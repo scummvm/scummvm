@@ -64,6 +64,7 @@ private:
 	void enter(uint16 magic, uint16 size);
 	void setSystemVariable();
 	void loadPicture();
+	void appendToSharedStorage();
 
 public:
 	Process(AGDSEngine *engine, Object *object);

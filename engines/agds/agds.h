@@ -43,6 +43,8 @@ class Object;
 class Process;
 
 class AGDSEngine : public Engine {
+	friend class Process;
+
 public:
 	AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~AGDSEngine();
@@ -52,6 +54,7 @@ public:
 private:
 	bool load();
 	void loadObject(Common::String & name);
+	int appendToSharedStorage(const Common::String &value);
 
 private:
 	typedef Common::HashMap<Common::String, Object *> ObjectsType;
@@ -63,6 +66,8 @@ private:
 	ObjectsType					_objects;
 	ProcessListType				_processes;
 	Common::String				_nextScreen;
+	int							_sharedStorageIndex;
+	Common::String				_sharedStorage[10];
 };
 
 
