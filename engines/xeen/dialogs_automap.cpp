@@ -158,7 +158,7 @@ void AutoMapDialog::execute() {
 					v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
 
 					if (v != INVALID_CELL && map._currentSurfaceId && map._currentSteppedOn)
-						map._tileSprites.draw(0, map.mazeData()._surfaceTypes[
+						map._tileSprites.draw(0, 36 + map.mazeData()._surfaceTypes[
 							map._currentSurfaceId], Common::Point(xp, yp));
 				}
 			}
