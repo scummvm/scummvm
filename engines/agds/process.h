@@ -57,6 +57,7 @@ private:
 
 	void push(int32 value);
 	int32 pop();
+	const Object::StringEntry & popString();
 
 	void enter(uint16 magic, uint16 size);
 	void setSystemVariable();

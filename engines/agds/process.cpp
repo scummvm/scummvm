@@ -53,7 +53,9 @@ enum Opcode {
 #define OP_UU(NAME, METHOD) \
 	case NAME: { uint16 arg1 = next16(); uint16 arg2 = next16(); METHOD (arg1, arg2); } break
 
-Process::Process(Object* object) : _object(object), _ip(0), _failed(false) { }
+Process::Process(Object* object) :
+	_object(object), _ip(0), _failed(false) {
+}
 
 void Process::push(int32 value) {
 	_stack.push(value);
@@ -63,6 +65,10 @@ int32 Process::pop() {
 	if (_stack.empty())
 		error("stack underflow, ip: %08x", _ip);
 	return _stack.pop();
+}
+
+const Object::StringEntry & Process::popString() {
+	return _object->getString(pop());
 }
 
 void Process::execute() {
