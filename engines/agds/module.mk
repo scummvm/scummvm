@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	detection.o \
 	object.o \
 	process.o \
+	process_opcodes.o \
 	resourceManager.o
 
 # This module can be built as a plugin

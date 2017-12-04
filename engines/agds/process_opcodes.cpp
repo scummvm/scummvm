@@ -20,55 +20,25 @@
  *
  */
 
-#ifndef AGDS_PROCESS_H
-#define AGDS_PROCESS_H
-
-#include "agds/object.h"
-#include "common/scummsys.h"
-#include "common/stack.h"
+#include "agds/process.h"
+#include "common/debug.h"
 
 namespace AGDS {
 
-class Process {
-private:
-	typedef Common::Stack<int32> StackType;
+void Process::enter(int16 dead, int16 jump) {
+	_ip += jump;
+}
 
-	Object *		_object;
-	StackType		_stack;
-	unsigned		_ip;
-	bool			_failed; //fixme: add status
+void Process::stub142() {
+	int arg1 = pop();
+	int arg2 = pop();
+	debug("stub142: %d, %d", arg1, arg2);
+}
 
-private:
-	uint8 next() {
-		const Object::CodeType & code = _object->getCode();
-		if (_ip < code.size()) {
-			return code[_ip++];
-		} else {
-			_failed = true;
-			return 0;
-		}
-	}
+void Process::loadPicture() {
+	int32 id = pop();
+	debug("loadPicture stub %d", id);
+	push(100500); //dummy
+}
 
-	uint16 next16() {
-		uint8 l = next();
-		uint16 h = next();
-		return (h << 8) | l;
-	}
-
-	void push(int32 value);
-	int32 pop();
-
-	void enter(int16 dead, int16 jump);
-	void stub142();
-	void loadPicture();
-
-public:
-	Process(Object *object);
-
-	void execute();
-};
-
-
-} // End of namespace AGDS
-
-#endif /* AGDS_PROCESS_H */
+}
