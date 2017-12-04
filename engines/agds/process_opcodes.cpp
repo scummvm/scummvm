@@ -40,16 +40,16 @@ void Process::enter(uint16 magic, uint16 size) {
 	_object->readStringTable(resOffset, resCount);
 }
 
-void Process::setSpecialVariable() {
+void Process::setSystemVariable() {
 	int16 valueIndex = pop();
 	int16 nameIndex = pop();
 
 	const Object::StringEntry &name = _object->getString(nameIndex);
 	if (valueIndex != -1) {
 		const Object::StringEntry &value = _object->getString(valueIndex);
-		debug("setSpecialVariable: %s[%d] to %s[%d]", name.string.c_str(), nameIndex, value.string.c_str(), valueIndex);
+		debug("setSystemVariable: %s[%d] to %s[%d]", name.string.c_str(), nameIndex, value.string.c_str(), valueIndex);
 	} else {
-		debug("resetSpecialVariable: %s[%d]", name.string.c_str(), nameIndex);
+		debug("resetSystemVariable: %s[%d]", name.string.c_str(), nameIndex);
 	}
 }
 

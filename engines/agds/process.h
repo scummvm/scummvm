@@ -59,7 +59,7 @@ private:
 	int32 pop();
 
 	void enter(uint16 magic, uint16 size);
-	void setSpecialVariable();
+	void setSystemVariable();
 	void loadPicture();
 
 public:
