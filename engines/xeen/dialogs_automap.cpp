@@ -80,7 +80,7 @@ void AutoMapDialog::execute() {
 	events.updateGameCounter();
 	do {
 		if (drawFlag)
-			intf.draw3d(false);
+			intf.draw3d(false, true);
 		windows[5].writeString("\n");
 
 		if (map._isOutdoors) {
