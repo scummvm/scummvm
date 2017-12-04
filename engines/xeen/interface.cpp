@@ -1298,7 +1298,7 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 	}
 
 	party._stepped = false;
-	if (_vm->_mode == MODE_9) {
+	if (_vm->_mode == MODE_RECORD_EVENTS) {
 		// TODO: Save current scripts data?
 	}
 

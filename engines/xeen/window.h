@@ -49,20 +49,9 @@ struct DrawStruct {
 };
 
 class Windows : public FontData {
-	friend class Window;
 private:
 	Common::Array<Window> _windows;
 	Common::Array<Window *> _windowStack;
-private:
-	/**
-	 * Adds a window to the stack of currently open ones
-	 */
-	void addToStack(Window *win);
-
-	/**
-	 * Removes a window from the currently active stack
-	 */
-	void removeFromStack(Window *win);
 public:
 	Windows();
 	~Windows();
@@ -76,6 +65,16 @@ public:
 	 * Close all currently open windows
 	 */
 	void closeAll();
+
+	/**
+	 * Called when a window has been opened
+	 */
+	void windowOpened(Window *win);
+
+	/**
+	 * Called when a window has been closed
+	 */
+	void windowClosed(Window *win);
 };
 
 class Window: public FontSurface {
@@ -87,8 +86,6 @@ private:
 	int _border;
 	int _xLo, _xHi;
 	int _ycL, _ycH;
-
-	void open2();
 public:
 	bool _enabled;
 public:

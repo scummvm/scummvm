@@ -86,7 +86,7 @@ enum Mode {
 	MODE_6 = 6,
 	MODE_7 = 7,
 	MODE_8 = 8,
-	MODE_9 = 9,
+	MODE_RECORD_EVENTS = 9,
 	MODE_CHARACTER_INFO = 10,
 	MODE_12 = 12,
 	MODE_DIALOG_123 = 13,

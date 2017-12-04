@@ -188,7 +188,7 @@ int Scripts::checkEvents() {
 				if (event._position == _currentPos && party._mazeDirection !=
 						(_currentPos.x | _currentPos.y) && event._line == _lineNum) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
-						_vm->_mode = MODE_9;
+						_vm->_mode = MODE_RECORD_EVENTS;
 						_scriptExecuted = true;
 						doOpcode(event);
 						break;

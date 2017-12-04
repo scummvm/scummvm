@@ -92,11 +92,11 @@ void Windows::closeAll() {
 	assert(_windowStack.size() == 0);
 }
 
-void Windows::addToStack(Window *win) {
+void Windows::windowOpened(Window *win) {
 	_windowStack.push_back(win);
 }
 
-void Windows::removeFromStack(Window *win) {
+void Windows::windowClosed(Window *win) {
 	for (uint i = 0; i < _windowStack.size(); ++i) {
 		if (_windowStack[i] == win) {
 			_windowStack.remove_at(i);
@@ -134,36 +134,48 @@ void Window::setBounds(const Common::Rect &r) {
 }
 
 void Window::open() {
-	if (!_enabled) {
-		_enabled = true;
-		g_vm->_windows->addToStack(this);
-		open2();
-	}
+	Screen &screen = *g_vm->_screen;
 
-	if (g_vm->_mode == MODE_9) {
-		warning("TODO: copyFileToMemory");
+	if (!_enabled) {
+		// Save a copy of the area under the window
+		_savedArea.create(_bounds.width(), _bounds.height());
+		_savedArea.copyRectToSurface(screen, 0, 0, _bounds);
+
+		// Mark the area as dirty and fill it with a default background
+		addDirtyRect(_bounds);
+		frame();
+		fill();
+
+		_writePos.x = _bounds.right - 8;
+		writeSymbol(19);
+
+		_writePos.x = _innerBounds.left;
+		_writePos.y = _innerBounds.top;
+		_fontJustify = JUSTIFY_NONE;
+		_fontReduced = false;
+		_enabled = true;
+
+		// Signal that the window has opened
+		g_vm->_windows->windowOpened(this);
 	}
 }
 
-void Window::open2() {
+void Window::close() {
 	Screen &screen = *g_vm->_screen;
 
-	// Save a copy of the area under the window
-	_savedArea.create(_bounds.width(), _bounds.height());
-	_savedArea.copyRectToSurface(screen, 0, 0, _bounds);
+	if (_enabled) {
+		// Update the window
+		update();
 
-	// Mark the area as dirty and fill it with a default background
-	addDirtyRect(_bounds);
-	frame();
-	fill();
+		// Restore the saved original content
+		screen.copyRectToSurface(_savedArea, _bounds.left, _bounds.top,
+			Common::Rect(0, 0, _bounds.width(), _bounds.height()));
+		addDirtyRect(_bounds);
 
-	_writePos.x = _bounds.right - 8;
-	writeSymbol(19);
-
-	_writePos.x = _innerBounds.left;
-	_writePos.y = _innerBounds.top;
-	_fontJustify = JUSTIFY_NONE;
-	_fontReduced = false;
+		// Signal that the window has closed
+		g_vm->_windows->windowClosed(this);
+		_enabled = false;
+	}
 }
 
 void Window::frame() {
@@ -218,28 +230,6 @@ void Window::frame() {
 
 	_writePos.x = _bounds.right - FONT_WIDTH;
 	writeSymbol(19);
-}
-
-void Window::close() {
-	Screen &screen = *g_vm->_screen;
-
-	if (_enabled) {
-		// Update the window
-		update();
-
-		// Restore the saved original content
-		screen.copyRectToSurface(_savedArea, _bounds.left, _bounds.top,
-			Common::Rect(0, 0, _bounds.width(), _bounds.height()));
-		addDirtyRect(_bounds);
-
-		// Remove the window from the stack and flag it as now disabled
-		g_vm->_windows->removeFromStack(this);
-		_enabled = false;
-	}
-
-	if (g_vm->_mode == MODE_9) {
-		warning("TODO: copyFileToMemory");
-	}
 }
 
 void Window::update() {

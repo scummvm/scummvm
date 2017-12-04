@@ -405,7 +405,7 @@ void Party::addTime(int numMinutes) {
 		_newDay = true;
 
 	if (_newDay && _minutes >= 300) {
-		if (_vm->_mode != MODE_9 && _vm->_mode != MODE_17) {
+		if (_vm->_mode != MODE_RECORD_EVENTS && _vm->_mode != MODE_17) {
 			resetTemps();
 			if (_rested || _vm->_mode == MODE_SLEEPING) {
 				_rested = false;
@@ -579,7 +579,7 @@ void Party::giveTreasure() {
 	for (int idx = 0; idx < 26 && !monstersPresent; ++idx)
 		monstersPresent = combat._attackMonsters[idx] != -1;
 
-	if (_vm->_mode != MODE_9 && monstersPresent)
+	if (_vm->_mode != MODE_RECORD_EVENTS && monstersPresent)
 		return;
 
 	Common::fill(&combat._shooting[0], &combat._shooting[MAX_PARTY_COUNT], 0);
