@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-12-03 19:35+0100\n"
+"POT-Creation-Date: 2017-12-04 03:26+0100\n"
 "PO-Revision-Date: 2017-12-01 10:54+0000\n"
 "Last-Translator: hampusf <hampus.flink@gmail.com>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -141,7 +141,7 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nej"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:568
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:569
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM kunde inte öppna den valda katalogen!"
 
@@ -154,8 +154,8 @@ msgstr ""
 "fil med samma namn."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
-#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:525
-#: gui/launcher.cpp:529 gui/massadd.cpp:92 gui/options.cpp:1682
+#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:526
+#: gui/launcher.cpp:530 gui/massadd.cpp:92 gui/options.cpp:1682
 #: gui/saveload-dialog.cpp:1122 engines/engine.cpp:443 engines/engine.cpp:454
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
@@ -553,15 +553,15 @@ msgstr "Stäng"
 msgid "Mouse click"
 msgstr "Musklick"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:340
+#: gui/gui-manager.cpp:126 base/main.cpp:341
 msgid "Display keyboard"
 msgstr "Visa tangentbord"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:344
+#: gui/gui-manager.cpp:130 base/main.cpp:345
 msgid "Remap keys"
 msgstr "Ställ in tangenter"
 
-#: gui/gui-manager.cpp:133 base/main.cpp:347 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:348 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Fullskärmsläge"
 
@@ -677,7 +677,7 @@ msgstr "~R~adera spel"
 msgid "Search in game list"
 msgstr "Sök i spellistan"
 
-#: gui/launcher.cpp:176 gui/launcher.cpp:774
+#: gui/launcher.cpp:176 gui/launcher.cpp:775
 msgid "Search:"
 msgstr "Sök:"
 
@@ -719,28 +719,28 @@ msgstr "Vill du verkligen radera den här spelkonfigurationen?"
 msgid "Do you want to load saved game?"
 msgstr "Vill du ladda sparat spel?"
 
-#: gui/launcher.cpp:525
+#: gui/launcher.cpp:526
 msgid "This game does not support loading games from the launcher."
 msgstr "Det här spelet stöder inte laddning av spardata från launchern."
 
-#: gui/launcher.cpp:529
+#: gui/launcher.cpp:530
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM kunde inte hitta en motor kapabel till att köra det valda spelet!"
 
-#: gui/launcher.cpp:580
+#: gui/launcher.cpp:581
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM kunde inte hitta några spel i den valda katalogen!"
 
-#: gui/launcher.cpp:593
+#: gui/launcher.cpp:594
 msgid "Pick the game:"
 msgstr "Välj spel:"
 
-#: gui/launcher.cpp:711
+#: gui/launcher.cpp:712
 msgid "Mass Add..."
 msgstr "Masstillägg..."
 
-#: gui/launcher.cpp:713
+#: gui/launcher.cpp:714
 msgid "Record..."
 msgstr "Spela in..."
 
@@ -1435,13 +1435,13 @@ msgstr "Spela upp"
 msgid "Edit"
 msgstr "Redigera"
 
-#: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
-#: gui/recorderdialog.cpp:252
+#: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
+#: gui/recorderdialog.cpp:251
 msgid "Author: "
 msgstr "Skapare: "
 
-#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
-#: gui/recorderdialog.cpp:253
+#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:242
+#: gui/recorderdialog.cpp:252
 msgid "Notes: "
 msgstr "Anteckningar: "
 
@@ -1449,7 +1449,7 @@ msgstr "Anteckningar: "
 msgid "Do you really want to delete this record?"
 msgstr "Vill du verkligen radera den här inspelningen?"
 
-#: gui/recorderdialog.cpp:173
+#: gui/recorderdialog.cpp:172
 msgid "Unknown Author"
 msgstr "Okänd skapare"
 
@@ -1648,35 +1648,35 @@ msgstr "Fortsätt"
 msgid "Clear value"
 msgstr "Töm sökfältet"
 
-#: base/main.cpp:253
+#: base/main.cpp:254
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Motorn stöder inte debug-nivå '%s'"
 
-#: base/main.cpp:327
+#: base/main.cpp:328
 msgid "Menu"
 msgstr "Meny"
 
-#: base/main.cpp:330 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:331 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Skippa"
 
-#: base/main.cpp:333 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Paus"
 
-#: base/main.cpp:336
+#: base/main.cpp:337
 msgid "Skip line"
 msgstr "Skippa rad"
 
-#: base/main.cpp:547
+#: base/main.cpp:548
 msgid "Error running game:"
 msgstr "Fel under körning av spel:"
 
-#: base/main.cpp:594
+#: base/main.cpp:595
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunde inte hitta en motor kapabel till att köra det valda spelet"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-12-03 19:35+0100\n"
+"POT-Creation-Date: 2017-12-04 03:26+0100\n"
 "PO-Revision-Date: 2017-04-28 11:12+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -139,7 +139,7 @@ msgstr "Ναι"
 msgid "No"
 msgstr "Όχι"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:568
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:569
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "Το ScummVM δε μπόρεσε να ανοίξει το καθορισμένο φάκελο!"
 
@@ -152,8 +152,8 @@ msgstr ""
 "φάκελος έχει ένα αρχείο με το ίδιο όνομα."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
-#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:525
-#: gui/launcher.cpp:529 gui/massadd.cpp:92 gui/options.cpp:1682
+#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:526
+#: gui/launcher.cpp:530 gui/massadd.cpp:92 gui/options.cpp:1682
 #: gui/saveload-dialog.cpp:1122 engines/engine.cpp:443 engines/engine.cpp:454
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
@@ -556,15 +556,15 @@ msgstr "Κλείσιμο"
 msgid "Mouse click"
 msgstr "Click ποντικιού"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:340
+#: gui/gui-manager.cpp:126 base/main.cpp:341
 msgid "Display keyboard"
 msgstr "Προβολή πληκτρολογίου"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:344
+#: gui/gui-manager.cpp:130 base/main.cpp:345
 msgid "Remap keys"
 msgstr "Αντιστοίχιση πλήκτρων"
 
-#: gui/gui-manager.cpp:133 base/main.cpp:347 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:348 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Λειτουργία πλήρους οθόνης"
 
@@ -682,7 +682,7 @@ msgstr "~Α~φαίρ. Παιχν"
 msgid "Search in game list"
 msgstr "Αναζήτηση στη λίστα παιχνιδιών"
 
-#: gui/launcher.cpp:176 gui/launcher.cpp:774
+#: gui/launcher.cpp:176 gui/launcher.cpp:775
 msgid "Search:"
 msgstr "Αναζήτηση:"
 
@@ -725,30 +725,30 @@ msgstr "Θέλετε πραγματικά να σβήσετε τις ρυθμίσεις αυτού του παιχνιδιού;"
 msgid "Do you want to load saved game?"
 msgstr "Θέλετε να φορτώσετε το αποθηκευμένο παιχνίδι;"
 
-#: gui/launcher.cpp:525
+#: gui/launcher.cpp:526
 msgid "This game does not support loading games from the launcher."
 msgstr "Αυτό το παιχνίδι δεν υποστηρίζει φόρτωση παιχνιδιών από τον προωθητή."
 
-#: gui/launcher.cpp:529
+#: gui/launcher.cpp:530
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "Το ScummVM δε μπόρεσε να βρεί κάποια μηχανή ικανή να εκτελέσει το επιλεγμένο "
 "παιχνίδι!"
 
-#: gui/launcher.cpp:580
+#: gui/launcher.cpp:581
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr ""
 "Το ScummVM δε μπόρεσε να βρεί κάποιο παιχνίδι στον προκαθορισμένο φάκελο!"
 
-#: gui/launcher.cpp:593
+#: gui/launcher.cpp:594
 msgid "Pick the game:"
 msgstr "Διαλέξτε το παιχνίδι:"
 
-#: gui/launcher.cpp:711
+#: gui/launcher.cpp:712
 msgid "Mass Add..."
 msgstr "Μαζική Προσθήκη..."
 
-#: gui/launcher.cpp:713
+#: gui/launcher.cpp:714
 msgid "Record..."
 msgstr "Εγγραφή..."
 
@@ -1459,13 +1459,13 @@ msgstr "Αναπαραγωγή"
 msgid "Edit"
 msgstr "Διόρθωση"
 
-#: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
-#: gui/recorderdialog.cpp:252
+#: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
+#: gui/recorderdialog.cpp:251
 msgid "Author: "
 msgstr "Συγγραφέας: "
 
-#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
-#: gui/recorderdialog.cpp:253
+#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:242
+#: gui/recorderdialog.cpp:252
 msgid "Notes: "
 msgstr "Σημειώσεις: "
 
@@ -1473,7 +1473,7 @@ msgstr "Σημειώσεις: "
 msgid "Do you really want to delete this record?"
 msgstr "Θέλετε πραγματικά να σβήσετε αυτή την εγγραφή;"
 
-#: gui/recorderdialog.cpp:173
+#: gui/recorderdialog.cpp:172
 msgid "Unknown Author"
 msgstr "¶γνωστος Συγγραφέας"
 
@@ -1672,35 +1672,35 @@ msgstr "Προχώρα"
 msgid "Clear value"
 msgstr "Σβήσιμο τιμής"
 
-#: base/main.cpp:253
+#: base/main.cpp:254
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Η μηχανή δεν υποστηρίζει επίπεδο εντοπισμού σφαλμάτων '%s'"
 
-#: base/main.cpp:327
+#: base/main.cpp:328
 msgid "Menu"
 msgstr "Μενού"
 
-#: base/main.cpp:330 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:331 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Παράλειψη"
 
-#: base/main.cpp:333 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Παύση"
 
-#: base/main.cpp:336
+#: base/main.cpp:337
 msgid "Skip line"
 msgstr "Παράλειψη γραμμής"
 
-#: base/main.cpp:547
+#: base/main.cpp:548
 msgid "Error running game:"
 msgstr "Σφάλμα κατά την εκτέλεση του παιχνιδιού:"
 
-#: base/main.cpp:594
+#: base/main.cpp:595
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 "Δεν ήταν δυνατή η εύρεση μηχανής η οποία να μπορεί να εκτελέσει το "
