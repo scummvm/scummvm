@@ -98,7 +98,7 @@ static const char LogTable256[256] = {
 };
 
 inline int intLog2(uint32 v) {
-	register uint32 t, tt;
+	uint32 t, tt;
 
 	if ((tt = v >> 16))
 		return (t = tt >> 8) ? 24 + LogTable256[t] : 16 + LogTable256[tt];
