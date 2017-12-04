@@ -262,20 +262,15 @@ public:
 	//@}
 };
 
-
-// Engine plugins
-
-typedef PluginSubclass<MetaEngine> EnginePlugin;
-
 /**
  * Singleton class which manages all Engine plugins.
  */
 class EngineManager : public Common::Singleton<EngineManager> {
 public:
-	GameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
-	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
+	GameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin = NULL) const;
+	GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL) const;
 	GameList detectGames(const Common::FSList &fslist) const;
-	const EnginePlugin::List &getPlugins() const;
+	const PluginList &getPlugins() const;
 };
 
 /** Convenience shortcut for accessing the engine manager. */
