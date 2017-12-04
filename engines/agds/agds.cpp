@@ -31,7 +31,7 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc) {
+		_gameDescription(gameDesc), _sharedStorageIndex(-2) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -90,5 +90,14 @@ Common::Error AGDSEngine::run() {
 
 	return Common::kNoError;
 }
+
+int AGDSEngine::appendToSharedStorage(const Common::String &value) {
+	int index = _sharedStorageIndex;
+	_sharedStorage[-2 - (_sharedStorageIndex--)] = value;
+	if (_sharedStorageIndex <= -12)
+		_sharedStorageIndex = -2;
+	return index;
+}
+
 
 } // End of namespace AGDS

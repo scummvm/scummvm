@@ -32,6 +32,7 @@ enum Opcode {
 	kSetSystemVariable	= 142,
 	kGetRegionWidth		= 146,
 	kGetRegionHeight	= 147,
+	kAppendToSharedStorage			= 175,
 	kLoadPicture		= 198,
 	kMax				= 248
 };
@@ -79,8 +80,9 @@ void Process::execute() {
 			OP_UU	(kEnter, enter);
 			OP		(kPop, pop);
 			OP_C	(kPushImm8, push);
-			OP		(kLoadPicture, loadPicture);
 			OP		(kSetSystemVariable, setSystemVariable);
+			OP		(kAppendToSharedStorage, appendToSharedStorage);
+			OP		(kLoadPicture, loadPicture);
 		default:
 			debug("%08x: unknown opcode 0x%02x (%u)", _ip - 1, (unsigned)op, (unsigned)op);
 			_failed = true;

@@ -21,6 +21,7 @@
  */
 
 #include "agds/process.h"
+#include "agds/agds.h"
 #include "common/debug.h"
 
 namespace AGDS {
@@ -57,5 +58,13 @@ void Process::loadPicture() {
 	debug("loadPicture stub %s", name.string.c_str());
 	push(100500); //dummy
 }
+
+void Process::appendToSharedStorage() {
+	const Object::StringEntry &value = popString();
+	int index = _engine->appendToSharedStorage(value.string);
+	debug("appendToSharedStorage %s -> %d", value.string.c_str(), index);
+	push(index);
+}
+
 
 }
