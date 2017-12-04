@@ -81,7 +81,7 @@ void AutoMapDialog::execute() {
 	do {
 		if (drawFlag)
 			intf.draw3d(false, true);
-		windows[5].writeString("\n");
+		windows[5].writeString("\r");
 
 		if (map._isOutdoors) {
 			// Draw outdoors map
