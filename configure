@@ -1078,13 +1078,21 @@ Optional Libraries:
   --disable-libcurl        disable libcurl networking library [autodetect]
 
 Some influential environment variables:
-  LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
-                 nonstandard directory <lib dir>
-  CXX            C++ compiler command
-  CXXFLAGS       C++ compiler flags
+  AR             archiver command
+  AS             assembler command
+  ASFLAGS        assembler flags
   CPPFLAGS       C++ preprocessor flags, e.g. -I<include dir> if you have
                  headers in a nonstandard directory <include dir>
-  ASFLAGS        assembler flags
+  CXX            C++ compiler command
+  CXXFLAGS       C++ compiler flags
+  DWP            DWARF packing utility command
+  LD             linker command
+  LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
+                 nonstandard directory <lib dir>
+  RANLIB         archive indexer command
+  SDL_CONFIG     SDL configurer script name (not path)
+  STRIP          symbol stripper command
+  WINDRES        Windows resource compiler command
   WINDRESFLAGS   Windows resource compiler flags
 
 EOF
