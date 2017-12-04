@@ -29,7 +29,7 @@ enum Opcode {
 	kEnter				= 5,
 	kPop				= 10,
 	kPushImm8			= 18,
-	kSetSpecialVariable	= 142,
+	kSetSystemVariable	= 142,
 	kGetRegionWidth		= 146,
 	kGetRegionHeight	= 147,
 	kLoadPicture		= 198,
@@ -74,7 +74,7 @@ void Process::execute() {
 			OP		(kPop, pop);
 			OP_C	(kPushImm8, push);
 			OP		(kLoadPicture, loadPicture);
-			OP		(kSetSpecialVariable, setSpecialVariable);
+			OP		(kSetSystemVariable, setSystemVariable);
 		default:
 			debug("%08x: unknown opcode 0x%02x (%u)", _ip - 1, (unsigned)op, (unsigned)op);
 			_failed = true;
