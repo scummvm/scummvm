@@ -164,7 +164,7 @@ _libunity=auto
 _debug_build=auto
 _release_build=auto
 _optimizations=auto
-_use_cxx11=no
+_use_cxx11=yes
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -964,8 +964,9 @@ Game engines:
     The values of <engine name> for these options are as follows:
 $engines_help
 Optional Features:
+  --force-c++98            force building as C++98 even if the compiler supports a
+                           newer standard
   --enable-static          build a static binary instead of using shared objects
-  --enable-c++11           build as C++11 if the compiler allows that
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
   --enable-release         enable building in release mode (this activates
@@ -1289,9 +1290,8 @@ for ac_option in $@; do
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--enable-c++11)
-		_use_cxx11=yes
 		;;
-	--disable-c++11)
+	--disable-c++11|--force-c++98)
 		_use_cxx11=no
 		;;
 	--enable-debug)
