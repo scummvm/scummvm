@@ -73,7 +73,7 @@ void AGDSEngine::loadObject(Common::String & name) {
 	if (!object)
 		_objects.setVal(name, object = new Object(stream));
 
-	_processes.push_back(Process(object));
+	_processes.push_back(Process(this, object));
 	_processes.back().execute();
 }
 
