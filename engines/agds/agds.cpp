@@ -21,6 +21,8 @@
  */
 
 #include "agds/agds.h"
+#include "agds/object.h"
+#include "agds/process.h"
 #include "common/error.h"
 #include "common/ini-file.h"
 #include "common/file.h"
@@ -56,18 +58,35 @@ bool AGDSEngine::load() {
 		return false;
 
 	_patch.open("patch.adb"); //it's ok
-	
+	_nextScreen = "main";
+
 	return true;
+}
+
+void AGDSEngine::loadObject(Common::String & name) {
+	debug("loading object %s", name.c_str());
+	Common::SeekableReadStream * stream = _data.getEntry(name);
+	if (!stream)
+		error("no database entry for %s\n", name.c_str());
+	ObjectsType::iterator i = _objects.find(name);
+	Object *object = i != _objects.end()? i->_value: NULL;
+	if (!object)
+		_objects.setVal(name, object = new Object(stream));
+
+	_processes.push_back(Process(object));
+	_processes.back().execute();
 }
 
 Common::Error AGDSEngine::run() {
 	if (!load())
 		return Common::kNoGameDataFoundError;
-
-	Common::SeekableReadStream * main = _data.getEntry("main");
-	debug("loaded main: %p\n", static_cast<void *>(main));
-	if (!main)
-		return Common::kNoGameDataFoundError;
+	if (!_nextScreen.empty()) {
+		debug("loading screen %s", _nextScreen.c_str());
+		Common::String nextScreen;
+		nextScreen = _nextScreen;
+		_nextScreen.clear();
+		loadObject(nextScreen);
+	}
 
 	return Common::kNoError;
 }

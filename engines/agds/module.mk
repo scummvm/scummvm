@@ -4,6 +4,8 @@ MODULE_OBJS := \
 	agds.o \
 	database.o \
 	detection.o \
+	object.o \
+	process.o \
 	resourceManager.o
 
 # This module can be built as a plugin
