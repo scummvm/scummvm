@@ -29,10 +29,12 @@
 
 namespace AGDS {
 
+class AGDSEngine;
 class Process {
 private:
 	typedef Common::Stack<int32> StackType;
 
+	AGDSEngine *	_engine;
 	Object *		_object;
 	StackType		_stack;
 	unsigned		_ip;
@@ -64,7 +66,7 @@ private:
 	void loadPicture();
 
 public:
-	Process(Object *object);
+	Process(AGDSEngine *engine, Object *object);
 
 	void execute();
 };

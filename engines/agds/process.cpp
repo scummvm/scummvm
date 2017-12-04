@@ -53,8 +53,8 @@ enum Opcode {
 #define OP_UU(NAME, METHOD) \
 	case NAME: { uint16 arg1 = next16(); uint16 arg2 = next16(); METHOD (arg1, arg2); } break
 
-Process::Process(Object* object) :
-	_object(object), _ip(0), _failed(false) {
+Process::Process(AGDSEngine *engine, Object* object) :
+	_engine(engine), _object(object), _ip(0), _failed(false) {
 }
 
 void Process::push(int32 value) {
