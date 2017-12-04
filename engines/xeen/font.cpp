@@ -33,11 +33,12 @@ byte FontData::_bgColor;
 bool FontData::_fontReduced;
 Justify FontData::_fontJustify;
 
-FontSurface::FontSurface() : XSurface() {
+FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr) {
 	setTextColor(0);
 }
 
-FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv), _msgWraps(false), _displayString(nullptr) {
+FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
+		_msgWraps(false), _displayString(nullptr) {
 	create(w, h);
 	setTextColor(0);
 }

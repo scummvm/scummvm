@@ -529,9 +529,9 @@ Character *Town::doTownOptions(Character *c) {
 
 Character *Town::doBankOptions(Character *c) {
 	if (_buttonValue == Common::KEYCODE_d)
-		_buttonValue = WHERE_PARTY;
+		_buttonValue = (int)WHERE_PARTY;
 	else if (_buttonValue == Common::KEYCODE_w)
-		_buttonValue = WHERE_BANK;
+		_buttonValue = (int)WHERE_BANK;
 	else
 		return c;
 
