@@ -63,7 +63,7 @@ bool AGDSEngine::load() {
 	return true;
 }
 
-void AGDSEngine::loadObject(Common::String & name) {
+ProcessExitCode AGDSEngine::loadObject(Common::String & name) {
 	debug("loading object %s", name.c_str());
 	Common::SeekableReadStream * stream = _data.getEntry(name);
 	if (!stream)
@@ -74,7 +74,7 @@ void AGDSEngine::loadObject(Common::String & name) {
 		_objects.setVal(name, object = new Object(stream));
 
 	_processes.push_back(Process(this, object));
-	_processes.back().execute();
+	return _processes.back().execute();
 }
 
 Common::Error AGDSEngine::run() {
@@ -97,6 +97,13 @@ int AGDSEngine::appendToSharedStorage(const Common::String &value) {
 	if (_sharedStorageIndex <= -12)
 		_sharedStorageIndex = -2;
 	return index;
+}
+
+const Common::String & AGDSEngine::getSharedStorage(int id) const {
+	int index = -2 - id;
+	if (index < 0 || index >= 10)
+		error("shared storage id is out of range");
+	return _sharedStorage[index];
 }
 
 
