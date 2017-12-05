@@ -97,7 +97,7 @@ private:
 
 	void stub98();
 	void stub128();
-	void stub140();
+	void changeScreenPatch();
 	void stub182();
 
 	void suspend(ProcessExitCode exitCode) {

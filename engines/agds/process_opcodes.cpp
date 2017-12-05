@@ -107,13 +107,15 @@ void Process::stub98() {
 	debug("stub98");
 }
 
-void Process::stub140() {
+void Process::changeScreenPatch() {
 	Common::String res2 = popString();
 	Common::String res1;
 	int index = pop();
 	if (index != -1)
 		res1 = getString(index);
+	//change screen patch
 	debug("stub140: %d '%s' '%s'", index, res1.c_str(), res2.c_str());
+	push(0);
 }
 
 void Process::stub128() {
@@ -183,7 +185,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadMouse, loadMouse);
 			OP		(kScreenLoadObject, loadScreenObject);
 			OP		(kScreenRemoveObject, removeScreenObject);
-			OP		(kStub140, stub140);
+			OP		(kScreenChangeScreenPatch, changeScreenPatch);
 			OP		(kSetSystemVariable, setSystemVariable);
 			OP		(kSetIntegerVariable, setIntegerVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);

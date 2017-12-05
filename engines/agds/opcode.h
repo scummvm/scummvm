@@ -157,7 +157,7 @@ enum Opcode {
 	kStub137						= 137,
 	kStub138						= 138,
 	kStub139						= 139,
-	kStub140						= 140,
+	kScreenChangeScreenPatch		= 140,
 	kStub141						= 141,
 	kSetSystemVariable				= 142,
 	kSetIntegerVariable				= 143,
