@@ -2565,10 +2565,13 @@ bool AxacussCorridor5::handleMoneyDialog() {
 			removeSentence(2, 2);
 			removeSentence(3, 2);
 		} else {
-			_varTexts3[2] = Common::String::format("%d", _gm->_state._money - 200);
-			_varTexts3[3] = Common::String::format("%d", _gm->_state._money);
+			Common::String string = _vm->getGameString(kStringDialogAxacussCorridor5_7);
+			_vm->setGameString(kStringPlaceholder1, Common::String::format(string.c_str(), _gm->_state._money - 200));
+			_vm->setGameString(kStringPlaceholder2, Common::String::format(string.c_str(), _gm->_state._money));
+			_dialog3[2] = kStringPlaceholder1;
+			_dialog3[3] = kStringPlaceholder2;
 		}
-		switch (_gm->dialog(4, _rows, _dialog3, 2, _varTexts3)) {
+		switch (_gm->dialog(4, _rows, _dialog3, 2)) {
 		case 1:
 			_gm->wait2(3);
 			_vm->renderImage(1);

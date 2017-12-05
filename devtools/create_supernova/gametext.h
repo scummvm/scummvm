@@ -678,7 +678,7 @@ const char *gameText[] = {
 	"Dann gehe ich eben wieder.", // kStringDialogAxacussCorridor5_5
 	"Ach, halten Sie's Maul, ich gehe trotzdem!", // kStringDialogAxacussCorridor5_6
 	// 535
-	"Wenn Sie mich durchlassen gebe ich Ihnen %s Xa.",  // kStringDialogAxacussCorridor5_7
+	"Wenn Sie mich durchlassen gebe ich Ihnen %d Xa.",  // kStringDialogAxacussCorridor5_7
 	"Hallo!", // kStringDialogX1
 	"Guten Tag!", // kStringDialogX2
 	"Ich bin's, Horst Hummel.", // kStringDialogX3

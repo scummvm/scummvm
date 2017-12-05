@@ -355,7 +355,6 @@ void GameManager::initState() {
 	for (int i = 0 ; i < 6 ; ++i) {
 		_sentenceNumber[i] = -1;
 		_texts[i] = kNoString;
-		_varTexts[i].clear();
 		_rows[i] = 0;
 		_rowsStart[i] = 0;
 	}
@@ -687,8 +686,6 @@ void GameManager::telomat(int nr) {
 	dial2[3] = kStringDialogSeparator;
 
 	static byte rows2[4] = {1, 1, 1, 1};
-	
-	Common::String varDial[6];
 
 	_vm->renderBox(0, 0, 320, 200, kColorBlack);
 	_vm->renderText(kStringTelomat7, 100, 70, kColorGreen);
@@ -755,13 +752,14 @@ void GameManager::telomat(int nr) {
 			waitOnInput(_timer1);
 			_vm->removeMessage();
 			if (_state._nameSeen[nr]) {
-				varDial[1] = name2[nr];
-				dial1[1] = kStringTelomat2;
+				Common::String string = _vm->getGameString(kStringTelomat2);
+				_vm->setGameString(kStringPlaceholder1, Common::String::format(string.c_str(), name2[nr].c_str()));
+				dial1[1] = kStringPlaceholder1;
 				_currentRoom->addSentence(1, 1);
 			} else
 				_currentRoom->removeSentence(1, 1);
 
-			switch (dialog(3, rows1, dial1, 1, varDial)) {
+			switch (dialog(3, rows1, dial1, 1)) {
 			case 1: _vm->renderMessage(kStringTelomat18, kMessageTop);
 				waitOnInput(_timer1);
 				_vm->removeMessage();
@@ -1299,7 +1297,7 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 		_vm->removeMessage();
 }
 
-int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number, Common::String varText[6]) {
+int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number) {
 	_vm->_allowLoadGame = false;
 	_guiEnabled = false;
 
@@ -1322,8 +1320,6 @@ int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number
 			_rows[i] = rowLength[i];
 			for (int j = 0; j < _rows[i]; ++j, ++r, ++rq) {
 				_texts[r] = text[rq];
-				if (varText != nullptr && !varText[rq].empty())
-					_varTexts[r] = varText[rq];
 				_sentenceNumber[r] = i;
 			}
 			sentence(i, false);
