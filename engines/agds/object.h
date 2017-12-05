@@ -46,16 +46,19 @@ public:
 private:
 	typedef Common::HashMap<uint16, StringEntry, Common::Hash<uint16> > StringTableType;
 
+	Common::String		_name;
 	CodeType			_code;
 	StringTableType		_stringTable;
 	bool				_stringTableLoaded;
 
 
 public:
-	Object(Common::SeekableReadStream * stream);
+	Object(const Common::String &name, Common::SeekableReadStream * stream);
 
 	void readStringTable(unsigned resOffset, uint16 resCount);
 	const StringEntry & getString(uint16 index) const;
+	const Common::String & getName() const
+	{ return _name; }
 
 	const CodeType & getCode() const {
 		return _code;
