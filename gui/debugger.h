@@ -28,6 +28,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/array.h"
+#include "common/str.h"
 #include "common/str-array.h"
 
 namespace GUI {
@@ -161,7 +162,7 @@ private:
 	 */
 	bool _isActive;
 
-	char *_errStr;
+	Common::String _errStr;
 
 	/**
 	 * Initially true, set to false when Debugger::enter is called
@@ -208,7 +209,7 @@ private:
 	 * Splits up the input into individual parameters
 	 * @remarks		Adapted from code provided by torek on StackOverflow
 	 */
-	void splitCommand(char *input, int &argc, const char **argv);
+	void splitCommand(Common::String &input, int &argc, const char **argv);
 
 	bool parseCommand(const char *input);
 	bool tabComplete(const char *input, Common::String &completion) const;
