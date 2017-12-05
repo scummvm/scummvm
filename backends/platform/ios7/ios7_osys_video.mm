@@ -52,8 +52,8 @@ static void displayAlert(void *ctx) {
 }
 
 void OSystem_iOS7::fatalError() {
-	if (_lastErrorMessage) {
-		dispatch_async_f(dispatch_get_main_queue(), _lastErrorMessage, displayAlert);
+	if (_lastErrorMessage.size()) {
+		dispatch_async_f(dispatch_get_main_queue(), (void *)_lastErrorMessage.c_str(), displayAlert);
 		for(;;);
 	}
 	else {

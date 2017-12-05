@@ -27,6 +27,7 @@
 #include "backends/platform/ios7/ios7_common.h"
 #include "backends/base-backend.h"
 #include "common/events.h"
+#include "common/str.h"
 #include "audio/mixer_intern.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 #include "graphics/colormasks.h"
@@ -109,7 +110,7 @@ protected:
 	bool _fullScreenOverlayIsDirty;
 	int _screenChangeCount;
 
-	char *_lastErrorMessage;
+	Common::String _lastErrorMessage;
 
 #ifdef IPHONE_SANDBOXED
 	Common::String _chrootBasePath;
