@@ -66,6 +66,16 @@ private:
 	void push(int32 value);
 	int32 pop();
 
+	void jump(int delta)
+	{ _ip += delta; }
+
+	void jumpz(int delta)
+	{
+		int value = pop();
+		if (value == 0)
+			jump(delta);
+	}
+
 	Common::String getString(int id);
 	Common::String popString() {
 		return getString(pop());
@@ -74,6 +84,7 @@ private:
 	void enter(uint16 magic, uint16 size);
 	void clearScreen();
 	void setSystemVariable();
+	void setGlobal();
 	void loadPicture();
 	void loadMouse();
 	void appendToSharedStorage();
@@ -82,9 +93,11 @@ private:
 	void loadFont();
 	void setIntegerVariable();
 	void exitProcess();
+	void onKey(unsigned size);
 
 	void stub98();
 	void stub128();
+	void stub140();
 	void stub182();
 
 	void suspend(ProcessExitCode exitCode) {

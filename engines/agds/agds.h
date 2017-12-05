@@ -56,11 +56,14 @@ private:
 	bool load();
 	ProcessExitCode loadObject(const Common::String & name);
 	int appendToSharedStorage(const Common::String &value);
+	void setGlobal(const Common::String &name, int value)
+	{ _globals.setVal(name, value); }
 	const Common::String & getSharedStorage(int id) const;
 
 private:
-	typedef Common::HashMap<Common::String, Object *> ObjectsType;
+	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
 	typedef Common::List<Process> ProcessListType;
+	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
 
 	const ADGameDescription *	_gameDescription;
 	ResourceManager				_resourceManager;
@@ -70,6 +73,7 @@ private:
 	Common::String				_nextScreen;
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];
+	GlobalsType					_globals;
 };
 
 

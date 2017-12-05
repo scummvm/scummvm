@@ -89,6 +89,13 @@ void Process::setIntegerVariable() {
 	debug("setIntegerVariable stub: %s -> %d", name.c_str(), value);
 }
 
+void Process::setGlobal() {
+	Common::String name = popString();
+	int value = pop();
+	debug("setting global %s -> %d", name.c_str(), value);
+	_engine->setGlobal(name, value);
+}
+
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
 	int index = _engine->appendToSharedStorage(value);
@@ -96,13 +103,27 @@ void Process::appendToSharedStorage() {
 	push(index);
 }
 
-void Process::stub128() {
-	debug("ProcessCleanupStub128");
+void Process::stub98() {
+	debug("stub98");
 }
+
+void Process::stub140() {
+	Common::String res2 = popString();
+	Common::String res1;
+	int index = pop();
+	if (index != -1)
+		res1 = getString(index);
+	debug("stub140: %d '%s' '%s'", index, res1.c_str(), res2.c_str());
+}
+
+void Process::stub128() {
+	debug("processCleanupStub128");
+}
+
 void Process::stub182() {
 	int arg2 = pop();
 	int arg1 = pop();
-	debug("Stub182 %d %d", arg1, arg2);
+	debug("stub182 %d %d", arg1, arg2);
 }
 
 void Process::exitProcess() {
@@ -114,6 +135,13 @@ void Process::exitProcess() {
 void Process::clearScreen() {
 	debug("clearScreen");
 }
+
+void Process::onKey(unsigned size) {
+	Common::String key = popString();
+	debug("onKey %s handler, %u instructions", key.c_str(), size);
+	_ip += size;
+}
+
 
 //fixme: add trace here
 #define OP(NAME, METHOD) \
@@ -142,16 +170,20 @@ ProcessExitCode Process::execute() {
 		uint8 op = next();
 		switch(op) {
 			OP_UU	(kEnter, enter);
+			OP_W	(kJumpZImm16, jumpz);
 			OP		(kPop, pop);
 			OP		(kExitProcess, exitProcess);
 			OP_C	(kPushImm8, push);
 			OP_W	(kPushImm16, push);
 			OP_C	(kPushImm8_2, push);
 			OP_W	(kPushImm16_2, push);
+			OP		(kSetGlobal, setGlobal);
+			OP		(kStub98, stub98);
 			OP		(kClearScreen, clearScreen);
 			OP		(kLoadMouse, loadMouse);
 			OP		(kScreenLoadObject, loadScreenObject);
 			OP		(kScreenRemoveObject, removeScreenObject);
+			OP		(kStub140, stub140);
 			OP		(kSetSystemVariable, setSystemVariable);
 			OP		(kSetIntegerVariable, setIntegerVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
@@ -159,6 +191,7 @@ ProcessExitCode Process::execute() {
 			OP		(kProcessCleanupStub128, stub128);
 			OP		(kStub182, stub182);
 			OP		(kLoadFont, loadFont);
+			OP_U	(kOnKey, onKey);
 		default:
 			debug("%08x: unknown opcode 0x%02x (%u)", _ip - 1, (unsigned)op, (unsigned)op);
 			_status = kStatusError;
