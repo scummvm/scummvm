@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-12-04 03:26+0100\n"
-"PO-Revision-Date: 2016-12-29 07:29+0000\n"
-"Last-Translator: poulsen93 <poulsen93@gmail.com>\n"
-"Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/da/>\n"
+"PO-Revision-Date: 2017-12-05 21:17+0000\n"
+"Last-Translator: stevenew <steffen@nyeland.dk>\n"
+"Language-Team: Danish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/da/>\n"
 "Language: da_DK\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -78,9 +78,8 @@ msgid "Choose"
 msgstr "Vælg"
 
 #: gui/downloaddialog.cpp:48
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "Vælg bibliotek med spil data"
+msgstr "Vælg bibliotek hvor spil data skal gemmes"
 
 #: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
 msgid "Select directory with game data"
@@ -112,6 +111,8 @@ msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"Det ser ud til at din forbindelse er begrænset. Er du sikker på du vil "
+"downloade filer med denne?"
 
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
@@ -148,6 +149,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"Kan ikke oprette et bibliotek til download - det angivne bibliotek har en "
+"fil med det samme navn."
 
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
 #: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:526
@@ -176,16 +179,18 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" eksisterer allerede i det angivne bibliotek.\n"
+"Vil du virkelig downloade filer ind i det bibliotek?"
 
 #: gui/downloaddialog.cpp:251
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr ""
+msgstr "Downloadet %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:258
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %s"
-msgstr "Skan gennemført!"
+msgstr "Download hastighed: %s %s"
 
 #: gui/editgamedialog.cpp:132
 msgid "Game"
@@ -413,6 +418,8 @@ msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"Muligheden for synkronisering af gemte spil, virker ikke med ikke-standard "
+"biblioteker. Hvis du vil bruge muligheden, brug standard bibliotek."
 
 #: gui/editgamedialog.cpp:534
 msgid "This game ID is already taken. Please choose another one."
@@ -816,37 +823,33 @@ msgid "the fullscreen setting could not be changed"
 msgstr "fuld skærm indstillingen kunne ikke ændres"
 
 #: gui/options.cpp:544
-#, fuzzy
 msgid "the filtering setting could not be changed"
-msgstr "fuld skærm indstillingen kunne ikke ændres"
+msgstr "filtrerings-indstillingen kunne ikke ændres"
 
 #: gui/options.cpp:932
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Vis Skærm kontrol"
 
 #: gui/options.cpp:936
-#, fuzzy
 msgid "Touchpad mouse mode"
-msgstr "Pegeplade tilstand deaktiveret."
+msgstr "Pegeplade muse tilstand"
 
 #: gui/options.cpp:940
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Byt Menu og Tilbage knapper"
 
 #: gui/options.cpp:945
-#, fuzzy
 msgid "Pointer Speed:"
-msgstr "Hastighed:"
+msgstr "Markør Hastighed:"
 
 #: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Hastighed for tastatur/joystick muse markør kontrol"
 
 #: gui/options.cpp:947
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Hastighed:"
+msgstr "Markør Hastighed:"
 
 #: gui/options.cpp:958
 msgid "Joy Deadzone:"
@@ -867,16 +870,16 @@ msgstr ""
 
 #: gui/options.cpp:974 gui/options.cpp:976
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "Forskellige hardware shaders giver forskellige visuelle effekter"
 
 #: gui/options.cpp:976
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr ""
+msgstr "HW Shader:"
 
 #: gui/options.cpp:977
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Forskellige shaders giver forskellige effekter"
 
 #: gui/options.cpp:994
 msgid "Graphics mode:"
@@ -896,13 +899,12 @@ msgid "Fullscreen mode"
 msgstr "Fuldskærms tilstand"
 
 #: gui/options.cpp:1023
-#, fuzzy
 msgid "Filter graphics"
-msgstr "Grafik"
+msgstr "Filtrer grafik"
 
 #: gui/options.cpp:1023
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Brug liniær filtrering når grafik skaleres"
 
 #: gui/options.cpp:1026
 msgid "Aspect ratio correction"
@@ -1112,12 +1114,11 @@ msgstr "Tale lydstyrke:"
 
 #: gui/options.cpp:1438
 msgid "Shader"
-msgstr ""
+msgstr "Shader"
 
 #: gui/options.cpp:1450
-#, fuzzy
 msgid "Control"
-msgstr "Kontrollér mus"
+msgstr "Kontrol"
 
 #: gui/options.cpp:1476
 msgid "FluidSynth Settings"
@@ -1181,36 +1182,36 @@ msgstr "Sprog for brugerfladen i ScummVM"
 
 #: gui/options.cpp:1600 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr ""
+msgstr "Opdaterings tjek:"
 
 #: gui/options.cpp:1600
 msgid "How often to check ScummVM updates"
-msgstr ""
+msgstr "Hvor ofte skal der tjekkes for ScummVM opdateringer"
 
 #: gui/options.cpp:1612
 msgid "Check now"
-msgstr ""
+msgstr "Tjek nu"
 
 #: gui/options.cpp:1620
 msgid "Cloud"
-msgstr ""
+msgstr "Skyen"
 
 #: gui/options.cpp:1622
 msgctxt "lowres"
 msgid "Cloud"
-msgstr ""
+msgstr "Skyen"
 
 #: gui/options.cpp:1627
 msgid "Storage:"
-msgstr ""
+msgstr "Lager:"
 
 #: gui/options.cpp:1627
 msgid "Active cloud storage"
-msgstr ""
+msgstr "Aktivér lagring i skyen"
 
 #: gui/options.cpp:1634 gui/options.cpp:2210
 msgid "<none>"
-msgstr ""
+msgstr "<ingen>"
 
 #: gui/options.cpp:1638 backends/platform/wii/options.cpp:114
 msgid "Username:"
@@ -1218,117 +1219,113 @@ msgstr "Bruger:"
 
 #: gui/options.cpp:1638
 msgid "Username used by this storage"
-msgstr ""
+msgstr "Brugernavn for denne lagring"
 
 #: gui/options.cpp:1641
 msgid "Used space:"
-msgstr ""
+msgstr "Udnyttet plads:"
 
 #: gui/options.cpp:1641
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "Plads brugt af ScummVM's gemte spil på denne lagring"
 
 #: gui/options.cpp:1644
 msgid "Last sync time:"
-msgstr ""
+msgstr "Sidst synkroniseret:"
 
 #: gui/options.cpp:1644
 msgid "When the last saved games sync for this storage occured"
 msgstr ""
+"Hvornår den sidste synkronisering af gemte spil på denne lagring foregik"
 
 #: gui/options.cpp:1647 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr ""
+msgstr "Tilslut"
 
 #: gui/options.cpp:1647
 msgid "Open wizard dialog to connect your cloud storage account"
-msgstr ""
+msgstr "Åben hjælpe dialog for at forbinde din lagringskonto i skyen"
 
 #: gui/options.cpp:1648
 msgid "Refresh"
-msgstr ""
+msgstr "Genopfrisk"
 
 #: gui/options.cpp:1648
 msgid "Refresh current cloud storage information (username and usage)"
-msgstr ""
+msgstr "Genopfrisk aktuel lagrings information i skyen (brugernavn og brug)"
 
 #: gui/options.cpp:1649
-#, fuzzy
 msgid "Download"
-msgstr "Ned"
+msgstr "Download"
 
 #: gui/options.cpp:1649
 msgid "Open downloads manager dialog"
-msgstr ""
+msgstr "Åben download manager dialog"
 
 #: gui/options.cpp:1651
 msgid "Run server"
-msgstr ""
+msgstr "Kør server"
 
 #: gui/options.cpp:1651
 msgid "Run local webserver"
-msgstr ""
+msgstr "Kør lokal webserver"
 
 #: gui/options.cpp:1652 gui/options.cpp:2320
-#, fuzzy
 msgid "Not running"
-msgstr "Fejl ved kørsel af spil:"
+msgstr "Kører ikke"
 
 #: gui/options.cpp:1656
-#, fuzzy
 msgid "/root/ Path:"
-msgstr "Ekstra sti:"
+msgstr "/root/ sti:"
 
 #: gui/options.cpp:1656 gui/options.cpp:1658 gui/options.cpp:1659
-#, fuzzy
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Angiver hvor dine gemmer bliver lagt"
+msgstr "Angiver hvilke biblioteker Fil Manager kan tilgå"
 
 #: gui/options.cpp:1658
-#, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "Ekstra sti:"
+msgstr "/root/ sti:"
 
 #: gui/options.cpp:1668
-#, fuzzy
 msgid "Server's port:"
-msgstr "Server:"
+msgstr "Server's port:"
 
 #: gui/options.cpp:1668
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
+"Hvilken port bruges af serveren\n"
+"Godkendelse med server er ikke mulig med ikke-standard port"
 
 #: gui/options.cpp:1681
 msgid "Apply"
-msgstr ""
+msgstr "Anvend"
 
 #: gui/options.cpp:1824
-#, fuzzy
 msgid "Failed to change cloud storage!"
-msgstr "Mislykkedes at gemme spil"
+msgstr "Mislykkedes at ændre lagring i sky!"
 
 #: gui/options.cpp:1827
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "En anden lagring i skyen er allerede aktiv."
 
 #: gui/options.cpp:1895
-#, fuzzy
 msgid "Theme does not support selected language!"
-msgstr "Motor udvidelse understøtter ikke gemmetilstande"
+msgstr "Tema understøtter ikke valgte sprog!"
 
 #: gui/options.cpp:1898
-#, fuzzy
 msgid "Theme cannot be loaded!"
-msgstr "Spillet blev IKKE indlæst"
+msgstr "Tema kunne ikke indlæses!"
 
 #: gui/options.cpp:1901
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
+"\n"
+"Misc opsætning vil blive genskabt."
 
 #: gui/options.cpp:1937
 msgid "The chosen directory cannot be written to. Please select another one."
@@ -1347,38 +1344,37 @@ msgid "Select directory for plugins"
 msgstr "Vælg bibliotek for plugins"
 
 #: gui/options.cpp:1979
-#, fuzzy
 msgid "Select directory for Files Manager /root/"
-msgstr "Vælg bibliotek for ekstra filer"
+msgstr "Vælg bibliotek for Fil Manager /root/"
 
 #: gui/options.cpp:2217
 #, c-format
 msgid "%llu bytes"
-msgstr ""
+msgstr "%llu bytes"
 
 #: gui/options.cpp:2225
 msgid "<right now>"
-msgstr ""
+msgstr "<lige nu>"
 
 #: gui/options.cpp:2227
-#, fuzzy
 msgid "<never>"
-msgstr "Aldrig"
+msgstr "<aldrig>"
 
 #: gui/options.cpp:2311
-#, fuzzy
 msgid "Stop server"
-msgstr "Server:"
+msgstr "Stop server"
 
 #: gui/options.cpp:2312
 msgid "Stop local webserver"
-msgstr ""
+msgstr "Stop lokal webserver"
 
 #: gui/options.cpp:2403
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Anmodning fejlet.\n"
+"Tjek din internet forbindelse."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
@@ -1452,9 +1448,8 @@ msgid "Unknown Author"
 msgstr "Ukendt forfatter"
 
 #: gui/remotebrowser.cpp:128
-#, fuzzy
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM kunne ikke åbne det angivne bibliotek!"
+msgstr "ScummVM kunne ikke tilgå biblioteket!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
@@ -1493,9 +1488,8 @@ msgid "Playtime: "
 msgstr "Spilletid: "
 
 #: gui/saveload-dialog.cpp:581 gui/saveload-dialog.cpp:669
-#, fuzzy
 msgid "Untitled saved game"
-msgstr "Unavngivet gemmetilstand"
+msgstr "Unavngivet spil gemmer"
 
 #: gui/saveload-dialog.cpp:728
 msgid "Next"
@@ -1525,73 +1519,73 @@ msgstr "Indtast en beskrivelse af plads %d:"
 #: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr ""
+msgstr "%s Lagrings Forbindelses Hjælper"
 
 #: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr ""
+msgstr "Navigér til den følgende URL:"
 
 #: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
-msgstr ""
+msgstr "Tag koden fra lagringen, indtast den"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr ""
+msgstr "i det følgende felt og tryk 'Tilslut'."
 
 #: gui/storagewizarddialog.cpp:69
-#, fuzzy
 msgid "Open URL"
-msgstr "OpenGL"
+msgstr "Åben URL"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
-msgstr ""
+msgstr "Sæt ind"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr ""
+msgstr "Indsæt indholdet af klippebordet i felterne"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
-msgstr ""
+msgstr "Du vil blive dirigeret til ScummVM's side, hvor"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr ""
+msgstr "du skal tillade at den tilgår din lagring."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr ""
+msgstr "En anden lagring er aktiv. Vil du afbryde den?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "Vent indtil aktuel lagring er færdig og prøv igen."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr ""
+msgstr "Felt %s har en fejl i sig."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr ""
+msgstr "Felterne %s har fejl i dem."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr ""
+msgstr "Alt OK!"
 
 #: gui/storagewizarddialog.cpp:201
-#, fuzzy
 msgid "Invalid code"
-msgstr "Ugyldig sti"
+msgstr "Ugyldig kode"
 
 #: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
+"Fejlede i at åbne URL!\n"
+"Venligst navigér til denne side manuelt."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
@@ -1628,16 +1622,21 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
+"ScummVM understøtter nu automatisk tjek for opdateringer,\n"
+"hvilke kræver adgang til internettet. Vil du\n"
+"aktivere denne mulighed?"
 
 #: gui/updates-dialog.cpp:52
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
 msgstr ""
+"Du kan ændre denne opsætning senere under Misc fanen\n"
+"i Muligheder dialogen."
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
-msgstr ""
+msgstr "Fortsæt"
 
 #: gui/widget.cpp:375 gui/widget.cpp:377 gui/widget.cpp:383 gui/widget.cpp:385
 msgid "Clear value"
@@ -1728,9 +1727,8 @@ msgid "Could not find suitable engine plugin"
 msgstr "Kunne ikke finde passende motor udvidelse"
 
 #: common/error.cpp:68
-#, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "Motor udvidelse understøtter ikke gemmetilstande"
+msgstr "Motor udvidelse understøtter ikke gemte spil"
 
 #: common/error.cpp:71
 msgid "User canceled"
@@ -1769,20 +1767,19 @@ msgstr "Hercules brun"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr ""
+msgstr "Daglig"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr ""
+msgstr "Ugentlig"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr ""
+msgstr "Månedlig"
 
 #: common/updates.cpp:64
-#, fuzzy
 msgid "<Bad value>"
-msgstr "Slet værdi"
+msgstr "<Forkert værdi>"
 
 #: engines/advancedDetector.cpp:330
 #, c-format
@@ -1792,10 +1789,14 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"Spillet i '%s' ser ud til at være en ukendt %s \"motor\" spil variant.\n"
+"\n"
+"Rapportér venligst følgende data til ScummVM teamet på %s, sammen med navnet "
+"på spillet du prøvede at tilføje, samt denne version, sprog, etc.:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr ""
+msgstr "Matchede spil-id'er:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -1879,12 +1880,12 @@ msgstr ""
 "man får yderligere hjælp."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:395
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Gem af spiltilstand fejlede (%s)! Se venligst README for grundlæggende "
+"Gemning af spil fejlede (%s)! Se venligst README for grundlæggende "
 "oplysninger, og for at få instruktioner om, hvordan man får yderligere hjælp."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:102
@@ -1918,9 +1919,8 @@ msgid "Could not apply fullscreen setting."
 msgstr "Kunne ikke anvende fuldskærm indstilling."
 
 #: engines/engine.cpp:342
-#, fuzzy
 msgid "Could not apply filtering setting."
-msgstr "Kunne ikke anvende fuldskærm indstilling."
+msgstr "Kunne ikke anvende filtrerings indstilling."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1951,14 +1951,13 @@ msgstr ""
 "Se README fil for detaljer."
 
 #: engines/engine.cpp:508
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Indlæsning af spiltilstand fejlede (%s)! Se venligst README for "
-"grundlæggende oplysninger, og for at få instruktioner om, hvordan man får "
-"yderligere hjælp."
+"Indlæsning af gemt spil fejlede (%s)! Se venligst README for grundlæggende "
+"oplysninger, og for at få instruktioner om, hvordan man får yderligere hjælp."
 
 #: engines/engine.cpp:521
 msgid ""
@@ -2075,19 +2074,20 @@ msgid "C64 Audio Emulator"
 msgstr "C64 lyd emulator"
 
 #: backends/cloud/storage.cpp:211
-#, fuzzy
 msgid "Saved games sync complete."
-msgstr "Skan gennemført!"
+msgstr "Synkronisering af gemte spil gennemført!"
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
-msgstr ""
+msgstr "Synkronisering af gemte spil blev afbrudt."
 
 #: backends/cloud/storage.cpp:224
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
+"Synkronisering af gemte spil fejlede.\n"
+"Tjek din internet forbindelse."
 
 #: backends/cloud/storage.cpp:328
 #, c-format
@@ -2095,16 +2095,16 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
+"Download fuldført.\n"
+"Fejlede på %u filer."
 
 #: backends/cloud/storage.cpp:330
-#, fuzzy
 msgid "Download complete."
-msgstr "Skan gennemført!"
+msgstr "Download fuldført!"
 
 #: backends/cloud/storage.cpp:340
-#, fuzzy
 msgid "Download failed."
-msgstr "Indlæs fil"
+msgstr "Download fejlede."
 
 #: backends/events/default/default-events.cpp:190
 msgid "Do you really want to return to the Launcher?"
@@ -2219,7 +2219,7 @@ msgstr "Vindue tilstand"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:703
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr ""
+msgstr "Opløsning: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2453
@@ -2233,15 +2233,13 @@ msgstr "Deaktivér billedformat korrektion"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
-#, fuzzy
 msgid "Filtering enabled"
-msgstr "Klik aktiveret"
+msgstr "Filtering aktiveret"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:748
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
-#, fuzzy
 msgid "Filtering disabled"
-msgstr "Klik deaktiveret"
+msgstr "Filtrering deaktiveret"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
