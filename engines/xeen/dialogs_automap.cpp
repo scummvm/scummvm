@@ -271,7 +271,7 @@ void AutoMapDialog::execute() {
 					map._tileSprites.draw(0, frame, Common::Point(xp, 30));
 			}
 
-			// Draw any walls on the cells
+			// Draw the front/back walls of cells in the minimap
 			for (int yCtr = 0, yp = 38, yDiff = pt.y + 7; yCtr < 16; ++yCtr, yp += 8, --yDiff) {
 				for (int xCtr = 0, xp = 80, xDiff = pt.x - 7; xCtr < 16; ++xCtr, xp += 10, ++xDiff) {
 					// Draw the arrow if at the correct position

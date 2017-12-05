@@ -41,7 +41,6 @@ void InterfaceMinimap::drawMinimap() {
 	}
 
 	int v, frame;
-	int frame2 = 0; // _overallFrame * 2;
 	bool eyeActive = party._wizardEyeActive;
 	if (party._automapOn)
 		party._wizardEyeActive = false;
@@ -91,7 +90,9 @@ void InterfaceMinimap::drawMinimap() {
 		res._globalSprites.draw(window1, party._mazeDirection + 1,
 			Common::Point(267, 36));
 	} else {
-		frame2 = (frame2 + 2) % 8;
+		// Draw indoors minimap
+		int frame2 = _animFrame;
+		_animFrame = (_animFrame + 2) % 8;
 
 		// First draw the default surface bases for each cell to show
 		for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
@@ -106,7 +107,7 @@ void InterfaceMinimap::drawMinimap() {
 			}
 		}
 
-		// Draw correct surface bases for revealed tiles
+		// Draw thinner ground tiles on the left edge of the map
 		for (int rowNum = 0, yp = 17, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
 			for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
 				v = map.mazeLookup(
@@ -121,6 +122,7 @@ void InterfaceMinimap::drawMinimap() {
 			}
 		}
 
+		// Draw thin tile portion on top-left corner of map
 		v = map.mazeLookup(Common::Point(party._mazePosition.x - 4, party._mazePosition.y + 4), 0xffff, 0);
 		if (v != INVALID_CELL && map._currentSurfaceId &&
 			(map._currentSteppedOn || party._wizardEyeActive)) {
@@ -157,7 +159,7 @@ void InterfaceMinimap::drawMinimap() {
 			}
 		}
 
-		//
+		// Draw walls on left and top edges of map
 		for (int idx = 0, xp = 237, yp = 60, xDiff = -3; idx < MINIMAP_SIZE;
 			++idx, ++xDiff, xp += 10, yp -= 8) {
 			v = map.mazeLookup(
@@ -165,42 +167,42 @@ void InterfaceMinimap::drawMinimap() {
 				12, 0xffff);
 
 			switch (v) {
-			case 1:
+			case SURFTYPE_DIRT:
 				frame = 18;
 				break;
-			case 3:
+			case SURFTYPE_SNOW:
 				frame = 22;
 				break;
-			case 4:
-			case 13:
+			case SURFTYPE_SWAMP:
+			case SURFTYPE_CLOUD:
 				frame = 16;
 				break;
-			case 5:
-			case 8:
+			case SURFTYPE_LAVA:
+			case SURFTYPE_DWATER:
 				frame = 2;
 				break;
-			case 6:
+			case SURFTYPE_DESERT:
 				frame = 30;
 				break;
-			case 7:
+			case SURFTYPE_ROAD:
 				frame = 32;
 				break;
-			case 9:
+			case SURFTYPE_TFLR:
 				frame = 24;
 				break;
-			case 10:
+			case SURFTYPE_SKY:
 				frame = 28;
 				break;
-			case 11:
+			case SURFTYPE_CROAD:
 				frame = 14;
 				break;
-			case 12:
+			case SURFTYPE_SEWER:
 				frame = frame2 + 4;
 				break;
-			case 14:
+			case SURFTYPE_SCORCH:
 				frame = 24;
 				break;
-			case 15:
+			case SURFTYPE_SPACE:
 				frame = 26;
 				break;
 			default:
@@ -216,45 +218,45 @@ void InterfaceMinimap::drawMinimap() {
 				0);
 
 			switch (v) {
-			case 1:
+			case SURFTYPE_DIRT:
 				frame = 19;
 				break;
-			case 2:
+			case SURFTYPE_GRASS:
 				frame = 35;
 				break;
-			case 3:
+			case SURFTYPE_SNOW:
 				frame = 23;
 				break;
-			case 4:
-			case 13:
+			case SURFTYPE_SWAMP:
+			case SURFTYPE_CLOUD:
 				frame = 17;
 				break;
-			case 5:
-			case 8:
+			case SURFTYPE_LAVA:
+			case SURFTYPE_DWATER:
 				frame = 3;
 				break;
-			case 6:
+			case SURFTYPE_DESERT:
 				frame = 31;
 				break;
-			case 7:
+			case SURFTYPE_ROAD:
 				frame = 33;
 				break;
-			case 9:
+			case SURFTYPE_TFLR:
 				frame = 21;
 				break;
-			case 10:
+			case SURFTYPE_SKY:
 				frame = 29;
 				break;
-			case 11:
+			case SURFTYPE_CROAD:
 				frame = 15;
 				break;
-			case 12:
+			case SURFTYPE_SEWER:
 				frame = frame2 + 5;
 				break;
-			case 14:
+			case SURFTYPE_SCORCH:
 				frame = 25;
 				break;
-			case 15:
+			case SURFTYPE_SPACE:
 				frame = 27;
 				break;
 			default:
@@ -280,42 +282,45 @@ void InterfaceMinimap::drawMinimap() {
 				v = map.mazeLookup(Common::Point(party._mazePosition.x + xDiff,
 					party._mazePosition.y + yDiff), 12, 0xffff);
 				switch (v) {
-				case 1:
+				case SURFTYPE_DIRT:
 					frame = 18;
 					break;
-				case 3:
+				case SURFTYPE_GRASS:
+					frame = 34;
+					break;
+				case SURFTYPE_SNOW:
 					frame = 22;
 					break;
-				case 4:
-				case 13:
+				case SURFTYPE_SWAMP:
+				case SURFTYPE_CLOUD:
 					frame = 16;
 					break;
-				case 5:
-				case 8:
+				case SURFTYPE_LAVA:
+				case SURFTYPE_DWATER:
 					frame = 2;
 					break;
-				case 6:
+				case SURFTYPE_DESERT:
 					frame = 30;
 					break;
-				case 7:
+				case SURFTYPE_ROAD:
 					frame = 32;
 					break;
-				case 9:
+				case SURFTYPE_TFLR:
 					frame = 20;
 					break;
-				case 10:
+				case SURFTYPE_SKY:
 					frame = 28;
 					break;
-				case 11:
+				case SURFTYPE_CROAD:
 					frame = 14;
 					break;
-				case 12:
+				case SURFTYPE_SEWER:
 					frame = frame2 + 4;
 					break;
-				case 14:
+				case SURFTYPE_SCORCH:
 					frame = 24;
 					break;
-				case 15:
+				case SURFTYPE_SPACE:
 					frame = 26;
 					break;
 				default:
@@ -330,45 +335,45 @@ void InterfaceMinimap::drawMinimap() {
 				v = map.mazeLookup(Common::Point(party._mazePosition.x + xDiff,
 					party._mazePosition.y + yDiff), 12, 0xffff);
 				switch (v) {
-				case 1:
+				case SURFTYPE_DIRT:
 					frame = 19;
 					break;
-				case 2:
+				case SURFTYPE_GRASS:
 					frame = 35;
 					break;
-				case 3:
+				case SURFTYPE_SNOW:
 					frame = 23;
 					break;
-				case 4:
-				case 13:
+				case SURFTYPE_SWAMP:
+				case SURFTYPE_CLOUD:
 					frame = 17;
 					break;
-				case 5:
-				case 8:
+				case SURFTYPE_LAVA:
+				case SURFTYPE_DWATER:
 					frame = 3;
 					break;
-				case 6:
+				case SURFTYPE_DESERT:
 					frame = 31;
 					break;
-				case 7:
+				case SURFTYPE_ROAD:
 					frame = 33;
 					break;
-				case 9:
+				case SURFTYPE_TFLR:
 					frame = 21;
 					break;
-				case 10:
+				case SURFTYPE_SKY:
 					frame = 29;
 					break;
-				case 11:
+				case SURFTYPE_CROAD:
 					frame = 15;
 					break;
-				case 12:
+				case SURFTYPE_SEWER:
 					frame = frame2 + 5;
 					break;
-				case 14:
+				case SURFTYPE_SCORCH:
 					frame = 25;
 					break;
-				case 15:
+				case SURFTYPE_SPACE:
 					frame = 27;
 					break;
 				default:
