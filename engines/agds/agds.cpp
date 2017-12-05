@@ -78,6 +78,7 @@ ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 	ProcessExitCode code = kExitCodeDestroy;
 	while(!_processes.empty()) {
 		Process & process = _processes.back();
+		process.activate();
 		code = process.execute();
 		switch(code) {
 		case kExitCodeLoadScreenObject:

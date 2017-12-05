@@ -74,8 +74,15 @@ private:
 	void enter(uint16 magic, uint16 size);
 	void setSystemVariable();
 	void loadPicture();
+	void loadMouse();
 	void appendToSharedStorage();
 	void loadScreenObject();
+	void removeScreenObject();
+	void loadFont();
+	void stub128();
+	void stub182();
+	void setIntegerVariable();
+	void exitProcess();
 
 	void suspend(ProcessExitCode exitCode) {
 		if (_status == kStatusActive)
@@ -85,6 +92,8 @@ private:
 
 public:
 	Process(AGDSEngine *engine, Object *object);
+
+	void activate();
 
 	ProcessExitCode execute();
 
