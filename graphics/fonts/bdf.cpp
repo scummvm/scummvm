@@ -411,8 +411,8 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				boxes[encoding] = box;
 			}
 		} else if (line.hasPrefix("FAMILY_NAME \"")) {
-			familyName = new char[line.size()]; // We will definitely fit here
-			Common::strlcpy(familyName, &line.c_str()[13], line.size());
+			familyName = new char[line.size()];
+			Common::strlcpy(familyName, line.c_str() + 13, line.size() - 13);
 			char *p = &familyName[strlen(familyName)];
 			while (p != familyName && *p != '"')
 				p--;
@@ -428,8 +428,8 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			}
 			*p = '\0'; // Remove last quote
 		} else if (line.hasPrefix("SLANT \"")) {
-			slant = new char[line.size()]; // We will definitely fit here
-			Common::strlcpy(slant, &line.c_str()[7], line.size());
+			slant = new char[line.size()];
+			Common::strlcpy(slant, line.c_str() + 7, line.size() - 7);
 			char *p = &slant[strlen(slant)];
 			while (p != slant && *p != '"')
 				p--;
