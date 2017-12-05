@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "xeen/dialogs.h"
 #include "xeen/interface_map.h"
+#include "xeen/interface_minimap.h"
 #include "xeen/party.h"
 #include "xeen/window.h"
 
@@ -62,7 +63,8 @@ public:
 /**
  * Implements the main in-game interface
  */
-class Interface: public ButtonContainer, public InterfaceMap, public PartyDrawer {
+class Interface: public ButtonContainer, public InterfaceMap, 
+		public InterfaceMinimap, public PartyDrawer {
 private:
 	XeenEngine *_vm;
 	SpriteResource _uiSprites;
@@ -116,11 +118,6 @@ private:
 	 * Shake the screen
 	 */
 	void shake(int time);
-
-	/**
-	 * Draw the minimap
-	 */
-	void drawMiniMap();
 
 	/**
 	 * Select next character or monster to be attacking

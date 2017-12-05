@@ -33,6 +33,7 @@ MODULE_OBJS := \
 	font.o \
 	interface.o \
 	interface_map.o \
+	interface_minimap.o \
 	map.o \
 	music.o \
 	party.o \
