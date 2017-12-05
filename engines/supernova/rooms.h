@@ -1015,9 +1015,6 @@ public:
 		_rows[3] = 1;
 		_rows[4] = 0;
 		_rows[5] = 0;
-
-		for (int i = 0; i < 6; i++)
-			_varTexts3[i] = "";
 	}
 
 	virtual void onEntrance();
@@ -1031,7 +1028,6 @@ private:
 	StringID _dialog1[2];
 	StringID _dialog2[2];
 	StringID _dialog3[4];
-	Common::String _varTexts3[6];
 
 	byte _rows[6];
 };

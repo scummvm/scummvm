@@ -150,6 +150,15 @@ public:
 			return _nullString;
 		return _gameStrings[idx];
 	}
+
+	void setGameString(int idx, const Common::String &string) {
+		if (idx < 0)
+			return;
+		while ((int)_gameStrings.size() <= idx)
+			_gameStrings.push_back(Common::String());
+		_gameStrings[idx] = string;
+	}
+
 	int  textWidth(const Common::String &text) {
 		if (text.empty())
 			return 0;
