@@ -60,10 +60,32 @@ void Process::loadPicture() {
 }
 
 void Process::loadScreenObject() {
-	Common::String value = popString();
-	debug("loadObjectToCurrentScreen: %s", value.c_str());
-	_exitValue = value;
+	Common::String name = popString();
+	debug("loadScreenObject: %s", name.c_str());
+	_exitValue = name;
 	suspend(kExitCodeLoadScreenObject);
+}
+
+void Process::removeScreenObject() {
+	Common::String name = popString();
+	debug("removeScreenObject: %s", name.c_str());
+}
+
+void Process::loadFont() {
+	Common::String name = popString();
+	int id = pop();
+	debug("loadFont %s %d stub", name.c_str(), id);
+}
+
+void Process::loadMouse() {
+	Common::String name = popString();
+	debug("loadMouse %s", name.c_str());
+}
+
+void Process::setIntegerVariable() {
+	int value = pop();
+	Common::String name = popString();
+	debug("setIntegerVariable stub: %s -> %d", name.c_str(), value);
 }
 
 void Process::appendToSharedStorage() {
@@ -73,5 +95,99 @@ void Process::appendToSharedStorage() {
 	push(index);
 }
 
+void Process::stub128() {
+	debug("ProcessCleanupStub128");
+}
+void Process::stub182() {
+	int arg2 = pop();
+	int arg1 = pop();
+	debug("Stub182 %d %d", arg1, arg2);
+}
+
+void Process::exitProcess() {
+	debug("exit");
+	_status = kStatusDone;
+	_exitCode = kExitCodeDestroy;
+}
+
+//fixme: add trace here
+#define OP(NAME, METHOD) \
+	case NAME: METHOD (); break
+
+#define OP_C(NAME, METHOD) \
+	case NAME: { int8 arg = next(); METHOD (arg); } break
+
+#define OP_B(NAME, METHOD) \
+	case NAME: { uint8 arg = next(); METHOD (arg); } break
+
+#define OP_W(NAME, METHOD) \
+	case NAME: { int16 arg = next16(); METHOD (arg); } break
+
+#define OP_U(NAME, METHOD) \
+	case NAME: { uint16 arg = next16(); METHOD (arg); } break
+
+#define OP_UU(NAME, METHOD) \
+	case NAME: { uint16 arg1 = next16(); uint16 arg2 = next16(); METHOD (arg1, arg2); } break
+
+enum Opcode {
+	kEnter							= 5,
+	kPop							= 10,
+	kExitProcess					= 12,
+	kPushImm16						= 15,
+	kPushImm8						= 16,
+	kPushImm16_2					= 17,
+	kPushImm8_2						= 18,
+	kScreenLoadObject				= 76,
+	kScreenRemoveObject				= 78,
+	kLoadMouse						= 108,
+	kProcessCleanupStub128			= 128,
+	kSetSystemVariable				= 142,
+	kSetIntegerVariable				= 143,
+	kGetRegionWidth					= 146,
+	kGetRegionHeight				= 147,
+	kAppendToSharedStorage			= 175,
+	kStub182						= 182,
+	kLoadPicture					= 198,
+	kLoadFont						= 227,
+	kMax							= 248
+};
+
+ProcessExitCode Process::execute() {
+	_exitCode = kExitCodeDestroy;
+
+	const Object::CodeType &code = _object->getCode();
+	while(_status == kStatusActive && _ip < code.size()) {
+		uint8 op = next();
+		switch(op) {
+			OP_UU	(kEnter, enter);
+			OP		(kPop, pop);
+			OP		(kExitProcess, exitProcess);
+			OP_C	(kPushImm8, push);
+			OP_W	(kPushImm16, push);
+			OP_C	(kPushImm8_2, push);
+			OP_W	(kPushImm16_2, push);
+			OP		(kLoadMouse, loadMouse);
+			OP		(kScreenLoadObject, loadScreenObject);
+			OP		(kScreenRemoveObject, removeScreenObject);
+			OP		(kSetSystemVariable, setSystemVariable);
+			OP		(kSetIntegerVariable, setIntegerVariable);
+			OP		(kAppendToSharedStorage, appendToSharedStorage);
+			OP		(kLoadPicture, loadPicture);
+			OP		(kProcessCleanupStub128, stub128);
+			OP		(kStub182, stub182);
+			OP		(kLoadFont, loadFont);
+		default:
+			debug("%08x: unknown opcode 0x%02x (%u)", _ip - 1, (unsigned)op, (unsigned)op);
+			_status = kStatusError;
+			break;
+		}
+	}
+
+	if (_status == kStatusActive) {
+		debug("code ended, exiting...");
+	}
+
+	return _exitCode;
+}
 
 }
