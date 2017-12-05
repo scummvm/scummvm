@@ -22,6 +22,7 @@
 
 #include "agds/process.h"
 #include "agds/agds.h"
+#include "agds/opcode.h"
 #include "common/debug.h"
 
 namespace AGDS {
@@ -110,6 +111,10 @@ void Process::exitProcess() {
 	_exitCode = kExitCodeDestroy;
 }
 
+void Process::clearScreen() {
+	debug("clearScreen");
+}
+
 //fixme: add trace here
 #define OP(NAME, METHOD) \
 	case NAME: METHOD (); break
@@ -129,29 +134,6 @@ void Process::exitProcess() {
 #define OP_UU(NAME, METHOD) \
 	case NAME: { uint16 arg1 = next16(); uint16 arg2 = next16(); METHOD (arg1, arg2); } break
 
-enum Opcode {
-	kEnter							= 5,
-	kPop							= 10,
-	kExitProcess					= 12,
-	kPushImm16						= 15,
-	kPushImm8						= 16,
-	kPushImm16_2					= 17,
-	kPushImm8_2						= 18,
-	kScreenLoadObject				= 76,
-	kScreenRemoveObject				= 78,
-	kLoadMouse						= 108,
-	kProcessCleanupStub128			= 128,
-	kSetSystemVariable				= 142,
-	kSetIntegerVariable				= 143,
-	kGetRegionWidth					= 146,
-	kGetRegionHeight				= 147,
-	kAppendToSharedStorage			= 175,
-	kStub182						= 182,
-	kLoadPicture					= 198,
-	kLoadFont						= 227,
-	kMax							= 248
-};
-
 ProcessExitCode Process::execute() {
 	_exitCode = kExitCodeDestroy;
 
@@ -166,6 +148,7 @@ ProcessExitCode Process::execute() {
 			OP_W	(kPushImm16, push);
 			OP_C	(kPushImm8_2, push);
 			OP_W	(kPushImm16_2, push);
+			OP		(kClearScreen, clearScreen);
 			OP		(kLoadMouse, loadMouse);
 			OP		(kScreenLoadObject, loadScreenObject);
 			OP		(kScreenRemoveObject, removeScreenObject);
