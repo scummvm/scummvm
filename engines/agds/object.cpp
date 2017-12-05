@@ -26,7 +26,7 @@
 
 namespace AGDS {
 
-Object::Object(Common::SeekableReadStream * stream) : _stringTableLoaded(false) {
+Object::Object(const Common::String &name, Common::SeekableReadStream * stream) : _name(name), _stringTableLoaded(false) {
 	stream->skip(2);
 	uint16 dataSize = stream->readUint16LE();
 	if (dataSize != 0)

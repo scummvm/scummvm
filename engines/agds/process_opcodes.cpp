@@ -193,7 +193,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadFont, loadFont);
 			OP_U	(kOnKey, onKey);
 		default:
-			debug("%08x: unknown opcode 0x%02x (%u)", _ip - 1, (unsigned)op, (unsigned)op);
+			debug("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
 			_status = kStatusError;
 			break;
 		}

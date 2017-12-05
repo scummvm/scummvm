@@ -71,7 +71,7 @@ ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 	ObjectsType::iterator i = _objects.find(name);
 	Object *object = i != _objects.end()? i->_value: NULL;
 	if (!object)
-		_objects.setVal(name, object = new Object(stream));
+		_objects.setVal(name, object = new Object(name, stream));
 
 	_processes.push_back(Process(this, object));
 
