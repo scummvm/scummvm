@@ -72,6 +72,7 @@ private:
 	}
 
 	void enter(uint16 magic, uint16 size);
+	void clearScreen();
 	void setSystemVariable();
 	void loadPicture();
 	void loadMouse();
@@ -79,10 +80,12 @@ private:
 	void loadScreenObject();
 	void removeScreenObject();
 	void loadFont();
-	void stub128();
-	void stub182();
 	void setIntegerVariable();
 	void exitProcess();
+
+	void stub98();
+	void stub128();
+	void stub182();
 
 	void suspend(ProcessExitCode exitCode) {
 		if (_status == kStatusActive)
