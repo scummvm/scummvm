@@ -24,6 +24,7 @@
 #define AGDS_PROCESS_H
 
 #include "agds/object.h"
+#include "agds/processExitCode.h"
 #include "common/scummsys.h"
 #include "common/stack.h"
 
@@ -31,6 +32,9 @@ namespace AGDS {
 
 class AGDSEngine;
 class Process {
+public:
+	enum Status { kStatusActive, kStatusPassive, kStatusDone, kStatusError };
+
 private:
 	typedef Common::Stack<int32> StackType;
 
@@ -38,7 +42,9 @@ private:
 	Object *		_object;
 	StackType		_stack;
 	unsigned		_ip;
-	bool			_failed; //fixme: add status
+	Status			_status;
+	Common::String	_exitValue;
+	ProcessExitCode	_exitCode;
 
 private:
 	uint8 next() {
@@ -46,7 +52,7 @@ private:
 		if (_ip < code.size()) {
 			return code[_ip++];
 		} else {
-			_failed = true;
+			_status = kStatusError;
 			return 0;
 		}
 	}
@@ -59,17 +65,36 @@ private:
 
 	void push(int32 value);
 	int32 pop();
-	const Object::StringEntry & popString();
+
+	Common::String getString(int id);
+	Common::String popString() {
+		return getString(pop());
+	}
 
 	void enter(uint16 magic, uint16 size);
 	void setSystemVariable();
 	void loadPicture();
 	void appendToSharedStorage();
+	void loadScreenObject();
+
+	void suspend(ProcessExitCode exitCode) {
+		if (_status == kStatusActive)
+			_status = kStatusPassive;
+		_exitCode = exitCode;
+	}
 
 public:
 	Process(AGDSEngine *engine, Object *object);
 
-	void execute();
+	ProcessExitCode execute();
+
+	ProcessExitCode getExitCode() const {
+		return _exitCode;
+	}
+
+	const Common::String & getExitValue() const {
+		return _exitValue;
+	}
 };
 
 

@@ -21,20 +21,22 @@
  */
 
 #include "agds/process.h"
+#include "agds/agds.h"
 #include "common/debug.h"
 
 namespace AGDS {
 
 enum Opcode {
-	kEnter				= 5,
-	kPop				= 10,
-	kPushImm8			= 18,
-	kSetSystemVariable	= 142,
-	kGetRegionWidth		= 146,
-	kGetRegionHeight	= 147,
+	kEnter							= 5,
+	kPop							= 10,
+	kPushImm8						= 18,
+	kScreenLoadObject				= 76,
+	kSetSystemVariable				= 142,
+	kGetRegionWidth					= 146,
+	kGetRegionHeight				= 147,
 	kAppendToSharedStorage			= 175,
-	kLoadPicture		= 198,
-	kMax				= 248
+	kLoadPicture					= 198,
+	kMax							= 248
 };
 
 
@@ -55,7 +57,7 @@ enum Opcode {
 	case NAME: { uint16 arg1 = next16(); uint16 arg2 = next16(); METHOD (arg1, arg2); } break
 
 Process::Process(AGDSEngine *engine, Object* object) :
-	_engine(engine), _object(object), _ip(0), _failed(false) {
+	_engine(engine), _object(object), _ip(0), _status(kStatusActive), _exitCode(kExitCodeDestroy) {
 }
 
 void Process::push(int32 value) {
@@ -68,27 +70,36 @@ int32 Process::pop() {
 	return _stack.pop();
 }
 
-const Object::StringEntry & Process::popString() {
-	return _object->getString(pop());
+Common::String Process::getString(int id) {
+	if (id <= -2 && id > -12)
+		return _engine->getSharedStorage(id);
+	else
+		return _object->getString(id).string;
 }
 
-void Process::execute() {
+
+ProcessExitCode Process::execute() {
+	_exitCode = kExitCodeDestroy;
+
 	const Object::CodeType &code = _object->getCode();
-	while(!_failed && _ip < code.size()) {
+	while(_status == kStatusActive && _ip < code.size()) {
 		uint8 op = next();
 		switch(op) {
 			OP_UU	(kEnter, enter);
 			OP		(kPop, pop);
 			OP_C	(kPushImm8, push);
+			OP		(kScreenLoadObject, loadScreenObject);
 			OP		(kSetSystemVariable, setSystemVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kLoadPicture, loadPicture);
 		default:
 			debug("%08x: unknown opcode 0x%02x (%u)", _ip - 1, (unsigned)op, (unsigned)op);
-			_failed = true;
+			_status = kStatusError;
 			break;
 		}
 	}
+
+	return _exitCode;
 }
 
 }

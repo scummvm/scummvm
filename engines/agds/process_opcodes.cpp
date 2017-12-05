@@ -43,26 +43,33 @@ void Process::enter(uint16 magic, uint16 size) {
 
 void Process::setSystemVariable() {
 	int16 valueIndex = pop();
-	const Object::StringEntry &name = popString();
+	Common::String name = popString();
 
 	if (valueIndex != -1) {
-		const Object::StringEntry &value = _object->getString(valueIndex);
-		debug("setSystemVariable %s to %s", name.string.c_str(), value.string.c_str());
+		Common::String value = getString(valueIndex);
+		debug("setSystemVariable %s to %s", name.c_str(), value.c_str());
 	} else {
-		debug("resetSystemVariable %s", name.string.c_str());
+		debug("resetSystemVariable %s", name.c_str());
 	}
 }
 
 void Process::loadPicture() {
-	const Object::StringEntry &name = popString();
-	debug("loadPicture stub %s", name.string.c_str());
+	Common::String name = popString();
+	debug("loadPicture stub %s", name.c_str());
 	push(100500); //dummy
 }
 
+void Process::loadScreenObject() {
+	Common::String value = popString();
+	debug("loadObjectToCurrentScreen: %s", value.c_str());
+	_exitValue = value;
+	suspend(kExitCodeLoadScreenObject);
+}
+
 void Process::appendToSharedStorage() {
-	const Object::StringEntry &value = popString();
-	int index = _engine->appendToSharedStorage(value.string);
-	debug("appendToSharedStorage %s -> %d", value.string.c_str(), index);
+	Common::String value = popString();
+	int index = _engine->appendToSharedStorage(value);
+	debug("appendToSharedStorage %s -> %d", value.c_str(), index);
 	push(index);
 }
 

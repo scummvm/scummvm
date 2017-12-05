@@ -26,8 +26,9 @@
 #include "common/scummsys.h"
 #include "common/hashmap.h"
 #include "engines/advancedDetector.h"
-#include "agds/resourceManager.h"
 #include "agds/database.h"
+#include "agds/processExitCode.h"
+#include "agds/resourceManager.h"
 
 /**
  * This is the namespace of the AGDS engine.
@@ -53,8 +54,9 @@ public:
 
 private:
 	bool load();
-	void loadObject(Common::String & name);
+	ProcessExitCode loadObject(Common::String & name);
 	int appendToSharedStorage(const Common::String &value);
+	const Common::String & getSharedStorage(int id) const;
 
 private:
 	typedef Common::HashMap<Common::String, Object *> ObjectsType;
