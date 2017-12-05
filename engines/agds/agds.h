@@ -54,7 +54,7 @@ public:
 
 private:
 	bool load();
-	ProcessExitCode loadObject(Common::String & name);
+	ProcessExitCode loadObject(const Common::String & name);
 	int appendToSharedStorage(const Common::String &value);
 	const Common::String & getSharedStorage(int id) const;
 

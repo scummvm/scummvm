@@ -63,7 +63,7 @@ bool AGDSEngine::load() {
 	return true;
 }
 
-ProcessExitCode AGDSEngine::loadObject(Common::String & name) {
+ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 	debug("loading object %s", name.c_str());
 	Common::SeekableReadStream * stream = _data.getEntry(name);
 	if (!stream)
@@ -74,7 +74,22 @@ ProcessExitCode AGDSEngine::loadObject(Common::String & name) {
 		_objects.setVal(name, object = new Object(stream));
 
 	_processes.push_back(Process(this, object));
-	return _processes.back().execute();
+
+	ProcessExitCode code = kExitCodeDestroy;
+	while(!_processes.empty()) {
+		Process & process = _processes.back();
+		code = process.execute();
+		switch(code) {
+		case kExitCodeLoadScreenObject:
+			debug("loading screen object...");
+			code = loadObject(process.getExitValue());
+			break;
+		default:
+			debug("destroying process...");
+			_processes.pop_back();
+		}
+	}
+	return code;
 }
 
 Common::Error AGDSEngine::run() {
