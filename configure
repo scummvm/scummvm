@@ -1830,6 +1830,15 @@ psp)
 		echo "Please set PSPSDK in your environment. export PSPSDK=<path to psp sdk>"
 		exit 1
 	fi
+
+	# These have to be set early because the compiler will not link successfully
+	# during testing otherwise
+	if test -d "$PSPDEV/psp/lib"; then
+		append_var LDFLAGS "-L$PSPDEV/psp/lib"
+	fi
+	append_var LDFLAGS "-L$PSPSDK/lib"
+	append_var LDFLAGS "-specs=$_srcdir/backends/platform/psp/psp.spec"
+
 	;;
 riscos)
 	if test -z "$GCCSDK_INSTALL_ENV"; then
@@ -2860,11 +2869,6 @@ case $_host_os in
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
 	psp)
-		if test -d "$PSPDEV/psp/lib"; then
-			append_var LDFLAGS "-L$PSPDEV/psp/lib"
-		fi
-		append_var LDFLAGS "-L$PSPSDK/lib"
-		append_var LDFLAGS "-specs=$_srcdir/backends/platform/psp/psp.spec"
 		_optimization_level=-O3
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
