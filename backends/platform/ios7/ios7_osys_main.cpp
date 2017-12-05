@@ -111,7 +111,7 @@ OSystem_iOS7::OSystem_iOS7() :
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_lastErrorMessage(NULL), _mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
+	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
 	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iOS7_isBigDevice();
 #ifdef IPHONE_SANDBOXED
@@ -352,8 +352,7 @@ void OSystem_iOS7::logMessage(LogMessageType::Type type, const char *message) {
 		output = stderr;
 
 	if (type == LogMessageType::kError) {
-		free(_lastErrorMessage);
-		_lastErrorMessage = strdup(message);
+		_lastErrorMessage = message;
 	}
 
 	fputs(message, output);
