@@ -91,8 +91,8 @@ private:
 				// each line - negative for overlap
 	uint8 _borderPen;	// output pen color of character borders
 
-	uint16 analyzeSentence(byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
-	byte *buildTextSprite(byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
+	uint16 analyzeSentence(const byte *sentence, uint16 maxWidth, uint32 fontRes, LineInfo *line);
+	byte *buildTextSprite(const byte *sentence, uint32 fontRes, uint8 pen, LineInfo *line, uint16 noOfLines);
 	uint16 charWidth(byte ch, uint32 fontRes);
 	uint16 charHeight(uint32 fontRes);
 	byte *findChar(byte ch, byte *charSet);
@@ -109,7 +109,7 @@ public:
 			free(_blocList[i].text_mem);
 	}
 
-	byte *makeTextSprite(byte *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border = BORDER_PEN);
+	byte *makeTextSprite(const byte *sentence, uint16 maxWidth, uint8 pen, uint32 fontRes, uint8 border = BORDER_PEN);
 
 	void killTextBloc(uint32 bloc_number);
 	void printTextBlocs();
