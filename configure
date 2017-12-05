@@ -164,7 +164,7 @@ _libunity=auto
 _debug_build=auto
 _release_build=auto
 _optimizations=auto
-_use_cxx11=yes
+_cxx_std=c++14
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -1292,7 +1292,7 @@ for ac_option in $@; do
 	--enable-c++11)
 		;;
 	--disable-c++11|--force-c++98)
-		_use_cxx11=no
+		_cxx_std=no
 		;;
 	--enable-debug)
 		_debug_build=yes
@@ -1977,15 +1977,21 @@ if test "$cxx_verc_fail" = yes ; then
 fi
 
 #
-# Check whether the compiler supports C++11
+# Check C++ version support
 #
-have_cxx11=no
-cat > $TMPC << EOF
-int main(int argc, char *argv[]) { if (argv == nullptr) return -1; else return 0; }
-EOF
-cc_check -std=c++11 && have_cxx11=yes
-if test "$_use_cxx11" = "yes" ; then
-	_use_cxx11=$have_cxx11
+if test "$_cxx_std" = "no"; then
+	_cxx_std=
+elif echo "int main() { return 0'000; }" > $TMPC && cc_check -std=c++14 ; then
+	_cxx_std=c++14
+elif echo "int main(int argc, char *argv[]) { if (argv == nullptr) return -1; else return 0; }" > $TMPC && cc_check -std=c++11 ; then
+	_cxx_std=c++11
+elif echo "int main() { return 0; }" > $TMPC && cc_check -std=c++03 ; then
+	_cxx_std=c++03
+elif echo "int main() { return 0; }" > $TMPC && cc_check ; then
+	_cxx_std=
+else
+	echo "ERROR: compiler is broken!"
+	exit 1
 fi
 
 #
@@ -1995,8 +2001,7 @@ fi
 #
 if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
-		# Try to use ANSI mode when C++11 is disabled.
-		if test "$_use_cxx11" = "no" ; then
+		if test "$_cxx_std" = "" ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
@@ -2006,6 +2011,41 @@ if test "$have_gcc" = yes ; then
 				append_var CXXFLAGS "-ansi"
 				;;
 			esac
+		else
+			need_gnu=no
+			gnu_std=`echo $_cxx_std | sed 's/c++/gnu++/'`
+
+			# This is only a problem until we can use variadic templates (i.e.
+			# C++11 is the minimum baseline), at which point vsnprintf goes
+			# away, or until the AmigaOS standard library is fixed:
+			# https://github.com/sba1/adtools/issues/19
+			echocheck "whether vsnprintf needs -std=gnu"
+			cat > $TMPC << EOF
+#include <stdarg.h>
+#include <stdio.h>
+int foo(const char *fmt, ...) {
+	va_list list;
+	va_start(list, fmt);
+	char buf[1];
+	vsnprintf(buf, 1, fmt, list);
+	va_end(list);
+}
+int main(void) { foo(""); return 0; }
+EOF
+			if ! cc_check_no_clean -std=$_cxx_std ; then
+				if ! cc_check_no_clean -std=$gnu_std ; then
+					echo "vsprintf is broken"
+					exit 1
+				else
+					need_gnu=yes
+				fi
+			fi
+			cc_check_clean
+			echo $need_gnu
+
+			if test "$need_gnu" = "yes"; then
+				_cxx_std=$gnu_std
+			fi
 		fi
 		append_var CXXFLAGS "-W -Wno-unused-parameter"
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
@@ -2023,13 +2063,15 @@ elif test "$have_icc" = yes ; then
 fi;
 
 #
-# Update status about C++11 mode
+# Update status about C++ language standard
 #
-echo_n "Building as C++11... "
-if test "$_use_cxx11" = "yes" ; then
-	append_var CXXFLAGS "-std=c++11"
+echocheck "best C++ language standard"
+if test "$_cxx_std" != "" ; then
+	append_var CXXFLAGS "-std=$_cxx_std"
+	echo $_cxx_std
+else
+	echo "ancient"
 fi
-echo $_use_cxx11
 
 #
 # Determine extra build flags for debug and/or release builds
