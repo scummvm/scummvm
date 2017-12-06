@@ -31,6 +31,7 @@
 #include "common/rect.h"
 #include "common/rendermode.h"
 #include "common/stack.h"
+#include "common/str.h"
 #include "common/system.h"
 
 #include "engines/engine.h"
@@ -354,7 +355,7 @@ struct AgiControllerKeyMapping {
 
 struct AgiObject {
 	int location;
-	char *name;
+	Common::String name;
 };
 
 struct AgiDir {
@@ -763,7 +764,7 @@ private:
 	int _firstSlot;
 
 public:
-	AgiObject *_objects;    // objects in the game
+	Common::Array<AgiObject> _objects;    // objects in the game
 
 	StringData _stringdata;
 
@@ -852,14 +853,12 @@ public:
 	int showObjects();
 	int loadObjects(const char *fname);
 	int loadObjects(Common::File &fp);
-	void unloadObjects();
 	const char *objectName(uint16 objectNr);
 	int objectGetLocation(uint16 objectNr);
 	void objectSetLocation(uint16 objectNr, int);
 private:
 	int decodeObjects(uint8 *mem, uint32 flen);
 	int readObjects(Common::File &fp, int flen);
-	int allocObjects(int);
 
 	// Logic
 public:

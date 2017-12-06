@@ -214,7 +214,7 @@ int AgiEngine::agiDeinit() {
 	agiUnloadResources();    // unload resources in memory
 	_loader->unloadResource(RESOURCETYPE_LOGIC, 0);
 	ec = _loader->deinit();
-	unloadObjects();
+	_objects.clear();
 	_words->unloadDictionary();
 
 	clearImageStack();
@@ -385,8 +385,6 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_intobj = NULL;
 
 	memset(&_stringdata, 0, sizeof(struct StringData));
-
-	_objects = NULL;
 
 	_restartGame = false;
 
