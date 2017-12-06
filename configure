@@ -1312,6 +1312,7 @@ for ac_option in $@; do
 	--enable-release)
 		_release_build=yes
 		_optimizations=yes
+		_updates=yes
 		;;
 	--disable-release)
 		_release_build=no
