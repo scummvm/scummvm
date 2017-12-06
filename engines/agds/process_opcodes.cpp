@@ -165,7 +165,12 @@ void Process::stub206() {
 	debug("stub206 (mouse?) %d %d", arg1, arg2);
 }
 
-
+void Process::exitScreen()
+{
+	debug("stubExit15");
+	_status = kStatusDone;
+	_exitCode = kExitCodeExitScreen;
+}
 
 void Process::onKey(unsigned size) {
 	Common::String key = popString();
@@ -228,6 +233,7 @@ ProcessExitCode Process::execute() {
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kLoadPicture, loadPicture);
 			OP		(kProcessCleanupStub128, stub128);
+			OP		(kExitScreen, exitScreen);
 			OP		(kStub182, stub182);
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);

@@ -179,7 +179,7 @@ enum Opcode {
 	kStub159						= 159,
 	kStub160						= 160,
 	kStub161						= 161,
-	kStub162						= 162,
+	kExitScreen						= 162,
 	kStub163						= 163,
 	kStub164						= 164,
 	kStub165						= 165,
