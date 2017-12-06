@@ -21,13 +21,13 @@
  */
 
 #include "xeen/interface.h"
-#include "xeen/dialogs_automap.h"
 #include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_control_panel.h"
 #include "xeen/dialogs_error.h"
 #include "xeen/dialogs_fight_options.h"
 #include "xeen/dialogs_info.h"
 #include "xeen/dialogs_items.h"
+#include "xeen/dialogs_map.h"
 #include "xeen/dialogs_query.h"
 #include "xeen/dialogs_quests.h"
 #include "xeen/dialogs_quick_ref.h"
@@ -558,7 +558,7 @@ void Interface::perform() {
 
 	case Common::KEYCODE_m:
 		// Show map dialog
-		AutoMapDialog::show(_vm);
+		MapDialog::show(_vm);
 		break;
 
 	case Common::KEYCODE_q:

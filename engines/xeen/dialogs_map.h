@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef XEEN_DIALOGS_AUTOMAP_H
-#define XEEN_DIALOGS_AUTOMAP_H
+#ifndef XEEN_DIALOGS_MAP_H
+#define XEEN_DIALOGS_MAP_H
 
 #include "xeen/dialogs.h"
 
@@ -29,10 +29,28 @@ namespace Xeen {
 
 class XeenEngine;
 
-class AutoMapDialog: public ButtonContainer {
+class MapDialog: public ButtonContainer {
 private:
-	AutoMapDialog(XeenEngine *vm) : ButtonContainer(vm) {}
+	int _animFrame;
+	SpriteResource _globalSprites;
+	Common::Point _pt, _arrowPt;
+	bool _frameEndFlag;
+private:
+	MapDialog(XeenEngine *vm) : ButtonContainer(vm), _animFrame(0) {}
 
+	/**
+	 * Draws the map contents when outdoors
+	 */
+	void drawOutdoors();
+
+	/**
+	 * Draws the map contents when indoors
+	 */
+	void drawIndoors();
+
+	/**
+	 * Handles the display of the dialog
+	 */
 	void execute();
 public:
 	static void show(XeenEngine *vm);

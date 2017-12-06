@@ -110,7 +110,6 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	Party &party = *g_vm->_party;
 	Resources &res = *g_vm->_resources;
 	int v, frame;
-
 	int frame2 = _animFrame;
 	_animFrame = (_animFrame + 2) % 8;
 
@@ -143,7 +142,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	}
 
 	// Draw thin tile portion on top-left corner of map
-	v = map.mazeLookup(Common::Point(party._mazePosition.x - 4, party._mazePosition.y + 4), 0xffff, 0);
+	v = map.mazeLookup(Common::Point(party._mazePosition.x - 4, party._mazePosition.y + 4), 0, 0xffff);
 	if (v != INVALID_CELL && map._currentSurfaceId &&
 		(map._currentSteppedOn || party._wizardEyeActive)) {
 		map._tileSprites.draw(1,
@@ -182,6 +181,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	// Draw walls on left and top edges of map
 	for (int idx = 0, xp = 237, yp = 60, xDiff = -3; idx < MINIMAP_SIZE;
 		++idx, ++xDiff, xp += 10, yp -= 8) {
+		// Left column
 		v = map.mazeLookup(
 			Common::Point(party._mazePosition.x - 4, party._mazePosition.y - 3 + idx),
 			12, 0xffff);
@@ -233,6 +233,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 		if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive))
 			map._tileSprites.draw(1, frame, Common::Point(222, yp));
 
+		// Top row
 		v = map.mazeLookup(
 			Common::Point(party._mazePosition.x - 3 + idx, party._mazePosition.y + 4),
 			0);
@@ -285,10 +286,10 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 		}
 
 		if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive))
-			map._tileSprites.draw(1, frame, Common::Point(xp, yp));
+			map._tileSprites.draw(1, frame, Common::Point(xp, 4));
 	}
 
-	// Draw the front/back walls of cells in the minimap
+	// Draw the walls for the remaining cells of the minimap
 	for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE;
 		++rowNum, --yDiff, yp += 8) {
 		for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE;
@@ -353,7 +354,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 			}
 
 			v = map.mazeLookup(Common::Point(party._mazePosition.x + xDiff,
-				party._mazePosition.y + yDiff), 12, 0xffff);
+				party._mazePosition.y + yDiff), 0);
 			switch (v) {
 			case SURFTYPE_DIRT:
 				frame = 19;
