@@ -491,18 +491,17 @@ void Room::update() {
 		if (_hotspotId != 0)
 			s.writeString(0, 0, _hotspotName, false);
 	} else {
-		// Word wrap (if necessary) the status line and dispaly it
-		char *statusLineCopy = strdup(_statusLine);
+		// Word wrap (if necessary) the status line and display it
+		Common::String statusLineCopy(_statusLine);
 		char **lines;
 		uint8 numLines;
 		int16 yPos = 0;
-		s.wordWrap(statusLineCopy, s.width(), lines, numLines);
+		s.wordWrap(statusLineCopy.begin(), s.width(), lines, numLines);
 		for (int lineNum = 0; lineNum < numLines; ++lineNum) {
 			s.writeString(0, yPos, lines[lineNum], false, white);
 			yPos += FONT_HEIGHT;
 		}
 		Memory::dealloc(lines);
-		Memory::dealloc(statusLineCopy);
 	}
 
 	// Debug - if the bottle object is on layer 0FEh, then display it's surface

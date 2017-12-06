@@ -479,16 +479,15 @@ Surface *Surface::newDialog(uint16 width, uint8 numLines, const char **lines, bo
 
 Surface *Surface::newDialog(uint16 width, const char *line, int color) {
 	char **lines;
-	char *lineCopy = strdup(line);
+	Common::String lineCopy(line);
 	uint8 numLines;
-	wordWrap(lineCopy, width - (Surface::textX() * 2), lines, numLines);
+	wordWrap(lineCopy.begin(), width - (Surface::textX() * 2), lines, numLines);
 
 	// Create the dialog
 	Surface *result = newDialog(width, numLines, const_cast<const char **>(lines), true, color);
 
 	// Deallocate used resources
 	free(lines);
-	free(lineCopy);
 
 	return result;
 }
