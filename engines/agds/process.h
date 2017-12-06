@@ -104,6 +104,7 @@ private:
 	void stub203();
 	void stub206();
 	void enableUser();
+	void exitScreen();
 
 	void suspend(ProcessExitCode exitCode) {
 		if (_status == kStatusActive)

@@ -27,7 +27,8 @@ namespace AGDS {
 
 	enum ProcessExitCode {
 		kExitCodeDestroy = 2,
-		kExitCodeLoadScreenObject = 8
+		kExitCodeLoadScreenObject = 8,
+		kExitCodeExitScreen = 15
 	};
 
 }
