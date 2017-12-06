@@ -82,29 +82,35 @@ private:
 	}
 
 	void enter(uint16 magic, uint16 size);
+	void exitProcess();
+	void suspendProcess();
+	void exitScreen();
+
 	void clearScreen();
-	void setSystemVariable();
-	void getGlobal(unsigned index);
-	void setGlobal();
 	void loadPicture();
 	void loadMouse();
-	void appendToSharedStorage();
 	void loadScreenObject();
-	void removeScreenObject();
 	void loadFont();
+	void removeScreenObject();
+	void changeScreenPatch();
+
+	void setSystemVariable();
 	void setIntegerVariable();
-	void exitProcess();
+	void getGlobal(unsigned index);
+	void setGlobal();
+	void appendToSharedStorage();
+	void findObjectInMouseArea();
+
+	void enableUser();
 	void onKey(unsigned size);
 
 	void stub98();
 	void stub128();
-	void changeScreenPatch();
 	void stub182();
 	void stub202(unsigned size);
 	void stub203();
 	void stub206();
-	void enableUser();
-	void exitScreen();
+
 
 	void suspend(ProcessExitCode exitCode) {
 		if (_status == kStatusActive)
