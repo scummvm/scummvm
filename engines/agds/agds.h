@@ -56,9 +56,11 @@ private:
 	bool load();
 	ProcessExitCode loadObject(const Common::String & name);
 	int appendToSharedStorage(const Common::String &value);
+	const Common::String & getSharedStorage(int id) const;
+
 	void setGlobal(const Common::String &name, int value)
 	{ _globals.setVal(name, value); }
-	const Common::String & getSharedStorage(int id) const;
+	int getGlobal(const Common::String &name) const;
 
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;

@@ -96,6 +96,14 @@ void Process::setGlobal() {
 	_engine->setGlobal(name, value);
 }
 
+void Process::getGlobal(unsigned index) {
+	const Common::String & name = _object->getString(index).string;
+	int value = _engine->getGlobal(name);
+	debug("get global %s -> %d", name.c_str(), value);
+	push(value);
+}
+
+
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
 	int index = _engine->appendToSharedStorage(value);
@@ -138,11 +146,31 @@ void Process::clearScreen() {
 	debug("clearScreen");
 }
 
+void Process::stub202(unsigned size) {
+	debug("stub203, %u instructions", size);
+	_ip += size;
+}
+
+void Process::stub203() {
+	//arg3 is optional and stored in process struct, offset 0x210
+	Common::String audio = popString();
+	Common::String video = popString();
+
+	debug("playFilm %s %s", video.c_str(), audio.c_str());
+}
+
+
 void Process::onKey(unsigned size) {
 	Common::String key = popString();
 	debug("onKey %s handler, %u instructions", key.c_str(), size);
 	_ip += size;
 }
+
+void Process::enableUser() {
+	//screen loading block user interaction until this instruction
+	debug("enableUser");
+}
+
 
 
 //fixme: add trace here
@@ -179,8 +207,10 @@ ProcessExitCode Process::execute() {
 			OP_W	(kPushImm16, push);
 			OP_C	(kPushImm8_2, push);
 			OP_W	(kPushImm16_2, push);
+			OP_B	(kGetGlobalImm8, getGlobal);
 			OP		(kSetGlobal, setGlobal);
 			OP		(kStub98, stub98);
+			OP		(kEnableUser, enableUser);
 			OP		(kClearScreen, clearScreen);
 			OP		(kLoadMouse, loadMouse);
 			OP		(kScreenLoadObject, loadScreenObject);
@@ -193,6 +223,8 @@ ProcessExitCode Process::execute() {
 			OP		(kProcessCleanupStub128, stub128);
 			OP		(kStub182, stub182);
 			OP		(kLoadFont, loadFont);
+			OP_U	(kStub202ScreenHandler, stub202);
+			OP		(kPlayFilm, stub203);
 			OP_U	(kOnKey, onKey);
 		default:
 			debug("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
