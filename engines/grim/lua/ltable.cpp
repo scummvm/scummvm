@@ -21,34 +21,33 @@ namespace Grim {
 #define REHASH_LIMIT	0.70    // avoid more than this % full
 #define TagDefault		LUA_T_ARRAY;
 
-#ifdef SCUMM_64BITS
-static int64 hashindex(TObject *ref) {
-	int64 h;
+static uintptr hashindex(TObject *ref) {
+	uintptr h;
 
 	switch (ttype(ref)) {
 	case LUA_T_NUMBER:
-		h = (int64)nvalue(ref);
+		h = (uintptr)nvalue(ref);
 		break;
 	case LUA_T_USERDATA:
-		h = (int64)ref->value.ud.id;
+		h = (uintptr)ref->value.ud.id;
 		break;
 	case LUA_T_STRING:
-		h = (int64)tsvalue(ref);
+		h = (uintptr)tsvalue(ref);
 		break;
 	case LUA_T_ARRAY:
-		h = (int64)avalue(ref);
+		h = (uintptr)avalue(ref);
 		break;
 	case LUA_T_PROTO:
-		h = (int64)tfvalue(ref);
+		h = (uintptr)tfvalue(ref);
 		break;
 	case LUA_T_CPROTO:
-		h = (int64)fvalue(ref);
+		h = (uintptr)fvalue(ref);
 		break;
 	case LUA_T_CLOSURE:
-		h = (int64)clvalue(ref);
+		h = (uintptr)clvalue(ref);
 		break;
 	case LUA_T_TASK:
-		h = (int64)nvalue(ref);
+		h = (uintptr)nvalue(ref);
 		break;
 	default:
 		lua_error("unexpected type to index table");
@@ -59,7 +58,7 @@ static int64 hashindex(TObject *ref) {
 
 int32 present(Hash *t, TObject *key) {
 	int32 tsize = nhash(t);
-	int64 h = hashindex(key);
+	uintptr h = hashindex(key);
 	int32 h1 = int32(h % tsize);
 	TObject *rf = ref(node(t, h1));
 	if (ttype(rf) != LUA_T_NIL && !luaO_equalObj(key, rf)) {
@@ -74,61 +73,6 @@ int32 present(Hash *t, TObject *key) {
 	return h1;
 }
 
-#else
-
-static int32 hashindex(TObject *r) {
-	int32 h;
-
-	switch (ttype(r)) {
-	case LUA_T_NUMBER:
-		h = (int32)nvalue(r);
-		break;
-	case LUA_T_USERDATA:
-		h = (int32)r->value.ud.id;
-		break;
-	case LUA_T_STRING:
-		h = (int32)tsvalue(r);
-		break;
-	case LUA_T_ARRAY:
-		h = (int32)avalue(r);
-		break;
-	case LUA_T_PROTO:
-		h = (int32)tfvalue(r);
-		break;
-	case LUA_T_CPROTO:
-		h = (int32)fvalue(r);
-		break;
-	case LUA_T_CLOSURE:
-		h = (int32)clvalue(r);
-		break;
-	case LUA_T_TASK:
-		h = (int32)nvalue(r);
-		break;
-	default:
-		lua_error("unexpected type to index table");
-		h = 0;  // to avoid warnings
-	}
-	return (h >= 0 ? h : -(h + 1));
-}
-
-int32 present(Hash *t, TObject *key) {
-	int32 tsize = nhash(t);
-	int32 h = hashindex(key);
-	int32 h1 = h % tsize;
-	TObject *rf = ref(node(t, h1));
-	if (ttype(rf) != LUA_T_NIL && !luaO_equalObj(key, rf)) {
-		int32 h2 = h % (tsize - 2) + 1;
-		do {
-			h1 += h2;
-			if (h1 >= tsize)
-				h1 -= tsize;
-			rf = ref(node(t, h1));
-		} while (ttype(rf) != LUA_T_NIL && !luaO_equalObj(key, rf));
-	}
-	return h1;
-}
-
-#endif
 
 /*
 ** Alloc a vector node
