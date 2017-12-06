@@ -159,6 +159,13 @@ void Process::stub203() {
 	debug("playFilm %s %s", video.c_str(), audio.c_str());
 }
 
+void Process::stub206() {
+	int arg2 = pop();
+	int arg1 = pop();
+	debug("stub206 (mouse?) %d %d", arg1, arg2);
+}
+
+
 
 void Process::onKey(unsigned size) {
 	Common::String key = popString();
@@ -225,6 +232,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
 			OP		(kPlayFilm, stub203);
+			OP		(kStub206, stub206);
 			OP_U	(kOnKey, onKey);
 		default:
 			debug("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
