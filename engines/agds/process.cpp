@@ -41,7 +41,9 @@ int32 Process::pop() {
 }
 
 Common::String Process::getString(int id) {
-	if (id <= -2 && id > -12)
+	if (id == -1)
+		return Common::String();
+	else if (id <= -2 && id > -12)
 		return _engine->getSharedStorage(id);
 	else
 		return _object->getString(id).string;
