@@ -54,10 +54,28 @@ void Process::setSystemVariable() {
 	}
 }
 
+void Process::getIntegerSystemVariable() {
+	Common::String name = popString();
+	int value = 0;
+	debug("getIntegerSystemVariable: %s -> %d", name.c_str(), value);
+	push(value);
+}
+
+
 void Process::loadPicture() {
 	Common::String name = popString();
 	debug("loadPicture stub %s", name.c_str());
 	push(100500); //dummy
+}
+
+void Process::loadAnimation() {
+	Common::String name = popString();
+	debug("loadAnimation %s", name.c_str());
+}
+
+void Process::loadSample() {
+	Common::String name = popString();
+	debug("loadSample %s", name.c_str());
 }
 
 void Process::loadScreenObject() {
@@ -103,6 +121,12 @@ void Process::getGlobal(unsigned index) {
 	push(value);
 }
 
+void Process::hasGlobal() {
+	Common::String name = popString();
+	int result = _engine->hasGlobal(name)? 1: 0;
+	debug("hasGlobal %s %d", name.c_str(), result);
+	push(result);
+}
 
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
@@ -130,11 +154,44 @@ void Process::stub128() {
 	debug("processCleanupStub128");
 }
 
+void Process::stub129() {
+	int value = pop();
+	debug("stub129 %d", value);
+}
+
+void Process::stub130() {
+	int value = pop();
+	debug("stub130 %d", value);
+}
+void Process::stub133() {
+	int pan = pop();
+	int volume = pop();
+	debug("stub133: pan? %d volume? %d", pan, volume);
+}
+
+void Process::stub134() {
+	int arg2 = pop();
+	int arg1 = pop();
+	debug("stub134, font related %d %d", arg1, arg2);
+}
+
+void Process::stub136() {
+	debug("stub136 sets value of stub130 to 1000000000");
+}
+
 void Process::stub182() {
 	int arg2 = pop();
 	int arg1 = pop();
 	debug("stub182 %d %d", arg1, arg2);
 }
+
+void Process::stub188() {
+	int arg3 = pop();
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("stub188 %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+}
+
 
 void Process::exitProcess() {
 	debug("exit");
@@ -165,18 +222,37 @@ void Process::stub206() {
 	debug("stub206 (mouse?) %d %d", arg1, arg2);
 }
 
-void Process::exitScreen()
-{
-	debug("stubExit15");
-	_status = kStatusDone;
-	_exitCode = kExitCodeExitScreen;
+void Process::exitProcessSetNextScreen() {
+	_exitValue = popString();
+	_exitCode = kExitCodeDestroyProcessSetNextScreen;
+	_status = kStatusPassive;
 }
 
-void Process::suspendProcess()
+void Process::exitScreen()
 {
+	debug("exitScreen? reactivating process...");
+	if (_status != kStatusDone)
+		_status = kStatusActive;
+}
+
+void Process::updateScreenHeightToDisplay() {
+	debug("updateScreenHeightToDisplay");
+}
+
+
+void Process::suspendProcess() {
 	debug("suspendProcess");
 	_status = kStatusPassive;
 	_exitCode = kExitCodeSuspend;
+}
+
+void Process::call(uint16 addr) {
+	debug("call %04x", addr);
+	//original engine just create new process, save exit code in screen object
+	//and on stack, then just ignore return code, fixme?
+	Process callee(_engine, _object, addr);
+	ProcessExitCode code = callee.execute();
+	debug("call returned %d", code);
 }
 
 void Process::onKey(unsigned size) {
@@ -198,6 +274,23 @@ void Process::findObjectInMouseArea() {
 	debug("findObjectInMouseArea %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
 	push(0);
 }
+
+void Process::loadPictureFromObject() {
+	Common::String name = popString();
+	debug("loadPictureFromObject %s", name.c_str());
+}
+
+void Process::loadAnimationFromObject() {
+	Common::String name = popString();
+	debug("loadAnimationFromObject %s", name.c_str());
+}
+
+void Process::setCounter() {
+	int value = pop();
+	debug("setCounter127 %d", value);
+}
+
+
 
 //fixme: add trace here
 #define OP(NAME, METHOD) \
@@ -235,27 +328,49 @@ ProcessExitCode Process::execute() {
 			OP_C	(kPushImm8_2, push);
 			OP_W	(kPushImm16_2, push);
 			OP_B	(kGetGlobalImm8, getGlobal);
+			OP		(kEquals, equals);
+			OP		(kNotEquals, notEquals);
 			OP		(kSetGlobal, setGlobal);
+			OP		(kBoolOr, boolOr);
+			OP		(kBoolAnd, boolAnd);
+			OP		(kNot, bitNot);
+			OP		(kBoolNot, boolNot);
+			OP_U	(kCall, call);
+			OP		(kLoadPictureFromObject, loadPictureFromObject);
+			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
 			OP		(kStub98, stub98);
 			OP		(kEnableUser, enableUser);
 			OP		(kClearScreen, clearScreen);
 			OP		(kLoadMouse, loadMouse);
+			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
 			OP		(kScreenLoadObject, loadScreenObject);
+			OP		(kExitProcessSetNextScreen, exitProcessSetNextScreen);
 			OP		(kScreenRemoveObject, removeScreenObject);
+			OP		(kLoadAnimation, loadAnimation);
+			OP		(kLoadSample, loadSample);
+			OP		(kSetCounter, setCounter);
+			OP		(kProcessCleanupStub128, stub128);
+			OP		(kStub129, stub129);
+			OP		(kStub130, stub130);
+			OP		(kStub133, stub133);
+			OP		(kStub134, stub134);
+			OP		(kStub136, stub136);
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
 			OP		(kSetSystemVariable, setSystemVariable);
 			OP		(kSetIntegerVariable, setIntegerVariable);
+			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
-			OP		(kLoadPicture, loadPicture);
-			OP		(kProcessCleanupStub128, stub128);
 			OP		(kExitScreen, exitScreen);
 			OP		(kStub182, stub182);
+			OP		(kStub188, stub188);
+			OP		(kLoadPicture, loadPicture);
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
 			OP		(kPlayFilm, stub203);
 			OP		(kFindObjectInMouseArea, findObjectInMouseArea);
 			OP		(kStub206, stub206);
 			OP_U	(kOnKey, onKey);
+			OP		(kHasGlobal, hasGlobal);
 		default:
 			error("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
 			_status = kStatusError;

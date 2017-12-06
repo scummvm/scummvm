@@ -82,6 +82,7 @@ ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 		code = process.execute();
 		switch(code) {
 		case kExitCodeLoadScreenObject:
+		case kExitCodeDestroyProcessSetNextScreen:
 			debug("loading screen object...");
 			code = loadObject(process.getExitValue());
 			break;

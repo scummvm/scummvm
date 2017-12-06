@@ -61,6 +61,8 @@ private:
 	void setGlobal(const Common::String &name, int value)
 	{ _globals.setVal(name, value); }
 	int getGlobal(const Common::String &name) const;
+	bool hasGlobal(const Common::String &name) const
+	{ return _globals.find(name) != _globals.end(); }
 
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
