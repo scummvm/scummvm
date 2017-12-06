@@ -122,5 +122,16 @@ const Common::String & AGDSEngine::getSharedStorage(int id) const {
 	return _sharedStorage[index];
 }
 
+int AGDSEngine::getGlobal(const Common::String &name) const {
+	GlobalsType::const_iterator i = _globals.find(name);
+	if (i != _globals.end())
+		return i->_value;
+	else {
+		debug("global %s was not declared, returning 0", name.c_str());
+		return 0;
+	}
+}
+
+
 
 } // End of namespace AGDS

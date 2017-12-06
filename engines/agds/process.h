@@ -84,6 +84,7 @@ private:
 	void enter(uint16 magic, uint16 size);
 	void clearScreen();
 	void setSystemVariable();
+	void getGlobal(unsigned index);
 	void setGlobal();
 	void loadPicture();
 	void loadMouse();
@@ -99,6 +100,9 @@ private:
 	void stub128();
 	void changeScreenPatch();
 	void stub182();
+	void stub202(unsigned size);
+	void stub203();
+	void enableUser();
 
 	void suspend(ProcessExitCode exitCode) {
 		if (_status == kStatusActive)
