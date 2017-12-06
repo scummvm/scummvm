@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-12-04 03:26+0100\n"
-"PO-Revision-Date: 2017-12-05 21:17+0000\n"
+"PO-Revision-Date: 2017-12-06 22:20+0000\n"
 "Last-Translator: stevenew <steffen@nyeland.dk>\n"
 "Language-Team: Danish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/da/>\n"
@@ -865,8 +865,9 @@ msgid "Joy Deadzone:"
 msgstr ""
 
 #: gui/options.cpp:974
+#, fuzzy
 msgid "HW Shader:"
-msgstr ""
+msgstr "HW Shader:"
 
 #: gui/options.cpp:974 gui/options.cpp:976
 msgid "Different hardware shaders give different visual effects"
@@ -2785,7 +2786,7 @@ msgstr "Søg efter opdateringer..."
 #: engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr ""
+msgstr "Kan ikke finde '%s' \"motorens\" data fil."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:977
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
@@ -2793,7 +2794,7 @@ msgstr ""
 #: engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr ""
+msgstr "'%s' \"motorens\" data fil er ødelagt."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:988
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
@@ -2804,24 +2805,24 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
+"Ukorrekt version af '%s' \"motorens\" data fil fundet. Forventet %d.%d, men "
+"fandt %d.%d."
 
 #: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
-#, fuzzy
 msgid "Color mode"
-msgstr "Farveblind-tilstand"
+msgstr "Farve-tilstand"
 
 #: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
 msgid "Use color graphics"
-msgstr ""
+msgstr "Brug farve grafik"
 
 #: engines/adl/detection.cpp:65
 msgid "Scanlines"
-msgstr ""
+msgstr "Scanlinjer"
 
 #: engines/adl/detection.cpp:66
-#, fuzzy
 msgid "Show scanlines"
-msgstr "Vis labels på genstande"
+msgstr "Vis scanlinjer"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
@@ -2835,7 +2836,6 @@ msgstr "Brug original gem/indlæs skærme"
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
-#, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Brug de originale gem/indlæs skærme, istedet for dem fra ScummVM"
 
@@ -2863,23 +2863,24 @@ msgstr ""
 "menuer."
 
 #: engines/agi/detection.cpp:177
-#, fuzzy
 msgid "Use Hercules hires font"
-msgstr "Hercules grøn"
+msgstr "Brug Hercules hires font"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
-msgstr ""
+msgstr "Brug Hercules hires font, når font fil er tilgængelig."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr ""
+msgstr "Pause når kommandoer indtastes"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
+"Vis et kommando prompt vindue, og pauser spillet (ligesom i SCI) istedet for "
+"en realtids prompt."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -2910,35 +2911,35 @@ msgid "Restore"
 msgstr "Gendan"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to load saved game from file:\n"
 "\n"
 "%s"
 msgstr ""
-"Mislykkedes at indlæse spil tilstand fra fil:\n"
+"Mislykkedes at indlæse gemt spil fra fil:\n"
 "\n"
 "%s"
 
 #: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to save game to file:\n"
 "\n"
 "%s"
 msgstr ""
-"Mislykkedes at gemme spil tilstand til fil:\n"
+"Mislykkedes at gemme spil til fil:\n"
 "\n"
 "%s"
 
 #: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Successfully saved game in file:\n"
 "\n"
 "%s"
 msgstr ""
-"Gemt spil tilstand problemfrit i fil:\n"
+"Succesfuldt gemt spil i fil:\n"
 "\n"
 "%s"
 
@@ -2956,7 +2957,6 @@ msgid "Enable Color Blind Mode by default"
 msgstr "Aktivér Farveblind tilstand som standard"
 
 #: engines/drascula/saveload.cpp:47
-#, fuzzy
 msgid ""
 "ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
@@ -2984,15 +2984,13 @@ msgstr "Vis grafik ved hjælp af spillets lyse palette"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
-#, fuzzy
 msgid "Failed to load saved game from file."
-msgstr "Mislykkedes at indlæse spil tilstand fra fil."
+msgstr "Mislykkedes at indlæse gem spil fra fil."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:545
-#, fuzzy
 msgid "Failed to save game to file."
-msgstr "Mislykkedes at gemme spil tilstand til fil."
+msgstr "Mislykkedes at gemme spil til fil."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
@@ -3085,12 +3083,10 @@ msgid "Move Back"
 msgstr "Flyt bagud"
 
 #: engines/kyra/eobcommon.cpp:333
-#, fuzzy
 msgid "Move Left"
 msgstr "Flyt til venstre"
 
 #: engines/kyra/eobcommon.cpp:334
-#, fuzzy
 msgid "Move Right"
 msgstr "Flyt til højre"
 
@@ -3105,46 +3101,44 @@ msgid "Turn Right"
 msgstr "Drej til højre"
 
 #: engines/kyra/eobcommon.cpp:337
-#, fuzzy
 msgid "Open/Close Inventory"
-msgstr "Oversigt"
+msgstr "Åbn/Luk Oversigt"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
-msgstr ""
+msgstr "Skift Oversigt/Karakter skærm"
 
 #: engines/kyra/eobcommon.cpp:339
 msgid "Camp"
-msgstr ""
+msgstr "Hvil"
 
 #: engines/kyra/eobcommon.cpp:340
-#, fuzzy
 msgid "Cast Spell"
-msgstr "Vælg magi"
+msgstr "Brug Magi"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
-msgstr ""
+msgstr "Magi Niveau 1"
 
 #: engines/kyra/eobcommon.cpp:344
 msgid "Spell Level 2"
-msgstr ""
+msgstr "Magi Niveau 2"
 
 #: engines/kyra/eobcommon.cpp:345
 msgid "Spell Level 3"
-msgstr ""
+msgstr "Magi Niveau 3"
 
 #: engines/kyra/eobcommon.cpp:346
 msgid "Spell Level 4"
-msgstr ""
+msgstr "Magi Niveau 4"
 
 #: engines/kyra/eobcommon.cpp:347
 msgid "Spell Level 5"
-msgstr ""
+msgstr "Magi Niveau 5"
 
 #: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 6"
-msgstr ""
+msgstr "Magi Niveau 6"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
@@ -3219,7 +3213,7 @@ msgstr ""
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
 "ScummVM. If you want to manually import original saved game later you will\n"
@@ -3227,41 +3221,40 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"%d originale savegame filer, er med succes er blevet importeret i\n"
-"ScummVM. Hvis du manuelt vil importere original savegame filer senere, vil "
-"du være\n"
-"nødt til at åbne ScummVM debug konsol og bruge kommandoen "
-"'import_savefile'.\n"
+"%d originale gemte spil filer, er med succes blevet importeret i\n"
+"ScummVM. Hvis du manuelt vil importere originale gemte spil filer senere, "
+"vil du være\n"
+"nødt til at åbne ScummVM debug konsol, og bruge kommandoen 'import_savefile'."
+"\n"
 "\n"
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr ""
+msgstr "Nem muse brugerflade"
 
 #: engines/mads/detection.cpp:92
-#, fuzzy
 msgid "Shows object names when hovering the mouse over them"
-msgstr "Vis labels for genstande musen er henover"
+msgstr "Vis navne for genstande når musen er henover"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
-msgstr ""
+msgstr "Animerede ting i beholdning"
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
-msgstr ""
+msgstr "Animeret spil brugerflade"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr ""
+msgstr "Uhyggelig spiltilstand"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
-msgstr ""
+msgstr "Afspil Myst \"fly by\" film"
 
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr ""
+msgstr "Myst \"fly by\" filmen blev ikke afspillet af den originale \"motor\"."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:183 engines/mohawk/dialogs.cpp:269
@@ -3278,47 +3271,40 @@ msgid "~D~rop Page"
 msgstr "Smi~d~ side"
 
 #: engines/mohawk/dialogs.cpp:190
-#, fuzzy
 msgid "Show ~M~ap"
-msgstr "Vi~s~ kort"
+msgstr "Vis ~K~ort"
 
 #: engines/mohawk/dialogs.cpp:196
-#, fuzzy
 msgid "Main Men~u~"
-msgstr "Hoved~m~enu"
+msgstr "Hovedmen~u~"
 
 #: engines/mohawk/dialogs.cpp:270
 msgid "~W~ater Effect Enabled"
 msgstr "~V~andeffekter aktiveret"
 
 #: engines/mohawk/dialogs.cpp:272
-#, fuzzy
 msgid "Transitions:"
-msgstr "~O~vergange aktiveret"
+msgstr "Overgange:"
 
 #: engines/mohawk/dialogs.cpp:274
-#, fuzzy
 msgid "Disabled"
-msgstr "Deaktiveret GFX"
+msgstr "Deaktiveret"
 
 #: engines/mohawk/dialogs.cpp:275
-#, fuzzy
 msgid "Fastest"
-msgstr "Hurtig tilstand"
+msgstr "Hurtigst"
 
 #: engines/mohawk/dialogs.cpp:276
-#, fuzzy
 msgid "Normal"
-msgstr "OpenGL Normal"
+msgstr "Normal"
 
 #: engines/mohawk/dialogs.cpp:277
 msgid "Best"
-msgstr ""
+msgstr "Bedst"
 
 #: engines/mohawk/mohawk.cpp:58
-#, fuzzy
 msgid "The game is paused. Press any key to continue."
-msgstr "Spil sat på pause. Tryk MELLEMRUM for at fortsætte."
+msgstr "Spillet er sat på pause. Tryk en tast for at fortsætte."
 
 #: engines/mohawk/riven.cpp:149
 msgid ""
@@ -3829,9 +3815,8 @@ msgid "Ctrl"
 msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
-#, fuzzy
 msgid "Load saved game 1-10"
-msgstr "Indlæs spil tilstand 1-10"
+msgstr "Indlæs gemt spil 1-10"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:101
@@ -3840,9 +3825,8 @@ msgid "Alt"
 msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
-#, fuzzy
 msgid "Save game 1-10"
-msgstr "Gem spil tilstand 1-10"
+msgstr "Gem spil 1-10"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
 msgid "Enter"
@@ -4606,7 +4590,6 @@ msgid "Use high resolution MPEG video"
 msgstr "Brug høj opløsning MPEG-video"
 
 #: engines/zvision/detection_tables.h:92
-#, fuzzy
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr "Brug MPEG-video fra DVD-versionen, i stedet for lavere opløsning AVI"
 
