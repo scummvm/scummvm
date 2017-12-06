@@ -282,10 +282,12 @@ endif
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-750x1334.png $(bundle_name)/LaunchImage-800-667h@2x.png
 
 ifdef USE_SPARKLE
+ifdef MACOSX
 ifneq ($(SPARKLEPATH),)
 LDFLAGS += -F$(SPARKLEPATH)
 endif
 LDFLAGS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
+endif
 endif
 
 # Special target to create a static linked binary for the iPhone (legacy, and iOS 7+)
