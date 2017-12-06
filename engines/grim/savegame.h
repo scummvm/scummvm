@@ -59,11 +59,13 @@ public:
 	void endSection();
 	void read(void *data, int size);
 	void write(const void *data, int size);
+	uint64 readLEUint64();
 	uint32 readLEUint32();
 	uint16 readLEUint16();
 	int32 readLESint32();
 	bool readBool();
 	byte readByte();
+	void writeLEUint64(uint64 data);
 	void writeLEUint32(uint32 data);
 	void writeLEUint16(uint16 data);
 	void writeLESint32(int32 data);

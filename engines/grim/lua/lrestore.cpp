@@ -38,8 +38,7 @@ static void restoreObjectValue(TObject *object, SaveGame *savedState) {
 		case LUA_T_ARRAY:
 			{
 				PointerId ptr;
-				ptr.low = savedState->readLEUint32();
-				ptr.hi = savedState->readLEUint32();
+				ptr.id = savedState->readLEUint64();
 				object->value.a = (Hash *)makePointerFromId(ptr);
 			}
 			break;
@@ -56,8 +55,7 @@ static void restoreObjectValue(TObject *object, SaveGame *savedState) {
 		case LUA_T_STRING:
 			{
 				PointerId ptr;
-				ptr.low = savedState->readLEUint32();
-				ptr.hi = savedState->readLEUint32();
+				ptr.id = savedState->readLEUint64();
 				object->value.ts = (TaggedString *)makePointerFromId(ptr);
 			}
 			break;
@@ -65,8 +63,7 @@ static void restoreObjectValue(TObject *object, SaveGame *savedState) {
 		case LUA_T_PMARK:
 			{
 				PointerId ptr;
-				ptr.low = savedState->readLEUint32();
-				ptr.hi = savedState->readLEUint32();
+				ptr.id = savedState->readLEUint64();
 				object->value.tf = (TProtoFunc *)makePointerFromId(ptr);
 			}
 			break;
@@ -74,8 +71,7 @@ static void restoreObjectValue(TObject *object, SaveGame *savedState) {
 		case LUA_T_CMARK:
 			{
 				PointerId ptr;
-				ptr.low = savedState->readLEUint32();
-				ptr.hi = savedState->readLEUint32();
+				ptr.id = savedState->readLEUint64();
 
 				// WORKAROUND: C++ forbids casting from a pointer-to-function to a
 				// pointer-to-object. We use a union to work around that.
@@ -92,8 +88,7 @@ static void restoreObjectValue(TObject *object, SaveGame *savedState) {
 		case LUA_T_CLMARK:
 			{
 				PointerId ptr;
-				ptr.low = savedState->readLEUint32();
-				ptr.hi = savedState->readLEUint32();
+				ptr.id = savedState->readLEUint64();
 				object->value.cl = (Closure *)makePointerFromId(ptr);
 			}
 			break;
@@ -104,8 +99,7 @@ static void restoreObjectValue(TObject *object, SaveGame *savedState) {
 			break;
 		default:
 			PointerId ptr;
-			ptr.low = savedState->readLEUint32();
-			ptr.hi = savedState->readLEUint32();
+			ptr.id = savedState->readLEUint64();
 			object->value.ts = (TaggedString *)makePointerFromId(ptr);
 	}
 }
@@ -116,25 +110,13 @@ struct ArrayIDObj {
 };
 
 static int sortCallback(const void *id1, const void *id2) {
-#ifdef SCUMM_64BITS
-	uint64 p1 = ((const ArrayIDObj *)id1)->idObj.low | ((uint64)(((const ArrayIDObj *)id1)->idObj.hi)) << 32;
-	uint64 p2 = ((const ArrayIDObj *)id2)->idObj.low | ((uint64)(((const ArrayIDObj *)id2)->idObj.hi)) << 32;
-	if (p1 > p2) {
+	if (((const ArrayIDObj *)id1)->idObj.id > ((const ArrayIDObj *)id2)->idObj.id) {
 		return 1;
-	} else if (p1 < p2) {
+	} else if (((const ArrayIDObj *)id1)->idObj.id < ((const ArrayIDObj *)id2)->idObj.id) {
 		return -1;
 	} else {
 		return 0;
 	}
-#else
-	if (((const ArrayIDObj *)id1)->idObj.low > ((const ArrayIDObj *)id2)->idObj.low) {
-		return 1;
-	} else if (((const ArrayIDObj *)id1)->idObj.low < ((const ArrayIDObj *)id2)->idObj.low) {
-		return -1;
-	} else {
-		return 0;
-	}
-#endif
 }
 
 int32 arrayHashTablesCount = 0;
@@ -149,11 +131,7 @@ static bool arraysAllreadySort = false;
 
 static void recreateObj(TObject *obj) {
 	if (obj->ttype == LUA_T_CPROTO) {
-#ifdef SCUMM_64BITS
-		uint64 id = ((uint64)(obj->value.f)) >> 16;
-#else
-		uint32 id = ((uint32)(obj->value.f)) >> 16;
-#endif
+		uintptr id = ((uintptr)(obj->value.f)) >> 16;
 		luaL_libList *list = list_of_libs;
 		while (list) {
 			if (id == 0)
@@ -162,11 +140,7 @@ static void recreateObj(TObject *obj) {
 			list = list->next;
 		}
 
-#ifdef SCUMM_64BITS
-		int32 numberFunc = (uint64)(obj->value.f) & 0xffff;
-#else
-		int32 numberFunc = (uint32)(obj->value.f) & 0xffff;
-#endif
+		int32 numberFunc = (uintptr)(obj->value.f) & 0xffff;
 		if (list && id == 0 && numberFunc < list->number) {
 			obj->value.f = list->list[numberFunc].func;
 		} else {
@@ -255,8 +229,7 @@ void lua_Restore(SaveGame *savedState) {
 
 	int32 i;
 	for (i = 0; i < arrayStringsCount; i++) {
-		arraysObj->idObj.low = savedState->readLESint32();
-		arraysObj->idObj.hi = savedState->readLESint32();
+		arraysObj->idObj.id = savedState->readLEUint64();
 		int32 constIndex = savedState->readLESint32();
 
 		TaggedString *tempString = nullptr;
@@ -284,8 +257,7 @@ void lua_Restore(SaveGame *savedState) {
 	arraysObj = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayClosuresCount);
 	arrayClosures = arraysObj;
 	for (i = 0; i < arrayClosuresCount; i++) {
-		arraysObj->idObj.low = savedState->readLESint32();
-		arraysObj->idObj.hi = savedState->readLESint32();
+		arraysObj->idObj.id = savedState->readLEUint64();
 		int32 countElements = savedState->readLESint32();
 		tempClosure = (Closure *)luaM_malloc((countElements * sizeof(TObject)) + sizeof(Closure));
 		luaO_insertlist(prevClosure, (GCnode *)tempClosure);
@@ -304,8 +276,7 @@ void lua_Restore(SaveGame *savedState) {
 	arraysObj = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayHashTablesCount);
 	arrayHashTables = arraysObj;
 	for (i = 0; i < arrayHashTablesCount; i++) {
-		arraysObj->idObj.low = savedState->readLESint32();
-		arraysObj->idObj.hi = savedState->readLESint32();
+		arraysObj->idObj.id = savedState->readLEUint64();
 		tempHash = luaM_new(Hash);
 		tempHash->nhash = savedState->readLESint32();
 		tempHash->nuse = savedState->readLESint32();
@@ -327,14 +298,12 @@ void lua_Restore(SaveGame *savedState) {
 	arrayProtoFuncs = (ArrayIDObj *)luaM_malloc(sizeof(ArrayIDObj) * arrayProtoFuncsCount);
 	arraysObj = arrayProtoFuncs;
 	for (i = 0; i < arrayProtoFuncsCount; i++) {
-		arraysObj->idObj.low = savedState->readLESint32();
-		arraysObj->idObj.hi = savedState->readLESint32();
+		arraysObj->idObj.id = savedState->readLEUint64();
 		tempProtoFunc = luaM_new(TProtoFunc);
 		luaO_insertlist(oldProto, (GCnode *)tempProtoFunc);
 		oldProto = (GCnode *)tempProtoFunc;
 		PointerId ptr;
-		ptr.low = savedState->readLESint32();
-		ptr.hi = savedState->readLESint32();
+		ptr.id = savedState->readLEUint64();
 		tempProtoFunc->fileName = (TaggedString *)makePointerFromId(ptr);
 		tempProtoFunc->lineDefined = savedState->readLESint32();
 		tempProtoFunc->nconsts = savedState->readLESint32();
@@ -356,8 +325,7 @@ void lua_Restore(SaveGame *savedState) {
 		}
 
 		for (l = 0; l < countVariables; l++) {
-			ptr.low = savedState->readLESint32();
-			ptr.hi = savedState->readLESint32();
+			ptr.id = savedState->readLEUint64();
 			tempProtoFunc->locvars[l].varname = (TaggedString *)makePointerFromId(ptr);
 			tempProtoFunc->locvars[l].line = savedState->readLESint32();
 		}
@@ -434,8 +402,7 @@ void lua_Restore(SaveGame *savedState) {
 		TaggedString *tempString = nullptr;
 		tempObj.ttype = LUA_T_STRING;
 		PointerId ptr;
-		ptr.low = savedState->readLESint32();
-		ptr.hi = savedState->readLESint32();
+		ptr.id = savedState->readLEUint64();
 		tempObj.value.ts = (TaggedString *)makePointerFromId(ptr);
 		recreateObj(&tempObj);
  		tempString = (TaggedString *)tempObj.value.ts;
@@ -521,14 +488,12 @@ void lua_Restore(SaveGame *savedState) {
 				TObject tempObj;
 				tempObj.ttype = LUA_T_CLOSURE;
 				PointerId ptr;
-				ptr.low = savedState->readLEUint32();
-				ptr.hi = savedState->readLEUint32();
+				ptr.id = savedState->readLEUint64();
 				tempObj.value.cl = (Closure *)makePointerFromId(ptr);
 				recreateObj(&tempObj);
 				task->cl = (Closure *)tempObj.value.cl;
 				tempObj.ttype = LUA_T_PROTO;
-				ptr.low = savedState->readLEUint32();
-				ptr.hi = savedState->readLEUint32();
+				ptr.id = savedState->readLEUint64();
 				tempObj.value.tf = (TProtoFunc *)makePointerFromId(ptr);
 				recreateObj(&tempObj);
 				task->tf = (TProtoFunc *)tempObj.value.tf;

@@ -21,30 +21,13 @@ namespace Grim {
 
 PointerId makeIdFromPointer(void *ptr) {
 	PointerId pointer;
-
-#ifdef SCUMM_64BITS
-	uint64 v = (uint64)ptr;
-	pointer.low = v & 0xffffffff;
-	pointer.hi = v >> 32;
-#else
-	pointer.low = (uint32)ptr;
-	pointer.hi = 0;
-#endif
+	pointer.id = (uintptr)ptr;
 
 	return pointer;
 }
 
 void *makePointerFromId(PointerId ptr) {
-	void *pointer;
-
-#ifdef SCUMM_64BITS
-	uint64 v = ptr.low | ((uint64)ptr.hi << 32);
-	pointer = (void *)v;
-#else
-	pointer = (void *)ptr.low;
-#endif
-
-	return pointer;
+	return (void *)ptr.id;
 }
 
 static void saveObjectValue(TObject *object, SaveGame *savedState) {
@@ -81,8 +64,7 @@ static void saveObjectValue(TObject *object, SaveGame *savedState) {
 			break;
 		case LUA_T_ARRAY:
 			{
-				savedState->writeLEUint32(makeIdFromPointer(object->value.a).low);
-				savedState->writeLEUint32(makeIdFromPointer(object->value.a).hi);
+				savedState->writeLEUint64(makeIdFromPointer(object->value.a).id);
 			}
 			break;
 		case LUA_T_USERDATA:
@@ -93,22 +75,19 @@ static void saveObjectValue(TObject *object, SaveGame *savedState) {
 			break;
 		case LUA_T_STRING:
 			{
-				savedState->writeLEUint32(makeIdFromPointer(object->value.ts).low);
-				savedState->writeLEUint32(makeIdFromPointer(object->value.ts).hi);
+				savedState->writeLEUint64(makeIdFromPointer(object->value.ts).id);
 			}
 			break;
 		case LUA_T_PROTO:
 		case LUA_T_PMARK:
 			{
-				savedState->writeLEUint32(makeIdFromPointer(object->value.tf).low);
-				savedState->writeLEUint32(makeIdFromPointer(object->value.tf).hi);
+				savedState->writeLEUint64(makeIdFromPointer(object->value.tf).id);
 			}
 			break;
 		case LUA_T_CLOSURE:
 		case LUA_T_CLMARK:
 			{
-				savedState->writeLEUint32(makeIdFromPointer(object->value.cl).low);
-				savedState->writeLEUint32(makeIdFromPointer(object->value.cl).hi);
+				savedState->writeLEUint64(makeIdFromPointer(object->value.cl).id);
 			}
 			break;
 		case LUA_T_LINE:
@@ -117,8 +96,7 @@ static void saveObjectValue(TObject *object, SaveGame *savedState) {
 			}
 			break;
 		default:
-			savedState->writeLEUint32(makeIdFromPointer(object->value.ts).low);
-			savedState->writeLEUint32(makeIdFromPointer(object->value.ts).hi);
+			savedState->writeLEUint64(makeIdFromPointer(object->value.ts).id);
 	}
 }
 
@@ -215,8 +193,7 @@ void lua_Save(SaveGame *savedState) {
 		for (l = 0; l < tempStringTable->size; l++) {
 			if (tempStringTable->hash[l] && tempStringTable->hash[l] != &EMPTY) {
 				tempString = tempStringTable->hash[l];
-				savedState->writeLEUint32(makeIdFromPointer(tempString).low);
-				savedState->writeLEUint32(makeIdFromPointer(tempString).hi);
+				savedState->writeLEUint64(makeIdFromPointer(tempString).id);
 				savedState->writeLESint32(tempString->constindex);
 				if (tempString->constindex != -1) {
 					saveObjectValue(&tempString->globalval, savedState);
@@ -232,8 +209,7 @@ void lua_Save(SaveGame *savedState) {
 
 	Closure *tempClosure = (Closure *)rootcl.next;
 	while (tempClosure) {
-		savedState->writeLEUint32(makeIdFromPointer(tempClosure).low);
-		savedState->writeLEUint32(makeIdFromPointer(tempClosure).hi);
+		savedState->writeLEUint64(makeIdFromPointer(tempClosure).id);
 		savedState->writeLESint32(tempClosure->nelems);
 		for (i = 0; i <= tempClosure->nelems; i++) {
 			saveObjectValue(&tempClosure->consts[i], savedState);
@@ -243,8 +219,7 @@ void lua_Save(SaveGame *savedState) {
 
 	Hash *tempHash = (Hash *)roottable.next;
 	while (tempHash) {
-		savedState->writeLEUint32(makeIdFromPointer(tempHash).low);
-		savedState->writeLEUint32(makeIdFromPointer(tempHash).hi);
+		savedState->writeLEUint64(makeIdFromPointer(tempHash).id);
 		savedState->writeLESint32(tempHash->nhash);
 		int32 countUsedHash = 0;
 		for (i = 0; i < tempHash->nhash; i++) {
@@ -267,10 +242,8 @@ void lua_Save(SaveGame *savedState) {
 
 	TProtoFunc *tempProtoFunc = (TProtoFunc *)rootproto.next;
 	while (tempProtoFunc) {
-		savedState->writeLEUint32(makeIdFromPointer(tempProtoFunc).low);
-		savedState->writeLEUint32(makeIdFromPointer(tempProtoFunc).hi);
-		savedState->writeLEUint32(makeIdFromPointer(tempProtoFunc->fileName).low);
-		savedState->writeLEUint32(makeIdFromPointer(tempProtoFunc->fileName).hi);
+		savedState->writeLEUint64(makeIdFromPointer(tempProtoFunc).id);
+		savedState->writeLEUint64(makeIdFromPointer(tempProtoFunc->fileName).id);
 		savedState->writeLESint32(tempProtoFunc->lineDefined);
 		savedState->writeLESint32(tempProtoFunc->nconsts);
 		for (i = 0; i < tempProtoFunc->nconsts; i++) {
@@ -283,8 +256,7 @@ void lua_Save(SaveGame *savedState) {
 
 		savedState->writeLESint32(countVariables);
 		for (i = 0; i < countVariables; i++) {
-			savedState->writeLEUint32(makeIdFromPointer(tempProtoFunc->locvars[i].varname).low);
-			savedState->writeLEUint32(makeIdFromPointer(tempProtoFunc->locvars[i].varname).hi);
+			savedState->writeLEUint64(makeIdFromPointer(tempProtoFunc->locvars[i].varname).id);
 			savedState->writeLESint32(tempProtoFunc->locvars[i].line);
 		}
 
@@ -303,8 +275,7 @@ void lua_Save(SaveGame *savedState) {
 
 	tempString = (TaggedString *)rootglobal.next;
 	while (tempString) {
-		savedState->writeLEUint32(makeIdFromPointer(tempString).low);
-		savedState->writeLEUint32(makeIdFromPointer(tempString).hi);
+		savedState->writeLEUint64(makeIdFromPointer(tempString).id);
 		tempString = (TaggedString *)tempString->head.next;
 	}
 
@@ -361,10 +332,8 @@ void lua_Save(SaveGame *savedState) {
 		savedState->writeLESint32(countTasks);
 		task = state->task;
 		while (task) {
-			savedState->writeLEUint32(makeIdFromPointer(task->cl).low);
-			savedState->writeLEUint32(makeIdFromPointer(task->cl).hi);
-			savedState->writeLEUint32(makeIdFromPointer(task->tf).low);
-			savedState->writeLEUint32(makeIdFromPointer(task->tf).hi);
+			savedState->writeLEUint64(makeIdFromPointer(task->cl).id);
+			savedState->writeLEUint64(makeIdFromPointer(task->tf).id);
 			savedState->writeLESint32(task->base);
 			savedState->writeLESint32(task->some_base);
 			savedState->writeLESint32(task->some_results);

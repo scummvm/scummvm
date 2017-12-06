@@ -33,8 +33,7 @@ typedef void (*lua_CFunction)();
 typedef uint32 lua_Object;
 
 struct PointerId {
-	uint32	low;
-	uint32	hi;
+	uint64 id;
 };
 
 PointerId makeIdFromPointer(void *ptr);
