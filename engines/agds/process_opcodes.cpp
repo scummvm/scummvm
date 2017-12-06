@@ -172,6 +172,13 @@ void Process::exitScreen()
 	_exitCode = kExitCodeExitScreen;
 }
 
+void Process::suspendProcess()
+{
+	debug("suspendProcess");
+	_status = kStatusPassive;
+	_exitCode = kExitCodeSuspend;
+}
+
 void Process::onKey(unsigned size) {
 	Common::String key = popString();
 	debug("onKey %s handler, %u instructions", key.c_str(), size);
@@ -183,7 +190,14 @@ void Process::enableUser() {
 	debug("enableUser");
 }
 
+void Process::findObjectInMouseArea() {
+	Common::String arg3 = popString();
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
 
+	debug("findObjectInMouseArea %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+	push(0);
+}
 
 //fixme: add trace here
 #define OP(NAME, METHOD) \
@@ -215,6 +229,7 @@ ProcessExitCode Process::execute() {
 			OP_W	(kJumpZImm16, jumpz);
 			OP		(kPop, pop);
 			OP		(kExitProcess, exitProcess);
+			OP		(kSuspendProcess, suspendProcess);
 			OP_C	(kPushImm8, push);
 			OP_W	(kPushImm16, push);
 			OP_C	(kPushImm8_2, push);
@@ -238,10 +253,11 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
 			OP		(kPlayFilm, stub203);
+			OP		(kFindObjectInMouseArea, findObjectInMouseArea);
 			OP		(kStub206, stub206);
 			OP_U	(kOnKey, onKey);
 		default:
-			debug("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
+			error("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
 			_status = kStatusError;
 			break;
 		}
