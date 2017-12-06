@@ -102,6 +102,7 @@ private:
 	void stub182();
 	void stub202(unsigned size);
 	void stub203();
+	void stub206();
 	void enableUser();
 
 	void suspend(ProcessExitCode exitCode) {
