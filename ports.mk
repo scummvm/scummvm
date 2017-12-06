@@ -381,10 +381,12 @@ OSX_ZLIB ?= $(STATICLIBPATH)/lib/libz.a
 endif
 
 ifdef USE_SPARKLE
+ifdef MACOSX
 ifneq ($(SPARKLEPATH),)
 OSX_STATIC_LIBS += -F$(SPARKLEPATH)
 endif
 OSX_STATIC_LIBS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
+endif
 endif
 
 # Special target to create a static linked binary for Mac OS X.
