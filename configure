@@ -4301,9 +4301,6 @@ echo "$_mpeg2"
 #
 # Check for Sparkle if updates support is enabled
 #
-#
-# Check is NSDockTilePlugIn protocol is supported
-#
 case $_host_os in
 	darwin*)
 		echocheck "Sparkle"
