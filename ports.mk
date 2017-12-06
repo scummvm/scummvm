@@ -276,7 +276,7 @@ scummvmwinres.o: $(srcdir)/icons/scummvm.ico $(DIST_FILES_THEMES) $(DIST_FILES_N
 	$(QUIET_WINDRES)$(WINDRES) -DHAVE_CONFIG_H $(WINDRESFLAGS) $(DEFINES) -I. -I$(srcdir) $(srcdir)/dists/scummvm.rc scummvmwinres.o
 
 # Special target to create a win32 snapshot binary (for Inno Setup)
-win32dist: $(EXECUTABLE)
+win32dist: all
 	mkdir -p $(WIN32PATH)
 	mkdir -p $(WIN32PATH)/graphics
 	mkdir -p $(WIN32PATH)/doc
@@ -307,15 +307,23 @@ win32dist: $(EXECUTABLE)
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
 	cp $(srcdir)/doc/se/Snabbstart $(WIN32PATH)/doc/se/Snabbstart.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
+	cp $(WIN32SDLDOCPATH)/README-SDL.txt $(WIN32PATH)/README-SDL.txt
 	cp $(srcdir)/doc/de/LIESMICH $(WIN32PATH)/doc/de/LIESMICH.txt
 	cp $(srcdir)/doc/se/LasMig $(WIN32PATH)/doc/se/LasMig.txt
-	cp /usr/local/README-SDL.txt $(WIN32PATH)
-	cp /usr/local/bin/SDL2.dll $(WIN32PATH)
+	cp $(WIN32SDLPATH)/SDL2.dll $(WIN32PATH)
 	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/migration.bat $(WIN32PATH)
 	cp $(srcdir)/dists/win32/migration.txt $(WIN32PATH)
 	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
+ifdef USE_SDL_NET
+	cp $(WIN32SDLPATH)/SDL2_net.dll $(WIN32PATH)
+	sed -e '/SDL2_net\.dll/ s/^;//' -i $(WIN32PATH)/ScummVM.iss
+endif
+ifdef USE_SPARKLE
+	cp $(WIN32SPARKLEPATH)/WinSparkle.dll $(WIN32PATH)
+	sed -e '/WinSparkle\.dll/ s/^;//' -i $(WIN32PATH)/ScummVM.iss
+endif
 	unix2dos $(WIN32PATH)/*.txt
 	unix2dos $(WIN32PATH)/doc/*.txt
 	unix2dos $(WIN32PATH)/doc/cz/*.txt

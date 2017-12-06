@@ -22,6 +22,7 @@ SetupIconFile=graphics\scummvm-install.ico
 WizardImageFile=graphics\left.bmp
 ShowLanguageDialog=yes
 LanguageDetectionMethod=uilanguage
+PrivilegesRequired=lowest
 
 [Languages]
 Name: en; MessagesFile: compiler:Default.isl
@@ -111,8 +112,8 @@ Source: doc/se/LasMig.txt; DestDir: {app}; Flags: ignoreversion isreadme; Langua
 Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion
 Source: scummvm.exe; DestDir: {app}; Flags: ignoreversion
 Source: SDL2.dll; DestDir: {app}; Flags: replacesameversion
-;Mirgration script for saved games in Windows NT4 onwards
+;Source: SDL2_net.dll; DestDir: {app}; Flags: replacesameversion
+;Source: WinSparkle.dll; DestDir: {app}; Flags: replacesameversion
+;Migration script for saved games in Windows NT4 onwards
 Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
 Source: migration.txt; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
-
-
