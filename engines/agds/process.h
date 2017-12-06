@@ -85,6 +85,7 @@ private:
 	void exitProcess();
 	void suspendProcess();
 	void exitScreen();
+	void call(uint16 addr);
 
 	void clearScreen();
 	void loadPicture();
@@ -93,23 +94,51 @@ private:
 	void loadFont();
 	void removeScreenObject();
 	void changeScreenPatch();
+	void updateScreenHeightToDisplay();
+	void findObjectInMouseArea();
+	void loadPictureFromObject();
+	void loadAnimationFromObject();
+	void loadAnimation();
+	void loadSample();
+	void setCounter();
 
 	void setSystemVariable();
+	void getIntegerSystemVariable();
 	void setIntegerVariable();
 	void getGlobal(unsigned index);
 	void setGlobal();
+	void hasGlobal();
 	void appendToSharedStorage();
-	void findObjectInMouseArea();
 
 	void enableUser();
 	void onKey(unsigned size);
 
 	void stub98();
 	void stub128();
+	void stub129();
+	void stub130();
+	void stub133();
+	void stub134();
+	void stub136();
 	void stub182();
+	void stub188();
 	void stub202(unsigned size);
 	void stub203();
 	void stub206();
+	void exitProcessSetNextScreen();
+
+	void boolNot()
+	{ push(!pop()); }
+	void boolOr()
+	{ int arg2 = pop(); int arg1 = pop(); push(arg1 || arg2); }
+	void boolAnd()
+	{ int arg2 = pop(); int arg1 = pop(); push(arg1 && arg2); }
+	void bitNot()
+	{ push(~pop()); }
+	void equals()
+	{ push(pop() == pop()); }
+	void notEquals()
+	{ push(pop() != pop()); }
 
 
 	void suspend(ProcessExitCode exitCode) {
@@ -119,7 +148,7 @@ private:
 	}
 
 public:
-	Process(AGDSEngine *engine, Object *object);
+	Process(AGDSEngine *engine, Object *object, unsigned ip = 0);
 
 	void activate();
 

@@ -26,8 +26,8 @@
 
 namespace AGDS {
 
-Process::Process(AGDSEngine *engine, Object* object) :
-	_engine(engine), _object(object), _ip(0), _status(kStatusActive), _exitCode(kExitCodeDestroy) {
+Process::Process(AGDSEngine *engine, Object* object, unsigned ip) :
+	_engine(engine), _object(object), _ip(ip), _status(kStatusActive), _exitCode(kExitCodeDestroy) {
 }
 
 void Process::push(int32 value) {
