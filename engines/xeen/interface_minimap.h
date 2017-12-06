@@ -28,6 +28,16 @@ namespace Xeen {
 class InterfaceMinimap {
 private:
 	int _animFrame;
+private:
+	/**
+	 * Draws the outdoors minimap
+	 */
+	void drawOutdoorsMinimap();
+
+	/**
+	 * Draws the indoors minimap
+	 */
+	void drawIndoorsMinimap();
 public:
 	InterfaceMinimap() : _animFrame(0) {}
 
