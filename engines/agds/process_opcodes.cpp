@@ -222,6 +222,14 @@ void Process::clearScreen() {
 	debug("clearScreen");
 }
 
+void Process::stub165() {
+	int arg3 = pop();
+	int arg2 = pop();
+	Common::String arg1 = popString();
+	debug("stub165 %s %d %d", arg1.c_str(), arg2, arg3);
+}
+
+
 void Process::stub202(unsigned size) {
 	debug("stub203, %u instructions", size);
 	_ip += size;
@@ -252,6 +260,11 @@ void Process::exitScreen()
 	debug("exitScreen? reactivating process...");
 	if (_status != kStatusDone)
 		_status = kStatusActive;
+}
+
+void Process::setScreenHeight() {
+	int height = pop();
+	debug("setScreenHeight %d", height);
 }
 
 void Process::updateScreenHeightToDisplay() {
@@ -349,6 +362,14 @@ ProcessExitCode Process::execute() {
 			OP_B	(kGetGlobalImm8, getGlobal);
 			OP		(kEquals, equals);
 			OP		(kNotEquals, notEquals);
+			OP		(kGreater, greater);
+			OP		(kLess, less);
+			OP		(kGreaterOrEquals, greaterOrEquals);
+			OP		(kLessOrEquals, lessOrEquals);
+			OP		(kAdd, add);
+			OP		(kSub, sub);
+			OP		(kMul, mul);
+			OP		(kDiv, div);
 			OP		(kSetGlobal, setGlobal);
 			OP		(kBoolOr, boolOr);
 			OP		(kBoolAnd, boolAnd);
@@ -361,6 +382,7 @@ ProcessExitCode Process::execute() {
 			OP		(kEnableUser, enableUser);
 			OP		(kClearScreen, clearScreen);
 			OP		(kLoadMouse, loadMouse);
+			OP		(kSetScreenHeight, setScreenHeight);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
 			OP		(kScreenLoadObject, loadScreenObject);
 			OP		(kExitProcessSetNextScreen, exitProcessSetNextScreen);
@@ -382,6 +404,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kExitScreen, exitScreen);
+			OP		(kStub165, stub165);
 			OP		(kStub182, stub182);
 			OP		(kStub188, stub188);
 			OP		(kLoadPicture, loadPicture);
