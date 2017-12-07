@@ -25,6 +25,13 @@
 
 namespace Xeen {
 
+#define MINIMAP_SIZE 7
+#define MINIMAP_DIFF ((MINIMAP_SIZE - 1) / 2)
+#define MINIMAP_XSTART 237
+#define MINIMAP_YSTART 12
+#define TILE_WIDTH 10
+#define TILE_HEIGHT 8
+
 void InterfaceMinimap::drawMinimap() {
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
@@ -35,7 +42,7 @@ void InterfaceMinimap::drawMinimap() {
 		return;
 	if (!party._automapOn && !party._wizardEyeActive) {
 		// Draw the Might & Magic logo
-		res._globalSprites.draw(1, 5, Common::Point(232, 9));
+		res._globalSprites.draw(1, 5, Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 9));
 		return;
 	}
 
@@ -59,14 +66,15 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 	Party &party = *g_vm->_party;
 	Resources &res = *g_vm->_resources;
 	int v, frame;
+	const Common::Point &pt = party._mazePosition;
 
-	res._globalSprites.draw(1, 15, Common::Point(237, 12));
+	res._globalSprites.draw(1, 15, Common::Point(MINIMAP_XSTART, MINIMAP_YSTART));
 
-	for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
-		for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
-			v = map.mazeLookup(
-				Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
-				4);
+	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
+			yp += TILE_HEIGHT, --mazeY) {
+		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
+				xp += TILE_WIDTH, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
 			frame = map.mazeDataCurrent()._surfaceTypes[v];
 
 			if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
@@ -75,11 +83,11 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 		}
 	}
 
-	for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
-		for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
-			v = map.mazeLookup(
-				Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
-				4);
+	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
+			yp += TILE_HEIGHT, --mazeY) {
+		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
+				xp += TILE_WIDTH, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
 			frame = map.mazeData()._wallTypes[v];
 
 			if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
@@ -88,11 +96,11 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 		}
 	}
 
-	for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
-		for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
-			v = map.mazeLookup(
-				Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
-				4);
+	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
+			yp += TILE_HEIGHT, --mazeY) {
+		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
+				xp += TILE_WIDTH, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
 
 			if (v != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
 				map._tileSprites.draw(1, v + 32, Common::Point(xp, yp));
@@ -110,15 +118,16 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	Party &party = *g_vm->_party;
 	Resources &res = *g_vm->_resources;
 	int v, frame;
+	const Common::Point &pt = party._mazePosition;
 	int frame2 = _animFrame;
 	_animFrame = (_animFrame + 2) % 8;
-
+	party._wizardEyeActive = true;//***DEBUG****
 	// Draw default ground for all the valid explored areas
-	for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
-		for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
-			v = map.mazeLookup(
-				Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
-				0, 0xffff);
+	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
+			yp += TILE_HEIGHT, --mazeY) {
+		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
+				xp += TILE_WIDTH, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0, 0xffff);
 
 			if (v != INVALID_CELL && (map._currentSteppedOn || party._wizardEyeActive)) {
 				map._tileSprites.draw(1, 0, Common::Point(xp, yp));
@@ -127,11 +136,11 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	}
 
 	// Draw the specific surface type for each cell
-	for (int rowNum = 0, yp = 17, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
-		for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
-			v = map.mazeLookup(
-				Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
-				0, 0xffff);
+	for (int yp = MINIMAP_YSTART + (TILE_HEIGHT / 2), mazeY = pt.y + MINIMAP_DIFF;
+			mazeY >= (pt.y - MINIMAP_DIFF); yp += TILE_HEIGHT, --mazeY) {
+		for (int xp = MINIMAP_XSTART + (TILE_WIDTH / 2), mazeX = pt.x - MINIMAP_DIFF;
+				mazeX <= (pt.x + MINIMAP_DIFF); xp += TILE_WIDTH, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0, 0xffff);
 			int surfaceId = map.mazeData()._surfaceTypes[map._currentSurfaceId];
 
 			if (v != INVALID_CELL && map._currentSurfaceId &&
@@ -142,30 +151,31 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	}
 
 	// Draw thin tile portion on top-left corner of map
-	v = map.mazeLookup(Common::Point(party._mazePosition.x - 4, party._mazePosition.y + 4), 0, 0xffff);
+	v = map.mazeLookup(Common::Point(pt.x - MINIMAP_DIFF - 1, pt.y + MINIMAP_DIFF + 1), 0, 0xffff);
 	if (v != INVALID_CELL && map._currentSurfaceId &&
 		(map._currentSteppedOn || party._wizardEyeActive)) {
 		map._tileSprites.draw(1,
 			map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
-			Common::Point(232, 9));
+			Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 
+				MINIMAP_YSTART - (TILE_HEIGHT / 2) + 1));
 	}
 
 	// Handle drawing surface sprites partially clipped at the left edge
-	for (int rowNum = 0, yp = 17, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, --yDiff, yp += 8) {
-		v = map.mazeLookup(
-			Common::Point(party._mazePosition.x - 4, party._mazePosition.y + yDiff),
-			0, 0xffff);
+	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
+			yp += TILE_HEIGHT, --mazeY) {
+		v = map.mazeLookup(Common::Point(pt.x - MINIMAP_DIFF - 1, mazeY), 0, 0xffff);
 
 		if (v != INVALID_CELL && map._currentSurfaceId &&
 			(map._currentSteppedOn || party._wizardEyeActive)) {
 			map._tileSprites.draw(1,
 				map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
-				Common::Point(232, yp));
+				Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), yp));
 		}
 	}
 
 	// Handle drawing surface sprites partially clipped at the top edge
-	for (int colNum = 0, xp = 242, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, ++xDiff, xp += 8) {
+	for (int colNum = 0, xp = MINIMAP_YSTART + (TILE_HEIGHT / 2), xDiff = -3;
+			colNum < MINIMAP_SIZE; ++colNum, ++xDiff, xp += TILE_WIDTH) {
 		v = map.mazeLookup(
 			Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + 4),
 			0, 0xffff);
@@ -174,17 +184,17 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 			(map._currentSteppedOn || party._wizardEyeActive)) {
 			map._tileSprites.draw(1,
 				map.mazeData()._surfaceTypes[map._currentSurfaceId] + 36,
-				Common::Point(xp, 9));
+				Common::Point(xp, MINIMAP_YSTART - (TILE_HEIGHT / 2) + 1));
 		}
 	}
 
-	// Draw walls on left and top edges of map
-	for (int idx = 0, xp = 237, yp = 60, xDiff = -3; idx < MINIMAP_SIZE;
-		++idx, ++xDiff, xp += 10, yp -= 8) {
+	// Handle drawing partially clip top row and left column
+	for (int xp = MINIMAP_XSTART, yp = MINIMAP_YSTART + (MINIMAP_SIZE - 1) * TILE_HEIGHT,		
+			mazeX = pt.x - MINIMAP_DIFF, mazeY = pt.y + MINIMAP_DIFF;
+			mazeX <= (pt.x - MINIMAP_DIFF);
+			xp += TILE_WIDTH, yp -= TILE_HEIGHT, ++mazeX, --mazeY) {
 		// Left column
-		v = map.mazeLookup(
-			Common::Point(party._mazePosition.x - 4, party._mazePosition.y - 3 + idx),
-			12, 0xffff);
+		v = map.mazeLookup(Common::Point(pt.x - MINIMAP_DIFF - 1, mazeY), 12, 0xffff);
 
 		switch (v) {
 		case SURFTYPE_DIRT:
@@ -231,12 +241,11 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 		}
 
 		if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive))
-			map._tileSprites.draw(1, frame, Common::Point(222, yp));
+			map._tileSprites.draw(1, frame, Common::Point(
+				MINIMAP_XSTART - TILE_WIDTH - (TILE_WIDTH / 2), yp));
 
 		// Top row
-		v = map.mazeLookup(
-			Common::Point(party._mazePosition.x - 3 + idx, party._mazePosition.y + 4),
-			0);
+		v = map.mazeLookup(Common::Point(mazeX, pt.y + MINIMAP_DIFF + 1), 0);
 
 		switch (v) {
 		case SURFTYPE_DIRT:
@@ -286,22 +295,21 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 		}
 
 		if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive))
-			map._tileSprites.draw(1, frame, Common::Point(xp, 4));
+			map._tileSprites.draw(1, frame, Common::Point(xp, MINIMAP_YSTART - TILE_HEIGHT));
 	}
 
 	// Draw the walls for the remaining cells of the minimap
-	for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE;
-		++rowNum, --yDiff, yp += 8) {
-		for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE;
-			++colNum, ++xDiff, xp += 10) {
-			if (colNum == 4 && rowNum == 4) {
+	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
+			yp += TILE_HEIGHT, --mazeY) {
+		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
+				xp += TILE_WIDTH, ++mazeX) {
+			if (mazeX == pt.x && mazeY == pt.y) {
 				// Center of the minimap. Draw the direction arrow
 				res._globalSprites.draw(1, party._mazeDirection + 1,
 					Common::Point(272, 40));
 			}
 
-			v = map.mazeLookup(Common::Point(party._mazePosition.x + xDiff,
-				party._mazePosition.y + yDiff), 12, 0xffff);
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 12, 0xffff);
 			switch (v) {
 			case SURFTYPE_DIRT:
 				frame = 18;
@@ -353,8 +361,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 				map._tileSprites.draw(1, frame, Common::Point(xp, yp));
 			}
 
-			v = map.mazeLookup(Common::Point(party._mazePosition.x + xDiff,
-				party._mazePosition.y + yDiff), 0);
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0);
 			switch (v) {
 			case SURFTYPE_DIRT:
 				frame = 19;
@@ -408,11 +415,13 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 		}
 	}
 
-	// Draw the top of blocked/wall cells on the map
-	for (int rowNum = 0, yp = 12, yDiff = 3; rowNum < MINIMAP_SIZE; ++rowNum, yp += 8, --yDiff) {
-		for (int colNum = 0, xp = 237, xDiff = -3; colNum < MINIMAP_SIZE; ++colNum, xp += 10, ++xDiff) {
+	// Draw overlay on cells that haven't been stepped on yet
+	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
+			yp += TILE_HEIGHT, --mazeY) {
+		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
+				xp += TILE_WIDTH, ++mazeX) {
 			v = map.mazeLookup(
-				Common::Point(party._mazePosition.x + xDiff, party._mazePosition.y + yDiff),
+				Common::Point(mazeX, mazeY),
 				0, 0xffff);
 
 			if (v == INVALID_CELL || (!map._currentSteppedOn && !party._wizardEyeActive)) {
