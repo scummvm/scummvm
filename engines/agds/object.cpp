@@ -49,7 +49,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 	if (resOffset >= _code.size())
 		error("invalid resource table offset");
 
-	debug("resource table at %08x", resOffset);
+	//debug("resource table at %08x", resOffset);
 	Common::MemoryReadStream stream(_code.data() + resOffset, _code.size() - resOffset);
 	for(uint16 i = 0; i < resCount; ++i) {
 		uint16 offset = stream.readUint16LE();
@@ -65,7 +65,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 
 		Common::String name(nameBegin, nameEnd - nameBegin);
 
-		debug("resource table 1[%04u]: 0x%04x %s", i, flags, name.c_str());
+		//debug("resource table 1[%04u]: 0x%04x %s", i, flags, name.c_str());
 		_stringTable[i] = StringEntry(name, flags);
 	}
 	_stringTableLoaded = true;
