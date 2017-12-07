@@ -101,6 +101,8 @@ private:
 	void loadAnimation();
 	void loadSample();
 	void setCounter();
+	void getRegionWidth();
+	void getRegionHeight();
 
 	void setSystemVariable();
 	void getIntegerSystemVariable();

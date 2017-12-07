@@ -23,6 +23,7 @@
 #include "agds/agds.h"
 #include "agds/object.h"
 #include "agds/process.h"
+#include "agds/region.h"
 #include "common/error.h"
 #include "common/ini-file.h"
 #include "common/file.h"
@@ -63,6 +64,14 @@ bool AGDSEngine::load() {
 	return true;
 }
 
+Region * AGDSEngine::loadRegion(const Common::String &name) {
+	debug("loading region %s", name.c_str());
+	Common::SeekableReadStream * stream = _data.getEntry(name);
+	if (!stream)
+		error("no database entry for %s\n", name.c_str());
+	return new Region(name, stream);
+}
+
 ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 	debug("loading object %s", name.c_str());
 	Common::SeekableReadStream * stream = _data.getEntry(name);
@@ -72,6 +81,8 @@ ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 	Object *object = i != _objects.end()? i->_value: NULL;
 	if (!object)
 		_objects.setVal(name, object = new Object(name, stream));
+
+	delete stream;
 
 	_processes.push_back(Process(this, object));
 
