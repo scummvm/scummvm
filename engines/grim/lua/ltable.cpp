@@ -53,7 +53,7 @@ static uintptr hashindex(TObject *ref) {
 		lua_error("unexpected type to index table");
 		h = 0;  // to avoid warnings
 	}
-	return (h >= 0 ? h : -(h + 1));
+	return h;
 }
 
 int32 present(Hash *t, TObject *key) {
