@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef XEEN_INTERFACE_MAP_H
-#define XEEN_INTERFACE_MAP_H
+#ifndef XEEN_INTERFACE_SCENE_H
+#define XEEN_INTERFACE_SCENE_H
 
 #include "common/scummsys.h"
 #include "xeen/map.h"
@@ -88,7 +88,7 @@ public:
 	int size() const { return 170; }
 };
 
-class InterfaceMap {
+class InterfaceScene {
 private:
 	XeenEngine *_vm;
 	int _combatFloatCounter;
@@ -130,9 +130,9 @@ public:
 	bool _openDoor;
 	bool _isAttacking;
 public:
-	InterfaceMap(XeenEngine *vm);
+	InterfaceScene(XeenEngine *vm);
 
-	virtual ~InterfaceMap() {}
+	virtual ~InterfaceScene() {}
 
 	/**
 	 * Set up draw structures for displaying on-screen monsters
@@ -172,4 +172,4 @@ public:
 
 } // End of namespace Xeen
 
-#endif /* XEEN_INTERFACE_MAP_H */
+#endif /* XEEN_INTERFACE_SCENE_H */

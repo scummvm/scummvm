@@ -25,8 +25,8 @@
 
 #include "common/scummsys.h"
 #include "xeen/dialogs.h"
-#include "xeen/interface_map.h"
 #include "xeen/interface_minimap.h"
+#include "xeen/interface_scene.h"
 #include "xeen/party.h"
 #include "xeen/window.h"
 
@@ -62,7 +62,7 @@ public:
 /**
  * Implements the main in-game interface
  */
-class Interface: public ButtonContainer, public InterfaceMap, 
+class Interface: public ButtonContainer, public InterfaceScene,
 		public InterfaceMinimap, public PartyDrawer {
 private:
 	XeenEngine *_vm;

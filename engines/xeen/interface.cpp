@@ -128,9 +128,10 @@ void PartyDrawer::unhighlightChar() {
 void PartyDrawer::resetHighlight() {
 	_hiliteChar = HILIGHT_CHAR_NONE;
 }
+
 /*------------------------------------------------------------------------*/
 
-Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceMap(vm),
+Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceScene(vm),
 		PartyDrawer(vm), _vm(vm) {
 	_buttonsLoaded = false;
 	_intrIndex1 = 0;

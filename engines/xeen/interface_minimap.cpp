@@ -121,7 +121,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	const Common::Point &pt = party._mazePosition;
 	int frame2 = _animFrame;
 	_animFrame = (_animFrame + 2) % 8;
-	party._wizardEyeActive = true;//***DEBUG****
+
 	// Draw default ground for all the valid explored areas
 	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
 			yp += TILE_HEIGHT, --mazeY) {

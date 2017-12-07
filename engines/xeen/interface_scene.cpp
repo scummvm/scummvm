@@ -20,7 +20,7 @@
  *
  */
 
-#include "xeen/interface.h"
+#include "xeen/interface_scene.h"
 #include "xeen/dialogs_error.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -365,7 +365,7 @@ IndoorDrawList::IndoorDrawList() :
 
 /*------------------------------------------------------------------------*/
 
-InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
+InterfaceScene::InterfaceScene(XeenEngine *vm): _vm(vm) {
 	Common::fill(&_wp[0], &_wp[20], 0);
 	Common::fill(&_wo[0], &_wo[308], 0);
 	_overallFrame = 0;
@@ -383,7 +383,7 @@ InterfaceMap::InterfaceMap(XeenEngine *vm): _vm(vm) {
 	_openDoor = false;
 }
 
-void InterfaceMap::drawMap() {
+void InterfaceScene::drawMap() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	Scripts &scripts = *_vm->_scripts;
@@ -689,7 +689,7 @@ void InterfaceMap::drawMap() {
 	animate3d();
 }
 
-void InterfaceMap::animate3d() {
+void InterfaceScene::animate3d() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	_overallFrame = (_overallFrame + 1) % 5;
@@ -797,7 +797,7 @@ void InterfaceMap::animate3d() {
 	}
 }
 
-void InterfaceMap::setMazeBits() {
+void InterfaceScene::setMazeBits() {
 	Common::fill(&_wo[0], &_wo[308], 0);
 
 	switch (_vm->_map->getCell(0) - 1) {
@@ -2302,7 +2302,7 @@ void InterfaceMap::setMazeBits() {
 	}
 }
 
-void InterfaceMap::setIndoorsMonsters() {
+void InterfaceScene::setIndoorsMonsters() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	Common::Point mazePos = _vm->_party->_mazePosition;
@@ -2611,7 +2611,7 @@ void InterfaceMap::setIndoorsMonsters() {
 	}
 }
 
-void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, SpriteResource *sprites,
+void InterfaceScene::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster, SpriteResource *sprites,
 		int frame, int defaultY) {
 	MonsterStruct &monsterData = *monster._monsterData;
 	bool flying = monsterData._flying;
@@ -2632,7 +2632,7 @@ void InterfaceMap::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster
 		drawStruct._flags = Res.MONSTER_EFFECT_FLAGS[monster._effect2][monster._effect3];
 }
 
-void InterfaceMap::setIndoorsObjects() {
+void InterfaceScene::setIndoorsObjects() {
 	Common::Point mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
 	Common::Point pt;
@@ -2857,7 +2857,7 @@ void InterfaceMap::setIndoorsObjects() {
 	}
 }
 
-void InterfaceMap::setIndoorsWallPics() {
+void InterfaceScene::setIndoorsWallPics() {
 	Map &map = *_vm->_map;
 	const Common::Point &mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
@@ -3083,7 +3083,7 @@ void InterfaceMap::setIndoorsWallPics() {
 	}
 }
 
-void InterfaceMap::setOutdoorsMonsters() {
+void InterfaceScene::setOutdoorsMonsters() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -3336,7 +3336,7 @@ void InterfaceMap::setOutdoorsMonsters() {
 	// TODO
 }
 
-void InterfaceMap::setOutdoorsObjects() {
+void InterfaceScene::setOutdoorsObjects() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	const Common::Point &pt = party._mazePosition;
@@ -3523,7 +3523,7 @@ void InterfaceMap::setOutdoorsObjects() {
 	}
 }
 
-void InterfaceMap::drawIndoors() {
+void InterfaceScene::drawIndoors() {
 	Map &map = *_vm->_map;
 	Windows &windows = *_vm->_windows;
 	int surfaceId;
@@ -4370,7 +4370,7 @@ void InterfaceMap::drawIndoors() {
 	_charsShooting = _isAttacking;
 }
 
-void InterfaceMap::drawOutdoors() {
+void InterfaceScene::drawOutdoors() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Windows &windows = *_vm->_windows;
