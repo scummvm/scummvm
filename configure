@@ -2565,7 +2565,6 @@ case $_host_os in
 		append_var CXXFLAGS "-fdata-sections"
 		append_var CXXFLAGS "-fno-strict-aliasing"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
-		append_var LDFLAGS "-specs=ds_arm9.specs"
 		append_var LDFLAGS "-mthumb-interwork"
 		append_var LDFLAGS "-mfloat-abi=soft"
 		append_var LDFLAGS "-Wl,-Map,map.txt"
@@ -2579,6 +2578,7 @@ case $_host_os in
 		append_var LDFLAGS "-L$DEVKITPRO/libnds/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/nds/lib"
 		append_var LDFLAGS "-L$DEVKITPRO/portlibs/armv5te/lib"
+		append_var LIBS "-specs=ds_arm9.specs"
 		append_var LIBS "-lnds9"
 		;;
 	freebsd*)
