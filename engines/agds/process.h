@@ -94,6 +94,7 @@ private:
 	void loadFont();
 	void removeScreenObject();
 	void changeScreenPatch();
+	void setScreenHeight();
 	void updateScreenHeightToDisplay();
 	void findObjectInMouseArea();
 	void loadPictureFromObject();
@@ -122,6 +123,7 @@ private:
 	void stub133();
 	void stub134();
 	void stub136();
+	void stub165();
 	void stub182();
 	void stub188();
 	void stub202(unsigned size);
@@ -129,18 +131,26 @@ private:
 	void stub206();
 	void exitProcessSetNextScreen();
 
-	void boolNot()
-	{ push(!pop()); }
-	void boolOr()
-	{ int arg2 = pop(); int arg1 = pop(); push(arg1 || arg2); }
-	void boolAnd()
-	{ int arg2 = pop(); int arg1 = pop(); push(arg1 && arg2); }
-	void bitNot()
-	{ push(~pop()); }
-	void equals()
-	{ push(pop() == pop()); }
-	void notEquals()
-	{ push(pop() != pop()); }
+#define UNARY_OP(NAME, OP) void NAME () { push( OP pop() ); }
+#define BINARY_OP(NAME, OP) void NAME () { int arg2 = pop(); int arg1 = pop(); push(arg1 OP arg2); }
+
+	UNARY_OP(boolNot, !)
+	UNARY_OP(bitNot, ~)
+	BINARY_OP(boolOr, ||)
+	BINARY_OP(boolAnd, &&)
+	BINARY_OP(equals, ==)
+	BINARY_OP(notEquals, !=)
+	BINARY_OP(greater, >)
+	BINARY_OP(greaterOrEquals, >=)
+	BINARY_OP(less, <)
+	BINARY_OP(lessOrEquals, <=)
+	BINARY_OP(add, +)
+	BINARY_OP(sub, +)
+	BINARY_OP(mul, *)
+	BINARY_OP(div, /)
+
+#undef UNARY_OP
+#undef BINARY_OP
 
 
 	void suspend(ProcessExitCode exitCode) {
