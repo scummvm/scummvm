@@ -1512,7 +1512,7 @@ linupy)
 maemo)
 	_host_os=maemo
 	_host_cpu=arm
-	_host_alias=arm-linux
+	_host_alias=arm-none-linux-gnueabi
 
 	# The prefix is always the same on Maemo so we hardcode the default
 	# here. It is still possible to define a custom prefix which is
