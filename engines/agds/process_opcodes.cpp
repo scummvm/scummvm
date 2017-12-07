@@ -23,6 +23,7 @@
 #include "agds/process.h"
 #include "agds/agds.h"
 #include "agds/opcode.h"
+#include "agds/region.h"
 #include "common/debug.h"
 
 namespace AGDS {
@@ -59,6 +60,24 @@ void Process::getIntegerSystemVariable() {
 	int value = 0;
 	debug("getIntegerSystemVariable: %s -> %d", name.c_str(), value);
 	push(value);
+}
+
+void Process::getRegionWidth() {
+	Common::String name = popString();
+	Region *reg = _engine->loadRegion(name);
+	int value = reg->width;
+	push(value);
+	delete reg;
+	debug("getRegionWidth %s -> %d", name.c_str(), value);
+}
+
+void Process::getRegionHeight() {
+	Common::String name = popString();
+	Region *reg = _engine->loadRegion(name);
+	int value = reg->width;
+	push(value);
+	delete reg;
+	debug("getRegionHeight %s -> %d", name.c_str(), value);
 }
 
 
@@ -358,6 +377,8 @@ ProcessExitCode Process::execute() {
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
 			OP		(kSetSystemVariable, setSystemVariable);
 			OP		(kSetIntegerVariable, setIntegerVariable);
+			OP		(kGetRegionWidth, getRegionWidth);
+			OP		(kGetRegionHeight, getRegionHeight);
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kExitScreen, exitScreen);

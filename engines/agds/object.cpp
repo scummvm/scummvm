@@ -39,7 +39,6 @@ Object::Object(const Common::String &name, Common::SeekableReadStream * stream) 
 	debug("object code size %u", codeSize);
 	_code.resize(codeSize);
 	stream->read(_code.data(), _code.size());
-	delete stream;
 }
 
 void Object::readStringTable(unsigned resOffset, uint16 resCount) {
