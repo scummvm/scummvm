@@ -265,6 +265,10 @@ struct Palette {
 #endif
 };
 
+struct PaletteMod {
+	int8 r, g, b;
+};
+
 struct PalSchedule {
 	byte from;
 	uint32 schedule;
