@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+ /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -74,10 +74,10 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 			yp += TILE_HEIGHT, --mazeY) {
 		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
 				xp += TILE_WIDTH, ++mazeX) {
-			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0);
 			frame = map.mazeDataCurrent()._surfaceTypes[v];
 
-			if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+			if (frame && (map._currentSteppedOn || party._wizardEyeActive)) {
 				map._tileSprites.draw(1, frame, Common::Point(xp, yp));
 			}
 		}
@@ -90,7 +90,7 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
 			frame = map.mazeData()._wallTypes[v];
 
-			if (frame != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
+			if (frame && (map._currentSteppedOn || party._wizardEyeActive)) {
 				map._tileSprites.draw(1, frame + 16, Common::Point(xp, yp));
 			}
 		}
@@ -100,10 +100,10 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 			yp += TILE_HEIGHT, --mazeY) {
 		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
 				xp += TILE_WIDTH, ++mazeX) {
-			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
+			frame = map.mazeLookup(Common::Point(mazeX, mazeY), 8, 0xff);
 
-			if (v != -1 && (map._currentSteppedOn || party._wizardEyeActive)) {
-				map._tileSprites.draw(1, v + 32, Common::Point(xp, yp));
+			if (frame && (map._currentSteppedOn || party._wizardEyeActive)) {
+				map._tileSprites.draw(1, frame + 32, Common::Point(xp, yp));
 			}
 		}
 	}

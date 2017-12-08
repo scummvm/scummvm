@@ -111,36 +111,36 @@ void MapDialog::execute() {
 
 void MapDialog::drawOutdoors() {
 	Map &map = *g_vm->_map;
-	int v;
+	int v, frame;
 
 	// Draw outdoors map
-	for (int yp = 38, yDiff = _pt.y + 7; yp < 166; --yDiff, yp += 8) {
-		for (int xp = 80, xDiff = _pt.x - 7; xp < 240; xp += 10, ++xDiff) {
-			v = map.mazeLookup(Common::Point(xDiff, yDiff), 0);
+	for (int yp = 38, mazeY = _pt.y + 7; yp < 166; --mazeY, yp += 8) {
+		for (int xp = 80, mazeX = _pt.x - 7; xp < 240; xp += 10, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0);
+			frame = map.mazeDataCurrent()._surfaceTypes[v];
 
 			if (map._currentSteppedOn) {
-				map._tileSprites.draw(0, map.mazeDataCurrent()._surfaceTypes[v],
-					Common::Point(xp, yp));
+				map._tileSprites.draw(0, frame, Common::Point(xp, yp));
 			}
 		}
 	}
 
-	for (int yp = 38, yDiff = _pt.y + 7; yp < 166; --yDiff, yp += 8) {
-		for (int xp = 80, xDiff = _pt.x - 7; xp < 240; xp += 10, ++xDiff) {
-			v = map.mazeLookup(Common::Point(xDiff, yDiff), 4);
-			int wallType = map.mazeDataCurrent()._wallTypes[v];
+	for (int yp = 38, mazeY = _pt.y + 7; yp < 166; --mazeY, yp += 8) {
+		for (int xp = 80, mazeX = _pt.x - 7; xp < 240; xp += 10, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
+			frame = map.mazeDataCurrent()._wallTypes[v];
 
-			if (wallType && map._currentSteppedOn)
-				map._tileSprites.draw(0, wallType, Common::Point(xp, yp));
+			if (frame && map._currentSteppedOn)
+				map._tileSprites.draw(0, frame + 16, Common::Point(xp, yp));
 		}
 	}
 
-	for (int yp = 38, yDiff = _pt.y + 7; yp < 166; yp += 8, --yDiff) {
-		for (int xp = 80, xDiff = -7; xp < 240; xp += 10, ++xDiff) {
-			v = map.mazeLookup(Common::Point(xDiff, yDiff), 8);
+	for (int yp = 38, mazeY = _pt.y + 7; yp < 166; yp += 8, --mazeY) {
+		for (int xp = 80, mazeX = _pt.x - 7; xp < 240; xp += 10, ++mazeX) {
+			frame = map.mazeLookup(Common::Point(mazeX, mazeY), 8, 0xff);
 
-			if (v && map._currentSteppedOn)
-				map._tileSprites.draw(0, 1, Common::Point(xp, yp));
+			if (frame && map._currentSteppedOn)
+				map._tileSprites.draw(0, frame + 32, Common::Point(xp, yp));
 		}
 	}
 }
@@ -156,9 +156,9 @@ void MapDialog::drawIndoors() {
 	frame2 = (frame2 + 2) % 8;
 
 	// Draw default ground for all the valid explored areas
-	for (int yp = 38, yDiff = _pt.y + 7; yp < 166; yp += 8, --yDiff) {
-		for (int xp = 80, xDiff = _pt.x - 7; xp < 240; xp += 10, ++xDiff) {
-			v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
+	for (int yp = 38, mazeY = _pt.y + 7; yp < 166; yp += 8, --mazeY) {
+		for (int xp = 80, mazeX = _pt.x - 7; xp < 240; xp += 10, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0, 0xffff);
 
 			if (v != INVALID_CELL && map._currentSteppedOn)
 				map._tileSprites.draw(0, 0, Common::Point(xp, yp));
@@ -166,8 +166,8 @@ void MapDialog::drawIndoors() {
 	}
 
 	// Draw thinner ground tiles on the left edge of the map
-	for (int yp = 43, yDiff = _pt.y + 7; yp < 171; yp += 8, --yDiff) {
-		v = map.mazeLookup(Common::Point(_pt.x - 8, yDiff), 0, 0xffff);
+	for (int yp = 43, mazeY = _pt.y + 7; yp < 171; yp += 8, --mazeY) {
+		v = map.mazeLookup(Common::Point(_pt.x - 8, mazeY), 0, 0xffff);
 
 		if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
 			map._tileSprites.draw(0, 36 + map.mazeData()._surfaceTypes[
@@ -181,8 +181,8 @@ void MapDialog::drawIndoors() {
 			map._currentSurfaceId], Common::Point(75, 35));
 
 	// Draw any thin tiles at the very top of the map
-	for (int xp = 85, xDiff = _pt.x - 7; xp < 245; xp += 10, ++xDiff) {
-		v = map.mazeLookup(Common::Point(xDiff, _pt.y + 8), 0, 0xffff);
+	for (int xp = 85, mazeX = _pt.x - 7; xp < 245; xp += 10, ++mazeX) {
+		v = map.mazeLookup(Common::Point(mazeX, _pt.y + 8), 0, 0xffff);
 
 		if (v != INVALID_CELL && map._currentSurfaceId != 0 && map._currentSteppedOn)
 			map._tileSprites.draw(0, 36 + map.mazeData()._surfaceTypes[
@@ -190,9 +190,9 @@ void MapDialog::drawIndoors() {
 	}
 
 	// Draw the default ground tiles
-	for (int yp = 43, yDiff = _pt.y + 7; yp < 171; yp += 8, --yDiff) {
-		for (int xp = 85, xDiff = _pt.x - 7; xp < 245; xp += 10, ++xDiff) {
-			v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
+	for (int yp = 43, mazeY = _pt.y + 7; yp < 171; yp += 8, --mazeY) {
+		for (int xp = 85, mazeX = _pt.x - 7; xp < 245; xp += 10, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0, 0xffff);
 
 			if (v != INVALID_CELL && map._currentSurfaceId && map._currentSteppedOn)
 				map._tileSprites.draw(0, 36 + map.mazeData()._surfaceTypes[
@@ -201,10 +201,10 @@ void MapDialog::drawIndoors() {
 	}
 
 	// Draw walls on left and top edges of map
-	for (int xp = 80, yp = 158, xDiff = _pt.x - 7, yDiff = _pt.y - 8; xp < 250;
-	xp += 10, yp -= 8, ++xDiff, ++yDiff) {
+	for (int xp = 80, yp = 158, mazeX = _pt.x - 7, mazeY = _pt.y - 8; xp < 250;
+	xp += 10, yp -= 8, ++mazeX, ++mazeY) {
 		// Draw walls on left edge of map
-		v = map.mazeLookup(Common::Point(_pt.x - 8, yDiff), 12);
+		v = map.mazeLookup(Common::Point(_pt.x - 8, mazeY), 12);
 
 		switch (v) {
 		case SURFTYPE_DIRT:
@@ -254,7 +254,7 @@ void MapDialog::drawIndoors() {
 			map._tileSprites.draw(0, frame, Common::Point(70, yp));
 
 		// Draw walls on top edge of map
-		v = map.mazeLookup(Common::Point(xDiff, _pt.y + 8), 0);
+		v = map.mazeLookup(Common::Point(mazeX, _pt.y + 8), 0);
 
 		switch (v) {
 		case SURFTYPE_DIRT:
@@ -308,15 +308,15 @@ void MapDialog::drawIndoors() {
 	}
 
 	// Draw the walls for the remaining cells of the minimap
-	for (int yCtr = 0, yp = 38, yDiff = _pt.y + 7; yCtr < 16; ++yCtr, yp += 8, --yDiff) {
-		for (int xCtr = 0, xp = 80, xDiff = _pt.x - 7; xCtr < 16; ++xCtr, xp += 10, ++xDiff) {
+	for (int yCtr = 0, yp = 38, mazeY = _pt.y + 7; yCtr < 16; ++yCtr, yp += 8, --mazeY) {
+		for (int xCtr = 0, xp = 80, mazeX = _pt.x - 7; xCtr < 16; ++xCtr, xp += 10, ++mazeX) {
 			// Draw the arrow if at the correct position
 			if ((_arrowPt.x / 10) == xCtr && (14 - (_arrowPt.y / 10)) == yCtr && _frameEndFlag) {
 				_globalSprites.draw(0, party._mazeDirection + 1,
 					Common::Point(_arrowPt.x + 81, _arrowPt.y + 29));
 			}
 
-			v = map.mazeLookup(Common::Point(xDiff, yDiff), 12);
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 12);
 			switch (v) {
 			case 1:
 				frame = 18;
@@ -367,7 +367,7 @@ void MapDialog::drawIndoors() {
 			if (frame != -1 && map._currentSteppedOn)
 				map._tileSprites.draw(0, frame, Common::Point(xp, yp));
 
-			v = map.mazeLookup(Common::Point(xDiff, yDiff), 0);
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0);
 			switch (v) {
 			case 1:
 				frame = 19;
@@ -421,9 +421,9 @@ void MapDialog::drawIndoors() {
 	}
 
 	// Draw overlay on cells that haven't been stepped on yet
-	for (int yDiff = _pt.y + 7, yp = 38; yp < 166; --yDiff, yp += 8) {
-		for (int xp = 80, xDiff = _pt.x - 7; xp < 240; xp += 10, ++xDiff) {
-			v = map.mazeLookup(Common::Point(xDiff, yDiff), 0, 0xffff);
+	for (int mazeY = _pt.y + 7, yp = 38; yp < 166; --mazeY, yp += 8) {
+		for (int xp = 80, mazeX = _pt.x - 7; xp < 240; xp += 10, ++mazeX) {
+			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0, 0xffff);
 
 			if (v == INVALID_CELL || !map._currentSteppedOn)
 				map._tileSprites.draw(0, 1, Common::Point(xp, yp));
