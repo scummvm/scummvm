@@ -1,0 +1,83 @@
+# SQ3 per-resource palette configuration
+# Copyright (C) 2006 Matt Hargett
+
+gameid = SQ3;
+
+# ego
+view(0,8,11,12,14,68,17,22..26,32,35, 751, 289, 288, 261, 260, 257, 213, 199, 193, 192, 138, 137, 134, 109, 110, 113, 114, 117, 122, 123,100, 99, 97, 95, 89, 88, 87, 85, 84, 82, 76, 68, 63, 104 ) *= 1.25 ;
+view(136) *= 1.15;
+view(106)(4,5,9) *= 1.25;
+view(105)(0,1) *= 1.25;
+# ego on garbage lifter -- lighten but not so as to make the lifter be obviously weird
+view(13)(0)(2) *= 1.15 ;
+view(31) *= 1.15;
+view(15)(3)(0) *= 1.25 ;
+view(16,19)(0) *= 1.25;
+view(57)(5..6) *= 1.25 ;
+view(21)(1) *= 1.25 ;
+# ego's shadow
+view(7,18) *= 0.5;
+view(6..8,18) *= 0.9;
+view(901) *= 1.25;
+view(751) *= 1.25;
+view(750)(1) *= 1.25;
+view(92)(4) *= 1.25;
+view(83)(0) *= 1.25;
+view(83)(1)(2) *=1.15;
+view(83)(2)(2) *=1.15;
+view(78)(3) *= 1.25;
+view(64)(2,3) *= 1.25;
+# ego's hands controlling robot
+pic(96) *= 1.15;
+# peeking at scumsoft
+pic(81,82) *= 1.15;
+#lifted by robot
+pic(430) *= 1.15;
+
+# computer controls
+view(40,41,42,149,146,141,151,152) *= 0.8;
+view(70,2) *= 0.9;
+pic(17,18,162..164,170,180,191,300) *= 0.75;
+
+# title screen
+view(900) *= 0.9;
+pic(1) *= 0.9 ;
+pic(926) *= 0.9;
+
+# humans(?)
+view(593,93,103,131..133,210,130,115) *= 1.2;
+pic(117) *=1.15;
+view(116)(1..2) *= 1.2;
+
+#ships, planets, and robots
+view(39) *= 0.9;
+view(1) *= 0.75;
+pic(205..209,112..115) *= 0.9;
+pic(60..72) *= 0.9;
+pic(153) *= 0.8;
+view(96) *= 0.9;
+pic(690) *= 0.9;
+view(77)(0..2) *= 0.7;
+view(259) *= 1.15;
+
+
+# in the garbage scow
+pic(1..20) *= 0.75 ;
+pic(157) *= 0.6;
+view(20)(0) *= 0.5;
+# rats
+view(15)(0,1) *= 0.6;
+view(34) *= 0.6;
+
+# guys from andromeda
+view(128) *= 0.9;
+view(601, 602) *= 0.9;
+
+# misc text bubbles, effects, etc
+view(94) *= 1.1;
+view(91, 73) *= 1.5;
+view(57)(3,4) *= 1.5;
+view(15)(4) *= 1.5;
+view(64)(0) *= 1.5;
+view(71)(8) *= 1.5;
+view(10)(6) *= 1.5;

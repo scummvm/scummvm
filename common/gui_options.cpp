@@ -85,6 +85,7 @@ const struct GameOpt {
 	{ GUIO_GAMEOPTIONS10, "gameOptionA" },
 	{ GUIO_GAMEOPTIONS11, "gameOptionB" },
 	{ GUIO_GAMEOPTIONS12, "gameOptionC" },
+	{ GUIO_GAMEOPTIONS13, "gameOptionD" },
 
 	{ GUIO_NONE, 0 }
 };

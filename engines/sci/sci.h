@@ -59,6 +59,7 @@ namespace Sci {
 #define GAMEOPTION_HQ_VIDEO                 GUIO_GAMEOPTIONS10
 #define GAMEOPTION_ENABLE_CENSORING         GUIO_GAMEOPTIONS11
 #define GAMEOPTION_RGB_RENDERING            GUIO_GAMEOPTIONS12
+#define GAMEOPTION_PALETTE_MODS             GUIO_GAMEOPTIONS13
 
 struct EngineState;
 class Vocabulary;

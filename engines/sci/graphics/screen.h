@@ -150,6 +150,11 @@ public:
 	void grabPalette(byte *buffer, uint start, uint num) const;
 	void setPalette(const byte *buffer, uint start, uint num, bool update = true);
 
+	byte getCurPaletteMapValue() const { return _curPaletteMapValue; }
+	void setCurPaletteMapValue(byte val) { _curPaletteMapValue = val; }
+	void setPaletteMods(const PaletteMod *mods, unsigned int count);
+	bool paletteModsEnabled() const { return _paletteModsEnabled; }
+
 private:
 	uint16 _width;
 	uint16 _height;
@@ -195,6 +200,12 @@ private:
 	// Screens for RGB mode support
 	byte *_displayedScreen;
 	byte *_rgbScreen;
+
+	// For RGB per-view/pic palette mods
+	byte *_paletteMapScreen;
+	byte _curPaletteMapValue;
+	PaletteMod _paletteMods[256];
+	bool _paletteModsEnabled;
 
 	byte *_backupScreen; // for bak* functions
 
@@ -244,6 +255,8 @@ public:
 
 		if (drawMask & GFX_SCREEN_MASK_VISUAL) {
 			_visualScreen[offset] = color;
+			if (_paletteMapScreen)
+				_paletteMapScreen[offset] = _curPaletteMapValue;
 
 			int displayOffset = 0;
 
@@ -317,6 +330,9 @@ public:
 		if (drawMask & GFX_SCREEN_MASK_VISUAL) {
 			_visualScreen[offset] = color;
 			_displayScreen[offset] = color;
+			if (_paletteMapScreen)
+				_paletteMapScreen[offset] = _curPaletteMapValue;
+
 		}
 		if (drawMask & GFX_SCREEN_MASK_PRIORITY) {
 			_priorityScreen[offset] = priority;

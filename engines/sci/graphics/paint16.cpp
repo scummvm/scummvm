@@ -39,6 +39,8 @@
 #include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
 
+#include "sci/graphics/scifx.h"
+
 namespace Sci {
 
 GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster16 *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
@@ -66,6 +68,9 @@ void GfxPaint16::debugSetEGAdrawingVisualize(bool state) {
 void GfxPaint16::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
 	GfxPicture *picture = new GfxPicture(_resMan, _coordAdjuster, _ports, _screen, _palette, pictureId, _EGAdrawingVisualize);
 
+	// Set up custom per-picture palette mod
+	doCustomPicPalette(_screen, pictureId);
+
 	// do we add to a picture? if not -> clear screen with white
 	if (!addToFlag)
 		clearScreen(_screen->getColorWhite());
@@ -77,6 +82,9 @@ void GfxPaint16::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mi
 	//  (SCI1.1 only)
 	if (getSciVersion() == SCI_VERSION_1_1)
 		_palette->drewPicture(pictureId);
+
+	// Reset custom per-picture palette mod
+	_screen->setCurPaletteMapValue(0);
 }
 
 // This one is the only one that updates screen!

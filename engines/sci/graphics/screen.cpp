@@ -34,6 +34,7 @@
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/scifx.h"
 
 namespace Sci {
 
@@ -49,6 +50,9 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	_height = 0;
 	_displayWidth = 0;
 	_displayHeight = 0;
+
+	_curPaletteMapValue = 0;
+	_paletteModsEnabled = false;
 
 	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able
 	// to provide that under DOS as well, but as gk1/floppy does support
@@ -175,6 +179,12 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		_colorDefaultVectorData = 0;
 	}
 
+	// Set up palette mods if requested
+	if (ConfMan.getBool("palette_mods")) {
+		setupCustomPaletteMods(this);
+		ConfMan.setBool("rgb_rendering", true);
+	}
+
 	// Initialize the actual screen
 	Graphics::PixelFormat format8 = Graphics::PixelFormat::createFormatCLUT8();
 	const Graphics::PixelFormat *format = &format8;
@@ -203,10 +213,16 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		_displayedScreen = (byte *)calloc(_displayPixels, 1);
 		_rgbScreen = (byte *)calloc(_format.bytesPerPixel*_displayPixels, 1);
 		_palette = new byte[3*256];
+
+		if (_paletteModsEnabled)
+			_paletteMapScreen = (byte *)calloc(_displayPixels, 1);
+		else
+			_paletteMapScreen = 0;
 	} else {
 		_displayedScreen = 0;
 		_palette = 0;
 		_rgbScreen = 0;
+		_paletteMapScreen = 0;
 	}
 	_backupScreen = 0;
 }
@@ -217,6 +233,7 @@ GfxScreen::~GfxScreen() {
 	free(_controlScreen);
 	free(_displayScreen);
 
+	free(_paletteMapScreen);
 	free(_displayedScreen);
 	free(_rgbScreen);
 	delete[] _palette;
@@ -235,29 +252,73 @@ void GfxScreen::convertToRGB(const Common::Rect &rect) {
 
 		if (_format.bytesPerPixel == 2) {
 
-			for (int x = 0; x < rect.width(); ++x) {
-				byte i = *in;
-				byte r = _palette[3*i + 0];
-				byte g = _palette[3*i + 1];
-				byte b = _palette[3*i + 2];
-				uint16 c = (uint16)_format.RGBToColor(r, g, b);
-				WRITE_UINT16(out, c);
-				in += 1;
-				out += 2;
+			if (_paletteMapScreen) {
+				const byte *mod = _paletteMapScreen + y * _displayWidth + rect.left;
+				for (int x = 0; x < rect.width(); ++x) {
+					byte i = *in;
+					byte r = _palette[3*i + 0];
+					byte g = _palette[3*i + 1];
+					byte b = _palette[3*i + 2];
+
+					if (*mod) {
+						r = MIN(r * (128 + _paletteMods[*mod].r) / 128, 255);
+						g = MIN(g * (128 + _paletteMods[*mod].g) / 128, 255);
+						b = MIN(b * (128 + _paletteMods[*mod].b) / 128, 255);
+					}
+
+					uint16 c = (uint16)_format.RGBToColor(r, g, b);
+					WRITE_UINT16(out, c);
+					in += 1;
+					out += 2;
+					mod += 1;
+				}
+			} else {
+				for (int x = 0; x < rect.width(); ++x) {
+					byte i = *in;
+					byte r = _palette[3*i + 0];
+					byte g = _palette[3*i + 1];
+					byte b = _palette[3*i + 2];
+					uint16 c = (uint16)_format.RGBToColor(r, g, b);
+					WRITE_UINT16(out, c);
+					in += 1;
+					out += 2;
+				}
 			}
 
 		} else {
 			assert(_format.bytesPerPixel == 4);
 
-			for (int x = 0; x < rect.width(); ++x) {
-				byte i = *in;
-				byte r = _palette[3*i + 0];
-				byte g = _palette[3*i + 1];
-				byte b = _palette[3*i + 2];
-				uint32 c = _format.RGBToColor(r, g, b);
-				WRITE_UINT32(out, c);
-				in += 1;
-				out += 4;
+			if (_paletteMapScreen) {
+				const byte *mod = _paletteMapScreen + y * _displayWidth + rect.left;
+				for (int x = 0; x < rect.width(); ++x) {
+					byte i = *in;
+					byte r = _palette[3*i + 0];
+					byte g = _palette[3*i + 1];
+					byte b = _palette[3*i + 2];
+
+					if (*mod) {
+						r = MIN(r * (128 + _paletteMods[*mod].r) / 128, 255);
+						g = MIN(g * (128 + _paletteMods[*mod].g) / 128, 255);
+						b = MIN(b * (128 + _paletteMods[*mod].b) / 128, 255);
+					}
+
+					uint32 c = _format.RGBToColor(r, g, b);
+					WRITE_UINT32(out, c);
+					in += 1;
+					out += 4;
+					mod += 1;
+				}
+			} else {
+				for (int x = 0; x < rect.width(); ++x) {
+					byte i = *in;
+					byte r = _palette[3*i + 0];
+					byte g = _palette[3*i + 1];
+					byte b = _palette[3*i + 2];
+					uint32 c = _format.RGBToColor(r, g, b);
+					WRITE_UINT32(out, c);
+					in += 1;
+					out += 4;
+				}
 			}
 		}
 	}
@@ -309,6 +370,8 @@ void GfxScreen::clearForRestoreGame() {
 	if (_displayedScreen) {
 		memset(_displayedScreen, 0, _displayPixels);
 		memset(_rgbScreen, 0, _format.bytesPerPixel*_displayPixels);
+		if (_paletteMapScreen)
+			memset(_paletteMapScreen, 0, _displayPixels);
 	}
 	memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
 	_fontIsUpscaled = false;
@@ -579,10 +642,14 @@ int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 		byteCount += pixels; // _visualScreen
 		if (!_upscaledHires) {
 			byteCount += pixels; // _displayScreen
+			if (_paletteMapScreen)
+				byteCount += pixels; // _paletteMapScreen
 		} else {
 			int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
 			int rectWidth = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
 			byteCount += rectHeight * rectWidth; // _displayScreen (upscaled hires)
+			if (_paletteMapScreen)
+				byteCount += rectHeight * rectWidth; // _paletteMapScreen (upscaled hires)
 		}
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
@@ -595,6 +662,8 @@ int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 		if (!_upscaledHires)
 			error("bitsGetDataSize() called w/o being in upscaled hires mode");
 		byteCount += pixels; // _displayScreen (coordinates actually are given to us for hires displayScreen)
+		if (_paletteMapScreen)
+			byteCount += pixels; // _paletteMapScreen
 	}
 	return byteCount;
 }
@@ -606,6 +675,8 @@ void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
 		bitsSaveScreen(rect, _visualScreen, _width, memoryPtr);
 		bitsSaveDisplayScreen(rect, _displayScreen, memoryPtr);
+		if (_paletteMapScreen)
+			bitsSaveDisplayScreen(rect, _paletteMapScreen, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
 		bitsSaveScreen(rect, _priorityScreen, _width, memoryPtr);
@@ -617,6 +688,8 @@ void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 		if (!_upscaledHires)
 			error("bitsSave() called w/o being in upscaled hires mode");
 		bitsSaveScreen(rect, _displayScreen, _displayWidth, memoryPtr);
+		if (_paletteMapScreen)
+			bitsSaveScreen(rect, _paletteMapScreen, _displayWidth, memoryPtr);
 	}
 }
 
@@ -666,6 +739,8 @@ void GfxScreen::bitsRestore(const byte *memoryPtr) {
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
 		bitsRestoreScreen(rect, memoryPtr, _visualScreen, _width);
 		bitsRestoreDisplayScreen(rect, memoryPtr, _displayScreen);
+		if (_paletteMapScreen)
+			bitsRestoreDisplayScreen(rect, memoryPtr, _paletteMapScreen);
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
 		bitsRestoreScreen(rect, memoryPtr, _priorityScreen, _width);
@@ -677,6 +752,9 @@ void GfxScreen::bitsRestore(const byte *memoryPtr) {
 		if (!_upscaledHires)
 			error("bitsRestore() called w/o being in upscaled hires mode");
 		bitsRestoreScreen(rect, memoryPtr, _displayScreen, _displayWidth);
+		if (_paletteMapScreen)
+			bitsRestoreScreen(rect, memoryPtr, _paletteMapScreen, _displayWidth);
+
 		// WORKAROUND - we are not sure what sierra is doing. If we don't do this here, portraits won't get fully removed
 		//  from screen. Some lowres showBits() call is used for that and it's not covering the whole area
 		//  We would need to find out inside the kq6 windows interpreter, but this here works already and seems not to have
@@ -745,6 +823,7 @@ void GfxScreen::dither(bool addToFlag) {
 	byte color, ditheredColor;
 	byte *visualPtr = _visualScreen;
 	byte *displayPtr = _displayScreen;
+	byte *paletteMapPtr = _paletteMapScreen;
 
 	if (!_unditheringEnabled) {
 		// Do dithering on visual and display-screen
@@ -758,6 +837,8 @@ void GfxScreen::dither(bool addToFlag) {
 					case GFX_SCREEN_UPSCALED_DISABLED:
 					case GFX_SCREEN_UPSCALED_480x300:
 						*displayPtr = color;
+						if (_paletteMapScreen)
+							*paletteMapPtr = _curPaletteMapValue;
 						break;
 					default:
 						putScaledPixelOnDisplay(x, y, color);
@@ -765,7 +846,7 @@ void GfxScreen::dither(bool addToFlag) {
 					}
 					*visualPtr = color;
 				}
-				visualPtr++; displayPtr++;
+				visualPtr++; displayPtr++; paletteMapPtr++;
 			}
 		}
 	} else {
@@ -790,6 +871,8 @@ void GfxScreen::dither(bool addToFlag) {
 					case GFX_SCREEN_UPSCALED_DISABLED:
 					case GFX_SCREEN_UPSCALED_480x300:
 						*displayPtr = ditheredColor;
+						if (_paletteMapScreen)
+							*paletteMapPtr = _curPaletteMapValue;
 						break;
 					default:
 						putScaledPixelOnDisplay(x, y, ditheredColor);
@@ -798,7 +881,7 @@ void GfxScreen::dither(bool addToFlag) {
 					color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
 					*visualPtr = color;
 				}
-				visualPtr++; displayPtr++;
+				visualPtr++; displayPtr++; paletteMapPtr++;
 			}
 		}
 	}
@@ -985,7 +1068,13 @@ void GfxScreen::bakCopyRectToScreen(const Common::Rect &rect, int16 x, int16 y) 
 	g_system->copyRectToScreen(ptr, _format.bytesPerPixel * _displayWidth, x, y, rect.width(), rect.height());
 }
 
+void GfxScreen::setPaletteMods(const PaletteMod *mods, unsigned int count) {
+	assert(count < 256);
+	for (unsigned int i = 0; i < count; ++i)
+		_paletteMods[i] = mods[i];
 
+	_paletteModsEnabled = true;
+}
 
 
 

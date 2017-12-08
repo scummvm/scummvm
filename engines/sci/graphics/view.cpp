@@ -28,6 +28,9 @@
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
 
+
+#include "sci/graphics/scifx.h"
+
 namespace Sci {
 
 GfxView::GfxView(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId)
@@ -796,6 +799,10 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 
 	const byte *bitmapData = bitmap.getUnsafeDataAt((clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left), celWidth * (height - 1) + width);
 
+	// Set up custom per-view palette mod
+	byte oldpalvalue = _screen->getCurPaletteMapValue();
+	doCustomViewPalette(_screen, _resourceId, loopNo, celNo);
+
 	if (_EGAmapping) {
 		const SciSpan<const byte> EGAmapping = _EGAmapping.subspan(EGAmappingNr * SCI_VIEW_EGAMAPPING_SIZE, SCI_VIEW_EGAMAPPING_SIZE);
 		for (int y = 0; y < height; y++, bitmapData += celWidth) {
@@ -836,6 +843,9 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 			}
 		}
 	}
+
+	// Reset custom per-view palette mod
+	_screen->setCurPaletteMapValue(oldpalvalue);
 }
 
 /**
