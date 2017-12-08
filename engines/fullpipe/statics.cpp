@@ -1579,17 +1579,12 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 	int dynCount = file.readUint16LE();
 
-	debugC(6, kDebugXML, "%% <MOVEMENT id=%d name=\"%s\" x=%d y=%d priority=%d f8=%d>",
-		_id, transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
-
 	if (dynCount != 0xffff || _id == MV_MAN_TURN_LU) {
 		_framePosOffsets.resize(dynCount + 2);
 
 		for (int i = 0; i < dynCount; i++) {
 			DynamicPhase *ph = new DynamicPhase();
 			ph->load(file);
-
-			debugC(6, kDebugXML, "%% <PHASE %s />", ph->toXML().c_str());
 
 			_dynamicPhases.push_back(ph);
 
@@ -1609,12 +1604,12 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 		_mx = file.readSint32LE();
 		_my = file.readSint32LE();
 
-		staticsid = file.readUint16LE();
+		int staticsid2 = file.readUint16LE();
 
-		_staticsObj2 = ani->getStaticsById(staticsid);
+		_staticsObj2 = ani->getStaticsById(staticsid2);
 
-		if (!_staticsObj2 && (staticsid & 0x4000)) {
-			Statics *s = ani->getStaticsById(staticsid ^ 0x4000);
+		if (!_staticsObj2 && (staticsid2 & 0x4000)) {
+			Statics *s = ani->getStaticsById(staticsid2 ^ 0x4000);
 			_staticsObj2 = ani->addReverseStatics(s);
 		}
 
@@ -1627,6 +1622,14 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 			_framePosOffsets[_dynamicPhases.size() - 1].x = _m2x;
 			_framePosOffsets[_dynamicPhases.size() - 1].y = _m2y;
 		}
+
+		debugC(6, kDebugXML, "%% <MOVEMENT id=%d name=\"%s\" x=%d y=%d priority=%d f8=%d staticsId=%d mX=%d my=%d staticsId2=%d m2x=%d m2y=%d>",
+			_id, transCyrillic(_objectName), _ox, _oy, _priority, _field_8, staticsid, _mx, _my, staticsid2, _m2x, _m2y);
+
+		for (int i = 0; i < dynCount; i++)
+			debugC(6, kDebugXML, "%% <PHASE %s />", _dynamicPhases[i]->toXML().c_str());
+
+		debugC(6, kDebugXML, "%% </MOVEMENT>");
 
 	} else {
 		int movid = file.readUint16LE();
@@ -1653,8 +1656,6 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 	_counter = 0;
 	updateCurrDynamicPhase();
-
-	debugC(6, kDebugXML, "%% </MOVEMENT>");
 
 	return true;
 }
