@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="toon"
+	ProjectGUID="{AFBA47B3-E0B6-4CF8-8E7E-986C0E2A75F2}"
+	RootNamespace="toon"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\toon\anim.cpp" />
+		<File RelativePath="..\..\engines\toon\anim.h" />
+		<File RelativePath="..\..\engines\toon\audio.cpp" />
+		<File RelativePath="..\..\engines\toon\audio.h" />
+		<File RelativePath="..\..\engines\toon\character.cpp" />
+		<File RelativePath="..\..\engines\toon\character.h" />
+		<File RelativePath="..\..\engines\toon\console.cpp" />
+		<File RelativePath="..\..\engines\toon\console.h" />
+		<File RelativePath="..\..\engines\toon\conversation.cpp" />
+		<File RelativePath="..\..\engines\toon\conversation.h" />
+		<File RelativePath="..\..\engines\toon\detection.cpp" />
+		<File RelativePath="..\..\engines\toon\drew.cpp" />
+		<File RelativePath="..\..\engines\toon\drew.h" />
+		<File RelativePath="..\..\engines\toon\flux.cpp" />
+		<File RelativePath="..\..\engines\toon\flux.h" />
+		<File RelativePath="..\..\engines\toon\font.cpp" />
+		<File RelativePath="..\..\engines\toon\font.h" />
+		<File RelativePath="..\..\engines\toon\hotspot.cpp" />
+		<File RelativePath="..\..\engines\toon\hotspot.h" />
+		<File RelativePath="..\..\engines\toon\module.mk" />
+		<File RelativePath="..\..\engines\toon\movie.cpp" />
+		<File RelativePath="..\..\engines\toon\movie.h" />
+		<File RelativePath="..\..\engines\toon\path.cpp" />
+		<File RelativePath="..\..\engines\toon\path.h" />
+		<File RelativePath="..\..\engines\toon\picture.cpp" />
+		<File RelativePath="..\..\engines\toon\picture.h" />
+		<File RelativePath="..\..\engines\toon\resource.cpp" />
+		<File RelativePath="..\..\engines\toon\resource.h" />
+		<File RelativePath="..\..\engines\toon\script.cpp" />
+		<File RelativePath="..\..\engines\toon\script.h" />
+		<File RelativePath="..\..\engines\toon\script_func.cpp" />
+		<File RelativePath="..\..\engines\toon\script_func.h" />
+		<File RelativePath="..\..\engines\toon\state.cpp" />
+		<File RelativePath="..\..\engines\toon\state.h" />
+		<File RelativePath="..\..\engines\toon\text.cpp" />
+		<File RelativePath="..\..\engines\toon\text.h" />
+		<File RelativePath="..\..\engines\toon\tools.cpp" />
+		<File RelativePath="..\..\engines\toon\tools.h" />
+		<File RelativePath="..\..\engines\toon\toon.cpp" />
+		<File RelativePath="..\..\engines\toon\toon.h" />
+	</Files>
+</VisualStudioProject>

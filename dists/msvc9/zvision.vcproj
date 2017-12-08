@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="zvision"
+	ProjectGUID="{D23A5F1E-DA91-42FC-AD6F-FB78A214CDAA}"
+	RootNamespace="zvision"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="core">
+			<File RelativePath="..\..\engines\zvision\core\clock.cpp" />
+			<File RelativePath="..\..\engines\zvision\core\clock.h" />
+			<File RelativePath="..\..\engines\zvision\core\console.cpp" />
+			<File RelativePath="..\..\engines\zvision\core\console.h" />
+			<File RelativePath="..\..\engines\zvision\core\events.cpp" />
+		</Filter>
+		<Filter	Name="file">
+			<File RelativePath="..\..\engines\zvision\file\lzss_read_stream.cpp" />
+			<File RelativePath="..\..\engines\zvision\file\lzss_read_stream.h" />
+			<File RelativePath="..\..\engines\zvision\file\save_manager.cpp" />
+			<File RelativePath="..\..\engines\zvision\file\save_manager.h" />
+			<File RelativePath="..\..\engines\zvision\file\search_manager.cpp" />
+			<File RelativePath="..\..\engines\zvision\file\search_manager.h" />
+			<File RelativePath="..\..\engines\zvision\file\zfs_archive.cpp" />
+			<File RelativePath="..\..\engines\zvision\file\zfs_archive.h" />
+		</Filter>
+		<Filter	Name="graphics">
+			<Filter	Name="cursors">
+				<File RelativePath="..\..\engines\zvision\graphics\cursors\cursor.cpp" />
+				<File RelativePath="..\..\engines\zvision\graphics\cursors\cursor.h" />
+				<File RelativePath="..\..\engines\zvision\graphics\cursors\cursor_manager.cpp" />
+				<File RelativePath="..\..\engines\zvision\graphics\cursors\cursor_manager.h" />
+			</Filter>
+			<Filter	Name="effects">
+				<File RelativePath="..\..\engines\zvision\graphics\effects\fog.cpp" />
+				<File RelativePath="..\..\engines\zvision\graphics\effects\fog.h" />
+				<File RelativePath="..\..\engines\zvision\graphics\effects\light.cpp" />
+				<File RelativePath="..\..\engines\zvision\graphics\effects\light.h" />
+				<File RelativePath="..\..\engines\zvision\graphics\effects\wave.cpp" />
+				<File RelativePath="..\..\engines\zvision\graphics\effects\wave.h" />
+			</Filter>
+			<File RelativePath="..\..\engines\zvision\graphics\graphics_effect.h" />
+			<File RelativePath="..\..\engines\zvision\graphics\render_manager.cpp" />
+			<File RelativePath="..\..\engines\zvision\graphics\render_manager.h" />
+			<File RelativePath="..\..\engines\zvision\graphics\render_table.cpp" />
+			<File RelativePath="..\..\engines\zvision\graphics\render_table.h" />
+		</Filter>
+		<Filter	Name="scripting">
+			<Filter	Name="controls">
+				<File RelativePath="..\..\engines\zvision\scripting\controls\fist_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\fist_control.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\hotmov_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\hotmov_control.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\input_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\input_control.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\lever_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\lever_control.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\paint_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\paint_control.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\push_toggle_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\push_toggle_control.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\safe_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\safe_control.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\save_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\save_control.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\slot_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\slot_control.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\titler_control.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\controls\titler_control.h" />
+			</Filter>
+			<Filter	Name="effects">
+				<File RelativePath="..\..\engines\zvision\scripting\effects\animation_effect.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\animation_effect.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\distort_effect.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\distort_effect.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\music_effect.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\music_effect.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\region_effect.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\region_effect.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\syncsound_effect.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\syncsound_effect.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\timer_effect.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\timer_effect.h" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\ttytext_effect.cpp" />
+				<File RelativePath="..\..\engines\zvision\scripting\effects\ttytext_effect.h" />
+			</Filter>
+			<File RelativePath="..\..\engines\zvision\scripting\actions.cpp" />
+			<File RelativePath="..\..\engines\zvision\scripting\actions.h" />
+			<File RelativePath="..\..\engines\zvision\scripting\control.cpp" />
+			<File RelativePath="..\..\engines\zvision\scripting\control.h" />
+			<File RelativePath="..\..\engines\zvision\scripting\inventory.cpp" />
+			<File RelativePath="..\..\engines\zvision\scripting\menu.cpp" />
+			<File RelativePath="..\..\engines\zvision\scripting\menu.h" />
+			<File RelativePath="..\..\engines\zvision\scripting\puzzle.h" />
+			<File RelativePath="..\..\engines\zvision\scripting\scr_file_handling.cpp" />
+			<File RelativePath="..\..\engines\zvision\scripting\script_manager.cpp" />
+			<File RelativePath="..\..\engines\zvision\scripting\script_manager.h" />
+			<File RelativePath="..\..\engines\zvision\scripting\scripting_effect.h" />
+		</Filter>
+		<Filter	Name="sound">
+			<File RelativePath="..\..\engines\zvision\sound\midi.cpp" />
+			<File RelativePath="..\..\engines\zvision\sound\midi.h" />
+			<File RelativePath="..\..\engines\zvision\sound\zork_raw.cpp" />
+			<File RelativePath="..\..\engines\zvision\sound\zork_raw.h" />
+		</Filter>
+		<Filter	Name="text">
+			<File RelativePath="..\..\engines\zvision\text\string_manager.cpp" />
+			<File RelativePath="..\..\engines\zvision\text\string_manager.h" />
+			<File RelativePath="..\..\engines\zvision\text\subtitles.cpp" />
+			<File RelativePath="..\..\engines\zvision\text\subtitles.h" />
+			<File RelativePath="..\..\engines\zvision\text\text.cpp" />
+			<File RelativePath="..\..\engines\zvision\text\text.h" />
+			<File RelativePath="..\..\engines\zvision\text\truetype_font.cpp" />
+			<File RelativePath="..\..\engines\zvision\text\truetype_font.h" />
+		</Filter>
+		<Filter	Name="video">
+			<File RelativePath="..\..\engines\zvision\video\rlf_decoder.cpp" />
+			<File RelativePath="..\..\engines\zvision\video\rlf_decoder.h" />
+			<File RelativePath="..\..\engines\zvision\video\video.cpp" />
+			<File RelativePath="..\..\engines\zvision\video\zork_avi_decoder.cpp" />
+			<File RelativePath="..\..\engines\zvision\video\zork_avi_decoder.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\zvision\detection.cpp" />
+		<File RelativePath="..\..\engines\zvision\detection_tables.h" />
+		<File RelativePath="..\..\engines\zvision\module.mk" />
+		<File RelativePath="..\..\engines\zvision\zvision.cpp" />
+		<File RelativePath="..\..\engines\zvision\zvision.h" />
+	</Files>
+</VisualStudioProject>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="toltecs"
+	ProjectGUID="{5BBD51A2-93A1-4F44-854F-678449339E07}"
+	RootNamespace="toltecs"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\toltecs\animation.cpp" />
+		<File RelativePath="..\..\engines\toltecs\animation.h" />
+		<File RelativePath="..\..\engines\toltecs\console.cpp" />
+		<File RelativePath="..\..\engines\toltecs\console.h" />
+		<File RelativePath="..\..\engines\toltecs\detection.cpp" />
+		<File RelativePath="..\..\engines\toltecs\menu.cpp" />
+		<File RelativePath="..\..\engines\toltecs\menu.h" />
+		<File RelativePath="..\..\engines\toltecs\microtiles.cpp" />
+		<File RelativePath="..\..\engines\toltecs\microtiles.h" />
+		<File RelativePath="..\..\engines\toltecs\module.mk" />
+		<File RelativePath="..\..\engines\toltecs\movie.cpp" />
+		<File RelativePath="..\..\engines\toltecs\movie.h" />
+		<File RelativePath="..\..\engines\toltecs\music.cpp" />
+		<File RelativePath="..\..\engines\toltecs\music.h" />
+		<File RelativePath="..\..\engines\toltecs\palette.cpp" />
+		<File RelativePath="..\..\engines\toltecs\palette.h" />
+		<File RelativePath="..\..\engines\toltecs\render.cpp" />
+		<File RelativePath="..\..\engines\toltecs\render.h" />
+		<File RelativePath="..\..\engines\toltecs\resource.cpp" />
+		<File RelativePath="..\..\engines\toltecs\resource.h" />
+		<File RelativePath="..\..\engines\toltecs\saveload.cpp" />
+		<File RelativePath="..\..\engines\toltecs\screen.cpp" />
+		<File RelativePath="..\..\engines\toltecs\screen.h" />
+		<File RelativePath="..\..\engines\toltecs\script.cpp" />
+		<File RelativePath="..\..\engines\toltecs\script.h" />
+		<File RelativePath="..\..\engines\toltecs\segmap.cpp" />
+		<File RelativePath="..\..\engines\toltecs\segmap.h" />
+		<File RelativePath="..\..\engines\toltecs\sound.cpp" />
+		<File RelativePath="..\..\engines\toltecs\sound.h" />
+		<File RelativePath="..\..\engines\toltecs\sprite.cpp" />
+		<File RelativePath="..\..\engines\toltecs\toltecs.cpp" />
+		<File RelativePath="..\..\engines\toltecs\toltecs.h" />
+	</Files>
+</VisualStudioProject>

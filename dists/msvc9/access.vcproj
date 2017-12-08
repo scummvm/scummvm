@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="access"
+	ProjectGUID="{36FEA96A-90A1-4F81-ABEB-D04681ADA16E}"
+	RootNamespace="access"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="amazon">
+			<File RelativePath="..\..\engines\access\amazon\amazon_game.cpp" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_game.h" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_logic.cpp" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_logic.h" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_player.cpp" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_player.h" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_resources.cpp" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_resources.h" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_room.cpp" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_room.h" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_scripts.cpp" />
+			<File RelativePath="..\..\engines\access\amazon\amazon_scripts.h" />
+		</Filter>
+		<Filter	Name="martian">
+			<File RelativePath="..\..\engines\access\martian\martian_game.cpp" />
+			<File RelativePath="..\..\engines\access\martian\martian_game.h" />
+			<File RelativePath="..\..\engines\access\martian\martian_player.cpp" />
+			<File RelativePath="..\..\engines\access\martian\martian_player.h" />
+			<File RelativePath="..\..\engines\access\martian\martian_resources.cpp" />
+			<File RelativePath="..\..\engines\access\martian\martian_resources.h" />
+			<File RelativePath="..\..\engines\access\martian\martian_room.cpp" />
+			<File RelativePath="..\..\engines\access\martian\martian_room.h" />
+			<File RelativePath="..\..\engines\access\martian\martian_scripts.cpp" />
+			<File RelativePath="..\..\engines\access\martian\martian_scripts.h" />
+		</Filter>
+		<Filter	Name="video">
+			<File RelativePath="..\..\engines\access\video\movie_decoder.cpp" />
+			<File RelativePath="..\..\engines\access\video\movie_decoder.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\access\access.cpp" />
+		<File RelativePath="..\..\engines\access\access.h" />
+		<File RelativePath="..\..\engines\access\animation.cpp" />
+		<File RelativePath="..\..\engines\access\animation.h" />
+		<File RelativePath="..\..\engines\access\asurface.cpp" />
+		<File RelativePath="..\..\engines\access\asurface.h" />
+		<File RelativePath="..\..\engines\access\bubble_box.cpp" />
+		<File RelativePath="..\..\engines\access\bubble_box.h" />
+		<File RelativePath="..\..\engines\access\char.cpp" />
+		<File RelativePath="..\..\engines\access\char.h" />
+		<File RelativePath="..\..\engines\access\data.cpp" />
+		<File RelativePath="..\..\engines\access\data.h" />
+		<File RelativePath="..\..\engines\access\debugger.cpp" />
+		<File RelativePath="..\..\engines\access\debugger.h" />
+		<File RelativePath="..\..\engines\access\decompress.cpp" />
+		<File RelativePath="..\..\engines\access\decompress.h" />
+		<File RelativePath="..\..\engines\access\detection.cpp" />
+		<File RelativePath="..\..\engines\access\detection_tables.h" />
+		<File RelativePath="..\..\engines\access\events.cpp" />
+		<File RelativePath="..\..\engines\access\events.h" />
+		<File RelativePath="..\..\engines\access\files.cpp" />
+		<File RelativePath="..\..\engines\access\files.h" />
+		<File RelativePath="..\..\engines\access\font.cpp" />
+		<File RelativePath="..\..\engines\access\font.h" />
+		<File RelativePath="..\..\engines\access\inventory.cpp" />
+		<File RelativePath="..\..\engines\access\inventory.h" />
+		<File RelativePath="..\..\engines\access\module.mk" />
+		<File RelativePath="..\..\engines\access\player.cpp" />
+		<File RelativePath="..\..\engines\access\player.h" />
+		<File RelativePath="..\..\engines\access\resources.cpp" />
+		<File RelativePath="..\..\engines\access\resources.h" />
+		<File RelativePath="..\..\engines\access\room.cpp" />
+		<File RelativePath="..\..\engines\access\room.h" />
+		<File RelativePath="..\..\engines\access\screen.cpp" />
+		<File RelativePath="..\..\engines\access\screen.h" />
+		<File RelativePath="..\..\engines\access\scripts.cpp" />
+		<File RelativePath="..\..\engines\access\scripts.h" />
+		<File RelativePath="..\..\engines\access\sound.cpp" />
+		<File RelativePath="..\..\engines\access\sound.h" />
+		<File RelativePath="..\..\engines\access\video.cpp" />
+		<File RelativePath="..\..\engines\access\video.h" />
+	</Files>
+</VisualStudioProject>

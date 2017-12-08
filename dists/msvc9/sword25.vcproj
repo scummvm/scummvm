@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="sword25"
+	ProjectGUID="{0C19EC67-A9CA-4877-A254-66BB3C385F96}"
+	RootNamespace="sword25"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="fmv">
+			<File RelativePath="..\..\engines\sword25\fmv\movieplayer.cpp" />
+			<File RelativePath="..\..\engines\sword25\fmv\movieplayer.h" />
+			<File RelativePath="..\..\engines\sword25\fmv\movieplayer_script.cpp" />
+		</Filter>
+		<Filter	Name="gfx">
+			<Filter	Name="image">
+				<File RelativePath="..\..\engines\sword25\gfx\image\art.cpp" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\art.h" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\image.h" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\imgloader.cpp" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\imgloader.h" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\renderedimage.cpp" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\renderedimage.h" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\swimage.cpp" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\swimage.h" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\vectorimage.cpp" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\vectorimage.h" />
+				<File RelativePath="..\..\engines\sword25\gfx\image\vectorimagerenderer.cpp" />
+			</Filter>
+			<File RelativePath="..\..\engines\sword25\gfx\animation.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\animation.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\animationdescription.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\animationdescription.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\animationresource.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\animationresource.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\animationtemplate.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\animationtemplate.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\animationtemplateregistry.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\animationtemplateregistry.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\bitmap.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\bitmap.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\bitmapresource.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\dynamicbitmap.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\dynamicbitmap.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\fontresource.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\fontresource.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\graphicengine.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\graphicengine.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\graphicengine_script.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\microtiles.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\microtiles.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\panel.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\panel.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\renderobject.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\renderobject.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\renderobjectmanager.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\renderobjectmanager.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\renderobjectptr.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\renderobjectregistry.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\rootrenderobject.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\screenshot.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\screenshot.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\staticbitmap.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\staticbitmap.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\text.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\text.h" />
+			<File RelativePath="..\..\engines\sword25\gfx\timedrenderobject.cpp" />
+			<File RelativePath="..\..\engines\sword25\gfx\timedrenderobject.h" />
+		</Filter>
+		<Filter	Name="input">
+			<File RelativePath="..\..\engines\sword25\input\inputengine.cpp" />
+			<File RelativePath="..\..\engines\sword25\input\inputengine.h" />
+			<File RelativePath="..\..\engines\sword25\input\inputengine_script.cpp" />
+		</Filter>
+		<Filter	Name="kernel">
+			<File RelativePath="..\..\engines\sword25\kernel\common.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\filesystemutil.cpp" />
+			<File RelativePath="..\..\engines\sword25\kernel\filesystemutil.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\inputpersistenceblock.cpp" />
+			<File RelativePath="..\..\engines\sword25\kernel\inputpersistenceblock.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\kernel.cpp" />
+			<File RelativePath="..\..\engines\sword25\kernel\kernel.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\kernel_script.cpp" />
+			<File RelativePath="..\..\engines\sword25\kernel\objectregistry.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\outputpersistenceblock.cpp" />
+			<File RelativePath="..\..\engines\sword25\kernel\outputpersistenceblock.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\persistable.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\persistenceblock.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\persistenceservice.cpp" />
+			<File RelativePath="..\..\engines\sword25\kernel\persistenceservice.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\resmanager.cpp" />
+			<File RelativePath="..\..\engines\sword25\kernel\resmanager.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\resource.cpp" />
+			<File RelativePath="..\..\engines\sword25\kernel\resource.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\resservice.h" />
+			<File RelativePath="..\..\engines\sword25\kernel\service.h" />
+		</Filter>
+		<Filter	Name="math">
+			<File RelativePath="..\..\engines\sword25\math\geometry.h" />
+			<File RelativePath="..\..\engines\sword25\math\geometry_script.cpp" />
+			<File RelativePath="..\..\engines\sword25\math\line.h" />
+			<File RelativePath="..\..\engines\sword25\math\polygon.cpp" />
+			<File RelativePath="..\..\engines\sword25\math\polygon.h" />
+			<File RelativePath="..\..\engines\sword25\math\region.cpp" />
+			<File RelativePath="..\..\engines\sword25\math\region.h" />
+			<File RelativePath="..\..\engines\sword25\math\regionregistry.cpp" />
+			<File RelativePath="..\..\engines\sword25\math\regionregistry.h" />
+			<File RelativePath="..\..\engines\sword25\math\vertex.cpp" />
+			<File RelativePath="..\..\engines\sword25\math\vertex.h" />
+			<File RelativePath="..\..\engines\sword25\math\walkregion.cpp" />
+			<File RelativePath="..\..\engines\sword25\math\walkregion.h" />
+		</Filter>
+		<Filter	Name="package">
+			<File RelativePath="..\..\engines\sword25\package\packagemanager.cpp" />
+			<File RelativePath="..\..\engines\sword25\package\packagemanager.h" />
+			<File RelativePath="..\..\engines\sword25\package\packagemanager_script.cpp" />
+		</Filter>
+		<Filter	Name="script">
+			<File RelativePath="..\..\engines\sword25\script\lua_extensions.cpp" />
+			<File RelativePath="..\..\engines\sword25\script\luabindhelper.cpp" />
+			<File RelativePath="..\..\engines\sword25\script\luabindhelper.h" />
+			<File RelativePath="..\..\engines\sword25\script\luacallback.cpp" />
+			<File RelativePath="..\..\engines\sword25\script\luacallback.h" />
+			<File RelativePath="..\..\engines\sword25\script\luascript.cpp" />
+			<File RelativePath="..\..\engines\sword25\script\luascript.h" />
+			<File RelativePath="..\..\engines\sword25\script\script.h" />
+		</Filter>
+		<Filter	Name="sfx">
+			<File RelativePath="..\..\engines\sword25\sfx\soundengine.cpp" />
+			<File RelativePath="..\..\engines\sword25\sfx\soundengine.h" />
+			<File RelativePath="..\..\engines\sword25\sfx\soundengine_script.cpp" />
+		</Filter>
+		<Filter	Name="util">
+			<Filter	Name="lua">
+				<File RelativePath="..\..\engines\sword25\util\lua\lapi.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lapi.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lauxlib.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lauxlib.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lbaselib.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lcode.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lcode.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ldblib.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ldebug.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ldebug.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ldo.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ldo.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lfunc.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lfunc.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lgc.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lgc.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\linit.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\liolib.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\llex.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\llex.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\llimits.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lmathlib.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lmem.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lmem.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\loadlib.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lobject.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lobject.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lopcodes.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lopcodes.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\loslib.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lparser.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lparser.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lstate.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lstate.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lstring.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lstring.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lstrlib.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ltable.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ltable.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ltablib.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ltm.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\ltm.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lua.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\luaconf.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lualib.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lvm.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lvm.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lzio.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\lzio.h" />
+				<File RelativePath="..\..\engines\sword25\util\lua\scummvm_file.cpp" />
+				<File RelativePath="..\..\engines\sword25\util\lua\scummvm_file.h" />
+			</Filter>
+			<File RelativePath="..\..\engines\sword25\util\double_serialization.cpp" />
+			<File RelativePath="..\..\engines\sword25\util\double_serialization.h" />
+			<File RelativePath="..\..\engines\sword25\util\lua_persist.cpp" />
+			<File RelativePath="..\..\engines\sword25\util\lua_persistence.h" />
+			<File RelativePath="..\..\engines\sword25\util\lua_persistence_util.cpp" />
+			<File RelativePath="..\..\engines\sword25\util\lua_persistence_util.h" />
+			<File RelativePath="..\..\engines\sword25\util\lua_unpersist.cpp" />
+		</Filter>
+		<File RelativePath="..\..\engines\sword25\console.cpp" />
+		<File RelativePath="..\..\engines\sword25\console.h" />
+		<File RelativePath="..\..\engines\sword25\detection.cpp" />
+		<File RelativePath="..\..\engines\sword25\detection_tables.h" />
+		<File RelativePath="..\..\engines\sword25\module.mk" />
+		<File RelativePath="..\..\engines\sword25\sword25.cpp" />
+		<File RelativePath="..\..\engines\sword25\sword25.h" />
+	</Files>
+</VisualStudioProject>

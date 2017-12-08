@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="gnap"
+	ProjectGUID="{7EF7DA6E-F11D-42F5-A793-3A8EE514941D}"
+	RootNamespace="gnap"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="scenes">
+			<File RelativePath="..\..\engines\gnap\scenes\arcade.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\arcade.h" />
+			<File RelativePath="..\..\engines\gnap\scenes\group0.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\group0.h" />
+			<File RelativePath="..\..\engines\gnap\scenes\group1.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\group1.h" />
+			<File RelativePath="..\..\engines\gnap\scenes\group2.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\group2.h" />
+			<File RelativePath="..\..\engines\gnap\scenes\group3.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\group3.h" />
+			<File RelativePath="..\..\engines\gnap\scenes\group4.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\group4.h" />
+			<File RelativePath="..\..\engines\gnap\scenes\group5.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\group5.h" />
+			<File RelativePath="..\..\engines\gnap\scenes\groupcs.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\groupcs.h" />
+			<File RelativePath="..\..\engines\gnap\scenes\intro.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\intro.h" />
+			<File RelativePath="..\..\engines\gnap\scenes\scenecore.cpp" />
+			<File RelativePath="..\..\engines\gnap\scenes\scenecore.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\gnap\character.cpp" />
+		<File RelativePath="..\..\engines\gnap\character.h" />
+		<File RelativePath="..\..\engines\gnap\datarchive.cpp" />
+		<File RelativePath="..\..\engines\gnap\datarchive.h" />
+		<File RelativePath="..\..\engines\gnap\debugger.cpp" />
+		<File RelativePath="..\..\engines\gnap\debugger.h" />
+		<File RelativePath="..\..\engines\gnap\detection.cpp" />
+		<File RelativePath="..\..\engines\gnap\fontdata.h" />
+		<File RelativePath="..\..\engines\gnap\gamesys.cpp" />
+		<File RelativePath="..\..\engines\gnap\gamesys.h" />
+		<File RelativePath="..\..\engines\gnap\gnap.cpp" />
+		<File RelativePath="..\..\engines\gnap\gnap.h" />
+		<File RelativePath="..\..\engines\gnap\grid.cpp" />
+		<File RelativePath="..\..\engines\gnap\menu.cpp" />
+		<File RelativePath="..\..\engines\gnap\module.mk" />
+		<File RelativePath="..\..\engines\gnap\music.cpp" />
+		<File RelativePath="..\..\engines\gnap\music.h" />
+		<File RelativePath="..\..\engines\gnap\resource.cpp" />
+		<File RelativePath="..\..\engines\gnap\resource.h" />
+		<File RelativePath="..\..\engines\gnap\sound.cpp" />
+		<File RelativePath="..\..\engines\gnap\sound.h" />
+	</Files>
+</VisualStudioProject>

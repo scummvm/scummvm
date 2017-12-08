@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="dreamweb"
+	ProjectGUID="{A7CA0A0A-08A2-4636-B7EA-916BFDFE2782}"
+	RootNamespace="dreamweb"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4355;"/>
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4355;"/>
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4355;"/>
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4355;"/>
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4355;"/>
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4355;"/>
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4355;"/>
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4355;"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\dreamweb\backdrop.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\console.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\console.h" />
+		<File RelativePath="..\..\engines\dreamweb\detection.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\detection_tables.h" />
+		<File RelativePath="..\..\engines\dreamweb\dreamweb.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\dreamweb.h" />
+		<File RelativePath="..\..\engines\dreamweb\keypad.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\module.mk" />
+		<File RelativePath="..\..\engines\dreamweb\monitor.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\mouse.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\newplace.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\object.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\pathfind.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\people.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\print.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\rain.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\saveload.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\sound.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\sound.h" />
+		<File RelativePath="..\..\engines\dreamweb\sprite.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\structs.h" />
+		<File RelativePath="..\..\engines\dreamweb\stubs.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\talk.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\titles.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\use.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\vgafades.cpp" />
+		<File RelativePath="..\..\engines\dreamweb\vgagrafx.cpp" />
+	</Files>
+</VisualStudioProject>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="tsage"
+	ProjectGUID="{30CC1EA2-9D8D-4C03-BE63-DCD0A5088A7E}"
+	RootNamespace="tsage"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="blue_force">
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_dialogs.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_dialogs.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_logic.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_logic.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes0.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes0.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes1.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes1.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes2.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes2.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes3.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes3.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes4.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes4.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes5.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes5.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes6.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes6.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes7.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes7.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes8.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes8.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes9.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_scenes9.h" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_speakers.cpp" />
+			<File RelativePath="..\..\engines\tsage\blue_force\blueforce_speakers.h" />
+		</Filter>
+		<Filter	Name="ringworld">
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_demo.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_demo.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_dialogs.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_dialogs.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_logic.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_logic.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes1.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes1.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes10.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes10.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes2.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes2.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes3.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes3.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes4.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes4.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes5.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes5.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes6.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes6.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes8.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_scenes8.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_speakers.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld\ringworld_speakers.h" />
+		</Filter>
+		<Filter	Name="ringworld2">
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_airduct.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_airduct.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_dialogs.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_dialogs.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_logic.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_logic.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_outpost.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_outpost.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_scenes0.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_scenes0.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_scenes1.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_scenes1.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_scenes2.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_scenes2.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_scenes3.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_scenes3.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_speakers.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_speakers.h" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_vampire.cpp" />
+			<File RelativePath="..\..\engines\tsage\ringworld2\ringworld2_vampire.h" />
+		</Filter>
+		<Filter	Name="sherlock">
+			<File RelativePath="..\..\engines\tsage\sherlock\sherlock_logo.cpp" />
+			<File RelativePath="..\..\engines\tsage\sherlock\sherlock_logo.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\tsage\converse.cpp" />
+		<File RelativePath="..\..\engines\tsage\converse.h" />
+		<File RelativePath="..\..\engines\tsage\core.cpp" />
+		<File RelativePath="..\..\engines\tsage\core.h" />
+		<File RelativePath="..\..\engines\tsage\debugger.cpp" />
+		<File RelativePath="..\..\engines\tsage\debugger.h" />
+		<File RelativePath="..\..\engines\tsage\detection.cpp" />
+		<File RelativePath="..\..\engines\tsage\detection_tables.h" />
+		<File RelativePath="..\..\engines\tsage\dialogs.cpp" />
+		<File RelativePath="..\..\engines\tsage\dialogs.h" />
+		<File RelativePath="..\..\engines\tsage\events.cpp" />
+		<File RelativePath="..\..\engines\tsage\events.h" />
+		<File RelativePath="..\..\engines\tsage\globals.cpp" />
+		<File RelativePath="..\..\engines\tsage\globals.h" />
+		<File RelativePath="..\..\engines\tsage\graphics.cpp" />
+		<File RelativePath="..\..\engines\tsage\graphics.h" />
+		<File RelativePath="..\..\engines\tsage\module.mk" />
+		<File RelativePath="..\..\engines\tsage\resources.cpp" />
+		<File RelativePath="..\..\engines\tsage\resources.h" />
+		<File RelativePath="..\..\engines\tsage\saveload.cpp" />
+		<File RelativePath="..\..\engines\tsage\saveload.h" />
+		<File RelativePath="..\..\engines\tsage\scenes.cpp" />
+		<File RelativePath="..\..\engines\tsage\scenes.h" />
+		<File RelativePath="..\..\engines\tsage\screen.cpp" />
+		<File RelativePath="..\..\engines\tsage\screen.h" />
+		<File RelativePath="..\..\engines\tsage\sound.cpp" />
+		<File RelativePath="..\..\engines\tsage\sound.h" />
+		<File RelativePath="..\..\engines\tsage\staticres.cpp" />
+		<File RelativePath="..\..\engines\tsage\staticres.h" />
+		<File RelativePath="..\..\engines\tsage\tsage.cpp" />
+		<File RelativePath="..\..\engines\tsage\tsage.h" />
+		<File RelativePath="..\..\engines\tsage\user_interface.cpp" />
+		<File RelativePath="..\..\engines\tsage\user_interface.h" />
+	</Files>
+</VisualStudioProject>

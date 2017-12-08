@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="adl"
+	ProjectGUID="{DD7C3522-BA7B-43C0-8D3B-90A0E4CCF2F9}"
+	RootNamespace="adl"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\adl\adl.cpp" />
+		<File RelativePath="..\..\engines\adl\adl.h" />
+		<File RelativePath="..\..\engines\adl\adl_v2.cpp" />
+		<File RelativePath="..\..\engines\adl\adl_v2.h" />
+		<File RelativePath="..\..\engines\adl\adl_v3.cpp" />
+		<File RelativePath="..\..\engines\adl\adl_v3.h" />
+		<File RelativePath="..\..\engines\adl\adl_v4.cpp" />
+		<File RelativePath="..\..\engines\adl\adl_v4.h" />
+		<File RelativePath="..\..\engines\adl\adl_v5.cpp" />
+		<File RelativePath="..\..\engines\adl\adl_v5.h" />
+		<File RelativePath="..\..\engines\adl\console.cpp" />
+		<File RelativePath="..\..\engines\adl\console.h" />
+		<File RelativePath="..\..\engines\adl\detection.cpp" />
+		<File RelativePath="..\..\engines\adl\detection.h" />
+		<File RelativePath="..\..\engines\adl\disk.cpp" />
+		<File RelativePath="..\..\engines\adl\disk.h" />
+		<File RelativePath="..\..\engines\adl\display.cpp" />
+		<File RelativePath="..\..\engines\adl\display.h" />
+		<File RelativePath="..\..\engines\adl\graphics.cpp" />
+		<File RelativePath="..\..\engines\adl\graphics.h" />
+		<File RelativePath="..\..\engines\adl\hires1.cpp" />
+		<File RelativePath="..\..\engines\adl\hires2.cpp" />
+		<File RelativePath="..\..\engines\adl\hires4.cpp" />
+		<File RelativePath="..\..\engines\adl\hires5.cpp" />
+		<File RelativePath="..\..\engines\adl\hires6.cpp" />
+		<File RelativePath="..\..\engines\adl\module.mk" />
+		<File RelativePath="..\..\engines\adl\sound.cpp" />
+		<File RelativePath="..\..\engines\adl\sound.h" />
+	</Files>
+</VisualStudioProject>

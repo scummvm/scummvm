@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="fullpipe"
+	ProjectGUID="{15705D96-D8A9-44AD-A254-1276516BB510}"
+	RootNamespace="fullpipe"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="scenes">
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene01.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene02.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene03.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene04.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene05.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene06.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene07.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene08.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene09.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene10.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene11.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene12.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene13.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene14.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene15.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene16.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene17.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene18and19.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene20.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene21.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene22.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene23.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene24.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene25.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene26.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene27.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene28.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene29.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene30.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene31.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene32.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene33.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene34.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene35.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene36.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene37.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\scene38.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\sceneDbg.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\sceneFinal.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\sceneIntro.cpp" />
+			<File RelativePath="..\..\engines\fullpipe\scenes\sceneIntroDemo.cpp" />
+		</Filter>
+		<File RelativePath="..\..\engines\fullpipe\anihandler.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\anihandler.h" />
+		<File RelativePath="..\..\engines\fullpipe\behavior.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\behavior.h" />
+		<File RelativePath="..\..\engines\fullpipe\console.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\console.h" />
+		<File RelativePath="..\..\engines\fullpipe\constants.h" />
+		<File RelativePath="..\..\engines\fullpipe\detection.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\floaters.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\floaters.h" />
+		<File RelativePath="..\..\engines\fullpipe\fullpipe.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\fullpipe.h" />
+		<File RelativePath="..\..\engines\fullpipe\gameloader.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\gameloader.h" />
+		<File RelativePath="..\..\engines\fullpipe\gfx.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\gfx.h" />
+		<File RelativePath="..\..\engines\fullpipe\init.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\input.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\input.h" />
+		<File RelativePath="..\..\engines\fullpipe\interaction.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\interaction.h" />
+		<File RelativePath="..\..\engines\fullpipe\inventory.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\inventory.h" />
+		<File RelativePath="..\..\engines\fullpipe\lift.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\messagehandlers.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\messages.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\messages.h" />
+		<File RelativePath="..\..\engines\fullpipe\modal.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\modal.h" />
+		<File RelativePath="..\..\engines\fullpipe\module.mk" />
+		<File RelativePath="..\..\engines\fullpipe\motion.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\motion.h" />
+		<File RelativePath="..\..\engines\fullpipe\ngiarchive.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\ngiarchive.h" />
+		<File RelativePath="..\..\engines\fullpipe\objectnames.h" />
+		<File RelativePath="..\..\engines\fullpipe\objects.h" />
+		<File RelativePath="..\..\engines\fullpipe\scene.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\scene.h" />
+		<File RelativePath="..\..\engines\fullpipe\scenes.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\scenes.h" />
+		<File RelativePath="..\..\engines\fullpipe\sound.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\sound.h" />
+		<File RelativePath="..\..\engines\fullpipe\stateloader.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\statesaver.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\statics.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\statics.h" />
+		<File RelativePath="..\..\engines\fullpipe\utils.cpp" />
+		<File RelativePath="..\..\engines\fullpipe\utils.h" />
+	</Files>
+</VisualStudioProject>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="voyeur"
+	ProjectGUID="{2DD62302-6FB9-4B04-B723-C3839C96C056}"
+	RootNamespace="voyeur"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\voyeur\animation.cpp" />
+		<File RelativePath="..\..\engines\voyeur\animation.h" />
+		<File RelativePath="..\..\engines\voyeur\data.cpp" />
+		<File RelativePath="..\..\engines\voyeur\data.h" />
+		<File RelativePath="..\..\engines\voyeur\debugger.cpp" />
+		<File RelativePath="..\..\engines\voyeur\debugger.h" />
+		<File RelativePath="..\..\engines\voyeur\detection.cpp" />
+		<File RelativePath="..\..\engines\voyeur\detection_tables.h" />
+		<File RelativePath="..\..\engines\voyeur\events.cpp" />
+		<File RelativePath="..\..\engines\voyeur\events.h" />
+		<File RelativePath="..\..\engines\voyeur\files.cpp" />
+		<File RelativePath="..\..\engines\voyeur\files.h" />
+		<File RelativePath="..\..\engines\voyeur\files_threads.cpp" />
+		<File RelativePath="..\..\engines\voyeur\module.mk" />
+		<File RelativePath="..\..\engines\voyeur\screen.cpp" />
+		<File RelativePath="..\..\engines\voyeur\screen.h" />
+		<File RelativePath="..\..\engines\voyeur\sound.cpp" />
+		<File RelativePath="..\..\engines\voyeur\sound.h" />
+		<File RelativePath="..\..\engines\voyeur\staticres.cpp" />
+		<File RelativePath="..\..\engines\voyeur\staticres.h" />
+		<File RelativePath="..\..\engines\voyeur\voyeur.cpp" />
+		<File RelativePath="..\..\engines\voyeur\voyeur.h" />
+		<File RelativePath="..\..\engines\voyeur\voyeur_game.cpp" />
+	</Files>
+</VisualStudioProject>

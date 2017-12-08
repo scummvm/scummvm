@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="mortevielle"
+	ProjectGUID="{9D8E3BC6-C2D1-4E54-85FB-B7E843C8C673}"
+	RootNamespace="mortevielle"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\mortevielle\actions.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\debugger.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\debugger.h" />
+		<File RelativePath="..\..\engines\mortevielle\detection.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\detection_tables.h" />
+		<File RelativePath="..\..\engines\mortevielle\dialogs.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\dialogs.h" />
+		<File RelativePath="..\..\engines\mortevielle\graphics.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\graphics.h" />
+		<File RelativePath="..\..\engines\mortevielle\menu.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\menu.h" />
+		<File RelativePath="..\..\engines\mortevielle\module.mk" />
+		<File RelativePath="..\..\engines\mortevielle\mortevielle.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\mortevielle.h" />
+		<File RelativePath="..\..\engines\mortevielle\mouse.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\mouse.h" />
+		<File RelativePath="..\..\engines\mortevielle\outtext.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\outtext.h" />
+		<File RelativePath="..\..\engines\mortevielle\saveload.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\saveload.h" />
+		<File RelativePath="..\..\engines\mortevielle\sound.cpp" />
+		<File RelativePath="..\..\engines\mortevielle\sound.h" />
+		<File RelativePath="..\..\engines\mortevielle\utils.cpp" />
+	</Files>
+</VisualStudioProject>

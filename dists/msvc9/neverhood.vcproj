@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="neverhood"
+	ProjectGUID="{AA4778B6-A4C8-431A-9F8A-699A89220DC6}"
+	RootNamespace="neverhood"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="modules">
+			<File RelativePath="..\..\engines\neverhood\modules\module1000.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1000.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1000_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1000_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1100.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1100.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1100_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1100_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1200.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1200.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1200_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1200_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1300.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1300.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1300_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1300_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1400.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1400.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1400_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1400_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1500.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1500.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1600.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1600.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1600_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1600_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1700.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1700.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1700_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1700_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1800.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1800.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1900.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1900.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1900_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module1900_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2000.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2000.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2000_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2000_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2100.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2100.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2100_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2100_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2200.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2200.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2200_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2200_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2300.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2300.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2400.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2400.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2400_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2400_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2500.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2500.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2500_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2500_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2600.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2600.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2600_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2600_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2700.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2700.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2700_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2700_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2800.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2800.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2800_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2800_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2900.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2900.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2900_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module2900_sprites.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module3000.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module3000.h" />
+			<File RelativePath="..\..\engines\neverhood\modules\module3000_sprites.cpp" />
+			<File RelativePath="..\..\engines\neverhood\modules\module3000_sprites.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\neverhood\background.cpp" />
+		<File RelativePath="..\..\engines\neverhood\background.h" />
+		<File RelativePath="..\..\engines\neverhood\blbarchive.cpp" />
+		<File RelativePath="..\..\engines\neverhood\blbarchive.h" />
+		<File RelativePath="..\..\engines\neverhood\console.cpp" />
+		<File RelativePath="..\..\engines\neverhood\console.h" />
+		<File RelativePath="..\..\engines\neverhood\detection.cpp" />
+		<File RelativePath="..\..\engines\neverhood\diskplayerscene.cpp" />
+		<File RelativePath="..\..\engines\neverhood\diskplayerscene.h" />
+		<File RelativePath="..\..\engines\neverhood\entity.cpp" />
+		<File RelativePath="..\..\engines\neverhood\entity.h" />
+		<File RelativePath="..\..\engines\neverhood\gamemodule.cpp" />
+		<File RelativePath="..\..\engines\neverhood\gamemodule.h" />
+		<File RelativePath="..\..\engines\neverhood\gamevars.cpp" />
+		<File RelativePath="..\..\engines\neverhood\gamevars.h" />
+		<File RelativePath="..\..\engines\neverhood\graphics.cpp" />
+		<File RelativePath="..\..\engines\neverhood\graphics.h" />
+		<File RelativePath="..\..\engines\neverhood\klaymen.cpp" />
+		<File RelativePath="..\..\engines\neverhood\klaymen.h" />
+		<File RelativePath="..\..\engines\neverhood\menumodule.cpp" />
+		<File RelativePath="..\..\engines\neverhood\menumodule.h" />
+		<File RelativePath="..\..\engines\neverhood\messages.h" />
+		<File RelativePath="..\..\engines\neverhood\microtiles.cpp" />
+		<File RelativePath="..\..\engines\neverhood\microtiles.h" />
+		<File RelativePath="..\..\engines\neverhood\module.cpp" />
+		<File RelativePath="..\..\engines\neverhood\module.h" />
+		<File RelativePath="..\..\engines\neverhood\module.mk" />
+		<File RelativePath="..\..\engines\neverhood\mouse.cpp" />
+		<File RelativePath="..\..\engines\neverhood\mouse.h" />
+		<File RelativePath="..\..\engines\neverhood\navigationscene.cpp" />
+		<File RelativePath="..\..\engines\neverhood\navigationscene.h" />
+		<File RelativePath="..\..\engines\neverhood\neverhood.cpp" />
+		<File RelativePath="..\..\engines\neverhood\neverhood.h" />
+		<File RelativePath="..\..\engines\neverhood\palette.cpp" />
+		<File RelativePath="..\..\engines\neverhood\palette.h" />
+		<File RelativePath="..\..\engines\neverhood\resource.cpp" />
+		<File RelativePath="..\..\engines\neverhood\resource.h" />
+		<File RelativePath="..\..\engines\neverhood\resourceman.cpp" />
+		<File RelativePath="..\..\engines\neverhood\resourceman.h" />
+		<File RelativePath="..\..\engines\neverhood\saveload.cpp" />
+		<File RelativePath="..\..\engines\neverhood\scene.cpp" />
+		<File RelativePath="..\..\engines\neverhood\scene.h" />
+		<File RelativePath="..\..\engines\neverhood\screen.cpp" />
+		<File RelativePath="..\..\engines\neverhood\screen.h" />
+		<File RelativePath="..\..\engines\neverhood\smackerplayer.cpp" />
+		<File RelativePath="..\..\engines\neverhood\smackerplayer.h" />
+		<File RelativePath="..\..\engines\neverhood\smackerscene.cpp" />
+		<File RelativePath="..\..\engines\neverhood\smackerscene.h" />
+		<File RelativePath="..\..\engines\neverhood\sound.cpp" />
+		<File RelativePath="..\..\engines\neverhood\sound.h" />
+		<File RelativePath="..\..\engines\neverhood\sprite.cpp" />
+		<File RelativePath="..\..\engines\neverhood\sprite.h" />
+		<File RelativePath="..\..\engines\neverhood\staticdata.cpp" />
+		<File RelativePath="..\..\engines\neverhood\staticdata.h" />
+	</Files>
+</VisualStudioProject>

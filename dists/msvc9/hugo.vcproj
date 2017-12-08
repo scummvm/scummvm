@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="hugo"
+	ProjectGUID="{21911766-CE5D-4F00-92EA-230FE71292D2}"
+	RootNamespace="hugo"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\hugo\console.cpp" />
+		<File RelativePath="..\..\engines\hugo\console.h" />
+		<File RelativePath="..\..\engines\hugo\detection.cpp" />
+		<File RelativePath="..\..\engines\hugo\dialogs.cpp" />
+		<File RelativePath="..\..\engines\hugo\dialogs.h" />
+		<File RelativePath="..\..\engines\hugo\display.cpp" />
+		<File RelativePath="..\..\engines\hugo\display.h" />
+		<File RelativePath="..\..\engines\hugo\file.cpp" />
+		<File RelativePath="..\..\engines\hugo\file.h" />
+		<File RelativePath="..\..\engines\hugo\file_v1d.cpp" />
+		<File RelativePath="..\..\engines\hugo\file_v1w.cpp" />
+		<File RelativePath="..\..\engines\hugo\file_v2d.cpp" />
+		<File RelativePath="..\..\engines\hugo\file_v2w.cpp" />
+		<File RelativePath="..\..\engines\hugo\file_v3d.cpp" />
+		<File RelativePath="..\..\engines\hugo\game.h" />
+		<File RelativePath="..\..\engines\hugo\hugo.cpp" />
+		<File RelativePath="..\..\engines\hugo\hugo.h" />
+		<File RelativePath="..\..\engines\hugo\intro.cpp" />
+		<File RelativePath="..\..\engines\hugo\intro.h" />
+		<File RelativePath="..\..\engines\hugo\inventory.cpp" />
+		<File RelativePath="..\..\engines\hugo\inventory.h" />
+		<File RelativePath="..\..\engines\hugo\module.mk" />
+		<File RelativePath="..\..\engines\hugo\mouse.cpp" />
+		<File RelativePath="..\..\engines\hugo\mouse.h" />
+		<File RelativePath="..\..\engines\hugo\object.cpp" />
+		<File RelativePath="..\..\engines\hugo\object.h" />
+		<File RelativePath="..\..\engines\hugo\object_v1d.cpp" />
+		<File RelativePath="..\..\engines\hugo\object_v1w.cpp" />
+		<File RelativePath="..\..\engines\hugo\object_v2d.cpp" />
+		<File RelativePath="..\..\engines\hugo\object_v3d.cpp" />
+		<File RelativePath="..\..\engines\hugo\parser.cpp" />
+		<File RelativePath="..\..\engines\hugo\parser.h" />
+		<File RelativePath="..\..\engines\hugo\parser_v1d.cpp" />
+		<File RelativePath="..\..\engines\hugo\parser_v1w.cpp" />
+		<File RelativePath="..\..\engines\hugo\parser_v2d.cpp" />
+		<File RelativePath="..\..\engines\hugo\parser_v3d.cpp" />
+		<File RelativePath="..\..\engines\hugo\route.cpp" />
+		<File RelativePath="..\..\engines\hugo\route.h" />
+		<File RelativePath="..\..\engines\hugo\schedule.cpp" />
+		<File RelativePath="..\..\engines\hugo\schedule.h" />
+		<File RelativePath="..\..\engines\hugo\sound.cpp" />
+		<File RelativePath="..\..\engines\hugo\sound.h" />
+		<File RelativePath="..\..\engines\hugo\text.cpp" />
+		<File RelativePath="..\..\engines\hugo\text.h" />
+		<File RelativePath="..\..\engines\hugo\util.cpp" />
+		<File RelativePath="..\..\engines\hugo\util.h" />
+	</Files>
+</VisualStudioProject>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="tony"
+	ProjectGUID="{35203A88-A169-4A76-B823-611C9E4DC567}"
+	RootNamespace="tony"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" DebugInformationFormat="3" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="mpal">
+			<File RelativePath="..\..\engines\tony\mpal\expr.cpp" />
+			<File RelativePath="..\..\engines\tony\mpal\expr.h" />
+			<File RelativePath="..\..\engines\tony\mpal\loadmpc.cpp" />
+			<File RelativePath="..\..\engines\tony\mpal\loadmpc.h" />
+			<File RelativePath="..\..\engines\tony\mpal\lzo.cpp" />
+			<File RelativePath="..\..\engines\tony\mpal\lzo.h" />
+			<File RelativePath="..\..\engines\tony\mpal\memory.cpp" />
+			<File RelativePath="..\..\engines\tony\mpal\memory.h" />
+			<File RelativePath="..\..\engines\tony\mpal\mpal.cpp" />
+			<File RelativePath="..\..\engines\tony\mpal\mpal.h" />
+			<File RelativePath="..\..\engines\tony\mpal\mpaldll.h" />
+			<File RelativePath="..\..\engines\tony\mpal\mpalutils.cpp" />
+			<File RelativePath="..\..\engines\tony\mpal\mpalutils.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\tony\custom.cpp" />
+		<File RelativePath="..\..\engines\tony\custom.h" />
+		<File RelativePath="..\..\engines\tony\debugger.cpp" />
+		<File RelativePath="..\..\engines\tony\debugger.h" />
+		<File RelativePath="..\..\engines\tony\detection.cpp" />
+		<File RelativePath="..\..\engines\tony\detection_tables.h" />
+		<File RelativePath="..\..\engines\tony\font.cpp" />
+		<File RelativePath="..\..\engines\tony\font.h" />
+		<File RelativePath="..\..\engines\tony\game.cpp" />
+		<File RelativePath="..\..\engines\tony\game.h" />
+		<File RelativePath="..\..\engines\tony\gfxcore.cpp" />
+		<File RelativePath="..\..\engines\tony\gfxcore.h" />
+		<File RelativePath="..\..\engines\tony\gfxengine.cpp" />
+		<File RelativePath="..\..\engines\tony\gfxengine.h" />
+		<File RelativePath="..\..\engines\tony\globals.cpp" />
+		<File RelativePath="..\..\engines\tony\globals.h" />
+		<File RelativePath="..\..\engines\tony\input.cpp" />
+		<File RelativePath="..\..\engines\tony\input.h" />
+		<File RelativePath="..\..\engines\tony\inventory.cpp" />
+		<File RelativePath="..\..\engines\tony\inventory.h" />
+		<File RelativePath="..\..\engines\tony\loc.cpp" />
+		<File RelativePath="..\..\engines\tony\loc.h" />
+		<File RelativePath="..\..\engines\tony\module.mk" />
+		<File RelativePath="..\..\engines\tony\resid.h" />
+		<File RelativePath="..\..\engines\tony\sound.cpp" />
+		<File RelativePath="..\..\engines\tony\sound.h" />
+		<File RelativePath="..\..\engines\tony\tony.cpp" />
+		<File RelativePath="..\..\engines\tony\tony.h" />
+		<File RelativePath="..\..\engines\tony\tonychar.cpp" />
+		<File RelativePath="..\..\engines\tony\tonychar.h" />
+		<File RelativePath="..\..\engines\tony\utils.cpp" />
+		<File RelativePath="..\..\engines\tony\utils.h" />
+		<File RelativePath="..\..\engines\tony\window.cpp" />
+		<File RelativePath="..\..\engines\tony\window.h" />
+	</Files>
+</VisualStudioProject>

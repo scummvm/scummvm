@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="sherlock"
+	ProjectGUID="{13008A94-34F3-4D24-A3A0-77DDC0FEA4E0}"
+	RootNamespace="sherlock"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="scalpel">
+			<Filter	Name="3do">
+				<File RelativePath="..\..\engines\sherlock\scalpel\3do\movie_decoder.cpp" />
+				<File RelativePath="..\..\engines\sherlock\scalpel\3do\movie_decoder.h" />
+				<File RelativePath="..\..\engines\sherlock\scalpel\3do\scalpel_3do_screen.cpp" />
+				<File RelativePath="..\..\engines\sherlock\scalpel\3do\scalpel_3do_screen.h" />
+			</Filter>
+			<Filter	Name="drivers">
+				<File RelativePath="..\..\engines\sherlock\scalpel\drivers\adlib.cpp" />
+				<File RelativePath="..\..\engines\sherlock\scalpel\drivers\mididriver.h" />
+				<File RelativePath="..\..\engines\sherlock\scalpel\drivers\mt32.cpp" />
+			</Filter>
+			<Filter	Name="tsage">
+				<File RelativePath="..\..\engines\sherlock\scalpel\tsage\logo.cpp" />
+				<File RelativePath="..\..\engines\sherlock\scalpel\tsage\logo.h" />
+				<File RelativePath="..\..\engines\sherlock\scalpel\tsage\resources.cpp">
+					<FileConfiguration Name="Debug|Win32">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\scalpel_tsage_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\scalpel_tsage_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Analysis|Win32">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\scalpel_tsage_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\scalpel_tsage_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Release|Win32">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\scalpel_tsage_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\scalpel_tsage_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Debug|x64">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\scalpel_tsage_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\scalpel_tsage_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Analysis|x64">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\scalpel_tsage_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\scalpel_tsage_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Release|x64">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\scalpel_tsage_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\scalpel_tsage_$(InputName).xdc" />
+					</FileConfiguration>
+				</File>
+				<File RelativePath="..\..\engines\sherlock\scalpel\tsage\resources.h" />
+			</Filter>
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_darts.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_darts.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_debugger.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_debugger.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_fixed_text.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_fixed_text.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_inventory.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_inventory.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_journal.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_journal.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_map.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_map.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_people.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_people.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_saveload.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_saveload.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_scene.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_scene.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_screen.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_screen.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_talk.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_talk.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_user_interface.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\scalpel_user_interface.h" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\settings.cpp" />
+			<File RelativePath="..\..\engines\sherlock\scalpel\settings.h" />
+		</Filter>
+		<Filter	Name="tattoo">
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_darts.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_darts.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_debugger.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_debugger.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_fixed_text.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_fixed_text.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_inventory.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_inventory.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_journal.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_journal.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_map.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_map.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_people.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_people.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_resources.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_resources.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_scene.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_scene.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_screen.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_screen.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_talk.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_talk.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_user_interface.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\tattoo_user_interface.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_base.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_base.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_credits.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_credits.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_files.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_files.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_foolscap.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_foolscap.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_inventory.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_inventory.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_lab.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_lab.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_options.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_options.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_password.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_password.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_quit.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_quit.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_talk.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_talk.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_text.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_text.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_tooltip.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_tooltip.h" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_verbs.cpp" />
+			<File RelativePath="..\..\engines\sherlock\tattoo\widget_verbs.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\sherlock\animation.cpp" />
+		<File RelativePath="..\..\engines\sherlock\animation.h" />
+		<File RelativePath="..\..\engines\sherlock\debugger.cpp" />
+		<File RelativePath="..\..\engines\sherlock\debugger.h" />
+		<File RelativePath="..\..\engines\sherlock\detection.cpp" />
+		<File RelativePath="..\..\engines\sherlock\detection_tables.h" />
+		<File RelativePath="..\..\engines\sherlock\events.cpp" />
+		<File RelativePath="..\..\engines\sherlock\events.h" />
+		<File RelativePath="..\..\engines\sherlock\fixed_text.cpp" />
+		<File RelativePath="..\..\engines\sherlock\fixed_text.h" />
+		<File RelativePath="..\..\engines\sherlock\fonts.cpp" />
+		<File RelativePath="..\..\engines\sherlock\fonts.h" />
+		<File RelativePath="..\..\engines\sherlock\image_file.cpp" />
+		<File RelativePath="..\..\engines\sherlock\image_file.h" />
+		<File RelativePath="..\..\engines\sherlock\inventory.cpp" />
+		<File RelativePath="..\..\engines\sherlock\inventory.h" />
+		<File RelativePath="..\..\engines\sherlock\journal.cpp" />
+		<File RelativePath="..\..\engines\sherlock\journal.h" />
+		<File RelativePath="..\..\engines\sherlock\map.cpp" />
+		<File RelativePath="..\..\engines\sherlock\map.h" />
+		<File RelativePath="..\..\engines\sherlock\module.mk" />
+		<File RelativePath="..\..\engines\sherlock\music.cpp" />
+		<File RelativePath="..\..\engines\sherlock\music.h" />
+		<File RelativePath="..\..\engines\sherlock\objects.cpp" />
+		<File RelativePath="..\..\engines\sherlock\objects.h" />
+		<File RelativePath="..\..\engines\sherlock\people.cpp" />
+		<File RelativePath="..\..\engines\sherlock\people.h" />
+		<File RelativePath="..\..\engines\sherlock\resources.cpp">
+			<FileConfiguration Name="Debug|Win32">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Analysis|Win32">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Release|Win32">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Debug|x64">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Analysis|x64">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Release|x64">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+		</File>
+		<File RelativePath="..\..\engines\sherlock\resources.h" />
+		<File RelativePath="..\..\engines\sherlock\saveload.cpp" />
+		<File RelativePath="..\..\engines\sherlock\saveload.h" />
+		<File RelativePath="..\..\engines\sherlock\scene.cpp" />
+		<File RelativePath="..\..\engines\sherlock\scene.h" />
+		<File RelativePath="..\..\engines\sherlock\screen.cpp" />
+		<File RelativePath="..\..\engines\sherlock\screen.h" />
+		<File RelativePath="..\..\engines\sherlock\sherlock.cpp" />
+		<File RelativePath="..\..\engines\sherlock\sherlock.h" />
+		<File RelativePath="..\..\engines\sherlock\sound.cpp" />
+		<File RelativePath="..\..\engines\sherlock\sound.h" />
+		<File RelativePath="..\..\engines\sherlock\surface.cpp" />
+		<File RelativePath="..\..\engines\sherlock\surface.h" />
+		<File RelativePath="..\..\engines\sherlock\talk.cpp" />
+		<File RelativePath="..\..\engines\sherlock\talk.h" />
+		<File RelativePath="..\..\engines\sherlock\user_interface.cpp" />
+		<File RelativePath="..\..\engines\sherlock\user_interface.h" />
+	</Files>
+</VisualStudioProject>

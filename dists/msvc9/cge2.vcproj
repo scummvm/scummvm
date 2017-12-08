@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="cge2"
+	ProjectGUID="{9C58A6DE-1F66-4C63-B693-3C5E5EEA7C5E}"
+	RootNamespace="cge2"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\cge2\bitmap.cpp" />
+		<File RelativePath="..\..\engines\cge2\bitmap.h" />
+		<File RelativePath="..\..\engines\cge2\cge2.cpp" />
+		<File RelativePath="..\..\engines\cge2\cge2.h" />
+		<File RelativePath="..\..\engines\cge2\cge2_main.cpp" />
+		<File RelativePath="..\..\engines\cge2\cge2_main.h" />
+		<File RelativePath="..\..\engines\cge2\console.cpp" />
+		<File RelativePath="..\..\engines\cge2\console.h" />
+		<File RelativePath="..\..\engines\cge2\detection.cpp" />
+		<File RelativePath="..\..\engines\cge2\events.cpp" />
+		<File RelativePath="..\..\engines\cge2\events.h" />
+		<File RelativePath="..\..\engines\cge2\fileio.cpp" />
+		<File RelativePath="..\..\engines\cge2\fileio.h" />
+		<File RelativePath="..\..\engines\cge2\general.h" />
+		<File RelativePath="..\..\engines\cge2\hero.cpp" />
+		<File RelativePath="..\..\engines\cge2\hero.h" />
+		<File RelativePath="..\..\engines\cge2\inventory.cpp" />
+		<File RelativePath="..\..\engines\cge2\map.cpp" />
+		<File RelativePath="..\..\engines\cge2\map.h" />
+		<File RelativePath="..\..\engines\cge2\module.mk" />
+		<File RelativePath="..\..\engines\cge2\saveload.cpp" />
+		<File RelativePath="..\..\engines\cge2\snail.cpp" />
+		<File RelativePath="..\..\engines\cge2\snail.h" />
+		<File RelativePath="..\..\engines\cge2\sound.cpp" />
+		<File RelativePath="..\..\engines\cge2\sound.h" />
+		<File RelativePath="..\..\engines\cge2\spare.cpp" />
+		<File RelativePath="..\..\engines\cge2\spare.h" />
+		<File RelativePath="..\..\engines\cge2\talk.cpp" />
+		<File RelativePath="..\..\engines\cge2\talk.h" />
+		<File RelativePath="..\..\engines\cge2\text.cpp" />
+		<File RelativePath="..\..\engines\cge2\text.h" />
+		<File RelativePath="..\..\engines\cge2\toolbar.cpp" />
+		<File RelativePath="..\..\engines\cge2\vga13h.cpp" />
+		<File RelativePath="..\..\engines\cge2\vga13h.h" />
+		<File RelativePath="..\..\engines\cge2\vmenu.cpp" />
+		<File RelativePath="..\..\engines\cge2\vmenu.h" />
+	</Files>
+</VisualStudioProject>

@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="wintermute"
+	ProjectGUID="{D900CD3A-0FDB-4552-8139-DB9FE2B114B4}"
+	RootNamespace="wintermute"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="ad">
+			<File RelativePath="..\..\engines\wintermute\ad\ad_actor.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_actor.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_entity.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_entity.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_game.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_game.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_inventory.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_inventory.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_inventory_box.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_inventory_box.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_item.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_item.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_layer.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_layer.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_node_state.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_node_state.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_object.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_object.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_path.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_path.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_path_point.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_path_point.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_region.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_region.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_response.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_response.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_response_box.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_response_box.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_response_context.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_response_context.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_rot_level.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_rot_level.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_scale_level.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_scale_level.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_scene.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_scene.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_scene_node.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_scene_node.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_scene_state.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_scene_state.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_sentence.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_sentence.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_sprite_set.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_sprite_set.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_talk_def.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_talk_def.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_talk_holder.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_talk_holder.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_talk_node.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_talk_node.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_types.h" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_waypoint_group.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ad\ad_waypoint_group.h" />
+		</Filter>
+		<Filter	Name="base">
+			<Filter	Name="file">
+				<File RelativePath="..\..\engines\wintermute\base\file\base_disk_file.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\file\base_disk_file.h" />
+				<File RelativePath="..\..\engines\wintermute\base\file\base_file.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\file\base_file.h" />
+				<File RelativePath="..\..\engines\wintermute\base\file\base_file_entry.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\file\base_file_entry.h" />
+				<File RelativePath="..\..\engines\wintermute\base\file\base_package.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\file\base_package.h" />
+				<File RelativePath="..\..\engines\wintermute\base\file\base_save_thumb_file.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\file\base_save_thumb_file.h" />
+				<File RelativePath="..\..\engines\wintermute\base\file\dcpackage.h" />
+			</Filter>
+			<Filter	Name="font">
+				<File RelativePath="..\..\engines\wintermute\base\font\base_font.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\font\base_font.h" />
+				<File RelativePath="..\..\engines\wintermute\base\font\base_font_bitmap.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\font\base_font_bitmap.h" />
+				<File RelativePath="..\..\engines\wintermute\base\font\base_font_storage.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\font\base_font_storage.h" />
+				<File RelativePath="..\..\engines\wintermute\base\font\base_font_truetype.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\font\base_font_truetype.h" />
+			</Filter>
+			<Filter	Name="gfx">
+				<Filter	Name="osystem">
+					<File RelativePath="..\..\engines\wintermute\base\gfx\osystem\base_render_osystem.cpp" />
+					<File RelativePath="..\..\engines\wintermute\base\gfx\osystem\base_render_osystem.h" />
+					<File RelativePath="..\..\engines\wintermute\base\gfx\osystem\base_surface_osystem.cpp" />
+					<File RelativePath="..\..\engines\wintermute\base\gfx\osystem\base_surface_osystem.h" />
+					<File RelativePath="..\..\engines\wintermute\base\gfx\osystem\render_ticket.cpp" />
+					<File RelativePath="..\..\engines\wintermute\base\gfx\osystem\render_ticket.h" />
+				</Filter>
+				<File RelativePath="..\..\engines\wintermute\base\gfx\base_image.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\gfx\base_image.h" />
+				<File RelativePath="..\..\engines\wintermute\base\gfx\base_renderer.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\gfx\base_renderer.h" />
+				<File RelativePath="..\..\engines\wintermute\base\gfx\base_surface.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\gfx\base_surface.h" />
+			</Filter>
+			<Filter	Name="particles">
+				<File RelativePath="..\..\engines\wintermute\base\particles\part_emitter.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\particles\part_emitter.h" />
+				<File RelativePath="..\..\engines\wintermute\base\particles\part_force.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\particles\part_force.h" />
+				<File RelativePath="..\..\engines\wintermute\base\particles\part_particle.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\particles\part_particle.h" />
+			</Filter>
+			<Filter	Name="scriptables">
+				<Filter	Name="debuggable">
+					<File RelativePath="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script.cpp" />
+					<File RelativePath="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script.h" />
+					<File RelativePath="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script_engine.cpp" />
+					<File RelativePath="..\..\engines\wintermute\base\scriptables\debuggable\debuggable_script_engine.h" />
+				</Filter>
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\dcscript.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_engine.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_engine.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_array.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_array.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_date.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_date.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_file.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_file.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_math.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_math.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_mem_buffer.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_mem_buffer.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_object.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_object.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_string.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_ext_string.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_stack.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_stack.h" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_value.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\scriptables\script_value.h" />
+			</Filter>
+			<Filter	Name="sound">
+				<File RelativePath="..\..\engines\wintermute\base\sound\base_sound.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\sound\base_sound.h" />
+				<File RelativePath="..\..\engines\wintermute\base\sound\base_sound_buffer.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\sound\base_sound_buffer.h" />
+				<File RelativePath="..\..\engines\wintermute\base\sound\base_sound_manager.cpp" />
+				<File RelativePath="..\..\engines\wintermute\base\sound\base_sound_manager.h" />
+			</Filter>
+			<File RelativePath="..\..\engines\wintermute\base\base.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_active_rect.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_active_rect.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_dynamic_buffer.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_dynamic_buffer.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_engine.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_engine.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_fader.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_fader.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_file_manager.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_file_manager.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_frame.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_frame.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_game.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_game.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_game_music.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_game_music.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_game_settings.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_game_settings.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_keyboard_state.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_keyboard_state.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_named_object.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_named_object.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_object.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_object.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_parser.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_parser.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_persistence_manager.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_persistence_manager.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_point.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_point.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_quick_msg.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_quick_msg.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_region.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_region.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_script_holder.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_script_holder.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_scriptable.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_scriptable.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_sprite.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_sprite.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_string_table.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_string_table.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_sub_frame.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_sub_frame.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_surface_storage.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_surface_storage.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_transition_manager.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_transition_manager.h" />
+			<File RelativePath="..\..\engines\wintermute\base\base_viewport.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\base_viewport.h" />
+			<File RelativePath="..\..\engines\wintermute\base\save_thumb_helper.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\save_thumb_helper.h" />
+			<File RelativePath="..\..\engines\wintermute\base\saveload.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\saveload.h" />
+			<File RelativePath="..\..\engines\wintermute\base\timer.cpp" />
+			<File RelativePath="..\..\engines\wintermute\base\timer.h" />
+		</Filter>
+		<Filter	Name="debugger">
+			<Filter	Name="listing_providers">
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\basic_source_listing_provider.cpp" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\basic_source_listing_provider.h" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\blank_listing.cpp" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\blank_listing.h" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\blank_listing_provider.cpp" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\blank_listing_provider.h" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\cached_source_listing_provider.cpp" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\cached_source_listing_provider.h" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\source_listing.cpp" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\source_listing.h" />
+				<File RelativePath="..\..\engines\wintermute\debugger\listing_providers\source_listing_provider.h" />
+			</Filter>
+			<File RelativePath="..\..\engines\wintermute\debugger\breakpoint.cpp" />
+			<File RelativePath="..\..\engines\wintermute\debugger\breakpoint.h" />
+			<File RelativePath="..\..\engines\wintermute\debugger\debugger_controller.cpp" />
+			<File RelativePath="..\..\engines\wintermute\debugger\debugger_controller.h" />
+			<File RelativePath="..\..\engines\wintermute\debugger\error.cpp" />
+			<File RelativePath="..\..\engines\wintermute\debugger\error.h" />
+			<File RelativePath="..\..\engines\wintermute\debugger\listing.cpp" />
+			<File RelativePath="..\..\engines\wintermute\debugger\listing.h" />
+			<File RelativePath="..\..\engines\wintermute\debugger\listing_provider.h" />
+			<File RelativePath="..\..\engines\wintermute\debugger\script_monitor.cpp" />
+			<File RelativePath="..\..\engines\wintermute\debugger\script_monitor.h" />
+			<File RelativePath="..\..\engines\wintermute\debugger\watch.cpp" />
+			<File RelativePath="..\..\engines\wintermute\debugger\watch.h" />
+			<File RelativePath="..\..\engines\wintermute\debugger\watch_instance.cpp" />
+			<File RelativePath="..\..\engines\wintermute\debugger\watch_instance.h" />
+		</Filter>
+		<Filter	Name="math">
+			<File RelativePath="..\..\engines\wintermute\math\floatpoint.h" />
+			<File RelativePath="..\..\engines\wintermute\math\math_util.cpp" />
+			<File RelativePath="..\..\engines\wintermute\math\math_util.h" />
+			<File RelativePath="..\..\engines\wintermute\math\matrix4.cpp" />
+			<File RelativePath="..\..\engines\wintermute\math\matrix4.h" />
+			<File RelativePath="..\..\engines\wintermute\math\rect32.h" />
+			<File RelativePath="..\..\engines\wintermute\math\vector2.cpp" />
+			<File RelativePath="..\..\engines\wintermute\math\vector2.h" />
+		</Filter>
+		<Filter	Name="system">
+			<File RelativePath="..\..\engines\wintermute\system\sys_class.cpp" />
+			<File RelativePath="..\..\engines\wintermute\system\sys_class.h" />
+			<File RelativePath="..\..\engines\wintermute\system\sys_class_registry.cpp" />
+			<File RelativePath="..\..\engines\wintermute\system\sys_class_registry.h" />
+			<File RelativePath="..\..\engines\wintermute\system\sys_instance.cpp" />
+			<File RelativePath="..\..\engines\wintermute\system\sys_instance.h" />
+		</Filter>
+		<Filter	Name="ui">
+			<File RelativePath="..\..\engines\wintermute\ui\ui_button.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_button.h" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_edit.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_edit.h" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_entity.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_entity.h" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_object.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_object.h" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_text.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_text.h" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_tiled_image.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_tiled_image.h" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_window.cpp" />
+			<File RelativePath="..\..\engines\wintermute\ui\ui_window.h" />
+		</Filter>
+		<Filter	Name="utils">
+			<File RelativePath="..\..\engines\wintermute\utils\convert_utf.cpp" />
+			<File RelativePath="..\..\engines\wintermute\utils\convert_utf.h" />
+			<File RelativePath="..\..\engines\wintermute\utils\crc.cpp" />
+			<File RelativePath="..\..\engines\wintermute\utils\crc.h" />
+			<File RelativePath="..\..\engines\wintermute\utils\path_util.cpp" />
+			<File RelativePath="..\..\engines\wintermute\utils\path_util.h" />
+			<File RelativePath="..\..\engines\wintermute\utils\string_util.cpp" />
+			<File RelativePath="..\..\engines\wintermute\utils\string_util.h" />
+			<File RelativePath="..\..\engines\wintermute\utils\utils.cpp" />
+			<File RelativePath="..\..\engines\wintermute\utils\utils.h" />
+		</Filter>
+		<Filter	Name="video">
+			<File RelativePath="..\..\engines\wintermute\video\subtitle_card.cpp" />
+			<File RelativePath="..\..\engines\wintermute\video\subtitle_card.h" />
+			<File RelativePath="..\..\engines\wintermute\video\video_player.cpp" />
+			<File RelativePath="..\..\engines\wintermute\video\video_player.h" />
+			<File RelativePath="..\..\engines\wintermute\video\video_subtitler.cpp" />
+			<File RelativePath="..\..\engines\wintermute\video\video_subtitler.h" />
+			<File RelativePath="..\..\engines\wintermute\video\video_theora_player.cpp" />
+			<File RelativePath="..\..\engines\wintermute\video\video_theora_player.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\wintermute\coll_templ.h" />
+		<File RelativePath="..\..\engines\wintermute\dcgf.h" />
+		<File RelativePath="..\..\engines\wintermute\dctypes.h" />
+		<File RelativePath="..\..\engines\wintermute\debugger.cpp" />
+		<File RelativePath="..\..\engines\wintermute\debugger.h" />
+		<File RelativePath="..\..\engines\wintermute\detection.cpp" />
+		<File RelativePath="..\..\engines\wintermute\detection_tables.h" />
+		<File RelativePath="..\..\engines\wintermute\game_description.h" />
+		<File RelativePath="..\..\engines\wintermute\module.mk" />
+		<File RelativePath="..\..\engines\wintermute\persistent.cpp" />
+		<File RelativePath="..\..\engines\wintermute\persistent.h" />
+		<File RelativePath="..\..\engines\wintermute\platform_osystem.cpp" />
+		<File RelativePath="..\..\engines\wintermute\platform_osystem.h" />
+		<File RelativePath="..\..\engines\wintermute\wintermute.cpp" />
+		<File RelativePath="..\..\engines\wintermute\wintermute.h" />
+		<File RelativePath="..\..\engines\wintermute\wintypes.h" />
+	</Files>
+</VisualStudioProject>

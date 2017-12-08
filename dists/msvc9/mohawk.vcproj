@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="mohawk"
+	ProjectGUID="{5A6BCF3A-1982-4A1E-B4E2-A5CFAE967D48}"
+	RootNamespace="mohawk"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="myst_stacks">
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\channelwood.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\channelwood.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\credits.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\credits.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\demo.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\demo.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\dni.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\dni.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\intro.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\intro.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\makingof.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\makingof.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\mechanical.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\mechanical.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\myst.cpp">
+				<FileConfiguration Name="Debug|Win32">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\myst_stacks_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\myst_stacks_$(InputName).xdc" />
+				</FileConfiguration>
+				<FileConfiguration Name="Analysis|Win32">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\myst_stacks_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\myst_stacks_$(InputName).xdc" />
+				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\myst_stacks_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\myst_stacks_$(InputName).xdc" />
+				</FileConfiguration>
+				<FileConfiguration Name="Debug|x64">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\myst_stacks_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\myst_stacks_$(InputName).xdc" />
+				</FileConfiguration>
+				<FileConfiguration Name="Analysis|x64">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\myst_stacks_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\myst_stacks_$(InputName).xdc" />
+				</FileConfiguration>
+				<FileConfiguration Name="Release|x64">
+					<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\myst_stacks_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\myst_stacks_$(InputName).xdc" />
+				</FileConfiguration>
+			</File>
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\myst.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\preview.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\preview.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\selenitic.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\selenitic.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\slides.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\slides.h" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\stoneship.cpp" />
+			<File RelativePath="..\..\engines\mohawk\myst_stacks\stoneship.h" />
+		</Filter>
+		<Filter	Name="riven_stacks">
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\aspit.cpp" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\aspit.h" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\bspit.cpp" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\bspit.h" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\domespit.cpp" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\domespit.h" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\gspit.cpp" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\gspit.h" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\jspit.cpp" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\jspit.h" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\ospit.cpp" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\ospit.h" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\pspit.cpp" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\pspit.h" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\rspit.cpp" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\rspit.h" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\tspit.cpp" />
+			<File RelativePath="..\..\engines\mohawk\riven_stacks\tspit.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\mohawk\bitmap.cpp" />
+		<File RelativePath="..\..\engines\mohawk\bitmap.h" />
+		<File RelativePath="..\..\engines\mohawk\console.cpp" />
+		<File RelativePath="..\..\engines\mohawk\console.h" />
+		<File RelativePath="..\..\engines\mohawk\cursors.cpp" />
+		<File RelativePath="..\..\engines\mohawk\cursors.h" />
+		<File RelativePath="..\..\engines\mohawk\detection.cpp" />
+		<File RelativePath="..\..\engines\mohawk\detection_tables.h" />
+		<File RelativePath="..\..\engines\mohawk\dialogs.cpp" />
+		<File RelativePath="..\..\engines\mohawk\dialogs.h" />
+		<File RelativePath="..\..\engines\mohawk\graphics.cpp" />
+		<File RelativePath="..\..\engines\mohawk\graphics.h" />
+		<File RelativePath="..\..\engines\mohawk\installer_archive.cpp" />
+		<File RelativePath="..\..\engines\mohawk\installer_archive.h" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks.cpp" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks.h" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_code.cpp" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_code.h" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_graphics.cpp" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_graphics.h" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_lbx.cpp" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_lbx.h" />
+		<File RelativePath="..\..\engines\mohawk\module.mk" />
+		<File RelativePath="..\..\engines\mohawk\mohawk.cpp" />
+		<File RelativePath="..\..\engines\mohawk\mohawk.h" />
+		<File RelativePath="..\..\engines\mohawk\myst.cpp">
+			<FileConfiguration Name="Debug|Win32">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Analysis|Win32">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Release|Win32">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Debug|x64">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Analysis|x64">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+			<FileConfiguration Name="Release|x64">
+				<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\$(InputName).obj" XMLDocumentationFileName="$(IntDir)\$(InputName).xdc" />
+			</FileConfiguration>
+		</File>
+		<File RelativePath="..\..\engines\mohawk\myst.h" />
+		<File RelativePath="..\..\engines\mohawk\myst_areas.cpp" />
+		<File RelativePath="..\..\engines\mohawk\myst_areas.h" />
+		<File RelativePath="..\..\engines\mohawk\myst_graphics.cpp" />
+		<File RelativePath="..\..\engines\mohawk\myst_graphics.h" />
+		<File RelativePath="..\..\engines\mohawk\myst_scripts.cpp" />
+		<File RelativePath="..\..\engines\mohawk\myst_scripts.h" />
+		<File RelativePath="..\..\engines\mohawk\myst_sound.cpp" />
+		<File RelativePath="..\..\engines\mohawk\myst_sound.h" />
+		<File RelativePath="..\..\engines\mohawk\myst_state.cpp" />
+		<File RelativePath="..\..\engines\mohawk\myst_state.h" />
+		<File RelativePath="..\..\engines\mohawk\resource.cpp" />
+		<File RelativePath="..\..\engines\mohawk\resource.h" />
+		<File RelativePath="..\..\engines\mohawk\resource_cache.cpp" />
+		<File RelativePath="..\..\engines\mohawk\resource_cache.h" />
+		<File RelativePath="..\..\engines\mohawk\riven.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven.h" />
+		<File RelativePath="..\..\engines\mohawk\riven_card.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven_card.h" />
+		<File RelativePath="..\..\engines\mohawk\riven_graphics.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven_graphics.h" />
+		<File RelativePath="..\..\engines\mohawk\riven_inventory.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven_inventory.h" />
+		<File RelativePath="..\..\engines\mohawk\riven_saveload.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven_saveload.h" />
+		<File RelativePath="..\..\engines\mohawk\riven_scripts.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven_scripts.h" />
+		<File RelativePath="..\..\engines\mohawk\riven_sound.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven_sound.h" />
+		<File RelativePath="..\..\engines\mohawk\riven_stack.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven_stack.h" />
+		<File RelativePath="..\..\engines\mohawk\riven_vars.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven_video.cpp" />
+		<File RelativePath="..\..\engines\mohawk\riven_video.h" />
+		<File RelativePath="..\..\engines\mohawk\sound.cpp" />
+		<File RelativePath="..\..\engines\mohawk\sound.h" />
+		<File RelativePath="..\..\engines\mohawk\video.cpp" />
+		<File RelativePath="..\..\engines\mohawk\video.h" />
+		<File RelativePath="..\..\engines\mohawk\view.cpp" />
+		<File RelativePath="..\..\engines\mohawk\view.h" />
+	</Files>
+</VisualStudioProject>

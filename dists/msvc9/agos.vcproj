@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="agos"
+	ProjectGUID="{C49CDC14-E3AE-4FD1-BF00-FB3BF4B227CD}"
+	RootNamespace="agos"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4511;"/>
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4511;"/>
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4511;"/>
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4511;"/>
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4511;"/>
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4511;"/>
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4511;"/>
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4511;"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="drivers">
+			<Filter	Name="accolade">
+				<File RelativePath="..\..\engines\agos\drivers\accolade\adlib.cpp">
+					<FileConfiguration Name="Debug|Win32">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_accolade_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_accolade_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Analysis|Win32">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_accolade_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_accolade_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Release|Win32">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_accolade_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_accolade_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Debug|x64">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_accolade_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_accolade_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Analysis|x64">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_accolade_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_accolade_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Release|x64">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_accolade_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_accolade_$(InputName).xdc" />
+					</FileConfiguration>
+				</File>
+				<File RelativePath="..\..\engines\agos\drivers\accolade\driverfile.cpp" />
+				<File RelativePath="..\..\engines\agos\drivers\accolade\mididriver.h" />
+				<File RelativePath="..\..\engines\agos\drivers\accolade\mt32.cpp" />
+			</Filter>
+			<Filter	Name="simon1">
+				<File RelativePath="..\..\engines\agos\drivers\simon1\adlib.cpp">
+					<FileConfiguration Name="Debug|Win32">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_simon1_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_simon1_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Analysis|Win32">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_simon1_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_simon1_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Release|Win32">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_simon1_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_simon1_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Debug|x64">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_simon1_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_simon1_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Analysis|x64">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_simon1_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_simon1_$(InputName).xdc" />
+					</FileConfiguration>
+					<FileConfiguration Name="Release|x64">
+						<Tool Name="VCCLCompilerTool" ObjectFile="$(IntDir)\drivers_simon1_$(InputName).obj" XMLDocumentationFileName="$(IntDir)\drivers_simon1_$(InputName).xdc" />
+					</FileConfiguration>
+				</File>
+				<File RelativePath="..\..\engines\agos\drivers\simon1\adlib.h" />
+			</Filter>
+		</Filter>
+		<File RelativePath="..\..\engines\agos\agos.cpp" />
+		<File RelativePath="..\..\engines\agos\agos.h" />
+		<File RelativePath="..\..\engines\agos\animation.cpp" />
+		<File RelativePath="..\..\engines\agos\animation.h" />
+		<File RelativePath="..\..\engines\agos\charset-fontdata.cpp" />
+		<File RelativePath="..\..\engines\agos\charset.cpp" />
+		<File RelativePath="..\..\engines\agos\contain.cpp" />
+		<File RelativePath="..\..\engines\agos\cursor.cpp" />
+		<File RelativePath="..\..\engines\agos\debug.cpp" />
+		<File RelativePath="..\..\engines\agos\debug.h" />
+		<File RelativePath="..\..\engines\agos\debugger.cpp" />
+		<File RelativePath="..\..\engines\agos\debugger.h" />
+		<File RelativePath="..\..\engines\agos\detection.cpp" />
+		<File RelativePath="..\..\engines\agos\detection_tables.h" />
+		<File RelativePath="..\..\engines\agos\draw.cpp" />
+		<File RelativePath="..\..\engines\agos\event.cpp" />
+		<File RelativePath="..\..\engines\agos\feeble.cpp" />
+		<File RelativePath="..\..\engines\agos\gfx.cpp" />
+		<File RelativePath="..\..\engines\agos\icons.cpp" />
+		<File RelativePath="..\..\engines\agos\input.cpp" />
+		<File RelativePath="..\..\engines\agos\input_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\intern.h" />
+		<File RelativePath="..\..\engines\agos\items.cpp" />
+		<File RelativePath="..\..\engines\agos\menus.cpp" />
+		<File RelativePath="..\..\engines\agos\midi.cpp" />
+		<File RelativePath="..\..\engines\agos\midi.h" />
+		<File RelativePath="..\..\engines\agos\midiparser_s1d.cpp" />
+		<File RelativePath="..\..\engines\agos\module.mk" />
+		<File RelativePath="..\..\engines\agos\oracle.cpp" />
+		<File RelativePath="..\..\engines\agos\pn.cpp" />
+		<File RelativePath="..\..\engines\agos\res.cpp" />
+		<File RelativePath="..\..\engines\agos\res_ami.cpp" />
+		<File RelativePath="..\..\engines\agos\res_snd.cpp" />
+		<File RelativePath="..\..\engines\agos\rooms.cpp" />
+		<File RelativePath="..\..\engines\agos\saveload.cpp" />
+		<File RelativePath="..\..\engines\agos\script.cpp" />
+		<File RelativePath="..\..\engines\agos\script_dp.cpp" />
+		<File RelativePath="..\..\engines\agos\script_e1.cpp" />
+		<File RelativePath="..\..\engines\agos\script_e2.cpp" />
+		<File RelativePath="..\..\engines\agos\script_ff.cpp" />
+		<File RelativePath="..\..\engines\agos\script_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\script_pp.cpp" />
+		<File RelativePath="..\..\engines\agos\script_s1.cpp" />
+		<File RelativePath="..\..\engines\agos\script_s2.cpp" />
+		<File RelativePath="..\..\engines\agos\script_ww.cpp" />
+		<File RelativePath="..\..\engines\agos\sound.cpp" />
+		<File RelativePath="..\..\engines\agos\sound.h" />
+		<File RelativePath="..\..\engines\agos\string.cpp" />
+		<File RelativePath="..\..\engines\agos\string_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\subroutine.cpp" />
+		<File RelativePath="..\..\engines\agos\verb.cpp" />
+		<File RelativePath="..\..\engines\agos\verb_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\vga.cpp" />
+		<File RelativePath="..\..\engines\agos\vga.h" />
+		<File RelativePath="..\..\engines\agos\vga_e2.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_ff.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_s1.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_s2.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_ww.cpp" />
+		<File RelativePath="..\..\engines\agos\window.cpp" />
+		<File RelativePath="..\..\engines\agos\zones.cpp" />
+	</Files>
+</VisualStudioProject>

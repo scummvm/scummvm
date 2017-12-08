@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="bbvs"
+	ProjectGUID="{9B4CD2B2-6271-4B9C-AA8A-B8735FA8C134}"
+	RootNamespace="bbvs"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="minigames">
+			<File RelativePath="..\..\engines\bbvs\minigames\bbairguitar.cpp" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbairguitar.h" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbairguitar_anims.cpp" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbant.cpp" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbant.h" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbant_anims.cpp" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbloogie.cpp" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbloogie.h" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbloogie_anims.cpp" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbtennis.cpp" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbtennis.h" />
+			<File RelativePath="..\..\engines\bbvs\minigames\bbtennis_anims.cpp" />
+			<File RelativePath="..\..\engines\bbvs\minigames\minigame.cpp" />
+			<File RelativePath="..\..\engines\bbvs\minigames\minigame.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\bbvs\bbvs.cpp" />
+		<File RelativePath="..\..\engines\bbvs\bbvs.h" />
+		<File RelativePath="..\..\engines\bbvs\detection.cpp" />
+		<File RelativePath="..\..\engines\bbvs\dialogs.cpp" />
+		<File RelativePath="..\..\engines\bbvs\dialogs.h" />
+		<File RelativePath="..\..\engines\bbvs\gamemodule.cpp" />
+		<File RelativePath="..\..\engines\bbvs\gamemodule.h" />
+		<File RelativePath="..\..\engines\bbvs\graphics.cpp" />
+		<File RelativePath="..\..\engines\bbvs\graphics.h" />
+		<File RelativePath="..\..\engines\bbvs\logic.cpp" />
+		<File RelativePath="..\..\engines\bbvs\module.mk" />
+		<File RelativePath="..\..\engines\bbvs\saveload.cpp" />
+		<File RelativePath="..\..\engines\bbvs\scene.cpp" />
+		<File RelativePath="..\..\engines\bbvs\sound.cpp" />
+		<File RelativePath="..\..\engines\bbvs\sound.h" />
+		<File RelativePath="..\..\engines\bbvs\spritemodule.cpp" />
+		<File RelativePath="..\..\engines\bbvs\spritemodule.h" />
+		<File RelativePath="..\..\engines\bbvs\videoplayer.cpp" />
+		<File RelativePath="..\..\engines\bbvs\walk.cpp" />
+	</Files>
+</VisualStudioProject>

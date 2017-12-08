@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="mads"
+	ProjectGUID="{A8D11571-2DB8-4780-9712-49F5B8CDF689}"
+	RootNamespace="mads"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="dragonsphere">
+			<File RelativePath="..\..\engines\mads\dragonsphere\dragonsphere_scenes.cpp" />
+			<File RelativePath="..\..\engines\mads\dragonsphere\dragonsphere_scenes.h" />
+			<File RelativePath="..\..\engines\mads\dragonsphere\dragonsphere_scenes1.cpp" />
+			<File RelativePath="..\..\engines\mads\dragonsphere\dragonsphere_scenes1.h" />
+			<File RelativePath="..\..\engines\mads\dragonsphere\game_dragonsphere.cpp" />
+			<File RelativePath="..\..\engines\mads\dragonsphere\game_dragonsphere.h" />
+			<File RelativePath="..\..\engines\mads\dragonsphere\globals_dragonsphere.cpp" />
+			<File RelativePath="..\..\engines\mads\dragonsphere\globals_dragonsphere.h" />
+		</Filter>
+		<Filter	Name="nebular">
+			<File RelativePath="..\..\engines\mads\nebular\dialogs_nebular.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\dialogs_nebular.h" />
+			<File RelativePath="..\..\engines\mads\nebular\game_nebular.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\game_nebular.h" />
+			<File RelativePath="..\..\engines\mads\nebular\globals_nebular.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\globals_nebular.h" />
+			<File RelativePath="..\..\engines\mads\nebular\menu_nebular.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\menu_nebular.h" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes.h" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes1.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes1.h" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes2.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes2.h" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes3.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes3.h" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes4.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes4.h" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes5.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes5.h" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes6.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes6.h" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes7.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes7.h" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes8.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\nebular_scenes8.h" />
+			<File RelativePath="..\..\engines\mads\nebular\sound_nebular.cpp" />
+			<File RelativePath="..\..\engines\mads\nebular\sound_nebular.h" />
+		</Filter>
+		<Filter	Name="phantom">
+			<File RelativePath="..\..\engines\mads\phantom\game_phantom.cpp" />
+			<File RelativePath="..\..\engines\mads\phantom\game_phantom.h" />
+			<File RelativePath="..\..\engines\mads\phantom\globals_phantom.cpp" />
+			<File RelativePath="..\..\engines\mads\phantom\globals_phantom.h" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes.cpp" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes.h" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes1.cpp" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes1.h" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes2.cpp" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes2.h" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes3.cpp" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes3.h" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes4.cpp" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes4.h" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes5.cpp" />
+			<File RelativePath="..\..\engines\mads\phantom\phantom_scenes5.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\mads\action.cpp" />
+		<File RelativePath="..\..\engines\mads\action.h" />
+		<File RelativePath="..\..\engines\mads\animation.cpp" />
+		<File RelativePath="..\..\engines\mads\animation.h" />
+		<File RelativePath="..\..\engines\mads\assets.cpp" />
+		<File RelativePath="..\..\engines\mads\assets.h" />
+		<File RelativePath="..\..\engines\mads\audio.cpp" />
+		<File RelativePath="..\..\engines\mads\audio.h" />
+		<File RelativePath="..\..\engines\mads\camera.cpp" />
+		<File RelativePath="..\..\engines\mads\camera.h" />
+		<File RelativePath="..\..\engines\mads\compression.cpp" />
+		<File RelativePath="..\..\engines\mads\compression.h" />
+		<File RelativePath="..\..\engines\mads\conversations.cpp" />
+		<File RelativePath="..\..\engines\mads\conversations.h" />
+		<File RelativePath="..\..\engines\mads\debugger.cpp" />
+		<File RelativePath="..\..\engines\mads\debugger.h" />
+		<File RelativePath="..\..\engines\mads\detection.cpp" />
+		<File RelativePath="..\..\engines\mads\detection_tables.h" />
+		<File RelativePath="..\..\engines\mads\dialogs.cpp" />
+		<File RelativePath="..\..\engines\mads\dialogs.h" />
+		<File RelativePath="..\..\engines\mads\events.cpp" />
+		<File RelativePath="..\..\engines\mads\events.h" />
+		<File RelativePath="..\..\engines\mads\font.cpp" />
+		<File RelativePath="..\..\engines\mads\font.h" />
+		<File RelativePath="..\..\engines\mads\game.cpp" />
+		<File RelativePath="..\..\engines\mads\game.h" />
+		<File RelativePath="..\..\engines\mads\game_data.cpp" />
+		<File RelativePath="..\..\engines\mads\game_data.h" />
+		<File RelativePath="..\..\engines\mads\globals.cpp" />
+		<File RelativePath="..\..\engines\mads\globals.h" />
+		<File RelativePath="..\..\engines\mads\hotspots.cpp" />
+		<File RelativePath="..\..\engines\mads\hotspots.h" />
+		<File RelativePath="..\..\engines\mads\inventory.cpp" />
+		<File RelativePath="..\..\engines\mads\inventory.h" />
+		<File RelativePath="..\..\engines\mads\mads.cpp" />
+		<File RelativePath="..\..\engines\mads\mads.h" />
+		<File RelativePath="..\..\engines\mads\menu_views.cpp" />
+		<File RelativePath="..\..\engines\mads\menu_views.h" />
+		<File RelativePath="..\..\engines\mads\messages.cpp" />
+		<File RelativePath="..\..\engines\mads\messages.h" />
+		<File RelativePath="..\..\engines\mads\module.mk" />
+		<File RelativePath="..\..\engines\mads\msurface.cpp" />
+		<File RelativePath="..\..\engines\mads\msurface.h" />
+		<File RelativePath="..\..\engines\mads\palette.cpp" />
+		<File RelativePath="..\..\engines\mads\palette.h" />
+		<File RelativePath="..\..\engines\mads\player.cpp" />
+		<File RelativePath="..\..\engines\mads\player.h" />
+		<File RelativePath="..\..\engines\mads\rails.cpp" />
+		<File RelativePath="..\..\engines\mads\rails.h" />
+		<File RelativePath="..\..\engines\mads\resources.cpp" />
+		<File RelativePath="..\..\engines\mads\resources.h" />
+		<File RelativePath="..\..\engines\mads\scene.cpp" />
+		<File RelativePath="..\..\engines\mads\scene.h" />
+		<File RelativePath="..\..\engines\mads\scene_data.cpp" />
+		<File RelativePath="..\..\engines\mads\scene_data.h" />
+		<File RelativePath="..\..\engines\mads\screen.cpp" />
+		<File RelativePath="..\..\engines\mads\screen.h" />
+		<File RelativePath="..\..\engines\mads\sequence.cpp" />
+		<File RelativePath="..\..\engines\mads\sequence.h" />
+		<File RelativePath="..\..\engines\mads\sound.cpp" />
+		<File RelativePath="..\..\engines\mads\sound.h" />
+		<File RelativePath="..\..\engines\mads\sprites.cpp" />
+		<File RelativePath="..\..\engines\mads\sprites.h" />
+		<File RelativePath="..\..\engines\mads\staticres.cpp" />
+		<File RelativePath="..\..\engines\mads\staticres.h" />
+		<File RelativePath="..\..\engines\mads\user_interface.cpp" />
+		<File RelativePath="..\..\engines\mads\user_interface.h" />
+	</Files>
+</VisualStudioProject>

@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="sci"
+	ProjectGUID="{B723583B-6033-4D96-82F4-FD1B92BEBF01}"
+	RootNamespace="sci"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4373;"/>
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4373;"/>
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4373;"/>
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4373;"/>
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4373;"/>
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4373;"/>
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4373;"/>
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4373;"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="engine">
+			<File RelativePath="..\..\engines\sci\engine\features.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\features.h" />
+			<File RelativePath="..\..\engines\sci\engine\file.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\file.h" />
+			<File RelativePath="..\..\engines\sci\engine\gc.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\gc.h" />
+			<File RelativePath="..\..\engines\sci\engine\guest_additions.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\guest_additions.h" />
+			<File RelativePath="..\..\engines\sci\engine\kernel.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kernel.h" />
+			<File RelativePath="..\..\engines\sci\engine\kernel_tables.h" />
+			<File RelativePath="..\..\engines\sci\engine\kevent.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kfile.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kgraphics.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kgraphics32.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\klists.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kmath.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kmenu.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kmisc.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kmovement.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kparse.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kpathing.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kscripts.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\ksound.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kstring.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kvideo.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\message.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\message.h" />
+			<File RelativePath="..\..\engines\sci\engine\object.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\object.h" />
+			<File RelativePath="..\..\engines\sci\engine\savegame.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\savegame.h" />
+			<File RelativePath="..\..\engines\sci\engine\script.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\script.h" />
+			<File RelativePath="..\..\engines\sci\engine\script_patches.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\script_patches.h" />
+			<File RelativePath="..\..\engines\sci\engine\scriptdebug.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\scriptdebug.h" />
+			<File RelativePath="..\..\engines\sci\engine\seg_manager.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\seg_manager.h" />
+			<File RelativePath="..\..\engines\sci\engine\segment.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\segment.h" />
+			<File RelativePath="..\..\engines\sci\engine\selector.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\selector.h" />
+			<File RelativePath="..\..\engines\sci\engine\state.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\state.h" />
+			<File RelativePath="..\..\engines\sci\engine\static_selectors.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\vm.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\vm.h" />
+			<File RelativePath="..\..\engines\sci\engine\vm_types.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\vm_types.h" />
+			<File RelativePath="..\..\engines\sci\engine\workarounds.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\workarounds.h" />
+		</Filter>
+		<Filter	Name="graphics">
+			<File RelativePath="..\..\engines\sci\graphics\animate.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\animate.h" />
+			<File RelativePath="..\..\engines\sci\graphics\cache.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\cache.h" />
+			<File RelativePath="..\..\engines\sci\graphics\celobj32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\celobj32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\compare.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\compare.h" />
+			<File RelativePath="..\..\engines\sci\graphics\controls16.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\controls16.h" />
+			<File RelativePath="..\..\engines\sci\graphics\controls32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\controls32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\coordadjuster.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\coordadjuster.h" />
+			<File RelativePath="..\..\engines\sci\graphics\cursor.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\cursor.h" />
+			<File RelativePath="..\..\engines\sci\graphics\cursor32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\cursor32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\font.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\font.h" />
+			<File RelativePath="..\..\engines\sci\graphics\fontsjis.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\fontsjis.h" />
+			<File RelativePath="..\..\engines\sci\graphics\frameout.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\frameout.h" />
+			<File RelativePath="..\..\engines\sci\graphics\helpers.h" />
+			<File RelativePath="..\..\engines\sci\graphics\lists32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\maciconbar.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\maciconbar.h" />
+			<File RelativePath="..\..\engines\sci\graphics\menu.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\menu.h" />
+			<File RelativePath="..\..\engines\sci\graphics\paint16.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\paint16.h" />
+			<File RelativePath="..\..\engines\sci\graphics\paint32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\paint32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\palette.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\palette.h" />
+			<File RelativePath="..\..\engines\sci\graphics\palette32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\palette32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\picture.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\picture.h" />
+			<File RelativePath="..\..\engines\sci\graphics\plane32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\plane32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\portrait.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\portrait.h" />
+			<File RelativePath="..\..\engines\sci\graphics\ports.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\ports.h" />
+			<File RelativePath="..\..\engines\sci\graphics\remap.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\remap.h" />
+			<File RelativePath="..\..\engines\sci\graphics\remap32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\remap32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\screen.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\screen.h" />
+			<File RelativePath="..\..\engines\sci\graphics\screen_item32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\screen_item32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\text16.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\text16.h" />
+			<File RelativePath="..\..\engines\sci\graphics\text32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\text32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\transitions.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\transitions.h" />
+			<File RelativePath="..\..\engines\sci\graphics\transitions32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\transitions32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\video32.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\video32.h" />
+			<File RelativePath="..\..\engines\sci\graphics\view.cpp" />
+			<File RelativePath="..\..\engines\sci\graphics\view.h" />
+		</Filter>
+		<Filter	Name="parser">
+			<File RelativePath="..\..\engines\sci\parser\grammar.cpp" />
+			<File RelativePath="..\..\engines\sci\parser\said.cpp" />
+			<File RelativePath="..\..\engines\sci\parser\vocabulary.cpp" />
+			<File RelativePath="..\..\engines\sci\parser\vocabulary.h" />
+		</Filter>
+		<Filter	Name="sound">
+			<Filter	Name="decoders">
+				<File RelativePath="..\..\engines\sci\sound\decoders\sol.cpp" />
+				<File RelativePath="..\..\engines\sci\sound\decoders\sol.h" />
+			</Filter>
+			<Filter	Name="drivers">
+				<File RelativePath="..\..\engines\sci\sound\drivers\adlib.cpp" />
+				<File RelativePath="..\..\engines\sci\sound\drivers\amigamac.cpp" />
+				<File RelativePath="..\..\engines\sci\sound\drivers\cms.cpp" />
+				<File RelativePath="..\..\engines\sci\sound\drivers\fb01.cpp" />
+				<File RelativePath="..\..\engines\sci\sound\drivers\fmtowns.cpp" />
+				<File RelativePath="..\..\engines\sci\sound\drivers\gm_names.h" />
+				<File RelativePath="..\..\engines\sci\sound\drivers\map-mt32-to-gm.h" />
+				<File RelativePath="..\..\engines\sci\sound\drivers\midi.cpp" />
+				<File RelativePath="..\..\engines\sci\sound\drivers\mididriver.h" />
+				<File RelativePath="..\..\engines\sci\sound\drivers\pcjr.cpp" />
+			</Filter>
+			<File RelativePath="..\..\engines\sci\sound\audio.cpp" />
+			<File RelativePath="..\..\engines\sci\sound\audio.h" />
+			<File RelativePath="..\..\engines\sci\sound\audio32.cpp" />
+			<File RelativePath="..\..\engines\sci\sound\audio32.h" />
+			<File RelativePath="..\..\engines\sci\sound\midiparser_sci.cpp" />
+			<File RelativePath="..\..\engines\sci\sound\midiparser_sci.h" />
+			<File RelativePath="..\..\engines\sci\sound\music.cpp" />
+			<File RelativePath="..\..\engines\sci\sound\music.h" />
+			<File RelativePath="..\..\engines\sci\sound\soundcmd.cpp" />
+			<File RelativePath="..\..\engines\sci\sound\soundcmd.h" />
+			<File RelativePath="..\..\engines\sci\sound\sync.cpp" />
+			<File RelativePath="..\..\engines\sci\sound\sync.h" />
+		</Filter>
+		<Filter	Name="video">
+			<File RelativePath="..\..\engines\sci\video\robot_decoder.cpp" />
+			<File RelativePath="..\..\engines\sci\video\robot_decoder.h" />
+			<File RelativePath="..\..\engines\sci\video\seq_decoder.cpp" />
+			<File RelativePath="..\..\engines\sci\video\seq_decoder.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\sci\console.cpp" />
+		<File RelativePath="..\..\engines\sci\console.h" />
+		<File RelativePath="..\..\engines\sci\debug.h" />
+		<File RelativePath="..\..\engines\sci\decompressor.cpp" />
+		<File RelativePath="..\..\engines\sci\decompressor.h" />
+		<File RelativePath="..\..\engines\sci\detection.cpp" />
+		<File RelativePath="..\..\engines\sci\detection_tables.h" />
+		<File RelativePath="..\..\engines\sci\event.cpp" />
+		<File RelativePath="..\..\engines\sci\event.h" />
+		<File RelativePath="..\..\engines\sci\module.mk" />
+		<File RelativePath="..\..\engines\sci\resource.cpp" />
+		<File RelativePath="..\..\engines\sci\resource.h" />
+		<File RelativePath="..\..\engines\sci\resource_audio.cpp" />
+		<File RelativePath="..\..\engines\sci\resource_intern.h" />
+		<File RelativePath="..\..\engines\sci\sci.cpp" />
+		<File RelativePath="..\..\engines\sci\sci.h" />
+		<File RelativePath="..\..\engines\sci\util.cpp" />
+		<File RelativePath="..\..\engines\sci\util.h" />
+	</Files>
+</VisualStudioProject>

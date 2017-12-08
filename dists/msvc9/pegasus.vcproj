@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="pegasus"
+	ProjectGUID="{3138930F-7942-4EA6-86C0-8D45C8F8B091}"
+	RootNamespace="pegasus"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="LLVM|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_LLVM64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter	Name="ai">
+			<File RelativePath="..\..\engines\pegasus\ai\ai_action.cpp" />
+			<File RelativePath="..\..\engines\pegasus\ai\ai_action.h" />
+			<File RelativePath="..\..\engines\pegasus\ai\ai_area.cpp" />
+			<File RelativePath="..\..\engines\pegasus\ai\ai_area.h" />
+			<File RelativePath="..\..\engines\pegasus\ai\ai_condition.cpp" />
+			<File RelativePath="..\..\engines\pegasus\ai\ai_condition.h" />
+			<File RelativePath="..\..\engines\pegasus\ai\ai_rule.cpp" />
+			<File RelativePath="..\..\engines\pegasus\ai\ai_rule.h" />
+		</Filter>
+		<Filter	Name="items">
+			<Filter	Name="biochips">
+				<File RelativePath="..\..\engines\pegasus\items\biochips\aichip.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\aichip.h" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\biochipitem.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\biochipitem.h" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\mapchip.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\mapchip.h" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\mapimage.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\mapimage.h" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\opticalchip.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\opticalchip.h" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\pegasuschip.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\pegasuschip.h" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\retscanchip.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\retscanchip.h" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\shieldchip.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\biochips\shieldchip.h" />
+			</Filter>
+			<Filter	Name="inventory">
+				<File RelativePath="..\..\engines\pegasus\items\inventory\airmask.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\inventory\airmask.h" />
+				<File RelativePath="..\..\engines\pegasus\items\inventory\gascanister.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\inventory\gascanister.h" />
+				<File RelativePath="..\..\engines\pegasus\items\inventory\inventoryitem.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\inventory\inventoryitem.h" />
+				<File RelativePath="..\..\engines\pegasus\items\inventory\keycard.cpp" />
+				<File RelativePath="..\..\engines\pegasus\items\inventory\keycard.h" />
+			</Filter>
+			<File RelativePath="..\..\engines\pegasus\items\autodragger.cpp" />
+			<File RelativePath="..\..\engines\pegasus\items\autodragger.h" />
+			<File RelativePath="..\..\engines\pegasus\items\inventory.cpp" />
+			<File RelativePath="..\..\engines\pegasus\items\inventory.h" />
+			<File RelativePath="..\..\engines\pegasus\items\inventorypicture.cpp" />
+			<File RelativePath="..\..\engines\pegasus\items\inventorypicture.h" />
+			<File RelativePath="..\..\engines\pegasus\items\item.cpp" />
+			<File RelativePath="..\..\engines\pegasus\items\item.h" />
+			<File RelativePath="..\..\engines\pegasus\items\itemdragger.cpp" />
+			<File RelativePath="..\..\engines\pegasus\items\itemdragger.h" />
+			<File RelativePath="..\..\engines\pegasus\items\itemlist.cpp" />
+			<File RelativePath="..\..\engines\pegasus\items\itemlist.h" />
+		</Filter>
+		<Filter	Name="neighborhood">
+			<Filter	Name="caldoria">
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoria.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoria.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoria4dsystem.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoria4dsystem.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoriabomb.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoriabomb.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoriamessages.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoriamessages.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoriamirror.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\caldoria\caldoriamirror.h" />
+			</Filter>
+			<Filter	Name="mars">
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\constants.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\energybeam.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\energybeam.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\gravitoncannon.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\gravitoncannon.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\hermite.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\hermite.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\mars.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\mars.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\planetmover.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\planetmover.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\reactor.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\reactor.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\robotship.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\robotship.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\shuttleenergymeter.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\shuttleenergymeter.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\shuttlehud.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\shuttlehud.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\shuttleweapon.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\shuttleweapon.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\spacechase3d.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\spacechase3d.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\spacejunk.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\spacejunk.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\tractorbeam.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\mars\tractorbeam.h" />
+			</Filter>
+			<Filter	Name="norad">
+				<Filter	Name="alpha">
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\ecrmonitor.cpp" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\ecrmonitor.h" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\fillingstation.cpp" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\fillingstation.h" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\noradalpha.cpp" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\noradalpha.h" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\panorama.cpp" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\panorama.h" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\panoramascroll.cpp" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\alpha\panoramascroll.h" />
+				</Filter>
+				<Filter	Name="delta">
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\delta\globegame.cpp" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\delta\globegame.h" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\delta\noraddelta.cpp" />
+					<File RelativePath="..\..\engines\pegasus\neighborhood\norad\delta\noraddelta.h" />
+				</Filter>
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\constants.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\norad.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\norad.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\noradelevator.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\noradelevator.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\pressuredoor.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\pressuredoor.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\pressuretracker.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\pressuretracker.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\subcontrolroom.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\subcontrolroom.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\subplatform.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\norad\subplatform.h" />
+			</Filter>
+			<Filter	Name="prehistoric">
+				<File RelativePath="..\..\engines\pegasus\neighborhood\prehistoric\prehistoric.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\prehistoric\prehistoric.h" />
+			</Filter>
+			<Filter	Name="tsa">
+				<File RelativePath="..\..\engines\pegasus\neighborhood\tsa\fulltsa.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\tsa\fulltsa.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\tsa\tinytsa.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\tsa\tinytsa.h" />
+			</Filter>
+			<Filter	Name="wsc">
+				<File RelativePath="..\..\engines\pegasus\neighborhood\wsc\moleculebin.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\wsc\moleculebin.h" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\wsc\wsc.cpp" />
+				<File RelativePath="..\..\engines\pegasus\neighborhood\wsc\wsc.h" />
+			</Filter>
+			<File RelativePath="..\..\engines\pegasus\neighborhood\door.cpp" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\door.h" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\exit.cpp" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\exit.h" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\extra.cpp" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\extra.h" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\hotspotinfo.cpp" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\hotspotinfo.h" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\neighborhood.cpp" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\neighborhood.h" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\spot.cpp" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\spot.h" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\turn.cpp" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\turn.h" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\view.cpp" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\view.h" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\zoom.cpp" />
+			<File RelativePath="..\..\engines\pegasus\neighborhood\zoom.h" />
+		</Filter>
+		<File RelativePath="..\..\engines\pegasus\compass.cpp" />
+		<File RelativePath="..\..\engines\pegasus\compass.h" />
+		<File RelativePath="..\..\engines\pegasus\console.cpp" />
+		<File RelativePath="..\..\engines\pegasus\console.h" />
+		<File RelativePath="..\..\engines\pegasus\constants.h" />
+		<File RelativePath="..\..\engines\pegasus\cursor.cpp" />
+		<File RelativePath="..\..\engines\pegasus\cursor.h" />
+		<File RelativePath="..\..\engines\pegasus\detection.cpp" />
+		<File RelativePath="..\..\engines\pegasus\elements.cpp" />
+		<File RelativePath="..\..\engines\pegasus\elements.h" />
+		<File RelativePath="..\..\engines\pegasus\energymonitor.cpp" />
+		<File RelativePath="..\..\engines\pegasus\energymonitor.h" />
+		<File RelativePath="..\..\engines\pegasus\fader.cpp" />
+		<File RelativePath="..\..\engines\pegasus\fader.h" />
+		<File RelativePath="..\..\engines\pegasus\gamestate.cpp" />
+		<File RelativePath="..\..\engines\pegasus\gamestate.h" />
+		<File RelativePath="..\..\engines\pegasus\graphics.cpp" />
+		<File RelativePath="..\..\engines\pegasus\graphics.h" />
+		<File RelativePath="..\..\engines\pegasus\hotspot.cpp" />
+		<File RelativePath="..\..\engines\pegasus\hotspot.h" />
+		<File RelativePath="..\..\engines\pegasus\input.cpp" />
+		<File RelativePath="..\..\engines\pegasus\input.h" />
+		<File RelativePath="..\..\engines\pegasus\interaction.cpp" />
+		<File RelativePath="..\..\engines\pegasus\interaction.h" />
+		<File RelativePath="..\..\engines\pegasus\interface.cpp" />
+		<File RelativePath="..\..\engines\pegasus\interface.h" />
+		<File RelativePath="..\..\engines\pegasus\menu.cpp" />
+		<File RelativePath="..\..\engines\pegasus\menu.h" />
+		<File RelativePath="..\..\engines\pegasus\module.mk" />
+		<File RelativePath="..\..\engines\pegasus\movie.cpp" />
+		<File RelativePath="..\..\engines\pegasus\movie.h" />
+		<File RelativePath="..\..\engines\pegasus\notification.cpp" />
+		<File RelativePath="..\..\engines\pegasus\notification.h" />
+		<File RelativePath="..\..\engines\pegasus\pegasus.cpp" />
+		<File RelativePath="..\..\engines\pegasus\pegasus.h" />
+		<File RelativePath="..\..\engines\pegasus\scoring.h" />
+		<File RelativePath="..\..\engines\pegasus\sound.cpp" />
+		<File RelativePath="..\..\engines\pegasus\sound.h" />
+		<File RelativePath="..\..\engines\pegasus\surface.cpp" />
+		<File RelativePath="..\..\engines\pegasus\surface.h" />
+		<File RelativePath="..\..\engines\pegasus\timers.cpp" />
+		<File RelativePath="..\..\engines\pegasus\timers.h" />
+		<File RelativePath="..\..\engines\pegasus\transition.cpp" />
+		<File RelativePath="..\..\engines\pegasus\transition.h" />
+		<File RelativePath="..\..\engines\pegasus\types.h" />
+		<File RelativePath="..\..\engines\pegasus\util.cpp" />
+		<File RelativePath="..\..\engines\pegasus\util.h" />
+	</Files>
+</VisualStudioProject>

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|Win32">
+			<Configuration>Analysis</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Analysis|x64">
+			<Configuration>Analysis</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|Win32">
+			<Configuration>LLVM</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM|x64">
+			<Configuration>LLVM</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>{E7EA1521-EC71-4C5E-8CF3-A517E8A2D2BC}</ProjectGuid>
+		<RootNamespace>kyra</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+		<VCTargetsPath Condition="'$(VCTargetsPath12)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''">$(VCTargetsPath12)</VCTargetsPath>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>LLVM-vs2013</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+		<PlatformToolset>v120</PlatformToolset>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Analysis64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_LLVM64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4355;4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4355;4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4355;4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+		<ClCompile>
+			<DisableSpecificWarnings>4355;4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4355;4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Analysis|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4355;4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LLVM|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4355;4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<ClCompile>
+			<DisableSpecificWarnings>4355;4510;4610;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\kyra\animator_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\animator_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\animator_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\animator_tim.cpp" />
+		<ClCompile Include="..\..\engines\kyra\animator_v2.cpp" />
+		<ClCompile Include="..\..\engines\kyra\chargen.cpp" />
+		<ClCompile Include="..\..\engines\kyra\darkmoon.cpp" />
+		<ClCompile Include="..\..\engines\kyra\debugger.cpp" />
+		<ClCompile Include="..\..\engines\kyra\detection.cpp" />
+		<ClCompile Include="..\..\engines\kyra\eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\eobcommon.cpp" />
+		<ClCompile Include="..\..\engines\kyra\gui.cpp" />
+		<ClCompile Include="..\..\engines\kyra\gui_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\gui_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\gui_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\gui_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\gui_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\gui_rpg.cpp" />
+		<ClCompile Include="..\..\engines\kyra\gui_v1.cpp" />
+		<ClCompile Include="..\..\engines\kyra\gui_v2.cpp" />
+		<ClCompile Include="..\..\engines\kyra\items_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\items_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\items_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\items_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\items_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\items_v2.cpp" />
+		<ClCompile Include="..\..\engines\kyra\kyra_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\kyra_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\kyra_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\kyra_rpg.cpp" />
+		<ClCompile Include="..\..\engines\kyra\kyra_v1.cpp" />
+		<ClCompile Include="..\..\engines\kyra\kyra_v2.cpp" />
+		<ClCompile Include="..\..\engines\kyra\lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\magic_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\resource.cpp" />
+		<ClCompile Include="..\..\engines\kyra\resource_intern.cpp" />
+		<ClCompile Include="..\..\engines\kyra\saveload.cpp" />
+		<ClCompile Include="..\..\engines\kyra\saveload_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\saveload_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\saveload_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\saveload_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\saveload_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\saveload_rpg.cpp" />
+		<ClCompile Include="..\..\engines\kyra\scene_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\scene_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\scene_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\scene_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\scene_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\scene_rpg.cpp" />
+		<ClCompile Include="..\..\engines\kyra\scene_v1.cpp" />
+		<ClCompile Include="..\..\engines\kyra\scene_v2.cpp" />
+		<ClCompile Include="..\..\engines\kyra\screen.cpp" />
+		<ClCompile Include="..\..\engines\kyra\screen_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\screen_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\screen_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\screen_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\screen_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\screen_v2.cpp" />
+		<ClCompile Include="..\..\engines\kyra\script.cpp" />
+		<ClCompile Include="..\..\engines\kyra\script_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\script_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\script_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\script_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\script_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\script_tim.cpp" />
+		<ClCompile Include="..\..\engines\kyra\script_v1.cpp" />
+		<ClCompile Include="..\..\engines\kyra\script_v2.cpp" />
+		<ClCompile Include="..\..\engines\kyra\seqplayer.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sequences_darkmoon.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sequences_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sequences_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sequences_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sequences_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sequences_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sequences_v2.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sound.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sound_adlib.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sound_amiga.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sound_digital.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sound_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sound_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sound_midi.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sound_pcspk.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sound_towns.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sprites.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sprites_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sprites_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\sprites_rpg.cpp" />
+		<ClCompile Include="..\..\engines\kyra\staticres.cpp" />
+		<ClCompile Include="..\..\engines\kyra\staticres_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\staticres_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\staticres_rpg.cpp" />
+		<ClCompile Include="..\..\engines\kyra\text.cpp" />
+		<ClCompile Include="..\..\engines\kyra\text_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\text_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\text_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\text_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\text_rpg.cpp" />
+		<ClCompile Include="..\..\engines\kyra\timer.cpp" />
+		<ClCompile Include="..\..\engines\kyra\timer_eob.cpp" />
+		<ClCompile Include="..\..\engines\kyra\timer_hof.cpp" />
+		<ClCompile Include="..\..\engines\kyra\timer_lok.cpp" />
+		<ClCompile Include="..\..\engines\kyra\timer_lol.cpp" />
+		<ClCompile Include="..\..\engines\kyra\timer_mr.cpp" />
+		<ClCompile Include="..\..\engines\kyra\timer_rpg.cpp" />
+		<ClCompile Include="..\..\engines\kyra\util.cpp" />
+		<ClCompile Include="..\..\engines\kyra\vqa.cpp" />
+		<ClCompile Include="..\..\engines\kyra\wsamovie.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\kyra\animator_lok.h" />
+		<ClInclude Include="..\..\engines\kyra\darkmoon.h" />
+		<ClInclude Include="..\..\engines\kyra\debugger.h" />
+		<ClInclude Include="..\..\engines\kyra\detection_tables.h" />
+		<ClInclude Include="..\..\engines\kyra\eob.h" />
+		<ClInclude Include="..\..\engines\kyra\eobcommon.h" />
+		<ClInclude Include="..\..\engines\kyra\gui.h" />
+		<ClInclude Include="..\..\engines\kyra\gui_eob.h" />
+		<ClInclude Include="..\..\engines\kyra\gui_hof.h" />
+		<ClInclude Include="..\..\engines\kyra\gui_lok.h" />
+		<ClInclude Include="..\..\engines\kyra\gui_lol.h" />
+		<ClInclude Include="..\..\engines\kyra\gui_mr.h" />
+		<ClInclude Include="..\..\engines\kyra\gui_v1.h" />
+		<ClInclude Include="..\..\engines\kyra\gui_v2.h" />
+		<ClInclude Include="..\..\engines\kyra\item.h" />
+		<ClInclude Include="..\..\engines\kyra\kyra_hof.h" />
+		<ClInclude Include="..\..\engines\kyra\kyra_lok.h" />
+		<ClInclude Include="..\..\engines\kyra\kyra_mr.h" />
+		<ClInclude Include="..\..\engines\kyra\kyra_rpg.h" />
+		<ClInclude Include="..\..\engines\kyra\kyra_v1.h" />
+		<ClInclude Include="..\..\engines\kyra\kyra_v2.h" />
+		<ClInclude Include="..\..\engines\kyra\lol.h" />
+		<ClInclude Include="..\..\engines\kyra\resource.h" />
+		<ClInclude Include="..\..\engines\kyra\resource_intern.h" />
+		<ClInclude Include="..\..\engines\kyra\screen.h" />
+		<ClInclude Include="..\..\engines\kyra\screen_eob.h" />
+		<ClInclude Include="..\..\engines\kyra\screen_hof.h" />
+		<ClInclude Include="..\..\engines\kyra\screen_lok.h" />
+		<ClInclude Include="..\..\engines\kyra\screen_lol.h" />
+		<ClInclude Include="..\..\engines\kyra\screen_mr.h" />
+		<ClInclude Include="..\..\engines\kyra\screen_v2.h" />
+		<ClInclude Include="..\..\engines\kyra\script.h" />
+		<ClInclude Include="..\..\engines\kyra\script_eob.h" />
+		<ClInclude Include="..\..\engines\kyra\script_tim.h" />
+		<ClInclude Include="..\..\engines\kyra\seqplayer.h" />
+		<ClInclude Include="..\..\engines\kyra\sequences_hof.h" />
+		<ClInclude Include="..\..\engines\kyra\sound.h" />
+		<ClInclude Include="..\..\engines\kyra\sound_adlib.h" />
+		<ClInclude Include="..\..\engines\kyra\sound_digital.h" />
+		<ClInclude Include="..\..\engines\kyra\sound_intern.h" />
+		<ClInclude Include="..\..\engines\kyra\sprites.h" />
+		<ClInclude Include="..\..\engines\kyra\text.h" />
+		<ClInclude Include="..\..\engines\kyra\text_hof.h" />
+		<ClInclude Include="..\..\engines\kyra\text_lol.h" />
+		<ClInclude Include="..\..\engines\kyra\text_mr.h" />
+		<ClInclude Include="..\..\engines\kyra\text_rpg.h" />
+		<ClInclude Include="..\..\engines\kyra\timer.h" />
+		<ClInclude Include="..\..\engines\kyra\util.h" />
+		<ClInclude Include="..\..\engines\kyra\vqa.h" />
+		<ClInclude Include="..\..\engines\kyra\wsamovie.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\kyra\module.mk" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>
