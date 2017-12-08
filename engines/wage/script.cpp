@@ -63,13 +63,24 @@ static Common::String toString(const Designed *d) {
 		return d->toString();
 }
 
-Common::String Script::Operand::toString() {
+static Common::String toString(const Common::String *d) {
+	if (!d)
+		return "<NULL>";
+	else
+		return *d;
+}
+
+static Common::String toString(int16 val) {
+	return Common::String::format("%d", val);
+}
+
+Common::String Script::Operand::toString() const {
 	switch(_type) {
 	case NUMBER:
-		return Common::String::format("%d", _value.number);
+		return Wage::toString(_value.number);
 	case STRING:
 	case TEXT_INPUT:
-		return *_value.string;
+		return Wage::toString(_value.string);
 	case OBJ:
 		return Wage::toString(_value.obj);
 	case CHR:
