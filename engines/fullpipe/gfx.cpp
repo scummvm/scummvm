@@ -234,6 +234,11 @@ GameObject::GameObject(GameObject *src) {
 	_field_8 = src->_field_8;
 }
 
+Common::String GameObject::toXML() {
+	return Common::String::format("id=%d name=\"%s\" x=%d y=%d priority=%d f8=%d",
+		_id, transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
+}
+
 bool GameObject::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "GameObject::load()");
 	_odelay = 0;
