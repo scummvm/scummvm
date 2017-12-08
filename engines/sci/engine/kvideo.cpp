@@ -77,7 +77,7 @@ void playVideo(Video::VideoDecoder &videoDecoder) {
 
 	if (videoDecoder.hasDirtyPalette()) {
 		const byte *palette = videoDecoder.getPalette();
-		g_system->getPaletteManager()->setPalette(palette, 0, 255);
+		g_sci->_gfxScreen->setPalette(palette, 0, 255);
 	}
 
 	while (!g_engine->shouldQuit() && !videoDecoder.endOfVideo() && !skipVideo) {
@@ -85,18 +85,19 @@ void playVideo(Video::VideoDecoder &videoDecoder) {
 			const Graphics::Surface *frame = videoDecoder.decodeNextFrame();
 
 			if (frame) {
+				Common::Rect rect(x, y, x+width, y+height);
 				if (scaleBuffer) {
 					const SciSpan<const byte> input((const byte *)frame->getPixels(), frame->w * frame->h * bytesPerPixel);
 					// TODO: Probably should do aspect ratio correction in KQ6
 					g_sci->_gfxScreen->scale2x(input, *scaleBuffer, videoDecoder.getWidth(), videoDecoder.getHeight(), bytesPerPixel);
-					g_system->copyRectToScreen(scaleBuffer->getUnsafeDataAt(0, pitch * height), pitch, x, y, width, height);
+					g_sci->_gfxScreen->copyVideoFrameToScreen(scaleBuffer->getUnsafeDataAt(0, pitch * height), pitch, rect, bytesPerPixel == 1);
 				} else {
-					g_system->copyRectToScreen(frame->getPixels(), frame->pitch, x, y, width, height);
+					g_sci->_gfxScreen->copyVideoFrameToScreen((const byte *)frame->getPixels(), frame->pitch, rect, bytesPerPixel == 1);
 				}
 
 				if (videoDecoder.hasDirtyPalette()) {
 					const byte *palette = videoDecoder.getPalette();
-					g_system->getPaletteManager()->setPalette(palette, 0, 255);
+					g_sci->_gfxScreen->setPalette(palette, 0, 255);
 				}
 
 				g_system->updateScreen();
@@ -127,6 +128,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 	Common::ScopedPtr<Video::VideoDecoder> videoDecoder;
 
+	bool switchedGraphicsMode = false;
+
 	if (argv[0].isPointer()) {
 		Common::String filename = s->_segMan->getString(argv[0]);
 
@@ -135,7 +138,10 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			// The only argument is the string for the video
 
 			// HACK: Switch to 16bpp graphics for Cinepak.
-			initGraphics(screenWidth, screenHeight, nullptr);
+			if (g_system->getScreenFormat().bytesPerPixel == 1) {
+				initGraphics(screenWidth, screenHeight, nullptr);
+				switchedGraphicsMode = true;
+			}
 
 			if (g_system->getScreenFormat().bytesPerPixel == 1) {
 				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode");
@@ -177,13 +183,15 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (videoDecoder) {
+		bool is8bit = videoDecoder->getPixelFormat().bytesPerPixel == 1;
+
 		playVideo(*videoDecoder);
 
 		// HACK: Switch back to 8bpp if we played a true color video.
 		// We also won't be copying the screen to the SCI screen...
-		if (g_system->getScreenFormat().bytesPerPixel != 1)
+		if (switchedGraphicsMode)
 			initGraphics(screenWidth, screenHeight);
-		else {
+		else if (is8bit) {
 			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 			g_sci->_gfxPalette16->kernelSyncScreenPalette();
 		}

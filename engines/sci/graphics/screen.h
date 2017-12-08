@@ -28,6 +28,7 @@
 #include "sci/graphics/view.h"
 
 #include "graphics/sjis.h"
+#include "graphics/pixelformat.h"
 
 namespace Sci {
 
@@ -80,11 +81,18 @@ public:
 
 	void clearForRestoreGame();
 	void copyToScreen();
-	void copyFromScreen(byte *buffer);
 	void kernelSyncWithFramebuffer();
 	void copyRectToScreen(const Common::Rect &rect);
 	void copyDisplayRectToScreen(const Common::Rect &rect);
 	void copyRectToScreen(const Common::Rect &rect, int16 x, int16 y);
+
+	// functions to manipulate a backup copy of the screen (for transitions)
+	void bakCreateBackup();
+	void bakCopyRectToScreen(const Common::Rect &rect, int16 x, int16 y);
+	void bakDiscard();
+
+	// video frame displaying
+	void copyVideoFrameToScreen(const byte *buffer, int pitch, const Common::Rect &rect, bool is8bit);
 
 	// Vector drawing
 private:
@@ -114,8 +122,8 @@ public:
 
 	int bitsGetDataSize(Common::Rect rect, byte mask);
 	void bitsSave(Common::Rect rect, byte mask, byte *memoryPtr);
-	void bitsGetRect(byte *memoryPtr, Common::Rect *destRect);
-	void bitsRestore(byte *memoryPtr);
+	void bitsGetRect(const byte *memoryPtr, Common::Rect *destRect);
+	void bitsRestore(const byte *memoryPtr);
 
 	void scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel = 1);
 
@@ -139,6 +147,9 @@ public:
 	void setFontIsUpscaled(bool isUpscaled) { _fontIsUpscaled = isUpscaled; }
 	bool fontIsUpscaled() const { return _fontIsUpscaled; }
 
+	void grabPalette(byte *buffer, uint start, uint num) const;
+	void setPalette(const byte *buffer, uint start, uint num, bool update = true);
+
 private:
 	uint16 _width;
 	uint16 _height;
@@ -149,13 +160,15 @@ private:
 	uint16 _displayHeight;
 	uint _displayPixels;
 
+	Graphics::PixelFormat _format;
+
 	byte _colorWhite;
 	byte _colorDefaultVectorData;
 
-	void bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen, uint16 screenWidth);
-	void bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr);
-	void bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWidth, byte *&memoryPtr);
-	void bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr);
+	void bitsRestoreScreen(Common::Rect rect, const byte *&memoryPtr, byte *screen, uint16 screenWidth);
+	void bitsRestoreDisplayScreen(Common::Rect rect, const byte *&memoryPtr, byte *screen);
+	void bitsSaveScreen(Common::Rect rect, const byte *screen, uint16 screenWidth, byte *&memoryPtr);
+	void bitsSaveDisplayScreen(Common::Rect rect, const byte *screen, byte *&memoryPtr);
 
 	void setVerticalShakePos(uint16 shakePos);
 
@@ -178,6 +191,17 @@ private:
 	 * Only read from this buffer for Save/ShowBits usage.
 	 */
 	byte *_displayScreen;
+
+	// Screens for RGB mode support
+	byte *_displayedScreen;
+	byte *_rgbScreen;
+
+	byte *_backupScreen; // for bak* functions
+
+	void convertToRGB(const Common::Rect &rect);
+	void displayRectRGB(const Common::Rect &rect, int x, int y);
+	void displayRect(const Common::Rect &rect, int x, int y);
+	byte *_palette;
 
 	ResourceManager *_resMan;
 

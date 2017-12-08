@@ -59,8 +59,10 @@ public:
 	void getSys(Palette *pal);
 	uint16 getTotalColorCount() const { return _totalScreenColors; }
 
-	void setOnScreen();
-	void copySysPaletteToScreen();
+	// Set palette on screen. If update is false, try not to change the palette
+	// on already painted areas, but this may be impossible.
+	void setOnScreen(bool update=true);
+	void copySysPaletteToScreen(bool update);
 
 	void drewPicture(GuiResourceId pictureId);
 

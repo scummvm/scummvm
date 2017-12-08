@@ -272,7 +272,7 @@ void GfxTransitions::doTransition(int16 number, bool blackoutFlag) {
 
 void GfxTransitions::setNewPalette(bool blackoutFlag) {
 	if (!blackoutFlag)
-		_palette->setOnScreen();
+		_palette->setOnScreen(false);
 }
 
 void GfxTransitions::setNewScreen(bool blackoutFlag) {
@@ -308,7 +308,7 @@ void GfxTransitions::fadeOut() {
 	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
 	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
 
-	g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
+	_screen->grabPalette(oldPalette, 0, 256);
 
 	for (stepNr = 100; stepNr >= 0; stepNr -= 10) {
 		for (colorNr = 1; colorNr <= tillColorNr; colorNr++) {
@@ -322,7 +322,7 @@ void GfxTransitions::fadeOut() {
 				workPalette[colorNr * 3 + 2] = oldPalette[colorNr * 3 + 2] * stepNr / 100;
 			}
 		}
-		g_system->getPaletteManager()->setPalette(workPalette + 3, 1, tillColorNr);
+		_screen->setPalette(workPalette + 3, 1, tillColorNr);
 		g_sci->getEngineState()->wait(2);
 	}
 }
@@ -460,15 +460,12 @@ void GfxTransitions::straight(int16 number, bool blackoutFlag) {
 }
 
 void GfxTransitions::scrollCopyOldToScreen(Common::Rect screenRect, int16 x, int16 y) {
-	byte *oldScreenPtr = _oldScreen;
-	int16 screenWidth = _screen->getDisplayWidth();
 	if (_screen->getUpscaledHires()) {
 		_screen->adjustToUpscaledCoordinates(screenRect.top, screenRect.left);
 		_screen->adjustToUpscaledCoordinates(screenRect.bottom, screenRect.right);
 		_screen->adjustToUpscaledCoordinates(y, x);
 	}
-	oldScreenPtr += screenRect.left + screenRect.top * screenWidth;
-	g_system->copyRectToScreen(oldScreenPtr, screenWidth, x, y, screenRect.width(), screenRect.height());
+	_screen->bakCopyRectToScreen(screenRect, x, y);
 }
 
 // Scroll old screen (up/down/left/right) and insert new screen that way - works
@@ -481,7 +478,7 @@ void GfxTransitions::scroll(int16 number) {
 	Common::Rect newScreenRect = _picRect;
 	uint32 msecCount = 0;
 
-	_screen->copyFromScreen(_oldScreen);
+	_screen->bakCreateBackup();
 
 	switch (number) {
 	case SCI_TRANSITIONS_SCROLL_LEFT:
@@ -554,6 +551,8 @@ void GfxTransitions::scroll(int16 number) {
 		}
 		break;
 	}
+
+	_screen->bakDiscard();
 
 	// Copy over final position just in case
 	_screen->copyRectToScreen(newScreenRect);

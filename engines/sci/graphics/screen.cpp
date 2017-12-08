@@ -20,16 +20,20 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/util.h"
 #include "common/system.h"
 #include "common/timer.h"
 #include "graphics/surface.h"
+#include "graphics/palette.h"
+#include "graphics/cursorman.h"
 #include "engines/util.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/view.h"
+#include "sci/graphics/palette.h"
 
 namespace Sci {
 
@@ -172,6 +176,10 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	}
 
 	// Initialize the actual screen
+	Graphics::PixelFormat format8 = Graphics::PixelFormat::createFormatCLUT8();
+	const Graphics::PixelFormat *format = &format8;
+	if (ConfMan.getBool("rgb_rendering"))
+		format = 0; // Backend's preferred mode; RGB if available
 
 	if (g_sci->hasMacIconBar()) {
 		// For SCI1.1 Mac games with the custom icon bar, we need to expand the screen
@@ -179,13 +187,28 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		// We add 2 to the height of the icon bar to add a buffer between the screen and the
 		// icon bar (as did the original interpreter).
 		if (g_sci->getGameId() == GID_KQ6)
-			initGraphics(_displayWidth, _displayHeight + 26 + 2);
+			initGraphics(_displayWidth, _displayHeight + 26 + 2, format);
 		else if (g_sci->getGameId() == GID_FREDDYPHARKAS)
-			initGraphics(_displayWidth, _displayHeight + 28 + 2);
+			initGraphics(_displayWidth, _displayHeight + 28 + 2, format);
 		else
 			error("Unknown SCI1.1 Mac game");
 	} else
-		initGraphics(_displayWidth, _displayHeight);
+		initGraphics(_displayWidth, _displayHeight, format);
+
+
+	_format = g_system->getScreenFormat();
+
+	// If necessary, allocate buffers for RGB mode
+	if (_format.bytesPerPixel != 1) {
+		_displayedScreen = (byte *)calloc(_displayPixels, 1);
+		_rgbScreen = (byte *)calloc(_format.bytesPerPixel*_displayPixels, 1);
+		_palette = new byte[3*256];
+	} else {
+		_displayedScreen = 0;
+		_palette = 0;
+		_rgbScreen = 0;
+	}
+	_backupScreen = 0;
 }
 
 GfxScreen::~GfxScreen() {
@@ -193,7 +216,88 @@ GfxScreen::~GfxScreen() {
 	free(_priorityScreen);
 	free(_controlScreen);
 	free(_displayScreen);
+
+	free(_displayedScreen);
+	free(_rgbScreen);
+	delete[] _palette;
+	delete[] _backupScreen;
 }
+
+void GfxScreen::convertToRGB(const Common::Rect &rect) {
+	assert(_format.bytesPerPixel != 1);
+
+	for (int y = rect.top; y < rect.bottom; ++y) {
+
+		const byte *in = _displayedScreen + y * _displayWidth + rect.left;
+		byte *out = _rgbScreen + (y * _displayWidth + rect.left) * _format.bytesPerPixel;
+
+		// TODO: Reduce code duplication here
+
+		if (_format.bytesPerPixel == 2) {
+
+			for (int x = 0; x < rect.width(); ++x) {
+				byte i = *in;
+				byte r = _palette[3*i + 0];
+				byte g = _palette[3*i + 1];
+				byte b = _palette[3*i + 2];
+				uint16 c = (uint16)_format.RGBToColor(r, g, b);
+				WRITE_UINT16(out, c);
+				in += 1;
+				out += 2;
+			}
+
+		} else {
+			assert(_format.bytesPerPixel == 4);
+
+			for (int x = 0; x < rect.width(); ++x) {
+				byte i = *in;
+				byte r = _palette[3*i + 0];
+				byte g = _palette[3*i + 1];
+				byte b = _palette[3*i + 2];
+				uint32 c = _format.RGBToColor(r, g, b);
+				WRITE_UINT32(out, c);
+				in += 1;
+				out += 4;
+			}
+		}
+	}
+}
+
+void GfxScreen::displayRectRGB(const Common::Rect &rect, int x, int y) {
+	// Display rect from _activeScreen to screen location x, y.
+	// Clipping is assumed to be done already.
+
+	Common::Rect targetRect;
+	targetRect.left = x;
+	targetRect.setWidth(rect.width());
+	targetRect.top = y;
+	targetRect.setHeight(rect.height());
+
+	// 1. Update _displayedScreen
+	for (int i = 0; i < rect.height(); ++i) {
+		int offset = (rect.top + i) * _displayWidth + rect.left;
+		int targetOffset = (targetRect.top + i) * _displayWidth + targetRect.left;
+		memcpy(_displayedScreen + targetOffset, _activeScreen + offset, rect.width());
+	}
+
+	// 2. Convert to RGB
+	convertToRGB(targetRect);
+
+	// 3. Copy to screen
+	g_system->copyRectToScreen(_rgbScreen + (targetRect.top * _displayWidth + targetRect.left) * _format.bytesPerPixel, _displayWidth * _format.bytesPerPixel, targetRect.left, targetRect.top, targetRect.width(), targetRect.height());
+}
+
+void GfxScreen::displayRect(const Common::Rect &rect, int x, int y) {
+	// Display rect from _activeScreen to screen location x, y.
+	// Clipping is assumed to be done already.
+
+	if (_format.bytesPerPixel == 1) {
+		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
+	} else {
+		displayRectRGB(rect, x, y);
+	}
+}
+
 
 // should not be used regularly; only meant for restore game
 void GfxScreen::clearForRestoreGame() {
@@ -202,45 +306,59 @@ void GfxScreen::clearForRestoreGame() {
 	memset(_priorityScreen, 0, _pixels);
 	memset(_controlScreen, 0, _pixels);
 	memset(_displayScreen, 0, _displayPixels);
+	if (_displayedScreen) {
+		memset(_displayedScreen, 0, _displayPixels);
+		memset(_rgbScreen, 0, _format.bytesPerPixel*_displayPixels);
+	}
 	memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
 	_fontIsUpscaled = false;
 	copyToScreen();
 }
 
 void GfxScreen::copyToScreen() {
-	g_system->copyRectToScreen(_activeScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
+	Common::Rect r(0, 0, _displayWidth, _displayHeight);
+	displayRect(r, 0, 0);
 }
 
-void GfxScreen::copyFromScreen(byte *buffer) {
-	Graphics::Surface *screen = g_system->lockScreen();
-
-	if (screen->pitch == _displayWidth) {
-		memcpy(buffer, screen->getPixels(), _displayPixels);
+void GfxScreen::copyVideoFrameToScreen(const byte *buffer, int pitch, const Common::Rect &rect, bool is8bit) {
+	if (_format.bytesPerPixel == 1 || !is8bit) {
+		g_system->copyRectToScreen(buffer, pitch, rect.left, rect.top, rect.width(), rect.height());
 	} else {
-		const byte *src = (const byte *)screen->getPixels();
-		uint height = _displayHeight;
-
-		while (height--) {
-			memcpy(buffer, src, _displayWidth);
-			buffer += _displayWidth;
-			src    += screen->pitch;
+		for (int i = 0; i < rect.height(); ++i) {
+			int offset = i * pitch;
+			int targetOffset = (rect.top + i) * _displayWidth + rect.left;
+			memcpy(_displayedScreen + targetOffset, buffer + offset, rect.width());
 		}
+		convertToRGB(rect);
+		g_system->copyRectToScreen(_rgbScreen + (rect.top * _displayWidth + rect.left) * _format.bytesPerPixel, _displayWidth * _format.bytesPerPixel, rect.left, rect.top, rect.width(), rect.height());
 	}
-
-	g_system->unlockScreen();
 }
 
 void GfxScreen::kernelSyncWithFramebuffer() {
-	copyFromScreen(_displayScreen);
+	if (_format.bytesPerPixel == 1) {
+		Graphics::Surface *screen = g_system->lockScreen();
+		const byte *pix = (const byte *)screen->getPixels();
+		for (int y = 0; y < _displayHeight; ++y)
+			memcpy(_displayScreen + y * _displayWidth, pix + y * screen->pitch, _displayWidth);
+		g_system->unlockScreen();
+	} else {
+		memcpy(_displayScreen, _displayedScreen, _displayPixels);
+	}
 }
 
 void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)  {
-		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
+		displayRect(rect, rect.left, rect.top);
 	} else {
 		int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
 		int rectWidth  = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
-		g_system->copyRectToScreen(_activeScreen + _upscaledHeightMapping[rect.top] * _displayWidth + _upscaledWidthMapping[rect.left], _displayWidth, _upscaledWidthMapping[rect.left], _upscaledHeightMapping[rect.top], rectWidth, rectHeight);
+
+		Common::Rect r;
+		r.left =  _upscaledWidthMapping[rect.left];
+		r.top = _upscaledHeightMapping[rect.top];
+		r.setWidth(rectWidth);
+		r.setHeight(rectHeight);
+		displayRect(r, r.left, r.top);
 	}
 }
 
@@ -251,17 +369,23 @@ void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
 void GfxScreen::copyDisplayRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)
 		error("copyDisplayRectToScreen: not in upscaled hires mode");
-	g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
+
+	displayRect(rect, rect.left, rect.top);
 }
 
 void GfxScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 	if (!_upscaledHires)  {
-		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
+		displayRect(rect, x, y);
 	} else {
 		int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
 		int rectWidth  = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
 
-		g_system->copyRectToScreen(_activeScreen + _upscaledHeightMapping[rect.top] * _displayWidth + _upscaledWidthMapping[rect.left], _displayWidth, _upscaledWidthMapping[x], _upscaledHeightMapping[y], rectWidth, rectHeight);
+		Common::Rect r;
+		r.left =  _upscaledWidthMapping[rect.left];
+		r.top = _upscaledHeightMapping[rect.top];
+		r.setWidth(rectWidth);
+		r.setHeight(rectHeight);
+		displayRect(r, _upscaledWidthMapping[x], _upscaledHeightMapping[y]);
 	}
 }
 
@@ -481,7 +605,7 @@ void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
 		bitsSaveScreen(rect, _visualScreen, _width, memoryPtr);
-		bitsSaveDisplayScreen(rect, memoryPtr);
+		bitsSaveDisplayScreen(rect, _displayScreen, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
 		bitsSaveScreen(rect, _priorityScreen, _width, memoryPtr);
@@ -496,20 +620,19 @@ void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	}
 }
 
-void GfxScreen::bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWidth, byte *&memoryPtr) {
+void GfxScreen::bitsSaveScreen(Common::Rect rect, const byte *screen, uint16 screenWidth, byte *&memoryPtr) {
 	int width = rect.width();
 	int y;
 
 	screen += (rect.top * screenWidth) + rect.left;
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy(memoryPtr, (void *)screen, width); memoryPtr += width;
+		memcpy(memoryPtr, screen, width); memoryPtr += width;
 		screen += screenWidth;
 	}
 }
 
-void GfxScreen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
-	byte *screen = _displayScreen;
+void GfxScreen::bitsSaveDisplayScreen(Common::Rect rect, const byte *screen, byte *&memoryPtr) {
 	int width;
 	int y;
 
@@ -524,16 +647,16 @@ void GfxScreen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 
 	for (y = rect.top; y < rect.bottom; y++) {
-		memcpy(memoryPtr, (void *)screen, width); memoryPtr += width;
+		memcpy(memoryPtr, screen, width); memoryPtr += width;
 		screen += _displayWidth;
 	}
 }
 
-void GfxScreen::bitsGetRect(byte *memoryPtr, Common::Rect *destRect) {
-	memcpy((void *)destRect, memoryPtr, sizeof(Common::Rect));
+void GfxScreen::bitsGetRect(const byte *memoryPtr, Common::Rect *destRect) {
+	memcpy(destRect, memoryPtr, sizeof(Common::Rect));
 }
 
-void GfxScreen::bitsRestore(byte *memoryPtr) {
+void GfxScreen::bitsRestore(const byte *memoryPtr) {
 	Common::Rect rect;
 	byte mask;
 
@@ -542,7 +665,7 @@ void GfxScreen::bitsRestore(byte *memoryPtr) {
 
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
 		bitsRestoreScreen(rect, memoryPtr, _visualScreen, _width);
-		bitsRestoreDisplayScreen(rect, memoryPtr);
+		bitsRestoreDisplayScreen(rect, memoryPtr, _displayScreen);
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
 		bitsRestoreScreen(rect, memoryPtr, _priorityScreen, _width);
@@ -562,7 +685,7 @@ void GfxScreen::bitsRestore(byte *memoryPtr) {
 	}
 }
 
-void GfxScreen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen, uint16 screenWidth) {
+void GfxScreen::bitsRestoreScreen(Common::Rect rect, const byte *&memoryPtr, byte *screen, uint16 screenWidth) {
 	int width = rect.width();
 	int y;
 
@@ -574,8 +697,7 @@ void GfxScreen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *scr
 	}
 }
 
-void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
-	byte *screen = _displayScreen;
+void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, const byte *&memoryPtr, byte *screen) {
 	int width;
 	int y;
 
@@ -808,5 +930,63 @@ int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {
 
 	return oldPicNotValid;
 }
+
+
+void GfxScreen::grabPalette(byte *buffer, uint start, uint num) const {
+	assert(start + num <= 256);
+	if (_format.bytesPerPixel == 1) {
+		g_system->getPaletteManager()->grabPalette(buffer, start, num);
+	} else {
+		memcpy(buffer, _palette + 3*start, 3*num);
+	}
+}
+
+void GfxScreen::setPalette(const byte *buffer, uint start, uint num, bool update) {
+	assert(start + num <= 256);
+	if (_format.bytesPerPixel == 1) {
+		g_system->getPaletteManager()->setPalette(buffer, start, num);
+	} else {
+		memcpy(_palette + 3*start, buffer, 3*num);
+		if (update) {
+			// directly paint from _displayedScreen, not from _activeScreen
+			Common::Rect r(0, 0, _displayWidth, _displayHeight);
+			convertToRGB(r);
+			g_system->copyRectToScreen(_rgbScreen, _displayWidth * _format.bytesPerPixel, 0, 0, _displayWidth, _displayHeight);
+		}
+		// CHECKME: Inside or outside the if (update)?
+		// (The !update case only happens inside transitions.)
+		CursorMan.replaceCursorPalette(_palette, 0, 256);
+	}
+}
+
+
+void GfxScreen::bakCreateBackup() {
+	assert(!_backupScreen);
+	_backupScreen = new byte[_format.bytesPerPixel * _displayPixels];
+	if (_format.bytesPerPixel == 1) {
+		Graphics::Surface *screen = g_system->lockScreen();
+		memcpy(_backupScreen, screen->getPixels(), _displayPixels);
+		g_system->unlockScreen();
+	} else {
+		memcpy(_backupScreen, _rgbScreen, _format.bytesPerPixel * _displayPixels);
+	}
+}
+
+void GfxScreen::bakDiscard() {
+	assert(_backupScreen);
+	delete[] _backupScreen;
+	_backupScreen = nullptr;
+}
+
+void GfxScreen::bakCopyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
+	assert(_backupScreen);
+	const byte *ptr = _backupScreen;
+	ptr += _format.bytesPerPixel * (rect.left + rect.top * _displayWidth);
+	g_system->copyRectToScreen(ptr, _format.bytesPerPixel * _displayWidth, x, y, rect.width(), rect.height());
+}
+
+
+
+
 
 } // End of namespace Sci
