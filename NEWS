@@ -173,10 +173,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed crash on Return to Launcher.
 
  Voyeur:
-  - Fixed backgrounds not showing for static rooms.
-  - Fixed playback of audio events on VCR.
-  - Fixed exiting game from the VCR screen.
-  - Added workaround for original game bug using invalid hotspot Ids
+   - Fixed backgrounds not showing for static rooms.
+   - Fixed playback of audio events on VCR.
+   - Fixed exiting game from the VCR screen.
+   - Added workaround for original game bug using invalid hotspot Ids
 
  macOS port:
    - Added support for selecting any connected MIDI devices instead of automatically
