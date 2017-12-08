@@ -163,6 +163,9 @@ bool StaticANIObject::load(MfcArchive &file) {
 
 	GameObject::load(file);
 
+	debugC(6, kDebugXML, "%% <OLDANI id=%d name=\"%s\" x=%d y=%d priority=%d f8=%d>",
+		_id, transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
+
 	int count = file.readUint16LE();
 
 	for (int i = 0; i < count; i++) {
@@ -196,6 +199,8 @@ bool StaticANIObject::load(MfcArchive &file) {
 	} else {
 		pt.x = pt.y = 100;
 	}
+
+	debugC(6, kDebugXML, "%% </OLDANI>");
 
 	setOXY(pt.x, pt.y);
 
@@ -1371,7 +1376,8 @@ bool Statics::load(MfcArchive &file) {
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
-	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic(_staticsName), _staticsId, _staticsId);
+	debugC(6, kDebugXML, "%% <STATICS id=%d name=\"%s\" f7c=%d %s />",
+		_staticsId, transCyrillic(_staticsName), _field_7C, DynamicPhase::toXML().c_str());
 
 	_picture.load(file);
 
@@ -1573,13 +1579,17 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 	int dynCount = file.readUint16LE();
 
-	debugC(7, kDebugLoading, "dynCount: %d  _id: %d", dynCount, _id);
+	debugC(6, kDebugXML, "%% <MOVEMENT id=%d name=\"%s\" x=%d y=%d priority=%d f8=%d>",
+		_id, transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
+
 	if (dynCount != 0xffff || _id == MV_MAN_TURN_LU) {
 		_framePosOffsets.resize(dynCount + 2);
 
 		for (int i = 0; i < dynCount; i++) {
 			DynamicPhase *ph = new DynamicPhase();
 			ph->load(file);
+
+			debugC(6, kDebugXML, "%% <PHASE %s />", ph->toXML().c_str());
 
 			_dynamicPhases.push_back(ph);
 
@@ -1643,6 +1653,8 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 	_counter = 0;
 	updateCurrDynamicPhase();
+
+	debugC(6, kDebugXML, "%% </MOVEMENT>");
 
 	return true;
 }
@@ -2127,6 +2139,12 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	copyMemoryObject2(*src);
 }
 
+Common::String DynamicPhase::toXML() {
+	return Common::String::format("f7c=%d left=%d top=%d right=%d bottom=%d sX=%d sY=%d dynFlags=%d %s",
+			_field_7C, _rect.left, _rect.top, _rect.right, _rect.bottom, _someX, _someY, _dynFlags,
+			StaticPhase::toXML().c_str());
+}
+
 bool DynamicPhase::load(MfcArchive &file) {
 	debugC(5, kDebugLoading, "DynamicPhase::load()");
 
@@ -2155,6 +2173,10 @@ StaticPhase::StaticPhase() {
 	_initialCountdown = 0;
 	_countdown = 0;
 	_field_68 = 0;
+}
+
+Common::String StaticPhase::toXML() {
+	return Common::String::format("countdown=%d f6a=%d", _initialCountdown, _field_6A);
 }
 
 bool StaticPhase::load(MfcArchive &file) {

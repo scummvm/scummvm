@@ -463,7 +463,8 @@ bool Picture::load(MfcArchive &file) {
 
 	getData();
 
-	debugC(5, kDebugLoading, "Picture::load: loaded <%s>", _memfilename.c_str());
+	debugC(5, kDebugLoading, "Picture::load: loaded memobject=\"%s\" x=%d y=%d f44=%d width=%d height=%d alpha=%d memobject2=\"%s\"", _memfilename.c_str(),
+				_x, _y, _field_44, _width, _height, _alpha, _memoryObject2->_memfilename.c_str());
 
 	return true;
 }

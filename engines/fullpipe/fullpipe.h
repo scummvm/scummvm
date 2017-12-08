@@ -59,7 +59,8 @@ enum {
 	kDebugBehavior		= 1 << 6,
 	kDebugInventory		= 1 << 7,
 	kDebugSceneLogic	= 1 << 8,
-	kDebugInteractions	= 1 << 9
+	kDebugInteractions	= 1 << 9,
+	kDebugXML			= 1 << 10
 };
 
 class BehaviorManager;
