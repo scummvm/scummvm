@@ -338,20 +338,28 @@ void SkyCompact::setSub(Compact *cpt, uint16 mode, uint16 value) {
 	switch (mode) {
 	case 0:
 		cpt->baseSub = value;
+		return;
 	case 2:
 		cpt->baseSub_off = value;
+		return;
 	case 4:
 		cpt->actionSub = value;
+		return;
 	case 6:
 		cpt->actionSub_off = value;
+		return;
 	case 8:
 		cpt->getToSub = value;
+		return;
 	case 10:
 		cpt->getToSub_off = value;
+		return;
 	case 12:
 		cpt->extraSub = value;
+		return;
 	case 14:
 		cpt->extraSub_off = value;
+		return;
 	default:
 		error("Invalid Mode (%d)", mode);
 	}
