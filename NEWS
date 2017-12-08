@@ -178,7 +178,7 @@ For a more comprehensive changelog of the latest experimental code, see:
   - Fixed exiting game from the VCR screen.
   - Added workaround for original game bug using invalid hotspot Ids
 
- macOS X port:
+ macOS port:
    - Added support for selecting any connected MIDI devices instead of automatically
      using the first one.
    - Improved behaviour of the file browser.
