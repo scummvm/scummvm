@@ -56,6 +56,13 @@
 
 namespace Wage {
 
+static Common::String toString(const Designed *d) {
+	if (!d)
+		return "<NULL>";
+	else
+		return d->toString();
+}
+
 Common::String Script::Operand::toString() {
 	switch(_type) {
 	case NUMBER:
@@ -64,13 +71,13 @@ Common::String Script::Operand::toString() {
 	case TEXT_INPUT:
 		return *_value.string;
 	case OBJ:
-		return _value.obj->toString();
+		return Wage::toString(_value.obj);
 	case CHR:
-		return _value.chr->toString();
+		return Wage::toString(_value.chr);
 	case SCENE:
-		return _value.scene->toString();
+		return Wage::toString(_value.scene);
 	case CLICK_INPUT:
-		return _value.inputClick->toString();
+		return Wage::toString(_value.inputClick);
 	default:
 		error("Unhandled operand type: _type");
 	}
