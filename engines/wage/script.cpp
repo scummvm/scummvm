@@ -90,7 +90,7 @@ Common::String Script::Operand::toString() const {
 	case CLICK_INPUT:
 		return Wage::toString(_value.inputClick);
 	default:
-		error("Unhandled operand type: _type");
+		error("Unhandled operand type: %d", (int)_type);
 	}
 }
 
