@@ -84,6 +84,7 @@ const struct GameOpt {
 	// "gameOption10" would be invalid here because it contains "gameOption1"
 	{ GUIO_GAMEOPTIONS10, "gameOptionA" },
 	{ GUIO_GAMEOPTIONS11, "gameOptionB" },
+	{ GUIO_GAMEOPTIONS12, "gameOptionC" },
 
 	{ GUIO_NONE, 0 }
 };
