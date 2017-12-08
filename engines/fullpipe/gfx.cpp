@@ -235,8 +235,8 @@ GameObject::GameObject(GameObject *src) {
 }
 
 Common::String GameObject::toXML() {
-	return Common::String::format("id=%d name=\"%s\" x=%d y=%d priority=%d f8=%d",
-		_id, transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
+	return Common::String::format("id=\"%s\" name=\"%s\" x=%d y=%d priority=%d f8=%d",
+		g_fp->gameIdToStr(_id).c_str(), transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
 }
 
 bool GameObject::load(MfcArchive &file) {

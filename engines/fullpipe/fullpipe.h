@@ -63,6 +63,8 @@ enum {
 	kDebugXML			= 1 << 10
 };
 
+#define MAXGAMEOBJH 10000
+
 class BehaviorManager;
 class BaseModalObject;
 class GameLoader;
@@ -89,6 +91,8 @@ class Vars;
 typedef Common::Array<int16> MovTable;
 typedef Common::Array<int32> Palette;
 typedef Common::Array<Common::Point> PointList;
+
+typedef Common::HashMap<uint16, Common::String> GameObjHMap;
 
 int global_messageHandler1(ExCommand *cmd);
 int global_messageHandler2(ExCommand *cmd);
@@ -134,6 +138,9 @@ public:
 	Common::ScopedPtr<GameLoader> _gameLoader;
 	GameProject *_gameProject;
 	bool loadGam(const char *fname, int scene = 0);
+
+	void loadGameObjH();
+	Common::String gameIdToStr(uint16 id);
 
 	GameVar *getGameLoaderGameVar();
 	InputController *getGameLoaderInputController();
@@ -346,6 +353,8 @@ public:
 	Audio::SoundHandle _soundStream4;
 
 	bool _stream2playing;
+
+	GameObjHMap _gameObjH;
 
 public:
 

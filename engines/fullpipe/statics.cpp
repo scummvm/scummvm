@@ -1375,8 +1375,8 @@ bool Statics::load(MfcArchive &file) {
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
-	debugC(6, kDebugXML, "%% <STATICS id=%d name=\"%s\" %s />",
-		_staticsId, transCyrillic(_staticsName), DynamicPhase::toXML().c_str());
+	debugC(6, kDebugXML, "%% <STATICS id=\"%s\" name=\"%s\" %s />",
+		g_fp->gameIdToStr(_staticsId).c_str(), transCyrillic(_staticsName), DynamicPhase::toXML().c_str());
 
 	_picture.load(file);
 
@@ -1622,8 +1622,8 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 			_framePosOffsets[_dynamicPhases.size() - 1].y = _m2y;
 		}
 
-		debugC(6, kDebugXML, "%% <MOVEMENT %s staticsId=%d mX=%d my=%d staticsId2=%d m2x=%d m2y=%d>",
-			GameObject::toXML().c_str(), staticsid, _mx, _my, staticsid2, _m2x, _m2y);
+		debugC(6, kDebugXML, "%% <MOVEMENT %s staticsId=\"%s\" mX=%d my=%d staticsId2=\"%s\" m2x=%d m2y=%d>",
+			GameObject::toXML().c_str(), g_fp->gameIdToStr(staticsid).c_str(), _mx, _my, g_fp->gameIdToStr(staticsid2).c_str(), _m2x, _m2y);
 
 		for (int i = 0; i < dynCount; i++)
 			debugC(6, kDebugXML, "%% <PHASE %s />", _dynamicPhases[i]->toXML().c_str());

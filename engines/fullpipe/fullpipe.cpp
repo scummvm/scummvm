@@ -269,6 +269,9 @@ Common::Error FullpipeEngine::run() {
 
 	_isSaveAllowed = false;
 
+	if (debugChannelSet(-1, kDebugXML))
+		loadGameObjH();
+
 	int scene = 0;
 	if (ConfMan.hasKey("boot_param"))
 		scene = convertScene(ConfMan.getInt("boot_param"));
