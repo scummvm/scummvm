@@ -27,6 +27,11 @@
 
 namespace Xeen {
 
+const int COMBAT_POS_X[3][2] = { { 102, 134 },{ 36, 67 },{ 161, 161 } };
+const int INDOOR_INDEXES[3] = { 157, 151, 154 };
+const int OUTDOOR_INDEXES[3] = { 119, 113, 116 };
+const int COMBAT_OFFSET_X[4] = { 8, 6, 4, 2 };
+
 OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_groundSprite(_data[2]), _attackImgs1(&_data[124]), _attackImgs2(&_data[95]),
 	_attackImgs3(&_data[76]), _attackImgs4(&_data[53]), _groundTiles(&_data[3]) {
@@ -383,15 +388,9 @@ InterfaceScene::InterfaceScene(XeenEngine *vm): _vm(vm) {
 	_openDoor = false;
 }
 
-void InterfaceScene::drawMap() {
-	Combat &combat = *_vm->_combat;
+void InterfaceScene::drawScene() {
 	Map &map = *_vm->_map;
 	Scripts &scripts = *_vm->_scripts;
-
-	const int COMBAT_POS_X[3][2] = { { 102, 134 }, { 36, 67 }, { 161, 161 } };
-	const int INDOOR_INDEXES[3] = { 157, 151, 154 };
-	const int OUTDOOR_INDEXES[3] = { 119, 113, 116 };
-	const int COMBAT_OFFSET_X[4] = { 8, 6, 4, 2 };
 
 	MazeObject &objObject = map._mobData._objects[_objNumber];
 	Direction partyDirection = _vm->_party->_mazeDirection;
@@ -421,272 +420,281 @@ void InterfaceScene::drawMap() {
 		mazeObject._flipped = animEntry._flipped._flags[directionIndex];
 	}
 
-	if (map._isOutdoors) {
-		// Outdoors drawing
-		for (int idx = 0; idx < 44; ++idx)
-			_outdoorList[Res.OUTDOOR_DRAWSTRCT_INDEXES[idx]]._frame = -1;
+	if (map._isOutdoors)
+		drawOutdoorsScene();
+	else
+		drawIndoorsScene();
 
-		if (combat._monstersAttacking) {
-			for (int idx = 0; idx < 8; ++idx) {
-				if (_outdoorList._attackImgs4[idx]._sprites)
-					_outdoorList._attackImgs4[idx]._frame = 0;
-				else if (_outdoorList._attackImgs3[idx]._sprites)
-					_outdoorList._attackImgs3[idx]._frame = 1;
-				else if (_outdoorList._attackImgs2[idx]._sprites)
-					_outdoorList._attackImgs2[idx]._frame = 2;
-				else if (_outdoorList._attackImgs1[idx]._sprites)
-					_outdoorList._attackImgs1[idx]._frame = 0;
-			}
-		} else if (_charsShooting) {
-			for (int idx = 0; idx < 8; ++idx) {
-				if (_outdoorList._attackImgs1[idx]._sprites)
-					_outdoorList._attackImgs1[idx]._frame = 0;
-				else if (_outdoorList._attackImgs2[idx]._sprites)
-					_outdoorList._attackImgs2[idx]._frame = 1;
-				else if (_outdoorList._attackImgs3[idx]._sprites)
-					_outdoorList._attackImgs3[idx]._frame = 2;
-				else if (_outdoorList._attackImgs4[idx]._sprites)
-					_outdoorList._attackImgs1[idx]._frame = 0;
-			}
+	animate3d();
+}
+
+void InterfaceScene::drawOutdoorsScene() {
+	Combat &combat = *_vm->_combat;
+	Map &map = *_vm->_map;
+
+	for (int idx = 0; idx < 44; ++idx)
+		_outdoorList[Res.OUTDOOR_DRAWSTRCT_INDEXES[idx]]._frame = -1;
+
+	if (combat._monstersAttacking) {
+		for (int idx = 0; idx < 8; ++idx) {
+			if (_outdoorList._attackImgs4[idx]._sprites)
+				_outdoorList._attackImgs4[idx]._frame = 0;
+			else if (_outdoorList._attackImgs3[idx]._sprites)
+				_outdoorList._attackImgs3[idx]._frame = 1;
+			else if (_outdoorList._attackImgs2[idx]._sprites)
+				_outdoorList._attackImgs2[idx]._frame = 2;
+			else if (_outdoorList._attackImgs1[idx]._sprites)
+				_outdoorList._attackImgs1[idx]._frame = 0;
 		}
-
-		_isAnimReset = false;
-		int attackMon2 = combat._attackMonsters[2];
-
-		for (int idx = 0; idx < 3; ++idx) {
-			DrawStruct &ds1 = _outdoorList[OUTDOOR_INDEXES[idx] + 1];
-			DrawStruct &ds2 = _outdoorList[OUTDOOR_INDEXES[idx]];
-			ds1._sprites = nullptr;
-			ds2._sprites = nullptr;
-
-			if (combat._charsArray1[idx]) {
-				int vIndex = combat._attackMonsters[1] && !attackMon2 ? 1 : 0;
-				combat._charsArray1[idx]--;
-
-				if (combat._monPow[idx]) {
-					ds2._x = COMBAT_POS_X[idx][vIndex];
-					ds2._frame = 0;
-					ds2._scale = combat._monsterScale[idx];
-
-					if (ds2._scale == 0x8000) {
-						ds2._x /= 3;
-						ds2._y = 60;
-					} else {
-						ds2._y = 73;
-					}
-
-					ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
-					ds2._sprites = &_charPowSprites;
-				}
-
-				if (combat._elemPow[idx]) {
-					ds1._x = COMBAT_POS_X[idx][vIndex] + COMBAT_OFFSET_X[idx];
-					ds1._frame = combat._elemPow[idx];
-					ds1._scale = combat._elemScale[idx];
-
-					if (ds1._scale == 0x8000)
-						ds1._x /= 3;
-					ds1._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
-					ds1._sprites = &_charPowSprites;
-				}
-			}
-		}
-
-		setOutdoorsMonsters();
-		setOutdoorsObjects();
-
-		_outdoorList[123]._sprites = nullptr;
-		_outdoorList[122]._sprites = nullptr;
-		_outdoorList[121]._sprites = nullptr;
-
-		int monsterIndex;
-		if (combat._attackMonsters[0] != -1 && map._mobData._monsters[combat._attackMonsters[0]]._frame >= 8) {
-			_outdoorList[121] = _outdoorList[118];
-			_outdoorList[122] = _outdoorList[119];
-			_outdoorList[123] = _outdoorList[120];
-			_outdoorList[118]._sprites = nullptr;
-			_outdoorList[119]._sprites = nullptr;
-			_outdoorList[120]._sprites = nullptr;
-			monsterIndex = 1;
-		} else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 8) {
-			_outdoorList[121] = _outdoorList[112];
-			_outdoorList[122] = _outdoorList[113];
-			_outdoorList[123] = _outdoorList[114];
-			_outdoorList[112]._sprites = nullptr;
-			_outdoorList[113]._sprites = nullptr;
-			_outdoorList[124]._sprites = nullptr;
-			monsterIndex = 2;
-		} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 8) {
-			_outdoorList[121] = _outdoorList[115];
-			_outdoorList[122] = _outdoorList[116];
-			_outdoorList[123] = _outdoorList[117];
-			_outdoorList[115]._sprites = nullptr;
-			_outdoorList[116]._sprites = nullptr;
-			_outdoorList[117]._sprites = nullptr;
-			monsterIndex = 3;
-		} else {
-			monsterIndex = 0;
-		}
-
-		drawOutdoors();
-
-		switch (monsterIndex) {
-		case 1:
-			_outdoorList[118] = _outdoorList[121];
-			_outdoorList[119] = _outdoorList[122];
-			_outdoorList[120] = _outdoorList[123];
-			break;
-		case 2:
-			_outdoorList[112] = _outdoorList[121];
-			_outdoorList[113] = _outdoorList[122];
-			_outdoorList[114] = _outdoorList[123];
-			break;
-		case 3:
-			_outdoorList[115] = _outdoorList[121];
-			_outdoorList[116] = _outdoorList[122];
-			_outdoorList[117] = _outdoorList[123];
-			break;
-		default:
-			break;
-		}
-	} else {
-		// Indoor drawing
-		// Default all the parts of draw struct not to be drawn by default
-		for (int idx = 3; idx < _indoorList.size(); ++idx)
-			_indoorList[idx]._frame = -1;
-
-		if (combat._monstersAttacking) {
-			for (int idx = 0; idx < 96; ++idx) {
-				if (_indoorList[79 + idx]._sprites != nullptr) {
-					_indoorList[79 + idx]._frame = 0;
-				}
-				else if (_indoorList[111 + idx]._sprites != nullptr) {
-					_indoorList[111 + idx]._frame = 1;
-				}
-				else if (_indoorList[135 + idx]._sprites != nullptr) {
-					_indoorList[135 + idx]._frame = 2;
-				}
-				else if (_indoorList[162 + idx]._sprites != nullptr) {
-					_indoorList[162 + idx]._frame = 0;
-				}
-			}
-		} else if (_charsShooting) {
-			for (int idx = 0; idx < 8; ++idx) {
-				if (_indoorList._attackImgs1[idx]._sprites != nullptr) {
-					_indoorList._attackImgs1[idx]._frame = 0;
-				} else if (_indoorList._attackImgs2[idx]._sprites != nullptr) {
-					_indoorList._attackImgs2[idx]._frame = 1;
-				} else if (_indoorList._attackImgs3[idx]._sprites != nullptr) {
-					_indoorList._attackImgs3[idx]._frame = 2;
-				} else if (_indoorList._attackImgs4[idx]._sprites != nullptr) {
-					_indoorList._attackImgs4[idx]._frame = 0;
-				}
-			}
-		}
-
-		setMazeBits();
-		_isAnimReset = false;
-
-		// Code in the original that's not being used
-		//MazeObject &objObject = map._mobData._objects[_objNumber - 1];
-
-		for (int idx = 0; idx < 3; ++idx) {
-			DrawStruct &ds1 = _indoorList[INDOOR_INDEXES[idx]];
-			DrawStruct &ds2 = _indoorList[INDOOR_INDEXES[idx] + 1];
-			ds1._sprites = nullptr;
-			ds2._sprites = nullptr;
-
-			if (combat._charsArray1[idx]) {
-				int posIndex = combat._attackMonsters[1] && !combat._attackMonsters[2] ? 1 : 0;
-				--combat._charsArray1[idx];
-
-				if (combat._monPow[idx]) {
-					ds1._x = COMBAT_POS_X[idx][posIndex];
-					ds1._frame = 0;
-					ds1._scale = combat._monsterScale[idx];
-					if (ds1._scale == 0x8000) {
-						ds1._x /= 3;
-						ds1._y = 60;
-					} else {
-						ds1._y = 73;
-					}
-
-					ds1._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
-					ds1._sprites = &_charPowSprites;
-				}
-
-				if (combat._elemPow[idx]) {
-					ds2._x = COMBAT_POS_X[idx][posIndex] + COMBAT_OFFSET_X[idx];
-					ds2._frame = combat._elemPow[idx];
-					ds2._scale = combat._elemScale[idx];
-					if (ds2._scale == 0x8000)
-						ds2._x /= 3;
-					ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
-					ds2._sprites = &_charPowSprites;
-				}
-			}
-		}
-
-		setIndoorsMonsters();
-		setIndoorsObjects();
-		setIndoorsWallPics();
-
-		_indoorList[161]._sprites = nullptr;
-		_indoorList[160]._sprites = nullptr;
-		_indoorList[159]._sprites = nullptr;
-
-		// Handle attacking monsters
-		int monsterIndex = 0;
-		if (combat._attackMonsters[0] != -1 && map._mobData._monsters[combat._attackMonsters[0]]._frame >= 8) {
-			_indoorList[159] = _indoorList[156];
-			_indoorList[160] = _indoorList[157];
-			_indoorList[161] = _indoorList[158];
-			_indoorList[158]._sprites = nullptr;
-			_indoorList[156]._sprites = nullptr;
-			_indoorList[157]._sprites = nullptr;
-			monsterIndex = 1;
-		} else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 8) {
-			_indoorList[159] = _indoorList[150];
-			_indoorList[160] = _indoorList[151];
-			_indoorList[161] = _indoorList[152];
-			_indoorList[152]._sprites = nullptr;
-			_indoorList[151]._sprites = nullptr;
-			_indoorList[150]._sprites = nullptr;
-			monsterIndex = 2;
-		} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 8) {
-			_indoorList[159] = _indoorList[153];
-			_indoorList[160] = _indoorList[154];
-			_indoorList[161] = _indoorList[155];
-			_indoorList[153]._sprites = nullptr;
-			_indoorList[154]._sprites = nullptr;
-			_indoorList[155]._sprites = nullptr;
-			monsterIndex = 3;
-		}
-
-		drawIndoors();
-
-		switch (monsterIndex) {
-		case 1:
-			_indoorList[156] = _indoorList[159];
-			_indoorList[157] = _indoorList[160];
-			_indoorList[158] = _indoorList[161];
-			break;
-		case 2:
-			_indoorList[150] = _indoorList[159];
-			_indoorList[151] = _indoorList[160];
-			_indoorList[152] = _indoorList[161];
-			break;
-		case 3:
-			_indoorList[153] = _indoorList[159];
-			_indoorList[154] = _indoorList[160];
-			_indoorList[155] = _indoorList[161];
-			break;
-		default:
-			break;
+	} else if (_charsShooting) {
+		for (int idx = 0; idx < 8; ++idx) {
+			if (_outdoorList._attackImgs1[idx]._sprites)
+				_outdoorList._attackImgs1[idx]._frame = 0;
+			else if (_outdoorList._attackImgs2[idx]._sprites)
+				_outdoorList._attackImgs2[idx]._frame = 1;
+			else if (_outdoorList._attackImgs3[idx]._sprites)
+				_outdoorList._attackImgs3[idx]._frame = 2;
+			else if (_outdoorList._attackImgs4[idx]._sprites)
+				_outdoorList._attackImgs1[idx]._frame = 0;
 		}
 	}
 
-	animate3d();
+	_isAnimReset = false;
+	int attackMon2 = combat._attackMonsters[2];
+
+	for (int idx = 0; idx < 3; ++idx) {
+		DrawStruct &ds1 = _outdoorList[OUTDOOR_INDEXES[idx] + 1];
+		DrawStruct &ds2 = _outdoorList[OUTDOOR_INDEXES[idx]];
+		ds1._sprites = nullptr;
+		ds2._sprites = nullptr;
+
+		if (combat._charsArray1[idx]) {
+			int vIndex = combat._attackMonsters[1] && !attackMon2 ? 1 : 0;
+			combat._charsArray1[idx]--;
+
+			if (combat._monPow[idx]) {
+				ds2._x = COMBAT_POS_X[idx][vIndex];
+				ds2._frame = 0;
+				ds2._scale = combat._monsterScale[idx];
+
+				if (ds2._scale == 0x8000) {
+					ds2._x /= 3;
+					ds2._y = 60;
+				}
+				else {
+					ds2._y = 73;
+				}
+
+				ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds2._sprites = &_charPowSprites;
+			}
+
+			if (combat._elemPow[idx]) {
+				ds1._x = COMBAT_POS_X[idx][vIndex] + COMBAT_OFFSET_X[idx];
+				ds1._frame = combat._elemPow[idx];
+				ds1._scale = combat._elemScale[idx];
+
+				if (ds1._scale == 0x8000)
+					ds1._x /= 3;
+				ds1._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds1._sprites = &_charPowSprites;
+			}
+		}
+	}
+
+	setOutdoorsMonsters();
+	setOutdoorsObjects();
+
+	_outdoorList[123]._sprites = nullptr;
+	_outdoorList[122]._sprites = nullptr;
+	_outdoorList[121]._sprites = nullptr;
+
+	int monsterIndex;
+	if (combat._attackMonsters[0] != -1 && map._mobData._monsters[combat._attackMonsters[0]]._frame >= 8) {
+		_outdoorList[121] = _outdoorList[118];
+		_outdoorList[122] = _outdoorList[119];
+		_outdoorList[123] = _outdoorList[120];
+		_outdoorList[118]._sprites = nullptr;
+		_outdoorList[119]._sprites = nullptr;
+		_outdoorList[120]._sprites = nullptr;
+		monsterIndex = 1;
+	} else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 8) {
+		_outdoorList[121] = _outdoorList[112];
+		_outdoorList[122] = _outdoorList[113];
+		_outdoorList[123] = _outdoorList[114];
+		_outdoorList[112]._sprites = nullptr;
+		_outdoorList[113]._sprites = nullptr;
+		_outdoorList[124]._sprites = nullptr;
+		monsterIndex = 2;
+	} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 8) {
+		_outdoorList[121] = _outdoorList[115];
+		_outdoorList[122] = _outdoorList[116];
+		_outdoorList[123] = _outdoorList[117];
+		_outdoorList[115]._sprites = nullptr;
+		_outdoorList[116]._sprites = nullptr;
+		_outdoorList[117]._sprites = nullptr;
+		monsterIndex = 3;
+	} else {
+		monsterIndex = 0;
+	}
+
+	drawOutdoors();
+
+	switch (monsterIndex) {
+	case 1:
+		_outdoorList[118] = _outdoorList[121];
+		_outdoorList[119] = _outdoorList[122];
+		_outdoorList[120] = _outdoorList[123];
+		break;
+	case 2:
+		_outdoorList[112] = _outdoorList[121];
+		_outdoorList[113] = _outdoorList[122];
+		_outdoorList[114] = _outdoorList[123];
+		break;
+	case 3:
+		_outdoorList[115] = _outdoorList[121];
+		_outdoorList[116] = _outdoorList[122];
+		_outdoorList[117] = _outdoorList[123];
+		break;
+	default:
+		break;
+	}
+}
+
+void InterfaceScene::drawIndoorsScene() {
+	Combat &combat = *_vm->_combat;
+	Map &map = *_vm->_map;
+
+	// Default all the parts of draw struct not to be drawn by default
+	for (int idx = 3; idx < _indoorList.size(); ++idx)
+		_indoorList[idx]._frame = -1;
+
+	if (combat._monstersAttacking) {
+		for (int idx = 0; idx < 96; ++idx) {
+			if (_indoorList[79 + idx]._sprites != nullptr) {
+				_indoorList[79 + idx]._frame = 0;
+			} else if (_indoorList[111 + idx]._sprites != nullptr) {
+				_indoorList[111 + idx]._frame = 1;
+			} else if (_indoorList[135 + idx]._sprites != nullptr) {
+				_indoorList[135 + idx]._frame = 2;
+			} else if (_indoorList[162 + idx]._sprites != nullptr) {
+				_indoorList[162 + idx]._frame = 0;
+			}
+		}
+	} else if (_charsShooting) {
+		for (int idx = 0; idx < 8; ++idx) {
+			if (_indoorList._attackImgs1[idx]._sprites != nullptr) {
+				_indoorList._attackImgs1[idx]._frame = 0;
+			} else if (_indoorList._attackImgs2[idx]._sprites != nullptr) {
+				_indoorList._attackImgs2[idx]._frame = 1;
+			} else if (_indoorList._attackImgs3[idx]._sprites != nullptr) {
+				_indoorList._attackImgs3[idx]._frame = 2;
+			} else if (_indoorList._attackImgs4[idx]._sprites != nullptr) {
+				_indoorList._attackImgs4[idx]._frame = 0;
+			}
+		}
+	}
+
+	setMazeBits();
+	_isAnimReset = false;
+
+	// Code in the original that's not being used
+	//MazeObject &objObject = map._mobData._objects[_objNumber - 1];
+
+	for (int idx = 0; idx < 3; ++idx) {
+		DrawStruct &ds1 = _indoorList[INDOOR_INDEXES[idx]];
+		DrawStruct &ds2 = _indoorList[INDOOR_INDEXES[idx] + 1];
+		ds1._sprites = nullptr;
+		ds2._sprites = nullptr;
+
+		if (combat._charsArray1[idx]) {
+			int posIndex = combat._attackMonsters[1] && !combat._attackMonsters[2] ? 1 : 0;
+			--combat._charsArray1[idx];
+
+			if (combat._monPow[idx]) {
+				ds1._x = COMBAT_POS_X[idx][posIndex];
+				ds1._frame = 0;
+				ds1._scale = combat._monsterScale[idx];
+				if (ds1._scale == 0x8000) {
+					ds1._x /= 3;
+					ds1._y = 60;
+				} else {
+					ds1._y = 73;
+				}
+
+				ds1._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds1._sprites = &_charPowSprites;
+			}
+
+			if (combat._elemPow[idx]) {
+				ds2._x = COMBAT_POS_X[idx][posIndex] + COMBAT_OFFSET_X[idx];
+				ds2._frame = combat._elemPow[idx];
+				ds2._scale = combat._elemScale[idx];
+				if (ds2._scale == 0x8000)
+					ds2._x /= 3;
+				ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds2._sprites = &_charPowSprites;
+			}
+		}
+	}
+
+	setIndoorsMonsters();
+	setIndoorsObjects();
+	setIndoorsWallPics();
+
+	_indoorList[161]._sprites = nullptr;
+	_indoorList[160]._sprites = nullptr;
+	_indoorList[159]._sprites = nullptr;
+
+	// Handle attacking monsters
+	int monsterIndex = 0;
+	if (combat._attackMonsters[0] != -1 && map._mobData._monsters[combat._attackMonsters[0]]._frame >= 8) {
+		_indoorList[159] = _indoorList[156];
+		_indoorList[160] = _indoorList[157];
+		_indoorList[161] = _indoorList[158];
+		_indoorList[158]._sprites = nullptr;
+		_indoorList[156]._sprites = nullptr;
+		_indoorList[157]._sprites = nullptr;
+		monsterIndex = 1;
+	} else if (combat._attackMonsters[1] != -1 && map._mobData._monsters[combat._attackMonsters[1]]._frame >= 8) {
+		_indoorList[159] = _indoorList[150];
+		_indoorList[160] = _indoorList[151];
+		_indoorList[161] = _indoorList[152];
+		_indoorList[152]._sprites = nullptr;
+		_indoorList[151]._sprites = nullptr;
+		_indoorList[150]._sprites = nullptr;
+		monsterIndex = 2;
+	} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 8) {
+		_indoorList[159] = _indoorList[153];
+		_indoorList[160] = _indoorList[154];
+		_indoorList[161] = _indoorList[155];
+		_indoorList[153]._sprites = nullptr;
+		_indoorList[154]._sprites = nullptr;
+		_indoorList[155]._sprites = nullptr;
+		monsterIndex = 3;
+	}
+
+	drawIndoors();
+
+	switch (monsterIndex) {
+	case 1:
+		_indoorList[156] = _indoorList[159];
+		_indoorList[157] = _indoorList[160];
+		_indoorList[158] = _indoorList[161];
+		break;
+	case 2:
+		_indoorList[150] = _indoorList[159];
+		_indoorList[151] = _indoorList[160];
+		_indoorList[152] = _indoorList[161];
+		break;
+	case 3:
+		_indoorList[153] = _indoorList[159];
+		_indoorList[154] = _indoorList[160];
+		_indoorList[155] = _indoorList[161];
+		break;
+	default:
+		break;
+	}
 }
 
 void InterfaceScene::animate3d() {

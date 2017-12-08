@@ -1263,8 +1263,8 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 			combat.moveMonsters();
 	}
 
-	// Draw the map
-	drawMap();
+	// Draw the game scene
+	drawScene();
 
 	// Draw the minimap
 	drawMinimap();

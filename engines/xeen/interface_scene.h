@@ -101,6 +101,16 @@ private:
 	 */
 	void setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monster,
 		SpriteResource *sprites, int frame, int defaultY);
+
+	/**
+	 * Draws outdoor scenes
+	 */
+	void drawOutdoorsScene();
+
+	/**
+	 * Draws indoor scenes
+	 */
+	void drawIndoorsScene();
 protected:
 	int8 _wp[20];
 	byte _wo[308];
@@ -119,7 +129,10 @@ protected:
 	 */
 	void animate3d();
 
-	void drawMap();
+	/**
+	 * Draws the game scene
+	 */
+	void drawScene();
 public:
 	OutdoorDrawList _outdoorList;
 	IndoorDrawList _indoorList;
