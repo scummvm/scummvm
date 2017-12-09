@@ -74,7 +74,7 @@ void Process::getRegionWidth() {
 void Process::getRegionHeight() {
 	Common::String name = popString();
 	Region *reg = _engine->loadRegion(name);
-	int value = reg->width;
+	int value = reg->height;
 	push(value);
 	delete reg;
 	debug("getRegionHeight %s -> %d", name.c_str(), value);
