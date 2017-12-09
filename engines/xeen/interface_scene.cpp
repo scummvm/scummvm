@@ -480,8 +480,7 @@ void InterfaceScene::drawOutdoorsScene() {
 				if (ds2._scale == 0x8000) {
 					ds2._x /= 3;
 					ds2._y = 60;
-				}
-				else {
+				} else {
 					ds2._y = 73;
 				}
 
@@ -3316,14 +3315,13 @@ void InterfaceScene::setOutdoorsMonsters() {
 		if (ds._frame != -1) {
 			ds._flags &= ~0xfff;
 
-			// TODO: Double-check.. this section looks *weird*
+			// Use the frame number as an index to the correct monster,
+			// and replace the frame number with the monster's current frame
 			MazeMonster &monster = map._mobData._monsters[ds._frame];
-			MonsterStruct &monsterData = *monster._monsterData;
-
 			ds._frame = monster._frame;
 
 			if (monster._effect2) {
-				ds._flags = Res.MONSTER_EFFECT_FLAGS[monster._effect2 - 1][monster._effect3];
+				ds._flags |= Res.MONSTER_EFFECT_FLAGS[monster._effect2 - 1][monster._effect3];
 			}
 
 			if (monster._frame > 7) {
@@ -3335,13 +3333,13 @@ void InterfaceScene::setOutdoorsMonsters() {
 
 			ds._y = Res.OUTDOOR_MONSTERS_Y[idx];
 
+			MonsterStruct &monsterData = *monster._monsterData;
 			if (monsterData._flying) {
 				ds._x += Res.COMBAT_FLOAT_X[_combatFloatCounter];
 				ds._y += Res.COMBAT_FLOAT_Y[_combatFloatCounter];
 			}
 		}
 	}
-	// TODO
 }
 
 void InterfaceScene::setOutdoorsObjects() {
