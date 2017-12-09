@@ -105,6 +105,7 @@ private:
 	void setCounter();
 	void getRegionWidth();
 	void getRegionHeight();
+	void fadeObject();
 
 	void setSystemVariable();
 	void getIntegerSystemVariable();
@@ -112,6 +113,7 @@ private:
 	void getGlobal(unsigned index);
 	void setGlobal();
 	void hasGlobal();
+	void incrementGlobal();
 	void appendToSharedStorage();
 
 	void enableUser();
@@ -130,6 +132,8 @@ private:
 	void stub182();
 	void stub188();
 	void stub190();
+	void stub195();
+	void stub196();
 	void stub202(unsigned size);
 	void stub203();
 	void stub206();

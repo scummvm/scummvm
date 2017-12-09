@@ -57,6 +57,9 @@ public:
 
 	void readStringTable(unsigned resOffset, uint16 resCount);
 	const StringEntry & getString(uint16 index) const;
+	uint getStringTableSize() const
+	{ return _stringTable.size(); }
+
 	const Common::String & getName() const
 	{ return _name; }
 

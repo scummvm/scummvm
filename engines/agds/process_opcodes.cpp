@@ -147,6 +147,12 @@ void Process::hasGlobal() {
 	push(result);
 }
 
+void Process::incrementGlobal() {
+	Common::String name = popString();
+	debug("increment global %s", name.c_str());
+	_engine->setGlobal(name, _engine->getGlobal(name) + 1);
+}
+
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
 	int index = _engine->appendToSharedStorage(value);
@@ -172,6 +178,12 @@ void Process::changeScreenPatch() {
 void Process::loadMouseStub66() {
 	Common::String name = popString();
 	debug("loadMouseStub66 %s", name.c_str());
+}
+
+void Process::fadeObject() {
+	int arg = pop();
+	Common::String name = popString();
+	debug("fadeObject %s %d", name.c_str(), arg);
 }
 
 
@@ -239,6 +251,20 @@ void Process::stub165() {
 void Process::stub190() {
 	int value = pop();
 	debug("stub190 %d", value);
+}
+
+void Process::stub195() {
+	Common::String value = popString();
+	debug("stub195 %s", value.c_str());
+	_engine->loadObject(value);
+	push(195);
+}
+
+void Process::stub196() {
+	Common::String value = popString();
+	debug("stub196 %s", value.c_str());
+	_engine->loadObject(value);
+	push(196);
 }
 
 void Process::stub202(unsigned size) {
@@ -381,6 +407,7 @@ ProcessExitCode Process::execute() {
 		switch(op) {
 			OP_UU	(kEnter, enter);
 			OP_W	(kJumpZImm16, jumpz);
+			OP_W	(kJumpImm16, jump);
 			OP		(kPop, pop);
 			OP		(kExitProcess, exitProcess);
 			OP		(kSuspendProcess, suspendProcess);
@@ -389,6 +416,7 @@ ProcessExitCode Process::execute() {
 			OP_C	(kPushImm8_2, push);
 			OP_W	(kPushImm16_2, push);
 			OP_B	(kGetGlobalImm8, getGlobal);
+			OP		(kIncrementGlobal, incrementGlobal);
 			OP		(kEquals, equals);
 			OP		(kNotEquals, notEquals);
 			OP		(kGreater, greater);
@@ -440,7 +468,10 @@ ProcessExitCode Process::execute() {
 			OP		(kStub182, stub182);
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);
+			OP		(kStub195, stub195);
+			OP		(kStub196, stub196);
 			OP		(kLoadPicture, loadPicture);
+			OP		(kFadeObject, fadeObject);
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
 			OP		(kPlayFilm, stub203);
