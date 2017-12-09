@@ -81,6 +81,8 @@ ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 	Object *object = i != _objects.end()? i->_value: NULL;
 	if (!object)
 		_objects.setVal(name, object = new Object(name, stream));
+	else
+		return kExitCodeDestroy;
 
 	delete stream;
 
