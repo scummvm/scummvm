@@ -99,6 +99,9 @@ ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 			debug("loading screen object...");
 			code = loadObject(process.getExitValue());
 			break;
+		case kExitCodeSuspend:
+			debug("nop, waking up");
+			break;
 		default:
 			debug("destroying process...");
 			_processes.pop_back();
