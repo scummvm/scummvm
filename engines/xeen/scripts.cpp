@@ -393,7 +393,7 @@ bool Scripts::cmdDisplay1(ParamsIterator &params) {
 	Common::String msg = Common::String::format("\r\x03""c%s", paramText.c_str());
 
 	windows[12].close();
-	if (windows[38]._enabled)
+	if (!windows[38]._enabled)
 		windows[38].open();
 	windows[38].writeString(msg);
 	windows[38].update();
