@@ -15,7 +15,7 @@ License		: GPL
 
 Url             : http://www.scummvm.org
 
-Source		: %{name}-%{version}.tar.bz2
+Source		: %{name}-%{version}.tar.xz
 Source1		: faad2-2.8.6.tar.gz
 Source2		: libmpeg2-0.5.1.tar.gz
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
