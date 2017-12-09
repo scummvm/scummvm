@@ -305,6 +305,9 @@ void Process::findObjectInMouseArea() {
 	Common::String arg1 = popString();
 
 	debug("findObjectInMouseArea %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+	_engine->loadRegion(arg1);
+	_engine->loadObject(arg2);
+	_engine->loadObject(arg3);
 	push(0);
 }
 
