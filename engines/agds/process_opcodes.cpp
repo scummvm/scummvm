@@ -227,6 +227,7 @@ void Process::stub165() {
 	int arg2 = pop();
 	Common::String arg1 = popString();
 	debug("stub165 %s %d %d", arg1.c_str(), arg2, arg3);
+	_engine->loadObject(arg1);
 }
 
 
