@@ -45,7 +45,15 @@ protected:
 
 	virtual void setupButtons(SpriteResource *buttons);
 
+	/**
+	 * Opens the menu window
+	 */
 	virtual void openWindow() {}
+
+	/**
+	 * Closes the menu window
+	 */
+	virtual void closeWindow() {}
 public:
 	virtual ~WorldOfXeenMenu() {}
 
@@ -82,7 +90,15 @@ protected:
 
 	virtual void setupButtons(SpriteResource *buttons);
 
+	/**
+	 * Opens the menu window
+	 */
 	virtual void openWindow();
+
+	/**
+	 * Closes the menu window
+	 */
+	virtual void closeWindow();
 
 	virtual void showContents(SpriteResource &title1, bool mode);
 public:

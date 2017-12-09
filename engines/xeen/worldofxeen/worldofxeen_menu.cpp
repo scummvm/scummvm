@@ -95,14 +95,17 @@ void WorldOfXeenMenu::execute() {
 
 			if (key == 27) {
 				// Hide the options menu
+				closeWindow();
 				break;
 			} else if (key == 'C' || key == 'V') {
 				// Show credits
+				closeWindow();
 				CreditsScreen::show(_vm);
 				break;
 			} else if (key == 'S') {
 				// Start new game
 				WOX_VM._pendingAction = WOX_PLAY_GAME;
+				closeWindow();
 				return;
 			}
 		}
@@ -211,6 +214,11 @@ void WorldOptionsMenu::setBackground(bool doFade) {
 void WorldOptionsMenu::openWindow() {
 	Windows &windows = *_vm->_windows;
 	windows[GAME_WINDOW].open();
+}
+
+void WorldOptionsMenu::closeWindow() {
+	Windows &windows = *_vm->_windows;
+	windows[GAME_WINDOW].close();
 }
 
 void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {

@@ -136,7 +136,7 @@ void Window::setBounds(const Common::Rect &r) {
 void Window::open() {
 	Screen &screen = *g_vm->_screen;
 
-	if (!_enabled) {
+	if (!_enabled && !isFullScreen()) {
 		// Save a copy of the area under the window
 		_savedArea.create(_bounds.width(), _bounds.height());
 		_savedArea.copyRectToSurface(screen, 0, 0, _bounds);
@@ -163,7 +163,7 @@ void Window::open() {
 void Window::close() {
 	Screen &screen = *g_vm->_screen;
 
-	if (_enabled) {
+	if (_enabled && !isFullScreen()) {
 		// Update the window
 		update();
 
@@ -256,6 +256,10 @@ void Window::drawList(DrawStruct *items, int count) {
 
 		items->_sprites->draw(*this, items->_frame, pt, items->_flags, items->_scale);
 	}
+}
+
+bool Window::isFullScreen() const {
+	return _bounds.width() == SCREEN_WIDTH && _bounds.height() == SCREEN_HEIGHT;
 }
 
 } // End of namespace Xeen
