@@ -762,7 +762,7 @@ void Combat::monsterOvercome() {
 		if (monster._damageType != DT_PHYSICAL && monster._damageType != DT_DRAGONSLEEP) {
 			// Do a saving throw for monster
 			if (dataIndex <= _vm->getRandomNumber(1, dataIndex + 50))
-				monster._damageType = 0;
+				monster._damageType = DT_PHYSICAL;
 		}
 	}
 }

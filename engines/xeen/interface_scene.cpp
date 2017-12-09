@@ -704,7 +704,7 @@ void InterfaceScene::animate3d() {
 
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
-		if (!monster._damageType) {
+		if (monster._damageType == DT_PHYSICAL) {
 			if (monster._frame < 8) {
 				MonsterStruct &monsterData = *monster._monsterData;
 				if (!monsterData._loopAnimation) {
