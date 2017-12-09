@@ -128,7 +128,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 }
 
 void Combat::clear() {
-	Common::fill(&_attackMonsters[0], &_attackMonsters[26], -1);
+	Common::fill(&_attackMonsters[0], &_attackMonsters[ATTACK_MONSTERS_COUNT], -1);
 }
 
 void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {

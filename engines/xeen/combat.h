@@ -32,6 +32,7 @@ namespace Xeen {
 
 #define MAX_NUM_MONSTERS 107
 #define PARTY_AND_MONSTERS 12
+#define ATTACK_MONSTERS_COUNT 26
 
 enum DamageType {
 	DT_PHYSICAL = 0, DT_MAGICAL = 1, DT_FIRE = 2, DT_ELECTRICAL = 3,
@@ -106,7 +107,7 @@ public:
 	Common::Array<bool> _charsBlocked;
 	Common::Array<int> _charsGone;
 	SpriteResource _powSprites;
-	int _attackMonsters[26];
+	int _attackMonsters[ATTACK_MONSTERS_COUNT];
 	int _monster2Attack;
 	int _charsArray1[PARTY_AND_MONSTERS];
 	bool _monPow[PARTY_AND_MONSTERS];

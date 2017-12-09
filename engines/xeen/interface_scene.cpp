@@ -2315,7 +2315,10 @@ void InterfaceScene::setIndoorsMonsters() {
 	Common::Point mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
 
+	// Reset the list of attacking monsters
 	combat.clear();
+
+	// Iterate through the monsters list checking for proximity to party
 	for (uint monsterIdx = 0; monsterIdx < map._mobData._monsters.size(); ++monsterIdx) {
 		MazeMonster &monster = map._mobData._monsters[monsterIdx];
 		SpriteResource *sprites = monster._sprites;
@@ -3097,6 +3100,10 @@ void InterfaceScene::setOutdoorsMonsters() {
 	Direction dir = party._mazeDirection;
 	Common::Point pt = party._mazePosition;
 
+	// Reset the list of attacking monsters
+	combat.clear();
+
+	// Iterate through the monsters list checking for proximity to party
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
 
@@ -3309,7 +3316,7 @@ void InterfaceScene::setOutdoorsMonsters() {
 		_outdoorList[45]._x = -16;
 	}
 
-	for (int idx = 0; idx < 26; ++idx) {
+	for (int idx = 0; idx < ATTACK_MONSTERS_COUNT; ++idx) {
 		DrawStruct &ds = _outdoorList[Res.OUTDOOR_MONSTER_INDEXES[idx]];
 
 		if (ds._frame != -1) {
