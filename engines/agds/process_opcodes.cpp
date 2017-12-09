@@ -169,6 +169,12 @@ void Process::changeScreenPatch() {
 	push(0);
 }
 
+void Process::loadMouseStub66() {
+	Common::String name = popString();
+	debug("loadMouseStub66 %s", name.c_str());
+}
+
+
 void Process::stub128() {
 	debug("processCleanupStub128");
 }
@@ -230,6 +236,10 @@ void Process::stub165() {
 	_engine->loadObject(arg1);
 }
 
+void Process::stub190() {
+	int value = pop();
+	debug("stub190 %d", value);
+}
 
 void Process::stub202(unsigned size) {
 	debug("stub203, %u instructions", size);
@@ -294,6 +304,12 @@ void Process::onKey(unsigned size) {
 	_ip += size;
 }
 
+void Process::onUse(unsigned size) {
+	debug("use? handler, %u instructions", size);
+	_ip += size;
+}
+
+
 void Process::enableUser() {
 	//screen loading block user interaction until this instruction
 	debug("enableUser");
@@ -305,11 +321,20 @@ void Process::findObjectInMouseArea() {
 	Common::String arg1 = popString();
 
 	debug("findObjectInMouseArea %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
-	_engine->loadRegion(arg1);
+	Region *reg = _engine->loadRegion(arg1);
 	_engine->loadObject(arg2);
 	_engine->loadObject(arg3);
+	delete reg;
 	push(0);
 }
+
+void Process::loadRegionFromObject() {
+	Common::String name = popString();
+	debug("loadRegionFromObject %s", name.c_str());
+	Region *reg = _engine->loadRegion(name);
+	delete reg;
+}
+
 
 void Process::loadPictureFromObject() {
 	Common::String name = popString();
@@ -379,7 +404,10 @@ ProcessExitCode Process::execute() {
 			OP		(kBoolAnd, boolAnd);
 			OP		(kNot, bitNot);
 			OP		(kBoolNot, boolNot);
-			OP_U	(kCall, call);
+			OP_U	(kCallImm16, call);
+			OP_U	(kObjectRegisterUseHandler, onUse);
+			OP		(kStub66, loadMouseStub66);
+			OP		(kLoadRegionFromObject, loadRegionFromObject);
 			OP		(kLoadPictureFromObject, loadPictureFromObject);
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
 			OP		(kStub98, stub98);
@@ -411,6 +439,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub165, stub165);
 			OP		(kStub182, stub182);
 			OP		(kStub188, stub188);
+			OP		(kStub190, stub190);
 			OP		(kLoadPicture, loadPicture);
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
