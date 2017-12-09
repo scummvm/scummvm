@@ -3332,7 +3332,7 @@ void InterfaceScene::setOutdoorsMonsters() {
 			}
 
 			if (monster._frame > 7) {
-				monster._frame -= 8;
+				ds._frame -= 8;
 				ds._sprites = monster._attackSprites;
 			} else {
 				ds._sprites = monster._sprites;
