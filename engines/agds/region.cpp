@@ -45,6 +45,18 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream * 
 	height		= READ_UINT16(header + kRegionHeaderHeightOffset);
 	flags		= READ_UINT16(header + kRegionHeaderFlagsOffset);
 	debug("region %s %dx%d %04x", name.c_str(), width, height, flags);
+	if (size > kRegionHeaderSize) {
+		uint16 ext	= stream->readUint16LE();
+		debug("extended entries %u", ext);
+		while(ext--) {
+			int16 a = stream->readSint16LE();
+			int16 b = stream->readSint16LE();
+			uint16 c = stream->readUint16LE();
+			debug("extended entry: %d %d %04x", a, b, c);
+		}
+		if (stream->pos() != size)
+			debug("region data left: %u", size - stream->pos());
+	}
 }
 
 }
