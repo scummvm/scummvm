@@ -97,6 +97,7 @@ private:
 	void setScreenHeight();
 	void updateScreenHeightToDisplay();
 	void findObjectInMouseArea();
+	void loadRegionFromObject();
 	void loadPictureFromObject();
 	void loadAnimationFromObject();
 	void loadAnimation();
@@ -115,7 +116,9 @@ private:
 
 	void enableUser();
 	void onKey(unsigned size);
+	void onUse(unsigned size);
 
+	void loadMouseStub66();
 	void stub98();
 	void stub128();
 	void stub129();
@@ -126,6 +129,7 @@ private:
 	void stub165();
 	void stub182();
 	void stub188();
+	void stub190();
 	void stub202(unsigned size);
 	void stub203();
 	void stub206();
