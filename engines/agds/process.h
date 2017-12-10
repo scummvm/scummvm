@@ -27,6 +27,7 @@
 #include "agds/processExitCode.h"
 #include "common/scummsys.h"
 #include "common/stack.h"
+#include "common/debug.h"
 
 namespace AGDS {
 
@@ -139,8 +140,8 @@ private:
 	void stub206();
 	void exitProcessSetNextScreen();
 
-#define UNARY_OP(NAME, OP) void NAME () { push( OP pop() ); }
-#define BINARY_OP(NAME, OP) void NAME () { int arg2 = pop(); int arg1 = pop(); push(arg1 OP arg2); }
+#define UNARY_OP(NAME, OP) void NAME () { int arg = pop(); debug(#NAME " %d", arg); push( OP arg ); }
+#define BINARY_OP(NAME, OP) void NAME () { int arg2 = pop(); int arg1 = pop(); debug(#NAME " %d " #OP " %d", arg1, arg2); push(arg1 OP arg2); }
 
 	UNARY_OP(boolNot, !)
 	UNARY_OP(bitNot, ~)

@@ -149,8 +149,10 @@ void Process::hasGlobal() {
 
 void Process::incrementGlobal() {
 	Common::String name = popString();
-	debug("increment global %s", name.c_str());
-	_engine->setGlobal(name, _engine->getGlobal(name) + 1);
+	int value = _engine->getGlobal(name);
+	debug("increment global %s %d", name.c_str(), value);
+	push(value);
+	_engine->setGlobal(name, value + 1);
 }
 
 void Process::appendToSharedStorage() {
