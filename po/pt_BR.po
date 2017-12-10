@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-12-04 03:26+0100\n"
+"POT-Creation-Date: 2017-12-10 15:25+0100\n"
 "PO-Revision-Date: 2017-03-03 22:26+0000\n"
 "Last-Translator: rafaelmessias <rmmartins@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -908,7 +908,7 @@ msgstr "Renderização:"
 msgid "Special dithering modes supported by some games"
 msgstr "Modos especiais de dithering suportados por alguns jogos"
 
-#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:587
+#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:588
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2590
 msgid "Fullscreen mode"
 msgstr "Modo Tela Cheia"
@@ -2252,33 +2252,33 @@ msgstr ""
 msgid "OpenGL"
 msgstr "Abrir"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:589
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:590
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2592
 msgid "Windowed mode"
 msgstr "Modo janela"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:703
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:704
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:725
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2453
 msgid "Enabled aspect ratio correction"
 msgstr "Correção de proporção habilitada"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:727
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2459
 msgid "Disabled aspect ratio correction"
 msgstr "Correção de proporção desabilitada"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:747
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Clicando Habilitado"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:748
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:749
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
 #, fuzzy
 msgid "Filtering disabled"
