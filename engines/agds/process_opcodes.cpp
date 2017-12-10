@@ -184,7 +184,7 @@ void Process::changeScreenPatch() {
 	Common::String res2 = popString();
 	Common::String res1 = popString();
 	//change screen patch
-	debug("stub140: '%s' '%s'", res1.c_str(), res2.c_str());
+	debug("changeScreenPatch: '%s' '%s'", res1.c_str(), res2.c_str());
 	push(140);
 }
 
