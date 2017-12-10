@@ -161,9 +161,15 @@ public:
 
 	void rest();
 
+	/**
+	 * Handles bash actions
+	 */
 	void bash(const Common::Point &pt, Direction direction);
 
-	void draw3d(bool updateFlag, bool skipDelay = false);
+	/**
+	 * Handles drawing the elements of the interface and game scene
+	 */
+	void draw3d(bool updateFlag);
 
 	/**
 	 * Draw the display borders

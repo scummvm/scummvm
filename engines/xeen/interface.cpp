@@ -1242,7 +1242,7 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 	drawParty(true);
 }
 
-void Interface::draw3d(bool updateFlag, bool skipDelay) {
+void Interface::draw3d(bool updateFlag) {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
@@ -1250,7 +1250,7 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 	Scripts &scripts = *_vm->_scripts;
 	Windows &windows = *_vm->_windows;
 
-	events.updateGameCounter();
+	events.timeMark5();
 	if (windows[11]._enabled)
 		return;
 
@@ -1299,12 +1299,7 @@ void Interface::draw3d(bool updateFlag, bool skipDelay) {
 	}
 
 	party._stepped = false;
-	if (_vm->_mode == MODE_RECORD_EVENTS) {
-		// TODO: Save current scripts data?
-	}
-
-	if (!skipDelay)
-		events.wait(2, false);
+	events.ipause5(2);
 }
 
 void Interface::handleFalling() {

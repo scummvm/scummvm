@@ -73,7 +73,7 @@ void MapDialog::execute() {
 	events.updateGameCounter();
 	do {
 		if (drawFlag)
-			intf.draw3d(false, true);
+			intf.draw3d(false);
 		windows[5].writeString("\r");
 
 		if (map._isOutdoors)

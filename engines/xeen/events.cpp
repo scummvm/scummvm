@@ -161,6 +161,12 @@ void EventsManager::ipause(uint amount) {
 	} while (!_vm->shouldQuit() && timeElapsed() < amount);
 }
 
+void EventsManager::ipause5(uint amount) {
+	do {
+		pollEventsAndWait();
+	} while (!_vm->shouldQuit() && timeElapsed5() < amount);
+}
+
 void EventsManager::nextFrame() {
 	++_frameCounter;
 

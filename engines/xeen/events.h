@@ -109,7 +109,15 @@ public:
 
 	bool wait(uint numFrames, bool interruptable = true);
 
+	/**
+	 * Pause for a set amount
+	 */
 	void ipause(uint amount);
+
+	/**
+	 * Pauses a set amount past the previous call to timeMark5
+	 */
+	void ipause5(uint amount);
 };
 
 class GameEvent {
