@@ -277,7 +277,8 @@ void Process::moveScreenObject() {
 	int arg2 = pop();
 	Common::String arg1 = popString();
 	debug("moveScreenObject %s %d %d", arg1.c_str(), arg2, arg3);
-	_engine->loadObject(arg1);
+	Object *object = _engine->loadObject(arg1);
+	object->move(arg2, arg3);
 }
 
 void Process::stub190() {
