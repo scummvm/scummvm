@@ -147,13 +147,21 @@ void Process::hasGlobal() {
 	push(result);
 }
 
-void Process::incrementGlobal() {
+void Process::postIncrementGlobal() {
 	Common::String name = popString();
 	int value = _engine->getGlobal(name);
 	debug("increment global %s %d", name.c_str(), value);
 	push(value);
 	_engine->setGlobal(name, value + 1);
 }
+
+void Process::decrementGlobal(int dec) {
+	Common::String name = popString();
+	int value = _engine->getGlobal(name);
+	debug("increment global %s %d", name.c_str(), value);
+	_engine->setGlobal(name, value - dec);
+}
+
 
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
@@ -257,14 +265,14 @@ void Process::stub190() {
 
 void Process::stub195() {
 	Common::String value = popString();
-	debug("stub195 %s", value.c_str());
+	debug("stub195(getPictureWidth) %s", value.c_str());
 	_engine->loadObject(value);
 	push(195);
 }
 
 void Process::stub196() {
 	Common::String value = popString();
-	debug("stub196 %s", value.c_str());
+	debug("stub196(getPictureHeight) %s", value.c_str());
 	_engine->loadObject(value);
 	push(196);
 }
@@ -418,7 +426,8 @@ ProcessExitCode Process::execute() {
 			OP_C	(kPushImm8_2, push);
 			OP_W	(kPushImm16_2, push);
 			OP_B	(kGetGlobalImm8, getGlobal);
-			OP		(kIncrementGlobal, incrementGlobal);
+			OP		(kPostIncrementGlobal, postIncrementGlobal);
+			OP		(kDecrementGlobalByTop, decrementGlobalByTop);
 			OP		(kEquals, equals);
 			OP		(kNotEquals, notEquals);
 			OP		(kGreater, greater);
