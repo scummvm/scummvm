@@ -42,6 +42,7 @@
 #else
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 #endif
+#include "backends/events/default/default-events.h"
 // ResidualVM:
 // #include "backends/events/sdl/sdl-events.h"
 #include "backends/events/sdl/resvm-sdl-events.h"
@@ -213,6 +214,15 @@ void OSystem_SDL::initBackend() {
 	// manager didn't provide one yet.
 	if (_eventSource == 0)
 		_eventSource = new ResVmSdlEventSource(); // ResidualVm: was SdlEventSource
+
+	if (_eventManager == nullptr) {
+		DefaultEventManager *eventManager = new DefaultEventManager(_eventSource);
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		// SDL 2 generates its own keyboard repeat events.
+		eventManager->setGenerateKeyRepeatEvents(false);
+#endif
+		_eventManager = eventManager;
+	}
 
 	if (_graphicsManager == 0) {
 		if (_graphicsManager == 0) {
