@@ -25,6 +25,7 @@
 #include "agds/process.h"
 #include "agds/region.h"
 #include "common/error.h"
+#include "common/events.h"
 #include "common/ini-file.h"
 #include "common/file.h"
 #include "common/debug.h"
@@ -34,7 +35,7 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _sharedStorageIndex(-2) {
+		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -110,7 +111,7 @@ Common::String AGDSEngine::loadFilename(const Common::String &entryName) {
 }
 
 
-ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
+void AGDSEngine::loadObject(const Common::String & name) {
 	debug("loading object %s", name.c_str());
 	Common::SeekableReadStream * stream = _data.getEntry(name);
 	if (!stream)
@@ -120,51 +121,69 @@ ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 	if (!object)
 		_objects.setVal(name, object = new Object(name, stream));
 	else
-		return kExitCodeDestroy;
+		return;
 
 	delete stream;
 
 	_processes.push_front(Process(this, object));
-
-	ProcessExitCode code = kExitCodeDestroy;
-	while(!_processes.empty()) {
-		for(ProcessListType::iterator p = _processes.begin(); p != _processes.end(); ) {
-			Process & process = *p;
-			if (process.getStatus() == Process::kStatusDone) {
-				p = _processes.erase(p);
-				continue;
-			}
-			process.activate();
-			code = process.execute();
-			switch(code) {
-			case kExitCodeLoadScreenObject:
-			case kExitCodeDestroyProcessSetNextScreen:
-				debug("loading screen object...");
-				code = loadObject(process.getExitValue());
-				break;
-			case kExitCodeSuspend:
-				debug("nop, waking up, next process");
-				break;
-			default:
-				debug("destroying process...");
-				p = _processes.erase(p);
-				continue;
-			}
-			break;
-		}
-	}
-	return code;
 }
+
+void AGDSEngine::runProcess() {
+	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
+		Process & process = *p;
+		if (process.getStatus() == Process::kStatusDone) {
+			p = _processes.erase(p);
+			continue;
+		}
+		process.activate();
+		ProcessExitCode code = process.execute();
+		switch(code) {
+		case kExitCodeLoadScreenObject:
+		case kExitCodeDestroyProcessSetNextScreen:
+			debug("loading screen object...");
+			loadObject(process.getExitValue());
+			break;
+		case kExitCodeSuspend:
+			debug("nop, waking up, next process");
+			break;
+		default:
+			debug("destroying process...");
+			p = _processes.erase(p);
+			continue;
+		}
+		break;
+	}
+}
+
 
 Common::Error AGDSEngine::run() {
 	if (!load())
 		return Common::kNoGameDataFoundError;
-	if (!_nextScreen.empty()) {
-		debug("loading screen %s", _nextScreen.c_str());
-		Common::String nextScreen;
-		nextScreen = _nextScreen;
-		_nextScreen.clear();
-		loadObject(nextScreen);
+
+	Common::EventManager *eventManager = _system->getEventManager();
+	_system->fillScreen(0);
+
+	while(!shouldQuit()) {
+		if (!_nextScreen.empty()) {
+			debug("loading screen %s", _nextScreen.c_str());
+			Common::String nextScreen;
+			nextScreen = _nextScreen;
+			_nextScreen.clear();
+			loadObject(nextScreen);
+		}
+
+		if (active()) {
+			while(active() && !_processes.empty())
+				runProcess();
+		}
+		else
+			--_timer;
+
+		Common::Event event;
+		while(eventManager->pollEvent(event)) {
+		}
+		_system->updateScreen();
+		_system->delayMillis(20);
 	}
 
 	return Common::kNoError;

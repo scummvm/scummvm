@@ -144,7 +144,7 @@ enum Opcode {
 	kStub124						= 124,
 	kStub125						= 125,
 	kStub126						= 126,
-	kSetCounter						= 127,
+	kSetTimer						= 127,
 	kProcessCleanupStub128			= 128,
 	kStub129						= 129,
 	kStub130						= 130,

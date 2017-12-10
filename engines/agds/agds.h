@@ -56,18 +56,28 @@ public:
 private:
 	bool initGraphics();
 	bool load();
-	ProcessExitCode loadObject(const Common::String & name);
+	void runProcess();
+
+	void loadObject(const Common::String & name);
 	Region * loadRegion(const Common::String &name);
 	Common::String loadFilename(const Common::String &name);
 
 	int appendToSharedStorage(const Common::String &value);
 	const Common::String & getSharedStorage(int id) const;
 
-	void setGlobal(const Common::String &name, int value)
-	{ _globals.setVal(name, value); }
+	void setGlobal(const Common::String &name, int value) {
+		_globals.setVal(name, value);
+	}
+	bool hasGlobal(const Common::String &name) const {
+		return _globals.find(name) != _globals.end();
+	}
 	int getGlobal(const Common::String &name) const;
-	bool hasGlobal(const Common::String &name) const
-	{ return _globals.find(name) != _globals.end(); }
+
+	void setTimer(int timer) {
+		_timer = timer;
+	}
+
+	bool active() const { return _timer <= 0; }
 
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
@@ -83,6 +93,7 @@ private:
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];
 	GlobalsType					_globals;
+	int							_timer;
 };
 
 

@@ -405,9 +405,12 @@ void Process::loadAnimationFromObject() {
 	debug("loadAnimationFromObject %s", name.c_str());
 }
 
-void Process::setCounter() {
+void Process::setTimer() {
 	int value = pop();
-	debug("setCounter127 %d", value);
+	debug("setTimer %d", value);
+	_engine->setTimer(value);
+	_status = kStatusPassive;
+	_exitCode = kExitCodeSuspend;
 }
 
 
@@ -485,7 +488,7 @@ ProcessExitCode Process::execute() {
 			OP		(kScreenRemoveObject, removeScreenObject);
 			OP		(kLoadAnimation, loadAnimation);
 			OP		(kLoadSample, loadSample);
-			OP		(kSetCounter, setCounter);
+			OP		(kSetTimer, setTimer);
 			OP		(kProcessCleanupStub128, stub128);
 			OP		(kStub129, stub129);
 			OP		(kStub130, stub130);
