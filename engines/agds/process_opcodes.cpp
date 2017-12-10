@@ -399,6 +399,7 @@ void Process::loadRegionFromObject() {
 void Process::loadPictureFromObject() {
 	Common::String name = popFilename();
 	debug("loadPictureFromObject %s", name.c_str());
+	_object->setPicture(_engine->resourceManager().loadPicture(name));
 }
 
 void Process::loadAnimationFromObject() {

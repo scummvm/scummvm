@@ -81,6 +81,10 @@ private:
 	bool active() const { return _timer <= 0 && !_mjpgPlayer; }
 	void playFilm(const Common::String &video, const Common::String &audio);
 
+	ResourceManager & resourceManager() {
+		return _resourceManager;
+	}
+
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
 	typedef Common::List<Process> ProcessListType;
