@@ -43,6 +43,7 @@ namespace AGDS {
 class Object;
 class Process;
 class Region;
+class MJPGPlayer;
 
 class AGDSEngine : public Engine {
 	friend class Process;
@@ -77,7 +78,8 @@ private:
 		_timer = timer;
 	}
 
-	bool active() const { return _timer <= 0; }
+	bool active() const { return _timer <= 0 && !_mjpgPlayer; }
+	void playFilm(const Common::String &video, const Common::String &audio);
 
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
@@ -94,6 +96,7 @@ private:
 	Common::String				_sharedStorage[10];
 	GlobalsType					_globals;
 	int							_timer;
+	MJPGPlayer *				_mjpgPlayer;
 };
 
 
