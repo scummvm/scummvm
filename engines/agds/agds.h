@@ -29,6 +29,7 @@
 #include "agds/database.h"
 #include "agds/processExitCode.h"
 #include "agds/resourceManager.h"
+#include "graphics/pixelformat.h"
 
 /**
  * This is the namespace of the AGDS engine.
@@ -59,7 +60,8 @@ private:
 	bool load();
 	void runProcess();
 
-	void loadObject(const Common::String & name);
+	Object * loadObject(const Common::String & name);
+
 	Region * loadRegion(const Common::String &name);
 	Common::String loadFilename(const Common::String &name);
 
@@ -85,6 +87,9 @@ private:
 		return _resourceManager;
 	}
 
+	const Graphics::Surface * loadPicture(const Common::String &name)
+	{ return _resourceManager.loadPicture(name, _pixelFormat); }
+
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
 	typedef Common::List<Process> ProcessListType;
@@ -100,7 +105,9 @@ private:
 	Common::String				_sharedStorage[10];
 	GlobalsType					_globals;
 	int							_timer;
+	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
+	Object *					_currentScreen;
 };
 
 

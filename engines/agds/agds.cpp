@@ -36,7 +36,8 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0), _mjpgPlayer(NULL) {
+		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0),
+		_mjpgPlayer(NULL), _currentScreen(NULL) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -51,7 +52,8 @@ bool AGDSEngine::initGraphics() {
 	for(fi = formats.begin(); fi != formats.end(); ++fi) {
 		if (fi->bytesPerPixel == 4) {
 			debug("found mode %s", fi->toString().c_str());
-			::initGraphics(800, 600, &*fi);
+			_pixelFormat = *fi;
+			::initGraphics(800, 600, &_pixelFormat);
 			return true;
 		}
 	}
@@ -112,21 +114,23 @@ Common::String AGDSEngine::loadFilename(const Common::String &entryName) {
 }
 
 
-void AGDSEngine::loadObject(const Common::String & name) {
-	debug("loading object %s", name.c_str());
+Object *AGDSEngine::loadObject(const Common::String & name) {
+	ObjectsType::iterator i = _objects.find(name);
+	Object *object = i != _objects.end()? i->_value: NULL;
+	if (object)
+		return object;
+
 	Common::SeekableReadStream * stream = _data.getEntry(name);
 	if (!stream)
 		error("no database entry for %s\n", name.c_str());
-	ObjectsType::iterator i = _objects.find(name);
-	Object *object = i != _objects.end()? i->_value: NULL;
-	if (!object)
-		_objects.setVal(name, object = new Object(name, stream));
-	else
-		return;
+
+	object = new Object(name, stream);
+	_objects.setVal(name, object);
 
 	delete stream;
 
 	_processes.push_front(Process(this, object));
+	return object;
 }
 
 void AGDSEngine::runProcess() {
@@ -140,9 +144,11 @@ void AGDSEngine::runProcess() {
 		ProcessExitCode code = process.execute();
 		switch(code) {
 		case kExitCodeLoadScreenObject:
-		case kExitCodeDestroyProcessSetNextScreen:
-			debug("loading screen object...");
-			loadObject(process.getExitValue());
+		case kExitCodeDestroyProcessSetNextScreen: {
+				Common::String screen = process.getExitValue();
+				debug("loading screen object %s", screen.c_str());
+				_currentScreen = loadObject(screen);
+			}
 			break;
 		case kExitCodeSuspend:
 			debug("process suspended");
