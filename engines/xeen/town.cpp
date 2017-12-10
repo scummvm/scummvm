@@ -30,10 +30,15 @@
 
 namespace Xeen {
 
-Town::Town(XeenEngine *vm) : ButtonContainer(vm) {
+TownLocation::TownLocation(TownAction action) : ButtonContainer(g_vm),
+		_townActionId(action), _isDarkCc(g_vm->_files->_isDarkCc),
+		_vocName("hello1.voc") {
+	_townMaxId = Res.TOWN_MAXES[_isDarkCc][action];
+	_songName = Res.TOWN_ACTION_MUSIC[_isDarkCc][action];
+	_townSprites.resize(Res.TOWN_ACTION_FILES[_isDarkCc][action]);
+
 	Common::fill(&_arr1[0], &_arr1[6], 0);
-	_townMaxId = 0;
-	_townActionId = BANK;
+	_animFrame = 0;
 	_drawFrameIndex = 0;
 	_currentCharLevel = 0;
 	_v1 = 0;
@@ -54,9 +59,22 @@ Town::Town(XeenEngine *vm) : ButtonContainer(vm) {
 	_flag1 = false;
 	_experienceToNextLevel = 0;
 	_drawCtr1 = _drawCtr2 = 0;
+	_townPos = Common::Point(8, 8);
+
+	clearButtons();
+	_icons1.clear();
+	_icons2.clear();
 }
 
-void Town::loadStrings(const Common::String &name) {
+TownLocation::~TownLocation() {
+	Interface &intf = *g_vm->_interface;
+
+	for (uint idx = 0; idx < _townSprites.size(); ++idx)
+		_townSprites[idx].clear();
+	intf.mainIconsPrint();
+}
+
+void TownLocation::loadStrings(const Common::String &name) {
 	File f(name);
 	_textStrings.clear();
 	while (f.pos() < f.size())
@@ -64,214 +82,46 @@ void Town::loadStrings(const Common::String &name) {
 	f.close();
 }
 
-int Town::townAction(TownAction actionId) {
-	Interface &intf = *_vm->_interface;
-	Map &map = *_vm->_map;
-	Party &party = *_vm->_party;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+int TownLocation::show() {
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+	Sound &sound = *g_vm->_sound;
+	Windows &windows = *g_vm->_windows;
 
-	if (actionId == ACTION12) {
-		pyramidEvent();
-		return 0;
-	}
+	// Play the appropriate music
+	sound.stopSound();
+	sound.playSong(_songName, 223);
 
-	_townMaxId = Res.TOWN_MAXES[_vm->_files->_isDarkCc][actionId];
-	_townActionId = actionId;
-	_drawFrameIndex = 0;
-	_v1 = 0;
-	_townPos = Common::Point(8, 8);
-	intf._overallFrame = 0;
-
-	// This area sets up the GUI buttos and startup sample to play for the
-	// given town action
-	Common::String vocName = "hello1.voc";
-	clearButtons();
-	_icons1.clear();
-	_icons2.clear();
-
-	switch (actionId) {
-	case BANK:
-		// Bank
-		_icons1.load("bank.icn");
-		_icons2.load("bank2.icn");
-		addButton(Common::Rect(234, 108, 259, 128), Common::KEYCODE_d, &_icons1);
-		addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_w, &_icons1);
-		addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_icons1);
-		intf._overallFrame = 1;
-
-		sound.stopSound();
-		vocName = isDarkCc ? "bank1.voc" : "banker.voc";
-		break;
-
-	case BLACKSMITH:
-		// Blacksmith
-		_icons1.load("esc.icn");
-		addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
-		addButton(Common::Rect(234, 54, 308, 62), 0);
-		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
-		addButton(Common::Rect(234, 74, 308, 82), 0);
-		addButton(Common::Rect(234, 84, 308, 92), 0);
-
-		sound.stopSound();
-		vocName = isDarkCc ? "see2.voc" : "whaddayo.voc";
-		break;
-
-	case GUILD:
-		// Guild
-		loadStrings("spldesc.bin");
-		_icons1.load("esc.icn");
-		addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
-		addButton(Common::Rect(234, 54, 308, 62), 0);
-		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
-		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_s);
-		addButton(Common::Rect(234, 84, 308, 92), 0);
-		_vm->_mode = MODE_17;
-
-		sound.stopSound();
-		vocName = isDarkCc ? "parrot1.voc" : "guild10.voc";
-		break;
-
-	case TAVERN:
-		// Tavern
-		loadStrings("tavern.bin");
-		_icons1.load("tavern.icn");
-		addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
-		addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_s, &_icons1);
-		addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_d);
-		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_f);
-		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_t);
-		addButton(Common::Rect(234, 84, 308, 92), Common::KEYCODE_r);
-		_vm->_mode = MODE_17;
-
-		sound.stopSound();
-		vocName = isDarkCc ? "hello1.voc" : "hello.voc";
-		break;
-
-	case TEMPLE:
-		// Temple
-		_icons1.load("esc.icn");
-		addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
-		addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_h);
-		addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_d);
-		addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_u);
-		addButton(Common::Rect(234, 84, 308, 92), 0);
-
-		sound.stopSound();
-		vocName = isDarkCc ? "help2.voc" : "maywe2.voc";
-		break;
-
-	case TRAINING:
-		// Training
-		Common::fill(&_arr1[0], &_arr1[6], 0);
-		_v2 = 0;
-
-		_icons1.load("train.icn");
-		addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
-		addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_icons1);
-
-		sound.stopSound();
-		vocName = isDarkCc ? "training.voc" : "youtrn1.voc";
-		break;
-
-	case ARENA:
-		// Arena event
-		arenaEvent();
-		return false;
-
-	case REAPER:
-		// Reaper event
-		reaperEvent();
-		return false;
-
-	case GOLEM:
-		// Golem event
-		golemEvent();
-		return false;
-
-	case DWARF1:
-	case DWARF2:
-		dwarfEvent();
-		return false;
-
-	case SPHINX:
-		sphinxEvent();
-		return false;
-
-	default:
-		break;
-	}
-
-	sound.playSong(Res.TOWN_ACTION_MUSIC[_vm->_files->_isDarkCc][actionId], 223);
-
-	_townSprites.resize(Res.TOWN_ACTION_FILES[isDarkCc][actionId]);
+	// Load the needed sprite sets for the location
 	for (uint idx = 0; idx < _townSprites.size(); ++idx) {
 		Common::String shapesName = Common::String::format("%s%d.twn",
-			Res.TOWN_ACTION_SHAPES[actionId], idx + 1);
+			Res.TOWN_ACTION_SHAPES[_townActionId], idx + 1);
 		_townSprites[idx].load(shapesName);
 	}
 
 	Character *charP = &party._activeParty[0];
-	Common::String title = createTownText(*charP);
-	intf._face1UIFrame = intf._face2UIFrame = 0;
-	intf._dangerSenseUIFrame = 0;
-	intf._spotDoorsUIFrame = 0;
-	intf._levitateUIFrame = 0;
 
-	_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
-	if (actionId == BANK && isDarkCc) {
-		_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
-			Common::Point(8, 30));
-	}
+	// Draw the background and the text window
+	drawBackground();
+	drawWindow();
+	drawAnim(true);
 
-	intf.assembleBorder();
-
-	// Open up the window and write the string
-	windows[10].open();
-	windows[10].writeString(title);
-	drawButtons(&windows[0]);
-
-	windows[0].update();
-	intf.highlightChar(0);
-	drawTownAnim(1);
-
-	if (actionId == BANK)
-		intf._overallFrame = 2;
-
-	sound.playSound(vocName, 1);
+	// Play the welcome speech
+	sound.playSound(_vocName, 1);
 
 	do {
-		townWait();
-		charP = doTownOptions(charP);
+		wait();
+		charP = doOptions(charP);
 		if (_vm->shouldQuit())
 			return 0;
 
-		title = createTownText(*charP);
-		windows[10].writeString(title);
+		Common::String msg = createLocationText(*charP);
+		windows[10].writeString(msg);
 		drawButtons(&windows[0]);
 	} while (_buttonValue != Common::KEYCODE_ESCAPE);
 
-	switch (actionId) {
-	case BLACKSMITH:
-		// Leave blacksmith
-		if (isDarkCc) {
-			sound.stopSound();
-			sound.playSound("come1.voc", 1);
-		}
-		break;
-
-	case TAVERN:
-		// Leave Tavern
-		sound.stopSound();
-		sound.playSound(isDarkCc ? "gdluck1.voc" : "goodbye.voc", 1);
-
-		map.mazeData()._mazeNumber = party._mazeId;
-		break;
-
-	default:
-		break;
-	}
+	// Handle any farewell message
+	farewell();
 
 	int result;
 	if (party._mazeId != 0) {
@@ -284,17 +134,175 @@ int Town::townAction(TownAction actionId) {
 		result = 2;
 	}
 
-	for (uint idx = 0; idx < _townSprites.size(); ++idx)
-		_townSprites[idx].clear();
-	intf.mainIconsPrint();
-	_buttonValue = 0;
-
 	return result;
 }
 
-int Town::townWait() {
-	EventsManager &events = *_vm->_events;
-	Windows &windows = *_vm->_windows;
+void TownLocation::drawBackground() {
+	Interface &intf = *g_vm->_interface;
+
+	intf._face1UIFrame = intf._face2UIFrame = 0;
+	intf._dangerSenseUIFrame = 0;
+	intf._spotDoorsUIFrame = 0;
+	intf._levitateUIFrame = 0;
+	_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+}
+
+void TownLocation::drawWindow() {
+	Interface &intf = *g_vm->_interface;
+	Party &party = *g_vm->_party;
+	Windows &windows = *g_vm->_windows;
+
+	Character *charP = &party._activeParty[0];
+	Common::String title = createLocationText(*charP);
+
+	// Open up the window and write the string
+	intf.assembleBorder();
+	windows[10].open();
+	windows[10].writeString(title);
+	drawButtons(&windows[0]);
+
+	windows[0].update();
+	intf.highlightChar(0);
+}
+
+void TownLocation::drawAnim(bool flag) {
+	Interface &intf = *g_vm->_interface;
+	Sound &sound = *g_vm->_sound;
+	Windows &windows = *g_vm->_windows;
+
+	// TODO: Figure out a clean way to split method into individual location classes
+	if (_townActionId == BLACKSMITH) {
+		if (sound.isPlaying()) {
+			if (_isDarkCc) {
+				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
+					Common::Point(34, 33));
+				_townSprites[2].draw(0, _vm->getRandomNumber(5) + 3,
+					Common::Point(34, 54));
+			}
+		} else {
+			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+			if (_isDarkCc) {
+				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
+					Common::Point(34, 33));
+			}
+		}
+	} else if (!_isDarkCc || _townActionId != TRAINING) {
+		if (!_townSprites[_drawFrameIndex / 8].empty())
+			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+	}
+
+	switch (_townActionId) {
+	case BANK:
+		if (sound.isPlaying() || (_isDarkCc && _animFrame)) {
+			if (_isDarkCc) {
+				if (sound.isPlaying() || _animFrame == 1) {
+					_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
+						Common::Point(8, 30));
+				} else if (_animFrame > 1) {
+					_townSprites[4].draw(0, 13 - _animFrame++,
+						Common::Point(8, 30));
+					if (_animFrame > 14)
+						_animFrame = 0;
+				}
+			} else {
+				_townSprites[2].draw(0, _vm->getRandomNumber(7, 11), Common::Point(8, 8));
+			}
+		}
+		break;
+
+	case GUILD:
+		if (sound.isPlaying()) {
+			if (_isDarkCc) {
+				if (_animFrame) {
+					_animFrame ^= 1;
+					_townSprites[6].draw(0, _animFrame, Common::Point(8, 106));
+				} else {
+					_townSprites[6].draw(0, _vm->getRandomNumber(3), Common::Point(16, 48));
+				}
+			}
+		}
+		break;
+
+	case TAVERN:
+		if (sound.isPlaying() && _isDarkCc) {
+			_townSprites[4].draw(0, _vm->getRandomNumber(7), Common::Point(153, 49));
+		}
+		break;
+
+	case TEMPLE:
+		if (sound.isPlaying()) {
+			_townSprites[3].draw(0, _vm->getRandomNumber(2, 4), Common::Point(8, 8));
+
+		}
+		break;
+
+	case TRAINING:
+		if (sound.isPlaying()) {
+			if (_isDarkCc) {
+				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+			}
+		} else {
+			if (_isDarkCc) {
+				_townSprites[0].draw(0, ++_animFrame % 8, Common::Point(8, 8));
+				_townSprites[5].draw(0, _vm->getRandomNumber(5), Common::Point(61, 74));
+			} else {
+				_townSprites[1].draw(0, _vm->getRandomNumber(8, 12), Common::Point(8, 8));
+			}
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	if (flag) {
+		intf._face1UIFrame = 0;
+		intf._face2UIFrame = 0;
+		intf._dangerSenseUIFrame = 0;
+		intf._spotDoorsUIFrame = 0;
+		intf._levitateUIFrame = 0;
+
+		intf.assembleBorder();
+	}
+
+	if (windows[11]._enabled) {
+		_drawCtr1 = (_drawCtr1 + 1) % 2;
+		if (!_drawCtr1 || !_drawCtr2) {
+			_drawFrameIndex = 0;
+			_drawCtr2 = 0;
+		} else {
+			_drawFrameIndex = _vm->getRandomNumber(3);
+		}
+	} else {
+		_drawFrameIndex = (_drawFrameIndex + 1) % _townMaxId;
+	}
+
+	if (_isDarkCc) {
+		if (_townActionId == BLACKSMITH && (_drawFrameIndex == 4 || _drawFrameIndex == 13))
+			sound.playFX(45);
+
+		if (_townActionId == TRAINING && _drawFrameIndex == 23) {
+			sound.playSound("spit1.voc");
+		}
+	} else {
+		if (_townMaxId == 32 && _drawFrameIndex == 0)
+			_drawFrameIndex = 17;
+		if (_townMaxId == 26 && _drawFrameIndex == 0)
+			_drawFrameIndex = 20;
+		if (_townActionId == BLACKSMITH && (_drawFrameIndex == 3 || _drawFrameIndex == 9))
+			sound.playFX(45);
+	}
+
+	windows[3].update();
+
+	if (_townActionId == BANK)
+		_animFrame = 2;
+}
+
+int TownLocation::wait() {
+	EventsManager &events = *g_vm->_events;
+	Windows &windows = *g_vm->_windows;
 
 	_buttonValue = 0;
 	while (!_vm->shouldQuit() && !_buttonValue) {
@@ -304,230 +312,42 @@ int Town::townWait() {
 			checkEvents(_vm);
 		}
 		if (!_buttonValue)
-			drawTownAnim(!windows[11]._enabled);
+			drawAnim(!windows[11]._enabled);
 	}
 
 	return _buttonValue;
 }
 
-void Town::pyramidEvent() {
-	error("TODO: pyramidEvent");
+/*------------------------------------------------------------------------*/
+
+BankLocation::BankLocation() : TownLocation(BANK) {
+	_icons1.load("bank.icn");
+	_icons2.load("bank2.icn");
+	addButton(Common::Rect(234, 108, 259, 128), Common::KEYCODE_d, &_icons1);
+	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_w, &_icons1);
+	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_icons1);
+	_animFrame = 1;
+
+	_vocName = _isDarkCc ? "bank1.voc" : "banker.voc";
 }
 
-void Town::arenaEvent() {
-	error("TODO: arenaEvent");
+Common::String BankLocation::createLocationText(Character &ch) {
+	Party &party = *g_vm->_party;
+	return Common::String::format(Res.BANK_TEXT,
+		XeenEngine::printMil(party._bankGold).c_str(),
+		XeenEngine::printMil(party._bankGems).c_str(),
+		XeenEngine::printMil(party._gold).c_str(),
+		XeenEngine::printMil(party._gems).c_str());
 }
 
-void Town::reaperEvent() {
-	error("TODO: repearEvent");
-}
-
-void Town::golemEvent() {
-	error("TODO: golemEvent");
-}
-
-void Town::sphinxEvent() {
-	error("TODO: sphinxEvent");
-}
-
-void Town::dwarfEvent() {
-	error("TODO: dwarfEvent");
-}
-
-Common::String Town::createTownText(Character &ch) {
-	Party &party = *_vm->_party;
-	Common::String msg;
-
-	switch (_townActionId) {
-	case BANK:
-		// Bank
-		return Common::String::format(Res.BANK_TEXT,
-			XeenEngine::printMil(party._bankGold).c_str(),
-			XeenEngine::printMil(party._bankGems).c_str(),
-			XeenEngine::printMil(party._gold).c_str(),
-			XeenEngine::printMil(party._gems).c_str());
-
-	case BLACKSMITH:
-		// Blacksmith
-		return Common::String::format(Res.BLACKSMITH_TEXT,
-			ch._name.c_str(), XeenEngine::printMil(party._gold).c_str());
-
-	case GUILD:
-		// Guild
-		return !ch.guildMember() ? Res.GUILD_NOT_MEMBER_TEXT :
-			Common::String::format(Res.GUILD_TEXT, ch._name.c_str());
-
-	case TAVERN:
-		// Tavern
-		return Common::String::format(Res.TAVERN_TEXT, ch._name.c_str(),
-			Res.FOOD_AND_DRINK, XeenEngine::printMil(party._gold).c_str());
-
-	case TEMPLE:
-		// Temple
-		_donation = 0;
-		_uncurseCost = 0;
-		_v5 = 0;
-		_v6 = 0;
-		_healCost = 0;
-
-		if (party._mazeId == (_vm->_files->_isDarkCc ? 29 : 28)) {
-			_v10 = _v11 = _v12 = _v13 = 0;
-			_v14 = 10;
-		} else if (party._mazeId == (_vm->_files->_isDarkCc ? 31 : 30)) {
-			_v13 = 10;
-			_v12 = 50;
-			_v11 = 500;
-			_v10 = 100;
-			_v14 = 25;
-		} else if (party._mazeId == (_vm->_files->_isDarkCc ? 37 : 73)) {
-			_v13 = 20;
-			_v12 = 100;
-			_v11 = 1000;
-			_v10 = 200;
-			_v14 = 50;
-		} else if (_vm->_files->_isDarkCc || party._mazeId == 49) {
-			_v13 = 100;
-			_v12 = 500;
-			_v11 = 5000;
-			_v10 = 300;
-			_v14 = 100;
-		}
-
-		_currentCharLevel = ch.getCurrentLevel();
-		if (ch._currentHp < ch.getMaxHP()) {
-			_healCost = _currentCharLevel * 10 + _v13;
-		}
-
-		for (int attrib = HEART_BROKEN; attrib <= UNCONSCIOUS; ++attrib) {
-			if (ch._conditions[attrib])
-				_healCost += _currentCharLevel * 10;
-		}
-
-		_v6 = 0;
-		if (ch._conditions[DEAD]) {
-			_v6 += (_currentCharLevel * 100) + (ch._conditions[DEAD] * 50) + _v12;
-		}
-		if (ch._conditions[STONED]) {
-			_v6 += (_currentCharLevel * 100) + (ch._conditions[STONED] * 50) + _v12;
-		}
-		if (ch._conditions[ERADICATED]) {
-			_v5 = (_currentCharLevel * 1000) + (ch._conditions[ERADICATED] * 500) + _v11;
-		}
-
-		for (int idx = 0; idx < 9; ++idx) {
-			_uncurseCost |= ch._weapons[idx]._bonusFlags & 0x40;
-			_uncurseCost |= ch._armor[idx]._bonusFlags & 0x40;
-			_uncurseCost |= ch._accessories[idx]._bonusFlags & 0x40;
-			_uncurseCost |= ch._misc[idx]._bonusFlags & 0x40;
-		}
-
-		if (_uncurseCost || ch._conditions[CURSED])
-			_v5 = (_currentCharLevel * 20) + _v10;
-
-		_donation = _flag1 ? 0 : _v14;
-		_healCost += _v6 + _v5;
-
-		return Common::String::format(Res.TEMPLE_TEXT, ch._name.c_str(),
-			_healCost, _donation, XeenEngine::printK(_uncurseCost).c_str(),
-			XeenEngine::printMil(party._gold).c_str());
-
-	case TRAINING:
-		// Training
-		if (_vm->_files->_isDarkCc) {
-			switch (party._mazeId) {
-			case 29:
-				// Castleview
-				_maxLevel = 30;
-				break;
-			case 31:
-				// Sandcaster
-				_maxLevel = 50;
-				break;
-			case 37:
-				// Olympus
-				_maxLevel = 200;
-				break;
-			default:
-				// Kalindra's Castle
-				_maxLevel = 100;
-				break;
-			}
-		} else {
-			switch (party._mazeId) {
-			case 28:
-				// Vertigo
-				_maxLevel = 10;
-				break;
-			case 30:
-				// Rivercity
-				_maxLevel = 15;
-				break;
-			default:
-				// Newcastle
-				_maxLevel = 20;
-				break;
-			}
-		}
-
-		_experienceToNextLevel = ch.experienceToNextLevel();
-
-		if (_experienceToNextLevel && ch._level._permanent < _maxLevel) {
-			// Need more experience
-			int nextLevel = ch._level._permanent + 1;
-			msg = Common::String::format(Res.EXPERIENCE_FOR_LEVEL,
-				ch._name.c_str(), _experienceToNextLevel, nextLevel);
-		} else if (ch._level._permanent >= _maxLevel) {
-			// At maximum level
-			_experienceToNextLevel = 1;
-			msg = Common::String::format(Res.LEARNED_ALL, ch._name.c_str());
-		} else {
-			// Eligble for level increase
-			msg = Common::String::format(Res.ELIGIBLE_FOR_LEVEL,
-				ch._name.c_str(), ch._level._permanent + 1);
-		}
-
-		return Common::String::format(Res.TRAINING_TEXT, msg.c_str(),
-			XeenEngine::printMil(party._gold).c_str());
-
-	default:
-		return "";
+void BankLocation::drawBackground() {
+	if (_isDarkCc) {
+		_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
+			Common::Point(8, 30));
 	}
 }
 
-Character *Town::doTownOptions(Character *c) {
-	switch (_townActionId) {
-	case BANK:
-		// Bank
-		c = doBankOptions(c);
-		break;
-	case BLACKSMITH:
-		// Blacksmith
-		c = doBlacksmithOptions(c);
-		break;
-	case GUILD:
-		// Guild
-		c = doGuildOptions(c);
-		break;
-	case TAVERN:
-		// Tavern
-		c = doTavernOptions(c);
-		break;
-	case TEMPLE:
-		// Temple
-		c = doTempleOptions(c);
-		break;
-	case TRAINING:
-		// Training
-		c = doTrainingOptions(c);
-		break;
-	default:
-		break;
-	}
-
-	return c;
-}
-
-Character *Town::doBankOptions(Character *c) {
+Character *BankLocation::doOptions(Character *c) {
 	if (_buttonValue == Common::KEYCODE_d)
 		_buttonValue = (int)WHERE_PARTY;
 	else if (_buttonValue == Common::KEYCODE_w)
@@ -539,9 +359,130 @@ Character *Town::doBankOptions(Character *c) {
 	return c;
 }
 
-Character *Town::doBlacksmithOptions(Character *c) {
-	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
+void BankLocation::depositWithdrawl(PartyBank whereId) {
+	Party &party = *g_vm->_party;
+	Sound &sound = *g_vm->_sound;
+	Windows &windows = *g_vm->_windows;
+	int gold, gems;
+
+	if (whereId == WHERE_BANK) {
+		gold = party._bankGold;
+		gems = party._bankGems;
+	} else {
+		gold = party._gold;
+		gems = party._gems;
+	}
+
+	for (uint idx = 0; idx < _buttons.size(); ++idx)
+		_buttons[idx]._sprites = &_icons2;
+	_buttons[0]._value = Common::KEYCODE_o;
+	_buttons[1]._value = Common::KEYCODE_e;
+	_buttons[2]._value = Common::KEYCODE_ESCAPE;
+
+	Common::String msg = Common::String::format(Res.GOLD_GEMS,
+		Res.DEPOSIT_WITHDRAWL[whereId],
+		XeenEngine::printMil(gold).c_str(),
+		XeenEngine::printMil(gems).c_str());
+
+	windows[35].open();
+	windows[35].writeString(msg);
+	drawButtons(&windows[35]);
+	windows[35].update();
+
+	sound.stopSound();
+	File voc("coina.voc");
+	ConsumableType consType = CONS_GOLD;
+
+	do {
+		switch (wait()) {
+		case Common::KEYCODE_o:
+			consType = CONS_GOLD;
+			break;
+		case Common::KEYCODE_e:
+			consType = CONS_GEMS;
+			break;
+		case Common::KEYCODE_ESCAPE:
+			break;
+		default:
+			continue;
+		}
+
+		if ((whereId == WHERE_BANK && !party._bankGems && consType == CONS_GEMS) ||
+			(whereId == WHERE_BANK && !party._bankGold && consType == CONS_GOLD) ||
+			(whereId == WHERE_PARTY && !party._gems && consType == CONS_GEMS) ||
+			(whereId == WHERE_PARTY && !party._gold && consType == CONS_GOLD)) {
+			party.notEnough(consType, whereId, WHERE_BANK, WT_2);
+		} else {
+			windows[35].writeString(Res.AMOUNT);
+			int amount = NumericInput::show(_vm, 35, 10, 77);
+
+			if (amount) {
+				if (consType == CONS_GEMS) {
+					if (party.subtract(CONS_GEMS, amount, whereId, WT_2)) {
+						if (whereId == WHERE_BANK) {
+							party._gems += amount;
+						} else {
+							party._bankGems += amount;
+						}
+					}
+				} else {
+					if (party.subtract(CONS_GOLD, amount, whereId, WT_2)) {
+						if (whereId == WHERE_BANK) {
+							party._gold += amount;
+						} else {
+							party._bankGold += amount;
+						}
+					}
+				}
+			}
+
+			if (whereId == WHERE_BANK) {
+				gold = party._bankGold;
+				gems = party._bankGems;
+			}
+			else {
+				gold = party._gold;
+				gems = party._gems;
+			}
+
+			sound.playSound(voc);
+			msg = Common::String::format(Res.GOLD_GEMS_2, Res.DEPOSIT_WITHDRAWL[whereId],
+				XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
+			windows[35].writeString(msg);
+			windows[35].update();
+		}
+		// TODO
+	} while (!g_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
+
+	for (uint idx = 0; idx < _buttons.size(); ++idx)
+		_buttons[idx]._sprites = &_icons1;
+	_buttons[0]._value = Common::KEYCODE_d;
+	_buttons[1]._value = Common::KEYCODE_w;
+	_buttons[2]._value = Common::KEYCODE_ESCAPE;
+}
+
+/*------------------------------------------------------------------------*/
+
+BlacksmithLocation::BlacksmithLocation() : TownLocation(BLACKSMITH) {
+	_icons1.load("esc.icn");
+	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
+	addButton(Common::Rect(234, 54, 308, 62), 0);
+	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
+	addButton(Common::Rect(234, 74, 308, 82), 0);
+	addButton(Common::Rect(234, 84, 308, 92), 0);
+
+	_vocName = _isDarkCc ? "see2.voc" : "whaddayo.voc";
+}
+
+Common::String BlacksmithLocation::createLocationText(Character &ch) {
+	Party &party = *g_vm->_party;
+	return Common::String::format(Res.BLACKSMITH_TEXT,
+		ch._name.c_str(), XeenEngine::printMil(party._gold).c_str());
+}
+
+Character *BlacksmithLocation::doOptions(Character *c) {
+	Interface &intf = *g_vm->_interface;
+	Party &party = *g_vm->_party;
 
 	if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
 		// Switch character
@@ -550,8 +491,7 @@ Character *Town::doBlacksmithOptions(Character *c) {
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);
 		}
-	}
-	else if (_buttonValue == Common::KEYCODE_b) {
+	} else if (_buttonValue == Common::KEYCODE_b) {
 		c = ItemsDialog::show(_vm, c, ITEMMODE_BLACKSMITH);
 		_buttonValue = 0;
 	}
@@ -559,11 +499,39 @@ Character *Town::doBlacksmithOptions(Character *c) {
 	return c;
 }
 
-Character *Town::doGuildOptions(Character *c) {
-	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
-	Sound &sound = *_vm->_sound;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+void BlacksmithLocation::farewell() {
+	Sound &sound = *g_vm->_sound;
+
+	if (_isDarkCc) {
+		sound.stopSound();
+		sound.playSound("come1.voc", 1);
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+GuildLocation::GuildLocation() : TownLocation(GUILD) {
+	loadStrings("spldesc.bin");
+	_icons1.load("esc.icn");
+	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
+	addButton(Common::Rect(234, 54, 308, 62), 0);
+	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
+	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_s);
+	addButton(Common::Rect(234, 84, 308, 92), 0);
+	g_vm->_mode = MODE_17;
+
+	_vocName = _isDarkCc ? "parrot1.voc" : "guild10.voc";
+}
+
+Common::String GuildLocation::createLocationText(Character &ch) {
+	return !ch.guildMember() ? Res.GUILD_NOT_MEMBER_TEXT :
+		Common::String::format(Res.GUILD_TEXT, ch._name.c_str());
+}
+
+Character *GuildLocation::doOptions(Character *c) {
+	Interface &intf = *g_vm->_interface;
+	Party &party = *g_vm->_party;
+	Sound &sound = *g_vm->_sound;
 
 	if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
 		// Switch character
@@ -574,8 +542,8 @@ Character *Town::doGuildOptions(Character *c) {
 
 			if (!c->guildMember()) {
 				sound.stopSound();
-				intf._overallFrame = 5;
-				sound.playSound(isDarkCc ? "skull1.voc" : "guild11.voc", 1);
+				_animFrame = 5;
+				sound.playSound(_isDarkCc ? "skull1.voc" : "guild11.voc", 1);
 			}
 		}
 	} else if (_buttonValue == Common::KEYCODE_s) {
@@ -593,13 +561,34 @@ Character *Town::doGuildOptions(Character *c) {
 	return c;
 }
 
-Character *Town::doTavernOptions(Character *c) {
-	Interface &intf = *_vm->_interface;
-	Map &map = *_vm->_map;
-	Party &party = *_vm->_party;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+/*------------------------------------------------------------------------*/
+
+TavernLocation::TavernLocation() : TownLocation(TAVERN) {
+	loadStrings("tavern.bin");
+	_icons1.load("tavern.icn");
+	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
+	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_s, &_icons1);
+	addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_d);
+	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_f);
+	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_t);
+	addButton(Common::Rect(234, 84, 308, 92), Common::KEYCODE_r);
+	g_vm->_mode = MODE_17;
+
+	_vocName = _isDarkCc ? "hello1.voc" : "hello.voc";
+}
+
+Common::String TavernLocation::createLocationText(Character &ch) {
+	Party &party = *g_vm->_party;
+	return Common::String::format(Res.TAVERN_TEXT, ch._name.c_str(),
+		Res.FOOD_AND_DRINK, XeenEngine::printMil(party._gold).c_str());
+}
+
+Character *TavernLocation::doOptions(Character *c) {
+	Interface &intf = *g_vm->_interface;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+	Sound &sound = *g_vm->_sound;
+	Windows &windows = *g_vm->_windows;
 	int idx = 0;
 
 	switch (_buttonValue) {
@@ -617,6 +606,7 @@ Character *Town::doTavernOptions(Character *c) {
 			_v21 = 0;
 		}
 		break;
+
 	case Common::KEYCODE_d:
 		// Drink
 		if (!c->noActions()) {
@@ -637,25 +627,26 @@ Character *Town::doTavernOptions(Character *c) {
 					sound.playFX(28);
 				}
 
-				townWait();
+				wait();
 			}
 		}
 		break;
+
 	case Common::KEYCODE_f: {
 		// Food
-		if (party._mazeId == (isDarkCc ? 29 : 28)) {
+		if (party._mazeId == (_isDarkCc ? 29 : 28)) {
 			_v22 = party._activeParty.size() * 15;
 			_v23 = 10;
 			idx = 0;
-		} else if (isDarkCc && party._mazeId == 31) {
+		} else if (_isDarkCc && party._mazeId == 31) {
 			_v22 = party._activeParty.size() * 60;
 			_v23 = 100;
 			idx = 1;
-		} else if (!isDarkCc && party._mazeId == 30) {
+		} else if (!_isDarkCc && party._mazeId == 30) {
 			_v22 = party._activeParty.size() * 50;
 			_v23 = 50;
 			idx = 1;
-		} else if (isDarkCc) {
+		} else if (_isDarkCc) {
 			_v22 = party._activeParty.size() * 120;
 			_v23 = 250;
 			idx = 2;
@@ -669,7 +660,7 @@ Character *Town::doTavernOptions(Character *c) {
 			idx = 0;
 		}
 
-		Common::String msg = _textStrings[(isDarkCc ? 60 : 75) + idx];
+		Common::String msg = _textStrings[(_isDarkCc ? 60 : 75) + idx];
 		windows[10].close();
 		windows[12].open();
 		windows[12].writeString(msg);
@@ -681,7 +672,7 @@ Character *Town::doTavernOptions(Character *c) {
 			} else if (party.subtract(CONS_GOLD, _v23, WHERE_PARTY, WT_2)) {
 				party._food = _v22;
 				sound.stopSound();
-				sound.playSound(isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
+				sound.playSound(_isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
 			}
 		}
 
@@ -693,11 +684,11 @@ Character *Town::doTavernOptions(Character *c) {
 
 	case Common::KEYCODE_r: {
 		// Rumors
-		if (party._mazeId == (isDarkCc ? 29 : 28)) {
+		if (party._mazeId == (_isDarkCc ? 29 : 28)) {
 			idx = 0;
-		} else if (party._mazeId == (isDarkCc ? 31 : 30)) {
+		} else if (party._mazeId == (_isDarkCc ? 31 : 30)) {
 			idx = 10;
-		} else if (isDarkCc || party._mazeId == 49) {
+		} else if (_isDarkCc || party._mazeId == 49) {
 			idx = 20;
 		}
 
@@ -708,19 +699,19 @@ Character *Town::doTavernOptions(Character *c) {
 		w.writeString(msg);
 		w.update();
 
-		townWait();
+		wait();
 		w.close();
 		break;
 	}
 
 	case Common::KEYCODE_s: {
 		// Sign In
-		idx = isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
+		idx = _isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
 		assert(idx >= 0);
-		party._mazePosition.x = Res.TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][0];
-		party._mazePosition.y = Res.TAVERN_EXIT_LIST[isDarkCc ? 1 : 0][_townActionId][idx][1];
+		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_townActionId][idx][0];
+		party._mazePosition.y = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_townActionId][idx][1];
 
-		if (!isDarkCc || party._mazeId == 29)
+		if (!_isDarkCc || party._mazeId == 29)
 			party._mazeDirection = DIR_WEST;
 		else if (party._mazeId == 31)
 			party._mazeDirection = DIR_EAST;
@@ -747,7 +738,7 @@ Character *Town::doTavernOptions(Character *c) {
 					XeenEngine::printMil(party._gold).c_str()));
 				drawButtons(&windows[0]);
 				windows[10].update();
-				townWait();
+				wait();
 			} else {
 				_v21 = 0;
 				if (c->_conditions[DRUNK]) {
@@ -756,32 +747,32 @@ Character *Town::doTavernOptions(Character *c) {
 						XeenEngine::printMil(party._gold).c_str()));
 					drawButtons(&windows[0]);
 					windows[10].update();
-					townWait();
+					wait();
 				} else if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_2)) {
 					sound.stopSound();
-					sound.playSound(isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
+					sound.playSound(_isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
 
-					if (party._mazeId == (isDarkCc ? 29 : 28)) {
+					if (party._mazeId == (_isDarkCc ? 29 : 28)) {
 						_v24 = 30;
-					} else if (isDarkCc && party._mazeId == 31) {
+					} else if (_isDarkCc && party._mazeId == 31) {
 						_v24 = 40;
-					} else if (!isDarkCc && party._mazeId == 45) {
+					} else if (!_isDarkCc && party._mazeId == 45) {
 						_v24 = 45;
-					} else if (!isDarkCc && party._mazeId == 49) {
+					} else if (!_isDarkCc && party._mazeId == 49) {
 						_v24 = 60;
-					} else if (isDarkCc) {
+					} else if (_isDarkCc) {
 						_v24 = 50;
 					}
 
 					Common::String msg = _textStrings[map.mazeData()._tavernTips + _v24];
 					map.mazeData()._tavernTips = (map.mazeData()._tavernTips + 1) /
-						(isDarkCc ? 10 : 15);
+						(_isDarkCc ? 10 : 15);
 
 					Window &w = windows[12];
 					w.open();
 					w.writeString(Common::String::format("\x03""c\x0B""012%s", msg.c_str()));
 					w.update();
-					townWait();
+					wait();
 					w.close();
 				}
 			}
@@ -795,10 +786,99 @@ Character *Town::doTavernOptions(Character *c) {
 	return c;
 }
 
-Character *Town::doTempleOptions(Character *c) {
-	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
-	Sound &sound = *_vm->_sound;
+void TavernLocation::farewell() {
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+	Sound &sound = *g_vm->_sound;
+
+	sound.stopSound();
+	sound.playSound(_isDarkCc ? "gdluck1.voc" : "goodbye.voc", 1);
+
+	map.mazeData()._mazeNumber = party._mazeId;
+}
+
+/*------------------------------------------------------------------------*/
+
+TempleLocation::TempleLocation() : TownLocation(TEMPLE) {
+	_icons1.load("esc.icn");
+	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
+	addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_h);
+	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_d);
+	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_u);
+	addButton(Common::Rect(234, 84, 308, 92), 0);
+
+	_vocName = _isDarkCc ? "help2.voc" : "maywe2.voc";
+}
+
+Common::String TempleLocation::createLocationText(Character &ch) {
+	Party &party = *g_vm->_party;
+
+	if (party._mazeId == (_isDarkCc ? 29 : 28)) {
+		_v10 = _v11 = _v12 = _v13 = 0;
+		_v14 = 10;
+	} else if (party._mazeId == (_isDarkCc ? 31 : 30)) {
+		_v13 = 10;
+		_v12 = 50;
+		_v11 = 500;
+		_v10 = 100;
+		_v14 = 25;
+	} else if (party._mazeId == (_isDarkCc ? 37 : 73)) {
+		_v13 = 20;
+		_v12 = 100;
+		_v11 = 1000;
+		_v10 = 200;
+		_v14 = 50;
+	} else if (_isDarkCc || party._mazeId == 49) {
+		_v13 = 100;
+		_v12 = 500;
+		_v11 = 5000;
+		_v10 = 300;
+		_v14 = 100;
+	}
+
+	_currentCharLevel = ch.getCurrentLevel();
+	if (ch._currentHp < ch.getMaxHP()) {
+		_healCost = _currentCharLevel * 10 + _v13;
+	}
+
+	for (int attrib = HEART_BROKEN; attrib <= UNCONSCIOUS; ++attrib) {
+		if (ch._conditions[attrib])
+			_healCost += _currentCharLevel * 10;
+	}
+
+	_v6 = 0;
+	if (ch._conditions[DEAD]) {
+		_v6 += (_currentCharLevel * 100) + (ch._conditions[DEAD] * 50) + _v12;
+	}
+	if (ch._conditions[STONED]) {
+		_v6 += (_currentCharLevel * 100) + (ch._conditions[STONED] * 50) + _v12;
+	}
+	if (ch._conditions[ERADICATED]) {
+		_v5 = (_currentCharLevel * 1000) + (ch._conditions[ERADICATED] * 500) + _v11;
+	}
+
+	for (int idx = 0; idx < 9; ++idx) {
+		_uncurseCost |= ch._weapons[idx]._bonusFlags & 0x40;
+		_uncurseCost |= ch._armor[idx]._bonusFlags & 0x40;
+		_uncurseCost |= ch._accessories[idx]._bonusFlags & 0x40;
+		_uncurseCost |= ch._misc[idx]._bonusFlags & 0x40;
+	}
+
+	if (_uncurseCost || ch._conditions[CURSED])
+		_v5 = (_currentCharLevel * 20) + _v10;
+
+	_donation = _flag1 ? 0 : _v14;
+	_healCost += _v6 + _v5;
+
+	return Common::String::format(Res.TEMPLE_TEXT, ch._name.c_str(),
+		_healCost, _donation, XeenEngine::printK(_uncurseCost).c_str(),
+		XeenEngine::printMil(party._gold).c_str());
+}
+
+Character *TempleLocation::doOptions(Character *c) {
+	Interface &intf = *g_vm->_interface;
+	Party &party = *g_vm->_party;
+	Sound &sound = *g_vm->_sound;
 
 	switch (_buttonValue) {
 	case Common::KEYCODE_F1:
@@ -891,11 +971,80 @@ Character *Town::doTempleOptions(Character *c) {
 	return c;
 }
 
-Character *Town::doTrainingOptions(Character *c) {
-	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
-	Sound &sound = *_vm->_sound;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+/*------------------------------------------------------------------------*/
+
+TrainingLocation::TrainingLocation() : TownLocation(TRAINING) {
+	_icons1.load("train.icn");
+	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
+	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_icons1);
+
+	_vocName = _isDarkCc ? "training.voc" : "youtrn1.voc";
+}
+
+Common::String TrainingLocation::createLocationText(Character &ch) {
+	Party &party = *g_vm->_party;
+	if (_isDarkCc) {
+		switch (party._mazeId) {
+		case 29:
+			// Castleview
+			_maxLevel = 30;
+			break;
+		case 31:
+			// Sandcaster
+			_maxLevel = 50;
+			break;
+		case 37:
+			// Olympus
+			_maxLevel = 200;
+			break;
+		default:
+			// Kalindra's Castle
+			_maxLevel = 100;
+			break;
+		}
+	} else {
+		switch (party._mazeId) {
+		case 28:
+			// Vertigo
+			_maxLevel = 10;
+			break;
+		case 30:
+			// Rivercity
+			_maxLevel = 15;
+			break;
+		default:
+			// Newcastle
+			_maxLevel = 20;
+			break;
+		}
+	}
+
+	_experienceToNextLevel = ch.experienceToNextLevel();
+
+	Common::String msg;
+	if (_experienceToNextLevel && ch._level._permanent < _maxLevel) {
+		// Need more experience
+		int nextLevel = ch._level._permanent + 1;
+		msg = Common::String::format(Res.EXPERIENCE_FOR_LEVEL,
+			ch._name.c_str(), _experienceToNextLevel, nextLevel);
+	} else if (ch._level._permanent >= _maxLevel) {
+		// At maximum level
+		_experienceToNextLevel = 1;
+		msg = Common::String::format(Res.LEARNED_ALL, ch._name.c_str());
+	} else {
+		// Eligble for level increase
+		msg = Common::String::format(Res.ELIGIBLE_FOR_LEVEL,
+			ch._name.c_str(), ch._level._permanent + 1);
+	}
+
+	return Common::String::format(Res.TRAINING_TEXT, msg.c_str(),
+		XeenEngine::printMil(party._gold).c_str());
+}
+
+Character *TrainingLocation::doOptions(Character *c) {
+	Interface &intf = *g_vm->_interface;
+	Party &party = *g_vm->_party;
+	Sound &sound = *g_vm->_sound;
 
 	switch (_buttonValue) {
 	case Common::KEYCODE_F1:
@@ -920,9 +1069,9 @@ Character *Town::doTrainingOptions(Character *c) {
 
 			Common::String name;
 			if (c->_level._permanent >= _maxLevel) {
-				name = isDarkCc ? "gtlost.voc" : "trainin1.voc";
+				name = _isDarkCc ? "gtlost.voc" : "trainin1.voc";
 			} else {
-				name = isDarkCc ? "gtlost.voc" : "trainin0.voc";
+				name = _isDarkCc ? "gtlost.voc" : "trainin0.voc";
 			}
 
 			sound.playSound(name);
@@ -931,7 +1080,7 @@ Character *Town::doTrainingOptions(Character *c) {
 			if (party.subtract(CONS_GOLD, (c->_level._permanent * c->_level._permanent) * 10, WHERE_PARTY, WT_2)) {
 				_drawFrameIndex = 0;
 				sound.stopSound();
-				sound.playSound(isDarkCc ? "prtygd.voc" : "trainin2.voc", 1);
+				sound.playSound(_isDarkCc ? "prtygd.voc" : "trainin2.voc", 1);
 
 				c->_experience -=  c->nextExperienceLevel() -
 					(c->getCurrentExperience() - c->_experience);
@@ -957,254 +1106,115 @@ Character *Town::doTrainingOptions(Character *c) {
 	return c;
 }
 
-void Town::depositWithdrawl(PartyBank whereId) {
-	Party &party = *_vm->_party;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
-	int gold, gems;
+/*------------------------------------------------------------------------*/
 
-	if (whereId == WHERE_BANK) {
-		gold = party._bankGold;
-		gems = party._bankGems;
-	} else {
-		gold = party._gold;
-		gems = party._gems;
-	}
-
-	for (uint idx = 0; idx < _buttons.size(); ++idx)
-		_buttons[idx]._sprites = &_icons2;
-	_buttons[0]._value = Common::KEYCODE_o;
-	_buttons[1]._value = Common::KEYCODE_e;
-	_buttons[2]._value = Common::KEYCODE_ESCAPE;
-
-	Common::String msg = Common::String::format(Res.GOLD_GEMS,
-		Res.DEPOSIT_WITHDRAWL[whereId],
-		XeenEngine::printMil(gold).c_str(),
-		XeenEngine::printMil(gems).c_str());
-
-	windows[35].open();
-	windows[35].writeString(msg);
-	drawButtons(&windows[35]);
-	windows[35].update();
-
-	sound.stopSound();
-	File voc("coina.voc");
-	ConsumableType consType = CONS_GOLD;
-
-	do {
-		switch (townWait()) {
-		case Common::KEYCODE_o:
-			consType = CONS_GOLD;
-			break;
-		case Common::KEYCODE_e:
-			consType = CONS_GEMS;
-			break;
-		case Common::KEYCODE_ESCAPE:
-			break;
-		default:
-			continue;
-		}
-
-		if ((whereId == WHERE_BANK && !party._bankGems && consType == CONS_GEMS) ||
-			(whereId == WHERE_BANK && !party._bankGold && consType == CONS_GOLD) ||
-			(whereId == WHERE_PARTY && !party._gems && consType == CONS_GEMS) ||
-			(whereId == WHERE_PARTY && !party._gold && consType == CONS_GOLD)) {
-			party.notEnough(consType, whereId, WHERE_BANK, WT_2);
-		} else {
-			windows[35].writeString(Res.AMOUNT);
-			int amount = NumericInput::show(_vm, 35, 10, 77);
-
-			if (amount) {
-				if (consType == CONS_GEMS) {
-					if (party.subtract(CONS_GEMS, amount, whereId, WT_2)) {
-						if (whereId == WHERE_BANK) {
-							party._gems += amount;
-						} else {
-							party._bankGems += amount;
-						}
-					}
-				} else {
-					if (party.subtract(CONS_GOLD, amount, whereId, WT_2)) {
-						if (whereId == WHERE_BANK) {
-							party._gold += amount;
-						} else {
-							party._bankGold += amount;
-						}
-					}
-				}
-			}
-
-			if (whereId == WHERE_BANK) {
-				gold = party._bankGold;
-				gems = party._bankGems;
-			} else {
-				gold = party._gold;
-				gems = party._gems;
-			}
-
-			sound.playSound(voc);
-			msg = Common::String::format(Res.GOLD_GEMS_2, Res.DEPOSIT_WITHDRAWL[whereId],
-				XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
-			windows[35].writeString(msg);
-			windows[35].update();
-		}
-		// TODO
-	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
-
-	for (uint idx = 0; idx < _buttons.size(); ++idx)
-		_buttons[idx]._sprites = &_icons1;
-	_buttons[0]._value = Common::KEYCODE_d;
-	_buttons[1]._value = Common::KEYCODE_w;
-	_buttons[2]._value = Common::KEYCODE_ESCAPE;
-}
-
-void Town::drawTownAnim(bool flag) {
-	Interface &intf = *_vm->_interface;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
-	bool isDarkCc = _vm->_files->_isDarkCc;
-
-	if (_townActionId == 1) {
-		if (sound.isPlaying()) {
-			if (isDarkCc) {
-				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
-				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
-					Common::Point(34, 33));
-				_townSprites[2].draw(0, _vm->getRandomNumber(5) + 3,
-					Common::Point(34, 54));
-			}
-		} else {
-			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
-			if (isDarkCc) {
-				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
-					Common::Point(34, 33));
-			}
-		}
-	} else {
-		if (!isDarkCc || _townActionId != 5) {
-			if (!_townSprites[_drawFrameIndex / 8].empty())
-				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
-		}
-	}
-
-	switch (_townActionId) {
-	case BANK:
-		if (sound.isPlaying() || (isDarkCc && intf._overallFrame)) {
-			if (isDarkCc) {
-				if (sound.isPlaying() || intf._overallFrame == 1) {
-					_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
-						Common::Point(8, 30));
-				} else if (intf._overallFrame > 1) {
-					_townSprites[4].draw(0, 13 - intf._overallFrame++,
-						Common::Point(8, 30));
-					if (intf._overallFrame > 14)
-						intf._overallFrame = 0;
-				}
-			} else {
-				_townSprites[2].draw(0, _vm->getRandomNumber(7, 11), Common::Point(8, 8));
-			}
-		}
-		break;
-
-	case GUILD:
-		if (sound.isPlaying()) {
-			if (isDarkCc) {
-				if (intf._overallFrame) {
-					intf._overallFrame ^= 1;
-					_townSprites[6].draw(0, intf._overallFrame, Common::Point(8, 106));
-				} else {
-					_townSprites[6].draw(0, _vm->getRandomNumber(3), Common::Point(16, 48));
-				}
-			}
-		}
-		break;
-
-	case TAVERN:
-		if (sound.isPlaying() && isDarkCc) {
-			_townSprites[4].draw(0, _vm->getRandomNumber(7), Common::Point(153, 49));
-		}
-		break;
-
-	case TEMPLE:
-		if (sound.isPlaying()) {
-			_townSprites[3].draw(0, _vm->getRandomNumber(2, 4), Common::Point(8, 8));
-
-		}
-		break;
-
-	case TRAINING:
-		if (sound.isPlaying()) {
-			if (isDarkCc) {
-				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
-			}
-		} else {
-			if (isDarkCc) {
-				_townSprites[0].draw(0, ++intf._overallFrame % 8, Common::Point(8, 8));
-				_townSprites[5].draw(0, _vm->getRandomNumber(5), Common::Point(61, 74));
-			} else {
-				_townSprites[1].draw(0, _vm->getRandomNumber(8, 12), Common::Point(8, 8));
-			}
-		}
-		break;
-
-	default:
-		break;
-	}
-
-	if (flag) {
-		intf._face1UIFrame = 0;
-		intf._face2UIFrame = 0;
-		intf._dangerSenseUIFrame = 0;
-		intf._spotDoorsUIFrame = 0;
-		intf._levitateUIFrame = 0;
-
-		intf.assembleBorder();
-	}
-
-	if (windows[11]._enabled) {
-		_drawCtr1 = (_drawCtr1 + 1) % 2;
-		if (!_drawCtr1 || !_drawCtr2) {
-			_drawFrameIndex = 0;
-			_drawCtr2 = 0;
-		} else {
-			_drawFrameIndex = _vm->getRandomNumber(3);
-		}
-	} else {
-		_drawFrameIndex = (_drawFrameIndex + 1) % _townMaxId;
-	}
-
-	if (isDarkCc) {
-		if (_townActionId == 1 && (_drawFrameIndex == 4 || _drawFrameIndex == 13))
-			sound.playFX(45);
-
-		if (_townActionId == 5 && _drawFrameIndex == 23) {
-			sound.playSound("spit1.voc");
-		}
-	} else {
-		if (_townMaxId == 32 && _drawFrameIndex == 0)
-			_drawFrameIndex = 17;
-		if (_townMaxId == 26 && _drawFrameIndex == 0)
-			_drawFrameIndex = 20;
-		if (_townActionId == 1 && (_drawFrameIndex == 3 || _drawFrameIndex == 9))
-			sound.playFX(45);
-	}
-
-	windows[3].update();
-}
-
-bool Town::isActive() const {
-	return _townSprites.size() > 0 && !_townSprites[0].empty();
-}
-
-void Town::clearSprites() {
-	_townSprites.clear();
+ArenaLocation::ArenaLocation() : TownLocation(ARENA) {
+	// TODO
 }
 
 /*------------------------------------------------------------------------*/
 
-bool TownMessage::show(XeenEngine *vm, int portrait, const Common::String &name,
+ReaperLocation::ReaperLocation() : TownLocation(REAPER) {
+	// TODO
+}
+
+/*------------------------------------------------------------------------*/
+
+GolemLocation::GolemLocation() : TownLocation(GOLEM) {
+	// TODO
+}
+
+/*------------------------------------------------------------------------*/
+
+DwarfLocation::DwarfLocation(bool isDwarf) : TownLocation(NO_ACTION) {
+	_townMaxId = Res.TOWN_MAXES[_isDarkCc][isDwarf ? DWARF1 : DWARF2];
+}
+
+/*------------------------------------------------------------------------*/
+
+SphinxLocation::SphinxLocation() : TownLocation(SPHINX) {
+	// TODO
+}
+
+/*------------------------------------------------------------------------*/
+
+PyramidLocation::PyramidLocation() : TownLocation(PYRAMID) {
+	// TODO
+}
+
+/*------------------------------------------------------------------------*/
+
+Town::Town() : _location(nullptr) {
+}
+
+int Town::townAction(TownAction actionId) {
+	// Create the desired location
+	switch (actionId) {
+	case BANK:
+		_location = new BankLocation();
+		break;
+	case BLACKSMITH:
+		_location = new BlacksmithLocation();
+		break;
+	case GUILD:
+		_location = new GuildLocation();
+		break;
+	case TAVERN:
+		_location = new TavernLocation();
+		break;
+	case TEMPLE:
+		_location = new TempleLocation();
+		break;
+	case TRAINING:
+		_location = new TrainingLocation();
+		break;
+	case ARENA:
+		_location = new ArenaLocation();
+		break;
+	case REAPER:
+		_location = new ReaperLocation();
+		break;
+	case GOLEM:
+		_location = new GolemLocation();
+		break;
+	case DWARF1:
+		_location = new DwarfLocation(true);
+		break;
+	case DWARF2:
+		_location = new DwarfLocation(false);
+		break;
+	case SPHINX:
+		_location = new SphinxLocation();
+		break;
+	case PYRAMID:
+		_location = new PyramidLocation();
+		break;
+	default:
+		return 0;
+	}
+
+	// Show the location
+	int result = _location->show();
+	delete _location;
+	_location = nullptr;
+
+	return result;
+}
+
+bool Town::isActive() const {
+	return _location != nullptr;
+}
+
+void Town::drawAnim(bool flag) {
+	if (_location)
+		_location->drawAnim(flag);
+}
+
+/*------------------------------------------------------------------------*/
+
+bool TownMessage::show(int portrait, const Common::String &name,
 		const Common::String &text, int confirm) {
-	TownMessage *dlg = new TownMessage(vm);
+	TownMessage *dlg = new TownMessage();
 	bool result = dlg->execute(portrait, name, text, confirm);
 	delete dlg;
 
@@ -1213,28 +1223,24 @@ bool TownMessage::show(XeenEngine *vm, int portrait, const Common::String &name,
 
 bool TownMessage::execute(int portrait, const Common::String &name, const Common::String &text,
 		int confirm) {
-	EventsManager &events = *_vm->_events;
-	Interface &intf = *_vm->_interface;
-	Map &map = *_vm->_map;
-	Party &party = *_vm->_party;
-	Resources &res = *_vm->_resources;
-	Town &town = *_vm->_town;
-	Windows &windows = *_vm->_windows;
+	EventsManager &events = *g_vm->_events;
+	Interface &intf = *g_vm->_interface;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+	Resources &res = *g_vm->_resources;
+	Windows &windows = *g_vm->_windows;
 	Window &w = windows[11];
 
-	town._townMaxId = 4;
-	town._townActionId = NO_ACTION;
-	town._drawFrameIndex = 0;
-	town._townPos = Common::Point(23, 22);
+	_townMaxId = 4;
+	_drawFrameIndex = 0;
+	_townPos = Common::Point(23, 22);
 
 	if (!confirm)
 		loadButtons();
 
-	if (town._townSprites.empty()) {
-		town._townSprites.resize(2);
-		town._townSprites[0].load(Common::String::format("face%02d.fac", portrait));
-		town._townSprites[1].load("frame.fac");
-	}
+	_townSprites.resize(2);
+	_townSprites[0].load(Common::String::format("face%02d.fac", portrait));
+	_townSprites[1].load("frame.fac");
 
 	if (!w._enabled)
 		w.open();
@@ -1254,9 +1260,9 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 				++wordCount;
 		}
 
-		town._drawCtr2 = wordCount * 2;	// Set timeout
-		town._townSprites[1].draw(0, 0, Common::Point(16, 16));
-		town._townSprites[0].draw(0, town._drawFrameIndex, Common::Point(23, 22));
+		_drawCtr2 = wordCount * 2;	// Set timeout
+		_townSprites[1].draw(0, 0, Common::Point(16, 16));
+		_townSprites[0].draw(0, _drawFrameIndex, Common::Point(23, 22));
 		w.update();
 
 		if (!msgEnd && !confirm) {
@@ -1288,7 +1294,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 					return false;
 
 				while (events.timeElapsed() >= 3) {
-					town.drawTownAnim(false);
+					drawAnim(false);
 					events.updateGameCounter();
 				}
 			} while (!_buttonValue);
@@ -1307,7 +1313,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 		if (msgEnd) {
 			// Text remaining, so cut off already displayed page's
 			msgText = Common::String(msgEnd);
-			town._drawCtr2 = wordCount;
+			_drawCtr2 = wordCount;
 			continue;
 		}
 	} while (result == -1);
@@ -1316,8 +1322,8 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 	if (!confirm)
 		intf.mainIconsPrint();
 
-	town._townSprites[0].clear();
-	town._townSprites[1].clear();
+	_townSprites[0].clear();
+	_townSprites[1].clear();
 	events.clearEvents();
 	return result == 1;
 }

@@ -103,7 +103,7 @@ void XeenEngine::initialize() {
 	_scripts = new Scripts(this);
 	_sound = new Sound(this, _mixer);
 	_spells = new Spells(this);
-	_town = new Town(this);
+	_town = new Town();
 	_windows = new Windows();
 
 	File f("029.obj");

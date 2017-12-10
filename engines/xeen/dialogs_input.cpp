@@ -242,7 +242,7 @@ int Choose123::execute(int numOptions) {
 			events.updateGameCounter();
 			int delay;
 			if (town.isActive()) {
-				town.drawTownAnim(true);
+				town.drawAnim(true);
 				delay = 3;
 			} else {
 				intf.draw3d(true);

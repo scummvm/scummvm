@@ -66,7 +66,7 @@ int WhoWill::execute(int message, int action, bool type) {
 		events.updateGameCounter();
 
 		if (windows[11]._enabled) {
-			town.drawTownAnim(0);
+			town.drawAnim(false);
 			windows[36].frame();
 			numFrames = 3;
 		} else {

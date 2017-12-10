@@ -137,7 +137,6 @@ int Scripts::checkEvents() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	Town &town = *_vm->_town;
 	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
@@ -265,9 +264,6 @@ int Scripts::checkEvents() {
 			party._savedTreasure._gems) {
 		party._treasure = party._savedTreasure;
 	}
-
-	// Clear any town loaded sprites
-	town.clearSprites();
 
 	_v2 = 1;
 	Common::fill(&intf._charFX[0], &intf._charFX[6], 0);
@@ -446,7 +442,7 @@ bool Scripts::cmdNPC(ParamsIterator &params) {
 	int confirm = params.readByte();
 	int lineNum = params.readByte();
 
-	if (TownMessage::show(_vm, portrait, _message, map._events._text[textNum],
+	if (TownMessage::show(portrait, _message, map._events._text[textNum],
 			confirm)) {
 		_lineNum = lineNum;
 		return false;
