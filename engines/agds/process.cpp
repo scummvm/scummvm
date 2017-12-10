@@ -40,6 +40,12 @@ int32 Process::pop() {
 	return _stack.pop();
 }
 
+int32 Process::top() {
+	if (_stack.empty())
+		error("stack underflow, ip: %08x", _ip);
+	return _stack.top();
+}
+
 Common::String Process::getString(int id) {
 	if (id == -1)
 		return Common::String();
