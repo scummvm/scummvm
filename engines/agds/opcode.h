@@ -68,7 +68,7 @@ enum Opcode {
 	kStub46							= 46,
 	kStub47							= 47,
 	kSetGlobal						= 48,
-	kStub49							= 49,
+	kIncrementGlobalByTop			= 49,
 	kDecrementGlobalByTop			= 50,
 	kStub51							= 51,
 	kStub52							= 52,

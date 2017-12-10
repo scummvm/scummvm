@@ -155,13 +155,19 @@ void Process::postIncrementGlobal() {
 	_engine->setGlobal(name, value + 1);
 }
 
-void Process::decrementGlobal(int dec) {
+void Process::incrementGlobal(int inc) {
 	Common::String name = popString();
 	int value = _engine->getGlobal(name);
 	debug("increment global %s %d", name.c_str(), value);
-	_engine->setGlobal(name, value - dec);
+	_engine->setGlobal(name, value + inc);
 }
 
+void Process::decrementGlobal(int dec) {
+	Common::String name = popString();
+	int value = _engine->getGlobal(name);
+	debug("decrement global %s %d", name.c_str(), value);
+	_engine->setGlobal(name, value - dec);
+}
 
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
@@ -427,6 +433,7 @@ ProcessExitCode Process::execute() {
 			OP_W	(kPushImm16_2, push);
 			OP_B	(kGetGlobalImm8, getGlobal);
 			OP		(kPostIncrementGlobal, postIncrementGlobal);
+			OP		(kIncrementGlobalByTop, incrementGlobalByTop);
 			OP		(kDecrementGlobalByTop, decrementGlobalByTop);
 			OP		(kEquals, equals);
 			OP		(kNotEquals, notEquals);

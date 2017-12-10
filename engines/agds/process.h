@@ -116,6 +116,8 @@ private:
 	void setGlobal();
 	void hasGlobal();
 	void postIncrementGlobal();
+	void incrementGlobal(int value);
+	void incrementGlobalByTop() { incrementGlobal(top()); }
 	void decrementGlobal(int value);
 	void decrementGlobalByTop() { decrementGlobal(top()); }
 	void appendToSharedStorage();
