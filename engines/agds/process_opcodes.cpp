@@ -240,6 +240,7 @@ void Process::stub188() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 	debug("stub188 %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+	_engine->loadObject(arg1);
 }
 
 
