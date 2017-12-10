@@ -28,8 +28,10 @@
 namespace AGDS {
 
 Process::Process(AGDSEngine *engine, Object* object, unsigned ip) :
-	_engine(engine), _object(object), _ip(ip), _status(kStatusActive), _exitCode(kExitCodeDestroy) {
+	_engine(engine), _object(object), _ip(ip), _status(kStatusActive), _exitCode(kExitCodeDestroy),
+	_glyphWidth(16), _glyphHeight(16) {
 }
+
 void Process::debug(const char *str, ...) {
 	va_list va;
 	va_start(va, str);

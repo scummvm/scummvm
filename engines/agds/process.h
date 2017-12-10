@@ -46,6 +46,7 @@ private:
 	Status			_status;
 	Common::String	_exitValue;
 	ProcessExitCode	_exitCode;
+	int				_glyphWidth, _glyphHeight;
 
 private:
 	uint8 next() {
@@ -139,7 +140,7 @@ private:
 	void stub154();
 	void stub155();
 	void stub166();
-	void stub182();
+	void setFontGlyphSize();
 	void stub188();
 	void stub190();
 	void stub195();

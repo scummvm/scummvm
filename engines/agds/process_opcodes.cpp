@@ -247,10 +247,10 @@ void Process::stub166() {
 	debug("stub166 %d %d", arg1, arg2);
 }
 
-void Process::stub182() {
-	int arg2 = pop();
-	int arg1 = pop();
-	debug("stub182 %d %d", arg1, arg2);
+void Process::setFontGlyphSize() {
+	_glyphHeight = pop();
+	_glyphWidth = pop();
+	debug("setFontGlyphSize %d %d", _glyphWidth, _glyphHeight);
 }
 
 void Process::stub188() {
@@ -507,7 +507,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub166, stub166);
 			OP		(kExitScreen, exitScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
-			OP		(kStub182, stub182);
+			OP		(kSetGlyphSize, setFontGlyphSize);
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);
 			OP		(kStub195, stub195);
