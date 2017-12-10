@@ -305,7 +305,6 @@ void Process::stub202(unsigned size) {
 }
 
 void Process::playFilm() {
-	//arg3 is optional and stored in process struct, offset 0x210
 	Common::String audio = popFilename();
 	Common::String video = popFilename();
 
