@@ -317,7 +317,7 @@ const char *const Resources::ALIGNMENT_NAMES[3] = { "Good", "Neutral", "Evil" };
 const char *const Resources::SEX_NAMES[2] = { "Male", "Female" };
 
 const char *const Resources::SKILL_NAMES[18] = {
-	"Thievery", "Arms Master", "Astrologer", "Body Builder", "Cartographer",
+	"Thievery\t100", "Arms Master", "Astrologer", "Body Builder", "Cartographer",
 	"Crusader", "Direction Sense", "Linguist", "Merchant", "Mountaineer",
 	"Navigator", "Path Finder", "Prayer Master", "Prestidigitator",
 	"Swimmer", "Tracker", "Spot Secret Door", "Danger Sense"
