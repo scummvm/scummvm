@@ -50,26 +50,15 @@ protected:
 	const bool &_isDarkCc;
 	int _animFrame;
 	Common::String _vocName, _songName;
-	int _v1, _v2;
-	int _donation;
-	int _healCost;
-	int _v5, _v6;
-	int _v10, _v11, _v12;
-	int _v13, _v14;
-	uint _maxLevel;
-	int _v21;
-	uint _v22;
-	int _v23;
-	int _v24;
-	int _dayOfWeek;
-	int _uncurseCost;
 	Common::Point _townPos;
-	int _arr1[6];
-	int _currentCharLevel;
-	bool _flag1;
-	uint _experienceToNextLevel;
 	int _drawFrameIndex;
+	uint _farewellTime;
 	int _drawCtr1, _drawCtr2;
+
+/*
+	int _v1, _v2;
+	int _dayOfWeek;
+	*/
 protected:
 	/**
 	 * Load a set of text strings from the given resource
@@ -184,6 +173,11 @@ public:
 };
 
 class TavernLocation : public TownLocation {
+private:
+	int _v21;
+	uint _v22;
+	int _v23;
+	int _v24;
 protected:
 	/**
 	* Generates the display text for the location, for a given character
@@ -205,6 +199,16 @@ public:
 };
 
 class TempleLocation : public TownLocation {
+private:
+	int _currentCharLevel;
+	int _donation;
+	int _healCost;
+	int _uncurseCost;
+	int _dayOfWeek;
+	int _v10, _v11, _v12;
+	int _v13, _v14;
+	bool _flag1;
+	int _v5, _v6;
 protected:
 	/**
 	* Generates the display text for the location, for a given character
@@ -221,6 +225,11 @@ public:
 };
 
 class TrainingLocation : public TownLocation {
+private:
+	int _charIndex;
+	bool _charsTrained[MAX_ACTIVE_PARTY];
+	uint _experienceToNextLevel;
+	uint _maxLevel;
 protected:
 	/**
 	 * Generates the display text for the location, for a given character

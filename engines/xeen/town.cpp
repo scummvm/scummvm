@@ -37,33 +37,11 @@ TownLocation::TownLocation(TownAction action) : ButtonContainer(g_vm),
 	_songName = Res.TOWN_ACTION_MUSIC[_isDarkCc][action];
 	_townSprites.resize(Res.TOWN_ACTION_FILES[_isDarkCc][action]);
 
-	Common::fill(&_arr1[0], &_arr1[6], 0);
 	_animFrame = 0;
 	_drawFrameIndex = 0;
-	_currentCharLevel = 0;
-	_v1 = 0;
-	_v2 = 0;
-	_donation = 0;
-	_healCost = 0;
-	_v5 = _v6 = 0;
-	_v10 = _v11 = 0;
-	_v12 = _v13 = 0;
-	_v14 = 0;
-	_maxLevel = 0;
-	_v21 = 0;
-	_v22 = 0;
-	_v23 = 0;
-	_v24 = 0;
-	_dayOfWeek = 0;
-	_uncurseCost = 0;
-	_flag1 = false;
-	_experienceToNextLevel = 0;
+	_farewellTime = 0;
 	_drawCtr1 = _drawCtr2 = 0;
 	_townPos = Common::Point(8, 8);
-
-	clearButtons();
-	_icons1.clear();
-	_icons2.clear();
 }
 
 TownLocation::~TownLocation() {
@@ -126,8 +104,8 @@ int TownLocation::show() {
 	int result;
 	if (party._mazeId != 0) {
 		map.load(party._mazeId);
-		_v1 += 1440;
-		party.addTime(_v1);
+		_farewellTime += 1440;
+		party.addTime(_farewellTime);
 		result = 0;
 	} else {
 		_vm->_saves->saveChars();
@@ -564,6 +542,11 @@ Character *GuildLocation::doOptions(Character *c) {
 /*------------------------------------------------------------------------*/
 
 TavernLocation::TavernLocation() : TownLocation(TAVERN) {
+	_v21 = 0;
+	_v22 = 0;
+	_v23 = 0;
+	_v24 = 0;
+
 	loadStrings("tavern.bin");
 	_icons1.load("tavern.icn");
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
@@ -800,6 +783,17 @@ void TavernLocation::farewell() {
 /*------------------------------------------------------------------------*/
 
 TempleLocation::TempleLocation() : TownLocation(TEMPLE) {
+	_currentCharLevel = 0;
+	_donation = 0;
+	_healCost = 0;
+	_uncurseCost = 0;
+	_dayOfWeek = 0;
+	_v10 = _v11 = 0;
+	_v12 = _v13 = 0;
+	_v14 = 0;
+	_flag1 = false;
+	_v5 = _v6 = 0;
+
 	_icons1.load("esc.icn");
 	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
 	addButton(Common::Rect(234, 54, 308, 62), Common::KEYCODE_h);
@@ -941,7 +935,7 @@ Character *TempleLocation::doOptions(Character *c) {
 			c->_currentHp = c->getMaxHP();
 			Common::fill(&c->_conditions[HEART_BROKEN], &c->_conditions[NO_CONDITION], 0);
 
-			_v1 = 1440;
+			_farewellTime = 1440;
 			intf.drawParty(true);
 			sound.stopSound();
 			sound.playSound("ahh.voc", 1);
@@ -957,7 +951,7 @@ Character *TempleLocation::doOptions(Character *c) {
 				c->_misc[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
 			}
 
-			_v1 = 1440;
+			_farewellTime = 1440;
 			intf.drawParty(true);
 			sound.stopSound();
 			sound.playSound("ahh.voc", 1);
@@ -974,6 +968,10 @@ Character *TempleLocation::doOptions(Character *c) {
 /*------------------------------------------------------------------------*/
 
 TrainingLocation::TrainingLocation() : TownLocation(TRAINING) {
+	Common::fill(&_charsTrained[0], &_charsTrained[6], 0);
+	_maxLevel = 0;
+	_experienceToNextLevel = 0;
+
 	_icons1.load("train.icn");
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
 	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_icons1);
@@ -1056,7 +1054,7 @@ Character *TrainingLocation::doOptions(Character *c) {
 		// Switch character
 		_buttonValue -= Common::KEYCODE_F1;
 		if (_buttonValue < (int)party._activeParty.size()) {
-			_v2 = _buttonValue;
+			_charIndex = _buttonValue;
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);
 		}
@@ -1086,9 +1084,9 @@ Character *TrainingLocation::doOptions(Character *c) {
 					(c->getCurrentExperience() - c->_experience);
 				c->_level._permanent++;
 
-				if (!_arr1[_v2]) {
+				if (!_charsTrained[_charIndex]) {
 					party.addTime(1440);
-					_arr1[_v2] = 1;
+					_charsTrained[_charIndex] = true;
 				}
 
 				party.resetTemps();
