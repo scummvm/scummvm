@@ -66,6 +66,7 @@ private:
 
 	void push(int32 value);
 	int32 pop();
+	int32 top();
 
 	void jump(int delta)
 	{ _ip += delta; }
