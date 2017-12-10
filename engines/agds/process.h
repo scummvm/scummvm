@@ -122,12 +122,12 @@ private:
 	void decrementGlobalByTop() { decrementGlobal(top()); }
 	void appendToSharedStorage();
 
+	void disableUser();
 	void enableUser();
 	void onKey(unsigned size);
 	void onUse(unsigned size);
 
 	void loadMouseStub66();
-	void stub98();
 	void stub128();
 	void stub129();
 	void stub130();

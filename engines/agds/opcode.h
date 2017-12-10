@@ -115,7 +115,7 @@ enum Opcode {
 	kStub95							= 95,
 	kStub96							= 96,
 	kStub97							= 97,
-	kStub98							= 98,
+	kDisableUser					= 98,
 	kEnableUser						= 99,
 	kStub100						= 100,
 	kStub101						= 101,

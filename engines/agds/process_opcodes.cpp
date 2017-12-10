@@ -176,8 +176,8 @@ void Process::appendToSharedStorage() {
 	push(index);
 }
 
-void Process::stub98() {
-	debug("stub98");
+void Process::disableUser() {
+	debug("disableUser");
 }
 
 void Process::changeScreenPatch() {
@@ -453,7 +453,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadRegionFromObject, loadRegionFromObject);
 			OP		(kLoadPictureFromObject, loadPictureFromObject);
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
-			OP		(kStub98, stub98);
+			OP		(kDisableUser, disableUser);
 			OP		(kEnableUser, enableUser);
 			OP		(kClearScreen, clearScreen);
 			OP		(kLoadMouse, loadMouse);
