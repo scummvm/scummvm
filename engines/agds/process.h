@@ -82,6 +82,7 @@ private:
 	Common::String popString() {
 		return getString(pop());
 	}
+	Common::String popFilename();
 
 	void enter(uint16 magic, uint16 size);
 	void exitProcess();

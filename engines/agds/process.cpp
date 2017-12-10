@@ -70,6 +70,10 @@ Common::String Process::getString(int id) {
 		return _object->getString(id).string;
 }
 
+Common::String Process::popFilename() {
+	return _engine->loadFilename(popString());
+}
+
 void Process::activate() {
 	switch(_status)
 	{

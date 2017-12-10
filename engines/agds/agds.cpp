@@ -72,6 +72,22 @@ Region * AGDSEngine::loadRegion(const Common::String &name) {
 	return new Region(name, stream);
 }
 
+Common::String AGDSEngine::loadFilename(const Common::String &entryName) {
+	Common::SeekableReadStream * stream = _data.getEntry(entryName);
+	if (!stream)
+		error("no database entry for %s\n", entryName.c_str());
+
+	byte name[32];
+	int end = stream->read(name, sizeof(name));
+	byte *nameEnd = Common::find(name, name + end, 0);
+	unsigned size = nameEnd - name;
+	ResourceManager::decrypt(name, size);
+
+	delete stream;
+	return Common::String(reinterpret_cast<const char *>(name), size);
+}
+
+
 ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 	debug("loading object %s", name.c_str());
 	Common::SeekableReadStream * stream = _data.getEntry(name);
