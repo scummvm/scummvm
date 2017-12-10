@@ -74,6 +74,10 @@ public:
 	const Graphics::Surface *getPicture() const {
 		return _picture;
 	}
+
+	void move(int x, int y) {
+		_x = x; _y = y;
+	}
 };
 
 
