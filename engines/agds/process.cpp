@@ -51,13 +51,13 @@ void Process::push(int32 value) {
 
 int32 Process::pop() {
 	if (_stack.empty())
-		error("stack underflow, ip: %08x", _ip);
+		error("stack underflow at %s:%04x", _object->getName().c_str(), _lastIp + 7);
 	return _stack.pop();
 }
 
 int32 Process::top() {
 	if (_stack.empty())
-		error("stack underflow, ip: %08x", _ip);
+		error("stack underflow, %s:%04x", _object->getName().c_str(), _lastIp + 7);
 	return _stack.top();
 }
 
@@ -79,7 +79,7 @@ void Process::activate() {
 			_status = kStatusActive;
 			break;
 		default:
-			error("process in invalid state");
+			error("process in invalid state %d", _status);
 	}
 }
 
