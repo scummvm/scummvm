@@ -145,7 +145,7 @@ private:
 	void stub195();
 	void stub196();
 	void stub202(unsigned size);
-	void stub203();
+	void playFilm();
 	void stub206();
 	void exitProcessSetNextScreen();
 	void debug(const char *str, ...);
@@ -171,7 +171,7 @@ private:
 #undef UNARY_OP
 #undef BINARY_OP
 
-	void suspend(ProcessExitCode exitCode) {
+	void suspend(ProcessExitCode exitCode = kExitCodeSuspend) {
 		if (_status == kStatusActive)
 			_status = kStatusPassive;
 		_exitCode = exitCode;

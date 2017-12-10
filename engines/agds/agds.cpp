@@ -21,6 +21,7 @@
  */
 
 #include "agds/agds.h"
+#include "agds/mjpgPlayer.h"
 #include "agds/object.h"
 #include "agds/process.h"
 #include "agds/region.h"
@@ -35,7 +36,7 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0) {
+		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0), _mjpgPlayer(NULL) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -144,7 +145,7 @@ void AGDSEngine::runProcess() {
 			loadObject(process.getExitValue());
 			break;
 		case kExitCodeSuspend:
-			debug("nop, waking up, next process");
+			debug("process suspended");
 			break;
 		default:
 			debug("destroying process...");
@@ -164,6 +165,9 @@ Common::Error AGDSEngine::run() {
 	_system->fillScreen(0);
 
 	while(!shouldQuit()) {
+		if (_timer > 0)
+			--_timer;
+
 		if (!_nextScreen.empty()) {
 			debug("loading screen %s", _nextScreen.c_str());
 			Common::String nextScreen;
@@ -172,12 +176,20 @@ Common::Error AGDSEngine::run() {
 			loadObject(nextScreen);
 		}
 
-		if (active()) {
-			while(active() && !_processes.empty())
-				runProcess();
+		while(active() && !_processes.empty())
+			runProcess();
+
+		if (_mjpgPlayer) {
+			const Graphics::Surface *surface = _mjpgPlayer->decodeFrame();
+
+			if (surface)
+				_system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
+
+			if (_mjpgPlayer->eos()) {
+				delete _mjpgPlayer;
+				_mjpgPlayer = NULL;
+			}
 		}
-		else
-			--_timer;
 
 		Common::Event event;
 		while(eventManager->pollEvent(event)) {
@@ -188,6 +200,12 @@ Common::Error AGDSEngine::run() {
 
 	return Common::kNoError;
 }
+
+void AGDSEngine::playFilm(const Common::String &video, const Common::String &audio) {
+	delete _mjpgPlayer;
+	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video));
+}
+
 
 int AGDSEngine::appendToSharedStorage(const Common::String &value) {
 	int index = _sharedStorageIndex;

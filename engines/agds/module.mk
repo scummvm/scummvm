@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	agds.o \
 	database.o \
 	detection.o \
+	mjpgPlayer.o \
 	object.o \
 	process.o \
 	process_opcodes.o \

@@ -20,23 +20,35 @@
  *
  */
 
-#ifndef AGDS_REGION_H
-#define AGDS_REGION_H
-
-#include "common/scummsys.h"
-#include "common/stream.h"
+#include "agds/mjpgPlayer.h"
+#include "common/debug.h"
 
 namespace AGDS {
 
-struct Region {
-	Common::String	name;
-	uint16			width;
-	uint16			height;
-	uint16			flags;
-	Region(const Common::String &resourceName, Common::SeekableReadStream * stream);
-};
+MJPGPlayer::MJPGPlayer(Common::SeekableReadStream * stream): _stream(stream), _firstFramePos(_stream->pos()) {
+}
+
+MJPGPlayer::~MJPGPlayer() {
+	delete _stream;
+}
+
+void MJPGPlayer::rewind() {
+	_stream->seek(_firstFramePos);
+}
+
+const Graphics::Surface *MJPGPlayer::decodeFrame() {
+	if (_stream->eos())
+		return NULL;
+
+	uint32 size = _stream->readSint32LE();
+	if (size == 0)
+		return NULL;
+
+	Common::SeekableReadStream *stream = _stream->readStream(size);
+	const Graphics::Surface *surface = _decoder.decodeFrame(*stream);
+	delete stream;
+	return surface;
+}
 
 
-} // End of namespace AGDS
-
-#endif /* AGDS_REGION_H */
+}

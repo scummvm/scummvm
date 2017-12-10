@@ -304,12 +304,14 @@ void Process::stub202(unsigned size) {
 	_ip += size;
 }
 
-void Process::stub203() {
+void Process::playFilm() {
 	//arg3 is optional and stored in process struct, offset 0x210
-	Common::String audio = popString();
-	Common::String video = popString();
+	Common::String audio = popFilename();
+	Common::String video = popFilename();
 
 	debug("playFilm %s %s", video.c_str(), audio.c_str());
+	_engine->playFilm(video, audio);
+	suspend();
 }
 
 void Process::stub206() {
@@ -409,8 +411,7 @@ void Process::setTimer() {
 	int value = pop();
 	debug("setTimer %d", value);
 	_engine->setTimer(value);
-	_status = kStatusPassive;
-	_exitCode = kExitCodeSuspend;
+	suspend();
 }
 
 
@@ -516,7 +517,7 @@ ProcessExitCode Process::execute() {
 			OP		(kFadeObject, fadeObject);
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
-			OP		(kPlayFilm, stub203);
+			OP		(kPlayFilm, playFilm);
 			OP		(kFindObjectInMouseArea, findObjectInMouseArea);
 			OP		(kStub206, stub206);
 			OP_U	(kOnKey, onKey);
