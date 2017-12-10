@@ -25,6 +25,7 @@
 #include "agds/object.h"
 #include "agds/process.h"
 #include "agds/region.h"
+#include "agds/screen.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/ini-file.h"
@@ -130,6 +131,8 @@ Object *AGDSEngine::loadObject(const Common::String & name) {
 	delete stream;
 
 	_processes.push_front(Process(this, object));
+	if (_currentScreen)
+		_currentScreen->add(object);
 	return object;
 }
 
@@ -147,7 +150,9 @@ void AGDSEngine::runProcess() {
 		case kExitCodeDestroyProcessSetNextScreen: {
 				Common::String screen = process.getExitValue();
 				debug("loading screen object %s", screen.c_str());
-				_currentScreen = loadObject(screen);
+				_currentScreen = new Screen(loadObject(screen));
+				delete _screens[screen];
+				_screens[screen] = _currentScreen;
 			}
 			break;
 		case kExitCodeSuspend:
@@ -186,6 +191,7 @@ Common::Error AGDSEngine::run() {
 			runProcess();
 
 		Graphics::Surface *backbuffer = _system->lockScreen();
+		backbuffer->fillRect(Common::Rect(0, 0, backbuffer->w, backbuffer->h), 0);
 
 		if (_mjpgPlayer) {
 			const Graphics::Surface *surface = _mjpgPlayer->decodeFrame();
@@ -202,6 +208,8 @@ Common::Error AGDSEngine::run() {
 				delete _mjpgPlayer;
 				_mjpgPlayer = NULL;
 			}
+		} else {
+			_currentScreen->paint(*backbuffer);
 		}
 
 		Common::Event event;

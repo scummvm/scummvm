@@ -327,6 +327,7 @@ void Process::stub206() {
 }
 
 void Process::exitProcessSetNextScreen() {
+	debug("exitProcessSetNextScreen");
 	_exitValue = popString();
 	_exitCode = kExitCodeDestroyProcessSetNextScreen;
 	_status = kStatusPassive;

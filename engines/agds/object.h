@@ -75,6 +75,8 @@ public:
 		return _picture;
 	}
 
+	void paint(Graphics::Surface &backbuffer);
+
 	void move(int x, int y) {
 		_x = x; _y = y;
 	}

@@ -9,7 +9,8 @@ MODULE_OBJS := \
 	process.o \
 	process_opcodes.o \
 	region.o \
-	resourceManager.o
+	resourceManager.o \
+	screen.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AGDS), DYNAMIC_PLUGIN)

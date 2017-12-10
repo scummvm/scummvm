@@ -45,6 +45,7 @@ class Object;
 class Process;
 class Region;
 class MJPGPlayer;
+class Screen;
 
 class AGDSEngine : public Engine {
 	friend class Process;
@@ -87,11 +88,16 @@ private:
 		return _resourceManager;
 	}
 
+	Screen *currentScreen() {
+		return _currentScreen;
+	}
+
 	const Graphics::Surface * loadPicture(const Common::String &name)
 	{ return _resourceManager.loadPicture(name, _pixelFormat); }
 
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
+	typedef Common::HashMap<Common::String, Screen *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ScreensType;
 	typedef Common::List<Process> ProcessListType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
 
@@ -99,6 +105,7 @@ private:
 	ResourceManager				_resourceManager;
 	Database					_data, _patch; //data and patch databases
 	ObjectsType					_objects;
+	ScreensType					_screens;
 	ProcessListType				_processes;
 	Common::String				_nextScreen;
 	int							_sharedStorageIndex;
@@ -107,7 +114,7 @@ private:
 	int							_timer;
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
-	Object *					_currentScreen;
+	Screen *					_currentScreen;
 };
 
 
