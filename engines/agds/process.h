@@ -42,7 +42,7 @@ private:
 	AGDSEngine *	_engine;
 	Object *		_object;
 	StackType		_stack;
-	unsigned		_ip;
+	unsigned		_ip, _lastIp;
 	Status			_status;
 	Common::String	_exitValue;
 	ProcessExitCode	_exitCode;

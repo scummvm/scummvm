@@ -416,6 +416,7 @@ ProcessExitCode Process::execute() {
 
 	const Object::CodeType &code = _object->getCode();
 	while(_status == kStatusActive && _ip < code.size()) {
+		_lastIp = _ip;
 		uint8 op = next();
 		switch(op) {
 			OP_UU	(kEnter, enter);
