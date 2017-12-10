@@ -1263,8 +1263,10 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 	Common::Point pos = pt;
 	int mapId = _vm->_party->_mazeId;
 
-	if (pt.x < -16 || pt.y < -16 || pt.x >= 32 || pt.y >= 32)
-		error("Invalid coordinate");
+	if (pt.x < -16 || pt.y < -16 || pt.x >= 32 || pt.y >= 32) {
+		_currentWall = INVALID_CELL;
+		return INVALID_CELL;
+	}
 
 	// Find the correct maze data out of the set to use
 	_mazeDataIndex = 0;

@@ -44,11 +44,12 @@ void MapDialog::execute() {
 
 	if (_pt.x < 8 && map.mazeData()._surroundingMazes._west == 0) {
 		_arrowPt.x = _pt.x * 10 + 4;
+		_pt.x = 7;
 	} else if (_pt.x > 23) {
-		_arrowPt.x = _pt.x * 10 + 100;
+		_arrowPt.x = (byte)(_pt.x * 10 + 100);
 		_pt.x = 23;
 	} else if (_pt.x > 8 && map.mazeData()._surroundingMazes._east == 0) {
-		_arrowPt.x = _pt.x * 10 + 4;
+		_arrowPt.x = (byte)(_pt.x * 10 + 4);
 		_pt.x = 7;
 	} else {
 		_arrowPt.x = 74;
@@ -58,7 +59,7 @@ void MapDialog::execute() {
 		_arrowPt.y = ((15 - _pt.y) << 3) + 13;
 		_pt.y = 8;
 	} else if (_pt.y > 24) {
-		_arrowPt.y = ((15 - (_pt.y - 24)) << 3) + 13;
+		_arrowPt.y = ((15 - (_pt.y - 16)) << 3) + 13;
 		_pt.y = 24;
 	} else if (_pt.y >= 8 && map.mazeData()._surroundingMazes._north == 0) {
 		_arrowPt.y = ((15 - _pt.y) << 3) + 13;
@@ -202,7 +203,7 @@ void MapDialog::drawIndoors() {
 
 	// Draw walls on left and top edges of map
 	for (int xp = 80, yp = 158, mazeX = _pt.x - 7, mazeY = _pt.y - 8; xp < 250;
-	xp += 10, yp -= 8, ++mazeX, ++mazeY) {
+			xp += 10, yp -= 8, ++mazeX, ++mazeY) {
 		// Draw walls on left edge of map
 		v = map.mazeLookup(Common::Point(_pt.x - 8, mazeY), 12);
 

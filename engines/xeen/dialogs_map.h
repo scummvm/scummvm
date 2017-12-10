@@ -36,7 +36,8 @@ private:
 	Common::Point _pt, _arrowPt;
 	bool _frameEndFlag;
 private:
-	MapDialog(XeenEngine *vm) : ButtonContainer(vm), _animFrame(0) {}
+	MapDialog(XeenEngine *vm) : ButtonContainer(vm),
+		_animFrame(0), _frameEndFlag(false) {}
 
 	/**
 	 * Draws the map contents when outdoors
