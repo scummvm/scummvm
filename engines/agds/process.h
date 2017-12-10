@@ -135,6 +135,9 @@ private:
 	void stub133();
 	void stub134();
 	void stub136();
+	void stub154();
+	void stub155();
+	void stub166();
 	void stub182();
 	void stub188();
 	void stub190();
@@ -166,7 +169,6 @@ private:
 
 #undef UNARY_OP
 #undef BINARY_OP
-
 
 	void suspend(ProcessExitCode exitCode) {
 		if (_status == kStatusActive)
