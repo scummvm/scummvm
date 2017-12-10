@@ -26,6 +26,7 @@
 #include "common/memstream.h"
 #include "common/algorithm.h"
 #include "common/ptr.h"
+#include "image/bmp.h"
 
 namespace AGDS {
 	ResourceManager::ResourceManager()
@@ -142,6 +143,15 @@ namespace AGDS {
 
 		grp.seek(resource->offset);
 		return grp.readStream(resource->size);
+	}
+
+	const Graphics::Surface * ResourceManager::loadPicture(const Common::String & name) {
+		Common::SeekableReadStream *stream = getResource(name);
+		if (!stream)
+			return NULL;
+
+		Image::BitmapDecoder bmp;
+		return bmp.loadStream(*stream)? bmp.getSurface(): NULL;
 	}
 
 
