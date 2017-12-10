@@ -85,9 +85,9 @@ const Object::StringEntry & Object::getString(uint16 index) const {
 	return _stringTable[index];
 }
 
-void Object::setPicture(const Graphics::Surface *surface) {
+void Object::setPicture(const Graphics::Surface *picture) {
 	delete _picture;
-	_picture = surface;
+	_picture = picture;
 }
 
 }

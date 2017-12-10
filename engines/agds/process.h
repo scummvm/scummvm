@@ -143,8 +143,8 @@ private:
 	void setFontGlyphSize();
 	void stub188();
 	void stub190();
-	void stub195();
-	void stub196();
+	void getObjectPictureWidth();
+	void getObjectPictureHeight();
 	void stub202(unsigned size);
 	void playFilm();
 	void stub206();

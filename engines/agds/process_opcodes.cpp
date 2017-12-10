@@ -285,18 +285,24 @@ void Process::stub190() {
 	debug("stub190 %d", value);
 }
 
-void Process::stub195() {
-	Common::String value = popString();
-	debug("stub195(getPictureWidth) %s", value.c_str());
-	_engine->loadObject(value);
-	push(195);
+void Process::getObjectPictureWidth() {
+	Common::String name = popString();
+	debug("getObjectPictureWidth %s", name.c_str());
+	Object *object = _engine->loadObject(name);
+	const Graphics::Surface *picture = object->getPicture();
+	int value = picture? picture->w: 0;
+	debug("\t->%d", value);
+	push(value);
 }
 
-void Process::stub196() {
-	Common::String value = popString();
-	debug("stub196(getPictureHeight) %s", value.c_str());
-	_engine->loadObject(value);
-	push(196);
+void Process::getObjectPictureHeight() {
+	Common::String name = popString();
+	debug("getObjectPictureHeight %s", name.c_str());
+	Object *object = _engine->loadObject(name);
+	const Graphics::Surface *picture = object->getPicture();
+	int value = picture? picture->h: 0;
+	debug("\t->%d", value);
+	push(value);
 }
 
 void Process::stub202(unsigned size) {
@@ -399,7 +405,7 @@ void Process::loadRegionFromObject() {
 void Process::loadPictureFromObject() {
 	Common::String name = popFilename();
 	debug("loadPictureFromObject %s", name.c_str());
-	_object->setPicture(_engine->resourceManager().loadPicture(name));
+	_object->setPicture(_engine->loadPicture(name));
 }
 
 void Process::loadAnimationFromObject() {
@@ -511,8 +517,8 @@ ProcessExitCode Process::execute() {
 			OP		(kSetGlyphSize, setFontGlyphSize);
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);
-			OP		(kStub195, stub195);
-			OP		(kStub196, stub196);
+			OP		(kGetObjectPictureWidth, getObjectPictureWidth);
+			OP		(kGetObjectPictureHeight, getObjectPictureHeight);
 			OP		(kLoadPicture, loadPicture);
 			OP		(kFadeObject, fadeObject);
 			OP		(kLoadFont, loadFont);
