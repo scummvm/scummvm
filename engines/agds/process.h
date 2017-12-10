@@ -105,7 +105,7 @@ private:
 	void loadAnimationFromObject();
 	void loadAnimation();
 	void loadSample();
-	void setCounter();
+	void setTimer();
 	void getRegionWidth();
 	void getRegionHeight();
 	void fadeObject();
