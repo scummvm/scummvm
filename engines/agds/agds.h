@@ -54,6 +54,7 @@ public:
 	Common::Error run();
 
 private:
+	bool initGraphics();
 	bool load();
 	ProcessExitCode loadObject(const Common::String & name);
 	Region * loadRegion(const Common::String &name);
