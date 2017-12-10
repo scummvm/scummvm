@@ -1307,7 +1307,7 @@ bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 	params.readByte();
 	int textId = params.readByte();
 
-	Common::String msg = Common::String::format("\r\x03c\t000\v007%s\n\n%s",
+	Common::String msg = Common::String::format("\r\x03""c\t000\v007%s\n\n%s",
 		"",
 		map._events._text[textId].c_str());
 	w.close();

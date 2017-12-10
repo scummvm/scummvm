@@ -1051,7 +1051,7 @@ void ItemsDialog::itemToGold(Character &c, int itemIndex, ItemCategory category,
 
 	if (category == CATEGORY_WEAPON && item._id == 34) {
 		sound.playFX(21);
-		ErrorScroll::show(_vm, Common::String::format("\v012\t000\x03c%s",
+		ErrorScroll::show(_vm, Common::String::format("\v012\t000\x03""c%s",
 			Res.SPELL_FAILED));
 	} else if (item._id != 0) {
 		// There is a valid item present

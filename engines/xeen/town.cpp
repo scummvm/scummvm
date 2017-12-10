@@ -1295,7 +1295,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 	int result = -1;
 	Common::String msgText = text;
 	do {
-		Common::String msg = Common::String::format("\r\v014\x03c\t125%s\t000\v054%s",
+		Common::String msg = Common::String::format("\r\v014\x03""c\t125%s\t000\v054%s",
 			name.c_str(), msgText.c_str());
 
 		// Count the number of words
