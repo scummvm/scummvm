@@ -86,25 +86,29 @@ ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 
 	delete stream;
 
-	_processes.push_back(Process(this, object));
+	_processes.push_front(Process(this, object));
 
 	ProcessExitCode code = kExitCodeDestroy;
 	while(!_processes.empty()) {
-		Process & process = _processes.back();
-		process.activate();
-		code = process.execute();
-		switch(code) {
-		case kExitCodeLoadScreenObject:
-		case kExitCodeDestroyProcessSetNextScreen:
-			debug("loading screen object...");
-			code = loadObject(process.getExitValue());
+		for(ProcessListType::iterator p = _processes.begin(); p != _processes.end(); ) {
+			Process & process = *p;
+			process.activate();
+			code = process.execute();
+			switch(code) {
+			case kExitCodeLoadScreenObject:
+			case kExitCodeDestroyProcessSetNextScreen:
+				debug("loading screen object...");
+				code = loadObject(process.getExitValue());
+				break;
+			case kExitCodeSuspend:
+				debug("nop, waking up, next process");
+				break;
+			default:
+				debug("destroying process...");
+				p = _processes.erase(p);
+				continue;
+			}
 			break;
-		case kExitCodeSuspend:
-			debug("nop, waking up, %u processes", _processes.size());
-			break;
-		default:
-			debug("destroying process...");
-			_processes.pop_back();
 		}
 	}
 	return code;
