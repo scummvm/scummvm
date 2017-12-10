@@ -108,6 +108,7 @@ private:
 	void getRegionWidth();
 	void getRegionHeight();
 	void fadeObject();
+	void moveScreenObject();
 
 	void setSystemVariable();
 	void getIntegerSystemVariable();
@@ -134,7 +135,6 @@ private:
 	void stub133();
 	void stub134();
 	void stub136();
-	void stub165();
 	void stub182();
 	void stub188();
 	void stub190();
