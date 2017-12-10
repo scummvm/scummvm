@@ -23,6 +23,8 @@
 #include "agds/object.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "common/rect.h"
+#include "graphics/surface.h"
 
 namespace AGDS {
 
@@ -89,5 +91,11 @@ void Object::setPicture(const Graphics::Surface *picture) {
 	delete _picture;
 	_picture = picture;
 }
+
+void Object::paint(Graphics::Surface &backbuffer) {
+	if (_picture)
+		backbuffer.copyRectToSurface(*_picture, _x, _y, Common::Rect(0, 0, _picture->w, _picture->h));
+}
+
 
 }
