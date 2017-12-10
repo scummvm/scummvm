@@ -154,7 +154,7 @@ private:
 	BINARY_OP(less, <)
 	BINARY_OP(lessOrEquals, <=)
 	BINARY_OP(add, +)
-	BINARY_OP(sub, +)
+	BINARY_OP(sub, -)
 	BINARY_OP(mul, *)
 	BINARY_OP(div, /)
 
