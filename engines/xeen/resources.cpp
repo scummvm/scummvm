@@ -699,7 +699,7 @@ const char *const Resources::TOWN_ACTION_MUSIC[2][7] = {
 };
 
 const char *const Resources::TOWN_ACTION_SHAPES[7] = {
-	"bankr", "blck", "gild", "tvrn", "tmpl", "trng", "eface08"
+	"bnkr", "blck", "gild", "tvrn", "tmpl", "trng", "eface08"
 };
 
 const int Resources::TOWN_ACTION_FILES[2][7] = {
