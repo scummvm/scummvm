@@ -195,7 +195,7 @@ Common::Error AGDSEngine::run() {
 		while(eventManager->pollEvent(event)) {
 		}
 		_system->updateScreen();
-		_system->delayMillis(20);
+		_system->delayMillis(40);
 	}
 
 	return Common::kNoError;
