@@ -23,11 +23,26 @@
 #include "agds/process.h"
 #include "agds/agds.h"
 #include "common/debug.h"
+#include "common/system.h"
 
 namespace AGDS {
 
 Process::Process(AGDSEngine *engine, Object* object, unsigned ip) :
 	_engine(engine), _object(object), _ip(ip), _status(kStatusActive), _exitCode(kExitCodeDestroy) {
+}
+void Process::debug(const char *str, ...) {
+	va_list va;
+	va_start(va, str);
+
+	Common::String format = Common::String::format("%s:%04x: %s: ", _object->getName().c_str(), _ip, str);
+	Common::String buf = Common::String::vformat(format.c_str(), va);
+
+	buf += '\n';
+
+	if (g_system)
+		g_system->logMessage(LogMessageType::kDebug, buf.c_str());
+
+	va_end(va);
 }
 
 void Process::push(int32 value) {
