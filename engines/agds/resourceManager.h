@@ -56,7 +56,7 @@ private:
 	};
 	typedef Common::SharedPtr<Resource> ResourcePtr;
 
-	typedef Common::HashMap<Common::String, ResourcePtr> ResourcesType;
+	typedef Common::HashMap<Common::String, ResourcePtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResourcesType;
 	ResourcesType _resources;
 
 public:
