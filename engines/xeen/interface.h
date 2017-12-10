@@ -168,8 +168,10 @@ public:
 
 	/**
 	 * Handles drawing the elements of the interface and game scene
+	 * @param updateFlag		Updates UI windows 1 & 3
+	 * @param pauseFlag			Does a brief pause at the end of drawing
 	 */
-	void draw3d(bool updateFlag);
+	void draw3d(bool updateFlag, bool pauseFlag = true);
 
 	/**
 	 * Draw the display borders

@@ -81,7 +81,7 @@ void MapDialog::execute() {
 	events.updateGameCounter();
 	do {
 		if (drawFlag)
-			intf.draw3d(false);
+			intf.draw3d(false, false);
 		windows[5].writeString("\r");
 
 		if (map._isOutdoors)
@@ -109,7 +109,7 @@ void MapDialog::execute() {
 		windows[5].update();
 		windows[3].update();
 
-		events.pollEvents();
+		events.ipause5(2);
 		drawFlag = false;
 	} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
 

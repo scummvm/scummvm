@@ -1242,7 +1242,7 @@ void Interface::bash(const Common::Point &pt, Direction direction) {
 	drawParty(true);
 }
 
-void Interface::draw3d(bool updateFlag) {
+void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
@@ -1299,7 +1299,8 @@ void Interface::draw3d(bool updateFlag) {
 	}
 
 	party._stepped = false;
-	events.ipause5(2);
+	if (pauseFlag)
+		events.ipause5(2);
 }
 
 void Interface::handleFalling() {
