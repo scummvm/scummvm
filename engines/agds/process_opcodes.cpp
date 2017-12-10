@@ -185,7 +185,7 @@ void Process::changeScreenPatch() {
 	Common::String res1 = popString();
 	//change screen patch
 	debug("changeScreenPatch: '%s' '%s'", res1.c_str(), res2.c_str());
-	push(140);
+	push(0);
 }
 
 void Process::loadMouseStub66() {
