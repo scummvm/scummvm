@@ -27,7 +27,10 @@
 namespace AGDS {
 
 Object::Object(const Common::String &name, Common::SeekableReadStream * stream) : _name(name), _stringTableLoaded(false) {
-	stream->skip(2);
+	byte id = stream->readByte();
+	byte flag = stream->readByte();
+	debug("id: 0x%02x %u, flag: %u", id, id, flag);
+
 	uint16 dataSize = stream->readUint16LE();
 	if (dataSize != 0)
 		error("implement me: object with data (%u)", dataSize);
