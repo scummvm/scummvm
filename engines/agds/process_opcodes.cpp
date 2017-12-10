@@ -229,6 +229,24 @@ void Process::stub136() {
 	debug("stub136 sets value of stub130 to 1000000000");
 }
 
+void Process::stub154() {
+	Common::String name = popString();
+	debug("stub154(getSomeX): %s", name.c_str());
+	push(154);
+}
+
+void Process::stub155() {
+	Common::String name = popString();
+	debug("stub154(getSomeY): %s", name.c_str());
+	push(155);
+}
+
+void Process::stub166() {
+	int arg2 = pop();
+	int arg1 = pop();
+	debug("stub166 %d %d", arg1, arg2);
+}
+
 void Process::stub182() {
 	int arg2 = pop();
 	int arg1 = pop();
@@ -362,10 +380,11 @@ void Process::findObjectInMouseArea() {
 
 	debug("findObjectInMouseArea %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
 	Region *reg = _engine->loadRegion(arg1);
-	//_engine->loadObject(arg2);
-	//_engine->loadObject(arg3);
 	delete reg;
 	push(205);
+
+	_engine->loadObject(arg2);
+	_engine->loadObject(arg3);
 }
 
 void Process::loadRegionFromObject() {
@@ -480,6 +499,9 @@ ProcessExitCode Process::execute() {
 			OP		(kGetRegionHeight, getRegionHeight);
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
+			OP		(kStub154, stub154);
+			OP		(kStub155, stub155);
+			OP		(kStub166, stub166);
 			OP		(kExitScreen, exitScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
 			OP		(kStub182, stub182);
