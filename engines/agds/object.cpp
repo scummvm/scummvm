@@ -54,6 +54,7 @@ void Object::readStringTable(unsigned resOffset, uint16 resCount) {
 
 	//debug("resource table at %08x", resOffset);
 	Common::MemoryReadStream stream(_code.data() + resOffset, _code.size() - resOffset);
+	_stringTable.resize(resCount);
 	for(uint16 i = 0; i < resCount; ++i) {
 		uint16 offset = stream.readUint16LE();
 		uint16 flags = stream.readUint16LE();
@@ -78,11 +79,10 @@ const Object::StringEntry & Object::getString(uint16 index) const {
 	if (!_stringTableLoaded)
 		error("no string table loaded");
 
-	StringTableType::const_iterator i = _stringTable.find(index);
-	if (i == _stringTable.end())
+	if (index >= _stringTable.size())
 		error("no resource name with id %u", index);
 
-	return i->_value;
+	return _stringTable[index];
 }
 
 void Object::setPicture(const Graphics::Surface *surface) {

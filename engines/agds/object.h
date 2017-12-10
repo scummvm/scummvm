@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/stream.h"
-#include "common/hashmap.h"
 #include "graphics/surface.h"
 
 namespace AGDS {
@@ -45,7 +44,7 @@ public:
 	};
 
 private:
-	typedef Common::HashMap<uint16, StringEntry, Common::Hash<uint16> > StringTableType;
+	typedef Common::Array<StringEntry> StringTableType;
 
 	Common::String					_name;
 	CodeType						_code;
