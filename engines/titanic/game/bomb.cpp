@@ -228,7 +228,7 @@ bool CBomb::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 				name = TRANSLATE("z#375.wav", "z#117.wav");
 				break;
 			default:
-				name = TRANSLATE("z#374.wav", "z#.wav");
+				name = TRANSLATE("z#374.wav", "z#116.wav");
 				break;
 			}
 
