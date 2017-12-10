@@ -44,6 +44,8 @@ const Graphics::Surface *MJPGPlayer::decodeFrame() {
 	if (size == 0)
 		return NULL;
 
+	if (_stream->eos())
+		return NULL;
 	Common::SeekableReadStream *stream = _stream->readStream(size);
 	const Graphics::Surface *surface = _decoder.decodeFrame(*stream);
 	delete stream;
