@@ -174,7 +174,7 @@ void Process::changeScreenPatch() {
 		res1 = getString(index);
 	//change screen patch
 	debug("stub140: %d '%s' '%s'", index, res1.c_str(), res2.c_str());
-	push(0);
+	push(140);
 }
 
 void Process::loadMouseStub66() {
@@ -353,7 +353,7 @@ void Process::findObjectInMouseArea() {
 	//_engine->loadObject(arg2);
 	//_engine->loadObject(arg3);
 	delete reg;
-	push(0);
+	push(205);
 }
 
 void Process::loadRegionFromObject() {
