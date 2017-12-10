@@ -179,11 +179,18 @@ Common::Error AGDSEngine::run() {
 		while(active() && !_processes.empty())
 			runProcess();
 
+		Graphics::Surface *backbuffer = _system->lockScreen();
+
 		if (_mjpgPlayer) {
 			const Graphics::Surface *surface = _mjpgPlayer->decodeFrame();
 
-			if (surface)
-				_system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
+			if (surface) {
+				Graphics::Surface * converted = surface->convertTo(backbuffer->format);
+				int x = (backbuffer->w - converted->w) / 2;
+				int y = (backbuffer->h - converted->h) / 2;
+				backbuffer->copyRectToSurface(*converted, x, y, Common::Rect(0, 0, converted->w, converted->h));
+				delete converted;
+			}
 
 			if (_mjpgPlayer->eos()) {
 				delete _mjpgPlayer;
@@ -194,6 +201,7 @@ Common::Error AGDSEngine::run() {
 		Common::Event event;
 		while(eventManager->pollEvent(event)) {
 		}
+		_system->unlockScreen();
 		_system->updateScreen();
 		_system->delayMillis(40);
 	}
