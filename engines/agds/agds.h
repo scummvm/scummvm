@@ -57,6 +57,7 @@ private:
 	bool load();
 	ProcessExitCode loadObject(const Common::String & name);
 	Region * loadRegion(const Common::String &name);
+	Common::String loadFilename(const Common::String &name);
 
 	int appendToSharedStorage(const Common::String &value);
 	const Common::String & getSharedStorage(int id) const;

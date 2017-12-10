@@ -82,18 +82,18 @@ void Process::getRegionHeight() {
 
 
 void Process::loadPicture() {
-	Common::String name = popString();
+	Common::String name = popFilename();
 	debug("loadPicture stub %s", name.c_str());
 	push(100500); //dummy
 }
 
 void Process::loadAnimation() {
-	Common::String name = popString();
+	Common::String name = popFilename();
 	debug("loadAnimation %s", name.c_str());
 }
 
 void Process::loadSample() {
-	Common::String name = popString();
+	Common::String name = popFilename();
 	debug("loadSample %s", name.c_str());
 }
 
@@ -110,13 +110,13 @@ void Process::removeScreenObject() {
 }
 
 void Process::loadFont() {
-	Common::String name = popString();
+	Common::String name = popFilename();
 	int id = pop();
 	debug("loadFont %s %d stub", name.c_str(), id);
 }
 
 void Process::loadMouse() {
-	Common::String name = popString();
+	Common::String name = popFilename();
 	debug("loadMouse %s", name.c_str());
 }
 
@@ -189,7 +189,7 @@ void Process::changeScreenPatch() {
 }
 
 void Process::loadMouseStub66() {
-	Common::String name = popString();
+	Common::String name = popFilename();
 	debug("loadMouseStub66 %s", name.c_str());
 }
 
@@ -396,12 +396,12 @@ void Process::loadRegionFromObject() {
 
 
 void Process::loadPictureFromObject() {
-	Common::String name = popString();
+	Common::String name = popFilename();
 	debug("loadPictureFromObject %s", name.c_str());
 }
 
 void Process::loadAnimationFromObject() {
-	Common::String name = popString();
+	Common::String name = popFilename();
 	debug("loadAnimationFromObject %s", name.c_str());
 }
 
