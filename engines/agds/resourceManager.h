@@ -30,6 +30,8 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
+namespace Graphics { class Surface; }
+
 namespace AGDS {
 
 class ResourceManager {
@@ -68,6 +70,7 @@ public:
 	bool addPath(const Common::String &grpFilename);
 
 	Common::SeekableReadStream * getResource(const Common::String &name) const;
+	const Graphics::Surface * loadPicture(const Common::String & name);
 };
 
 
