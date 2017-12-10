@@ -253,11 +253,11 @@ void Process::clearScreen() {
 	debug("clearScreen");
 }
 
-void Process::stub165() {
+void Process::moveScreenObject() {
 	int arg3 = pop();
 	int arg2 = pop();
 	Common::String arg1 = popString();
-	debug("stub165 %s %d %d", arg1.c_str(), arg2, arg3);
+	debug("moveScreenObject %s %d %d", arg1.c_str(), arg2, arg3);
 	_engine->loadObject(arg1);
 }
 
@@ -480,7 +480,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kExitScreen, exitScreen);
-			OP		(kStub165, stub165);
+			OP		(kMoveScreenObject, moveScreenObject);
 			OP		(kStub182, stub182);
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);

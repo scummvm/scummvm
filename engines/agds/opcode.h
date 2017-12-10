@@ -182,7 +182,7 @@ enum Opcode {
 	kExitScreen						= 162,
 	kStub163						= 163,
 	kStub164						= 164,
-	kStub165						= 165,
+	kMoveScreenObject				= 165,
 	kStub166						= 166,
 	kStub167						= 167,
 	kStub168						= 168,
