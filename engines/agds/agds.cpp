@@ -92,6 +92,10 @@ ProcessExitCode AGDSEngine::loadObject(const Common::String & name) {
 	while(!_processes.empty()) {
 		for(ProcessListType::iterator p = _processes.begin(); p != _processes.end(); ) {
 			Process & process = *p;
+			if (process.getStatus() == Process::kStatusDone) {
+				p = _processes.erase(p);
+				continue;
+			}
 			process.activate();
 			code = process.execute();
 			switch(code) {

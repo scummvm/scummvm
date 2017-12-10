@@ -177,6 +177,10 @@ private:
 public:
 	Process(AGDSEngine *engine, Object *object, unsigned ip = 0);
 
+	Status getStatus() const {
+		return _status;
+	}
+
 	void activate();
 
 	ProcessExitCode execute();
