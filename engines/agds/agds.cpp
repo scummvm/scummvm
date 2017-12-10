@@ -28,6 +28,8 @@
 #include "common/ini-file.h"
 #include "common/file.h"
 #include "common/debug.h"
+#include "common/system.h"
+#include "engines/util.h"
 
 namespace AGDS {
 
@@ -36,6 +38,23 @@ AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engin
 }
 
 AGDSEngine::~AGDSEngine() {
+}
+
+bool AGDSEngine::initGraphics() {
+	//fixme: get mode from config?
+	typedef Common::List<Graphics::PixelFormat> FormatsType;
+	FormatsType formats = _system->getSupportedFormats();
+
+	FormatsType::iterator fi;
+	for(fi = formats.begin(); fi != formats.end(); ++fi) {
+		if (fi->bytesPerPixel == 4) {
+			debug("found mode %s", fi->toString().c_str());
+			::initGraphics(800, 600, &*fi);
+			return true;
+		}
+	}
+	error("nope");
+	return false;
 }
 
 bool AGDSEngine::load() {
@@ -48,6 +67,9 @@ bool AGDSEngine::load() {
 	config.setDefaultSectionName("core");
 	if (!config.loadFromStream(configFile))
 		return false;
+
+	if (!initGraphics())
+		error("no video mode found");
 
 	Common::INIFile::SectionKeyList values = config.getKeys("core");
 	for(Common::INIFile::SectionKeyList::iterator i = values.begin(); i != values.end(); ++i) {
