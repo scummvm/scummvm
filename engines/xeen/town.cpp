@@ -1139,7 +1139,56 @@ SphinxLocation::SphinxLocation() : TownLocation(SPHINX) {
 /*------------------------------------------------------------------------*/
 
 PyramidLocation::PyramidLocation() : TownLocation(PYRAMID) {
-	// TODO
+}
+
+int PyramidLocation::show() {
+	EventsManager &events = *g_vm->_events;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+	Windows &windows = *g_vm->_windows;
+	int mapId;
+	Direction dir = DIR_NORTH;
+	Common::Point pt;
+
+	if (g_vm->getGameID() == GType_WorldOfXeen) {
+		if (_isDarkCc) {
+			if (party._mazeId == 52) {
+				mapId = 49;
+				pt = Common::Point(7, 14);
+				dir = DIR_SOUTH;
+			} else {
+				mapId = 23;
+				pt = Common::Point(8, 10);
+			}
+		} else {
+			if (party._mazeId == 49) {
+				mapId = 52;
+				pt = Common::Point(2, 2);
+			} else {
+				mapId = 29;
+				pt = Common::Point(25, 21);
+			}
+		}
+
+		// Load the destination map and set position and direction
+		map._loadDarkSide = !_isDarkCc;
+		map.load(mapId);
+		party._mazePosition = pt;
+		party._mazeDirection = dir;
+	} else {
+		// Playing Clouds or Dark Side on it's own, so can't switch sides
+		Window &win = windows[12];
+		Common::String msg = Common::String::format(Res.MOONS_NOT_ALIGNED,
+			_isDarkCc ? "Clouds" : "Darkside");
+		win.open();
+		win.writeString(msg);
+		win.update();
+
+		events.waitForPressAnimated();
+		win.close();
+	}
+
+	return 0;
 }
 
 /*------------------------------------------------------------------------*/

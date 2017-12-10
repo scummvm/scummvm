@@ -343,6 +343,7 @@ public:
 	static const char *const MONSTER_SPECIAL_ATTACKS[23];
 	static const char *const IDENTIFY_MONSTERS;
 	static const char *const EVENT_SAMPLES[6];
+	static const char *const MOONS_NOT_ALIGNED;
 public:
 	/**
 	 * Initializes an instnace of the resources

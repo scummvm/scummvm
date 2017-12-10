@@ -118,6 +118,11 @@ public:
 	 * Pauses a set amount past the previous call to timeMark5
 	 */
 	void ipause5(uint amount);
+
+	/**
+	 * Waits for a key or mouse press, animating the 3d view in the background
+	 */
+	void waitForPressAnimated();
 };
 
 class GameEvent {

@@ -167,6 +167,20 @@ void EventsManager::ipause5(uint amount) {
 	} while (!_vm->shouldQuit() && timeElapsed5() < amount);
 }
 
+void EventsManager::waitForPressAnimated() {
+	clearEvents();
+
+	do {
+		updateGameCounter();
+		_vm->_interface->draw3d(true);
+
+		while (!_vm->shouldQuit() && timeElapsed() == 0)
+			pollEventsAndWait();
+	} while (!_vm->shouldQuit() && !isKeyMousePressed());
+
+	clearEvents();
+}
+
 void EventsManager::nextFrame() {
 	++_frameCounter;
 

@@ -1606,4 +1606,7 @@ const char *const Resources::EVENT_SAMPLES[6] = {
 	"ahh.voc", "whereto.voc", "gulp.voc", "null.voc", "scream.voc", "laff1.voc"
 };
 
+const char *const Resources::MOONS_NOT_ALIGNED =
+"\x3""c\xB""012\t000The moons are not aligned. Passage to the %s is unavailable";
+
 } // End of namespace Xeen

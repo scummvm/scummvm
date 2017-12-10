@@ -270,6 +270,11 @@ class PyramidLocation : public TownLocation {
 public:
 	PyramidLocation();
 	virtual ~PyramidLocation() {}
+
+	/**
+	 * Show the town location
+	 */
+	virtual int show();
 };
 
 class Town {
