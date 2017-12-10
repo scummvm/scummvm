@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/stream.h"
 #include "common/hashmap.h"
+#include "graphics/surface.h"
 
 namespace AGDS {
 
@@ -46,10 +47,12 @@ public:
 private:
 	typedef Common::HashMap<uint16, StringEntry, Common::Hash<uint16> > StringTableType;
 
-	Common::String		_name;
-	CodeType			_code;
-	StringTableType		_stringTable;
-	bool				_stringTableLoaded;
+	Common::String					_name;
+	CodeType						_code;
+	StringTableType					_stringTable;
+	bool							_stringTableLoaded;
+	const Graphics::Surface *		_picture;
+	int								_x, _y;
 
 
 public:
@@ -65,6 +68,12 @@ public:
 
 	const CodeType & getCode() const {
 		return _code;
+	}
+
+	void setPicture(const Graphics::Surface *);
+
+	const Graphics::Surface *getPicture() const {
+		return _picture;
 	}
 };
 

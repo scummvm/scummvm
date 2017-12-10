@@ -26,7 +26,7 @@
 
 namespace AGDS {
 
-Object::Object(const Common::String &name, Common::SeekableReadStream * stream) : _name(name), _stringTableLoaded(false) {
+Object::Object(const Common::String &name, Common::SeekableReadStream * stream) : _name(name), _stringTableLoaded(false), _picture(), _x(), _y() {
 	byte id = stream->readByte();
 	byte flag = stream->readByte();
 	debug("id: 0x%02x %u, flag: %u", id, id, flag);
@@ -83,6 +83,11 @@ const Object::StringEntry & Object::getString(uint16 index) const {
 		error("no resource name with id %u", index);
 
 	return i->_value;
+}
+
+void Object::setPicture(const Graphics::Surface *surface) {
+	delete _picture;
+	_picture = surface;
 }
 
 }
