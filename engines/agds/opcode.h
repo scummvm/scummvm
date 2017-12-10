@@ -199,7 +199,7 @@ enum Opcode {
 	kStub179						= 179,
 	kStub180						= 180,
 	kStub181						= 181,
-	kStub182						= 182,
+	kSetGlyphSize					= 182,
 	kStub183						= 183,
 	kStub184						= 184,
 	kStub185						= 185,
