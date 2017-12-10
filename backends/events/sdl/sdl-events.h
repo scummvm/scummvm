@@ -80,6 +80,11 @@ protected:
 	/** Joystick */
 	SDL_Joystick *_joystick;
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	/** Game controller */
+	SDL_GameController *_controller;
+#endif
+
 	/** Last screen id for checking if it was modified */
 	int _lastScreenID;
 
@@ -117,7 +122,17 @@ protected:
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
 	virtual bool handleKbdMouse(Common::Event &event);
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	virtual bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp);
+	virtual bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event);
+#endif
+
 	//@}
+
+	/**
+	 * Update the virtual mouse according to a joystick or game controller axis position change
+	 */
+	bool handleAxisToMouseMotion(int16 xAxis, int16 yAxis);
 
 	/**
 	 * Assigns the mouse coords to the mouse event. Furthermore notify the
