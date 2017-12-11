@@ -62,6 +62,7 @@ private:
 	void runProcess();
 
 	Object * loadObject(const Common::String & name);
+	Screen * loadScreen(const Common::String & name);
 
 	Region * loadRegion(const Common::String &name);
 	Common::String loadFilename(const Common::String &name);
@@ -107,7 +108,6 @@ private:
 	ObjectsType					_objects;
 	ScreensType					_screens;
 	ProcessListType				_processes;
-	Common::String				_nextScreen;
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];
 	GlobalsType					_globals;

@@ -24,6 +24,7 @@
 #include "agds/agds.h"
 #include "agds/opcode.h"
 #include "agds/region.h"
+#include "agds/screen.h"
 #include "common/debug.h"
 
 namespace AGDS {
@@ -107,6 +108,9 @@ void Process::loadScreenObject() {
 void Process::removeScreenObject() {
 	Common::String name = popString();
 	debug("removeScreenObject: %s", name.c_str());
+	Screen *screen = _engine->currentScreen();
+	if (screen)
+		screen->remove(name);
 }
 
 void Process::loadFont() {
