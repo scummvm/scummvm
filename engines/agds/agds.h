@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/hashmap.h"
+#include "common/rect.h"
 #include "engines/advancedDetector.h"
 #include "agds/database.h"
 #include "agds/processExitCode.h"
@@ -115,6 +116,7 @@ private:
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
 	Screen *					_currentScreen;
+	Common::Point				_mouse;
 };
 
 
