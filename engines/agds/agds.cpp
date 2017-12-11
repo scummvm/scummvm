@@ -33,6 +33,7 @@
 #include "common/debug.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/transparent_surface.h"
 
 namespace AGDS {
 
@@ -50,16 +51,16 @@ bool AGDSEngine::initGraphics() {
 	typedef Common::List<Graphics::PixelFormat> FormatsType;
 	FormatsType formats = _system->getSupportedFormats();
 
-	FormatsType::iterator fi;
-	for(fi = formats.begin(); fi != formats.end(); ++fi) {
-		if (fi->bytesPerPixel == 4) {
-			debug("found mode %s", fi->toString().c_str());
-			_pixelFormat = *fi;
+	for(FormatsType::iterator fi = formats.begin(); fi != formats.end(); ++fi) {
+		const Graphics::PixelFormat & format = *fi;
+		if (fi->bytesPerPixel == 4 && format == Graphics::TransparentSurface::getSupportedPixelFormat()) {
+			debug("found mode %s", format.toString().c_str());
+			_pixelFormat = format;
 			::initGraphics(800, 600, &_pixelFormat);
 			return true;
 		}
 	}
-	error("nope");
+	error("no supported video format found");
 	return false;
 }
 
