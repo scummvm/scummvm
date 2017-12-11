@@ -93,8 +93,20 @@ void Object::setPicture(const Graphics::Surface *picture) {
 }
 
 void Object::paint(Graphics::Surface &backbuffer) {
-	if (_picture)
-		backbuffer.copyRectToSurface(*_picture, _x, _y, Common::Rect(0, 0, _picture->w, _picture->h));
+	if (_picture) {
+		Common::Rect srcRect(0, 0, _picture->w, _picture->h);
+		int x = _x, y = _y;
+		if (x < 0) {
+			srcRect.left += -x;
+			x = 0;
+		}
+		if (y < 0) {
+			srcRect.top += -y;
+			y = 0;
+		}
+		if (!srcRect.isEmpty())
+			backbuffer.copyRectToSurface(*_picture, x, y, srcRect);
+	}
 }
 
 
