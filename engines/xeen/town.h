@@ -45,7 +45,6 @@ protected:
 	TownAction _townActionId;
 	Common::Array<SpriteResource> _townSprites;
 	SpriteResource _icons1, _icons2;
-	Common::StringArray _textStrings;
 	int _townMaxId;
 	const bool &_isDarkCc;
 	int _animFrame;
@@ -54,17 +53,7 @@ protected:
 	int _drawFrameIndex;
 	uint _farewellTime;
 	int _drawCtr1, _drawCtr2;
-
-/*
-	int _v1, _v2;
-	int _dayOfWeek;
-	*/
 protected:
-	/**
-	 * Load a set of text strings from the given resource
-	 */
-	void loadStrings(const Common::String &name);
-
 	/**
 	 * Draw the window
 	 */

@@ -1480,7 +1480,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 15:
 		// Award
-		assert(val < 128);
+		assert(val < AWARDS_TOTAL);
 		if (ps.hasAward(val))
 			v = val;
 		break;

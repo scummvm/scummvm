@@ -20,6 +20,7 @@
  *
  */
 
+#include "xeen/dialogs_awards.h"
 #include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_exchange.h"
 #include "xeen/dialogs_items.h"
@@ -460,7 +461,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 
 	case 14:
 		// Awards
-		error("AwardsDialog::show");
+		Awards::show(_vm, &c);
 		return false;
 
 	case 15:

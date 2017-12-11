@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	dialogs.o \
+	dialogs_awards.o \
 	dialogs_char_info.o \
 	dialogs_control_panel.o \
 	dialogs_dismiss.o \

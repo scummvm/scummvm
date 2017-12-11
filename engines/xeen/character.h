@@ -34,6 +34,7 @@ namespace Xeen {
 
 #define INV_ITEMS_TOTAL 9
 #define MAX_SPELLS_PER_CLASS 39
+#define AWARDS_TOTAL 88
 
 enum BonusFlags {
 	ITEMFLAG_BONUS_MASK = 0xBF, ITEMFLAG_CURSED = 0x40, ITEMFLAG_BROKEN = 0x80
@@ -396,8 +397,14 @@ public:
 
 	uint getCurrentExperience() const;
 
+	/**
+	 * Returns the number of skills the character has
+	 */
 	int getNumSkills() const;
 
+	/**
+	 * Returns the number of awards the character has
+	 */
 	int getNumAwards() const;
 
 	int makeItem(int p1, int itemIndex, int p3);

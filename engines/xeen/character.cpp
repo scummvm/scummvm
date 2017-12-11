@@ -1508,7 +1508,7 @@ int Character::getNumSkills() const {
 
 int Character::getNumAwards() const {
 	int total = 0;
-	for (int idx = 0; idx < 88; ++idx) {
+	for (int idx = 0; idx < AWARDS_TOTAL; ++idx) {
 		if (hasAward(idx))
 			++total;
 	}

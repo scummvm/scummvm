@@ -52,6 +52,7 @@ private:
 	Common::Stack< Common::Array<UIButton> > _savedButtons;
 protected:
 	Common::Array<UIButton> _buttons;
+	Common::StringArray _textStrings;
 	int _buttonValue;
 
 	bool checkEvents(XeenEngine *vm);
@@ -63,6 +64,12 @@ protected:
 	 * @returns		True if key or mouse pressed
 	 */
 	virtual bool doScroll(bool rollUp, bool fadeIn);
+
+	/**
+	 * Load a set of text strings from the given resource
+	 * @param name		Name of resource containing strings
+	 */
+	void loadStrings(const Common::String &name);
 public:
 	ButtonContainer(XeenEngine *vm) : Cutscenes(vm), _buttonValue(0) {}
 

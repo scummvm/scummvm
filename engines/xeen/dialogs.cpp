@@ -152,6 +152,14 @@ bool ButtonContainer::doScroll(bool rollUp, bool fadeIn) {
 	}
 }
 
+void ButtonContainer::loadStrings(const Common::String &name) {
+	File f(name);
+	_textStrings.clear();
+	while (f.pos() < f.size())
+		_textStrings.push_back(f.readString());
+	f.close();
+}
+
 /*------------------------------------------------------------------------*/
 
 void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {

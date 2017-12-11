@@ -344,6 +344,9 @@ public:
 	static const char *const IDENTIFY_MONSTERS;
 	static const char *const EVENT_SAMPLES[6];
 	static const char *const MOONS_NOT_ALIGNED;
+	static const char *const AWARDS_FOR;
+	static const char *const AWARDS_TEXT;
+	static const char *const NO_AWARDS;
 public:
 	/**
 	 * Initializes an instnace of the resources

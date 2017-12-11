@@ -1609,4 +1609,13 @@ const char *const Resources::EVENT_SAMPLES[6] = {
 const char *const Resources::MOONS_NOT_ALIGNED =
 "\x3""c\xB""012\t000The moons are not aligned. Passage to the %s is unavailable";
 
+const char *const Resources::AWARDS_FOR =
+	"\r\x1\fd\x3""c\v000\t000Awards for %s the %s\x3""l\x2\n"
+	"%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\x1";
+
+const char *const Resources::AWARDS_TEXT =
+	"\r\x2\x3""c\xB""021\t221\xC""37U\xC""dp\t255\xC""37D\xC""down\t289Exit";
+
+const char *const Resources::NO_AWARDS = "\x3""cNo Awards";
+
 } // End of namespace Xeen

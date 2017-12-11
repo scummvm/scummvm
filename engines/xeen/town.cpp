@@ -52,14 +52,6 @@ TownLocation::~TownLocation() {
 	intf.mainIconsPrint();
 }
 
-void TownLocation::loadStrings(const Common::String &name) {
-	File f(name);
-	_textStrings.clear();
-	while (f.pos() < f.size())
-		_textStrings.push_back(f.readString());
-	f.close();
-}
-
 int TownLocation::show() {
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
