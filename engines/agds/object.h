@@ -80,6 +80,12 @@ public:
 	void move(int x, int y) {
 		_x = x; _y = y;
 	}
+	int getX() const {
+		return _x;
+	}
+	int getY() const {
+		return _y;
+	}
 };
 
 
