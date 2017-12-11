@@ -152,8 +152,7 @@ namespace AGDS {
 			return NULL;
 
 		Image::BitmapDecoder bmp;
-		const Graphics::Surface * surface = bmp.loadStream(*stream)? bmp.getSurface()->convertTo(format): NULL;
-		return surface;
+		return bmp.loadStream(*stream)? bmp.getSurface()->convertTo(format): NULL;
 	}
 
 
