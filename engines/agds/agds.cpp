@@ -38,7 +38,8 @@ namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0),
-		_mjpgPlayer(NULL), _currentScreen(NULL) {
+		_mjpgPlayer(NULL), _currentScreen(NULL),
+		_mouse(400, 300) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -187,6 +188,17 @@ Common::Error AGDSEngine::run() {
 		if (_timer > 0)
 			--_timer;
 
+		Common::Event event;
+		while(eventManager->pollEvent(event)) {
+			switch(event.type) {
+				case Common::EVENT_MOUSEMOVE:
+					_mouse = event.mouse;
+					break;
+				default:
+					break;
+			}
+		}
+
 		if (active())
 			runProcess();
 
@@ -212,9 +224,6 @@ Common::Error AGDSEngine::run() {
 			_currentScreen->paint(*backbuffer);
 		}
 
-		Common::Event event;
-		while(eventManager->pollEvent(event)) {
-		}
 		_system->unlockScreen();
 		_system->updateScreen();
 		_system->delayMillis(40);
