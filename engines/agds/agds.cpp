@@ -210,10 +210,11 @@ Common::Error AGDSEngine::run() {
 			const Graphics::Surface *surface = _mjpgPlayer->decodeFrame();
 
 			if (surface) {
-				Graphics::Surface * converted = surface->convertTo(backbuffer->format);
-				int x = (backbuffer->w - converted->w) / 2;
-				int y = (backbuffer->h - converted->h) / 2;
-				backbuffer->copyRectToSurface(*converted, x, y, converted->getRect());
+				Graphics::Surface * converted = surface->convertTo(_pixelFormat);
+				Common::Point dst((backbuffer->w - converted->w) / 2, (backbuffer->h - converted->h) / 2);
+				Common::Rect srcRect(converted->getRect());
+				if (Common::Rect::getBlitRect(dst, srcRect, converted->getRect()))
+					backbuffer->copyRectToSurface(*converted, dst.x, dst.y, srcRect);
 				delete converted;
 			}
 
@@ -231,11 +232,11 @@ Common::Error AGDSEngine::run() {
 				_mouseCursor->rewind();
 				frame = _mouseCursor->decodeNextFrame();
 			}
-			Graphics::Surface * c = frame->convertTo(_pixelFormat, _mouseCursor->getPalette());
+			Graphics::TransparentSurface * c = convertToTransparent(frame->convertTo(_pixelFormat, _mouseCursor->getPalette()));
 			Common::Point dst = _mouse;
 			Common::Rect srcRect = c->getRect();
 			if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect()))
-				backbuffer->copyRectToSurface(*c, dst.x, dst.y, srcRect);
+				c->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
 			delete c;
 		}
 
@@ -287,5 +288,16 @@ void AGDSEngine::loadCursor(const Common::String &name, unsigned index) {
 		delete cursor;
 }
 
+const Graphics::Surface * AGDSEngine::loadPicture(const Common::String &name)
+{ return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat)); }
+
+Graphics::TransparentSurface *AGDSEngine::convertToTransparent(const Graphics::Surface *surface) {
+	if (!surface)
+		return NULL;
+	Graphics::TransparentSurface * t = new Graphics::TransparentSurface(*surface, true);
+	t->applyColorKey(0xff, 0, 0xff, true);
+	delete surface;
+	return t;
+}
 
 } // End of namespace AGDS

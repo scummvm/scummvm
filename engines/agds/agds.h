@@ -41,6 +41,9 @@
  * Games using this engine:
  * - Black Mirror (Windows)
  */
+
+namespace Graphics { class TransparentSurface; }
+
 namespace AGDS {
 
 class Object;
@@ -95,8 +98,8 @@ private:
 		return _currentScreen;
 	}
 
-	const Graphics::Surface * loadPicture(const Common::String &name)
-	{ return _resourceManager.loadPicture(name, _pixelFormat); }
+	const Graphics::Surface * loadPicture(const Common::String &name);
+	Graphics::TransparentSurface *convertToTransparent(const Graphics::Surface *surface); //destroys surface!
 
 	void loadCursor(const Common::String &name, unsigned index = 0);
 	void enableUser(bool enabled) {
