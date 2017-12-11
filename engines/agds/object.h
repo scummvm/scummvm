@@ -51,7 +51,7 @@ private:
 	StringTableType					_stringTable;
 	bool							_stringTableLoaded;
 	const Graphics::Surface *		_picture;
-	int								_x, _y;
+	Common::Point					_pos;
 
 
 public:
@@ -77,14 +77,15 @@ public:
 
 	void paint(Graphics::Surface &backbuffer);
 
-	void move(int x, int y) {
-		_x = x; _y = y;
+	void move(Common::Point pos) {
+		_pos = pos;
 	}
+
 	int getX() const {
-		return _x;
+		return _pos.x;
 	}
 	int getY() const {
-		return _y;
+		return _pos.y;
 	}
 };
 

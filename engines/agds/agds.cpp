@@ -38,8 +38,8 @@ namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0),
-		_mjpgPlayer(NULL), _currentScreen(NULL),
-		_mouse(400, 300) {
+		_mjpgPlayer(NULL), _currentScreen(NULL), _mouseCursor(NULL),
+		_mouse(400, 300), _userEnabled(false) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -203,7 +203,7 @@ Common::Error AGDSEngine::run() {
 			runProcess();
 
 		Graphics::Surface *backbuffer = _system->lockScreen();
-		backbuffer->fillRect(Common::Rect(0, 0, backbuffer->w, backbuffer->h), 0);
+		backbuffer->fillRect(backbuffer->getRect(), 0);
 
 		if (_mjpgPlayer) {
 			const Graphics::Surface *surface = _mjpgPlayer->decodeFrame();
@@ -212,7 +212,7 @@ Common::Error AGDSEngine::run() {
 				Graphics::Surface * converted = surface->convertTo(backbuffer->format);
 				int x = (backbuffer->w - converted->w) / 2;
 				int y = (backbuffer->h - converted->h) / 2;
-				backbuffer->copyRectToSurface(*converted, x, y, Common::Rect(0, 0, converted->w, converted->h));
+				backbuffer->copyRectToSurface(*converted, x, y, converted->getRect());
 				delete converted;
 			}
 
@@ -222,6 +222,20 @@ Common::Error AGDSEngine::run() {
 			}
 		} else if (_currentScreen) {
 			_currentScreen->paint(*backbuffer);
+		}
+
+		if (_userEnabled && _mouseCursor) {
+			const Graphics::Surface * frame = _mouseCursor->decodeNextFrame();
+			if (!frame) {
+				_mouseCursor->rewind();
+				frame = _mouseCursor->decodeNextFrame();
+			}
+			Graphics::Surface * c = frame->convertTo(_pixelFormat, _mouseCursor->getPalette());
+			Common::Point dst = _mouse;
+			Common::Rect srcRect = c->getRect();
+			if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect()))
+				backbuffer->copyRectToSurface(*c, dst.x, dst.y, srcRect);
+			delete c;
 		}
 
 		_system->unlockScreen();
@@ -263,6 +277,14 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 	}
 }
 
+void AGDSEngine::loadCursor(const Common::String &name, unsigned index) {
+	Video::FlicDecoder * cursor = new Video::FlicDecoder;
+	if (cursor->loadStream(_resourceManager.getResource(name))) {
+		delete _mouseCursor;
+		_mouseCursor = cursor;
+	} else
+		delete cursor;
+}
 
 
 } // End of namespace AGDS
