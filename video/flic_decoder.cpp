@@ -121,6 +121,9 @@ void FlicDecoder::FlicVideoTrack::readHeader() {
 	_offsetFrame1 = _fileStream->readUint32LE();
 	_offsetFrame2 = _fileStream->readUint32LE();
 
+	if (_offsetFrame1 == 0)
+		_offsetFrame1 = 0x80; //length of FLIC header
+
 	// Seek to the first frame
 	_fileStream->seek(_offsetFrame1);
 }
