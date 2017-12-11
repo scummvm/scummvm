@@ -213,7 +213,7 @@ Common::Error AGDSEngine::run() {
 				Graphics::Surface * converted = surface->convertTo(_pixelFormat);
 				Common::Point dst((backbuffer->w - converted->w) / 2, (backbuffer->h - converted->h) / 2);
 				Common::Rect srcRect(converted->getRect());
-				if (Common::Rect::getBlitRect(dst, srcRect, converted->getRect()))
+				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect()))
 					backbuffer->copyRectToSurface(*converted, dst.x, dst.y, srcRect);
 				delete converted;
 			}
