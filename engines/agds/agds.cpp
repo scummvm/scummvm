@@ -86,7 +86,7 @@ bool AGDSEngine::load() {
 		return false;
 
 	_patch.open("patch.adb"); //it's ok
-	_nextScreen = "main";
+	_currentScreen = loadScreen("main");
 
 	return true;
 }
@@ -136,6 +136,17 @@ Object *AGDSEngine::loadObject(const Common::String & name) {
 	return object;
 }
 
+Screen *AGDSEngine::loadScreen(const Common::String & name) {
+	ScreensType::iterator i = _screens.find(name);
+	if (i != _screens.end())
+		return i->_value;
+
+	debug("loadScreen %s", name.c_str());
+	Screen *screen = new Screen(loadObject(name));
+	_screens[name] = screen;
+	return screen;
+}
+
 void AGDSEngine::runProcess() {
 	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
 		Process & process = *p;
@@ -147,13 +158,10 @@ void AGDSEngine::runProcess() {
 		ProcessExitCode code = process.execute();
 		switch(code) {
 		case kExitCodeLoadScreenObject:
-		case kExitCodeDestroyProcessSetNextScreen: {
-				Common::String screen = process.getExitValue();
-				debug("loading screen object %s", screen.c_str());
-				_currentScreen = new Screen(loadObject(screen));
-				delete _screens[screen];
-				_screens[screen] = _currentScreen;
-			}
+			loadObject(process.getExitValue());
+			break;
+		case kExitCodeDestroyProcessSetNextScreen:
+			_currentScreen = loadScreen(process.getExitValue());
 			break;
 		case kExitCodeSuspend:
 			debug("process suspended");
@@ -179,14 +187,6 @@ Common::Error AGDSEngine::run() {
 		if (_timer > 0)
 			--_timer;
 
-		if (!_nextScreen.empty()) {
-			debug("loading screen %s", _nextScreen.c_str());
-			Common::String nextScreen;
-			nextScreen = _nextScreen;
-			_nextScreen.clear();
-			loadObject(nextScreen);
-		}
-
 		while(active() && !_processes.empty())
 			runProcess();
 
@@ -208,7 +208,7 @@ Common::Error AGDSEngine::run() {
 				delete _mjpgPlayer;
 				_mjpgPlayer = NULL;
 			}
-		} else {
+		} else if (_currentScreen) {
 			_currentScreen->paint(*backbuffer);
 		}
 
