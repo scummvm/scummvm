@@ -31,6 +31,7 @@
 #include "agds/processExitCode.h"
 #include "agds/resourceManager.h"
 #include "graphics/pixelformat.h"
+#include "video/flic_decoder.h"
 
 /**
  * This is the namespace of the AGDS engine.
@@ -97,6 +98,11 @@ private:
 	const Graphics::Surface * loadPicture(const Common::String &name)
 	{ return _resourceManager.loadPicture(name, _pixelFormat); }
 
+	void loadCursor(const Common::String &name, unsigned index = 0);
+	void enableUser(bool enabled) {
+		_userEnabled = enabled;
+	}
+
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
 	typedef Common::HashMap<Common::String, Screen *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ScreensType;
@@ -116,7 +122,9 @@ private:
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
 	Screen *					_currentScreen;
+	Video::FlicDecoder *		_mouseCursor;
 	Common::Point				_mouse;
+	bool						_userEnabled;
 };
 
 

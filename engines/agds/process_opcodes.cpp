@@ -182,6 +182,7 @@ void Process::appendToSharedStorage() {
 
 void Process::disableUser() {
 	debug("disableUser");
+	_engine->enableUser(false);
 }
 
 void Process::changeScreenPatch() {
@@ -195,6 +196,7 @@ void Process::changeScreenPatch() {
 void Process::loadMouseStub66() {
 	Common::String name = popFilename();
 	debug("loadMouseStub66 %s", name.c_str());
+	_engine->loadCursor(name);
 }
 
 void Process::fadeObject() {
@@ -282,7 +284,7 @@ void Process::moveScreenObject() {
 	Common::String arg1 = popString();
 	debug("moveScreenObject %s %d %d", arg1.c_str(), arg2, arg3);
 	Object *object = _engine->loadObject(arg1);
-	object->move(arg2, arg3);
+	object->move(Common::Point(arg2, arg3));
 }
 
 void Process::stub190() {
@@ -384,6 +386,7 @@ void Process::onUse(unsigned size) {
 void Process::enableUser() {
 	//screen loading block user interaction until this instruction
 	debug("enableUser");
+	_engine->enableUser(true);
 }
 
 void Process::findObjectInMouseArea() {

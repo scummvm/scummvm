@@ -28,7 +28,7 @@
 
 namespace AGDS {
 
-Object::Object(const Common::String &name, Common::SeekableReadStream * stream) : _name(name), _stringTableLoaded(false), _picture(), _x(), _y() {
+Object::Object(const Common::String &name, Common::SeekableReadStream * stream) : _name(name), _stringTableLoaded(false), _picture(), _pos() {
 	byte id = stream->readByte();
 	byte flag = stream->readByte();
 	debug("id: 0x%02x %u, flag: %u", id, id, flag);
@@ -94,18 +94,10 @@ void Object::setPicture(const Graphics::Surface *picture) {
 
 void Object::paint(Graphics::Surface &backbuffer) {
 	if (_picture) {
-		Common::Rect srcRect(0, 0, _picture->w, _picture->h);
-		int x = _x, y = _y;
-		if (x < 0) {
-			srcRect.left += -x;
-			x = 0;
-		}
-		if (y < 0) {
-			srcRect.top += -y;
-			y = 0;
-		}
-		if (!srcRect.isEmpty())
-			backbuffer.copyRectToSurface(*_picture, x, y, srcRect);
+		Common::Point dst = _pos;
+		Common::Rect srcRect = _picture->getRect();
+		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
+			backbuffer.copyRectToSurface(*_picture, dst.x, dst.y, srcRect);
 	}
 }
 
