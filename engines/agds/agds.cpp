@@ -165,7 +165,7 @@ void AGDSEngine::runProcess() {
 			break;
 		case kExitCodeSuspend:
 			debug("process suspended");
-			break;
+			return;
 		default:
 			debug("destroying process...");
 			p = _processes.erase(p);
@@ -187,7 +187,7 @@ Common::Error AGDSEngine::run() {
 		if (_timer > 0)
 			--_timer;
 
-		while(active() && !_processes.empty())
+		if (active())
 			runProcess();
 
 		Graphics::Surface *backbuffer = _system->lockScreen();
