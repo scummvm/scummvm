@@ -87,7 +87,7 @@ private:
 
 	void enter(uint16 magic, uint16 size);
 	void exitProcess();
-	void suspendProcess();
+	void suspendProcess(ProcessExitCode code = kExitCodeSuspend);
 	void exitScreen();
 	void call(uint16 addr);
 
@@ -115,6 +115,7 @@ private:
 	void getObjectPictureWidth();
 	void getObjectPictureHeight();
 	void exitProcessSetNextScreen();
+	void exitProcessSetNextScreen80();
 	void quit();
 
 	void setSystemVariable();
