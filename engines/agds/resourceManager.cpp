@@ -27,6 +27,7 @@
 #include "common/algorithm.h"
 #include "common/ptr.h"
 #include "image/bmp.h"
+#include "image/pcx.h"
 #include "graphics/surface.h"
 
 namespace AGDS {
@@ -151,8 +152,18 @@ namespace AGDS {
 		if (!stream)
 			return NULL;
 
-		Image::BitmapDecoder bmp;
-		return bmp.loadStream(*stream)? bmp.getSurface()->convertTo(format): NULL;
+		Common::String lname = name;
+		lname.toLowercase();
+
+		if (lname.hasSuffix(".bmp")) {
+			Image::BitmapDecoder bmp;
+			return bmp.loadStream(*stream)? bmp.getSurface()->convertTo(format): NULL;
+		} else if (lname.hasSuffix(".pcx")) {
+			Image::PCXDecoder pcx;
+			return pcx.loadStream(*stream)? pcx.getSurface()->convertTo(format): NULL;
+		} else
+			warning("unknown extensions for resource %s", name.c_str());
+		return NULL;
 	}
 
 
