@@ -67,8 +67,13 @@ private:
 	bool load();
 	void runProcess();
 
-	Object * loadObject(const Common::String & name, bool forceRun = false);
-	Screen * loadScreen(const Common::String & name);
+	Object * loadObject(const Common::String & name);
+	void runObject(Object *object);
+
+	void runObject(const Common::String & name)
+	{ runObject(loadObject(name)); }
+
+	void loadScreen(const Common::String & name);
 
 	Region * loadRegion(const Common::String &name);
 	Common::String loadFilename(const Common::String &name);

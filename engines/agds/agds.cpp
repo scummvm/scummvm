@@ -88,7 +88,7 @@ bool AGDSEngine::load() {
 		return false;
 
 	_patch.open("patch.adb"); //it's ok
-	_currentScreen = loadScreen("main");
+	loadScreen("main");
 
 	return true;
 }
@@ -126,10 +126,9 @@ Common::String AGDSEngine::loadFilename(const Common::String &entryName) {
 }
 
 
-Object *AGDSEngine::loadObject(const Common::String & name, bool forceRun) {
+Object *AGDSEngine::loadObject(const Common::String & name) {
 	ObjectsType::iterator i = _objects.find(name);
 	Object *object = i != _objects.end()? i->_value: NULL;
-	bool run = forceRun;
 	if (!object) {
 		Common::SeekableReadStream * stream = _data.getEntry(name);
 		if (!stream)
@@ -137,28 +136,28 @@ Object *AGDSEngine::loadObject(const Common::String & name, bool forceRun) {
 
 		object = new Object(name, stream);
 		_objects.setVal(name, object);
-		run = true;
 		delete stream;
 	}
-
-	if (run) {
-		_processes.push_front(Process(this, object));
-		if (_currentScreen)
-			_currentScreen->add(object);
-	}
-
 	return object;
 }
 
-Screen *AGDSEngine::loadScreen(const Common::String & name) {
-	ScreensType::iterator i = _screens.find(name);
-	if (i != _screens.end())
-		return i->_value;
+void AGDSEngine::runObject(Object *object) {
+	_processes.push_front(Process(this, object));
+	if (_currentScreen)
+		_currentScreen->add(object);
+}
 
+void AGDSEngine::loadScreen(const Common::String & name) {
 	debug("loadScreen %s", name.c_str());
-	Screen *screen = new Screen(loadObject(name));
-	_screens[name] = screen;
-	return screen;
+	ScreensType::iterator i = _screens.find(name);
+	if (i == _screens.end())
+	{
+		Object *object = loadObject(name);
+		Screen *screen = new Screen(object);
+		_currentScreen = screen;
+		_screens[name] = screen;
+	}
+	runObject(name);
 }
 
 void AGDSEngine::runProcess() {
@@ -172,10 +171,10 @@ void AGDSEngine::runProcess() {
 		ProcessExitCode code = process.execute();
 		switch(code) {
 		case kExitCodeLoadScreenObject:
-			loadObject(process.getExitValue());
+			runObject(process.getExitValue());
 			break;
 		case kExitCodeDestroyProcessSetNextScreen:
-			_currentScreen = loadScreen(process.getExitValue());
+			loadScreen(process.getExitValue());
 			break;
 		case kExitCodeSuspend:
 			debug("process suspended");
@@ -211,12 +210,12 @@ Common::Error AGDSEngine::run() {
 						if ((region? region->region: NULL) != _currentRegion) {
 							if (_currentRegion) {
 								_currentRegion = NULL;
-								loadObject(_onLeaveObject, true); //force execution even if it's loaded, fixme: move to another mehtod?
+								runObject(_onLeaveObject);
 							}
 							if (region) {
 								_onLeaveObject = region->onLeave;
 								_currentRegion = region->region;
-								loadObject(region->onEnter, true);
+								runObject(region->onEnter);
 							}
 						}
 					}
