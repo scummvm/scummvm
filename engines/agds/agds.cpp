@@ -126,15 +126,16 @@ Common::String AGDSEngine::loadFilename(const Common::String &entryName) {
 }
 
 
-Object *AGDSEngine::loadObject(const Common::String & name) {
+Object *AGDSEngine::loadObject(const Common::String & name, const Common::String &prototype) {
 	ObjectsType::iterator i = _objects.find(name);
 	Object *object = i != _objects.end()? i->_value: NULL;
 	if (!object) {
-		Common::SeekableReadStream * stream = _data.getEntry(name);
+		Common::String clone = prototype.empty()? name: prototype;
+		Common::SeekableReadStream * stream = _data.getEntry(clone);
 		if (!stream)
-			error("no database entry for %s\n", name.c_str());
+			error("no database entry for %s\n", clone.c_str());
 
-		object = new Object(name, stream);
+		object = new Object(clone, stream);
 		_objects.setVal(name, object);
 		delete stream;
 	}
@@ -171,10 +172,10 @@ void AGDSEngine::runProcess() {
 		ProcessExitCode code = process.execute();
 		switch(code) {
 		case kExitCodeLoadScreenObject:
-			runObject(process.getExitValue());
+			runObject(process.getExitArg1(), process.getExitArg2());
 			break;
 		case kExitCodeDestroyProcessSetNextScreen:
-			loadScreen(process.getExitValue());
+			loadScreen(process.getExitArg1());
 			break;
 		case kExitCodeSuspend:
 			debug("process suspended");
