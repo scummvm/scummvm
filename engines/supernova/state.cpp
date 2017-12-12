@@ -838,8 +838,8 @@ void GameManager::guardNoticed() {
 	wait2(2);
 	reply(kStringGuardNoticed2, 2, 5);
 	_vm->paletteFadeOut();
-	r->setSectionVisible(2, false);
-	r->setSectionVisible(5, false);
+	_currentRoom->setSectionVisible(2, false);
+	_currentRoom->setSectionVisible(5, false);
 	_currentRoom = r;
 	_guiEnabled = true;
 	drawMapExits();
