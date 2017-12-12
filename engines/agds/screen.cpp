@@ -65,5 +65,16 @@ Object *Screen::find(Common::Point pos) const {
 	return NULL;
 }
 
+const MouseRegion * MouseMap::find(Common::Point pos) const {
+	for(MouseRegionsType::const_iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i) {
+		const MouseRegion &mouse = *i;
+		if (mouse.region->pointIn(pos))
+			return &mouse;
+	}
+	return NULL;
+
+}
+
+
 
 }
