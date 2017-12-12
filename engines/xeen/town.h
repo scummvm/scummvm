@@ -53,6 +53,7 @@ protected:
 	int _drawFrameIndex;
 	uint _farewellTime;
 	int _drawCtr1, _drawCtr2;
+	int _animCtr;
 protected:
 	/**
 	 * Draw the window
@@ -63,6 +64,11 @@ protected:
 	 * Waits for a brief pause, checking for any key or mouse events
 	 */
 	int wait();
+
+	/**
+	 * Handles animation updates for Sphinx, Golem, Repear, and Dwarf events
+	 */
+	void animUpdate();
 
 	/**
 	 * Generates the display text for the location, for a given character
@@ -253,9 +259,19 @@ public:
 };
 
 class DwarfLocation : public TownLocation {
+private:
+	/**
+	 * Set the new location
+	 */
+	bool setNewLocation();
 public:
 	DwarfLocation(bool isDwarf1);
 	virtual ~DwarfLocation() {}
+
+	/**
+	 * Show the town location
+	 */
+	virtual int show();
 };
 
 class SphinxLocation : public TownLocation {

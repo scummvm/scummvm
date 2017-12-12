@@ -33,15 +33,18 @@ namespace Xeen {
 TownLocation::TownLocation(TownAction action) : ButtonContainer(g_vm),
 		_townActionId(action), _isDarkCc(g_vm->_files->_isDarkCc),
 		_vocName("hello1.voc") {
-	_townMaxId = Res.TOWN_MAXES[_isDarkCc][action];
-	_songName = Res.TOWN_ACTION_MUSIC[_isDarkCc][action];
-	_townSprites.resize(Res.TOWN_ACTION_FILES[_isDarkCc][action]);
+	_townMaxId = (action >= SPHINX) ? 0 : Res.TOWN_MAXES[_isDarkCc][action];
+	if (action < NO_ACTION) {
+		_songName = Res.TOWN_ACTION_MUSIC[_isDarkCc][action];
+		_townSprites.resize(Res.TOWN_ACTION_FILES[_isDarkCc][action]);
+	}
 
 	_animFrame = 0;
 	_drawFrameIndex = 0;
 	_farewellTime = 0;
 	_drawCtr1 = _drawCtr2 = 0;
 	_townPos = Common::Point(8, 8);
+	_animCtr = 0;
 }
 
 TownLocation::~TownLocation() {
@@ -286,6 +289,10 @@ int TownLocation::wait() {
 	}
 
 	return _buttonValue;
+}
+
+void TownLocation::animUpdate() {
+	// TODO
 }
 
 /*------------------------------------------------------------------------*/
@@ -963,6 +970,7 @@ TrainingLocation::TrainingLocation() : TownLocation(TRAINING) {
 	Common::fill(&_charsTrained[0], &_charsTrained[6], 0);
 	_maxLevel = 0;
 	_experienceToNextLevel = 0;
+	_charIndex = 0;
 
 	_icons1.load("train.icn");
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
@@ -1116,8 +1124,239 @@ GolemLocation::GolemLocation() : TownLocation(GOLEM) {
 
 /*------------------------------------------------------------------------*/
 
+const int16 DWARF_X0[2][13] = {
+	{  0, -5, -7, -8, -11, -9, -3, 1, 6, 10, 15, 18, 23 },
+	{ 0, 4, 6, 8, 11, 12, 15, 17, 19, 22, 25, 0, 0 }
+};
+const int DWARF_X1[2][13] = {
+	{ 160, 145, 133, 122, 109, 101, 97, 91, 86, 80, 75, 68, 63 },
+	{ 160, 154, 146, 138, 131, 122, 115, 107, 99, 92, 85, 0, 0 }
+};
+const int DWARF_X2[13] = {
+	0, -1, -4, -7, -9, -13, -15, -18, -21, -23, -25, 0, 0
+};
+const int16 DWARF_Y[2][13] = {
+	{ 0, 0, 4, 9, 13, 15, 20, 24, 30, 37, 45, 51, 58 },
+	{ 0, 12, 25, 36, 38, 40, 41, 42, 44, 45, 50, 0, 0 }
+};
+const int16 DWARF2_X[2][16] = {
+	{ 0, -2, -4, -6, -8, -10, -12, -14, -16, -18, -20, -20, -20, -20, -20, -20 },
+	{ 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150 }
+};
+const int16 DWARF2_Y[2][16] = {
+	{ 0, 12, 25, 37, 50, 62, 75, 87, 100, 112, 125, 137, 150, 162, 175, 187 },
+	{ 0, 12, 25, 37, 50, 62, 75, 87, 100, 112, 125, 137, 150, 162, 175, 186 }
+};
+
 DwarfLocation::DwarfLocation(bool isDwarf) : TownLocation(NO_ACTION) {
 	_townMaxId = Res.TOWN_MAXES[_isDarkCc][isDwarf ? DWARF1 : DWARF2];
+	loadStrings("special.bin");
+}
+
+int DwarfLocation::show() {
+	EventsManager &events = *g_vm->_events;
+	Interface &intf = *g_vm->_interface;
+	Party &party = *g_vm->_party;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+	Windows &windows = *g_vm->_windows;
+
+	SpriteResource sprites1(_isDarkCc ? "town1.zom" : "dwarf1.vga");
+	SpriteResource sprites2(_isDarkCc ? "town2.zom" : "dwarf2.vga");
+	SpriteResource sprites3(_isDarkCc ? "town3.zom" : "dwarf3.vga");
+	SpriteResource boxSprites("box.vga");
+	bool mazeFlag = setNewLocation();
+
+	// Save the screen contents
+	Graphics::ManagedSurface savedBg;
+	savedBg.copyFrom(screen);
+
+	for (int idx = 0; idx < (_isDarkCc ? 10 : 12); ++idx) {
+		screen.copyFrom(savedBg);
+		sprites1.draw(0, 0,
+			Common::Point(DWARF_X0[_isDarkCc][idx], DWARF_Y[_isDarkCc][idx]));
+		sprites1.draw(0, 1,
+			Common::Point(DWARF_X1[_isDarkCc][idx], DWARF_Y[_isDarkCc][idx]));
+		if (_isDarkCc)
+			sprites1.draw(0, 2,
+				Common::Point(DWARF_X2[idx], DWARF_Y[_isDarkCc][idx]));
+
+		windows[0].update();
+		events.wait(1);
+	}
+
+	savedBg.copyFrom(screen);
+	for (int idx = 15; idx >= 0; --idx) {
+		screen.copyFrom(savedBg);
+		sprites2.draw(0, 0, Common::Point(DWARF2_X[_isDarkCc][idx], DWARF2_Y[_isDarkCc][idx]));
+		windows[0].update();
+		events.wait(1);
+	}
+
+	sound.setMusicVolume(48);
+	screen.copyFrom(savedBg);
+	sprites2.draw(0, 0);
+	windows[0].update();
+
+	for (int idx = 0; idx < (_isDarkCc ? 2 : 3); ++idx) {
+		switch (idx) {
+		case 0:
+			sound.playSound(_isDarkCc ? "pass2.voc" : "dwarf10.voc");
+			break;
+
+		case 1:
+			if (_isDarkCc) {
+				sprites2.draw(0, 0);
+				sprites3.draw(0, 0);
+				animUpdate();
+
+				events.timeMark5();
+				while (!g_vm->shouldQuit() && events.timeElapsed5() < 7)
+					events.pollEventsAndWait();
+
+				sound.playSound(mazeFlag ? "ok2.voc" : "back2.voc");
+			} else {
+				sound.playSound("dwarf11.voc");
+			}
+			break;
+
+		case 2:
+			sound.playSound("dwarf12.voc");
+			break;
+		}
+
+		events.updateGameCounter();
+		do {
+			sprites2.draw(0, 0);
+			sprites3.draw(0, g_vm->getRandomNumber(_isDarkCc ? 8 : 9));
+			animUpdate();
+
+			events.timeMark5();
+			while (!g_vm->shouldQuit() && events.timeElapsed5() < 2)
+				events.pollEventsAndWait();
+		} while (!g_vm->shouldQuit() && (sound.isPlaying() || _animCtr));
+
+		while (!g_vm->shouldQuit() && events.timeElapsed() < 3)
+			events.pollEventsAndWait();
+	}
+
+	sprites2.draw(0, 0);
+	if (!_isDarkCc)
+		sprites3.draw(0, 1);
+	windows[0].update();
+
+	// Restore game screen
+	sound.setMusicVolume(95);
+	screen.loadBackground("back.raw");
+	intf.drawParty(false);
+	intf.draw3d(false, false);
+
+	events.clearEvents();
+	return 0;
+}
+
+bool DwarfLocation::setNewLocation() {
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+	Common::Point mazePos;
+	Direction mazeDir = DIR_NORTH;
+	int mazeId = 0;
+	bool mazeFlag = false;
+
+	// Set 
+	if (_isDarkCc) {
+		switch (party._mazeId) {
+		case 4:
+			if (party._questItems[35]) {
+				mazeId = 29;
+				mazePos = Common::Point(15, 31);
+				mazeDir = DIR_SOUTH;
+			}
+			break;
+
+		case 6:
+			if (party._questItems[38]) {
+				mazeId = 35;
+				mazePos = Common::Point(15, 8);
+				mazeDir = DIR_WEST;
+			}
+			break;
+
+		case 19:
+			if (party._questItems[36]) {
+				mazeId = 31;
+				mazePos = Common::Point(31, 16);
+				mazeDir = DIR_WEST;
+			}
+			break;
+
+		case 22:
+			if (party._questItems[37]) {
+				mazeId = 33;
+				mazePos = Common::Point(0, 3);
+				mazeDir = DIR_EAST;
+			}
+			break;
+
+		case 98:
+			if (party._questItems[39]) {
+				mazeId = 37;
+				mazePos = Common::Point(7, 0);
+				mazeDir = DIR_NORTH;
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		mazeFlag = mazeId != 0;
+		if (!mazeFlag) {
+			mazeId = party._mazeId;
+			mazePos = party._mazePosition;
+			mazeDir = party._mazeDirection;
+		}
+	} else {
+		switch (party._mazeId) {
+		case 14:
+			mazeId = 37;
+			mazePos = Common::Point(1, 4);
+			mazeDir = DIR_EAST;
+			break;
+
+		case 18:
+			if (party._mazePosition.x == 9) {
+				mazeId = 35;
+				mazePos = Common::Point(1, 12);
+				mazeDir = DIR_EAST;
+			} else {
+				mazeId = 36;
+				mazePos = Common::Point(7, 1);
+				mazeDir = DIR_NORTH;
+			}
+			break;
+
+		case 23:
+			if (party._mazePosition.x == 5) {
+				mazeId = 33;
+				mazePos = Common::Point(7, 1);
+				mazeDir = DIR_NORTH;
+			} else {
+				mazeId = 34;
+				mazePos = Common::Point(7, 30);
+				mazeDir = DIR_SOUTH;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	map.load(mazeId);
+	party._mazePosition = mazePos;
+	party._mazeDirection = mazeDir;
+	return mazeFlag;
 }
 
 /*------------------------------------------------------------------------*/
