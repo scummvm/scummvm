@@ -22,6 +22,7 @@
 
 #include "agds/screen.h"
 #include "agds/object.h"
+#include "agds/region.h"
 
 namespace AGDS {
 
@@ -30,6 +31,10 @@ Screen::Screen(Object *object) {
 }
 
 void Screen::add(Object *object) {
+	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
+		if (*i == object)
+			return;
+	}
 	_children.push_back(object);
 }
 
@@ -45,8 +50,19 @@ void Screen::remove(const Common::String &name) {
 
 void Screen::paint(Graphics::Surface &backbuffer) {
 	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
-		(*i)->paint(backbuffer);
+		Object *object = *i;
+		object->paint(backbuffer);
 	}
+}
+
+Object *Screen::find(Common::Point pos) const {
+	for(ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
+		Object *object = *i;
+		Region *region = object->getRegion();
+		if (region && region->pointIn(pos))
+			return object;
+	}
+	return NULL;
 }
 
 

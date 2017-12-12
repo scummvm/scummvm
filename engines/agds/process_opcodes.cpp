@@ -120,6 +120,7 @@ void Process::loadFont() {
 void Process::loadMouse() {
 	Common::String name = popFilename();
 	debug("loadMouse %s", name.c_str());
+	_engine->loadCursor(name);
 }
 
 void Process::setIntegerVariable() {
@@ -194,7 +195,7 @@ void Process::changeScreenPatch() {
 void Process::loadMouseStub66() {
 	Common::String name = popFilename();
 	debug("loadMouseStub66 %s", name.c_str());
-	_engine->loadCursor(name);
+	//_engine->loadCursor(name); //overlay cursor
 }
 
 void Process::fadeObject() {
@@ -377,6 +378,7 @@ void Process::onKey(unsigned size) {
 
 void Process::onUse(unsigned size) {
 	debug("use? handler, %u instructions", size);
+	_object->setClickHandler(_ip);
 	_ip += size;
 }
 
@@ -393,18 +395,17 @@ void Process::findObjectInMouseArea() {
 	Common::String arg1 = popString();
 
 	debug("findObjectInMouseArea %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
-	Region *reg = _engine->loadRegion(arg1);
+	_engine->loadRegion(arg1);
 	push(205);
 
-	_engine->loadObject(arg2);
-	_engine->loadObject(arg3);
+	_engine->currentScreen()->add(_engine->loadObject(arg2));
+	_engine->currentScreen()->add(_engine->loadObject(arg3));
 }
 
 void Process::loadRegionFromObject() {
 	Common::String name = popString();
 	debug("loadRegionFromObject %s", name.c_str());
-	Region *reg = _engine->loadRegion(name);
-	delete reg;
+	_object->setRegion(_engine->loadRegion(name));
 }
 
 

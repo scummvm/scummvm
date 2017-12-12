@@ -204,6 +204,14 @@ Common::Error AGDSEngine::run() {
 				case Common::EVENT_MOUSEMOVE:
 					_mouse = event.mouse;
 					break;
+				case Common::EVENT_LBUTTONDOWN:
+					_mouse = event.mouse;
+					if (_userEnabled && _currentScreen) {
+						debug("lclick %d, %d", _mouse.x, _mouse.y);
+						Object *object = _currentScreen->find(_mouse);
+						debug("found object %p", (void *)object);
+					}
+					break;
 				default:
 					break;
 			}

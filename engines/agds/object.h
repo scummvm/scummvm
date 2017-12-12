@@ -30,6 +30,8 @@
 
 namespace AGDS {
 
+class Region;
+
 class Object {
 public:
 	typedef Common::Array<uint8> CodeType;
@@ -51,8 +53,9 @@ private:
 	StringTableType					_stringTable;
 	bool							_stringTableLoaded;
 	const Graphics::Surface *		_picture;
+	Region *						_region;
 	Common::Point					_pos;
-
+	unsigned						_clickHandler;
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
@@ -73,6 +76,18 @@ public:
 
 	const Graphics::Surface *getPicture() const {
 		return _picture;
+	}
+
+	void setRegion(Region *region) {
+		_region = region;
+	}
+
+	Region * getRegion() const {
+		return _region;
+	}
+
+	void setClickHandler(uint32 ip) {
+		_clickHandler = ip;
 	}
 
 	void paint(Graphics::Surface &backbuffer);

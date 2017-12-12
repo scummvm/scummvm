@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/list.h"
 #include "common/str.h"
+#include "common/rect.h"
 
 namespace Graphics {
 	class Surface;
@@ -44,6 +45,7 @@ public:
 	void add(Object *object);
 	void remove(const Common::String &name);
 	void paint(Graphics::Surface &backbuffer);
+	Object *find(Common::Point pos) const;
 };
 
 
