@@ -136,6 +136,12 @@ void Process::setGlobal() {
 	_engine->setGlobal(name, value);
 }
 
+void Process::resetGlobal() {
+	Common::String name = popString();
+	_engine->setGlobal(name, 0);
+	debug("resetGlobal %s", name.c_str());
+}
+
 void Process::getGlobal(unsigned index) {
 	const Common::String & name = _object->getString(index).string;
 	int value = _engine->getGlobal(name);
@@ -286,6 +292,11 @@ void Process::moveScreenObject() {
 	object->move(Common::Point(arg2, arg3));
 }
 
+void Process::quit() {
+	debug("quit");
+	_engine->quitGame();
+}
+
 void Process::stub190() {
 	int value = pop();
 	debug("stub190 %d", value);
@@ -426,6 +437,14 @@ void Process::setTimer() {
 	suspend();
 }
 
+void Process::stub235() {
+	int arg3 = pop();
+	int arg2 = pop();
+	int arg1 = pop();
+	debug("stub235 (fadeScreen?) %d %d %d", arg1, arg2, arg3);
+	suspend();
+}
+
 
 
 //fixme: add trace here
@@ -507,6 +526,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub130, stub130);
 			OP		(kStub133, stub133);
 			OP		(kStub134, stub134);
+			OP		(kResetGlobal, resetGlobal);
 			OP		(kStub136, stub136);
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
 			OP		(kSetSystemVariable, setSystemVariable);
@@ -518,6 +538,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub154, stub154);
 			OP		(kStub155, stub155);
 			OP		(kStub166, stub166);
+			OP		(kQuit, quit);
 			OP		(kExitScreen, exitScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
 			OP		(kSetGlyphSize, setFontGlyphSize);
@@ -533,6 +554,7 @@ ProcessExitCode Process::execute() {
 			OP		(kFindObjectInMouseArea, findObjectInMouseArea);
 			OP		(kStub206, stub206);
 			OP_U	(kOnKey, onKey);
+			OP		(kStub235, stub235);
 			OP		(kHasGlobal, hasGlobal);
 		default:
 			error("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
