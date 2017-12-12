@@ -41,25 +41,30 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream * 
 		error("invalid region %s", resourceName.c_str());
 	byte * nameEnd = Common::find(header, header + 0x20, 0);
 	name		= Common::String(reinterpret_cast<char *>(header), nameEnd - header);
-	width		= READ_UINT16(header + kRegionHeaderWidthOffset);
-	height		= READ_UINT16(header + kRegionHeaderHeightOffset);
+	centerX		= READ_UINT16(header + kRegionHeaderWidthOffset);
+	centerY		= READ_UINT16(header + kRegionHeaderHeightOffset);
 	flags		= READ_UINT16(header + kRegionHeaderFlagsOffset);
-	debug("region %s %dx%d %04x", name.c_str(), width, height, flags);
+	debug("region %s at (%d,%d) %04x", name.c_str(), centerX, centerY, flags);
 	if (size > kRegionHeaderSize) {
 		uint16 ext	= stream->readUint16LE();
-		debug("extended entries %u", ext);
+		//debug("extended entries %u", ext);
 		while(ext--) {
 			int16 a = stream->readSint16LE();
 			int16 b = stream->readSint16LE();
-			int16 c = stream->readUint16LE();
-			if (c != -12851) //0xcdcd
-				debug("extended entry: %d %d %d", a, b, c);
-			else
-				debug("extended entry: %d %d", a, b);
+			/* int16 c = */ stream->readUint16LE();
+//			if (c != -12851) //0xcdcd
+//				debug("extended entry: %d %d %d", a, b, c);
+//			else
+//				debug("extended entry: %d %d", a, b);
+			points.push_back(Common::Point(a, b));
 		}
 		if (stream->pos() != size)
-			debug("region data left: %u", size - stream->pos());
+			warning("region data left: %u", size - stream->pos());
 	}
+}
+
+bool Region::pointIn(Common::Point point) const {
+	return false;
 }
 
 }

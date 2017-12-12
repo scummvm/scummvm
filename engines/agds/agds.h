@@ -109,6 +109,7 @@ private:
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
 	typedef Common::HashMap<Common::String, Screen *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ScreensType;
+	typedef Common::HashMap<Common::String, Region *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RegionsType;
 	typedef Common::List<Process> ProcessListType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
 
@@ -117,6 +118,7 @@ private:
 	Database					_data, _patch; //data and patch databases
 	ObjectsType					_objects;
 	ScreensType					_screens;
+	RegionsType					_regions;
 	ProcessListType				_processes;
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];
