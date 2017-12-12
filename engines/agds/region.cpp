@@ -70,7 +70,6 @@ typedef struct {
 } dPoint;
 
 bool Region::pointIn(Common::Point point) const {
-	debug("POINT IN");
 	uint32 size = points.size();
 	if (size < 3) {
 		return false;
@@ -89,7 +88,6 @@ bool Region::pointIn(Common::Point point) const {
 	for (uint32 i = 1; i <= size; i++) {
 		p2.x = (double)points[i % size].x;
 		p2.y = (double)points[i % size].y;
-		debug("%g %g %g %g", p1.x, p1.y, p2.x, p2.y);
 
 		if (p.y > MIN(p1.y, p2.y)) {
 			if (p.y <= MAX(p1.y, p2.y)) {

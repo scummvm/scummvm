@@ -30,6 +30,7 @@
 #include "agds/database.h"
 #include "agds/processExitCode.h"
 #include "agds/resourceManager.h"
+#include "agds/screen.h"
 #include "graphics/pixelformat.h"
 #include "video/flic_decoder.h"
 
@@ -66,7 +67,7 @@ private:
 	bool load();
 	void runProcess();
 
-	Object * loadObject(const Common::String & name);
+	Object * loadObject(const Common::String & name, bool forceRun = false);
 	Screen * loadScreen(const Common::String & name);
 
 	Region * loadRegion(const Common::String &name);
@@ -129,7 +130,10 @@ private:
 	Screen *					_currentScreen;
 	Video::FlicDecoder *		_mouseCursor;
 	Common::Point				_mouse;
+	Region *					_currentRegion;
+	Common::String				_onLeaveObject;
 	bool						_userEnabled;
+	MouseMap					_mouseMap;
 };
 
 

@@ -195,7 +195,7 @@ void Process::changeScreenPatch() {
 void Process::loadMouseStub66() {
 	Common::String name = popFilename();
 	debug("loadMouseStub66 %s", name.c_str());
-	//_engine->loadCursor(name); //overlay cursor
+	_engine->loadCursor(name); //overlay cursor
 }
 
 void Process::fadeObject() {
@@ -394,12 +394,11 @@ void Process::findObjectInMouseArea() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 
-	debug("findObjectInMouseArea %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
-	_engine->loadRegion(arg1);
+	debug("findObjectInMouseArea (region: %s) %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+	Region *region = _engine->loadRegion(arg1);
 	push(205);
 
-	_engine->currentScreen()->add(_engine->loadObject(arg2));
-	_engine->currentScreen()->add(_engine->loadObject(arg3));
+	_engine->_mouseMap.add(MouseRegion(region, arg2, arg3));
 }
 
 void Process::loadRegionFromObject() {

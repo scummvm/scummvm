@@ -35,6 +35,30 @@ namespace Graphics {
 namespace AGDS {
 
 class Object;
+class Region;
+
+struct MouseRegion {
+	Region *region;
+	Common::String onEnter;
+	Common::String onLeave;
+
+	MouseRegion(): region() { }
+	MouseRegion(Region * reg, const Common::String &enter, const Common::String &leave):
+		region(reg), onEnter(enter), onLeave(leave) {
+	}
+};
+
+//fixme: move me away
+class MouseMap {
+	typedef Common::List<MouseRegion> MouseRegionsType;
+	MouseRegionsType	_mouseRegions;
+
+public:
+	void add(const MouseRegion & area) {
+		_mouseRegions.push_back(area);
+	}
+	const MouseRegion * find(Common::Point pos) const;
+};
 
 class Screen {
 	typedef Common::List<Object *> ChildrenType;

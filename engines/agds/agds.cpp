@@ -40,7 +40,7 @@ namespace AGDS {
 AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0),
 		_mjpgPlayer(NULL), _currentScreen(NULL), _mouseCursor(NULL),
-		_mouse(400, 300), _userEnabled(false) {
+		_mouse(400, 300), _userEnabled(false), _currentRegion(NULL) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -126,24 +126,27 @@ Common::String AGDSEngine::loadFilename(const Common::String &entryName) {
 }
 
 
-Object *AGDSEngine::loadObject(const Common::String & name) {
+Object *AGDSEngine::loadObject(const Common::String & name, bool forceRun) {
 	ObjectsType::iterator i = _objects.find(name);
 	Object *object = i != _objects.end()? i->_value: NULL;
-	if (object)
-		return object;
+	bool run = forceRun;
+	if (!object) {
+		Common::SeekableReadStream * stream = _data.getEntry(name);
+		if (!stream)
+			error("no database entry for %s\n", name.c_str());
 
-	Common::SeekableReadStream * stream = _data.getEntry(name);
-	if (!stream)
-		error("no database entry for %s\n", name.c_str());
+		object = new Object(name, stream);
+		_objects.setVal(name, object);
+		run = true;
+		delete stream;
+	}
 
-	object = new Object(name, stream);
-	_objects.setVal(name, object);
+	if (run) {
+		_processes.push_front(Process(this, object));
+		if (_currentScreen)
+			_currentScreen->add(object);
+	}
 
-	delete stream;
-
-	_processes.push_front(Process(this, object));
-	if (_currentScreen)
-		_currentScreen->add(object);
 	return object;
 }
 
@@ -203,13 +206,27 @@ Common::Error AGDSEngine::run() {
 			switch(event.type) {
 				case Common::EVENT_MOUSEMOVE:
 					_mouse = event.mouse;
+					if (_userEnabled && _currentScreen) {
+						const MouseRegion *region = _mouseMap.find(_mouse);
+						if ((region? region->region: NULL) != _currentRegion) {
+							if (_currentRegion) {
+								_currentRegion = NULL;
+								loadObject(_onLeaveObject, true); //force execution even if it's loaded, fixme: move to another mehtod?
+							}
+							if (region) {
+								_onLeaveObject = region->onLeave;
+								_currentRegion = region->region;
+								loadObject(region->onEnter, true);
+							}
+						}
+					}
 					break;
 				case Common::EVENT_LBUTTONDOWN:
 					_mouse = event.mouse;
 					if (_userEnabled && _currentScreen) {
 						debug("lclick %d, %d", _mouse.x, _mouse.y);
 						Object *object = _currentScreen->find(_mouse);
-						debug("found object %p", (void *)object);
+						debug("found object %p", (const void *)object);
 					}
 					break;
 				default:
