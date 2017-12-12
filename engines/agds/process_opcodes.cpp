@@ -79,6 +79,18 @@ void Process::getRegionCenterY() {
 	debug("getRegionCenterY %s -> %d", name.c_str(), value);
 }
 
+void Process::getObjectId() {
+	const Common::String &name = _object->getName();
+	//no rfind :(((
+	Common::String::const_iterator dotpos = 0;
+	for(Common::String::const_iterator i = name.begin(); i != name.end(); ++i)
+		if (*i == '.')
+			dotpos = i + 1;
+	Common::String id(dotpos, name.end());
+	int value = atoi(id.c_str());
+	debug("getObjectId %s %d", name.c_str(), value);
+	push(value);
+}
 
 void Process::loadPicture() {
 	Common::String name = popFilename();
@@ -192,12 +204,35 @@ void Process::decrementGlobal(int dec) {
 	_engine->setGlobal(name, value - dec);
 }
 
+void Process::multiplyGlobalByTop() {
+	Common::String name = popString();
+	int mul = top();
+	int value = _engine->getGlobal(name);
+	debug("multiply global %s %d by %d", name.c_str(), value, mul);
+	_engine->setGlobal(name, value * mul);
+}
+
+void Process::divideGlobalByTop() {
+	Common::String name = popString();
+	int div = top();
+	int value = _engine->getGlobal(name);
+	debug("divide global %s %d by %d", name.c_str(), value, div);
+	_engine->setGlobal(name, value / div);
+}
+
 void Process::appendToSharedStorage() {
 	Common::String value = popString();
 	int index = _engine->appendToSharedStorage(value);
 	debug("appendToSharedStorage %s -> %d", value.c_str(), index);
 	push(index);
 }
+
+void Process::appendNameToSharedStorage() {
+	int index = _engine->appendToSharedStorage(_object->getName());
+	debug("appendNameToSharedStorage %s -> %d", _object->getName().c_str(), index);
+	push(index);
+}
+
 
 void Process::stub176() {
 	debug("stub176");
@@ -557,6 +592,8 @@ ProcessExitCode Process::execute() {
 			OP		(kPostDecrementGlobal, postDecrementGlobal);
 			OP		(kIncrementGlobalByTop, incrementGlobalByTop);
 			OP		(kDecrementGlobalByTop, decrementGlobalByTop);
+			OP		(kMultiplyGlobalByTop, multiplyGlobalByTop);
+			OP		(kDivideGlobalByTop, divideGlobalByTop);
 			OP		(kEquals, equals);
 			OP		(kNotEquals, notEquals);
 			OP		(kGreater, greater);
@@ -612,6 +649,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGetRegionCenterY, getRegionCenterY);
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
+			OP		(kAppendNameToSharedStorage, appendNameToSharedStorage);
 			OP		(kStub176, stub176);
 			OP		(kStub152, stub152);
 			OP		(kStub153, stub153);
@@ -624,6 +662,7 @@ ProcessExitCode Process::execute() {
 			OP		(kQuit, quit);
 			OP		(kExitScreen, exitScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
+			OP		(kGetObjectId, getObjectId);
 			OP		(kSetGlyphSize, setFontGlyphSize);
 			OP		(kGenerateRegion, generateRegion);
 			OP		(kStub188, stub188);

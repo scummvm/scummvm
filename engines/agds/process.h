@@ -91,6 +91,7 @@ private:
 	void exitScreen();
 	void call(uint16 addr);
 
+	void getObjectId();
 	void clearScreen();
 	void loadPicture();
 	void loadMouse();
@@ -134,7 +135,10 @@ private:
 	void incrementGlobalByTop() { incrementGlobal(top()); }
 	void decrementGlobal(int value);
 	void decrementGlobalByTop() { decrementGlobal(top()); }
+	void multiplyGlobalByTop();
+	void divideGlobalByTop();
 	void appendToSharedStorage();
+	void appendNameToSharedStorage();
 
 	void disableUser();
 	void enableUser();
