@@ -57,6 +57,9 @@ public:
 	void add(const MouseRegion & area) {
 		_mouseRegions.push_back(area);
 	}
+	void clear() {
+		_mouseRegions.clear();
+	}
 	const MouseRegion * find(Common::Point pos) const;
 };
 

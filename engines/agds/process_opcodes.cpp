@@ -441,6 +441,7 @@ void Process::exitProcessSetNextScreen() {
 void Process::exitProcessSetNextScreen80() {
 	Common::String name = popString();
 	debug("exitProcessSetNextScreen80(code 7) %s", name.c_str());
+	_engine->_mouseMap.clear();
 	suspend(kExitCodeDestroyProcessSetNextScreen, name);
 }
 
