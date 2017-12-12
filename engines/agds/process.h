@@ -107,8 +107,8 @@ private:
 	void loadAnimation();
 	void loadSample();
 	void setTimer();
-	void getRegionWidth();
-	void getRegionHeight();
+	void getRegionCenterX();
+	void getRegionCenterY();
 	void fadeObject();
 	void moveScreenObject();
 

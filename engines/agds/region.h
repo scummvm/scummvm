@@ -24,16 +24,24 @@
 #define AGDS_REGION_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/stream.h"
+#include "common/rect.h"
 
 namespace AGDS {
 
 struct Region {
+	typedef Common::Array<Common::Point> PointsType;
+
 	Common::String	name;
-	uint16			width;
-	uint16			height;
+	uint16			centerX;
+	uint16			centerY;
 	uint16			flags;
+	PointsType		points;
+
 	Region(const Common::String &resourceName, Common::SeekableReadStream * stream);
+
+	bool pointIn(Common::Point point) const;
 };
 
 

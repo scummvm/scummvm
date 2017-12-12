@@ -63,22 +63,20 @@ void Process::getIntegerSystemVariable() {
 	push(value);
 }
 
-void Process::getRegionWidth() {
+void Process::getRegionCenterX() {
 	Common::String name = popString();
 	Region *reg = _engine->loadRegion(name);
-	int value = reg->width;
+	int value = reg->centerX;
 	push(value);
-	delete reg;
-	debug("getRegionWidth %s -> %d", name.c_str(), value);
+	debug("getRegionCenterX %s -> %d", name.c_str(), value);
 }
 
-void Process::getRegionHeight() {
+void Process::getRegionCenterY() {
 	Common::String name = popString();
 	Region *reg = _engine->loadRegion(name);
-	int value = reg->height;
+	int value = reg->centerY;
 	push(value);
-	delete reg;
-	debug("getRegionHeight %s -> %d", name.c_str(), value);
+	debug("getRegionCenterY %s -> %d", name.c_str(), value);
 }
 
 
@@ -396,7 +394,6 @@ void Process::findObjectInMouseArea() {
 
 	debug("findObjectInMouseArea %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
 	Region *reg = _engine->loadRegion(arg1);
-	delete reg;
 	push(205);
 
 	_engine->loadObject(arg2);
@@ -514,8 +511,8 @@ ProcessExitCode Process::execute() {
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
 			OP		(kSetSystemVariable, setSystemVariable);
 			OP		(kSetIntegerVariable, setIntegerVariable);
-			OP		(kGetRegionWidth, getRegionWidth);
-			OP		(kGetRegionHeight, getRegionHeight);
+			OP		(kGetRegionCenterX, getRegionCenterX);
+			OP		(kGetRegionCenterY, getRegionCenterY);
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kStub154, stub154);
