@@ -135,7 +135,7 @@ Object *AGDSEngine::loadObject(const Common::String & name, const Common::String
 		if (!stream)
 			error("no database entry for %s\n", clone.c_str());
 
-		object = new Object(clone, stream);
+		object = new Object(name, stream);
 		_objects.setVal(name, object);
 		delete stream;
 	}
