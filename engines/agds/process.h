@@ -111,12 +111,18 @@ private:
 	void getRegionCenterY();
 	void fadeObject();
 	void moveScreenObject();
+	void setFontGlyphSize();
+	void getObjectPictureWidth();
+	void getObjectPictureHeight();
+	void exitProcessSetNextScreen();
+	void quit();
 
 	void setSystemVariable();
 	void getIntegerSystemVariable();
 	void setIntegerVariable();
 	void getGlobal(unsigned index);
 	void setGlobal();
+	void resetGlobal();
 	void hasGlobal();
 	void postIncrementGlobal();
 	void incrementGlobal(int value);
@@ -140,15 +146,12 @@ private:
 	void stub154();
 	void stub155();
 	void stub166();
-	void setFontGlyphSize();
 	void stub188();
 	void stub190();
-	void getObjectPictureWidth();
-	void getObjectPictureHeight();
 	void stub202(unsigned size);
 	void playFilm();
 	void stub206();
-	void exitProcessSetNextScreen();
+	void stub235();
 	void debug(const char *str, ...);
 
 #define UNARY_OP(NAME, OP) void NAME () { int arg = pop(); debug(#NAME " %d", arg); push( OP arg ); }
