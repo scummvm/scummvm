@@ -164,6 +164,14 @@ void Process::postIncrementGlobal() {
 	_engine->setGlobal(name, value + 1);
 }
 
+void Process::postDecrementGlobal() {
+	Common::String name = popString();
+	int value = _engine->getGlobal(name);
+	debug("decrement global %s %d", name.c_str(), value);
+	push(value);
+	_engine->setGlobal(name, value - 1);
+}
+
 void Process::incrementGlobal(int inc) {
 	Common::String name = popString();
 	int value = _engine->getGlobal(name);
@@ -258,10 +266,23 @@ void Process::stub166() {
 	debug("stub166 %d %d", arg1, arg2);
 }
 
+void Process::stub173() {
+	debug("stub173: delAnimations?");
+}
+
+void Process::stub174() {
+	debug("stub174: mouse pointer mode 1?");
+}
+
 void Process::setFontGlyphSize() {
 	_glyphHeight = pop();
 	_glyphWidth = pop();
 	debug("setFontGlyphSize %d %d", _glyphWidth, _glyphHeight);
+}
+
+void Process::generateRegion() {
+	Common::String name = popString();
+	debug("generateRegion %s", name.c_str());
 }
 
 void Process::stub188() {
@@ -485,6 +506,7 @@ ProcessExitCode Process::execute() {
 			OP_W	(kPushImm16_2, push);
 			OP_B	(kGetGlobalImm8, getGlobal);
 			OP		(kPostIncrementGlobal, postIncrementGlobal);
+			OP		(kPostDecrementGlobal, postDecrementGlobal);
 			OP		(kIncrementGlobalByTop, incrementGlobalByTop);
 			OP		(kDecrementGlobalByTop, decrementGlobalByTop);
 			OP		(kEquals, equals);
@@ -538,10 +560,13 @@ ProcessExitCode Process::execute() {
 			OP		(kStub154, stub154);
 			OP		(kStub155, stub155);
 			OP		(kStub166, stub166);
+			OP		(kStub173, stub173);
+			OP		(kStub174, stub174);
 			OP		(kQuit, quit);
 			OP		(kExitScreen, exitScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
 			OP		(kSetGlyphSize, setFontGlyphSize);
+			OP		(kGenerateRegion, generateRegion);
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);
 			OP		(kGetObjectPictureWidth, getObjectPictureWidth);

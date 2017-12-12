@@ -102,6 +102,7 @@ private:
 	void updateScreenHeightToDisplay();
 	void findObjectInMouseArea();
 	void loadRegionFromObject();
+	void generateRegion();
 	void loadPictureFromObject();
 	void loadAnimationFromObject();
 	void loadAnimation();
@@ -126,6 +127,7 @@ private:
 	void resetGlobal();
 	void hasGlobal();
 	void postIncrementGlobal();
+	void postDecrementGlobal();
 	void incrementGlobal(int value);
 	void incrementGlobalByTop() { incrementGlobal(top()); }
 	void decrementGlobal(int value);
@@ -147,6 +149,8 @@ private:
 	void stub154();
 	void stub155();
 	void stub166();
+	void stub173();
+	void stub174();
 	void stub188();
 	void stub190();
 	void stub202(unsigned size);
