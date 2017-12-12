@@ -63,8 +63,54 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream * 
 	}
 }
 
+//FIXME: copied from wintermute/base_region.cpp
+
+typedef struct {
+	double x, y;
+} dPoint;
+
 bool Region::pointIn(Common::Point point) const {
-	return false;
+	debug("POINT IN");
+	uint32 size = points.size();
+	if (size < 3) {
+		return false;
+	}
+
+	int counter = 0;
+	double xinters;
+	dPoint p, p1, p2;
+
+	p.x = (double)point.x;
+	p.y = (double)point.y;
+
+	p1.x = (double)points[0].x;
+	p1.y = (double)points[0].y;
+
+	for (uint32 i = 1; i <= size; i++) {
+		p2.x = (double)points[i % size].x;
+		p2.y = (double)points[i % size].y;
+		debug("%g %g %g %g", p1.x, p1.y, p2.x, p2.y);
+
+		if (p.y > MIN(p1.y, p2.y)) {
+			if (p.y <= MAX(p1.y, p2.y)) {
+				if (p.x <= MAX(p1.x, p2.x)) {
+					if (p1.y != p2.y) {
+						xinters = (p.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y) + p1.x;
+						if (p1.x == p2.x || p.x <= xinters) {
+							counter++;
+						}
+					}
+				}
+			}
+		}
+		p1 = p2;
+	}
+
+	if (counter % 2 == 0) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 }
