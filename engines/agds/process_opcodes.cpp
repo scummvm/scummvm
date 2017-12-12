@@ -99,8 +99,14 @@ void Process::loadSample() {
 void Process::loadScreenObject() {
 	Common::String name = popString();
 	debug("loadScreenObject: %s", name.c_str());
-	_exitValue = name;
-	suspend(kExitCodeLoadScreenObject);
+	suspend(kExitCodeLoadScreenObject, name);
+}
+
+void Process::loadObjectAs() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("loadObject: %s %s", arg1.c_str(), arg2.c_str());
+	suspend(kExitCodeLoadScreenObject, arg1, arg2);
 }
 
 void Process::removeScreenObject() {
@@ -193,6 +199,10 @@ void Process::appendToSharedStorage() {
 	push(index);
 }
 
+void Process::stub176() {
+	debug("stub176");
+}
+
 void Process::disableUser() {
 	debug("disableUser");
 	_engine->enableUser(false);
@@ -248,6 +258,18 @@ void Process::stub136() {
 	debug("stub136 sets value of stub130 to 1000000000");
 }
 
+void Process::stub152() {
+	Common::String name = popString();
+	debug("stub152(getSomeX): %s", name.c_str());
+	push(152);
+}
+
+void Process::stub153() {
+	Common::String name = popString();
+	debug("stub153:(getSomeY): %s", name.c_str());
+	push(153);
+}
+
 void Process::stub154() {
 	Common::String name = popString();
 	debug("stub154(getSomeX): %s", name.c_str());
@@ -272,6 +294,12 @@ void Process::stub173() {
 
 void Process::stub174() {
 	debug("stub174: mouse pointer mode 1?");
+}
+
+void Process::stub192() {
+	int value = pop();
+	Common::String name = popString();
+	debug("stub192: %s: set some object flag to %d", name.c_str(), value);
 }
 
 void Process::setFontGlyphSize() {
@@ -323,6 +351,12 @@ void Process::stub190() {
 	debug("stub190 %d", value);
 }
 
+void Process::stub191() {
+	int value = pop();
+	value = value > 0? 1: 0;
+	debug("stub191: setting some mouse flag to %d", value);
+}
+
 void Process::getObjectPictureWidth() {
 	Common::String name = popString();
 	debug("getObjectPictureWidth %s", name.c_str());
@@ -364,15 +398,15 @@ void Process::stub206() {
 }
 
 void Process::exitProcessSetNextScreen() {
-	_exitValue = popString();
-	debug("exitProcessSetNextScreen %s", _exitValue.c_str());
-	suspend(kExitCodeDestroyProcessSetNextScreen);
+	Common::String name = popString();
+	debug("exitProcessSetNextScreen %s", name.c_str());
+	suspend(kExitCodeDestroyProcessSetNextScreen, name);
 }
 
 void Process::exitProcessSetNextScreen80() {
-	_exitValue = popString();
-	debug("exitProcessSetNextScreen80(code 7) %s", _exitValue.c_str());
-	suspend(kExitCodeDestroyProcessSetNextScreen);
+	Common::String name = popString();
+	debug("exitProcessSetNextScreen80(code 7) %s", name.c_str());
+	suspend(kExitCodeDestroyProcessSetNextScreen, name);
 }
 
 
@@ -390,6 +424,11 @@ void Process::setScreenHeight() {
 
 void Process::updateScreenHeightToDisplay() {
 	debug("updateScreenHeightToDisplay");
+}
+
+void Process::loadTextFromObject() {
+	Common::String name = popFilename();
+	debug("loadTextFromObject %s", name.c_str());
 }
 
 void Process::call(uint16 addr) {
@@ -413,6 +452,15 @@ void Process::onUse(unsigned size) {
 	_ip += size;
 }
 
+void Process::onLook(unsigned size) {
+	debug("look? handler, %u instructions", size);
+	_ip += size;
+}
+
+void Process::onScreenBD(unsigned size) {
+	debug("onScreen(+BD) handler, %u instructions", size);
+	_ip += size;
+}
 
 void Process::enableUser() {
 	//screen loading block user interaction until this instruction
@@ -522,10 +570,15 @@ ProcessExitCode Process::execute() {
 			OP		(kSetGlobal, setGlobal);
 			OP		(kBoolOr, boolOr);
 			OP		(kBoolAnd, boolAnd);
+			OP		(kAnd, bitAnd);
+			OP		(kOr, bitOr);
+			OP		(kXor, bitXor);
 			OP		(kNot, bitNot);
 			OP		(kBoolNot, boolNot);
 			OP_U	(kCallImm16, call);
+			OP_U	(kObjectRegisterLookHandler, onLook);
 			OP_U	(kObjectRegisterUseHandler, onUse);
+			OP_U	(kScreenRegisterHandlerBD, onScreenBD);
 			OP		(kStub66, loadMouseStub66);
 			OP		(kLoadRegionFromObject, loadRegionFromObject);
 			OP		(kLoadPictureFromObject, loadPictureFromObject);
@@ -537,7 +590,9 @@ ProcessExitCode Process::execute() {
 			OP		(kStub80, exitProcessSetNextScreen80);
 			OP		(kSetScreenHeight, setScreenHeight);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
+			OP		(kLoadTextFromObject, loadTextFromObject);
 			OP		(kScreenLoadObject, loadScreenObject);
+			OP		(kScreenLoadObjectAs, loadObjectAs);
 			OP		(kExitProcessSetNextScreen, exitProcessSetNextScreen);
 			OP		(kScreenRemoveObject, removeScreenObject);
 			OP		(kLoadAnimation, loadAnimation);
@@ -557,11 +612,15 @@ ProcessExitCode Process::execute() {
 			OP		(kGetRegionCenterY, getRegionCenterY);
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
+			OP		(kStub176, stub176);
+			OP		(kStub152, stub152);
+			OP		(kStub153, stub153);
 			OP		(kStub154, stub154);
 			OP		(kStub155, stub155);
 			OP		(kStub166, stub166);
 			OP		(kStub173, stub173);
 			OP		(kStub174, stub174);
+			OP		(kStub192, stub192);
 			OP		(kQuit, quit);
 			OP		(kExitScreen, exitScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
@@ -569,6 +628,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGenerateRegion, generateRegion);
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);
+			OP		(kStub191, stub191);
 			OP		(kGetObjectPictureWidth, getObjectPictureWidth);
 			OP		(kGetObjectPictureHeight, getObjectPictureHeight);
 			OP		(kLoadPicture, loadPicture);

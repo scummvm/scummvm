@@ -67,11 +67,11 @@ private:
 	bool load();
 	void runProcess();
 
-	Object * loadObject(const Common::String & name);
+	Object * loadObject(const Common::String & name, const Common::String & prototype = Common::String());
 	void runObject(Object *object);
 
-	void runObject(const Common::String & name)
-	{ runObject(loadObject(name)); }
+	void runObject(const Common::String & name, const Common::String &prototype = Common::String())
+	{ runObject(loadObject(name, prototype)); }
 
 	void loadScreen(const Common::String & name);
 

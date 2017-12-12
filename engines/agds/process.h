@@ -44,8 +44,8 @@ private:
 	StackType		_stack;
 	unsigned		_ip, _lastIp;
 	Status			_status;
-	Common::String	_exitValue;
 	ProcessExitCode	_exitCode;
+	Common::String	_exitArg1, _exitArg2;
 	int				_glyphWidth, _glyphHeight;
 
 private:
@@ -105,8 +105,10 @@ private:
 	void generateRegion();
 	void loadPictureFromObject();
 	void loadAnimationFromObject();
+	void loadTextFromObject();
 	void loadAnimation();
 	void loadSample();
+	void loadObjectAs();
 	void setTimer();
 	void getRegionCenterX();
 	void getRegionCenterY();
@@ -138,6 +140,8 @@ private:
 	void enableUser();
 	void onKey(unsigned size);
 	void onUse(unsigned size);
+	void onLook(unsigned size);
+	void onScreenBD(unsigned size);
 
 	void loadMouseStub66();
 	void stub128();
@@ -146,13 +150,18 @@ private:
 	void stub133();
 	void stub134();
 	void stub136();
+	void stub152();
+	void stub153();
 	void stub154();
 	void stub155();
 	void stub166();
 	void stub173();
 	void stub174();
+	void stub176();
 	void stub188();
 	void stub190();
+	void stub191();
+	void stub192();
 	void stub202(unsigned size);
 	void playFilm();
 	void stub206();
@@ -176,14 +185,19 @@ private:
 	BINARY_OP(sub, -)
 	BINARY_OP(mul, *)
 	BINARY_OP(div, /)
+	BINARY_OP(bitAnd, &)
+	BINARY_OP(bitOr, |)
+	BINARY_OP(bitXor, ^)
 
 #undef UNARY_OP
 #undef BINARY_OP
 
-	void suspend(ProcessExitCode exitCode = kExitCodeSuspend) {
+	void suspend(ProcessExitCode exitCode = kExitCodeSuspend, const Common::String &arg1 = Common::String(), const Common::String &arg2 = Common::String()) {
 		if (_status == kStatusActive)
 			_status = kStatusPassive;
 		_exitCode = exitCode;
+		_exitArg1 = arg1;
+		_exitArg2 = arg2;
 	}
 
 public:
@@ -201,8 +215,12 @@ public:
 		return _exitCode;
 	}
 
-	const Common::String & getExitValue() const {
-		return _exitValue;
+	const Common::String & getExitArg1() const {
+		return _exitArg1;
+	}
+
+	const Common::String & getExitArg2() const {
+		return _exitArg2;
 	}
 };
 
