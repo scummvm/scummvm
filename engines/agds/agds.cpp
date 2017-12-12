@@ -225,7 +225,13 @@ Common::Error AGDSEngine::run() {
 					if (_userEnabled && _currentScreen) {
 						debug("lclick %d, %d", _mouse.x, _mouse.y);
 						Object *object = _currentScreen->find(_mouse);
-						debug("found object %p", (const void *)object);
+						if (object) {
+							uint ip = object->getClickHandler();
+							if (ip) {
+								debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
+								_processes.push_front(Process(this, object, ip));
+							}
+						}
 					}
 					break;
 				default:

@@ -55,7 +55,7 @@ private:
 	const Graphics::Surface *		_picture;
 	Region *						_region;
 	Common::Point					_pos;
-	unsigned						_clickHandler;
+	uint							_clickHandler;
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
@@ -86,8 +86,12 @@ public:
 		return _region;
 	}
 
-	void setClickHandler(uint32 ip) {
+	void setClickHandler(uint ip) {
 		_clickHandler = ip;
+	}
+
+	uint getClickHandler() const {
+		return _clickHandler;
 	}
 
 	void paint(Graphics::Surface &backbuffer);
