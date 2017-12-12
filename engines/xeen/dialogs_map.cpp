@@ -127,6 +127,7 @@ void MapDialog::drawOutdoors() {
 		for (int xp = MAP_XSTART, mazeX = _pt.x - (MAP_DIFF - 1); mazeX <= (_pt.x + MAP_DIFF);
 				xp += TILE_WIDTH, ++mazeX) {
 			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0);
+			assert(v != INVALID_CELL);
 			frame = map.mazeDataCurrent()._surfaceTypes[v];
 
 			if (map._currentSteppedOn) {
@@ -140,6 +141,7 @@ void MapDialog::drawOutdoors() {
 		for (int xp = MAP_XSTART, mazeX = _pt.x - (MAP_DIFF - 1); mazeX <= (_pt.x + MAP_DIFF);
 				xp += TILE_WIDTH, ++mazeX) {
 			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
+			assert(v != INVALID_CELL);
 			frame = map.mazeDataCurrent()._wallTypes[v];
 
 			if (frame && map._currentSteppedOn)

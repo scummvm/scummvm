@@ -75,6 +75,7 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
 				xp += TILE_WIDTH, ++mazeX) {
 			v = map.mazeLookup(Common::Point(mazeX, mazeY), 0);
+			assert(v != INVALID_CELL);
 			frame = map.mazeDataCurrent()._surfaceTypes[v];
 
 			if (frame && (map._currentSteppedOn || party._wizardEyeActive)) {
@@ -88,6 +89,7 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 		for (int xp = MINIMAP_XSTART, mazeX = pt.x - MINIMAP_DIFF; mazeX <= (pt.x + MINIMAP_DIFF);
 				xp += TILE_WIDTH, ++mazeX) {
 			v = map.mazeLookup(Common::Point(mazeX, mazeY), 4);
+			assert(v != INVALID_CELL);
 			frame = map.mazeData()._wallTypes[v];
 
 			if (frame && (map._currentSteppedOn || party._wizardEyeActive)) {
