@@ -343,11 +343,17 @@ void Process::stub206() {
 }
 
 void Process::exitProcessSetNextScreen() {
-	debug("exitProcessSetNextScreen");
 	_exitValue = popString();
-	_exitCode = kExitCodeDestroyProcessSetNextScreen;
-	_status = kStatusPassive;
+	debug("exitProcessSetNextScreen %s", _exitValue.c_str());
+	suspend(kExitCodeDestroyProcessSetNextScreen);
 }
+
+void Process::exitProcessSetNextScreen80() {
+	_exitValue = popString();
+	debug("exitProcessSetNextScreen80(code 7) %s", _exitValue.c_str());
+	suspend(kExitCodeDestroyProcessSetNextScreen);
+}
+
 
 void Process::exitScreen()
 {
@@ -365,18 +371,11 @@ void Process::updateScreenHeightToDisplay() {
 	debug("updateScreenHeightToDisplay");
 }
 
-
-void Process::suspendProcess() {
-	debug("suspendProcess");
-	_status = kStatusPassive;
-	_exitCode = kExitCodeSuspend;
-}
-
 void Process::call(uint16 addr) {
 	debug("call %04x", addr);
 	//original engine just create new process, save exit code in screen object
 	//and on stack, then just ignore return code, fixme?
-	Process callee(_engine, _object, addr);
+	Process callee(_engine, _object, _ip + addr);
 	ProcessExitCode code = callee.execute();
 	debug("call returned %d", code);
 }
@@ -513,6 +512,7 @@ ProcessExitCode Process::execute() {
 			OP		(kEnableUser, enableUser);
 			OP		(kClearScreen, clearScreen);
 			OP		(kLoadMouse, loadMouse);
+			OP		(kStub80, exitProcessSetNextScreen80);
 			OP		(kSetScreenHeight, setScreenHeight);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
 			OP		(kScreenLoadObject, loadScreenObject);
