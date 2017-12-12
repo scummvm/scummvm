@@ -39,12 +39,6 @@ const int kMaxCarry = 30;
 
 const int kSleepAutosaveSlot = 999;
 
-//const int kRoomsChap0 =  1;
-//const int kRoomsChap1 = 16;
-//const int kRoomsChap2 =  9;
-//const int kRoomsChap3 = 21;
-//const int kRoomsNum = kRoomsChap0 + kRoomsChap1 + kRoomsChap2 + kRoomsChap3;
-
 const byte kShownFalse = 0;
 const byte kShownTrue = 1;
 
