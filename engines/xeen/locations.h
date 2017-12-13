@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef XEEN_TOWN_H
-#define XEEN_TOWN_H
+#ifndef XEEN_LOCATIONS_H
+#define XEEN_LOCATIONS_H
 
 #include "common/scummsys.h"
 #include "common/str-array.h"
@@ -31,18 +31,19 @@
 
 namespace Xeen {
 
-enum TownAction {
+enum LocationAction {
 	BANK = 0, BLACKSMITH = 1, GUILD = 2, TAVERN = 3, TEMPLE = 4,
 	TRAINING = 5, ARENA = 6, NO_ACTION = 7, REAPER = 8, GOLEM = 9,
 	DWARF1 = 10, SPHINX = 11, PYRAMID = 12, DWARF2 = 13
 };
 
 class XeenEngine;
-class TownMessage;
+
+namespace Locations {
 
 class BaseLocation : public ButtonContainer {
 protected:
-	TownAction _townActionId;
+	LocationAction _LocationActionId;
 	Common::Array<SpriteResource> _townSprites;
 	SpriteResource _icons1, _icons2;
 	int _townMaxId;
@@ -84,7 +85,7 @@ protected:
 	 */
 	virtual void farewell() {}
 public:
-	BaseLocation(TownAction action);
+	BaseLocation(LocationAction action);
 	virtual ~BaseLocation();
 
 	/**
@@ -259,7 +260,7 @@ protected:
 	 */
 	void setNewLocation();
 public:
-	CutsceneLocation(TownAction action);
+	CutsceneLocation(LocationAction action);
 };
 
 class ReaperCutscene : public CutsceneLocation {
@@ -312,9 +313,26 @@ public:
 	virtual int show();
 };
 
-class Town {
+} // End of namespace Locations
+
+class LocationMessage : public Locations::BaseLocation {
 private:
-	BaseLocation *_location;
+	SpriteResource _iconSprites;
+
+	LocationMessage() : Locations::BaseLocation(NO_ACTION) {}
+
+	bool execute(int portrait, const Common::String &name,
+		const Common::String &text, int confirm);
+
+	void loadButtons();
+public:
+	static bool show(int portrait, const Common::String &name,
+		const Common::String &text, int confirm);
+};
+
+class LocationManager {
+private:
+	Locations::BaseLocation *_location;
 private:
 	int townWait();
 
@@ -330,39 +348,24 @@ private:
 
 	Character *doTrainingOptions(Character *c);
 public:
-	Town();
+	LocationManager();
 
 	/**
-	 * Show a given location, and return any result
-	 */
-	int townAction(TownAction actionId);
+	* Show a given location, and return any result
+	*/
+	int doAction(LocationAction actionId);
 
 	/**
-	 * Returns true if a town location (bank, blacksmith, etc.) is currently active
-	 */
+	* Returns true if a town location (bank, blacksmith, etc.) is currently active
+	*/
 	bool isActive() const;
 
 	/**
-	 * Draws a currently active town location's animation
-	 */
+	* Draws a currently active town location's animation
+	*/
 	void drawAnim(bool flag);
-};
-
-class TownMessage : public BaseLocation {
-private:
-	SpriteResource _iconSprites;
-
-	TownMessage() : BaseLocation(NO_ACTION) {}
-
-	bool execute(int portrait, const Common::String &name,
-		const Common::String &text, int confirm);
-
-	void loadButtons();
-public:
-	static bool show(int portrait, const Common::String &name,
-		const Common::String &text, int confirm);
 };
 
 } // End of namespace Xeen
 
-#endif /* XEEN_SPELLS_H */
+#endif /* XEEN_LOCATIONS_H */

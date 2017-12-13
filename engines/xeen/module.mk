@@ -35,6 +35,7 @@ MODULE_OBJS := \
 	interface.o \
 	interface_minimap.o \
 	interface_scene.o \
+	locations.o \
 	map.o \
 	music.o \
 	party.o \
@@ -45,7 +46,6 @@ MODULE_OBJS := \
 	sound.o \
 	spells.o \
 	sprites.o \
-	town.o \
 	window.o \
 	xeen.o \
 	xsurface.o

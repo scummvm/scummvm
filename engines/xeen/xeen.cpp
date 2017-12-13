@@ -48,6 +48,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_events = nullptr;
 	_files = nullptr;
 	_interface = nullptr;
+	_locations = nullptr;
 	_map = nullptr;
 	_party = nullptr;
 	_resources = nullptr;
@@ -56,7 +57,6 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_scripts = nullptr;
 	_sound = nullptr;
 	_spells = nullptr;
-	_town = nullptr;
 	_windows = nullptr;
 	_eventData = nullptr;
 	_noDirectionSense = false;
@@ -73,6 +73,7 @@ XeenEngine::~XeenEngine() {
 	delete _debugger;
 	delete _events;
 	delete _interface;
+	delete _locations;
 	delete _map;
 	delete _party;
 	delete _saves;
@@ -80,7 +81,6 @@ XeenEngine::~XeenEngine() {
 	delete _scripts;
 	delete _sound;
 	delete _spells;
-	delete _town;
 	delete _windows;
 	delete _eventData;
 	delete _resources;
@@ -96,6 +96,7 @@ void XeenEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_interface = new Interface(this);
+	_locations = new LocationManager();
 	_map = new Map(this);
 	_party = new Party(this);
 	_saves = new SavesManager(this, *_party);
@@ -103,7 +104,6 @@ void XeenEngine::initialize() {
 	_scripts = new Scripts(this);
 	_sound = new Sound(this, _mixer);
 	_spells = new Spells(this);
-	_town = new Town();
 	_windows = new Windows();
 
 	File f("029.obj");

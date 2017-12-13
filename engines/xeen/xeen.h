@@ -37,6 +37,7 @@
 #include "xeen/events.h"
 #include "xeen/files.h"
 #include "xeen/interface.h"
+#include "xeen/locations.h"
 #include "xeen/map.h"
 #include "xeen/party.h"
 #include "xeen/resources.h"
@@ -45,7 +46,6 @@
 #include "xeen/scripts.h"
 #include "xeen/sound.h"
 #include "xeen/spells.h"
-#include "xeen/town.h"
 #include "xeen/window.h"
 
 /**
@@ -144,6 +144,7 @@ public:
 	EventsManager *_events;
 	FileManager *_files;
 	Interface *_interface;
+	LocationManager *_locations;
 	Map *_map;
 	Party *_party;
 	Resources *_resources;
@@ -152,7 +153,6 @@ public:
 	Scripts *_scripts;
 	Sound *_sound;
 	Spells *_spells;
-	Town *_town;
 	Windows *_windows;
 	Mode _mode;
 	GameEvent _gameEvent;

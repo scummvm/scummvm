@@ -442,7 +442,7 @@ bool Scripts::cmdNPC(ParamsIterator &params) {
 	int confirm = params.readByte();
 	int lineNum = params.readByte();
 
-	if (TownMessage::show(portrait, _message, map._events._text[textNum],
+	if (LocationMessage::show(portrait, _message, map._events._text[textNum],
 			confirm)) {
 		_lineNum = lineNum;
 		return false;
@@ -839,7 +839,7 @@ bool Scripts::cmdSpawn(ParamsIterator &params) {
 }
 
 bool Scripts::cmdDoTownEvent(ParamsIterator &params) {
-	_scriptResult = _vm->_town->townAction((TownAction)params.readByte());
+	_scriptResult = _vm->_locations->doAction((LocationAction)params.readByte());
 	_vm->_party->_stepped = true;
 	_refreshIcons = true;
 

@@ -225,7 +225,7 @@ int Choose123::show(XeenEngine *vm, int numOptions) {
 int Choose123::execute(int numOptions) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
-	Town &town = *_vm->_town;
+	LocationManager &loc = *_vm->_locations;
 	Windows &windows = *_vm->_windows;
 
 	Mode oldMode = _vm->_mode;
@@ -241,8 +241,8 @@ int Choose123::execute(int numOptions) {
 		do {
 			events.updateGameCounter();
 			int delay;
-			if (town.isActive()) {
-				town.drawAnim(true);
+			if (loc.isActive()) {
+				loc.drawAnim(true);
 				delay = 3;
 			} else {
 				intf.draw3d(true);

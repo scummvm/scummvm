@@ -20,7 +20,7 @@
  *
  */
 
-#include "xeen/town.h"
+#include "xeen/locations.h"
 #include "xeen/dialogs_input.h"
 #include "xeen/dialogs_items.h"
 #include "xeen/dialogs_query.h"
@@ -29,9 +29,10 @@
 #include "xeen/xeen.h"
 
 namespace Xeen {
+namespace Locations {
 
-BaseLocation::BaseLocation(TownAction action) : ButtonContainer(g_vm),
-		_townActionId(action), _isDarkCc(g_vm->_files->_isDarkCc),
+BaseLocation::BaseLocation(LocationAction action) : ButtonContainer(g_vm),
+		_LocationActionId(action), _isDarkCc(g_vm->_files->_isDarkCc),
 		_vocName("hello1.voc") {
 	_townMaxId = (action >= SPHINX) ? 0 : Res.TOWN_MAXES[_isDarkCc][action];
 	if (action < NO_ACTION) {
@@ -67,7 +68,7 @@ int BaseLocation::show() {
 	// Load the needed sprite sets for the location
 	for (uint idx = 0; idx < _townSprites.size(); ++idx) {
 		Common::String shapesName = Common::String::format("%s%d.twn",
-			Res.TOWN_ACTION_SHAPES[_townActionId], idx + 1);
+			Res.TOWN_ACTION_SHAPES[_LocationActionId], idx + 1);
 		_townSprites[idx].load(shapesName);
 	}
 
@@ -143,7 +144,7 @@ void BaseLocation::drawAnim(bool flag) {
 	Windows &windows = *g_vm->_windows;
 
 	// TODO: Figure out a clean way to split method into individual location classes
-	if (_townActionId == BLACKSMITH) {
+	if (_LocationActionId == BLACKSMITH) {
 		if (sound.isPlaying()) {
 			if (_isDarkCc) {
 				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
@@ -159,12 +160,12 @@ void BaseLocation::drawAnim(bool flag) {
 					Common::Point(34, 33));
 			}
 		}
-	} else if (!_isDarkCc || _townActionId != TRAINING) {
+	} else if (!_isDarkCc || _LocationActionId != TRAINING) {
 		if (!_townSprites[_drawFrameIndex / 8].empty())
 			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
 	}
 
-	switch (_townActionId) {
+	switch (_LocationActionId) {
 	case BANK:
 		if (sound.isPlaying() || (_isDarkCc && _animFrame)) {
 			if (_isDarkCc) {
@@ -251,10 +252,10 @@ void BaseLocation::drawAnim(bool flag) {
 	}
 
 	if (_isDarkCc) {
-		if (_townActionId == BLACKSMITH && (_drawFrameIndex == 4 || _drawFrameIndex == 13))
+		if (_LocationActionId == BLACKSMITH && (_drawFrameIndex == 4 || _drawFrameIndex == 13))
 			sound.playFX(45);
 
-		if (_townActionId == TRAINING && _drawFrameIndex == 23) {
+		if (_LocationActionId == TRAINING && _drawFrameIndex == 23) {
 			sound.playSound("spit1.voc");
 		}
 	} else {
@@ -262,13 +263,13 @@ void BaseLocation::drawAnim(bool flag) {
 			_drawFrameIndex = 17;
 		if (_townMaxId == 26 && _drawFrameIndex == 0)
 			_drawFrameIndex = 20;
-		if (_townActionId == BLACKSMITH && (_drawFrameIndex == 3 || _drawFrameIndex == 9))
+		if (_LocationActionId == BLACKSMITH && (_drawFrameIndex == 3 || _drawFrameIndex == 9))
 			sound.playFX(45);
 	}
 
 	windows[3].update();
 
-	if (_townActionId == BANK)
+	if (_LocationActionId == BANK)
 		_animFrame = 2;
 }
 
@@ -685,8 +686,8 @@ Character *TavernLocation::doOptions(Character *c) {
 		// Sign In
 		idx = _isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
 		assert(idx >= 0);
-		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_townActionId][idx][0];
-		party._mazePosition.y = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_townActionId][idx][1];
+		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_LocationActionId][idx][0];
+		party._mazePosition.y = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_LocationActionId][idx][1];
 
 		if (!_isDarkCc || party._mazeId == 29)
 			party._mazeDirection = DIR_WEST;
@@ -1107,7 +1108,7 @@ ArenaLocation::ArenaLocation() : BaseLocation(ARENA) {
 
 /*------------------------------------------------------------------------*/
 
-CutsceneLocation::CutsceneLocation(TownAction action) : BaseLocation(action),
+CutsceneLocation::CutsceneLocation(LocationAction action) : BaseLocation(action),
 		_animCtr(0), _mazeFlag(false) {
 	Party &party = *g_vm->_party;
 	_mazeId = party._mazeId;
@@ -1461,52 +1462,54 @@ int PyramidLocation::show() {
 	return 0;
 }
 
+} // End of namespace Locations
+
 /*------------------------------------------------------------------------*/
 
-Town::Town() : _location(nullptr) {
+LocationManager::LocationManager() : _location(nullptr) {
 }
 
-int Town::townAction(TownAction actionId) {
+int LocationManager::doAction(LocationAction actionId) {
 	// Create the desired location
 	switch (actionId) {
 	case BANK:
-		_location = new BankLocation();
+		_location = new Locations::BankLocation();
 		break;
 	case BLACKSMITH:
-		_location = new BlacksmithLocation();
+		_location = new Locations::BlacksmithLocation();
 		break;
 	case GUILD:
-		_location = new GuildLocation();
+		_location = new Locations::GuildLocation();
 		break;
 	case TAVERN:
-		_location = new TavernLocation();
+		_location = new Locations::TavernLocation();
 		break;
 	case TEMPLE:
-		_location = new TempleLocation();
+		_location = new Locations::TempleLocation();
 		break;
 	case TRAINING:
-		_location = new TrainingLocation();
+		_location = new Locations::TrainingLocation();
 		break;
 	case ARENA:
-		_location = new ArenaLocation();
+		_location = new Locations::ArenaLocation();
 		break;
 	case REAPER:
-		_location = new ReaperCutscene();
+		_location = new Locations::ReaperCutscene();
 		break;
 	case GOLEM:
-		_location = new GolemCutscene();
+		_location = new Locations::GolemCutscene();
 		break;
 	case DWARF1:
-		_location = new DwarfCutscene(true);
+		_location = new Locations::DwarfCutscene(true);
 		break;
 	case DWARF2:
-		_location = new DwarfCutscene(false);
+		_location = new Locations::DwarfCutscene(false);
 		break;
 	case SPHINX:
-		_location = new SphinxCutscene();
+		_location = new Locations::SphinxCutscene();
 		break;
 	case PYRAMID:
-		_location = new PyramidLocation();
+		_location = new Locations::PyramidLocation();
 		break;
 	default:
 		return 0;
@@ -1520,27 +1523,27 @@ int Town::townAction(TownAction actionId) {
 	return result;
 }
 
-bool Town::isActive() const {
+bool LocationManager::isActive() const {
 	return _location != nullptr;
 }
 
-void Town::drawAnim(bool flag) {
+void LocationManager::drawAnim(bool flag) {
 	if (_location)
 		_location->drawAnim(flag);
 }
 
 /*------------------------------------------------------------------------*/
 
-bool TownMessage::show(int portrait, const Common::String &name,
+bool LocationMessage::show(int portrait, const Common::String &name,
 		const Common::String &text, int confirm) {
-	TownMessage *dlg = new TownMessage();
+	LocationMessage *dlg = new LocationMessage();
 	bool result = dlg->execute(portrait, name, text, confirm);
 	delete dlg;
 
 	return result;
 }
 
-bool TownMessage::execute(int portrait, const Common::String &name, const Common::String &text,
+bool LocationMessage::execute(int portrait, const Common::String &name, const Common::String &text,
 		int confirm) {
 	EventsManager &events = *g_vm->_events;
 	Interface &intf = *g_vm->_interface;
@@ -1647,7 +1650,7 @@ bool TownMessage::execute(int portrait, const Common::String &name, const Common
 	return result == 1;
 }
 
-void TownMessage::loadButtons() {
+void LocationMessage::loadButtons() {
 	_iconSprites.load("confirm.icn");
 
 	addButton(Common::Rect(235, 75, 259, 95), Common::KEYCODE_y, &_iconSprites);

@@ -40,7 +40,7 @@ int WhoWill::execute(int message, int action, bool type) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
-	Town &town = *_vm->_town;
+	LocationManager &loc = *_vm->_locations;
 	Windows &windows = *_vm->_windows;
 	int numFrames;
 
@@ -66,7 +66,7 @@ int WhoWill::execute(int message, int action, bool type) {
 		events.updateGameCounter();
 
 		if (windows[11]._enabled) {
-			town.drawAnim(false);
+			loc.drawAnim(false);
 			windows[36].frame();
 			numFrames = 3;
 		} else {

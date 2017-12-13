@@ -102,7 +102,7 @@ bool YesNo::execute(bool type, bool townFlag) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Resources &res = *_vm->_resources;
-	Town &town = *_vm->_town;
+	LocationManager &loc = *_vm->_locations;
 	Windows &windows = *_vm->_windows;
 	SpriteResource confirmSprites;
 	bool result = false;
@@ -127,8 +127,8 @@ bool YesNo::execute(bool type, bool townFlag) {
 	while (!_vm->shouldQuit()) {
 		events.updateGameCounter();
 
-		if (town.isActive()) {
-			town.drawAnim(townFlag);
+		if (loc.isActive()) {
+			loc.drawAnim(townFlag);
 			//numFrames = 3;
 		} else {
 			intf.draw3d(true);
