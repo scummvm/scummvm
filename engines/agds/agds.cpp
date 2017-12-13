@@ -150,21 +150,27 @@ void AGDSEngine::runObject(Object *object) {
 
 void AGDSEngine::loadScreen(const Common::String & name) {
 	debug("loadScreen %s", name.c_str());
+	if (_currentScreen)
+		_previousScreen = _currentScreen->getName();
+
 	ScreensType::iterator i = _screens.find(name);
-	if (i == _screens.end())
-	{
-		Object *object = loadObject(name);
-		Screen *screen = new Screen(object);
-		_currentScreen = screen;
+	Screen *screen;
+	if (i == _screens.end()) {
+		screen = new Screen(loadObject(name));
 		_screens[name] = screen;
-	}
+	} else
+		screen = i->_value;
+
+	_currentScreen = screen;
 	runObject(name);
 }
 
 void AGDSEngine::runProcess() {
 	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
 		Process & process = *p;
+		const Common::String &name = process.getName();
 		if (process.getStatus() == Process::kStatusDone) {
+			debug("process %s finished", name.c_str());
 			p = _processes.erase(p);
 			continue;
 		}
@@ -177,11 +183,14 @@ void AGDSEngine::runProcess() {
 		case kExitCodeDestroyProcessSetNextScreen:
 			loadScreen(process.getExitArg1());
 			break;
+		case kExitCodeLoadPreviousScreenObject:
+			loadScreen(_previousScreen);
+			break;
 		case kExitCodeSuspend:
-			debug("process suspended");
+			debug("process %s suspended", name.c_str());
 			return;
 		default:
-			debug("destroying process...");
+			debug("destroying process %s...", name.c_str());
 			p = _processes.erase(p);
 			continue;
 		}

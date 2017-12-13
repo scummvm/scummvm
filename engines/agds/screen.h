@@ -64,11 +64,17 @@ public:
 };
 
 class Screen {
+	Common::String _name;
 	typedef Common::List<Object *> ChildrenType;
 	ChildrenType _children;
 
 public:
 	Screen(Object *object);
+
+	const Common::String &getName() const {
+		return _name;
+	}
+
 	void add(Object *object);
 	void remove(const Common::String &name);
 	void paint(Graphics::Surface &backbuffer);

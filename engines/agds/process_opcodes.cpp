@@ -445,6 +445,11 @@ void Process::exitProcessSetNextScreen80() {
 	suspend(kExitCodeDestroyProcessSetNextScreen, name);
 }
 
+void Process::loadPreviousScreen() {
+	debug("loadPreviousScreen");
+	_engine->_mouseMap.clear();
+	suspend(kExitCodeLoadPreviousScreenObject);
+}
 
 void Process::exitScreen()
 {
@@ -662,6 +667,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub192, stub192);
 			OP		(kQuit, quit);
 			OP		(kExitScreen, exitScreen);
+			OP		(kLoadPreviousScreen, loadPreviousScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
 			OP		(kGetObjectId, getObjectId);
 			OP		(kSetGlyphSize, setFontGlyphSize);
