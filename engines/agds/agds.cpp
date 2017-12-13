@@ -111,20 +111,8 @@ Region * AGDSEngine::loadRegion(const Common::String &name) {
 }
 
 Common::String AGDSEngine::loadFilename(const Common::String &entryName) {
-	Common::SeekableReadStream * stream = _data.getEntry(entryName);
-	if (!stream)
-		error("no database entry for %s\n", entryName.c_str());
-
-	byte name[32];
-	int end = stream->read(name, sizeof(name));
-	byte *nameEnd = Common::find(name, name + end, 0);
-	unsigned size = nameEnd - name;
-	ResourceManager::decrypt(name, size);
-
-	delete stream;
-	return Common::String(reinterpret_cast<const char *>(name), size);
+	return ResourceManager::loadText(_data.getEntry(entryName));
 }
-
 
 Object *AGDSEngine::loadObject(const Common::String & name, const Common::String &prototype) {
 	ObjectsType::iterator i = _objects.find(name);

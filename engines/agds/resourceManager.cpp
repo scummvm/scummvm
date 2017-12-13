@@ -166,5 +166,33 @@ namespace AGDS {
 		return NULL;
 	}
 
+	Common::String ResourceManager::loadText(Common::SeekableReadStream *stream)
+	{
+		if (!stream)
+			error("stream is null");
+		Common::Array<byte> text(stream->size());
+		if (stream->read(text.data(), text.size()) != text.size())
+			error("short read from text resource");
+		delete stream;
+
+		char *begin = reinterpret_cast<char *>(text.data());
+		char *end = begin + text.size();
+		while(begin != end && end[-1] == 0)
+			--end;
+
+		decrypt(text.data(), end - begin);
+
+		debug("last char %d %ld", (int)*end, end - begin);
+
+		return Common::String(begin, end);
+	}
+
+	Common::String ResourceManager::loadText(const Common::String & name) const {
+		Common::SeekableReadStream * stream = getResource(name);
+		if (!stream)
+			error("no text resource %s", name.c_str());
+		return loadText(stream);
+	}
+
 
 } // End of namespace AGDS
