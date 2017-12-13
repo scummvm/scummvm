@@ -25,6 +25,7 @@
 #include "common/memstream.h"
 #include "common/rect.h"
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 namespace AGDS {
 
@@ -87,7 +88,7 @@ const Object::StringEntry & Object::getString(uint16 index) const {
 	return _stringTable[index];
 }
 
-void Object::setPicture(const Graphics::Surface *picture) {
+void Object::setPicture(Graphics::TransparentSurface *picture) {
 	delete _picture;
 	_picture = picture;
 }
@@ -97,7 +98,7 @@ void Object::paint(Graphics::Surface &backbuffer) {
 		Common::Point dst = _pos;
 		Common::Rect srcRect = _picture->getRect();
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
-			backbuffer.copyRectToSurface(*_picture, dst.x, dst.y, srcRect);
+			_picture->blit(backbuffer, _pos.x, _pos.y, Graphics::FLIP_NONE, &srcRect);
 	}
 }
 

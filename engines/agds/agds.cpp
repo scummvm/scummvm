@@ -328,14 +328,14 @@ void AGDSEngine::loadCursor(const Common::String &name, unsigned index) {
 		delete cursor;
 }
 
-const Graphics::Surface * AGDSEngine::loadPicture(const Common::String &name)
+Graphics::TransparentSurface * AGDSEngine::loadPicture(const Common::String &name)
 { return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat)); }
 
 Graphics::TransparentSurface *AGDSEngine::convertToTransparent(const Graphics::Surface *surface) {
 	if (!surface)
 		return NULL;
 	Graphics::TransparentSurface * t = new Graphics::TransparentSurface(*surface, true);
-	t->applyColorKey(0xff, 0, 0xff, true);
+	t->applyColorKey(0xff, 0, 0xff);
 	delete surface;
 	return t;
 }
