@@ -176,7 +176,7 @@ enum Opcode {
 	kStub156						= 156,
 	kStub157						= 157,
 	kQuit							= 158,
-	kStub159						= 159,
+	kExitProcessCreatePatch			= 159,
 	kStub160						= 160,
 	kStub161						= 161,
 	kExitScreen						= 162,
