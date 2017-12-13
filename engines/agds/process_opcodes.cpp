@@ -25,6 +25,7 @@
 #include "agds/opcode.h"
 #include "agds/region.h"
 #include "agds/screen.h"
+#include "agds/systemVariable.h"
 #include "common/debug.h"
 
 namespace AGDS {
@@ -44,21 +45,30 @@ void Process::enter(uint16 magic, uint16 size) {
 	_object->readStringTable(resOffset, resCount);
 }
 
-void Process::setSystemVariable() {
+void Process::setStringSystemVariable() {
 	int16 valueIndex = pop();
 	Common::String name = popString();
 
 	if (valueIndex != -1) {
 		Common::String value = getString(valueIndex);
 		debug("setSystemVariable %s to %s", name.c_str(), value.c_str());
+		_engine->getSystemVariable(name)->setString(value);
 	} else {
 		debug("resetSystemVariable %s", name.c_str());
+		_engine->getSystemVariable(name)->reset();
 	}
+}
+
+void Process::setIntegerSystemVariable() {
+	int value = pop();
+	Common::String name = popString();
+	debug("setIntegerSystemVariable: %s -> %d", name.c_str(), value);
+	_engine->getSystemVariable(name)->setInteger(value);
 }
 
 void Process::getIntegerSystemVariable() {
 	Common::String name = popString();
-	int value = 0;
+	int value = _engine->getSystemVariable(name)->getInteger();
 	debug("getIntegerSystemVariable: %s -> %d", name.c_str(), value);
 	push(value);
 }
@@ -139,12 +149,6 @@ void Process::loadMouse() {
 	Common::String name = popFilename();
 	debug("loadMouse %s", name.c_str());
 	_engine->loadCursor(name);
-}
-
-void Process::setIntegerVariable() {
-	int value = pop();
-	Common::String name = popString();
-	debug("setIntegerVariable stub: %s -> %d", name.c_str(), value);
 }
 
 void Process::setGlobal() {
@@ -694,8 +698,8 @@ ProcessExitCode Process::execute() {
 			OP		(kResetGlobal, resetGlobal);
 			OP		(kStub136, stub136);
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
-			OP		(kSetSystemVariable, setSystemVariable);
-			OP		(kSetIntegerVariable, setIntegerVariable);
+			OP		(kSetStringSystemVariable, setStringSystemVariable);
+			OP		(kSetSystemIntegerVariable, setIntegerSystemVariable);
 			OP		(kGetRegionCenterX, getRegionCenterX);
 			OP		(kGetRegionCenterY, getRegionCenterY);
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);

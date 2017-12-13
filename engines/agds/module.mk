@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	process_opcodes.o \
 	region.o \
 	resourceManager.o \
+	systemVariable.o \
 	screen.o
 
 # This module can be built as a plugin

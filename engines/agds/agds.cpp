@@ -26,6 +26,7 @@
 #include "agds/process.h"
 #include "agds/region.h"
 #include "agds/screen.h"
+#include "agds/systemVariable.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/ini-file.h"
@@ -88,6 +89,8 @@ bool AGDSEngine::load() {
 		return false;
 
 	_patch.open("patch.adb"); //it's ok
+
+	initSystemVariables();
 	loadScreen("main");
 
 	return true;
@@ -336,5 +339,74 @@ Graphics::TransparentSurface *AGDSEngine::convertToTransparent(const Graphics::S
 	delete surface;
 	return t;
 }
+
+void AGDSEngine::initSystemVariables() {
+	_systemVars["inventory_scr"]	= new StringSystemVariable();
+	_systemVars["escape_scr"]		= new StringSystemVariable("none");
+	_systemVars["load_scr"]			= new StringSystemVariable();
+	_systemVars["load_scr"]			= new StringSystemVariable();
+
+	_systemVars["gfx_bright"]		= new IntegerSystemVariable(50);
+	_systemVars["gfx_contrast"]		= new IntegerSystemVariable(50);
+
+	_systemVars["sound_volume"]		= new IntegerSystemVariable(100);
+	_systemVars["music_volume"]		= new IntegerSystemVariable(80);
+	_systemVars["tell_volume"]		= new IntegerSystemVariable(100);
+
+	_systemVars["text_speed"]		= new IntegerSystemVariable(70);
+	_systemVars["tell_mode"]		= new IntegerSystemVariable(3);
+	_systemVars["version"]			= new IntegerSystemVariable(1);
+
+	_systemVars["objtext_x"]		= new IntegerSystemVariable(-1);
+	_systemVars["objtext_y"]		= new IntegerSystemVariable(-1);
+	_systemVars["objtext_mode"]		= new IntegerSystemVariable(-1);
+	_systemVars["objtext_font"]		= new IntegerSystemVariable(-1);
+
+	_systemVars["inv_open"]			= new StringSystemVariable();
+	_systemVars["inv_close"]		= new StringSystemVariable();
+	_systemVars["inv_region"]		= new StringSystemVariable();
+
+	_systemVars["anim_zoom"]		= new IntegerSystemVariable(1);
+
+	_systemVars["screen_curtain"]	= new IntegerSystemVariable(1);
+	_systemVars["music_curtain"]	= new IntegerSystemVariable(1);
+	_systemVars["sound_curtain"]	= new IntegerSystemVariable(1);
+
+	_systemVars["old_music_volume"]	= new IntegerSystemVariable();
+	_systemVars["old_sound_volume"]	= new IntegerSystemVariable();
+	_systemVars["old_screen_fade"]	= new IntegerSystemVariable();
+
+	_systemVars["subtitle_x"]		= new IntegerSystemVariable();
+	_systemVars["subtitle_y"]		= new IntegerSystemVariable();
+	_systemVars["subtitle_type"]	= new IntegerSystemVariable(3);
+	_systemVars["subtitles"]		= new IntegerSystemVariable();
+
+	_systemVars["tell_font"]		= new IntegerSystemVariable();
+	_systemVars["npc_tell_font"]	= new IntegerSystemVariable();
+	_systemVars["edit_font"]		= new IntegerSystemVariable();
+	_systemVars["delay_after_tell"]	= new IntegerSystemVariable();
+
+	_systemVars["scroll_factor"]	= new IntegerSystemVariable(30);
+
+	_systemVars["dialog_var"]		= new IntegerSystemVariable();
+	_systemVars["subtitle_width"]	= new IntegerSystemVariable(-1);
+	_systemVars["flash_mouse"]		= new IntegerSystemVariable();
+	_systemVars["scale_char"]		= new IntegerSystemVariable();
+
+	_systemVars["init_resources"]	= new StringSystemVariable();
+	_systemVars["done_resources"]	= new StringSystemVariable();
+	_systemVars["tell_close_inv"]	= new IntegerSystemVariable(1);
+	_systemVars["gamma"]			= new IntegerSystemVariable();
+}
+
+SystemVariable *AGDSEngine::getSystemVariable(const Common::String &name) {
+	SystemVariablesType::iterator i = _systemVars.find(name);
+	if (i != _systemVars.end())
+		return i->_value;
+
+	error("no system variable %s", name.c_str());
+}
+
+
 
 } // End of namespace AGDS

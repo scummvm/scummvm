@@ -123,9 +123,9 @@ private:
 	void getObjectPictureHeight();
 	void quit();
 
-	void setSystemVariable();
+	void setStringSystemVariable();
 	void getIntegerSystemVariable();
-	void setIntegerVariable();
+	void setIntegerSystemVariable();
 	void getGlobal(unsigned index);
 	void setGlobal();
 	void resetGlobal();
