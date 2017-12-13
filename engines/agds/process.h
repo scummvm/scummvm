@@ -140,6 +140,7 @@ private:
 	void divideGlobalByTop();
 	void appendToSharedStorage();
 	void appendNameToSharedStorage();
+	void setCloneVar();
 
 	void disableUser();
 	void enableUser();
@@ -149,6 +150,7 @@ private:
 	void onScreenBD(unsigned size);
 
 	void loadMouseStub66();
+	void stub82();
 	void stub128();
 	void stub129();
 	void stub130();
@@ -163,12 +165,14 @@ private:
 	void stub173();
 	void stub174();
 	void stub176();
+	void stub184();
 	void stub188();
 	void stub190();
 	void stub191();
 	void stub192();
 	void stub202(unsigned size);
 	void playFilm();
+	void stub200();
 	void stub206();
 	void stub235();
 	void debug(const char *str, ...);

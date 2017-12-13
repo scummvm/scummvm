@@ -233,6 +233,34 @@ void Process::appendNameToSharedStorage() {
 	push(index);
 }
 
+void Process::setCloneVar() {
+	int arg3 = pop();
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("setCloneVar %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+	bool isNumeric = false;
+	size_t prefixLength;
+	{
+		const char *begin = arg1.c_str();
+		const char *ptr = begin + arg1.size() - 1;
+		while(*ptr >= '0' && *ptr <= '9' && ptr > begin)
+			--ptr;
+		isNumeric = *ptr == '.';
+		prefixLength = isNumeric? ptr - begin: 0;
+	}
+
+	Common::String name;
+	if (isNumeric) {
+		//no substr :(((
+		name = Common::String(arg1.c_str(), arg1.c_str() + prefixLength) +
+			"." + arg2 + Common::String(arg1.c_str() + prefixLength);
+	} else {
+		name = arg1 + "." + arg2;
+	}
+	debug("global name for clone: %s", name.c_str());
+	_engine->setGlobal(name, arg3);
+	push(arg3);
+}
 
 void Process::stub176() {
 	debug("stub176");
@@ -263,6 +291,11 @@ void Process::fadeObject() {
 	debug("fadeObject %s %d", name.c_str(), arg);
 }
 
+void Process::stub82() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("stub82: %s %s", arg1.c_str(), arg2.c_str());
+}
 
 void Process::stub128() {
 	debug("processCleanupStub128");
@@ -346,6 +379,12 @@ void Process::setFontGlyphSize() {
 void Process::generateRegion() {
 	Common::String name = popString();
 	debug("generateRegion %s", name.c_str());
+
+}
+
+void Process::stub184() {
+	Common::String name = popString();
+	debug("stub184: %s", name.c_str());
 }
 
 void Process::stub188() {
@@ -424,6 +463,11 @@ void Process::playFilm() {
 	debug("playFilm %s %s", video.c_str(), audio.c_str());
 	_engine->playFilm(video, audio);
 	suspend();
+}
+
+void Process::stub200() {
+	int value = pop();
+	debug("stub200: %d", value);
 }
 
 void Process::stub206() {
@@ -630,7 +674,8 @@ ProcessExitCode Process::execute() {
 			OP		(kEnableUser, enableUser);
 			OP		(kClearScreen, clearScreen);
 			OP		(kLoadMouse, loadMouse);
-			OP		(kStub80, exitProcessSetNextScreen80);
+			OP		(kExitProcessNextScreen80, exitProcessSetNextScreen80);
+			OP		(kStub82, stub82);
 			OP		(kSetScreenHeight, setScreenHeight);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
 			OP		(kLoadTextFromObject, loadTextFromObject);
@@ -657,6 +702,7 @@ ProcessExitCode Process::execute() {
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kAppendNameToSharedStorage, appendNameToSharedStorage);
 			OP		(kStub176, stub176);
+			OP		(kSetCloneVar, setCloneVar);
 			OP		(kStub152, stub152);
 			OP		(kStub153, stub153);
 			OP		(kStub154, stub154);
@@ -672,6 +718,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGetObjectId, getObjectId);
 			OP		(kSetGlyphSize, setFontGlyphSize);
 			OP		(kGenerateRegion, generateRegion);
+			OP		(kStub184, stub184);
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);
 			OP		(kStub191, stub191);
@@ -683,6 +730,7 @@ ProcessExitCode Process::execute() {
 			OP_U	(kStub202ScreenHandler, stub202);
 			OP		(kPlayFilm, playFilm);
 			OP		(kFindObjectInMouseArea, findObjectInMouseArea);
+			OP		(kStub200, stub200);
 			OP		(kStub206, stub206);
 			OP_U	(kOnKey, onKey);
 			OP		(kStub235, stub235);
