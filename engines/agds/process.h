@@ -112,7 +112,7 @@ private:
 	void loadTextFromObject();
 	void loadAnimation();
 	void loadSample();
-	void loadObjectAs();
+	void cloneObject();
 	void setTimer();
 	void getRegionCenterX();
 	void getRegionCenterY();
