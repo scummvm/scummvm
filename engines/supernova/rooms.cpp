@@ -2322,9 +2322,15 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->reply(kStringArsanoMeetup3_27, 1, 1 + 128);
 		_gm->reply(kStringArsanoMeetup3_28, 1, 1 + 128);
 		_vm->paletteFadeOut();
+		// Remove all objects from the inventory except the Knife, Watch and Discman
 		_gm->_inventory.clear();
-		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(1));  // Knife
-		_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(2));  // Watch
+		_gm->_inventoryScroll = 0;
+		if (_gm->_rooms[INTRO]->getObject(1)->hasProperty(CARRIED)) // Knife
+			_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(1));
+		if (_gm->_rooms[INTRO]->getObject(2)->hasProperty(CARRIED)) // Watch
+			_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(2));
+		if (_gm->_rooms[INTRO]->getObject(3)->hasProperty(CARRIED)) // Discman
+			_gm->_inventory.add(*_gm->_rooms[INTRO]->getObject(3));
 		_gm->changeRoom(CELL);
 		_gm->_state._dream = true;
 	} else
