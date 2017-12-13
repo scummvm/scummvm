@@ -2514,12 +2514,15 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 
 
 void AxacussCorridor1::onEntrance() {
+	_gm->corridorOnEntrance();
 }
 
 void AxacussCorridor2::onEntrance() {
+	_gm->corridorOnEntrance();
 }
 
 void AxacussCorridor3::onEntrance() {
+	_gm->corridorOnEntrance();
 }
 
 void AxacussCorridor4::onEntrance() {
@@ -2560,6 +2563,7 @@ bool AxacussCorridor4::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void AxacussCorridor5::onEntrance() {
+	_gm->corridorOnEntrance();
 }
 
 bool AxacussCorridor5::handleMoneyDialog() {
@@ -2638,6 +2642,7 @@ bool AxacussCorridor5::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void AxacussCorridor6::onEntrance() {
+	_gm->corridorOnEntrance();
 }
 
 bool AxacussCorridor6::interact(Action verb, Object &obj1, Object &obj2) {
@@ -2657,9 +2662,11 @@ bool AxacussCorridor6::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void AxacussCorridor7::onEntrance() {
+	_gm->corridorOnEntrance();
 }
 
 void AxacussCorridor8::onEntrance() {
+	_gm->corridorOnEntrance();
 }
 
 bool AxacussCorridor8::interact(Action verb, Object &obj1, Object &obj2) {
@@ -2687,6 +2694,7 @@ bool AxacussCorridor8::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void AxacussCorridor9::onEntrance() {
+	_gm->corridorOnEntrance();
 }
 
 bool AxacussCorridor9::interact(Action verb, Object &obj1, Object &obj2) {
