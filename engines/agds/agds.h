@@ -52,6 +52,7 @@ class Process;
 struct Region;
 class MJPGPlayer;
 class Screen;
+class SystemVariable;
 
 class AGDSEngine : public Engine {
 	friend class Process;
@@ -112,10 +113,14 @@ private:
 		_userEnabled = enabled;
 	}
 
+	void initSystemVariables();
+	SystemVariable *getSystemVariable(const Common::String &name);
+
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
 	typedef Common::HashMap<Common::String, Screen *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ScreensType;
 	typedef Common::HashMap<Common::String, Region *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RegionsType;
+	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
 	typedef Common::List<Process> ProcessListType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
 
@@ -129,6 +134,7 @@ private:
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];
 	GlobalsType					_globals;
+	SystemVariablesType			_systemVars;
 	int							_timer;
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
