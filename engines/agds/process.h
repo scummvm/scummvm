@@ -89,6 +89,9 @@ private:
 	void exitProcess();
 	void suspendProcess(ProcessExitCode code = kExitCodeSuspend);
 	void exitScreen();
+	void exitProcessSetNextScreen();
+	void exitProcessSetNextScreen80();
+	void loadPreviousScreen();
 	void call(uint16 addr);
 
 	void getObjectId();
@@ -118,8 +121,6 @@ private:
 	void setFontGlyphSize();
 	void getObjectPictureWidth();
 	void getObjectPictureHeight();
-	void exitProcessSetNextScreen();
-	void exitProcessSetNextScreen80();
 	void quit();
 
 	void setSystemVariable();
@@ -206,6 +207,10 @@ private:
 
 public:
 	Process(AGDSEngine *engine, Object *object, unsigned ip = 0);
+
+	const Common::String & getName() const {
+		return _object->getName();
+	}
 
 	Status getStatus() const {
 		return _status;

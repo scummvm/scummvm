@@ -133,6 +133,7 @@ private:
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
 	Screen *					_currentScreen;
+	Common::String				_previousScreen;
 	Video::FlicDecoder *		_mouseCursor;
 	Common::Point				_mouse;
 	Region *					_currentRegion;

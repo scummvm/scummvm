@@ -30,7 +30,9 @@ namespace AGDS {
 		kExitCodeSuspend						= 5,
 		kExitCodeDestroyProcessSetNextScreen	= 6,
 		kExitCodeLoadScreenObject				= 8,
-		kExitCodeExitScreen						= 15
+		kExitCodeExitScreen						= 15,
+
+		kExitCodeLoadPreviousScreenObject		= 99
 	};
 
 }

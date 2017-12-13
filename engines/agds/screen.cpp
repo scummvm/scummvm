@@ -26,7 +26,7 @@
 
 namespace AGDS {
 
-Screen::Screen(Object *object) {
+Screen::Screen(Object *object) : _name(object->getName()) {
 	add(object);
 }
 
