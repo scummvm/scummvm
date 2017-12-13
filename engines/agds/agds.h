@@ -43,13 +43,13 @@
  * - Black Mirror (Windows)
  */
 
-namespace Graphics { class TransparentSurface; }
+namespace Graphics { struct TransparentSurface; }
 
 namespace AGDS {
 
 class Object;
 class Process;
-class Region;
+struct Region;
 class MJPGPlayer;
 class Screen;
 
