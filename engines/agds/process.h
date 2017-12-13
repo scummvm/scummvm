@@ -162,6 +162,7 @@ private:
 	void stub154();
 	void stub155();
 	void stub166();
+	void stub172();
 	void stub173();
 	void stub174();
 	void stub176();
@@ -170,6 +171,7 @@ private:
 	void stub190();
 	void stub191();
 	void stub192();
+	void stub194();
 	void stub202(unsigned size);
 	void playFilm();
 	void stub200();
