@@ -186,7 +186,6 @@ public:
 	void loadTime();
 	void saveTime();
 	void setAnimationTimer(int ticks);
-	void dead(const char *message);
 	void dead(StringID messageId);
 	int  dialog(int num, byte rowLength[6], StringID text[6], int number);
 	void sentence(int number, bool brightness);
