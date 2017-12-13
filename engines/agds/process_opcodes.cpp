@@ -266,10 +266,6 @@ void Process::setCloneVar() {
 	push(arg3);
 }
 
-void Process::stub176() {
-	debug("stub176");
-}
-
 void Process::disableUser() {
 	debug("disableUser");
 	_engine->enableUser(false);
@@ -360,12 +356,21 @@ void Process::stub166() {
 	debug("stub166 %d %d", arg1, arg2);
 }
 
+void Process::stub172() {
+	int value = pop();
+	debug("stub172: %d", value);
+}
+
 void Process::stub173() {
 	debug("stub173: delAnimations?");
 }
 
 void Process::stub174() {
 	debug("stub174: mouse pointer mode 1?");
+}
+
+void Process::stub176() {
+	debug("stub176");
 }
 
 void Process::stub192() {
@@ -433,6 +438,10 @@ void Process::stub191() {
 	int value = pop();
 	value = value > 0? 1: 0;
 	debug("stub191: setting some mouse flag to %d", value);
+}
+
+void Process::stub194() {
+	debug("stub194");
 }
 
 void Process::getObjectPictureWidth() {
@@ -712,6 +721,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub154, stub154);
 			OP		(kStub155, stub155);
 			OP		(kStub166, stub166);
+			OP		(kStub172, stub172);
 			OP		(kStub173, stub173);
 			OP		(kStub174, stub174);
 			OP		(kStub192, stub192);
@@ -726,6 +736,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);
 			OP		(kStub191, stub191);
+			OP		(kStub194, stub194);
 			OP		(kGetObjectPictureWidth, getObjectPictureWidth);
 			OP		(kGetObjectPictureHeight, getObjectPictureHeight);
 			OP		(kLoadPicture, loadPicture);
