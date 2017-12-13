@@ -114,10 +114,10 @@ void Process::loadScreenObject() {
 	suspend(kExitCodeLoadScreenObject, name);
 }
 
-void Process::loadObjectAs() {
+void Process::cloneObject() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
-	debug("loadObject: %s %s", arg1.c_str(), arg2.c_str());
+	debug("cloneObject: %s %s", arg1.c_str(), arg2.c_str());
 	suspend(kExitCodeLoadScreenObject, arg1, arg2);
 }
 
@@ -680,7 +680,7 @@ ProcessExitCode Process::execute() {
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
 			OP		(kLoadTextFromObject, loadTextFromObject);
 			OP		(kScreenLoadObject, loadScreenObject);
-			OP		(kScreenLoadObjectAs, loadObjectAs);
+			OP		(kScreenCloneObject, cloneObject);
 			OP		(kExitProcessSetNextScreen, exitProcessSetNextScreen);
 			OP		(kScreenRemoveObject, removeScreenObject);
 			OP		(kLoadAnimation, loadAnimation);

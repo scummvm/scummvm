@@ -95,7 +95,7 @@ enum Opcode {
 	kStub74							= 74,
 	kStub75							= 75,
 	kScreenLoadObject				= 76,
-	kScreenLoadObjectAs				= 77,
+	kScreenCloneObject				= 77,
 	kScreenRemoveObject				= 78,
 	kExitProcessSetNextScreen		= 79,
 	kExitProcessNextScreen80		= 80,
