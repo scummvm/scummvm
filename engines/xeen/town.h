@@ -40,7 +40,7 @@ enum TownAction {
 class XeenEngine;
 class TownMessage;
 
-class TownLocation : public ButtonContainer {
+class BaseLocation : public ButtonContainer {
 protected:
 	TownAction _townActionId;
 	Common::Array<SpriteResource> _townSprites;
@@ -53,7 +53,6 @@ protected:
 	int _drawFrameIndex;
 	uint _farewellTime;
 	int _drawCtr1, _drawCtr2;
-	int _animCtr;
 protected:
 	/**
 	 * Draw the window
@@ -64,11 +63,6 @@ protected:
 	 * Waits for a brief pause, checking for any key or mouse events
 	 */
 	int wait();
-
-	/**
-	 * Handles animation updates for Sphinx, Golem, Repear, and Dwarf events
-	 */
-	void animUpdate();
 
 	/**
 	 * Generates the display text for the location, for a given character
@@ -90,8 +84,8 @@ protected:
 	 */
 	virtual void farewell() {}
 public:
-	TownLocation(TownAction action);
-	virtual ~TownLocation();
+	BaseLocation(TownAction action);
+	virtual ~BaseLocation();
 
 	/**
 	 * Show the town location
@@ -104,7 +98,7 @@ public:
 	void drawAnim(bool flag);
 };
 
-class BankLocation : public TownLocation {
+class BankLocation : public BaseLocation {
 private:
 	/**
 	 * Handles deposits or withdrawls fro the bank
@@ -130,7 +124,7 @@ public:
 	virtual ~BankLocation() {}
 };
 
-class BlacksmithLocation : public TownLocation {
+class BlacksmithLocation : public BaseLocation {
 protected:
 	/**
 	* Generates the display text for the location, for a given character
@@ -151,7 +145,7 @@ public:
 	virtual ~BlacksmithLocation() {}
 };
 
-class GuildLocation : public TownLocation {
+class GuildLocation : public BaseLocation {
 protected:
 	/**
 	 * Generates the display text for the location, for a given character
@@ -167,7 +161,7 @@ public:
 	virtual ~GuildLocation() {}
 };
 
-class TavernLocation : public TownLocation {
+class TavernLocation : public BaseLocation {
 private:
 	int _v21;
 	uint _v22;
@@ -193,7 +187,7 @@ public:
 	virtual ~TavernLocation() {}
 };
 
-class TempleLocation : public TownLocation {
+class TempleLocation : public BaseLocation {
 private:
 	int _currentCharLevel;
 	int _donation;
@@ -219,7 +213,7 @@ public:
 	virtual ~TempleLocation() {}
 };
 
-class TrainingLocation : public TownLocation {
+class TrainingLocation : public BaseLocation {
 private:
 	int _charIndex;
 	bool _charsTrained[MAX_ACTIVE_PARTY];
@@ -240,33 +234,55 @@ public:
 	virtual ~TrainingLocation() {}
 };
 
-class ArenaLocation : public TownLocation {
+class ArenaLocation : public BaseLocation {
 public:
 	ArenaLocation();
 	virtual ~ArenaLocation() {}
 };
 
-class ReaperLocation : public TownLocation {
+class CutsceneLocation : public BaseLocation {
+protected:
+	int _animCtr;
+	SpriteResource _boxSprites;
+	int _mazeId;
+	Direction _mazeDir;
+	Common::Point _mazePos;
+	bool _mazeFlag;
+protected:
+	/**
+	* Handles cutscene animation update
+	*/
+	void cutsceneAnimUpdate();
+
+	/**
+	 * Sets the new location
+	 */
+	void setNewLocation();
 public:
-	ReaperLocation();
-	virtual ~ReaperLocation() {}
+	CutsceneLocation(TownAction action);
 };
 
-class GolemLocation : public TownLocation {
+class ReaperCutscene : public CutsceneLocation {
 public:
-	GolemLocation();
-	virtual ~GolemLocation() {}
+	ReaperCutscene();
+	virtual ~ReaperCutscene() {}
 };
 
-class DwarfLocation : public TownLocation {
+class GolemCutscene : public CutsceneLocation {
+public:
+	GolemCutscene();
+	virtual ~GolemCutscene() {}
+};
+
+class DwarfCutscene : public CutsceneLocation {
 private:
 	/**
-	 * Set the new location
+	 * Get the new location
 	 */
-	bool setNewLocation();
+	void getNewLocation();
 public:
-	DwarfLocation(bool isDwarf1);
-	virtual ~DwarfLocation() {}
+	DwarfCutscene(bool isDwarf1);
+	virtual ~DwarfCutscene() {}
 
 	/**
 	 * Show the town location
@@ -274,13 +290,18 @@ public:
 	virtual int show();
 };
 
-class SphinxLocation : public TownLocation {
+class SphinxCutscene : public CutsceneLocation {
+private:
+	/**
+	 * Get the new location
+	 */
+	void getNewLocation();
 public:
-	SphinxLocation();
-	virtual ~SphinxLocation() {}
+	SphinxCutscene();
+	virtual ~SphinxCutscene() {}
 };
 
-class PyramidLocation : public TownLocation {
+class PyramidLocation : public BaseLocation {
 public:
 	PyramidLocation();
 	virtual ~PyramidLocation() {}
@@ -293,7 +314,7 @@ public:
 
 class Town {
 private:
-	TownLocation *_location;
+	BaseLocation *_location;
 private:
 	int townWait();
 
@@ -327,11 +348,11 @@ public:
 	void drawAnim(bool flag);
 };
 
-class TownMessage : public TownLocation {
+class TownMessage : public BaseLocation {
 private:
 	SpriteResource _iconSprites;
 
-	TownMessage() : TownLocation(NO_ACTION) {}
+	TownMessage() : BaseLocation(NO_ACTION) {}
 
 	bool execute(int portrait, const Common::String &name,
 		const Common::String &text, int confirm);
