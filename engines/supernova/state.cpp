@@ -1515,6 +1515,7 @@ void GameManager::roomBrightness() {
 
 void GameManager::changeRoom(RoomID id) {
 	_currentRoom = _rooms[id];
+	_newRoom = true;
 }
 
 void GameManager::wait2(int ticks) {
@@ -2202,8 +2203,10 @@ void GameManager::executeRoom() {
 	else
 		_vm->paletteBrightness();
 
-	if (!_currentRoom->hasSeen())
+	if (!_currentRoom->hasSeen() && _newRoom) {
 		_currentRoom->onEntrance();
+		_newRoom = false;
+	}
 }
 
 void GameManager::guardShot() {
