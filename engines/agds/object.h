@@ -30,7 +30,7 @@
 
 namespace AGDS {
 
-class Region;
+struct Region;
 
 class Object {
 public:

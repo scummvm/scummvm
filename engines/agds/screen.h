@@ -29,13 +29,13 @@
 #include "common/rect.h"
 
 namespace Graphics {
-	class Surface;
+	struct Surface;
 }
 
 namespace AGDS {
 
 class Object;
-class Region;
+struct Region;
 
 struct MouseRegion {
 	Region *region;

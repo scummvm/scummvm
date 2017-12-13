@@ -30,7 +30,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
-namespace Graphics { class Surface; class PixelFormat; }
+namespace Graphics { struct Surface; struct PixelFormat; }
 
 namespace AGDS {
 
