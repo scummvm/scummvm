@@ -119,6 +119,26 @@ void Process::loadSample() {
 	debug("loadSample %s", name.c_str());
 }
 
+void Process::getSampleVolume() {
+	Common::String name = popString();
+	debug("getSampleVolume: stub");
+	push(100);
+}
+
+void Process::setSampleVolumeAndPan() {
+	int pan = pop();
+	int volume = pop();
+	Common::String name = popString();
+	debug("setSampleVolumeAndPan %s %d %d", name.c_str(), volume, pan);
+}
+
+void Process::updateSampleVarOr4() {
+	Common::String name = popString();
+	debug("updateSampleVarOr4 stub %s", name.c_str());
+	int value = _engine->getGlobal(name);
+	_engine->setGlobal(name, value | 4);
+}
+
 void Process::loadScreenObject() {
 	Common::String name = popString();
 	debug("loadScreenObject: %s", name.c_str());
@@ -645,6 +665,7 @@ ProcessExitCode Process::execute() {
 			OP_W	(kJumpZImm16, jumpz);
 			OP_W	(kJumpImm16, jump);
 			OP		(kPop, pop);
+			OP		(kDup, dup);
 			OP		(kExitProcess, exitProcess);
 			OP		(kSuspendProcess, suspendProcess);
 			OP_C	(kPushImm8, push);
@@ -686,6 +707,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
 			OP		(kDisableUser, disableUser);
 			OP		(kEnableUser, enableUser);
+			OP		(kUpdateSampleVarOr4, updateSampleVarOr4);
 			OP		(kClearScreen, clearScreen);
 			OP		(kLoadMouse, loadMouse);
 			OP		(kExitProcessNextScreen80, exitProcessSetNextScreen80);
@@ -741,6 +763,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGetObjectPictureWidth, getObjectPictureWidth);
 			OP		(kGetObjectPictureHeight, getObjectPictureHeight);
 			OP		(kLoadPicture, loadPicture);
+			OP		(kSetSampleVolumeAndPan, setSampleVolumeAndPan);
 			OP		(kFadeObject, fadeObject);
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
@@ -749,6 +772,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub200, stub200);
 			OP		(kStub206, stub206);
 			OP_U	(kOnKey, onKey);
+			OP		(kGetSampleVolume, getSampleVolume);
 			OP		(kStub235, stub235);
 			OP		(kHasGlobal, hasGlobal);
 		default:

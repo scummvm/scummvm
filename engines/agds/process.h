@@ -69,6 +69,10 @@ private:
 	int32 pop();
 	int32 top();
 
+	void dup() {
+		push(top());
+	}
+
 	void jump(int delta)
 	{ _ip += delta; }
 
@@ -112,6 +116,9 @@ private:
 	void loadTextFromObject();
 	void loadAnimation();
 	void loadSample();
+	void getSampleVolume();
+	void setSampleVolumeAndPan();
+	void updateSampleVarOr4();
 	void cloneObject();
 	void setTimer();
 	void getRegionCenterX();
