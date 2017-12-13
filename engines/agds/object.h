@@ -25,8 +25,10 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/rect.h"
 #include "common/stream.h"
-#include "graphics/surface.h"
+
+namespace Graphics { class Surface; class TransparentSurface; }
 
 namespace AGDS {
 
@@ -52,7 +54,7 @@ private:
 	CodeType						_code;
 	StringTableType					_stringTable;
 	bool							_stringTableLoaded;
-	const Graphics::Surface *		_picture;
+	Graphics::TransparentSurface *	_picture;
 	Region *						_region;
 	Common::Point					_pos;
 	uint							_clickHandler;
@@ -72,9 +74,9 @@ public:
 		return _code;
 	}
 
-	void setPicture(const Graphics::Surface *);
+	void setPicture(Graphics::TransparentSurface *);
 
-	const Graphics::Surface *getPicture() const {
+	const Graphics::TransparentSurface *getPicture() const {
 		return _picture;
 	}
 

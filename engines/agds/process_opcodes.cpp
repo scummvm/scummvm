@@ -26,6 +26,7 @@
 #include "agds/region.h"
 #include "agds/screen.h"
 #include "agds/systemVariable.h"
+#include "graphics/transparent_surface.h"
 #include "common/debug.h"
 
 namespace AGDS {

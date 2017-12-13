@@ -105,7 +105,7 @@ private:
 		return _currentScreen;
 	}
 
-	const Graphics::Surface * loadPicture(const Common::String &name);
+	Graphics::TransparentSurface *loadPicture(const Common::String &name);
 	Graphics::TransparentSurface *convertToTransparent(const Graphics::Surface *surface); //destroys surface!
 
 	void loadCursor(const Common::String &name, unsigned index = 0);
