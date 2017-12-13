@@ -115,6 +115,7 @@ public:
 	int _mouseY;
 	int _mouseField;
 	Room *_currentRoom;
+	bool _newRoom;
 	Room *_rooms[NUMROOMS];
 	Inventory _inventory;
 	GameState _state;
