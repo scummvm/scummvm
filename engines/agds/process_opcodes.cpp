@@ -427,9 +427,13 @@ void Process::stub188() {
 
 
 void Process::exitProcess() {
-	debug("exit");
+	debug("exitProcess");
 	_status = kStatusDone;
 	_exitCode = kExitCodeDestroy;
+}
+
+void Process::exitProcessCreatePatch() {
+	debug("exitProcessCreatePatch stub");
 }
 
 void Process::clearScreen() {
@@ -749,6 +753,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub174, stub174);
 			OP		(kStub192, stub192);
 			OP		(kQuit, quit);
+			OP		(kExitProcessCreatePatch, exitProcessCreatePatch);
 			OP		(kExitScreen, exitScreen);
 			OP		(kLoadPreviousScreen, loadPreviousScreen);
 			OP		(kMoveScreenObject, moveScreenObject);

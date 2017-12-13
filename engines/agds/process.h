@@ -91,6 +91,7 @@ private:
 
 	void enter(uint16 magic, uint16 size);
 	void exitProcess();
+	void exitProcessCreatePatch();
 	void suspendProcess(ProcessExitCode code = kExitCodeSuspend);
 	void exitScreen();
 	void exitProcessSetNextScreen();
