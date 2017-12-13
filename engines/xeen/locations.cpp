@@ -1363,12 +1363,87 @@ void DwarfCutscene::getNewLocation() {
 
 /*------------------------------------------------------------------------*/
 
+static const int SPHINX_X1[9] = { 0, -5, -10, -15, -20, -17, -12, -7, 0 };
+static const int SPHINX_Y1[9] = { 0, 0, 0, 6, 11, 16, 20, 23, 28 };
+static const int SPHINX_X2[9] = { 160, 145, 130, 115, 100, 93, 88, 83, 80 };
+
 SphinxCutscene::SphinxCutscene() : CutsceneLocation(SPHINX) {
+}
+
+int SphinxCutscene::show() {
+	EventsManager &events = *g_vm->_events;
+	Interface &intf = *g_vm->_interface;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+	Windows &windows = *g_vm->_windows;
 	SpriteResource sprites1("sphinx.vga");
 	_boxSprites.load("box.vga");
 
+	// Save background
+	Graphics::ManagedSurface bgSurface;
+	bgSurface.copyFrom(screen);
+	
+	for (int idx = 8; idx >= 0; --idx) {
+		screen.copyFrom(bgSurface);
+		sprites1.draw(0, 0, Common::Point(SPHINX_X1[idx], SPHINX_Y1[idx]));
+		sprites1.draw(0, 1, Common::Point(SPHINX_X2[idx], SPHINX_Y1[idx]));
+		windows[0].update();
+		events.wait(1);
+	}
 
-	// TODO
+	sound.setMusicVolume(48);
+
+	for (int idx = 0; idx < (_mazeFlag ? 3 : 2); ++idx) {
+		switch (idx) {
+		case 0:
+			sound.playSound(_mazeFlag ? "sphinx10.voc" : "sphinx13.voc");
+			break;
+		case 1:
+			sound.playSound(_mazeFlag ? "sphinx11.voc" : "sphinx14.voc");
+			break;
+		case 2:
+			sound.playSound("sphinx12.voc");
+			break;
+		}
+
+		do {
+			sprites1.draw(0, 0, Common::Point(0, 0));
+			sprites1.draw(0, 1, Common::Point(160, 0));
+			sprites1.draw(0, g_vm->getRandomNumber(2, 10));
+			cutsceneAnimUpdate();
+
+			events.wait(1);
+		} while (!g_vm->shouldQuit() && (sound.isPlaying() || _animCtr));
+
+		sprites1.draw(0, 0, Common::Point(0, 0));
+		sprites1.draw(0, 1, Common::Point(160, 0));
+	}
+
+	sound.setMusicVolume(95);
+
+	if (!_mazeFlag) {
+		for (int idx = 0; idx < 8; ++idx) {
+			screen.copyFrom(bgSurface);
+			sprites1.draw(0, 0, Common::Point(SPHINX_X1[idx], SPHINX_Y1[idx]));
+			sprites1.draw(0, 1, Common::Point(SPHINX_X2[idx], SPHINX_Y1[idx]));
+			windows[0].update();
+			events.wait(1);
+		}
+
+		screen.copyFrom(bgSurface);
+		windows[0].update();
+	}
+
+	setNewLocation();
+
+	// Restore game screen
+	sound.setMusicVolume(95);
+	screen.loadBackground("back.raw");
+	intf.drawParty(false);
+	intf.draw3d(false, false);
+
+	events.clearEvents();
+	return 0;
 }
 
 void SphinxCutscene::getNewLocation() {

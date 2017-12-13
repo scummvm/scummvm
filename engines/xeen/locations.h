@@ -300,6 +300,11 @@ private:
 public:
 	SphinxCutscene();
 	virtual ~SphinxCutscene() {}
+
+	/**
+	 * Show the town location
+	 */
+	virtual int show();
 };
 
 class PyramidLocation : public BaseLocation {
