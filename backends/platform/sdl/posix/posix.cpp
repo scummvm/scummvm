@@ -320,7 +320,7 @@ bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::St
 	if (posix_spawnp(&pid, client.c_str(), NULL, NULL, const_cast<char **>(argv), environ) != 0) {
 		return false;
 	}
-	return (waitpid(pid, NULL, 0) != -1);
+	return (waitpid(pid, NULL, WNOHANG) != -1);
 }
 
 AudioCDManager *OSystem_POSIX::createAudioCDManager() {
