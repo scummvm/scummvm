@@ -49,6 +49,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <spawn.h>
+extern char **environ;
+
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 	:
 	_baseConfigName(baseConfigName) {
@@ -279,7 +282,7 @@ bool OSystem_POSIX::openUrl(const Common::String &url) {
 	// try desktop environment specific tools
 	if (launchBrowser("gnome-open", url)) // gnome
 		return true;
-	if (launchBrowser("kfmclient openURL", url)) // kde
+	if (launchBrowser("kfmclient", url)) // kde
 		return true;
 	if (launchBrowser("exo-open", url)) // xfce
 		return true;
@@ -302,14 +305,23 @@ bool OSystem_POSIX::openUrl(const Common::String &url) {
 	return false;
 }
 
-bool OSystem_POSIX::launchBrowser(const Common::String& client, const Common::String &url) {
-	// FIXME: system's input must be heavily escaped
-	// well, when url's specified by user
-	// it's OK now (urls are hardcoded somewhere in GUI)
-	Common::String cmd = client + " " + url;
-	return (system(cmd.c_str()) != -1);
+bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::String &url) {
+	pid_t pid;
+	const char *argv[] = {
+		client.c_str(),
+		url.c_str(),
+		NULL,
+		NULL
+	};
+	if (client == "kfmclient") {
+		argv[2] = argv[1];
+		argv[1] = "openURL";
+	}
+	if (posix_spawnp(&pid, client.c_str(), NULL, NULL, const_cast<char **>(argv), environ) != 0) {
+		return false;
+	}
+	return (waitpid(pid, NULL, 0) != -1);
 }
-
 
 AudioCDManager *OSystem_POSIX::createAudioCDManager() {
 #ifdef USE_LINUXCD
