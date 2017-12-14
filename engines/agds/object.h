@@ -58,6 +58,7 @@ private:
 	Region *						_region;
 	Common::Point					_pos;
 	uint							_clickHandler;
+	int								_alpha;
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
@@ -76,8 +77,12 @@ public:
 
 	void setPicture(Graphics::TransparentSurface *);
 
-	const Graphics::TransparentSurface *getPicture() const {
+	Graphics::TransparentSurface *getPicture() const {
 		return _picture;
+	}
+
+	void setAlpha(int alpha) {
+		_alpha = (100 - alpha) * 255 / 100;
 	}
 
 	void setRegion(Region *region) {

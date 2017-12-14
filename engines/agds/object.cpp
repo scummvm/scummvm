@@ -29,7 +29,7 @@
 
 namespace AGDS {
 
-Object::Object(const Common::String &name, Common::SeekableReadStream * stream) : _name(name), _stringTableLoaded(false), _picture(), _pos(), _region() {
+Object::Object(const Common::String &name, Common::SeekableReadStream * stream) : _name(name), _stringTableLoaded(false), _picture(), _pos(), _region(), _alpha(255) {
 	byte id = stream->readByte();
 	byte flag = stream->readByte();
 	debug("id: 0x%02x %u, flag: %u", id, id, flag);
@@ -97,8 +97,9 @@ void Object::paint(Graphics::Surface &backbuffer) {
 	if (_picture) {
 		Common::Point dst = _pos;
 		Common::Rect srcRect = _picture->getRect();
+		uint32 color = (_alpha << 24) | 0xffffff; //fixme: _picture->format.ARGBToColor(_alpha, 255, 255, 255); is not working
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
-			_picture->blit(backbuffer, _pos.x, _pos.y, Graphics::FLIP_NONE, &srcRect);
+			_picture->blit(backbuffer, _pos.x, _pos.y, Graphics::FLIP_NONE, &srcRect, color);
 	}
 }
 

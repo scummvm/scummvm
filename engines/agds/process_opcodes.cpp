@@ -333,9 +333,10 @@ void Process::loadMouseStub66() {
 }
 
 void Process::fadeObject() {
-	int arg = pop();
+	int value = pop();
 	Common::String name = popString();
-	debug("fadeObject %s %d", name.c_str(), arg);
+	debug("fadeObject %s %d", name.c_str(), value);
+	_engine->loadObject(name)->setAlpha(value);
 }
 
 void Process::stub74() {
