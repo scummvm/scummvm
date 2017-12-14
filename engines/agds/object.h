@@ -82,6 +82,10 @@ public:
 	}
 
 	void setAlpha(int alpha) {
+		if (alpha < 0)
+			alpha = 0;
+		if (alpha > 100)
+			alpha = 100;
 		_alpha = (100 - alpha) * 255 / 100;
 	}
 
