@@ -49,7 +49,12 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// With very old macOS SDKs (10.4 for example) spawn.h is not there. Since it is
+// used for posix_spawnp() in openUrl(), which is reimplemented in OSystem_MacOSX
+// anyway, skip this code.
+#ifndef MACOSX
 #include <spawn.h>
+#endif
 extern char **environ;
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
@@ -268,6 +273,7 @@ bool OSystem_POSIX::displayLogFile() {
 	return WIFEXITED(status) && WEXITSTATUS(status) == 0;
 }
 
+#ifndef MACOSX
 bool OSystem_POSIX::openUrl(const Common::String &url) {
 	// inspired by Qt's "qdesktopservices_x11.cpp"
 
@@ -322,6 +328,7 @@ bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::St
 	}
 	return (waitpid(pid, NULL, WNOHANG) != -1);
 }
+#endif
 
 AudioCDManager *OSystem_POSIX::createAudioCDManager() {
 #ifdef USE_LINUXCD
