@@ -2204,8 +2204,8 @@ void GameManager::executeRoom() {
 		_vm->paletteBrightness();
 
 	if (!_currentRoom->hasSeen() && _newRoom) {
-		_currentRoom->onEntrance();
 		_newRoom = false;
+		_currentRoom->onEntrance();
 	}
 }
 
