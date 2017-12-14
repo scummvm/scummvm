@@ -202,6 +202,8 @@ Common::Error AGDSEngine::run() {
 	_system->fillScreen(0);
 
 	while(!shouldQuit()) {
+		uint32 frameStarted = _system->getMillis();
+
 		if (_timer > 0)
 			--_timer;
 
@@ -286,7 +288,13 @@ Common::Error AGDSEngine::run() {
 
 		_system->unlockScreen();
 		_system->updateScreen();
-		_system->delayMillis(40);
+
+		static const uint32 kFPS = 25;
+		static const uint32 kMaxTick = 1000 / kFPS;
+
+		uint32 dt = _system->getMillis() - frameStarted;
+		if (dt < kMaxTick)
+			_system->delayMillis(kMaxTick - dt);
 	}
 
 	return Common::kNoError;
