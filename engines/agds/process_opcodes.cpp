@@ -132,6 +132,19 @@ void Process::setSampleVolumeAndPan() {
 	debug("setSampleVolumeAndPan %s %d %d", name.c_str(), volume, pan);
 }
 
+void Process::playSound() {
+	Common::String name = popFilename();
+	int arg = pop();
+	debug("playSound %s %d", name.c_str(), arg);
+}
+
+void Process::updateSampleVarOr2() {
+	Common::String name = popString();
+	debug("updateSampleVarOr4 stub %s", name.c_str());
+	int value = _engine->getGlobal(name);
+	_engine->setGlobal(name, value | 2);
+}
+
 void Process::updateSampleVarOr4() {
 	Common::String name = popString();
 	debug("updateSampleVarOr4 stub %s", name.c_str());
@@ -143,6 +156,12 @@ void Process::loadScreenObject() {
 	Common::String name = popString();
 	debug("loadScreenObject: %s", name.c_str());
 	suspend(kExitCodeLoadScreenObject, name);
+}
+
+void Process::loadScreenRegion() {
+	Common::String name = popString();
+	debug("loadScreenRegion %s", name.c_str());
+	_engine->loadObject(_engine->currentScreen()->getName())->setRegion(_engine->loadRegion(name));
 }
 
 void Process::cloneObject() {
@@ -170,6 +189,13 @@ void Process::loadMouse() {
 	Common::String name = popFilename();
 	debug("loadMouse %s", name.c_str());
 	_engine->loadCursor(name);
+}
+
+void Process::getRandomNumber() {
+	int max = pop();
+	int value = max > 0? _engine->_random.getRandomNumber(max - 1): 0;
+	debug("random %d -> %d", max, value);
+	push(value);
 }
 
 void Process::setGlobal() {
@@ -312,10 +338,20 @@ void Process::fadeObject() {
 	debug("fadeObject %s %d", name.c_str(), arg);
 }
 
+void Process::stub74() {
+	int arg2 = pop();
+	int arg1 = pop();
+	debug("stub74: %d %d", arg1, arg2);
+}
+
 void Process::stub82() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 	debug("stub82: %s %s", arg1.c_str(), arg2.c_str());
+}
+
+void Process::stub119() {
+	debug("stub119");
 }
 
 void Process::stub128() {
@@ -400,6 +436,52 @@ void Process::stub192() {
 	debug("stub192: %s: set some object flag to %d", name.c_str(), value);
 }
 
+void Process::stub190() {
+	int value = pop();
+	debug("stub190 %d", value);
+}
+
+void Process::stub191() {
+	int value = pop();
+	value = value > 0? 1: 0;
+	debug("stub191: setting some mouse flag to %d", value);
+}
+
+void Process::stub194() {
+	debug("stub194");
+}
+
+void Process::stub199() {
+	int value = pop();
+	debug("stub199: %d", value);
+}
+
+void Process::stub200() {
+	int value = pop();
+	debug("stub200: %d", value);
+}
+
+void Process::stub202(unsigned size) {
+	debug("stub203, %u instructions", size);
+	_ip += size;
+}
+
+void Process::stub206() {
+	int arg2 = pop();
+	int arg1 = pop();
+	debug("stub206 (mouse?) %d %d", arg1, arg2);
+}
+
+void Process::stub215() {
+	int id = pop();
+	debug("stub215: sound group %d", id);
+}
+
+void Process::stub223() {
+	int value = pop();
+	debug("stub199: %d", value);
+}
+
 void Process::setFontGlyphSize() {
 	_glyphHeight = pop();
 	_glyphWidth = pop();
@@ -454,19 +536,22 @@ void Process::quit() {
 	_engine->quitGame();
 }
 
-void Process::stub190() {
+void Process::setDialogForNextFilm() {
 	int value = pop();
-	debug("stub190 %d", value);
+	debug("setDialogForNextFilm %d", value);
 }
 
-void Process::stub191() {
-	int value = pop();
-	value = value > 0? 1: 0;
-	debug("stub191: setting some mouse flag to %d", value);
+void Process::npcSay() {
+	debug("npcSay -> playerSay");
+	playerSay();
 }
 
-void Process::stub194() {
-	debug("stub194");
+void Process::playerSay() {
+	Common::String arg3 = popString();
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("playerSay %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+	//close inventory here if close flag was set
 }
 
 void Process::getObjectPictureWidth() {
@@ -489,11 +574,6 @@ void Process::getObjectPictureHeight() {
 	push(value);
 }
 
-void Process::stub202(unsigned size) {
-	debug("stub203, %u instructions", size);
-	_ip += size;
-}
-
 void Process::playFilm() {
 	Common::String audio = popFilename();
 	Common::String video = popFilename();
@@ -503,15 +583,14 @@ void Process::playFilm() {
 	suspend();
 }
 
-void Process::stub200() {
-	int value = pop();
-	debug("stub200: %d", value);
+void Process::inventoryClear() {
+	debug("inventoryClear");
 }
 
-void Process::stub206() {
-	int arg2 = pop();
-	int arg1 = pop();
-	debug("stub206 (mouse?) %d %d", arg1, arg2);
+void Process::inventoryAddObject() {
+	Common::String name = popString();
+	debug("inventoryAddObject %s", name.c_str());
+	suspend(kExitCodeLoadInventoryObject, name);
 }
 
 void Process::exitProcessSetNextScreen() {
@@ -603,6 +682,13 @@ void Process::findObjectInMouseArea() {
 	_engine->_mouseMap.add(MouseRegion(region, arg2, arg3));
 }
 
+void Process::fogOnCharacter() {
+	int arg2 = pop();
+	int arg1 = pop();
+	Common::String name = popString();
+	debug("fogOnCharacter %s %d %d", name.c_str(), arg1, arg2);
+}
+
 void Process::loadRegionFromObject() {
 	Common::String name = popString();
 	debug("loadRegionFromObject %s", name.c_str());
@@ -657,6 +743,9 @@ void Process::stub235() {
 #define OP_UU(NAME, METHOD) \
 	case NAME: { uint16 arg1 = next16(); uint16 arg2 = next16(); METHOD (arg1, arg2); } break
 
+#define OP_D(NAME, METHOD) \
+	case NAME: { uint16 arg1 = next16(); uint32 arg2 = next16(); METHOD (arg1 | (arg2 << 16)); } break
+
 ProcessExitCode Process::execute() {
 	_exitCode = kExitCodeDestroy;
 
@@ -672,6 +761,7 @@ ProcessExitCode Process::execute() {
 			OP		(kDup, dup);
 			OP		(kExitProcess, exitProcess);
 			OP		(kSuspendProcess, suspendProcess);
+			OP_D	(kPushImm32, push);
 			OP_C	(kPushImm8, push);
 			OP_W	(kPushImm16, push);
 			OP_C	(kPushImm8_2, push);
@@ -711,20 +801,28 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
 			OP		(kDisableUser, disableUser);
 			OP		(kEnableUser, enableUser);
+			OP		(kUpdateSampleVarOr2, updateSampleVarOr2);
 			OP		(kUpdateSampleVarOr4, updateSampleVarOr4);
 			OP		(kClearScreen, clearScreen);
+			OP		(kInventoryClear, inventoryClear);
 			OP		(kLoadMouse, loadMouse);
+			OP		(kInventoryAddObject, inventoryAddObject);
 			OP		(kExitProcessNextScreen80, exitProcessSetNextScreen80);
 			OP		(kStub82, stub82);
 			OP		(kSetScreenHeight, setScreenHeight);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
 			OP		(kLoadTextFromObject, loadTextFromObject);
+			OP		(kStub74, stub74);
 			OP		(kScreenLoadObject, loadScreenObject);
+			OP		(kScreenLoadRegion, loadScreenRegion);
 			OP		(kScreenCloneObject, cloneObject);
 			OP		(kExitProcessSetNextScreen, exitProcessSetNextScreen);
 			OP		(kScreenRemoveObject, removeScreenObject);
 			OP		(kLoadAnimation, loadAnimation);
 			OP		(kLoadSample, loadSample);
+			OP		(kStub119, stub119);
+			OP		(kPlayerSay, playerSay);
+			OP		(kNPCSay, npcSay);
 			OP		(kSetTimer, setTimer);
 			OP		(kProcessCleanupStub128, stub128);
 			OP		(kStub129, stub129);
@@ -739,6 +837,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGetRegionCenterX, getRegionCenterX);
 			OP		(kGetRegionCenterY, getRegionCenterY);
 			OP		(kGetIntegerSystemVariable, getIntegerSystemVariable);
+			OP		(kGetRandomNumber, getRandomNumber);
 			OP		(kAppendToSharedStorage, appendToSharedStorage);
 			OP		(kAppendNameToSharedStorage, appendNameToSharedStorage);
 			OP		(kStub176, stub176);
@@ -768,18 +867,24 @@ ProcessExitCode Process::execute() {
 			OP		(kGetObjectPictureWidth, getObjectPictureWidth);
 			OP		(kGetObjectPictureHeight, getObjectPictureHeight);
 			OP		(kLoadPicture, loadPicture);
+			OP		(kStub199, stub199);
 			OP		(kSetSampleVolumeAndPan, setSampleVolumeAndPan);
+			OP		(kPlaySound, playSound);
+			OP		(kStub215, stub215);
+			OP		(kStub223, stub223);
 			OP		(kFadeObject, fadeObject);
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
 			OP		(kPlayFilm, playFilm);
 			OP		(kFindObjectInMouseArea, findObjectInMouseArea);
+			OP		(kFogOnCharacter, fogOnCharacter);
 			OP		(kStub200, stub200);
 			OP		(kStub206, stub206);
 			OP_U	(kOnKey, onKey);
 			OP		(kGetSampleVolume, getSampleVolume);
 			OP		(kStub235, stub235);
 			OP		(kHasGlobal, hasGlobal);
+			OP		(kSetDialogForNextFilm, setDialogForNextFilm);
 		default:
 			error("%s: %08x: unknown opcode 0x%02x (%u)", _object->getName().c_str(), _ip - 1, (unsigned)op, (unsigned)op);
 			_status = kStatusError;

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/hashmap.h"
+#include "common/random.h"
 #include "common/rect.h"
 #include "engines/advancedDetector.h"
 #include "agds/database.h"
@@ -146,6 +147,7 @@ private:
 	Common::String				_onLeaveObject;
 	bool						_userEnabled;
 	MouseMap					_mouseMap;
+	Common::RandomSource		_random;
 };
 
 
