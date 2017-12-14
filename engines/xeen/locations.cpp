@@ -1114,6 +1114,8 @@ CutsceneLocation::CutsceneLocation(LocationAction action) : BaseLocation(action)
 	_mazeId = party._mazeId;
 	_mazePos = party._mazePosition;
 	_mazeDir = party._mazeDirection;
+
+	_boxSprites.load("box.vga");
 }
 
 void CutsceneLocation::cutsceneAnimUpdate() {
@@ -1136,8 +1138,268 @@ ReaperCutscene::ReaperCutscene() : CutsceneLocation(REAPER) {
 
 /*------------------------------------------------------------------------*/
 
+const int16 GOLEM_X1[2][12] = {
+	{ 0, -5, 0, 6, 10, 13, 17, 20, 23, 26, 29, 31 },
+	{ 0, 0, 1, 1, 1, 0, -9, -20, -21, 0, 0, 0 }
+};
+const int GOLEM_Y1[2][12] = {
+	{ 0, 0, 0, 0, 0, 5, 10, 15, 20, 25, 30, 35 },
+	{ 0, 6, 12, 18, 24, 30, 29, 23, 25, 0, 0, 0 }
+};
+const int GOLEM_X2[2][12] = {
+	{ 160, 145, 140, 136, 130, 123, 117, 110, 103, 96, 89, 81 },
+	{ 160, 150, 141, 131, 121, 110, 91, 70, 57, 0, 0, 0 }
+};
+
 GolemCutscene::GolemCutscene() : CutsceneLocation(GOLEM) {
-	// TODO
+}
+
+int GolemCutscene::show() {
+	EventsManager &events = *g_vm->_events;
+	Interface &intf = *g_vm->_interface;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+	Windows &windows = *g_vm->_windows;
+	SpriteResource sprites1, sprites2[2];
+	sprites1.load(_isDarkCc ? "dung1.zom" : "golmback.vga");
+	sprites2[0].load(_isDarkCc ? "dung2.zom" : "golem.vga");
+	if (_isDarkCc)
+		sprites2[1].load("dung3.zom");
+
+	// Save the screen
+	Graphics::ManagedSurface savedBg;
+	savedBg.copyFrom(screen);
+
+	for (int idx = (_isDarkCc ? 8 : 11); idx >= 0; --idx) {
+		screen.blitFrom(savedBg);
+		sprites1.draw(0, 0,
+			Common::Point(GOLEM_X1[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]));
+		sprites1.draw(0, 1,
+			Common::Point(GOLEM_X2[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]));
+
+		windows[0].update();
+		events.wait(1);
+	}
+
+	if (_isDarkCc)
+		sound.playSound("ogre.voc");
+
+	for (int idx = -200; idx < 0; idx += 16) {
+		sprites1.draw(0, 0, Common::Point(0, 0));
+		sprites1.draw(0, 1, Common::Point(160, 0));
+		sprites2[0].draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
+		sprites2[_isDarkCc].draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
+
+		if (!_isDarkCc)
+			sprites2[0].draw(0, 2, Common::Point(idx + g_vm->getRandomNumber(9) - 5,
+				g_vm->getRandomNumber(9) - 5), SPRFLAG_800);
+		
+		events.wait(1);
+		if (!_isDarkCc && !sound.isPlaying())
+			sound.playSound("ogre.voc");
+
+		events.wait(1);
+	}
+
+	sprites1.draw(0, 0, Common::Point(0, 0));
+	sprites1.draw(0, 1, Common::Point(160, 0));
+	sprites2[0].draw(0, 0, Common::Point(0, 0));
+	sprites2[_isDarkCc].draw(0, _isDarkCc ? 0 : 1, Common::Point(160, 0));
+	if (!_isDarkCc)
+		sprites2[0].draw(0, 2);
+
+	windows[0].update();
+	while (!g_vm->shouldQuit() && sound.isPlaying())
+		events.wait(1);
+	sound.setMusicVolume(48);
+	sound.playSound(_mazeFlag ? "golem15.voc" : "golem13.voc");
+
+	do {
+		sprites1.draw(0, 0, Common::Point(0, 0));
+		sprites1.draw(0, 1, Common::Point(160, 0));
+
+		if (_isDarkCc) {
+			int frame = g_vm->getRandomNumber(6);
+			sprites2[0].draw(0, frame, Common::Point(0, 0));
+			sprites2[1].draw(1, frame, Common::Point(160, 0));
+		} else {
+			sprites2[0].draw(0, 0, Common::Point(0, 0));
+			sprites2[0].draw(0, 1, Common::Point(160, 0));
+			sprites2[0].draw(0, 2, Common::Point(g_vm->getRandomNumber(5) - 3,
+				g_vm->getRandomNumber(9) - 3));
+		}
+
+		cutsceneAnimUpdate();
+		events.wait(1);
+	} while (!g_vm->shouldQuit() && (sound.isPlaying() || _animCtr));
+
+	sprites1.draw(0, 0, Common::Point(0, 0));
+	sprites1.draw(0, 1, Common::Point(160, 0));
+	sprites2[0].draw(0, 0, Common::Point(0, 0));
+	sprites2[_isDarkCc].draw(0, _isDarkCc ? 0 : 1, Common::Point(160, 0));
+	if (!_isDarkCc)
+		sprites2[0].draw(0, 2);
+
+	windows[0].update();
+	events.wait(_isDarkCc ? 10 : 1);
+
+	if (!_isDarkCc) {
+		sound.playSound("ogre.voc");
+		while (!g_vm->shouldQuit() && sound.isPlaying())
+			events.pollEventsAndWait();
+
+		sound.playSound(_mazeFlag ? "golem15.voc" : "golem13.voc");
+	} else {
+		sound.playSound(_mazeFlag ? "go2.voc" : "key2.voc");
+	}
+
+	do {
+		sprites1.draw(0, 0, Common::Point(0, 0));
+		sprites1.draw(0, 1, Common::Point(160, 0));
+
+		if (_isDarkCc) {
+			int frame = g_vm->getRandomNumber(6);
+			sprites2[0].draw(0, frame, Common::Point(0, 0));
+			sprites2[1].draw(1, frame, Common::Point(160, 0));
+		} else {
+			sprites2[0].draw(0, 0, Common::Point(0, 0));
+			sprites2[0].draw(0, 1, Common::Point(160, 0));
+			sprites2[0].draw(0, 2, Common::Point(g_vm->getRandomNumber(5) - 3,
+				g_vm->getRandomNumber(9) - 3));
+		}
+
+		windows[0].update();
+		events.wait(1);
+	} while (!g_vm->shouldQuit() && sound.isPlaying());
+
+	sprites1.draw(0, 0, Common::Point(0, 0));
+	sprites1.draw(0, 1, Common::Point(160, 0));
+	sprites2[0].draw(0, 0, Common::Point(0, 0));
+	sprites2[_isDarkCc].draw(0, _isDarkCc ? 0 : 1, Common::Point(160, 0));
+	if (!_isDarkCc)
+		sprites2[0].draw(0, 2);
+
+	windows[0].update();
+	while (!g_vm->shouldQuit() && sound.isPlaying())
+		events.pollEventsAndWait();
+	sound.setMusicVolume(95);
+
+	if (!_mazeFlag) {
+		for (int idx = 0; !g_vm->shouldQuit() && idx < (_isDarkCc ? 9 : 12); ++idx) {
+			screen.blitFrom(savedBg);
+			sprites1.draw(0, 0,
+				Common::Point(GOLEM_X1[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]));
+			sprites1.draw(0, 1,
+				Common::Point(GOLEM_X2[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]));
+
+			windows[0].update();
+			events.wait(1);
+		}
+	}
+
+	screen.blitFrom(savedBg);
+	windows[0].update();
+
+	setNewLocation();
+
+	// Restore game screen
+	sound.setMusicVolume(95);
+	screen.loadBackground("back.raw");
+	intf.drawParty(false);
+	intf.draw3d(false, false);
+
+	events.clearEvents();
+	return 0;
+}
+
+void GolemCutscene::getNewLocation() {
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+
+	if (_isDarkCc) {
+		switch (party._mazeId) {
+		case 12:
+			if (party._questItems[47]) {
+				_mazeId = 73;
+				_mazePos = Common::Point(0, 7);
+				_mazeDir = DIR_NORTH;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 14:
+			if (party._questItems[49]) {
+				_mazeId = 83;
+				_mazePos = Common::Point(11, 1);
+				_mazeDir = DIR_NORTH;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 19:
+			if (party._questItems[50]) {
+				_mazeId = 121;
+				_mazePos = Common::Point(18, 0);
+				_mazeDir = DIR_NORTH;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 22:
+			if (party._questItems[48]) {
+				_mazeId = 78;
+				_mazePos = Common::Point(8, 14);
+				_mazeDir = DIR_SOUTH;
+				_mazeFlag = true;
+			}
+			break;
+
+		default:
+			break;
+		}
+	} else {
+		switch (party._mazeId) {
+		case 8:
+			if (party._questItems[6]) {
+				_mazeId = 81;
+				_mazePos = Common::Point(1, 17);
+				_mazeDir = DIR_EAST;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 12:
+			if (party._questItems[5]) {
+				_mazeId = 80;
+				_mazePos = Common::Point(29, 16);
+				_mazeDir = DIR_WEST;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 19:
+			if (party._questItems[50]) {
+				map._loadDarkSide = true;
+				_mazeId = 121;
+				_mazePos = Common::Point(18, 0);
+				_mazeDir = DIR_NORTH;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 20:
+			if (party._questItems[7]) {
+				_mazeId = 79;
+				_mazePos = Common::Point(5, 16);
+				_mazeDir = DIR_EAST;
+				_mazeFlag = true;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -1180,7 +1442,6 @@ int DwarfCutscene::show() {
 	SpriteResource sprites1(_isDarkCc ? "town1.zom" : "dwarf1.vga");
 	SpriteResource sprites2(_isDarkCc ? "town2.zom" : "dwarf2.vga");
 	SpriteResource sprites3(_isDarkCc ? "town3.zom" : "dwarf3.vga");
-	SpriteResource boxSprites("box.vga");
 	getNewLocation();
 
 	// Save the screen contents
@@ -1188,7 +1449,7 @@ int DwarfCutscene::show() {
 	savedBg.copyFrom(screen);
 
 	for (int idx = 0; idx < (_isDarkCc ? 10 : 12); ++idx) {
-		screen.copyFrom(savedBg);
+		screen.blitFrom(savedBg);
 		sprites1.draw(0, 0,
 			Common::Point(DWARF_X0[_isDarkCc][idx], DWARF_Y[_isDarkCc][idx]));
 		sprites1.draw(0, 1,
@@ -1203,14 +1464,14 @@ int DwarfCutscene::show() {
 
 	savedBg.copyFrom(screen);
 	for (int idx = 15; idx >= 0; --idx) {
-		screen.copyFrom(savedBg);
+		screen.blitFrom(savedBg);
 		sprites2.draw(0, 0, Common::Point(DWARF2_X[_isDarkCc][idx], DWARF2_Y[_isDarkCc][idx]));
 		windows[0].update();
 		events.wait(1);
 	}
 
 	sound.setMusicVolume(48);
-	screen.copyFrom(savedBg);
+	screen.blitFrom(savedBg);
 	sprites2.draw(0, 0);
 	windows[0].update();
 
@@ -1283,6 +1544,7 @@ void DwarfCutscene::getNewLocation() {
 				_mazeId = 29;
 				_mazePos = Common::Point(15, 31);
 				_mazeDir = DIR_SOUTH;
+				_mazeFlag = true;
 			}
 			break;
 
@@ -1291,6 +1553,7 @@ void DwarfCutscene::getNewLocation() {
 				_mazeId = 35;
 				_mazePos = Common::Point(15, 8);
 				_mazeDir = DIR_WEST;
+				_mazeFlag = true;
 			}
 			break;
 
@@ -1299,6 +1562,7 @@ void DwarfCutscene::getNewLocation() {
 				_mazeId = 31;
 				_mazePos = Common::Point(31, 16);
 				_mazeDir = DIR_WEST;
+				_mazeFlag = true;
 			}
 			break;
 
@@ -1307,6 +1571,7 @@ void DwarfCutscene::getNewLocation() {
 				_mazeId = 33;
 				_mazePos = Common::Point(0, 3);
 				_mazeDir = DIR_EAST;
+				_mazeFlag = true;
 			}
 			break;
 
@@ -1315,20 +1580,20 @@ void DwarfCutscene::getNewLocation() {
 				_mazeId = 37;
 				_mazePos = Common::Point(7, 0);
 				_mazeDir = DIR_NORTH;
+				_mazeFlag = true;
 			}
 			break;
 
 		default:
 			break;
 		}
-
-		_mazeFlag = _mazeId != 0;
 	} else {
 		switch (party._mazeId) {
 		case 14:
 			_mazeId = 37;
 			_mazePos = Common::Point(1, 4);
 			_mazeDir = DIR_EAST;
+			_mazeFlag = true;
 			break;
 
 		case 18:
@@ -1341,6 +1606,7 @@ void DwarfCutscene::getNewLocation() {
 				_mazePos = Common::Point(7, 1);
 				_mazeDir = DIR_NORTH;
 			}
+			_mazeFlag = true;
 			break;
 
 		case 23:
@@ -1353,6 +1619,7 @@ void DwarfCutscene::getNewLocation() {
 				_mazePos = Common::Point(7, 30);
 				_mazeDir = DIR_SOUTH;
 			}
+			_mazeFlag = true;
 			break;
 
 		default:
@@ -1377,14 +1644,15 @@ int SphinxCutscene::show() {
 	Sound &sound = *g_vm->_sound;
 	Windows &windows = *g_vm->_windows;
 	SpriteResource sprites1("sphinx.vga");
-	_boxSprites.load("box.vga");
+
+	getNewLocation();
 
 	// Save background
 	Graphics::ManagedSurface bgSurface;
 	bgSurface.copyFrom(screen);
 	
 	for (int idx = 8; idx >= 0; --idx) {
-		screen.copyFrom(bgSurface);
+		screen.blitFrom(bgSurface);
 		sprites1.draw(0, 0, Common::Point(SPHINX_X1[idx], SPHINX_Y1[idx]));
 		sprites1.draw(0, 1, Common::Point(SPHINX_X2[idx], SPHINX_Y1[idx]));
 		windows[0].update();
@@ -1423,14 +1691,14 @@ int SphinxCutscene::show() {
 
 	if (!_mazeFlag) {
 		for (int idx = 0; idx < 8; ++idx) {
-			screen.copyFrom(bgSurface);
+			screen.blitFrom(bgSurface);
 			sprites1.draw(0, 0, Common::Point(SPHINX_X1[idx], SPHINX_Y1[idx]));
 			sprites1.draw(0, 1, Common::Point(SPHINX_X2[idx], SPHINX_Y1[idx]));
 			windows[0].update();
 			events.wait(1);
 		}
 
-		screen.copyFrom(bgSurface);
+		screen.blitFrom(bgSurface);
 		windows[0].update();
 	}
 
@@ -1473,14 +1741,7 @@ void SphinxCutscene::getNewLocation() {
 	default:
 		break;
 	}
-
-	if (!_mazeFlag) {
-		_mazeId = party._mazeId;
-		_mazePos = party._mazePosition;
-		_mazeDir = party._mazeDirection;
-	}
 }
-
 
 /*------------------------------------------------------------------------*/
 

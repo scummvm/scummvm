@@ -270,9 +270,19 @@ public:
 };
 
 class GolemCutscene : public CutsceneLocation {
+private:
+	/**
+	 * Get the new location
+	 */
+	void getNewLocation(); 
 public:
 	GolemCutscene();
 	virtual ~GolemCutscene() {}
+
+	/**
+	 * Show the town location
+	 */
+	virtual int show();
 };
 
 class DwarfCutscene : public CutsceneLocation {
