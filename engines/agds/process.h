@@ -99,10 +99,14 @@ private:
 	void loadPreviousScreen();
 	void call(uint16 addr);
 
+	void inventoryClear();
+	void inventoryAddObject();
+
 	void getObjectId();
 	void clearScreen();
 	void loadPicture();
 	void loadMouse();
+	void loadScreenRegion();
 	void loadScreenObject();
 	void loadFont();
 	void removeScreenObject();
@@ -117,8 +121,10 @@ private:
 	void loadTextFromObject();
 	void loadAnimation();
 	void loadSample();
+	void playSound();
 	void getSampleVolume();
 	void setSampleVolumeAndPan();
+	void updateSampleVarOr2();
 	void updateSampleVarOr4();
 	void cloneObject();
 	void setTimer();
@@ -129,8 +135,14 @@ private:
 	void setFontGlyphSize();
 	void getObjectPictureWidth();
 	void getObjectPictureHeight();
+	void fogOnCharacter();
 	void quit();
 
+	void setDialogForNextFilm();
+	void npcSay();
+	void playerSay();
+
+	void getRandomNumber();
 	void setStringSystemVariable();
 	void getIntegerSystemVariable();
 	void setIntegerSystemVariable();
@@ -158,7 +170,9 @@ private:
 	void onScreenBD(unsigned size);
 
 	void loadMouseStub66();
+	void stub74();
 	void stub82();
+	void stub119();
 	void stub128();
 	void stub129();
 	void stub130();
@@ -180,10 +194,13 @@ private:
 	void stub191();
 	void stub192();
 	void stub194();
+	void stub199();
 	void stub202(unsigned size);
 	void playFilm();
 	void stub200();
 	void stub206();
+	void stub215();
+	void stub223();
 	void stub235();
 	void debug(const char *str, ...);
 

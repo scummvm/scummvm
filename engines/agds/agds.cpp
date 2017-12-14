@@ -41,7 +41,8 @@ namespace AGDS {
 AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0),
 		_mjpgPlayer(NULL), _currentScreen(NULL), _mouseCursor(NULL),
-		_mouse(400, 300), _userEnabled(false), _currentRegion(NULL) {
+		_mouse(400, 300), _userEnabled(false), _currentRegion(NULL),
+		_random("agds") {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -176,6 +177,9 @@ void AGDSEngine::runProcess() {
 			break;
 		case kExitCodeLoadPreviousScreenObject:
 			loadScreen(_previousScreen);
+			break;
+		case kExitCodeLoadInventoryObject:
+			loadObject(process.getExitArg1());
 			break;
 		case kExitCodeSuspend:
 			debug("process %s suspended", name.c_str());
