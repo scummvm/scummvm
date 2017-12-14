@@ -508,6 +508,9 @@ void SupernovaEngine::restoreScreen() {
 }
 
 void SupernovaEngine::renderRoom(Room &room) {
+	if (room.getId() == INTRO)
+		return;
+
 	if (setCurrentImage(room.getFileNumber())) {
 		for (int i = 0; i < _currentImage->_numSections; ++i) {
 			int section = i;
