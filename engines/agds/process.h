@@ -75,11 +75,12 @@ private:
 	}
 
 	void jump(int delta)
-	{ _ip += delta; }
+	{ debug("jump %+d", delta); _ip += delta; }
 
 	void jumpz(int delta)
 	{
 		int value = pop();
+		debug("jumpz %d %+d", value, delta);
 		if (value == 0)
 			jump(delta);
 	}
