@@ -149,7 +149,7 @@ private:
 	void setIntegerSystemVariable();
 	void getGlobal(unsigned index);
 	void setGlobal();
-	void resetGlobal();
+	void resetPhaseVar();
 	void hasGlobal();
 	void postIncrementGlobal();
 	void postDecrementGlobal();
