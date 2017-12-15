@@ -243,7 +243,7 @@ public:
 
 class CutsceneLocation : public BaseLocation {
 protected:
-	int _animCtr;
+	int _subtitleCtr;
 	SpriteResource _boxSprites;
 	int _mazeId;
 	Direction _mazeDir;
@@ -251,9 +251,9 @@ protected:
 	bool _mazeFlag;
 protected:
 	/**
-	* Handles cutscene animation update
+	* Handles updating cutscene subtitles
 	*/
-	void cutsceneAnimUpdate();
+	void updateSubtitles();
 
 	/**
 	 * Sets the new location

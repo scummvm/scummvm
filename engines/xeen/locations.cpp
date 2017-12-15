@@ -1108,17 +1108,22 @@ ArenaLocation::ArenaLocation() : BaseLocation(ARENA) {
 
 /*------------------------------------------------------------------------*/
 
+const char *const CUTSCENE_SUBTITLE = "\xC""35\x3""c\xB""190\t000%s";
+
 CutsceneLocation::CutsceneLocation(LocationAction action) : BaseLocation(action),
-		_animCtr(0), _mazeFlag(false) {
+		_subtitleCtr(0), _mazeFlag(false) {
+	EventsManager &events = *g_vm->_events;
 	Party &party = *g_vm->_party;
 	_mazeId = party._mazeId;
 	_mazePos = party._mazePosition;
 	_mazeDir = party._mazeDirection;
 
+	loadStrings("special.bin");
 	_boxSprites.load("box.vga");
+	events.timeMark3();
 }
 
-void CutsceneLocation::cutsceneAnimUpdate() {
+void CutsceneLocation::updateSubtitles() {
 	// TODO
 }
 
@@ -1215,9 +1220,9 @@ int ReaperCutscene::show() {
 			sprites2.draw(0, frame, Common::Point(160, 0));
 		}
 
-		cutsceneAnimUpdate();
+		updateSubtitles();
 		events.wait(2);
-	} while (!g_vm->shouldQuit() && (sound.isPlaying() || _animCtr));
+	} while (!g_vm->shouldQuit() && (sound.isPlaying() || _subtitleCtr));
 
 	sprites2.draw(0, 0, Common::Point(0, 0));
 	if (_isDarkCc)
@@ -1486,9 +1491,9 @@ int GolemCutscene::show() {
 				g_vm->getRandomNumber(9) - 3));
 		}
 
-		cutsceneAnimUpdate();
+		updateSubtitles();
 		events.wait(1);
-	} while (!g_vm->shouldQuit() && (sound.isPlaying() || _animCtr));
+	} while (!g_vm->shouldQuit() && (sound.isPlaying() || _subtitleCtr));
 
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
@@ -1742,7 +1747,7 @@ int DwarfCutscene::show() {
 			if (_isDarkCc) {
 				sprites2.draw(0, 0);
 				sprites3.draw(0, 0);
-				cutsceneAnimUpdate();
+				updateSubtitles();
 
 				events.timeMark5();
 				while (!g_vm->shouldQuit() && events.timeElapsed5() < 7)
@@ -1763,12 +1768,12 @@ int DwarfCutscene::show() {
 		do {
 			sprites2.draw(0, 0);
 			sprites3.draw(0, g_vm->getRandomNumber(_isDarkCc ? 8 : 9));
-			cutsceneAnimUpdate();
+			updateSubtitles();
 
 			events.timeMark5();
 			while (!g_vm->shouldQuit() && events.timeElapsed5() < 2)
 				events.pollEventsAndWait();
-		} while (!g_vm->shouldQuit() && (sound.isPlaying() || _animCtr));
+		} while (!g_vm->shouldQuit() && (sound.isPlaying() || _subtitleCtr));
 
 		while (!g_vm->shouldQuit() && events.timeElapsed() < 3)
 			events.pollEventsAndWait();
@@ -1935,10 +1940,10 @@ int SphinxCutscene::show() {
 			sprites1.draw(0, 0, Common::Point(0, 0));
 			sprites1.draw(0, 1, Common::Point(160, 0));
 			sprites1.draw(0, g_vm->getRandomNumber(2, 10));
-			cutsceneAnimUpdate();
+			updateSubtitles();
 
 			events.wait(1);
-		} while (!g_vm->shouldQuit() && (sound.isPlaying() || _animCtr));
+		} while (!g_vm->shouldQuit() && (sound.isPlaying() || _subtitleCtr));
 
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));
