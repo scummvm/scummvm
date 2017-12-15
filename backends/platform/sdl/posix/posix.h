@@ -35,9 +35,7 @@ public:
 
 	virtual bool displayLogFile();
 
-#ifndef MACOSX
 	virtual bool openUrl(const Common::String &url);
-#endif
 
 	virtual void init();
 	virtual void initBackend();
@@ -68,9 +66,7 @@ protected:
 
 	virtual AudioCDManager *createAudioCDManager();
 
-#ifndef MACOSX
 	bool launchBrowser(const Common::String& client, const Common::String &url);
-#endif
 };
 
 #endif
