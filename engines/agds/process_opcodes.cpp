@@ -140,7 +140,7 @@ void Process::playSound() {
 
 void Process::updateSampleVarOr2() {
 	Common::String name = popString();
-	debug("updateSampleVarOr4 stub %s", name.c_str());
+	debug("updateSampleVarOr2 stub %s", name.c_str());
 	int value = _engine->getGlobal(name);
 	_engine->setGlobal(name, value | 2);
 }
@@ -205,10 +205,10 @@ void Process::setGlobal() {
 	_engine->setGlobal(name, value);
 }
 
-void Process::resetGlobal() {
+void Process::resetPhaseVar() {
 	Common::String name = popString();
 	_engine->setGlobal(name, 0);
-	debug("resetGlobal %s", name.c_str());
+	debug("resetPhaseVar %s", name.c_str());
 }
 
 void Process::getGlobal(unsigned index) {
@@ -830,7 +830,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub130, stub130);
 			OP		(kStub133, stub133);
 			OP		(kStub134, stub134);
-			OP		(kResetGlobal, resetGlobal);
+			OP		(kResetPhaseVar, resetPhaseVar);
 			OP		(kStub136, stub136);
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
 			OP		(kSetStringSystemVariable, setStringSystemVariable);

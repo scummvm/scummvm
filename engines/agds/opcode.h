@@ -152,7 +152,7 @@ enum Opcode {
 	kStub132						= 132,
 	kStub133						= 133,
 	kStub134						= 134,
-	kResetGlobal					= 135,
+	kResetPhaseVar					= 135,
 	kStub136						= 136,
 	kStub137						= 137,
 	kStub138						= 138,
