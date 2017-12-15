@@ -1132,8 +1132,265 @@ void CutsceneLocation::setNewLocation() {
 
 /*------------------------------------------------------------------------*/
 
+const int16 REAPER_X1[2][14] = {
+	{ 0, -10, -20, -30, -40, -49, -49, -49, -49, -49, -49, -49, -49, -49 },
+	{ 0, 2, 6, 8, 11, 14, 17, 21, 27, 35, 43, 51, 60, 67 }
+};
+const int16 REAPER_Y1[2][14] = {
+	{ 0, 12, 25, 37, 45, 50, 56, 61, 67, 72, 78, 83, 89, 94 },
+	{ 0, 6, 12, 17, 23, 29, 36, 42, 49, 54, 61, 68, 73, 77 }
+};
+const int16 REAPER_X2[14] = {
+	160, 152, 146, 138, 131, 124, 117, 111, 107, 105, 103, 101, 100, 97
+};
+const int16 REAPER_X3[14] = {
+	0, -3, -4, -7, -9, -11, -13, -14, -13, -10, -7, -4, 0, -1
+};
+
 ReaperCutscene::ReaperCutscene() : CutsceneLocation(REAPER) {
-	// TODO
+}
+
+int ReaperCutscene::show() {
+	EventsManager &events = *g_vm->_events;
+	Interface &intf = *g_vm->_interface;
+	Party &party = *g_vm->_party;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+	Windows &windows = *g_vm->_windows;
+
+	SpriteResource sprites1(_isDarkCc ? "tower1.zom" : "tower.vga");
+	SpriteResource sprites2(_isDarkCc ? "tower2.zom" : "freap.vga");
+
+	Graphics::ManagedSurface savedBg;
+	savedBg.copyFrom(screen);
+
+	for (int idx = 13; idx >= 0; --idx) {
+		sprites1.draw(0, 0, Common::Point(REAPER_X1[_isDarkCc][idx], REAPER_Y1[_isDarkCc][idx]));
+		if (_isDarkCc) {
+			sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]));
+			sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]));
+		}
+
+		windows[0].update();
+		events.wait(1);
+	}
+
+	if (_isDarkCc) {
+		for (int idx = -200; idx < 0; idx += 16) {
+			sprites1.draw(0, 0, Common::Point(0, 0));
+			sprites1.draw(0, 1, Common::Point(160, 0));
+			sprites1.draw(0, 2, Common::Point(0, 0));
+			sprites2.draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
+			sprites2.draw(0, 5, Common::Point(160 + idx, 0), SPRFLAG_800);
+
+			windows[0].update();
+			events.wait(1);
+		}
+	} else {
+		for (int idx = 200; idx >= 0; idx -= 16) {
+			sprites1.draw(0, 0, Common::Point(0, 0));
+			sprites2.draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
+
+			windows[0].update();
+			events.wait(1);
+		}
+	}
+
+	sound.setMusicVolume(48);
+	sprites1.draw(0, 0, Common::Point(0, 0));
+	if (_isDarkCc) {
+		sprites1.draw(0, 1, Common::Point(160, 0));
+		sprites1.draw(0, party._isNight ? 3 : 2);
+	}
+
+	sound.playSound(_mazeFlag ? "reaper12.voc" : "reaper14.voc");
+
+	do {
+		int frame = g_vm->getRandomNumber(4);
+		if (_isDarkCc) {
+			sprites2.draw(0, frame, Common::Point(0, 0));
+			sprites2.draw(0, frame + 5, Common::Point(160, 0));
+		} else {
+			sprites2.draw(0, 0, Common::Point(0, 0));
+			sprites2.draw(0, frame, Common::Point(160, 0));
+		}
+
+		cutsceneAnimUpdate();
+		events.wait(2);
+	} while (!g_vm->shouldQuit() && (sound.isPlaying() || _animCtr));
+
+	sprites2.draw(0, 0, Common::Point(0, 0));
+	if (_isDarkCc)
+		sprites2.draw(0, 5, Common::Point(160, 0));
+	windows[0].update();
+	events.wait(7);
+
+	sound.playSound(_mazeFlag ? "reaper12.voc" : "reaper14.voc");
+	if (_mazeFlag)
+		sound.playSound(_isDarkCc ? "goin1.voc" : "reaper13.voc");
+	else
+		sound.playSound(_isDarkCc ? "needkey1.voc" : "reaper15.voc");
+
+	do {
+		int frame = g_vm->getRandomNumber(4);
+		if (_isDarkCc) {
+			sprites2.draw(0, frame, Common::Point(0, 0));
+			sprites2.draw(0, frame + 5, Common::Point(160, 0));
+		} else {
+			sprites2.draw(0, 0, Common::Point(0, 0));
+			sprites2.draw(0, frame, Common::Point(160, 0));
+		}
+
+		windows[0].update();
+		events.wait(2);
+	} while (!g_vm->shouldQuit() && sound.isPlaying());
+
+	sprites2.draw(0, 0, Common::Point(0, 0));
+	if (_isDarkCc)
+		sprites2.draw(0, 5, Common::Point(160, 0));
+	windows[0].update();
+	events.wait(1);
+
+	if (_mazeFlag) {
+		for (int idx = 0; idx < 14; ++idx) {
+			screen.blitFrom(savedBg);
+			sprites1.draw(0, 0, Common::Point(REAPER_X1[_isDarkCc][idx], REAPER_Y1[_isDarkCc][idx]));
+			
+			if (_isDarkCc) {
+				sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]));
+				sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]));
+			}
+
+			windows[0].update();
+			events.wait(1);
+		}
+
+		screen.blitFrom(savedBg);
+		windows[0].update();
+	}
+
+	screen.blitFrom(savedBg);
+	windows[0].update();
+
+	setNewLocation();
+
+	// Restore game screen
+	sound.setMusicVolume(95);
+	screen.loadBackground("back.raw");
+	intf.drawParty(false);
+	intf.draw3d(false, false);
+
+	events.clearEvents();
+	return 0;
+}
+
+void ReaperCutscene::getNewLocation() {
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+
+	if (_isDarkCc) {
+		switch (party._mazeId) {
+		case 3:
+			if (party._questItems[40]) {
+				_mazeId = 57;
+				_mazePos = Common::Point(11, 8);
+				_mazeDir = DIR_WEST;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 12:
+			if (party._questItems[3]) {
+				_mazeId = 55;
+				_mazePos = Common::Point(3, 8);
+				_mazeDir = DIR_EAST;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 13:
+			if (party._questItems[43]) {
+				_mazeId = 69;
+				_mazePos = Common::Point(7, 4);
+				_mazeDir = DIR_NORTH;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 23:
+			if (party._questItems[42]) {
+				_mazeId = 65;
+				_mazePos = Common::Point(3, 8);
+				_mazeDir = DIR_EAST;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 29:
+			if (party._questItems[44]) {
+				_mazeId = 53;
+				_mazePos = Common::Point(11, 8);
+				_mazeDir = DIR_WEST;
+				_mazeFlag = true;
+			}
+			break;
+
+		default:
+			break;
+		}
+	} else {
+		switch (party._mazeId) {
+		case 7:
+			if (party._questItems[30]) {
+				map._loadDarkSide = true;
+				_mazeId = 113;
+				_mazePos = Common::Point(7, 4);
+				_mazeDir = DIR_NORTH;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 12:
+			if (party._questItems[3]) {
+				_mazeId = 55;
+				_mazePos = Common::Point(3, 8);
+				_mazeDir = DIR_EAST;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 13:
+			if (party._questItems[29]) {
+				map._loadDarkSide = true;
+				_mazeId = 117;
+				_mazePos = Common::Point(7, 4);
+				_mazeDir = DIR_NORTH;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 15:
+			if (party._questItems[2]) {
+				_mazeId = 59;
+				_mazePos = Common::Point(11, 8);
+				_mazeDir = DIR_WEST;
+				_mazeFlag = true;
+			}
+			break;
+
+		case 24:
+			if (party._questItems[1]) {
+				_mazeId = 51;
+				_mazePos = Common::Point(7, 12);
+				_mazeDir = DIR_SOUTH;
+				_mazeFlag = true;
+			}
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/

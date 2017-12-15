@@ -264,9 +264,19 @@ public:
 };
 
 class ReaperCutscene : public CutsceneLocation {
+private:
+	/**
+	 * Get the new location
+	 */
+	void getNewLocation();
 public:
 	ReaperCutscene();
 	virtual ~ReaperCutscene() {}
+
+	/**
+	 * Show the town location
+	 */
+	virtual int show();
 };
 
 class GolemCutscene : public CutsceneLocation {
