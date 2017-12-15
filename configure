@@ -212,6 +212,7 @@ _tainted_build=no
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
+_has_posix_spawn=no
 _endian=unknown
 _need_memalign=yes
 _have_x86=no
@@ -3630,6 +3631,17 @@ echo $_posix
 if test "$_posix" = yes ; then
 	append_var DEFINES "-DPOSIX"
 	add_line_to_config_mk 'POSIX = 1'
+
+	echo_n "Checking if posix_spawn is supported... "
+		cat > $TMPC << EOF
+#include <spawn.h>
+int main(void) { return posix_spawn(0, 0, 0, 0, 0, 0); }
+EOF
+	cc_check && _has_posix_spawn=yes
+	echo $_has_posix_spawn
+	if test "$_has_posix_spawn" = yes ; then
+		append_var DEFINES "-DHAS_POSIX_SPAWN"
+	fi
 fi
 
 #

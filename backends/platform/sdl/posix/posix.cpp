@@ -49,10 +49,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-// With very old macOS SDKs (10.4 for example) spawn.h is not there. Since it is
-// used for posix_spawnp() in openUrl(), which is reimplemented in OSystem_MacOSX
-// anyway, skip this code.
-#ifndef MACOSX
+#ifdef HAS_POSIX_SPAWN
 #include <spawn.h>
 #endif
 extern char **environ;
@@ -90,8 +87,12 @@ void OSystem_POSIX::initBackend() {
 }
 
 bool OSystem_POSIX::hasFeature(Feature f) {
-	if (f == kFeatureDisplayLogFile || f == kFeatureOpenUrl)
+	if (f == kFeatureDisplayLogFile)
 		return true;
+#ifdef HAS_POSIX_SPAWN
+	if (f == kFeatureOpenUrl)
+		return true;
+#endif
 	return OSystem_SDL::hasFeature(f);
 }
 
@@ -273,8 +274,8 @@ bool OSystem_POSIX::displayLogFile() {
 	return WIFEXITED(status) && WEXITSTATUS(status) == 0;
 }
 
-#ifndef MACOSX
 bool OSystem_POSIX::openUrl(const Common::String &url) {
+#ifdef HAS_POSIX_SPAWN
 	// inspired by Qt's "qdesktopservices_x11.cpp"
 
 	// try "standards"
@@ -309,9 +310,13 @@ bool OSystem_POSIX::openUrl(const Common::String &url) {
 
 	warning("openUrl() (POSIX) failed to open URL");
 	return false;
+#else
+	return false;
+#endif
 }
 
 bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::String &url) {
+#ifdef HAS_POSIX_SPAWN
 	pid_t pid;
 	const char *argv[] = {
 		client.c_str(),
@@ -327,8 +332,10 @@ bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::St
 		return false;
 	}
 	return (waitpid(pid, NULL, WNOHANG) != -1);
-}
+#else
+	return false;
 #endif
+}
 
 AudioCDManager *OSystem_POSIX::createAudioCDManager() {
 #ifdef USE_LINUXCD
