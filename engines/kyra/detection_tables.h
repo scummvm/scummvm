@@ -1449,6 +1449,23 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
+	{ // Spanish floppy version 1.23, bug #9699 "Lands of Lore - Spanish version 1.23 MD5"
+		{
+			"lol",
+			"Extracted",
+			{
+				{"GENERAL.PAK", 0, "ca1208aa60c5f3e3a7e06a0420a11526", -1 },
+				{"CHAPTER7.PAK", 0, "1f11dc4ba0473eec9d6d93bbf2ee9c8a", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
 	// Russian fan translation
 	{
 		{
