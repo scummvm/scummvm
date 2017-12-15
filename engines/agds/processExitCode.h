@@ -31,6 +31,7 @@ namespace AGDS {
 		kExitCodeDestroyProcessSetNextScreen	= 6,
 		kExitCodeLoadScreenObject				= 8,
 		kExitCodeLoadInventoryObject			= 10,
+		kExitCodeMouseAreaChange				= 11,
 		kExitCodeExitScreen						= 15,
 
 		kExitCodeLoadPreviousScreenObject		= 99

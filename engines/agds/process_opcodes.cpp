@@ -467,10 +467,11 @@ void Process::stub202(unsigned size) {
 	_ip += size;
 }
 
-void Process::stub206() {
-	int arg2 = pop();
-	int arg1 = pop();
-	debug("stub206 (mouse?) %d %d", arg1, arg2);
+void Process::modifyMouseArea() {
+	int enabled = pop();
+	int id = pop();
+	debug("modifyMouseArea %d, %d", id, enabled);
+	suspend(kExitCodeMouseAreaChange, id, enabled);
 }
 
 void Process::stub215() {
@@ -603,13 +604,11 @@ void Process::exitProcessSetNextScreen() {
 void Process::exitProcessSetNextScreen80() {
 	Common::String name = popString();
 	debug("exitProcessSetNextScreen80(code 7) %s", name.c_str());
-	_engine->_mouseMap.clear();
 	suspend(kExitCodeDestroyProcessSetNextScreen, name);
 }
 
 void Process::loadPreviousScreen() {
 	debug("loadPreviousScreen");
-	_engine->_mouseMap.clear();
 	suspend(kExitCodeLoadPreviousScreenObject);
 }
 
@@ -671,16 +670,17 @@ void Process::enableUser() {
 	_engine->enableUser(true);
 }
 
-void Process::findObjectInMouseArea() {
+void Process::addMouseArea() {
 	Common::String arg3 = popString();
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 
 	debug("findObjectInMouseArea (region: %s) %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
 	Region *region = _engine->loadRegion(arg1);
-	push(205);
 
-	_engine->_mouseMap.add(MouseRegion(region, arg2, arg3));
+	int value = _engine->_mouseMap.add(MouseRegion(region, arg2, arg3));
+	debug("\tmouse area id -> %d", value);
+	push(value);
 }
 
 void Process::fogOnCharacter() {
@@ -761,7 +761,7 @@ ProcessExitCode Process::execute() {
 			OP		(kPop, pop);
 			OP		(kDup, dup);
 			OP		(kExitProcess, exitProcess);
-			OP		(kSuspendProcess, suspendProcess);
+			OP		(kSuspendProcess, suspend);
 			OP_D	(kPushImm32, push);
 			OP_C	(kPushImm8, push);
 			OP_W	(kPushImm16, push);
@@ -877,10 +877,10 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
 			OP		(kPlayFilm, playFilm);
-			OP		(kFindObjectInMouseArea, findObjectInMouseArea);
+			OP		(kAddMouseArea, addMouseArea);
 			OP		(kFogOnCharacter, fogOnCharacter);
 			OP		(kStub200, stub200);
-			OP		(kStub206, stub206);
+			OP		(kModifyMouseArea, modifyMouseArea);
 			OP_U	(kOnKey, onKey);
 			OP		(kGetSampleVolume, getSampleVolume);
 			OP		(kStub235, stub235);

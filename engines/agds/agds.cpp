@@ -178,6 +178,9 @@ void AGDSEngine::runProcess() {
 		case kExitCodeLoadPreviousScreenObject:
 			loadScreen(_previousScreen);
 			break;
+		case kExitCodeMouseAreaChange:
+			changeMouseArea(process.getExitIntArg1(), process.getExitIntArg2());
+			break;
 		case kExitCodeLoadInventoryObject:
 			loadObject(process.getExitArg1());
 			break;
@@ -193,6 +196,26 @@ void AGDSEngine::runProcess() {
 	}
 }
 
+void AGDSEngine::changeMouseArea(int id, int enabled) {
+	MouseRegion * mouseArea = _mouseMap.find(id);
+	if (mouseArea) {
+		switch(enabled) {
+			case 1:
+				mouseArea->enabled = true;
+				break;
+			case 0:
+				if (mouseArea->currentlyIn) {
+					runObject(mouseArea->onLeave);
+				}
+				mouseArea->enabled = false;
+				break;
+			case -1:
+				_mouseMap.remove(id);
+				break;
+		}
+	} else
+		warning("mouse area %d could not be found", id);
+}
 
 Common::Error AGDSEngine::run() {
 	if (!load())
@@ -213,15 +236,17 @@ Common::Error AGDSEngine::run() {
 				case Common::EVENT_MOUSEMOVE:
 					_mouse = event.mouse;
 					if (_userEnabled && _currentScreen) {
-						const MouseRegion *region = _mouseMap.find(_mouse);
-						if ((region? region->region: NULL) != _currentRegion) {
+						MouseRegion *region = _mouseMap.find(_mouse);
+						if (region != _currentRegion) {
 							if (_currentRegion) {
+								MouseRegion *currentRegion = _currentRegion;
 								_currentRegion = NULL;
-								runObject(_onLeaveObject);
+								currentRegion->currentlyIn = false;
+								runObject(currentRegion->onLeave);
 							}
 							if (region) {
-								_onLeaveObject = region->onLeave;
-								_currentRegion = region->region;
+								_currentRegion = region;
+								_currentRegion->currentlyIn = true;
 								runObject(region->onEnter);
 							}
 						}
