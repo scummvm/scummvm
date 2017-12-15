@@ -65,15 +65,34 @@ Object *Screen::find(Common::Point pos) const {
 	return NULL;
 }
 
-const MouseRegion * MouseMap::find(Common::Point pos) const {
-	for(MouseRegionsType::const_iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i) {
-		const MouseRegion &mouse = *i;
-		if (mouse.region->pointIn(pos))
+MouseRegion * MouseMap::find(Common::Point pos) {
+	for(MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i) {
+		MouseRegion &mouse = *i;
+		if (mouse.enabled && mouse.region->pointIn(pos))
 			return &mouse;
 	}
 	return NULL;
-
 }
+
+MouseRegion * MouseMap::find(int id) {
+	for(MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i) {
+		MouseRegion &mouse = *i;
+		if (mouse.id == id)
+			return &mouse;
+	}
+	return NULL;
+}
+
+void MouseMap::remove(int id) {
+	for(MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ) {
+		MouseRegion &mouse = *i;
+		if (mouse.id == id)
+			i = _mouseRegions.erase(i);
+		else
+			++i;
+	}
+}
+
 
 
 

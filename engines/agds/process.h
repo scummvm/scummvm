@@ -46,6 +46,7 @@ private:
 	Status			_status;
 	ProcessExitCode	_exitCode;
 	Common::String	_exitArg1, _exitArg2;
+	int				_exitIntArg1, _exitIntArg2;
 	int				_glyphWidth, _glyphHeight;
 
 private:
@@ -92,7 +93,6 @@ private:
 	void enter(uint16 magic, uint16 size);
 	void exitProcess();
 	void exitProcessCreatePatch();
-	void suspendProcess(ProcessExitCode code = kExitCodeSuspend);
 	void exitScreen();
 	void exitProcessSetNextScreen();
 	void exitProcessSetNextScreen80();
@@ -113,7 +113,7 @@ private:
 	void changeScreenPatch();
 	void setScreenHeight();
 	void updateScreenHeightToDisplay();
-	void findObjectInMouseArea();
+	void addMouseArea();
 	void loadRegionFromObject();
 	void generateRegion();
 	void loadPictureFromObject();
@@ -198,7 +198,7 @@ private:
 	void stub202(unsigned size);
 	void playFilm();
 	void stub200();
-	void stub206();
+	void modifyMouseArea();
 	void stub215();
 	void stub223();
 	void stub235();
@@ -228,12 +228,24 @@ private:
 #undef UNARY_OP
 #undef BINARY_OP
 
-	void suspend(ProcessExitCode exitCode = kExitCodeSuspend, const Common::String &arg1 = Common::String(), const Common::String &arg2 = Common::String()) {
+	void suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2 = Common::String()) {
 		if (_status == kStatusActive)
 			_status = kStatusPassive;
 		_exitCode = exitCode;
+		_exitIntArg1 = 0;
+		_exitIntArg2 = 0;
 		_exitArg1 = arg1;
 		_exitArg2 = arg2;
+	}
+
+	void suspend(ProcessExitCode exitCode = kExitCodeSuspend, int arg1 = 0, int arg2 = 0) {
+		if (_status == kStatusActive)
+			_status = kStatusPassive;
+		_exitCode = exitCode;
+		_exitIntArg1 = arg1;
+		_exitIntArg2 = arg2;
+		_exitArg1.clear();
+		_exitArg2.clear();
 	}
 
 public:
@@ -259,9 +271,18 @@ public:
 		return _exitArg1;
 	}
 
+	int getExitIntArg1() const {
+		return _exitIntArg1;
+	}
+
 	const Common::String & getExitArg2() const {
 		return _exitArg2;
 	}
+
+	int getExitIntArg2() const {
+		return _exitIntArg2;
+	}
+
 };
 
 

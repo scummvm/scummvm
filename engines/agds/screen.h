@@ -38,13 +38,16 @@ class Object;
 struct Region;
 
 struct MouseRegion {
+	int id;
 	Region *region;
+	bool enabled;
+	bool currentlyIn;
 	Common::String onEnter;
 	Common::String onLeave;
 
-	MouseRegion(): region() { }
+	MouseRegion(): id(-1), enabled(false), currentlyIn(false), region() { }
 	MouseRegion(Region * reg, const Common::String &enter, const Common::String &leave):
-		region(reg), onEnter(enter), onLeave(leave) {
+		id(-1), region(reg), enabled(true), currentlyIn(false), onEnter(enter), onLeave(leave) {
 	}
 };
 
@@ -52,15 +55,22 @@ struct MouseRegion {
 class MouseMap {
 	typedef Common::List<MouseRegion> MouseRegionsType;
 	MouseRegionsType	_mouseRegions;
+	int _nextId;
 
 public:
-	void add(const MouseRegion & area) {
+	MouseMap(): _nextId(1) { }
+
+	int add(const MouseRegion & area) {
 		_mouseRegions.push_back(area);
+		_mouseRegions.back().id = _nextId++;
+		return _mouseRegions.back().id;
 	}
-	void clear() {
-		_mouseRegions.clear();
-	}
-	const MouseRegion * find(Common::Point pos) const;
+//	void clear() {
+//		_mouseRegions.clear();
+//	}
+	MouseRegion * find(Common::Point pos);
+	MouseRegion * find(int id);
+	void remove(int id);
 };
 
 class Screen {

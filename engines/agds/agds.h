@@ -51,6 +51,7 @@ namespace AGDS {
 class Object;
 class Process;
 struct Region;
+struct MouseRegion;
 class MJPGPlayer;
 class Screen;
 class SystemVariable;
@@ -110,6 +111,7 @@ private:
 	Graphics::TransparentSurface *convertToTransparent(const Graphics::Surface *surface); //destroys surface!
 
 	void loadCursor(const Common::String &name, unsigned index = 0);
+	void changeMouseArea(int id, int enabled);
 	void enableUser(bool enabled) {
 		_userEnabled = enabled;
 	}
@@ -143,8 +145,7 @@ private:
 	Common::String				_previousScreen;
 	Video::FlicDecoder *		_mouseCursor;
 	Common::Point				_mouse;
-	Region *					_currentRegion;
-	Common::String				_onLeaveObject;
+	MouseRegion *				_currentRegion;
 	bool						_userEnabled;
 	MouseMap					_mouseMap;
 	Common::RandomSource		_random;

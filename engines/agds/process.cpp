@@ -76,12 +76,6 @@ Common::String Process::popFilename() {
 	return _engine->loadFilename(popString());
 }
 
-void Process::suspendProcess(ProcessExitCode code) {
-	debug("suspendProcess");
-	_status = kStatusPassive;
-	_exitCode = code;
-}
-
 void Process::activate() {
 	switch(_status)
 	{
