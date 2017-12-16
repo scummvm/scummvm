@@ -1125,11 +1125,11 @@ int ArenaLocation::show() {
 
 		// Give each character the award
 		for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-			party._activeParty[idx]._awards[9]++;
+			party._activeParty[idx]._awards[WARZONE_AWARD]++;
 		}
 
 		Common::String format = map._events._text[3];
-		Common::String count = Common::String::format("%05u", party._activeParty[0]._awards[9]);
+		Common::String count = Common::String::format("%05u", party._activeParty[0]._awards[WARZONE_AWARD]);
 		int numIdx = count[3] == '1' ? 0 : count[4] - '0';
 		Common::String msg = Common::String::format(format.c_str(), count.c_str(), SUFFIXES[numIdx]);
 	
@@ -1140,7 +1140,7 @@ int ArenaLocation::show() {
 	}
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-		if (party._activeParty[idx]._awards[idx] >= 99) {
+		if (party._activeParty[idx]._awards[WARZONE_AWARD] >= 99) {
 			LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_MAXED, 1);
 			map.load(28);
 			goto exit;

@@ -35,6 +35,7 @@ namespace Xeen {
 #define INV_ITEMS_TOTAL 9
 #define MAX_SPELLS_PER_CLASS 39
 #define AWARDS_TOTAL 88
+#define WARZONE_AWARD 9
 
 enum BonusFlags {
 	ITEMFLAG_BONUS_MASK = 0xBF, ITEMFLAG_CURSED = 0x40, ITEMFLAG_BROKEN = 0x80
@@ -288,7 +289,7 @@ public:
 	uint _birthDay;
 	int _tempAge;
 	int _skills[18];
-	bool _awards[128];
+	int _awards[128];
 	int _spells[MAX_SPELLS_PER_CLASS];
 	int _lloydMap;
 	Common::Point _lloydPosition;
@@ -372,8 +373,14 @@ public:
 
 	bool noActions();
 
+	/**
+	 * Sets an award status
+	 */
 	void setAward(int awardId, bool value);
 
+	/**
+	 * Returns true if a character has a given award
+	 */
 	bool hasAward(int awardId) const;
 
 	int getArmorClass(bool baseOnly = false) const;

@@ -682,7 +682,7 @@ void Character::clear() {
 	_birthDay = 0;
 	_tempAge = 0;
 	Common::fill(&_skills[0], &_skills[18], 0);
-	Common::fill(&_awards[0], &_awards[128], false);
+	Common::fill(&_awards[0], &_awards[128], 0);
 	Common::fill(&_spells[0], &_spells[39], 0);
 	_lloydMap = 0;
 	_hasSpells = false;
@@ -748,13 +748,16 @@ void Character::synchronize(Common::Serializer &s) {
 	for (int idx = 0; idx < 18; ++idx)
 		s.syncAsByte(_skills[idx]);
 
-	// Synchronize character awards
+	// Synchronize character awards. The original packed awards 64..127 in the
+	// upper nibble of the first 64 bytes. Except for award 9, which was a full
+	// byte counter counting the number of times the warzone was awarded
 	for (int idx = 0; idx < 64; ++idx) {
-		byte b = (_awards[idx] ? 1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
+		byte b = (idx == WARZONE_AWARD) ? _awards[idx] :			
+			(_awards[idx] ? 0x1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
 		s.syncAsByte(b);
 		if (s.isLoading()) {
-			_awards[idx] = (b & 0xF) != 0;
-			_awards[idx + 64] = (b & 0xF0) != 0;
+			_awards[idx] = (idx == WARZONE_AWARD) ? b : b & 0xF;
+			_awards[idx + 64] = (idx == WARZONE_AWARD) ? 0 : (b >> 4) & 0xf;
 		}
 	}
 
@@ -1041,7 +1044,7 @@ void Character::setAward(int awardId, bool value) {
 	else if (awardId == 81)
 		v = 127;
 
-	_awards[v] = value;
+	_awards[v] = value ? 1 : 0;
 }
 
 bool Character::hasAward(int awardId) const {
