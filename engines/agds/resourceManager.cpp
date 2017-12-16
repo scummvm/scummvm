@@ -47,42 +47,45 @@ namespace AGDS {
 		}
 	}
 
-	bool ResourceManager::addPath(const Common::String &grpFilename) {
+	bool ResourceManager::GrpFile::load(const Common::String &grpFilename) {
 		static const char *	kSignature = "AGDS group file\x1a";
 		static const uint32	kMagic = 0x1a03c9e6;
 		static const uint32	kVersion1 = 44;
 		static const uint32	kVersion2 = 2;
 
 		debug("adding path %s", grpFilename.c_str());
-		Common::File grp;
-		if (!grp.open(grpFilename)) {
-			error("failing opening grp file %s", grpFilename.c_str());
+		if (!_file.open(grpFilename)) {
+			warning("failing opening grp file %s", grpFilename.c_str());
 			return false;
 		}
 		uint8 header[0x2c];
-		if (grp.read(header, sizeof(header)) != sizeof(header))
+		if (_file.read(header, sizeof(header)) != sizeof(header)) {
+			warning("short read from header");
 			return false;
+		}
 
 		decrypt(header, 0x10);
-		if (strncmp(reinterpret_cast<const char*>(header), kSignature, 0x10) != 0)
+		if (strncmp(reinterpret_cast<const char*>(header), kSignature, 0x10) != 0) {
+			warning("invalid signature");
 			return false;
+		}
 
 		Common::MemoryReadStreamEndian reader(header + 0x10, sizeof(header) - 0x10, false);
 		uint32 version1 = reader.readUint32();
 		if (version1 != kVersion1) {
-			error("invalid version 1 (%d)", version1);
+			warning("invalid version 1 (%d)", version1);
 			return false;
 		}
 
 		uint32 magic = reader.readUint32();
 		if (magic != kMagic) {
-			error("invalid magic (0x%08x)", magic);
+			warning("invalid magic (0x%08x)", magic);
 			return false;
 		}
 
 		uint32 version2 = reader.readUint32();
 		if (version2 != kVersion2) {
-			error("invalid version 2 (%d)", version2);
+			warning("invalid version 2 (%d)", version2);
 			return false;
 		}
 
@@ -90,21 +93,19 @@ namespace AGDS {
 		if (!reader.skip(3 * 4))
 			return false;
 
-		GrpFilePtr grpFile(new GrpFile(grpFilename));
-
-		debug("+%u files in index", dirCount);
+		//debug("+%u files in index", dirCount);
 		while(dirCount--) {
 			uint8 dirData[0x31];
 			uint8 * dirDataEnd = dirData + sizeof(dirData);
 
-			if (grp.read(dirData, sizeof(dirData)) != sizeof(dirData)) {
-				error("short read, corrupted file");
+			if (_file.read(dirData, sizeof(dirData)) != sizeof(dirData)) {
+				warning("short read, corrupted file");
 				return false;
 			}
 
 			uint8 *nameEnd = Common::find(dirData, dirDataEnd, 0);
 			if (nameEnd == dirDataEnd) {
-				error("corrupted entry at %d", (int)grp.pos() - 0x31);
+				warning("corrupted entry at %d", (int)_file.pos() - 0x31);
 				continue;
 			}
 
@@ -117,34 +118,55 @@ namespace AGDS {
 			uint32 offset	= dirReader.readSint32();
 			uint32 size		= dirReader.readSint32();
 			//debug("\t\tfile %s %u %u", name.c_str(), offset, size);
-			ResourcePtr resource(new Resource(grpFile, offset, size));
-			_resources.setVal(name, resource);
+			ArchiveMemberPtr resource(new ArchiveMember(this, name, offset, size));
+			_members.setVal(name, resource);
 		}
 
-		debug("\t%u files in index", _resources.size());
+		debug("%s: %u files in index", grpFilename.c_str(), _members.size());
 		return true;
 	}
 
-	Common::SeekableReadStream * ResourceManager::getResource(const Common::String &name) const
-	{
-		ResourcesType::const_iterator i = _resources.find(name);
-		if (i == _resources.end()) {
-			error("no resource %s could be found", name.c_str());
-			return NULL;
+	int ResourceManager::GrpFile::listMembers(Common::ArchiveMemberList &list) const {
+		int size = 0;
+		for(MembersType::const_iterator i = _members.begin(); i != _members.end(); ++i, ++size)
+			list.push_back(i->_value);
+		return size;
+	}
+
+	const Common::ArchiveMemberPtr ResourceManager::GrpFile::getMember(const Common::String &name) const {
+		Common::ArchiveMemberPtr member;
+		MembersType::const_iterator i = _members.find(name);
+		if (i != _members.end())
+			member = i->_value;
+		return member;
+	}
+
+	Common::SeekableReadStream *ResourceManager::GrpFile::createReadStreamForMember(const Common::String &name) const {
+		Common::ArchiveMemberPtr member = getMember(name);
+		return member? member->createReadStream(): NULL;
+	}
+
+
+	bool ResourceManager::addPath(const Common::String &grpFilename) {
+		GrpFile * grpFile = new GrpFile();
+		if (!grpFile->load(grpFilename)) {
+			delete grpFile;
+			return false;
 		}
 
-		const ResourcePtr & resource = i->_value;
-		assert(resource);
+		SearchMan.add(grpFilename, grpFile, 0, true);
+		return true;
+	}
 
-		const Common::String & filename = resource->grp->filename;
-		Common::File grp;
-		if (!grp.open(filename)) {
-			error("could not open group file %s", filename.c_str());
-			return NULL;
-		}
+	Common::SeekableReadStream * ResourceManager::ArchiveMember::createReadStream() const {
+		Common::SeekableReadStream &file = _parent->getArchiveStream();
+		file.seek(_offset);
+		return file.readStream(_size);
+	}
 
-		grp.seek(resource->offset);
-		return grp.readStream(resource->size);
+	Common::SeekableReadStream * ResourceManager::getResource(const Common::String &name) const {
+		Common::File file;
+		return (file.open(name))? file.readStream(file.size()): NULL;
 	}
 
 	const Graphics::Surface * ResourceManager::loadPicture(const Common::String & name, const Graphics::PixelFormat &format) {

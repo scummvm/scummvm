@@ -357,8 +357,11 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 }
 
 void AGDSEngine::loadCursor(const Common::String &name, unsigned index) {
+	Common::SeekableReadStream *stream = _resourceManager.getResource(name);
+	if (!stream)
+		error("could not load cursor from %s", name.c_str());
 	Video::FlicDecoder * cursor = new Video::FlicDecoder;
-	if (cursor->loadStream(_resourceManager.getResource(name))) {
+	if (cursor->loadStream(stream)) {
 		delete _mouseCursor;
 		_mouseCursor = cursor;
 	} else

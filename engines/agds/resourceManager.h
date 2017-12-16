@@ -24,8 +24,9 @@
 #define AGDS_RESOURCE_MANAGER_H
 
 #include "common/scummsys.h"
+#include "common/archive.h"
+#include "common/file.h"
 #include "common/str.h"
-#include "common/stream.h"
 #include "common/ptr.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -37,29 +38,46 @@ namespace AGDS {
 class ResourceManager {
 private:
 
-	//fixme: port to Archive
-	struct GrpFile
+	class GrpFile;
+	class ArchiveMember : public Common::ArchiveMember
 	{
-		Common::String filename;
+		GrpFile *		_parent;
+		Common::String	_name;
+		uint32			_offset;
+		uint32			_size;
 
-		GrpFile(const Common::String &fname): filename(fname) {
+	public:
+		ArchiveMember(GrpFile * parent, const Common::String &name, uint32 offset, uint32 size):
+			_parent(parent), _name(name), _offset(offset), _size(size) {
+		}
+		virtual Common::SeekableReadStream *createReadStream() const;
+		virtual Common::String getName() const {
+			return _name;
 		}
 	};
-	typedef Common::SharedPtr<GrpFile> GrpFilePtr;
+	typedef Common::SharedPtr<ArchiveMember> ArchiveMemberPtr;
 
-	struct Resource
+	class GrpFile : public Common::Archive
 	{
-		GrpFilePtr	grp;
-		uint32		offset;
-		uint32		size;
-		Resource(const GrpFilePtr &g, uint32 o, uint32 s):
-			grp(g), offset(o), size(s) {
-		}
-	};
-	typedef Common::SharedPtr<Resource> ResourcePtr;
+		Common::File	_file;
 
-	typedef Common::HashMap<Common::String, ResourcePtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ResourcesType;
-	ResourcesType _resources;
+		typedef Common::HashMap<Common::String, ArchiveMemberPtr, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> MembersType;
+		MembersType _members;
+
+	public:
+		bool load(const Common::String &fname);
+
+		Common::SeekableReadStream &getArchiveStream() {
+			return _file;
+		}
+
+		virtual bool hasFile(const Common::String &name) const
+		{ return _members.find(name) != _members.end(); }
+
+		virtual int listMembers(Common::ArchiveMemberList &list) const;
+		virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+		virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	};
 
 public:
 	ResourceManager();
