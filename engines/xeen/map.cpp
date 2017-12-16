@@ -837,6 +837,43 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 	}
 }
 
+void MonsterObjectData::clearMonsterSprites() {
+	_monsterSprites.clear();
+	_monsterAttackSprites.clear();
+}
+
+void MonsterObjectData::addMonsterSprites(MazeMonster &monster) {
+	Map &map = *g_vm->_map;
+	int imgNumber = map._monsterData[monster._spriteId]._imageNumber;
+	uint idx;
+
+	// Find the sprites for the monster, loading them in if necessary
+	for (idx = 0; idx < _monsterSprites.size(); ++idx) {
+		if (_monsterSprites[idx]._spriteId == monster._spriteId) {
+			monster._sprites = &_monsterSprites[idx]._sprites;
+			break;
+		}
+	}
+	if (idx == _monsterSprites.size()) {
+		_monsterSprites.push_back(SpriteResourceEntry(monster._spriteId));
+		_monsterSprites.back()._sprites.load(Common::String::format("%03u.mon", imgNumber));
+		monster._sprites = &_monsterSprites.back()._sprites;
+	}
+
+	// Find the attack sprites for the monster, loading them in if necessary
+	for (idx = 0; idx < _monsterAttackSprites.size(); ++idx) {
+		if (_monsterAttackSprites[idx]._spriteId == monster._spriteId) {
+			monster._attackSprites = &_monsterAttackSprites[idx]._sprites;
+			break;
+		}
+	}
+	if (idx == _monsterAttackSprites.size()) {
+		_monsterAttackSprites.push_back(SpriteResourceEntry(monster._spriteId));
+		_monsterAttackSprites.back()._sprites.load(Common::String::format("%03u.att", imgNumber));
+		monster._attackSprites = &_monsterAttackSprites.back()._sprites;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 HeadData::HeadData() {

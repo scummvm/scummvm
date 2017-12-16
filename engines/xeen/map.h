@@ -314,7 +314,20 @@ public:
 public:
 	MonsterObjectData(XeenEngine *vm);
 
+	/**
+	 * Synchronizes the data
+	 */
 	void synchronize(XeenSerializer &s, MonsterData &monsterData);
+
+	/**
+	 * Clears the current list of monster sprites
+	 */
+	void clearMonsterSprites();
+
+	/**
+	 * Load the normal and attack sprites for a given monster
+	 */
+	void addMonsterSprites(MazeMonster &monster);
 };
 
 class HeadData {

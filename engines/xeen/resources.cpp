@@ -1624,4 +1624,6 @@ const char *const Resources::WARZONE_MAXED = "What!  You again?  Go pick on some
 
 const char *const Resources::WARZONE_LEVEL = "What level of monsters? (1-10)\n";
 
+const char *const Resources::WARZONE_HOW_MANY = "How many monsters? (1-20)\n";
+
 } // End of namespace Xeen

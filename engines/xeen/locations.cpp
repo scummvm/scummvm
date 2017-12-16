@@ -1106,25 +1106,25 @@ ArenaLocation::ArenaLocation() : BaseLocation(ARENA) {
 int ArenaLocation::show() {
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
-	Resources &res = *g_vm->_resources;
 	Windows &windows = *g_vm->_windows;
+	int level, howMany;
+	bool check;
 	const char *SUFFIXES[10] = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
 
-	if (map._mobData._monsters.size() > 0) {
-		for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
-			MazeMonster &monster = map._mobData._monsters[idx];
+	Common::Array<MazeMonster> &monsters = map._mobData._monsters;
+
+	if (monsters.size() > 0) {
+		for (uint idx = 0; idx < monsters.size(); ++idx) {
+			MazeMonster &monster = monsters[idx];
 			if (monster._position.x != 0x80 && monster._position.y != 0x80) {
 				LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
 					map._events._text[4], 300);
-				party._mazeDirection = DIR_EAST;
-				party.moveToRunLocation();
-				windows.closeAll();
-				return 0;
+				goto exit;
 			}
 		}
 
 		// Give each character the award
-		for (int idx = 0; idx < party._activeParty.size(); ++idx) {
+		for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 			party._activeParty[idx]._awards[9]++;
 		}
 
@@ -1136,24 +1136,18 @@ int ArenaLocation::show() {
 		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, msg, 1);
 
 		map.load(28);
-		party._mazeDirection = DIR_EAST;
-		party.moveToRunLocation();
-		windows.closeAll();
-		return 0;
+		goto exit;
 	}
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		if (party._activeParty[idx]._awards[idx] >= 99) {
 			LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_MAXED, 1);
 			map.load(28);
-			party._mazeDirection = DIR_EAST;
-			party.moveToRunLocation();
-			windows.closeAll();
-			return 0;
+			goto exit;
 		}
 	}
 
-	bool check = LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
+	check = LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
 		map._events._text[0].c_str(), 300);
 	if (!check) {
 		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
@@ -1165,9 +1159,60 @@ int ArenaLocation::show() {
 		return 0;
 	}
 
-	LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_LEVEL, 2);
-	
-	// TODO
+	do {
+		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_LEVEL, 2);
+		level = NumericInput::show(g_vm, 11, 2, 200);
+	} while (!g_vm->shouldQuit() && level > 10);
+	if (level == 0)
+		goto exit;
+
+	do {
+		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_HOW_MANY, 2);
+		howMany = NumericInput::show(g_vm, 11, 2, 200);
+	} while (!g_vm->shouldQuit() && howMany > 20);
+	if (howMany == 0)
+		goto exit;
+
+	LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, map._events._text[2], 300);
+
+	// Clear monsters array
+	party._mazeDirection = DIR_EAST;
+	map._mobData.clearMonsterSprites();
+	monsters.clear();
+	monsters.resize(howMany);
+
+	for (uint idx = 0; idx < monsters.size(); ++idx) {
+		MazeMonster &mon = monsters[idx];
+		mon._spriteId = g_vm->getRandomNumber(1, 7) + (level - 1) * 7;
+		if (mon._spriteId > 67)
+			mon._spriteId -= 3;
+		if (mon._spriteId == 59)
+			mon._spriteId = 60;
+		if (mon._spriteId == 28)
+			mon._spriteId = 29;
+
+		// Set up normal and attack sprites
+		map._mobData.addMonsterSprites(mon);
+
+		mon._position.x = g_vm->getRandomNumber(3, 11);
+		mon._position.y = g_vm->getRandomNumber(2, 10);
+		if ((mon._position.x == 5 || mon._position.x == 10) &&
+			(mon._position.y == 8 || mon._position.y == 4))
+			mon._position.y = 5;
+
+		mon._id = g_vm->getRandomNumber(4);
+		const MonsterStruct &data = map._monsterData[mon._spriteId];
+		mon._hp = data._hp;
+		mon._frame = g_vm->getRandomNumber(7);
+		mon._effect1 = mon._effect2 = data._animationEffect;
+		if (data._animationEffect)
+			mon._effect3 = g_vm->getRandomNumber(7);
+		mon._isAttacking = true;
+	}
+exit:
+	party._mazeDirection = DIR_EAST;
+	party.moveToRunLocation();
+	windows.closeAll();
 	return 0;
 }
 

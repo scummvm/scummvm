@@ -350,6 +350,7 @@ public:
 	static const char *const WARZONE_BATTLE_MASTER;
 	static const char *const WARZONE_MAXED;
 	static const char *const WARZONE_LEVEL;
+	static const char *const WARZONE_HOW_MANY;
 public:
 	/**
 	 * Initializes an instnace of the resources
