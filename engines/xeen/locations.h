@@ -363,20 +363,6 @@ public:
 class LocationManager {
 private:
 	Locations::BaseLocation *_location;
-private:
-	int townWait();
-
-	Character *doBankOptions(Character *c);
-
-	Character *doBlacksmithOptions(Character *c);
-
-	Character *doGuildOptions(Character *c);
-
-	Character *doTavernOptions(Character *c);
-
-	Character *doTempleOptions(Character *c);
-
-	Character *doTrainingOptions(Character *c);
 public:
 	LocationManager();
 
