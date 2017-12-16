@@ -1717,9 +1717,9 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 		      (_gm->_rooms[AIRLOCK]->getObject(5)->hasProperty(WORN)) &&
 		      (_gm->_rooms[AIRLOCK]->getObject(6)->hasProperty(WORN)))) {
 			_vm->renderMessage(kStringArsanoEntrance26);
-			getObject(4)->setProperty(WORN);
-			getObject(5)->setProperty(WORN);
-			getObject(6)->setProperty(WORN);
+			_gm->_rooms[AIRLOCK]->getObject(4)->setProperty(WORN);
+			_gm->_rooms[AIRLOCK]->getObject(5)->setProperty(WORN);
+			_gm->_rooms[AIRLOCK]->getObject(6)->setProperty(WORN);
 			_gm->waitOnInput(_gm->_timer1);
 			_vm->removeMessage();
 		}
