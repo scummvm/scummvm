@@ -22,15 +22,38 @@
 
 #include "agds/soundManager.h"
 #include "common/debug.h"
+#include "common/file.h"
 #include "common/textconsole.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/wave.h"
 
 namespace AGDS {
 
 	void SoundManager::tick() {
 	}
 
-	void SoundManager::play(Common::SeekableReadStream *stream, const Common::String &phaseVar) {
+	void SoundManager::play(const Common::String &filename, const Common::String &phaseVar) {
+		Common::File *sound = new Common::File();
+		if (!sound->open(filename))
+			error("no sound %s", filename.c_str());
+
+		Common::String lname(filename);
+		lname.toLowercase();
+
+		Audio::SeekableAudioStream *stream = NULL;
+		if (lname.hasSuffix(".ogg")) {
+			stream = Audio::makeVorbisStream(sound, DisposeAfterUse::YES);
+		} else if (lname.hasSuffix(".wav")) {
+			stream = Audio::makeWAVStream(sound, DisposeAfterUse::YES);
+		}
+		if (!stream) {
+			warning("could not play sound %s", filename.c_str());
+			delete sound;
+			return;
+		}
+		Audio::SoundHandle handle;
+		_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
 	}
 
 }
