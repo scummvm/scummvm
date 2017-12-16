@@ -48,6 +48,7 @@ private:
 	Common::String	_exitArg1, _exitArg2;
 	int				_exitIntArg1, _exitIntArg2;
 	int				_glyphWidth, _glyphHeight;
+	Common::String	_phaseVar;
 
 private:
 	uint8 next() {
@@ -125,8 +126,8 @@ private:
 	void playSound();
 	void getSampleVolume();
 	void setSampleVolumeAndPan();
-	void updateSampleVarOr2();
-	void updateSampleVarOr4();
+	void updatePhaseVarOr2();
+	void updatePhaseVarOr4();
 	void cloneObject();
 	void setTimer();
 	void getRegionCenterX();
