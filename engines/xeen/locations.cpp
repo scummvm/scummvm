@@ -23,6 +23,7 @@
 #include "xeen/locations.h"
 #include "xeen/dialogs_input.h"
 #include "xeen/dialogs_items.h"
+#include "xeen/dialogs_party.h"
 #include "xeen/dialogs_query.h"
 #include "xeen/dialogs_spells.h"
 #include "xeen/resources.h"
@@ -682,6 +683,9 @@ Character *TavernLocation::doOptions(Character *c) {
 
 	case Common::KEYCODE_s: {
 		// Sign In
+		PartyDialog::show(g_vm);
+
+		// Set location and position afterwards
 		idx = _isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
 		assert(idx >= 0);
 		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_LocationActionId][idx][0];
@@ -702,7 +706,6 @@ Character *TavernLocation::doOptions(Character *c) {
 
 		party.addTime(1440);
 		party._mazeId = 0;
-		_vm->_quitMode = 2;
 		break;
 	}
 
