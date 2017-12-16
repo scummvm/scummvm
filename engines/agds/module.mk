@@ -10,8 +10,9 @@ MODULE_OBJS := \
 	process_opcodes.o \
 	region.o \
 	resourceManager.o \
-	systemVariable.o \
-	screen.o
+	screen.o \
+	soundManager.o \
+	systemVariable.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AGDS), DYNAMIC_PLUGIN)

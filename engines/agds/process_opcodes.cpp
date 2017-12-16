@@ -117,6 +117,12 @@ void Process::loadAnimation() {
 void Process::loadSample() {
 	Common::String name = popFilename();
 	debug("loadSample %s", name.c_str());
+	if (_phaseVar.empty()) {
+		warning("playing sample %s without phase var", _phaseVar.c_str());
+		return;
+	}
+	Common::SeekableReadStream *res = _engine->_resourceManager.getResource(name);
+	_engine->_soundManager.play(res, _phaseVar);
 }
 
 void Process::getSampleVolume() {
