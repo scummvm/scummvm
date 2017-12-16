@@ -905,11 +905,12 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->wait2(3);
 				}
 			}
+			
+			_vm->renderImage(15);
+			setSectionVisible(14, false);
+			setSectionVisible(13, false);
+			_vm->renderMessage(kStringShipCabinL3_3);
 		}
-		_vm->renderImage(15);
-		setSectionVisible(14, false);
-		setSectionVisible(13, false);
-		_vm->renderMessage(kStringShipCabinL3_3);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == RECORD) && (obj1._click != 15)) {
 		_vm->renderImage(9);
 		setSectionVisible(13, false);
