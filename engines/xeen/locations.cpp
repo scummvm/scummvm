@@ -412,8 +412,7 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 			if (whereId == WHERE_BANK) {
 				gold = party._bankGold;
 				gems = party._bankGems;
-			}
-			else {
+			} else {
 				gold = party._gold;
 				gems = party._gems;
 			}
@@ -424,7 +423,6 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 			windows[35].writeString(msg);
 			windows[35].update();
 		}
-		// TODO
 	} while (!g_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
 	for (uint idx = 0; idx < _buttons.size(); ++idx)
@@ -1103,7 +1101,74 @@ Character *TrainingLocation::doOptions(Character *c) {
 /*------------------------------------------------------------------------*/
 
 ArenaLocation::ArenaLocation() : BaseLocation(ARENA) {
+}
+
+int ArenaLocation::show() {
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+	Resources &res = *g_vm->_resources;
+	Windows &windows = *g_vm->_windows;
+	const char *SUFFIXES[10] = { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+
+	if (map._mobData._monsters.size() > 0) {
+		for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
+			MazeMonster &monster = map._mobData._monsters[idx];
+			if (monster._position.x != 0x80 && monster._position.y != 0x80) {
+				LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
+					map._events._text[4], 300);
+				party._mazeDirection = DIR_EAST;
+				party.moveToRunLocation();
+				windows.closeAll();
+				return 0;
+			}
+		}
+
+		// Give each character the award
+		for (int idx = 0; idx < party._activeParty.size(); ++idx) {
+			party._activeParty[idx]._awards[9]++;
+		}
+
+		Common::String format = map._events._text[3];
+		Common::String count = Common::String::format("%05u", party._activeParty[0]._awards[9]);
+		int numIdx = count[3] == '1' ? 0 : count[4] - '0';
+		Common::String msg = Common::String::format(format.c_str(), count.c_str(), SUFFIXES[numIdx]);
+	
+		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, msg, 1);
+
+		map.load(28);
+		party._mazeDirection = DIR_EAST;
+		party.moveToRunLocation();
+		windows.closeAll();
+		return 0;
+	}
+
+	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+		if (party._activeParty[idx]._awards[idx] >= 99) {
+			LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_MAXED, 1);
+			map.load(28);
+			party._mazeDirection = DIR_EAST;
+			party.moveToRunLocation();
+			windows.closeAll();
+			return 0;
+		}
+	}
+
+	bool check = LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
+		map._events._text[0].c_str(), 300);
+	if (!check) {
+		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
+			map._events._text[1].c_str(), 300);
+		windows.closeAll();
+		map.load(6);
+		party._mazePosition = Common::Point(12, 4);
+		party._mazeDirection = DIR_WEST;
+		return 0;
+	}
+
+	LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_LEVEL, 2);
+	
 	// TODO
+	return 0;
 }
 
 /*------------------------------------------------------------------------*/

@@ -1618,4 +1618,10 @@ const char *const Resources::AWARDS_TEXT =
 
 const char *const Resources::NO_AWARDS = "\x3""cNo Awards";
 
+const char *const Resources::WARZONE_BATTLE_MASTER = "The Warzone\n\t125Battle Master";
+
+const char *const Resources::WARZONE_MAXED = "What!  You again?  Go pick on someone your own size!";
+
+const char *const Resources::WARZONE_LEVEL = "What level of monsters? (1-10)\n";
+
 } // End of namespace Xeen

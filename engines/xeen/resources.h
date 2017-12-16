@@ -347,6 +347,9 @@ public:
 	static const char *const AWARDS_FOR;
 	static const char *const AWARDS_TEXT;
 	static const char *const NO_AWARDS;
+	static const char *const WARZONE_BATTLE_MASTER;
+	static const char *const WARZONE_MAXED;
+	static const char *const WARZONE_LEVEL;
 public:
 	/**
 	 * Initializes an instnace of the resources

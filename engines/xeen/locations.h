@@ -239,6 +239,11 @@ class ArenaLocation : public BaseLocation {
 public:
 	ArenaLocation();
 	virtual ~ArenaLocation() {}
+
+	/**
+	 * Show the town location
+	 */
+	virtual int show();
 };
 
 class CutsceneLocation : public BaseLocation {
