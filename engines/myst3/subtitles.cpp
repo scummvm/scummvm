@@ -257,7 +257,7 @@ const char *FontSubtitles::getCodePage(uint32 gdiCharset) {
 			{ 186, "cp1257" }, // BALTIC_CHARSET
 			{ 204, "cp1251" }, // RUSSIAN_CHARSET
 			{ 222, "cp874"  }, // THAI_CHARSET
-			{ 238, "cp1250" }  // EASTEUROPE_CHARSET
+			{ 238, "mac-centraleurope" }  // EASTEUROPE_CHARSET
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(codepages); i++) {
