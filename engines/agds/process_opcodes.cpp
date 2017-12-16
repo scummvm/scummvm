@@ -138,16 +138,16 @@ void Process::playSound() {
 	debug("playSound %s %d", name.c_str(), arg);
 }
 
-void Process::updateSampleVarOr2() {
+void Process::updatePhaseVarOr2() {
 	Common::String name = popString();
-	debug("updateSampleVarOr2 stub %s", name.c_str());
+	debug("updatePhaseVarOr2 stub %s", name.c_str());
 	int value = _engine->getGlobal(name);
 	_engine->setGlobal(name, value | 2);
 }
 
-void Process::updateSampleVarOr4() {
+void Process::updatePhaseVarOr4() {
 	Common::String name = popString();
-	debug("updateSampleVarOr4 stub %s", name.c_str());
+	debug("updatePhaseVarOr4 stub %s", name.c_str());
 	int value = _engine->getGlobal(name);
 	_engine->setGlobal(name, value | 4);
 }
@@ -208,6 +208,7 @@ void Process::setGlobal() {
 void Process::resetPhaseVar() {
 	Common::String name = popString();
 	_engine->setGlobal(name, 0);
+	_phaseVar = name;
 	debug("resetPhaseVar %s", name.c_str());
 }
 
@@ -357,6 +358,7 @@ void Process::stub119() {
 
 void Process::stub128() {
 	debug("processCleanupStub128");
+	_phaseVar.clear();
 }
 
 void Process::stub129() {
@@ -802,8 +804,8 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
 			OP		(kDisableUser, disableUser);
 			OP		(kEnableUser, enableUser);
-			OP		(kUpdateSampleVarOr2, updateSampleVarOr2);
-			OP		(kUpdateSampleVarOr4, updateSampleVarOr4);
+			OP		(kUpdatePhaseVarOr2, updatePhaseVarOr2);
+			OP		(kUpdatePhaseVarOr4, updatePhaseVarOr4);
 			OP		(kClearScreen, clearScreen);
 			OP		(kInventoryClear, inventoryClear);
 			OP		(kLoadMouse, loadMouse);
