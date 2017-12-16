@@ -28,6 +28,7 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "engines/advancedDetector.h"
+#include "agds/soundManager.h"
 #include "agds/database.h"
 #include "agds/processExitCode.h"
 #include "agds/resourceManager.h"
@@ -129,6 +130,7 @@ private:
 
 	const ADGameDescription *	_gameDescription;
 	ResourceManager				_resourceManager;
+	SoundManager				_soundManager;
 	Database					_data, _patch; //data and patch databases
 	ObjectsType					_objects;
 	ScreensType					_screens;

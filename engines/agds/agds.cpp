@@ -38,11 +38,11 @@
 
 namespace AGDS {
 
-AGDSEngine::AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
+AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
 		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0),
 		_mjpgPlayer(NULL), _currentScreen(NULL), _mouseCursor(NULL),
 		_mouse(400, 300), _userEnabled(false), _currentRegion(NULL),
-		_random("agds") {
+		_random("agds"), _soundManager(this, system->getMixer()) {
 }
 
 AGDSEngine::~AGDSEngine() {
