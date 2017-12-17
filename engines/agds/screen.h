@@ -56,9 +56,14 @@ class MouseMap {
 	typedef Common::List<MouseRegion> MouseRegionsType;
 	MouseRegionsType	_mouseRegions;
 	int					_nextId;
+	bool				_disabled;
 
 public:
-	MouseMap(): _nextId(0) { }
+	MouseMap(): _nextId(0), _disabled(false) { }
+
+	void disable(bool disabled) {
+		_disabled = disabled;
+	}
 
 	int add(const MouseRegion & area) {
 		_mouseRegions.push_back(area);
