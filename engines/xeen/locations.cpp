@@ -1809,9 +1809,7 @@ const int16 DWARF2_Y[2][16] = {
 	{ 0, 12, 25, 37, 50, 62, 75, 87, 100, 112, 125, 137, 150, 162, 175, 186 }
 };
 
-DwarfCutscene::DwarfCutscene(bool isDwarf) : CutsceneLocation(NO_ACTION) {
-	_townMaxId = Res.TOWN_MAXES[_isDarkCc][isDwarf ? DWARF1 : DWARF2];
-}
+DwarfCutscene::DwarfCutscene() : CutsceneLocation(DWARF_MINE) {}
 
 int DwarfCutscene::show() {
 	EventsManager &events = *g_vm->_events;
@@ -2226,11 +2224,9 @@ int LocationManager::doAction(LocationAction actionId) {
 	case GOLEM:
 		_location = new Locations::GolemCutscene();
 		break;
-	case DWARF1:
-		_location = new Locations::DwarfCutscene(true);
-		break;
-	case DWARF2:
-		_location = new Locations::DwarfCutscene(false);
+	case DWARF_MINE:
+	case DWARF_TOWN:
+		_location = new Locations::DwarfCutscene();
 		break;
 	case SPHINX:
 		_location = new Locations::SphinxCutscene();

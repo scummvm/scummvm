@@ -34,7 +34,7 @@ namespace Xeen {
 enum LocationAction {
 	BANK = 0, BLACKSMITH = 1, GUILD = 2, TAVERN = 3, TEMPLE = 4,
 	TRAINING = 5, ARENA = 6, NO_ACTION = 7, REAPER = 8, GOLEM = 9,
-	DWARF1 = 10, SPHINX = 11, PYRAMID = 12, DWARF2 = 13
+	DWARF_MINE = 10, SPHINX = 11, PYRAMID = 12, DWARF_TOWN = 13
 };
 
 class XeenEngine;
@@ -308,7 +308,7 @@ private:
 	 */
 	void getNewLocation();
 public:
-	DwarfCutscene(bool isDwarf1);
+	DwarfCutscene();
 	virtual ~DwarfCutscene() {}
 
 	/**
