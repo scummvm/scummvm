@@ -222,7 +222,6 @@ Common::Error AGDSEngine::run() {
 		return Common::kNoGameDataFoundError;
 
 	Common::EventManager *eventManager = _system->getEventManager();
-	_system->fillScreen(0);
 
 	while(!shouldQuit()) {
 		uint32 frameStarted = _system->getMillis();
