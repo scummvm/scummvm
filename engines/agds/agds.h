@@ -30,6 +30,7 @@
 #include "engines/advancedDetector.h"
 #include "agds/soundManager.h"
 #include "agds/database.h"
+#include "agds/inventory.h"
 #include "agds/processExitCode.h"
 #include "agds/resourceManager.h"
 #include "agds/screen.h"
@@ -104,6 +105,10 @@ private:
 		return _resourceManager;
 	}
 
+	Inventory & inventory() {
+		return _inventory;
+	}
+
 	Screen *currentScreen() {
 		return _currentScreen;
 	}
@@ -151,6 +156,7 @@ private:
 	bool						_userEnabled;
 	MouseMap					_mouseMap;
 	Common::RandomSource		_random;
+	Inventory					_inventory;
 };
 
 

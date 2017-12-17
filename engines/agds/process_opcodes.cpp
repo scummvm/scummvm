@@ -617,6 +617,7 @@ void Process::playFilm() {
 
 void Process::inventoryClear() {
 	debug("inventoryClear");
+	_engine->inventory().clear();
 }
 
 void Process::inventoryAddObject() {
@@ -626,19 +627,22 @@ void Process::inventoryAddObject() {
 }
 
 void Process::getMaxInventorySize() {
-	debug("getMaxInventorySize");
-	push(35);
+	int size = _engine->inventory().maxSize();
+	debug("getMaxInventorySize -> %d", size);
+	push(size);
 }
 
 void Process::getInventorySize() {
-	debug("getInventorySize");
-	push(1);
+	int size = _engine->inventory().size();
+	debug("getInventorySize -> %d", size);
+	push(size);
 }
 
 void Process::appendInventoryObjectNameToSharedSpace() {
 	int index = pop();
 	debug("appendInventoryObjectNameToSharedSpace %d", index);
-	push(_engine->appendToSharedStorage("*inventory name stub*"));
+	Object *object = _engine->inventory().get(index);
+	push(_engine->appendToSharedStorage(object? object->getName(): Common::String()));
 }
 
 void Process::exitProcessSetNextScreen() {
