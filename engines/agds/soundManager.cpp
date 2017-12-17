@@ -21,6 +21,7 @@
  */
 
 #include "agds/soundManager.h"
+#include "agds/agds.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/textconsole.h"
@@ -31,29 +32,38 @@
 namespace AGDS {
 
 	void SoundManager::tick() {
+		for(SoundList::iterator i = _sounds.begin(); i != _sounds.end(); ++i) {
+			Sound & sound = *i;
+			int state = _engine->getGlobal(sound.phaseVar);
+			state = 0;
+			_mixer->isSoundHandleActive(sound.handle);
+			_engine->setGlobal(sound.phaseVar, state);
+		}
 	}
 
-	void SoundManager::play(const Common::String &filename, const Common::String &phaseVar) {
-		Common::File *sound = new Common::File();
-		if (!sound->open(filename))
-			error("no sound %s", filename.c_str());
+	void SoundManager::play(const Common::String &resource, const Common::String &phaseVar) {
+		Common::File *file = new Common::File();
+		if (!file->open(resource))
+			error("no sound %s", resource.c_str());
 
-		Common::String lname(filename);
+		Common::String lname(resource);
 		lname.toLowercase();
 
 		Audio::SeekableAudioStream *stream = NULL;
 		if (lname.hasSuffix(".ogg")) {
-			stream = Audio::makeVorbisStream(sound, DisposeAfterUse::YES);
+			stream = Audio::makeVorbisStream(file, DisposeAfterUse::YES);
 		} else if (lname.hasSuffix(".wav")) {
-			stream = Audio::makeWAVStream(sound, DisposeAfterUse::YES);
+			stream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 		}
 		if (!stream) {
-			warning("could not play sound %s", filename.c_str());
-			delete sound;
+			warning("could not play sound %s", resource.c_str());
+			delete file;
 			return;
 		}
 		Audio::SoundHandle handle;
 		_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream);
+
+		_sounds.push_back(Sound(resource, phaseVar, handle));
 	}
 
 }
