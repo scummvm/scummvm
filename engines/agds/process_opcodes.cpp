@@ -632,9 +632,9 @@ void Process::getMaxInventorySize() {
 	push(size);
 }
 
-void Process::getInventorySize() {
-	int size = _engine->inventory().size();
-	debug("getInventorySize -> %d", size);
+void Process::getInventoryFreeSpace() {
+	int size = _engine->inventory().free();
+	debug("getInventoryFreeSpace -> %d", size);
 	push(size);
 }
 
@@ -893,7 +893,7 @@ ProcessExitCode Process::execute() {
 			OP		(kResetPhaseVar, resetPhaseVar);
 			OP		(kStub136, stub136);
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
-			OP		(kGetInventorySize, getInventorySize);
+			OP		(kGetFreeInventorySpace, getInventoryFreeSpace);
 			OP		(kSetStringSystemVariable, setStringSystemVariable);
 			OP		(kSetSystemIntegerVariable, setIntegerSystemVariable);
 			OP		(kGetRegionCenterX, getRegionCenterX);

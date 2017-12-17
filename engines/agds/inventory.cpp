@@ -26,12 +26,12 @@
 
 namespace AGDS {
 
-int Inventory::size() const {
-	int size = 0;
+int Inventory::free() const {
+	int free = 0;
 	for(uint i = 0; i < _entries.size(); ++i)
-		if (_entries[i])
-			++size;
-	return size;
+		if (!_entries[i])
+			++free;
+	return free;
 }
 
 int Inventory::add(Object *object) {

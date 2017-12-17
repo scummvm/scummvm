@@ -44,7 +44,7 @@ public:
 		return _entries[index];
 	}
 
-	int size() const;
+	int free() const;
 	void clear();
 
 	int maxSize() const {
