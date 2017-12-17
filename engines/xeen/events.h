@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
+#include "common/queue.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -40,7 +41,7 @@ private:
 	uint32 _priorFrameCounterTime;
 	uint32 _gameCounter;
 	uint32 _gameCounters[6];
-	Common::KeyState _key;
+	Common::Queue<Common::KeyState> _keys;
 	SpriteResource _sprites;
 
 	/**
