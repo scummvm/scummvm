@@ -191,7 +191,6 @@ void AGDSEngine::runProcess() {
 			p = _processes.erase(p);
 			continue;
 		}
-		break;
 	}
 }
 
