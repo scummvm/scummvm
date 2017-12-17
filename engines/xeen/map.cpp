@@ -943,11 +943,13 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 }
 
 void Map::load(int mapId) {
-	Interface &intf = *_vm->_interface;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
-	IndoorDrawList &indoorList = _vm->_interface->_indoorList;
-	OutdoorDrawList &outdoorList = _vm->_interface->_outdoorList;
+	EventsManager &events = *g_vm->_events;
+	Interface &intf = *g_vm->_interface;
+	Party &party = *g_vm->_party;
+	Sound &sound = *g_vm->_sound;
+	Windows &windows = *g_vm->_windows;
+	IndoorDrawList &indoorList = intf._indoorList;
+	OutdoorDrawList &outdoorList = intf._outdoorList;
 
 	if (intf._falling) {
 		Window &w = windows[9];
@@ -957,9 +959,10 @@ void Map::load(int mapId) {
 		PleaseWait::show(_vm);
 	}
 
-	_vm->_party->_stepped = true;
-	_vm->_party->_mazeId = mapId;
-	_vm->_events->clearEvents();
+	intf._objNumber = 0;
+	party._stepped = true;
+	party._mazeId = mapId;
+	events.clearEvents();
 
 	_sideObjects = 1;
 	_sideMonsters = 1;
@@ -1043,7 +1046,7 @@ void Map::load(int mapId) {
 
 			if (isDarkCc && mapId == 50)
 				mazeDataP->setAllTilesStepped();
-			if (!isDarkCc && _vm->_party->_gameFlags[0][25] &&
+			if (!isDarkCc && party._gameFlags[0][25] &&
 					(mapId == 42 || mapId == 43 || mapId == 4)) {
 				mazeDataP->clearCellSurfaces();
 			}
@@ -1077,14 +1080,14 @@ void Map::load(int mapId) {
 				_headData.synchronize(headFile);
 				headFile.close();
 
-				if (!isDarkCc && _vm->_party->_mazeId)
+				if (!isDarkCc && party._mazeId)
 					_mobData._monsters.clear();
 
 				if (!isDarkCc && mapId == 15) {
 					if ((_mobData._monsters[0]._position.x > 31 || _mobData._monsters[0]._position.y > 31) &&
 						(_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) &&
 						(_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
-						_vm->_party->_gameFlags[0][56] = true;
+						party._gameFlags[0][56] = true;
 					}
 				}
 			}
@@ -1102,7 +1105,7 @@ void Map::load(int mapId) {
 	// TODO: Switch setting flags that don't seem to ever be used
 
 	// Reload the monster data for the main maze that we're loading
-	mapId = _vm->_party->_mazeId;
+	mapId = party._mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.mob",
 		(mapId >= 100) ? 'x' : '0', mapId);
 	File mobFile(filename, *_vm->_saves);
@@ -1112,12 +1115,12 @@ void Map::load(int mapId) {
 
 	// Load sprites for the objects
 	for (uint i = 0; i < _mobData._objectSprites.size(); ++i) {
-		if (_vm->_party->_cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
+		if (party._cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
 				mapId == 27 && isDarkCc) {
 			_mobData._objects[29]._spriteId = 0;
 			_mobData._objects[29]._id = 8;
 			_mobData._objectSprites[i]._sprites.clear();
-		} else if (mapId == 12 && _vm->_party->_gameFlags[0][43] &&
+		} else if (mapId == 12 && party._gameFlags[0][43] &&
 			_mobData._objectSprites[i]._spriteId == 118 && !isDarkCc) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
