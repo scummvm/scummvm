@@ -1151,7 +1151,7 @@ void Map::load(int mapId) {
 
 	// Load wall picture sprite resources
 	for (uint i = 0; i < _mobData._wallItemSprites.size(); ++i) {
-		filename = Common::String::format("%03d.pic", _mobData._wallItems[i]._spriteId);
+		filename = Common::String::format("%03d.pic", _mobData._wallItemSprites[i]._spriteId);
 		_mobData._wallItemSprites[i]._sprites.load(filename,
 			_sidePictures ? ALTSIDE_ARCHIVE : GAME_ARCHIVE);
 	}
