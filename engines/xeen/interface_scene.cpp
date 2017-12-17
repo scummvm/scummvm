@@ -2879,16 +2879,16 @@ void InterfaceScene::setIndoorsWallPics() {
 		if (wallItem._direction != dir)
 			continue;
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][2]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][2])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][2]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][2])) {
 			if (_wp[1] == -1) {
 				_indoorList[148]._frame = wallItem._frame;
 				_indoorList[148]._sprites = wallItem._sprites;
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][7]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][7])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][7]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][7])) {
 			if (!_wo[27] && _wp[1] == -1) {
 				_indoorList[123]._frame = wallItem._frame;
 				_indoorList[123]._sprites = wallItem._sprites;
@@ -2896,8 +2896,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][5]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][5])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][5]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][5])) {
 			if (_wo[27] && _wo[25]) {
 			} else if (_wo[27] && _wo[28]) {
 			} else if (_wo[23] && _wo[25]) {
@@ -2909,8 +2909,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][9]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][9])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][9]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][9])) {
 			if (_wo[27] && _wo[26]) {
 			} else if (_wo[27] && _wo[29]) {
 			} else if (_wo[24] && _wo[26]) {
@@ -2922,17 +2922,17 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][14]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][14])) {
-			if (!_wo[22] && !_wo[27] && !_wp[8]) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][14]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][14])) {
+			if (!_wo[22] && !_wo[27] && _wp[8] == -1) {
 				_indoorList[94]._frame = wallItem._frame;
 				_indoorList[94]._sprites = wallItem._sprites;
 				_wp[8] = idx;
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[23]) {
 			} else if (_wo[22] && _wo[20]) {
@@ -2945,8 +2945,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[24]) {
 			} else if (_wo[22] && _wo[21]) {
@@ -2959,8 +2959,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][12]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][12])) {
 			if (_wo[27]) {
 			} else if (_wo[25] && _wo[28]) {
 			} else if (_wo[20] && _wo[16]) {
@@ -2971,8 +2971,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][16]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][16])) {
 			if (!_wo[26] && !_wo[29] && !_wo[21] && !_wo[18] && _wp[10] == -1) {
 				_indoorList[96]._frame = wallItem._frame;
 				_indoorList[96]._sprites = wallItem._sprites;
@@ -2980,8 +2980,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][27]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][27])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][27]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][27])) {
 			if (!_wo[27] && !_wo[22] && !_wo[15] && _wp[15] == -1) {
 				_indoorList[50]._frame = wallItem._frame;
 				_indoorList[50]._sprites = wallItem._sprites;
@@ -2989,8 +2989,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][25]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][25])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][25]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][25])) {
 			if (_wo[27]) {
 			} else if (_wo[27] && _wo[22]) {
 			} else if (_wo[15] && _wo[17]) {
@@ -3004,8 +3004,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[20]) {
 			} else if (_wo[22] && _wo[23]) {
@@ -3019,8 +3019,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][29]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][29])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][29]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][29])) {
 			if (_wo[27] || _wo[22]) {
 			} else if (_wo[15] && _wo[19]) {
 			} else if (_wo[15] && _wo[14]) {
@@ -3033,8 +3033,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (_wo[27]) {
 			} else if (_wo[22] && _wo[21]) {
 			} else if (_wo[22] && _wo[24]) {
@@ -3047,8 +3047,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (!_wo[27] && !_wo[20] && !_wo[12] && !_wo[23] && !_wo[8] && !_wo[30]) {
 				if (_wp[12] == -1) {
 					_indoorList[47]._frame = wallItem._frame;
@@ -3058,8 +3058,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (!_wo[27] && !_wo[21] && !_wo[14] && !_wo[24] && !_wo[10] && !_wo[31]) {
 				if (_wp[18] == -1) {
 					_indoorList[53]._frame = wallItem._frame;
@@ -3069,8 +3069,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][23]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][23])) {
 			if (!_wo[25] && !_wo[28] && !_wo[20] && !_wo[11] && !_wo[16] && !_wo[30] && !_wo[32]) {
 				if (_wp[11] == -1) {
 					_indoorList[46]._frame = wallItem._frame;
@@ -3080,8 +3080,8 @@ void InterfaceScene::setIndoorsWallPics() {
 			}
 		}
 
-		if (mazePos.x == (wallItem._position.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
-				mazePos.y == (wallItem._position.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
+		if (wallItem._position.x == (mazePos.x + Res.SCREEN_POSITIONING_X[dir][31]) &&
+				wallItem._position.y == (mazePos.y + Res.SCREEN_POSITIONING_Y[dir][31])) {
 			if (!_wo[26] && !_wo[20] && !_wo[21] && !_wo[13] && !_wo[18] && !_wo[31] && !_wo[33]) {
 				if (_wp[19] == -1) {
 					_indoorList[54]._frame = wallItem._frame;

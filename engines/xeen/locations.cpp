@@ -1926,6 +1926,8 @@ exit:
 
 	// Restore game screen
 	sound.setMusicVolume(95);
+	sound.stopSound();
+
 	screen.loadBackground("back.raw");
 	intf.drawParty(false);
 	intf.draw3d(false, false);
