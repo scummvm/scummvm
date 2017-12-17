@@ -54,6 +54,7 @@ protected:
 	int _drawFrameIndex;
 	uint _farewellTime;
 	int _drawCtr1, _drawCtr2;
+	bool _exitToUi;
 protected:
 	/**
 	 * Draw the window

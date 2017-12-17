@@ -34,7 +34,7 @@ namespace Locations {
 
 BaseLocation::BaseLocation(LocationAction action) : ButtonContainer(g_vm),
 		_LocationActionId(action), _isDarkCc(g_vm->_files->_isDarkCc),
-		_vocName("hello1.voc") {
+		_vocName("hello1.voc"), _exitToUi(false) {
 	_townMaxId = (action >= SPHINX) ? 0 : Res.TOWN_MAXES[_isDarkCc][action];
 	if (action < NO_ACTION) {
 		_songName = Res.TOWN_ACTION_MUSIC[_isDarkCc][action];
@@ -86,7 +86,7 @@ int BaseLocation::show() {
 	do {
 		wait();
 		charP = doOptions(charP);
-		if (_vm->shouldQuit())
+		if (_vm->shouldQuit() || _exitToUi)
 			return 0;
 
 		Common::String msg = createLocationText(*charP);
@@ -683,9 +683,7 @@ Character *TavernLocation::doOptions(Character *c) {
 
 	case Common::KEYCODE_s: {
 		// Sign In
-		PartyDialog::show(g_vm);
-
-		// Set location and position afterwards
+		// Set location and position for afterwards
 		idx = _isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
 		assert(idx >= 0);
 		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_LocationActionId][idx][0];
@@ -704,8 +702,16 @@ Character *TavernLocation::doOptions(Character *c) {
 			party._activeParty[idx]._xeenSide = map._loadDarkSide;
 		}
 
+		g_vm->_mode = MODE_17;
 		party.addTime(1440);
 		party._mazeId = 0;
+
+		// Show the party dialog
+		PartyDialog::show(g_vm);
+
+		if (party._mazeId != 0)
+			map.load(party._mazeId);
+		_exitToUi = true;
 		break;
 	}
 
