@@ -37,13 +37,11 @@ SpriteResource::SpriteResource() {
 	_filesize = 0;
 	_data = nullptr;
 	_scaledWidth = _scaledHeight = 0;
-	Common::fill(&_lineDist[0], &_lineDist[SCREEN_WIDTH], false);
 }
 
 SpriteResource::SpriteResource(const Common::String &filename) {
 	_data = nullptr;
 	_scaledWidth = _scaledHeight = 0;
-	Common::fill(&_lineDist[0], &_lineDist[SCREEN_WIDTH], false);
 	load(filename);
 }
 
@@ -101,18 +99,19 @@ void SpriteResource::clear() {
 }
 
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
-		const Common::Rect &clipRect, int flags, int scale) {
+		const Common::Rect &clipRect, uint flags, int scale) {
 	static const uint SCALE_TABLE[] = {
 		0xFFFF, 0xFFEF, 0xEFEF, 0xEFEE, 0xEEEE, 0xEEAE, 0xAEAE, 0xAEAA,
 		0xAAAA, 0xAA8A, 0x8A8A, 0x8A88, 0x8888, 0x8880, 0x8080, 0x8000
 	};
 	static const int PATTERN_STEPS[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
 
-	uint16 scaleMask = SCALE_TABLE[scale & 0x7fff];
+	assert(ABS(scale) < 16);
+	uint16 scaleMask = SCALE_TABLE[ABS(scale)];
 	uint16 scaleMaskX = scaleMask, scaleMaskY = scaleMask;
 	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
 	int xInc = flipped ? -1 : 1;
-	bool enlarge = (scale & 0x8000) != 0;
+	bool enlarge = scale < 0;
 
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);
@@ -299,24 +298,25 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		int flags, int scale) {
+		uint flags, int scale) {
 	draw(dest, frame, destPos, Common::Rect(0, 0, dest.w, dest.h), flags, scale);
 }
 
 void SpriteResource::draw(Window &dest, int frame, const Common::Point &destPos,
-		int flags, int scale) {
+		uint flags, int scale) {
 	draw(dest, frame, destPos, dest.getBounds(), flags, scale);
 }
 
 void SpriteResource::draw(int windowIndex, int frame, const Common::Point &destPos,
-		int flags, int scale) {
+		uint flags, int scale) {
 	Window &win = (*g_vm->_windows)[windowIndex];
 	draw(win, frame, destPos, flags, scale);
 }
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, int flags, int scale) {
+		const Common::Rect &bounds, uint flags, int scale) {
 
+	// Sprites can consist of separate background & foreground
 	drawOffset(dest, _index[frame]._offset1, destPos, bounds, flags, scale);
 	if (_index[frame]._offset2)
 		drawOffset(dest, _index[frame]._offset2, destPos, bounds, flags, scale);

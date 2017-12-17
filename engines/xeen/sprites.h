@@ -49,7 +49,6 @@ private:
 	Common::Array<IndexEntry> _index;
 	int32 _filesize;
 	byte *_data;
-	bool _lineDist[320];
 	int _scaledWidth, _scaledHeight;
 
 	/**
@@ -61,19 +60,19 @@ private:
 	 * Draw the sprite onto the given surface
 	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, int flags = 0, int scale = 0);
+		const Common::Rect &bounds, uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw the sprite onto a given window
 	 */
 	void draw(int windowNum, int frame, const Common::Point &destPos,
-		const Common::Rect &bounds, int flags = 0, int scale = 0);
+		const Common::Rect &bounds, uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw a sprite frame based on a passed offset into the data stream
 	 */
 	void drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,
-		const Common::Rect &clipRect, int flags, int scale);
+		const Common::Rect &clipRect, uint flags, int scale);
 
 	/**
 	 * Scale a co-ordinate value based on the passed scaling mask
@@ -107,34 +106,65 @@ public:
 
 	/**
 	 * Draw a sprite onto a surface
+	 * @param dest		Destination surface
+	 * @param frame		Frame number
+	 * @param destPos	Destination position
+	 * @param flags		Flags
+	 * @param scale		Scale: 0=No scale
+	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be.
+	 *					-1..-15 -> enlarges the sprite
 	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
-		int flags = 0, int scale = 0);
+		uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw a sprite onto a specific window
+	 * @param dest		Destination window
+	 * @param frame		Frame number
+	 * @param destPos	Destination position
+	 * @param flags		Flags
+	 * @param scale		Scale: 0=No scale
+	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be.
+	 *					-1..-15 -> enlarges the sprite
 	 */
 	void draw(Window &dest, int frame, const Common::Point &destPos,
-		int flags = 0, int scale = 0);
+		uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw a sprite onto a given window
+	 * @param windowIndex	Destination window number
+	 * @param frame		Frame number
+	 * @param destPos	Destination position
+	 * @param flags		Flags
+	 * @param scale		Scale: 0=No scale
+	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be.
+	 *					-1..-15 -> enlarges the sprite
 	 */
 	void draw(int windowIndex, int frame, const Common::Point &destPos,
-		int flags = 0, int scale = 0);
+		uint flags = 0, int scale = 0);
 
 	/**
 	 * Draw the sprite onto the given surface
+	 * @param dest		Destination surface
+	 * @param frame		Frame number
 	 */
 	void draw(XSurface &dest, int frame);
 
 	/**
 	 * Draw the sprite onto the given window
+	 * @param windowIndex	Destination window number
+	 * @param frame			Frame number
 	 */
 	void draw(int windowIndex, int frame);
 
-	int size() const { return _index.size(); }
+	/**
+	 * Returns the number of frames the sprite resource has
+	 */
+	size_t size() const { return _index.size(); }
 
+	/**
+	 * Returns true if the sprite resource is empty (ie. nothing is loaded)
+	 */
 	bool empty() const { return _index.size() == 0; }
 };
 
