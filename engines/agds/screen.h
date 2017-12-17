@@ -38,16 +38,25 @@ class Object;
 struct Region;
 
 struct MouseRegion {
-	int id;
-	Region *region;
-	bool enabled;
-	bool currentlyIn;
+	int			id;
+	Region *	region;
+	int			enabled;
+	bool		currentlyIn;
+
 	Common::String onEnter;
 	Common::String onLeave;
 
-	MouseRegion(): id(-1), enabled(false), currentlyIn(false), region() { }
+	void enable() {
+		++enabled;
+	}
+
+	void disable() {
+		if (enabled > 0)
+			--enabled;
+	}
+
 	MouseRegion(Region * reg, const Common::String &enter, const Common::String &leave):
-		id(-1), region(reg), enabled(true), currentlyIn(false), onEnter(enter), onLeave(leave) {
+		id(-1), region(reg), enabled(1), currentlyIn(false), onEnter(enter), onLeave(leave) {
 	}
 };
 
