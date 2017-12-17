@@ -73,7 +73,7 @@ Common::String Process::getString(int id) {
 }
 
 Common::String Process::popFilename() {
-	return _engine->loadFilename(popString());
+	return _engine->loadText(popString());
 }
 
 void Process::activate() {
