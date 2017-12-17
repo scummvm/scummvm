@@ -81,9 +81,10 @@ private:
 	void jumpz(int delta)
 	{
 		int value = pop();
-		debug("jumpz %d %+d", value, delta);
-		if (value == 0)
-			jump(delta);
+		if (value == 0) {
+			debug("jumpz %d %+d", value, delta);
+			_ip += delta;
+		}
 	}
 
 	Common::String getString(int id);
@@ -231,6 +232,7 @@ private:
 #undef BINARY_OP
 
 	void suspend(ProcessExitCode exitCode, const Common::String &arg1, const Common::String &arg2 = Common::String()) {
+		debug("suspend %d", exitCode);
 		if (_status == kStatusActive)
 			_status = kStatusPassive;
 		_exitCode = exitCode;
@@ -241,6 +243,7 @@ private:
 	}
 
 	void suspend(ProcessExitCode exitCode = kExitCodeSuspend, int arg1 = 0, int arg2 = 0) {
+		debug("suspend %d", exitCode);
 		if (_status == kStatusActive)
 			_status = kStatusPassive;
 		_exitCode = exitCode;

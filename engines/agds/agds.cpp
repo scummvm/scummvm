@@ -185,7 +185,6 @@ void AGDSEngine::runProcess() {
 			loadObject(process.getExitArg1());
 			break;
 		case kExitCodeSuspend:
-			debug("process %s suspended", name.c_str());
 			return;
 		default:
 			debug("destroying process %s...", name.c_str());
