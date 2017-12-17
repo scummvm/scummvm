@@ -105,7 +105,7 @@ private:
 	void inventoryClear();
 	void inventoryAddObject();
 	void getMaxInventorySize();
-	void getInventorySize();
+	void getInventoryFreeSpace();
 	void appendInventoryObjectNameToSharedSpace();
 
 	void getObjectId();

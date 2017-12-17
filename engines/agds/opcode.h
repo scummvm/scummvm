@@ -158,7 +158,7 @@ enum Opcode {
 	kStub138						= 138,
 	kStub139						= 139,
 	kScreenChangeScreenPatch		= 140,
-	kGetInventorySize				= 141,
+	kGetFreeInventorySpace			= 141,
 	kSetStringSystemVariable		= 142,
 	kSetSystemIntegerVariable		= 143,
 	kStub144						= 144,
