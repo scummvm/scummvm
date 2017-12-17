@@ -34,6 +34,14 @@ namespace Xeen {
 
 class XeenEngine;
 
+enum Obscurity {
+	OBSCURITY_BLACK = 0,
+	OBSCURITY_3 = 1,
+	OBSCURITY_2 = 2,
+	OBSCURITY_1 = 3,
+	OBSCURITY_NONE = 4
+};
+
 #define HILIGHT_CHAR_DISABLED -2
 #define HILIGHT_CHAR_NONE -1
 
@@ -123,7 +131,7 @@ private:
 	 */
 	void nextChar();
 public:
-	int _intrIndex1;
+	Obscurity _obscurity;
 	Common::String _interfaceText;
 	int _falling;
 	int _face1State, _face2State;
@@ -181,6 +189,11 @@ public:
 	void doCombat();
 
 	void spellFX(Character *c);
+
+	/**
+	 * Optionally obscures the scene due to low light conditions
+	 */
+	void obscureScene(Obscurity obscurity);
 };
 
 } // End of namespace Xeen

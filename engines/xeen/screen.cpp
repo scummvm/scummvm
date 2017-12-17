@@ -169,21 +169,4 @@ void Screen::restoreBackground(int slot) {
 	blitFrom(_savedScreens[slot - 1]);
 }
 
-void Screen::frameWindow(uint bgType) {
-	if (bgType >= 4)
-		return;
-
-	if (bgType == 0) {
-		// Totally black background
-		_vm->_screen->fillRect(Common::Rect(8, 8, 224, 140), 0);
-	} else {
-		const byte *lookup = Res.BACKGROUND_XLAT + bgType;
-		for (int yp = 8; yp < 140; ++yp) {
-			byte *destP = (byte *)_vm->_screen->getBasePtr(8, yp);
-			for (int xp = 8; xp < 224; ++xp, ++destP)
-				*destP = lookup[*destP];
-		}
-	}
-}
-
 } // End of namespace Xeen

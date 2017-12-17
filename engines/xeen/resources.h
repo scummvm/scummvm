@@ -80,7 +80,7 @@ public:
 	static const int CHAR_FACES_X[6];
 	static const int HP_BARS_X[6];
 	static const char *const NO_ONE_TO_ADVENTURE_WITH;
-	static const byte BACKGROUND_XLAT[];
+	static const byte DARKNESS_XLAT[3][256];
 	static const char *const YOUR_ROSTER_IS_FULL;
 	static const char *const PLEASE_WAIT;
 	static const char *const OOPS;

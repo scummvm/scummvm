@@ -462,6 +462,7 @@ void Party::resetTemps() {
 }
 
 void Party::handleLight() {
+	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 
 	if (_stepped) {
@@ -474,8 +475,9 @@ void Party::handleLight() {
 		}
 	}
 
-	_vm->_interface->_intrIndex1 = _lightCount ||
-		(map.mazeData()._mazeFlags2 & FLAG_IS_DARK) == 0 ? 4 : 0;
+	// Set whether the scene is completely dark or not
+	intf._obscurity = _lightCount ||
+		(map.mazeData()._mazeFlags2 & FLAG_IS_DARK) == 0 ? OBSCURITY_NONE : OBSCURITY_BLACK;
 }
 
 int Party::subtract(ConsumableType consumableId, uint amount, PartyBank whereId, ErrorWaitType wait) {

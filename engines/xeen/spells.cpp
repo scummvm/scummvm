@@ -816,7 +816,7 @@ void Spells::light() {
 	Sound &sound = *_vm->_sound;
 
 	++party._lightCount;
-	if (intf._intrIndex1)
+	if (intf._obscurity != OBSCURITY_BLACK)
 		party._stepped = true;
 	sound.playFX(39);
 }

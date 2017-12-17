@@ -134,7 +134,7 @@ void PartyDrawer::resetHighlight() {
 Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceScene(vm),
 		PartyDrawer(vm), _vm(vm) {
 	_buttonsLoaded = false;
-	_intrIndex1 = 0;
+	_obscurity = OBSCURITY_NONE;
 	_steppingFX = 0;
 	_falling = false;
 	_blessedUIFrame = 0;
@@ -1269,6 +1269,9 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 	// Draw the minimap
 	drawMinimap();
 
+	// Handle any darkness-based oscurity
+	obscureScene(_obscurity);
+
 	if (_falling == 1)
 		handleFalling();
 
@@ -1903,5 +1906,31 @@ void Interface::spellFX(Character *c) {
 	_tillMove = tillMove;
 }
 
+void Interface::obscureScene(Obscurity obscurity) {
+	Screen &screen = *g_vm->_screen;
+	const byte *lookup;
+
+	switch (obscurity) {
+	case OBSCURITY_BLACK:
+		// Totally dark (black) background
+		screen.fillRect(Common::Rect(8, 8, 224, 140), 0);
+		break;
+
+	case OBSCURITY_1:
+	case OBSCURITY_2:
+	case OBSCURITY_3:
+		lookup = &Res.DARKNESS_XLAT[obscurity - 1][0];
+		for (int yp = 8; yp < 140; ++yp) {
+			byte *destP = (byte *)screen.getBasePtr(8, yp);
+			for (int xp = 8; xp < 224; ++xp, ++destP)
+				*destP = lookup[*destP];
+		}
+		break;
+
+	default:
+		// Full daylight, so no obscurity
+		break;
+	}
+}
 
 } // End of namespace Xeen

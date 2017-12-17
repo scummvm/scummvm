@@ -45,6 +45,7 @@ void PartyDialog::show(XeenEngine *vm) {
 
 void PartyDialog::execute() {
 	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
@@ -118,9 +119,9 @@ void PartyDialog::execute() {
 					ErrorScroll::show(_vm, Res.NO_ONE_TO_ADVENTURE_WITH);
 				} else {
 					if (_vm->_mode != MODE_0) {
-						for (int idx = 4; idx >= 0; --idx) {
+						for (int idx = OBSCURITY_NONE; idx >= OBSCURITY_BLACK; --idx) {
 							events.updateGameCounter();
-							screen.frameWindow(idx);
+							intf.obscureScene((Obscurity)idx);
 							w.update();
 
 							while (events.timeElapsed() < 1)

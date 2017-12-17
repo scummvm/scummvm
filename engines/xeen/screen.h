@@ -102,8 +102,6 @@ public:
 	void saveBackground(int slot = 1);
 
 	void restoreBackground(int slot = 1);
-
-	void frameWindow(uint bgType);
 };
 
 } // End of namespace Xeen
