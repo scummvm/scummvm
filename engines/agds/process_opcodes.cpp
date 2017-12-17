@@ -486,9 +486,20 @@ void Process::stub215() {
 	debug("stub215: sound group %d", id);
 }
 
+void Process::stub221() {
+	Common::String phaseVar = popString();
+	debug("stub221: animation related, phaseVar %s", phaseVar.c_str());
+}
+
 void Process::stub223() {
 	int value = pop();
-	debug("stub199: %d", value);
+	debug("stub223: %d", value);
+}
+
+void Process::stub225() {
+	int arg = pop();
+	Common::String phaseVar = popString();
+	debug("stub225: animation related, phaseVar %s, arg %d", phaseVar.c_str(), arg);
 }
 
 void Process::setFontGlyphSize() {
@@ -562,6 +573,18 @@ void Process::playerSay() {
 	debug("playerSay %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
 	//close inventory here if close flag was set
 }
+void Process::runDialog() {
+	Common::String arg3 = popString();
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("runDialog %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+	arg2 = _engine->loadText(arg2);
+	arg3 = _engine->loadText(arg3);
+	debug("definition:\n%s", arg3.c_str());
+	debug("dialog:\n%s", arg2.c_str());
+	suspend(kExitCodeRunDialog, arg1);
+}
+
 
 void Process::getObjectPictureWidth() {
 	Common::String name = popString();
@@ -602,6 +625,22 @@ void Process::inventoryAddObject() {
 	suspend(kExitCodeLoadInventoryObject, name);
 }
 
+void Process::getMaxInventorySize() {
+	debug("getMaxInventorySize");
+	push(35);
+}
+
+void Process::getInventorySize() {
+	debug("getInventorySize");
+	push(1);
+}
+
+void Process::appendInventoryObjectNameToSharedSpace() {
+	int index = pop();
+	debug("appendInventoryObjectNameToSharedSpace %d", index);
+	push(_engine->appendToSharedStorage("*inventory name stub*"));
+}
+
 void Process::exitProcessSetNextScreen() {
 	Common::String name = popString();
 	debug("exitProcessSetNextScreen %s", name.c_str());
@@ -638,6 +677,8 @@ void Process::updateScreenHeightToDisplay() {
 void Process::loadTextFromObject() {
 	Common::String name = popFilename();
 	debug("loadTextFromObject %s", name.c_str());
+	Common::String text = _engine->loadText(name);
+	debug("%s", text.c_str());
 }
 
 void Process::call(uint16 addr) {
@@ -688,6 +729,13 @@ void Process::addMouseArea() {
 	int value = _engine->_mouseMap.add(MouseRegion(region, arg2, arg3));
 	debug("\tmouse area id -> %d", value);
 	push(value);
+}
+
+void Process::leaveCharacter() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("leaveCharacter %s %s", arg1.c_str(), arg2.c_str());
+	_engine->loadRegion(arg2);
 }
 
 void Process::fogOnCharacter() {
@@ -807,6 +855,7 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadRegionFromObject, loadRegionFromObject);
 			OP		(kLoadPictureFromObject, loadPictureFromObject);
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
+			OP		(kLeaveCharacter, leaveCharacter);
 			OP		(kDisableUser, disableUser);
 			OP		(kEnableUser, enableUser);
 			OP		(kUpdatePhaseVarOr2, updatePhaseVarOr2);
@@ -840,6 +889,7 @@ ProcessExitCode Process::execute() {
 			OP		(kResetPhaseVar, resetPhaseVar);
 			OP		(kStub136, stub136);
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
+			OP		(kGetInventorySize, getInventorySize);
 			OP		(kSetStringSystemVariable, setStringSystemVariable);
 			OP		(kSetSystemIntegerVariable, setIntegerSystemVariable);
 			OP		(kGetRegionCenterX, getRegionCenterX);
@@ -867,6 +917,8 @@ ProcessExitCode Process::execute() {
 			OP		(kGetObjectId, getObjectId);
 			OP		(kSetGlyphSize, setFontGlyphSize);
 			OP		(kGenerateRegion, generateRegion);
+			OP		(kGetMaxInventorySize, getMaxInventorySize);
+			OP		(kAppendInventoryObjectNameToSharedSpace, appendInventoryObjectNameToSharedSpace);
 			OP		(kStub184, stub184);
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);
@@ -879,7 +931,9 @@ ProcessExitCode Process::execute() {
 			OP		(kSetSampleVolumeAndPan, setSampleVolumeAndPan);
 			OP		(kPlaySound, playSound);
 			OP		(kStub215, stub215);
+			OP		(kStub221, stub221);
 			OP		(kStub223, stub223);
+			OP		(kStub225, stub225);
 			OP		(kFadeObject, fadeObject);
 			OP		(kLoadFont, loadFont);
 			OP_U	(kStub202ScreenHandler, stub202);
@@ -891,6 +945,7 @@ ProcessExitCode Process::execute() {
 			OP_U	(kOnKey, onKey);
 			OP		(kGetSampleVolume, getSampleVolume);
 			OP		(kStub235, stub235);
+			OP		(kRunDialog, runDialog);
 			OP		(kHasGlobal, hasGlobal);
 			OP		(kSetDialogForNextFilm, setDialogForNextFilm);
 		default:

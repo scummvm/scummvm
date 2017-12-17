@@ -170,6 +170,7 @@ void AGDSEngine::runProcess() {
 		ProcessExitCode code = process.execute();
 		switch(code) {
 		case kExitCodeLoadScreenObject:
+		case kExitCodeRunDialog:
 			runObject(process.getExitArg1(), process.getExitArg2());
 			break;
 		case kExitCodeDestroyProcessSetNextScreen:
