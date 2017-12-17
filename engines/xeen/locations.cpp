@@ -1821,32 +1821,42 @@ int DwarfCutscene::show() {
 	Windows &windows = *g_vm->_windows;
 
 	SpriteResource sprites1(_isDarkCc ? "town1.zom" : "dwarf1.vga");
-	SpriteResource sprites2(_isDarkCc ? "town2.zom" : "dwarf2.vga");
-	SpriteResource sprites3(_isDarkCc ? "town3.zom" : "dwarf3.vga");
+	SpriteResource sprites2(_isDarkCc ? "town2.zom" : "dwarf3.vga");
+	SpriteResource sprites3(_isDarkCc ? "town3.zom" : "dwarf2.vga");
 	getNewLocation();
 
 	// Save the screen contents
 	Graphics::ManagedSurface savedBg;
 	savedBg.copyFrom(screen);
 
-	for (int idx = 0; idx < (_isDarkCc ? 10 : 12); ++idx) {
+	// Zoom in on the mine entrance
+	for (int idx = (_isDarkCc ? 10 : 12); idx >= 0; --idx) {
+		if (g_vm->shouldQuit())
+			return 0;
+		events.updateGameCounter();
+
 		screen.blitFrom(savedBg);
 		sprites1.draw(0, 0,
-			Common::Point(DWARF_X0[_isDarkCc][idx], DWARF_Y[_isDarkCc][idx]));
+			Common::Point(DWARF_X0[_isDarkCc][idx], DWARF_Y[_isDarkCc][idx]), 0, idx);
 		sprites1.draw(0, 1,
-			Common::Point(DWARF_X1[_isDarkCc][idx], DWARF_Y[_isDarkCc][idx]));
+			Common::Point(DWARF_X1[_isDarkCc][idx], DWARF_Y[_isDarkCc][idx]), 0, idx);
 		if (_isDarkCc)
 			sprites1.draw(0, 2,
-				Common::Point(DWARF_X2[idx], DWARF_Y[_isDarkCc][idx]));
+				Common::Point(DWARF_X2[idx], DWARF_Y[_isDarkCc][idx]), 0, idx);
 
 		windows[0].update();
 		events.wait(1);
 	}
 
+	// Have character rise up from the bottom of the screen
 	savedBg.copyFrom(screen);
 	for (int idx = 15; idx >= 0; --idx) {
+		if (g_vm->shouldQuit())
+			return 0;
+		events.updateGameCounter();
+
 		screen.blitFrom(savedBg);
-		sprites2.draw(0, 0, Common::Point(DWARF2_X[_isDarkCc][idx], DWARF2_Y[_isDarkCc][idx]));
+		sprites2.draw(0, 0, Common::Point(DWARF2_X[_isDarkCc][idx], DWARF2_Y[_isDarkCc][idx]), 0, idx);
 		windows[0].update();
 		events.wait(1);
 	}
@@ -1856,7 +1866,7 @@ int DwarfCutscene::show() {
 	sprites2.draw(0, 0);
 	windows[0].update();
 
-	for (int idx = 0; idx < (_isDarkCc ? 2 : 3); ++idx) {
+	for (int idx = 0; !g_vm->shouldQuit() && idx < (_isDarkCc ? 2 : 3); ++idx) {
 		switch (idx) {
 		case 0:
 			sound.playSound(_isDarkCc ? "pass2.voc" : "dwarf10.voc");
