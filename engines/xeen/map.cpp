@@ -1137,14 +1137,15 @@ void Map::load(int mapId) {
 
 	// Load sprites for the monsters
 	for (uint i = 0; i < _mobData._monsterSprites.size(); ++i) {
-		ArchiveType archiveType =
-			_mobData._monsterSprites[i]._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen ?
+		MonsterObjectData::SpriteResourceEntry &spr = _mobData._monsterSprites[i];
+		ArchiveType archiveType = spr._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen ?
 			ALTSIDE_ARCHIVE : GAME_ARCHIVE;
+		uint imgNumber = _monsterData[spr._spriteId]._imageNumber;
 
-		filename = Common::String::format("%03d.mon", _mobData._monsterSprites[i]._spriteId);
+		filename = Common::String::format("%03u.mon", imgNumber);
 		_mobData._monsterSprites[i]._sprites.load(filename, archiveType);
 
-		filename = Common::String::format("%03d.att", _mobData._monsterSprites[i]._spriteId);
+		filename = Common::String::format("%03u.att", imgNumber);
 		_mobData._monsterSprites[i]._attackSprites.load(filename, archiveType);
 	}
 
