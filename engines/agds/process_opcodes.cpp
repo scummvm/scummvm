@@ -455,10 +455,10 @@ void Process::stub190() {
 	debug("stub190 %d", value);
 }
 
-void Process::stub191() {
+void Process::disableMouseAreas() {
 	int value = pop();
-	value = value > 0? 1: 0;
-	debug("stub191: setting some mouse flag to %d", value);
+	debug("disableMouseAreas %d", value);
+	_engine->_mouseMap.disable(value > 0);
 }
 
 void Process::stub194() {
@@ -943,7 +943,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub184, stub184);
 			OP		(kStub188, stub188);
 			OP		(kStub190, stub190);
-			OP		(kStub191, stub191);
+			OP		(kStub191, disableMouseAreas);
 			OP		(kStub194, stub194);
 			OP		(kGetObjectPictureWidth, getObjectPictureWidth);
 			OP		(kGetObjectPictureHeight, getObjectPictureHeight);

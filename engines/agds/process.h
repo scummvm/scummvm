@@ -112,6 +112,7 @@ private:
 	void clearScreen();
 	void loadPicture();
 	void loadMouse();
+	void loadMouseStub66();
 	void loadScreenRegion();
 	void loadScreenObject();
 	void loadFont();
@@ -173,13 +174,12 @@ private:
 
 	void disableUser();
 	void enableUser();
+	void disableMouseAreas();
+	void modifyMouseArea();
 	void onKey(unsigned size);
 	void onUse(unsigned size);
 	void onLook(unsigned size);
 	void onScreenBD(unsigned size);
-
-	void loadMouseStub66();
-	void modifyMouseArea();
 
 	void stub63(unsigned size);
 	void stub74();
@@ -203,7 +203,6 @@ private:
 	void stub184();
 	void stub188();
 	void stub190();
-	void stub191();
 	void stub192();
 	void stub194();
 	void stub199();

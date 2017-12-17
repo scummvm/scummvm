@@ -66,6 +66,8 @@ Object *Screen::find(Common::Point pos) const {
 }
 
 MouseRegion * MouseMap::find(Common::Point pos) {
+	if (_disabled)
+		return NULL;
 	for(MouseRegionsType::iterator i = _mouseRegions.begin(); i != _mouseRegions.end(); ++i) {
 		MouseRegion &mouse = *i;
 		if (mouse.enabled && mouse.region->pointIn(pos))
