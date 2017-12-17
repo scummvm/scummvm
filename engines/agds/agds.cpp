@@ -183,7 +183,7 @@ void AGDSEngine::runProcess() {
 			changeMouseArea(process.getExitIntArg1(), process.getExitIntArg2());
 			break;
 		case kExitCodeLoadInventoryObject:
-			loadObject(process.getExitArg1());
+			_inventory.add(loadObject(process.getExitArg1()));
 			break;
 		case kExitCodeSuspend:
 			return;

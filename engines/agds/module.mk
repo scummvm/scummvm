@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	agds.o \
 	database.o \
 	detection.o \
+	inventory.o \
 	mjpgPlayer.o \
 	object.o \
 	process.o \
