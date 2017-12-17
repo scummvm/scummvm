@@ -32,6 +32,8 @@
 namespace AGDS {
 
 class AGDSEngine;
+class Screen;
+
 class Process {
 public:
 	enum Status { kStatusActive, kStatusPassive, kStatusDone, kStatusError };
@@ -40,6 +42,7 @@ private:
 	typedef Common::Stack<int32> StackType;
 
 	AGDSEngine *	_engine;
+	Screen *		_parentScreen;
 	Object *		_object;
 	StackType		_stack;
 	unsigned		_ip, _lastIp;
@@ -268,6 +271,10 @@ public:
 
 	const Common::String & getName() const {
 		return _object->getName();
+	}
+
+	Screen *parentScreen() const {
+		return _parentScreen;
 	}
 
 	Status getStatus() const {
