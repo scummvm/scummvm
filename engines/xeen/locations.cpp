@@ -1829,8 +1829,6 @@ int DwarfCutscene::show() {
 
 	// Zoom in on the mine entrance
 	for (int idx = (_isDarkCc ? 10 : 12); idx >= 0; --idx) {
-		if (g_vm->shouldQuit())
-			return 0;
 		events.updateGameCounter();
 
 		screen.blitFrom(savedBg);
@@ -1843,7 +1841,11 @@ int DwarfCutscene::show() {
 				Common::Point(DWARF_X2[idx], DWARF_Y[_isDarkCc][idx]), 0, idx);
 
 		windows[0].update();
+
 		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
 	}
 
 	// Have character rise up from the bottom of the screen
@@ -1856,7 +1858,11 @@ int DwarfCutscene::show() {
 		screen.blitFrom(savedBg);
 		sprites2.draw(0, 0, Common::Point(DWARF2_X[_isDarkCc][idx], DWARF2_Y[_isDarkCc][idx]), 0, idx);
 		windows[0].update();
+
 		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
 	}
 
 	sound.setMusicVolume(48);
@@ -1864,7 +1870,7 @@ int DwarfCutscene::show() {
 	sprites2.draw(0, 0);
 	windows[0].update();
 
-	for (int idx = 0; !g_vm->shouldQuit() && idx < (_isDarkCc ? 2 : 3); ++idx) {
+	for (int idx = 0; idx < (_isDarkCc ? 2 : 3); ++idx) {
 		switch (idx) {
 		case 0:
 			sound.playSound(_isDarkCc ? "pass2.voc" : "dwarf10.voc");
@@ -1898,14 +1904,19 @@ int DwarfCutscene::show() {
 			updateSubtitles();
 
 			events.timeMark5();
-			while (!g_vm->shouldQuit() && events.timeElapsed5() < 2)
+			while (events.timeElapsed5() < 2) {
 				events.pollEventsAndWait();
-		} while (!g_vm->shouldQuit() && (sound.isPlaying() || _subtitleCtr));
+				checkEvents(g_vm);
+				if (g_vm->shouldQuit() || _buttonValue)
+					goto exit;
+			}
+		} while (sound.isPlaying() || _subtitleCtr);
 
 		while (!g_vm->shouldQuit() && events.timeElapsed() < 3)
 			events.pollEventsAndWait();
 	}
 
+exit:
 	sprites2.draw(0, 0);
 	if (!_isDarkCc)
 		sprites3.draw(0, 1);
