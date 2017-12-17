@@ -104,6 +104,9 @@ private:
 
 	void inventoryClear();
 	void inventoryAddObject();
+	void getMaxInventorySize();
+	void getInventorySize();
+	void appendInventoryObjectNameToSharedSpace();
 
 	void getObjectId();
 	void clearScreen();
@@ -139,11 +142,13 @@ private:
 	void getObjectPictureWidth();
 	void getObjectPictureHeight();
 	void fogOnCharacter();
+	void leaveCharacter();
 	void quit();
 
 	void setDialogForNextFilm();
 	void npcSay();
 	void playerSay();
+	void runDialog();
 
 	void getRandomNumber();
 	void setStringSystemVariable();
@@ -203,7 +208,9 @@ private:
 	void stub200();
 	void modifyMouseArea();
 	void stub215();
+	void stub221();
 	void stub223();
+	void stub225();
 	void stub235();
 	void debug(const char *str, ...);
 
