@@ -743,7 +743,7 @@ void Process::addMouseArea() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
 
-	debug("findObjectInMouseArea (region: %s) %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+	debug("addMouseArea (region: %s) %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
 	Region *region = _engine->loadRegion(arg1);
 
 	int value = _engine->_mouseMap.add(MouseRegion(region, arg2, arg3));
