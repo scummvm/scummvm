@@ -62,12 +62,13 @@ void InfoDialog::execute() {
 		party._day, party._year, statusText.c_str());
 
 	Window &w = windows[28];
-	w.setBounds(Common::Rect(88, 20, 248, 112));
+	w.setBounds(Common::Rect(88, 20, 248, 112 + (_lines.empty() ? 0 : _lines.size() * 9 + 13)));
 	w.open();
+	w.writeString(details);
 
 	do {
 		events.updateGameCounter();
-		intf.draw3d(false);
+		intf.draw3d(false, false);
 		w.frame();
 		w.writeString(details);
 		w.update();
