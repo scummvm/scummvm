@@ -2632,7 +2632,7 @@ void InterfaceScene::setMonsterSprite(DrawStruct &drawStruct, MazeMonster &monst
 
 	if (flying) {
 		drawStruct._x = Res.COMBAT_FLOAT_X[_combatFloatCounter];
-		drawStruct._y = Res.COMBAT_FLOAT_Y[_combatFloatCounter];
+		drawStruct._y += Res.COMBAT_FLOAT_Y[_combatFloatCounter];
 	} else {
 		drawStruct._x = 0;
 	}
