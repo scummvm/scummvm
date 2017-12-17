@@ -161,7 +161,7 @@ void AGDSEngine::runProcess() {
 	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
 		Process & process = *p;
 		const Common::String &name = process.getName();
-		if (process.getStatus() == Process::kStatusDone) {
+		if (process.getStatus() == Process::kStatusDone || process.getStatus() == Process::kStatusError) {
 			debug("process %s finished", name.c_str());
 			p = _processes.erase(p);
 			continue;
