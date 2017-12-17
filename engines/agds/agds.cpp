@@ -114,7 +114,7 @@ Region * AGDSEngine::loadRegion(const Common::String &name) {
 	return region;
 }
 
-Common::String AGDSEngine::loadFilename(const Common::String &entryName) {
+Common::String AGDSEngine::loadText(const Common::String &entryName) {
 	return ResourceManager::loadText(_data.getEntry(entryName));
 }
 
