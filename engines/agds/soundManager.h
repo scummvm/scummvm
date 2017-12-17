@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/list.h"
+#include "common/hashmap.h"
 #include "audio/mixer.h"
 
 namespace Common	{ class SeekableReadStream; }
@@ -33,15 +35,21 @@ namespace Audio		{ class Mixer; }
 namespace AGDS {
 	class AGDSEngine;
 
-	class Sound {
-		Common::String name;
-		Common::String phaseVar;
-		Audio::SoundHandle handle;
+	struct Sound {
+		Common::String		name;
+		Common::String		phaseVar;
+		Audio::SoundHandle	handle;
+		int					group;
+		Sound(const Common::String & res, const Common::String & var, Audio::SoundHandle h, int g = 0):
+			name(res), phaseVar(var), handle(h), group(g) {
+		}
 	};
 
 	class SoundManager {
+		typedef Common::List<Sound> SoundList;
 		AGDSEngine *				_engine;
 		Audio::Mixer *				_mixer;
+		SoundList					_sounds;
 
 	public:
 		SoundManager(AGDSEngine *engine, Audio::Mixer *mixer): _engine(engine), _mixer(mixer) { }

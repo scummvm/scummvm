@@ -66,6 +66,14 @@ public:
 
 	Common::Error run();
 
+	void setGlobal(const Common::String &name, int value) {
+		_globals.setVal(name, value);
+	}
+	bool hasGlobal(const Common::String &name) const {
+		return _globals.find(name) != _globals.end();
+	}
+	int getGlobal(const Common::String &name) const;
+
 private:
 	bool initGraphics();
 	bool load();
@@ -84,14 +92,6 @@ private:
 
 	int appendToSharedStorage(const Common::String &value);
 	const Common::String & getSharedStorage(int id) const;
-
-	void setGlobal(const Common::String &name, int value) {
-		_globals.setVal(name, value);
-	}
-	bool hasGlobal(const Common::String &name) const {
-		return _globals.find(name) != _globals.end();
-	}
-	int getGlobal(const Common::String &name) const;
 
 	void setTimer(int timer) {
 		_timer = timer;

@@ -271,6 +271,7 @@ Common::Error AGDSEngine::run() {
 			}
 		}
 
+		_soundManager.tick();
 		if (active())
 			runProcess();
 
