@@ -160,6 +160,11 @@ void AGDSEngine::loadScreen(const Common::String & name) {
 void AGDSEngine::runProcess() {
 	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
 		Process & process = *p;
+		if (process.parentScreen() != currentScreen()) {
+			++p;
+			continue;
+		}
+
 		const Common::String &name = process.getName();
 		if (process.getStatus() == Process::kStatusDone || process.getStatus() == Process::kStatusError) {
 			debug("process %s finished", name.c_str());
