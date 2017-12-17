@@ -128,6 +128,7 @@ private:
 	void loadAnimation();
 	void loadSample();
 	void playSound();
+	void playFilm();
 	void getSampleVolume();
 	void setSampleVolumeAndPan();
 	void updatePhaseVarOr2();
@@ -178,6 +179,9 @@ private:
 	void onScreenBD(unsigned size);
 
 	void loadMouseStub66();
+	void modifyMouseArea();
+
+	void stub63(unsigned size);
 	void stub74();
 	void stub82();
 	void stub119();
@@ -204,10 +208,10 @@ private:
 	void stub194();
 	void stub199();
 	void stub202(unsigned size);
-	void playFilm();
 	void stub200();
-	void modifyMouseArea();
+	void stub209(unsigned size);
 	void stub215();
+	void stub217();
 	void stub221();
 	void stub223();
 	void stub225();

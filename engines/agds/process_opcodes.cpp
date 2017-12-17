@@ -345,6 +345,12 @@ void Process::fadeObject() {
 	_engine->loadObject(name)->setAlpha(value);
 }
 
+void Process::stub63(unsigned size) {
+	Common::String arg = popString();
+	debug("stub63: %u instructions, arg: %s", size, arg.c_str());
+	_ip += size;
+}
+
 void Process::stub74() {
 	int arg2 = pop();
 	int arg1 = pop();
@@ -474,6 +480,11 @@ void Process::stub202(unsigned size) {
 	_ip += size;
 }
 
+void Process::stub209(unsigned size) {
+	debug("stub209, %u instructions", size);
+	_ip += size;
+}
+
 void Process::modifyMouseArea() {
 	int enabled = pop();
 	int id = pop();
@@ -484,6 +495,13 @@ void Process::modifyMouseArea() {
 void Process::stub215() {
 	int id = pop();
 	debug("stub215: sound group %d", id);
+}
+
+void Process::stub217() {
+	int soundGroup = pop();
+	int frame = pop();
+	int id = pop();
+	debug("stub217: animation? id: %d, frame: %d, soundGroup: %d", id, frame, soundGroup);
 }
 
 void Process::stub221() {
@@ -852,6 +870,7 @@ ProcessExitCode Process::execute() {
 			OP_U	(kCallImm16, call);
 			OP_U	(kObjectRegisterLookHandler, onLook);
 			OP_U	(kObjectRegisterUseHandler, onUse);
+			OP_U	(kStub63, stub63);
 			OP_U	(kScreenRegisterHandlerBD, onScreenBD);
 			OP		(kStub66, loadMouseStub66);
 			OP		(kLoadRegionFromObject, loadRegionFromObject);
@@ -933,6 +952,7 @@ ProcessExitCode Process::execute() {
 			OP		(kSetSampleVolumeAndPan, setSampleVolumeAndPan);
 			OP		(kPlaySound, playSound);
 			OP		(kStub215, stub215);
+			OP		(kStub217, stub217);
 			OP		(kStub221, stub221);
 			OP		(kStub223, stub223);
 			OP		(kStub225, stub225);
@@ -944,6 +964,7 @@ ProcessExitCode Process::execute() {
 			OP		(kFogOnCharacter, fogOnCharacter);
 			OP		(kStub200, stub200);
 			OP		(kModifyMouseArea, modifyMouseArea);
+			OP_U	(kStub209, stub209);
 			OP_U	(kOnKey, onKey);
 			OP		(kGetSampleVolume, getSampleVolume);
 			OP		(kStub235, stub235);
