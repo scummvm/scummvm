@@ -55,10 +55,10 @@ struct MouseRegion {
 class MouseMap {
 	typedef Common::List<MouseRegion> MouseRegionsType;
 	MouseRegionsType	_mouseRegions;
-	int _nextId;
+	int					_nextId;
 
 public:
-	MouseMap(): _nextId(1) { }
+	MouseMap(): _nextId(0) { }
 
 	int add(const MouseRegion & area) {
 		_mouseRegions.push_back(area);
