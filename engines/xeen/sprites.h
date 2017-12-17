@@ -35,6 +35,10 @@ namespace Xeen {
 class XeenEngine;
 class Window;
 
+enum {
+	SCALE_MASK = 0x7FFF, SCALE_ENLARGE = 0x8000
+};
+
 enum SpriteFlags {
 	SPRFLAG_800 = 0x800, SPRFLAG_SCENE_CLIPPED = 0x2000,
 	SPRFLAG_4000 = 0x4000, SPRFLAG_HORIZ_FLIPPED = 0x8000,
@@ -110,9 +114,8 @@ public:
 	 * @param frame		Frame number
 	 * @param destPos	Destination position
 	 * @param flags		Flags
-	 * @param scale		Scale: 0=No scale
-	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be.
-	 *					-1..-15 -> enlarges the sprite
+	 * @param scale		Scale: 0=No scale, SCALE_ENLARGE=Enlarge it
+	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(XSurface &dest, int frame, const Common::Point &destPos,
 		uint flags = 0, int scale = 0);
@@ -123,9 +126,8 @@ public:
 	 * @param frame		Frame number
 	 * @param destPos	Destination position
 	 * @param flags		Flags
-	 * @param scale		Scale: 0=No scale
-	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be.
-	 *					-1..-15 -> enlarges the sprite
+	 * @param scale		Scale: 0=No scale, SCALE_ENLARGE=Enlarge it
+	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(Window &dest, int frame, const Common::Point &destPos,
 		uint flags = 0, int scale = 0);
@@ -136,9 +138,8 @@ public:
 	 * @param frame		Frame number
 	 * @param destPos	Destination position
 	 * @param flags		Flags
-	 * @param scale		Scale: 0=No scale
-	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be.
-	 *					-1..-15 -> enlarges the sprite
+	 * @param scale		Scale: 0=No scale, SCALE_ENLARGE=Enlarge it
+	 *					1..15   -> reduces the sprite: the higher, the smaller it'll be
 	 */
 	void draw(int windowIndex, int frame, const Common::Point &destPos,
 		uint flags = 0, int scale = 0);

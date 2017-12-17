@@ -106,12 +106,12 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 	};
 	static const int PATTERN_STEPS[] = { 0, 1, 1, 1, 2, 2, 3, 3, 0, -1, -1, -1, -2, -2, -3, -3 };
 
-	assert(ABS(scale) < 16);
-	uint16 scaleMask = SCALE_TABLE[ABS(scale)];
+	assert((scale & SCALE_MASK) < 16);
+	uint16 scaleMask = SCALE_TABLE[scale & SCALE_MASK];
 	uint16 scaleMaskX = scaleMask, scaleMaskY = scaleMask;
 	bool flipped = (flags & SPRFLAG_HORIZ_FLIPPED) != 0;
 	int xInc = flipped ? -1 : 1;
-	bool enlarge = scale < 0;
+	bool enlarge = (scale & SCALE_ENLARGE) != 0;
 
 	// Get cell header
 	Common::MemoryReadStream f(_data, _filesize);
@@ -269,7 +269,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 
 				if (bit) {
 					// Check whether there's a pixel to write, and we're within the allowable bounds. Note that for
-					// the SPRFLAG_SCENE_CLIPPED or when scale == 0x8000, we also have an extra horizontal bounds check
+					// the SPRFLAG_SCENE_CLIPPED or when enlarging, we also have an extra horizontal bounds check
 					if (*lineP != -1 && xp >= bounds.left && xp < bounds.right &&
 							((!(flags & SPRFLAG_SCENE_CLIPPED) && !enlarge) || (xp >= SCENE_CLIP_LEFT && xp < SCENE_CLIP_RIGHT))) {
 						drawBounds.left = MIN(drawBounds.left, xp);

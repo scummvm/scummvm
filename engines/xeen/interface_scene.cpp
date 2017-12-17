@@ -145,7 +145,7 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[107] = DrawStruct(0, 200, 40, 0, SPRFLAG_HORIZ_FLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[108] = DrawStruct(0, 8, 47);
 	_data[109] = DrawStruct(0, 169, 47, 0, SPRFLAG_HORIZ_FLIPPED);
-	_data[110] = DrawStruct(1, -56, -4, 0x8000, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[110] = DrawStruct(1, -56, -4, SCALE_ENLARGE, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
 	_data[111] = DrawStruct(0, -5, 2, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
 	_data[112] = DrawStruct(0, -67, 2, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
 	_data[113] = DrawStruct(0, 44, 73);
@@ -477,7 +477,7 @@ void InterfaceScene::drawOutdoorsScene() {
 				ds2._frame = 0;
 				ds2._scale = combat._monsterScale[idx];
 
-				if (ds2._scale == 0x8000) {
+				if (ds2._scale == SCALE_ENLARGE) {
 					ds2._x /= 3;
 					ds2._y = 60;
 				} else {
@@ -493,7 +493,7 @@ void InterfaceScene::drawOutdoorsScene() {
 				ds1._frame = combat._elemPow[idx];
 				ds1._scale = combat._elemScale[idx];
 
-				if (ds1._scale == 0x8000)
+				if (ds1._scale == SCALE_ENLARGE)
 					ds1._x /= 3;
 				ds1._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
 				ds1._sprites = &_charPowSprites;
@@ -614,7 +614,7 @@ void InterfaceScene::drawIndoorsScene() {
 				ds1._x = COMBAT_POS_X[idx][posIndex];
 				ds1._frame = 0;
 				ds1._scale = combat._monsterScale[idx];
-				if (ds1._scale == 0x8000) {
+				if (ds1._scale == SCALE_ENLARGE) {
 					ds1._x /= 3;
 					ds1._y = 60;
 				} else {
@@ -629,7 +629,7 @@ void InterfaceScene::drawIndoorsScene() {
 				ds2._x = COMBAT_POS_X[idx][posIndex] + COMBAT_OFFSET_X[idx];
 				ds2._frame = combat._elemPow[idx];
 				ds2._scale = combat._elemScale[idx];
-				if (ds2._scale == 0x8000)
+				if (ds2._scale == SCALE_ENLARGE)
 					ds2._x /= 3;
 				ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
 				ds2._sprites = &_charPowSprites;
