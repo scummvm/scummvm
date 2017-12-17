@@ -1693,8 +1693,8 @@ void Interface::doCombat() {
 
 			// Handling for if the combat turn is complete
 			if (combat.allHaveGone()) {
-				Common::fill(&combat._charsGone[0], &combat._charsGone[combat._charsGone.size()], false);
-				Common::fill(&combat._charsBlocked[0], &combat._charsBlocked[combat._charsBlocked.size()], false);
+				Common::fill(&combat._charsGone[0], &combat._charsGone[0] + combat._charsGone.size(), false);
+				Common::fill(&combat._charsBlocked[0], &combat._charsBlocked[0] + combat._charsBlocked.size(), false);
 				combat.setSpeedTable();
 				combat._whosTurn = -1;
 				combat._whosSpeed = -1;
