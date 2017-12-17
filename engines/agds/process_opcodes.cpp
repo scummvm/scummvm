@@ -104,18 +104,18 @@ void Process::getObjectId() {
 }
 
 void Process::loadPicture() {
-	Common::String name = popFilename();
+	Common::String name = popText();
 	debug("loadPicture stub %s", name.c_str());
 	push(100500); //dummy
 }
 
 void Process::loadAnimation() {
-	Common::String name = popFilename();
+	Common::String name = popText();
 	debug("loadAnimation %s", name.c_str());
 }
 
 void Process::loadSample() {
-	Common::String name = popFilename();
+	Common::String name = popText();
 	debug("loadSample %s", name.c_str());
 	if (_phaseVar.empty()) {
 		warning("playing sample %s without phase var", _phaseVar.c_str());
@@ -138,7 +138,7 @@ void Process::setSampleVolumeAndPan() {
 }
 
 void Process::playSound() {
-	Common::String name = popFilename();
+	Common::String name = popText();
 	int arg = pop();
 	debug("playSound %s %d", name.c_str(), arg);
 }
@@ -185,13 +185,13 @@ void Process::removeScreenObject() {
 }
 
 void Process::loadFont() {
-	Common::String name = popFilename();
+	Common::String name = popText();
 	int id = pop();
 	debug("loadFont %s %d stub", name.c_str(), id);
 }
 
 void Process::loadMouse() {
-	Common::String name = popFilename();
+	Common::String name = popText();
 	debug("loadMouse %s", name.c_str());
 	_engine->loadCursor(name);
 }
@@ -333,7 +333,7 @@ void Process::changeScreenPatch() {
 }
 
 void Process::loadMouseStub66() {
-	Common::String name = popFilename();
+	Common::String name = popText();
 	debug("loadMouseStub66 %s", name.c_str());
 	_engine->loadCursor(name); //overlay cursor
 }
@@ -607,8 +607,8 @@ void Process::getObjectPictureHeight() {
 }
 
 void Process::playFilm() {
-	Common::String audio = popFilename();
-	Common::String video = popFilename();
+	Common::String audio = popText();
+	Common::String video = popText();
 
 	debug("playFilm %s %s", video.c_str(), audio.c_str());
 	_engine->playFilm(video, audio);
@@ -679,10 +679,8 @@ void Process::updateScreenHeightToDisplay() {
 }
 
 void Process::loadTextFromObject() {
-	Common::String name = popFilename();
-	debug("loadTextFromObject %s", name.c_str());
-	Common::String text = _engine->loadText(name);
-	debug("%s", text.c_str());
+	Common::String text = popText();
+	debug("loadTextFromObject %s", text.c_str());
 }
 
 void Process::call(uint16 addr) {
@@ -757,13 +755,13 @@ void Process::loadRegionFromObject() {
 
 
 void Process::loadPictureFromObject() {
-	Common::String name = popFilename();
+	Common::String name = popText();
 	debug("loadPictureFromObject %s", name.c_str());
 	_object->setPicture(_engine->loadPicture(name));
 }
 
 void Process::loadAnimationFromObject() {
-	Common::String name = popFilename();
+	Common::String name = popText();
 	debug("loadAnimationFromObject %s", name.c_str());
 }
 
