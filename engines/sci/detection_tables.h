@@ -2860,6 +2860,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
 
+	// Lighthouse - German DOS (from bug #10359)	
+	{"lighthouse", "", {
+		{"resmap.001", 0, "d2dc13bb936d6528a19feac92fc7df1c", 7852},
+		{"ressci.001", 0, "dbb615146ec943e4ff7764a485c90511", 122330257},
+		{"resmap.002", 0, "8fdb8544d801057d3123539d8e6d039a", 7618},
+		{"ressci.002", 0, "6635764dc258b2041ca9a387e5aaab25", 115026179},
+		AD_LISTEND},
+		Common::DE_DEU, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LIGHTHOUSE },
+
 #undef GUIO_LIGHTHOUSE_DEMO
 #undef GUIO_LIGHTHOUSE
 
