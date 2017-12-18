@@ -8,7 +8,7 @@
 		<item>
 			<title>Version 2.0.0</title>
 			<sparkle:releaseNotesLink>
-				https://scummvm.org/frs/scummvm/2.0.0/ReleaseNotes
+				https://scummvm.org/frs/scummvm/2.0.0/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
 			<pubDate>Sun, 17 Dec 2017 22:00:00 +0000</pubDate>
 			<enclosure url="https://www.scummvm.org/frs/scummvm/2.0.0/scummvm-2.0.0-macosx.dmg"
