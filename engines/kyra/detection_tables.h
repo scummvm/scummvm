@@ -1483,6 +1483,23 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
+	{ // German version - Bug 9557
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "8e144826df680397876e0fd7ce30c701", -1 },
+				{ "CHAPTER7.PAK", 0, "1240fb870aba719f5887ca7270227699", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
 	// Russian fan translation
 	{
 		{
