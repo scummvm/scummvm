@@ -179,7 +179,7 @@ enum Opcode {
 	kExitProcessCreatePatch			= 159,
 	kStub160						= 160,
 	kStub161						= 161,
-	kExitScreen						= 162,
+	kDisableInventory						= 162,
 	kStub163						= 163,
 	kLoadPreviousScreen				= 164,
 	kMoveScreenObject				= 165,
