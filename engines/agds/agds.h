@@ -60,6 +60,7 @@ class SystemVariable;
 
 class AGDSEngine : public Engine {
 	friend class Process;
+	typedef Common::List<Process> ProcessListType;
 
 public:
 	AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -78,6 +79,7 @@ public:
 private:
 	bool initGraphics();
 	bool load();
+	void runProcess(ProcessListType::iterator &it);
 	void runProcess();
 
 	Object * loadObject(const Common::String & name, const Common::String & prototype = Common::String());
@@ -130,7 +132,6 @@ private:
 	typedef Common::HashMap<Common::String, Screen *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ScreensType;
 	typedef Common::HashMap<Common::String, Region *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RegionsType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
-	typedef Common::List<Process> ProcessListType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
 
 	const ADGameDescription *	_gameDescription;

@@ -135,7 +135,9 @@ Object *AGDSEngine::loadObject(const Common::String & name, const Common::String
 }
 
 void AGDSEngine::runObject(Object *object) {
-	_processes.push_front(Process(this, object));
+	_processes.push_back(Process(this, object));
+	ProcessListType::iterator it = _processes.reverse_begin();
+	runProcess(it);
 	if (_currentScreen)
 		_currentScreen->add(object);
 }
@@ -157,46 +159,51 @@ void AGDSEngine::loadScreen(const Common::String & name) {
 	runObject(name);
 }
 
+void AGDSEngine::runProcess(ProcessListType::iterator &it) {
+	Process & process = *it;
+	if (process.parentScreen() != currentScreen()) {
+		++it;
+		return;
+	}
+
+	const Common::String &name = process.getName();
+	if (process.getStatus() == Process::kStatusDone || process.getStatus() == Process::kStatusError) {
+		debug("process %s finished", name.c_str());
+		it = _processes.erase(it);
+		return;
+	}
+	process.activate();
+	ProcessExitCode code = process.execute();
+	switch(code) {
+	case kExitCodeLoadScreenObject:
+	case kExitCodeRunDialog:
+		runObject(process.getExitArg1(), process.getExitArg2());
+		break;
+	case kExitCodeDestroyProcessSetNextScreen:
+		loadScreen(process.getExitArg1());
+		break;
+	case kExitCodeLoadPreviousScreenObject:
+		loadScreen(_previousScreen);
+		break;
+	case kExitCodeMouseAreaChange:
+		changeMouseArea(process.getExitIntArg1(), process.getExitIntArg2());
+		break;
+	case kExitCodeLoadInventoryObject:
+		_inventory.add(loadObject(process.getExitArg1()));
+		break;
+	case kExitCodeSuspend:
+		break;
+	default:
+		debug("destroying process %s...", name.c_str());
+		it = _processes.erase(it);
+		return;
+	}
+	++it;
+}
+
 void AGDSEngine::runProcess() {
 	for(ProcessListType::iterator p = _processes.begin(); active() && p != _processes.end(); ) {
-		Process & process = *p;
-		if (process.parentScreen() != currentScreen()) {
-			++p;
-			continue;
-		}
-
-		const Common::String &name = process.getName();
-		if (process.getStatus() == Process::kStatusDone || process.getStatus() == Process::kStatusError) {
-			debug("process %s finished", name.c_str());
-			p = _processes.erase(p);
-			continue;
-		}
-		process.activate();
-		ProcessExitCode code = process.execute();
-		switch(code) {
-		case kExitCodeLoadScreenObject:
-		case kExitCodeRunDialog:
-			runObject(process.getExitArg1(), process.getExitArg2());
-			break;
-		case kExitCodeDestroyProcessSetNextScreen:
-			loadScreen(process.getExitArg1());
-			break;
-		case kExitCodeLoadPreviousScreenObject:
-			loadScreen(_previousScreen);
-			break;
-		case kExitCodeMouseAreaChange:
-			changeMouseArea(process.getExitIntArg1(), process.getExitIntArg2());
-			break;
-		case kExitCodeLoadInventoryObject:
-			_inventory.add(loadObject(process.getExitArg1()));
-			break;
-		case kExitCodeSuspend:
-			return;
-		default:
-			debug("destroying process %s...", name.c_str());
-			p = _processes.erase(p);
-			continue;
-		}
+		runProcess(p);
 	}
 }
 
