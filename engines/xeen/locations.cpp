@@ -1580,34 +1580,42 @@ int GolemCutscene::show() {
 	savedBg.copyFrom(screen);
 
 	for (int idx = (_isDarkCc ? 8 : 11); idx >= 0; --idx) {
+		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sprites1.draw(0, 0,
-			Common::Point(GOLEM_X1[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]));
+			Common::Point(GOLEM_X1[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]), 0, idx);
 		sprites1.draw(0, 1,
-			Common::Point(GOLEM_X2[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]));
+			Common::Point(GOLEM_X2[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]), 0, idx);
 
 		windows[0].update();
+
 		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
 	}
 
 	if (_isDarkCc)
 		sound.playSound("ogre.voc");
 
 	for (int idx = -200; idx < 0; idx += 16) {
+		events.updateGameCounter();
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));
 		sprites2[0].draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
-		sprites2[_isDarkCc].draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
+		sprites2[_isDarkCc].draw(0, 1, Common::Point(idx + 160, 0), SPRFLAG_800);
 
 		if (!_isDarkCc)
 			sprites2[0].draw(0, 2, Common::Point(idx + g_vm->getRandomNumber(9) - 5,
 				g_vm->getRandomNumber(9) - 5), SPRFLAG_800);
 		
-		events.wait(1);
 		if (!_isDarkCc && !sound.isPlaying())
 			sound.playSound("ogre.voc");
 
 		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
 	}
 
 	sprites1.draw(0, 0, Common::Point(0, 0));
@@ -1618,12 +1626,19 @@ int GolemCutscene::show() {
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
-	while (!g_vm->shouldQuit() && sound.isPlaying())
+	while (sound.isPlaying()) {
+		events.updateGameCounter();
+
 		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
+	}
 	sound.setMusicVolume(48);
 	sound.playSound(_mazeFlag ? "golem15.voc" : "golem13.voc");
 
 	do {
+		events.updateGameCounter();
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));
 
@@ -1639,8 +1654,12 @@ int GolemCutscene::show() {
 		}
 
 		updateSubtitles();
+
 		events.wait(1);
-	} while (!g_vm->shouldQuit() && (sound.isPlaying() || _subtitleCtr));
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
+	} while (sound.isPlaying() || _subtitleCtr);
 
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
@@ -1650,6 +1669,7 @@ int GolemCutscene::show() {
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
+	events.updateGameCounter();
 	events.wait(_isDarkCc ? 10 : 1);
 
 	if (!_isDarkCc) {
@@ -1657,12 +1677,13 @@ int GolemCutscene::show() {
 		while (!g_vm->shouldQuit() && sound.isPlaying())
 			events.pollEventsAndWait();
 
-		sound.playSound(_mazeFlag ? "golem15.voc" : "golem13.voc");
+		sound.playSound(_mazeFlag ? "golem16.voc" : "golem14.voc");
 	} else {
 		sound.playSound(_mazeFlag ? "go2.voc" : "key2.voc");
 	}
 
 	do {
+		events.updateGameCounter();
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));
 
@@ -1678,7 +1699,11 @@ int GolemCutscene::show() {
 		}
 
 		windows[0].update();
+
 		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
 	} while (!g_vm->shouldQuit() && sound.isPlaying());
 
 	sprites1.draw(0, 0, Common::Point(0, 0));
@@ -1689,23 +1714,35 @@ int GolemCutscene::show() {
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
-	while (!g_vm->shouldQuit() && sound.isPlaying())
-		events.pollEventsAndWait();
+	while (!g_vm->shouldQuit() && sound.isPlaying()) {
+		events.updateGameCounter();
+		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
+	}
+
 	sound.setMusicVolume(95);
 
 	if (!_mazeFlag) {
 		for (int idx = 0; !g_vm->shouldQuit() && idx < (_isDarkCc ? 9 : 12); ++idx) {
+			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sprites1.draw(0, 0,
-				Common::Point(GOLEM_X1[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]));
+				Common::Point(GOLEM_X1[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]), 0, idx);
 			sprites1.draw(0, 1,
-				Common::Point(GOLEM_X2[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]));
+				Common::Point(GOLEM_X2[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]), 0, idx);
 
 			windows[0].update();
+
 			events.wait(1);
+			checkEvents(g_vm);
+			if (g_vm->shouldQuit() || _buttonValue)
+				goto exit;
 		}
 	}
 
+exit:
 	screen.blitFrom(savedBg);
 	windows[0].update();
 
@@ -1713,6 +1750,8 @@ int GolemCutscene::show() {
 
 	// Restore game screen
 	sound.setMusicVolume(95);
+	sound.stopSound();
+
 	screen.loadBackground("back.raw");
 	intf.drawParty(false);
 	intf.draw3d(false, false);
