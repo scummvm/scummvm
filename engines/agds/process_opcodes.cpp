@@ -708,6 +708,7 @@ void Process::call(uint16 addr) {
 	Process callee(_engine, _object, _ip + addr);
 	ProcessExitCode code = callee.execute();
 	debug("call returned %d", code);
+	suspend();
 }
 
 void Process::onKey(unsigned size) {
