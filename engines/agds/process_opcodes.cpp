@@ -680,11 +680,9 @@ void Process::loadPreviousScreen() {
 	suspend(kExitCodeLoadPreviousScreenObject);
 }
 
-void Process::exitScreen()
+void Process::disableInventory()
 {
-	debug("exitScreen? reactivating process...");
-	if (_status != kStatusDone)
-		_status = kStatusActive;
+	debug("disableInventory");
 }
 
 void Process::setScreenHeight() {
@@ -933,7 +931,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub192, stub192);
 			OP		(kQuit, quit);
 			OP		(kExitProcessCreatePatch, exitProcessCreatePatch);
-			OP		(kExitScreen, exitScreen);
+			OP		(kDisableInventory, disableInventory);
 			OP		(kLoadPreviousScreen, loadPreviousScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
 			OP		(kGetObjectId, getObjectId);
