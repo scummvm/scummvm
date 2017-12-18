@@ -435,6 +435,26 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 
 /*------------------------------------------------------------------------*/
 
+CastSpell::CastSpell(XeenEngine *vm) : ButtonContainer(vm) {
+	Windows &windows = *_vm->_windows;
+	_oldMode = _vm->_mode;
+	_vm->_mode = MODE_3;
+
+	windows[10].open();
+	loadButtons();
+}
+
+CastSpell::~CastSpell() {
+	Interface &intf = *_vm->_interface;
+	Windows &windows = *_vm->_windows;
+
+	windows[10].close();
+	intf.unhighlightChar();
+
+	_vm->_mode = (Mode)_oldMode;
+}
+
+
 int CastSpell::show(XeenEngine *vm) {
 	Combat &combat = *vm->_combat;
 	Interface &intf = *vm->_interface;
@@ -459,19 +479,27 @@ int CastSpell::show(XeenEngine *vm) {
 	Character *c = &party._activeParty[charNum];
 	intf.highlightChar(charNum);
 
-	CastSpell *dlg = new CastSpell(vm);
-	int spellId = dlg->execute(c);
-	delete dlg;
-
-	return spellId;
+	return show(vm, c);
 }
 
 int CastSpell::show(XeenEngine *vm, Character *&c) {
+	Spells &spells = *vm->_spells;
 	CastSpell *dlg = new CastSpell(vm);
-	int spellId = dlg->execute(c);
-	delete dlg;
+	int spellId;
+	int result = -1;
 
-	return spellId;
+	do {
+		spellId = dlg->execute(c);
+
+		if (g_vm->shouldQuit() || spellId == -1) {
+			result = 0;
+		} else {
+			result = spells.castSpell(c, (MagicSpell)spellId);
+		}
+	} while (result == -1);
+
+	delete dlg;
+	return result;
 }
 
 int CastSpell::execute(Character *&c) {
@@ -481,12 +509,6 @@ int CastSpell::execute(Character *&c) {
 	Spells &spells = *_vm->_spells;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[10];
-
-	Mode oldMode = _vm->_mode;
-	_vm->_mode = MODE_3;
-
-	w.open();
-	loadButtons();
 
 	int spellId = -1;
 	bool redrawFlag = true;
@@ -524,8 +546,8 @@ int CastSpell::execute(Character *&c) {
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_F6:
 			// Only allow changing character if the party is not in combat
-			if (oldMode != MODE_COMBAT) {
-				_vm->_mode = oldMode;
+			if (_oldMode != MODE_COMBAT) {
+				_vm->_mode = (Mode)_oldMode;
 				_buttonValue -= Common::KEYCODE_F1;
 
 				if (_buttonValue < (int)party._activeParty.size()) {
@@ -549,7 +571,7 @@ int CastSpell::execute(Character *&c) {
 
 		case Common::KEYCODE_n:
 			// Select new spell
-			_vm->_mode = oldMode;
+			_vm->_mode = (Mode)_oldMode;
 			c = SpellsDialog::show(_vm, this, c, 1);
 			redrawFlag = true;
 			break;
@@ -559,13 +581,8 @@ int CastSpell::execute(Character *&c) {
 		}
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
-	w.close();
-	intf.unhighlightChar();
-
 	if (_vm->shouldQuit())
 		spellId = -1;
-
-	_vm->_mode = oldMode;
 	return spellId;
 }
 

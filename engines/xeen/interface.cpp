@@ -531,17 +531,11 @@ void Interface::perform() {
 			draw3d(true);
 		}
 
-		int result = 0;
 		Character *c = &party._activeParty[(spells._lastCaster < 0 ||
 			spells._lastCaster >= (int)party._activeParty.size()) ?
 			(int)party._activeParty.size() - 1 : spells._lastCaster];
-		do {
-			int spellId = CastSpell::show(_vm, c);
-			if (spellId == -1)
-				break;
 
-			result = spells.castSpell(c, (MagicSpell)spellId);
-		} while (result != -1);
+		int result = CastSpell::show(_vm, c);
 
 		if (result == 1) {
 			chargeStep();
