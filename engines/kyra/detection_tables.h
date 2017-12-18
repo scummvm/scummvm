@@ -1500,6 +1500,23 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
+	{ // Japanese PC9821 version - Bug 9828
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "8902b233405461025e25093b9c4c8d2c", -1 },
+				{ "CHAPTER7.PAK", 0, "32a46c338a3d6249c273cc3b3881bb8a", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::JA_JPN,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_CD_FLAGS
+	},
+
 	// Russian fan translation
 	{
 		{
