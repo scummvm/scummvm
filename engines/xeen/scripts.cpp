@@ -133,12 +133,13 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 int Scripts::checkEvents() {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
+	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	bool isDarkCc = files._isDarkCc;
 
 	_refreshIcons = false;
 	_itemType = 0;
@@ -273,11 +274,12 @@ int Scripts::checkEvents() {
 
 void Scripts::openGrate(int wallVal, int action) {
 	Combat &combat = *_vm->_combat;
+	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	bool isDarkCc = files._isDarkCc;
 
 	if ((wallVal != 13 || map._currentGrateUnlocked) && (!isDarkCc || wallVal != 9 ||
 			map.mazeData()._wallKind != 2)) {
@@ -913,6 +915,7 @@ bool Scripts::cmdGiveExtended(ParamsIterator &params) {
 }
 
 bool Scripts::cmdConfirmWord(ParamsIterator &params) {
+	FileManager &files = *_vm->_files;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	int inputType = params.readByte();
@@ -933,21 +936,21 @@ bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 
 	_mirrorId = StringInput::show(_vm, inputType, msg1, msg2, _event->_opcode);
 	if (_mirrorId) {
-		if (_mirrorId == 33 && _vm->_files->_isDarkCc) {
+		if (_mirrorId == 33 && files._isDarkCc) {
 			doEndGame2();
-		} else if (_mirrorId == 34 && _vm->_files->_isDarkCc) {
+		} else if (_mirrorId == 34 && files._isDarkCc) {
 			doWorldEnd();
-		} else if (_mirrorId == 35 && _vm->_files->_isDarkCc &&
+		} else if (_mirrorId == 35 && files._isDarkCc &&
 				_vm->getGameID() == GType_WorldOfXeen) {
 			doEndGame();
-		} else if (_mirrorId == 40 && !_vm->_files->_isDarkCc) {
+		} else if (_mirrorId == 40 && !files._isDarkCc) {
 			doEndGame();
-		} else if (_mirrorId == 60 && !_vm->_files->_isDarkCc) {
+		} else if (_mirrorId == 60 && !files._isDarkCc) {
 			doEndGame2();
-		} else if (_mirrorId == 61 && !_vm->_files->_isDarkCc) {
+		} else if (_mirrorId == 61 && !files._isDarkCc) {
 			doWorldEnd();
 		} else {
-			if (_mirrorId == 59 && !_vm->_files->_isDarkCc) {
+			if (_mirrorId == 59 && !files._isDarkCc) {
 				for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 					XeenItem &item = party._treasure._weapons[idx];
 					if (!item._id) {
@@ -1436,6 +1439,7 @@ void Scripts::doEnding(const Common::String &endStr, int v2) {
 }
 
 bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
+	FileManager &files = *_vm->_files;
 	Party &party = *_vm->_party;
 	Character &ps = party._activeParty[charIndex];
 	uint v = 0;
@@ -1533,7 +1537,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	}
 	case 20:
-		if (_vm->_files->_isDarkCc)
+		if (files._isDarkCc)
 			val += 256;
 		assert(val < 512);
 		v = party._gameFlags[val / 256][val % 256] ? val : 0xffffffff;
@@ -1776,7 +1780,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 104:
 		// Get value of quest flag
-		v = party._questFlags[_vm->_files->_isDarkCc][val] ? val : 0xffffffff;
+		v = party._questFlags[files._isDarkCc][val] ? val : 0xffffffff;
 		break;
 	case 105:
 		// Test number of Megacredits in party. Only used by King's Engineer in Castle Burlock

@@ -34,71 +34,74 @@
 namespace Xeen {
 
 enum Opcode {
-	OP_None			= 0x00,
-	OP_Display0x01	= 0x01,
-	OP_DoorTextSml	= 0x02,
-	OP_DoorTextLrg	= 0x03,
-	OP_SignText		= 0x04,
-	OP_NPC			= 0x05,
-	OP_PlayFX		= 0x06,
-	OP_TeleportAndExit = 0x07,
-	OP_If1			= 0x08,
-	OP_If2			= 0x09,
-	OP_If3			= 0x0A,
-	OP_MoveObj		= 0x0B,
-	OP_TakeOrGive	= 0x0C,
-	OP_NoAction		= 0x0D,
-	OP_Remove		= 0x0E,
-	OP_SetChar		= 0x0F,
-	OP_Spawn		= 0x10,
-	OP_DoTownEvent	= 0x11,
-	OP_Exit			= 0x12,
-	OP_AfterMap		= 0x13,
-	OP_GiveExtended = 0x14,
-	OP_ConfirmWord	= 0x15,
-	OP_Damage		= 0x16,
-	OP_JumpRnd		= 0x17,
-	OP_AfterEvent	= 0x18,
-	OP_CallEvent	= 0x19,
-	OP_Return		= 0x1A,
-	OP_SetVar		= 0x1B,
-	OP_TakeOrGive_2 = 0x1C,
-	OP_TakeOrGive_3 = 0x1D,
-	OP_CutsceneEndClouds = 0x1E,
-	OP_TeleportAndContinue = 0x1F,
-	OP_WhoWill		= 0x20,
-	OP_RndDamage	= 0x21,
-	OP_MoveWallObj	= 0x22,
-	OP_AlterCellFlag= 0x23,
-	OP_AlterHed		= 0x24,
-	OP_DisplayStat	= 0x25,
-	OP_TakeOrGive_4	= 0x26,
-	OP_SeatTextSml	= 0x27,
-	OP_PlayEventVoc = 0x28,
-	OP_DisplayBottom = 0x29,
-	OP_IfMapFlag	= 0x2A,
-	OP_SelectRandomChar = 0x2B,
-	OP_GiveEnchanted= 0x2C,
-	OP_ItemType		= 0x2D,
-	OP_MakeNothingHere = 0x2E,
-	OP_NoAction_2	= 0x2F,
-	OP_ChooseNumeric= 0x30,
+	OP_None                  = 0x00,
+	OP_Display0x01           = 0x01,
+	OP_DoorTextSml           = 0x02,
+	OP_DoorTextLrg           = 0x03,
+	OP_SignText              = 0x04,
+	OP_NPC                   = 0x05,
+	OP_PlayFX                = 0x06,
+	OP_TeleportAndExit       = 0x07,
+	OP_If1                   = 0x08,
+	OP_If2                   = 0x09,
+	OP_If3                   = 0x0A,
+	OP_MoveObj               = 0x0B,
+	OP_TakeOrGive            = 0x0C,
+	OP_NoAction              = 0x0D,
+	OP_Remove                = 0x0E,
+	OP_SetChar               = 0x0F,
+	OP_Spawn                 = 0x10,
+	OP_DoTownEvent           = 0x11,
+	OP_Exit                  = 0x12,
+	OP_AfterMap              = 0x13,
+	OP_GiveExtended          = 0x14,
+	OP_ConfirmWord           = 0x15,
+	OP_Damage                = 0x16,
+	OP_JumpRnd               = 0x17,
+	OP_AfterEvent            = 0x18,
+	OP_CallEvent             = 0x19,
+	OP_Return                = 0x1A,
+	OP_SetVar                = 0x1B,
+	OP_TakeOrGive_2          = 0x1C,
+	OP_TakeOrGive_3          = 0x1D,
+	OP_CutsceneEndClouds     = 0x1E,
+	OP_TeleportAndContinue   = 0x1F,
+	OP_WhoWill               = 0x20,
+	OP_RndDamage             = 0x21,
+	OP_MoveWallObj           = 0x22,
+	OP_AlterCellFlag         = 0x23,
+	OP_AlterHed              = 0x24,
+	OP_DisplayStat           = 0x25,
+	OP_TakeOrGive_4          = 0x26,
+	OP_SeatTextSml           = 0x27,
+	OP_PlayEventVoc          = 0x28,
+	OP_DisplayBottom         = 0x29,
+	OP_IfMapFlag             = 0x2A,
+	OP_SelectRandomChar      = 0x2B,
+	OP_GiveEnchanted         = 0x2C,
+	OP_ItemType              = 0x2D,
+	OP_MakeNothingHere       = 0x2E,
+	OP_NoAction_2            = 0x2F,
+	OP_ChooseNumeric         = 0x30,
 	OP_DisplayBottomTwoLines = 0x31,
-	OP_DisplayLarge	= 0x32,
-	OP_ExchObj		= 0x33,
-	OP_FallToMap	= 0x34,
-	OP_DisplayMain	= 0x35,
-	OP_Goto			= 0x36,
-	OP_ConfirmWord_2= 0x37,
-	OP_GotoRandom	= 0x38,
-	OP_CutsceneEndDarkside = 0x39,
-	OP_CutsceneEdWorld = 0x3A,
-	OP_FlipWorld	= 0x3B,
-	OP_PlayCD		= 0x3C
+	OP_DisplayLarge          = 0x32,
+	OP_ExchObj               = 0x33,
+	OP_FallToMap             = 0x34,
+	OP_DisplayMain           = 0x35,
+	OP_Goto                  = 0x36,
+	OP_ConfirmWord_2         = 0x37,
+	OP_GotoRandom            = 0x38,
+	OP_CutsceneEndDarkside   = 0x39,
+	OP_CutsceneEdWorld       = 0x3A,
+	OP_FlipWorld             = 0x3B,
+	OP_PlayCD                = 0x3C
 };
 
 class XeenEngine;
 
+/**
+ * Encapsulates the parameters passed to script opcodes
+ */
 class EventParameters : public Common::Array<byte> {
 public:
 	class Iterator {
@@ -110,23 +113,23 @@ public:
 		Iterator(const Iterator &it) : _data(it._data), _index(0) {}
 
 		/**
-		* Return a byte
-		*/
+		 * Return a byte
+		 */
 		byte readByte();
 
 		/**
-		* Return a signed byte
-		*/
+		 * Return a signed byte
+		 */
 		int8 readShort() { return (int8)readByte(); }
 
 		/**
-		* Return a word
-		*/
+		 * Return a word
+		 */
 		uint16 readUint16LE();
 
 		/**
-		* Return a 32-bit dword
-		*/
+		 * Return a 32-bit dword
+		 */
 		uint32 readUint32LE();
 	};
 public:
@@ -138,6 +141,9 @@ public:
 	}
 };
 
+/**
+ * Represents a single event, an instruction of a script
+ */
 class MazeEvent {
 public:
 	Common::Point _position;
@@ -148,22 +154,37 @@ public:
 public:
 	MazeEvent();
 
+	/**
+	 * Synchronizes the data for the item
+	 */
 	void synchronize(Common::Serializer &s);
 };
 
+/**
+ * Represents an entire script that can be triggered within the maze
+ */
 class MazeEvents : public Common::Array<MazeEvent> {
 public:
 	Common::StringArray _text;
 public:
+	/**
+	 * Synchronizes the data for the item
+	 */
 	void synchronize(XeenSerializer &s);
 };
 
+/**
+ * Holds a single entry in the stack of subroutine call return points
+ */
 struct StackEntry : public Common::Point {
 	int line;
 
 	StackEntry(const Common::Point &pt, int l) : Common::Point(pt), line(l) {}
 };
 
+/**
+ * Holds a single destination that the mirror can send the player to
+ */
 struct MirrorEntry {
 	Common::String _name;
 	int _mapId;
@@ -175,6 +196,9 @@ struct MirrorEntry {
 	bool synchronize(Common::SeekableReadStream &s);
 };
 
+/**
+ * Overall scripts manager
+ */
 class Scripts {
 private:
 	XeenEngine *_vm;
@@ -514,8 +538,15 @@ public:
 public:
 	Scripts(XeenEngine *vm);
 
+	/**
+	 * Checks the event list, triggering any scripts as needed. Also does a
+	 * series of checks for updating party status
+	 */
 	int checkEvents();
 
+	/**
+	 * Handles opening grates
+	 */
 	void openGrate(int wallVal, int action);
 };
 
