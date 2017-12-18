@@ -4281,6 +4281,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Space Quest 1 VGA Remake - Russian DOS (from ncuxonaT in bug report #10156)
+	// VERSION file reports "2.000"
+	// SCI interpreter version 1.000.510 (just a guess)
+	{"sq1sci", "SCI", {
+		{"resource.map", 0, "764bcf12ef3d19c2edb12fef95311b18", 5913},
+		{"resource.000", 0, "8796727a998f62f5126a88342a6b919c", 1027050},
+		{"resource.001", 0, "03b15058b01dfad36a78eeb3237a468a", 1042620},
+		{"resource.002", 0, "c10edb6ee3c57da2af7f7f3b92e2d173", 1173464},
+		{"resource.003", 0, "da52b87ce225d12a3aa35e6b157e785c", 1214406},
+		{"resource.004", 0, "424f08b7593e54aa0ae22478b73e628a", 1208608},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+
 	// Space Quest 1 VGA Remake - English Mac (from Fingolfin)
 	{"sq1sci", "SCI", {
 		{"resource.map", 0, "5c6ad20407261b544238e8dce87afead", 5895},
