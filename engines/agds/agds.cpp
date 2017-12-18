@@ -21,6 +21,7 @@
  */
 
 #include "agds/agds.h"
+#include "agds/animation.h"
 #include "agds/mjpgPlayer.h"
 #include "agds/object.h"
 #include "agds/process.h"
@@ -40,7 +41,8 @@ namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
 		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0),
-		_mjpgPlayer(NULL), _currentScreen(NULL), _mouseCursor(NULL),
+		_mjpgPlayer(NULL), _currentScreen(NULL),
+		_defaultMouseCursor(NULL),
 		_mouse(400, 300), _userEnabled(false), _currentRegion(NULL),
 		_random("agds"), _soundManager(this, system->getMixer()) {
 }
@@ -281,6 +283,15 @@ Common::Error AGDSEngine::run() {
 			}
 		}
 
+		Animation *mouseCursor = NULL;
+
+		if (_userEnabled && _currentScreen) {
+			Object *object = _currentScreen->find(_mouse);
+			Animation *cursor = object? object->getMouseCursor(): NULL;
+			if (cursor)
+				mouseCursor = cursor;
+		}
+
 		_soundManager.tick();
 		if (active())
 			runProcess();
@@ -308,18 +319,11 @@ Common::Error AGDSEngine::run() {
 			_currentScreen->paint(*backbuffer);
 		}
 
-		if (_userEnabled && _mouseCursor) {
-			const Graphics::Surface * frame = _mouseCursor->decodeNextFrame();
-			if (!frame) {
-				_mouseCursor->rewind();
-				frame = _mouseCursor->decodeNextFrame();
-			}
-			Graphics::TransparentSurface * c = convertToTransparent(frame->convertTo(_pixelFormat, _mouseCursor->getPalette()));
-			Common::Point dst = _mouse;
-			Common::Rect srcRect = c->getRect();
-			if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect()))
-				c->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
-			delete c;
+		if (!mouseCursor)
+			mouseCursor = _defaultMouseCursor;
+
+		if (_userEnabled && mouseCursor) {
+			mouseCursor->paint(this, *backbuffer, _mouse);
 		}
 
 		_system->unlockScreen();
@@ -367,16 +371,19 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 	}
 }
 
-void AGDSEngine::loadCursor(const Common::String &name, unsigned index) {
+Animation * AGDSEngine::loadAnimation(const Common::String &name) {
+	AnimationsType::iterator i = _animations.find(name);
+	if (i != _animations.end())
+		return i->_value;
+
 	Common::SeekableReadStream *stream = _resourceManager.getResource(name);
 	if (!stream)
-		error("could not load cursor from %s", name.c_str());
-	Video::FlicDecoder * cursor = new Video::FlicDecoder;
-	if (cursor->loadStream(stream)) {
-		delete _mouseCursor;
-		_mouseCursor = cursor;
-	} else
-		delete cursor;
+		error("could not load animation from %s", name.c_str());
+	Animation *animation = new Animation();
+	if (!animation->load(stream))
+		error("could not load animation from %s", name.c_str());
+	_animations[name] = animation;
+	return animation;
 }
 
 Graphics::TransparentSurface * AGDSEngine::loadPicture(const Common::String &name)

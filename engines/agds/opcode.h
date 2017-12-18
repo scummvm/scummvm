@@ -85,7 +85,7 @@ enum Opcode {
 	kStub63							= 63,
 	kScreenRegisterHandlerBD		= 64,
 	kStub65							= 65,
-	kStub66							= 66,
+	kLoadMouseCursorFromObject							= 66,
 	kLoadRegionFromObject			= 68,
 	kLoadPictureFromObject			= 69,
 	kLoadAnimationFromObject		= 70,

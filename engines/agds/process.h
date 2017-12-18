@@ -115,7 +115,7 @@ private:
 	void clearScreen();
 	void loadPicture();
 	void loadMouse();
-	void loadMouseStub66();
+	void loadMouseCursorFromObject();
 	void loadScreenRegion();
 	void loadScreenObject();
 	void loadFont();
