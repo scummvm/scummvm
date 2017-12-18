@@ -23,9 +23,11 @@
 %option noyywrap
 %option nounput
 %option noinput
+%option never-interactive
 
 %{
 
+#define YY_NO_UNISTD_H
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/str.h"
@@ -42,15 +44,6 @@ static void count() {
 
 	g_lingo->_colnumber += strlen(yytext);
 }
-
-#if defined(__PLAYSTATION2__) || defined(_MSC_VER) || defined(__DC__)
-// Stub for missing function
-int isatty(int fileno) { return 0; }
-#endif
-
-#if defined(_MSC_VER) || defined(__DC__)
-#define YY_NO_UNISTD_H
-#endif
 
 static void countnl() {
 	char *p = yytext;
