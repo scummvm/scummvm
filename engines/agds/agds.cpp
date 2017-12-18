@@ -368,8 +368,8 @@ int AGDSEngine::getGlobal(const Common::String &name) const {
 	if (i != _globals.end())
 		return i->_value;
 	else {
-		debug("global %s was not declared, returning -1", name.c_str());
-		return -1;
+		debug("global %s was not declared, returning 0", name.c_str());
+		return 0;
 	}
 }
 
