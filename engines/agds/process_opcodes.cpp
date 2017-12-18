@@ -347,7 +347,7 @@ void Process::fadeObject() {
 
 void Process::stub63(unsigned size) {
 	Common::String arg = popString();
-	debug("stub63: %u instructions, arg: %s", size, arg.c_str());
+	debug("stub63: [handler] %u instructions, arg: %s", size, arg.c_str());
 	_ip += size;
 }
 
@@ -476,12 +476,12 @@ void Process::stub200() {
 }
 
 void Process::stub202(unsigned size) {
-	debug("stub203, %u instructions", size);
+	debug("stub203, [handler] %u instructions", size);
 	_ip += size;
 }
 
 void Process::stub209(unsigned size) {
-	debug("stub209, %u instructions", size);
+	debug("stub209, [handler] %u instructions", size);
 	_ip += size;
 }
 
@@ -711,23 +711,23 @@ void Process::call(uint16 addr) {
 
 void Process::onKey(unsigned size) {
 	Common::String key = popString();
-	debug("onKey %s handler, %u instructions", key.c_str(), size);
+	debug("onKey %s [handler], %u instructions", key.c_str(), size);
 	_ip += size;
 }
 
 void Process::onUse(unsigned size) {
-	debug("use? handler, %u instructions", size);
+	debug("lclick [handler], %u instructions", size);
 	_object->setClickHandler(_ip);
 	_ip += size;
 }
 
 void Process::onLook(unsigned size) {
-	debug("look? handler, %u instructions", size);
+	debug("look? [handler], %u instructions", size);
 	_ip += size;
 }
 
 void Process::onScreenBD(unsigned size) {
-	debug("onScreen(+BD) handler, %u instructions", size);
+	debug("onScreen(+BD) [handler], %u instructions", size);
 	_ip += size;
 }
 
