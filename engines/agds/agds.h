@@ -50,6 +50,7 @@ namespace Graphics { struct TransparentSurface; }
 
 namespace AGDS {
 
+class Animation;
 class Object;
 class Process;
 struct Region;
@@ -82,6 +83,7 @@ private:
 	void runProcess(ProcessListType::iterator &it);
 	void runProcess();
 
+public:
 	Object * loadObject(const Common::String & name, const Common::String & prototype = Common::String());
 	void runObject(Object *object);
 
@@ -115,10 +117,17 @@ private:
 		return _currentScreen;
 	}
 
+	const Graphics::PixelFormat & pixelFormat() const {
+		return _pixelFormat;
+	}
+
 	Graphics::TransparentSurface *loadPicture(const Common::String &name);
 	Graphics::TransparentSurface *convertToTransparent(const Graphics::Surface *surface); //destroys surface!
 
-	void loadCursor(const Common::String &name, unsigned index = 0);
+	Animation * loadAnimation(const Common::String &name);
+	void loadDefaultMouseCursor(const Common::String &name) {
+		_defaultMouseCursor = loadAnimation(name);
+	}
 	void changeMouseArea(int id, int enabled);
 	void enableUser(bool enabled) {
 		_userEnabled = enabled;
@@ -133,6 +142,7 @@ private:
 	typedef Common::HashMap<Common::String, Region *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RegionsType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
+	typedef Common::HashMap<Common::String, Animation *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> AnimationsType;
 
 	const ADGameDescription *	_gameDescription;
 	ResourceManager				_resourceManager;
@@ -141,6 +151,7 @@ private:
 	ObjectsType					_objects;
 	ScreensType					_screens;
 	RegionsType					_regions;
+	AnimationsType				_animations;
 	ProcessListType				_processes;
 	int							_sharedStorageIndex;
 	Common::String				_sharedStorage[10];
@@ -151,7 +162,7 @@ private:
 	MJPGPlayer *				_mjpgPlayer;
 	Screen *					_currentScreen;
 	Common::String				_previousScreen;
-	Video::FlicDecoder *		_mouseCursor;
+	Animation *					_defaultMouseCursor;
 	Common::Point				_mouse;
 	MouseRegion *				_currentRegion;
 	bool						_userEnabled;

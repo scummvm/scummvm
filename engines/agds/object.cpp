@@ -21,6 +21,7 @@
  */
 
 #include "agds/object.h"
+#include "agds/animation.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/rect.h"
@@ -29,7 +30,10 @@
 
 namespace AGDS {
 
-Object::Object(const Common::String &name, Common::SeekableReadStream * stream) : _name(name), _stringTableLoaded(false), _picture(), _pos(), _region(), _alpha(255) {
+Object::Object(const Common::String &name, Common::SeekableReadStream * stream) :
+	_name(name), _stringTableLoaded(false),
+	_picture(), _region(), _mouseCursor(),
+	_pos(), _alpha(255) {
 	byte id = stream->readByte();
 	byte flag = stream->readByte();
 	debug("id: 0x%02x %u, flag: %u", id, id, flag);
@@ -92,6 +96,11 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 	delete _picture;
 	_picture = picture;
 }
+
+void Object::setMouseCursor(Animation *animation) {
+	_mouseCursor = animation;
+}
+
 
 void Object::paint(Graphics::Surface &backbuffer) {
 	if (_picture) {

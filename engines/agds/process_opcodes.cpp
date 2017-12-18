@@ -193,7 +193,7 @@ void Process::loadFont() {
 void Process::loadMouse() {
 	Common::String name = popText();
 	debug("loadMouse %s", name.c_str());
-	_engine->loadCursor(name);
+	_engine->loadDefaultMouseCursor(name);
 }
 
 void Process::getRandomNumber() {
@@ -332,10 +332,10 @@ void Process::changeScreenPatch() {
 	push(0);
 }
 
-void Process::loadMouseStub66() {
+void Process::loadMouseCursorFromObject() {
 	Common::String name = popText();
-	debug("loadMouseStub66 %s", name.c_str());
-	_engine->loadCursor(name); //overlay cursor
+	debug("loadMouseCursorFromObject %s", name.c_str());
+	_object->setMouseCursor(_engine->loadAnimation(name)); //overlay cursor
 }
 
 void Process::fadeObject() {
@@ -871,7 +871,7 @@ ProcessExitCode Process::execute() {
 			OP_U	(kObjectRegisterUseHandler, onUse);
 			OP_U	(kStub63, stub63);
 			OP_U	(kScreenRegisterHandlerBD, onScreenBD);
-			OP		(kStub66, loadMouseStub66);
+			OP		(kLoadMouseCursorFromObject, loadMouseCursorFromObject);
 			OP		(kLoadRegionFromObject, loadRegionFromObject);
 			OP		(kLoadPictureFromObject, loadPictureFromObject);
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);

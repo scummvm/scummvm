@@ -33,6 +33,7 @@ namespace Graphics { class Surface; class TransparentSurface; }
 namespace AGDS {
 
 struct Region;
+class Animation;
 
 class Object {
 public:
@@ -56,6 +57,7 @@ private:
 	bool							_stringTableLoaded;
 	Graphics::TransparentSurface *	_picture;
 	Region *						_region;
+	Animation *						_mouseCursor;
 	Common::Point					_pos;
 	uint							_clickHandler;
 	int								_alpha;
@@ -75,8 +77,12 @@ public:
 		return _code;
 	}
 
-	void setPicture(Graphics::TransparentSurface *);
+	void setMouseCursor(Animation *animation);
+	Animation *getMouseCursor() const {
+		return _mouseCursor;
+	}
 
+	void setPicture(Graphics::TransparentSurface *);
 	Graphics::TransparentSurface *getPicture() const {
 		return _picture;
 	}
