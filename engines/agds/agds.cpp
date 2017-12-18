@@ -146,8 +146,9 @@ void AGDSEngine::runObject(Object *object) {
 
 void AGDSEngine::loadScreen(const Common::String & name) {
 	debug("loadScreen %s", name.c_str());
+	Common::String currentScreenName;
 	if (_currentScreen)
-		_previousScreen = _currentScreen->getName();
+		currentScreenName = _currentScreen->getName();
 
 	ScreensType::iterator i = _screens.find(name);
 	Screen *screen;
@@ -158,6 +159,7 @@ void AGDSEngine::loadScreen(const Common::String & name) {
 		screen = i->_value;
 
 	_currentScreen = screen;
+	_previousScreen = currentScreenName;
 	runObject(name);
 }
 
