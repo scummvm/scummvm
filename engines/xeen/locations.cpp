@@ -2121,11 +2121,16 @@ int SphinxCutscene::show() {
 	bgSurface.copyFrom(screen);
 	
 	for (int idx = 8; idx >= 0; --idx) {
+		events.updateGameCounter();
 		screen.blitFrom(bgSurface);
-		sprites1.draw(0, 0, Common::Point(SPHINX_X1[idx], SPHINX_Y1[idx]));
-		sprites1.draw(0, 1, Common::Point(SPHINX_X2[idx], SPHINX_Y1[idx]));
+		sprites1.draw(0, 0, Common::Point(SPHINX_X1[idx], SPHINX_Y1[idx]), 0, idx);
+		sprites1.draw(0, 1, Common::Point(SPHINX_X2[idx], SPHINX_Y1[idx]), 0, idx);
 		windows[0].update();
+
 		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
 	}
 
 	sound.setMusicVolume(48);
@@ -2144,13 +2149,17 @@ int SphinxCutscene::show() {
 		}
 
 		do {
+			events.updateGameCounter();
 			sprites1.draw(0, 0, Common::Point(0, 0));
 			sprites1.draw(0, 1, Common::Point(160, 0));
 			sprites1.draw(0, g_vm->getRandomNumber(2, 10));
 			updateSubtitles();
 
 			events.wait(1);
-		} while (!g_vm->shouldQuit() && (sound.isPlaying() || _subtitleCtr));
+			checkEvents(g_vm);
+			if (g_vm->shouldQuit() || _buttonValue)
+				goto exit;
+		} while (sound.isPlaying() || _subtitleCtr);
 
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));
@@ -2160,16 +2169,24 @@ int SphinxCutscene::show() {
 
 	if (!_mazeFlag) {
 		for (int idx = 0; idx < 8; ++idx) {
+			events.updateGameCounter();
 			screen.blitFrom(bgSurface);
-			sprites1.draw(0, 0, Common::Point(SPHINX_X1[idx], SPHINX_Y1[idx]));
-			sprites1.draw(0, 1, Common::Point(SPHINX_X2[idx], SPHINX_Y1[idx]));
+			sprites1.draw(0, 0, Common::Point(SPHINX_X1[idx], SPHINX_Y1[idx]), 0, idx);
+			sprites1.draw(0, 1, Common::Point(SPHINX_X2[idx], SPHINX_Y1[idx]), 0, idx);
 			windows[0].update();
+
 			events.wait(1);
+			checkEvents(g_vm);
+			if (g_vm->shouldQuit() || _buttonValue)
+				goto exit;
 		}
 
 		screen.blitFrom(bgSurface);
 		windows[0].update();
 	}
+exit:
+	screen.blitFrom(bgSurface);
+	windows[0].update();
 
 	setNewLocation();
 
