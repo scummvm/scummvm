@@ -1466,6 +1466,23 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
+	{ // Chinese floppy version bug #7893
+		{
+			"lol",
+			"Extracted",
+			{
+				{"GENERAL.PAK", 0, "f2c305bfb10c08371e947ab4d0a2f5f5", -1 },
+				{"CHAPTER7.PAK", 0, "f3cbab6d945ceda35149a5c9a324a8fe", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ZH_CNA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
 	// Russian fan translation
 	{
 		{
