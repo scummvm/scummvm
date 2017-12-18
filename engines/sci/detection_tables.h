@@ -3422,6 +3422,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Police Quest 2 English DOS 1.002.011 (supplied by misterhands in bug report #9716)
+	{"pq2", "", {
+		{"resource.map", 0, "f42a265e26168d0463d12e0913e8dd1c", 5808},
+		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 161673},
+		{"resource.002", 0, "77f02def3094af804fd2371db25b7100", 334283},
+		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 308044},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Police Quest 2 - English Atari ST
 	// Game version 1.001.006 1989-01-16 13:30
 	// Executable reports "1.001.009"
