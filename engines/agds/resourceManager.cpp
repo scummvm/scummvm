@@ -197,6 +197,9 @@ namespace AGDS {
 			error("short read from text resource");
 		delete stream;
 
+		if (text.empty())
+			return Common::String();
+
 		char *begin = reinterpret_cast<char *>(text.data());
 		char *end = begin + text.size();
 		while(begin != end && end[-1] == 0)
