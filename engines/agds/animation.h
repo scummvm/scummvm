@@ -27,7 +27,7 @@
 #include "common/rect.h"
 
 namespace Common	{ class SeekableReadStream; }
-namespace Graphics	{ class Surface; }
+namespace Graphics	{ struct Surface; }
 namespace Video		{ class FlicDecoder; }
 
 namespace AGDS {

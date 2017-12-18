@@ -28,7 +28,7 @@
 #include "common/rect.h"
 #include "common/stream.h"
 
-namespace Graphics { class Surface; class TransparentSurface; }
+namespace Graphics { struct Surface; struct TransparentSurface; }
 
 namespace AGDS {
 
