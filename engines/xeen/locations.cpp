@@ -1289,34 +1289,43 @@ int ReaperCutscene::show() {
 	savedBg.copyFrom(screen);
 
 	for (int idx = 13; idx >= 0; --idx) {
-		sprites1.draw(0, 0, Common::Point(REAPER_X1[_isDarkCc][idx], REAPER_Y1[_isDarkCc][idx]));
+		events.updateGameCounter();
+		sprites1.draw(0, 0, Common::Point(REAPER_X1[_isDarkCc][idx], REAPER_Y1[_isDarkCc][idx]), 0, idx);
 		if (_isDarkCc) {
-			sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]));
-			sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]));
+			sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]), 0, idx);
+			sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]), 0, idx);
 		}
 
-		windows[0].update();
 		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
 	}
 
 	if (_isDarkCc) {
 		for (int idx = -200; idx < 0; idx += 16) {
+			events.updateGameCounter();
 			sprites1.draw(0, 0, Common::Point(0, 0));
 			sprites1.draw(0, 1, Common::Point(160, 0));
 			sprites1.draw(0, 2, Common::Point(0, 0));
 			sprites2.draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
 			sprites2.draw(0, 5, Common::Point(160 + idx, 0), SPRFLAG_800);
 
-			windows[0].update();
 			events.wait(1);
+			checkEvents(g_vm);
+			if (g_vm->shouldQuit() || _buttonValue)
+				goto exit;
 		}
 	} else {
 		for (int idx = 200; idx >= 0; idx -= 16) {
+			events.updateGameCounter();
 			sprites1.draw(0, 0, Common::Point(0, 0));
 			sprites2.draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
 
-			windows[0].update();
 			events.wait(1);
+			checkEvents(g_vm);
+			if (g_vm->shouldQuit() || _buttonValue)
+				goto exit;
 		}
 	}
 
@@ -1330,18 +1339,23 @@ int ReaperCutscene::show() {
 	sound.playSound(_mazeFlag ? "reaper12.voc" : "reaper14.voc");
 
 	do {
+		events.updateGameCounter();
 		int frame = g_vm->getRandomNumber(4);
 		if (_isDarkCc) {
-			sprites2.draw(0, frame, Common::Point(0, 0));
+			sprites2.draw(0, frame);
 			sprites2.draw(0, frame + 5, Common::Point(160, 0));
 		} else {
-			sprites2.draw(0, 0, Common::Point(0, 0));
-			sprites2.draw(0, frame, Common::Point(160, 0));
+			sprites2.draw(0, 0);
+			sprites2.draw(0, frame);
 		}
 
 		updateSubtitles();
-		events.wait(2);
-	} while (!g_vm->shouldQuit() && (sound.isPlaying() || _subtitleCtr));
+
+		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
+	} while (sound.isPlaying() || _subtitleCtr);
 
 	sprites2.draw(0, 0, Common::Point(0, 0));
 	if (_isDarkCc)
@@ -1356,50 +1370,64 @@ int ReaperCutscene::show() {
 		sound.playSound(_isDarkCc ? "needkey1.voc" : "reaper15.voc");
 
 	do {
+		events.updateGameCounter();
 		int frame = g_vm->getRandomNumber(4);
 		if (_isDarkCc) {
 			sprites2.draw(0, frame, Common::Point(0, 0));
 			sprites2.draw(0, frame + 5, Common::Point(160, 0));
 		} else {
-			sprites2.draw(0, 0, Common::Point(0, 0));
-			sprites2.draw(0, frame, Common::Point(160, 0));
+			sprites2.draw(0, 0);
+			sprites2.draw(0, frame);
 		}
 
 		windows[0].update();
-		events.wait(2);
+
+		events.wait(1);
+		checkEvents(g_vm);
+		if (g_vm->shouldQuit() || _buttonValue)
+			goto exit;
 	} while (!g_vm->shouldQuit() && sound.isPlaying());
 
 	sprites2.draw(0, 0, Common::Point(0, 0));
 	if (_isDarkCc)
 		sprites2.draw(0, 5, Common::Point(160, 0));
 	windows[0].update();
+
+	events.updateGameCounter();
 	events.wait(1);
 
 	if (_mazeFlag) {
 		for (int idx = 0; idx < 14; ++idx) {
+			events.updateGameCounter();
 			screen.blitFrom(savedBg);
-			sprites1.draw(0, 0, Common::Point(REAPER_X1[_isDarkCc][idx], REAPER_Y1[_isDarkCc][idx]));
+			sprites1.draw(0, 0, Common::Point(REAPER_X1[_isDarkCc][idx], REAPER_Y1[_isDarkCc][idx]), 0, idx);
 			
 			if (_isDarkCc) {
-				sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]));
-				sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]));
+				sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]), 0, idx);
+				sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]), 0, idx);
 			}
 
 			windows[0].update();
+
 			events.wait(1);
+			checkEvents(g_vm);
+			if (g_vm->shouldQuit() || _buttonValue)
+				goto exit;
 		}
 
 		screen.blitFrom(savedBg);
 		windows[0].update();
 	}
-
+exit:
 	screen.blitFrom(savedBg);
 	windows[0].update();
 
 	setNewLocation();
 
 	// Restore game screen
+	sound.stopSound();
 	sound.setMusicVolume(95);
+
 	screen.loadBackground("back.raw");
 	intf.drawParty(false);
 	intf.draw3d(false, false);
