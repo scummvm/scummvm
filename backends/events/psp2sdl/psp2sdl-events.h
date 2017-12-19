@@ -32,7 +32,6 @@ class PSP2EventSource : public SdlEventSource {
 protected:
 	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
-	bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
 	void preprocessEvents(SDL_Event *event);
 };
 
