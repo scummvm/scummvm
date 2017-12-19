@@ -240,6 +240,8 @@ void AGDSEngine::runProcess() {
 }
 
 void AGDSEngine::changeMouseArea(int id, int enabled) {
+	if (id < 0)
+		return;
 	MouseRegion * mouseArea = _mouseMap.find(id);
 	if (mouseArea) {
 		switch(enabled) {
