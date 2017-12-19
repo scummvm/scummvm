@@ -237,13 +237,16 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 				mouseArea->enable();
 				break;
 			case 0:
+			case -1:
 				if (mouseArea->currentlyIn) {
 					runObject(mouseArea->onLeave);
 				}
 				mouseArea->disable();
-				break;
-			case -1:
-				_mouseMap.remove(id);
+				if (_currentRegion == mouseArea)
+					_currentRegion = NULL;
+				if (enabled == -1) {
+					_mouseMap.remove(id);
+				}
 				break;
 		}
 	} else
