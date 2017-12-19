@@ -217,6 +217,7 @@ private:
 	void stub200();
 	void stub209(unsigned size);
 	void stub215();
+	void stub216();
 	void stub217();
 	void stub221();
 	void stub223();

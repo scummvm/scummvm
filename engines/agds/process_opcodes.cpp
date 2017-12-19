@@ -497,6 +497,13 @@ void Process::stub215() {
 	debug("stub215: sound group %d", id);
 }
 
+void Process::stub216() {
+	int soundGroup = pop();
+	int frame = pop();
+	int id = pop();
+	debug("stub216: animation? id: %d, frame: %d, soundGroup: %d", id, frame, soundGroup);
+}
+
 void Process::stub217() {
 	int soundGroup = pop();
 	int frame = pop();
@@ -985,6 +992,7 @@ ProcessExitCode Process::execute() {
 			OP		(kSetSampleVolumeAndPan, setSampleVolumeAndPan);
 			OP		(kPlaySound, playSound);
 			OP		(kStub215, stub215);
+			OP		(kStub216, stub216);
 			OP		(kStub217, stub217);
 			OP		(kStub221, stub221);
 			OP		(kStub223, stub223);
