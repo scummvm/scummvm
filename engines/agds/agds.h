@@ -86,9 +86,7 @@ private:
 public:
 	Object * loadObject(const Common::String & name, const Common::String & prototype = Common::String());
 	void runObject(Object *object);
-
-	void runObject(const Common::String & name, const Common::String &prototype = Common::String())
-	{ runObject(loadObject(name, prototype)); }
+	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
 
 	void loadScreen(const Common::String & name);
 
