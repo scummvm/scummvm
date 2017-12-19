@@ -173,6 +173,13 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 	return configFile;
 }
 
+bool OSystem_SDL_Symbian::hasFeature(Feature f) {
+	if (f == kFeatureJoystickDeadzone) return false;
+
+	return OSystem_SDL::hasFeature(f);
+}
+
+
 RFs& OSystem_SDL_Symbian::FsSession() {
 	return *_RFs;
 }

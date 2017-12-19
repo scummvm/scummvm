@@ -132,7 +132,7 @@ protected:
 	/**
 	 * Update the virtual mouse according to a joystick or game controller axis position change
 	 */
-	bool handleAxisToMouseMotion(int16 xAxis, int16 yAxis);
+	virtual bool handleAxisToMouseMotion(int16 xAxis, int16 yAxis);
 
 	/**
 	 * Assigns the mouse coords to the mouse event. Furthermore notify the
