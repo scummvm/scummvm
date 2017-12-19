@@ -51,9 +51,6 @@ private:
 	void readPhrases(const DirectorySubEntry *desc);
 	static Common::String fakeBidiProcessing(const Common::String &phrase);
 
-	/** Return a codepage usable by iconv from a GDI Charset as provided to CreateFont */
-	const char *getCodePage(uint32 gdiCharset);
-
 	const Graphics::Font *_font;
 	Graphics::Surface *_surface;
 	float _scale;
@@ -239,35 +236,28 @@ void FontSubtitles::createTexture() {
 	}
 }
 
-const char *FontSubtitles::getCodePage(uint32 gdiCharset) {
+#ifdef USE_ICONV
+/** Return an encoding from a GDI Charset as provided to CreateFont */
+static Common::Encoding getEncodingFromCharsetCode(uint32 gdiCharset) {
 	static const struct {
 		uint32 charset;
-		const char *codepage;
+		Common::Encoding encoding;
 	} codepages[] = {
-			{ 128, "cp932"  }, // SHIFTJIS_CHARSET
-			{ 129, "cp949"  }, // HANGUL_CHARSET
-			{ 130, "cp1361" }, // JOHAB_CHARSET
-			{ 134, "cp936"  }, // GB2312_CHARSET
-			{ 136, "cp950"  }, // CHINESEBIG5_CHARSET
-			{ 161, "cp1253" }, // GREEK_CHARSET
-			{ 162, "cp1254" }, // TURKISH_CHARSET
-			{ 163, "cp1258" }, // VIETNAMESE_CHARSET
-			{ 177, "cp1255" }, // HEBREW_CHARSET
-			{ 178, "cp1256" }, // ARABIC_CHARSET
-			{ 186, "cp1257" }, // BALTIC_CHARSET
-			{ 204, "cp1251" }, // RUSSIAN_CHARSET
-			{ 222, "cp874"  }, // THAI_CHARSET
-			{ 238, "mac-centraleurope" }  // EASTEUROPE_CHARSET
+			{ 128, Common::kEncodingCP932            }, // SHIFTJIS_CHARSET
+			{ 177, Common::kEncodingCP1255           }, // HEBREW_CHARSET
+			{ 204, Common::kEncodingCP1251           }, // RUSSIAN_CHARSET
+			{ 238, Common::kEncodingMacCentralEurope }  // EASTEUROPE_CHARSET
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(codepages); i++) {
 		if (gdiCharset == codepages[i].charset) {
-			return codepages[i].codepage;
+			return codepages[i].encoding;
 		}
 	}
 
 	error("Unknown font charset code '%d'", gdiCharset);
 }
+#endif
 
 void FontSubtitles::drawToTexture(const Phrase *phrase) {
 	const Graphics::Font *font;
@@ -290,12 +280,12 @@ void FontSubtitles::drawToTexture(const Phrase *phrase) {
 	if (_fontCharsetCode == 0) {
 		font->drawString(_surface, phrase->string, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
 	} else {
-		const char *codepage = getCodePage(_fontCharsetCode);
 #ifdef USE_ICONV
-		Common::U32String unicode = Common::convertToU32String(codepage, phrase->string);
+		Common::Encoding encoding = getEncodingFromCharsetCode(_fontCharsetCode);
+		Common::U32String unicode = Common::convertToU32String(encoding, phrase->string);
 		font->drawString(_surface, unicode, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter);
 #else
-		warning("Unable to display codepage '%s' subtitles, iconv support is not compiled in.", codepage);
+		warning("Unable to display charset '%d' subtitles, iconv support is not compiled in.", _fontCharsetCode);
 #endif
 	}
 

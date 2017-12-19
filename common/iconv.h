@@ -32,7 +32,27 @@ namespace Common {
 class String;
 class U32String;
 
-U32String convertToU32String(const char *fromCode, const String &string);
+enum Encoding {
+	/** Windows codepage 1250 (Eastern European, Latin alphabet) */
+	kEncodingCP1250,
+
+	/** Windows codepage 1251 (Eastern European, Cyrillic alphabet) */
+	kEncodingCP1251,
+
+	/** Windows codepage 1252 (Western European, Latin alphabet) */
+	kEncodingCP1252,
+
+	/** Windows codepage 1255 (Hebrew) */
+	kEncodingCP1255,
+
+	/** Windows codepage 932 (Japanese, extended Shift-JIS) */
+	kEncodingCP932,
+
+	/** Macintosh Central European (Eastern European, Latin alphabet) */
+	kEncodingMacCentralEurope
+};
+
+U32String convertToU32String(Encoding fromEncoding, const String &string);
 
 } // End of namespace Common
 
