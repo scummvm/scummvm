@@ -90,6 +90,8 @@ OSystem_SDL::OSystem_SDL()
 	_eventSource(0),
 	_window(0) {
 
+	ConfMan.registerDefault("kbdmouse_speed", 3);
+	ConfMan.registerDefault("joystick_deadzone", 3);
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -287,14 +289,6 @@ void OSystem_SDL::initBackend() {
 
 	_inited = true;
 
-	if (!ConfMan.hasKey("kbdmouse_speed")) {
-		ConfMan.registerDefault("kbdmouse_speed", 3);
-		ConfMan.setInt("kbdmouse_speed", 3);
-	}
-	if (!ConfMan.hasKey("joystick_deadzone")) {
-		ConfMan.registerDefault("joystick_deadzone", 3);
-		ConfMan.setInt("joystick_deadzone", 3);
-	}
 	ModularBackend::initBackend();
 
 	// We have to initialize the graphics manager before the event manager

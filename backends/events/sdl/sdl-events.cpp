@@ -32,7 +32,6 @@
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
-#define JOY_DEADZONE 3200
 
 // #define JOY_INVERT_Y
 #define JOY_XAXIS 0
@@ -1022,9 +1021,7 @@ bool SdlEventSource::handleAxisToMouseMotion(int16 xAxis, int16 yAxis) {
 
 	float analogX = (float)xAxis;
 	float analogY = (float)yAxis;
-	float deadZone = (float)JOY_DEADZONE;
-	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone))
-		deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
+	float deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
 
 	float magnitude = sqrt(analogX * analogX + analogY * analogY);
 
