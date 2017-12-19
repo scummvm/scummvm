@@ -144,6 +144,11 @@ void AGDSEngine::runObject(Object *object) {
 		_currentScreen->add(object);
 }
 
+void AGDSEngine::runObject(const Common::String & name, const Common::String &prototype)
+{
+	runObject(loadObject(name, prototype));
+}
+
 void AGDSEngine::loadScreen(const Common::String & name) {
 	debug("loadScreen %s", name.c_str());
 
