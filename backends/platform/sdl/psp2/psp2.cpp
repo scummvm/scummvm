@@ -94,12 +94,6 @@ void OSystem_PSP2::initBackend() {
 	if (!ConfMan.hasKey("filtering")) {
 		ConfMan.setBool("filtering", true);
 	}
-	if (!ConfMan.hasKey("kbdmouse_speed")) {
-		ConfMan.setInt("kbdmouse_speed", 3);
-	}
-	if (!ConfMan.hasKey("joystick_deadzone")) {
-		ConfMan.setInt("joystick_deadzone", 2);
-	}
 	if (!ConfMan.hasKey("shader")) {
 		ConfMan.setInt("shader", 2);
 	}

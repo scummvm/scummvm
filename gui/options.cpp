@@ -240,21 +240,17 @@ void OptionsDialog::build() {
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
-		if (ConfMan.hasKey("kbdmouse_speed", _domain)) {
-			int value =  ConfMan.getInt("kbdmouse_speed", _domain);
-			if (_kbdMouseSpeedSlider && value < ARRAYSIZE(kbdMouseSpeedLabels) - 1 && value >= 0) {
-				_kbdMouseSpeedSlider->setValue(value);
-				_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[value]));
-			}
+		int value = ConfMan.getInt("kbdmouse_speed", _domain);
+		if (_kbdMouseSpeedSlider && value < ARRAYSIZE(kbdMouseSpeedLabels) - 1 && value >= 0) {
+			_kbdMouseSpeedSlider->setValue(value);
+			_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[value]));
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
-		if (ConfMan.hasKey("joystick_deadzone", _domain)) {
-			int value =  ConfMan.getInt("joystick_deadzone", _domain);
-			if (_joystickDeadzoneSlider != 0) {
-				_joystickDeadzoneSlider->setValue(value);
-				_joystickDeadzoneLabel->setValue(value);
-			}
+		int value = ConfMan.getInt("joystick_deadzone", _domain);
+		if (_joystickDeadzoneSlider != 0) {
+			_joystickDeadzoneSlider->setValue(value);
+			_joystickDeadzoneLabel->setValue(value);
 		}
 	}
 
