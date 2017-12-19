@@ -930,41 +930,6 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 }
 
 bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
-
-#ifdef QTOPIA
-	// Quit on fn+backspace on zaurus
-	if (ev.key.keysym.sym == 127) {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-
-	// Map menu key (f11) to f5 (scumm menu)
-	if (ev.key.keysym.sym == SDLK_F11) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-	}
-	// Map center (space) to tab (default action)
-	// I wanted to map the calendar button but the calendar comes up
-	else if (ev.key.keysym.sym == SDLK_SPACE) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_TAB;
-		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-	}
-	// Since we stole space (pause) above we'll rebind it to the tab key on the keyboard
-	else if (ev.key.keysym.sym == SDLK_TAB) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_SPACE;
-		event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-	} else {
-	// Let the events fall through if we didn't change them, this may not be the best way to
-	// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
-	// and yes i have an huge terminal size so i dont wrap soon enough.
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = ev.key.keysym.sym;
-		event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-	}
-#endif
 	return false;
 }
 
