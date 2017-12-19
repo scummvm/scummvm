@@ -928,7 +928,6 @@ Special configuration feature:
                                            gp2xwiz for GP2X Wiz
                                            iphone for Apple iPhone (iOS <= 6)
                                            ios7 for Apple iPhone / iPad (iOS >= 7)
-                                           linupy for Yopy PDA
                                            maemo for Nokia Maemo
                                            motoezx for MotoEZX
                                            motomagx for MotoMAGX
@@ -1505,10 +1504,6 @@ ios7)
 	_host_os=iphone
 	_host_cpu=arm
 	_host_alias=arm-apple-darwin11
-	;;
-linupy)
-	_host_os=linux
-	_host_cpu=arm
 	;;
 maemo)
 	_host_os=maemo
@@ -3044,9 +3039,6 @@ if test -n "$_host"; then
 			_build_scalers=no
 			_seq_midi=no
 			_timidity=no
-			;;
-		linupy)
-			append_var DEFINES "-DLINUPY"
 			;;
 		m68k-atari-mint)
 			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"

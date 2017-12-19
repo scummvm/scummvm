@@ -320,17 +320,10 @@ void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 
 	event.kbd.flags = 0;
 
-#ifdef LINUPY
-	// Yopy has no ALT key, steal the SHIFT key
-	// (which isn't used much anyway)
-	if (mod & KMOD_SHIFT)
-		event.kbd.flags |= Common::KBD_ALT;
-#else
 	if (mod & KMOD_SHIFT)
 		event.kbd.flags |= Common::KBD_SHIFT;
 	if (mod & KMOD_ALT)
 		event.kbd.flags |= Common::KBD_ALT;
-#endif
 	if (mod & KMOD_CTRL)
 		event.kbd.flags |= Common::KBD_CTRL;
 	if (mod & KMOD_META)
@@ -937,34 +930,6 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 }
 
 bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
-#ifdef LINUPY
-	// On Yopy map the End button to quit
-	if ((ev.key.keysym.sym == 293)) {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-	// Map menu key to f5 (scumm menu)
-	if (ev.key.keysym.sym == 306) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-		return true;
-	}
-	// Map action key to action
-	if (ev.key.keysym.sym == 291) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_TAB;
-		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-		return true;
-	}
-	// Map OK key to skip cinematic
-	if (ev.key.keysym.sym == 292) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_ESCAPE;
-		event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-		return true;
-	}
-#endif
 
 #ifdef QTOPIA
 	// Quit on fn+backspace on zaurus
