@@ -537,11 +537,11 @@ void Process::stub184() {
 	debug("stub184: %s", name.c_str());
 }
 
-void Process::stub188() {
+void Process::setObjectText() {
 	int arg3 = pop();
-	Common::String arg2 = popString();
+	Common::String arg2 = popText();
 	Common::String arg1 = popString();
-	debug("stub188 %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+	debug("setObjectText %s \"%s\" %d", arg1.c_str(), arg2.c_str(), arg3);
 	//_engine->loadObject(arg1);
 }
 
@@ -950,7 +950,7 @@ ProcessExitCode Process::execute() {
 			OP		(kGetMaxInventorySize, getMaxInventorySize);
 			OP		(kAppendInventoryObjectNameToSharedSpace, appendInventoryObjectNameToSharedSpace);
 			OP		(kStub184, stub184);
-			OP		(kStub188, stub188);
+			OP		(kSetObjectText, setObjectText);
 			OP		(kStub190, stub190);
 			OP		(kStub191, disableMouseAreas);
 			OP		(kStub194, stub194);

@@ -205,7 +205,7 @@ enum Opcode {
 	kGetMaxInventorySize			= 185,
 	kStub186						= 186,
 	kAppendInventoryObjectNameToSharedSpace	= 187,
-	kStub188						= 188,
+	kSetObjectText					= 188,
 	kStub189						= 189,
 	kStub190						= 190,
 	kStub191						= 191,
