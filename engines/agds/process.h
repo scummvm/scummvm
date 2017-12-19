@@ -99,12 +99,13 @@ private:
 	void enter(uint16 magic, uint16 size);
 	void exitProcess();
 	void exitProcessCreatePatch();
-	void disableInventory();
 	void exitProcessSetNextScreen();
 	void exitProcessSetNextScreen80();
 	void loadPreviousScreen();
 	void call(uint16 addr);
 
+	void disableInventory();
+	void enableInventory();
 	void inventoryClear();
 	void inventoryAddObject();
 	void getMaxInventorySize();
@@ -146,6 +147,9 @@ private:
 	void setFontGlyphSize();
 	void getObjectPictureWidth();
 	void getObjectPictureHeight();
+	void loadCharacter();
+	void enableCharacter();
+	void showCharacter();
 	void fogOnCharacter();
 	void leaveCharacter();
 	void quit();

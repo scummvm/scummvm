@@ -690,9 +690,12 @@ void Process::loadPreviousScreen() {
 	suspend(kExitCodeLoadPreviousScreenObject);
 }
 
-void Process::disableInventory()
-{
+void Process::disableInventory() {
 	debug("disableInventory");
+}
+
+void Process::enableInventory() {
+	debug("enableInventory");
 }
 
 void Process::setScreenHeight() {
@@ -758,6 +761,23 @@ void Process::addMouseArea() {
 	int value = _engine->_mouseMap.add(MouseRegion(region, arg2, arg3));
 	debug("\tmouse area id -> %d", value);
 	push(value);
+}
+
+void Process::loadCharacter() {
+	Common::String arg3 = popString();
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("loadCharacter %s %s %s", arg1.c_str(), arg2.c_str(), arg3.c_str());
+}
+
+void Process::enableCharacter() {
+	Common::String name = popString();
+	debug("enableCharacter %s", name.c_str());
+}
+
+void Process::showCharacter() {
+	Common::String name = popString();
+	debug("showCharacter %s", name.c_str());
 }
 
 void Process::leaveCharacter() {
@@ -885,6 +905,8 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadRegionFromObject, loadRegionFromObject);
 			OP		(kLoadPictureFromObject, loadPictureFromObject);
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
+			OP		(kShowCharacter, showCharacter);
+			OP		(kEnableCharacter, enableCharacter);
 			OP		(kLeaveCharacter, leaveCharacter);
 			OP		(kDisableUser, disableUser);
 			OP		(kEnableUser, enableUser);
@@ -896,6 +918,7 @@ ProcessExitCode Process::execute() {
 			OP		(kInventoryAddObject, inventoryAddObject);
 			OP		(kExitProcessNextScreen80, exitProcessSetNextScreen80);
 			OP		(kStub82, stub82);
+			OP		(kLoadCharacter, loadCharacter);
 			OP		(kSetScreenHeight, setScreenHeight);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
 			OP		(kLoadTextFromObject, loadTextFromObject);
@@ -942,6 +965,7 @@ ProcessExitCode Process::execute() {
 			OP		(kQuit, quit);
 			OP		(kExitProcessCreatePatch, exitProcessCreatePatch);
 			OP		(kDisableInventory, disableInventory);
+			OP		(kEnableInventory, enableInventory);
 			OP		(kLoadPreviousScreen, loadPreviousScreen);
 			OP		(kMoveScreenObject, moveScreenObject);
 			OP		(kGetObjectId, getObjectId);
