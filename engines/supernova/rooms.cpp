@@ -2729,8 +2729,9 @@ void AxacussBcorridor::onEntrance() {
 
 bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	if (obj1.hasProperty(EXIT) ||
-	    ((verb == ACTION_USE) && obj1.hasProperty(COMBINABLE) && obj2.hasProperty(EXIT)))
-		_gm->_guiEnabled = false;
+	    ((verb == ACTION_USE) && obj1.hasProperty(COMBINABLE) && obj2.hasProperty(EXIT))) {
+		_gm->_state._playerHidden = false;
+	}
 
 	if ((verb == ACTION_CLOSE) && (obj1._id >= DOOR1) && (obj1._id <= DOOR4) && obj1.hasProperty(OPENED)) {
 		_vm->renderImage(_gm->invertSection(obj1._id - DOOR1 + 1));
@@ -2794,7 +2795,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 		return false;
 	} else if ((verb == ACTION_WALK) && ((obj1._id == PILLAR1) || (obj1._id == PILLAR2))) {
 		_vm->renderMessage(kStringAxacussBcorridor_1);
-		_gm->_guiEnabled = true;
+		_gm->_state._playerHidden = true;
 	} else
 		return false;
 
