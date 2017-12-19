@@ -197,6 +197,9 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		break;
 	case kExitCodeSuspend:
 		break;
+	case kExitCodeCreatePatchLoadResources:
+		runObject(process.getExitArg1());
+		//deliberate fallthrough
 	default:
 		debug("destroying process %s...", name.c_str());
 		it = _processes.erase(it);
