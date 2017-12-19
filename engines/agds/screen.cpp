@@ -26,7 +26,7 @@
 
 namespace AGDS {
 
-Screen::Screen(Object *object) : _name(object->getName()) {
+Screen::Screen(Object *object, const MouseMap &mouseMap) : _name(object->getName()), _mouseMap(mouseMap) {
 	add(object);
 }
 
