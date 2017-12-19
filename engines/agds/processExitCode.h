@@ -28,7 +28,8 @@ namespace AGDS {
 	enum ProcessExitCode {
 		kExitCodeDestroy						= 2,
 		kExitCodeSuspend						= 5,
-		kExitCodeDestroyProcessSetNextScreen	= 6,
+		kExitCodeSetNextScreen					= 6,
+		kExitCodeSetNextScreenSaveInHistory		= 7,
 		kExitCodeLoadScreenObject				= 8,
 		kExitCodeLoadInventoryObject			= 10,
 		kExitCodeMouseAreaChange				= 11,
