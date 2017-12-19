@@ -204,7 +204,7 @@ private:
 	void stub174();
 	void stub176();
 	void stub184();
-	void stub188();
+	void setObjectText();
 	void stub190();
 	void stub192();
 	void stub194();
