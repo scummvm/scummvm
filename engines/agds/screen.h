@@ -79,24 +79,30 @@ public:
 		_mouseRegions.back().id = _nextId++;
 		return _mouseRegions.back().id;
 	}
-//	void clear() {
-//		_mouseRegions.clear();
-//	}
+	void clear() {
+		_mouseRegions.clear();
+	}
 	MouseRegion * find(Common::Point pos);
 	MouseRegion * find(int id);
 	void remove(int id);
 };
 
 class Screen {
-	Common::String _name;
 	typedef Common::List<Object *> ChildrenType;
-	ChildrenType _children;
+
+	Common::String	_name;
+	ChildrenType	_children;
+	MouseMap		_mouseMap;
 
 public:
-	Screen(Object *object);
+	Screen(Object *object, const MouseMap &mouseMap);
 
 	const Common::String &getName() const {
 		return _name;
+	}
+
+	MouseMap & mouseMap() {
+		return _mouseMap;
 	}
 
 	void add(Object *object);

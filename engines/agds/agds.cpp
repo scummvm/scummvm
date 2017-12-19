@@ -152,13 +152,21 @@ void AGDSEngine::runObject(const Common::String & name, const Common::String &pr
 void AGDSEngine::loadScreen(const Common::String & name) {
 	debug("loadScreen %s", name.c_str());
 
+	if (_currentRegion) {
+		if (_currentRegion->currentlyIn)
+			runObject(_currentRegion->onLeave);
+		_currentRegion = NULL;
+	}
+
 	ScreensType::iterator i = _screens.find(name);
 	Screen *screen;
 	if (i == _screens.end()) {
-		screen = new Screen(loadObject(name));
+		screen = new Screen(loadObject(name), _mouseMap);
 		_screens[name] = screen;
-	} else
+	} else {
 		screen = i->_value;
+	}
+	_mouseMap.clear();
 
 	_currentScreen = screen;
 	runObject(name);
@@ -242,8 +250,6 @@ void AGDSEngine::changeMouseArea(int id, int enabled) {
 					runObject(mouseArea->onLeave);
 				}
 				mouseArea->disable();
-				if (_currentRegion == mouseArea)
-					_currentRegion = NULL;
 				if (enabled == -1) {
 					_mouseMap.remove(id);
 				}
@@ -271,7 +277,8 @@ Common::Error AGDSEngine::run() {
 				case Common::EVENT_MOUSEMOVE:
 					_mouse = event.mouse;
 					if (_userEnabled && _currentScreen) {
-						MouseRegion *region = _mouseMap.find(_mouse);
+						MouseMap &mouseMap = _currentScreen->mouseMap();
+						MouseRegion *region = mouseMap.find(_mouse);
 						if (region != _currentRegion) {
 							if (_currentRegion) {
 								MouseRegion *currentRegion = _currentRegion;
