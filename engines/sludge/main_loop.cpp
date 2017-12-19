@@ -38,7 +38,7 @@
 #include "sludge/sound.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
-#include "sludge/talk.h"
+#include "sludge/speech.h"
 #include "sludge/transition.h"
 #include "sludge/timing.h"
 

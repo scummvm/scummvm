@@ -33,7 +33,6 @@
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/people.h"
-#include "sludge/talk.h"
 #include "sludge/objtypes.h"
 #include "sludge/backdrop.h"
 #include "sludge/region.h"
@@ -44,6 +43,7 @@
 #include "sludge/sound.h"
 #include "sludge/loadsave.h"
 #include "sludge/bg_effects.h"
+#include "sludge/speech.h"
 #include "sludge/utf8.h"
 #include "sludge/version.h"
 #include "sludge/graphics.h"
@@ -59,9 +59,7 @@ extern const char *typeName[];                      // In variable.cpp
 extern int numGlobals;                              // In sludger.cpp
 extern Variable *globalVars;                        // In sludger.cpp
 extern Floor *currentFloor;                          // In floor.cpp
-extern SpeechStruct *speech;                        // In talk.cpp
 extern FILETIME fileTime;                           // In sludger.cpp
-extern int speechMode;                              // "    "   "
 extern byte brightnessLevel;               // "    "   "
 extern byte fadeMode;                      // In transition.cpp
 extern bool captureAllKeys;
@@ -410,12 +408,11 @@ bool saveGame(const Common::String &fname) {
 	}
 
 	g_sludge->_gfxMan->saveZBuffer(fp);
-
 	g_sludge->_gfxMan->saveLightMap(fp);
 
-	fp->writeByte(speechMode);
 	fp->writeByte(fadeMode);
-	saveSpeech(speech, fp);
+
+	g_sludge->_speechMan->save(fp);
 	saveStatusBars(fp);
 	g_sludge->_soundMan->saveSounds(fp);
 
@@ -559,9 +556,8 @@ bool loadGame(const Common::String &fname) {
 		return false;
 	}
 
-	speechMode = fp->readByte();
 	fadeMode = fp->readByte();
-	loadSpeech(speech, fp);
+	g_sludge->_speechMan->load(fp);
 	loadStatusBars(fp);
 	g_sludge->_soundMan->loadSounds(fp);
 

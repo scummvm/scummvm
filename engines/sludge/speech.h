@@ -39,13 +39,44 @@ struct SpeechStruct {
 	SpritePalette talkCol;
 };
 
-int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool);
-void viewSpeech();
-void killAllSpeech();
-int isThereAnySpeechGoingOn();
-void initSpeech();
-void saveSpeech(SpeechStruct *sS, Common::WriteStream *stream);
-bool loadSpeech(SpeechStruct *sS, Common::SeekableReadStream *stream);
+class SpeechManager {
+public:
+	SpeechManager(SludgeEngine *vm) : _vm(vm) { init(); }
+	~SpeechManager() { kill(); }
+
+	void init();
+	void kill();
+
+	int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool);
+	void display();
+
+	int isThereAnySpeechGoingOn();
+	bool isCurrentTalker(OnScreenPerson *person) { return person == _speech->currentTalker; }
+	int getLastSpeechSound();
+
+	// setters & getters
+	void setObjFontColour(ObjectType *t);
+	void setSpeechSpeed(float speed) { _speechSpeed = speed; }
+	float getSpeechSpeed() { return _speechSpeed; }
+
+	// load & save
+	void save(Common::WriteStream *stream);
+	bool load(Common::SeekableReadStream *stream);
+
+	// freeze & restore
+	void freeze(FrozenStuffStruct *frozenStuff);
+	void restore(FrozenStuffStruct *frozenStuff);
+
+private:
+	SludgeEngine *_vm;
+	int _speechMode;
+	SpeechStruct *_speech;
+	float _speechSpeed;
+
+	void addSpeechLine(const Common::String &theLine, int x, int &offset);
+	int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int sampleFile);
+	int wrapSpeechPerson(const Common::String &theText, OnScreenPerson &thePerson, int sampleFile, bool animPerson);
+};
 
 } // End of namespace Sludge
 

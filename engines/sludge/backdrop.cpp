@@ -35,11 +35,11 @@
 #include "sludge/imgloader.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
+#include "sludge/speech.h"
 #include "sludge/statusba.h"
 #include "sludge/zbuffer.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
-#include "sludge/talk.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
 
@@ -185,7 +185,7 @@ bool GraphicsManager::snapshot() {
 
 	// draw snapshot to rendersurface
 	displayBase();
-	viewSpeech(); // ...and anything being said
+	_vm->_speechMan->display();
 	drawStatusBar();
 
 	// copy backdrop to snapshot

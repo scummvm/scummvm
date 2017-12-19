@@ -27,10 +27,11 @@
 
 #include "sludge/cursors.h"
 #include "sludge/event.h"
+#include "sludge/fonttext.h"
 #include "sludge/graphics.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
-#include "sludge/fonttext.h"
+#include "sludge/speech.h"
 #include "sludge/main_loop.h"
 
 namespace Sludge {
@@ -80,6 +81,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	_soundMan = new SoundManager();
 	_txtMan = new TextManager();
 	_cursorMan = new CursorManager(this);
+	_speechMan = new SpeechManager(this);
 }
 
 SludgeEngine::~SludgeEngine() {
@@ -118,6 +120,8 @@ SludgeEngine::~SludgeEngine() {
 	_languageMan = nullptr;
 	delete _resMan;
 	_resMan = nullptr;
+	delete _speechMan;
+	_speechMan = nullptr;
 }
 
 Common::Error SludgeEngine::run() {

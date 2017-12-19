@@ -22,64 +22,62 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
-#include "sludge/graphics.h"
-#include "sludge/sprites.h"
-#include "sludge/sludger.h"
-#include "sludge/objtypes.h"
-#include "sludge/region.h"
-#include "sludge/sprbanks.h"
-#include "sludge/people.h"
-#include "sludge/talk.h"
-#include "sludge/sludge.h"
-#include "sludge/sound.h"
 #include "sludge/fonttext.h"
-#include "sludge/newfatal.h"
+#include "sludge/freeze.h"
+#include "sludge/graphics.h"
 #include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/objtypes.h"
+#include "sludge/people.h"
+#include "sludge/region.h"
+#include "sludge/sludge.h"
+#include "sludge/sludger.h"
+#include "sludge/sound.h"
+#include "sludge/speech.h"
+#include "sludge/sprbanks.h"
+#include "sludge/sprites.h"
 
 namespace Sludge {
 
-extern int speechMode;
-SpeechStruct *speech;
-float speechSpeed = 1;
-
-void initSpeech() {
-	speech = new SpeechStruct;
-	if (checkNew(speech)) {
-		speech->currentTalker = NULL;
-		speech->allSpeech = NULL;
-		speech->speechY = 0;
-		speech->lastFile = -1;
+void SpeechManager::init() {
+	_speechMode = 0;
+	_speechSpeed = 1;
+	_speech = new SpeechStruct;
+	if (checkNew(_speech)) {
+		_speech->currentTalker = NULL;
+		_speech->allSpeech = NULL;
+		_speech->speechY = 0;
+		_speech->lastFile = -1;
 	}
 }
 
-void killAllSpeech() {
-	if (!speech)
+void SpeechManager::kill() {
+	if (!_speech)
 		return;
 
-	if (speech->lastFile != -1) {
-		g_sludge->_soundMan->huntKillSound(speech->lastFile);
-		speech->lastFile = -1;
+	if (_speech->lastFile != -1) {
+		_vm->_soundMan->huntKillSound(_speech->lastFile);
+		_speech->lastFile = -1;
 	}
 
-	if (speech->currentTalker) {
-		makeSilent(*(speech->currentTalker));
-		speech->currentTalker = NULL;
+	if (_speech->currentTalker) {
+		makeSilent(*(_speech->currentTalker));
+		_speech->currentTalker = NULL;
 	}
 
 	SpeechLine *killMe;
-
-	while (speech->allSpeech) {
-		killMe = speech->allSpeech;
-		speech->allSpeech = speech->allSpeech->next;
+	while (_speech->allSpeech) {
+		killMe = _speech->allSpeech;
+		_speech->allSpeech = _speech->allSpeech->next;
 		delete killMe;
 	}
 }
 
-inline void setObjFontColour(ObjectType *t) {
-	setFontColour(speech->talkCol, t->r, t->g, t->b);
+void SpeechManager::setObjFontColour(ObjectType *t) {
+	setFontColour(_speech->talkCol, t->r, t->g, t->b);
 }
 
-void addSpeechLine(const Common::String &theLine, int x, int &offset) {
+void SpeechManager::addSpeechLine(const Common::String &theLine, int x, int &offset) {
 	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 	int halfWidth = (g_sludge->_txtMan->stringWidth(theLine) >> 1) / cameraZoom;
 	int xx1 = x - (halfWidth);
@@ -87,11 +85,11 @@ void addSpeechLine(const Common::String &theLine, int x, int &offset) {
 	SpeechLine *newLine = new SpeechLine;
 	checkNew(newLine);
 
-	newLine->next = speech->allSpeech;
+	newLine->next = _speech->allSpeech;
 	newLine->textLine.clear();
 	newLine->textLine = theLine;
 	newLine->x = xx1;
-	speech->allSpeech = newLine;
+	_speech->allSpeech = newLine;
 	if ((xx1 < 5) && (offset < (5 - xx1))) {
 		offset = 5 - xx1;
 	} else if ((xx2 >= ((float) g_system->getWidth() / cameraZoom) - 5)
@@ -100,33 +98,37 @@ void addSpeechLine(const Common::String &theLine, int x, int &offset) {
 	}
 }
 
-int isThereAnySpeechGoingOn() {
-	return speech->allSpeech ? speech->lookWhosTalking : -1;
+int SpeechManager::isThereAnySpeechGoingOn() {
+	return _speech->allSpeech ? _speech->lookWhosTalking : -1;
 }
 
-int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int sampleFile) {
+int SpeechManager::getLastSpeechSound() {
+	return _vm->_soundMan->findInSoundCache(_speech->lastFile);
+}
+
+int SpeechManager::wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int sampleFile) {
 	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 	int fontHeight = g_sludge->_txtMan->getFontHeight();
 	int cameraY = g_sludge->_gfxMan->getCamY();
 
 	int a, offset = 0;
 
-	killAllSpeech();
+	kill();
 
-	int speechTime = (theText.size() + 20) * speechSpeed;
+	int speechTime = (theText.size() + 20) * _speechSpeed;
 	if (speechTime < 1)
 		speechTime = 1;
 	if (sampleFile != -1) {
-		if (speechMode >= 1) {
+		if (_speechMode >= 1) {
 			if (g_sludge->_soundMan->startSound(sampleFile, false)) {
 				speechTime = -10;
-				speech->lastFile = sampleFile;
-				if (speechMode == 2) return -10;
+				_speech->lastFile = sampleFile;
+				if (_speechMode == 2) return -10;
 			}
 
 		}
 	}
-	speech->speechY = y;
+	_speech->speechY = y;
 
 	char *tmp, *txt;
 	tmp = txt = createCString(theText);
@@ -150,13 +152,13 @@ int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int samp
 	delete []tmp;
 
 	if (y < 0)
-		speech->speechY -= y;
-	else if (speech->speechY > cameraY + (float) (g_system->getHeight() - fontHeight / 3) / cameraZoom)
-		speech->speechY = cameraY
+		_speech->speechY -= y;
+	else if (_speech->speechY > cameraY + (float) (g_system->getHeight() - fontHeight / 3) / cameraZoom)
+		_speech->speechY = cameraY
 				+ (float) (g_system->getHeight() - fontHeight / 3) / cameraZoom;
 
 	if (offset) {
-		SpeechLine *viewLine = speech->allSpeech;
+		SpeechLine *viewLine = _speech->allSpeech;
 		while (viewLine) {
 			viewLine->x += offset;
 			viewLine = viewLine->next;
@@ -165,7 +167,7 @@ int wrapSpeechXY(const Common::String &theText, int x, int y, int wrap, int samp
 	return speechTime;
 }
 
-int wrapSpeechPerson(const Common::String &theText, OnScreenPerson &thePerson, int sampleFile, bool animPerson) {
+int SpeechManager::wrapSpeechPerson(const Common::String &theText, OnScreenPerson &thePerson, int sampleFile, bool animPerson) {
 	int cameraX = g_sludge->_gfxMan->getCamX();
 	int cameraY = g_sludge->_gfxMan->getCamY();
 	int i = wrapSpeechXY(theText, thePerson.x - cameraX,
@@ -175,17 +177,17 @@ int wrapSpeechPerson(const Common::String &theText, OnScreenPerson &thePerson, i
 			thePerson.thisType->wrapSpeech, sampleFile);
 	if (animPerson) {
 		makeTalker(thePerson);
-		speech->currentTalker = &thePerson;
+		_speech->currentTalker = &thePerson;
 	}
 	return i;
 }
 
-int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool animPerson) {
+int SpeechManager::wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool animPerson) {
 	int i;
 	int cameraX = g_sludge->_gfxMan->getCamX();
 	int cameraY = g_sludge->_gfxMan->getCamY();
 
-	speech->lookWhosTalking = objT;
+	_speech->lookWhosTalking = objT;
 	OnScreenPerson *thisPerson = findPerson(objT);
 	if (thisPerson) {
 		setObjFontColour(thisPerson->thisType);
@@ -208,35 +210,37 @@ int wrapSpeech(const Common::String &theText, int objT, int sampleFile, bool ani
 	return i;
 }
 
-void viewSpeech() {
+void SpeechManager::display() {
 	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
 	int fontHeight = g_sludge->_txtMan->getFontHeight();
-	int viewY = speech->speechY;
-	SpeechLine *viewLine = speech->allSpeech;
+	int viewY = _speech->speechY;
+	SpeechLine *viewLine = _speech->allSpeech;
 	while (viewLine) {
-		g_sludge->_txtMan->pasteString(viewLine->textLine, viewLine->x, viewY, speech->talkCol);
+		g_sludge->_txtMan->pasteString(viewLine->textLine, viewLine->x, viewY, _speech->talkCol);
 		viewY -= fontHeight / cameraZoom;
 		viewLine = viewLine->next;
 	}
 }
 
-void saveSpeech(SpeechStruct *sS, Common::WriteStream *stream) {
-	SpeechLine *viewLine = sS->allSpeech;
+void SpeechManager::save(Common::WriteStream *stream) {
+	stream->writeByte(_speechMode);
 
-	stream->writeByte(sS->talkCol.originalRed);
-	stream->writeByte(sS->talkCol.originalGreen);
-	stream->writeByte(sS->talkCol.originalBlue);
+	SpeechLine *viewLine = _speech->allSpeech;
 
-	stream->writeFloatLE(speechSpeed);
+	stream->writeByte(_speech->talkCol.originalRed);
+	stream->writeByte(_speech->talkCol.originalGreen);
+	stream->writeByte(_speech->talkCol.originalBlue);
+
+	stream->writeFloatLE(_speechSpeed);
 
 	// Write y co-ordinate
-	stream->writeUint16BE(sS->speechY);
+	stream->writeUint16BE(_speech->speechY);
 
 	// Write which character's talking
-	stream->writeUint16BE(sS->lookWhosTalking);
-	if (sS->currentTalker) {
+	stream->writeUint16BE(_speech->lookWhosTalking);
+	if (_speech->currentTalker) {
 		stream->writeByte(1);
-		stream->writeUint16BE(sS->currentTalker->thisType->objectNum);
+		stream->writeUint16BE(_speech->currentTalker->thisType->objectNum);
 	} else {
 		stream->writeByte(0);
 	}
@@ -251,42 +255,57 @@ void saveSpeech(SpeechStruct *sS, Common::WriteStream *stream) {
 	stream->writeByte(0);
 }
 
-bool loadSpeech(SpeechStruct *sS, Common::SeekableReadStream *stream) {
-	speech->currentTalker = NULL;
-	killAllSpeech();
+bool SpeechManager::load(Common::SeekableReadStream *stream) {
+	// read speech mode
+	_speechMode = stream->readByte();
+
+	_speech->currentTalker = nullptr;
+	kill();
 	byte r = stream->readByte();
 	byte g = stream->readByte();
 	byte b = stream->readByte();
-	setFontColour(sS->talkCol, r, g, b);
+	setFontColour(_speech->talkCol, r, g, b);
 
-	speechSpeed = stream->readFloatLE();
+	_speechSpeed = stream->readFloatLE();
 
 	// Read y co-ordinate
-	sS->speechY = stream->readUint16BE();
+	_speech->speechY = stream->readUint16BE();
 
 	// Read which character's talking
-	sS->lookWhosTalking = stream->readUint16BE();
+	_speech->lookWhosTalking = stream->readUint16BE();
 
 	if (stream->readByte()) {
-		sS->currentTalker = findPerson(stream->readUint16BE());
+		_speech->currentTalker = findPerson(stream->readUint16BE());
 	} else {
-		sS->currentTalker = NULL;
+		_speech->currentTalker = NULL;
 	}
 
 	// Read what's being said
-	SpeechLine **viewLine = &sS->allSpeech;
+	SpeechLine **viewLine = &_speech->allSpeech;
 	SpeechLine *newOne;
-	speech->lastFile = -1;
+	_speech->lastFile = -1;
 	while (stream->readByte()) {
 		newOne = new SpeechLine;
-		if (! checkNew(newOne)) return false;
+		if (!checkNew(newOne))
+			return false;
 		newOne->textLine = readString(stream);
 		newOne->x = stream->readUint16BE();
 		newOne->next = NULL;
-		(* viewLine) = newOne;
+		(*viewLine) = newOne;
 		viewLine = &(newOne->next);
 	}
 	return true;
+}
+
+void SpeechManager::freeze(FrozenStuffStruct *frozenStuff) {
+	frozenStuff->speech = _speech;
+	init();
+}
+
+void SpeechManager::restore(FrozenStuffStruct *frozenStuff) {
+	kill();
+	delete _speech;
+	_speech = frozenStuff->speech;
 }
 
 } // End of namespace Sludge

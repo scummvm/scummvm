@@ -40,7 +40,6 @@
 #include "sludge/objtypes.h"
 #include "sludge/floor.h"
 #include "sludge/zbuffer.h"
-#include "sludge/talk.h"
 #include "sludge/region.h"
 #include "sludge/language.h"
 #include "sludge/moreio.h"
@@ -49,6 +48,7 @@
 #include "sludge/freeze.h"
 #include "sludge/language.h"
 #include "sludge/sludge.h"
+#include "sludge/speech.h"
 #include "sludge/utf8.h"
 #include "sludge/graphics.h"
 #include "sludge/event.h"
@@ -71,7 +71,6 @@ extern int numBIFNames, numUserFunc;
 extern Common::String *allUserFunc;
 extern Common::String *allBIFNames;
 
-extern float speechSpeed;
 extern byte brightnessLevel;
 extern byte fadeMode;
 extern uint16 saveEncoding;
@@ -153,7 +152,7 @@ static BuiltReturn sayCore(int numParams, LoadedFunction *fun, bool sayIt) {
 			if (!getValueType(objT, SVT_OBJTYPE, fun->stack->thisVar))
 				return BR_ERROR;
 			trimStack(fun->stack);
-			p = wrapSpeech(newText, objT, fileNum, sayIt);
+			p = g_sludge->_speechMan->wrapSpeech(newText, objT, fileNum, sayIt);
 			fun->timeLeft = p;
 			//debugOut ("BUILTIN: sayCore: %s (%i)\n", newText, p);
 			fun->isSpeech = true;
@@ -1298,7 +1297,7 @@ builtIn(setSpeechMode) {
 
 builtIn(somethingSpeaking) {
 	UNUSEDALL
-	int i = isThereAnySpeechGoingOn();
+	int i = g_sludge->_speechMan->isThereAnySpeechGoingOn();
 	if (i == -1) {
 		setVariable(fun->reg, SVT_INT, 0);
 	} else {
@@ -1958,7 +1957,7 @@ builtIn(setSpeechSpeed) {
 	if (!getValueType(number, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	speechSpeed = number * 0.01;
+	g_sludge->_speechMan->setSpeechSpeed(number * 0.01);
 	setVariable(fun->reg, SVT_INT, 1);
 	return BR_CONTINUE;
 }

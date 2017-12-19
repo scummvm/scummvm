@@ -28,7 +28,6 @@
 #include "sludge/objtypes.h"
 #include "sludge/region.h"
 #include "sludge/people.h"
-#include "sludge/talk.h"
 #include "sludge/newfatal.h"
 #include "sludge/variable.h"
 #include "sludge/moreio.h"
@@ -37,6 +36,7 @@
 #include "sludge/zbuffer.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
+#include "sludge/speech.h"
 #include "sludge/version.h"
 
 #define ANGLEFIX (180.0 / 3.14157)
@@ -45,8 +45,6 @@
 #define ANI_TALK 2
 
 namespace Sludge {
-
-extern SpeechStruct *speech;
 
 extern VariableStack *noStack;
 
@@ -202,7 +200,7 @@ bool turnPersonToFace(int thisNum, int direc) {
 		thisPerson->walking = false;
 		thisPerson->spinning = false;
 		turnMeAngle(thisPerson, direc);
-		setFrames(*thisPerson, (thisPerson == speech->currentTalker) ? ANI_TALK : ANI_STAND);
+		setFrames(*thisPerson, g_sludge->_speechMan->isCurrentTalker(thisPerson) ? ANI_TALK : ANI_STAND);
 		return true;
 	}
 	return false;

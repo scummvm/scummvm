@@ -28,10 +28,10 @@ MODULE_OBJS := \
 	sludge.o \
 	sludger.o \
 	sound.o \
+	speech.o \
 	sprbanks.o \
 	sprites.o \
 	statusba.o \
-	talk.o \
 	thumbnail.o \
 	timing.o \
 	transition.o \
