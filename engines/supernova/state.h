@@ -56,6 +56,7 @@ struct GameState {
 	bool   _powerOff;
 	bool   _dream;
 	bool   _nameSeen[4];
+	bool   _playerHidden;
 };
 
 class Inventory {

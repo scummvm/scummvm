@@ -1091,7 +1091,7 @@ void GameManager::guardWalkEvent() {
 			walk(18);
 		}
 	
-		if (!_currentRoom->isSectionVisible(kMaxSection - 1)) {
+		if (!_state._playerHidden) {
 			if (_state._origin & 1)
 				walk(10);
 			else
