@@ -937,18 +937,18 @@ bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 	_mirrorId = StringInput::show(_vm, inputType, msg1, msg2, _event->_opcode);
 	if (_mirrorId) {
 		if (_mirrorId == 33 && files._isDarkCc) {
-			doEndGame2();
+			doDarkSideEnding();
 		} else if (_mirrorId == 34 && files._isDarkCc) {
-			doWorldEnd();
+			doWorldEnding();
 		} else if (_mirrorId == 35 && files._isDarkCc &&
 				_vm->getGameID() == GType_WorldOfXeen) {
-			doEndGame();
+			doCloudsEnding();
 		} else if (_mirrorId == 40 && !files._isDarkCc) {
-			doEndGame();
+			doCloudsEnding();
 		} else if (_mirrorId == 60 && !files._isDarkCc) {
-			doEndGame2();
+			doDarkSideEnding();
 		} else if (_mirrorId == 61 && !files._isDarkCc) {
-			doWorldEnd();
+			doWorldEnding();
 		} else {
 			if (_mirrorId == 59 && !files._isDarkCc) {
 				for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
@@ -1386,7 +1386,7 @@ bool Scripts::cmdCutsceneEndDarkside(ParamsIterator &params) {
 	party._mazeDirection = DIR_NORTH;
 	party._mazePosition = Common::Point(25, 21);
 
-	doEndGame2();
+	doDarkSideEnding();
 	return false;
 }
 
@@ -1394,7 +1394,7 @@ bool Scripts::cmdCutsceneEndWorld(ParamsIterator &params) {
 	_vm->_saves->_wonWorld = true;
 	_vm->_party->_worldEnd = true;
 
-	doWorldEnd();
+	doWorldEnding();
 	return false;
 }
 
@@ -1405,35 +1405,34 @@ bool Scripts::cmdFlipWorld(ParamsIterator &params) {
 
 bool Scripts::cmdPlayCD(ParamsIterator &params) { error("TODO"); }
 
-void Scripts::doEndGame() {
-	doEnding("ENDGAME", 0);
+void Scripts::doCloudsEnding() {
+	doEnding("ENDGAME");
 }
 
-void Scripts::doEndGame2() {
-	Party &party = *_vm->_party;
-	int v2 = 0;
+void Scripts::doDarkSideEnding() {
+	doEnding("ENDGAME2");
+}
 
+void Scripts::doWorldEnding() {
+	doEnding("WORLDEND");
+}
+
+void Scripts::doEnding(const Common::String &endStr) {
+	_vm->_saves->saveChars();
+
+	Party &party = *_vm->_party;
+
+	int state = 0;
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		Character &player = party._activeParty[idx];
 		if (player.hasAward(77)) {
-			v2 = 2;
+			state = 2;
 			break;
-		}
-		else if (player.hasAward(76)) {
-			v2 = 1;
+		} else if (player.hasAward(76)) {
+			state = 1;
 			break;
 		}
 	}
-
-	doEnding("ENDGAME2", v2);
-}
-
-void Scripts::doWorldEnd() {
-	error("TODO: doWorldEnd");
-}
-
-void Scripts::doEnding(const Common::String &endStr, int v2) {
-	_vm->_saves->saveChars();
 
 	error("TODO: doEnding");
 }

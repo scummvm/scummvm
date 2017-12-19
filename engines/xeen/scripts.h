@@ -505,13 +505,26 @@ private:
 
 	int whoWill(int v1, int v2, int v3);
 
-	void doEndGame();
+	/**
+	 * Do the Clouds of Xeen ending
+	 */
+	void doCloudsEnding();
 
-	void doEndGame2();
+	/**
+	 * Do the Dark Side of Xeen ending
+	 */
+	void doDarkSideEnding();
 
-	void doWorldEnd();
+	/**
+	 * Do the World of Xeen combined ending
 
-	void doEnding(const Common::String &endStr, int v2);
+	 */
+	void doWorldEnding();
+
+	/**
+	 * Triggers an ending sequence
+	 */
+	void doEnding(const Common::String &endStr);
 
 	/**
 	 * This monstrosity handles doing the various types of If checks on various data
