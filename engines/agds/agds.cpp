@@ -146,9 +146,6 @@ void AGDSEngine::runObject(Object *object) {
 
 void AGDSEngine::loadScreen(const Common::String & name) {
 	debug("loadScreen %s", name.c_str());
-	Common::String currentScreenName;
-	if (_currentScreen)
-		currentScreenName = _currentScreen->getName();
 
 	ScreensType::iterator i = _screens.find(name);
 	Screen *screen;
@@ -159,7 +156,6 @@ void AGDSEngine::loadScreen(const Common::String & name) {
 		screen = i->_value;
 
 	_currentScreen = screen;
-	_previousScreen = currentScreenName;
 	runObject(name);
 }
 
@@ -178,15 +174,24 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 	}
 	process.activate();
 	ProcessExitCode code = process.execute();
+	bool destroy = false;
 	switch(code) {
 	case kExitCodeLoadScreenObject:
 	case kExitCodeRunDialog:
 		runObject(process.getExitArg1(), process.getExitArg2());
 		break;
-	case kExitCodeDestroyProcessSetNextScreen:
+	case kExitCodeSetNextScreen:
 		loadScreen(process.getExitArg1());
+		destroy = true;
+		break;
+	case kExitCodeSetNextScreenSaveInHistory:
+		if (_currentScreen)
+			_previousScreen = _currentScreen->getName();
+		loadScreen(process.getExitArg1());
+		destroy = true;
 		break;
 	case kExitCodeLoadPreviousScreenObject:
+		debug("previous screen: %s", _previousScreen.c_str());
 		loadScreen(_previousScreen);
 		break;
 	case kExitCodeMouseAreaChange:
@@ -201,13 +206,16 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		runObject(process.getExitArg1());
 		_inventory.clear();
 		runObject(process.getExitArg2());
-		//deliberate fallthrough
+		destroy = true;
+		break;
 	default:
+		destroy = true;
+	}
+	if (destroy) {
 		debug("destroying process %s...", name.c_str());
 		it = _processes.erase(it);
-		return;
-	}
-	++it;
+	} else
+		++it;
 }
 
 void AGDSEngine::runProcess() {

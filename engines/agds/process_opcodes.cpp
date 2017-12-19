@@ -673,16 +673,16 @@ void Process::appendInventoryObjectNameToSharedSpace() {
 	push(_engine->appendToSharedStorage(object? object->getName(): Common::String()));
 }
 
-void Process::exitProcessSetNextScreen() {
+void Process::setNextScreen() {
 	Common::String name = popString();
 	debug("exitProcessSetNextScreen %s", name.c_str());
-	suspend(kExitCodeDestroyProcessSetNextScreen, name);
+	suspend(kExitCodeSetNextScreen, name);
 }
 
-void Process::exitProcessSetNextScreen80() {
+void Process::setNextScreenSaveInHistory() {
 	Common::String name = popString();
-	debug("exitProcessSetNextScreen80(code 7) %s", name.c_str());
-	suspend(kExitCodeDestroyProcessSetNextScreen, name);
+	debug("setNextScreenSaveInHistory %s", name.c_str());
+	suspend(kExitCodeSetNextScreenSaveInHistory, name);
 }
 
 void Process::loadPreviousScreen() {
@@ -916,7 +916,7 @@ ProcessExitCode Process::execute() {
 			OP		(kInventoryClear, inventoryClear);
 			OP		(kLoadMouse, loadMouse);
 			OP		(kInventoryAddObject, inventoryAddObject);
-			OP		(kExitProcessNextScreen80, exitProcessSetNextScreen80);
+			OP		(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory);
 			OP		(kStub82, stub82);
 			OP		(kLoadCharacter, loadCharacter);
 			OP		(kSetScreenHeight, setScreenHeight);
@@ -926,7 +926,7 @@ ProcessExitCode Process::execute() {
 			OP		(kScreenLoadObject, loadScreenObject);
 			OP		(kScreenLoadRegion, loadScreenRegion);
 			OP		(kScreenCloneObject, cloneObject);
-			OP		(kExitProcessSetNextScreen, exitProcessSetNextScreen);
+			OP		(kSetNextScreen, setNextScreen);
 			OP		(kScreenRemoveObject, removeScreenObject);
 			OP		(kLoadAnimation, loadAnimation);
 			OP		(kLoadSample, loadSample);

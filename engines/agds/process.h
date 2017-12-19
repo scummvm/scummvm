@@ -99,8 +99,8 @@ private:
 	void enter(uint16 magic, uint16 size);
 	void exitProcess();
 	void exitProcessCreatePatch();
-	void exitProcessSetNextScreen();
-	void exitProcessSetNextScreen80();
+	void setNextScreen();
+	void setNextScreenSaveInHistory();
 	void loadPreviousScreen();
 	void call(uint16 addr);
 
