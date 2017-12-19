@@ -30,17 +30,9 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
-#ifdef JOY_ANALOG
-#include "math.h"
-#endif
-
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
 #define JOY_DEADZONE 3200
-
-#ifndef __SYMBIAN32__ // Symbian wants dialog joystick i.e cursor for movement/selection
-	#define JOY_ANALOG
-#endif
 
 // #define JOY_INVERT_Y
 #define JOY_XAXIS 0
@@ -1023,7 +1015,6 @@ bool SdlEventSource::handleAxisToMouseMotion(int16 xAxis, int16 yAxis) {
 	yAxis = -yAxis;
 #endif
 
-#ifdef JOY_ANALOG
 	// conversion factor between keyboard mouse and joy axis value
 	int vel_to_axis = (1500 / MULTIPLIER);
 
@@ -1047,35 +1038,6 @@ bool SdlEventSource::handleAxisToMouseMotion(int16 xAxis, int16 yAxis) {
 		_km.x_vel = 0;
 		_km.y_vel = 0;
 	}
-#else
-	if (xAxis > JOY_DEADZONE) {
-		xAxis -= JOY_DEADZONE;
-	} else if (xAxis < -JOY_DEADZONE) {
-		xAxis += JOY_DEADZONE;
-	} else
-		xAxis = 0;
-	if (yAxis > JOY_DEADZONE) {
-		yAxis -= JOY_DEADZONE;
-	} else if (yAxis < -JOY_DEADZONE) {
-		yAxis += JOY_DEADZONE;
-	} else
-		yAxis = 0;
-
-	if (xAxis != 0) {
-		_km.x_vel = (xAxis > 0) ? 1 * MULTIPLIER:-1 * MULTIPLIER;
-		_km.x_down_count = 1;
-	} else {
-		_km.x_vel = 0;
-		_km.x_down_count = 0;
-	}
-	if (yAxis != 0) {
-		_km.y_vel = (yAxis > 0) ? 1 * MULTIPLIER: -1 * MULTIPLIER;
-		_km.y_down_count = 1;
-	} else {
-		_km.y_vel = 0;
-		_km.y_down_count = 0;
-	}
-#endif
 
 	return false;
 }

@@ -180,9 +180,7 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (f == kFeatureClipboardSupport) return true;
 #endif
-#ifdef JOY_ANALOG
 	if (f == kFeatureJoystickDeadzone) return true;
-#endif
 	if (f == kFeatureKbdMouseSpeed) return true;
 	return ModularBackend::hasFeature(f);
 }
@@ -293,12 +291,10 @@ void OSystem_SDL::initBackend() {
 		ConfMan.registerDefault("kbdmouse_speed", 3);
 		ConfMan.setInt("kbdmouse_speed", 3);
 	}
-#ifdef JOY_ANALOG
 	if (!ConfMan.hasKey("joystick_deadzone")) {
 		ConfMan.registerDefault("joystick_deadzone", 3);
 		ConfMan.setInt("joystick_deadzone", 3);
 	}
-#endif
 	ModularBackend::initBackend();
 
 	// We have to initialize the graphics manager before the event manager

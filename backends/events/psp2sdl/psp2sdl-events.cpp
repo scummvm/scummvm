@@ -37,7 +37,6 @@
 #include "math.h"
 
 #define JOY_DEADZONE 2000
-#define JOY_ANALOG
 #define JOY_XAXIS 0
 #define JOY_YAXIS 1
 #define JOY_XAXISR 2
