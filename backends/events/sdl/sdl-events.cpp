@@ -87,37 +87,12 @@ SdlEventSource::SdlEventSource()
 		}
 #endif
 
-		// Enable joystick
-		if (SDL_NumJoysticks() > joystick_num) {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-			if (SDL_IsGameController(joystick_num)) {
-				_controller = SDL_GameControllerOpen(joystick_num);
-				debug("Using game controller: %s", SDL_GameControllerName(_controller));
-			} else
-#endif
-			{
-				_joystick = SDL_JoystickOpen(joystick_num);
-				debug("Using joystick: %s",
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-				      SDL_JoystickName(_joystick)
-#else
-				      SDL_JoystickName(joystick_num)
-#endif
-				     );
-			}
-		} else {
-			warning("Invalid joystick: %d", joystick_num);
-		}
+		openJoystick(joystick_num);
 	}
 }
 
 SdlEventSource::~SdlEventSource() {
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-	if (_controller)
-		SDL_GameControllerClose(_controller);
-#endif
-	if (_joystick)
-		SDL_JoystickClose(_joystick);
+	closeJoystick();
 }
 
 int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
@@ -617,6 +592,12 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		default:
 			return false;
 		}
+
+	case SDL_JOYDEVICEADDED:
+		return handleJoystickAdded(ev.jdevice);
+
+	case SDL_JOYDEVICEREMOVED:
+		return handleJoystickRemoved(ev.jdevice);
 #else
 	case SDL_VIDEOEXPOSE:
 		if (_graphicsManager)
@@ -831,6 +812,44 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
+void SdlEventSource::openJoystick(int joystickIndex) {
+	assert(!_joystick && !_controller);
+
+	if (SDL_NumJoysticks() > joystickIndex) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (SDL_IsGameController(joystickIndex)) {
+			_controller = SDL_GameControllerOpen(joystickIndex);
+			debug("Using game controller: %s", SDL_GameControllerName(_controller));
+		} else
+#endif
+		{
+			_joystick = SDL_JoystickOpen(joystickIndex);
+			debug("Using joystick: %s",
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+                  SDL_JoystickName(_joystick)
+#else
+                  SDL_JoystickName(joystickIndex)
+#endif
+			);
+		}
+	} else {
+		warning("Invalid joystick: %d", joystickIndex);
+	}
+}
+
+void SdlEventSource::closeJoystick() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_controller) {
+		SDL_GameControllerClose(_controller);
+		_controller = nullptr;
+	}
+#endif
+	if (_joystick) {
+		SDL_JoystickClose(_joystick);
+		_joystick = nullptr;
+	}
+}
+
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
@@ -906,6 +925,35 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 }
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+bool SdlEventSource::handleJoystickAdded(const SDL_JoyDeviceEvent &device) {
+	int joystick_num = ConfMan.getInt("joystick_num");
+	if (joystick_num == device.which) {
+		closeJoystick();
+		openJoystick(joystick_num);
+	}
+
+	return false;
+}
+
+bool SdlEventSource::handleJoystickRemoved(const SDL_JoyDeviceEvent &device) {
+	SDL_Joystick *joystick;
+	if (_controller) {
+		joystick = SDL_GameControllerGetJoystick(_controller);
+	} else {
+		joystick = _joystick;
+	}
+
+	if (!joystick) {
+		return false;
+	}
+
+	if (SDL_JoystickInstanceID(joystick) == device.which) {
+		closeJoystick();
+	}
+
+	return false;
+}
+
 bool SdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) {
 	using namespace Common;
 

@@ -94,6 +94,21 @@ protected:
 	SdlGraphicsManager *_graphicsManager;
 
 	/**
+	 * Open the SDL joystick with the specified index
+	 *
+	 * After this function completes successfully, SDL sends events for the device.
+	 *
+	 * If the joystick is also a SDL game controller, open it as a controller
+	 * so an extended button mapping can be used.
+	 */
+	void openJoystick(int joystickIndex);
+
+	/**
+	 * Close the currently open joystick if any
+	 */
+	void closeJoystick();
+
+	/**
 	 * Pre process an event before it is dispatched.
 	 */
 	virtual void preprocessEvents(SDL_Event *event) {}
@@ -123,6 +138,8 @@ protected:
 	virtual bool handleKbdMouse(Common::Event &event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+	virtual bool handleJoystickAdded(const SDL_JoyDeviceEvent &event);
+	virtual bool handleJoystickRemoved(const SDL_JoyDeviceEvent &device);
 	virtual bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp);
 	virtual bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event);
 #endif
