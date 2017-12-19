@@ -189,6 +189,9 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 	ProcessExitCode code = process.execute();
 	bool destroy = false;
 	switch(code) {
+	case kExitCodeDestroy:
+		destroy = true;
+		break;
 	case kExitCodeLoadScreenObject:
 	case kExitCodeRunDialog:
 		runObject(process.getExitArg1(), process.getExitArg2());
@@ -219,10 +222,9 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		runObject(process.getExitArg1());
 		_inventory.clear();
 		runObject(process.getExitArg2());
-		destroy = true;
 		break;
 	default:
-		destroy = true;
+		error("unknown process exit code %d", code);
 	}
 	if (destroy) {
 		debug("destroying process %s...", name.c_str());
