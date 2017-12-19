@@ -553,12 +553,17 @@ void Process::exitProcess() {
 }
 
 void Process::exitProcessCreatePatch() {
-	SystemVariable * init = _engine->getSystemVariable("init_resources");
-	if (!init)
+	SystemVariable * initVar = _engine->getSystemVariable("init_resources");
+	if (!initVar)
 		error("no init_resources declared");
-	Common::String name = init->getString();
-	debug("exitProcessCreatePatch stub, resource object: %s", name.c_str());
-	suspend(kExitCodeCreatePatchLoadResources, name);
+	Common::String init = initVar->getString();
+
+	SystemVariable * doneVar = _engine->getSystemVariable("done_resources");
+	if (!doneVar)
+		error("no done_resources declared");
+	Common::String done = doneVar->getString();
+	debug("exitProcessCreatePatch stub, resource objects: %s %s", done.c_str(), init.c_str());
+	suspend(kExitCodeCreatePatchLoadResources, done, init);
 }
 
 void Process::clearScreen() {
