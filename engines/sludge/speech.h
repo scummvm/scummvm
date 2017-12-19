@@ -26,6 +26,8 @@
 
 namespace Sludge {
 
+struct ObjectType;
+
 struct SpeechLine {
 	Common::String textLine;
 	SpeechLine *next;

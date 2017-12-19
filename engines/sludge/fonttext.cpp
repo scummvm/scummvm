@@ -21,11 +21,11 @@
  */
 
 #include "sludge/allfiles.h"
-#include "sludge/sprites.h"
 #include "sludge/fonttext.h"
 #include "sludge/graphics.h"
-#include "sludge/newfatal.h"
 #include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/sprites.h"
 #include "sludge/sludge.h"
 #include "sludge/version.h"
 

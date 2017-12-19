@@ -24,13 +24,13 @@
 #include "common/savefile.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/variable.h"
+#include "sludge/fileset.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
-#include "sludge/fileset.h"
 #include "sludge/sludge.h"
+#include "sludge/variable.h"
 
 namespace Sludge {
 

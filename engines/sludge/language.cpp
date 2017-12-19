@@ -24,9 +24,9 @@
 
 #include "sludge/allfiles.h"
 #include "sludge/fileset.h"
-#include "sludge/newfatal.h"
-#include "sludge/moreio.h"
 #include "sludge/language.h"
+#include "sludge/moreio.h"
+#include "sludge/newfatal.h"
 #include "sludge/sludge.h"
 #include "sludge/version.h"
 

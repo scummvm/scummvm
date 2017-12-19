@@ -23,12 +23,12 @@
 #include "graphics/surface.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/newfatal.h"
 #include "sludge/fileset.h"
+#include "sludge/floor.h"
 #include "sludge/graphics.h"
 #include "sludge/moreio.h"
+#include "sludge/newfatal.h"
 #include "sludge/sludge.h"
-#include "sludge/floor.h"
 
 namespace Sludge {
 

@@ -24,13 +24,13 @@
 #include "image/png.h"
 
 #include "sludge/allfiles.h"
+#include "sludge/backdrop.h"
 #include "sludge/errors.h"
 #include "sludge/graphics.h"
 #include "sludge/imgloader.h"
 #include "sludge/moreio.h"
-#include "sludge/sludger.h"
-#include "sludge/backdrop.h"
 #include "sludge/newfatal.h"
+#include "sludge/sludger.h"
 #include "sludge/version.h"
 
 namespace Sludge {

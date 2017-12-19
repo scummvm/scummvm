@@ -23,9 +23,9 @@
 #include "common/file.h"
 
 #include "sludge/allfiles.h"
-#include "sludge/variable.h"
-#include "sludge/newfatal.h"
 #include "sludge/moreio.h"
+#include "sludge/newfatal.h"
+#include "sludge/variable.h"
 
 #define LOAD_ERROR "Can't load custom data...\n\n"
 

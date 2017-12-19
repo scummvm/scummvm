@@ -21,8 +21,8 @@
  */
 
 #include "sludge/allfiles.h"
-#include "sludge/cursors.h"
 #include "sludge/backdrop.h"
+#include "sludge/cursors.h"
 #include "sludge/event.h"
 #include "sludge/fonttext.h"
 #include "sludge/freeze.h"
@@ -31,11 +31,11 @@
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
 #include "sludge/region.h"
+#include "sludge/sludge.h"
+#include "sludge/sludger.h"
 #include "sludge/speech.h"
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
-#include "sludge/sludge.h"
-#include "sludge/sludger.h"
 #include "sludge/statusba.h"
 #include "sludge/zbuffer.h"
 
