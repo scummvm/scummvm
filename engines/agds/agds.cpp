@@ -306,9 +306,11 @@ Common::Error AGDSEngine::run() {
 
 						switch(event.kbd.keycode) {
 							case Common::KEYCODE_SPACE:
+								skipFilm();
 								key = "space";
 								break;
 							case Common::KEYCODE_ESCAPE:
+								skipFilm();
 								key = "escape";
 								break;
 							case Common::KEYCODE_TAB:
@@ -430,6 +432,10 @@ void AGDSEngine::playFilm(const Common::String &video, const Common::String &aud
 	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video));
 }
 
+void AGDSEngine::skipFilm() {
+	delete _mjpgPlayer;
+	_mjpgPlayer = NULL;
+}
 
 int AGDSEngine::appendToSharedStorage(const Common::String &value) {
 	int index = _sharedStorageIndex;
