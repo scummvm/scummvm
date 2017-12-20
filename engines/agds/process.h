@@ -149,9 +149,12 @@ private:
 	void getObjectPictureHeight();
 	void loadCharacter();
 	void enableCharacter();
+	void moveCharacter();
 	void showCharacter();
 	void fogOnCharacter();
 	void leaveCharacter();
+	void setCharacter();
+	void pointCharacter();
 	void quit();
 
 	void setDialogForNextFilm();
@@ -195,9 +198,12 @@ private:
 	void stub128();
 	void stub129();
 	void stub130();
+	void stub131();
 	void stub133();
 	void stub134();
 	void stub136();
+	void stub137();
+	void stub138();
 	void stub152();
 	void stub153();
 	void stub154();
