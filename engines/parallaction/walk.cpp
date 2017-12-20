@@ -585,7 +585,7 @@ void PathWalker_BR::doWalk(State &s) {
 
 	if (s._walkDelay > 0) {
 		s._walkDelay--;
-		if (s._walkDelay == 0 && s._a->_scriptName) {
+		if (s._walkDelay == 0 && !s._a->_scriptName.empty()) {
 			// stop script and reset
 			s._a->_flags &= ~kFlagsActing;
 //			_vm->_programExec->resetProgram(s._a->_scriptName);
