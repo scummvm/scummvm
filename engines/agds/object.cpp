@@ -32,7 +32,8 @@ namespace AGDS {
 
 Object::Object(const Common::String &name, Common::SeekableReadStream * stream) :
 	_name(name), _stringTableLoaded(false),
-	_picture(), _region(), _mouseCursor(),
+	_picture(), _region(),
+	_animation(), _mouseCursor(),
 	_pos(), _alpha(255) {
 	byte id = stream->readByte();
 	byte flag = stream->readByte();
@@ -97,18 +98,16 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 	_picture = picture;
 }
 
-void Object::setMouseCursor(Animation *animation) {
-	_mouseCursor = animation;
-}
-
-
-void Object::paint(Graphics::Surface &backbuffer) {
+void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (_picture) {
 		Common::Point dst = _pos;
 		Common::Rect srcRect = _picture->getRect();
 		uint32 color = (_alpha << 24) | 0xffffff; //fixme: _picture->format.ARGBToColor(_alpha, 255, 255, 255); is not working
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
 			_picture->blit(backbuffer, _pos.x, _pos.y, Graphics::FLIP_NONE, &srcRect, color);
+	}
+	if (_animation) {
+		_animation->paint(engine, backbuffer, _animationPos);
 	}
 }
 

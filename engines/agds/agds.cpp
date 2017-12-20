@@ -344,14 +344,14 @@ Common::Error AGDSEngine::run() {
 				_mjpgPlayer = NULL;
 			}
 		} else if (_currentScreen) {
-			_currentScreen->paint(*backbuffer);
+			_currentScreen->paint(*this, *backbuffer);
 		}
 
 		if (!mouseCursor)
 			mouseCursor = _defaultMouseCursor;
 
 		if (_userEnabled && mouseCursor) {
-			mouseCursor->paint(this, *backbuffer, _mouse);
+			mouseCursor->paint(*this, *backbuffer, _mouse);
 		}
 
 		_system->unlockScreen();

@@ -131,6 +131,7 @@ private:
 	void loadAnimationFromObject();
 	void loadTextFromObject();
 	void loadAnimation();
+	void setAnimationPosition();
 	void loadSample();
 	void playSound();
 	void playFilm();
@@ -161,6 +162,7 @@ private:
 	void npcSay();
 	void playerSay();
 	void runDialog();
+	void setObjectText();
 
 	void getRandomNumber();
 	void setStringSystemVariable();
@@ -200,7 +202,6 @@ private:
 	void stub130();
 	void stub131();
 	void stub133();
-	void stub134();
 	void stub136();
 	void stub137();
 	void stub138();
@@ -214,7 +215,6 @@ private:
 	void stub174();
 	void stub176();
 	void stub184();
-	void setObjectText();
 	void stub190();
 	void stub192();
 	void stub194();

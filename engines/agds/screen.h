@@ -34,6 +34,7 @@ namespace Graphics {
 
 namespace AGDS {
 
+class AGDSEngine;
 class Object;
 struct Region;
 
@@ -106,8 +107,8 @@ public:
 	}
 
 	void add(Object *object);
-	void remove(const Common::String &name);
-	void paint(Graphics::Surface &backbuffer);
+	void remove(const Common::String & name);
+	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer);
 	Object *find(Common::Point pos) const;
 };
 

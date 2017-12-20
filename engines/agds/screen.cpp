@@ -48,10 +48,10 @@ void Screen::remove(const Common::String &name) {
 }
 
 
-void Screen::paint(Graphics::Surface &backbuffer) {
+void Screen::paint(AGDSEngine & engine, Graphics::Surface & backbuffer) {
 	for(ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		Object *object = *i;
-		object->paint(backbuffer);
+		object->paint(engine, backbuffer);
 	}
 }
 
