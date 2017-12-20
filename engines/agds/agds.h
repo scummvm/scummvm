@@ -105,6 +105,7 @@ public:
 
 	bool active() const { return _timer <= 0 && !_mjpgPlayer; }
 	void playFilm(const Common::String &video, const Common::String &audio);
+	void skipFilm();
 
 	ResourceManager & resourceManager() {
 		return _resourceManager;
