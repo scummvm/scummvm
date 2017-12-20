@@ -44,7 +44,8 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 		_mjpgPlayer(), _currentScreen(), _previousScreen(),
 		_defaultMouseCursor(),
 		_mouse(400, 300), _userEnabled(false), _currentRegion(),
-		_random("agds"), _soundManager(this, system->getMixer()) {
+		_random("agds"), _soundManager(this, system->getMixer()),
+		_fastMode(false) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -139,11 +140,15 @@ Object *AGDSEngine::loadObject(const Common::String & name, const Common::String
 }
 
 void AGDSEngine::runObject(Object *object) {
-	_processes.push_back(Process(this, object));
-	ProcessListType::iterator it = _processes.reverse_begin();
-	runProcess(it);
+	runProcess(object);
 	if (_currentScreen)
 		_currentScreen->add(object);
+}
+
+void AGDSEngine::runProcess(Object *object, uint ip) {
+	_processes.push_back(Process(this, object, ip));
+	ProcessListType::iterator it = _processes.reverse_begin();
+	runProcess(it);
 }
 
 void AGDSEngine::runObject(const Common::String & name, const Common::String &prototype)
@@ -291,10 +296,40 @@ Common::Error AGDSEngine::run() {
 
 		Common::Event event;
 		while(eventManager->pollEvent(event)) {
+			if (!_currentScreen)
+				continue;
+
 			switch(event.type) {
+				case Common::EVENT_KEYDOWN:
+					{
+						Common::String key;
+
+						switch(event.kbd.keycode) {
+							case Common::KEYCODE_SPACE:
+								key = "space";
+								break;
+							case Common::KEYCODE_ESCAPE:
+								key = "escape";
+								break;
+							case Common::KEYCODE_TAB:
+								key = "tab";
+								break;
+							default:
+								if (event.kbd.ascii)
+									key = Common::String(static_cast<char>(event.kbd.ascii));
+						};
+						if (!key.empty()) {
+							Screen::KeyHandler handler = _currentScreen->findKeyHandler(key);
+							if (handler.object) {
+								debug("found handler for key %s: %s %08x", key.c_str(), handler.object->getName().c_str(), handler.ip + 7);
+								runProcess(handler.object, handler.ip);
+							}
+						}
+					}
+					break;
 				case Common::EVENT_MOUSEMOVE:
 					_mouse = event.mouse;
-					if (_userEnabled && _currentScreen) {
+					if (_userEnabled) {
 						MouseMap &mouseMap = _currentScreen->mouseMap();
 						MouseRegion *region = mouseMap.find(_mouse);
 						if (region != _currentRegion) {
@@ -314,14 +349,14 @@ Common::Error AGDSEngine::run() {
 					break;
 				case Common::EVENT_LBUTTONDOWN:
 					_mouse = event.mouse;
-					if (_userEnabled && _currentScreen) {
+					if (_userEnabled) {
 						debug("lclick %d, %d", _mouse.x, _mouse.y);
 						Object *object = _currentScreen->find(_mouse);
 						if (object) {
 							uint ip = object->getClickHandler();
 							if (ip) {
 								debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
-								_processes.push_front(Process(this, object, ip));
+								runProcess(object, ip);
 							}
 						}
 					}
@@ -377,12 +412,14 @@ Common::Error AGDSEngine::run() {
 		_system->unlockScreen();
 		_system->updateScreen();
 
-		static const uint32 kFPS = 25;
-		static const uint32 kMaxTick = 1000 / kFPS;
+		if (!_fastMode) {
+			static const uint32 kFPS = 25;
+			static const uint32 kMaxTick = 1000 / kFPS;
 
-		uint32 dt = _system->getMillis() - frameStarted;
-		if (dt < kMaxTick)
-			_system->delayMillis(kMaxTick - dt);
+			uint32 dt = _system->getMillis() - frameStarted;
+			if (dt < kMaxTick)
+				_system->delayMillis(kMaxTick - dt);
+		}
 	}
 
 	return Common::kNoError;
