@@ -59,6 +59,7 @@ bool GameManager::serialize(Common::WriteStream *out) {
 	out->writeByte(_state._dream);
 	for (int i = 0; i < 4; i++)
 		out->writeByte(_state._nameSeen[i]);
+	out->writeByte(_state._playerHidden);
 
 	// Inventory
 	out->writeSint32LE(_inventory.getSize());
@@ -121,6 +122,11 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 		else
 			_state._nameSeen[i] = false;
 	}
+
+	if (version >= 8)
+		_state._playerHidden = in->readByte();
+	else
+		_state._playerHidden = false;
 
 	_oldTime = g_system->getMillis();
 
