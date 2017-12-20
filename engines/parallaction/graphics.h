@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/str.h"
 #include "common/stream.h"
 #include "common/array.h"
 
@@ -286,7 +287,7 @@ enum {
 };
 
 class GfxObj {
-	char *_name;
+	Common::String _name;
 	Frames *_frames;
 
 public:
