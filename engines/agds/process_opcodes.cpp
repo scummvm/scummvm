@@ -364,6 +364,12 @@ void Process::stub82() {
 	debug("stub82: %s %s", arg1.c_str(), arg2.c_str());
 }
 
+void Process::stub83() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("stub83: %s %s", arg1.c_str(), arg2.c_str());
+}
+
 void Process::stub119() {
 	debug("stub119");
 }
@@ -968,6 +974,7 @@ ProcessExitCode Process::execute() {
 			OP		(kInventoryAddObject, inventoryAddObject);
 			OP		(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory);
 			OP		(kStub82, stub82);
+			OP		(kStub83, stub83);
 			OP		(kLoadCharacter, loadCharacter);
 			OP		(kSetScreenHeight, setScreenHeight);
 			OP		(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay);
