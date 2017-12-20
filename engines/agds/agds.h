@@ -88,7 +88,9 @@ public:
 	void runObject(Object *object);
 	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
 
+	void resetCurrentScreen();
 	void loadScreen(const Common::String & name);
+	void setCurrentScreen(Screen *screen);
 
 	Region * loadRegion(const Common::String &name);
 	Common::String loadText(const Common::String &name);
@@ -111,8 +113,12 @@ public:
 		return _inventory;
 	}
 
-	Screen *currentScreen() {
+	Screen * getCurrentScreen() {
 		return _currentScreen;
+	}
+
+	Common::String & getCurrentScreenName() {
+		return _currentScreenName;
 	}
 
 	const Graphics::PixelFormat & pixelFormat() const {
@@ -157,7 +163,8 @@ private:
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
 	Screen *					_currentScreen;
-	Common::String				_previousScreen;
+	Common::String				_currentScreenName;
+	Screen *					_previousScreen;
 	Animation *					_defaultMouseCursor;
 	Common::Point				_mouse;
 	MouseRegion *				_currentRegion;
