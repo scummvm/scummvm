@@ -234,7 +234,7 @@ DECLARE_COMMAND_OPCODE(get) {
 
 
 DECLARE_COMMAND_OPCODE(location) {
-	_vm->scheduleLocationSwitch(ctxt._cmd->_string);
+	_vm->scheduleLocationSwitch(ctxt._cmd->_string.c_str());
 }
 
 

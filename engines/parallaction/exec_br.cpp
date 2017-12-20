@@ -72,7 +72,7 @@ typedef Common::Functor1Mem<ProgramContext&, void, ProgramExec_br> OpcodeV2;
 
 extern const char *_instructionNamesRes_br[];
 
-void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
+void Parallaction_br::setupSubtitles(const char *s, const char *s2, int y) {
 	debugC(5, kDebugExec, "setupSubtitles(%s, %s, %i)", s, s2, y);
 
 	clearSubtitles();
@@ -123,7 +123,7 @@ DECLARE_COMMAND_OPCODE(location) {
 	_vm->_location._followerStartPosition = ctxt._cmd->_startPos2;
 	_vm->_location._followerStartFrame = 0;
 
-	_vm->scheduleLocationSwitch(ctxt._cmd->_string);
+	_vm->scheduleLocationSwitch(ctxt._cmd->_string.c_str());
 }
 
 
@@ -172,8 +172,8 @@ DECLARE_COMMAND_OPCODE(stop) {
 
 
 DECLARE_COMMAND_OPCODE(character) {
-	debugC(9, kDebugExec, "Parallaction_br::cmdOp_character(%s)", ctxt._cmd->_string);
-	_vm->changeCharacter(ctxt._cmd->_string);
+	debugC(9, kDebugExec, "Parallaction_br::cmdOp_character(%s)", ctxt._cmd->_string.c_str());
+	_vm->changeCharacter(ctxt._cmd->_string.c_str());
 }
 
 
@@ -291,7 +291,7 @@ DECLARE_COMMAND_OPCODE(give) {
 
 
 DECLARE_COMMAND_OPCODE(text) {
-	_vm->setupSubtitles(ctxt._cmd->_string, ctxt._cmd->_string2, ctxt._cmd->_zeta0);
+	_vm->setupSubtitles(ctxt._cmd->_string.c_str(), ctxt._cmd->_string2.c_str(), ctxt._cmd->_zeta0);
 }
 
 
@@ -492,7 +492,7 @@ DECLARE_INSTRUCTION_OPCODE(print) {
 
 DECLARE_INSTRUCTION_OPCODE(text) {
 	InstructionPtr inst = ctxt._inst;
-	_vm->setupSubtitles(inst->_text, inst->_text2, inst->_y);
+	_vm->setupSubtitles(inst->_text.c_str(), inst->_text2.c_str(), inst->_y);
 }
 
 

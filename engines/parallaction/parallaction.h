@@ -526,7 +526,7 @@ public:
 	virtual DialogueManager *createDialogueManager(ZonePtr z);
 	virtual bool processGameEvent(int event);
 
-	void setupSubtitles(char *s, char *s2, int y);
+	void setupSubtitles(const char *s, const char *s2, int y);
 	void clearSubtitles();
 
 	void testCounterCondition(const Common::String &name, int op, int value);
