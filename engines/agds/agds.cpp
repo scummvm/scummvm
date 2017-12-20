@@ -146,8 +146,8 @@ void AGDSEngine::runObject(Object *object) {
 }
 
 void AGDSEngine::runProcess(Object *object, uint ip) {
-	_processes.push_back(Process(this, object, ip));
-	ProcessListType::iterator it = _processes.reverse_begin();
+	_processes.push_front(Process(this, object, ip));
+	ProcessListType::iterator it = _processes.begin();
 	runProcess(it);
 }
 
