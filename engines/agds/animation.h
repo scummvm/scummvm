@@ -43,7 +43,7 @@ public:
 	~Animation();
 
 	bool load(Common::SeekableReadStream *stream);
-	void paint(AGDSEngine *engine, Graphics::Surface & backbuffer, Common::Point dst);
+	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst);
 	int width() const;
 	int height() const;
 };

@@ -112,6 +112,7 @@ void Process::loadPicture() {
 void Process::loadAnimation() {
 	Common::String name = popText();
 	debug("loadAnimation %s", name.c_str());
+	_object->setAnimation(_engine->loadAnimation(name));
 }
 
 void Process::loadSample() {
@@ -390,12 +391,6 @@ void Process::stub133() {
 	int pan = pop();
 	int volume = pop();
 	debug("stub133: pan? %d volume? %d", pan, volume);
-}
-
-void Process::stub134() {
-	int arg2 = pop();
-	int arg1 = pop();
-	debug("stub134, font related %d %d", arg1, arg2);
 }
 
 void Process::stub136() {
@@ -857,6 +852,13 @@ void Process::loadAnimationFromObject() {
 	debug("loadAnimationFromObject %s", name.c_str());
 }
 
+void Process::setAnimationPosition() {
+	int arg2 = pop();
+	int arg1 = pop();
+	debug("setAnimationPosition %d %d", arg1, arg2);
+	_object->setAnimationPosition(Common::Point(arg1, arg2));
+}
+
 void Process::setTimer() {
 	int value = pop();
 	debug("setTimer %d", value);
@@ -987,7 +989,7 @@ ProcessExitCode Process::execute() {
 			OP		(kStub130, stub130);
 			OP		(kStub131, stub131);
 			OP		(kStub133, stub133);
-			OP		(kStub134, stub134);
+			OP		(kSetAnimationPosition, setAnimationPosition);
 			OP		(kResetPhaseVar, resetPhaseVar);
 			OP		(kStub136, stub136);
 			OP		(kStub137, stub137);

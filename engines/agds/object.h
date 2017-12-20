@@ -32,6 +32,7 @@ namespace Graphics { struct Surface; struct TransparentSurface; }
 
 namespace AGDS {
 
+class AGDSEngine;
 struct Region;
 class Animation;
 
@@ -57,8 +58,9 @@ private:
 	bool							_stringTableLoaded;
 	Graphics::TransparentSurface *	_picture;
 	Region *						_region;
+	Animation *						_animation;
 	Animation *						_mouseCursor;
-	Common::Point					_pos;
+	Common::Point					_pos, _animationPos;
 	uint							_clickHandler;
 	int								_alpha;
 
@@ -77,7 +79,21 @@ public:
 		return _code;
 	}
 
-	void setMouseCursor(Animation *animation);
+	void setAnimation(Animation *animation) {
+		_animation = animation;
+	}
+
+	Animation *getAnimation() const {
+		return _animation;
+	}
+
+	void setAnimationPosition(Common::Point animationPos) {
+		_animationPos = animationPos;
+	}
+
+	void setMouseCursor(Animation *mouseCursor) {
+		_mouseCursor = mouseCursor;
+	}
 	Animation *getMouseCursor() const {
 		return _mouseCursor;
 	}
@@ -111,7 +127,7 @@ public:
 		return _clickHandler;
 	}
 
-	void paint(Graphics::Surface &backbuffer);
+	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
 
 	void move(Common::Point pos) {
 		_pos = pos;

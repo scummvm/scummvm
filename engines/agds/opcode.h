@@ -151,7 +151,7 @@ enum Opcode {
 	kStub131						= 131,
 	kStub132						= 132,
 	kStub133						= 133,
-	kStub134						= 134,
+	kSetAnimationPosition			= 134,
 	kResetPhaseVar					= 135,
 	kStub136						= 136,
 	kStub137						= 137,

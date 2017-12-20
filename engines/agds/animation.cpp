@@ -49,13 +49,13 @@ bool Animation::load(Common::SeekableReadStream* stream) {
 }
 
 
-void Animation::paint(AGDSEngine *engine, Graphics::Surface & backbuffer, Common::Point dst) {
+void Animation::paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst) {
 	const Graphics::Surface * frame = _flic->decodeNextFrame();
 	if (!frame) {
 		_flic->rewind();
 		frame = _flic->decodeNextFrame();
 	}
-	Graphics::TransparentSurface * c = engine->convertToTransparent(frame->convertTo(engine->pixelFormat(), _flic->getPalette()));
+	Graphics::TransparentSurface * c = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
 	Common::Rect srcRect = c->getRect();
 	if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect()))
 		c->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect);
