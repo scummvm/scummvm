@@ -48,6 +48,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 }
 
 AGDSEngine::~AGDSEngine() {
+	delete _currentScreen;
 }
 
 bool AGDSEngine::initGraphics() {
@@ -158,17 +159,10 @@ void AGDSEngine::loadScreen(const Common::String & name) {
 		_currentRegion = NULL;
 	}
 
-	ScreensType::iterator i = _screens.find(name);
-	Screen *screen;
-	if (i == _screens.end()) {
-		screen = new Screen(loadObject(name), _mouseMap);
-		_screens[name] = screen;
-	} else {
-		screen = i->_value;
-	}
+	delete _currentScreen;
+	_currentScreen = new Screen(loadObject(name), _mouseMap);
 	_mouseMap.clear();
 
-	_currentScreen = screen;
 	runObject(name);
 }
 
