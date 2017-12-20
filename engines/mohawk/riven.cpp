@@ -238,6 +238,8 @@ void MohawkEngine_Riven::doFrame() {
 				runDialog(*_optionsDialog);
 				if (_optionsDialog->getLoadSlot() >= 0)
 					loadGameStateAndDisplayError(_optionsDialog->getLoadSlot());
+				if (_optionsDialog->getSaveSlot() >= 0)
+					saveGameStateAndDisplayError(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
 				_gfx->setTransitionMode((RivenTransitionMode) _vars["transitionmode"]);
 				_card->initializeZipMode();
 				break;
@@ -255,6 +257,20 @@ void MohawkEngine_Riven::doFrame() {
 					if (_stack->getId() != kStackAspit)
 						changeToStack(kStackAspit);
 					changeToCard(6);
+				}
+				break;
+			case Common::KEYCODE_o:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					if (canLoadGameStateCurrently()) {
+						runLoadDialog();
+					}
+				}
+				break;
+			case Common::KEYCODE_s:
+				if (event.kbd.flags & Common::KBD_CTRL) {
+					if (canSaveGameStateCurrently()) {
+						runSaveDialog();
+					}
 				}
 				break;
 			default:
@@ -525,6 +541,24 @@ void MohawkEngine_Riven::runLoadDialog() {
 	}
 }
 
+void MohawkEngine_Riven::runSaveDialog() {
+	GUI::SaveLoadChooser slc(_("Save game:"), _("Save"), true);
+
+	pauseEngine(true);
+	int slot = slc.runModalWithCurrentTarget();
+	pauseEngine(false);
+
+	if (slot >= 0) {
+		Common::String result(slc.getResultString());
+		if (result.empty()) {
+			// If the user was lazy and entered no save name, come up with a default name.
+			result = slc.createDefaultSaveDescription(slot);
+		}
+
+		saveGameStateAndDisplayError(slot, result);
+	}
+}
+
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
 	return _saveLoad->loadGame(slot);
 }
@@ -542,6 +576,17 @@ void MohawkEngine_Riven::loadGameStateAndDisplayError(int slot) {
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
 	return _saveLoad->saveGame(slot, desc);
+}
+
+void MohawkEngine_Riven::saveGameStateAndDisplayError(int slot, const Common::String &desc) {
+	assert(slot >= 0 && !desc.empty());
+
+	Common::Error saveError = saveGameState(slot, desc);
+
+	if (saveError.getCode() != Common::kNoError) {
+		GUI::MessageDialog dialog(saveError.getDesc());
+		dialog.runModal();
+	}
 }
 
 void MohawkEngine_Riven::addZipVisitedCard(uint16 cardId, uint16 cardNameId) {

@@ -391,6 +391,8 @@ void MohawkEngine_Myst::doFrame() {
 						runDialog(*_optionsDialog);
 						if (_optionsDialog->getLoadSlot() >= 0)
 							loadGameState(_optionsDialog->getLoadSlot());
+						if (_optionsDialog->getSaveSlot() >= 0)
+							saveGameState(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
 
 						if (_needsPageDrop) {
 							dropPage();

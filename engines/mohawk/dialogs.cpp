@@ -94,13 +94,13 @@ enum {
 
 MohawkOptionsDialog::MohawkOptionsDialog(MohawkEngine *vm) :
 		GUI::Dialog(0, 0, 360, 200),
-		_vm(vm), _loadSlot(-1) {
-	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), 0, kLoadCmd);
-	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), 0, kSaveCmd);
-	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), 0, kQuitCmd);
+		_vm(vm), _loadSlot(-1), _saveSlot(-1) {
+	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), nullptr, kLoadCmd);
+	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), nullptr, kSaveCmd);
+	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), nullptr, kQuitCmd);
 
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), nullptr, GUI::kOKCmd);
+	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), nullptr, GUI::kCloseCmd);
 
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
 	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -115,22 +115,22 @@ void MohawkOptionsDialog::open() {
 	GUI::Dialog::open();
 
 	_loadSlot = -1;
+	_saveSlot = -1;
 	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
 	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
 }
 
 
 void MohawkOptionsDialog::save() {
-	int slot = _saveDialog->runModalWithCurrentTarget();
+	_saveSlot = _saveDialog->runModalWithCurrentTarget();
 
-	if (slot >= 0) {
-		Common::String result(_saveDialog->getResultString());
-		if (result.empty()) {
+	if (_saveSlot >= 0) {
+		_saveDescription = _saveDialog->getResultString();
+		if (_saveDescription.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
-			result = _saveDialog->createDefaultSaveDescription(slot);
+			_saveDescription = _saveDialog->createDefaultSaveDescription(_saveSlot);
 		}
 
-		_vm->saveGameState(slot, result);
 		close();
 	}
 }

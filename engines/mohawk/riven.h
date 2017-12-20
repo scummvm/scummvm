@@ -100,7 +100,6 @@ public:
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 	Common::Error loadGameState(int slot);
-	void loadGameStateAndDisplayError(int slot);
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool hasFeature(EngineFeature f) const;
 
@@ -148,8 +147,13 @@ public:
 	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
 	bool _activatedPLST;
 	bool _activatedSLST;
-	void runLoadDialog();
 	void delay(uint32 ms);
+
+	// Save / Load
+	void runLoadDialog();
+	void runSaveDialog();
+	void loadGameStateAndDisplayError(int slot);
+	void saveGameStateAndDisplayError(int slot, const Common::String &desc);
 
 	/**
 	 * Has the game ended, or has the user requested to quit?
