@@ -973,6 +973,7 @@ Optional Features:
                            optimizations)
   --enable-release-mode    enable building in release mode (without optimizations)
   --enable-optimizations   enable optimizations
+  --enable-optimizations=FLAG enable a specific optimization level (e.g. -O2)
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
@@ -1323,6 +1324,11 @@ for ac_option in $@; do
 		;;
 	--disable-optimizations)
 		_optimizations=no
+		;;
+	--enable-optimizations=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_optimizations=yes
+		_optimization_level=$arg
 		;;
 	--enable-profiling)
 		_enable_prof=yes
@@ -3647,16 +3653,16 @@ if test "$_optimizations" = yes ; then
 		# cache misses are minimized by keeping the code small as well.
 		cc_check_no_clean -Os && _optimization_level=-Os || _optimization_level=-O2
 		echo_n -- "$_optimization_level"
+
+		if cc_check_no_clean $_optimization_level -ftree-vectorize; then
+			echo_n " with auto-vectorization"
+			append_var CXXFLAGS "-ftree-vectorize"
+		fi
 	else
 		echo_n -- "$_optimization_level (forced)"
 	fi
-	append_var CXXFLAGS "$_optimization_level"
-
-	if cc_check_no_clean $_optimization_level -ftree-vectorize; then
-		echo_n " with auto-vectorization"
-		append_var CXXFLAGS "-ftree-vectorize"
-	fi
 	echo ""
+	append_var CXXFLAGS "$_optimization_level"
 
 	# Enabling optimizations also makes it possible to use -Wuninitialized, so
 	# let's do that.
