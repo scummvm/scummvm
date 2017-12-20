@@ -65,6 +65,21 @@ Object *Screen::find(Common::Point pos) const {
 	return NULL;
 }
 
+Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
+	KeyHandler keyHandler;
+	for(ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
+		Object *object = *i;
+		uint ip = object->getKeyHandler(keyName);
+		if (ip) {
+			keyHandler.ip = ip;
+			keyHandler.object = object;
+			break;
+		}
+	}
+	return keyHandler;
+
+}
+
 MouseRegion * MouseMap::find(Common::Point pos) {
 	if (_disabled)
 		return NULL;
@@ -94,8 +109,5 @@ void MouseMap::remove(int id) {
 			++i;
 	}
 }
-
-
-
 
 }

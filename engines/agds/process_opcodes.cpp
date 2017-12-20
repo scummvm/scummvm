@@ -750,6 +750,7 @@ void Process::call(uint16 addr) {
 void Process::onKey(unsigned size) {
 	Common::String key = popString();
 	debug("onKey %s [handler], %u instructions", key.c_str(), size);
+	_object->setKeyHandler(key, _ip);
 	_ip += size;
 }
 

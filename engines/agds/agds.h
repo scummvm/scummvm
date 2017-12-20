@@ -87,6 +87,7 @@ public:
 	Object * loadObject(const Common::String & name, const Common::String & prototype = Common::String());
 	void runObject(Object *object);
 	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
+	void runProcess(Object *object, uint ip = 0);
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name);
@@ -172,6 +173,7 @@ private:
 	MouseMap					_mouseMap;
 	Common::RandomSource		_random;
 	Inventory					_inventory;
+	bool						_fastMode;
 };
 
 

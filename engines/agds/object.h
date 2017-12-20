@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
 #include "common/stream.h"
 
@@ -51,11 +53,13 @@ public:
 
 private:
 	typedef Common::Array<StringEntry> StringTableType;
+	typedef Common::HashMap<Common::String, uint, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> KeyHandlersType;
 
 	Common::String					_name;
 	CodeType						_code;
 	StringTableType					_stringTable;
 	bool							_stringTableLoaded;
+	KeyHandlersType					_keyHandlers;
 	Graphics::TransparentSurface *	_picture;
 	Region *						_region;
 	Animation *						_animation;
@@ -133,11 +137,17 @@ public:
 		_pos = pos;
 	}
 
-	int getX() const {
-		return _pos.x;
+	Common::Point getPosition() const {
+		return _pos;
 	}
-	int getY() const {
-		return _pos.y;
+
+	void setKeyHandler(const Common::String &name, uint ip) {
+		_keyHandlers[name] = ip;
+	}
+
+	uint getKeyHandler(const Common::String &name) const {
+		KeyHandlersType::const_iterator i = _keyHandlers.find(name);
+		return i != _keyHandlers.end()? i->_value: 0;
 	}
 };
 

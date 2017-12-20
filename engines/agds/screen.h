@@ -96,6 +96,14 @@ class Screen {
 	MouseMap		_mouseMap;
 
 public:
+	struct KeyHandler {
+		Object *	object;
+		uint		ip;
+
+		KeyHandler(): object(), ip() { }
+		KeyHandler(Object *o, uint i): object(o), ip(i) { }
+	};
+
 	Screen(Object *object, const MouseMap &mouseMap);
 
 	const Common::String &getName() const {
@@ -110,6 +118,7 @@ public:
 	void remove(const Common::String & name);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer);
 	Object *find(Common::Point pos) const;
+	KeyHandler findKeyHandler(const Common::String &keyName);
 };
 
 
