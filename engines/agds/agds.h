@@ -136,7 +136,6 @@ public:
 
 private:
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
-	typedef Common::HashMap<Common::String, Screen *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ScreensType;
 	typedef Common::HashMap<Common::String, Region *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RegionsType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
 	typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> GlobalsType;
@@ -147,7 +146,6 @@ private:
 	SoundManager				_soundManager;
 	Database					_data, _patch; //data and patch databases
 	ObjectsType					_objects;
-	ScreensType					_screens;
 	RegionsType					_regions;
 	AnimationsType				_animations;
 	ProcessListType				_processes;
