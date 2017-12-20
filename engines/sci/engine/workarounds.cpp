@@ -369,6 +369,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL6,           -1,   928, -1,           "Narrator", "startText",                       NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
 	{ GID_LSL6HIRES,      -1,    85,  0,             "LL6Inv", "init",                            NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when creating a new game
 	{ GID_LSL6HIRES,      -1,    85,  0,          "washcloth", "doVerb",                          NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // when interacting with the wet washcloth in the inventory - Trac#9811
+	{ GID_LSL6HIRES,     820,    82,  0,                   "", "export 0",                        NULL,     3,     3, { WORKAROUND_FAKE,   0 } }, // when touching the electric fence - bug #10361
 	{ GID_LSL6HIRES,      -1, 64950,  1,            "Feature", "handleEvent",                     NULL,     0,     0, { WORKAROUND_FAKE,   0 } }, // at least when entering swimming pool area
 	{ GID_LSL6HIRES,      -1, 64964,  0,              "DPath", "init",                            NULL,     1,     1, { WORKAROUND_FAKE,   0 } }, // during the game
 	{ GID_LSL7,           -1, 64029,  0,          "oMessager", "nextMsg",                         NULL,     4,     4, { WORKAROUND_FAKE,   0 } }, // when running the game with subtitles only
