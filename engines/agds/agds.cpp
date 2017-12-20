@@ -41,14 +41,15 @@ namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
 		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0),
-		_mjpgPlayer(NULL), _currentScreen(NULL),
-		_defaultMouseCursor(NULL),
-		_mouse(400, 300), _userEnabled(false), _currentRegion(NULL),
+		_mjpgPlayer(), _currentScreen(), _previousScreen(),
+		_defaultMouseCursor(),
+		_mouse(400, 300), _userEnabled(false), _currentRegion(),
 		_random("agds"), _soundManager(this, system->getMixer()) {
 }
 
 AGDSEngine::~AGDSEngine() {
 	delete _currentScreen;
+	delete _previousScreen;
 }
 
 bool AGDSEngine::initGraphics() {
@@ -152,7 +153,26 @@ void AGDSEngine::runObject(const Common::String & name, const Common::String &pr
 
 void AGDSEngine::loadScreen(const Common::String & name) {
 	debug("loadScreen %s", name.c_str());
+	resetCurrentScreen();
+	_currentScreenName = name;
+	_currentScreen = new Screen(loadObject(name), _mouseMap);
+	_mouseMap.clear();
+	runObject(name); //is it called once or per screen activation?
+}
 
+void AGDSEngine::setCurrentScreen(Screen *screen) {
+	if (!screen)
+		error("no previous screen");
+
+	resetCurrentScreen();
+
+	_currentScreenName = screen->getName();
+	_currentScreen = screen;
+	_previousScreen = NULL;
+}
+
+void AGDSEngine::resetCurrentScreen()
+{
 	if (_currentRegion) {
 		if (_currentRegion->currentlyIn)
 			runObject(_currentRegion->onLeave);
@@ -160,15 +180,13 @@ void AGDSEngine::loadScreen(const Common::String & name) {
 	}
 
 	delete _currentScreen;
-	_currentScreen = new Screen(loadObject(name), _mouseMap);
-	_mouseMap.clear();
-
-	runObject(name);
+	_currentScreen = NULL;
 }
+
 
 void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 	Process & process = *it;
-	if (process.parentScreen() != currentScreen()) {
+	if (process.parentScreenName() != _currentScreenName) {
 		++it;
 		return;
 	}
@@ -195,14 +213,16 @@ void AGDSEngine::runProcess(ProcessListType::iterator &it) {
 		destroy = true;
 		break;
 	case kExitCodeSetNextScreenSaveInHistory:
-		if (_currentScreen)
-			_previousScreen = _currentScreen->getName();
+		if (_currentScreen) {
+			delete _previousScreen;
+			_previousScreen = _currentScreen;
+			_currentScreen = NULL;
+		}
 		loadScreen(process.getExitArg1());
 		destroy = true;
 		break;
 	case kExitCodeLoadPreviousScreenObject:
-		debug("previous screen: %s", _previousScreen.c_str());
-		loadScreen(_previousScreen);
+		setCurrentScreen(_previousScreen);
 		break;
 	case kExitCodeMouseAreaChange:
 		changeMouseArea(process.getExitIntArg1(), process.getExitIntArg2());

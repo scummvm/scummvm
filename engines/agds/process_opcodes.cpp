@@ -167,7 +167,7 @@ void Process::loadScreenObject() {
 void Process::loadScreenRegion() {
 	Common::String name = popString();
 	debug("loadScreenRegion %s", name.c_str());
-	_engine->loadObject(_engine->currentScreen()->getName())->setRegion(_engine->loadRegion(name));
+	_engine->loadObject(_engine->getCurrentScreenName())->setRegion(_engine->loadRegion(name));
 }
 
 void Process::cloneObject() {
@@ -180,7 +180,7 @@ void Process::cloneObject() {
 void Process::removeScreenObject() {
 	Common::String name = popString();
 	debug("removeScreenObject: %s", name.c_str());
-	Screen *screen = _engine->currentScreen();
+	Screen *screen = _engine->getCurrentScreen();
 	if (screen)
 		screen->remove(name);
 }

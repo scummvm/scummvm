@@ -42,7 +42,7 @@ private:
 	typedef Common::Stack<int32> StackType;
 
 	AGDSEngine *	_engine;
-	Screen *		_parentScreen;
+	Common::String	_parentScreen;
 	Object *		_object;
 	StackType		_stack;
 	unsigned		_ip, _lastIp;
@@ -284,7 +284,7 @@ public:
 		return _object->getName();
 	}
 
-	Screen *parentScreen() const {
+	const Common::String & parentScreenName() const {
 		return _parentScreen;
 	}
 
