@@ -129,6 +129,14 @@ public:
 
 	Graphics::TransparentSurface *loadPicture(const Common::String &name);
 	Graphics::TransparentSurface *convertToTransparent(const Graphics::Surface *surface); //destroys surface!
+	Graphics::TransparentSurface *loadFromCache(int id) const;
+	int saveToCache(Graphics::TransparentSurface *surface) {
+		if (!surface)
+			return -1;
+		int id = _pictureCacheId++;
+		_pictureCache[id] = surface;
+		return id;
+	}
 
 	Animation * loadAnimation(const Common::String &name);
 	void loadDefaultMouseCursor(const Common::String &name) {
@@ -143,6 +151,7 @@ public:
 	SystemVariable *getSystemVariable(const Common::String &name);
 
 private:
+	typedef Common::HashMap<int, Graphics::TransparentSurface *> PictureCacheType;
 	typedef Common::HashMap<Common::String, Object *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ObjectsType;
 	typedef Common::HashMap<Common::String, Region *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> RegionsType;
 	typedef Common::HashMap<Common::String, SystemVariable *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> SystemVariablesType;
@@ -153,6 +162,8 @@ private:
 	ResourceManager				_resourceManager;
 	SoundManager				_soundManager;
 	Database					_data, _patch; //data and patch databases
+	PictureCacheType			_pictureCache;
+	int							_pictureCacheId;
 	ObjectsType					_objects;
 	RegionsType					_regions;
 	AnimationsType				_animations;

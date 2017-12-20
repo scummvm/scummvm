@@ -40,7 +40,7 @@
 namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
-		_gameDescription(gameDesc), _sharedStorageIndex(-2), _timer(0),
+		_gameDescription(gameDesc), _pictureCacheId(0), _sharedStorageIndex(-2), _timer(0),
 		_mjpgPlayer(), _currentScreen(), _previousScreen(),
 		_defaultMouseCursor(),
 		_mouse(400, 300), _userEnabled(false), _currentRegion(),
@@ -484,6 +484,11 @@ Animation * AGDSEngine::loadAnimation(const Common::String &name) {
 
 Graphics::TransparentSurface * AGDSEngine::loadPicture(const Common::String &name)
 { return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat)); }
+
+Graphics::TransparentSurface *AGDSEngine::loadFromCache(int id) const {
+	PictureCacheType::const_iterator i = _pictureCache.find(id);
+	return (i != _pictureCache.end())? i->_value: NULL;
+}
 
 Graphics::TransparentSurface *AGDSEngine::convertToTransparent(const Graphics::Surface *surface) {
 	if (!surface)
