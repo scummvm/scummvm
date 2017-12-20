@@ -374,12 +374,17 @@ void Process::stub128() {
 
 void Process::stub129() {
 	int value = pop();
-	debug("stub129 %d", value);
+	debug("stub129 %d animation duration?", value);
 }
 
 void Process::stub130() {
 	int value = pop();
-	debug("stub130 %d", value);
+	debug("stub130 %d sample loops?", value);
+}
+
+void Process::stub131() {
+	int value = pop();
+	debug("stub130 %d random sample?", value);
 }
 void Process::stub133() {
 	int pan = pop();
@@ -394,7 +399,19 @@ void Process::stub134() {
 }
 
 void Process::stub136() {
-	debug("stub136 sets value of stub130 to 1000000000");
+	debug("stub136 sets value of stub130 (loops?) to 1000000000");
+}
+
+void Process::stub137() {
+	int value = pop();
+	debug("stub137 %d", value);
+}
+
+void Process::stub138() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("stub138 %s %s", arg1.c_str(), arg2.c_str());
+	suspend(kExitCodeLoadScreenObject, arg2);
 }
 
 void Process::stub152() {
@@ -782,6 +799,14 @@ void Process::enableCharacter() {
 	debug("enableCharacter %s", name.c_str());
 }
 
+void Process::moveCharacter() {
+	int arg3 = pop();
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("moveCharacter %s %s %d", arg1.c_str(), arg2.c_str(), arg3);
+	suspend();
+}
+
 void Process::showCharacter() {
 	Common::String name = popString();
 	debug("showCharacter %s", name.c_str());
@@ -792,6 +817,19 @@ void Process::leaveCharacter() {
 	Common::String arg1 = popString();
 	debug("leaveCharacter %s %s", arg1.c_str(), arg2.c_str());
 	_engine->loadRegion(arg2);
+}
+
+void Process::setCharacter() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("setCharacter %s %s", arg1.c_str(), arg2.c_str());
+}
+
+void Process::pointCharacter() {
+	Common::String arg2 = popString();
+	Common::String arg1 = popString();
+	debug("pointCharacter %s %s", arg1.c_str(), arg2.c_str());
+	suspend();
 }
 
 void Process::fogOnCharacter() {
@@ -914,7 +952,10 @@ ProcessExitCode Process::execute() {
 			OP		(kLoadAnimationFromObject, loadAnimationFromObject);
 			OP		(kShowCharacter, showCharacter);
 			OP		(kEnableCharacter, enableCharacter);
+			OP		(kMoveCharacter, moveCharacter);
 			OP		(kLeaveCharacter, leaveCharacter);
+			OP		(kSetCharacter, setCharacter);
+			OP		(kPointCharacter, pointCharacter);
 			OP		(kDisableUser, disableUser);
 			OP		(kEnableUser, enableUser);
 			OP		(kUpdatePhaseVarOr2, updatePhaseVarOr2);
@@ -944,10 +985,13 @@ ProcessExitCode Process::execute() {
 			OP		(kProcessCleanupStub128, stub128);
 			OP		(kStub129, stub129);
 			OP		(kStub130, stub130);
+			OP		(kStub131, stub131);
 			OP		(kStub133, stub133);
 			OP		(kStub134, stub134);
 			OP		(kResetPhaseVar, resetPhaseVar);
 			OP		(kStub136, stub136);
+			OP		(kStub137, stub137);
+			OP		(kStub138, stub138);
 			OP		(kScreenChangeScreenPatch, changeScreenPatch);
 			OP		(kGetFreeInventorySpace, getInventoryFreeSpace);
 			OP		(kSetStringSystemVariable, setStringSystemVariable);
