@@ -325,7 +325,7 @@ Common::Error AGDSEngine::run() {
 								if (event.kbd.ascii)
 									key = Common::String(static_cast<char>(event.kbd.ascii));
 						};
-						if (!key.empty()) {
+						if (_userEnabled && !key.empty()) {
 							Screen::KeyHandler handler = _currentScreen->findKeyHandler(key);
 							if (handler.object) {
 								debug("found handler for key %s: %s %08x", key.c_str(), handler.object->getName().c_str(), handler.ip + 7);
