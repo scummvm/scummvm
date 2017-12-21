@@ -2845,7 +2845,7 @@ bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
 		for (int i = 4; i <= 11; i++) {
 			_vm->renderImage(i);
 			if (i == 11)
-				_vm->playSound(kAudioUndef2); // 046/4020
+				_vm->playSound(kAudioSmash); // 046/4020
 			_gm->wait2(1);
 			_vm->renderImage(i + 128);
 		}
@@ -2878,7 +2878,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
 		setSectionVisible(16, false);
-		_vm->playSound(kAudioUndef2);
+		_vm->playSound(kAudioSmash);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
 			_vm->renderMessage(kStringBroken);
@@ -2959,7 +2959,7 @@ bool AxacussOffice2::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
 		setSectionVisible(16, false);
-		_vm->playSound(kAudioUndef2);
+		_vm->playSound(kAudioSmash);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
 			_vm->renderMessage(kStringBroken);
@@ -2984,7 +2984,7 @@ bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
-		_vm->playSound(kAudioUndef2);
+		_vm->playSound(kAudioSmash);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
 			_vm->renderMessage(kStringBroken);
@@ -3012,7 +3012,7 @@ bool AxacussOffice4::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
-		_vm->playSound(kAudioUndef2);
+		_vm->playSound(kAudioSmash);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == COMPUTER)) {
 		if (isSectionVisible(4))
 			_vm->renderMessage(kStringBroken);
@@ -3031,7 +3031,7 @@ void AxacussOffice5::onEntrance() {
 bool AxacussOffice5::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
-		_vm->playSound(kAudioUndef2);
+		_vm->playSound(kAudioSmash);
 	} else if ((verb == ACTION_TAKE) && (obj1._id == TICKETS)) {
 		_vm->renderImage(_gm->invertSection(5));
 		obj1._click = 255;
