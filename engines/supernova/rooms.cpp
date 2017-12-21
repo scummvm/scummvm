@@ -2357,7 +2357,7 @@ void AxacussCell::animation() {
 		_vm->renderImage(_gm->invertSection(31));
 		_vm->renderImage(28);
 		getObject(0)->_click = 255;
-		getObject(1)->setProperty(EXIT | OPENABLE | OPENED | CLOSED);
+		getObject(1)->resetProperty(EXIT | OPENABLE | OPENED | CLOSED);
 	} else if ((_gm->_state._timeRobot >= 301) && (_gm->_state._timeRobot <= 320)) {
 		_vm->renderImage(_gm->invertSection(329 - _gm->_state._timeRobot));
 		_vm->renderImage(328 - _gm->_state._timeRobot);
@@ -2365,14 +2365,14 @@ void AxacussCell::animation() {
 		_vm->renderImage(31);
 		setSectionVisible(8, false);
 		getObject(0)->_click = 1;
-		getObject(1)->setProperty(EXIT | OPENABLE | CLOSED);
+		getObject(1)->resetProperty(EXIT | OPENABLE | CLOSED);
 	}
 
 	if (_gm->_state._timeRobot == 599) {
 		_vm->renderImage(_gm->invertSection(31));
 		_vm->renderImage(8);
 		getObject(0)->_click = 255;
-		getObject(1)->setProperty(EXIT | OPENABLE | OPENED | CLOSED);
+		getObject(1)->resetProperty(EXIT | OPENABLE | OPENED | CLOSED);
 	} else if ((_gm->_state._timeRobot >= 601) && (_gm->_state._timeRobot <= 620)) {
 		_vm->renderImage(_gm->_state._timeRobot - 593 + 128);
 		_vm->renderImage(_gm->_state._timeRobot - 592);
@@ -2380,7 +2380,7 @@ void AxacussCell::animation() {
 		_vm->renderImage(31);
 		setSectionVisible(28, false);
 		getObject(0)->_click = 1;
-		getObject(1)->setProperty(EXIT | OPENABLE | CLOSED);
+		getObject(1)->resetProperty(EXIT | OPENABLE | CLOSED);
 	} else if (_gm->_state._timeRobot == 700)
 		_gm->_state._timeRobot = 0;
 	else if (_gm->_state._timeRobot == 10002) {
@@ -2651,7 +2651,7 @@ bool AxacussCorridor6::interact(Action verb, Object &obj1, Object &obj2) {
 	        (obj1.hasProperty(OPENED))) {
 		_vm->renderImage(6);
 		setSectionVisible(7, false);
-		obj1.setProperty(EXIT | OPENABLE | CLOSED);
+		obj1.resetProperty(EXIT | OPENABLE | CLOSED);
 		_gm->_rooms[CORRIDOR8]->setSectionVisible(27, false);
 		_gm->_rooms[CORRIDOR8]->setSectionVisible(28, true);
 		_gm->_rooms[CORRIDOR8]->getObject(0)->disableProperty(OPENED);
@@ -2677,7 +2677,7 @@ bool AxacussCorridor8::interact(Action verb, Object &obj1, Object &obj2) {
 		obj1.setProperty(OPENED);
 		_gm->_rooms[CORRIDOR6]->setSectionVisible(6, false);
 		_gm->_rooms[CORRIDOR6]->setSectionVisible(7, true);
-		_gm->_rooms[CORRIDOR6]->getObject(2)->setProperty(EXIT | OPENED | OPENABLE);
+		_gm->_rooms[CORRIDOR6]->getObject(2)->resetProperty(EXIT | OPENED | OPENABLE);
 		_gm->_rooms[CORRIDOR6]->getObject(2)->_click = 4;
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) && (obj1._type & OPENED)) {
@@ -2686,7 +2686,7 @@ bool AxacussCorridor8::interact(Action verb, Object &obj1, Object &obj2) {
 		obj1.disableProperty(OPENED);
 		_gm->_rooms[CORRIDOR6]->setSectionVisible(6, true);
 		_gm->_rooms[CORRIDOR6]->setSectionVisible(7, false);
-		_gm->_rooms[CORRIDOR6]->getObject(2)->setProperty(EXIT | CLOSED | OPENABLE);
+		_gm->_rooms[CORRIDOR6]->getObject(2)->resetProperty(EXIT | CLOSED | OPENABLE);
 		_vm->playSound(kAudioDoorClose);
 	} else
 		return false;
@@ -2736,15 +2736,17 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id >= DOOR1) && (obj1._id <= DOOR4) && obj1.hasProperty(OPENED)) {
 		_vm->renderImage(_gm->invertSection(obj1._id - DOOR1 + 1));
 		_vm->playSound(kAudioDoorClose);
+		obj1.disableProperty(OPENED);
+		obj1.setProperty(CLOSED);
 		if (obj1.hasProperty(OCCUPIED)) {
 			_gm->_state._destination = 255;
-			obj1.setProperty(EXIT | OPENABLE | CLOSED | CAUGHT);
+			obj1.disableProperty(OCCUPIED);
+			obj1.setProperty(CAUGHT);
 			if (!_gm->_rooms[OFFICE_L1 + obj1._id - DOOR1]->isSectionVisible(4))
 				_gm->search(180);
 			else
 				_gm->_state._eventTime = 0xffffffff;
-		} else
-			obj1.setProperty(EXIT | OPENABLE | CLOSED);
+		}
 	} else if (((verb == ACTION_WALK) || ((verb == ACTION_OPEN) && !obj1.hasProperty(OPENED))) &&
 	           (obj1._id >= DOOR1) && (obj1._id <= DOOR4) &&
 	           obj1.hasProperty(OCCUPIED)) {
@@ -2758,7 +2760,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->playSound(kAudioDoorOpen);
 			if (getObject(4)->hasProperty(CAUGHT))
 				_gm->busted(11);
-			getObject(4)->setProperty(EXIT | OPENABLE | OPENED);
+			getObject(4)->resetProperty(EXIT | OPENABLE | OPENED);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR2) && !getObject(5)->hasProperty(OPENED)) {
 		if (getObject(5)->hasProperty(OCCUPIED))
@@ -2768,7 +2770,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->playSound(kAudioDoorOpen);
 			if (getObject(5)->hasProperty(CAUGHT))
 				_gm->busted(16);
-			getObject(5)->setProperty(EXIT | OPENABLE | OPENED);
+			getObject(5)->resetProperty(EXIT | OPENABLE | OPENED);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR3) && !getObject(6)->hasProperty(OPENED)) {
 		if (getObject(6)->hasProperty(OCCUPIED))
@@ -2778,7 +2780,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->playSound(kAudioDoorOpen);
 			if (getObject(6)->hasProperty(CAUGHT))
 				_gm->busted(15);
-			getObject(6)->setProperty(EXIT | OPENABLE | OPENED);
+			getObject(6)->resetProperty(EXIT | OPENABLE | OPENED);
 		}
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR4) && !getObject(7)->hasProperty(OPENED)) {
 		if (getObject(7)->hasProperty(OCCUPIED)) {
@@ -2788,7 +2790,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->playSound(kAudioDoorOpen);
 			if (getObject(7)->hasProperty(CAUGHT))
 				_gm->busted(20);
-			getObject(7)->setProperty(EXIT | OPENABLE | OPENED);
+			getObject(7)->resetProperty(EXIT | OPENABLE | OPENED);
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id >= DOOR1) && (obj1._id <= DOOR4)) {
 		_gm->_state._nameSeen[obj1._id - DOOR1] = true;
@@ -2868,12 +2870,14 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        obj1.hasProperty(OPENED)) {
 		_vm->renderImage(_gm->invertSection(9));
-		obj1.setProperty(EXIT | OPENABLE | CLOSED);
+		obj1.disableProperty(OPENED);
+		obj1.setProperty(CLOSED);
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
 	           !getObject(0)->hasProperty(OPENED)) {
 		_vm->renderImage(9);
-		getObject(0)->setProperty(EXIT | OPENABLE | OPENED);
+		getObject(0)->disableProperty(CLOSED);
+		getObject(0)->setProperty(OPENED);
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
@@ -2901,7 +2905,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 			} else {
 				_vm->renderImage(6);
 				setSectionVisible(7, false);
-				obj1.setProperty(OPENABLE | OPENED);
+				obj1.resetProperty(OPENABLE | OPENED);
 				if (getObject(2)->hasProperty(TAKE)) {
 					_vm->renderImage(8);
 					getObject(2)->_click = 9;
@@ -2913,7 +2917,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_CLOSE) && (obj1._id == LOCKER) && obj1.hasProperty(OPENED)) {
 		_vm->renderImage(7);
 		setSectionVisible(6, false);
-		obj1.setProperty(OPENABLE | CLOSED);
+		obj1.resetProperty(OPENABLE | CLOSED);
 		setSectionVisible(8, false);
 		getObject(2)->_click = 255;
 		_vm->playSound(kAudioDoorClose);
@@ -2950,11 +2954,13 @@ bool AxacussOffice2::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        obj1.hasProperty(OPENED)) {
 		_vm->renderImage(_gm->invertSection(9));
-		obj1.setProperty(EXIT | OPENABLE | CLOSED);
+		obj1.disableProperty(OPENED);
+		obj1.setProperty(CLOSED);
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) && !getObject(0)->hasProperty(OPENED)) {
 		_vm->renderImage(9);
-		getObject(0)->setProperty(EXIT | OPENABLE | OPENED);
+		getObject(0)->disableProperty(CLOSED);
+		getObject(0)->setProperty(OPENED);
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
@@ -2975,12 +2981,14 @@ bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) &&
 	        obj1.hasProperty(OPENED)) {
 		_vm->renderImage(_gm->invertSection(3));
-		obj1.setProperty(EXIT | OPENABLE | CLOSED);
+		obj1.disableProperty(OPENED);
+		obj1.setProperty(CLOSED);
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
 	           !getObject(0)->hasProperty(OPENED)) {
 		_vm->renderImage(3);
-		getObject(0)->setProperty(EXIT | OPENABLE | OPENED);
+		getObject(0)->disableProperty(CLOSED);
+		getObject(0)->setProperty(OPENED);
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
@@ -3003,12 +3011,14 @@ bool AxacussOffice3::interact(Action verb, Object &obj1, Object &obj2) {
 bool AxacussOffice4::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_CLOSE) && (obj1._id == DOOR) && obj1.hasProperty(OPENED)) {
 		_vm->renderImage(_gm->invertSection(3));
-		obj1.setProperty(EXIT | OPENABLE | CLOSED);
+		obj1.disableProperty(OPENED);
+		obj1.setProperty(CLOSED);
 		_vm->playSound(kAudioDoorClose);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, MASTERKEYCARD, DOOR) &&
 	           !getObject(0)->hasProperty(OPENED)) {
 		_vm->renderImage(3);
-		getObject(0)->setProperty(EXIT | OPENABLE | OPENED);
+		getObject(0)->disableProperty(CLOSED);
+		getObject(0)->setProperty(OPENED);
 		_vm->playSound(kAudioDoorOpen);
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
