@@ -528,15 +528,40 @@ void GameManager::resetInputState() {
 }
 
 void GameManager::processInput() {
+	enum {
+		onNone,
+		onObject,
+		onCmdButton,
+		onInventory,
+		onInventoryArrowUp,
+		onInventoryArrowDown
+	} mouseLocation;
+
+	if (_mouseField >= 0 && _mouseField < 256)
+		mouseLocation = onObject;
+	else if (_mouseField >= 256 && _mouseField < 512)
+		mouseLocation = onCmdButton;
+	else if (_mouseField >= 512 && _mouseField < 768)
+		mouseLocation = onInventory;
+	else if (_mouseField == 768)
+		mouseLocation = onInventoryArrowUp;
+	else if (_mouseField == 769)
+		mouseLocation = onInventoryArrowDown;
+	else
+		mouseLocation = onNone;
+
 	if (_mouseClickType == Common::EVENT_LBUTTONUP) {
 		if (_vm->_messageDisplayed) {
 			// Hide the message and consume the event
 			_vm->removeMessage();
-			return;
+			if (mouseLocation != onCmdButton)
+				return;
 		}
 
-		if (((_mouseField >= 0) && (_mouseField < 256)) ||
-		    ((_mouseField >= 512) && (_mouseField < 768))) {
+		switch(mouseLocation) {
+		case onObject:
+		case onInventory:
+			// Fallthrough
 			if (_inputVerb == ACTION_GIVE || _inputVerb == ACTION_USE) {
 				if (Object::isNullObject(_inputObject[0])) {
 					_inputObject[0] = _currentInputObject;
@@ -551,27 +576,34 @@ void GameManager::processInput() {
 				if (!Object::isNullObject(_currentInputObject))
 					_processInput = true;
 			}
-		} else if (_mouseField >= 256 && _mouseField < 512) {
+			break;
+		case onCmdButton:
 			resetInputState();
 			_inputVerb = static_cast<Action>(_mouseField - 256);
-		} else if (_mouseField == 768) {
+			break;
+		case onInventoryArrowUp:
 			if (_inventoryScroll >= 2)
 				_inventoryScroll -= 2;
-		} else if (_mouseField == 769) {
+			break;
+		case onInventoryArrowDown:
 			if (_inventoryScroll < _inventory.getSize() - ARRAYSIZE(_guiInventory))
 				_inventoryScroll += 2;
+			break;
+		case onNone:
+			break;
 		}
+
 	} else if (_mouseClickType == Common::EVENT_RBUTTONUP) {
 		if (_vm->_messageDisplayed) {
 			// Hide the message and consume the event
 			_vm->removeMessage();
 			return;
 		}
+
 		if (Object::isNullObject(_currentInputObject))
 			return;
 
-		if (((_mouseField >= 0) && (_mouseField < 256)) ||
-		    ((_mouseField >= 512) && (_mouseField < 768))) {
+		if (mouseLocation == onObject || mouseLocation == onInventory) {
 			_inputObject[0] = _currentInputObject;
 			ObjectTypes type = _inputObject[0]->_type;
 			if (type & OPENABLE)
@@ -628,27 +660,59 @@ void GameManager::processInput() {
 		}
 
 		if (_mouseField != field) {
-			if (_mouseField >= 768)
+			switch (mouseLocation) {
+			case onInventoryArrowUp:
+			case onInventoryArrowDown:
+				// Fallthrough
 				_guiInventoryArrow[_mouseField - 768].setHighlight(false);
-			else if (_mouseField >= 512)
+				break;
+			case onInventory:
 				_guiInventory[_mouseField - 512].setHighlight(false);
-			else if (_mouseField >= 256)
+				break;
+			case onCmdButton:
 				_guiCommandButton[_mouseField - 256].setHighlight(false);
-			else if (_mouseField !=  -1) {
+				break;
+			case onObject:
+			case onNone:
+				// Fallthrough
+				break;
 			}
 
 			Object::setObjectNull(_currentInputObject);
 
 			_mouseField = field;
-			if (_mouseField >= 768)
+			if (_mouseField >= 0 && _mouseField < 256)
+				mouseLocation = onObject;
+			else if (_mouseField >= 256 && _mouseField < 512)
+				mouseLocation = onCmdButton;
+			else if (_mouseField >= 512 && _mouseField < 768)
+				mouseLocation = onInventory;
+			else if (_mouseField == 768)
+				mouseLocation = onInventoryArrowUp;
+			else if (_mouseField == 769)
+				mouseLocation = onInventoryArrowDown;
+			else
+				mouseLocation = onNone;
+			
+			switch (mouseLocation) {
+			case onInventoryArrowUp:
+			case onInventoryArrowDown:
+				// Fallthrough
 				_guiInventoryArrow[_mouseField - 768].setHighlight(true);
-			else if (_mouseField >= 512) {
+				break;
+			case onInventory:
 				_guiInventory[_mouseField - 512].setHighlight(true);
 				_currentInputObject = _inventory.get(_mouseField - 512 + _inventoryScroll);
-			} else if (_mouseField >= 256)
+				break;
+			case onCmdButton:
 				_guiCommandButton[_mouseField - 256].setHighlight(true);
-			else if (_mouseField !=  -1)
+				break;
+			case onObject:
 				_currentInputObject = _currentRoom->getObject(_mouseField);
+				break;
+			case onNone:
+				break;
+			}
 		}
 	}
 }
