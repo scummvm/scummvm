@@ -1041,8 +1041,9 @@ void GameManager::walk(int imgId) {
 
 void GameManager::guardWalkEvent() {
 	_prevImgId = 0;
-	bool behind = (!_rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OCCUPIED) || _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
-	_rooms[BCORRIDOR]->getObject(_state._origin + 4)->resetProperty(OCCUPIED);
+	bool behind = (!_rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OCCUPIED) ||
+	               _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
+	_rooms[BCORRIDOR]->getObject(_state._origin + 4)->disableProperty(OCCUPIED);
 	if (_currentRoom == _rooms[BCORRIDOR]) {
 		if (_vm->_messageDisplayed)
 			_vm->removeMessage();
