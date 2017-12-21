@@ -55,7 +55,7 @@ enum AudioIndex {
 	kAudioCrash,                // 45|0
 	kAudioVoiceHalt,            // 46|0
 	kAudioGunShot,              // 46|2510
-	kAudioUndef2,               // 46|4020
+	kAudioSmash,                // 46|4020
 	kAudioVoiceSupernova,       // 47|0
 	kAudioVoiceYeah,            // 47|24010
 	kAudioUndef3,               // 48|0
