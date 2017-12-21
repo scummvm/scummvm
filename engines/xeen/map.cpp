@@ -928,6 +928,7 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_sideObjects = 0;
 	_sideMonsters = 0;
 	_sidePictures = 0;
+	_sideMusic = 0;
 	_isOutdoors = false;
 	_mazeDataIndex = 0;
 	_currentSteppedOn = false;
@@ -944,6 +945,7 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 
 void Map::load(int mapId) {
 	EventsManager &events = *g_vm->_events;
+	FileManager &files = *g_vm->_files;
 	Interface &intf = *g_vm->_interface;
 	Party &party = *g_vm->_party;
 	Sound &sound = *g_vm->_sound;
@@ -974,6 +976,8 @@ void Map::load(int mapId) {
 	}
 
 	if (_vm->getGameID() == GType_WorldOfXeen) {
+		files.setGameCc(1);
+
 		if (!_loadDarkSide) {
 			_animationInfo.load("clouds.dat");
 			_monsterData.load("xeen.mon");
@@ -1020,6 +1024,8 @@ void Map::load(int mapId) {
 				break;
 			}
 		}
+
+		files.setGameCc(_loadDarkSide);
 	}
 
 	// Load any events for the new map
@@ -1056,9 +1062,10 @@ void Map::load(int mapId) {
 			// Handle loading text data
 			if (!textLoaded) {
 				textLoaded = true;
+
 				Common::String txtName = Common::String::format("%s%c%03d.txt",
 					isDarkCc ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
-				File fText(txtName);
+				File fText(txtName, 1);
 				char mazeName[33];
 				fText.read(mazeName, 33);
 				mazeName[32] = '\0';
@@ -1115,6 +1122,8 @@ void Map::load(int mapId) {
 
 	// Load sprites for the objects
 	for (uint i = 0; i < _mobData._objectSprites.size(); ++i) {
+		files.setGameCc(_sideObjects);
+
 		if (party._cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
 				mapId == 27 && isDarkCc) {
 			_mobData._objects[29]._spriteId = 0;
@@ -1131,30 +1140,30 @@ void Map::load(int mapId) {
 		}
 
 		// Read in the object sprites
-		_mobData._objectSprites[i]._sprites.load(filename,
-			_sideObjects ? ALTSIDE_ARCHIVE : GAME_ARCHIVE);
+		_mobData._objectSprites[i]._sprites.load(filename);
 	}
 
 	// Load sprites for the monsters
 	for (uint i = 0; i < _mobData._monsterSprites.size(); ++i) {
 		MonsterObjectData::SpriteResourceEntry &spr = _mobData._monsterSprites[i];
-		ArchiveType archiveType = spr._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen ?
-			ALTSIDE_ARCHIVE : GAME_ARCHIVE;
 		uint imgNumber = _monsterData[spr._spriteId]._imageNumber;
 
+		files.setGameCc((spr._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen) ?
+			0 : _sideMonsters);
 		filename = Common::String::format("%03u.mon", imgNumber);
-		_mobData._monsterSprites[i]._sprites.load(filename, archiveType);
+		_mobData._monsterSprites[i]._sprites.load(filename);
 
 		filename = Common::String::format("%03u.att", imgNumber);
-		_mobData._monsterSprites[i]._attackSprites.load(filename, archiveType);
+		_mobData._monsterSprites[i]._attackSprites.load(filename);
 	}
 
 	// Load wall picture sprite resources
 	for (uint i = 0; i < _mobData._wallItemSprites.size(); ++i) {
 		filename = Common::String::format("%03d.pic", _mobData._wallItemSprites[i]._spriteId);
-		_mobData._wallItemSprites[i]._sprites.load(filename,
-			_sidePictures ? ALTSIDE_ARCHIVE : GAME_ARCHIVE);
+		_mobData._wallItemSprites[i]._sprites.load(filename, _sidePictures);
 	}
+
+	files.setGameCc(isDarkCc);
 
 	// Handle loading miscellaneous sprites for the map
 	if (_isOutdoors) {
@@ -1190,11 +1199,15 @@ void Map::load(int mapId) {
 				_surfaceSprites[i].load(Res.SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 	} else {
+		if (isDarkCc || mapId == 125 || mapId == 126 || mapId == 127)
+			files.setGameCc(0);
+
 		// Start playing relevant music
 		const int MUS_INDEXES[] = { 1, 2, 3, 4, 3, 5 };
 		Common::String musName;
 
-		if (_vm->_files->_isDarkCc) {
+		_sideMusic = isDarkCc;
+		if (isDarkCc) {
 			int randIndex = _vm->getRandomNumber(6);
 			musName = MUSIC_FILES2[MUS_INDEXES[_mazeData->_wallKind]][randIndex];
 		} else {
@@ -1298,6 +1311,10 @@ void Map::load(int mapId) {
 	}
 
 	loadSky();
+
+	files.setGameCc(isDarkCc);
+	if (windows[9]._enabled)
+		windows[9].close();
 }
 
 int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {

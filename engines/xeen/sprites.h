@@ -101,7 +101,7 @@ public:
 	/**
 	 * Load a sprite resource from a given file and archive
 	 */
-	void load(const Common::String &filename, ArchiveType archiveType);
+	void load(const Common::String &filename, int ccMode);
 
 	/**
 	 * Clears the sprite resource

@@ -655,7 +655,7 @@ const uint AdlibMusicDriver::WAVEFORMS[24] = {
 /*------------------------------------------------------------------------*/
 
 Music::Music() : _musicDriver(nullptr), _songData(nullptr),
-		_archiveType(ANY_ARCHIVE), _effectsData(nullptr), _musicOn(true) {
+		_effectsData(nullptr), _musicOn(true) {
 	_musicDriver = new AdlibMusicDriver();
 }
 
@@ -668,13 +668,13 @@ Music::~Music() {
 
 void Music::loadEffectsData() {
 	// Check whether it's the first load, or switching from intro to game data
-	if (_effectsData && !(_archiveType == INTRO_ARCHIVE && File::_currentArchive != INTRO_ARCHIVE))
-		return;
+//	if (_effectsData && !(_archiveType == INTRO_ARCHIVE && File::_currentArchive != INTRO_ARCHIVE))
+//		return;
 
 	// Stop any prior FX
 	stopFX();
 	delete[] _effectsData;
-	_archiveType = File::_currentArchive;
+//	_archiveType = File::_currentArchive;
 
 	// Load in an entire driver so we have quick access to the effects data
 	// that's hardcoded within it

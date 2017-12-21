@@ -57,7 +57,6 @@ void OutFile::finalize() {
 
 SavesManager::SavesManager(XeenEngine *vm, Party &party) :
 		BaseCCArchive(), _vm(vm), _party(party) {
-	SearchMan.add("saves", this, 0, false);
 	_data = nullptr;
 	_wonWorld = false;
 	_wonDarkSide = false;
@@ -133,13 +132,13 @@ void SavesManager::load(Common::SeekableReadStream *stream) {
 }
 
 void SavesManager::reset() {
-	Common::String prefix = _vm->getGameID() != GType_DarkSide ? "xeen|" : "dark|";
 	Common::MemoryWriteStreamDynamic saveFile(DisposeAfterUse::YES);
-	Common::File fIn;
+	File fIn;
 
+	g_vm->_files->setGameCc(g_vm->getGameID() == GType_DarkSide ? 1 : 0);
 	const int RESOURCES[6] = { 0x2A0C, 0x2A1C, 0x2A2C, 0x2A3C, 0x284C, 0x2A5C };
 	for (int i = 0; i < 6; ++i) {
-		Common::String filename = prefix + Common::String::format("%.4x", RESOURCES[i]);
+		Common::String filename = Common::String::format("%.4x", RESOURCES[i]);
 		if (fIn.exists(filename)) {
 			// Read in the next resource
 			fIn.open(filename);
@@ -153,20 +152,9 @@ void SavesManager::reset() {
 		}
 	}
 
+	assert(saveFile.size() > 0);
 	Common::MemoryReadStream f(saveFile.getData(), saveFile.size());
 	load(&f);
-
-	// Set up the party and characters from dark.cur
-	CCArchive gameCur("xeen.cur", false);
-	File fParty("maze.pty", gameCur);
-	Common::Serializer sParty(&fParty, nullptr);
-	_party.synchronize(sParty);
-	fParty.close();
-
-	File fChar("maze.chr", gameCur);
-	Common::Serializer sChar(&fChar, nullptr);
-	_party._roster.synchronize(sChar);
-	fChar.close();
 
 	// Set any final initial values
 	_party.resetBlacksmithWares();

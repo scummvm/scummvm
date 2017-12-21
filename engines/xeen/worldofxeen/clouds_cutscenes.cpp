@@ -94,7 +94,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 		lake("lake.vga"), xeen("xeen.vga"), wizTower("wiztower.vga"),
 		wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
 		xeen1("xeen1.vga");
-	_subtitles.load("special.bin", GAME_ARCHIVE);
+	_subtitles.load("special.bin", 0);
 	_vm->_files->_isDarkCc = false;
 
 	// Show the production splash screen
@@ -343,7 +343,7 @@ bool CloudsCutscenes::showCloudsEnding() {
 	Sound &sound = *_vm->_sound;
 
 	files._isDarkCc = false;
-	File::setCurrentArchive(GAME_ARCHIVE);
+	files.setGameCc(0);
 
 	// Show the castle with swirling clouds and lightning
 	SpriteResource prec;

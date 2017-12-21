@@ -42,6 +42,8 @@ Resources *Resources::init(XeenEngine *vm) {
 
 Resources::Resources() {
 	g_resources = this;
+	g_vm->_files->setGameCc(1);
+	
 	_globalSprites.load("global.icn");
 
 	File f("mae.xen");

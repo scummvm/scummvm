@@ -93,8 +93,6 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 	} else {
 		if (argc == 2)
 			f.open(argv[1]);
-		else
-			f.open(argv[1], (ArchiveType)strToInt(argv[2]));
 
 		if (f.isOpen()) {
 			Common::DumpFile df;

@@ -267,7 +267,7 @@ void XeenEngine::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeade
 
 void XeenEngine::playGame() {
 	_saves->reset();
-	File::setCurrentArchive(GAME_ARCHIVE);
+	_files->setGameCc(0);
 	_sound->stopAllAudio();
 
 	play();

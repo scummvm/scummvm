@@ -32,11 +32,6 @@
 
 namespace Xeen {
 
-enum ArchiveType {
-	ANY_ARCHIVE = -1, GAME_ARCHIVE = 0, ALTSIDE_ARCHIVE = 1,
-	INTRO_ARCHIVE = 2
-};
-
 class XeenEngine;
 class CCArchive;
 class File;
@@ -59,38 +54,44 @@ class File;
  * Main resource manager
  */
 class FileManager {
-	friend class File;
-private:
-	static CCArchive *_archives[3];
 public:
 	bool _isDarkCc;
 public:
 	/**
-	 * Instantiates the resource manager
+	 * Constructor
 	 */
 	FileManager(XeenEngine *vm);
+	
+	/**
+	 * Destructor
+	 */
+	~FileManager();
 
 	/**
 	 * Set which game side files to use
+	 * @param ccMode	0=Clouds, 1=Dark Side
 	 */
-	void setGameCc(bool isDarkCc);
+	void setGameCc(int ccMode);
 };
 
 /**
  * Derived file class
  */
 class File : public Common::File {
+	friend class FileManager;
+private:
+	static CCArchive *_currentArchive;
+	static CCArchive *_xeenCc;
+	static CCArchive *_darkCc;
 public:
-	static ArchiveType _currentArchive;
-
 	/**
 	 * Sets which archive is used by default
 	 */
-	static void setCurrentArchive(ArchiveType arcType) { _currentArchive = arcType; }
+	static void setCurrentArchive(int ccMode);
 public:
 	File() : Common::File() {}
 	File(const Common::String &filename);
-	File(const Common::String &filename, ArchiveType archiveType);
+	File(const Common::String &filename, int ccMode);
 	File(const Common::String &filename, Common::Archive &archive);
 	virtual ~File() {}
 
@@ -102,12 +103,12 @@ public:
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	virtual bool open(const Common::String &filename, ArchiveType archiveType);
+	virtual bool open(const Common::String &filename, Common::Archive &archive);
 
 	/**
 	 * Opens the given file, throwing an error if it can't be opened
 	 */
-	virtual bool open(const Common::String &filename, Common::Archive &archive);
+	virtual bool open(const Common::String &filename, int ccMode);
 
 	/**
 	 * Opens the given file
@@ -123,7 +124,26 @@ public:
 		return Common::File::open(stream, name);
 	}
 
+	/**
+	 * Reads in a null terminated string
+	 */
 	Common::String readString();
+
+	/**
+	 * Checks if a given file exists
+	 *
+	 * @param	filename	the file to check for
+	 * @return	true if the file exists, false otherwise
+	 */
+	static bool exists(const Common::String &filename);
+
+	/**
+	 * Checks if a given file exists
+	 *
+	 * @param	filename	the file to check for
+	 * @return	true if the file exists, false otherwise
+	 */
+	static bool exists(const Common::String &filename, int ccMode);
 };
 
 class StringArray : public Common::StringArray {
@@ -139,7 +159,7 @@ public:
 	/**
 	 * Loads a string array from the specified file
 	 */
-	void load(const Common::String &name, ArchiveType archiveType);
+	void load(const Common::String &name, int ccMode);
 };
 
 class XeenSerializer : public Common::Serializer {
