@@ -27,7 +27,6 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/random.h"
-#include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
@@ -124,17 +123,6 @@ protected:
 private:
 	void initialize();
 
-	/**
-	 * Synchronize savegame data
-	 */
-	void synchronize(Common::Serializer &s);
-
-	/**
-	 * Support method that generates a savegame name
-	 * @param slot		Slot number
-	 */
-	Common::String generateSaveName(int slot);
-
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
@@ -195,16 +183,6 @@ public:
 	* Returns true if the game can currently be saved
 	*/
 	bool canSaveGameStateCurrently();
-
-	/**
-	 * Read in a savegame header
-	 */
-	static bool readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header);
-
-	/**
-	 * Write out a savegame header
-	 */
-	void writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header);
 
 	static Common::String printMil(uint value);
 

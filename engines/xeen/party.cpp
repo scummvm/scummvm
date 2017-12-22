@@ -206,11 +206,11 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_bankGems);
 	s.syncAsUint32LE(_totalTime);
 	s.syncAsByte(_rested);
-	SavesManager::syncBitFlags(s, &_gameFlags[0][0], &_gameFlags[0][256]);
-	SavesManager::syncBitFlags(s, &_gameFlags[1][0], &_gameFlags[1][256]);
-	SavesManager::syncBitFlags(s, &_worldFlags[0], &_worldFlags[128]);
-	SavesManager::syncBitFlags(s, &_questFlags[0][0], &_questFlags[0][30]);
-	SavesManager::syncBitFlags(s, &_questFlags[1][0], &_questFlags[1][30]);
+	File::syncBitFlags(s, &_gameFlags[0][0], &_gameFlags[0][256]);
+	File::syncBitFlags(s, &_gameFlags[1][0], &_gameFlags[1][256]);
+	File::syncBitFlags(s, &_worldFlags[0], &_worldFlags[128]);
+	File::syncBitFlags(s, &_questFlags[0][0], &_questFlags[0][30]);
+	File::syncBitFlags(s, &_questFlags[1][0], &_questFlags[1][30]);
 
 	for (int i = 0; i < 85; ++i)
 		s.syncAsByte(_questItems[i]);
@@ -225,7 +225,7 @@ void Party::synchronize(Common::Serializer &s) {
 		_blacksmithMisc[1][i].synchronize(s);
 
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
-		SavesManager::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][24]);
+		File::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][24]);
 	s.syncBytes(&dummy[0], 30);
 }
 

@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/file.h"
+#include "common/memstream.h"
+#include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/str-array.h"
 #include "graphics/surface.h"
@@ -34,7 +36,12 @@ namespace Xeen {
 
 class XeenEngine;
 class CCArchive;
+class BaseCCArchive;
 class File;
+class SaveArchive;
+class Party;
+class OutFile;
+class SavesManager;
 
 #define SYNC_AS(SUFFIX,STREAM,TYPE,SIZE) \
 	template<typename T> \
@@ -49,6 +56,20 @@ class File;
 		} \
 		_bytesSynced += SIZE; \
 	}
+
+/**
+ * Details of a single entry in a CC file index
+ */
+struct CCEntry {
+	uint16 _id;
+	uint32 _offset;
+	uint16 _size;
+
+	CCEntry() : _id(0), _offset(0), _size(0) {}
+	CCEntry(uint16 id, uint32 offset, uint32 size)
+		: _id(id), _offset(offset), _size(size) {
+	}
+};
 
 /*
  * Main resource manager
@@ -79,15 +100,23 @@ public:
  */
 class File : public Common::File {
 	friend class FileManager;
+	friend class OutFile;
+	friend class SavesManager;
 private:
-	static CCArchive *_currentArchive;
-	static CCArchive *_xeenCc;
-	static CCArchive *_darkCc;
+	static CCArchive *_xeenCc, *_darkCc;
+	static SaveArchive *_xeenSave, *_darkSave;
+	static BaseCCArchive *_currentArchive;
+	static SaveArchive *_currentSave;
 public:
 	/**
 	 * Sets which archive is used by default
 	 */
 	static void setCurrentArchive(int ccMode);
+
+	/**
+	 * Synchronizes a boolean array as a bitfield set
+	 */
+	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
 public:
 	File() : Common::File() {}
 	File(const Common::String &filename);
@@ -175,22 +204,8 @@ public:
 };
 
 /**
-* Details of a single entry in a CC file index
-*/
-struct CCEntry {
-	uint16 _id;
-	uint32 _offset;
-	uint16 _size;
-
-	CCEntry() : _id(0), _offset(0), _size(0) {}
-	CCEntry(uint16 id, uint32 offset, uint32 size)
-		: _id(id), _offset(offset), _size(size) {
-	}
-};
-
-/**
-* Base Xeen CC file implementation
-*/
+ * Base Xeen CC file implementation
+ */
 class BaseCCArchive : public Common::Archive {
 protected:
 	Common::Array<CCEntry> _index;
@@ -220,8 +235,8 @@ public:
 };
 
 /**
-* Xeen CC file implementation
-*/
+ * Xeen CC file implementation
+ */
 class CCArchive : public BaseCCArchive {
 private:
 	Common::String _filename;
@@ -236,6 +251,42 @@ public:
 
 	// Archive implementation
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+};
+
+class SaveArchive : public BaseCCArchive {
+	friend class OutFile;
+private:
+	Party *_party;
+	byte *_data;
+	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *> _newData;
+
+	void load(Common::SeekableReadStream *stream);
+public:
+	SaveArchive(Party *party);
+	~SaveArchive();
+
+	/**
+	* Sets up the dynamic data for the game for a new game
+	*/
+	void reset(CCArchive *src);
+
+	// Archive implementation
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+};
+
+class OutFile : public Common::WriteStream {
+private:
+	SaveArchive *_archive;
+	Common::String _filename;
+	Common::MemoryWriteStreamDynamic _backingStream;
+public:
+	OutFile(const Common::String filename);
+
+	void finalize();
+
+	uint32 write(const void *dataPtr, uint32 dataSize) override;
+
+	int32 pos() const override;
 };
 
 } // End of namespace Xeen

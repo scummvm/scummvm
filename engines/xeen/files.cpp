@@ -186,8 +186,6 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
 
 FileManager::FileManager(XeenEngine *vm) {
 	Common::File f;
-	int sideNum = 0;
-
 	_isDarkCc = vm->getGameID() == GType_DarkSide;
 	
 	File::_xeenCc = (vm->getGameID() == GType_DarkSide) ? nullptr :
@@ -220,9 +218,12 @@ void FileManager::setGameCc(int ccMode) {
 
 /*------------------------------------------------------------------------*/
 
-CCArchive *File::_currentArchive;
 CCArchive *File::_xeenCc;
 CCArchive *File::_darkCc;
+SaveArchive *File::_xeenSave;
+SaveArchive *File::_darkSave;
+BaseCCArchive *File::_currentArchive;
+SaveArchive *File::_currentSave;
 
 File::File(const Common::String &filename) {
 	File::open(filename);
@@ -237,7 +238,7 @@ File::File(const Common::String &filename, int ccMode) {
 }
 
 bool File::open(const Common::String &filename) {
-	if (!g_vm->_saves || !Common::File::open(filename, *g_vm->_saves)) {
+	if (!_currentSave || !Common::File::open(filename, *_currentSave)) {
 		if (!Common::File::open(filename, *_currentArchive)) {
 			// Could not find in current archive, so try intro.cc or in folder
 			if (!Common::File::open(filename))
@@ -269,10 +270,12 @@ void File::setCurrentArchive(int ccMode) {
 	switch (ccMode) {
 	case 0:
 		_currentArchive = _xeenCc;
+		_currentSave = _xeenSave;
 		break;
 
 	case 1:
 		_currentArchive = _darkCc;
+		_currentSave = _darkSave;
 		break;
 
 	default:
@@ -293,7 +296,7 @@ Common::String File::readString() {
 }
 
 bool File::exists(const Common::String &filename) {
-	if (!g_vm->_saves || !g_vm->_saves->hasFile(filename)) {
+	if (!_currentSave || !_currentSave->hasFile(filename)) {
 		if (!_currentArchive->hasFile(filename)) {
 			// Could not find in current archive, so try intro.cc or in folder
 			return Common::File::exists(filename);
@@ -314,6 +317,28 @@ bool File::exists(const Common::String &filename, int ccMode) {
 	return result;
 }
 
+void File::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP) {
+	byte data = 0;
+
+	int bitCounter = 0;
+	for (bool *p = startP; p <= endP; ++p, bitCounter = (bitCounter + 1) % 8) {
+		if (p == endP || bitCounter == 0) {
+			if (p != endP || s.isSaving())
+				s.syncAsByte(data);
+			if (p == endP)
+				break;
+
+			if (s.isSaving())
+				data = 0;
+		}
+
+		if (s.isLoading())
+			*p = (data >> bitCounter) != 0;
+		else if (*p)
+			data |= 1 << bitCounter;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 void StringArray::load(const Common::String &name) {
@@ -328,6 +353,110 @@ void StringArray::load(const Common::String &name, int ccMode) {
 	clear();
 	while (f.pos() < f.size())
 		push_back(f.readString());
+}
+
+/*------------------------------------------------------------------------*/
+
+SaveArchive::SaveArchive(Party *party) : BaseCCArchive(), _party(party) {
+	_data = nullptr;
+}
+
+SaveArchive::~SaveArchive() {
+	for (Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *>::iterator it = _newData.begin(); it != _newData.end(); it++) {
+		delete (*it)._value;
+	}
+	delete[] _data;
+}
+
+Common::SeekableReadStream *SaveArchive::createReadStreamForMember(const Common::String &name) const {
+	CCEntry ccEntry;
+
+	// If the given resource has already been perviously "written" to the
+	// save manager, then return that new resource
+	uint16 id = BaseCCArchive::convertNameToId(name);
+	if (_newData.contains(id)) {
+		Common::MemoryWriteStreamDynamic *stream = _newData[id];
+		return new Common::MemoryReadStream(stream->getData(), stream->size());
+	}
+
+	// Retrieve the resource from the loaded savefile
+	if (getHeaderEntry(name, ccEntry)) {
+		// Open the correct CC entry
+		return new Common::MemoryReadStream(_data + ccEntry._offset, ccEntry._size);
+	}
+
+	return nullptr;
+}
+
+void SaveArchive::load(Common::SeekableReadStream *stream) {
+	loadIndex(stream);
+
+	delete[] _data;
+	_data = new byte[stream->size()];
+	stream->seek(0);
+	stream->read(_data, stream->size());
+
+	// Load in the character stats and active party
+	Common::SeekableReadStream *chr = createReadStreamForMember("maze.chr");
+	Common::Serializer sChr(chr, nullptr);
+	_party->_roster.synchronize(sChr);
+	delete chr;
+
+	Common::SeekableReadStream *pty = createReadStreamForMember("maze.pty");
+	Common::Serializer sPty(pty, nullptr);
+	_party->synchronize(sPty);
+	delete pty;
+}
+
+void SaveArchive::reset(CCArchive *src) {
+	Common::MemoryWriteStreamDynamic saveFile(DisposeAfterUse::YES);
+	File fIn;
+
+	g_vm->_files->setGameCc(g_vm->getGameID() == GType_DarkSide ? 1 : 0);
+	const int RESOURCES[6] = { 0x2A0C, 0x2A1C, 0x2A2C, 0x2A3C, 0x284C, 0x2A5C };
+	for (int i = 0; i < 6; ++i) {
+		Common::String filename = Common::String::format("%.4x", RESOURCES[i]);
+		if (src->hasFile(filename)) {
+			// Read in the next resource
+			fIn.open(filename, *src);
+			byte *data = new byte[fIn.size()];
+			fIn.read(data, fIn.size());
+
+			// Copy it to the combined savefile resource
+			saveFile.write(data, fIn.size());
+			delete[] data;
+			fIn.close();
+		}
+	}
+
+	assert(saveFile.size() > 0);
+	Common::MemoryReadStream f(saveFile.getData(), saveFile.size());
+	load(&f);
+}
+
+/*------------------------------------------------------------------------*/
+
+OutFile::OutFile(const Common::String filename) :
+		_filename(filename), _backingStream(DisposeAfterUse::YES) {
+	_archive = File::_currentSave;
+}
+
+uint32 OutFile::write(const void *dataPtr, uint32 dataSize) {
+	return _backingStream.write(dataPtr, dataSize);
+}
+
+int32 OutFile::pos() const {
+	return _backingStream.pos();
+}
+
+void OutFile::finalize() {
+	uint16 id = BaseCCArchive::convertNameToId(_filename);
+
+	if (!_archive->_newData.contains(id))
+		_archive->_newData[id] = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+
+	Common::MemoryWriteStreamDynamic *out = _archive->_newData[id];
+	out->write(_backingStream.getData(), _backingStream.size());
 }
 
 } // End of namespace Xeen

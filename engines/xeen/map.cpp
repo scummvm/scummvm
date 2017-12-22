@@ -620,9 +620,9 @@ void MazeData::synchronize(Common::SeekableReadStream &s) {
 
 	Common::Serializer ser(&s, nullptr);
 	for (int y = 0; y < MAP_HEIGHT; ++y)
-		SavesManager::syncBitFlags(ser, &_seenTiles[y][0], &_seenTiles[y][MAP_WIDTH]);
+		File::syncBitFlags(ser, &_seenTiles[y][0], &_seenTiles[y][MAP_WIDTH]);
 	for (int y = 0; y < MAP_HEIGHT; ++y)
-		SavesManager::syncBitFlags(ser, &_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH]);
+		File::syncBitFlags(ser, &_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH]);
 }
 
 void MazeData::setAllTilesStepped() {
@@ -1115,7 +1115,7 @@ void Map::load(int mapId) {
 	mapId = party._mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.mob",
 		(mapId >= 100) ? 'x' : '0', mapId);
-	File mobFile(filename, *_vm->_saves);
+	File mobFile(filename);
 	XeenSerializer sMob(&mobFile, nullptr);
 	_mobData.synchronize(sMob, _monsterData);
 	mobFile.close();
@@ -1395,7 +1395,7 @@ void Map::loadEvents(int mapId) {
 	// Load events
 	Common::String filename = Common::String::format("maze%c%03d.evt",
 		(mapId >= 100) ? 'x' : '0', mapId);
-	File fEvents(filename, *_vm->_saves);
+	File fEvents(filename);
 	XeenSerializer sEvents(&fEvents, nullptr);
 	_events.synchronize(sEvents);
 	fEvents.close();
@@ -1418,7 +1418,7 @@ void Map::saveMaze() {
 	// Save the event data
 	Common::String filename = Common::String::format("maze%c%03d.evt",
 		(mazeNum >= 100) ? 'x' : '0', mazeNum);
-	OutFile fEvents(_vm, filename);
+	OutFile fEvents(filename);
 	XeenSerializer sEvents(nullptr, &fEvents);
 	_events.synchronize(sEvents);
 	fEvents.finalize();
@@ -1426,7 +1426,7 @@ void Map::saveMaze() {
 	// Save the maze MOB file
 	filename = Common::String::format("maze%c%03d.mob",
 		(mazeNum >= 100) ? 'x' : '0', mazeNum);
-	OutFile fMob(_vm, filename);
+	OutFile fMob(filename);
 	XeenSerializer sMob(nullptr, &fEvents);
 	_mobData.synchronize(sMob, _monsterData);
 	fEvents.finalize();

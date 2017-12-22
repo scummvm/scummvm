@@ -30,7 +30,6 @@
 #include "xeen/character.h"
 #include "xeen/combat.h"
 #include "xeen/dialogs_error.h"
-#include "xeen/items.h"
 
 namespace Xeen {
 
