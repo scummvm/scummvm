@@ -207,6 +207,9 @@ namespace AGDS {
 
 		decrypt(text.data(), end - begin);
 
+		while(begin != end && end[-1] == 0)
+			--end;
+
 		return Common::String(begin, end);
 	}
 
