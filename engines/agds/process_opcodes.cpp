@@ -736,6 +736,7 @@ void Process::updateScreenHeightToDisplay() {
 void Process::loadTextFromObject() {
 	Common::String text = popText();
 	debug("loadTextFromObject %s", text.c_str());
+	_object->setText(text);
 }
 
 void Process::call(uint16 addr) {
