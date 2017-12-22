@@ -33,21 +33,23 @@ namespace AGDS {
 
 class Font : public Graphics::Font {
 	Graphics::TransparentSurface * _surface;
-	int _gw, _gh;
+	int		_glyphW, _glyphH;
+	int		_cellW, _cellH;
+	uint8	_width[0x100];
 
 public:
 	Font(Graphics::TransparentSurface *surface, int gw, int gh);
 
 	virtual int getFontHeight() const {
-		return _gh;
+		return _glyphH;
 	}
 
 	virtual int getMaxCharWidth() const {
-		return _gw;
+		return _glyphW;
 	}
 
 	virtual int getCharWidth(uint32 chr) const {
-		return _gw;
+		return chr < 0x100? _width[chr]: 0;
 	}
 
 	virtual void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const;
