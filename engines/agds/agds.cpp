@@ -22,6 +22,7 @@
 
 #include "agds/agds.h"
 #include "agds/animation.h"
+#include "agds/font.h"
 #include "agds/mjpgPlayer.h"
 #include "agds/object.h"
 #include "agds/process.h"
@@ -488,6 +489,21 @@ Graphics::TransparentSurface * AGDSEngine::loadPicture(const Common::String &nam
 Graphics::TransparentSurface *AGDSEngine::loadFromCache(int id) const {
 	PictureCacheType::const_iterator i = _pictureCache.find(id);
 	return (i != _pictureCache.end())? i->_value: NULL;
+}
+
+void AGDSEngine::loadFont(int id, const Common::String &name, int gw, int gh) {
+	debug("loadFont %d %s %d %d", id, name.c_str(), gw, gh);
+	Graphics::TransparentSurface *surface = loadPicture(name);
+	Font * & font = _fonts[id];
+	delete font;
+	font = new Font(surface, gw, gh);
+}
+
+Font *AGDSEngine::getFont(int id) const {
+	FontsType::const_iterator i = _fonts.find(id);
+	if (i == _fonts.end())
+		error("no font with id %d", id);
+	return i->_value;
 }
 
 Graphics::TransparentSurface *AGDSEngine::convertToTransparent(const Graphics::Surface *surface) {

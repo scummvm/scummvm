@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	animation.o \
 	database.o \
 	detection.o \
+	font.o \
 	inventory.o \
 	mjpgPlayer.o \
 	object.o \

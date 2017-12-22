@@ -21,6 +21,8 @@
  */
 
 #include "agds/object.h"
+#include "agds/agds.h"
+#include "agds/font.h"
 #include "agds/animation.h"
 #include "common/debug.h"
 #include "common/memstream.h"
@@ -108,6 +110,10 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	}
 	if (_animation) {
 		_animation->paint(engine, backbuffer, _animationPos);
+	}
+	if (!_text.empty()) {
+		int w = backbuffer.w - _pos.x;
+		engine.getFont(1)->drawString(&backbuffer, _text, _pos.x, _pos.y, w, 0);
 	}
 }
 
