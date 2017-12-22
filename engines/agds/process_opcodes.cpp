@@ -565,10 +565,10 @@ void Process::stub184() {
 
 void Process::setObjectText() {
 	int arg3 = pop();
-	Common::String arg2 = popText();
-	Common::String arg1 = popString();
-	debug("setObjectText %s \"%s\" %d", arg1.c_str(), arg2.c_str(), arg3);
-	//_engine->loadObject(arg1);
+	Common::String text = popText();
+	Common::String name = popString();
+	debug("setObjectText %s \"%s\" %d", name.c_str(), text.c_str(), arg3);
+	_engine->loadObject(name)->setText(text);
 }
 
 
