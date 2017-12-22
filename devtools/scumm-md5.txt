@@ -638,15 +638,16 @@ airport	Let's Explore the Airport with Buzzy
 	3c90d2a39cafa60b8ebce70a34a59a41	51152	nl	Windows	-	Demo	-	Ben Castricum
 
 farm	Let's Explore the Farm with Buzzy
-	a5c5388da9bf0e6662fdca8813a79d13	86962	en	Windows	-	-	-	George Kormendi
+	f4357cf21ba59889d6d5bcc431140238	-1	en	Windows	-	-	-	MrEightThreeOne
+	a5c5388da9bf0e6662fdca8813a79d13	86962	en	Windows	HE 72	-	-	George Kormendi
 	fbbbb38a81fc9d6a61d509278390a290	-1	en	Mac	HE 73	-	-	khalek
 	a85856675429fe88051744f755b72f93	-1	en	Windows	HE 73	-	-	Kirben
 	a2386da005672cbd5136f4f27a626c5f	87061	nl	Windows	HE 73	-	-	George Kormendi
 	eeb606c2d2ec877a712a9f20c10bcdda	87034	nl	Mac	HE 73	-	-	Ben Castricum
 	5dda73606533d66a4c3f4f9ea6e842af	87061	ru	Windows	HE 73	-	-	sev
 
-	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	-	Demo	-	Joachim Eberhard
-	6c375c2236d99f56e6c2cf540e74e474	34333	nl	Windows	-	Demo	-	Kirben
+	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	HE 72	Demo	-	Joachim Eberhard
+	6c375c2236d99f56e6c2cf540e74e474	34333	nl	Windows	HE 72	Demo	-	Kirben
 	03173f0df12062d84721062666155efa	34312	en	Windows	HE 71	Demo	-	Ben Castricum
 	bf8b52fdd9a69c67f34e8e9fec72661c	-1	en	Windows	HE 71	Demo	-	khalek, sev
 	0557df19f046a84c2fdc63507c6616cb	-1	nl	Windows	HE 72	Demo	-	adutchguy
