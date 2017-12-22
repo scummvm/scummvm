@@ -41,10 +41,10 @@ Region::Region(const Common::String &resourceName, Common::SeekableReadStream * 
 		error("invalid region %s", resourceName.c_str());
 	byte * nameEnd = Common::find(header, header + 0x20, 0);
 	name		= Common::String(reinterpret_cast<char *>(header), nameEnd - header);
-	centerX		= READ_UINT16(header + kRegionHeaderWidthOffset);
-	centerY		= READ_UINT16(header + kRegionHeaderHeightOffset);
+	center.x	= READ_UINT16(header + kRegionHeaderWidthOffset);
+	center.y	= READ_UINT16(header + kRegionHeaderHeightOffset);
 	flags		= READ_UINT16(header + kRegionHeaderFlagsOffset);
-	debug("region %s at (%d,%d) %04x", name.c_str(), centerX, centerY, flags);
+	debug("region %s at (%d,%d) %04x", name.c_str(), center.x, center.y, flags);
 	if (size > kRegionHeaderSize) {
 		uint16 ext	= stream->readUint16LE();
 		//debug("extended entries %u", ext);
