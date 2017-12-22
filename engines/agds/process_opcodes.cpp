@@ -189,7 +189,8 @@ void Process::removeScreenObject() {
 void Process::loadFont() {
 	Common::String name = popText();
 	int id = pop();
-	debug("loadFont %s %d stub", name.c_str(), id);
+	debug("loadFont %s %d", name.c_str(), id);
+	_engine->loadFont(id, name, _glyphWidth, _glyphHeight);
 }
 
 void Process::loadMouse() {
