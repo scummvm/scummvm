@@ -130,6 +130,7 @@ done
 # eventrec=no, build_scalers=no, build_hq_scalers=no, sdlnet=no, libcurl=no, cloud=no
 #
 # Default lib behaviour yes/no/auto
+_ogg=auto
 _vorbis=auto
 _sdlnet=no
 _libcurl=no
