@@ -876,6 +876,11 @@ void Process::setTimer() {
 	suspend();
 }
 
+void Process::stub233() {
+	Common::String name = popString();
+	debug("stub233 %s", name.c_str());
+}
+
 void Process::stub235() {
 	int arg3 = pop();
 	int arg2 = pop();
@@ -953,6 +958,7 @@ ProcessExitCode Process::execute() {
 			OP		(kXor, bitXor);
 			OP		(kNot, bitNot);
 			OP		(kBoolNot, boolNot);
+			OP		(kNegate, negate);
 			OP_U	(kCallImm16, call);
 			OP_U	(kObjectRegisterLookHandler, onLook);
 			OP_U	(kObjectRegisterUseHandler, onUse);
@@ -1065,6 +1071,7 @@ ProcessExitCode Process::execute() {
 			OP_U	(kStub209, stub209);
 			OP_U	(kOnKey, onKey);
 			OP		(kGetSampleVolume, getSampleVolume);
+			OP		(kStub233, stub233);
 			OP		(kStub235, stub235);
 			OP		(kRunDialog, runDialog);
 			OP		(kHasGlobal, hasGlobal);
