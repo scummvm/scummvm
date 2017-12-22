@@ -77,7 +77,7 @@ void Process::getIntegerSystemVariable() {
 void Process::getRegionCenterX() {
 	Common::String name = popString();
 	Region *reg = _engine->loadRegion(name);
-	int value = reg->centerX;
+	int value = reg->center.x;
 	push(value);
 	debug("getRegionCenterX %s -> %d", name.c_str(), value);
 }
@@ -85,7 +85,7 @@ void Process::getRegionCenterX() {
 void Process::getRegionCenterY() {
 	Common::String name = popString();
 	Region *reg = _engine->loadRegion(name);
-	int value = reg->centerY;
+	int value = reg->center.y;
 	push(value);
 	debug("getRegionCenterY %s -> %d", name.c_str(), value);
 }

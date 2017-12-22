@@ -34,8 +34,7 @@ struct Region {
 	typedef Common::Array<Common::Point> PointsType;
 
 	Common::String	name;
-	uint16			centerX;
-	uint16			centerY;
+	Common::Point	center;
 	uint16			flags;
 	PointsType		points;
 
