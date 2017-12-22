@@ -61,7 +61,7 @@ enum Opcode {
 	kBoolAnd						= 39,
 	kBoolOr							= 40,
 	kBoolNot						= 41,
-	kStub42							= 42,
+	kNegate							= 42,
 	kStub43							= 43,
 	kStub44							= 44,
 	kPostIncrementGlobal			= 45,

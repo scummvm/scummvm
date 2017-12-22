@@ -229,6 +229,7 @@ private:
 	void stub221();
 	void stub223();
 	void stub225();
+	void stub233();
 	void stub235();
 	void debug(const char *str, ...);
 
@@ -237,6 +238,7 @@ private:
 
 	UNARY_OP(boolNot, !)
 	UNARY_OP(bitNot, ~)
+	UNARY_OP(negate, -)
 	BINARY_OP(boolOr, ||)
 	BINARY_OP(boolAnd, &&)
 	BINARY_OP(equals, ==)
