@@ -284,6 +284,7 @@ static const GameSettings gameVariantsTable[] = {
 	{"fbear", "HE 70", 0, GID_FBEAR, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows, GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)},
 
 	{"puttmoon", "", 0, GID_PUTTMOON, 6, 62, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO1(GUIO_NOLAUNCHLOAD)},
+	{"puttmoon", "Demo", 0, GID_HEGAME, 6, 62, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO1(GUIO_NOLAUNCHLOAD)},
 	{"puttmoon", "HE 70", 0, GID_PUTTMOON, 6, 70, MDT_NONE,             GF_USE_KEY, Common::kPlatformWindows, GUIO2(GUIO_NOLAUNCHLOAD, GUIO_NOMIDI)},
 
 	{"puttputt", "HE 60", 0, GID_HEGAME,   6, 60, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO1(GUIO_NOLAUNCHLOAD)},

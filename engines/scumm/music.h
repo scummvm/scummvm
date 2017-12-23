@@ -55,6 +55,13 @@ public:
 	virtual void startSound(int sound) = 0;
 
 	/**
+	 * Start playing the sound with the given id and track id.
+	 * @param sound		the sound to start
+	 * @param track		the track to start
+	 */
+	virtual void startSoundWithTrackID(int sound, int track) { startSound(sound); }
+
+	/**
 	 * Stop playing the sound with the given id.
 	 * @param sound		the sound to stop
 	 */
