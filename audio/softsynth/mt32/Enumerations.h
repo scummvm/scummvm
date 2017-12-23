@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -35,6 +35,12 @@
 #define MT32EMU_PARTIAL_STATE_NAME mt32emu_partial_state
 #define MT32EMU_PARTIAL_STATE(ident) MT32EMU_PS_##ident
 
+#define MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME mt32emu_samplerate_conversion_quality
+#define MT32EMU_SAMPLERATE_CONVERSION_QUALITY(ident) MT32EMU_SRCQ_##ident
+
+#define MT32EMU_RENDERER_TYPE_NAME mt32emu_renderer_type
+#define MT32EMU_RENDERER_TYPE(ident) MT32EMU_RT_##ident
+
 #else /* #ifdef MT32EMU_C_ENUMERATIONS */
 
 #define MT32EMU_CPP_ENUMERATIONS_H
@@ -50,6 +56,12 @@
 
 #define MT32EMU_PARTIAL_STATE_NAME PartialState
 #define MT32EMU_PARTIAL_STATE(ident) PartialState_##ident
+
+#define MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME SamplerateConversionQuality
+#define MT32EMU_SAMPLERATE_CONVERSION_QUALITY(ident) SamplerateConversionQuality_##ident
+
+#define MT32EMU_RENDERER_TYPE_NAME RendererType
+#define MT32EMU_RENDERER_TYPE(ident) RendererType_##ident
 
 namespace MT32Emu {
 
@@ -73,7 +85,6 @@ enum MT32EMU_DAC_INPUT_MODE_NAME {
 	 * Nicer overdrive characteristics than the DAC hacks (it simply clips samples within range)
 	 * Much less likely to overdrive than any other mode.
 	 * Half the volume of any of the other modes.
-	 * Output gain is ignored for both LA32 and reverb output.
 	 * Perfect for developers while debugging :)
 	 */
 	MT32EMU_DAC_INPUT_MODE(PURE),
@@ -134,6 +145,21 @@ enum MT32EMU_PARTIAL_STATE_NAME {
 	MT32EMU_PARTIAL_STATE(RELEASE)
 };
 
+enum MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME {
+	/** Use this only when the speed is more important than the audio quality. */
+	MT32EMU_SAMPLERATE_CONVERSION_QUALITY(FASTEST),
+	MT32EMU_SAMPLERATE_CONVERSION_QUALITY(FAST),
+	MT32EMU_SAMPLERATE_CONVERSION_QUALITY(GOOD),
+	MT32EMU_SAMPLERATE_CONVERSION_QUALITY(BEST)
+};
+
+enum MT32EMU_RENDERER_TYPE_NAME {
+	/** Use 16-bit signed samples in the renderer and the accurate wave generator model based on logarithmic fixed-point computations and LUTs. Maximum emulation accuracy and speed. */
+	MT32EMU_RENDERER_TYPE(BIT16S),
+	/** Use float samples in the renderer and simplified wave generator model. Maximum output quality and minimum noise. */
+	MT32EMU_RENDERER_TYPE(FLOAT)
+};
+
 #ifndef MT32EMU_C_ENUMERATIONS
 
 } // namespace MT32Emu
@@ -151,5 +177,11 @@ enum MT32EMU_PARTIAL_STATE_NAME {
 
 #undef MT32EMU_PARTIAL_STATE_NAME
 #undef MT32EMU_PARTIAL_STATE
+
+#undef MT32EMU_SAMPLERATE_CONVERSION_QUALITY_NAME
+#undef MT32EMU_SAMPLERATE_CONVERSION_QUALITY
+
+#undef MT32EMU_RENDERER_TYPE_NAME
+#undef MT32EMU_RENDERER_TYPE
 
 #endif /* #if (!defined MT32EMU_CPP_ENUMERATIONS_H && !defined MT32EMU_C_ENUMERATIONS) || (!defined MT32EMU_C_ENUMERATIONS_H && defined MT32EMU_C_ENUMERATIONS) */
