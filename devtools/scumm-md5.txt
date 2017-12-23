@@ -772,7 +772,7 @@ puttmoon	Putt-Putt Goes to the Moon
 	9c92eeaf517a31b7221ec2546ab669fd	-1	en	Windows	HE 70	-	-	khalek
 	3c4c471342bd95505a42334367d8f127	12161	ru	Windows	HE 70	-	-	sev
 
-	aa6a91b7f6f119d1b7b1f2a4c9e24d59	6233	en	DOS	-	Demo	-
+	aa6a91b7f6f119d1b7b1f2a4c9e24d59	6233	en	DOS	Demo	Demo	-
 	4af4a6b248103c1fe9edef619677f540	-1	en	Mac	-	Demo	-	khalek
 	9c143c5905055d5df7a0f014ab379aee	-1	en	Windows	HE 70	Demo	-	khalek
 

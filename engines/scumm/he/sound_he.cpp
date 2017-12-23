@@ -765,6 +765,10 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 			_vm->_imuse->stopSound(_currentMusic);
 			_currentMusic = soundID;
 			_vm->_imuse->startSoundWithNoteOffset(soundID, heOffset);
+		} else if (_vm->_musicEngine) {
+			_vm->_musicEngine->stopSound(_currentMusic);
+			_currentMusic = soundID;
+			_vm->_musicEngine->startSoundWithTrackID(soundID, heOffset);
 		}
 	}
 }
