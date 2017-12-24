@@ -159,8 +159,10 @@ Inventory::Inventory() : _numObjects(0) {
 
 // TODO: Update Inventory surface for scrolling
 void Inventory::add(Object &obj) {
-	if (_numObjects < kMaxCarry)
+	if (_numObjects < kMaxCarry) {
 		_inventory[_numObjects++] = &obj;
+		obj.setProperty(CARRIED);
+	}
 
 //	if (inventory_amount>8) inventory_scroll = ((inventory_amount+1)/2)*2-8;
 //	show_inventory();
