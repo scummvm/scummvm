@@ -29,6 +29,8 @@
 
 namespace Supernova {
 
+const int32 INT32_MAX = 0x7FFFFFFF;
+
 enum EventFunction { kNoFn, kSupernovaFn, kGuardReturnedFn, kGuardWalkFn, kTaxiFn, kSearchStartFn };
 
 struct GameState {
