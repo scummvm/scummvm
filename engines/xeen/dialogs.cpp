@@ -201,13 +201,22 @@ void CreditsScreen::execute() {
 
 /*------------------------------------------------------------------------*/
 
-void PleaseWait::show(XeenEngine *vm) {
-	Windows &windows = *vm->_windows;
+PleaseWait::PleaseWait(bool isOops) {
+	_msg = isOops ? Res.OOPS : Res.PLEASE_WAIT;
+}
+
+PleaseWait::~PleaseWait() {
+	Windows &windows = *g_vm->_windows;
+	windows[9].close();
+}
+
+void PleaseWait::show() {
+	Windows &windows = *g_vm->_windows;
 	Window &w = windows[9];
 
-	if (vm->_mode != MODE_0) {
+	if (g_vm->_mode != MODE_0) {
 		w.open();
-		w.writeString(Res.PLEASE_WAIT);
+		w.writeString(_msg);
 		w.update();
 	}
 }

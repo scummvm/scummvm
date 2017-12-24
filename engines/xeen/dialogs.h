@@ -113,8 +113,13 @@ public:
 };
 
 class PleaseWait {
+private:
+	Common::String _msg;
 public:
-	static void show(XeenEngine *vm);
+	PleaseWait(bool isOops = false);
+	~PleaseWait();
+
+	void show();
 };
 
 } // End of namespace Xeen

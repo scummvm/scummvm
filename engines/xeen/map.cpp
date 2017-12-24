@@ -949,17 +949,11 @@ void Map::load(int mapId) {
 	Interface &intf = *g_vm->_interface;
 	Party &party = *g_vm->_party;
 	Sound &sound = *g_vm->_sound;
-	Windows &windows = *g_vm->_windows;
 	IndoorDrawList &indoorList = intf._indoorList;
 	OutdoorDrawList &outdoorList = intf._outdoorList;
 
-	if (intf._falling) {
-		Window &w = windows[9];
-		w.open();
-		w.writeString(Res.OOPS);
-	} else {
-		PleaseWait::show(_vm);
-	}
+	PleaseWait waitMsg(intf._falling);
+	waitMsg.show();
 
 	intf._objNumber = 0;
 	party._stepped = true;
@@ -1313,8 +1307,6 @@ void Map::load(int mapId) {
 	loadSky();
 
 	files.setGameCc(isDarkCc);
-	if (windows[9]._enabled)
-		windows[9].close();
 }
 
 int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
