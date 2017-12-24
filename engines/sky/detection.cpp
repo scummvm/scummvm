@@ -173,18 +173,26 @@ DetectedGames SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// Match found, add to list of candidates, then abort inner loop.
 		// The game detector uses US English by default. We want British
 		// English to match the recorded voices better.
-		DetectedGame game;
-		game.matchedGame = GameDescriptor(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		const SkyVersion *sv = skyVersions;
 		while (sv->dinnerTableEntries) {
 			if (dinnerTableEntries == sv->dinnerTableEntries &&
 				(sv->dataDiskSize == dataDiskSize || sv->dataDiskSize == -1)) {
-				game.matchedGame.updateDesc(Common::String::format("v0.0%d %s", sv->version, sv->extraDesc).c_str());
-				game.matchedGame.setGUIOptions(sv->guioptions);
 				break;
 			}
 			++sv;
 		}
+
+		DetectedGame game;
+		if (sv->dinnerTableEntries) {
+			Common::String extra = Common::String::format("v0.0%d %s", sv->version, sv->extraDesc);
+
+			game.matchedGame = GameDescriptor(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown, extra);
+			game.matchedGame.setGUIOptions(sv->guioptions);
+
+		} else {
+			game.matchedGame = GameDescriptor(skySetting.gameId, skySetting.description);
+		}
+
 		detectedGames.push_back(game);
 	}
 

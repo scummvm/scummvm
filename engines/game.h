@@ -81,20 +81,12 @@ enum GameSupportLevel {
 class GameDescriptor {
 public:
 	GameDescriptor();
-	explicit GameDescriptor(const PlainGameDescriptor &pgd, const Common::String &guioptions = Common::String());
+	explicit GameDescriptor(const PlainGameDescriptor &pgd);
 	GameDescriptor(const Common::String &id,
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,
-				  Common::Platform platform = Common::kPlatformUnknown,
-				  const Common::String &guioptions = Common::String(),
-				  GameSupportLevel gsl = kStableGame);
-
-	/**
-	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.
-	 * Values that are missing are omitted, so e.g. (EXTRA/LANG) would be
-	 * added if no platform has been specified but a language and an extra string.
-	 */
-	void updateDesc(const char *extraDesc = 0);
+	              Common::Platform platform = Common::kPlatformUnknown,
+	              const Common::String &extra = Common::String());
 
 	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
@@ -114,6 +106,13 @@ public:
 	GameSupportLevel gameSupportLevel;
 
 private:
+	/**
+	 * Update the description string by appending (EXTRA/PLATFORM/LANG) to it.
+	 * Values that are missing are omitted, so e.g. (EXTRA/LANG) would be
+	 * added if no platform has been specified but a language and an extra string.
+	 */
+	Common::String updateDesc() const;
+
 	Common::String _guiOptions;
 };
 

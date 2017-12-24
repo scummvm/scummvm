@@ -193,7 +193,8 @@ DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursion = fal
 
 					// Match found, add to list of candidates, then abort inner loop.
 					DetectedGame game;
-					game.matchedGame = GameDescriptor(g->gameid, g->description, Common::UNK_LANG, Common::kPlatformUnknown, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+					game.matchedGame = GameDescriptor(g->gameid, g->description);
+					game.matchedGame.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 
 					detectedGames.push_back(game);
 					break;

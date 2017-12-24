@@ -1037,10 +1037,7 @@ DetectedGames ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 		assert(g);
 
 		DetectedGame game;
-		game.matchedGame = GameDescriptor(x->game.gameid, g->description, x->language, x->game.platform);
-
-		// Append additional information, if set, to the description.
-		game.matchedGame.updateDesc(x->extra);
+		game.matchedGame = GameDescriptor(x->game.gameid, g->description, x->language, x->game.platform, x->extra);
 
 		// Compute and set the preferred target name for this game.
 		// Based on generateComplexID() in advancedDetector.cpp.

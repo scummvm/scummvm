@@ -41,7 +41,7 @@ GameDescriptor::GameDescriptor() :
 		gameSupportLevel(kStableGame) {
 }
 
-GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, const Common::String &guioptions) :
+GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd) :
 		language(Common::UNK_LANG),
 		platform(Common::kPlatformUnknown),
 		gameSupportLevel(kStableGame) {
@@ -49,21 +49,18 @@ GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, const Common::Str
 	gameId = pgd.gameId;
 	preferredTarget = pgd.gameId;
 	description = pgd.description;
-
-	if (!guioptions.empty())
-		_guiOptions = Common::getGameGUIOptionsDescription(guioptions);
 }
 
-GameDescriptor::GameDescriptor(const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &guioptions, GameSupportLevel gsl) {
+GameDescriptor::GameDescriptor(const Common::String &id, const Common::String &d, Common::Language l, Common::Platform p, const Common::String &ex) {
 	gameId = id;
 	preferredTarget = id;
 	description = d;
 	language = l;
 	platform = p;
-	gameSupportLevel = gsl;
+	extra = ex;
 
-	if (!guioptions.empty())
-		_guiOptions = Common::getGameGUIOptionsDescription(guioptions);
+	// Append additional information, if set, to the description.
+	description += updateDesc();
 }
 
 void GameDescriptor::setGUIOptions(const Common::String &guioptions) {
@@ -80,31 +77,34 @@ void GameDescriptor::appendGUIOptions(const Common::String &str) {
 	_guiOptions += str;
 }
 
-void GameDescriptor::updateDesc(const char *extraDesc) {
+Common::String GameDescriptor::updateDesc() const {
 	const bool hasCustomLanguage = (language != Common::UNK_LANG);
 	const bool hasCustomPlatform = (platform != Common::kPlatformUnknown);
-	const bool hasExtraDesc = (extraDesc && extraDesc[0]);
+	const bool hasExtraDesc = !extra.empty();
 
 	// Adapt the description string if custom platform/language is set.
-	if (hasCustomLanguage || hasCustomPlatform || hasExtraDesc) {
-		Common::String descr = description;
+	Common::String descr;
+	if (!hasCustomLanguage && !hasCustomPlatform && !hasExtraDesc)
+		return descr;
 
-		descr += " (";
+	descr += " (";
+
+	if (hasExtraDesc)
+		descr += extra;
+	if (hasCustomPlatform) {
 		if (hasExtraDesc)
-			descr += extraDesc;
-		if (hasCustomPlatform) {
-			if (hasExtraDesc)
-				descr += "/";
-			descr += Common::getPlatformDescription(platform);
-		}
-		if (hasCustomLanguage) {
-			if (hasExtraDesc || hasCustomPlatform)
-				descr += "/";
-			descr += Common::getLanguageDescription(language);
-		}
-		descr += ")";
-		description = descr;
+			descr += "/";
+		descr += Common::getPlatformDescription(platform);
 	}
+	if (hasCustomLanguage) {
+		if (hasExtraDesc || hasCustomPlatform)
+			descr += "/";
+		descr += Common::getLanguageDescription(language);
+	}
+
+	descr += ")";
+
+	return descr;
 }
 
 DetectionResults::DetectionResults(const DetectedGames &detectedGames) :

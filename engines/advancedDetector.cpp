@@ -56,8 +56,8 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 	else if (g.flags & ADGF_TESTING)
 		gsl = kTestingGame;
 
-	GameDescriptor gd(g.gameId, title, g.language, g.platform, 0, gsl);
-	gd.updateDesc(extra);
+	GameDescriptor gd(g.gameId, title, g.language, g.platform, extra);
+	gd.gameSupportLevel = gsl;
 	return gd;
 }
 
