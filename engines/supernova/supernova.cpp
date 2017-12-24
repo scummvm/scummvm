@@ -186,7 +186,7 @@ void SupernovaEngine::updateEvents() {
 	if (_gm->_state._eventCallback != kNoFn && _gm->_state._time >= _gm->_state._eventTime) {
 		_allowLoadGame = false;
 		_allowSaveGame = false;
-		_gm->_state._eventTime = 0x7FFFFFFF;
+		_gm->_state._eventTime = INT32_MAX;
 		EventFunction fn = _gm->_state._eventCallback;
 		_gm->_state._eventCallback = kNoFn;
 		switch (fn) {
