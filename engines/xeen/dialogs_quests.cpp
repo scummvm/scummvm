@@ -204,13 +204,13 @@ void Quests::execute() {
 			topRow = 0;
 			break;
 		case Common::KEYCODE_END:
-			topRow = count - 1;
+			topRow = MAX(count - 1, 0);
 			break;
 		case Common::KEYCODE_PAGEUP:
 			topRow = MAX(topRow - 3, 0);
 			break;
 		case Common::KEYCODE_PAGEDOWN:
-			topRow = CLIP(topRow + 3, 0, count - 1);
+			topRow = CLIP(topRow + 3, 0, MAX(count - 1, 0));
 			break;
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_KP8:
@@ -218,7 +218,7 @@ void Quests::execute() {
 			break;
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
-			topRow = CLIP(topRow + 1, 0, count - 1);
+			topRow = CLIP(topRow + 1, 0, MAX(count - 1, 0));
 			break;
 		default:
 			break;
