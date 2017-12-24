@@ -120,14 +120,11 @@ Common::KeyCode Input::waitForKey(const Common::String &msg) {
 void Input::animateCursor() {
 	// Iterate through each frame
 	_cursorAnimIndex = _cursorAnimIndex ? _cursorAnimIndex - 1 : 5;
-	static const int CURSOR_ANIMATION_IDS[] = { 32, 124, 126, 127, 126, 124 };
+	static const char CURSOR_ANIMATION_IDS[] = { 32, 124, 126, 127, 126, 124 };
 
 	// Form a string for the cursor and write it out
-	Common::String cursorStr = Common::String::format("%c",
-		CURSOR_ANIMATION_IDS[_cursorAnimIndex]);
-
 	Common::Point writePos = _window->_writePos;
-	_window->writeString(cursorStr);
+	_window->writeCharacter(CURSOR_ANIMATION_IDS[_cursorAnimIndex]);
 	_window->_writePos = writePos;
 }
 

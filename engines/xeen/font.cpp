@@ -247,6 +247,13 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 	return _displayString;
 }
 
+void FontSurface::writeCharacter(char c, const Common::Rect &clipRect) {
+	Justify justify = _fontJustify;
+	_fontJustify = JUSTIFY_NONE;
+	writeString(Common::String::format("%c", c), clipRect);
+	_fontJustify = justify;
+}
+
 char FontSurface::getNextChar() {
 	return  *_displayString++ & 0x7f;
 }

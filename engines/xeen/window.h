@@ -148,6 +148,14 @@ public:
 	const char *writeString(const Common::String &s) {
 		return FontSurface::writeString(s, _innerBounds);
 	}
+
+	/**
+	 * Write a charcter to the window
+	 * @param c			Character
+	 */
+	void writeCharacter(char c) {
+		FontSurface::writeCharacter(c, _innerBounds);
+	}
 };
 
 } // End of namespace Xeen
