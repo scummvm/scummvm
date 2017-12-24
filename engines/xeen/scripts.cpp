@@ -1434,7 +1434,7 @@ void Scripts::doEnding(const Common::String &endStr) {
 		}
 	}
 
-	error("TODO: doEnding");
+	error("TODO: doEnding state:%d", state);
 }
 
 bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
