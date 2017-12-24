@@ -1636,7 +1636,7 @@ void Map::getNewMaze() {
 
 	// Get the correct map to use from the cached list
 	_mazeDataIndex = 0;
-	while (_mazeData[_mazeDataIndex]._mazeId == mapId)
+	while (_mazeData[_mazeDataIndex]._mazeId != mapId)
 		++_mazeDataIndex;
 
 	// Adjust Y and X to be in the 0-15 range, and on the correct surrounding
