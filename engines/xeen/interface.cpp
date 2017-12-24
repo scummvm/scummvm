@@ -1898,6 +1898,7 @@ void Interface::spellFX(Character *c) {
 
 	drawParty(true);
 	_tillMove = tillMove;
+	++_charFX[charIndex];
 }
 
 void Interface::obscureScene(Obscurity obscurity) {

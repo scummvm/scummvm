@@ -593,6 +593,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	int mode1, mode2, mode3, param2;
 	uint32 val1, val2, val3;
 
+	_refreshIcons = true;
 	mode1 = params.readByte();
 	switch (mode1) {
 	case 16:
@@ -876,6 +877,7 @@ bool Scripts::cmdGiveExtended(ParamsIterator &params) {
 	int newLineNum;
 	bool result;
 
+	_refreshIcons = true;
 	int mode = params.readByte();
 	switch (mode) {
 	case 16:
