@@ -53,6 +53,20 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
+	
+	// BladeRunner (Russian)
+	{
+		"bladerunner",
+		0,
+		{
+			{"STARTUP.MIX", 0, "c198b54a5366b88b1734bbca21d3b192", 2678672},
+			AD_LISTEND
+		},
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
 	AD_TABLE_END_MARKER
 };
 
