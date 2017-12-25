@@ -1061,12 +1061,14 @@ const Feature s_features[] = {
 };
 
 const Tool s_tools[] = {
+	{ "create_cryo",         true},
 	{ "create_drascula",     true},
 	{ "create_hugo",         true},
 	{ "create_kyradat",      true},
 	{ "create_lure",         true},
 	{ "create_neverhood",    true},
 	{ "create_teenagent",    true},
+	{ "create_titanic",      true},
 	{ "create_tony",         true},
 	{ "create_toon",         true},
 	{ "create_translations", true},
