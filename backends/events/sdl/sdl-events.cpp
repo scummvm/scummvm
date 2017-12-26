@@ -30,17 +30,8 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
-#ifdef JOY_ANALOG
-#include "math.h"
-#endif
-
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
-#define JOY_DEADZONE 3200
-
-#ifndef __SYMBIAN32__ // Symbian wants dialog joystick i.e cursor for movement/selection
-	#define JOY_ANALOG
-#endif
 
 // #define JOY_INVERT_Y
 #define JOY_XAXIS 0
@@ -77,7 +68,7 @@ static uint32 convUTF8ToUTF32(const char *src) {
 SdlEventSource::SdlEventSource()
     : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-      , _queuedFakeKeyUp(false), _fakeKeyUp()
+      , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr)
 #endif
       {
 	// Reset mouse state
@@ -90,25 +81,18 @@ SdlEventSource::SdlEventSource()
 			error("Could not initialize SDL: %s", SDL_GetError());
 		}
 
-		// Enable joystick
-		if (SDL_NumJoysticks() > joystick_num) {
-			_joystick = SDL_JoystickOpen(joystick_num);
-			debug("Using joystick: %s",
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-			      SDL_JoystickName(_joystick)
-#else
-			      SDL_JoystickName(joystick_num)
-#endif
-			     );
-		} else {
-			warning("Invalid joystick: %d", joystick_num);
+		if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) == -1) {
+			error("Could not initialize SDL: %s", SDL_GetError());
 		}
+#endif
+
+		openJoystick(joystick_num);
 	}
 }
 
 SdlEventSource::~SdlEventSource() {
-	if (_joystick)
-		SDL_JoystickClose(_joystick);
+	closeJoystick();
 }
 
 int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
@@ -541,12 +525,6 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleMouseButtonDown(ev, event);
 	case SDL_MOUSEBUTTONUP:
 		return handleMouseButtonUp(ev, event);
-	case SDL_JOYBUTTONDOWN:
-		return handleJoyButtonDown(ev, event);
-	case SDL_JOYBUTTONUP:
-		return handleJoyButtonUp(ev, event);
-	case SDL_JOYAXISMOTION:
-		return handleJoyAxisMotion(ev, event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
@@ -614,6 +592,12 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		default:
 			return false;
 		}
+
+	case SDL_JOYDEVICEADDED:
+		return handleJoystickAdded(ev.jdevice);
+
+	case SDL_JOYDEVICEREMOVED:
+		return handleJoystickRemoved(ev.jdevice);
 #else
 	case SDL_VIDEOEXPOSE:
 		if (_graphicsManager)
@@ -629,6 +613,30 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return true;
 
 	}
+
+	if (_joystick) {
+		switch (ev.type) {
+		case SDL_JOYBUTTONDOWN:
+			return handleJoyButtonDown(ev, event);
+		case SDL_JOYBUTTONUP:
+			return handleJoyButtonUp(ev, event);
+		case SDL_JOYAXISMOTION:
+			return handleJoyAxisMotion(ev, event);
+		}
+	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_controller) {
+		switch (ev.type) {
+		case SDL_CONTROLLERBUTTONDOWN:
+			return handleControllerButton(ev, event, false);
+		case SDL_CONTROLLERBUTTONUP:
+			return handleControllerButton(ev, event, true);
+		case SDL_CONTROLLERAXISMOTION:
+			return handleControllerAxisMotion(ev, event);
+		}
+	}
+#endif
 
 	return false;
 }
@@ -804,6 +812,44 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
+void SdlEventSource::openJoystick(int joystickIndex) {
+	assert(!_joystick && !_controller);
+
+	if (SDL_NumJoysticks() > joystickIndex) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (SDL_IsGameController(joystickIndex)) {
+			_controller = SDL_GameControllerOpen(joystickIndex);
+			debug("Using game controller: %s", SDL_GameControllerName(_controller));
+		} else
+#endif
+		{
+			_joystick = SDL_JoystickOpen(joystickIndex);
+			debug("Using joystick: %s",
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+                  SDL_JoystickName(_joystick)
+#else
+                  SDL_JoystickName(joystickIndex)
+#endif
+			);
+		}
+	} else {
+		warning("Invalid joystick: %d", joystickIndex);
+	}
+}
+
+void SdlEventSource::closeJoystick() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_controller) {
+		SDL_GameControllerClose(_controller);
+		_controller = nullptr;
+	}
+#endif
+	if (_joystick) {
+		SDL_JoystickClose(_joystick);
+		_joystick = nullptr;
+	}
+}
+
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
@@ -867,71 +913,176 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 }
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+	if (ev.jaxis.axis == JOY_XAXIS) {
+		_km.joy_x = ev.jaxis.value;
+		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+	} else if (ev.jaxis.axis == JOY_YAXIS) {
+		_km.joy_y = ev.jaxis.value;
+		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+	}
 
-	int axis = ev.jaxis.value;
-#ifdef JOY_ANALOG
+	return false;
+}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+bool SdlEventSource::handleJoystickAdded(const SDL_JoyDeviceEvent &device) {
+	int joystick_num = ConfMan.getInt("joystick_num");
+	if (joystick_num == device.which) {
+		closeJoystick();
+		openJoystick(joystick_num);
+	}
+
+	return false;
+}
+
+bool SdlEventSource::handleJoystickRemoved(const SDL_JoyDeviceEvent &device) {
+	SDL_Joystick *joystick;
+	if (_controller) {
+		joystick = SDL_GameControllerGetJoystick(_controller);
+	} else {
+		joystick = _joystick;
+	}
+
+	if (!joystick) {
+		return false;
+	}
+
+	if (SDL_JoystickInstanceID(joystick) == device.which) {
+		closeJoystick();
+	}
+
+	return false;
+}
+
+bool SdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) {
+	using namespace Common;
+
+	struct ControllerEventMapping {
+		EventType normalType;
+		KeyState normalKeystate;
+		EventType modifierType;
+		KeyState modifierKeystate;
+	};
+
+	static const ControllerEventMapping mapping[] = {
+			// SDL_CONTROLLER_BUTTON_A: Left mouse button
+			{ EVENT_LBUTTONDOWN, KeyState(), EVENT_LBUTTONDOWN, KeyState() },
+			// SDL_CONTROLLER_BUTTON_B: Right mouse button
+			{ EVENT_RBUTTONDOWN, KeyState(), EVENT_RBUTTONDOWN, KeyState() },
+			// SDL_CONTROLLER_BUTTON_X: Period (+R_trigger: Space)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_PERIOD, '.'), EVENT_KEYDOWN, KeyState(KEYCODE_SPACE, ASCII_SPACE) },
+			// SDL_CONTROLLER_BUTTON_Y: Escape (+R_trigger: Return)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE), EVENT_KEYDOWN, KeyState(KEYCODE_RETURN, ASCII_RETURN) },
+			// SDL_CONTROLLER_BUTTON_BACK: Virtual keyboard (+R_trigger: Predictive Input Dialog)
+#ifdef ENABLE_VKEYBD
+			{ EVENT_VIRTUAL_KEYBOARD, KeyState(), EVENT_PREDICTIVE_DIALOG, KeyState() },
+#else
+			{ EVENT_INVALID, KeyState(), EVENT_PREDICTIVE_DIALOG, KeyState() },
+#endif
+			// SDL_CONTROLLER_BUTTON_GUIDE: Unmapped
+			{ EVENT_INVALID, KeyState(), EVENT_INVALID, KeyState() },
+			// SDL_CONTROLLER_BUTTON_START: ScummVM in game menu
+			{ EVENT_MAINMENU, KeyState(), EVENT_MAINMENU, KeyState() },
+			// SDL_CONTROLLER_BUTTON_LEFTSTICK: Unmapped
+			{ EVENT_INVALID, KeyState(), EVENT_INVALID, KeyState() },
+			// SDL_CONTROLLER_BUTTON_RIGHTSTICK: Unmapped
+			{ EVENT_INVALID, KeyState(), EVENT_INVALID, KeyState() },
+			// SDL_CONTROLLER_BUTTON_LEFTSHOULDER: Game menu
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_F5, ASCII_F5), EVENT_KEYDOWN, KeyState(KEYCODE_F5, ASCII_F5) },
+			// SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: Modifier + Shift
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_INVALID, 0, KBD_SHIFT), EVENT_KEYDOWN, KeyState(KEYCODE_INVALID, 0, 0) },
+			// SDL_CONTROLLER_BUTTON_DPAD_UP: Up (+R_trigger: Up+Right)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP8, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP9, 0) },
+			// SDL_CONTROLLER_BUTTON_DPAD_DOWN: Down (+R_trigger: Down+Left)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP2, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP1, 0) },
+			// SDL_CONTROLLER_BUTTON_DPAD_LEFT: Left (+R_trigger: Up+Left)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP4, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP7, 0) },
+			// SDL_CONTROLLER_BUTTON_DPAD_RIGHT: Right (+R_trigger: Down+Right)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP6, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP3, 0) }
+	};
+
+	if (ev.cbutton.button > SDL_CONTROLLER_BUTTON_DPAD_RIGHT) {
+		warning("Unknown SDL controller button: '%d'", ev.cbutton.button);
+		return false;
+	}
+
+	if (!_km.modifier) {
+		event.type = mapping[ev.cbutton.button].normalType;
+		event.kbd = mapping[ev.cbutton.button].normalKeystate;
+	} else {
+		event.type = mapping[ev.cbutton.button].modifierType;
+		event.kbd = mapping[ev.cbutton.button].modifierKeystate;
+	}
+
+	// Setting the mouse speed modifier after filling the event structure above
+	// ensures that the shift key events are correctly handled
+	if (ev.cbutton.button == SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) {
+		// Right shoulder is the modifier button that makes the mouse go slower
+		// and allows access to an extended layout while pressed.
+		_km.modifier = !buttonUp;
+	}
+
+	if (event.type == EVENT_LBUTTONDOWN || event.type == EVENT_RBUTTONDOWN) {
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+	}
+
+	if (buttonUp) {
+		// The event mapping table is for button down events. If we received a button up event,
+		// transform the event type to the corresponding up type.
+		if (event.type == EVENT_KEYDOWN) {
+			event.type = EVENT_KEYUP;
+		} else if (event.type == EVENT_LBUTTONDOWN) {
+			event.type = EVENT_LBUTTONUP;
+		} else if (event.type == EVENT_RBUTTONDOWN) {
+			event.type = EVENT_RBUTTONUP;
+		} else {
+			// Handled in key down
+			event.type = EVENT_INVALID;
+		}
+	}
+
+	return event.type != EVENT_INVALID;
+}
+
+bool SdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) {
+	if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
+		_km.joy_x = ev.caxis.value;
+		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+	} else if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
+		_km.joy_y = ev.caxis.value;
+		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+	}
+
+	return false;
+}
+#endif
+
+bool SdlEventSource::handleAxisToMouseMotion(int16 xAxis, int16 yAxis) {
+#ifdef JOY_INVERT_Y
+	yAxis = -yAxis;
+#endif
+
 	// conversion factor between keyboard mouse and joy axis value
 	int vel_to_axis = (1500 / MULTIPLIER);
-#else
-	if (axis > JOY_DEADZONE) {
-		axis -= JOY_DEADZONE;
-	} else if (axis < -JOY_DEADZONE) {
-		axis += JOY_DEADZONE;
-	} else
-		axis = 0;
-#endif
 
-	if (ev.jaxis.axis == JOY_XAXIS) {
-#ifdef JOY_ANALOG
-		_km.joy_x = axis;
-#else
-		if (axis != 0) {
-			_km.x_vel = (axis > 0) ? 1 * MULTIPLIER:-1 * MULTIPLIER;
-			_km.x_down_count = 1;
-		} else {
-			_km.x_vel = 0;
-			_km.x_down_count = 0;
-		}
-#endif
-	} else if (ev.jaxis.axis == JOY_YAXIS) {
-#ifndef JOY_INVERT_Y
-		axis = -axis;
-#endif
-#ifdef JOY_ANALOG
-		_km.joy_y = -axis;
-#else
-		if (axis != 0) {
-			_km.y_vel = (-axis > 0) ? 1 * MULTIPLIER: -1 * MULTIPLIER;
-			_km.y_down_count = 1;
-		} else {
-			_km.y_vel = 0;
-			_km.y_down_count = 0;
-		}
-#endif
-	}
-#ifdef JOY_ANALOG
-	// radial and scaled analog joystick deadzone
-	float analogX = (float)_km.joy_x;
-	float analogY = (float)_km.joy_y;
-	float deadZone = (float)JOY_DEADZONE;
-	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone))
-		deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
-	float scalingFactor = 1.0f;
-	float magnitude = 0.0f;
+	// radial and scaled deadzone
 
-	magnitude = sqrt(analogX * analogX + analogY * analogY);
+	float analogX = (float)xAxis;
+	float analogY = (float)yAxis;
+	float deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
+
+	float magnitude = sqrt(analogX * analogX + analogY * analogY);
 
 	if (magnitude >= deadZone) {
 		_km.x_down_count = 0;
 		_km.y_down_count = 0;
-		scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
+		float scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
 		_km.x_vel = (int16)(analogX * scalingFactor * 32768.0f / vel_to_axis);
 		_km.y_vel = (int16)(analogY * scalingFactor * 32768.0f / vel_to_axis);
 	} else {
 		_km.x_vel = 0;
 		_km.y_vel = 0;
 	}
-#endif
 
 	return false;
 }
