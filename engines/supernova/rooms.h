@@ -1223,7 +1223,7 @@ public:
 
 		_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,9,BCORRIDOR,9);
 		_objectState[1] = Object(_id, kStringComputer,kStringDefaultDescription,COMPUTER,COMBINABLE,4,4,0);
-		_objectState[2] = Object(_id, kStringMoney,kStringMoneyDescription1,TICKETS,TAKE,255,255,0);
+		_objectState[2] = Object(_id, kStringMoney,kStringMoneyDescription1,MONEY,TAKE,255,255,0);
 		_objectState[3] = Object(_id, kStringLocker,kStringLockerDescription,LOCKER,OPENABLE|CLOSED,5,5,0);
 		_objectState[4] = Object(_id, kStringLetter,kStringDefaultDescription,LETTER,UNNECESSARY,3,3,0);
 	}
@@ -1310,7 +1310,7 @@ public:
 		_objectState[0] = Object(_id, kStringDoor,kStringDefaultDescription,DOOR,EXIT|OPENABLE|OPENED,6,6,17,GUARD3,9);
 		_objectState[1] = Object(_id, kStringComputer,kStringComputerDescription,COMPUTER,COMBINABLE,4,4,0);
 		_objectState[2] = Object(_id, kStringGraffiti,kStringGraffitiDescription,NULLOBJECT,NULLTYPE,7,7,0);
-		_objectState[3] = Object(_id, kStringMoney,kStringMoneyDescription2,TICKETS,TAKE,8,8,0);
+		_objectState[3] = Object(_id, kStringMoney,kStringMoneyDescription2,MONEY,TAKE,8,8,0);
 	}
 
 	virtual void onEntrance();
