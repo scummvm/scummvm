@@ -2921,7 +2921,7 @@ bool AxacussOffice1::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(8, false);
 		getObject(2)->_click = 255;
 		_vm->playSound(kAudioDoorClose);
-	} else if ((verb == ACTION_TAKE) && (obj1._id == TICKETS)) {
+	} else if ((verb == ACTION_TAKE) && (obj1._id == MONEY)) {
 		_vm->renderImage(6);
 		setSectionVisible(8, false);
 		getObject(2)->_click = 255;
@@ -3042,7 +3042,7 @@ bool AxacussOffice5::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_USE) && Object::combine(obj1, obj2, COMPUTER, MAGNET)) {
 		_vm->renderImage(4);
 		_vm->playSound(kAudioSmash);
-	} else if ((verb == ACTION_TAKE) && (obj1._id == TICKETS)) {
+	} else if ((verb == ACTION_TAKE) && (obj1._id == MONEY)) {
 		_vm->renderImage(_gm->invertSection(5));
 		obj1._click = 255;
 		_gm->takeMoney(350);
