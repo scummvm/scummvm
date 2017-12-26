@@ -36,33 +36,29 @@
  * This pauses execution and keeps redrawing the screen until the XMB is closed.
  */
 void PS3SdlEventSource::preprocessEvents(SDL_Event *event) {
-	if (event->type == SDL_WINDOWEVENT) {
-		if (event->window.event == SDL_WINDOWEVENT_LEAVE) {
-			// XMB opened
-			if (g_engine)
-				g_engine->pauseEngine(true);
+	if (event->type == SDL_APP_DIDENTERBACKGROUND) {
+		// XMB opened
+		if (g_engine)
+			g_engine->pauseEngine(true);
 
-			for (;;) {
-				if (!SDL_PollEvent(event)) {
-					// Locking the screen forces a full redraw
-					Graphics::Surface* screen = g_system->lockScreen();
-					if (screen) {
-						g_system->unlockScreen();
-						g_system->updateScreen();
-					}
-					SDL_Delay(10);
-					continue;
+		for (;;) {
+			if (!SDL_PollEvent(event)) {
+				// Locking the screen forces a full redraw
+				Graphics::Surface* screen = g_system->lockScreen();
+				if (screen) {
+					g_system->unlockScreen();
+					g_system->updateScreen();
 				}
-				if (event->type == SDL_QUIT)
-					return;
-				if (event->type != SDL_WINDOWEVENT)
-					continue;
-				if (event->window.event == SDL_WINDOWEVENT_ENTER) {
-					// XMB closed
-					if (g_engine)
-						g_engine->pauseEngine(false);
-					return;
-				}
+				SDL_Delay(10);
+				continue;
+			}
+			if (event->type == SDL_QUIT)
+				return;
+			if (event->type == SDL_APP_DIDENTERFOREGROUND) {
+				// XMB closed
+				if (g_engine)
+					g_engine->pauseEngine(false);
+				return;
 			}
 		}
 	}
