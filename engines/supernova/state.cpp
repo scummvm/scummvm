@@ -100,6 +100,7 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_state._greatFlag = in->readUint16LE();
 	_state._timeRobot = in->readSint16LE();
 	_state._money = in->readSint16LE();
+	_vm->setGameString(kStringInventoryMoney, Common::String::format("%d Xa", _state._money));
 	_state._coins = in->readByte();
 	_state._shoes = in->readByte();
 	if (version >= 6)
@@ -1452,7 +1453,6 @@ void GameManager::takeObject(Object &obj) {
 
 	if (obj._section != 0)
 		_vm->renderImage(obj._section);
-	obj.setProperty(CARRIED);
 	obj._click = obj._click2 = 255;
 	_inventory.add(obj);
 	if (_inventory.getSize() > _inventoryScroll + 8) {
@@ -1482,6 +1482,7 @@ void GameManager::drawInventory() {
 		               _guiInventory[i].width(),
 		               _guiInventory[i].height(),
 		               _guiInventory[i]._bgColor);
+
 		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name,
 		                _guiInventory[i]._textPosition.x,
 		                _guiInventory[i]._textPosition.y,
@@ -1803,20 +1804,17 @@ void GameManager::shot(int a, int b) {
 }
 
 void GameManager::takeMoney(int amount) {
+	Object *moneyObject = _rooms[INTRO]->getObject(4);
 	_state._money += amount;
-	if (amount > 0)
-		great(0);
-	// TODO: kmaxobject - 1?
-//	_rooms[OFFICE_R1]->getObject(5)->_name = _rooms[OFFICE_R1]->getObject(kMaxObject - 1);
-//	_rooms[OFFICE_R1]->object[5].name = &(_rooms[OFFICE_R1]->object[MAX_OBJECT-1]);
-//	strcpy(_rooms[OFFICE_R1]->object[5].name,ltoa((long)_state.money));
-//	strcat(_rooms[OFFICE_R1]->object[5].name," Xa");
+	_vm->setGameString(kStringInventoryMoney, Common::String::format("%d Xa", _state._money));
 
-	if (_state._money) {
-		if (!_rooms[OFFICE_R1]->getObject(5)->hasProperty(CARRIED))
-			takeObject(*_rooms[OFFICE_R1]->getObject(5));
-	} else
-		_inventory.remove(*_rooms[OFFICE_R1]->getObject(5));
+	if (_state._money > 0) {
+		takeObject(*moneyObject);
+		if (amount > 0)
+			great(0);
+	} else {
+		_inventory.remove(*moneyObject);
+	}
 }
 
 void GameManager::drawStatus() {

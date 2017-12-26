@@ -552,7 +552,10 @@ enum StringID {
 	kStringTelomat18, kStringTelomat19, kStringTelomat20, kStringTelomat21, kStringAlarm,
 
 	// Add two placeholder strings at the end for variable text
-	kStringPlaceholder1, kStringPlaceholder2
+	kStringPlaceholder1, kStringPlaceholder2,
+
+	// String for money in inventory
+	kStringInventoryMoney
 };
 
 static StringID guiCommands[] = {

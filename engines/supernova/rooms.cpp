@@ -116,6 +116,9 @@ Intro::Intro(SupernovaEngine *vm, GameManager *gm) {
 	_objectState[3] =
 	Object(_id, kStringDiscman, kStringDiscmanDescription, DISCMAN,
 		   TAKE | COMBINABLE, 255, 255, 0, NULLROOM, 0);
+	_objectState[4] =
+	Object(_id, kStringInventoryMoney, kStringDefaultDescription, MONEY,
+	       TAKE | COMBINABLE, 255, 255, 0);
 
 	_shouldExit = false;
 
