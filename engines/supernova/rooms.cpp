@@ -509,7 +509,7 @@ void Intro::leaveCutscene() {
 bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == BUTTON)) {
 		if (_objectState[6].hasProperty(OPENED)) {
-			_vm->playSound(kAudioDoorSound);
+			_vm->playSound(kAudioSlideDoor);
 			_objectState[6].disableProperty(OPENED);
 			_vm->renderImage(8);
 			setSectionVisible(9, false);
@@ -519,7 +519,7 @@ bool ShipCorridor::interact(Action verb, Object &obj1, Object &obj2) {
 			_gm->wait2(2);
 			_vm->renderImage(_gm->invertSection(7));
 		} else {
-			_vm->playSound(kAudioDoorSound);
+			_vm->playSound(kAudioSlideDoor);
 			_objectState[6].setProperty(OPENED);
 			_vm->renderImage(7);
 			_gm->wait2(2);
@@ -1014,7 +1014,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_PRESS) && (obj1._id == BUTTON1)) {
 		if (!getObject(1)->hasProperty(OPENED)) {
 			_vm->renderImage(10);
-			_vm->playSound(kAudioDoorSound);
+			_vm->playSound(kAudioSlideDoor);
 			if (getObject(0)->hasProperty(OPENED)) {
 				getObject(0)->disableProperty(OPENED);
 				_vm->renderImage(1);
@@ -1040,7 +1040,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!getObject(0)->hasProperty(OPENED)) {
 			_vm->renderImage(11);
 			if (getObject(1)->hasProperty(OPENED)) {
-				_vm->playSound(kAudioDoorSound);
+				_vm->playSound(kAudioSlideDoor);
 				getObject(1)->disableProperty(OPENED);
 				_vm->renderImage(4);
 				_gm->wait2(2);
@@ -1083,7 +1083,7 @@ bool ShipAirlock::interact(Action verb, Object &obj1, Object &obj2) {
 				_gm->wait2(3);
 				_vm->renderImage(17);
 				setSectionVisible(16, false);
-				_vm->playSound(kAudioDoorSound);
+				_vm->playSound(kAudioSlideDoor);
 				_vm->renderImage(5);
 				setSectionVisible(6, false);
 				_gm->wait2(2);
@@ -1276,7 +1276,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 	if ((verb == ACTION_OPEN) && (obj1._id == OUTERHATCH)) {
 		if (obj1.hasProperty(OPENED))
 			return false;
-		_vm->playSound(kAudioDoorSound);
+		_vm->playSound(kAudioSlideDoor);
 		_vm->renderImage(1);
 		if (isSectionVisible(7))
 			_vm->renderImage(10);
@@ -1292,7 +1292,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		if (isSectionVisible(11) || isSectionVisible(12))
 			_vm->renderMessage(kStringShipHold7);
 		else {
-			_vm->playSound(kAudioDoorSound);
+			_vm->playSound(kAudioSlideDoor);
 			_vm->renderImage(_gm->invertSection(1));
 			setSectionVisible(10, false);
 			if (isSectionVisible(13))
@@ -1331,7 +1331,7 @@ bool ShipGenerator::interact(Action verb, Object &obj1, Object &obj2) {
 		else
 			_vm->renderImage(4);
 	} else if ((verb == ACTION_OPEN) && (obj1._id == TRAP)) {
-		_vm->playSound(kAudioDoorSound);
+		_vm->playSound(kAudioSlideDoor);
 		_vm->renderImage(2);
 		if (getObject(11)->_click == 11)
 			_vm->renderImage(3);
@@ -1513,7 +1513,7 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 void ArsanoEntrance::animation() {
 	if (!_vm->_messageDisplayed && isSectionVisible(kMaxSection - 5)) {
 		_gm->animationOff(); // to avoid recursive call
-		_vm->playSound(kAudioDoorSound);
+		_vm->playSound(kAudioSlideDoor);
 		_vm->renderImage(8);
 		setSectionVisible(9, false);
 		_gm->wait2(2);
@@ -1645,7 +1645,7 @@ bool ArsanoEntrance::interact(Action verb, Object &obj1, Object &obj2) {
 			}
 		}
 	} else if ((verb == ACTION_PRESS) && (obj1._id == BATHROOM_BUTTON)) {
-		_vm->playSound(kAudioDoorSound);
+		_vm->playSound(kAudioSlideDoor);
 		_vm->renderImage(5);
 		_gm->wait2(2);
 		_vm->renderImage(6);
@@ -3068,7 +3068,7 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 		if (!isSectionVisible(3)) {
 			_vm->renderImage(1);
 			getObject(2)->resetProperty();
-			_vm->playSound(kAudioDoorSound);
+			_vm->playSound(kAudioSlideDoor);
 			_gm->wait2(25);
 			for (int i = 3; i <= 7; i++) {
 				_gm->wait2(2);
@@ -3087,13 +3087,13 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 			_vm->renderImage(2);
 			getObject(3)->resetProperty();
 			getObject(3)->_click = 255;
-			_vm->playSound(kAudioDoorSound);
+			_vm->playSound(kAudioSlideDoor);
 			for (int i = 7; i >= 3; i--) {
 				_gm->wait2(2);
 				_vm->renderImage(_gm->invertSection(i));
 			}
 			_gm->wait2(25);
-			_vm->playSound(kAudioDoorSound);
+			_vm->playSound(kAudioSlideDoor);
 			getObject(2)->resetProperty(EXIT);
 			_vm->renderImage(_gm->invertSection(2));
 		}

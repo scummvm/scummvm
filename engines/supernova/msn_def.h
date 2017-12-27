@@ -68,7 +68,7 @@ enum AudioIndex {
 	kAudioDeath,                // 53|0
 	kAudioAlarm,                // 54|0
 	kAudioSuccess,              // 54|8010
-	kAudioDoorSound,            // 54|24020
+	kAudioSlideDoor,            // 54|24020
 	kAudioDoorOpen,             // 54|30030
 	kAudioDoorClose,            // 54|31040
 	kAudioNumSamples

@@ -1273,8 +1273,8 @@ void GameManager::searchStartEvent() {
 
 void GameManager::outro() {
 //	title = 2;
-	_vm->playSoundMod(49);
 //	title = 0;
+	_vm->playSoundMod(kMusicOutro);
 	_vm->paletteFadeOut();
 	_vm->setCurrentImage(55);
 	_vm->renderImage(0);
