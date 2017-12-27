@@ -106,6 +106,7 @@ public:
 	enum GraphicsModeID {			///> Possible output formats onscreen
 		ORIGINAL_RESOLUTION,
 		KEEP_ASPECT_RATIO,
+		ASPECT_RATIO_CORRECTION,
 		STRETCHED_FULL_SCREEN
 	};
 	DisplayManager() : _screen(0), _cursor(0), _overlay(0), _keyboard(0),
@@ -118,7 +119,7 @@ public:
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const { return _graphicsMode; }
-	uint32 getDefaultGraphicsMode() const { return STRETCHED_FULL_SCREEN; }
+	uint32 getDefaultGraphicsMode() const { return KEEP_ASPECT_RATIO; }
 	const OSystem::GraphicsMode* getSupportedGraphicsModes() const { return _supportedModes; }
 
 	// Setters for pointers
