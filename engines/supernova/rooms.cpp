@@ -457,15 +457,15 @@ void Intro::cutscene() {
 	_vm->_brightness = 0;
 	_vm->paletteBrightness();
 	exitOnEscape(10);
-	_vm->playSound(kAudioUndef6);
+	_vm->playSound(kAudioSnoring);
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		;
 	exitOnEscape(10);
-	_vm->playSound(kAudioUndef6);
+	_vm->playSound(kAudioSnoring);
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		;
 	exitOnEscape(10);
-	_vm->playSound(kAudioUndef6);
+	_vm->playSound(kAudioSnoring);
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		;
 	exitOnEscape(30);
@@ -1446,7 +1446,7 @@ void ArsanoMeetup::onEntrance() {
 		_vm->renderImage(_gm->invertSection(6));
 	}
 	if (!(_gm->_state._greatFlag & 0x8000)) {
-		_vm->playSound(kAudioGreat);
+		_vm->playSound(kAudioFoundLocation);
 		_gm->_state._greatFlag |= 0x8000;
 	}
 }
@@ -2396,7 +2396,7 @@ void AxacussCell::animation() {
 		_vm->renderImage(30);
 		getObject(8)->_click = 12;
 		getObject(7)->_click = 14;
-		_vm->playSound(kAudioUndef4);
+		_vm->playSound(kAudioRobotBreaks);
 	} else if (_gm->_state._timeRobot == 10010)
 		--_gm->_state._timeRobot;
 
@@ -2410,7 +2410,7 @@ void AxacussCell::animation() {
 
 	if ((isSectionVisible(6)) &&
 	    ((_gm->_state._timeRobot == 310) || (_gm->_state._timeRobot == 610))) {
-		_vm->playSound(kAudioUndef3);
+		_vm->playSound(kAudioRobotShock);
 		_gm->_state._timeRobot = 10000;
 	}
 
@@ -3078,7 +3078,7 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 			getObject(3)->_click = 2;
 			_vm->renderImage(_gm->invertSection(1));
 			if (!(_gm->_state._greatFlag & 0x4000)) {
-				_vm->playSound(kAudioGreat);
+				_vm->playSound(kAudioFoundLocation);
 				_gm->_state._greatFlag |= 0x4000;
 			}
 		}

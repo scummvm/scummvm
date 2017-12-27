@@ -1289,7 +1289,7 @@ void GameManager::great(uint number) {
 	if (number && (_state._greatFlag & (1 << number)))
 		return;
 
-	_vm->playSound(kAudioUndef7);
+	_vm->playSound(kAudioSuccess);
 	_state._greatFlag |= 1 << number;
 }
 
