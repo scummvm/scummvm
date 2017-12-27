@@ -51,23 +51,23 @@ enum MessagePosition {
 };
 
 enum AudioIndex {
-	kAudioGreat,                // 44|0
+	kAudioFoundLocation,        // 44|0
 	kAudioCrash,                // 45|0
 	kAudioVoiceHalt,            // 46|0
 	kAudioGunShot,              // 46|2510
 	kAudioSmash,                // 46|4020
 	kAudioVoiceSupernova,       // 47|0
 	kAudioVoiceYeah,            // 47|24010
-	kAudioUndef3,               // 48|0
-	kAudioUndef4,               // 48|2510
+	kAudioRobotShock,           // 48|0
+	kAudioRobotBreaks,          // 48|2510
 	kAudioShock,                // 48|10520
 	kAudioTurntable,            // 48|13530
 	kAudioSiren,                // 50|0
-	kAudioUndef6,               // 50|12786
+	kAudioSnoring,              // 50|12786
 	kAudioRocks,                // 51|0
 	kAudioDeath,                // 53|0
 	kAudioAlarm,                // 54|0
-	kAudioUndef7,               // 54|8010
+	kAudioSuccess,              // 54|8010
 	kAudioDoorSound,            // 54|24020
 	kAudioDoorOpen,             // 54|30030
 	kAudioDoorClose,            // 54|31040
