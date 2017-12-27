@@ -3135,7 +3135,7 @@ bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->wait2(18);
 		_vm->renderImage(_gm->invertSection(1));
 		for (int i = 2; i <= 7; i++) {
-			_vm->renderImage(_gm->invertSection(i));
+			_vm->renderImage(i);
 			_gm->wait2(3);
 			_vm->renderImage(_gm->invertSection(i));
 		}
