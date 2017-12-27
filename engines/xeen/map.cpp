@@ -659,6 +659,12 @@ bool MobStruct::synchronize(XeenSerializer &s) {
 	return _id != 0xff || _pos.x != -1 || _pos.y != -1;
 }
 
+void MobStruct::endOfList() {
+	_pos.x = _pos.y = -1;
+	_id = 0xff;
+	_direction = (Direction)-1;
+}
+
 /*------------------------------------------------------------------------*/
 
 MazeObject::MazeObject() {
@@ -754,8 +760,7 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			mobStruct._direction = _objects[i]._direction;
 			mobStruct.synchronize(s);
 		}
-		mobStruct._pos.x = mobStruct._pos.y = -1;
-		mobStruct._id = 0xff;
+		mobStruct.endOfList();
 		mobStruct.synchronize(s);
 
 		// Save monsters
@@ -765,13 +770,13 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			mobStruct._direction = DIR_NORTH;
 			mobStruct.synchronize(s);
 		}
-		mobStruct._pos.x = mobStruct._pos.y = -1;
-		mobStruct._id = 0xff;
+		mobStruct.endOfList();
 		mobStruct.synchronize(s);
 
 		// Save wall items
 		if (_wallItems.size() == 0) {
 			MobStruct nullStruct;
+			nullStruct._pos.x = nullStruct._pos.y = 0x80;
 			nullStruct.synchronize(s);
 		} else {
 			for (uint i = 0; i < _wallItems.size(); ++i) {
@@ -781,8 +786,7 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 				mobStruct.synchronize(s);
 			}
 		}
-		mobStruct._pos.x = mobStruct._pos.y = -1;
-		mobStruct._id = 0xff;
+		mobStruct.endOfList();
 		mobStruct.synchronize(s);
 
 	} else {
@@ -1421,16 +1425,6 @@ void Map::saveEvents() {
 	fEvents.finalize();
 }
 
-void Map::saveMonsters() {
-	int mapId = _mazeData[0]._mazeId;
-	Common::String filename = Common::String::format("maze%c%03d.mob",
-		(mapId >= 100) ? 'x' : '0', mapId);
-	OutFile fMob(filename);
-	XeenSerializer sMob(nullptr, &fMob);
-	_mobData.synchronize(sMob, _monsterData);
-	fMob.finalize();
-}
-
 void Map::saveMap() {
 	FileManager &files = *g_vm->_files;
 	Party &party = *g_vm->_party;
@@ -1446,13 +1440,12 @@ void Map::saveMap() {
 	datFile.finalize();
 
 	if (!files._isDarkCc && mapId == 15) {
-		MazeMonster &mon0 = _mobData._monsters[0];
-		MazeMonster &mon1 = _mobData._monsters[1];
-		MazeMonster &mon2 = _mobData._monsters[2];
-		if ((mon0._position.x > 31 || mon0._position.y > 31) ||
-				(mon1._position.x > 31 || mon1._position.y > 31) ||
-				(mon2._position.x > 31 || mon2._position.y > 31)) {
-			party._gameFlags[0][56] = true;
+		for (uint idx = 0; idx < MIN(_mobData._monsters.size(), (uint)3); ++idx) {
+			MazeMonster &mon = _mobData._monsters[idx];
+			if (mon._position.x > 31 || mon._position.y > 31) {
+				party._gameFlags[0][56] = true;
+				break;
+			}
 		}
 	}
 
@@ -1470,6 +1463,16 @@ void Map::saveMap() {
 			datFile2.finalize();
 		}
 	}
+}
+
+void Map::saveMonsters() {
+	int mapId = _mazeData[0]._mazeId;
+	Common::String filename = Common::String::format("maze%c%03d.mob",
+		(mapId >= 100) ? 'x' : '0', mapId);
+	OutFile fMob(filename);
+	XeenSerializer sMob(nullptr, &fMob);
+	_mobData.synchronize(sMob, _monsterData);
+	fMob.finalize();
 }
 
 void Map::saveMaze() {

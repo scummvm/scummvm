@@ -233,7 +233,15 @@ public:
 public:
 	MobStruct();
 
+	/**
+	 * Synchronizes the data for the item
+	 */
 	bool synchronize(XeenSerializer &s);
+
+	/**
+	 * Sets up the entry as an end of list marker
+	 */
+	void endOfList();
 };
 
 struct MazeObject {

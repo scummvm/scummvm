@@ -151,7 +151,7 @@ bool Debugger::cmdMap(int argc, const char **argv) {
 		return true;
 	} else {
 		int mapId = strToInt(argv[1]);
-		bool side = argc < 3 ? g_vm->_files->_isDarkCc : strToInt(argv[2]) != 0;
+		bool side = argc < 3 ? files._isDarkCc : strToInt(argv[2]) != 0;
 		int x = argc < 4 ? 8 : strToInt(argv[3]);
 		int y = argc < 5 ? 8 : strToInt(argv[4]);
 
@@ -174,7 +174,7 @@ bool Debugger::cmdPos(int argc, const char **argv) {
 		party._mazePosition.x = strToInt(argv[1]);
 		party._mazePosition.y = strToInt(argv[2]);
 		party._stepped = true;
-		return true;
+		return false;
 	}
 }
 
