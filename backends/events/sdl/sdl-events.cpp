@@ -924,8 +924,12 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 bool SdlEventSource::handleJoystickAdded(const SDL_JoyDeviceEvent &device) {
+	debug(5, "SdlEventSource: Received joystick added event for index '%d'", device.which);
+
 	int joystick_num = ConfMan.getInt("joystick_num");
 	if (joystick_num == device.which) {
+		debug(5, "SdlEventSource: Newly added joystick with index '%d' matches 'joysticky_num', trying to use it", device.which);
+
 		closeJoystick();
 		openJoystick(joystick_num);
 	}
@@ -934,6 +938,8 @@ bool SdlEventSource::handleJoystickAdded(const SDL_JoyDeviceEvent &device) {
 }
 
 bool SdlEventSource::handleJoystickRemoved(const SDL_JoyDeviceEvent &device) {
+	debug(5, "SdlEventSource: Received joystick removed event for instance id '%d'", device.which);
+
 	SDL_Joystick *joystick;
 	if (_controller) {
 		joystick = SDL_GameControllerGetJoystick(_controller);
@@ -946,6 +952,8 @@ bool SdlEventSource::handleJoystickRemoved(const SDL_JoyDeviceEvent &device) {
 	}
 
 	if (SDL_JoystickInstanceID(joystick) == device.which) {
+		debug(5, "SdlEventSource: Newly removed joystick with instance id '%d' matches currently used joystick, closing current joystick", device.which);
+
 		closeJoystick();
 	}
 
