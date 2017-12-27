@@ -274,18 +274,32 @@ public:
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 };
 
+/**
+ * Provides an interface to updating files within the in-memory save state
+ */
 class OutFile : public Common::WriteStream {
 private:
 	SaveArchive *_archive;
 	Common::String _filename;
 	Common::MemoryWriteStreamDynamic _backingStream;
 public:
-	OutFile(const Common::String filename);
+	OutFile(const Common::String &filename);
+	OutFile(const Common::String &filename, SaveArchive *archive);
+	OutFile(const Common::String &filename, int ccMode);
 
+	/**
+	 * Finishes any pending writes, pushing out the written data
+	 */
 	void finalize();
 
+	/**
+	 * Writes data
+	 */
 	uint32 write(const void *dataPtr, uint32 dataSize) override;
 
+	/**
+	 * Returns the current position
+	 */
 	int32 pos() const override;
 };
 

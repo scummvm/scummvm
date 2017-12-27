@@ -518,11 +518,11 @@ void SurroundingMazes::clear() {
 	_west = 0;
 }
 
-void SurroundingMazes::synchronize(Common::SeekableReadStream &s) {
-	_north = s.readUint16LE();
-	_east = s.readUint16LE();
-	_south = s.readUint16LE();
-	_west = s.readUint16LE();
+void SurroundingMazes::synchronize(XeenSerializer &s) {
+	s.syncAsUint16LE(_north);
+	s.syncAsUint16LE(_east);
+	s.syncAsUint16LE(_south);
+	s.syncAsUint16LE(_west);
 }
 
 int &SurroundingMazes::operator[](int idx) {
@@ -551,15 +551,15 @@ MazeDifficulties::MazeDifficulties() {
 	_chance2Run = -1;
 }
 
-void MazeDifficulties::synchronize(Common::SeekableReadStream &s) {
-	_wallNoPass = s.readByte();
-	_surfaceNoPass = s.readByte();
-	_unlockDoor = s.readByte();
-	_unlockBox = s.readByte();
-	_bashDoor = s.readByte();
-	_bashGrate = s.readByte();
-	_bashWall = s.readByte();
-	_chance2Run = s.readByte();
+void MazeDifficulties::synchronize(XeenSerializer &s) {
+	s.syncAsByte(_wallNoPass);
+	s.syncAsByte(_surfaceNoPass);
+	s.syncAsByte(_unlockDoor);
+	s.syncAsByte(_unlockBox);
+	s.syncAsByte(_bashDoor);
+	s.syncAsSint8(_bashGrate);
+	s.syncAsSint8(_bashWall);
+	s.syncAsSint8(_chance2Run);
 }
 
 /*------------------------------------------------------------------------*/
@@ -587,42 +587,48 @@ void MazeData::clear() {
 	_mazeId = 0;
 }
 
-void MazeData::synchronize(Common::SeekableReadStream &s) {
+void MazeData::synchronize(XeenSerializer &s) {
+	byte b;
+
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
 		for (int x = 0; x < MAP_WIDTH; ++x)
-			_wallData[y][x]._data = s.readUint16LE();
+			s.syncAsUint16LE(_wallData[y][x]._data);
 	}
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
 		for (int x = 0; x < MAP_WIDTH; ++x) {
-			byte b = s.readByte();
-			_cells[y][x]._surfaceId = b & 7;
-			_cells[y][x]._flags = b & 0xF8;
+			if (s.isLoading()) {
+				s.syncAsByte(b);
+				_cells[y][x]._surfaceId = b & 7;
+				_cells[y][x]._flags = b & 0xF8;
+			} else {
+				b = (_cells[y][x]._surfaceId & 7) | (_cells[y][x]._flags & 0xf8);
+				s.syncAsByte(b);
+			}
 		}
 	}
 
-	_mazeNumber = s.readUint16LE();
+	s.syncAsUint16LE(_mazeNumber);
 	_surroundingMazes.synchronize(s);
-	_mazeFlags = s.readUint16LE();
-	_mazeFlags2 = s.readUint16LE();
+	s.syncAsUint16LE(_mazeFlags);
+	s.syncAsUint16LE(_mazeFlags2);
 
 	for (int i = 0; i < 16; ++i)
-		_wallTypes[i] = s.readByte();
+		s.syncAsByte(_wallTypes[i]);
 	for (int i = 0; i < 16; ++i)
-		_surfaceTypes[i] = s.readByte();
+		s.syncAsByte(_surfaceTypes[i]);
 
-	_floorType = s.readByte();
-	_runPosition.x = s.readByte();
+	s.syncAsByte(_floorType);
+	s.syncAsByte(_runPosition.x);
 	_difficulties.synchronize(s);
-	_runPosition.y = s.readByte();
-	_trapDamage = s.readByte();
-	_wallKind = s.readByte();
-	_tavernTips = s.readByte();
+	s.syncAsByte(_runPosition.y);
+	s.syncAsByte(_trapDamage);
+	s.syncAsByte(_wallKind);
+	s.syncAsByte(_tavernTips);
 
-	Common::Serializer ser(&s, nullptr);
 	for (int y = 0; y < MAP_HEIGHT; ++y)
-		File::syncBitFlags(ser, &_seenTiles[y][0], &_seenTiles[y][MAP_WIDTH]);
+		File::syncBitFlags(s, &_seenTiles[y][0], &_seenTiles[y][MAP_WIDTH]);
 	for (int y = 0; y < MAP_HEIGHT; ++y)
-		File::syncBitFlags(ser, &_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH]);
+		File::syncBitFlags(s, &_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH]);
 }
 
 void MazeData::setAllTilesStepped() {
@@ -724,19 +730,19 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 	for (uint i = 0; i < 16; ++i) {
 		b = (i >= _objectSprites.size()) ? 0xff : _objectSprites[i]._spriteId;
 		s.syncAsByte(b);
-		if (b != 0xff)
+		if (s.isLoading() && b != 0xff)
 			_objectSprites.push_back(SpriteResourceEntry(b));
 	}
 	for (uint i = 0; i < 16; ++i) {
 		b = (i >= _monsterSprites.size()) ? 0xff : _monsterSprites[i]._spriteId;
 		s.syncAsByte(b);
-		if (b != 0xff)
+		if (s.isLoading() && b != 0xff)
 			_monsterSprites.push_back(SpriteResourceEntry(b));
 	}
 	for (uint i = 0; i < 16; ++i) {
 		b = (i >= _wallItemSprites.size()) ? 0xff : _wallItemSprites[i]._spriteId;
 		s.syncAsByte(b);
-		if (b != 0xff)
+		if (s.isLoading() && b != 0xff)
 			_wallItemSprites.push_back(SpriteResourceEntry(b));
 	}
 
@@ -958,6 +964,7 @@ void Map::load(int mapId) {
 	intf._objNumber = 0;
 	party._stepped = true;
 	party._mazeId = mapId;
+	saveMaze();
 	events.clearEvents();
 
 	_sideObjects = 1;
@@ -1041,7 +1048,8 @@ void Map::load(int mapId) {
 			Common::String datName = Common::String::format("maze%c%03d.dat",
 				(mapId >= 100) ? 'x' : '0', mapId);
 			File datFile(datName);
-			mazeDataP->synchronize(datFile);
+			XeenSerializer datSer(&datFile, nullptr);
+			mazeDataP->synchronize(datSer);
 			datFile.close();
 
 			if (isDarkCc && mapId == 50)
@@ -1402,26 +1410,76 @@ void Map::loadEvents(int mapId) {
 	fText.close();
 }
 
+void Map::saveEvents() {
+	// Save eents
+	int mapId = _mazeData[0]._mazeId;
+	Common::String filename = Common::String::format("maze%c%03d.evt",
+		(mapId >= 100) ? 'x' : '0', mapId);
+	OutFile fEvents(filename);
+	XeenSerializer sEvents(nullptr, &fEvents);
+	_events.synchronize(sEvents);
+	fEvents.finalize();
+}
+
+void Map::saveMonsters() {
+	int mapId = _mazeData[0]._mazeId;
+	Common::String filename = Common::String::format("maze%c%03d.mob",
+		(mapId >= 100) ? 'x' : '0', mapId);
+	OutFile fMob(filename);
+	XeenSerializer sMob(nullptr, &fMob);
+	_mobData.synchronize(sMob, _monsterData);
+	fMob.finalize();
+}
+
+void Map::saveMap() {
+	FileManager &files = *g_vm->_files;
+	Party &party = *g_vm->_party;
+	int mapId = _mazeData[0]._mazeId;
+	if (!files._isDarkCc && mapId == 85)
+		return;
+
+	// Save the primary maze
+	Common::String datName = Common::String::format("maze%c%03d.dat", (mapId >= 100) ? 'x' : '0', mapId);
+	OutFile datFile(datName);
+	XeenSerializer datSer(nullptr, &datFile);
+	_mazeData[0].synchronize(datSer);
+	datFile.finalize();
+
+	if (!files._isDarkCc && mapId == 15) {
+		MazeMonster &mon0 = _mobData._monsters[0];
+		MazeMonster &mon1 = _mobData._monsters[1];
+		MazeMonster &mon2 = _mobData._monsters[2];
+		if ((mon0._position.x > 31 || mon0._position.y > 31) ||
+				(mon1._position.x > 31 || mon1._position.y > 31) ||
+				(mon2._position.x > 31 || mon2._position.y > 31)) {
+			party._gameFlags[0][56] = true;
+		}
+	}
+
+	if (!_isOutdoors) {
+		// Iterate through the surrounding mazes
+		for (int mazeIndex = 1; mazeIndex < 9; ++mazeIndex) {
+			mapId = _mazeData[_mazeDataIndex]._mazeId;
+			if (mapId == 0)
+				continue;
+
+			datName = Common::String::format("maze%c%03d.dat", (mapId >= 100) ? 'x' : '0', mapId);
+			OutFile datFile2(datName);
+			XeenSerializer datSer2(nullptr, &datFile2);
+			_mazeData[mazeIndex].synchronize(datSer2);
+			datFile2.finalize();
+		}
+	}
+}
+
 void Map::saveMaze() {
 	int mazeNum = _mazeData[0]._mazeNumber;
 	if (!mazeNum || (mazeNum == 85 && !_vm->_files->_isDarkCc))
 		return;
 
-	// Save the event data
-	Common::String filename = Common::String::format("maze%c%03d.evt",
-		(mazeNum >= 100) ? 'x' : '0', mazeNum);
-	OutFile fEvents(filename);
-	XeenSerializer sEvents(nullptr, &fEvents);
-	_events.synchronize(sEvents);
-	fEvents.finalize();
-
-	// Save the maze MOB file
-	filename = Common::String::format("maze%c%03d.mob",
-		(mazeNum >= 100) ? 'x' : '0', mazeNum);
-	OutFile fMob(filename);
-	XeenSerializer sMob(nullptr, &fEvents);
-	_mobData.synchronize(sMob, _monsterData);
-	fEvents.finalize();
+	saveEvents();
+	saveMap();
+	saveMonsters();
 }
 
 void Map::cellFlagLookup(const Common::Point &pt) {

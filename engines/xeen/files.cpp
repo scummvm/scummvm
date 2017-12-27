@@ -436,8 +436,18 @@ void SaveArchive::reset(CCArchive *src) {
 
 /*------------------------------------------------------------------------*/
 
-OutFile::OutFile(const Common::String filename) :
+OutFile::OutFile(const Common::String &filename) :
 		_filename(filename), _backingStream(DisposeAfterUse::YES) {
+	_archive = File::_currentSave;
+}
+
+OutFile::OutFile(const Common::String &filename, SaveArchive *archive) :
+	_filename(filename), _archive(archive), _backingStream(DisposeAfterUse::YES) {
+}
+
+OutFile::OutFile(const Common::String &filename, int ccMode) :
+		_filename(filename), _backingStream(DisposeAfterUse::YES) {
+	g_vm->_files->setGameCc(ccMode);
 	_archive = File::_currentSave;
 }
 
