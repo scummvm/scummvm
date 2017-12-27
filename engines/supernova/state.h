@@ -63,7 +63,10 @@ struct GameState {
 
 class Inventory {
 public:
-	Inventory();
+	Inventory(int &inventoryScroll)
+	    : _numObjects(0)
+	    , _inventoryScroll(inventoryScroll)
+	{}
 
 	void add(Object &obj);
 	void remove(Object &obj);
@@ -74,6 +77,7 @@ public:
 
 private:
 	Object *_inventory[kMaxCarry];
+	int &_inventoryScroll;
 	int _numObjects;
 };
 

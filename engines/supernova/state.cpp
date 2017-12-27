@@ -155,24 +155,24 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	return !in->err();
 }
 
-Inventory::Inventory() : _numObjects(0) {
-}
-
-// TODO: Update Inventory surface for scrolling
 void Inventory::add(Object &obj) {
 	if (_numObjects < kMaxCarry) {
 		_inventory[_numObjects++] = &obj;
 		obj.setProperty(CARRIED);
 	}
 
-//	if (inventory_amount>8) inventory_scroll = ((inventory_amount+1)/2)*2-8;
-//	show_inventory();
+	if (getSize() > _inventoryScroll + 8) {
+		_inventoryScroll = getSize() - 8;
+		_inventoryScroll += _inventoryScroll % 2;
+	}
 }
 
-// TODO: Update Inventory surface for scrolling
 void Inventory::remove(Object &obj) {
 	for (int i = 0; i < _numObjects; ++i) {
 		if (_inventory[i] == &obj) {
+			if (_inventoryScroll >= 2 && getSize() % 2)
+				_inventoryScroll -= 2;
+
 			--_numObjects;
 			while (i < _numObjects) {
 				_inventory[i] = _inventory[i + 1];
@@ -185,6 +185,7 @@ void Inventory::remove(Object &obj) {
 
 void Inventory::clear() {
 	_numObjects = 0;
+	_inventoryScroll = 0;
 }
 
 Object *Inventory::get(int index) const {
@@ -272,9 +273,9 @@ static Common::String timeToString(int msec) {
 	return Common::String(s);
 }
 
-GameManager::GameManager(SupernovaEngine *vm) {
-	_vm = vm;
-
+GameManager::GameManager(SupernovaEngine *vm)
+    : _inventory(_inventoryScroll)
+    , _vm(vm) {
 	initRooms();
 	changeRoom(INTRO);
 	initState();
@@ -1455,10 +1456,6 @@ void GameManager::takeObject(Object &obj) {
 		_vm->renderImage(obj._section);
 	obj._click = obj._click2 = 255;
 	_inventory.add(obj);
-	if (_inventory.getSize() > _inventoryScroll + 8) {
-		_inventoryScroll = _inventory.getSize() - 8;
-		_inventoryScroll += _inventoryScroll % 2;
-	}
 }
 
 void GameManager::drawCommandBox() {
