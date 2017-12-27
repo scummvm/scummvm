@@ -1452,7 +1452,7 @@ void Map::saveMap() {
 	if (!_isOutdoors) {
 		// Iterate through the surrounding mazes
 		for (int mazeIndex = 1; mazeIndex < 9; ++mazeIndex) {
-			mapId = _mazeData[_mazeDataIndex]._mazeId;
+			mapId = _mazeData[mazeIndex]._mazeId;
 			if (mapId == 0)
 				continue;
 

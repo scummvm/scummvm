@@ -321,22 +321,23 @@ void File::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP) {
 	byte data = 0;
 
 	int bitCounter = 0;
-	for (bool *p = startP; p <= endP; ++p, bitCounter = (bitCounter + 1) % 8) {
-		if (p == endP || bitCounter == 0) {
-			if (p != endP || s.isSaving())
+	for (bool *p = startP; p < endP; ++p, bitCounter = (bitCounter + 1) % 8) {
+		if (bitCounter == 0) {
+			if (s.isLoading() || p != startP)
 				s.syncAsByte(data);
-			if (p == endP)
-				break;
 
 			if (s.isSaving())
 				data = 0;
 		}
 
 		if (s.isLoading())
-			*p = (data >> bitCounter) != 0;
+			*p = ((data >> bitCounter) & 1) != 0;
 		else if (*p)
 			data |= 1 << bitCounter;
 	}
+
+	if (s.isSaving())
+		s.syncAsByte(data);
 }
 
 /*------------------------------------------------------------------------*/
