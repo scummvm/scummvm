@@ -50,6 +50,8 @@ Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
 	registerCmd("gold", WRAP_METHOD(Debugger, cmdGold));
 	registerCmd("gems", WRAP_METHOD(Debugger, cmdGems));
+	registerCmd("map", WRAP_METHOD(Debugger, cmdMap));
+	registerCmd("pos", WRAP_METHOD(Debugger, cmdPos));
 
 	_spellId = -1;
 }
@@ -137,6 +139,43 @@ bool Debugger::cmdGems(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Debugger::cmdMap(int argc, const char **argv) {
+	FileManager &files = *g_vm->_files;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+
+	if (argc < 2) {
+		debugPrintf("map mapId [ sideNum [ xp, yp ]]\n");
+		return true;
+	} else {
+		int mapId = strToInt(argv[1]);
+		bool side = argc < 3 ? g_vm->_files->_isDarkCc : strToInt(argv[2]) != 0;
+		int x = argc < 4 ? 8 : strToInt(argv[3]);
+		int y = argc < 5 ? 8 : strToInt(argv[4]);
+
+		map._loadDarkSide = side;
+		map.load(mapId);
+		party._mazePosition.x = x;
+		party._mazePosition.y = y;
+		party._mazeDirection = DIR_NORTH;
+		return false;
+	}
+}
+
+bool Debugger::cmdPos(int argc, const char **argv) {
+	Party &party = *g_vm->_party;
+
+	if (argc < 3) {
+		debugPrintf("pos xp, yp\n");
+		return true;
+	} else {
+		party._mazePosition.x = strToInt(argv[1]);
+		party._mazePosition.y = strToInt(argv[2]);
+		party._stepped = true;
+		return true;
+	}
 }
 
 } // End of namespace Xeen
