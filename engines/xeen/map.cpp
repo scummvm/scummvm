@@ -1038,7 +1038,7 @@ void Map::load(int mapId) {
 
 	// Iterate through loading the given maze as well as the two successive
 	// mazes in each of the four cardinal directions
-	bool isDarkCc = _vm->getGameID() == GType_DarkSide;
+	bool isDarkCc = files._isDarkCc;
 	MazeData *mazeDataP = &_mazeData[0];
 	bool textLoaded = false;
 
