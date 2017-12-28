@@ -2250,6 +2250,13 @@ void GameManager::handleInput() {
 void GameManager::executeRoom() {
 	if (_processInput && !_vm->_messageDisplayed && _guiEnabled) {
 		handleInput();
+		if (_mouseClicked) {
+			Common::Event event;
+			event.type = Common::EVENT_MOUSEMOVE;
+			event.mouse = Common::Point(_mouseX, _mouseY);
+			_vm->getEventManager()->pushEvent(event);
+		}
+
 		resetInputState();
 	}
 
