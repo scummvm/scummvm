@@ -1272,8 +1272,6 @@ void GameManager::searchStartEvent() {
 }
 
 void GameManager::outro() {
-//	title = 2;
-//	title = 0;
 	_vm->playSoundMod(kMusicOutro);
 	_vm->paletteFadeOut();
 	_vm->setCurrentImage(55);
@@ -1281,8 +1279,10 @@ void GameManager::outro() {
 	_vm->paletteFadeIn();
 	getInput();
 	_vm->paletteFadeOut();
-	// TODO: render info file
-	// Exit
+
+	Common::Event event;
+	event.type = Common::EVENT_RTL;
+	_vm->getEventManager()->pushEvent(event);
 }
 
 void GameManager::great(uint number) {
