@@ -2253,6 +2253,9 @@ void GameManager::executeRoom() {
 		if (_mouseClicked) {
 			Common::Event event;
 			event.type = Common::EVENT_MOUSEMOVE;
+			event.mouse = Common::Point(0, 0);
+			_vm->getEventManager()->pushEvent(event);
+			event.type = Common::EVENT_MOUSEMOVE;
 			event.mouse = Common::Point(_mouseX, _mouseY);
 			_vm->getEventManager()->pushEvent(event);
 		}
