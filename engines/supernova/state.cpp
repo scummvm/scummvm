@@ -1433,7 +1433,6 @@ void GameManager::turnOff() {
 
 	_state._powerOff = true;
 	roomBrightness();
-	_vm->paletteBrightness();
 }
 
 void GameManager::turnOn() {
@@ -1442,7 +1441,6 @@ void GameManager::turnOn() {
 
 	_state._powerOff = false;
 	_vm->_brightness = 255;
-//	_vm->paletteBrightness();
 	_rooms[SLEEP]->setSectionVisible(1, false);
 	_rooms[SLEEP]->setSectionVisible(2, false);
 	_rooms[COCKPIT]->setSectionVisible(22, false);
@@ -1582,6 +1580,8 @@ void GameManager::roomBrightness() {
 
 	if (_vm->_brightness != 0)
 		_vm->_brightness = _roomBrightness;
+	
+	_vm->paletteBrightness();
 }
 
 void GameManager::changeRoom(RoomID id) {
@@ -1955,7 +1955,6 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		getInput();
 		_vm->renderRoom(*_currentRoom);
 		roomBrightness();
-		_vm->paletteBrightness();
 		_vm->renderMessage(kStringGenericInteract_12);
 	} else if ((verb == ACTION_LOOK) && (obj1._id == KEYCARD2)) {
 		_vm->renderMessage(obj1._description);
@@ -2266,10 +2265,6 @@ void GameManager::executeRoom() {
 	}
 
 	roomBrightness();
-	if (_vm->_brightness == 0)
-		_vm->paletteFadeIn();
-	else
-		_vm->paletteBrightness();
 
 	if (!_currentRoom->hasSeen() && _newRoom) {
 		_newRoom = false;

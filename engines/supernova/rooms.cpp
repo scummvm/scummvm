@@ -1187,13 +1187,11 @@ bool ShipLandingModule::interact(Action verb, Object &obj1, Object &obj2) {
 				if (r->isSectionVisible(9))
 					_gm->_state._powerOff = true;
 				_gm->roomBrightness();
-				_vm->paletteBrightness();
 			} else {
 				_vm->renderImage(7);
 				if (r->isSectionVisible(9))
 					_gm->_state._powerOff = false;
 				_gm->roomBrightness();
-				_vm->paletteBrightness();
 				r = _gm->_rooms[SLEEP];
 				r->setSectionVisible(1, false);
 				r->setSectionVisible(2, false);
@@ -2859,7 +2857,6 @@ bool AxacussExit::interact(Action verb, Object &obj1, Object &obj2) {
 
 		_gm->search(450);
 		_gm->roomBrightness();
-		_vm->paletteBrightness();
 	} else if ((verb == ACTION_USE) && (Object::combine(obj1,obj2,MAGNET,GUARDIAN) || Object::combine(obj1,obj2,KNIFE,GUARDIAN)))
 		_vm->renderMessage(kStringArsanoEntrance27);
 	else
