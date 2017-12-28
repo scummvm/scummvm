@@ -151,6 +151,7 @@ void Intro::titleScreen() {
 	// Newspaper
 	CursorMan.showMouse(false);
 	_vm->_brightness = 0;
+	_vm->_menuBrightness = 0;
 	_vm->paletteBrightness();
 	_vm->setCurrentImage(1);
 	_vm->renderImage(0);
@@ -499,6 +500,7 @@ void Intro::cutscene() {
 }
 
 void Intro::leaveCutscene() {
+	_vm->_brightness = 255;
 	_vm->removeMessage();
 	_gm->changeRoom(CABIN_R3);
 	_gm->_guiEnabled = true;
