@@ -273,7 +273,7 @@ bool Intro::animate(int section1, int section2, int section3, int section4,
 void Intro::cutscene() {
 #define exitOnEscape(X) do { \
 	Common::KeyCode key = Common::KEYCODE_INVALID; \
-	if (_gm->waitOnInput(X, key) && key == Common::KEYCODE_ESCAPE) \
+	if ((_gm->waitOnInput(X, key) && key == Common::KEYCODE_ESCAPE) || _vm->shouldQuit()) \
 		return; \
 } while (0);
 
