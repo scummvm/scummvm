@@ -655,7 +655,7 @@ const uint AdlibMusicDriver::WAVEFORMS[24] = {
 /*------------------------------------------------------------------------*/
 
 Music::Music() : _musicDriver(nullptr), _songData(nullptr),
-		_effectsData(nullptr), _musicOn(true) {
+		_effectsData(nullptr), _musicOn(true), _musicSide(0) {
 	_musicDriver = new AdlibMusicDriver();
 }
 
@@ -738,7 +738,7 @@ void Music::playSong(const Common::String &name, int param) {
 	_priorMusic = _currentMusic;
 	_currentMusic = name;
 
-	File f(name);
+	File f(name, _musicSide);
 	playSong(f);
 }
 

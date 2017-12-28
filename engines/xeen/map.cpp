@@ -1174,6 +1174,7 @@ void Map::load(int mapId) {
 	// Handle loading miscellaneous sprites for the map
 	if (_isOutdoors) {
 		// Start playing relevant music
+		sound._musicSide = isDarkCc;
 		Common::String musName;
 
 		if (_vm->_files->_isDarkCc) {
@@ -1205,8 +1206,9 @@ void Map::load(int mapId) {
 				_surfaceSprites[i].load(Res.SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 	} else {
-		if (isDarkCc || mapId == 125 || mapId == 126 || mapId == 127)
+		if (files._isDarkCc && (mapId == 125 || mapId == 126 || mapId == 127))
 			files.setGameCc(0);
+		sound._musicSide = files._isDarkCc;
 
 		// Start playing relevant music
 		const int MUS_INDEXES[] = { 1, 2, 3, 4, 3, 5 };

@@ -318,6 +318,7 @@ private:
 public:
 	bool _musicOn;
 	Common::String _currentMusic, _priorMusic;
+	int _musicSide;
 public:
 	Music();
 	~Music();
