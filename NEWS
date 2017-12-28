@@ -6,7 +6,7 @@
 	General:
 	- ...
 
-0.3.0 (2017-xx-xx)
+0.3.0 (2017-12-30)
 	General:
 	- Switched SDL backend to SDL2 by default. SDL1 is still a fallback
 	- Added support for selecting between the legacy OpenGL and shaders OpenGL
