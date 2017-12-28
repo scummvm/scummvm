@@ -302,6 +302,22 @@ public:
 	bool operator_bool() const { return _pointer != nullptr; }
 
 	/**
+	 * Resets the pointer with the new value. Old object will be destroyed
+	 */
+	void reset(PointerType o, DisposeAfterUse::Flag dispose) {
+		if (_dispose) D()(_pointer);
+		_pointer = o;
+		_dispose = dispose;
+	}
+
+	/**
+	 * Clears the pointer. Old object will be destroyed
+	 */
+	void reset() {
+		reset(nullptr, DisposeAfterUse::NO);
+	}
+
+	/**
 	 * Returns the plain pointer value.
 	 *
 	 * @return the pointer the DisposablePtr manages
