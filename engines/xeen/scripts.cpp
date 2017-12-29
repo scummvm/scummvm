@@ -1248,7 +1248,7 @@ bool Scripts::cmdGiveEnchanted(ParamsIterator &params) {
 
 			return true;
 		} else {
-			error("Invalid id");
+			party._questItems[id - 82]++;
 		}
 	}
 
@@ -1570,8 +1570,8 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 					}
 				}
 			}
-		} else {
-			error("Invalid id");
+		} else if (party._questItems[val - 82]) {
+			v = val;
 		}
 		break;
 	case 25:

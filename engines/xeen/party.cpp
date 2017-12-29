@@ -860,7 +860,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 					break;
 				}
 			} else {
-				error("Invalid id");
+				_questItems[takeVal - 82]--;
 			}
 		}
 		if (!found)
@@ -1129,7 +1129,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 				return false;
 			}
 		} else {
-			error("Invalid id");
+			_questItems[giveVal - 82]++;
 		}
 		return true;
 	}	
