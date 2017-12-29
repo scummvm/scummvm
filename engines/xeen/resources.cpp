@@ -1668,4 +1668,8 @@ const char *const Resources::WARZONE_LEVEL = "What level of monsters? (1-10)\n";
 
 const char *const Resources::WARZONE_HOW_MANY = "How many monsters? (1-20)\n";
 
+const char *const Resources::PICKS_THE_LOCK = "\x3""c\xB""010%s picks the lock!\nPress any key.";
+
+const char *const Resources::UNABLE_TO_PICK_LOCK = "\x3""c\v010%s was unable to pick the lock!\nPress any key.";
+
 } // End of namespace Xeen

@@ -932,7 +932,7 @@ bool Scripts::cmdGiveExtended(ParamsIterator &params) {
 	}
 
 	_scriptExecuted = true;
-	bool result = party.giveTakeExt(mode1, val1, mode2, val2, mode3, val3,
+	bool result = party.giveExt(mode1, val1, mode2, val2, mode3, val3,
 		(_charIndex > 0) ? _charIndex - 1 : 0);
 
 	if (result) {

@@ -1391,9 +1391,108 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 	return false;
 }
 
-bool Party::giveTakeExt(int takeMode, uint takeVal, int giveMode, uint giveVal, int extMode, uint extVal, int charIdx) {
-	// TODO
-	return true;
+bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint val3, int charId) {
+	Combat &combat = *g_vm->_combat;
+	FileManager &files = *g_vm->_files;
+	Interface &intf = *g_vm->_interface;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+	Scripts &scripts = *g_vm->_scripts;
+	Sound &sound = *g_vm->_sound;
+	Character &c = party._activeParty[charId];
+	int var1 = 0;
+	bool retFlag = false;
+
+	if (intf._objNumber && !scripts._animCounter) {
+		MazeObject &obj = map._mobData._objects[intf._objNumber - 1];
+		switch (obj._spriteId) {
+		case 15:
+			if (!files._isDarkCc)
+				break;
+			// Intentional fall-through
+
+		case 16:
+		case 58:
+		case 73:
+			obj._frame = 1;
+
+			if (obj._position.x != 20) {
+				if (g_vm->getRandomNumber(1, 4) == 1) {
+					combat.giveCharDamage(map.mazeData()._trapDamage,
+						(DamageType)_vm->getRandomNumber(0, 6), charId);
+				}
+
+				int unlockBox = map.mazeData()._difficulties._unlockBox;
+				if ((c.getThievery() + _vm->getRandomNumber(1, 20)) >= unlockBox) {
+					scripts._animCounter++;
+					g_vm->_mode = MODE_7;
+					c._experience += c.getCurrentLevel() * unlockBox * 10;
+
+					intf.draw3d(true, false);
+					Common::String msg = Common::String::format(Res.PICKS_THE_LOCK, c._name.c_str());
+					ErrorScroll::show(g_vm, msg);
+				} else {
+					sound.playFX(21);
+
+					obj._frame = 0;
+					scripts._animCounter = 0;
+					Common::String msg = Common::String::format(Res.UNABLE_TO_PICK_LOCK, c._name.c_str());
+					ErrorScroll::show(g_vm, msg);
+
+					scripts._animCounter = 255;
+					return true;
+				}
+			}
+		}
+	}
+
+	for (int paramCtr = 0; paramCtr < 3; ++paramCtr) {
+		int mode = (paramCtr == 0) ? mode1 : (paramCtr == 1 ? mode2 : mode3);
+		int val = (paramCtr == 0) ? val1 : (paramCtr == 1 ? val2 : val3);
+
+		switch (mode) {
+		case 34:
+			party._treasure._gold += val;
+			break;
+
+		case 35:
+			party._treasure._gems += val;
+			break;
+
+		case 66:
+			c = _itemsCharacter;
+			c.clear();
+
+			if (giveTake(0, 0, mode, val, charId))
+				return true;
+			break;
+
+		case 100:
+			_treasure._gold += g_vm->getRandomNumber(1, val);
+			break;
+
+		case 101:
+			_treasure._gems += g_vm->getRandomNumber(1, val);
+			break;
+
+		case 106:
+			party._food += g_vm->getRandomNumber(1, val);
+			break;
+
+		case 67:
+			retFlag = true;
+			// Intentional fall-through
+
+		default:
+			if (giveTake(0, 0, mode, val, charId))
+				return true;
+			else if (retFlag)
+				return false;
+			break;
+		}
+	}
+
+	return false;
 }
 
 int Party::howMuch() {

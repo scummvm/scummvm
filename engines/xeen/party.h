@@ -227,9 +227,9 @@ public:
 	bool giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int charIdx);
 
 	/**
-	 * Gives and/or takes amounts from various character and/or party properties
+	 * Gives up to three different item/amounts to various character and/or party properties
 	 */
-	bool giveTakeExt(int takeMode, uint takeVal, int giveMode, uint giveVal, int extMode, uint extVal, int charIdx);
+	bool giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint val3, int charId);
 
 	/**
 	 * Resets the inventory that Blacksmiths sell

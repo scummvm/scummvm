@@ -351,6 +351,8 @@ public:
 	static const char *const WARZONE_MAXED;
 	static const char *const WARZONE_LEVEL;
 	static const char *const WARZONE_HOW_MANY;
+	static const char *const PICKS_THE_LOCK;
+	static const char *const UNABLE_TO_PICK_LOCK;
 public:
 	/**
 	 * Initializes an instnace of the resources
