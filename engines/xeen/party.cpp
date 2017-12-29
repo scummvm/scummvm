@@ -1130,6 +1130,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 			}
 		} else {
 			_questItems[giveVal - 82]++;
+			return false;
 		}
 		return true;
 	}	
@@ -1400,8 +1401,6 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 	Scripts &scripts = *g_vm->_scripts;
 	Sound &sound = *g_vm->_sound;
 	Character &c = party._activeParty[charId];
-	int var1 = 0;
-	bool retFlag = false;
 
 	if (intf._objNumber && !scripts._animCounter) {
 		MazeObject &obj = map._mobData._objects[intf._objNumber - 1];
@@ -1428,6 +1427,7 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 					g_vm->_mode = MODE_7;
 					c._experience += c.getCurrentLevel() * unlockBox * 10;
 
+					sound.playFX(10);
 					intf.draw3d(true, false);
 					Common::String msg = Common::String::format(Res.PICKS_THE_LOCK, c._name.c_str());
 					ErrorScroll::show(g_vm, msg);
@@ -1480,13 +1480,10 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 			break;
 
 		case 67:
-			retFlag = true;
-			// Intentional fall-through
-
 		default:
 			if (giveTake(0, 0, mode, val, charId))
 				return true;
-			else if (retFlag)
+			else if (mode == 67)
 				return false;
 			break;
 		}

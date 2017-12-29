@@ -348,7 +348,7 @@ bool Scripts::doOpcode(MazeEvent &event) {
 		&Scripts::cmdMoveObj, &Scripts::cmdTakeOrGive, &Scripts::cmdDoNothing,
 		&Scripts::cmdRemove, &Scripts::cmdSetChar, &Scripts::cmdSpawn,
 		&Scripts::cmdDoTownEvent, &Scripts::cmdExit, &Scripts::cmdAlterMap,
-		&Scripts::cmdGiveExtended, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
+		&Scripts::cmdGiveMulti, &Scripts::cmdConfirmWord, &Scripts::cmdDamage,
 		&Scripts::cmdJumpRnd, &Scripts::cmdAlterEvent, &Scripts::cmdCallEvent,
 		&Scripts::cmdReturn, &Scripts::cmdSetVar, &Scripts::cmdTakeOrGive,
 		&Scripts::cmdTakeOrGive, &Scripts::cmdCutsceneEndClouds,
@@ -871,81 +871,46 @@ bool Scripts::cmdAlterMap(ParamsIterator &params) {
 	return true;
 }
 
-bool Scripts::cmdGiveExtended(ParamsIterator &params) {
+bool Scripts::cmdGiveMulti(ParamsIterator &params) {
 	Party &party = *_vm->_party;
-	int mode1, mode2, mode3;
-	uint32 val1, val2, val3;
+	int modes[3];
+	uint32 vals[3];
 
-	_refreshIcons = true;
-	mode1 = params.readByte();
-	switch (mode1) {
-	case 16:
-	case 34:
-	case 100:
-		val1 = params.readUint32LE();
-		break;
-	case 25:
-	case 35:
-	case 101:
-	case 106:
-		val1 = params.readUint16LE();
-		break;
-	default:
-		val1 = params.readByte();
-		break;
-	}
-
-	mode2 = params.readByte();
-	switch (mode2) {
-	case 16:
-	case 34:
-	case 100:
-		val2 = params.readUint32LE();
-		break;
-	case 25:
-	case 35:
-	case 101:
-	case 106:
-		val2 = params.readUint16LE();
-		break;
-	default:
-		val2 = params.readByte();
-		break;
-	}
-
-	mode3 = params.readByte();
-	switch (mode3) {
-	case 16:
-	case 34:
-	case 100:
-		val3 = params.readUint32LE();
-		break;
-	case 25:
-	case 35:
-	case 101:
-	case 106:
-		val3 = params.readUint16LE();
-		break;
-	default:
-		val3 = params.readByte();
-		break;
+	for (int idx = 0; idx < 3; ++idx) {
+		modes[idx] = params.readByte();
+		switch (modes[idx]) {
+		case 16:
+		case 34:
+		case 100:
+			vals[idx] = params.readUint32LE();
+			break;
+		case 25:
+		case 35:
+		case 101:
+		case 106:
+			vals[idx] = params.readUint16LE();
+			break;
+		default:
+			vals[idx] = params.readByte();
+			break;
+		}
 	}
 
 	_scriptExecuted = true;
-	bool result = party.giveExt(mode1, val1, mode2, val2, mode3, val3,
+	bool result = party.giveExt(modes[0], vals[0], modes[1], vals[1], modes[2], vals[2],
 		(_charIndex > 0) ? _charIndex - 1 : 0);
 
 	if (result) {
 		if (_animCounter == 255) {
 			_animCounter = 0;
 			return cmdExit(params);
-		} else if (mode1 == 67 || mode2 == 67 || mode3 == 67) {
+		} else if (modes[0] == 67 || modes[1] == 67 || modes[2] == 67) {
 			_animCounter = 1;
 		} else {
 			return cmdExit(params);
 		}
 	} else {
-		if (mode1 == 67 || mode2 == 67 || mode3 == 67)
+		if (modes[0] == 67 || modes[1] == 67 || modes[2] == 67)
 			return cmdExit(params);
 	}
 

@@ -54,7 +54,7 @@ enum Opcode {
 	OP_DoTownEvent           = 0x11,
 	OP_Exit                  = 0x12,
 	OP_AfterMap              = 0x13,
-	OP_GiveExtended          = 0x14,
+	OP_GiveMulti             = 0x14,
 	OP_ConfirmWord           = 0x15,
 	OP_Damage                = 0x16,
 	OP_JumpRnd               = 0x17,
@@ -312,9 +312,9 @@ private:
 	bool cmdAlterMap(ParamsIterator &params);
 
 	/**
-	 *
+	 * Gives up to three different item/amounts to various character and/or party properties
 	 */
-	bool cmdGiveExtended(ParamsIterator &params);
+	bool cmdGiveMulti(ParamsIterator &params);
 	
 	/**
 	 * Prompts the user to enter a word for passwords or mirror
