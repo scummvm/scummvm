@@ -47,7 +47,6 @@ enum PartyBank {
 	WHERE_PARTY = 0, WHERE_BANK = 1
 };
 
-#define FLAGS_COUNT 256
 #define ITEMS_COUNT 36
 #define TOTAL_CHARACTERS 30
 #define XEEN_TOTAL_CHARACTERS 24
@@ -83,40 +82,6 @@ public:
 class Party {
 	friend class Character;
 	friend class InventoryItems;
-
-	class GameFlags {
-	private:
-		byte _flags[2][FLAGS_COUNT / 8];
-	public:
-		byte &_state;
-	public:
-		GameFlags() : _state(_flags[0][6]) { clear(); }
-
-		/**
-		 * Clears the flags
-		 */
-		void clear();
-
-		/**
-		 * Get a flag value
-		 */
-		bool get(uint flagNum, uint sideNum = 0) const;
-
-		/**
-		 * Sets a flag value
-		 */
-		void set(uint flagNum, bool value) { set(flagNum % 256, flagNum / 256, value); }
-
-		/**
-		 * Sets a flag value
-		 */
-		void set(uint flagNum, uint sideNum, bool value);
-
-		/**
-		 * Synchronize flags
-		 */
-		void synchronize(Common::Serializer &s);
-	};
 private:
 	static XeenEngine *_vm;
 	Character _itemsCharacter;
@@ -185,7 +150,7 @@ public:
 	uint _bankGems;
 	int _totalTime;
 	bool _rested;
-	GameFlags _gameFlags;
+	bool _gameFlags[2][256];
 	bool _worldFlags[128];
 	bool _questFlags[2][30];
 	int _questItems[TOTAL_QUEST_ITEMS];

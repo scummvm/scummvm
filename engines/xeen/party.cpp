@@ -72,34 +72,6 @@ Treasure::Treasure() {
 
 /*------------------------------------------------------------------------*/
 
-void Party::GameFlags::clear() {
-	Common::fill(&_flags[0][0], &_flags[0][0] + (FLAGS_COUNT / 8), 0);
-	Common::fill(&_flags[1][0], &_flags[1][0] + (FLAGS_COUNT / 8), 0);
-}
-
-bool Party::GameFlags::get(uint flagNum, uint sideNum) const {
-	if (flagNum >= FLAGS_COUNT) {
-		sideNum = flagNum / FLAGS_COUNT;
-		flagNum %= FLAGS_COUNT;
-	}
-
-	return (_flags[sideNum][flagNum / 8] & (1 << (flagNum % 8))) != 0;
-}
-
-void Party::GameFlags::set(uint flagNum, uint sideNum, bool value) {
-	byte &b = _flags[sideNum][flagNum / 8];
-	b &= ~(1 << (flagNum % 8));
-	if (value)
-		b |= 1 << (flagNum % 8);
-}
-
-void Party::GameFlags::synchronize(Common::Serializer &s) {
-	s.syncBytes(&_flags[0][0], FLAGS_COUNT / 8);
-	s.syncBytes(&_flags[1][0], FLAGS_COUNT / 8);
-}
-
-/*------------------------------------------------------------------------*/
-
 XeenEngine *Party::_vm;
 
 Party::Party(XeenEngine *vm) {
@@ -140,6 +112,8 @@ Party::Party(XeenEngine *vm) {
 	_totalTime = 0;
 	_rested = false;
 
+	Common::fill(&_gameFlags[0][0], &_gameFlags[0][256], false);
+	Common::fill(&_gameFlags[1][0], &_gameFlags[1][256], false);
 	Common::fill(&_worldFlags[0], &_worldFlags[128], false);
 	Common::fill(&_questFlags[0][0], &_questFlags[0][30], false);
 	Common::fill(&_questFlags[1][0], &_questFlags[1][30], false);
@@ -232,7 +206,8 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsUint32LE(_bankGems);
 	s.syncAsUint32LE(_totalTime);
 	s.syncAsByte(_rested);
-	_gameFlags.synchronize(s);
+	File::syncBitFlags(s, &_gameFlags[0][0], &_gameFlags[0][256]);
+	File::syncBitFlags(s, &_gameFlags[1][0], &_gameFlags[1][256]);
 	File::syncBitFlags(s, &_worldFlags[0], &_worldFlags[128]);
 	File::syncBitFlags(s, &_questFlags[0][0], &_questFlags[0][30]);
 	File::syncBitFlags(s, &_questFlags[1][0], &_questFlags[1][30]);
@@ -851,7 +826,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	}
 	case 20:
-		_gameFlags.set(takeVal, files._isDarkCc, false);
+		_gameFlags[files._isDarkCc][takeVal] = false;
 		break;
 	case 21: {
 		bool found = false;
@@ -1121,7 +1096,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	}
 	case 20:
-		_gameFlags.set(giveVal, files._isDarkCc, true);
+		_gameFlags[files._isDarkCc][giveVal] = true;
 		break;
 	case 21: {
 		int idx;
@@ -1430,10 +1405,10 @@ void Party::subPartyTime(int time) {
 }
 
 void Party::resetYearlyBits() {
-	_gameFlags.set(55, false);
-	_gameFlags.set(155, false);
-	_gameFlags.set(222, false);
-	_gameFlags.set(231, false);
+	_gameFlags[0][55] = false;
+	_gameFlags[0][155] = false;
+	_gameFlags[0][222] = false;
+	_gameFlags[0][231] = false;
 }
 
 const int BLACKSMITH_DATA1[4][4] = {

@@ -677,7 +677,7 @@ void Interface::doStepCode() {
 		break;
 	}
 
-	if (_vm->_files->_isDarkCc && party._gameFlags.get(118, 1)) {
+	if (_vm->_files->_isDarkCc && party._gameFlags[1][118]) {
 		_falling = false;
 	} else {
 		if (_falling)
@@ -711,7 +711,7 @@ void Interface::startFalling(bool flag) {
 	Scripts &scripts = *_vm->_scripts;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
-	if (isDarkCc && party._gameFlags.get(118, 1)) {
+	if (isDarkCc && party._gameFlags[1][118]) {
 		_falling = 0;
 		return;
 	}

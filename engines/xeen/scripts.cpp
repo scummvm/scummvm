@@ -1541,7 +1541,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		if (files._isDarkCc)
 			val += 256;
 		assert(val < 512);
-		v = party._gameFlags.get(val) ? val : 0xffffffff;
+		v = party._gameFlags[val / 256][val % 256] ? val : 0xffffffff;
 		break;
 	case 21:
 		// Scans inventories for given item number

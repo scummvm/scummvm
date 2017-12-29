@@ -1476,16 +1476,16 @@ void Combat::attack2(int damage, RangeType rangeType) {
 	if (monsterDied) {
 		if (!isDarkCc) {
 			if (_monster2Attack == 20 && party._mazeId == 41)
-				party._gameFlags.set(11, true);
+				party._gameFlags[0][11] = true;
 			if (_monster2Attack == 8 && party._mazeId == 78) {
-				party._gameFlags.set(60, true);
+				party._gameFlags[0][60] = true;
 				party._questFlags[0][23] = false;
 
 				for (uint idx = 0; idx < party._activeParty.size(); ++idx)
 					party._activeParty[idx].setAward(42, true);
 
 				if (_monster2Attack == 27 && party._mazeId == 29)
-					party._gameFlags.set(104, true);
+					party._gameFlags[0][104] = true;
 			}
 		}
 
