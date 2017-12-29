@@ -1,5 +1,5 @@
 /*
-README to .guide converter $Ver: 0.13 (29.01.2016)
+README to .guide converter $VER: RM2AG.rx 0.14 (29.12.2017)
 
 This script converts the pure ASCII-text based README file of ScummVM to a
 basic Amiga guide file.
@@ -23,12 +23,10 @@ ELSE DO
 END
 
 /* If it's the proper file, lets start converting */
-
 OPEN(readme_read,readme_txt,'R')
 OPEN(guide_write,'README.guide','W')
 
 /* Prepare the Amiga guide file, add the intro and fixed text */
-
 WRITELN(guide_write,'@DATABASE ScummVM README.guide')
 WRITELN(guide_write,'@WORDWRAP')
 WRITELN(guide_write,'@NODE "main" "ScummVM README Guide"')
@@ -38,7 +36,6 @@ WRITELN(guide_write,READLN(readme_read))
 WRITELN(guide_write,'@{ub}')
 
 /* Creating the main link nodes */
-
 x=1
 
 DO WHILE EOF(readme_read) = 0
@@ -46,60 +43,59 @@ DO WHILE EOF(readme_read) = 0
 	working_line=READLN(readme_read)
 
 	/* Checking if the sub links have been reached and leave the loop, if met */
-	IF POS('°1.0°',working_line) = 1 & x > 1 THEN
+	IF POS('Â°1.0Â°',working_line) = 1 & x > 1 THEN
 		LEAVE
-	ENDIF
+
 	/* If no chapter has been found, simply write the line */
-	IF POS('°',working_line) = 0 THEN
+	IF POS('Â°',working_line) = 0 THEN
 		WRITELN(guide_write,working_line)
-	ENDIF
 
 	/* Fix the empty chapters - two chapters (1.0 and 7.8) are empty and consist of only the headlines.
 	    We add them to the following chapter and link both of them to the empty one */
 
 	/* If chapter 1.1 is found add a link node to 1.0 (as chapter 1.0 is empty) */
-	IF POS(' * °1.1°',working_line) = 1 THEN DO
+	IF POS(' * Â°1.1Â°',working_line) = 1 THEN DO
 		/* Get rid of the markers so the following loops doesn't process them again */
-		working_line=COMPRESS(working_line,'*°')
+		working_line=COMPRESS(working_line,'*Â°')
 		WRITELN(guide_write,'    @{" 1.1 " Link "1.0"} 'working_line)
 	END
 
 	/* If chapter 7.8.1 is found add a link node to 7.8 (as chapter 7.8  is empty) */
-	IF POS(' * * °7.8.1°',working_line) = 1 THEN DO
+	IF POS(' * * Â°7.8.1Â°',working_line) = 1 THEN DO
 		/* Get rid of the markers so the following loops doesn't process them again */
-		working_line=COMPRESS(working_line,'*°')
+		working_line=COMPRESS(working_line,'*Â°')
 		WRITELN(guide_write,'      @{" 7.8.1 " Link "7.8"} 'working_line)
 	END
 
 	/* If a single number main chapter is found 1.0 upto 9.0), prepare and write the link node */
 	IF POS('.0',working_line) = 3 THEN DO
 		WRITELN(guide_write,' ')
-		WRITELN(guide_write,'  @{" 'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1) '" Link "'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1)'"} 'COMPRESS(working_line,'*°'))
+		WRITELN(guide_write,'  @{" 'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1) '" Link "'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1)'"} 'COMPRESS(working_line,'*Â°'))
 		/* Get rid of the markers so the following loops doesn't process them again */
-		working_line=COMPRESS(working_line,'*°')
+		working_line=COMPRESS(working_line,'*Â°')
 		x=x+1
 	END
 
 	/* If a double number main chapter is found (10.0 ff), prepare and write the link node */
 	IF POS('.0',working_line) = 4 THEN DO
 		WRITELN(guide_write,' ')
-		WRITELN(guide_write,'  @{" 'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1) '" Link "'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1)'"} 'COMPRESS(working_line,'*°'))
+		WRITELN(guide_write,'  @{" 'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1) '" Link "'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1)'"} 'COMPRESS(working_line,'*Â°'))
 		/* Get rid of the markers so the following loops doesn't process them again */
-		working_line=COMPRESS(working_line,'*°')
+		working_line=COMPRESS(working_line,'*Â°')
 	END
 
 	/* If a level one sub chapter is found (i.e. 1.1), prepare and write the link node */
-	IF POS(' * °',working_line) = 1 THEN DO
-		WRITELN(guide_write,'    @{" 'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1) '" Link "'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1)'"} 'COMPRESS(working_line,'*°'))
+	IF POS(' * Â°',working_line) = 1 THEN DO
+		WRITELN(guide_write,'    @{" 'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1) '" Link "'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1)'"} 'COMPRESS(working_line,'*Â°'))
 		/* Get rid of the markers so the following loops doesn't process them again */
-		working_line=COMPRESS(working_line,'*°')
+		working_line=COMPRESS(working_line,'*Â°')
 	END
 
 	/* If a level two sub chapter is found (i.e. 1.1.1), prepare and write the link node */
-	IF POS(' * * °',working_line) = 1 THEN DO
-		WRITELN(guide_write,'      @{" 'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1) '" Link "'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1)'"} 'COMPRESS(working_line,'*°'))
+	IF POS(' * * Â°',working_line) = 1 THEN DO
+		WRITELN(guide_write,'      @{" 'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1) '" Link "'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1)'"} 'COMPRESS(working_line,'*Â°'))
 		/* Get rid of the markers so the following loops doesn't process them again */
-		working_line=COMPRESS(working_line,'*°')
+		working_line=COMPRESS(working_line,'*Â°')
 	END
 END
 
@@ -111,43 +107,42 @@ WRITELN(guide_write,'@{"http://www.scummvm.org/" System "URLOpen http://www.scum
 WRITELN(guide_write,'------------------------------------------------------------------------')
 
 /* Creating the sub links nodes */
-
 DO WHILE EOF(readme_read) = 0
 	/* If no chapter has been found, simply write the line */
-	IF POS('°',working_line) = 0 THEN
+	IF POS('Â°',working_line) = 0 THEN
 		WRITELN(guide_write,working_line)
-	ENDIF
 
 	/* Fix the empty chapters - two chapters (1.0 and 7.8) are empty and consist of only the Headlines.
 	    We don't close the NODE, rather add the following chapter to the former empty one */
 
 	/* If chapter 1.1 is found don't close the NODE, just write the line */
-	IF POS('°1.1°',working_line) = 1 THEN DO
+	IF POS('Â°1.1Â°',working_line) = 1 THEN DO
 		/* Get rid of the markers so the following loops doesn't process them again */
-		working_line=COMPRESS(working_line,'°')
-		WRITELN(guide_write,working_line)
-	END
-	/* If chapter 7.8.1 is found don't close the NODE, just write the line */
-	IF POS('°7.8.1°',working_line) = 1 THEN DO
-		/* Get rid of the markers so the following loops doesn't process them again */
-		working_line=COMPRESS(working_line,'°')
+		working_line=COMPRESS(working_line,'Â°')
 		WRITELN(guide_write,working_line)
 	END
 
-	IF POS('°',working_line) > 0 THEN DO
+	/* If chapter 7.8.1 is found don't close the NODE, just write the line */
+	IF POS('Â°7.8.1Â°',working_line) = 1 THEN DO
+		/* Get rid of the markers so the following loops doesn't process them again */
+		working_line=COMPRESS(working_line,'Â°')
+		WRITELN(guide_write,working_line)
+	END
+
+	IF POS('Â°',working_line) > 0 THEN DO
 		/* Check for link references inside the text and create link nodes for them */
-		IF POS('section °',working_line) > 0 THEN DO
-			working_line=SUBSTR(working_line,1,POS('°',working_line)-1)'@{"'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1)'" Link "'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1)'"}'SUBSTR(working_line,LASTPOS('°',working_line)+1)
+		IF POS('section Â°',working_line) > 0 THEN DO
+			working_line=SUBSTR(working_line,1,POS('Â°',working_line)-1)'@{"'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1)'" Link "'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1)'"}'SUBSTR(working_line,LASTPOS('Â°',working_line)+1)
 			/* Get rid of the markers so the following loops doesn't process them again */
-			WRITELN(guide_write,COMPRESS(working_line,'°'))
+			WRITELN(guide_write,COMPRESS(working_line,'Â°'))
 		END
 		ELSE DO
 		/* If a chapter has been found, prepare and write the link */
 		WRITELN(guide_write,'@ENDNODE')
-		WRITELN(guide_write,'@NODE "'SUBSTR(working_line,POS('°',working_line)+1,LASTPOS('°',working_line)-POS('°',working_line)-1)'" "'COMPRESS(working_line,'°')'"')
+		WRITELN(guide_write,'@NODE "'SUBSTR(working_line,POS('Â°',working_line)+1,LASTPOS('Â°',working_line)-POS('Â°',working_line)-1)'" "'COMPRESS(working_line,'Â°')'"')
 		WRITELN(guide_write,' ')
 		/* Get rid of the markers so the following loops doesn't process them again */
-		WRITELN(guide_write,COMPRESS(working_line,'°'))
+		WRITELN(guide_write,COMPRESS(working_line,'Â°'))
 		END
 	END
 
@@ -157,7 +152,6 @@ DO WHILE EOF(readme_read) = 0
 	/* If the outtro text is found, leave the loop and prepare for closing */
 	IF POS('------------------------------------------------------------------------',working_line) > 0 THEN
 		LEAVE
-	ENDIF
 END
 
 WRITELN(guide_write,'@ENDNODE')
@@ -167,4 +161,5 @@ WRITELN(guide_write,'@ENDNODE')
 
 CLOSE(readme_read)
 CLOSE(guide_write)
+
 EXIT 0
