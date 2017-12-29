@@ -1058,7 +1058,7 @@ void Map::load(int mapId) {
 
 			if (isDarkCc && mapId == 50)
 				mazeDataP->setAllTilesStepped();
-			if (!isDarkCc && party._gameFlags[0][25] &&
+			if (!isDarkCc && party._gameFlags.get(25) &&
 					(mapId == 42 || mapId == 43 || mapId == 4)) {
 				mazeDataP->clearCellSurfaces();
 			}
@@ -1100,7 +1100,7 @@ void Map::load(int mapId) {
 					if ((_mobData._monsters[0]._position.x > 31 || _mobData._monsters[0]._position.y > 31) &&
 						(_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) &&
 						(_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
-						party._gameFlags[0][56] = true;
+						party._gameFlags.set(56, true);
 					}
 				}
 			}
@@ -1135,7 +1135,7 @@ void Map::load(int mapId) {
 			_mobData._objects[29]._spriteId = 0;
 			_mobData._objects[29]._id = 8;
 			_mobData._objectSprites[i]._sprites.clear();
-		} else if (mapId == 12 && party._gameFlags[0][43] &&
+		} else if (mapId == 12 && party._gameFlags.get(43) &&
 			_mobData._objectSprites[i]._spriteId == 118 && !isDarkCc) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
@@ -1445,7 +1445,7 @@ void Map::saveMap() {
 		for (uint idx = 0; idx < MIN(_mobData._monsters.size(), (uint)3); ++idx) {
 			MazeMonster &mon = _mobData._monsters[idx];
 			if (mon._position.x > 31 || mon._position.y > 31) {
-				party._gameFlags[0][56] = true;
+				party._gameFlags.set(56, true);
 				break;
 			}
 		}
