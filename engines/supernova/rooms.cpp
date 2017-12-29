@@ -455,6 +455,7 @@ void Intro::cutscene() {
 	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene32))
 		return;
 
+	CursorMan.showMouse(false);
 	_vm->_brightness = 0;
 	_vm->paletteBrightness();
 	exitOnEscape(10);
@@ -470,6 +471,8 @@ void Intro::cutscene() {
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		;
 	exitOnEscape(30);
+	CursorMan.showMouse(true);
+
 	_vm->setCurrentImage(22);
 	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene33))
 		return;
