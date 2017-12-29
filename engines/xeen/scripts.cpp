@@ -873,44 +873,80 @@ bool Scripts::cmdAlterMap(ParamsIterator &params) {
 
 bool Scripts::cmdGiveExtended(ParamsIterator &params) {
 	Party &party = *_vm->_party;
-	uint32 val;
-	int newLineNum;
-	bool result;
+	int mode1, mode2, mode3;
+	uint32 val1, val2, val3;
 
 	_refreshIcons = true;
-	int mode = params.readByte();
-	switch (mode) {
+	mode1 = params.readByte();
+	switch (mode1) {
 	case 16:
 	case 34:
 	case 100:
-		val = params.readUint32LE();
+		val1 = params.readUint32LE();
 		break;
 	case 25:
 	case 35:
 	case 101:
 	case 106:
-		val = params.readUint16LE();
+		val1 = params.readUint16LE();
 		break;
 	default:
-		val = params.readByte();
+		val1 = params.readByte();
 		break;
 	}
-	newLineNum = params.readByte();
 
-	if ((_charIndex != 0 && _charIndex != 8) || mode == 44) {
-		result = ifProc(mode, val, _event->_opcode - OP_If1, _charIndex - 1);
-	} else {
-		result = false;
-		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
-			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
-				result = ifProc(mode, val, _event->_opcode - OP_If1, idx);
-			}
-		}
+	mode2 = params.readByte();
+	switch (mode2) {
+	case 16:
+	case 34:
+	case 100:
+		val2 = params.readUint32LE();
+		break;
+	case 25:
+	case 35:
+	case 101:
+	case 106:
+		val2 = params.readUint16LE();
+		break;
+	default:
+		val2 = params.readByte();
+		break;
 	}
 
+	mode3 = params.readByte();
+	switch (mode3) {
+	case 16:
+	case 34:
+	case 100:
+		val3 = params.readUint32LE();
+		break;
+	case 25:
+	case 35:
+	case 101:
+	case 106:
+		val3 = params.readUint16LE();
+		break;
+	default:
+		val3 = params.readByte();
+		break;
+	}
+
+	_scriptExecuted = true;
+	bool result = party.giveTakeExt(mode1, val1, mode2, val2, mode3, val3,
+		(_charIndex > 0) ? _charIndex - 1 : 0);
+
 	if (result) {
-		_lineNum = newLineNum;
-		return false;
+		if (_animCounter == 255) {
+			_animCounter = 0;
+			return cmdExit(params);
+		} else if (mode1 == 67 || mode2 == 67 || mode3 == 67) {
+			_animCounter = 1;
+		} else {
+			return cmdExit(params);
+		}
+	} else {
+		if (mode1 == 67 || mode2 == 67 || mode3 == 67)
+			return cmdExit(params);
 	}
 
 	return true;

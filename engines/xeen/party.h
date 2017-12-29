@@ -227,6 +227,11 @@ public:
 	bool giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int charIdx);
 
 	/**
+	 * Gives and/or takes amounts from various character and/or party properties
+	 */
+	bool giveTakeExt(int takeMode, uint takeVal, int giveMode, uint giveVal, int extMode, uint extVal, int charIdx);
+
+	/**
 	 * Resets the inventory that Blacksmiths sell
 	 */
 	void resetBlacksmithWares();

@@ -1391,6 +1391,11 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 	return false;
 }
 
+bool Party::giveTakeExt(int takeMode, uint takeVal, int giveMode, uint giveVal, int extMode, uint extVal, int charIdx) {
+	// TODO
+	return true;
+}
+
 int Party::howMuch() {
 	return HowMuch::show(_vm);
 }
