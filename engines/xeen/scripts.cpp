@@ -468,7 +468,8 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 	Sound &sound = *_vm->_sound;
 
 	windows.closeAll();
-
+	
+	bool restartFlag = _event->_opcode == OP_TeleportAndContinue;
 	int mapId = params.readByte();
 	Common::Point pt;
 
@@ -519,11 +520,13 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 
 	events.clearEvents();
 
-	if (_event->_opcode == OP_TeleportAndContinue) {
+	if (restartFlag) {
+		// Draw the new location and start any script at that location
 		intf.draw3d(true);
 		_lineNum = 0;
 		return true;
 	} else {
+		// Stop executing the script
 		return cmdExit(params);
 	}
 }
