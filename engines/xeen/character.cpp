@@ -61,6 +61,25 @@ AttributeCategory XeenItem::getAttributeCategory() const {
 	return (AttributeCategory)idx;
 }
 
+const char *XeenItem::getItemName(ItemCategory category, uint id) {
+	if (id < 82)
+		return Res.ITEM_NAMES[category][id];
+
+	switch (category) {
+	case CATEGORY_WEAPON:
+		return Res.QUEST_ITEM_NAMES[id - 82];
+
+	case CATEGORY_ARMOR:
+		return Res.QUEST_ITEM_NAMES[id - 82 + 35];
+
+	case CATEGORY_ACCESSORY:
+		return Res.QUEST_ITEM_NAMES[id - 82 + 35 + 14];
+
+	default:
+		return Res.QUEST_ITEM_NAMES[id - 82 + 35 + 14 + 11];
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 InventoryItems::InventoryItems(Character *character, ItemCategory category):

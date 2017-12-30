@@ -713,17 +713,15 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	if (treasureItem._id < 82) {
 		// Copy item into the character's inventory
 		c._items[category][INV_ITEMS_TOTAL - 1] = treasureItem;
-		c._items[category].sort();
 	}
 
 	w.writeString(Res.GIVE_TREASURE_FORMATTING);
 	w.update();
 	events.ipause(5);
 
-	w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(),
-		Res.ITEM_NAMES[category][treasureItem._id]));
+	const char *itemName = XeenItem::getItemName(category, treasureItem._id);
+	w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), itemName));
 	w.update();
-
 	events.ipause(5);
 }
 

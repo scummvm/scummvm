@@ -97,6 +97,11 @@ public:
 	int _bonusFlags;
 	int _frame;
 public:
+	/**
+	 * Return the name of the item
+	 */
+	static const char *getItemName(ItemCategory category, uint id);
+public:
 	XeenItem();
 
 	void clear();
