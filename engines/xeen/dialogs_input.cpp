@@ -144,6 +144,7 @@ int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
 
 int StringInput::execute(bool type, const Common::String &expected,
 		const Common::String &title, int opcode) {
+	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
 	Scripts &scripts = *_vm->_scripts;
 	Windows &windows = *_vm->_windows;
@@ -165,8 +166,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 			}
 		} else {
 			// Load in the mirror list
-			File f(Common::String::format("%smirr.txt",
-				_vm->_files->_isDarkCc ? "dark" : "xeen"));
+			File f(Common::String::format("%smirr.txt", files._isDarkCc ? "dark" : "xeen"), 1);
 			MirrorEntry me;
 			scripts._mirror.clear();
 			while (me.synchronize(f))
