@@ -1818,7 +1818,7 @@ void Character::subtractHitPoints(int amount) {
 	}
 }
 
-bool Character::hasSpecialItem() const {
+bool Character::hasSlayerSword() const {
 	for (uint idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		if (_weapons[idx]._id == 34)
 			// Character has Xeen Slayer sword

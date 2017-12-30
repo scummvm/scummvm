@@ -222,7 +222,7 @@ void PartyDialog::execute() {
 					if (charButtonValue != 0) {
 						int charIndex = charButtonValue - Common::KEYCODE_1 + startingChar;
 						Character &c = party._roster[_charList[charIndex]];
-						if (c.hasSpecialItem()) {
+						if (c.hasSlayerSword()) {
 							ErrorScroll::show(_vm, Res.HAS_SLAYER_SWORD);
 						} else {
 							Common::String msg = Common::String::format(Res.SURE_TO_DELETE_CHAR,
