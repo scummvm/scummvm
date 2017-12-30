@@ -1125,87 +1125,80 @@ uint Character::getCurrentLevel() const {
 int Character::itemScan(int itemId) const {
 	int result = 0;
 
-	for (int accessIdx = 0; accessIdx < 3; ++accessIdx) {
-		switch (accessIdx) {
-		case 0:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				const XeenItem &item = _weapons[idx];
+	// Weapons
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		const XeenItem &item = _weapons[idx];
 
-				if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11
-						&& itemId != 3 && item._material >= 59 && item._material <= 130) {
-					int mIndex = (int)item.getAttributeCategory();
-					if (mIndex > PERSONALITY)
-						++mIndex;
+		if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11
+				&& itemId != 3 && item._material >= 59 && item._material <= 130) {
+			int mIndex = (int)item.getAttributeCategory();
+			if (mIndex > PERSONALITY)
+				++mIndex;
 
-					if (mIndex == itemId)
-						result += Res.ATTRIBUTE_BONUSES[item._material - 59];
+			if (mIndex == itemId)
+				result += Res.ATTRIBUTE_BONUSES[item._material - 59];
+		}
+	}
+
+	// Armor
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		const XeenItem &item = _armor[idx];
+
+		if (item._frame && !(item._bonusFlags & 0xC0)) {
+			if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
+				int mIndex = (int)item.getAttributeCategory();
+				if (mIndex > PERSONALITY)
+					++mIndex;
+
+				if (mIndex == itemId)
+					result += Res.ATTRIBUTE_BONUSES[item._material - 59];
+			}
+
+			if (itemId > 10 && item._material < 37) {
+				int mIndex = item.getElementalCategory() + 11;
+
+				if (mIndex == itemId) {
+					result += Res.ELEMENTAL_RESISTENCES[item._material];
 				}
 			}
-			break;
 
-		case 1:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				const XeenItem &item = _armor[idx];
+			if (itemId == 9) {
+				result += Res.ARMOR_STRENGTHS[item._id];
 
-				if (item._frame && !(item._bonusFlags & 0xC0)) {
-					if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
-						int mIndex = (int)item.getAttributeCategory();
-						if (mIndex > PERSONALITY)
-							++mIndex;
+				if (item._material >= 37 && item._material <= 58)
+					result += Res.METAL_LAC[item._material - 37];
+			}
+		}
+	}
 
-						if (mIndex == itemId)
-							result += Res.ATTRIBUTE_BONUSES[item._material - 59];
-					}
+	// Accessories
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		const XeenItem &item = _accessories[idx];
 
-					if (itemId > 10 && item._material < 37) {
-						int mIndex = item.getElementalCategory() + 11;
+		if (item._frame && !(item._bonusFlags & 0xC0)) {
+			if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
+				int mIndex = (int)item.getAttributeCategory();
+				if (mIndex > PERSONALITY)
+					++mIndex;
 
-						if (mIndex == itemId) {
-							result += Res.ELEMENTAL_RESISTENCES[item._material];
-						}
-					}
-
-					if (itemId == 9) {
-						result += Res.ARMOR_STRENGTHS[item._id];
-
-						if (item._material >= 37 && item._material <= 58)
-							result += Res.METAL_LAC[item._material - 37];
-					}
+				if (mIndex == itemId) {
+					result += Res.ATTRIBUTE_BONUSES[item._material - 59];
 				}
 			}
-			break;
 
-		case 2:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				const XeenItem &item = _accessories[idx];
+			if (itemId > 10 && item._material < 37) {
+				int mIndex = item.getElementalCategory() + 11;
 
-				if (item._frame && !(item._bonusFlags & 0xC0)) {
-					if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
-						int mIndex = (int)item.getAttributeCategory();
-						if (mIndex > PERSONALITY)
-							++mIndex;
+				if (mIndex == itemId)
+					result += Res.ELEMENTAL_RESISTENCES[item._material];
+			}
 
-						if (mIndex == itemId) {
-							result += Res.ATTRIBUTE_BONUSES[item._material - 59];
-						}
-					}
-
-					if (itemId > 10 && item._material < 37) {
-						int mIndex = item.getElementalCategory() + 11;
-
-						if (mIndex == itemId)
-							result += Res.ELEMENTAL_RESISTENCES[item._material];
-					}
-
-					if (itemId == 9) {
-						result += Res.ARMOR_STRENGTHS[item._id];
-						if (item._material >= 37 && item._material <= 58) {
-							result += Res.METAL_LAC[item._material - 37];
-						}
-					}
+			if (itemId == 9) {
+				result += Res.ARMOR_STRENGTHS[item._id];
+				if (item._material >= 37 && item._material <= 58) {
+					result += Res.METAL_LAC[item._material - 37];
 				}
 			}
-			break;
 		}
 	}
 
