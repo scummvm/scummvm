@@ -876,6 +876,7 @@ bool Scripts::cmdGiveMulti(ParamsIterator &params) {
 	int modes[3];
 	uint32 vals[3];
 
+	_refreshIcons = true;
 	for (int idx = 0; idx < 3; ++idx) {
 		modes[idx] = params.readByte();
 		switch (modes[idx]) {
