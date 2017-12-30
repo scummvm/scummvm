@@ -44,7 +44,7 @@ PngLoader::Status PngLoader::allocate() {
 
 	_buffer->setSize(_width, _height, _sizeBy);
 
-	uint32 bitsPerPixel = _bitDepth * _channels;
+	uint32 bitsPerPixel = _bitDepth;
 
 	if (_paletteSize) {	// 8 or 4-bit image
 		if (bitsPerPixel == 4) {
@@ -87,7 +87,7 @@ bool PngLoader::load() {
 
 	PSP_DEBUG_PRINT("succeded in loading image\n");
 
-	if (_paletteSize == 16)		// 4-bit
+	if (_bitDepth == 4)		// 4-bit
 		_buffer->flipNibbles();	// required because of PNG 4-bit format
 	return true;
 }
