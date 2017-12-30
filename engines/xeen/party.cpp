@@ -574,7 +574,7 @@ void Party::giveTreasure() {
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[10];
 
-	if (!_treasure._gold && !_treasure._gems)
+	if (!_treasure._hasItems && !_treasure._gold && !_treasure._gems)
 		return;
 
 	bool monstersPresent = false;
@@ -652,7 +652,7 @@ void Party::giveTreasure() {
 				Character &c = _activeParty[charIndex];
 				if (!c._items[(ItemCategory)categoryNum].isFull() && !c.isDisabledOrDead()) {
 					giveTreasureToCharacter(c, (ItemCategory)categoryNum, itemNum);
-					continue;
+					break;
 				}
 			}
 		}
@@ -1100,7 +1100,10 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	case 21: {
 		int idx;
-		if (giveVal < 35) {
+		if (giveVal >= 82) {
+			_questItems[giveVal - 82]++;
+		}
+		if (giveVal < 35 || giveVal >= 82) {
 			for (idx = 0; idx < 10 && _treasure._weapons[idx]._id; ++idx);
 			if (idx < 10) {
 				_treasure._weapons[idx]._id = giveVal;
@@ -1121,16 +1124,13 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 				_treasure._hasItems = true;
 				return false;
 			}
-		} else if (giveVal < 82) {
+		} else {
 			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx);
 			if (idx < 10) {
 				_treasure._accessories[idx]._material = giveVal - 60;
 				_treasure._hasItems = true;
 				return false;
 			}
-		} else {
-			_questItems[giveVal - 82]++;
-			return false;
 		}
 		return true;
 	}	

@@ -1581,7 +1581,7 @@ const char *const Resources::BACKPACKS_FULL_PRESS_KEY =
 	"\v007\f12Warning!  BackPacks Full!\fd\n"
 	"Press a Key";
 
-const char *const Resources::HIT_A_KEY = "\x3l\v120\t000\x4""077\x3""c\f37Hit a key\f'd";
+const char *const Resources::HIT_A_KEY = "\x3l\v120\t000\x4""077\x3""c\f37Hit a key\xC""d";
 
 const char *const Resources::GIVE_TREASURE_FORMATTING =
 	"\x3l\v060\t000\x4""077\n"
