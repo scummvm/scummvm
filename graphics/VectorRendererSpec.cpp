@@ -3739,7 +3739,8 @@ drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset) {
 					              occludingRect.right, y2);
 				}
 			} else {
-				blendFill(ptr_fill + shadowRect.left, ptr_fill + shadowRect.right + 1, color, (uint8)alpha);
+				blendFillClip(ptr_fill + shadowRect.left, ptr_fill + shadowRect.right + 1, color, (uint8)alpha,
+				              shadowRect.left, y2);
 			}
 
 			ptr_fill += pitch;
