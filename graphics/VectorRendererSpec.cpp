@@ -3587,42 +3587,44 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
 
 	// These constants ensure a border of 2px on the left and of each rounded square
-	int xstart = (x1 > 2) ? x1 - 2 : x1;
-	int ystart = y1;
-	int width = w + offset + 2;
-	int height = h + offset + 1;
+	Common::Rect shadowRect(w + offset + 2, h + offset + 1);
+	shadowRect.translate((x1 > 2) ? x1 - 2 : x1, y1);
 
+	// The rounded rectangle drawn on top of this shadow is guaranteed
+	// to occlude entirely the following rect with a non-transparent color.
+	// As an optimization, we don't draw the shadow inside of it.
+	Common::Rect occludingRect(x1, y1, x1 + w, y1 + h);
+	occludingRect.top    += r;
+	occludingRect.bottom -= r;
+
+	// Soft shadows are constructed by drawing increasingly
+	// darker and smaller rectangles on top of each other.
 	for (int i = offset; i >= 0; i--) {
 		int f, ddF_x, ddF_y;
 		int x, y, px, py;
 
-		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + r);
-		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + r);
-		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + height - r);
-		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + height - r);
-		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(xstart, ystart);
+		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.left  + r, shadowRect.top + r);
+		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.right - r, shadowRect.top + r);
+		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.left  + r, shadowRect.bottom - r);
+		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.right - r, shadowRect.bottom - r);
 
-		int short_h = height - (2 * r) + 2;
 		PixelType color = _format.RGBToColor(0, 0, 0);
 
 		BE_RESET();
 
-		// HACK: As we are drawing circles exploting 8-axis symmetry,
+		// HACK: As we are drawing circles exploiting 8-axis symmetry,
 		// there are 4 pixels on each circle which are drawn twice.
 		// this is ok on filled circles, but when blending on surfaces,
 		// we cannot let it blend twice. awful.
 		uint32 hb = 0;
 
+		// Draw the top and bottom parts of the shadow. Those parts have rounded corners.
 		while (x++ < y) {
 			BE_ALGORITHM();
 
 			if (((1 << x) & hb) == 0) {
 				blendFill(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha);
-
-				// Will create a dark line of pixles if left out
-				if (hb > 0) {
-					blendFill(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha);
-				}
+				blendFill(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha);
 				hb |= (1 << x);
 			}
 
@@ -3633,17 +3635,26 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 			}
 		}
 
-		ptr_fill += pitch * r;
-		while (short_h--) {
-			blendFill(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha);
+		// Draw the middle part of the shadow. This part is a rectangle with regular corners.
+		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(0, shadowRect.top + r);
+		for (int y2 = shadowRect.top + r; y2 < shadowRect.bottom - r + 1; y2++) {
+
+			if (occludingRect.top <= y2 && y2 < occludingRect.bottom) {
+				if (shadowRect.left < occludingRect.left) {
+					blendFill(ptr_fill + shadowRect.left, ptr_fill + occludingRect.left, color, (uint8)alpha);
+				}
+				if (occludingRect.right < shadowRect.right + 1) {
+					blendFill(ptr_fill + occludingRect.right, ptr_fill + shadowRect.right + 1, color, (uint8)alpha);
+				}
+			} else {
+				blendFill(ptr_fill + shadowRect.left, ptr_fill + shadowRect.right + 1, color, (uint8)alpha);
+			}
+
 			ptr_fill += pitch;
 		}
 
-		// Make shadow smaller each iteration, and move it one pixel inward
-		xstart += 1;
-		ystart += 1;
-		width -= 2;
-		height -= 2;
+		// Make shadow smaller each iteration
+		shadowRect.grow(-1);
 
 		if (_shadowFillMode == kShadowExponential)
 			// Multiply with expfactor
@@ -3661,27 +3672,32 @@ drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset) {
 	uint16 alpha = (_activeSurface->format.bytesPerPixel > 2) ? 4 : 8;
 
 	// These constants ensure a border of 2px on the left and of each rounded square
-	int xstart = (x1 > 2) ? x1 - 2 : x1;
-	int ystart = y1;
-	int width = w + offset + 2;
-	int height = h + offset + 1;
+	Common::Rect shadowRect(w + offset + 2, h + offset + 1);
+	shadowRect.translate((x1 > 2) ? x1 - 2 : x1, y1);
 
+	// The rounded rectangle drawn on top of this shadow is guaranteed
+	// to occlude entirely the following rect with a non-transparent color.
+	// As an optimization, we don't draw the shadow inside of it.
+	Common::Rect occludingRect(x1, y1, x1 + w, y1 + h);
+	occludingRect.top    += r;
+	occludingRect.bottom -= r;
+
+	// Soft shadows are constructed by drawing increasingly
+	// darker and smaller rectangles on top of each other.
 	for (int i = offset; i >= 0; i--) {
 		int f, ddF_x, ddF_y;
 		int x, y, px, py;
 
-		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + r);
-		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + r);
-		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(xstart + r, ystart + height - r);
-		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(xstart + width - r, ystart + height - r);
-		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(xstart, ystart);
+		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.left  + r, shadowRect.top + r);
+		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.right - r, shadowRect.top + r);
+		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.left  + r, shadowRect.bottom - r);
+		PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.right - r, shadowRect.bottom - r);
 
-		int short_h = height - (2 * r) + 2;
 		PixelType color = _format.RGBToColor(0, 0, 0);
 
 		BE_RESET();
 
-		// HACK: As we are drawing circles exploting 8-axis symmetry,
+		// HACK: As we are drawing circles exploiting 8-axis symmetry,
 		// there are 4 pixels on each circle which are drawn twice.
 		// this is ok on filled circles, but when blending on surfaces,
 		// we cannot let it blend twice. awful.
@@ -3692,36 +3708,45 @@ drawRoundedSquareShadowClip(int x1, int y1, int r, int w, int h, int offset) {
 
 			if (((1 << x) & hb) == 0) {
 				blendFillClip(ptr_tl - y - px, ptr_tr + y - px, color, (uint8)alpha,
-					xstart + r - y, ystart + r - x);
+				              shadowRect.left + r - y, shadowRect.top + r - x);
+				blendFillClip(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha,
+				              shadowRect.left + r - y, shadowRect.bottom - r + x);
 
-				// Will create a dark line of pixles if left out
-				if (hb > 0) {
-					blendFillClip(ptr_bl - y + px, ptr_br + y + px, color, (uint8)alpha,
-						xstart + r - y, ystart + height - r + x);
-				}
 				hb |= (1 << x);
 			}
 
 			if (((1 << y) & hb) == 0) {
-				blendFillClip(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha, xstart + r - x, ystart + r - y);
-				blendFillClip(ptr_bl - x + py, ptr_br + x + py, color, (uint8)alpha, xstart + r - x, ystart + height - r + y);
+				blendFillClip(ptr_tl - x - py, ptr_tr + x - py, color, (uint8)alpha,
+				              shadowRect.left + r - x, shadowRect.top + r - y);
+				blendFillClip(ptr_bl - x + py, ptr_br + x + py, color, (uint8)alpha,
+				              shadowRect.left + r - x, shadowRect.bottom - r + y);
+
 				hb |= (1 << y);
 			}
 		}
 
-		ptr_fill += pitch * r;
-		int orig_short_h = short_h;
-		while (short_h--) {
-			blendFillClip(ptr_fill, ptr_fill + width + 1, color, (uint8)alpha,
-				xstart, ystart + r + orig_short_h - short_h - 1);
+		// Draw the middle part of the shadow. This part is a rectangle with regular corners.
+		PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(0, shadowRect.top + r);
+		for (int y2 = shadowRect.top + r; y2 < shadowRect.bottom - r + 1; y2++) {
+
+			if (occludingRect.top <= y2 && y2 < occludingRect.bottom) {
+				if (shadowRect.left < occludingRect.left) {
+					blendFillClip(ptr_fill + shadowRect.left, ptr_fill + occludingRect.left, color, (uint8)alpha,
+					              shadowRect.left, y2);
+				}
+				if (occludingRect.right < shadowRect.right + 1) {
+					blendFillClip(ptr_fill + occludingRect.right, ptr_fill + shadowRect.right + 1, color, (uint8)alpha,
+					              occludingRect.right, y2);
+				}
+			} else {
+				blendFill(ptr_fill + shadowRect.left, ptr_fill + shadowRect.right + 1, color, (uint8)alpha);
+			}
+
 			ptr_fill += pitch;
 		}
 
-		// Make shadow smaller each iteration, and move it one pixel inward
-		xstart += 1;
-		ystart += 1;
-		width -= 2;
-		height -= 2;
+		// Make shadow smaller each iteration
+		shadowRect.grow(-1);
 
 		if (_shadowFillMode == kShadowExponential)
 			// Multiply with expfactor
