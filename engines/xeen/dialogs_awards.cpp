@@ -41,7 +41,7 @@ void Awards::execute(const Character *ch) {
 	Mode oldMode = g_vm->_mode;
 	int topIndex = 0;
 
-	loadStrings("award.bin");
+	loadStrings("award.bin", 1);
 	addButtons();
 
 	// Open the window and draw contents

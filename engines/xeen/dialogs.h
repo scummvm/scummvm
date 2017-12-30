@@ -70,6 +70,13 @@ protected:
 	 * @param name		Name of resource containing strings
 	 */
 	void loadStrings(const Common::String &name);
+
+	/**
+	 * Load a set of text strings from the given resource
+	 * @param name		Name of resource containing strings
+	 * @param ccMode	Optional cc file number to explicitly use
+	 */
+	void loadStrings(const Common::String &name, int ccMode);
 public:
 	ButtonContainer(XeenEngine *vm) : Cutscenes(vm), _buttonValue(0) {}
 

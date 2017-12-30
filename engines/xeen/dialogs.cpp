@@ -160,6 +160,14 @@ void ButtonContainer::loadStrings(const Common::String &name) {
 	f.close();
 }
 
+void ButtonContainer::loadStrings(const Common::String &name, int ccMode) {
+	File f(name, ccMode);
+	_textStrings.clear();
+	while (f.pos() < f.size())
+		_textStrings.push_back(f.readString());
+	f.close();
+}
+
 /*------------------------------------------------------------------------*/
 
 void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {
