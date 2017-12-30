@@ -1432,10 +1432,10 @@ void Scripts::doEnding(const Common::String &endStr) {
 	int state = 0;
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		Character &player = party._activeParty[idx];
-		if (player.hasAward(77)) {
+		if (player.hasAward(SUPER_GOOBER)) {
 			state = 2;
 			break;
-		} else if (player.hasAward(76)) {
+		} else if (player.hasAward(GOOBER)) {
 			state = 1;
 			break;
 		}

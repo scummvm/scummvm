@@ -1451,23 +1451,24 @@ void Character::setValue(int id, uint value) {
 }
 
 bool Character::guildMember() const {
-	Party &party = *Party::_vm->_party;
+	FileManager &files = *g_vm->_files;
+	Party &party = *g_vm->_party;
 
-	if (party._mazeId == 49 && !Party::_vm->_files->_isDarkCc) {
-		return hasAward(5);
+	if (party._mazeId == 49 && !files._isDarkCc) {
+		return hasAward(SHANGRILA_GUILD_MEMBER);
 	}
 
 	switch (party._mazeId) {
 	case 29:
-		return hasAward(83);
+		return hasAward(CASTLEVIEW_GUILD_MEMBER);
 	case 31:
-		return hasAward(84);
+		return hasAward(SANDCASTER_GUILD_MEMBER);
 	case 33:
-		return hasAward(85);
+		return hasAward(LAKESIDE_GUILD_MEMBER);
 	case 35:
-		return hasAward(86);
+		return hasAward(NECROPOLIS_GUILD_MEMBER);
 	default:
-		return hasAward(87);
+		return hasAward(OLYMPUS_GUILD_MEMBER);
 	}
 }
 
