@@ -2409,8 +2409,7 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 
 		if (!msgEnd && !confirm) {
 			res._globalSprites.draw(0, 7, Common::Point(232, 74));
-			res._globalSprites.draw(0, 0, Common::Point(235, 75));
-			res._globalSprites.draw(0, 2, Common::Point(260, 75));
+			drawButtons(&windows[0]);
 			windows[34].update();
 
 			intf._face1State = map._headData[party._mazePosition.y][party._mazePosition.x]._left;
