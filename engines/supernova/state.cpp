@@ -2275,6 +2275,8 @@ void GameManager::executeRoom() {
 	}
 
 	roomBrightness();
+	if (_vm->_brightness == 0)
+		_vm->paletteFadeIn();
 
 	if (!_currentRoom->hasSeen() && _newRoom) {
 		_newRoom = false;
