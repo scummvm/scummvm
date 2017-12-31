@@ -1279,6 +1279,7 @@ void GameManager::outro() {
 	_vm->paletteFadeIn();
 	getInput();
 	_vm->paletteFadeOut();
+	_vm->_brightness = 1;
 
 	Common::Event event;
 	event.type = Common::EVENT_RTL;
