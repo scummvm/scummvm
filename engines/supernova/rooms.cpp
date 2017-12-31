@@ -2245,7 +2245,6 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->getInput();
 		g_system->fillScreen(kColorBlack);
 		_vm->renderRoom(*this);
-		// CHECKME: Doesn't look complete - check sb_meetup()
 	} else if ((verb == ACTION_WALK) && (obj1._id == UFO)) {
 		g_system->fillScreen(kColorBlack);
 		_vm->setCurrentImage(36);
