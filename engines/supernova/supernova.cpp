@@ -70,7 +70,7 @@ const AudioInfo audioInfo[kAudioNumSamples] = {
 	{54, 31040,    -1}
 };
 
-const Object Object::nullObject = Object();
+const Object Object::nullObject;
 
 ObjectType operator|(ObjectType a, ObjectType b) {
 	return static_cast<ObjectType>(+a | +b);
