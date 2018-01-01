@@ -147,15 +147,19 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	_numClickFields = stream.readByte();
-	for (int i = 0; i < kMaxClickFields; ++i) {
-		_clickField[i].next = 0;
-	}
 	for (int i = 0; i < _numClickFields; ++i) {
 		_clickField[i].x1 = stream.readUint16LE();
 		_clickField[i].x2 = stream.readUint16LE();
 		_clickField[i].y1 = stream.readByte();
 		_clickField[i].y2 = stream.readByte();
 		_clickField[i].next = stream.readByte();
+	}
+	for (int i = _numClickFields; i < kMaxClickFields; ++i) {
+		_clickField[i].x1 = 0;
+		_clickField[i].x2 = 0;
+		_clickField[i].y1 = 0;
+		_clickField[i].y2 = 0;
+		_clickField[i].next = 0;
 	}
 
 	// Newspaper images may be in the engine data file. So first try to read
