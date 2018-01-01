@@ -165,7 +165,7 @@ FirstStartMenuOptions=''
 
 # Enable multi-ABI binary, with hardware FPU support - it will also work on old devices,
 # but .apk size is 2x bigger (y) / (n) / (x86) / (all)
-MultiABI="armeabi armeabi-v7a arm64-v8a x86 x86_64"
+MultiABI="armeabi-v7a arm64-v8a x86 x86_64"
 
 # Minimum amount of RAM application requires, in Mb, SDL will print warning to user if it's lower
 AppMinimumRAM=256
