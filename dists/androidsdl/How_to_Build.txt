@@ -36,7 +36,6 @@ Script:
 5) Install packages, which needs for build:
 
 Commands:
-	sudo apt-get install ant //If you install manually - set envirnoment value to Ant
 	sudo apt-get install make
 	sudo apt-get install git-core
 
