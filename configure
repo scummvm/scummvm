@@ -958,6 +958,7 @@ Game engines:
     The values of <engine name> for these options are as follows:
 $engines_help
 Optional Features:
+  --enable-static          build a static binary instead of using shared objects
   --enable-c++11           build as C++11 if the compiler allows that
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
@@ -1101,6 +1102,7 @@ EOF
 
 for ac_option in $@; do
 	case "$ac_option" in
+	--enable-static)         _static_build=yes    ;;
 	--disable-16bit)          _16bit=no       ;;
 	--enable-highres)         _highres=yes    ;;
 	--disable-highres)        _highres=no     ;;
@@ -3491,7 +3493,11 @@ case $_backend in
 	androidsdl | dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
 		find_sdlconfig
 		append_var INCLUDES "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
+		if test "$_static_build" = yes ; then
+			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
+		else
+			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
+		fi
 		append_var DEFINES "-DSDL_BACKEND"
 		add_line_to_config_mk "SDL_BACKEND = 1"
 
