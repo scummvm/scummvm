@@ -22,5 +22,5 @@ fi
 cd ../../../androidsdl
 ./build.sh scummvm
 
-mv project/bin/MainActivity-debug.apk ../scummvm/dists/androidsdl/scummvm-debug.apk
+mv project/app/build/outputs/apk/app-release.apk ../scummvm/dists/androidsdl/scummvm-debug.apk
 cd ../scummvm/dists/androidsdl
