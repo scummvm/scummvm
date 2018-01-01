@@ -1,10 +1,12 @@
 1) At first, for building you need (64bit) linux.
 
-2) Install Android SDK and NDK (You can unpack them into ~/android directory), and download required tools.
+2) Install Android SDK and NDK (You can unpack them into ~/Android directory), and download required tools.
 
-	https://developer.android.com/ndk/downloads/index.html
 	https://developer.android.com/studio/index.html (you can download GUI Android Studio with SDK (which installs
 from studio) or download command-line tools)
+    
+At current moment (01.01.2018) latest NDK version r16b not supported by pelya's liBSDL, so you need to use previous version r15c
+    https://developer.android.com/ndk/downloads/older_releases.html
 
 Download this:
 
@@ -29,9 +31,8 @@ Script:
 	#!/bin/sh
 
 	export ANDROID_HOME=~/Android/android-sdk
-	export ANDROID_NDK_HOME=~/Android/Sdk/ndk-bundle
-	export PATH=$ANDROID_NDK_HOME:$ANDROID_HOME/tools:$PATH
-	export PATH=$ANDROID_HOME/build-tools/25.0.2:$PATH
+	export ANDROID_NDK_HOME=~/Android/android-ndk-r15c
+    export PATH=$ANDROID_NDK_HOME:$ANDROID_HOME/tools:$PATH
 
 5) Install packages, which needs for build:
 
