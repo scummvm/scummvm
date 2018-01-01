@@ -23,7 +23,7 @@ InhibitSuspend=y
 # If the URL does not contain 'http://' it is treated as file from 'project/jni/application/src/AndroidData' dir -
 # these files are put inside .apk package by build system
 # Also please avoid 'https://' URLs, many Android devices do not have trust certificates and will fail to connect to SF.net over HTTPS
-AppDataDownloadUrl="!!App data|scummvm_1_10_0-git-appdata.zip"
+AppDataDownloadUrl="!!App data|scummvm_2_1_0-git-appdata.zip"
 
 # Video color depth - 16 BPP is the fastest and supported for all modes, 24 bpp is supported only
 # with SwVideoMode=y, SDL_OPENGL mode supports everything. (16)/(24)/(32)
