@@ -255,6 +255,7 @@ void RivenVideo::playBlocking(int32 endTime) {
 	if (playTillEnd) {
 		disable();
 		stop();
+		seek(0);
 	}
 
 	// Execute the stored opcode
