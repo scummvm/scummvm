@@ -299,10 +299,11 @@ void GuiManager::runLoop() {
 	}
 
 	Common::EventManager *eventMan = _system->getEventManager();
-	uint32 lastRedraw = 0;
-	const uint32 waitTime = 1000 / 60;
+	const uint32 targetFrameDuration = 1000 / 60;
 
 	while (!_dialogStack.empty() && activeDialog == getTopDialog() && !eventMan->shouldQuit()) {
+		uint32 frameStartTime = _system->getMillis(true);
+
 		redraw();
 
 		// Don't "tickle" the dialog until the theme has had a chance
@@ -312,14 +313,6 @@ void GuiManager::runLoop() {
 
 		if (_useStdCursor)
 			animateCursor();
-//		_theme->updateScreen();
-//		_system->updateScreen();
-
-		if (lastRedraw + waitTime < _system->getMillis(true)) {
-			lastRedraw = _system->getMillis(true);
-			_theme->updateScreen();
-			_system->updateScreen();
-		}
 
 		Common::Event event;
 
@@ -349,13 +342,6 @@ void GuiManager::runLoop() {
 			}
 
 			processEvent(event, activeDialog);
-
-
-			if (lastRedraw + waitTime < _system->getMillis(true)) {
-				lastRedraw = _system->getMillis(true);
-				_theme->updateScreen();
-				_system->updateScreen();
-			}
 		}
 
 		// Delete GuiObject that have been added to the trash for a delayed deletion
@@ -379,8 +365,14 @@ void GuiManager::runLoop() {
 			}
 		}
 
-		// Delay for a moment
-		_system->delayMillis(10);
+		_theme->updateScreen();
+
+		// Delay until the allocated frame time is elapsed to match the target frame rate
+		uint32 actualFrameDuration = _system->getMillis(true) - frameStartTime;
+		if (actualFrameDuration < targetFrameDuration) {
+			_system->delayMillis(targetFrameDuration - actualFrameDuration);
+		}
+		_system->updateScreen();
 	}
 
 	// WORKAROUND: When quitting we might not properly close the dialogs on
