@@ -138,7 +138,7 @@ SupernovaEngine::~SupernovaEngine() {
 }
 
 Common::Error SupernovaEngine::run() {
-	initGraphics(_screenWidth, _screenHeight, false);
+	initGraphics(_screenWidth, _screenHeight);
 
 	Common::Error status = loadGameStrings();
 	if (status.getCode() != Common::kNoError)
@@ -436,13 +436,13 @@ void SupernovaEngine::renderImageSection(int section) {
 		if (_screenWidth != 640) {
 			_screenWidth = 640;
 			_screenHeight = 480;
-			initGraphics(_screenWidth, _screenHeight, true);
+			initGraphics(_screenWidth, _screenHeight);
 		}
 	} else {
 		if (_screenWidth != 320) {
 			_screenWidth = 320;
 			_screenHeight = 200;
-			initGraphics(_screenWidth, _screenHeight, false);
+			initGraphics(_screenWidth, _screenHeight);
 		}
 	}
 
