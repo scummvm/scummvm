@@ -8,6 +8,7 @@ if [ \! -d ../../../androidsdl ] ; then
    git clone git://github.com/pelya/commandergenius androidsdl
    cd androidsdl
    git submodule update --init project/jni/iconv/src
+   git checkout d378ee692f2e380a0ab0635c1df2eb6941b5bf58
    cd ../scummvm/dists/androidsdl
 fi
 
