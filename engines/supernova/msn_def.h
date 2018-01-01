@@ -558,16 +558,6 @@ enum StringID {
 	kStringInventoryMoney
 };
 
-static StringID guiCommands[] = {
-	kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
-	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive
-};
-
-static StringID guiStatusCommands[] = {
-	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
-	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive
-};
-
 ObjectType operator|(ObjectType a, ObjectType b);
 ObjectType operator&(ObjectType a, ObjectType b);
 ObjectType operator^(ObjectType a, ObjectType b);

@@ -273,6 +273,16 @@ static Common::String timeToString(int msec) {
 	return Common::String(s);
 }
 
+StringID GameManager::guiCommands[] = {
+	kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
+	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive
+};
+
+StringID GameManager::guiStatusCommands[] = {
+	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
+	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive
+};
+
 GameManager::GameManager(SupernovaEngine *vm)
     : _inventory(_inventoryScroll)
     , _vm(vm) {

@@ -113,6 +113,8 @@ public:
 	bool serialize(Common::WriteStream *out);
 	bool deserialize(Common::ReadStream *in, int version);
 
+	static StringID guiCommands[];
+	static StringID guiStatusCommands[];
 	SupernovaEngine *_vm;
 	Common::KeyState _key;
 	Common::EventType _mouseClickType;
