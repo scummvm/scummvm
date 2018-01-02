@@ -124,7 +124,7 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				if (ev.type == SDL_KEYDOWN) {
 					for (int i = 0; i < TOTAL_ZONES; i++)
 						if ( (_km.x / MULTIPLIER) >= _zones[i].x && (_km.y / MULTIPLIER) >= _zones[i].y &&
-							(_km.x / MULTIPLIER) <= _zones[i].x + _zones[i].width && (_km.y / MULTIPLIER <= _zones[i].y + _zones[i].height
+							(_km.x / MULTIPLIER) <= _zones[i].x + _zones[i].width && (_km.y / MULTIPLIER <= _zones[i].y + _zones[i].height)
 							) {
 							_mouseXZone[i] = _km.x / MULTIPLIER;
 							_mouseYZone[i] = _km.y / MULTIPLIER;
