@@ -2918,6 +2918,9 @@ Common::String ResourceManager::findSierraGameId(const bool isBE) {
 		heap = findResource(ResourceId(kResourceTypeScript, 0), false);
 
 		Resource *vocab = findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), false);
+		if (!vocab)
+			return "";
+
 		const uint16 numSelectors = isBE ? vocab->getUint16BEAt(0) : vocab->getUint16LEAt(0);
 		for (uint16 i = 0; i < numSelectors; ++i) {
 			uint16 selectorOffset;
