@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -340,10 +340,13 @@ void RhythmPart::setPan(unsigned int midiPan) {
 void Part::setPan(unsigned int midiPan) {
 	// NOTE: Panning is inverted compared to GM.
 
-	// CM-32L: Divide by 8.5
-	patchTemp->panpot = Bit8u((midiPan << 3) / 68);
-	// FIXME: MT-32: Divide by 9
-	//patchTemp->panpot = Bit8u(midiPan / 9);
+	if (synth->controlROMFeatures->quirkPanMult) {
+		// MT-32: Divide by 9
+		patchTemp->panpot = Bit8u(midiPan / 9);
+	} else {
+		// CM-32L: Divide by 8.5
+		patchTemp->panpot = Bit8u((midiPan << 3) / 68);
+	}
 
 	//synth->printDebug("%s (%s): Set pan to %d", name, currentInstr, panpot);
 }
@@ -352,6 +355,10 @@ void Part::setPan(unsigned int midiPan) {
  * Applies key shift to a MIDI key and converts it into an internal key value in the range 12-108.
  */
 unsigned int Part::midiKeyToKey(unsigned int midiKey) {
+	if (synth->controlROMFeatures->quirkKeyShift) {
+		// NOTE: On MT-32 GEN0, key isn't adjusted, and keyShift is applied further in TVP, unlike newer units:
+		return midiKey;
+	}
 	int key = midiKey + patchTemp->patch.keyShift;
 	if (key < 36) {
 		// After keyShift is applied, key < 36, so move up by octaves

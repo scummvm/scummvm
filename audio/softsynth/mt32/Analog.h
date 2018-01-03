@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2016 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -20,12 +20,10 @@
 
 #include "globals.h"
 #include "internals.h"
-#include "Types.h"
 #include "Enumerations.h"
+#include "Types.h"
 
 namespace MT32Emu {
-
-class AbstractLowPassFilter;
 
 /* Analog class is dedicated to perform fair emulation of analogue circuitry of hardware units that is responsible
  * for processing output signal after the DAC. It appears that the analogue circuit labeled "LPF" on the schematic
@@ -38,21 +36,16 @@ class AbstractLowPassFilter;
  */
 class Analog {
 public:
-	Analog(const AnalogOutputMode mode, const bool oldMT32AnalogLPF);
-	~Analog();
-	void process(Sample *outStream, const Sample *nonReverbLeft, const Sample *nonReverbRight, const Sample *reverbDryLeft, const Sample *reverbDryRight, const Sample *reverbWetLeft, const Sample *reverbWetRight, Bit32u outLength);
-	unsigned int getOutputSampleRate() const;
-	Bit32u getDACStreamsLength(Bit32u outputLength) const;
-	void setSynthOutputGain(float synthGain);
-	void setReverbOutputGain(float reverbGain, bool mt32ReverbCompatibilityMode);
+	static Analog *createAnalog(const AnalogOutputMode mode, const bool oldMT32AnalogLPF, const RendererType rendererType);
 
-private:
-	AbstractLowPassFilter &leftChannelLPF;
-	AbstractLowPassFilter &rightChannelLPF;
-	SampleEx synthGain;
-	SampleEx reverbGain;
+	virtual ~Analog() {}
+	virtual unsigned int getOutputSampleRate() const = 0;
+	virtual Bit32u getDACStreamsLength(const Bit32u outputLength) const = 0;
+	virtual void setSynthOutputGain(const float synthGain) = 0;
+	virtual void setReverbOutputGain(const float reverbGain, const bool mt32ReverbCompatibilityMode) = 0;
 
-	Analog(Analog &);
+	virtual bool process(IntSample *outStream, const IntSample *nonReverbLeft, const IntSample *nonReverbRight, const IntSample *reverbDryLeft, const IntSample *reverbDryRight, const IntSample *reverbWetLeft, const IntSample *reverbWetRight, Bit32u outLength) = 0;
+	virtual bool process(FloatSample *outStream, const FloatSample *nonReverbLeft, const FloatSample *nonReverbRight, const FloatSample *reverbDryLeft, const FloatSample *reverbDryRight, const FloatSample *reverbWetLeft, const FloatSample *reverbWetRight, Bit32u outLength) = 0;
 };
 
 } // namespace MT32Emu
