@@ -64,6 +64,9 @@ OSystem_PSP::~OSystem_PSP() {}
 void OSystem_PSP::initBackend() {
 	DEBUG_ENTER_FUNC();
 
+	ConfMan.registerDefault("aspect_ratio", false);
+	ConfMan.registerDefault("gfx_mode", "Fit to Screen");
+
 	// Instantiate real time clock
 	PspRtc::instance();
 

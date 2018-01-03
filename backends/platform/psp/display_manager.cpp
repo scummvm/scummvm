@@ -35,6 +35,8 @@
 #include "backends/platform/psp/pspkeyboard.h"
 #include "backends/platform/psp/image_viewer.h"
 
+#include "common/config-manager.h"
+
 #define USE_DISPLAY_CALLBACK	// to use callback for finishing the render
 #include "backends/platform/psp/display_manager.h"
 
@@ -54,9 +56,8 @@ uint32 __attribute__((aligned(16))) MasterGuRenderer::_displayList[2048];
 
 const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 	{ "Original Resolution", "Original Resolution", ORIGINAL_RESOLUTION },
-	{ "Keep Aspect Ratio", "Keep Aspect Ratio", KEEP_ASPECT_RATIO },
-	{ "4:3 Aspect Ratio", "4:3 Aspect Ratio", ASPECT_RATIO_CORRECTION },
-	{ "Stretched Full Screen", "Stretched Full Screen", STRETCHED_FULL_SCREEN },
+	{ "Fit to Screen", "Fit to Screen", FIT_TO_SCREEN },
+	{ "Stretch to Screen", "Stretch to Screen", STRETCH_TO_SCREEN },
 	{0, 0, 0}
 };
 
@@ -365,32 +366,26 @@ void DisplayManager::calculateScaleParams() {
 			_displayParams.screenOutput.height =  _displayParams.screenSource.height;
 			break;
 		}
-		// else revert to keep aspect ratio
-	case KEEP_ASPECT_RATIO:	{ // maximize the height while keeping aspect ratio
-			float aspectRatio = (float)_displayParams.screenSource.width / (float)_displayParams.screenSource.height;
+		// else revert to fit to screen
+	case FIT_TO_SCREEN: { // maximize the height while keeping aspect ratio
+			float aspectRatio;
 
-			_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;	// always full height
+			if (ConfMan.getBool("aspect_ratio")) {
+				aspectRatio = 4.0f / 3.0f;
+			} else {
+				aspectRatio = (float)_displayParams.screenSource.width / (float)_displayParams.screenSource.height;
+			}
+
+			_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT; // always full height
 			_displayParams.screenOutput.width = (uint32)(PSP_SCREEN_HEIGHT * aspectRatio);
 
 			if (_displayParams.screenOutput.width > PSP_SCREEN_WIDTH) { // shrink if wider than screen
-				_displayParams.screenOutput.height = (uint32) (((float) PSP_SCREEN_HEIGHT * (float) PSP_SCREEN_WIDTH) / (float) _displayParams.screenOutput.width); 
+				_displayParams.screenOutput.height = (uint32)(((float)PSP_SCREEN_HEIGHT * (float)PSP_SCREEN_WIDTH) / (float)_displayParams.screenOutput.width); 
 				_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
 			}
 		}
 		break;
-	case ASPECT_RATIO_CORRECTION: { // maximize the height while forcing 4:3 aspect ratio
-			float aspectRatio = 4.0f / 3.0f;
-			
-			_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;	// always full height
-			_displayParams.screenOutput.width = (uint32)(PSP_SCREEN_HEIGHT * aspectRatio);
-
-			if (_displayParams.screenOutput.width > PSP_SCREEN_WIDTH) { // // shrink if wider than screen
-				_displayParams.screenOutput.height = (uint32) (((float) PSP_SCREEN_HEIGHT * (float) PSP_SCREEN_WIDTH) / (float) _displayParams.screenOutput.width); 
-				_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
-			}
-		}
-		break;
-	case STRETCHED_FULL_SCREEN:	// we simply stretch to the whole screen
+	case STRETCH_TO_SCREEN: // we simply stretch to the whole screen
 		_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
 		_displayParams.screenOutput.height = PSP_SCREEN_HEIGHT;
 		break;

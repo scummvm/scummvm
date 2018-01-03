@@ -3231,6 +3231,7 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/sdl/psp2/psp2.mk"
 			;;
 		psp)
+			append_var DEFINES "-DGUI_ONLY_FULLSCREEN"
 			_backend="psp"
 			_build_scalers=no
 			_mt32emu=no
