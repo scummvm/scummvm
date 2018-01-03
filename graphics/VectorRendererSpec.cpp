@@ -936,34 +936,26 @@ blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const 
 	if (r.height() > source->h)
 		y = y + (r.height() >> 1) - (source->h >> 1);
 
-	int w = source->w, h = source->h;
-	int usedW = w, usedH = h;
-	int offsetX = 0, offsetY = 0;
+	Common::Rect drawRect(x, y, x + source->w, y + source->h);
+	drawRect.clip(clipping);
 
-	if (x > clipping.right || x + w < clipping.left) return;
-	if (y > clipping.bottom || y + h < clipping.top) return;
-	if (x < clipping.left) {
-		offsetX = clipping.left - x;
-		usedW -= offsetX;
-		x = clipping.left;
+	if (drawRect.isEmpty()) {
+		return;
 	}
-	if (y < clipping.top) {
-		offsetY = clipping.top - y;
-		usedH -= offsetY;
-		y = clipping.top;
-	}
-	if (usedW > clipping.width()) usedW = clipping.width();
-	if (usedH > clipping.height()) usedH = clipping.height();
 
-	PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(x, y);
-	const PixelType *src_ptr = (const PixelType *)source->getBasePtr(offsetX, offsetY);
+	int sourceOffsetX = drawRect.left - x;
+	int sourceOffsetY = drawRect.top - y;
+
+	PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(drawRect.left, drawRect.top);
+	const PixelType *src_ptr = (const PixelType *)source->getBasePtr(sourceOffsetX, sourceOffsetY);
 
 	int dst_pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 	int src_pitch = source->pitch / source->format.bytesPerPixel;
 
-	h = usedH;
+	int w, h = drawRect.height();
+
 	while (h--) {
-		w = usedW;
+		w = drawRect.width();
 
 		while (w--) {
 			if (*src_ptr != _bitmapAlphaColor)
@@ -973,8 +965,8 @@ blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const 
 			src_ptr++;
 		}
 
-		dst_ptr = dst_ptr - usedW + dst_pitch;
-		src_ptr = src_ptr - usedW + src_pitch;
+		dst_ptr = dst_ptr - drawRect.width() + dst_pitch;
+		src_ptr = src_ptr - drawRect.width() + src_pitch;
 	}
 }
 
