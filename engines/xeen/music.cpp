@@ -142,7 +142,7 @@ bool MusicDriver::cmdChangeFrequency(const byte *&srcP, byte param) {
 		srcP += 3;
 	}
 
-	return true;
+	return false;
 }
 
 bool MusicDriver::musEndSubroutine(const byte *&srcP, byte param) {
@@ -200,7 +200,6 @@ bool MusicDriver::fxEndSubroutine(const byte *&srcP, byte param) {
 
 void MusicDriver::playFX(uint effectId, const byte *data) {
 	if (!_fxPlaying || effectId < 7 || effectId >= 11) {
-		_musStartPtr = nullptr;
 		_fxDataPtr = _fxStartPtr = data;
 		_fxCountdownTimer = 0;
 		_channels[7]._changeFrequency = _channels[8]._changeFrequency = false;
@@ -356,7 +355,7 @@ void AdlibMusicDriver::pausePostProcess() {
 		}
 	}
 
-	for (int channelNum = 8; channelNum != 6 || (channelNum == 7 && _exclude7); --channelNum) {
+	for (int channelNum = 8; channelNum > (_exclude7 ? 7 : 6); --channelNum) {
 		Channel &chan = _channels[channelNum];
 		if (!chan._changeFrequency || (chan._freqCtr += chan._freqCtrChange) >= 0)
 			continue;
@@ -656,7 +655,7 @@ const uint AdlibMusicDriver::WAVEFORMS[24] = {
 /*------------------------------------------------------------------------*/
 
 Music::Music() : _musicDriver(nullptr), _songData(nullptr),
-		_archiveType(ANY_ARCHIVE), _effectsData(nullptr), _musicOn(true) {
+		_effectsData(nullptr), _musicOn(true), _musicSide(0) {
 	_musicDriver = new AdlibMusicDriver();
 }
 
@@ -669,13 +668,13 @@ Music::~Music() {
 
 void Music::loadEffectsData() {
 	// Check whether it's the first load, or switching from intro to game data
-	if (_effectsData && !(_archiveType == INTRO_ARCHIVE && File::_currentArchive != INTRO_ARCHIVE))
-		return;
+//	if (_effectsData && !(_archiveType == INTRO_ARCHIVE && File::_currentArchive != INTRO_ARCHIVE))
+//		return;
 
 	// Stop any prior FX
 	stopFX();
 	delete[] _effectsData;
-	_archiveType = File::_currentArchive;
+//	_archiveType = File::_currentArchive;
 
 	// Load in an entire driver so we have quick access to the effects data
 	// that's hardcoded within it
@@ -736,7 +735,10 @@ void Music::playSong(Common::SeekableReadStream &stream) {
 }
 
 void Music::playSong(const Common::String &name, int param) {
-	File f(name);
+	_priorMusic = _currentMusic;
+	_currentMusic = name;
+
+	File f(name, _musicSide);
 	playSong(f);
 }
 

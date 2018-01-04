@@ -169,12 +169,26 @@ static const LureGameDescription gameDescriptions[] = {
 		GF_FLOPPY,
 	},
 
-	// Russian OG Edition
+	// Russian OG Edition v1.0
 	{
 		{
 			"lure",
-			"",
+			"1.0",
 			AD_ENTRY1("disk1.vga", "04cdcaa9f0cadca492f7aff0c8adfe06"),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GF_FLOPPY,
+	},
+
+	// Russian OG Edition v1.1
+	{
+		{
+			"lure",
+			"1.1",
+			AD_ENTRY1("disk1.vga", "3f27adff8e8b279f12aaf3d808e84f02"),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,

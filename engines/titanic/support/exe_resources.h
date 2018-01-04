@@ -29,6 +29,8 @@ class CScriptHandler;
 
 enum FileHandle { HANDLE_STDIN = 0, HANDLE_STDOUT = 1, HANDLE_STDERR = 2 };
 
+enum VocabMode { VOCAB_MODE_NONE = 0, VOCAB_MODE_EN = 3, VOCAB_MODE_DE = 5 };
+
 class CExeResources {
 public:
 	CScriptHandler *_owner;
@@ -37,14 +39,21 @@ public:
 	int _fieldC;
 	int _field10;
 	int _field14;
-	int _field18;
+	VocabMode _vocabMode;
 public:
 	CExeResources();
 
-	void reset(CScriptHandler *owner, int val1, int val2);
+	void reset(CScriptHandler *owner, int val1, VocabMode vocabMode);
 
-	bool is18Equals(int val) const { return _field18 == val; }
-	int get18() const { return _field18; }
+	/**
+	 * Tests whether the vocab mode equals the passed mode
+	 */
+	bool isVocabMode(int mode) const { return _vocabMode == mode; }
+
+	/**
+	 * Returns the vocab mode
+	 */
+	VocabMode getVocabMode() const { return _vocabMode; }
 };
 
 } // End of namespace Titanic

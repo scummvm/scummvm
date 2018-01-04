@@ -22,6 +22,8 @@
 
 #include "titanic/game/nav_helmet.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/star_control/star_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -37,26 +39,26 @@ END_MESSAGE_MAP()
 
 void CNavHelmet::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_flag, indent);
+	file->writeNumberLine(_helmetOn, indent);
 	CGameObject::save(file, indent);
 }
 
 void CNavHelmet::load(SimpleFile *file) {
 	file->readNumber();
-	_flag = file->readNumber();
+	_helmetOn = file->readNumber();
 	CGameObject::load(file);
 }
 
 bool CNavHelmet::MovieEndMsg(CMovieEndMsg *msg) {
-	if (_flag) {
+	CPetControl *pet = getPetControl();
+	assert(pet);
+
+	if (_helmetOn && pet->isAreaUnlocked()) {
 		setVisible(false);
 
-		CPetControl *pet = getPetControl();
-		if (pet) {
-			pet->setArea(PET_STARFIELD);
-			petDisplayMessage(1, ADJUST_VIEWING_APPARATUS);
-			pet->incAreaLocks();
-		}
+		pet->setArea(PET_STARFIELD);
+		petDisplayMessage(1, ADJUST_VIEWING_APPARATUS);
+		pet->incAreaLocks();
 
 		starFn(STAR_SHOW);
 		starFn(STAR_12);
@@ -67,6 +69,7 @@ bool CNavHelmet::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CNavHelmet::EnterViewMsg(CEnterViewMsg *msg) {
 	petSetRemoteTarget();
+	loadFrame(120);
 	return true;
 }
 
@@ -78,13 +81,13 @@ bool CNavHelmet::LeaveViewMsg(CLeaveViewMsg *msg) {
 bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 	CPetControl *pet = getPetControl();
 
-	if (_flag) {
-		_flag = false;
+	if (_helmetOn) {
+		_helmetOn = false;
 		setVisible(true);
 		starFn(STAR_HIDE);
 		playMovie(61, 120, MOVIE_NOTIFY_OBJECT);
-		playSound("a#47.wav");
-		playSound("a#48.wav");
+		playSound(TRANSLATE("a#47.wav", "a#40.wav"));
+		playSound(TRANSLATE("a#48.wav", "a#41.wav"));
 
 		if (pet) {
 			pet->decAreaLocks();
@@ -94,31 +97,47 @@ bool CNavHelmet::PETHelmetOnOffMsg(CPETHelmetOnOffMsg *msg) {
 		decTransitions();
 	} else {
 		incTransitions();
-		_flag = true;
+		_helmetOn = true;
 		setVisible(true);
 		playMovie(0, 60, MOVIE_NOTIFY_OBJECT);
-		playSound("a#48.wav");
-		playSound("a#47.wav");
+		playSound(TRANSLATE("a#48.wav", "a#41.wav"));
+		playSound(TRANSLATE("a#47.wav", "a#40.wav"));
 	}
 
 	return true;
 }
 
 bool CNavHelmet::PETPhotoOnOffMsg(CPETPhotoOnOffMsg *msg) {
-	if (_flag)
+	if (_helmetOn)
 		starFn(STAR_TOGGLE_MODE);
 
 	return true;
 }
 
 bool CNavHelmet::PETStarFieldLockMsg(CPETStarFieldLockMsg *msg) {
-	if (_flag) {
-		if (msg->_value) {
-			playSound("a#6.wav");
-			starFn(STAR_17);
-		} else {
-			playSound("a#5.wav");
-			starFn(STAR_18);
+	if (_helmetOn) {
+		CPetControl *pet = getPetControl();
+		CStarControl *starControl = nullptr;
+		bool isStarFieldMode = false;
+
+		if (pet)
+			starControl = pet->getStarControl();
+
+		if (starControl)
+			isStarFieldMode = starControl->isStarFieldMode();
+
+		if (isStarFieldMode) {
+			// locking and unlocking only in starfield
+			// It already does this without the conditional
+			// but now it will also not play the sounds in
+			// photoview
+			if (msg->_value) {
+				playSound(TRANSLATE("a#6.wav", "a#58.wav"));
+				starFn(LOCK_STAR);
+			} else {
+				playSound(TRANSLATE("a#5.wav", "a#57.wav"));
+				starFn(UNLOCK_STAR);
+			}
 		}
 	}
 

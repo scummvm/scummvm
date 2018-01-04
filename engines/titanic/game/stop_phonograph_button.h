@@ -30,6 +30,7 @@ namespace Titanic {
 class CStopPhonographButton : public CBackground {
 	DECLARE_MESSAGE_MAP;
 	bool MouseButtonDownMsg(CMouseButtonDownMsg *msg);
+	bool TimerMsg(CTimerMsg *msg);
 public:
 	CLASSDEF;
 

@@ -87,6 +87,18 @@ void CSurfaceArea::setColorFromPixel() {
 	setColor(_rgb);
 }
 
+Graphics::PixelFormat CSurfaceArea::getPixelFormat() const {
+	switch (_bpp) {
+	case 1:
+	case 2:
+		return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+	case 4:
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	default:
+		return Graphics::PixelFormat::createFormatCLUT8();
+	}
+}
+
 void CSurfaceArea::pixelToRGB(uint pixel, uint *rgb) {
 	switch (_bpp) {
 	case 0:
@@ -95,12 +107,8 @@ void CSurfaceArea::pixelToRGB(uint pixel, uint *rgb) {
 
 	case 1:
 	case 2: {
-		uint r = pixel & 0xF8;
-		uint g = (pixel >> 8) & 0xf8;
-		uint b = ((pixel >> 16) & 0xff) >> 3;
-		uint value = (((r << 5) | g) << 2) | b;
-		value &= 0xffff;
-		*rgb = (value << 16) | value;
+		Graphics::PixelFormat pf = getPixelFormat();
+		*rgb = pf.RGBToColor(pixel & 0xff, (pixel >> 8) & 0xff, (pixel >> 16) & 0xff);
 		break;
 	}
 
@@ -176,13 +184,13 @@ double CSurfaceArea::drawLine(const FPoint &pt1, const FPoint &pt2) {
 	Graphics::Surface s;
 	s.setPixels(_pixelsPtr);
 	s.pitch = _pitch;
+	s.format = getPixelFormat();
 	s.w = _width;
 	s.h = _height;
 	_surface = &s;
 
 	switch (_bpp) {
 	case 0:
-		s.format = Graphics::PixelFormat::createFormatCLUT8();
 		if (_mode != SA_SOLID) {
 			Graphics::drawLine(srcPos.x, srcPos.y, destPos.x, destPos.y, 0, plotPoint<byte>, this);
 			return p1._y;
@@ -190,14 +198,12 @@ double CSurfaceArea::drawLine(const FPoint &pt1, const FPoint &pt2) {
 		break;
 	case 1:
 	case 2:
-		s.format = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		if (_mode != SA_SOLID) {
 			Graphics::drawLine(srcPos.x, srcPos.y, destPos.x, destPos.y, 0, plotPoint<uint16>, this);
 			return p1._y;
 		}
 		break;
 	case 4:
-		s.format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 		if (_mode != SA_SOLID) {
 			Graphics::drawLine(srcPos.x, srcPos.y, destPos.x, destPos.y, 0, plotPoint<uint32>, this);
 			return p1._y;

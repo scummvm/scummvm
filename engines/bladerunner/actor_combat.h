@@ -23,11 +23,11 @@
 #ifndef BLADERUNNER_ACTOR_COMBAT_H
 #define BLADERUNNER_ACTOR_COMBAT_H
 
-#include "bladerunner/bladerunner.h"
-
 #include "bladerunner/vector.h"
 
 namespace BladeRunner {
+
+class BladeRunnerEngine;
 
 class ActorCombat {
 	BladeRunnerEngine *_vm;

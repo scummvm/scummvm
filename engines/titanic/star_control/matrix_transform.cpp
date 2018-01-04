@@ -21,6 +21,7 @@
  */
 
 #include "titanic/star_control/matrix_transform.h"
+#include "titanic/star_control/fpose.h"
 #include "common/textconsole.h"
 
 namespace Titanic {
@@ -54,7 +55,7 @@ CMatrixTransform CMatrixTransform::resize(double factor) const {
 	return dest;
 }
 
-void CMatrixTransform::fn4(const DMatrix &m) {
+void CMatrixTransform::fn4(const FMatrix &m) {
 	double total = m._row1._x + m._row3._z + m._row2._y + 1.0;
 
 	if (total <= 0.00001) {

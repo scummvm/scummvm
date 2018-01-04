@@ -753,7 +753,7 @@ uint32 Scene2803::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case NM_KLAYMEN_LOWER_LEVER:
 		toggleBackground();
-		// NOTE Intentional fall-through
+		// fall through
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x84251F82)
 			setMessageList(0x004B7A50);

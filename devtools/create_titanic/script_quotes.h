@@ -26,9 +26,9 @@
 #include "common/scummsys.h"
 
 struct ScriptQuote {
+	uint _tag1;
+	uint _tag2;
 	uint _index;
-	uint _tagId;
-	uint _dialogueId;
 };
 
 extern void writeAllScriptQuotes();

@@ -52,13 +52,14 @@ public:
 
 	int addMenuItem(const char *name);
 	void addMenuSubItem(int id, const char *text, int action, int style = 0, char shortcut = 0, bool enabled = true);
-	void createSubMenuFromString(int id, const char *string);
+	void createSubMenuFromString(int id, const char *string, int commandId);
 	void clearSubMenu(int id);
 
 	bool draw(ManagedSurface *g, bool forceRedraw = false);
 	bool processEvent(Common::Event &event);
 
 	void enableCommand(int menunum, int action, bool state);
+	void enableCommand(const char *menuitem, const char *menuaction, bool state);
 	void disableAllMenus();
 
 	void setActive(bool active) { _menuActivated = active; }

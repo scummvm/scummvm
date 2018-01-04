@@ -130,10 +130,14 @@ int Font::getTextWidth(const Common::String &text) {
 		return 0;
 	}
 	while (*character != 0) {
-		totalWidth = _spacing1 + _characters[*character + 1]._width;
+		totalWidth += _spacing1 + _characters[*character + 1]._width;
 		character++;
 	}
 	return totalWidth - _spacing1;
+}
+
+int Font::getTextHeight(const Common::String &text) {
+	return _maxHeight;
 }
 
 void Font::reset() {

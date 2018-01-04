@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/bridge_view.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -55,6 +56,7 @@ bool CBridgeView::ActMsg(CActMsg *msg) {
 	} else if (msg->_action == "Go") {
 		_action = BA_GO;
 		setVisible(true);
+		hideMouse();
 		volumeMsg._volume = 100;
 		volumeMsg.execute("EngineSounds");
 		onMsg.execute("EngineSounds");
@@ -67,14 +69,17 @@ bool CBridgeView::ActMsg(CActMsg *msg) {
 		if (msg->_action == "Cruise") {
 			_action = BA_CRUISE;
 			setVisible(true);
+			hideMouse();
 			playMovie(MOVIE_NOTIFY_OBJECT);
 		} else if (msg->_action == "GoEnd") {
 			_action = BA_ENDING1;
 			setVisible(true);
+			hideMouse();
+
 			CChangeMusicMsg musicMsg;
-			musicMsg._flags = 1;
+			musicMsg._action = MUSIC_STOP;
 			musicMsg.execute("BridgeAutoMusicPlayer");
-			playSound("a#42.wav");
+			playSound(TRANSLATE("a#42.wav", "a#35.wav"));
 			playMovie(MOVIE_NOTIFY_OBJECT);
 		}
 	}
@@ -90,6 +95,7 @@ bool CBridgeView::MovieEndMsg(CMovieEndMsg *msg) {
 	case BA_GO:
 	case BA_CRUISE:
 		setVisible(false);
+		showMouse();
 		decTransitions();
 		break;
 

@@ -75,27 +75,33 @@ void DirectorEngine::loadEXE(const Common::String movie) {
 	if (!exeStream)
 		error("Failed to open EXE '%s'", getEXEName().c_str());
 
-	_lingo->processEvent(kEventStart, kMovieScript, 0);
+	_lingo->processEvent(kEventStart);
 
-	exeStream->seek(-4, SEEK_END);
-	exeStream->seek(exeStream->readUint32LE());
+	uint32 initialTag = exeStream->readUint32LE();
+	if (initialTag == MKTAG('R', 'I', 'F', 'X')) {
+		// we've encountered a movie saved from Director, not a projector.
+		loadEXERIFX(exeStream, 0);
+	} else {
+		exeStream->seek(-4, SEEK_END);
+		exeStream->seek(exeStream->readUint32LE());
 
-	switch (getVersion()) {
-	case 2:
-	case 3:
-		loadEXEv3(exeStream);
-		break;
-	case 4:
-		loadEXEv4(exeStream);
-		break;
-	case 5:
-		loadEXEv5(exeStream);
-		break;
-	case 7:
-		loadEXEv7(exeStream);
-		break;
-	default:
-		error("Unhandled Windows EXE version %d", getVersion());
+		switch (getVersion()) {
+		case 2:
+		case 3:
+			loadEXEv3(exeStream);
+			break;
+		case 4:
+			loadEXEv4(exeStream);
+			break;
+		case 5:
+			loadEXEv5(exeStream);
+			break;
+		case 7:
+			loadEXEv7(exeStream);
+			break;
+		default:
+			error("Unhandled Windows EXE version %d", getVersion());
+		}
 	}
 }
 
@@ -169,8 +175,10 @@ void DirectorEngine::loadEXEv4(Common::SeekableReadStream *stream) {
 }
 
 void DirectorEngine::loadEXEv5(Common::SeekableReadStream *stream) {
-	if (stream->readUint32LE() != MKTAG('P', 'J', '9', '5'))
-		error("Invalid projector tag found in v5 EXE");
+	uint32 ver = stream->readUint32LE();
+	
+	if (ver != MKTAG('P', 'J', '9', '5'))
+		error("Invalid projector tag found in v5 EXE [%s]", tag2str(ver));
 
 	uint32 rifxOffset = stream->readUint32LE();
 	stream->readUint32LE(); // unknown
@@ -248,13 +256,13 @@ void DirectorEngine::loadSharedCastsFrom(Common::String filename) {
 	_sharedSound = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 	_sharedBMP = new Common::HashMap<int, Common::SeekableSubReadStreamEndian *>;
 
-	_sharedScore = new Score(this);
 	if (!shardcst->openFile(filename)) {
 		warning("No shared cast %s", filename.c_str());
 
 		return;
 	}
 
+	_sharedScore = new Score(this);
 	_sharedScore->setArchive(shardcst);
 
 	if (shardcst->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {

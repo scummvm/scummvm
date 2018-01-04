@@ -31,7 +31,7 @@
 
 namespace Fullpipe {
 
-bool GameLoader::writeSavegame(Scene *sc, const char *fname) {
+bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::String &description) {
 	GameVar *v = _gameVar->getSubVarByName("OBJSTATES")->getSubVarByName("SAVEGAME");
 
 	if (!v) {
@@ -55,7 +55,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	header.updateCounter = _updateCounter;
 	header.unkField = 1;
 
-	Common::MemoryWriteStreamDynamic stream;
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
 
 	MfcArchive *archive = new MfcArchive(&stream);
 
@@ -88,13 +88,13 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	debugC(3, kDebugLoading, "Saving %d infos", _sc2array.size());
 
 	for (uint i = 0; i < _sc2array.size(); i++) {
-		archive->writeUint32LE(_sc2array[i]._picAniInfosCount);
+		archive->writeUint32LE(_sc2array[i]._picAniInfos.size());
 
-		if (_sc2array[i]._picAniInfosCount)
-			debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfosCount);
+		if (_sc2array[i]._picAniInfos.size())
+			debugC(3, kDebugLoading, "Count %d: %d", i, _sc2array[i]._picAniInfos.size());
 
-		for (int j = 0; j < _sc2array[i]._picAniInfosCount; j++) {
-			_sc2array[i]._picAniInfos[j]->save(*archive);
+		for (uint j = 0; j < _sc2array[i]._picAniInfos.size(); j++) {
+			_sc2array[i]._picAniInfos[j].save(*archive);
 		}
 	}
 
@@ -145,6 +145,11 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname) {
 	saveFile->writeUint32LE(header2.date);
 	saveFile->writeUint16LE(header2.time);
 	saveFile->writeUint32LE(header2.playtime);
+
+	// Added in save version 2
+	Common::String desc(description.c_str(), MIN(255u, description.size()));	// Restrict description size
+	saveFile->writeByte(desc.size());
+	saveFile->writeString(desc);
 
 	g_fp->_currentScene->draw();
 

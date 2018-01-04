@@ -2,13 +2,67 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-1.10.0 (DD.MM.YYYY)
+2.0.0 (17.12.2017)
+ Neue Spiele:
+   - Unterstützung für Full Pipe hinzugefügt.
+   - Unterstützung für Hi-Res Adventure #3: Cranston Manor hinzugefügt.
+   - Unterstützung für Hi-Res Adventure #4: Ulysses and the Golden Fleece hinzugefügt.
+   - Unterstützung für Hi-Res Adventure #5: Time Zone hinzugefügt.
+   - Unterstützung für Hi-Res Adventure #6: The Dark Crystal hinzugefügt.
+   - Unterstützung für Riven hinzugefügt.
+   - Unterstützung für Starship Titanic (Raumschiff Titanic) hinzugefügt.
+
+ Neue Spiele (Sierra SCI2 - SCI3):
+   - Unterstützung für Gabriel Knight hinzugefügt.
+   - Unterstützung für Gabriel Knight 2 hinzugefügt.
+   - Unterstützung für King's Quest VII hinzugefügt.
+   - Unterstützung für King's Questions hinzugefügt.
+   - Unterstützung für Leisure Suit Larry 6 (hires) hinzugefügt.
+   - Unterstützung für Leisure Suit Larry 7 hinzugefügt.
+   - Unterstützung für Lighthouse hinzugefügt.
+   - Unterstützung für Mixed-Up Mother Goose Deluxe hinzugefügt.
+   - Unterstützung für Phantasmagoria hinzugefügt.
+   - Unterstützung für Phantasmagoria 2 hinzugefügt.
+   - Unterstützung für Police Quest 4 hinzugefügt.
+   - Unterstützung für RAMA hinzugefügt.
+   - Unterstützung für Shivers hinzugefügt.
+   - Unterstützung für Space Quest 6 hinzugefügt.
+   - Unterstützung für Torin's Passage hinzugefügt.
+
+ Neue Portierungen:
+   - Portierung für PSP Vita hinzugefügt.
+   - Portierung für RISC OS hinzugefügt.
+
  Allgemein:
+   - Bilineare Filterung für den SDL2-Vollbildmodus hinzugefügt.
+   - Fehler behoben, der einen Absturz im Optionen-Dialog verursacht.
    - Kommandozeilen-Option hinzugefügt, mit der das aktuelle oder ein gewähltes
      Verzeichnis nach unterstützten Spielen durchsucht werden kann.
    - Viele Optionen der Benutzeroberfläche können nun übernommen werden, ohne
      den Optionen-Dialog zu schließen.
    - Sprache der Benutzeroberfläche kann ohne Programmneustart geändert werden.
+   - Integrierter Munt MT-32-Emulator auf Version 2.0.3 aktualisiert.
+   - Verbesserte Joystick-Behandlung.
+   - Verbesserte Audio-Latenz.
+   - Verbesserte Verwaltung des ScummVM-Fensters in Spielen, die den Bildschirm-Modus
+     wechseln.
+   - Darstellung von Listen verbessert (z.B. im Speichern-Dialog)
+   - Speicherort für Bildschirmfotos geändert. Dies behebt Probleme, die auftreten,
+     wenn ScummVM in einem Verzeichnis ohne Schreibrechte installiert ist. Ebenfalls
+     wurde eine Einstellung hinzugefügt, mit der dieser Speicherort verändert werden kann.
+   - Fehler im Multithreading behoben, der zu einem Absturz in Spielen mit MP3-Audio führen kann.
+
+ ADL:
+   - Fehler behoben, der zum Einfrieren von ScummVM führt, wenn das Schild in der Rakete
+     in Mission Asteroid gelesen wird.
+
+ AGI:
+   - Fehler behoben, der verursacht, dass Spiel-Skripte blockiert werden, nachdem ein Spielstand
+     geladen wird, der gespeichert wurde, während Musik abgespielt wurde (dieser Fehler kann z.B.
+     im Poker-Hinterzimmer in Police Quest 1 auftreten).
+   - Fehlerhaftes Cursor-Verhalten in Manhunter korrigiert.
+   - Geschwindigkeit der Nachtclub-Arcade-Sequenz in der Apple IIgs-Version von Manhunter korrigiert.
+   - Maximale Spielgeschwindigkeit auf 40 FPS begrenzt, um sicherzustellen, dass das Spiel nicht zu schnell läuft.
 
  AGOS:
    - Einstellung für die Untertitel-Geschwindigkeit in der hebräischen Version von
@@ -16,18 +70,135 @@ Programmcodes finden Sie auf Englisch unter:
 
  Composer:
    - Unterstützung für das Speichern und Laden von Spielständen aus dem Hauptmenü heraus hinzugefügt.
+   - Die französische Version von Gregory wird nun korrekt erkannt.
+   - Die deutsche Version von Baba Yaga wird nun korrekt erkannt.
 
-1.9.1 (DD.MM.YYYY)
- Allgemein:
-   - Option für bilineare Filterung im SDL2-Vollbildmodus hinzugefügt.
-   - Fehler behoben, der einen Absturz im Optionen-Dialog der Benutzeroberfläche verursacht.
+ Cruise:
+   - Schrift-Darstellung korrigiert.
+
+ Drascula:
+   - Fehler behoben, der es unmöglich gemacht hat, im Gasthaus mehr als einmal mit dem
+     Trunkenbold zu sprechen.
+   - Lautstärke-Regelung hinzugefügt und Lautstärke-Synchronisation zwischen dem Spiel
+     und den ScummVM-Einstellungen korrigiert.
+   - Spielstände können jetzt mithilfe des GMM gespeichert und geladen werden.
+
+ Dreamweb:
+   - Fehler behoben, der zu einem Absturz führt, wenn die letzten Steine unter der Kirche
+     eingesammelt werden.
+   - Die italienische CD-Version wird nun korrekt erkannt.
 
  Kyra:
-   - Pufferüberlauf in "Lands of Lore" behoben.
+   - Pufferüberlauf in Lands of Lore behoben.
+   - Absturz aufgrund fehlender Farbpaletten-Daten in der Diskettenversion von Legend of
+     Kyrandia behoben.
+
+ MADE:
+   - Fehlerhafte Audio-Wiedergabe behoben (Fehler #9753).
 
  MADS:
-   - Fehler behoben, der einen Absturz verursacht, wenn "Rex Nebular and the Cosmic Gender Bender"
-     gestartet wird.
+   - Fehler behoben, der zu einem Absturz nach dem Start von Rex Nebular and the Cosmic
+     Gender Bender führt.
+   - Fehler behoben, der zu einem Absturz führen kann, wenn Rex gefangen genommen wird
+
+ MOHAWK:
+   - Verbesserungen an den originalen Spieldaten vorgenommen, um die Anweisungen
+     zum Öffnen des Tresors in Myst ME zu korrigieren.
+   - Situationen korrigiert, in denen Myst scheinbar nicht mehr reagiert.
+   - Behandlung der Audio-Wiedergabe in Myst überarbeitet und verbessert.
+   - Absturz während des Klavier-Rätsels in Myst behoben.
+
+ Neverhood:
+   - Absturz im Musikhaus in der russischen DR-Version behoben.
+   - Absturz im späteren Spiel in der russischen DR-Version behoben.
+
+ Pegasus:
+   - Fehler beim Laden eines Spiels aus dem Launcher korrigiert.
+   - Einige Events werden nun ignoriert, während die ScummVM-Oberfläche sichtbar ist.
+     Damit wird beispielsweise korrigiert, dass das Spieleigene Menü geöffnet wird,
+     wenn der GMM mittels ESC geschlossen wird.
+   - Mehrere Abstürze im Zusammenhang mit dem gemeinsamen Bildschirmplatz korrigiert.
+   - Verbesserte Performance beim Ausblenden des Bildschirms.
+
+ SAGA:
+   - Absturz behoben, der Auftritt, wenn das Verb "Gib" in IHNM verwendet wird.
+   - Gorrister ist nun nicht mehr unsichtbar und hängt nicht mehr fest, wenn
+     ein Spiel am Liegeplatz in IHNM geladen wird.
+   - Hintergrundfarbe des Gesprächs-Feldes in IHNM korrigiert.
+   - Unterstützung für die französische Fan-Übersetzung von Inherit the Earth hinzugefügt.
+
+ SCI:
+   - Script-Fehler in Laura Bow 2: Dagger of Amon Ra korrigiert, der es unmöglich
+     machte, den Party-Raum mit dem großen goldenen Kopf im Museum (Raum 350) zu verlassen.
+     Dieser Fehler tritt auch auf, wenn der originale Interpreter verwendet wird.
+   - Verbesserte Ladezeit bei Verwendung des MT-32-Emulators.
+   - Verbesserte Behandlung von MT-32-Halleffekten in SCI0-Spielen.
+   - Verbesserte Auswahl synthetisierter Soundeffekte in SCI0-Spielen.
+   - Verbesserte Auswahl der digitalen Audio-Ausgabe in SQ4.
+   - Verbesserte Ressourcenverwaltung.
+   - Verbesserte Fehlerbehandlung fehlerhafter MIDI-Daten.
+   - Fehler behoben, der die Speicherstände mit der Zeit mit unnötigen Daten gefüllt hat.
+   - Fehlerhafter Tag/Nacht-Rhythmus in QFG3 behoben.
+   - Skript-Fehler in Police Quest 3 behoben. Wenn der Spieler Marie das Medaillon
+     übergibt, erhält er dafür 10 Punkte. Damit ist es jetzt möglich, das Spiel mit
+     einer perfekten Punktzahl zu beenden. Dieser Fehler ist auch im Originalspiel
+     vorhanden.
+   - Verschiedene andere Skript-Fehler wurden behoben.
+   - Verbesserung der Lautstärke-Einstellungen.
+
+ SCUMM:
+   - Absturz in Amiga-Spielen behoben.
+   - Fehler behoben, der verursacht, dass zwei Soundtracks gleichzeitig in Monkey Island 2
+     abgespielt werden.
+   - Fehler behoben, der verursacht, dass sich die Caponier nicht tarnen, wenn der blaue
+     Kristall in Zak McKracken verwendet wird.
+   - Fehler in Maniac Mansion behoben, der verursacht, dass Dr. Fred in der 
+     Labor-Zwischensequenz in die falsche Richtung schaut.
+   - Fehler behoben, der verursacht, dass in V0 und V1-Spielen die Charaktere eine Zeile
+     zu hoch dargstellt werden.
+   - Fehler in Maniac Mansion behoben, der verursacht, dass Purpur-Tentakel im Labor-Eingang
+     erscheint, nachdem es davongejagt wurde.
+   - Fehler in Maniac Mansion behoben, der verursacht, dass der Strom nicht wieder eingeschaltet
+     wird, wenn das Labor betreten wird, während Dr. Fred den Strom abgeschaltet hat.
+   - Fehler in Maniac Mansion behoben, der zu einer fehlerhaften Darstellung von Charakteren
+     führen kann.
+
+ Sherlock:
+   - Die italienische Fan-Übersetzuhng von Serrated Scalpel wird nun korrekt erkannt.
+
+ Sky:
+   - Kollisionsabfrage korrigiert.
+
+ Sword1:
+   - Vorschaubild für Spielstände hinzugefügt, die über den spieleigenen Dialog angefertigt werden.
+   - Fehler korrigiert, der dazu führt, dass die Audio- und Untertitel-Einstellungen geändert
+     werden, wenn der spieleigene Laden/Speichern-Dialog geöffnet wird.
+
+ Tinsel:
+   - Fehler in Discworld 2 behoben, der verursacht, dass der Text und die Sprachausgabe
+     nicht durchgehend angezeigt bzw. abgespielt wird.
+   - Absturz im Spiel behoben, der auftritt, wenn alle Spielstand-Plätze mit langen
+     Namen verwendet werden.
+
+ TsAGE:
+   - Kürzlich eingeführten Fehler korrigiert, der verhindert, dass die Animationen in
+     Return to Ringworld abgespielt werden.
+   - Darstellungsfehler in der Demo-Version von Return to Ringworld behoben.
+   - Möglichen Fehler beim Laden von Spielstände in Return to Ringworld behoben.
+   - Fehler im Audio-Code behoben.
+   - Absturz bei der Rückkehr zum Launcher korrigiert.
+
+ Voyeur:
+   - Fehler behoben, der verursacht, dass Hintergründe in statischen Räumen nicht dargestellt werden.
+   - Audio-Wiedergabe in VCR korrigiert.
+   - Fehler behoben, der verhindert, dass das Spiel aus dem VCR-Bildschirm heraus verlassen werden kann.
+   - Workaround für einen Fehler im Original-Spiel hinzugefügt, der zur Verwendung ungültiger
+     Hotspot-IDs führt.
+
+ macOS X-Portierung:
+   - Verbundene MIDI-Geräte können jetzt manuell ausgewählt werden. Es wird nicht mehr
+     automatisch das erste Gerät ausgewählt.
+   - Verhalten des Datei-Browsers verbessert.
 
 1.9.0 (17.10.2016)
  Neue Spiele:

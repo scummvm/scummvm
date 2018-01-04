@@ -107,8 +107,8 @@ class MystAreaVideo : public MystAreaAction {
 public:
 	MystAreaVideo(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent);
 
-	VideoHandle playMovie();
-	VideoHandle getMovieHandle();
+	VideoEntryPtr playMovie();
+	VideoEntryPtr getVideo();
 
 	void handleCardChange() override;
 	bool isPlaying();
@@ -117,7 +117,7 @@ public:
 	void pauseMovie(bool pause);
 
 protected:
-	static Common::String convertMystVideoName(Common::String name);
+	static Common::String convertMystVideoName(const Common::String &name);
 
 	Common::String _videoFile;
 	int16 _left;

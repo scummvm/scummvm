@@ -1463,7 +1463,7 @@ void DisplayMan::drawSquareD3L(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypePit:
 		if (!squareAspect[kDMSquareAspectPitInvisible])
 			drawFloorPitOrStairsBitmap(kDMGraphicIdxFloorPitD3L, frameFloorPitD3L);
-	// no break on purpose
+		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackLeftBackRightFrontLeftFrontRight;
@@ -1546,7 +1546,7 @@ void DisplayMan::drawSquareD3R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypePit:
 		if (!squareAspect[kDMSquareAspectPitInvisible])
 			drawFloorPitOrStairsBitmapFlippedHorizontally(kDMGraphicIdxFloorPitD3L, frameFloorPitD3R);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackRightBackLeftFrontRightFrontLeft;
@@ -1626,7 +1626,7 @@ void DisplayMan::drawSquareD3C(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypePit:
 		if (!squareAspect[kDMSquareAspectPitInvisible])
 			drawFloorPitOrStairsBitmap(kDMGraphicIdxFloorPitD3C, frameFloorPitD3C);
-	// No break on purpose
+		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackLeftBackRightFrontLeftFrontRight;
@@ -1690,7 +1690,7 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 		break;
 	case kDMElementTypeStairsSide:
 		drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexSideD2L, frameStairsSideD2L);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeDoorSide:
 		order = kDMCellOrderBackRightFrontLeftFrontRight;
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD2L); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
@@ -1706,7 +1706,7 @@ void DisplayMan::drawSquareD2L(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD2L : kDMGraphicIdxFloorPitD2L,
 										frameFloorPitD2L);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackLeftBackRightFrontLeftFrontRight;
@@ -1775,7 +1775,7 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 		break;
 	case kDMElementTypeStairsSide:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(_stairsNativeBitmapIndexSideD2L, frameStairsSideD2R);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeDoorSide:
 		order = kDMCellOrderBackLeftFrontRightFrontLeft;
 		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
@@ -1793,7 +1793,7 @@ void DisplayMan::drawSquareD2R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(
 			squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD2L : kDMGraphicIdxFloorPitD2L, frameFloorPitD2R);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackRightBackLeftFrontRightFrontLeft;
@@ -1876,7 +1876,7 @@ void DisplayMan::drawSquareD2C(Direction dir, int16 posX, int16 posY) {
 		break;
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD2C : kDMGraphicIdxFloorPitD2C, frameFloorPitD2C);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackLeftBackRightFrontLeftFrontRight;
@@ -1944,7 +1944,7 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 			drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexUpSideD1L, frameStairsUpSideD1L);
 		else
 			drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexDownSideD1L, frameStairsDownSideD1L);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeDoorSide:
 		order = kDMCellOrderBackRightFrontRight;
 		/* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
@@ -1961,7 +1961,7 @@ void DisplayMan::drawSquareD1L(Direction dir, int16 posX, int16 posY) {
 		break;
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD1L : kDMGraphicIdxFloorPitD1L, frameFloorPitD1L);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackRightFrontRight;
@@ -2029,7 +2029,7 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 		else
 			drawFloorPitOrStairsBitmapFlippedHorizontally(_stairsNativeBitmapIndexDownSideD1L, frameStairsDownSideD1R);
 
-		// No break on purpose
+		// fall through
 	case kDMElementTypeDoorSide:
 		order = kDMCellOrderBackLeftFrontLeft;
 		drawFloorOrnament(squareAspect[kDMSquareAspectFloorOrn], kDMViewFloorD1R); /* BUG0_64 Floor ornaments are drawn over open pits. There is no check to prevent drawing floor ornaments over open pits */
@@ -2046,7 +2046,7 @@ void DisplayMan::drawSquareD1R(Direction dir, int16 posX, int16 posY) {
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmapFlippedHorizontally(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD1L
 														   : kDMGraphicIdxFloorPitD1L, frameFloorPitD1R);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackLeftFrontLeft;
@@ -2134,7 +2134,7 @@ void DisplayMan::drawSquareD1C(Direction dir, int16 posX, int16 posY) {
 		break;
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD1C : kDMGraphicIdxFloorPitD1C, frameFloorPitD1C);
-		// No break on purpose
+		// fall through
 	case kDMElementTypeTeleporter:
 	case kDMElementTypeCorridor:
 		order = kDMCellOrderBackLeftBackRightFrontLeftFrontRight;

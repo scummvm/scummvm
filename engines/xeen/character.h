@@ -33,6 +33,15 @@
 namespace Xeen {
 
 #define INV_ITEMS_TOTAL 9
+#define MAX_SPELLS_PER_CLASS 39
+#define AWARDS_TOTAL 88
+#define WARZONE_AWARD 9
+
+enum Award {
+	SHANGRILA_GUILD_MEMBER = 5, GOOBER = 76, SUPER_GOOBER = 77,
+	CASTLEVIEW_GUILD_MEMBER = 83, SANDCASTER_GUILD_MEMBER = 84,
+	LAKESIDE_GUILD_MEMBER = 85, NECROPOLIS_GUILD_MEMBER = 86, OLYMPUS_GUILD_MEMBER = 87
+};
 
 enum BonusFlags {
 	ITEMFLAG_BONUS_MASK = 0xBF, ITEMFLAG_CURSED = 0x40, ITEMFLAG_BROKEN = 0x80
@@ -94,16 +103,36 @@ public:
 	int _bonusFlags;
 	int _frame;
 public:
+	/**
+	 * Return the name of the item
+	 */
+	static const char *getItemName(ItemCategory category, uint id);
+public:
 	XeenItem();
 
+	/**
+	 * Clear the data for the item
+	 */
 	void clear();
 
+	/**
+	 * Returns true if no item is set
+	 */
 	bool empty() const { return _id != 0; }
 
+	/**
+	 * Synchronizes the data for the item
+	 */
 	void synchronize(Common::Serializer &s);
 
+	/**
+	 * Gets the elemental category for the item
+	 */
 	ElementalCategory getElementalCategory() const;
 
+	/**
+	 * Gets the attribute category for the item
+	 */
 	AttributeCategory getAttributeCategory() const;
 };
 
@@ -122,6 +151,9 @@ public:
 	InventoryItems(Character *character, ItemCategory category);
 	virtual ~InventoryItems() {}
 
+	/**
+	 * Clears the set of items
+	 */
 	void clear();
 
 	/**
@@ -136,6 +168,9 @@ public:
 
 	virtual Common::String getFullDescription(int itemIndex, int displayNum = 15) = 0;
 
+	/**
+	 * Returns the identified details for an item
+	 */
 	Common::String getIdentifiedDetails(int itemIndex);
 
 	/**
@@ -143,6 +178,9 @@ public:
 	 */
 	bool discardItem(int itemIndex);
 
+	/**
+	 * Equips an item
+	 */
 	virtual void equipItem(int itemIndex) {}
 
 	/**
@@ -155,6 +193,9 @@ public:
 	 */
 	void sort();
 
+	/**
+	 * Enchants an item
+	 */
 	virtual void enchantItem(int itemIndex, int amount);
 
 	/**
@@ -181,6 +222,9 @@ public:
 	 */
 	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 
+	/**
+	 * Enchants a weapon
+	 */
 	virtual void enchantItem(int itemIndex, int amount);
 };
 
@@ -202,6 +246,9 @@ public:
 	 */
 	virtual Common::String getFullDescription(int itemIndex, int displayNum);
 
+	/**
+	 * Enchants an armor
+	 */
 	virtual void enchantItem(int itemIndex, int amount);
 };
 
@@ -286,8 +333,8 @@ public:
 	uint _birthDay;
 	int _tempAge;
 	int _skills[18];
-	bool _awards[128];
-	int _spells[39];
+	int _awards[128];
+	int _spells[MAX_SPELLS_PER_CLASS];
 	int _lloydMap;
 	Common::Point _lloydPosition;
 	bool _hasSpells;
@@ -320,8 +367,14 @@ public:
 public:
 	Character();
 
+	/**
+	 * Clears the data for a character
+	 */
 	void clear();
 
+	/**
+	 * Synchronizes data for the character
+	 */
 	void synchronize(Common::Serializer &s);
 
 	/**
@@ -349,8 +402,14 @@ public:
 	 */
 	int getAge(bool ignoreTemp = false) const;
 
+	/**
+	 * Gets the maximum hit points for a character
+	 */
 	int getMaxHP() const;
 
+	/**
+	 * Gets the maximum spell points for a character
+	 */
 	int getMaxSP() const;
 
 	/**
@@ -364,16 +423,34 @@ public:
 	 */
 	static int statColor(int amount, int threshold);
 
+	/**
+	 * Returns the bonus the character gets for stats
+	 */
 	int statBonus(uint statValue) const;
 
+	/**
+	 * Returns true if the character passes a saving throw for a given attack type
+	 */
 	bool charSavingThrow(DamageType attackType) const;
 
+	/**
+	 * Returns true if the character is unable to perform any action
+	 */
 	bool noActions();
 
+	/**
+	 * Sets an award status
+	 */
 	void setAward(int awardId, bool value);
 
+	/**
+	 * Returns true if a character has a given award
+	 */
 	bool hasAward(int awardId) const;
 
+	/**
+	 * Returns the character's armor class
+	 */
 	int getArmorClass(bool baseOnly = false) const;
 
 	/**
@@ -383,22 +460,49 @@ public:
 
 	uint getCurrentLevel() const;
 
+	/**
+	 * Scans the character's inventory for the given item
+	 */
 	int itemScan(int itemId) const;
 
+	/**
+	 * Sets various attributes of a character
+	 */
 	void setValue(int id, uint value);
 
+	/**
+	 * Returns true if the character is a member of the current town's guild
+	 */
 	bool guildMember() const;
 
+	/**
+	 * Returns the experience required to reach the next level
+	 */
 	uint experienceToNextLevel() const;
 
+	/**
+	 * Returns the next level the character will reach
+	 */
 	uint nextExperienceLevel() const;
 
+	/**
+	 * Returns the character's current experience
+	 */
 	uint getCurrentExperience() const;
 
+	/**
+	 * Returns the number of skills the character has
+	 */
 	int getNumSkills() const;
 
+	/**
+	 * Returns the number of awards the character has
+	 */
 	int getNumAwards() const;
 
+	/**
+	 * Creates an item and adds it to the inventory
+	 */
 	int makeItem(int p1, int itemIndex, int p3);
 
 	/**
@@ -407,14 +511,23 @@ public:
 	void addHitPoints(int amount);
 
 	/**
-	 * Remove hit points fromo the character
+	 * Remove hit points from the character
 	 */
 	void subtractHitPoints(int amount);
 
-	bool hasSpecialItem() const;
+	/**
+	 * Returns true if the character has the Xeen Slayer Sword
+	 */
+	bool hasSlayerSword() const;
 
+	/**
+	 * Returns true if the character has a missile weapon, such as a bow
+	 */
 	bool hasMissileWeapon() const;
 
+	/**
+	 * Returns a category index for a character, used such for indexing into spell data
+	 */
 	int getClassCategory() const;
 };
 

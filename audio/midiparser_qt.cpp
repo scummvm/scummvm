@@ -423,7 +423,7 @@ void MidiParser_QT::initFromContainerTracks() {
 		if (tracks[i]->codecType == CODEC_TYPE_MIDI) {
 			assert(tracks[i]->sampleDescs.size() == 1);
 
-			if (tracks[i]->editCount != 1)
+			if (tracks[i]->editList.size() != 1)
 				warning("Unhandled QuickTime MIDI edit lists, things may go awry");
 
 			MIDITrackInfo trackInfo;
@@ -455,7 +455,7 @@ void MidiParser_QT::initCommon() {
 byte *MidiParser_QT::readWholeTrack(Common::QuickTimeParser::Track *track, uint32 &trackSize) {
 	// This just goes through all chunks and appends them together
 
-	Common::MemoryWriteStreamDynamic output;
+	Common::MemoryWriteStreamDynamic output(DisposeAfterUse::NO);
 	uint32 curSample = 0;
 
 	// Read in the note request data first

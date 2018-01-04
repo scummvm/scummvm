@@ -159,7 +159,7 @@ void CPetGlyphs::draw(CScreenManager *screenManager) {
 			CPetGlyph *glyph = getGlyph(itemIndex);
 
 			if (glyph)
-				glyph->drawAt(screenManager, pt, index == _highlightIndex);
+				glyph->drawAt(screenManager, pt, itemIndex == _highlightIndex);
 		}
 	}
 
@@ -415,21 +415,6 @@ bool CPetGlyphs::KeyCharMsg(int key) {
 }
 
 bool CPetGlyphs::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
-	Common::KeyCode key = msg->_keyState.keycode;
-
-	switch (key) {
-	case Common::KEYCODE_LEFT:
-		decSelection();
-		return true;
-
-	case Common::KEYCODE_RIGHT:
-		incSelection();
-		return true;
-
-	default:
-		break;
-	}
-
 	if (_highlightIndex >= 0) {
 		CPetGlyph *glyph = getGlyph(_highlightIndex);
 		if (glyph && glyph->VirtualKeyCharMsg(msg))

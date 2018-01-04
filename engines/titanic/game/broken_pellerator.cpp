@@ -53,16 +53,16 @@ void CBrokenPellerator::load(SimpleFile *file) {
 }
 
 bool CBrokenPellerator::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_v1) {
-		changeView(_v2 ? _string5 : _string4);
+	if (_pelleratorOpen) {
+		changeView(_gottenHose ? _string5 : _string4);
 	} else {
-		if (_v2) {
+		if (_gottenHose) {
 			playMovie(28, 43, 0);
 		} else {
 			playMovie(0, 14, MOVIE_NOTIFY_OBJECT);
 		}
 
-		_v1 = true;
+		_pelleratorOpen = true;
 	}
 
 	return true;
@@ -71,7 +71,7 @@ bool CBrokenPellerator::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 bool CBrokenPellerator::LeaveViewMsg(CLeaveViewMsg *msg) {
 	CString name = msg->_newView->getNodeViewName();
 	if (name == "Node 3.S" || name == "Node 3.N") {
-		_v1 = false;
+		_pelleratorOpen = false;
 		loadFrame(0);
 	}
 
@@ -80,32 +80,32 @@ bool CBrokenPellerator::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 bool CBrokenPellerator::ActMsg(CActMsg *msg) {
 	if (msg->_action == "PlayerGetsHose") {
-		_v2 = 1;
+		_gottenHose = true;
 		loadFrame(43);
 
 		CStatusChangeMsg statusMsg;
 		statusMsg.execute("PickupHose");
 	} else {
-		_exitAction = 0;
+		_closeAction = CLOSE_NONE;
 		bool closeFlag = msg->_action == "Close";
 		if (msg->_action == "CloseLeft") {
 			closeFlag = true;
-			_exitAction = 1;
+			_closeAction = CLOSE_LEFT;
 		}
 		if (msg->_action == "CloseRight") {
 			closeFlag = true;
-			_exitAction = 2;
+			_closeAction = CLOSE_RIGHT;
 		}
 
 		if (closeFlag) {
-			if (_v1) {
-				_v1 = false;
-				if (_v2)
+			if (_pelleratorOpen) {
+				_pelleratorOpen = false;
+				if (_gottenHose)
 					playMovie(43, 57, MOVIE_NOTIFY_OBJECT);
 				else
 					playMovie(14, 28, MOVIE_NOTIFY_OBJECT);
 			} else {
-				switch (_exitAction) {
+				switch (_closeAction) {
 				case 1:
 					changeView(_exitLeftView);
 					break;
@@ -116,7 +116,7 @@ bool CBrokenPellerator::ActMsg(CActMsg *msg) {
 					break;
 				}
 
-				_exitAction = 0;
+				_closeAction = CLOSE_NONE;
 			}
 		}
 	}
@@ -139,12 +139,14 @@ bool CBrokenPellerator::MovieEndMsg(CMovieEndMsg *msg) {
 		statusMsg.execute("PickUpHose");
 	}
 
-	switch (_exitAction) {
+	switch (_closeAction) {
 	case 1:
 		changeView(_exitLeftView);
+		_closeAction = CLOSE_NONE;
 		break;
 	case 2:
 		changeView(_exitRightView);
+		_closeAction = CLOSE_NONE;
 		break;
 	default:
 		break;

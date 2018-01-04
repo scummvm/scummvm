@@ -161,9 +161,8 @@ void Sword1CheckDirectory(const Common::FSList &fslist, bool *filesFound, bool r
 			if (directory.hasPrefix("clusters") && directory.size() <= 9 && !recursion)
 				continue;
 
-			const char *fileName = file->getName().c_str();
 			for (int cnt = 0; cnt < NUM_FILES_TO_CHECK; cnt++)
-				if (scumm_stricmp(fileName, g_filesToCheck[cnt]) == 0)
+				if (scumm_stricmp(file->getName().c_str(), g_filesToCheck[cnt]) == 0)
 					filesFound[cnt] = true;
 		} else {
 			for (int cnt = 0; cnt < ARRAYSIZE(g_dirNames); cnt++)
@@ -213,18 +212,31 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 		if (!filesFound[i] || psxFilesFound)
 			psxDemoFilesFound = false;
 
+	GameDescriptor gd;
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1DemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1DemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && pcFilesFound && psxFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1PSXSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1PSXSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && pcFilesFound && psxDemoFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1PSXDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1PSXDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && pcFilesFound && !psxFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1FullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1FullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && macFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1MacFullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1MacFullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 	else if (mainFilesFound && macDemoFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1MacDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
+		gd = GameDescriptor(sword1MacDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
+	else
+		return detectedGames;
+
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::ES_ESP));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::PT_BRA));
+	gd.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::CZ_CZE));
+
+	detectedGames.push_back(gd);
 
 	return detectedGames;
 }

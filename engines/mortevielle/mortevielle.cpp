@@ -247,7 +247,7 @@ void MortevielleEngine::pauseEngineIntern(bool pause) {
  */
 Common::ErrorCode MortevielleEngine::initialize() {
 	// Initialize graphics mode
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, true);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Set up an intermediate screen surface
 	_screenSurface->create(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());

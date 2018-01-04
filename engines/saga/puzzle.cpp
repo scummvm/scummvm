@@ -73,6 +73,8 @@ Puzzle::Puzzle(SagaEngine *vm) : _vm(vm), _solved(false), _active(false) {
 		_lang = 1;
 	else if (_vm->getLanguage() == Common::IT_ITA)
 		_lang = 2;
+	else if (_vm->getLanguage() == Common::FR_FRA)
+		_lang = 3;
 
 	_hintRqState = kRQNoHint;
 	_hintOffer = 0;

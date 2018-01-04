@@ -28,13 +28,11 @@
 namespace Sci {
 
 /**
- * StablePointerArray holds pointers in a fixed-size array
- * that maintains position of erased items until `pack` is
- * called. It is used by DrawList, RectList, and
- * ScreenItemList. StablePointerArray takes ownership of
- * all pointers that are passed to it and deletes them when
- * calling `erase` or when destroying the
- * StablePointerArray.
+ * StablePointerArray holds pointers in a fixed-size array that maintains
+ * position of erased items until `pack` is called. It is used by DrawList,
+ * RectList, and ScreenItemList. StablePointerArray takes ownership of all
+ * pointers that are passed to it and deletes them when calling `erase` or when
+ * destroying the StablePointerArray.
  */
 template<class T, uint N>
 class StablePointerArray {

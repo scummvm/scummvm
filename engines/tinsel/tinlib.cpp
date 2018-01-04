@@ -2050,6 +2050,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 		int timeout;
 		bool bTookControl;
 		int myEscape;
+		int myLeftEvent;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -2186,7 +2187,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 				/*
 				 * PrintObj() called from other event
 				 */
-				_ctx->myEscape = GetLeftEvents();
+				_ctx->myLeftEvent = GetLeftEvents();
 				_ctx->bTookControl = GetControl();
 
 				// Display for a time, but abort if conversation gets hidden
@@ -2200,7 +2201,7 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 					// Abort if left click - hardwired feature for talky-print!
 					// Abort if sample times out
 					// Abort if conversation hidden
-					if (LeftEventChange(_ctx->myEscape)
+					if (LeftEventChange(_ctx->myLeftEvent)
 							|| --_ctx->timeout <= 0
 							|| ConvIsHidden())
 						break;

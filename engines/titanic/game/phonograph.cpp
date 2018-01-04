@@ -83,8 +83,8 @@ bool CPhonograph::PhonographPlayMsg(CPhonographPlayMsg *msg) {
 		_isPlaying = true;
 		msg->_value = 1;
 	} else {
-		stopGlobalSound(false, -1);
-		playGlobalSound(cylinderMsg._name, -2, true, true, 0);
+		stopAmbientSound(false, -1);
+		playAmbientSound(cylinderMsg._name, VOL_QUIET, true, true, 0);
 		_isPlaying = true;
 		msg->_value = 1;
 	}
@@ -107,7 +107,7 @@ bool CPhonograph::PhonographStopMsg(CPhonographStopMsg *msg) {
 				CStopMusicMsg stopMsg;
 				stopMsg.execute(this);
 			} else {
-				stopGlobalSound(msg->_leavingRoom, -1);
+				stopAmbientSound(msg->_leavingRoom, -1);
 			}
 			msg->_cylinderPresent = true;
 		}

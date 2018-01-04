@@ -21,6 +21,9 @@
  */
 
 #include "titanic/star_control/surface_fader.h"
+#include "titanic/star_control/surface_area.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/video_surface.h"
 #include "common/system.h"
 #include "graphics/pixelformat.h"
 

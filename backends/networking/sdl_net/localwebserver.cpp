@@ -42,6 +42,10 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
+#ifndef SIOCGIFCONF
+#include <sys/sockio.h>
+#endif
+
 #ifndef _SIZEOF_ADDR_IFREQ
 #define _SIZEOF_ADDR_IFREQ sizeof
 #endif
@@ -241,8 +245,8 @@ void LocalWebserver::handleClient(uint32 i) {
 			break;
 
 		// if no handler, answer with default BAD REQUEST
-		// fallthrough
 	}
+	// fall through
 
 	case BAD_REQUEST:
 		setClientGetHandler(_client[i], "<html><head><title>ScummVM - Bad Request</title></head><body>BAD REQUEST</body></html>", 400);
@@ -321,7 +325,7 @@ void LocalWebserver::resolveAddress(void *ipAddress) {
 		    warning("LocalWebserver: ioctl SIOCGIFCONF failed: %s (%d)", strerror(errno), errno);
 		} else {
 			struct ifreq *i;
-			for (size_t index = 0; index < ifc.ifc_len; index += _SIZEOF_ADDR_IFREQ(*i)) {
+			for (size_t index = 0; index < (size_t)ifc.ifc_len; index += _SIZEOF_ADDR_IFREQ(*i)) {
 				i = (struct ifreq *)(buffer + index);
 
 				Common::String addr;

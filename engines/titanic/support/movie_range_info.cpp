@@ -55,6 +55,8 @@ void CMovieRangeInfo::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_isRepeat, indent + 1);
 	file->writeNumberLine(_isReversed, indent + 1);
 	_events.save(file, indent + 1);
+
+	ListItem::save(file, indent);
 }
 
 void CMovieRangeInfo::load(SimpleFile *file) {
@@ -67,6 +69,8 @@ void CMovieRangeInfo::load(SimpleFile *file) {
 		_isReversed = file->readNumber();
 		_events.load(file);
 	}
+
+	ListItem::load(file);
 }
 
 void CMovieRangeInfo::getMovieEnd(CMovieEventList &list) {

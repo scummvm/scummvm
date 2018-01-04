@@ -23,7 +23,7 @@
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
-#include "mohawk/sound.h"
+#include "mohawk/myst_sound.h"
 #include "mohawk/video.h"
 
 #include "common/events.h"
@@ -162,7 +162,7 @@ const Common::String MystAreaAction::describe() {
 }
 
 // In Myst/Making of Myst, the paths are hardcoded ala Windows style without extension. Convert them.
-Common::String MystAreaVideo::convertMystVideoName(Common::String name) {
+Common::String MystAreaVideo::convertMystVideoName(const Common::String &name) {
 	Common::String temp;
 
 	for (uint32 i = 1; i < name.size(); i++) {
@@ -211,13 +211,13 @@ MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, Common::SeekableReadStream *
 	debugC(kDebugResource, "\tplayRate: %d", _playRate);
 }
 
-VideoHandle MystAreaVideo::playMovie() {
+VideoEntryPtr MystAreaVideo::playMovie() {
 	// Check if the video is already running
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 
 	// If the video is not running, play it
 	if (!handle) {
-		handle = _vm->_video->playMovie(_videoFile);
+		handle = _vm->_video->playMovie(_videoFile, Audio::Mixer::kSFXSoundType);
 		if (!handle)
 			error("Failed to open '%s'", _videoFile.c_str());
 
@@ -244,19 +244,19 @@ VideoHandle MystAreaVideo::playMovie() {
 	}
 
 	if (_playBlocking) {
-		_vm->_video->waitUntilMovieEnds(handle);
-		return VideoHandle();
+		_vm->waitUntilMovieEnds(handle);
+		return VideoEntryPtr();
 	}
 
 	return handle;
 }
 
-VideoHandle MystAreaVideo::getMovieHandle() {
+VideoEntryPtr MystAreaVideo::getVideo() {
 	// If the video is already in the manager, just return the handle
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 	if (!handle) {
 		// If the video has not been loaded yet, do it but don't start playing it
-		handle = _vm->_video->playMovie(_videoFile);
+		handle = _vm->_video->playMovie(_videoFile, Audio::Mixer::kSFXSoundType);
 		if (!handle)
 			error("Failed to open '%s'", _videoFile.c_str());
 		handle->stop();
@@ -271,12 +271,12 @@ void MystAreaVideo::handleCardChange() {
 }
 
 bool MystAreaVideo::isPlaying() {
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 	return handle && !handle->endOfVideo();
 }
 
 void MystAreaVideo::pauseMovie(bool pause) {
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 	if (handle && !handle->endOfVideo())
 		handle->pause(pause);
 }
@@ -443,7 +443,6 @@ void MystAreaImageSwitch::drawConditionalDataToScreen(uint16 state, bool update)
 		// Draw to screen
 		if (update) {
 			_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
-			_vm->_system->updateScreen();
 		} else {
 			_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
 		}
@@ -641,7 +640,7 @@ void MystAreaSlider::updatePosition(const Common::Point &mouse) {
 	}
 
 	if (positionChanged && _dragSound)
-		_vm->_sound->replaceSoundMyst(_dragSound);
+		_vm->_sound->playEffect(_dragSound);
 }
 
 MystAreaDrag::MystAreaDrag(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
@@ -777,7 +776,6 @@ MystVideoInfo::~MystVideoInfo() {
 void MystVideoInfo::drawFrame(uint16 frame) {
 	_currentFrame = _firstFrame + frame;
 	_vm->_gfx->copyImageToScreen(_currentFrame, _frameRect);
-	_vm->_system->updateScreen();
 }
 
 bool MystVideoInfo::pullLeverV() {
@@ -808,7 +806,7 @@ void MystVideoInfo::releaseLeverV() {
 	// Release lever
 	for (int i = step; i >= 0; i--) {
 		drawFrame(i);
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 }
 

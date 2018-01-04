@@ -54,7 +54,7 @@
  */
 namespace Drascula {
 
-#define DRASCULA_DAT_VER 4
+#define DRASCULA_DAT_VER 5
 #define DATAALIGNMENT 4
 
 enum DrasculaGameFeatures {
@@ -420,11 +420,13 @@ public:
 	char iconName[44][13];
 
 	int objectNum[40], visible[40], isDoor[40];
-	int roomObjX[40], roomObjY[40], trackObj[40];
+	int trackObj[40];
+	Common::Point _roomObject[40];
 	int inventoryObjects[43];
-	char _targetSurface[40][20];
-	int _destX[40], _destY[40], trackCharacter_alkeva[40], roomExits[40];
-	int _objectX1[40], _objectY1[40], _objectX2[40], _objectY2[40];
+	int _doorDestRoom[40];
+	Common::Point _doorDestPoint[40];
+	int trackCharacter_alkeva[40], _roomExitId[40];
+	Common::Rect _objectRect[40];
 	int takeObject, pickedObject;
 	bool _subtitlesDisabled;
 	bool _menuBar, _menuScreen, _hasName;
@@ -435,15 +437,16 @@ public:
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int curX, curY, characterMoved, curDirection, trackProtagonist, _characterFrame;
-	int characterVisible;
+	int curX, curY, curDirection, trackProtagonist, _characterFrame;
+	bool _characterMoved, _characterVisible;
 	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;
 	int curHeight, curWidth, feetHeight;
-	int floorX1, floorY1, floorX2, floorY2;
+	Common::Rect _walkRect;
 	int lowerLimit, upperLimit;
-	int trackFinal, walkToObject;
+	int trackFinal;
+	bool _walkToObject;
 	int objExit;
 	int _startTime;
 	int hasAnswer;
@@ -456,8 +459,6 @@ public:
 	int blinking;
 	int igorX, igorY, trackIgor;
 	int drasculaX, drasculaY, trackDrascula;
-	int bjX, bjY, trackBJ;
-	int framesWithoutAction;
 	int term_int;
 	int currentChapter;
 	bool _loadedDifferentChapter;
@@ -486,7 +487,7 @@ public:
 
 	void enterRoom(int);
 	void clearRoom();
-	void gotoObject(int, int);
+	void walkToPoint(Common::Point pos);
 	void moveCursor();
 	void checkObjects();
 	void selectVerbFromBar();
@@ -526,7 +527,6 @@ public:
 	bool animate(const char *animation, int FPS);
 	void pause(int);
 	void placeIgor();
-	void placeBJ();
 	void placeDrascula();
 
 	void talkInit(const char *filename);

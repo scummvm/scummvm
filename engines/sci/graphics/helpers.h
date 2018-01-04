@@ -52,10 +52,6 @@ typedef int16 TextAlignment;
 #define PORTS_FIRSTWINDOWID 2
 #define PORTS_FIRSTSCRIPTWINDOWID 3
 
-#ifdef ENABLE_SCI32
-#define PRINT_RECT(x) (x).left,(x).top,(x).right,(x).bottom
-#endif
-
 struct Port {
 	uint16 id;
 	int16 top, left;
@@ -187,47 +183,49 @@ inline void mulru(Common::Rect &rect, const Common::Rational &ratioX, const Comm
 	rect.bottom = mulru(rect.bottom - 1, ratioY, extra) + 1;
 }
 
-struct Buffer : public Graphics::Surface {
-	uint16 screenWidth;
-	uint16 screenHeight;
-	uint16 scriptWidth;
-	uint16 scriptHeight;
-
-	Buffer() :
-		screenWidth(0),
-		screenHeight(0),
-		scriptWidth(320),
-		scriptHeight(200) {}
-
-	Buffer(const uint16 width, const uint16 height, uint8 *const pix) :
-		screenWidth(width),
-		screenHeight(height),
-		// TODO: These values are not correct for all games. Script
-		// dimensions were hard-coded per game in the original
-		// interpreter. Search all games for their internal script
-		// dimensions and set appropriately. (This code does not
-		// appear to exist at all in SCI3, which uses 640x480.)
-		scriptWidth(320),
-		scriptHeight(200) {
-		init(width, height, width, pix, Graphics::PixelFormat::createFormatCLUT8());
+/**
+ * Determines the parts of `r` that aren't overlapped by `other`.
+ * Returns -1 if `r` and `other` have no intersection.
+ * Returns number of returned parts (in `outRects`) otherwise.
+ * (In particular, this returns 0 if `r` is contained in `other`.)
+ */
+inline int splitRects(Common::Rect r, const Common::Rect &other, Common::Rect(&outRects)[4]) {
+	if (!r.intersects(other)) {
+		return -1;
 	}
 
-	void clear(const uint8 value) {
-		memset(pixels, value, w * h);
+	int splitCount = 0;
+	if (r.top < other.top) {
+		Common::Rect &t = outRects[splitCount++];
+		t = r;
+		t.bottom = other.top;
+		r.top = other.top;
 	}
 
-	inline uint8 *getAddress(const uint16 x, const uint16 y) {
-		return (uint8 *)getBasePtr(x, y);
+	if (r.bottom > other.bottom) {
+		Common::Rect &t = outRects[splitCount++];
+		t = r;
+		t.top = other.bottom;
+		r.bottom = other.bottom;
 	}
 
-	inline uint8 *getAddressSimRes(const uint16 x, const uint16 y) {
-		return (uint8*)pixels + (y * w * screenHeight / scriptHeight) + (x * screenWidth / scriptWidth);
+	if (r.left < other.left) {
+		Common::Rect &t = outRects[splitCount++];
+		t = r;
+		t.right = other.left;
+		r.left = other.left;
 	}
 
-	bool isNull() {
-		return pixels == nullptr;
+	if (r.right > other.right) {
+		Common::Rect &t = outRects[splitCount++];
+		t = r;
+		t.left = other.right;
 	}
-};
+
+	return splitCount;
+}
+
+typedef Graphics::Surface Buffer;
 #endif
 
 struct Color {

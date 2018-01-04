@@ -577,7 +577,7 @@ Common::Error AGOSEngine::init() {
 		_screenHeight = 200;
 	}
 
-	initGraphics(_screenWidth, _screenHeight, getGameType() == GType_FF || getGameType() == GType_PP);
+	initGraphics(_screenWidth, _screenHeight);
 
 	_midi = new MidiPlayer();
 

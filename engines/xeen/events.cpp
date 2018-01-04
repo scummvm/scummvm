@@ -33,8 +33,7 @@ namespace Xeen {
 
 EventsManager::EventsManager(XeenEngine *vm) : _vm(vm),
 		_frameCounter(0), _priorFrameCounterTime(0), _gameCounter(0),
-		_leftButton(false), _rightButton(false), _sprites("mouse.icn"),
-		_keyCode(Common::KEYCODE_INVALID) {
+		_leftButton(false), _rightButton(false), _sprites("mouse.icn") {
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
 }
 
@@ -81,7 +80,7 @@ void EventsManager::pollEvents() {
 				_vm->_debugger->attach();
 				_vm->_debugger->onFrame();
 			} else {
-				_keyCode = event.kbd.keycode;
+				_keys.push(event.kbd);
 			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
@@ -111,7 +110,7 @@ void EventsManager::pollEventsAndWait() {
 }
 
 void EventsManager::clearEvents() {
-	_keyCode = Common::KEYCODE_INVALID;
+	_keys.clear();
 	_leftButton = _rightButton = false;
 
 }
@@ -122,17 +121,16 @@ void EventsManager::debounceMouse() {
 	}
 }
 bool EventsManager::getKey(Common::KeyState &key) {
-	if (_keyCode == Common::KEYCODE_INVALID) {
+	if (_keys.empty()) {
 		return false;
 	} else {
-		key = _keyCode;
-		_keyCode = Common::KEYCODE_INVALID;
+		key = _keys.pop();
 		return true;
 	}
 }
 
 bool EventsManager::isKeyPending() const {
-	return _keyCode != Common::KEYCODE_INVALID;
+	return !_keys.empty();
 }
 
 bool EventsManager::isKeyMousePressed() {
@@ -159,6 +157,26 @@ void EventsManager::ipause(uint amount) {
 		_vm->_interface->draw3d(true);
 		pollEventsAndWait();
 	} while (!_vm->shouldQuit() && timeElapsed() < amount);
+}
+
+void EventsManager::ipause5(uint amount) {
+	do {
+		pollEventsAndWait();
+	} while (!_vm->shouldQuit() && timeElapsed5() < amount);
+}
+
+void EventsManager::waitForPressAnimated() {
+	clearEvents();
+
+	do {
+		updateGameCounter();
+		_vm->_interface->draw3d(true);
+
+		while (!_vm->shouldQuit() && timeElapsed() == 0)
+			pollEventsAndWait();
+	} while (!_vm->shouldQuit() && !isKeyMousePressed());
+
+	clearEvents();
 }
 
 void EventsManager::nextFrame() {

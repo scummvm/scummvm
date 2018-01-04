@@ -106,7 +106,7 @@ class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public P
 protected:
 	// PaletteManager API
   void setPalette(const byte *colors, uint start, uint num);
-  void grabPalette(byte *colors, uint start, uint num);
+  void grabPalette(byte *colors, uint start, uint num) const;
 
 public:
 

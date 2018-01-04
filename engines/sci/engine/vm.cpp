@@ -26,12 +26,6 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
-#include "sci/resource.h"
-#ifdef ENABLE_SCI32
-#include "audio/mixer.h"
-#include "sci/sound/audio32.h"
-#include "sci/sound/music.h"
-#endif
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/state.h"
@@ -42,6 +36,7 @@
 #include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/gc.h"
 #include "sci/engine/workarounds.h"
+#include "sci/engine/scriptdebug.h"
 
 namespace Sci {
 
@@ -119,10 +114,6 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 
 	return true;
 }
-
-#ifndef REDUCE_MEMORY_USAGE
-extern const char *opcodeNames[]; // from scriptdebug.cpp
-#endif
 
 static reg_t read_var(EngineState *s, int type, int index) {
 	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
@@ -263,8 +254,6 @@ static void _exec_varselectors(EngineState *s) {
 	}
 }
 
-// from scriptdebug.cpp
-extern void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType);
 
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
 	// send_obj and work_obj are equal for anything but 'super'
@@ -302,12 +291,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		if (selectorType == kSelectorMethod) {
 			stackType = EXEC_STACK_TYPE_CALL;
 			curSP = sp;
-			// TODO: Will this offset suffice for large SCI3 scripts?
 			curFP = make_reg32(funcp.getSegment(), funcp.getOffset());
 			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
 		}
 
-		if (activeBreakpointTypes || DebugMan.isDebugChannelEnabled(kDebugLevelScripts))
+		if ((activeBreakpointTypes & (BREAK_SELECTOREXEC | BREAK_SELECTORREAD | BREAK_SELECTORWRITE))
+		     || DebugMan.isDebugChannelEnabled(kDebugLevelScripts))
 			debugSelectorCall(send_obj, selector, argc, argp, varp, funcp, s->_segMan, selectorType);
 
 		assert(argp[0].toUint16() == argc); // The first argument is argc
@@ -345,9 +334,6 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int kerne
 						-1, kernelCallNr, kernelSubCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
 	s->_executionStack.push_back(xstack);
 }
-
-// from scriptdebug.cpp
-extern void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result);
 
 static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	Kernel *kernel = g_sci->getKernel();
@@ -389,13 +375,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		addKernelCallToExecStack(s, kernelCallNr, -1, argc, argv);
 		s->r_acc = kernelCall.function(s, argc, argv);
 
-		if (kernelCall.debugLogging)
+		if (g_sci->checkKernelBreakpoint(kernelCall.name))
 			logKernelCall(&kernelCall, NULL, s, argc, argv, s->r_acc);
-		if (kernelCall.debugBreakpoint) {
-			debugN("Break on k%s\n", kernelCall.name);
-			g_sci->_debugState.debugging = true;
-			g_sci->_debugState.breakpointWasHit = true;
-		}
 	} else {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
@@ -461,13 +442,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		addKernelCallToExecStack(s, kernelCallNr, subId, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
 
-		if (kernelSubCall.debugLogging)
+		if (g_sci->checkKernelBreakpoint(kernelSubCall.name))
 			logKernelCall(&kernelCall, &kernelSubCall, s, argc, argv, s->r_acc);
-		if (kernelSubCall.debugBreakpoint) {
-			debugN("Break on k%s\n", kernelSubCall.name);
-			g_sci->_debugState.debugging = true;
-			g_sci->_debugState.breakpointWasHit = true;
-		}
 	}
 
 	// Remove callk stack frame again, if there's still an execution stack
@@ -1079,6 +1055,14 @@ void run_vm(EngineState *s) {
 			if (!r_temp.isPointer())
 				error("[VM]: Invalid superclass in object");
 			else {
+				// SCI3 sets r_acc to whatever was in EAX at the start of a
+				// send. In the case of a super call this is the object ID of
+				// the superclass, as determined by the interpreter, rather than
+				// by the game scripts
+				if (getSciVersion() == SCI_VERSION_3) {
+					s->r_acc = r_temp;
+				}
+
 				s_temp = s->xs->sp;
 				s->xs->sp -= ((opparams[1] >> 1) + s->r_rest); // Adjust stack
 
@@ -1143,29 +1127,60 @@ void run_vm(EngineState *s) {
 
 		case op_pToa: // 0x31 (49)
 			// Property To Accumulator
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    validate_property(s, obj, opparams[0]), NULL_REG,
+				                    s->_segMan, BREAK_SELECTORREAD);
+			}
 			s->r_acc = validate_property(s, obj, opparams[0]);
 			break;
 
 		case op_aTop: // 0x32 (50)
+			{
 			// Accumulator To Property
-			validate_property(s, obj, opparams[0]) = s->r_acc;
+			reg_t &opProperty = validate_property(s, obj, opparams[0]);
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    opProperty, s->r_acc,
+				                    s->_segMan, BREAK_SELECTORWRITE);
+			}
+
+			opProperty = s->r_acc;
 #ifdef ENABLE_SCI32
 			updateInfoFlagViewVisible(obj, opparams[0], true);
 #endif
 			break;
+		}
 
 		case op_pTos: // 0x33 (51)
+			{
 			// Property To Stack
-			PUSH32(validate_property(s, obj, opparams[0]));
+			reg_t value = validate_property(s, obj, opparams[0]);
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    value, NULL_REG,
+				                    s->_segMan, BREAK_SELECTORREAD);
+			}
+			PUSH32(value);
 			break;
+		}
 
 		case op_sTop: // 0x34 (52)
+			{
 			// Stack To Property
-			validate_property(s, obj, opparams[0]) = POP32();
+			reg_t newValue = POP32();
+			reg_t &opProperty = validate_property(s, obj, opparams[0]);
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    opProperty, newValue,
+				                    s->_segMan, BREAK_SELECTORWRITE);
+			}
+			opProperty = newValue;
 #ifdef ENABLE_SCI32
 			updateInfoFlagViewVisible(obj, opparams[0], true);
 #endif
 			break;
+		}
 
 		case op_ipToa: // 0x35 (53)
 		case op_dpToa: // 0x36 (54)
@@ -1175,10 +1190,25 @@ void run_vm(EngineState *s) {
 			// Increment/decrement a property and copy to accumulator,
 			// or push to stack
 			reg_t &opProperty = validate_property(s, obj, opparams[0]);
+			reg_t oldValue = opProperty;
+
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORREAD) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    oldValue, NULL_REG,
+				                    s->_segMan, BREAK_SELECTORREAD);
+			}
+
 			if (opcode & 1)
 				opProperty += 1;
 			else
 				opProperty -= 1;
+
+			if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTORWRITE) {
+				debugPropertyAccess(obj, s->xs->objp, opparams[0],
+				                    oldValue, opProperty,
+				                    s->_segMan, BREAK_SELECTORWRITE);
+			}
+
 #ifdef ENABLE_SCI32
 			updateInfoFlagViewVisible(obj, opparams[0], true);
 #endif

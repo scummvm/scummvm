@@ -20,21 +20,18 @@
  *
  */
 
-#ifndef BLADERUNNER_AUDIO_H
-#define BLADERUNNER_AUDIO_H
+#ifndef BLADERUNNER_AUDIO_PLAYER_H
+#define BLADERUNNER_AUDIO_PLAYER_H
 
-#include "audio/mixer.h"
 #include "common/array.h"
 #include "common/mutex.h"
 #include "common/str.h"
-#include "common/types.h"
+#include "audio/audiostream.h"
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
 class AudioCache;
-
-#define TRACKS 6
 
 /*
  * This is a poor imitation of Bladerunner's resource cache
@@ -54,6 +51,7 @@ class AudioCache {
 	uint32 _totalSize;
 	uint32 _maxSize;
 	uint32 _accessCounter;
+
 public:
 	AudioCache() :
 		_totalSize(0),
@@ -72,23 +70,26 @@ public:
 };
 
 class AudioPlayer {
-	BladeRunnerEngine *_vm;
-	AudioCache *_cache;
+	static const int kTracks = 6;
 
 	struct Track {
-		bool               isMaybeActive;
-		Audio::SoundHandle soundHandle;
-		int                priority;
-		int32              hash;
-		int                volume;
+		bool                isActive;
+		int                 channel;
+		int                 priority;
+		int32               hash;
+		int                 volume;
+		int                 pan;
+		Audio::AudioStream *stream;
 
-		Track() : isMaybeActive(false) {}
+		Track() : isActive(false) {}
 	};
 
-	Track _tracks[TRACKS];
+	BladeRunnerEngine *_vm;
 
-	bool isTrackActive(Track *track);
-	void fadeAndStopTrack(Track *track, int time);
+	Common::Mutex _mutex;
+	AudioCache   *_cache;
+	Track         _tracks[kTracks];
+	int           _sfxVolume;
 
 public:
 	AudioPlayer(BladeRunnerEngine *vm);
@@ -99,9 +100,16 @@ public:
 		OVERRIDE_VOLUME = 2
 	};
 
-	int playAud(const Common::String &name, int volume, int panFrom, int panTo, int priority, byte flags = 0);
-
+	int playAud(const Common::String &name, int volume, int panStart, int panEnd, int priority, byte flags = 0);
+	bool isActive(int track);
+	void stop(int track, bool immediately);
 	void stopAll();
+	void adjustVolume(int track, int volume, int delay, bool overrideVolume);
+	void adjustPan(int track, int pan, int delay);
+
+private:
+	void remove(int channel);
+	static void mixerChannelEnded(int channel, void *data);
 };
 
 } // End of namespace BladeRunner

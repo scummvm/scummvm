@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/end_explode_ship.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -53,9 +54,9 @@ bool CEndExplodeShip::ActMsg(CActMsg *msg) {
 	} else if (msg->_action == "Disarm Bomb") {
 		_isExploding = false;
 	} else if (msg->_action == "TakeOff") {
-		loadSound("a#31.wav");
-		loadSound("a#14.wav");
-		playGlobalSound("a#13.wav", -1, true, true, 0);
+		loadSound(TRANSLATE("a#31.wav", "a#26.wav"));
+		loadSound(TRANSLATE("a#14.wav", "a#7.wav"));
+		playAmbientSound(TRANSLATE("a#13.wav", "a#6.wav"), VOL_NORMAL, true, true, 0);
 		addTimer(1, 10212, 0);
 	}
 
@@ -71,12 +72,12 @@ bool CEndExplodeShip::TimerMsg(CTimerMsg *msg) {
 	}
 
 	if (msg->_actionVal == 3) {
-		setGlobalSoundVolume(-4, 2, -1);
+		setAmbientSoundVolume(VOL_MUTE, 2, -1);
 		CActMsg actMsg(_isExploding ? "ExplodeCredits" : "Credits");
 		actMsg.execute("EndGameCredits");
 	}
 
-	if (msg->_action == "Room") {
+	if (msg->_action == "Boom") {
 		playMovie(550, 583, MOVIE_NOTIFY_OBJECT);
 		movieEvent(551);
 	}
@@ -85,8 +86,8 @@ bool CEndExplodeShip::TimerMsg(CTimerMsg *msg) {
 }
 
 bool CEndExplodeShip::MovieEndMsg(CMovieEndMsg *msg) {
-	if (getMovieFrame() == 550) {
-		playSound("z#399.wav");
+	if (msg->_endFrame == 550) {
+		playSound(TRANSLATE("z#399.wav", "a#10.wav"));
 		startAnimTimer("Boom", 4200, 0);
 	} else {
 		addTimer(3, 8000, 0);
@@ -96,10 +97,10 @@ bool CEndExplodeShip::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CEndExplodeShip::MovieFrameMsg(CMovieFrameMsg *msg) {
-	if (getMovieFrame() == 58)
-		playSound("a#31.wav", 70);
-	else if (getMovieFrame() == 551)
-		playSound("a#14.wav");
+	if (msg->_frameNumber == 58)
+		playSound(TRANSLATE("a#31.wav", "a#26.wav"), 70);
+	else if (msg->_frameNumber == 551)
+		playSound(TRANSLATE("a#14.wav", "a#7.wav"));
 
 	return true;
 }

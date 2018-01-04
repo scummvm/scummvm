@@ -15,11 +15,9 @@ License		: GPL
 
 Url             : http://www.scummvm.org
 
-Source		: %{name}-%{version}.tar.bz2
-Source1		: libmad-0.15.1b.tar.bz2
-Source2		: faad2-2.7.tar.bz2
-Source3		: mpeg2dec-0.5.1.tar.bz2
-Patch0		: libmad-0.15.1b-fixes-1.patch
+Source		: %{name}-%{version}.tar.xz
+Source1		: faad2-2.8.6.tar.gz
+Source2		: libmpeg2-0.5.1.tar.gz
 BuildRoot	: %{_tmppath}/%{name}-%{version}-root
 
 BuildRequires: desktop-file-utils
@@ -34,6 +32,8 @@ BuildRequires: fluidsynth-devel
 BuildRequires: libtheora-devel
 BuildRequires: libpng-devel
 BuildRequires: libjpeg-turbo-devel
+BuildRequires: alsa-lib-devel
+BuildRequires: libmad-devel
 
 #------------------------------------------------------------------------------
 #   Description
@@ -52,40 +52,18 @@ games) and many more. See http://www.scummvm.org for a full compatibility list.
 #   install scripts
 #------------------------------------------------------------------------------
 %prep
-%setup -q -a 1 -a 2 -a 3 -n scummvm-%{version}
-%patch0 -p0
+%setup -q -a 1 -a 2 -n scummvm-%{version}
 mkdir tmp
 
 %build
-(cd libmad-0.15.1b; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-(cd faad2-2.7; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-(cd mpeg2dec-0.5.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make; make install)
-./configure --with-mad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-faad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix} --enable-release
-make
+(cd faad2-2.8.6; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make %{_smp_mflags} -C libfaad all install)
+(cd libmpeg2-0.5.1; ./configure --enable-static --disable-shared --prefix=%{_builddir}/scummvm-%{version}/tmp; make -C libmpeg2 all install; make -C include all install)
+./configure --with-faad-prefix=%{_builddir}/scummvm-%{version}/tmp --with-mpeg2-prefix=%{_builddir}/scummvm-%{version}/tmp --prefix=%{_prefix} --enable-release
+make %{_smp_mflags}
 
 %install
-install -m755 -D scummvm %{buildroot}%{_bindir}/scummvm
-install -m644 -D dists/scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
-install -m644 -D icons/scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
-install -m644 -D icons/scummvm.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/scummvm.svg
+make DESTDIR=%{buildroot} install
 install -m644 -D dists/redhat/scummvm48.png %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/scummvm.png
-install -m644 -D gui/themes/scummclassic.zip %{buildroot}%{_datadir}/scummvm/scummclassic.zip
-install -m644 -D gui/themes/scummmodern.zip %{buildroot}%{_datadir}/scummvm/scummmodern.zip
-install -m644 -D gui/themes/translations.dat %{buildroot}%{_datadir}/scummvm/translations.dat
-install -m644 -D dists/pred.dic %{buildroot}%{_datadir}/scummvm/pred.dic
-install -m644 -D dists/engine-data/kyra.dat %{buildroot}%{_datadir}/scummvm/kyra.dat
-install -m644 -D dists/engine-data/lure.dat %{buildroot}%{_datadir}/scummvm/lure.dat
-install -m644 -D dists/engine-data/queen.tbl %{buildroot}%{_datadir}/scummvm/queen.tbl
-install -m644 -D dists/engine-data/sky.cpt %{buildroot}%{_datadir}/scummvm/sky.cpt
-install -m644 -D dists/engine-data/drascula.dat %{buildroot}%{_datadir}/scummvm/drascula.dat
-install -m644 -D dists/engine-data/teenagent.dat %{buildroot}%{_datadir}/scummvm/teenagent.dat
-install -m644 -D dists/engine-data/hugo.dat %{buildroot}%{_datadir}/scummvm/hugo.dat
-install -m644 -D dists/engine-data/tony.dat %{buildroot}%{_datadir}/scummvm/tony.dat
-install -m644 -D dists/engine-data/toon.dat %{buildroot}%{_datadir}/scummvm/toon.dat
-install -m644 -D dists/engine-data/wintermute.zip %{buildroot}%{_datadir}/scummvm/wintermute.zip
-install -m644 -D dists/engine-data/neverhood.dat %{buildroot}%{_datadir}/scummvm/neverhood.dat
-install -m644 -D dists/engine-data/mort.dat %{buildroot}%{_datadir}/scummvm/mort.dat
-install -m644 -D dists/engine-data/access.dat %{buildroot}%{_datadir}/scummvm/access.dat
 desktop-file-install --vendor scummvm --dir=%{buildroot}/%{_datadir}/applications dists/scummvm.desktop
 
 %clean
@@ -114,28 +92,19 @@ fi
 %{_datadir}/pixmaps/scummvm.xpm
 %{_datadir}/icons/hicolor/48x48/apps/scummvm.png
 %{_datadir}/icons/hicolor/scalable/apps/scummvm.svg
-%{_datadir}/scummvm/scumm*.zip
-%{_datadir}/scummvm/translations.dat
-%{_datadir}/scummvm/pred.dic
-%{_datadir}/scummvm/kyra.dat
-%{_datadir}/scummvm/queen.tbl
-%{_datadir}/scummvm/sky.cpt
-%{_datadir}/scummvm/lure.dat
-%{_datadir}/scummvm/drascula.dat
-%{_datadir}/scummvm/teenagent.dat
-%{_datadir}/scummvm/hugo.dat
-%{_datadir}/scummvm/tony.dat
-%{_datadir}/scummvm/toon.dat
-%{_datadir}/scummvm/wintermute.zip
-%{_datadir}/scummvm/neverhood.dat
-%{_datadir}/scummvm/mort.dat
-%{_datadir}/scummvm/access.dat
+%{_datadir}/appdata/scummvm.appdata.xml
+%{_datadir}/scummvm/*
 %{_mandir}/man6/scummvm.6*
 
 #------------------------------------------------------------------------------
 #   Change Log
 #------------------------------------------------------------------------------
 %changelog
+* Thu Nov 23 2017 (2.0.0)
+  - remove own libmad since this is now in Fedora itself
+* Fri Jul 11 2014 (1.8.0)
+  - add libmad build patch
+  - re-add mpeg2dec
 * Thu Dec 29 2011 (1.4.0-2)
   - include libfaad2
 * Fri Sep 17 2010 (1.2.0)

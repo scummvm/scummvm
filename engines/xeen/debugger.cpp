@@ -48,6 +48,10 @@ Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
 	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
+	registerCmd("gold", WRAP_METHOD(Debugger, cmdGold));
+	registerCmd("gems", WRAP_METHOD(Debugger, cmdGems));
+	registerCmd("map", WRAP_METHOD(Debugger, cmdMap));
+	registerCmd("pos", WRAP_METHOD(Debugger, cmdPos));
 
 	_spellId = -1;
 }
@@ -91,8 +95,6 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 	} else {
 		if (argc == 2)
 			f.open(argv[1]);
-		else
-			f.open(argv[1], (ArchiveType)strToInt(argv[2]));
 
 		if (f.isOpen()) {
 			Common::DumpFile df;
@@ -111,6 +113,69 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Debugger::cmdGold(int argc, const char **argv) {
+	Party &party = *_vm->_party;
+	if (argc == 1) {
+		debugPrintf("Current gold: %d, bank: %d\n", party._gold, party._bankGold);
+	} else {
+		party._gold = strToInt(argv[1]);
+		if (argc > 2)
+			party._bankGold = strToInt(argv[2]);
+	}
+
+	return true;
+}
+
+bool Debugger::cmdGems(int argc, const char **argv) {
+	Party &party = *_vm->_party;
+	if (argc == 1) {
+		debugPrintf("Current gems: %d, bank: %d\n", party._gems, party._bankGems);
+	} else {
+		party._gems = strToInt(argv[1]);
+		if (argc > 2)
+			party._bankGems = strToInt(argv[2]);
+	}
+
+	return true;
+}
+
+bool Debugger::cmdMap(int argc, const char **argv) {
+	FileManager &files = *g_vm->_files;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+
+	if (argc < 2) {
+		debugPrintf("map mapId [ sideNum [ xp, yp ]]\n");
+		return true;
+	} else {
+		int mapId = strToInt(argv[1]);
+		bool side = argc < 3 ? files._isDarkCc : strToInt(argv[2]) != 0;
+		int x = argc < 4 ? 8 : strToInt(argv[3]);
+		int y = argc < 5 ? 8 : strToInt(argv[4]);
+
+		map._loadDarkSide = side;
+		map.load(mapId);
+		party._mazePosition.x = x;
+		party._mazePosition.y = y;
+		party._mazeDirection = DIR_NORTH;
+		return false;
+	}
+}
+
+bool Debugger::cmdPos(int argc, const char **argv) {
+	Party &party = *g_vm->_party;
+
+	if (argc < 3) {
+		debugPrintf("pos xp, yp\n");
+		return true;
+	} else {
+		party._mazePosition.x = strToInt(argv[1]);
+		party._mazePosition.y = strToInt(argv[2]);
+		party._stepped = true;
+		return false;
+	}
 }
 
 } // End of namespace Xeen

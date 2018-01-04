@@ -34,6 +34,7 @@ class SaveLoadChooser;
 class ButtonWidget;
 class CheckboxWidget;
 class CommandSender;
+class PopUpWidget;
 class StaticTextWidget;
 }
 
@@ -82,7 +83,9 @@ public:
 	virtual void reflowLayout() override;
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	int getLoadSlot() const {return _loadSlot;}
+	int getLoadSlot() const { return _loadSlot; }
+	int getSaveSlot() const { return _saveSlot; }
+	Common::String getSaveDescription() const { return _saveDescription; }
 
 private:
 	MohawkEngine *_vm;
@@ -94,6 +97,8 @@ private:
 	GUI::SaveLoadChooser *_saveDialog;
 
 	int _loadSlot;
+	int _saveSlot;
+	Common::String _saveDescription;
 
 	void save();
 	void load();
@@ -143,6 +148,8 @@ private:
 
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_waterEffectCheckbox;
+	GUI::StaticTextWidget *_transitionModeCaption;
+	GUI::PopUpWidget *_transitionModePopUp;
 };
 
 #endif

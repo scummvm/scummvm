@@ -29,6 +29,21 @@ namespace Titanic {
 
 EMPTY_MESSAGE_MAP(CLinkItem, CNamedItem);
 
+Movement CLinkItem::getMovementFromCursor(CursorId cursorId) {
+	if (cursorId == CURSOR_MOVE_LEFT)
+		return TURN_LEFT;
+	else if (cursorId == CURSOR_MOVE_RIGHT)
+		return TURN_RIGHT;
+	else if (cursorId == CURSOR_MOVE_FORWARD || cursorId == CURSOR_MOVE_THROUGH ||
+			cursorId == CURSOR_DOWN || cursorId == CURSOR_LOOK_UP ||
+			cursorId == CURSOR_LOOK_DOWN || cursorId == CURSOR_MAGNIFIER)
+		return MOVE_FORWARDS;
+	else if (cursorId == CURSOR_BACKWARDS)
+		return MOVE_BACKWARDS;
+	else
+		return MOVE_NONE;
+}
+
 CLinkItem::CLinkItem() : CNamedItem() {
 	_roomNumber = -1;
 	_nodeNumber = -1;
@@ -96,11 +111,11 @@ void CLinkItem::load(SimpleFile *file) {
 	switch (val) {
 	case 2:
 		_cursorId = (CursorId)file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 1:
 		_linkMode = file->readNumber();
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	case 0:
 		_roomNumber = file->readNumber();
@@ -132,7 +147,7 @@ void CLinkItem::load(SimpleFile *file) {
 			_cursorId = CURSOR_MOVE_FORWARD;
 			break;
 		default:
-			_cursorId = CURSOR_MOVE_FORWARD2;
+			_cursorId = CURSOR_MOVE_THROUGH;
 			break;
 		}
 	}
@@ -171,6 +186,21 @@ CRoomItem *CLinkItem::getDestRoom() const {
 
 CMovieClip *CLinkItem::getClip() const {
 	return findRoom()->findClip(getName());
+}
+
+Movement CLinkItem::getMovement() const {
+	if (_bounds.isEmpty())
+		return MOVE_NONE;
+
+	return getMovementFromCursor(_cursorId);
+}
+
+bool CLinkItem::findPoint(Quadrant quadrant, Point &pt) {
+	if (_bounds.isEmpty())
+		return false;
+
+	pt = _bounds.getPoint(quadrant);
+	return true;
 }
 
 } // End of namespace Titanic

@@ -115,7 +115,7 @@ const OSystem::GraphicsMode *WINCESdlGraphicsManager::getSupportedGraphicsModes(
 		return s_supportedGraphicsModesLow;
 }
 
-bool WINCESdlGraphicsManager::hasFeature(OSystem::Feature f) {
+bool WINCESdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return (f == OSystem::kFeatureVirtualKeyboard);
 }
 
@@ -153,7 +153,7 @@ void WINCESdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	}
 }
 
-bool WINCESdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+bool WINCESdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 		return false;

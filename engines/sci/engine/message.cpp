@@ -149,7 +149,7 @@ public:
 	}
 };
 
-#ifdef ENABLE_SCI32
+#ifdef ENABLE_SCI32_MAC
 // SCI32 Mac decided to add an extra byte (currently unknown in meaning) between
 // the talker and the string...
 class MessageReaderV4_MacSCI32 : public MessageReader {
@@ -202,6 +202,8 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	case 4:
 #ifdef ENABLE_SCI32
 	case 5: // v5 seems to be compatible with v4
+#endif
+#ifdef ENABLE_SCI32_MAC
 		// SCI32 Mac is different than SCI32 DOS/Win here
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY)
 			reader = new MessageReaderV4_MacSCI32(*res);

@@ -42,6 +42,7 @@
 #include "sci/engine/script.h"	// for script_adjust_opcode_formats
 #include "sci/engine/script_patches.h"
 #include "sci/engine/selector.h"	// for SELECTOR
+#include "sci/engine/scriptdebug.h"
 
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
@@ -163,11 +164,39 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
 	// (e.g. KQ Collection 1997) is for the demo of Phantasmagoria, included in the disk
-	if (_gameId != GID_KQ6)
-		SearchMan.addSubDirectoryMatching(gameDataDir, "patches");	// resource patches
+	if (_gameId != GID_KQ6) {
+		// Patch files in the root directory of Phantasmagoria 2 are higher
+		// priority than patch files in the patches directory (the SSCI
+		// installer copies these patches to HDD and gives the HDD directory
+		// top priority)
+		const int priority = _gameId == GID_PHANTASMAGORIA2 ? -1 : 0;
+		SearchMan.addSubDirectoryMatching(gameDataDir, "patches", priority);	// resource patches
+	}
 
 	// Some releases (e.g. Pointsoft Torin) use a different patch directory name
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patch");	// resource patches
+
+	switch (desc->language) {
+	case Common::DE_DEU:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "german/msg");
+		break;
+	case Common::EN_ANY:
+	case Common::EN_GRB:
+	case Common::EN_USA:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "english/msg");
+		break;
+	case Common::ES_ESP:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "spanish/msg");
+		break;
+	case Common::FR_FRA:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "french/msg");
+		break;
+	case Common::IT_ITA:
+		SearchMan.addSubDirectoryMatching(gameDataDir, "italian/msg");
+		break;
+	default:
+		break;
+	}
 }
 
 SciEngine::~SciEngine() {
@@ -292,7 +321,7 @@ Common::Error SciEngine::run() {
 	_guestAdditions = new GuestAdditions(_gamestate, _features, _kernel);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1_EARLY) {
+	if (getSciVersion() >= SCI_VERSION_2) {
 		_audio32 = new Audio32(_resMan);
 	} else
 #endif
@@ -540,6 +569,10 @@ bool SciEngine::initGame() {
 	// Load game language into printLang property of game object
 	setSciLanguage();
 
+#ifdef ENABLE_SCI32
+	_guestAdditions->sciEngineInitGameHook();
+#endif
+
 	return true;
 }
 
@@ -637,14 +670,14 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 
 	// Register the first element on the execution stack
 	if (!send_selector(_gamestate, _gameObjectAddress, _gameObjectAddress, _gamestate->stack_base, 2, _gamestate->stack_base)) {
-		_console->printObject(_gameObjectAddress);
+		printObject(_gameObjectAddress);
 		error("initStackBaseWithSelector: error while registering the first selector in the call stack");
 	}
 
 }
 
 void SciEngine::runGame() {
-	setTotalPlayTime(0);
+	setTotalPlayTime(17);
 
 	initStackBaseWithSelector(SELECTOR(play)); // Call the play selector
 
@@ -815,18 +848,23 @@ int SciEngine::inQfGImportRoom() const {
 }
 
 void SciEngine::sleep(uint32 msecs) {
+	if (!msecs) {
+		return;
+	}
+
 	uint32 time;
 	const uint32 wakeUpTime = g_system->getMillis() + msecs;
 
 	for (;;) {
 		// let backend process events and update the screen
-		_eventMan->getSciEvent(SCI_EVENT_PEEK);
+		_eventMan->getSciEvent(kSciEventPeek);
+
 #ifdef ENABLE_SCI32
 		// If a game is in a wait loop, kFrameOut is not called, but mouse
 		// movement is still occurring and the screen needs to be updated to
 		// reflect it
 		if (getSciVersion() >= SCI_VERSION_2) {
-			g_system->updateScreen();
+			g_sci->_gfxFrameout->updateScreen();
 		}
 #endif
 		time = g_system->getMillis();
@@ -837,7 +875,6 @@ void SciEngine::sleep(uint32 msecs) {
 				g_system->delayMillis(wakeUpTime - time);
 			break;
 		}
-
 	}
 }
 
@@ -879,8 +916,21 @@ void SciEngine::pauseEngineIntern(bool pause) {
 }
 
 void SciEngine::syncSoundSettings() {
+	updateSoundMixerVolumes();
+	_guestAdditions->syncSoundSettingsFromScummVM();
+}
+
+void SciEngine::updateSoundMixerVolumes() {
 	Engine::syncSoundSettings();
-	_guestAdditions->syncSoundSettings();
+
+	// ScummVM adjusts the software mixer volume in Engine::syncSoundSettings,
+	// but MIDI either does not run through the ScummVM mixer (e.g. hardware
+	// synth) or it uses a kPlainSoundType channel type, so the master MIDI
+	// volume must be adjusted here for MIDI playback volume to be correct
+	if (_soundCmd) {
+		const int16 musicVolume = (ConfMan.getInt("music_volume") + 1) * MUSIC_MASTERVOLUME_MAX / Audio::Mixer::kMaxMixerVolume;
+		_soundCmd->setMasterVolume(ConfMan.getBool("mute") ? 0 : musicVolume);
+	}
 }
 
 void SciEngine::loadMacExecutable() {

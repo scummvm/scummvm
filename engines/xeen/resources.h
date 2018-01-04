@@ -45,6 +45,7 @@ public:
 	static const char *const OPTIONS_TITLE;
 	static const char *const THE_PARTY_NEEDS_REST;
 	static const char *const WHO_WILL;
+	static const char *const HOW_MUCH;
 	static const char *const WHATS_THE_PASSWORD;
 	static const char *const IN_NO_CONDITION;
 	static const char *const NOTHING_HERE;
@@ -79,7 +80,7 @@ public:
 	static const int CHAR_FACES_X[6];
 	static const int HP_BARS_X[6];
 	static const char *const NO_ONE_TO_ADVENTURE_WITH;
-	static const byte BACKGROUND_XLAT[];
+	static const byte DARKNESS_XLAT[3][256];
 	static const char *const YOUR_ROSTER_IS_FULL;
 	static const char *const PLEASE_WAIT;
 	static const char *const OOPS;
@@ -123,8 +124,8 @@ public:
 	static const int MAKE_ITEM_ARR5[8][2];
 	static const int OUTDOOR_DRAWSTRCT_INDEXES[44];
 	static const int TOWN_MAXES[2][11];
-	static const char *const TOWN_ACTION_MUSIC[14];
-	static const char *const TOWN_ACTION_SHAPES[4];
+	static const char *const TOWN_ACTION_MUSIC[2][7];
+	static const char *const TOWN_ACTION_SHAPES[7];
 	static const int TOWN_ACTION_FILES[2][7];
 	static const char *const BANK_TEXT;
 	static const char *const BLACKSMITH_TEXT;
@@ -232,7 +233,7 @@ public:
 	static const char *const EFFECTIVENESS_NAMES[7];
 	static const char *const QUEST_ITEM_NAMES[85];
 	static const int WEAPON_BASE_COSTS[35];
-	static const int ARMOR_BASE_COSTS[25];
+	static const int ARMOR_BASE_COSTS[14];
 	static const int ACCESSORY_BASE_COSTS[11];
 	static const int MISC_MATERIAL_COSTS[22];
 	static const int MISC_BASE_COSTS[76];
@@ -342,6 +343,16 @@ public:
 	static const char *const MONSTER_SPECIAL_ATTACKS[23];
 	static const char *const IDENTIFY_MONSTERS;
 	static const char *const EVENT_SAMPLES[6];
+	static const char *const MOONS_NOT_ALIGNED;
+	static const char *const AWARDS_FOR;
+	static const char *const AWARDS_TEXT;
+	static const char *const NO_AWARDS;
+	static const char *const WARZONE_BATTLE_MASTER;
+	static const char *const WARZONE_MAXED;
+	static const char *const WARZONE_LEVEL;
+	static const char *const WARZONE_HOW_MANY;
+	static const char *const PICKS_THE_LOCK;
+	static const char *const UNABLE_TO_PICK_LOCK;
 public:
 	/**
 	 * Initializes an instnace of the resources

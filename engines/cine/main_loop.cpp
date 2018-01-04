@@ -171,7 +171,7 @@ static void processEvent(Common::Event &event) {
 				g_cine->getDebugger()->attach();
 				g_cine->getDebugger()->onFrame();
 			}
-			// No Break to allow fallthrough to process 'd' without CTRL
+			// fall through
 		default:
 			lastKeyStroke = event.kbd.keycode;
 			break;

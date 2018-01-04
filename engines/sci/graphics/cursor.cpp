@@ -113,7 +113,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	byte colorMapping[4];
 	int16 x, y;
 	byte color;
-	int16 maskA, maskB;
+	uint16 maskA, maskB;
 	byte *pOut;
 	int16 heightWidth;
 
@@ -179,7 +179,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 		Common::SpanOwner<SciSpan<byte> > upscaledBitmap;
 		upscaledBitmap->allocate(heightWidth * heightWidth, "upscaled cursor bitmap");
 		_screen->scale2x(*rawBitmap, *upscaledBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH);
-		rawBitmap = upscaledBitmap;
+		rawBitmap.moveFrom(upscaledBitmap);
 	}
 
 	if (hotspot.x >= heightWidth || hotspot.y >= heightWidth) {
@@ -479,7 +479,7 @@ void GfxCursor::kernelMoveCursor(Common::Point pos) {
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	_event->getSciEvent(SCI_EVENT_PEEK);
+	_event->getSciEvent(kSciEventPeek);
 }
 
 void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum) {

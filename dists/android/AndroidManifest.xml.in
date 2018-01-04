@@ -1,16 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- NB: android:versionCode needs to be bumped for formal releases -->
 
+<!-- NB: android:versionCode needs to be bumped for formal releases -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.scummvm.scummvm"
 		android:versionCode="@ANDROID_VERSIONCODE@"
 		android:versionName="@VERSION@"
 		android:sharedUserId="org.scummvm.scummvm">
 
-	<!-- This version works on Android 1.5 (SDK 3) and newer, but we
-			want Android 2.2 (SDK 8) defaults and features. -->
 	<uses-sdk android:minSdkVersion="3"
-			android:targetSdkVersion="8"/>
+			android:targetSdkVersion="14"/>
+
+	<uses-permission
+			android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+	<uses-permission
+			android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+	<uses-feature
+			android:name="android.hardware.wifi"
+			android:required="false"/>
+
+	<uses-feature
+			android:name="android.hardware.screen.landscape"
+			android:required="false"/>
+
+	<uses-feature
+			android:name="android.hardware.touchscreen"
+			android:required="false"/>
+
+	<uses-feature
+			android:name="android.software.leanback"
+			android:required="false"/>
 
 	<application
 			android:label="@string/app_name"
@@ -19,36 +39,16 @@
 			android:icon="@drawable/scummvm">
 		<activity android:name=".ScummVMActivity"
 				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+				android:banner="@drawable/leanback_icon"
 				android:screenOrientation="landscape"
-				android:configChanges="orientation|keyboardHidden"
+				android:configChanges="orientation|keyboardHidden|screenSize"
 				android:windowSoftInputMode="adjustResize">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
 				<category android:name="tv.ouya.intent.category.GAME"/>
+				<category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
 			</intent-filter>
 		</activity>
-		<activity android:name=".ScummVMActivity"
-				android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-				android:banner="@drawable/leanback_icon">
-		  <intent-filter>
-				<action android:name="android.intent.action.MAIN"/>
-				<category android:name="android.intent.category.LEANBACK_LAUNCHER"/>
-		  </intent-filter>
-		</activity>
 	</application>
-
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" android:required="true"/>
-
-	<uses-feature android:name="android.hardware.screen.landscape"
-		        android:required="false" />
-
-	<uses-feature android:name="android.hardware.touchscreen"
-		        android:required="false" />
-
-	<uses-feature android:name="android.software.leanback"
-		        android:required="false" />
-
 </manifest>

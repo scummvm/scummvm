@@ -26,6 +26,7 @@
 #include "gui/gui-manager.h"
 #include "gui/saveload.h"
 #include "gui/widget.h"
+#include "gui/widgets/popup.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -35,6 +36,7 @@
 
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
+#include "mohawk/riven_graphics.h"
 #endif
 
 namespace Mohawk {
@@ -92,13 +94,13 @@ enum {
 
 MohawkOptionsDialog::MohawkOptionsDialog(MohawkEngine *vm) :
 		GUI::Dialog(0, 0, 360, 200),
-		_vm(vm), _loadSlot(-1) {
-	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), 0, kLoadCmd);
-	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), 0, kSaveCmd);
-	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), 0, kQuitCmd);
+		_vm(vm), _loadSlot(-1), _saveSlot(-1) {
+	_loadButton = new GUI::ButtonWidget(this, 245, 25, 100, 25, _("~L~oad"), nullptr, kLoadCmd);
+	_saveButton = new GUI::ButtonWidget(this, 245, 60, 100, 25, _("~S~ave"), nullptr, kSaveCmd);
+	new GUI::ButtonWidget(this, 245, 95, 100, 25, _("~Q~uit"), nullptr, kQuitCmd);
 
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), nullptr, GUI::kOKCmd);
+	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), nullptr, GUI::kCloseCmd);
 
 	_loadDialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
 	_saveDialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -113,22 +115,22 @@ void MohawkOptionsDialog::open() {
 	GUI::Dialog::open();
 
 	_loadSlot = -1;
+	_saveSlot = -1;
 	_loadButton->setEnabled(_vm->canLoadGameStateCurrently());
 	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
 }
 
 
 void MohawkOptionsDialog::save() {
-	int slot = _saveDialog->runModalWithCurrentTarget();
+	_saveSlot = _saveDialog->runModalWithCurrentTarget();
 
-	if (slot >= 0) {
-		Common::String result(_saveDialog->getResultString());
-		if (result.empty()) {
+	if (_saveSlot >= 0) {
+		_saveDescription = _saveDialog->getResultString();
+		if (_saveDescription.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
-			result = _saveDialog->createDefaultSaveDescription(slot);
+			_saveDescription = _saveDialog->createDefaultSaveDescription(_saveSlot);
 		}
 
-		_vm->saveGameState(slot, result);
 		close();
 	}
 }
@@ -266,6 +268,13 @@ RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) :
 		_vm(vm) {
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 220, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 220, 15, _("~W~ater Effect Enabled"), 0, kWaterCmd);
+
+	_transitionModeCaption = new GUI::StaticTextWidget(this, 15, 50, 90, 20, _("Transitions:"), Graphics::kTextAlignRight);
+	_transitionModePopUp = new GUI::PopUpWidget(this, 115, 50, 120, 20);
+	_transitionModePopUp->appendEntry(_("Disabled"), kRivenTransitionModeDisabled);
+	_transitionModePopUp->appendEntry(_("Fastest"), kRivenTransitionModeFastest);
+	_transitionModePopUp->appendEntry(_("Normal"), kRivenTransitionModeNormal);
+	_transitionModePopUp->appendEntry(_("Best"), kRivenTransitionModeBest);
 }
 
 RivenOptionsDialog::~RivenOptionsDialog() {
@@ -276,6 +285,7 @@ void RivenOptionsDialog::open() {
 
 	_zipModeCheckbox->setState(_vm->_vars["azip"] != 0);
 	_waterEffectCheckbox->setState(_vm->_vars["waterenabled"] != 0);
+	_transitionModePopUp->setSelectedTag(_vm->_vars["transitionmode"]);
 }
 
 void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -283,6 +293,7 @@ void RivenOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, u
 	case GUI::kOKCmd:
 		_vm->_vars["azip"] = _zipModeCheckbox->getState() ? 1 : 0;
 		_vm->_vars["waterenabled"] = _waterEffectCheckbox->getState() ? 1 : 0;
+		_vm->_vars["transitionmode"] = _transitionModePopUp->getSelectedTag();
 		setResult(1);
 		close();
 		break;

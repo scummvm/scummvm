@@ -39,8 +39,12 @@ class AudStream : public Audio::RewindableAudioStream {
 	byte       *_end;
 	AudioCache *_cache;
 	int32       _hash;
-	byte        _compressionType;
 	uint16      _deafBlockRemain;
+	uint16      _frequency;
+	uint32      _size;
+	uint32      _sizeDecompressed;
+	byte        _flags;
+	byte        _compressionType;
 
 	ADPCMWestwoodDecoder _decoder;
 
@@ -53,9 +57,10 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return false; }
-	int getRate() const { return READ_LE_UINT16(_data); };
+	int getRate() const { return _frequency; };
 	bool endOfData() const { return _p == _end; }
 	bool rewind();
+	int getLength();
 };
 
 } // End of namespace BladeRunner

@@ -254,6 +254,11 @@ bool DiskImage::open(const Common::String &filename) {
 		_tracks = 35;
 		_sectorsPerTrack = 16;
 		_bytesPerSector = 256;
+	} else if (lcName.hasSuffix(".d13")) {
+		_stream = readImage(filename);
+		_tracks = 35;
+		_sectorsPerTrack = 13;
+		_bytesPerSector = 256;
 	} else if (lcName.hasSuffix(".nib")) {
 		_stream = readImage_NIB(filename);
 		_tracks = 35;

@@ -22,6 +22,7 @@
 
 #include "titanic/game/computer_screen.h"
 #include "titanic/messages/messages.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -30,6 +31,7 @@ BEGIN_MESSAGE_MAP(CComputerScreen, CGameObject)
 	ON_MESSAGE(MovieEndMsg)
 	ON_MESSAGE(EnterViewMsg)
 	ON_MESSAGE(TimerMsg)
+	ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
 CComputerScreen::CComputerScreen() : CGameObject() {
@@ -57,7 +59,7 @@ bool CComputerScreen::ActMsg(CActMsg *msg) {
 }
 
 bool CComputerScreen::MovieEndMsg(CMovieEndMsg *msg) {
-	playSound("z#47.wav");
+	playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 	addTimer(0, 3000, 0);
 
 	for (int idx = 0; idx < 10; ++idx)
@@ -67,7 +69,20 @@ bool CComputerScreen::MovieEndMsg(CMovieEndMsg *msg) {
 
 bool CComputerScreen::EnterViewMsg(CEnterViewMsg *msg) {
 	loadFrame(26);
+
+	// WORKAROUND: The original game leaves in a debug link that
+	// allows skipping of Doorbot arrival sequence. Disable it
+	static_cast<CLinkItem *>(getParent()->findByName("_TRACK,3,e-cu,4,E"))->_bounds.clear();
+
 	return true;
+}
+
+bool CComputerScreen::MovementMsg(CMovementMsg *msg) {
+	if (msg->_movement != MOVE_BACKWARDS)
+		return true;
+
+	msg->_posToUse = Common::Point(320, 50);
+	return false;
 }
 
 bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
@@ -75,47 +90,57 @@ bool CComputerScreen::TimerMsg(CTimerMsg *msg) {
 
 	switch (msg->_actionVal) {
 	case 0:
-		loadSound("a#32.wav");
-		loadSound("a#31.wav");
-		loadSound("a#33.wav");
-		loadSound("a#30.wav");
-		loadSound("a#29.wav");
-		playSound("a#25.wav");
+		if (g_language == Common::DE_DEU) {
+			loadSound("a#27.wav");
+			loadSound("a#26.wav");
+			loadSound("a#28.wav");
+			loadSound("a#25.wav");
+			loadSound("a#24.wav");
+			playSound("a#20.wav");
+		} else {
+			loadSound("a#32.wav");
+			loadSound("a#31.wav");
+			loadSound("a#33.wav");
+			loadSound("a#30.wav");
+			loadSound("a#29.wav");
+			playSound("a#25.wav");
+		}
 		addTimer(1, 2000, 0);
 		break;
 
 	case 1:
-		playSound("a#32.wav");
-		playSound("a#31.wav");
+		playMovie(23, 26, MOVIE_STOP_PREVIOUS);
+		playSound(TRANSLATE("a#32.wav", "a#27.wav"));
+		playSound(TRANSLATE("a#31.wav", "a#26.wav"));
 		addTimer(2, 2000, 0);
 		break;
 
 	case 2: {
-		CChangeMusicMsg musicMsg(CString(), 1);
+		CChangeMusicMsg musicMsg(CString(), MUSIC_STOP);
 		musicMsg.execute("HomeMusicPlayer");
-		playSound("a#33.wav");
-		playSound("a#31.wav");
+		playSound(TRANSLATE("a#33.wav", "a#28.wav"));
+		playSound(TRANSLATE("a#31.wav", "a#26.wav"));
 		changeView("Home.Node 4.E", "");
 		playClip(51, 150);
-		playSound("a#31.wav");
+		playSound(TRANSLATE("a#31.wav", "a#26.wav"));
 		playClip(151, 200);
 
-		handle = playSound("a#27.wav");
+		handle = playSound(TRANSLATE("a#27.wav", "a#22.wav"));
 		playClip(200, 306);
-		playSound("a#30.wav");
+		playSound(TRANSLATE("a#30.wav", "a#25.wav"));
 		stopSound(handle, 0);
 
 		playClip(306, 338);
-		handle = playSound("a#28.wav");
+		handle = playSound(TRANSLATE("a#28.wav", "a#23.wav"));
 		playClip(338, 392);
-		playSound("a#29.wav");
+		playSound(TRANSLATE("a#29.wav", "a#24.wav"));
 		stopSound(handle);
 
-		handle = playSound("y#662.wav");
+		handle = playSound(TRANSLATE("y#662.wav", "y#0.wav"));
 		setSoundVolume(handle, 10, 2);
 		playClip(392, 450);
 		startTalking("Doorbot", 0x3611A);
-		sleep(8000);
+		sleep(TRANSLATE(8000, 7000));
 
 		playClip(450, 492);
 		startTalking("Doorbot", 0x36121);

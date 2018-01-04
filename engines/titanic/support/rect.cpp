@@ -25,10 +25,11 @@
 namespace Titanic {
 
 void Rect::combine(const Rect &r) {
-	if (isEmpty() || r.isEmpty())
-		return;
-
-	Common::Rect::extend(r);
+	if (isEmpty()) {
+		*this = r;
+	} else if (!r.isEmpty()) {
+		Common::Rect::extend(r);
+	}
 }
 
 void Rect::constrain(const Rect &r) {
@@ -38,6 +39,24 @@ void Rect::constrain(const Rect &r) {
 		} else {
 			Common::Rect::clip(r);
 		}
+	}
+}
+
+Point Rect::getPoint(Quadrant quadrant) {
+	if (isEmpty())
+		return Point(left, top);
+
+	switch (quadrant) {
+	case Q_LEFT:
+		return Point(MIN(left + 10, (int)right), (top + bottom) / 2);
+	case Q_RIGHT:
+		return Point(MAX(right - 10, (int)left), (top + bottom) / 2);
+	case Q_TOP:
+		return Point((left + right) / 2, MIN(top + 10, (int)bottom));
+	case Q_BOTTOM:
+		return Point((left + right) / 2, MAX(bottom - 10, (int)top));
+	default:
+		return Point((left + right) / 2, (top + bottom) / 2);
 	}
 }
 

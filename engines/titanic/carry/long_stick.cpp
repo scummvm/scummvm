@@ -47,7 +47,7 @@ bool CLongStick::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 	if (msg->_other->isEquals("SpeechCentre")) {
 		CPuzzleSolvedMsg puzzleMsg;
 		puzzleMsg.execute(msg->_other);
-	} else if (msg->_other->isEquals("LongStickDispensor")) {
+	} else if (msg->_other->isEquals("LongStickDispenser")) {
 		petDisplayMessage(1, ALREADY_HAVE_STICK);
 	} else if (msg->_other->isEquals("Bomb")) {
 		CActMsg actMsg("Hit");
@@ -56,6 +56,7 @@ bool CLongStick::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		return CCarry::UseWithOtherMsg(msg);
 	}
 
+	petAddToInventory();
 	return true;
 }
 

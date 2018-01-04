@@ -38,10 +38,10 @@ class CNavHelmet : public CGameObject {
 	bool PETStarFieldLockMsg(CPETStarFieldLockMsg *msg);
 	bool PETSetStarDestinationMsg(CPETSetStarDestinationMsg *msg);
 private:
-	bool _flag;
+	bool _helmetOn;
 public:
 	CLASSDEF;
-	CNavHelmet() : CGameObject(), _flag(false) {}
+	CNavHelmet() : CGameObject(), _helmetOn(false) {}
 
 	/**
 	 * Save the data for the class to file

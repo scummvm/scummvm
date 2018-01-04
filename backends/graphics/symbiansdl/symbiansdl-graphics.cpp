@@ -50,7 +50,7 @@ bool SymbianSdlGraphicsManager::setGraphicsMode(int /*name*/) {
 	return SurfaceSdlGraphicsManager::setGraphicsMode(getDefaultGraphicsMode());
 }
 
-bool SymbianSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+bool SymbianSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 	case OSystem::kFeatureAspectRatioCorrection:

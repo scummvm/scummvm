@@ -102,21 +102,33 @@ public:
 		case GID_SQ6:
 			return true;
 		case GID_KQ7:
-		case GID_QFG4:
-			// (1) KQ7 1.51 (SCI2.1early) uses the non-standard attenuation, but
+			// KQ7 1.51 (SCI2.1early) uses the non-standard attenuation, but
 			// 2.00b (SCI2.1mid) does not
-			// (2) QFG4 CD is SCI2.1early; QFG4 floppy is SCI2 and does not use
-			// the SCI2.1 audio system
 			return getSciVersion() == SCI_VERSION_2_1_EARLY;
 		default:
 			return false;
 		}
 	}
 
+	inline bool gameScriptsControlMasterVolume() const {
+		switch (g_sci->getGameId()) {
+		case GID_LSL7:
+		case GID_PHANTASMAGORIA2:
+		case GID_TORIN:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	inline bool hasSci3Audio() const {
+		return getSciVersion() == SCI_VERSION_3 || g_sci->getGameId() == GID_GK2;
+	}
+
 	inline bool hasTransparentPicturePlanes() const {
 		const SciGameId &gid = g_sci->getGameId();
 
-		// NOTE: MGDX is assumed to not have transparent picture planes since it
+		// MGDX is assumed to not have transparent picture planes since it
 		// was released before SQ6, but this has not been verified since it
 		// cannot be disassembled at the moment (Phar Lap Windows-only release)
 		return getSciVersion() >= SCI_VERSION_2_1_MIDDLE &&
@@ -226,6 +238,11 @@ public:
 	 * KQ5 and SQ4.
 	 */
 	bool useAltWinGMSound();
+
+	/**
+	 * Checks if the game only supports General MIDI for music playback.
+	 */
+	bool generalMidiOnly();
 
 	/**
 	 * Forces DOS soundtracks in Windows CD versions when the user hasn't

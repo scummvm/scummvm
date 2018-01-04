@@ -45,13 +45,12 @@ enum Season {
 	SEASON_SPRING = 3
 };
 
-PTR_LIST_ITEM(CMovie);
-class CGameStateMovieList : public List<CMovieListItem> {
+class CGameStateMovieList : public Common::List<CMovie *> {
 public:
 	CViewItem *_destView;
 	CMovieClip *_movieClip;
 public:
-	CGameStateMovieList() : List<CMovieListItem>(), _destView(nullptr), _movieClip(nullptr) {}
+	CGameStateMovieList() : Common::List<CMovie *>(), _destView(nullptr), _movieClip(nullptr) {}
 
 	/**
 	 * Returns true if there are no movies in the list

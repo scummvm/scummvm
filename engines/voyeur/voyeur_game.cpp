@@ -61,6 +61,8 @@ void VoyeurEngine::playStamp() {
 		switch (_voy->_playStampMode) {
 		case 5:
 			buttonId = _mainThread->doInterface();
+			if (shouldQuit())
+				return;
 
 			if (buttonId == -2) {
 				switch (_mainThread->doApt()) {
@@ -647,6 +649,9 @@ void VoyeurEngine::reviewTape() {
 
 		} while (!shouldQuit() && (!_eventsManager->_mouseClicked || foundIndex == -1));
 
+		if (shouldQuit())
+			return;
+
 		newY = _eventsManager->getMousePos().y;
 		_voy->_fadingType = 0;
 		_voy->_viewBounds = nullptr;
@@ -674,9 +679,9 @@ void VoyeurEngine::reviewTape() {
 
 			_bVoy->getBoltGroup(0x7F00);
 			_screen->_backgroundPage = _bVoy->boltEntry(0x7F00 +
-				BLIND_TABLE[_audioVideoId])._picResource;
+				BLIND_TABLE[_audioVideoId] * 2)._picResource;
 			_screen->_backColors = _bVoy->boltEntry(0x7F01 +
-				BLIND_TABLE[_audioVideoId])._cMapResource;
+				BLIND_TABLE[_audioVideoId] * 2)._cMapResource;
 
 			_screen->_vPort->setupViewPort(_screen->_backgroundPage);
 			_screen->_backColors->startFade();
@@ -688,7 +693,10 @@ void VoyeurEngine::reviewTape() {
 
 			// Play sound for the given duration
 			_soundManager->setVOCOffset(_voy->_vocSecondsOffset);
-			_soundManager->startVOCPlay(_audioVideoId + 159);
+			Common::String filename = _soundManager->getVOCFileName(
+				_audioVideoId + 159);
+			_soundManager->startVOCPlay(filename);
+
 			uint32 secondsDuration = e._computerOff;
 
 			_eventsManager->getMouseInfo();

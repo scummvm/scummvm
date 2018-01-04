@@ -132,19 +132,5 @@ uint16 invertBits(uint16 val, int nbits) {
 	return res;
 }
 
-uint8 avClipUint8(int a) {
-	if (a & (~0xFF))
-		return (-a) >> 31;
-	else
-		return a;
-}
-
-unsigned avClipUintp2(int a, int p) {
-	if (a & ~((1 << p) - 1))
-		return -a >> 31 & ((1 << p) - 1);
-	else
-		return  a;
-}
-
 } // End of namespace Indeo
 } // End of namespace Image

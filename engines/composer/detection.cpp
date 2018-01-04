@@ -62,8 +62,8 @@ static const PlainGameDescriptor composerGames[] = {
 	{"imoking", "Magic Tales: Imo and the King"},
 	{"liam", "Magic Tales: Liam Finds a Story"},
 	{"littlesamurai", "Magic Tales: The Little Samurai"},
-	{"princess", "The Princess and the Crab"},
-	{"sleepingcub", "Sleeping Cub's Test of Courage"},
+	{"princess", "Magic Tales: The Princess and the Crab"},
+	{"sleepingcub", "Magic Tales: Sleeping Cub's Test of Courage"},
 	{0, 0}
 };
 
@@ -98,6 +98,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Baba Yaga and the Magic Geese German- from bug #10171
+	{
+		{
+			"babayaga",
+			"",
+			AD_ENTRY1s("book.ini", "2a20e73d33ecd0f2fa8123d4f9862f90", 3814),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: Imo and the King - from bug #3485018
 	{
 		{
@@ -120,6 +134,20 @@ static const ComposerGameDescription gameDescriptions[] = {
 			AD_ENTRY1("imo and the king", "b0277885fec943b5f19409f35b33964c"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: Imo and the King German - from bug #10199
+	{
+		{
+			"imoking",
+			"",
+			AD_ENTRY1s("book.ini", "5925c6d4bf85d89b17208be4fcace5e8", 3274),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -321,7 +349,7 @@ static const ComposerGameDescription gameDescriptions[] = {
 			"gregory",
 			0,
 			AD_ENTRY1("book.ini", "e54fc5c00de5f94e908a969e445af5d0"),
-			Common::EN_ANY,
+			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
@@ -507,8 +535,8 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 }
 
 bool Composer::ComposerEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsRTL 
-		|| f == kSupportsSavingDuringRuntime 
+	return (f == kSupportsRTL
+		|| f == kSupportsSavingDuringRuntime
 		|| f == kSupportsLoadingDuringRuntime);
 }
 

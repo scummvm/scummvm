@@ -189,8 +189,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh && g_sci->getGameId() != GID_TORIN) {
-			// Torin Mac seems to be the only game that uses view cursors
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 			delete hotspot; // Mac cursors have their own hotspot, so ignore any we get here
 			g_sci->_gfxCursor->kernelSetMacCursor(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16());
 		} else {
@@ -397,13 +396,13 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	int sleep_time = argv[0].toUint16();
 
-	s->wait(sleep_time);
+	const int delta = s->wait(sleep_time);
 
 	if (g_sci->_guestAdditions->kWaitHook()) {
 		return NULL_REG;
 	}
 
-	return s->r_acc;
+	return make_reg(0, delta);
 }
 
 reg_t kCoordPri(EngineState *s, int argc, reg_t *argv) {
@@ -932,7 +931,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			}
 		}
 
-		debugC(kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d", PRINT_REG(controlObject), x, y, SCI_MAX_SAVENAME_LENGTH);
+		debugC(kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y);
 		g_sci->_gfxControls16->kernelDrawList(rect, controlObject, maxChars, listCount, listStrings, fontId, style, upperPos, cursorPos, isAlias, hilite);
 		delete[] listStrings;
 		return;
@@ -1166,7 +1165,7 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// keep ScummVM responsive. Fixes ScummVM "freezing" during the credits,
 	// bug #3101846
 	if (g_sci->getGameId() == GID_ECOQUEST && s->currentRoomNumber() == 680)
-		g_sci->getEventManager()->getSciEvent(SCI_EVENT_PEEK);
+		g_sci->getEventManager()->getSciEvent(kSciEventPeek);
 
 	return s->r_acc;
 }

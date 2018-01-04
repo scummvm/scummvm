@@ -29,6 +29,9 @@
 #include "sci/engine/vm.h"
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/util.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/palette32.h"
+#endif
 
 namespace Sci {
 
@@ -433,7 +436,7 @@ public:
 		_size(0),
 		_data(nullptr) {}
 
-	SciArray(const SciArray &array) : Common::Serializable() {
+	SciArray(const SciArray &array) {
 		_type = array._type;
 		_size = array._size;
 		_elementSize = array._elementSize;
@@ -502,10 +505,14 @@ public:
 	}
 
 	/**
-	 * Returns the size of the array, in bytes.
+	 * Returns the maximum number of bytes that can be stored in the array.
 	 */
 	uint16 byteSize() const {
-		return _size * _elementSize;
+		uint16 size = _size;
+		if (_type == kArrayTypeID || _type == kArrayTypeInt16) {
+			size *= sizeof(uint16);
+		}
+		return size;
 	}
 
 	/**
@@ -521,14 +528,6 @@ public:
 			}
 			_size = newSize;
 		}
-	}
-
-	/**
-	 * Shrinks a string array to its optimal size.
-	 */
-	void snug() {
-		assert(_type == kArrayTypeString || _type == kArrayTypeByte);
-		resize(Common::strnlen((char *)_data, _size) + 1, true);
 	}
 
 	/**
@@ -762,12 +761,12 @@ public:
 	 * Copies values from the source array. Both arrays will be grown if needed
 	 * to prevent out-of-bounds reads/writes.
 	 */
-	void copy(SciArray &source, const uint16 sourceIndex, const uint16 targetIndex, uint16 count) {
-		if (count == 65535 /* -1 */) {
+	void copy(SciArray &source, const uint16 sourceIndex, const uint16 targetIndex, int16 count) {
+		if (count == -1) {
 			count = source.size() - sourceIndex;
 		}
 
-		if (!count) {
+		if (count < 1) {
 			return;
 		}
 
@@ -889,7 +888,7 @@ public:
 			break;
 		}
 
-		return Common::String::format("type %s; %u entries; %u bytes", type, size(), byteSize());
+		return Common::String::format("type %s; %u entries", type, size());
 	}
 
 protected:
@@ -973,12 +972,12 @@ public:
 
 	inline SciBitmap() : _data(nullptr), _dataSize(0), _gc(true) {}
 
-	inline SciBitmap(const SciBitmap &other) : Common::Serializable() {
+	inline SciBitmap(const SciBitmap &other) {
 		_dataSize = other._dataSize;
 		_data = (byte *)malloc(other._dataSize);
 		memcpy(_data, other._data, other._dataSize);
 		if (_dataSize) {
-			_buffer = Buffer(getWidth(), getHeight(), getPixels());
+			_buffer.init(getWidth(), getHeight(), getWidth(), getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 		}
 		_gc = other._gc;
 	}
@@ -999,7 +998,7 @@ public:
 		_data = (byte *)malloc(other._dataSize);
 		memcpy(_data, other._data, _dataSize);
 		if (_dataSize) {
-			_buffer = Buffer(getWidth(), getHeight(), getPixels());
+			_buffer.init(getWidth(), getHeight(), getWidth(), getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 		}
 		_gc = other._gc;
 
@@ -1026,14 +1025,14 @@ public:
 		setRemap(remap);
 		setDataSize(width * height);
 		WRITE_SCI11ENDIAN_UINT32(_data + 16, 0);
-		setHunkPaletteOffset(paletteSize > 0 ? (width * height) : 0);
+		setHunkPaletteOffset(paletteSize > 0 ? (bitmapHeaderSize + width * height) : 0);
 		setDataOffset(bitmapHeaderSize);
 		setUncompressedDataOffset(bitmapHeaderSize);
 		setControlOffset(0);
 		setXResolution(xResolution);
 		setYResolution(yResolution);
 
-		_buffer = Buffer(getWidth(), getHeight(), getPixels());
+		_buffer.init(getWidth(), getHeight(), getWidth(), getPixels(), Graphics::PixelFormat::createFormatCLUT8());
 	}
 
 	inline int getRawSize() const {
@@ -1099,26 +1098,15 @@ public:
 
 	BITMAP_PROPERTY(32, DataSize, 12);
 
-	inline uint32 getHunkPaletteOffset() const {
-		return READ_SCI11ENDIAN_UINT32(_data + 20);
-	}
-
-	inline void setHunkPaletteOffset(uint32 hunkPaletteOffset) {
-		if (hunkPaletteOffset) {
-			hunkPaletteOffset += getBitmapHeaderSize();
-		}
-
-		WRITE_SCI11ENDIAN_UINT32(_data + 20, hunkPaletteOffset);
-	}
+	BITMAP_PROPERTY(32, HunkPaletteOffset, 20);
 
 	BITMAP_PROPERTY(32, DataOffset, 24);
 
-	// NOTE: This property is used as a "magic number" for
-	// validating that a block of memory is a valid bitmap,
-	// and so is always set to the size of the header.
+	// This property is used as a "magic number" for validating that a block of
+	// memory is a valid bitmap, and so is always set to the size of the header.
 	BITMAP_PROPERTY(32, UncompressedDataOffset, 28);
 
-	// NOTE: This property always seems to be zero
+	// This property always seems to be zero in SSCI
 	BITMAP_PROPERTY(32, ControlOffset, 32);
 
 	inline uint16 getXResolution() const {
@@ -1160,6 +1148,14 @@ public:
 			return nullptr;
 		}
 		return _data + getHunkPaletteOffset();
+	}
+
+	inline void setPalette(const Palette &palette) {
+		byte *paletteData = getHunkPalette();
+		if (paletteData != nullptr) {
+			SciSpan<byte> paletteSpan(paletteData, getRawSize() - getHunkPaletteOffset());
+			HunkPalette::write(paletteSpan, palette);
+		}
 	}
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);

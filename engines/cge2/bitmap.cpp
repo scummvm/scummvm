@@ -301,7 +301,7 @@ bool Bitmap::solidAt(V2D pos) {
 		switch (t) {
 		case kBmpEOI:
 			r--;
-			// No break on purpose
+			// fall through
 		case kBmpSKP:
 			w = 0;
 			break;

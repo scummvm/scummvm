@@ -11,7 +11,6 @@ MODULE_OBJS := \
 	disk.o \
 	display.o \
 	graphics.o \
-	hires0.o \
 	hires1.o \
 	hires2.o \
 	hires4.o \

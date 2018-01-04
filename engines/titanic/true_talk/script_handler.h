@@ -50,7 +50,7 @@ public:
 	TTconcept *_concept3P;
 	TTconcept *_concept4P;
 public:
-	CScriptHandler(CTitleEngine *owner, int val1, int val2);
+	CScriptHandler(CTitleEngine *owner, int val1, VocabMode vocabMode);
 	~CScriptHandler();
 
 	/**

@@ -29,18 +29,18 @@ class LinuxmotoSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
-	virtual void initSize(uint w, uint h);
-	virtual void setGraphicsModeIntern();
-	virtual bool setGraphicsMode(int mode);
-	virtual void internUpdateScreen();
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool loadGFXMode();
-	virtual void drawMouse();
-	virtual void undrawMouse();
-	virtual void showOverlay();
-	virtual void hideOverlay();
-	virtual void warpMouse(int x, int y);
+	virtual void initSize(uint w, uint h) override;
+	virtual void setGraphicsModeIntern() override;
+	virtual bool setGraphicsMode(int mode) override;
+	virtual void internUpdateScreen() override;
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool loadGFXMode() override;
+	virtual void drawMouse() override;
+	virtual void undrawMouse() override;
+	virtual void showOverlay() override;
+	virtual void hideOverlay() override;
+	virtual void warpMouse(int x, int y) override;
 
 	virtual void transformMouseCoordinates(Common::Point &point);
 };

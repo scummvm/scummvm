@@ -61,7 +61,7 @@ namespace Video {
  */
 class TheoraDecoder : public VideoDecoder {
 public:
-	TheoraDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kMusicSoundType);
+	TheoraDecoder();
 	virtual ~TheoraDecoder();
 
 	/**
@@ -110,8 +110,6 @@ private:
 		VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo);
 		~VorbisAudioTrack();
 
-		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
-
 		bool decodeSamples();
 		bool hasAudio() const;
 		bool needsAudio() const;
@@ -126,7 +124,6 @@ private:
 		int _audioBufferFill;
 		ogg_int16_t *_audioBuffer;
 
-		Audio::Mixer::SoundType _soundType;
 		Audio::QueuingAudioStream *_audStream;
 
 		vorbis_block _vorbisBlock;
@@ -141,8 +138,6 @@ private:
 	void ensureAudioBufferSize();
 
 	Common::SeekableReadStream *_fileStream;
-
-	Audio::Mixer::SoundType _soundType;
 
 	ogg_sync_state _oggSync;
 	ogg_page _oggPage;

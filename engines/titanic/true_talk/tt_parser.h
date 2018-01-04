@@ -69,6 +69,7 @@ private:
 	StringArray _replacements1;
 	StringArray _replacements2;
 	StringArray _replacements3;
+	StringArray _replacements4;
 	StringArray _phrases;
 	NumberArray _numbers;
 	TTparserNode *_nodesP;
@@ -168,6 +169,12 @@ private:
 	 * Detaches a node from the main node list
 	 */
 	void removeNode(TTparserNode *node);
+
+	/**
+	 * Handles any preprocessing for the German version
+	 * @param line		Line to check and update
+	 */
+	void preprocessGerman(TTstring &line);
 
 	int processModifiers(int modifier, TTword *word);
 

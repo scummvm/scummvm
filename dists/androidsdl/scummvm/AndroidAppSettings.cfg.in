@@ -165,7 +165,7 @@ FirstStartMenuOptions=''
 
 # Enable multi-ABI binary, with hardware FPU support - it will also work on old devices,
 # but .apk size is 2x bigger (y) / (n) / (x86) / (all)
-MultiABI="armeabi armeabi-v7a arm64-v8a x86 x86_64 mips"
+MultiABI="armeabi armeabi-v7a arm64-v8a x86 x86_64"
 
 # Minimum amount of RAM application requires, in Mb, SDL will print warning to user if it's lower
 AppMinimumRAM=256
@@ -225,6 +225,11 @@ AdmobTestDeviceId=
 # Your AdMob banner size (BANNER/IAB_BANNER/IAB_LEADERBOARD/IAB_MRECT/IAB_WIDE_SKYSCRAPER/SMART_BANNER)
 AdmobBannerSize=
 
-UseGlshim=n
+# Use gl4es library for provide OpenGL 1.x functionality to OpenGL ES accelerated cards (y) or (n)
+UseGl4es=n
 
+# Application needs to access SD card. If your data files are bigger than 5 Mb, enable it. (y) / (n)
 AccessSdCard=y
+
+# Hide Android system mouse cursor image when USB mouse is attached (y) or (n) - the app must draw it's own mouse cursor
+HideSystemMousePointer=y

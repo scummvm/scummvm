@@ -210,7 +210,7 @@ int GfxMgr::initVideo() {
 	_displayPixels = _displayScreenWidth * _displayScreenHeight;
 	_displayScreen = (byte *)calloc(_displayPixels, 1);
 
-	initGraphics(_displayScreenWidth, _displayScreenHeight, _displayScreenWidth > 320);
+	initGraphics(_displayScreenWidth, _displayScreenHeight);
 
 	setPalette(true); // set gfx-mode palette
 
@@ -1003,7 +1003,7 @@ void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroun
 	case Common::kRenderHercA:
 	case Common::kRenderHercG:
 		lineColor = 0; // change linecolor to black
-		// supposed to fall through
+		// fall through
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
 	case Common::kRenderVGA:
@@ -1027,7 +1027,7 @@ void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte c
 	case Common::kRenderHercA:
 		if (color)
 			color = 1; // change any color except black to green/amber
-		// supposed to fall through
+		// fall through
 	case Common::kRenderEGA:
 	default:
 		drawDisplayRectEGA(x, y, width, height, color);

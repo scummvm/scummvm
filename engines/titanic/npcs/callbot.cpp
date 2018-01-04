@@ -22,6 +22,8 @@
 
 #include "titanic/npcs/callbot.h"
 #include "titanic/core/room_item.h"
+#include "titanic/game_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -59,10 +61,15 @@ bool CCallBot::EnterViewMsg(CEnterViewMsg *msg) {
 		CRoomItem *room = getRoom();
 
 		if (room) {
+			CGameState &gs = getGameManager()->_gameState;
+			gs.setMode(GSMODE_CUTSCENE);
+
 			CSummonBotQueryMsg queryMsg;
 			queryMsg._npcName = _npcName;
 			if (queryMsg.execute(room))
 				petOnSummonBot(_npcName, 0);
+
+			gs.setMode(GSMODE_INTERACTIVE);
 		}
 
 		_enabled = false;

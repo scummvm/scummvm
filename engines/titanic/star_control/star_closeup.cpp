@@ -21,7 +21,9 @@
  */
 
 #include "titanic/star_control/star_closeup.h"
+#include "titanic/star_control/error_code.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/surface_area.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -193,7 +195,7 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 		CSurfaceArea *surfaceArea, CStarCamera *camera) {
 	const int VALUES[] = { 0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4 };
 	float val1 = camera->getThreshold();
-	int val2 = camera->proc27();
+	StarColor starColor = camera->getStarColor();
 	if (!_flag)
 		return;
 
@@ -290,7 +292,8 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 				}
 			}
 
-			if (val2 <= 0) {
+			switch (starColor) {
+			case WHITE: 
 				surfaceArea->setMode(SA_SOLID);
 				surfaceArea->_pixel = MKTAG_BE(entryP->_pixel1, entryP->_pixel2,
 					entryP->_pixel3, 0);
@@ -313,7 +316,8 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 							grid2._position._x, grid2._position._y));
 					}
 				}
-			} else {
+				break;
+			case PINK:
 				surfaceArea->setMode(SA_SOLID);
 				surfaceArea->_pixel = entryP->_pixel1;
 				surfaceArea->setColorFromPixel();
@@ -357,6 +361,9 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 							grid2._position._x, grid2._position._y));
 					}
 				}
+				break;
+			default:
+				assert(0);
 			}
 		}
 	}
@@ -395,7 +402,8 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 			+ newV._x * pose._row1._z + pose._vector._z;
 	}
 
-	if (val2 <= 0) {
+	switch(starColor) {
+	case WHITE:
 		surfaceArea->setMode(SA_SOLID);
 		surfaceArea->_pixel = pixel1;
 		surfaceArea->setColorFromPixel();
@@ -416,8 +424,9 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 				surfaceArea->drawLine(FRect(grid1._position._x, grid1._position._y,
 					grid2._position._x, grid2._position._y));
 			}
-		}
-	} else {
+		}		
+		break;
+	case PINK:
 		surfaceArea->setMode(SA_SOLID);
 		surfaceArea->_pixel = pixel2;
 		surfaceArea->setColorFromPixel();
@@ -461,6 +470,9 @@ void CStarCloseup::draw(const FPose &pose, const FVector &vector, const FVector 
 					grid2._position._x, grid2._position._y));
 			}
 		}
+		break;
+	default:
+		assert(0);
 	}
 }
 

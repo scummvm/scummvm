@@ -22,6 +22,7 @@
 
 #include "titanic/gfx/music_voice_mute.h"
 #include "titanic/sound/music_room.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -38,7 +39,7 @@ bool CMusicVoiceMute::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
 	CMusicRoom *musicRoom = getMusicRoom();
 	musicRoom->setMuteControl(_controlArea, _controlVal == 1 ? 1 : 0);
 	loadFrame(1 - _controlVal);
-	playSound("z#55.wav", 50);
+	playSound(TRANSLATE("z#55.wav", "z#586.wav"), 50);
 
 	return true;
 }

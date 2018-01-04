@@ -113,7 +113,7 @@ private:
 	// An MPEG audio track
 	class MPEGAudioTrack : public AudioTrack, public MPEGStream {
 	public:
-		MPEGAudioTrack(Common::SeekableReadStream &firstPacket);
+		MPEGAudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType);
 		~MPEGAudioTrack();
 
 		bool sendPacket(Common::SeekableReadStream *packet, uint32 pts, uint32 dts);

@@ -31,6 +31,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/mactextwindow.h"
 #include "graphics/macgui/macmenu.h"
 
 namespace Graphics {
@@ -175,22 +176,33 @@ MacWindowManager::~MacWindowManager() {
 MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool editable) {
 	MacWindow *w = new MacWindow(_lastId, scrollable, resizable, editable, this);
 
-	_windows.push_back(w);
-	_windowStack.push_back(w);
+	addWindowInitialized(w);
 
-	setActive(_lastId);
-
-	_lastId++;
+	setActive(getNextId());
 
 	return w;
 }
 
+MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu) {
+	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu);
+
+	addWindowInitialized(w);
+
+	setActive(getNextId());
+
+	return w;
+}
+
+
+void MacWindowManager::addWindowInitialized(MacWindow *macwindow) {
+	_windows.push_back(macwindow);
+	_windowStack.push_back(macwindow);
+}
+
 MacMenu *MacWindowManager::addMenu() {
-	_menu = new MacMenu(_lastId, _screen->getBounds(), this);
+	_menu = new MacMenu(getNextId(), _screen->getBounds(), this);
 
 	_windows.push_back(_menu);
-
-	_lastId++;
 
 	return _menu;
 }
@@ -277,8 +289,10 @@ void MacWindowManager::draw() {
 
 			Common::Rect clip(w->getDimensions().left - 2, w->getDimensions().top - 2, w->getDimensions().right - 2, w->getDimensions().bottom - 2);
 			clip.clip(_screen->getBounds());
+			clip.clip(Common::Rect(0, 0, g_system->getWidth() - 1, g_system->getHeight() - 1));
 
-			g_system->copyRectToScreen(_screen->getBasePtr(clip.left, clip.top), _screen->pitch, clip.left, clip.top, clip.width(), clip.height());
+			if (!clip.isEmpty())
+				g_system->copyRectToScreen(_screen->getBasePtr(clip.left, clip.top), _screen->pitch, clip.left, clip.top, clip.width(), clip.height());
 		}
 	}
 
@@ -290,13 +304,9 @@ void MacWindowManager::draw() {
 }
 
 bool MacWindowManager::processEvent(Common::Event &event) {
-	// Menu gets events first fir shortcuts and menu bar
+	// Menu gets events first for shortcuts and menu bar
 	if (_menu && _menu->processEvent(event))
 		return true;
-
-	if (event.type != Common::EVENT_MOUSEMOVE && event.type != Common::EVENT_LBUTTONDOWN &&
-			event.type != Common::EVENT_LBUTTONUP)
-		return false;
 
 	if (_windows[_activeWindow]->isEditable() && _windows[_activeWindow]->getType() == kWindowWindow &&
 			((MacWindow *)_windows[_activeWindow])->getInnerDimensions().contains(event.mouse.x, event.mouse.y)) {
@@ -315,8 +325,8 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		it--;
 		BaseMacWindow *w = *it;
 
-
-		if (w->hasAllFocus() || w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
+		if (w->hasAllFocus() || (w->isEditable() && event.type == Common::EVENT_KEYDOWN) ||
+				w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
 				setActive(w->getId());
 

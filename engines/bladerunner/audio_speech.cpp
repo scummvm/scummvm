@@ -23,6 +23,7 @@
 #include "bladerunner/audio_speech.h"
 
 #include "bladerunner/aud_stream.h"
+#include "bladerunner/audio_mixer.h"
 #include "bladerunner/bladerunner.h"
 
 #include "common/debug.h"
@@ -31,17 +32,29 @@ namespace BladeRunner {
 
 #define BUFFER_SIZE 200000
 
+void AudioSpeech::ended() {
+	//Common::StackLock lock(_mutex);
+	_isActive = false;
+	_channel = -1;
+}
+
+void AudioSpeech::mixerChannelEnded(int channel, void *data) {
+	AudioSpeech *audioSpeech = (AudioSpeech*)data;
+	audioSpeech->ended();
+}
+
 AudioSpeech::AudioSpeech(BladeRunnerEngine *vm) : _vm(vm) {
 	_volume = 50;
-	_isMaybeActive = false;
+	_isActive = false;
 	_data = new byte[BUFFER_SIZE];
+	_channel = -1;
 }
 
 AudioSpeech::~AudioSpeech() {
 	delete[] _data;
 }
 
-bool AudioSpeech::playSpeech(const char *name, int balance) {
+bool AudioSpeech::playSpeech(const char *name, int pan) {
 	// debug("AudioSpeech::playSpeech(\"%s\")", name);
 	Common::ScopedPtr<Common::SeekableReadStream> r(_vm->getResourceStream(name));
 
@@ -67,28 +80,35 @@ bool AudioSpeech::playSpeech(const char *name, int balance) {
 
 	AudStream *audioStream = new AudStream(_data);
 
-	_vm->_mixer->playStream(
-		Audio::Mixer::kPlainSoundType,
-		&_soundHandle,
-		audioStream,
-		-1,
-		_volume * 255 / 100,
-		balance);
+	// TODO: shorty mode - set rate of sound to 33khz
 
-	_isMaybeActive = true;
+	_channel = _vm->_audioMixer->play(
+		Audio::Mixer::kSpeechSoundType,
+		audioStream,
+		100,
+		false,
+		_volume,
+		pan,
+		mixerChannelEnded,
+		this);
+
+	_isActive = true;
 
 	return true;
 }
 
 void AudioSpeech::stopSpeech() {
-	_vm->_mixer->stopHandle(_soundHandle);
+	//Common::StackLock lock(_mutex);
+	if (_channel != -1) {
+		_vm->_audioMixer->stop(_channel, 0);
+	}
 }
 
 bool AudioSpeech::isPlaying() {
-	if (!_isMaybeActive)
-		return false;
-
-	return _isMaybeActive = _vm->_mixer->isSoundHandleActive(_soundHandle);
+	if (_channel == -1) {
+		return  false;
+	}
+	return _isActive;
 }
 
 } // End of namespace BladeRunner

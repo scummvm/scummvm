@@ -21,6 +21,7 @@
  */
 
 #include "titanic/gfx/music_switch_reverse.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -46,9 +47,9 @@ bool CMusicSwitchReverse::MusicSettingChangedMsg(CMusicSettingChangedMsg *msg) {
 			_controlVal = 0;
 
 		loadFrame(_controlVal);
-		playSound("z#59.wav", 50);
+		playSound(TRANSLATE("z#59.wav", "z#590.wav"), 50);
 	} else {
-		playSound("z#46.wav");
+		playSound(TRANSLATE("z#46.wav", "z#577.wav"));
 	}
 
 	return true;

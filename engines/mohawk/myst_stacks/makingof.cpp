@@ -37,14 +37,10 @@ MakingOf::MakingOf(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 MakingOf::~MakingOf() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &MakingOf::x, #x))
-
 void MakingOf::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_quit);
+	REGISTER_OPCODE(100, MakingOf, o_quit);
 }
-
-#undef OPCODE
 
 void MakingOf::disablePersistentScripts() {
 }

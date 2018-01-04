@@ -22,6 +22,7 @@
 
 #include "titanic/carry/bridge_piece.h"
 #include "titanic/game/ship_setting.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -60,7 +61,7 @@ bool CBridgePiece::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		return true;
 	} else {
 		setVisible(false);
-		playSound("z#54.wav");
+		playSound(TRANSLATE("z#54.wav", "z#585.wav"));
 		setPosition(shipSetting->_pos1);
 		shipSetting->_itemName = getName();
 		petMoveToHiddenRoom();

@@ -23,11 +23,9 @@
 #ifndef BLADERUNNER_ACTOR_CLUES_H
 #define BLADERUNNER_ACTOR_CLUES_H
 
-#include "bladerunner/bladerunner.h"
-
-#include "bladerunner/gameinfo.h"
-
 namespace BladeRunner {
+
+class BladeRunnerEngine;
 
 struct ActorClue {
 	int _clueId;

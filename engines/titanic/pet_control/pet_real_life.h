@@ -126,6 +126,10 @@ public:
 	 */
 	virtual CTextControl *getText() { return &_text; }
 
+	/**
+	 * Handles updates to the sound levels
+	 */
+	void syncSoundSettings();
 };
 
 } // End of namespace Titanic

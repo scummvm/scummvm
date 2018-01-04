@@ -33,10 +33,9 @@ namespace Titanic {
 
 enum LoadMode { LOADMODE_AUDIO_BUFFER = 1, LOADMODE_SCUMMVM = 2 };
 
-class QSoundManager;
-
 class CWaveFile {
 private:
+	Audio::Mixer *_mixer;
 	byte *_waveData;
 	int _waveSize;
 	int _dataSize;
@@ -44,7 +43,7 @@ private:
 	int _rate;
 	byte _flags;
 	uint16 _wavType;
-	Audio::SeekableAudioStream *_audioStream;
+	Audio::SeekableAudioStream *_pendingAudioStream;
 private:
 	/**
 	 * Handles setup of fields shared by the constructors
@@ -55,6 +54,11 @@ private:
 	 * Gets passed the raw data for the wave file
 	 */
 	void load(byte *data, uint dataSize);
+
+	/**
+	 * Returns a ScummVM Audio Stream for playback purposes
+	 */
+	Audio::SeekableAudioStream *createAudioStream();
 public:
 	Audio::Mixer::SoundType _soundType;
 
@@ -63,8 +67,7 @@ public:
 	DisposeAfterUse::Flag _disposeAudioBuffer;
 	int _channel;
 public:
-	CWaveFile();
-	CWaveFile(QSoundManager *owner);
+	CWaveFile(Audio::Mixer *mixer);
 	~CWaveFile();
 
 	/**
@@ -78,11 +81,6 @@ public:
 	 * Return the size of the wave file
 	 */
 	uint size() const { return _dataSize; }
-
-	/**
-	 * Returns a ScummVM Audio Stream for playback purposes
-	 */
-	Audio::SeekableAudioStream *audioStream();
 
 	/**
 	 * Tries to load the specified wave file sound
@@ -108,18 +106,13 @@ public:
 	 * Returns true if the wave file has data loaded
 	 */
 	bool isLoaded() const {
-		return _audioStream != nullptr || _waveData != nullptr;
+		return _waveData != nullptr || _pendingAudioStream != nullptr;
 	}
 
 	/**
 	 * Return the frequency of the loaded wave file
 	 */
-	uint getFrequency();
-
-	/**
-	 * Resets the music stream
-	 */
-	void reset();
+	uint getFrequency() const { return _rate; }
 
 	/**
 	 * Lock sound data for access
@@ -130,6 +123,15 @@ public:
 	 * Unlock sound data after a prior call to lock
 	 */
 	void unlock(const int16 *ptr);
+
+	/**
+	 * Plays the wave file
+	 * @param numLoops		Number of times to loop. 0 for none,
+	 *		-1 for infinite, and >0 for specified number of times
+	 * @param volume		Volume to play at
+	 * @returns				Audio handle for started sound
+	 */
+	Audio::SoundHandle play(int numLoops, byte volume);
 };
 
 } // End of namespace Titanic

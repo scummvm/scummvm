@@ -34,11 +34,11 @@ class CAutoAnimate : public CBackground {
 	bool InitializeAnimMsg(CInitializeAnimMsg *msg);
 private:
 	bool _enabled;
-	int _fieldE4;
+	bool _redo;
 	bool _repeat;
 public:
 	CLASSDEF;
-	CAutoAnimate() : CBackground(), _enabled(true), _fieldE4(1), _repeat(false) {}
+	CAutoAnimate() : CBackground(), _enabled(true), _redo(true), _repeat(false) {}
 
 	/**
 	 * Save the data for the class to file

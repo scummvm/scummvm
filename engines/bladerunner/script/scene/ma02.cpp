@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptMA02::InitializeScene() {
-	if (Game_Flag_Query(36)) {
+	if (Game_Flag_Query(kFlagMA04ToMA02)) {
 		Setup_Scene_Information(-172.0f, -144.13f, 6.27f, 500);
 	} else {
 		Setup_Scene_Information(23.19f, -144.12f, 378.27f, 750);
@@ -92,7 +92,7 @@ bool SceneScriptMA02::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Voice_Over(1180, kActorVoiceOver);
 			Actor_Voice_Over(1190, kActorVoiceOver);
 			Actor_Voice_Over(1200, kActorVoiceOver);
-			Actor_Clue_Acquire(kActorMcCoy, kClueCrystalsCigarette, 1, -1);
+			Actor_Clue_Acquire(kActorMcCoy, kClueCrystalsCigarette, true, -1);
 		} else {
 			Actor_Says(kActorMcCoy, 8526, 0);
 		}
@@ -102,7 +102,7 @@ bool SceneScriptMA02::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptMA02::ClickedOnActor(int actorId) {
-	if (actorId == 66 && Actor_Query_Goal_Number(kActorMaggie) == 599) {
+	if (actorId == kActorMaggie && Actor_Query_Goal_Number(kActorMaggie) == 599) {
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorMaggie, 30, 1, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
 			Actor_Voice_Over(1140, kActorVoiceOver);
@@ -119,14 +119,14 @@ bool SceneScriptMA02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.19f, -144.12f, 378.27f, 0, 1, false, 0)) {
 			Music_Stop(10);
-			Game_Flag_Set(33);
+			Game_Flag_Set(kFlagMA02toMA06);
 			Set_Enter(52, 52);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -168.0f, -144.13f, 10.27f, 0, 1, false, 0)) {
-			Game_Flag_Set(35);
+			Game_Flag_Set(kFlagMA02ToMA04);
 			Set_Enter(50, 50);
 		}
 		return true;
@@ -145,10 +145,10 @@ void SceneScriptMA02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptMA02::PlayerWalkedIn() {
-	if (Game_Flag_Query(34)) {
+	if (Game_Flag_Query(kFlagMA06ToMA02)) {
 		sub_402044();
 	}
-	if (Game_Flag_Query(36)) {
+	if (Game_Flag_Query(kFlagMA04ToMA02)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -148.12f, -144.13f, 34.27f, 0, 1, false, 0);
 	}
 	if (Global_Variable_Query(1) == 4 && !Game_Flag_Query(655)) {
@@ -156,7 +156,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 		Game_Flag_Set(655);
 		sub_401E4C();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.19f, -144.12f, 378.27f, 0, 0, false, 0);
-		Game_Flag_Set(33);
+		Game_Flag_Set(kFlagMA02toMA06);
 		Set_Enter(52, 52);
 		//	return true;
 		return;
@@ -171,7 +171,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 		Game_Flag_Set(654);
 		Autosave_Game(3);
 	}
-	if (Global_Variable_Query(1) < 4 && !Game_Flag_Query(36) && Actor_Query_Goal_Number(kActorMaggie) != 2) {
+	if (Global_Variable_Query(1) < 4 && !Game_Flag_Query(kFlagMA04ToMA02) && Actor_Query_Goal_Number(kActorMaggie) != 2) {
 		Actor_Set_Goal_Number(kActorMaggie, 1);
 		if (!Game_Flag_Query(60)) {
 			Game_Flag_Set(60);
@@ -187,14 +187,14 @@ void SceneScriptMA02::PlayerWalkedIn() {
 			}
 		}
 	}
-	Game_Flag_Reset(36);
-	Game_Flag_Reset(34);
+	Game_Flag_Reset(kFlagMA04ToMA02);
+	Game_Flag_Reset(kFlagMA06ToMA02);
 	//return false;
 	return;
 }
 
 void SceneScriptMA02::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 }
 
@@ -225,41 +225,24 @@ bool SceneScriptMA02::sub_401F7C() {
 }
 
 void SceneScriptMA02::sub_402044() {
-	// int v0;
-	// int v1;
-	// int v3[7];
-
-	// v0 = 0;
-
 	int i = 0;
 	int arr[7];
 	if (Global_Variable_Query(1) < 4 && Game_Flag_Query(45)) {
-		// v0 = 1;
-		// v3[0] = 0;
 		arr[i++] = 0;
 	}
-
-	// v1 = v0 + 1;
-	// v3[v0] = 1;
 	arr[i++] = 1;
 	if (Global_Variable_Query(1) >= 3) {
-		// v3[v1] = 2;
-		// v1 = v0 + 2;
 		arr[i++] = 2;
 	}
 	if (Global_Variable_Query(1) >= 2 && Global_Variable_Query(1) <= 4) {
-		// v3[v1++] = 3;
 		arr[i++] = 3;
 	}
 	if (Game_Flag_Query(171) && Game_Flag_Query(170)) {
-		// v3[v1++] = 4;
 		arr[i++] = 4;
 	}
-	//if (v1 <= 0) {
 	if (i == 0) {
 		Global_Variable_Set(52, -1);
 	} else {
-		// Global_Variable_Set(52, v3[Random_Query(0, v1 - 1)]);
 		Global_Variable_Set(52, arr[Random_Query(0, i - 1)]);
 	}
 }

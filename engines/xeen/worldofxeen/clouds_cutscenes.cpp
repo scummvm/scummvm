@@ -46,7 +46,7 @@ bool CloudsCutscenes::showCloudsTitle() {
 
 	for (int idx = 0; idx < 80; ++idx) {
 		screen.restoreBackground();
-		logo[idx / 65].draw(screen, idx % 65);
+		logo[idx / 65].draw(0, idx % 65);
 		screen.update();
 
 		switch (idx) {
@@ -88,11 +88,13 @@ bool CloudsCutscenes::showCloudsIntro() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
+
 	SpriteResource stars("stars.vga"), intro1("intro1.vga"),
 		lake("lake.vga"), xeen("xeen.vga"), wizTower("wiztower.vga"),
 		wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
 		xeen1("xeen1.vga");
-	_subtitles.load("special.bin", GAME_ARCHIVE);
+	_subtitles.load("special.bin", 0);
 	_vm->_files->_isDarkCc = false;
 
 	// Show the production splash screen
@@ -108,22 +110,21 @@ bool CloudsCutscenes::showCloudsIntro() {
 	screen.loadPalette("intro.pal");
 	screen.loadBackground("blank.raw");
 	screen.saveBackground();
-	stars.draw(screen, 0);
-	stars.draw(screen, 1, Common::Point(160, 0));
+	stars.draw(0, 0);
+	stars.draw(0, 1, Common::Point(160, 0));
 	screen.loadPage(0);
-	intro1.draw(screen, 0);
+	intro1.draw(0, 0);
 	screen.loadPage(1);
 
 	bool fadeFlag = true;
 	for (int yCtr = SCREEN_HEIGHT, yScroll = 0, xeenCtr = -1; yCtr > 0; --yCtr, ++yScroll) {
 		screen.vertMerge(yScroll);
 		if (yCtr < 160) {
-			xeen.draw(screen, 0);
-		}
-		else if (yCtr < 100) {
-			xeen.draw(screen, 0);
+			xeen.draw(0, 0);
+		} else if (yCtr < 100) {
+			xeen.draw(0, 0);
 			if (++xeenCtr < 14)
-				xeen1.draw(screen, xeenCtr);
+				xeen1.draw(0, xeenCtr);
 		}
 		screen.update();
 
@@ -137,9 +138,9 @@ bool CloudsCutscenes::showCloudsIntro() {
 
 	// Remainder of vertical scrolling of background
 	screen.restoreBackground();
-	intro1.draw(screen, 0);
+	intro1.draw(0, 0);
 	screen.loadPage(0);
-	lake.draw(screen, 0);
+	lake.draw(0, 0);
 	screen.loadPage(1);
 
 	bool drawFlag = false;
@@ -151,11 +152,11 @@ bool CloudsCutscenes::showCloudsIntro() {
 				lakeCtr = 0;
 				drawFlag = true;
 			} else {
-				lake3.draw(screen, lakeCtr, Common::Point(0, yCtr));
+				lake3.draw(0, lakeCtr, Common::Point(0, yCtr));
 			}
 		}
 
-		xeen.draw(screen, 0);
+		xeen.draw(0, 0);
 		screen.update();
 		WAIT(1);
 	}
@@ -163,7 +164,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 	screen.freePages();
 
 	// Flying creatures moving horizontally
-	lake.draw(screen, 0);
+	lake.draw(0, 0);
 	screen.saveBackground();
 
 	int frameNum = 0;
@@ -171,7 +172,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 	for (int idx = 0; idx < 100; ++idx) {
 		frameNum = (frameNum + 1) % 43;
 		screen.restoreBackground();
-		lake2.draw(screen, frameNum, Common::Point(0, 0), SPRFLAG_800);
+		lake2.draw(0, frameNum, Common::Point(0, 0), SPRFLAG_800);
 		WAIT(1);
 	}
 
@@ -184,22 +185,22 @@ bool CloudsCutscenes::showCloudsIntro() {
 		events.updateGameCounter();
 
 		screen.restoreBackground();
-		lake2.draw(screen, frameNum, Common::Point(0, 0), SPRFLAG_800);
+		lake2.draw(0, frameNum, Common::Point(0, 0), SPRFLAG_800);
 		frameNum = (frameNum + 1) % 43;
-		wizTower.draw(screen, 0, Common::Point(XLIST1[idx], YLIST[idx]), 0, idx);
-		wizTower.draw(screen, 1, Common::Point(XLIST2[idx], YLIST[idx]), 0, idx);
+		wizTower.draw(0, 0, Common::Point(XLIST1[idx], YLIST[idx]), 0, idx);
+		wizTower.draw(0, 1, Common::Point(XLIST2[idx], YLIST[idx]), 0, idx);
 		screen.update();
 		WAIT(1);
 	}
 
 	// Cloaked figure walks horizontally
-	wizTower.draw(screen, 0);
-	wizTower.draw(screen, 1, Common::Point(160, 0));
+	wizTower.draw(0, 0);
+	wizTower.draw(0, 1, Common::Point(160, 0));
 	screen.saveBackground();
 
 	for (int idx = 0; idx < 39; ++idx) {
 		screen.restoreBackground();
-		wizTower2.draw(screen, idx);
+		wizTower2.draw(0, idx);
 		screen.update();
 
 		WAIT(2);
@@ -214,10 +215,10 @@ bool CloudsCutscenes::showCloudsIntro() {
 	SpriteResource groupo("groupo.vga"), group("group.vga"),
 		crodo("crodo.vga"), box("box.vga");
 
-	groupo.draw(screen, 0);
-	groupo.draw(screen, 1, Common::Point(160, 0));
-	crodo.draw(screen, 0, Common::Point(0, -5));
-	screen._windows[0].writeString(Res.CLOUDS_INTRO1);
+	groupo.draw(0, 0);
+	groupo.draw(0, 1, Common::Point(160, 0));
+	crodo.draw(0, 0, Common::Point(0, -5));
+	windows[0].writeString(Res.CLOUDS_INTRO1);
 
 	// Unroll a scroll
 	if (doScroll(false, true))
@@ -236,13 +237,13 @@ bool CloudsCutscenes::showCloudsIntro() {
 		}
 
 		for (int frameCtr = 0, lookup = 0; sound.isPlaying() || _subtitleSize; ) {
-			groupo.draw(screen, 0);
-			groupo.draw(screen, 1, Common::Point(160, 0));
+			groupo.draw(0, 0);
+			groupo.draw(0, 1, Common::Point(160, 0));
 
 			switch (lineCtr) {
 			case 2:
 				ctr1 = (ctr1 + 1) % 5;
-				group.draw(screen, ctr1);
+				group.draw(0, ctr1);
 				ctr4 = (ctr4 + 1) % 9;
 				break;
 
@@ -260,7 +261,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 			case 9:
 			case 13:
 				ctr3 = (ctr3 + 1) % 3;
-				group.draw(screen, ctr3 + 43, Common::Point(178, 134));
+				group.draw(0, ctr3 + 43, Common::Point(178, 134));
 				ctr4 = (ctr4 + 1) % 9;
 				ctr2 = (ctr2 % 15) + 3;
 				break;
@@ -272,10 +273,10 @@ bool CloudsCutscenes::showCloudsIntro() {
 				break;
 			}
 
-			group.draw(screen, ctr4 + 5, Common::Point(0, 99));
-			group.draw(screen, ctr2 + 24, Common::Point(202, 12));
+			group.draw(0, ctr4 + 5, Common::Point(0, 99));
+			group.draw(0, ctr2 + 24, Common::Point(202, 12));
 			if ((++totalCtr % 30) == 0)
-				group.draw(screen, 43, Common::Point(178, 134));
+				group.draw(0, 43, Common::Point(178, 134));
 
 			switch (lineCtr) {
 			case 2:
@@ -284,8 +285,8 @@ bool CloudsCutscenes::showCloudsIntro() {
 			case 9:
 			case 12:
 			case 13: {
-				crodo.draw(screen, 0, Common::Point(0, -5));
-				screen._windows[0].writeString(Res.CLOUDS_INTRO1);
+				crodo.draw(0, 0, Common::Point(0, -5));
+				windows[0].writeString(Res.CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
 				WAIT(1);
@@ -294,11 +295,11 @@ bool CloudsCutscenes::showCloudsIntro() {
 			}
 
 			default:
-				crodo.draw(screen, frameCtr, Common::Point(0, -5));
+				crodo.draw(0, frameCtr, Common::Point(0, -5));
 				if (lookup > 30)
 					lookup = 30;
 				frameCtr = _INTRO_FRAMES_VALS[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
-				screen._windows[0].writeString(Res.CLOUDS_INTRO1);
+				windows[0].writeString(Res.CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
 				WAIT(1);
@@ -342,7 +343,7 @@ bool CloudsCutscenes::showCloudsEnding() {
 	Sound &sound = *_vm->_sound;
 
 	files._isDarkCc = false;
-	File::setCurrentArchive(GAME_ARCHIVE);
+	files.setGameCc(0);
 
 	// Show the castle with swirling clouds and lightning
 	SpriteResource prec;
@@ -351,8 +352,8 @@ bool CloudsCutscenes::showCloudsEnding() {
 	screen.loadPalette("mm4e.pal");
 
 	loadScreen(Common::String::format("prec00%02u.frm", 1));
-	prec.draw(screen, 0);
-	prec.draw(screen, 1, Common::Point(160, 0));
+	prec.draw(0, 0);
+	prec.draw(0, 1, Common::Point(160, 0));
 	screen.update();
 	screen.fadeIn();
 	WAIT(15);
@@ -365,8 +366,8 @@ bool CloudsCutscenes::showCloudsEnding() {
 		loadScreen(Common::String::format("prec00%02u.frm", idx));
 
 		// Render castle in front of it
-		prec.draw(screen, 0);
-		prec.draw(screen, 1, Common::Point(160, 0));
+		prec.draw(0, 0);
+		prec.draw(0, 1, Common::Point(160, 0));
 		screen.update();
 
 		switch (idx) {
@@ -392,7 +393,7 @@ bool CloudsCutscenes::showCloudsEnding() {
 
 	// Show swirling vortex
 	// TODO? SpriteResource vort[21];
-	SpriteResource cast[6], darkLord[4];
+	SpriteResource cast[16], darkLord[4];
 	for (int idx = 1; idx < 7; ++idx)
 		cast[idx - 1].load(Common::String::format("cast%02u.end", idx));
 	for (int idx = 1; idx < 4; ++idx)
@@ -400,8 +401,8 @@ bool CloudsCutscenes::showCloudsEnding() {
 
 	for (int idx = 1; idx < 16; ++idx) {
 		loadScreen(Common::String::format("vort%02u.frm", idx));
-		cast[0].draw(screen, 0);
-		cast[idx - 1].draw(screen, 0, Common::Point(0, 100));
+		cast[0].draw(0, 0);
+		cast[idx - 1].draw(0, 0, Common::Point(0, 100));
 	}
 
 	// TODO

@@ -28,28 +28,28 @@ BEGIN_MESSAGE_MAP(CAutoSoundEvent, CGameObject)
 	ON_MESSAGE(FrameMsg)
 END_MESSAGE_MAP()
 
-CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _value1(0), _value2(0xFFFFFF) {
+CAutoSoundEvent::CAutoSoundEvent() : CGameObject(), _counter(0), _mask(0xFFFFFF) {
 }
 
 void CAutoSoundEvent::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_value1, indent);
-	file->writeNumberLine(_value2, indent);
+	file->writeNumberLine(_counter, indent);
+	file->writeNumberLine(_mask, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CAutoSoundEvent::load(SimpleFile *file) {
 	file->readNumber();
-	_value1 = file->readNumber();
-	_value2  = file->readNumber();
+	_counter = file->readNumber();
+	_mask  = file->readNumber();
 
 	CGameObject::load(file);
 }
 
 bool CAutoSoundEvent::FrameMsg(CFrameMsg *msg) {
-	if (_value1 >= 0)
-		_value1 = (_value1 + 1) & _value2;
+	if (_counter >= 0)
+		_counter = (_counter + 1) & _mask;
 
 	return true;
 }

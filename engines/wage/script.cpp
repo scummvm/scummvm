@@ -50,32 +50,51 @@
 #include "wage/script.h"
 #include "wage/world.h"
 
+#include "common/config-manager.h"
+#include "common/file.h"
 #include "common/stream.h"
 
 namespace Wage {
 
-Common::String Script::Operand::toString() {
+static Common::String toString(const Designed *d) {
+	if (!d)
+		return "<NULL>";
+	else
+		return d->toString();
+}
+
+static Common::String toString(const Common::String *d) {
+	if (!d)
+		return "<NULL>";
+	else
+		return *d;
+}
+
+static Common::String toString(int16 val) {
+	return Common::String::format("%d", val);
+}
+
+Common::String Script::Operand::toString() const {
 	switch(_type) {
 	case NUMBER:
-		return Common::String::format("%d", _value.number);
+		return Wage::toString(_value.number);
 	case STRING:
 	case TEXT_INPUT:
-		return *_value.string;
+		return Wage::toString(_value.string);
 	case OBJ:
-		return _value.obj->toString();
+		return Wage::toString(_value.obj);
 	case CHR:
-		return _value.chr->toString();
+		return Wage::toString(_value.chr);
 	case SCENE:
-		return _value.scene->toString();
+		return Wage::toString(_value.scene);
 	case CLICK_INPUT:
-		return _value.inputClick->toString();
+		return Wage::toString(_value.inputClick);
 	default:
-		error("Unhandled operand type: _type");
+		error("Unhandled operand type: %d", (int)_type);
 	}
 }
 
-Script::Script(Common::SeekableReadStream *data) : _data(data) {
-	_engine = NULL;
+Script::Script(Common::SeekableReadStream *data, int num, WageEngine *engine) : _data(data), _engine(engine) {
 	_world = NULL;
 
 	_loopCount = 0;
@@ -85,6 +104,29 @@ Script::Script(Common::SeekableReadStream *data) : _data(data) {
 	_handled = false;
 
 	convertToText();
+
+	if (ConfMan.getBool("dump_scripts")) {
+		Common::DumpFile out;
+		Common::String name;
+
+		if (num == -1)
+			name = Common::String::format("./dumps/%s-global.txt", _engine->getTargetName());
+		else
+			name = Common::String::format("./dumps/%s-%d.txt", _engine->getTargetName(), num);
+
+		if (!out.open(name)) {
+			warning("Can not open dump file %s", name.c_str());
+			return;
+		}
+
+		for (uint i = 0; i < _scriptText.size(); i++) {
+			out.write(_scriptText[i]->line.c_str(), strlen(_scriptText[i]->line.c_str()));
+			out.writeByte('\n');
+		}
+
+		out.flush();
+		out.close();
+	}
 }
 
 Script::~Script() {
@@ -109,20 +151,62 @@ void Script::printLine(int offset) {
 		}
 }
 
-bool Script::execute(World *world, int loopCount, Common::String *inputText, Designed *inputClick, WageEngine *engine) {
+Common::String Script::preprocessInputText(Common::String inputText) {
+	if (inputText.empty())
+		return inputText;
+
+	// "take " and "pick up " are mapped to "get " before script
+	// execution, so scripts see them as "get ", but only if there's
+	// a trailing space
+	inputText.toLowercase();
+
+	if (inputText.hasPrefix("take "))
+		return Common::String("get ") + (inputText.c_str() + strlen("take "));
+
+	if (inputText.hasPrefix("pick up "))
+		return Common::String("get ") + (inputText.c_str() + strlen("pick up "));
+
+	if (inputText.hasPrefix("put on "))
+		return Common::String("wear ") + (inputText.c_str() + strlen("put on "));
+
+	// exact aliases:
+	if (inputText.size() == 1) {
+		if (inputText.equals("n"))
+			return "north";
+
+		if (inputText.equals("e"))
+			return "east";
+
+		if (inputText.equals("s"))
+			return "south";
+
+		if (inputText.equals("w"))
+			return "west";
+	}
+
+	if (inputText.equals("wait")) {
+		return "rest";
+	}
+
+	return inputText;
+}
+
+bool Script::execute(World *world, int loopCount, Common::String *inputText, Designed *inputClick) {
 	_world = world;
 	_loopCount = loopCount;
 	_inputText = inputText;
 	_inputClick = inputClick;
-	_engine = engine;
 	_handled = false;
 	Common::String input;
 
-	if (inputText)
-		input = *inputText;
+	if (inputText) {
+		input = preprocessInputText(*_inputText);
+		debug(2, "Input was: '%s' is '%s'", _inputText->c_str(), input.c_str());
+		_inputText = new Common::String(input);
+	}
 
 	_data->seek(12);
-	while (_data->pos() < _data->size()) {
+	while (_data->pos() < _data->size() && !_engine->_shouldQuit) {
 		printLine(_data->pos());
 
 		byte command = _data->readByte();
@@ -189,7 +273,7 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 
 	if (_world->_globalScript != this) {
 		debug(1, "Executing global script...");
-		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, &input, _inputClick, _engine);
+		bool globalHandled = _world->_globalScript->execute(_world, _loopCount, &input, _inputClick);
 		if (globalHandled)
 			_handled = true;
 	} else if (!input.empty()) {
@@ -201,29 +285,23 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 			_handled = _engine->handleMoveCommand(SOUTH, "south");
 		} else if (input.contains("west")) {
 			_handled = _engine->handleMoveCommand(WEST, "west");
-		} else if (input.hasPrefix("take ")) {
-			_handled = _engine->handleTakeCommand(&input.c_str()[5]);
 		} else if (input.hasPrefix("get ")) {
 			_handled = _engine->handleTakeCommand(&input.c_str()[4]);
-		} else if (input.hasPrefix("pick up ")) {
-			_handled = _engine->handleTakeCommand(&input.c_str()[8]);
 		} else if (input.hasPrefix("drop ")) {
 			_handled = _engine->handleDropCommand(&input.c_str()[5]);
 		} else if (input.hasPrefix("aim ")) {
 			_handled = _engine->handleAimCommand(&input.c_str()[4]);
 		} else if (input.hasPrefix("wear ")) {
 			_handled = _engine->handleWearCommand(&input.c_str()[5]);
-		} else if (input.hasPrefix("put on ")) {
-			_handled = _engine->handleWearCommand(&input.c_str()[7]);
 		} else if (input.hasPrefix("offer ")) {
 			_handled = _engine->handleOfferCommand(&input.c_str()[6]);
 		} else if (input.contains("look")) {
 			_handled = _engine->handleLookCommand();
-		} else if (input.contains("inventory")) {
+		} else if (input.contains("inven")) {
 			_handled = _engine->handleInventoryCommand();
 		} else if (input.contains("status")) {
 			_handled = _engine->handleStatusCommand();
-		} else if (input.contains("rest") || input.equals("wait")) {
+		} else if (input.contains("rest")) {
 			_handled = _engine->handleRestCommand();
 		} else if (_engine->getOffer() != NULL && input.contains("accept")) {
 			_handled = _engine->handleAcceptCommand();
@@ -424,7 +502,7 @@ Script::Operand *Script::readStringOperand() {
 			*str += c;
 		else
 			break;
-		if (c < '0' || c > '9')
+		if ((c < '0' || c > '9') && !(c == '-' && str->empty()))
 			allDigits = false;
 	}
 	_data->seek(-1, SEEK_CUR);
@@ -616,6 +694,7 @@ struct Comparator {
 	{ '<', OBJ, SCENE, kCompLtObjScene },
 	{ '<', CHR, CHR, kCompEqChrChr }, // Same logic as =
 	{ '<', SCENE, SCENE, kCompEqSceneScene },
+	{ '<', CHR, SCENE, kCompGtChrScene }, // Same logic as >
 
 	{ '>', NUMBER, NUMBER, kCompGtNumNum },
 	{ '>', TEXT_INPUT, STRING, kCompLtTextInputString }, // Same logic as <
@@ -1123,12 +1202,19 @@ void Script::convertToText() {
 			break;
 
 		if (c < 0x80) {
-			if (c < 0x20)
-				error("convertToText: Unknown code 0x%02x at %d", c, _data->pos());
+			if (c < 0x20) {
+				warning("convertToText: Unknown code 0x%02x at %d", c, _data->pos());
+				c = ' ';
+			}
 
 			do {
 				scr->line += c;
 				c = _data->readByte();
+
+				if (c < 0x20) {
+					warning("convertToText: Unknown code 0x%02x at %d", c, _data->pos());
+					c = ' ';
+				}
 			} while (c < 0x80);
 
 			_data->seek(-1, SEEK_CUR);

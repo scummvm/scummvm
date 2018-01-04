@@ -34,6 +34,7 @@
 #include "sci/engine/savegame.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/features.h"
+#include "sci/engine/scriptdebug.h"
 #include "sci/sound/midiparser_sci.h"
 #include "sci/sound/music.h"
 #include "sci/sound/drivers/mididriver.h"
@@ -52,9 +53,11 @@
 #include "video/avi_decoder.h"
 #include "sci/video/seq_decoder.h"
 #ifdef ENABLE_SCI32
+#include "common/memstream.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette32.h"
+#include "sci/sound/decoders/sol.h"
 #include "video/coktel_decoder.h"
 #endif
 
@@ -116,6 +119,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("alloc_list",				WRAP_METHOD(Console, cmdAllocList));
 	registerCmd("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	registerCmd("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
+	registerCmd("integrity_dump",	WRAP_METHOD(Console, cmdResourceIntegrityDump));
 	// Game
 	registerCmd("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	registerCmd("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
@@ -171,6 +175,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
 	registerCmd("map_instrument",		WRAP_METHOD(Console, cmdMapInstrument));
 	registerCmd("audio_list",		WRAP_METHOD(Console, cmdAudioList));
+	registerCmd("audio_dump",		WRAP_METHOD(Console, cmdAudioDump));
 	// Script
 	registerCmd("addresses",			WRAP_METHOD(Console, cmdAddresses));
 	registerCmd("registers",			WRAP_METHOD(Console, cmdRegisters));
@@ -204,6 +209,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	registerCmd("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
 	registerCmd("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
+	registerCmd("bp_action",				WRAP_METHOD(Console, cmdBreakpointAction));
+	registerCmd("bpact",				WRAP_METHOD(Console, cmdBreakpointAction));			// alias
 	registerCmd("bp_address",			WRAP_METHOD(Console, cmdBreakpointAddress));
 	registerCmd("bpa",					WRAP_METHOD(Console, cmdBreakpointAddress));		// alias
 	registerCmd("bp_method",			WRAP_METHOD(Console, cmdBreakpointMethod));
@@ -258,60 +265,23 @@ void Console::preEnter() {
 	_engine->pauseEngine(true);
 }
 
-extern void playVideo(Video::VideoDecoder *videoDecoder, VideoState videoState);
+extern void playVideo(Video::VideoDecoder &videoDecoder);
 
 void Console::postEnter() {
 	if (!_videoFile.empty()) {
-		Video::VideoDecoder *videoDecoder = 0;
-
-#ifdef ENABLE_SCI32
-		bool duckMode = false;
-#endif
+		Common::ScopedPtr<Video::VideoDecoder> videoDecoder;
 
 		if (_videoFile.hasSuffix(".seq")) {
-			videoDecoder = new SEQDecoder(_videoFrameDelay);
-#ifdef ENABLE_SCI32
-		} else if (_videoFile.hasSuffix(".vmd")) {
-			videoDecoder = new Video::AdvancedVMDDecoder();
-		} else if (_videoFile.hasSuffix(".duk")) {
-			duckMode = true;
-			videoDecoder = new Video::AVIDecoder();
-#endif
+			videoDecoder.reset(new SEQDecoder(_videoFrameDelay));
 		} else if (_videoFile.hasSuffix(".avi")) {
-			videoDecoder = new Video::AVIDecoder();
+			videoDecoder.reset(new Video::AVIDecoder());
 		} else {
 			warning("Unrecognized video type");
 		}
 
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
 			_engine->_gfxCursor->kernelHide();
-
-#ifdef ENABLE_SCI32
-			// Duck videos are 16bpp, so we need to change pixel formats
-			int oldWidth = g_system->getWidth();
-			int oldHeight = g_system->getHeight();
-			if (duckMode) {
-				Common::List<Graphics::PixelFormat> formats;
-				formats.push_back(videoDecoder->getPixelFormat());
-				initGraphics(640, 480, true, formats);
-
-				if (g_system->getScreenFormat().bytesPerPixel != videoDecoder->getPixelFormat().bytesPerPixel)
-					error("Could not switch screen format for the duck video");
-			}
-#endif
-
-			VideoState emptyState;
-			emptyState.reset();
-			emptyState.fileName = _videoFile;
-			emptyState.flags = kDoubled;	// always allow the videos to be double sized
-			playVideo(videoDecoder, emptyState);
-
-#ifdef ENABLE_SCI32
-			// Switch back to 8bpp if we played a duck video
-			if (duckMode)
-				initGraphics(oldWidth, oldHeight, oldWidth > 320);
-#endif
-
+			playVideo(*videoDecoder);
 			_engine->_gfxCursor->kernelShow();
 		} else
 			warning("Could not play video %s\n", _videoFile.c_str());
@@ -370,6 +340,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" alloc_list - Lists all allocated resources\n");
 	debugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
 	debugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
+	debugPrintf(" integrity_dump - Dumps integrity data about resources in the current game to disk\n");
 	debugPrintf("\n");
 	debugPrintf("Game:\n");
 	debugPrintf(" save_game - Saves the current game state to the hard disk\n");
@@ -420,7 +391,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" sfx01_track - Dumps a track of a SCI01 song\n");
 	debugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
 	debugPrintf(" map_instrument - Dynamically maps an MT-32 instrument to a GM instrument\n");
-	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2.1+)\n");
+	debugPrintf(" audio_list - Lists currently active digital audio samples (SCI2+)\n");
+	debugPrintf(" audio_dump - Dumps the requested audio resource as an uncompressed wave file (SCI2+)\n");
 	debugPrintf("\n");
 	debugPrintf("Script:\n");
 	debugPrintf(" addresses - Provides information on how to pass addresses\n");
@@ -442,6 +414,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("Breakpoints:\n");
 	debugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
 	debugPrintf(" bp_del / bpdel / bc - Deletes a breakpoint with the specified index\n");
+	debugPrintf(" bp_action / bpact - Set action to be performed when breakpoint is triggered\n");
 	debugPrintf(" bp_address / bpa - Sets a breakpoint on a script address\n");
 	debugPrintf(" bp_method / bpx - Sets a breakpoint on the execution of a specified method/selector\n");
 	debugPrintf(" bp_read / bpr - Sets a breakpoint on reading of a specified selector\n");
@@ -915,6 +888,113 @@ bool Console::cmdList(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdResourceIntegrityDump(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Dumps integrity data about resources in the current game to disk.\n");
+		debugPrintf("Usage: %s <filename> [<skip video file hashing>] [<skip video files altogether>]\n", argv[0]);
+		return true;
+	}
+
+	Common::DumpFile outFile;
+	if (!outFile.open(argv[1])) {
+		debugPrintf("Failed to open output file %s.\n", argv[1]);
+		return true;
+	}
+
+	const bool hashVideoFiles = argc < 3;
+	const bool videoFiles = argc < 4;
+
+	for (int i = 0; i < kResourceTypeInvalid; ++i) {
+		const ResourceType resType = (ResourceType)i;
+
+		// This will list video resources inside of resource bundles even if
+		// video files are skipped, but this seems fine since those files are
+		// small because they were intended to load into memory. (This happens
+		// with VMDs in GK2.)
+		Common::List<ResourceId> resources = _engine->getResMan()->listResources(resType);
+
+		const char *extension;
+		if (videoFiles) {
+			switch (resType) {
+			case kResourceTypeRobot:
+			case kResourceTypeVMD:
+			case kResourceTypeDuck:
+			case kResourceTypeClut: {
+				extension = getResourceTypeExtension(resType);
+				assert(*extension != '\0');
+
+				const Common::String filesGlob = Common::String::format("*.%s", extension).c_str();
+				Common::ArchiveMemberList files;
+				const int numMatches = SearchMan.listMatchingMembers(files, filesGlob);
+				if (numMatches > 0) {
+					Common::ArchiveMemberList::const_iterator it;
+					for (it = files.begin(); it != files.end(); ++it) {
+						const uint resNo = atoi((*it)->getName().c_str());
+						resources.push_back(ResourceId(resType, resNo));
+					}
+				}
+
+				break;
+			}
+			default:
+				extension = "";
+			}
+		}
+
+		if (resources.size()) {
+			Common::sort(resources.begin(), resources.end());
+			Common::List<ResourceId>::const_iterator it;
+			debugPrintf("%s: ", getResourceTypeName(resType));
+			for (it = resources.begin(); it != resources.end(); ++it) {
+				Common::String statusName;
+				if (resType == kResourceTypeAudio36 || resType == kResourceTypeSync36) {
+					statusName = it->toPatchNameBase36();
+				} else {
+					statusName = Common::String::format("%d", it->getNumber());
+				}
+
+				const Common::String resourceName = it->toString();
+
+				Resource *resource = _engine->getResMan()->findResource(*it, false);
+				if (resource) {
+					Common::MemoryReadStream stream = resource->toStream();
+					writeIntegrityDumpLine(statusName, resourceName, outFile, &stream, resource->size(), true);
+				} else if (videoFiles && *extension != '\0') {
+					const Common::String fileName = Common::String::format("%u.%s", it->getNumber(), extension);
+					Common::File file;
+					Common::ReadStream *stream = nullptr;
+					if (file.open(fileName)) {
+						stream = &file;
+					}
+					writeIntegrityDumpLine(statusName, resourceName, outFile, stream, file.size(), hashVideoFiles);
+				}
+			}
+
+			debugPrintf("\n");
+		}
+	}
+
+	const char *otherVideoFiles[] = { "avi", "seq" };
+	for (uint i = 0; i < ARRAYSIZE(otherVideoFiles); ++i) {
+		const char *extension = otherVideoFiles[i];
+
+		Common::ArchiveMemberList files;
+		if (SearchMan.listMatchingMembers(files, Common::String::format("*.%s", extension).c_str()) > 0) {
+			debugPrintf("%s: ", extension);
+			Common::sort(files.begin(), files.end(), Common::ArchiveMemberListComparator());
+			Common::ArchiveMemberList::const_iterator it;
+			for (it = files.begin(); it != files.end(); ++it) {
+				const Common::ArchiveMember &file = **it;
+				Common::ScopedPtr<Common::SeekableReadStream> stream(file.createReadStream());
+				writeIntegrityDumpLine(file.getName(), file.getName(), outFile, stream.get(), stream->size(), hashVideoFiles);
+			}
+			debugPrintf("\n");
+		}
+	}
+
+	return true;
+}
+
 bool Console::cmdAllocList(int argc, const char **argv) {
 	ResourceManager *resMan = _engine->getResMan();
 
@@ -1336,6 +1416,146 @@ bool Console::cmdAudioList(int argc, const char **argv) {
 	debugPrintf("SCI32 isn't included in this compiled executable\n");
 #endif
 
+	return true;
+}
+
+bool Console::cmdAudioDump(int argc, const char **argv) {
+#ifdef ENABLE_SCI32
+	if (argc != 2 && argc != 6) {
+		debugPrintf("Dumps the requested audio resource as an uncompressed wave file.\n");
+		debugPrintf("Usage (audio): %s <audio resource id>\n", argv[0]);
+		debugPrintf("Usage (audio36): %s <audio map id> <noun> <verb> <cond> <seq>\n", argv[0]);
+		return true;
+	}
+
+	ResourceId id;
+	if (argc == 2) {
+		id = ResourceId(kResourceTypeAudio, atoi(argv[1]));
+	} else {
+		id = ResourceId(kResourceTypeAudio36, atoi(argv[1]), atoi(argv[2]), atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+	}
+
+	Resource *resource = _engine->_resMan->findResource(id, false);
+	if (!resource) {
+		debugPrintf("Not found.\n");
+		return true;
+	}
+
+	Common::MemoryReadStream stream = resource->toStream();
+
+	Common::DumpFile outFile;
+	const Common::String fileName = Common::String::format("%s.wav", id.toString().c_str());
+	if (!outFile.open(fileName)) {
+		debugPrintf("Could not open dump file %s.\n", fileName.c_str());
+		return true;
+	}
+
+	const bool isSol = detectSolAudio(stream);
+	const bool isWave = !isSol && detectWaveAudio(stream);
+	const bool isRaw = !isSol && !isWave;
+
+	if (isSol || isRaw) {
+		uint16 sampleRate = 11025;
+		int numChannels = 1;
+		int bytesPerSample = 1;
+		bool sourceIs8Bit = true;
+		uint32 compressedSize;
+		uint32 decompressedSize;
+
+		if (isSol) {
+			stream.seek(6, SEEK_SET);
+			sampleRate = stream.readUint16LE();
+			const byte flags = stream.readByte();
+			compressedSize = stream.readUint32LE();
+
+			// All AudioStreams must output 16-bit samples
+			bytesPerSample = 2;
+
+			decompressedSize = compressedSize;
+
+			if (flags & kCompressed) {
+				decompressedSize *= 2;
+			}
+			if (flags & k16Bit) {
+				sourceIs8Bit = false;
+			} else {
+				// 8-bit is implicitly up-converted by AudioStream to 16-bit
+				decompressedSize *= 2;
+			}
+			if (flags & kStereo) {
+				numChannels = 2;
+			}
+		} else {
+			decompressedSize = resource->size();
+		}
+
+		enum {
+			kWaveHeaderSize = 36
+		};
+
+		outFile.writeString("RIFF");
+		outFile.writeUint32LE(kWaveHeaderSize + decompressedSize);
+		outFile.writeString("WAVEfmt ");
+		outFile.writeUint32LE(16);
+		outFile.writeUint16LE(1);
+		outFile.writeUint16LE(numChannels);
+		outFile.writeUint32LE(sampleRate);
+		outFile.writeUint32LE(sampleRate * bytesPerSample * numChannels);
+		outFile.writeUint16LE(bytesPerSample * numChannels);
+		outFile.writeUint16LE(bytesPerSample * 8);
+		outFile.writeString("data");
+		outFile.writeUint32LE(decompressedSize);
+
+		if (isSol) {
+			stream.seek(0, SEEK_SET);
+			Common::ScopedPtr<Audio::SeekableAudioStream> audioStream(makeSOLStream(&stream, DisposeAfterUse::NO));
+
+			if (!audioStream) {
+				debugPrintf("Could not create SOL stream.\n");
+				return true;
+			}
+
+			byte buffer[4096];
+			const int samplesToRead = ARRAYSIZE(buffer) / 2;
+			uint bytesWritten = 0;
+			int samplesRead;
+			while ((samplesRead = audioStream->readBuffer((int16 *)buffer, samplesToRead))) {
+				uint bytesToWrite = samplesRead * bytesPerSample;
+				outFile.write(buffer, bytesToWrite);
+				bytesWritten += bytesToWrite;
+			}
+
+			if (bytesWritten != decompressedSize) {
+				debugPrintf("WARNING: Should have written %u bytes but wrote %u bytes!\n", decompressedSize, bytesWritten);
+				while (bytesWritten < decompressedSize) {
+					outFile.writeByte(0);
+					++bytesWritten;
+				}
+			}
+
+			const char *bits;
+			if (sourceIs8Bit) {
+				bits = "upconverted 16";
+			} else {
+				bits = "16";
+			}
+
+			debugPrintf("%s-bit %uHz %d-channel SOL audio, %u -> %u bytes\n", bits, sampleRate, numChannels, compressedSize, decompressedSize);
+		} else {
+			outFile.write(resource->data(), resource->size());
+			debugPrintf("%d-bit %uHz %d-channel raw audio, %u bytes\n", bytesPerSample * 8, sampleRate, numChannels, decompressedSize);
+		}
+	} else if (isWave) {
+		outFile.write(resource->data(), resource->size());
+		debugPrintf("Raw wave file\n");
+	} else {
+		error("Impossible situation");
+	}
+
+	debugPrintf("Written to %s successfully.\n", fileName.c_str());
+#else
+	debugPrintf("SCI32 isn't included in this compiled executable\n");
+#endif
 	return true;
 }
 
@@ -1788,7 +2008,7 @@ bool Console::cmdPicVisualize(int argc, const char **argv) {
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Plays a SEQ, AVI, VMD, RBT or DUK video.\n");
+		debugPrintf("Plays a SEQ or AVI video.\n");
 		debugPrintf("Usage: %s <video file name> <delay>\n", argv[0]);
 		debugPrintf("The video file name should include the extension\n");
 		debugPrintf("Delay is only used in SEQ videos and is measured in ticks (default: 10)\n");
@@ -1798,8 +2018,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	Common::String filename = argv[1];
 	filename.toLowercase();
 
-	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd") ||
-		filename.hasSuffix(".rbt") || filename.hasSuffix(".duk")) {
+	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
 		return cmdExit(0, 0);
@@ -2828,94 +3047,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		}
 	}
 
-	int type_mask = g_sci->getKernel()->findRegType(reg);
-	int filter;
-	int found = 0;
-
-	debugPrintf("%04x:%04x is of type 0x%x: ", PRINT_REG(reg), type_mask);
-
-	if (reg.getSegment() == 0 && reg.getOffset() == 0) {
-		debugPrintf("Null.\n");
-		return true;
-	}
-
-	if (reg_end.getSegment() != reg.getSegment() && reg_end != NULL_REG) {
-		debugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
-		reg_end = NULL_REG;
-	}
-
-	for (filter = 1; filter < 0xf000; filter <<= 1) {
-		int type = type_mask & filter;
-
-		if (found && type) {
-			debugPrintf("--- Alternatively, it could be a ");
-		}
-
-
-		switch (type) {
-		case 0:
-			break;
-		case SIG_TYPE_LIST:
-			printList(reg);
-			break;
-		case SIG_TYPE_NODE:
-			debugPrintf("list node\n");
-			printNode(reg);
-			break;
-		case SIG_TYPE_OBJECT:
-			debugPrintf("object\n");
-			printObject(reg);
-			break;
-		case SIG_TYPE_REFERENCE: {
-			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
-#ifdef ENABLE_SCI32
-				case SEG_TYPE_ARRAY: {
-					printArray(reg);
-					break;
-				}
-				case SEG_TYPE_BITMAP: {
-					printBitmap(reg);
-					break;
-				}
-#endif
-				default: {
-					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
-					uint16 size = block.maxSize;
-
-					debugPrintf("raw data\n");
-
-					if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
-						debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
-						reg_end = NULL_REG;
-					}
-
-					if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset()))
-						size = reg_end.getOffset() - reg.getOffset();
-
-					if (reg_end.getSegment() != 0)
-						debugPrintf("Block size less than or equal to %d\n", size);
-
-					if (block.isRaw)
-						Common::hexdump(block.raw, size, 16, 0);
-					else
-						hexDumpReg(block.reg, size / 2, 4, 0);
-				}
-			}
-			break;
-		}
-		case SIG_TYPE_INTEGER:
-			debugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.getOffset(), reg.getOffset());
-			break;
-		default:
-			debugPrintf("unknown type %d.\n", type);
-		}
-
-		if (type) {
-			debugPrintf("\n");
-			found = 1;
-		}
-	}
-
+	printReference(reg, reg_end);
 	return true;
 }
 
@@ -3039,9 +3171,9 @@ bool Console::cmdDumpReference(int argc, const char **argv) {
 }
 
 bool Console::cmdViewObject(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2) {
 		debugPrintf("Examines the object at the given address.\n");
-		debugPrintf("Usage: %s <address>\n", argv[0]);
+		debugPrintf("Usage: %s <address> [<selector name> ...]\n", argv[0]);
 		debugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
@@ -3054,8 +3186,45 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 		return true;
 	}
 
-	debugPrintf("Information on the object at the given address:\n");
-	printObject(addr);
+	if (argc >= 3) {
+		for (int i = 2; i < argc; ++i) {
+			const Object *obj = _engine->_gamestate->_segMan->getObject(addr);
+			if (!obj) {
+				debugPrintf("%04x:%04x is not an object.\n", PRINT_REG(addr));
+				break;
+			}
+
+			const Selector selector = _engine->getKernel()->findSelector(argv[i]);
+			if (selector == -1) {
+				debugPrintf("Invalid selector '%s'.\n", argv[i]);
+				break;
+			}
+
+			const int index = obj->locateVarSelector(_engine->_gamestate->_segMan, selector);
+			if (index == -1) {
+				debugPrintf("Selector '%s' is not valid for object %04x:%04x.\n", argv[i], PRINT_REG(addr));
+				break;
+			}
+
+			const reg_t value = obj->getVariable(index);
+			if (i == argc - 1) {
+				if (value.isPointer()) {
+					printReference(value);
+				} else {
+					debugPrintf("%04x:%04x (%u)\n", PRINT_REG(value), value.toUint16());
+				}
+			} else if (!value.isPointer()) {
+				debugPrintf("Selector '%s' on object %04x:%04x is not a pointer to an object.\n", argv[i], PRINT_REG(addr));
+				debugPrintf("Value is %04x:%04x (%u).\n", PRINT_REG(value), value.toUint16());
+				break;
+			} else {
+				addr = value;
+			}
+		}
+	} else {
+		debugPrintf("Information on the object at the given address:\n");
+		printObject(addr);
+	}
 
 	return true;
 }
@@ -3260,75 +3429,7 @@ void Console::printOffsets(int scriptNr, uint16 showType) {
 }
 
 bool Console::cmdBacktrace(int argc, const char **argv) {
-	debugPrintf("Call stack (current base: 0x%x):\n", _engine->_gamestate->executionStackBase);
-	Common::List<ExecStack>::const_iterator iter;
-	uint i = 0;
-
-	for (iter = _engine->_gamestate->_executionStack.begin();
-	     iter != _engine->_gamestate->_executionStack.end(); ++iter, ++i) {
-		const ExecStack &call = *iter;
-		const char *objname = _engine->_gamestate->_segMan->getObjectName(call.sendp);
-		int paramc, totalparamc;
-
-		switch (call.type) {
-		case EXEC_STACK_TYPE_CALL: // Normal function
-			if (call.type == EXEC_STACK_TYPE_CALL)
-			debugPrintf(" %x: script %d - ", i, (*(Script *)_engine->_gamestate->_segMan->_heap[call.addr.pc.getSegment()]).getScriptNumber());
-			if (call.debugSelector != -1) {
-				debugPrintf("%s::%s(", objname, _engine->getKernel()->getSelectorName(call.debugSelector).c_str());
-			} else if (call.debugExportId != -1) {
-				debugPrintf("export %d (", call.debugExportId);
-			} else if (call.debugLocalCallOffset != -1) {
-				debugPrintf("call %x (", call.debugLocalCallOffset);
-			}
-			break;
-
-		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			if (call.debugKernelSubFunction == -1)
-				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction).c_str());
-			else
-				debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
-			break;
-
-		case EXEC_STACK_TYPE_VARSELECTOR:
-			debugPrintf(" %x:[%x] vs%s %s::%s (", i, call.debugOrigin, (call.argc) ? "write" : "read",
-			          objname, _engine->getKernel()->getSelectorName(call.debugSelector).c_str());
-			break;
-		}
-
-		totalparamc = call.argc;
-
-		if (totalparamc > 16)
-			totalparamc = 16;
-
-		for (paramc = 1; paramc <= totalparamc; paramc++) {
-			debugPrintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
-
-			if (paramc < call.argc)
-				debugPrintf(", ");
-		}
-
-		if (call.argc > 16)
-			debugPrintf("...");
-
-		debugPrintf(")\n     ");
-		if (call.debugOrigin != -1)
-			debugPrintf("by %x ", call.debugOrigin);
-		debugPrintf("obj@%04x:%04x", PRINT_REG(call.objp));
-		if (call.type == EXEC_STACK_TYPE_CALL) {
-			debugPrintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
-			if (call.sp == CALL_SP_CARRY)
-				debugPrintf(" sp,fp:carry");
-			else {
-				debugPrintf(" sp=ST:%04x", (unsigned)(call.sp - _engine->_gamestate->stack_base));
-				debugPrintf(" fp=ST:%04x", (unsigned)(call.fp - _engine->_gamestate->stack_base));
-			}
-		} else
-			debugPrintf(" pc:none");
-
-		debugPrintf(" argp:ST:%04x", (unsigned)(call.variables_argp - _engine->_gamestate->stack_base));
-		debugPrintf("\n");
-	}
+	logBacktrace();
 
 	return true;
 }
@@ -3344,9 +3445,7 @@ bool Console::cmdTrace(int argc, const char **argv) {
 bool Console::cmdStepOver(int argc, const char **argv) {
 	_debugState.seeking = kDebugSeekStepOver;
 	_debugState.seekLevel = _engine->_gamestate->_executionStack.size();
-	_debugState.debugging = true;
-
-	return cmdExit(0, 0);
+	return cmdTrace(argc, argv);
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
@@ -3465,8 +3564,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 			if (jumpTarget > farthestTarget)
 				farthestTarget = jumpTarget;
 		}
-		// TODO: Use a true 32-bit reg_t for the position (addr)
-		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), objAddr, printBWTag, printBytecode);
+		addr = disassemble(_engine->_gamestate, make_reg32(addr.getSegment(), addr.getOffset()), obj, printBWTag, printBytecode);
 		if (addr.isNull() && prevAddr < farthestTarget)
 			addr = prevAddr + 1; // skip past the ret
 	} while (addr.getOffset() > 0);
@@ -3489,7 +3587,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	uint opCount = 1;
 	bool printBWTag = false;
 	bool printBytes = false;
-	uint16 size;
+	uint32 size;
 
 	if (parse_reg_t(_engine->_gamestate, argv[1], &vpc, false)) {
 		debugPrintf("Invalid address passed.\n");
@@ -3514,8 +3612,7 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	}
 
 	do {
-		// TODO: Use a true 32-bit reg_t for the position (vpc)
-		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), NULL_REG, printBWTag, printBytes);
+		vpc = disassemble(_engine->_gamestate, make_reg32(vpc.getSegment(), vpc.getOffset()), nullptr, printBWTag, printBytes);
 	} while ((vpc.getOffset() > 0) && (vpc.getOffset() + 6 < size) && (--opCount));
 
 	return true;
@@ -3762,60 +3859,72 @@ bool Console::cmdGo(int argc, const char **argv) {
 }
 
 bool Console::cmdLogKernel(int argc, const char **argv) {
-	if (argc < 3) {
+	if (argc != 2) {
 		debugPrintf("Logs calls to specified kernel function.\n");
-		debugPrintf("Usage: %s <kernel function/*> <on/off>\n", argv[0]);
-		debugPrintf("Example: %s StrCpy on\n", argv[0]);
+		debugPrintf("Usage: %s <kernel function/*>\n", argv[0]);
+		debugPrintf("Example: %s StrCpy\n", argv[0]);
+		debugPrintf("This is an alias for: bpk <kernel function> log\n");
 		return true;
 	}
 
-	bool logging;
-	if (strcmp(argv[2], "on") == 0)
-		logging = true;
-	else if (strcmp(argv[2], "off") == 0)
-		logging = false;
-	else {
-		debugPrintf("2nd parameter must be either on or off\n");
-		return true;
-	}
+	const char *bpk_argv[] = { "bpk", argv[1], "log" };
+	cmdBreakpointKernel(3, bpk_argv);
 
-	if (g_sci->getKernel()->debugSetFunction(argv[1], logging, -1))
-		debugPrintf("Logging %s for k%s\n", logging ? "enabled" : "disabled", argv[1]);
-	else
-		debugPrintf("Unknown kernel function %s\n", argv[1]);
 	return true;
+}
+
+void Console::printBreakpoint(int index, const Breakpoint &bp) {
+	debugPrintf("  #%i: ", index);
+	const char *bpaction;
+
+	switch (bp._action) {
+	case BREAK_LOG:
+		bpaction = " (action: log only)";
+		break;
+	case BREAK_BACKTRACE:
+		bpaction = " (action: show backtrace)";
+		break;
+	case BREAK_INSPECT:
+		bpaction = " (action: show object)";
+		break;
+	case BREAK_NONE:
+		bpaction = " (action: ignore)";
+		break;
+	default:
+		bpaction = "";
+	}
+	switch (bp._type) {
+	case BREAK_SELECTOREXEC:
+		debugPrintf("Execute %s%s\n", bp._name.c_str(), bpaction);
+		break;
+	case BREAK_SELECTORREAD:
+		debugPrintf("Read %s%s\n", bp._name.c_str(), bpaction);
+		break;
+	case BREAK_SELECTORWRITE:
+		debugPrintf("Write %s%s\n", bp._name.c_str(), bpaction);
+		break;
+	case BREAK_EXPORT: {
+		int bpdata = bp._address;
+		debugPrintf("Execute script %d, export %d%s\n", bpdata >> 16, bpdata & 0xFFFF, bpaction);
+		break;
+	}
+	case BREAK_ADDRESS:
+		debugPrintf("Execute address %04x:%04x%s\n", PRINT_REG(bp._regAddress), bpaction);
+		break;
+	case BREAK_KERNEL:
+		debugPrintf("Kernel call k%s%s\n", bp._name.c_str(), bpaction);
+	}
 }
 
 bool Console::cmdBreakpointList(int argc, const char **argv) {
 	int i = 0;
-	int bpdata;
 
 	debugPrintf("Breakpoint list:\n");
 
 	Common::List<Breakpoint>::const_iterator bp = _debugState._breakpoints.begin();
 	Common::List<Breakpoint>::const_iterator end = _debugState._breakpoints.end();
-	for (; bp != end; ++bp) {
-		debugPrintf("  #%i: ", i);
-		switch (bp->type) {
-		case BREAK_SELECTOREXEC:
-			debugPrintf("Execute %s\n", bp->name.c_str());
-			break;
-		case BREAK_SELECTORREAD:
-			debugPrintf("Read %s\n", bp->name.c_str());
-			break;
-		case BREAK_SELECTORWRITE:
-			debugPrintf("Write %s\n", bp->name.c_str());
-			break;
-		case BREAK_EXPORT:
-			bpdata = bp->address;
-			debugPrintf("Execute script %d, export %d\n", bpdata >> 16, bpdata & 0xFFFF);
-			break;
-		case BREAK_ADDRESS:
-			debugPrintf("Execute address %04x:%04x\n", PRINT_REG(bp->regAddress));
-		}
-
-		i++;
-	}
+	for (; bp != end; ++bp)
+		printBreakpoint(i++, *bp);
 
 	if (!i)
 		debugPrintf("  No breakpoints defined.\n");
@@ -3854,113 +3963,283 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	// Delete it
 	_debugState._breakpoints.erase(bp);
 
-	// Update EngineState::_activeBreakpointTypes.
-	int type = 0;
-	for (bp = _debugState._breakpoints.begin(); bp != end; ++bp) {
-		type |= bp->type;
-	}
-
-	_debugState._activeBreakpointTypes = type;
+	_debugState.updateActiveBreakpointTypes();
 
 	return true;
 }
 
+static bool stringToBreakpointAction(Common::String str, BreakpointAction &action) {
+	if (str == "break")
+		action = BREAK_BREAK;
+	else if (str == "log")
+		action = BREAK_LOG;
+	else if (str == "bt")
+		action = BREAK_BACKTRACE;
+	else if (str == "inspect")
+		action = BREAK_INSPECT;
+	else if (str == "ignore")
+		action = BREAK_NONE;
+	else
+		return false;
+	return true;
+}
+
+bool Console::cmdBreakpointAction(int argc, const char **argv) {
+	bool usage = false;
+
+	if (argc != 3) {
+		usage = true;
+	}
+
+	Common::String arg;
+	if (argc >= 3)
+		arg = argv[2];
+
+	BreakpointAction bpaction;
+	if (!stringToBreakpointAction(arg, bpaction))
+		usage = true;
+
+	if (usage) {
+		debugPrintf("Change the action for the breakpoint with the specified index.\n");
+		debugPrintf("Usage: %s <breakpoint index> break|log|bt|inspect|none\n", argv[0]);
+		debugPrintf("<index> * will process all breakpoints\n");
+		debugPrintf("Actions: break  : break into debugger\n");
+		debugPrintf("         log    : log without breaking\n");
+		debugPrintf("         bt     : show backtrace without breaking\n");
+		debugPrintf("         inspect: show object (only for bpx/bpr/bpw)\n");
+		debugPrintf("         ignore : ignore breakpoint\n");
+		return true;
+	}
+
+	Common::List<Breakpoint>::iterator bp = _debugState._breakpoints.begin();
+	const Common::List<Breakpoint>::iterator end = _debugState._breakpoints.end();
+	if (strcmp(argv[1], "*") == 0) {
+		for (; bp != end; ++bp)
+			bp->_action = bpaction;
+		_debugState.updateActiveBreakpointTypes();
+		return true;	
+	}
+
+	const int idx = atoi(argv[1]);
+
+	// Find the breakpoint at index idx.
+	for (int i = 0; bp != end && i < idx; ++bp, ++i) {
+		// do nothing
+	}
+
+	if (bp == end) {
+		debugPrintf("Invalid breakpoint index %i\n", idx);
+		return true;
+	}
+
+	bp->_action = bpaction;
+
+	_debugState.updateActiveBreakpointTypes();
+
+	printBreakpoint(idx, *bp);
+
+	return true;
+}
+
+
 bool Console::cmdBreakpointMethod(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on execution of a specified method/selector.\n");
-		debugPrintf("Usage: %s <name>\n", argv[0]);
+		debugPrintf("Usage: %s <name> [<action>]\n", argv[0]);
 		debugPrintf("Example: %s ego::doit\n", argv[0]);
+		debugPrintf("         %s ego::doit log\n", argv[0]);
 		debugPrintf("May also be used to set a breakpoint that applies whenever an object\n");
 		debugPrintf("of a specific type is touched: %s foo::\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
+	}
+
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
 	}
 
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint bp;
-	bp.type = BREAK_SELECTOREXEC;
-	bp.name = argv[1];
+	bp._type = BREAK_SELECTOREXEC;
+	bp._name = argv[1];
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
-	_debugState._activeBreakpointTypes |= BREAK_SELECTOREXEC;
+
+	if (action != BREAK_NONE)
+		_debugState._activeBreakpointTypes |= BREAK_SELECTOREXEC;
+
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
+
 	return true;
 }
 
 bool Console::cmdBreakpointRead(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on reading of a specified selector.\n");
-		debugPrintf("Usage: %s <name>\n", argv[0]);
+		debugPrintf("Usage: %s <name> [<action>]\n", argv[0]);
 		debugPrintf("Example: %s ego::view\n", argv[0]);
+		debugPrintf("         %s ego::view log\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
 	}
 
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
+	}
+
 	Breakpoint bp;
-	bp.type = BREAK_SELECTORREAD;
-	bp.name = argv[1];
+	bp._type = BREAK_SELECTORREAD;
+	bp._name = argv[1];
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
-	_debugState._activeBreakpointTypes |= BREAK_SELECTORREAD;
+
+	if (action != BREAK_NONE)
+		_debugState._activeBreakpointTypes |= BREAK_SELECTORREAD;
+
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
+
 	return true;
 }
 
 bool Console::cmdBreakpointWrite(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on writing of a specified selector.\n");
-		debugPrintf("Usage: %s <name>\n", argv[0]);
+		debugPrintf("Usage: %s <name> [<action>]\n", argv[0]);
 		debugPrintf("Example: %s ego::view\n", argv[0]);
+		debugPrintf("         %s ego::view log\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
 	}
 
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
+	}
+
 	Breakpoint bp;
-	bp.type = BREAK_SELECTORWRITE;
-	bp.name = argv[1];
+	bp._type = BREAK_SELECTORWRITE;
+	bp._name = argv[1];
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
-	_debugState._activeBreakpointTypes |= BREAK_SELECTORWRITE;
+
+	if (action != BREAK_NONE)
+		_debugState._activeBreakpointTypes |= BREAK_SELECTORWRITE;
+
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
+
 	return true;
 }
 
 bool Console::cmdBreakpointKernel(int argc, const char **argv) {
-	if (argc < 3) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on execution of a kernel function.\n");
-		debugPrintf("Usage: %s <name> <on/off>\n", argv[0]);
-		debugPrintf("Example: %s DrawPic on\n", argv[0]);
+		debugPrintf("Usage: %s <name> [<action>]\n", argv[0]);
+		debugPrintf("Example: %s DrawPic\n", argv[0]);
+		debugPrintf("         %s DoSoundPlay,DoSoundStop\n", argv[0]);
+		debugPrintf("         %s DoSound*\n", argv[0]);
+		debugPrintf("         %s DoSound*,!DoSoundUpdateCues\n", argv[0]);
+		debugPrintf("         %s DrawPic log\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
 	}
 
-	bool breakpoint;
-	if (strcmp(argv[2], "on") == 0)
-		breakpoint = true;
-	else if (strcmp(argv[2], "off") == 0)
-		breakpoint = false;
-	else {
-		debugPrintf("2nd parameter must be either on or off\n");
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
+	}
+
+	// Check if any kernel functions match, to catch typos
+	Common::String pattern = argv[1];
+	bool found = false;
+	const Kernel::KernelFunctionArray &kernelFuncs = _engine->getKernel()->_kernelFuncs;
+	for (uint id = 0; id < kernelFuncs.size() && !found; id++) {
+		if (kernelFuncs[id].name) {
+			const KernelSubFunction *kernelSubCall = kernelFuncs[id].subFunctions;
+			if (!kernelSubCall) {
+				Common::String kname = kernelFuncs[id].name;
+				if (matchKernelBreakpointPattern(pattern, kname))
+					found = true;
+			} else {
+				uint kernelSubCallCount = kernelFuncs[id].subFunctionCount;
+				for (uint subId = 0; subId < kernelSubCallCount; subId++) {
+					if (kernelSubCall->name) {
+						Common::String kname = kernelSubCall->name;
+						if (matchKernelBreakpointPattern(pattern, kname))
+							found = true;
+					}
+					kernelSubCall++;
+				}
+			}
+		}
+	}
+	if (!found) {
+		debugPrintf("No kernel functions match %s.\n", pattern.c_str());
 		return true;
 	}
 
-	if (g_sci->getKernel()->debugSetFunction(argv[1], -1, breakpoint))
-		debugPrintf("Breakpoint %s for k%s\n", (breakpoint ? "enabled" : "disabled"), argv[1]);
-	else
-		debugPrintf("Unknown kernel function %s\n", argv[1]);
+	Breakpoint bp;
+	bp._type = BREAK_KERNEL;
+	bp._name = pattern;
+	bp._action = action;
+
+	_debugState._breakpoints.push_back(bp);
+
+	if (action != BREAK_NONE)
+		_debugState._activeBreakpointTypes |= BREAK_KERNEL;
+
+	printBreakpoint(_debugState._breakpoints.size() - 1, bp);
 
 	return true;
 }
 
 bool Console::cmdBreakpointFunction(int argc, const char **argv) {
-	if (argc != 3) {
+	if (argc < 3 || argc > 4) {
 		debugPrintf("Sets a breakpoint on the execution of the specified exported function.\n");
-		debugPrintf("Usage: %s <script number> <export number>\n", argv[0]);
+		debugPrintf("Usage: %s <script number> <export number> [<action>]\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
+	}
+
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 4) {
+		if (!stringToBreakpointAction(argv[3], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[3]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
 	}
 
 	/* Note: We can set a breakpoint on a method that has not been loaded yet.
 	   Thus, we can't check whether the command argument is a valid method name.
 	   A breakpoint set on an invalid method name will just never trigger. */
 	Breakpoint bp;
-	bp.type = BREAK_EXPORT;
+	bp._type = BREAK_EXPORT;
 	// script number, export number
-	bp.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
+	bp._address = (atoi(argv[1]) << 16 | atoi(argv[2]));
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_EXPORT;
@@ -3969,9 +4248,10 @@ bool Console::cmdBreakpointFunction(int argc, const char **argv) {
 }
 
 bool Console::cmdBreakpointAddress(int argc, const char **argv) {
-	if (argc != 2) {
+	if (argc < 2 || argc > 3) {
 		debugPrintf("Sets a breakpoint on the execution of the specified code address.\n");
-		debugPrintf("Usage: %s <address>\n", argv[0]);
+		debugPrintf("Usage: %s <address> [<action>]\n", argv[0]);
+		debugPrintf("See bp_action usage for possible actions.\n");
 		return true;
 	}
 
@@ -3983,9 +4263,19 @@ bool Console::cmdBreakpointAddress(int argc, const char **argv) {
 		return true;
 	}
 
+	BreakpointAction action = BREAK_BREAK;
+	if (argc == 3) {
+		if (!stringToBreakpointAction(argv[2], action)) {
+			debugPrintf("Invalid breakpoint action %s.\n", argv[2]);
+			debugPrintf("See bp_action usage for possible actions.\n");
+			return true;
+		}
+	}
+
 	Breakpoint bp;
-	bp.type = BREAK_ADDRESS;
-	bp.regAddress = make_reg32(addr.getSegment(), addr.getOffset());
+	bp._type = BREAK_ADDRESS;
+	bp._regAddress = make_reg32(addr.getSegment(), addr.getOffset());
+	bp._action = action;
 
 	_debugState._breakpoints.push_back(bp);
 	_debugState._activeBreakpointTypes |= BREAK_ADDRESS;
@@ -4662,6 +4952,96 @@ int Console::printNode(reg_t addr) {
 	return 0;
 }
 
+void Console::printReference(reg_t reg, reg_t reg_end) {
+	int type_mask = g_sci->getKernel()->findRegType(reg);
+	int filter;
+	int found = 0;
+
+	debugPrintf("%04x:%04x is of type 0x%x: ", PRINT_REG(reg), type_mask);
+
+	if (reg.getSegment() == 0 && reg.getOffset() == 0) {
+		debugPrintf("Null.\n");
+		return;
+	}
+
+	if (reg_end.getSegment() != reg.getSegment() && reg_end != NULL_REG) {
+		debugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
+		reg_end = NULL_REG;
+	}
+
+	for (filter = 1; filter < 0xf000; filter <<= 1) {
+		int type = type_mask & filter;
+
+		if (found && type) {
+			debugPrintf("--- Alternatively, it could be a ");
+		}
+
+
+		switch (type) {
+		case 0:
+			break;
+		case SIG_TYPE_LIST:
+			printList(reg);
+			break;
+		case SIG_TYPE_NODE:
+			debugPrintf("list node\n");
+			printNode(reg);
+			break;
+		case SIG_TYPE_OBJECT:
+			debugPrintf("object\n");
+			printObject(reg);
+			break;
+		case SIG_TYPE_REFERENCE: {
+			switch (_engine->_gamestate->_segMan->getSegmentType(reg.getSegment())) {
+#ifdef ENABLE_SCI32
+				case SEG_TYPE_ARRAY: {
+					printArray(reg);
+					break;
+				}
+				case SEG_TYPE_BITMAP: {
+					printBitmap(reg);
+					break;
+				}
+#endif
+				default: {
+					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
+					uint16 size = block.maxSize;
+
+					debugPrintf("raw data\n");
+
+					if (reg_end.getSegment() != 0 && (size < reg_end.getOffset() - reg.getOffset())) {
+						debugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
+						reg_end = NULL_REG;
+					}
+
+					if (reg_end.getSegment() != 0 && (size >= reg_end.getOffset() - reg.getOffset()))
+						size = reg_end.getOffset() - reg.getOffset();
+
+					if (reg_end.getSegment() != 0)
+						debugPrintf("Block size less than or equal to %d\n", size);
+
+					if (block.isRaw)
+						Common::hexdump(block.raw, size, 16, 0);
+					else
+						hexDumpReg(block.reg, size / 2, 4, 0);
+				}
+			}
+			break;
+		}
+		case SIG_TYPE_INTEGER:
+			debugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.getOffset(), reg.getOffset());
+			break;
+		default:
+			debugPrintf("unknown type %d.\n", type);
+		}
+
+		if (type) {
+			debugPrintf("\n");
+			found = 1;
+		}
+	}
+}
+
 #ifdef ENABLE_SCI32
 void Console::printArray(reg_t reg) {
 	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(reg.getSegment(), SEG_TYPE_ARRAY);
@@ -4739,63 +5119,23 @@ void Console::printBitmap(reg_t reg) {
 
 #endif
 
-int Console::printObject(reg_t pos) {
-	EngineState *s = _engine->_gamestate;	// for the several defines in this function
-	const Object *obj = s->_segMan->getObject(pos);
-	const Object *var_container = obj;
-	uint i;
+void Console::writeIntegrityDumpLine(const Common::String &statusName, const Common::String &resourceName, Common::WriteStream &out, Common::ReadStream *const data, const int size, const bool writeHash) {
+	debugPrintf("%s", statusName.c_str());
 
-	if (!obj) {
-		debugPrintf("[%04x:%04x]: Not an object.\n", PRINT_REG(pos));
-		return 1;
+	out.writeString(resourceName);
+	if (!data) {
+		out.writeString(" ERROR\n");
+		debugPrintf("[ERR] ");
+	} else {
+		out.writeString(Common::String::format(" %d ", size));
+		if (writeHash) {
+			out.writeString(Common::computeStreamMD5AsString(*data));
+		} else {
+			out.writeString("disabled");
+		}
+		out.writeString("\n");
+		debugPrintf("[OK] ");
 	}
-
-	// Object header
-	debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->_segMan->getObjectName(pos),
-				obj->getVarCount(), obj->getMethodCount());
-
-	if (!obj->isClass())
-		var_container = s->_segMan->getObject(obj->getSuperClassSelector());
-	debugPrintf("  -- member variables:\n");
-
-	if (getSciVersion() == SCI_VERSION_3) {
-		debugPrintf("    (----) [---] -size- = 0000:%04x (%d)\n", obj->getVarCount(), obj->getVarCount());
-		debugPrintf("    (----) [---] -classScript- = %04x:%04x (%d)\n", PRINT_REG(obj->getClassScriptSelector()), obj->getClassScriptSelector().getOffset());
-		debugPrintf("    (----) [---] -species- = %04x:%04x (%s)\n", PRINT_REG(obj->getSpeciesSelector()), s->_segMan->getObjectName(obj->getSpeciesSelector()));
-		debugPrintf("    (----) [---] -super- = %04x:%04x (%s)\n", PRINT_REG(obj->getSuperClassSelector()), s->_segMan->getObjectName(obj->getSuperClassSelector()));
-		debugPrintf("    (----) [---] -info- = %04x:%04x (%d)\n", PRINT_REG(obj->getInfoSelector()), obj->getInfoSelector().getOffset());
-	}
-
-	for (i = 0; (uint)i < obj->getVarCount(); i++) {
-		debugPrintf("    ");
-		if (var_container && i < var_container->getVarCount()) {
-			uint16 varSelector = var_container->getVarSelector(i);
-			// Times two commented out for now for easy parsing of vocab.994
-			debugPrintf("(%04x) [%03x] %s = ", i /* *2 */, varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
-		} else
-			debugPrintf("p#%x = ", i);
-
-		reg_t val = obj->getVariable(i);
-		debugPrintf("%04x:%04x", PRINT_REG(val));
-
-		if (!val.getSegment())
-			debugPrintf(" (%d)", val.getOffset());
-
-		const Object *ref = s->_segMan->getObject(val);
-		if (ref)
-			debugPrintf(" (%s)", s->_segMan->getObjectName(val));
-
-		debugPrintf("\n");
-	}
-	debugPrintf("  -- methods:\n");
-	for (i = 0; i < obj->getMethodCount(); i++) {
-		reg_t fptr = obj->getFunction(i);
-		debugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), _engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), PRINT_REG(fptr));
-	}
-	if (s->_segMan->_heap[pos.getSegment()]->getType() == SEG_TYPE_SCRIPT)
-		debugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.getSegment())->getScriptNumber());
-
-	return 0;
 }
 
 static void printChar(byte c) {

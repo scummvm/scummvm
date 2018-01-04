@@ -20,6 +20,7 @@
  *
  */
 
+#include "xeen/dialogs_awards.h"
 #include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_exchange.h"
 #include "xeen/dialogs_items.h"
@@ -40,7 +41,7 @@ void CharacterInfo::execute(int charIndex) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 
 	bool redrawFlag = true;
 	Mode oldMode = _vm->_mode;
@@ -50,7 +51,7 @@ void CharacterInfo::execute(int charIndex) {
 
 	Character *c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : combat._combatParty[charIndex];
 	intf.highlightChar(charIndex);
-	Window &w = screen._windows[24];
+	Window &w = windows[24];
 	w.open();
 
 	do {
@@ -93,6 +94,8 @@ void CharacterInfo::execute(int charIndex) {
 			} else {
 				_vm->_mode = MODE_CHARACTER_INFO;
 			}
+
+			intf.highlightChar(_buttonValue);
 			redrawFlag = true;
 			break;
 
@@ -316,12 +319,11 @@ Common::String CharacterInfo::loadCharacterDetails(const Character &c) {
 }
 
 void CharacterInfo::showCursor(bool flag) {
-	Screen &screen = *_vm->_screen;
 	const int CURSOR_X[5] = { 9, 60, 111, 176, 0 };
 	const int CURSOR_Y[5] = { 23, 46, 69, 92, 115 };
 
 	if (_cursorCell < 20) {
-		_iconSprites.draw(screen, flag ? 49 : 48,
+		_iconSprites.draw(0, flag ? 49 : 48,
 			Common::Point(CURSOR_X[_cursorCell / 5], CURSOR_Y[_cursorCell % 5]));
 	}
 }
@@ -340,6 +342,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	Common::Rect bounds(STAT_POS[0][attrib], STAT_POS[1][attrib],
 		STAT_POS[0][attrib] + 143, STAT_POS[1][attrib] + 52);
 	Party &party = *_vm->_party;
+	Windows &windows = *_vm->_windows;
 	uint stat1, stat2;
 	uint idx;
 	Common::String msg;
@@ -458,7 +461,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 
 	case 14:
 		// Awards
-		error("AwardsDialog::show");
+		Awards::show(_vm, &c);
 		return false;
 
 	case 15:
@@ -549,7 +552,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	}
 
 	// Write the data for the stat display
-	Window &w = _vm->_screen->_windows[28];
+	Window &w = windows[28];
 	w.setBounds(bounds);
 	w.open();
 	w.writeString(msg);

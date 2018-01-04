@@ -35,59 +35,37 @@
 namespace Fullpipe {
 
 StepArray::StepArray() {
-	_points = 0;
-	_maxPointIndex = 0;
 	_currPointIndex = 0;
-	_pointsCount = 0;
-	_isEos = 0;
-}
-
-StepArray::~StepArray() {
-	if (_pointsCount) {
-		for (int i = 0; i < _pointsCount; i++)
-			delete _points[i];
-
-		free(_points);
-
-		_points = 0;
-	}
+	_isEos = false;
 }
 
 void StepArray::clear() {
 	_currPointIndex = 0;
-	_maxPointIndex = 0;
-	_isEos = 0;
-
-	for (int i = 0; i < _pointsCount; i++) {
-		_points[i]->x = 0;
-		_points[i]->y = 0;
-	}
+	_isEos = false;
+	_points.clear();
 }
 
-Common::Point *StepArray::getCurrPoint(Common::Point *point) {
-	if (_isEos || _points == 0) {
-		point->x = 0;
-		point->y = 0;
-	} else {
-		point->x = _points[_currPointIndex]->x;
-		point->y = _points[_currPointIndex]->y;
+Common::Point StepArray::getCurrPoint() const {
+	if (_isEos || !_points.size()) {
+		return Common::Point();
 	}
-	return point;
+
+	return Common::Point(_points[_currPointIndex].x,
+						 _points[_currPointIndex].y);
 }
 
-Common::Point *StepArray::getPoint(Common::Point *point, int index, int offset) {
+Common::Point StepArray::getPoint(int index, int offset) const {
 	if (index == -1)
 		index = _currPointIndex;
 
-	if (index + offset > _maxPointIndex - 1)
-		offset = _maxPointIndex - index;
+	if (index + offset > getPointsCount() - 1)
+		offset = getPointsCount() - index;
 
-	point->x = 0;
-	point->y = 0;
+	Common::Point point;
 
 	while (offset >= 1) {
-		point->x += _points[index]->x;
-		point->y += _points[index]->y;
+		point.x += _points[index].x;
+		point.y += _points[index].y;
 
 		index++;
 		offset--;
@@ -97,33 +75,18 @@ Common::Point *StepArray::getPoint(Common::Point *point, int index, int offset) 
 }
 
 bool StepArray::gotoNextPoint() {
-	if (_currPointIndex < _maxPointIndex - 1) {
+	if (_currPointIndex < getPointsCount() - 1) {
 		_currPointIndex++;
 		return true;
 	} else {
-		_isEos = 1;
+		_isEos = true;
 		return false;
 	}
 }
 
-void StepArray::insertPoints(Common::Point **points, int pointsCount) {
-	if (_currPointIndex + pointsCount >= _pointsCount) {
-		_points = (Common::Point **)realloc(_points, sizeof(Common::Point *) * (_pointsCount + pointsCount));
-
-		if (!_points) {
-			error("Out of memory at StepArray::insertPoints()");
-		}
-
-		for(int i = 0; i < pointsCount; i++)
-			_points[_pointsCount + i] = new Common::Point;
-
-		_pointsCount += pointsCount;
-	}
-
-	_maxPointIndex = _currPointIndex + pointsCount;
-
-	for (int i = 0; i < pointsCount; i++)
-		*_points[_currPointIndex + i] = *points[i];
+void StepArray::insertPoints(const PointList &points) {
+	_points.resize(_currPointIndex + points.size());
+	Common::copy(points.begin(), points.end(), _points.begin() + _currPointIndex);
 }
 
 StaticANIObject::StaticANIObject() {
@@ -149,16 +112,8 @@ StaticANIObject::StaticANIObject() {
 }
 
 StaticANIObject::~StaticANIObject() {
-	for (uint i = 0; i < _staticsList.size(); i++)
-		delete _staticsList[i];
-
-	_staticsList.clear();
-
-	for (uint i = 0; i < _movements.size(); i++)
-		delete _movements[i];
-
-	_movements.clear();
-
+	Common::for_each(_staticsList.begin(), _staticsList.end(), Common::DefaultDeleter<Statics>());
+	Common::for_each(_movements.begin(), _movements.end(), Common::DefaultDeleter<Movement>());
 	g_fp->_aniHandler->detachAllObjects();
 }
 
@@ -182,7 +137,7 @@ StaticANIObject::StaticANIObject(StaticANIObject *src) : GameObject(src) {
 	_objtype = kObjTypeStaticANIObject;
 
 	for (uint i = 0; i < src->_staticsList.size(); i++)
-		_staticsList.push_back(new Statics(src->_staticsList[i], 0));
+		_staticsList.push_back(new Statics(src->_staticsList[i], false));
 
 	_movement = 0;
 	_statics = 0;
@@ -208,6 +163,8 @@ bool StaticANIObject::load(MfcArchive &file) {
 
 	GameObject::load(file);
 
+	debugC(6, kDebugXML, "%% <OLDANI %s>", GameObject::toXML().c_str());
+
 	int count = file.readUint16LE();
 
 	for (int i = 0; i < count; i++) {
@@ -225,25 +182,24 @@ bool StaticANIObject::load(MfcArchive &file) {
 
 		Common::String movname = genFileName(_id, movNum, "mov");
 
-		Common::SeekableReadStream *f = g_fp->_currArchive->createReadStreamForMember(movname);
+		Common::ScopedPtr<Common::SeekableReadStream> f(g_fp->_currArchive->createReadStreamForMember(movname));
 
 		Movement *mov = new Movement();
-
-		MfcArchive archive(f);
-
-		mov->load(archive, this);
-
 		_movements.push_back(mov);
 
-		delete f;
+		MfcArchive archive(f.get());
+
+		mov->load(archive, this);
 	}
 
 	Common::Point pt;
 	if (count) { // We have movements
-		_movements[0]->getCurrDynamicPhaseXY(pt);
+		pt = _movements[0]->getCurrDynamicPhaseXY();
 	} else {
 		pt.x = pt.y = 100;
 	}
+
+	debugC(6, kDebugXML, "%% </OLDANI>");
 
 	setOXY(pt.x, pt.y);
 
@@ -396,8 +352,7 @@ void StaticANIObject::startMQIfIdle(int qId, int flag) {
 }
 
 bool StaticANIObject::isIdle() {
-	if (_objtype != kObjTypeStaticANIObject)
-		return true;
+	assert(_objtype == kObjTypeStaticANIObject);
 
 	if (_messageQueueId) {
 		MessageQueue *m = g_fp->_globalMessageQueueList->getMessageQueueById(_messageQueueId);
@@ -433,7 +388,7 @@ Movement *StaticANIObject::getMovementById(int itemId) {
 	return 0;
 }
 
-int StaticANIObject::getMovementIdById(int itemId) {
+int StaticANIObject::getMovementIdById(int itemId) const {
 	for (uint i = 0; i < _movements.size(); i++) {
 		Movement *mov = _movements[i];
 
@@ -476,7 +431,6 @@ bool StaticANIObject::getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly) {
 	int ongoing;
 	int xani, yani;
 	int oxani, oyani;
-	Common::Point point;
 
 	if (_movement)
 		ongoing = _movement->_currMovement != 0;
@@ -484,13 +438,13 @@ bool StaticANIObject::getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly) {
 		ongoing = _statics->_staticsId & 0x4000;
 
 	if (_movement) {
-		_movement->getCurrDynamicPhaseXY(point);
+		const Common::Point point = _movement->getCurrDynamicPhaseXY();
 		xani = point.x;
 		yani = point.y;
 		oxani = _movement->_ox;
 		oyani = _movement->_oy;
 	} else {
-		_statics->getSomeXY(point);
+		const Common::Point point = _statics->getSomeXY();
 		xani = point.x;
 		yani = point.y;
 		oxani = _ox;
@@ -501,7 +455,7 @@ bool StaticANIObject::getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly) {
 	int ytarget = y - (oyani - yani);
 
 	if (ongoing && _movement)
-		xtarget = pic->getDimensions(&point)->x - xtarget;
+		xtarget = pic->getDimensions().x - xtarget;
 
 	x = pic->_x;
 	y = pic->_y;
@@ -527,48 +481,46 @@ bool StaticANIObject::getPixelAtPos(int x, int y, uint32 *pixel, bool hitOnly) {
 void Movement::draw(bool flipFlag, int angle) {
 	debugC(3, kDebugDrawing, "Movement::draw(%d, %d)", flipFlag, angle);
 
-	Common::Point point;
-
-	getCurrDynamicPhaseXY(point);
+	Common::Point point = getCurrDynamicPhaseXY();
 
 	int x = _ox - point.x;
 	int y = _oy - point.y;
 
-	if (_currDynamicPhase->getPaletteData())
-		g_fp->_globalPalette = _currDynamicPhase->getPaletteData();
+	if (_currDynamicPhase->getPaletteData().size())
+		g_fp->_globalPalette = &_currDynamicPhase->getPaletteData();
 
-	Bitmap *bmp;
+	Common::ScopedPtr<Bitmap> bmp;
 	if (_currMovement) {
-		bmp = _currDynamicPhase->getPixelData()->reverseImage();
+		bmp.reset(_currDynamicPhase->getPixelData()->reverseImage());
 	} else {
-		bmp = _currDynamicPhase->getPixelData()->reverseImage(false);
+		bmp.reset(_currDynamicPhase->getPixelData()->reverseImage(false));
 	}
 
 	if (flipFlag) {
-		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect->bottom, _currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+		bmp->flipVertical()->drawShaded(1, x, y + 30 + _currDynamicPhase->_rect.bottom, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	} else if (angle) {
-		bmp->drawRotated(x, y, angle, _currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+		bmp->drawRotated(x, y, angle, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	} else {
-		bmp->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+		bmp->putDib(x, y, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 	}
-	//Prevent memory leak after new was used to create bmp in reverseImage()
-	delete bmp;
 
-	if (_currDynamicPhase->_rect->top) {
-		if (!_currDynamicPhase->_convertedBitmap) {
+	if (_currDynamicPhase->_rect.top) {
+		if (!_currDynamicPhase->getConvertedBitmap()) {
 			//v12 = Picture_getPixelData(v5);
 			//v13 = Bitmap_convertTo16Bit565(v12, (unsigned int *)&_currDynamicPhase->rect);
 			//_currDynamicPhase->convertedBitmap = v13;
 		}
 
-		if (_currDynamicPhase->_convertedBitmap) {
+		if (_currDynamicPhase->getConvertedBitmap()) {
 			if (_currMovement) {
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, LOBYTE(_currDynamicPhase->rect.top));
-				_currDynamicPhase->_convertedBitmap->reverseImage()->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+				bmp.reset(_currDynamicPhase->getConvertedBitmap()->reverseImage());
+				bmp->putDib(x, y, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
 			} else {
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 1, LOBYTE(_currDynamicPhase->rect.top));
-				_currDynamicPhase->_convertedBitmap->reverseImage(false)->putDib(x, y, (int32 *)_currDynamicPhase->_paletteData, _currDynamicPhase->_alpha);
+				bmp.reset(_currDynamicPhase->getConvertedBitmap()->reverseImage(false));
+				bmp->putDib(x, y, _currDynamicPhase->getPaletteData(), _currDynamicPhase->getAlpha());
 				//vrtSetAlphaBlendMode(g_vrtDrawHandle, 0, 255);
 			}
 		}
@@ -586,11 +538,11 @@ void StaticANIObject::freeMovementsPixelData() {
 }
 
 Statics *StaticANIObject::addReverseStatics(Statics *st) {
+	assert(st);
 	Statics *res = getStaticsById(st->_staticsId ^ 0x4000);
 
 	if (!res) {
 		res = new Statics(st, true);
-
 		_staticsList.push_back(res);
 	}
 
@@ -601,13 +553,10 @@ void StaticANIObject::draw() {
 	if ((_flags & 4) == 0)
 		return;
 
-	Common::Point point;
-	Common::Rect rect;
-
 	debugC(6, kDebugDrawing, "StaticANIObject::draw() (%s) [%d] [%d, %d]", transCyrillic(_objectName), _id, _ox, _oy);
 
 	if (_shadowsOn && g_fp->_currentScene && g_fp->_currentScene->_shadows
-		&& (getCurrDimensions(point)->x != 1 || getCurrDimensions(point)->y != 1)) {
+		&& (getCurrDimensions().x != 1 || getCurrDimensions().y != 1)) {
 
 		DynamicPhase *dyn;
 
@@ -622,20 +571,20 @@ void StaticANIObject::draw() {
 		}
 
 		if (dyn->getDynFlags() & 4) {
-			rect = *dyn->_rect;
+			const Common::Rect &rect = dyn->_rect;
 
 			DynamicPhase *shd = g_fp->_currentScene->_shadows->findSize(rect.width(), rect.height());
 			if (shd) {
-				shd->getDimensions(&point);
-				int midx = _ox - point.x / 2 - dyn->_someX;
-				int midy = _oy - point.y / 2 - dyn->_someY + rect.bottom - 3;
-				int shdw =  point.y;
+				const Dims dims = shd->getDimensions();
+				int midx = _ox - dims.x / 2 - dyn->_someX;
+				int midy = _oy - dims.y / 2 - dyn->_someY + rect.bottom - 3;
+				int shdw =  dims.y;
 
 				int px;
 				if (!_movement || (_flags & 0x20))
-					px = _statics->getCenter(&point)->x;
+					px = _statics->getCenter().x;
 				else
-					px = _movement->getCenter(&point)->x;
+					px = _movement->getCenter().x;
 
 				if (_shadowsOn != 1)
 					midy = _shadowsOn - shdw / 2;
@@ -654,7 +603,7 @@ void StaticANIObject::draw() {
 	}
 
 	if (!_movement || (_flags & 0x20)) {
-		_statics->getSomeXY(point);
+		const Common::Point point = _statics->getSomeXY();
 		_statics->_x = _ox - point.x;
 		_statics->_y = _oy - point.y;
 		_statics->draw(_statics->_x, _statics->_y, 0, angle);
@@ -670,10 +619,7 @@ void StaticANIObject::draw2() {
 		if (_movement) {
 			_movement->draw(1, 0);
 		} else {
-			Common::Point point;
-
-			_statics->getSomeXY(point);
-
+			const Common::Point point = _statics->getSomeXY();
 			_statics->draw(_ox - point.x, _oy - point.y, 1, 0);
 		}
 	}
@@ -683,22 +629,19 @@ MovTable *StaticANIObject::countMovements() {
 	GameVar *preloadSubVar = g_fp->getGameLoaderGameVar()->getSubVarByName(getName())->getSubVarByName("PRELOAD");
 
 	if (!preloadSubVar || preloadSubVar->getSubVarsCount() == 0)
-		return 0;
+		return nullptr;
 
 	MovTable *movTable = new MovTable;
-
-	movTable->count = _movements.size();
-	movTable->movs = (int16 *)calloc(_movements.size(), sizeof(int16));
-
+	movTable->reserve(_movements.size());
 	for (uint i = 0; i < _movements.size(); i++) {
-		movTable->movs[i] = 2;
-
+		int16 value = 2;
 		for (GameVar *sub = preloadSubVar->_subVars; sub; sub = sub->_nextVarObj) {
 			if (scumm_stricmp(_movements[i]->getName().c_str(), sub->_varName.c_str()) == 0) {
-				movTable->movs[i] = 1;
+				value = 1;
 				break;
 			}
 		}
+		movTable->push_back(value);
 	}
 
 	return movTable;
@@ -743,15 +686,15 @@ void StaticANIObject::preloadMovements(MovTable *mt) {
 		for (uint i = 0; i < _movements.size(); i++) {
 			Movement *mov = _movements[i];
 
-			if (mt->movs[i] == 1)
+			if ((*mt)[i] == 1)
 				mov->loadPixelData();
-			else if (mt->movs[i] == 2)
+			else if ((*mt)[i] == 2)
 				mov->freePixelData();
 		}
 	}
 }
 
-Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
+Dims StaticANIObject::getCurrDimensions() const {
 	Picture *pic;
 
 	if (_movement)
@@ -760,30 +703,21 @@ Common::Point *StaticANIObject::getCurrDimensions(Common::Point &p) {
 		pic = _statics;
 
 	if (pic) {
-		Common::Point point;
-
-		pic->getDimensions(&point);
-		p.x = point.x;
-		p.y = point.y;
-	} else {
-		p.x = 0;
-		p.y = 0;
+		return pic->getDimensions();
 	}
 
-	return &p;
+	return Dims();
 }
 
-Common::Point *StaticANIObject::getSomeXY(Common::Point &p) {
+Common::Point StaticANIObject::getSomeXY() const {
 	if (_movement) {
-		_movement->getCurrDynamicPhaseXY(p);
-
-		return &p;
+		return _movement->getCurrDynamicPhaseXY();
 	}
 
 	if (_statics)
-		_statics->getSomeXY(p);
+		return _statics->getSomeXY();
 
-	return &p;
+	error("No someXY found");
 }
 
 void StaticANIObject::update(int counterdiff) {
@@ -804,7 +738,6 @@ void StaticANIObject::update(int counterdiff) {
 		return;
 	}
 
-	Common::Point point;
 	ExCommand *ex, *newex;
 
 	if (_movement) {
@@ -870,7 +803,7 @@ void StaticANIObject::update(int counterdiff) {
 			if (!_movement)
 				return;
 
-			_stepArray.getCurrPoint(&point);
+			const Common::Point point = _stepArray.getCurrPoint();
 			setOXY(point.x + _ox, point.y + _oy);
 			_stepArray.gotoNextPoint();
 			if (_someDynamicPhaseIndex == _movement->_currDynamicPhaseIndex)
@@ -880,10 +813,9 @@ void StaticANIObject::update(int counterdiff) {
 			_flags |= 1;
 
 			_movement->gotoFirstFrame();
-			_movement->getCurrDynamicPhaseXY(point);
 
-			Common::Point pointS;
-			_statics->getSomeXY(pointS);
+			const Common::Point point = _movement->getCurrDynamicPhaseXY();
+			const Common::Point pointS = _statics->getSomeXY();
 			_movement->setOXY(_ox + point.x + _movement->_mx - pointS.x,
 							  _oy + point.y + _movement->_my - pointS.y);
 		}
@@ -908,11 +840,11 @@ void StaticANIObject::updateStepPos() {
 	int ox = _movement->_ox;
 	int oy = _movement->_oy;
 
-	_movement->calcSomeXY(point, 1, _someDynamicPhaseIndex);
+	point = _movement->calcSomeXY(1, _someDynamicPhaseIndex);
 	int x = point.x;
 	int y = point.y;
 
-	_stepArray.getPoint(&point, -1, _stepArray.getPointsCount());
+	point = _stepArray.getPoint(-1, _stepArray.getPointsCount());
 	x += point.x;
 	y += point.y;
 
@@ -930,9 +862,7 @@ Common::Point *StaticANIObject::calcNextStep(Common::Point *pRes) {
 		return pRes;
 	}
 
-	Common::Point point;
-
-	_movement->calcSomeXY(point, 1, _someDynamicPhaseIndex);
+	Common::Point point = _movement->calcSomeXY(1, _someDynamicPhaseIndex);
 
 	int resX = point.x;
 	int resY = point.y;
@@ -948,7 +878,7 @@ Common::Point *StaticANIObject::calcNextStep(Common::Point *pRes) {
 	}
 
 	if (pointN >= 0) {
-		_stepArray.getPoint(&point, pointN, offset);
+		point = _stepArray.getPoint(pointN, offset);
 
 		resX += point.x;
 		resY += point.y;
@@ -981,18 +911,18 @@ void StaticANIObject::stopAnim_maybe() {
 					goto L11;
 L8:
 				_statics = _movement->_staticsObj1;
-				_movement->getCurrDynamicPhaseXY(point);
+				point = _movement->getCurrDynamicPhaseXY();
 				_ox -= point.x;
 				_oy -= point.y;
 
 				_ox -= _movement->_mx;
 				_oy -= _movement->_my;
 
-				_statics->getSomeXY(point);
+				point = _statics->getSomeXY();
 				if (_movement->_currMovement) {
 					_oy += point.y;
 					_ox -= point.x;
-					_ox += _statics->getDimensions(&point)->x;
+					_ox += _statics->getDimensions().x;
 				} else {
 					_ox += point.x;
 					_oy += point.y;
@@ -1005,7 +935,7 @@ L8:
 L11:
 		_statics = _movement->_staticsObj2;
 L12:
-		_statics->getSomeXY(point);
+		point = _statics->getSomeXY();
 
 		_statics->_x = _ox - point.x;
 		_statics->_y = _oy - point.y;
@@ -1036,11 +966,11 @@ void StaticANIObject::adjustSomeXY() {
 	if (_movement) {
 		Common::Point point;
 
-		_movement->calcSomeXY(point, 0, -1);
+		point = _movement->calcSomeXY(0, -1);
 
 		int diff = abs(point.y) - abs(point.x);
 
-		_movement->calcSomeXY(point, 1, -1);
+		point = _movement->calcSomeXY(1, -1);
 
 		if (diff > 0)
 			_ox += point.x;
@@ -1131,9 +1061,7 @@ void StaticANIObject::show1(int x, int y, int movId, int mqId) {
 
 	_statics = mov->_staticsObj1;
 
-	Common::Point point;
-
-	mov->_staticsObj1->getSomeXY(point);
+	const Common::Point point = mov->_staticsObj1->getSomeXY();
 	_statics->_x = x - point.x;
 	_statics->_y = y - point.y;
 
@@ -1173,13 +1101,11 @@ void StaticANIObject::show2(int x, int y, int movementId, int mqId) {
 			mov->setOXY(x, y);
 			mov->gotoFirstFrame();
 
-			Common::Point point;
-
-			mov->getCurrDynamicPhaseXY(point);
+			Common::Point point = mov->getCurrDynamicPhaseXY();
 			_statics->_x = mov->_ox - point.x - mov->_mx;
 			_statics->_y = mov->_oy - point.y - mov->_my;
 
-			_statics->getSomeXY(point);
+			point = _statics->getSomeXY();
 			_flags |= 4;
 			_ox = _statics->_x + point.x;
 			_oy = _statics->_y + point.y;
@@ -1204,7 +1130,7 @@ void StaticANIObject::playIdle() {
 		adjustSomeXY();
 }
 
-void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, int y, Common::Point **points, int pointsCount, int someDynamicPhaseIndex) {
+void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, int y, const PointList &points, int someDynamicPhaseIndex) {
 	Movement *mov = 0;
 
 	if (!(_flags & 0x80)) {
@@ -1227,9 +1153,7 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 	if (_movement || !_statics)
 		return;
 
-	Common::Point point;
-
-	_statics->getSomeXY(point);
+	Common::Point point = _statics->getSomeXY();
 
 	int newx = _ox - point.x;
 	int newy = _oy - point.y;
@@ -1242,11 +1166,11 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 		_movement->gotoFirstFrame();
 
 	_stepArray.clear();
-	_stepArray.insertPoints(points, pointsCount);
+	_stepArray.insertPoints(points);
 
 	if (!(_flags & 0x40)) {
 		if (!_movement->_currDynamicPhaseIndex) {
-			_stepArray.getCurrPoint(&point);
+			point = _stepArray.getCurrPoint();
 			newx += point.x + _movement->_mx;
 			newy += point.y + _movement->_my;
 			_stepArray.gotoNextPoint();
@@ -1264,7 +1188,7 @@ void StaticANIObject::startAnimSteps(int movementId, int messageQueueId, int x, 
 		}
 	}
 
-	_movement->getCurrDynamicPhaseXY(point);
+	point = _movement->getCurrDynamicPhaseXY();
 	setOXY(point.x + newx, point.y + newy);
 
 	if ((_movement->_staticsObj2->_staticsId >> 8) & 0x40)
@@ -1332,13 +1256,13 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 	Common::Point point;
 
 	if (_movement) {
-		_movement->getCurrDynamicPhaseXY(point);
+		point = _movement->getCurrDynamicPhaseXY();
 
 		newx -= point.x;
 		newy -= point.y;
 
 	} else if (_statics) {
-		_statics->getSomeXY(point);
+		point = _statics->getSomeXY();
 
 		newx -= point.x;
 		newy -= point.y;
@@ -1355,7 +1279,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 
 	if (!(_flags & 0x40)) {
 		if (!_movement->_currDynamicPhaseIndex) {
-			_stepArray.getCurrPoint(&point);
+			point = _stepArray.getCurrPoint();
 			newx += point.x + _movement->_mx;
 			newy += point.y + _movement->_my;
 
@@ -1372,7 +1296,7 @@ bool StaticANIObject::startAnim(int movementId, int messageQueueId, int dynPhase
 		}
 	}
 
-	_movement->getCurrDynamicPhaseXY(point);
+	point = _movement->getCurrDynamicPhaseXY();
 	setOXY(point.x + newx, point.y + newy);
 
 	if (_movement->_staticsObj2->_staticsId & 0x4000)
@@ -1405,7 +1329,7 @@ Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
 	if (_movement) {
 		Common::Point point;
 
-		_movement->calcSomeXY(point, 0, _movement->_currDynamicPhaseIndex);
+		point = _movement->calcSomeXY(0, _movement->_currDynamicPhaseIndex);
 
 		p->x = point.x;
 		p->y = point.y;
@@ -1413,8 +1337,7 @@ Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
 		int idx = _stepArray.getCurrPointIndex() - _movement->_currDynamicPhaseIndex - 1;
 
 		if (idx >= 0) {
-			_stepArray.getPoint(&point, idx, _movement->_currDynamicPhaseIndex + 2);
-
+			point = _stepArray.getPoint(idx, _movement->_currDynamicPhaseIndex + 2);
 			p->x += point.x;
 			p->y += point.y;
 		}
@@ -1428,12 +1351,7 @@ Common::Point *StaticANIObject::calcStepLen(Common::Point *p) {
 
 Statics::Statics() {
 	_staticsId = 0;
-	_picture = nullptr;
 	_data = nullptr;
-}
-
-Statics::~Statics() {
-	delete _picture;
 }
 
 Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
@@ -1447,8 +1365,6 @@ Statics::Statics(Statics *src, bool reverse) : DynamicPhase(src, reverse) {
 	}
 
 	_memfilename = src->_memfilename;
-
-	_picture = new Picture();
 }
 
 bool Statics::load(MfcArchive &file) {
@@ -1459,10 +1375,10 @@ bool Statics::load(MfcArchive &file) {
 	_staticsId = file.readUint16LE();
 
 	_staticsName = file.readPascalString();
-	debugC(7, kDebugLoading, "statics: <%s> id: %d (%x)", transCyrillic(_staticsName), _staticsId, _staticsId);
+	debugC(6, kDebugXML, "%% <STATICS id=\"%s\" name=\"%s\" %s />",
+		g_fp->gameIdToStr(_staticsId).c_str(), transCyrillic(_staticsName), DynamicPhase::toXML().c_str());
 
-	_picture = new Picture();
-	_picture->load(file);
+	_picture.load(file);
 
 	return true;
 }
@@ -1471,37 +1387,24 @@ void Statics::init() {
 	Picture::init();
 
 	if (_staticsId & 0x4000) {
-		Bitmap *reversed = _bitmap->reverseImage();
-		// TODO: properly dispose old _bitmap
-		// Enabling the call below causes corruption in flipped bitmaps
-		//freePixelData();
-		_bitmap = reversed;
+		_bitmap.reset(_bitmap->reverseImage());
 	}
 }
 
-Common::Point *Statics::getSomeXY(Common::Point &p) {
-	p.x = _someX;
-	p.y = _someY;
-
-	return &p;
+Common::Point Statics::getSomeXY() const {
+	return Common::Point(_someX, _someY);
 }
 
-Common::Point *Statics::getCenter(Common::Point *p) {
-	Common::Rect rect;
-
-	rect = *_rect;
+Common::Point Statics::getCenter() const {
+	Common::Rect rect(_rect);
 
 	if (_staticsId & 0x4000) {
-		Common::Point point;
-
-		getDimensions(&point);
-		rect.moveTo(point.x - _rect->right, _rect->top);
+		const Dims dims = getDimensions();
+		rect.moveTo(dims.x - _rect.right, _rect.top);
 	}
 
-	p->x = rect.left + _rect->width() / 2;
-	p->y = rect.top + _rect->height() / 2;
-
-	return p;
+	return Common::Point(rect.left + _rect.width() / 2,
+						 rect.top + _rect.height() / 2);
 }
 
 Movement::Movement() {
@@ -1516,7 +1419,6 @@ Movement::Movement() {
 	_m2y = 0;
 	_field_50 = 1;
 	_field_78 = 0;
-	_framePosOffsets = 0;
 	_field_84 = 0;
 	_currDynamicPhase = 0;
 	_field_8C = 0;
@@ -1525,29 +1427,24 @@ Movement::Movement() {
 	_currMovement = 0;
 	_counter = 0;
 	_counterMax = 83;
-
-	_somePoint.x = 0;
-	_somePoint.y = 0;
 }
 
 Movement::~Movement() {
-	for (uint i = 0; i < _dynamicPhases.size(); i++)
-		delete _framePosOffsets[i];
-
-	if (!_currMovement ) {
+	if (!_currMovement) {
 		if (_updateFlag1) {
 			_dynamicPhases[0]->freePixelData();
-			_dynamicPhases.remove_at(0);
+			delete _dynamicPhases.remove_at(0);
 		}
 
 		// FIXME: At this point, the last entry in _dynamicPhases is invalid
-		for (uint i = 0; i < _dynamicPhases.size() - 1; i++)
-			_dynamicPhases[i]->freePixelData();
-
-		_dynamicPhases.clear();
+		for (uint i = 0; i < _dynamicPhases.size() - 1; i++) {
+			DynamicPhase *phase = _dynamicPhases[i];
+			if (phase != _staticsObj1 && phase != _staticsObj2)
+				delete phase;
+			else
+				_dynamicPhases[i]->freePixelData();
+		}
 	}
-
-	free(_framePosOffsets);
 }
 
 Movement::Movement(Movement *src, StaticANIObject *ani) {
@@ -1562,7 +1459,6 @@ Movement::Movement(Movement *src, StaticANIObject *ani) {
 	_m2y = 0;
 
 	_field_78 = 0;
-	_framePosOffsets = 0;
 	_field_84 = 0;
 	_currDynamicPhase = 0;
 	_field_8C = 0;
@@ -1599,7 +1495,6 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 	_counterMax = 0;
 
 	_field_78 = 0;
-	_framePosOffsets = 0;
 	_field_84 = 0;
 	_currDynamicPhase = 0;
 	_field_8C = 0;
@@ -1630,29 +1525,23 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 		return;
 	}
 
-	_framePosOffsets = (Common::Point **)calloc(newSize, sizeof(Common::Point *));
-
-	for (int i = 0; i < newSize; i++)
-		_framePosOffsets[i] = new Common::Point();
+	_framePosOffsets.resize(newSize);
 
 	if (oldIdxs) {
 		for (int i = 0; i < newSize - 1; i++, oldIdxs++) {
 			if (oldIdxs[i] == -1) {
 				_dynamicPhases.push_back(src->_staticsObj1);
-
-				_framePosOffsets[i]->x = 0;
-				_framePosOffsets[i]->y = 0;
 			} else {
 				src->setDynamicPhaseIndex(oldIdxs[i]);
 
 				_dynamicPhases.push_back(src->_currDynamicPhase);
 
-				_framePosOffsets[i]->x = src->_framePosOffsets[oldIdxs[i]]->x;
-				_framePosOffsets[i]->y = src->_framePosOffsets[oldIdxs[i]]->y;
+				_framePosOffsets[i].x = src->_framePosOffsets[oldIdxs[i]].x;
+				_framePosOffsets[i].y = src->_framePosOffsets[oldIdxs[i]].y;
 			}
 		}
-		_staticsObj1 = (Statics *)_dynamicPhases.front();
-		_staticsObj2 = (Statics *)_dynamicPhases.back();
+		_staticsObj1 = dynamic_cast<Statics *>(_dynamicPhases.front());
+		_staticsObj2 = dynamic_cast<Statics *>(_dynamicPhases.back());
 	} else {
 		for (int i = 0; i < newSize; i++) {
 			src->setDynamicPhaseIndex(i);
@@ -1660,8 +1549,8 @@ Movement::Movement(Movement *src, int *oldIdxs, int newSize, StaticANIObject *an
 			if (i < newSize - 1)
 				_dynamicPhases.push_back(new DynamicPhase(src->_currDynamicPhase, 0));
 
-			_framePosOffsets[i]->x = src->_framePosOffsets[i]->x;
-			_framePosOffsets[i]->y = src->_framePosOffsets[i]->y;
+			_framePosOffsets[i].x = src->_framePosOffsets[i].x;
+			_framePosOffsets[i].y = src->_framePosOffsets[i].y;
 		}
 
 		_staticsObj1 = ani->getStaticsById(src->_staticsObj1->_staticsId);
@@ -1689,12 +1578,8 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 	int dynCount = file.readUint16LE();
 
-	debugC(7, kDebugLoading, "dynCount: %d  _id: %d", dynCount, _id);
 	if (dynCount != 0xffff || _id == MV_MAN_TURN_LU) {
-		_framePosOffsets = (Common::Point **)calloc(dynCount + 2, sizeof(Common::Point *));
-
-		for (int i = 0; i < dynCount + 2; i++)
-			_framePosOffsets[i] = new Common::Point();
+		_framePosOffsets.resize(dynCount + 2);
 
 		for (int i = 0; i < dynCount; i++) {
 			DynamicPhase *ph = new DynamicPhase();
@@ -1702,8 +1587,8 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 
 			_dynamicPhases.push_back(ph);
 
-			_framePosOffsets[i]->x = ph->_x;
-			_framePosOffsets[i]->y = ph->_y;
+			_framePosOffsets[i].x = ph->_x;
+			_framePosOffsets[i].y = ph->_y;
 		}
 
 		int staticsid = file.readUint16LE();
@@ -1718,12 +1603,12 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 		_mx = file.readSint32LE();
 		_my = file.readSint32LE();
 
-		staticsid = file.readUint16LE();
+		int staticsid2 = file.readUint16LE();
 
-		_staticsObj2 = ani->getStaticsById(staticsid);
+		_staticsObj2 = ani->getStaticsById(staticsid2);
 
-		if (!_staticsObj2 && (staticsid & 0x4000)) {
-			Statics *s = ani->getStaticsById(staticsid ^ 0x4000);
+		if (!_staticsObj2 && (staticsid2 & 0x4000)) {
+			Statics *s = ani->getStaticsById(staticsid2 ^ 0x4000);
 			_staticsObj2 = ani->addReverseStatics(s);
 		}
 
@@ -1733,9 +1618,17 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 		if (_staticsObj2) {
 			_dynamicPhases.push_back(_staticsObj2);
 
-			_framePosOffsets[_dynamicPhases.size() - 1]->x = _m2x;
-			_framePosOffsets[_dynamicPhases.size() - 1]->y = _m2y;
+			_framePosOffsets[_dynamicPhases.size() - 1].x = _m2x;
+			_framePosOffsets[_dynamicPhases.size() - 1].y = _m2y;
 		}
+
+		debugC(6, kDebugXML, "%% <MOVEMENT %s staticsId=\"%s\" mX=%d my=%d staticsId2=\"%s\" m2x=%d m2y=%d>",
+			GameObject::toXML().c_str(), g_fp->gameIdToStr(staticsid).c_str(), _mx, _my, g_fp->gameIdToStr(staticsid2).c_str(), _m2x, _m2y);
+
+		for (int i = 0; i < dynCount; i++)
+			debugC(6, kDebugXML, "%% <PHASE %s />", _dynamicPhases[i]->toXML().c_str());
+
+		debugC(6, kDebugXML, "%% </MOVEMENT>");
 
 	} else {
 		int movid = file.readUint16LE();
@@ -1766,14 +1659,11 @@ bool Movement::load(MfcArchive &file, StaticANIObject *ani) {
 	return true;
 }
 
-Common::Point *Movement::getCurrDynamicPhaseXY(Common::Point &p) {
-	p.x = _currDynamicPhase->_someX;
-	p.y = _currDynamicPhase->_someY;
-
-	return &p;
+Common::Point Movement::getCurrDynamicPhaseXY() const {
+	return Common::Point(_currDynamicPhase->_someX, _currDynamicPhase->_someY);
 }
 
-Common::Point *Movement::calcSomeXY(Common::Point &p, int idx, int dynidx) {
+Common::Point Movement::calcSomeXY(int idx, int dynidx) {
 	int oldox = _ox;
 	int oldoy = _oy;
 	int oldidx = _currDynamicPhaseIndex;
@@ -1782,9 +1672,7 @@ Common::Point *Movement::calcSomeXY(Common::Point &p, int idx, int dynidx) {
 	int y = 0;
 
 	if (!idx) {
-		Common::Point point;
-
-		_staticsObj1->getSomeXY(point);
+		const Common::Point point = _staticsObj1->getSomeXY();
 		int x1 = _mx - point.x;
 		int y1 = _my - point.y;
 
@@ -1799,13 +1687,12 @@ Common::Point *Movement::calcSomeXY(Common::Point &p, int idx, int dynidx) {
 	while (_currDynamicPhaseIndex != dynidx && gotoNextFrame(0, 0))
 		;
 
-	p.x = _ox;
-	p.y = _oy;
+	Common::Point p(_ox, _oy);
 
 	setDynamicPhaseIndex(oldidx);
 	setOXY(oldox, oldoy);
 
-	return &p;
+	return p;
 }
 
 void Movement::setAlpha(int alpha) {
@@ -1819,7 +1706,7 @@ void Movement::setAlpha(int alpha) {
 		}
 }
 
-Common::Point *Movement::getDimensionsOfPhase(Common::Point *p, int phaseIndex) {
+Dims Movement::getDimensionsOfPhase(int phaseIndex) const {
 	int idx = phaseIndex;
 
 	if (idx == -1)
@@ -1832,13 +1719,7 @@ Common::Point *Movement::getDimensionsOfPhase(Common::Point *p, int phaseIndex) 
 	else
 		dyn = _dynamicPhases[idx];
 
-	Common::Point point;
-
-	dyn->getDimensions(&point);
-
-	*p = point;
-
-	return p;
+	return dyn->getDimensions();
 }
 
 void Movement::initStatics(StaticANIObject *ani) {
@@ -1857,9 +1738,9 @@ void Movement::initStatics(StaticANIObject *ani) {
 
 	Common::Point point;
 
-	int x1 = _currMovement->_staticsObj1->getDimensions(&point)->x - _mx;
+	int x1 = _currMovement->_staticsObj1->getDimensions().x - _mx;
 
-	_mx = x1 - _currMovement->_currDynamicPhase->getDimensions(&point)->x;
+	_mx = x1 - _currMovement->_currDynamicPhase->getDimensions().x;
 
 	_currMovement->setDynamicPhaseIndex(_currMovement->_currDynamicPhaseIndex);
 
@@ -1867,8 +1748,8 @@ void Movement::initStatics(StaticANIObject *ani) {
 	_m2y = _currMovement->_m2y;
 	_currMovement->gotoLastFrame();
 
-	x1 = _currMovement->_staticsObj2->getDimensions(&point)->x;
-	_m2x = _currMovement->_currDynamicPhase->getDimensions(&point)->x - _m2x - x1;
+	x1 = _currMovement->_staticsObj2->getDimensions().x;
+	_m2x = _currMovement->_currDynamicPhase->getDimensions().x - _m2x - x1;
 }
 
 void Movement::updateCurrDynamicPhase() {
@@ -1954,7 +1835,7 @@ void Movement::loadPixelData() {
 		mov = mov->_currMovement;
 
 	for (uint i = 0; i < mov->_dynamicPhases.size(); i++) {
-		if ((Statics *)mov->_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000))
+		if (mov->_dynamicPhases[i] != mov->_staticsObj2 || !(mov->_staticsObj2->_staticsId & 0x4000))
 			mov->_dynamicPhases[i]->getPixelData();
 	}
 
@@ -1977,12 +1858,12 @@ void Movement::removeFirstPhase() {
 			gotoNextFrame(0, 0);
 
 		if (!_currMovement) {
-			_dynamicPhases.remove_at(0);
+			delete _dynamicPhases.remove_at(0);
 
 			for (uint i = 0; i < _dynamicPhases.size(); i++) {
-				_framePosOffsets[i]->x = _framePosOffsets[i + 1]->x;
-				_framePosOffsets[i]->y = _framePosOffsets[i + 1]->y;
+				_framePosOffsets[i] = _framePosOffsets[i + 1];
 			}
+			_framePosOffsets.pop_back();
 		}
 		_currDynamicPhaseIndex--;
 	}
@@ -2011,16 +1892,14 @@ bool Movement::gotoNextFrame(void (*callback1)(int, Common::Point *point, int, i
 		return true;
 	}
 
-	Common::Point point;
-
-	getCurrDynamicPhaseXY(point);
+	Common::Point point = getCurrDynamicPhaseXY();
 	_ox -= point.x;
 	_oy -= point.y;
 
 	int deltax = 0;
 
 	if (_currMovement)
-		deltax = _currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex)->x;
+		deltax = _currMovement->getDimensionsOfPhase(_currDynamicPhaseIndex).x;
 
 	int oldDynIndex = _currDynamicPhaseIndex;
 
@@ -2040,33 +1919,33 @@ bool Movement::gotoNextFrame(void (*callback1)(int, Common::Point *point, int, i
 			_currDynamicPhaseIndex = 0;
 			result = false;
 		}
-		if (_currMovement->_framePosOffsets) {
+		if (_currMovement->_framePosOffsets.size()) {
 			if (callback1) {
-				point = *_currMovement->_framePosOffsets[_currDynamicPhaseIndex];
+				point = _currMovement->_framePosOffsets[_currDynamicPhaseIndex];
 				callback1(_currDynamicPhaseIndex, &point, _ox, _oy);
 
 				_ox += deltax - point.x;
 				_oy += point.y;
 
-				_ox -= _currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex)->x;
+				_ox -= _currMovement->getDimensionsOfPhase(_currDynamicPhaseIndex).x;
 			} else if (oldDynIndex >= _currDynamicPhaseIndex) {
 				while (oldDynIndex > _currDynamicPhaseIndex) {
 					_ox += deltax;
-					deltax = _currMovement->getDimensionsOfPhase(&point, oldDynIndex)->x;
+					deltax = _currMovement->getDimensionsOfPhase(oldDynIndex).x;
 
-					_ox += _currMovement->_framePosOffsets[oldDynIndex]->x;
-					_oy -= _currMovement->_framePosOffsets[oldDynIndex]->y;
+					_ox += _currMovement->_framePosOffsets[oldDynIndex].x;
+					_oy -= _currMovement->_framePosOffsets[oldDynIndex].y;
 					oldDynIndex--;
 
-					_ox -= _currMovement->getDimensionsOfPhase(&point, oldDynIndex)->x;
+					_ox -= _currMovement->getDimensionsOfPhase(oldDynIndex).x;
 				}
 			} else {
 				for (int i = oldDynIndex + 1; i <= _currDynamicPhaseIndex; i++) {
 					_ox += deltax;
-					deltax = _currMovement->getDimensionsOfPhase(&point, i)->x;
-					_ox -= _currMovement->_framePosOffsets[i]->x;
-					_oy += _currMovement->_framePosOffsets[i]->y;
-					_ox -= _currMovement->getDimensionsOfPhase(&point, i)->x;
+					deltax = _currMovement->getDimensionsOfPhase(i).x;
+					_ox -= _currMovement->_framePosOffsets[i].x;
+					_oy += _currMovement->_framePosOffsets[i].y;
+					_ox -= _currMovement->getDimensionsOfPhase(i).x;
 				}
 			}
 		}
@@ -2080,30 +1959,30 @@ bool Movement::gotoNextFrame(void (*callback1)(int, Common::Point *point, int, i
 			result = false;
 		}
 
-		if (_framePosOffsets) {
+		if (_framePosOffsets.size()) {
 			if (callback1) {
-				point.x = _framePosOffsets[_currDynamicPhaseIndex]->x;
-				point.y = _framePosOffsets[_currDynamicPhaseIndex]->y;
+				point.x = _framePosOffsets[_currDynamicPhaseIndex].x;
+				point.y = _framePosOffsets[_currDynamicPhaseIndex].y;
 
 				callback1(_currDynamicPhaseIndex, &point, _ox, _oy);
 				_ox += point.x;
 				_oy += point.y;
 			} else if (oldDynIndex >= _currDynamicPhaseIndex) {
 				for (int i = oldDynIndex; i > _currDynamicPhaseIndex; i--) {
-					_ox -= _framePosOffsets[i]->x;
-					_oy -= _framePosOffsets[i]->y;
+					_ox -= _framePosOffsets[i].x;
+					_oy -= _framePosOffsets[i].y;
 				}
 			} else {
 				for (int i = oldDynIndex + 1; i <= _currDynamicPhaseIndex; i++) {
-					_ox += _framePosOffsets[i]->x;
-					_oy += _framePosOffsets[i]->y;
+					_ox += _framePosOffsets[i].x;
+					_oy += _framePosOffsets[i].y;
 				}
 			}
 		}
 	}
 
 	updateCurrDynamicPhase();
-	getCurrDynamicPhaseXY(point);
+	point = getCurrDynamicPhaseXY();
 	_ox += point.x;
 	_oy += point.y;
 
@@ -2120,29 +1999,27 @@ bool Movement::gotoPrevFrame() {
 		return false;
 	}
 
-	Common::Point point;
-
-	getCurrDynamicPhaseXY(point);
+	Common::Point point = getCurrDynamicPhaseXY();
 
 	_ox -= point.x;
 	_oy -= point.y;
 
 	if (_currMovement) {
-		if (_currMovement->_framePosOffsets) {
-			_ox += _currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex)->x;
-			_ox += _currMovement->_framePosOffsets[_currDynamicPhaseIndex]->x;
-			_oy -= _currMovement->_framePosOffsets[_currDynamicPhaseIndex]->y;
+		if (_currMovement->_framePosOffsets.size()) {
+			_ox += _currMovement->getDimensionsOfPhase(_currDynamicPhaseIndex).x;
+			_ox += _currMovement->_framePosOffsets[_currDynamicPhaseIndex].x;
+			_oy -= _currMovement->_framePosOffsets[_currDynamicPhaseIndex].y;
 		}
 
 		_currDynamicPhaseIndex--;
 		if (_currDynamicPhaseIndex < 0)
 			_currDynamicPhaseIndex = _currMovement->_dynamicPhases.size() - 1;
 
-		_ox -= _currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex)->x;
+		_ox -= _currMovement->getDimensionsOfPhase(_currDynamicPhaseIndex).x;
 	} else {
-		if (_framePosOffsets) {
-			_ox -= _framePosOffsets[_currDynamicPhaseIndex]->x;
-			_oy -= _framePosOffsets[_currDynamicPhaseIndex]->y;
+		if (_framePosOffsets.size()) {
+			_ox -= _framePosOffsets[_currDynamicPhaseIndex].x;
+			_oy -= _framePosOffsets[_currDynamicPhaseIndex].y;
 		}
 
 		_currDynamicPhaseIndex--;
@@ -2151,7 +2028,7 @@ bool Movement::gotoPrevFrame() {
 	}
 
 	updateCurrDynamicPhase();
-	getCurrDynamicPhaseXY(point);
+	point = getCurrDynamicPhaseXY();
 
 	_ox += point.x;
 	_oy += point.y;
@@ -2180,28 +2057,20 @@ void Movement::gotoLastFrame() {
 	}
 }
 
-Common::Point *Movement::getCenter(Common::Point *p) {
-	Common::Rect rect;
-
-	rect = *_currDynamicPhase->_rect;
+Common::Point Movement::getCenter() const {
+	Common::Rect rect(_currDynamicPhase->_rect);
 
 	if (_currMovement) {
-		Common::Point point;
-
-		_currMovement->getDimensionsOfPhase(&point, _currDynamicPhaseIndex);
-
-		rect.moveTo(point.x - _currDynamicPhase->_rect->right, _currDynamicPhase->_rect->top);
+		const Dims dims = _currMovement->getDimensionsOfPhase(_currDynamicPhaseIndex);
+		rect.moveTo(dims.x - _currDynamicPhase->_rect.right, _currDynamicPhase->_rect.top);
 	}
 
-	p->x = rect.left + _currDynamicPhase->_rect->width() / 2;
-	p->y = rect.top + _currDynamicPhase->_rect->height() / 2;
-
-	return p;
+	return Common::Point(rect.left + _currDynamicPhase->_rect.width() / 2,
+						 rect.top + _currDynamicPhase->_rect.height() / 2);
 }
 
 DynamicPhase::DynamicPhase() {
 	_someX = 0;
-	_rect = 0;
 	_field_7C = 0;
 	_field_7E = 0;
 	_dynFlags = 0;
@@ -2209,14 +2078,9 @@ DynamicPhase::DynamicPhase() {
 	_data = nullptr;
 }
 
-DynamicPhase::~DynamicPhase() {
-	delete _rect;
-}
-
 DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 	_field_7C = src->_field_7C;
 	_field_7E = 0;
-	_rect = new Common::Rect();
 
 	debugC(1, kDebugAnimation, "DynamicPhase::DynamicPhase(src, %d)", reverse);
 
@@ -2224,7 +2088,7 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		if (!src->_bitmap)
 			src->init();
 
-		_bitmap = src->_bitmap->reverseImage();
+		_bitmap.reset(src->_bitmap->reverseImage());
 		_dataSize = src->_dataSize;
 
 		if (g_fp->_currArchive) {
@@ -2246,27 +2110,25 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 		_mfield_10 = src->_mfield_10;
 		_libHandle = src->_libHandle;
 
-		_bitmap = src->_bitmap;
-		if (_bitmap) {
+		if (src->_bitmap) {
 			_field_54 = 1;
-
-			_bitmap = src->_bitmap->reverseImage(false);
+			_bitmap.reset(src->_bitmap->reverseImage(false));
 		}
 
 		_someX = src->_someX;
 		_someY = src->_someY;
 	}
 
-	*_rect = *src->_rect;
+	_rect = src->_rect;
 
 	_width = src->_width;
 	_height = src->_height;
 	_field_7C = src->_field_7C;
 
 	if (src->getExCommand())
-		_exCommand = src->getExCommand()->createClone();
+		_exCommand.reset(src->getExCommand()->createClone());
 	else
-		_exCommand = 0;
+		_exCommand.reset();
 
 	_initialCountdown = src->_initialCountdown;
 	_field_6A = src->_field_6A;
@@ -2274,7 +2136,13 @@ DynamicPhase::DynamicPhase(DynamicPhase *src, bool reverse) {
 
 	setPaletteData(src->getPaletteData());
 
-	copyMemoryObject2(src);
+	copyMemoryObject2(*src);
+}
+
+Common::String DynamicPhase::toXML() {
+	return Common::String::format("f7c=%d left=%d top=%d right=%d bottom=%d sX=%d sY=%d dynFlags=%d %s",
+			_field_7C, _rect.left, _rect.top, _rect.right, _rect.bottom, _someX, _someY, _dynFlags,
+			StaticPhase::toXML().c_str());
 }
 
 bool DynamicPhase::load(MfcArchive &file) {
@@ -2283,11 +2151,10 @@ bool DynamicPhase::load(MfcArchive &file) {
 	StaticPhase::load(file);
 
 	_field_7C = file.readUint16LE();
-	_rect = new Common::Rect();
-	_rect->left = file.readSint32LE();
-	_rect->top = file.readSint32LE();
-	_rect->right = file.readSint32LE();
-	_rect->bottom = file.readSint32LE();
+	_rect.left = file.readSint32LE();
+	_rect.top = file.readSint32LE();
+	_rect.right = file.readSint32LE();
+	_rect.bottom = file.readSint32LE();
 
 	assert(g_fp->_gameProjectVersion >= 1);
 
@@ -2306,11 +2173,10 @@ StaticPhase::StaticPhase() {
 	_initialCountdown = 0;
 	_countdown = 0;
 	_field_68 = 0;
-	_exCommand = 0;
 }
 
-StaticPhase::~StaticPhase() {
-	delete _exCommand;
+Common::String StaticPhase::toXML() {
+	return Common::String::format("countdown=%d f6a=%d", _initialCountdown, _field_6A);
 }
 
 bool StaticPhase::load(MfcArchive &file) {
@@ -2321,15 +2187,9 @@ bool StaticPhase::load(MfcArchive &file) {
 	_initialCountdown = file.readUint16LE();
 	_field_6A = file.readUint16LE();
 
-	if (g_fp->_gameProjectVersion >= 12) {
-		_exCommand = (ExCommand *)file.readClass();
+	assert(g_fp->_gameProjectVersion >= 12);
 
-		return true;
-	}
-
-	assert (g_fp->_gameProjectVersion >= 12);
-
-	warning("StaticPhase::load(): Code continues here");
+	_exCommand.reset(file.readClass<ExCommand>());
 
 	return true;
 }

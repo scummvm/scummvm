@@ -74,6 +74,8 @@ bool CCentralCore::DropZoneLostObjectMsg(CDropZoneLostObjectMsg *msg) {
 bool CCentralCore::DropZoneGotObjectMsg(CDropZoneGotObjectMsg *msg) {
 	CString name = msg->_object->getName();
 	if (name == "PerchCoreHolder") {
+		CParrot::_takeOff = false;
+
 		if (isEquals("CentralCore")) {
 			CParrot::_coreReplaced = true;
 			CActMsg actMsg("CoreReplaced");

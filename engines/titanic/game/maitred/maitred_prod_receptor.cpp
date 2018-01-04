@@ -34,24 +34,24 @@ END_MESSAGE_MAP()
 
 void CMaitreDProdReceptor::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldBC, indent);
+	file->writeNumberLine(_prodSource, indent);
 	file->writeNumberLine(_counter, indent);
-	file->writeNumberLine(_fieldC4, indent);
+	file->writeNumberLine(_proddable, indent);
 
 	CGameObject::save(file, indent);
 }
 
 void CMaitreDProdReceptor::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldBC = file->readNumber();
+	_prodSource = (ProdSource)file->readNumber();
 	_counter = file->readNumber();
-	_fieldC4 = file->readNumber();
+	_proddable = file->readNumber();
 
 	CGameObject::load(file);
 }
 
 bool CMaitreDProdReceptor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_fieldBC == 2 && static_cast<CGameObject *>(getParent())->hasActiveMovie()) {
+	if (_prodSource == MAITRED_BUTTOCKS && static_cast<CGameObject *>(getParent())->hasActiveMovie()) {
 		return false;
 	} else {
 		CProdMaitreDMsg prodMsg(126);
@@ -61,7 +61,9 @@ bool CMaitreDProdReceptor::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 }
 
 bool CMaitreDProdReceptor::MouseMoveMsg(CMouseMoveMsg *msg) {
-	if (_fieldBC == 2 && static_cast<CGameObject *>(getParent())->hasActiveMovie())
+	if (!getDraggingObject())
+		return true;
+	if (_prodSource == MAITRED_BUTTOCKS && static_cast<CGameObject *>(getParent())->hasActiveMovie())
 		return false;
 	else if (++_counter < 20)
 		return true;
@@ -88,20 +90,20 @@ bool CMaitreDProdReceptor::MouseMoveMsg(CMouseMoveMsg *msg) {
 }
 
 bool CMaitreDProdReceptor::ProdMaitreDMsg(CProdMaitreDMsg *msg) {
-	if (_fieldC4) {
+	if (_proddable) {
 		CMaitreD *maitreD = static_cast<CMaitreD *>(findRoomObject("MaitreD"));
 		if (maitreD->_speechCounter == 0) {
 			CViewItem *view = findView();
 			startTalking(maitreD, msg->_value, view);
 
-			switch (_fieldBC) {
-			case 1:
+			switch (_prodSource) {
+			case MAITRED_LEGS:
 				startTalking(maitreD, 128, view);
 				break;
-			case 2:
+			case MAITRED_BUTTOCKS:
 				startTalking(maitreD, 129, view);
 				break;
-			case 3:
+			case MAITRED_GENERAL:
 				startTalking(maitreD, 127, view);
 				break;
 			default:
@@ -115,7 +117,7 @@ bool CMaitreDProdReceptor::ProdMaitreDMsg(CProdMaitreDMsg *msg) {
 }
 
 bool CMaitreDProdReceptor::DisableMaitreDProdReceptor(CDisableMaitreDProdReceptor *msg) {
-	_fieldC4 = 0;
+	_proddable = false;
 	return true;
 }
 

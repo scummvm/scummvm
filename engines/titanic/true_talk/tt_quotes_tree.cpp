@@ -20,9 +20,10 @@
  *
  */
 
-#include "common/algorithm.h"
 #include "titanic/true_talk/tt_quotes_tree.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
+#include "common/algorithm.h"
 
 namespace Titanic {
 

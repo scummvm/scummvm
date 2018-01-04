@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/lights.h"
+#include "bladerunner/screen_effects.h"
 #include "bladerunner/set_effects.h"
 #include "bladerunner/slice_animations.h"
 
@@ -44,6 +45,10 @@ SliceRenderer::SliceRenderer(BladeRunnerEngine *vm) {
 }
 
 SliceRenderer::~SliceRenderer() {
+}
+
+void SliceRenderer::setScreenEffects(ScreenEffects *screenEffects) {
+	_screenEffects = screenEffects;
 }
 
 void SliceRenderer::setView(const View &view) {
@@ -349,6 +354,8 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 		_modelMatrix
 	);
 
+	Vector3 cameraPosition(_view._cameraPosition.x, _view._cameraPosition.z, _view._cameraPosition.y); // not a bug
+
 	SliceRendererLights sliceRendererLights = SliceRendererLights(_lights);
 
 	_lights->setupFrame(_view._frame);
@@ -364,7 +371,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	float setEffectsColorCoeficient;
 	Color setEffectColor;
 	_setEffects->calculateColor(
-		_view._cameraPosition,
+		cameraPosition,
 		Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight),
 		&setEffectsColorCoeficient,
 		&setEffectColor);
@@ -401,7 +408,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 
 		if (sliceLineIterator._currentY & 1) {
 			_setEffects->calculateColor(
-				_view._cameraPosition,
+				cameraPosition,
 				Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight),
 				&setEffectsColorCoeficient,
 				&setEffectColor);
@@ -416,7 +423,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 		_setEffectColor.b = setEffectColor.b * 31.0f * 65536.0f;
 
 		if (frameY >= 0 && frameY < 480) {
-			drawSlice((int)sliceLine, true, frameLinePtr, zBufferLinePtr);
+			drawSlice((int)sliceLine, true, frameLinePtr, zBufferLinePtr, frameY);
 		}
 
 		sliceLineIterator.advance();
@@ -480,7 +487,7 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	while (currentSlice < _frameSliceCount) {
 		if (currentY >= 0 && currentY < 480) {
 			memset(lineZbuffer, 0xFF, 640 * 2);
-			drawSlice(currentSlice, false, frameLinePtr, lineZbuffer);
+			drawSlice(currentSlice, false, frameLinePtr, lineZbuffer, currentY);
 			currentSlice += sliceStep;
 			currentY--;
 			frameLinePtr -= 640;
@@ -488,7 +495,7 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	}
 }
 
-void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr) {
+void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr, int y) {
 	if (slice < 0 || (uint32)slice >= _frameSliceCount)
 		return;
 
@@ -523,14 +530,15 @@ void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, ui
 				if (vertexZ >= 0 && vertexZ < 65536) {
 					int color555 = palette.color555[p[2]];
 					if (advanced) {
-						Color256 color = palette.color[p[2]];
+						Color256 aescColor = { 0, 0, 0 };
+						_screenEffects->getColor(&aescColor, vertexX, y, vertexZ);
 
-						color.r = (int)(_setEffectColor.r + _lightsColor.r * color.r) >> 16;
-						color.g = (int)(_setEffectColor.g + _lightsColor.g * color.g) >> 16;
-						color.b = (int)(_setEffectColor.b + _lightsColor.b * color.b) >> 16;
+						Color256 color = palette.color[p[2]];
+						color.r = ((int)(_setEffectColor.r + _lightsColor.r * color.r) >> 16) + aescColor.r;
+						color.g = ((int)(_setEffectColor.g + _lightsColor.g * color.g) >> 16) + aescColor.g;
+						color.b = ((int)(_setEffectColor.b + _lightsColor.b * color.b) >> 16) + aescColor.b;
 
 						int bladeToScummVmConstant = 256 / 32;
-
 						color555 = _pixelFormat.RGBToColor(CLIP(color.r * bladeToScummVmConstant, 0, 255), CLIP(color.g * bladeToScummVmConstant, 0, 255), CLIP(color.b * bladeToScummVmConstant, 0, 255));
 					}
 					for (int x = previousVertexX; x != vertexX; ++x) {

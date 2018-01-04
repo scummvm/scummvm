@@ -678,7 +678,7 @@ void OSystem_PS2::setPalette(const byte *colors, uint start, uint num) {
 	_screen->setPalette(colors, (uint8)start, (uint16)num);
 }
 
-void OSystem_PS2::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_PS2::grabPalette(byte *colors, uint start, uint num) const {
 	_screen->grabPalette(colors, (uint8)start, (uint16)num);
 }
 

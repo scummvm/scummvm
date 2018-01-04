@@ -275,9 +275,6 @@ byte *loadCharacter(Common::SeekableReadStream &stream, int &encoding, int &adva
 			return bitmap;
 		}
 	}
-
-	delete[] bitmap;
-	return 0;
 }
 
 void freeBitmaps(byte **bitmaps, int size) {
@@ -299,7 +296,8 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 	memset(bitmaps, 0, sizeof(byte *) * font.numCharacters);
 	byte *advances = new byte[font.numCharacters];
 	BdfBoundingBox *boxes = new BdfBoundingBox[font.numCharacters];
-	char *familyName, *slant;
+	char *familyName = nullptr;
+	char *slant = nullptr;
 
 	int descent = -1;
 
@@ -697,6 +695,8 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	data.bitmaps = bitmaps;
 	data.advances = advances;
 	data.boxes = boxes;
+	data.familyName = nullptr;
+	data.slant = nullptr;
 	return new BdfFont(data, DisposeAfterUse::YES);
 }
 

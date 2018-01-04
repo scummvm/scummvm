@@ -85,8 +85,6 @@ public:
 	virtual void mouseMove(const Point &mousePos);
 	virtual void leftButtonDown(const Point &mousePos);
 	virtual void leftButtonUp(const Point &mousePos);
-	virtual void rightButtonDown(const Point &mousePos);
-	virtual void rightButtonUp(const Point &mousePos);
 	virtual void keyDown(Common::KeyState keyState);
 
 	/**

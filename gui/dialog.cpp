@@ -88,13 +88,7 @@ void Dialog::open() {
 	_visible = true;
 	g_gui.openDialog(this);
 
-	Widget *w = _firstWidget;
-	// Search for the first objects that wantsFocus() (if any) and give it the focus
-	while (w && !w->wantsFocus()) {
-		w = w->_next;
-	}
-
-	setFocusWidget(w);
+	setDefaultFocusedWidget();
 }
 
 void Dialog::close() {
@@ -140,6 +134,16 @@ void Dialog::setFocusWidget(Widget *widget) {
 		widget->receivedFocus();
 
 	_focusedWidget = widget;
+}
+
+void Dialog::setDefaultFocusedWidget() {
+	Widget *w = _firstWidget;
+	// Search for the first objects that wantsFocus() (if any) and give it the focus
+	while (w && !w->wantsFocus()) {
+		w = w->_next;
+	}
+
+	setFocusWidget(w);
 }
 
 void Dialog::releaseFocus() {

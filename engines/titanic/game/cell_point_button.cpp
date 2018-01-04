@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/cell_point_button.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -89,7 +90,7 @@ bool CCellPointButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 	playMovie(0);
 	_regionNum = _regionNum ? 0 : 1;
-	playSound("z#425.wav");
+	playSound(TRANSLATE("z#425.wav", "z#170.wav"));
 	talkSetDialRegion(_npcName, _dialNum, _regionNum);
 
 	return true;

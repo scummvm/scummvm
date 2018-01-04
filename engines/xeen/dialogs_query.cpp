@@ -34,8 +34,8 @@ bool Confirm::show(XeenEngine *vm, const Common::String &msg, int mode) {
 }
 
 bool Confirm::execute(const Common::String &msg, int mode) {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
+	Windows &windows = *_vm->_windows;
 	SpriteResource confirmSprites;
 	bool result = false;
 
@@ -43,7 +43,7 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 	addButton(Common::Rect(129, 112, 153, 122), Common::KEYCODE_y, &confirmSprites);
 	addButton(Common::Rect(185, 112, 209, 122), Common::KEYCODE_n, &confirmSprites);
 
-	Window &w = screen._windows[mode ? 22 : 21];
+	Window &w = windows[mode ? 22 : 21];
 	w.open();
 
 	if (!mode) {
@@ -102,10 +102,9 @@ bool YesNo::execute(bool type, bool townFlag) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Resources &res = *_vm->_resources;
-	Screen &screen = *_vm->_screen;
-	Town &town = *_vm->_town;
+	LocationManager &loc = *_vm->_locations;
+	Windows &windows = *_vm->_windows;
 	SpriteResource confirmSprites;
-	//int numFrames;
 	bool result = false;
 
 	Mode oldMode = _vm->_mode;
@@ -113,10 +112,10 @@ bool YesNo::execute(bool type, bool townFlag) {
 
 	if (!type) {
 		confirmSprites.load("confirm.icn");
-		res._globalSprites.draw(screen, 7, Common::Point(232, 74));
-		confirmSprites.draw(screen, 0, Common::Point(235, 75));
-		confirmSprites.draw(screen, 2, Common::Point(260, 75));
-		screen._windows[34].update();
+		res._globalSprites.draw(0, 7, Common::Point(232, 74));
+		confirmSprites.draw(0, 0, Common::Point(235, 75));
+		confirmSprites.draw(0, 2, Common::Point(260, 75));
+		windows[34].update();
 
 		addButton(Common::Rect(235, 75, 259, 95), Common::KEYCODE_y, &confirmSprites);
 		addButton(Common::Rect(260, 75, 284, 95), Common::KEYCODE_n, &confirmSprites);
@@ -128,8 +127,8 @@ bool YesNo::execute(bool type, bool townFlag) {
 	while (!_vm->shouldQuit()) {
 		events.updateGameCounter();
 
-		if (town.isActive()) {
-			town.drawTownAnim(townFlag);
+		if (loc.isActive()) {
+			loc.drawAnim(townFlag);
 			//numFrames = 3;
 		} else {
 			intf.draw3d(true);

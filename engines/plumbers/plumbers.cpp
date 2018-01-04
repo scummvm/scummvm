@@ -43,6 +43,17 @@ PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc) : E
 	_image = nullptr;
 	_console = nullptr;
 	_timerInstalled = false;
+	_showScoreFl = false;
+	_setDurationFl = false;
+	_leftButtonDownFl = false;
+	_endGameFl = false;
+	_curSceneIdx = -1;
+	_prvSceneIdx = -1;
+	_curBitmapIdx = -1;
+	_curChoice = 0;
+	_totScene = -1;
+	_totScore = 0;
+
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
 }
 
@@ -77,7 +88,7 @@ static const byte cursorPalette[] = {
 };
 
 Common::Error PlumbersGame::run() {
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 	_console = new Console(this);
 
 	CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);

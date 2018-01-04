@@ -378,7 +378,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 
 	if (s.isSaving()) {
 		for (int i = 0; i < kPocketNX; i++) {
-			register Sprite *pocSpr = _pocket[i];
+			Sprite *pocSpr = _pocket[i];
 			_pocref[i] = (pocSpr) ? pocSpr->_ref : -1;
 		}
 
@@ -417,7 +417,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 			}
 
 			for (int i = 0; i < kPocketNX; i++) {
-				register int r = _pocref[i];
+				int r = _pocref[i];
 				_pocket[i] = (r < 0) ? NULL : _vga->_spareQ->locate(r);
 			}
 		}

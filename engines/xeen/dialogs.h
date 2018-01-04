@@ -52,6 +52,7 @@ private:
 	Common::Stack< Common::Array<UIButton> > _savedButtons;
 protected:
 	Common::Array<UIButton> _buttons;
+	Common::StringArray _textStrings;
 	int _buttonValue;
 
 	bool checkEvents(XeenEngine *vm);
@@ -63,6 +64,19 @@ protected:
 	 * @returns		True if key or mouse pressed
 	 */
 	virtual bool doScroll(bool rollUp, bool fadeIn);
+
+	/**
+	 * Load a set of text strings from the given resource
+	 * @param name		Name of resource containing strings
+	 */
+	void loadStrings(const Common::String &name);
+
+	/**
+	 * Load a set of text strings from the given resource
+	 * @param name		Name of resource containing strings
+	 * @param ccMode	Optional cc file number to explicitly use
+	 */
+	void loadStrings(const Common::String &name, int ccMode);
 public:
 	ButtonContainer(XeenEngine *vm) : Cutscenes(vm), _buttonValue(0) {}
 
@@ -106,8 +120,13 @@ public:
 };
 
 class PleaseWait {
+private:
+	Common::String _msg;
 public:
-	static void show(XeenEngine *vm);
+	PleaseWait(bool isOops = false);
+	~PleaseWait();
+
+	void show();
 };
 
 } // End of namespace Xeen

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/gfx/text_control.h"
+#include "titanic/support/strings.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -262,7 +263,7 @@ void CTextControl::remapColors(uint count, uint *srcColors, uint *destColors) {
 		for (uint index = 0; index < count; ++index) {
 			if (color == srcColors[index]) {
 				// Found a match, so replace the color
-				setLineColor(lineNum, destColors[lineNum]);
+				setLineColor(lineNum, destColors[index]);
 				break;
 			}
 		}

@@ -71,6 +71,7 @@ public:
 	void drawColor(const Common::String &text, Graphics::Surface &surface, int x, int y, uint16 color);
 
 	int getTextWidth(const Common::String &text);
+	int getTextHeight(const Common::String &text);
 
 private:
 	void reset();

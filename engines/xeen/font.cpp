@@ -26,13 +26,19 @@
 
 namespace Xeen {
 
-FontSurface::FontSurface() : XSurface(), _fontData(nullptr), _bgColor(DEFAULT_BG_COLOR),
-		_fontReduced(false),_fontJustify(JUSTIFY_NONE), _msgWraps(false) {
+const byte *FontData::_fontData;
+Common::Point FontData::_writePos;
+byte FontData::_textColors[4];
+byte FontData::_bgColor;
+bool FontData::_fontReduced;
+Justify FontData::_fontJustify;
+
+FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr) {
 	setTextColor(0);
 }
 
-FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv), _fontData(nullptr), _msgWraps(false),
-		_bgColor(DEFAULT_BG_COLOR), _fontReduced(false), _fontJustify(JUSTIFY_NONE) {
+FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
+		_msgWraps(false), _displayString(nullptr) {
 	create(w, h);
 	setTextColor(0);
 }
@@ -239,6 +245,13 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 	}
 
 	return _displayString;
+}
+
+void FontSurface::writeCharacter(char c, const Common::Rect &clipRect) {
+	Justify justify = _fontJustify;
+	_fontJustify = JUSTIFY_NONE;
+	writeString(Common::String::format("%c", c), clipRect);
+	_fontJustify = justify;
 }
 
 char FontSurface::getNextChar() {

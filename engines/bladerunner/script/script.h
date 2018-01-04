@@ -429,6 +429,34 @@ enum SpinnerDestinations {
 	kSpinnerDestinationHysteriaHall = 9
 };
 
+enum Flags {
+	kFlagIntroPlayed = 24,
+	kFlagMA02toMA06 = 33,
+	kFlagMA06ToMA02 = 34,
+	kFlagMA02ToMA04 = 35,
+	kFlagMA04ToMA02 = 36,
+	kFlagMA01toMA06 = 37,
+	kFlagMA06toMA01 = 38,
+	kFlagMA07toMA06 = 57,
+	kFlagMA06toMA07 = 58,
+	kFlagMA04toMA05 = 62,
+	kFlagMA05toMA04 = 63,
+	kFlagRC01PoliceDone = 186,
+	kFlagMA01Locked = 250
+};
+
+enum Variables {
+	kVariableWalkLoopActor = 37,
+	kVariableWalkLoopRun = 38
+};
+
+enum Outtakes {
+	kOuttakeIntro = 0,
+	kOuttakeWestwood = 28,
+	kOuttakeDescent = 33,
+	kOuttakeBladeRunner = 41
+};
+
 class BladeRunnerEngine;
 
 class ScriptBase {
@@ -561,33 +589,33 @@ protected:
 	void Footstep_Sounds_Set(int index, int value);
 	void Footstep_Sound_Override_On(int footstepSoundOverride);
 	void Footstep_Sound_Override_Off();
-	bool Music_Play(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
-	void Music_Adjust(int a1, int a2, int a3);
-	void Music_Stop(int a1);
+	bool Music_Play(int musicId, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut);
+	void Music_Adjust(int volume, int pan, int delay);
+	void Music_Stop(int delay);
 	bool Music_Is_Playing();
-	void Overlay_Play(const char *overlay, int a2, int a3, int a4, int a5);
+	void Overlay_Play(const char *overlay, int loopId, int loopForever, int startNow, int a5);
 	void Overlay_Remove(const char *overlay);
-	void Scene_Loop_Set_Default(int);
-	void Scene_Loop_Start_Special(int, int, int);
+	void Scene_Loop_Set_Default(int loopId);
+	void Scene_Loop_Start_Special(int sceneLoopMode, int loopId, bool immediately);
 	void Outtake_Play(int id, int noLocalization = false, int container = -1);
-	void Ambient_Sounds_Add_Sound(int id, int time1, int time2, int volume1, int volume2, int pan1begin, int pan1end, int pan2begin, int pan2end, int priority, int unk);
-	void Ambient_Sounds_Remove_Sound(int id, bool a2);
-	void Ambient_Sounds_Add_Speech_Sound(int id, int unk1, int time1, int time2, int volume1, int volume2, int pan1begin, int pan1end, int pan2begin, int pan2end, int priority, int unk2);
+	void Ambient_Sounds_Add_Sound(int sfxId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk);
+	void Ambient_Sounds_Remove_Sound(int sfxId, bool stopPlaying);
+	void Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk);
 	// Ambient_Sounds_Remove_Speech_Sound
-	int Ambient_Sounds_Play_Sound(int a1, int a2, int a3, int a4, int a5);
+	void Ambient_Sounds_Play_Sound(int sfxId, int volume, int panStart, int panEnd, int priority);
 	// Ambient_Sounds_Play_Speech_Sound
-	void Ambient_Sounds_Remove_All_Non_Looping_Sounds(int time);
-	void Ambient_Sounds_Add_Looping_Sound(int id, int volume, int pan, int fadeInTime);
-	void Ambient_Sounds_Adjust_Looping_Sound(int id, int panBegin, int panEnd, int a4);
-	void Ambient_Sounds_Remove_Looping_Sound(int id, bool a2);
-	void Ambient_Sounds_Remove_All_Looping_Sounds(int time);
+	void Ambient_Sounds_Remove_All_Non_Looping_Sounds(bool stopPlaying);
+	void Ambient_Sounds_Add_Looping_Sound(int sfxId, int volume, int pan, int delay);
+	void Ambient_Sounds_Adjust_Looping_Sound(int sfxId, int volume, int pan, int delay);
+	void Ambient_Sounds_Remove_Looping_Sound(int sfxId, int delay);
+	void Ambient_Sounds_Remove_All_Looping_Sounds(int delay);
 	void Setup_Scene_Information(float actorX, float actorY, float actorZ, int actorFacing);
 	bool Dialogue_Menu_Appear(int x, int y);
 	bool Dialogue_Menu_Disappear();
 	bool Dialogue_Menu_Clear_List();
 	bool Dialogue_Menu_Add_To_List(int answer);
 	bool Dialogue_Menu_Add_DONE_To_List(int answer);
-	// Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected
+	bool Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected(int answer);
 	bool DM_Add_To_List(int answer, int a2, int a3, int a4);
 	bool DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int a2, int a3, int a4);
 	void Dialogue_Menu_Remove_From_List(int answer);
@@ -625,12 +653,12 @@ protected:
 	bool SDB_Add_Replicant_Clue(int suspectId, int clueId);
 	bool SDB_Add_Non_Replicant_Clue(int suspectId, int clueId);
 	bool SDB_Add_Other_Clue(int suspectId, int clueId);
-	void Spinner_Set_Selectable_Destination_Flag(int a1, int a2);
-	// Spinner_Query_Selectable_Destination_Flag
-	int Spinner_Interface_Choose_Dest(int a1, int a2);
+	void Spinner_Set_Selectable_Destination_Flag(int destination, bool selectable);
+	// Spinner_Query_Selectable_Destination_Flag(int destination);
+	int Spinner_Interface_Choose_Dest(int loopId, bool immediately);
 	void ESPER_Flag_To_Activate();
 	bool Voight_Kampff_Activate(int a1, int a2);
-	int Elevator_Activate(int elevator);
+	int Elevator_Activate(int elevatorId);
 	void View_Score_Board();
 	// Query_Score
 	void Set_Score(int a0, int a1);

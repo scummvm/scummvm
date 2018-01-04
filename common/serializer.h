@@ -144,6 +144,10 @@ public:
 	 */
 	Version getVersion() const { return _version; }
 
+	/**
+	 * Manually set the version
+	 */
+	void setVersion(Version version) { _version = version; }
 
 	/**
 	 * Return the total number of bytes synced so far.

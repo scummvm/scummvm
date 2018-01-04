@@ -43,6 +43,11 @@ class SeekableReadStream;
 namespace Sci {
 
 enum {
+#ifdef ENABLE_SCI32
+	// Hack to treat RESMAP.PAT/RESSCI.PAT as the highest volume
+	kResPatVolumeNumber = 100,
+#endif
+
 	kResourceHeaderSize = 2, ///< patch type + header size
 
 	/** The maximum allowed size for a compressed or decompressed resource */
@@ -124,6 +129,7 @@ enum ResourceType {
 };
 
 const char *getResourceTypeName(ResourceType restype);
+const char *getResourceTypeExtension(ResourceType restype);
 
 enum ResVersion {
 	kResVersionUnknown,
@@ -164,6 +170,8 @@ class ResourceId {
 		return string;
 	}
 
+	friend void syncWithSerializer(Common::Serializer &s, ResourceId &obj);
+
 public:
 	ResourceId() : _type(kResourceTypeInvalid), _number(0), _tuple(0) { }
 
@@ -190,7 +198,11 @@ public:
 	Common::String toPatchNameBase36() const {
 		Common::String output;
 
-		output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
+		if (getSciVersion() >= SCI_VERSION_2) {
+			output += (getType() == kResourceTypeAudio36) ? 'A' : 'S'; // Identifier
+		} else {
+			output += (getType() == kResourceTypeAudio36) ? '@' : '#'; // Identifier
+		}
 		output += intToBase36(getNumber(), 3);                     // Map
 		output += intToBase36(getTuple() >> 24, 2);                // Noun
 		output += intToBase36((getTuple() >> 16) & 0xff, 2);       // Verb
@@ -378,7 +390,7 @@ public:
 
 	void setAudioLanguage(int language);
 	int getAudioLanguage() const;
-	void changeAudioDirectory(const Common::String &path);
+	void changeAudioDirectory(Common::String path);
 	bool isGMTrackIncluded();
 	bool isSci11Mac() const { return _volVersion == kResVersionSci11Mac; }
 	ViewType getViewType() const { return _viewType; }
@@ -463,7 +475,8 @@ protected:
 	int _maxMemoryLRU;
 
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
-	Common::List<ResourceSource *> _sources;
+	typedef Common::List<ResourceSource *> SourcesList;
+	SourcesList _sources;
 	int _memoryLocked;	///< Amount of resource bytes in locked memory
 	int _memoryLRU;		///< Amount of resource bytes under LRU control
 	Common::List<Resource *> _LRU; ///< Last Resource Used list
@@ -573,6 +586,13 @@ protected:
 	 */
 	void readResourcePatches();
 	void readResourcePatchesBase36();
+
+	/**
+	 * Determines whether or not a patch file matching the given resource ID
+	 * should be ignored when processing patches.
+	 */
+	bool isBlacklistedPatch(const ResourceId &resId) const;
+
 	void processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple = 0);
 
 	/**

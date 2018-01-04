@@ -41,19 +41,13 @@
 #include "sci/sound/audio.h"
 #include "sci/console.h"
 #ifdef ENABLE_SCI32
+#include "graphics/thumbnail.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/message.h"
 #include "sci/resource.h"
 #endif
 
 namespace Sci {
-
-extern reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mode, bool unwrapFilename);
-extern FileHandle *getFileFromHandle(EngineState *s, uint handle);
-extern int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle);
-extern void listSavegames(Common::Array<SavegameDesc> &saves);
-extern int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId);
-extern bool fillSavegameDesc(const Common::String &filename, SavegameDesc *desc);
 
 /**
  * Writes the cwd to the supplied address and returns the address in acc.
@@ -269,6 +263,34 @@ static bool saveCatalogueExists(const Common::String &name) {
 
 	return exists;
 }
+
+static Common::String getRamaSaveName(EngineState *s, const uint saveNo) {
+	const reg_t catalogId = s->variables[VAR_GLOBAL][kGlobalVarRamaCatalogFile];
+	if (catalogId.isNull()) {
+		error("Could not find CatalogFile object to retrieve save game name");
+	}
+
+	const List *list = s->_segMan->lookupList(readSelector(s->_segMan, catalogId, SELECTOR(elements)));
+	if (!list) {
+		error("Could not read CatalogFile object list");
+	}
+
+	Node *node = s->_segMan->lookupNode(list->first);
+	while (node) {
+		const reg_t entryId = node->value;
+		if (readSelectorValue(s->_segMan, entryId, SELECTOR(fileNumber)) == saveNo) {
+			reg_t description = readSelector(s->_segMan, entryId, SELECTOR(description));
+			if (s->_segMan->isObject(description)) {
+				description = readSelector(s->_segMan, description, SELECTOR(data));
+			}
+			return s->_segMan->getString(description);
+		}
+
+		node = s->_segMan->lookupNode(node->succ);
+	}
+
+	error("Could not find a save name for save %u", saveNo);
+}
 #endif
 
 reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
@@ -319,11 +341,11 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	if (g_sci->getGameId() == GID_SHIVERS && name.hasSuffix(".SG")) {
 		// Shivers stores the name and score of save games in separate %d.SG
 		// files, which are used by the save/load screen
-		if (mode == _K_FILE_MODE_OPEN_OR_CREATE || mode == _K_FILE_MODE_CREATE) {
+		if (mode == kFileOpenModeOpenOrCreate || mode == kFileOpenModeCreate) {
 			// Suppress creation of the SG file, since it is not necessary
 			debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
 			return SIGNAL_REG;
-		} else if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
+		} else if (mode == kFileOpenModeOpenOrFail) {
 			// Create a virtual file containing the save game description
 			// and current score progress, as the game scripts expect.
 			int saveNo;
@@ -331,7 +353,9 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 			saveNo += kSaveIdShift;
 
 			SavegameDesc save;
-			fillSavegameDesc(g_sci->getSavegameName(saveNo), &save);
+			if (!fillSavegameDesc(g_sci->getSavegameName(saveNo), save)) {
+				return SIGNAL_REG;
+			}
 
 			Common::String score;
 			if (!save.highScore) {
@@ -340,9 +364,9 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				score = Common::String::format("%u%03u", save.highScore, save.lowScore);
 			}
 
-			const uint nameLength = Common::strnlen(save.name, SCI_MAX_SAVENAME_LENGTH);
+			const uint nameLength = Common::strnlen(save.name, kMaxSaveNameLength);
 			const uint size = nameLength + /* \r\n */ 2 + score.size();
-			char *buffer = (char *)malloc(size);
+			byte *buffer = (byte *)malloc(size);
 			memcpy(buffer, save.name, nameLength);
 			buffer[nameLength] = '\r';
 			buffer[nameLength + 1] = '\n';
@@ -350,7 +374,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 
 			const uint handle = findFreeFileHandle(s);
 
-			s->_fileHandles[handle]._in = new Common::MemoryReadStream((byte *)buffer, size, DisposeAfterUse::YES);
+			s->_fileHandles[handle]._in = new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 			s->_fileHandles[handle]._out = nullptr;
 			s->_fileHandles[handle]._name = "";
 
@@ -359,22 +383,33 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 	} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES && name.hasSuffix(".DTA")) {
 		// MGDX stores the name and avatar ID in separate %d.DTA files, which
 		// are used by the save/load screen
-		if (mode == _K_FILE_MODE_OPEN_OR_CREATE || mode == _K_FILE_MODE_CREATE) {
+		if (mode == kFileOpenModeOpenOrCreate || mode == kFileOpenModeCreate) {
 			// Suppress creation of the DTA file, since it is not necessary
 			debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
 			return SIGNAL_REG;
-		} else if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
+		} else if (mode == kFileOpenModeOpenOrFail) {
 			// Create a virtual file containing the save game description
 			// and avatar ID, as the game scripts expect.
 			int saveNo;
-			sscanf(name.c_str(), "%d.DTA", &saveNo);
+
+			// The 4-language release uses a slightly different filename
+			// structure that includes the letter of the language at the start
+			// of the filename
+			const int skip = name.firstChar() < '0' || name.firstChar() > '9';
+
+			if (sscanf(name.c_str() + skip, "%i.DTA", &saveNo) != 1) {
+				warning("Could not parse game filename %s", name.c_str());
+			}
+
 			saveNo += kSaveIdShift;
 
 			SavegameDesc save;
-			fillSavegameDesc(g_sci->getSavegameName(saveNo), &save);
+			if (!fillSavegameDesc(g_sci->getSavegameName(saveNo), save)) {
+				return SIGNAL_REG;
+			}
 
 			const Common::String avatarId = Common::String::format("%02d", save.avatarId);
-			const uint nameLength = Common::strnlen(save.name, SCI_MAX_SAVENAME_LENGTH);
+			const uint nameLength = Common::strnlen(save.name, kMaxSaveNameLength);
 			const uint size = nameLength + /* \r\n */ 2 + avatarId.size() + 1;
 			char *buffer = (char *)malloc(size);
 			memcpy(buffer, save.name, nameLength);
@@ -395,40 +430,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 		// catalogue, but since we do not create catalogues for most SCI32
 		// games, ignore the write
 		if (name == "temp.tmp") {
-			return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
-		}
-
-		// KQ7 tries to read out game information from catalogues directly
-		// instead of using the standard kSaveGetFiles function
-		if (name == "kq7cdsg.cat") {
-			if (mode == _K_FILE_MODE_OPEN_OR_CREATE || mode == _K_FILE_MODE_CREATE) {
-				// Suppress creation of the catalogue file, since it is not necessary
-				debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
-				return SIGNAL_REG;
-			} else if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
-				Common::Array<SavegameDesc> saves;
-				listSavegames(saves);
-
-				const uint recordSize = sizeof(int16) + SCI_MAX_SAVENAME_LENGTH;
-				const uint numSaves = MIN<uint>(saves.size(), 10);
-				const uint size = numSaves * recordSize + /* terminator */ 2;
-				byte *const buffer = (byte *)malloc(size);
-
-				byte *out = buffer;
-				for (uint i = 0; i < numSaves; ++i) {
-					WRITE_UINT16(out, saves[i].id - kSaveIdShift);
-					Common::strlcpy((char *)out + sizeof(int16), saves[i].name, SCI_MAX_SAVENAME_LENGTH);
-					out += recordSize;
-				}
-				WRITE_UINT16(out, 0xFFFF);
-
-				const uint handle = findFreeFileHandle(s);
-				s->_fileHandles[handle]._in = new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
-				s->_fileHandles[handle]._out = nullptr;
-				s->_fileHandles[handle]._name = "";
-
-				return make_reg(0, handle);
-			}
+			return make_reg(0, kVirtualFileHandleSci32Save);
 		}
 	} else if (g_sci->getGameId() == GID_PQSWAT) {
 		// PQSWAT tries to create subdirectories for each game profile
@@ -437,19 +439,98 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				*it = '_';
 			}
 		}
+	} else if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && name == "RESDUK.PAT") {
+		// Ignore the censorship password file in lieu of our game option
+		return SIGNAL_REG;
+	} else if (g_sci->getGameId() == GID_RAMA) {
+		if (name == "PREF.DAT") {
+			return SIGNAL_REG;
+		}
+
+		int saveNo = -1;
+		if (name == "911.sg" || name == "autorama.sg") {
+			saveNo = kAutoSaveId;
+		} else if (sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
+			saveNo += kSaveIdShift;
+		}
+
+		if (saveNo != -1) {
+			Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+			const Common::String fileName = g_sci->getSavegameName(saveNo);
+			Common::SeekableReadStream *in = nullptr;
+			Common::OutSaveFile *out = nullptr;
+			bool valid = false;
+
+			if (mode == kFileOpenModeOpenOrFail) {
+				in = saveFileMan->openForLoading(fileName);
+				if (in) {
+					SavegameMetadata meta;
+					if (get_savegame_metadata(in, meta)) {
+						Graphics::skipThumbnail(*in);
+						valid = true;
+					}
+					if (meta.version >= 34) {
+						g_sci->setTickCount(meta.playTime);
+					}
+				}
+			} else {
+				out = saveFileMan->openForSaving(fileName);
+				if (out) {
+					Common::String saveName;
+					if (saveNo == kAutoSaveId) {
+						saveName = _("(Autosave)");
+					} else {
+						saveName = getRamaSaveName(s, saveNo - kSaveIdShift);
+					}
+					Common::ScopedPtr<Common::SeekableReadStream> versionFile(SearchMan.createReadStreamForMember("VERSION"));
+					const Common::String gameVersion = versionFile->readLine();
+					set_savegame_metadata(out, saveName, gameVersion);
+					valid = true;
+				}
+			}
+
+			if (valid) {
+				uint handle = findFreeFileHandle(s);
+				s->_fileHandles[handle]._in = in;
+				s->_fileHandles[handle]._out = out;
+				s->_fileHandles[handle]._name = "-scummvm-save-";
+				return make_reg(0, handle);
+			}
+		}
 	}
 
 	// See kMakeSaveCatName
 	if (name == "fake.cat") {
-		return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
+		return make_reg(0, kVirtualFileHandleSci32Save);
 	}
 
 	if (isSaveCatalogue(name)) {
 		const bool exists = saveCatalogueExists(name);
 		if (exists) {
+			// KQ7 & RAMA read out game information from catalogues directly
+			// instead of using the standard kSaveGetFiles function
+			if (name == "kq7cdsg.cat" || name == "ramasg.cat") {
+				if (mode == kFileOpenModeOpenOrCreate || mode == kFileOpenModeCreate) {
+					// Suppress creation of the catalogue file, since it is not necessary
+					debugC(kDebugLevelFile, "Not creating unused file %s", name.c_str());
+					return SIGNAL_REG;
+				} else if (mode == kFileOpenModeOpenOrFail) {
+					const uint handle = findFreeFileHandle(s);
+
+					if (name == "kq7cdsg.cat") {
+						s->_fileHandles[handle]._in = makeCatalogue(10, kMaxSaveNameLength, "", false);
+					} else {
+						s->_fileHandles[handle]._in = makeCatalogue(100, 20, "ramasg.%d", true);
+					}
+					s->_fileHandles[handle]._out = nullptr;
+					s->_fileHandles[handle]._name = "";
+					return make_reg(0, handle);
+				}
+			}
+
 			// Dummy handle is used to represent the catalogue and ignore any
 			// direct game script writes
-			return make_reg(0, VIRTUALFILE_HANDLE_SCI32SAVE);
+			return make_reg(0, kVirtualFileHandleSci32Save);
 		} else {
 			return SIGNAL_REG;
 		}
@@ -460,7 +541,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 
 	if (name.hasPrefix("sciAudio\\")) {
 		// fan-made sciAudio extension, don't create those files and instead return a virtual handle
-		return make_reg(0, VIRTUALFILE_HANDLE_SCIAUDIO);
+		return make_reg(0, kVirtualFileHandleSciAudio);
 	}
 
 	// QFG import rooms get a virtual filelisting instead of an actual one
@@ -483,7 +564,7 @@ reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
 
 	uint16 handle = argv[0].toUint16();
 
-	if (handle >= VIRTUALFILE_HANDLE_START) {
+	if (handle >= kVirtualFileHandleStart) {
 		// it's a virtual handle? ignore it
 		return getSciVersion() >= SCI_VERSION_2 ? TRUE_REG : SIGNAL_REG;
 	}
@@ -527,7 +608,7 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	uint16 size = argv[2].toUint16();
 
 #ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
+	if (handle == kVirtualFileHandleSci32Save) {
 		return make_reg(0, size);
 	}
 #endif
@@ -588,11 +669,15 @@ reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
 		result = saveFileMan->removeSavefile(name);
 #ifdef ENABLE_SCI32
 	} else if (getSciVersion() >= SCI_VERSION_2) {
-		// Special case for KQ7, basically identical to the SQ4 case above,
-		// where the game hardcodes its save game names
-		if (name.hasPrefix("kq7cdsg.")) {
-			int saveNo = atoi(name.c_str() + name.size() - 3);
+		// Special cases for KQ7 & RAMA, basically identical to the SQ4 case
+		// above, where the game hardcodes its save game names
+		int saveNo;
+		if (sscanf(name.c_str(), "kq7cdsg.%i", &saveNo) == 1 ||
+			sscanf(name.c_str(), "ramasg.%i", &saveNo) == 1) {
+
 			name = g_sci->getSavegameName(saveNo + kSaveIdShift);
+		} else if (g_sci->getGameId() == GID_RAMA && (name == "911.sg" || name == "autorama.sg")) {
+			name = g_sci->getSavegameName(kAutoSaveId);
 		}
 
 		// The file name may be already wrapped, so check both cases
@@ -661,7 +746,7 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 	// We skip creating these files, and instead handle the calls
 	// directly. Since the sciAudio calls are only creating text files,
 	// this is probably the most straightforward place to handle them.
-	if (handle == VIRTUALFILE_HANDLE_SCIAUDIO) {
+	if (handle == kVirtualFileHandleSciAudio) {
 		Common::List<ExecStack>::const_iterator iter = s->_executionStack.reverse_begin();
 		iter--;	// sciAudio
 		iter--;	// sciAudio child
@@ -744,10 +829,24 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		return saveCatalogueExists(name) ? TRUE_REG : NULL_REG;
 	}
 
-	// LSL7 checks to see if the autosave save exists when deciding whether to
-	// go to the main menu or not on startup
+	int findSaveNo = -1;
+
 	if (g_sci->getGameId() == GID_LSL7 && name == "autosvsg.000") {
-		return g_sci->getSaveFileManager()->listSavefiles(g_sci->getSavegameName(0)).empty() ? NULL_REG : TRUE_REG;
+		// LSL7 checks to see if the autosave save exists when deciding whether
+		// to go to the main menu or not on startup
+		findSaveNo = kAutoSaveId;
+	} else if (g_sci->getGameId() == GID_RAMA) {
+		// RAMA checks to see if save game files exist before showing them in
+		// the native save/load dialogue
+		if (name == "autorama.sg") {
+			findSaveNo = kAutoSaveId;
+		} else if (sscanf(name.c_str(), "ramasg.%i", &findSaveNo) == 1) {
+			findSaveNo += kSaveIdShift;
+		}
+	}
+
+	if (findSaveNo != -1) {
+		return g_sci->getSaveFileManager()->listSavefiles(g_sci->getSavegameName(findSaveNo)).empty() ? NULL_REG : TRUE_REG;
 	}
 #endif
 
@@ -852,22 +951,45 @@ reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv) {
 	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 	if (!f)
-		return NULL_REG;
-	return make_reg(0, f->_in->readUint16LE());
+		return s->r_acc;
+
+	reg_t value;
+	if (f->_name == "-scummvm-save-") {
+		value._segment = f->_in->readUint16LE();
+		value._offset = f->_in->readUint16LE();
+	} else {
+		value = make_reg(0, f->_in->readUint16LE());
+	}
+
+	if (f->_in->err()) {
+		return s->r_acc;
+	}
+
+	return value;
 }
 
 reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
-	uint16 handle = argv[0].toUint16();
+	const uint16 handle = argv[0].toUint16();
 
-#ifdef ENABLE_SCI32
-	if (handle == VIRTUALFILE_HANDLE_SCI32SAVE) {
+	if (handle == kVirtualFileHandleSci32Save) {
 		return s->r_acc;
 	}
-#endif
 
 	FileHandle *f = getFileFromHandle(s, handle);
-	if (f)
+	if (!f) {
+		return s->r_acc;
+	}
+
+	if (f->_name == "-scummvm-save-") {
+		f->_out->writeUint16LE(argv[1]._segment);
+		f->_out->writeUint16LE(argv[1]._offset);
+	} else {
+		if (argv[1].isPointer()) {
+			error("kFileIO(WriteWord): Attempt to write non-number %04x:%04x to non-save file", PRINT_REG(argv[1]));
+		}
 		f->_out->writeUint16LE(argv[1].toUint16());
+	}
+
 	return s->r_acc;
 }
 
@@ -1162,7 +1284,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
-	uint totalSaves = MIN<uint>(saves.size(), MAX_SAVEGAME_NR);
+	uint totalSaves = MIN<uint>(saves.size(), kMaxNumSaveGames);
 
 	Common::String game_id = s->_segMan->getString(argv[0]);
 
@@ -1175,14 +1297,14 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 		totalSaves = 0;
 	}
 
-	const uint bufSize = (totalSaves * SCI_MAX_SAVENAME_LENGTH) + 1;
+	const uint bufSize = (totalSaves * kMaxSaveNameLength) + 1;
 	char *saveNames = new char[bufSize];
 	char *saveNamePtr = saveNames;
 
 	for (uint i = 0; i < totalSaves; i++) {
 		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame ID (see above)
 		strcpy(saveNamePtr, saves[i].name);
-		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
+		saveNamePtr += kMaxSaveNameLength;
 	}
 
 	*saveNamePtr = 0; // Terminate list
@@ -1215,19 +1337,19 @@ reg_t kSaveGame32(EngineState *s, int argc, reg_t *argv) {
 		saveNo += kSaveIdShift;
 	}
 
-	if (g_sci->getGameId() == GID_LIGHTHOUSE && gameName == "rst") {
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA2 && s->callInStack(g_sci->getGameObject(), SELECTOR(bookMark))) {
+		saveNo = kAutoSaveId;
+	} else if (g_sci->getGameId() == GID_LIGHTHOUSE && gameName == "rst") {
 		saveNo = kNewGameId;
-	}
-
-	// Auto-save system used by QFG4
-	if (g_sci->getGameId() == GID_QFG4) {
+	} else if (g_sci->getGameId() == GID_QFG4) {
+		// Auto-save system used by QFG4
 		reg_t autoSaveNameId;
 		SciArray &autoSaveName = *s->_segMan->allocateArray(kArrayTypeString, 0, &autoSaveNameId);
 		MessageTuple autoSaveNameTuple(0, 0, 16, 1);
 		s->_msgState->getMessage(0, autoSaveNameTuple, autoSaveNameId);
 
 		if (saveDescription == autoSaveName.toString()) {
-			saveNo = 0;
+			saveNo = kAutoSaveId;
 		}
 
 		s->_segMan->freeArray(autoSaveNameId);
@@ -1309,7 +1431,7 @@ reg_t kCheckSaveGame32(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	SavegameDesc save;
-	if (!fillSavegameDesc(g_sci->getSavegameName(saveNo), &save)) {
+	if (!fillSavegameDesc(g_sci->getSavegameName(saveNo), save)) {
 		return NULL_REG;
 	}
 
@@ -1357,17 +1479,19 @@ reg_t kGetSaveFiles32(EngineState *s, int argc, reg_t *argv) {
 
 	// Normally SSCI limits to 20 games per directory, but ScummVM allows more
 	// than that with games that use the standard save-load dialogue
-	descriptions.resize(SCI_MAX_SAVENAME_LENGTH * saves.size() + 1, true);
+	descriptions.resize(kMaxSaveNameLength * saves.size() + 1, true);
 	saveIds.resize(saves.size() + 1, true);
 
 	for (uint i = 0; i < saves.size(); ++i) {
 		const SavegameDesc &save = saves[i];
-		char *target = &descriptions.charAt(SCI_MAX_SAVENAME_LENGTH * i);
-		Common::strlcpy(target, save.name, SCI_MAX_SAVENAME_LENGTH);
+		char *target = &descriptions.charAt(kMaxSaveNameLength * i);
+		// At least Phant2 requires use of strncpy, since it creates save game
+		// names of exactly kMaxSaveNameLength
+		strncpy(target, save.name, kMaxSaveNameLength);
 		saveIds.setFromInt16(i, save.id - kSaveIdShift);
 	}
 
-	descriptions.charAt(SCI_MAX_SAVENAME_LENGTH * saves.size()) = '\0';
+	descriptions.charAt(kMaxSaveNameLength * saves.size()) = '\0';
 	saveIds.setFromInt16(saves.size(), 0);
 
 	return make_reg(0, saves.size());

@@ -106,7 +106,7 @@ GraphicsManager::~GraphicsManager() {
 void GraphicsManager::setGraphicalMode(int width, int height) {
 	if (!_initGraphicsFl) {
 		Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
-		initGraphics(width, height, true, &pixelFormat16);
+		initGraphics(width, height, &pixelFormat16);
 
 		// Init surfaces
 		_backBuffer = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);

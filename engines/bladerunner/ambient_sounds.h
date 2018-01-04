@@ -30,23 +30,21 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class AmbientSounds {
-	BladeRunnerEngine *_vm;
-
 	struct NonLoopingSound {
 		bool   isActive;
 		char   name[13];
 		int32  hash;
-		int32  audio_player_track;
-		int32  time1;
-		int32  time2;
+		int32  audioPlayerTrack;
+		int32  timeMin;
+		int32  timeMax;
 		uint32 nextPlayTime;
-		int32  volume1;
-		int32  volume2;
+		int32  volumeMin;
+		int32  volumeMax;
 		int32  volume;
-		int32  pan1begin;
-		int32  pan1end;
-		int32  pan2begin;
-		int32  pan2end;
+		int32  panStartMin;
+		int32  panStartMax;
+		int32  panEndMin;
+		int32  panEndMax;
 		int32  priority;
 	};
 
@@ -54,8 +52,12 @@ class AmbientSounds {
 		bool  isActive;
 		char  name[13];
 		int32 hash;
+		int   audioPlayerTrack;
 		int32 volume;
+		int   pan;
 	};
+
+	BladeRunnerEngine *_vm;
 
 	NonLoopingSound *_nonLoopingSounds;
 	LoopingSound    *_loopingSounds;
@@ -66,25 +68,31 @@ public:
 	~AmbientSounds();
 
 	void addSound(
-		int id,
-		int timeRangeBegin, int timeRangeEnd,
-		int volumeRangeBegin, int volumeRangeEnd,
-		int pan1begin, int pan1end,
-		int pan2begin, int pan2end,
-		int priority, int unk3
+		int sfxId,
+		int timeMin, int timeMax,
+		int volumeMin, int volumeMax,
+		int panStartMin, int panStartMax,
+		int panEndMin, int panEndMax,
+		int priority, int unk
 	);
-	// removeSound
-	// addSpeechSound
-	// removeSpeechSound
-	// playSound
-	// playSpeech
-	// removeAllNonLoopingSounds
+	void removeNonLoopingSound(int sfxId, bool stopPlaying);
+	void removeAllNonLoopingSounds(bool stopPlaying);
 
-	// addLoopingSound
-	void addLoopingSound(int sfx_id, int volume, int unk, int fadeInTime);
-	// adjustLoopingSound
-	// removeLoopingSound
-	// removeAllLoopingSounds
+	void addSpeech(
+		int actorId, int sentenceId,
+		int timeMin, int timeMax,
+		int volumeMin, int volumeMax,
+		int panStartMin, int panStartMax,
+		int panEndMin, int panEndMax,
+		int priority, int unk);
+	void playSound(int sfxId, int volume, int panStart, int panEnd, int priority);
+
+	void addLoopingSound(int sfxId, int volume, int pan, int delay);
+	void adjustLoopingSound(int sfxId, int volume, int pan, int delay);
+	// it seems there is little confusion in original code about delay parameter,
+	// sometimes it is used as boolean in same way as stopPlaying from non looping
+	void removeLoopingSound(int sfxId, int delay);
+	void removeAllLoopingSounds(int delay);
 
 	void tick();
 
@@ -108,11 +116,14 @@ private:
 
 	void addSoundByName(
 		const char *name,
-		int timeRangeBegin, int timeRangeEnd,
-		int volumeRangeBegin, int volumeRangeEnd,
-		int unk1RangeBegin, int unk1RangeEnd,
-		int unk2RangeBegin, int unk2RangeEnd,
-		int priority, int unk3);
+		int timeMin, int timeMax,
+		int volumeMin, int volumeMax,
+		int panStartMin, int panStartMax,
+		int panEndMin, int panEndMax,
+		int priority, int unk);
+
+	void removeNonLoopingSoundByIndex(int index, bool stopPlaying);
+	void removeLoopingSoundByIndex(int index, int delay);
 };
 
 } // End of namespace BladeRunner

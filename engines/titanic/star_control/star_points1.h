@@ -23,13 +23,13 @@
 #ifndef TITANIC_STAR_POINTS1_H
 #define TITANIC_STAR_POINTS1_H
 
-#include "common/array.h"
-#include "titanic/star_control/surface_area.h"
 #include "titanic/star_control/fvector.h"
+#include "common/array.h"
 
 namespace Titanic {
 
 class CStarCamera;
+class CSurfaceArea;
 
 class CStarPoints1 {
 	struct CStarPointEntry : public FVector {

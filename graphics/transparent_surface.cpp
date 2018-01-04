@@ -62,6 +62,7 @@ void doBlitBinaryFast(byte *ino, byte *outo, uint32 width, uint32 height, uint32
 void doBlitAlphaBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 void doBlitAdditiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
+void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color);
 
 TransparentSurface::TransparentSurface() : Surface(), _alphaMode(ALPHA_FULL) {}
 
@@ -326,6 +327,72 @@ void doBlitSubtractiveBlend(byte *ino, byte *outo, uint32 width, uint32 height, 
 	}
 }
 
+/**
+ * Optimized version of doBlit to be used with multiply blended blitting
+ */
+void doBlitMultiplyBlend(byte *ino, byte *outo, uint32 width, uint32 height, uint32 pitch, int32 inStep, int32 inoStep, uint32 color) {
+	byte *in;
+	byte *out;
+
+	if (color == 0xffffffff) {
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				if (in[kAIndex] != 0) {
+					out[kRIndex] = MIN((in[kRIndex] * in[kAIndex] >> 8) * out[kRIndex] >> 8, 255);
+					out[kGIndex] = MIN((in[kGIndex] * in[kAIndex] >> 8) * out[kGIndex] >> 8, 255);
+					out[kBIndex] = MIN((in[kBIndex] * in[kAIndex] >> 8) * out[kBIndex] >> 8, 255);
+				}
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	} else {
+		byte ca = (color >> kAModShift) & 0xFF;
+		byte cr = (color >> kRModShift) & 0xFF;
+		byte cg = (color >> kGModShift) & 0xFF;
+		byte cb = (color >> kBModShift) & 0xFF;
+
+		for (uint32 i = 0; i < height; i++) {
+			out = outo;
+			in = ino;
+			for (uint32 j = 0; j < width; j++) {
+
+				uint32 ina = in[kAIndex] * ca >> 8;
+
+				if (cb != 255) {
+					out[kBIndex] = MIN<uint>(out[kBIndex] * ((in[kBIndex] * cb * ina) >> 16) >> 8, 255u);
+				} else {
+					out[kBIndex] = MIN<uint>(out[kBIndex] * (in[kBIndex] * ina >> 8) >> 8, 255u);
+				}
+
+				if (cg != 255) {
+					out[kGIndex] = MIN<uint>(out[kGIndex] * ((in[kGIndex] * cg * ina) >> 16) >> 8, 255u);
+				} else {
+					out[kGIndex] = MIN<uint>(out[kGIndex] * (in[kGIndex] * ina >> 8) >> 8, 255u);
+				}
+
+				if (cr != 255) {
+					out[kRIndex] = MIN<uint>(out[kRIndex] * ((in[kRIndex] * cr * ina) >> 16) >> 8, 255u);
+				} else {
+					out[kRIndex] = MIN<uint>(out[kRIndex] * (in[kRIndex] * ina >> 8) >> 8, 255u);
+				}
+
+				in += inStep;
+				out += 4;
+			}
+			outo += pitch;
+			ino += inoStep;
+		}
+	}
+
+}
+
 Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int posY, int flipping, Common::Rect *pPartRect, uint color, int width, int height, TSpriteBlendMode blendMode) {
 
 	Common::Rect retSize;
@@ -400,19 +467,31 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	// Handle off-screen clipping
 	if (posY < 0) {
 		img->h = MAX(0, (int)img->h - -posY);
-		img->setPixels((byte *)img->getBasePtr(0, -posY));
+		if (!(flipping & FLIP_V))
+			img->setPixels((byte *)img->getBasePtr(0, -posY));
 		posY = 0;
 	}
 
 	if (posX < 0) {
 		img->w = MAX(0, (int)img->w - -posX);
-		img->setPixels((byte *)img->getBasePtr(-posX, 0));
+		if (!(flipping & FLIP_H))
+			img->setPixels((byte *)img->getBasePtr(-posX, 0));
 		posX = 0;
 	}
 
-	img->w = CLIP((int)img->w, 0, (int)MAX((int)target.w - posX, 0));
-	img->h = CLIP((int)img->h, 0, (int)MAX((int)target.h - posY, 0));
+	if (img->w > target.w - posX) {
+		if (flipping & FLIP_H)
+			img->setPixels((byte *)img->getBasePtr(img->w - target.w + posX, 0));
+		img->w = CLIP((int)img->w, 0, (int)MAX((int)target.w - posX, 0));
+	}
 
+	if (img->h > target.h - posY) {
+		if (flipping & FLIP_V)
+			img->setPixels((byte *)img->getBasePtr(0, img->h - target.h + posY));
+		img->h = CLIP((int)img->h, 0, (int)MAX((int)target.h - posY, 0));
+	}
+
+	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
 		int xp = 0, yp = 0;
 
@@ -440,6 +519,8 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else if (blendMode == BLEND_MULTIPLY) {
+				doBlitMultiplyBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
@@ -533,19 +614,31 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 	// Handle off-screen clipping
 	if (posY < clippingArea.top) {
 		img->h = MAX(0, (int)img->h - (clippingArea.top - posY));
-		img->setPixels((byte *)img->getBasePtr(0, clippingArea.top - posY));
+		if (!(flipping & FLIP_V))
+			img->setPixels((byte *)img->getBasePtr(0, clippingArea.top - posY));
 		posY = clippingArea.top;
 	}
 
 	if (posX < clippingArea.left) {
 		img->w = MAX(0, (int)img->w - (clippingArea.left - posX));
-		img->setPixels((byte *)img->getBasePtr(clippingArea.left - posX, 0));
+		if (!(flipping & FLIP_H))
+			img->setPixels((byte *)img->getBasePtr(clippingArea.left - posX, 0));
 		posX = clippingArea.left;
 	}
 
-	img->w = CLIP((int)img->w, 0, (int)MAX((int)clippingArea.right - posX, 0));
-	img->h = CLIP((int)img->h, 0, (int)MAX((int)clippingArea.bottom - posY, 0));
+	if (img->w > clippingArea.right - posX) {
+		if (flipping & FLIP_H)
+			img->setPixels((byte *)img->getBasePtr(img->w - clippingArea.right + posX, 0));
+		img->w = CLIP((int)img->w, 0, (int)MAX((int)clippingArea.right - posX, 0));
+	}
 
+	if (img->h > clippingArea.bottom - posY) {
+		if (flipping & FLIP_V)
+			img->setPixels((byte *)img->getBasePtr(0, img->h - clippingArea.bottom + posY));
+		img->h = CLIP((int)img->h, 0, (int)MAX((int)clippingArea.bottom - posY, 0));
+	}
+
+	// Flip surface
 	if ((img->w > 0) && (img->h > 0)) {
 		int xp = 0, yp = 0;
 
@@ -573,6 +666,8 @@ Common::Rect TransparentSurface::blitClip(Graphics::Surface &target, Common::Rec
 				doBlitAdditiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else if (blendMode == BLEND_SUBTRACTIVE) {
 				doBlitSubtractiveBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
+			} else if (blendMode == BLEND_MULTIPLY) {
+				doBlitMultiplyBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
 			} else {
 				assert(blendMode == BLEND_NORMAL);
 				doBlitAlphaBlend(ino, outo, img->w, img->h, target.pitch, inStep, inoStep, color);
@@ -793,21 +888,17 @@ TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transf
 template <TFilteringMode filteringMode>
 TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight) const {
 
-	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
-	Common::Rect dstRect(0, 0, (int16)newWidth, (int16)newHeight);
-
 	TransparentSurface *target = new TransparentSurface();
 
-	assert(format.bytesPerPixel == 4);
+	int srcW = w;
+	int srcH = h;
+	int dstW = newWidth;
+	int dstH = newHeight;
 
-	int srcW = srcRect.width();
-	int srcH = srcRect.height();
-	int dstW = dstRect.width();
-	int dstH = dstRect.height();
-
-	target->create((uint16)dstW, (uint16)dstH, this->format);
+	target->create((uint16)dstW, (uint16)dstH, format);
 
 	if (filteringMode == FILTER_BILINEAR) {
+		assert(format.bytesPerPixel == 4);
 
 		bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
 
@@ -954,25 +1045,29 @@ TransparentSurface *TransparentSurface::scaleT(uint16 newWidth, uint16 newHeight
 		delete[] say;
 
 	} else {
-
 		int *scaleCacheX = new int[dstW];
 		for (int x = 0; x < dstW; x++) {
 			scaleCacheX[x] = (x * srcW) / dstW;
 		}
 
-		for (int y = 0; y < dstH; y++) {
-			uint32 *destP = (uint32 *)target->getBasePtr(0, y);
-			const uint32 *srcP = (const uint32 *)getBasePtr(0, (y * srcH) / dstH);
-			for (int x = 0; x < dstW; x++) {
-				*destP++ = srcP[scaleCacheX[x]];
-			}
+		switch (format.bytesPerPixel) {
+		case 1:
+			scaleNN<uint8>(scaleCacheX, target);
+			break;
+		case 2:
+			scaleNN<uint16>(scaleCacheX, target);
+			break;
+		case 4:
+			scaleNN<uint32>(scaleCacheX, target);
+			break;
+		default:
+			error("Can only scale 8bpp, 16bpp, and 32bpp");
 		}
-		delete[] scaleCacheX;
 
+		delete[] scaleCacheX;
 	}
 
 	return target;
-
 }
 
 TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, const byte *palette) const {
@@ -1053,11 +1148,25 @@ TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, 
 	return surface;
 }
 
+template <typename Size>
+void TransparentSurface::scaleNN(int *scaleCacheX, TransparentSurface *target) const {
+	for (int y = 0; y < target->h; y++) {
+		Size *destP = (Size *)target->getBasePtr(0, y);
+		const Size *srcP = (const Size *)getBasePtr(0, (y * h) / target->h);
+		for (int x = 0; x < target->w; x++) {
+			*destP++ = srcP[scaleCacheX[x]];
+		}
+	}
+}
 
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_NEAREST>(const TransformStruct &transform) const;
 template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_BILINEAR>(const TransformStruct &transform) const;
 template TransparentSurface *TransparentSurface::scaleT<FILTER_NEAREST>(uint16 newWidth, uint16 newHeight) const;
 template TransparentSurface *TransparentSurface::scaleT<FILTER_BILINEAR>(uint16 newWidth, uint16 newHeight) const;
+
+template void TransparentSurface::scaleNN<uint8>(int *scaleCacheX, TransparentSurface *target) const;
+template void TransparentSurface::scaleNN<uint16>(int *scaleCacheX, TransparentSurface *target) const;
+template void TransparentSurface::scaleNN<uint32>(int *scaleCacheX, TransparentSurface *target) const;
 
 TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
 	return rotoscaleT<FILTER_BILINEAR>(transform);

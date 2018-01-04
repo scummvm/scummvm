@@ -27,6 +27,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "xeen/combat.h"
+#include "xeen/files.h"
 #include "xeen/party.h"
 #include "xeen/scripts.h"
 #include "xeen/sprites.h"
@@ -114,7 +115,7 @@ public:
 
 	void clear();
 
-	void synchronize(Common::SeekableReadStream &s);
+	void synchronize(XeenSerializer &s);
 
 	int &operator[](int idx);
 };
@@ -132,7 +133,10 @@ public:
 public:
 	MazeDifficulties();
 
-	void synchronize(Common::SeekableReadStream &s);
+	/**
+	 * Synchronizes data for the item
+	 */
+	void synchronize(XeenSerializer &s);
 };
 
 enum MazeFlags {
@@ -208,7 +212,10 @@ public:
 
 	void clear();
 
-	void synchronize(Common::SeekableReadStream &s);
+	/**
+	 * Synchronize data for the maze data
+	 */
+	void synchronize(XeenSerializer &s);
 
 	/**
 	 * Flags all tiles for the map as having been stepped on
@@ -226,7 +233,15 @@ public:
 public:
 	MobStruct();
 
+	/**
+	 * Synchronizes the data for the item
+	 */
 	bool synchronize(XeenSerializer &s);
+
+	/**
+	 * Sets up the entry as an end of list marker
+	 */
+	void endOfList();
 };
 
 struct MazeObject {
@@ -248,7 +263,7 @@ struct MazeMonster {
 	int _id;
 	int _spriteId;
 	bool _isAttacking;
-	int _damageType;
+	DamageType _damageType;
 	int _field9;
 	int _fieldA;
 	int _hp;
@@ -314,7 +329,20 @@ public:
 public:
 	MonsterObjectData(XeenEngine *vm);
 
+	/**
+	 * Synchronizes the data
+	 */
 	void synchronize(XeenSerializer &s, MonsterData &monsterData);
+
+	/**
+	 * Clears the current list of monster sprites
+	 */
+	void clearMonsterSprites();
+
+	/**
+	 * Load the normal and attack sprites for a given monster
+	 */
+	void addMonsterSprites(MazeMonster &monster);
 };
 
 class HeadData {
@@ -375,12 +403,28 @@ private:
 	int _sidePictures;
 	int _sideObjects;
 	int _sideMonsters;
+	int _sideMusic;
 	int _mazeDataIndex;
 
 	/**
 	 * Load the events for a new map
 	 */
 	void loadEvents(int mapId);
+
+	/**
+	 * Save the events for a map
+	 */
+	void saveEvents();
+
+	/**
+	 * Save the monster data for a map
+	 */
+	void saveMonsters();
+
+	/**
+	 * Save the map data
+	 */
+	void saveMap();
 public:
 	Common::String _mazeName;
 	bool _isOutdoors;
@@ -419,6 +463,9 @@ public:
 
 	void setWall(const Common::Point &pt, Direction dir, int v);
 
+	/**
+	 * Saves all changeable maze data to the in-memory save state
+	 */
 	void saveMaze();
 
 	int getCell(int idx);

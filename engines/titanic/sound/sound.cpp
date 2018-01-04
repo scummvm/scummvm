@@ -26,9 +26,20 @@
 
 namespace Titanic {
 
+CSoundItem::~CSoundItem() {
+	delete _waveFile;
+}
+
+/*------------------------------------------------------------------------*/
+
 CSound::CSound(CGameManager *owner, Audio::Mixer *mixer) :
 		_gameManager(owner), _soundManager(mixer) {
 	g_vm->_movieManager.setSoundManager(&_soundManager);
+}
+
+CSound::~CSound() {
+	_soundManager.qsWaveMixCloseSession();
+	_sounds.destroyContents();
 }
 
 void CSound::save(SimpleFile *file) const {
@@ -129,7 +140,6 @@ CWaveFile *CSound::loadSound(const CString &name) {
 			// Found it, so move it to the front of the list and return
 			_sounds.remove(soundItem);
 			_sounds.push_front(soundItem);
-			soundItem->_waveFile->reset();
 			return soundItem->_waveFile;
 		}
 	}
@@ -211,8 +221,10 @@ int CSound::playSpeech(CDialogueFile *dialogueFile, int speechId, CProximity &pr
 		return -1;
 
 	prox._soundDuration = waveFile->getDurationTicks();
-	activateSound(waveFile, prox._disposeAfterUse);
+	if (prox._soundType != Audio::Mixer::kPlainSoundType)
+		waveFile->_soundType = prox._soundType;
 
+	activateSound(waveFile, prox._disposeAfterUse);
 	return _soundManager.playSound(*waveFile, prox);
 }
 

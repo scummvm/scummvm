@@ -21,21 +21,27 @@
  */
 
 #include "titanic/star_control/viewport.h"
+#include "titanic/star_control/fvector.h"
+#include "titanic/debugger.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
 
 CViewport::CViewport() {
-	_fieldC = 0;
-	_field10 = 800.0;
-	_field14 = 10000.0;
-	_field18 = 20.0;
-	_field1C = 20.0;
+	_fieldC = 0; // doesn't get used
+	_field10 = 800.0; // doesn't get used
+	_field14 = 10000.0; // doesn't get used
+	_centerYAngleDegrees = 20.0;
+	_centerZAngleDegrees = 20.0;
 	_width = 600;
 	_height = 340;
-	_field24 = 0;
-	_flag = false;
-	Common::fill(&_valArray[0], &_valArray[5], 0.0);
+	_starColor = PINK; // default for starview
+	_poseUpToDate = false;
+	Common::fill(&_valArray[0], &_valArray[2], 0.0);
+	_isZero = 0.0; // seems to always be zero
+	_pixel1OffSetX = 0.0;
+	_pixel2OffSetX = 0.0;
 }
 
 CViewport::CViewport(CViewport *src) :
@@ -44,17 +50,20 @@ CViewport::CViewport(CViewport *src) :
 	_fieldC = src->_fieldC;
 	_field10 = src->_field10;
 	_field14 = src->_field14;
-	_field18 = src->_field18;
-	_field1C = src->_field1C;
+	_centerYAngleDegrees = src->_centerYAngleDegrees;
+	_centerZAngleDegrees = src->_centerZAngleDegrees;
 	_width = src->_width;
 	_height = src->_height;
 
 	_center = src->_center;
 	_centerVector = src->_centerVector;
-	_field24 = src->_field24;
+	_starColor = src->_starColor;
 
-	Common::copy(&src->_valArray[0], &src->_valArray[5], &_valArray[0]);
-	_flag = false;
+	Common::copy(&src->_valArray[0], &src->_valArray[2], &_valArray[0]);
+	_isZero = src->_isZero;
+	_pixel1OffSetX = src->_pixel1OffSetX;
+	_pixel2OffSetX = src->_pixel2OffSetX;
+	_poseUpToDate = false;
 }
 
 void CViewport::copyFrom(const CViewport *src) {
@@ -68,19 +77,24 @@ void CViewport::load(SimpleFile *file, int param) {
 	_fieldC = file->readFloat();
 	_field10 = file->readFloat();
 	_field14 = file->readFloat();
-	_field18 = file->readFloat();
-	_field1C = file->readFloat();
+	_centerYAngleDegrees = file->readFloat();
+	_centerZAngleDegrees = file->readFloat();
 
 	int widthHeight = file->readNumber();
 	_width = widthHeight & 0xffff;
 	_height = widthHeight >> 16;
-	_field24 = file->readNumber();
+	int field24 = file->readNumber(); //0 = White, 2 = Pink
+	_starColor = (StarColor) field24;
 
-	for (int idx = 0; idx < 5; ++idx)
+	for (int idx = 0; idx < 2; ++idx)
 		_valArray[idx] = file->readFloat();
 
+	_isZero = file->readFloat();
+	_pixel1OffSetX = file->readFloat();
+	_pixel2OffSetX = file->readFloat();
+
 	_orientation.load(file, param);
-	_flag = false;
+	_poseUpToDate = false;
 }
 
 void CViewport::save(SimpleFile *file, int indent) {
@@ -90,12 +104,18 @@ void CViewport::save(SimpleFile *file, int indent) {
 	file->writeFloatLine(_fieldC, indent);
 	file->writeFloatLine(_field10, indent);
 	file->writeFloatLine(_field14, indent);
-	file->writeFloatLine(_field18, indent);
-	file->writeFloatLine(_field1C, indent);
+	file->writeFloatLine(_centerYAngleDegrees, indent);
+	file->writeFloatLine(_centerZAngleDegrees, indent);
 	file->writeNumberLine(_width | (_height << 16), indent);
+	int field24 = (int) _starColor;
+	file->writeNumberLine(field24, indent);
 
-	for (int idx = 0; idx < 5; ++idx)
+	for (int idx = 0; idx < 2; ++idx)
 		file->writeFloatLine(_valArray[idx], indent);
+
+	file->writeFloatLine(_isZero, indent);
+	file->writeFloatLine(_pixel1OffSetX, indent);
+	file->writeFloatLine(_pixel2OffSetX, indent);
 
 	_orientation.save(file, indent);
 }
@@ -103,158 +123,184 @@ void CViewport::save(SimpleFile *file, int indent) {
 void CViewport::setPosition(const FVector &v) {
 	debugC(DEBUG_INTERMEDIATE, kDebugStarfield, "Setting starmap position to %s", v.toString().c_str());
 	_position = v;
-	_flag = false;
+	_poseUpToDate = false;
 }
 
 void CViewport::setPosition(const FPose &pose) {
-	_position = _position.fn5(pose);
-	_flag = false;
+	_position = _position.matProdRowVect(pose);
+	_poseUpToDate = false;
 }
 
 void CViewport::setOrientation(const FMatrix &m) {
 	_orientation = m;
-	_flag = false;
+	_poseUpToDate = false;
 }
 
 void CViewport::setOrientation(const FVector &v) {
 	_orientation.set(v);
-	_flag = false;
+	_poseUpToDate = false;
 }
 
+// This never gets called
 void CViewport::setC(double v) {
 	_fieldC = v;
-	_flag = false;
+	_poseUpToDate = false;
 }
 
+// This never gets called
 void CViewport::set10(double v) {
 	_field10 = v;
-	_flag = false;
+	_poseUpToDate = false;
 }
 
+// This never gets called
 void CViewport::set14(double v) {
 	_field10 = v;
 }
 
-void CViewport::set18(double v) {
-	_field18 = v;
-	_flag = false;
+void CViewport::setCenterYAngle(double angleDegrees) {
+	_centerYAngleDegrees = angleDegrees;
+	_poseUpToDate = false;
 }
 
-void CViewport::set1C(double v) {
-	_field1C = v;
-	_flag = false;
+void CViewport::setCenterZAngle(double angleDegrees) {
+	_centerZAngleDegrees = angleDegrees;
+	_poseUpToDate = false;
 }
 
-void CViewport::fn12() {
+void CViewport::randomizeOrientation() {
 	_orientation.identity();
 
-	FPose m1(X_AXIS, g_vm->getRandomNumber(359));
-	FPose m2(Y_AXIS, g_vm->getRandomNumber(359));
-	FPose m3(Z_AXIS, g_vm->getRandomNumber(359));
+	double ranRotAngleX = g_vm->getRandomNumber(359);
+	double ranRotAngleY = g_vm->getRandomNumber(359);
+	double ranRotAngleZ = g_vm->getRandomNumber(359);
+
+	FPose m1(X_AXIS, ranRotAngleX);
+	FPose m2(Y_AXIS, ranRotAngleY);
+	FPose m3(Z_AXIS, ranRotAngleZ);
 	
 	FPose s1(m1, m2);
 	FPose s2(s1, m3);
 
-	m1.copyFrom(s2);
-	_orientation.fn2(m1);
-	_flag = false;
+	_orientation.matRProd(s2);
+	_poseUpToDate = false;
 }
 
-void CViewport::fn13(StarMode mode, double val) {
+void CViewport::changeStarColorPixel(StarMode mode, double pixelOffSet) {
+	// pixelOffset is usually 0.0, 30.0, or 28000.0 
 	if (mode == MODE_PHOTO) {
-		_valArray[0] = val;
-		_valArray[1] = -val;
+		_valArray[0] = pixelOffSet;
+		_valArray[1] = -pixelOffSet;
 	} else {
-		_valArray[3] = val;
-		_valArray[4] = -val;
+		_pixel1OffSetX = pixelOffSet;
+		_pixel2OffSetX = -pixelOffSet;
 	}
 
-	_valArray[2] = 0.0;
-	_field24 = val ? 2 : 0;
+	_isZero = 0.0;
+	_starColor = pixelOffSet ? PINK : WHITE;
 }
 
 void CViewport::reposition(double factor) {
 	_position._x = _orientation._row3._x * factor + _position._x;
 	_position._y = _orientation._row3._y * factor + _position._y;
 	_position._z = _orientation._row3._z * factor + _position._z;
-	_flag = false;
+	_poseUpToDate = false;
 }
 
-void CViewport::fn15(const FMatrix &matrix) {
-	_orientation.fn3(matrix);
-	_flag = false;
+void CViewport::changeOrientation(const FMatrix &matrix) {
+	_orientation.matLProd(matrix);
+	_poseUpToDate = false;
 }
 
 FPose CViewport::getPose() {
-	if (!_flag)
+	if (!_poseUpToDate)
 		reset();
 
 	return _currentPose;
 }
 
 FPose CViewport::getRawPose() {
-	if (!_flag)
+	if (!_poseUpToDate)
 		reset();
 
 	return _rawPose;
 }
 
-FVector CViewport::fn16(int index, const FVector &src) {
-	FPose temp = getPose();
 
-	FVector dest;
-	dest._x = temp._row3._x * src._z + temp._row2._x * src._y
-		+ src._x * temp._row1._x + temp._vector._x;
-	dest._y = temp._row3._y * src._z + temp._row2._y * src._y
-		+ src._x * temp._row1._y + temp._vector._y;
-	dest._z = temp._row3._z * src._z + temp._row2._z * src._y
-		+ src._x * temp._row1._z + temp._vector._z;
+// TODO: should index be used here like 
+// getRelativePosCentering/getRelativePosCentering2?
+// CStarCamera::getRelativePosCentering is calling this with an index of
+// 2 which corresponds to _isZero which has value 0.
+FVector CViewport::getRelativePosNoCentering(int index, const FVector &src) {
+	FPose current_pose = getPose();
+	FVector dest = src.matProdRowVect(current_pose);
 	return dest;
 }
 
-FVector CViewport::fn17(int index, const FVector &src) {
+FVector CViewport::getRelativePosCentering(int index, const FVector &src) {
 	FVector dest;
 	FPose pose = getPose();
-	FVector tv = src.fn5(pose);
+	FVector tv = src.matProdRowVect(pose);
 
-	dest._x = (_valArray[index] + tv._x)
+	double val;
+	if (index <2) {
+		val = _valArray[index];
+	} else if (index == 2) {
+		val = _isZero;
+	} else if (index == 3) {
+		val = _pixel1OffSetX;
+	} else {
+		val = _pixel2OffSetX;
+	}
+
+	dest._x = (val + tv._x)
 		* _centerVector._x / (_centerVector._y * tv._z);
 	dest._y = (tv._y * _centerVector._x) / (_centerVector._z * tv._z);
 	dest._z = tv._z;
 	return dest;
 }
 
-FVector CViewport::fn18(int index, const FVector &src) {
+// Similar to getRelativePosCentering, but uses the raw/transpose version of Pose
+FVector CViewport::getRelativePosCenteringRaw(int index, const FVector &src) {
 	FVector dest;
 	FPose pose = getRawPose();
-	FVector tv = src.fn5(pose);
+	FVector tv = src.matProdRowVect(pose);
 
-	dest._x = (_valArray[index] + tv._x)
+	double val;
+	if (index <2) {
+		val = _valArray[index];
+	} else if (index == 2) {
+		val = _isZero;
+	} else if (index == 3) {
+		val = _pixel1OffSetX;
+	} else {
+		val = _pixel2OffSetX;
+	}
+
+	dest._x = (val + tv._x)
 		* _centerVector._x / (_centerVector._y * tv._z);
 	dest._y = (tv._y * _centerVector._x) / (_centerVector._z * tv._z);
 	dest._z = tv._z;
 	return dest;
 }
 
-void CViewport::fn19(double *v1, double *v2, double *v3, double *v4) {
+void CViewport::getRelativeXCenterPixels(double *v1, double *v2, double *v3, double *v4) {
 	*v1 = _centerVector._x / _centerVector._y;
 	*v2 = _centerVector._x / _centerVector._z;
-	*v3 = _valArray[3];
-	*v4 = _valArray[4];
+	*v3 = _pixel1OffSetX;
+	*v4 = _pixel2OffSetX;
 }
 
 void CViewport::reset() {
-	const double FACTOR = 2 * M_PI / 360.0;
-
 	_rawPose.copyFrom(_orientation);
 	_rawPose._vector = _position;
-	_currentPose = _rawPose.fn4();
+	_currentPose = _rawPose.inverseTransform();
+	_poseUpToDate = true;
 
 	_center = FPoint((double)_width * 0.5, (double)_height * 0.5);
 	_centerVector._x = MIN(_center._x, _center._y);
-	_centerVector._y = tan(_field18 * FACTOR);
-	_centerVector._z = tan(_field1C * FACTOR);
-	_flag = true;
+	_centerVector._y = tan(_centerYAngleDegrees * Deg2Rad);
+	_centerVector._z = tan(_centerZAngleDegrees * Deg2Rad);
 }
 
 const FMatrix &CViewport::getOrientation() const {

@@ -21,6 +21,7 @@
  */
 
 #include "titanic/moves/restricted_move.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -54,10 +55,12 @@ bool CRestrictedMove::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	} else if (classNum != UNCHECKED) {
 		petDisplayMessage(1, CLASS_NOT_ALLOWED_AT_DEST);
 	} else if (compareRoomNameTo("EmbLobby")) {
-		playSound("a#17.wav");
+		if (g_language != Common::DE_DEU)
+			playSound("a#17.wav");
 		petDisplayMessage(1, CHECK_IN_AT_RECEPTION);
 	} else if (compareViewNameTo("Titania.Node 1.S")) {
-		playSound("z#226.wav");
+		CProximity prox(Audio::Mixer::kSpeechSoundType);
+		playSound(TRANSLATE("z#226.wav", "z#132.wav"), prox);
 		changeView(_destination);
 	}
 

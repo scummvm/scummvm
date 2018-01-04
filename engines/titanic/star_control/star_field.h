@@ -23,7 +23,7 @@
 #ifndef TITANIC_STAR_FIELD_H
 #define TITANIC_STAR_FIELD_H
 
-#include "titanic/star_control/star_control_sub2.h"
+#include "titanic/star_control/star_field_base.h"
 #include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_markers.h"
 #include "titanic/star_control/star_crosshairs.h"
@@ -32,7 +32,7 @@
 
 namespace Titanic {
 
-class CStarField : public CStarControlSub2 {
+class CStarField : public CStarFieldBase {
 private:
 	CStarMarkers _markers;
 	CStarCrosshairs _crosshairs;
@@ -120,6 +120,16 @@ public:
 	bool isSolved() const;
 
 	/**
+	 * Return true if the starfield puzzle was skipped
+	 */
+	bool isSkipped() const;
+
+	/**
+	 * Skips the starfield puzzle
+	 */
+	void skipPuzzle();
+
+	/**
 	 * Returns the number of markers placed in the starfield
 	 */
 	int getMarkerCount() const {
@@ -130,7 +140,12 @@ public:
 	double fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		FVector &v1, FVector &v2, FVector &v3);
 	void fn6(CVideoSurface *surface, CStarCamera *camera);
-	void fn7();
+
+	/**
+	 * Increments the number of matched markers
+	 */
+	void incMatches();
+
 	void fn8(CVideoSurface *surface);
 	void fn9() { _starCloseup.fn1(); }
 

@@ -245,10 +245,10 @@ bool GfxMacIconBar::pointOnIcon(uint32 iconIndex, Common::Point point) {
 reg_t GfxMacIconBar::handleEvents() {
 	// Peek event queue for a mouse button press
 	EventManager *evtMgr = g_sci->getEventManager();
-	SciEvent evt = evtMgr->getSciEvent(SCI_EVENT_MOUSE_PRESS | SCI_EVENT_PEEK);
+	SciEvent evt = evtMgr->getSciEvent(kSciEventMousePress | kSciEventPeek);
 
 	// No mouse press found
-	if (evt.type == SCI_EVENT_NONE)
+	if (evt.type == kSciEventNone)
 		return NULL_REG;
 
 	// If the mouse is not over the icon bar, return
@@ -256,7 +256,7 @@ reg_t GfxMacIconBar::handleEvents() {
 		return NULL_REG;
 
 	// Remove event from queue
-	evtMgr->getSciEvent(SCI_EVENT_MOUSE_PRESS);
+	evtMgr->getSciEvent(kSciEventMousePress);
 
 	// Mouse press on the icon bar, check the icon rectangles
 	uint iconNr;
@@ -273,14 +273,14 @@ reg_t GfxMacIconBar::handleEvents() {
 	bool isSelected = true;
 
 	// Wait for mouse release
-	while (evt.type != SCI_EVENT_MOUSE_RELEASE) {
+	while (evt.type != kSciEventMouseRelease) {
 		// Mimic behavior of SSCI when moving mouse with button held down
 		if (isSelected != pointOnIcon(iconNr, evt.mousePos)) {
 			isSelected = !isSelected;
 			drawIcon(iconNr, isSelected);
 		}
 
-		evt = evtMgr->getSciEvent(SCI_EVENT_MOUSE_RELEASE);
+		evt = evtMgr->getSciEvent(kSciEventMouseRelease);
 		g_system->delayMillis(10);
 	}
 

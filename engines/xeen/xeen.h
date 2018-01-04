@@ -27,7 +27,6 @@
 #include "common/system.h"
 #include "common/error.h"
 #include "common/random.h"
-#include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/util.h"
 #include "engines/engine.h"
@@ -37,6 +36,7 @@
 #include "xeen/events.h"
 #include "xeen/files.h"
 #include "xeen/interface.h"
+#include "xeen/locations.h"
 #include "xeen/map.h"
 #include "xeen/party.h"
 #include "xeen/resources.h"
@@ -45,7 +45,7 @@
 #include "xeen/scripts.h"
 #include "xeen/sound.h"
 #include "xeen/spells.h"
-#include "xeen/town.h"
+#include "xeen/window.h"
 
 /**
  * This is the namespace of the Xeen engine.
@@ -85,7 +85,7 @@ enum Mode {
 	MODE_6 = 6,
 	MODE_7 = 7,
 	MODE_8 = 8,
-	MODE_9 = 9,
+	MODE_RECORD_EVENTS = 9,
 	MODE_CHARACTER_INFO = 10,
 	MODE_12 = 12,
 	MODE_DIALOG_123 = 13,
@@ -123,17 +123,6 @@ protected:
 private:
 	void initialize();
 
-	/**
-	 * Synchronize savegame data
-	 */
-	void synchronize(Common::Serializer &s);
-
-	/**
-	 * Support method that generates a savegame name
-	 * @param slot		Slot number
-	 */
-	Common::String generateSaveName(int slot);
-
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
@@ -143,6 +132,7 @@ public:
 	EventsManager *_events;
 	FileManager *_files;
 	Interface *_interface;
+	LocationManager *_locations;
 	Map *_map;
 	Party *_party;
 	Resources *_resources;
@@ -151,7 +141,7 @@ public:
 	Scripts *_scripts;
 	Sound *_sound;
 	Spells *_spells;
-	Town *_town;
+	Windows *_windows;
 	Mode _mode;
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;
@@ -193,16 +183,6 @@ public:
 	* Returns true if the game can currently be saved
 	*/
 	bool canSaveGameStateCurrently();
-
-	/**
-	 * Read in a savegame header
-	 */
-	static bool readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header);
-
-	/**
-	 * Write out a savegame header
-	 */
-	void writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header);
 
 	static Common::String printMil(uint value);
 

@@ -20,15 +20,13 @@
  *
  */
 
-#include "audio_player.h"
-
-#include "bladerunner/archive.h"
-#include "bladerunner/aud_stream.h"
+#include "bladerunner/audio_player.h"
 
 #include "bladerunner/bladerunner.h"
 
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
+#include "bladerunner/archive.h"
+#include "bladerunner/aud_stream.h"
+#include "bladerunner/audio_mixer.h"
 
 #include "common/debug.h"
 #include "common/stream.h"
@@ -79,7 +77,7 @@ byte *AudioCache::findByHash(int32 hash) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void AudioCache::storeByHash(int32 hash, Common::SeekableReadStream *stream) {
@@ -110,7 +108,7 @@ void AudioCache::incRef(int32 hash) {
 			return;
 		}
 	}
-	assert(0 && "AudioCache::incRef: hash not found");
+	assert(false && "AudioCache::incRef: hash not found");
 }
 
 void AudioCache::decRef(int32 hash) {
@@ -123,7 +121,7 @@ void AudioCache::decRef(int32 hash) {
 			return;
 		}
 	}
-	assert(0 && "AudioCache::decRef: hash not found");
+	assert(false && "AudioCache::decRef: hash not found");
 }
 
 AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) : _vm(vm) {
@@ -132,69 +130,109 @@ AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) : _vm(vm) {
 	for (int i = 0; i != 6; ++i) {
 		_tracks[i].hash = 0;
 		_tracks[i].priority = 0;
+		_tracks[i].isActive = false;
+		_tracks[i].channel = -1;
+		_tracks[i].stream = nullptr;
 	}
+
+	_sfxVolume = 65;
 }
 
 AudioPlayer::~AudioPlayer() {
+	stopAll();
 	delete _cache;
 }
 
-bool AudioPlayer::isTrackActive(Track *track) {
-	if (!track->isMaybeActive)
-		return false;
-
-	return track->isMaybeActive = _vm->_mixer->isSoundHandleActive(track->soundHandle);
-}
-
 void AudioPlayer::stopAll() {
-	for (int i = 0; i != TRACKS; ++i) {
-		_vm->_mixer->stopHandle(_tracks[i].soundHandle);
+	for (int i = 0; i != kTracks; ++i) {
+		stop(i, false);
+	}
+	for (int i = 0; i != kTracks; ++i) {
+		while (isActive(i)) {
+			// wait for all tracks to finish
+		}
 	}
 }
 
-void AudioPlayer::fadeAndStopTrack(Track *track, int time) {
-	(void)time;
+void AudioPlayer::adjustVolume(int track, int volume, int delay, bool overrideVolume) {
+	if (track < 0 || track >= kTracks || !_tracks[track].isActive || _tracks[track].channel == -1) {
+		return;
+	}
 
-	_vm->_mixer->stopHandle(track->soundHandle);
+	int actualVolume = volume;
+	if (!overrideVolume) {
+		actualVolume = actualVolume * _sfxVolume / 100;
+	}
+
+	_tracks[track].volume = volume;
+	_vm->_audioMixer->adjustVolume(_tracks[track].channel, volume, 60 * delay);
+}
+
+void AudioPlayer::adjustPan(int track, int pan, int delay) {
+	if (track < 0 || track >= kTracks || !_tracks[track].isActive || _tracks[track].channel == -1) {
+		return;
+	}
+
+	_tracks[track].pan = pan;
+	_vm->_audioMixer->adjustPan(_tracks[track].channel, pan, 60 * delay);
+}
+
+void AudioPlayer::remove(int channel) {
+	Common::StackLock lock(_mutex);
+	for (int i = 0; i != kTracks; ++i) {
+		if (_tracks[i].channel == channel) {
+			_tracks[i].isActive = false;
+			_tracks[i].priority = 0;
+			_tracks[i].channel = -1;
+			_tracks[i].stream = nullptr;
+			break;
+		}
+	}
+}
+
+void AudioPlayer::mixerChannelEnded(int channel, void *data) {
+	AudioPlayer *audioPlayer = (AudioPlayer *)data;
+	audioPlayer->remove(channel);
 }
 
 int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, int panTo, int priority, byte flags) {
 	/* Find first available track or, alternatively, the lowest priority playing track */
-	Track *track = NULL;
-	int    lowestPriority = 1000000;
-	Track *lowestPriorityTrack = NULL;
+	int track = -1;
+	int lowestPriority = 1000000;
+	int lowestPriorityTrack = -1;
 
 	for (int i = 0; i != 6; ++i) {
-		Track *ti = &_tracks[i];
-		if (!isTrackActive(ti)) {
-			track = ti;
+		if (!isActive(i)) {
+			track = i;
 			break;
 		}
 
-		if (lowestPriorityTrack == NULL || ti->priority < lowestPriority) {
-			lowestPriority = ti->priority;
-			lowestPriorityTrack = ti;
+		if (lowestPriorityTrack == -1 || _tracks[i].priority < lowestPriority) {
+			lowestPriority = _tracks[i].priority;
+			lowestPriorityTrack = i;
 		}
 	}
 
 	/* If there's no available track, stop the lowest priority track if it's lower than
 	 * the new priority
 	 */
-	if (track == NULL && lowestPriority < priority) {
-		fadeAndStopTrack(lowestPriorityTrack, 1);
+	if (track == -1 && lowestPriority < priority) {
+		stop(lowestPriorityTrack, true);
 		track = lowestPriorityTrack;
 	}
 
 	/* If there's still no available track, give up */
-	if (track == NULL)
+	if (track == -1) {
 		return -1;
+	}
 
 	/* Load audio resource and store in cache. Playback will happen directly from there. */
 	int32 hash = mix_id(name);
 	if (!_cache->findByHash(hash)) {
 		Common::SeekableReadStream *r = _vm->getResourceStream(name);
-		if (!r)
+		if (!r) {
 			return -1;
+		}
 
 		int32 size = r->size();
 		while (!_cache->canAllocate(size)) {
@@ -207,34 +245,58 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 		delete r;
 	}
 
-	AudStream *audStream = new AudStream(_cache, hash);
+	AudStream *audioStream = new AudStream(_cache, hash);
 
-	Audio::AudioStream *audioStream = audStream;
-	if (flags & LOOP) {
-		audioStream = new Audio::LoopingAudioStream(audStream, 0, DisposeAfterUse::YES);
+	int actualVolume = volume;
+	if (!(flags & OVERRIDE_VOLUME)) {
+		actualVolume = _sfxVolume * volume / 100;
 	}
-
-	Audio::SoundHandle soundHandle;
 
 	// debug("PlayStream: %s", name.c_str());
 
-	int balance = panFrom;
-
-	_vm->_mixer->playStream(
+	int channel = _vm->_audioMixer->play(
 		Audio::Mixer::kPlainSoundType,
-		&soundHandle,
 		audioStream,
-		-1,
-		volume * 255 / 100,
-		balance);
+		priority,
+		flags & LOOP,
+		actualVolume,
+		panFrom,
+		mixerChannelEnded,
+		this);
 
-	track->isMaybeActive = true;
-	track->soundHandle   = soundHandle;
-	track->priority      = priority;
-	track->hash          = hash;
-	track->volume        = volume;
+	if (channel == -1) {
+		delete audioStream;
+		_cache->decRef(hash);
+		return -1;
+	}
 
-	return track - &_tracks[0];
+	if (panFrom != panTo) {
+		_vm->_audioMixer->adjustPan(channel, panTo, (60 * audioStream->getLength()) / 1000);
+	}
+
+	_tracks[track].isActive = true;
+	_tracks[track].channel  = channel;
+	_tracks[track].priority = priority;
+	_tracks[track].hash     = hash;
+	_tracks[track].volume   = actualVolume;
+	_tracks[track].stream   = audioStream;
+
+	return track;
+}
+
+bool AudioPlayer::isActive(int track) {
+	Common::StackLock lock(_mutex);
+	if (track < 0 || track >= kTracks) {
+		return false;
+	}
+
+	return _tracks[track].isActive;
+}
+
+void AudioPlayer::stop(int track, bool immediately) {
+	if (isActive(track)) {
+		_vm->_audioMixer->stop(_tracks[track].channel, immediately ? 0 : 60);
+	}
 }
 
 } // End of namespace BladeRunner

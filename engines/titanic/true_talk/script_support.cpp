@@ -21,6 +21,7 @@
  */
 
 #include "titanic/true_talk/script_support.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -145,16 +146,15 @@ void TTwordEntries::load(const char *name) {
 void TThandleQuoteEntries::load(const char *name) {
 	Common::SeekableReadStream *r = g_vm->_filesManager->getResource(name);
 
-	_tag1 = r->readUint32LE();
-	_tag2 = r->readUint32LE();
 	_rangeStart = r->readUint32LE();
 	_rangeEnd = r->readUint32LE();
+	_incr = r->readUint32LE();
 
 	while (r->pos() < r->size()) {
 		TThandleQuoteEntry qe;
+		qe._tag1 = r->readUint32LE();
+		qe._tag2= r->readUint32LE();
 		qe._index = r->readUint32LE();
-		qe._tagId = r->readUint32LE();
-		qe._dialogueId = r->readUint32LE();
 
 		push_back(qe);
 	}

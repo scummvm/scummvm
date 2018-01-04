@@ -33,16 +33,22 @@
 
 namespace Titanic {
 
+enum VolumeMode {
+	VOL_NORMAL = -1, VOL_QUIET = -2, VOL_VERY_QUIET = -3, VOL_MUTE = -4
+};
+
 /**
  * Abstract interface class for a sound manager
  */
 class CSoundManager {
 protected:
+	uint _handleCtr;
+	// Old volume levels, deprecated in favor of setting the volumes
+	// directly in the ScummVM mixer
 	double _musicPercent;
 	double _speechPercent;
 	double _masterPercent;
 	double _parrotPercent;
-	uint _handleCtr;
 public:
 	CSoundManager();
 	virtual ~CSoundManager() {}
@@ -222,7 +228,7 @@ public:
 	/**
 	 * Gets the volume for a given mode? value
 	 */
-	uint getModeVolume(int mode);
+	uint getModeVolume(VolumeMode mode);
 };
 
 class QSoundManagerSound : public ListItem {

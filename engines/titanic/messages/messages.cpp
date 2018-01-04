@@ -21,10 +21,12 @@
  */
 
 #include "titanic/messages/messages.h"
-#include "titanic/messages/mouse_messages.h"
 #include "titanic/core/game_object.h"
 #include "titanic/core/message_target.h"
+#include "titanic/core/project_item.h"
 #include "titanic/core/tree_item.h"
+#include "titanic/main_game_window.h"
+#include "titanic/messages/mouse_messages.h"
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
 
@@ -89,7 +91,8 @@ const MSGMAP_ENTRY *CMessage::findMapEntry(const CTreeItem *treeItem, const Clas
 		for (const MSGMAP_ENTRY *entry = msgMap->lpEntries;
 				entry->_class != nullptr; ++entry) {
 			// Check if the class or any of it's ancesotrs is handled by this entry
-			for (const ClassDef *entryDef = entry->_class; entryDef; entryDef = entryDef->_parent) {
+			for (const ClassDef *entryDef = *entry->_class; entryDef;
+					entryDef = entryDef->_parent) {
 				if (entryDef == classDef)
 					return entry;
 			}
@@ -174,6 +177,27 @@ CShowTextMsg::CShowTextMsg(const CString &msg) : CMessage(), _message(msg) {
 
 CShowTextMsg::CShowTextMsg(StringId stringId) : CMessage() {
 	_message = g_vm->_strings[stringId];
+}
+
+/*------------------------------------------------------------------------*/
+
+Movement CMovementMsg::getMovement(Common::KeyCode keycode) {
+	switch (keycode) {
+	case Common::KEYCODE_LEFT:
+	case Common::KEYCODE_KP4:
+		return TURN_LEFT;
+	case Common::KEYCODE_RIGHT:
+	case Common::KEYCODE_KP6:
+		return TURN_RIGHT;
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_KP8:
+		return MOVE_FORWARDS;
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_KP2:
+		return MOVE_BACKWARDS;
+	default:
+		return MOVE_NONE;
+	}
 }
 
 } // End of namespace Titanic

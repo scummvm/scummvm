@@ -63,15 +63,13 @@ public:
 	virtual void middleButtonDown(const Point &mousePos) {}
 	virtual void middleButtonUp(const Point &mousePos) {}
 	virtual void middleButtonDoubleClick(const Point &mousePos) {}
-	virtual void rightButtonDown(const Point &mousePos) {}
-	virtual void rightButtonUp(const Point &mousePos) {}
 	virtual void mouseWheel(const Point &mousePos, bool wheelUp) {}
 	virtual void keyDown(Common::KeyState keyState) {}
 	virtual void keyUp(Common::KeyState keyState) {}
 };
 
 /**
- * An eent target used for waiting for a mouse or keypress
+ * An event target used for waiting for a mouse or keypress
  */
 class CPressTarget : public CEventTarget {
 public:
@@ -81,8 +79,10 @@ public:
 	virtual ~CPressTarget() {}
 	virtual void leftButtonDown(const Point &mousePos) { _pressed = true; }
 	virtual void middleButtonDown(const Point &mousePos) { _pressed = true; }
-	virtual void rightButtonDown(const Point &mousePos) { _pressed = true; }
-	virtual void keyDown(Common::KeyState keyState) { _pressed = true; }
+	virtual void keyDown(Common::KeyState keyState) {
+		if (keyState.ascii)
+			_pressed = true;
+	}
 };
 
 class Events {
@@ -91,6 +91,7 @@ private:
 	Common::Stack<CEventTarget *> _eventTargets;
 	uint32 _frameCounter;
 	uint32 _priorFrameTime;
+	uint _totalFrames;
 	Common::Point _mousePos;
 	uint _specialButtons;
 
@@ -147,9 +148,19 @@ public:
 	uint32 getFrameCounter() const { return _frameCounter; }
 
 	/**
-	 * Get the elapsed playtime
+	 * Return the current game ticks
 	 */
 	uint32 getTicksCount() const;
+
+	/**
+	 * Get the total number of playtime frames/ticks
+	 */
+	uint32 getTotalPlayTicks() const;
+
+	/**
+	 * Set the total number of frames/ticks played
+	 */
+	void setTotalPlayTicks(uint frames);
 
 	/**
 	 * Sleep for a specified period of time

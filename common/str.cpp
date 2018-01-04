@@ -444,6 +444,44 @@ void String::trim() {
 	}
 }
 
+void String::wordWrap(const uint32 maxLength) {
+	if (_size < maxLength) {
+		return;
+	}
+
+	makeUnique();
+
+	enum { kNoSpace = 0xFFFFFFFF };
+
+	uint32 i = 0;
+	while (i < _size) {
+		uint32 lastSpace = kNoSpace;
+		uint32 x = 0;
+		while (i < _size && x <= maxLength) {
+			const char c = _str[i];
+			if (c == '\n') {
+				lastSpace = kNoSpace;
+				x = 0;
+			} else {
+				if (Common::isSpace(c)) {
+					lastSpace = i;
+				}
+				++x;
+			}
+			++i;
+		}
+
+		if (x > maxLength) {
+			if (lastSpace == kNoSpace) {
+				insertChar('\n', i - 1);
+			} else {
+				setChar('\n', lastSpace);
+				i = lastSpace + 1;
+			}
+		}
+	}
+}
+
 uint String::hash() const {
 	return hashit(c_str());
 }

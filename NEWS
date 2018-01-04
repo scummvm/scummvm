@@ -1,65 +1,187 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.10.0 (YYYY-MM-DD)
+2.0.0 (2017-12-17)
  New Games:
    - Added support for Full Pipe.
+   - Added support for Hi-Res Adventure #3: Cranston Manor.
+   - Added support for Hi-Res Adventure #4: Ulysses and the Golden Fleece.
+   - Added support for Hi-Res Adventure #5: Time Zone.
+   - Added support for Hi-Res Adventure #6: The Dark Crystal.
+   - Added support for Riven.
+   - Added support for Starship Titanic English & German.
 
- New Games (Sierra SCI2 - SCI2.1):
+ New Games (Sierra SCI2 - SCI3):
    - Added support for Gabriel Knight.
    - Added support for Gabriel Knight 2.
    - Added support for King's Quest VII.
    - Added support for King's Questions.
    - Added support for Leisure Suit Larry 6 (hires).
+   - Added support for Leisure Suit Larry 7.
+   - Added support for Lighthouse.
+   - Added support for Mixed-Up Mother Goose Deluxe.
    - Added support for Phantasmagoria.
+   - Added support for Phantasmagoria 2.
    - Added support for Police Quest 4.
+   - Added support for RAMA.
    - Added support for Shivers.
    - Added support for Space Quest 6.
    - Added support for Torin's Passage.
 
  New ports:
    - Added PSP Vita port.
+   - Added RISC OS port.
 
  General:
+   - Added bilinear filtering option for SDL2 fullscreen mode.
+   - Fixed a bug that caused a crash in the options dialog of the GUI.
    - Added a command-line option to automatically scan for supported games in
      the current or a specified directory.
-   - Many options in GUI could be applied without closing the dialog.
-   - On-the-fly language switching was implemented.
+   - Added possibility to apply changes in the options dialog without closing
+     the dialog.
+   - Added support for on-the-fly GUI language switching.
    - Updated Munt MT-32 emulation code to version 2.0.3.
    - Improved handling of joysticks.
+   - Improved audio latency.
+   - Improved management of the ScummVM window in games that switch display
+     modes.
+   - Fixed list view drawing over text above it (for example in the save dialog).
+   - Changed location where screenshot are saved. This fixes issues when scummvm
+     is installed in a read-only directory. Also added setting to allow changing
+     this location.
+   - Changed screenshot format to png.
+   - Fixed multithreading issue that could cause a crash in games using MP3 audio.
+
+ ADL:
+   - Fixed application freeze when reading sign in rocket in Mission Asteroid.
+
+ AGI:
+   - Fixed game script blocking forever after loading a savegame that was saved
+     while music was playing (this could happen for example in Police Quest 1
+     poker back room.
+   - Fixed cursor behaviour in Manhunter.
+   - Fixed nightclub arcade sequence speed for Manhunter Apple IIgs version.
+   - Reduced fastest game speed to a maximum of 40 FPS to ensure the games do
+     not run too fast.
 
  AGOS:
    - Fixed subtitle speed setting in the Hebrew version of Simon the Sorcerer 1.
 
  Composer:
    - Added save/load from General Main Menu.
+   - Fixed the detection for the French Gregory.
+   - Added detection for German Baba Yaga.
 
-Drascula:
-  - Added handling of the master volume and fix volume synchronization between
-    the game and ScummVM options.
-  - Added possibility to load and save games using GMM.
-
-1.9.1 (YYYY-MM-DD)
- General:
-   - Added bilinear filtering option for SDL2 fullscreen mode.
-   - Fixed a bug that caused a crash in the options dialog of the GUI.
+ Cruise:
+   - Fixed font rendering.
 
  Drascula:
-  - Fixed bug that made it impossible to talk to the drunkard more than once in the inn.
+   - Fixed bug that made it impossible to talk to the drunkard more than once in the inn.
+   - Added handling of the master volume and fix volume synchronization between
+     the game and ScummVM options.
+   - Added possibility to load and save games using GMM.
+
+ Dreamweb:
+   - Fixed crash when collecting last stones under church.
+   - Fixed detection of Italian CD release.
 
  Kyra:
    - Fixed a buffer overflow in Lands of Lore.
+   - Fixed crash due to missing palette data for Legend of Kyrandia floppy version.
+
+ MADE:
+   - Fixed badly distorted sound (bug #9753).
 
  MADS:
    - Fixed a bug that caused a crash after starting Rex Nebular and the Cosmic Gender Bender.
+   - Fix rare crash that can happen when Rex is first locked up
+
+ MOHAWK:
+   - Added patch to the original data files to correct the vault access
+     instructions in Myst ME.
+   - Fixed situations where Myst could appear to be unresponsive.
+   - Reworked sound handling in Myst to be more accurate.
+   - Fixed crash in Myst piano puzzle.
+
+ Neverhood:
+   - Fixed crash in musical hut in Russian DR version.
+   - Fixed late game notes crash in Russian DR version.
+
+ Pegasus:
+   - Fixed loading a game from the launcher after returning to the launcher.
+   - Ignored events occuring while the GUI is visible. This for example fixed an
+     issue where closing the GMM using Escape would also opens the game's own
+     menu.
+   - Fixed several crashes when toggling the shared screen space.
+   - Improved performances when fading screen.
+
+ SAGA:
+   - Fixed crash when using the give verb on an actor in IHNM.
+   - Fixed Gorrister invisible and stuck when reloading at mooring ring in IHNM.
+   - Fixed the conversation panel background color in IHNM.
+   - Added support French Fan Translation of Inherit the Earth.
 
  SCI:
-   - Fixed a script bug in Laura Bow 2: Dagger of Amon Ra that made it impossible to exit the
-     party room with the large golden head inside the museum (room 350).
+   - Fixed a script bug in Laura Bow 2: Dagger of Amon Ra that made it impossible
+     to exit the party room with the large golden head inside the museum (room 350).
      This bug is also present, when using the original interpreter.
+   - Improved startup speed when using the MT-32 emulator.
+   - Improved handling of MT-32 reverb in SCI0 games.
+   - Improved selection of synthesized sound effects in SCI0 games.
+   - Improved selection of digital audio in SQ4.
+   - Improved resource bounds checking.
+   - Improved error handling of corrupt MIDI data.
+   - Fixed slow leak of small amounts of data into save games over time.
+   - Fixed broken day/night cycle in QFG3.
+   - Fixed a script bug in Police Quest 3 to now grant 10 points when giving the
+     locket to Marie. Now it's possible to beat the game with a perfect score.
+     This bug is also present when using the original interpreter.
+   - Fixed various other script bugs.
+   - Improved audio volume and settings synchronization.
+
+ SCUMM:
+   - Fixed crash in amiga games.
+   - Fixed two soundtracks playing at once in Monkey Island 2.
+   - Fixed Caponians dont disguise after using blue crystal in Zak McKracken.
+   - Fixed Dr. Fred facing wrong way in lab cutscene in Maniac Mansion.
+   - Fixed actors being drawn one line too high in V0 and V1 games.
+   - Fixed Purple Tentacle appears in Lab Entry after being chased out in maniac Mansion.
+   - Fixed power not turning back on in Maniac Mansion when entering the lab
+     while Dr. Fred has the power off.
+   - Fixed actors skipping between certain walk-boxes in Maniac Mansion.
+
+ Sherlock:
+   - Fixed detection for Italian fan translation of Serrated Scalpel.
+
+ Sky:
+   - Fixed collision detection.
+
+ Sword1:
+   - Added thumbnail when saving from in-game dialog.
+   - Fixed audio and subtitles settings being changed when open the load/save
+     in-game dialog.
+
+ Tinsel:
+   - Fixed some Discworld 2 text/voice not displaying & playing all the way through
+   - Fix crash in in-game save menu when all slots are used with long names
 
  TsAGE:
-   - Fixed recently introduced bug preventing animations in Return to Ringworld from playing.
+   - Fixed regression preventing animations in Return to Ringworld from playing.
+   - Fixed display issues in Return to Ringworld Demo.
+   - Fixed loading Return to Ringworld savegames with unreferenced dynamic objects.
+   - Fixed deadlock in audio code.
+   - Fixed crash on Return to Launcher.
+
+ Voyeur:
+   - Fixed backgrounds not showing for static rooms.
+   - Fixed playback of audio events on VCR.
+   - Fixed exiting game from the VCR screen.
+   - Added workaround for original game bug using invalid hotspot Ids
+
+ macOS port:
+   - Added support for selecting any connected MIDI devices instead of automatically
+     using the first one.
+   - Improved behaviour of the file browser.
 
 1.9.0 (2016-10-17)
  New Games:

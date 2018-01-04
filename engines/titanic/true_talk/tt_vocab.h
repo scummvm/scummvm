@@ -23,6 +23,7 @@
 #ifndef TITANIC_ST_VOCAB_H
 #define TITANIC_ST_VOCAB_H
 
+#include "titanic/support/exe_resources.h"
 #include "titanic/support/string.h"
 #include "titanic/true_talk/tt_string.h"
 #include "titanic/true_talk/tt_word.h"
@@ -34,7 +35,7 @@ private:
 	TTword *_headP;
 	TTword *_tailP;
 	TTword *_word;
-	int _vocabMode;
+	VocabMode _vocabMode;
 private:
 	/**
 	 * Load the vocab data
@@ -67,7 +68,7 @@ private:
 	 * @param str		Word to check
 	 * @returns			New word instance for found match, or nullptr otherwise
 	 */
-	TTword *getSuffixedWord(TTstring &str) const;
+	TTword *getSuffixedWord(TTstring &str, TTword **srcWord = nullptr) const;
 
 	/**
 	 * Checks the passed word for common prefixes, and checks for a word
@@ -75,9 +76,9 @@ private:
 	 * @param str		Word to check
 	 * @returns			New word instance for found match, or nullptr otherwise
 	 */
-	TTword *getPrefixedWord(TTstring &str) const;
+	TTword *getPrefixedWord(TTstring &str, TTword **srcWord = nullptr) const;
 public:
-	TTvocab(int val);
+	TTvocab(VocabMode vocabMode);
 	~TTvocab();
 
 	/**

@@ -117,7 +117,7 @@ Rect CPetLoadSave::getSlotBounds(int index) {
 
 void CPetLoadSave::resetSlots() {
 	for (int idx = 0; idx < SAVEGAME_SLOTS_COUNT; ++idx) {
-		_slotNames[idx].setText("Empty");
+		_slotNames[idx].setText(EMPTY);
 		_slotInUse[idx] = false;
 
 		// Try and open up the savegame for access

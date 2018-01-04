@@ -43,9 +43,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
+	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	loadButtons();
 
@@ -54,7 +54,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	int selection = -1;
 	int topIndex = 0;
 	int newSelection;
-	screen._windows[25].open();
+	windows[25].open();
 
 	do {
 		if (!isCasting) {
@@ -68,14 +68,14 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			Common::String title = Common::String::format(Res.BUY_SPELLS, c->_name.c_str());
 			Common::String msg = Common::String::format(Res.GUILD_OPTIONS,
 				title.c_str(), XeenEngine::printMil(party._gold).c_str());
-			screen._windows[10].writeString(msg);
+			windows[10].writeString(msg);
 
 			warning("TODO: Sprite draw using previously used button sprites");
 		}
 
 		_spells.clear();
 		const char *errorMsg = setSpellText(c, castingCopy);
-		screen._windows[25].writeString(Common::String::format(Res.SPELLS_FOR,
+		windows[25].writeString(Common::String::format(Res.SPELLS_FOR,
 			errorMsg == nullptr ? Res.SPELL_LINES_0_TO_9 : "",
 			c->_name.c_str()));
 
@@ -98,7 +98,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		if (_spells.size() == 0)
 			names[0] = errorMsg;
 
-		screen._windows[37].writeString(Common::String::format(Res.SPELLS_DIALOG_SPELLS,
+		windows[37].writeString(Common::String::format(Res.SPELLS_DIALOG_SPELLS,
 			colors[0], names[0], colors[1], names[1], colors[2], names[2],
 			colors[3], names[3], colors[4], names[4], colors[5], names[5],
 			colors[6], names[6], colors[7], names[7], colors[8], names[8],
@@ -107,13 +107,13 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			isCasting ? c->_currentSp : party._gold
 		));
 
-		_scrollSprites.draw(screen, 4, Common::Point(39, 26));
-		_scrollSprites.draw(screen, 0, Common::Point(187, 26));
-		_scrollSprites.draw(screen, 2, Common::Point(187, 111));
+		_scrollSprites.draw(0, 4, Common::Point(39, 26));
+		_scrollSprites.draw(0, 0, Common::Point(187, 26));
+		_scrollSprites.draw(0, 2, Common::Point(187, 111));
 		if (isCasting)
-			_scrollSprites.draw(screen._windows[25], 5, Common::Point(132, 123));
+			_scrollSprites.draw(windows[25], 5, Common::Point(132, 123));
 
-		screen._windows[25].update();
+		windows[25].update();
 
 		do {
 			events.pollEventsAndWait();
@@ -135,7 +135,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					intf.highlightChar(_buttonValue);
 
 					if (_vm->_mode == MODE_17) {
-						screen._windows[10].writeString(Common::String::format(Res.GUILD_OPTIONS,
+						windows[10].writeString(Common::String::format(Res.GUILD_OPTIONS,
 							XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()));
 					} else {
 						int category;
@@ -155,15 +155,15 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 						int spellIndex = (c->_currentSpell == -1) ? 39 : c->_currentSpell;
 						int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
-						screen._windows[10].writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
+						windows[10].writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
 							c->_name.c_str(), spells._spellNames[spellId].c_str(),
 							spells.calcSpellPoints(spellId, c->getCurrentLevel()),
 							Res.SPELL_GEM_COST[spellId], c->_currentSp));
 					}
 
 					if (priorDialog != nullptr)
-						priorDialog->drawButtons(&screen);
-					screen._windows[10].update();
+						priorDialog->drawButtons(&windows[0]);
+					windows[10].update();
 				}
 			}
 			break;
@@ -236,7 +236,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 						Common::String::format(Res.SPELLS_PURCHASE, spellName.c_str(), spellCost);
 
 					if (Confirm::show(_vm, msg, castingCopy + 1)) {
-						if (party.subtract(0, spellCost, 0, WT_FREEZE_WAIT)) {
+						if (party.subtract(CONS_GOLD, spellCost, WHERE_PARTY, WT_FREEZE_WAIT)) {
 							++c->_spells[spellIndex];
 							sound.stopSound();
 							intf._overallFrame = 0;
@@ -273,7 +273,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		}
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
-	screen._windows[25].close();
+	windows[25].close();
 
 	if (_vm->shouldQuit())
 		selection = -1;
@@ -345,7 +345,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 			if (party._mazeId == 49 || party._mazeId == 37) {
 				for (uint spellId = 0; spellId < 76; ++spellId) {
 					int idx = 0;
-					while (idx < MAX_SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] == spellId)
+					while (idx < MAX_SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != spellId)
 						++idx;
 
 					// Handling if the spell is appropriate for the character's class
@@ -416,7 +416,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 		if (c->getMaxSP() == 0) {
 			return Res.NOT_A_SPELL_CASTER;
 		} else {
-			for (int spellIndex = 0; spellIndex < (MAX_SPELLS_PER_CLASS - 1); ++spellIndex) {
+			for (int spellIndex = 0; spellIndex < MAX_SPELLS_PER_CLASS; ++spellIndex) {
 				if (c->_spells[spellIndex]) {
 					int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
 					int gemCost = Res.SPELL_GEM_COST[spellId];
@@ -434,6 +434,26 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 }
 
 /*------------------------------------------------------------------------*/
+
+CastSpell::CastSpell(XeenEngine *vm) : ButtonContainer(vm) {
+	Windows &windows = *_vm->_windows;
+	_oldMode = _vm->_mode;
+	_vm->_mode = MODE_3;
+
+	windows[10].open();
+	loadButtons();
+}
+
+CastSpell::~CastSpell() {
+	Interface &intf = *_vm->_interface;
+	Windows &windows = *_vm->_windows;
+
+	windows[10].close();
+	intf.unhighlightChar();
+
+	_vm->_mode = (Mode)_oldMode;
+}
+
 
 int CastSpell::show(XeenEngine *vm) {
 	Combat &combat = *vm->_combat;
@@ -459,34 +479,36 @@ int CastSpell::show(XeenEngine *vm) {
 	Character *c = &party._activeParty[charNum];
 	intf.highlightChar(charNum);
 
-	CastSpell *dlg = new CastSpell(vm);
-	int spellId = dlg->execute(c);
-	delete dlg;
-
-	return spellId;
+	return show(vm, c);
 }
 
 int CastSpell::show(XeenEngine *vm, Character *&c) {
+	Spells &spells = *vm->_spells;
 	CastSpell *dlg = new CastSpell(vm);
-	int spellId = dlg->execute(c);
-	delete dlg;
+	int spellId;
+	int result = -1;
 
-	return spellId;
+	do {
+		spellId = dlg->execute(c);
+
+		if (g_vm->shouldQuit() || spellId == -1) {
+			result = 0;
+		} else {
+			result = spells.castSpell(c, (MagicSpell)spellId);
+		}
+	} while (result == -1);
+
+	delete dlg;
+	return result;
 }
 
 int CastSpell::execute(Character *&c) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
-	Window &w = screen._windows[10];
-
-	Mode oldMode = _vm->_mode;
-	_vm->_mode = MODE_3;
-
-	w.open();
-	loadButtons();
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[10];
 
 	int spellId = -1;
 	bool redrawFlag = true;
@@ -501,7 +523,7 @@ int CastSpell::execute(Character *&c) {
 			w.writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
 				c->_name.c_str(), spells._spellNames[spellId].c_str(),
 				spCost, gemCost, c->_currentSp));
-			drawButtons(&screen);
+			drawButtons(&windows[0]);
 			w.update();
 
 			redrawFlag = false;
@@ -524,8 +546,8 @@ int CastSpell::execute(Character *&c) {
 		case Common::KEYCODE_F5:
 		case Common::KEYCODE_F6:
 			// Only allow changing character if the party is not in combat
-			if (oldMode != MODE_COMBAT) {
-				_vm->_mode = oldMode;
+			if (_oldMode != MODE_COMBAT) {
+				_vm->_mode = (Mode)_oldMode;
 				_buttonValue -= Common::KEYCODE_F1;
 
 				if (_buttonValue < (int)party._activeParty.size()) {
@@ -549,7 +571,7 @@ int CastSpell::execute(Character *&c) {
 
 		case Common::KEYCODE_n:
 			// Select new spell
-			_vm->_mode = oldMode;
+			_vm->_mode = (Mode)_oldMode;
 			c = SpellsDialog::show(_vm, this, c, 1);
 			redrawFlag = true;
 			break;
@@ -559,13 +581,8 @@ int CastSpell::execute(Character *&c) {
 		}
 	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
-	w.close();
-	intf.unhighlightChar();
-
 	if (_vm->shouldQuit())
 		spellId = -1;
-
-	_vm->_mode = oldMode;
 	return spellId;
 }
 
@@ -598,9 +615,9 @@ int SpellOnWho::execute(int spellId) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
-	Window &w = screen._windows[16];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[16];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_3;
 	int result = 999;
@@ -664,9 +681,9 @@ int SelectElement::execute(int spellId) {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
-	Window &w = screen._windows[15];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[15];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_3;
 	int result = 999;
@@ -675,7 +692,7 @@ int SelectElement::execute(int spellId) {
 
 	w.open();
 	w.writeString(Res.WHICH_ELEMENT1);
-	drawButtons(&screen);
+	drawButtons(&windows[0]);
 	w.update();
 
 	while (result == 999) {
@@ -684,7 +701,7 @@ int SelectElement::execute(int spellId) {
 			intf.draw3d(true);
 			w.frame();
 			w.writeString(Res.WHICH_ELEMENT2);
-			drawButtons(&screen);
+			drawButtons(&windows[0]);
 			w.update();
 
 			do {
@@ -742,9 +759,9 @@ void NotWhileEngaged::show(XeenEngine *vm, int spellId) {
 
 void NotWhileEngaged::execute(int spellId) {
 	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
 	Spells &spells = *_vm->_spells;
-	Window &w = screen._windows[6];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[6];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_3;
 
@@ -777,9 +794,9 @@ bool LloydsBeacon::execute() {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Window &w = screen._windows[10];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[10];
 	bool isDarkCc = _vm->_files->_isDarkCc;
 	Character &c = *combat._oldCharacter;
 
@@ -810,7 +827,7 @@ bool LloydsBeacon::execute() {
 	w.open();
 	w.writeString(Common::String::format(Res.LLOYDS_BEACON,
 		mapName.c_str(), c._lloydPosition.x, c._lloydPosition.y));
-	drawButtons(&screen);
+	drawButtons(&windows[0]);
 	w.update();
 
 	bool result = true;
@@ -881,8 +898,8 @@ int Teleport::show(XeenEngine *vm) {
 int Teleport::execute() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
-	Window &w = screen._windows[6];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[6];
 	Common::String num;
 
 	w.open();
@@ -938,8 +955,8 @@ int TownPortal::show(XeenEngine *vm) {
 
 int TownPortal::execute() {
 	Map &map = *_vm->_map;
-	Screen &screen = *_vm->_screen;
-	Window &w = screen._windows[20];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[20];
 	Common::String townNames[5];
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_FF;
@@ -987,9 +1004,9 @@ void IdentifyMonster::execute() {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
-	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Window &w = screen._windows[17];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[17];
 	Common::String monsterDesc[3];
 
 	for (int monIndex = 0; monIndex < 3; ++monIndex) {
@@ -1017,7 +1034,7 @@ void IdentifyMonster::execute() {
 		events.updateGameCounter();
 		intf.draw3d(false);
 		w.frame();
-		screen._windows[3].update();
+		windows[3].update();
 
 		events.wait(1, false);
 	} while (!events.isKeyMousePressed());

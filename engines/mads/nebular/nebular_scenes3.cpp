@@ -881,6 +881,9 @@ void Scene307::step() {
 			_guardTime = 0;
 		} else if ((_prisonerTimer > 300) && (_game._screenObjects._inputMode != kInputConversation) && (_scene->_animation[0] == nullptr) && !_activePrisonerFl) {
 			if (!_globals[kMetBuddyBeast]) {
+				if (_prisonerMessageId == -1)
+					_prisonerMessageId = 0x104;
+
 				int idx = _scene->_kernelMessages.add(Common::Point(5, 51), 0xFDFC, 0, 81, 120, _game.getQuote(_prisonerMessageId));
 				_scene->_kernelMessages.setQuoted(idx, 4, true);
 				_prisonerMessageId++;

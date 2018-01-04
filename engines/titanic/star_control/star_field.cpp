@@ -131,11 +131,20 @@ bool CStarField::isCloseToMarker() const {
 }
 
 void CStarField::setSolved() {
-	_isSolved = _crosshairs._matchIndex == 2;
+	_isSolved = _crosshairs._matchIndex >= 2;
 }
 
 bool CStarField::isSolved() const {
 	return _isSolved;
+}
+
+bool CStarField::isSkipped() const {
+	return _crosshairs.isSkipped();
+}
+
+void CStarField::skipPuzzle() {
+	_crosshairs._matchIndex = 3;
+	setSolved();
 }
 
 void CStarField::fn1(CErrorCode *errorCode) {
@@ -184,11 +193,15 @@ void CStarField::fn4(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 		FVector &v1, FVector &v2, FVector &v3) {
 	if (_crosshairs.isEmpty())
+		// No crosshairs selection yet
+		return -1.0;
+	if (_crosshairs._entryIndex == _crosshairs._matchIndex)
+		// Trying to re-lock on a previously locked star
 		return -1.0;
 
 	const CBaseStarEntry *dataP = _markers.getDataPtr(_crosshairs._entryIndex);
 	v2 = dataP->_position;
-	FVector tv = camera->proc29(2, v2);
+	FVector tv = camera->getRelativePosNoCentering(2, v2); // First argument is not getting used in CViewport::fn16
 
 	if (camera->getThreshold() >= tv._z)
 		return -1.0;
@@ -203,11 +216,13 @@ double CStarField::fn5(CSurfaceArea *surfaceArea, CStarCamera *camera,
 	double incr = (v1._x - pt._x) * (v1._x - pt._x);
 	if (incr > 3600.0)
 		return -1.0;
-	if ((v1._y - pt._y) * (v1._y - pt._y) + incr > 3600.0)
+
+	incr += (v1._y - pt._y) * (v1._y - pt._y);
+	if (incr > 3600.0)
 		return -1.0;
 
 	_closeToMarker = true;
-	return v1._y - pt._y;
+	return incr;
 }
 
 void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
@@ -215,7 +230,7 @@ void CStarField::fn6(CVideoSurface *surface, CStarCamera *camera) {
 	_crosshairs.fn1(this, &surfaceArea, camera);
 }
 
-void CStarField::fn7() {
+void CStarField::incMatches() {
 	_crosshairs.incMatches();
 	setSolved();
 }

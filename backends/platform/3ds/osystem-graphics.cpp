@@ -230,7 +230,7 @@ void OSystem_3DS::setPalette(const byte *colors, uint start, uint num) {
 		flushGameScreen();
 	}
 }
-void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) const {
 	assert(start + num <= 256);
 	memcpy(colors, _palette + 3 * start, 3 * num);
 }

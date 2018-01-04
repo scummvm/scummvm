@@ -36,6 +36,7 @@ void Cutscenes::resetSubtitles(uint lineNum, uint defaultSize) {
 void Cutscenes::showSubtitles(uint windowIndex) {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
 
 	if (sound._soundOn || _vm->shouldQuit()) {
 		// Sound is on, so subtitles aren't needed
@@ -59,10 +60,10 @@ void Cutscenes::showSubtitles(uint windowIndex) {
 		if (!_boxSprites)
 			// Not already loaded, so load it
 			_boxSprites = new SpriteResource("box.vga");
-		_boxSprites->draw(screen, 0, Common::Point(36, 189));
+		_boxSprites->draw(0, 0, Common::Point(36, 189));
 
 		// Write the subtitle line
-		screen._windows[windowIndex].writeString(_subtitleLine);
+		windows[windowIndex].writeString(_subtitleLine);
 	}
 
 	screen.update();
@@ -149,15 +150,15 @@ bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 			screen.restoreBackground();
 
 			if (i > 14) {
-				hand[14]->draw(screen, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
-				hand[15]->draw(screen, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
+				hand[14]->draw(0, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
+				hand[15]->draw(0, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
 				--ctr;
 			} else if (i != 0) {
-				hand[i - 1]->draw(screen, 0);
+				hand[i - 1]->draw(0, 0);
 			}
 
 			if (i <= 20)
-				marb[(i - 1) / 5]->draw(screen, (i - 1) % 5);
+				marb[(i - 1) / 5]->draw(0, (i - 1) % 5);
 			screen.update();
 
 			while (!_vm->shouldQuit() && events.timeElapsed() == 0)
@@ -173,15 +174,15 @@ bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 			screen.restoreBackground();
 
 			if (i < 14) {
-				hand[i]->draw(screen, 0);
+				hand[i]->draw(0, 0);
 			} else {
-				hand[14]->draw(screen, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
-				hand[15]->draw(screen, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
+				hand[14]->draw(0, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
+				hand[15]->draw(0, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
 				++ctr;
 			}
 
 			if (i < 20) {
-				marb[i / 5]->draw(screen, i % 5);
+				marb[i / 5]->draw(0, i % 5);
 			}
 			screen.update();
 
@@ -194,8 +195,8 @@ bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 	}
 
 	if (rollUp) {
-		hand[0]->draw(screen, 0);
-		marb[0]->draw(screen, 0);
+		hand[0]->draw(0, 0);
+		marb[0]->draw(0, 0);
 	} else {
 		screen.restoreBackground();
 	}

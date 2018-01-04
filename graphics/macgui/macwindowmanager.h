@@ -27,6 +27,7 @@
 #include "common/list.h"
 #include "common/events.h"
 
+#include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/macgui/macwindow.h"
 
@@ -60,6 +61,9 @@ using namespace MacGUIConstants;
 class ManagedSurface;
 
 class MacMenu;
+class MacTextWindow;
+
+class MacFont;
 
 class MacFontManager;
 
@@ -103,6 +107,24 @@ public:
 	 * @return Pointer to the newly created window.
 	 */
 	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
+	MacTextWindow *addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu);
+
+	/**
+	 * Adds a window that has already been initialized to the registry.
+	 * Like addWindow, but this doesn't create/allocate the Window.
+	 * @param macWindow the window to be added to the registry
+	 */
+	void addWindowInitialized(MacWindow *macwindow);
+	/**
+	 * Returns the last allocated id
+	 * @return last allocated window id
+	 */
+	int getLastId() { return _lastId; }
+	/**
+	 * Returns the next available id and the increments the internal counter.
+	 * @return next (new) window id that can be used
+	 */
+	int getNextId() { return _lastId++; }
 	/**
 	 * Add the menu to the desktop.
 	 * Note that the returned menu is empty, and therefore must be filled

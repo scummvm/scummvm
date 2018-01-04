@@ -269,9 +269,26 @@ public:
 
 		{
 			Common::SpanOwner<Common::Span<byte> > owner2;
+			TS_ASSERT(owner2->data() == nullptr);
+			owner2 = owner;
+			TS_ASSERT(owner2->data() != nullptr);
+			TS_ASSERT_DIFFERS(owner->data(), owner2->data());
+
+			for (int i = 0; i < 3; ++i) {
+				TS_ASSERT_EQUALS(owner2->getUint8At(i), 'a' + i);
+				TS_ASSERT_EQUALS((*owner2)[i], 'a' + i);
+			}
+
+			TS_ASSERT_EQUALS((bool)owner2, true);
+			owner2.release();
+			TS_ASSERT_EQUALS((bool)owner2, false);
+		}
+
+		{
+			Common::SpanOwner<Common::Span<byte> > owner2;
 			TS_ASSERT_EQUALS((bool)owner, true);
 			void *dataPtr = owner->data();
-			owner2 = owner;
+			owner2.moveFrom(owner);
 			TS_ASSERT_EQUALS((bool)owner, false);
 			TS_ASSERT(owner->data() == nullptr);
 			TS_ASSERT_EQUALS(owner2->data(), dataPtr);
@@ -350,7 +367,7 @@ public:
 			Common::SpanOwner<Common::NamedSpan<byte> > owner2;
 			TS_ASSERT_EQUALS((bool)owner, true);
 			void *dataPtr = owner->data();
-			owner2 = owner;
+			owner2.moveFrom(owner);
 			TS_ASSERT_EQUALS((bool)owner, false);
 			TS_ASSERT(owner->data() == nullptr);
 			TS_ASSERT_EQUALS(owner2->data(), dataPtr);

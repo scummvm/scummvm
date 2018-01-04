@@ -1251,10 +1251,13 @@ bool Debugger::Cmd_LogicCommand(int argc, const char **argv) {
 	switch (argc) {
 		case  5:
 			arg3 = atoi(argv[4]);
+			// fall through
 		case  4:
 			arg2 = atoi(argv[3]);
+			// fall through
 		case  3:
 			arg1 = atoi(argv[2]);
+			// fall through
 	}
 
 	for (int i = 0; i < numMCodes; ++i) {

@@ -22,6 +22,7 @@
 
 #include "titanic/core/multi_drop_target.h"
 #include "titanic/support/string_parser.h"
+#include "titanic/carry/carry.h"
 
 namespace Titanic {
 
@@ -31,33 +32,37 @@ END_MESSAGE_MAP()
 
 void CMultiDropTarget::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string5, indent);
-	file->writeQuotedLine(_string6, indent);
+	file->writeQuotedLine(_dropFrames, indent);
+	file->writeQuotedLine(_dropNames, indent);
 
 	CDropTarget::save(file, indent);
 }
 
 void CMultiDropTarget::load(SimpleFile *file) {
 	file->readNumber();
-	_string5 = file->readString();
-	_string6 = file->readString();
+	_dropFrames = file->readString();
+	_dropNames = file->readString();
 
 	CDropTarget::load(file);
 }
 
 bool CMultiDropTarget::DropObjectMsg(CDropObjectMsg *msg) {
-	CStringParser parser1(_string5);
-	CStringParser parser2(_string6);
+	CStringParser parser1(_dropFrames);
+	CStringParser parser2(_dropNames);
 	CString seperatorChars = ",";
 
+	// WORKAROUND: The original didn't break out of loop if a drop target
+	// succeeded, nor did it return the item to the inventory if incorrect
 	while (parser2.parse(_itemMatchName, seperatorChars)) {
 		_dropFrame = parser1.readInt();
-		CDropTarget::DropObjectMsg(msg);
+		if (CDropTarget::DropObjectMsg(msg))
+			return true;
 
 		parser1.skipSeperators(seperatorChars);
 		parser2.skipSeperators(seperatorChars);
 	}
 
+	msg->_item->petAddToInventory();
 	return true;
 }
 

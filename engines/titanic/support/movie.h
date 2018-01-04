@@ -50,7 +50,6 @@ protected:
 public:
 	bool _handled;
 	bool _hasVideoFrame;
-	bool _hasAudioTiming;
 public:
 	static CMovieList *_playingMovies;
 	static CVideoSurface *_movieSurface;
@@ -86,8 +85,9 @@ public:
 	/**
 	 * Plays a sub-section of a movie, and doesn't return until either
 	 * the playback ends or a key has been pressed
+	 * @returns		True if the cutscene was not interrupted
 	 */
-	virtual void playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) = 0;
+	virtual bool playCutscene(const Rect &drawRect, uint startFrame, uint endFrame) = 0;
 
 	/**
 	 * Pauses a movie
@@ -136,6 +136,11 @@ public:
 	 * Set the frame rate for the movie
 	 */
 	virtual void setFrameRate(double rate) = 0;
+
+	/**
+	 * Sets whether the video is playing (versus paused)
+	 */
+	virtual void setPlaying(bool playingFlag) = 0;
 
 	/**
 	 * Creates a duplicate of the transparency surface
@@ -193,8 +198,9 @@ public:
 	/**
 	 * Plays a sub-section of a movie, and doesn't return until either
 	 * the playback ends or a key has been pressed
+	 * @returns		True if the cutscene was not interrupted
 	 */
-	virtual void playCutscene(const Rect &drawRect, uint startFrame, uint endFrame);
+	virtual bool playCutscene(const Rect &drawRect, uint startFrame, uint endFrame);
 
 	/**
 	 * Pauses a movie
@@ -243,6 +249,11 @@ public:
 	 * Set the frame rate for the movie
 	 */
 	virtual void setFrameRate(double rate);
+
+	/**
+	 * Sets whether the video is playing (versus paused)
+	 */
+	virtual void setPlaying(bool playingFlag);
 
 	/**
 	 * Creates a duplicate of the transparency surface

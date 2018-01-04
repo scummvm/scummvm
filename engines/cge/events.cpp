@@ -111,7 +111,7 @@ bool Keyboard::getKey(Common::Event &event) {
 			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - Common::KEYCODE_0, NULL);
 			return false;
 		}
-		// Fallthrough intended
+		// fall through
 	case Common::KEYCODE_5:
 	case Common::KEYCODE_6:
 	case Common::KEYCODE_7:

@@ -338,14 +338,14 @@ void DrasculaEngine::talk_bj(int index) {
 
 			updateRefresh_pre();
 
-			copyBackground(bjX + 2, bjY - 1, bjX + 2, bjY - 1, 27, 40, bgSurface, screenSurface);
+			copyBackground(170 + 2, 90 - 1, 170 + 2, 90 - 1, 27, 40, bgSurface, screenSurface);
 
-			copyRect(x_talk[face], 99, bjX + 2, bjY - 1, 27, 40, drawSurface3, screenSurface);
+			copyRect(x_talk[face], 99, 170 + 2, 90 - 1, 27, 40, drawSurface3, screenSurface);
 			moveCharacters();
 			updateRefresh();
 
 			if (!_subtitlesDisabled)
-				centerText(said, bjX + 7, bjY);
+				centerText(said, 170 + 7, 90);
 
 			updateScreen();
 
@@ -973,7 +973,7 @@ void DrasculaEngine::grr() {
 	copyBackground(253, 110, 150, 65, 20, 30, drawSurface3, screenSurface);
 
 	if (!_subtitlesDisabled)
-		centerText("groaaarrrrgghhhh!", 153, 65);
+		centerText(_textmisc[6], 153, 65); // "groaaarrrrgghhhh!"
 
 	updateScreen();
 

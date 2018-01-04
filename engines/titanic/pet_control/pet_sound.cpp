@@ -24,10 +24,12 @@
 #include "titanic/pet_control/pet_control.h"
 #include "titanic/pet_control/pet_real_life.h"
 #include "titanic/game_manager.h"
+#include "titanic/titanic.h"
+#include "common/config-manager.h"
 
 namespace Titanic {
 
-CPetSound::CPetSound() : CPetGlyph(), _draggingSlider(nullptr), _draggingSliderNum(0) {
+CPetSound::CPetSound() : CPetGlyph(), _draggingSlider(nullptr), _draggingSliderNum(MASTER_SLIDER) {
 }
 
 bool CPetSound::setup(CPetControl *petControl, CPetGlyphs *owner) {
@@ -51,11 +53,11 @@ bool CPetSound::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	_parrotVolume.setThumbSize(Point(25, 15));
 	_parrotVolume.translate(Point(415, 376));
 
-	_parrotVolume.setOrientation(ORIENTATION_HORIZONTAL);
-	_parrotVolume.setBounds(Rect(17, 60, 147, 75));
-	_parrotVolume.setSlidingBounds(Rect(35, 65, 127, 71));
-	_parrotVolume.setThumbSize(Point(25, 15));
-	_parrotVolume.translate(Point(415, 376));
+	_speechVolume.setOrientation(ORIENTATION_HORIZONTAL);
+	_speechVolume.setBounds(Rect(17, 60, 147, 75));
+	_speechVolume.setSlidingBounds(Rect(35, 65, 127, 71));
+	_speechVolume.setThumbSize(Point(25, 15));
+	_speechVolume.translate(Point(415, 376));
 
 	_element.setBounds(Rect(0, 0, 165, 77));
 	_element.translate(Point(415, 376));
@@ -65,25 +67,25 @@ bool CPetSound::setup(CPetControl *petControl, CPetGlyphs *owner) {
 	_textMasterVolume.setBounds(rect);
 	_textMasterVolume.resize(3);
 	_textMasterVolume.setHasBorder(false);
-	_textMasterVolume.setText("Master volume");
+	_textMasterVolume.setText(MASTER_VOLUME);
 
 	rect.translate(0, 20);
 	_textMusicVolume.setBounds(rect);
 	_textMusicVolume.resize(3);
 	_textMusicVolume.setHasBorder(false);
-	_textMusicVolume.setText("Music volume");
+	_textMusicVolume.setText(MUSIC_VOLUME);
 
 	rect.translate(0, 20);
 	_textParrotVolume.setBounds(rect);
 	_textParrotVolume.resize(3);
 	_textParrotVolume.setHasBorder(false);
-	_textParrotVolume.setText("Parrot volume");
+	_textParrotVolume.setText(PARROT_VOLUME);
 
 	rect.translate(0, 20);
 	_textSpeechVolume.setBounds(rect);
 	_textSpeechVolume.resize(3);
 	_textSpeechVolume.setHasBorder(false);
-	_textSpeechVolume.setText("Speech volume");
+	_textSpeechVolume.setText(SPEECH_VOLUME);
 
 	return true;
 }
@@ -93,10 +95,10 @@ bool CPetSound::reset() {
 	if (pet) {
 		setName("PetSound", pet);
 		_element.reset("PetVolChannels", pet, MODE_UNSELECTED);
-		_musicVolume.reset("PetVolSlug");
-		_masterVolume.reset("PetVolSlug");
-		_parrotVolume.reset("PetVolSlug");
-		_speechVolume.reset("PetVolSlug");
+		_musicVolume.setupThumb2("PetVolSlug", pet);
+		_masterVolume.setupThumb2("PetVolSlug", pet);
+		_parrotVolume.setupThumb2("PetVolSlug", pet);
+		_speechVolume.setupThumb2("PetVolSlug", pet);
 
 		CPetSection *section = getPetSection();
 		uint col = section->getColor(0);
@@ -107,6 +109,62 @@ bool CPetSound::reset() {
 	}
 
 	return false;
+}
+
+void CPetSound::setSliders() {
+	// Get the mute settings
+	bool muteAll = ConfMan.hasKey("mute") ? ConfMan.getBool("mute") : false;
+	bool musicMute = muteAll || (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute"));
+	bool sfxMute = muteAll || (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute"));
+	bool speechMute = muteAll || (ConfMan.hasKey("speech_mute") && ConfMan.getBool("speech_mute"));
+
+	// Get the volume levels
+	uint musicVol = musicMute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
+	uint parrotVol = sfxMute ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
+	uint speechVol = speechMute ? 0 : MIN(255, ConfMan.getInt("speech_volume"));
+	uint masterVol = MAX(musicVol, MAX(parrotVol, speechVol));
+
+	const double FACTOR = 1.0 / 255.0;
+	_masterVolume.setSliderOffset(masterVol * FACTOR);
+	_musicVolume.setSliderOffset(musicVol * FACTOR);
+	_parrotVolume.setSliderOffset(parrotVol * FACTOR);
+	_speechVolume.setSliderOffset(speechVol * FACTOR);
+}
+
+void CPetSound::sliderChanged(double offset, SliderType sliderNum) {
+	uint newVol = (uint)(offset * 255.0);
+
+	switch (sliderNum) {
+	case MASTER_SLIDER:
+		ConfMan.setBool("music_mute", false);
+		ConfMan.setBool("sfx_mute", false);
+		ConfMan.setBool("sfx_mute", false);
+		ConfMan.setInt("music_volume", newVol);
+		ConfMan.setInt("sfx_volume", newVol);
+		ConfMan.setInt("speech_volume", newVol);
+
+		_musicVolume.setSliderOffset(newVol * 0.01);
+		_parrotVolume.setSliderOffset(newVol * 0.01);
+		_speechVolume.setSliderOffset(newVol * 0.01);
+		break;
+	case MUSIC_SLIDER:
+		ConfMan.setBool("music_mute", false);
+		ConfMan.setInt("music_volume", newVol);
+		break;
+	case PARROT_SLIDER:
+		ConfMan.setBool("sfx_mute", false);
+		ConfMan.setInt("sfx_volume", newVol);
+		break;
+	case SPEECH_SLIDER:
+		ConfMan.setBool("speech_mute", false);
+		ConfMan.setInt("speech_volume", newVol);
+		break;
+	default:
+		return;
+	}
+
+	ConfMan.setBool("mute", false);
+	g_vm->syncSoundSettings();
 }
 
 void CPetSound::draw2(CScreenManager *screenManager) {
@@ -142,7 +200,7 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 	rectRight.translate(567, 378);
 
 	CPetSlider *sliders[4] = { &_masterVolume, &_musicVolume, &_parrotVolume, &_speechVolume };
-	for (int idx = 0; idx < 4; ++idx) {
+	for (int idx = MASTER_SLIDER; idx <= SPEECH_SLIDER; ++idx) {
 		CPetSlider *slider = sliders[idx];
 		bool isLeft = rectLeft.contains(pt);
 		bool isRight = rectRight.contains(pt);
@@ -157,7 +215,7 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 		}
 
 		if (isLeft || isRight) {
-			sliderChanged(offset, idx);
+			sliderChanged(offset, (SliderType)idx);
 			return true;
 		}
 
@@ -169,56 +227,26 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 	return false;
 }
 
-void CPetSound::sliderChanged(double offset, int sliderNum) {
-	CPetControl *pet = getPetControl();
-	if (!pet)
-		return;
-
-	CGameManager *gameManager = pet->getGameManager();
-	if (!gameManager)
-		return;
-
-	QSoundManager &soundManager = gameManager->_sound._soundManager;
-	double percent = offset * 100.0;
-
-	switch (sliderNum) {
-	case 0:
-		soundManager.setMasterPercent(percent);
-		break;
-	case 1:
-		soundManager.setMusicPercent(percent);
-		break;
-	case 2:
-		soundManager.setParrotPercent(percent);
-		break;
-	case 3:
-		soundManager.setSpeechPercent(percent);
-		break;
-	default:
-		break;
-	}
-}
-
 bool CPetSound::MouseDragStartMsg(CMouseDragStartMsg *msg) {
-	if (_musicVolume.resetThumbFocus()) {
+	if (_masterVolume.resetThumbFocus()) {
+		_draggingSlider = &_masterVolume; 
+		getOwner()->startDragging(this, msg);
+		_draggingSliderNum = MASTER_SLIDER;
+		return true;
+	} else if (_musicVolume.resetThumbFocus()) {
 		_draggingSlider = &_musicVolume;
 		getOwner()->startDragging(this, msg);
-		_draggingSliderNum = 0;
-		return true;
-	} else if (_masterVolume.resetThumbFocus()) {
-		_draggingSlider = &_masterVolume;
-		getOwner()->startDragging(this, msg);
-		_draggingSliderNum = 1;
+		_draggingSliderNum = MUSIC_SLIDER;
 		return true;
 	} else if (_parrotVolume.resetThumbFocus()) {
 		_draggingSlider = &_parrotVolume;
 		getOwner()->startDragging(this, msg);
-		_draggingSliderNum = 2;
+		_draggingSliderNum = PARROT_SLIDER;
 		return true;
 	} else if (_speechVolume.resetThumbFocus()) {
 		_draggingSlider = &_speechVolume;
 		getOwner()->startDragging(this, msg);
-		_draggingSliderNum = 3;
+		_draggingSliderNum = SPEECH_SLIDER;
 		return true;
 	}
 
@@ -244,27 +272,30 @@ bool CPetSound::MouseDragEndMsg(CMouseDragEndMsg *msg) {
 	if (!_draggingSlider)
 		return false;
 
-	_draggingSlider->MouseDragEndMsg(msg->_mousePos);
+	// Flush the changed settings
+	ConfMan.flushToDisk();
+
+	bool result = _draggingSlider->MouseDragEndMsg(msg->_mousePos);
 	getOwner()->endDragging();
 
-	return false;
+	return result;
 }
 
 bool CPetSound::MouseButtonUpMsg(const Point &pt) {
-	int sliderNum = 0;
+	SliderType sliderNum = MASTER_SLIDER;
 	CPetSlider *slider = nullptr;
 
-	if (_musicVolume.MouseButtonUpMsg(pt)) {
-		sliderNum = 0;
-		slider = &_musicVolume;
-	} else if (_masterVolume.MouseButtonUpMsg(pt)) {
-		sliderNum = 1;
+	if (_masterVolume.MouseButtonUpMsg(pt)) {
+		sliderNum = MASTER_SLIDER;
 		slider = &_masterVolume;
+	} else if (_musicVolume.MouseButtonUpMsg(pt)) {
+		sliderNum = MUSIC_SLIDER;
+		slider = &_musicVolume;
 	} else if (_parrotVolume.MouseButtonUpMsg(pt)) {
-		sliderNum = 2;
+		sliderNum = PARROT_SLIDER;
 		slider = &_parrotVolume;
 	} else if (_speechVolume.MouseButtonUpMsg(pt)) {
-		sliderNum = 3;
+		sliderNum = SPEECH_SLIDER;
 		slider = &_speechVolume;
 	} else {
 		return false;
@@ -276,7 +307,7 @@ bool CPetSound::MouseButtonUpMsg(const Point &pt) {
 }
 
 void CPetSound::getTooltip(CTextControl *text) {
-	text->setText("Change the volume settings.");
+	text->setText(CHANGE_VOLUME_SETTINGS);
 }
 
 } // End of namespace Titanic

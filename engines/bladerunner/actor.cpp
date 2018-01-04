@@ -23,7 +23,6 @@
 #include "bladerunner/actor.h"
 
 #include "bladerunner/bladerunner.h"
-
 #include "bladerunner/actor_clues.h"
 #include "bladerunner/actor_combat.h"
 #include "bladerunner/actor_walk.h"
@@ -37,6 +36,7 @@
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/scene.h"
 #include "bladerunner/script/ai.h"
+#include "bladerunner/set.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/waypoints.h"
@@ -333,20 +333,6 @@ void Actor::movementTrackWaypointReached() {
 	}
 }
 
-bool Actor::loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
-	return loopWalk(_vm->_actors[otherActorId]->_position, destinationOffset, a3, run, _position, 24.0f, 24.0f, a5, flagIsRunning, false);
-}
-
-bool Actor::loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
-	float x, y, z;
-	int width, height;
-	_vm->_items->getXYZ(itemId, &x, &y, &z);
-	_vm->_items->getWidthHeight(itemId, &width, &height);
-	Vector3 itemPosition(x, y, z);
-
-	return loopWalk(itemPosition, destinationOffset, a3, run, _position, width, 24.0f, a5, flagIsRunning, false);
-}
-
 void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool moving, bool retired) {
 	_position = position;
 	setFacing(facing, snapFacing);
@@ -378,12 +364,19 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3,
 		bool arrived;
 		_walkInfo->setup(_id, false, _position, destination, false, &arrived);
 
-		for (;;) {
+		if (async) {
+			return false;
+		}
+		while (true) {
 			_vm->gameTick();
 			if (!_walkInfo->isWalking() && !_walkInfo->isRunning())
+			{
 				break;
+			}
 			if (!_vm->_gameIsRunning)
+			{
 				break;
+			}
 		}
 		return false;
 	} else {
@@ -481,8 +474,18 @@ bool Actor::walkTo(bool run, const Vector3 &destination, bool a3) {
 	return _walkInfo->setup(_id, run, _position, destination, a3, &arrived);
 }
 
-bool Actor::loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning) {
-	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
+bool Actor::loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
+	return loopWalk(_vm->_actors[otherActorId]->_position, destinationOffset, a3, run, _position, 24.0f, 24.0f, a5, flagIsRunning, false);
+}
+
+bool Actor::loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
+	float x, y, z;
+	int width, height;
+	_vm->_items->getXYZ(itemId, &x, &y, &z);
+	_vm->_items->getWidthHeight(itemId, &width, &height);
+	Vector3 itemPosition(x, y, z);
+
+	return loopWalk(itemPosition, destinationOffset, a3, run, _position, width, 24.0f, a5, flagIsRunning, false);
 }
 
 bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning) {
@@ -534,6 +537,22 @@ bool Actor::loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bo
 	Vector3 waypointPosition;
 	_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
 	return loopWalk(waypointPosition, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
+}
+
+bool Actor::loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning) {
+	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
+}
+
+bool Actor::asyncWalkToWaypoint(int waypointId, int destinationOffset, bool run, bool a5) {
+	bool flagIsRunning;
+	Vector3 waypointPosition;
+	_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
+	return loopWalk(waypointPosition, destinationOffset, false, run, _position, 0.0f, 24.0f, a5, &flagIsRunning, true);
+}
+
+void Actor::asyncWalkToXYZ(const Vector3 &destination, int destinationOffset, bool run, int a6) {
+	bool flagIsRunning;
+	loopWalk(destination, destinationOffset, false, run, _position, 0.0f, 24.0f, a6, &flagIsRunning, true);
 }
 
 bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
@@ -672,7 +691,7 @@ bool Actor::draw(Common::Rect *screenRect) {
 
 	// TODO: Handle SHORTY mode
 
-	_vm->_sliceRenderer->drawInWorld(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surface2, _vm->_zbuffer->getData());
+	_vm->_sliceRenderer->drawInWorld(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surfaceGame, _vm->_zbuffer->getData());
 	_vm->_sliceRenderer->getScreenRectangle(screenRect, _animationId, _animationFrame, drawPosition, drawAngle, drawScale);
 
 	return !screenRect->isEmpty();
@@ -767,7 +786,7 @@ void Actor::setBoundingBox(const Vector3 &position, bool retired) {
 
 float Actor::distanceFromView(View *view) const{
 	float xDist = this->_position.x - view->_cameraPosition.x;
-	float zDist = this->_position.z - view->_cameraPosition.z;
+	float zDist = this->_position.z + view->_cameraPosition.z;
 	return sqrt(xDist * xDist + zDist * zDist);
 }
 
@@ -863,7 +882,7 @@ void Actor::faceHeading(int heading, bool animate) {
 }
 
 void Actor::modifyFriendlinessToOther(int otherActorId, signed int change) {
-	_friendlinessToOther[otherActorId] = MIN(MAX(_friendlinessToOther[otherActorId] + change, 0), 100);
+	_friendlinessToOther[otherActorId] = CLIP(_friendlinessToOther[otherActorId] + change, 0, 100);
 }
 
 void Actor::setFriendlinessToOther(int otherActorId, int friendliness) {
@@ -895,29 +914,29 @@ void Actor::setImmunityToObstacles(bool isImmune) {
 }
 
 void Actor::modifyCurrentHP(signed int change) {
-	_currentHP = MIN(MAX(_currentHP + change, 0), 100);
+	_currentHP = CLIP(_currentHP + change, 0, 100);
 	if (_currentHP > 0)
 		retire(false, 0, 0, -1);
 }
 
 void Actor::modifyMaxHP(signed int change) {
-	_maxHP = MIN(MAX(_maxHP + change, 0), 100);
+	_maxHP = CLIP(_maxHP + change, 0, 100);
 }
 
 void Actor::modifyCombatAggressiveness(signed int change) {
-	_combatAggressiveness = MIN(MAX(_combatAggressiveness + change, 0), 100);
+	_combatAggressiveness = CLIP(_combatAggressiveness + change, 0, 100);
 }
 
 void Actor::modifyHonesty(signed int change) {
-	_honesty = MIN(MAX(_honesty + change, 0), 100);
+	_honesty = CLIP(_honesty + change, 0, 100);
 }
 
 void Actor::modifyIntelligence(signed int change) {
-	_intelligence = MIN(MAX(_intelligence + change, 0), 100);
+	_intelligence = CLIP(_intelligence + change, 0, 100);
 }
 
 void Actor::modifyStability(signed int change) {
-	_stability = MIN(MAX(_stability + change, 0), 100);
+	_stability = CLIP(_stability + change, 0, 100);
 }
 
 void Actor::setFlagDamageAnimIfMoving(bool value) {
@@ -1043,7 +1062,7 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 		int screenX = 320; //, screenY = 0;
 		//TODO: transform to screen space using fov;
 		balance = 127 * (2 * screenX - 640) / 640;
-		balance = MIN(127, MAX(-127, balance));
+		balance = CLIP<int>(balance, -127, 127);
 	}
 
 	_vm->_audioSpeech->playSpeech(name, balance);
@@ -1062,7 +1081,11 @@ void Actor::addClueToDatabase(int clueId, int weight, bool clueAcquired, bool un
 }
 
 void Actor::acquireClue(int clueId, bool unknownFlag, int fromActorId) {
+	bool hasAlready = hasClue(clueId);
 	_clues->acquire(clueId, unknownFlag, fromActorId);
+	if (!hasAlready) {
+		_vm->_aiScripts->ReceivedClue(_id, clueId, fromActorId);
+	}
 }
 
 void Actor::loseClue(int clueId) {
@@ -1088,12 +1111,12 @@ void Actor::copyClues(int actorId) {
 
 int Actor::soundVolume() const {
 	float dist = distanceFromView(_vm->_view);
-	return 255.0f * MAX(MIN(dist / 1200.0f, 1.0f), 0.0f);
+	return 35.0f * CLIP(1.0f - (dist / 1200.0f), 0.0f, 1.0f);
 }
 
 int Actor::soundBalance() const {
 	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
-	return 127.0f * (MAX(MIN(screenPosition.x / 640.0f, 1.0f), 0.0f) * 2.0f - 1.0f);
+	return 35.0f * (CLIP(screenPosition.x / 640.0f, 0.0f, 1.0f) * 2.0f - 1.0f);
 }
 
 bool Actor::walkFindU1(const Vector3 &startPosition, const Vector3 &targetPosition, float size, Vector3 *newDestination) {

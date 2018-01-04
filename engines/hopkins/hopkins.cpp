@@ -665,6 +665,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			_objectsMan->sceneControl2("IM26", "IM26", "ANIM26", "IM26", 30, true);
+			break;
 
 		case 33:
 			_objectsMan->sceneControl("IM33", "IM33", "ANIM33", "IM33", 8, false);

@@ -1169,6 +1169,7 @@ void Interface::processStatusTextInput(Common::KeyState keystate) {
 		}
 		_statusTextInputPos--;
 		_statusTextInputString[_statusTextInputPos] = 0;
+		break;
 	default:
 		if (_statusTextInputPos >= STATUS_TEXT_INPUT_MAX - 1) { // -1 because of the null termination
 			break;
@@ -1202,6 +1203,7 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 			break;
 		}
 		_textInputPos--;
+		// fall through
 	case Common::KEYCODE_DELETE:
 		if (_textInputPos <= _textInputStringLength) {
 			if (_textInputPos != 1) {
@@ -2531,10 +2533,12 @@ void Interface::converseDisplayTextLines() {
 	char bullet[2] = {
 		(char)0xb7, 0
 	};
-	Rect rect(8, _vm->getDisplayInfo().converseTextLines * _vm->getDisplayInfo().converseTextHeight);
-	Point textPoint;
 
 	assert(_conversePanel.buttonsCount >= 6);
+	Rect rect(8, _vm->getDisplayInfo().converseTextLines * _vm->getDisplayInfo().converseTextHeight);
+	rect.moveTo(_conversePanel.x + _conversePanel.buttons[0].xOffset, _conversePanel.y + _conversePanel.buttons[0].yOffset);
+
+	Point textPoint;
 
 	if (_vm->getGameId() == GID_ITE) {
 		bulletForegnd = kITEColorGreen;
@@ -2545,13 +2549,11 @@ void Interface::converseDisplayTextLines() {
 		bullet[0] = '>';				// different bullet in IHNM
 	}
 
-	rect.moveTo(_conversePanel.x + _conversePanel.buttons[0].xOffset,
-		_conversePanel.y + _conversePanel.buttons[0].yOffset);
-
 	if (_vm->getGameId() == GID_ITE)
-		_vm->_gfx->drawRect(rect, kITEColorDarkGrey);	//fill bullet place
-	else
-		_vm->_gfx->drawRect(rect, _vm->KnownColor2ColorId(kKnownColorBlack));	//fill bullet place
+		_vm->_gfx->drawRect(rect, kITEColorDarkGrey);	// fill bullet place
+	else if (_vm->getGameId() == GID_IHNM)
+		// TODO: Add these to IHNM_DisplayInfo?
+		_vm->_gfx->drawRect(Common::Rect(118, 345, 603, 463), _vm->KnownColor2ColorId(kKnownColorBlack));	// fill converse rect
 
 	for (int i = 0; i < _vm->getDisplayInfo().converseTextLines; i++) {
 		relPos = _converseStartPos + i;

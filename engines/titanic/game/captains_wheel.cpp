@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/captains_wheel.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -99,6 +100,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 		}
 	} else if (msg->_action == "Go") {
 		if (_stopEnabled) {
+			_goEnabled = false;
 			incTransitions();
 			_stopEnabled = false;
 			_actionNum = 1;
@@ -118,7 +120,7 @@ bool CCaptainsWheel::ActMsg(CActMsg *msg) {
 			playMovie(162, 168, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
 	} else if (msg->_action == "SetDestin") {
-		playSound("a#44.wav");
+		playSound(TRANSLATE("a#44.wav", "a#37.wav"));
 		CSetVolumeMsg volumeMsg;
 		volumeMsg._volume = 25;
 		volumeMsg.execute("EngineSounds");

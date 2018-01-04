@@ -169,7 +169,7 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 	int n;
 	double ll;
 
-	Common::MemoryWriteStreamDynamic st;
+	Common::MemoryWriteStreamDynamic st(DisposeAfterUse::NO);
 
 	ll = log10(pow(2.0, 1.0 / 12.0));
 

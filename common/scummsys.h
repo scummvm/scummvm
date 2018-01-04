@@ -154,6 +154,7 @@
 #endif
 
 #ifndef STATIC_ASSERT
+#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER > 1600)
 	/**
 	 * Generates a compile-time assertion.
 	 *
@@ -162,8 +163,21 @@
 	 * time if the expression evaluates to false.
 	 */
 	#define STATIC_ASSERT(expression, message) \
-		extern int STATIC_ASSERT_##message[(expression) ? 1 : -1]; \
-		(void)(STATIC_ASSERT_##message);
+		static_assert((expression), #message)
+#else
+	/**
+	 * Generates a compile-time assertion.
+	 *
+	 * @param expression An expression that can be evaluated at compile time.
+	 * @param message An underscore-delimited message to be presented at compile
+	 * time if the expression evaluates to false.
+	 */
+	#define STATIC_ASSERT(expression, message) \
+		do { \
+			extern int STATIC_ASSERT_##message[(expression) ? 1 : -1]; \
+			(void)(STATIC_ASSERT_##message); \
+		} while (false)
+#endif
 #endif
 
 // The following math constants are usually defined by the system math.h header, but
@@ -310,26 +324,6 @@
 #endif
 
 //
-// Determine 64 bitness
-// Reference: http://nadeausoftware.com/articles/2012/02/c_c_tip_how_detect_processor_type_using_compiler_predefined_macros
-//
-#if !defined(HAVE_CONFIG_H)
-
-	#if defined(__x86_64__) || \
-		  defined(_M_X64) || \
-		  defined(__ppc64__) || \
-		  defined(__powerpc64__) || \
-		  defined(__LP64__)
-
-		#if !defined(SCUMM_64BITS)
-			#define SCUMM_64BITS
-		#endif
-
-	#endif
-
-#endif
-
-//
 // Some more system specific settings.
 // TODO/FIXME: All of these should be moved to backend specific files (such as portdefs.h)
 //
@@ -452,11 +446,27 @@
 	#endif
 #endif
 
+//
+// Determine 64 bitness
+// Reference: http://nadeausoftware.com/articles/2012/02/c_c_tip_how_detect_processor_type_using_compiler_predefined_macros
+//
+#if !defined(HAVE_CONFIG_H)
 
-//
-// Overlay color type (FIXME: shouldn't be declared here)
-//
-typedef uint16 OverlayColor;
+#if defined(__x86_64__) || \
+		  defined(_M_X64) || \
+		  defined(__ppc64__) || \
+		  defined(__powerpc64__) || \
+		  defined(__LP64__)
+
+typedef uint64 uintptr;
+
+#else
+
+typedef uint32 uintptr;
+
+#endif
+
+#endif
 
 #include "common/forbidden.h"
 

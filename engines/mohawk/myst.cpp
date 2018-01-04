@@ -31,11 +31,11 @@
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/myst_sound.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/resource.h"
 #include "mohawk/resource_cache.h"
-#include "mohawk/sound.h"
 #include "mohawk/video.h"
 
 // The stacks
@@ -70,12 +70,13 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
 	_curCard = 0;
-	_needsUpdate = false;
-	_canSafelySaveLoad = false;
-	_curResource = -1;
+
 	_hoverResource = nullptr;
+	_activeResource = nullptr;
+	_clickedResource = nullptr;
 
 	_sound = nullptr;
+	_video = nullptr;
 	_gfx = nullptr;
 	_console = nullptr;
 	_scriptParser = nullptr;
@@ -83,12 +84,18 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_optionsDialog = nullptr;
 
 	_prevStack = nullptr;
+
+	_mouseClicked = false;
+	_mouseMoved = false;
+	_escapePressed = false;
+	_interactive = true;
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _gfx;
+	delete _video;
 	delete _sound;
 	delete _console;
 	delete _scriptParser;
@@ -218,11 +225,89 @@ Common::String MohawkEngine_Myst::wrapMovieFilename(const Common::String &movieN
 	return Common::String("qtw/") + prefix + movieName + ".mov";
 }
 
+VideoEntryPtr MohawkEngine_Myst::playMovie(const Common::String &name, MystStack stack) {
+	Common::String filename = wrapMovieFilename(name, stack);
+	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
+
+	if (!video) {
+		error("Failed to open the '%s' movie", filename.c_str());
+	}
+
+	return video;
+}
+
+VideoEntryPtr MohawkEngine_Myst::findVideo(const Common::String &name, MystStack stack) {
+	Common::String filename = wrapMovieFilename(name, stack);
+	return _video->findVideo(filename);
+}
+
+void MohawkEngine_Myst::playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y) {
+	Common::String filename = wrapMovieFilename(name, stack);
+	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
+	if (!video) {
+		error("Failed to open the '%s' movie", filename.c_str());
+	}
+
+	video->moveTo(x, y);
+
+	waitUntilMovieEnds(video);
+}
+
+void MohawkEngine_Myst::playFlybyMovie(const Common::String &name) {
+	Common::String filename = wrapMovieFilename(name, kMasterpieceOnly);
+	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
+	if (!video) {
+		error("Failed to open the '%s' movie", filename.c_str());
+	}
+
+	// Clear screen
+	_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
+
+	video->center();
+	waitUntilMovieEnds(video);
+}
+
+void MohawkEngine_Myst::waitUntilMovieEnds(const VideoEntryPtr &video) {
+	if (!video)
+		return;
+
+	_interactive = false;
+
+	// Sanity check
+	if (video->isLooping())
+		error("Called waitUntilMovieEnds() on a looping video");
+
+	while (!video->endOfVideo() && !shouldQuit()) {
+		doFrame();
+
+		// Allow skipping
+		if (_escapePressed) {
+			_escapePressed = false;
+			break;
+		}
+	}
+
+	// Ensure it's removed
+	_video->removeEntry(video);
+	_interactive = true;
+}
+
+void MohawkEngine_Myst::playSoundBlocking(uint16 id) {
+	_interactive = false;
+	_sound->playEffect(id);
+
+	while (_sound->isEffectPlaying() && !shouldQuit()) {
+		doFrame();
+	}
+	_interactive = true;
+}
+
 Common::Error MohawkEngine_Myst::run() {
 	MohawkEngine::run();
 
 	_gfx = new MystGraphics(this);
-	_sound = new Sound(this);
+	_video = new VideoManager(this);
+	_sound = new MystSound(this);
 	_console = new MystConsole(this);
 	_gameState = new MystGameState(this, _saveFileMan);
 	_optionsDialog = new MystOptionsDialog(this);
@@ -258,165 +343,137 @@ Common::Error MohawkEngine_Myst::run() {
 	// Test Load Function...
 	loadHelp(10000);
 
-	Common::Event event;
 	while (!shouldQuit()) {
-		// Update any background videos
-		_needsUpdate = _video->updateMovies();
-		_scriptParser->runPersistentScripts();
-
-		while (pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE: {
-				_needsUpdate = true;
-				bool mouseClicked = _system->getEventManager()->getButtonState() & 1;
-
-				// Keep the same resource when dragging
-				if (!mouseClicked) {
-					checkCurrentResource();
-				}
-				if (_curResource >= 0 && _resources[_curResource]->isEnabled() && mouseClicked) {
-					debug(2, "Sending mouse move event to resource %d", _curResource);
-					_resources[_curResource]->handleMouseDrag();
-				}
-				break;
-			}
-			case Common::EVENT_LBUTTONUP:
-				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
-					debug(2, "Sending mouse up event to resource %d", _curResource);
-					_resources[_curResource]->handleMouseUp();
-				}
-				checkCurrentResource();
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				if (_curResource >= 0 && _resources[_curResource]->isEnabled()) {
-					debug(2, "Sending mouse up event to resource %d", _curResource);
-					_resources[_curResource]->handleMouseDown();
-				}
-				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_d:
-					if (event.kbd.flags & Common::KBD_CTRL) {
-						_console->attach();
-						_console->onFrame();
-					}
-					break;
-				case Common::KEYCODE_SPACE:
-					pauseGame();
-					break;
-				case Common::KEYCODE_F5:
-					_needsPageDrop = false;
-					_needsShowMap = false;
-					_needsShowDemoMenu = false;
-					_needsShowCredits = false;
-
-					_canSafelySaveLoad = true;
-					runDialog(*_optionsDialog);
-					if (_optionsDialog->getLoadSlot() >= 0)
-						loadGameState(_optionsDialog->getLoadSlot());
-					_canSafelySaveLoad = false;
-
-					if (_needsPageDrop) {
-						dropPage();
-						_needsPageDrop = false;
-					}
-
-					if (_needsShowMap) {
-						_scriptParser->showMap();
-						_needsShowMap = false;
-					}
-
-					if (_needsShowDemoMenu) {
-						changeToStack(kDemoStack, 2002, 0, 0);
-						_needsShowDemoMenu = false;
-					}
-
-					if (_needsShowCredits) {
-						_cursor->hideCursor();
-						changeToStack(kCreditsStack, 10000, 0, 0);
-						_needsShowCredits = false;
-					}
-					break;
-				default:
-					break;
-				}
-				break;
-			default:
-				break;
-			}
-		}
-
-		if (_needsUpdate) {
-			_system->updateScreen();
-			_needsUpdate = false;
-		}
-
-		// Cut down on CPU usage
-		_system->delayMillis(10);
+		doFrame();
 	}
 
 	return Common::kNoError;
 }
 
-bool MohawkEngine_Myst::pollEvent(Common::Event &event) {
-	// Saving / Loading is allowed from the GMM only when the main event loop is running
-	_canSafelySaveLoad = true;
-	bool eventReturned =  _eventMan->pollEvent(event);
-	_canSafelySaveLoad = false;
-
-	return eventReturned;
-}
-
-bool MohawkEngine_Myst::skippableWait(uint32 duration) {
-	uint32 end = _system->getMillis() + duration;
-	bool skipped = false;
-
-	while (_system->getMillis() < end && !skipped) {
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_LBUTTONUP:
-				skipped = true;
-				break;
-			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
-					pauseGame();
-					break;
-				case Common::KEYCODE_ESCAPE:
-					skipped = true;
-					break;
-				default:
-					break;
-			}
-			default:
-				break;
-			}
-		}
-
-		// Cut down on CPU usage
-		_system->delayMillis(10);
+void MohawkEngine_Myst::doFrame() {
+	// Update any background videos
+	_video->updateMovies();
+	if (!_scriptParser->isScriptRunning() && _interactive) {
+		_interactive = false;
+		_scriptParser->runPersistentScripts();
+		_interactive = true;
 	}
 
-	return skipped;
-}
-
-void MohawkEngine_Myst::pollAndDiscardEvents() {
-	// Poll the events to update the mouse cursor position
 	Common::Event event;
 	while (_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				_mouseMoved = true;
+				break;
+			case Common::EVENT_LBUTTONUP:
+				_mouseClicked = false;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				_mouseClicked = true;
+				break;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
+					case Common::KEYCODE_d:
+						if (event.kbd.flags & Common::KBD_CTRL) {
+							_console->attach();
+							_console->onFrame();
+						}
+						break;
 					case Common::KEYCODE_SPACE:
 						pauseGame();
+						break;
+					case Common::KEYCODE_F5:
+						_needsPageDrop = false;
+						_needsShowMap = false;
+						_needsShowDemoMenu = false;
+						_needsShowCredits = false;
+
+						runDialog(*_optionsDialog);
+						if (_optionsDialog->getLoadSlot() >= 0)
+							loadGameState(_optionsDialog->getLoadSlot());
+						if (_optionsDialog->getSaveSlot() >= 0)
+							saveGameState(_optionsDialog->getSaveSlot(), _optionsDialog->getSaveDescription());
+
+						if (_needsPageDrop) {
+							dropPage();
+							_needsPageDrop = false;
+						}
+
+						if (_needsShowMap) {
+							_scriptParser->showMap();
+							_needsShowMap = false;
+						}
+
+						if (_needsShowDemoMenu) {
+							changeToStack(kDemoStack, 2002, 0, 0);
+							_needsShowDemoMenu = false;
+						}
+
+						if (_needsShowCredits) {
+							_cursor->hideCursor();
+							changeToStack(kCreditsStack, 10000, 0, 0);
+							_needsShowCredits = false;
+						}
+						break;
+					case Common::KEYCODE_ESCAPE:
+						_escapePressed = true;
 						break;
 					default:
 						break;
 				}
+				break;
+			case Common::EVENT_KEYUP:
+				switch (event.kbd.keycode) {
+					case Common::KEYCODE_ESCAPE:
+						_escapePressed = false;
+						break;
+					default:
+						break;
+				}
+				break;
 			default:
 				break;
 		}
+	}
+
+	if (!_scriptParser->isScriptRunning() && _interactive) {
+		updateActiveResource();
+		checkCurrentResource();
+	}
+
+	_system->updateScreen();
+
+	// Cut down on CPU usage
+	_system->delayMillis(10);
+}
+
+bool MohawkEngine_Myst::wait(uint32 duration, bool skippable) {
+	_interactive = false;
+	uint32 end = getTotalPlayTime() + duration;
+
+	do {
+		doFrame();
+
+		if (_escapePressed && skippable) {
+			_escapePressed = false;
+			return true; // Return true if skipped
+		}
+	} while (getTotalPlayTime() < end && !shouldQuit());
+
+	_interactive = true;
+	return false;
+}
+
+void MohawkEngine_Myst::pauseEngineIntern(bool pause) {
+	MohawkEngine::pauseEngineIntern(pause);
+
+	if (pause) {
+		_video->pauseVideos();
+	} else {
+		_video->resumeVideos();
+
+		// We may have missed events while paused
+		_mouseClicked = (_eventMan->getButtonState() & 1) != 0;
 	}
 }
 
@@ -434,13 +491,11 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	else
 		_gfx->clearScreenPalette();
 
-	_system->updateScreen();
-
-	_sound->stopSound();
-	_sound->stopBackgroundMyst();
+	_sound->stopEffect();
+	_sound->stopBackground();
 	_video->stopVideos();
 	if (linkSrcSound)
-		_sound->playSoundBlocking(linkSrcSound);
+		playSoundBlocking(linkSrcSound);
 
 	// Delete the previous stack and move the current stack to the previous one
 	// There's probably a better way to do this, but the script classes shouldn't
@@ -542,14 +597,15 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 			break;
 		}
 
-		if (flyby)
-			_video->playMovieBlockingCentered(wrapMovieFilename(flyby, kMasterpieceOnly));
+		if (flyby) {
+			playFlybyMovie(flyby);
+		}
 	}
 
 	changeToCard(card, kTransitionCopy);
 
 	if (linkDstSound)
-		_sound->playSoundBlocking(linkDstSound);
+		playSoundBlocking(linkDstSound);
 }
 
 uint16 MohawkEngine_Myst::getCardBackgroundId() {
@@ -591,6 +647,9 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	_cache.clear();
 	_gfx->clearCache();
 
+	_mouseClicked = false;
+	_mouseMoved = false;
+	_escapePressed = false;
 	_curCard = card;
 
 	// Load a bunch of stuff
@@ -628,15 +687,8 @@ void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 			_gfx->runTransition(transition, Common::Rect(544, 333), 10, 0);
 		} else {
 			_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-			_system->updateScreen();
-			_needsUpdate = false;
 		}
 	}
-
-	// Make sure we have the right cursor showing
-	_hoverResource = nullptr;
-	_curResource = -1;
-	checkCurrentResource();
 
 	// Debug: Show resource rects
 	if (_showResourceRects)
@@ -648,13 +700,21 @@ void MohawkEngine_Myst::drawResourceRects() {
 		_resources[i]->getRect().debugPrint(0);
 		_resources[i]->drawBoundingRect();
 	}
+}
 
-	_system->updateScreen();
+void MohawkEngine_Myst::updateActiveResource() {
+	const Common::Point &mouse = _system->getEventManager()->getMousePos();
+
+	_activeResource = nullptr;
+	for (uint16 i = 0; i < _resources.size(); i++) {
+		if (_resources[i]->contains(mouse) && _resources[i]->canBecomeActive()) {
+			_activeResource = _resources[i];
+			break;
+		}
+	}
 }
 
 void MohawkEngine_Myst::checkCurrentResource() {
-	// See what resource we're over
-	bool foundResource = false;
 	const Common::Point &mouse = _system->getEventManager()->getMousePos();
 
 	// Tell previous resource the mouse is no longer hovering it
@@ -663,33 +723,41 @@ void MohawkEngine_Myst::checkCurrentResource() {
 		_hoverResource = nullptr;
 	}
 
-	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->contains(mouse)) {
-			if (_hoverResource != _resources[i] && _resources[i]->type == kMystAreaHover) {
-				_hoverResource = static_cast<MystAreaHover *>(_resources[i]);
-				_hoverResource->handleMouseEnter();
-			}
-
-			if (!foundResource && _resources[i]->canBecomeActive()) {
-				_curResource = i;
-				foundResource = true;
-			}
+	for (uint16 i = 0; i < _resources.size(); i++) {
+		if (_resources[i]->contains(mouse) && _resources[i]->type == kMystAreaHover
+			&& _hoverResource != _resources[i]) {
+			_hoverResource = static_cast<MystAreaHover *>(_resources[i]);
+			_hoverResource->handleMouseEnter();
 		}
+	}
 
-	// Set the resource to none if we're not over any
-	if (!foundResource)
-		_curResource = -1;
+	if (!_mouseClicked && _clickedResource) {
+		if (_clickedResource->isEnabled()) {
+			_clickedResource->handleMouseUp();
+		}
+		_clickedResource = nullptr;
+	} else if (_mouseMoved && _clickedResource) {
+		if (_clickedResource->isEnabled()) {
+			_clickedResource->handleMouseDrag();
+		}
+	} else if (_mouseClicked && !_clickedResource) {
+		if (_activeResource && _activeResource->isEnabled()) {
+			_clickedResource = _activeResource;
+			_clickedResource->handleMouseDown();
+		}
+	}
+
+	_mouseMoved = false;
 
 	checkCursorHints();
 }
 
-MystArea *MohawkEngine_Myst::updateCurrentResource() {
-	checkCurrentResource();
+MystArea *MohawkEngine_Myst::forceUpdateClickedResource() {
+	updateActiveResource();
 
-	if (_curResource >= 0)
-		return _resources[_curResource];
-	else
-		return nullptr;
+	_clickedResource = _activeResource;
+
+	return _clickedResource;
 }
 
 void MohawkEngine_Myst::loadCard() {
@@ -852,6 +920,9 @@ void MohawkEngine_Myst::unloadCard() {
 	_view.conditionalImages.clear();
 	_view.soundBlock.soundList.clear();
 	_view.scriptResources.clear();
+	_hoverResource = nullptr;
+	_activeResource = nullptr;
+	_clickedResource = nullptr;
 }
 
 void MohawkEngine_Myst::runInitScript() {
@@ -988,7 +1059,7 @@ void MohawkEngine_Myst::checkCursorHints() {
 
 	// Check all the cursor hints to see if we're in a hotspot that contains a hint.
 	for (uint16 i = 0; i < _cursorHints.size(); i++)
-		if (_cursorHints[i].id == _curResource && _resources[_cursorHints[i].id]->isEnabled()) {
+		if (_resources[_cursorHints[i].id] == _activeResource && _activeResource->isEnabled()) {
 			if (_cursorHints[i].cursor == -1) {
 				uint16 var_value = _scriptParser->getVar(_cursorHints[i].variableHint.var);
 
@@ -1121,12 +1192,25 @@ bool MohawkEngine_Myst::hasGameSaveSupport() const {
 }
 
 bool MohawkEngine_Myst::canLoadGameStateCurrently() {
-	// No loading in the demo/makingof
-	return _canSafelySaveLoad && hasGameSaveSupport();
+	if (_scriptParser->isScriptRunning() || !_interactive) {
+		return false;
+	}
+
+	if (_clickedResource) {
+		// Can't save while dragging resources
+		return false;
+	}
+
+	if (!hasGameSaveSupport()) {
+		// No loading in the demo/makingof
+		return false;
+	}
+
+	return true;
 }
 
 bool MohawkEngine_Myst::canSaveGameStateCurrently() {
-	if (!_canSafelySaveLoad) {
+	if (!canLoadGameStateCurrently()) {
 		return false;
 	}
 
@@ -1151,13 +1235,14 @@ void MohawkEngine_Myst::dropPage() {
 	bool redPage = page - 7 < 6;
 
 	// Play drop page sound
-	_sound->replaceSoundMyst(800);
+	_sound->playEffect(800);
 
 	// Drop page
 	_gameState->_globals.heldPage = 0;
 
 	// Redraw page area
 	if (whitePage && _gameState->_globals.currentAge == 2) {
+		_scriptParser->toggleVar(41);
 		redrawArea(41);
 	} else if (bluePage) {
 		if (page == 6) {
@@ -1248,13 +1333,13 @@ void MohawkEngine_Myst::applySoundBlock(const MystSoundBlock &block) {
 		debug(2, "Continuing with current sound");
 	else if (soundAction == kMystSoundActionChangeVolume) {
 		debug(2, "Continuing with current sound, changing volume");
-		_sound->changeBackgroundVolumeMyst(soundActionVolume);
+		_sound->changeBackgroundVolume(soundActionVolume);
 	} else if (soundAction == kMystSoundActionStop) {
 		debug(2, "Stopping sound");
-		_sound->stopBackgroundMyst();
+		_sound->stopBackground();
 	} else if (soundAction > 0) {
 		debug(2, "Playing new sound %d", soundAction);
-		_sound->replaceBackgroundMyst(soundAction, soundActionVolume);
+		_sound->playBackground(soundAction, soundActionVolume);
 	} else {
 		error("Unknown sound action %d", soundAction);
 	}

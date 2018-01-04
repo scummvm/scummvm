@@ -609,7 +609,7 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN: {
-			if (event.synthetic)
+			if (event.kbdRepeat)
 				break;
 
 			if (event.kbd.keycode == Common::KEYCODE_d && event.kbd.hasFlags(Common::KBD_CTRL)) {
@@ -782,7 +782,7 @@ void EventManager::processCommandQueue() {
 			delete _vm->_saveThumbnail;
 			_vm->_saveThumbnail = nullptr;
 		} else if (!_vm->_saveThumbnail) {
-			_vm->_saveThumbnail = new Common::MemoryWriteStreamDynamic();
+			_vm->_saveThumbnail = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 			Graphics::saveThumbnail(*_vm->_saveThumbnail);
 		}
 
@@ -1369,7 +1369,8 @@ void EventManager::processType80_clickInDungeonView_grabLeaderHandObject(uint16 
 	int16 mapX = _vm->_dungeonMan->_partyMapX;
 	int16 mapY = _vm->_dungeonMan->_partyMapY;
 	if (viewCell >= kDMViewCellBackRight) {
-		mapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], mapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
+		mapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
+		mapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
 		Thing groupThing = _vm->_groupMan->groupGetThing(mapX, mapY);
 		if ((groupThing != _vm->_thingEndOfList) &&
 			!_vm->_moveSens->isLevitating(groupThing) &&
@@ -1397,8 +1398,10 @@ void EventManager::clickInDungeonViewDropLeaderHandObject(uint16 viewCell) {
 	if (droppingIntoAnAlcove)
 		viewCell = kDMViewCellBackRight;
 
-	if (viewCell > kDMViewCellFrontRight)
-		mapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir], mapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
+	if (viewCell > kDMViewCellFrontRight) {
+		mapX += _vm->_dirIntoStepCountEast[_vm->_dungeonMan->_partyDir];
+		mapY += _vm->_dirIntoStepCountNorth[_vm->_dungeonMan->_partyDir];
+	}
 
 	uint16 currCell = _vm->normalizeModulo4(_vm->_dungeonMan->_partyDir + viewCell);
 	Thing removedThing = _vm->_championMan->getObjectRemovedFromLeaderHand();

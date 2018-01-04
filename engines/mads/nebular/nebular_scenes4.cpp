@@ -3819,7 +3819,7 @@ void Scene411::actions() {
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[10], 1, 6);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[10], 3);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[10], SEQUENCE_TRIGGER_EXPIRE, 0, 112);
-			// No break on purpose
+			// fall through
 		case 112:
 			_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 			_game._player._visible = true;

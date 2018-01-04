@@ -185,7 +185,7 @@ IMPLEMENT_FUNCTION_I(11, Boutarel, function11, bool)
 				getObjects()->update(kObjectCompartmentC, kEntityPlayer, kObjectLocation2, kCursorKeepValue, kCursorKeepValue);
 			else
 				getObjects()->update(kObjectCompartmentC, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);
-			// Fallback to next case
+			// fall through
 
 		case 1:
 			getObjects()->update(kObject50, kEntityPlayer, kObjectLocationNone, kCursorHandKnock, kCursorHand);

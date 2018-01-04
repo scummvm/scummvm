@@ -305,7 +305,6 @@ private:
 	const byte *_effectsData;
 	Common::Array<uint16> _effectsOffsets;
 	const byte *_songData;
-	ArchiveType _archiveType;
 private:
 	/**
 	 * Loads effects data that was embedded in the music driver
@@ -318,6 +317,8 @@ private:
 	void update();
 public:
 	bool _musicOn;
+	Common::String _currentMusic, _priorMusic;
+	int _musicSide;
 public:
 	Music();
 	~Music();

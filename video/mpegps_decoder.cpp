@@ -142,7 +142,7 @@ void MPEGPSDecoder::readNextPacket() {
 			} else if (startCode >= 0x1C0 && startCode <= 0x1DF) {
 #ifdef USE_MAD
 				// MPEG Audio stream
-				MPEGAudioTrack *audioTrack = new MPEGAudioTrack(*packet);
+				MPEGAudioTrack *audioTrack = new MPEGAudioTrack(*packet, getSoundType());
 				stream = audioTrack;
 				_streamMap[startCode] = audioTrack;
 				addTrack(audioTrack);
@@ -512,7 +512,8 @@ void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *f
 
 // The audio code here is almost entirely based on what we do in mp3.cpp
 
-MPEGPSDecoder::MPEGAudioTrack::MPEGAudioTrack(Common::SeekableReadStream &firstPacket) {
+MPEGPSDecoder::MPEGAudioTrack::MPEGAudioTrack(Common::SeekableReadStream &firstPacket, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
 	_audStream = Audio::makePacketizedMP3Stream(firstPacket);
 }
 

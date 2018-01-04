@@ -87,6 +87,7 @@ struct WidgetDrawData {
 	    E.g. when taking into account rounded corners, drop shadows, etc
 	    Used when restoring the widget background */
 	uint16 _backgroundOffset;
+	uint16 _shadowOffset;
 
 	bool _buffer;
 
@@ -271,6 +272,10 @@ void ThemeItemDrawData::drawSelf(bool draw, bool restore) {
 
 	Common::Rect extendedRect = _area;
 	extendedRect.grow(_engine->kDirtyRectangleThreshold + _data->_backgroundOffset);
+	if (_data->_shadowOffset > _data->_backgroundOffset) {
+		extendedRect.right += _data->_shadowOffset - _data->_backgroundOffset;
+		extendedRect.bottom += _data->_shadowOffset - _data->_backgroundOffset;
+	}
 
 	if (restore)
 		_engine->restoreBackground(extendedRect);
@@ -288,6 +293,10 @@ void ThemeItemDrawDataClip::drawSelf(bool draw, bool restore) {
 
 	Common::Rect extendedRect = _area;
 	extendedRect.grow(_engine->kDirtyRectangleThreshold + _data->_backgroundOffset);
+	if (_data->_shadowOffset > _data->_backgroundOffset) {
+		extendedRect.right += _data->_shadowOffset - _data->_backgroundOffset;
+		extendedRect.bottom += _data->_shadowOffset - _data->_backgroundOffset;
+	}
 
 	if (restore)
 		_engine->restoreBackground(extendedRect);
@@ -621,6 +630,7 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 			_bytesPerPixel = sizeof(uint16);
 			break;
 		}
+		// fall through
 	default:
 		error("Invalid graphics mode");
 	}
@@ -646,17 +656,18 @@ void ThemeEngine::setGraphicsMode(GraphicsMode mode) {
 }
 
 void WidgetDrawData::calcBackgroundOffset() {
-	uint maxShadow = 0;
+	uint maxShadow = 0, maxBevel = 0;
 	for (Common::List<Graphics::DrawStep>::const_iterator step = _steps.begin();
 	        step != _steps.end(); ++step) {
 		if ((step->autoWidth || step->autoHeight) && step->shadow > maxShadow)
 			maxShadow = step->shadow;
 
-		if (step->drawingCall == &Graphics::VectorRenderer::drawCallback_BEVELSQ && step->bevel > maxShadow)
-			maxShadow = step->bevel;
+		if (step->drawingCall == &Graphics::VectorRenderer::drawCallback_BEVELSQ && step->bevel > maxBevel)
+			maxBevel = step->bevel;
 	}
 
-	_backgroundOffset = maxShadow;
+	_backgroundOffset = maxBevel;
+	_shadowOffset = maxShadow;
 }
 
 void ThemeEngine::restoreBackground(Common::Rect r) {

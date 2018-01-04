@@ -23,6 +23,7 @@
 #ifndef MOHAWK_VIDEO_H
 #define MOHAWK_VIDEO_H
 
+#include "audio/mixer.h"
 #include "audio/timestamp.h"
 #include "common/array.h"
 #include "common/list.h"
@@ -38,18 +39,6 @@ class VideoDecoder;
 namespace Mohawk {
 
 class MohawkEngine;
-
-struct MLSTRecord {
-	uint16 index;
-	uint16 movieID;
-	uint16 code;
-	uint16 left;
-	uint16 top;
-	uint16 u0[3];
-	uint16 loop;
-	uint16 volume;
-	uint16 u1;
-};
 
 /**
  * A video monitored by the VideoManager
@@ -246,98 +235,28 @@ private:
 
 typedef Common::SharedPtr<VideoEntry> VideoEntryPtr;
 
-/**
- * A handle for manipulating a video
- */
-class VideoHandle {
-	// The private members should be able to be manipulated by VideoManager
-	friend class VideoManager;
-
-public:
-	/**
-	 * Default constructor
-	 */
-	VideoHandle() {}
-
-	/**
-	 * Copy constructor
-	 */
-	VideoHandle(const VideoHandle &handle);
-
-	/**
-	 * Is this handle pointing to a valid video entry?
-	 */
-	bool isValid() const { return _ptr && _ptr->isOpen(); }
-
-	/**
-	 * Convenience implicit cast to bool
-	 */
-	operator bool() const { return isValid(); }
-
-	/**
-	 * Simple equality operator
-	 */
-	bool operator==(const VideoHandle &other) const { return _ptr.get() == other._ptr.get(); }
-
-	/**
-	 * Simple inequality operator
-	 */
-	bool operator!=(const VideoHandle &other) const { return !(*this == other); }
-
-	/**
-	 * Convenience operator-> override to give direct access to the VideoEntry
-	 */
-	VideoEntryPtr operator->() const { return _ptr; }
-
-private:
-	/**
-	 * Constructor for internal VideoManager use
-	 */
-	explicit VideoHandle(VideoEntryPtr ptr);
-
-	/**
-	 * The video entry this is associated with
-	 */
-	VideoEntryPtr _ptr;
-};
-
 class VideoManager {
 public:
 	VideoManager(MohawkEngine *vm);
-	~VideoManager();
+	virtual ~VideoManager();
 
 	// Generic movie functions
-	void playMovieBlocking(const Common::String &filename, uint16 x = 0, uint16 y = 0, bool clearScreen = false);
-	void playMovieBlockingCentered(const Common::String &filename, bool clearScreen = true);
-	VideoHandle playMovie(const Common::String &filename);
-	VideoHandle playMovie(uint16 id);
+	VideoEntryPtr playMovie(const Common::String &filename, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	VideoEntryPtr playMovie(uint16 id);
 	bool updateMovies();
 	void pauseVideos();
 	void resumeVideos();
 	void stopVideos();
 	bool isVideoPlaying();
 
-	// Riven-related functions
-	void activateMLST(uint16 mlstId, uint16 card);
-	void clearMLST();
-	void disableAllMovies();
-	VideoHandle playMovieRiven(uint16 id);
-	void playMovieBlockingRiven(uint16 id);
-	VideoHandle findVideoHandleRiven(uint16 id);
-	void stopMovieRiven(uint16 id);
-
 	// Handle functions
-	VideoHandle findVideoHandle(uint16 id);
-	VideoHandle findVideoHandle(const Common::String &fileName);
-	void waitUntilMovieEnds(VideoHandle handle);
-	void delayUntilMovieEnds(VideoHandle handle);
-	void drawVideoFrame(VideoHandle handle, const Audio::Timestamp &time);
+	VideoEntryPtr findVideo(uint16 id);
+	VideoEntryPtr findVideo(const Common::String &fileName);
+	void drawVideoFrame(const VideoEntryPtr &video, const Audio::Timestamp &time);
+	void removeEntry(const VideoEntryPtr &video);
 
-private:
+protected:
 	MohawkEngine *_vm;
-
-	// Riven-related variables
-	Common::Array<MLSTRecord> _mlstRecords;
 
 	// Keep tabs on any videos playing
 	typedef Common::List<VideoEntryPtr> VideoList;
@@ -345,10 +264,9 @@ private:
 
 	// Utility functions for managing entries
 	VideoEntryPtr open(uint16 id);
-	VideoEntryPtr open(const Common::String &fileName);
+	VideoEntryPtr open(const Common::String &fileName, Audio::Mixer::SoundType soundType);
 
 	VideoList::iterator findEntry(VideoEntryPtr ptr);
-	void removeEntry(VideoEntryPtr ptr);
 
 	bool drawNextFrame(VideoEntryPtr videoEntry);
 

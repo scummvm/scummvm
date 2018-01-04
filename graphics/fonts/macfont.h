@@ -102,12 +102,14 @@ struct MacGlyph {
 	void clear() {
 		bitmapOffset = 0;
 		width = 0;
+		height = 0;
 		bitmapWidth = 0;
 		kerningOffset = 0;
 	}
 
 	uint16 bitmapOffset;
 	byte width;
+	uint16 height;
 	uint16 bitmapWidth;
 	int kerningOffset;
 };

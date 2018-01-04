@@ -44,7 +44,7 @@ public:
 	float     _viewportHalfHeight;
 	float     _viewportDistance;
 
-	bool read(Common::ReadStream *stream);
+	bool readVqa(Common::ReadStream *stream);
 	Vector3 calculateScreenPosition(Vector3 worldPosition);
 
 private:

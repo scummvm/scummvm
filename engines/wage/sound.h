@@ -56,6 +56,7 @@ public:
 	~Sound();
 
 	Common::String _name;
+	uint _size;
 	byte *_data;
 };
 

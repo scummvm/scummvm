@@ -229,20 +229,12 @@ private:
 // Based on FFmpeg's decoder and http://wiki.multimedia.cx/index.php?title=Duck_DK3_IMA_ADPCM
 
 class DK3_ADPCMStream : public Ima_ADPCMStream {
-protected:
-
-	void reset() {
-		Ima_ADPCMStream::reset();
-		_topNibble = false;
-	}
-
 public:
 	DK3_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
 		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
 
 		// DK3 only works as a stereo stream
 		assert(channels == 2);
-		_topNibble = false;
 	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);

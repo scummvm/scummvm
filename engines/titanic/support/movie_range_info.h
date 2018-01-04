@@ -41,6 +41,7 @@ public:
 	bool _isRepeat;
 	CMovieEventList _events;
 public:
+	CLASSDEF;
 	CMovieRangeInfo();
 	CMovieRangeInfo(const CMovieRangeInfo *src);
 	virtual ~CMovieRangeInfo();

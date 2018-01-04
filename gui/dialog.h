@@ -107,6 +107,8 @@ protected:
 	Widget *findWidget(const char *name);
 	void removeWidget(Widget *widget);
 
+	void setDefaultFocusedWidget();
+
 	void setResult(int result) { _result = result; }
 	int getResult() const { return _result; }
 };

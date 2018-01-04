@@ -27,6 +27,9 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/resource_cache.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/video.h"
+
+#include "audio/mixer.h"
 
 #include "common/events.h"
 #include "common/random.h"
@@ -40,6 +43,7 @@ class MystScriptParser;
 class MystConsole;
 class MystGameState;
 class MystOptionsDialog;
+class MystSound;
 class MystArea;
 class MystAreaImageSwitch;
 class MystAreaHover;
@@ -59,7 +63,7 @@ enum {
 };
 
 // Myst Stacks
-enum {
+enum MystStack {
 	kChannelwoodStack = 0,	// Channelwood Age
 	kCreditsStack,			// Credits
 	kDemoStack,				// Demo Main Menu
@@ -177,8 +181,6 @@ public:
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id) override;
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
 
-	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
-
 	void changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound);
 	void changeToCard(uint16 card, TransitionType transition);
 	uint16 getCurCard() { return _curCard; }
@@ -186,14 +188,15 @@ public:
 	void setMainCursor(uint16 cursor);
 	uint16 getMainCursor() { return _mainCursor; }
 	void checkCursorHints();
-	MystArea *updateCurrentResource();
-	void pollAndDiscardEvents();
-	bool skippableWait(uint32 duration);
+	MystArea *forceUpdateClickedResource();
+	bool wait(uint32 duration, bool skippable = false);
+
+	/** Update the game state according to events and update the screen */
+	void doFrame();
 
 	MystSoundBlock readSoundBlock(Common::ReadStream *stream) const;
 	void applySoundBlock(const MystSoundBlock &block);
 
-	bool _needsUpdate;
 	bool _needsPageDrop;
 	bool _needsShowMap;
 	bool _needsShowDemoMenu;
@@ -201,7 +204,8 @@ public:
 
 	bool _showResourceRects;
 
-	Sound *_sound;
+	VideoManager *_video;
+	MystSound *_sound;
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
 	MystScriptParser *_scriptParser;
@@ -221,6 +225,14 @@ public:
 
 	void setCacheState(bool state) { _cache.enabled = state; }
 	bool getCacheState() { return _cache.enabled; }
+
+	VideoEntryPtr playMovie(const Common::String &name, MystStack stack);
+	VideoEntryPtr findVideo(const Common::String &name, MystStack stack);
+	void playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y);
+	void playFlybyMovie(const Common::String &name);
+	void waitUntilMovieEnds(const VideoEntryPtr &video);
+
+	void playSoundBlocking(uint16 id);
 
 	GUI::Debugger *getDebugger() override { return _console; }
 
@@ -243,13 +255,7 @@ private:
 
 	bool _runExitScript;
 
-	/**
-	 * Saving / Loading is only allowed from the main event loop
-	 */
-	bool _canSafelySaveLoad;
 	bool hasGameSaveSupport() const;
-
-	bool pollEvent(Common::Event &event);
 
 	void dropPage();
 
@@ -263,13 +269,31 @@ private:
 	void loadResources();
 	void drawResourceRects();
 	void checkCurrentResource();
-	int16 _curResource;
+	void updateActiveResource();
+
+	Common::String wrapMovieFilename(const Common::String &movieName, uint16 stack);
+
+	/** Area of type kMystAreaHover being hovered by the mouse, if any */
 	MystAreaHover *_hoverResource;
+
+	/** Active area being hovered by the mouse, if any */
+	MystArea *_activeResource;
+
+	/** Active area being clicked on / dragged, if any */
+	MystArea *_clickedResource;
+
+	// Input
+	bool _mouseClicked;
+	bool _mouseMoved;
+	bool _escapePressed;
+	bool _interactive; // Is the game currently interactive
 
 	Common::Array<MystCursorHint> _cursorHints;
 	void loadCursorHints();
 	uint16 _currentCursor;
 	uint16 _mainCursor; // Also defines the current page being held (white, blue, red, or none)
+
+	void pauseEngineIntern(bool) override;
 };
 
 template<class T>

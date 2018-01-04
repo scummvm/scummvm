@@ -97,7 +97,7 @@ protected:
 EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	: OptionsDialog(domain, "GameOptions") {
 	// Retrieve all game specific options.
-	const EnginePlugin *plugin = 0;
+	const Plugin *plugin = nullptr;
 	// To allow for game domains without a gameid.
 	// TODO: Is it intentional that this is still supported?
 	String gameId(ConfMan.get("gameid", domain));
@@ -107,7 +107,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// implementation.
 	EngineMan.findGame(gameId, &plugin);
 	if (plugin) {
-		_engineOptions = (*plugin)->getExtraGuiOptions(domain);
+		_engineOptions = plugin->get<MetaEngine>().getExtraGuiOptions(domain);
 	} else {
 		warning("Plugin for target \"%s\" not found! Game specific settings might be missing", domain.c_str());
 	}
@@ -539,7 +539,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			_domain = newDomain;
 		}
 	}
-	// FALL THROUGH to default case
+	// fall through
 	default:
 		OptionsDialog::handleCommand(sender, cmd, data);
 	}

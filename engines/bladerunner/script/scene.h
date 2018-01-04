@@ -276,8 +276,8 @@ DECLARE_SCRIPT(MA04)
 	void sub_402F2C();
 	void sub_4032A0();
 	void sub_4034D8();
-	void sub_403864();
-	void sub_403DA8();
+	void turnOnTV();
+	void sleep();
 END_SCRIPT
 
 DECLARE_SCRIPT(MA05)
@@ -285,8 +285,8 @@ DECLARE_SCRIPT(MA05)
 END_SCRIPT
 
 DECLARE_SCRIPT(MA06)
-	bool sub_4012C0();
-	void sub_4014E4();
+	bool isElevatorOnDifferentFloor();
+	void activateElevator();
 END_SCRIPT
 
 DECLARE_SCRIPT(MA07)
@@ -410,7 +410,7 @@ END_SCRIPT
 
 DECLARE_SCRIPT(RC01)
 	void sub_403850();
-	void sub_4037AC();
+	void walkToCenter();
 END_SCRIPT
 
 DECLARE_SCRIPT(RC02)

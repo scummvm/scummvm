@@ -27,7 +27,7 @@
 
 namespace BladeRunner {
 
-bool View::read(Common::ReadStream *stream) {
+bool View::readVqa(Common::ReadStream *stream) {
 	_frame = stream->readUint32LE();
 
 	float d[12];
@@ -72,8 +72,8 @@ void View::calculateCameraPosition() {
 	Matrix4x3 invertedMatrix = invertMatrix(_sliceViewMatrix);
 
 	_cameraPosition.x = invertedMatrix(0, 3);
-	_cameraPosition.y = invertedMatrix(1, 3);
-	_cameraPosition.z = invertedMatrix(2, 3);
+	_cameraPosition.z = invertedMatrix(1, 3); // this is not a bug, it Z & Y are inverted in original source
+	_cameraPosition.y = invertedMatrix(2, 3);
 }
 
 Vector3 View::calculateScreenPosition(Vector3 worldPosition) {

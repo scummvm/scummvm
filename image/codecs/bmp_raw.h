@@ -41,7 +41,7 @@ public:
 	Graphics::PixelFormat getPixelFormat() const;
 
 private:
-	Graphics::Surface *_surface;
+	Graphics::Surface _surface;
 	int _width, _height;
 	int _bitsPerPixel;
 };

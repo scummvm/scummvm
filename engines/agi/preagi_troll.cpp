@@ -584,7 +584,7 @@ void TrollEngine::gameLoop() {
 				printUserMessage(13);
 				break;
 			}
-		// fall down
+			// fall through
 		case OT_GO:
 			_currentRoom = roomParam;
 			_roomPicture = _roomPicStartIdx[_currentRoom];

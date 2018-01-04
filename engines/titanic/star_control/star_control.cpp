@@ -20,17 +20,14 @@
  *
  */
 
-#include "titanic/support/screen_manager.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/star_control/star_control.h"
-#include "titanic/star_control/dmatrix.h"
-#include "titanic/star_control/error_code.h"
-#include "titanic/star_control/fpose.h"
-#include "titanic/star_control/star_camera.h"
-#include "titanic/game_manager.h"
 #include "titanic/core/dont_save_file_item.h"
 #include "titanic/core/project_item.h"
-#include "titanic/core/view_item.h"
+#include "titanic/game_manager.h"
+#include "titanic/pet_control/pet_control.h"
+#include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/error_code.h" // CErrorCode
+#include "titanic/support/screen_manager.h"
 
 namespace Titanic {
 
@@ -39,17 +36,16 @@ BEGIN_MESSAGE_MAP(CStarControl, CGameObject)
 	ON_MESSAGE(MouseButtonDownMsg)
 	ON_MESSAGE(KeyCharMsg)
 	ON_MESSAGE(FrameMsg)
+	ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
 CStarControl::CStarControl() : _enabled(false), _petControl(nullptr),
 		_starRect(20, 10, 620, 350) {
 	CStarCamera::init();
-	DMatrix::init();
 }
 
 CStarControl::~CStarControl() {
 	CStarCamera::deinit();
-	DMatrix::deinit();
 }
 
 void CStarControl::save(SimpleFile *file, int indent) {
@@ -149,6 +145,18 @@ void CStarControl::newFrame() {
 	}
 }
 
+bool CStarControl::isStarFieldMode() {
+	if (!_petControl)
+		_petControl = getPetControl();
+
+	if (_petControl) {
+
+		if (_starField.getMode() == MODE_STARFIELD)
+			return true;
+	}
+	return false;
+}
+
 void CStarControl::doAction(StarControlAction action) {
 	if (!_enabled)
 		return;
@@ -242,12 +250,12 @@ void CStarControl::doAction(StarControlAction action) {
 		_view.fn3(false);
 		break;
 
-	case STAR_17:
-		_view.fn16();
+	case LOCK_STAR:
+		_view.lockStar();
 		break;
 
-	case STAR_18:
-		_view.fn17();
+	case UNLOCK_STAR:
+		_view.unlockStar();
 		break;
 
 	case STAR_19:
@@ -260,9 +268,12 @@ bool CStarControl::isSolved() const {
 	return _starField.isSolved();
 }
 
+bool CStarControl::isSkipped() const {
+	return _starField.isSkipped();
+}
+
 void CStarControl::forceSolved() {
-	while (!_starField.isSolved())
-		_starField.fn7();
+	_starField.skipPuzzle();
 }
 
 bool CStarControl::canSetStarDestination() const {
@@ -271,6 +282,13 @@ bool CStarControl::canSetStarDestination() const {
 
 void CStarControl::starDestinationSet() {
 	_view.starDestinationSet();
+}
+
+bool CStarControl::MovementMsg(CMovementMsg *msg) {
+	// The star control view has an unused turn right link hidden
+	// under the star view. For cleanliness, explicitly consume any
+	// movements in the star view so the link is never used
+	return true;
 }
 
 } // End of namespace Titanic

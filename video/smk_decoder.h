@@ -23,6 +23,7 @@
 #ifndef VIDEO_SMK_PLAYER_H
 #define VIDEO_SMK_PLAYER_H
 
+#include "common/bitstream.h"
 #include "common/rational.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
@@ -34,7 +35,6 @@ class QueuingAudioStream;
 }
 
 namespace Common {
-class BitStream;
 class SeekableReadStream;
 }
 
@@ -59,7 +59,7 @@ class BigHuffmanTree;
  */
 class SmackerDecoder : public VideoDecoder {
 public:
-	SmackerDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
+	SmackerDecoder();
 	virtual ~SmackerDecoder();
 
 	virtual bool loadStream(Common::SeekableReadStream *stream);
@@ -91,9 +91,9 @@ protected:
 		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
-		void readTrees(Common::BitStream &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
+		void readTrees(Common::BitStreamMemory8LSB &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
 		void increaseCurFrame() { _curFrame++; }
-		void decodeFrame(Common::BitStream &bs);
+		void decodeFrame(Common::BitStreamMemory8LSB &bs);
 		void unpackPalette(Common::SeekableReadStream *stream);
 
 	protected:
@@ -164,8 +164,6 @@ private:
 		bool isRewindable() const { return true; }
 		bool rewind();
 
-		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
-
 		void queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize);
 		void queuePCM(byte *buffer, uint32 bufferSize);
 
@@ -173,7 +171,6 @@ private:
 		Audio::AudioStream *getAudioStream() const;
 
 	private:
-		Audio::Mixer::SoundType _soundType;
 		Audio::QueuingAudioStream *_audioStream;
 		AudioInfo _audioInfo;
 	};
@@ -186,8 +183,6 @@ private:
 	byte *_frameTypes;
 
 	uint32 _firstFrameStart;
-
-	Audio::Mixer::SoundType _soundType;
 };
 
 } // End of namespace Video

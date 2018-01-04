@@ -866,7 +866,8 @@ void Lingo::b_continue(int nargs) {
 }
 
 void Lingo::b_dontPassEvent(int nargs) {
-	warning("STUB: b_dontPassEvent");
+	g_lingo->dontPassEvent = true;
+	warning("dontPassEvent raised");
 }
 
 void Lingo::b_nothing(int nargs) {

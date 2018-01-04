@@ -26,11 +26,14 @@
 #include "audio/audiostream.h"
 
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
+#include "mohawk/resource.h"
 #include "mohawk/sound.h"
 
 namespace Mohawk {
 
-RivenSoundManager::RivenSoundManager(MohawkEngine *vm) :
+RivenSoundManager::RivenSoundManager(MohawkEngine_Riven *vm) :
 		_vm(vm),
 		_effect(nullptr),
 		_mainAmbientSoundId(-1),
@@ -59,7 +62,7 @@ void RivenSoundManager::playSound(uint16 id, uint16 volume, bool playOnDraw) {
 		return;
 	}
 
-	_effect = new RivenSound(_vm, rewindStream);
+	_effect = new RivenSound(_vm, rewindStream, Audio::Mixer::kSFXSoundType);
 	_effect->setVolume(volume);
 
 	_effectPlayOnDraw = playOnDraw;
@@ -68,62 +71,10 @@ void RivenSoundManager::playSound(uint16 id, uint16 volume, bool playOnDraw) {
 	}
 }
 
-void RivenSoundManager::playSLST(uint16 index, uint16 card) {
-	Common::SeekableReadStream *slstStream = _vm->getResource(ID_SLST, card);
-
-	uint16 recordCount = slstStream->readUint16BE();
-
-	for (uint16 i = 0; i < recordCount; i++) {
-		SLSTRecord slstRecord;
-		slstRecord.index = slstStream->readUint16BE();
-
-		uint16 soundCount = slstStream->readUint16BE();
-		slstRecord.soundIds.resize(soundCount);
-
-		for (uint16 j = 0; j < soundCount; j++)
-			slstRecord.soundIds[j] = slstStream->readUint16BE();
-
-		slstRecord.fadeFlags = slstStream->readUint16BE();
-		slstRecord.loop = slstStream->readUint16BE();
-		slstRecord.globalVolume = slstStream->readUint16BE();
-		slstRecord.u0 = slstStream->readUint16BE();			// Unknown
-
-		if (slstRecord.u0 > 1)
-			warning("slstRecord.u0: %d non-boolean", slstRecord.u0);
-
-		slstRecord.suspend = slstStream->readUint16BE();
-
-		if (slstRecord.suspend != 0)
-			warning("slstRecord.u1: %d non-zero", slstRecord.suspend);
-
-		slstRecord.volumes.resize(soundCount);
-		slstRecord.balances.resize(soundCount);
-		slstRecord.u2.resize(soundCount);
-
-		for (uint16 j = 0; j < soundCount; j++)
-			slstRecord.volumes[j] = slstStream->readUint16BE();
-
-		for (uint16 j = 0; j < soundCount; j++)
-			slstRecord.balances[j] = slstStream->readSint16BE();	// negative = left, 0 = center, positive = right
-
-		for (uint16 j = 0; j < soundCount; j++) {
-			slstRecord.u2[j] = slstStream->readUint16BE();		// Unknown
-
-			if (slstRecord.u2[j] != 255 && slstRecord.u2[j] != 256)
-				warning("slstRecord.u2[%d]: %d not 255 or 256", j, slstRecord.u2[j]);
-		}
-
-		if (slstRecord.index == index) {
-			playSLST(slstRecord);
-			delete slstStream;
-			return;
-		}
-	}
-
-	delete slstStream;
-
-	// If we have no matching entries, we do nothing and just let
-	// the previous ambient sounds continue.
+void RivenSoundManager::playCardSound(const Common::String &name, uint16 volume, bool playOnDraw) {
+	Common::String fullName = Common::String::format("%d_%s_1", _vm->getCard()->getId(), name.c_str());
+	uint16 id =_vm->findResourceID(ID_TWAV, fullName);
+	playSound(id, volume, playOnDraw);
 }
 
 void RivenSoundManager::playSLST(const SLSTRecord &slstRecord) {
@@ -188,7 +139,7 @@ void RivenSoundManager::addAmbientSounds(const SLSTRecord &record) {
 		for (uint i = oldSize; i < _ambientSounds.sounds.size(); i++) {
 			Audio::RewindableAudioStream *stream = makeAudioStream(record.soundIds[i]);
 
-			RivenSound *sound = new RivenSound(_vm, stream);
+			RivenSound *sound = new RivenSound(_vm, stream, Audio::Mixer::kMusicSoundType);
 			sound->setVolume(record.volumes[i]);
 			sound->setBalance(record.balances[i]);
 
@@ -200,7 +151,7 @@ void RivenSoundManager::addAmbientSounds(const SLSTRecord &record) {
 }
 
 void RivenSoundManager::setTargetVolumes(const SLSTRecord &record) {
-	for (uint i = 0; i < record.volumes.size(); i++) {
+	for (uint i = 0; i < MIN(_ambientSounds.sounds.size(), record.volumes.size()); i++) {
 		_ambientSounds.sounds[i].targetVolume = record.volumes[i] * record.globalVolume / 256;
 		_ambientSounds.sounds[i].targetBalance = record.balances[i];
 	}
@@ -356,12 +307,17 @@ bool RivenSoundManager::fadeBalance(RivenSoundManager::AmbientSound &ambientSoun
 	}
 }
 
-RivenSound::RivenSound(MohawkEngine *vm, Audio::RewindableAudioStream *rewindStream) :
+bool RivenSoundManager::isEffectPlaying() const {
+	return _effect != nullptr && _effect->isPlaying();
+}
+
+RivenSound::RivenSound(MohawkEngine_Riven *vm, Audio::RewindableAudioStream *rewindStream, Audio::Mixer::SoundType mixerType) :
 		_vm(vm),
 		_volume(Audio::Mixer::kMaxChannelVolume),
 		_balance(0),
 		_looping(false),
-		_stream(rewindStream) {
+		_stream(rewindStream),
+		_mixerType(mixerType) {
 
 }
 
@@ -417,7 +373,7 @@ void RivenSound::play() {
 
 	int8 mixerBalance = convertBalance(_balance);
 	byte mixerVolume = convertVolume(_volume);
-	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_handle, playStream, -1, mixerVolume, mixerBalance);
+	_vm->_mixer->playStream(_mixerType, &_handle, playStream, -1, mixerVolume, mixerBalance);
 	_stream = nullptr;
 }
 

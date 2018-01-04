@@ -93,7 +93,7 @@ void AIScriptLeon::ClickedByPlayer() {
 void AIScriptLeon::EnteredScene(int sceneId) {}
 
 void AIScriptLeon::OtherAgentEnteredThisScene(int otherActorId) {
-	if (otherActorId == 0 && Actor_Query_Goal_Number(kActorLeon) == 7) {
+	if (otherActorId == kActorMcCoy && Actor_Query_Goal_Number(kActorLeon) == 7) {
 		AI_Countdown_Timer_Reset(kActorLeon, 0);
 		AI_Movement_Track_Flush(kActorLeon);
 		AI_Movement_Track_Append(kActorLeon, 353, 0);
@@ -104,7 +104,7 @@ void AIScriptLeon::OtherAgentEnteredThisScene(int otherActorId) {
 }
 
 void AIScriptLeon::OtherAgentExitedThisScene(int otherActorId) {
-	if (otherActorId == 0 && Actor_Query_Which_Set_In(kActorLeon) == 33) {
+	if (otherActorId == kActorMcCoy && Actor_Query_Which_Set_In(kActorLeon) == 33) {
 		AI_Movement_Track_Flush(kActorLeon);
 		ADQ_Flush();
 		Actor_Set_Goal_Number(kActorLeon, 8);
@@ -115,7 +115,7 @@ void AIScriptLeon::OtherAgentExitedThisScene(int otherActorId) {
 }
 
 void AIScriptLeon::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
-	if (otherActorId == 0 && combatMode == 1 && Actor_Query_Goal_Number(kActorLeon) == 1) {
+	if (otherActorId == kActorMcCoy && combatMode == 1 && Actor_Query_Goal_Number(kActorLeon) == 1) {
 		Game_Flag_Set(539);
 		Player_Loses_Control();
 		Actor_Face_Actor(kActorMcCoy, kActorLeon, true);
@@ -202,8 +202,8 @@ bool AIScriptLeon::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Says(kActorMcCoy, 565, 18);
 			Actor_Face_Actor(kActorMcCoy, kActorLeon, true);
 			Actor_Says(kActorLeon, 140, 12);
-			Actor_Says_With_Pause(kActorMcCoy, 570, 0.0, 17);
-			Actor_Says_With_Pause(kActorMcCoy, 575, 1.2, 13);
+			Actor_Says_With_Pause(kActorMcCoy, 570, 0.0f, 17);
+			Actor_Says_With_Pause(kActorMcCoy, 575, 1.2f, 13);
 			Actor_Says(kActorLeon, 150, 3);
 			Actor_Says(kActorMcCoy, 580, 3);
 			Actor_Says(kActorLeon, 160, 13);
@@ -448,7 +448,7 @@ void AIScriptLeon::FledCombat() {}
 float AIScriptLeon::sub_446700(int actorId, float x, float y, float z) {
 	float actorX, actorY, actorZ;
 	Actor_Query_XYZ(actorId, &actorX, &actorY, &actorZ);
-	return sqrtf((z - actorZ) * (z - actorZ) + (y - actorX) * (y - actorX) + (y - actorY) * (y - actorY));
+	return sqrtf((z - actorZ) * (z - actorZ) + (y - actorY) * (y - actorY) + (x - actorX) * (x - actorX));
 }
 
 } // End of namespace BladeRunner

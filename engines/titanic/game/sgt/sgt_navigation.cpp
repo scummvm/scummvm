@@ -43,7 +43,7 @@ void CSGTNavigation::deinit() {
 
 void CSGTNavigation::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_statics->_changeViewNum, indent);
+	file->writeNumberLine(_statics->_miniLiftFloor, indent);
 	file->writeQuotedLine(_statics->_destView, indent);
 	file->writeQuotedLine(_statics->_destRoom, indent);
 
@@ -52,7 +52,7 @@ void CSGTNavigation::save(SimpleFile *file, int indent) {
 
 void CSGTNavigation::load(SimpleFile *file) {
 	file->readNumber();
-	_statics->_changeViewNum = file->readNumber();
+	_statics->_miniLiftFloor = file->readNumber();
 	_statics->_destView = file->readString();
 	_statics->_destRoom = file->readString();
 
@@ -64,20 +64,20 @@ bool CSGTNavigation::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	if (isEquals("SGTLL")) {
 		static const int FRAMES[7] = { 0, 149, 112, 74, 0, 36, 74 };
-		_statics->_changeViewNum = msg->_newStatus;
-		if (pet->getRooms1CC() != _statics->_changeViewNum) {
+		_statics->_miniLiftFloor = msg->_newStatus;
+		if (pet->getRoomsSublevel() != _statics->_miniLiftFloor) {
 			changeView("SGTLittleLift.Node 1.N");
 		}
 
-		int startVal = pet->getRooms1CC();
-		if (startVal > _statics->_changeViewNum)
-			playMovie(FRAMES[startVal], FRAMES[_statics->_changeViewNum], MOVIE_WAIT_FOR_FINISH);
+		int startVal = pet->getRoomsSublevel();
+		if (startVal > _statics->_miniLiftFloor)
+			playMovie(FRAMES[startVal], FRAMES[_statics->_miniLiftFloor], MOVIE_WAIT_FOR_FINISH);
 		else
-			playMovie(FRAMES[startVal + 3], FRAMES[_statics->_changeViewNum + 3], MOVIE_WAIT_FOR_FINISH);
+			playMovie(FRAMES[startVal + 3], FRAMES[_statics->_miniLiftFloor + 3], MOVIE_WAIT_FOR_FINISH);
 
-		_cursorId = _statics->_changeViewNum != 1 ? CURSOR_MOVE_FORWARD : CURSOR_INVALID;
+		_cursorId = _statics->_miniLiftFloor != 1 ? CURSOR_MOVE_FORWARD : CURSOR_INVALID;
 
-		pet->setRooms1CC(_statics->_changeViewNum);
+		pet->setRoomsSublevel(_statics->_miniLiftFloor);
 		pet->resetRoomsHighlight();
 	}
 
@@ -90,7 +90,7 @@ bool CSGTNavigation::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		_statics->_destRoom = "SgtLobby";
 		changeView("SGTState.Node 1.S");
 	} else if (compareRoomNameTo("SGTLittleLift")) {
-		if (_statics->_changeViewNum != 1) {
+		if (_statics->_miniLiftFloor != 1) {
 			_statics->_destRoom = "SGTLittleLift";
 			changeView("SGTState.Node 1.S");
 		}
@@ -121,7 +121,7 @@ bool CSGTNavigation::EnterViewMsg(CEnterViewMsg *msg) {
 	if (isEquals("SGTLL")) {
 		static const int FRAMES[3] = { 0, 36, 74 };
 		CPetControl *pet = getPetControl();
-		loadFrame(FRAMES[pet->getRooms1CC() - 1]);
+		loadFrame(FRAMES[pet->getRoomsSublevel() - 1]);
 	}
 
 	return true;

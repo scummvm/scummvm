@@ -141,10 +141,17 @@ static const char *const s_resourceTypeSuffixes[] = {
 };
 
 const char *getResourceTypeName(ResourceType restype) {
-	if (restype != kResourceTypeInvalid)
+	if (restype < ARRAYSIZE(s_resourceTypeNames))
 		return s_resourceTypeNames[restype];
 	else
 		return "invalid";
+}
+
+const char *getResourceTypeExtension(ResourceType restype) {
+	if (restype < ARRAYSIZE(s_resourceTypeSuffixes))
+		return s_resourceTypeSuffixes[restype];
+	else
+		return "";
 }
 
 static const ResourceType s_resTypeMapSci0[] = {
@@ -469,12 +476,14 @@ void MacResourceForkResourceSource::decompressResource(Common::SeekableReadStrea
 	bool canBeCompressed = !(g_sci && g_sci->getGameId() == GID_KQ6) && isCompressableResource(resource->_id.getType());
 	uint32 uncompressedSize = 0;
 
+#ifdef ENABLE_SCI32_MAC
 	// GK2 Mac is crazy. In its Patches resource fork, picture 2315 is not
 	// compressed and it is hardcoded in the executable to say that it's
 	// not compressed. Why didn't they just add four zeroes to the end of
 	// the resource? (Checked with PPC disasm)
 	if (g_sci && g_sci->getGameId() == GID_GK2 && resource->_id.getType() == kResourceTypePic && resource->_id.getNumber() == 2315)
 		canBeCompressed = false;
+#endif
 
 	// Get the uncompressed size from the end of the resource
 	if (canBeCompressed && stream->size() > 4) {
@@ -645,7 +654,7 @@ int ResourceManager::addAppropriateSources() {
 		if (mapFiles.empty() || files.empty())
 			return 0;
 
-		if (Common::File::exists("resaud.001")) {
+		if (Common::File::exists("ressci.001")) {
 			_multiDiscAudio = true;
 		}
 
@@ -667,7 +676,7 @@ int ResourceManager::addAppropriateSources() {
 
 			if (!foundVolume &&
 				// GK2 on Steam comes with an extra bogus resource map file;
-				// ignore it
+				// ignore it instead of treating it as a bad resource
 				(g_sci->getGameId() != GID_GK2 || mapFiles.size() != 2 || mapNumber != 1)) {
 
 				warning("Could not find corresponding volume for %s", mapName.c_str());
@@ -678,7 +687,7 @@ int ResourceManager::addAppropriateSources() {
 		// SCI2.1 resource patches
 		if (Common::File::exists("resmap.pat") && Common::File::exists("ressci.pat")) {
 			// We add this resource with a map which surely won't exist
-			addSource(new VolumeResourceSource("ressci.pat", addExternalMap("resmap.pat", 100), 100));
+			addSource(new VolumeResourceSource("ressci.pat", addExternalMap("resmap.pat", kResPatVolumeNumber), kResPatVolumeNumber));
 		}
 	}
 #else
@@ -732,7 +741,7 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 #ifdef ENABLE_SCI32
 		// SCI2.1 resource patches
 		if (filename.contains("resmap.pat"))
-			sci21PatchMap = addExternalMap(file, 100);
+			sci21PatchMap = addExternalMap(file, kResPatVolumeNumber);
 
 		if (filename.contains("ressci.pat"))
 			sci21PatchRes = file;
@@ -744,7 +753,7 @@ int ResourceManager::addAppropriateSourcesForDetection(const Common::FSList &fsl
 
 #ifdef ENABLE_SCI32
 	if (sci21PatchMap && sci21PatchRes)
-		addSource(new VolumeResourceSource(sci21PatchRes->getName(), sci21PatchMap, 100, sci21PatchRes));
+		addSource(new VolumeResourceSource(sci21PatchRes->getName(), sci21PatchMap, kResPatVolumeNumber, sci21PatchRes));
 #endif
 
 	// Now find all the resource.0?? files
@@ -1098,7 +1107,7 @@ void ResourceManager::printLRU() {
 void ResourceManager::freeOldResources() {
 	while (_maxMemoryLRU < _memoryLRU) {
 		assert(!_LRU.empty());
-		Resource *goner = *_LRU.reverse_begin();
+		Resource *goner = _LRU.back();
 		removeFromLRU(goner);
 		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMAN
@@ -1423,6 +1432,29 @@ ResVersion ResourceManager::detectVolVersion() {
 	return kResVersionUnknown;
 }
 
+bool ResourceManager::isBlacklistedPatch(const ResourceId &resId) const {
+	switch (g_sci->getGameId()) {
+	case GID_SHIVERS:
+		// The SFX resource map patch in the Shivers interactive demo has
+		// broken offsets for some sounds; ignore it so that the correct map
+		// from RESSCI.000 will be used instead.
+		return g_sci->isDemo() &&
+			resId.getType() == kResourceTypeMap &&
+			resId.getNumber() == 65535;
+	case GID_PHANTASMAGORIA:
+		// The GOG release of Phantasmagoria 1 merges all resources into a
+		// single-disc bundle, but they also include the 65535.MAP from the
+		// original game's CD 1, which does not contain the entries for sound
+		// effects from later CDs. So, just ignore this map patch since the
+		// correct maps will be found in the RESSCI.000 file. This also helps
+		// eliminate user error when copying files from the original CDs, since
+		// each CD had a different 65535.MAP patch file.
+		return resId.getType() == kResourceTypeMap && resId.getNumber() == 65535;
+	default:
+		return false;
+	}
+}
+
 // version-agnostic patch application
 void ResourceManager::processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple) {
 	Common::SeekableReadStream *fileStream = 0;
@@ -1430,12 +1462,8 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	ResourceId resId = ResourceId(resourceType, resourceNr, tuple);
 	ResourceType checkForType = resourceType;
 
-	// HACK: The SFX resource map patch in the Shivers interactive demo has
-	// broken offsets for some sounds; ignore it so that the correct map from
-	// RESSCI.000 will be used instead
-	if (g_sci->getGameId() == GID_SHIVERS && g_sci->isDemo() &&
-		resourceType == kResourceTypeMap && resourceNr == 65535) {
-
+	if (isBlacklistedPatch(resId)) {
+		debug("Skipping blacklisted patch file %s", source->getLocationName().c_str());
 		delete source;
 		return;
 	}
@@ -1777,7 +1805,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 				}
 			}
 
-			addResource(resId, source, offset & (((~bMask) << 24) | 0xFFFFFF), 0, map->getLocationName());
+			addResource(resId, source, offset & ((((byte)~bMask) << 24) | 0xFFFFFF), 0, map->getLocationName());
 		}
 	} while (!fileStream->eos());
 
@@ -1877,12 +1905,6 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				// if we use the first entries in the resource file, half of the
 				// game will be English and umlauts will also be missing :P
 				if (resource->_source->getSourceType() == kSourceVolume) {
-					// Maps are read during the scanning process (below), so
-					// need to be treated as unallocated in order for the new
-					// data from this volume to be picked up and used
-					if (resId.getType() == kResourceTypeMap) {
-						resource->_status = kResStatusNoMalloc;
-					}
 					updateResource(resId, source, fileOffset, 0, map->getLocationName());
 				}
 			}
@@ -1899,8 +1921,22 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				addSource(audioMap);
 
 				Common::String volumeName;
-				if (resId.getNumber() == 65535) {
+				if (mapVolumeNr == kResPatVolumeNumber) {
+					if (resId.getNumber() == 65535) {
+						volumeName = "RESSCI.PAT";
+					} else {
+						volumeName = "RESAUD.001";
+					}
+				} else if (resId.getNumber() == 65535) {
 					volumeName = Common::String::format("RESSFX.%03d", mapVolumeNr);
+
+					if (g_sci->getGameId() == GID_RAMA && !Common::File::exists(volumeName)) {
+						if (Common::File::exists("RESOURCE.SFX")) {
+							volumeName = "RESOURCE.SFX";
+						} else if (Common::File::exists("RESSFX.001")) {
+							volumeName = "RESSFX.001";
+						}
+					}
 				} else {
 					volumeName = Common::String::format("RESAUD.%03d", mapVolumeNr);
 				}
@@ -2237,9 +2273,9 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 			const uint32 audioSize = READ_LE_UINT32(ptr + 9);
 			const uint32 calculatedTotalSize = audioSize + headerSize + kResourceHeaderSize;
 			if (calculatedTotalSize != _size) {
-				error("Unexpected audio file size: the size of %s in %s is %d, but the volume says it should be %d", _id.toString().c_str(), _source->getLocationName().c_str(), calculatedTotalSize, _size);
+				warning("Unexpected audio file size: the size of %s in %s is %d, but the volume says it should be %d", _id.toString().c_str(), _source->getLocationName().c_str(), calculatedTotalSize, _size);
 			}
-			_size = headerSize + audioSize;
+			_size = MIN(_size - kResourceHeaderSize, headerSize + audioSize);
 		}
 	}
 
@@ -2589,9 +2625,6 @@ void ResourceManager::detectSciVersion() {
 			}
 
 			error("Failed to accurately determine SCI version");
-			// No parser, we assume SCI_VERSION_01.
-			s_sciVersion = SCI_VERSION_01;
-			return;
 		}
 
 		// New decompressors. It's either SCI_VERSION_1_EGA_ONLY or SCI_VERSION_1_EARLY.
@@ -2885,6 +2918,9 @@ Common::String ResourceManager::findSierraGameId(const bool isBE) {
 		heap = findResource(ResourceId(kResourceTypeScript, 0), false);
 
 		Resource *vocab = findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), false);
+		if (!vocab)
+			return "";
+
 		const uint16 numSelectors = isBE ? vocab->getUint16BEAt(0) : vocab->getUint16LEAt(0);
 		for (uint16 i = 0; i < numSelectors; ++i) {
 			uint16 selectorOffset;

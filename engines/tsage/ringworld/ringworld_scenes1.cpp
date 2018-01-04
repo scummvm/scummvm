@@ -1975,7 +1975,7 @@ void Scene60::Action1::signal() {
 		break;
 	case 4:
 		g_globals->setFlag(90);
-		// Deliberate fall-through
+		// fall through
 	case 5:
 	case 6:
 	case 7:

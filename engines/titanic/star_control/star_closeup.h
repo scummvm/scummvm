@@ -23,15 +23,16 @@
 #ifndef TITANIC_STAR_CLOSEUP_H
 #define TITANIC_STAR_CLOSEUP_H
 
-#include "common/array.h"
 #include "titanic/star_control/fvector.h"
 #include "titanic/star_control/fpose.h"
-#include "titanic/star_control/error_code.h"
 #include "titanic/star_control/surface_area.h"
+#include "common/array.h"
 
 namespace Titanic {
 
+class CErrorCode;
 class CStarCamera;
+class CSurfaceArea;
 
 /**
  * Handles drawing a 3D rendered closeup of a star

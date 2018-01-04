@@ -60,8 +60,10 @@ public:
 class CastSpell : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
-
-	CastSpell(XeenEngine *vm) : ButtonContainer(vm) {}
+	int _oldMode;
+private:
+	CastSpell(XeenEngine *vm);
+	~CastSpell();
 
 	int execute(Character *&c);
 

@@ -20,15 +20,16 @@
  *
  */
 
-#include "common/rect.h"
 #include "titanic/star_control/base_stars.h"
-#include "titanic/star_control/star_camera.h"
-#include "titanic/star_control/surface_area.h"
+#include "common/rect.h"
 
 #ifndef TITANIC_STAR_REF_H
 #define TITANIC_STAR_REF_H
 
 namespace Titanic {
+
+class CStarCamera;
+class CSurfaceArea;
 
 class CBaseStarRef {
 protected:

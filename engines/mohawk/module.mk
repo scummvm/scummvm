@@ -34,6 +34,7 @@ MODULE_OBJS += \
 	myst_areas.o \
 	myst_graphics.o \
 	myst_scripts.o \
+	myst_sound.o \
 	myst_state.o \
 	resource_cache.o \
 	myst_stacks/channelwood.o \
@@ -53,12 +54,24 @@ endif
 ifdef ENABLE_RIVEN
 MODULE_OBJS += \
 	riven.o \
-	riven_external.o \
+	riven_card.o \
 	riven_graphics.o \
+	riven_inventory.o \
 	riven_saveload.o \
 	riven_scripts.o \
 	riven_sound.o \
-	riven_vars.o
+	riven_stack.o \
+	riven_vars.o \
+	riven_video.o \
+	riven_stacks/aspit.o \
+	riven_stacks/bspit.o \
+	riven_stacks/domespit.o \
+	riven_stacks/gspit.o \
+	riven_stacks/jspit.o \
+	riven_stacks/ospit.o \
+	riven_stacks/pspit.o \
+	riven_stacks/rspit.o \
+	riven_stacks/tspit.o
 endif
 
 # This module can be built as a plugin

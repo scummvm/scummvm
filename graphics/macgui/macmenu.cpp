@@ -56,11 +56,6 @@ enum {
 	kFontStyleExtended = 64
 };
 
-enum {
-	kMenuActionCommand
-};
-
-
 struct MacMenuSubItem {
 	Common::String text;
 	int action;
@@ -216,7 +211,7 @@ void MacMenu::clearSubMenu(int id) {
 	menu->subitems.clear();
 }
 
-void MacMenu::createSubMenuFromString(int id, const char *str) {
+void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
 	clearSubMenu(id);
 
 	MacMenuItem *menu = _items[id];
@@ -278,7 +273,7 @@ void MacMenu::createSubMenuFromString(int id, const char *str) {
 					}
 			}
 
-			menu->subitems.push_back(new MacMenuSubItem(item.c_str(), kMenuActionCommand, style, shortcut, enabled));
+			menu->subitems.push_back(new MacMenuSubItem(item.c_str(), commandId, style, shortcut, enabled));
 		}
 
 		item.clear();
@@ -586,6 +581,25 @@ bool MacMenu::processMenuShortCut(byte flags, uint16 ascii) {
 void MacMenu::enableCommand(int menunum, int action, bool state) {
 	for (uint i = 0; i < _items[menunum]->subitems.size(); i++)
 		if (_items[menunum]->subitems[i]->action == action)
+			_items[menunum]->subitems[i]->enabled = state;
+
+	_contentIsDirty = true;
+}
+
+void MacMenu::enableCommand(const char *menuitem, const char *menuaction, bool state) {
+	uint menunum = 0;
+
+	while (menunum < _items.size())
+		if (_items[menunum]->name.equalsIgnoreCase(menuitem))
+			break;
+		else
+			menunum++;
+
+	if (menunum == _items.size())
+		return;
+
+	for (uint i = 0; i < _items[menunum]->subitems.size(); i++)
+		if (_items[menunum]->subitems[i]->text.equalsIgnoreCase(menuaction))
 			_items[menunum]->subitems[i]->enabled = state;
 
 	_contentIsDirty = true;

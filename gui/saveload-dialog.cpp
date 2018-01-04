@@ -428,11 +428,13 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 		break;
 	case kChooseCmd:
 		_list->endEditMode();
-		if (!_saveList.empty()) {
-			setResult(_saveList[selItem].getSaveSlot());
-			_resultString = _list->getSelectedString();
+		if (selItem >= 0) {
+			if (!_saveList.empty()) {
+				setResult(_saveList[selItem].getSaveSlot());
+				_resultString = _list->getSelectedString();
+			}
+			close();
 		}
-		close();
 		break;
 	case kListSelectionChangedCmd:
 		updateSelection(true);
@@ -474,12 +476,14 @@ void SaveLoadChooserSimple::reflowLayout() {
 		int thumbY = y + kLineHeight;
 
 		int textLines = 0;
-		if (!_saveDateSupport)
+		if (_saveDateSupport)
+			textLines += 2;
+		if (_playTimeSupport)
 			textLines++;
-		if (!_playTimeSupport)
-			textLines++;
+		if (textLines > 0)
+			textLines++; // add a line of padding at the bottom
 
-		_container->resize(x, y, w, h - (kLineHeight * textLines));
+		_container->resize(x, y, w, h + (kLineHeight * textLines));
 		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
 
 		int height = thumbY + thumbH + kLineHeight;
@@ -692,7 +696,13 @@ void SaveLoadChooserSimple::updateSaveList() {
 		colors.push_back(ThemeEngine::kFontColorNormal);
 	}
 
+	int selected = _list->getSelected();
 	_list->setList(saveNames, &colors);
+	if (selected >= 0 && selected < (int)saveNames.size())
+		_list->setSelected(selected);
+	else
+		_chooseButton->setEnabled(false);
+
 	draw();
 }
 

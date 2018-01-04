@@ -459,7 +459,9 @@ bool MacWindow::processEvent(Common::Event &event) {
 			_draggedY = event.mouse.y;
 
 			_wm->setFullRefresh(true);
-			(*_callback)(click, event, _dataPtr);
+
+			if (_callback)
+				(*_callback)(click, event, _dataPtr);
 		}
 		break;
 	case Common::EVENT_LBUTTONDOWN:
@@ -494,7 +496,10 @@ bool MacWindow::processEvent(Common::Event &event) {
 		return false;
 	}
 
-	return (*_callback)(click, event, _dataPtr);
+	if (_callback)
+		return (*_callback)(click, event, _dataPtr);
+	else
+		return false;
 }
 
 } // End of namespace Wage

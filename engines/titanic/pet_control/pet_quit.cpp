@@ -53,7 +53,7 @@ bool CPetQuit::reset() {
 	setName("PetExit", pet);
 
 	uint col = getPetSection()->getColor(0);
-	_text.setText("Are you sure you want to quit?");
+	_text.setText(SURE_YOU_WANT_TO_QUIT);
 	_text.setLineColor(0, col);
 
 	_btnYes.reset("PetQuitOut", pet, MODE_UNSELECTED);
@@ -84,7 +84,7 @@ bool CPetQuit::MouseButtonUpMsg(const Point &pt) {
 }
 
 void CPetQuit::getTooltip(CTextControl *text) {
-	text->setText("Quit the game.");
+	text->setText(QUIT_THE_GAME);
 }
 
 } // End of namespace Titanic

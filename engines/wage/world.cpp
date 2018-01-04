@@ -114,9 +114,9 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 	Common::MacResIDArray::const_iterator iter;
 
 	// Dumping interpreter code
-#if 1
+#if 0
 	res = resMan->getResource(MKTAG('C','O','D','E'), 1);
-	warning("code size: %d", res->size());
+	warning("Dumping interpreter code size: %d", res->size());
 	byte *buf = (byte *)malloc(res->size());
 	res->read(buf, res->size());
 	Common::DumpFile out;
@@ -132,7 +132,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 	// Load global script
 	res = resMan->getResource(MKTAG('G','C','O','D'), resArray[0]);
-	_globalScript = new Script(res);
+	_globalScript = new Script(res, -1, _engine);
 
 	// TODO: read creator
 
@@ -174,21 +174,29 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		message->trim();
 		debug(2, "_gameOverMessage: %s", message->c_str());
 		_gameOverMessage = message;
+	} else {
+		_gameOverMessage = new Common::String("Game Over!");
 	}
 	if ((message = loadStringFromDITL(resMan, 2480, 3)) != NULL) {
 		message->trim();
 		debug(2, "_saveBeforeQuitMessage: %s", message->c_str());
 		_saveBeforeQuitMessage = message;
+	} else {
+		_saveBeforeQuitMessage = new Common::String("Save changes before quiting?");
 	}
 	if ((message = loadStringFromDITL(resMan, 2490, 3)) != NULL) {
 		message->trim();
 		debug(2, "_saveBeforeCloseMessage: %s", message->c_str());
 		_saveBeforeCloseMessage = message;
+	} else {
+		_saveBeforeCloseMessage = new Common::String("Save changes before closing?");
 	}
 	if ((message = loadStringFromDITL(resMan, 2940, 2)) != NULL) {
 		message->trim();
 		debug(2, "_revertMessage: %s", message->c_str());
 		_revertMessage = message;
+	} else {
+		_revertMessage = new Common::String("Revert to the last saved version?");
 	}
 
 	// Load scenes
@@ -201,7 +209,7 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 
 		res = resMan->getResource(MKTAG('A','C','O','D'), *iter);
 		if (res != NULL)
-			scene->_script = new Script(res);
+			scene->_script = new Script(res, *iter, _engine);
 
 		res = resMan->getResource(MKTAG('A','T','X','T'), *iter);
 		if (res != NULL) {
@@ -244,10 +252,24 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		Chr *chr = new Chr(resMan->getResName(MKTAG('A','C','H','R'), *iter), res);
 		chr->_resourceId = *iter;
 		addChr(chr);
-		// TODO: What if there's more than one player character?
-		if (chr->_playerCharacter)
+
+		if (chr->_playerCharacter) {
+			if (_player)
+				warning("loadWorld: Player is redefined");
+
 			_player = chr;
+		}
 	}
+
+	if (!_player) {
+		warning("loadWorld: Player is not defined");
+
+		if (_chrs.empty()) {
+			error("loadWorld: and I have no characters");
+		}
+		_player = _orderedChrs[0];
+	}
+
 
 	// Load Sounds
 	resArray = resMan->getResIDArray(MKTAG('A','S','N','D'));

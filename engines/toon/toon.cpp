@@ -1116,7 +1116,7 @@ Common::Error ToonEngine::run() {
 	if (!loadToonDat())
 		return Common::kUnknownError;
 
-	initGraphics(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT, true);
+	initGraphics(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 	init();
 
 	// do we need to load directly a game?

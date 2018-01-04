@@ -942,25 +942,40 @@ public:
 		_span.allocateFromSpan(other._span);
 	}
 
-	/**
-	 * Transfers ownership of the Span from the other owner to this owner.
-	 * If this owner already holds another Span, the old Span will be destroyed.
-	 */
-	inline SpanOwner &operator=(SpanOwner &other) {
+	inline SpanOwner &operator=(const SpanOwner &other) {
 		if (this == &other) {
 			return *this;
 		}
 
-		if (_span.data()) {
-			delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		_span.clear();
+
+		// Allocating memory when copy-assigning from an unallocated owner
+		// will break the new owner by making it appear allocated even though
+		// it doesn't (and shouldn't) contain data
+		if (other) {
+			_span.allocateFromSpan(other._span);
 		}
-		_span = other._span;
-		other.release();
+
 		return *this;
 	}
 
 	inline ~SpanOwner() {
 		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+	}
+
+	/**
+	 * Transfers ownership of the Span from the other owner to this owner.
+	 */
+	inline SpanOwner &moveFrom(SpanOwner &other) {
+		if (this == &other) {
+			return *this;
+		}
+
+		delete[] const_cast<typename RemoveConst<value_type>::type *>(_span.data());
+		_span = other._span;
+		other.release();
+		return *this;
 	}
 
 	/**

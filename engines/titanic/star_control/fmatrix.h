@@ -23,31 +23,24 @@
 #ifndef TITANIC_FMATRIX_H
 #define TITANIC_FMATRIX_H
 
-#include "titanic/support/simple_file.h"
 #include "titanic/star_control/fvector.h"
 
 namespace Titanic {
 
-class DMatrix;
-class DVector;
+class SimpleFile;
 
 /**
  * Floating point matrix class.
- * @remarks		TODO: See if it can be merged with DMatrix
+
  */
 class FMatrix {
-private:
-	/**
-	 * Copys data from a given source
-	 */
-	void copyFrom(const DMatrix &src);
 public:
 	FVector _row1;
 	FVector _row2;
 	FVector _row3;
 public:
 	FMatrix();
-	FMatrix(const DMatrix &src);
+	FMatrix(const FVector &, const FVector &, const FVector &);
 	FMatrix(const FMatrix &src);
 
 	/**
@@ -73,20 +66,29 @@ public:
 	/**
 	 * Sets the data for the matrix
 	 */
-	void set(const FVector &row1, const FVector &row2, const FVector &row3);
+	void set(const FMatrix &m);
 
 	/**
 	 * Sets the data for the matrix
 	 */
-	void set(const DVector &row1, const DVector &row2, const DVector &row3);
+	void set(const FVector &row1, const FVector &row2, const FVector &row3);
 
 	/**
 	 * Sets the data for the matrix from a vector
 	 */
 	void set(const FVector &v);
 
-	void fn2(const FMatrix &m);
-	void fn3(const FMatrix &m);
+	/**
+	 * Changes this matrix, A, to be C, where C=Am. Matrix m multiplies this matrix (A) on its Right.
+	 * m is said to premultiply A (the previous this matrix).
+	 */
+	void matRProd(const FMatrix &m);
+
+	/**
+	 * Changes this matrix, A, to be C, where C=mA. Matrix m multiplies this matrix (A) on its Left.
+	 * m is said to postmultiply A (the previous this matrix).
+	 */
+	void matLProd(const FMatrix &m);
 
 	/**
 	 * Returns true if the passed matrix equals this one
@@ -111,6 +113,13 @@ public:
 		return *rows[idx];
 	}
 };
+
+/**
+ * Puts the matrix product between a and m in C, C = am
+ * Called by MatLProd and MatLProd
+ * Caller must preallocate output matrix
+ */
+void matProd(const FMatrix &a, const FMatrix &m, FMatrix &C);
 
 } // End of namespace Titanic
 

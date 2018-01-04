@@ -55,7 +55,8 @@ struct SciWorkaroundEntry {
 	const char *objectName;
 	const char *methodName;
 	const uint16 *localCallSignature;
-	int index;
+	int fromIndex;
+	int toIndex;
 	SciWorkaroundSolution newValue;
 };
 
@@ -90,6 +91,7 @@ extern const SciWorkaroundEntry kMoveCursor_workarounds[];
 extern const SciWorkaroundEntry kNewWindow_workarounds[];
 extern const SciWorkaroundEntry kPalVarySetVary_workarounds[];
 extern const SciWorkaroundEntry kPalVarySetPercent_workarounds[];
+extern const SciWorkaroundEntry kPalVarySetStart_workarounds[];
 extern const SciWorkaroundEntry kPalVaryMergeStart_workarounds[];
 extern const SciWorkaroundEntry kPlatform32_workarounds[];
 extern const SciWorkaroundEntry kRandom_workarounds[];

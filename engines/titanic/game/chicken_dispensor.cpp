@@ -24,6 +24,7 @@
 #include "titanic/carry/chicken.h"
 #include "titanic/core/project_item.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -90,7 +91,7 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 		if (_disabled) {
 			playMovie(0, 12, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
-			playSound("z#400.wav");
+			playSound(TRANSLATE("z#400.wav", "z#145.wav"));
 		} else {
 			playMovie(12, 16, MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		}
@@ -104,25 +105,22 @@ bool CChickenDispensor::StatusChangeMsg(CStatusChangeMsg *msg) {
 }
 
 bool CChickenDispensor::MovieEndMsg(CMovieEndMsg *msg) {
-	int movieFrame = getMovieFrame();
+	int movieFrame = msg->_endFrame;
 	
 	if (movieFrame == 16) {
 		// Dispensed a chicken
 		_cursorId = CURSOR_HAND;
-		playSound("b#50.wav", 50);
+		playSound(TRANSLATE("b#50.wav", "b#30.wav"), 50);
 		CActMsg actMsg("Dispense Chicken");
 		actMsg.execute("Chicken");
 
-		if (_dispenseMode == DISPENSE_HOT) {
-			// A properly hot chicken is dispensed, no further ones will be
-			// until the current one is used up, and the fuse in Titania's
-			// fusebox is removed and replaced
-			_dispenseMode = DISPENSE_NONE;
-		} else {
+		#ifdef FIX_DISPENSOR_TEMPATURE
+		if (_dispenseMode != DISPENSE_HOT) {
 			// WORKAROUND: If the fuse for the dispensor is removed in Titania's fusebox,
 			// make the dispensed chicken already cold
 			CChicken::_temperature = 0;
 		}
+		#endif
 	} else if (_dispensed) {
 		// Chicken dispensed whilst dispensor is "disabled", which basically
 		// spits the chicken out at high speed directly into the SuccUBus
@@ -159,7 +157,7 @@ bool CChickenDispensor::LeaveViewMsg(CLeaveViewMsg *msg) {
 }
 
 bool CChickenDispensor::EnterViewMsg(CEnterViewMsg *msg) {
-	playSound("b#51.wav");
+	playSound(TRANSLATE("b#51.wav", "b#31.wav"));
 	_dispensed = false;
 	_cursorId = CURSOR_ARROW;
 	return true;

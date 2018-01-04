@@ -21,11 +21,12 @@
  */
 
 #include "titanic/game/television.h"
-#include "titanic/game/get_lift_eye2.h"
-#include "titanic/core/project_item.h"
 #include "titanic/carry/magazine.h"
+#include "titanic/core/project_item.h"
+#include "titanic/debugger.h"
+#include "titanic/game/get_lift_eye2.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -48,7 +49,7 @@ END_MESSAGE_MAP()
 int CTelevision::_seasonFrame;
 bool CTelevision::_turnOn;
 int CTelevision::_seasonUnused;
-int CTelevision::_floorNum;
+int CTelevision::_eyeFloorNum;
 bool CTelevision::_channel4Glyph;
 bool CTelevision::_eyeFlag;
 
@@ -60,7 +61,7 @@ void CTelevision::init() {
 	_seasonFrame = 531;
 	_turnOn = true;
 	_seasonUnused = 0;
-	_floorNum = 27;
+	_eyeFloorNum = 27;
 	_channel4Glyph = true;
 	_eyeFlag = true;
 }
@@ -77,7 +78,7 @@ void CTelevision::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(_isOn, indent);
 	file->writeNumberLine(_seasonUnused, indent);
 	file->writeNumberLine(_unused, indent);
-	file->writeNumberLine(_floorNum, indent);
+	file->writeNumberLine(_eyeFloorNum, indent);
 	file->writeNumberLine(_soundHandle, indent);
 	file->writeNumberLine(_channel4Glyph, indent);
 	file->writeNumberLine(_eyeFlag, indent);
@@ -94,7 +95,7 @@ void CTelevision::load(SimpleFile *file) {
 	_isOn = file->readNumber() != 0;
 	_seasonUnused = file->readNumber();
 	_unused = file->readNumber();
-	_floorNum = file->readNumber();
+	_eyeFloorNum = file->readNumber();
 	_soundHandle = file->readNumber();
 	_channel4Glyph = file->readNumber();
 	_eyeFlag = file->readNumber();
@@ -236,20 +237,31 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 	}
 
 	if (_channelNum == 3 && compareRoomNameTo("SGTState") && getPassengerClass() == THIRD_CLASS) {
-		playSound("z#47.wav");
-		_soundHandle = playSound("b#20.wav");
-		CMagazine *magazine = dynamic_cast<CMagazine *>(getRoot()->findByName("Magazine"));
+		// WORKAROUND: The original allowed the magazine to be "won" multiple times. We
+		// now search for magazine within the room (which is it's initial, hidden location).
+		// That way, when it's 'Won', it's no longer present and can't be won again
+		CMagazine *magazine = dynamic_cast<CMagazine *>(findRoom()->findByName("Magazine"));
 
 		if (magazine) {
+			// You may be a winner
+			CProximity prox1, prox2;
+			prox1._soundType = prox2._soundType = Audio::Mixer::kSpeechSoundType;
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"), prox1);
+			_soundHandle = playSound(TRANSLATE("b#20.wav", "b#1.wav"), prox2);
+
+			// Get the room flags for the SGT floor we're on
 			CPetControl *pet = getPetControl();
 			uint roomFlags = pet->getRoomFlags();
 
-			debugC(kDebugScripts, "Assigned room - %d", roomFlags);
+			// Send the magazine to the SuccUBus
+			debugC(DEBUG_INTERMEDIATE, kDebugScripts, "Assigned room - %d", roomFlags);
 			magazine->addMail(roomFlags);
 			magazine->sendMail(roomFlags, roomFlags);
-		}
 
-		loadFrame(561);
+			loadFrame(561);
+		} else {
+			petDisplayMessage(NOTHING_ON_CHANNEL);
+		}
 	} else if (_channelNum == 2) {
 		loadFrame(_seasonFrame);
 	} else if (_channelNum == 4 && _channel4Glyph) {
@@ -258,7 +270,7 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 		else
 			petDisplayMessage(NOTHING_ON_CHANNEL);
 	} else if (_channelNum == 5 && *CGetLiftEye2::_destObject != "NULL") {
-		loadFrame(393 + _floorNum);
+		loadFrame(393 + _eyeFloorNum);
 	} else {
 		petDisplayMessage(NOTHING_ON_CHANNEL);
 	}
@@ -267,7 +279,7 @@ bool CTelevision::MovieEndMsg(CMovieEndMsg *msg) {
 }
 
 bool CTelevision::ShipSettingMsg(CShipSettingMsg *msg) {
-	_floorNum = msg->_value;
+	_eyeFloorNum = msg->_value;
 	return true;
 }
 

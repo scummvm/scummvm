@@ -35,7 +35,7 @@
 namespace Sci {
 #pragma mark CelScaler
 
-CelScaler *CelObj::_scaler = nullptr;
+Common::ScopedPtr<CelScaler> CelObj::_scaler;
 
 void CelScaler::activateScaleTables(const Ratio &scaleX, const Ratio &scaleY) {
 	for (int i = 0; i < ARRAYSIZE(_scaleTables); ++i) {
@@ -74,9 +74,9 @@ void CelScaler::buildLookupTable(int *table, const Ratio &ratio, const int size)
 	}
 }
 
-const CelScalerTable *CelScaler::getScalerTable(const Ratio &scaleX, const Ratio &scaleY) {
+const CelScalerTable &CelScaler::getScalerTable(const Ratio &scaleX, const Ratio &scaleY) {
 	activateScaleTables(scaleX, scaleY);
-	return &_scaleTables[_activeIndex];
+	return _scaleTables[_activeIndex];
 }
 
 #pragma mark -
@@ -87,21 +87,13 @@ void CelObj::init() {
 	CelObj::deinit();
 	_drawBlackLines = false;
 	_nextCacheId = 1;
-	_scaler = new CelScaler();
-	_cache = new CelCache;
-	_cache->resize(100);
+	_scaler.reset(new CelScaler());
+	_cache.reset(new CelCache(100));
 }
 
 void CelObj::deinit() {
-	delete _scaler;
-	_scaler = nullptr;
-	if (_cache != nullptr) {
-		for (CelCache::iterator it = _cache->begin(); it != _cache->end(); ++it) {
-			delete it->celObj;
-		}
-	}
-	delete _cache;
-	_cache = nullptr;
+	_scaler.reset();
+	_cache.reset();
 }
 
 #pragma mark -
@@ -172,10 +164,9 @@ struct SCALER_Scale {
 	_minX(targetRect.left),
 	_maxX(targetRect.right - 1),
 #endif
-	// The maximum width of the scaled object may not be as
-	// wide as the source data it requires if downscaling,
-	// so just always make the reader decompress an entire
-	// line of source data when scaling
+	// The maximum width of the scaled object may not be as wide as the source
+	// data it requires if downscaling, so just always make the reader
+	// decompress an entire line of source data when scaling
 	_reader(celObj, celObj._width) {
 #ifndef NDEBUG
 		assert(_minX <= _maxX);
@@ -203,39 +194,39 @@ struct SCALER_Scale {
 		// games which use global scaling are the ones that use low-resolution
 		// script coordinates too.
 
-		const CelScalerTable *table = CelObj::_scaler->getScalerTable(scaleX, scaleY);
+		const CelScalerTable &table = CelObj::_scaler->getScalerTable(scaleX, scaleY);
 
-		if (g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth == kLowResX) {
+		if (g_sci->_gfxFrameout->getScriptWidth() == kLowResX) {
 			const int16 unscaledX = (scaledPosition.x / scaleX).toInt();
 			if (FLIP) {
 				const int lastIndex = celObj._width - 1;
 				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = lastIndex - (table->valuesX[x] - unscaledX);
+					_valuesX[x] = lastIndex - (table.valuesX[x] - unscaledX);
 				}
 			} else {
 				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = table->valuesX[x] - unscaledX;
+					_valuesX[x] = table.valuesX[x] - unscaledX;
 				}
 			}
 
 			const int16 unscaledY = (scaledPosition.y / scaleY).toInt();
 			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
-				_valuesY[y] = table->valuesY[y] - unscaledY;
+				_valuesY[y] = table.valuesY[y] - unscaledY;
 			}
 		} else {
 			if (FLIP) {
 				const int lastIndex = celObj._width - 1;
 				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = lastIndex - table->valuesX[x - scaledPosition.x];
+					_valuesX[x] = lastIndex - table.valuesX[x - scaledPosition.x];
 				}
 			} else {
 				for (int16 x = targetRect.left; x < targetRect.right; ++x) {
-					_valuesX[x] = table->valuesX[x - scaledPosition.x];
+					_valuesX[x] = table.valuesX[x - scaledPosition.x];
 				}
 			}
 
 			for (int16 y = targetRect.top; y < targetRect.bottom; ++y) {
-				_valuesY[y] = table->valuesY[y - scaledPosition.y];
+				_valuesY[y] = table.valuesY[y - scaledPosition.y];
 			}
 		}
 	}
@@ -412,8 +403,8 @@ struct MAPPER_NoMDNoSkip {
 struct MAPPER_Map {
 	inline void draw(byte *target, const byte pixel, const uint8 skipColor) const {
 		if (pixel != skipColor) {
-			// NOTE: For some reason, SSCI never checks if the source
-			// pixel is *above* the range of remaps.
+			// For some reason, SSCI never checks if the source pixel is *above*
+			// the range of remaps, so we do not either.
 			if (pixel < g_sci->_gfxRemap32->getStartColor()) {
 				*target = pixel;
 			} else if (g_sci->_gfxRemap32->remapEnabled(pixel)) {
@@ -429,8 +420,8 @@ struct MAPPER_Map {
  */
 struct MAPPER_NoMap {
 	inline void draw(byte *target, const byte pixel, const uint8 skipColor) const {
-		// NOTE: For some reason, SSCI never checks if the source
-		// pixel is *above* the range of remaps.
+		// For some reason, SSCI never checks if the source pixel is *above* the
+		// range of remaps, so we do not either.
 		if (pixel != skipColor && pixel < g_sci->_gfxRemap32->getStartColor()) {
 			*target = pixel;
 		}
@@ -444,9 +435,9 @@ void CelObj::draw(Buffer &target, const ScreenItem &screenItem, const Common::Re
 	_drawBlackLines = screenItem._drawBlackLines;
 
 	if (_remap) {
-		// NOTE: In the original code this check was `g_Remap_numActiveRemaps && _remap`,
-		// but since we are already in a `_remap` branch, there is no reason to check it
-		// again
+		// In SSCI, this check was `g_Remap_numActiveRemaps && _remap`, but
+		// since we are already in a `_remap` branch, there is no reason to
+		// check that again
 		if (g_sci->_gfxRemap32->getRemapCount()) {
 			if (scaleX.isOne() && scaleY.isOne()) {
 				if (_compressionType == kCelCompressionNone) {
@@ -612,7 +603,7 @@ void CelObj::submitPalette() const {
 #pragma mark CelObj - Caching
 
 int CelObj::_nextCacheId = 1;
-CelCache *CelObj::_cache = nullptr;
+Common::ScopedPtr<CelCache> CelObj::_cache;
 
 int CelObj::searchCache(const CelInfo32 &celInfo, int *const nextInsertIndex) const {
 	*nextInsertIndex = -1;
@@ -648,12 +639,7 @@ void CelObj::putCopyInCache(const int cacheIndex) const {
 	}
 
 	CelCacheEntry &entry = (*_cache)[cacheIndex];
-
-	if (entry.celObj != nullptr) {
-		delete entry.celObj;
-	}
-
-	entry.celObj = duplicate();
+	entry.celObj.reset(duplicate());
 	entry.id = ++_nextCacheId;
 }
 
@@ -672,9 +658,9 @@ struct RENDERER {
 	_skipColor(skipColor) {}
 
 	inline void draw(Buffer &target, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-		byte *targetPixel = (byte *)target.getPixels() + target.screenWidth * targetRect.top + targetRect.left;
+		byte *targetPixel = (byte *)target.getPixels() + target.w * targetRect.top + targetRect.left;
 
-		const int16 skipStride = target.screenWidth - targetRect.width();
+		const int16 skipStride = target.w - targetRect.width();
 		const int16 targetWidth = targetRect.width();
 		const int16 targetHeight = targetRect.height();
 		for (int16 y = 0; y < targetHeight; ++y) {
@@ -807,8 +793,8 @@ void CelObj::drawUncompHzFlipNoMDNoSkip(Buffer &target, const Common::Rect &targ
 }
 
 void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	// In SSCI the checks are > because their rects are BR-inclusive;
-	// our checks are >= because our rects are BR-exclusive
+	// In SSCI the checks are > because their rects are BR-inclusive; our checks
+	// are >= because our rects are BR-exclusive
 	if (g_sci->_features->hasEmptyScaleDrawHack() &&
 		(targetRect.left >= targetRect.right ||
 		 targetRect.top >= targetRect.bottom)) {
@@ -822,8 +808,8 @@ void CelObj::scaleDrawNoMD(Buffer &target, const Ratio &scaleX, const Ratio &sca
 }
 
 void CelObj::scaleDrawUncompNoMD(Buffer &target, const Ratio &scaleX, const Ratio &scaleY, const Common::Rect &targetRect, const Common::Point &scaledPosition) const {
-	// In SSCI the checks are > because their rects are BR-inclusive;
-	// our checks are >= because our rects are BR-exclusive
+	// In SSCI the checks are > because their rects are BR-inclusive; our checks
+	// are >= because our rects are BR-exclusive
 	if (g_sci->_features->hasEmptyScaleDrawHack() &&
 		(targetRect.left >= targetRect.right ||
 		 targetRect.top >= targetRect.bottom)) {
@@ -861,11 +847,11 @@ int16 CelObjView::getNumCels(const GuiResourceId viewId, int16 loopNo) {
 
 	const uint16 loopCount = data[2];
 
-	// Every version of SCI32 has a logic error in this function that causes
-	// random memory to be read if a script requests the cel count for one
-	// past the maximum loop index. For example, GK1 room 808 does this, and
-	// gets stuck in an infinite loop because the game script expects this
-	// method to return a non-zero value.
+	// Every version of SSCI has a logic error in this function that causes
+	// random memory to be read if a script requests the cel count for one past
+	// the maximum loop index. For example, GK1 room 808 does this, and gets
+	// stuck in an infinite loop because the game script expects this method to
+	// return a non-zero value.
 	// This bug is triggered in basically every SCI32 game and appears to be
 	// universally fixable simply by always using the next lowest loop instead.
 	if (loopNo == loopCount) {
@@ -904,7 +890,7 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	const int cacheIndex = searchCache(_info, &cacheInsertIndex);
 	if (cacheIndex != -1) {
 		CelCacheEntry &entry = (*_cache)[cacheIndex];
-		const CelObjView *const cachedCelObj = dynamic_cast<CelObjView *>(entry.celObj);
+		const CelObjView *const cachedCelObj = dynamic_cast<CelObjView *>(entry.celObj.get());
 		if (cachedCelObj == nullptr) {
 			error("Expected a CelObjView in cache slot %d", cacheIndex);
 		}
@@ -915,7 +901,7 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 
 	const Resource *const resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypeView, viewId), false);
 
-	// NOTE: SCI2.1/SQ6 just silently returns here.
+	// SSCI just silently returns here
 	if (!resource) {
 		error("View resource %d not found", viewId);
 	}
@@ -944,8 +930,6 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		_info.loopNo = loopCount - 1;
 	}
 
-	// NOTE: This is the actual check, in the actual location,
-	// from SCI engine.
 	if (loopNo < 0) {
 		error("Loop is less than 0");
 	}
@@ -982,7 +966,19 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		error("Cel is less than 0 on loop 0");
 	}
 
-	_hunkPaletteOffset = data.getUint32SEAt(8);
+	// HACK: Phantasmagoria view 64001 contains a bad palette that overwrites
+	// parts of the palette used by the background picture in room 6400, causing
+	// the black shadows to become tan, and many of the other background colors
+	// to end up a little bit off. View 64001 renders fine using the existing
+	// palette created by the background image, so here we just ignore the
+	// embedded palette entirely.
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA &&
+		_info.type == kCelTypeView && _info.resourceId == 64001) {
+
+		_hunkPaletteOffset = 0;
+	} else {
+		_hunkPaletteOffset = data.getUint32SEAt(8);
+	}
 	_celHeaderOffset = loopHeader.getUint32SEAt(12) + (data[13] * _info.celNo);
 
 	const SciSpan<const byte> celHeader = data.subspan(_celHeaderOffset);
@@ -991,9 +987,6 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 	_height = celHeader.getUint16SEAt(2);
 	assert(_width <= kCelScalerTableSize && _height <= kCelScalerTableSize);
 	_origin.x = _width / 2 - celHeader.getInt16SEAt(4);
-	if (g_sci->_features->usesAlternateSelectors() && _mirrorX) {
-		_origin.x = _width - _origin.x - 1;
-	}
 	_origin.y = _height - celHeader.getInt16SEAt(6) - 1;
 	_skipColor = celHeader[8];
 	_compressionType = (CelCompressionType)celHeader[9];
@@ -1002,10 +995,8 @@ CelObjView::CelObjView(const GuiResourceId viewId, const int16 loopNo, const int
 		error("Compression type not supported - V: %d  L: %d  C: %d", _info.resourceId, _info.loopNo, _info.celNo);
 	}
 
-	if (celHeader[10] & 128) {
-		// NOTE: This is correct according to SCI2.1/SQ6/DOS;
-		// the engine re-reads the byte value as a word value
-		const uint16 flags = celHeader.getUint16SEAt(10);
+	const uint16 flags = celHeader.getUint16SEAt(10);
+	if (flags & 0x80) {
 		_transparent = flags & 1 ? true : false;
 		_remap = flags & 2 ? true : false;
 	} else if (_compressionType == kCelCompressionNone) {
@@ -1069,6 +1060,38 @@ const SciSpan<const byte> CelObjView::getResPointer() const {
 	return *resource;
 }
 
+Common::Point CelObjView::getLinkPosition(const int16 linkId) const {
+	const SciSpan<const byte> resource = getResPointer();
+
+	if (resource[18] < 0x84) {
+		error("%s unsupported version %u for Links", _info.toString().c_str(), resource[18]);
+	}
+
+	const SciSpan<const byte> celHeader = resource.subspan(_celHeaderOffset);
+	const int16 numLinks = celHeader.getInt16SEAt(40);
+
+	if (numLinks) {
+		const int recordSize = 6;
+		SciSpan<const byte> linkTable = resource.subspan(celHeader.getInt32SEAt(36), recordSize * numLinks);
+		for (int16 i = 0; i < numLinks; ++i) {
+			if (linkTable[4] == linkId) {
+				Common::Point point;
+				point.x = linkTable.getInt16SEAt(0);
+				if (_mirrorX) {
+					// SSCI had an off-by-one error here (missing -1)
+					point.x = _width - point.x - 1;
+				}
+				point.y = linkTable.getInt16SEAt(2);
+				return point;
+			}
+
+			linkTable += recordSize;
+		}
+	}
+
+	return Common::Point(-1, -1);
+}
+
 #pragma mark -
 #pragma mark CelObjPic
 
@@ -1086,7 +1109,7 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 	const int cacheIndex = searchCache(_info, &cacheInsertIndex);
 	if (cacheIndex != -1) {
 		CelCacheEntry &entry = (*_cache)[cacheIndex];
-		const CelObjPic *const cachedCelObj = dynamic_cast<CelObjPic *>(entry.celObj);
+		const CelObjPic *const cachedCelObj = dynamic_cast<CelObjPic *>(entry.celObj.get());
 		if (cachedCelObj == nullptr) {
 			error("Expected a CelObjPic in cache slot %d", cacheIndex);
 		}
@@ -1097,7 +1120,7 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 
 	const Resource *const resource = g_sci->getResMan()->findResource(ResourceId(kResourceTypePic, picId), false);
 
-	// NOTE: SCI2.1/SQ6 just silently returns here.
+	// SSCI just silently returns here
 	if (!resource) {
 		error("Pic resource %d not found", picId);
 	}
@@ -1142,10 +1165,9 @@ CelObjPic::CelObjPic(const GuiResourceId picId, const int16 celNo) {
 		_yResolution = 400;
 	}
 
-	if (celHeader.getUint8At(10) & 128) {
-		// NOTE: This is correct according to SCI2.1/SQ6/DOS;
-		// the engine re-reads the byte value as a word value
-		const uint16 flags = celHeader.getUint16SEAt(10);
+
+	const uint16 flags = celHeader.getUint16SEAt(10);
+	if (flags & 0x80) {
 		_transparent = flags & 1 ? true : false;
 		_remap = flags & 2 ? true : false;
 	} else {
@@ -1210,7 +1232,8 @@ CelObjMem::CelObjMem(const reg_t bitmapObject) {
 
 	SciBitmap *bitmap = g_sci->getEngineState()->_segMan->lookupBitmap(bitmapObject);
 
-	// NOTE: SSCI did no error checking here at all.
+	// SSCI did no error checking here at all so would just end up reading
+	// garbage or crashing if this ever happened
 	if (!bitmap) {
 		error("Bitmap %04x:%04x not found", PRINT_REG(bitmapObject));
 	}
@@ -1242,8 +1265,8 @@ CelObjColor::CelObjColor(const uint8 color, const int16 width, const int16 heigh
 	_info.color = color;
 	_origin.x = 0;
 	_origin.y = 0;
-	_xResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	_yResolution = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	_xResolution = g_sci->_gfxFrameout->getScriptWidth();
+	_yResolution = g_sci->_gfxFrameout->getScriptHeight();
 	_hunkPaletteOffset = 0;
 	_mirrorX = false;
 	_remap = false;
@@ -1252,8 +1275,8 @@ CelObjColor::CelObjColor(const uint8 color, const int16 width, const int16 heigh
 }
 
 void CelObjColor::draw(Buffer &target, const ScreenItem &screenItem, const Common::Rect &targetRect, const bool mirrorX) {
-	// TODO: The original engine sets this flag but why? One cannot
-	// draw a solid color mirrored.
+	// One cannot draw a solid color mirrored, but SSCI sets it anyway, so we do
+	// too
 	_drawMirrored = mirrorX;
 	draw(target, targetRect);
 }

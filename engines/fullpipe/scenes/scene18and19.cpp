@@ -130,6 +130,7 @@ void scene19_setMovements(Scene *sc, int entranceId) {
 void scene19_preload() {
 	for (SceneTagList::iterator s = g_fp->_gameProject->_sceneTagList->begin(); s != g_fp->_gameProject->_sceneTagList->end(); ++s) {
 		if (s->_sceneId == SC_18) {
+			delete s->_scene;
 			s->_scene = g_fp->_scene3;
 
 			break;
@@ -181,7 +182,7 @@ void scene18_setupSwingers(StaticANIObject *ani, Scene *sc) {
 		else
 			ani->startAnim(MV_KSL_SWING, 0, -1);
 
-		ani->_movement->setDynamicPhaseIndex(g_fp->_rnd->getRandomNumber(17));
+		ani->_movement->setDynamicPhaseIndex(g_fp->_rnd.getRandomNumber(17));
 
 		g_vars->scene18_swingers.push_back(swinger);
 	}
@@ -216,9 +217,9 @@ void scene18_initScene1(Scene *sc) {
 	g_vars->scene18_girlJumpY += newy;
 
 	for (uint i = 0; i < g_vars->scene18_swingers.size(); i++) {
-		g_vars->scene18_swingers[i]->ani->getPicAniInfo(&info);
+		g_vars->scene18_swingers[i]->ani->getPicAniInfo(info);
 		sc->addStaticANIObject(g_vars->scene18_swingers[i]->ani, 1);
-		g_vars->scene18_swingers[i]->ani->setPicAniInfo(&info);
+		g_vars->scene18_swingers[i]->ani->setPicAniInfo(info);
 
 		g_vars->scene18_swingers[i]->sx += newx;
 		g_vars->scene18_swingers[i]->sy += newy;
@@ -256,9 +257,9 @@ void scene18_initScene1(Scene *sc) {
 
 	g_fp->playSound(sndid, 1);
 
-	g_vars->scene18_boy->getPicAniInfo(&info);
+	g_vars->scene18_boy->getPicAniInfo(info);
 	sc->addStaticANIObject(g_vars->scene18_boy, 1);
-	g_vars->scene18_boy->setPicAniInfo(&info);
+	g_vars->scene18_boy->setPicAniInfo(info);
 
 	int x, y;
 
@@ -272,9 +273,9 @@ void scene18_initScene1(Scene *sc) {
 
 	g_vars->scene18_boy->setOXY(newx + x, newy + y);
 
-	g_vars->scene18_girl->getPicAniInfo(&info);
+	g_vars->scene18_girl->getPicAniInfo(info);
 	sc->addStaticANIObject(g_vars->scene18_girl, 1);
-	g_vars->scene18_girl->setPicAniInfo(&info);
+	g_vars->scene18_girl->setPicAniInfo(info);
 
 	if (g_vars->scene18_girl->_movement) {
 		x = g_vars->scene18_girl->_movement->_ox;

@@ -359,6 +359,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				handled = false;
 				break;
 			}
+			// fall through
 		case Common::KEYCODE_BACKSPACE:
 		case Common::KEYCODE_DELETE:
 			if (_selectedItem >= 0) {
@@ -375,6 +376,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				handled = false;
 				break;
 			}
+			// fall through
 		case Common::KEYCODE_END:
 			_selectedItem = _list.size() - 1;
 			break;
@@ -385,6 +387,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				handled = false;
 				break;
 			}
+			// fall through
 		case Common::KEYCODE_DOWN:
 			if (_selectedItem < (int)_list.size() - 1)
 				_selectedItem++;
@@ -395,6 +398,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				handled = false;
 				break;
 			}
+			// fall through
 		case Common::KEYCODE_PAGEDOWN:
 			_selectedItem += _entriesPerPage - 1;
 			if (_selectedItem >= (int)_list.size() )
@@ -406,6 +410,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				handled = false;
 				break;
 			}
+			// fall through
 		case Common::KEYCODE_HOME:
 			_selectedItem = 0;
 			break;
@@ -415,6 +420,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				handled = false;
 				break;
 			}
+			// fall through
 		case Common::KEYCODE_UP:
 			if (_selectedItem > 0)
 				_selectedItem--;
@@ -425,6 +431,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				handled = false;
 				break;
 			}
+			// fall through
 		case Common::KEYCODE_PAGEUP:
 			_selectedItem -= _entriesPerPage - 1;
 			if (_selectedItem < 0)

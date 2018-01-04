@@ -20,13 +20,17 @@
  *
  */
 
-#include "titanic/support/screen_manager.h"
 #include "titanic/star_control/star_view.h"
+#include "titanic/star_control/camera_mover.h"
+#include "titanic/star_control/error_code.h"
+#include "titanic/star_control/fvector.h"
 #include "titanic/star_control/star_control.h"
 #include "titanic/star_control/star_field.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/core/game_object.h"
 #include "titanic/messages/pet_messages.h"
-#include "titanic/titanic.h"
+#include "titanic/pet_control/pet_control.h"
 
 namespace Titanic {
 
@@ -37,6 +41,11 @@ CStarView::CStarView() : _camera((const CNavigationInfo *)nullptr), _owner(nullp
 	CNavigationInfo data = { 0, 0, 100000.0, 0, 20.0, 1.0, 1.0, 1.0 };
 
 	_camera.proc3(&data);
+}
+
+CStarView::~CStarView() {
+	delete _videoSurface;
+	delete _photoSurface;
 }
 
 void CStarView::load(SimpleFile *file, int param) {
@@ -97,7 +106,7 @@ void CStarView::draw(CScreenManager *screenManager) {
 			if (_homePhotoMask)
 				_homePhotoMask->draw(screenManager, Point(20, 187));
 		} else {
-			fn1();
+			updateCamera();
 
 			// Render the display
 			_videoSurface->clear();
@@ -149,7 +158,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	FPose pose;
 	int matchedIndex = _starField ? _starField->getMatchedIndex() : -1;
 
-	switch (key) {
+	switch (tolower(key)) {
 	case Common::KEYCODE_TAB:
 		if (_starField) {
 			toggleMode();
@@ -176,10 +185,9 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 	}
 
 	case Common::KEYCODE_z:
-	case Common::KEYCODE_c:
 		if (matchedIndex == -1) {
-			pose.setRotationMatrix(key == Common::KEYCODE_z ? Y_AXIS : X_AXIS, 1.0);
-			_camera.proc22(pose);
+			pose.setRotationMatrix(Y_AXIS, -1.0);
+			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
 			return true;
 		}
@@ -187,7 +195,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_SEMICOLON:
 		if (matchedIndex == -1) {
-			_camera.increaseSpeed();
+			_camera.increaseForwardSpeed();
 			errorCode->set();
 			return true;
 		}
@@ -195,7 +203,7 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_PERIOD:
 		if (matchedIndex == -1) {
-			_camera.decreaseSpeed();
+			_camera.increaseBackwardSpeed();
 			errorCode->set();
 			return true;
 		}
@@ -211,8 +219,8 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_x:
 		if (matchedIndex == -1) {
-			pose.setRotationMatrix(Y_AXIS, -1.0);
-			_camera.proc22(pose);
+			pose.setRotationMatrix(Y_AXIS, 1.0);
+			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
 			return true;
 		}
@@ -220,8 +228,17 @@ bool CStarView::KeyCharMsg(int key, CErrorCode *errorCode) {
 
 	case Common::KEYCODE_QUOTE:
 		if (matchedIndex == -1) {
+			pose.setRotationMatrix(X_AXIS, 1.0);
+			_camera.changeOrientation(pose);
+			_camera.updatePosition(errorCode);
+			return true;
+		}
+		break;
+
+	case Common::KEYCODE_SLASH:
+		if (matchedIndex == -1) {
 			pose.setRotationMatrix(X_AXIS, -1.0);
-			_camera.proc22(pose);
+			_camera.changeOrientation(pose);
 			_camera.updatePosition(errorCode);
 			return true;
 		}
@@ -246,7 +263,10 @@ void CStarView::resetPosition() {
 	_camera.setPosition(FVector(0.0, 0.0, 0.0));
 }
 
-bool CStarView::fn1() {
+bool CStarView::updateCamera() {
+	if (_fader.isActive() || _showingPhoto)
+		return false;
+
 	if (_videoSurface) {
 		CErrorCode errorCode;
 		_camera.updatePosition(&errorCode);
@@ -334,6 +354,9 @@ void CStarView::fn9() {
 }
 
 void CStarView::toggleMode() {
+	if (!_photoSurface)
+		return;
+
 	_showingPhoto = !_showingPhoto;
 	if (_starField)
 		_starField->setMode(_showingPhoto ? MODE_PHOTO : MODE_STARFIELD);
@@ -368,37 +391,44 @@ void CStarView::setHasReference() {
 	_photoViewport.setPosition(pos);
 	_photoViewport.setOrientation(orientation);
 	_field218 = false;
-	_photoViewport.fn13(MODE_PHOTO, 0.0);
-	_photoViewport.fn13(MODE_STARFIELD, 0.0);
+	_photoViewport.changeStarColorPixel(MODE_PHOTO, 0.0);
+	_photoViewport.changeStarColorPixel(MODE_STARFIELD, 0.0);
 	_hasReference = true;
 	reset();
 	_field218 = true;
 }
 
-void CStarView::fn16() {
+void CStarView::lockStar() {
 	if (_starField && !_showingPhoto) {
 		CSurfaceArea surfaceArea(_videoSurface);
 		FVector v1, v2, v3;
 		double val = _starField->fn5(&surfaceArea, &_camera, v1, v2, v3);
+		bool lockSuccess = false;
 
 		if (val > -1.0) {
-			v1 += surfaceArea._centroid;
-			v3 += surfaceArea._centroid;
+			v1 -= surfaceArea._centroid;
+			v3 -= surfaceArea._centroid;
 
 			switch (_starField->getMatchedIndex()) {
 			case -1:
-				_camera.fn2(v1, v2, v3);
-				_starField->fn7();
+				// First star match
+				lockSuccess = _camera.lockMarker1(v1, v2, v3);
+				assert(lockSuccess); // lockMarker1 should always succeed
+				_starField->incMatches();
 				break;
 
 			case 0:
-				_camera.fn3(&_photoViewport, v2);
-				_starField->fn7();
+				// Second star match
+				lockSuccess = _camera.lockMarker2(&_photoViewport, v2);
+				if (lockSuccess) // lockMarker2 may have issues
+					_starField->incMatches();
 				break;
 
 			case 1:
-				_camera.fn1(&_photoViewport, v2);
-				_starField->fn7();
+				// Third star match
+				lockSuccess = _camera.lockMarker3(&_photoViewport, v2);
+				assert(lockSuccess); // lockMarker3 should always succeed
+				_starField->incMatches();
 				break;
 
 			default:
@@ -408,9 +438,9 @@ void CStarView::fn16() {
 	}
 }
 
-void CStarView::fn17() {
-	if (_starField && !_showingPhoto) {
-		_camera.removeMatrixRow();
+void CStarView::unlockStar() {
+	if (_starField && !_showingPhoto && _camera.isNotInLockingProcess()) {
+		_camera.removeLockedStar();
 		_starField->fn8(_photoSurface);
 	}
 }
@@ -492,6 +522,5 @@ void CStarView::resizeSurface(CScreenManager *scrManager, int width, int height,
 	if (newSurface)
 		*surface = newSurface;
 }
-
 
 } // End of namespace Titanic

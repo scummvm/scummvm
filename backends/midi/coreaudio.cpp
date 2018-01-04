@@ -308,7 +308,7 @@ void MidiDriver_CORE::sysEx(const byte *msg, uint16 length) {
 class CoreAudioMusicPlugin : public MusicPluginObject {
 public:
 	const char *getName() const {
-		return "CoreAudio";
+		return "Apple DLS Software Synthesizer";
 	}
 
 	const char *getId() const {
@@ -321,8 +321,6 @@ public:
 
 MusicDevices CoreAudioMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	// TODO: Return a different music type depending on the configuration
-	// TODO: List the available devices
 	devices.push_back(MusicDevice(this, "", MT_GM));
 	return devices;
 }

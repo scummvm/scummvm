@@ -251,6 +251,14 @@ void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map, Common::Stri
 		if (synonyms == 0xff)
 			break;
 
+		// WORKAROUND: Missing verb list terminator in hires3
+		if (_gameDescription->gameType == GAME_TYPE_HIRES3 && index == 72 && synonyms == 0)
+			return;
+
+		// WORKAROUND: Missing noun list terminator in hires3
+		if (_gameDescription->gameType == GAME_TYPE_HIRES3 && index == 113)
+			return;
+
 		// WORKAROUND: Missing noun list terminator in hires5 region 15
 		if (_gameDescription->gameType == GAME_TYPE_HIRES5 && _state.region == 15 && index == 81)
 			return;
@@ -673,7 +681,7 @@ void AdlEngine::gameLoop() {
 }
 
 Common::Error AdlEngine::run() {
-	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, true);
+	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2);
 
 	_console = new Console(this);
 	_display = new Display();

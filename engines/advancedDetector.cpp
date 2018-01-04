@@ -325,17 +325,30 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		return Common::kNoError;
 }
 
-void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const {
-	// TODO: This message should be cleaned up / made more specific.
-	// For example, we should specify at least which engine triggered this.
-	//
-	// Might also be helpful to display the full path (for when this is used
-	// from the mass detector).
+void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps, const ADGameIdList &matchedGameIds) const {
 	Common::String report = Common::String::format(
-			_("The game in '%s' seems to be unknown.\n"
-			  "Please, report the following data to the ScummVM team along with name\n"
-			  "of the game you tried to add and its version, language, etc.:"), path.getPath().c_str()) + "\n";
-	report += "\n";
+			_("The game in '%s' seems to be an unknown %s engine game "
+			  "variant.\n\nPlease report the following data to the ScummVM "
+			  "team at %s along with the name of the game you tried to add and "
+			  "its version, language, etc.:"),
+			path.getPath().c_str(), getName(), "https://bugs.scummvm.org/");
+
+	if (matchedGameIds.size()) {
+		report += "\n\n";
+		report += _("Matched game IDs:");
+		report += " ";
+
+		for (ADGameIdList::const_iterator gameId = matchedGameIds.begin(); gameId != matchedGameIds.end(); ++gameId) {
+			if (gameId != matchedGameIds.begin()) {
+				report += ", ";
+			}
+			report += *gameId;
+		}
+	}
+
+	report += "\n\n";
+
+	report.wordWrap(80);
 
 	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file)
 		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
@@ -444,6 +457,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 	}
 
 	ADGameDescList matched;
+	ADGameIdList matchedGameIds;
 	int maxFilesMatched = 0;
 	bool gotAnyMatchesWithAllFiles = false;
 
@@ -466,6 +480,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 		bool allFilesPresent = true;
 		int curFilesMatched = 0;
+		bool hashOrSizeMismatch = false;
 
 		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
@@ -477,16 +492,21 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 				break;
 			}
 
+			if (hashOrSizeMismatch)
+				continue;
+
 			if (fileDesc->md5 != NULL && fileDesc->md5 != filesProps[tstr].md5) {
 				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[tstr].md5.c_str());
 				fileMissing = true;
-				break;
+				hashOrSizeMismatch = true;
+				continue;
 			}
 
 			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[tstr].size) {
 				debug(3, "Size Mismatch. Skipping");
 				fileMissing = true;
-				break;
+				hashOrSizeMismatch = true;
+				continue;
 			}
 
 			debug(3, "Matched file: %s", tstr.c_str());
@@ -502,8 +522,11 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 		// Potentially this could rule out variants where some particular file
 		// is really missing, but the developers should better know about such
 		// cases.
-		if (allFilesPresent)
+		if (allFilesPresent) {
 			gotAnyMatchesWithAllFiles = true;
+			if (!matchedGameIds.size() || strcmp(matchedGameIds.back(), g->gameId) != 0)
+				matchedGameIds.push_back(g->gameId);
+		}
 
 		if (!fileMissing) {
 			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
@@ -530,7 +553,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 	// We didn't find a match
 	if (matched.empty()) {
 		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
-			reportUnknown(parent, filesProps);
+			reportUnknown(parent, filesProps, matchedGameIds);
 		}
 
 		// Filename based fallback

@@ -8,7 +8,6 @@ MODULE_OBJS := \
 	dialog.o \
 	entities.o \
 	gui.o \
-	gui-console.o \
 	randomhat.o \
 	saveload.o \
 	script.o \

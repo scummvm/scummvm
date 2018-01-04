@@ -34,24 +34,22 @@ namespace Sci {
 GfxCursor32::GfxCursor32() :
 	_hideCount(0),
 	_position(0, 0),
-	_writeToVMAP(false) {
-	CursorMan.showMouse(false);
+	_needsPaint(false) {
 }
 
-void GfxCursor32::init(const Buffer &vmap) {
-	_vmap = vmap;
-	_vmapRegion.rect = Common::Rect(_vmap.screenWidth, _vmap.screenHeight);
-	_vmapRegion.data = (byte *)_vmap.getPixels();
-	_restrictedArea = _vmapRegion.rect;
+void GfxCursor32::init(const Buffer &outputBuffer) {
+	_screen = outputBuffer;
+	_screenRegion.rect = Common::Rect(_screen.w, _screen.h);
+	_screenRegion.data = static_cast<byte *>(_screen.getPixels());
+	_restrictedArea = _screenRegion.rect;
 }
 
 GfxCursor32::~GfxCursor32() {
-	CursorMan.showMouse(true);
 	free(_cursor.data);
 	free(_cursorBack.data);
-	free(_drawBuff1.data);
-	free(_drawBuff2.data);
-	free(_savedVmapRegion.data);
+	free(_scratch1.data);
+	free(_scratch2.data);
+	free(_savedScreenRegion.data);
 }
 
 void GfxCursor32::hide() {
@@ -59,26 +57,28 @@ void GfxCursor32::hide() {
 		return;
 	}
 
+	g_system->showMouse(false);
 	if (!_cursorBack.rect.isEmpty()) {
-		drawToHardware(_cursorBack);
+		drawToScreen(_cursorBack);
 	}
 }
 
 void GfxCursor32::revealCursor() {
 	_cursorBack.rect = _cursor.rect;
-	_cursorBack.rect.clip(_vmapRegion.rect);
+	_cursorBack.rect.clip(_screenRegion.rect);
 	if (_cursorBack.rect.isEmpty()) {
 		return;
 	}
 
-	readVideo(_cursorBack);
-	_drawBuff1.rect = _cursor.rect;
-	copy(_drawBuff1, _cursorBack);
-	paint(_drawBuff1, _cursor);
-	drawToHardware(_drawBuff1);
+	copyFromScreen(_cursorBack);
+	_scratch1.rect = _cursor.rect;
+	copy<false>(_scratch1, _cursorBack);
+	copy<true>(_scratch1, _cursor);
+	drawToScreen(_scratch1);
 }
 
-void GfxCursor32::paint(DrawRegion &target, const DrawRegion &source) {
+template <bool SKIP>
+void GfxCursor32::copy(DrawRegion &target, const DrawRegion &source) {
 	if (source.rect.isEmpty()) {
 		return;
 	}
@@ -98,25 +98,33 @@ void GfxCursor32::paint(DrawRegion &target, const DrawRegion &source) {
 	const byte *sourcePixel = source.data + (sourceYOffset * source.rect.width()) + sourceXOffset;
 	const uint8 skipColor = source.skipColor;
 
-	const int16 sourceStride = source.rect.width() - drawRectWidth;
-	const int16 targetStride = target.rect.width() - drawRectWidth;
+	int16 sourceStride = source.rect.width();
+	int16 targetStride = target.rect.width();
+	if (SKIP) {
+		sourceStride -= drawRectWidth;
+		targetStride -= drawRectWidth;
+	}
 
 	for (int16 y = 0; y < drawRectHeight; ++y) {
-		for (int16 x = 0; x < drawRectWidth; ++x) {
-			if (*sourcePixel != skipColor) {
-				*targetPixel = *sourcePixel;
+		if (SKIP) {
+			for (int16 x = 0; x < drawRectWidth; ++x) {
+				if (*sourcePixel != skipColor) {
+					*targetPixel = *sourcePixel;
+				}
+				++targetPixel;
+				++sourcePixel;
 			}
-			++targetPixel;
-			++sourcePixel;
+		} else {
+			memcpy(targetPixel, sourcePixel, drawRectWidth);
 		}
-		sourcePixel += sourceStride;
 		targetPixel += targetStride;
+		sourcePixel += sourceStride;
 	}
 }
 
-void GfxCursor32::drawToHardware(const DrawRegion &source) {
+void GfxCursor32::drawToScreen(const DrawRegion &source) {
 	Common::Rect drawRect(source.rect);
-	drawRect.clip(_vmapRegion.rect);
+	drawRect.clip(_screenRegion.rect);
 	const int16 sourceXOffset = drawRect.left - source.rect.left;
 	const int16 sourceYOffset = drawRect.top - source.rect.top;
 	byte *sourcePixel = source.data + (sourceYOffset * source.rect.width()) + sourceXOffset;
@@ -129,12 +137,14 @@ void GfxCursor32::unhide() {
 		return;
 	}
 
+	g_system->showMouse(true);
 	_cursor.rect.moveTo(_position.x - _hotSpot.x, _position.y - _hotSpot.y);
 	revealCursor();
 }
 
 void GfxCursor32::show() {
 	if (_hideCount) {
+		g_system->showMouse(true);
 		_hideCount = 0;
 		_cursor.rect.moveTo(_position.x - _hotSpot.x, _position.y - _hotSpot.y);
 		revealCursor();
@@ -144,31 +154,39 @@ void GfxCursor32::show() {
 void GfxCursor32::setRestrictedArea(const Common::Rect &rect) {
 	_restrictedArea = rect;
 
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
 
 	mulru(_restrictedArea, Ratio(screenWidth, scriptWidth), Ratio(screenHeight, scriptHeight), 0);
 
+	bool restricted = false;
+
 	if (_position.x < rect.left) {
 		_position.x = rect.left;
+		restricted = true;
 	}
 	if (_position.x >= rect.right) {
 		_position.x = rect.right - 1;
+		restricted = true;
 	}
 	if (_position.y < rect.top) {
 		_position.y = rect.top;
+		restricted = true;
 	}
 	if (_position.y >= rect.bottom) {
 		_position.y = rect.bottom - 1;
+		restricted = true;
 	}
 
-	g_system->warpMouse(_position.x, _position.y);
+	if (restricted) {
+		g_system->warpMouse(_position.x, _position.y);
+	}
 }
 
 void GfxCursor32::clearRestrictedArea() {
-	_restrictedArea = _vmapRegion.rect;
+	_restrictedArea = _screenRegion.rect;
 }
 
 void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const int16 celNo) {
@@ -178,48 +196,8 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 	_cursorInfo.loopNo = loopNo;
 	_cursorInfo.celNo = celNo;
 
-	if (_macCursorRemap.empty() && viewId != -1) {
-		CelObjView view(viewId, loopNo, celNo);
-
-		_hotSpot = view._origin;
-		_width = view._width;
-		_height = view._height;
-
-		// SSCI never increased the size of cursors, but some of the cursors
-		// in early SCI32 games were designed for low-resolution display mode
-		// and so are kind of hard to pick out when running in high-resolution
-		// mode.
-		// To address this, we make some slight adjustments to cursor display
-		// in these early games:
-		// GK1: All the cursors are increased in size since they all appear to
-		//      be designed for low-res display.
-		// PQ4: We only make the cursors bigger if they are above a set
-		//      threshold size because inventory items usually have a
-		//      high-resolution cursor representation.
-		bool pixelDouble = false;
-		if (g_sci->_gfxFrameout->_isHiRes &&
-			(g_sci->getGameId() == GID_GK1 ||
-			(g_sci->getGameId() == GID_PQ4 && _width <= 22 && _height <= 22))) {
-
-			_width *= 2;
-			_height *= 2;
-			_hotSpot.x *= 2;
-			_hotSpot.y *= 2;
-			pixelDouble = true;
-		}
-
-		_cursor.data = (byte *)realloc(_cursor.data, _width * _height);
-		_cursor.rect = Common::Rect(_width, _height);
-		memset(_cursor.data, 255, _width * _height);
-		_cursor.skipColor = 255;
-
-		Buffer target(_width, _height, _cursor.data);
-		if (pixelDouble) {
-			view.draw(target, _cursor.rect, Common::Point(0, 0), false, 2, 2);
-		} else {
-			view.draw(target, _cursor.rect, Common::Point(0, 0), false);
-		}
-	} else if (!_macCursorRemap.empty() && viewId != -1) {
+#ifdef ENABLE_SCI32_MAC
+	if (!_macCursorRemap.empty() && viewId != -1) {
 		// Mac cursor handling
 		GuiResourceId viewNum = viewId;
 
@@ -263,6 +241,50 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 
 		// The cursor will be drawn on next refresh
 		delete macCursor;
+	} else
+#endif
+	if (viewId != -1) {
+		CelObjView view(viewId, loopNo, celNo);
+
+		_hotSpot = view._origin;
+		_width = view._width;
+		_height = view._height;
+
+		// SSCI never increased the size of cursors, but some of the cursors
+		// in early SCI32 games were designed for low-resolution display mode
+		// and so are kind of hard to pick out when running in high-resolution
+		// mode.
+		// To address this, we make some slight adjustments to cursor display
+		// in these early games:
+		// GK1: All the cursors are increased in size since they all appear to
+		//      be designed for low-res display.
+		// PQ4: We only make the cursors bigger if they are above a set
+		//      threshold size because inventory items usually have a
+		//      high-resolution cursor representation.
+		bool pixelDouble = false;
+		if (g_sci->_gfxFrameout->isHiRes() &&
+			(g_sci->getGameId() == GID_GK1 ||
+			(g_sci->getGameId() == GID_PQ4 && _width <= 22 && _height <= 22))) {
+
+			_width *= 2;
+			_height *= 2;
+			_hotSpot.x *= 2;
+			_hotSpot.y *= 2;
+			pixelDouble = true;
+		}
+
+		_cursor.data = (byte *)realloc(_cursor.data, _width * _height);
+		_cursor.rect = Common::Rect(_width, _height);
+		memset(_cursor.data, 255, _width * _height);
+		_cursor.skipColor = 255;
+
+		Buffer target;
+		target.init(_width, _height, _width, _cursor.data, Graphics::PixelFormat::createFormatCLUT8());
+		if (pixelDouble) {
+			view.draw(target, _cursor.rect, Common::Point(0, 0), false, 2, 2);
+		} else {
+			view.draw(target, _cursor.rect, Common::Point(0, 0), false);
+		}
 	} else {
 		_hotSpot = Common::Point(0, 0);
 		_width = _height = 1;
@@ -270,120 +292,106 @@ void GfxCursor32::setView(const GuiResourceId viewId, const int16 loopNo, const 
 		_cursor.rect = Common::Rect(_width, _height);
 		*_cursor.data = _cursor.skipColor;
 		_cursorBack.rect = _cursor.rect;
-		_cursorBack.rect.clip(_vmapRegion.rect);
+		_cursorBack.rect.clip(_screenRegion.rect);
 		if (!_cursorBack.rect.isEmpty()) {
-			readVideo(_cursorBack);
+			copyFromScreen(_cursorBack);
 		}
 	}
 
 	_cursorBack.data = (byte *)realloc(_cursorBack.data, _width * _height);
 	memset(_cursorBack.data, 0, _width * _height);
-	_drawBuff1.data = (byte *)realloc(_drawBuff1.data, _width * _height);
-	_drawBuff2.data = (byte *)realloc(_drawBuff2.data, _width * _height * 4);
-	_savedVmapRegion.data = (byte *)realloc(_savedVmapRegion.data, _width * _height);
+	_scratch1.data = (byte *)realloc(_scratch1.data, _width * _height);
+	_scratch2.data = (byte *)realloc(_scratch2.data, _width * _height * 4);
+	_savedScreenRegion.data = (byte *)realloc(_savedScreenRegion.data, _width * _height);
 
 	unhide();
 }
 
-void GfxCursor32::readVideo(DrawRegion &target) {
-	// NOTE: In SSCI, mouse events were received via hardware interrupt, so
-	// there was a separate branch here that would read from VRAM instead of
-	// from the game's back buffer when a mouse event was received while the
-	// back buffer was being updated. In ScummVM, mouse events are polled, which
-	// means it is not possible to receive a mouse event during a back buffer
-	// update, so the code responsible for handling that is removed.
-	copy(target, _vmapRegion);
-}
-
-void GfxCursor32::copy(DrawRegion &target, const DrawRegion &source) {
-	if (source.rect.isEmpty()) {
-		return;
-	}
-
-	Common::Rect drawRect(source.rect);
-	drawRect.clip(target.rect);
-	if (drawRect.isEmpty()) {
-		return;
-	}
-
-	const int16 sourceXOffset = drawRect.left - source.rect.left;
-	const int16 sourceYOffset = drawRect.top - source.rect.top;
-	const int16 drawWidth = drawRect.width();
-	const int16 drawHeight = drawRect.height();
-
-	byte *targetPixel = target.data + ((drawRect.top - target.rect.top) * target.rect.width()) + (drawRect.left - target.rect.left);
-	const byte *sourcePixel = source.data + (sourceYOffset * source.rect.width()) + sourceXOffset;
-
-	const int16 sourceStride = source.rect.width();
-	const int16 targetStride = target.rect.width();
-
-	for (int y = 0; y < drawHeight; ++y) {
-		memcpy(targetPixel, sourcePixel, drawWidth);
-		targetPixel += targetStride;
-		sourcePixel += sourceStride;
-	}
+void GfxCursor32::copyFromScreen(DrawRegion &target) {
+	// In SSCI, mouse events were received via hardware interrupt, so there was
+	// a separate branch here that would read from VRAM instead of from the
+	// game's back buffer when a mouse event was received while the back buffer
+	// was being updated. In ScummVM, mouse events are polled, which means it is
+	// not possible to receive a mouse event during a back buffer update, so the
+	// code responsible for handling that is removed.
+	copy<false>(target, _screenRegion);
 }
 
 void GfxCursor32::setPosition(const Common::Point &position) {
-	const int16 scriptWidth = g_sci->_gfxFrameout->getCurrentBuffer().scriptWidth;
-	const int16 scriptHeight = g_sci->_gfxFrameout->getCurrentBuffer().scriptHeight;
-	const int16 screenWidth = g_sci->_gfxFrameout->getCurrentBuffer().screenWidth;
-	const int16 screenHeight = g_sci->_gfxFrameout->getCurrentBuffer().screenHeight;
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
 
-	_position.x = (position.x * Ratio(screenWidth, scriptWidth)).toInt();
-	_position.y = (position.y * Ratio(screenHeight, scriptHeight)).toInt();
+	Common::Point newPosition;
+	newPosition.x = (position.x * Ratio(screenWidth, scriptWidth)).toInt();
+	newPosition.y = (position.y * Ratio(screenHeight, scriptHeight)).toInt();
 
-	g_system->warpMouse(_position.x, _position.y);
+	if (!deviceMoved(newPosition)) {
+		g_system->warpMouse(newPosition.x, newPosition.y);
+	}
 }
 
 void GfxCursor32::gonnaPaint(Common::Rect paintRect) {
-	if (!_hideCount && !_writeToVMAP && !_cursorBack.rect.isEmpty()) {
+	if (!_hideCount && !_needsPaint && !_cursorBack.rect.isEmpty()) {
 		paintRect.left &= ~3;
 		paintRect.right |= 3;
 		if (_cursorBack.rect.intersects(paintRect)) {
-			_writeToVMAP = true;
+			_needsPaint = true;
 		}
 	}
 }
 
 void GfxCursor32::paintStarting() {
-	if (_writeToVMAP) {
-		_savedVmapRegion.rect = _cursor.rect;
-		copy(_savedVmapRegion, _vmapRegion);
-		paint(_vmapRegion, _cursor);
+	if (_needsPaint) {
+		_savedScreenRegion.rect = _cursor.rect;
+		copy<false>(_savedScreenRegion, _screenRegion);
+		copy<true>(_screenRegion, _cursor);
 	}
 }
 
 void GfxCursor32::donePainting() {
-	if (_writeToVMAP) {
-		copy(_vmapRegion, _savedVmapRegion);
-		_savedVmapRegion.rect = Common::Rect();
-		_writeToVMAP = false;
+	if (_needsPaint) {
+		copy<false>(_screenRegion, _savedScreenRegion);
+		_savedScreenRegion.rect = Common::Rect();
+		_needsPaint = false;
 	}
 
 	if (!_hideCount && !_cursorBack.rect.isEmpty()) {
-		copy(_cursorBack, _vmapRegion);
+		copy<false>(_cursorBack, _screenRegion);
 	}
 }
 
-void GfxCursor32::deviceMoved(Common::Point &position) {
+bool GfxCursor32::deviceMoved(Common::Point &position) {
+	bool restricted = false;
+
 	if (position.x < _restrictedArea.left) {
 		position.x = _restrictedArea.left;
+		restricted = true;
 	}
 	if (position.x >= _restrictedArea.right) {
 		position.x = _restrictedArea.right - 1;
+		restricted = true;
 	}
 	if (position.y < _restrictedArea.top) {
 		position.y = _restrictedArea.top;
+		restricted = true;
 	}
 	if (position.y >= _restrictedArea.bottom) {
 		position.y = _restrictedArea.bottom - 1;
+		restricted = true;
 	}
 
-	_position = position;
+	if (restricted) {
+		g_system->warpMouse(position.x, position.y);
+	}
 
-	g_system->warpMouse(position.x, position.y);
-	move();
+	if (_position != position) {
+		_position = position;
+		move();
+	}
+
+	return restricted;
 }
 
 void GfxCursor32::move() {
@@ -399,51 +407,53 @@ void GfxCursor32::move() {
 	}
 
 	// Cursor moved offscreen
-	if (!_cursor.rect.intersects(_vmapRegion.rect)) {
-		drawToHardware(_cursorBack);
+	if (!_cursor.rect.intersects(_screenRegion.rect)) {
+		drawToScreen(_cursorBack);
 		return;
 	}
 
 	if (!_cursor.rect.intersects(_cursorBack.rect)) {
 		// Cursor moved to a completely different part of the screen
-		_drawBuff1.rect = _cursor.rect;
-		_drawBuff1.rect.clip(_vmapRegion.rect);
-		readVideo(_drawBuff1);
+		_scratch1.rect = _cursor.rect;
+		_scratch1.rect.clip(_screenRegion.rect);
+		copyFromScreen(_scratch1);
 
-		_drawBuff2.rect = _drawBuff1.rect;
-		copy(_drawBuff2, _drawBuff1);
+		_scratch2.rect = _scratch1.rect;
+		copy<false>(_scratch2, _scratch1);
 
-		paint(_drawBuff1, _cursor);
-		drawToHardware(_drawBuff1);
+		copy<true>(_scratch1, _cursor);
+		drawToScreen(_scratch1);
 
-		drawToHardware(_cursorBack);
+		drawToScreen(_cursorBack);
 
 		_cursorBack.rect = _cursor.rect;
-		_cursorBack.rect.clip(_vmapRegion.rect);
-		copy(_cursorBack, _drawBuff2);
+		_cursorBack.rect.clip(_screenRegion.rect);
+		copy<false>(_cursorBack, _scratch2);
 	} else {
 		// Cursor moved, but still overlaps the previous cursor location
 		Common::Rect mergedRect(_cursorBack.rect);
 		mergedRect.extend(_cursor.rect);
-		mergedRect.clip(_vmapRegion.rect);
+		mergedRect.clip(_screenRegion.rect);
 
-		_drawBuff2.rect = mergedRect;
-		readVideo(_drawBuff2);
+		_scratch2.rect = mergedRect;
+		copyFromScreen(_scratch2);
 
-		copy(_drawBuff2, _cursorBack);
+		copy<false>(_scratch2, _cursorBack);
 
 		_cursorBack.rect = _cursor.rect;
-		_cursorBack.rect.clip(_vmapRegion.rect);
-		copy(_cursorBack, _drawBuff2);
+		_cursorBack.rect.clip(_screenRegion.rect);
+		copy<false>(_cursorBack, _scratch2);
 
-		paint(_drawBuff2, _cursor);
-		drawToHardware(_drawBuff2);
+		copy<true>(_scratch2, _cursor);
+		drawToScreen(_scratch2);
 	}
 }
 
+#ifdef ENABLE_SCI32_MAC
 void GfxCursor32::setMacCursorRemapList(int cursorCount, reg_t *cursors) {
 	for (int i = 0; i < cursorCount; i++)
 		_macCursorRemap.push_back(cursors[i].toUint16());
 }
+#endif
 
 } // End of namespace Sci

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
+#include "common/queue.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -40,7 +41,7 @@ private:
 	uint32 _priorFrameCounterTime;
 	uint32 _gameCounter;
 	uint32 _gameCounters[6];
-	Common::KeyCode _keyCode;
+	Common::Queue<Common::KeyState> _keys;
 	SpriteResource _sprites;
 
 	/**
@@ -109,7 +110,20 @@ public:
 
 	bool wait(uint numFrames, bool interruptable = true);
 
+	/**
+	 * Pause for a set amount
+	 */
 	void ipause(uint amount);
+
+	/**
+	 * Pauses a set amount past the previous call to timeMark5
+	 */
+	void ipause5(uint amount);
+
+	/**
+	 * Waits for a key or mouse press, animating the 3d view in the background
+	 */
+	void waitForPressAnimated();
 };
 
 class GameEvent {

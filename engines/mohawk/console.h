@@ -82,7 +82,8 @@ private:
 	bool Cmd_ChangeStack(int argc, const char **argv);
 	bool Cmd_Hotspots(int argc, const char **argv);
 	bool Cmd_ZipMode(int argc, const char **argv);
-	bool Cmd_RunAllBlocks(int argc, const char **argv);
+	bool Cmd_DumpCard(int argc, const char **argv);
+	bool Cmd_DumpStack(int argc, const char **argv);
 	bool Cmd_DumpScript(int argc, const char **argv);
 	bool Cmd_ListZipCards(int argc, const char **argv);
 	bool Cmd_GetRMAP(int argc, const char **argv);

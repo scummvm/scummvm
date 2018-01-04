@@ -497,12 +497,12 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 			mCodeNumber = scriptCode[pc++];
 			mCodeArguments = scriptCode[pc++];
 			switch (mCodeArguments) {
-			case 6: f = stack[--stackIdx];
-			case 5: e = stack[--stackIdx];
-			case 4: d = stack[--stackIdx];
-			case 3: c = stack[--stackIdx];
-			case 2: b = stack[--stackIdx];
-			case 1: a = stack[--stackIdx];
+			case 6: f = stack[--stackIdx]; // fall through
+			case 5: e = stack[--stackIdx]; // fall through
+			case 4: d = stack[--stackIdx]; // fall through
+			case 3: c = stack[--stackIdx]; // fall through
+			case 2: b = stack[--stackIdx]; // fall through
+			case 1: a = stack[--stackIdx]; // fall through
 			case 0:
 				Debug::callMCode(mCodeNumber, mCodeArguments, a, b, c, d, e, f);
 				mCodeReturn = (this->*_mcodeTable[mCodeNumber])(compact, id, a, b, c, d, e, f);

@@ -199,7 +199,7 @@ ToucheEngine::~ToucheEngine() {
 }
 
 Common::Error ToucheEngine::run() {
-	initGraphics(kScreenWidth, kScreenHeight, true);
+	initGraphics(kScreenWidth, kScreenHeight);
 
 	Graphics::setupFont(_language);
 

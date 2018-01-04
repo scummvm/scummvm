@@ -120,8 +120,6 @@ enum {
 
 static const char *savePeriodLabels[] = { _s("Never"), _s("every 5 mins"), _s("every 10 mins"), _s("every 15 mins"), _s("every 30 mins"), 0 };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
-static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11 kHz"), _s("22 kHz"), _s("44 kHz"), _s("48 kHz"), 0 };
-static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
 static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", 0 };
@@ -167,8 +165,6 @@ void OptionsDialog::init() {
 	_midiPopUpDesc = 0;
 	_oplPopUp = 0;
 	_oplPopUpDesc = 0;
-	_outputRatePopUp = 0;
-	_outputRatePopUpDesc = 0;
 	_enableMIDISettings = false;
 	_gmDevicePopUp = 0;
 	_gmDevicePopUpDesc = 0;
@@ -244,21 +240,17 @@ void OptionsDialog::build() {
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureKbdMouseSpeed)) {
-		if (ConfMan.hasKey("kbdmouse_speed", _domain)) {
-			int value =  ConfMan.getInt("kbdmouse_speed", _domain);
-			if (_kbdMouseSpeedSlider && value < ARRAYSIZE(kbdMouseSpeedLabels) - 1 && value >= 0) {
-				_kbdMouseSpeedSlider->setValue(value);
-				_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[value]));
-			}
+		int value = ConfMan.getInt("kbdmouse_speed", _domain);
+		if (_kbdMouseSpeedSlider && value < ARRAYSIZE(kbdMouseSpeedLabels) - 1 && value >= 0) {
+			_kbdMouseSpeedSlider->setValue(value);
+			_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[value]));
 		}
 	}
 	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone)) {
-		if (ConfMan.hasKey("joystick_deadzone", _domain)) {
-			int value =  ConfMan.getInt("joystick_deadzone", _domain);
-			if (_joystickDeadzoneSlider != 0) {
-				_joystickDeadzoneSlider->setValue(value);
-				_joystickDeadzoneLabel->setValue(value);
-			}
+		int value = ConfMan.getInt("joystick_deadzone", _domain);
+		if (_joystickDeadzoneSlider != 0) {
+			_joystickDeadzoneSlider->setValue(value);
+			_joystickDeadzoneLabel->setValue(value);
 		}
 	}
 
@@ -333,15 +325,6 @@ void OptionsDialog::build() {
 	if (_oplPopUp) {
 		OPL::Config::DriverId id = MAX<OPL::Config::DriverId>(OPL::Config::parse(ConfMan.get("opl_driver", _domain)), 0);
 		_oplPopUp->setSelectedTag(id);
-	}
-
-	if (_outputRatePopUp) {
-		_outputRatePopUp->setSelected(1);
-		int value = ConfMan.getInt("output_rate", _domain);
-		for	(int i = 0; outputRateLabels[i]; i++) {
-			if (value == outputRateValues[i])
-				_outputRatePopUp->setSelected(i);
-		}
 	}
 
 	if (_multiMidiCheckbox) {
@@ -437,7 +420,7 @@ void OptionsDialog::rebuild() {
 	build();
 	reflowLayout();
 	_tabWidget->setActiveTab(currentTab);
-	setFocusWidget(_firstWidget);
+	setDefaultFocusedWidget();
 }
 
 void OptionsDialog::open() {
@@ -638,17 +621,6 @@ void OptionsDialog::apply() {
 				ConfMan.removeKey("opl_driver", _domain);
 		} else {
 			ConfMan.removeKey("opl_driver", _domain);
-		}
-	}
-
-	if (_outputRatePopUp) {
-		if (_enableAudioSettings) {
-			if (_outputRatePopUp->getSelectedTag() != 0)
-				ConfMan.setInt("output_rate", _outputRatePopUp->getSelectedTag(), _domain);
-			else
-				ConfMan.removeKey("output_rate", _domain);
-		} else {
-			ConfMan.removeKey("output_rate", _domain);
 		}
 	}
 
@@ -860,8 +832,6 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 		_oplPopUpDesc->setEnabled(enabled);
 		_oplPopUp->setEnabled(enabled);
 	}
-	_outputRatePopUpDesc->setEnabled(enabled);
-	_outputRatePopUp->setEnabled(enabled);
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
@@ -1066,9 +1036,9 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
 	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
 
-	const MusicPlugin::List p = MusicMan.getPlugins();
-	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (**m)->getDevices();
+	const PluginList p = MusicMan.getPlugins();
+	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			Common::String deviceGuiOption = MidiDriver::musicType2GUIO(d->getMusicType());
 
@@ -1096,14 +1066,6 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 		++ed;
 	}
 
-	// Sample rate settings
-	_outputRatePopUpDesc = new StaticTextWidget(boss, prefix + "auSampleRatePopupDesc", _("Output rate:"), _("Higher value specifies better sound quality but may be not supported by your soundcard"));
-	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", _("Higher value specifies better sound quality but may be not supported by your soundcard"));
-
-	for (int i = 0; outputRateLabels[i]; i++) {
-		_outputRatePopUp->appendEntry(_(outputRateLabels[i]), outputRateValues[i]);
-	}
-
 	_enableAudioSettings = true;
 }
 
@@ -1112,19 +1074,19 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	_gmDevicePopUp = new PopUpWidget(boss, prefix + "auPrefGmPopup");
 
 	// Populate
-	const MusicPlugin::List p = MusicMan.getPlugins();
+	const PluginList p = MusicMan.getPlugins();
 	// Make sure the null device is the first one in the list to avoid undesired
 	// auto detection for users who don't have a saved setting yet.
-	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (**m)->getDevices();
+	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getMusicDriverId() == "null")
 				_gmDevicePopUp->appendEntry(_("Don't use General MIDI music"), d->getHandle());
 		}
 	}
 	// Now we add the other devices.
-	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (**m)->getDevices();
+	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getMusicType() >= MT_GM) {
 				if (d->getMusicType() != MT_MT32)
@@ -1175,19 +1137,19 @@ void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefi
 	// GS Extensions setting
 	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Roland GS Device (enable MT-32 mappings)"), _("Check if you want to enable patch mappings to emulate an MT-32 on a Roland GS device"));
 
-	const MusicPlugin::List p = MusicMan.getPlugins();
+	const PluginList p = MusicMan.getPlugins();
 	// Make sure the null device is the first one in the list to avoid undesired
 	// auto detection for users who don't have a saved setting yet.
-	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (**m)->getDevices();
+	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getMusicDriverId() == "null")
 				_mt32DevicePopUp->appendEntry(_("Don't use Roland MT-32 music"), d->getHandle());
 		}
 	}
 	// Now we add the other devices.
-	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-		MusicDevices i = (**m)->getDevices();
+	for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getMusicType() >= MT_GM)
 				_mt32DevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
@@ -1299,10 +1261,10 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 
 	if (_domain != Common::ConfigManager::kApplicationDomain || ConfMan.hasKey(setting, _domain) || preferredType) {
 		const Common::String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain);
-		const MusicPlugin::List p = MusicMan.getPlugins();
+		const PluginList p = MusicMan.getPlugins();
 
-		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
-			MusicDevices i = (**m)->getDevices();
+		for (PluginList::const_iterator m = p.begin(); m != p.end(); ++m) {
+			MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 				if (setting.empty() ? (preferredType == d->getMusicType()) : (drv == d->getCompleteId())) {
 					popup->setSelectedTag(d->getHandle());
@@ -1319,10 +1281,10 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 	if (!popup || !_enableAudioSettings)
 		return;
 
-	const MusicPlugin::List p = MusicMan.getPlugins();
+	const PluginList p = MusicMan.getPlugins();
 	bool found = false;
-	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end() && !found; ++m) {
-		MusicDevices i = (**m)->getDevices();
+	for (PluginList::const_iterator m = p.begin(); m != p.end() && !found; ++m) {
+		MusicDevices i = (*m)->get<MusicPluginObject>().getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 			if (d->getHandle() == popup->getSelectedTag()) {
 				ConfMan.set(setting, d->getCompleteId(), _domain);

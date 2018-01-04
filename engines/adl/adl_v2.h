@@ -97,6 +97,7 @@ protected:
 	Common::Array<DataBlockPtr> _itemPics;
 	bool _itemRemoved;
 	byte _roomOnScreen, _picOnScreen, _itemsOnScreen;
+	Common::Array<byte> _brokenRooms;
 
 private:
 	Common::RandomSource *_random;

@@ -190,14 +190,14 @@ void sceneHandler09_spitterClick() {
 	if (g_vars->scene09_spitter->_flags & 4) {
 		PicAniInfo info;
 
-		g_vars->scene09_spitter->getPicAniInfo(&info);
+		g_vars->scene09_spitter->getPicAniInfo(info);
 		g_vars->scene09_spitter->_messageQueueId = 0;
 		g_vars->scene09_spitter->changeStatics2(ST_PLV_SIT);
 
 		int x = g_vars->scene09_spitter->_ox - 10;
 		int y = g_vars->scene09_spitter->_oy + 145;
 
-		g_vars->scene09_spitter->setPicAniInfo(&info);
+		g_vars->scene09_spitter->setPicAniInfo(info);
 
 		if (ABS(x - g_fp->_aniMan->_ox) > 1 || ABS(y - g_fp->_aniMan->_oy) > 1) {
 			MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, y, 1, ST_MAN_UP);
@@ -404,7 +404,7 @@ void sceneHandler09_hangerStartCycle() {
 		if (g_vars->scene09_intHangerMaxPhase != -1000 && g_vars->scene09_hangers[g_vars->scene09_interactingHanger]->phase != g_vars->scene09_intHangerMaxPhase) {
 			ExCommand *ex = new ExCommand(0, 35, SND_9_019, 0, 0, 0, 1, 0, 0, 0);
 
-			ex->_field_14 = 1;
+			ex->_z = 1;
 			ex->_excFlags |= 2;
 			ex->postMessage();
 
@@ -555,7 +555,7 @@ int sceneHandler09(ExCommand *cmd) {
 
 						ExCommand *ex = new ExCommand(0, 35, SND_9_018, 0, 0, 0, 1, 0, 0, 0);
 
-						ex->_field_14 = 1;
+						ex->_z = 1;
 						ex->_excFlags |= 2;
 						ex->postMessage();
 					}

@@ -25,16 +25,16 @@
 namespace BladeRunner {
 
 void SceneScriptMA04::InitializeScene() {
-	if (Game_Flag_Query(63)) {
+	if (Game_Flag_Query(kFlagMA05toMA04)) {
 		Setup_Scene_Information(-7199.0f, 953.97f, 1579.0f, 502);
 		if (Global_Variable_Query(1) != 2 && Global_Variable_Query(1) != 3) {
-			Scene_Loop_Start_Special(0, 0, 0);
+			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		}
 	} else if (Game_Flag_Query(35)) {
 		Setup_Scene_Information(-7099.0f, 954.0f, 1866.0f, 502);
 	} else if (Game_Flag_Query(647)) {
 		Setup_Scene_Information(-7107.0f, 954.0f, 1742.0f, 502);
-		Scene_Loop_Start_Special(0, 4, 0);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 4, false);
 	} else {
 		Setup_Scene_Information(-7143.0f, 954.0f, 1868.0f, 733);
 	}
@@ -80,7 +80,7 @@ bool SceneScriptMA04::MouseClick(int x, int y) {
 
 bool SceneScriptMA04::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("BED-SHEETS", objectName)) {
-		sub_403DA8();
+		sleep();
 		return false;
 	}
 	if (Object_Query_Click("BED-TV-1", objectName) || Object_Query_Click("BED-TV-2", objectName)) {
@@ -89,7 +89,7 @@ bool SceneScriptMA04::ClickedOn3DObject(const char *objectName, bool a2) {
 			Unclickable_Object("BED-TV-1");
 			Unclickable_Object("BED-TV-2");
 			Sound_Play(132, 100, 0, 0, 50);
-			sub_403864();
+			turnOnTV();
 			return false;
 		}
 		return true;
@@ -108,7 +108,7 @@ bool SceneScriptMA04::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptMA04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7099.0f, 954.0f, 1866.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(36);
+			Game_Flag_Set(kFlagMA04ToMA02);
 			Set_Enter(10, 49);
 		}
 		return true;
@@ -121,7 +121,7 @@ bool SceneScriptMA04::ClickedOnExit(int exitId) {
 				Overlay_Remove("MA04OVER");
 			}
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 955.0f, 1675.0f, 0, 0, false, 1);
-			Game_Flag_Set(62);
+			Game_Flag_Set(kFlagMA04toMA05);
 			if (Global_Variable_Query(1) != 2 && Global_Variable_Query(1) != 3) {
 				Async_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1568.0f, 0, false);
 			}
@@ -145,7 +145,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 		return false;
 	}
 	if (region == 1) {
-		sub_403DA8();
+		sleep();
 		return true;
 	}
 	if (region == 0) {
@@ -243,7 +243,7 @@ void SceneScriptMA04::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7143.0f, 954.0f, 1868.0f, 0, 1, false, 0);
 	}
 	Game_Flag_Reset(35);
-	Game_Flag_Reset(63);
+	Game_Flag_Reset(kFlagMA05toMA04);
 	Game_Flag_Reset(647);
 	if (Game_Flag_Query(61)) {
 		if (Global_Variable_Query(1) == 2 && !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallGuzza)) {
@@ -265,9 +265,9 @@ void SceneScriptMA04::PlayerWalkedIn() {
 			Actor_Says(kActorGuzza, 60, 3);
 			Actor_Says(kActorGuzza, 70, 3);
 			Sound_Play(123, 100, 0, 0, 50);
-			Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallGuzza, 1, kActorGuzza);
-			Spinner_Set_Selectable_Destination_Flag(5, 1);
-			Game_Flag_Set(186);
+			Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallGuzza, false, kActorGuzza);
+			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationTyrellBuilding, true);
+			Game_Flag_Set(kFlagRC01PoliceDone);
 			if (!Game_Flag_Query(163)) {
 				Game_Flag_Set(163);
 				Item_Remove_From_World(66);
@@ -295,10 +295,10 @@ void SceneScriptMA04::PlayerWalkedIn() {
 }
 
 void SceneScriptMA04::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (Game_Flag_Query(678)) {
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(1, 0, -1);
 		Game_Flag_Reset(678);
@@ -368,7 +368,7 @@ void SceneScriptMA04::sub_4028A8() {
 		Actor_Says(kActorMcCoy, 2525, 15);
 		Actor_Says(kActorDektora, 420, 3);
 		Sound_Play(123, 100, 0, 0, 50);
-		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallDektora1, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallDektora1, true, -1);
 	} else {
 		Actor_Says_With_Pause(kActorMcCoy, 2505, 0.5f, 19);
 		Actor_Says(kActorDektora, 430, 3);
@@ -382,7 +382,7 @@ void SceneScriptMA04::sub_4028A8() {
 		Actor_Says(kActorDektora, 490, 3);
 		Sound_Play(123, 100, 0, 0, 50);
 		Actor_Says(kActorMcCoy, 2540, 15);
-		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallDektora2, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallDektora2, true, -1);
 	}
 }
 
@@ -403,7 +403,7 @@ void SceneScriptMA04::sub_402F2C() {
 		if (!Game_Flag_Query(378)) {
 			Actor_Says(kActorLucy, 640, 3);
 		}
-		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy2, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy2, true, -1);
 	} else {
 		Actor_Says(kActorLucy, 590, 3);
 		Actor_Says(kActorMcCoy, 2565, 12);
@@ -416,7 +416,7 @@ void SceneScriptMA04::sub_402F2C() {
 		if (!Game_Flag_Query(378)) {
 			Actor_Says(kActorLucy, 640, 3);
 		}
-		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy1, 1, -1);
+		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy1, true, -1);
 	}
 	Sound_Play(123, 100, 0, 0, 50);
 }
@@ -439,7 +439,7 @@ void SceneScriptMA04::sub_4032A0() {
 	Actor_Says(kActorSteele, 810, 3);
 	Actor_Says(kActorSteele, 820, 3);
 	Sound_Play(123, 100, 0, 0, 50);
-	Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallCrystal, 1, -1);
+	Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallCrystal, true, -1);
 }
 
 void SceneScriptMA04::sub_4034D8() {
@@ -471,10 +471,10 @@ void SceneScriptMA04::sub_4034D8() {
 	Actor_Says(kActorClovis, 530, 3);
 	Actor_Says(kActorClovis, 540, 3);
 	Sound_Play(123, 100, 0, 0, 50);
-	Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallClovis, 1, -1);
+	Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallClovis, true, -1);
 }
 
-void SceneScriptMA04::sub_403864() {
+void SceneScriptMA04::turnOnTV() {
 	Overlay_Play("MA04OVR2", 0, 1, 0, 0);
 	switch (Global_Variable_Query(52)) {
 	case 4:
@@ -533,7 +533,7 @@ void SceneScriptMA04::sub_403864() {
 	}
 }
 
-void SceneScriptMA04::sub_403DA8() {
+void SceneScriptMA04::sleep() {
 	if (!Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BED-SHEETS", 12, true, false)) {
 		Actor_Says(kActorMcCoy, 8530, 12);
 		Music_Stop(4);
@@ -558,7 +558,7 @@ void SceneScriptMA04::sub_403DA8() {
 		} else {
 			Set_Enter(10, 50);
 		}
-		Scene_Loop_Start_Special(1, 3, 0);
+		Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, false);
 	}
 }
 

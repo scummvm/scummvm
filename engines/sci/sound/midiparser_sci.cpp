@@ -392,6 +392,8 @@ void MidiParser_SCI::sendInitCommands() {
 	// Set initial voice count
 	if (_pSnd) {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
+			static_cast<MidiPlayer *>(_driver)->onNewSound();
+
 			for (int i = 0; i < 15; ++i) {
 				byte voiceCount = 0;
 				if (_channelUsed[i]) {
@@ -752,18 +754,12 @@ bool MidiParser_SCI::processEvent(const EventInfo &info, bool fireEvents) {
 			case kUpdateCue:
 				if (!_jumpingToTick) {
 					int inc;
-					switch (_soundVersion) {
-					case SCI_VERSION_0_EARLY:
-					case SCI_VERSION_0_LATE:
+					if (_soundVersion <= SCI_VERSION_0_LATE) {
 						inc = info.basic.param2;
-						break;
-					case SCI_VERSION_1_EARLY:
-					case SCI_VERSION_1_LATE:
-					case SCI_VERSION_2_1_EARLY:
+					} else if (_soundVersion >= SCI_VERSION_1_EARLY && _soundVersion <= SCI_VERSION_2_1_MIDDLE) {
 						inc = 1;
-						break;
-					default:
-						error("unsupported _soundVersion");
+					} else {
+						error("Unsupported _soundVersion %s", getSciVersionDesc(_soundVersion));
 					}
 					_pSnd->dataInc += inc;
 					debugC(4, kDebugLevelSound, "datainc %04x", inc);
@@ -895,22 +891,14 @@ void MidiParser_SCI::allNotesOff() {
 void MidiParser_SCI::setMasterVolume(byte masterVolume) {
 	assert(masterVolume <= MUSIC_MASTERVOLUME_MAX);
 	_masterVolume = masterVolume;
-	switch (_soundVersion) {
-	case SCI_VERSION_0_EARLY:
-	case SCI_VERSION_0_LATE:
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		// update driver master volume
 		setVolume(_volume);
-		break;
-
-	case SCI_VERSION_1_EARLY:
-	case SCI_VERSION_1_LATE:
-	case SCI_VERSION_2_1_EARLY:
+	} else if (_soundVersion >= SCI_VERSION_1_EARLY && _soundVersion <= SCI_VERSION_2_1_MIDDLE) {
 		// directly set master volume (global volume is merged with channel volumes)
 		((MidiPlayer *)_driver)->setVolume(masterVolume);
-		break;
-
-	default:
-		error("MidiParser_SCI::setVolume: Unsupported soundVersion");
+	} else {
+		error("MidiParser_SCI::setVolume: Unsupported soundVersion %s", getSciVersionDesc(_soundVersion));
 	}
 }
 
@@ -918,26 +906,17 @@ void MidiParser_SCI::setVolume(byte volume) {
 	assert(volume <= MUSIC_VOLUME_MAX);
 	_volume = volume;
 
-	switch (_soundVersion) {
-	case SCI_VERSION_0_EARLY:
-	case SCI_VERSION_0_LATE: {
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		// SCI0 adlib driver doesn't support channel volumes, so we need to go this way
 		int16 globalVolume = _volume * _masterVolume / MUSIC_VOLUME_MAX;
 		((MidiPlayer *)_driver)->setVolume(globalVolume);
-		break;
-	}
-
-	case SCI_VERSION_1_EARLY:
-	case SCI_VERSION_1_LATE:
-	case SCI_VERSION_2_1_EARLY:
+	} else if (_soundVersion >= SCI_VERSION_1_EARLY && _soundVersion <= SCI_VERSION_2_1_MIDDLE) {
 		// Send previous channel volumes again to actually update the volume
 		for (int i = 0; i < 15; i++)
 			if (_channelRemap[i] != -1)
 				sendToDriver(0xB0 + i, 7, _channelVolume[i]);
-		break;
-
-	default:
-		error("MidiParser_SCI::setVolume: Unsupported soundVersion");
+	} else {
+		error("MidiParser_SCI::setVolume: Unsupported soundVersion %s", getSciVersionDesc(_soundVersion));
 	}
 }
 

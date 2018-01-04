@@ -65,7 +65,7 @@ bool CEnterExitView::EnterViewMsg(CEnterViewMsg *msg) {
 
 bool CEnterExitView::LeaveViewMsg(CLeaveViewMsg *msg) {
 	setVisible(true);
-	playMovie(_leaveStartFrame, _leaveEndFrame, MOVIE_NOTIFY_OBJECT);
+	playMovie(_leaveStartFrame, _leaveEndFrame, MOVIE_WAIT_FOR_FINISH);
 	return true;
 }
 

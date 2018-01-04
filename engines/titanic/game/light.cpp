@@ -23,6 +23,7 @@
 #include "titanic/game/light.h"
 #include "titanic/game/television.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -109,10 +110,10 @@ bool CLight::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	if (_eyePresent && isYourStateroom) {
 		petDisplayMessage(1, LIGHT_IS_LOOSE);
-		playSound("z#144.wav", 70);
+		playSound(TRANSLATE("z#144.wav", "z#700.wav"), 70);
 	} else {
 		petDisplayMessage(1, LUMI_GLOW_LIGHTS);
-		playSound("z#62.wav", 70);
+		playSound(TRANSLATE("z#62.wav", "z#593.wav"), 70);
 	}
 
 	return true;
@@ -124,10 +125,10 @@ bool CLight::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 
 	if (_eyePresent && isYourStateroom) {
 		petDisplayMessage(1, LIGHT_IS_LOOSE);
-		playSound("z#144.wav", 70);
+		playSound(TRANSLATE("z#144.wav", "z#700.wav"), 70);
 	} else {
 		petDisplayMessage(1, LUMI_GLOW_LIGHTS);
-		playSound("z#62.wav", 70);
+		playSound(TRANSLATE("z#62.wav", "z#593.wav"), 70);
 	}
 
 	return true;

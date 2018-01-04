@@ -87,6 +87,8 @@ public:
 	const DataBlockPtr getDataBlock(uint track, uint sector, uint offset = 0, uint size = 0) const;
 	Common::SeekableReadStream *createReadStream(uint track, uint sector, uint offset = 0, uint size = 0, uint sectorsUsed = 0) const;
 	void setSectorLimit(uint sectorLimit) { _sectorLimit = sectorLimit; } // Maximum number of sectors to read per track before stepping
+	uint getBytesPerSector() const { return _bytesPerSector; }
+	uint getSectorsPerTrack() const { return _sectorsPerTrack; }
 
 protected:
 	class DataBlock : public Adl::DataBlock {

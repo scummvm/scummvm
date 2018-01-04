@@ -34,7 +34,7 @@ namespace Voyeur {
 // Number of audio frames to keep audio track topped up when playing back video
 #define SOUND_FRAMES_READAHEAD 3
 
-RL2Decoder::RL2Decoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
+RL2Decoder::RL2Decoder() {
 	_paletteStart = 0;
 	_fileStream = nullptr;
 	_soundFrameNumber = -1;
@@ -76,7 +76,7 @@ bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 	// Add an audio track if sound is present
 	_audioTrack = nullptr;
 	if (_header._soundRate) {
-		_audioTrack = new RL2AudioTrack(_header, stream, _soundType);
+		_audioTrack = new RL2AudioTrack(_header, stream, getSoundType());
 		addTrack(_audioTrack);
 	}
 
@@ -433,8 +433,9 @@ Graphics::Surface *RL2Decoder::RL2VideoTrack::getBackSurface() {
 
 /*------------------------------------------------------------------------*/
 
-RL2Decoder::RL2AudioTrack::RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream, Audio::Mixer::SoundType soundType):
-		_header(header), _soundType(soundType) {
+RL2Decoder::RL2AudioTrack::RL2AudioTrack(const RL2FileHeader &header, Common::SeekableReadStream *stream, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType),
+		_header(header) {
 	// Create audio straem for the audio track
 	_audStream = Audio::makeQueuingAudioStream(_header._rate, _header._channels == 2);
 }

@@ -22,6 +22,7 @@
 
 #include "titanic/carry/brain.h"
 #include "titanic/game/brain_slot.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -70,7 +71,7 @@ bool CBrain::UseWithOtherMsg(CUseWithOtherMsg *msg) {
 		petMoveToHiddenRoom();
 		CAddHeadPieceMsg headpieceMsg(getName());
 		headpieceMsg.execute(msg->_other);
-		playSound("z#116.wav");
+		playSound(TRANSLATE("z#116.wav", "z#647.wav"));
 		setPosition(Point(0, 0));
 		setVisible(false);
 		_pieceAdded = true;

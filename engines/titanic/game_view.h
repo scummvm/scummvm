@@ -24,13 +24,15 @@
 #define TITANIC_GAME_VIEW_H
 
 #include "common/scummsys.h"
-#include "titanic/core/view_item.h"
-#include "titanic/support/video_surface.h"
 
 namespace Titanic {
 
 class CMainGameWindow;
 class CGameManager;
+class CResourceKey;
+class CViewItem;
+class CVideoSurface;
+class Rect;
 
 class CGameView {
 protected:

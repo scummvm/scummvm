@@ -51,7 +51,7 @@ void TattooEngine::showOpening() {
 }
 
 void TattooEngine::initialize() {
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 
 	// Initialize the base engine
 	SherlockEngine::initialize();

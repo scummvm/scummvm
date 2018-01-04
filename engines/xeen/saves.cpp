@@ -23,137 +23,42 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "common/memstream.h"
+#include "graphics/scaler.h"
+#include "graphics/thumbnail.h"
 #include "xeen/saves.h"
 #include "xeen/files.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-OutFile::OutFile(XeenEngine *vm, const Common::String filename) :
-	_vm(vm), _filename(filename) {
-}
+SavesManager::SavesManager(const Common::String &targetName): _targetName(targetName),
+		_wonWorld(false), _wonDarkSide(false) {
+	File::_xeenSave = nullptr;
+	File::_darkSave = nullptr;
 
-void OutFile::finalize() {
-	uint16 id = BaseCCArchive::convertNameToId(_filename);
+	if (g_vm->getGameID() != GType_Clouds) {
+		File::_darkSave = new SaveArchive(g_vm->_party);
+		File::_darkSave->reset(File::_darkCc);
+	}
+	if (g_vm->getGameID() != GType_DarkSide) {
+		File::_xeenSave = new SaveArchive(g_vm->_party);
+		File::_xeenSave->reset(File::_xeenCc);
+	}
 
-	if (!_vm->_saves->_newData.contains(id))
-		_vm->_saves->_newData[id] = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	File::_currentSave = g_vm->getGameID() == GType_DarkSide ?
+		File::_darkSave : File::_xeenSave;
+	assert(File::_currentSave);
 
-	Common::MemoryWriteStreamDynamic &out = _vm->_saves->_newData[id];
-	out.write(getData(), size());
-}
-
-/*------------------------------------------------------------------------*/
-
-SavesManager::SavesManager(XeenEngine *vm, Party &party) :
-		BaseCCArchive(), _vm(vm), _party(party) {
-	SearchMan.add("saves", this, 0, false);
-	_data = nullptr;
-	_wonWorld = false;
-	_wonDarkSide = false;
+	// Set any final initial values
+	Party &party = *g_vm->_party;
+	party.resetBlacksmithWares();
+	party._year = g_vm->getGameID() == GType_WorldOfXeen ? 610 : 850;
+	party._totalTime = 0;
 }
 
 SavesManager::~SavesManager() {
-	delete[] _data;
-}
-
-void SavesManager::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP) {
-	byte data = 0;
-
-	int bitCounter = 0;
-	for (bool *p = startP; p <= endP; ++p, bitCounter = (bitCounter + 1) % 8) {
-		if (p == endP || bitCounter == 0) {
-			if (p != endP || s.isSaving())
-				s.syncAsByte(data);
-			if (p == endP)
-				break;
-
-			if (s.isSaving())
-				data = 0;
-		}
-
-		if (s.isLoading())
-			*p = (data >> bitCounter) != 0;
-		else if (*p)
-			data |= 1 << bitCounter;
-	}
-}
-
-Common::SeekableReadStream *SavesManager::createReadStreamForMember(const Common::String &name) const {
-	CCEntry ccEntry;
-
-	// If the given resource has already been perviously "written" to the
-	// save manager, then return that new resource
-	uint16 id = BaseCCArchive::convertNameToId(name);
-	if (_newData.contains(id)) {
-		Common::MemoryWriteStreamDynamic stream = _newData[id];
-		return new Common::MemoryReadStream(stream.getData(), stream.size());
-	}
-
-	// Retrieve the resource from the loaded savefile
-	if (getHeaderEntry(name, ccEntry)) {
-		// Open the correct CC entry
-		return new Common::MemoryReadStream(_data + ccEntry._offset, ccEntry._size);
-	}
-
-	return nullptr;
-}
-
-void SavesManager::load(Common::SeekableReadStream *stream) {
-	loadIndex(stream);
-
-	delete[] _data;
-	_data = new byte[stream->size()];
-	stream->seek(0);
-	stream->read(_data, stream->size());
-
-	// Load in the character stats and active party
-	Common::SeekableReadStream *chr = createReadStreamForMember("maze.chr");
-	Common::Serializer sChr(chr, nullptr);
-	_party._roster.synchronize(sChr);
-	delete chr;
-
-	Common::SeekableReadStream *pty = createReadStreamForMember("maze.pty");
-	Common::Serializer sPty(pty, nullptr);
-	_party.synchronize(sPty);
-	delete pty;
-}
-
-void SavesManager::reset() {
-	Common::String prefix = _vm->getGameID() != GType_DarkSide ? "xeen|" : "dark|";
-	Common::MemoryWriteStreamDynamic saveFile(DisposeAfterUse::YES);
-	Common::File fIn;
-
-	const int RESOURCES[6] = { 0x2A0C, 0x2A1C, 0x2A2C, 0x2A3C, 0x284C, 0x2A5C };
-	for (int i = 0; i < 6; ++i) {
-		Common::String filename = prefix + Common::String::format("%.4x", RESOURCES[i]);
-		if (fIn.exists(filename)) {
-			// Read in the next resource
-			fIn.open(filename);
-			byte *data = new byte[fIn.size()];
-			fIn.read(data, fIn.size());
-
-			// Copy it to the combined savefile resource
-			saveFile.write(data, fIn.size());
-			delete[] data;
-			fIn.close();
-		}
-	}
-
-	Common::MemoryReadStream f(saveFile.getData(), saveFile.size());
-	load(&f);
-
-	// Set up the party and characters from dark.cur
-	CCArchive gameCur("xeen.cur", false);
-	File fParty("maze.pty", gameCur);
-	Common::Serializer sParty(&fParty, nullptr);
-	_party.synchronize(sParty);
-	fParty.close();
-
-	File fChar("maze.chr", gameCur);
-	Common::Serializer sChar(&fChar, nullptr);
-	_party._roster.synchronize(sChar);
-	fChar.close();
+	delete File::_xeenSave;
+	delete File::_darkSave;
 }
 
 void SavesManager::readCharFile() {
@@ -167,5 +72,127 @@ void SavesManager::writeCharFile() {
 void SavesManager::saveChars() {
 	warning("TODO: saveChars");
 }
+
+const char *const SAVEGAME_STR = "XEEN";
+#define SAVEGAME_STR_SIZE 6
+
+bool SavesManager::readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header) {
+	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
+	header._thumbnail = nullptr;
+
+	// Validate the header Id
+	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
+	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
+		return false;
+
+	header._version = in->readByte();
+	if (header._version > XEEN_SAVEGAME_VERSION)
+		return false;
+
+	// Read in the string
+	header._saveName.clear();
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header._saveName += ch;
+
+	// Get the thumbnail
+	header._thumbnail = Graphics::loadThumbnail(*in);
+	if (!header._thumbnail)
+		return false;
+
+	// Read in save date/time
+	header._year = in->readSint16LE();
+	header._month = in->readSint16LE();
+	header._day = in->readSint16LE();
+	header._hour = in->readSint16LE();
+	header._minute = in->readSint16LE();
+	header._totalFrames = in->readUint32LE();
+
+	return true;
+}
+
+void SavesManager::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header) {
+	// Write out a savegame header
+	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
+
+	out->writeByte(XEEN_SAVEGAME_VERSION);
+
+	// Write savegame name
+	out->writeString(header._saveName);
+	out->writeByte('\0');
+
+	// Write a thumbnail of the screen
+	/*
+	uint8 thumbPalette[768];
+	_screen->getPalette(thumbPalette);
+	Graphics::Surface saveThumb;
+	::createThumbnail(&saveThumb, (const byte *)_screen->getPixels(),
+	_screen->w, _screen->h, thumbPalette);
+	Graphics::saveThumbnail(*out, saveThumb);
+	saveThumb.free();
+	*/
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+	//	out->writeUint32LE(_events->getFrameCounter());
+}
+
+Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) {
+	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
+		generateSaveName(slot));
+	if (!out)
+		return Common::kCreatingFileFailed;
+
+	XeenSavegameHeader header;
+	header._saveName = desc;
+	writeSavegameHeader(out, header);
+
+	Common::Serializer s(nullptr, out);
+	synchronize(s);
+
+	out->finalize();
+	delete out;
+
+	return Common::kNoError;
+}
+
+Common::Error SavesManager::loadGameState(int slot) {
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
+		generateSaveName(slot));
+	if (!saveFile)
+		return Common::kReadingFailed;
+
+	Common::Serializer s(saveFile, nullptr);
+
+	// Load the savaegame header
+	XeenSavegameHeader header;
+	if (!readSavegameHeader(saveFile, header))
+		error("Invalid savegame");
+
+	if (header._thumbnail) {
+		header._thumbnail->free();
+		delete header._thumbnail;
+	}
+
+	// Load most of the savegame data
+	synchronize(s);
+	delete saveFile;
+
+	return Common::kNoError;
+}
+
+Common::String SavesManager::generateSaveName(int slot) {
+	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
+
+void SavesManager::synchronize(Common::Serializer &s) {
+	// TODO
+}
+
 
 } // End of namespace Xeen

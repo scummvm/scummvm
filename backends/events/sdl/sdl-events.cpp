@@ -30,17 +30,8 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
-#ifdef JOY_ANALOG
-#include "math.h"
-#endif
-
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
-#define JOY_DEADZONE 3200
-
-#ifndef __SYMBIAN32__ // Symbian wants dialog joystick i.e cursor for movement/selection
-	#define JOY_ANALOG
-#endif
 
 // #define JOY_INVERT_Y
 #define JOY_XAXIS 0
@@ -75,9 +66,9 @@ static uint32 convUTF8ToUTF32(const char *src) {
 #endif
 
 SdlEventSource::SdlEventSource()
-    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0)
+    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0), _queuedFakeMouseMove(false)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-      , _queuedFakeKeyUp(false), _fakeKeyUp()
+      , _queuedFakeKeyUp(false), _fakeKeyUp(), _controller(nullptr)
 #endif
       {
 	// Reset mouse state
@@ -90,25 +81,18 @@ SdlEventSource::SdlEventSource()
 			error("Could not initialize SDL: %s", SDL_GetError());
 		}
 
-		// Enable joystick
-		if (SDL_NumJoysticks() > joystick_num) {
-			_joystick = SDL_JoystickOpen(joystick_num);
-			debug("Using joystick: %s",
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-			      SDL_JoystickName(_joystick)
-#else
-			      SDL_JoystickName(joystick_num)
-#endif
-			     );
-		} else {
-			warning("Invalid joystick: %d", joystick_num);
+		if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) == -1) {
+			error("Could not initialize SDL: %s", SDL_GetError());
 		}
+#endif
+
+		openJoystick(joystick_num);
 	}
 }
 
 SdlEventSource::~SdlEventSource() {
-	if (_joystick)
-		SDL_JoystickClose(_joystick);
+	closeJoystick();
 }
 
 int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
@@ -158,7 +142,7 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	} else if (key >= Common::KEYCODE_UP && key <= Common::KEYCODE_PAGEDOWN) {
 		return key;
 	} else if (unicode) {
-		// Return unicode in case it's stil set and wasn't filtered.
+		// Return unicode in case it's still set and wasn't filtered.
 		return unicode;
 	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
 		return key & ~0x20;
@@ -169,14 +153,15 @@ int SdlEventSource::mapKey(SDLKey sdlKey, SDLMod mod, Uint16 unicode) {
 	}
 }
 
-void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
+bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
 	if (_graphicsManager) {
-		_graphicsManager->notifyMousePos(Common::Point(x, y));
-		_graphicsManager->transformMouseCoordinates(event.mouse);
+		return _graphicsManager->notifyMousePosition(event.mouse);
 	}
+
+	return true;
 }
 
 bool SdlEventSource::handleKbdMouse(Common::Event &event) {
@@ -308,8 +293,7 @@ bool SdlEventSource::handleKbdMouse(Common::Event &event) {
 
 			if (_km.x != oldKmX || _km.y != oldKmY) {
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-				return true;
+				return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 			}
 		}
 	}
@@ -320,17 +304,10 @@ void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 
 	event.kbd.flags = 0;
 
-#ifdef LINUPY
-	// Yopy has no ALT key, steal the SHIFT key
-	// (which isn't used much anyway)
-	if (mod & KMOD_SHIFT)
-		event.kbd.flags |= Common::KBD_ALT;
-#else
 	if (mod & KMOD_SHIFT)
 		event.kbd.flags |= Common::KBD_SHIFT;
 	if (mod & KMOD_ALT)
 		event.kbd.flags |= Common::KBD_ALT;
-#endif
 	if (mod & KMOD_CTRL)
 		event.kbd.flags |= Common::KBD_CTRL;
 	if (mod & KMOD_META)
@@ -508,6 +485,12 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 		return true;
 	}
 
+	if (_queuedFakeMouseMove) {
+		event = _fakeMouseMove;
+		_queuedFakeMouseMove = false;
+		return true;
+	}
+
 	SDL_Event ev;
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
@@ -535,12 +518,6 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleMouseButtonDown(ev, event);
 	case SDL_MOUSEBUTTONUP:
 		return handleMouseButtonUp(ev, event);
-	case SDL_JOYBUTTONDOWN:
-		return handleJoyButtonDown(ev, event);
-	case SDL_JOYBUTTONUP:
-		return handleJoyButtonUp(ev, event);
-	case SDL_JOYAXISMOTION:
-		return handleJoyAxisMotion(ev, event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	case SDL_MOUSEWHEEL: {
@@ -549,7 +526,9 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		// with a mouse wheel event. However, SDL2 does not supply
 		// these, thus we use whatever we got last time. It seems
 		// these are always stored in _km.x, _km.y.
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		if (!processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER)) {
+			return false;
+		}
 		if (yDir < 0) {
 			event.type = Common::EVENT_WHEELDOWN;
 			return true;
@@ -589,12 +568,29 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 				_graphicsManager->notifyVideoExpose();
 			return false;
 
-		case SDL_WINDOWEVENT_RESIZED:
+		// SDL2 documentation indicate that SDL_WINDOWEVENT_SIZE_CHANGED is sent either as a result
+		// of the size being changed by an external event (for example the user resizing the window
+		// or going fullscreen) or a call to the SDL API (for example SDL_SetWindowSize). On the
+		// other hand SDL_WINDOWEVENT_RESIZED is only sent for resize resulting from an external event,
+		// and is always preceded by a SDL_WINDOWEVENT_SIZE_CHANGED event.
+		// We need to handle the programmatic resize as well so that the graphics manager always know
+		// the current size. See comments in SdlWindow::createOrUpdateWindow for details of one case
+		// where we need to call SDL_SetWindowSize and we need the resulting event to be processed.
+		// However if the documentation is correct we can ignore SDL_WINDOWEVENT_RESIZED since when we
+		// get one we should always get a SDL_WINDOWEVENT_SIZE_CHANGED as well.
+		case SDL_WINDOWEVENT_SIZE_CHANGED:
+		//case SDL_WINDOWEVENT_RESIZED:
 			return handleResizeEvent(event, ev.window.data1, ev.window.data2);
 
 		default:
 			return false;
 		}
+
+	case SDL_JOYDEVICEADDED:
+		return handleJoystickAdded(ev.jdevice);
+
+	case SDL_JOYDEVICEREMOVED:
+		return handleJoystickRemoved(ev.jdevice);
 #else
 	case SDL_VIDEOEXPOSE:
 		if (_graphicsManager)
@@ -610,6 +606,30 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return true;
 
 	}
+
+	if (_joystick) {
+		switch (ev.type) {
+		case SDL_JOYBUTTONDOWN:
+			return handleJoyButtonDown(ev, event);
+		case SDL_JOYBUTTONUP:
+			return handleJoyButtonUp(ev, event);
+		case SDL_JOYAXISMOTION:
+			return handleJoyAxisMotion(ev, event);
+		}
+	}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_controller) {
+		switch (ev.type) {
+		case SDL_CONTROLLERBUTTONDOWN:
+			return handleControllerButton(ev, event, false);
+		case SDL_CONTROLLERBUTTONUP:
+			return handleControllerButton(ev, event, true);
+		case SDL_CONTROLLERAXISMOTION:
+			return handleControllerAxisMotion(ev, event);
+		}
+	}
+#endif
 
 	return false;
 }
@@ -677,6 +697,10 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	event.kbd.keycode = SDLToOSystemKeycode(sdlKeycode);
 	event.kbd.ascii = mapKey(sdlKeycode, (SDLMod)ev.key.keysym.mod, obtainUnicode(ev.key.keysym));
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	event.kbdRepeat = ev.key.repeat;
+#endif
+
 	return true;
 }
 
@@ -729,12 +753,12 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
-	processMouseEvent(event, ev.motion.x, ev.motion.y);
+
 	// update KbdMouse
 	_km.x = ev.motion.x * MULTIPLIER;
 	_km.y = ev.motion.y * MULTIPLIER;
 
-	return true;
+	return processMouseEvent(event, ev.motion.x, ev.motion.y);
 }
 
 bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
@@ -755,12 +779,11 @@ bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 	else
 		return false;
 
-	processMouseEvent(event, ev.button.x, ev.button.y);
 	// update KbdMouse
 	_km.x = ev.button.x * MULTIPLIER;
 	_km.y = ev.button.y * MULTIPLIER;
 
-	return true;
+	return processMouseEvent(event, ev.button.x, ev.button.y);
 }
 
 bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
@@ -774,21 +797,57 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 #endif
 	else
 		return false;
-	processMouseEvent(event, ev.button.x, ev.button.y);
+
 	// update KbdMouse
 	_km.x = ev.button.x * MULTIPLIER;
 	_km.y = ev.button.y * MULTIPLIER;
 
-	return true;
+	return processMouseEvent(event, ev.button.x, ev.button.y);
+}
+
+void SdlEventSource::openJoystick(int joystickIndex) {
+	if (SDL_NumJoysticks() > joystickIndex) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (SDL_IsGameController(joystickIndex)) {
+			_controller = SDL_GameControllerOpen(joystickIndex);
+			debug("Using game controller: %s", SDL_GameControllerName(_controller));
+		} else
+#endif
+		{
+			_joystick = SDL_JoystickOpen(joystickIndex);
+			debug("Using joystick: %s",
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+                  SDL_JoystickName(_joystick)
+#else
+                  SDL_JoystickName(joystickIndex)
+#endif
+			);
+		}
+	} else {
+		warning("Invalid joystick: %d", joystickIndex);
+	}
+}
+
+void SdlEventSource::closeJoystick() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_controller) {
+		SDL_GameControllerClose(_controller);
+		_controller = nullptr;
+	}
+#endif
+	if (_joystick) {
+		SDL_JoystickClose(_joystick);
+		_joystick = nullptr;
+	}
 }
 
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONDOWN;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else {
 		event.type = Common::EVENT_KEYDOWN;
 		switch (ev.jbutton.button) {
@@ -809,17 +868,17 @@ bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		}
+		return true;
 	}
-	return true;
 }
 
 bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONUP;
-		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 	} else {
 		event.type = Common::EVENT_KEYUP;
 		switch (ev.jbutton.button) {
@@ -840,145 +899,194 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		}
+		return true;
 	}
-	return true;
 }
 
 bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+	if (ev.jaxis.axis == JOY_XAXIS) {
+		_km.joy_x = ev.jaxis.value;
+		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+	} else if (ev.jaxis.axis == JOY_YAXIS) {
+		_km.joy_y = ev.jaxis.value;
+		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+	}
 
-	int axis = ev.jaxis.value;
-#ifdef JOY_ANALOG
+	return false;
+}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+bool SdlEventSource::handleJoystickAdded(const SDL_JoyDeviceEvent &device) {
+	debug(5, "SdlEventSource: Received joystick added event for index '%d'", device.which);
+
+	int joystick_num = ConfMan.getInt("joystick_num");
+	if (joystick_num == device.which) {
+		debug(5, "SdlEventSource: Newly added joystick with index '%d' matches 'joysticky_num', trying to use it", device.which);
+
+		closeJoystick();
+		openJoystick(joystick_num);
+	}
+
+	return false;
+}
+
+bool SdlEventSource::handleJoystickRemoved(const SDL_JoyDeviceEvent &device) {
+	debug(5, "SdlEventSource: Received joystick removed event for instance id '%d'", device.which);
+
+	SDL_Joystick *joystick;
+	if (_controller) {
+		joystick = SDL_GameControllerGetJoystick(_controller);
+	} else {
+		joystick = _joystick;
+	}
+
+	if (!joystick) {
+		return false;
+	}
+
+	if (SDL_JoystickInstanceID(joystick) == device.which) {
+		debug(5, "SdlEventSource: Newly removed joystick with instance id '%d' matches currently used joystick, closing current joystick", device.which);
+
+		closeJoystick();
+	}
+
+	return false;
+}
+
+bool SdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) {
+	using namespace Common;
+
+	struct ControllerEventMapping {
+		EventType normalType;
+		KeyState normalKeystate;
+		EventType modifierType;
+		KeyState modifierKeystate;
+	};
+
+	static const ControllerEventMapping mapping[] = {
+			// SDL_CONTROLLER_BUTTON_A: Left mouse button
+			{ EVENT_LBUTTONDOWN, KeyState(), EVENT_LBUTTONDOWN, KeyState() },
+			// SDL_CONTROLLER_BUTTON_B: Right mouse button
+			{ EVENT_RBUTTONDOWN, KeyState(), EVENT_RBUTTONDOWN, KeyState() },
+			// SDL_CONTROLLER_BUTTON_X: Period (+R_trigger: Space)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_PERIOD, '.'), EVENT_KEYDOWN, KeyState(KEYCODE_SPACE, ASCII_SPACE) },
+			// SDL_CONTROLLER_BUTTON_Y: Escape (+R_trigger: Return)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE), EVENT_KEYDOWN, KeyState(KEYCODE_RETURN, ASCII_RETURN) },
+			// SDL_CONTROLLER_BUTTON_BACK: Virtual keyboard (+R_trigger: Predictive Input Dialog)
+#ifdef ENABLE_VKEYBD
+			{ EVENT_VIRTUAL_KEYBOARD, KeyState(), EVENT_PREDICTIVE_DIALOG, KeyState() },
+#else
+			{ EVENT_INVALID, KeyState(), EVENT_PREDICTIVE_DIALOG, KeyState() },
+#endif
+			// SDL_CONTROLLER_BUTTON_GUIDE: Unmapped
+			{ EVENT_INVALID, KeyState(), EVENT_INVALID, KeyState() },
+			// SDL_CONTROLLER_BUTTON_START: ScummVM in game menu
+			{ EVENT_MAINMENU, KeyState(), EVENT_MAINMENU, KeyState() },
+			// SDL_CONTROLLER_BUTTON_LEFTSTICK: Unmapped
+			{ EVENT_INVALID, KeyState(), EVENT_INVALID, KeyState() },
+			// SDL_CONTROLLER_BUTTON_RIGHTSTICK: Unmapped
+			{ EVENT_INVALID, KeyState(), EVENT_INVALID, KeyState() },
+			// SDL_CONTROLLER_BUTTON_LEFTSHOULDER: Game menu
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_F5, ASCII_F5), EVENT_KEYDOWN, KeyState(KEYCODE_F5, ASCII_F5) },
+			// SDL_CONTROLLER_BUTTON_RIGHTSHOULDER: Modifier + Shift
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_INVALID, 0, KBD_SHIFT), EVENT_KEYDOWN, KeyState(KEYCODE_INVALID, 0, 0) },
+			// SDL_CONTROLLER_BUTTON_DPAD_UP: Up (+R_trigger: Up+Right)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP8, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP9, 0) },
+			// SDL_CONTROLLER_BUTTON_DPAD_DOWN: Down (+R_trigger: Down+Left)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP2, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP1, 0) },
+			// SDL_CONTROLLER_BUTTON_DPAD_LEFT: Left (+R_trigger: Up+Left)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP4, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP7, 0) },
+			// SDL_CONTROLLER_BUTTON_DPAD_RIGHT: Right (+R_trigger: Down+Right)
+			{ EVENT_KEYDOWN, KeyState(KEYCODE_KP6, 0), EVENT_KEYDOWN, KeyState(KEYCODE_KP3, 0) }
+	};
+
+	if (ev.cbutton.button > SDL_CONTROLLER_BUTTON_DPAD_RIGHT) {
+		warning("Unknown SDL controller button: '%d'", ev.cbutton.button);
+		return false;
+	}
+
+	if (!_km.modifier) {
+		event.type = mapping[ev.cbutton.button].normalType;
+		event.kbd = mapping[ev.cbutton.button].normalKeystate;
+	} else {
+		event.type = mapping[ev.cbutton.button].modifierType;
+		event.kbd = mapping[ev.cbutton.button].modifierKeystate;
+	}
+
+	// Setting the mouse speed modifier after filling the event structure above
+	// ensures that the shift key events are correctly handled
+	if (ev.cbutton.button == SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) {
+		// Right shoulder is the modifier button that makes the mouse go slower
+		// and allows access to an extended layout while pressed.
+		_km.modifier = !buttonUp;
+	}
+
+	if (event.type == EVENT_LBUTTONDOWN || event.type == EVENT_RBUTTONDOWN) {
+		processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+	}
+
+	if (buttonUp) {
+		// The event mapping table is for button down events. If we received a button up event,
+		// transform the event type to the corresponding up type.
+		if (event.type == EVENT_KEYDOWN) {
+			event.type = EVENT_KEYUP;
+		} else if (event.type == EVENT_LBUTTONDOWN) {
+			event.type = EVENT_LBUTTONUP;
+		} else if (event.type == EVENT_RBUTTONDOWN) {
+			event.type = EVENT_RBUTTONUP;
+		} else {
+			// Handled in key down
+			event.type = EVENT_INVALID;
+		}
+	}
+
+	return event.type != EVENT_INVALID;
+}
+
+bool SdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) {
+	if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTX) {
+		_km.joy_x = ev.caxis.value;
+		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+	} else if (ev.caxis.axis == SDL_CONTROLLER_AXIS_LEFTY) {
+		_km.joy_y = ev.caxis.value;
+		return handleAxisToMouseMotion(_km.joy_x, _km.joy_y);
+	}
+
+	return false;
+}
+#endif
+
+bool SdlEventSource::handleAxisToMouseMotion(int16 xAxis, int16 yAxis) {
+#ifdef JOY_INVERT_Y
+	yAxis = -yAxis;
+#endif
+
 	// conversion factor between keyboard mouse and joy axis value
 	int vel_to_axis = (1500 / MULTIPLIER);
-#else
-	if (axis > JOY_DEADZONE) {
-		axis -= JOY_DEADZONE;
-	} else if (axis < -JOY_DEADZONE) {
-		axis += JOY_DEADZONE;
-	} else
-		axis = 0;
-#endif
 
-	if (ev.jaxis.axis == JOY_XAXIS) {
-#ifdef JOY_ANALOG
-		_km.joy_x = axis;
-#else
-		if (axis != 0) {
-			_km.x_vel = (axis > 0) ? 1 * MULTIPLIER:-1 * MULTIPLIER;
-			_km.x_down_count = 1;
-		} else {
-			_km.x_vel = 0;
-			_km.x_down_count = 0;
-		}
-#endif
-	} else if (ev.jaxis.axis == JOY_YAXIS) {
-#ifndef JOY_INVERT_Y
-		axis = -axis;
-#endif
-#ifdef JOY_ANALOG
-		_km.joy_y = -axis;
-#else
-		if (axis != 0) {
-			_km.y_vel = (-axis > 0) ? 1 * MULTIPLIER: -1 * MULTIPLIER;
-			_km.y_down_count = 1;
-		} else {
-			_km.y_vel = 0;
-			_km.y_down_count = 0;
-		}
-#endif
-	}
-#ifdef JOY_ANALOG
-	// radial and scaled analog joystick deadzone
-	float analogX = (float)_km.joy_x;
-	float analogY = (float)_km.joy_y;
-	float deadZone = (float)JOY_DEADZONE;
-	if (g_system->hasFeature(OSystem::kFeatureJoystickDeadzone))
-		deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
-	float scalingFactor = 1.0f;
-	float magnitude = 0.0f;
+	// radial and scaled deadzone
 
-	magnitude = sqrt(analogX * analogX + analogY * analogY);
+	float analogX = (float)xAxis;
+	float analogY = (float)yAxis;
+	float deadZone = (float)ConfMan.getInt("joystick_deadzone") * 1000.0f;
+
+	float magnitude = sqrt(analogX * analogX + analogY * analogY);
 
 	if (magnitude >= deadZone) {
 		_km.x_down_count = 0;
 		_km.y_down_count = 0;
-		scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
+		float scalingFactor = 1.0f / magnitude * (magnitude - deadZone) / (32769.0f - deadZone);
 		_km.x_vel = (int16)(analogX * scalingFactor * 32768.0f / vel_to_axis);
 		_km.y_vel = (int16)(analogY * scalingFactor * 32768.0f / vel_to_axis);
 	} else {
 		_km.x_vel = 0;
 		_km.y_vel = 0;
 	}
-#endif
 
 	return false;
 }
 
 bool SdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
-#ifdef LINUPY
-	// On Yopy map the End button to quit
-	if ((ev.key.keysym.sym == 293)) {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-	// Map menu key to f5 (scumm menu)
-	if (ev.key.keysym.sym == 306) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-		return true;
-	}
-	// Map action key to action
-	if (ev.key.keysym.sym == 291) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_TAB;
-		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-		return true;
-	}
-	// Map OK key to skip cinematic
-	if (ev.key.keysym.sym == 292) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_ESCAPE;
-		event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-		return true;
-	}
-#endif
-
-#ifdef QTOPIA
-	// Quit on fn+backspace on zaurus
-	if (ev.key.keysym.sym == 127) {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-
-	// Map menu key (f11) to f5 (scumm menu)
-	if (ev.key.keysym.sym == SDLK_F11) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-	}
-	// Nap center (space) to tab (default action )
-	// I wanted to map the calendar button but the calendar comes up
-	//
-	else if (ev.key.keysym.sym == SDLK_SPACE) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_TAB;
-		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-	}
-	// Since we stole space (pause) above we'll rebind it to the tab key on the keyboard
-	else if (ev.key.keysym.sym == SDLK_TAB) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_SPACE;
-		event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-	} else {
-	// Let the events fall through if we didn't change them, this may not be the best way to
-	// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
-	// and yes i have an huge terminal size so i dont wrap soon enough.
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = ev.key.keysym.sym;
-		event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-	}
-#endif
 	return false;
 }
 
@@ -990,6 +1098,12 @@ void SdlEventSource::resetKeyboardEmulation(int16 x_max, int16 y_max) {
 	_km.modifier = false;
 	_km.joy_x = 0;
 	_km.joy_y = 0;
+}
+
+void SdlEventSource::fakeWarpMouse(const int x, const int y) {
+	_queuedFakeMouseMove = true;
+	_fakeMouseMove.type = Common::EVENT_MOUSEMOVE;
+	_fakeMouseMove.mouse = Common::Point(x, y);
 }
 
 bool SdlEventSource::handleResizeEvent(Common::Event &event, int w, int h) {

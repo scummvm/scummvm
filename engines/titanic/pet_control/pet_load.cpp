@@ -21,9 +21,10 @@
  */
 
 #include "titanic/pet_control/pet_load.h"
-#include "titanic/pet_control/pet_control.h"
 #include "titanic/core/project_item.h"
 #include "titanic/game_manager.h"
+#include "titanic/main_game_window.h"
+#include "titanic/pet_control/pet_control.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -51,7 +52,7 @@ bool CPetLoad::MouseButtonUpMsg(const Point &pt) {
 }
 
 void CPetLoad::getTooltip(CTextControl *text) {
-	text->setText("Load the game.");
+	text->setText(LOAD_THE_GAME);
 }
 
 void CPetLoad::execute() {

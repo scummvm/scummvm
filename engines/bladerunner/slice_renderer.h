@@ -38,6 +38,7 @@ class MemoryReadStream;
 
 namespace BladeRunner {
 
+class ScreenEffects;
 class BladeRunnerEngine;
 class Lights;
 class SetEffects;
@@ -51,6 +52,7 @@ class SliceRenderer {
 	float     _facing;
 	float     _scale;
 
+	ScreenEffects       *_screenEffects;
 	View        _view;
 	Lights     *_lights;
 	SetEffects *_setEffects;
@@ -87,12 +89,13 @@ class SliceRenderer {
 	Graphics::PixelFormat _pixelFormat;
 
 	Matrix3x2 calculateFacingRotationMatrix();
-	void drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr);
+	void drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr, int y);
 
 public:
 	SliceRenderer(BladeRunnerEngine *vm);
 	~SliceRenderer();
 
+	void setScreenEffects(ScreenEffects *aesc);
 	void setView(const View &view);
 	void setLights(Lights *lights);
 	void setSetEffects(SetEffects *setEffects);

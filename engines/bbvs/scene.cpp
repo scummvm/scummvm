@@ -118,8 +118,8 @@ void BbvsEngine::initScene(bool sounds) {
 			sceneObject->animIndex = soInit->animIndex;
 			sceneObject->frameIndex = sceneObject->anim->frameCount - 1;
 			sceneObject->frameTicks = 1;
-			sceneObject->x = soInit->x << 16;
-			sceneObject->y = soInit->y << 16;
+			sceneObject->x = soInit->x * 65536;
+			sceneObject->y = soInit->y * 65536;
 		}
 	}
 
@@ -142,7 +142,7 @@ void BbvsEngine::initScene(bool sounds) {
 		int minDistance = 0xFFFFFF;
 		for (int cameraNum = 0; cameraNum < 4; ++cameraNum) {
 			CameraInit *cameraInit = _gameModule->getCameraInit(cameraNum);
-			int curDistance = ABS(cameraInit->cameraPos.x - (int)(_buttheadObject->x >> 16) + 160);
+			int curDistance = ABS(cameraInit->cameraPos.x - (int)(_buttheadObject->x / 65536) + 160);
 			if (curDistance < minDistance) {
 				minDistance = curDistance;
 				_currCameraNum = cameraNum;

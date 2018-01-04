@@ -25,8 +25,6 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "engines/util.h"
-#include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
 #include "xeen/xeen.h"
 #include "xeen/files.h"
 #include "xeen/resources.h"
@@ -48,6 +46,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_events = nullptr;
 	_files = nullptr;
 	_interface = nullptr;
+	_locations = nullptr;
 	_map = nullptr;
 	_party = nullptr;
 	_resources = nullptr;
@@ -56,13 +55,14 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_scripts = nullptr;
 	_sound = nullptr;
 	_spells = nullptr;
-	_town = nullptr;
+	_windows = nullptr;
 	_eventData = nullptr;
-	_quitMode = 0;
 	_noDirectionSense = false;
+	_startupWindowActive = false;
+	_quitMode = 0;
 	_mode = MODE_0;
 	_endingScore = 0;
-	_startupWindowActive = false;
+	_loadSaveSlot = -1;
 	g_vm = this;
 }
 
@@ -71,6 +71,7 @@ XeenEngine::~XeenEngine() {
 	delete _debugger;
 	delete _events;
 	delete _interface;
+	delete _locations;
 	delete _map;
 	delete _party;
 	delete _saves;
@@ -78,7 +79,7 @@ XeenEngine::~XeenEngine() {
 	delete _scripts;
 	delete _sound;
 	delete _spells;
-	delete _town;
+	delete _windows;
 	delete _eventData;
 	delete _resources;
 	delete _files;
@@ -93,21 +94,21 @@ void XeenEngine::initialize() {
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
 	_interface = new Interface(this);
+	_locations = new LocationManager();
 	_map = new Map(this);
 	_party = new Party(this);
-	_saves = new SavesManager(this, *_party);
+	_saves = new SavesManager(_targetName);
 	_screen = new Screen(this);
 	_scripts = new Scripts(this);
-	_screen->setupWindows();
 	_sound = new Sound(this, _mixer);
 	_spells = new Spells(this);
-	_town = new Town(this);
+	_windows = new Windows();
 
-	File f("029.obj");
+	File f("029.obj", 1);
 	_eventData = f.readStream(f.size());
 
 	// Set graphics mode
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
@@ -134,51 +135,11 @@ int XeenEngine::getRandomNumber(int minNumber, int maxNumber) {
 }
 
 Common::Error XeenEngine::saveGameState(int slot, const Common::String &desc) {
-	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
-		generateSaveName(slot));
-	if (!out)
-		return Common::kCreatingFileFailed;
-
-	XeenSavegameHeader header;
-	header._saveName = desc;
-	writeSavegameHeader(out, header);
-
-	Common::Serializer s(nullptr, out);
-	synchronize(s);
-
-	out->finalize();
-	delete out;
-
-	return Common::kNoError;
+	return _saves->saveGameState(slot, desc);
 }
 
 Common::Error XeenEngine::loadGameState(int slot) {
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
-		generateSaveName(slot));
-	if (!saveFile)
-		return Common::kReadingFailed;
-
-	Common::Serializer s(saveFile, nullptr);
-
-	// Load the savaegame header
-	XeenSavegameHeader header;
-	if (!readSavegameHeader(saveFile, header))
-		error("Invalid savegame");
-
-	if (header._thumbnail) {
-		header._thumbnail->free();
-		delete header._thumbnail;
-	}
-
-	// Load most of the savegame data
-	synchronize(s);
-	delete saveFile;
-
-	return Common::kNoError;
-}
-
-Common::String XeenEngine::generateSaveName(int slot) {
-	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+	return _saves->loadGameState(slot);
 }
 
 bool XeenEngine::canLoadGameStateCurrently() {
@@ -189,82 +150,8 @@ bool XeenEngine::canSaveGameStateCurrently() {
 	return true;
 }
 
-void XeenEngine::synchronize(Common::Serializer &s) {
-	// TODO
-}
-
-const char *const SAVEGAME_STR = "XEEN";
-#define SAVEGAME_STR_SIZE 6
-
-bool XeenEngine::readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header) {
-	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
-	header._thumbnail = nullptr;
-
-	// Validate the header Id
-	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
-	if (strncmp(saveIdentBuffer, SAVEGAME_STR, SAVEGAME_STR_SIZE))
-		return false;
-
-	header._version = in->readByte();
-	if (header._version > XEEN_SAVEGAME_VERSION)
-		return false;
-
-	// Read in the string
-	header._saveName.clear();
-	char ch;
-	while ((ch = (char)in->readByte()) != '\0')
-		header._saveName += ch;
-
-	// Get the thumbnail
-	header._thumbnail = Graphics::loadThumbnail(*in);
-	if (!header._thumbnail)
-		return false;
-
-	// Read in save date/time
-	header._year = in->readSint16LE();
-	header._month = in->readSint16LE();
-	header._day = in->readSint16LE();
-	header._hour = in->readSint16LE();
-	header._minute = in->readSint16LE();
-	header._totalFrames = in->readUint32LE();
-
-	return true;
-}
-
-void XeenEngine::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header) {
-	// Write out a savegame header
-	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
-
-	out->writeByte(XEEN_SAVEGAME_VERSION);
-
-	// Write savegame name
-	out->writeString(header._saveName);
-	out->writeByte('\0');
-
-	// Write a thumbnail of the screen
-/*
-	uint8 thumbPalette[768];
-	_screen->getPalette(thumbPalette);
-	Graphics::Surface saveThumb;
-	::createThumbnail(&saveThumb, (const byte *)_screen->getPixels(),
-		_screen->w, _screen->h, thumbPalette);
-	Graphics::saveThumbnail(*out, saveThumb);
-	saveThumb.free();
-*/
-	// Write out the save date/time
-	TimeDate td;
-	g_system->getTimeAndDate(td);
-	out->writeSint16LE(td.tm_year + 1900);
-	out->writeSint16LE(td.tm_mon + 1);
-	out->writeSint16LE(td.tm_mday);
-	out->writeSint16LE(td.tm_hour);
-	out->writeSint16LE(td.tm_min);
-//	out->writeUint32LE(_events->getFrameCounter());
-}
-
 void XeenEngine::playGame() {
-	_saves->reset();
-	File::setCurrentArchive(GAME_ARCHIVE);
+	_files->setGameCc(0);
 	_sound->stopAllAudio();
 
 	play();
@@ -293,9 +180,9 @@ void XeenEngine::play() {
 //		_screen->fadeOut();
 	}
 
-	_screen->_windows[0].update();
+	(*_windows)[0].update();
 	_interface->mainIconsPrint();
-	_screen->_windows[0].update();
+	(*_windows)[0].update();
 	_events->setCursor(0);
 
 	_combat->_moveMonsters = true;

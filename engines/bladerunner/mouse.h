@@ -52,6 +52,8 @@ public:
 
 	void setCursor(int cursor);
 
+	void getXY(int *x, int *y);
+
 	void disable();
 	void enable();
 	bool isDisabled();

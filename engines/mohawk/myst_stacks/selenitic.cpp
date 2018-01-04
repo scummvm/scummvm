@@ -25,7 +25,7 @@
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_state.h"
-#include "mohawk/sound.h"
+#include "mohawk/myst_sound.h"
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/selenitic.h"
 
@@ -44,45 +44,42 @@ Selenitic::Selenitic(MohawkEngine_Myst *vm) :
 
 	_soundReceiverDirection = 0;
 	_soundReceiverStartTime = 0;
+	_soundReceiverNearBlinkCounter = 0;
 }
 
 Selenitic::~Selenitic() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Selenitic::x, #x))
-
 void Selenitic::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_mazeRunnerMove);
-	OPCODE(101, o_mazeRunnerSoundRepeat);
-	OPCODE(102, o_soundReceiverSigma);
-	OPCODE(103, o_soundReceiverRight);
-	OPCODE(104, o_soundReceiverLeft);
-	OPCODE(105, o_soundReceiverSource);
-	OPCODE(106, o_soundReceiverSource);
-	OPCODE(107, o_soundReceiverSource);
-	OPCODE(108, o_soundReceiverSource);
-	OPCODE(109, o_soundReceiverSource);
-	OPCODE(110, o_mazeRunnerDoorButton);
-	OPCODE(111, o_soundReceiverUpdateSound);
-	OPCODE(112, o_soundLockMove);
-	OPCODE(113, o_soundLockStartMove);
-	OPCODE(114, o_soundLockEndMove);
-	OPCODE(115, o_soundLockButton);
-	OPCODE(116, NOP);
-	OPCODE(117, o_soundReceiverEndMove);
+	REGISTER_OPCODE(100, Selenitic, o_mazeRunnerMove);
+	REGISTER_OPCODE(101, Selenitic, o_mazeRunnerSoundRepeat);
+	REGISTER_OPCODE(102, Selenitic, o_soundReceiverSigma);
+	REGISTER_OPCODE(103, Selenitic, o_soundReceiverRight);
+	REGISTER_OPCODE(104, Selenitic, o_soundReceiverLeft);
+	REGISTER_OPCODE(105, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(106, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(107, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(108, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(109, Selenitic, o_soundReceiverSource);
+	REGISTER_OPCODE(110, Selenitic, o_mazeRunnerDoorButton);
+	REGISTER_OPCODE(111, Selenitic, o_soundReceiverUpdateSound);
+	REGISTER_OPCODE(112, Selenitic, o_soundLockMove);
+	REGISTER_OPCODE(113, Selenitic, o_soundLockStartMove);
+	REGISTER_OPCODE(114, Selenitic, o_soundLockEndMove);
+	REGISTER_OPCODE(115, Selenitic, o_soundLockButton);
+	REGISTER_OPCODE(116, Selenitic, NOP);
+	REGISTER_OPCODE(117, Selenitic, o_soundReceiverEndMove);
 
 	// "Init" Opcodes
-	OPCODE(200, o_mazeRunnerCompass_init);
-	OPCODE(201, o_mazeRunnerWindow_init);
-	OPCODE(202, o_mazeRunnerLight_init);
-	OPCODE(203, o_soundReceiver_init);
-	OPCODE(204, o_soundLock_init);
-	OPCODE(205, o_mazeRunnerRight_init);
-	OPCODE(206, o_mazeRunnerLeft_init);
+	REGISTER_OPCODE(200, Selenitic, o_mazeRunnerCompass_init);
+	REGISTER_OPCODE(201, Selenitic, o_mazeRunnerWindow_init);
+	REGISTER_OPCODE(202, Selenitic, o_mazeRunnerLight_init);
+	REGISTER_OPCODE(203, Selenitic, o_soundReceiver_init);
+	REGISTER_OPCODE(204, Selenitic, o_soundLock_init);
+	REGISTER_OPCODE(205, Selenitic, o_mazeRunnerRight_init);
+	REGISTER_OPCODE(206, Selenitic, o_mazeRunnerLeft_init);
 }
-
-#undef OPCODE
 
 void Selenitic::disablePersistentScripts() {
 	_soundReceiverRunning = false;
@@ -285,7 +282,7 @@ bool Selenitic::setVarValue(uint16 var, uint16 value) {
 	return refresh;
 }
 
-void Selenitic::o_mazeRunnerMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerMove(uint16 var, const ArgumentsArray &args) {
 	uint16 oldPosition = _mazeRunnerPosition;
 	uint16 move = var;
 
@@ -363,128 +360,128 @@ void Selenitic::mazeRunnerBacktrack(uint16 &oldPosition) {
 		}
 
 		_mazeRunnerCompass->drawConditionalDataToScreen(_mazeRunnerDirection);
-		_vm->_system->delayMillis(150);
+		_vm->wait(150);
 	}
 }
 
 void Selenitic::mazeRunnerPlayVideo(uint16 video, uint16 pos) {
-	Common::String file;
+	Common::String videoName;
 
 	switch (video) {
 	case 1:
-		file = _vm->wrapMovieFilename("forwa1", kSeleniticStack);
+		videoName = "forwa1";
 		break;
 	case 2:
-		file = _vm->wrapMovieFilename("forwe0", kSeleniticStack);
+		videoName = "forwe0";
 		break;
 	case 3:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwf1", kSeleniticStack);
+			videoName = "forwf1";
 		else
-			file = _vm->wrapMovieFilename("forwf0", kSeleniticStack);
+			videoName = "forwf0";
 		break;
 	case 4:
-		file = _vm->wrapMovieFilename("left00", kSeleniticStack);
+		videoName = "left00";
 		break;
 	case 5:
-		file = _vm->wrapMovieFilename("left01", kSeleniticStack);
+		videoName = "left01";
 		break;
 	case 6:
-		file = _vm->wrapMovieFilename("left10", kSeleniticStack);
+		videoName = "left10";
 		break;
 	case 7:
-		file = _vm->wrapMovieFilename("left11", kSeleniticStack);
+		videoName = "left11";
 		break;
 	case 8:
-		file = _vm->wrapMovieFilename("right00", kSeleniticStack);
+		videoName = "right00";
 		break;
 	case 9:
-		file = _vm->wrapMovieFilename("right01", kSeleniticStack);
+		videoName = "right01";
 		break;
 	case 10:
-		file = _vm->wrapMovieFilename("right10", kSeleniticStack);
+		videoName = "right10";
 		break;
 	case 11:
-		file = _vm->wrapMovieFilename("right11", kSeleniticStack);
+		videoName = "right11";
 		break;
 	case 12:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwo1", kSeleniticStack);
+			videoName = "forwo1";
 		else
-			file = _vm->wrapMovieFilename("forwo0", kSeleniticStack);
+			videoName = "forwo0";
 		break;
 	case 13:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwp1", kSeleniticStack);
+			videoName = "forwp1";
 		else
-			file = _vm->wrapMovieFilename("forwp0", kSeleniticStack);
+			videoName = "forwp0";
 		break;
 	case 14:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forws1", kSeleniticStack);
+			videoName = "forws1";
 		else
-			file = _vm->wrapMovieFilename("forws0", kSeleniticStack);
+			videoName = "forws0";
 		break;
 	case 15:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwr1", kSeleniticStack);
+			videoName = "forwr1";
 		else
-			file = _vm->wrapMovieFilename("forwr0", kSeleniticStack);
+			videoName = "forwr0";
 		break;
 	case 16:
 		if (mazeRunnerForwardAllowed(_mazeRunnerPosition))
-			file = _vm->wrapMovieFilename("forwl1", kSeleniticStack);
+			videoName = "forwl1";
 		else
-			file = _vm->wrapMovieFilename("forwl0", kSeleniticStack);
+			videoName = "forwl0";
 		break;
 	case 17:
-		file = _vm->wrapMovieFilename("backa1", kSeleniticStack);
+		videoName = "backa1";
 		break;
 	case 18:
-		file = _vm->wrapMovieFilename("backe1", kSeleniticStack);
+		videoName = "backe1";
 		break;
 	case 19:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backf1", kSeleniticStack);
+			videoName = "backf1";
 		else
-			file = _vm->wrapMovieFilename("backf0", kSeleniticStack);
+			videoName = "backf0";
 		break;
 	case 20:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backo1", kSeleniticStack);
+			videoName = "backo1";
 		else
-			file = _vm->wrapMovieFilename("backo0", kSeleniticStack);
+			videoName = "backo0";
 		break;
 	case 21:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backp1", kSeleniticStack);
+			videoName = "backp1";
 		else
-			file = _vm->wrapMovieFilename("backp0", kSeleniticStack);
+			videoName = "backp0";
 		break;
 	case 22:
 		if (mazeRunnerForwardAllowed(pos)) {
-			file = _vm->wrapMovieFilename("backs1", kSeleniticStack);
+			videoName = "backs1";
 		} else {
-			file = _vm->wrapMovieFilename("backs0", kSeleniticStack);
+			videoName = "backs0";
 		}
 		break;
 	case 23:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backr1", kSeleniticStack);
+			videoName = "backr1";
 		else
-			file = _vm->wrapMovieFilename("backr0", kSeleniticStack);
+			videoName = "backr0";
 		break;
 	case 24:
 		if (mazeRunnerForwardAllowed(pos))
-			file = _vm->wrapMovieFilename("backl1", kSeleniticStack);
+			videoName = "backl1";
 		else
-			file = _vm->wrapMovieFilename("backl0", kSeleniticStack);
+			videoName = "backl0";
 		break;
 	}
 
-	if (!file.empty()) {
+	if (!videoName.empty()) {
 		const Common::Rect &dest = _mazeRunnerWindow->getRect();
-		_vm->_video->playMovieBlocking(file, dest.left, dest.top, false);
+		_vm->playMovieBlocking(videoName, kSeleniticStack, dest.left, dest.top);
 	}
 }
 
@@ -561,21 +558,16 @@ void Selenitic::mazeRunnerPlaySoundHelp() {
 		soundId =  2191;
 
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 
 	_mazeRunnerLight->drawConditionalDataToScreen(0);
 }
 
-void Selenitic::o_mazeRunnerSoundRepeat(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerSoundRepeat(uint16 var, const ArgumentsArray &args) {
 	mazeRunnerPlaySoundHelp();
 }
 
-/**
- * Sound receiver sigma button
- */
-void Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver sigma button", op);
-
+void Selenitic::o_soundReceiverSigma(uint16 var, const ArgumentsArray &args) {
 	_vm->_cursor->hideCursor();
 
 	_soundReceiverCurrentSource->drawConditionalDataToScreen(0);
@@ -603,17 +595,17 @@ void Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 
 		}
 
 		_soundReceiverPosition = &_state.soundReceiverPositions[source];
-		_vm->_sound->stopBackgroundMyst();
-		_vm->_sound->replaceSoundMyst(2287);
+		_vm->_sound->stopBackground();
+		_vm->_sound->playEffect(2287);
 		soundReceiverDrawView();
 		uint16 soundId = soundReceiverCurrentSound(source, *_soundReceiverPosition);
-		_vm->_sound->replaceBackgroundMyst(soundId);
-		_vm->_system->delayMillis(1000);
+		_vm->_sound->playBackground(soundId);
+		_vm->wait(1000);
 	}
 
 	_soundReceiverPosition = oldPosition;
 	_soundReceiverSigmaPressed = true;
-	_vm->_sound->stopBackgroundMyst();
+	_vm->_sound->stopBackground();
 
 	_soundReceiverSources[_state.soundReceiverCurrentSource]->drawConditionalDataToScreen(1);
 
@@ -622,26 +614,15 @@ void Selenitic::o_soundReceiverSigma(uint16 op, uint16 var, uint16 argc, uint16 
 	_vm->_cursor->showCursor();
 }
 
-/**
- * Sound receiver right button
- */
-void Selenitic::o_soundReceiverRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver right", op);
-
+void Selenitic::o_soundReceiverRight(uint16 var, const ArgumentsArray &args) {
 	soundReceiverLeftRight(1);
 }
 
-/**
- * Sound receiver left button
- */
-void Selenitic::o_soundReceiverLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver left", op);
-
+void Selenitic::o_soundReceiverLeft(uint16 var, const ArgumentsArray &args) {
 	soundReceiverLeftRight(2);
 }
 
 void Selenitic::soundReceiverLeftRight(uint direction) {
-
 	if (_soundReceiverSigmaPressed) {
 		_soundReceiverSigmaButton->drawConditionalDataToScreen(0);
 		_soundReceiverSigmaPressed = false;
@@ -652,7 +633,7 @@ void Selenitic::soundReceiverLeftRight(uint direction) {
 	else
 		_soundReceiverLeftButton->drawConditionalDataToScreen(1);
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 
 	_soundReceiverDirection = direction;
 	_soundReceiverSpeed = 1;
@@ -694,12 +675,7 @@ void Selenitic::soundReceiverDrawAngle() {
 	_vm->redrawResource(_soundReceiverAngle4);
 }
 
-/**
- * Sound receiver source selection buttons
- */
-void Selenitic::o_soundReceiverSource(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver source", op);
-
+void Selenitic::o_soundReceiverSource(uint16 var, const ArgumentsArray &args) {
 	if (_soundReceiverSigmaPressed) {
 		_soundReceiverSigmaButton->drawConditionalDataToScreen(0);
 		_soundReceiverSigmaPressed = false;
@@ -717,11 +693,11 @@ void Selenitic::o_soundReceiverSource(uint16 op, uint16 var, uint16 argc, uint16
 		_soundReceiverPosition = &_state.soundReceiverPositions[pressedButton];
 		_soundReceiverCurrentSource = _soundReceiverSources[pressedButton];
 
-		_vm->_sound->stopSound();
+		_vm->_sound->stopEffect();
 
-		uint16 soundId = argv[0];
-		_vm->_sound->stopBackgroundMyst();
-		_vm->_sound->replaceSoundMyst(soundId);
+		uint16 soundId = args[0];
+		_vm->_sound->stopBackground();
+		_vm->_sound->playEffect(soundId);
 
 		_soundReceiverCurrentSource->drawConditionalDataToScreen(1);
 
@@ -731,25 +707,24 @@ void Selenitic::o_soundReceiverSource(uint16 op, uint16 var, uint16 argc, uint16
 	_vm->_cursor->showCursor();
 }
 
-void Selenitic::o_mazeRunnerDoorButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerDoorButton(uint16 var, const ArgumentsArray &args) {
 	// Used for Selenitic Maze Runner Exit Logic
-	uint16 cardIdExit = argv[0];
-	uint16 cardIdEntry = argv[1];
+	uint16 cardIdExit = args[0];
+	uint16 cardIdEntry = args[1];
+	uint16 updateDataSize = args[2];
 
 	if (_mazeRunnerPosition == 288) {
 		_vm->changeToCard(cardIdEntry, kNoTransition);
-		_vm->_sound->replaceSoundMyst(cardIdEntry);
-		animatedUpdate(argv[2], &argv[3], 10);
+		_vm->_sound->playEffect(cardIdEntry);
+		animatedUpdate(ArgumentsArray(args.begin() + 3, updateDataSize), 10);
 	} else if (_mazeRunnerPosition == 289) {
 		_vm->changeToCard(cardIdExit, kNoTransition);
-		_vm->_sound->replaceSoundMyst(cardIdExit);
-		animatedUpdate(argv[2], &argv[3], 10);
+		_vm->_sound->playEffect(cardIdExit);
+		animatedUpdate(ArgumentsArray(args.begin() + 3, updateDataSize), 10);
 	}
 }
 
-void Selenitic::o_soundReceiverUpdateSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver update sound", op);
-
+void Selenitic::o_soundReceiverUpdateSound(uint16 var, const ArgumentsArray &args) {
 	soundReceiverUpdateSound();
 }
 
@@ -795,33 +770,27 @@ MystAreaSlider *Selenitic::soundLockSliderFromVar(uint16 var) {
 	return nullptr;
 }
 
-void Selenitic::o_soundLockMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound lock move", op);
-
+void Selenitic::o_soundLockMove(uint16 var, const ArgumentsArray &args) {
 	MystAreaSlider *slider = soundLockSliderFromVar(var);
 
 	uint16 soundId = soundLockCurrentSound(slider->_pos.y, true);
 	if (_soundLockSoundId != soundId) {
 		_soundLockSoundId = soundId;
-		_vm->_sound->replaceSoundMyst(soundId, Audio::Mixer::kMaxChannelVolume, true);
+		_vm->_sound->playEffect(soundId, true);
 	}
 }
 
-void Selenitic::o_soundLockStartMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound lock start move", op);
-
+void Selenitic::o_soundLockStartMove(uint16 var, const ArgumentsArray &args) {
 	MystAreaSlider *slider = soundLockSliderFromVar(var);
 
 	_vm->_cursor->setCursor(700);
-	_vm->_sound->pauseBackgroundMyst();
+	_vm->_sound->pauseBackground();
 
 	_soundLockSoundId = soundLockCurrentSound(slider->_pos.y, true);
-	_vm->_sound->replaceSoundMyst(_soundLockSoundId, Audio::Mixer::kMaxChannelVolume, true);
+	_vm->_sound->playEffect(_soundLockSoundId, true);
 }
 
-void Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound lock end move", op);
-
+void Selenitic::o_soundLockEndMove(uint16 var, const ArgumentsArray &args) {
 	MystAreaSlider *slider = soundLockSliderFromVar(var);
 	uint16 *value = &_state.soundLockSliderPositions[0];
 
@@ -861,30 +830,28 @@ void Selenitic::o_soundLockEndMove(uint16 op, uint16 var, uint16 argc, uint16 *a
 
 	uint16 soundId = slider->getList3(0);
 	if (soundId)
-		_vm->_sound->replaceSoundMyst(soundId);
+		_vm->_sound->playEffect(soundId);
 
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->resumeBackground();
 }
 
 void Selenitic::soundLockCheckSolution(MystAreaSlider *slider, uint16 value, uint16 solution, bool &solved) {
 	slider->drawConditionalDataToScreen(2);
-	_vm->_sound->replaceSoundMyst(soundLockCurrentSound(value / 12, false));
-	_vm->_system->delayMillis(1500);
+	_vm->_sound->playEffect(soundLockCurrentSound(value / 12, false));
+	_vm->wait(1500);
 
 	if (value / 12 != solution)
 		solved = false;
 
 	slider->drawConditionalDataToScreen(1);
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 }
 
-void Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound lock button", op);
-
+void Selenitic::o_soundLockButton(uint16 var, const ArgumentsArray &args) {
 	bool solved = true;
 
-	_vm->_sound->pauseBackgroundMyst();
-	_vm->_sound->replaceSoundMyst(1147);
+	_vm->_sound->pauseBackground();
+	_vm->_sound->playEffect(1147);
 	_soundLockButton->drawConditionalDataToScreen(1);
 	_vm->_cursor->hideCursor();
 
@@ -894,21 +861,24 @@ void Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	soundLockCheckSolution(_soundLockSlider4, _state.soundLockSliderPositions[3], 6, solved);
 	soundLockCheckSolution(_soundLockSlider5, _state.soundLockSliderPositions[4], 7, solved);
 
-	_vm->_sound->replaceSoundMyst(1148);
-	_vm->_sound->resumeBackgroundMyst();
+	_vm->_sound->playEffect(1148);
+	_vm->_sound->resumeBackground();
 
 	if (solved) {
 		_soundLockButton->drawConditionalDataToScreen(2);
 
-		uint16 cardIdClosed = argv[0];
-		uint16 cardIdOpen = argv[1];
+		uint16 cardIdClosed = args[0];
+		uint16 cardIdOpen = args[1];
 
 		_vm->changeToCard(cardIdClosed, kTransitionDissolve);
 
 		_vm->changeToCard(cardIdOpen, kNoTransition);
-		_vm->_sound->replaceSoundMyst(argv[2]);
+		_vm->_sound->playEffect(args[2]);
 
-		animatedUpdate(argv[4], &argv[5], argv[3]);
+		uint16 animationDelay = args[3];
+		uint16 animationDataSize = args[4];
+
+		animatedUpdate(ArgumentsArray(args.begin() + 5, animationDataSize), animationDelay);
 	} else {
 		_soundLockButton->drawConditionalDataToScreen(0);
 	}
@@ -916,9 +886,7 @@ void Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	_vm->_cursor->showCursor();
 }
 
-void Selenitic::o_soundReceiverEndMove(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver end move", op);
-
+void Selenitic::o_soundReceiverEndMove(uint16 var, const ArgumentsArray &args) {
 	uint16 oldDirection = _soundReceiverDirection;
 
 	if (_soundReceiverDirection) {
@@ -933,15 +901,15 @@ void Selenitic::o_soundReceiverEndMove(uint16 op, uint16 var, uint16 argc, uint1
 	}
 }
 
-void Selenitic::o_mazeRunnerCompass_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerCompass_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerCompass = getInvokingResource<MystAreaImageSwitch>();
 }
 
-void Selenitic::o_mazeRunnerWindow_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerWindow_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerWindow = getInvokingResource<MystAreaImageSwitch>();
 }
 
-void Selenitic::o_mazeRunnerLight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerLight_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerLight = getInvokingResource<MystAreaImageSwitch>();
 }
 
@@ -982,7 +950,7 @@ void Selenitic::soundReceiverIncreaseSpeed() {
 
 void Selenitic::soundReceiverUpdateSound() {
 	uint16 soundId = soundReceiverCurrentSound(_state.soundReceiverCurrentSource, *_soundReceiverPosition);
-	_vm->_sound->replaceSoundMyst(soundId);
+	_vm->_sound->playBackground(soundId);
 }
 
 uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
@@ -1023,13 +991,26 @@ uint16 Selenitic::soundReceiverCurrentSound(uint16 source, uint16 position) {
 		if (position == solution) {
 			soundId = soundIdGood;
 		} else if (position > solution && position <= solution + 50) {
-			_soundReceiverLeftButton->drawConditionalDataToScreen(2);
-			_soundReceiverLeftButton->drawConditionalDataToScreen(0);
+			_soundReceiverNearBlinkCounter++;
+			if (_soundReceiverNearBlinkCounter % 2) {
+				_soundReceiverLeftButton->drawConditionalDataToScreen(2);
+			} else {
+				_soundReceiverLeftButton->drawConditionalDataToScreen(0);
+			}
 			soundId = soundIdNear;
 		} else if (position < solution && position >= solution - 50) {
-			_soundReceiverRightButton->drawConditionalDataToScreen(2);
-			_soundReceiverRightButton->drawConditionalDataToScreen(0);
+			_soundReceiverNearBlinkCounter++;
+			if (_soundReceiverNearBlinkCounter % 2) {
+				_soundReceiverRightButton->drawConditionalDataToScreen(2);
+			} else {
+				_soundReceiverRightButton->drawConditionalDataToScreen(0);
+			}
 			soundId = soundIdNear;
+		} else if (_soundReceiverNearBlinkCounter > 0) {
+			// Make sure the buttons don't stay highlighted when leaving the 'near' area
+			_soundReceiverRightButton->drawConditionalDataToScreen(0);
+			_soundReceiverLeftButton->drawConditionalDataToScreen(0);
+			_soundReceiverNearBlinkCounter = 0;
 		}
 	}
 
@@ -1061,9 +1042,7 @@ void Selenitic::soundReceiverSolution(uint16 source, uint16 &solution, bool &ena
 	}
 }
 
-void Selenitic::o_soundReceiver_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound receiver init", op);
-
+void Selenitic::o_soundReceiver_init(uint16 var, const ArgumentsArray &args) {
 	// Used for Card 1245 (Sound Receiver)
 	_soundReceiverRunning = true;
 
@@ -1088,11 +1067,10 @@ void Selenitic::o_soundReceiver_init(uint16 op, uint16 var, uint16 argc, uint16 
 	soundReceiverSetSubimageRect();
 
 	_soundReceiverSigmaPressed = false;
+	_soundReceiverNearBlinkCounter = 0;
 }
 
-void Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Sound lock init", op);
-
+void Selenitic::o_soundLock_init(uint16 var, const ArgumentsArray &args) {
 	for (uint i = 0; i < _vm->_resources.size(); i++) {
 		if (_vm->_resources[i]->type == kMystAreaSlider) {
 			switch (_vm->_resources[i]->getImageSwitchVar()) {
@@ -1125,11 +1103,11 @@ void Selenitic::o_soundLock_init(uint16 op, uint16 var, uint16 argc, uint16 *arg
 	_soundLockSoundId = 0;
 }
 
-void Selenitic::o_mazeRunnerRight_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerRight_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerRightButton = getInvokingResource<MystAreaImageSwitch>();
 }
 
-void Selenitic::o_mazeRunnerLeft_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Selenitic::o_mazeRunnerLeft_init(uint16 var, const ArgumentsArray &args) {
 	_mazeRunnerLeftButton = getInvokingResource<MystAreaImageSwitch>();
 }
 

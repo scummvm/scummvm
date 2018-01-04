@@ -33,23 +33,26 @@ namespace Titanic {
 class CPetRealLife;
 
 class CPetSound : public CPetGlyph {
+	enum SliderType {
+		MASTER_SLIDER = 0, MUSIC_SLIDER = 1, PARROT_SLIDER = 2, SPEECH_SLIDER = 3
+	};
 private:
 	CPetGfxElement _element;
-	CPetSlider _masterVolume;
-	CPetSlider _musicVolume;
-	CPetSlider _parrotVolume;
-	CPetSlider _speechVolume;
+	CPetSoundSlider _masterVolume;
+	CPetSoundSlider _musicVolume;
+	CPetSoundSlider _parrotVolume;
+	CPetSoundSlider _speechVolume;
 	CTextControl _textMasterVolume;
 	CTextControl _textMusicVolume;
 	CTextControl _textParrotVolume;
 	CTextControl _textSpeechVolume;
 	CPetSlider *_draggingSlider;
-	int _draggingSliderNum;
+	SliderType _draggingSliderNum;
 private:
 	/**
 	 * Called when a slider has changed
 	 */
-	void sliderChanged(double offset, int sliderNum);
+	void sliderChanged(double offset, SliderType sliderNum);
 public:
 	CPetSound();
 
@@ -94,9 +97,21 @@ public:
 	virtual bool MouseButtonUpMsg(const Point &pt);
 
 	/**
+	 * Highlight any currently highlighted element
+	 */
+	virtual void highlightCurrent(const Point &pt) {
+		setSliders();
+	}
+
+	/**
 	 * Returns the tooltip text for when the glyph is selected
 	 */
 	virtual void getTooltip(CTextControl *text);
+
+	/**
+	 * Sets the positions of the volume sliders
+	 */
+	void setSliders();
 };
 
 } // End of namespace Titanic

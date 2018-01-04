@@ -22,6 +22,8 @@
 
 #include "bladerunner/actor_clues.h"
 
+#include "bladerunner/bladerunner.h"
+#include "bladerunner/gameinfo.h"
 #include "bladerunner/crimes_database.h"
 
 #include "common/debug.h"

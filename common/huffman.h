@@ -31,8 +31,6 @@
 
 namespace Common {
 
-class BitStream;
-
 /**
  * Huffman bitstream decoding
  *
@@ -56,7 +54,21 @@ public:
 	void setSymbols(const uint32 *symbols = 0);
 
 	/** Return the next symbol in the bitstream. */
-	uint32 getSymbol(BitStream &bits) const;
+	template<class BITSTREAM>
+	uint32 getSymbol(BITSTREAM &bits) const {
+		uint32 code = 0;
+
+		for (uint32 i = 0; i < _codes.size(); i++) {
+			bits.addBit(code, i);
+
+			for (CodeList::const_iterator cCode = _codes[i].begin(); cCode != _codes[i].end(); ++cCode)
+				if (code == cCode->code)
+					return cCode->symbol;
+		}
+
+		error("Unknown Huffman code");
+		return 0;
+	}
 
 private:
 	struct Symbol {

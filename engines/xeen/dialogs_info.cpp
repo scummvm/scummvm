@@ -33,10 +33,10 @@ void InfoDialog::show(XeenEngine *vm) {
 }
 
 void InfoDialog::execute() {
-	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
+	Windows &windows = *_vm->_windows;
 
 	protectionText();
 	Common::String statusText = "";
@@ -61,13 +61,14 @@ void InfoDialog::execute() {
 		party._minutes % 60, (hour > 11) ? 'p' : 'a',
 		party._day, party._year, statusText.c_str());
 
-	Window &w = screen._windows[28];
-	w.setBounds(Common::Rect(88, 20, 248, 112));
+	Window &w = windows[28];
+	w.setBounds(Common::Rect(88, 20, 248, 112 + (_lines.empty() ? 0 : _lines.size() * 9 + 13)));
 	w.open();
+	w.writeString(details);
 
 	do {
 		events.updateGameCounter();
-		intf.draw3d(false);
+		intf.draw3d(false, false);
 		w.frame();
 		w.writeString(details);
 		w.update();
@@ -114,7 +115,7 @@ void InfoDialog::protectionText() {
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}
 
-	if (party._levitateActive) {
+	if (party._levitateCount) {
 		_lines.push_back(Common::String::format(Res.LEVITATE_TEXT,
 			_lines.size() == 0 ? 10 : 1, AA_L024, AA_R124));
 	}

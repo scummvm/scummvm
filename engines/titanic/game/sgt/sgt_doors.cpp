@@ -58,7 +58,7 @@ bool CSGTDoors::EnterViewMsg(CEnterViewMsg *msg) {
 		static const int START_FRAMES[7] = { 0, 26, 30, 34, 38, 42, 46 };
 		static const int END_FRAMES[7] = { 12, 29, 33, 37, 41, 45, 49 };
 
-		if (pet->getRooms1CC() == 1)
+		if (pet->getRoomsSublevel() == 1)
 			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
 				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		else
@@ -87,7 +87,7 @@ bool CSGTDoors::LeaveRoomMsg(CLeaveRoomMsg *msg) {
 		static const int START_FRAMES[7] = { 12, 69, 65, 61, 57, 53, 49 };
 		static const int END_FRAMES[7] = { 25, 72, 68, 64, 60, 56, 52 };
 
-		if (pet->getRooms1CC() == 1)
+		if (pet->getRoomsSublevel() == 1)
 			playMovie(START_FRAMES[roomNum], END_FRAMES[roomNum],
 				MOVIE_NOTIFY_OBJECT | MOVIE_WAIT_FOR_FINISH);
 		else

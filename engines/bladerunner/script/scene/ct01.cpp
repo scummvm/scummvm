@@ -366,7 +366,6 @@ void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 			} else {
 				Ambient_Sounds_Play_Sound(66, Random_Query(33, 50), 0, 0, 0);
 			}
-
 		}
 	}
 }

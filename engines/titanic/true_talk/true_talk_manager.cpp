@@ -22,8 +22,8 @@
 
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/core/tree_item.h"
-#include "titanic/npcs/true_talk_npc.h"
 #include "titanic/game_manager.h"
+#include "titanic/npcs/true_talk_npc.h"
 #include "titanic/titanic.h"
 
 #define MKTAG_BE(a3,a2,a1,a0) ((uint32)((a3) | ((a2) << 8) | ((a1) << 16) | ((a0) << 24)))
@@ -48,7 +48,7 @@ CTrueTalkNPC *CTrueTalkManager::_currentNPC;
 CTrueTalkManager::CTrueTalkManager(CGameManager *owner) :
 		_gameManager(owner), _scripts(), _currentCharId(0),
 		_dialogueFile(nullptr), _dialogueId(0) {
-	_titleEngine.setup(3, 3);
+	_titleEngine.setup(3, VOCAB_MODE_EN);
 	_quotes.load();
 	_quotesTree.load();
 
@@ -212,6 +212,7 @@ void CTrueTalkManager::removeCompleted() {
 
 		if (talker->_done) {
 			i = _talkers.erase(i);
+			talker->speechEnded();
 			delete talker;
 		} else {
 			++i;
@@ -271,7 +272,6 @@ TTnpcScript *CTrueTalkManager::getNpcScript(CTrueTalkNPC *npc) const {
 
 	if (!script) {
 		// Fall back on the default NPC script
-		warning("Could not find NPC script for %s, using fallback", npc->getName().c_str());
 		script = _scripts.getNpcScript(101);
 	}
 
@@ -386,7 +386,7 @@ CString CTrueTalkManager::readDialogueString() {
 
 		// Strip off any non-printable characters
 		for (byte *p = buffer; *p != '\0'; ++p) {
-			if (*p < 32 || *p > 127)
+			if (*p < 32)
 				*p = ' ';
 		}
 
@@ -488,6 +488,7 @@ void CTrueTalkManager::playSpeech(TTtalker *talker, TTroomScript *roomScript, CV
 	// Setup proximities
 	CProximity p1, p2, p3;
 	if (isParrot) {
+		p1._soundType = Audio::Mixer::kSFXSoundType;
 		p1._channelMode = 3;
 		p2._channelMode = 5;
 		p3._channelMode = 4;

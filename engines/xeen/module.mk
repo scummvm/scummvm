@@ -12,7 +12,7 @@ MODULE_OBJS := \
 	debugger.o \
 	detection.o \
 	dialogs.o \
-	dialogs_automap.o \
+	dialogs_awards.o \
 	dialogs_char_info.o \
 	dialogs_control_panel.o \
 	dialogs_dismiss.o \
@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	dialogs_info.o \
 	dialogs_input.o \
 	dialogs_items.o \
+	dialogs_map.o \
 	dialogs_party.o \
 	dialogs_query.o \
 	dialogs_quests.o \
@@ -32,7 +33,9 @@ MODULE_OBJS := \
 	files.o \
 	font.o \
 	interface.o \
-	interface_map.o \
+	interface_minimap.o \
+	interface_scene.o \
+	locations.o \
 	map.o \
 	music.o \
 	party.o \
@@ -43,7 +46,7 @@ MODULE_OBJS := \
 	sound.o \
 	spells.o \
 	sprites.o \
-	town.o \
+	window.o \
 	xeen.o \
 	xsurface.o
 

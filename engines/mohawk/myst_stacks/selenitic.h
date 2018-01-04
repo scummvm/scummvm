@@ -34,7 +34,7 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Selenitic : public MystScriptParser {
 public:
@@ -86,6 +86,7 @@ private:
 	uint16 _soundReceiverDirection; // 120
 	uint16 _soundReceiverSpeed; // 122
 	uint32 _soundReceiverStartTime; //124
+	uint _soundReceiverNearBlinkCounter;
 	MystAreaImageSwitch *_soundReceiverViewer; // 128
 	MystAreaImageSwitch *_soundReceiverRightButton; // 132
 	MystAreaImageSwitch *_soundReceiverLeftButton; // 136

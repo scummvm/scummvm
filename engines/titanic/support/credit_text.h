@@ -71,10 +71,10 @@ public:
 	CGameObject *_objectP;
 	CCreditLineGroups::iterator _groupIt;
 	CCreditLines::iterator _lineIt;
-	int _totalHeight;
-	int _yPos;
+	int _yOffset;
+	int _priorInc;
 	int _textR, _textG, _textB;
-	int _destR, _destG, _destB;
+	int _deltaR, _deltaG, _deltaB;
 	int _counter;
 public:
 	CCreditText();

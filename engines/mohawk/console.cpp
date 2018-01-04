@@ -22,6 +22,7 @@
 
 #include "mohawk/console.h"
 #include "mohawk/livingbooks.h"
+#include "mohawk/resource.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
@@ -37,12 +38,15 @@
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
+#include "mohawk/myst_sound.h"
 #endif
 
 #ifdef ENABLE_RIVEN
 #include "mohawk/riven.h"
-#include "mohawk/riven_external.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_sound.h"
+#include "mohawk/riven_stack.h"
+#include "mohawk/riven_stacks/domespit.h"
 #endif
 
 namespace Mohawk {
@@ -77,7 +81,7 @@ bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 	_vm->changeToCard((uint16)atoi(argv[1]), kTransitionCopy);
 
 	return false;
@@ -165,7 +169,7 @@ bool MystConsole::Cmd_ChangeStack(int argc, const char **argv) {
 
 	// We need to stop any playing sound when we change the stack
 	// as the next card could continue playing it if it.
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 
 	uint16 card = 0;
 	if (argc == 3)
@@ -192,7 +196,6 @@ bool MystConsole::Cmd_DrawImage(int argc, const char **argv) {
 		rect = Common::Rect((uint16)atoi(argv[2]), (uint16)atoi(argv[3]), (uint16)atoi(argv[4]), (uint16)atoi(argv[5]));
 
 	_vm->_gfx->copyImageToScreen((uint16)atoi(argv[1]), rect);
-	_vm->_system->updateScreen();
 	return false;
 }
 
@@ -231,7 +234,7 @@ bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_sound->replaceSoundMyst((uint16)atoi(argv[1]));
+	_vm->_sound->playEffect((uint16) atoi(argv[1]));
 
 	return false;
 }
@@ -239,51 +242,41 @@ bool MystConsole::Cmd_PlaySound(int argc, const char **argv) {
 bool MystConsole::Cmd_StopSound(int argc, const char **argv) {
 	debugPrintf("Stopping Sound\n");
 
-	_vm->_sound->stopSound();
+	_vm->_sound->stopEffect();
 
 	return true;
 }
 
 bool MystConsole::Cmd_PlayMovie(int argc, const char **argv) {
-	if (argc < 2) {
-		debugPrintf("Usage: playMovie <name> [<stack>] [<left> <top>]\n");
+	if (argc < 3) {
+		debugPrintf("Usage: playMovie <name> <stack> [<left> <top>]\n");
 		debugPrintf("NOTE: The movie will play *once* in the background.\n");
 		return true;
 	}
 
-	Common::String fileName;
-	if (argc == 3 || argc > 4) {
-		int8 stackNum = 0;
-		for (byte i = 1; i <= ARRAYSIZE(mystStackNames); i++)
-			if (!scumm_stricmp(argv[2], mystStackNames[i - 1])) {
-				stackNum = i;
-				break;
-			}
-
-		if (!stackNum) {
-			debugPrintf("\'%s\' is not a stack name!\n", argv[2]);
-			return true;
+	Common::String fileName = argv[1];
+	int8 stackNum = -1;
+	for (byte i = 0; i < ARRAYSIZE(mystStackNames); i++)
+		if (!scumm_stricmp(argv[2], mystStackNames[i])) {
+			stackNum = i;
+			break;
 		}
 
-		fileName = _vm->wrapMovieFilename(argv[1], stackNum - 1);
-	} else {
-		fileName = argv[1];
-	}
-
-	VideoHandle handle = _vm->_video->playMovie(fileName);
-	if (!handle) {
-		debugPrintf("Failed to open movie '%s'\n", fileName.c_str());
+	if (stackNum < 0) {
+		debugPrintf("\'%s\' is not a stack name!\n", argv[2]);
 		return true;
 	}
 
+	VideoEntryPtr video = _vm->playMovie(fileName, static_cast<MystStack>(stackNum));
+
 	if (argc == 4) {
-		handle->setX(atoi(argv[2]));
-		handle->setY(atoi(argv[3]));
+		video->setX(atoi(argv[2]));
+		video->setY(atoi(argv[3]));
 	} else if (argc > 4) {
-		handle->setX(atoi(argv[3]));
-		handle->setY(atoi(argv[4]));
+		video->setX(atoi(argv[3]));
+		video->setY(atoi(argv[4]));
 	} else {
-		handle->center();
+		video->center();
 	}
 
 	return false;
@@ -333,6 +326,8 @@ bool MystConsole::Cmd_Resources(int argc, const char **argv) {
 }
 
 bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
+	_vm->pauseEngine(false);
+
 	// Go through all the ages, all the views and click random stuff
 	for (uint i = 0; i < ARRAYSIZE(mystStackNames); i++) {
 		if (i == 2 || i == 5 || i == 9 || i == 10) continue;
@@ -346,9 +341,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 			debug("Loading card %d", ids[j]);
 			_vm->changeToCard(ids[j], kTransitionCopy);
 
-			_vm->_video->updateMovies();
-			_vm->_scriptParser->runPersistentScripts();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 
 			int16 resIndex = _vm->_rnd->getRandomNumber(_vm->_resources.size()) - 1;
 			if (resIndex >= 0 && _vm->_resources[resIndex]->isEnabled()) {
@@ -356,9 +349,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 				_vm->_resources[resIndex]->handleMouseUp();
 			}
 
-			_vm->_video->updateMovies();
-			_vm->_scriptParser->runPersistentScripts();
-			_vm->_system->updateScreen();
+			_vm->doFrame();
 
 			if (_vm->getCurStack() != i) {
 				// Clicking may have linked us to another age
@@ -367,6 +358,7 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 		}
 	}
 
+	_vm->pauseEngine(true);
 	return true;
 }
 
@@ -377,11 +369,13 @@ bool MystConsole::Cmd_QuickTest(int argc, const char **argv) {
 RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("changeCard",		WRAP_METHOD(RivenConsole, Cmd_ChangeCard));
 	registerCmd("curCard",		WRAP_METHOD(RivenConsole, Cmd_CurCard));
+	registerCmd("dumpCard",		WRAP_METHOD(RivenConsole, Cmd_DumpCard));
 	registerCmd("var",			WRAP_METHOD(RivenConsole, Cmd_Var));
 	registerCmd("playSound",		WRAP_METHOD(RivenConsole, Cmd_PlaySound));
 	registerCmd("playSLST",       WRAP_METHOD(RivenConsole, Cmd_PlaySLST));
 	registerCmd("stopSound",		WRAP_METHOD(RivenConsole, Cmd_StopSound));
 	registerCmd("curStack",		WRAP_METHOD(RivenConsole, Cmd_CurStack));
+	registerCmd("dumpStack",		WRAP_METHOD(RivenConsole, Cmd_DumpStack));
 	registerCmd("changeStack",	WRAP_METHOD(RivenConsole, Cmd_ChangeStack));
 	registerCmd("hotspots",		WRAP_METHOD(RivenConsole, Cmd_Hotspots));
 	registerCmd("zipMode",		WRAP_METHOD(RivenConsole, Cmd_ZipMode));
@@ -390,6 +384,7 @@ RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
 	registerCmd("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
 	registerCmd("sliderState",    WRAP_METHOD(RivenConsole, Cmd_SliderState));
+	registerVar("show_hotspots",  &_vm->_showHotspots);
 }
 
 RivenConsole::~RivenConsole() {
@@ -410,7 +405,7 @@ bool RivenConsole::Cmd_ChangeCard(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_CurCard(int argc, const char **argv) {
-	debugPrintf("Current Card: %d\n", _vm->getCurCard());
+	debugPrintf("Current Card: %d\n", _vm->getCard()->getId());
 
 	return true;
 }
@@ -449,7 +444,7 @@ bool RivenConsole::Cmd_PlaySound(int argc, const char **argv) {
 
 bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 	if (argc < 2) {
-		debugPrintf("Usage: playSLST <slst index> <card, default = current>\n");
+		debugPrintf("Usage: playSLST <slst index>\n");
 
 		return true;
 	}
@@ -457,9 +452,7 @@ bool RivenConsole::Cmd_PlaySLST(int argc, const char **argv) {
 	_vm->_sound->stopSound();
 	_vm->_sound->stopAllSLST();
 
-	uint16 card = (argc == 3) ? (uint16)atoi(argv[2]) : _vm->getCurCard();
-
-	_vm->_sound->playSLST((uint16)atoi(argv[1]), card);
+	_vm->getCard()->playSound((uint16)atoi(argv[1]));
 	return false;
 }
 
@@ -472,7 +465,7 @@ bool RivenConsole::Cmd_StopSound(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_CurStack(int argc, const char **argv) {
-	debugPrintf("Current Stack: %s\n", _vm->getStackName(_vm->getCurStack()).c_str());
+	debugPrintf("Current Stack: %s\n", RivenStacks::getName(_vm->getStack()->getId()));
 
 	return true;
 }
@@ -483,46 +476,42 @@ bool RivenConsole::Cmd_ChangeStack(int argc, const char **argv) {
 		debugPrintf("Stacks:\n=======\n");
 
 		for (uint i = kStackFirst; i <= kStackLast; i++)
-			debugPrintf(" %s\n", _vm->getStackName(i).c_str());
+			debugPrintf(" %s\n", RivenStacks::getName(i));
 
 		debugPrintf("\n");
 
 		return true;
 	}
 
-	uint stack = kStackUnknown;
-
-	for (uint i = kStackFirst; i <= kStackLast; i++) {
-		if (!scumm_stricmp(argv[1], _vm->getStackName(i).c_str())) {
-			stack = i;
-			break;
-		}
-	}
-
-	if (stack == kStackUnknown) {
+	uint stackId = RivenStacks::getId(argv[1]);
+	if (stackId == kStackUnknown) {
 		debugPrintf("\'%s\' is not a stack name!\n", argv[1]);
 		return true;
 	}
 
-	_vm->changeToStack(stack);
+	_vm->changeToStack(stackId);
 	_vm->changeToCard((uint16)atoi(argv[2]));
 
 	return false;
 }
 
 bool RivenConsole::Cmd_Hotspots(int argc, const char **argv) {
-	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCurCard(), _vm->getHotspotCount());
+	Common::Array<RivenHotspot *> hotspots = _vm->getCard()->getHotspots();
 
-	for (uint16 i = 0; i < _vm->getHotspotCount(); i++) {
-		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, _vm->_hotspots[i].index, _vm->_hotspots[i].blstID);
+	debugPrintf("Current card (%d) has %d hotspots:\n", _vm->getCard()->getId(), hotspots.size());
 
-		if (_vm->_hotspots[i].enabled)
+	for (uint16 i = 0; i < hotspots.size(); i++) {
+		RivenHotspot *hotspot = hotspots[i];
+		debugPrintf("Hotspot %d, index %d, BLST ID %d (", i, hotspot->getIndex(), hotspot->getBlstId());
+
+		if (hotspot->isEnabled())
 			debugPrintf("enabled");
 		else
 			debugPrintf("disabled");
 
-		debugPrintf(") - (%d, %d, %d, %d)\n", _vm->_hotspots[i].rect.left, _vm->_hotspots[i].rect.top, _vm->_hotspots[i].rect.right, _vm->_hotspots[i].rect.bottom);
-		debugPrintf("    Name = %s\n", _vm->getHotspotName(i).c_str());
+		Common::Rect rect = hotspot->getRect();
+		debugPrintf(") - (%d, %d, %d, %d)\n", rect.left, rect.top, rect.right, rect.bottom);
+		debugPrintf("    Name = %s\n", hotspot->getName().c_str());
 	}
 
 	return true;
@@ -538,72 +527,47 @@ bool RivenConsole::Cmd_ZipMode(int argc, const char **argv) {
 	return true;
 }
 
+bool RivenConsole::Cmd_DumpCard(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: dumpCard\n");
+		return true;
+	}
+
+	_vm->getCard()->dump();
+
+	debugPrintf("Card dump complete.\n");
+
+	return true;
+}
+
+bool RivenConsole::Cmd_DumpStack(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: dumpStack\n");
+		return true;
+	}
+
+	_vm->getStack()->dump();
+
+	debugPrintf("Stack dump complete.\n");
+
+	return true;
+}
+
 bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	if (argc < 4) {
 		debugPrintf("Usage: dumpScript <stack> <CARD or HSPT> <card>\n");
 		return true;
 	}
 
-	uint16 oldStack = _vm->getCurStack();
-	uint newStack = kStackUnknown;
+	uint16 oldStack = _vm->getStack()->getId();
 
-	for (uint i = kStackFirst; i <= kStackLast; i++) {
-		if (!scumm_stricmp(argv[1], _vm->getStackName(i).c_str())) {
-			newStack = i;
-			break;
-		}
-	}
-
+	uint newStack = RivenStacks::getId(argv[1]);
 	if (newStack == kStackUnknown) {
 		debugPrintf("\'%s\' is not a stack name!\n", argv[1]);
 		return true;
 	}
 
 	_vm->changeToStack(newStack);
-
-	// Load in Variable Names
-	Common::SeekableReadStream *nameStream = _vm->getResource(ID_NAME, VariableNames);
-	Common::StringArray varNames;
-
-	uint16 namesCount = nameStream->readUint16BE();
-	uint16 *stringOffsets = new uint16[namesCount];
-	for (uint16 i = 0; i < namesCount; i++)
-		stringOffsets[i] = nameStream->readUint16BE();
-	nameStream->seek(namesCount * 2, SEEK_CUR);
-	int32 curNamesPos = nameStream->pos();
-
-	for (uint32 i = 0; i < namesCount; i++) {
-		nameStream->seek(curNamesPos + stringOffsets[i]);
-
-		Common::String name;
-		for (char c = nameStream->readByte(); c; c = nameStream->readByte())
-			name += c;
-		varNames.push_back(name);
-	}
-	delete nameStream;
-	delete[] stringOffsets;
-
-	// Load in External Command Names
-	nameStream = _vm->getResource(ID_NAME, ExternalCommandNames);
-	Common::StringArray xNames;
-
-	namesCount = nameStream->readUint16BE();
-	stringOffsets = new uint16[namesCount];
-	for (uint16 i = 0; i < namesCount; i++)
-		stringOffsets[i] = nameStream->readUint16BE();
-	nameStream->seek(namesCount * 2, SEEK_CUR);
-	curNamesPos = nameStream->pos();
-
-	for (uint32 i = 0; i < namesCount; i++) {
-		nameStream->seek(curNamesPos + stringOffsets[i]);
-
-		Common::String name;
-		for (char c = nameStream->readByte(); c; c = nameStream->readByte())
-			name += c;
-		xNames.push_back(name);
-	}
-	delete nameStream;
-	delete[] stringOffsets;
 
 	// Get CARD/HSPT data and dump their scripts
 	if (!scumm_stricmp(argv[2], "CARD")) {
@@ -617,10 +581,10 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		debugN("==================================\n\n");
 		Common::SeekableReadStream *cardStream = _vm->getResource(MKTAG('C','A','R','D'), (uint16)atoi(argv[3]));
 		cardStream->seek(4);
-		RivenScriptList scriptList = _vm->_scriptMan->readScripts(cardStream, false);
+		RivenScriptList scriptList = _vm->_scriptMan->readScripts(cardStream);
 		for (uint32 i = 0; i < scriptList.size(); i++) {
-			scriptList[i]->dumpScript(varNames, xNames, 0);
-			delete scriptList[i];
+			debugN("Stream Type %d:\n", scriptList[i].type);
+			scriptList[i].script->dumpScript(0);
 		}
 		delete cardStream;
 	} else if (!scumm_stricmp(argv[2], "HSPT")) {
@@ -635,10 +599,10 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		for (uint16 i = 0; i < hotspotCount; i++) {
 			debugN("Hotspot %d:\n", i);
 			hsptStream->seek(22, SEEK_CUR);	// Skip non-script related stuff
-			RivenScriptList scriptList = _vm->_scriptMan->readScripts(hsptStream, false);
+			RivenScriptList scriptList = _vm->_scriptMan->readScripts(hsptStream);
 			for (uint32 j = 0; j < scriptList.size(); j++) {
-				scriptList[j]->dumpScript(varNames, xNames, 1);
-				delete scriptList[j];
+				debugN("\tStream Type %d:\n", scriptList[j].type);
+				scriptList[j].script->dumpScript(1);
 			}
 		}
 
@@ -670,8 +634,8 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_GetRMAP(int argc, const char **argv) {
-	uint32 rmapCode = _vm->getCurCardRMAP();
-	debugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()).c_str(), _vm->getCurCard(), rmapCode);
+	uint32 rmapCode = _vm->getStack()->getCurrentCardGlobalId();
+	debugPrintf("RMAP for %s %d = %08x\n", RivenStacks::getName(_vm->getStack()->getId()), _vm->getCard()->getId(), rmapCode);
 	return true;
 }
 
@@ -687,11 +651,11 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 
 	debugPrintf("Telescope Combo:\n  ");
 	for (int i = 0; i < 5; i++)
-		debugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(teleCombo, i));
+		debugPrintf("%d ", _vm->getStack()->getComboDigit(teleCombo, i));
 
 	debugPrintf("\nPrison Combo:\n  ");
 	for (int i = 0; i < 5; i++)
-		debugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(prisonCombo, i));
+		debugPrintf("%d ", _vm->getStack()->getComboDigit(prisonCombo, i));
 
 	debugPrintf("\nDome Combo:\n  ");
 	for (int i = 1; i <= 25; i++)
@@ -703,10 +667,16 @@ bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
 }
 
 bool RivenConsole::Cmd_SliderState(int argc, const char **argv) {
-	if (argc > 1)
-		_vm->_externalScriptHandler->setDomeSliderState((uint32)atoi(argv[1]));
+	RivenStacks::DomeSpit *domeSpit = dynamic_cast<RivenStacks::DomeSpit *>(_vm->getStack());
+	if (!domeSpit) {
+		debugPrintf("No dome in this stack\n");
+		return true;
+	}
 
-	debugPrintf("Dome Slider State = %08x\n", _vm->_externalScriptHandler->getDomeSliderState());
+	if (argc > 1)
+		domeSpit->setDomeSliderState((uint32)atoi(argv[1]));
+
+	debugPrintf("Dome Slider State = %08x\n", domeSpit->getDomeSliderState());
 	return true;
 }
 

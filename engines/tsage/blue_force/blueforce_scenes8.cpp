@@ -2624,7 +2624,7 @@ void Scene860::Action1::signal() {
 			BF_GLOBALS._player.setStrip(2);
 		}
 		signal();
-		// Deliberate fall-through
+		// fall through
 	case 2:
 		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		ADD_MOVER_NULL(BF_GLOBALS._player, scene->_destPos.x, scene->_destPos.y);

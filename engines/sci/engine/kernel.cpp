@@ -122,10 +122,14 @@ void Kernel::loadSelectorNames() {
 	Resource *r = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), 0);
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
+#ifdef ENABLE_SCI32_MAC
 	// Starting with KQ7, Mac versions have a BE name table. GK1 Mac and earlier (and all
 	// other platforms) always use LE.
-	bool isBE = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY
+	const bool isBE = (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY
 			&& g_sci->getGameId() != GID_GK1);
+#else
+	const bool isBE = false;
+#endif
 
 	if (!r) { // No such resource?
 		// Check if we have a table for this game
@@ -598,7 +602,6 @@ void Kernel::mapFunctions() {
 		_kernelFuncs[id].workarounds = NULL;
 		_kernelFuncs[id].subFunctions = NULL;
 		_kernelFuncs[id].subFunctionCount = 0;
-		_kernelFuncs[id].debugLogging = false;
 		if (kernelName.empty()) {
 			// No name was given -> must be an unknown opcode
 			warning("Kernel function %x unknown", id);
@@ -611,7 +614,7 @@ void Kernel::mapFunctions() {
 			continue;
 		}
 
-#ifdef ENABLE_SCI32
+#ifdef ENABLE_SCI32_MAC
 		// HACK: Phantasmagoria Mac uses a modified kDoSound (which *nothing*
 		// else seems to use)!
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && g_sci->getGameId() == GID_PHANTASMAGORIA && kernelName == "DoSound") {
@@ -657,7 +660,7 @@ void Kernel::mapFunctions() {
 					kernelSubMap++;
 				}
 				if (!subFunctionCount)
-					error("k%s[%x]: no subfunctions found for requested version", kernelName.c_str(), id);
+					error("k%s[%x]: no subfunctions found for requested version %s", kernelName.c_str(), id, getSciVersionDesc(mySubVersion));
 				// Now allocate required memory and go through it again
 				_kernelFuncs[id].subFunctionCount = subFunctionCount;
 				KernelSubFunction *subFunctions = new KernelSubFunction[subFunctionCount];
@@ -713,85 +716,6 @@ void Kernel::mapFunctions() {
 				mapped + ignored, _kernelNames.size(), mapped, ignored);
 
 	return;
-}
-
-bool Kernel::debugSetFunction(const char *kernelName, int logging, int breakpoint) {
-	if (strcmp(kernelName, "*")) {
-		for (uint id = 0; id < _kernelFuncs.size(); id++) {
-			if (_kernelFuncs[id].name) {
-				if (strcmp(kernelName, _kernelFuncs[id].name) == 0) {
-					if (_kernelFuncs[id].subFunctions) {
-						// sub-functions available and main name matched, in that case set logging of all sub-functions
-						KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
-						uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
-						for (uint subId = 0; subId < kernelSubCallCount; subId++) {
-							if (kernelSubCall->function) {
-								if (logging != -1)
-									kernelSubCall->debugLogging = logging == 1 ? true : false;
-								if (breakpoint != -1)
-									kernelSubCall->debugBreakpoint = breakpoint == 1 ? true : false;
-							}
-							kernelSubCall++;
-						}
-						return true;
-					}
-					// function name matched, set for this one and exit
-					if (logging != -1)
-						_kernelFuncs[id].debugLogging = logging == 1 ? true : false;
-					if (breakpoint != -1)
-						_kernelFuncs[id].debugBreakpoint = breakpoint == 1 ? true : false;
-					return true;
-				} else {
-					// main name was not matched
-					if (_kernelFuncs[id].subFunctions) {
-						// Sub-Functions available
-						KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
-						uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
-						for (uint subId = 0; subId < kernelSubCallCount; subId++) {
-							if (kernelSubCall->function) {
-								if (strcmp(kernelName, kernelSubCall->name) == 0) {
-									// sub-function name matched, set for this one and exit
-									if (logging != -1)
-										kernelSubCall->debugLogging = logging == 1 ? true : false;
-									if (breakpoint != -1)
-										kernelSubCall->debugBreakpoint = breakpoint == 1 ? true : false;
-									return true;
-								}
-							}
-							kernelSubCall++;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
-	// Set debugLogging for all calls
-	for (uint id = 0; id < _kernelFuncs.size(); id++) {
-		if (_kernelFuncs[id].name) {
-			if (!_kernelFuncs[id].subFunctions) {
-				// No sub-functions, enable actual kernel function
-				if (logging != -1)
-					_kernelFuncs[id].debugLogging = logging == 1 ? true : false;
-				if (breakpoint != -1)
-					_kernelFuncs[id].debugBreakpoint = breakpoint == 1 ? true : false;
-			} else {
-				// Sub-Functions available, enable those too
-				KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
-				uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
-				for (uint subId = 0; subId < kernelSubCallCount; subId++) {
-					if (kernelSubCall->function) {
-						if (logging != -1)
-							kernelSubCall->debugLogging = logging == 1 ? true : false;
-						if (breakpoint != -1)
-							kernelSubCall->debugBreakpoint = breakpoint == 1 ? true : false;
-					}
-					kernelSubCall++;
-				}
-			}
-		}
-	}
-	return true;
 }
 
 #ifdef ENABLE_SCI32

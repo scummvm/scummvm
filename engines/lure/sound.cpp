@@ -165,7 +165,7 @@ void SoundManager::bellsBodge() {
 			break;
 		case 2:
 			setVolume(0, 15);
-			// Deliberate fall through
+			// fall through
 		default:
 			killSound(1);
 			break;

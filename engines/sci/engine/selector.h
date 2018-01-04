@@ -131,6 +131,11 @@ struct SelectorCache {
 	Selector iconIndex; ///< Used to index icon bar objects
 	Selector select;
 
+	Selector handsOff;
+	Selector setStep;
+	Selector setMotion;
+	Selector cycleSpeed;
+
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures
@@ -174,6 +179,21 @@ struct SelectorCache {
 	Selector setPos; // for Torin volume sync
 	Selector setSize; // for PQ4 volume sync
 	Selector displayValue; // for PQ:SWAT volume sync
+	Selector new_; // for Torin/LSL7 save/load patching
+	Selector mainCel; // for MGDX volume sync
+	Selector move; // for Phant2 volume sync
+	Selector eachElementDo; // for Phant2 volume sync
+	Selector physicalBar; // for Phant2 volume sync
+	Selector init; // for Phant2 save/load patching
+	Selector scratch; // for Phant2 save/load patching
+	Selector num; // for Phant2 restore from launcher
+	Selector reallyRestore; // for Phant2 restore from launcher
+	Selector bookMark; // for Phant2 auto-save
+	Selector fileNumber; // for RAMA save/load
+	Selector description; // for RAMA save/load
+	Selector dispose; // for RAMA save/load save from launcher
+	Selector masterVolume; // for RAMA volume sync
+	Selector setCel; // for RAMA volume sync
 #endif
 };
 

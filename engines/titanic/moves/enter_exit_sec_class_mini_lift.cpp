@@ -67,7 +67,7 @@ bool CEnterExitSecClassMiniLift::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		CPetControl *pet = getPetControl();
 		if (pet) {
 			pet->setRoomsRoomNum(_roomNum);
-			pet->setRooms1CC(1);
+			pet->setRoomsSublevel(1);
 		}
 	} else if (compareRoomNameTo("SecClassLittleLift")) {
 		if (_statics->_state == 1) {
@@ -85,7 +85,7 @@ bool CEnterExitSecClassMiniLift::StatusChangeMsg(CStatusChangeMsg *msg) {
 
 	CPetControl *pet = getPetControl();
 	if (pet)
-		pet->setRooms1CC(_statics->_state);
+		pet->setRoomsSublevel(_statics->_state);
 
 	_cursorId = _statics->_state == 1 ? CURSOR_MOVE_FORWARD : CURSOR_INVALID;
 	return true;

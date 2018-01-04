@@ -16,37 +16,37 @@
 
 #include "SoxrAdapter.h"
 
-#include "Synth.h"
+#include "../Synth.h"
 
 using namespace MT32Emu;
 
 static const unsigned int CHANNEL_COUNT = 2;
 
 size_t SoxrAdapter::getInputSamples(void *input_fn_state, soxr_in_t *data, size_t requested_len) {
-	unsigned int length = requested_len < 1 ? 1 : (MAX_SAMPLES_PER_RUN < requested_len ? MAX_SAMPLES_PER_RUN : requested_len);
+	unsigned int length = requested_len < 1 ? 1 : (MAX_SAMPLES_PER_RUN < requested_len ? MAX_SAMPLES_PER_RUN : static_cast<unsigned int>(requested_len));
 	SoxrAdapter *instance = static_cast<SoxrAdapter *>(input_fn_state);
 	instance->synth.render(instance->inBuffer, length);
 	*data = instance->inBuffer;
 	return length;
 }
 
-SoxrAdapter::SoxrAdapter(Synth &useSynth, double targetSampleRate, SampleRateConverter::Quality quality) :
+SoxrAdapter::SoxrAdapter(Synth &useSynth, double targetSampleRate, SamplerateConversionQuality quality) :
 	synth(useSynth),
 	inBuffer(new float[CHANNEL_COUNT * MAX_SAMPLES_PER_RUN])
 {
 	soxr_io_spec_t ioSpec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I);
 	unsigned long qualityRecipe;
 	switch (quality) {
-	case SampleRateConverter::FASTEST:
+	case SamplerateConversionQuality_FASTEST:
 		qualityRecipe = SOXR_QQ;
 		break;
-	case SampleRateConverter::FAST:
+	case SamplerateConversionQuality_FAST:
 		qualityRecipe = SOXR_LQ;
 		break;
-	case SampleRateConverter::GOOD:
+	case SamplerateConversionQuality_GOOD:
 		qualityRecipe = SOXR_MQ;
 		break;
-	case SampleRateConverter::BEST:
+	case SamplerateConversionQuality_BEST:
 	default:
 		qualityRecipe = SOXR_16_BITQ;
 		break;

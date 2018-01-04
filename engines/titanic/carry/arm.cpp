@@ -22,6 +22,7 @@
 
 #include "titanic/carry/arm.h"
 #include "titanic/messages/messages.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -150,7 +151,7 @@ bool CArm::MaitreDHappyMsg(CMaitreDHappyMsg *msg) {
 	CGameObject *petItem;
 	if (find(getName(), &petItem, FIND_PET)) {
 		if (!_armUnlocked)
-			playSound("z#47.wav");
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 		if (_heldItemName == "Key" || _heldItemName == "AuditoryCentre") {
 			CGameObject *heldItem = dynamic_cast<CGameObject *>(getFirstChild());
 			if (heldItem) {

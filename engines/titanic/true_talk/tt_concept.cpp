@@ -21,6 +21,7 @@
  */
 
 #include "titanic/true_talk/tt_concept.h"
+#include "titanic/true_talk/script_handler.h"
 #include "titanic/true_talk/tt_script_base.h"
 #include "titanic/true_talk/tt_word.h"
 #include "titanic/titanic.h"

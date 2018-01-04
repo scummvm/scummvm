@@ -65,7 +65,7 @@ NeverhoodEngine::~NeverhoodEngine() {
 }
 
 Common::Error NeverhoodEngine::run() {
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -181,9 +181,6 @@ void NeverhoodEngine::mainLoop() {
 				break;
 			case Common::EVENT_WHEELDOWN:
 				_gameModule->handleWheelDown();
-				break;
-			case Common::EVENT_QUIT:
-				_system->quit();
 				break;
 			default:
 				break;

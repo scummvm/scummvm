@@ -22,72 +22,378 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/riven.h"
-#include "mohawk/riven_external.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_graphics.h"
 #include "mohawk/riven_scripts.h"
 #include "mohawk/riven_sound.h"
-#include "mohawk/video.h"
-
+#include "mohawk/riven_stack.h"
+#include "mohawk/riven_video.h"
 #include "common/memstream.h"
+
+#include "common/debug-channels.h"
 #include "common/stream.h"
 #include "common/system.h"
 
 namespace Mohawk {
 
-RivenScript::RivenScript(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream, uint16 scriptType, uint16 parentStack, uint16 parentCard)
-	: _vm(vm), _stream(stream), _scriptType(scriptType), _parentStack(parentStack), _parentCard(parentCard) {
-	setupOpcodes();
-	_isRunning = _continueRunning = false;
+static void printTabs(byte tabs) {
+	for (byte i = 0; i < tabs; i++)
+		debugN("\t");
 }
 
-RivenScript::~RivenScript() {
-	delete _stream;
+RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) :
+		_vm(vm),
+		_runningQueuedScripts(false),
+		_stoppingAllScripts(false) {
+
+	_storedMovieOpcode.time = 0;
+	_storedMovieOpcode.slot = 0;
 }
 
-uint32 RivenScript::calculateCommandSize(Common::SeekableReadStream* script) {
-	uint16 command = script->readUint16BE();
-	uint32 commandSize = 2;
-	if (command == 8) {
-		if (script->readUint16BE() != 2) // Arg count?
-			warning ("if-then-else unknown value is not 2");
-		script->readUint16BE();								// variable to check against
-		uint16 logicBlockCount = script->readUint16BE();	// number of logic blocks
-		commandSize += 6;									// 2 + variable + logicBlocks
+RivenScriptManager::~RivenScriptManager() {
+	clearStoredMovieOpcode();
+}
 
-		for (uint16 i = 0; i < logicBlockCount; i++) {
-			script->readUint16BE(); // Block variable
-			uint16 logicBlockLength = script->readUint16BE();
-			commandSize += 4;
-			for (uint16 j = 0; j < logicBlockLength; j++)
-				commandSize += calculateCommandSize(script);
-		}
+RivenScriptPtr RivenScriptManager::readScript(Common::ReadStream *stream) {
+	RivenScriptPtr script = RivenScriptPtr(new RivenScript());
+
+	uint16 commandCount = stream->readUint16BE();
+
+	for (uint16 i = 0; i < commandCount; i++) {
+		RivenCommandPtr command = readCommand(stream);
+		script->addCommand(command);
+	}
+
+	return script;
+}
+
+RivenCommandPtr RivenScriptManager::readCommand(Common::ReadStream *stream) {
+	RivenCommandType type = (RivenCommandType) stream->readUint16BE();
+
+	switch (type) {
+		case kRivenCommandSwitch:
+			return RivenCommandPtr(RivenSwitchCommand::createFromStream(_vm, stream));
+		case kRivenCommandChangeStack:
+			return RivenCommandPtr(RivenStackChangeCommand::createFromStream(_vm, stream));
+		default:
+			return RivenCommandPtr(RivenSimpleCommand::createFromStream(_vm, type, stream));
+	}
+}
+
+RivenScriptList RivenScriptManager::readScripts(Common::ReadStream *stream) {
+	RivenScriptList scriptList;
+
+	uint16 scriptCount = stream->readUint16BE();
+	for (uint16 i = 0; i < scriptCount; i++) {
+		RivenTypedScript script;
+		script.type = stream->readUint16BE();
+		script.script = readScript(stream);
+		scriptList.push_back(script);
+	}
+
+	return scriptList;
+}
+
+void RivenScriptManager::stopAllScripts() {
+	_stoppingAllScripts = true;
+}
+
+void RivenScriptManager::setStoredMovieOpcode(const StoredMovieOpcode &op) {
+	clearStoredMovieOpcode();
+	_storedMovieOpcode.script = op.script;
+	_storedMovieOpcode.slot = op.slot;
+	_storedMovieOpcode.time = op.time;
+}
+
+void RivenScriptManager::runStoredMovieOpcode() {
+	if (_storedMovieOpcode.script) {
+		runScript(_storedMovieOpcode.script, false);
+		clearStoredMovieOpcode();
+	}
+}
+
+void RivenScriptManager::clearStoredMovieOpcode() {
+	_storedMovieOpcode.script = RivenScriptPtr();
+	_storedMovieOpcode.time = 0;
+	_storedMovieOpcode.slot = 0;
+}
+
+void RivenScriptManager::runScript(const RivenScriptPtr &script, bool queue) {
+	if (!script || script->empty()) {
+		return;
+	}
+
+	if (!queue) {
+		script->run(this);
 	} else {
-		uint16 argCount = script->readUint16BE();
-		commandSize += 2;
-		for (uint16 i = 0; i < argCount; i++) {
-			script->readUint16BE();
-			commandSize += 2;
+		_queue.push_back(script);
+	}
+}
+
+bool RivenScriptManager::hasQueuedScripts() const {
+	return !_queue.empty();
+}
+
+void RivenScriptManager::runQueuedScripts() {
+	_runningQueuedScripts = true;
+
+	for (uint i = 0; i < _queue.size(); i++) {
+		_queue[i]->run(this);
+	}
+
+	_queue.clear();
+
+	_stoppingAllScripts = false; // Once the queue is empty, all scripts have been stopped
+	_runningQueuedScripts = false;
+}
+
+RivenScriptPtr RivenScriptManager::createScriptFromData(uint commandCount, ...) {
+	va_list args;
+	va_start(args, commandCount);
+
+	// Build a script from the variadic arguments
+	Common::MemoryWriteStreamDynamic writeStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	writeStream.writeUint16BE((uint16)commandCount);
+
+	for (uint i = 0; i < commandCount; i++) {
+		uint16 command = va_arg(args, int);
+		writeStream.writeUint16BE(command);
+
+		if (command == kRivenCommandSwitch) {
+			// The switch command has a different format that is not implemented
+			error("Cannot create a Switch command from data");
+		}
+
+		uint16 argumentCount = va_arg(args, int);
+		writeStream.writeUint16BE(argumentCount);
+
+		for (uint j = 0; j < commandCount; j++) {
+			uint16 argument = va_arg(args, int);
+			writeStream.writeUint16BE(argument);
 		}
 	}
 
-	return commandSize;
+	va_end(args);
+
+	Common::MemoryReadStream readStream = Common::MemoryReadStream(writeStream.getData(), writeStream.size());
+	return readScript(&readStream);
 }
 
-uint32 RivenScript::calculateScriptSize(Common::SeekableReadStream* script) {
-	uint32 oldPos = script->pos();
-	uint16 commandCount = script->readUint16BE();
-	uint16 scriptSize = 2; // 2 for command count
+RivenScriptPtr RivenScriptManager::readScriptFromData(uint16 *data, uint16 size) {
+	// Script data is expected to be in big endian
+	for (uint i = 0; i < size; i++) {
+		data[i] = TO_BE_16(data[i]);
+	}
 
-	for (uint16 i = 0; i < commandCount; i++)
-		scriptSize += calculateCommandSize(script);
-
-	script->seek(oldPos);
-	return scriptSize;
+	Common::MemoryReadStream patchStream((const byte *)(data), size * sizeof(uint16));
+	return _vm->_scriptMan->readScript(&patchStream);
 }
 
-#define OPCODE(x) { &RivenScript::x, #x }
+RivenScriptPtr RivenScriptManager::createScriptWithCommand(RivenCommand *command) {
+	assert(command);
 
-void RivenScript::setupOpcodes() {
+	RivenScriptPtr script = RivenScriptPtr(new RivenScript());
+	script->addCommand(RivenCommandPtr(command));
+	return script;
+}
+
+bool RivenScriptManager::runningQueuedScripts() const {
+	return _runningQueuedScripts;
+}
+
+bool RivenScriptManager::stoppingAllScripts() const {
+	return _stoppingAllScripts;
+}
+
+RivenScript::RivenScript() {
+}
+
+RivenScript::~RivenScript() {
+}
+
+void RivenScript::dumpScript(byte tabs) {
+	for (uint16 i = 0; i < _commands.size(); i++) {
+		_commands[i]->dump(tabs);
+	}
+}
+
+void RivenScript::run(RivenScriptManager *scriptManager) {
+	for (uint i = 0; i < _commands.size(); i++) {
+		if (scriptManager->stoppingAllScripts()) {
+			return;
+		}
+
+		_commands[i]->execute();
+	}
+}
+
+void RivenScript::addCommand(RivenCommandPtr command) {
+	_commands.push_back(command);
+}
+
+bool RivenScript::empty() const {
+	return _commands.empty();
+}
+
+RivenScript &RivenScript::operator+=(const RivenScript &other) {
+	_commands.push_back(other._commands);
+	return *this;
+}
+
+const char *RivenScript::getTypeName(uint16 type) {
+	static const char *names[] = {
+		"MouseDown",
+		"MouseDrag",
+		"MouseUp",
+		"MouseEnter",
+		"MouseInside",
+		"MouseLeave",
+		"CardLoad",
+		"CardLeave",
+		"CardUnknown",
+		"CardEnter",
+		"CardUpdate"
+	};
+
+	assert(type < ARRAYSIZE(names));
+	return names[type];
+}
+
+void RivenScript::applyCardPatches(MohawkEngine_Riven *vm, uint32 cardGlobalId, uint16 scriptType, uint16 hotspotId) {
+	bool shouldApplyPatches = false;
+
+	// On Prison Island when pressing the dome viewer switch to close the dome,
+	// the game schedules an ambient sound change using kRivenCommandStoreMovieOpcode
+	// but does not play the associated video in a blocking way. The stored opcode
+	// is not immediately used, stays in memory and may be triggered by some
+	// other action. (Bug #9958)
+	// We replace kRivenCommandStoreMovieOpcode by kRivenCommandActivateSLST
+	// to make the ambient sound change happen immediately.
+	//
+	// Script before patch:
+	// playMovieBlocking(3); // Dome closing
+	// playMovie(4);         // Dome spinning up
+	// activatePLST(2);      // Dome closed
+	// playMovieBlocking(4); // Dome spinning up
+	// storeMovieOpcode(1, 0, 0, 40, 2); // Schedule ambient sound change to "dome spinning"
+	//                                      after movie 1 finishes blocking playback
+	// playMovie(1);         // Dome spinning
+	//
+	// Script after patch:
+	// playMovieBlocking(3); // Dome closing
+	// playMovie(4);         // Dome spinning up
+	// activatePLST(2);      // Dome closed
+	// playMovieBlocking(4); // Dome spinning up
+	// activateSLST(2);      // Ambient sound change to "dome spinning"
+	// playMovie(1);         // Dome spinning
+	if (cardGlobalId == 0x1AC1 && scriptType == kCardEnterScript) {
+		shouldApplyPatches = true;
+		for (uint i = 0; i < _commands.size(); i++) {
+			if (_commands[i]->getType() == kRivenCommandStoreMovieOpcode) {
+				RivenSimpleCommand::ArgumentArray arguments;
+				arguments.push_back(2);
+				_commands[i] = RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandActivateSLST, arguments));
+				debugC(kRivenDebugPatches, "Applied immediate ambient sound patch to card %x", cardGlobalId);
+				break;
+			}
+		}
+	}
+
+	// On Jungle Island when entering the submarine from the dock beside the main walkway,
+	// the sound of the hatch closing does not play (Bug #9972).
+	// This happens only in the CD version of the game.
+	//
+	// Script before patch:
+	// transition(16);
+	// switchCard(534);
+	//
+	// Script after patch:
+	// transition(16);
+	// switchCard(534);
+	// playSound(112, 256, 0);
+	if (cardGlobalId == 0x2E900 && scriptType == kMouseDownScript && hotspotId == 3
+			&& !(vm->getFeatures() & GF_DVD)) {
+		shouldApplyPatches = true;
+		RivenSimpleCommand::ArgumentArray arguments;
+		arguments.push_back(112);
+		arguments.push_back(256);
+		arguments.push_back(0);
+		_commands.push_back(RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandPlaySound, arguments)));
+		debugC(kRivenDebugPatches, "Applied missing closing sound patch to card %x", cardGlobalId);
+	}
+
+	// Second part of the patch to fix the invalid card change when entering Gehn's office
+	// The first part is in the card patches.
+	if (cardGlobalId == 0x2E76 && scriptType == kCardUpdateScript && !(vm->getFeatures() & GF_DVD)) {
+		shouldApplyPatches = true;
+
+		for (uint i = 0; i < _commands.size(); i++) {
+			int transitionIndex = -1;
+			if (_commands[i]->getType() == kRivenCommandTransition) {
+				transitionIndex = i;
+			}
+			if (transitionIndex >= 0) {
+				_commands.remove_at(transitionIndex + 1);
+				_commands.remove_at(transitionIndex);
+
+				RivenSimpleCommand::ArgumentArray arguments;
+				arguments.push_back(6);
+				_commands.push_back(RivenCommandPtr(new RivenSimpleCommand(vm, kRivenCommandActivatePLST, arguments)));
+			}
+		}
+
+		debugC(kRivenDebugPatches, "Applied invalid card change during screen update (2/2) to card %x", cardGlobalId);
+	}
+
+	if (shouldApplyPatches) {
+		for (uint i = 0; i < _commands.size(); i++) {
+			_commands[i]->applyCardPatches(cardGlobalId, scriptType, hotspotId);
+		}
+	}
+}
+
+RivenScriptPtr &operator+=(RivenScriptPtr &lhs, const RivenScriptPtr &rhs) {
+	if (rhs) {
+		*lhs += *rhs;
+	}
+	return lhs;
+}
+
+RivenCommand::RivenCommand(MohawkEngine_Riven *vm) :
+		_vm(vm) {
+
+}
+
+RivenCommand::~RivenCommand() {
+
+}
+
+RivenSimpleCommand::RivenSimpleCommand(MohawkEngine_Riven *vm, RivenCommandType type, const ArgumentArray &arguments) :
+		RivenCommand(vm),
+		_type(type),
+		_arguments(arguments) {
+	setupOpcodes();
+}
+
+RivenSimpleCommand::~RivenSimpleCommand() {
+}
+
+RivenSimpleCommand *RivenSimpleCommand::createFromStream(MohawkEngine_Riven *vm, RivenCommandType type, Common::ReadStream *stream) {
+	uint16 argc = stream->readUint16BE();
+
+	Common::Array<uint16> arguments;
+	arguments.resize(argc);
+
+	for (uint16 i = 0; i < argc; i++) {
+		arguments[i] = stream->readUint16BE();
+	}
+
+	return new RivenSimpleCommand(vm, type, arguments);
+}
+
+#define OPCODE(x) { &RivenSimpleCommand::x, #x }
+
+void RivenSimpleCommand::setupOpcodes() {
 	static const RivenOpcode riven_opcodes[] = {
 		// 0x00 (0 decimal)
 		OPCODE(empty),
@@ -100,7 +406,7 @@ void RivenScript::setupOpcodes() {
 		OPCODE(empty),						// Complex animation (not used)
 		OPCODE(setVariable),
 		// 0x08 (8 decimal)
-		OPCODE(mohawkSwitch),
+		OPCODE(empty),                      // Not a SimpleCommand
 		OPCODE(enableHotspot),
 		OPCODE(disableHotspot),
 		OPCODE(empty),						// Empty
@@ -115,15 +421,15 @@ void RivenScript::setupOpcodes() {
 		OPCODE(transition),
 		OPCODE(refreshCard),
 		// 0x14 (20 decimal)
-		OPCODE(disableScreenUpdate),
-		OPCODE(enableScreenUpdate),
+		OPCODE(beginScreenUpdate),
+		OPCODE(applyScreenUpdate),
 		OPCODE(empty),						// Empty
 		OPCODE(empty),						// Empty
 		// 0x18 (24 decimal)
 		OPCODE(incrementVariable),
 		OPCODE(empty),						// Empty
 		OPCODE(empty),						// Empty
-		OPCODE(changeStack),
+		OPCODE(empty),                      // Not a SimpleCommand
 		// 0x1C (28 decimal)
 		OPCODE(disableMovie),
 		OPCODE(disableAllMovies),
@@ -154,492 +460,270 @@ void RivenScript::setupOpcodes() {
 	_opcodes = riven_opcodes;
 }
 
-static void printTabs(byte tabs) {
-	for (byte i = 0; i < tabs; i++)
-		debugN("\t");
-}
-
-void RivenScript::dumpScript(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) {
-	if (_stream->pos() != 0)
-		_stream->seek(0);
-
-	printTabs(tabs); debugN("Stream Type %d:\n", _scriptType);
-	dumpCommands(varNames, xNames, tabs + 1);
-}
-
-void RivenScript::dumpCommands(const Common::StringArray &varNames, const Common::StringArray &xNames, byte tabs) {
-	uint16 commandCount = _stream->readUint16BE();
-
-	for (uint16 i = 0; i < commandCount; i++) {
-		uint16 command = _stream->readUint16BE();
-
-		if (command == 8) { // "Switch" Statement
-			if (_stream->readUint16BE() != 2)
-				warning ("if-then-else unknown value is not 2");
-			uint16 var = _stream->readUint16BE();
-			printTabs(tabs); debugN("switch (%s) {\n", varNames[var].c_str());
-			uint16 logicBlockCount = _stream->readUint16BE();
-			for (uint16 j = 0; j < logicBlockCount; j++) {
-				uint16 varCheck = _stream->readUint16BE();
-				printTabs(tabs + 1);
-				if (varCheck == 0xFFFF)
-					debugN("default:\n");
-				else
-					debugN("case %d:\n", varCheck);
-				dumpCommands(varNames, xNames, tabs + 2);
-				printTabs(tabs + 2); debugN("break;\n");
-			}
-			printTabs(tabs); debugN("}\n");
-		} else if (command == 7) { // Use the variable name
-			_stream->readUint16BE(); // Skip the opcode var count
-			printTabs(tabs);
-			uint16 var = _stream->readUint16BE();
-			debugN("%s = %d;\n", varNames[var].c_str(), _stream->readUint16BE());
-		} else if (command == 17) { // Use the external command name
-			_stream->readUint16BE(); // Skip the opcode var count
-			printTabs(tabs);
-			debugN("%s(", xNames[_stream->readUint16BE()].c_str());
-			uint16 varCount = _stream->readUint16BE();
-			for (uint16 j = 0; j < varCount; j++) {
-				debugN("%d", _stream->readUint16BE());
-				if (j != varCount - 1)
-					debugN(", ");
-			}
-			debugN(");\n");
-		} else if (command == 24) { // Use the variable name
-			_stream->readUint16BE(); // Skip the opcode var count
-			printTabs(tabs);
-			uint16 var = _stream->readUint16BE();
-			debugN("%s += %d;\n", varNames[var].c_str(), _stream->readUint16BE());
-		} else {
-			printTabs(tabs);
-			uint16 varCount = _stream->readUint16BE();
-			debugN("%s(", _opcodes[command].desc);
-			for (uint16 j = 0; j < varCount; j++) {
-				debugN("%d", _stream->readUint16BE());
-				if (j != varCount - 1)
-					debugN(", ");
-			}
-			debugN(");\n");
-		}
-	}
-}
-
-void RivenScript::runScript() {
-	_isRunning = _continueRunning = true;
-
-	if (_stream->pos() != 0)
-		_stream->seek(0);
-
-	processCommands(true);
-	_isRunning = false;
-}
-
-void RivenScript::processCommands(bool runCommands) {
-	bool runBlock = true;
-
-	uint16 commandCount = _stream->readUint16BE();
-
-	for (uint16 j = 0; j < commandCount && !_vm->shouldQuit() && _stream->pos() < _stream->size() && _continueRunning; j++) {
-		uint16 command = _stream->readUint16BE();
-
-		if (command == 8) {
-			// Command 8 contains a conditional branch, similar to switch statements
-			if (_stream->readUint16BE() != 2)
-				warning("if-then-else unknown value is not 2");
-
-			uint16 var = _stream->readUint16BE();				// variable to check against
-			uint16 logicBlockCount = _stream->readUint16BE();	// number of logic blocks
-			bool anotherBlockEvaluated = false;
-
-			for (uint16 k = 0; k < logicBlockCount; k++) {
-				uint16 checkValue = _stream->readUint16BE();	// variable for this logic block
-
-				// Run the following block if the block's variable is equal to the variable to check against
-				// Don't run it if the parent block is not executed
-				// And don't run it if another block has already evaluated to true (needed for the default case)
-				runBlock = (_vm->getStackVar(var) == checkValue || checkValue == 0xffff) && runCommands && !anotherBlockEvaluated;
-				processCommands(runBlock);
-
-				if (runBlock)
-					anotherBlockEvaluated = true;
-			}
-		} else {
-			uint16 argCount = _stream->readUint16BE();
-			uint16 *argValues = new uint16[argCount];
-
-			for (uint16 k = 0; k < argCount; k++)
-				argValues[k] = _stream->readUint16BE();
-
-			if (runCommands) {
-				debug (4, "Running opcode %04x, argument count %d", command, argCount);
-				(this->*(_opcodes[command].proc)) (command, argCount, argValues);
-			}
-
-			delete[] argValues;
-		}
-	}
-}
-
 ////////////////////////////////
 // Opcodes
 ////////////////////////////////
 
 // Command 1: draw tBMP resource (tbmp_id, left, top, right, bottom, u0, u1, u2, u3)
-void RivenScript::drawBitmap(uint16 op, uint16 argc, uint16 *argv) {
-	if (argc < 5) // Copy the image to the whole screen, ignoring the rest of the parameters
-		_vm->_gfx->copyImageToScreen(argv[0], 0, 0, 608, 392);
+void RivenSimpleCommand::drawBitmap(uint16 op, const ArgumentArray &args) {
+	if (args.size() < 5) // Copy the image to the whole screen, ignoring the rest of the parameters
+		_vm->_gfx->copyImageToScreen(args[0], 0, 0, 608, 392);
 	else          // Copy the image to a certain part of the screen
-		_vm->_gfx->copyImageToScreen(argv[0], argv[1], argv[2], argv[3], argv[4]);
-
-	// Now, update the screen
-	_vm->_gfx->updateScreen();
+		_vm->_gfx->copyImageToScreen(args[0], args[1], args[2], args[3], args[4]);
 }
 
 // Command 2: go to card (card id)
-void RivenScript::switchCard(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->changeToCard(argv[0]);
-
-	// WORKAROUND: If we changed card on a mouse down event,
-	// we want to ignore the next mouse up event so we don't
-	// change card when lifting the mouse on the next card.
-	if (_scriptType == kMouseDownScript)
-		_vm->ignoreNextMouseUp();
+void RivenSimpleCommand::switchCard(uint16 op, const ArgumentArray &args) {
+	_vm->changeToCard(args[0]);
 }
 
 // Command 3: play an SLST from the script
-void RivenScript::playScriptSLST(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::playScriptSLST(uint16 op, const ArgumentArray &args) {
 	int offset = 0, j = 0;
-	uint16 soundCount = argv[offset++];
+	uint16 soundCount = args[offset++];
 
 	SLSTRecord slstRecord;
 	slstRecord.index = 0;		// not set by the scripts, so we set it to 0
 	slstRecord.soundIds.resize(soundCount);
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.soundIds[j] = argv[offset++];
-	slstRecord.fadeFlags = argv[offset++];
-	slstRecord.loop = argv[offset++];
-	slstRecord.globalVolume = argv[offset++];
-	slstRecord.u0 = argv[offset++];
-	slstRecord.suspend = argv[offset++];
+		slstRecord.soundIds[j] = args[offset++];
+	slstRecord.fadeFlags = args[offset++];
+	slstRecord.loop = args[offset++];
+	slstRecord.globalVolume = args[offset++];
+	slstRecord.u0 = args[offset++];
+	slstRecord.suspend = args[offset++];
 
 	slstRecord.volumes.resize(soundCount);
 	slstRecord.balances.resize(soundCount);
 	slstRecord.u2.resize(soundCount);
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.volumes[j] = argv[offset++];
+		slstRecord.volumes[j] = args[offset++];
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.balances[j] = argv[offset++];	// negative = left, 0 = center, positive = right
+		slstRecord.balances[j] = args[offset++];	// negative = left, 0 = center, positive = right
 
 	for (j = 0; j < soundCount; j++)
-		slstRecord.u2[j] = argv[offset++];			// Unknown
+		slstRecord.u2[j] = args[offset++];			// Unknown
 
 	// Play the requested sound list
 	_vm->_sound->playSLST(slstRecord);
 }
 
 // Command 4: play local tWAV resource (twav_id, volume, block)
-void RivenScript::playSound(uint16 op, uint16 argc, uint16 *argv) {
-	uint16 volume = argv[1];
-	bool playOnDraw = argv[2] == 1;
+void RivenSimpleCommand::playSound(uint16 op, const ArgumentArray &args) {
+	uint16 volume = args[1];
+	bool playOnDraw = args[2] == 1;
 
-	_vm->_sound->playSound(argv[0], volume, playOnDraw);
+	_vm->_sound->playSound(args[0], volume, playOnDraw);
 }
 
 // Command 7: set variable value (variable, value)
-void RivenScript::setVariable(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->getStackVar(argv[0]) = argv[1];
-}
-
-// Command 8: conditional branch
-void RivenScript::mohawkSwitch(uint16 op, uint16 argc, uint16 *argv) {
-	// dummy function, this opcode does logic checking in processCommands()
+void RivenSimpleCommand::setVariable(uint16 op, const ArgumentArray &args) {
+	_vm->getStackVar(args[0]) = args[1];
 }
 
 // Command 9: enable hotspot (blst_id)
-void RivenScript::enableHotspot(uint16 op, uint16 argc, uint16 *argv) {
-	for (uint16 i = 0; i < _vm->getHotspotCount(); i++) {
-		if (_vm->_hotspots[i].blstID == argv[0]) {
-			debug(2, "Enabling hotspot with BLST ID %d", argv[0]);
-			_vm->_hotspots[i].enabled = true;
-		}
+void RivenSimpleCommand::enableHotspot(uint16 op, const ArgumentArray &args) {
+	RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(args[0]);
+	if (hotspot) {
+		hotspot->enable(true);
 	}
-
-	// Recheck our current hotspot because it may have now changed
-	_vm->updateCurrentHotspot();
 }
 
 // Command 10: disable hotspot (blst_id)
-void RivenScript::disableHotspot(uint16 op, uint16 argc, uint16 *argv) {
-	for (uint16 i = 0; i < _vm->getHotspotCount(); i++) {
-		if (_vm->_hotspots[i].blstID == argv[0]) {
-			debug(2, "Disabling hotspot with BLST ID %d", argv[0]);
-			_vm->_hotspots[i].enabled = false;
-		}
+void RivenSimpleCommand::disableHotspot(uint16 op, const ArgumentArray &args) {
+	RivenHotspot *hotspot = _vm->getCard()->getHotspotByBlstId(args[0]);
+	if (hotspot) {
+		hotspot->enable(false);
 	}
-
-	// Recheck our current hotspot because it may have now changed
-	_vm->updateCurrentHotspot();
 }
 
 // Command 12: stop sounds (flags)
-void RivenScript::stopSound(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::stopSound(uint16 op, const ArgumentArray &args) {
 	// WORKAROUND: The Play Riven/Visit Riven/Start New Game buttons
 	// in the main menu call this function to stop ambient sounds
 	// after the change stack call to Temple Island. However, this
 	// would cause all ambient sounds not to play. An alternative
 	// fix would be to stop all scripts on a stack change, but this
 	// does fine for now.
-	if (_vm->getCurStack() == kStackTspit && (_vm->getCurCardRMAP() == 0x6e9a || _vm->getCurCardRMAP() == 0xfeeb))
+	if (_vm->getStack()->getId() == kStackTspit && (_vm->getStack()->getCurrentCardGlobalId() == 0x6e9a ||
+			_vm->getStack()->getCurrentCardGlobalId() == 0xfeeb))
 		return;
 
 	// The argument is a bitflag for the setting.
 	// bit 0 is normal sound stopping
 	// bit 1 is ambient sound stopping
 	// Having no flags set means clear all
-	if (argv[0] & 2 || argv[0] == 0)
+	if (args[0] & 2 || args[0] == 0)
 		_vm->_sound->stopAllSLST();
 
-	if (argv[0] & 1 || argv[0] == 0)
+	if (args[0] & 1 || args[0] == 0)
 		_vm->_sound->stopSound();
 }
 
 // Command 13: set mouse cursor (cursor_id)
-void RivenScript::changeCursor(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Change to cursor %d", argv[0]);
-	_vm->_cursor->setCursor(argv[0]);
-	_vm->_system->updateScreen();
+void RivenSimpleCommand::changeCursor(uint16 op, const ArgumentArray &args) {
+	_vm->_cursor->setCursor(args[0]);
 }
 
 // Command 14: pause script execution (delay in ms, u1)
-void RivenScript::delay(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Delay %dms", argv[0]);
-	if (argv[0] > 0)
-		_vm->delayAndUpdate(argv[0]);
+void RivenSimpleCommand::delay(uint16 op, const ArgumentArray &args) {
+	if (args[0] > 0)
+		_vm->delay(args[0]);
 }
 
 // Command 17: call external command
-void RivenScript::runExternalCommand(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_externalScriptHandler->runCommand(argc, argv);
+void RivenSimpleCommand::runExternalCommand(uint16 op, const ArgumentArray &args) {
+	uint16 commandNameid = args[0];
+	uint16 argumentCount = args[1];
+
+	Common::Array<uint16> commandArgs(argumentCount ? &args[2] : nullptr, argumentCount);
+
+	_vm->getStack()->runCommand(commandNameid, commandArgs);
 }
 
 // Command 18: transition
-// Note that this opcode has 1 or 5 parameters, depending on argc
+// Note that this opcode has 1 or 5 parameters, depending on args.size()
 // Parameter 0: transition type
 // Parameters 1-4: transition rectangle
-void RivenScript::transition(uint16 op, uint16 argc, uint16 *argv) {
-	if (argc == 1)
-		_vm->_gfx->scheduleTransition(argv[0]);
+void RivenSimpleCommand::transition(uint16 op, const ArgumentArray &args) {
+	if (args.size() == 1)
+		_vm->_gfx->scheduleTransition((RivenTransition) args[0]);
 	else
-		_vm->_gfx->scheduleTransition(argv[0], Common::Rect(argv[1], argv[2], argv[3], argv[4]));
+		_vm->_gfx->scheduleTransition((RivenTransition) args[0], Common::Rect(args[1], args[2], args[3], args[4]));
 }
 
 // Command 19: reload card
-void RivenScript::refreshCard(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Refreshing card");
-	_vm->refreshCard();
+void RivenSimpleCommand::refreshCard(uint16 op, const ArgumentArray &args) {
+	_vm->getCard()->enter(false);
 }
 
-// Command 20: disable screen update
-void RivenScript::disableScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Screen update disabled");
-	_vm->_gfx->_updatesEnabled = false;
+// Command 20: begin screen update
+void RivenSimpleCommand::beginScreenUpdate(uint16 op, const ArgumentArray &args) {
+	_vm->_gfx->beginScreenUpdate();
 }
 
-// Command 21: enable screen update
-void RivenScript::enableScreenUpdate(uint16 op, uint16 argc, uint16 *argv) {
-	debug(2, "Screen update enabled");
-	_vm->_gfx->_updatesEnabled = true;
-	_vm->_gfx->updateScreen();
+// Command 21: apply screen update
+void RivenSimpleCommand::applyScreenUpdate(uint16 op, const ArgumentArray &args) {
+	_vm->_gfx->applyScreenUpdate();
 }
 
 // Command 24: increment variable (variable, value)
-void RivenScript::incrementVariable(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->getStackVar(argv[0]) += argv[1];
-}
-
-// Command 27: go to stack (stack name, code high, code low)
-void RivenScript::changeStack(uint16 op, uint16 argc, uint16 *argv) {
-	Common::String stackName = _vm->getName(StackNames, argv[0]);
-	int8 index = -1;
-
-	for (byte i = 0; i < 8; i++)
-		if (_vm->getStackName(i).equalsIgnoreCase(stackName)) {
-			index = i;
-			break;
-		}
-
-	if (index == -1)
-		error ("'%s' is not a stack name!", stackName.c_str());
-
-	_vm->changeToStack(index);
-	uint32 rmapCode = (argv[1] << 16) + argv[2];
-	uint16 cardID = _vm->matchRMAPToCard(rmapCode);
-	_vm->changeToCard(cardID);
+void RivenSimpleCommand::incrementVariable(uint16 op, const ArgumentArray &args) {
+	_vm->getStackVar(args[0]) += args[1];
 }
 
 // Command 28: disable a movie
-void RivenScript::disableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	VideoHandle handle = _vm->_video->findVideoHandleRiven(argv[0]);
-	if (handle)
-		handle->setEnabled(false);
+void RivenSimpleCommand::disableMovie(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
+	if (video)
+		video->disable();
 }
 
 // Command 29: disable all movies
-void RivenScript::disableAllMovies(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::disableAllMovies(uint16 op, const ArgumentArray &args) {
 	_vm->_video->disableAllMovies();
 }
 
 // Command 31: enable a movie
-void RivenScript::enableMovie(uint16 op, uint16 argc, uint16 *argv) {
-	VideoHandle handle = _vm->_video->findVideoHandleRiven(argv[0]);
-	if (handle)
-		handle->setEnabled(true);
+void RivenSimpleCommand::enableMovie(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
+	video->enable();
 }
 
 // Command 32: play foreground movie - blocking (movie_id)
-void RivenScript::playMovieBlocking(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_cursor->hideCursor();
-	_vm->_video->playMovieBlockingRiven(argv[0]);
-	_vm->_cursor->showCursor();
+void RivenSimpleCommand::playMovieBlocking(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
+	video->setLooping(false);
+	video->enable();
+	video->playBlocking();
 }
 
 // Command 33: play background movie - nonblocking (movie_id)
-void RivenScript::playMovie(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->playMovieRiven(argv[0]);
+void RivenSimpleCommand::playMovie(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
+	video->enable();
+	video->play();
 }
 
 // Command 34: stop a movie
-void RivenScript::stopMovie(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->stopMovieRiven(argv[0]);
+void RivenSimpleCommand::stopMovie(uint16 op, const ArgumentArray &args) {
+	RivenVideo *video = _vm->_video->openSlot(args[0]);
+	video->stop();
 }
 
 // Command 36: unknown
-void RivenScript::unk_36(uint16 op, uint16 argc, uint16 *argv) {
-	debug(0, "unk_36: Ignoring");
+void RivenSimpleCommand::unk_36(uint16 op, const ArgumentArray &args) {
 }
 
 // Command 37: fade ambient sounds
-void RivenScript::fadeAmbientSounds(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::fadeAmbientSounds(uint16 op, const ArgumentArray &args) {
 	// Similar to stopSound(), but does fading
 	_vm->_sound->stopAllSLST(true);
 }
 
 // Command 38: Store an opcode for use when playing a movie (movie id, time high, time low, opcode, arguments...)
-void RivenScript::storeMovieOpcode(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::storeMovieOpcode(uint16 op, const ArgumentArray &args) {
 	// This opcode is used to delay an opcode's usage based on the elapsed
 	// time of a specified movie. However, every use in the game is for
 	// delaying an activateSLST opcode.
 
-	uint32 scriptSize = 6 + (argc - 4) * 2;
+	uint32 delayTime = (args[1] << 16) + args[2];
 
-	// Create our dummy script
-	byte *scriptBuf = (byte *)malloc(scriptSize);
-	WRITE_BE_UINT16(scriptBuf, 1);            // One command
-	WRITE_BE_UINT16(scriptBuf + 2, argv[3]);  // One opcode
-	WRITE_BE_UINT16(scriptBuf + 4, argc - 4); // argc - 4 args
+	// Store the script
+	RivenScriptManager::StoredMovieOpcode storedOp;
+	storedOp.script = _vm->_scriptMan->createScriptFromData(1, args[3], 1, args[4]);
+	storedOp.time = delayTime;
+	storedOp.slot = args[0];
 
-	for (int i = 0; i < argc - 4; i++)
-		WRITE_BE_UINT16(scriptBuf + 6 + (i * 2), argv[i + 4]);
-
-	// Build a script out of 'er
-	Common::SeekableReadStream *scriptStream = new Common::MemoryReadStream(scriptBuf, scriptSize, DisposeAfterUse::YES);
-	RivenScript *script = new RivenScript(_vm, scriptStream, kStoredOpcodeScript, getParentStack(), getParentCard());
-
-	uint32 delayTime = (argv[1] << 16) + argv[2];
-
-	if (delayTime > 0) {
-		// Store the script
-		RivenScriptManager::StoredMovieOpcode storedOp;
-		storedOp.script = script;
-		storedOp.time = delayTime;
-		storedOp.id = argv[0];
-
-		// Store the opcode for later
-		_vm->_scriptMan->setStoredMovieOpcode(storedOp);
-	} else {
-		// Run immediately if we have no delay
-		script->runScript();
-		delete script;
-	}
+	// Store the opcode for later
+	_vm->_scriptMan->setStoredMovieOpcode(storedOp);
 }
 
 // Command 39: activate PLST record (card picture lists)
-void RivenScript::activatePLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_gfx->drawPLST(argv[0]);
+void RivenSimpleCommand::activatePLST(uint16 op, const ArgumentArray &args) {
+	_vm->_activatedPLST = true;
 
-	// An update is automatically sent here as long as it's not a load or update script and updates are enabled.
-	if (_scriptType != kCardLoadScript && _scriptType != kCardUpdateScript)
-		_vm->_gfx->updateScreen();
+	RivenCard::Picture picture = _vm->getCard()->getPicture(args[0]);
+	_vm->_gfx->copyImageToScreen(picture.id, picture.rect.left, picture.rect.top, picture.rect.right, picture.rect.bottom);
 }
 
 // Command 40: activate SLST record (card ambient sound lists)
-void RivenScript::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
-	// WORKAROUND: Disable the SLST that is played during Riven's intro.
-	// Riven X does this too (spoke this over with Jeff)
-	if (_vm->getCurStack() == kStackTspit && _vm->getCurCardRMAP() == 0x6e9a && argv[0] == 2)
-		return;
-
-	_vm->_sound->playSLST(argv[0], _vm->getCurCard());
+void RivenSimpleCommand::activateSLST(uint16 op, const ArgumentArray &args) {
 	_vm->_activatedSLST = true;
+
+	SLSTRecord slstRecord = _vm->getCard()->getSound(args[0]);
+	_vm->_sound->playSLST(slstRecord);
 }
 
 // Command 41: activate MLST record and play
-void RivenScript::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(argv[0], _vm->getCurCard());
-	_vm->_video->playMovieRiven(argv[0]);
+void RivenSimpleCommand::activateMLSTAndPlay(uint16 op, const ArgumentArray &args) {
+	MLSTRecord mlstRecord = _vm->getCard()->getMovie(args[0]);
+	activateMLST(mlstRecord);
+
+	RivenVideo *video = _vm->_video->openSlot(mlstRecord.playbackSlot);
+	video->enable();
+	video->play();
 }
 
 // Command 43: activate BLST record (card hotspot enabling lists)
-void RivenScript::activateBLST(uint16 op, uint16 argc, uint16 *argv) {
-	Common::SeekableReadStream* blst = _vm->getResource(ID_BLST, _vm->getCurCard());
-	uint16 recordCount = blst->readUint16BE();
-
-	for (uint16 i = 0; i < recordCount; i++) {
-		uint16 index = blst->readUint16BE();	// record index
-		uint16 enabled = blst->readUint16BE();
-		uint16 hotspotID = blst->readUint16BE();
-
-		if (argv[0] == index)
-			for (uint16 j = 0; j < _vm->getHotspotCount(); j++)
-				if (_vm->_hotspots[j].blstID == hotspotID)
-					_vm->_hotspots[j].enabled = (enabled == 1);
-	}
-
-	delete blst;
-
-	// Recheck our current hotspot because it may have now changed
-	_vm->updateCurrentHotspot();
+void RivenSimpleCommand::activateBLST(uint16 op, const ArgumentArray &args) {
+	_vm->getCard()->activateHotspotEnableRecord(args[0]);
 }
 
 // Command 44: activate FLST record (information on which SFXE resource this card should use)
-void RivenScript::activateFLST(uint16 op, uint16 argc, uint16 *argv) {
-	Common::SeekableReadStream* flst = _vm->getResource(ID_FLST, _vm->getCurCard());
-	uint16 recordCount = flst->readUint16BE();
-
-	for (uint16 i = 0; i < recordCount; i++) {
-		uint16 index = flst->readUint16BE();
-		uint16 sfxeID = flst->readUint16BE();
-
-		if (flst->readUint16BE() != 0)
-			warning("FLST u0 non-zero");
-
-		if (index == argv[0]) {
-			_vm->_gfx->scheduleWaterEffect(sfxeID);
-			break;
-		}
-	}
-
-	delete flst;
+void RivenSimpleCommand::activateFLST(uint16 op, const ArgumentArray &args) {
+	_vm->getCard()->activateWaterEffect(args[0]);
 }
 
 // Command 45: do zip mode
-void RivenScript::zipMode(uint16 op, uint16 argc, uint16 *argv) {
+void RivenSimpleCommand::zipMode(uint16 op, const ArgumentArray &args) {
+	assert(_vm->getCard() && _vm->getCard()->getCurHotspot());
+
 	// Check the ZIPS records to see if we have a match to the hotspot name
-	Common::String hotspotName = _vm->getHotspotName(_vm->getCurHotspot());
+	Common::String hotspotName = _vm->getCard()->getCurHotspot()->getName();
 
 	for (uint16 i = 0; i < _vm->_zipModeData.size(); i++)
 		if (_vm->_zipModeData[i].name == hotspotName) {
@@ -649,81 +733,224 @@ void RivenScript::zipMode(uint16 op, uint16 argc, uint16 *argv) {
 }
 
 // Command 46: activate MLST record (movie lists)
-void RivenScript::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->activateMLST(argv[0], _vm->getCurCard());
+void RivenSimpleCommand::activateMLST(uint16 op, const ArgumentArray &args) {
+	MLSTRecord mlstRecord = _vm->getCard()->getMovie(args[0]);
+	activateMLST(mlstRecord);
 }
 
-RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) {
-	_vm = vm;
-	_storedMovieOpcode.script = 0;
-	_storedMovieOpcode.time = 0;
-	_storedMovieOpcode.id = 0;
+void RivenSimpleCommand::activateMLST(const MLSTRecord &mlstRecord) const {
+	RivenVideo *ptr = _vm->_video->openSlot(mlstRecord.playbackSlot);
+	ptr->load(mlstRecord.movieID);
+	ptr->moveTo(mlstRecord.left, mlstRecord.top);
+	ptr->setLooping(mlstRecord.loop != 0);
+	ptr->setVolume(mlstRecord.volume);
 }
 
-RivenScriptManager::~RivenScriptManager() {
-	for (uint32 i = 0; i < _currentScripts.size(); i++)
-		delete _currentScripts[i];
+Common::String RivenSimpleCommand::describe() const {
+	Common::String desc;
 
-	clearStoredMovieOpcode();
-}
-
-RivenScriptList RivenScriptManager::readScripts(Common::SeekableReadStream *stream, bool garbageCollect) {
-	if (garbageCollect)
-		unloadUnusedScripts(); // Garbage collect!
-
-	RivenScriptList scriptList;
-
-	uint16 scriptCount = stream->readUint16BE();
-	for (uint16 i = 0; i < scriptCount; i++) {
-		uint16 scriptType = stream->readUint16BE();
-		uint32 scriptSize = RivenScript::calculateScriptSize(stream);
-		RivenScript *script = new RivenScript(_vm, stream->readStream(scriptSize), scriptType, _vm->getCurStack(), _vm->getCurCard());
-		scriptList.push_back(script);
-
-		// Only add it to the scripts that we will free later if it is requested.
-		// (ie. we don't want to store scripts from the dumpScript console command)
-		if (garbageCollect)
-			_currentScripts.push_back(script);
+	if (_type == kRivenCommandSwitch) { // Use the variable name
+		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
+		desc = Common::String::format("%s = %d", varName.c_str(), _arguments[1]);
+	} else if (_type == kRivenCommandRunExternal) { // Use the external command name
+		Common::String externalCommandName = _vm->getStack()->getName(kExternalCommandNames, _arguments[0]);
+		desc = Common::String::format("%s(", externalCommandName.c_str());
+		uint16 varCount = _arguments[1];
+		for (uint16 j = 0; j < varCount; j++) {
+			desc += Common::String::format("%d", _arguments[2 + j]);
+			if (j != varCount - 1)
+				desc += ", ";
+		}
+		desc += ")";
+	} else if (_type == kRivenCommandIncrementVariable) { // Use the variable name
+		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
+		desc = Common::String::format("%s += %d", varName.c_str(), _arguments[1]);
+	} else if (_type == kRivenCommandSetVariable) { // Use the variable name
+		Common::String varName = _vm->getStack()->getName(kVariableNames, _arguments[0]);
+		desc = Common::String::format("%s = %d", varName.c_str(), _arguments[1]);
+	} else {
+		desc = Common::String::format("%s(", _opcodes[_type].desc);
+		for (uint16 j = 0; j < _arguments.size(); j++) {
+			desc += Common::String::format("%d", _arguments[j]);
+			if (j != _arguments.size() - 1)
+				desc += ", ";
+		}
+		desc += ")";
 	}
 
-	return scriptList;
+	return desc;
 }
 
-void RivenScriptManager::stopAllScripts() {
-	for (uint32 i = 0; i < _currentScripts.size(); i++)
-		_currentScripts[i]->stopRunning();
+void RivenSimpleCommand::dump(byte tabs) {
+	printTabs(tabs);
+	debugN("%s;\n", describe().c_str());
 }
 
-void RivenScriptManager::unloadUnusedScripts() {
-	// Free any scripts that aren't part of the current card and aren't running
-	for (uint32 i = 0; i < _currentScripts.size(); i++) {
-		if ((_vm->getCurStack() != _currentScripts[i]->getParentStack() || _vm->getCurCard() != _currentScripts[i]->getParentCard()) && !_currentScripts[i]->isRunning()) {
-			delete _currentScripts[i];
-			_currentScripts.remove_at(i);
-			i--;
+void RivenSimpleCommand::execute() {
+	if (DebugMan.isDebugChannelEnabled(kRivenDebugScript)) {
+		debugC(kRivenDebugScript, "Running opcode: %s", describe().c_str());
+	}
+
+	(this->*(_opcodes[_type].proc)) (_type, _arguments);
+}
+
+RivenCommandType RivenSimpleCommand::getType() const {
+	return _type;
+}
+
+RivenSwitchCommand::RivenSwitchCommand(MohawkEngine_Riven *vm) :
+		RivenCommand(vm),
+		_variableId(0) {
+
+}
+
+RivenSwitchCommand::~RivenSwitchCommand() {
+
+}
+
+RivenSwitchCommand *RivenSwitchCommand::createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream) {
+	RivenSwitchCommand *command = new RivenSwitchCommand(vm);
+
+	if (stream->readUint16BE() != 2) {
+		// This value is not used in the original engine
+		warning("if-then-else unknown value is not 2");
+	}
+
+	// variable to check against
+	command->_variableId = stream->readUint16BE();
+
+	// number of logic blocks
+	uint16 logicBlockCount = stream->readUint16BE();
+	command->_branches.resize(logicBlockCount);
+
+	for (uint16 i = 0; i < logicBlockCount; i++) {
+		Branch &branch = command->_branches[i];
+
+		// Value for this logic block
+		branch.value = stream->readUint16BE();
+		branch.script = vm->_scriptMan->readScript(stream);
+	}
+
+	return command;
+}
+
+void RivenSwitchCommand::dump(byte tabs) {
+	Common::String varName = _vm->getStack()->getName(kVariableNames, _variableId);
+	printTabs(tabs); debugN("switch (%s) {\n", varName.c_str());
+	for (uint16 j = 0; j < _branches.size(); j++) {
+		printTabs(tabs + 1);
+		if (_branches[j].value == 0xFFFF)
+			debugN("default:\n");
+		else
+			debugN("case %d:\n", _branches[j].value);
+		_branches[j].script->dumpScript(tabs + 2);
+		printTabs(tabs + 2); debugN("break;\n");
+	}
+	printTabs(tabs); debugN("}\n");
+}
+
+void RivenSwitchCommand::execute() {
+	if (DebugMan.isDebugChannelEnabled(kRivenDebugScript)) {
+		Common::String varName = _vm->getStack()->getName(kVariableNames, _variableId);
+		debugC(kRivenDebugScript, "Running opcode: switch(%s)", varName.c_str());
+	}
+
+	// Get the switch variable value
+	uint32 value = _vm->getStackVar(_variableId);
+
+	// Look for a case matching the value
+	for (uint i = 0; i < _branches.size(); i++) {
+		if  (_branches[i].value == value) {
+			_vm->_scriptMan->runScript(_branches[i].script, false);
+			return;
+		}
+	}
+
+	// Look for the default case if any
+	for (uint i = 0; i < _branches.size(); i++) {
+		if  (_branches[i].value == 0Xffff) {
+			_vm->_scriptMan->runScript(_branches[i].script, false);
+			return;
 		}
 	}
 }
 
-void RivenScriptManager::setStoredMovieOpcode(const StoredMovieOpcode &op) {
-	clearStoredMovieOpcode();
-	_storedMovieOpcode.script = op.script;
-	_storedMovieOpcode.id = op.id;
-	_storedMovieOpcode.time = op.time;
+RivenCommandType RivenSwitchCommand::getType() const {
+	return kRivenCommandSwitch;
 }
 
-void RivenScriptManager::runStoredMovieOpcode() {
-	if (_storedMovieOpcode.script) {
-		_storedMovieOpcode.script->runScript();
-		clearStoredMovieOpcode();
+void RivenSwitchCommand::applyCardPatches(uint32 globalId, int scriptType, uint16 hotspotId) {
+	for (uint i = 0; i < _branches.size(); i++) {
+		_branches[i].script->applyCardPatches(_vm, globalId, scriptType, hotspotId);
 	}
 }
 
-void RivenScriptManager::clearStoredMovieOpcode() {
-	delete _storedMovieOpcode.script;
-	_storedMovieOpcode.script = 0;
-	_storedMovieOpcode.time = 0;
-	_storedMovieOpcode.id = 0;
+RivenStackChangeCommand::RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId, bool byStackId) :
+		RivenCommand(vm),
+		_stackId(stackId),
+		_cardId(globalCardId),
+		_byStackId(byStackId) {
+
+}
+
+RivenStackChangeCommand::~RivenStackChangeCommand() {
+
+}
+
+RivenStackChangeCommand *RivenStackChangeCommand::createFromStream(MohawkEngine_Riven *vm, Common::ReadStream *stream) {
+	/* argumentsSize = */ stream->readUint16BE();
+	uint16 stackId = stream->readUint16BE();
+	uint32 globalCardId = stream->readUint32BE();
+
+	return new RivenStackChangeCommand(vm, stackId, globalCardId, false);
+}
+
+void RivenStackChangeCommand::execute() {
+	debugC(kRivenDebugScript, "Running opcode: changeStack(%d, %d)", _stackId, _cardId);
+
+	uint16 stackID;
+	if (_byStackId) {
+		stackID = _stackId;
+	} else {
+		Common::String stackName = _vm->getStack()->getName(kStackNames, _stackId);
+
+		stackID = RivenStacks::getId(stackName.c_str());
+		if (stackID == kStackUnknown) {
+			error ("'%s' is not a stack name!", stackName.c_str());
+		}
+	}
+
+	_vm->changeToStack(stackID);
+	uint16 cardID = _vm->getStack()->getCardStackId(_cardId);
+	_vm->changeToCard(cardID);
+}
+
+void RivenStackChangeCommand::dump(byte tabs) {
+	printTabs(tabs);
+	debugN("changeStack(%d, %d);\n", _stackId, _cardId);
+}
+
+RivenCommandType RivenStackChangeCommand::getType() const {
+	return kRivenCommandChangeStack;
+}
+
+RivenTimerCommand::RivenTimerCommand(MohawkEngine_Riven *vm, const Common::SharedPtr<RivenStack::TimerProc> &timerProc) :
+	RivenCommand(vm),
+	_timerProc(timerProc) {
+
+}
+
+void RivenTimerCommand::execute() {
+	(*_timerProc)();
+}
+
+void RivenTimerCommand::dump(byte tabs) {
+	printTabs(tabs);
+	debugN("doTimer();\n");
+}
+
+RivenCommandType RivenTimerCommand::getType() const {
+	return kRivenCommandTimer;
 }
 
 } // End of namespace Mohawk

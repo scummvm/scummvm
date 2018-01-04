@@ -424,8 +424,10 @@ bool SimpleFile::scanf(const char *format, ...) {
 			formatStr.deleteChar(0);
 
 			safeRead(&c, 1);
-			if (!Common::isSpace(c))
+			if (!Common::isSpace(c)) {
+				va_end(va);
 				return false;
+			}
 
 			// Skip over whitespaces
 			skipSpaces();

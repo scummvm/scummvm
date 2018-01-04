@@ -20,15 +20,18 @@
  *
  */
 
-#include "common/algorithm.h"
-#include "common/textconsole.h"
+#include "titanic/true_talk/tt_npc_script.h"
+#include "titanic/core/project_item.h"
+#include "titanic/game_manager.h"
 #include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"
-#include "titanic/true_talk/tt_npc_script.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/true_talk_manager.h"
-#include "titanic/game_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
+#include "common/algorithm.h"
+#include "common/textconsole.h"
 
 namespace Titanic {
 
@@ -115,8 +118,8 @@ void TTnpcData::resetFlags() {
 
 void TTnpcData::copyData() {
 	if (_array[20]) {
-		Common::copy_backward(&_array[16], &_array[136], &_array[24]);
-		Common::fill(&_array[20], &_array[28], 0);
+		Common::copy_backward(&_array[16], &_array[128], &_array[136]);
+		Common::fill(&_array[16], &_array[24], 0);
 	}
 }
 
@@ -279,51 +282,41 @@ bool TTnpcScript::handleWord(uint id) const {
 }
 
 int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *sentence,
-		uint val, uint tagId, uint remainder) {
+		uint tag1, uint tag2, uint remainder) {
 	if (_quotes.empty())
 		return 1;
 
-
-	int loopCounter = 0;
-	for (uint idx = 0; idx < _quotes.size() && loopCounter < 2; ++idx) {
+	for (uint idx = 3; idx < _quotes.size(); ++idx) {
 		const TThandleQuoteEntry *qe = &_quotes[idx];
 
-		if (!qe->_index) {
-			// End of list; start at beginning again
-			++loopCounter;
-			idx = 0;
-			qe = &_quotes[0];
-		}
-
-		if (qe->_index == val && (
-				(tagId == 0 && loopCounter == 2) ||
-				(qe->_tagId < MKTAG('A', 'A', 'A', 'A')) ||
-				(qe->_tagId == tagId)
-				)) {
-			uint foundTagId = qe->_tagId;
-			if (foundTagId > 0 && foundTagId < 100) {
-				if (!tagId)
-					foundTagId >>= 1;
-				if (getRandomNumber(100) < foundTagId)
+		if (qe->_tag1 == tag1 && 
+				(qe->_tag2 == tag2 || qe->_tag2 < MKTAG('A', 'A', 'A', 'A'))) {
+			uint threshold = qe->_tag2;
+			if (threshold > 0 && threshold < 100) {
+				if (!tag2)
+					threshold >>= 1;
+				if (getRandomNumber(100) < threshold)
 					return 1;
 			}
 
-			uint dialogueId = qe->_dialogueId;
+			uint dialogueId = qe->_index;
 			if (dialogueId >= _quotes._rangeStart && dialogueId <= _quotes._rangeEnd) {
 				dialogueId -= _quotes._rangeStart;
-				if (dialogueId > 3)
-					error("Invalid dialogue index in BarbotScript");
+				if (dialogueId >= _quotes.size())
+					error("Invalid dialogue index in bot script");
+				TThandleQuoteEntry &quote = _quotes[dialogueId];
 
-				const int RANDOM_LIMITS[4] = { 30, 50, 70, 60 };
-				int rangeLimit = RANDOM_LIMITS[dialogueId];
-				int dialRegion = getDialRegion(0);
-
-				if (dialRegion != 1) {
-					rangeLimit = MAX(rangeLimit - 20, 20);
+				int rangeLimit = quote._index;
+				if (isQuoteDialled()) {
+					// Barbot and Doorbot response is affected by dial region
+					int dialRegion = getDialRegion(0);
+					if (dialRegion != 1) {
+						rangeLimit = MAX((int)quote._tag1 - 20, 20);
+					}
 				}
 
-				dialogueId = (((int)remainder + 25) % 100) >= rangeLimit
-					? _quotes._tag1 : _quotes._tag2;
+				dialogueId = ((remainder + _quotes._incr) % 100) >= (uint)rangeLimit
+					? quote._tag2 : quote._tag1;
 			}
 
 			addResponse(getDialogueId(dialogueId));
@@ -333,7 +326,6 @@ int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *s
 	}
 
 	return 1;
-
 }
 
 uint TTnpcScript::getRangeValue(uint id) {
@@ -400,7 +392,135 @@ const TTscriptMapping *TTnpcScript::getMapping(int index) {
 }
 
 int TTnpcScript::doSentenceEntry(int val1, const int *srcIdP, const TTroomScript *roomScript, const TTsentence *sentence) {
-	return 0;
+	if (g_language != Common::DE_DEU || !roomScript)
+		return 0;
+
+	switch (val1) {
+	case 516:
+		return getValue(1) == 1 ? 0 : 1;
+	case 517:
+		return getValue(1) == 2 ? 0 : 1;
+	case 518:
+		return getValue(1) == 3 ? 0 : 1;
+	case 519:
+		return getValue(1) != 1 ? 0 : 1;
+	case 520:
+		return getValue(1) != 2 ? 0 : 1;
+	case 521:
+		return getValue(1) != 3 ? 0 : 1;
+
+	case 522:
+		return roomScript->_scriptId == 101 ? 0 : 1;
+	case 523:
+		return roomScript->_scriptId == 106 ? 0 : 1;
+	case 524:
+		return roomScript->_scriptId == 107 ? 0 : 1;
+	case 525:
+		return roomScript->_scriptId == 108 ? 0 : 1;
+	case 526:
+		return roomScript->_scriptId == 109 ? 0 : 1;
+	case 527:
+		return roomScript->_scriptId == 110 ? 0 : 1;
+	case 528:
+		return roomScript->_scriptId == 111 ? 0 : 1;
+	case 529:
+		return roomScript->_scriptId == 112 ? 0 : 1;
+	case 530:
+		return roomScript->_scriptId == 113 ? 0 : 1;
+	case 531:
+		return roomScript->_scriptId == 114 ? 0 : 1;
+	case 532:
+		return roomScript->_scriptId == 115 ? 0 : 1;
+	case 533:
+		return roomScript->_scriptId == 116 ? 0 : 1;
+	case 534:
+		return roomScript->_scriptId == 117 ? 0 : 1;
+	case 535:
+		return roomScript->_scriptId == 118 ? 0 : 1;
+	case 536:
+		return roomScript->_scriptId == 120 ? 0 : 1;
+	case 537:
+		return roomScript->_scriptId == 121 ? 0 : 1;
+	case 538:
+		return roomScript->_scriptId == 122 ? 0 : 1;
+	case 539:
+		return roomScript->_scriptId == 123 ? 0 : 1;
+	case 540:
+		return roomScript->_scriptId == 124 ? 0 : 1;
+	case 541:
+		return roomScript->_scriptId == 125 ? 0 : 1;
+	case 542:
+		return roomScript->_scriptId == 126 ? 0 : 1;
+	case 543:
+		return roomScript->_scriptId == 127 ? 0 : 1;
+	case 544:
+		return roomScript->_scriptId == 128 ? 0 : 1;
+	case 545:
+		return roomScript->_scriptId == 129 ? 0 : 1;
+	case 546:
+		return roomScript->_scriptId == 130 ? 0 : 1;
+	case 547:
+		return roomScript->_scriptId == 131 ? 0 : 1;
+	case 548:
+		return roomScript->_scriptId == 132 ? 0 : 1;
+
+	case 549:
+		return roomScript->_scriptId != 101 ? 0 : 1;
+	case 550:
+		return roomScript->_scriptId != 106 ? 0 : 1;
+	case 551:
+		return roomScript->_scriptId != 107 ? 0 : 1;
+	case 552:
+		return roomScript->_scriptId != 108 ? 0 : 1;
+	case 553:
+		return roomScript->_scriptId != 109 ? 0 : 1;
+	case 554:
+		return roomScript->_scriptId != 110 ? 0 : 1;
+	case 555:
+		return roomScript->_scriptId != 111 ? 0 : 1;
+	case 556:
+		return roomScript->_scriptId != 112 ? 0 : 1;
+	case 557:
+		return roomScript->_scriptId != 113 ? 0 : 1;
+	case 558:
+		return roomScript->_scriptId != 114 ? 0 : 1;
+	case 559:
+		return roomScript->_scriptId != 115 ? 0 : 1;
+	case 560:
+		return roomScript->_scriptId != 116 ? 0 : 1;
+	case 561:
+		return roomScript->_scriptId != 117 ? 0 : 1;
+	case 562:
+		return roomScript->_scriptId != 118 ? 0 : 1;
+	case 563:
+		return roomScript->_scriptId != 120 ? 0 : 1;
+	case 564:
+		return roomScript->_scriptId != 121 ? 0 : 1;
+	case 565:
+		return roomScript->_scriptId != 122 ? 0 : 1;
+	case 566:
+		return roomScript->_scriptId != 123 ? 0 : 1;
+	case 567:
+		return roomScript->_scriptId != 124 ? 0 : 1;
+	case 568:
+		return roomScript->_scriptId != 125 ? 0 : 1;
+	case 569:
+		return roomScript->_scriptId != 126 ? 0 : 1;
+	case 570:
+		return roomScript->_scriptId != 127 ? 0 : 1;
+	case 571:
+		return roomScript->_scriptId != 128 ? 0 : 1;
+	case 572:
+		return roomScript->_scriptId != 129 ? 0 : 1;
+	case 573:
+		return roomScript->_scriptId != 130 ? 0 : 1;
+	case 574:
+		return roomScript->_scriptId != 131 ? 0 : 1;
+	case 575:
+		return roomScript->_scriptId != 132 ? 0 : 1;
+	default:
+		return 0;
+	}
 }
 
 void TTnpcScript::save(SimpleFile *file) {
@@ -777,11 +897,11 @@ int TTnpcScript::processEntries(const TTsentenceEntries *entries, uint entryCoun
 
 bool TTnpcScript::defaultProcess(const TTroomScript *roomScript, const TTsentence *sentence) {
 	uint remainder;
-	TTtreeResult results[32];
+	TTtreeResult treeResult[32];
 	const TTstring &line = sentence->_normalizedLine;
 
 	uint tagId = g_vm->_trueTalkManager->_quotes.find(line.c_str());
-	int val = g_vm->_trueTalkManager->_quotesTree.search(line.c_str(), TREE_1, results, tagId, &remainder);
+	int val = g_vm->_trueTalkManager->_quotesTree.search(line.c_str(), TREE_1, &treeResult[0], tagId, &remainder);
 
 	if (val > 0) {
 		if (!handleQuote(roomScript, sentence, val, tagId, remainder))

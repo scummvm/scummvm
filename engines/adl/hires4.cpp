@@ -26,6 +26,7 @@
 #include "common/file.h"
 #include "common/stream.h"
 #include "common/events.h"
+#include "common/memstream.h"
 
 #include "adl/adl_v3.h"
 #include "adl/detection.h"
@@ -52,7 +53,9 @@ namespace Adl {
 class HiRes4Engine : public AdlEngine_v3 {
 public:
 	HiRes4Engine(OSystem *syst, const AdlGameDescription *gd) :
-			AdlEngine_v3(syst, gd) { }
+			AdlEngine_v3(syst, gd),
+			_boot(nullptr) { _brokenRooms.push_back(121); }
+	~HiRes4Engine();
 
 private:
 	// AdlEngine
@@ -71,7 +74,59 @@ private:
 	void runIntroLoading(Common::SeekableReadStream &adventure);
 
 	static const uint kClock = 1022727; // Apple II CPU clock rate
+
+	DiskImage *_boot;
 };
+
+// TODO: It might be worth replacing this with a more generic variant that
+// can be used in both hires4 and hires6
+static Common::MemoryReadStream *readSkewedSectors(DiskImage *disk, byte track, byte sector, byte count) {
+	const uint bytesPerSector = disk->getBytesPerSector();
+	const uint sectorsPerTrack = disk->getSectorsPerTrack();
+	const uint bufSize = count * bytesPerSector;
+	byte *const buf = (byte *)malloc(bufSize);
+	byte *p = buf;
+
+	while (count-- != 0) {
+		StreamPtr stream(disk->createReadStream(track, sector));
+		stream->read(p, bytesPerSector);
+
+		if (stream->err() || stream->eos())
+			error("Error loading from disk image");
+
+		p += bytesPerSector;
+		sector += 5;
+		sector %= sectorsPerTrack;
+		if (sector == 0)
+			++track;
+	}
+
+	return new Common::MemoryReadStream(buf, bufSize, DisposeAfterUse::YES);
+}
+
+static Common::MemoryReadStream *decodeData(Common::SeekableReadStream &stream, const uint startOffset, uint endOffset, const byte xorVal) {
+	assert(stream.size() >= 0);
+
+	uint streamSize(stream.size());
+
+	if (endOffset > streamSize)
+		endOffset = streamSize;
+
+	byte *const buf = (byte *)malloc(streamSize);
+	stream.read(buf, streamSize);
+
+	if (stream.err() || stream.eos())
+		error("Failed to read data for decoding");
+
+	for (uint i = startOffset; i < endOffset; ++i)
+		buf[i] ^= xorVal;
+
+	return new Common::MemoryReadStream(buf, streamSize, DisposeAfterUse::YES);
+}
+
+HiRes4Engine::~HiRes4Engine() {
+	delete _boot;
+}
 
 void HiRes4Engine::putSpace(uint x, uint y) const {
 	if (shouldQuit())
@@ -405,9 +460,82 @@ void HiRes4Engine::runIntro() {
 
 void HiRes4Engine::init() {
 	_graphics = new GraphicsMan_v2(*_display);
+
+	_boot = new DiskImage();
+	if (!_boot->open(getDiskImageName(0)))
+		error("Failed to open disk image '%s'", getDiskImageName(0).c_str());
+
+	insertDisk(1);
+
+	StreamPtr stream(readSkewedSectors(_boot, 0x05, 0x6, 1));
+	_strings.verbError = readStringAt(*stream, 0x4f);
+	_strings.nounError = readStringAt(*stream, 0x8e);
+	_strings.enterCommand = readStringAt(*stream, 0xbc);
+
+	stream.reset(readSkewedSectors(_boot, 0x05, 0x3, 1));
+	stream->skip(0xd7);
+	_strings_v2.time = readString(*stream, 0xff);
+
+	stream.reset(readSkewedSectors(_boot, 0x05, 0x7, 2));
+	_strings.lineFeeds = readStringAt(*stream, 0xf8);
+
+	stream.reset(readSkewedSectors(_boot, 0x06, 0xf, 3));
+	_strings_v2.saveInsert = readStringAt(*stream, 0x5f);
+	_strings_v2.saveReplace = readStringAt(*stream, 0xe5);
+	_strings_v2.restoreInsert = readStringAt(*stream, 0x132);
+	_strings_v2.restoreReplace = readStringAt(*stream, 0x1c2);
+	_strings.playAgain = readStringAt(*stream, 0x225);
+
+	_messageIds.cantGoThere = IDI_HR4_MSG_CANT_GO_THERE;
+	_messageIds.dontUnderstand = IDI_HR4_MSG_DONT_UNDERSTAND;
+	_messageIds.itemDoesntMove = IDI_HR4_MSG_ITEM_DOESNT_MOVE;
+	_messageIds.itemNotHere = IDI_HR4_MSG_ITEM_NOT_HERE;
+	_messageIds.thanksForPlaying = IDI_HR4_MSG_THANKS_FOR_PLAYING;
+
+	stream.reset(readSkewedSectors(_boot, 0x0a, 0x0, 5));
+	loadMessages(*stream, IDI_HR4_NUM_MESSAGES);
+
+	stream.reset(readSkewedSectors(_boot, 0x05, 0x2, 1));
+	stream->skip(0x80);
+	loadPictures(*stream);
+
+	stream.reset(readSkewedSectors(_boot, 0x09, 0x2, 1));
+	stream->skip(0x05);
+	loadItemPictures(*stream, IDI_HR4_NUM_ITEM_PICS);
+
+	stream.reset(readSkewedSectors(_boot, 0x04, 0x0, 3));
+	stream->skip(0x15);
+	loadItemDescriptions(*stream, IDI_HR4_NUM_ITEM_DESCS);
+
+	stream.reset(readSkewedSectors(_boot, 0x08, 0x2, 6));
+	stream->skip(0xa5);
+	readCommands(*stream, _roomCommands);
+
+	stream.reset(readSkewedSectors(_boot, 0x04, 0xc, 4));
+	stream.reset(decodeData(*stream, 0x218, 0x318, 0xee));
+	readCommands(*stream, _globalCommands);
+
+	stream.reset(readSkewedSectors(_boot, 0x06, 0x6, 1));
+	stream->skip(0x15);
+	loadDroppedItemOffsets(*stream, IDI_HR4_NUM_ITEM_OFFSETS);
+
+	stream.reset(readSkewedSectors(_boot, 0x05, 0x0, 4));
+	loadWords(*stream, _verbs, _priVerbs);
+
+	stream.reset(readSkewedSectors(_boot, 0x0b, 0xb, 7));
+	loadWords(*stream, _nouns, _priNouns);
 }
 
 void HiRes4Engine::initGameState() {
+	_state.vars.resize(IDI_HR4_NUM_VARS);
+
+	StreamPtr stream(readSkewedSectors(_boot, 0x0b, 0x9, 10));
+	stream->skip(0x0e);
+	loadRooms(*stream, IDI_HR4_NUM_ROOMS);
+
+	stream.reset(readSkewedSectors(_boot, 0x0b, 0x0, 13));
+	stream.reset(decodeData(*stream, 0x43, 0x143, 0x91));
+	loadItems(*stream);
 }
 
 class HiRes4Engine_Atari : public AdlEngine_v3 {
@@ -415,7 +543,7 @@ public:
 	HiRes4Engine_Atari(OSystem *syst, const AdlGameDescription *gd) :
 			AdlEngine_v3(syst, gd),
 			_boot(nullptr),
-			_curDisk(0) { }
+			_curDisk(0) { _brokenRooms.push_back(121); }
 	~HiRes4Engine_Atari();
 
 private:
@@ -504,19 +632,6 @@ void HiRes4Engine_Atari::loadRoom(byte roomNr) {
 	} else if (_curDisk != 1) {
 		insertDisk(1);
 		rebindDisk();
-	}
-
-	if (roomNr == 121) {
-		// Room 121 is not present in the Atari version. This causes
-		// problems when we're dumping scripts with the debugger, so
-		// we intercept this room load here.
-		// FIXME: Find out if the Apple II version does have this room
-		// FIXME: Implement more generic handling of invalid rooms?
-		debug("Warning: attempt to load non-existent room 121");
-		_roomData.description.clear();
-		_roomData.pictures.clear();
-		_roomData.commands.clear();
-		return;
 	}
 
 	AdlEngine_v3::loadRoom(roomNr);

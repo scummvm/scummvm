@@ -771,7 +771,7 @@ static void SetNextDest(PMOVER pMover) {
 			pMover->over = true;
 			return;
 		}
-		// Fall through for LEAVING
+		// fall through
 
 	case LEAVING:
 		assert(pMover->bIgPath || InPolygon(pMover->UtargetX, pMover->UtargetY, PATH) != NOPOLY); // Error 5002

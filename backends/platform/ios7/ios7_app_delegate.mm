@@ -39,14 +39,6 @@
 	return self;
 }
 
-- (void)mainLoop:(id)param {
-	@autoreleasepool {
-		iOS7_main(iOS7_argc, iOS7_argv);
-	}
-
-	exit(0);
-}
-
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 
@@ -78,7 +70,12 @@
 	                                             name:@"UIDeviceOrientationDidChangeNotification"
 	                                           object:nil];
 
-	[NSThread detachNewThreadSelector:@selector(mainLoop:) toTarget:self withObject:nil];
+	// Force creation of the shared instance on the main thread
+	iOS7_buildSharedOSystemInstance();
+
+	dispatch_async(dispatch_get_global_queue(0, 0), ^{
+		iOS7_main(iOS7_argc, iOS7_argv);
+	});
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

@@ -112,9 +112,9 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 
 		// As mentioned above, the script and the heap together should not exceed 64KB
 		if (script->size() + heap->size() > 65535)
-			error("Script and heap sizes combined exceed 64K. This means a fundamental "
+			error("Script and heap %d sizes combined exceed 64K. This means a fundamental "
 					"design bug was made regarding SCI1.1 and newer games.\n"
-					"Please report this error to the ScummVM team");
+					"Please report this error to the ScummVM team", script_nr);
 	} else if (getSciVersion() == SCI_VERSION_3 && script->size() > 0x3FFFF) {
 		error("Script %d size exceeds 256K (it is %u bytes).\n"
 			  "Please report this error to the ScummVM team", script_nr, script->size());
@@ -218,7 +218,7 @@ void Script::load(int script_nr, ResourceManager *resMan, ScriptPatcher *scriptP
 			_localsOffset = 0;
 
 		if (_localsOffset + _localsCount * 2 + 1 >= (int)_buf->size()) {
-			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, (int)_buf->size());
+			error("Locals extend beyond end of script %d: offset %04x, count %u vs size %u", _nr, _localsOffset, _localsCount, _buf->size());
 		}
 	}
 
@@ -649,11 +649,8 @@ const Object *Script::getObject(uint32 offset) const {
 }
 
 Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
-	if (getSciVersion() < SCI_VERSION_1_1 && fullObjectInit)
-		obj_pos.incOffset(8);	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
-
 	if (obj_pos.getOffset() >= _buf->size())
-		error("Attempt to initialize object beyond end of script");
+		error("Attempt to initialize object beyond end of script %d (%u >= %u)", _nr, obj_pos.getOffset(), _buf->size());
 
 	// Get the object at the specified position and init it. This will
 	// automatically "allocate" space for it in the _objects map if necessary.
@@ -701,9 +698,9 @@ int Script::relocateOffsetSci3(uint32 offset) const {
 }
 #endif
 
-bool Script::relocateLocal(SegmentId segment, int location) {
+bool Script::relocateLocal(SegmentId segment, int location, uint32 offset) {
 	if (_localsBlock)
-		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, getHeapOffset());
+		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, offset);
 	else
 		return false;
 }
@@ -744,7 +741,7 @@ const SciSpan<const uint16> Script::getRelocationTableSci0Sci21() const {
 		}
 
 		if (relocationBlock != findBlockSCI0(SCI_OBJ_POINTERS, true)) {
-			warning("script.%u has multiple relocation tables", _nr);
+			warning("Script %d has multiple relocation tables", _nr);
 		}
 
 		numEntries = relocationBlock.getUint16SEAt(4);
@@ -783,13 +780,13 @@ const SciSpan<const uint16> Script::getRelocationTableSci0Sci21() const {
 
 		dataOffset = 2;
 	} else {
-		error("Invalid engine version called Script::getRelocationTableSci0Sci21");
+		error("Invalid engine version called Script::getRelocationTableSci0Sci21 on script %d", _nr);
 	}
 
 	// This check should work correctly even with SCI1.1+ because the relocation
 	// table is always at the very end of the heap in these games
 	if (dataOffset + numEntries * sizeof(uint16) != relocationBlock.size()) {
-		warning("script.%u unexpected relocation table size %u", _nr, relocationBlock.size());
+		warning("Script %d unexpected relocation table size %u", _nr, relocationBlock.size());
 	}
 
 	return relocationBlock.subspan<const uint16>(dataOffset, numEntries * sizeof(uint16));
@@ -807,7 +804,7 @@ void Script::relocateSci0Sci21(const SegmentId segmentId) {
 		// We only relocate locals and objects here, and ignore relocation of
 		// code blocks. In SCI1.1 and newer versions, only locals and objects
 		// are relocated.
-		if (!relocateLocal(segmentId, pos)) {
+		if (!relocateLocal(segmentId, pos, getHeapOffset())) {
 			// Not a local? It's probably an object or code block. If it's an
 			// object, relocate it.
 			const ObjMap::iterator end = _objects.end();
@@ -820,19 +817,23 @@ void Script::relocateSci0Sci21(const SegmentId segmentId) {
 
 #ifdef ENABLE_SCI32
 void Script::relocateSci3(const SegmentId segmentId) {
-	SciSpan<const byte> relocStart = _buf->subspan(_buf->getUint32SEAt(8));
+	SciSpan<const byte> relocEntry = _buf->subspan(_buf->getUint32SEAt(8));
 	const uint relocCount = _buf->getUint16SEAt(18);
 
-	ObjMap::iterator it;
-	for (it = _objects.begin(); it != _objects.end(); ++it) {
-		SciSpan<const byte> seeker = relocStart;
-		for (uint i = 0; i < relocCount; ++i) {
-			it->_value.relocateSci3(segmentId,
-						seeker.getUint32SEAt(0),
-						seeker.getUint32SEAt(4),
-						_script.size());
-			seeker += 10;
+	for (uint i = 0; i < relocCount; ++i) {
+		const uint location = relocEntry.getUint32SEAt(0);
+		const uint offset = relocEntry.getUint32SEAt(4);
+
+		if (!relocateLocal(segmentId, location, offset)) {
+			const ObjMap::iterator end = _objects.end();
+			for (ObjMap::iterator it = _objects.begin(); it != end; ++it) {
+				if (it->_value.relocateSci3(segmentId, location, offset, _script.size())) {
+					break;
+				}
+			}
 		}
+
+		relocEntry += 10;
 	}
 }
 #endif
@@ -860,7 +861,7 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
 	if (_numExports <= (uint)pubfunct) {
-		error("script.%d validateExportFunc(): pubfunct %d is invalid", _nr, pubfunct);
+		error("Script %d validateExportFunc(): pubfunct %d is invalid", _nr, pubfunct);
 	}
 
 	if (exportsAreWide)
@@ -890,7 +891,7 @@ uint32 Script::validateExportFunc(int pubfunct, bool relocSci3) {
 	}
 
 	if (offset == -1 || offset >= (int)_buf->size())
-		error("Invalid export %d function pointer (%d) in script.%d", pubfunct, offset, _nr);
+		error("Invalid export %d function pointer (%d) in script %d", pubfunct, offset, _nr);
 
 	return offset;
 }
@@ -915,7 +916,7 @@ SciSpan<const byte> Script::findBlockSCI0(ScriptObjectTypes type, bool findLastB
 		assert(blockSize > 0);
 
 		if (blockType == type) {
-			foundBlock = buf.subspan(0, blockSize, Common::String::format("%s, %s block", _buf->name().c_str(), sciObjectTypeNames[type]));;
+			foundBlock = buf.subspan(0, blockSize, Common::String::format("%s, %s block", _buf->name().c_str(), sciObjectTypeNames[type]));
 
 			if (!findLastBlock) {
 				break;
@@ -936,8 +937,8 @@ bool Script::isValidOffset(uint32 offset) const {
 
 SegmentRef Script::dereference(reg_t pointer) {
 	if (pointer.getOffset() > _buf->size()) {
-		error("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%u)",
-				  PRINT_REG(pointer), _buf->size());
+		error("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script %d segment (script size=%u)",
+				  PRINT_REG(pointer), _nr, _buf->size());
 		return SegmentRef();
 	}
 
@@ -957,7 +958,7 @@ LocalVariables *Script::allocLocalsSegment(SegManager *segMan) {
 		if (_localsSegment) {
 			locals = (LocalVariables *)segMan->getSegment(_localsSegment, SEG_TYPE_LOCALS);
 			if (!locals || locals->getType() != SEG_TYPE_LOCALS || locals->script_id != getScriptNumber())
-				error("Invalid script locals segment while allocating locals");
+				error("Invalid script %d locals segment while allocating locals", _nr);
 		} else
 			locals = (LocalVariables *)segMan->allocSegment(new LocalVariables(), &_localsSegment);
 
@@ -976,7 +977,7 @@ void Script::initializeLocals(SegManager *segMan) {
 			const SciSpan<const byte> base = _buf->subspan(getLocalsOffset());
 
 			for (uint16 i = 0; i < getLocalsCount(); i++)
-				locals->_locals[i] = make_reg(0, base.getUint16SEAt(i * 2));
+				locals->_locals[i] = make_reg(0, base.getUint16SEAt(i * sizeof(uint16)));
 		} else {
 			// In SCI0 early, locals are set at run time, thus zero them all here
 			for (uint16 i = 0; i < getLocalsCount(); i++)
@@ -1057,7 +1058,7 @@ void Script::initializeClasses(SegManager *segMan) {
 			}
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
-				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d\n",
+				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d",
 						  species, species, segMan->classTableSize(), segMan->classTableSize(), _nr);
 
 			SegmentId segmentId = segMan->getScriptSegment(_nr);
@@ -1088,11 +1089,13 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 			case SCI_OBJ_OBJECT:
 			case SCI_OBJ_CLASS:
 				{
-					reg_t addr = make_reg(segmentId, seeker - *_buf + 4);
-					Object *obj = scriptObjInit(addr);
-					obj->initSpecies(segMan, addr);
-
-					if (pass == 2) {
+					reg_t addr = make_reg(segmentId, seeker - *_buf + 4 - SCRIPT_OBJECT_MAGIC_OFFSET);
+					Object *obj;
+					if (pass == 1) {
+						obj = scriptObjInit(addr);
+						obj->initSpecies(segMan, addr);
+					} else {
+						obj = getObject(addr.getOffset());
 						if (!obj->initBaseObject(segMan, addr)) {
 							if ((_nr == 202 || _nr == 764) && g_sci->getGameId() == GID_KQ5) {
 								// WORKAROUND: Script 202 of KQ5 French and German
@@ -1103,7 +1106,7 @@ void Script::initializeObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 								// contain junk towards its end.
 								_objects.erase(addr.toUint16() - SCRIPT_OBJECT_MAGIC_OFFSET);
 							} else {
-								error("Failed to locate base object for object at %04X:%04X", PRINT_REG(addr));
+								error("Failed to locate base object for object at %04x:%04x in script %d", PRINT_REG(addr), _nr);
 							}
 						}
 					}
@@ -1253,7 +1256,7 @@ Common::Array<reg_t> Script::listAllOutgoingReferences(reg_t addr) const {
 			for (uint i = 0; i < obj->getVarCount(); i++)
 				tmp.push_back(obj->getVariable(i));
 		} else {
-			error("Request for outgoing script-object reference at %04x:%04x failed", PRINT_REG(addr));
+			error("Request for outgoing script-object reference at %04x:%04x failed in script %d", PRINT_REG(addr), _nr);
 		}
 	} else {
 		/*		warning("Unexpected request for outgoing script-object references at %04x:%04x", PRINT_REG(addr));*/

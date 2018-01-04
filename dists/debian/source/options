@@ -1,0 +1,4 @@
+compression = "xz"
+
+# ignore changes on replaced (unbundled) fonts
+extend-diff-ignore = "(^|/)gui/themes/scummmodern/[^/]+\.ttf$"

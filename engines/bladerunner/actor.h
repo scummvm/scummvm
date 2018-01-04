@@ -147,6 +147,8 @@ public:
 	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning);
 	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning);
 	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning);
+	bool asyncWalkToWaypoint(int waypointId, int destinationOffset, bool run, bool a5);
+	void asyncWalkToXYZ(const Vector3 &destination, int destinationOffset, bool run, int a6);
 
 	bool tick(bool forceUpdate, Common::Rect *screenRect);
 	bool draw(Common::Rect *screenRect);

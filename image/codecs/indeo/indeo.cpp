@@ -127,6 +127,8 @@ void IVIHuffDesc::huffDescCopy(const IVIHuffDesc *src) {
 /*------------------------------------------------------------------------*/
 
 IVIHuffTab::IVIHuffTab() : _tab(nullptr) {
+	_custDesc._numRows = 0;
+	Common::fill(&_custDesc._xBits[0], &_custDesc._xBits[16], 0);
 }
 
 int IVIHuffTab::decodeHuffDesc(IVI45DecContext *ctx, int descCoded, int whichTab) {
@@ -442,7 +444,8 @@ IVI45DecContext::IVI45DecContext() : _gb(nullptr), _frameNum(0), _frameType(0),
 		_bRefBuf(0), _rvmapSel(0), _inImf(false), _inQ(false), _picGlobQuant(0),
 		_unknown1(0), _gopHdrSize(0), _gopFlags(0), _lockWord(0), _hasBFrames(false),
 		_hasTransp(false), _usesTiling(false), _usesHaar(false), _usesFullpel(false),
-		_gopInvalid(false), _isIndeo4(false), _pFrame(nullptr), _gotPFrame(false) {
+		_gopInvalid(false), _isIndeo4(false), _transKeyColor(0), _pFrame(nullptr),
+		_gotPFrame(false) {
 	Common::fill(&_bufInvalid[0], &_bufInvalid[4], 0);
 	Common::copy(&_ff_ivi_rvmap_tabs[0], &_ff_ivi_rvmap_tabs[9], &_rvmapTabs[0]);
 
@@ -463,6 +466,9 @@ IVI45DecContext::IVI45DecContext() : _gb(nullptr), _frameNum(0), _frameType(0),
 
 IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height, uint bitsPerPixel) : Codec() {
 	switch (bitsPerPixel) {
+	case 15:
+		_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0);
+		break;
 	case 16:
 		_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		break;
@@ -477,18 +483,18 @@ IndeoDecoderBase::IndeoDecoderBase(uint16 width, uint16 height, uint bitsPerPixe
 		break;
 	}
 
-	_surface = new Graphics::Surface();
-	_surface->create(width, height, _pixelFormat);
-	_surface->fillRect(Common::Rect(0, 0, width, height), (bitsPerPixel == 32) ? 0xff : 0);
+	_surface.create(width, height, _pixelFormat);
+	_surface.fillRect(Common::Rect(0, 0, width, height), (bitsPerPixel == 32) ? 0xff : 0);
 	_ctx._bRefBuf = 3; // buffer 2 is used for scalability mode
 }
 
 IndeoDecoderBase::~IndeoDecoderBase() {
-	_surface->free();
-	delete _surface;
+	_surface.free();
 	IVIPlaneDesc::freeBuffers(_ctx._planes);
 	if (_ctx._mbVlc._custTab._table)
 		_ctx._mbVlc._custTab.freeVlc();
+	if (_ctx._transVlc._custTab._table)
+		_ctx._transVlc._custTab.freeVlc();
 
 	delete _ctx._pFrame;
 }
@@ -553,7 +559,7 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 	if (!isNonNullFrame())
 		return 0;
 
-	assert(_ctx._planes[0]._width <= _surface->w && _ctx._planes[0]._height <= _surface->h);
+	assert(_ctx._planes[0]._width <= _surface.w && _ctx._planes[0]._height <= _surface.h);
 	result = frame->setDimensions(_ctx._planes[0]._width, _ctx._planes[0]._height);
 	if (result < 0)
 		return result;
@@ -573,11 +579,22 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 	outputPlane(&_ctx._planes[2], frame->_data[1], frame->_linesize[1]);
 	outputPlane(&_ctx._planes[1], frame->_data[2], frame->_linesize[2]);
 
+	// Merge the planes into the final surface
+	YUVToRGBMan.convert410(&_surface, Graphics::YUVToRGBManager::kScaleITU,
+		frame->_data[0], frame->_data[1], frame->_data[2], frame->_width, frame->_height,
+		frame->_width, frame->_width);
+
+	if (_ctx._hasTransp)
+		decodeTransparency();
+
 	// If the bidirectional mode is enabled, next I and the following P
 	// frame will be sent together. Unfortunately the approach below seems
 	// to be the only way to handle the B-frames mode.
 	// That's exactly the same Intel decoders do.
 	if (_ctx._isIndeo4 && _ctx._frameType == IVI4_FRAMETYPE_INTRA) {
+		// TODO: It appears from the reference decoder that this should be
+		// aligning GetBits to a 32-bit boundary before reading again?
+
 		int left;
 
 		// skip version string
@@ -593,18 +610,8 @@ int IndeoDecoderBase::decodeIndeoFrame() {
 		}
 	}
 
-	// Merge the planes into the final surface
-	Graphics::Surface s = _surface->getSubArea(Common::Rect(0, 0, _surface->w, _surface->h));
-	YUVToRGBMan.convert410(&s, Graphics::YUVToRGBManager::kScaleITU,
-		frame->_data[0], frame->_data[1], frame->_data[2], frame->_width, frame->_height,
-		frame->_width, frame->_width);
-
 	// Free the now un-needed frame data
 	frame->freeFrame();
-
-	// If there's any transparency data, decode it
-	if (_ctx._hasTransp)
-		decodeTransparency();
 
 	return 0;
 }
@@ -1256,16 +1263,15 @@ int IndeoDecoderBase::decodeCodedBlocks(GetBits *gb, IVIBandDesc *band,
 	// zero column flags
 	memset(colFlags, 0, sizeof(colFlags));
 	while (scanPos <= numCoeffs) {
-		sym = gb->getVLC2(band->_blkVlc._tab->_table,
-			IVI_VLC_BITS, 1);
+		sym = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS);
 		if (sym == rvmap->_eobSym)
 			break; // End of block
 
 		// Escape - run/val explicitly coded using 3 vlc codes
 		if (sym == rvmap->_escSym) {
-			run = gb->getVLC2(band->_blkVlc._tab->_table, IVI_VLC_BITS, 1) + 1;
-			lo = gb->getVLC2(band->_blkVlc._tab->_table, IVI_VLC_BITS, 1);
-			hi = gb->getVLC2(band->_blkVlc._tab->_table, IVI_VLC_BITS, 1);
+			run = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS) + 1;
+			lo = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS);
+			hi = gb->getVLC2<1>(band->_blkVlc._tab->_table, IVI_VLC_BITS);
 			// merge them and convert into signed val
 			val = IVI_TOSIGNED((hi << 6) | lo);
 		} else {

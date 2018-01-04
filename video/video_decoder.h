@@ -431,6 +431,18 @@ public:
 	void setBalance(int8 balance);
 
 	/**
+	 * Get the mixer sound type audio is being played with.
+	 */
+	Audio::Mixer::SoundType getSoundType() const;
+
+	/**
+	 * Set the mixer sound type used to play the audio tracks.
+	 *
+	 * This must be set before calling loadStream().
+	 */
+	void setSoundType(Audio::Mixer::SoundType soundType);
+
+	/**
 	 * Add an audio track from a stream file.
 	 *
 	 * This calls SeekableAudioStream::openStreamFile() internally
@@ -667,7 +679,7 @@ protected:
 	 */
 	class AudioTrack : public Track {
 	public:
-		AudioTrack();
+		AudioTrack(Audio::Mixer::SoundType soundType);
 		virtual ~AudioTrack() {}
 
 		TrackType getTrackType() const { return kTrackTypeAudio; }
@@ -713,11 +725,6 @@ protected:
 		uint32 getRunningTime() const;
 
 		/**
-		 * Get the sound type to be used when playing this audio track
-		 */
-		virtual Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kPlainSoundType; }
-
-		/**
 		 * Mute the track
 		 */
 		void setMute(bool mute);
@@ -732,6 +739,7 @@ protected:
 
 	private:
 		Audio::SoundHandle _handle;
+		Audio::Mixer::SoundType _soundType;
 		byte _volume;
 		int8 _balance;
 		bool _muted;
@@ -743,7 +751,7 @@ protected:
 	 */
 	class RewindableAudioTrack : public AudioTrack {
 	public:
-		RewindableAudioTrack() {}
+		RewindableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
 		virtual ~RewindableAudioTrack() {}
 
 		bool isRewindable() const { return true; }
@@ -765,7 +773,7 @@ protected:
 	 */
 	class SeekableAudioTrack : public AudioTrack {
 	public:
-		SeekableAudioTrack() {}
+		SeekableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
 		virtual ~SeekableAudioTrack() {}
 
 		bool isSeekable() const { return true; }
@@ -789,7 +797,7 @@ protected:
 	 */
 	class StreamFileAudioTrack : public SeekableAudioTrack {
 	public:
-		StreamFileAudioTrack();
+		StreamFileAudioTrack(Audio::Mixer::SoundType soundType);
 		~StreamFileAudioTrack();
 
 		/**
@@ -886,6 +894,11 @@ protected:
 	TrackListIterator getTrackListEnd() { return _internalTracks.end(); }
 
 	/**
+	 * Removes a specified track
+	 */
+	void eraseTrack(Track *track);
+
+	/**
 	 * The internal seek function that does the actual seeking.
 	 *
 	 * @see seek()
@@ -948,6 +961,7 @@ private:
 	uint32 _pauseStartTime;
 	byte _audioVolume;
 	int8 _audioBalance;
+	Audio::Mixer::SoundType _soundType;
 
 	AudioTrack *_mainAudioTrack;
 };

@@ -34,30 +34,30 @@ END_MESSAGE_MAP()
 
 void CBrokenPelleratorFroz::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeQuotedLine(_string2, indent);
-	file->writeQuotedLine(_string3, indent);
-	file->writeQuotedLine(_string4, indent);
-	file->writeQuotedLine(_string5, indent);
+	file->writeQuotedLine(_exitLeft, indent);
+	file->writeQuotedLine(_exitRight, indent);
+	file->writeQuotedLine(_closeUpWithoutHose, indent);
+	file->writeQuotedLine(_closeUpWithHose, indent);
 
 	CBrokenPellBase::save(file, indent);
 }
 
 void CBrokenPelleratorFroz::load(SimpleFile *file) {
 	file->readNumber();
-	_string2 = file->readString();
-	_string3 = file->readString();
-	_string4 = file->readString();
-	_string5 = file->readString();
+	_exitLeft = file->readString();
+	_exitRight = file->readString();
+	_closeUpWithoutHose = file->readString();
+	_closeUpWithHose = file->readString();
 
 	CBrokenPellBase::load(file);
 }
 
 bool CBrokenPelleratorFroz::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
-	if (_v1) {
-		changeView(_v2 ? _string5 : _string4);
+	if (_pelleratorOpen) {
+		changeView(_gottenHose ? _closeUpWithHose : _closeUpWithoutHose);
 	} else {
-		_v1 = true;
-		if (_v2) {
+		_pelleratorOpen = true;
+		if (_gottenHose) {
 			playMovie(0, 13, 0);
 		} else {
 			playMovie(43, 55, MOVIE_NOTIFY_OBJECT);
@@ -71,7 +71,7 @@ bool CBrokenPelleratorFroz::LeaveViewMsg(CLeaveViewMsg *msg) {
 	CString name = msg->_newView->getNodeViewName();
 
 	if (name == "Node 3.S" || name == "Node 3.E") {
-		_v1 = false;
+		_pelleratorOpen = false;
 		loadFrame(0);
 	}
 
@@ -80,42 +80,43 @@ bool CBrokenPelleratorFroz::LeaveViewMsg(CLeaveViewMsg *msg) {
 
 bool CBrokenPelleratorFroz::ActMsg(CActMsg *msg) {
 	if (msg->_action == "PlayerGetsHose") {
-		_v2 = 1;
+		_gottenHose = true;
+		loadFrame(29);
 		CStatusChangeMsg statusMsg;
 		statusMsg._newStatus = 0;
 		statusMsg.execute("FPickUpHose");
 	} else {
-		_exitAction = 0;
+		_closeAction = CLOSE_NONE;
 		bool closeFlag = msg->_action == "Close";
 		if (msg->_action == "CloseLeft") {
 			closeFlag = true;
-			_exitAction = 1;
+			_closeAction = CLOSE_LEFT;
 		}
 		if (msg->_action == "CloseRight") {
 			closeFlag = true;
-			_exitAction = 2;
+			_closeAction = CLOSE_RIGHT;
 		}
 
 		if (closeFlag) {
-			if (_v1) {
-				_v1 = false;
-				if (_v2)
+			if (_pelleratorOpen) {
+				_pelleratorOpen = false;
+				if (_gottenHose)
 					playMovie(29, 42, MOVIE_NOTIFY_OBJECT);
 				else
 					playMovie(72, 84, MOVIE_NOTIFY_OBJECT);
 			} else {
-				switch (_exitAction) {
-				case 1:
-					changeView(_string2);
+				switch (_closeAction) {
+				case CLOSE_LEFT:
+					changeView(_exitLeft);
 					break;
-				case 2:
-					changeView(_string3);
+				case CLOSE_RIGHT:
+					changeView(_exitRight);
 					break;
 				default:
 					break;
 				}
 
-				_exitAction = 0;
+				_closeAction = CLOSE_NONE;
 			}
 		}
 	}
@@ -136,12 +137,12 @@ bool CBrokenPelleratorFroz::MovieEndMsg(CMovieEndMsg *msg) {
 		statusMsg.execute("FPickUpHose");
 	}
 
-	if (_exitAction == 1) {
-		changeView(_string2);
-		_exitAction = 0;
-	} else if (_exitAction == 2) {
-		changeView(_string3);
-		_exitAction = 0;
+	if (_closeAction == CLOSE_LEFT) {
+		changeView(_exitLeft);
+		_closeAction = CLOSE_NONE;
+	} else if (_closeAction == CLOSE_RIGHT) {
+		changeView(_exitRight);
+		_closeAction = CLOSE_NONE;
 	}
 
 	return true;

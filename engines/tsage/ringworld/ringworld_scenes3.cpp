@@ -5907,7 +5907,7 @@ void Scene2320::postInit(SceneObjectList *OwnerList) {
 			_hotspot11.setPosition(Common::Point(178, 118));
 			_hotspot11.animate(ANIM_MODE_1, NULL);
 		}
-		// Deliberate fall-through
+		// fall through
 	case 4250:
 	case 5000:
 	case 7000:

@@ -27,6 +27,10 @@
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#ifdef ENABLE_SCI32
+#include "sci/engine/features.h"
+#include "sci/sound/audio32.h"
+#endif
 
 #include "common/file.h"
 
@@ -45,34 +49,67 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }
 
-// Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
+// Unloads an arbitrary resource of type 'restype' with resource number 'resnr'
 //  behavior of this call didn't change between sci0->sci1.1 parameter wise, which means getting called with
 //  1 or 3+ parameters is not right according to sierra sci
 reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
-	if (argc >= 2) {
-		ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
-		reg_t resnr = argv[1];
+	// NOTE: Locked resources in SSCI could be disposed by kUnLoad regardless
+	// of lock state. With this ScummVM implementation of kUnLoad, game scripts
+	// that dispose locked resources via kUnLoad without unlocking them with
+	// kLock will leak the resource until the engine is restarted.
 
-		if (restype == kResourceTypeMemory)
-			s->_segMan->freeHunkEntry(resnr);
-	}
+	ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
+	reg_t resnr = argv[1];
+
+	if (restype == kResourceTypeMemory)
+		s->_segMan->freeHunkEntry(resnr);
 
 	return s->r_acc;
 }
 
 reg_t kLock(EngineState *s, int argc, reg_t *argv) {
-	int state = argc > 2 ? argv[2].toUint16() : 1;
+	// NOTE: In SSCI, kLock uses a boolean lock flag, not a lock counter.
+	// ScummVM's current counter-based implementation should be better than SSCI
+	// at dealing with game scripts that unintentionally lock & unlock the same
+	// resource multiple times (e.g. through recursion), but it will introduce
+	// memory bugs (resource leaks lasting until the engine is restarted, or
+	// destruction of kernel locks that lead to a use-after-free) that are
+	// masked by ResourceManager's LRU cache if scripts rely on kLock being
+	// idempotent like it was in SSCI.
+	//
+	// Like SSCI, resource locks are not persisted in save games in ScummVM
+	// until GK2, so it is also possible that kLock bugs will appear only after
+	// restoring a save game.
+	//
+	// See also kUnLoad.
+
 	ResourceType type = g_sci->getResMan()->convertResType(argv[0].toUint16());
-	ResourceId id = ResourceId(type, argv[1].toUint16());
+	if (type == kResourceTypeSound && getSciVersion() >= SCI_VERSION_1_1) {
+		type = g_sci->_soundCmd->getSoundResourceType(argv[1].toUint16());
+	}
 
-	Resource *which;
+	const ResourceId id(type, argv[1].toUint16());
+	const bool lock = argc > 2 ? argv[2].toUint16() : true;
 
-	switch (state) {
-	case 1 :
-		g_sci->getResMan()->findResource(id, 1);
-		break;
-	case 0 :
-		if (id.getNumber() == 0xFFFF) {
+#ifdef ENABLE_SCI32
+	// SSCI GK2+SCI3 also saves lock states for View, Pic, and Sync resources,
+	// but so far it seems like audio resources are the only ones that actually
+	// need to be handled
+	if (g_sci->_features->hasSci3Audio() && type == kResourceTypeAudio) {
+		g_sci->_audio32->lockResource(id, lock);
+		return s->r_acc;
+	}
+#endif
+
+	if (getSciVersion() == SCI_VERSION_1_1 &&
+		(type == kResourceTypeAudio36 || type == kResourceTypeSync36)) {
+		return s->r_acc;
+	}
+
+	if (lock) {
+		g_sci->getResMan()->findResource(id, true);
+	} else {
+		if (getSciVersion() < SCI_VERSION_2 && id.getNumber() == 0xFFFF) {
 			// Unlock all resources of the requested type
 			Common::List<ResourceId> resources = g_sci->getResMan()->listResources(type);
 			Common::List<ResourceId>::iterator itr;
@@ -82,7 +119,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 					g_sci->getResMan()->unlockResource(res);
 			}
 		} else {
-			which = g_sci->getResMan()->findResource(id, 0);
+			Resource *which = g_sci->getResMan()->findResource(id, false);
 
 			if (which)
 				g_sci->getResMan()->unlockResource(which);
@@ -96,7 +133,6 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 					debugC(kDebugLevelResMan, "[resMan] Attempt to unlock non-existent resource %s", id.toString().c_str());
 			}
 		}
-		break;
 	}
 	return s->r_acc;
 }
@@ -122,7 +158,7 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 	// GK2 stores some VMDs inside of resource volumes, but usually videos are
 	// streamed from the filesystem.
 	if (res == nullptr) {
-		const char *format = nullptr;
+		const char *format;
 		switch (restype) {
 		case kResourceTypeRobot:
 			format = "%u.rbt";

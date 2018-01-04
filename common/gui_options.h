@@ -74,6 +74,8 @@
 #define GUIO_GAMEOPTIONS7    "\056"
 #define GUIO_GAMEOPTIONS8    "\057"
 #define GUIO_GAMEOPTIONS9    "\060"
+#define GUIO_GAMEOPTIONS10   "\061"
+#define GUIO_GAMEOPTIONS11   "\062"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
@@ -84,6 +86,7 @@
 #define GUIO6(a,b,c,d,e,f) (a b c d e f)
 #define GUIO7(a,b,c,d,e,f,g) (a b c d e f g)
 #define GUIO8(a,b,c,d,e,f,g,h) (a b c d e f g h)
+#define GUIO9(a,b,c,d,e,f,g,h,i) (a b c d e f g h i)
 
 namespace Common {
 

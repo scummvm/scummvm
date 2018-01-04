@@ -184,7 +184,7 @@ protected:
 		_size = new_len;
 	}
 public:
-	MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
+	explicit MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
 
 	~MemoryWriteStreamDynamic() {
 		if (_disposeMemory)
@@ -212,13 +212,14 @@ public:
 /**
 * MemoryStream based on RingBuffer. Grows if has insufficient buffer size.
 */
-class MemoryReadWriteStream : public WriteStream {
+class MemoryReadWriteStream : public SeekableReadStream, public WriteStream {
 private:
 	uint32 _capacity;
 	uint32 _size;
 	byte *_data;
 	uint32 _writePos, _readPos, _pos, _length;
 	DisposeAfterUse::Flag _disposeMemory;
+	bool _eos;
 
 	void ensureCapacity(uint32 new_len) {
 		if (new_len <= _capacity)
@@ -246,7 +247,7 @@ private:
 		}
 	}
 public:
-	MemoryReadWriteStream(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : _capacity(0), _size(0), _data(0), _writePos(0), _readPos(0), _pos(0), _length(0), _disposeMemory(disposeMemory) {}
+	explicit MemoryReadWriteStream(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _data(0), _writePos(0), _readPos(0), _pos(0), _length(0), _disposeMemory(disposeMemory), _eos(false) {}
 
 	~MemoryReadWriteStream() {
 		if (_disposeMemory)
@@ -271,8 +272,10 @@ public:
 	}
 
 	virtual uint32 read(void *dataPtr, uint32 dataSize) {
-		uint32 length = _length;
-		if (length < dataSize) dataSize = length;
+		if (_length < dataSize) {
+			dataSize = _length;
+			_eos = true;
+		}
 		if (dataSize == 0 || _capacity == 0) return 0;
 		if (_readPos + dataSize < _capacity) {
 			memcpy(dataPtr, _data + _readPos, dataSize);
@@ -287,7 +290,10 @@ public:
 	}
 
 	int32 pos() const { return _pos - _length; } //'read' position in the stream
-	uint32 size() const { return _size; } //that's also 'write' position in the stream, as it's append-only
+	int32 size() const { return _size; } //that's also 'write' position in the stream, as it's append-only
+	bool seek(int32, int) { return false; }
+	bool eos() const { return _eos; }
+	void clearErr() { _eos = false; }
 
 	byte *getData() { return _data; }
 };

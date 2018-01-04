@@ -1061,12 +1061,14 @@ const Feature s_features[] = {
 };
 
 const Tool s_tools[] = {
+	{ "create_cryo",         true},
 	{ "create_drascula",     true},
 	{ "create_hugo",         true},
 	{ "create_kyradat",      true},
 	{ "create_lure",         true},
 	{ "create_neverhood",    true},
 	{ "create_teenagent",    true},
+	{ "create_titanic",      true},
 	{ "create_tony",         true},
 	{ "create_toon",         true},
 	{ "create_translations", true},
@@ -1170,7 +1172,9 @@ bool producesObjectFile(const std::string &fileName) {
 }
 
 std::string toString(int num) {
-	return static_cast<std::ostringstream*>(&(std::ostringstream() << num))->str();
+	std::ostringstream os;
+	os << num;
+	return os.str();
 }
 
 /**
@@ -1770,18 +1774,20 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
 				shouldInclude.push(false);
 			else
-				shouldInclude.push(true);
+				shouldInclude.push(true && shouldInclude.top());
 		} else if (*i == "ifndef") {
 			if (tokens.size() < 2)
 				error("Malformed ifndef in " + moduleMkFile);
 			++i;
 
 			if (std::find(defines.begin(), defines.end(), *i) == defines.end())
-				shouldInclude.push(true);
+				shouldInclude.push(true && shouldInclude.top());
 			else
 				shouldInclude.push(false);
 		} else if (*i == "else") {
-			shouldInclude.top() = !shouldInclude.top();
+			bool last = shouldInclude.top();
+			shouldInclude.pop();
+			shouldInclude.push(!last && shouldInclude.top());
 		} else if (*i == "endif") {
 			if (shouldInclude.size() <= 1)
 				error("endif without ifdef found in " + moduleMkFile);

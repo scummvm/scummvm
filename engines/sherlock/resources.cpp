@@ -57,24 +57,23 @@ void Cache::load(const Common::String &name, Common::SeekableReadStream &stream)
 
 	int32 signature = stream.readUint32BE();
 	stream.seek(0);
-
-	// Allocate a new cache entry
-	_resources[name] = CacheEntry();
-	CacheEntry &cacheEntry = _resources[name];
-
+	
 	// Check whether the file is compressed
 	if (signature == MKTAG('L', 'Z', 'V', 26)) {
+
+		// Allocate a new cache entry
+		_resources[name] = CacheEntry();
+		CacheEntry &cacheEntry = _resources[name];
+
 		// It's compressed, so decompress the file and store its data in the cache entry
 		Common::SeekableReadStream *decompressed = _vm->_res->decompress(stream);
 		cacheEntry.resize(decompressed->size());
 		decompressed->read(&cacheEntry[0], decompressed->size());
 
 		delete decompressed;
-	} else {
-		// It's not, so read the raw data of the file into the cache entry
-		cacheEntry.resize(stream.size());
-		stream.read(&cacheEntry[0], stream.size());
+
 	}
+
 }
 
 Common::SeekableReadStream *Cache::get(const Common::String &filename) const {

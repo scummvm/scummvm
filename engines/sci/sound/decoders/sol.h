@@ -33,7 +33,7 @@ enum SOLFlags {
 	kStereo     = 16
 };
 
-template <bool STEREO, bool S16BIT>
+template <bool STEREO, bool S16BIT, bool OLDDPCM8>
 class SOLStream : public Audio::SeekableAudioStream {
 private:
 	/**
@@ -47,8 +47,7 @@ private:
 	uint16 _sampleRate;
 
 	/**
-	 * The raw (possibly-compressed) size of audio data in
-	 * the stream.
+	 * The raw (possibly-compressed) size of audio data in the stream.
 	 */
 	int32 _rawDataSize;
 

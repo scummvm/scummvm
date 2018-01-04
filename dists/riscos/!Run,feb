@@ -1,0 +1,13 @@
+Run <Obey$Dir>.!Boot
+
+RMEnsure SharedUnixLibrary 1.14 RMLoad System:Modules.SharedULib
+RMEnsure SharedUnixLibrary 1.14 Error ScummVM requires SharedUnixLibrary 1.14 or later. This can be downloaded from https://www.riscos.info/packages/LibraryDetails.html#SharedUnixLibrary
+
+RMEnsure DigitalRenderer 0.56 RMLoad System:Modules.DRenderer
+RMEnsure DigitalRenderer 0.56 Error ScummVM requires DigitalRenderer 0.56 or later. This can be downloaded from https://www.riscos.info/packages/LibraryDetails.html#DRenderer
+
+Set ScummVM$stdout ><Choices$Write>.ScummVM.stdout 2><Choices$Write>.ScummVM.stderr
+If "<Wimp$State>"="commands" Then Unset ScummVM$stdout Else CDir <Choices$Write>.ScummVM
+
+|WimpSlot
+Do Run <ScummVM$Dir>.scummvm %*0 <ScummVM$stdout>

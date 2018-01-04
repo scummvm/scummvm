@@ -23,23 +23,28 @@
 #ifndef TITANIC_AUDIO_BUFFER_H
 #define TITANIC_AUDIO_BUFFER_H
 
-#include "common/array.h"
+#include "titanic/support/fixed_queue.h"
 #include "common/mutex.h"
 
 namespace Titanic {
 
+#define AUDIO_SAMPLING_RATE 22050
+
 class CAudioBuffer {
 private:
 	Common::Mutex _mutex;
-	Common::Array<int16> _data;
-	int16 *_frontP, *_backP;
+	FixedQueue<int16, AUDIO_SAMPLING_RATE * 4> _data;
+private:
+	/**
+	 * Enters a critical section
+	 */
+	void enterCriticalSection();
 
 	/**
-	 * Reclaims any space at the start of the array resulting from
-	 * having read values off the font
+	 * Leave a critical section
 	 */
-	void compact();
-public:
+	void leaveCriticalSection();
+private:
 	bool _finished;
 public:
 	CAudioBuffer(int maxSize);
@@ -57,17 +62,22 @@ public:
 	/**
 	 * Returns the number of 16-bit entries in the buffer
 	 */
-	int size() const { return _backP - _frontP; }
-
-	/**
-	 * Returns true if the buffer is full
-	 */
-	bool full() const { return (_backP - _frontP) == (int)_data.size(); }
+	int size() const { return _data.size(); }
 
 	/**
 	 * Returns the number of entries free in the buffer
 	 */
-	int freeSize();
+	int freeSize() const { return _data.freeSize(); }
+
+	/**
+	 * Returns true if the buffer is full
+	 */
+	bool full() const { return _data.full(); }
+
+	/**
+	 * Returns true if the audio buffering is finished
+	 */
+	bool isFinished() const { return _finished && empty(); }
 
 	/**
 	 * Adds a value to the buffer
@@ -77,7 +87,7 @@ public:
 	/**
 	 * Adds a value to the buffer
 	 */
-	void push(int16 *values, int count);
+	void push(const int16 *values, int count);
 
 	/**
 	 * Removes a value from the buffer
@@ -85,14 +95,14 @@ public:
 	int16 pop();
 
 	/**
-	 * Enters a critical section
+	 * Reads out a specified number of samples
 	 */
-	void enterCriticalSection();
+	int read(int16 *values, int count);
 
 	/**
-	 * Leave a critical section
+	 * Marks the buffer as finishing, and that no more new data will arrive
 	 */
-	void leaveCriticalSection();
+	void finalize() { _finished = true; }
 };
 
 } // End of namespace Titanic

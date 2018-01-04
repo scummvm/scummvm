@@ -35,4 +35,14 @@ CProximity::CProximity() : _channelVolume(100), _balance(0),
 		_soundDuration(0), _soundType(Audio::Mixer::kPlainSoundType) {
 }
 
+CProximity::CProximity(Audio::Mixer::SoundType soundType, int volume) :
+	_soundType(soundType), _channelVolume(volume),
+	_balance(0), _priorSoundHandle(-1), _frequencyMultiplier(0.0),
+	_frequencyAdjust(1.875), _repeated(false), _channelMode(10),
+	_positioningMode(POSMODE_NONE), _azimuth(0.0), _range(0.5), _elevation(0),
+	_posX(0.0), _posY(0.0), _posZ(0.0), _hasVelocity(false), _velocityX(0),
+	_velocityY(0), _velocityZ(0), _disposeAfterUse(DisposeAfterUse::NO),
+	_endTalkerFn(nullptr), _talker(nullptr), _soundDuration(0) {
+}
+
 } // End of namespace Titanic

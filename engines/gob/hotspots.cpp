@@ -1422,7 +1422,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 
 	case 20:
 		inputId = i;
-		// Fall through to case 2
+		// fall through
 	case kTypeClick:
 		key    = _vm->_game->_script->readInt16();
 		ids[i] = _vm->_game->_script->readInt16();

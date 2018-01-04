@@ -49,7 +49,7 @@ public:
 
 	int16 findIconId(int16 objId);
 	void  loadInvent(Common::SeekableReadStream &in);
-	int16 processInventory(const InvAct action, ...);
+	int16 processInventory(const int action, ...);
 	void  runInventory();
 
 private:

@@ -785,6 +785,12 @@ begin_credits("Credits");
 				add_person("Joost Peters", "joostp", "");
 			end_section();
 
+			begin_section("Titanic");
+				add_person("David Fioramonti", "dafioram", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Colin Snover", "", "");
+			end_section();
+
 			begin_section("Toltecs");
 				add_person("Benjamin Haisch", "john_doe", "");
 				add_person("Filippos Karapetis", "[md5]", "");
@@ -1050,6 +1056,10 @@ begin_credits("Credits");
 
 			begin_section("OS/2");
 				add_person("Paul Smedley", "Creeping", "");
+			end_section();
+
+			begin_section("RISC OS");
+				add_person("Cameron Cawley", "ccawley2011", "");
 			end_section();
 
 			begin_section("SlackWare");

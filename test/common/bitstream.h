@@ -5,13 +5,14 @@
 
 class BitStreamTestSuite : public CxxTest::TestSuite
 {
-	public:
-	void test_get_bit() {
+private:
+	template<class MS, class BS>
+	void tmpl_get_bit() {
 		byte contents[] = { 'a' };
 
-		Common::MemoryReadStream ms(contents, sizeof(contents));
+		MS ms(contents, sizeof(contents));
 
-		Common::BitStream8MSB bs(ms);
+		BS bs(ms);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		TS_ASSERT_EQUALS(bs.getBit(), 0u);
 		TS_ASSERT_EQUALS(bs.getBit(), 1u);
@@ -19,13 +20,20 @@ class BitStreamTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(bs.pos(), 3u);
 		TS_ASSERT(!bs.eos());
 	}
+public:
+	void test_get_bit() {
+		tmpl_get_bit<Common::MemoryReadStream, Common::BitStream8MSB>();
+		tmpl_get_bit<Common::BitStreamMemoryStream, Common::BitStreamMemory8MSB>();
+	}
 
-	void test_get_bits() {
+private:
+	template<class MS, class BS>
+	void tmpl_get_bits() {
 		byte contents[] = { 'a', 'b' };
 
-		Common::MemoryReadStream ms(contents, sizeof(contents));
+		MS ms(contents, sizeof(contents));
 
-		Common::BitStream8MSB bs(ms);
+		BS bs(ms);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		TS_ASSERT_EQUALS(bs.getBits(3), 3u);
 		TS_ASSERT_EQUALS(bs.pos(), 3u);
@@ -33,13 +41,20 @@ class BitStreamTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(bs.pos(), 11u);
 		TS_ASSERT(!bs.eos());
 	}
+public:
+	void test_get_bits() {
+		tmpl_get_bits<Common::MemoryReadStream, Common::BitStream8MSB>();
+		tmpl_get_bits<Common::BitStreamMemoryStream, Common::BitStreamMemory8MSB>();
+	}
 
-	void test_skip() {
+private:
+	template<class MS, class BS>
+	void tmpl_skip() {
 		byte contents[] = { 'a', 'b' };
 
-		Common::MemoryReadStream ms(contents, sizeof(contents));
+		MS ms(contents, sizeof(contents));
 
-		Common::BitStream8MSB bs(ms);
+		BS bs(ms);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		bs.skip(5);
 		TS_ASSERT_EQUALS(bs.pos(), 5u);
@@ -48,13 +63,20 @@ class BitStreamTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(bs.getBits(3), 6u);
 		TS_ASSERT(!bs.eos());
 	}
+public:
+	void test_skip() {
+		tmpl_skip<Common::MemoryReadStream, Common::BitStream8MSB>();
+		tmpl_skip<Common::BitStreamMemoryStream, Common::BitStreamMemory8MSB>();
+	}
 
-	void test_rewind() {
+private:
+	template<class MS, class BS>
+	void tmpl_rewind() {
 		byte contents[] = { 'a' };
 
-		Common::MemoryReadStream ms(contents, sizeof(contents));
+		MS ms(contents, sizeof(contents));
 
-		Common::BitStream8MSB bs(ms);
+		BS bs(ms);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		bs.skip(5);
 		TS_ASSERT_EQUALS(bs.pos(), 5u);
@@ -65,13 +87,20 @@ class BitStreamTestSuite : public CxxTest::TestSuite
 
 		TS_ASSERT_EQUALS(bs.size(), 8u);
 	}
+public:
+	void test_rewind() {
+		tmpl_rewind<Common::MemoryReadStream, Common::BitStream8MSB>();
+		tmpl_rewind<Common::BitStreamMemoryStream, Common::BitStreamMemory8MSB>();
+	}
 
-	void test_peek_bit() {
+private:
+	template<class MS, class BS>
+	void tmpl_peek_bit() {
 		byte contents[] = { 'a' };
 
-		Common::MemoryReadStream ms(contents, sizeof(contents));
+		MS ms(contents, sizeof(contents));
 
-		Common::BitStream8MSB bs(ms);
+		BS bs(ms);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		TS_ASSERT_EQUALS(bs.peekBit(), 0u);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
@@ -81,13 +110,20 @@ class BitStreamTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(bs.pos(), 1u);
 		TS_ASSERT(!bs.eos());
 	}
+public:
+	void test_peek_bit() {
+		tmpl_peek_bit<Common::MemoryReadStream, Common::BitStream8MSB>();
+		tmpl_peek_bit<Common::BitStreamMemoryStream, Common::BitStreamMemory8MSB>();
+	}
 
-	void test_peek_bits() {
+private:
+	template<class MS, class BS>
+	void tmpl_peek_bits() {
 		byte contents[] = { 'a', 'b' };
 
-		Common::MemoryReadStream ms(contents, sizeof(contents));
+		MS ms(contents, sizeof(contents));
 
-		Common::BitStream8MSB bs(ms);
+		BS bs(ms);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		TS_ASSERT_EQUALS(bs.peekBits(3), 3u);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
@@ -100,13 +136,20 @@ class BitStreamTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(bs.peekBits(5), 2u);
 		TS_ASSERT(!bs.eos());
 	}
+public:
+	void test_peek_bits() {
+		tmpl_peek_bits<Common::MemoryReadStream, Common::BitStream8MSB>();
+		tmpl_peek_bits<Common::BitStreamMemoryStream, Common::BitStreamMemory8MSB>();
+	}
 
-	void test_eos() {
+private:
+	template<class MS, class BS>
+	void tmpl_eos() {
 		byte contents[] = { 'a', 'b' };
 
-		Common::MemoryReadStream ms(contents, sizeof(contents));
+		MS ms(contents, sizeof(contents));
 
-		Common::BitStream8MSB bs(ms);
+		BS bs(ms);
 		bs.skip(11);
 		TS_ASSERT_EQUALS(bs.pos(), 11u);
 		TS_ASSERT_EQUALS(bs.getBits(5), 2u);
@@ -116,13 +159,20 @@ class BitStreamTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		TS_ASSERT(!bs.eos());
 	}
+public:
+	void test_eos() {
+		tmpl_eos<Common::MemoryReadStream, Common::BitStream8MSB>();
+		tmpl_eos<Common::BitStreamMemoryStream, Common::BitStreamMemory8MSB>();
+	}
 
-	void test_get_bits_lsb() {
+private:
+	template<class MS, class BS>
+	void tmpl_get_bits_lsb() {
 		byte contents[] = { 'a', 'b' };
 
-		Common::MemoryReadStream ms(contents, sizeof(contents));
+		MS ms(contents, sizeof(contents));
 
-		Common::BitStream8LSB bs(ms);
+		BS bs(ms);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		TS_ASSERT_EQUALS(bs.getBits(3), 1u);
 		TS_ASSERT_EQUALS(bs.pos(), 3u);
@@ -130,13 +180,20 @@ class BitStreamTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(bs.pos(), 11u);
 		TS_ASSERT(!bs.eos());
 	}
+public:
+	void test_get_bits_lsb() {
+		tmpl_get_bits_lsb<Common::MemoryReadStream, Common::BitStream8LSB>();
+		tmpl_get_bits_lsb<Common::BitStreamMemoryStream, Common::BitStreamMemory8LSB>();
+	}
 
-	void test_peek_bits_lsb() {
+private:
+	template<class MS, class BS>
+	void tmpl_peek_bits_lsb() {
 		byte contents[] = { 'a', 'b' };
 
-		Common::MemoryReadStream ms(contents, sizeof(contents));
+		MS ms(contents, sizeof(contents));
 
-		Common::BitStream8LSB bs(ms);
+		BS bs(ms);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
 		TS_ASSERT_EQUALS(bs.peekBits(3), 1u);
 		TS_ASSERT_EQUALS(bs.pos(), 0u);
@@ -148,5 +205,10 @@ class BitStreamTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(bs.pos(), 11u);
 		TS_ASSERT_EQUALS(bs.peekBits(5), 12u);
 		TS_ASSERT(!bs.eos());
+	}
+public:
+	void test_peek_bits_lsb() {
+		tmpl_peek_bits_lsb<Common::MemoryReadStream, Common::BitStream8LSB>();
+		tmpl_peek_bits_lsb<Common::BitStreamMemoryStream, Common::BitStreamMemory8LSB>();
 	}
 };

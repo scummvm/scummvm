@@ -33,18 +33,21 @@ Inhaltsverzeichnis:
  * 3.12 Hinweise zu Inherit the Earth: Quest for the Orb (Macintosh)
  * 3.13 Hinweise zu Maniac Mansion (Apple II/NES)
  * 3.14 Hinweise zu Mickey's Space Adventure
- * 3.15 Hinweise zu Nippon Safes Inc. (Amiga)
- * 3.16 Hinweise zu Simon the Sorcerer 1 und 2
- * 3.17 Hinweise zu The Curse of Monkey Island
- * 3.18 Hinweise zu Floyd – Es gibt noch Helden
- * 3.19 Hinweise zu The Legend of Kyrandia
- * 3.20 Hinweise zu Troll's Tale
- * 3.21 Hinweise zu Winnie the Pooh
- * 3.22 Hinweise zum vorhersagenden Eingabedialog in AGI-Spielen von Sierra
- * 3.23 Gleichzeitige Sprachausgabe und Untertitel in SCI-Spielen von Sierra
- * 3.24 Hinweise zu den Spielen der Zork-Reihe
- * 3.25 Hinweise zu Spielen für den Commodore 64
- * 3.26 Hinweise zu Spielen für den Macintosh
+ * 3.15 Hinweise zu Myst
+ * 3.16 Hinweise zu Nippon Safes Inc. (Amiga)
+ * 3.17 Hinweise zu Riven
+ * 3.18 Hinweise zu Simon the Sorcerer 1 und 2
+ * 3.19 Hinweise zu Starship Titanic
+ * 3.20 Hinweise zu The Curse of Monkey Island
+ * 3.21 Hinweise zu Floyd – Es gibt noch Helden
+ * 3.22 Hinweise zu The Legend of Kyrandia
+ * 3.23 Hinweise zu Troll's Tale
+ * 3.24 Hinweise zu Winnie the Pooh
+ * 3.25 Hinweise zum vorhersagenden Eingabedialog in AGI-Spielen von Sierra
+ * 3.26 Gleichzeitige Sprachausgabe und Untertitel in SCI-Spielen von Sierra
+ * 3.27 Hinweise zu den Spielen der Zork-Reihe
+ * 3.28 Hinweise zu Spielen für den Commodore 64
+ * 3.29 Hinweise zu Spielen für den Macintosh
 4.0) Unterstützte Plattformen
 5.0) ScummVM verwenden
  * 5.1 Kommandozeilenoptionen
@@ -81,8 +84,9 @@ Inhaltsverzeichnis:
 8.0) Konfigurationsdatei
  * 8.1 Verwendbare Konfigurationsschlüsselwörter
  * 8.2 Spielspezifische Optionen der grafischen Benutzeroberfläche
-9.0) Kompilieren
-10.0) Mitwirkende
+9.0) Bildschirmfotos (nur SDL-Backend)
+10.0) Kompilieren
+11.0) Mitwirkende
 
 
 1.0) Einführung:
@@ -208,19 +212,20 @@ und des Chats Englisch ist und keine andere Sprache dort verwendet werden
 sollte.
 
 
-2.1) Fehler berichten:
+2.1) Fehler melden:
 ---- -----------------
-Um einen Fehler zu berichten, erstellen Sie bitte ein SourceForge-Konto und
-folgen Sie dem Link „Bug Tracker“ auf der ScummVM-Website. Bitte stellen Sie
-sicher, dass sich der Bug reproduzieren lässt und immer noch in der aktuellen
-Git-Version oder im Daily Build auftritt. Bitte sehen Sie auch auf der
-Kompatibilitätsliste der ScummVM-Website für dieses Spiel nach, um
-sicherzustellen, dass das Problem nicht bereits bekannt ist:
+Um einen Fehler zu melden, folgen Sie dem Link „Fehlerberichte“ auf der
+ScummVM-Website und melden Sie sich dort mit Ihrem GitHub-Konto an.
+Bitte stellen Sie sicher, dass sich der Bug reproduzieren lässt und
+immer noch in der aktuellen Git-Version oder der Entwicklerversion
+auftritt. Bitte sehen Sie auch auf der Kompatibilitätsliste der ScummVM-Website
+für dieses Spiel nach, um sicherzustellen, dass das Problem nicht bereits
+bekannt ist:
 
-  http://www.scummvm.org/compatibility_stable.php
+  <http://scummvm.org/compatibility/>
 
-Bitte berichten Sie keine Fehler zu Spielen, die nicht als durchspielbar im
-Bereich „Supported Games“ oder der Kompatibilitätsliste aufgelistet sind.
+Bitte melden Sie keine Fehler zu Spielen, die nicht als durchspielbar im
+Bereich „Unterstützte Spiele“ oder der Kompatibilitätsliste aufgelistet sind.
 Wir -wissen-, dass diese Spiele Fehler aufweisen.
 
 Bitte liefern Sie folgende Informationen:
@@ -336,6 +341,7 @@ Spiele von Sierra (SCI):
      EcoQuest: Die Suche nach Cetus              [ecoquest]
      EcoQuest 2: Lost Secret of the Rainforest   [ecoquest2]
      Freddy Pharkas: Cowboy-Apotheker            [freddypharkas]
+     Gabriel Knight: Sins of the Fathers         [gk1]
      Hoyle's Book of Games 1                     [hoyle1]
      Hoyle's Book of Games 2                     [hoyle2]
      Hoyle's Book of Games 3                     [hoyle3]
@@ -345,6 +351,8 @@ Spiele von Sierra (SCI):
      King's Quest IV                             [kq4sci]
      King's Quest V                              [kq5]
      King's Quest VI                             [kq6]
+     King's Quest VII                            [kq7]
+     King's Questions                            [kquestions]
      Laura Bow: The Colonel's Bequest            [laurabow]
      Laura Bow 2: Der Dolch des Amon Ra          [laurabow2]
      Leisure Suit Larry 1                        [lsl1sci]
@@ -352,22 +360,34 @@ Spiele von Sierra (SCI):
      Leisure Suit Larry 3                        [lsl3]
      Leisure Suit Larry 5                        [lsl5]
      Leisure Suit Larry 6                        [lsl6]
+     Leisure Suit Larry 6 (hires)                [lsl6hires]
+     Leisure Suit Larry 7                        [lsl7]
+     Lighthouse: The Dark Being                  [lighthouse]
      Mixed-up Fairy Tales                        [fairytales]
      Mixed-up Mother Goose                       [mothergoose]
+     Mixed-up Mother Goose Deluxe                [mothergoosehires]
      Pepper's Adventures in Time                 [pepper]
+     Phantasmagoria                              [phantasmagoria]
+     Phantasmagoria 2: A Puzzle of Flesh         [phantasmagoria2]
      Police Quest 1                              [pq1sci]
      Police Quest 2                              [pq2]
      Police Quest 3                              [pq3]
+     Police Quest 4                              [pq4]
      Quest for Glory 1/Hero's Quest              [qfg1]
      Quest for Glory 1                           [qfg1vga]
      Quest for Glory 2                           [qfg2]
      Quest for Glory 3                           [qfg3]
+     RAMA                                        [rama]
      Slater & Charlie Go Camping                 [slater]
+     Shivers                                     [shivers]
      Space Quest I                               [sq1sci]
      Space Quest III                             [sq3]
      Space Quest IV                              [sq4]
      Space Quest V                               [sq5]
+     Space Quest 6                               [sq6]
      The Island of Dr. Brain                     [islandbrain]
+     The Beast Within: A Gabriel Knight Mystery  [gk2]
+     Torin's Passage                             [torin]
 
 Andere Spiele:
      3 Skulls of the Toltecs                     [toltecs]
@@ -405,9 +425,11 @@ Andere Spiele:
      Nippon Safes Inc.                           [nippon]
      Rex Nebular and the Cosmic Gender Bender    [nebular]
      Ringworld: Revenge of the Patriarch         [ringworld]
+     Riven: The Sequel to Myst                   [riven]
      Return to Ringworld                         [ringworld2]
      Sfinx                                       [sfinx]
      Soltys                                      [soltys]
+     Starship Titanic                            [titanic]
      TeenAgent                                   [teenagent]
      The 7th Guest                               [t7g]
      The Journeyman Project: Pegasus Prime       [pegasus]
@@ -942,8 +964,14 @@ Der Spieler kann dann einfach auf den Rand des Spielbildschirms klicken, um den
 Ort zu wechseln, ähnlich wie in vielen Adventures, was einfacher und viel
 unkomplizierter ist, als sich mit dem Menü umherzubewegen.
 
+3.15) Hinweise zu Myst:
+----- -----------------
+Linke Maustaste: Bewegen/Aktion
+Leertaste: Spiel pausieren
+ESC: Zwischensequenz überspringen
+F5: Menü
 
-3.15) Hinweise zu Nippon Safes Inc. (Amiga):
+3.16) Hinweise zu Nippon Safes Inc. (Amiga):
 ----- --------------------------------------
 Für dieses Spiel benötigen Sie die Dateien
 disk0, global.table, pointer und it (en, fr, ge für die internationale Version).
@@ -951,15 +979,57 @@ disk0, global.table, pointer und it (en, fr, ge für die internationale Version)
 Zusätzlich müssen Sie das Diskettenabbild 2 in disk1, Abbild 3 in disk2,
 Abbild 4 in disk3 sowie Abbild 5 in disk4 umbenennen.
 
+3.17) Hinweise zu Riven
+----- -----------------
+Linke Maustaste: Bewegen/Aktion
+Pfeiltasten: Bewegen
+Bild hoch: Nach oben sehen
+Bild unten: Nach unten sehen
+Leertaste: Spiel pausieren
+ESC: Zwischensequenz überspringen
+F5: Menü
+Strg-o: Spiel laden
+Strg-s: Spiel speichern
 
-3.16) Hinweise zu Simon the Sorcerer 1 und 2:
+
+3.18) Hinweise zu Simon the Sorcerer 1 und 2:
 ----- ---------------------------------------
 Wenn Sie die Doppel-Version von Simon the Sorcerer 1 oder 2 auf CD haben, finden
 Sie die Windows-Version im Hauptverzeichnis der CD und die DOS-Version im
 DOS-Verzeichnis der CD.
 
+3.19) Hinweise zu Starship Titanic:
+-----------------------------------
+Grundlegende Steuerung:
+Linke Maustaste: Bewegung ausführen
+Shift + Linke Maustaste: Bearbeite Raum-Symbole und schnelle Bewegungs-Übergänge
+Rechte Maustaste: Bearbeite Raum-Symbole und schnelle Übergänge
+Mausrad: Durch Items (Inventar, etc) und Konversations-Log scrollen
+Pfeiltasten: Bewegung. Pfeil nach unten/zurück ist nur verfügbar, wenn die aktuelle
+Ansicht die Bewegung nach unten explizit verfügbar hat.
 
-3.17) Hinweise zu The Curse of Monkey Island:
+Steuerung für das Starfield-Puzzle am Ende des Spiels:
+Tab: Zwischen Sternenkarte und Himmelslandschaft umschalten
+Mausklick: Stern auf der Himmelslandschaft auswählen
+Mausbewegung: Ausrichtung der Sternenkarte
+Z: Sternenkarte nach links drehen
+X: Sternenkarte nach rechts drehen
+'  Sternenkarte nach oben drehen
+/  Sternenkarte nach unten drehen
+;  Sternenkarte nach vorne bewegen
+.  Sternenkarte nach hinten bewegen
+LEER  Bewegung der Sternenkarte stoppen
+L: Koordinaten der Sternenkarte sperren
+D: Koordinaten der Sternenkarte entsperren
+
+Um das Puzzle zu lösen, werden nur Mausklicks, die L- und die Tab-Taste wirklich
+benötigt. Die Aktions-Symbole im PET können anstelle der Tab-Taste verwendet werden.
+
+Verschiedene Steuerungselemente:
+Strg + C: Öffnet den Cheat-Raum für Entwickler
+Strg + D: Öffnet den Debugger.
+
+3.20) Hinweise zu The Curse of Monkey Island:
 ----- ---------------------------------------
 Für dieses Spiel benötigen Sie die Dateien comi.la0, comi.la1 und comi.la2. Die
 Datei comi.la0 kann auf beiden CDs vorgefunden werden, ist aber auf beiden
@@ -971,7 +1041,7 @@ dieser Dateien lassen sich auf beiden CDs vorfinden, jedoch sind sie auch in
 diesem Fall identisch.
 
 
-3.18) Hinweise zu Floyd – Es gibt noch Helden:
+3.21) Hinweise zu Floyd – Es gibt noch Helden:
 ----- ----------------------------------------
 Amiga/Macintosh:
 Sie benötigen ein kleines Paket mit Zwischensequenzen, welche sowohl in der
@@ -1000,7 +1070,7 @@ voices.wav von CD3 in voices3.wav
 voices.wav von CD4 in voices4.wav
 
 
-3.19) Hinweise zu The Legend of Kyrandia:
+3.22) Hinweise zu The Legend of Kyrandia:
 ----- -----------------------------------
 Um The Legend of Kyrandia unter ScummVM laufen zu lassen, benötigen Sie die
 Datei „kyra.dat“. Die Datei sollte immer in offiziellen ScummVM-Paketen
@@ -1011,14 +1081,14 @@ eingebettet sein sollte. Also müssen Sie sich nur diese besorgen, wenn sich
 ScummVM darüber beschwert, dass diese Datei fehlt.
 
 
-3.20) Hinweise zu Troll's Tale:
+3.23) Hinweise zu Troll's Tale:
 ----- -------------------------
 Das Originalspiel wurde auf einer PC-Boot-Diskette ausgeliefert, weshalb es
 notwendig ist, die Inhalte dieser Diskette in einer Abbild-Datei auszugeben und
 diese „troll.img“ zu nennen, um das Spiel unter ScummVM spielen zu können.
 
 
-3.21) Hinweise zu Winnie the Pooh:
+3.24) Hinweise zu Winnie the Pooh:
 ----- ----------------------------
 Es ist möglich, Spielstände vom Original-Interpreter des Spiels in ScummVM zu
 importieren.
@@ -1033,7 +1103,7 @@ Ort zu wechseln, ähnlich wie in vielen Adventures, was einfacher und viel
 unkomplizierter ist, als sich mit dem Menü umherzubewegen.
 
 
-3.22) Hinweise zum vorhersagenden Eingabedialog bei Sierras AGI-Spielen:
+3.25) Hinweise zum vorhersagenden Eingabedialog bei Sierras AGI-Spielen:
 ----- ------------------------------------------------------------------
 Der vorhersagende Eingabedialog ist ein ScummVM-Hilfsmittel, um die englischen
 Spiele der AGI-Engine (die offensichtlich Kommandozeilen-Eingabe erfordern) auf
@@ -1092,7 +1162,7 @@ Ziffernblock zugewiesen wurde. Ebenso können die Schaltflächen mittels der
 Pfeiltasten und der Eingabetaste gesteuert werden.
 
 
-3.23) Gleichzeitige Sprachausgabe und Untertitel in Sierra-SCI-Spielen:
+3.26) Gleichzeitige Sprachausgabe und Untertitel in Sierra-SCI-Spielen:
 ----- -----------------------------------------------------------------
 Bestimmte CD-Versionen von Sierra-SCI-Spielen boten sowohl Sprachausgabe als
 auch Untertitel an. Bei einigen gab es die Möglichkeit, zwischen beidem hin- und
@@ -1107,10 +1177,17 @@ In diesen CD-Spielen ist es möglich, gleichzeitige Sprachausgabe und Untertitel
 anzeigen zu lassen:
   EcoQuest 1 CD
   Freddy Pharkas CD
+  Gabriel Knight CD
   King's Quest 6 CD
+  King's Quest VII CD
   Laura Bow 2 CD
   Leisure Suit Larry 6 CD
+  Leisure Suit Larry 6 (hires) CD
+  Police Quest 4 CD
+  Shivers CD
   Space Quest 4 CD
+  Space Quest 6 CD
+  Torin's Passage CD
 
 EcoQuest 1 CD:
     Der Modus Sprachausgabe und Untertitel kann über die Spieloptionen oder auch
@@ -1122,11 +1199,23 @@ Freddy Pharkas CD:
     möglich. Bitte beachten Sie, dass einige gesprochene Teile in den
     Untertiteln fehlen.
 
+Gabriel Knight CD:
+    Sprachausgabe und Textausgabe kann mithilfe der "Text" und "Sprache"-Buttons
+    in den Spiel-Optionen oder über die Audio-Einstellungen von ScummVM
+    ausgewählt werden.
+
 King's Quest 6 CD:
     Der Modus Sprachausgabe und Untertitel kann über die Modusschaltfläche in
     den Spieloptionen (über die für ScummVM zusätzlich hinzugefügte Einstellung
     „Dual“) oder auch über ScummVMs Audio-Optionen deaktiviert und aktiviert
     werden.
+
+King's Quest VII CD:
+    Es gibt innerhalb des Spiels keine Option, um zwischen Sprachausgabe und
+    Textausgabe umzuschalten. Nur die Audio-Einstellungen von ScummVM können
+    dazu verwendet werden. Beachten Sie, dass Untertitel in der offiziellen
+    Veröffentlichung des Spiels deaktiviert wurden, sodass einige Untertitel
+    fehlerhaft sein können oder teilweise fehlen.
 
 Laura Bow 2 CD:
     Der Modus Sprachausgabe und Untertitel kann über die Modusschaltfläche in
@@ -1139,13 +1228,40 @@ Leisure Suit Larry 6 CD:
     gewählt werden. Es gibt innerhalb des Spiels keine Option, um alleinige
     Untertitel zu aktivieren. Dies ist nur über ScummVMs Audio-Optionen möglich.
 
+Leisure Suit Larry 6 (hires) CD:
+    Untertitel können über die Option "Text Ein/Aus" innerhalb des Spiels oder
+    über die Audio-Einstellungen von ScummVM deaktiviert werden. Die Sprachausgabe
+    kann nicht deaktiviert werden.
+
+Police Quest 4 CD:
+    Innerhalb des Spiels kann nur zwischen Sprachausgabe und Textausgabe umgeschaltet
+    werden. Nur mithilfe der ScummVM-Audioeinstellungen ist es möglich, Sprachausgabe
+    und Untertitel gleichzeitig zu aktivieren.
+
+Shivers CD:
+    Die Textausgabe kann mithilfe der "Text"-Option in den Einstellungen des Spiels
+    sowie über die Audio-Einstellungen von ScummVM ein- und ausgeschaltet werden.
+    Bitte beachten Sie, dass in diesem Spiel nur die Videos mit Untertiteln
+    versehen sind.
+
 Space Quest 4 CD:
     Der Modus Sprachausgabe und Untertitel kann über die Schaltfläche für den
     Anzeige-Modus in den Spieloptionen oder auch über ScummVMs Audio-Optionen
     deaktiviert und aktiviert werden.
 
+Space Quest 6 CD:
+    Sprachausgabe und Text kann mithilfe der "Sprache"- und "Text"-Buttons
+    in den Einstellungen des Spiels oder über die Audioeinstellungen in
+    ScummVM ein- und ausgeschaltet werden.
 
-3.24) Hinweise zu den Spielen der Zork-Reihe:
+Torin's Passage CD:
+    Untertitel können über die Option "Closed Captioning" in den Einstellungen
+    des Spiels ein- und ausgeschaltet werden. Die Sprachausgabe kann ausgeschaltet
+    werden, indem die Option "Audio Mixer" im Spielmenü ausgewählt und die
+    Lautstärke der Sprachaufgabe auf null gesetzt wird.
+
+
+3.27) Hinweise zu den Spielen der Zork-Reihe:
 ----- ---------------------------------------
 Um die unterstützen Zork-Spiele (Zork Nemesis: Das verbotene Land und
 Zork: Der Großinquisitor) spielen zu können, müssen Sie einige zusätzliche
@@ -1258,7 +1374,7 @@ das Hauptverzeichnis des Spiels. Kopieren Sie die Verzeichnisse "zassetsc" und
 "zassetse" ebenfalls in das Hauptverzeichnis des Spiels.
 
 
-3.25) Hinweise zu Spielen für den Commodore 64:
+3.28) Hinweise zu Spielen für den Commodore 64:
 ----- -----------------------------------------
 Sowohl Maniac Mansion als auch Zak McKracken laufen, aber Maniac Mansion ist
 noch nicht spielbar. Benennen Sie einfach die D64-Datenträger um in
@@ -1273,7 +1389,7 @@ Plattform eingestellt ist. Wir empfehlen, auf die viel einfachere Methode
 zurückzugreifen, die im vorherigen Absatz beschrieben ist.
 
 
-3.26) Hinweise zu Spielen für den Macintosh:
+3.29) Hinweise zu Spielen für den Macintosh:
 ----- --------------------------------------
 Alle auf SCUMM basierenden Adventures von Lucasarts, mit Ausnahme von COMI,
 existieren auch als Versionen für den Macintosh. ScummVM kann die meisten
@@ -1394,10 +1510,25 @@ gestartet werden -- siehe nächster Abschnitt.
   -t, --list-targets       Zeigt Liste konfigurierter Ziele und beendet.
   --list-saves=ZIEL        Zeigt Liste von Spielständen für das festgelegte
                            Spiel (ZIEL)
-  --auto-detect            Zeigt eine Liste unterstützter Spiele im aktuellen
-                           oder in einem anderen gewählten Verzeichnis an.
-                           Verwenden Sie --path=PFAD vor --auto-detect, um
-                           ein Verzeichnis zu wählen.
+  -a, --add                Fügt alle Spiele aus dem aktuellen oder einem gewählten
+                           Verzeichnis hinzu. Wenn --game=ID verwendet wird,
+                           wird nur das Spiel mit dieser Kennung hinzugefügt.
+                           Siehe auch --detect.
+                           Verwenden Sie --path=PFAD vor -a, -add um ein
+                           Verzeichnis festzulegen.
+  --detect                 Zeigt eine Liste der Spiele mit ihrer Kennung in dem
+                           aktuellen oder einem gewählten Verzeichnis an, ohne
+                           sie zu der Konfiguration hinzuzufügen.
+                           Verwenden Sie --path=PFAD vor --detect, um ein
+                           Verzeichnis festzulegen.
+  --game=ID                In Kombination mit --add oder --detect wird nur das Spiel
+                           mit der gewählten Kennung hinzugefügt oder versucht zu erkennen.
+  --auto-detect            Zeigt eine Liste der Spiele im aktuellen oder einem gewählten
+                           Verzeichnis an und starte das erste erkannte Spiel.
+                           Verwenden Sie --path=PFAD vor --auto-detect, um ein Verzeichnis
+                           festzulegen.
+  --recursive              In Kombination mit --add oder --detect werden alle
+                           Unterverzeichnisse rekursiv durchsucht.
   --console                Aktiviert das Konsolenfenster
                            (standardmäßig aktiviert) (nur Windows)
 
@@ -1534,6 +1665,7 @@ Die Engines, die momentan das Zurückkehren zur Spieleliste unterstützen, sind:
     SWORD1
     SWORD2
     TEENAGENT
+    TITANIC
     TOUCHE
     TSAGE
     TUCKER
@@ -1921,11 +2053,13 @@ den Originalversionen verwendet werden.
     - Benennen Sie die Spielstanddatei in „elvira2-pc.xxx“ (DOS-Versionen) oder
       „elvira2.xxx“ (andere Versionen) um.
 
-  Waxworks
-    - Fügen Sie 8 Bytes (Name für Spielstand) am Anfang der Spielstanddatei
-      hinzu.
-    - Benennen Sie die Spielstanddatei in „waxworks-pc.xxx“ (DOS-Versionen) oder
-      „waxworks.xxx“ (andere Versionen) um.
+  Myst
+    - Bennen Sie die Spielstanddatei in "myst-xxx.mys" um.
+    - Spielstände der Masterpiece Edition und der normalen Ausgabe sind austauschbar.
+
+  Riven
+    - Bennen Sie die Spielstanddatei in "riven-xxx.rvn" um.
+    - Spielstände der CD- und der DVD-Ausgabe sind nicht austauschbar.
 
   Simon the Sorcerer 1
     - Benennen Sie die Spielstanddatei in „simon1.xxx“ um.
@@ -1933,8 +2067,17 @@ den Originalversionen verwendet werden.
   Simon the Sorcerer 2
     - Benennen Sie die Spielstanddatei in „simon2.xxx“ um.
 
+  Starship Titanic
+    - Benennen Sie die Spielstanddatei in "titanic-win.xxx" um.
+
   Floyd - Es gibt noch Helden
     - Benennen Sie die Spielstanddatei in „feeble.xxx“ um.
+
+  Waxworks
+    - Fügen Sie 8 Bytes (Name für Spielstand) am Anfang der Spielstanddatei
+      hinzu.
+    - Benennen Sie die Spielstanddatei in „waxworks-pc.xxx“ (DOS-Versionen) oder
+      „waxworks.xxx“ (andere Versionen) um.
 
 Hierbei steht „xxx“ für den genauen Speicherplatz (z. B. 001), auf welchem sich
 der Spielstand unter ScummVM befinden soll.
@@ -1974,6 +2117,7 @@ der Spielstand unter ScummVM befinden soll.
        SWORD2
        TEENAGENT
        TINSEL
+       TITANIC
        TOON
        TOUCHE
        TSAGE
@@ -2009,6 +2153,7 @@ der Spielstand unter ScummVM befinden soll.
        SWORD2
        TEENAGENT
        TINSEL
+       TITANIC
        TOON
        TOUCHE
        TSAGE
@@ -2577,6 +2722,14 @@ Die folgenden Schlüsselwörter werden erkannt:
     save_slot          Zahl     Nummer des Spielstands, der zu Spielbeginn
                                 geladen werden soll
     savepath           Text     Verzeichnis für Spielstände des Spiels
+    screenshotpath     Text     Verzeichnis für Bildschirmfotos
+    iconpaths          Text     Verzeichnis, in dem nach Icons gesucht wird,
+                                die für das ScummVM-Icon in der Windows-Taskbar
+                                oder im macOS X-Dock verwendet werden, wenn
+                                ein Spiel läuft. Die Icon-Dateien sollten nach
+                                der Spiele-Kennung benannt werden und sich unter
+                                Windows im .ico-Format und unter macOS X im
+                                .png-Format befinden.
     versioninfo        Text     Die Version von ScummVM, welche diese
                                 Konfigurationsdatei erstellt hat
 
@@ -2613,6 +2766,11 @@ Die folgenden Schlüsselwörter werden erkannt:
     opl_driver         Text     Verwendung von AdLib-(OPL-)Emulator
     output_rate        Zahl     Zu verwendende Ausgabefrequenz in Hz. Sinnvolle
                                 Werte sind 11025, 22050 und 44100.
+    audio_buffer_size  Zahl     Überschreibt die Größe des Audio-Zwischenspeichers.
+                                Zulässige Werte sind: 256 512 1024 2048 4096
+                                8192 16384 32768. Das Standard-Wert wird anhand der
+                                output_rate berechnet, um die Audio-Latenz unter
+                                45ms zu halten.
     alsa_port          Text     Zu verwendender Port für Ausgabe mittels
                                 ALSA-Musiktreiber
     music_volume       Zahl     Musiklautstärke-Einstellung (0-255)
@@ -2832,8 +2990,27 @@ angezeigt werden, muss das betreffende Spiel einmal gestartet oder neu zur
 Spieleliste hinzugefügt werden. Dadurch wird die Konfiguration von jedem Eintrag
 aktualisiert, was die spielspezifischen Optionen zum Vorschein bringt.
 
+9.0) Bildschirmfotos (nur SDL-Backend):
+---- ----------------------------------
+Auf Systemen, die das SDL-Backen verwenden (zum Beispiel Windows, Mac oder Linux)
+können Sie die Tastenkombination "Alt+S" zum Erstellen von Bildschirmfotos verwenden
+(siehe auch 5.4 - Tastenkürzel).
 
-9.0) Kompilieren:
+Sie können das Verzeichnis, in dem die erstellten Bildschirmfotos abgelegt werden sollen,
+in der ScummVM-Konfigurationsdatei festlegen. Dazu müssen Sie einen Eintrag "screenshotpath"
+innerhalb der [scummvm]-Sektion hinzufügen:
+
+[scummvm]
+screenshotpath=/pfad/zu/den/bildschirmfotos/
+
+Wenn in der Konfigurationsdatei kein Bildschirmfoto-Verzeichnis angegeben ist, hängt
+der Speicherort der Bildschirmfotos vom verwendeten Betriebssystem ab:
+  Windows: Im Verzeichnis "Users\Benutzername\Bilder\ScummVM Screenshots"
+  macOS X: Auf dem Desktop.
+  Alle anderen Betriebssysteme: Im aktuellen Verzeichnis.
+
+
+10.0) Kompilieren:
 ---- ------------
 Für eine aktuelle Übersicht dazu, wie man ScummVM für unterschiedliche
 Plattformen kompiliert, schauen Sie bitte in unserem Wiki nach, insbesondere auf
@@ -2862,18 +3039,12 @@ Debug-Nachrichten zu durchsuchen
 
 
    Windows:
-   * Dev-C++
-      Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/DevCPP
    * MinGW
       Weiterführende Informationen finden Sie unter:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/MinGW
    * Visual Studio (MSVC)
       Weiterführende Informationen finden Sie unter:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Visual_Studio
-   * Windows CE/Mobile
-      Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Windows_CE
 
    Linux:
    * GCC
@@ -2882,7 +3053,7 @@ Debug-Nachrichten zu durchsuchen
 
    AmigaOS4:
       Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/AmigaOS
+      http://wiki.scummvm.org/index.php/AmigaOS4
 
    Apple iPhone:
       Weiterführende Informationen finden Sie unter:
@@ -2923,10 +3094,6 @@ http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling
       Weiterführende Informationen finden Sie unter:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Maemo
 
-   Nintendo DS:
-      Weiterführende Informationen finden Sie unter:
-      http://wiki.scummvm.org/index.php/Compiling_ScummVM/Nintendo_DS
-
    Nintendo Wii and Gamecube:
       Weiterführende Informationen finden Sie unter:
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Wii
@@ -2955,12 +3122,12 @@ http://wiki.scummvm.org/index.php/Compiling_ScummVM/Mac_OS_X_Crosscompiling
       http://wiki.scummvm.org/index.php/Compiling_ScummVM/Symbian
 
 
-10.0) Mitwirkende
+11.0) Mitwirkende
 ----- -------
 Eine ausführliche Liste derjenigen, die ScummVM ermöglicht haben, finden Sie
 unter:
 
-  http://www.scummvm.org/credits/
+  http://www.scummvm.org/credits
 
 
 ------------------------------------------------------------------------

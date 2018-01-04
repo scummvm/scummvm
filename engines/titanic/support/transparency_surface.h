@@ -46,7 +46,10 @@ private:
 	/**
 	* Returns a a pixel from the transparency surface
 	*/
-	uint getPixel() const;
+	inline uint getPixel() const {
+		byte pixel = *(const byte *)_surface->getBasePtr(_pos.x, _pos.y);
+		return pixel;
+	}
 public:
 	/**
 	 * Constructor
@@ -56,32 +59,48 @@ public:
 	/**
 	 * Sets the row to get transparencies from
 	 */
-	void setRow(int yp) { _pos.y = yp; }
+	inline void setRow(int yp) { _pos.y = yp; }
 
 	/**
 	 * Sets the column to get transparencies from
 	 */
-	void setCol(int xp) { _pos.x = xp; }
+	inline void setCol(int xp) { _pos.x = xp; }
 
 	/**
 	 * Moves reading position horizontally by a single pixel
 	 */
-	int moveX();
+	inline int moveX() {
+		if (++_pos.x >= _surface->w) {
+			_pos.x = 0;
+			++_pos.y;
+		}
+
+		return 1;
+	}
 
 	/**
 	 * Returns the alpha value for the pixel (0-31)
 	 */
-	uint getAlpha() const;
+	inline uint getAlpha() const {
+		byte pixel = getPixel();
+		return _opaqueColor ? 0xFF - pixel : pixel;
+	}
 
 	/**
 	 * Returns true if the pixel is opaque
 	 */
-	bool isPixelOpaque() const;
+	inline bool isPixelOpaque() const {
+		byte pixel = getPixel();
+		return _opaqueColor ? pixel >= 0xf0 : pixel < 0x10;
+	}
 
 	/**
 	 * Returns true if the pixel is completely transparent
 	 */
-	bool isPixelTransparent() const;
+	inline bool isPixelTransparent() const {
+		byte pixel = getPixel();
+		return _transparentColor ? pixel >= 0xf0 : pixel < 0x10;
+	}
 };
 
 } // End of namespace Titanic

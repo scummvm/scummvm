@@ -37,7 +37,7 @@ void BbvsEngine::playVideo(int videoNum) {
 		videoFilename = Common::String::format("vid/video%03d.avi", videoNum - 1);
 
 	// Set the correct video mode
-	initGraphics(320, 240, false, 0);
+	initGraphics(320, 240, nullptr);
 	if (_system->getScreenFormat().bytesPerPixel == 1) {
 		warning("Couldn't switch to a RGB color video mode to play a video.");
 		return;
@@ -84,7 +84,7 @@ void BbvsEngine::playVideo(int videoNum) {
 
 	delete videoDecoder;
 
-	initGraphics(320, 240, false);
+	initGraphics(320, 240);
 
 }
 

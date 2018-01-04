@@ -797,7 +797,7 @@ void Inter_v2::o2_initScreen() {
 			height = _vm->_height = 400;
 			_vm->_global->_colorCount = 16;
 
-			_vm->_video->setSize(true);
+			_vm->_video->setSize();
 
 		} else if (_vm->_global->_videoMode == 0x10) {
 
@@ -810,7 +810,7 @@ void Inter_v2::o2_initScreen() {
 			_vm->_height = 200;
 			_vm->_global->_colorCount = 256;
 
-			_vm->_video->setSize(false);
+			_vm->_video->setSize();
 
 		}
 	}

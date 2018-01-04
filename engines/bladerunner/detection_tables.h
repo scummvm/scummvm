@@ -53,6 +53,21 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
+
+	// BladeRunner (French) - Bug #9722
+	{
+		"bladerunner",
+		0,
+		{
+			{"STARTUP.MIX", 0, "39d1901df50935d58aee252707134952", 2314526},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+
 	AD_TABLE_END_MARKER
 };
 

@@ -61,6 +61,25 @@ AttributeCategory XeenItem::getAttributeCategory() const {
 	return (AttributeCategory)idx;
 }
 
+const char *XeenItem::getItemName(ItemCategory category, uint id) {
+	if (id < 82)
+		return Res.ITEM_NAMES[category][id];
+
+	switch (category) {
+	case CATEGORY_WEAPON:
+		return Res.QUEST_ITEM_NAMES[id - 82];
+
+	case CATEGORY_ARMOR:
+		return Res.QUEST_ITEM_NAMES[id - 82 + 35];
+
+	case CATEGORY_ACCESSORY:
+		return Res.QUEST_ITEM_NAMES[id - 82 + 35 + 14];
+
+	default:
+		return Res.QUEST_ITEM_NAMES[id - 82 + 35 + 14 + 11];
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 InventoryItems::InventoryItems(Character *character, ItemCategory category):
@@ -682,7 +701,7 @@ void Character::clear() {
 	_birthDay = 0;
 	_tempAge = 0;
 	Common::fill(&_skills[0], &_skills[18], 0);
-	Common::fill(&_awards[0], &_awards[128], false);
+	Common::fill(&_awards[0], &_awards[128], 0);
 	Common::fill(&_spells[0], &_spells[39], 0);
 	_lloydMap = 0;
 	_hasSpells = false;
@@ -748,18 +767,21 @@ void Character::synchronize(Common::Serializer &s) {
 	for (int idx = 0; idx < 18; ++idx)
 		s.syncAsByte(_skills[idx]);
 
-	// Synchronize character awards
+	// Synchronize character awards. The original packed awards 64..127 in the
+	// upper nibble of the first 64 bytes. Except for award 9, which was a full
+	// byte counter counting the number of times the warzone was awarded
 	for (int idx = 0; idx < 64; ++idx) {
-		byte b = (_awards[idx] ? 1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
+		byte b = (idx == WARZONE_AWARD) ? _awards[idx] :			
+			(_awards[idx] ? 0x1 : 0) | (_awards[idx + 64] ? 0x10 : 0);
 		s.syncAsByte(b);
 		if (s.isLoading()) {
-			_awards[idx] = (b & 0xF) != 0;
-			_awards[idx + 64] = (b & 0xF0) != 0;
+			_awards[idx] = (idx == WARZONE_AWARD) ? b : b & 0xF;
+			_awards[idx + 64] = (idx == WARZONE_AWARD) ? 0 : (b >> 4) & 0xf;
 		}
 	}
 
 	// Synchronize spell list
-	for (int i = 0; i < MAX_SPELLS_PER_CLASS - 1; ++i)
+	for (int i = 0; i < MAX_SPELLS_PER_CLASS; ++i)
 		s.syncAsByte(_spells[i]);
 	s.syncAsByte(_lloydMap);
 	s.syncAsByte(_lloydPosition.x);
@@ -1041,7 +1063,7 @@ void Character::setAward(int awardId, bool value) {
 	else if (awardId == 81)
 		v = 127;
 
-	_awards[v] = value;
+	_awards[v] = value ? 1 : 0;
 }
 
 bool Character::hasAward(int awardId) const {
@@ -1089,7 +1111,7 @@ int Character::getThievery() const {
 
 	result += itemScan(10);
 
-	// If the character doesn't have a thievery skill, then do'nt allow any result
+	// If the character doesn't have a thievery skill, then don't allow any result
 	if (!_skills[THIEVERY])
 		result = 0;
 
@@ -1103,82 +1125,82 @@ uint Character::getCurrentLevel() const {
 int Character::itemScan(int itemId) const {
 	int result = 0;
 
-	for (int accessIdx = 0; accessIdx < 3; ++accessIdx) {
-		switch (accessIdx) {
-		case 0:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				const XeenItem &item = _weapons[idx];
+	// Weapons
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		const XeenItem &item = _weapons[idx];
 
-				if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11
-						&& itemId != 3 && item._material >= 59 && item._material <= 130) {
-					int mIndex = (int)item.getAttributeCategory();
-					if (mIndex > PERSONALITY)
-						++mIndex;
+		if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11
+				&& itemId != 3 && item._material >= 59 && item._material <= 130) {
+			int mIndex = (int)item.getAttributeCategory();
+			if (mIndex > PERSONALITY)
+				++mIndex;
 
-					if (mIndex == itemId)
-						result += Res.ATTRIBUTE_BONUSES[item._material - 59];
-				}
-			}
-			break;
-
-		case 1:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				const XeenItem &item = _armor[idx];
-
-				if (item._frame && !(item._bonusFlags & 0xC0)) {
-					if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
-						int mIndex = (int)item.getAttributeCategory();
-						if (mIndex > PERSONALITY)
-							++mIndex;
-
-						if (mIndex == itemId)
-							result += Res.ATTRIBUTE_BONUSES[item._material - 59];
-					}
-
-					if (itemId > 10 && item._material < 37) {
-						int mIndex = item.getElementalCategory() + 11;
-
-						if (mIndex == itemId) {
-							result += Res.ELEMENTAL_RESISTENCES[item._material];
-						}
-					}
-
-					if (itemId == 9) {
-						result += Res.ARMOR_STRENGTHS[item._id];
-
-						if (item._material >= 37 && item._material <= 58)
-							result += Res.METAL_LAC[item._material - 37];
-					}
-				}
-			}
-			break;
-
-		case 2:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				const XeenItem &item = _accessories[idx];
-
-				if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11 && itemId != 3) {
-					if (item._material >= 59 && item._material <= 130) {
-						int mIndex = (int)item.getAttributeCategory();
-						if (mIndex > PERSONALITY)
-							++mIndex;
-
-						if (mIndex == itemId) {
-							result += Res.ATTRIBUTE_BONUSES[item._material - 59];
-						}
-					}
-
-					if (itemId > 10 && item._material < 37) {
-						int mIndex = item.getElementalCategory() + 11;
-
-						if (mIndex == itemId)
-							result += Res.ELEMENTAL_RESISTENCES[item._material];
-					}
-				}
-			}
-			break;
+			if (mIndex == itemId)
+				result += Res.ATTRIBUTE_BONUSES[item._material - 59];
 		}
-	};
+	}
+
+	// Armor
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		const XeenItem &item = _armor[idx];
+
+		if (item._frame && !(item._bonusFlags & 0xC0)) {
+			if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
+				int mIndex = (int)item.getAttributeCategory();
+				if (mIndex > PERSONALITY)
+					++mIndex;
+
+				if (mIndex == itemId)
+					result += Res.ATTRIBUTE_BONUSES[item._material - 59];
+			}
+
+			if (itemId > 10 && item._material < 37) {
+				int mIndex = item.getElementalCategory() + 11;
+
+				if (mIndex == itemId) {
+					result += Res.ELEMENTAL_RESISTENCES[item._material];
+				}
+			}
+
+			if (itemId == 9) {
+				result += Res.ARMOR_STRENGTHS[item._id];
+
+				if (item._material >= 37 && item._material <= 58)
+					result += Res.METAL_LAC[item._material - 37];
+			}
+		}
+	}
+
+	// Accessories
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		const XeenItem &item = _accessories[idx];
+
+		if (item._frame && !(item._bonusFlags & 0xC0)) {
+			if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
+				int mIndex = (int)item.getAttributeCategory();
+				if (mIndex > PERSONALITY)
+					++mIndex;
+
+				if (mIndex == itemId) {
+					result += Res.ATTRIBUTE_BONUSES[item._material - 59];
+				}
+			}
+
+			if (itemId > 10 && item._material < 37) {
+				int mIndex = item.getElementalCategory() + 11;
+
+				if (mIndex == itemId)
+					result += Res.ELEMENTAL_RESISTENCES[item._material];
+			}
+
+			if (itemId == 9) {
+				result += Res.ARMOR_STRENGTHS[item._id];
+				if (item._material >= 37 && item._material <= 58) {
+					result += Res.METAL_LAC[item._material - 37];
+				}
+			}
+		}
+	}
 
 	return result;
 }
@@ -1380,8 +1402,7 @@ void Character::setValue(int id, uint value) {
 		party._food = value;
 		break;
 	case 69:
-		// Set levitate active
-		party._levitateActive = value != 0;
+		party._levitateCount = value;
 		break;
 	case 70:
 		party._lightCount = value;
@@ -1403,7 +1424,7 @@ void Character::setValue(int id, uint value) {
 		party._electricityResistence = value;
 		party._fireResistence = value;
 		party._lightCount = value;
-		party._levitateActive = value != 0;
+		party._levitateCount = value;
 		break;
 	case 76:
 		// Set day of the year (0-99)
@@ -1413,7 +1434,7 @@ void Character::setValue(int id, uint value) {
 		party._wizardEyeActive = true;
 		break;
 	case 83:
-		scripts._nEdamageType = value;
+		scripts._nEdamageType = (DamageType)value;
 		break;
 	case 84:
 		party._mazeDirection = (Direction)value;
@@ -1430,23 +1451,24 @@ void Character::setValue(int id, uint value) {
 }
 
 bool Character::guildMember() const {
-	Party &party = *Party::_vm->_party;
+	FileManager &files = *g_vm->_files;
+	Party &party = *g_vm->_party;
 
-	if (party._mazeId == 49 && !Party::_vm->_files->_isDarkCc) {
-		return hasAward(5);
+	if (party._mazeId == 49 && !files._isDarkCc) {
+		return hasAward(SHANGRILA_GUILD_MEMBER);
 	}
 
 	switch (party._mazeId) {
 	case 29:
-		return hasAward(83);
+		return hasAward(CASTLEVIEW_GUILD_MEMBER);
 	case 31:
-		return hasAward(84);
+		return hasAward(SANDCASTER_GUILD_MEMBER);
 	case 33:
-		return hasAward(85);
+		return hasAward(LAKESIDE_GUILD_MEMBER);
 	case 35:
-		return hasAward(86);
+		return hasAward(NECROPOLIS_GUILD_MEMBER);
 	default:
-		return hasAward(87);
+		return hasAward(OLYMPUS_GUILD_MEMBER);
 	}
 }
 
@@ -1463,6 +1485,7 @@ uint Character::nextExperienceLevel() const {
 		shift = 10;
 	} else {
 		base = 0;
+		assert(_level._permanent > 0);
 		shift = _level._permanent - 1;
 	}
 
@@ -1473,7 +1496,7 @@ uint Character::getCurrentExperience() const {
 	int lev = _level._permanent - 1;
 	int shift, base;
 
-	if (lev > 0 && lev < 12)
+	if (lev == 0)
 		return _experience;
 
 	if (lev >= 12) {
@@ -1501,7 +1524,7 @@ int Character::getNumSkills() const {
 
 int Character::getNumAwards() const {
 	int total = 0;
-	for (int idx = 0; idx < 88; ++idx) {
+	for (int idx = 0; idx < AWARDS_TOTAL; ++idx) {
 		if (hasAward(idx))
 			++total;
 	}
@@ -1659,20 +1682,15 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 			rval = vm->getRandomNumber(1, 100);
 			if (rval <= 25) {
 				mult = 0;
-			}
-			else if (rval <= 45) {
+			} else if (rval <= 45) {
 				mult = 1;
-			}
-			else if (rval <= 60) {
+			} else if (rval <= 60) {
 				mult = 2;
-			}
-			else if (rval <= 75) {
+			} else if (rval <= 75) {
 				mult = 3;
-			}
-			else if (rval <= 95) {
+			} else if (rval <= 95) {
 				mult = 4;
-			}
-			else {
+			} else {
 				mult = 5;
 			}
 
@@ -1704,14 +1722,16 @@ int Character::makeItem(int p1, int itemIndex, int p3) {
 				mult = 9;
 			}
 
-			v12 = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(Res.MAKE_ITEM_ARR3[mult][p1][0],
+			v14 = Res.MAKE_ITEM_ARR1[vm->getRandomNumber(Res.MAKE_ITEM_ARR3[mult][p1][0],
 				Res.MAKE_ITEM_ARR3[mult][p1][1])];
 			break;
 
 		case 3:
 			mult = p1 == 7 || vm->getRandomNumber(1, 100) > 70 ? 1 : 0;
-			v16 = vm->getRandomNumber(Res.MAKE_ITEM_ARR4[mult][p1][0],
-				Res.MAKE_ITEM_ARR4[mult][p1][1]);
+			v16 = vm->getRandomNumber(Res.MAKE_ITEM_ARR4[mult][p1 - 1][0],
+				Res.MAKE_ITEM_ARR4[mult][p1 - 1][1]);
+			if (mult)
+				v16 += 9;
 			break;
 
 		case 4:
@@ -1799,7 +1819,7 @@ void Character::subtractHitPoints(int amount) {
 	}
 }
 
-bool Character::hasSpecialItem() const {
+bool Character::hasSlayerSword() const {
 	for (uint idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		if (_weapons[idx]._id == 34)
 			// Character has Xeen Slayer sword

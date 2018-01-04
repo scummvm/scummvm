@@ -159,6 +159,8 @@ bool CPhonographCylinder::RecordOntoCylinderMsg(CRecordOntoCylinderMsg *msg) {
 	_bassPitchControl = queryMsg._value;
 	queryMsg.execute("Bass Inversion Control");
 	_bassInversionControl = queryMsg._value;
+	queryMsg.execute("Bass Direction Control");
+	_bassDirectionControl = queryMsg._value;
 
 	return true;
 }

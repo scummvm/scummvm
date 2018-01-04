@@ -42,6 +42,8 @@ Resources *Resources::init(XeenEngine *vm) {
 
 Resources::Resources() {
 	g_resources = this;
+	g_vm->_files->setGameCc(1);
+	
 	_globalSprites.load("global.icn");
 
 	File f("mae.xen");
@@ -97,6 +99,8 @@ const char *const Resources::THE_PARTY_NEEDS_REST = "\x0B""012The Party needs re
 
 const char *const Resources::WHO_WILL = "\x03""c\x0B""000\x09""000%s\x0A\x0A"
 	"Who will\x0A%s?\x0A\x0B""055F1 - F%d";
+
+const char *const Resources::HOW_MUCH = "\x3""cHow Much\n\n";
 
 const char *const Resources::WHATS_THE_PASSWORD = "What's the Password?";
 
@@ -315,7 +319,7 @@ const char *const Resources::ALIGNMENT_NAMES[3] = { "Good", "Neutral", "Evil" };
 const char *const Resources::SEX_NAMES[2] = { "Male", "Female" };
 
 const char *const Resources::SKILL_NAMES[18] = {
-	"Thievery", "Arms Master", "Astrologer", "Body Builder", "Cartographer",
+	"Thievery\t100", "Arms Master", "Astrologer", "Body Builder", "Cartographer",
 	"Crusader", "Direction Sense", "Linguist", "Merchant", "Mountaineer",
 	"Navigator", "Path Finder", "Prayer Master", "Prestidigitator",
 	"Swimmer", "Tracker", "Spot Secret Door", "Danger Sense"
@@ -385,19 +389,59 @@ const char *const Resources::NO_ONE_TO_ADVENTURE_WITH = "You have no one to adve
 
 const char *const Resources::YOUR_ROSTER_IS_FULL = "Your Roster is full!";
 
-const byte Resources::BACKGROUND_XLAT[] = {
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0xF7, 0xFF, 0x09, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0xF9, 0xFF, 0x07, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0xF7, 0xFF, 0x09, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0xF5, 0xFF, 0x0B, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0xF3, 0xFF, 0x0D, 0x00, 0x00, 0x00,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-	0x00, 0x00
+const byte Resources::DARKNESS_XLAT[3][256] = {
+	{
+	0, 25, 26, 27, 28, 29, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	60, 61, 62, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	76, 77, 78, 79, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	92, 93, 94, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	108, 109, 110, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	124, 125, 126, 127, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	140, 141, 142, 143, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	168, 169, 170, 171, 172, 173, 174, 175, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	188, 189, 190, 191, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	204, 205, 206, 207, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	220, 221, 222, 223, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	236, 237, 238, 239, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	252, 253, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+	}, {
+	0, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0,
+	56, 57, 58, 59, 60, 61, 62, 63, 0, 0, 0, 0, 0, 0, 0, 0,
+	72, 73, 74, 75, 76, 77, 78, 79, 0, 0, 0, 0, 0, 0, 0, 0,
+	88, 89, 90, 91, 92, 93, 94, 95, 0, 0, 0, 0, 0, 0, 0, 0,
+	104, 105, 106, 107, 108, 109, 110, 111, 0, 0, 0, 0, 0, 0, 0, 0,
+	120, 121, 122, 123, 124, 125, 126, 127, 0, 0, 0, 0, 0, 0, 0, 0,
+	136, 137, 138, 139, 140, 141, 142, 143, 0, 0, 0, 0, 0, 0, 0, 0,
+	160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	184, 185, 186, 187, 188, 189, 190, 191, 0, 0, 0, 0, 0, 0, 0, 0,
+	200, 201, 202, 203, 204, 205, 206, 207, 0, 0, 0, 0, 0, 0, 0, 0,
+	216, 217, 218, 219, 220, 221, 222, 223, 0, 0, 0, 0, 0, 0, 0, 0,
+	232, 233, 234, 235, 236, 237, 238, 239, 0, 0, 0, 0, 0, 0, 0, 0,
+	248, 249, 250, 251, 252, 253, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0
+	}, {
+	0, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+	24, 25, 26, 27, 28, 29, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0,
+	36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0,
+	52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 0, 0, 0, 0,
+	68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 0, 0, 0, 0,
+	84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 0, 0, 0, 0,
+	100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 0, 0, 0, 0,
+	116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 0, 0, 0, 0,
+	132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 0, 0, 0, 0,
+	152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167,
+	168, 169, 170, 171, 172, 173, 174, 175, 0, 0, 0, 0, 0, 0, 0, 0,
+	180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 0, 0, 0, 0,
+	196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 0, 0, 0, 0,
+	212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 0, 0, 0, 0,
+	228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 0, 0, 0, 0,
+	244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 0, 0, 0, 0
+	}
 };
 
 const char *const Resources::PLEASE_WAIT = "\014""d\003""c\011""000"
@@ -689,14 +733,15 @@ const int Resources::TOWN_MAXES[2][11] = {
 	{ 26, 19, 48, 27, 26, 37, 16, 16, 16, 16, 16 }
 };
 
-const char *const Resources::TOWN_ACTION_MUSIC[14] = {
-	"bank.m", "smith.m", "guild.m", "tavern.m", "temple.m",
-	"grounds.m", "endgame.m", "bank.m", "sf09.m", "guild.m",
-	"tavern.m", "temple.m", "smith.m", "endgame.m"
+const char *const Resources::TOWN_ACTION_MUSIC[2][7] = {
+	{ "bank.m", "smith.m", "guild.m", "tavern.m",
+	"temple.m", "grounds.m", "endgame.m" },
+	{ "bank.m", "sf09.m", "guild.m", "tavern.m",
+	"temple.m", "smith.m", "endgame.m" }
 };
 
-const char *const Resources::TOWN_ACTION_SHAPES[4] = {
-	"bankr", "blck", "gild", "tvrn"
+const char *const Resources::TOWN_ACTION_SHAPES[7] = {
+	"bnkr", "blck", "gild", "tvrn", "tmpl", "trng", "eface08"
 };
 
 const int Resources::TOWN_ACTION_FILES[2][7] = {
@@ -1127,7 +1172,7 @@ const char *const Resources::WEAPON_NAMES[35] = {
 };
 
 const char *const Resources::ARMOR_NAMES[14] = {
-	nullptr, "Robes ", "Scale rmor ", "ring mail ", "chain mail ",
+	nullptr, "robes ", "sale armor ", "ring mail ", "chain mail ",
 	"splint mail ", "plate mail ", "plate armor ", "shield ",
 	"helm ", "boots ", "cloak ", "cape ", "gauntlets "
 };
@@ -1255,7 +1300,7 @@ const int Resources::WEAPON_BASE_COSTS[35] = {
 	100, 15, 30, 15, 200, 80, 250, 150, 400, 100, 40, 120,
 	300, 100, 200, 300, 25, 100, 50, 15, 0
 };
-const int Resources::ARMOR_BASE_COSTS[25] = {
+const int Resources::ARMOR_BASE_COSTS[14] = {
 	0, 20, 100, 200, 400, 600, 1000, 2000, 100, 60, 40, 250, 200, 100
 };
 const int Resources::ACCESSORY_BASE_COSTS[11] = {
@@ -1311,7 +1356,7 @@ const char *const Resources::X_FOR_Y_GOLD =
 const char *const Resources::FMT_CHARGES = "\x3rr\t000Charges\x3l";
 
 const char *const Resources::AVAILABLE_GOLD_COST =
-	"\x1\fd\r\x3l\v000\t000Available %s%s\t150Gold - %lu\x3r\t000Cost"
+	"\x1\fd\r\x3l\v000\t000Available %s\t150Gold - %lu\x3r\t000Cost"
 	"\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\xC""d";
 
 const char *const Resources::CHARGES = "Charges";
@@ -1536,7 +1581,7 @@ const char *const Resources::BACKPACKS_FULL_PRESS_KEY =
 	"\v007\f12Warning!  BackPacks Full!\fd\n"
 	"Press a Key";
 
-const char *const Resources::HIT_A_KEY = "\x3l\v120\t000\x4""077\x3""c\f37Hit a key\f'd";
+const char *const Resources::HIT_A_KEY = "\x3l\v120\t000\x4""077\x3""c\f37Hit a key\xC""d";
 
 const char *const Resources::GIVE_TREASURE_FORMATTING =
 	"\x3l\v060\t000\x4""077\n"
@@ -1602,5 +1647,29 @@ const char *const Resources::IDENTIFY_MONSTERS =
 const char *const Resources::EVENT_SAMPLES[6] = {
 	"ahh.voc", "whereto.voc", "gulp.voc", "null.voc", "scream.voc", "laff1.voc"
 };
+
+const char *const Resources::MOONS_NOT_ALIGNED =
+"\x3""c\xB""012\t000The moons are not aligned. Passage to the %s is unavailable";
+
+const char *const Resources::AWARDS_FOR =
+	"\r\x1\fd\x3""c\v000\t000Awards for %s the %s\x3""l\x2\n"
+	"%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\x1";
+
+const char *const Resources::AWARDS_TEXT =
+	"\r\x2\x3""c\xB""021\t221\xC""37U\xC""dp\t255\xC""37D\xC""down\t289Exit";
+
+const char *const Resources::NO_AWARDS = "\x3""cNo Awards";
+
+const char *const Resources::WARZONE_BATTLE_MASTER = "The Warzone\n\t125Battle Master";
+
+const char *const Resources::WARZONE_MAXED = "What!  You again?  Go pick on someone your own size!";
+
+const char *const Resources::WARZONE_LEVEL = "What level of monsters? (1-10)\n";
+
+const char *const Resources::WARZONE_HOW_MANY = "How many monsters? (1-20)\n";
+
+const char *const Resources::PICKS_THE_LOCK = "\x3""c\xB""010%s picks the lock!\nPress any key.";
+
+const char *const Resources::UNABLE_TO_PICK_LOCK = "\x3""c\v010%s was unable to pick the lock!\nPress any key.";
 
 } // End of namespace Xeen

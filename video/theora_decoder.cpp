@@ -47,7 +47,7 @@
 
 namespace Video {
 
-TheoraDecoder::TheoraDecoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
+TheoraDecoder::TheoraDecoder() {
 	_fileStream = 0;
 
 	_videoTrack = 0;
@@ -177,7 +177,7 @@ bool TheoraDecoder::loadStream(Common::SeekableReadStream *stream) {
 	th_setup_free(theoraSetup);
 
 	if (_hasAudio) {
-		_audioTrack = new VorbisAudioTrack(_soundType, _vorbisInfo);
+		_audioTrack = new VorbisAudioTrack(getSoundType(), _vorbisInfo);
 
 		// Get enough audio data to start us off
 		while (!_audioTrack->hasAudio()) {
@@ -330,7 +330,8 @@ void TheoraDecoder::TheoraVideoTrack::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuf
 
 static vorbis_info *info = 0;
 
-TheoraDecoder::VorbisAudioTrack::VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo) : _soundType(soundType) {
+TheoraDecoder::VorbisAudioTrack::VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo) :
+		AudioTrack(soundType) {
 	vorbis_synthesis_init(&_vorbisDSP, &vorbisInfo);
 	vorbis_block_init(&_vorbisDSP, &_vorbisBlock);
 	info = &vorbisInfo;

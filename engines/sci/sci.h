@@ -56,6 +56,8 @@ namespace Sci {
 // HIGH_RESOLUTION_GRAPHICS availability is checked for in SciEngine::run()
 #define GAMEOPTION_HIGH_RESOLUTION_GRAPHICS GUIO_GAMEOPTIONS8
 #define GAMEOPTION_ENABLE_BLACK_LINED_VIDEO GUIO_GAMEOPTIONS9
+#define GAMEOPTION_HQ_VIDEO                 GUIO_GAMEOPTIONS10
+#define GAMEOPTION_ENABLE_CENSORING         GUIO_GAMEOPTIONS11
 
 struct EngineState;
 class Vocabulary;
@@ -260,7 +262,8 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
-	void syncSoundSettings();
+	void syncSoundSettings(); ///< from ScummVM to the game
+	void updateSoundMixerVolumes();
 	uint32 getTickCount();
 	void setTickCount(const uint32 ticks);
 
@@ -315,6 +318,7 @@ public:
 	bool checkAddressBreakpoint(const reg32_t &address);
 
 public:
+	bool checkKernelBreakpoint(const Common::String &name);
 
 	/**
 	 * Processes a multilanguage string based on the current language settings and

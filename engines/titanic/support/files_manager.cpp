@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/zlib.h"
 #include "titanic/support/files_manager.h"
 #include "titanic/game_manager.h"
 #include "titanic/titanic.h"
@@ -29,30 +30,40 @@
 namespace Titanic {
 
 CFilesManager::CFilesManager(TitanicEngine *vm) : _vm(vm), _gameManager(nullptr),
-		_assetsPath("Assets"), _drive(-1) {
-	loadResourceIndex();
+		_assetsPath("Assets"), _drive(-1), _version(0) {
 }
 
 CFilesManager::~CFilesManager() {
 	_datFile.close();
 }
 
-void CFilesManager::loadResourceIndex() {
-	if (!_datFile.open("titanic.dat"))
-		error("Could not find titanic.dat data file");
+bool CFilesManager::loadResourceIndex() {
+	if (!_datFile.open("titanic.dat")) {
+		g_vm->GUIError("Could not find titanic.dat data file");
+		return false;
+	}
 
 	uint headerId = _datFile.readUint32BE();
-	uint version = _datFile.readUint16LE();
-	if (headerId != MKTAG('S', 'V', 'T', 'N') || version < 1)
-		error("Invalid data file");
+	_version = _datFile.readUint16LE();
+	if (headerId != MKTAG('S', 'V', 'T', 'N')) {
+		g_vm->GUIError("titanic.dat has invalid contents");
+		return false;
+	}
+
+	if (_version != 5) {
+		g_vm->GUIError("titanic.dat is out of date");
+		return false;
+	}
 
 	// Read in entries
-	uint offset, size;
+	uint offset, size, flags;
 	char c;
 	Common::String resourceName;
 	for (;;) {
 		offset = _datFile.readUint32LE();
 		size = _datFile.readUint32LE();
+		flags = (_version == 1) ? 0 : _datFile.readUint16LE();
+
 		if (offset == 0 && size == 0)
 			break;
 
@@ -60,8 +71,10 @@ void CFilesManager::loadResourceIndex() {
 		while ((c = _datFile.readByte()) != '\0')
 			resName += c;
 
-		_resources[resName] = ResourceEntry(offset, size);
+		_resources[resName] = ResourceEntry(offset, size, flags);
 	}
+
+	return true;
 }
 
 bool CFilesManager::fileExists(const CString &name) {
@@ -92,10 +105,10 @@ bool CFilesManager::scanForFile(const CString &name) {
 	if (fileExists(fname))
 		return true;
 
-	// Couldn't find file. Start by calling the game manager's viewChange
+	// Couldn't find file. Start by calling the game manager's roomChange
 	// method, which handles all active scene objects freeing their resources
 	if (_gameManager)
-		_gameManager->viewChange();
+		_gameManager->roomChange();
 
 	return false;
 }
@@ -131,8 +144,13 @@ Common::SeekableReadStream *CFilesManager::getResource(const CString &str) {
 
 	_datFile.seek(resEntry._offset);
 
-	return (resEntry._size > 0) ? _datFile.readStream(resEntry._size) :
+	Common::SeekableReadStream *stream = (resEntry._size > 0) ?
+		_datFile.readStream(resEntry._size) :
 		new Common::MemoryReadStream(nullptr, 0);
+	if (resEntry._flags & FLAG_COMPRESSED)
+		stream = Common::wrapCompressedReadStream(stream);
+
+	return stream;
 }
 
 } // End of namespace Titanic

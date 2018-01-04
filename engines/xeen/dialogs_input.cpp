@@ -42,7 +42,7 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 	_window->update();
 
 	while (!_vm->shouldQuit()) {
-		Common::KeyCode keyCode = doCursor(msg);
+		Common::KeyCode keyCode = waitForKey(msg);
 
 		bool refresh = false;
 		if ((keyCode == Common::KEYCODE_BACKSPACE || keyCode == Common::KEYCODE_DELETE)
@@ -72,17 +72,17 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 	return line.size();
 }
 
-Common::KeyCode Input::doCursor(const Common::String &msg) {
+Common::KeyCode Input::waitForKey(const Common::String &msg) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
 
 	bool oldUpDoorText = intf._upDoorText;
 	byte oldTillMove = intf._tillMove;
 	intf._upDoorText = false;
 	intf._tillMove = 0;
 
-	bool flag = !_vm->_startupWindowActive && !screen._windows[25]._enabled
+	bool flag = !_vm->_startupWindowActive && !windows[25]._enabled
 		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_17;
 
 	Common::KeyCode ch = Common::KEYCODE_INVALID;
@@ -92,12 +92,14 @@ Common::KeyCode Input::doCursor(const Common::String &msg) {
 		if (flag)
 			intf.draw3d(false);
 		_window->writeString(msg);
+		animateCursor();
 		_window->update();
 
 		if (flag)
-			screen._windows[3].update();
+			windows[3].update();
 
 		events.wait(1);
+
 		if (events.isKeyPending()) {
 			Common::KeyState keyState;
 			events.getKey(keyState);
@@ -115,9 +117,20 @@ Common::KeyCode Input::doCursor(const Common::String &msg) {
 	return ch;
 }
 
+void Input::animateCursor() {
+	// Iterate through each frame
+	_cursorAnimIndex = _cursorAnimIndex ? _cursorAnimIndex - 1 : 5;
+	static const char CURSOR_ANIMATION_IDS[] = { 32, 124, 126, 127, 126, 124 };
+
+	// Form a string for the cursor and write it out
+	Common::Point writePos = _window->_writePos;
+	_window->writeCharacter(CURSOR_ANIMATION_IDS[_cursorAnimIndex]);
+	_window->_writePos = writePos;
+}
+
 /*------------------------------------------------------------------------*/
 
-StringInput::StringInput(XeenEngine *vm): Input(vm, &vm->_screen->_windows[6]) {
+StringInput::StringInput(XeenEngine *vm): Input(vm, &(*vm->_windows)[6]) {
 }
 
 int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
@@ -131,10 +144,11 @@ int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
 
 int StringInput::execute(bool type, const Common::String &expected,
 		const Common::String &title, int opcode) {
+	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
-	Window &w = screen._windows[6];
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[6];
 	Sound &sound = *_vm->_sound;
 	int result = 0;
 
@@ -152,8 +166,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 			}
 		} else {
 			// Load in the mirror list
-			File f(Common::String::format("%smirr.txt",
-				_vm->_files->_isDarkCc ? "dark" : "xeen"));
+			File f(Common::String::format("%smirr.txt", files._isDarkCc ? "dark" : "xeen"), 1);
 			MirrorEntry me;
 			scripts._mirror.clear();
 			while (me.synchronize(f))
@@ -161,7 +174,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 
 			for (uint idx = 0; idx < scripts._mirror.size(); ++idx) {
 				if (line == scripts._mirror[idx]._name) {
-					result = idx;
+					result = idx + 1;
 					sound.playFX(_vm->_files->_isDarkCc ? 35 : 61);
 					break;
 				}
@@ -175,7 +188,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 
 /*------------------------------------------------------------------------*/
 
-NumericInput::NumericInput(XeenEngine *vm, int window) : Input(vm, &vm->_screen->_windows[window]) {
+NumericInput::NumericInput(XeenEngine *vm, int window) : Input(vm, &(*vm->_windows)[window]) {
 }
 
 int NumericInput::show(XeenEngine *vm, int window, int maxLength, int maxWidth) {
@@ -209,24 +222,24 @@ int Choose123::show(XeenEngine *vm, int numOptions) {
 int Choose123::execute(int numOptions) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
-	Town &town = *_vm->_town;
+	LocationManager &loc = *_vm->_locations;
+	Windows &windows = *_vm->_windows;
 
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_DIALOG_123;
 
 	loadButtons(numOptions);
-	_iconSprites.draw(screen, 7, Common::Point(232, 74));
-	drawButtons(&screen);
-	screen._windows[34].update();
+	_iconSprites.draw(0, 7, Common::Point(232, 74));
+	drawButtons(&windows[0]);
+	windows[34].update();
 
 	int result = -1;
 	while (result == -1) {
 		do {
 			events.updateGameCounter();
 			int delay;
-			if (town.isActive()) {
-				town.drawTownAnim(true);
+			if (loc.isActive()) {
+				loc.drawAnim(true);
 				delay = 3;
 			} else {
 				intf.draw3d(true);
@@ -270,6 +283,32 @@ void Choose123::loadButtons(int numOptions) {
 		addButton(Common::Rect(260, 75, 284, 95), Common::KEYCODE_2, &_iconSprites);
 	if (numOptions >= 3)
 		addButton(Common::Rect(286, 75, 311, 95), Common::KEYCODE_3, &_iconSprites);
+}
+
+/*------------------------------------------------------------------------*/
+
+int HowMuch::show(XeenEngine *vm) {
+	HowMuch *dlg = new HowMuch(vm);
+	int result = dlg->execute();
+	delete dlg;
+
+	return result;
+}
+
+int HowMuch::execute() {
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[6];
+	Common::String num;
+
+	w.open();
+	w.writeString(Res.HOW_MUCH);
+	w.update();
+	int lineSize = Input::show(_vm, &w, num, 8, 70, true);
+	w.close();
+
+	if (!lineSize)
+		return -1;
+	return atoi(num.c_str());
 }
 
 } // End of namespace Xeen

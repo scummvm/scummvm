@@ -49,6 +49,11 @@ void PegasusChip::select() {
 	setUpPegasusChip();
 }
 
+void PegasusChip::takeSharedArea() {
+	BiochipItem::takeSharedArea();
+	setUpPegasusChip();
+}
+
 void PegasusChip::setUpPegasusChip() {
 	switch (GameState.getCurrentNeighborhood()) {
 	case kCaldoriaID:

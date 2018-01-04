@@ -57,7 +57,7 @@ enum {
 
 static const char *copyright_text[] = {
 "",
-"C0""Copyright (C) 2001-2017 The ScummVM Team",
+"C0""Copyright (C) 2001-2018 The ScummVM Team",
 "C0""http://www.scummvm.org",
 "",
 "C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
@@ -110,16 +110,16 @@ AboutDialog::AboutDialog()
 	engines += _("Available engines:");
 	addLine(engines.c_str());
 
-	const EnginePlugin::List &plugins = EngineMan.getPlugins();
-	EnginePlugin::List::const_iterator iter = plugins.begin();
+	const PluginList &plugins = EngineMan.getPlugins();
+	PluginList::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
 		Common::String str;
 		str = "C0";
-		str += (**iter).getName();
+		str += (*iter)->getName();
 		addLine(str.c_str());
 
 		str = "C2";
-		str += (**iter)->getOriginalCopyright();
+		str += (*iter)->get<MetaEngine>().getOriginalCopyright();
 		addLine(str.c_str());
 
 		//addLine("");

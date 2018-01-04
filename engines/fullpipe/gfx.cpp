@@ -38,23 +38,11 @@ Background::Background() {
 	_x = 0;
 	_y = 0;
 	_messageQueueId = 0;
-	_bigPictureArray1Count = 0;
-	_bigPictureArray2Count = 0;
-	_bigPictureArray = 0;
-	_palette = 0;
 }
 
 Background::~Background() {
-	_picObjList.clear();
-
-	for (int i = 0; i < _bigPictureArray1Count; i++) {
-		for (int j = 0; j < _bigPictureArray2Count; j++)
-			delete _bigPictureArray[i][j];
-
-		free(_bigPictureArray[i]);
-	}
-
-	free(_bigPictureArray);
+	Common::for_each(_picObjList.begin(), _picObjList.end(), Common::DefaultDeleter<PictureObject>());
+	Common::for_each(_bigPictureArray.begin(), _bigPictureArray.end(), Common::DefaultDeleter<BigPicture>());
 }
 
 bool Background::load(MfcArchive &file) {
@@ -70,25 +58,16 @@ bool Background::load(MfcArchive &file) {
 		addPictureObject(pct);
 	}
 
-	assert(g_fp->_gameProjectVersion >= 4);
-
-	_bigPictureArray1Count = file.readUint32LE();
-
 	assert(g_fp->_gameProjectVersion >= 5);
 
-	_bigPictureArray2Count = file.readUint32LE();
+	_bigPictureXDim = file.readUint32LE();
+	_bigPictureYDim = file.readUint32LE();
 
-	_bigPictureArray = (BigPicture ***)calloc(_bigPictureArray1Count, sizeof(BigPicture **));
+	debugC(6, kDebugLoading, "bigPictureArray[%d][%d]", _bigPictureXDim, _bigPictureYDim);
 
-	debugC(6, kDebugLoading, "bigPictureArray[%d][%d]", _bigPictureArray1Count, _bigPictureArray2Count);
-
-	for (int i = 0; i < _bigPictureArray1Count; i++) {
-		_bigPictureArray[i] = (BigPicture **)calloc(_bigPictureArray2Count, sizeof(BigPicture *));
-		for (int j = 0; j < _bigPictureArray2Count; j++) {
-			_bigPictureArray[i][j] = new BigPicture();
-
-			_bigPictureArray[i][j]->load(file);
-		}
+	for (uint i = 0; i < _bigPictureXDim * _bigPictureYDim; ++i) {
+		_bigPictureArray.push_back(new BigPicture());
+		_bigPictureArray[i]->load(file);
 	}
 
 	return true;
@@ -115,17 +94,9 @@ void Background::addPictureObject(PictureObject *pct) {
 PictureObject::PictureObject() {
 	_ox = 0;
 	_oy = 0;
-	_picture = 0;
 	_ox2 = 0;
 	_oy2 = 0;
-	_pictureObject2List = 0;
 	_objtype = kObjTypePictureObject;
-}
-
-PictureObject::~PictureObject() {
-	delete _picture;
-	_pictureObject2List->clear();
-	delete _pictureObject2List;
 }
 
 PictureObject::PictureObject(PictureObject *src) : GameObject(src) {
@@ -141,21 +112,17 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 	GameObject::load(file);
 
 	if (bigPicture)
-		_picture = new BigPicture();
+		_picture = Common::SharedPtr<Picture>(new BigPicture());
 	else
-		_picture = new Picture();
+		_picture = Common::SharedPtr<Picture>(new Picture());
 
 	_picture->load(file);
-
-	_pictureObject2List = new Common::Array<GameObject *>;
 
 	int count = file.readUint16LE();
 
 	if (count > 0) {
-		GameObject *o = new GameObject();
-
-		o->load(file);
-		_pictureObject2List->push_back(o);
+		_pictureObject2List.push_back(GameObject());
+		_pictureObject2List.back().load(file);
 	}
 
 	_ox2 = _ox;
@@ -166,12 +133,6 @@ bool PictureObject::load(MfcArchive &file, bool bigPicture) {
 #endif
 
 	return true;
-}
-
-Common::Point *PictureObject::getDimensions(Common::Point *p) {
-	_picture->getDimensions(p);
-
-	return p;
 }
 
 void PictureObject::draw() {
@@ -196,19 +157,17 @@ void PictureObject::drawAt(int x, int y) {
 		_picture->draw(x, y, 0, 0);
 }
 
-bool PictureObject::setPicAniInfo(PicAniInfo *picAniInfo) {
-	if (!(picAniInfo->type & 2) || (picAniInfo->type & 1)) {
-		error("PictureObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
-
-		return false;
+bool PictureObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
+	if (!(picAniInfo.type & 2) || (picAniInfo.type & 1)) {
+		error("PictureObject::setPicAniInfo(): Wrong type: %d", picAniInfo.type);
 	}
 
-	if (picAniInfo->type & 2) {
-		setOXY(picAniInfo->ox, picAniInfo->oy);
-		_priority = picAniInfo->priority;
-		_odelay = picAniInfo->field_8;
-		setFlags(picAniInfo->flags);
-		_field_8 = picAniInfo->field_24;
+	if (picAniInfo.type & 2) {
+		setOXY(picAniInfo.ox, picAniInfo.oy);
+		_priority = picAniInfo.priority;
+		_odelay = picAniInfo.field_8;
+		setFlags(picAniInfo.flags);
+		_field_8 = picAniInfo.field_24;
 
 		return true;
 	}
@@ -275,7 +234,9 @@ GameObject::GameObject(GameObject *src) {
 	_field_8 = src->_field_8;
 }
 
-GameObject::~GameObject() {
+Common::String GameObject::toXML() {
+	return Common::String::format("id=\"%s\" name=\"%s\" x=%d y=%d priority=%d f8=%d",
+		g_fp->gameIdToStr(_id).c_str(), transCyrillic(_objectName), _ox, _oy, _priority, _field_8);
 }
 
 bool GameObject::load(MfcArchive &file) {
@@ -307,8 +268,8 @@ void GameObject::renumPictures(Common::Array<StaticANIObject *> *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
-		if (_id == ((GameObject *)((*lst)[i]))->_id)
-			buf[((GameObject *)((*lst)[i]))->_odelay] = 1;
+		if (_id == (*lst)[i]->_id)
+			buf[(*lst)[i]->_odelay] = 1;
 	}
 
 	if (buf[_odelay]) {
@@ -325,8 +286,8 @@ void GameObject::renumPictures(Common::Array<PictureObject *> *lst) {
 	int *buf = (int *)calloc(lst->size() + 2, sizeof(int));
 
 	for (uint i = 0; i < lst->size(); i++) {
-		if (_id == ((GameObject *)((*lst)[i]))->_id)
-			buf[((GameObject *)((*lst)[i]))->_odelay] = 1;
+		if (_id == (*lst)[i]->_id)
+			buf[(*lst)[i]->_odelay] = 1;
 	}
 
 	if (buf[_odelay]) {
@@ -339,48 +300,48 @@ void GameObject::renumPictures(Common::Array<PictureObject *> *lst) {
 	free(buf);
 }
 
-bool GameObject::getPicAniInfo(PicAniInfo *info) {
+bool GameObject::getPicAniInfo(PicAniInfo &info) {
 	if (_objtype == kObjTypePictureObject) {
-		info->type = 2;
-		info->objectId = _id;
-		info->sceneId = 0;
-		info->field_8 = _odelay;
-		info->flags = _flags;
-		info->field_24 = _field_8;
-		info->ox = _ox;
-		info->oy = _oy;
-		info->priority = _priority;
+		info.type = 2;
+		info.objectId = _id;
+		info.sceneId = 0;
+		info.field_8 = _odelay;
+		info.flags = _flags;
+		info.field_24 = _field_8;
+		info.ox = _ox;
+		info.oy = _oy;
+		info.priority = _priority;
 
 		return true;
 	}
 
 	if (_objtype == kObjTypeStaticANIObject) {
-		StaticANIObject *ani = (StaticANIObject *)this;
+		StaticANIObject *ani = static_cast<StaticANIObject *>(this);
 
-		info->type = (ani->_messageQueueId << 16) | 1;
-		info->objectId = ani->_id;
-		info->field_8 = ani->_odelay;
-		info->sceneId = ani->_sceneId;
-		info->flags = ani->_flags;
-		info->field_24 = ani->_field_8;
+		info.type = (ani->_messageQueueId << 16) | 1;
+		info.objectId = ani->_id;
+		info.field_8 = ani->_odelay;
+		info.sceneId = ani->_sceneId;
+		info.flags = ani->_flags;
+		info.field_24 = ani->_field_8;
 		if (ani->_movement) {
-			info->ox = ani->_movement->_ox;
-			info->oy = ani->_movement->_oy;
+			info.ox = ani->_movement->_ox;
+			info.oy = ani->_movement->_oy;
 		} else {
-			info->ox = ani->_ox;
-			info->oy = ani->_oy;
+			info.ox = ani->_ox;
+			info.oy = ani->_oy;
 		}
-		info->priority = ani->_priority;
+		info.priority = ani->_priority;
 
 		if (ani->_statics)
-			info->staticsId = ani->_statics->_staticsId;
+			info.staticsId = ani->_statics->_staticsId;
 
 		if (ani->_movement) {
-			info->movementId = ani->_movement->_id;
-			info->dynamicPhaseIndex = ani->_movement->_currDynamicPhaseIndex;
+			info.movementId = ani->_movement->_id;
+			info.dynamicPhaseIndex = ani->_movement->_currDynamicPhaseIndex;
 		}
 
-		info->someDynamicPhaseIndex = ani->_someDynamicPhaseIndex;
+		info.someDynamicPhaseIndex = ani->_someDynamicPhaseIndex;
 
 		return true;
 	}
@@ -388,49 +349,49 @@ bool GameObject::getPicAniInfo(PicAniInfo *info) {
 	return false;
 }
 
-bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
-	if (!(picAniInfo->type & 3)) {
-		warning("StaticANIObject::setPicAniInfo(): Wrong type: %d", picAniInfo->type);
+bool GameObject::setPicAniInfo(const PicAniInfo &picAniInfo) {
+	if (!(picAniInfo.type & 3)) {
+		warning("StaticANIObject::setPicAniInfo(): Wrong type: %d", picAniInfo.type);
 
 		return false;
 	}
 
-	if (picAniInfo->type & 2) {
-		setOXY(picAniInfo->ox, picAniInfo->oy);
-		_priority = picAniInfo->priority;
-		_odelay = picAniInfo->field_8;
-		setFlags(picAniInfo->flags);
-		_field_8 = picAniInfo->field_24;
+	if (picAniInfo.type & 2) {
+		setOXY(picAniInfo.ox, picAniInfo.oy);
+		_priority = picAniInfo.priority;
+		_odelay = picAniInfo.field_8;
+		setFlags(picAniInfo.flags);
+		_field_8 = picAniInfo.field_24;
 
 		return true;
 	}
 
-	if (picAniInfo->type & 1) {
-		StaticANIObject *ani = (StaticANIObject *)this;
+	if (picAniInfo.type & 1 && _objtype == kObjTypeStaticANIObject) {
+		StaticANIObject *ani = static_cast<StaticANIObject *>(this);
 
-		ani->_messageQueueId = (picAniInfo->type >> 16) & 0xffff;
-		ani->_odelay = picAniInfo->field_8;
-		ani->setFlags(picAniInfo->flags);
-		ani->_field_8 = picAniInfo->field_24;
+		ani->_messageQueueId = (picAniInfo.type >> 16) & 0xffff;
+		ani->_odelay = picAniInfo.field_8;
+		ani->setFlags(picAniInfo.flags);
+		ani->_field_8 = picAniInfo.field_24;
 
-		if (picAniInfo->staticsId) {
-			ani->_statics = ani->getStaticsById(picAniInfo->staticsId);
+		if (picAniInfo.staticsId) {
+			ani->_statics = ani->getStaticsById(picAniInfo.staticsId);
 		} else {
 			ani->_statics = 0;
 		}
 
-		if (picAniInfo->movementId) {
-			ani->_movement = ani->getMovementById(picAniInfo->movementId);
+		if (picAniInfo.movementId) {
+			ani->_movement = ani->getMovementById(picAniInfo.movementId);
 			if (ani->_movement)
-				ani->_movement->setDynamicPhaseIndex(picAniInfo->dynamicPhaseIndex);
+				ani->_movement->setDynamicPhaseIndex(picAniInfo.dynamicPhaseIndex);
 		} else {
 			ani->_movement = 0;
 		}
 
-		ani->setOXY(picAniInfo->ox, picAniInfo->oy);
-		ani->_priority = picAniInfo->priority;
+		ani->setOXY(picAniInfo.ox, picAniInfo.oy);
+		ani->_priority = picAniInfo.priority;
 
-		ani->setSomeDynamicPhaseIndex(picAniInfo->someDynamicPhaseIndex);
+		ani->setSomeDynamicPhaseIndex(picAniInfo.someDynamicPhaseIndex);
 
 		return true;
 	}
@@ -438,35 +399,17 @@ bool GameObject::setPicAniInfo(PicAniInfo *picAniInfo) {
 	return false;
 }
 
-Picture::Picture() {
-	_x = 0;
-	_y = 0;
-	_field_44 = 0;
-	_field_54 = 0;
-	_bitmap = 0;
-	_alpha = -1;
-	_paletteData = 0;
-	_convertedBitmap = 0;
-	_memoryObject2 = 0;
-	_width = 0;
-	_height = 0;
-}
+Picture::Picture() :
+	_x(0),
+	_y(0),
+	_field_44(0),
+	_field_54(0),
+	_alpha(-1),
+	_width(0),
+	_height(0) {}
 
 Picture::~Picture() {
 	freePicture();
-
-	_bitmap = 0;
-
-	if (_memoryObject2)
-		delete _memoryObject2;
-
-	if (_paletteData)
-		free(_paletteData);
-
-	if (_convertedBitmap) {
-		delete _convertedBitmap;
-		_convertedBitmap = 0;
-	}
 }
 
 void Picture::freePicture() {
@@ -475,20 +418,12 @@ void Picture::freePicture() {
 	if (_bitmap) {
 		if (testFlags() && !_field_54) {
 			freeData();
-			delete _bitmap;
-			_bitmap = 0;
 		}
+		_bitmap.reset();
+		_data = nullptr;
 	}
 
-	if (_bitmap) {
-		_bitmap = 0;
-		_data = 0;
-	}
-
-	if (_convertedBitmap) {
-		delete _convertedBitmap;
-		_convertedBitmap = 0;
-	}
+	_convertedBitmap.reset();
 }
 
 void Picture::freePixelData() {
@@ -511,27 +446,30 @@ bool Picture::load(MfcArchive &file) {
 
 	_mflags |= 1;
 
-	_memoryObject2 = new MemoryObject2;
+	_memoryObject2.reset(new MemoryObject2);
 	_memoryObject2->load(file);
 
 	if (_memoryObject2->_data) {
 		setAOIDs();
 	}
 
-	assert (g_fp->_gameProjectVersion >= 12);
+	assert(g_fp->_gameProjectVersion >= 12);
 
 	_alpha = file.readUint32LE() & 0xff;
 
 	int havePal = file.readUint32LE();
 
 	if (havePal > 0) {
-		_paletteData = (byte *)calloc(1024, 1);
-		file.read(_paletteData, 1024);
+		_paletteData.reserve(256);
+		for (int i = 0; i < 256; ++i) {
+			_paletteData.push_back(file.readUint32LE());
+		}
 	}
 
 	getData();
 
-	debugC(5, kDebugLoading, "Picture::load: loaded <%s>", _memfilename.c_str());
+	debugC(5, kDebugLoading, "Picture::load: loaded memobject=\"%s\" x=%d y=%d f44=%d width=%d height=%d alpha=%d memobject2=\"%s\"", _memfilename.c_str(),
+				_x, _y, _field_44, _width, _height, _alpha, _memoryObject2->_memfilename.c_str());
 
 	return true;
 }
@@ -555,18 +493,11 @@ void Picture::init() {
 
 	MemoryObject::getData();
 
-	_bitmap = new Bitmap();
+	_bitmap.reset(new Bitmap());
 
 	getDibInfo();
 
 	_bitmap->_flags |= 0x1000000;
-}
-
-Common::Point *Picture::getDimensions(Common::Point *p) {
-	p->x = _width;
-	p->y = _height;
-
-	return p;
 }
 
 void Picture::getDibInfo() {
@@ -596,14 +527,14 @@ void Picture::getDibInfo() {
 	_bitmap->load(s);
 	delete s;
 
-	_bitmap->decode(_data, (int32 *)(_paletteData ? _paletteData : g_fp->_globalPalette));
+	_bitmap->decode(_data, _paletteData.size() ? _paletteData : *g_fp->_globalPalette);
 }
 
-Bitmap *Picture::getPixelData() {
+const Bitmap *Picture::getPixelData() {
 	if (!_bitmap)
 		init();
 
-	return _bitmap;
+	return _bitmap.get();
 }
 
 void Picture::draw(int x, int y, int style, int angle) {
@@ -628,25 +559,25 @@ void Picture::draw(int x, int y, int style, int angle) {
 		debugC(7, kDebugDrawing, "Picture:draw: alpha = %0x", _alpha);
 	}
 
-	byte *pal = _paletteData;
-
-	if (!pal) {
+	const Palette *pal;
+	if (_paletteData.size()) {
+		pal = &_paletteData;
+	} else {
 		//warning("Picture:draw: using global palette");
 		pal = g_fp->_globalPalette;
 	}
 
-	Common::Point point;
-
 	switch (style) {
-	case 1:
+	case 1: {
 		//flip
-		getDimensions(&point);
-		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + point.y, pal, _alpha);
+		const Dims dims = getDimensions();
+		_bitmap->flipVertical()->drawShaded(1, x1, y1 + 30 + dims.y, *pal, _alpha);
 		break;
+	}
 	case 2:
 		//vrtSetFadeRatio(g_vrtDrawHandle, 0.34999999);
 		//vrtSetFadeTable(g_vrtDrawHandle, &unk_477F88, 1.0, 1000.0, 0, 0);
-		_bitmap->drawShaded(2, x1, y1, pal, _alpha);
+		_bitmap->drawShaded(2, x1, y1, *pal, _alpha);
 		//vrtSetFadeRatio(g_vrtDrawHandle, 0.0);
 		//vrtSetFadeTable(g_vrtDrawHandle, &unk_477F90, 1.0, 1000.0, 0, 0);
 		break;
@@ -654,7 +585,7 @@ void Picture::draw(int x, int y, int style, int angle) {
 		if (angle)
 			drawRotated(x1, y1, angle);
 		else {
-			_bitmap->putDib(x1, y1, (int32 *)pal, _alpha);
+			_bitmap->putDib(x1, y1, *pal, _alpha);
 		}
 	}
 }
@@ -664,7 +595,7 @@ void Picture::drawRotated(int x, int y, int angle) {
 }
 
 void Picture::displayPicture() {
-	if (!g_fp->_gameContinue)
+	if (g_fp->shouldQuit())
 		return;
 
 	getData();
@@ -673,8 +604,8 @@ void Picture::displayPicture() {
 	if (!_dataSize)
 		return;
 
-	g_fp->_backgroundSurface->fillRect(Common::Rect(0, 0, 800, 600), 0);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(0, 0), g_fp->_backgroundSurface->pitch, 0, 0, 800, 600);
+	g_fp->_backgroundSurface.fillRect(Common::Rect(0, 0, 800, 600), 0);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
 
 	draw(0, 0, 0, 0);
 
@@ -682,7 +613,7 @@ void Picture::displayPicture() {
 	g_fp->_system->delayMillis(10);
 	g_fp->_system->updateScreen();
 
-	while (g_fp->_gameContinue) {
+	while (!g_fp->shouldQuit()) {
 		g_fp->updateEvents();
 		g_fp->_system->delayMillis(10);
 		g_fp->_system->updateScreen();
@@ -694,19 +625,17 @@ void Picture::displayPicture() {
 	}
 }
 
-void Picture::setPaletteData(byte *pal) {
-	if (_paletteData)
-		free(_paletteData);
-
-	if (pal) {
-		_paletteData = (byte *)malloc(1024);
-		memcpy(_paletteData, pal, 1024);
+void Picture::setPaletteData(const Palette &pal) {
+	if (pal.size()) {
+		_paletteData = pal;
+	} else {
+		_paletteData.clear();
 	}
 }
 
-void Picture::copyMemoryObject2(Picture *src) {
-	if (_width == src->_width && _height == src->_height) {
-		if (src->_memoryObject2 && src->_memoryObject2->_rows && _memoryObject2) {
+void Picture::copyMemoryObject2(Picture &src) {
+	if (_width == src._width && _height == src._height) {
+		if (src._memoryObject2 && src._memoryObject2->_rows && _memoryObject2) {
 			byte *data = loadData();
 			_memoryObject2->copyData(data, _dataSize);
 			setAOIDs();
@@ -747,7 +676,7 @@ int Picture::getPixelAtPosEx(int x, int y) {
 
 	warning("STUB: Picture::getPixelAtPosEx(%d, %d)", x, y);
 
-	// It looks like this doesn't really work. TODO. FIXME
+	// TODO: It looks like this doesn't really work.
 	if (x < (g_fp->_pictureScale + _width - 1) / g_fp->_pictureScale &&
 			y < (g_fp->_pictureScale + _height - 1) / g_fp->_pictureScale &&
 			_memoryObject2 != 0 && _memoryObject2->_rows != 0)
@@ -764,29 +693,26 @@ Bitmap::Bitmap() {
 	_type = 0;
 	_dataSize = 0;
 	_flags = 0;
-	_surface = 0;
 	_flipping = Graphics::FLIP_NONE;
-	_copied_surface = false;
 }
 
-Bitmap::Bitmap(Bitmap *src) {
-	_x = src->_x;
-	_y = src->_y;
-	_flags = src->_flags;
-	_dataSize = src->_dataSize;
-	_type = src->_type;
-	_width = src->_width;
-	_height = src->_height;
-	_surface = new Graphics::TransparentSurface(*src->_surface);
-	_copied_surface = true;
-	_flipping = src->_flipping;
+Bitmap::Bitmap(const Bitmap &src) {
+	_x = src._x;
+	_y = src._y;
+	_flags = src._flags;
+	_dataSize = src._dataSize;
+	_type = src._type;
+	_width = src._width;
+	_height = src._height;
+	_surface = src._surface;
+	_flipping = src._flipping;
 }
 
 Bitmap::~Bitmap() {
-	if (!_copied_surface)
+	// TODO: This is a hack because Graphics::Surface has terrible resource
+	// management
+	if (_surface.unique())
 		_surface->free();
-	delete _surface;
-	_surface = 0;
 }
 
 void Bitmap::load(Common::ReadStream *s) {
@@ -815,9 +741,8 @@ bool Bitmap::isPixelHitAtPos(int x, int y) {
 	return ((*((int32 *)_surface->getBasePtr(x - _x, y - _y)) & 0xff) != 0);
 }
 
-void Bitmap::decode(byte *pixels, int32 *palette) {
-	_surface = new Graphics::TransparentSurface;
-
+void Bitmap::decode(byte *pixels, const Palette &palette) {
+	_surface = TransSurfacePtr(new Graphics::TransparentSurface, Graphics::SurfaceDeleter());
 	_surface->create(_width, _height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	if (_type == MKTAG('R', 'B', '\0', '\0'))
@@ -826,7 +751,7 @@ void Bitmap::decode(byte *pixels, int32 *palette) {
 		putDibCB(pixels, palette);
 }
 
-void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
+void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 	debugC(7, kDebugDrawing, "Bitmap::putDib(%d, %d)", x, y);
 
 	int x1 = x - g_fp->_sceneRect.left;
@@ -851,11 +776,11 @@ void Bitmap::putDib(int x, int y, int32 *palette, byte alpha) {
 
 	int alphac = TS_ARGB(0xff, alpha, 0xff, 0xff);
 
-	_surface->blit(*g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
-	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(x1, y1), g_fp->_backgroundSurface->pitch, x1, y1, sub.width(), sub.height());
+	_surface->blit(g_fp->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
+	g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(x1, y1), g_fp->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
 }
 
-bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
+bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 	uint32 *curDestPtr;
 	int endy;
 	int x;
@@ -866,7 +791,7 @@ bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
 	uint16 *srcPtr2;
 	uint16 *srcPtr;
 
-	if (!palette) {
+	if (!palette.size()) {
 		debugC(2, kDebugDrawing, "Bitmap::putDibRB(): Both global and local palettes are empty");
 		return false;
 	}
@@ -948,7 +873,7 @@ bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
 
 				if (y <= endy) {
 					curDestPtr = (uint32 *)_surface->getBasePtr(start1, y);
-					paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, (int32 *)palette);
+					paletteFill(curDestPtr, (byte *)srcPtr2, fillLen, palette);
 				}
 			}
 		}
@@ -957,7 +882,7 @@ bool Bitmap::putDibRB(byte *pixels, int32 *palette) {
 	return false;
 }
 
-void Bitmap::putDibCB(byte *pixels, int32 *palette) {
+void Bitmap::putDibCB(byte *pixels, const Palette &palette) {
 	uint32 *curDestPtr;
 	int endx;
 	int endy;
@@ -970,7 +895,7 @@ void Bitmap::putDibCB(byte *pixels, int32 *palette) {
 
 	cb05_format = (_type == MKTAG('C', 'B', '\05', 'e'));
 
-	if (!palette && !cb05_format)
+	if (!palette.size() && !cb05_format)
 		error("Bitmap::putDibCB(): Both global and local palettes are empty");
 
 	bpp = cb05_format ? 2 : 1;
@@ -987,12 +912,12 @@ void Bitmap::putDibCB(byte *pixels, int32 *palette) {
 	if (_flags & 0x1000000) {
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
 			curDestPtr = (uint32 *)_surface->getBasePtr(startx, y);
-			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, (int32 *)palette, cb05_format);
+			copierKeyColor(curDestPtr, srcPtr, endx - startx + 1, _flags & 0xff, palette, cb05_format);
 		}
 	} else {
 		for (int y = starty; y <= endy; srcPtr -= pitch, y++) {
 			curDestPtr = (uint32 *)_surface->getBasePtr(startx, y);
-			copier(curDestPtr, srcPtr, endx - startx + 1, (int32 *)palette, cb05_format);
+			copier(curDestPtr, srcPtr, endx - startx + 1, palette, cb05_format);
 		}
 	}
 }
@@ -1010,7 +935,7 @@ void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
 #endif
 	byte r, g, b;
 
-	g_fp->_origFormat->colorToRGB(color, r, g, b);
+	g_fp->_origFormat.colorToRGB(color, r, g, b);
 
 	uint32 c = TS_ARGB(0xff, r, g, b);
 
@@ -1018,7 +943,7 @@ void Bitmap::colorFill(uint32 *dest, int len, int32 color) {
 		*dest++ = c;
 }
 
-void Bitmap::paletteFill(uint32 *dest, byte *src, int len, int32 *palette) {
+void Bitmap::paletteFill(uint32 *dest, byte *src, int len, const Palette &palette) {
 #if 0
 	if (blendMode) {
 		if (blendMode != 1)
@@ -1033,13 +958,13 @@ void Bitmap::paletteFill(uint32 *dest, byte *src, int len, int32 *palette) {
 	byte r, g, b;
 
 	for (int i = 0; i < len; i++) {
-		g_fp->_origFormat->colorToRGB(READ_LE_UINT32(&palette[*src++]) & 0xffff, r, g, b);
+		g_fp->_origFormat.colorToRGB(palette[*src++] & 0xffff, r, g, b);
 
 		*dest++ = TS_ARGB(0xff, r, g, b);
 	}
 }
 
-void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, int32 *palette, bool cb05_format) {
+void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, const Palette &palette, bool cb05_format) {
 #if 0
 	if (blendMode) {
 		if (blendMode == 1) {
@@ -1062,7 +987,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, int3
 	if (!cb05_format) {
 		for (int i = 0; i < len; i++) {
 			if (*src != keyColor) {
-				g_fp->_origFormat->colorToRGB(READ_LE_UINT32(&palette[*src]) & 0xffff, r, g, b);
+				g_fp->_origFormat.colorToRGB(palette[*src] & 0xffff, r, g, b);
 				*dest = TS_ARGB(0xff, r, g, b);
 			}
 
@@ -1074,7 +999,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, int3
 
 		for (int i = 0; i < len; i++) {
 			if (*src16 != 0) {
-				g_fp->_origFormat->colorToRGB(READ_LE_UINT16(src16) & 0xffff, r, g, b);
+				g_fp->_origFormat.colorToRGB(READ_LE_UINT16(src16), r, g, b);
 				*dest = TS_ARGB(0xff, r, g, b);
 			}
 
@@ -1084,7 +1009,7 @@ void Bitmap::copierKeyColor(uint32 *dest, byte *src, int len, int keyColor, int3
 	}
 }
 
-void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_format) {
+void Bitmap::copier(uint32 *dest, byte *src, int len, const Palette &palette, bool cb05_format) {
 #if 0
 	if (blendMode) {
 		if (blendMode == 1) {
@@ -1106,7 +1031,7 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_
 
 	if (!cb05_format) {
 		for (int i = 0; i < len; i++) {
-			g_fp->_origFormat->colorToRGB(READ_LE_UINT32(&palette[*src++]) & 0xffff, r, g, b);
+			g_fp->_origFormat.colorToRGB(palette[*src++] & 0xffff, r, g, b);
 
 			*dest++ = TS_ARGB(0xff, r, g, b);
 		}
@@ -1114,14 +1039,14 @@ void Bitmap::copier(uint32 *dest, byte *src, int len, int32 *palette, bool cb05_
 		int16 *src16 = (int16 *)src;
 
 		for (int i = 0; i < len; i++) {
-			g_fp->_origFormat->colorToRGB(READ_LE_UINT32(src16++) & 0xffff, r, g, b);
+			g_fp->_origFormat.colorToRGB(READ_LE_UINT16(src16++), r, g, b);
 			*dest++ = TS_ARGB(0xff, r, g, b);
 		}
 	}
 }
 
-Bitmap *Bitmap::reverseImage(bool flip) {
-	Bitmap *b = new Bitmap(this);
+Bitmap *Bitmap::reverseImage(bool flip) const {
+	Bitmap *b = new Bitmap(*this);
 
 	if (flip)
 		b->_flipping ^= Graphics::FLIP_H;
@@ -1129,25 +1054,25 @@ Bitmap *Bitmap::reverseImage(bool flip) {
 	return b;
 }
 
-Bitmap *Bitmap::flipVertical() {
-	Bitmap *b = new Bitmap(this);
+Bitmap *Bitmap::flipVertical() const {
+	Bitmap *b = new Bitmap(*this);
 
 	b->_flipping ^= Graphics::FLIP_V;
 
 	return b;
 }
 
-void Bitmap::drawShaded(int type, int x, int y, byte *palette, int alpha) {
+void Bitmap::drawShaded(int type, int x, int y, const Palette &palette, int alpha) {
 	if (alpha != 255)
 		warning("STUB: Bitmap::drawShaded(%d, %d, %d, %d)", type, x, y, alpha);
 
-	putDib(x, y, (int32 *)palette, alpha);
+	putDib(x, y, palette, alpha);
 }
 
-void Bitmap::drawRotated(int x, int y, int angle, byte *palette, int alpha) {
+void Bitmap::drawRotated(int x, int y, int angle, const Palette &palette, int alpha) {
 	warning("STUB: Bitmap::drawRotated(%d, %d, %d, %d)", x, y, angle, alpha);
 
-	putDib(x, y, (int32 *)palette, alpha);
+	putDib(x, y, palette, alpha);
 }
 
 bool BigPicture::load(MfcArchive &file) {
@@ -1173,7 +1098,7 @@ void BigPicture::draw(int x, int y, int style, int angle) {
 		if (y != -1)
 			ny = y;
 
-		_bitmap->putDib(nx, ny, 0, _alpha);
+		_bitmap->putDib(nx, ny, Palette(), _alpha);
 	}
 }
 
@@ -1214,18 +1139,16 @@ void Shadows::initMovement(Movement *mov) {
 	_items.clear();
 	_items.resize(num);
 
-	Common::Point point;
-
-	_items[0].dynPhase = (DynamicPhase *)mov->_staticsObj1;
-	_items[0].dynPhase->getDimensions(&point);
-	_items[0].width = point.x;
-	_items[0].height = point.y;
+	_items[0].dynPhase = mov->_staticsObj1;
+	Dims dims = _items[0].dynPhase->getDimensions();
+	_items[0].width = dims.x;
+	_items[0].height = dims.y;
 
 	for (uint i = 1; i < num; i++) {
 		_items[i].dynPhase = mov->getDynamicPhaseByIndex(i - 1);
-		_items[i].dynPhase->getDimensions(&point);
-		_items[i].width = point.x;
-		_items[i].height = point.y;
+		dims = _items[i].dynPhase->getDimensions();
+		_items[i].width = dims.x;
+		_items[i].height = dims.y;
 	}
 }
 
@@ -1248,7 +1171,7 @@ DynamicPhase *Shadows::findSize(int width, int height) {
 
 void FullpipeEngine::drawAlphaRectangle(int x1, int y1, int x2, int y2, int alpha) {
 	for (int y = y1; y < y2; y++) {
-		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface->getBasePtr(x1, y);
+		uint32 *ptr = (uint32 *)g_fp->_backgroundSurface.getBasePtr(x1, y);
 
 		for (int x = x1; x < x2; x++) {
 			uint32 color = *ptr;
@@ -1267,8 +1190,8 @@ void FullpipeEngine::sceneFade(Scene *sc, bool direction) {
 		int ticks = g_fp->_system->getMillis();
 		sc->draw();
 
-		drawAlphaRectangle(0, 0, g_fp->_backgroundSurface->w, g_fp->_backgroundSurface->h, direction ? dim : 255 - dim);
-		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface->getBasePtr(0, 0), g_fp->_backgroundSurface->pitch, 0, 0, 800, 600);
+		drawAlphaRectangle(0, 0, g_fp->_backgroundSurface.w, g_fp->_backgroundSurface.h, direction ? dim : 255 - dim);
+		g_fp->_system->copyRectToScreen(g_fp->_backgroundSurface.getBasePtr(0, 0), g_fp->_backgroundSurface.pitch, 0, 0, 800, 600);
 
 		g_fp->_system->updateScreen();
 		ticks = g_fp->_system->getMillis() - ticks;

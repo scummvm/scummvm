@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	ambient_sounds.o \
 	archive.o \
 	aud_stream.o \
+	audio_mixer.o \
 	audio_player.o \
 	audio_speech.o \
 	bladerunner.o \
@@ -20,6 +21,8 @@ MODULE_OBJS = \
 	decompress_lcw.o \
 	decompress_lzo.o \
 	detection.o \
+	dialogue_menu.o \
+	elevator.o \
 	fog.o \
 	font.o \
 	gameflags.o \
@@ -33,21 +36,25 @@ MODULE_OBJS = \
 	matrix.o \
 	mouse.o \
 	movement_track.o \
+	music.o \
 	obstacles.o \
 	outtake.o \
+	overlays.o \
 	regions.o \
 	scene.o \
 	scene_objects.o \
+	screen_effects.o \
 	script/script.o \
 	script/init.o \
 	script/kia.o \
 	script/vk.o \
 	script/esper.o \
 	script/ai.o \
-	script/ai/mccoy.o \
-	script/ai/runciter.o \
-	script/ai/officer_leary.o \
 	script/ai/leon.o \
+	script/ai/maggie.o \
+	script/ai/mccoy.o \
+	script/ai/officer_leary.o \
+	script/ai/runciter.o \
 	script/scene.o \
 	script/scene/ar01.o \
 	script/scene/ar02.o \
@@ -93,6 +100,7 @@ MODULE_OBJS = \
 	script/scene/hf04.o \
 	script/scene/hf05.o \
 	script/scene/hf06.o \
+	script/scene/hf07.o \
 	script/scene/kp01.o \
 	script/scene/kp02.o \
 	script/scene/kp03.o \
@@ -166,8 +174,10 @@ MODULE_OBJS = \
 	shape.o \
 	slice_animations.o \
 	slice_renderer.o \
+	spinner.o \
 	suspects_database.o \
 	text_resource.o \
+	ui_image_picker.o \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o \

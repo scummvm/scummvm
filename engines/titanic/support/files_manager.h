@@ -29,6 +29,8 @@
 
 namespace Titanic {
 
+enum ResourceFlag { FLAG_COMPRESSED = 1 };
+
 class TitanicEngine;
 class CGameManager;
 
@@ -39,9 +41,11 @@ class CFilesManager {
 	struct ResourceEntry {
 		uint _offset;
 		uint _size;
+		uint _flags;
 
-		ResourceEntry() : _offset(0), _size(0) {}
-		ResourceEntry(uint offset, uint size) : _offset(offset), _size(size) {}
+		ResourceEntry() : _offset(0), _size(0), _flags(0) {}
+		ResourceEntry(uint offset, uint size, uint flags) :
+			_offset(offset), _size(size), _flags(flags) {}
 	};
 	typedef Common::HashMap<Common::String, ResourceEntry> ResourceHash;
 private:
@@ -52,11 +56,15 @@ private:
 	CFilesManagerList _list;
 	int _drive;
 	const CString _assetsPath;
-private:
-	void loadResourceIndex();
+	int _version;
 public:
 	CFilesManager(TitanicEngine *vm);
 	~CFilesManager();
+
+	/**
+	 * Opens up the titanic.dat support file and loads it's index
+	 */
+	bool loadResourceIndex();
 
 	/**
 	 * Sets the game manager

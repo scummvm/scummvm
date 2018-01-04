@@ -33,7 +33,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "common/language.h"
+#include "common/memstream.h"
 #include "common/rect.h"
+#include "zlib.h"
 #include "winexe_pe.h"
 #include "file.h"
 #include "script_preresponses.h"
@@ -54,8 +56,8 @@
  * ASCIIZ  - name of the resource
  */
 
-#define VERSION_NUMBER 1
-#define HEADER_SIZE 0xF00
+#define VERSION_NUMBER 5
+#define HEADER_SIZE 0x1700
 
 Common::File inputFile, outputFile;
 Common::PEResources resEng, resGer;
@@ -70,17 +72,20 @@ uint dataOffset = HEADER_SIZE;
 enum {
 	ENGLISH_10042C_DIFF = 0x401C00,
 	ENGLISH_10042B_DIFF = 0x401400,
-	ENGLISH_10042_DIFF = 0x402000
+	ENGLISH_10042_DIFF = 0x402000,
+	GERMAN_DIFF = 0x401200
 };
 enum Version {
 	ENGLISH_10042C = 0,
 	ENGLISH_10042B = 1,
-	ENGLISH_10042 = 2
+	ENGLISH_10042 = 2,
+	GERMAN = 3
 };
 Version _version;
 
-const int FILE_DIFF[3] = {
-	ENGLISH_10042C_DIFF, ENGLISH_10042B_DIFF, ENGLISH_10042_DIFF
+const int FILE_DIFF[4] = {
+	ENGLISH_10042C_DIFF, ENGLISH_10042B_DIFF, ENGLISH_10042_DIFF,
+	GERMAN_DIFF
 };
 
 static const char *const ITEM_NAMES[46] = {
@@ -112,6 +117,54 @@ static const char *const ITEM_DESCRIPTIONS[46] = {
 	"A super-absorbent napkin", "Titania's nose", "A perch", "A phonograph cylinder",
 	"A phonograph cylinder", "A phonograph cylinder", "A phonograph cylinder",
 	"A photograph"
+};
+static const char *const ITEM_DESCRIPTIONS_DE[46] = {
+	"Der linke Arm des OberkellnerBots, im Besitz eines Schl\xFC""ssels ",
+	"Der linke Arm des OberkellnerBots",
+	"Der rechte Arm des OberkellnerBots, im Besitz von Titanias Geh\xF6""rmodul",
+	"Der rechte Arm des OberkellnerBots",
+	"Rote Sicherung",
+	"Gelbe Sicherung",
+	"Blaue Sicherung",
+	"Gr\xFC""ne Sicherung",
+	"Der Papagei",
+	"Titanias Gro\xDF""hirn",
+	"Titanias Geh\xF6""rmodul",
+	"Titanias Geruchsmodul",
+	"Titanias Sprachmodul",
+	"Titanias Gesichtsmodul",
+	"ziemlich fettiges H\xFC""hnchen",
+	"H\xFC""hnchen ohne alles",
+	"mit Starenp\xFC""ree beschmiertes H\xFC""hnchen",
+	"mit Tomatensauce garniertes H\xFC""hnchen",
+	"mit Senfso\xDF""e \xFC""berzogenes H\xFC""hnchen",
+	"Ein zerschmetterter Fernsehapparat",
+	"Titanias Ohr",
+	"Titanias Ohr",
+	"Titanias Auge",
+	"Titanias Auge",
+	"Eine Papageienfeder",
+	"Eine sch\xF6""ne fette saftige Zitrone",
+	"Ein leeres Bierglas",
+	"Ein Starenp\xFC""ree enthaltendes Bierglas",
+	"Ein Tomatenso\xDF""e enthaltendes Bierglas",
+	"Ein Senfso\xDF""e enthaltendes Bierglas",
+	"Ein Hammer",
+	"Ein Schlauch",
+	"Das andere Ende eines Schlauchs",
+	"Der Kopf eines LiftBots",
+	"Ein ziemlich langer Stab",
+	"Ein Magazin",
+	"Titanias Mund",
+	"Ein Schl\xFC""ssel",
+	"Eine supersaugf\xE4""hige Serviette",
+	"Titanias Nase",
+	"Eine Vogelstange",
+	"Ein Grammophonzylinder",
+	"Ein Grammophonzylinder",
+	"Ein Grammophonzylinder",
+	"Ein Grammophonzylinder",
+	"Ein Foto"
 };
 
 static const char *const ITEM_IDS[40] = {
@@ -147,7 +200,7 @@ const NumberEntry NUMBERS[76] = {
 	{ "and", 0, 1 },
 	{ "negative", 0, 10 },
 	{ "minus", 0, 10 },
-	{ "below zeor", 0, 8 },
+	{ "below zero", 0, 8 },
 	{ "degrees below zero", 0, 8 },
 	{ "nil", 0, 2 },
 	{ "zero", 0, 2 },
@@ -227,7 +280,7 @@ struct CommonPhrase {
 	uint _val1;
 };
 
-static const CommonPhrase BELLBOT_COMMON_PHRASES[] = {
+static const CommonPhrase BELLBOT_COMMON_PHRASES_EN[] = {
 	{ "what is wrong with her", 0x30FF9, 0x7B, 0 },
 	{ "what is wrong with titania", 0x30FF9, 0x7B, 0 },
 	{ "something for the weekend", 0x30D8B, 0x00, 0 },
@@ -264,6 +317,68 @@ static const CommonPhrase BELLBOT_COMMON_PHRASES[] = {
 	{ "is not the captain supposed to go down with the ship", 0x31482, 0x00, 0 },
 	{ "sauce sticks to the chicken", 0x3156B, 0x00, 0 },
 	{ "sauce gets stuck to the chicken", 0x3156B, 0x00, 0 },
+	{ nullptr, 0, 0, 0 }
+};
+static const CommonPhrase BELLBOT_COMMON_PHRASES_DE[] = {
+	{ "was ist mit ihr los", 0x30ff9, 0x7b, 0 },
+	{ "was fehlt ihr", 0x30ff9, 0x7b, 0 },
+	{ "was hat sie denn", 0x30ff9, 0x7b, 0 },
+	{ "was ist denn mit ihr", 0x30ff9, 0x7b, 0 },
+	{ "was stimmt denn nicht mit ihr", 0x30ff9, 0x7b, 0 },
+	{ "was ist mit titania los", 0x30ff9, 0x7b, 0 },
+	{ "was fehlt titania", 0x30ff9, 0x7b, 0 },
+	{ " was ist denn mit titania", 0x30ff9, 0x7b, 0 },
+	{ "was ist denn mit titania los", 0x30ff9, 0x7b, 0 },
+	{ "etwas anderes zu essen", 0x30e1d, 0, 3 },
+	{ "noch zu essen", 0x30e1d, 0, 3 },
+	{ "noch essen", 0x30e1d, 0, 3 },
+	{ "anderes essen", 0x30e1d, 0, 3 },
+	{ "etwas gutes zu essen", 0x30e1d, 0, 3 },
+	{ "vernuenftiges essen", 0x30e1d, 0, 3 },
+	{ "leckeres essen", 0x30e1d, 0, 3 },
+	{ "lecker essen", 0x30e1d, 0, 3 },
+	{ "besseres essen", 0x30e1d, 0, 3 },
+	{ "gutes zu essen", 0x30e1d, 0, 3 },
+	{ "aufheitern", 0x31011, 0, 0 },
+	{ "heiter mich mal auf", 0x31011, 0, 0 },
+	{ "kriege ich ein besseres zimmer", 0x30e8a, 0, 3 },
+	{ "kriege ich ein besseres zimmer", 0x30e8a, 0, 2 },
+	{ "kriege ich eine bessere kabine", 0x30e8a, 0, 3 },
+	{ "kriege ich eine bessere kabine", 0x30e8a, 0, 2 },
+	{ "komme ich an eine schoenere kabine", 0x30e8a, 0, 3 },
+	{ "komme ich an eine schoenere kabine", 0x30e8a, 0, 2 },
+	{ "kriege ich eine schoenere kabine", 0x30e8a, 0, 3 },
+	{ "kriege ich eine schoenere kabine", 0x30e8a, 0, 2 },
+	{ "bekomme ich eine schoenere kabine", 0x30e8a, 0, 3 },
+	{ "bekomme ich eine schoenere kabine", 0x30e8a, 0, 2 },
+	{ "komme ich an eine bessere kabine", 0x30e8a, 0, 3 },
+	{ "komme ich an eine bessere kabine", 0x30e8a, 0, 2 },
+	{ "ich verstehe", 0x30d75, 0x6d, 0 },
+	{ "das wusste ich", 0x30d75, 0x6d, 0 },
+	{ "wusste ich es doch", 0x30d75, 0x6d, 0 },
+	{ "ich weiss", 0x30d75, 0x6d, 0 },
+	{ "ich kenne", 0x30d75, 0x6d, 0 },
+	{ "hilfst du nicht", 0x30d6f, 0x6d, 0 },
+	{ "du hilfst nicht", 0x30d6f, 0x6d, 0 },
+	{ "nicht hilfsbereit", 0x30d6f, 0x6d, 0 },
+	{ "nicht freundlich", 0x30d6f, 0x6d, 0 },
+	{ "nicht zuvorkommend", 0x30d6f, 0x6d, 0 },
+	{ "hilfst nicht", 0x30d6f, 0x6d, 0 },
+	{ "keine hilfe", 0x30d6f, 0x6d, 0 },
+	{ "hilfst du mir nicht", 0x30d6f, 0x6d, 0 },
+	{ "entschuldig", 0x30d76, 0x6d, 0 },
+	{ "verzeihung", 0x30d76, 0x6d, 0 },
+	{ "tut mir leid", 0x30d76, 0x6d, 0 },
+	{ "tut mir aber leid", 0x30d76, 0x6d, 0 },
+	{ "ich meinte es nicht so", 0x30d76, 0x6d, 0 },
+	{ "wollte ich nicht sagen", 0x30d76, 0x6d, 0 },
+	{ "nicht so gemeint", 0x30d76, 0x6d, 0 },
+	{ "nichts fuer ungut", 0x30d76, 0x6d, 0 },
+	{ "spielst du golf", 0x313b6, 0, 0 },
+	{ "golf spielen", 0x313b6, 0, 0 },
+	{ "spiele golf", 0x313b6, 0, 0 },
+	{ "sosse klebt am huhn fest", 0x3156b, 0, 0 },
+	{ "die sosse nicht von dem huehnchen los", 0x3156b, 0, 0 },
 	{ nullptr, 0, 0, 0 }
 };
 
@@ -365,6 +480,90 @@ static const char *const MISSIVEOMAT_MESSAGES[3] = {
 	"His Loftiness Leovinus are here."
 };
 
+static const char *const MISSIVEOMAT_MESSAGES_DE[3] = {
+	"Willkommen, Leovinus.\n"
+	"\n"
+	"Dies ist Ihr Depesch-O-Mat.\n"
+	"\n"
+	"Sie haben 1827 Elektrische Depeschen erhalten.\n"
+	"\n"
+	"Aus praktischen Gr\xFC""nden habe ich 453 Nachrichten von Leuten, "
+	"die Sie nicht kennen und die dachten, es w\xE4""re unheimlich geistreich, "
+	"sie an Sie weiterzusenden, gel\xF6""scht, darunter 63 Depeschen mit "
+	"doppelten oder dreifachen Ausrufezeichen,\n"
+	"846 Depeschen von Mailing-Listen, die Sie einmal f\xFC"
+	"r sehr interessant hielten, und von denen Sie jetzt keine Ahnung haben, "
+	"wie man sie l\xF6""schen kann, \n"
+	"962 Kettendepeschen,\n"
+	"1034 Anweisungen, wie man durch den Einsatz von Butter zum Million\xE4""r wird,\n"
+	"3 Yassakkanische Morddrohungen (diese Zahl ist im Vergleich zur Vorwoche leicht "
+	"gesunken, was durchaus erfreulich ist), \n"
+	"und eine Depesche von Ihrer Mutter, die ich mit beruhigenden Worten beantwortet habe.\n"
+	"\n"
+	"Auf folgende Depeschen m\xF6""chte ich Ihre besondere Aufmerksamkeit lenken. "
+	"Sie brauchen den Flunker-Finder nicht zu aktivieren um zu sehen, warum. "
+	"Irgend etwas ist faul, und ich habe den Verdacht, da\xDF"" die beiden schleimigen "
+	"Quallen Brobostigon und Scraliontis wieder dahinter stecken.",
+
+	"Hallo Droot.  Ich habe Ihre letzten Depeschen ausgewertet.\n"
+	"Der Inhalt gliedert sich wie folgt:\n"
+	"\n"
+	"Gute Nachrichten 49%\n"
+	"Schlechte Nachrichten 48%\n"
+	"Mittelm\xE4\xDF""ige Nachrichten 4%\n"
+	"Belanglose Mailings und Familiendepeschen 5%\n"
+	"Sonderangebote der Blerontinischen Sand Gesellschaft 1% "
+	"(beachtenswert: die ziemlich h\xFC""bsche Miet-D\xFC""ne auf Seite 4)\n"
+	"\n"
+	"Insgesamt gesehen sind Sie \xE4""u\xDF""erst Erfolgreich.  Die Gesch\xE4""fte "
+	"Florieren weiterhin.  Ihre Aktien sind in Sicherheit. Ihr Haar "
+	"sieht wie immer Toll aus. Teppich 14 mu\xDF"" gereinigt werden.\n"
+	"\n"
+	"Es freut mich, berichten zu d\xFC""rfen, da\xDF"" keine weiteren "
+	"Kommentare zu Schwei\xDF""f\xFC\xDF""en gemeldet wurden.\n"
+	"\n"
+	"Empfehle dringend, alle Fischpaste-Aktien zu verkaufen, da Marktschwankungen.\n"
+	"\n"
+	"Da Ihr Gro\xDF""er Plan beinahe vollendet ist, war ich so frei, alle "
+	"nicht dringenden Depeschen zu beantworten und f\xFC""hre hierauffolgend nur "
+	"die Korrespondenz mit Manager Brobostigon und Ihrer Durchlauchtigsten Gro\xDF""kotz "
+	"Nervens\xE4""ge Leovinus auf.\n"
+	"\n"
+	"Achtung: Leovinus sch\xF6""pft langsam Verdacht.  Lassen Sie auch Brobostigon "
+	"nicht aus den Augen.\n"
+	"\n"
+	"F\xFC""r den morgigen Stapellauf ist das Wetter heiter und sonnig.  "
+	"Um elf Uhr wird leichte Bew\xF6""lkung eingeschaltet. Ich schlage "
+	"den roten Anzug mit der Sch\xE4""rpe vor.\n"
+	"\n"
+	"Alle Geld\xFC""berweisungen werden \xFC""ber Decknamenkonten vor Mondaufgang get\xE4""tigt.\n"
+	"\n"
+	"Achten Sie auf eine ausgewogene Ern\xE4""hrung.  Ihr Fischstand ist niedrig und Sie k\xF6"
+	"nnten am sp\xE4""ten Vormittag unter Entscheidungsschwankungen leiden.\n"
+	"\n"
+	"Hier sind Ihre Depeschen...",
+
+	"Hallo Antar, dies ist Ihr Depesch-O-Mat.\n"
+	"\n"
+	"Nicht, da\xDF"" Sie daran noch erinnert werden m\xFC"
+	"ssen, aber heute ist die Glorreiche D\xE4""mmerung eines Neuen Zeitalters "
+	"in der Luxusraumfahrt. \n"
+	"\n"
+	"Im Allgemeinen zeigt meine Bewertung Ihrer Verfassung an diesem Morgen, "
+	"da\xDF"" Sie wohlauf sind, wenn auch nicht so reich, wie Sie es gerne w\xE4""ren.  "
+	"Ich hoffe, die interessante Zusammenarbeit mit Herrn Scraliontis wird bald "
+	"Fr\xFC""chte tragen. \n"
+	"\n"
+	"Ich hoffe, Ihre Bl\xE4""hungen haben in der Nacht etwas nachgelassen.  "
+	"Was f\xFC""r ein betr\xFC""bliches Leiden f\xFC""r  "
+	"einen Mann in Ihrer Position.\n"
+	"\n"
+	"Bei den meisten eingegangenen Depeschen handelt es sich um routinem\xE4\xDF"
+	"ige Bauangelegenheiten, die ich bearbeitet und dann gel\xF6""scht "
+	"habe.  Alle Depeschen von Herrn Scraliontis und Ihrer Durchlauchtigen "
+	"Aufgeblasenheit Leovinus folgen."
+};
+
 struct BedheadEntry {
 	const char *_name1;
 	const char *_name2;
@@ -416,7 +615,7 @@ static const BedheadEntry OFF_RESTING_D_WRONG[1] = {
 	{ "Any", "Any", "Any", "ClosedWrong", 59, 70 }
 };
 
-static const char *const STRINGS_EN[141] = {
+static const char *const STRINGS_EN[156] = {
 	"",
 	"You are standing outside the Pellerator.",
 	"I'm sorry, you cannot enter this pellerator at present as a bot is in the way.",
@@ -561,25 +760,38 @@ static const char *const STRINGS_EN[141] = {
 	"A previously assigned room: ",
 	"Saved Chevron: ",
 	"Current location: ",
+	"Elevator %d",
+	"Floor %d",
+	"Room %d",
+	" (shift-click edits)",
 	"A hot",
-	"A cold"
+	"A cold",
+	"Load the game.",
+	"Save the game.",
+	"Empty",
+	"Quit the game.",
+	"Are you sure you want to quit?",
+	"Change the volume settings",
+	"Master volume",
+	"Music volume",
+	"Parrot volume",
+	"Speech volume"
 };
 
-static const char *const STRINGS_DE[186] = {
-	// TODO: Still many strings to translate to German
+static const char *const STRINGS_DE[202] = {
 	"",
 	"Sie befinden sich vor dem Pellerator.",
 	"Wir bedauern, da ein Bot den Weg versperrt, ist Ihnen der "
 		"Zutritt zum Pellerator Ihnen gegenwSrtig verwehrt.",
-	"Wir bedauern, Zutritt zu diesem Pellerator ist nicht m\0xF6"
-		"glich, da die T\0xFC" "r zugefroren ist.",
+	"Wir bedauern, Zutritt zu diesem Pellerator ist nicht m\xF6"
+		"glich, da die T\xFC" "r zugefroren ist.",
 	"Der Sukk-U-Bus befindet sich gegenwSrtig im Standby-oder \"AUS\"-Betrieb.",
 	"Zur Zeit gibt es nichts zuzustellen.",
 	"Gegenw\xE4rtig befindet sich nichts im Ablagekorb.",
-	"Der Sukk-U-Bus ist ein Einzel-St\0xFC" "ck-Liefergerst.",
+	"Der Sukk-U-Bus ist ein Einzel-St\xFC" "ck-Liefergerst.",
 	"Nur ein H\xFChnchen pro Passagier. Wir bedanken uns f\xFC"
 		"r Ihr Verst\xE4ndnis.",
-	"H\0xFChner werden nur in Eine-Einheit-Pro-Person-Rationen zugeteilt.",
+	"H\xFChner werden nur in Eine-Einheit-Pro-Person-Rationen zugeteilt.",
 	"Sie sind in die Erste Klasse h\xF6hergestuft worden. Genie\xDF"
 		"en Sie es in vollen Z\xFCgen.",
 	"Sie sind in die Zweite Klasse h\xF6hergestuft worden. Genie\xDF"
@@ -647,114 +859,128 @@ static const char *const STRINGS_DE[186] = {
 	"Eine Schale Pistazien.",
 	"Keine Schale Pistazien.",
 
-	"Sadly, it is not possible to summon the DoorBot from this location.",
-	"Sadly, it is not possible to summon the BellBot from this location.",
-	"There is no one here to talk to",
-	"Talking to ",
-	"the DoorBot",
-	"the DeskBot",
-	"a LiftBot",
-	"the Parrot",
-	"the BarBot",
-	"a ChatterBot",
-	"the BellBot",
-	"the Maitre d'Bot",
-	"a Succ-U-Bus",
-	"Unknown",
-	"The arm is already holding something.",
-	"You can't get this.",
-	"That doesn't seem to do anything.",
-	"It doesn't seem to want this.",
-	"This does not reach.",
-	"The chicken is already clean.",
-	"Succ-U-Bus auxiliary hose attachment incompatible with sliding glass cover.",
-	"This item is incorrectly calibrated.",
-	"Only First Class passengers are allowed to use the Gondoliers.",
-	"There is currently nothing available for your viewing pleasure on this channel.",
-	"Television control",
-	"Operate visual entertainment device",
-	"Operate the lights",
-	"Deploy floral enhancement",
-	"Deploy fully recumbent relaxation device",
-	"Deploy comfort workstation",
-	"Deploy minor horizontally mobile storage compartment",
-	"Deploy major semi-recumbent relaxation device",
-	"Inflate fully recumbent relaxation device ",
-	"Deploy personal maintenance hub",
-	"Deploy executive horizontal worksurface",
-	"Deploy minor semi-recumbent relaxation device",
-	"Deploy aqueous cleansing receptacle",
-	"Deploy major horizontally mobile storage compartment",
-	"Succ-U-Bus delivery system control",
-	"Navigation controller",
-	"Let Titania figure out where Earth is (skip puzzle)",
-	"Summon Elevator",
-	"Summon Pellerator",
-	"Go to the Bottom of the Well",
-	"Go to the Top of the Well",
-	"Go to your stateroom",
-	"Go to the Bar",
-	"Go to the Promenade Deck",
-	"Go to the Arboretum",
-	"Go to the Music Room",
-	"Go to the First Class Restaurant"
-	"The Parrot Lobby",
-	"The Creators' Chamber",
-	"The Bridge",
-	"The Bilge Room",
-	"The Sculpture Chamber",
-	"The Arboretum",
-	"The Bottom of the Well",
-	"The Promenade Deck",
-	"The 1st class restaurant",
-	"Titania's Room",
-	"The Bar",
-	"The Embarkation Lobby",
-	"The Music Room",
-	"Unknown Room",
-	"The Service Elevator",
-	"The Super Galactic Leisure Lounge",
-	"The Elevator",
-	"The Dome",
-	"The Pellerator",
-	"The Top of the Well",
-	"Nowhere you're likely to want to go.",
-	"1st class",
-	"2nd class",
-	"SGT class",
-	"no class",
-	"Your assigned room: ",
-	"A previously assigned room: ",
-	"Saved Chevron: ",
-	"Current location: ",
-	"A hot",
-	"A cold",
+	"Leider ist es nicht m\xF6""glich den T\xFC""r-Bot von diesem Ort aus herbeizurufen.",
+	"Leider ist es nicht m\xF6""glich den Klingel-Bot von diesem Ort aus herbeizurufen.",
+	"Es ist niemand hier mit dem du sprechen k\xF6""nntest",
+	"Im Gespr\xE4""ch mit ",
+	"der T\xFC""r-Bot",
+	"der Empfangs-Bot",
+	"der Aufzugs-Bot",
+	"der Papagei",
+	"der Bar-Bot",
+	"ein Quassel-Bot",
+	"der Klingel-Bot",
+	"der Chef-Bot",
+	"ein Sukk-U-Bus",
+	"Unbekannt",
+	"Der Arm h\xE4""lt bereits etwas.",
+	"Das kannst du nicht bekommen.",
+	"Das scheint nichts zu tun.",
+	"Es scheint das nicht zu wollen.",
+	"Das erreicht es nicht.",
+	"Das H\xFC""hnchen ist bereits sauber.",
+	"Sukk-U-Bus Hilfsschlauch-Aufsatz nicht kompatibel mit gl\xE4""serner Schiebeabdeckung.",
+	"Der Gegenstand ist falsch kalibriert.",
+	"Nur Passagiere erster Klasse ist es erlaubt den Gondoliere zu benutzen.",
+	"Zurzeit kommt auf diesem Kanal nichts sehenswertes.",
+	"Fernbedienung",
+	"Bediene visuelles Unterhaltungssystem",
+	"Bediene die Lichter",
+	"Setze florale Verbesserung ein",
+	"Stelle vollkommend-liegendes Entspannungsger\xE4""t bereit",
+	"Stelle Wohlf\xFC""hl-Arbeitsplatz bereit",
+	"Stelle kleineres horizontal bewegliches Abstellfach bereit",
+	"Stelle gr\xF6""\xDF""eres halbliegendes Entspannungsger\xE4""t bereit",
+	"Pumpe vollkommend-liegendes Entspannungsger\xE4""t auf",
+	"Stelle pers\xF6""nliche Instandsetzungsstation bereit",
+	"Stelle horizontale F\xFC""hrungskrafts-Arbeitsfl\xE4""che bereit",
+	"Stelle kleineres halbliegendes Entspannungsger\xE4""t bereit",
+	"Stelle mit Wasser reinigendes Beh\xE4""ltnis bereit",
+	"Stelle gr\xF6""\xDF""eres horizontal tragbares Abstellfach bereit",
+	"Sukk-U-Bus Zustell-Kontrollsystem",
+	"Navigations-Kontroller",
+	"Lass Titania herausbekommen wo die Erde ist (\xFC""berspringe Puzzle)",
+	"Rufe Aufzug",
+	"Rufe Pellerator",
+	"Gehe zum Grund des Brunnens",
+	"Gehe zur Oberfl\xE4""che des Brunnens",
+	"Gehe zu deiner Kabine",
+	"Gehe zur Bar",
+	"Gehe zum Promenadendeck",
+	"Gehe zum Baumgarten",
+	"Gehe zum Musikzimmer",
+	"Gehe zum First-Class-Restaurant",
+	"Die Papagei-Lobby",
+	"Das Zimmer des Erschaffers",
+	"Die Br\xFC""cke",
+	"Der Kielraum",
+	"Das Skulpturenzimmer",
+	"Der Baumgarten",
+	"Der Grund des Brunnens",
+	"Das Promenadendeck",
+	"Das First-Class-Restaurant",
+	"Titanias Zimmer",
+	"Die Bar",
+	"Die Empfangshalle",
+	"Das Musikzimmer",
+	"Unbekanntes Zimmer",
+	"Der G\xFC""teraufzug",
+	"Die Supergalaktische-Freizeitlounge",
+	"Der Aufzug",
+	"Die Kuppel",
+	"Der Pellerator",
+	"Die Oberfl\xE4""che des Brunnens",
+	"Nirgends, wo du hingehen m\xF6""chtest.",
+	"Erste Klasse",
+	"Zweite Klasse",
+	"SGT Klasse",
+	"keine Klasse",
+	"Dein zugewiesenes Zimmer: ",
+	"Dein zuvor zugewiesenes Zimmer: ",
+	"Gespeichertes Abzeichen: ",
+	"Derzeitige Position: ",
+	"Aufzug %d",
+	"Stock %d",
+	"Kabine %d",
+	" (Chevrons ver\xE4" "ndern mit Umschalt-Taste+Klicken)",
+	"Eine hei\xDF""e",
+	"Eine kalte",
+	"Laden Sie das Spiel.",
+	"Speichern Sie das Spiel.",
+	"Leer",
+	"Beenden Sie das Spiel.",
+	"Sind Sie sicher, da\xDF"" Sie das Spiel verlassen m\xF6""chten?",
+	"\xC4""ndern der Lautst\xE4""rkeeinstellungen",
+	"Grundlautst\xE4""rke",
+	"Musiklautst\xE4""rke",
+	"Papageienlautst\xE4""rke",
+	"Sprachlautst\xE4""rke",
 
 	"Sommer",
 	"Herbst",
 	"Winter",
-	"Fr\0xFC" "nhling",
+	"Fr\xFC" "nhling",
 	"Sn'ood",
 	"J'af'ah",
 	"Bitta",
-	"Fr\0xAA" "ic",
-	"Pflanzen bitte nicht ber\0xFC" "nhren.",
-	"!\0xBC" "ta'\0xAD" "ta! !T\0xAA" "z n\0xAA" " sappibundli t\0xAA"
-		"cn\0xAA" "z!",
+	"Fr\xAA" "ic",
+	"Pflanzen bitte nicht ber\xFC" "nhren.",
+	"!\xBC" "ta'\xAD" "ta! !T\xAA" "z n\xAA" " sappibundli t\xAA"
+		"cn\xAA" "z!",
 
 	"Stop",
 	"!Hanaz!",
 	"VorwSrts",
 	"!Panaz!",
-	"T\0xAA" "z k'b\0xAA" "z",
+	"T\xAA" "z k'b\xAA" "z",
 	"Ein wenig herumkurven",
-	"Otundo a\0x92" " doom\0xAA" "n n\0x92" "sanza",
+	"Otundo a\x92" " doom\xAA" "n n\x92" "sanza",
 	"Sinnlose Drehung des Steuerrads",
-	"!0xBC" "ta\0x92\0xAD" "ta!  T\0xAA""z vidsta\0x92" "jaha i\0xAC"
-		"in\0x92" "qu\0xAA" " m\0xAA" "n\0xAA" "z",
-	"Sternenpanorama des Reiseziels hier einf\0xFC" "ngen.",
+	"!0xBC" "ta\x92\xAD" "ta!  T\xAA""z vidsta\x92" "jaha i\xAC"
+		"in\x92" "qu\xAA" " m\xAA" "n\xAA" "z",
+	"Sternenpanorama des Reiseziels hier einf\xFC" "ngen.",
 
-	"V'lo\0xAC",
+	"V'lo\xAC",
 	"Geschwindigkeit",
 	"Pan",
 	"Ein",
@@ -765,29 +991,29 @@ static const char *const STRINGS_DE[186] = {
 	"Pido",
 	"Schnell",
 
-	"\0xBC" "lu\0xAD" " q\0xB0 scu'b\0xAA" "rri",
-	"H\0xFC" "hnchen a la sauce tomate",
-	"\0xBC" "lu\0xAD" " q\0xB0 scu'jajaja",
+	"\xBC" "lu\xAD" " q\xB0 scu'b\xAA" "rri",
+	"H\xFC" "hnchen a la sauce tomate",
+	"\xBC" "lu\xAD" " q\xB0 scu'jajaja",
 	"H0xFC" "hnchen a la sauce moutarde",
-	"\0xBC" "lu0xAD q\0xB0 scu'\0xAD" "lu\0xAD",
-	"H\0xFC" "hnchen a la sauce 'Vogel'",
-	"\0xBC" "lu\0xAD" " sanza scu, n\0xAA n\0xAA n\0xAA",
-	"H\0xFC" "hnchen bar jeglicher sauce",
+	"\xBC" "lu0xAD q\xB0 scu'\xAD" "lu\xAD",
+	"H\xFC" "hnchen a la sauce 'Vogel'",
+	"\xBC" "lu\xAD" " sanza scu, n\xAA n\xAA n\xAA",
+	"H\xFC" "hnchen bar jeglicher sauce",
 
-	"!\0xB2" "la! !\0xB2" "la!  !!!Sizzlo ab\0x92\0xAA\0xAA" "o s\0xAA"
-		"nza cr\0xAA" "dibo!!!  N\0xAA" "nto p\0xAA" "rificio i\0xAC" "ind\0xAA",
+	"!\xB2" "la! !\xB2" "la!  !!!Sizzlo ab\x92\xAA\xAA" "o s\xAA"
+		"nza cr\xAA" "dibo!!!  N\xAA" "nto p\xAA" "rificio i\xAC" "ind\xAA",
 	"Achtung, Lebensgefahr. Unglaublich hohe Voltzahl!!! Innen keine "
-		"artungsbed\0xFC" "rftigen Teile vorhanden.",
-	"!!!Birin\0xAC" "i sp\0xAA" "culato t\0xAA" "z n\0xAA n\0xAA n\0xAA"
-		" ouvraditiniz!  J\0x92" "in n\0xAA n\0xAA upraximus stifibilimus"
-		" j\0x92" "in sigorto funct",
-	"Sie hStten die erste Kontrollt\0xFC" "r nicht \0xF6"
-		"ffnen sollen! Dies ist nicht nur ungeheuer gef\0xE4"
-		"hrlich, Sie verlieren auch jegliche Garantie-Anspr\0xFC" "che.",
-	"!T\0xAA" "z n\0xAA bleabaz t\0xAA" "z n\0xAA j\0x92" "abaz!  Coco?",
-	"Und sagen Sie hinterher blo\0xFC nicht, niemand hStte Sie gewarnt.",
-	"Pin\0xAA" "z-pin\0xAA" "z stot \0xAF" "r\0xB0 jibbli",
-	"Dr\0xFC" "cken Sie den Knopf um die Bombe zu entschSrfen."
+		"artungsbed\xFC" "rftigen Teile vorhanden.",
+	"!!!Birin\xAC" "i sp\xAA" "culato t\xAA" "z n\xAA n\xAA n\xAA"
+		" ouvraditiniz!  J\x92" "in n\xAA n\xAA upraximus stifibilimus"
+		" j\x92" "in sigorto funct",
+	"Sie hStten die erste Kontrollt\xFC" "r nicht \xF6"
+		"ffnen sollen! Dies ist nicht nur ungeheuer gef\xE4"
+		"hrlich, Sie verlieren auch jegliche Garantie-Anspr\xFC" "che.",
+	"!T\xAA" "z n\xAA bleabaz t\xAA" "z n\xAA j\x92" "abaz!  Coco?",
+	"Und sagen Sie hinterher blo\xFC nicht, niemand hStte Sie gewarnt.",
+	"Pin\xAA" "z-pin\xAA" "z stot \xAF" "r\xB0 jibbli",
+	"Dr\xFC" "cken Sie den Knopf um die Bombe zu entschSrfen."
 };
 
 static const char *const MUSIC_DATA[4] = {
@@ -825,14 +1051,24 @@ void NORETURN_PRE error(const char *s, ...) {
 	exit(1);
 }
 
-void writeEntryHeader(const char *name, uint offset, uint size) {
+void writeEntryHeader(const char *name, uint offset, uint size, uint flags) {
 	assert(headerOffset < HEADER_SIZE);
 	outputFile.seek(headerOffset);
 	outputFile.writeLong(offset);
 	outputFile.writeLong(size);
+	outputFile.writeWord(flags);
 	outputFile.writeString(name);
 
-	headerOffset += 8 + strlen(name) + 1;
+	headerOffset += 10 + strlen(name) + 1;
+}
+
+void writeEntryHeader(const char *name, uint offset, uint size) {
+	writeEntryHeader(name, offset, size, 0);
+}
+
+void writeEntryHeader(const char *name, uint offset, uint size, bool isCompressed) {
+	uint flags = isCompressed ? 1 : 0;
+	writeEntryHeader(name, offset, size, flags);
 }
 
 void writeFinalEntryHeader() {
@@ -840,6 +1076,10 @@ void writeFinalEntryHeader() {
 	outputFile.seek(headerOffset);
 	outputFile.writeLong(0);
 	outputFile.writeLong(0);
+}
+
+void writeCompressedRes(Common::File *src) {
+
 }
 
 void writeStringArray(const char *name, uint offset, int count) {
@@ -900,42 +1140,72 @@ void writeResource(const char *name, Common::File *file) {
 	delete file;
 }
 
-void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) {
-	char nameBuffer[256];
-	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
-
+void writeResource(const char *resName, const char *sectionStr, uint32 resId, bool isEnglish = true) {
 	Common::PEResources &res = isEnglish ? resEng : resGer;
 	Common::File *file = res.getResource(getResId(sectionStr), resId);
 	assert(file);
-	writeResource(nameBuffer, file);
+	writeResource(resName, file);
+}
+
+void writeResource(const char *sectionStr, uint32 resId, bool isEnglish = true) {
+	char nameBuffer[256];
+	sprintf(nameBuffer, "%s/%u", sectionStr, resId);
+	if (!isEnglish)
+		strcat(nameBuffer, "/DE");
+	
+	writeResource(nameBuffer, sectionStr, resId, isEnglish);
+}
+
+void writeResource(const char *resName, const char *sectionStr, const char *resId, bool isEnglish = true) {
+	Common::PEResources &res = isEnglish ? resEng : resGer;
+	Common::File *file = res.getResource(getResId(sectionStr),
+		Common::WinResourceID(resId));
+	assert(file);
+	writeResource(resName, file);
 }
 
 void writeResource(const char *sectionStr, const char *resId, bool isEnglish = true) {
 	char nameBuffer[256];
 	sprintf(nameBuffer, "%s/%s", sectionStr, resId);
+	if (!isEnglish)
+		strcat(nameBuffer, "/DE");
 
-	Common::PEResources &res = isEnglish ? resEng : resGer;
-	Common::File *file = res.getResource(getResId(sectionStr),
-		Common::WinResourceID(resId));
-	assert(file);
-	writeResource(nameBuffer, file);
+	writeResource(nameBuffer, sectionStr, resId, isEnglish);
 }
 
 void writeBitmap(const char *name, Common::File *file) {
 	outputFile.seek(dataOffset);
 
+	// Set up a memory stream for the compressed data, and wrap
+	// it with a zlib compressor
+	Common::MemoryWriteStreamDynamic *compressedData =
+		new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	Common::WriteStream *zlib = Common::wrapCompressedWriteStream(compressedData);
+
 	// Write out the necessary bitmap header so that the ScummVM
 	// BMP decoder can properly handle decoding the bitmaps
-	outputFile.write("BM", 2);
-	outputFile.writeLong(file->size() + 14);	// Filesize
-	outputFile.writeLong(0);					// res1 & res2
-	outputFile.writeLong(0x436);				// image offset
+	zlib->write("BM", 2);
+	zlib->writeUint32LE(file->size() + 14);	// Filesize
+	zlib->writeUint32LE(0);					// res1 & res2
+	zlib->writeUint32LE(0x436);				// image offset
 
-	outputFile.write(*file, file->size());
+	// Transfer the bitmap data
+	int srcSize = file->size();
+	byte *data = new byte[srcSize];
+	file->read(data, srcSize);
+	zlib->write(data, srcSize);
 
-	writeEntryHeader(name, dataOffset, file->size() + 14);
-	dataOffset += file->size() + 14;
-	delete file;
+	delete[] data;
+	zlib->finalize();
+
+	// Write out the compressed data
+	outputFile.write(compressedData->getData(), compressedData->size());
+
+	writeEntryHeader(name, dataOffset, compressedData->size() + 14, true);
+	dataOffset += compressedData->size() + 14;
+
+	// Free the zlib write stream
+	delete zlib;
 }
 
 void writeBitmap(const char *sectionStr, const char *resId, bool isEnglish = true) {
@@ -1075,9 +1345,11 @@ void writeWords(const char *name, uint tableOffset, int recordCount = 2) {
 		val = inputFile.readLong();
 		strOffset = inputFile.readLong();
 
-		if (!val)
+		if (!val) {
 			// Reached end of list
+			assert(idx >= 128);
 			break;
+		}
 
 		outputFile.writeLong(val);
 		writeString(strOffset);
@@ -1183,6 +1455,21 @@ void writeMissiveOMatMessages() {
 	writeStringArray("TEXT/MISSIVEOMAT/TO", TO[_version], 58);
 }
 
+void writeMissiveOMatMessagesDE() {
+	outputFile.seek(dataOffset);
+
+	for (int idx = 0; idx < 3; ++idx)
+		outputFile.writeString(MISSIVEOMAT_MESSAGES_DE[idx]);
+
+	uint size = outputFile.size() - dataOffset;
+	writeEntryHeader("TEXT/MISSIVEOMAT/WELCOME/DE", dataOffset, size);
+	dataOffset += size;
+
+	writeStringArray("TEXT/MISSIVEOMAT/MESSAGES/DE", 0x5A9988, 58);
+	writeStringArray("TEXT/MISSIVEOMAT/FROM/DE", 0x5A97B8, 58);
+	writeStringArray("TEXT/MISSIVEOMAT/TO/DE", 0x5A98A0, 58);
+}
+
 void writeBedheadGroup(const BedheadEntry *data, int count) {
 	for (int idx = 0; idx < count; ++idx, ++data) {
 		outputFile.writeString(data->_name1);
@@ -1277,20 +1564,21 @@ void writeData() {
 	writeResource("STFONT", 152);
 	writeResource("STFONT", 153);
 
+	writeResource("TEXT/STVOCAB", "TEXT", "STVOCAB.TXT");
+	writeResource("TEXT/JRQUOTES", "TEXT", "JRQUOTES.TXT");
+	writeResource("TEXT", 155);
+
 	writeResource("STARFIELD", 132);
 	writeStarfieldPoints();
 	writeStarfieldPoints2();
 
-	writeResource("TEXT", "STVOCAB.TXT");
-	writeResource("TEXT", "JRQUOTES.TXT");
-	writeResource("TEXT", 155);
-
 	writeStringArray("TEXT/ITEM_DESCRIPTIONS", ITEM_DESCRIPTIONS, 46);
+	writeStringArray("TEXT/ITEM_DESCRIPTIONS/DE", ITEM_DESCRIPTIONS_DE, 46);
 	writeStringArray("TEXT/ITEM_NAMES", ITEM_NAMES, 46);
 	writeStringArray("TEXT/ITEM_IDS", ITEM_IDS, 40);
 	writeStringArray("TEXT/ROOM_NAMES", ROOM_NAMES, 34);
-	writeStringArray("TEXT/STRINGS", STRINGS_EN, 141);
-	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 186);
+	writeStringArray("TEXT/STRINGS", STRINGS_EN, 156);
+	writeStringArray("TEXT/STRINGS/DE", STRINGS_DE, 202);
 	const int TEXT_PHRASES[3] = { 0x61D3C8, 0x618340, 0x61B1E0 };
 	const int TEXT_REPLACEMENTS1[3] = { 0x61D9B0, 0x61C788, 0x61B7C8 };
 	const int TEXT_REPLACEMENTS2[3] = { 0x61DD20, 0x61CAF8, 0x61BB38 };
@@ -1405,11 +1693,11 @@ void writeData() {
 	writeSentenceMappings("Mappings/Parrot", MAPPINGS_PARROT[_version], 1);
 	writeSentenceMappings("Mappings/SuccUBus", MAPPINGS_SUCCUBUS[_version], 1);
 	writeWords("Words/Barbot", WORDS_BARBOT[_version]);
-	writeWords("Words/Bellbot", WORDS_BELLBOT[_version]);
-	writeWords("Words/Deskbot", WORDS_DESKBOT[_version]);
+	writeWords("Words/Bellbot", WORDS_BELLBOT[_version], 3);
+	writeWords("Words/Deskbot", WORDS_DESKBOT[_version], 3);
 	writeWords("Words/Doorbot", WORDS_DOORBOT[_version], 3);
 	writeWords("Words/Liftbot", WORDS_LIFTBOT[_version]);
-	writePhrases("Phrases/Bellbot", BELLBOT_COMMON_PHRASES);
+	writePhrases("Phrases/Bellbot", BELLBOT_COMMON_PHRASES_EN);
 
 	writeResponseTree();
 	writeNumbers();
@@ -1424,6 +1712,62 @@ void writeData() {
 	writeMissiveOMatMessages();
 	writeBedheadData();
 	writeParrotLobbyLinkUpdaterEntries();
+}
+
+void writeGermanData() {
+	writeResource("TEXT/STVOCAB/DE", "TEXT", "STVOCABDE.TXT", false);
+	writeResource("TEXT/JRQUOTES/DE", "TEXT", "JRQUOTESDE.TXT", false);
+	writeResource("TEXT/155/DE", "TEXT", 155, false);
+
+	writeStringArray("TEXT/PHRASES/DE", 0x23EEC8 + GERMAN_DIFF, 178);
+	writeStringArray("TEXT/REPLACEMENTS1/DE", 0x23F198 + GERMAN_DIFF, 1362);
+	writeStringArray("TEXT/REPLACEMENTS2/DE", 0x2406E8 + GERMAN_DIFF, 816);
+	writeStringArray("TEXT/REPLACEMENTS3/DE", 0x2413B0 + GERMAN_DIFF, 608);
+	writeStringArray("TEXT/REPLACEMENTS4/DE", 0x241D38 + GERMAN_DIFF, 195);
+	writeStringArray("TEXT/PRONOUNS/DE", 0x248610 + GERMAN_DIFF, 15);
+
+	writeSentenceMappings("Mappings/Barbot/DE", 0x1BA388 + GERMAN_DIFF, 8);
+	writeSentenceMappings("Mappings/Bellbot/DE", 0x1E1D20 + GERMAN_DIFF, 1);
+	writeSentenceMappings("Mappings/Deskbot/DE", 0x1F5A18 + GERMAN_DIFF, 4);
+	writeSentenceMappings("Mappings/Doorbot/DE", 0x214E00 + GERMAN_DIFF, 4);
+	writeSentenceMappings("Mappings/Liftbot/DE", 0x224AE0 + GERMAN_DIFF, 4);
+	writeSentenceMappings("Mappings/MaitreD/DE", 0x232E30 + GERMAN_DIFF, 1);
+	writeSentenceMappings("Mappings/Parrot/DE", 0x235FA8 + GERMAN_DIFF, 1);
+	writeSentenceMappings("Mappings/SuccUBus/DE", 0x2399C8 + GERMAN_DIFF, 1);
+	writeWords("Words/Barbot/DE", 0x5C68B8);
+	writeWords("Words/Bellbot/DE", 0x5E8378, 3);
+	writeWords("Words/Deskbot/DE", 0x5FE8D8, 3);
+	writeWords("Words/Doorbot/DE", 0x61B398, 3);
+	writeWords("Words/Liftbot/DE", 0x629618);
+	writePhrases("Phrases/Bellbot/DE", BELLBOT_COMMON_PHRASES_DE);
+
+	const int SENTENCES_BARBOT[2] = { 0x5B00C0, 0x5C5AC8 };
+	const int SENTENCES_BELLBOT[20] = { 0x5CACF8, 0x5D1670 };
+	const int SENTENCES_DESKBOT[3] = { 0x5ED428, 0x5FCEA0, 0x5FCC30 };
+	const int SENTENCES_DOORBOT[4] = { 0x5FFFC8, 0x61A690, 0x61AA38 };
+
+	writeSentenceEntries("Sentences/Default/DE", 0x5C8C70);
+	writeSentenceEntries("Sentences/Barbot/DE", SENTENCES_BARBOT[0]);
+	writeSentenceEntries("Sentences/Barbot2/DE", SENTENCES_BARBOT[1]);
+	writeSentenceEntries("Sentences/Bellbot/DE", SENTENCES_BELLBOT[0]);
+	writeSentenceEntries("Sentences/Bellbot/1/DE", SENTENCES_BELLBOT[1]);
+	writeSentenceEntries("Sentences/Deskbot/DE", SENTENCES_DESKBOT[0]);
+	writeSentenceEntries("Sentences/Deskbot/2/DE", SENTENCES_DESKBOT[1]);
+	writeSentenceEntries("Sentences/Deskbot/3/DE", SENTENCES_DESKBOT[2]);
+	writeSentenceEntries("Sentences/Doorbot/DE", SENTENCES_DOORBOT[0]);
+	writeSentenceEntries("Sentences/Doorbot/1/DE", SENTENCES_DOORBOT[1]);
+	writeSentenceEntries("Sentences/Doorbot/2/DE", SENTENCES_DOORBOT[2]);
+	writeSentenceEntries("Sentences/Liftbot/DE", 0x61CAD0);
+	writeSentenceEntries("Sentences/MaitreD/DE", 0x629EE8);
+	writeSentenceEntries("Sentences/Parrot/DE", 0x633FFC);
+	writeSentenceEntries("Sentences/SuccUBus/DE", 0x637CD8);
+
+	writeMissiveOMatMessagesDE();
+
+	writeResource("STFONT", 149, false);
+	writeResource("STFONT", 151, false);
+	writeResource("STFONT", 152, false);
+	writeResource("STFONT", 153, false);
 }
 
 void createScriptMap() {
@@ -1477,7 +1821,7 @@ int main(int argc, char *argv[]) {
 	}
 	resEng.loadFromEXE(argv[1]);
 
-	if (argc >= 3) {
+	if (argc == 4) {
 		resGer.loadFromEXE(argv[2]);
 	}
 
@@ -1503,8 +1847,13 @@ int main(int argc, char *argv[]) {
 
 	writeHeader();
 	writeData();
-	writeFinalEntryHeader();
 
+	if (argc == 4) {
+		inputFile.open(argv[2]);
+		_version = GERMAN;
+		writeGermanData();
+	}
+	writeFinalEntryHeader();
 	inputFile.close();
 	outputFile.close();
 	return 0;

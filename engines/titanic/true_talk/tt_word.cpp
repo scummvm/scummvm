@@ -163,14 +163,14 @@ uint TTword::readNumber(const char *str) {
 }
 
 bool TTword::testFileHandle(FileHandle file) const {
-	if (g_vm->_exeResources.is18Equals(3))
+	if (g_vm->_exeResources.isVocabMode(VOCAB_MODE_EN))
 		return true;
 
 	// TODO: Figure out why original compares passed file handle against specific values
 	return true;
 }
 
-bool TTword::findSynByName(const TTstring &str, TTsynonym *dest, int mode) const {
+bool TTword::findSynByName(const TTstring &str, TTsynonym *dest, VocabMode mode) const {
 	if (!_synP)
 		return false;
 
@@ -217,8 +217,9 @@ TTstringStatus TTword::getChainStatus() const {
 }
 
 TTword *TTword::copyWords() {
+	// Replicate the word and all following words it's linked to
 	TTword *result = copy();
-	for (TTword *word = result; word; word = word->_nextP)
+	for (TTword *word = result; word->_nextP; word = word->_nextP)
 		word->_nextP = word->_nextP->copy();
 
 	return result;

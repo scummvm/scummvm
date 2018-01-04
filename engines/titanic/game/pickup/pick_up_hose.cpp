@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/pickup/pick_up_hose.h"
+#include "titanic/game/broken_pell_base.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/room_item.h"
 #include "titanic/core/view_item.h"
@@ -95,7 +96,8 @@ bool CPickUpHose::StatusChangeMsg(CStatusChangeMsg *msg) {
 }
 
 bool CPickUpHose::EnterViewMsg(CEnterViewMsg *msg) {
-	_cursorId = CURSOR_IGNORE;
+	if (msg->_oldView)
+		_cursorId = CURSOR_IGNORE;
 	return true;
 }
 

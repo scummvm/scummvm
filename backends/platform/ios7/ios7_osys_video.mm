@@ -120,6 +120,15 @@ Common::List<Graphics::PixelFormat> OSystem_iOS7::getSupportedFormats() const {
 }
 #endif
 
+static inline void execute_on_main_thread(void (^block)(void)) {
+	if ([NSThread currentThread] == [NSThread mainThread]) {
+		block();
+	}
+	else {
+		dispatch_sync(dispatch_get_main_queue(), block);
+	}
+}
+
 void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	//printf("initSize(%u, %u, %p)\n", width, height, (const void *)format);
 
@@ -135,7 +144,9 @@ void OSystem_iOS7::initSize(uint width, uint height, const Graphics::PixelFormat
 	// Create the screen texture right here. We need to do this here, since
 	// when a game requests hi-color mode, we actually set the framebuffer
 	// to the texture buffer to avoid an additional copy step.
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(createScreenTexture) withObject:nil waitUntilDone: YES];
+	execute_on_main_thread(^ {
+		[[iOS7AppDelegate iPhoneView] createScreenTexture];
+	});
 
 	// In case the client code tries to set up a non supported mode, we will
 	// fall back to CLUT8 and set the transaction error accordingly.
@@ -172,13 +183,17 @@ void OSystem_iOS7::beginGFXTransaction() {
 OSystem::TransactionError OSystem_iOS7::endGFXTransaction() {
 	_screenChangeCount++;
 	updateOutputSurface();
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(setGraphicsMode) withObject:nil waitUntilDone: YES];
+	execute_on_main_thread(^ {
+		[[iOS7AppDelegate iPhoneView] setGraphicsMode];
+	});
 
 	return _gfxTransactionError;
 }
 
 void OSystem_iOS7::updateOutputSurface() {
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(initSurface) withObject:nil waitUntilDone: YES];
+	execute_on_main_thread(^ {
+		[[iOS7AppDelegate iPhoneView] initSurface];
+	});
 }
 
 int16 OSystem_iOS7::getHeight() {
@@ -208,7 +223,7 @@ void OSystem_iOS7::setPalette(const byte *colors, uint start, uint num) {
 		_mouseDirty = _mouseNeedTextureUpdate = true;
 }
 
-void OSystem_iOS7::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_iOS7::grabPalette(byte *colors, uint start, uint num) const {
 	//printf("grabPalette(%p, %u, %u)\n", colors, start, num);
 	assert(start + num <= 256);
 	byte *b = colors;
@@ -338,7 +353,9 @@ void OSystem_iOS7::unlockScreen() {
 void OSystem_iOS7::setShakePos(int shakeOffset) {
 	//printf("setShakePos(%i)\n", shakeOffset);
 	_videoContext->shakeOffsetY = shakeOffset;
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(setViewTransformation) withObject:nil waitUntilDone: YES];
+	execute_on_main_thread(^ {
+		[[iOS7AppDelegate iPhoneView] setViewTransformation];
+	});
 	// HACK: We use this to force a redraw.
 	_mouseDirty = true;
 }
@@ -348,8 +365,10 @@ void OSystem_iOS7::showOverlay() {
 	_videoContext->overlayVisible = true;
 	dirtyFullOverlayScreen();
 	updateScreen();
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(updateMouseCursorScaling) withObject:nil waitUntilDone: YES];
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(clearColorBuffer) withObject:nil waitUntilDone: YES];
+	execute_on_main_thread(^ {
+		[[iOS7AppDelegate iPhoneView] updateMouseCursorScaling];
+		[[iOS7AppDelegate iPhoneView] clearColorBuffer];
+	});
 }
 
 void OSystem_iOS7::hideOverlay() {
@@ -357,8 +376,10 @@ void OSystem_iOS7::hideOverlay() {
 	_videoContext->overlayVisible = false;
 	_dirtyOverlayRects.clear();
 	dirtyFullScreen();
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(updateMouseCursorScaling) withObject:nil waitUntilDone: YES];
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(clearColorBuffer) withObject:nil waitUntilDone: YES];
+	execute_on_main_thread(^ {
+		[[iOS7AppDelegate iPhoneView] updateMouseCursorScaling];
+		[[iOS7AppDelegate iPhoneView] clearColorBuffer];
+	});
 }
 
 void OSystem_iOS7::clearOverlay() {
@@ -439,7 +460,9 @@ void OSystem_iOS7::warpMouse(int x, int y) {
 	//printf("warpMouse(%d, %d)\n", x, y);
 	_videoContext->mouseX = x;
 	_videoContext->mouseY = y;
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(notifyMouseMove) withObject:nil waitUntilDone: YES];
+	execute_on_main_thread(^ {
+		[[iOS7AppDelegate iPhoneView] notifyMouseMove];
+	});
 	_mouseDirty = true;
 }
 
@@ -552,5 +575,7 @@ void OSystem_iOS7::updateMouseTexture() {
 		}
 	}
 
-	[[iOS7AppDelegate iPhoneView] performSelectorOnMainThread:@selector(updateMouseCursor) withObject:nil waitUntilDone: YES];
+	execute_on_main_thread(^ {
+		[[iOS7AppDelegate iPhoneView] updateMouseCursor];
+	});
 }

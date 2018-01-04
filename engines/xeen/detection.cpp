@@ -119,7 +119,7 @@ bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		*engine = new Xeen::WorldOfXeen::WorldOfXeenEngine(syst, gd);
 		break;
 	default:
-		break;
+		error("Invalid game");
 	}
 
 	return gd != 0;
@@ -144,7 +144,7 @@ SaveStateList XeenMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				Xeen::XeenEngine::readSavegameHeader(in, header);
+				Xeen::SavesManager::readSavegameHeader(in, header);
 				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
 				header._thumbnail->free();
@@ -172,7 +172,7 @@ SaveStateDescriptor XeenMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	if (f) {
 		Xeen::XeenSavegameHeader header;
-		Xeen::XeenEngine::readSavegameHeader(f, header);
+		Xeen::SavesManager::readSavegameHeader(f, header);
 		delete f;
 
 		// Create the return descriptor

@@ -41,6 +41,16 @@ namespace Chewy {
 #define MAX_AUTOMOVE 20
 #define MAX_SOUNDS 3
 
+struct SoundInfo {
+	uint16 enable[MAX_SOUNDS];	// flag, 0 = disable, 1 = enable
+	int16 index[MAX_SOUNDS];
+	uint16 start[MAX_SOUNDS];
+	uint16 channel[MAX_SOUNDS];
+	uint16 volume[MAX_SOUNDS];
+	uint16 repeatCount[MAX_SOUNDS];
+	uint16 stereo[MAX_SOUNDS];	// stereo position for the SFX
+};
+
 // Animated details - scene animations
 struct AnimatedDetails {
 	int16 x;
@@ -57,7 +67,7 @@ struct AnimatedDetails {
 	uint16 zIndex;
 	byte loadFlag;      // 0: load animation in memory immediately, 1: load animation in memory when it is played
 	byte zoom;
-	// 2 * 3 * 7 = 42 bytes sound data - TODO
+	SoundInfo soundInfo;
 	byte showOneFrame;  // show a sprite, 0: none, 1: before animation, 2: after animation
 	byte currentFrame;
 };
@@ -76,6 +86,7 @@ struct Hotspot {
 	Common::Rect rect;
 	uint16 resource;
 	Common::String desc;
+	int16 speechId;
 };
 
 struct RoomInfo {
@@ -95,11 +106,11 @@ struct AutoMove {
 	// 1 byte dummy
 };
 
-struct HotspotSpeech {
+/*struct HotspotSpeech {
 	int16 look;
 	int16 use;
 	int16 talk;
-};
+};*/
 
 struct SceneInfo {
 	uint16 staticDetailsCount;
@@ -110,8 +121,8 @@ struct SceneInfo {
 	Hotspot hotspot[MAX_HOTSPOTS];
 	RoomInfo roomInfo;
 	AutoMove autoMove[MAX_AUTOMOVE];
-	HotspotSpeech hotspotSpeech[MAX_DETAILS];
-	byte hotspotSound[MAX_DETAILS][MAX_SOUNDS];
+	int16 hotspotSpeech[MAX_DETAILS * MAX_SOUNDS];
+	//uint32 hotspotSoundPtr[MAX_DETAILS][MAX_SOUNDS];	// unused
 };
 
 Scene::Scene(ChewyEngine *vm) : _vm(vm) {
@@ -161,6 +172,7 @@ void Scene::updateMouse(Common::Point coords) {
 			if (coords.y >= 8) {
 				_vm->_graphics->setDescSurface(Common::Point(coords.x, coords.y - 8));
 				_vm->_graphics->drawText(_sceneInfo->hotspot[i].desc, coords.x, coords.y - 8);
+				//_vm->_graphics->drawText(_sceneInfo->hotspot[i].desc + Common::String::format(" (%d)", i), coords.x, coords.y - 8);	// debug
 			}
 			break;
 		}
@@ -172,17 +184,21 @@ void Scene::mouseClick(Common::Point coords) {
 	for (uint16 i = 0; i < MAX_HOTSPOTS; i++) {
 		//_vm->_graphics->drawRect(_sceneInfo->hotspot[i].rect, 0);	// debug
 		if (_sceneInfo->hotspot[i].rect.contains(coords)) {
-			int sample = -1;
+			int16 sample = -1;
+
+			// TODO: This is still not right
+			int16 speechId = _sceneInfo->hotspotSpeech[_sceneInfo->hotspot[i].resource - 4];
+			SoundInfo *s = &_sceneInfo->animatedDetails[speechId].soundInfo;
 
 			switch (_vm->_cursor->getCurrentCursor()) {
-			case kLook:
-				sample = _sceneInfo->hotspotSpeech[i].look;
-				break;
 			case kUse:
-				sample = _sceneInfo->hotspotSpeech[i].use;
+				sample = s->index[0];
+				break;
+			case kLook:
+				sample = s->index[1];
 				break;
 			case kTalk:
-				sample = _sceneInfo->hotspotSpeech[i].talk;
+				sample = s->index[2];
 				break;
 			default:
 				break;
@@ -194,6 +210,22 @@ void Scene::mouseClick(Common::Point coords) {
 	}
 }
 
+static void readSSoundInfo(Common::File &indexFile, int16 *data) {
+	for (int i = 0; i < MAX_SOUNDS; i++)
+		data[i] = indexFile.readSint16LE();
+}
+
+static void readUSoundInfo(Common::File &indexFile, uint16 *data) {
+	for (int i = 0; i < MAX_SOUNDS; i++)
+		data[i] = indexFile.readUint16LE();
+}
+
+/**
+ * Loads scene information from test.rdi
+ * Note that the original loads everything with a single read into a structure,
+ * which is why there are some pointers saved in the resource file - however,
+ * these are set to zero
+ */
 void Scene::loadSceneInfo() {
 	const uint32 sceneInfoSize = 3784;
 	const uint32 headerRDI = MKTAG('R', 'D', 'I', '\0');
@@ -208,13 +240,13 @@ void Scene::loadSceneInfo() {
 	uint32 header = indexFile.readUint32BE();
 	if (header != headerRDI)
 		error("Invalid resource - %s", sceneIndexFileName);
+	indexFile.skip(2);	// room count, unused (set to 100)
 
 	indexFile.seek(sceneInfoSize * _curScene, SEEK_CUR);
 
-	// TODO: These can be set to larger numbers than MAX_DETAILS
 	_sceneInfo->staticDetailsCount = indexFile.readUint16LE();
 	_sceneInfo->animatedDetailsCount = indexFile.readUint16LE();
-	indexFile.skip(6);
+	indexFile.skip(4);	// pointer to sprites
 
 	// Animated details
 	for (int i = 0; i < MAX_DETAILS; i++) {
@@ -232,7 +264,17 @@ void Scene::loadSceneInfo() {
 		_sceneInfo->animatedDetails[i].zIndex = indexFile.readUint16LE();
 		_sceneInfo->animatedDetails[i].loadFlag = indexFile.readByte();
 		_sceneInfo->animatedDetails[i].zoom = indexFile.readByte();
-		indexFile.skip(42);	// 2 * 3 * 7 = 42 bytes sound data - TODO
+
+		SoundInfo *s = &_sceneInfo->animatedDetails[i].soundInfo;
+		readUSoundInfo(indexFile, s->enable);
+		readSSoundInfo(indexFile, s->index);
+		readUSoundInfo(indexFile, s->start);
+		readUSoundInfo(indexFile, s->channel);
+		readUSoundInfo(indexFile, s->volume);
+		readUSoundInfo(indexFile, s->repeatCount);
+		readUSoundInfo(indexFile, s->stereo);
+		//debug("Sound %i: %i, %i, %i", i, s->index[0], s->index[1], s->index[2]);
+
 		_sceneInfo->animatedDetails[i].showOneFrame = indexFile.readUint16LE();
 		_sceneInfo->animatedDetails[i].currentFrame = indexFile.readUint16LE();
 	}
@@ -261,11 +303,15 @@ void Scene::loadSceneInfo() {
 	for (int i = 0; i < MAX_HOTSPOTS; i++) {
 		_sceneInfo->hotspot[i].resource = indexFile.readUint16LE() + 4;
 		_sceneInfo->hotspot[i].desc = "";
+		_sceneInfo->hotspot[i].speechId = -1;
 
 		if (_sceneInfo->hotspot[i].resource < kATSTextMax) {
 			TextEntry *entry = text->getText(_curScene + kADSTextMax, _sceneInfo->hotspot[i].resource);
-			if (entry)
+			if (entry) {
 				_sceneInfo->hotspot[i].desc = entry->text;
+				//_sceneInfo->hotspot[i].speechId = entry->speechId;	// TODO
+				//debug("Hotspot %i: '%s', resource %d", i, entry->text.c_str(), _sceneInfo->hotspot[i].resource);
+			}
 		}
 	}
 
@@ -291,21 +337,19 @@ void Scene::loadSceneInfo() {
 			warning("Auto move %d should be unused, but it isn't (max auto move items are %d)", i, _sceneInfo->roomInfo.autoMoveCount);
 	}
 
-	for (int i = 0; i < MAX_DETAILS; i++) {
-		// FIXME: These are all wrong... investigate why
-		_sceneInfo->hotspotSpeech[i].look = indexFile.readSint16LE();
-		_sceneInfo->hotspotSpeech[i].use = indexFile.readSint16LE();
-		_sceneInfo->hotspotSpeech[i].talk = indexFile.readSint16LE();
+	for (int i = 0; i < MAX_DETAILS * MAX_SOUNDS; i++) {
+		_sceneInfo->hotspotSpeech[i] = indexFile.readSint16LE();
+		/*HotspotSpeech *hs = &_sceneInfo->hotspotSpeech[i];
+		hs->look = indexFile.readSint16LE();
+		hs->use = indexFile.readSint16LE();
+		hs->talk = indexFile.readSint16LE();
+		debug("Hotspot %d: (%d, %d, %d)", i, hs->look, hs->use, hs->talk);*/
 	}
 
-	for (int i = 0; i < MAX_DETAILS; i++) {
-		_sceneInfo->hotspotSound[i][0] = indexFile.readSint16LE();
-		_sceneInfo->hotspotSound[i][1] = indexFile.readSint16LE();
-		_sceneInfo->hotspotSound[i][2] = indexFile.readSint16LE();
-	}
-
-	// TODO: We seem to be missing a chunk of data (186 bytes) from the end of
-	// the room info structure
+	// The rest of the scene data is MAX_DETAILS * 3 * 4 bytes full of null or
+	// invalid pointers to sound buffers, where sounds for each hotspot are
+	// preloaded
+	indexFile.skip(MAX_DETAILS * 3 * 4);
 
 	delete text;
 	indexFile.close();

@@ -21,13 +21,16 @@
  */
 
 #include "titanic/true_talk/tt_parser.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/true_talk/script_handler.h"
+#include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/true_talk/tt_action.h"
 #include "titanic/true_talk/tt_concept.h"
 #include "titanic/true_talk/tt_picture.h"
 #include "titanic/true_talk/tt_sentence.h"
 #include "titanic/true_talk/tt_word.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -62,6 +65,8 @@ void TTparser::loadArrays() {
 	loadArray(_replacements1, "TEXT/REPLACEMENTS1");
 	loadArray(_replacements2, "TEXT/REPLACEMENTS2");
 	loadArray(_replacements3, "TEXT/REPLACEMENTS3");
+	if (g_language == Common::DE_DEU)
+		loadArray(_replacements4, "TEXT/REPLACEMENTS4");
 	loadArray(_phrases, "TEXT/PHRASES");
 	loadArray(_pronouns, "TEXT/PRONOUNS");
 
@@ -81,14 +86,24 @@ int TTparser::preprocess(TTsentence *sentence) {
 	if (normalize(sentence))
 		return 0;
 
-	// Scan for and replace common slang and contractions with verbose versions
-	searchAndReplace(sentence->_normalizedLine, _replacements1);
-	searchAndReplace(sentence->_normalizedLine, _replacements2);
+	if (g_language == Common::DE_DEU) {
+		preprocessGerman(sentence->_normalizedLine);
+	} else {
+		// Scan for and replace common slang and contractions with verbose versions
+		searchAndReplace(sentence->_normalizedLine, _replacements1);
+		searchAndReplace(sentence->_normalizedLine, _replacements2);
+	}
 
 	// Check entire normalized line against common phrases to replace
 	for (uint idx = 0; idx < _phrases.size(); idx += 2) {
 		if (!_phrases[idx].compareTo(sentence->_normalizedLine))
 			sentence->_normalizedLine = _phrases[idx + 1];
+	}
+
+	if (g_language == Common::DE_DEU) {
+		// Scan for and replace common slang and contractions with verbose versions
+		searchAndReplace(sentence->_normalizedLine, _replacements1);
+		searchAndReplace(sentence->_normalizedLine, _replacements2);
 	}
 
 	// Do a further search and replace of roman numerals to decimal
@@ -364,6 +379,7 @@ int TTparser::searchAndReplace(TTstring &line, int startIndex, const StringArray
 				// Replace the text in the line with it's replacement
 				line = CString(line.c_str(), line.c_str() + startIndex) + replacementStr +
 					CString(line.c_str() + startIndex + origStr.size());
+				lineSize = line.size();
 
 				startIndex += replacementStr.size();
 				break;
@@ -394,10 +410,10 @@ int TTparser::replaceNumbers(TTstring &line, int startIndex) {
 		return index;
 
 	bool flag1 = false, flag2 = false, flag3 = false;
-	int total = 0, factor = 0;
+	int total = 0, factor = 0, endIndex;
 
 	do {
-		if (numEntry->_flags & NF_1) {
+		if (!(numEntry->_flags & NF_1)) {
 			flag2 = true;
 			if (numEntry->_flags & NF_8)
 				flag1 = true;
@@ -416,8 +432,11 @@ int TTparser::replaceNumbers(TTstring &line, int startIndex) {
 				factor += numEntry->_value;
 			}
 		}
-	} while (replaceNumbers2(line, &index));
 
+		endIndex = index;
+	} while ((numEntry = replaceNumbers2(line, &index)) != nullptr);
+
+	index = endIndex;
 	if (!flag2)
 		return index;
 
@@ -432,8 +451,13 @@ int TTparser::replaceNumbers(TTstring &line, int startIndex) {
 		total = -total;
 
 	CString numStr = CString::format("%d", total);
-	line = CString(line.c_str(), line.c_str() + startIndex) + numStr +
-		CString(line.c_str() + index);
+	line = CString::format("%s%s%s",
+		CString(line.c_str(), line.c_str() + startIndex).c_str(),
+		numStr.c_str(),
+		(index == -1) ? "" : line.c_str() + index - 1
+	);
+
+	index = startIndex + numStr.size();
 	return index;
 }
 
@@ -612,6 +636,7 @@ int TTparser::loadRequests(TTword *word) {
 
 		if (status != 1) {
 			addToConceptList(word);
+			addNode(SEEK_STATE);
 			addNode(SEEK_MODIFIERS);
 		}
 		break;
@@ -1397,7 +1422,7 @@ int TTparser::checkForAction() {
 			// Chain of words, so we need to find the last word of the chain,
 			// and set the last-but-one's _nextP to nullptr to detach the last one
 			TTword *prior = nullptr;
-			for (word = word->_nextP; word->_nextP; word = word->_nextP) {
+			for (; word->_nextP; word = word->_nextP) {
 				prior = word;
 			}
 
@@ -1582,7 +1607,10 @@ bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
 		return concept->checkWordId1();
 
 	case 9:
-		if (!concept->checkWordId3() && _sentenceConcept->_concept2P) {
+		if (concept->checkWordId3())
+			return true;
+
+		if (_sentenceConcept->_concept2P) {
 			if (!_sentenceConcept->_concept2P->checkWordId2() || !concept->checkWordId2()) {
 				return _sentenceConcept->_concept2P->checkWordClass() &&
 					concept->checkWordClass();
@@ -1600,7 +1628,9 @@ bool TTparser::checkConcept2(TTconcept *concept, int conceptMode) {
 int TTparser::filterConcepts(int conceptMode, int conceptIndex) {
 	int result = 0;
 
-	for (TTconcept *currP = _conceptP; currP && !result; currP = currP->_nextP) {
+	for (TTconcept *nextP, *currP = _conceptP; currP && !result; currP = nextP) {
+		nextP = currP->_nextP;
+
 		if (checkConcept2(currP, conceptMode)) {
 			TTconcept **ptrPP = _sentenceConcept->setConcept(conceptIndex, currP);
 			TTconcept *newConcept = new TTconcept(*currP);
@@ -1712,6 +1742,39 @@ int TTparser::processModifiers(int modifier, TTword *word) {
 	}
 
 	return 0;
+}
+
+void TTparser::preprocessGerman(TTstring &line) {
+	static const char *const SUFFIXES[12] = {
+		" ", "est ", "em ", "en ", "er ", "es ",
+		"et ", "st ", "s ", "e ", "n ", "t "
+	};
+
+	for (uint idx = 0; idx < _replacements4.size(); ++idx) {
+		if (!line.hasSuffix(_replacements4[idx]))
+			continue;
+
+		const char *lineP = line.c_str();
+		const char *p = strstr(lineP, _replacements4[idx].c_str());
+		if (!p || p == lineP || *(p - 1) != ' ')
+			continue;
+
+		const char *wordEndP = p + _replacements4[idx].size();
+		
+		for (int sIdx = 0; sIdx < 12; ++sIdx) {
+			const char *suffixP = SUFFIXES[sIdx];
+			if (!strncmp(wordEndP, suffixP, strlen(suffixP))) {
+				// Form a new line with the replacement word
+				const char *nextWordP = wordEndP + strlen(suffixP);
+				line = Common::String::format("%s %s %s",
+					Common::String(lineP, p).c_str(),
+					_replacements4[idx + 1].c_str(),
+					nextWordP
+					);
+				return;
+			}
+		}
+	}
 }
 
 } // End of namespace Titanic

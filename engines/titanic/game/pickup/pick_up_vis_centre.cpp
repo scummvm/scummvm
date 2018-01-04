@@ -37,6 +37,10 @@ void CPickUpVisCentre::save(SimpleFile *file, int indent) {
 void CPickUpVisCentre::load(SimpleFile *file) {
 	file->readNumber();
 	CPickUp::load(file);
+
+	// WORKAROUND: Show the hand cursor when highlighting to indicate
+	// that the vision center can be picked up
+	_cursorId = CURSOR_HAND;
 }
 
 

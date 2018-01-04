@@ -431,7 +431,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		if (Game_Flag_Query(666)) {
 			Chapter_Enter(5, 53, 53);
 		} else {
-			Game_Flag_Set(34);
+			Game_Flag_Set(kFlagMA06ToMA02);
 			Chapter_Enter(5, 10, 49);
 		}
 		return true;
@@ -1684,7 +1684,7 @@ void AIScriptMcCoy::sub_4054F0() {
 		if ((z < 220.0f) && (-210.0f < x) && (-70.0f > x)) {
 			Game_Flag_Set(682);
 			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(2, 2, 1);
+			Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
 			Actor_Set_Goal_Number(kActorMcCoy, 390);
 			Actor_Query_XYZ(kActorFreeSlotA, &x, &y, &z);
 			if (-200.0 < x && -62.0f > x) {

@@ -28,12 +28,15 @@
 #include "common/array.h"          // for Array
 #include "common/mutex.h"          // for StackLock, Mutex
 #include "common/scummsys.h"       // for int16, uint8, uint32, uint16
-#include "engines/sci/resource.h"  // for ResourceId
+#include "sci/resource.h"          // for ResourceId
 #include "sci/engine/vm_types.h"   // for reg_t, NULL_REG
 #include "sci/video/robot_decoder.h" // for RobotAudioStream
 
 namespace Sci {
 class Console;
+
+bool detectSolAudio(Common::SeekableReadStream &stream);
+bool detectWaveAudio(Common::SeekableReadStream &stream);
 
 #pragma mark AudioChannel
 
@@ -47,27 +50,23 @@ struct AudioChannel {
 	ResourceId id;
 
 	/**
-	 * The resource loaded into this channel.
+	 * The resource loaded into this channel. The resource is owned by
+	 * ResourceManager.
 	 */
 	Resource *resource;
 
 	/**
-	 * Data stream containing the raw audio for the channel.
+	 * The audio stream loaded into this channel. Can cast to
+	 * `SeekableAudioStream` for normal channels and `RobotAudioStream` for
+	 * robot channels.
 	 */
-	Common::SeekableReadStream *resourceStream;
+	Common::ScopedPtr<Audio::AudioStream> stream;
 
 	/**
-	 * The audio stream loaded into this channel. Can cast
-	 * to `SeekableAudioStream` for normal channels and
-	 * `RobotAudioStream` for robot channels.
+	 * The converter used to transform and merge the input stream into the
+	 * mixer's output buffer.
 	 */
-	Audio::AudioStream *stream;
-
-	/**
-	 * The converter used to transform and merge the input
-	 * stream into the mixer's output buffer.
-	 */
-	Audio::RateConverter *converter;
+	Common::ScopedPtr<Audio::RateConverter> converter;
 
 	/**
 	 * Duration of the channel, in ticks.
@@ -85,14 +84,8 @@ struct AudioChannel {
 	uint32 pausedAtTick;
 
 	/**
-	 * Whether or not the audio in this channel should loop
-	 * infinitely.
-	 */
-	bool loop;
-
-	/**
-	 * The time, in ticks, that the channel fade began.
-	 * If 0, the channel is not being faded.
+	 * The time, in ticks, that the channel fade began. If 0, the channel is not
+	 * being faded.
 	 */
 	uint32 fadeStartTick;
 
@@ -112,20 +105,19 @@ struct AudioChannel {
 	int fadeTargetVolume;
 
 	/**
-	 * Whether or not the channel should be stopped and
-	 * freed when the fade is complete.
+	 * Whether or not the channel should be stopped and freed when the fade is
+	 * complete.
 	 */
 	bool stopChannelOnFade;
 
 	/**
-	 * Whether or not this channel contains a Robot
-	 * audio block.
+	 * Whether or not this channel contains a Robot audio block.
 	 */
 	bool robot;
 
 	/**
-	 * For digital sound effects, the related VM
-	 * Sound::nodePtr object for the sound.
+	 * For digital sound effects, the related VM Sound::nodePtr object for the
+	 * sound.
 	 */
 	reg_t soundNode;
 
@@ -135,15 +127,37 @@ struct AudioChannel {
 	int volume;
 
 	/**
-	 * The amount to pan to the right, from 0 to 100.
-	 * 50 is centered, -1 is not panned.
+	 * The amount to pan to the right, from 0 to 100. 50 is centered, -1 is not
+	 * panned.
 	 */
 	int pan;
+
+	AudioChannel &operator=(AudioChannel &other) {
+		id = other.id;
+		resource = other.resource;
+		stream.reset(other.stream.release());
+		converter.reset(other.converter.release());
+		duration = other.duration;
+		startedAtTick = other.startedAtTick;
+		pausedAtTick = other.pausedAtTick;
+		fadeStartTick = other.fadeStartTick;
+		fadeStartVolume = other.fadeStartVolume;
+		fadeDuration = other.fadeDuration;
+		fadeTargetVolume = other.fadeTargetVolume;
+		stopChannelOnFade = other.stopChannelOnFade;
+		robot = other.robot;
+		soundNode = other.soundNode;
+		volume = other.volume;
+		pan = other.pan;
+		return *this;
+	}
 };
 
+#pragma mark -
+
 /**
- * Special audio channel indexes used to select a channel
- * for digital audio playback.
+ * Special audio channel indexes used to select a channel for digital audio
+ * playback.
  */
 enum AudioChannelIndex {
 	kRobotChannel = -3,
@@ -152,15 +166,16 @@ enum AudioChannelIndex {
 };
 
 /**
- * Audio32 acts as a permanent audio stream into the system
- * mixer and provides digital audio services for the SCI32
- * engine, since the system mixer does not support all the
- * features of SCI.
+ * Audio32 acts as a permanent audio stream into the system mixer and provides
+ * digital audio services for the SCI32 engine, since the system mixer does not
+ * support all the features of SCI.
  */
-class Audio32 : public Audio::AudioStream {
+class Audio32 : public Audio::AudioStream, public Common::Serializable {
 public:
 	Audio32(ResourceManager *resMan);
 	~Audio32();
+
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 	enum {
 		/**
@@ -188,10 +203,22 @@ public:
 
 private:
 	/**
-	 * Mixes audio from the given source stream into the
-	 * target buffer using the given rate converter.
+	 * Determines the number of channels that will be mixed together during a
+	 * call to readBuffer.
 	 */
-	int writeAudioInternal(Audio::AudioStream *const sourceStream, Audio::RateConverter *const converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume, const bool loop);
+	int16 getNumChannelsToMix() const;
+
+	/**
+	 * Determines whether or not the given audio channel will be mixed into the
+	 * output stream.
+	 */
+	bool channelShouldMix(const AudioChannel &channel) const;
+
+	/**
+	 * Mixes audio from the given source stream into the target buffer using the
+	 * given rate converter.
+	 */
+	int writeAudioInternal(Audio::AudioStream &sourceStream, Audio::RateConverter &converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume);
 
 #pragma mark -
 #pragma mark Channel management
@@ -205,21 +232,38 @@ public:
 	}
 
 	/**
-	 * Finds a channel that is already configured for the
-	 * given audio sample.
+	 * Gets the number of currently active channels that are playing from
+	 * unlocked resources.
 	 *
-	 * @param startIndex The location of the audio resource
-	 * information in the arguments list.
+	 * @note In SSCI, this function would actually return the number of channels
+	 * whose audio data were not loaded into memory. In practice, the signal for
+	 * placing audio data into memory was a call to kLock, so since we do not
+	 * follow how SSCI works when it comes to resource management, the lock
+	 * state is used as an (apparently) successful proxy for this information
+	 * instead.
+	 */
+	uint8 getNumUnlockedChannels() const;
+
+	/**
+	 * Finds a channel that is already configured for the given audio sample.
+	 *
+	 * @param startIndex The location of the audio resource information in the
+	 * arguments list.
 	 */
 	int16 findChannelByArgs(int argc, const reg_t *argv, const int startIndex, const reg_t soundNode) const;
 
 	/**
-	 * Finds a channel that is already configured for the
-	 * given audio sample.
+	 * Finds a channel that is already configured for the given audio sample.
 	 */
 	int16 findChannelById(const ResourceId resourceId, const reg_t soundNode = NULL_REG) const;
 
+	/**
+	 * Sets or clears a lock on the given resource ID.
+	 */
+	void lockResource(const ResourceId resourceId, const bool lock);
+
 private:
+	typedef Common::Array<ResourceId> LockList;
 	typedef Common::Array<Resource *> UnlockList;
 
 	/**
@@ -228,28 +272,31 @@ private:
 	Common::Array<AudioChannel> _channels;
 
 	/**
-	 * The number of active audio channels in the mixer.
-	 * Being active is not the same as playing; active
-	 * channels may be paused.
+	 * The number of active audio channels in the mixer. Being active is not the
+	 * same as playing; active channels may be paused.
 	 */
 	uint8 _numActiveChannels;
 
 	/**
 	 * Whether or not we are in the audio thread.
 	 *
-	 * This flag is used instead of passing a parameter to
-	 * `freeUnusedChannels` because a parameter would
-	 * require forwarding through the public method `stop`,
-	 * and there is not currently any reason for this
-	 * implementation detail to be exposed.
+	 * This flag is used instead of passing a parameter to `freeUnusedChannels`
+	 * because a parameter would require forwarding through the public method
+	 * `stop`, and there is not currently any reason for this implementation
+	 * detail to be exposed.
 	 */
 	bool _inAudioThread;
 
 	/**
-	 * The list of resources from freed channels that need
-	 * to be unlocked from the main thread.
+	 * The list of resources from freed channels that need to be unlocked from
+	 * the main thread.
 	 */
 	UnlockList _resourcesToUnlock;
+
+	/**
+	 * The list of resource IDs that have been locked by game scripts.
+	 */
+	LockList _lockedResourceIds;
 
 	/**
 	 * Gets the audio channel at the given index.
@@ -270,8 +317,7 @@ private:
 	}
 
 	/**
-	 * Frees all non-looping channels that have reached the
-	 * end of their stream.
+	 * Frees all non-looping channels that have reached the end of their stream.
 	 */
 	void freeUnusedChannels();
 
@@ -281,8 +327,7 @@ private:
 	void freeChannel(const int16 channelIndex);
 
 	/**
-	 * Unlocks all resources that were freed by the audio
-	 * thread.
+	 * Unlocks all resources that were freed by the audio thread.
 	 */
 	void unlockResources();
 
@@ -290,58 +335,58 @@ private:
 #pragma mark Script compatibility
 public:
 	/**
-	 * Gets the (fake) sample rate of the hardware DAC.
-	 * For script compatibility only.
+	 * Gets the (fake) sample rate of the hardware DAC. For script compatibility
+	 * only.
 	 */
 	inline uint16 getSampleRate() const {
 		return _globalSampleRate;
 	}
 
 	/**
-	 * Sets the (fake) sample rate of the hardware DAC.
-	 * For script compatibility only.
+	 * Sets the (fake) sample rate of the hardware DAC. For script compatibility
+	 * only.
 	 */
 	void setSampleRate(uint16 rate);
 
 	/**
-	 * Gets the (fake) bit depth of the hardware DAC.
-	 * For script compatibility only.
+	 * Gets the (fake) bit depth of the hardware DAC. For script compatibility
+	 * only.
 	 */
 	inline uint8 getBitDepth() const {
 		return _globalBitDepth;
 	}
 
 	/**
-	 * Sets the (fake) sample rate of the hardware DAC.
-	 * For script compatibility only.
+	 * Sets the (fake) sample rate of the hardware DAC. For script compatibility
+	 * only.
 	 */
 	void setBitDepth(uint8 depth);
 
 	/**
-	 * Gets the (fake) number of output (speaker) channels
-	 * of the hardware DAC. For script compatibility only.
+	 * Gets the (fake) number of output (speaker) channels of the hardware DAC.
+	 * For script compatibility only.
 	 */
 	inline uint8 getNumOutputChannels() const {
 		return _globalNumOutputChannels;
 	}
 
 	/**
-	 * Sets the (fake) number of output (speaker) channels
-	 * of the hardware DAC. For script compatibility only.
+	 * Sets the (fake) number of output (speaker) channels of the hardware DAC.
+	 * For script compatibility only.
 	 */
 	void setNumOutputChannels(int16 numChannels);
 
 	/**
-	 * Gets the (fake) number of preloaded channels.
-	 * For script compatibility only.
+	 * Gets the (fake) number of preloaded channels. For script compatibility
+	 * only.
 	 */
 	inline uint8 getPreload() const {
 		return _preload;
 	}
 
 	/**
-	 * Sets the (fake) number of preloaded channels.
-	 * For script compatibility only.
+	 * Sets the (fake) number of preloaded channels. For script compatibility
+	 * only.
 	 */
 	inline void setPreload(uint8 preload) {
 		_preload = preload;
@@ -349,49 +394,43 @@ public:
 
 private:
 	/**
-	 * The hardware DAC sample rate. Stored only for script
-	 * compatibility.
+	 * The hardware DAC sample rate. Stored only for script compatibility.
 	 */
 	uint16 _globalSampleRate;
 
 	/**
-	 * The maximum allowed sample rate of the system mixer.
-	 * Stored only for script compatibility.
+	 * The maximum allowed sample rate of the system mixer. Stored only for
+	 * script compatibility.
 	 */
 	uint16 _maxAllowedSampleRate;
 
 	/**
-	 * The hardware DAC bit depth. Stored only for script
-	 * compatibility.
+	 * The hardware DAC bit depth. Stored only for script compatibility.
 	 */
 	uint8 _globalBitDepth;
 
 	/**
-	 * The maximum allowed bit depth of the system mixer.
-	 * Stored only for script compatibility.
+	 * The maximum allowed bit depth of the system mixer. Stored only for script
+	 * compatibility.
 	 */
 	uint8 _maxAllowedBitDepth;
 
 	/**
-	 * The hardware DAC output (speaker) channel
-	 * configuration. Stored only for script compatibility.
+	 * The hardware DAC output (speaker) channel configuration. Stored only for
+	 * script compatibility.
 	 */
 	uint8 _globalNumOutputChannels;
 
 	/**
-	 * The maximum allowed number of output (speaker)
-	 * channels of the system mixer. Stored only for script
-	 * compatibility.
+	 * The maximum allowed number of output (speaker) channels of the system
+	 * mixer. Stored only for script compatibility.
 	 */
 	uint8 _maxAllowedOutputChannels;
 
 	/**
-	 * The number of audio channels that should have their
-	 * data preloaded into memory instead of streaming from
-	 * disk.
-	 * 1 = all channels, 2 = 2nd active channel and above,
-	 * etc.
-	 * Stored only for script compatibility.
+	 * The number of audio channels that should have their data preloaded into
+	 * memory instead of streaming from disk. 1 = all channels, 2 = 2nd active
+	 * channel and above, etc. Stored only for script compatibility.
 	 */
 	uint8 _preload;
 
@@ -410,8 +449,7 @@ private:
 	int16 findRobotChannel() const;
 
 	/**
-	 * When true, channels marked as robot audio will not be
-	 * played.
+	 * When true, channels marked as robot audio will not be played.
 	 */
 	bool _robotAudioPaused;
 
@@ -424,8 +462,8 @@ public:
 	uint16 play(int16 channelIndex, const ResourceId resourceId, const bool autoPlay, const bool loop, const int16 volume, const reg_t soundNode, const bool monitor);
 
 	/**
-	 * Resumes playback of a paused audio channel, or of
-	 * the entire audio player.
+	 * Resumes playback of a paused audio channel, or of the entire audio
+	 * player.
 	 */
 	bool resume(const int16 channelIndex);
 	bool resume(const ResourceId resourceId, const reg_t soundNode = NULL_REG) {
@@ -443,8 +481,7 @@ public:
 	}
 
 	/**
-	 * Stops and unloads an audio channel, or the entire
-	 * audio player.
+	 * Stops and unloads an audio channel, or the entire audio player.
 	 */
 	int16 stop(const int16 channelIndex);
 	int16 stop(const ResourceId resourceId, const reg_t soundNode = NULL_REG) {
@@ -458,8 +495,7 @@ public:
 	uint16 restart(const ResourceId resourceId, const bool autoPlay, const bool loop, const int16 volume, const reg_t soundNode, const bool monitor);
 
 	/**
-	 * Returns the playback position for the given channel
-	 * number, in ticks.
+	 * Returns the playback position for the given channel number, in ticks.
 	 */
 	int16 getPosition(const int16 channelIndex) const;
 	int16 getPosition(const ResourceId resourceId, const reg_t soundNode = NULL_REG) {
@@ -474,6 +510,14 @@ public:
 	void setLoop(const ResourceId resourceId, const reg_t soundNode, const bool loop) {
 		Common::StackLock lock(_mutex);
 		setLoop(findChannelById(resourceId, soundNode), loop);
+	}
+
+	/**
+	 * Sets the stereo panning for the given channel.
+	 */
+	void setPan(const int16 channelIndex, const int16 pan) {
+		Common::StackLock lock(_mutex);
+		getChannel(channelIndex).pan = pan;
 	}
 
 private:
@@ -491,8 +535,8 @@ private:
 #pragma mark Effects
 public:
 	/**
-	 * Gets the volume for a given channel. Passing
-	 * `kAllChannels` will get the global volume.
+	 * Gets the volume for a given channel. Passing `kAllChannels` will get the
+	 * global volume.
 	 */
 	int16 getVolume(const int16 channelIndex) const;
 	int16 getVolume(const ResourceId resourceId, const reg_t soundNode) const {
@@ -501,8 +545,8 @@ public:
 	}
 
 	/**
-	 * Sets the volume of an audio channel. Passing
-	 * `kAllChannels` will set the global volume.
+	 * Sets the volume of an audio channel. Passing `kAllChannels` will set the
+	 * global volume.
 	 */
 	void setVolume(const int16 channelIndex, int16 volume);
 	void setVolume(const ResourceId resourceId, const reg_t soundNode, const int16 volume) {
@@ -543,24 +587,21 @@ public:
 
 private:
 	/**
-	 * If true, audio will be mixed by reducing the target
-	 * buffer by half every time a new channel is mixed in.
-	 * The final channel is not attenuated.
+	 * If true, audio will be mixed by reducing the target buffer by half every
+	 * time a new channel is mixed in. The final channel is not attenuated.
 	 */
 	bool _attenuatedMixing;
 
 	/**
-	 * When true, a modified attenuation algorithm is used
-	 * (`A/4 + B`) instead of standard linear attenuation
-	 * (`A/2 + B/2`).
+	 * When true, a modified attenuation algorithm is used (`A/4 + B`) instead
+	 * of standard linear attenuation (`A/2 + B/2`).
 	 */
 	bool _useModifiedAttenuation;
 
 	/**
 	 * Processes an audio fade for the given channel.
 	 *
-	 * @returns true if the fade was completed and the
-	 * channel was stopped.
+	 * @returns true if the fade was completed and the channel was stopped.
 	 */
 	bool processFade(const int16 channelIndex);
 
@@ -568,35 +609,27 @@ private:
 #pragma mark Signal monitoring
 public:
 	/**
-	 * Returns whether the currently monitored audio channel
-	 * contains any signal within the next audio frame.
+	 * Returns whether the currently monitored audio channel contains any signal
+	 * within the next audio frame.
 	 */
 	bool hasSignal() const;
 
 private:
 	/**
-	 * The index of the channel being monitored for signal,
-	 * or -1 if no channel is monitored. When a channel is
-	 * monitored, it also causes the engine to play only the
-	 * monitored channel.
+	 * The index of the channel being monitored for signal, or -1 if no channel
+	 * is monitored. When a channel is monitored, it also causes the engine to
+	 * play only the monitored channel.
 	 */
 	int16 _monitoredChannelIndex;
 
 	/**
-	 * The data buffer holding decompressed audio data for
-	 * the channel that will be monitored for an audio
-	 * signal.
+	 * The data buffer holding decompressed audio data for the channel that will
+	 * be monitored for an audio signal.
 	 */
-	Audio::st_sample_t *_monitoredBuffer;
+	Common::Array<Audio::st_sample_t> _monitoredBuffer;
 
 	/**
-	 * The size of the buffer, in bytes.
-	 */
-	size_t _monitoredBufferSize;
-
-	/**
-	 * The number of valid audio samples in the signal
-	 * monitoring buffer.
+	 * The number of valid audio samples in the signal monitoring buffer.
 	 */
 	int _numMonitoredSamples;
 
@@ -612,6 +645,8 @@ public:
 	reg_t kernelMixing(const int argc, const reg_t *const argv);
 	reg_t kernelFade(const int argc, const reg_t *const argv);
 	void kernelLoop(const int argc, const reg_t *const argv);
+	void kernelPan(const int argc, const reg_t *const argv);
+	void kernelPanOff(const int argc, const reg_t *const argv);
 
 #pragma mark -
 #pragma mark Debugging

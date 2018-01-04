@@ -213,9 +213,9 @@ private:
 	void fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_array tone_level_idx_temp,
 	                              sb_int8_array coding_method, int nb_channels,
 	                              int c, int superblocktype_2_3, int cm_table_select);
-	void synthfilt_build_sb_samples(Common::BitStream *gb, int length, int sb_min, int sb_max);
-	void init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStream *gb, int length);
-	void init_tone_level_dequantization(Common::BitStream *gb, int length);
+	void synthfilt_build_sb_samples(Common::BitStreamMemory32LELSB *gb, int length, int sb_min, int sb_max);
+	void init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStreamMemory32LELSB *gb, int length);
+	void init_tone_level_dequantization(Common::BitStreamMemory32LELSB *gb, int length);
 	void process_subpacket_9(QDM2SubPNode *node);
 	void process_subpacket_10(QDM2SubPNode *node, int length);
 	void process_subpacket_11(QDM2SubPNode *node, int length);
@@ -224,7 +224,7 @@ private:
 	void qdm2_decode_super_block(void);
 	void qdm2_fft_init_coefficient(int sub_packet, int offset, int duration,
 	                               int channel, int exp, int phase);
-	void qdm2_fft_decode_tones(int duration, Common::BitStream *gb, int b);
+	void qdm2_fft_decode_tones(int duration, Common::BitStreamMemory32LELSB *gb, int b);
 	void qdm2_decode_fft_packets(void);
 	void qdm2_fft_generate_tone(FFTTone *tone);
 	void qdm2_fft_tone_synthesizer(uint8 sub_packet);
@@ -232,11 +232,6 @@ private:
 	void qdm2_synthesis_filter(uint8 index);
 	bool qdm2_decodeFrame(Common::SeekableReadStream &in, QueuingAudioStream *audioStream);
 };
-
-// Fix compilation for non C99-compliant compilers, like MSVC
-#ifndef int64_t
-typedef signed long long int int64_t;
-#endif
 
 #define QDM2_LIST_ADD(list, size, packet) \
 	do { \
@@ -323,7 +318,7 @@ static inline uint16 round_sample(int *sum) {
 }
 
 static inline int MULH(int a, int b) {
-	return ((int64_t)(a) * (int64_t)(b))>>32;
+	return ((int64)(a) * (int64)(b))>>32;
 }
 
 // signed 16x16 -> 32 multiply add accumulate
@@ -677,7 +672,7 @@ void ff_mpa_synth_filter(int16 *synth_buf_ptr, int *synth_buf_offset,
  *                  read the longest vlc code
  *                  = (max_vlc_length + bits - 1) / bits
  */
-static int getVlc2(Common::BitStream *s, int16 (*table)[2], int bits, int maxDepth) {
+static int getVlc2(Common::BitStreamMemory32LELSB *s, int16 (*table)[2], int bits, int maxDepth) {
 	int index = s->peekBits(bits);
 	int code = table[index][0];
 	int n = table[index][1];
@@ -894,9 +889,8 @@ void QDM2Stream::rndTableInit(void) {
 	uint16 i;
 	uint16 j;
 	uint32 ldw, hdw;
-	// TODO: Replace Code with uint64 less version...
-	int64_t tmp64_1;
-	int64_t random_seed = 0;
+	int64 tmp64_1;
+	int64 random_seed = 0;
 	float delta = 1.0 / 16384.0;
 
 	for(i = 0; i < ARRAYSIZE(_noiseTable); i++) {
@@ -912,7 +906,7 @@ void QDM2Stream::rndTableInit(void) {
 			ldw = (uint32)ldw % (uint32)random_seed;
 			tmp64_1 = (random_seed * 0x55555556);
 			hdw = (uint32)(tmp64_1 >> 32);
-			random_seed = (int64_t)(hdw + (ldw >> 31));
+			random_seed = (int64)(hdw + (ldw >> 31));
 		}
 	}
 
@@ -1216,7 +1210,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	rndTableInit();
 	initNoiseSamples();
 
-	_compressedData = new uint8[_packetSize];
+	_compressedData = new uint8[_packetSize + FF_INPUT_BUFFER_PADDING_SIZE];
 
 	if (disposeExtraData == DisposeAfterUse::YES)
 		delete extraData;
@@ -1227,7 +1221,7 @@ QDM2Stream::~QDM2Stream() {
 	delete[] _compressedData;
 }
 
-static int qdm2_get_vlc(Common::BitStream *gb, VLC *vlc, int flag, int depth) {
+static int qdm2_get_vlc(Common::BitStreamMemory32LELSB *gb, VLC *vlc, int flag, int depth) {
 	int value = getVlc2(gb, vlc->table, vlc->bits, depth);
 
 	// stage-2, 3 bits exponent escape sequence
@@ -1246,7 +1240,7 @@ static int qdm2_get_vlc(Common::BitStream *gb, VLC *vlc, int flag, int depth) {
 	return value;
 }
 
-static int qdm2_get_se_vlc(VLC *vlc, Common::BitStream *gb, int depth)
+static int qdm2_get_se_vlc(VLC *vlc, Common::BitStreamMemory32LELSB *gb, int depth)
 {
 	int value = qdm2_get_vlc(gb, vlc, 0, depth);
 
@@ -1490,8 +1484,7 @@ void QDM2Stream::fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_
 	int ch, sb, j;
 	int tmp, acc, esp_40, comp;
 	int add1, add2, add3, add4;
-	// TODO : Remove multres 64 bit variable necessity...
-	int64_t multres;
+	int64 multres;
 
 	// This should never happen
 	if (nb_channels <= 0)
@@ -1612,7 +1605,7 @@ void QDM2Stream::fill_coding_method_array(sb_int8_array tone_level_idx, sb_int8_
  * @param sb_min    lower subband processed (sb_min included)
  * @param sb_max    higher subband processed (sb_max excluded)
  */
-void QDM2Stream::synthfilt_build_sb_samples(Common::BitStream *gb, int length, int sb_min, int sb_max) {
+void QDM2Stream::synthfilt_build_sb_samples(Common::BitStreamMemory32LELSB *gb, int length, int sb_min, int sb_max) {
 	int sb, j, k, n, ch, run, channels;
 	int joined_stereo, zero_encoding, chs;
 	int type34_first;
@@ -1792,7 +1785,7 @@ void QDM2Stream::synthfilt_build_sb_samples(Common::BitStream *gb, int length, i
  * @param gb        bitreader context
  * @param length    packet length in bits
  */
-void QDM2Stream::init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStream *gb, int length) {
+void QDM2Stream::init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::BitStreamMemory32LELSB *gb, int length) {
 	int i, k, run, level, diff;
 
 	if ((length - gb->pos()) < 16)
@@ -1826,7 +1819,7 @@ void QDM2Stream::init_quantized_coeffs_elem0(int8 *quantized_coeffs, Common::Bit
  * @param gb        bitreader context
  * @param length    packet length in bits
  */
-void QDM2Stream::init_tone_level_dequantization(Common::BitStream *gb, int length) {
+void QDM2Stream::init_tone_level_dequantization(Common::BitStreamMemory32LELSB *gb, int length) {
 	int sb, j, k, n, ch;
 
 	for (ch = 0; ch < _channels; ch++) {
@@ -1892,8 +1885,8 @@ void QDM2Stream::init_tone_level_dequantization(Common::BitStream *gb, int lengt
 void QDM2Stream::process_subpacket_9(QDM2SubPNode *node) {
 	int i, j, k, n, ch, run, level, diff;
 
-	Common::MemoryReadStream d(node->packet->data, node->packet->size*8);
-	Common::BitStream32LELSB gb(&d);
+	Common::BitStreamMemoryStream d(node->packet->data, node->packet->size + FF_INPUT_BUFFER_PADDING_SIZE);
+	Common::BitStreamMemory32LELSB gb(&d);
 
 	n = coeff_per_sb_for_avg[_coeffPerSbSelect][QDM2_SB_USED(_subSampling) - 1] + 1; // same as averagesomething function
 
@@ -1926,8 +1919,8 @@ void QDM2Stream::process_subpacket_9(QDM2SubPNode *node) {
  * @param length    packet length in bits
  */
 void QDM2Stream::process_subpacket_10(QDM2SubPNode *node, int length) {
-	Common::MemoryReadStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
-	Common::BitStream32LELSB gb(&d);
+	Common::BitStreamMemoryStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size + FF_INPUT_BUFFER_PADDING_SIZE));
+	Common::BitStreamMemory32LELSB gb(&d);
 
 	if (length != 0) {
 		init_tone_level_dequantization(&gb, length);
@@ -1944,8 +1937,8 @@ void QDM2Stream::process_subpacket_10(QDM2SubPNode *node, int length) {
  * @param length    packet length in bit
  */
 void QDM2Stream::process_subpacket_11(QDM2SubPNode *node, int length) {
-	Common::MemoryReadStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
-	Common::BitStream32LELSB gb(&d);
+	Common::BitStreamMemoryStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size + FF_INPUT_BUFFER_PADDING_SIZE));
+	Common::BitStreamMemory32LELSB gb(&d);
 
 	if (length >= 32) {
 		int c = gb.getBits(13);
@@ -1965,8 +1958,8 @@ void QDM2Stream::process_subpacket_11(QDM2SubPNode *node, int length) {
  * @param length    packet length in bits
  */
 void QDM2Stream::process_subpacket_12(QDM2SubPNode *node, int length) {
-	Common::MemoryReadStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size*8));
-	Common::BitStream32LELSB gb(&d);
+	Common::BitStreamMemoryStream d(((node == NULL) ? _emptyBuffer : node->packet->data), ((node == NULL) ? 0 : node->packet->size + FF_INPUT_BUFFER_PADDING_SIZE));
+	Common::BitStreamMemory32LELSB gb(&d);
 
 	synthfilt_build_sb_samples(&gb, length, 8, QDM2_SB_USED(_subSampling));
 }
@@ -2020,27 +2013,27 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 
 	average_quantized_coeffs(); // average elements in quantized_coeffs[max_ch][10][8]
 
-	Common::MemoryReadStream *d = new Common::MemoryReadStream(_compressedData, _packetSize*8);
-	Common::BitStream *gb = new Common::BitStream32LELSB(d);
+	Common::BitStreamMemoryStream packetStream(_compressedData, _packetSize + FF_INPUT_BUFFER_PADDING_SIZE);
+	Common::BitStreamMemory32LELSB packetBitStream(packetStream);
 	//qdm2_decode_sub_packet_header
-	header.type = gb->getBits(8);
+	header.type = packetBitStream.getBits(8);
 
 	if (header.type == 0) {
 		header.size = 0;
 		header.data = NULL;
 	} else {
-		header.size = gb->getBits(8);
+		header.size = packetBitStream.getBits(8);
 
 		if (header.type & 0x80) {
 			header.size <<= 8;
-			header.size |= gb->getBits(8);
+			header.size |= packetBitStream.getBits(8);
 			header.type &= 0x7f;
 		}
 
 		if (header.type == 0x7f)
-			header.type |= (gb->getBits(8) << 8);
+			header.type |= (packetBitStream.getBits(8) << 8);
 
-		header.data = &_compressedData[gb->pos() / 8];
+		header.data = &_compressedData[packetBitStream.pos() / 8];
 	}
 
 	if (header.type < 2 || header.type >= 8) {
@@ -2050,15 +2043,13 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 	}
 
 	_superblocktype_2_3 = (header.type == 2 || header.type == 3);
-	packet_bytes = (_packetSize - gb->pos() / 8);
+	packet_bytes = (_packetSize - packetBitStream.pos() / 8);
 
-	delete gb;
-	delete d;
-	d = new Common::MemoryReadStream(header.data, header.size*8);
-	gb = new Common::BitStream32LELSB(d);
+	Common::BitStreamMemoryStream headerStream(header.data, header.size + FF_INPUT_BUFFER_PADDING_SIZE);
+	Common::BitStreamMemory32LELSB headerBitStream(headerStream);
 
 	if (header.type == 2 || header.type == 4 || header.type == 5) {
-		int csum = 257 * gb->getBits(8) + 2 * gb->getBits(8);
+		int csum = 257 * headerBitStream.getBits(8) + 2 * headerBitStream.getBits(8);
 
 		csum = qdm2_packet_checksum(_compressedData, _packetSize, csum);
 
@@ -2084,41 +2075,37 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 		if (i > 0) {
 			_subPacketListA[i - 1].next = &_subPacketListA[i];
 
-			// seek to next block
-			delete gb;
-			delete d;
-			d = new Common::MemoryReadStream(header.data, header.size*8);
-			gb = new Common::BitStream32LELSB(d);
-			gb->skip(next_index*8);
-
 			if (next_index >= header.size)
 				break;
+
+			// seek to next block
+			headerBitStream.skip(next_index * 8 - headerBitStream.pos());
 		}
 
 		// decode subpacket
 		packet = &_subPackets[i];
 		//qdm2_decode_sub_packet_header
-		packet->type = gb->getBits(8);
+		packet->type = headerBitStream.getBits(8);
 
 		if (packet->type == 0) {
 			packet->size = 0;
 			packet->data = NULL;
 		} else {
-			packet->size = gb->getBits(8);
+			packet->size = headerBitStream.getBits(8);
 
 			if (packet->type & 0x80) {
 				packet->size <<= 8;
-				packet->size |= gb->getBits(8);
+				packet->size |= headerBitStream.getBits(8);
 				packet->type &= 0x7f;
 			}
 
 			if (packet->type == 0x7f)
-				packet->type |= (gb->getBits(8) << 8);
+				packet->type |= (headerBitStream.getBits(8) << 8);
 
-			packet->data = &header.data[gb->pos() / 8];
+			packet->data = &header.data[headerBitStream.pos() / 8];
 		}
 
-		next_index = packet->size + gb->pos() / 8;
+		next_index = packet->size + headerBitStream.pos() / 8;
 		sub_packet_size = ((packet->size > 0xff) ? 1 : 0) + packet->size + 2;
 
 		if (packet->type == 0)
@@ -2138,22 +2125,18 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 		// add subpacket to related list
 		if (packet->type == 8) {
 			error("Unsupported packet type 8");
-			delete gb;
-			delete d;
 			return;
 		} else if (packet->type >= 9 && packet->type <= 12) {
 			// packets for MPEG Audio like Synthesis Filter
 			QDM2_LIST_ADD(_subPacketListD, subPacketsD, packet);
 		} else if (packet->type == 13) {
 			for (j = 0; j < 6; j++)
-				_fftLevelExp[j] = gb->getBits(6);
+				_fftLevelExp[j] = headerBitStream.getBits(6);
 		} else if (packet->type == 14) {
 			for (j = 0; j < 6; j++)
-				_fftLevelExp[j] = qdm2_get_vlc(gb, &_fftLevelExpVlc, 0, 2);
+				_fftLevelExp[j] = qdm2_get_vlc(&headerBitStream, &_fftLevelExpVlc, 0, 2);
 		} else if (packet->type == 15) {
 			error("Unsupported packet type 15");
-			delete gb;
-			delete d;
 			return;
 		} else if (packet->type >= 16 && packet->type < 48 && !fft_subpackets[packet->type - 16]) {
 			// packets for FFT
@@ -2171,8 +2154,6 @@ void QDM2Stream::qdm2_decode_super_block(void) {
 		process_subpacket_12(NULL, 0);
 	}
 // ****************************************************************
-	delete gb;
-	delete d;
 }
 
 void QDM2Stream::qdm2_fft_init_coefficient(int sub_packet, int offset, int duration,
@@ -2188,7 +2169,7 @@ void QDM2Stream::qdm2_fft_init_coefficient(int sub_packet, int offset, int durat
 	_fftCoefsIndex++;
 }
 
-void QDM2Stream::qdm2_fft_decode_tones(int duration, Common::BitStream *gb, int b) {
+void QDM2Stream::qdm2_fft_decode_tones(int duration, Common::BitStreamMemory32LELSB *gb, int b) {
 	int channel, stereo, phase, exp;
 	int local_int_4,  local_int_8,  stereo_phase,  local_int_10;
 	int local_int_14, stereo_exp, local_int_20, local_int_28;
@@ -2297,8 +2278,8 @@ void QDM2Stream::qdm2_decode_fft_packets(void) {
 			return;
 
 		// decode FFT tones
-		Common::MemoryReadStream d(packet->data, packet->size*8);
-		Common::BitStream32LELSB gb(&d);
+		Common::BitStreamMemoryStream d(packet->data, packet->size + FF_INPUT_BUFFER_PADDING_SIZE);
+		Common::BitStreamMemory32LELSB gb(&d);
 
 		if (packet->type >= 32 && packet->type < 48 && !fft_subpackets[packet->type - 16])
 			unknown_flag = 1;
@@ -2521,6 +2502,7 @@ bool QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream &in, QueuingAudioSt
 
 	if (!in.eos()) {
 		in.read(_compressedData, _packetSize);
+		memset(_compressedData + _packetSize, 0, FF_INPUT_BUFFER_PADDING_SIZE);
 		debug(1, "QDM2Stream::qdm2_decodeFrame constructed input data");
 	}
 

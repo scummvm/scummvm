@@ -23,9 +23,11 @@
 #ifndef MYST_SCRIPTS_PREVIEW_H
 #define MYST_SCRIPTS_PREVIEW_H
 
+#include "mohawk/sound.h"
+#include "mohawk/myst_stacks/myst.h"
+
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "mohawk/myst_stacks/myst.h"
 
 namespace Mohawk {
 
@@ -33,7 +35,7 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Preview : public Myst {
 public:

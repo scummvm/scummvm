@@ -290,6 +290,9 @@ endif
 ifdef ENABLE_TEENAGENT
 DIST_FILES_ENGINEDATA+=teenagent.dat
 endif
+ifdef ENABLE_TITANIC
+DIST_FILES_ENGINEDATA+=titanic.dat
+endif
 ifdef ENABLE_TONY
 DIST_FILES_ENGINEDATA+=tony.dat
 endif

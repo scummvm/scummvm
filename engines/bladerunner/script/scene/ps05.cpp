@@ -91,16 +91,6 @@ bool SceneScriptPS05::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptPS05::ClickedOnItem(int itemId, bool a2) {
-	if (Game_Flag_Query(23)) {
-		Actor_Set_At_XYZ(kActorMcCoy, 718.72f, 0.37f, -461.26f, 600);
-	} else if (Game_Flag_Query(22)) {
-		sub_401B34();
-		sub_401C30();
-	}
-	Game_Flag_Reset(22);
-	Game_Flag_Reset(23);
-	Game_Flag_Reset(21);
-	Game_Flag_Reset(204);
 	return false;
 }
 
@@ -152,6 +142,16 @@ void SceneScriptPS05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS05::PlayerWalkedIn() {
+	if (Game_Flag_Query(23)) {
+		Actor_Set_At_XYZ(kActorMcCoy, 718.72f, 0.37f, -461.26f, 600);
+	} else if (Game_Flag_Query(22)) {
+		sub_401B34();
+		sub_401C30();
+	}
+	Game_Flag_Reset(22);
+	Game_Flag_Reset(23);
+	Game_Flag_Reset(21);
+	Game_Flag_Reset(204);
 }
 
 void SceneScriptPS05::PlayerWalkedOut() {
@@ -162,31 +162,26 @@ void SceneScriptPS05::DialogueQueueFlushed(int a1) {
 }
 
 void SceneScriptPS05::sub_401B34() {
-	int v0;
-	int v1;
-	int v3[7];
-
-	v0 = 0;
+	int i = 0;
+	int arr[7];
 	if (Global_Variable_Query(1) < 4 && Game_Flag_Query(45)) {
-		v0 = 1;
-		v3[0] = 0;
+		arr[i++] = 0;
 	}
-	v1 = v0 + 1;
-	v3[v0] = 1;
+	arr[i++] = 1;
 	if (Global_Variable_Query(1) >= 3) {
-		v3[v1] = 2;
-		v1 = v0 + 2;
+		arr[i++] = 2;
 	}
 	if (Global_Variable_Query(1) >= 2 && Global_Variable_Query(1) <= 4) {
-		v3[v1++] = 3;
+		arr[i++] = 3;
 	}
 	if (Game_Flag_Query(171) && Game_Flag_Query(170)) {
-		v3[v1++] = 4;
+		arr[i++] = 4;
 	}
-	if (v1 <= 0) {
+	if (i == 0) {
 		Global_Variable_Set(52, -1);
-	} else {
-		Global_Variable_Set(52, v3[Random_Query(0, v1 - 1)]);
+	}
+	else {
+		Global_Variable_Set(52, arr[Random_Query(0, i - 1)]);
 	}
 }
 

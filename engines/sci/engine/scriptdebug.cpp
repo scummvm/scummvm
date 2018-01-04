@@ -28,6 +28,9 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"
+#include "sci/engine/scriptdebug.h"
+
+#include "common/algorithm.h"
 
 namespace Sci {
 
@@ -67,8 +70,18 @@ const char *opcodeNames[] = {
 };
 #endif	// REDUCE_MEMORY_USAGE
 
+void DebugState::updateActiveBreakpointTypes() {
+	int type = 0;
+	for (Common::List<Breakpoint>::iterator bp = _breakpoints.begin(); bp != _breakpoints.end(); ++bp) {
+		if (bp->_action != BREAK_NONE)
+			type |= bp->_type;
+	}
+
+	_activeBreakpointTypes = type;
+}
+
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, bool printBytecode) {
+reg_t disassemble(EngineState *s, reg32_t pos, const Object *obj, bool printBWTag, bool printBytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.getSegment(), SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	reg_t retval;
@@ -178,7 +191,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 				debugN("\t%s[%x],", (param_value < kernel->_kernelFuncs.size()) ?
 							((param_value < kernel->getKernelNamesSize()) ? kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
-			} else if (opcode == op_class) {
+			} else if (opcode == op_class || opcode == op_super) {
 				const reg_t classAddr = s->_segMan->getClassAddress(param_value, SCRIPT_GET_DONT_LOAD, retval.getSegment());
 				if (!classAddr.isNull()) {
 					debugN("\t%s", s->_segMan->getObjectName(classAddr));
@@ -186,27 +199,31 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 				} else {
 					debugN(opsize ? "\t%02x" : "\t%04x", param_value);
 				}
-			} else if (opcode == op_super) {
-				Object *obj;
-				if (objAddr != NULL_REG && (obj = s->_segMan->getObject(objAddr)) != nullptr) {
-					debugN("\t%s", s->_segMan->getObjectName(obj->getSuperClassSelector()));
-					debugN(opsize ? "[%02x]" : "[%04x]", param_value);
-				} else {
-					debugN(opsize ? "\t%02x" : "\t%04x", param_value);
-				}
 
-				debugN(",");
+				debugN(", ");
 #ifdef ENABLE_SCI32
-			} else if (getSciVersion() == SCI_VERSION_3 && (
+			} else if (
 				opcode == op_pToa || opcode == op_aTop ||
 				opcode == op_pTos || opcode == op_sTop ||
 				opcode == op_ipToa || opcode == op_dpToa ||
-				opcode == op_ipTos || opcode == op_dpTos)) {
+				opcode == op_ipTos || opcode == op_dpTos) {
 
-				const char *selectorName = "<invalid>";
+				const char *selectorName;
 
-				if (param_value < kernel->getSelectorNamesSize()) {
-					selectorName = kernel->getSelectorName(param_value).c_str();
+				if (getSciVersion() == SCI_VERSION_3) {
+					if (param_value < kernel->getSelectorNamesSize()) {
+						selectorName = kernel->getSelectorName(param_value).c_str();
+					} else {
+						selectorName = "<invalid>";
+					}
+				} else {
+					if (obj != nullptr) {
+						const Object *const super = obj->getClass(s->_segMan);
+						assert(super);
+						selectorName = kernel->getSelectorName(super->getVarSelector(param_value / 2)).c_str();
+					} else {
+						selectorName = "<unavailable>";
+					}
 				}
 
 				debugN("\t%s[%x]", selectorName, param_value);
@@ -243,11 +260,15 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 				retval.incOffset(2);
 			}
 
-			const uint32 offset = findOffset(param_value, script_entity, retval.getOffset());
+			const uint32 offset = findOffset(param_value, script_entity, pos.getOffset() + bytecount);
 			reg_t addr;
 			addr.setSegment(retval.getSegment());
 			addr.setOffset(offset);
-			debugN("\t%s", s->_segMan->getObjectName(addr));
+			if (!s->_segMan->isObject(addr)) {
+				debugN("\t\"%s\"", s->_segMan->derefString(addr));
+			} else {
+				debugN("\t%s", s->_segMan->getObjectName(addr));
+			}
 			debugN(opsize ? "[%02x]" : "[%04x]", offset);
 			break;
 		}
@@ -256,11 +277,11 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 			if (opsize) {
 				int8 offset = (int8)scr[retval.getOffset()];
 				retval.incOffset(1);
-				debugN("\t%02x  [%04x]", 0xff & offset, kOffsetMask & (retval.getOffset() + offset));
+				debugN("\t%02x  [%04x]", 0xff & offset, kOffsetMask & (pos.getOffset() + bytecount + offset));
 			} else {
 				int16 offset = (int16)READ_SCI11ENDIAN_UINT16(&scr[retval.getOffset()]);
 				retval.incOffset(2);
-				debugN("\t%04x  [%04x]", 0xffff & offset, kOffsetMask & (retval.getOffset() + offset));
+				debugN("\t%04x  [%04x]", 0xffff & offset, kOffsetMask & (pos.getOffset() + bytecount + offset));
 			}
 			break;
 
@@ -277,7 +298,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, reg_t objAddr, bool printBWTag, b
 	if (pos == s->xs->addr.pc) { // Extra information if debugging the current opcode
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
-			const Object *obj = s->_segMan->getObject(s->xs->objp);
+			obj = s->_segMan->getObject(s->xs->objp);
 			if (!obj) {
 				warning("Attempted to reference on non-object at %04x:%04x", PRINT_REG(s->xs->objp));
 			} else {
@@ -466,7 +487,7 @@ void SciEngine::scriptDebug() {
 	}
 
 	debugN("Step #%d\n", s->scriptStepCounter);
-	disassemble(s, s->xs->addr.pc, s->xs->objp, false, true);
+	disassemble(s, s->xs->addr.pc, s->_segMan->getObject(s->xs->objp), false, true);
 
 	if (_debugState.runningStep) {
 		_debugState.runningStep--;
@@ -681,53 +702,170 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 
 bool SciEngine::checkSelectorBreakpoint(BreakpointType breakpointType, reg_t send_obj, int selector) {
 	Common::String methodName = _gamestate->_segMan->getObjectName(send_obj);
-	methodName += ("::" + getKernel()->getSelectorName(selector));
+	methodName += "::" + getKernel()->getSelectorName(selector);
 
-	Common::List<Breakpoint>::const_iterator bpIter;
-	for (bpIter = _debugState._breakpoints.begin(); bpIter != _debugState._breakpoints.end(); ++bpIter) {
-		if ((*bpIter).type == breakpointType && (*bpIter).name == methodName) {
-			_console->debugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
-			_debugState.debugging = true;
-			_debugState.breakpointWasHit = true;
-			return true;
+	bool found = false;
+
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		if (bp->_action == BREAK_NONE || bp->_type != breakpointType)
+			continue;
+
+		if (bp->_name == methodName ||
+		    (bp->_name.hasSuffix("::") && methodName.hasPrefix(bp->_name))) {
+			if (!found) // Show message once, but allow multiple actions
+				_console->debugPrintf("Break on %s (in [%04x:%04x])\n", methodName.c_str(), PRINT_REG(send_obj));
+			found = true;
+
+			if (bp->_action == BREAK_BREAK) {
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+			} else if (bp->_action == BREAK_BACKTRACE) {
+				logBacktrace();
+			} else if (bp->_action == BREAK_INSPECT) {
+				printObject(send_obj);
+			}
 		}
 	}
-	return false;
+	return found;
 }
 
 bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
-	if (_debugState._activeBreakpointTypes & BREAK_EXPORT) {
-		uint32 bpaddress = (script << 16 | pubfunct);
 
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
+	if (!(_debugState._activeBreakpointTypes & BREAK_EXPORT))
+		return false;
+
+	bool found = false;
+	uint32 bpaddress = (script << 16 | pubfunct);
+
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		if (bp->_action == BREAK_NONE || bp->_type != BREAK_EXPORT)
+			continue;
+
+		if (bp->_address == bpaddress) {
+			if (!found) // Show message once, but allow multiple actions
 				_console->debugPrintf("Break on script %d, export %d\n", script, pubfunct);
+			found = true;
+
+			if (bp->_action == BREAK_BREAK) {
 				_debugState.debugging = true;
 				_debugState.breakpointWasHit = true;
-				return true;
+			} else if (bp->_action == BREAK_BACKTRACE) {
+				logBacktrace();
+			} else if (bp->_action == BREAK_INSPECT) {
+				// Ignoring this mode, to make it identical to BREAK_LOG
 			}
 		}
 	}
 
-	return false;
+	return found;
 }
 
 bool SciEngine::checkAddressBreakpoint(const reg32_t &address) {
-	if (_debugState._activeBreakpointTypes & BREAK_ADDRESS) {
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
-			if (bp->type == BREAK_ADDRESS && bp->regAddress == address) {
+	if (!(_debugState._activeBreakpointTypes & BREAK_ADDRESS))
+		return false;
+
+	bool found = false;
+
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		if (bp->_action == BREAK_NONE || bp->_type != BREAK_ADDRESS)
+			continue;
+
+		if (bp->_regAddress == address) {
+			if (!found)
 				_console->debugPrintf("Break at %04x:%04x\n", PRINT_REG(address));
+			found = true;
+
+			if (bp->_action == BREAK_BREAK) {
 				_debugState.debugging = true;
 				_debugState.breakpointWasHit = true;
-				return true;
+			} else if (bp->_action == BREAK_BACKTRACE) {
+				logBacktrace();
+			} else if (bp->_action == BREAK_INSPECT) {
+				// Ignoring this mode, to make it identical to BREAK_LOG
 			}
 		}
 	}
 
-	return false;
+	return found;
 }
+
+bool matchKernelBreakpointPattern(const Common::String &pattern, const Common::String &name) {
+	// Pattern:
+	// A comma-separated list of atoms.
+	// An atom is a (possibly empty) word, optionally with a ! prefix (for
+	// a negative-match), and/or a * suffix (for a prefix-match).
+
+	// The last matching atom in the pattern takes effect.
+
+	// Examples:
+	// FrameOut : matches only FrameOut
+	// * : matches everything
+	// *,!FrameOut : matches everything except FrameOut
+	// InitBresen,DoBresen : matches InitBresen and DoBresen
+	// DoSound*,!DoSoundUpdateCues : matches all DoSound sub-functions except
+	//                               DoSoundUpdateCues
+
+	bool result = false;
+
+	Common::String::const_iterator i = pattern.begin();
+	while (i != pattern.end()) {
+		Common::String::const_iterator next = Common::find(i, pattern.end(), ',');
+		bool negative = *i == '!';
+
+		if (negative)
+			i++;
+
+		Common::String atom(i, next - i);
+
+		bool wildcard = atom.lastChar() == '*';
+		if (wildcard)
+			atom.deleteLastChar();
+
+		if ((!wildcard && atom == name) || (wildcard && name.hasPrefix(atom)))
+			result = !negative;
+
+		i = next;
+		if (i != pattern.end())
+			++i; // skip comma
+	}
+
+	return result;
+}
+
+bool SciEngine::checkKernelBreakpoint(const Common::String &name) {
+	if (!(_debugState._activeBreakpointTypes & BREAK_KERNEL))
+		return false;
+
+	bool found = false;
+
+	Common::List<Breakpoint>::const_iterator bp;
+	for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+		if (bp->_action == BREAK_NONE || bp->_type != BREAK_KERNEL)
+			continue;
+
+		if (matchKernelBreakpointPattern(bp->_name, name)) {
+			if (bp->_action == BREAK_BREAK) {
+				if (!found)
+					_console->debugPrintf("Break on k%s\n", name.c_str());
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+			} else if (bp->_action == BREAK_BACKTRACE) {
+				if (!found)
+					_console->debugPrintf("Break on k%s\n", name.c_str());
+				logBacktrace();
+			} else if (bp->_action == BREAK_INSPECT) {
+				// Ignoring this mode, to make it identical to BREAK_LOG
+			}
+			found = true;
+		}
+	}
+
+	return found;
+}
+
 
 void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr argp, ObjVarRef &varp, reg_t funcp, SegManager *segMan, SelectorType selectorType) {
 	int activeBreakpointTypes = g_sci->_debugState._activeBreakpointTypes;
@@ -801,7 +939,52 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 	}	// switch
 }
 
+void debugPropertyAccess(Object *obj, reg_t objp, unsigned int index, reg_t curValue, reg_t newValue, SegManager *segMan, BreakpointType breakpointType) {
+	const Object *var_container = obj;
+	if (!obj->isClass() && getSciVersion() != SCI_VERSION_3)
+		var_container = segMan->getObject(obj->getSuperClassSelector());
+
+	uint16 varSelector;
+	if (getSciVersion() == SCI_VERSION_3) {
+		varSelector = index;
+	} else {
+		index >>= 1;
+
+		if (index >= var_container->getVarCount()) {
+			// TODO: error, warning, debug?
+			return;
+		}
+
+		varSelector = var_container->getVarSelector(index);
+	}
+
+	if (g_sci->checkSelectorBreakpoint(breakpointType, objp, varSelector)) {
+		// checkSelectorBreakpoint has already triggered the breakpoint.
+		// We just output the relevant data here.
+
+		Console *con = g_sci->getSciDebugger();
+		const char *objectName = segMan->getObjectName(objp);
+		const char *selectorName = g_sci->getKernel()->getSelectorName(varSelector).c_str();
+		if (breakpointType == BREAK_SELECTORWRITE) {
+			con->debugPrintf("Write to selector (%s:%s): change %04x:%04x to %04x:%04x\n",
+								objectName, selectorName,
+								PRINT_REG(curValue), PRINT_REG(newValue));
+		} else if (breakpointType == BREAK_SELECTORREAD) {
+			con->debugPrintf("Read from selector (%s:%s): %04x:%04x\n",
+								objectName, selectorName,
+								PRINT_REG(curValue));
+
+		} else {
+			assert(false);
+		}
+	}
+}
+
 void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
+	if (s->abortScriptProcessing != kAbortNone) {
+		return;
+	}
+
 	Kernel *kernel = g_sci->getKernel();
 	if (!kernelSubCall) {
 		debugN("k%s: ", kernelCall->name);
@@ -880,5 +1063,161 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 	else
 		debugN(" = %d\n", result.getOffset());
 }
+
+
+void logBacktrace() {
+	Console *con = g_sci->getSciDebugger();
+	EngineState *s = g_sci->getEngineState();
+
+	con->debugPrintf("Call stack (current base: 0x%x):\n", s->executionStackBase);
+	Common::List<ExecStack>::const_iterator iter;
+	uint i = 0;
+
+
+	for (iter = s->_executionStack.begin();
+	     iter != s->_executionStack.end(); ++iter, ++i) {
+		const ExecStack &call = *iter;
+		const char *objname = s->_segMan->getObjectName(call.sendp);
+		int paramc, totalparamc;
+
+		switch (call.type) {
+		case EXEC_STACK_TYPE_CALL: // Normal function
+			if (call.type == EXEC_STACK_TYPE_CALL)
+			con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
+			if (call.debugSelector != -1) {
+				con->debugPrintf("%s::%s(", objname, g_sci->getKernel()->getSelectorName(call.debugSelector).c_str());
+			} else if (call.debugExportId != -1) {
+				con->debugPrintf("export %d (", call.debugExportId);
+			} else if (call.debugLocalCallOffset != -1) {
+				con->debugPrintf("call %x (", call.debugLocalCallOffset);
+			}
+			break;
+
+		case EXEC_STACK_TYPE_KERNEL: // Kernel function
+			if (call.debugKernelSubFunction == -1)
+				con->debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, g_sci->getKernel()->getKernelName(call.debugKernelFunction).c_str());
+			else
+				con->debugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, g_sci->getKernel()->getKernelName(call.debugKernelFunction, call.debugKernelSubFunction).c_str());
+			break;
+
+		case EXEC_STACK_TYPE_VARSELECTOR:
+			con->debugPrintf(" %x:[%x] vs%s %s::%s (", i, call.debugOrigin, (call.argc) ? "write" : "read",
+			          objname, g_sci->getKernel()->getSelectorName(call.debugSelector).c_str());
+			break;
+		}
+
+		totalparamc = call.argc;
+
+		if (totalparamc > 16)
+			totalparamc = 16;
+
+		for (paramc = 1; paramc <= totalparamc; paramc++) {
+			con->debugPrintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
+
+			if (paramc < call.argc)
+				con->debugPrintf(", ");
+		}
+
+		if (call.argc > 16)
+			con->debugPrintf("...");
+
+		con->debugPrintf(")\n     ");
+		if (call.debugOrigin != -1)
+			con->debugPrintf("by %x ", call.debugOrigin);
+		con->debugPrintf("obj@%04x:%04x", PRINT_REG(call.objp));
+		if (call.type == EXEC_STACK_TYPE_CALL) {
+			con->debugPrintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
+			if (call.sp == CALL_SP_CARRY)
+				con->debugPrintf(" sp,fp:carry");
+			else {
+				con->debugPrintf(" sp=ST:%04x", (unsigned)(call.sp - s->stack_base));
+				con->debugPrintf(" fp=ST:%04x", (unsigned)(call.fp - s->stack_base));
+			}
+		} else
+			con->debugPrintf(" pc:none");
+
+		con->debugPrintf(" argp:ST:%04x", (unsigned)(call.variables_argp - s->stack_base));
+		con->debugPrintf("\n");
+	}
+}
+
+bool printObject(reg_t pos) {
+	Console *con = g_sci->getSciDebugger();
+	EngineState *s = g_sci->getEngineState();
+	const Object *obj = s->_segMan->getObject(pos);
+	const Object *var_container = obj;
+	uint i;
+
+	if (!obj) {
+		con->debugPrintf("[%04x:%04x]: Not an object.\n", PRINT_REG(pos));
+		return false;
+	}
+
+	// Object header
+	con->debugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->_segMan->getObjectName(pos),
+	                 obj->getVarCount(), obj->getMethodCount());
+
+	if (!obj->isClass())
+		var_container = s->_segMan->getObject(obj->getSuperClassSelector());
+	con->debugPrintf("  -- member variables:\n");
+
+	if (getSciVersion() == SCI_VERSION_3) {
+		con->debugPrintf("    (----) [---] -size- = 0000:%04x (%d)\n", obj->getVarCount(), obj->getVarCount());
+		con->debugPrintf("    (----) [---] -classScript- = %04x:%04x (%d)\n", PRINT_REG(obj->getClassScriptSelector()), obj->getClassScriptSelector().getOffset());
+		con->debugPrintf("    (----) [---] -species- = %04x:%04x (%s)\n", PRINT_REG(obj->getSpeciesSelector()), s->_segMan->getObjectName(obj->getSpeciesSelector()));
+		con->debugPrintf("    (----) [---] -super- = %04x:%04x (%s)\n", PRINT_REG(obj->getSuperClassSelector()), s->_segMan->getObjectName(obj->getSuperClassSelector()));
+		con->debugPrintf("    (----) [---] -info- = %04x:%04x (%d)\n", PRINT_REG(obj->getInfoSelector()), obj->getInfoSelector().getOffset());
+	}
+
+	for (i = 0; (uint)i < obj->getVarCount(); i++) {
+		con->debugPrintf("    ");
+		if (var_container && i < var_container->getVarCount()) {
+			uint16 varSelector = var_container->getVarSelector(i);
+			// Times two commented out for now for easy parsing of vocab.994
+			con->debugPrintf("(%04x) [%03x] %s = ", i /* *2 */, varSelector, g_sci->getKernel()->getSelectorName(varSelector).c_str());
+		} else
+			con->debugPrintf("p#%x = ", i);
+
+		reg_t val = obj->getVariable(i);
+		con->debugPrintf("%04x:%04x", PRINT_REG(val));
+
+		if (!val.getSegment())
+			con->debugPrintf(" (%d)", val.getOffset());
+
+		const Object *ref = s->_segMan->getObject(val);
+		if (ref)
+			con->debugPrintf(" (%s)", s->_segMan->getObjectName(val));
+
+		con->debugPrintf("\n");
+	}
+	con->debugPrintf("  -- methods:\n");
+	Common::Array<Selector> foundMethods;
+	const Object *protoObj = obj;
+	do {
+		for (i = 0; i < protoObj->getMethodCount(); i++) {
+			const Selector selector = protoObj->getFuncSelector(i);
+			if (Common::find(foundMethods.begin(), foundMethods.end(), selector) == foundMethods.end()) {
+				reg_t fptr = protoObj->getFunction(i);
+				con->debugPrintf("    [%03x] ", selector);
+				if (protoObj != obj) {
+					con->debugPrintf("%s::", s->_segMan->getObjectName(protoObj->getPos()));
+				}
+				con->debugPrintf("%s = %04x:%04x\n", g_sci->getKernel()->getSelectorName(selector).c_str(), PRINT_REG(fptr));
+				foundMethods.push_back(selector);
+			}
+		}
+	} while ((protoObj = s->_segMan->getObject(protoObj->getSuperClassSelector())));
+
+	Script *scr = s->_segMan->getScriptIfLoaded(pos.getSegment());
+	if (scr)
+		con->debugPrintf("\nOwner script: %d\n", scr->getScriptNumber());
+
+	return true;
+}
+
+
+
+
+
 
 } // End of namespace Sci

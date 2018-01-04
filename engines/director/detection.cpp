@@ -100,7 +100,7 @@ class DirectorMetaEngine : public AdvancedMetaEngine {
 public:
 	DirectorMetaEngine() : AdvancedMetaEngine(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
 		_singleId = "director";
-		_maxScanDepth = 2,
+		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
@@ -165,26 +165,20 @@ const ADGameDescription *DirectorMetaEngine::fallbackDetect(const FileMap &allFi
 		if (!fileName.hasSuffix(".exe"))
 			continue;
 
-		SearchMan.clear();
-		SearchMan.addDirectory(file->getParent().getName(), file->getParent());
-
-		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(file->getName());
-
-		if (!stream)
+		Common::File f;
+		if (!f.open(*file))
 			continue;
 
-		stream->seek(-4, SEEK_END);
+		f.seek(-4, SEEK_END);
 
-		uint32 offset = stream->readUint32LE();
+		uint32 offset = f.readUint32LE();
 
-		if (stream->eos() || offset == 0 || offset >= (uint32)(stream->size() - 4)) {
-			delete stream;
+		if (f.eos() || offset == 0 || offset >= (uint32)(f.size() - 4))
 			continue;
-		}
 
-		stream->seek(offset);
+		f.seek(offset);
 
-		uint32 tag = stream->readUint32LE();
+		uint32 tag = f.readUint32LE();
 
 		switch (tag) {
 		case MKTAG('3', '9', 'J', 'P'):
@@ -200,41 +194,31 @@ const ADGameDescription *DirectorMetaEngine::fallbackDetect(const FileMap &allFi
 			// Prior to version 4, there was no tag here. So we'll use a bit of a
 			// heuristic to detect. The first field is the entry count, of which
 			// there should only be one.
-			if ((tag & 0xFFFF) != 1) {
-				delete stream;
+			if ((tag & 0xFFFF) != 1)
 				continue;
-			}
 
-			stream->skip(3);
+			f.skip(3);
 
-			uint32 mmmSize = stream->readUint32LE();
+			uint32 mmmSize = f.readUint32LE();
 
-			if (stream->eos() || mmmSize == 0) {
-				delete stream;
+			if (f.eos() || mmmSize == 0)
 				continue;
-			}
 
-			byte fileNameSize = stream->readByte();
+			byte fileNameSize = f.readByte();
 
-			if (stream->eos()) {
-				delete stream;
+			if (f.eos())
 				continue;
-			}
 
-			stream->skip(fileNameSize);
-			byte directoryNameSize = stream->readByte();
+			f.skip(fileNameSize);
+			byte directoryNameSize = f.readByte();
 
-			if (stream->eos()) {
-				delete stream;
+			if (f.eos())
 				continue;
-			}
 
-			stream->skip(directoryNameSize);
+			f.skip(directoryNameSize);
 
-			if (stream->pos() != stream->size() - 4) {
-				delete stream;
+			if (f.pos() != f.size() - 4)
 				continue;
-			}
 
 			// Assume v3 at this point (for now at least)
 			desc->version = 3;

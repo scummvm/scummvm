@@ -203,12 +203,12 @@ monkey	The Secret of Monkey Island
 	e98b982ceaf9d253d730bde8903233d6	-1	de	DOS	EGA	EGA	4 disk	Joachim Eberhard
 	477dbafbd66a53c98416dc01aef019ad	-1	it	DOS	EGA	EGA	4 disk	Andrea Petrucci
 
-	6c2bff0e327f2962e809c2e1a82d7309	-1	en	Amiga	VGA	VGA	-	dhweg
-	3433be9866ca4261b2d5d25374e3f243	-1	fr	Amiga	VGA	VGA	-	Gerald Vincent
-	0a212fa35fa8421f31c1f3961272caf0	-1	de	Amiga	VGA	VGA	V1.1	Andreas Bylund
-	319a4dde52c7960b5aae8a1ec348d918	-1	de	Amiga	VGA	VGA	V1.2r	ghoostkilla
-	fb66aa42de21675116346213f176a366	-1	it	Amiga	VGA	VGA	-	Andrea Petrucci
-	870d1e3c86bc50846d808d14a36b4e08	-1	es	Amiga	VGA	VGA	-	Andreas Bylund
+	6c2bff0e327f2962e809c2e1a82d7309	-1	en	Amiga	VGA	-	-	dhweg
+	3433be9866ca4261b2d5d25374e3f243	-1	fr	Amiga	VGA	-	-	Gerald Vincent
+	0a212fa35fa8421f31c1f3961272caf0	-1	de	Amiga	VGA	-	V1.1	Andreas Bylund
+	319a4dde52c7960b5aae8a1ec348d918	-1	de	Amiga	VGA	-	V1.2r	ghoostkilla
+	fb66aa42de21675116346213f176a366	-1	it	Amiga	VGA	-	-	Andrea Petrucci
+	870d1e3c86bc50846d808d14a36b4e08	-1	es	Amiga	VGA	-	-	Andreas Bylund
 
 	c7890e038806df2bb5c0c8c6f1986ea2	-1	en	DOS	VGA	VGA	8 disk	Andrea Petrucci
 	15e03ffbfeddb9c2aebc13dcb2a4a8f4	8357	en	DOS	VGA	VGA	4 disk
@@ -236,7 +236,7 @@ monkey	The Secret of Monkey Island
 
 	71523b539491527d9860f4407faf0411	7607	en	DOS	Demo	EGA Demo	-	Fingolfin
 	771bc18ec6f93837b839c992b211904b	-1	de	DOS	Demo	EGA Demo	-	khalek
-	54a936ad06161ff7bfefcb96200f7bff	7617	en	Amiga	VGA	VGA Demo	-	khalek
+	54a936ad06161ff7bfefcb96200f7bff	7617	en	Amiga	VGA	Demo	-	khalek
 	c0c9de81fb965e6cbe77f6e5631ca705	9135	en	DOS	SE Talkie	Unofficial SE Talkie v1.02	rootfather
 
 pass	Passport to Adventure
@@ -517,6 +517,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 
 	c7c492a107ec520d7a7943037d0ca54a	-1	nl	Windows	HE 71	Demo	-	DarthBo
 	084ed0fa98a6d1e9368d67fe9cfbd417	-1	en	Windows	HE 71	Demo	-	khalek
+	e3f1f2b6ca7b55076782872cb8ff0985	9779	en	Windows	HE 71	Demo	-	Ben Castricum
 	c8aac5e3e701874e2fa4117896f9e1b1	-1	en	Mac	HE 73	Demo	-	khalek, sev
 	0855496dde35356b1a9691e22ba84cdc	-1	en	Windows	HE 73	Demo	-	khalek
 	566165a7338fa11029e7c14d94fa70d0	9800	en	Windows	HE 73	Demo	-	khalek
@@ -617,6 +618,7 @@ FreddisFunShop	Freddi Fish's One-Stop Fun Shop
 
 catalog	Humongous Interactive Catalog
 	11e6e244078ff09b0f3832e35420e0a7	-1	en	Windows	-	Demo	-	khalek, sev
+	c13fdcdd2ecaa346f80d1c61782208be	28539	en	Windows	-	Demo	-	Ben Castricum
 	037385a953789190298494d92b89b3d0	-1	en	Windows	HE 72	Demo	-	khalek, sev
 	f7635a0e2ab82c9a0f9ace5f232a488f	-1	en	Windows	HE 72	Demo	-	Kirben
 	a56e8d9d4281c53c3f63c9bd22a59e21	10978342	en	All	HE CUP	Preview	George Kormendi
@@ -636,15 +638,17 @@ airport	Let's Explore the Airport with Buzzy
 	3c90d2a39cafa60b8ebce70a34a59a41	51152	nl	Windows	-	Demo	-	Ben Castricum
 
 farm	Let's Explore the Farm with Buzzy
-	a5c5388da9bf0e6662fdca8813a79d13	86962	en	Windows	-	-	-	George Kormendi
+	f4357cf21ba59889d6d5bcc431140238	-1	en	Windows	-	-	-	MrEightThreeOne
+	a5c5388da9bf0e6662fdca8813a79d13	86962	en	Windows	HE 72	-	-	George Kormendi
 	fbbbb38a81fc9d6a61d509278390a290	-1	en	Mac	HE 73	-	-	khalek
 	a85856675429fe88051744f755b72f93	-1	en	Windows	HE 73	-	-	Kirben
 	a2386da005672cbd5136f4f27a626c5f	87061	nl	Windows	HE 73	-	-	George Kormendi
 	eeb606c2d2ec877a712a9f20c10bcdda	87034	nl	Mac	HE 73	-	-	Ben Castricum
 	5dda73606533d66a4c3f4f9ea6e842af	87061	ru	Windows	HE 73	-	-	sev
 
-	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	-	Demo	-	Joachim Eberhard
-	6c375c2236d99f56e6c2cf540e74e474	34333	nl	Windows	-	Demo	-	Kirben
+	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	HE 72	Demo	-	Joachim Eberhard
+	6c375c2236d99f56e6c2cf540e74e474	34333	nl	Windows	HE 72	Demo	-	Kirben
+	03173f0df12062d84721062666155efa	34312	en	Windows	HE 71	Demo	-	Ben Castricum
 	bf8b52fdd9a69c67f34e8e9fec72661c	-1	en	Windows	HE 71	Demo	-	khalek, sev
 	0557df19f046a84c2fdc63507c6616cb	-1	nl	Windows	HE 72	Demo	-	adutchguy
 	8d479e36f35e80257dfc102cf4b8a912	34333	en	Windows	HE 72	Demo	-	khalek, sev
@@ -880,6 +884,7 @@ PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 spyfox	SPY Fox 1: Dry Cereal
 	6bf70eee5de3d24d2403e0dd3d267e8a	49221	All	Windows	-	-	-	khalek (US and ???)
 	100b4c8403ad6a83d4bf7dbf83e44dc4	-1	fr	Windows	-	-	-	gist974
+	68e4bf77136cb3165e65d5c197ce65bd	49221	de	Windows	-	-	-	Ben Castricum
 	9bda5fee51d2fda5253d02c642016bf4	-1	nl	All	HE 98.5	-	-	daniel9, joostp
 	58436e634f4fae1d9973591c2ffa1fcb	-1	en	All	HE 99	Updated	-	Joachim Eberhard (GB or US?)
 	a28135a7ade38cc0208b04507c46efd1	-1	de	All	HE 99	-	-	nachbarnebenan
@@ -890,6 +895,11 @@ spyfox	SPY Fox 1: Dry Cereal
 	23394c8d29cc63c61313959431a12476	-1	en	Windows	HE 100	Updated	-	Jonathan (GB or US?)
 	50b831f11b8c4b83784cf81f4dcc69ea	-1	en	Wii	HE 101	-	-	sanguinehearts (GB or US?)
 	15878e3bee2e1e759184abee98589eaa	-1	en	iOS	HE 100	-	-	clone2727 (GB or US?)
+	e441af0b65983c1a4b3a52f9c7b15484	49742	us	Wii	HE 100	-	-	Ben Castricum
+	1b3a7f67d688f44d0e54da839923d3a3	49742	nl	Wii	HE 100	-	-	Ben Castricum
+	2f7583da072d027057983c43bb3fa53f	49742	gb	Wii	HE 100	-	-	Ben Castricum
+	afd74ce452df9cca6ebc023276b4772a	49742	de	Wii	HE 100	-	-	Ben Castricum
+	6f4d64ce1b44470536cae2eb6fe8aefd	49742	fr	Wii	HE 100	-	-	Ben Castricum
 
 	53e94115b55dd51d4b8ff0871aa1df1e	20103	us	All	-	Demo	-	khalek, sev
 	fbdd947d21e8f5bac6d6f7a316af1c5a	15693	us	All	-	Demo	-	sev

@@ -1865,21 +1865,21 @@ struct PolygonDrawData {
 	}
 
 	void transform(const Common::Point *tp1, const Common::Point *tp2, const Common::Point *sp1, const Common::Point *sp2) {
-		int32 tx_acc = tp1->x << 16;
-		int32 sx_acc = sp1->x << 16;
-		int32 sy_acc = sp1->y << 16;
+		int32 tx_acc = tp1->x * (1 << 16);
+		int32 sx_acc = sp1->x * (1 << 16);
+		int32 sy_acc = sp1->y * (1 << 16);
 		uint16 dy = ABS(tp2->y - tp1->y) + 1;
-		int32 tx_step = ((tp2->x - tp1->x) << 16) / dy;
-		int32 sx_step = ((sp2->x - sp1->x) << 16) / dy;
-		int32 sy_step = ((sp2->y - sp1->y) << 16) / dy;
+		int32 tx_step = ((tp2->x - tp1->x) * (1 << 16)) / dy;
+		int32 sx_step = ((sp2->x - sp1->x) * (1 << 16)) / dy;
+		int32 sy_step = ((sp2->y - sp1->y) * (1 << 16)) / dy;
 
 		int y = tp1->y - mat[0].y;
 		while (dy--) {
 			assert(y >= 0 && y < pAreasNum);
 			PolygonArea *ppa = &pa[y];
-			int32 ttx = tx_acc >> 16;
-			int32 tsx = sx_acc >> 16;
-			int32 tsy = sy_acc >> 16;
+			int32 ttx = tx_acc / (1 << 16);
+			int32 tsx = sx_acc / (1 << 16);
+			int32 tsy = sy_acc / (1 << 16);
 
 			if (ppa->xmin > ttx) {
 				ppa->xmin = ttx;
@@ -2143,12 +2143,12 @@ void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, i
 			int16 w = x2 - x1 + 1;
 			if (w > 0) {
 				int16 width = ppa->xmax - ppa->xmin + 1;
-				pra->x_step = ((ppa->x2 - ppa->x1) << 16) / width;
-				pra->y_step = ((ppa->y2 - ppa->y1) << 16) / width;
+				pra->x_step = ((ppa->x2 - ppa->x1) * (1 << 16)) / width;
+				pra->y_step = ((ppa->y2 - ppa->y1) * (1 << 16)) / width;
 				pra->dst_offs = yoff + x1 * _vm->_bytesPerPixel;
 				pra->w = w;
-				pra->x_s = ppa->x1 << 16;
-				pra->y_s = ppa->y1 << 16;
+				pra->x_s = ppa->x1 * (1 << 16);
+				pra->y_s = ppa->y1 * (1 << 16);
 				int16 tmp = x1 - ppa->xmin;
 				if (tmp != 0) {
 					pra->x_s += pra->x_step * tmp;
@@ -2170,7 +2170,7 @@ void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, i
 		int32 x_acc = pra->x_s;
 		int32 y_acc = pra->y_s;
 		while (--w) {
-			int32 src_offs = (y_acc >> 16) * wizW + (x_acc >> 16);
+			int32 src_offs = (y_acc / (1 << 16)) * wizW + (x_acc / (1 << 16));
 			assert(src_offs < wizW * wizH);
 			x_acc += pra->x_step;
 			y_acc += pra->y_step;

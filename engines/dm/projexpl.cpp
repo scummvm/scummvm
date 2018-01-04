@@ -429,7 +429,8 @@ void ProjExpl::processEvents48To49(TimelineEvent *event) {
 	if (projectileMovesToOtherSquare) {
 		sourceMapX = destinationMapX;
 		sourceMapY = destinationMapY;
-		destinationMapX += _vm->_dirIntoStepCountEast[projectileDirection], destinationMapY += _vm->_dirIntoStepCountNorth[projectileDirection];
+		destinationMapX += _vm->_dirIntoStepCountEast[projectileDirection];
+		destinationMapY += _vm->_dirIntoStepCountNorth[projectileDirection];
 		Square destSquare = _vm->_dungeonMan->getSquare(destinationMapX, destinationMapY);
 		ElementType destSquareType = destSquare.getType();
 		if ((destSquareType == kDMElementTypeWall) ||

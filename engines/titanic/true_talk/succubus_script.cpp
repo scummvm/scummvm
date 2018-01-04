@@ -24,6 +24,7 @@
 #include "titanic/true_talk/succubus_script.h"
 #include "titanic/true_talk/true_talk_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -50,6 +51,7 @@ int SuccUBusScript::chooseResponse(const TTroomScript *roomScript, const TTsente
 	case MKTAG('S', 'L', 'O', 'W'):
 	case MKTAG('T', 'H', 'R', 'T'):
 		dialogueId = 70021;
+		break;
 
 	case MKTAG('S', 'U', 'C', '1'):
 		dialogueId = getDialogueId(230009);
@@ -160,7 +162,7 @@ int SuccUBusScript::process(const TTroomScript *roomScript, const TTsentence *se
 
 	if (processEntries(&_entries, _entryCount, roomScript, sentence) != 2) {
 		uint tagId = g_vm->_trueTalkManager->_quotes.find(sentence->_normalizedLine.c_str());
-		if (tagId && chooseResponse(roomScript, sentence, tagId) != 2) {
+		if (!tagId || chooseResponse(roomScript, sentence, tagId) != 2) {
 			addResponse(getDialogueId(230030));
 			applyResponse();
 		}
@@ -170,15 +172,28 @@ int SuccUBusScript::process(const TTroomScript *roomScript, const TTsentence *se
 }
 
 ScriptChangedResult SuccUBusScript::scriptChanged(const TTroomScript *roomScript, uint id) {
-	if (id == 148)
-		CTrueTalkManager::setFlags(3, 1);
-	else if (id == 150)
-		CTrueTalkManager::setFlags(2, 1);
+	if (g_language == Common::EN_ANY) {
+		if (id == 148)
+			CTrueTalkManager::setFlags(3, 1);
+		else if (id == 150)
+			CTrueTalkManager::setFlags(2, 1);
+	} else {
+		if (id == 70211 || id == 230013) {
+			addResponse(getDialogueId(230163));
+			applyResponse();
+			return SCR_2;
+		} else if (id < 70211) {
+			if (id == 148)
+				CTrueTalkManager::setFlags(3, 1);
+			else if (id == 150)
+				CTrueTalkManager::setFlags(2, 1);
+		}
+	}
 
 	if (id >= 230000 && id <= 230245) {
 		addResponse(getDialogueId(id));
 		applyResponse();
-	} else if (id >= 70000 && id <= 70243) {
+	} else if (id >= 70000 && id <= (uint)TRANSLATE(70243, 70248)) {
 		addResponse(id);
 		applyResponse();
 	}

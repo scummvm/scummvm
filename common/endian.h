@@ -49,7 +49,6 @@
 #	error No endianness defined
 #endif
 
-#ifdef HAVE_INT64
 #define SWAP_CONSTANT_64(a) \
 	((uint64)((((a) >> 56) & 0x000000FF) | \
 	          (((a) >> 40) & 0x0000FF00) | \
@@ -59,7 +58,6 @@
 	          (((a) & 0x00FF0000) << 24) | \
 	          (((a) & 0x0000FF00) << 40) | \
 	          (((a) & 0x000000FF) << 56) ))
-#endif
 
 #define SWAP_CONSTANT_32(a) \
 	((uint32)((((a) >> 24) & 0x00FF) | \
@@ -150,7 +148,6 @@
 	}
 #endif
 
-#ifdef HAVE_INT64
 /**
  * Swap the bytes in a 64 bit word in order to convert LE encoded data to BE
  * and vice versa.
@@ -202,7 +199,6 @@
 	}
 #endif
 
-#endif // HAVE_INT64
 
 
 /**
@@ -253,7 +249,6 @@
 		((Unaligned32 *)ptr)->val = value;
 	}
 
-#ifdef HAVE_INT64
 	FORCEINLINE uint64 READ_UINT64(const void *ptr) {
 		struct Unaligned64 { uint64 val; } __attribute__ ((__packed__, __may_alias__));
 		return ((const Unaligned64 *)ptr)->val;
@@ -263,7 +258,6 @@
 		struct Unaligned64 { uint64 val; } __attribute__((__packed__, __may_alias__));
 		((Unaligned64 *)ptr)->val = value;
 	}
-#endif
 
 #elif !defined(SCUMM_NEED_ALIGNMENT)
 
@@ -283,7 +277,6 @@
 		*(uint32 *)(ptr) = value;
 	}
 
-#ifdef HAVE_INT64
 	FORCEINLINE uint64 READ_UINT64(const void *ptr) {
 		return *(const uint64 *)(ptr);
 	}
@@ -291,7 +284,6 @@
 	FORCEINLINE void WRITE_UINT64(void *ptr, uint64 value) {
 		*(uint64 *)(ptr) = value;
 	}
-#endif
 
 
 // use software fallback by loading each byte explicitely
@@ -319,7 +311,6 @@
 			b[2] = (uint8)(value >> 16);
 			b[3] = (uint8)(value >> 24);
 		}
-#ifdef HAVE_INT64
 		inline uint64 READ_UINT64(const void *ptr) {
 			const uint8 *b = (const uint8 *)ptr;
 			return ((uint64)b[7] << 56) | ((uint64)b[6] << 48) | ((uint64)b[5] << 40) | ((uint64)b[4] << 32) | ((uint64)b[3] << 24) | ((uint64)b[2] << 16) | ((uint64)b[1] << 8) | ((uint64)b[0]);
@@ -335,7 +326,6 @@
 			b[6] = (uint8)(value >> 48);
 			b[7] = (uint8)(value >> 56);
 		}
-#endif
 
 #	elif defined(SCUMM_BIG_ENDIAN)
 
@@ -359,7 +349,6 @@
 			b[2] = (uint8)(value >>  8);
 			b[3] = (uint8)(value >>  0);
 		}
-#ifdef HAVE_INT64
 		inline uint64 READ_UINT64(const void *ptr) {
 			const uint8 *b = (const uint8 *)ptr;
 			return ((uint64)b[0] << 56) | ((uint64)b[1] << 48) | ((uint64)b[2] << 40) | ((uint64)b[3] << 32) | ((uint64)b[4] << 24) | ((uint64)b[5] << 16) | ((uint64)b[6] << 8) | ((uint64)b[7]);
@@ -375,7 +364,6 @@
 			b[6] = (uint8)(value >>  8);
 			b[7] = (uint8)(value >>  0);
 		}
-#endif
 
 #	endif
 
@@ -409,7 +397,6 @@
 	#define CONSTANT_BE_32(a) SWAP_CONSTANT_32(a)
 	#define CONSTANT_BE_16(a) SWAP_CONSTANT_16(a)
 
-#ifdef HAVE_INT64
 	#define READ_LE_UINT64(a) READ_UINT64(a)
 	#define WRITE_LE_UINT64(a, v) WRITE_UINT64(a, v)
 	#define FROM_LE_64(a) ((uint64)(a))
@@ -418,7 +405,6 @@
 	#define TO_BE_64(a) SWAP_BYTES_64(a)
 	#define CONSTANT_LE_64(a) ((uint64)(a))
 	#define CONSTANT_BE_64(a) SWAP_CONSTANT_64(a)
-#endif
 
 // if the unaligned load and the byteswap take alot instructions its better to directly read and invert
 #	if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
@@ -443,7 +429,6 @@
 			b[2] = (uint8)(value >>  8);
 			b[3] = (uint8)(value >>  0);
 		}
-#ifdef HAVE_INT64
 		inline uint64 READ_BE_UINT64(const void *ptr) {
 			const uint8 *b = (const uint8 *)ptr;
 			return ((uint64)b[0] << 56) | ((uint64)b[1] << 48) | ((uint64)b[2] << 40) | ((uint64)b[3] << 32) | ((uint64)b[4] << 24) | ((uint64)b[5] << 16) | ((uint64)b[6] << 8) | ((uint64)b[7]);
@@ -459,7 +444,6 @@
 			b[6] = (uint8)(value >> 8);
 			b[7] = (uint8)(value >> 0);
 		}
-#endif
 
 #	else
 
@@ -475,14 +459,12 @@
 		inline void WRITE_BE_UINT32(void *ptr, uint32 value) {
 			WRITE_UINT32(ptr, SWAP_BYTES_32(value));
 		}
-#ifdef HAVE_INT64
 		inline uint64 READ_BE_UINT64(const void *ptr) {
 			return SWAP_BYTES_64(READ_UINT64(ptr));
 		}
 		inline void WRITE_BE_UINT64(void *ptr, uint64 value) {
 			WRITE_UINT64(ptr, SWAP_BYTES_64(value));
 		}
-#endif
 
 #	endif	// if defined(SCUMM_NEED_ALIGNMENT)
 
@@ -512,7 +494,6 @@
 	#define CONSTANT_BE_32(a) ((uint32)(a))
 	#define CONSTANT_BE_16(a) ((uint16)(a))
 
-#ifdef HAVE_INT64
 	#define READ_BE_UINT64(a) READ_UINT64(a)
 	#define WRITE_BE_UINT64(a, v) WRITE_UINT64(a, v)
 	#define FROM_LE_64(a) SWAP_BYTES_64(a)
@@ -521,7 +502,6 @@
 	#define TO_BE_64(a) ((uint64)(a))
 	#define CONSTANT_LE_64(a) SWAP_CONSTANT_64(a)
 	#define CONSTANT_BE_64(a) ((uint64)(a))
-#endif
 
 // if the unaligned load and the byteswap take alot instructions its better to directly read and invert
 #	if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
@@ -547,7 +527,6 @@
 		b[3] = (uint8)(value >> 24);
 	}
 
-#ifdef HAVE_INT64
 	inline uint64 READ_LE_UINT64(const void *ptr) {
 		const uint8 *b = (const uint8 *)ptr;
 		return ((uint64)b[7] << 56) | ((uint64)b[6] << 48) | ((uint64)b[5] << 40) | ((uint64)b[4] << 32) | ((uint64)b[3] << 24) | ((uint64)b[2] << 16) | ((uint64)b[1] << 8) | ((uint64)b[0]);
@@ -563,7 +542,6 @@
 		b[6] = (uint8)(value >> 48);
 		b[7] = (uint8)(value >> 56);
 	}
-#endif
 
 #	else
 
@@ -579,14 +557,12 @@
 	inline void WRITE_LE_UINT32(void *ptr, uint32 value) {
 		WRITE_UINT32(ptr, SWAP_BYTES_32(value));
 	}
-#ifdef HAVE_INT64
 	inline uint64 READ_LE_UINT64(const void *ptr) {
 		return SWAP_BYTES_64(READ_UINT64(ptr));
 	}
 	inline void WRITE_LE_UINT64(void *ptr, uint64 value) {
 		WRITE_UINT64(ptr, SWAP_BYTES_64(value));
 	}
-#endif
 
 #	endif	// if defined(SCUMM_NEED_ALIGNMENT)
 
@@ -607,5 +583,37 @@ inline uint32 READ_BE_UINT24(const void *ptr) {
 #else
 #define READ_UINT24(a) READ_BE_UINT24(a)
 #endif
+
+inline int16 READ_LE_INT16(const void *ptr) {
+	return static_cast<int16>(READ_LE_UINT16(ptr));
+}
+
+inline void WRITE_LE_INT16(void *ptr, int16 value) {
+	WRITE_LE_UINT16(ptr, static_cast<uint16>(value));
+}
+
+inline int16 READ_BE_INT16(const void *ptr) {
+	return static_cast<int16>(READ_BE_UINT16(ptr));
+}
+
+inline void WRITE_BE_INT16(void *ptr, int16 value) {
+	WRITE_BE_UINT16(ptr, static_cast<uint16>(value));
+}
+
+inline int32 READ_LE_INT32(const void *ptr) {
+	return static_cast<int32>(READ_LE_UINT32(ptr));
+}
+
+inline void WRITE_LE_INT32(void *ptr, int32 value) {
+	WRITE_LE_UINT32(ptr, static_cast<uint32>(value));
+}
+
+inline int32 READ_BE_INT32(const void *ptr) {
+	return static_cast<int32>(READ_BE_UINT32(ptr));
+}
+
+inline void WRITE_BE_INT32(void *ptr, int32 value) {
+	WRITE_BE_UINT32(ptr, static_cast<uint32>(value));
+}
 
 #endif

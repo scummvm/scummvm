@@ -67,7 +67,7 @@ enum ObjectOffsets {
 	kOffsetNamePointerSci11 = 16
 };
 
-class Object {
+class Object : public Common::Serializable {
 public:
 	Object() :
 		_name(NULL_REG),
@@ -169,7 +169,6 @@ public:
 		}
 	}
 
-	// NOTE: In real engine, -info- is treated as byte size
 	void clearInfoSelectorFlag(infoSelectorFlags flag) {
 		if (getSciVersion() == SCI_VERSION_3) {
 			_infoSelectorSci3 &= ~flag;
@@ -230,22 +229,21 @@ public:
 
 	Selector getVarSelector(uint16 i) const { return _baseVars[i]; }
 
-	reg_t getFunction(uint16 i) const {
-		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
-		if (getSciVersion() == SCI_VERSION_3)
-			offset--;
-
+	/**
+	 * @returns A pointer to the code for the method at the given index.
+	 */
+	reg_t getFunction(const uint16 index) const {
 		reg_t addr;
 		addr.setSegment(_pos.getSegment());
-		addr.setOffset(_baseMethod[offset]);
+		addr.setOffset(_baseMethod[index * 2 + 1]);
 		return addr;
 	}
 
-	Selector getFuncSelector(uint16 i) const {
-		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? i : i * 2 + 1;
-		if (getSciVersion() == SCI_VERSION_3)
-			offset--;
-		return _baseMethod[offset];
+	/**
+	 * @returns The selector for the method at the given index.
+	 */
+	Selector getFuncSelector(const uint16 index) const {
+		return _baseMethod[index * 2];
 	}
 
 	/**
@@ -335,8 +333,8 @@ private:
 	Common::Array<uint16> _baseVars;
 
 	/**
-	 * A lookup table from a method index to its corresponding selector number.
-	 * In SCI3, the table contains selector + offset in pairs.
+	 * A lookup table from a method index to its corresponding selector number
+	 * or offset to code. The table contains selector + offset in pairs.
 	 */
 	Common::Array<uint32> _baseMethod;
 

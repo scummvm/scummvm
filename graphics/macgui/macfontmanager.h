@@ -77,9 +77,9 @@ public:
 		_font = NULL;
 	}
 
-	int getId() { return _id; };
-	int getSize() { return _size; }
-	int getSlant() { return _slant; }
+	int getId() const { return _id; };
+	int getSize() const { return _size; }
+	int getSlant() const { return _slant; }
 	Common::String getName() { return _name; }
 	void setName(Common::String &name) { _name = name; }
 	void setName(const char *name) { _name = name; }

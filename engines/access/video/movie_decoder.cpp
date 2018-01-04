@@ -152,7 +152,7 @@ bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 				soundblasterRate = _stream->readByte();
 				audioSampleRate = 1000000 / (256 - soundblasterRate);
 
-				_audioTrack = new StreamAudioTrack(audioSampleRate);
+				_audioTrack = new StreamAudioTrack(audioSampleRate, getSoundType());
 				addTrack(_audioTrack);
 
 				_stream->seek(chunkStartOffset); // seek back
@@ -194,7 +194,7 @@ bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	// If sample rate was found, create an audio track
 	if (audioSampleRate) {
-		_audioTrack = new StreamAudioTrack(audioSampleRate);
+		_audioTrack = new StreamAudioTrack(audioSampleRate, getSoundType());
 		addTrack(_audioTrack);
 	}
 
@@ -641,7 +641,8 @@ bool AccessVIDMovieDecoder::StreamVideoTrack::hasDirtyPalette() const {
 	return _dirtyPalette;
 }
 
-AccessVIDMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 sampleRate) {
+AccessVIDMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 sampleRate, Audio::Mixer::SoundType soundType) :
+		AudioTrack(soundType) {
 	_totalAudioQueued = 0; // currently 0 milliseconds queued
 
 	_sampleRate  = sampleRate;

@@ -305,8 +305,7 @@ endif
 ifdef USE_VORBIS
 OSX_STATIC_LIBS += \
 		$(STATICLIBPATH)/lib/libvorbisfile.a \
-		$(STATICLIBPATH)/lib/libvorbis.a \
-		$(STATICLIBPATH)/lib/libogg.a
+		$(STATICLIBPATH)/lib/libvorbis.a
 endif
 
 ifdef USE_TREMOR
@@ -315,6 +314,10 @@ endif
 
 ifdef USE_FLAC
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libFLAC.a
+endif
+
+ifdef USE_OGG
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libogg.a
 endif
 
 ifdef USE_FLUIDSYNTH
@@ -326,7 +329,7 @@ OSX_STATIC_LIBS += \
 
 ifneq ($(BACKEND), iphone)
 ifneq ($(BACKEND), ios7)
-OSX_STATIC_LIBS += -lreadline
+OSX_STATIC_LIBS += -lreadline -framework AudioUnit
 endif
 endif
 endif

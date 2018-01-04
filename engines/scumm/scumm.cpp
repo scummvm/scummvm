@@ -952,7 +952,7 @@ ScummEngine_v100he::~ScummEngine_v100he() {
 ScummEngine_vCUPhe::ScummEngine_vCUPhe(OSystem *syst, const DetectorResult &dr) : Engine(syst){
 	_syst = syst;
 	_game = dr.game;
-	_filenamePattern = dr.fp,
+	_filenamePattern = dr.fp;
 
 	_cupPlayer = new CUP_Player(syst, this, _mixer);
 }
@@ -962,7 +962,7 @@ ScummEngine_vCUPhe::~ScummEngine_vCUPhe() {
 }
 
 Common::Error ScummEngine_vCUPhe::run() {
-	initGraphics(CUP_Player::kDefaultVideoWidth, CUP_Player::kDefaultVideoHeight, true);
+	initGraphics(CUP_Player::kDefaultVideoWidth, CUP_Player::kDefaultVideoHeight);
 
 	if (_cupPlayer->open(_filenamePattern.pattern)) {
 		_cupPlayer->play();
@@ -1247,7 +1247,7 @@ Common::Error ScummEngine::init() {
 
 	// Initialize backend
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		initGraphics(kHercWidth, kHercHeight, true);
+		initGraphics(kHercWidth, kHercHeight);
 	} else {
 		int screenWidth = _screenWidth;
 		int screenHeight = _screenHeight;
@@ -1266,7 +1266,7 @@ Common::Error ScummEngine::init() {
 			_outputPixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 
 			if (_game.platform != Common::kPlatformFMTowns && _game.platform != Common::kPlatformPCEngine) {
-				initGraphics(screenWidth, screenHeight, screenWidth > 320, &_outputPixelFormat);
+				initGraphics(screenWidth, screenHeight, &_outputPixelFormat);
 				if (_outputPixelFormat != _system->getScreenFormat())
 					return Common::kUnsupportedColorMode;
 			} else {
@@ -1281,14 +1281,14 @@ Common::Error ScummEngine::init() {
 					}
 				}
 
-				initGraphics(screenWidth, screenHeight, screenWidth > 320, tryModes);
+				initGraphics(screenWidth, screenHeight, tryModes);
 				if (_system->getScreenFormat().bytesPerPixel != 2)
 					return Common::kUnsupportedColorMode;
 			}
 #else
 			if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {
 				warning("Starting game without the required 16bit color support.\nYou may experience color glitches");
-				initGraphics(screenWidth, screenHeight, (screenWidth > 320));
+				initGraphics(screenWidth, screenHeight);
 			} else {
 				return Common::Error(Common::kUnsupportedColorMode, "16bit color support is required for this game");
 			}
@@ -1298,7 +1298,7 @@ Common::Error ScummEngine::init() {
 		if (_game.platform == Common::kPlatformFMTowns && _game.version == 5)
 			return Common::Error(Common::kUnsupportedColorMode, "This game requires dual graphics layer support which is disabled in this build");
 #endif
-			initGraphics(screenWidth, screenHeight, (screenWidth > 320));
+			initGraphics(screenWidth, screenHeight);
 		}
 	}
 

@@ -249,9 +249,6 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 			// soundBuffer.
 			soundBuffer[workChunkSize] = soundBuffer[workChunkSize - 1];
 
-			for (i = 0; i < chunkSize; i++)
-				soundBuffer[i] = 0;
-
 			if (deltaType == 1) {
 				for (i = 0; i < chunkSize - 1; i += 2) {
 					l = i / 2;

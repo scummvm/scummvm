@@ -38,6 +38,24 @@ const int MAP_GRID_PRIOR_INDEX2[] = { 0, 0, 0, 0, 2, 3, 4, 1, 0 };
 
 const int MAP_GRID_PRIOR_DIRECTION2[] = { 0, 1, 2, 3, 0, 1, 2, 3, 0 };
 
+const char *const MUSIC_FILES1[5] = {
+	"outdoors.m", "town.m", "cavern.m", "dungeon.m", "castle.m"
+};
+
+const char *const MUSIC_FILES2[6][7] = {
+	{ "outday1.m", "outday2.m", "outday4.m", "outnght1.m",
+	"outnght2.m", "outnght4.m", "daydesrt.m" },
+	{ "townday1.m", "twnwlk.m", "newbrigh.m", "twnnitea.m",
+	"twnniteb.m", "twnwlk.m", "townday1.m" },
+	{ "cavern1.m", "cavern2.m", "cavern3a.m", "cavern1.m",
+	"cavern2.m", "cavern3a.m", "cavern1.m" },
+	{ "dngon1.m", "dngon2.m", "dngon3.m", "dngon1.m",
+	"dngon2.m", "dngon3.m", "dngon1.m" },
+	{ "cstl1rev.m", "cstl2rev.m", "cstl3rev.m", "cstl1rev.m",
+	"cstl2rev.m", "cstl3rev.m", "cstl1rev.m" },
+	{ "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m" }
+};
+
 MonsterStruct::MonsterStruct() {
 	_experience = 0;
 	_hp = 0;
@@ -500,11 +518,11 @@ void SurroundingMazes::clear() {
 	_west = 0;
 }
 
-void SurroundingMazes::synchronize(Common::SeekableReadStream &s) {
-	_north = s.readUint16LE();
-	_east = s.readUint16LE();
-	_south = s.readUint16LE();
-	_west = s.readUint16LE();
+void SurroundingMazes::synchronize(XeenSerializer &s) {
+	s.syncAsUint16LE(_north);
+	s.syncAsUint16LE(_east);
+	s.syncAsUint16LE(_south);
+	s.syncAsUint16LE(_west);
 }
 
 int &SurroundingMazes::operator[](int idx) {
@@ -528,17 +546,20 @@ MazeDifficulties::MazeDifficulties() {
 	_bashDoor = 0;
 	_bashGrate = 0;
 	_bashWall = 0;
+	_wallNoPass = -1;
+	_surfaceNoPass = -1;
+	_chance2Run = -1;
 }
 
-void MazeDifficulties::synchronize(Common::SeekableReadStream &s) {
-	_wallNoPass = s.readByte();
-	_surfaceNoPass = s.readByte();
-	_unlockDoor = s.readByte();
-	_unlockBox = s.readByte();
-	_bashDoor = s.readByte();
-	_bashGrate = s.readByte();
-	_bashWall = s.readByte();
-	_chance2Run = s.readByte();
+void MazeDifficulties::synchronize(XeenSerializer &s) {
+	s.syncAsByte(_wallNoPass);
+	s.syncAsByte(_surfaceNoPass);
+	s.syncAsByte(_unlockDoor);
+	s.syncAsByte(_unlockBox);
+	s.syncAsByte(_bashDoor);
+	s.syncAsSint8(_bashGrate);
+	s.syncAsSint8(_bashWall);
+	s.syncAsSint8(_chance2Run);
 }
 
 /*------------------------------------------------------------------------*/
@@ -563,44 +584,51 @@ void MazeData::clear() {
 	_trapDamage = 0;
 	_wallKind = 0;
 	_tavernTips = 0;
+	_mazeId = 0;
 }
 
-void MazeData::synchronize(Common::SeekableReadStream &s) {
+void MazeData::synchronize(XeenSerializer &s) {
+	byte b;
+
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
 		for (int x = 0; x < MAP_WIDTH; ++x)
-			_wallData[y][x]._data = s.readUint16LE();
+			s.syncAsUint16LE(_wallData[y][x]._data);
 	}
 	for (int y = 0; y < MAP_HEIGHT; ++y) {
 		for (int x = 0; x < MAP_WIDTH; ++x) {
-			byte b = s.readByte();
-			_cells[y][x]._surfaceId = b & 7;
-			_cells[y][x]._flags = b & 0xF8;
+			if (s.isLoading()) {
+				s.syncAsByte(b);
+				_cells[y][x]._surfaceId = b & 7;
+				_cells[y][x]._flags = b & 0xF8;
+			} else {
+				b = (_cells[y][x]._surfaceId & 7) | (_cells[y][x]._flags & 0xf8);
+				s.syncAsByte(b);
+			}
 		}
 	}
 
-	_mazeNumber = s.readUint16LE();
+	s.syncAsUint16LE(_mazeNumber);
 	_surroundingMazes.synchronize(s);
-	_mazeFlags = s.readUint16LE();
-	_mazeFlags2 = s.readUint16LE();
+	s.syncAsUint16LE(_mazeFlags);
+	s.syncAsUint16LE(_mazeFlags2);
 
 	for (int i = 0; i < 16; ++i)
-		_wallTypes[i] = s.readByte();
+		s.syncAsByte(_wallTypes[i]);
 	for (int i = 0; i < 16; ++i)
-		_surfaceTypes[i] = s.readByte();
+		s.syncAsByte(_surfaceTypes[i]);
 
-	_floorType = s.readByte();
-	_runPosition.x = s.readByte();
+	s.syncAsByte(_floorType);
+	s.syncAsByte(_runPosition.x);
 	_difficulties.synchronize(s);
-	_runPosition.y = s.readByte();
-	_trapDamage = s.readByte();
-	_wallKind = s.readByte();
-	_tavernTips = s.readByte();
+	s.syncAsByte(_runPosition.y);
+	s.syncAsByte(_trapDamage);
+	s.syncAsByte(_wallKind);
+	s.syncAsByte(_tavernTips);
 
-	Common::Serializer ser(&s, nullptr);
 	for (int y = 0; y < MAP_HEIGHT; ++y)
-		SavesManager::syncBitFlags(ser, &_seenTiles[y][0], &_seenTiles[y][MAP_WIDTH]);
+		File::syncBitFlags(s, &_seenTiles[y][0], &_seenTiles[y][MAP_WIDTH]);
 	for (int y = 0; y < MAP_HEIGHT; ++y)
-		SavesManager::syncBitFlags(ser, &_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH]);
+		File::syncBitFlags(s, &_steppedOnTiles[y][0], &_steppedOnTiles[y][MAP_WIDTH]);
 }
 
 void MazeData::setAllTilesStepped() {
@@ -629,6 +657,12 @@ bool MobStruct::synchronize(XeenSerializer &s) {
 	s.syncAsByte(_direction);
 
 	return _id != 0xff || _pos.x != -1 || _pos.y != -1;
+}
+
+void MobStruct::endOfList() {
+	_pos.x = _pos.y = -1;
+	_id = 0xff;
+	_direction = (Direction)-1;
 }
 
 /*------------------------------------------------------------------------*/
@@ -702,19 +736,19 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 	for (uint i = 0; i < 16; ++i) {
 		b = (i >= _objectSprites.size()) ? 0xff : _objectSprites[i]._spriteId;
 		s.syncAsByte(b);
-		if (b != 0xff)
+		if (s.isLoading() && b != 0xff)
 			_objectSprites.push_back(SpriteResourceEntry(b));
 	}
 	for (uint i = 0; i < 16; ++i) {
 		b = (i >= _monsterSprites.size()) ? 0xff : _monsterSprites[i]._spriteId;
 		s.syncAsByte(b);
-		if (b != 0xff)
+		if (s.isLoading() && b != 0xff)
 			_monsterSprites.push_back(SpriteResourceEntry(b));
 	}
 	for (uint i = 0; i < 16; ++i) {
 		b = (i >= _wallItemSprites.size()) ? 0xff : _wallItemSprites[i]._spriteId;
 		s.syncAsByte(b);
-		if (b != 0xff)
+		if (s.isLoading() && b != 0xff)
 			_wallItemSprites.push_back(SpriteResourceEntry(b));
 	}
 
@@ -726,8 +760,7 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			mobStruct._direction = _objects[i]._direction;
 			mobStruct.synchronize(s);
 		}
-		mobStruct._pos.x = mobStruct._pos.y = -1;
-		mobStruct._id = 0xff;
+		mobStruct.endOfList();
 		mobStruct.synchronize(s);
 
 		// Save monsters
@@ -737,13 +770,13 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			mobStruct._direction = DIR_NORTH;
 			mobStruct.synchronize(s);
 		}
-		mobStruct._pos.x = mobStruct._pos.y = -1;
-		mobStruct._id = 0xff;
+		mobStruct.endOfList();
 		mobStruct.synchronize(s);
 
 		// Save wall items
 		if (_wallItems.size() == 0) {
 			MobStruct nullStruct;
+			nullStruct._pos.x = nullStruct._pos.y = 0x80;
 			nullStruct.synchronize(s);
 		} else {
 			for (uint i = 0; i < _wallItems.size(); ++i) {
@@ -753,8 +786,7 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 				mobStruct.synchronize(s);
 			}
 		}
-		mobStruct._pos.x = mobStruct._pos.y = -1;
-		mobStruct._id = 0xff;
+		mobStruct.endOfList();
 		mobStruct.synchronize(s);
 
 	} else {
@@ -815,6 +847,43 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 	}
 }
 
+void MonsterObjectData::clearMonsterSprites() {
+	_monsterSprites.clear();
+	_monsterAttackSprites.clear();
+}
+
+void MonsterObjectData::addMonsterSprites(MazeMonster &monster) {
+	Map &map = *g_vm->_map;
+	int imgNumber = map._monsterData[monster._spriteId]._imageNumber;
+	uint idx;
+
+	// Find the sprites for the monster, loading them in if necessary
+	for (idx = 0; idx < _monsterSprites.size(); ++idx) {
+		if (_monsterSprites[idx]._spriteId == monster._spriteId) {
+			monster._sprites = &_monsterSprites[idx]._sprites;
+			break;
+		}
+	}
+	if (idx == _monsterSprites.size()) {
+		_monsterSprites.push_back(SpriteResourceEntry(monster._spriteId));
+		_monsterSprites.back()._sprites.load(Common::String::format("%03u.mon", imgNumber));
+		monster._sprites = &_monsterSprites.back()._sprites;
+	}
+
+	// Find the attack sprites for the monster, loading them in if necessary
+	for (idx = 0; idx < _monsterAttackSprites.size(); ++idx) {
+		if (_monsterAttackSprites[idx]._spriteId == monster._spriteId) {
+			monster._attackSprites = &_monsterAttackSprites[idx]._sprites;
+			break;
+		}
+	}
+	if (idx == _monsterAttackSprites.size()) {
+		_monsterAttackSprites.push_back(SpriteResourceEntry(monster._spriteId));
+		_monsterAttackSprites.back()._sprites.load(Common::String::format("%03u.att", imgNumber));
+		monster._attackSprites = &_monsterAttackSprites.back()._sprites;
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 HeadData::HeadData() {
@@ -869,6 +938,7 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 	_sideObjects = 0;
 	_sideMonsters = 0;
 	_sidePictures = 0;
+	_sideMusic = 0;
 	_isOutdoors = false;
 	_mazeDataIndex = 0;
 	_currentSteppedOn = false;
@@ -884,22 +954,22 @@ Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
 }
 
 void Map::load(int mapId) {
-	Interface &intf = *_vm->_interface;
-	Screen &screen = *_vm->_screen;
-	IndoorDrawList &indoorList = _vm->_interface->_indoorList;
-	OutdoorDrawList &outdoorList = _vm->_interface->_outdoorList;
+	EventsManager &events = *g_vm->_events;
+	FileManager &files = *g_vm->_files;
+	Interface &intf = *g_vm->_interface;
+	Party &party = *g_vm->_party;
+	Sound &sound = *g_vm->_sound;
+	IndoorDrawList &indoorList = intf._indoorList;
+	OutdoorDrawList &outdoorList = intf._outdoorList;
 
-	if (intf._falling) {
-		Window &w = screen._windows[9];
-		w.open();
-		w.writeString(Res.OOPS);
-	} else {
-		PleaseWait::show(_vm);
-	}
+	PleaseWait waitMsg(intf._falling);
+	waitMsg.show();
 
-	_vm->_party->_stepped = true;
-	_vm->_party->_mazeId = mapId;
-	_vm->_events->clearEvents();
+	intf._objNumber = 0;
+	party._stepped = true;
+	party._mazeId = mapId;
+	saveMaze();
+	events.clearEvents();
 
 	_sideObjects = 1;
 	_sideMonsters = 1;
@@ -911,6 +981,8 @@ void Map::load(int mapId) {
 	}
 
 	if (_vm->getGameID() == GType_WorldOfXeen) {
+		files.setGameCc(1);
+
 		if (!_loadDarkSide) {
 			_animationInfo.load("clouds.dat");
 			_monsterData.load("xeen.mon");
@@ -952,11 +1024,13 @@ void Map::load(int mapId) {
 				break;
 			default:
 				_animationInfo.load("dark.dat");
-				_monsterData.load("ddark.mon");
+				_monsterData.load("dark.mon");
 				_wallPicSprites.load("darkpic.dat");
 				break;
 			}
 		}
+
+		files.setGameCc(_loadDarkSide);
 	}
 
 	// Load any events for the new map
@@ -964,7 +1038,7 @@ void Map::load(int mapId) {
 
 	// Iterate through loading the given maze as well as the two successive
 	// mazes in each of the four cardinal directions
-	bool isDarkCc = _vm->getGameID() == GType_DarkSide;
+	bool isDarkCc = files._isDarkCc;
 	MazeData *mazeDataP = &_mazeData[0];
 	bool textLoaded = false;
 
@@ -978,12 +1052,13 @@ void Map::load(int mapId) {
 			Common::String datName = Common::String::format("maze%c%03d.dat",
 				(mapId >= 100) ? 'x' : '0', mapId);
 			File datFile(datName);
-			mazeDataP->synchronize(datFile);
+			XeenSerializer datSer(&datFile, nullptr);
+			mazeDataP->synchronize(datSer);
 			datFile.close();
 
 			if (isDarkCc && mapId == 50)
 				mazeDataP->setAllTilesStepped();
-			if (!isDarkCc && _vm->_party->_gameFlags[25] &&
+			if (!isDarkCc && party._gameFlags[0][25] &&
 					(mapId == 42 || mapId == 43 || mapId == 4)) {
 				mazeDataP->clearCellSurfaces();
 			}
@@ -993,9 +1068,10 @@ void Map::load(int mapId) {
 			// Handle loading text data
 			if (!textLoaded) {
 				textLoaded = true;
+
 				Common::String txtName = Common::String::format("%s%c%03d.txt",
 					isDarkCc ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
-				File fText(txtName);
+				File fText(txtName, 1);
 				char mazeName[33];
 				fText.read(mazeName, 33);
 				mazeName[32] = '\0';
@@ -1017,14 +1093,14 @@ void Map::load(int mapId) {
 				_headData.synchronize(headFile);
 				headFile.close();
 
-				if (!isDarkCc && _vm->_party->_mazeId)
+				if (!isDarkCc && party._mazeId)
 					_mobData._monsters.clear();
 
 				if (!isDarkCc && mapId == 15) {
 					if ((_mobData._monsters[0]._position.x > 31 || _mobData._monsters[0]._position.y > 31) &&
 						(_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) &&
 						(_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
-						_vm->_party->_gameFlags[56] = true;
+						party._gameFlags[0][56] = true;
 					}
 				}
 			}
@@ -1042,22 +1118,24 @@ void Map::load(int mapId) {
 	// TODO: Switch setting flags that don't seem to ever be used
 
 	// Reload the monster data for the main maze that we're loading
-	mapId = _vm->_party->_mazeId;
+	mapId = party._mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.mob",
 		(mapId >= 100) ? 'x' : '0', mapId);
-	File mobFile(filename, *_vm->_saves);
+	File mobFile(filename);
 	XeenSerializer sMob(&mobFile, nullptr);
 	_mobData.synchronize(sMob, _monsterData);
 	mobFile.close();
 
 	// Load sprites for the objects
 	for (uint i = 0; i < _mobData._objectSprites.size(); ++i) {
-		if (_vm->_party->_cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
+		files.setGameCc(_sideObjects);
+
+		if (party._cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
 				mapId == 27 && isDarkCc) {
 			_mobData._objects[29]._spriteId = 0;
 			_mobData._objects[29]._id = 8;
 			_mobData._objectSprites[i]._sprites.clear();
-		} else if (mapId == 12 && _vm->_party->_gameFlags[43] &&
+		} else if (mapId == 12 && party._gameFlags[0][43] &&
 			_mobData._objectSprites[i]._spriteId == 118 && !isDarkCc) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
@@ -1068,34 +1146,47 @@ void Map::load(int mapId) {
 		}
 
 		// Read in the object sprites
-		_mobData._objectSprites[i]._sprites.load(filename,
-			_sideObjects ? ALTSIDE_ARCHIVE : GAME_ARCHIVE);
+		_mobData._objectSprites[i]._sprites.load(filename);
 	}
 
 	// Load sprites for the monsters
 	for (uint i = 0; i < _mobData._monsterSprites.size(); ++i) {
-		ArchiveType archiveType =
-			_mobData._monsterSprites[i]._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen ?
-			ALTSIDE_ARCHIVE : GAME_ARCHIVE;
+		MonsterObjectData::SpriteResourceEntry &spr = _mobData._monsterSprites[i];
+		uint imgNumber = _monsterData[spr._spriteId]._imageNumber;
 
-		filename = Common::String::format("%03d.mon", _mobData._monsterSprites[i]._spriteId);
-		_mobData._monsterSprites[i]._sprites.load(filename, archiveType);
+		files.setGameCc((spr._spriteId == 91 && _vm->getGameID() == GType_WorldOfXeen) ?
+			0 : _sideMonsters);
+		filename = Common::String::format("%03u.mon", imgNumber);
+		_mobData._monsterSprites[i]._sprites.load(filename);
 
-		filename = Common::String::format("%03d.att", _mobData._monsterSprites[i]._spriteId);
-		_mobData._monsterSprites[i]._attackSprites.load(filename, archiveType);
+		filename = Common::String::format("%03u.att", imgNumber);
+		_mobData._monsterSprites[i]._attackSprites.load(filename);
 	}
 
 	// Load wall picture sprite resources
 	for (uint i = 0; i < _mobData._wallItemSprites.size(); ++i) {
-		filename = Common::String::format("%03d.pic", _mobData._wallItems[i]._spriteId);
-		_mobData._wallItemSprites[i]._sprites.load(filename,
-			_sidePictures ? ALTSIDE_ARCHIVE : GAME_ARCHIVE);
+		filename = Common::String::format("%03d.pic", _mobData._wallItemSprites[i]._spriteId);
+		_mobData._wallItemSprites[i]._sprites.load(filename, _sidePictures);
 	}
+
+	files.setGameCc(isDarkCc);
 
 	// Handle loading miscellaneous sprites for the map
 	if (_isOutdoors) {
-		warning("TODO");	// Sound loading
+		// Start playing relevant music
+		sound._musicSide = isDarkCc;
+		Common::String musName;
 
+		if (_vm->_files->_isDarkCc) {
+			int randIndex = _vm->getRandomNumber(6);
+			musName = MUSIC_FILES2[_mazeData->_wallKind][randIndex];
+		} else {
+			musName = "outdoors.m";
+		}
+		if (musName != sound._currentMusic)
+			sound.playSong(musName, 207);
+
+		// Load sprite sets needed for scene rendering
 		_groundSprites.load("water.out");
 		_tileSprites.load("outdoor.til");
 		outdoorList._sky1._sprites = &_skySprites[0];
@@ -1115,8 +1206,25 @@ void Map::load(int mapId) {
 				_surfaceSprites[i].load(Res.SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 	} else {
-		warning("TODO");	// Sound loading
+		if (files._isDarkCc && (mapId == 125 || mapId == 126 || mapId == 127))
+			files.setGameCc(0);
+		sound._musicSide = files._isDarkCc;
 
+		// Start playing relevant music
+		const int MUS_INDEXES[] = { 1, 2, 3, 4, 3, 5 };
+		Common::String musName;
+
+		_sideMusic = isDarkCc;
+		if (isDarkCc) {
+			int randIndex = _vm->getRandomNumber(6);
+			musName = MUSIC_FILES2[MUS_INDEXES[_mazeData->_wallKind]][randIndex];
+		} else {
+			musName = MUSIC_FILES1[MUS_INDEXES[_mazeData->_wallKind]];
+		}
+		if (musName != sound._currentMusic)
+			sound.playSong(musName, 207);
+
+		// Load sprite sets needed for scene rendering
 		_skySprites[1].load(Common::String::format("%s.sky",
 			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
 		_groundSprites.load(Common::String::format("%s.gnd",
@@ -1211,14 +1319,18 @@ void Map::load(int mapId) {
 	}
 
 	loadSky();
+
+	files.setGameCc(isDarkCc);
 }
 
 int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 	Common::Point pos = pt;
 	int mapId = _vm->_party->_mazeId;
 
-	if (pt.x < -16 || pt.y < -16 || pt.x >= 32 || pt.y >= 32)
-		error("Invalid coordinate");
+	if (pt.x < -16 || pt.y < -16 || pt.x >= 32 || pt.y >= 32) {
+		_currentWall = INVALID_CELL;
+		return INVALID_CELL;
+	}
 
 	// Find the correct maze data out of the set to use
 	_mazeDataIndex = 0;
@@ -1289,7 +1401,7 @@ void Map::loadEvents(int mapId) {
 	// Load events
 	Common::String filename = Common::String::format("maze%c%03d.evt",
 		(mapId >= 100) ? 'x' : '0', mapId);
-	File fEvents(filename, *_vm->_saves);
+	File fEvents(filename);
 	XeenSerializer sEvents(&fEvents, nullptr);
 	_events.synchronize(sEvents);
 	fEvents.close();
@@ -1304,26 +1416,75 @@ void Map::loadEvents(int mapId) {
 	fText.close();
 }
 
+void Map::saveEvents() {
+	// Save eents
+	int mapId = _mazeData[0]._mazeId;
+	Common::String filename = Common::String::format("maze%c%03d.evt",
+		(mapId >= 100) ? 'x' : '0', mapId);
+	OutFile fEvents(filename);
+	XeenSerializer sEvents(nullptr, &fEvents);
+	_events.synchronize(sEvents);
+	fEvents.finalize();
+}
+
+void Map::saveMap() {
+	FileManager &files = *g_vm->_files;
+	Party &party = *g_vm->_party;
+	int mapId = _mazeData[0]._mazeId;
+	if (!files._isDarkCc && mapId == 85)
+		return;
+
+	// Save the primary maze
+	Common::String datName = Common::String::format("maze%c%03d.dat", (mapId >= 100) ? 'x' : '0', mapId);
+	OutFile datFile(datName);
+	XeenSerializer datSer(nullptr, &datFile);
+	_mazeData[0].synchronize(datSer);
+	datFile.finalize();
+
+	if (!files._isDarkCc && mapId == 15) {
+		for (uint idx = 0; idx < MIN(_mobData._monsters.size(), (uint)3); ++idx) {
+			MazeMonster &mon = _mobData._monsters[idx];
+			if (mon._position.x > 31 || mon._position.y > 31) {
+				party._gameFlags[0][56] = true;
+				break;
+			}
+		}
+	}
+
+	if (!_isOutdoors) {
+		// Iterate through the surrounding mazes
+		for (int mazeIndex = 1; mazeIndex < 9; ++mazeIndex) {
+			mapId = _mazeData[mazeIndex]._mazeId;
+			if (mapId == 0)
+				continue;
+
+			datName = Common::String::format("maze%c%03d.dat", (mapId >= 100) ? 'x' : '0', mapId);
+			OutFile datFile2(datName);
+			XeenSerializer datSer2(nullptr, &datFile2);
+			_mazeData[mazeIndex].synchronize(datSer2);
+			datFile2.finalize();
+		}
+	}
+}
+
+void Map::saveMonsters() {
+	int mapId = _mazeData[0]._mazeId;
+	Common::String filename = Common::String::format("maze%c%03d.mob",
+		(mapId >= 100) ? 'x' : '0', mapId);
+	OutFile fMob(filename);
+	XeenSerializer sMob(nullptr, &fMob);
+	_mobData.synchronize(sMob, _monsterData);
+	fMob.finalize();
+}
+
 void Map::saveMaze() {
 	int mazeNum = _mazeData[0]._mazeNumber;
 	if (!mazeNum || (mazeNum == 85 && !_vm->_files->_isDarkCc))
 		return;
 
-	// Save the event data
-	Common::String filename = Common::String::format("maze%c%03d.evt",
-		(mazeNum >= 100) ? 'x' : '0', mazeNum);
-	OutFile fEvents(_vm, filename);
-	XeenSerializer sEvents(nullptr, &fEvents);
-	_events.synchronize(sEvents);
-	fEvents.finalize();
-
-	// Save the maze MOB file
-	filename = Common::String::format("maze%c%03d.mob",
-		(mazeNum >= 100) ? 'x' : '0', mazeNum);
-	OutFile fMob(_vm, filename);
-	XeenSerializer sMob(nullptr, &fEvents);
-	_mobData.synchronize(sMob, _monsterData);
-	fEvents.finalize();
+	saveEvents();
+	saveMap();
+	saveMonsters();
 }
 
 void Map::cellFlagLookup(const Common::Point &pt) {
@@ -1447,11 +1608,11 @@ int Map::getCell(int idx) {
 				_currentWall = INVALID_CELL;
 				return INVALID_CELL;
 			}
-
-			_mazeDataIndex = 0;
-			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-				++_mazeDataIndex;
 		}
+
+		_mazeDataIndex = 0;
+		while (_mazeData[_mazeDataIndex]._mazeId != mapId)
+			++_mazeDataIndex;
 	}
 
 	if (pt.x & 16) {
@@ -1490,10 +1651,10 @@ int Map::getCell(int idx) {
 			++_mazeDataIndex;
 	}
 
+	assert(pt.x >= 0 && pt.x < 16 && pt.y >= 0 && pt.y < 16);
 	int wallData = _mazeData[_mazeDataIndex]._wallData[pt.y][pt.x]._data;
 	if (_isOutdoors) {
 		if (mapId) {
-			// TODO: tile is set to word of (wallLayers >> 8) && 0xff? Makes no sense
 			_currentTile = (wallData >> 8) & 0xFF;
 			_currentWall = (wallData >> 4) & 0xF;
 			_currentSurfaceId = wallData & 0xF;
@@ -1506,11 +1667,7 @@ int Map::getCell(int idx) {
 		if (!mapId)
 			return 0;
 
-		if (pt.x > 31 || pt.y > 31)
-			_currentSurfaceId = 7;
-		else
-			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
-
+		_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pt.y][pt.x]._surfaceId;
 		_currentWall = wallData;
 		return (_currentWall >> Res.WALL_SHIFTS[dir][idx]) & 0xF;
 	}
@@ -1534,7 +1691,7 @@ void Map::getNewMaze() {
 
 	// Get the correct map to use from the cached list
 	_mazeDataIndex = 0;
-	while (_mazeData[_mazeDataIndex]._mazeId == mapId)
+	while (_mazeData[_mazeDataIndex]._mazeId != mapId)
 		++_mazeDataIndex;
 
 	// Adjust Y and X to be in the 0-15 range, and on the correct surrounding

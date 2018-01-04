@@ -24,11 +24,11 @@
 #define XEEN_SAVES_H
 
 #include "common/scummsys.h"
-#include "common/memstream.h"
 #include "common/savefile.h"
+#include "common/serializer.h"
+#include "common/str.h"
 #include "graphics/surface.h"
 #include "xeen/party.h"
-#include "xeen/files.h"
 
 namespace Xeen {
 
@@ -41,45 +41,31 @@ struct XeenSavegameHeader {
 	int _totalFrames;
 };
 
-class XeenEngine;
-class SavesManager;
-
-class OutFile : public Common::MemoryWriteStreamDynamic {
+class SavesManager {
 private:
-	XeenEngine *_vm;
-	Common::String _filename;
-public:
-	OutFile(XeenEngine *vm, const Common::String filename);
-
-	void finalize();
-};
-
-class SavesManager: public BaseCCArchive {
-	friend class OutFile;
+	Common::String _targetName;
 private:
-	XeenEngine *_vm;
-	Party &_party;
-	byte *_data;
-	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic > _newData;
-
-	void load(Common::SeekableReadStream *stream);
-public:
 	/**
-	 * Synchronizes a boolean array as a bitfield set
+	 * Synchronize savegame data
 	 */
-	static void syncBitFlags(Common::Serializer &s, bool *startP, bool *endP);
+	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Support method that generates a savegame name
+	 * @param slot		Slot number
+	 */
+	Common::String generateSaveName(int slot);
+
+	/**
+	 * Initializes a new savegame
+	 */
+	void reset();
 public:
 	bool _wonWorld;
 	bool _wonDarkSide;
 public:
-	SavesManager(XeenEngine *vm, Party &party);
-
+	SavesManager(const Common::String &targetName);
 	~SavesManager();
-
-	/**
-	 * Sets up the dynamic data for the game for a new game
-	 */
-	void reset();
 
 	void readCharFile();
 
@@ -87,8 +73,25 @@ public:
 
 	void saveChars();
 
-	// Archive implementation
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+	/**
+	 * Read in a savegame header
+	 */
+	static bool readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header);
+
+	/**
+	 * Write out a savegame header
+	 */
+	void writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header);
+
+	/**
+	 * Load a savegame
+	 */
+	Common::Error loadGameState(int slot);
+
+	/**
+	 * Save the game
+	 */
+	Common::Error saveGameState(int slot, const Common::String &desc);
 };
 
 } // End of namespace Xeen

@@ -44,17 +44,22 @@ public:
 		_dialogueId(0), _talkEndState(0), _done(0) {}
 	TTtalker(CTrueTalkManager *owner, CTrueTalkNPC *npc) :
 		_owner(owner), _npc(npc), _dialogueId(0), _talkEndState(0), _done(0) {}
-	~TTtalker();
 
 	/**
 	 * Start a new speech
 	 */
-	void speechStarted(const CString &dialogueStr, uint dialogueId, uint speechHandle);
+	void speechStarted(const CString &dialogueStr, uint dialogueId, uint speechDuration);
 
 	/**
 	 * End the speech
 	 */
 	void endSpeech(int val);
+	
+	/**
+	 * Called when a speech is finished, to signal to the associated character
+	 * that the speech is over
+	 */
+	void speechEnded();
 };
 
 class TTtalkerList : public List<TTtalker> {

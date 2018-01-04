@@ -125,29 +125,63 @@ void SdlMixerManager::init() {
 	startAudio();
 }
 
+static uint32 roundDownPowerOfTwo(uint32 samples) {
+	// Public domain code from Sean Eron Anderson
+	// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+	uint32 rounded = samples;
+	--rounded;
+	rounded |= rounded >> 1;
+	rounded |= rounded >> 2;
+	rounded |= rounded >> 4;
+	rounded |= rounded >> 8;
+	rounded |= rounded >> 16;
+	++rounded;
+
+	if (rounded != samples)
+		rounded >>= 1;
+
+	return rounded;
+}
+
 SDL_AudioSpec SdlMixerManager::getAudioSpec(uint32 outputRate) {
 	SDL_AudioSpec desired;
 
-	// Determine the desired output sampling frequency.
-	uint32 samplesPerSec = 0;
-	if (ConfMan.hasKey("output_rate"))
-		samplesPerSec = ConfMan.getInt("output_rate");
-	if (samplesPerSec <= 0)
-		samplesPerSec = outputRate;
+	const char *const appDomain = Common::ConfigManager::kApplicationDomain;
 
-	// Determine the sample buffer size. We want it to store enough data for
-	// at least 1/16th of a second (though at most 8192 samples). Note
-	// that it must be a power of two. So e.g. at 22050 Hz, we request a
-	// sample buffer size of 2048.
-	uint32 samples = 8192;
-	while (samples * 16 > samplesPerSec * 2)
-		samples >>= 1;
+	// There was once a GUI option for this, but it was never used;
+	// configurability is retained for advanced users only who wish to modify
+	// their ScummVM config file directly
+	uint32 freq = 0;
+	if (ConfMan.hasKey("output_rate", appDomain))
+		freq = ConfMan.getInt("output_rate", appDomain);
+	if (freq <= 0)
+		freq = outputRate;
+
+	// One SDL "sample" is a complete audio frame (i.e. all channels = 1 sample)
+	uint32 samples = 0;
+
+	// Different games and host systems have different performance
+	// characteristics which are not easily measured, so allow advanced users to
+	// tweak their audio buffer size if they are experience excess latency or
+	// drop-outs by setting this value in their ScummVM config file directly
+	if (ConfMan.hasKey("audio_buffer_size", appDomain))
+		samples = ConfMan.getInt("audio_buffer_size", appDomain);
+
+	// 256 is an arbitrary minimum; 32768 is the largest power-of-two value
+	// representable with uint16
+	if (samples < 256 || samples > 32768)
+		// By default, hold no more than 45ms worth of samples to avoid
+		// perceptable audio lag (ATSC IS-191). For reference, DOSBox (as of Sep
+		// 2017) uses a buffer size of 1024 samples by default for a 16-bit
+		// stereo 44kHz mixer, which happens to be the next lowest power of two
+		// below 45ms.
+		samples = freq / (1000.0 / 45);
 
 	memset(&desired, 0, sizeof(desired));
-	desired.freq = samplesPerSec;
+	desired.freq = freq;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
-	desired.samples = (uint16)samples;
+	desired.samples = roundDownPowerOfTwo(samples);
 	desired.callback = sdlCallback;
 	desired.userdata = this;
 

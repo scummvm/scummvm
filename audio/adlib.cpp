@@ -1796,7 +1796,7 @@ void MidiDriver_ADLIB::adlibSetParam(int channel, byte param, int value, bool pr
 			value -= 15;
 		else
 			value -= 383;
-		value <<= 4;
+		value *= 16;
 		_channelTable2[channel] = value;
 		adlibPlayNote(channel, _curNotTable[channel] + value);
 		return;

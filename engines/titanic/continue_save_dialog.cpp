@@ -21,7 +21,11 @@
  */
 
 #include "titanic/continue_save_dialog.h"
+#include "titanic/support/movie_manager.h"
 #include "titanic/titanic.h"
+#include "common/error.h"
+#include "common/str-array.h"
+#include "graphics/screen.h"
 
 namespace Titanic {
 
@@ -74,6 +78,9 @@ int CContinueSaveDialog::show() {
 	// Event loop waiting for selection
 	while (!g_vm->shouldQuit() && _selectedSlot == -999) {
 		g_vm->_events->pollEventsAndWait();
+
+		if (g_vm->_loadSaveSlot != -1)
+			_selectedSlot = g_vm->_loadSaveSlot;
 	}
 	if (g_vm->shouldQuit())
 		_selectedSlot = -2;
@@ -96,6 +103,8 @@ void CContinueSaveDialog::render() {
 	Graphics::Screen &screen = *g_vm->_screen;
 	screen.clear();
 	screen.blitFrom(_backdrop, Common::Point(48, 22));
+	CScreenManager::_screenManagerPtr->setSurfaceBounds(SURFACE_PRIMARY,
+		Rect(48, 22, 48 + _backdrop.w, 22 + _backdrop.h));
 
 	if (_evilTwinShown)
 		screen.blitFrom(_evilTwin, Common::Point(78, 59));
@@ -174,14 +183,30 @@ void CContinueSaveDialog::mouseMove(const Point &mousePos) {
 }
 
 void CContinueSaveDialog::leftButtonDown(const Point &mousePos) {
-	_mouseDown = true;
-	mouseMove(mousePos);
+	Rect eye1(188, 190, 192, 195), eye2(209, 192, 213, 197);
+
+	if (g_vm->_events->isSpecialPressed(MK_SHIFT) &&		
+			(eye1.contains(mousePos) || eye2.contains(mousePos))) {
+		// Show the Easter Egg "Evil Twin"
+		_evilTwinShown = true;
+		render();
+	} else {
+		// Standard mouse handling
+		_mouseDown = true;
+		mouseMove(mousePos);
+	}
 }
 
 void CContinueSaveDialog::leftButtonUp(const Point &mousePos) {
 	Rect restoreRect(RESTORE_X, RESTORE_Y, RESTORE_X + _restoreU.w, RESTORE_Y + _restoreU.h);
 	Rect startRect(START_X, START_Y, START_X + _startU.w, START_Y + _startU.h);
 	_mouseDown = false;
+
+	if (_evilTwinShown) {
+		_evilTwinShown = false;
+		render();
+		return;
+	}
 
 	if (restoreRect.contains(mousePos)) {
 		// Flag to exit dialog and load highlighted slot. If no slot was
@@ -200,22 +225,6 @@ void CContinueSaveDialog::leftButtonUp(const Point &mousePos) {
 				break;
 			}
 		}
-	}
-}
-
-void CContinueSaveDialog::rightButtonDown(const Point &mousePos) {
-	Rect eye1(188, 190, 192, 195), eye2(209, 192, 213, 197);
-
-	if (eye1.contains(mousePos) || eye2.contains(mousePos)) {
-		_evilTwinShown = true;
-		render();
-	}
-}
-
-void CContinueSaveDialog::rightButtonUp(const Point &mousePos) {
-	if (_evilTwinShown) {
-		_evilTwinShown = false;
-		render();
 	}
 }
 

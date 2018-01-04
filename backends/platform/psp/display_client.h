@@ -85,18 +85,19 @@ public:
 	void clear();
 	void setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::Type bufferType, bool swapRedBlue = false);
 	void setNumOfEntries(uint32 num) {	_numOfEntries = num; }
-	uint32 getNumOfEntries() { return _numOfEntries; }
-	uint32 getSizeInBytes() { return _pixelFormat.pixelsToBytes(_numOfEntries); }
+	uint32 getNumOfEntries() const { return _numOfEntries; }
+	uint32 getSizeInBytes() const { return _pixelFormat.pixelsToBytes(_numOfEntries); }
 	void set(byte *values) { setPartial(values, 0, _numOfEntries); }
 	void setPartial(const byte *colors, uint start, uint num, bool supportsAlpha = false);
-	void getPartial(byte *colors, uint start, uint num);
-	uint32 getRawColorAt(uint32 position);
-	uint32 getRGBAColorAt(uint32 position);
+	void getPartial(byte *colors, uint start, uint num) const;
+	uint32 getRawColorAt(uint32 position) const;
+	uint32 getRGBAColorAt(uint32 position) const;
 	void setSingleColorRGBA(uint32 num, byte r, byte g, byte b, byte a);
 	void setColorPositionAlpha(uint32 position, bool alpha);
+	const byte *getRawValues() const { return _values; }
 	byte *getRawValues() { return _values; }
-	bool isAllocated() { return (_values != 0); }
-	PSPPixelFormat::Type getPixelFormat() { return _pixelFormat.format; }
+	bool isAllocated() const { return (_values != 0); }
+	PSPPixelFormat::Type getPixelFormat() const { return _pixelFormat.format; }
 	void print(uint32 numToPrint = 0);					// print to screen
 
 protected:
@@ -127,19 +128,20 @@ public:
 	void setPixelFormat(PSPPixelFormat::Type type, bool swapRedBlue = false);
 
 	// getters
-	uint32 getWidth() { return _width; }
-	uint32 getWidthInBytes() { return _pixelFormat.pixelsToBytes(getWidth()); }
-	uint32 getHeight() { return _height; }
-	uint32 getSourceWidth() { return _sourceSize.width; }
-	uint32 getSourceWidthInBytes() { return _pixelFormat.pixelsToBytes(_sourceSize.width); }
-	uint32 getSourceHeight() { return _sourceSize.height; }
-	uint32 getTextureWidth() { return _textureSize.width; }
-	uint32 getTextureHeight() { return _textureSize.height; }
-	PSPPixelFormat::Type getPixelFormat() { return _pixelFormat.format; }
-	uint32 getBitsPerPixel() { return _pixelFormat.bitsPerPixel; }
-	uint32 getBytesPerPixel() { return getBitsPerPixel() >> 3; } /* won't work for 4-bit */
+	uint32 getWidth() const { return _width; }
+	uint32 getWidthInBytes() const { return _pixelFormat.pixelsToBytes(getWidth()); }
+	uint32 getHeight() const { return _height; }
+	uint32 getSourceWidth() const { return _sourceSize.width; }
+	uint32 getSourceWidthInBytes() const { return _pixelFormat.pixelsToBytes(_sourceSize.width); }
+	uint32 getSourceHeight() const { return _sourceSize.height; }
+	uint32 getTextureWidth() const { return _textureSize.width; }
+	uint32 getTextureHeight() const { return _textureSize.height; }
+	PSPPixelFormat::Type getPixelFormat() const { return _pixelFormat.format; }
+	uint32 getBitsPerPixel() const { return _pixelFormat.bitsPerPixel; }
+	uint32 getBytesPerPixel() const { return getBitsPerPixel() >> 3; } /* won't work for 4-bit */
+	const byte *getPixels() const { return _pixels; }
 	byte *getPixels() { return _pixels; }
-	uint32 getSizeInBytes() { return _pixelFormat.pixelsToBytes(_width * _height); }
+	uint32 getSizeInBytes() const { return _pixelFormat.pixelsToBytes(_width * _height); }
 
 	bool hasPalette();
 	void copyFromArray(const byte *buffer, int pitch);
@@ -147,7 +149,7 @@ public:
 	void copyToArray(byte *dst, int pitch);
 	bool allocate(bool inVram = false);
 	void deallocate();
-	bool isAllocated() { return (_pixels != 0) ; }
+	bool isAllocated() const { return (_pixels != 0) ; }
 	void clear();
 	void flipNibbles();		// To handle peculiarities of PSP's 4 bit textures
 	static uint32 scaleUpToPowerOfTwo(uint32 size);

@@ -143,8 +143,6 @@ struct KernelFunction {
 	const SciWorkaroundEntry *workarounds;
 	KernelSubFunction *subFunctions;
 	uint16 subFunctionCount;
-	bool debugLogging;
-	bool debugBreakpoint;
 };
 
 class Kernel {
@@ -230,11 +228,6 @@ public:
 	 * name table of the resource (the format changed between version 0 and 1).
 	 */
 	void loadKernelNames(GameFeatures *features);
-
-	/**
-	 * Sets debug flags for a kernel function
-	 */
-	bool debugSetFunction(const char *kernelName, int logging, int breakpoint);
 
 private:
 	/**
@@ -447,6 +440,8 @@ reg_t kDoAudioPreload(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioFade(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioHasSignal(EngineState *s, int argc, reg_t *argv);
 reg_t kDoAudioSetLoop(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPan(EngineState *s, int argc, reg_t *argv);
+reg_t kDoAudioPanOff(EngineState *s, int argc, reg_t *argv);
 
 reg_t kRobot(EngineState *s, int argc, reg_t *argv);
 reg_t kRobotOpen(EngineState *s, int argc, reg_t *argv);
@@ -515,7 +510,6 @@ reg_t kStringNew(EngineState *s, int argc, reg_t *argv);
 reg_t kStringGetChar(EngineState *s, int argc, reg_t *argv);
 reg_t kStringFree(EngineState *s, int argc, reg_t *argv);
 reg_t kStringCompare(EngineState *s, int argc, reg_t *argv);
-reg_t kStringGetData(EngineState *s, int argc, reg_t *argv);
 reg_t kStringLength(EngineState *s, int argc, reg_t *argv);
 reg_t kStringFormat(EngineState *s, int argc, reg_t *argv);
 reg_t kStringFormatAt(EngineState *s, int argc, reg_t *argv);
@@ -559,19 +553,12 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapDrawLine(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapDrawView(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapDrawBitmap(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapInvert(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapSetOrigin(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapCopyPixels(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapClone(EngineState *s, int argc, reg_t *argv);
 reg_t kBitmapGetInfo(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapScale(EngineState *s, int argc, reg_t *argv);
-reg_t kBitmapCreateFromUnknown(EngineState *s, int argc, reg_t *argv);
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv);
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv);
@@ -643,6 +630,9 @@ reg_t kCelInfo(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfoGetOriginX(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfoGetOriginY(EngineState *s, int argc, reg_t *argv);
 reg_t kCelInfoGetPixel(EngineState *s, int argc, reg_t *argv);
+reg_t kCelLink(EngineState *s, int argc, reg_t *argv);
+reg_t kCelLinkGetX(EngineState *s, int argc, reg_t *argv);
+reg_t kCelLinkGetY(EngineState *s, int argc, reg_t *argv);
 
 reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv);
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv);
@@ -653,8 +643,10 @@ reg_t kAddLine(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv);
 reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv);
 
+#ifdef ENABLE_SCI32_MAC
 // Phantasmagoria Mac Special Kernel Function
 reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv);
+#endif
 
 // SCI3 Kernel functions
 reg_t kPlayDuck(EngineState *s, int argc, reg_t *argv);

@@ -71,8 +71,7 @@ bool CPetRealLife::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 }
 
 bool CPetRealLife::KeyCharMsg(CKeyCharMsg *msg) {
-	_glyphs.KeyCharMsg(msg->_key);
-	return true;
+	return _glyphs.KeyCharMsg(msg->_key);
 }
 
 bool CPetRealLife::VirtualKeyCharMsg(CVirtualKeyCharMsg *msg) {
@@ -124,6 +123,12 @@ void CPetRealLife::addButton(CPetGlyph *glyph) {
 	}
 }
 
-
+void CPetRealLife::syncSoundSettings() {
+	for (CPetGlyphs::iterator i = _glyphs.begin(); i != _glyphs.end(); ++i) {
+		CPetSound *sound = dynamic_cast<CPetSound *>(*i);
+		if (sound)
+			sound->setSliders();
+	}
+}
 
 } // End of namespace Titanic

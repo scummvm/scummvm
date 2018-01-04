@@ -21,6 +21,7 @@
  */
 
 #include "titanic/moves/exit_bridge.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -48,7 +49,7 @@ void CExitBridge::load(SimpleFile *file) {
 bool CExitBridge::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (getGameManager()) {
 		changeView(_destination);
-		playSound("a#53.wav");
+		playSound(TRANSLATE("a#53.wav", "a#46.wav"));
 		changeView(_viewName);
 	}
 

@@ -37,6 +37,7 @@ struct EngineState;
  *
  * Version - new/changed feature
  * =============================
+ *      44 - GK2+SCI3 audio resource locks
  *      43 - stop saving SCI3 mustSetViewVisible array
  *      42 - SCI3 robots and VM objects
  *      41 - palette support for newer SCI2.1 games; stable SCI2/2.1 save games
@@ -68,7 +69,7 @@ struct EngineState;
  */
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 43,
+	CURRENT_SAVEGAME_VERSION = 44,
 	MINIMUM_SAVEGAME_VERSION = 14
 #ifdef ENABLE_SCI32
 	,
@@ -117,8 +118,13 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *save);
 /**
  * Read the header from a savegame.
  */
-bool get_savegame_metadata(Common::SeekableReadStream* stream, SavegameMetadata* meta);
+bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata &meta);
 
+/**
+ * Write the header to a savegame.
+ */
+void set_savegame_metadata(Common::Serializer &ser, Common::WriteStream *fh, const Common::String &savename, const Common::String &version);
+void set_savegame_metadata(Common::WriteStream *fh, const Common::String &savename, const Common::String &version);
 
 } // End of namespace Sci
 

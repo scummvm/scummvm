@@ -55,6 +55,8 @@ private:
 	void setColor(uint rgb);
 
 	void pixelToRGB(uint pixel, uint *rgb);
+
+	Graphics::PixelFormat getPixelFormat() const;
 public:
 	int _field0;
 	int _width;

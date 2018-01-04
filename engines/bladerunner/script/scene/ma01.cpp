@@ -26,14 +26,14 @@ namespace BladeRunner {
 
 void SceneScriptMA01::InitializeScene() {
 	Setup_Scene_Information(381.0f, 0.0f, 54.0f, 992);
-	if (Game_Flag_Query(250)) {
+	if (Game_Flag_Query(kFlagMA01Locked)) {
 		Setup_Scene_Information(381.0f, 0.0f, 54.0f, 992);
 	}
-	if (Game_Flag_Query(38)) {
+	if (Game_Flag_Query(kFlagMA06toMA01)) {
 		Setup_Scene_Information(1446.0f, 0.0f, -725.0f, 660);
 	}
 	Scene_Exit_Add_2D_Exit(0, 328, 132, 426, 190, 0);
-	if (Game_Flag_Query(250)) {
+	if (Game_Flag_Query(kFlagMA01Locked)) {
 		Scene_Exit_Add_2D_Exit(1, 234, 240, 398, 328, 2);
 	}
 	Ambient_Sounds_Add_Looping_Sound(101, 90, 0, 1);
@@ -44,13 +44,13 @@ void SceneScriptMA01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(375, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(376, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 10, 70, 50, 100, 0, 0, -101, -101, 0, 0);
-	if (Game_Flag_Query(38)) {
+	if (Game_Flag_Query(kFlagMA06toMA01)) {
 		Scene_Loop_Set_Default(1);
-		Game_Flag_Reset(38);
+		Game_Flag_Reset(kFlagMA06toMA01);
 	} else {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Game_Flag_Set(273);
-		Scene_Loop_Start_Special(0, 0, 0);
+		Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		Scene_Loop_Set_Default(1);
 	}
 	if (Game_Flag_Query(409)) {
@@ -95,9 +95,9 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 				Scene_Exits_Disable();
 			}
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 12, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Game_Flag_Set(37);
+			Game_Flag_Set(kFlagMA01toMA06);
 			Set_Enter(52, 52);
 		}
 		return true;
@@ -114,71 +114,71 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 			Game_Flag_Reset(177);
 			Game_Flag_Reset(258);
 			Game_Flag_Reset(178);
-			int spinnerDest = Spinner_Interface_Choose_Dest(3, 0);
+			int spinnerDest = Spinner_Interface_Choose_Dest(3, false);
 
 			switch (spinnerDest) {
-			case 0:
+			case kSpinnerDestinationPoliceStation:
 				Game_Flag_Set(178);
-				Game_Flag_Reset(250);
+				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(251);
 				Set_Enter(61, 65);
-				Scene_Loop_Start_Special(1, 4, 1);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
-			case 2:
+			case kSpinnerDestinationRuncitersAnimals:
 				Game_Flag_Set(182);
-				Game_Flag_Reset(250);
+				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(249);
 				Set_Enter(69, 78);
-				Scene_Loop_Start_Special(1, 4, 1);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
-			case 3:
+			case kSpinnerDestinationChinatown:
 				Game_Flag_Set(176);
-				Game_Flag_Reset(250);
+				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(248);
 				Set_Enter(4, 13);
-				Scene_Loop_Start_Special(1, 4, 1);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
-			case 5:
+			case kSpinnerDestinationTyrellBuilding:
 				Game_Flag_Set(261);
-				Game_Flag_Reset(250);
+				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(307);
 				Set_Enter(17, 82);
-				Scene_Loop_Start_Special(1, 4, 1);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
-			case 4:
+			case kSpinnerDestinationAnimoidRow:
 				Game_Flag_Set(180);
-				Game_Flag_Reset(250);
+				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(252);
 				Set_Enter(0, 0);
-				Scene_Loop_Start_Special(1, 4, 1);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
-			case 6:
+			case kSpinnerDestinationDNARow:
 				Game_Flag_Set(177);
-				Game_Flag_Reset(250);
+				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(253);
 				Set_Enter(7, 25);
-				Scene_Loop_Start_Special(1, 4, 1);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
-			case 7:
+			case kSpinnerDestinationBradburyBuilding:
 				Game_Flag_Set(258);
-				Game_Flag_Reset(250);
+				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(254);
 				Set_Enter(20, 2);
-				Scene_Loop_Start_Special(1, 4, 1);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
-			case 8:
+			case kSpinnerDestinationNightclubRow:
 				Game_Flag_Set(181);
-				Game_Flag_Reset(250);
+				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(255);
 				Set_Enter(54, 54);
-				Scene_Loop_Start_Special(1, 4, 1);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
-			case 9:
+			case kSpinnerDestinationHysteriaHall:
 				Game_Flag_Set(257);
-				Game_Flag_Reset(250);
+				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(256);
 				Set_Enter(37, 34);
-				Scene_Loop_Start_Special(1, 4, 1);
+				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			default:
 				Actor_Set_Invisible(kActorMcCoy, false);

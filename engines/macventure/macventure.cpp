@@ -146,7 +146,7 @@ void MacVentureEngine::initDebugChannels() {
 
 Common::Error MacVentureEngine::run() {
 	debug("MacVenture::MacVentureEngine::init()");
-	initGraphics(kScreenWidth, kScreenHeight, true);
+	initGraphics(kScreenWidth, kScreenHeight);
 
 	_debugger = new Console(this);
 

@@ -41,7 +41,6 @@ my @subs_files = qw(
 	dists/iphone/Info.plist
 	dists/ios7/Info.plist
 	dists/irix/scummvm.spec
-	dists/win32/scummvm.nsi
 	dists/wii/meta.xml
 	dists/android/AndroidManifest.xml
 	dists/openpandora/PXML.xml
@@ -50,7 +49,9 @@ my @subs_files = qw(
 	dists/openpandora/index.html
 	dists/gph/README-GPH
 	dists/gph/scummvm.ini
+	dists/riscos/!Boot,feb
 	backends/platform/psp/README.PSP
+	snapcraft.yaml
 	);
 
 my %subs = (

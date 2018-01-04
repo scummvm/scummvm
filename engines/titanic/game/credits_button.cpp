@@ -21,6 +21,7 @@
  */
 
 #include "titanic/game/credits_button.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -50,7 +51,7 @@ bool CCreditsButton::MouseButtonUpMsg(CMouseButtonUpMsg *msg) {
 
 bool CCreditsButton::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	if (_fieldE0) {
-		playSound("a#20.wav");
+		playSound(TRANSLATE("a#20.wav", "a#15.wav"));
 		CSignalObject signalMsg;
 		signalMsg._numValue = 1;
 		signalMsg.execute("CreditsPlayer");

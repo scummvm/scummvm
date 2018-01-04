@@ -22,27 +22,34 @@
 
 #include "bladerunner/script/script.h"
 
-#include "bladerunner/bladerunner.h"
-
 #include "bladerunner/actor.h"
 #include "bladerunner/actor_combat.h"
 #include "bladerunner/adq.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/combat.h"
+#include "bladerunner/dialogue_menu.h"
+#include "bladerunner/elevator.h"
 #include "bladerunner/gameflags.h"
 #include "bladerunner/gameinfo.h"
 #include "bladerunner/items.h"
 #include "bladerunner/item_pickup.h"
 #include "bladerunner/movement_track.h"
+#include "bladerunner/music.h"
+#include "bladerunner/overlays.h"
+#include "bladerunner/regions.h"
+#include "bladerunner/set.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/set_effects.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
+#include "bladerunner/spinner.h"
+#include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/waypoints.h"
@@ -417,12 +424,14 @@ int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
 bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int distance, int a4, bool run) {
 	_vm->gameWaitForActive();
 
-	if (actorId == _vm->_walkingActorId) {
+	if (_vm->_walkingActorId == actorId) {
 		run = true;
 	}
 	_vm->_playerActorIdle = false;
 	bool isRunning;
+
 	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, distance, a4, run, true, &isRunning);
+
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
@@ -430,8 +439,8 @@ bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int dis
 	if (isRunning == 1) {
 		_vm->_walkingActorId = actorId;
 	}
-	Global_Variable_Set(37, actorId);
-	Global_Variable_Set(38, isRunning);
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
 	return result;
 }
 
@@ -443,7 +452,9 @@ bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4
 	}
 	_vm->_playerActorIdle = false;
 	bool isRunning;
+
 	bool result = _vm->_actors[actorId]->loopWalkToItem(itemId, a3, a4, run, true, &isRunning);
+
 	if (_vm->_playerActorIdle == 1) {
 		result = true;
 		_vm->_playerActorIdle = false;
@@ -451,8 +462,8 @@ bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int a3, int a4
 	if (isRunning == 1) {
 		_vm->_walkingActorId = actorId;
 	}
-	Global_Variable_Set(37, actorId);
-	Global_Variable_Set(38, isRunning);
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
 	return result;
 }
 
@@ -464,7 +475,9 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 	}
 	_vm->_playerActorIdle = false;
 	bool isRunning;
+
 	bool result = _vm->_actors[actorId]->loopWalkToSceneObject(objectName, destinationOffset, a4, run, true, &isRunning);
+
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
@@ -472,52 +485,79 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 	if (isRunning == 1) {
 		_vm->_walkingActorId = actorId;
 	}
-	Global_Variable_Set(37, actorId);
-	Global_Variable_Set(38, isRunning);
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
 	return result;
 }
 
 bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, int a4, bool run) {
-	//TODO
-	warning("Loop_Actor_Walk_To_Waypoint(%d, %d, %d, %d, %d)", actorId, waypointId, destinationOffset, a4, run);
-	return false;
+	_vm->gameWaitForActive();
+
+	if (_vm->_walkingActorId == actorId) {
+		run = true;
+	}
+	_vm->_playerActorIdle = false;
+	bool isRunning;
+
+	bool result = _vm->_actors[actorId]->loopWalkToWaypoint(waypointId, destinationOffset, a4, run, true, &isRunning);
+
+	if (_vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+	if (isRunning == 1) {
+		_vm->_walkingActorId = actorId;
+	}
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
+	return result;
 }
 
 bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, int a5, bool run, int a7) {
 	_vm->gameWaitForActive();
 
-	if(_vm->_walkingActorId == actorId) {
-		if(a7) {
+	if (_vm->_walkingActorId == actorId) {
+		if (a7) {
 			_vm->_walkingActorId = -1;
 		} else {
 			run = true;
 		}
 	}
-	//TODO:
-	//PlayerActorIdle = 0;
+	_vm->_playerActorIdle = false;
 	bool isRunning;
-	bool result = _vm->_actors[actorId]->loopWalkToXYZ(Vector3(x, y, z), destinationOffset, a5, run, 1, &isRunning);
 
-//	if (PlayerActorIdle == 1) {
-//		result = 1;
-//		PlayerActorIdle = 0;
-//	}
-	if(isRunning) {
+	bool result = _vm->_actors[actorId]->loopWalkToXYZ(Vector3(x, y, z), destinationOffset, a5, run, true, &isRunning);
+
+	if (_vm->_playerActorIdle) {
+		result = true;
+		_vm->_playerActorIdle = false;
+	}
+	if (isRunning) {
 		_vm->_walkingActorId = actorId;
 	}
-	Global_Variable_Set(37, actorId);
-	Global_Variable_Set(38, isRunning);
+	Global_Variable_Set(kVariableWalkLoopActor, actorId);
+	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
 	return result;
 }
 
 void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, int run) {
-	//TODO
-	warning("Async_Actor_Walk_To_Waypoint(%d, %d, %d, %d)", actorId, waypointId, destinationOffset, run);
+	_vm->gameWaitForActive();
+
+	if (_vm->_walkingActorId == actorId) {
+		run = true;
+	}
+
+	_vm->_actors[actorId]->asyncWalkToWaypoint(waypointId, destinationOffset, run, true);
 }
 
 void ScriptBase::Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, bool run) {
-	//TODO
-	warning("Async_Actor_Walk_To_XYZ(%d, %f, %f, %f, %d, %d)", actorId, x, y, z, destinationOffset, run);
+	_vm->gameWaitForActive();
+
+	if (_vm->_walkingActorId == actorId) {
+		run = true;
+	}
+
+	_vm->_actors[actorId]->asyncWalkToXYZ(Vector3(x, y, z), destinationOffset, run, true);
 }
 
 void ScriptBase::Actor_Force_Stop_Walking(int actorId) {
@@ -790,48 +830,41 @@ void ScriptBase::Footstep_Sound_Override_Off() {
 	_vm->_scene->_set->resetFoodstepSoundOverride();
 }
 
-bool ScriptBase::Music_Play(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
-	//TODO
-	warning("Music_Play(%d, %d, %d, %d, %d, %d, %d)", a1,  a2,  a3,  a4,  a5,  a6,  a7);
-	return false;
+bool ScriptBase::Music_Play(int musicId, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut) {
+	const char *musicName = _vm->_gameInfo->getMusicTrack(musicId);
+	return _vm->_music->play(musicName, volume, pan, timeFadeIn, timePlay, loop, timeFadeOut);
 }
 
-void ScriptBase::Music_Adjust(int a1, int a2, int a3) {
-	//TODO
-	warning("Music_Adjust(%d, %d, %d)", a1, a2, a3);
+void ScriptBase::Music_Adjust(int volume, int pan, int delay) {
+	_vm->_music->adjust(volume, pan, delay);
 }
 
-void ScriptBase::Music_Stop(int a1) {
-	//TODO
-	warning("Music_Stop(%d)", a1);
+void ScriptBase::Music_Stop(int delay) {
+	_vm->_music->stop(delay);
 }
 
 bool ScriptBase::Music_Is_Playing() {
-	//TODO
-	warning("Music_Is_Playing()");
-	return false;
+	return _vm->_music->isPlaying();
 }
 
-void ScriptBase::Overlay_Play(const char *overlay, int a2, int a3, int a4, int a5) {
-	//TODO
-	warning("Overlay_Play(%s, %d, %d, %d, %d)", overlay, a2, a3, a4, a5);
+void ScriptBase::Overlay_Play(const char *overlay, int loopId, int loopForever, int startNow, int a5) {
+	_vm->_overlays->play(overlay, loopId, loopForever, startNow, a5);
 }
 
 void ScriptBase::Overlay_Remove(const char *overlay) {
-	//TODO
-	warning("Overlay_Remove(%s)", overlay);
+	_vm->_overlays->remove(overlay);
 }
 
 void ScriptBase::Scene_Loop_Set_Default(int loopId) {
 	_vm->_scene->loopSetDefault(loopId);
 }
 
-void ScriptBase::Scene_Loop_Start_Special(int sceneLoopMode, int loopId, int c) {
-	if (sceneLoopMode == 1) {
-		c = 1;
+void ScriptBase::Scene_Loop_Start_Special(int sceneLoopMode, int loopId, bool immediately) {
+	if (sceneLoopMode == kSceneLoopModeChangeSet) {
+		immediately = true;
 	}
-	_vm->_scene->loopStartSpecial(sceneLoopMode, loopId, c);
-	if (sceneLoopMode == 1) {
+	_vm->_scene->loopStartSpecial(sceneLoopMode, loopId, immediately);
+	if (sceneLoopMode == kSceneLoopModeChangeSet) {
 		_vm->_settings->clearNewSetAndScene();
 	}
 }
@@ -840,54 +873,44 @@ void ScriptBase::Outtake_Play(int id, int noLocalization, int container) {
 	_vm->outtakePlay(id, noLocalization, container);
 }
 
-void ScriptBase::Ambient_Sounds_Add_Sound(int id, int time1, int time2, int volume1, int volume2, int pan1begin, int pan1end, int pan2begin, int pan2end, int priority, int unk) {
-	_vm->_ambientSounds->addSound(id, time1, time2, volume1, volume2, pan1begin, pan1end, pan2begin, pan2end, priority, unk);
+void ScriptBase::Ambient_Sounds_Add_Sound(int sfxId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk) {
+	_vm->_ambientSounds->addSound(sfxId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 }
 
-void  ScriptBase::Ambient_Sounds_Remove_Sound(int id, bool a2) {
-	//TODO
-	warning("Ambient_Sounds_Remove_Sound(%d, %d)", id, a2);
+void  ScriptBase::Ambient_Sounds_Remove_Sound(int sfxId, bool stopPlaying) {
+	_vm->_ambientSounds->removeNonLoopingSound(sfxId,  stopPlaying);
 }
 
-void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int id, int unk1, int time1, int time2, int volume1, int volume2, int pan1begin, int pan1end, int pan2begin, int pan2end, int priority, int unk2){
-	//TODO
-	warning("Ambient_Sounds_Add_Speech_Sound(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", id, unk1, time1, time2, volume1, volume2, pan1begin, pan1end, pan2begin, pan2end, priority, unk2);
+void ScriptBase::Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk){
+	_vm->_ambientSounds->addSpeech(actorId, sentenceId, timeMin, timeMax, volumeMin, volumeMax, panStartMin, panStartMax, panEndMin, panEndMax, priority, unk);
 }
 
 // ScriptBase::Ambient_Sounds_Remove_Speech_Sound
 
-int ScriptBase::Ambient_Sounds_Play_Sound(int a1, int a2, int a3, int a4, int a5) {
-	//TODO
-	warning("Ambient_Sounds_Remove_Sound(%d, %d, %d, %d, %d)", a1, a2, a3, a4, a5);
-	return -1;
+void ScriptBase::Ambient_Sounds_Play_Sound(int sfxId, int volume, int panStart, int panEnd, int priority) {
+	_vm->_ambientSounds->playSound(sfxId, volume, panStart, panEnd, priority);
 }
 
 // ScriptBase::Ambient_Sounds_Play_Speech_Sound
 
-void ScriptBase::Ambient_Sounds_Remove_All_Non_Looping_Sounds(int time) {
-	//TODO
-	warning("Ambient_Sounds_Remove_All_Non_Looping_Sounds(%d)", time);
-	// _vm->_ambientSounds->removeAllNonLoopingSounds(time);
+void ScriptBase::Ambient_Sounds_Remove_All_Non_Looping_Sounds(bool stopPlaying) {
+	_vm->_ambientSounds->removeAllNonLoopingSounds(stopPlaying);
 }
 
-void ScriptBase::Ambient_Sounds_Add_Looping_Sound(int id, int volume, int pan, int fadeInTime) {
-	_vm->_ambientSounds->addLoopingSound(id, volume, pan, fadeInTime);
+void ScriptBase::Ambient_Sounds_Add_Looping_Sound(int sfxId, int volume, int pan, int delay) {
+	_vm->_ambientSounds->addLoopingSound(sfxId, volume, pan, delay);
 }
 
-void ScriptBase::Ambient_Sounds_Adjust_Looping_Sound(int id, int panBegin, int panEnd, int a4) {
-	//TODO
-	warning("Ambient_Sounds_Adjust_Looping_Sound(%d, %d, %d, %d)", id, panBegin, panEnd, a4);
+void ScriptBase::Ambient_Sounds_Adjust_Looping_Sound(int sfxId, int volume, int pan, int delay) {
+	_vm->_ambientSounds->adjustLoopingSound(sfxId, volume, pan, delay);
 }
 
-void ScriptBase::Ambient_Sounds_Remove_Looping_Sound(int id, bool a2){
-	//TODO
-	warning("Ambient_Sounds_Remove_Looping_Sound(%d, %d)", id, a2);
+void ScriptBase::Ambient_Sounds_Remove_Looping_Sound(int sfxId, int delay){
+	_vm->_ambientSounds->removeLoopingSound(sfxId, delay);
 }
 
-void ScriptBase::Ambient_Sounds_Remove_All_Looping_Sounds(int time) {
-	//TODO
-	warning("Ambient_Sounds_Remove_All_Looping_Sounds(%d)", time);
-	// _vm->_ambientSounds->removeAllLoopingSounds(time);
+void ScriptBase::Ambient_Sounds_Remove_All_Looping_Sounds(int delay) {
+	_vm->_ambientSounds->removeAllLoopingSounds(delay);
 }
 
 void ScriptBase::Setup_Scene_Information(float actorX, float actorY, float actorZ, int actorFacing) {
@@ -895,47 +918,44 @@ void ScriptBase::Setup_Scene_Information(float actorX, float actorY, float actor
 }
 
 bool ScriptBase::Dialogue_Menu_Appear(int x, int y) {
-	//TODO
-	warning("Dialogue_Menu_Appear(%d, %d)", x, y);
+	if (!_vm->_dialogueMenu->isVisible()) {
+		return _vm->_dialogueMenu->show();
+	}
 	return false;
 }
 
 bool ScriptBase::Dialogue_Menu_Disappear() {
-	//TODO
-	warning("Dialogue_Menu_Disappear()");
+	if (_vm->_dialogueMenu->isVisible()) {
+		return _vm->_dialogueMenu->hide();
+	}
 	return false;
 }
 
 bool ScriptBase::Dialogue_Menu_Clear_List() {
-	//TODO
-	warning("Dialogue_Menu_Clear_List()");
+	_vm->_dialogueMenu->clearList();
 	return false;
 }
 
 bool ScriptBase::Dialogue_Menu_Add_To_List(int answer) {
-	//TODO
-	warning("Dialogue_Menu_Add_To_List(%d)", answer);
+	_vm->_dialogueMenu->addToList(answer, false, 5, 5, 5);
 	return false;
 }
 
 bool ScriptBase::Dialogue_Menu_Add_DONE_To_List(int answerValue) {
-	//TODO
-	warning("Dialogue_Menu_Add_DONE_To_List(%d)", answerValue);
+	_vm->_dialogueMenu->addToList(answerValue, 1, 0, 0, 0);
 	return false;
 }
 
-// Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected
+bool ScriptBase::Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected(int answer) {
+	return _vm->_dialogueMenu->addToListNeverRepeatOnceSelected(answer, 5, 5, 5);
+}
 
 bool ScriptBase::DM_Add_To_List(int answer, int a2, int a3, int a4) {
-	//TODO
-	warning("DM_Add_To_List(%d, %d, %d, %d)", answer, a2, a3, a4);
-	return false;
+	return _vm->_dialogueMenu->addToList(answer, 0, a2, a3, a4);
 }
 
 bool ScriptBase::DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int a2, int a3, int a4) {
-	//TODO
-	warning("DM_Add_To_List_Never_Repeat_Once_Selected(%d, %d, %d, %d)", answer, a2, a3, a4);
-	return false;
+	return _vm->_dialogueMenu->addToListNeverRepeatOnceSelected(answer, a2, a3, a4);
 }
 
 void ScriptBase::Dialogue_Menu_Remove_From_List(int answer) {
@@ -945,14 +965,11 @@ void ScriptBase::Dialogue_Menu_Remove_From_List(int answer) {
 
 int ScriptBase::Dialogue_Menu_Query_Input() {
 	//TODO
-	warning("Dialogue_Menu_Query_Input()");
-	return 0;
+	return _vm->_dialogueMenu->queryInput();
 }
 
 int ScriptBase::Dialogue_Menu_Query_List_Size() {
-	//TODO
-	warning("Dialogue_Menu_Query_List_Size()");
-	return 0;
+	return _vm->_dialogueMenu->listSize();
 }
 
 void ScriptBase::Scene_Exit_Add_2D_Exit(int index, int left, int top, int right, int down, int type) {
@@ -1070,22 +1087,15 @@ bool ScriptBase::SDB_Add_Other_Clue(int suspectId, int clueId) {
 	return _vm->_suspectsDatabase->get(suspectId)->addOtherClue(clueId);
 }
 
-void ScriptBase::Spinner_Set_Selectable_Destination_Flag(int a1, int a2) {
-	//TODO
-	warning("Spinner_Set_Selectable_Destination_Flag(%d, %d)", a1, a2);
+void ScriptBase::Spinner_Set_Selectable_Destination_Flag(int destination, bool selectable) {
+	_vm->_spinner->setSelectableDestinationFlag(destination, selectable);
 }
 
 // ScriptBase::Spinner_Query_Selectable_Destination_Flag
 
-int ScriptBase::Spinner_Interface_Choose_Dest(int a1, int a2) {
-	//TODO
-	warning("Spinner_Interface_Choose_Dest(%d, %d)", a1, a2);
-	return -1;
+int ScriptBase::Spinner_Interface_Choose_Dest(int loopId, bool immediately) {
+	return _vm->_spinner->chooseDestination(loopId, immediately);
 }
-
-// ScriptBase::Spinner_Set_Selectable_Destination_Flag
-// ScriptBase::Spinner_Query_Selectable_Destination_Flag
-// ScriptBase::Spinner_Interface_Choose_Dest
 
 void ScriptBase::ESPER_Flag_To_Activate() {
 	//TODO
@@ -1098,10 +1108,8 @@ bool ScriptBase::Voight_Kampff_Activate(int a1, int a2){
 	return false;
 }
 
-int ScriptBase::Elevator_Activate(int elevator) {
-	//TODO
-	warning("Elevator_Activate(%d)", elevator);
-	return 0;
+int ScriptBase::Elevator_Activate(int elevatorId) {
+	return _vm->_elevator->activate(elevatorId);
 }
 
 void ScriptBase::View_Score_Board() {
@@ -1143,7 +1151,7 @@ void ScriptBase::Actor_Retired_Here(int actorId, int width, int height, int reti
 	Vector3 actorPosition;
 	actor->getXYZ(&actorPosition.x, &actorPosition.y, &actorPosition.z);
 	actor->retire(retired, width, height, retiredByActorId);
-	actor->setAtXYZ(actorPosition, actor->getFacing(), true, 0, true);
+	actor->setAtXYZ(actorPosition, actor->getFacing(), true, false, true);
 	_vm->_sceneObjects->setRetired(actorId + SCENE_OBJECTS_ACTORS_OFFSET, true);
 }
 

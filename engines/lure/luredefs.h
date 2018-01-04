@@ -37,9 +37,6 @@ namespace Lure {
 
 #define LURE_DEBUG 1
 
-#define READ_LE_INT16(x) (int16) READ_LE_UINT16(x)
-#define READ_LE_INT32(x) (int32) READ_LE_UINT32(x)
-
 enum {
 	kLureDebugScripts = 1 << 0,
 	kLureDebugAnimations = 1 << 1,

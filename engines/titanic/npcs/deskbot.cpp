@@ -22,6 +22,8 @@
 
 #include "titanic/npcs/deskbot.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/game_manager.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -84,7 +86,7 @@ bool CDeskbot::TurnOn(CTurnOn *msg) {
 		playClip("BellRinging");
 		playClip("Opening", MOVIE_NOTIFY_OBJECT);
 
-		playSound("b#69.wav");
+		playSound(TRANSLATE("b#69.wav", "b#47.wav"));
 		petSetArea(PET_CONVERSATION);
 
 		_npcFlags |= NPCFLAG_MOVE_START;
@@ -99,6 +101,11 @@ bool CDeskbot::EnterViewMsg(CEnterViewMsg *msg) {
 	_deskbotActive = false;
 	_fieldC4 = 0;
 	loadFrame(625);
+
+	// WORKAROUND: If loading directly from the launcher when Marcinta
+	// is active, reset the active NPC back to none at the same time
+	CPetControl *pet = getPetControl();
+	pet->resetActiveNPC();
 
 	return true;
 }
@@ -118,12 +125,11 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 			petSetArea(PET_ROOMS);
 			decTransitions();
 			unlockMouse();
-			playSound("z#47.wav");
+			playSound(TRANSLATE("z#47.wav", "z#578.wav"));
 			_classNum = NO_CLASS;
 		}
 
 		_npcFlags &= ~NPCFLAG_MOVING;
-		flag = true;
 	}
 
 	if (_npcFlags & NPCFLAG_MOVE_LOOP) {
@@ -134,6 +140,7 @@ bool CDeskbot::MovieEndMsg(CMovieEndMsg *msg) {
 			CTurnOn turnOn;
 			turnOn.execute("EmbBellbotTrigger");
 			unlockMouse();
+			getGameManager()->lockInputHandler();
 			changeView("EmbLobby.Node 4.N", "");
 		} else if (_npcFlags & NPCFLAG_MOVE_LEFT) {
 			CTurnOn turnOn;
@@ -258,16 +265,31 @@ bool CDeskbot::TrueTalkNotifySpeechStartedMsg(CTrueTalkNotifySpeechStartedMsg *m
 		return true;
 
 	CTrueTalkNPC::TrueTalkNotifySpeechStartedMsg(msg);
-	switch (msg->_dialogueId) {
-	case 41684:
-	case 41686:
-	case 41787:
-	case 41788:
-	case 41789:
-		lockMouse();
-		break;
-	default:
-		break;
+
+	if (g_language == Common::DE_DEU) {
+		switch (msg->_dialogueId) {
+		case 41701:
+		case 41703:
+		case 41804:
+		case 41805:
+		case 41806:
+			lockMouse();
+			break;
+		default:
+			break;
+		}
+	} else {
+		switch (msg->_dialogueId) {
+		case 41684:
+		case 41686:
+		case 41787:
+		case 41788:
+		case 41789:
+			lockMouse();
+			break;
+		default:
+			break;
+		}
 	}
 
 	return true;
@@ -279,22 +301,43 @@ bool CDeskbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 
 	CTurnOff turnOff;
 	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
+	 
+	if (g_language == Common::DE_DEU) {
+		switch (msg->_dialogueId) {
+		case 41701:
+		case 41804:
+		case 41805:
+		case 41806:
+			_npcFlags |= NPCFLAG_MOVE_FINISH;
+			turnOff.execute(this);
+			break;
 
-	switch (msg->_dialogueId) {
-	case 41684:
-	case 41787:
-	case 41788:
-	case 41789:
-		_npcFlags |= NPCFLAG_MOVE_FINISH;
-		turnOff.execute(this);
+		case 41703:
+			_npcFlags |= NPCFLAG_MOVE_LEFT;
+			turnOff.execute(this);
+			break;
 
-	case 41686:
-		_npcFlags |= NPCFLAG_MOVE_LEFT;
-		turnOff.execute(this);
-		break;
+		default:
+			break;
+		}
+	} else {
+		switch (msg->_dialogueId) {
+		case 41684:
+		case 41787:
+		case 41788:
+		case 41789:
+			_npcFlags |= NPCFLAG_MOVE_FINISH;
+			turnOff.execute(this);
+			break;
 
-	default:
-		break;
+		case 41686:
+			_npcFlags |= NPCFLAG_MOVE_LEFT;
+			turnOff.execute(this);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	return true;

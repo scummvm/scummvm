@@ -111,8 +111,8 @@ PSP2SdlGraphicsManager::~PSP2SdlGraphicsManager() {
 		}
 		_vitatex_hwscreen = NULL;
 	}
-	if (_hwscreen) {
-		_hwscreen->pixels = _sdlpixels_hwscreen;
+	if (_hwScreen) {
+		_hwScreen->pixels = _sdlpixels_hwscreen;
 	}
 	_sdlpixels_hwscreen = nullptr;
 }
@@ -153,7 +153,7 @@ void PSP2SdlGraphicsManager::unloadGFXMode() {
 
 	deinitializeRenderer();
 
-	if (_hwscreen) {
+	if (_hwScreen) {
 		if (_vitatex_hwscreen) {
 			vita2d_free_texture(_vitatex_hwscreen);
 			for (int i = 0; i < 6; i++) {
@@ -162,7 +162,7 @@ void PSP2SdlGraphicsManager::unloadGFXMode() {
 			}
 			_vitatex_hwscreen = NULL;
 		}
-		_hwscreen->pixels = _sdlpixels_hwscreen;
+		_hwScreen->pixels = _sdlpixels_hwscreen;
 	}
 	SurfaceSdlGraphicsManager::unloadGFXMode();
 }
@@ -172,7 +172,7 @@ bool PSP2SdlGraphicsManager::hotswapGFXMode() {
 		return false;
 
 	// Release the HW screen surface
-	if (_hwscreen) {
+	if (_hwScreen) {
 		if (_vitatex_hwscreen) {
 			vita2d_free_texture(_vitatex_hwscreen);
 			for (int i = 0; i < 6; i++) {
@@ -181,7 +181,7 @@ bool PSP2SdlGraphicsManager::hotswapGFXMode() {
 			}
 			_vitatex_hwscreen = NULL;
 		}
-		_hwscreen->pixels = _sdlpixels_hwscreen;
+		_hwScreen->pixels = _sdlpixels_hwscreen;
 	}
 	return SurfaceSdlGraphicsManager::hotswapGFXMode();
 }
@@ -222,23 +222,23 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 
 	// definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
 #if defined(DEBUG)
-	assert(_hwscreen != NULL);
-	assert(_hwscreen->map->sw_data != NULL);
+	assert(_hwScreen != NULL);
+	assert(_hwScreen->map->sw_data != NULL);
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
 	if (_currentShakePos != _newShakePos ||
-		(_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
+		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
-		SDL_FillRect(_hwscreen, &blackrect, 0);
+		SDL_FillRect(_hwScreen, &blackrect, 0);
 
 		_currentShakePos = _newShakePos;
 
-		_forceFull = true;
+		_forceRedraw = true;
 	}
 
 	// Check whether the palette was changed in the meantime and update the
@@ -250,7 +250,7 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 
 		_paletteDirtyEnd = 0;
 
-		_forceFull = true;
+		_forceRedraw = true;
 	}
 
 	if (!_overlayVisible) {
@@ -272,7 +272,7 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 
 	// Add the area covered by the mouse cursor to the list of dirty rects if
 	// we have to redraw the mouse.
-	if (_mouseNeedsRedraw)
+	if (_cursorNeedsRedraw)
 		undrawMouse();
 
 #ifdef USE_OSD
@@ -280,7 +280,7 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 #endif
 
 	// Force a full redraw if requested
-	if (_forceFull) {
+	if (_forceRedraw) {
 		_numDirtyRects = 1;
 		_dirtyRectList[0].x = 0;
 		_dirtyRectList[0].y = 0;
@@ -289,7 +289,7 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 	}
 
 	// Only draw anything if necessary
-	if (_numDirtyRects > 0 || _mouseNeedsRedraw) {
+	if (_numDirtyRects > 0 || _cursorNeedsRedraw) {
 		SDL_Rect *r;
 		SDL_Rect dst;
 		uint32 srcPitch, dstPitch;
@@ -306,7 +306,7 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 
 		SDL_LockSurface(srcSurf);
 		srcPitch = srcSurf->pitch;
-		dstPitch = _hwscreen->pitch;
+		dstPitch = _hwScreen->pitch;
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			register int dst_y = r->y + _currentShakePos;
@@ -331,7 +331,7 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 
 				assert(scalerProc != NULL);
 				scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-					(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
+					(byte *)_hwScreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 			}
 
 			r->x = rx1;
@@ -341,15 +341,15 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
-				r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
+				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
 #endif
 		}
 		SDL_UnlockSurface(srcSurf);
 		// Readjust the dirty rect list in case we are doing a full update.
 		// This is necessary if shaking is active.
-		if (_forceFull) {
+		if (_forceRedraw) {
 			_dirtyRectList[0].y = 0;
-			_dirtyRectList[0].h = effectiveScreenHeight();
+			_dirtyRectList[0].h = _videoMode.hardwareHeight;
 		}
 
 		drawMouse();
@@ -380,15 +380,15 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 
 				if (h > 0 && w > 0) {
 					// Use white as color for now.
-					Uint32 rectColor = SDL_MapRGB(_hwscreen->format, 0xFF, 0xFF, 0xFF);
+					Uint32 rectColor = SDL_MapRGB(_hwScreen->format, 0xFF, 0xFF, 0xFF);
 
 					// First draw the top and bottom lines
 					// then draw the left and right lines
-					if (_hwscreen->format->BytesPerPixel == 2) {
-						uint16 *top = (uint16 *)((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 2);
-						uint16 *bottom = (uint16 *)((byte *)_hwscreen->pixels + (y + h) * _hwscreen->pitch + x * 2);
-						byte *left = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 2);
-						byte *right = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + (x + w - 1) * 2);
+					if (_hwScreen->format->BytesPerPixel == 2) {
+						uint16 *top = (uint16 *)((byte *)_hwScreen->pixels + y * _hwScreen->pitch + x * 2);
+						uint16 *bottom = (uint16 *)((byte *)_hwScreen->pixels + (y + h) * _hwScreen->pitch + x * 2);
+						byte *left = ((byte *)_hwScreen->pixels + y * _hwScreen->pitch + x * 2);
+						byte *right = ((byte *)_hwScreen->pixels + y * _hwScreen->pitch + (x + w - 1) * 2);
 
 						while (w--) {
 							*top++ = rectColor;
@@ -399,14 +399,14 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 							*(uint16 *)left = rectColor;
 							*(uint16 *)right = rectColor;
 
-							left += _hwscreen->pitch;
-							right += _hwscreen->pitch;
+							left += _hwScreen->pitch;
+							right += _hwScreen->pitch;
 						}
-					} else if (_hwscreen->format->BytesPerPixel == 4) {
-						uint32 *top = (uint32 *)((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 4);
-						uint32 *bottom = (uint32 *)((byte *)_hwscreen->pixels + (y + h) * _hwscreen->pitch + x * 4);
-						byte *left = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + x * 4);
-						byte *right = ((byte *)_hwscreen->pixels + y * _hwscreen->pitch + (x + w - 1) * 4);
+					} else if (_hwScreen->format->BytesPerPixel == 4) {
+						uint32 *top = (uint32 *)((byte *)_hwScreen->pixels + y * _hwScreen->pitch + x * 4);
+						uint32 *bottom = (uint32 *)((byte *)_hwScreen->pixels + (y + h) * _hwScreen->pitch + x * 4);
+						byte *left = ((byte *)_hwScreen->pixels + y * _hwScreen->pitch + x * 4);
+						byte *right = ((byte *)_hwScreen->pixels + y * _hwScreen->pitch + (x + w - 1) * 4);
 
 						while (w--) {
 							*top++ = rectColor;
@@ -417,8 +417,8 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 							*(uint32 *)left = rectColor;
 							*(uint32 *)right = rectColor;
 
-							left += _hwscreen->pitch;
-							right += _hwscreen->pitch;
+							left += _hwScreen->pitch;
+							right += _hwScreen->pitch;
 						}
 					}
 				}
@@ -428,13 +428,13 @@ void PSP2SdlGraphicsManager::internUpdateScreen() {
 
 		// Finally, blit all our changes to the screen
 		if (!_displayDisabled) {
-			PSP2_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
+			PSP2_UpdateRects(_hwScreen, _numDirtyRects, _dirtyRectList);
 		}
 	}
 
 	_numDirtyRects = 0;
-	_forceFull = false;
-	_mouseNeedsRedraw = false;
+	_forceRedraw = false;
+	_cursorNeedsRedraw = false;
 }
 
 void PSP2SdlGraphicsManager::setAspectRatioCorrection(bool enable) {
@@ -459,6 +459,7 @@ void PSP2SdlGraphicsManager::setAspectRatioCorrection(bool enable) {
 }
 
 SDL_Surface *PSP2SdlGraphicsManager::SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) {
+
 	SDL_Surface *screen = SurfaceSdlGraphicsManager::SDL_SetVideoMode(width, height, bpp, flags);
 	
 	if (screen != nullptr) {
@@ -466,6 +467,7 @@ SDL_Surface *PSP2SdlGraphicsManager::SDL_SetVideoMode(int width, int height, int
 		_vitatex_hwscreen = vita2d_create_empty_texture_format(width, height, SCE_GXM_TEXTURE_FORMAT_R5G6B5);
 		_sdlpixels_hwscreen = screen->pixels; // for SDL_FreeSurface...
 		screen->pixels = vita2d_texture_get_datap(_vitatex_hwscreen);
+		screen->pitch = vita2d_texture_get_stride(_vitatex_hwscreen);
 		updateShader();
 	}
 	return screen;

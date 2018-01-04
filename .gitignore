@@ -21,6 +21,8 @@ lib*.a
 /MT32_PCM.ROM
 /ScummVM.app
 /scummvm.docktileplugin
+/\!ScummVM
+/*,e1f
 /scummvm-ps3.pkg
 /*.ipk
 /.project
@@ -207,7 +209,7 @@ dists/msvc*/**
 
 #Ignore Xcode output/project files
 out/
-scummvm.xcodeproj
+/*.xcodeproj
 
 #Ignore PSP2 files
 psp2pkg/

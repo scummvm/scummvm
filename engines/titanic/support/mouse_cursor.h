@@ -36,9 +36,9 @@ enum CursorId {
 	CURSOR_MOVE_LEFT = 2,
 	CURSOR_MOVE_RIGHT = 3,
 	CURSOR_MOVE_FORWARD = 4,
-	CURSOR_MOVE_UP = 5,
-	CURSOR_MOVE_DOWN1 = 6,
-	CURSOR_MOVE_FORWARD2 = 7,
+	CURSOR_LOOK_UP = 5,
+	CURSOR_LOOK_DOWN = 6,
+	CURSOR_MOVE_THROUGH = 7,
 	CURSOR_HAND = 8,
 	CURSOR_ACTIVATE = 9,
 	CURSOR_INVALID = 10,
@@ -54,11 +54,10 @@ class CVideoSurface;
 
 class CMouseCursor {
 	struct CursorEntry {
-		CVideoSurface *_videoSurface;
-		Graphics::ManagedSurface *_transSurface;
+		Graphics::ManagedSurface *_surface;
 		Common::Point _centroid;
 
-		CursorEntry() : _videoSurface(nullptr), _transSurface(nullptr) {}
+		CursorEntry() : _surface(nullptr) {}
 		~CursorEntry();
 	};
 private:
@@ -72,7 +71,7 @@ private:
 	int _fieldE8;
 	Common::Point _moveStartPos;
 	Common::Point _moveDestPos;
-	uint _moveStartTime, _moveEndTime;
+	uint32 _moveStartTime, _moveEndTime;
 
 	/**
 	 * Load the images for each cursor

@@ -22,6 +22,7 @@
 
 #include "titanic/sound/music_room_handler.h"
 #include "titanic/sound/sound_manager.h"
+#include "titanic/events.h"
 #include "titanic/core/project_item.h"
 #include "titanic/titanic.h"
 
@@ -37,7 +38,7 @@ CMusicRoomHandler::CMusicRoomHandler(CProjectItem *project, CSoundManager *sound
 	for (int idx = 0; idx < 4; ++idx)
 		_songs[idx] = new CMusicSong(idx);
 	Common::fill(&_startPos[0], &_startPos[4], 0);
-	Common::fill(&_animTime[0], &_animTime[4], 0.0);
+	Common::fill(&_animExpiryTime[0], &_animExpiryTime[4], 0.0);
 	Common::fill(&_position[0], &_position[4], 0);
 
 	_audioBuffer = new CAudioBuffer(88200);
@@ -88,7 +89,7 @@ void CMusicRoomHandler::setup(int volume) {
 		}
 
 		_position[idx] = _startPos[idx];
-		_animTime[idx] = 0.0;
+		_animExpiryTime[idx] = 0.0;
 	}
 
 	_instrumentsActive = 4;
@@ -179,7 +180,7 @@ void CMusicRoomHandler::start() {
 }
 
 bool CMusicRoomHandler::update() {
-	uint currentTicks = g_vm->_events->getTicksCount();
+	uint currentTicks =  g_system->getMillis();
 
 	if (!_startTicks) {
 		start();
@@ -194,15 +195,15 @@ bool CMusicRoomHandler::update() {
 		_soundStartTicks = currentTicks;
 	}
 
-	updateAudio();
-	updateInstruments();
+	if (_instrumentsActive > 0) {
+		updateAudio();
+		updateInstruments();
+	}
 
-	return _instrumentsActive > 0;
+	return !_audioBuffer->isFinished();
 }
 
 void CMusicRoomHandler::updateAudio() {
-	_audioBuffer->enterCriticalSection();
-
 	int size = _audioBuffer->freeSize();
 	int count;
 	int16 *ptr;
@@ -219,9 +220,9 @@ void CMusicRoomHandler::updateAudio() {
 			// Iterate through each of the four instruments and do an additive
 			// read that will merge their data onto the output buffer
 			for (count = size, ptr = audioData; count > 0; ) {
-				int amount = musicWave->read(ptr, count);
+				int amount = musicWave->read(ptr, count * 2);
 				if (amount > 0) {
-					count -= amount;
+					count -= amount / sizeof(uint16);
 					ptr += amount / sizeof(uint16);
 				} else if (!pollInstrument(instrument)) {
 					--_instrumentsActive;
@@ -234,10 +235,14 @@ void CMusicRoomHandler::updateAudio() {
 		delete[] audioData;
 	}
 
-	_audioBuffer->leaveCriticalSection();
+	if (_instrumentsActive == 0)
+		// Reaching end of music
+		_audioBuffer->finalize();
 }
 
 void CMusicRoomHandler::updateInstruments() {
+	uint currentTicks = g_system->getMillis();
+
 	if (_active && _soundStartTicks) {
 		for (MusicInstrument instrument = BELLS; instrument <= BASS;
 				instrument = (MusicInstrument)((int)instrument + 1)) {
@@ -251,12 +256,11 @@ void CMusicRoomHandler::updateInstruments() {
 				continue;
 			}
 
-			uint ticks = g_vm->_events->getTicksCount() - _soundStartTicks;
-			double time = (double)ticks * 0.001 - 0.6;
-			double threshold = _animTime[instrument] - ins->_animTime;
+			double time = (double)(currentTicks - _soundStartTicks) / 1000.0 - 0.6;
+			double threshold = _animExpiryTime[instrument] - ins->_insStartTime;
 
 			if (time >= threshold) {
-				_animTime[instrument] += getAnimDuration(instrument, _position[instrument]);
+				_animExpiryTime[instrument] += getAnimDuration(instrument, _position[instrument]);
 
 				const CValuePair &vp = (*_songs[instrument])[_position[instrument]];
 				if (vp._data != 0x7FFFFFFF) {

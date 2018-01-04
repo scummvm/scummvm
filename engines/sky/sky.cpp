@@ -259,7 +259,7 @@ Common::Error SkyEngine::go() {
 }
 
 Common::Error SkyEngine::init() {
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 
 	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);

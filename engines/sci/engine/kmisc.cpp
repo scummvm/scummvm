@@ -422,6 +422,9 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	} else if (setting == "jumpto") {
 		// Hoyle 5 startup.
 		s->_segMan->strcpy(data, "");
+	} else if (setting == "deflang") {
+		// MGDX 4-language startup.
+		s->_segMan->strcpy(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}
@@ -432,6 +435,10 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 // Likely modelled after the Windows 3.1 function GetPrivateProfileInt:
 // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724345%28v=vs.85%29.aspx
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getPlatform() != Common::kPlatformWindows) {
+		return s->r_acc;
+	}
+
 	Common::String category = s->_segMan->getString(argv[0]);	// always "config"
 	category.toLowercase();
 	Common::String setting = s->_segMan->getString(argv[1]);
@@ -522,7 +529,7 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		// In SCI1, its usage is still unknown
 		// In SCI1.1, it's NOP
 		// In SCI32, it's used for remapping cursor ID's
-#ifdef ENABLE_SCI32
+#ifdef ENABLE_SCI32_MAC
 		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) // Set Mac cursor remap
 			g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
 		else
@@ -584,10 +591,10 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 
 	switch (operation) {
 	case kPlatformUnknown:
-		// For Mac versions, kPlatform(0) with other args has more functionality
+		// For Mac versions, kPlatform(0) with other args has more functionality. Otherwise, fall through.
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && argc > 1)
 			return kMacPlatform(s, argc - 1, argv + 1);
-		// Otherwise, fall through
+		// fall through
 	case kPlatformGetPlatform:
 		if (isWindows)
 			return make_reg(0, kSciPlatformWindows);
@@ -636,17 +643,26 @@ reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
 		case Common::kPlatformWindows:
 			return make_reg(0, kSciPlatformWindows);
 		case Common::kPlatformMacintosh:
+#ifdef ENABLE_SCI32_MAC
 			// For Mac versions, kPlatform(0) with other args has more functionality
 			if (argc > 1)
 				return kMacPlatform(s, argc - 1, argv + 1);
 			else
+#endif
 				return make_reg(0, kSciPlatformMacintosh);
 		default:
 			error("Unknown platform %d", g_sci->getPlatform());
 		}
 	case kGetColorDepth:
-		return make_reg(0, /* 256 color */ 2);
+		if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+			return make_reg(0, /* 16-bit color */ 3);
+		} else {
+			return make_reg(0, /* 256 color */ 2);
+		}
 	case kGetCDSpeed:
+		// The value `4` comes from Rama DOS resource.cfg installed in DOSBox,
+		// and seems to correspond to the highest expected CD speed value
+		return make_reg(0, 4);
 	case kGetCDDrive:
 	default:
 		return NULL_REG;

@@ -72,6 +72,13 @@ public:
 
 	MusicType getMusicType() const;
 
+	ResourceType getSoundResourceType(const uint16 resourceNo) const {
+		if (_useDigitalSFX && _resMan->testResource(ResourceId(kResourceTypeAudio, resourceNo)))
+			return kResourceTypeAudio;
+		else
+			return kResourceTypeSound;
+	}
+
 	/**
 	 * Synchronizes the current state of the music list to the rest of the engine, so that
 	 * the changes that the sound thread makes to the music are registered with the engine

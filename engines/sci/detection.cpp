@@ -126,7 +126,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	// === SCI3 games =========================================================
 	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
 	{"lighthouse",      "Lighthouse: The Dark Being"},
-	{"phantasmagoria2", "Phantasmagoria II: A Puzzle of Flesh"},
+	{"phantasmagoria2", "Phantasmagoria 2: A Puzzle of Flesh"},
 	//{"shivers2",        "Shivers II: Harvest of Souls"},	// Not SCI
 	{"rama",            "RAMA"},
 	{0, 0}
@@ -424,6 +424,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+#ifdef USE_RGB_COLOR
+	{
+		GAMEOPTION_HQ_VIDEO,
+		{
+			_s("Use high-quality video scaling"),
+			_s("Use linear interpolation when upscaling videos, where possible"),
+			"enable_hq_video",
+			true
+		}
+	},
+#endif
+
 	{
 		GAMEOPTION_PREFER_DIGITAL_SFX,
 		{
@@ -487,6 +499,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
+	// Phantasmagoria 2 - content censoring option
+	{
+		GAMEOPTION_ENABLE_CENSORING,
+		{
+			_s("Enable content censoring"),
+			_s("Enable the game's built-in optional content censoring"),
+			"enable_censoring",
+			false
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
@@ -506,10 +529,24 @@ static ADGameDescription s_fallbackDesc = {
 
 static char s_fallbackGameIdBuf[256];
 
+static const char *directoryGlobs[] = {
+	"avi",
+	"english",
+	"french",
+	"german",
+	"italian",
+	"msg",
+	"spanish",
+	0
+};
+
 class SciMetaEngine : public AdvancedMetaEngine {
 public:
 	SciMetaEngine() : AdvancedMetaEngine(Sci::SciGameDescriptions, sizeof(ADGameDescription), s_sciGameTitles, optionsList) {
 		_singleId = "sci";
+		_maxScanDepth = 3;
+		_directoryGlobs = directoryGlobs;
+		_matchFullPaths = true;
 	}
 
 	virtual const char *getName() const {
@@ -775,7 +812,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				SavegameMetadata meta;
-				if (!get_savegame_metadata(in, &meta)) {
+				if (!get_savegame_metadata(in, meta)) {
 					// invalid
 					delete in;
 					continue;
@@ -824,7 +861,7 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 	if (in) {
 		SavegameMetadata meta;
 
-		if (!get_savegame_metadata(in, &meta)) {
+		if (!get_savegame_metadata(in, meta)) {
 			// invalid
 			delete in;
 

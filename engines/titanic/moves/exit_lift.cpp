@@ -63,7 +63,7 @@ bool CExitLift::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 	} else if (floorNum > 27) {
 		switch (elevNum) {
 		case 1:
-		case 2:
+		case 3:
 			_viewName = "SgtLobby.Node 1.N";
 			break;
 		default:
@@ -71,12 +71,12 @@ bool CExitLift::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		}
 	} else if (floorNum > 19) {
 		switch (elevNum) {
-		case 0:
-		case 2:
-			_viewName = "2ndClassLobby.Node 8.N";
-			break;
 		case 1:
 		case 3:
+			_viewName = "2ndClassLobby.Node 8.N";
+			break;
+		case 2:
+		case 4:
 			_viewName = "2ndClassLobby.Node 1.N";
 			break;
 		default:
@@ -84,12 +84,12 @@ bool CExitLift::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		}
 	} else if (floorNum > 1) {
 		switch (elevNum) {
-		case 0:
-		case 2:
-			_viewName = "1stClassLobby.Node 1.W";
-			break;
 		case 1:
 		case 3:
+			_viewName = "1stClassLobby.Node 1.W";
+			break;
+		case 2:
+		case 4:
 			_viewName = "1stClassLobby.Node 1.E";
 			break;
 		default:
@@ -97,16 +97,16 @@ bool CExitLift::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 		}
 	} else {
 		switch (elevNum) {
-		case 0:
+		case 1:
 			_viewName = "TopOfWell.Node 6.E";
 			break;
-		case 1:
+		case 2:
 			_viewName = "TopOfWell.Node 6.W";
 			break;
-		case 2:
+		case 3:
 			_viewName = "TopOfWell.Node 10.W";
 			break;
-		case 3:
+		case 4:
 			_viewName = "TopOfWell.Node 10.E";
 			break;
 		default:

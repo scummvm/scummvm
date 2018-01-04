@@ -22,7 +22,10 @@
 
 #include "titanic/star_control/base_stars.h"
 #include "titanic/star_control/star_camera.h"
+#include "titanic/star_control/star_closeup.h"
 #include "titanic/star_control/star_ref.h"
+#include "titanic/support/files_manager.h"
+#include "titanic/support/simple_file.h"
 #include "titanic/titanic.h"
 
 namespace Titanic {
@@ -125,8 +128,8 @@ void CBaseStars::resetEntry(CBaseStarEntry &entry) {
 
 void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	if (!_data.empty()) {
-		switch (camera->proc27()) {
-		case 0:
+		switch (camera->getStarColor()) {
+		case WHITE: // draw white, green, and red stars (mostly white)
 			switch (surfaceArea->_bpp) {
 			case 1:
 				draw1(surfaceArea, camera, closeup);
@@ -139,7 +142,7 @@ void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClose
 			}
 			break;
 
-		case 2:
+		case PINK: // draw pink stars
 			switch (surfaceArea->_bpp) {
 			case 1:
 				draw3(surfaceArea, camera, closeup);
@@ -160,7 +163,7 @@ void CBaseStars::draw(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClose
 
 void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
-	camera->proc36(&_value1, &_value2, &_value3, &_value4);
+	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
@@ -245,7 +248,7 @@ void CBaseStars::draw1(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 
 void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
-	camera->proc36(&_value1, &_value2, &_value3, &_value4);
+	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
@@ -331,7 +334,7 @@ void CBaseStars::draw2(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 
 void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
-	camera->proc36(&_value1, &_value2, &_value3, &_value4);
+	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
@@ -438,7 +441,7 @@ void CBaseStars::draw3(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarClos
 
 void CBaseStars::draw4(CSurfaceArea *surfaceArea, CStarCamera *camera, CStarCloseup *closeup) {
 	FPose pose = camera->getPose();
-	camera->proc36(&_value1, &_value2, &_value3, &_value4);
+	camera->getRelativeXCenterPixels(&_value1, &_value2, &_value3, &_value4);
 
 	const double MAX_VAL = 1.0e9 * 1.0e9;
 	FPoint centroid = surfaceArea->_centroid + FPoint(0.5, 0.5);
@@ -560,7 +563,7 @@ int CBaseStars::baseFn2(CSurfaceArea *surfaceArea, CStarCamera *camera) {
 /*------------------------------------------------------------------------*/
 
 void CStarVector::apply() {
-	_owner->addMatrixRow(_vector);
+	_owner->addLockedStar(_vector);
 }
 
 } // End of namespace Titanic

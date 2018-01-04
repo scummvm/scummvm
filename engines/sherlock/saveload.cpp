@@ -219,7 +219,7 @@ void SaveManager::loadGame(int slot) {
 
 	// Synchronize the savegame data
 	Serializer s(saveFile, nullptr);
-	s.setSaveVersion(header._version);
+	s.setVersion(header._version);
 	synchronize(s);
 
 	delete saveFile;
@@ -237,7 +237,7 @@ void SaveManager::saveGame(int slot, const Common::String &name) {
 
 	// Synchronize the savegame data
 	Serializer s(nullptr, out);
-	s.setSaveVersion(CURRENT_SAVEGAME_VERSION);
+	s.setVersion(CURRENT_SAVEGAME_VERSION);
 	synchronize(s);
 
 	out->finalize();

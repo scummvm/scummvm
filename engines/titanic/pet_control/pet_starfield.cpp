@@ -94,7 +94,7 @@ bool CPetStarfield::MouseButtonDownMsg(CMouseButtonDownMsg *msg) {
 			_petControl->displayMessage(SUPPLY_GALACTIC_REFERENCE);
 		}
 	} else if (!_btnSetDest.MouseButtonDownMsg(msg->_mousePos)) {
-		return elementsMouseDown(msg);
+		return markersMouseDown(msg);
 	}
 
 	return true;
@@ -216,33 +216,36 @@ void CPetStarfield::makePetDirty() {
 	_petControl->makeDirty();
 }
 
-bool CPetStarfield::elementsMouseDown(CMouseButtonDownMsg *msg) {
-	if (elementMouseButton(0, msg, _leds[0].getBounds()))
+bool CPetStarfield::markersMouseDown(CMouseButtonDownMsg *msg) {
+	if (markerMouseDown(0, msg, _leds[0].getRawBounds()))
 		return true;
-	if (elementMouseButton(1, msg, _leds[2].getBounds()))
+	if (markerMouseDown(1, msg, _leds[2].getRawBounds()))
 		return true;
-	if (elementMouseButton(2, msg, _leds[4].getBounds()))
+	if (markerMouseDown(2, msg, _leds[4].getRawBounds()))
 		return true;
 
 	return false;
 }
 
-bool CPetStarfield::elementMouseButton(int index, CMouseButtonDownMsg *msg, const Rect &rect) {
+bool CPetStarfield::markerMouseDown(int index, CMouseButtonDownMsg *msg, const Rect &rect) {
 	if (!rect.contains(msg->_mousePos))
 		return false;
 
 	switch (_markerStates[index]) {
-	case 1:
+	case MS_FLICKERING:
+		// Marker is flickering, so lock it in
 		if (_petControl->_remoteTarget) {
 			CPETStarFieldLockMsg lockMsg(1);
 			lockMsg.execute(_petControl->_remoteTarget);
 		}
 		break;
 
-	case 2:
-		if (index < 2 && _markerStates[index] >= 2) {
+	case MS_HIGHLIGHTED:
+		// Marker is locked in. If the most recently locked marker
+		// is clicked on, allow it to be unlocked
+		if (index == 2 || _markerStates[index + 1] != MS_HIGHLIGHTED) {
 			if (_petControl->_remoteTarget) {
-				CPETStarFieldLockMsg lockMsg(1);
+				CPETStarFieldLockMsg lockMsg(0);
 				lockMsg.execute(_petControl->_remoteTarget);
 			}
 		}

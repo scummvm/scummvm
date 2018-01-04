@@ -42,6 +42,13 @@ struct TitanicSavegameHeader {
 	int _year, _month, _day;
 	int _hour, _minute;
 	int _totalFrames;
+
+	TitanicSavegameHeader() { clear(); }
+
+	/**
+	 * Clear the header
+	 */
+	void clear();
 };
 
 
@@ -228,6 +235,22 @@ public:
 	 * Finds a view
 	 */
 	CViewItem *findView(int roomNumber, int nodeNumber, int viewNumber);
+
+	/**
+	 * Parses a view into it's components of room, node, and view,
+	 * and locates the designated view
+	 */
+	CViewItem *parseView(const CString &viewString);
+
+	/**
+	 * Change the view
+	 */
+	bool changeView(const CString &viewName, const CString &clipName);
+
+	/**
+	 * Change the view
+	 */
+	bool changeView(const CString &viewName);
 };
 
 } // End of namespace Titanic

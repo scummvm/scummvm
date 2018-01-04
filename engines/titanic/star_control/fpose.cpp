@@ -21,8 +21,29 @@
  */
 
 #include "titanic/star_control/fpose.h"
+#include "titanic/star_control/matrix_transform.h"
+#include "titanic/star_control/matrix_inv.h"
 
 namespace Titanic {
+
+// Non-member functions
+
+void fposeProd(const FPose &a, const FPose &m, FPose &C) {
+	C._row1._x = a._row1._y * m._row2._x + a._row1._z * m._row3._x + a._row1._x * m._row1._x;
+	C._row1._y = a._row1._x * m._row1._y + m._row2._y * a._row1._y + m._row3._y * a._row1._z;
+	C._row1._z = a._row1._x * m._row1._z + a._row1._y * m._row2._z + a._row1._z * m._row3._z;
+	C._row2._x = m._row1._x * a._row2._x + m._row3._x * a._row2._z + m._row2._x * a._row2._y;
+	C._row2._y = m._row3._y * a._row2._z + m._row1._y * a._row2._x + m._row2._y * a._row2._y;
+	C._row2._z = a._row2._z * m._row3._z + a._row2._x * m._row1._z + a._row2._y * m._row2._z;
+	C._row3._x = m._row1._x * a._row3._x + a._row3._z * m._row3._x + a._row3._y * m._row2._x;
+	C._row3._y = a._row3._y * m._row2._y + a._row3._z * m._row3._y + a._row3._x * m._row1._y;
+	C._row3._z = a._row3._x * m._row1._z + a._row3._y * m._row2._z + a._row3._z * m._row3._z;
+	C._vector._x = a._vector._x * m._row1._x + a._vector._y * m._row2._x + a._vector._z * m._row3._x + m._vector._x;
+	C._vector._y = a._vector._x * m._row1._y + a._vector._y * m._row2._y + a._vector._z * m._row3._y + m._vector._y;
+	C._vector._z = a._vector._x * m._row1._z + a._vector._y * m._row2._z + a._vector._z * m._row3._z + m._vector._z;
+}
+
+// Member functions
 
 FPose::FPose() {
 	clear();
@@ -37,45 +58,30 @@ FPose::FPose(const FPose &src) : FMatrix() {
 }
 
 FPose::FPose(const FPose &s1, const FPose &s2) {
-	_row1._x = s2._row1._x * s1._row1._x
-		+ s1._row1._z * s2._row3._x
-		+ s1._row1._y * s2._row2._x;
-	_row1._y = s1._row1._x * s2._row1._y
-		+ s2._row3._y * s1._row1._z
-		+ s2._row2._y * s1._row1._y;
-	_row1._z = s1._row1._x * s2._row1._z
-		+ s2._row3._z * s1._row1._z
-		+ s2._row2._z * s1._row1._y;
-	_row2._x = s2._row1._x * s1._row2._x
-		+ s1._row2._y * s2._row2._x
-		+ s1._row2._z * s2._row3._x;
-	_row2._y = s1._row2._y * s2._row2._y
-		+ s1._row2._z * s2._row3._y
-		+ s2._row1._y * s1._row2._x;
-	_row2._z = s2._row1._z * s1._row2._x
-		+ s1._row2._y * s2._row2._z
-		+ s1._row2._z * s2._row3._z;
-	_row3._x = s2._row1._x * s1._row3._x
-		+ s1._row3._y * s2._row2._x
-		+ s1._row3._z * s2._row3._x;
-	_row3._y = s1._row3._z * s2._row3._y
-		+ s1._row3._y * s2._row2._y
-		+ s2._row1._y * s1._row3._x;
-	_row3._z = s2._row3._z * s1._row3._z
-		+ s2._row2._z * s1._row3._y
-		+ s2._row1._z * s1._row3._x;
-	_vector._x = s2._row1._x * s1._vector._x
-		+ s1._vector._y * s2._row2._x
-		+ s1._vector._z * s2._row3._x
-		+ s2._vector._x;
-	_vector._y = s1._vector._z * s2._row3._y
-		+ s1._vector._y * s2._row2._y
-		+ s1._vector._x * s2._row1._y
-		+ s2._vector._y;
-	_vector._z = s1._vector._y * s2._row2._z
-		+ s1._vector._z * s2._row3._z
-		+ s1._vector._x * s2._row1._z
-		+ s2._vector._z;
+	fposeProd(s1, s2, *this);
+}
+
+FPose::FPose(int mode, const FVector &src) {
+	switch (mode) {
+	case 0:
+		_row1._x = 1.0;
+		_row2._y = 1.0;
+		_row3._z = 1.0;
+		_vector = src;
+		break;
+
+	case 1:
+		_row1._x = src._x;
+		_row2._y = src._y;
+		_row3._z = src._z;
+		break;
+
+	default:
+		_row1._x = 1.0;
+		_row2._y = 1.0;
+		_row3._z = 1.0;
+		break;
+	}
 }
 
 void FPose::identity() {
@@ -83,8 +89,9 @@ void FPose::identity() {
 	_vector.clear();
 }
 
+// Source: https://en.wikipedia.org/wiki/Rotation_matrix
 void FPose::setRotationMatrix(Axis axis, float amount) {
-	const float ROTATION = 2 * M_PI / 360.0;
+	const float ROTATION = (float)(2 * M_PI / 360.0);
 	float sinVal = sin(amount * ROTATION);
 	float cosVal = cos(amount * ROTATION);
 
@@ -104,11 +111,11 @@ void FPose::setRotationMatrix(Axis axis, float amount) {
 	case Y_AXIS:
 		_row1._x = cosVal;
 		_row1._y = 0.0;
-		_row1._z = sinVal;
+		_row1._z = -sinVal;
 		_row2._x = 0.0;
 		_row2._y = 1.0;
 		_row2._z = 0.0;
-		_row3._x = -sinVal;
+		_row3._x = sinVal;
 		_row3._y = 0.0;
 		_row3._z = cosVal;
 		break;
@@ -132,6 +139,13 @@ void FPose::setRotationMatrix(Axis axis, float amount) {
 	_vector.clear();
 }
 
+void FPose::rotVectAxisY(double angleDeg) {
+	_row1.rotVectAxisY(angleDeg);
+	_row2.rotVectAxisY(angleDeg);
+	_row3.rotVectAxisY(angleDeg);
+	_vector.rotVectAxisY(angleDeg);
+}
+
 void FPose::copyFrom(const FPose &src) {
 	_row1 = src._row1;
 	_row2 = src._row2;
@@ -145,70 +159,83 @@ void FPose::copyFrom(const FMatrix &src) {
 	_row3 = src._row3;
 }
 
-FPose FPose::fn4() const {
-	float v2, v3, v6, v7, v8, v9, v10, v11;
-	float v12, v13, v14, v15, v16, v17, v18;
-	FPose result;
+FPose FPose::inverseTransform() const {
+	FPose matrix_inv;
 
-	v16 = _row3._z * _row2._y;
-	v2 = _row1._x * v16;
-	v3 = 0.0;
-	v18 = v2;
-	if (v2 < 0.0) {
-		v3 = v18;
-		v2 = 0.0;
-	}
-	v6 = _row3._x * _row1._y * _row2._z;
-	if (v6 < 0.0)
-		v3 = v3 + v6;
-	else
-		v2 = v2 + v6;
-	v7 = _row3._y * _row1._z * _row2._x;
-	if (v7 < 0.0)
-		v3 = v3 + v7;
-	else
-		v2 = v2 + v7;
-	if (-(_row3._x * _row1._z * _row2._y) < 0.0)
-		v3 = v3 - _row3._x * _row1._z * _row2._y;
-	else
-		v2 = v2 - _row3._x * _row1._z * _row2._y;
-	if (-(_row1._y * _row2._x * _row3._z) < 0.0)
-		v3 = v3 - _row1._y * _row2._x * _row3._z;
-	else
-		v2 = v2 - _row1._y * _row2._x * _row3._z;
-	v17 = _row2._z * _row3._y;
-	if (-(_row1._x * v17) < 0.0)
-		v3 = v3 - _row1._x * v17;
-	else
-		v2 = v2 - _row1._x * v17;
-	v18 = v3 + v2;
-	assert(!(v18 == 0.0 || fabs(v18 / (v2 - v3)) < 1.0e-10));
+	matrix_inv._row1._x = _row1._x;
+	matrix_inv._row2._x = _row1._y;
+	matrix_inv._row3._x = _row1._z;
+	matrix_inv._row1._y = _row2._x;
+	matrix_inv._row2._y = _row2._y;
+	matrix_inv._row3._y = _row2._z;
+	matrix_inv._row1._z = _row3._x;
+	matrix_inv._row2._z = _row3._y;
+	matrix_inv._row3._z = _row3._z;
 
-	v8 = 1.0 / v18;
-	v18 = v8;
-	result._row1._x = (v16 - v17) * v8;
-	result._row2._x = -(_row2._x * _row3._z - _row3._x * _row2._z) * v8;
-	result._row3._x = (_row3._y * _row2._x - _row3._x * _row2._y) * v8;
-	result._row1._y = -(_row1._y * _row3._z - _row3._y * _row1._z) * v8;
-	result._row2._y = (_row1._x * _row3._z - _row3._x * _row1._z) * v8;
-	result._row3._y = -(_row1._x * _row3._y - _row3._x * _row1._y) * v8;
-	result._row1._z = (_row1._y * _row2._z - _row1._z * _row2._y) * v8;
-	result._row2._z = -(_row1._x * _row2._z - _row1._z * _row2._x) * v8;
-	v9 = result._row1._x;
-	v10 = result._row2._y;
-	v11 = result._row3._y;
-	v12 = result._row1._z;
-	v13 = result._row2._z;
-	result._row3._z = (_row1._x * _row2._y - _row1._y * _row2._x) * v18;
-	v14 = v9;
-	v15 = result._row3._z;
-	result._vector._x = -(v14 * _vector._x
-		+ _vector._y * result._row2._x
-		+ _vector._z * result._row3._x);
-	result._vector._y = -(_vector._x * result._row1._y + v10 * _vector._y + v11 * _vector._z);
-	result._vector._z = -(v12 * _vector._x + v13 * _vector._y + v15 * _vector._z);
+	float A[16]={_row1._x,_row1._y,_row1._z, 0.0,
+				 _row2._x,_row2._y,_row2._z, 0.0,
+				 _row3._x,_row3._y,_row3._z, 0.0,
+				 _vector._x,_vector._y,_vector._z, 1.0};
+	// Inverse matrix
+	float B[16]={};
 
-	return result;
+	// B contains inverse of A
+	matrix4Inverse<float>(A,B);	
+	matrix_inv._vector._x=B[12];
+	matrix_inv._vector._y=B[13];
+	matrix_inv._vector._z=B[14];
+
+	return matrix_inv;
+}
+
+//TODO: Check math and provide source
+void FPose::loadTransform(const CMatrixTransform &src) {
+	double total = src.fn1();
+	double factor = (total <= 0.0) ? 0.0 : 2.0 / total;
+	FVector temp1V = src._vector * factor;
+	FVector temp2V = temp1V * src._vector;
+
+	double val1 = temp1V._y * src._vector._x;
+	double val2 = temp1V._z * src._vector._x;
+	double val3 = temp1V._z * src._vector._y;
+	double val4 = temp1V._x * src._field0;
+	double val5 = temp1V._y * src._field0;
+	double val6 = temp1V._z * src._field0;
+
+	_row1._x = 1.0 - (temp2V._z + temp2V._y);
+	_row1._y = val1 + val6;
+	_row1._z = val2 - val5;
+	_row2._x = val1 - val6;
+	_row2._y = 1.0 - (temp2V._z + temp2V._x);
+	_row2._z = val3 + val4;
+	_row3._x = val2 + val5;
+	_row3._y = val3 - val4;
+	_row3._z = 1.0 - (temp2V._y + temp2V._x);
+	_vector._x = 0;
+	_vector._y = 0;
+	_vector._z = 0;
+}
+
+FPose FPose::compose(const FMatrix &m) {
+	FPose dm;
+	FPose am;
+	am._row1 = m._row1;
+	am._row2 = m._row2;
+	am._row3 = m._row3;
+
+	fposeProd(*this, am, dm);
+
+	return dm;
+}
+
+FPose FPose::compose2(const FPose &m) {
+	FPose dm;
+	dm._row1 = _row1.matProdRowVect(m);
+	dm._row2 = _row2.matProdRowVect(m);
+	dm._row3 = _row3.matProdRowVect(m);
+	dm._vector = _vector.matProdRowVect(m);
+
+	return dm;
 }
 
 } // End of namespace Titanic

@@ -111,6 +111,7 @@ bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcL
  * still need the length carried along with the stream, and you know
  * the decompressed length at wrap-time, then it can be supplied as knownSize
  * here. knownSize will be ignored if the GZip-stream DOES include a length.
+ * The created stream also becomes responsible for freeing the passed stream.
  *
  * It is safe to call this with a NULL parameter (in this case, NULL is
  * returned).
@@ -125,6 +126,7 @@ SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, ui
  * transparent on-the-fly compression. The compressed data is written in the
  * gzip format, unless ZLIB support has been disabled, in which case the given
  * stream is returned unmodified (and in particular, not wrapped).
+ * The created stream also becomes responsible for freeing the passed stream.
  *
  * It is safe to call this with a NULL parameter (in this case, NULL is
  * returned).

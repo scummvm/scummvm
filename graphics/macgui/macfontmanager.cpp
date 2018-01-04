@@ -209,7 +209,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 			Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily->getAssocTable();
 
 			for (uint i = 0; i < assoc->size(); i++) {
-				debug("size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle,
+				debug(8, "size: %d style: %d id: %d", (*assoc)[i]._fontSize, (*assoc)[i]._fontStyle,
 										(*assoc)[i]._fontID);
 
 				Common::SeekableReadStream *fontstream;
@@ -222,7 +222,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 					fontstream = fontFile->getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
 
 				if (!fontstream) {
-					warning("Unknown FontId: %d", (*assoc)[i]._fontID);
+					warning("MacFontManager: Unknown FontId: %d", (*assoc)[i]._fontID);
 
 					continue;
 				}

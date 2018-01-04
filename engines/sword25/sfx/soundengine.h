@@ -73,6 +73,8 @@ struct SndHandle {
 	int32 loopStart;
 	int32 loopEnd;
 	uint32 layer;
+
+	SndHandle();
 };
 
 

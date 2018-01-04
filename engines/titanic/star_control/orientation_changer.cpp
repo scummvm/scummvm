@@ -21,7 +21,8 @@
  */
 
 #include "titanic/star_control/orientation_changer.h"
-#include "titanic/star_control/dmatrix.h"
+#include "titanic/star_control/fpose.h"
+#include "titanic/star_control/fmatrix.h"
 
 namespace Titanic {
 
@@ -41,7 +42,7 @@ FMatrix COrientationChanger::getOrientation(double percent) {
 	} else {
 		CMatrixTransform tfm = _sub1.fn5(percent, _sub2);
 
-		DMatrix m1;
+		FPose m1;
 		m1.loadTransform(tfm);
 		return m1;
 	}

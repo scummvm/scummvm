@@ -22,7 +22,9 @@
 
 #include "titanic/game/missiveomat.h"
 #include "titanic/core/room_item.h"
+#include "titanic/support/files_manager.h"
 #include "titanic/titanic.h"
+#include "titanic/translation.h"
 
 namespace Titanic {
 
@@ -75,7 +77,7 @@ void CMissiveOMat::load(SimpleFile *file) {
 }
 
 bool CMissiveOMat::EnterViewMsg(CEnterViewMsg *msg) {
-	CMissiveOMatActionMsg actionMsg(MESSAGE_9);
+	CMissiveOMatActionMsg actionMsg(MESSAGE_STARTUP);
 	actionMsg.execute(this);
 	return true;
 }
@@ -89,7 +91,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 		if (!msg->_key)
 			return true;
 
-		playSound("z#228.wav");
+		playSound(TRANSLATE("z#228.wav", "z#134.wav"));
 		editMsg._mode = EDIT_KEYPRESS;
 		editMsg._param = msg->_key;
 		editMsg.execute(loginControl);
@@ -119,7 +121,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 		if (!msg->_key)
 			return true;
 
-		playSound("z#228.wav");
+		playSound(TRANSLATE("z#228.wav", "z#134.wav"));
 		editMsg._mode = EDIT_KEYPRESS;
 		editMsg._param = msg->_key;
 		editMsg.execute(loginControl);
@@ -143,7 +145,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			// Check whether a valid username and password has been entered
 			static const char *const PASSWORDS_EN[3] = { "other", "this", "that" };
 			static const char *const PASSWORDS_DE[3] = { "t'ok", "t'ik", "t'ak" };
-			static const char *const *pwds = g_vm->isGerman() ? PASSWORDS_DE : PASSWORDS_EN;
+			static const char *const *pwds = TRANSLATE(PASSWORDS_EN, PASSWORDS_DE);
 
 			bool validFlag = false;
 			if ((_username == "leovinus" && _password == pwds[0]) ||
@@ -161,7 +163,7 @@ bool CMissiveOMat::KeyCharMsg(CKeyCharMsg *msg) {
 			if (validFlag) {
 				// Credentials were valid, so log in
 				_mode = MMODE_LOGGED_IN;
-				loadFrame(4);
+				setVisible(false);
 				editMsg._mode = EDIT_CLEAR;
 				editMsg.execute(loginControl);
 
@@ -212,6 +214,7 @@ bool CMissiveOMat::TimerMsg(CTimerMsg *msg) {
 		// Reset back to asking for a login username
 		_mode = MMODE_USERNAME;
 		loadFrame(1);
+		setVisible(true);
 
 		CTreeItem *loginControl = findRoom()->findByName("MissiveOMat Login Control");
 		CEditControlMsg editMsg;
@@ -228,6 +231,9 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 
 	switch (msg->_action) {
 	case MESSAGE_SHOW: {
+		if (_account == NO_ACCOUNT)
+			break;
+
 		CRoomItem *room = findRoom();
 		CTreeItem *btnOk = room->findByName("MissiveOMat OK Button");
 		CTreeItem *btnNext = room->findByName("MissiveOMat Next Button");
@@ -275,7 +281,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 
 	case MESSAGE_5: {
 		CMissiveOMatActionMsg actionMsg;
-		actionMsg._action = MESSAGE_9;
+		actionMsg._action = MESSAGE_STARTUP;
 		actionMsg.execute(this);
 		break;
 	}
@@ -301,7 +307,8 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		}
 		break;
 
-	case MESSAGE_9: {
+	case MESSAGE_STARTUP: {
+		setVisible(true);
 		loadFrame(1);
 		_mode = MMODE_USERNAME;
 		_account = NO_ACCOUNT;
@@ -329,6 +336,7 @@ bool CMissiveOMat::MissiveOMatActionMsg(CMissiveOMatActionMsg *msg) {
 		editMsg._mode = EDIT_BORDERS;
 		editMsg._param = 8;
 		editMsg.execute("MissiveOMat Login Control");
+		petHideCursor();
 		editMsg._mode = EDIT_SHOW_CURSOR;
 		editMsg.execute("MissiveOMat Login Control");
 

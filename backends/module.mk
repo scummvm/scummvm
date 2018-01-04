@@ -139,7 +139,6 @@ MODULE_OBJS += \
 	events/sdl/sdl-events.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
-	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
@@ -209,6 +208,12 @@ MODULE_OBJS += \
 	fs/amigaos4/amigaos4-fs.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
 	midi/camd.o
+endif
+
+ifdef RISCOS
+MODULE_OBJS += \
+	fs/riscos/riscos-fs.o \
+	fs/riscos/riscos-fs-factory.o
 endif
 
 ifdef PLAYSTATION3

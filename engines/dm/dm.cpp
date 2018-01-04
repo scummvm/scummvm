@@ -357,7 +357,7 @@ Common::Error DMEngine::run() {
 	initConstants();
 
 	// scummvm/engine specific
-	initGraphics(320, 200, false);
+	initGraphics(320, 200);
 	_console = new Console(this);
 	_displayMan = new DisplayMan(this);
 	_dungeonMan = new DungeonMan(this);
@@ -922,7 +922,8 @@ void DMEngine::fuseSequence() {
 	fuseSequenceUpdate();
 	int16 lordChaosMapX = _dungeonMan->_partyMapX;
 	int16 lordChaosMapY = _dungeonMan->_partyMapY;
-	lordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_partyDir], lordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_partyDir];
+	lordChaosMapX += _dirIntoStepCountEast[_dungeonMan->_partyDir];
+	lordChaosMapY += _dirIntoStepCountNorth[_dungeonMan->_partyDir];
 	Thing lordChaosThing = _groupMan->groupGetThing(lordChaosMapX, lordChaosMapY);
 	Group *lordGroup = (Group*)_dungeonMan->getThingData(lordChaosThing);
 	lordGroup->_health[0] = 10000;

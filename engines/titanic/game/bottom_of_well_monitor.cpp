@@ -56,7 +56,7 @@ bool CBottomOfWellMonitor::ActMsg(CActMsg *msg) {
 		CVisibleMsg visibleMsg;
 		visibleMsg.execute("CrushedTV2NE");
 		visibleMsg.execute("CrushedTV4SW");
-		_cursorId = CURSOR_MOVE_DOWN1;
+		_cursorId = CURSOR_LOOK_DOWN;
 	} else if (msg->_action == "TelevisionTaken") {
 		_tvPresent = false;
 		_cursorId = CURSOR_ARROW;

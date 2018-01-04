@@ -20,13 +20,15 @@
  *
  */
 
-#include "titanic/game_manager.h"
-#include "titanic/support/screen_manager.h"
+#include "titanic/core/view_item.h"
 #include "titanic/core/project_item.h"
 #include "titanic/core/room_item.h"
-#include "titanic/core/view_item.h"
+#include "titanic/events.h"
+#include "titanic/game_manager.h"
 #include "titanic/messages/messages.h"
 #include "titanic/pet_control/pet_control.h"
+#include "titanic/support/screen_manager.h"
+#include "titanic/titanic.h"
 
 namespace Titanic {
 
@@ -35,6 +37,7 @@ BEGIN_MESSAGE_MAP(CViewItem, CNamedItem)
 	ON_MESSAGE(MouseButtonUpMsg)
 	ON_MESSAGE(MouseDoubleClickMsg)
 	ON_MESSAGE(MouseMoveMsg)
+	ON_MESSAGE(MovementMsg)
 END_MESSAGE_MAP()
 
 CViewItem::CViewItem() : CNamedItem() {
@@ -67,7 +70,7 @@ void CViewItem::load(SimpleFile *file) {
 	switch (val) {
 	case 1:
 		_resourceKey.load(file);
-		// Deliberate fall-through
+		// Intentional fall-through
 
 	default:
 		file->readBuffer();
@@ -102,7 +105,7 @@ void CViewItem::leaveView(CViewItem *newView) {
 			if (newRoom != oldRoom) {
 				CGameManager *gm = getGameManager();
 				if (gm)
-					gm->viewChange();
+					gm->roomChange();
 
 				CLeaveRoomMsg roomMsg(oldRoom, newRoom);
 				roomMsg.execute(oldRoom, nullptr, MSGFLAG_SCAN);
@@ -163,6 +166,11 @@ void CViewItem::enterView(CViewItem *newView) {
 					petControl->enterRoom(newRoom);
 			}
 		}
+
+		// WORKAROUND: Do a dummy mouse movement, to allow for the correct cursor 
+		// to be set for the current position in the new view
+		CMouseMoveMsg moveMsg(g_vm->_events->getMousePos(), 0);
+		newView->MouseMoveMsg(&moveMsg);
 	}
 }
 
@@ -329,6 +337,102 @@ CString CViewItem::getNodeViewName() const {
 	CNodeItem *node = findNode();
 
 	return CString::format("%s.%s", node->getName().c_str(), getName().c_str());
+}
+
+bool CViewItem::MovementMsg(CMovementMsg *msg) {
+	Point pt;
+	bool foundPt = false;
+	int quadrant;
+
+	// First allow any child objects to handle it
+	for (CTreeItem *treeItem = getFirstChild(); treeItem;
+		treeItem = treeItem->scan(this)) {
+		if (msg->execute(treeItem, nullptr, 0))
+			return true;
+	}
+
+	if (msg->_posToUse.x != 0 || msg->_posToUse.y != 0) {
+		pt = msg->_posToUse;
+		foundPt = true;
+	} else {
+		// Iterate through the view's contents to find a link or item
+		// with the appropriate movement action
+		for (CTreeItem *treeItem = getFirstChild(); treeItem;
+				treeItem = treeItem->scan(this)) {
+			CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
+			CGameObject *gameObj = dynamic_cast<CGameObject *>(treeItem);
+
+			if (link) {
+				// Skip links that aren't for the desired direction
+				if (link->getMovement() != msg->_movement)
+					continue;
+
+				for (quadrant = Q_CENTER; quadrant <= Q_BOTTOM; ++quadrant) {
+					if (link->findPoint((Quadrant)quadrant, pt))
+						if (link == getItemAtPoint(pt))
+							break;
+				}
+				if (quadrant > Q_BOTTOM)
+					continue;
+			} else if (gameObj) {
+				if (!gameObj->_visible || gameObj->getMovement() != msg->_movement)
+					continue;
+
+				for (quadrant = Q_CENTER; quadrant <= Q_BOTTOM; ++quadrant) {
+					if (gameObj->findPoint((Quadrant)quadrant, pt))
+						if (gameObj == getItemAtPoint(pt))
+							break;
+				}
+				if (quadrant > Q_BOTTOM)
+					continue;
+			} else {
+				// Not a link or object, so ignore
+				continue;
+			}
+
+			foundPt = true;
+			break;
+		}
+	}
+
+	if (foundPt) {
+		// We've found a point on the object or link that has a
+		// cursor for the given direction. So simulate a mouse
+		// press and release on the desired point
+		CMouseButtonDownMsg downMsg(pt, MB_LEFT);
+		CMouseButtonUpMsg upMsg(pt, MB_LEFT);
+		MouseButtonDownMsg(&downMsg);
+		MouseButtonUpMsg(&upMsg);
+		return true;
+	}
+
+	return false;
+}
+
+CTreeItem *CViewItem::getItemAtPoint(const Point &pt) {
+	CTreeItem *result = nullptr;
+
+	// First scan for objects
+	for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
+		CGameObject *gameObject = dynamic_cast<CGameObject *>(treeItem);
+
+		if (gameObject && gameObject->checkPoint(pt, false, true))
+			result = treeItem;
+	}
+
+	if (result == nullptr) {
+		// Scan for links coverign that position
+		for (CTreeItem *treeItem = scan(this); treeItem; treeItem = treeItem->scan(this)) {
+			CLinkItem *link = dynamic_cast<CLinkItem *>(treeItem);
+
+			if (link && link->_bounds.contains(pt)) {
+				result = treeItem;
+				break;
+			}
+		}
+	}
+
+	return result;
 }
 
 } // End of namespace Titanic

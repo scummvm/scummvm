@@ -23,23 +23,13 @@
 #ifndef TITANIC_TITANIC_H
 #define TITANIC_TITANIC_H
 
-#include "common/scummsys.h"
-#include "common/random.h"
-#include "common/str-array.h"
-#include "common/system.h"
-#include "common/serializer.h"
-#include "engines/advancedDetector.h"
-#include "engines/engine.h"
-#include "graphics/screen.h"
-#include "titanic/debugger.h"
-#include "titanic/events.h"
-#include "titanic/support/files_manager.h"
-#include "titanic/main_game_window.h"
-#include "titanic/support/exe_resources.h"
-#include "titanic/support/movie_manager.h"
-#include "titanic/support/screen_manager.h"
-#include "titanic/support/string.h"
-#include "titanic/true_talk/tt_script_base.h"
+#include "common/random.h" // getRandomNumber and getRandomFloat
+#include "engines/engine.h" // class Engine
+#include "titanic/support/exe_resources.h" // class CExeResources
+#include "titanic/support/movie_manager.h" // class CMovieManager
+#include "titanic/support/string.h" // class StringArray;
+#include "titanic/support/strings.h" // class Strings;
+#include "common/language.h" // Language enum
 
 /**
  * This is the namespace of the Titanic engine.
@@ -49,38 +39,53 @@
  * Games using this engine:
  * - Starship Titanic
  */
-namespace Titanic {
 
-enum TitanicDebugChannels {
-	kDebugCore      = 1 << 0,
-	kDebugScripts	= 1 << 1,
-	kDebugGraphics	= 1 << 2,
-	kDebugStarfield = 1 << 3
-};
+class OSystem;
+
+namespace Graphics {
+class Screen;
+}
+
+namespace Common {
+class Error;
+class FSNode;
+}
+
+namespace Titanic {
 
 #define TITANIC_SAVEGAME_VERSION 1
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-#define DEBUG_BASIC 1
-#define DEBUG_INTERMEDIATE 2
-#define DEBUG_DETAILED 3
-
 #define TOTAL_ITEMS 46
 #define TOTAL_ROOMS 34
 
 #define MAX_SAVES 99
 
+// If enabled, fixes an original bug where dispensed chickens weren't
+// meant to be hot unless the Yellow fuse was left in the Fusebox.
+// This is being left disabled for now, since most walkthroughs for
+// the game redundantly suggest removing the fuse, which is wrong
+//#define FIX_DISPENSOR_TEMPATURE
+
+class CFilesManager;
+class CMainGameWindow;
+class CString;
+class CTrueTalkManager;
+class Debugger;
+class Events;
+class OSScreenManager;
+class CScriptHandler;
+class TTscriptBase;
 struct TitanicGameDescription;
-class TitanicEngine;
 
 class TitanicEngine : public Engine {
 private:
 	/**
 	 * Handles basic initialization
 	 */
-	void initialize();
+	bool initialize();
 
 	/**
 	 * Handles game deinitialization
@@ -98,7 +103,6 @@ private:
 	void setRoomNames();
 protected:
 	const TitanicGameDescription *_gameDescription;
-	int _loadSaveSlot;
 
 	// Engine APIs
 	virtual void initializePath(const Common::FSNode &gamePath);
@@ -119,11 +123,11 @@ public:
 	CExeResources _exeResources;
 	StringArray _itemNames;
 	StringArray _itemDescriptions;
-	CString _itemObjects[TOTAL_ITEMS];
 	StringArray _itemIds;
 	StringArray _roomNames;
 	Strings _strings;
 	CString _stateRoomExitView;
+	int _loadSaveSlot;
 public:
 	TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDesc);
 	virtual ~TitanicEngine();
@@ -149,8 +153,19 @@ public:
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
+	/**
+	 * Handles updates to the sound levels
+	 */
+	virtual void syncSoundSettings();
+
+	/**
+	 * Gets the game features
+	 */
 	uint32 getFeatures() const;
-	bool isDemo() const;
+
+	/**
+	 * Returns the language for the game
+	 */
 	Common::Language getLanguage() const;
 
 	/**
@@ -159,14 +174,14 @@ public:
 	bool isGerman() const { return getLanguage() == Common::DE_DEU; }
 
 	/**
-	 * Gets a random number
+	 * Returns a uniform random unsigned integer in the interval [0, max]
 	 */
 	uint getRandomNumber(uint max) { return _randomSource.getRandomNumber(max); }
 
 	/**
-	 * Returns a random floating point number between 0.0 to 65535.0
+	 * Returns a uniform random floating point number in the interval [0.0, 65535.0]
 	 */
-	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.000015259022; }
+	double getRandomFloat() { return getRandomNumber(0xfffffffe) * 0.00001525855623540901; } // fffffffe=4294967294 and 0.00001525855623540901 ~= 1/65537.0 
 
 	/**
 	 * Support method that generates a savegame name
@@ -179,6 +194,21 @@ public:
 	 * and if it exists, returns it's description
 	 */
 	CString getSavegameName(int slot);
+
+	/**
+	 * Displays an error message in a GUI dialog
+	 */
+	void GUIError(const char *msg, ...) GCC_PRINTF(2, 3);
+
+	/**
+	 * Shows the ScummVM GMM save dialog
+	 */
+	void showScummVMSaveDialog();
+
+	/**
+	 * Shows the ScummVM GMM load dialog
+	 */
+	void showScummVMRestoreDialog();
 };
 
 extern TitanicEngine *g_vm;

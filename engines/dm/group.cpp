@@ -727,6 +727,7 @@ T0209005_AddEventAndReturn:
 				if (AL0446_i_Behavior2Or3 || (_vm->getRandomNumber(4))) /* BUG0_00 Useless code. Behavior cannot be 2 nor 3 because these values are never used. The actual condition is thus: if 3/4 chances then no reaction */
 					return;
 			} /* No 'break': proceed to instruction after the next 'case' below. Reaction is to move in a random direction to try and avoid other projectiles */
+			// fall through
 		case kDMEventTypeCreateReactionDangerOnSquare: /* This event is used when some creatures in the group were killed by a Poison Cloud or by a closing door or if Lord Chaos is surrounded by 3 Fluxcages. It causes the creature to move in a random direction to avoid the danger */
 			approachAfterReaction = (AL0447_i_Behavior == kDMBehaviorAttack); /* If the creature behavior is 'Attack' and it has to move to avoid danger then it will change its behavior to 'Approach' after the movement */
 			newGroupDirectionFound = false;
@@ -818,7 +819,8 @@ T0209058_MoveInRandomDirection:
 							do {
 								AL0450_i_DestinationMapX = eventMapX;
 								AL0451_i_DestinationMapY = eventMapY;
-								AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction], AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
+								AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction];
+								AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
 								if (((activeGroup->_priorMapX != AL0450_i_DestinationMapX) ||
 									(activeGroup->_priorMapY != AL0451_i_DestinationMapY) ||
 									 (moveToPriorLocation = !_vm->getRandomNumber(4))) /* 1/4 chance of moving back to the square that the creature comes from */
@@ -909,7 +911,8 @@ T0209085_SingleSquareMove:
 						(!_vm->getRandomNumber(4) && isMovementPossible(&creatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->returnOppositeDir((Direction)primaryDirectionToOrFromParty), false))) {
 						AL0450_i_DestinationMapX = eventMapX;
 						AL0451_i_DestinationMapY = eventMapY;
-						AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction], AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
+						AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction];
+						AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction];
 						goto T0209061_MoveGroup;
 					}
 					if (isArchEnemy) {
@@ -921,7 +924,8 @@ T0209089_DoubleSquareMove:
 							((_fluxCageCount >= 2) && isArchenemyDoubleMovementPossible(&creatureInfo, eventMapX, eventMapY, AL0446_i_Direction = _vm->returnOppositeDir((Direction)primaryDirectionToOrFromParty)))) {
 							AL0450_i_DestinationMapX = eventMapX;
 							AL0451_i_DestinationMapY = eventMapY;
-							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2, AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
+							AL0450_i_DestinationMapX += _vm->_dirIntoStepCountEast[AL0446_i_Direction] * 2;
+							AL0451_i_DestinationMapY += _vm->_dirIntoStepCountNorth[AL0446_i_Direction] * 2;
 							_vm->_sound->requestPlay(kDMSoundIndexBuzz, AL0450_i_DestinationMapX, AL0451_i_DestinationMapY, kDMSoundModePlayIfPrioritized);
 							goto T0209061_MoveGroup;
 						}
@@ -1450,7 +1454,8 @@ bool GroupMan::isArchenemyDoubleMovementPossible(CreatureInfo *info, int16 mapX,
 	if (_fluxCages[dir])
 		return false;
 
-	mapX += _vm->_dirIntoStepCountEast[dir], mapY += _vm->_dirIntoStepCountNorth[dir];
+	mapX += _vm->_dirIntoStepCountEast[dir];
+	mapY += _vm->_dirIntoStepCountNorth[dir];
 	return isMovementPossible(info, mapX, mapY, dir, false);
 }
 

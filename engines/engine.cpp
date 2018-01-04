@@ -32,6 +32,7 @@
 
 #include "engines/engine.h"
 #include "engines/dialogs.h"
+#include "engines/util.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -194,58 +195,22 @@ void Engine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 4);
 }
 
-void initCommonGFX(bool defaultTo1XScaler) {
-	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
+void initCommonGFX() {
 	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
 
-	assert(transientDomain);
-
-	const bool useDefaultGraphicsMode =
-		(!transientDomain->contains("gfx_mode") ||
-		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "normal") ||
-		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "default")
-		)
-		 &&
-		(
-		!gameDomain ||
-		!gameDomain->contains("gfx_mode") ||
-		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "normal") ||
-		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "default")
-		);
-
-	// See if the game should default to 1x scaler
-	if (useDefaultGraphicsMode && defaultTo1XScaler) {
-		g_system->resetGraphicsScale();
-	} else {
-		// Override global scaler with any game-specific define
-		if (ConfMan.hasKey("gfx_mode")) {
-			Common::String gfxMode = ConfMan.get("gfx_mode");
-			g_system->setGraphicsMode(gfxMode.c_str());
-
-			// HACK: For OpenGL modes, we will still honor the graphics scale override
-			if (defaultTo1XScaler && gfxMode.equalsIgnoreCase("opengl"))
-				g_system->resetGraphicsScale();
-		}
-	}
-
-	// Note: The following code deals with the fullscreen / ASR settings. This
-	// is a bit tricky, because there are three ways the user can affect these
-	// settings: Via the config file, via the command line, and via in-game
-	// hotkeys.
 	// Any global or command line settings already have been applied at the time
-	// we get here. Hence we only do something
+	// we get here, so we only do something if the game domain overrides those
+	// values
+	if (gameDomain) {
+		if (gameDomain->contains("aspect_ratio"))
+			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 
-	// (De)activate aspect-ratio correction as determined by the config settings
-	if (gameDomain && gameDomain->contains("aspect_ratio"))
-		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		if (gameDomain->contains("fullscreen"))
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 
-	// (De)activate fullscreen mode as determined by the config settings
-	if (gameDomain && gameDomain->contains("fullscreen"))
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
-	
-	// (De)activate filtering mode as determined by the config settings
-	if (gameDomain && gameDomain->contains("filtering"))
-		g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+		if (gameDomain->contains("filtering"))
+			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+	}
 }
 
 // Please leave the splash screen in working order for your releases, even if they're commercial.
@@ -307,11 +272,15 @@ void splashScreen() {
 	splash = true;
 }
 
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format) {
+void initGraphicsModes(const Graphics::ModeList &modes) {
+	g_system->initSizeHint(modes);
+}
+
+void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	g_system->beginGFXTransaction();
 
-		initCommonGFX(defaultTo1xScaler);
+		initCommonGFX();
 #ifdef USE_RGB_COLOR
 		if (format)
 			g_system->initSize(width, height, format);
@@ -375,9 +344,6 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 	}
 }
 
-
-using Graphics::PixelFormat;
-
 /**
  * Determines the first matching format between two lists.
  *
@@ -386,33 +352,33 @@ using Graphics::PixelFormat;
  * @return			The first item on the backend list that also occurs on the frontend list
  *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
  */
-inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
+inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::PixelFormat> &backend, const Common::List<Graphics::PixelFormat> &frontend) {
 #ifdef USE_RGB_COLOR
-	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
-		for (Common::List<PixelFormat>::iterator j = frontend.begin(); j != frontend.end(); ++j) {
+	for (Common::List<Graphics::PixelFormat>::const_iterator i = backend.begin(); i != backend.end(); ++i) {
+		for (Common::List<Graphics::PixelFormat>::const_iterator j = frontend.begin(); j != frontend.end(); ++j) {
 			if (*i == *j)
 				return *i;
 		}
 	}
 #endif
-	return PixelFormat::createFormatCLUT8();
+	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
 
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList) {
+void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList) {
 	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
-	initGraphics(width, height, defaultTo1xScaler, &format);
+	initGraphics(width, height, &format);
 }
 
-void initGraphics(int width, int height, bool defaultTo1xScaler) {
+void initGraphics(int width, int height) {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	initGraphics(width, height, defaultTo1xScaler, &format);
+	initGraphics(width, height, &format);
 }
 
 void GUIErrorMessage(const Common::String &msg) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
-		initCommonGFX(false);
+		initCommonGFX();
 		g_system->initSize(320, 200);
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		GUI::MessageDialog dialog(msg);

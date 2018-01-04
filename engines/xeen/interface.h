@@ -25,16 +25,25 @@
 
 #include "common/scummsys.h"
 #include "xeen/dialogs.h"
-#include "xeen/interface_map.h"
+#include "xeen/interface_minimap.h"
+#include "xeen/interface_scene.h"
 #include "xeen/party.h"
-#include "xeen/screen.h"
+#include "xeen/window.h"
 
 namespace Xeen {
 
 class XeenEngine;
 
-#define MINIMAP_SIZE 7
+enum Obscurity {
+	OBSCURITY_BLACK = 0,
+	OBSCURITY_3 = 1,
+	OBSCURITY_2 = 2,
+	OBSCURITY_1 = 3,
+	OBSCURITY_NONE = 4
+};
+
 #define HILIGHT_CHAR_DISABLED -2
+#define HILIGHT_CHAR_NONE -1
 
 /**
  * Class responsible for drawing the images of the characters in the party
@@ -61,7 +70,8 @@ public:
 /**
  * Implements the main in-game interface
  */
-class Interface: public ButtonContainer, public InterfaceMap, public PartyDrawer {
+class Interface: public ButtonContainer, public InterfaceScene,
+		public InterfaceMinimap, public PartyDrawer {
 private:
 	XeenEngine *_vm;
 	SpriteResource _uiSprites;
@@ -117,16 +127,11 @@ private:
 	void shake(int time);
 
 	/**
-	 * Draw the minimap
-	 */
-	void drawMiniMap();
-
-	/**
 	 * Select next character or monster to be attacking
 	 */
 	void nextChar();
 public:
-	int _intrIndex1;
+	Obscurity _obscurity;
 	Common::String _interfaceText;
 	int _falling;
 	int _face1State, _face2State;
@@ -164,9 +169,17 @@ public:
 
 	void rest();
 
+	/**
+	 * Handles bash actions
+	 */
 	void bash(const Common::Point &pt, Direction direction);
 
-	void draw3d(bool updateFlag, bool skipDelay = false);
+	/**
+	 * Handles drawing the elements of the interface and game scene
+	 * @param updateFlag		Updates UI windows 1 & 3
+	 * @param pauseFlag			Does a brief pause at the end of drawing
+	 */
+	void draw3d(bool updateFlag, bool pauseFlag = true);
 
 	/**
 	 * Draw the display borders
@@ -176,6 +189,11 @@ public:
 	void doCombat();
 
 	void spellFX(Character *c);
+
+	/**
+	 * Optionally obscures the scene due to low light conditions
+	 */
+	void obscureScene(Obscurity obscurity);
 };
 
 } // End of namespace Xeen
