@@ -66,6 +66,8 @@ void OSystem_PSP::initBackend() {
 
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "Fit to Screen");
+	ConfMan.registerDefault("kbdmouse_speed", 3);
+	ConfMan.registerDefault("joystick_deadzone", 3);
 
 	// Instantiate real time clock
 	PspRtc::instance();
@@ -112,7 +114,8 @@ void OSystem_PSP::engineDone() {
 }
 
 bool OSystem_PSP::hasFeature(Feature f) {
-	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette);
+	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorPalette || 
+			f == kFeatureKbdMouseSpeed || f == kFeatureJoystickDeadzone);
 }
 
 void OSystem_PSP::setFeatureState(Feature f, bool enable) {

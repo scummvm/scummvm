@@ -466,7 +466,7 @@ bool DisplayManager::renderAll() {
 
 inline bool DisplayManager::isTimeToUpdate() {
 
-#define MAX_FPS 30
+#define MAX_FPS 60 // was 30
 
 	uint32 now = g_system->getMillis();
 	if (now - _lastUpdateTime < (1000 / MAX_FPS))
