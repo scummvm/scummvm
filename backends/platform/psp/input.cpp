@@ -280,12 +280,6 @@ bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 	analogStepX = modifyNubAxisMotion(analogStepX);
 	analogStepY = modifyNubAxisMotion(analogStepY);
 
-	static int32 hiresX = 0;
-	static int32 hiresY = 0;
-
-	hiresX += analogStepX;
-	hiresY += analogStepY;
-
 	int32 speedFactor = 25;
 	switch (ConfMan.getInt("kbdmouse_speed")) {
 	// 0.25 keyboard pointer speed
@@ -324,18 +318,24 @@ bool Nub::getEvent(Common::Event &event, PspEvent &pspEvent, SceCtrlData &pad) {
 		speedFactor = 25;
 	}
 
-	int32 additionalFactor = 32;
+	// the larger the factor, the slower the cursor will move
+	int32 additionalFactor = 16;
 	if (_shifted) {
-		additionalFactor = 256;
+		additionalFactor = 192;
 	}
 
-	int32 factor = speedFactor * additionalFactor / 25;
+	int32 factor = (speedFactor * additionalFactor) / 25;
 
-	analogStepX = hiresX / factor;
-	analogStepY = hiresY / factor;
+	// hi-res cumulative analog delta for sub-pixel cursor positioning
+	_hiresX += (analogStepX * 1024) / factor;
+	_hiresY += (analogStepY * 1024) / factor;
 
-	hiresX %= factor;
-	hiresY %= factor;
+	analogStepX = (_hiresX / 1024);
+	analogStepY = (_hiresY / 1024);
+
+	// keep track of remainder for true sub-pixel cursor position
+	_hiresX %= 1024;
+	_hiresY %= 1024;
 	
 	int32 oldX = _cursor->getX();
 	int32 oldY = _cursor->getY();
