@@ -141,7 +141,7 @@ static const char *const selectorNameTable[] = {
 	"setScale",     // LSL6hires
 	"setScaler",    // LSL6hires
 	"readWord",     // LSL7, Phant1, Torin
-	"flag",         // PQ4
+	"points",       // PQ4
 	"select",       // PQ4
 	"handle",       // RAMA
 	"saveFilePtr",  // RAMA
@@ -214,7 +214,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setScale,
 	SELECTOR_setScaler,
 	SELECTOR_readWord,
-	SELECTOR_flag,
+	SELECTOR_points,
 	SELECTOR_select,
 	SELECTOR_handle,
 	SELECTOR_saveFilePtr,
@@ -4644,7 +4644,7 @@ static const uint16 pq4CdSpeechAndSubtitlesPatch[] = {
 // bar earlier in the game, and checks local 3 then, so just check local 3 in
 // both cases to prevent the game from appearing to be in an unwinnable state
 // just because the player interacted in the "wrong" order.
-// Applies to at least: English floppy, German floppy, English CD
+// Applies to at least: English floppy, German floppy, English CD, German CD
 static const uint16 pq4BittyKittyShowBarieRedShoeSignature[] = {
 	// stripper::noun check is for checking, if police badge was shown
 	SIG_MAGICDWORD,
@@ -4652,7 +4652,7 @@ static const uint16 pq4BittyKittyShowBarieRedShoeSignature[] = {
 	0x35, 0x02,                         // ldi 2
 	0x1e,                               // gt?
 	0x30, SIG_UINT16(0x0028),           // bnt [skip 2 points code]
-	0x39, SIG_SELECTOR8(flag),          // pushi $61 (flag)
+	0x39, SIG_SELECTOR8(points),       // pushi $61 (points)
 	SIG_END
 };
 
