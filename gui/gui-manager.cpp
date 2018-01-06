@@ -208,7 +208,7 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, 
 void GuiManager::redraw() {
 	ThemeEngine::ShadingStyle shading;
 
-	if (_redrawStatus == kRedrawDisabled || _dialogStack.empty())
+	if (_dialogStack.empty())
 		return;
 
 	shading = (ThemeEngine::ShadingStyle)xmlEval()->getVar("Dialog." + _dialogStack.top()->_name + ".Shading", 0);
@@ -241,8 +241,11 @@ void GuiManager::redraw() {
 			break;
 
 		default:
-			return;
+			break;
 	}
+
+	// Redraw the widgets that are marked as dirty
+	_dialogStack.top()->drawWidgets();
 
 	_theme->updateScreen();
 	_redrawStatus = kRedrawDisabled;
@@ -304,8 +307,6 @@ void GuiManager::runLoop() {
 	while (!_dialogStack.empty() && activeDialog == getTopDialog() && !eventMan->shouldQuit()) {
 		uint32 frameStartTime = _system->getMillis(true);
 
-		redraw();
-
 		// Don't "tickle" the dialog until the theme has had a chance
 		// to re-allocate buffers in case of a scaler change.
 
@@ -365,7 +366,7 @@ void GuiManager::runLoop() {
 			}
 		}
 
-		_theme->updateScreen();
+		redraw();
 
 		// Delay until the allocated frame time is elapsed to match the target frame rate
 		uint32 actualFrameDuration = _system->getMillis(true) - frameStartTime;

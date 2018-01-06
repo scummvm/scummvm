@@ -235,7 +235,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	}
 
 	if (dirty)
-		draw();
+		markAsDirty();
 
 	if (forcecaret)
 		makeCaretVisible();

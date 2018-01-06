@@ -173,6 +173,7 @@ void ConsoleDialog::drawDialog() {
 		drawLine(line, false);
 
 	// Draw the scrollbar
+	_scrollBar->markAsDirty();
 	_scrollBar->draw();
 }
 
@@ -213,7 +214,7 @@ void ConsoleDialog::reflowLayout() {
 	updateScrollBuffer();
 
 	Dialog::reflowLayout();
-	draw();
+	markAsDirty();
 }
 
 void ConsoleDialog::handleTickle() {
@@ -236,13 +237,13 @@ void ConsoleDialog::handleTickle() {
 			// End the slide
 			_slideMode = kNoSlideMode;
 			_y = 0;
-			draw();
+			markAsDirty();
 		} else if (_slideMode == kUpSlideMode && _y <= -_h) {
 			// End the slide
 			//_slideMode = kNoSlideMode;
 			close();
 		} else
-			draw();
+			markAsDirty();
 	}
 
 	_scrollBar->handleTickle();
@@ -291,7 +292,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		print(PROMPT);
 		_promptStartPos = _promptEndPos = _currentPos;
 
-		draw();
+		markAsDirty();
 		if (!keepRunning)
 			slideUpAndClose();
 		break;
@@ -376,7 +377,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		} else {
 			_currentPos = _promptEndPos;
 		}
-		draw();
+		markAsDirty();
 		break;
 
 	case Common::KEYCODE_KP2:
@@ -404,7 +405,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 					_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			}
 			updateScrollBuffer();
-			draw();
+			markAsDirty();
 		}
 		break;
 
@@ -445,7 +446,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		} else {
 			_currentPos = _promptStartPos;
 		}
-		draw();
+		markAsDirty();
 		break;
 
 	case Common::KEYCODE_KP8:
@@ -470,7 +471,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 			if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
 				_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			updateScrollBuffer();
-			draw();
+			markAsDirty();
 		}
 		break;
 
@@ -507,7 +508,7 @@ void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		int newPos = (int)data + _linesPerPage - 1 + _firstLineInBuffer;
 		if (newPos != _scrollLine) {
 			_scrollLine = newPos;
-			draw();
+			markAsDirty();
 		}
 		break;
 	}
@@ -517,25 +518,25 @@ void ConsoleDialog::specialKeys(int keycode) {
 	switch (keycode) {
 	case Common::KEYCODE_a:
 		_currentPos = _promptStartPos;
-		draw();
+		markAsDirty();
 		break;
 	case Common::KEYCODE_d:
 		if (_currentPos < _promptEndPos) {
 			killChar();
-			draw();
+			markAsDirty();
 		}
 		break;
 	case Common::KEYCODE_e:
 		_currentPos = _promptEndPos;
-		draw();
+		markAsDirty();
 		break;
 	case Common::KEYCODE_k:
 		killLine();
-		draw();
+		markAsDirty();
 		break;
 	case Common::KEYCODE_w:
 		killLastWord();
-		draw();
+		markAsDirty();
 		break;
 	}
 }
@@ -625,7 +626,7 @@ void ConsoleDialog::historyScroll(int direction) {
 	// Ensure once more the caret is visible (in case of very long history entries)
 	scrollToCurrent();
 
-	draw();
+	markAsDirty();
 }
 
 void ConsoleDialog::nextLine() {
@@ -703,7 +704,7 @@ void ConsoleDialog::print(const char *str) {
 	while (*str)
 		printCharIntern(*str++);
 
-	draw();
+	markAsDirty();
 }
 
 void ConsoleDialog::drawCaret(bool erase) {
@@ -732,7 +733,7 @@ void ConsoleDialog::scrollToCurrent() {
 	} else if (line > _scrollLine) {
 		_scrollLine = line;
 		updateScrollBuffer();
-		draw();
+		markAsDirty();
 	}
 }
 

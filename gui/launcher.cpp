@@ -323,7 +323,7 @@ void LauncherDialog::addGame() {
 				selectTarget(newTarget);
 			}
 
-			draw();
+			markAsDirty();
 		}
 
 		// We need to update the buttons here, so "Mass add" will revert to "Add game"
@@ -427,7 +427,7 @@ void LauncherDialog::removeGame(int item) {
 
 		// Update the ListWidget and force a redraw
 		updateListing();
-		draw();
+		markAsDirty();
 	}
 }
 
@@ -452,7 +452,7 @@ void LauncherDialog::editGame(int item) {
 		// Update the ListWidget, reselect the edited game and force a redraw
 		updateListing();
 		selectTarget(editDialog.getDomain());
-		draw();
+		markAsDirty();
 	}
 }
 
@@ -614,7 +614,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 			// Update the ListWidget, select the new item, and force a redraw
 			updateListing();
 			selectTarget(editDialog.getDomain());
-			draw();
+			markAsDirty();
 		} else {
 			// User aborted, remove the the new domain again
 			ConfMan.removeGameDomain(domain);
@@ -688,15 +688,15 @@ void LauncherDialog::updateButtons() {
 	bool enable = (_list->getSelected() >= 0);
 	if (enable != _startButton->isEnabled()) {
 		_startButton->setEnabled(enable);
-		_startButton->draw();
+		_startButton->markAsDirty();
 	}
 	if (enable != _editButton->isEnabled()) {
 		_editButton->setEnabled(enable);
-		_editButton->draw();
+		_editButton->markAsDirty();
 	}
 	if (enable != _removeButton->isEnabled()) {
 		_removeButton->setEnabled(enable);
-		_removeButton->draw();
+		_removeButton->markAsDirty();
 	}
 
 	int item = _list->getSelected();
@@ -707,7 +707,7 @@ void LauncherDialog::updateButtons() {
 
 	if (en != _loadButton->isEnabled()) {
 		_loadButton->setEnabled(en);
-		_loadButton->draw();
+		_loadButton->markAsDirty();
 	}
 	switchButtonsText(_addButton, "~A~dd Game...", _s("Mass Add..."));
 #ifdef ENABLE_EVENTRECORDER

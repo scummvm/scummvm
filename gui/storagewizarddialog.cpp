@@ -231,7 +231,7 @@ void StorageWizardDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 				_codeWidget[i]->setEditString(subcode);
 			}
 			handleCommand(sender, kCodeBoxCmd, data);
-			draw();
+			markAsDirty();
 		}
 		break;
 	}

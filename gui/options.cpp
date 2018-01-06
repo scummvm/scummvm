@@ -709,12 +709,12 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	switch (cmd) {
 	case kMidiGainChanged:
 		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
-		_midiGainLabel->draw();
+		_midiGainLabel->markAsDirty();
 		break;
 	case kMusicVolumeChanged: {
 		const int newValue = _musicVolumeSlider->getValue();
 		_musicVolumeLabel->setValue(newValue);
-		_musicVolumeLabel->draw();
+		_musicVolumeLabel->markAsDirty();
 
 		if (_guioptions.contains(GUIO_LINKMUSICTOSFX)) {
 			updateSfxVolume(newValue);
@@ -729,7 +729,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kSfxVolumeChanged: {
 		const int newValue = _sfxVolumeSlider->getValue();
 		_sfxVolumeLabel->setValue(_sfxVolumeSlider->getValue());
-		_sfxVolumeLabel->draw();
+		_sfxVolumeLabel->markAsDirty();
 
 		if (_guioptions.contains(GUIO_LINKMUSICTOSFX)) {
 			updateMusicVolume(newValue);
@@ -744,7 +744,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kSpeechVolumeChanged: {
 		const int newValue = _speechVolumeSlider->getValue();
 		_speechVolumeLabel->setValue(newValue);
-		_speechVolumeLabel->draw();
+		_speechVolumeLabel->markAsDirty();
 
 		if (_guioptions.contains(GUIO_LINKSPEECHTOSFX)) {
 			updateSfxVolume(newValue);
@@ -768,20 +768,20 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		break;
 	case kSubtitleSpeedChanged:
 		_subSpeedLabel->setValue(_subSpeedSlider->getValue());
-		_subSpeedLabel->draw();
+		_subSpeedLabel->markAsDirty();
 		break;
 	case kClearSoundFontCmd:
 		_soundFont->setLabel(_c("None", "soundfont"));
 		_soundFontClearButton->setEnabled(false);
-		draw();
+		markAsDirty();
 		break;
 	case kKbdMouseSpeedChanged:
 		_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()]));
-		_kbdMouseSpeedLabel->draw();
+		_kbdMouseSpeedLabel->markAsDirty();
 		break;
 	case kJoystickDeadzoneChanged:
 		_joystickDeadzoneLabel->setValue(_joystickDeadzoneSlider->getValue());
-		_joystickDeadzoneLabel->draw();
+		_joystickDeadzoneLabel->markAsDirty();
 		break;
 	case kApplyCmd:
 		apply();
@@ -1320,22 +1320,22 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 void OptionsDialog::updateMusicVolume(const int newValue) const {
 	_musicVolumeLabel->setValue(newValue);
 	_musicVolumeSlider->setValue(newValue);
-	_musicVolumeLabel->draw();
-	_musicVolumeSlider->draw();
+	_musicVolumeLabel->markAsDirty();
+	_musicVolumeSlider->markAsDirty();
 }
 
 void OptionsDialog::updateSfxVolume(const int newValue) const {
 	_sfxVolumeLabel->setValue(newValue);
 	_sfxVolumeSlider->setValue(newValue);
-	_sfxVolumeLabel->draw();
-	_sfxVolumeSlider->draw();
+	_sfxVolumeLabel->markAsDirty();
+	_sfxVolumeSlider->markAsDirty();
 }
 
 void OptionsDialog::updateSpeechVolume(const int newValue) const {
 	_speechVolumeLabel->setValue(newValue);
 	_speechVolumeSlider->setValue(newValue);
-	_speechVolumeLabel->draw();
-	_speechVolumeSlider->draw();
+	_speechVolumeLabel->markAsDirty();
+	_speechVolumeSlider->markAsDirty();
 }
 
 void OptionsDialog::reflowLayout() {
@@ -1936,7 +1936,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 				error.runModal();
 				return;
 			}
-			draw();
+			markAsDirty();
 		}
 		break;
 	}
@@ -1946,7 +1946,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_themePath->setLabel(dir.getPath());
-			draw();
+			markAsDirty();
 		}
 		break;
 	}
@@ -1956,7 +1956,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_extraPath->setLabel(dir.getPath());
-			draw();
+			markAsDirty();
 		}
 		break;
 	}
@@ -1967,7 +1967,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_pluginsPath->setLabel(dir.getPath());
-			draw();
+			markAsDirty();
 		}
 		break;
 	}
@@ -1982,7 +1982,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			if (path.empty())
 				path = "/"; // absolute root
 			_rootPath->setLabel(path);
-			draw();
+			markAsDirty();
 		}
 		break;
 	}
@@ -2013,7 +2013,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			else
 				_soundFontClearButton->setEnabled(false);
 
-			draw();
+			markAsDirty();
 		}
 		break;
 	}
@@ -2107,7 +2107,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (_serverPort) {
 			_serverPort->setEditString(Common::String::format("%u", Networking::LocalWebserver::DEFAULT_SERVER_PORT));
 		}
-		draw();
+		markAsDirty();
 		break;
 	}
 #endif // USE_SDL_NET
@@ -2144,7 +2144,7 @@ void GlobalOptionsDialog::handleTickle() {
 #endif
 	if (_redrawCloudTab) {
 		setupCloudTab();
-		draw();
+		markAsDirty();
 		_redrawCloudTab = false;
 	}
 #endif

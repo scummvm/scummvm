@@ -115,7 +115,7 @@ void ThemeBrowser::updateListing() {
 	_fileList->setSelected(currentThemeIndex);
 
 	// Finally, redraw
-	draw();
+	markAsDirty();
 }
 
 } // End of namespace GUI

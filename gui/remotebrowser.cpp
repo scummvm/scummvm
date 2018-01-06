@@ -162,7 +162,7 @@ void RemoteBrowserDialog::updateListing() {
 	_fileList->setEnabled(!_navigationLocked);
 
 	// Finally, redraw
-	draw();
+	markAsDirty();
 }
 
 void RemoteBrowserDialog::goUp() {

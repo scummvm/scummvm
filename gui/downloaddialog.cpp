@@ -81,7 +81,7 @@ void DownloadDialog::open() {
 		if (!selectDirectories())
 			close();
 	reflowLayout();
-	draw();
+	markAsDirty();
 }
 
 void DownloadDialog::close() {
@@ -101,7 +101,7 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kDownloadProgressCmd:
 		if (!_close) {
 			refreshWidgets();
-			draw();
+			markAsDirty();
 		}
 		break;
 	case kDownloadEndedCmd:
@@ -196,7 +196,7 @@ void DownloadDialog::handleTickle() {
 	int32 progress = (int32)(100 * CloudMan.getDownloadingProgress());
 	if (_progressBar->getValue() != progress) {
 		refreshWidgets();
-		draw();
+		markAsDirty();
 	}
 
 	Dialog::handleTickle();

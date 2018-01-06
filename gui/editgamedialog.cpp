@@ -424,26 +424,26 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	switch (cmd) {
 	case kCmdGlobalGraphicsOverride:
 		setGraphicSettingsState(data != 0);
-		draw();
+		markAsDirty();
 		break;
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
 		setSubtitleSettingsState(data != 0);
 		if (_globalVolumeOverride == NULL)
 			setVolumeSettingsState(data != 0);
-		draw();
+		markAsDirty();
 		break;
 	case kCmdGlobalMIDIOverride:
 		setMIDISettingsState(data != 0);
-		draw();
+		markAsDirty();
 		break;
 	case kCmdGlobalMT32Override:
 		setMT32SettingsState(data != 0);
-		draw();
+		markAsDirty();
 		break;
 	case kCmdGlobalVolumeOverride:
 		setVolumeSettingsState(data != 0);
-		draw();
+		markAsDirty();
 		break;
 	case kCmdChooseSoundFontCmd:
 	{
@@ -459,7 +459,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			else
 				_soundFontClearButton->setEnabled(false);
 
-			draw();
+			markAsDirty();
 		}
 		break;
 	}
@@ -477,9 +477,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// FSList files = dir.listDir(FSNode::kListFilesOnly);
 
 			_gamePathWidget->setLabel(dir.getPath());
-			draw();
+			markAsDirty();
 		}
-		draw();
+		markAsDirty();
 		break;
 	}
 
@@ -491,9 +491,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_extraPathWidget->setLabel(dir.getPath());
-			draw();
+			markAsDirty();
 		}
-		draw();
+		markAsDirty();
 		break;
 	}
 	// Change path for stored save game (perm and temp) data
@@ -508,9 +508,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			MessageDialog warningMessage(_("Saved games sync feature doesn't work with non-default directories. If you want your saved games to sync, use default directory."));
 			warningMessage.runModal();
 #endif
-			draw();
+			markAsDirty();
 		}
-		draw();
+		markAsDirty();
 		break;
 	}
 

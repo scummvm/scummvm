@@ -145,7 +145,7 @@ void ListWidget::setSelected(int item) {
 
 		_currentPos = _selectedItem - _entriesPerPage / 2;
 		scrollToCurrent();
-		draw();
+		markAsDirty();
 	}
 }
 
@@ -251,7 +251,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	// TODO: Determine where inside the string the user clicked and place the
 	// caret accordingly.
 	// See _editScrollOffset and EditTextWidget::handleMouseDown.
-	draw();
+	markAsDirty();
 
 }
 
@@ -446,12 +446,12 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 	}
 
 	if (dirty || _selectedItem != oldSelectedItem)
-		draw();
+		markAsDirty();
 
 	if (_selectedItem != oldSelectedItem) {
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 		// also draw scrollbar
-		_scrollBar->draw();
+		_scrollBar->markAsDirty();
 	}
 
 	return handled;
@@ -467,7 +467,7 @@ void ListWidget::receivedFocusWidget() {
 	_inversion = ThemeEngine::kTextInversionFocus;
 
 	// Redraw the widget so the selection color will change
-	draw();
+	markAsDirty();
 }
 
 void ListWidget::lostFocusWidget() {
@@ -477,7 +477,7 @@ void ListWidget::lostFocusWidget() {
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	drawCaret(true);
-	draw();
+	markAsDirty();
 }
 
 void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -486,7 +486,7 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 		if (_currentPos != (int)data) {
 			_currentPos = data;
 			checkBounds();
-			draw();
+			markAsDirty();
 
 			// Scrollbar actions cause list focus (which triggers a redraw)
 			// NOTE: ListWidget's boss is always GUI::Dialog
@@ -600,7 +600,7 @@ void ListWidget::scrollToEnd() {
 
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();
-	_scrollBar->draw();
+	_scrollBar->markAsDirty();
 }
 
 void ListWidget::startEditMode() {
@@ -616,7 +616,7 @@ void ListWidget::startEditMode() {
 			else
 				_editColor = _listColors[_listIndex[_selectedItem]];
 		}
-		draw();
+		markAsDirty();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	}
 }
@@ -636,7 +636,7 @@ void ListWidget::abortEditMode() {
 	assert(_selectedItem >= 0);
 	_editMode = false;
 	//drawCaret(true);
-	//draw();
+	//markAsDirty();
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
@@ -744,7 +744,7 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		// Such a widget could also (optionally) draw a border (or even different
 		// kinds of borders) around the objects it groups; and also a 'title'
 		// (I am borrowing these "ideas" from the NSBox class in Cocoa :).
-		_boss->draw();
+		_boss->markAsDirty();
 	}
 }
 

@@ -211,7 +211,7 @@ void RecorderDialog::updateList() {
 		file.close();
 	}
 	_list->setList(namesList);
-	_list->draw();
+	_list->markAsDirty();
 }
 
 int RecorderDialog::runModal(Common::String &target) {
@@ -253,7 +253,7 @@ void RecorderDialog::updateSelection(bool redraw) {
 		_screenShotsCount = -1;
 		_currentScreenshot = 0;
 		_gfxWidget->setGfx(-1, -1, 0, 0, 0);
-		_gfxWidget->draw();
+		_gfxWidget->markAsDirty();
 		updateScreenShotsText();
 	}
 }
@@ -283,7 +283,7 @@ void RecorderDialog::updateScreenshot() {
 	} else {
 		_gfxWidget->setGfx(-1, -1, 0, 0, 0);
 	}
-	_gfxWidget->draw();
+	_gfxWidget->markAsDirty();
 }
 
 void RecorderDialog::updateScreenShotsText() {
