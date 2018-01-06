@@ -28,6 +28,7 @@
 #include "common/system.h"
 
 #include "gui/browser.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 #ifdef ENABLE_EVENTRECORDER
 #include "gui/onscreendialog.h"
@@ -424,26 +425,26 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	switch (cmd) {
 	case kCmdGlobalGraphicsOverride:
 		setGraphicSettingsState(data != 0);
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
 		setSubtitleSettingsState(data != 0);
 		if (_globalVolumeOverride == NULL)
 			setVolumeSettingsState(data != 0);
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalMIDIOverride:
 		setMIDISettingsState(data != 0);
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalMT32Override:
 		setMT32SettingsState(data != 0);
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalVolumeOverride:
 		setVolumeSettingsState(data != 0);
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdChooseSoundFontCmd:
 	{
@@ -459,7 +460,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			else
 				_soundFontClearButton->setEnabled(false);
 
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
@@ -477,9 +478,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// FSList files = dir.listDir(FSNode::kListFilesOnly);
 
 			_gamePathWidget->setLabel(dir.getPath());
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 
@@ -491,9 +492,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_extraPathWidget->setLabel(dir.getPath());
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 	// Change path for stored save game (perm and temp) data
@@ -508,9 +509,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			MessageDialog warningMessage(_("Saved games sync feature doesn't work with non-default directories. If you want your saved games to sync, use default directory."));
 			warningMessage.runModal();
 #endif
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 

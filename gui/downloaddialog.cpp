@@ -29,6 +29,7 @@
 #include "gui/browser.h"
 #include "gui/chooser.h"
 #include "gui/editgamedialog.h"
+#include "gui/gui-manager.h"
 #include "gui/launcher.h"
 #include "gui/message.h"
 #include "gui/remotebrowser.h"
@@ -81,7 +82,7 @@ void DownloadDialog::open() {
 		if (!selectDirectories())
 			close();
 	reflowLayout();
-	markAsDirty();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void DownloadDialog::close() {
@@ -101,7 +102,7 @@ void DownloadDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	case kDownloadProgressCmd:
 		if (!_close) {
 			refreshWidgets();
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	case kDownloadEndedCmd:
@@ -196,7 +197,7 @@ void DownloadDialog::handleTickle() {
 	int32 progress = (int32)(100 * CloudMan.getDownloadingProgress());
 	if (_progressBar->getValue() != progress) {
 		refreshWidgets();
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 	}
 
 	Dialog::handleTickle();

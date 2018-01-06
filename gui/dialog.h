@@ -88,7 +88,6 @@ protected:
 	virtual void open();
 	virtual void close();
 
-	void markAsDirty() override;
 	/** Recursively mark all the widgets in this dialog as dirty so they are redrawn */
 	void markWidgetsAsDirty();
 

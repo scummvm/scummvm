@@ -358,7 +358,7 @@ void HelpDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 da
 			_prevButton->setFlags(WIDGET_ENABLED);
 		}
 		displayKeyBindings();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kPrevCmd:
 		_page--;
@@ -369,7 +369,7 @@ void HelpDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 da
 			_prevButton->clearFlags(WIDGET_ENABLED);
 		}
 		displayKeyBindings();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	default:
 		ScummDialog::handleCommand(sender, cmd, data);
@@ -553,7 +553,7 @@ void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
 
 		setResult(_value);
 		_timer = g_system->getMillis() + kDisplayDelay;
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	} else {
 		close();
 	}
@@ -581,7 +581,7 @@ void SubtitleSettingsDialog::handleKeyDown(Common::KeyState state) {
 		cycleValue();
 
 		reflowLayout();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	} else {
 		close();
 	}
@@ -634,7 +634,7 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 		buffer.deleteLastChar();
 		Common::String total = mainText + ' ' + buffer;
 		setInfoText(total);
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		reflowLayout();
 	} else if (state.keycode == Common::KEYCODE_RETURN) {
 		done = 1;
@@ -643,7 +643,7 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 	} else if ((state.ascii >= '0' && state.ascii <= '9') || (state.ascii >= 'A' && state.ascii <= 'Z') || (state.ascii >= 'a' && state.ascii <= 'z') || state.ascii == '.' || state.ascii == ' ') {
 		buffer += state.ascii;
 		Common::String total = mainText + ' ' + buffer;
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		reflowLayout();
 		setInfoText(total);
 	}

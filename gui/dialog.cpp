@@ -153,14 +153,6 @@ void Dialog::releaseFocus() {
 	}
 }
 
-void Dialog::markAsDirty() {
-	//TANOKU - FIXME when is this enabled? what does this do?
-	// Update: called on tab drawing, mainly...
-	// we can pass this as open a new dialog or something
-//	g_gui._needRedraw = true;
-	g_gui._redrawStatus = GUI::GuiManager::kRedrawTopDialog;
-}
-
 void Dialog::markWidgetsAsDirty() {
 	Widget *w = _firstWidget;
 	while (w) {

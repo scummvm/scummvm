@@ -744,7 +744,7 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		// Such a widget could also (optionally) draw a border (or even different
 		// kinds of borders) around the objects it groups; and also a 'title'
 		// (I am borrowing these "ideas" from the NSBox class in Cocoa :).
-		_boss->markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 

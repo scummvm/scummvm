@@ -30,6 +30,7 @@
 #include "common/translation.h"
 
 #include "gui/widgets/list.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 
 namespace GUI {
@@ -154,7 +155,7 @@ void FileBrowserDialog::updateListing() {
 	_fileList->scrollTo(0);
 
 	// Finally, redraw
-	markAsDirty();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 } // End of namespace GUI

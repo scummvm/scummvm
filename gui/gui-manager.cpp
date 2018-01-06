@@ -590,8 +590,8 @@ void GuiManager::processEvent(const Common::Event &event, Dialog *const activeDi
 	}
 }
 
-void GuiManager::doFullRedraw() {
-	_redrawStatus = kRedrawFull;
+void GuiManager::scheduleTopDialogRedraw() {
+	_redrawStatus = kRedrawTopDialog;
 }
 
 void GuiManager::giveFocusToDialog(Dialog *dialog) {
