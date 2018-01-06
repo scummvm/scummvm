@@ -191,7 +191,7 @@ void BrowserDialog::updateListing() {
 	_fileList->scrollTo(0);
 
 	// Finally, redraw
-	draw();
+	markAsDirty();
 }
 
 } // End of namespace GUI

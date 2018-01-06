@@ -60,7 +60,7 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 	backgroundButton->setEnabled(canRunInBackground);
-	draw();
+	markAsDirty();
 }
 
 SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {
@@ -72,7 +72,7 @@ void SaveLoadCloudSyncProgressDialog::handleCommand(CommandSender *sender, uint3
 	case kSavesSyncProgressCmd:
 		_percentLabel->setLabel(Common::String::format("%u%%", data));
 		_progressBar->setValue(data);
-		_progressBar->draw();
+		_progressBar->markAsDirty();
 		break;
 
 	case kCancelSyncCmd:
@@ -594,14 +594,14 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 	_deleteButton->setEnabled(isDeletable && !isLocked && (selItem >= 0) && (!_list->getSelectedString().empty()));
 
 	if (redraw) {
-		_gfxWidget->draw();
-		_date->draw();
-		_time->draw();
-		_playtime->draw();
-		_chooseButton->draw();
-		_deleteButton->draw();
+		_gfxWidget->markAsDirty();
+		_date->markAsDirty();
+		_time->markAsDirty();
+		_playtime->markAsDirty();
+		_chooseButton->markAsDirty();
+		_deleteButton->markAsDirty();
 
-		draw();
+		markAsDirty();
 	}
 }
 
@@ -703,7 +703,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 	else
 		_chooseButton->setEnabled(false);
 
-	draw();
+	markAsDirty();
 }
 
 // SaveLoadChooserGrid implementation
@@ -761,13 +761,13 @@ void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kNextCmd:
 		++_curPage;
 		updateSaves();
-		draw();
+		markAsDirty();
 		break;
 
 	case kPrevCmd:
 		--_curPage;
 		updateSaves();
-		draw();
+		markAsDirty();
 		break;
 
 	case kNewSaveCmd:
@@ -788,13 +788,13 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 		if (_nextButton->isEnabled()) {
 			++_curPage;
 			updateSaves();
-			draw();
+			markAsDirty();
 		}
 	} else {
 		if (_prevButton->isEnabled()) {
 			--_curPage;
 			updateSaves();
-			draw();
+			markAsDirty();
 		}
 	}
 }
@@ -802,7 +802,7 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 void SaveLoadChooserGrid::updateSaveList() {
 	SaveLoadChooserDialog::updateSaveList();
 	updateSaves();
-	draw();
+	markAsDirty();
 }
 
 void SaveLoadChooserGrid::open() {

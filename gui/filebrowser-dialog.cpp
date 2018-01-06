@@ -88,7 +88,7 @@ void FileBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		break;
 	case kListSelectionChangedCmd:
 		_fileName->setEditString(_fileList->getList().operator[](_fileList->getSelected()).c_str());
-		_fileName->draw();
+		_fileName->markAsDirty();
 		break;
 	case kListItemActivatedCmd:
 	case kListItemDoubleClickedCmd:
@@ -154,7 +154,7 @@ void FileBrowserDialog::updateListing() {
 	_fileList->scrollTo(0);
 
 	// Finally, redraw
-	draw();
+	markAsDirty();
 }
 
 } // End of namespace GUI

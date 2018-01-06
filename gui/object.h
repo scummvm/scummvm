@@ -70,7 +70,7 @@ protected:
 	Widget		*_firstWidget;
 
 public:
-	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _firstWidget(0), _textDrawableArea(Common::Rect(0, 0, 0, 0)) { }
+	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _firstWidget(nullptr) { }
 	GuiObject(const Common::String &name);
 	~GuiObject();
 
@@ -87,7 +87,7 @@ public:
 
 	virtual bool	isVisible() const = 0;
 
-	virtual void	draw() = 0;
+	virtual void    markAsDirty() = 0;
 
 	virtual void	reflowLayout();
 

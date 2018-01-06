@@ -87,7 +87,7 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		last = cur;
 	}
 	if (setCaretPos(i))
-		draw();
+		markAsDirty();
 
 #ifdef TIZEN
 	// Display the virtual keypad to allow text entry. Samsung app-store testers expected
