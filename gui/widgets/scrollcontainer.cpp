@@ -102,7 +102,6 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 	case kSetPositionCmd:
 		_scrolledY = _verticalScroll->_currentPos;
 		reflowLayout();
-		markAsDirty();
 		g_gui.doFullRedraw();
 		break;
 	}
