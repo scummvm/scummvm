@@ -773,7 +773,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kClearSoundFontCmd:
 		_soundFont->setLabel(_c("None", "soundfont"));
 		_soundFontClearButton->setEnabled(false);
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kKbdMouseSpeedChanged:
 		_kbdMouseSpeedLabel->setLabel(_(kbdMouseSpeedLabels[_kbdMouseSpeedSlider->getValue()]));
@@ -1934,7 +1934,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 				error.runModal();
 				return;
 			}
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
@@ -1944,7 +1944,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_themePath->setLabel(dir.getPath());
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
@@ -1954,7 +1954,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_extraPath->setLabel(dir.getPath());
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
@@ -1965,7 +1965,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			_pluginsPath->setLabel(dir.getPath());
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
@@ -1980,7 +1980,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			if (path.empty())
 				path = "/"; // absolute root
 			_rootPath->setLabel(path);
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
@@ -2011,7 +2011,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			else
 				_soundFontClearButton->setEnabled(false);
 
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
@@ -2105,7 +2105,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		if (_serverPort) {
 			_serverPort->setEditString(Common::String::format("%u", Networking::LocalWebserver::DEFAULT_SERVER_PORT));
 		}
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 #endif // USE_SDL_NET
@@ -2142,7 +2142,7 @@ void GlobalOptionsDialog::handleTickle() {
 #endif
 	if (_redrawCloudTab) {
 		setupCloudTab();
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		_redrawCloudTab = false;
 	}
 #endif

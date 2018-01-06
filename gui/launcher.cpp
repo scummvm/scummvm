@@ -323,7 +323,7 @@ void LauncherDialog::addGame() {
 				selectTarget(newTarget);
 			}
 
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 
 		// We need to update the buttons here, so "Mass add" will revert to "Add game"
@@ -427,7 +427,7 @@ void LauncherDialog::removeGame(int item) {
 
 		// Update the ListWidget and force a redraw
 		updateListing();
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
@@ -452,7 +452,7 @@ void LauncherDialog::editGame(int item) {
 		// Update the ListWidget, reselect the edited game and force a redraw
 		updateListing();
 		selectTarget(editDialog.getDomain());
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
@@ -614,7 +614,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 			// Update the ListWidget, select the new item, and force a redraw
 			updateListing();
 			selectTarget(editDialog.getDomain());
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		} else {
 			// User aborted, remove the the new domain again
 			ConfMan.removeGameDomain(domain);

@@ -60,7 +60,7 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", "Cancel", 0, kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
 	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", "Run in background", 0, kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 	backgroundButton->setEnabled(canRunInBackground);
-	markAsDirty();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 SaveLoadCloudSyncProgressDialog::~SaveLoadCloudSyncProgressDialog() {
@@ -601,7 +601,7 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 		_chooseButton->markAsDirty();
 		_deleteButton->markAsDirty();
 
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
@@ -703,7 +703,7 @@ void SaveLoadChooserSimple::updateSaveList() {
 	else
 		_chooseButton->setEnabled(false);
 
-	markAsDirty();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 // SaveLoadChooserGrid implementation
@@ -761,13 +761,13 @@ void SaveLoadChooserGrid::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	case kNextCmd:
 		++_curPage;
 		updateSaves();
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 
 	case kPrevCmd:
 		--_curPage;
 		updateSaves();
-		markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 
 	case kNewSaveCmd:
@@ -788,13 +788,13 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 		if (_nextButton->isEnabled()) {
 			++_curPage;
 			updateSaves();
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 	} else {
 		if (_prevButton->isEnabled()) {
 			--_curPage;
 			updateSaves();
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 	}
 }
@@ -802,7 +802,7 @@ void SaveLoadChooserGrid::handleMouseWheel(int x, int y, int direction) {
 void SaveLoadChooserGrid::updateSaveList() {
 	SaveLoadChooserDialog::updateSaveList();
 	updateSaves();
-	markAsDirty();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void SaveLoadChooserGrid::open() {

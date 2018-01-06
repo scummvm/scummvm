@@ -87,8 +87,6 @@ public:
 
 	virtual bool	isVisible() const = 0;
 
-	virtual void    markAsDirty() = 0;
-
 	virtual void	reflowLayout();
 
 	virtual void	removeWidget(Widget *widget);

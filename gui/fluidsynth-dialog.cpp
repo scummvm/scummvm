@@ -21,6 +21,7 @@
  */
 
 #include "gui/fluidsynth-dialog.h"
+#include "gui/gui-manager.h"
 #include "gui/message.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
@@ -218,7 +219,7 @@ void FluidSynthSettingsDialog::handleCommand(CommandSender *sender, uint32 cmd, 
 		if (alert.runModal() == GUI::kMessageOK) {
 			resetSettings();
 			readSettings();
-			markAsDirty();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}

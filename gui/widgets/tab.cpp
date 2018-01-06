@@ -154,7 +154,7 @@ void TabWidget::removeTab(int tabID) {
 	}
 
 	// Finally trigger a redraw
-	_boss->markAsDirty();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void TabWidget::setActiveTab(int tabID) {
@@ -174,7 +174,7 @@ void TabWidget::setActiveTab(int tabID) {
 		while (_lastVisibleTab < tabID)
 			setFirstVisible(_firstVisibleTab + 1, false);
 
-		_boss->markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
@@ -246,7 +246,7 @@ void TabWidget::setFirstVisible(int tabID, bool adjustIfRoom) {
 
 	computeLastVisibleTab(adjustIfRoom);
 
-	_boss->markAsDirty(); // TODO: Necessary?
+	g_gui.scheduleTopDialogRedraw(); // TODO: Necessary?
 }
 
 void TabWidget::reflowLayout() {

@@ -451,7 +451,7 @@ void RemapDialog::refreshKeymap() {
 	}
 	// need to redraw entire Dialog so that invisible
 	// widgets disappear
-	markAsDirty();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 

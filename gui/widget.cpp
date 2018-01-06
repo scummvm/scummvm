@@ -206,7 +206,7 @@ void Widget::setEnabled(bool e) {
 		else
 			clearFlags(WIDGET_ENABLED);
 
-		_boss->markAsDirty();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 
