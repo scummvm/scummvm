@@ -1947,7 +1947,9 @@ versions.
     - Rename the saved game to 'simon2.xxx'
 
   Starship Titanic
-    - Rename the saved game to 'titanic-win.xxx'
+    - Rename the saved game to 'titanic-win.xxx' for saves from the English 
+      version and 'titanic-win-de.xxx' for saves from the German version
+    - Saved games between different languages are not interchangeable
 
   The Feeble Files
     - Rename the saved game to 'feeble.xxx'
