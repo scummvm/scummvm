@@ -382,7 +382,7 @@ void GameManager::initState() {
 	_state._time = ticksToMsec(916364); // 2 pm
 	_state._timeSleep = 0;
 	_state._timeAlarm = ticksToMsec(458182);    // 7 am
-	_state._eventTime = INT32_MAX;
+	_state._eventTime = kMaxTimerValue;
 	_state._eventCallback = kNoFn;
 	_state._arrivalDaysLeft = 2840;
 	_state._shipEnergyDaysLeft = 2135;
@@ -863,7 +863,7 @@ void GameManager::telomat(int nr) {
 				}
 				_rooms[BCORRIDOR]->setSectionVisible(7, true);
 				_rooms[BCORRIDOR]->setSectionVisible(i + 1, true);
-				_state._eventTime = INT32_MAX;
+				_state._eventTime = kMaxTimerValue;
 				_currentRoom->addSentence(0, 1);
 			}
 			_guiEnabled = true;

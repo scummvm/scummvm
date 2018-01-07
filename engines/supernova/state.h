@@ -29,7 +29,7 @@
 
 namespace Supernova {
 
-const int32 INT32_MAX = 0x7FFFFFFF;
+const int32 kMaxTimerValue = 0x7FFFFFFF;
 
 enum EventFunction { kNoFn, kSupernovaFn, kGuardReturnedFn, kGuardWalkFn, kTaxiFn, kSearchStartFn };
 
