@@ -145,7 +145,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-		kGroovieV2, 1
+		kGroovieT11H, 1
 	},
 
 	// The 11th Hour Windows English
@@ -168,7 +168,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-		kGroovieV2, 1
+		kGroovieT11H, 1
 	},
 
 	// The 11th Hour Macintosh English (Installed)
@@ -180,7 +180,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-		kGroovieV2, 1
+		kGroovieT11H, 1
 	},
 
 	// The 11th Hour DOS Demo English
@@ -191,7 +191,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-		kGroovieV2, 1
+		kGroovieT11H, 1
 	},
 
 	// The Making of The 11th Hour DOS English
@@ -202,7 +202,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
-		kGroovieV2, 2
+		kGroovieT11H, 2
 	},
 
 	// The Making of The 11th Hour Macintosh English
@@ -214,7 +214,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-		kGroovieV2, 2
+		kGroovieT11H, 2
 	},
 
 	// The Making of The 11th Hour Macintosh English (Installed)
@@ -226,7 +226,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-		kGroovieV2, 2
+		kGroovieT11H, 2
 	},
 
 	// Clandestiny Trailer DOS English
@@ -237,7 +237,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
-		kGroovieV2, 3
+		kGroovieCDY, 3
 	},
 
 	// Clandestiny Trailer Macintosh English
@@ -249,7 +249,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-		kGroovieV2, 3
+		kGroovieCDY, 3
 	},
 
 	// Clandestiny Trailer Macintosh English (Installed)
@@ -261,7 +261,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
-		kGroovieV2, 3
+		kGroovieCDY, 3
 	},
 
 	// Clandestiny DOS English
@@ -272,7 +272,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
-		kGroovieV2, 1
+		kGroovieCDY, 1
 	},
 
 	// Uncle Henry's Playhouse PC English
@@ -283,7 +283,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
-		kGroovieV2, 1
+		kGroovieUHP, 1
 	},
 
 	// Tender Loving Care PC English
@@ -294,7 +294,18 @@ static const GroovieGameDescription gameDescriptions[] = {
 			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
-		kGroovieV2, 1
+		kGroovieTLC, 1
+	},
+
+	// Tender Loving Care PC Deutsch
+	{
+		{
+			"tlc", "deu",
+			AD_ENTRY1s("disk.1", "07fd3381128b0035a72d41548241c82b", 77),
+			Common::DE_DEU, Common::kPlatformDOS, ADGF_UNSTABLE,
+			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+		},
+		kGroovieTLC, 1
 	},
 
 	{AD_TABLE_END_MARKER, kGroovieT7G, 0}
