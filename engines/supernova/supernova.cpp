@@ -103,6 +103,7 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	, _currentImage(NULL)
 	, _soundMusicIntro(NULL)
 	, _soundMusicOutro(NULL)
+	, _rnd("supernova")
 	, _brightness(255)
 	, _menuBrightness(255)
 	, _delay(33)
@@ -121,15 +122,12 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 
 	// setup engine specific debug channels
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
-
-	_rnd = new Common::RandomSource("supernova");
 }
 
 SupernovaEngine::~SupernovaEngine() {
 	DebugMan.clearAllDebugChannels();
 
 	delete _currentImage;
-	delete _rnd;
 	delete _console;
 	delete _gm;
 	delete _soundMusicIntro;
