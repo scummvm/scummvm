@@ -76,6 +76,20 @@ private:
 	ScreenBuffer *_last;
 };
 
+struct SoundSample {
+	SoundSample()
+	    : _buffer(NULL)
+	    , _length(0)
+	{}
+
+	~SoundSample() {
+		delete _buffer;
+	}
+
+	byte *_buffer;
+	int _length;
+};
+
 class SupernovaEngine : public Engine {
 public:
 	explicit SupernovaEngine(OSystem *syst);
@@ -91,10 +105,7 @@ public:
 	byte _mouseNormal[256];
 	byte _mouseWait[256];
 	MSNImageDecoder *_currentImage;
-	struct SoundSample {
-		byte *_buffer;
-		int _length;
-	} _soundSamples[kAudioNumSamples];
+	SoundSample _soundSamples[kAudioNumSamples];
 	Common::MemoryReadStream *_soundMusic[2];
 	Common::Event _event;
 	int _screenWidth;
