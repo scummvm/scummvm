@@ -290,6 +290,13 @@ public:
 	}
 
 	/**
+	 * Returns the currently active drawing surface
+	 */
+	virtual TransparentSurface *getActiveSurface() {
+		return _activeSurface;
+	}
+
+	/**
 	 * Fills the active surface with the specified fg/bg color or the active gradient.
 	 * Defaults to using the active Foreground color for filling.
 	 */

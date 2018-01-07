@@ -48,7 +48,7 @@ public:
 
 	void open();
 	void close();
-	void drawDialog();
+	void drawDialog(DrawLayer layerToDraw) override;
 	void handleTickle();
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleKeyDown(Common::KeyState state);

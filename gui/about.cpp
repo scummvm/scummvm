@@ -180,8 +180,8 @@ void AboutDialog::close() {
 	Dialog::close();
 }
 
-void AboutDialog::drawDialog() {
-	Dialog::drawDialog();
+void AboutDialog::drawDialog(DrawLayer layerToDraw) {
+	Dialog::drawDialog(layerToDraw);
 
 	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h));
 
@@ -268,7 +268,7 @@ void AboutDialog::handleTickle() {
 			_scrollPos = 0;
 			_scrollTime += kScrollStartDelay;
 		}
-		drawDialog();
+		drawDialog(kDrawLayerForeground);
 	}
 }
 

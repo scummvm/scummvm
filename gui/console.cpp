@@ -163,18 +163,11 @@ void ConsoleDialog::close() {
 	Dialog::close();
 }
 
-void ConsoleDialog::drawDialog() {
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kDialogBackgroundPlain/*_backgroundType*/);
-	// FIXME: for the old theme the frame around the console vanishes
-	// when any action is processed if we enable this
-	// _drawingHints &= ~THEME_HINT_FIRST_DRAW;
+void ConsoleDialog::drawDialog(DrawLayer layerToDraw) {
+	Dialog::drawDialog(layerToDraw);
 
 	for (int line = 0; line < _linesPerPage; line++)
 		drawLine(line, false);
-
-	// Draw the scrollbar
-	_scrollBar->markAsDirty();
-	_scrollBar->draw();
 }
 
 void ConsoleDialog::drawLine(int line, bool restoreBg) {
@@ -188,7 +181,6 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 	if (restoreBg) {
 		Common::Rect r(_x, y - 2, _x + _pageWidth * kConsoleCharWidth, y+kConsoleLineHeight);
 		g_gui.theme()->restoreBackground(r);
-		g_gui.theme()->addDirtyRect(r);
 	}
 
 	for (int column = 0; column < limit; column++) {
@@ -201,8 +193,6 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 		g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
 		x += kConsoleCharWidth;
 	}
-
-	g_gui.theme()->updateScreen();
 }
 
 void ConsoleDialog::reflowLayout() {

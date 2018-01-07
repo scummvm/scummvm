@@ -557,17 +557,19 @@ Common::SaveFileManager *EventRecorder::getSaveManager(Common::SaveFileManager *
 }
 
 void EventRecorder::preDrawOverlayGui() {
-    if ((_initialized) || (_needRedraw)) {
+	if ((_initialized) || (_needRedraw)) {
 		RecordMode oldMode = _recordMode;
 		_recordMode = kPassthrough;
 		g_system->showOverlay();
 		g_gui.theme()->clearAll();
-		g_gui.theme()->openDialog(true, GUI::ThemeEngine::kShadingNone);
-		_controlPanel->drawDialog();
-		g_gui.theme()->finishBuffering();
+		g_gui.theme()->drawToBackbuffer();
+		_controlPanel->drawDialog(kDrawLayerBackground);
+		g_gui.theme()->drawToScreen();
+		g_gui.theme()->copyBackBufferToScreen();
+		_controlPanel->drawDialog(kDrawLayerForeground);
 		g_gui.theme()->updateScreen();
 		_recordMode = oldMode;
-   }
+	}
 }
 
 void EventRecorder::postDrawOverlayGui() {

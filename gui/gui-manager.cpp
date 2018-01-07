@@ -224,20 +224,33 @@ void GuiManager::redraw() {
 		case kRedrawFull:
 		case kRedrawTopDialog:
 			_theme->clearAll();
-			_theme->openDialog(true, ThemeEngine::kShadingNone);
+			_theme->drawToBackbuffer();
 
-			for (DialogStack::size_type i = 0; i < _dialogStack.size() - 1; i++)
-				_dialogStack[i]->drawDialog();
-
-			_theme->finishBuffering();
+			for (DialogStack::size_type i = 0; i < _dialogStack.size() - 1; i++) {
+				_dialogStack[i]->drawDialog(kDrawLayerBackground);
+				_dialogStack[i]->drawDialog(kDrawLayerForeground);
+			}
 
 			// fall through
 
 		case kRedrawOpenDialog:
-			_theme->updateScreen(false);
-			_theme->openDialog(true, shading);
-			_dialogStack.top()->drawDialog();
-			_theme->finishBuffering();
+			// This case is an optimization to avoid redrawing the whole dialog
+			// stack when opening a new dialog.
+
+			_theme->drawToBackbuffer();
+
+			if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 1) {
+				Dialog *previousDialog = _dialogStack[_dialogStack.size() - 2];
+				previousDialog->drawDialog(kDrawLayerForeground);
+			}
+
+			_theme->applyScreenShading(shading);
+			_dialogStack.top()->drawDialog(kDrawLayerBackground);
+
+			_theme->drawToScreen();
+			_theme->copyBackBufferToScreen();
+
+			_dialogStack.top()->drawDialog(kDrawLayerForeground);
 			break;
 
 		default:
@@ -245,6 +258,7 @@ void GuiManager::redraw() {
 	}
 
 	// Redraw the widgets that are marked as dirty
+	_theme->drawToScreen();
 	_dialogStack.top()->drawWidgets();
 
 	_theme->updateScreen();
