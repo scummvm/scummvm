@@ -97,7 +97,7 @@ public:
 
 	virtual Common::Error run();
 
-	Common::RandomSource *_rnd;
+	Common::RandomSource _rnd;
 	GameManager *_gm;
 	Console *_console;
 	Audio::SoundHandle _soundHandle;
