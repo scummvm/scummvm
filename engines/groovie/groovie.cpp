@@ -90,7 +90,7 @@ GroovieEngine::~GroovieEngine() {
 }
 
 Common::Error GroovieEngine::run() {
-	if (_gameDescription->version == kGroovieV2 && getPlatform() == Common::kPlatformMacintosh) {
+	if (_gameDescription->version == kGroovieT11H && getPlatform() == Common::kPlatformMacintosh) {
 		// Load the Mac installer with the lowest priority (in case the user has installed
 		// the game and has the MIDI folder present; faster to just load them)
 		Common::Archive *archive = createStuffItArchive("The 11th Hour Installer");
@@ -103,7 +103,10 @@ Common::Error GroovieEngine::run() {
 
 	// Initialize the graphics
 	switch (_gameDescription->version) {
-	case kGroovieV2: {
+	case kGroovieT11H:
+	case kGroovieCDY:
+	case kGroovieUHP:
+	case kGroovieTLC: {
 		// Request the mode with the highest precision available
 		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 		initGraphics(640, 480, &format);
@@ -119,6 +122,9 @@ Common::Error GroovieEngine::run() {
 		initGraphics(640, 480);
 		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 		break;
+
+	default:
+		error("GROOVIE: Unknown Game version. groovie.cpp:run()");
 	}
 
 	// Create debugger. It requires GFX to be initialized
@@ -155,13 +161,20 @@ Common::Error GroovieEngine::run() {
 		_grvCursorMan = new GrvCursorMan_t7g(_system, _macResFork);
 		_videoPlayer = new VDXPlayer(this);
 		break;
-	case kGroovieV2:
+
+	case kGroovieT11H:
+	case kGroovieCDY:
+	case kGroovieUHP:
+	case kGroovieTLC:
 		_resMan = new ResMan_v2();
 		_grvCursorMan = new GrvCursorMan_v2(_system);
 #ifdef ENABLE_GROOVIE2
 		_videoPlayer = new ROQPlayer(this);
 #endif
 		break;
+
+	default:
+		error("GROOVIE: Unknown Game version. groovie.cpp:run()");
 	}
 
 	// Detect ScummVM Music Enhancement Project presence (T7G only)
@@ -197,7 +210,7 @@ Common::Error GroovieEngine::run() {
 			filename = "demo.grv";
 		else if (getPlatform() == Common::kPlatformMacintosh)
 			filename = "script.grv"; // Stored inside the executable's resource fork
-	} else if (_gameDescription->version == kGroovieV2) {
+	} else if (_gameDescription->version != kGroovieT7G) {
 		// Open the disk index
 		Common::File disk;
 		if (!disk.open(filename)) {

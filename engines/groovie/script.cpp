@@ -52,13 +52,10 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_version(version), _random("GroovieScripts") {
 
 	// Initialize the opcode set depending on the engine version
-	switch (version) {
-	case kGroovieT7G:
+	if (version == kGroovieT7G) {
 		_opcodes = _opcodesT7G;
-		break;
-	case kGroovieV2:
+	} else {
 		_opcodes = _opcodesV2;
-		break;
 	}
 
 	// Prepare the variables
