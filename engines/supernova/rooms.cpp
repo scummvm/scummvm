@@ -2750,7 +2750,7 @@ bool AxacussBcorridor::interact(Action verb, Object &obj1, Object &obj2) {
 			if (!_gm->_rooms[OFFICE_L1 + obj1._id - DOOR1]->isSectionVisible(4))
 				_gm->search(180);
 			else
-				_gm->_state._eventTime = INT32_MAX;
+				_gm->_state._eventTime = kMaxTimerValue;
 		}
 	} else if (((verb == ACTION_WALK) || ((verb == ACTION_OPEN) && !obj1.hasProperty(OPENED))) &&
 	           (obj1._id >= DOOR1) && (obj1._id <= DOOR4) &&
