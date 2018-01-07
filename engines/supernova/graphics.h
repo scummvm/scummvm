@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef SUPERNOVA_GRAPHICS_H
+#define SUPERNOVA_GRAPHICS_H
 
 #include "common/scummsys.h"
 #include "image/image_decoder.h"
