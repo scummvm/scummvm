@@ -2112,11 +2112,11 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			} else
 				_vm->renderMessage(kStringGenericInteract_22);
 		} else if (obj1.hasProperty(WORN)) {
-			if (airless())
-				dead(kStringGenericInteract_23);
-
 			obj1.disableProperty(WORN);
 			_vm->renderMessage(kStringGenericInteract_24);
+			getInput();
+			if (airless())
+				dead(kStringGenericInteract_23);
 		} else {
 			Room *r = _rooms[AIRLOCK];
 			if (r->getObject(5)->hasProperty(WORN)) {
@@ -2136,11 +2136,11 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			} else
 				_vm->renderMessage(kStringGenericInteract_22);
 		} else if (obj1.hasProperty(WORN)) {
-			if (airless())
-				dead(kStringGenericInteract_27);
-
 			obj1.disableProperty(WORN);
 			_vm->renderMessage(kStringGenericInteract_28);
+			getInput();
+			if (airless())
+				dead(kStringGenericInteract_27);
 		} else {
 			Room *r = _rooms[AIRLOCK];
 			if (r->getObject(5)->hasProperty(WORN)) {
