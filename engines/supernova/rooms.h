@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ROOMS_H
-#define ROOMS_H
+#ifndef SUPERNOVA_ROOMS_H
+#define SUPERNOVA_ROOMS_H
 
 #include "common/scummsys.h"
 
@@ -1385,4 +1385,4 @@ private:
 };
 
 }
-#endif // ROOMS_H
+#endif // SUPERNOVA_ROOMS_H

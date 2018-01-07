@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef MSN_DEF_H
-#define MSN_DEF_H
+#ifndef SUPERNOVA_MSN_DEF_H
+#define SUPERNOVA_MSN_DEF_H
 
 namespace Supernova {
 
@@ -640,4 +640,4 @@ struct Object {
 
 }
 
-#endif // MSN_DEF_H
+#endif // SUPERNOVA_MSN_DEF_H

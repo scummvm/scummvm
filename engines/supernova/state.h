@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STATE_H
-#define STATE_H
+#ifndef SUPERNOVA_STATE_H
+#define SUPERNOVA_STATE_H
 
 #include "common/rect.h"
 #include "common/keyboard.h"
@@ -231,4 +231,4 @@ private:
 
 }
 
-#endif // STATE_H
+#endif // SUPERNOVA_STATE_H

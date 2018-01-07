@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SUPERNOVA_H
-#define SUPERNOVA_H
+#ifndef SUPERNOVA_SUPERNOVA_H
+#define SUPERNOVA_SUPERNOVA_H
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
