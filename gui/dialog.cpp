@@ -161,11 +161,12 @@ void Dialog::markWidgetsAsDirty() {
 	}
 }
 
-void Dialog::drawDialog() {
+void Dialog::drawDialog(DrawLayer layerToDraw) {
 
 	if (!isVisible())
 		return;
 
+	g_gui.theme()->_layerToDraw = layerToDraw;
 	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), _backgroundType);
 
 	markWidgetsAsDirty();

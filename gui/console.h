@@ -132,7 +132,7 @@ public:
 
 	void open();
 	void close();
-	void drawDialog();
+	void drawDialog(DrawLayer layerToDraw) override;
 
 	void handleTickle();
 	void reflowLayout();

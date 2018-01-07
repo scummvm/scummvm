@@ -128,7 +128,7 @@ public:
 	ValueDisplayDialog(const Common::String& label, int minVal, int maxVal, int val, uint16 incKey, uint16 decKey);
 
 	virtual void open();
-	virtual void drawDialog();
+	void drawDialog(GUI::DrawLayer layerToDraw) override;
 	virtual void handleTickle();
 	virtual void handleMouseDown(int x, int y, int button, int clickCount) {
 		close();

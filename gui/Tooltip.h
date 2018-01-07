@@ -40,7 +40,7 @@ public:
 
 	void setup(Dialog *parent, Widget *widget, int x, int y);
 
-	void drawDialog();
+	void drawDialog(DrawLayer layerToDraw) override;
 
 	virtual void receivedFocus(int x = -1, int y = -1) {}
 protected:
