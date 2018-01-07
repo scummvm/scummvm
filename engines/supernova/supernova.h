@@ -106,7 +106,8 @@ public:
 	byte _mouseWait[256];
 	MSNImageDecoder *_currentImage;
 	SoundSample _soundSamples[kAudioNumSamples];
-	Common::MemoryReadStream *_soundMusic[2];
+	Common::MemoryReadStream *_soundMusicIntro;
+	Common::MemoryReadStream *_soundMusicOutro;
 	Common::Event _event;
 	int _screenWidth;
 	int _screenHeight;

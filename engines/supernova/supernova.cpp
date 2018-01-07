@@ -101,6 +101,8 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	, _console(NULL)
 	, _gm(NULL)
 	, _currentImage(NULL)
+	, _soundMusicIntro(NULL)
+	, _soundMusicOutro(NULL)
 	, _brightness(255)
 	, _menuBrightness(255)
 	, _delay(33)
@@ -121,8 +123,6 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
 
 	_rnd = new Common::RandomSource("supernova");
-	_soundMusic[0] = NULL;
-	_soundMusic[1] = NULL;
 }
 
 SupernovaEngine::~SupernovaEngine() {
@@ -132,8 +132,8 @@ SupernovaEngine::~SupernovaEngine() {
 	delete _rnd;
 	delete _console;
 	delete _gm;
-	delete _soundMusic[0];
-	delete _soundMusic[1];
+	delete _soundMusicIntro;
+	delete _soundMusicOutro;
 }
 
 Common::Error SupernovaEngine::run() {
@@ -360,8 +360,8 @@ void SupernovaEngine::initData() {
 		file.close();
 	}
 
-	_soundMusic[0] = convertToMod("msn_data.049");
-	_soundMusic[1] = convertToMod("msn_data.052");
+	_soundMusicIntro = convertToMod("msn_data.049");
+	_soundMusicOutro = convertToMod("msn_data.052");
 
 	// Cursor
 	const uint16 *bufferNormal = reinterpret_cast<const uint16 *>(mouseNormal);
@@ -403,12 +403,14 @@ void SupernovaEngine::stopSound() {
 
 void SupernovaEngine::playSoundMod(int filenumber)
 {
-	if (filenumber != 49 && filenumber != 52) {
+	Audio::AudioStream *audioStream;
+	if (filenumber == 49)
+		audioStream = Audio::makeProtrackerStream(_soundMusicIntro);
+	else if (filenumber == 52)
+		audioStream = Audio::makeProtrackerStream(_soundMusicOutro);
+	else
 		return;
-	}
 
-	int index = filenumber == 49 ? 0 : 1;
-	Audio::AudioStream *audioStream = Audio::makeProtrackerStream(_soundMusic[index]);
 	stopSound();
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream,
 	                   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
