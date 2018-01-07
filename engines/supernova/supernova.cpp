@@ -413,7 +413,7 @@ void SupernovaEngine::playSoundMod(int filenumber)
 
 	stopSound();
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream,
-	                   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	                   -1, Audio::Mixer::kMaxChannelVolume, 0);
 }
 
 void SupernovaEngine::renderImageSection(int section) {
