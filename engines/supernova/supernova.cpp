@@ -121,6 +121,8 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
 
 	_rnd = new Common::RandomSource("supernova");
+	_soundMusic[0] = NULL;
+	_soundMusic[1] = NULL;
 }
 
 SupernovaEngine::~SupernovaEngine() {
@@ -130,9 +132,6 @@ SupernovaEngine::~SupernovaEngine() {
 	delete _rnd;
 	delete _console;
 	delete _gm;
-	for (int i = 0; i < kAudioNumSamples; ++i) {
-		delete[] _soundSamples[i]._buffer;
-	}
 	delete _soundMusic[0];
 	delete _soundMusic[1];
 }
