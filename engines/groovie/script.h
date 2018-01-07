@@ -38,6 +38,14 @@ struct Surface;
 
 namespace Groovie {
 
+enum EngineVersion {
+	kGroovieT7G,
+	kGroovieT11H,
+	kGroovieCDY,
+	kGroovieUHP,
+	kGroovieTLC
+};
+
 class CellGame;
 class Debugger;
 
