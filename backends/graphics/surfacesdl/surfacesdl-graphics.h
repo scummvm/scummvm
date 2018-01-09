@@ -187,8 +187,8 @@ protected:
 	void deinitializeRenderer();
 	void recreateScreenTexture();
 
-	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
-	void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects);
+	virtual SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags) override;
+	virtual void SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects) override;
 #endif
 
 	/** Unseen game screen */
