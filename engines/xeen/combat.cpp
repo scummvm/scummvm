@@ -645,7 +645,7 @@ void Combat::setupMonsterAttack(int monsterDataIndex, const Common::Point &pt) {
 	Party &party = *_vm->_party;
 
 	for (int idx = 0; idx < 36; ++idx) {
-		if (_gmonHit[idx] != -1) {
+		if (_gmonHit[idx] == -1) {
 			int result = stopAttack(pt - party._mazePosition);
 			if (result) {
 				_monstersAttacking = true;
