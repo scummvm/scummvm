@@ -181,7 +181,8 @@ void Intro::titleScreen() {
 	_gm->getInput();
 	// TODO: render animated text
 	_vm->playSound(kAudioVoiceYeah);
-	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle));
+	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		_gm->wait2(1);
 	_vm->paletteFadeOut();
 }
 
@@ -463,15 +464,15 @@ void Intro::cutscene() {
 	exitOnEscape(10);
 	_vm->playSound(kAudioSnoring);
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
-		;
+		_gm->wait2(1);
 	exitOnEscape(10);
 	_vm->playSound(kAudioSnoring);
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
-		;
+		_gm->wait2(1);
 	exitOnEscape(10);
 	_vm->playSound(kAudioSnoring);
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
-		;
+		_gm->wait2(1);
 	exitOnEscape(30);
 	CursorMan.showMouse(true);
 
