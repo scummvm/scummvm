@@ -151,7 +151,6 @@ public:
 	void renderText(const uint16 character);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void setColor63(byte value);
-	void command_print();
 	bool loadGame(int slot);
 	bool saveGame(int slot, const Common::String &description);
 	void errorTempSave(bool saving);
