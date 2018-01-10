@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Mission Supernova 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-22 19:53+0100\n"
-"PO-Revision-Date: 2017-12-13 21:29+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2018-01-07 18:01+0000\n"
+"Last-Translator: Joseph-Eugene Winzer <Joe.Winzer@gmx.de>\n"
 "Language-Team: none\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -400,8 +400,8 @@ msgid ""
 "Komisch! Auf einmal kannst du die Schrift lesen!|Darauf steht:\"Wenn Sie "
 "diese Schrift jetzt|lesen k”nnen, hat die Tablette gewirkt.\""
 msgstr ""
-"Funny! Now you can read the inscription! It says, \"If you can read this "
-"text now, the pill has worked.\""
+"Funny! Now you can read the inscription!|It says, \"If you can read this "
+"text now,|the pill has worked.\""
 
 #: ../../msn/msn_r0.c:232
 msgid "Sie ist leer."
@@ -1352,7 +1352,7 @@ msgstr "Nonsense!"
 msgid ""
 "Komisch! Auf einmal kannst du|das Schild lesen! Darauf steht:|\"Treffpunkt "
 "Galactica\"."
-msgstr "Funny! You can read the sign now! It says \"Galactica meeting point\"."
+msgstr "Funny! You can read the sign now!|It says \"Galactica meeting point\"."
 
 #: ../../msn/msn_r2.c:92
 msgid "Darauf steht:|\"Treffpunkt Galactica\"."
@@ -2617,11 +2617,11 @@ msgstr "Funny picture."
 
 #: ../../msn/msn_r3.c:1600
 msgid "Karte"
-msgstr "Map"
+msgstr "Keycard"
 
 #: ../../msn/msn_r3.c:1600
 msgid "Darauf steht: \"Generalkarte\"."
-msgstr "It says:\"General Map\"."
+msgstr "It says: \"Master keycard\"."
 
 #: ../../msn/msn_r3.c:1612
 msgid "Lampe"
