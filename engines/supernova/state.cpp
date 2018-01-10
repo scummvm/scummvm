@@ -1524,7 +1524,7 @@ void GameManager::drawInventory() {
 }
 
 uint16 GameManager::getKeyInput(bool blockForPrintChar) {
-	while (true) {
+	while (!_vm->shouldQuit()) {
 		_vm->updateEvents();
 		if (_keyPressed) {
 			if (blockForPrintChar) {
@@ -1550,6 +1550,7 @@ uint16 GameManager::getKeyInput(bool blockForPrintChar) {
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
 	}
+	return 0;
 }
 
 Common::EventType GameManager::getMouseInput() {
@@ -1758,6 +1759,8 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 		}
 
 		getKeyInput(true);
+		if (_vm->shouldQuit())
+			break;
 		switch (_key.keycode) {
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_ESCAPE:
