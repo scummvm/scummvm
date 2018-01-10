@@ -184,6 +184,8 @@ void Inventory::remove(Object &obj) {
 }
 
 void Inventory::clear() {
+	for (int i = 0; i < _numObjects; ++i)
+		_inventory[i]->disableProperty(CARRIED);
 	_numObjects = 0;
 	_inventoryScroll = 0;
 }
