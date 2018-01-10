@@ -85,6 +85,7 @@ private:
 public:
 	SpriteResource();
 	SpriteResource(const Common::String &filename);
+	SpriteResource(const Common::String &filename, int ccMode);
 
 	virtual ~SpriteResource();
 

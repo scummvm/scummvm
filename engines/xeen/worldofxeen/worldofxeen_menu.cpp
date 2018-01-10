@@ -51,6 +51,7 @@ void WorldOfXeenMenu::show(XeenEngine *vm) {
 }
 
 void WorldOfXeenMenu::execute() {
+	_vm->_files->setGameCc(1);
 	SpriteResource special("special.icn");
 	Windows &windows = *_vm->_windows;
 	EventsManager &events = *_vm->_events;

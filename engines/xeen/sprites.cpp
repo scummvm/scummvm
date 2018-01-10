@@ -45,6 +45,12 @@ SpriteResource::SpriteResource(const Common::String &filename) {
 	load(filename);
 }
 
+SpriteResource::SpriteResource(const Common::String &filename, int ccMode) {
+	_data = nullptr;
+	_scaledWidth = _scaledHeight = 0;
+	load(filename, ccMode);
+}
+
 SpriteResource::~SpriteResource() {
 	clear();
 }
