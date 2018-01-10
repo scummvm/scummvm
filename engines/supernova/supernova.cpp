@@ -218,20 +218,21 @@ void SupernovaEngine::updateEvents() {
 
 	_gm->_mouseClicked = false;
 	_gm->_keyPressed = false;
-	while (g_system->getEventManager()->pollEvent(_event)) {
-		switch (_event.type) {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_gm->_keyPressed = true;
-			if (_event.kbd.keycode == Common::KEYCODE_d &&
-			    (_event.kbd.flags & Common::KBD_CTRL)) {
+			if (event.kbd.keycode == Common::KEYCODE_d &&
+			    (event.kbd.flags & Common::KBD_CTRL)) {
 				_console->attach();
 			}
-			if (_event.kbd.keycode == Common::KEYCODE_x &&
-			    (_event.kbd.flags & Common::KBD_CTRL)) {
+			if (event.kbd.keycode == Common::KEYCODE_x &&
+			    (event.kbd.flags & Common::KBD_CTRL)) {
 				// TODO: Draw exit box
 			}
 
-			_gm->processInput(_event.kbd);
+			_gm->processInput(event.kbd);
 			break;
 
 		case Common::EVENT_LBUTTONUP:
@@ -242,9 +243,9 @@ void SupernovaEngine::updateEvents() {
 			_gm->_mouseClicked = true;
 			// fallthrough
 		case Common::EVENT_MOUSEMOVE:
-			_gm->_mouseClickType = _event.type;
-			_gm->_mouseX = _event.mouse.x;
-			_gm->_mouseY = _event.mouse.y;
+			_gm->_mouseClickType = event.type;
+			_gm->_mouseX = event.mouse.x;
+			_gm->_mouseY = event.mouse.y;
 			if (_gm->_guiEnabled)
 				_gm->processInput();
 			break;
