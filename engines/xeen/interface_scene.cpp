@@ -433,7 +433,7 @@ void InterfaceScene::drawOutdoorsScene() {
 	Map &map = *_vm->_map;
 
 	for (int idx = 0; idx < 44; ++idx)
-		_outdoorList[Res.OUTDOOR_DRAWSTRCT_INDEXES[idx]]._frame = -1;
+		_outdoorList[Res.OUTDOOR_DRAWSTRUCT_INDEXES[idx]]._frame = -1;
 
 	if (combat._monstersAttacking) {
 		for (int idx = 0; idx < 8; ++idx) {

@@ -122,7 +122,7 @@ public:
 	static const int MAKE_ITEM_ARR3[10][7][2];
 	static const int MAKE_ITEM_ARR4[2][7][2];
 	static const int MAKE_ITEM_ARR5[8][2];
-	static const int OUTDOOR_DRAWSTRCT_INDEXES[44];
+	static const int OUTDOOR_DRAWSTRUCT_INDEXES[44];
 	static const int TOWN_MAXES[2][11];
 	static const char *const TOWN_ACTION_MUSIC[2][7];
 	static const char *const TOWN_ACTION_SHAPES[7];

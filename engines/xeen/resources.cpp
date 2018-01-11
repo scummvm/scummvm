@@ -721,7 +721,7 @@ const int Resources::MAKE_ITEM_ARR5[8][2] = {
 	{ 51, 60 }, { 61, 73 }, { 61, 73 }
 };
 
-const int Resources::OUTDOOR_DRAWSTRCT_INDEXES[44] = {
+const int Resources::OUTDOOR_DRAWSTRUCT_INDEXES[44] = {
 	37, 38, 39, 40, 41, 44, 42, 43, 47, 45, 46,
 	48, 49, 52, 50, 51, 66, 67, 68, 69, 70, 71,
 	72, 75, 73, 74, 87, 88, 89, 90, 91, 94, 92,
