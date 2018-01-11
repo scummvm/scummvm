@@ -83,7 +83,7 @@ struct SoundSample {
 	{}
 
 	~SoundSample() {
-		delete _buffer;
+		delete[] _buffer;
 	}
 
 	byte *_buffer;
