@@ -135,6 +135,10 @@ SupernovaEngine::~SupernovaEngine() {
 }
 
 Common::Error SupernovaEngine::run() {
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(320, 200));
+	modes.push_back(Graphics::Mode(640, 480));
+	initGraphicsModes(modes);
 	initGraphics(_screenWidth, _screenHeight);
 
 	Common::Error status = loadGameStrings();
