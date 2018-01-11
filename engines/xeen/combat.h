@@ -104,7 +104,7 @@ private:
 	void giveExperience(int experience);
 public:
 	Common::Array<Character *> _combatParty;
-	Common::Array<bool> _charsBlocked;
+	bool _charsBlocked[PARTY_AND_MONSTERS];
 	Common::Array<int> _charsGone;
 	SpriteResource _powSprites;
 	int _attackMonsters[ATTACK_MONSTERS_COUNT];
@@ -145,7 +145,15 @@ public:
 public:
 	Combat(XeenEngine *vm);
 
+	/**
+	 * Clear the list of attacking monsters
+	 */
 	void clear();
+
+	/**
+	 * Clear the list of blocked characters
+	 */
+	void clearBlocked();
 
 	void giveCharDamage(int damage, DamageType attackType, int charIndex);
 

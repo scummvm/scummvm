@@ -131,6 +131,10 @@ void Combat::clear() {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[ATTACK_MONSTERS_COUNT], -1);
 }
 
+void Combat::clearBlocked() {
+	Common::fill(_charsBlocked, _charsBlocked + PARTY_AND_MONSTERS, false);
+}
+
 void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
@@ -773,7 +777,7 @@ void Combat::doMonsterTurn(int monsterId) {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 
-	if (_monstersAttacking) {
+	if (!_monstersAttacking) {
 		int monsterIndex;
 		switch (_whosTurn - _combatParty.size()) {
 		case 0:
@@ -790,6 +794,7 @@ void Combat::doMonsterTurn(int monsterId) {
 			intf._indoorList[153]._scale = 0;
 		}
 
+		assert(monsterIndex != -1);
 		MazeMonster &monster = map._mobData._monsters[monsterIndex];
 		MonsterStruct &monsterData = *monster._monsterData;
 		if (monster._damageType)
