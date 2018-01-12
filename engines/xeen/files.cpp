@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "common/archive.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 #include "common/textconsole.h"
 #include "xeen/xeen.h"
 #include "xeen/files.h"
@@ -393,9 +394,10 @@ void SaveArchive::load(Common::SeekableReadStream *stream) {
 	loadIndex(stream);
 
 	delete[] _data;
-	_data = new byte[stream->size()];
+	_dataSize = stream->size();
+	_data = new byte[_dataSize];
 	stream->seek(0);
-	stream->read(_data, stream->size());
+	stream->read(_data, _dataSize);
 
 	// Load in the character stats and active party
 	Common::SeekableReadStream *chr = createReadStreamForMember("maze.chr");
@@ -433,6 +435,11 @@ void SaveArchive::reset(CCArchive *src) {
 	assert(saveFile.size() > 0);
 	Common::MemoryReadStream f(saveFile.getData(), saveFile.size());
 	load(&f);
+}
+
+void SaveArchive::save(Common::WriteStream &s) {
+	s.writeUint32LE(_dataSize);
+	s.write(_data, _dataSize);
 }
 
 /*------------------------------------------------------------------------*/

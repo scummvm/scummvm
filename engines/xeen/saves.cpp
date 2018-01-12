@@ -23,6 +23,7 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "xeen/saves.h"
@@ -112,6 +113,9 @@ bool SavesManager::readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader
 }
 
 void SavesManager::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHeader &header) {
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+
 	// Write out a savegame header
 	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
 
@@ -122,15 +126,14 @@ void SavesManager::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHea
 	out->writeByte('\0');
 
 	// Write a thumbnail of the screen
-	/*
 	uint8 thumbPalette[768];
-	_screen->getPalette(thumbPalette);
+	screen.getPalette(thumbPalette);
 	Graphics::Surface saveThumb;
-	::createThumbnail(&saveThumb, (const byte *)_screen->getPixels(),
-	_screen->w, _screen->h, thumbPalette);
+	::createThumbnail(&saveThumb, (const byte *)screen.getPixels(),
+		screen.w, screen.h, thumbPalette);
 	Graphics::saveThumbnail(*out, saveThumb);
 	saveThumb.free();
-	*/
+
 	// Write out the save date/time
 	TimeDate td;
 	g_system->getTimeAndDate(td);
@@ -139,7 +142,7 @@ void SavesManager::writeSavegameHeader(Common::OutSaveFile *out, XeenSavegameHea
 	out->writeSint16LE(td.tm_mday);
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
-	//	out->writeUint32LE(_events->getFrameCounter());
+	out->writeUint32LE(events.playTime());
 }
 
 Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) {
@@ -152,8 +155,16 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) 
 	header._saveName = desc;
 	writeSavegameHeader(out, header);
 
-	Common::Serializer s(nullptr, out);
-	synchronize(s);
+	// Loop through saving the sides' save archives
+	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
+	for (int idx = 0; idx < 2; ++idx) {
+		if (archives[idx]) {
+			archives[idx]->save(*out);
+		} else {
+			// Side isn't present
+			out->writeUint32LE(0);
+		}
+	}
 
 	out->finalize();
 	delete out;
@@ -167,8 +178,6 @@ Common::Error SavesManager::loadGameState(int slot) {
 	if (!saveFile)
 		return Common::kReadingFailed;
 
-	Common::Serializer s(saveFile, nullptr);
-
 	// Load the savaegame header
 	XeenSavegameHeader header;
 	if (!readSavegameHeader(saveFile, header))
@@ -179,9 +188,22 @@ Common::Error SavesManager::loadGameState(int slot) {
 		delete header._thumbnail;
 	}
 
-	// Load most of the savegame data
-	synchronize(s);
-	delete saveFile;
+	// Set the total play time
+	g_vm->_events->setPlayTime(header._totalFrames);
+
+	// Loop through loading the sides' save archives
+	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
+	for (int idx = 0; idx < 2; ++idx) {
+		uint fileSize = saveFile->readUint32LE();
+
+		if (archives[idx]) {
+			Common::SeekableSubReadStream arcStream(saveFile, saveFile->pos(),
+				saveFile->pos() + fileSize);
+			archives[idx]->load(&arcStream);
+		} else {
+			assert(!fileSize);
+		}
+	}
 
 	return Common::kNoError;
 }
@@ -189,10 +211,5 @@ Common::Error SavesManager::loadGameState(int slot) {
 Common::String SavesManager::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
-
-void SavesManager::synchronize(Common::Serializer &s) {
-	// TODO
-}
-
 
 } // End of namespace Xeen

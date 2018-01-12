@@ -31,7 +31,7 @@
 
 namespace Xeen {
 
-EventsManager::EventsManager(XeenEngine *vm) : _vm(vm),
+EventsManager::EventsManager(XeenEngine *vm) : _vm(vm), _playTime(0),
 		_frameCounter(0), _priorFrameCounterTime(0), _gameCounter(0),
 		_leftButton(false), _rightButton(false), _sprites("mouse.icn") {
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
@@ -181,6 +181,7 @@ void EventsManager::waitForPressAnimated() {
 
 void EventsManager::nextFrame() {
 	++_frameCounter;
+	++_playTime;
 
 	// Allow debugger to update
 	_vm->_debugger->update();

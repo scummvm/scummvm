@@ -41,6 +41,7 @@ private:
 	uint32 _priorFrameCounterTime;
 	uint32 _gameCounter;
 	uint32 _gameCounters[6];
+	uint32 _playTime;
 	Common::Queue<Common::KeyState> _keys;
 	SpriteResource _sprites;
 
@@ -107,6 +108,8 @@ public:
 	uint32 timeElapsed4() const { return _frameCounter - _gameCounters[4]; }
 	uint32 timeElapsed5() const { return _frameCounter - _gameCounters[5]; }
 	uint32 getTicks() { return _frameCounter; }
+	uint32 playTime() const { return _playTime; }
+	void setPlayTime(uint32 time) { _playTime = time; }
 
 	bool wait(uint numFrames, bool interruptable = true);
 

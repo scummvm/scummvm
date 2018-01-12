@@ -258,9 +258,8 @@ class SaveArchive : public BaseCCArchive {
 private:
 	Party *_party;
 	byte *_data;
+	uint32 _dataSize;
 	Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *> _newData;
-
-	void load(Common::SeekableReadStream *stream);
 public:
 	SaveArchive(Party *party);
 	~SaveArchive();
@@ -270,8 +269,20 @@ public:
 	*/
 	void reset(CCArchive *src);
 
-	// Archive implementation
+	/**
+	 * Archive implementation
+	 */
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+
+	/**
+	 * Loads a save archive from a stream
+	 */
+	void load(Common::SeekableReadStream *stream);
+
+	/**
+	 * Saves a save archive to a savegame
+	 */
+	void save(Common::WriteStream &s);
 };
 
 /**

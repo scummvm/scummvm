@@ -46,11 +46,6 @@ private:
 	Common::String _targetName;
 private:
 	/**
-	 * Synchronize savegame data
-	 */
-	void synchronize(Common::Serializer &s);
-
-	/**
 	 * Support method that generates a savegame name
 	 * @param slot		Slot number
 	 */
