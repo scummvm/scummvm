@@ -2316,7 +2316,7 @@ void InterfaceScene::setIndoorsMonsters() {
 	Direction dir = _vm->_party->_mazeDirection;
 
 	// Reset the list of attacking monsters
-	combat.clear();
+	combat.clearAttackers();
 
 	// Iterate through the monsters list checking for proximity to party
 	for (uint monsterIdx = 0; monsterIdx < map._mobData._monsters.size(); ++monsterIdx) {
@@ -3101,7 +3101,7 @@ void InterfaceScene::setOutdoorsMonsters() {
 	Common::Point pt = party._mazePosition;
 
 	// Reset the list of attacking monsters
-	combat.clear();
+	combat.clearAttackers();
 
 	// Iterate through the monsters list checking for proximity to party
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {

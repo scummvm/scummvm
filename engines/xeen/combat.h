@@ -148,7 +148,7 @@ public:
 	/**
 	 * Clear the list of attacking monsters
 	 */
-	void clear();
+	void clearAttackers();
 
 	/**
 	 * Clear the list of blocked characters
@@ -203,6 +203,9 @@ public:
 	 */
 	void run();
 
+	/**
+	 * Called to handle monsters doing ranged attacks against the party
+	 */
 	void monstersAttack();
 
 	void setupMonsterAttack(int monsterDataIndex, const Common::Point &pt);

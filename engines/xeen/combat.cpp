@@ -127,7 +127,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 	_rangeType = RT_SINGLE;
 }
 
-void Combat::clear() {
+void Combat::clearAttackers() {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[ATTACK_MONSTERS_COUNT], -1);
 }
 
