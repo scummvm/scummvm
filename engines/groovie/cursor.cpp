@@ -259,15 +259,14 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 	_numFrames = file.readUint16LE();
 	_width = file.readUint16LE();
 	_height = file.readUint16LE();
+	_hotspotX = file.readUint16LE();
+	_hotspotY = file.readUint16LE();
 
 	_img = new byte[_width * _height * _numFrames * 4];
 
-	debugC(1, kDebugCursor, "Groovie::Cursor: width: %d, height: %d, frames:%d", _width, _height, _numFrames);
+	debugC(1, kDebugCursor, "Groovie::Cursor: width: %d, height: %d, frames:%d, hotspot: %d, %d", _width, _height, _numFrames, _hotspotX, _hotspotY);
 
-	uint16 tmp16 = file.readUint16LE();
-	debugC(5, kDebugCursor, "hotspot x?: %d\n", tmp16);
-	tmp16 = file.readUint16LE();
-	debugC(5, kDebugCursor, "hotspot y?: %d\n", tmp16);
+	uint16 tmp16;
 	int loop2count = file.readUint16LE();
 	debugC(5, kDebugCursor, "loop2count?: %d\n", loop2count);
 	for (int l = 0; l < loop2count; l++) {
@@ -386,7 +385,7 @@ void Cursor_v2::enable() {
 
 void Cursor_v2::showFrame(uint16 frame) {
 	int offset = _width * _height * frame * 4;
-	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _width >> 1, _height >> 1, 0, false, &_format);
+	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _hotspotX, _hotspotY, 0, false, &_format);
 }
 
 

@@ -42,6 +42,8 @@ public:
 protected:
 	uint16 _width;
 	uint16 _height;
+	uint16 _hotspotX;
+	uint16 _hotspotY;
 	uint16 _numFrames;
 };
 
