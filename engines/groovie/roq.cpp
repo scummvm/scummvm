@@ -50,7 +50,8 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	VideoPlayer(vm), _codingTypeCount(0),
 	_fg(&_vm->_graphicsMan->_foreground),
 	_bg(&_vm->_graphicsMan->_background),
-	_firstFrame(true) {
+	_firstFrame(true),
+	_origX(0), _origY(0) {
 
 	// Create the work surfaces
 	_currBuf = new Graphics::Surface();
@@ -63,6 +64,11 @@ ROQPlayer::~ROQPlayer() {
 	delete _currBuf;
 	_prevBuf->free();
 	delete _prevBuf;
+}
+
+void ROQPlayer::setOrigin(int16 x, int16 y) {
+	_origX = x;
+	_origY = y;
 }
 
 uint16 ROQPlayer::loadInternal() {
@@ -91,6 +97,10 @@ uint16 ROQPlayer::loadInternal() {
 		return 0;
 	}
 
+	debugC(1, kDebugVideo, "Groovie::ROQ: First Block type = 0x%02X", blockHeader.type);
+	debugC(1, kDebugVideo, "Groovie::ROQ: First Block size = 0x%08X", blockHeader.size);
+	debugC(1, kDebugVideo, "Groovie::ROQ: First Block param = 0x%04X", blockHeader.param);
+
 	// Verify the file signature
 	if (blockHeader.type != 0x1084) {
 		return 0;
@@ -112,7 +122,7 @@ uint16 ROQPlayer::loadInternal() {
 
 		// Hardcoded FPS
 		return 30;
-	} else if (blockHeader.size == (uint32)-1) {
+	} else if (blockHeader.size == (uint32)-1 || blockHeader.size == 0) {
 		// Set the offset scaling to 1
 		_offScale = 1;
 
@@ -128,11 +138,14 @@ void ROQPlayer::buildShowBuf() {
 	if (_alpha)
 		_fg->copyFrom(*_bg);
 
-	for (int line = 0; line < _bg->h; line++) {
+	for (int line = _origY; line < _bg->h; line++) {
 		uint32 *out = _alpha ? (uint32 *)_fg->getBasePtr(0, line) : (uint32 *)_bg->getBasePtr(0, line);
-		uint32 *in = (uint32 *)_currBuf->getBasePtr(0, line / _scaleY);
+		uint32 *in = (uint32 *)_currBuf->getBasePtr(0, (line - _origY) / _scaleY);
 
-		for (int x = 0; x < _bg->w; x++) {
+		// Apply offset
+		out += _origX;
+
+		for (int x = _origX; x < _bg->w; x++) {
 			// Copy a pixel, checking the alpha channel first
 			if (_alpha && !(*in & 0xFF))
 				out++;
@@ -193,8 +206,12 @@ bool ROQPlayer::playFrameInternal() {
 	}
 
 	// Report the end of the video if we reached the end of the file or if we
-	// just wanted to play one frame.
-	return _file->eos() || playFirstFrame();
+	// just wanted to play one frame. Also reset origin for next video / image
+	if (_file->eos() || playFirstFrame()) {
+		_origX = _origY = 0;
+		return true;
+	}
+	return false;
 }
 
 bool ROQPlayer::readBlockHeader(ROQBlockHeader &blockHeader) {
@@ -313,6 +330,12 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		_currBuf->create(width, height, _vm->_pixelFormat);
 		_prevBuf->create(width, height, _vm->_pixelFormat);
 	}
+
+	// Hack: Detect a video with interlaced black lines, by checking its height compared to width
+	if (height <= width / 3) {
+		_offScale = 2;
+	}
+	debugC(1, kDebugVideo, "Groovie::ROQ: widht=%d, height=%d, scaleX=%d, scaleY=%d, _offScale=%d", width, height, _scaleX, _scaleY, _offScale);
 
 	// Switch from/to fullscreen, if needed
 	if (_bg->h != 480 && height == 480)
