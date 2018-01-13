@@ -38,7 +38,8 @@ struct ROQBlockHeader {
 class ROQPlayer : public VideoPlayer {
 public:
 	ROQPlayer(GroovieEngine *vm);
-	~ROQPlayer() override;
+	~ROQPlayer();
+	void setOrigin(int16 x, int16 y);
 
 protected:
 	uint16 loadInternal() override;
@@ -63,6 +64,9 @@ private:
 	void paint4(byte i, int destx, int desty);
 	void paint8(byte i, int destx, int desty);
 	void copy(byte size, int destx, int desty, int offx, int offy);
+
+	// Origin
+	int16 _origX, _origY;
 
 	// Block coding type
 	byte getCodingType();
