@@ -62,12 +62,6 @@ public:
 	SavesManager(const Common::String &targetName);
 	~SavesManager();
 
-	void readCharFile();
-
-	void writeCharFile();
-
-	void saveChars();
-
 	/**
 	 * Read in a savegame header
 	 */

@@ -104,7 +104,7 @@ int BaseLocation::show() {
 		party.addTime(_farewellTime);
 		result = 0;
 	} else {
-		_vm->_saves->saveChars();
+		//_vm->_saves->saveChars();
 		result = 2;
 	}
 

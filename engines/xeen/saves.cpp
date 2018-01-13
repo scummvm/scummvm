@@ -62,18 +62,6 @@ SavesManager::~SavesManager() {
 	delete File::_darkSave;
 }
 
-void SavesManager::readCharFile() {
-	warning("TODO: readCharFile");
-}
-
-void SavesManager::writeCharFile() {
-	warning("TODO: writeCharFile");
-}
-
-void SavesManager::saveChars() {
-	warning("TODO: saveChars");
-}
-
 const char *const SAVEGAME_STR = "XEEN";
 #define SAVEGAME_STR_SIZE 6
 
@@ -151,6 +139,11 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) 
 	if (!out)
 		return Common::kCreatingFileFailed;
 
+	// Push map and party data to the save archives
+	Map &map = *g_vm->_map;
+	map.saveMaze();
+
+
 	XeenSavegameHeader header;
 	header._saveName = desc;
 	writeSavegameHeader(out, header);
@@ -199,7 +192,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 		if (archives[idx]) {
 			Common::SeekableSubReadStream arcStream(saveFile, saveFile->pos(),
 				saveFile->pos() + fileSize);
-			archives[idx]->load(&arcStream);
+			archives[idx]->load(arcStream);
 		} else {
 			assert(!fileSize);
 		}

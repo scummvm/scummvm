@@ -133,7 +133,7 @@ void PartyDialog::execute() {
 					party._mazeId = party._priorMazeId;
 
 					party.copyPartyToRoster();
-					_vm->_saves->writeCharFile();
+					//_vm->_saves->writeCharFile();
 					return;
 				}
 				break;
@@ -208,7 +208,7 @@ void PartyDialog::execute() {
 					createChar();
 
 					party.copyPartyToRoster();
-					_vm->_saves->writeCharFile();
+					//_vm->_saves->writeCharFile();
 					screen.fadeOut();
 					modeFlag = true;
 					breakFlag = true;

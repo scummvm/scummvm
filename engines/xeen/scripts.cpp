@@ -1425,7 +1425,7 @@ void Scripts::doWorldEnding() {
 }
 
 void Scripts::doEnding(const Common::String &endStr) {
-	_vm->_saves->saveChars();
+	//_vm->_saves->saveChars();
 
 	Party &party = *_vm->_party;
 

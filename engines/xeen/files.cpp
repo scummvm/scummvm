@@ -56,18 +56,17 @@ uint16 BaseCCArchive::convertNameToId(const Common::String &resourceName) {
 	return total;
 }
 
-void BaseCCArchive::loadIndex(Common::SeekableReadStream *stream) {
-	int count = stream->readUint16LE();
+void BaseCCArchive::loadIndex(Common::SeekableReadStream &stream) {
+	int count = stream.readUint16LE();
 
 	// Read in the data for the archive's index
 	byte *rawIndex = new byte[count * 8];
-	stream->read(rawIndex, count * 8);
+	stream.read(rawIndex, count * 8);
 
 	// Decrypt the index
-	int ah = 0xac;
-	for (int i = 0; i < count * 8; ++i) {
-		rawIndex[i] = (byte)(((rawIndex[i] << 2 | rawIndex[i] >> 6) + ah) & 0xff);
-		ah += 0x67;
+	int seed = 0xac;
+	for (int i = 0; i < count * 8; ++i, seed += 0x67) {
+		rawIndex[i] = (byte)(((rawIndex[i] << 2 | rawIndex[i] >> 6) + seed) & 0xff);
 	}
 
 	// Extract the index data into entry structures
@@ -86,14 +85,51 @@ void BaseCCArchive::loadIndex(Common::SeekableReadStream *stream) {
 	delete[] rawIndex;
 }
 
+void BaseCCArchive::saveIndex(Common::WriteStream &stream) {
+	// First caclculate file offsets for each resource, since replaced resources
+	// will shift file offsets for even the succeeding unchanged resources
+	for (uint idx = 1, pos = _index[0]._offset + _index[0]._size; idx < _index.size(); ++idx) {
+		_index[idx]._offset = pos;
+		pos += _index[idx]._size;
+	}
+
+	// Fill up the data for the index entries into a raw data block
+	byte data[8];
+	byte *rawIndex = new byte[_index.size() * 8];
+
+	byte *entryP = rawIndex;
+	for (uint i = 0; i < _index.size(); ++i, entryP += 8) {
+		CCEntry &entry = _index[i];
+		WRITE_LE_UINT16(&entryP[0], entry._id);
+		WRITE_LE_UINT32(&entryP[2], entry._offset);
+		WRITE_LE_UINT16(&entryP[5], entry._size);
+		entryP[7] = 0;
+	}
+
+	// Encrypt the index
+	int seed = 0xac;
+	for (uint i = 0; i < _index.size() * 8; ++i, seed += 0x67) {
+		byte b = (seed - rawIndex[i]) && 0xff;
+		rawIndex[i] = ((b >> 2) & 0x3f) | ((b & 3) << 6);
+	}
+
+	// Write out the number of entries and the encrypted index data
+	stream.writeUint16LE(_index.size());
+	stream.write(rawIndex, _index.size() * 8);
+
+	delete[] rawIndex;
+}
+
 bool BaseCCArchive::hasFile(const Common::String &name) const {
 	CCEntry ccEntry;
 	return getHeaderEntry(name, ccEntry);
 }
 
 bool BaseCCArchive::getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const {
-	uint16 id = convertNameToId(resourceName);
+	return getHeaderEntry(convertNameToId(resourceName), ccEntry);
+}
 
+bool BaseCCArchive::getHeaderEntry(uint16 id, CCEntry &ccEntry) const {
 	// Loop through the index
 	for (uint i = 0; i < _index.size(); ++i) {
 		if (_index[i]._id == id) {
@@ -123,7 +159,7 @@ int BaseCCArchive::listMembers(Common::ArchiveMemberList &list) const {
 CCArchive::CCArchive(const Common::String &filename, bool encoded):
 		BaseCCArchive(), _filename(filename), _encoded(encoded) {
 	File f(filename, SearchMan);
-	loadIndex(&f);
+	loadIndex(f);
 }
 
 CCArchive::CCArchive(const Common::String &filename, const Common::String &prefix,
@@ -131,7 +167,7 @@ CCArchive::CCArchive(const Common::String &filename, const Common::String &prefi
 		_prefix(prefix), _encoded(encoded) {
 	_prefix.toLowercase();
 	File f(filename, SearchMan);
-	loadIndex(&f);
+	loadIndex(f);
 }
 
 CCArchive::~CCArchive() {
@@ -371,18 +407,22 @@ SaveArchive::~SaveArchive() {
 }
 
 Common::SeekableReadStream *SaveArchive::createReadStreamForMember(const Common::String &name) const {
-	CCEntry ccEntry;
 
 	// If the given resource has already been perviously "written" to the
 	// save manager, then return that new resource
 	uint16 id = BaseCCArchive::convertNameToId(name);
+	return createReadStreamForMember(id);
+}
+
+Common::SeekableReadStream *SaveArchive::createReadStreamForMember(uint16 id) const {
 	if (_newData.contains(id)) {
 		Common::MemoryWriteStreamDynamic *stream = _newData[id];
 		return new Common::MemoryReadStream(stream->getData(), stream->size());
 	}
 
 	// Retrieve the resource from the loaded savefile
-	if (getHeaderEntry(name, ccEntry)) {
+	CCEntry ccEntry;
+	if (getHeaderEntry(id, ccEntry)) {
 		// Open the correct CC entry
 		return new Common::MemoryReadStream(_data + ccEntry._offset, ccEntry._size);
 	}
@@ -390,14 +430,14 @@ Common::SeekableReadStream *SaveArchive::createReadStreamForMember(const Common:
 	return nullptr;
 }
 
-void SaveArchive::load(Common::SeekableReadStream *stream) {
+void SaveArchive::load(Common::SeekableReadStream &stream) {
 	loadIndex(stream);
 
 	delete[] _data;
-	_dataSize = stream->size();
+	_dataSize = stream.size();
 	_data = new byte[_dataSize];
-	stream->seek(0);
-	stream->read(_data, _dataSize);
+	stream.seek(0);
+	stream.read(_data, _dataSize);
 
 	// Load in the character stats and active party
 	Common::SeekableReadStream *chr = createReadStreamForMember("maze.chr");
@@ -434,12 +474,53 @@ void SaveArchive::reset(CCArchive *src) {
 
 	assert(saveFile.size() > 0);
 	Common::MemoryReadStream f(saveFile.getData(), saveFile.size());
-	load(&f);
+	load(f);
 }
 
 void SaveArchive::save(Common::WriteStream &s) {
-	s.writeUint32LE(_dataSize);
-	s.write(_data, _dataSize);
+	// Save the character stats and active party
+	OutFile chr("maze.chr", this);
+	XeenSerializer sChr(nullptr, &chr);
+	_party->_roster.synchronize(sChr);
+
+	OutFile pty("maze.pty", this);
+	Common::Serializer sPty(nullptr, &pty);
+	_party->synchronize(sPty);
+
+	// Save out the index
+	saveIndex(s);
+
+	// Save out each resource in turn
+	for (uint idx = 0; idx < _index.size(); ++idx) {
+		// Get the entry
+		Common::SeekableReadStream *entry = createReadStreamForMember(_index[idx]._id);
+		byte *data = new byte[entry->size()];
+		entry->read(data, entry->size());
+
+		// Write it out to the savegame
+		s.write(data, entry->size());
+		delete[] data;
+		delete entry;
+	}
+}
+
+void SaveArchive::replaceEntry(uint16 id, const byte *data, size_t size) {
+	// Delete any prior set entry
+	if (_newData.contains(id))
+		delete _newData[id];
+
+	// Create a new entry and write out the data to it
+	Common::MemoryWriteStreamDynamic *out = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	out->write(data, size);
+	_newData[id] = out;
+
+	// Update the index with the entry's size for later convenience when creating savegames
+	for (uint idx = 0; idx < _index.size(); ++idx) {
+		if (_index[idx]._id == id) {
+			_index[idx]._size = size;
+			break;
+		}
+	}
 }
 
 /*------------------------------------------------------------------------*/
@@ -470,11 +551,7 @@ int32 OutFile::pos() const {
 void OutFile::finalize() {
 	uint16 id = BaseCCArchive::convertNameToId(_filename);
 
-	if (!_archive->_newData.contains(id))
-		_archive->_newData[id] = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
-
-	Common::MemoryWriteStreamDynamic *out = _archive->_newData[id];
-	out->write(_backingStream.getData(), _backingStream.size());
+	_archive->replaceEntry(id, _backingStream.getData(), _backingStream.size());
 }
 
 } // End of namespace Xeen

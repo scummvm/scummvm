@@ -213,13 +213,24 @@ protected:
 	/**
 	 * Load the index of a given CC file
 	 */
-	void loadIndex(Common::SeekableReadStream *stream);
+	void loadIndex(Common::SeekableReadStream &stream);
+
+	/**
+	 * Saves out the contents of the index. Used when creating savegames
+	 */
+	void saveIndex(Common::WriteStream &stream);
 
 	/**
 	 * Given a resource name, returns whether an entry exists, and returns
 	 * the header index data for that entry
 	 */
 	virtual bool getHeaderEntry(const Common::String &resourceName, CCEntry &ccEntry) const;
+
+	/**
+	 * Given a resource Id, returns whether an entry exists, and returns
+	 * the header index data for that entry
+	 */
+	virtual bool getHeaderEntry(uint16 id, CCEntry &ccEntry) const;
 public:
 	/**
 	 * Hash a given filename to produce the Id that represents it
@@ -275,14 +286,24 @@ public:
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 	/**
+	 * Archive implementation
+	 */
+	virtual Common::SeekableReadStream *createReadStreamForMember(uint16 id) const;
+
+	/**
 	 * Loads a save archive from a stream
 	 */
-	void load(Common::SeekableReadStream *stream);
+	void load(Common::SeekableReadStream &stream);
 
 	/**
 	 * Saves a save archive to a savegame
 	 */
 	void save(Common::WriteStream &s);
+
+	/**
+	 * Sets a new resource entry
+	 */
+	void replaceEntry(uint16 id, const byte *data, size_t size);
 };
 
 /**
