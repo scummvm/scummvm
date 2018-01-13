@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-12-26 21:11+0100\n"
+"POT-Creation-Date: 2018-01-13 17:22+0100\n"
 "PO-Revision-Date: 2017-12-07 19:59+0000\n"
 "Last-Translator: stevenew <steffen@nyeland.dk>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -2385,11 +2385,11 @@ msgstr "Pegeplade tilstand aktiveret."
 msgid "Touchpad mode disabled."
 msgstr "Pegeplade tilstand deaktiveret."
 
-#: backends/platform/maemo/maemo.cpp:208
+#: backends/platform/maemo/maemo.cpp:206
 msgid "Click Mode"
 msgstr "Klik tilstand"
 
-#: backends/platform/maemo/maemo.cpp:214
+#: backends/platform/maemo/maemo.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/tizen/form.cpp:274
 #: backends/platform/wince/CEActionsPocket.cpp:60
@@ -2397,11 +2397,11 @@ msgstr "Klik tilstand"
 msgid "Left Click"
 msgstr "Venstre klik"
 
-#: backends/platform/maemo/maemo.cpp:217
+#: backends/platform/maemo/maemo.cpp:215
 msgid "Middle Click"
 msgstr "Miderste klik"
 
-#: backends/platform/maemo/maemo.cpp:220
+#: backends/platform/maemo/maemo.cpp:218
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44

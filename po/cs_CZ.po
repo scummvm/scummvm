@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-12-26 21:11+0100\n"
+"POT-Creation-Date: 2018-01-13 17:22+0100\n"
 "PO-Revision-Date: 2017-11-29 07:42+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -2392,11 +2392,11 @@ msgstr "Touchpad re¾im zapnut."
 msgid "Touchpad mode disabled."
 msgstr "Touchpad re¾im vypnut."
 
-#: backends/platform/maemo/maemo.cpp:208
+#: backends/platform/maemo/maemo.cpp:206
 msgid "Click Mode"
 msgstr "Re¾im kliknutí"
 
-#: backends/platform/maemo/maemo.cpp:214
+#: backends/platform/maemo/maemo.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/tizen/form.cpp:274
 #: backends/platform/wince/CEActionsPocket.cpp:60
@@ -2404,11 +2404,11 @@ msgstr "Re¾im kliknutí"
 msgid "Left Click"
 msgstr "Levé Kliknutí"
 
-#: backends/platform/maemo/maemo.cpp:217
+#: backends/platform/maemo/maemo.cpp:215
 msgid "Middle Click"
 msgstr "Kliknutí prostøedním tlaèítkem"
 
-#: backends/platform/maemo/maemo.cpp:220
+#: backends/platform/maemo/maemo.cpp:218
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
