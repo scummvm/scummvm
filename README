@@ -964,6 +964,15 @@ Mouse Wheel: Scroll through items (inventory, etc) and conversation log
 Arrow Keys: Movement. Down arrow/back is only available if the
     given view explicitly has a backwards movement available.
 
+Function Keys:
+F1: Switch to Chat-O-Mat
+F2: Switch to Personal Baggage
+F3: Switch to Remote Thingummy
+F4: Switch to Designer Room Numbers (chevron list)
+F5: GMM save menu
+F6: Switch to Real Life
+F7: GMM restore menu
+
 Controls for the Starfield Puzzle at the end of the game:
 Tab: Toggle between starmap and skyscape
 Mouse Click: skyscape star selection and
@@ -1947,7 +1956,9 @@ versions.
     - Rename the saved game to 'simon2.xxx'
 
   Starship Titanic
-    - Rename the saved game to 'titanic-win.xxx'
+    - Rename the saved game to 'titanic-win.xxx' for saves from the English 
+      version and 'titanic-win-de.xxx' for saves from the German version
+    - Saved games between different languages are not interchangeable
 
   The Feeble Files
     - Rename the saved game to 'feeble.xxx'
