@@ -807,12 +807,14 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_renderModePopUp->setEnabled(enabled);
 	_filteringCheckbox->setEnabled(enabled);
 #ifndef GUI_ENABLE_KEYSDIALOG
+#ifndef GUI_ONLY_FULLSCREEN
 	_fullscreenCheckbox->setEnabled(enabled);
+#endif // !GUI_ONLY_FULLSCREEN
 	if (_guioptions.contains(GUIO_NOASPECT))
 		_aspectCheckbox->setEnabled(false);
 	else
 		_aspectCheckbox->setEnabled(enabled);
-#endif
+#endif // !GUI_ENABLE_KEYSDIALOG
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
