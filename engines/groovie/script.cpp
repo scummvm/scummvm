@@ -358,10 +358,11 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 
 	// Show hotspots when debugging
 	if (DebugMan.isDebugChannelEnabled(kDebugHotspots)) {
-		if (!_vm->_graphicsMan->isFullScreen())
+		if (_vm->_graphicsMan->isFullScreen())
 			rect.translate(0, -80);
-		_vm->_graphicsMan->_foreground.frameRect(rect, 250);
-		_vm->_graphicsMan->updateScreen(&_vm->_graphicsMan->_foreground);
+		Graphics::Surface *gamescreen = _vm->_system->lockScreen();
+		gamescreen->frameRect(rect, 0xcc2338ff);
+		_vm->_system->unlockScreen();
 		_vm->_system->updateScreen();
 	}
 
@@ -668,20 +669,23 @@ void Script::o_keyboardaction() {
 	uint8 val = readScript8bits();
 	uint16 address = readScript16bits();
 
-	debugC(5, kDebugScript, "Test key == 0x%02X @0x%04X", val, address);
-
 	// If there's an already planned action, do nothing
 	if (_inputAction != -1) {
+		debugC(5, kDebugScript, "Test key == 0x%02X @0x%04X - skipped", val, address);
 		return;
 	}
 
 	// Check the typed key
 	if (_kbdChar == val) {
+		debugC(5, kDebugScript, "Test key == 0x%02X @0x%04X - match", val, address);
+
 		// Exit the input loop
 		_inputLoopAddress = 0;
 
 		// Save the action address
 		_inputAction = address;
+	} else {
+		debugC(5, kDebugScript, "Test key == 0x%02X @0x%04X", val, address);
 	}
 }
 
