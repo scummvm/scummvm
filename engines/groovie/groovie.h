@@ -67,7 +67,8 @@ enum DebugLevels {
 	kDebugMIDI = 1 << 6,
 	kDebugScriptvars = 1 << 7,
 	kDebugCell = 1 << 8,
-	kDebugFast = 1 << 9
+	kDebugFast = 1 << 9,
+	kDebugTlcGame = 1 << 10
 	// the current limitation is 32 debug levels (1 << 31 is the last one)
 	// but some are used by system, so avoid high values.
 };

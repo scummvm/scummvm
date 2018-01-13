@@ -47,6 +47,7 @@ enum EngineVersion {
 class CellGame;
 class Debugger;
 class GroovieEngine;
+class TlcGame;
 
 class Script {
 	friend class Debugger;
@@ -130,7 +131,9 @@ private:
 	Common::String _debugString;
 	uint16 _oldInstruction;
 
+	// Special classes depending on played game
 	CellGame *_staufsMove;
+	TlcGame *_tlcGame;
 
 	// Helper functions
 	uint8 getCodeByte(uint16 address);

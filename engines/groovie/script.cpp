@@ -31,6 +31,7 @@
 #include "groovie/player.h"
 #include "groovie/resource.h"
 #include "groovie/saveload.h"
+#include "groovie/tlcgame.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
@@ -49,7 +50,7 @@ namespace Groovie {
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
 	_videoFile(NULL), _videoRef(0), _staufsMove(NULL), _lastCursor(0xff),
-	_version(version), _random("GroovieScripts") {
+	_version(version), _random("GroovieScripts"), _tlcGame(0) {
 
 	// Initialize the opcode set depending on the engine version
 	if (version == kGroovieT7G) {
@@ -92,6 +93,9 @@ Script::~Script() {
 	delete[] _savedCode;
 
 	delete _videoFile;
+
+	delete _staufsMove;
+	delete _tlcGame;
 }
 
 void Script::setVariable(uint16 variablenum, byte value) {
@@ -637,6 +641,11 @@ void Script::o_bf5on() {			// 0x0A
 void Script::o_inputloopstart() {	//0x0B
 	debugC(5, kDebugScript, "Input loop start");
 
+	// For TLC the regions for many questions are in an extra database. Reset internal region counters
+	if (_version == kGroovieTLC && _tlcGame != NULL) {
+		_tlcGame->getRegionRewind();
+	}
+
 	// Reset the input action and the mouse cursor
 	_inputAction = -1;
 	_newCursorStyle = 5;
@@ -683,6 +692,14 @@ void Script::o_hotspot_rect() {
 	uint16 bottom = readScript16bits();
 	uint16 address = readScript16bits();
 	uint8 cursor = readScript8bits();
+
+	// TLC: The regions for many questions are in an extra database
+	if (_version == kGroovieTLC && left == 0 && top == 0 && right == 0 && bottom == 0 && _tlcGame != NULL) {
+		if (_tlcGame->getRegionNext(left, top, right, bottom) < 0) {
+			debugC(5, kDebugScript, "HOTSPOT-RECT(x,x,x,x) @0x%04X cursor=%d SKIPPED", left, top, right, bottom, address, cursor);
+			return;
+		}
+	}
 
 	debugC(5, kDebugScript, "HOTSPOT-RECT(%d,%d,%d,%d) @0x%04X cursor=%d", left, top, right, bottom, address, cursor);
 
@@ -1363,6 +1380,8 @@ void Script::o_hotspot_slot() {
 	}
 }
 
+// Checks valid save games. Even for TLC (uses only 4 user save games) the function
+// checks for 10 save games.
 void Script::o_checkvalidsaves() {
 	debugC(1, kDebugScript, "CHECKVALIDSAVES");
 
@@ -1734,10 +1753,47 @@ void Script::o2_setvideoskip() {
 	debugC(1, kDebugScript, "SetVideoSkip (0x%04X)", _videoSkipAddress);
 }
 
+// This function depends on the actual game played. So it is different for 
+// T7G, 11H, TLC, ...
 void Script::o2_stub42() {
 	uint8 arg = readScript8bits();
-	// TODO: Switch with 5 cases (0 - 5). Anything above 5 is a NOP
-	debugC(1, kDebugScript, "STUB42 (0x%02X)", arg);
+
+	switch (_version) {
+	case kGroovieTLC:
+		if (_tlcGame == NULL) {
+			_tlcGame = new TlcGame();
+			_tlcGame->setVariables(_variables);
+		}
+		switch (arg) {
+		case 0:
+			debugC(1, kDebugScript, "Op42 (0x%02X): TLC Regions", arg);
+			_tlcGame->opRegions();
+			break;
+
+		case 1:
+			debugC(1, kDebugScript, "Op42 (0x%02X): TLC Exit Polls", arg);
+			_tlcGame->opExitPoll();
+			break;
+
+		case 2:
+			_tlcGame->opFlags();
+			debugC(1, kDebugScript, "Op42 (0x%02X): TLC TATFlags", arg);
+			break;
+
+		case 3:
+			debugC(1, kDebugScript, "Op42 (0x%02X): TLC TATs (TODO)", arg);
+			_tlcGame->opTat();
+			break;
+
+		default:
+			debugC(1, kDebugScript, "Op42 (0x%02X): TLC Invalid -> NOP", arg);
+		}
+		break;
+
+	default:
+		debugC(1, kDebugScript, "STUB42 (0x%02X)", arg);
+		warning("OpCode 0x42 for current game not implemented yet.");
+	}
 }
 
 void Script::o2_stub52() {
