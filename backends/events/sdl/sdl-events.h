@@ -152,6 +152,12 @@ protected:
 	virtual bool handleAxisToMouseMotion(int16 xAxis, int16 yAxis);
 
 	/**
+	 * Compute the virtual mouse movement speed factor according to the 'kbdmouse_speed' setting.
+	 * The speed factor is scaled with the display size.
+	 */
+	int16 computeJoystickMouseSpeedFactor() const;
+
+	/**
 	 * Assigns the mouse coords to the mouse event. Furthermore notify the
 	 * graphics manager about the position change.
 	 */
