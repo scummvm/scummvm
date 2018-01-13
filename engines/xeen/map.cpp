@@ -1323,6 +1323,17 @@ void Map::load(int mapId) {
 	files.setGameCc(isDarkCc);
 }
 
+void Map::findMap(int mapId) {
+	if (mapId == -1)
+		mapId = _vm->_party->_mazeId;
+
+	_mazeDataIndex = 0;
+	while (_mazeDataIndex < 9 && _mazeData[_mazeDataIndex]._mazeId != mapId)
+		++_mazeDataIndex;
+	if (_mazeDataIndex == 9)
+		error("Could not find map %d", mapId);
+}
+
 int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 	Common::Point pos = pt;
 	int mapId = _vm->_party->_mazeId;
@@ -1333,9 +1344,7 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 	}
 
 	// Find the correct maze data out of the set to use
-	_mazeDataIndex = 0;
-	while (_mazeData[_mazeDataIndex]._mazeId != _vm->_party->_mazeId)
-		++_mazeDataIndex;
+	findMap();
 
 	// Handle map changing to the north or south as necessary
 	if (pos.y & 16) {
@@ -1349,9 +1358,7 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 
 		if (mapId) {
 			// Move to the correct map to north/south
-			_mazeDataIndex = 0;
-			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-				++_mazeDataIndex;
+			findMap(mapId);
 		} else {
 			// No map, so reached outside indoor area or outer space outdoors
 			_currentSteppedOn = true;
@@ -1369,11 +1376,9 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._west;
 		}
 
-		if (mapId) {
-			_mazeDataIndex = 0;
-			while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-				++_mazeDataIndex;
-		}
+		if (mapId)
+			// Move to the correct map to east/west
+			findMap(mapId);
 	}
 
 	if (mapId) {
@@ -1489,10 +1494,10 @@ void Map::saveMaze() {
 
 void Map::cellFlagLookup(const Common::Point &pt) {
 	Common::Point pos = pt;
+	findMap();
+
 	int mapId = _vm->_party->_mazeId;
-	_mazeDataIndex = 0;
-	while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-		++_mazeDataIndex;
+	findMap(mapId);
 
 	// Handle map changing to the north or south as necessary
 	if (pos.y & 16) {
@@ -1504,9 +1509,7 @@ void Map::cellFlagLookup(const Common::Point &pt) {
 			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._south;
 		}
 
-		_mazeDataIndex = 0;
-		while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-			++_mazeDataIndex;
+		findMap(mapId);
 	}
 
 	// Handle map changing to the east or west as necessary
@@ -1519,9 +1522,7 @@ void Map::cellFlagLookup(const Common::Point &pt) {
 			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._west;
 		}
 
-		_mazeDataIndex = 0;
-		while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-			++_mazeDataIndex;
+		findMap(mapId);
 	}
 
 	// Get the cell flags
@@ -1575,9 +1576,7 @@ int Map::getCell(int idx) {
 		return INVALID_CELL;
 	}
 
-	_mazeDataIndex = 0;
-	while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-		++_mazeDataIndex;
+	findMap(mapId);
 
 	if (pt.y & 16) {
 		if (pt.y >= 0) {
@@ -1610,9 +1609,7 @@ int Map::getCell(int idx) {
 			}
 		}
 
-		_mazeDataIndex = 0;
-		while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-			++_mazeDataIndex;
+		findMap(mapId);
 	}
 
 	if (pt.x & 16) {
@@ -1646,9 +1643,7 @@ int Map::getCell(int idx) {
 			}
 		}
 
-		_mazeDataIndex = 0;
-		while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-			++_mazeDataIndex;
+		findMap(mapId);
 	}
 
 	assert(pt.x >= 0 && pt.x < 16 && pt.y >= 0 && pt.y < 16);
@@ -1690,9 +1685,7 @@ void Map::getNewMaze() {
 	int mapId = party._mazeId;
 
 	// Get the correct map to use from the cached list
-	_mazeDataIndex = 0;
-	while (_mazeData[_mazeDataIndex]._mazeId != mapId)
-		++_mazeDataIndex;
+	findMap(mapId);
 
 	// Adjust Y and X to be in the 0-15 range, and on the correct surrounding
 	// map if either value is < 0 or >= 16
@@ -1705,11 +1698,8 @@ void Map::getNewMaze() {
 			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._south;
 		}
 
-		if (mapId) {
-			_mazeDataIndex = 0;
-			while (_mazeData[_mazeDataIndex]._mazeId == mapId)
-				++_mazeDataIndex;
-		}
+		if (mapId)
+			findMap(mapId);
 	}
 
 	if (pt.x & 16) {
@@ -1721,11 +1711,8 @@ void Map::getNewMaze() {
 			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._west;
 		}
 
-		if (mapId) {
-			_mazeDataIndex = 0;
-			while (_mazeData[_mazeDataIndex]._mazeId == mapId)
-				++_mazeDataIndex;
-		}
+		if (mapId)
+			findMap(mapId);
 	}
 
 	// Save the adjusted (0,0)-(15,15) position and load the given map.

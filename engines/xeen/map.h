@@ -425,6 +425,12 @@ private:
 	 * Save the map data
 	 */
 	void saveMap();
+
+	/**
+	 * Finds a map in the array that contains the currently active and the surrounding
+	 * maps in the eight cardinal directions
+	 */
+	void findMap(int mapId = -1);
 public:
 	Common::String _mazeName;
 	bool _isOutdoors;
