@@ -159,6 +159,10 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) 
 		}
 	}
 
+	// Write out miscellaneous
+	FileManager &files = *g_vm->_files;
+	files.save(*out);
+
 	out->finalize();
 	delete out;
 
@@ -166,6 +170,11 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) 
 }
 
 Common::Error SavesManager::loadGameState(int slot) {
+	EventsManager &events = *g_vm->_events;
+	FileManager &files = *g_vm->_files;
+	Map &map = *g_vm->_map;
+	Party &party = *g_vm->_party;
+
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(
 		generateSaveName(slot));
 	if (!saveFile)
@@ -182,7 +191,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 	}
 
 	// Set the total play time
-	g_vm->_events->setPlayTime(header._totalFrames);
+	events.setPlayTime(header._totalFrames);
 
 	// Loop through loading the sides' save archives
 	SaveArchive *archives[2] = { File::_xeenSave, File::_darkSave };
@@ -197,6 +206,12 @@ Common::Error SavesManager::loadGameState(int slot) {
 			assert(!fileSize);
 		}
 	}
+
+	// Read in miscellaneous
+	files.load(*saveFile);
+
+	// Load the new map
+	map.load(party._mazeId);
 
 	return Common::kNoError;
 }

@@ -245,6 +245,14 @@ void FileManager::setGameCc(int ccMode) {
 	_isDarkCc = ccMode != 0;
 }
 
+void FileManager::load(Common::SeekableReadStream &stream) {
+	setGameCc(stream.readByte());
+}
+
+void FileManager::save(Common::WriteStream &s) {
+	s.writeByte(_isDarkCc ? 1 : 0);
+}
+
 /*------------------------------------------------------------------------*/
 
 CCArchive *File::_xeenCc;
@@ -474,10 +482,12 @@ void SaveArchive::save(Common::WriteStream &s) {
 	OutFile chr("maze.chr", this);
 	XeenSerializer sChr(nullptr, &chr);
 	_party->_roster.synchronize(sChr);
+	chr.finalize();
 
 	OutFile pty("maze.pty", this);
 	Common::Serializer sPty(nullptr, &pty);
 	_party->synchronize(sPty);
+	pty.finalize();
 
 	// First caclculate file offsets for each resource, since replaced resources
 	// will shift file offsets for even the succeeding unchanged resources

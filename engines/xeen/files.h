@@ -93,6 +93,16 @@ public:
 	 * @param ccMode	0=Clouds, 1=Dark Side
 	 */
 	void setGameCc(int ccMode);
+
+	/**
+	 * Loads a save archive from a stream
+	 */
+	void load(Common::SeekableReadStream &stream);
+
+	/**
+	 * Saves a save archive to a savegame
+	 */
+	void save(Common::WriteStream &s);
 };
 
 /**
