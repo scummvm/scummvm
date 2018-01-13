@@ -166,6 +166,7 @@ Common::Error GroovieEngine::run() {
 	case kGroovieCDY:
 	case kGroovieUHP:
 	case kGroovieTLC:
+		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		_resMan = new ResMan_v2();
 		_grvCursorMan = new GrvCursorMan_v2(_system);
 #ifdef ENABLE_GROOVIE2

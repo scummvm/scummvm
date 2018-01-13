@@ -1088,7 +1088,9 @@ void Script::o_loadgame() {
 	debugC(1, kDebugScript, "LOADGAME var[0x%04X] -> slot=%d (TODO)", varnum, slot);
 
 	loadgame(slot);
-	_vm->_system->fillScreen(0);
+	if (_version == kGroovieT7G) {
+		_vm->_system->fillScreen(0);
+	}
 }
 
 void Script::o_savegame() {
@@ -1620,6 +1622,33 @@ void Script::o_stub59() {
 	debugC(1, kDebugScript, "STUB59: 0x%04X 0x%02X", val1, val2);
 }
 
+void Script::o2_printstring() {
+	uint16 posx = readScript16bits();
+	uint16 posy = readScript16bits();
+	uint8  colr = readScript8bits();
+	uint8  colg = readScript8bits();
+	uint8  colb = readScript8bits();
+	uint32 col = _vm->_pixelFormat.RGBToColor(colr, colg, colb);
+	char   message[20];
+	memset(message, 0, sizeof(message));
+
+	for (int i = 0; i < 19; i++) {
+		if (_variables[i] > 0) {
+			message[i] = _variables[i] + 0x30;
+		}
+	}
+
+	debugC(1, kDebugScript, "PRINTSTRING (%d, %d): %s", posx, posy, message);
+
+	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
+	_vm->_font->drawString(gamescreen, message, posx, posy, 640, col, Graphics::kTextAlignLeft);
+	_vm->_system->unlockScreen();
+	_vm->_graphicsMan->change();	// Force Update screen after step
+
+									// 42 Bytes unknown
+	_currentInstruction += 39;
+}
+
 void Script::o2_playsong() {
 	uint32 fileref = readScript32bits();
 	debugC(1, kDebugScript, "PlaySong(0x%08X): Play xmidi file", fileref);
@@ -1876,7 +1905,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_copyrecttobg,
 	&Script::o_restorestkpnt, // 0x38
 	&Script::o_obscureswap,
-	&Script::o_printstring,
+	&Script::o2_printstring,
 	&Script::o_hotspot_slot,
 	&Script::o_checkvalidsaves, // 0x3C
 	&Script::o_resetvars,
