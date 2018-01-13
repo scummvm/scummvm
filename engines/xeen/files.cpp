@@ -66,7 +66,7 @@ void BaseCCArchive::loadIndex(Common::SeekableReadStream &stream) {
 	// Decrypt the index
 	int seed = 0xac;
 	for (int i = 0; i < count * 8; ++i, seed += 0x67) {
-		rawIndex[i] = (byte)(((rawIndex[i] << 2 | rawIndex[i] >> 6) + seed) & 0xff);
+		rawIndex[i] = (byte)((((rawIndex[i] << 2) | (rawIndex[i] >> 6)) + seed) & 0xff);
 	}
 
 	// Extract the index data into entry structures
@@ -86,15 +86,7 @@ void BaseCCArchive::loadIndex(Common::SeekableReadStream &stream) {
 }
 
 void BaseCCArchive::saveIndex(Common::WriteStream &stream) {
-	// First caclculate file offsets for each resource, since replaced resources
-	// will shift file offsets for even the succeeding unchanged resources
-	for (uint idx = 1, pos = _index[0]._offset + _index[0]._size; idx < _index.size(); ++idx) {
-		_index[idx]._offset = pos;
-		pos += _index[idx]._size;
-	}
-
 	// Fill up the data for the index entries into a raw data block
-	byte data[8];
 	byte *rawIndex = new byte[_index.size() * 8];
 
 	byte *entryP = rawIndex;
@@ -109,8 +101,8 @@ void BaseCCArchive::saveIndex(Common::WriteStream &stream) {
 	// Encrypt the index
 	int seed = 0xac;
 	for (uint i = 0; i < _index.size() * 8; ++i, seed += 0x67) {
-		byte b = (seed - rawIndex[i]) && 0xff;
-		rawIndex[i] = ((b >> 2) & 0x3f) | ((b & 3) << 6);
+		byte b = (rawIndex[i] - seed) & 0xff;
+		rawIndex[i] = (byte)((b >> 2) | (b << 6));
 	}
 
 	// Write out the number of entries and the encrypted index data
@@ -486,6 +478,17 @@ void SaveArchive::save(Common::WriteStream &s) {
 	OutFile pty("maze.pty", this);
 	Common::Serializer sPty(nullptr, &pty);
 	_party->synchronize(sPty);
+
+	// First caclculate file offsets for each resource, since replaced resources
+	// will shift file offsets for even the succeeding unchanged resources
+	for (uint idx = 1, pos = _index[0]._offset + _index[0]._size; idx < _index.size(); ++idx) {
+		_index[idx]._offset = pos;
+		pos += _index[idx]._size;
+	}
+
+	// Write out the size of the save archive
+	_dataSize = _index.back()._offset + _index.back()._size;
+	s.writeUint32LE(_dataSize);
 
 	// Save out the index
 	saveIndex(s);
