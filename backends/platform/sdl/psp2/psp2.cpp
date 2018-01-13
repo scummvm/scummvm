@@ -73,7 +73,6 @@ void OSystem_PSP2::init() {
 void OSystem_PSP2::initBackend() {
 	
 	ConfMan.set("joystick_num", 0);
-	ConfMan.set("vkeybdpath", PREFIX "/data");
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "2x");

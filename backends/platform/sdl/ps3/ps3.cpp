@@ -59,7 +59,6 @@ void OSystem_PS3::init() {
 
 void OSystem_PS3::initBackend() {
 	ConfMan.set("joystick_num", 0);
-	ConfMan.set("vkeybdpath", PREFIX "/data");
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 
