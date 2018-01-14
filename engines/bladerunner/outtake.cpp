@@ -37,11 +37,12 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 		return;
 	}
 
-	Common::String resName;
-	if (noLocalization)
-		resName = name + ".VQA";
-	else
-		resName = name + "_E.VQA";
+	Common::String resName = name;
+	if (!noLocalization) {
+		resName = resName + "_" + _vm->_languageCode;
+	}
+
+	resName = resName + ".VQA";
 
 	VQAPlayer vqa_player(_vm, &_vm->_surfaceGame);
 

@@ -54,7 +54,7 @@ public:
 
 bool BladeRunnerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const
 {
-	*engine = new BladeRunner::BladeRunnerEngine(syst);
+	*engine = new BladeRunner::BladeRunnerEngine(syst, desc);
 
 	return true;
 }

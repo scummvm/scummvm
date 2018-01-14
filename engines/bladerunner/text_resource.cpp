@@ -47,7 +47,7 @@ bool TextResource::open(const char *name) {
 	assert(strlen(name) <= 8);
 
 	char resName[13];
-	sprintf(resName, "%s.TRE", name);
+	sprintf(resName, "%s.TR%s", name, _vm->_languageCode);
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(resName));
 	if (!s)
 		return false;

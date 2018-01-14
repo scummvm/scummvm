@@ -37,6 +37,8 @@ namespace Common {
 struct Event;
 }
 
+struct ADGameDescription;
+
 namespace BladeRunner {
 
 enum AnimationModes {
@@ -101,6 +103,7 @@ public:
 	bool      _gameIsRunning;
 	bool      _windowIsActive;
 	int       _playerLosesControlCounter;
+	char*     _languageCode;
 
 	ADQ              *_adq;
 	ScreenEffects    *_screenEffects;
@@ -176,7 +179,7 @@ private:
 	MIXArchive _archives[kArchiveCount];
 
 public:
-	BladeRunnerEngine(OSystem *syst);
+	BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc);
 	~BladeRunnerEngine();
 
 	bool hasFeature(EngineFeature f) const;

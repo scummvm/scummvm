@@ -1052,7 +1052,7 @@ int Actor::getGoal() {
 
 void Actor::speechPlay(int sentenceId, bool voiceOver) {
 	char name[13];
-	sprintf(name, "%02d-%04d.AUD", _id, sentenceId); //TODO somewhere here should be also language code
+	sprintf(name, "%02d-%04d%s.AUD", _id, sentenceId, _vm->_languageCode);
 	int balance;
 
 	if (voiceOver || _id == VOICEOVER_ACTOR) {

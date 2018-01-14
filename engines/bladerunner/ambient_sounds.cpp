@@ -107,7 +107,7 @@ void AmbientSounds::addSpeech(int actorId, int sentenceId, int timeMin, int time
 	sort(panEndMin, panEndMax);
 
 	char name[13];
-	sprintf(name, "%02d-%04d.AUD", actorId, sentenceId); //TODO somewhere here should be also language code
+	sprintf(name, "%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode);
 	addSoundByName(name,
 					timeMin, timeMax,
 					volumeMin, volumeMax,

@@ -69,12 +69,13 @@
 #include "common/system.h"
 
 #include "engines/util.h"
+#include "engines/advancedDetector.h"
 
 #include "graphics/pixelformat.h"
 
 namespace BladeRunner {
 
-BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
+BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst),
 	  _rnd("bladerunner") {
 	_windowIsActive = true;
@@ -104,6 +105,29 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst)
 	_walkSoundId = -1;
 	_walkSoundVolume = 0;
 	_walkSoundBalance = 0;
+
+	switch (desc->language) {
+		case Common::EN_ANY:
+			this->_languageCode = "E";
+			break;
+		case Common::DE_DEU:
+			this->_languageCode = "G";
+			break;
+		case Common::FR_FRA:
+			this->_languageCode = "F";
+			break;
+		case Common::IT_ITA:
+			this->_languageCode = "I";
+			break;
+		case Common::RU_RUS:
+			this->_languageCode = "R";
+			break;
+		case Common::ES_ESP:
+			this->_languageCode = "S";
+			break;
+		default:
+			this->_languageCode = "E";
+	}
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
