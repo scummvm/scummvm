@@ -88,12 +88,13 @@ void BaseCCArchive::loadIndex(Common::SeekableReadStream &stream) {
 void BaseCCArchive::saveIndex(Common::WriteStream &stream) {
 	// Fill up the data for the index entries into a raw data block
 	byte *rawIndex = new byte[_index.size() * 8];
+	byte b;
 
 	byte *entryP = rawIndex;
 	for (uint i = 0; i < _index.size(); ++i, entryP += 8) {
 		CCEntry &entry = _index[i];
 		WRITE_LE_UINT16(&entryP[0], entry._id);
-		WRITE_LE_UINT32(&entryP[2], entry._offset);
+		WRITE_LE_UINT32(&entryP[2], entry._writeOffset);
 		WRITE_LE_UINT16(&entryP[5], entry._size);
 		entryP[7] = 0;
 	}
@@ -101,8 +102,11 @@ void BaseCCArchive::saveIndex(Common::WriteStream &stream) {
 	// Encrypt the index
 	int seed = 0xac;
 	for (uint i = 0; i < _index.size() * 8; ++i, seed += 0x67) {
-		byte b = (rawIndex[i] - seed) & 0xff;
-		rawIndex[i] = (byte)((b >> 2) | (b << 6));
+		b = (rawIndex[i] - seed) & 0xff;
+		b = (byte)((b >> 2) | (b << 6));
+
+		assert(rawIndex[i] == (byte)((((b << 2) | (b >> 6)) + seed) & 0xff));
+		rawIndex[i] = b;
 	}
 
 	// Write out the number of entries and the encrypted index data
@@ -489,19 +493,19 @@ void SaveArchive::save(Common::WriteStream &s) {
 	_party->synchronize(sPty);
 	pty.finalize();
 
-	// First caclculate file offsets for each resource, since replaced resources
-	// will shift file offsets for even the succeeding unchanged resources
-	for (uint idx = 1, pos = _index[0]._offset + _index[0]._size; idx < _index.size(); ++idx) {
-		_index[idx]._offset = pos;
-		pos += _index[idx]._size;
+	// First caclculate new offsets and total filesize
+	_dataSize = _index.size() * 8 + 2;
+	for (uint idx = 0; idx < _index.size(); ++idx) {
+		_index[idx]._writeOffset = (idx == 0) ? _dataSize :
+			_index[idx - 1]._writeOffset + _index[idx - 1]._size;
+		_dataSize += _index[idx]._size;
 	}
 
-	// Write out the size of the save archive
-	_dataSize = _index.back()._offset + _index.back()._size;
 	s.writeUint32LE(_dataSize);
 
 	// Save out the index
-	saveIndex(s);
+	SubWriteStream dataStream(&s);
+	saveIndex(dataStream);
 
 	// Save out each resource in turn
 	for (uint idx = 0; idx < _index.size(); ++idx) {
@@ -511,7 +515,8 @@ void SaveArchive::save(Common::WriteStream &s) {
 		entry->read(data, entry->size());
 
 		// Write it out to the savegame
-		s.write(data, entry->size());
+		assert(dataStream.pos() == _index[idx]._writeOffset);
+		dataStream.write(data, entry->size());
 		delete[] data;
 		delete entry;
 	}

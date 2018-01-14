@@ -143,7 +143,7 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) 
 	Map &map = *g_vm->_map;
 	map.saveMaze();
 
-
+	// Write the savegame header
 	XeenSavegameHeader header;
 	header._saveName = desc;
 	writeSavegameHeader(out, header);

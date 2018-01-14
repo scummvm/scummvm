@@ -64,8 +64,9 @@ struct CCEntry {
 	uint16 _id;
 	uint32 _offset;
 	uint16 _size;
+	uint32 _writeOffset;
 
-	CCEntry() : _id(0), _offset(0), _size(0) {}
+	CCEntry() : _id(0), _offset(0), _size(0), _writeOffset(0) {}
 	CCEntry(uint16 id, uint32 offset, uint32 size)
 		: _id(id), _offset(offset), _size(size) {
 	}
@@ -183,6 +184,30 @@ public:
 	 * @return	true if the file exists, false otherwise
 	 */
 	static bool exists(const Common::String &filename, int ccMode);
+};
+
+/**
+ * SubWriteStream provides a way of compartmentalizing writing to a subsection of
+ * a file. This is primarily useful for the pos() function which can, for example,
+ * be used in asserts to ensure writing is being done at the correct offset within
+ * the bounds of the structure being written.
+*/
+class SubWriteStream : virtual public Common::WriteStream {
+protected:
+	Common::WriteStream *_parentStream;
+	uint32 _begin;
+	DisposeAfterUse::Flag _disposeAfterUse;
+public:
+	SubWriteStream(Common::WriteStream *parentStream) :
+		_parentStream(parentStream),  _begin(parentStream->pos()) {
+	}
+
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) {
+		return _parentStream->write(dataPtr, dataSize);
+	}
+	virtual bool flush() { return _parentStream->flush(); }
+	virtual void finalize() {}
+	virtual int32 pos() const { return _parentStream->pos() - _begin; }
 };
 
 class StringArray : public Common::StringArray {
