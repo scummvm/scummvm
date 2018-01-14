@@ -146,9 +146,7 @@ bool ScriptManager::parseCriteria(Common::SeekableReadStream &stream, Common::Li
 	// shows a close-up of only the tunnel, instead of showing the entire
 	// booth. However, the scripts that draw the lever in its correct
 	// state do not test this flag, causing it to be drawn when it should
-	// not be. This bug does not happen in the original game, suggesting
-	// a ScummVM bug. But I'm not aware of any other such glitches, and it
-	// still seems like a correct way of working around bug #6770.
+	// not be. This fixes bug #6770.
 	if (_engine->getGameId() == GID_GRANDINQUISITOR && key == 9536) {
 		Puzzle::CriteriaEntry entry;
 		entry.key = 9404; // me2j_time_tunnel_open
