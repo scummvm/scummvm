@@ -70,16 +70,16 @@ void BaseCCArchive::loadIndex(Common::SeekableReadStream &stream) {
 	}
 
 	// Extract the index data into entry structures
-	_index.reserve(count);
+	_index.resize(count);
 	const byte *entryP = &rawIndex[0];
-	for (int i = 0; i < count; ++i, entryP += 8) {
+	for (int idx = 0; idx < count; ++idx, entryP += 8) {
 		CCEntry entry;
 		entry._id = READ_LE_UINT16(entryP);
 		entry._offset = READ_LE_UINT32(entryP + 2) & 0xffffff;
 		entry._size = READ_LE_UINT16(entryP + 5);
 		assert(!entryP[7]);
 
-		_index.push_back(entry);
+		_index[idx] = entry;
 	}
 
 	delete[] rawIndex;
