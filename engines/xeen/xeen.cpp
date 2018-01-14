@@ -139,7 +139,8 @@ Common::Error XeenEngine::saveGameState(int slot, const Common::String &desc) {
 }
 
 Common::Error XeenEngine::loadGameState(int slot) {
-	return _saves->loadGameState(slot);
+	_loadSaveSlot = slot;
+	return Common::kNoError;
 }
 
 bool XeenEngine::canLoadGameStateCurrently() {
@@ -173,7 +174,12 @@ void XeenEngine::play() {
 		_party->_mazePosition.y = 21;
 	}
 
-	_map->load(_party->_mazeId);
+	if (_loadSaveSlot >= 0) {
+		_saves->loadGameState(_loadSaveSlot);
+		_loadSaveSlot = -1;
+	} else {
+		_map->load(_party->_mazeId);
+	}
 
 	_interface->startup();
 	if (_mode == MODE_0) {
@@ -199,6 +205,13 @@ void XeenEngine::play() {
 void XeenEngine::gameLoop() {
 	// Main game loop
 	while (!shouldQuit()) {
+		if (_loadSaveSlot >= 0) {
+			// Load any pending savegame
+			int saveSlot = _loadSaveSlot;
+			_loadSaveSlot = -1;
+			_saves->loadGameState(saveSlot);
+		}
+
 		_map->cellFlagLookup(_party->_mazePosition);
 		if (_map->_currentIsEvent) {
 			_quitMode = _scripts->checkEvents();

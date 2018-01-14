@@ -102,13 +102,20 @@ class XeenEngine : public Engine {
 private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	int _loadSaveSlot;
+private:
+	void initialize();
+
+	// Engine APIs
+	virtual Common::Error run();
+	virtual bool hasFeature(EngineFeature f) const;
 
 	void play();
 
 	void pleaseWait();
 
 	void gameLoop();
+protected:
+	int _loadSaveSlot;
 protected:
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific
@@ -120,12 +127,6 @@ protected:
 	 * Play the game
 	 */
 	virtual void playGame();
-private:
-	void initialize();
-
-	// Engine APIs
-	virtual Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
 public:
 	Combat *_combat;
 	Debugger *_debugger;
