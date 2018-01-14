@@ -51,8 +51,10 @@ public:
 	void enable();
 	void disable();
 
-	void setHitSoundId(int row, int column, int soundId);
-	void setMissSoundId(int row, int column, int soundId);
+	void setHitSound(int ammoType, int column, int soundId);
+	void setMissSound(int ammoType, int column, int soundId);
+	int getHitSound();
+	int getMissSound();
 };
 
 } // End of namespace BladeRunner

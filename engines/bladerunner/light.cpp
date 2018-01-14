@@ -36,8 +36,8 @@ Light::~Light() {
 	}
 }
 
-void Light::read(Common::ReadStream *stream, int framesCount, int frame, int animated) {
-	_framesCount = framesCount;
+void Light::read(Common::ReadStream *stream, int frameCount, int frame, int animated) {
+	_frameCount = frameCount;
 	_animated = animated;
 
 	int size = stream->readUint32LE();
@@ -50,37 +50,37 @@ void Light::read(Common::ReadStream *stream, int framesCount, int frame, int ani
 	if (_animationData != nullptr) {
 		delete[] _animationData;
 	}
-	int floatsCount = size / 4;
-	_animationData = new float[floatsCount];
-	for (int i = 0; i < floatsCount; i++) {
+	int floatCount = size / 4;
+	_animationData = new float[floatCount];
+	for (int i = 0; i < floatCount; i++) {
 		_animationData[i] = stream->readFloatLE();
 	}
 
 	_m11ptr          = _animationData;
-	_m12ptr          = _m11ptr          + (_animatedParameters &     0x1 ? framesCount : 1);
-	_m13ptr          = _m12ptr          + (_animatedParameters &     0x2 ? framesCount : 1);
-	_m14ptr          = _m13ptr          + (_animatedParameters &     0x4 ? framesCount : 1);
-	_m21ptr          = _m14ptr          + (_animatedParameters &     0x8 ? framesCount : 1);
-	_m22ptr          = _m21ptr          + (_animatedParameters &    0x10 ? framesCount : 1);
-	_m23ptr          = _m22ptr          + (_animatedParameters &    0x20 ? framesCount : 1);
-	_m24ptr          = _m23ptr          + (_animatedParameters &    0x40 ? framesCount : 1);
-	_m31ptr          = _m24ptr          + (_animatedParameters &    0x80 ? framesCount : 1);
-	_m32ptr          = _m31ptr          + (_animatedParameters &   0x100 ? framesCount : 1);
-	_m33ptr          = _m32ptr          + (_animatedParameters &   0x200 ? framesCount : 1);
-	_m34ptr          = _m33ptr          + (_animatedParameters &   0x400 ? framesCount : 1);
-	_colorRPtr       = _m34ptr          + (_animatedParameters &   0x800 ? framesCount : 1);
-	_colorGPtr       = _colorRPtr       + (_animatedParameters &  0x1000 ? framesCount : 1);
-	_colorBPtr       = _colorGPtr       + (_animatedParameters &  0x2000 ? framesCount : 1);
-	_falloffStartPtr = _colorBPtr       + (_animatedParameters &  0x4000 ? framesCount : 1);
-	_falloffEndPtr   = _falloffStartPtr + (_animatedParameters &  0x8000 ? framesCount : 1);
-	_angleStartPtr   = _falloffEndPtr   + (_animatedParameters & 0x10000 ? framesCount : 1);
-	_angleEndPtr     = _angleStartPtr   + (_animatedParameters & 0x20000 ? framesCount : 1);
+	_m12ptr          = _m11ptr          + (_animatedParameters &     0x1 ? frameCount : 1);
+	_m13ptr          = _m12ptr          + (_animatedParameters &     0x2 ? frameCount : 1);
+	_m14ptr          = _m13ptr          + (_animatedParameters &     0x4 ? frameCount : 1);
+	_m21ptr          = _m14ptr          + (_animatedParameters &     0x8 ? frameCount : 1);
+	_m22ptr          = _m21ptr          + (_animatedParameters &    0x10 ? frameCount : 1);
+	_m23ptr          = _m22ptr          + (_animatedParameters &    0x20 ? frameCount : 1);
+	_m24ptr          = _m23ptr          + (_animatedParameters &    0x40 ? frameCount : 1);
+	_m31ptr          = _m24ptr          + (_animatedParameters &    0x80 ? frameCount : 1);
+	_m32ptr          = _m31ptr          + (_animatedParameters &   0x100 ? frameCount : 1);
+	_m33ptr          = _m32ptr          + (_animatedParameters &   0x200 ? frameCount : 1);
+	_m34ptr          = _m33ptr          + (_animatedParameters &   0x400 ? frameCount : 1);
+	_colorRPtr       = _m34ptr          + (_animatedParameters &   0x800 ? frameCount : 1);
+	_colorGPtr       = _colorRPtr       + (_animatedParameters &  0x1000 ? frameCount : 1);
+	_colorBPtr       = _colorGPtr       + (_animatedParameters &  0x2000 ? frameCount : 1);
+	_falloffStartPtr = _colorBPtr       + (_animatedParameters &  0x4000 ? frameCount : 1);
+	_falloffEndPtr   = _falloffStartPtr + (_animatedParameters &  0x8000 ? frameCount : 1);
+	_angleStartPtr   = _falloffEndPtr   + (_animatedParameters & 0x10000 ? frameCount : 1);
+	_angleEndPtr     = _angleStartPtr   + (_animatedParameters & 0x20000 ? frameCount : 1);
 
 	setupFrame(frame);
 }
 
-void Light::readVqa(Common::ReadStream *stream, int framesCount, int frame, int animated) {
-	_framesCount = framesCount;
+void Light::readVqa(Common::ReadStream *stream, int frameCount, int frame, int animated) {
+	_frameCount = frameCount;
 	_animated = animated;
 
 	_animatedParameters = stream->readUint32LE();
@@ -91,37 +91,37 @@ void Light::readVqa(Common::ReadStream *stream, int framesCount, int frame, int 
 		delete[] _animationData;
 	}
 
-	int floatsCount = size / 4;
-	_animationData = new float[floatsCount];
-	for (int i = 0; i < floatsCount; i++) {
+	int floatCount = size / 4;
+	_animationData = new float[floatCount];
+	for (int i = 0; i < floatCount; i++) {
 		_animationData[i] = stream->readFloatLE();
 	}
 
 	_m11ptr          = _animationData;
-	_m12ptr          = _m11ptr          + (_animatedParameters &     0x1 ? framesCount : 1);
-	_m13ptr          = _m12ptr          + (_animatedParameters &     0x2 ? framesCount : 1);
-	_m14ptr          = _m13ptr          + (_animatedParameters &     0x4 ? framesCount : 1);
-	_m21ptr          = _m14ptr          + (_animatedParameters &     0x8 ? framesCount : 1);
-	_m22ptr          = _m21ptr          + (_animatedParameters &    0x10 ? framesCount : 1);
-	_m23ptr          = _m22ptr          + (_animatedParameters &    0x20 ? framesCount : 1);
-	_m24ptr          = _m23ptr          + (_animatedParameters &    0x40 ? framesCount : 1);
-	_m31ptr          = _m24ptr          + (_animatedParameters &    0x80 ? framesCount : 1);
-	_m32ptr          = _m31ptr          + (_animatedParameters &   0x100 ? framesCount : 1);
-	_m33ptr          = _m32ptr          + (_animatedParameters &   0x200 ? framesCount : 1);
-	_m34ptr          = _m33ptr          + (_animatedParameters &   0x400 ? framesCount : 1);
-	_colorRPtr       = _m34ptr          + (_animatedParameters &   0x800 ? framesCount : 1);
-	_colorGPtr       = _colorRPtr       + (_animatedParameters &  0x1000 ? framesCount : 1);
-	_colorBPtr       = _colorGPtr       + (_animatedParameters &  0x2000 ? framesCount : 1);
-	_falloffStartPtr = _colorBPtr       + (_animatedParameters &  0x4000 ? framesCount : 1);
-	_falloffEndPtr   = _falloffStartPtr + (_animatedParameters &  0x8000 ? framesCount : 1);
-	_angleStartPtr   = _falloffEndPtr   + (_animatedParameters & 0x10000 ? framesCount : 1);
-	_angleEndPtr     = _angleStartPtr   + (_animatedParameters & 0x20000 ? framesCount : 1);
+	_m12ptr          = _m11ptr          + (_animatedParameters &     0x1 ? frameCount : 1);
+	_m13ptr          = _m12ptr          + (_animatedParameters &     0x2 ? frameCount : 1);
+	_m14ptr          = _m13ptr          + (_animatedParameters &     0x4 ? frameCount : 1);
+	_m21ptr          = _m14ptr          + (_animatedParameters &     0x8 ? frameCount : 1);
+	_m22ptr          = _m21ptr          + (_animatedParameters &    0x10 ? frameCount : 1);
+	_m23ptr          = _m22ptr          + (_animatedParameters &    0x20 ? frameCount : 1);
+	_m24ptr          = _m23ptr          + (_animatedParameters &    0x40 ? frameCount : 1);
+	_m31ptr          = _m24ptr          + (_animatedParameters &    0x80 ? frameCount : 1);
+	_m32ptr          = _m31ptr          + (_animatedParameters &   0x100 ? frameCount : 1);
+	_m33ptr          = _m32ptr          + (_animatedParameters &   0x200 ? frameCount : 1);
+	_m34ptr          = _m33ptr          + (_animatedParameters &   0x400 ? frameCount : 1);
+	_colorRPtr       = _m34ptr          + (_animatedParameters &   0x800 ? frameCount : 1);
+	_colorGPtr       = _colorRPtr       + (_animatedParameters &  0x1000 ? frameCount : 1);
+	_colorBPtr       = _colorGPtr       + (_animatedParameters &  0x2000 ? frameCount : 1);
+	_falloffStartPtr = _colorBPtr       + (_animatedParameters &  0x4000 ? frameCount : 1);
+	_falloffEndPtr   = _falloffStartPtr + (_animatedParameters &  0x8000 ? frameCount : 1);
+	_angleStartPtr   = _falloffEndPtr   + (_animatedParameters & 0x10000 ? frameCount : 1);
+	_angleEndPtr     = _angleStartPtr   + (_animatedParameters & 0x20000 ? frameCount : 1);
 
 	setupFrame(frame);
 }
 
 void Light::setupFrame(int frame) {
-	int offset = frame % _framesCount;
+	int offset = frame % _frameCount;
 	_matrix._m[0][0] = (_animatedParameters &     0x1 ? _m11ptr[offset]          : *_m11ptr);
 	_matrix._m[0][1] = (_animatedParameters &     0x2 ? _m12ptr[offset]          : *_m12ptr);
 	_matrix._m[0][2] = (_animatedParameters &     0x4 ? _m13ptr[offset]          : *_m13ptr);
@@ -143,11 +143,11 @@ void Light::setupFrame(int frame) {
 	_angleEnd        = (_animatedParameters & 0x40000 ? _angleEndPtr[offset]     : *_angleEndPtr);
 }
 
-float Light::calculate(Vector3 start, Vector3 end) {
+float Light::calculate(Vector3 start, Vector3 end) const {
 	return calculateFalloutCoefficient(_matrix * start, _matrix * end, _falloffStart, _falloffEnd);
 }
 
-void Light::calculateColor(Color *outColor, Vector3 position) {
+void Light::calculateColor(Color *outColor, Vector3 position) const {
 	Vector3 positionT = _matrix * position;
 	float att = attenuation(_falloffStart, _falloffEnd, positionT.length());
 	outColor->r = _color.r * att;
@@ -155,7 +155,7 @@ void Light::calculateColor(Color *outColor, Vector3 position) {
 	outColor->b = _color.b * att;
 }
 
-float Light::calculateFalloutCoefficient(Vector3 start, Vector3 end, float falloffStart, float falloffEnd) {
+float Light::calculateFalloutCoefficient(Vector3 start, Vector3 end, float falloffStart, float falloffEnd) const {
 	if (falloffEnd == 0.0f) {
 		return 1.0e30f;
 	}
@@ -177,7 +177,7 @@ float Light::calculateFalloutCoefficient(Vector3 start, Vector3 end, float fallo
 	return 1.0e30f;
 }
 
-float Light::attenuation(float min, float max, float distance) {
+float Light::attenuation(float min, float max, float distance) const {
 	if (max == 0.0f) {
 		return 1.0f;
 	}
@@ -192,7 +192,7 @@ float Light::attenuation(float min, float max, float distance) {
 	return 0.0f;
 }
 
-float Light1::calculate(Vector3 start, Vector3 end) {
+float Light1::calculate(Vector3 start, Vector3 end) const {
 	start = _matrix * start;
 	end = _matrix * end;
 
@@ -217,7 +217,7 @@ float Light1::calculate(Vector3 start, Vector3 end) {
 	}
 }
 
-void Light1::calculateColor(Color *outColor, Vector3 position) {
+void Light1::calculateColor(Color *outColor, Vector3 position) const {
 	Vector3 positionT = _matrix * position;
 
 	outColor->r = 0.0f;
@@ -234,7 +234,7 @@ void Light1::calculateColor(Color *outColor, Vector3 position) {
 	}
 }
 
-float Light2::calculate(Vector3 start, Vector3 end) {
+float Light2::calculate(Vector3 start, Vector3 end) const {
 	start = _matrix * start;
 	end = _matrix * end;
 
@@ -261,7 +261,7 @@ float Light2::calculate(Vector3 start, Vector3 end) {
 	}
 }
 
-void Light2::calculateColor(Color *outColor, Vector3 position) {
+void Light2::calculateColor(Color *outColor, Vector3 position) const {
 	Vector3 positionT = _matrix * position;
 
 	outColor->r = 0.0f;
@@ -279,7 +279,7 @@ void Light2::calculateColor(Color *outColor, Vector3 position) {
 	}
 }
 
-void Light3::calculateColor(Color *outColor, Vector3 position) {
+void Light3::calculateColor(Color *outColor, Vector3 position) const {
 	Vector3 positionT = _matrix * position;
 
 	outColor->r = 0.0f;
@@ -296,7 +296,7 @@ void Light3::calculateColor(Color *outColor, Vector3 position) {
 	}
 }
 
-void Light4::calculateColor(Color *outColor, Vector3 position) {
+void Light4::calculateColor(Color *outColor, Vector3 position) const {
 	Vector3 positionT = _matrix * position;
 
 	outColor->r = 0.0f;
@@ -314,11 +314,11 @@ void Light4::calculateColor(Color *outColor, Vector3 position) {
 	}
 }
 
-float LightAmbient::calculate(Vector3 start, Vector3 end) {
+float LightAmbient::calculate(Vector3 start, Vector3 end) const {
 	return 1.0e30f;
 }
 
-void LightAmbient::calculateColor(Color *outColor, Vector3 position) {
+void LightAmbient::calculateColor(Color *outColor, Vector3 position) const {
 	outColor->r = _color.r;
 	outColor->g = _color.g;
 	outColor->b = _color.b;

@@ -20,23 +20,23 @@
  *
  */
 
-#include "bladerunner/spinner.h"
+#include "bladerunner/ui/spinner.h"
 
 #include "bladerunner/bladerunner.h"
-
+#include "bladerunner/mouse.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/shape.h"
-#include "bladerunner/mouse.h"
-#include "bladerunner/vqa_player.h"
 #include "bladerunner/text_resource.h"
-#include "bladerunner/ui_image_picker.h"
+#include "bladerunner/vqa_player.h"
+#include "bladerunner/ui/ui_image_picker.h"
 
 #include "common/rect.h"
 #include "common/system.h"
 
 namespace BladeRunner {
 
-Spinner::Spinner(BladeRunnerEngine *vm) : _vm(vm) {
+Spinner::Spinner(BladeRunnerEngine *vm) {
+	_vm = vm;
 	reset();
 	_imagePicker = new UIImagePicker(vm, kSpinnerDestinations);
 	_vqaPlayer = nullptr;
@@ -61,17 +61,16 @@ bool Spinner::querySelectableDestinationFlag(int destination) const {
 	return _isDestinationSelectable[destination];
 }
 
-SpinnerDestination SpinnerDestinationsNear[] = {
+const Spinner::Destination Spinner::kSpinnerDestinationsNear[] = {
 	{  0, Common::Rect(210, 263, 263, 332) },
 	{  1, Common::Rect(307, 330, 361, 381) },
 	{  2, Common::Rect(338, 137, 362, 169) },
 	{  3, Common::Rect(248, 135, 289, 168) },
 	{  4, Common::Rect(352, 222, 379, 238) },
 	{ -1, Common::Rect(-1,-1,-1,-1) }
-
 };
 
-SpinnerDestination SpinnerDestinationsMedium[] = {
+const Spinner::Destination Spinner::kSpinnerDestinationsMedium[] = {
 	{  0, Common::Rect(252, 242, 279, 283) },
 	{  1, Common::Rect(301, 273, 328, 304) },
 	{  2, Common::Rect(319, 182, 336, 200) },
@@ -83,7 +82,7 @@ SpinnerDestination SpinnerDestinationsMedium[] = {
 	{ -1, Common::Rect(-1,-1,-1,-1) }
 };
 
-SpinnerDestination SpinnerDestinationsFar[] = {
+const Spinner::Destination Spinner::kSpinnerDestinationsFar[] = {
 	{  0, Common::Rect(220, 227, 246, 262) },
 	{  1, Common::Rect(260, 252, 286, 279) },
 	{  2, Common::Rect(286, 178, 302, 196) },
@@ -96,11 +95,6 @@ SpinnerDestination SpinnerDestinationsFar[] = {
 	{  9, Common::Rect(390, 218, 419, 236) },
 	{ -1, Common::Rect(-1, -1, -1, -1) }
 };
-
-static void spinner_mouseInCallback(int, void*);
-static void spinner_mouseOutCallback(int, void*);
-static void spinner_mouseDownCallback(int, void*);
-static void spinner_mouseUpCallback(int, void*);
 
 int Spinner::chooseDestination(int loopId, bool immediately) {
 	_selectedDestination = 0;
@@ -119,7 +113,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 		_vm->playerGainsControl();
 	}
 
-	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceInterface);
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
 	if (!_vqaPlayer->open("SPINNER.VQA")) {
 		return 0;
 	}
@@ -143,17 +137,17 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	mapmask = 1;
 
 	if (mapmask & 4) {
-		_destinations = SpinnerDestinationsFar;
+		_destinations = kSpinnerDestinationsFar;
 		firstShapeId = 26;
 		shapeCount = 20;
 		spinnerLoopId = 4;
 	} else if (mapmask & 2) {
-		_destinations = SpinnerDestinationsMedium;
+		_destinations = kSpinnerDestinationsMedium;
 		firstShapeId = 10;
 		shapeCount = 16;
 		spinnerLoopId = 2;
 	} else if (mapmask & 1) {
-		_destinations = SpinnerDestinationsNear;
+		_destinations = kSpinnerDestinationsNear;
 		firstShapeId = 0;
 		shapeCount = 10;
 		spinnerLoopId = 0;
@@ -171,7 +165,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 
 	_imagePicker->resetImages();
 
-	for (SpinnerDestination *dest = _destinations; dest->id != -1; ++dest) {
+	for (const Destination *dest = _destinations; dest->id != -1; ++dest) {
 		if (!_isDestinationSelectable[dest->id]) {
 			continue;
 		}
@@ -189,10 +183,10 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	}
 
 	_imagePicker->activate(
-		spinner_mouseInCallback,
-		spinner_mouseOutCallback,
-		spinner_mouseDownCallback,
-		spinner_mouseUpCallback,
+		nullptr,
+		nullptr,
+		nullptr,
+		mouseUpCallback,
 		this
 	);
 
@@ -225,16 +219,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	return _selectedDestination;
 }
 
-static void spinner_mouseInCallback(int, void*) {
-}
-
-static void spinner_mouseOutCallback(int, void*) {
-}
-
-static void spinner_mouseDownCallback(int, void*) {
-}
-
-static void spinner_mouseUpCallback(int image, void *self) {
+void Spinner::mouseUpCallback(int image, void *self) {
 	if (image >= 0 && image < 10) {
 		((Spinner *)self)->setSelectedDestination(image);
 	}
@@ -266,8 +251,8 @@ void Spinner::tick() {
 	int frame = _vqaPlayer->update();
 	assert(frame >= -1);
 
-	// vqaPlayer renders to _surfaceInterface
-	blit(_vm->_surfaceInterface, _vm->_surfaceGame);
+	// vqaPlayer renders to _surfaceBack
+	blit(_vm->_surfaceBack, _vm->_surfaceFront);
 
 	Common::Point p = _vm->getMousePos();
 	_imagePicker->handleMouseAction(p.x, p.y, false, false, false);
@@ -276,11 +261,11 @@ void Spinner::tick() {
 	} else {
 		_vm->_mouse->setCursor(0);
 	}
-	_imagePicker->draw(_vm->_surfaceGame);
-	_vm->_mouse->draw(_vm->_surfaceGame, p.x, p.y);
-	_imagePicker->drawTooltip(_vm->_surfaceGame, p.x, p.y);
+	_imagePicker->draw(_vm->_surfaceFront);
+	_vm->_mouse->draw(_vm->_surfaceFront, p.x, p.y);
+	_imagePicker->drawTooltip(_vm->_surfaceFront, p.x, p.y);
 
-	_vm->blitToScreen(_vm->_surfaceGame);
+	_vm->blitToScreen(_vm->_surfaceFront);
 	_vm->_system->delayMillis(10);
 }
 

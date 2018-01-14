@@ -20,26 +20,46 @@
  *
  */
 
-#ifndef BLADERUNNER_GAMEFLAGS_H
-#define BLADERUNNER_GAMEFLAGS_H
+#ifndef BLADERUNNER_KIA_SECTION_BASE_H
+#define BLADERUNNER_KIA_SECTION_BASE_H
 
-#include <common/scummsys.h>
+
+namespace Common {
+struct KeyState;
+}
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace BladeRunner {
 
-class GameFlags {
-	uint32 *flags;
-	int     flagCount;
+class BladeRunnerEngine;
+
+class KIASectionBase {
+protected:
+	BladeRunnerEngine *_vm;
 
 public:
-	GameFlags();
-	~GameFlags();
+	bool _field0;
 
-	void setFlagCount(int count);
+	KIASectionBase(BladeRunnerEngine *vm);
+	virtual ~KIASectionBase();
 
-	void set(int flag);
-	void reset(int flag);
-	bool query(int flag);
+	virtual void open() {}
+	virtual void close() {}
+
+	virtual void draw(Graphics::Surface &surface) {}
+
+	virtual void handleKeyUp(const Common::KeyState &kbd) {}
+	virtual void handleKeyDown(const Common::KeyState &kbd) {}
+	virtual void handleMouseMove(int mouseX, int mouseY) {}
+	virtual void handleMouseDown(bool mainButton) {}
+	virtual void handleMouseUp(bool mainButton) {}
+
+protected:
+	virtual void onButtonPressed(int buttonId) {}
+
 };
 
 } // End of namespace BladeRunner

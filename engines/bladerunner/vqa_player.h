@@ -70,7 +70,7 @@ class VQAPlayer {
 	bool   _audioStarted;
 	Audio::SoundHandle _soundHandle;
 
-	void (*_callbackLoopEnded)(void*, int frame, int loopId);
+	void (*_callbackLoopEnded)(void *, int frame, int loopId);
 	void  *_callbackData;
 
 public:
@@ -110,7 +110,7 @@ public:
 	void updateLights(Lights *lights);
 
 	bool setBeginAndEndFrame(int begin, int end, int repeatsCount, int loopSetMode, void(*callback)(void *, int, int), void *callbackData);
-	bool setLoop(int loop, int repeatsCount, int loopSetMode, void(*callback)(void*, int, int), void* callbackData);
+	bool setLoop(int loop, int repeatsCount, int loopSetMode, void(*callback)(void*, int, int), void *callbackData);
 
 	bool seekToFrame(int frame);
 

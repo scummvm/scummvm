@@ -23,7 +23,7 @@
 #ifndef BLADERUNNER_TEXT_RESOURCE_H
 #define BLADERUNNER_TEXT_RESOURCE_H
 
-#include "common/scummsys.h"
+#include "common/str.h"
 
 namespace BladeRunner {
 
@@ -42,8 +42,9 @@ public:
 	TextResource(BladeRunnerEngine *vm);
 	~TextResource();
 
-	bool open(const char *name);
-	const char *getText(uint32 id);
+	bool open(const Common::String &name);
+	const char *getText(uint32 id) const;
+	int getCount() const;
 };
 
 } // End of namespace BladeRunner

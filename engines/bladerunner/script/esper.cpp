@@ -26,7 +26,7 @@
 
 namespace BladeRunner {
 
-void ScriptESPER::SCRIPT_ESPER_DLL_Initialize() {
+void ESPERScript::SCRIPT_ESPER_DLL_Initialize() {
 	int v0 = 0;
 	if (Actor_Clue_Query(kActorMcCoy, kClueRuncitersVideo)) {
 		if (!Actor_Clue_Query(kActorMcCoy, kClueRuncitersViewA)) {
@@ -88,7 +88,7 @@ void ScriptESPER::SCRIPT_ESPER_DLL_Initialize() {
 	}
 }
 
-void ScriptESPER::SCRIPT_ESPER_DLL_Photo_Selected(int photo) {
+void ESPERScript::SCRIPT_ESPER_DLL_Photo_Selected(int photo) {
 	switch (photo) {
 	case 9:
 		Actor_Says(kActorAnsweringMachine, 270, 3);
@@ -151,7 +151,7 @@ void ScriptESPER::SCRIPT_ESPER_DLL_Photo_Selected(int photo) {
 	}
 }
 
-bool ScriptESPER::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region) {
+bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region) {
 	switch (photo) {
 	case 9:
 		switch (region) {

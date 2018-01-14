@@ -177,11 +177,11 @@ void SceneScriptMA02::PlayerWalkedIn() {
 			Game_Flag_Set(60);
 			Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
 			Actor_Voice_Over(1210, kActorVoiceOver);
-			if (!Game_Flag_Query(378)) {
+			if (!Game_Flag_Query(kFlagDirectorsCut)) {
 				Actor_Voice_Over(1220, kActorVoiceOver);
 			}
 			Actor_Voice_Over(1230, kActorVoiceOver);
-			if (!Game_Flag_Query(378)) {
+			if (!Game_Flag_Query(kFlagDirectorsCut)) {
 				Actor_Voice_Over(1240, kActorVoiceOver);
 				Actor_Voice_Over(1250, kActorVoiceOver);
 			}

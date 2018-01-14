@@ -184,7 +184,7 @@ void SceneScriptNR08::PlayerWalkedIn() {
 	}
 	if (Actor_Query_Goal_Number(kActorSteele) == 231) {
 		Actor_Says(kActorSteele, 1640, 12);
-		if (!Game_Flag_Query(378)) {
+		if (!Game_Flag_Query(kFlagDirectorsCut)) {
 			Actor_Says(kActorMcCoy, 3790, 13);
 			Actor_Says(kActorSteele, 1650, 14);
 		}

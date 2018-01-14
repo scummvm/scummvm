@@ -39,7 +39,7 @@ class Fog {
 
 protected:
 	char       _name[20];
-	int        _framesCount;
+	int        _frameCount;
 	int        _animatedParameters;
 	Matrix4x3  _matrix;
 	Matrix4x3  _inverted;
@@ -69,7 +69,7 @@ public:
 	Fog();
 	virtual ~Fog();
 
-	virtual void read(Common::ReadStream *stream, int framesCount) = 0;
+	virtual void read(Common::ReadStream *stream, int frameCount) = 0;
 	virtual void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) = 0;
 	void reset();
 
@@ -82,17 +82,17 @@ protected:
 };
 
 class FogCone : public Fog {
-	void read(Common::ReadStream *stream, int framesCount);
+	void read(Common::ReadStream *stream, int frameCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
 
 class FogSphere : public Fog {
-	void read(Common::ReadStream *stream, int framesCount);
+	void read(Common::ReadStream *stream, int frameCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
 
 class FogBox : public Fog {
-	void read(Common::ReadStream *stream, int framesCount);
+	void read(Common::ReadStream *stream, int frameCount);
 	void calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient);
 };
 

@@ -20,17 +20,16 @@
  *
  */
 
-#include "bladerunner/elevator.h"
-
-#include "bladerunner/bladerunner.h"
+#include "bladerunner/ui/elevator.h"
 
 #include "bladerunner/actor.h"
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/audio_player.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/script/script.h"
-#include "bladerunner/ui_image_picker.h"
+#include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
 
 #include "common/rect.h"
@@ -39,7 +38,8 @@
 
 namespace BladeRunner {
 
-Elevator::Elevator(BladeRunnerEngine *vm) : _vm(vm) {
+Elevator::Elevator(BladeRunnerEngine *vm) {
+	_vm = vm;
 	reset();
 	_imagePicker = new UIImagePicker(vm, 8);
 }
@@ -48,11 +48,6 @@ Elevator::~Elevator() {
 	delete _imagePicker;
 	reset();
 }
-
-void elevator_mouseInCallback(int, void*);
-void elevator_mouseOutCallback(int, void*);
-void elevator_mouseDownCallback(int, void*);
-void elevator_mouseUpCallback(int, void*);
 
 int Elevator::activate(int elevatorId) {
 	const char *vqaName;
@@ -67,10 +62,11 @@ int Elevator::activate(int elevatorId) {
 		error("Invalid elevator id");
 	}
 
-	if (!_vm->openArchive("MODE.MIX"))
+	if (!_vm->openArchive("MODE.MIX")) {
 		return 0;
+	}
 
-	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceInterface);
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
 	if (!_vqaPlayer->open(vqaName)) {
 		return 0;
 	}
@@ -151,10 +147,10 @@ int Elevator::activate(int elevatorId) {
 	}
 
 	_imagePicker->activate(
-		elevator_mouseInCallback,
-		elevator_mouseOutCallback,
-		elevator_mouseDownCallback,
-		elevator_mouseUpCallback,
+		mouseInCallback,
+		mouseOutCallback,
+		mouseDownCallback,
+		mouseUpCallback,
 		this
 	);
 
@@ -213,8 +209,8 @@ void Elevator::tick() {
 	int frame = _vqaPlayer->update();
 	assert(frame >= -1);
 
-	// vqaPlayer renders to _surfaceInterface
-	blit(_vm->_surfaceInterface, _vm->_surfaceGame);
+	// vqaPlayer renders to _surfaceBack
+	blit(_vm->_surfaceBack, _vm->_surfaceFront);
 
 	Common::Point p = _vm->getMousePos();
 
@@ -226,10 +222,10 @@ void Elevator::tick() {
 		_vm->_mouse->setCursor(0);
 	}
 
-	_imagePicker->draw(_vm->_surfaceGame);
-	_vm->_mouse->draw(_vm->_surfaceGame, p.x, p.y);
+	_imagePicker->draw(_vm->_surfaceFront);
+	_vm->_mouse->draw(_vm->_surfaceFront, p.x, p.y);
 
-	_vm->blitToScreen(_vm->_surfaceGame);
+	_vm->blitToScreen(_vm->_surfaceFront);
 	tickDescription();
 	_vm->_system->delayMillis(10);
 }
@@ -308,22 +304,22 @@ void Elevator::resume() {
 	// TODO
 }
 
-void elevator_mouseInCallback(int buttonId, void *self) {
-	((Elevator*)self)->buttonFocus(buttonId);
+void Elevator::mouseInCallback(int buttonId, void *self) {
+	((Elevator *)self)->buttonFocus(buttonId);
 }
 
-void elevator_mouseOutCallback(int, void *self) {
-	((Elevator*)self)->buttonFocus(-1);
+void Elevator::mouseOutCallback(int, void *self) {
+	((Elevator *)self)->buttonFocus(-1);
 }
 
-void elevator_mouseDownCallback(int, void *self) {
-	Elevator *elevator = ((Elevator*)self);
+void Elevator::mouseDownCallback(int, void *self) {
+	Elevator *elevator = ((Elevator *)self);
 	const char *name = elevator->_vm->_gameInfo->getSfxTrack(515);
 	elevator->_vm->_audioPlayer->playAud(name, 100, 0, 0, 50, 0);
 }
 
-void elevator_mouseUpCallback(int buttonId, void *self) {
-	((Elevator*)self)->buttonClick(buttonId);
+void Elevator::mouseUpCallback(int buttonId, void *self) {
+	((Elevator *)self)->buttonClick(buttonId);
 }
 
 } // End of namespace BladeRunner

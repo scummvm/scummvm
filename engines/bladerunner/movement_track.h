@@ -30,23 +30,21 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class BoundingBox;
 
-struct MovementTrackEntry {
-	int waypointId;
-	int delay;
-	int angle;
-	int running;
-};
-
 class MovementTrack {
-//	BladeRunnerEngine *_vm;
+	static const int kSize = 100;
 
-private:
-	int _currentIndex;
-	int _lastIndex;
-	bool _hasNext;
-	bool _paused;
-	MovementTrackEntry _entries[100];
-	void reset();
+	struct Entry {
+		int waypointId;
+		int delay;
+		int angle;
+		int running;
+	};
+
+	int   _currentIndex;
+	int   _lastIndex;
+	bool  _hasNext;
+	bool  _paused;
+	Entry _entries[kSize];
 
 public:
 	MovementTrack();
@@ -57,11 +55,14 @@ public:
 	void repeat();
 	void pause();
 	void unpause();
-	bool isPaused();
-	bool hasNext();
+	bool isPaused() const;
+	bool hasNext() const;
 	bool next(int *waypointId, int *delay, int *angle, int *running);
 
 	//int saveGame();
+
+private:
+	void reset();
 };
 
 } // End of namespace BladeRunner

@@ -1,10 +1,10 @@
 MODULE := engines/bladerunner
 
 MODULE_OBJS = \
-	adq.o \
 	actor.o \
 	actor_clues.o \
 	actor_combat.o \
+	actor_dialogue_queue.o \
 	actor_walk.o \
 	adpcm_decoder.o \
 	ambient_sounds.o \
@@ -22,11 +22,10 @@ MODULE_OBJS = \
 	decompress_lzo.o \
 	detection.o \
 	dialogue_menu.o \
-	elevator.o \
 	fog.o \
 	font.o \
-	gameflags.o \
-	gameinfo.o \
+	game_flags.o \
+	game_info.o \
 	image.o \
 	item.o \
 	item_pickup.o \
@@ -174,10 +173,24 @@ MODULE_OBJS = \
 	shape.o \
 	slice_animations.o \
 	slice_renderer.o \
-	spinner.o \
 	suspects_database.o \
 	text_resource.o \
-	ui_image_picker.o \
+	ui/elevator.o \
+	ui/kia.o \
+	ui/kia_log.o \
+	ui/kia_section_base.o \
+	ui/kia_section_clues.o \
+	ui/kia_section_crimes.o \
+	ui/kia_section_help.o \
+	ui/kia_section_settings.o \
+	ui/kia_shapes.o \
+	ui/spinner.o \
+	ui/ui_check_box.o \
+	ui/ui_container.o \
+	ui/ui_image_picker.o \
+	ui/ui_input_box.o \
+	ui/ui_scroll_box.o \
+	ui/ui_slider.o \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o \

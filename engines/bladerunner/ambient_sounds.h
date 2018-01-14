@@ -30,6 +30,9 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class AmbientSounds {
+	static const int kNonLoopingSounds = 25;
+	static const int kLoopingSounds = 3;
+
 	struct NonLoopingSound {
 		bool   isActive;
 		char   name[13];
@@ -96,15 +99,16 @@ public:
 
 	void tick();
 
-	// setVolume
-	// getVolume
+	void setVolume(int volume);
+	int getVolume() const;
+	void playSample();
 
 private:
-	int findAvailableNonLoopingTrack();
-	int findNonLoopingTrackByHash(int32 hash);
+	int findAvailableNonLoopingTrack() const;
+	int findNonLoopingTrackByHash(int32 hash) const;
 
-	int findAvailableLoopingTrack();
-	int findLoopingTrackByHash(int32 hash);
+	int findAvailableLoopingTrack() const;
+	int findLoopingTrackByHash(int32 hash) const;
 
 	// stopNonLoopingTrack
 	// stopLoopingTrack

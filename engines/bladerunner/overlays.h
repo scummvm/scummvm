@@ -27,7 +27,7 @@
 #include "common/str.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace BladeRunner {
@@ -35,21 +35,22 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class VQAPlayer;
 
-struct OverlayVideo {
-	bool       loaded;
-	VQAPlayer *vqaPlayer;
-	// char       name[13];
-	int32      id;
-	int        field0;
-	int        field1;
-	int        field2;
-};
 
 class Overlays {
 	static const int kOverlayVideos = 5;
 
+	struct Video {
+		bool       loaded;
+		VQAPlayer *vqaPlayer;
+		// char       name[13];
+		int32      id;
+		int        field0;
+		int        field1;
+		int        field2;
+	};
+
 	BladeRunnerEngine *_vm;
-	Common::Array<OverlayVideo> _videos;
+	Common::Array<Video> _videos;
 
 public:
 	Overlays(BladeRunnerEngine *vm);

@@ -39,19 +39,19 @@ class AudioMixer {
 	static const int kUpdatesPerSecond = 40;
 
 	struct Channel {
-		bool isPresent;
-		int  priority;
-		bool loop;
+		bool                isPresent;
+		int                 priority;
+		bool                loop;
 		Audio::SoundHandle  handle;
 		Audio::AudioStream *stream;
-		float  volume;
-		float  volumeDelta;
-		float  volumeTarget;
-		float  pan;
-		float  panDelta;
-		float  panTarget;
-		void (*endCallback)(int channel, void *data);
-		void  *callbackData;
+		float               volume;
+		float               volumeDelta;
+		float               volumeTarget;
+		float               pan;
+		float               panDelta;
+		float               panTarget;
+		void              (*endCallback)(int channel, void *data);
+		void               *callbackData;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -76,7 +76,7 @@ public:
 private:
 	int playInChannel(int channel, Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void(*endCallback)(int, void *), void *callbackData);
 
-	bool isActive(int channel);
+	bool isActive(int channel) const;
 	void tick();
 	static void timerCallback(void *refCon);
 };

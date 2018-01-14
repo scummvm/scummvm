@@ -177,7 +177,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				Delay(500);
 				Actor_Says(kActorClovis, 310, 3);
 				Actor_Says(kActorClovis, 320, 3);
-				if (!Game_Flag_Query(378) && Global_Variable_Query(1) < 3) {
+				if (!Game_Flag_Query(kFlagDirectorsCut) && Global_Variable_Query(1) < 3) {
 					Actor_Voice_Over(1300, kActorVoiceOver);
 					Actor_Voice_Over(1310, kActorVoiceOver);
 					Actor_Voice_Over(1320, kActorVoiceOver);
@@ -193,7 +193,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				Delay(500);
 				Actor_Says(kActorLucy, 500, 3);
 				Actor_Says(kActorLucy, 510, 3);
-				if (!Game_Flag_Query(378) && Global_Variable_Query(1) < 3) {
+				if (!Game_Flag_Query(kFlagDirectorsCut) && Global_Variable_Query(1) < 3) {
 					Actor_Voice_Over(1330, kActorVoiceOver);
 					Actor_Voice_Over(1340, kActorVoiceOver);
 					Actor_Voice_Over(1350, kActorVoiceOver);
@@ -204,7 +204,7 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				return true;
 			}
 			Actor_Says(kActorMcCoy, 2670, 13);
-			if (!Game_Flag_Query(378)) {
+			if (!Game_Flag_Query(kFlagDirectorsCut)) {
 				Actor_Says(kActorMcCoy, 2675, 17);
 			}
 		}
@@ -400,7 +400,7 @@ void SceneScriptMA04::sub_402F2C() {
 	if (Game_Flag_Query(165) || Actor_Query_Goal_Number(kActorCrazylegs) == 2) {
 		Actor_Says(kActorLucy, 630, 3);
 		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
-		if (!Game_Flag_Query(378)) {
+		if (!Game_Flag_Query(kFlagDirectorsCut)) {
 			Actor_Says(kActorLucy, 640, 3);
 		}
 		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy2, true, -1);
@@ -413,7 +413,7 @@ void SceneScriptMA04::sub_402F2C() {
 		Actor_Says(kActorMcCoy, 2570, 13);
 		Actor_Says_With_Pause(kActorLucy, 630, 0.0f, 3);
 		Actor_Says_With_Pause(kActorMcCoy, 2575, 0.0f, 15);
-		if (!Game_Flag_Query(378)) {
+		if (!Game_Flag_Query(kFlagDirectorsCut)) {
 			Actor_Says(kActorLucy, 640, 3);
 		}
 		Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallLucy1, true, -1);

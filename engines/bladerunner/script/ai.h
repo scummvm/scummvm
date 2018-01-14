@@ -174,11 +174,11 @@ class AIScripts {
 private:
 	BladeRunnerEngine *_vm;
 	int                _inScriptCounter;
-	int                _actorsCount;
+	int                _actorCount;
 	AIScriptBase     **_AIScripts;
 	bool              *_actorUpdating;
 public:
-	AIScripts(BladeRunnerEngine *vm, int actorsCount);
+	AIScripts(BladeRunnerEngine *vm, int actorCount);
 	~AIScripts();
 
 	void Initialize(int actor);

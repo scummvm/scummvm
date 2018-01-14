@@ -44,7 +44,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 
 	resName = resName + ".VQA";
 
-	VQAPlayer vqa_player(_vm, &_vm->_surfaceGame);
+	VQAPlayer vqa_player(_vm, &_vm->_surfaceFront);
 
 	vqa_player.open(resName);
 
@@ -60,7 +60,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 			break;
 
 		if (frame >= 0) {
-			_vm->blitToScreen(_vm->_surfaceGame);
+			_vm->blitToScreen(_vm->_surfaceFront);
 		}
 
 		_vm->_system->delayMillis(10);

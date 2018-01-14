@@ -32,7 +32,6 @@ class BladeRunnerEngine;
 class ActorCombat {
 	BladeRunnerEngine *_vm;
 
-private:
 //	int _actorId;
 //	int _combatOn;
 //	int _field2;

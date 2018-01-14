@@ -119,7 +119,7 @@ void SceneScriptKP01::SceneFrameAdvanced(int frame) {
 void SceneScriptKP01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	if (actorId == 1) {
 		if (newGoal == 422) {
-			if (Game_Flag_Query(378) == 1) {
+			if (Game_Flag_Query(kFlagDirectorsCut) == 1) {
 				Delay(500);
 				Actor_Change_Animation_Mode(kActorMcCoy, 75);
 				Delay(4500);

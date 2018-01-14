@@ -336,7 +336,7 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 				Delay(3000);
 				Item_Pickup_Spin_Effect(941, 405, 192);
 				Actor_Says(kActorBulletBob, 2030, 30);
-				Game_Flag_Set(487);
+				Game_Flag_Set(kFlagKIAPrivacyAddon);
 			} else {
 				Actor_Says(kActorMcCoy, 8980, 16);
 				Actor_Says(kActorBulletBob, 2040, 30);

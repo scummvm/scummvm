@@ -29,9 +29,9 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-class ScriptESPER : ScriptBase {
+class ESPERScript : ScriptBase {
 public:
-	ScriptESPER(BladeRunnerEngine *vm)
+	ESPERScript(BladeRunnerEngine *vm)
 		: ScriptBase(vm) {
 	}
 

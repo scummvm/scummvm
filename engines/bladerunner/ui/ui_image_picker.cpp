@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/ui_image_picker.h"
+#include "bladerunner/ui/ui_image_picker.h"
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
@@ -33,7 +33,8 @@
 
 namespace BladeRunner {
 
-UIImagePicker::UIImagePicker(BladeRunnerEngine *vm, int imageCount) : _vm(vm) {
+UIImagePicker::UIImagePicker(BladeRunnerEngine *vm, int imageCount) {
+	_vm = vm;
 	reset();
 	_images.resize(imageCount);
 	_imageCount = imageCount;
@@ -51,12 +52,12 @@ void UIImagePicker::resetImages() {
 	}
 }
 
-bool UIImagePicker::defineImage(int i, Common::Rect rect, Shape *shapeUp, Shape *shapeHovered, Shape *shapeDown, const char *tooltip) {
+bool UIImagePicker::defineImage(int i, Common::Rect rect, const Shape *shapeUp, const Shape *shapeHovered, const Shape *shapeDown, const char *tooltip) {
 	if (i < 0 || i >= _imageCount || _images[i].active) {
 		return false;
 	}
 
-	UIImagePickerImage &img = _images[i];
+	Image &img = _images[i];
 
 	img.rect = rect;
 	// for rect to be inclusive
@@ -81,7 +82,7 @@ bool UIImagePicker::setImageTop(int i, int top) {
 		return false;
 	}
 
-	UIImagePickerImage &img = _images[i];
+	Image &img = _images[i];
 
 	img.rect.moveTo(img.rect.left, top);
 
@@ -93,14 +94,14 @@ bool UIImagePicker::setImageLeft(int i, int left) {
 		return false;
 	}
 
-	UIImagePickerImage &img = _images[i];
+	Image &img = _images[i];
 
 	img.rect.moveTo(left, img.rect.top);
 
 	return true;
 }
 
-bool UIImagePicker::setImageShapeUp(int i, Shape *shapeUp) {
+bool UIImagePicker::setImageShapeUp(int i, const Shape *shapeUp) {
 	if (i < 0 || i >= _imageCount || !_images[i].active) {
 		return false;
 	}
@@ -110,7 +111,7 @@ bool UIImagePicker::setImageShapeUp(int i, Shape *shapeUp) {
 	return true;
 }
 
-bool UIImagePicker::setImageShapeHovered(int i, Shape *shapeHovered) {
+bool UIImagePicker::setImageShapeHovered(int i, const Shape *shapeHovered) {
 	if (i < 0 || i >= _imageCount || !_images[i].active) {
 		return false;
 	}
@@ -120,7 +121,7 @@ bool UIImagePicker::setImageShapeHovered(int i, Shape *shapeHovered) {
 	return true;
 }
 
-bool UIImagePicker::setImageShapeDown(int i, Shape *shapeDown) {
+bool UIImagePicker::setImageShapeDown(int i, const Shape *shapeDown) {
 	if (i < 0 || i >= _imageCount || !_images[i].active) {
 		return false;
 	}
@@ -186,7 +187,7 @@ void UIImagePicker::draw(Graphics::Surface &surface) {
 	}
 
 	for (int i = 0; i != _imageCount; ++i) {
-		UIImagePickerImage &img = _images[i];
+		Image &img = _images[i];
 		if (!img.active) {
 			continue;
 		}
@@ -205,6 +206,9 @@ void UIImagePicker::draw(Graphics::Surface &surface) {
 				img.shapeUp->draw(surface, img.rect.left, img.rect.top);
 			}
 		}
+#if BLADERUNNER_DEBUG_RENDERING
+		surface.frameRect(img.rect, 0x7fff);
+#endif
 	}
 }
 
@@ -305,7 +309,7 @@ void UIImagePicker::handleMouseAction(int x, int y, bool down, bool up, bool ign
 
 void UIImagePicker::resetImage(int i) {
 	assert(i >= 0 && i < _imageCount);
-	UIImagePickerImage &img = _images[i];
+	Image &img = _images[i];
 
 	img.active = false;
 	img.rect.left = -1;

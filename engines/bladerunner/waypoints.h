@@ -30,28 +30,30 @@
 
 namespace BladeRunner {
 
-struct Waypoint {
-	int _setId;
-	Vector3 _position;
-	bool _present;
-};
-
 class Waypoints {
+#if BLADERUNNER_DEBUG_RENDERING
+	friend class BladeRunnerEngine;
+#endif
+
+	struct Waypoint {
+		int     setId;
+		Vector3 position;
+		bool    present;
+	};
+
 	BladeRunnerEngine *_vm;
 
-public:
-	int       _count;
-	Waypoint *_waypoints;
+	int                     _count;
+	Common::Array<Waypoint> _waypoints;
 
 public:
 	Waypoints(BladeRunnerEngine *vm, int count);
-	~Waypoints();
 
-	void getXYZ(int waypointId, float *x, float *y, float *z);
-	float getX(int waypointId);
-	float getY(int waypointId);
-	float getZ(int waypointId);
-	int getSetId(int waypointId);
+	void getXYZ(int waypointId, float *x, float *y, float *z) const;
+	float getX(int waypointId) const;
+	float getY(int waypointId) const;
+	float getZ(int waypointId) const;
+	int getSetId(int waypointId) const;
 
 	bool set(int waypointId, int setId, Vector3 position);
 	bool reset(int waypointId);

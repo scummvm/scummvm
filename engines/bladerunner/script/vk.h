@@ -29,9 +29,9 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-class ScriptVK : ScriptBase {
+class VKScript : ScriptBase {
 public:
-	ScriptVK(BladeRunnerEngine *vm)
+	VKScript(BladeRunnerEngine *vm)
 		: ScriptBase(vm) {
 	}
 

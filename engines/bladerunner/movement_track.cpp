@@ -37,7 +37,7 @@ void MovementTrack::reset() {
 	_lastIndex = 0;
 	_hasNext = false;
 	_paused = false;
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < kSize; i++) {
 		_entries[i].waypointId = -1;
 		_entries[i].delay = -1;
 		_entries[i].angle = -1;
@@ -50,7 +50,7 @@ int MovementTrack::append(int waypointId, int delay, int running) {
 }
 
 int MovementTrack::append(int waypointId, int delay, int angle, int running) {	
-	if (_lastIndex >= 100) {
+	if (_lastIndex >= kSize) {
 		return 0;
 	}
 
@@ -82,11 +82,11 @@ void MovementTrack::unpause() {
 	_paused = false;
 }
 
-bool MovementTrack::isPaused() {
+bool MovementTrack::isPaused() const {
 	return _paused;
 }
 
-bool MovementTrack::hasNext() {
+bool MovementTrack::hasNext() const {
 	return _hasNext;
 }
 

@@ -37,7 +37,8 @@ namespace BladeRunner {
 
 #define kSet0 0x53657430
 
-Set::Set(BladeRunnerEngine *vm) : _vm(vm) {
+Set::Set(BladeRunnerEngine *vm) {
+	_vm = vm;
 	_objectCount = 0;
 	_walkboxCount = 0;
 	_objects = new Object[85];
@@ -60,13 +61,13 @@ bool Set::open(const Common::String &name) {
 	if (sig != kSet0)
 		return false;
 
-	int framesCount = s->readUint32LE();
+	int frameCount = s->readUint32LE();
 
 	_objectCount = s->readUint32LE();
 	assert(_objectCount <= 85);
 
 	for (int i = 0; i < _objectCount; ++i) {
-		s->read(_objects[i]._name, 20);
+		s->read(_objects[i].name, 20);
 
 		float x0, y0, z0, x1, y1, z1;
 		x0 = s->readFloatLE();
@@ -76,12 +77,11 @@ bool Set::open(const Common::String &name) {
 		y1 = s->readFloatLE();
 		z1 = s->readFloatLE();
 
-		_objects[i]._bbox = BoundingBox(x0, y0, z0, x1, y1, z1);
-
-		_objects[i]._isObstacle = s->readByte();
-		_objects[i]._isClickable = s->readByte();
-		_objects[i]._isHotMouse = 0;
-		_objects[i]._isTarget = 0;
+		_objects[i].bbox = BoundingBox(x0, y0, z0, x1, y1, z1);
+		_objects[i].isObstacle = s->readByte();
+		_objects[i].isClickable = s->readByte();
+		_objects[i].isHotMouse = 0;
+		_objects[i].isTarget = 0;
 		s->skip(4);
 
 		// debug("OBJECT: %s [%d%d%d%d]", _objects[i]._name, _objects[i]._isObstacle, _objects[i]._isClickable, _objects[i]._isHotMouse, _objects[i]._isTarget);
@@ -93,34 +93,34 @@ bool Set::open(const Common::String &name) {
 	for (int i = 0; i < _walkboxCount; ++i) {
 		float x, z;
 
-		s->read(_walkboxes[i]._name, 20);
-		_walkboxes[i]._altitude = s->readFloatLE();
-		_walkboxes[i]._vertexCount = s->readUint32LE();
+		s->read(_walkboxes[i].name, 20);
+		_walkboxes[i].altitude = s->readFloatLE();
+		_walkboxes[i].vertexCount = s->readUint32LE();
 
-		assert(_walkboxes[i]._vertexCount <= 8);
+		assert(_walkboxes[i].vertexCount <= 8);
 
-		for (int j = 0; j < _walkboxes[i]._vertexCount; ++j) {
+		for (int j = 0; j < _walkboxes[i].vertexCount; ++j) {
 			x = s->readFloatLE();
 			z = s->readFloatLE();
 
-			_walkboxes[i]._vertices[j] = Vector3(x, _walkboxes[i]._altitude, z);
+			_walkboxes[i].vertices[j] = Vector3(x, _walkboxes[i].altitude, z);
 		}
 
 		// debug("WALKBOX: %s", _walkboxes[i]._name);
 	}
 
 	_vm->_lights->reset();
-	_vm->_lights->read(s.get(), framesCount);
+	_vm->_lights->read(s.get(), frameCount);
 	_vm->_sliceRenderer->setLights(_vm->_lights);
 	_effects->reset();
-	_effects->read(s.get(), framesCount);
+	_effects->read(s.get(), frameCount);
 	_vm->_sliceRenderer->setSetEffects(_effects);
 
-	// _vm->_sliceRenderer->set_setColors(&this->colors);
+	// _vm->_sliceRenderer->set_setColors(&colors);
 	_loaded = true;
 
 	for (int i = 0; i < _walkboxCount; ++i) {
-		this->setWalkboxStepSound(i, 0);
+		setWalkboxStepSound(i, 0);
 	}
 
 	return true;
@@ -128,7 +128,7 @@ bool Set::open(const Common::String &name) {
 
 void Set::addObjectsToScene(SceneObjects *sceneObjects) const {
 	for (int i = 0; i < _objectCount; i++) {
-		sceneObjects->addObject(i + SCENE_OBJECTS_OBJECTS_OFFSET, &_objects[i]._bbox, _objects[i]._isClickable, _objects[i]._isObstacle, _objects[i]._unknown1, _objects[i]._isTarget);
+		sceneObjects->addObject(i + kSceneObjectOffsetObjects, &_objects[i].bbox, _objects[i].isClickable, _objects[i].isObstacle, _objects[i].unknown1, _objects[i].isTarget);
 	}
 }
 
@@ -152,14 +152,14 @@ bool pointInWalkbox(float x, float z, const Walkbox &w)
 }
 */
 
-static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox) {
+bool Set::isXZInWalkbox(float x, float z, const Walkbox &walkbox) {
 	int found = 0;
 
-	float lastX = walkbox._vertices[walkbox._vertexCount - 1].x;
-	float lastZ = walkbox._vertices[walkbox._vertexCount - 1].z;
-	for (int i = 0; i < walkbox._vertexCount; i++) {
-		float currentX = walkbox._vertices[i].x;
-		float currentZ = walkbox._vertices[i].z;
+	float lastX = walkbox.vertices[walkbox.vertexCount - 1].x;
+	float lastZ = walkbox.vertices[walkbox.vertexCount - 1].z;
+	for (int i = 0; i < walkbox.vertexCount; i++) {
+		float currentX = walkbox.vertices[i].x;
+		float currentZ = walkbox.vertices[i].z;
 
 		if ((currentZ > z && z >= lastZ) || (currentZ <= z && z < lastZ)) {
 			float lineX = (lastX - currentX) / (lastZ - currentZ) * (z - currentZ) + currentX;
@@ -173,15 +173,15 @@ static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox) {
 }
 
 float Set::getAltitudeAtXZ(float x, float z, bool *inWalkbox) const {
-	float altitude = _walkboxes[0]._altitude;
+	float altitude = _walkboxes[0].altitude;
 	*inWalkbox = false;
 
 	for (int i = 0; i < _walkboxCount; ++i) {
 		const Walkbox &walkbox = _walkboxes[i];
 
 		if (isXZInWalkbox(x, z, walkbox)) {
-			if (!*inWalkbox || altitude < walkbox._altitude) {
-				altitude = walkbox._altitude;
+			if (!*inWalkbox || altitude < walkbox.altitude) {
+				altitude = walkbox.altitude;
 				*inWalkbox = true;
 			}
 		}
@@ -197,7 +197,7 @@ int Set::findWalkbox(float x, float z) const {
 		const Walkbox &w = _walkboxes[i];
 
 		if (isXZInWalkbox(x, z, w)) {
-			if (result == -1 || w._altitude > _walkboxes[result]._altitude) {
+			if (result == -1 || w.altitude > _walkboxes[result].altitude) {
 				result = i;
 			}
 		}
@@ -209,7 +209,7 @@ int Set::findWalkbox(float x, float z) const {
 int Set::findObject(const char *objectName) const {
 	int i;
 	for (i = 0; i < (int)_objectCount; i++) {
-		if (scumm_stricmp(objectName, _objects[i]._name) == 0) {
+		if (scumm_stricmp(objectName, _objects[i].name) == 0) {
 			return i;
 		}
 	}
@@ -224,7 +224,7 @@ bool Set::objectSetHotMouse(int objectId) const {
 		return false;
 	}
 
-	_objects[objectId]._isHotMouse = true;
+	_objects[objectId].isHotMouse = true;
 	return true;
 }
 
@@ -237,30 +237,30 @@ bool Set::objectGetBoundingBox(int objectId, BoundingBox *boundingBox) const {
 	}
 	float x0, y0, z0, x1, y1, z1;
 
-	_objects[objectId]._bbox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
+	_objects[objectId].bbox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
 	boundingBox->setXYZ(x0, y0, z0, x1, y1, z1);
 
 	return true;
 }
 
-void Set::objectSetIsClickable(int objectId, bool isClickable) const {
-	_objects[objectId]._isClickable = isClickable;
+void Set::objectSetIsClickable(int objectId, bool isClickable) {
+	_objects[objectId].isClickable = isClickable;
 }
 
-void Set::objectSetIsObstacle(int objectId, bool isObstacle) const {
-	_objects[objectId]._isObstacle = isObstacle;
+void Set::objectSetIsObstacle(int objectId, bool isObstacle) {
+	_objects[objectId].isObstacle = isObstacle;
 }
 
-void Set::objectSetIsTarget(int objectId, bool isTarget) const {
-	_objects[objectId]._isTarget = isTarget;
+void Set::objectSetIsTarget(int objectId, bool isTarget) {
+	_objects[objectId].isTarget = isTarget;
 }
 
 const char *Set::objectGetName(int objectId) const {
-	return _objects[objectId]._name;
+	return _objects[objectId].name;
 }
 
 void Set::setWalkboxStepSound(int walkboxId, int stepSound) {
-	this->_walkboxStepSound[walkboxId] = stepSound;
+	_walkboxStepSound[walkboxId] = stepSound;
 }
 
 void Set::setFoodstepSoundOverride(int soundId) {
@@ -271,12 +271,12 @@ void Set::resetFoodstepSoundOverride() {
 	_footstepSoundOverride = -1;
 }
 
-int Set::getWalkboxSoundWalkLeft(int walkboxId) {
+int Set::getWalkboxSoundWalkLeft(int walkboxId) const{
 	int soundId;
-	if (this->_footstepSoundOverride >= 0) {
-		soundId = this->_footstepSoundOverride;
+	if (_footstepSoundOverride >= 0) {
+		soundId = _footstepSoundOverride;
 	} else {
-		soundId = this->_walkboxStepSound[walkboxId];
+		soundId = _walkboxStepSound[walkboxId];
 	}
 
 	if (soundId == 0) { //stone floor
@@ -295,12 +295,12 @@ int Set::getWalkboxSoundWalkLeft(int walkboxId) {
 	return -1;
 }
 
-int Set::getWalkboxSoundWalkRight(int walkboxId) {
+int Set::getWalkboxSoundWalkRight(int walkboxId) const {
 	int soundId;
-	if (this->_footstepSoundOverride >= 0) {
-		soundId = this->_footstepSoundOverride;
+	if (_footstepSoundOverride >= 0) {
+		soundId = _footstepSoundOverride;
 	} else {
-		soundId = this->_walkboxStepSound[walkboxId];
+		soundId = _walkboxStepSound[walkboxId];
 	}
 
 	if (soundId == 0) { //stone floor
@@ -319,11 +319,11 @@ int Set::getWalkboxSoundWalkRight(int walkboxId) {
 	return -1;
 }
 
-int Set::getWalkboxSoundRunLeft(int walkboxId) {
+int Set::getWalkboxSoundRunLeft(int walkboxId) const {
 	return getWalkboxSoundWalkLeft(walkboxId);
 }
 
-int Set::getWalkboxSoundRunRight(int walkboxId) {
+int Set::getWalkboxSoundRunRight(int walkboxId) const {
 	return getWalkboxSoundWalkRight(walkboxId);
 }
 } // End of namespace BladeRunner

@@ -24,7 +24,7 @@
 
 #include "bladerunner/actor.h"
 #include "bladerunner/actor_combat.h"
-#include "bladerunner/adq.h"
+#include "bladerunner/actor_dialogue_queue.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/audio_speech.h"
@@ -32,9 +32,8 @@
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/combat.h"
 #include "bladerunner/dialogue_menu.h"
-#include "bladerunner/elevator.h"
-#include "bladerunner/gameflags.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/game_flags.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/items.h"
 #include "bladerunner/item_pickup.h"
 #include "bladerunner/movement_track.h"
@@ -48,9 +47,11 @@
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
-#include "bladerunner/spinner.h"
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/ui/elevator.h"
+#include "bladerunner/ui/kia.h"
+#include "bladerunner/ui/spinner.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/waypoints.h"
 
@@ -230,14 +231,14 @@ void ScriptBase::Actor_Set_Targetable(int actorId, bool targetable) {
 
 void ScriptBase::Actor_Says(int actorId, int sentenceId, int animationMode){
 	_vm->loopActorSpeaking();
-	_vm->_adq->flush(1, true);
+	_vm->_actorDialogueQueue->flush(1, true);
 	Actor_Says_With_Pause(actorId, sentenceId, 0.5f, animationMode);
 }
 
 void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause, int animationMode) {
 	_vm->gameWaitForActive();
 	_vm->loopActorSpeaking();
-	_vm->_adq->flush(1, true);
+	_vm->_actorDialogueQueue->flush(1, true);
 
 	Actor *actor = _vm->_actors[actorId];
 
@@ -285,35 +286,12 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 	Player_Gains_Control();
 }
 
-#if 0
 void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
-	// Wait for any existing speech to end
-	_vm->loopActorSpeaking();
-
-	// TODO: Hack - This needs to go through the actor class
-	char name[13];
-	sprintf(name, "%02d-%04d.AUD", actorId, sentenceId);
-	_vm->_audioSpeech->playSpeech(name);
-
-	// warning("start voice over loop");
-	while (true)
-	{
-		_vm->gameTick();
-		if (_vm->shouldQuit())
-			break;
-		if (!_vm->_audioSpeech->isPlaying())
-			break;
-	}
-	// warning("end voice over loop");
-}
-#endif
-
-void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
-	assert(actorId < ACTORS_COUNT);
+	assert(actorId < BladeRunnerEngine::kActorCount);
 
 	_vm->gameWaitForActive();
 	_vm->loopActorSpeaking();
-	_vm->_adq->flush(1, true);
+	_vm->_actorDialogueQueue->flush(1, true);
 
 	Actor *actor = _vm->_actors[actorId];
 
@@ -337,7 +315,7 @@ void ScriptBase::Actor_Start_Speech_Sample(int actorId, int sentenceId) {
 
 void ScriptBase::Actor_Start_Voice_Over_Sample(int sentenceId) {
 	_vm->loopActorSpeaking();
-	_vm->_actors[VOICEOVER_ACTOR]->speechPlay(sentenceId, true);
+	_vm->_actors[Actors::kActorVoiceOver]->speechPlay(sentenceId, true);
 }
 
 int ScriptBase::Actor_Query_Which_Set_In(int actorId) {
@@ -380,11 +358,11 @@ bool ScriptBase::Actor_Query_In_Between_Two_Actors(int actorId, int otherActor1I
 	float z1 = _vm->_actors[otherActor1Id]->getZ();
 	float x2 = _vm->_actors[otherActor2Id]->getX();
 	float z2 = _vm->_actors[otherActor2Id]->getZ();
-	return _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1, z1, x2, z1)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1 - 12.0f, z1 - 12.0f, x2 - 12.0f, z2 - 12.0f)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1 + 12.0f, z1 - 12.0f, x2 + 12.0f, z2 - 12.0f)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1 + 12.0f, z1 + 12.0f, x2 + 12.0f, z2 + 12.0f)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + SCENE_OBJECTS_ACTORS_OFFSET, x1 - 12.0f, z1 + 12.0f, x2 - 12.0f, z2 + 12.0f);
+	return _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1, z1, x2, z1)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1 - 12.0f, z1 - 12.0f, x2 - 12.0f, z2 - 12.0f)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1 + 12.0f, z1 - 12.0f, x2 + 12.0f, z2 - 12.0f)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1 + 12.0f, z1 + 12.0f, x2 + 12.0f, z2 + 12.0f)
+		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1 - 12.0f, z1 + 12.0f, x2 - 12.0f, z2 + 12.0f);
 }
 
 void ScriptBase::Actor_Set_Goal_Number(int actorId, int goalNumber) {
@@ -594,11 +572,11 @@ bool ScriptBase::Actor_Clue_Query(int actorId, int clueId) {
 }
 
 void ScriptBase::Actor_Clues_Transfer_New_To_Mainframe(int actorId) {
-	_vm->_actors[actorId]->copyClues(VOICEOVER_ACTOR);
+	_vm->_actors[actorId]->copyClues(Actors::kActorVoiceOver);
 }
 
 void ScriptBase::Actor_Clues_Transfer_New_From_Mainframe(int actorId) {
-	_vm->_actors[VOICEOVER_ACTOR]->copyClues(actorId);
+	_vm->_actors[Actors::kActorVoiceOver]->copyClues(actorId);
 }
 
 void ScriptBase::Actor_Set_Invisible(int actorId, bool isInvisible) {
@@ -1126,16 +1104,16 @@ void ScriptBase::Give_McCoy_Ammo(int ammoType, int ammo) {
 	_vm->_settings->addAmmo(ammoType, ammo);
 }
 
-void ScriptBase::Assign_Player_Gun_Hit_Sounds(int row, int soundId1, int soundId2, int soundId3) {
-	_vm->_combat->setHitSoundId(row, 0, soundId1);
-	_vm->_combat->setHitSoundId(row, 1, soundId2);
-	_vm->_combat->setHitSoundId(row, 2, soundId3);
+void ScriptBase::Assign_Player_Gun_Hit_Sounds(int ammoType, int soundId1, int soundId2, int soundId3) {
+	_vm->_combat->setHitSound(ammoType, 0, soundId1);
+	_vm->_combat->setHitSound(ammoType, 1, soundId2);
+	_vm->_combat->setHitSound(ammoType, 2, soundId3);
 }
 
-void ScriptBase::Assign_Player_Gun_Miss_Sounds(int row, int soundId1, int soundId2, int soundId3) {
-	_vm->_combat->setMissSoundId(row, 0, soundId1);
-	_vm->_combat->setMissSoundId(row, 1, soundId2);
-	_vm->_combat->setMissSoundId(row, 2, soundId3);
+void ScriptBase::Assign_Player_Gun_Miss_Sounds(int ammoType, int soundId1, int soundId2, int soundId3) {
+	_vm->_combat->setMissSound(ammoType, 0, soundId1);
+	_vm->_combat->setMissSound(ammoType, 1, soundId2);
+	_vm->_combat->setMissSound(ammoType, 2, soundId3);
 }
 
 void ScriptBase::Disable_Shadows(int animationsIdsList[], int listSize) {
@@ -1152,7 +1130,7 @@ void ScriptBase::Actor_Retired_Here(int actorId, int width, int height, int reti
 	actor->getXYZ(&actorPosition.x, &actorPosition.y, &actorPosition.z);
 	actor->retire(retired, width, height, retiredByActorId);
 	actor->setAtXYZ(actorPosition, actor->getFacing(), true, false, true);
-	_vm->_sceneObjects->setRetired(actorId + SCENE_OBJECTS_ACTORS_OFFSET, true);
+	_vm->_sceneObjects->setRetired(actorId + kSceneObjectOffsetActors, true);
 }
 
 void ScriptBase::Clickable_Object(const char *objectName) {
@@ -1209,24 +1187,24 @@ void ScriptBase::Set_Fade_Density(float density) {
 	_vm->_scene->_set->_effects->setFadeDensity(density);
 }
 
-void ScriptBase::Set_Fog_Color(const char* fogName, float r, float g, float b) {
+void ScriptBase::Set_Fog_Color(const char *fogName, float r, float g, float b) {
 	_vm->_scene->_set->_effects->setFogColor(fogName, r, g, b);
 }
 
-void ScriptBase::Set_Fog_Density(const char* fogName, float density) {
+void ScriptBase::Set_Fog_Density(const char *fogName, float density) {
 	_vm->_scene->_set->_effects->setFogDensity(fogName, density);
 }
 
 void ScriptBase::ADQ_Flush() {
-	_vm->_adq->flush(0, true);
+	_vm->_actorDialogueQueue->flush(0, true);
 }
 
 void ScriptBase::ADQ_Add(int actorId, int sentenceId, int animationMode) {
-	_vm->_adq->add(actorId, sentenceId, animationMode);
+	_vm->_actorDialogueQueue->add(actorId, sentenceId, animationMode);
 }
 
 void ScriptBase::ADQ_Add_Pause(int delay) {
-	_vm->_adq->addPause(delay);
+	_vm->_actorDialogueQueue->addPause(delay);
 }
 
 bool ScriptBase::Game_Over() {
@@ -1289,22 +1267,22 @@ void ScriptBase::AI_Movement_Track_Flush(int actorId) {
 	_vm->_actors[actorId]->stopWalking(false);
 }
 
-void ScriptBase::KIA_Play_Actor_Dialogue(int a1, int a2) {
-	//TODO
-	warning("KIA_Play_Actor_Dialogue(%d, %d)", a1, a2);
+void ScriptBase::KIA_Play_Actor_Dialogue(int actorId, int sentenceId) {
+	_vm->gameWaitForActive();
+	_vm->_kia->playActorDialogue(actorId, sentenceId);
 }
 
-void ScriptBase::KIA_Play_Slice_Model(int a1) {
-	//TODO
-	warning("KIA_Play_Slice_Model(%d)", a1);
+void ScriptBase::KIA_Play_Slice_Model(int sliceModelId) {
+	_vm->gameWaitForActive();
+	_vm->_kia->playSliceModel(sliceModelId);
 }
 
-void ScriptBase::KIA_Play_Photograph(int a1) {
-	//TODO
-	warning("KIA_Play_Photograph(%d)", a1);
+void ScriptBase::KIA_Play_Photograph(int photographId) {
+	_vm->gameWaitForActive();
+	_vm->_kia->playPhotograph(photographId);
 }
 
-void ScriptBase::ESPER_Add_Photo(const char* fileName, int a2, int a3) {
+void ScriptBase::ESPER_Add_Photo(const char *fileName, int a2, int a3) {
 	//TODO
 	warning("ESPER_Add_Photo(%s, %d, %d)", fileName, a2, a3);
 }

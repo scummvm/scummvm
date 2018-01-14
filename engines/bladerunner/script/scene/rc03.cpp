@@ -140,7 +140,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 			if (Game_Flag_Query(289)) {
 				Game_Flag_Set(702);
 			}
-			Game_Flag_Set(114);
+			Game_Flag_Set(kFlagRC03toRC01);
 			Set_Enter(69, 78);
 			Actor_Set_Goal_Number(kActorDektora, 100);
 		}

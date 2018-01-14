@@ -20,52 +20,48 @@
  *
  */
 
-#ifndef BLADERUNNER_ADQ_H
-#define BLADERUNNER_ADQ_H
-#include "common/array.h"
+#ifndef BLADERUNNER_ui_inputbox_H
+#define BLADERUNNER_ui_inputbox_H
+
+#include "bladerunner/ui/ui_component.h"
+
+#include "common/rect.h"
+#include "common/str.h"
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
+class UIInputBox : public UIComponent
+{
+private:
+	UIComponentCallback *_valueChangedCallback;
+	void                *_callbackData;
 
-struct ADQEntry {
-	bool _isNotPause;
-	bool _isPause;
-	int _actorId;
-	int _sentenceId;
-	int _animationMode;
-	int _delay;
+	bool                 _isVisible;
+	Common::Rect         _rect;
 
-	ADQEntry();
-};
+	int                  _maxLength;
+	int                  _length;
+	Common::String       _text;
 
-// actor dialogue queue??
-class ADQ {
-	BladeRunnerEngine *_vm;
+	bool                 _cursorIsVisible;
 
-	Common::Array<ADQEntry> _entries;
-
-	bool     _isNotPause;
-	int      _actorId;
-	int      _sentenceId;
-	int      _animationMode;
-	int      _animationModePrevious;
-	bool     _isPause;
-	int      _delay;
-	int      _timeLast;
-
+	int                  _timeLast;
 
 public:
-	ADQ(BladeRunnerEngine *vm);
-	~ADQ();
+	UIInputBox(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallback, void *callbackData, Common::Rect rect, int maxLength, const Common::String &text);
 
-	void add(int actorId, int speechId, int animationMode);
-	void addPause(int delay);
-	void flush(int a1, bool callScript);
-	void tick();
+	void draw(Graphics::Surface &surface);
+
+	void setText(const Common::String &text);
+	const Common::String &getText();
+
+	void show();
+	void hide();
+
+	void handleKeyUp(const Common::KeyState &kbd);
 
 private:
-	void clear();
+	bool charIsValid(const Common::KeyState &kbd);
 };
 
 } // End of namespace BladeRunner

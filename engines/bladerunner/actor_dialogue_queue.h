@@ -20,51 +20,49 @@
  *
  */
 
-#ifndef BLADERUNNER_ELEVATOR_H
-#define BLADERUNNER_ELEVATOR_H
-
+#ifndef BLADERUNNER_ACTOR_DIALOGUE_QUEUE_H
+#define BLADERUNNER_ACTOR_DIALOGUE_QUEUE_H
 #include "common/array.h"
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class Shape;
-class VQAPlayer;
-class UIImagePicker;
 
-class Elevator {
-	BladeRunnerEngine     *_vm;
-	bool                   _isOpen;
-	VQAPlayer             *_vqaPlayer;
-	int                    _buttonClicked;
-	Common::Array<Shape*>  _shapes;
-	UIImagePicker         *_imagePicker;
-	int                    _actorId;
-	int                    _sentenceId;
-	int                    _timeSpeakDescription;
+class ActorDialogueQueue {
+	struct Entry {
+		bool isNotPause;
+		bool isPause;
+		int actorId;
+		int sentenceId;
+		int animationMode;
+		int delay;
 
-	friend void elevator_mouseInCallback(int, void*);
-	friend void elevator_mouseOutCallback(int, void*);
-	friend void elevator_mouseDownCallback(int, void*);
-	friend void elevator_mouseUpCallback(int, void*);
+		Entry();
+	};
+
+	BladeRunnerEngine *_vm;
+
+	Common::Array<Entry> _entries;
+	bool                 _isNotPause;
+	int                  _actorId;
+	int                  _sentenceId;
+	int                  _animationMode;
+	int                  _animationModePrevious;
+	bool                 _isPause;
+	int                  _delay;
+	int                  _timeLast;
 
 public:
-	Elevator(BladeRunnerEngine *vm);
-	~Elevator();
+	ActorDialogueQueue(BladeRunnerEngine *vm);
+	~ActorDialogueQueue();
 
-	int  activate(int elevatorId);
-	void open();
-	bool isOpen() const;
-	int  handleMouseUp(int x, int y);
-	int  handleMouseDown(int x, int y);
+	void add(int actorId, int speechId, int animationMode);
+	void addPause(int delay);
+	void flush(int a1, bool callScript);
 	void tick();
-	void buttonClick(int buttonId);
-	void reset();
-	void buttonFocus(int buttonId);
-	void setupDescription(int actorId, int sentenceId);
-	void resetDescription();
-	void tickDescription();
-	void resume();
+
+private:
+	void clear();
 };
 
 } // End of namespace BladeRunner

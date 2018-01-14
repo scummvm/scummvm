@@ -118,7 +118,7 @@ bool AudStream::rewind() {
 	return true;
 }
 
-int AudStream::getLength() {
+int AudStream::getLength() const {
 	int bytesPerSecond = _frequency;
 	if (_flags & 1) { // 16 bit
 		bytesPerSecond *= 2;

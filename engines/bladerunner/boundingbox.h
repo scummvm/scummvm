@@ -35,13 +35,13 @@ public:
 	BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1);
 
 	void expand(float x0, float y0, float z0, float x1, float y1, float z1);
-	bool inside(float x, float y, float z);
+	bool inside(float x, float y, float z) const;
 
 	void setXYZ(float x0, float y0, float z0, float x1, float y1, float z1);
-	void getXYZ(float* x0, float *y0, float* z0, float *x1, float* y1, float* z1);
+	void getXYZ(float *x0, float *y0, float *z0, float *x1, float *y1, float *z1) const;
 
-	float getZ0();
-	float getZ1();
+	float getZ0() const;
+	float getZ1() const;
 };
 
 } // End of namespace BladeRunner

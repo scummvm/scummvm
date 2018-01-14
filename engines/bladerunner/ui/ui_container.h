@@ -20,55 +20,36 @@
  *
  */
 
-#ifndef BLADERUNNER_SPINNER_H
-#define BLADERUNNER_SPINNER_H
+#ifndef BLADERUNNER_UI_CONTAINER_H
+#define BLADERUNNER_UI_CONTAINER_H
+
+#include "bladerunner/ui/ui_component.h"
 
 #include "common/array.h"
-#include "common/rect.h"
 
 namespace BladeRunner {
 
-class BladeRunnerEngine;
-class Shape;
-class VQAPlayer;
-class UIImagePicker;
+class UIComponent;
 
-struct SpinnerDestination {
-	int          id;
-	Common::Rect rect;
-};
-
-class Spinner {
-	static const int kSpinnerDestinations = 10;
-
-	BladeRunnerEngine     *_vm;
-	bool                   _isDestinationSelectable[kSpinnerDestinations];
-	bool                   _isOpen;
-	VQAPlayer             *_vqaPlayer;
-	SpinnerDestination    *_destinations;
-	int                    _selectedDestination;
-	Common::Array<Shape*>  _shapes;
-	UIImagePicker         *_imagePicker;
+class UIContainer : public UIComponent
+{
+private:
+	Common::Array<UIComponent*> _components;
 
 public:
-	Spinner(BladeRunnerEngine *vm);
-	~Spinner();
+	UIContainer(BladeRunnerEngine *vm) : UIComponent(vm) {}
 
-	void setSelectableDestinationFlag(int destination, bool selectable);
-	bool querySelectableDestinationFlag(int destination) const;
+	void draw(Graphics::Surface &surface);
 
-	int chooseDestination(int vqaLoopId, bool immediately);
+	void handleMouseMove(int mouseX, int mouseY);
+	void handleMouseDown(bool alternateButton);
+	void handleMouseUp(bool alternateButton);
+	void handleKeyUp(const Common::KeyState &kbd);
 
-	void open();
-	bool isOpen() const;
-
-	int handleMouseUp(int x, int y);
-	int handleMouseDown(int x, int y);
-	void tick();
-	void setSelectedDestination(int destination);
-	void reset();
-	void resume();
+	void add(UIComponent *component);
+	void clear();
 };
+
 
 } // End of namespace BladeRunner
 

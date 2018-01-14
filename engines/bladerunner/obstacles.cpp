@@ -28,28 +28,24 @@ namespace BladeRunner {
 
 Obstacles::Obstacles(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_polygons       = new ObstaclesPolygon[50];
-	_polygonsBackup = new ObstaclesPolygon[50];
 	_vertices       = new Vector2[150];
 	clear();
 }
 
 Obstacles::~Obstacles() {
 	delete[] _vertices;
-	delete[] _polygonsBackup;
-	delete[] _polygons;
 }
 
 void Obstacles::clear() {
-	for (int i = 0; i < 50; i++) {
-		_polygons[i]._isPresent = false;
-		_polygons[i]._verticesCount = 0;
-		for (int j = 0; j < 160; j++) {
-			_polygons[i]._vertices[j].x = 0.0f;
-			_polygons[i]._vertices[j].y = 0.0f;
+	for (int i = 0; i < kPolygonCount; i++) {
+		_polygons[i].isPresent = false;
+		_polygons[i].verticeCount = 0;
+		for (int j = 0; j < kVertexCount; j++) {
+			_polygons[i].vertices[j].x = 0.0f;
+			_polygons[i].vertices[j].y = 0.0f;
 		}
 	}
-	_verticesCount = 0;
+	_verticeCount = 0;
 	_backup = false;
 	_count = 0;
 }
@@ -57,7 +53,7 @@ void Obstacles::clear() {
 void Obstacles::add(float x0, float z0, float x1, float z1) {
 }
 
-bool Obstacles::find(const Vector3 &from, const Vector3 &to, Vector3 *next) {
+bool Obstacles::find(const Vector3 &from, const Vector3 &to, Vector3 *next) const {
 	//TODO
 	*next = to;
 	return true;

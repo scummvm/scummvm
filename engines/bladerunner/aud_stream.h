@@ -60,7 +60,7 @@ public:
 	int getRate() const { return _frequency; };
 	bool endOfData() const { return _p == _end; }
 	bool rewind();
-	int getLength();
+	int getLength() const;
 };
 
 } // End of namespace BladeRunner

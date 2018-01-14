@@ -24,27 +24,25 @@
 
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/game_info.h"
 
 #include "common/debug.h"
 #include "common/system.h"
 
 namespace BladeRunner {
 
-#define NON_LOOPING_SOUNDS 25
-#define LOOPING_SOUNDS      3
-
-AmbientSounds::AmbientSounds(BladeRunnerEngine *vm)	: _vm(vm) {
-	_nonLoopingSounds = new NonLoopingSound[NON_LOOPING_SOUNDS];
-	_loopingSounds = new LoopingSound[LOOPING_SOUNDS];
+AmbientSounds::AmbientSounds(BladeRunnerEngine *vm) {
+	_vm = vm;
+	_nonLoopingSounds = new NonLoopingSound[kNonLoopingSounds];
+	_loopingSounds = new LoopingSound[kLoopingSounds];
 	_ambientVolume = 65;
 
-	for (int i = 0; i != NON_LOOPING_SOUNDS; ++i) {
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		NonLoopingSound &track = _nonLoopingSounds[i];
 		track.isActive = false;
 	}
 
-	for (int i = 0; i != LOOPING_SOUNDS; ++i) {
+	for (int i = 0; i != kLoopingSounds; ++i) {
 		LoopingSound &track = _loopingSounds[i];
 		track.isActive = false;
 	}
@@ -96,7 +94,7 @@ void AmbientSounds::removeNonLoopingSound(int sfxId, bool stopPlaying) {
 }
 
 void AmbientSounds::removeAllNonLoopingSounds(bool stopPlaying) {
-	for (int i = 0; i < NON_LOOPING_SOUNDS; i++) {
+	for (int i = 0; i < kNonLoopingSounds; i++) {
 		removeNonLoopingSoundByIndex(i, stopPlaying);
 	}
 }
@@ -188,7 +186,7 @@ void AmbientSounds::removeLoopingSound(int sfxId, int delay) {
 }
 
 void AmbientSounds::removeAllLoopingSounds(int delay) {
-	for (int i = 0; i < LOOPING_SOUNDS; i++) {
+	for (int i = 0; i < kLoopingSounds; i++) {
 		removeLoopingSoundByIndex(i, delay);
 	}
 }
@@ -196,7 +194,7 @@ void AmbientSounds::removeAllLoopingSounds(int delay) {
 void AmbientSounds::tick() {
 	uint32 now = g_system->getMillis();
 
-	for (int i = 0; i != NON_LOOPING_SOUNDS; ++i) {
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		NonLoopingSound &track = _nonLoopingSounds[i];
 
 		if (!track.isActive || track.nextPlayTime > now) {
@@ -226,8 +224,37 @@ void AmbientSounds::tick() {
 	}
 }
 
-int AmbientSounds::findAvailableNonLoopingTrack() {
-	for (int i = 0; i != NON_LOOPING_SOUNDS; ++i) {
+void AmbientSounds::setVolume(int volume) {
+	if (_loopingSounds) {
+		for (int i = 0; i < kLoopingSounds; i++) {
+			if (_loopingSounds[i].isActive && _loopingSounds[i].audioPlayerTrack != -1) {
+				int newVolume = _loopingSounds[i].volume * volume / 100;
+				if (_vm->_audioPlayer->isActive(_loopingSounds[i].audioPlayerTrack)) {
+					_vm->_audioPlayer->adjustVolume(_loopingSounds[i].audioPlayerTrack, newVolume, 1, false);
+				} else {
+					_loopingSounds[i].audioPlayerTrack = _vm->_audioPlayer->playAud(_loopingSounds[i].name, 1, _loopingSounds[i].pan, _loopingSounds[i].pan, 99, AudioPlayer::LOOP | AudioPlayer::OVERRIDE_VOLUME);
+					if (_loopingSounds[i].audioPlayerTrack == -1) {
+						removeLoopingSound(i, 0);
+					} else {
+						_vm->_audioPlayer->adjustVolume(_loopingSounds[i].audioPlayerTrack, newVolume, 1, false);
+					}
+				}
+			}
+		}
+	}
+	_ambientVolume = volume;
+}
+
+int AmbientSounds::getVolume() const {
+	return _ambientVolume;
+}
+
+void AmbientSounds::playSample() {
+	playSound(66, 100, 0, 0, 0);
+}
+
+int AmbientSounds::findAvailableNonLoopingTrack() const {
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		if (!_nonLoopingSounds[i].isActive) {
 			return i;
 		}
@@ -236,8 +263,8 @@ int AmbientSounds::findAvailableNonLoopingTrack() {
 	return -1;
 }
 
-int AmbientSounds::findNonLoopingTrackByHash(int32 hash) {
-	for (int i = 0; i != NON_LOOPING_SOUNDS; ++i) {
+int AmbientSounds::findNonLoopingTrackByHash(int32 hash) const {
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
 		NonLoopingSound &track = _nonLoopingSounds[i];
 
 		if (track.isActive && track.hash == hash) {
@@ -248,8 +275,8 @@ int AmbientSounds::findNonLoopingTrackByHash(int32 hash) {
 	return -1;
 }
 
-int AmbientSounds::findAvailableLoopingTrack() {
-	for (int i = 0; i != LOOPING_SOUNDS; ++i) {
+int AmbientSounds::findAvailableLoopingTrack() const {
+	for (int i = 0; i != kLoopingSounds; ++i) {
 		if (!_loopingSounds[i].isActive) {
 			return i;
 		}
@@ -258,8 +285,8 @@ int AmbientSounds::findAvailableLoopingTrack() {
 	return -1;
 }
 
-int AmbientSounds::findLoopingTrackByHash(int32 hash) {
-	for (int i = 0; i != LOOPING_SOUNDS; ++i) {
+int AmbientSounds::findLoopingTrackByHash(int32 hash) const {
+	for (int i = 0; i != kLoopingSounds; ++i) {
 		LoopingSound &track = _loopingSounds[i];
 
 		if (track.isActive && track.hash == hash) {

@@ -111,7 +111,7 @@ void SceneScriptMA05::PlayerWalkedIn() {
 		Sound_Play(69, 100, 0, 0, 50);
 	}
 	if (Game_Flag_Query(146) && !Game_Flag_Query(61)) {
-		if (!Game_Flag_Query(378)) {
+		if (!Game_Flag_Query(kFlagDirectorsCut)) {
 			Actor_Voice_Over(1260, kActorVoiceOver);
 			Actor_Voice_Over(1270, kActorVoiceOver);
 			Actor_Voice_Over(1280, kActorVoiceOver);

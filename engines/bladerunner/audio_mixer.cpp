@@ -47,7 +47,7 @@ AudioMixer::~AudioMixer() {
 	_vm->getTimerManager()->removeTimerProc(timerCallback);
 }
 
-int AudioMixer::play(Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void (*endCallback)(int, void*), void *callbackData) {
+int AudioMixer::play(Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void (*endCallback)(int, void *), void *callbackData) {
 	Common::StackLock lock(_mutex);
 
 	int channel = -1;
@@ -110,7 +110,7 @@ int AudioMixer::playInChannel(int channel, Audio::Mixer::SoundType type, Audio::
 	_channels[channel].endCallback = endCallback;
 	_channels[channel].callbackData = callbackData;
 
-	Audio::AudioStream* audioStream = stream;
+	Audio::AudioStream *audioStream = stream;
 
 	if (loop) {
 		audioStream = new Audio::LoopingAudioStream(stream, 0, DisposeAfterUse::YES);
@@ -127,14 +127,14 @@ int AudioMixer::playInChannel(int channel, Audio::Mixer::SoundType type, Audio::
 	return channel;
 }
 
-bool AudioMixer::isActive(int channel) {
+bool AudioMixer::isActive(int channel) const {
 	Common::StackLock lock(_mutex);
 
 	return _channels[channel].isPresent && _vm->_mixer->isSoundHandleActive(_channels[channel].handle);
 }
 
 void AudioMixer::timerCallback(void *self) {
-	((AudioMixer*)self)->tick();
+	((AudioMixer *)self)->tick();
 }
 
 void AudioMixer::adjustVolume(int channel, int newVolume, int time)

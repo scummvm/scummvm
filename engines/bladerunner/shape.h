@@ -46,7 +46,7 @@ public:
 
 	bool readFromContainer(const Common::String &container, int index);
 
-	void draw(Graphics::Surface &surface, int x, int y);
+	void draw(Graphics::Surface &surface, int x, int y) const;
 
 	int getWidth()  const { return _width;  }
 	int getHeight() const { return _height; }

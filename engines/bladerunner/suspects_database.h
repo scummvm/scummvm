@@ -29,33 +29,36 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class TextResource;
 
-#define MO_CLUES_COUNT 10
-#define WHEREABOUTS_CLUES_COUNT 10
-#define REPLICANT_CLUES_COUNT 20
-#define NONREPLICANT_CLUES_COUNT 20
-#define OTHER_CLUES_COUNT 20
-#define IDENTITY_CLUES_COUNT 10
-#define PHOTO_CLUES_COUNT 6
-
 class SuspectDatabaseEntry {
+private:
+	static const int kMOClueCount = 10;
+	static const int kWhereaboutsClueCount = 10;
+	static const int kReplicantClueCount = 20;
+	static const int kNonReplicantClueCount = 20;
+	static const int kOtherClueCount = 20;
+	static const int kIdentityClueCount = 10;
+	static const int kPhotoClueCount = 6;
+
 	BladeRunnerEngine *_vm;
 
 	int _actorId;
 	int _sex;
-	int _moClues[MO_CLUES_COUNT];
-	int _whereaboutsClues[WHEREABOUTS_CLUES_COUNT];
-	int _replicantClues[REPLICANT_CLUES_COUNT];
-	int _nonReplicantClues[NONREPLICANT_CLUES_COUNT];
-	int _otherClues[OTHER_CLUES_COUNT];
-	int _identityClues[IDENTITY_CLUES_COUNT];
-	int _photoClues[PHOTO_CLUES_COUNT][3];
-	int _moCluesCount;
-	int _whereaboutsCluesCount;
-	int _replicantCluesCount;
-	int _nonReplicantCluesCount;
-	int _otherCluesCount;
-	int _identityCluesCount;
-	int _photoCluesCount;
+
+	int _moClues[kMOClueCount];
+	int _whereaboutsClues[kWhereaboutsClueCount];
+	int _replicantClues[kReplicantClueCount];
+	int _nonReplicantClues[kNonReplicantClueCount];
+	int _otherClues[kOtherClueCount];
+	int _identityClues[kIdentityClueCount];
+	int _photoClues[kPhotoClueCount][3];
+
+	int _moClueCount;
+	int _whereaboutsClueCount;
+	int _replicantClueCount;
+	int _nonReplicantClueCount;
+	int _otherClueCount;
+	int _identityClueCount;
+	int _photoClueCount;
 
 public:
 	SuspectDatabaseEntry(BladeRunnerEngine *_vm);

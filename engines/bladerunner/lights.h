@@ -32,7 +32,7 @@
 namespace BladeRunner {
 
 class Lights {
-#if _DEBUG
+#if BLADERUNNER_DEBUG_RENDERING
 	friend class BladeRunnerEngine;
 #endif
 	friend class SliceRendererLights;
@@ -42,18 +42,18 @@ class Lights {
 	Color                  _ambientLightColor;
 	Common::Array<Light *> _lights;
 	int                    _frame;
-	//char gap[28];
 
 public:
 	Lights(BladeRunnerEngine *vm);
 	~Lights();
 
-	void read(Common::ReadStream *stream, int framesCount);
+	void read(Common::ReadStream *stream, int frameCount);
 	void readVqa(Common::ReadStream *stream);
 
 	void reset();
 
 	void setupFrame(int frame);
+
 private:
 	void removeAnimated();
 };

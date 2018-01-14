@@ -30,7 +30,8 @@
 
 namespace BladeRunner {
 
-TextResource::TextResource(BladeRunnerEngine *vm) : _vm(vm) {
+TextResource::TextResource(BladeRunnerEngine *vm) {
+	_vm      = vm;
 	_count   = 0;
 	_ids     = nullptr;
 	_offsets = nullptr;
@@ -43,11 +44,11 @@ TextResource::~TextResource() {
 	delete[] _strings;
 }
 
-bool TextResource::open(const char *name) {
-	assert(strlen(name) <= 8);
+bool TextResource::open(const Common::String &name) {
+	assert(name.size() <= 8);
 
 	char resName[13];
-	sprintf(resName, "%s.TR%s", name, _vm->_languageCode);
+	sprintf(resName, "%s.TR%s", name.c_str(), _vm->_languageCode);
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(resName));
 	if (!s)
 		return false;
@@ -78,7 +79,7 @@ bool TextResource::open(const char *name) {
 
 	s->read(_strings, remain);
 
-#if 0
+#if BLADERUNNER_DEBUG_CONSOLE
 	debug("\n%s\n----------------", resName);
 	for (uint32 i = 0; i != (uint32)_count; ++i) {
 		debug("%3d: %s", i, getText(i));
@@ -88,7 +89,7 @@ bool TextResource::open(const char *name) {
 	return true;
 }
 
-const char *TextResource::getText(uint32 id) {
+const char *TextResource::getText(uint32 id) const {
 	for (uint32 i = 0; i != _count; ++i) {
 		if (_ids[i] == id) {
 			return _strings + _offsets[i];
@@ -96,6 +97,10 @@ const char *TextResource::getText(uint32 id) {
 	}
 
 	return "";
+}
+
+int TextResource::getCount() const {
+	return _count;
 }
 
 } // End of namespace BladeRunner

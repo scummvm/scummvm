@@ -22,14 +22,14 @@
 
 #include "bladerunner/audio_player.h"
 
-#include "bladerunner/bladerunner.h"
-
 #include "bladerunner/archive.h"
 #include "bladerunner/aud_stream.h"
 #include "bladerunner/audio_mixer.h"
+#include "bladerunner/bladerunner.h"
 
 #include "common/debug.h"
 #include "common/stream.h"
+#include "common/random.h"
 
 namespace Common {
 	class MemoryReadStream;
@@ -43,7 +43,7 @@ AudioCache::~AudioCache() {
 	}
 }
 
-bool AudioCache::canAllocate(uint32 size) {
+bool AudioCache::canAllocate(uint32 size) const {
 	Common::StackLock lock(_mutex);
 
 	return _maxSize - _totalSize >= size;
@@ -84,7 +84,7 @@ void AudioCache::storeByHash(int32 hash, Common::SeekableReadStream *stream) {
 	Common::StackLock lock(_mutex);
 
 	uint32 size = stream->size();
-	byte *data = (byte*)malloc(size);
+	byte *data = (byte *)malloc(size);
 	stream->read(data, size);
 
 	cacheItem item = {
@@ -124,7 +124,8 @@ void AudioCache::decRef(int32 hash) {
 	assert(false && "AudioCache::decRef: hash not found");
 }
 
-AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) : _vm(vm) {
+AudioPlayer::AudioPlayer(BladeRunnerEngine *vm) {
+	_vm = vm;
 	_cache = new AudioCache();
 
 	for (int i = 0; i != 6; ++i) {
@@ -175,6 +176,31 @@ void AudioPlayer::adjustPan(int track, int pan, int delay) {
 
 	_tracks[track].pan = pan;
 	_vm->_audioMixer->adjustPan(_tracks[track].channel, pan, 60 * delay);
+}
+
+void AudioPlayer::setVolume(int volume) {
+	_sfxVolume = volume;
+}
+
+int AudioPlayer::getVolume() const {
+	return _sfxVolume;
+}
+
+void AudioPlayer::playSample() {
+	Common::String name;
+
+	int rnd = _vm->_rnd.getRandomNumber(3);
+	if (rnd == 0) {
+		name = "gunmiss1.aud";
+	} else if (rnd == 1) {
+		name = "gunmiss2.aud";
+	} else if (rnd == 2) {
+		name = "gunmiss3.aud";
+	} else {
+		name = "gunmiss4.aud";
+	}
+
+	playAud(name, 100, 0, 0, 100, 0);
 }
 
 void AudioPlayer::remove(int channel) {
@@ -284,7 +310,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	return track;
 }
 
-bool AudioPlayer::isActive(int track) {
+bool AudioPlayer::isActive(int track) const {
 	Common::StackLock lock(_mutex);
 	if (track < 0 || track >= kTracks) {
 		return false;

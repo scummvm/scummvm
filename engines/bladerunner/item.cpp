@@ -58,21 +58,18 @@ Item::Item(BladeRunnerEngine *vm) {
 	_screenRectangle.left = -1;
 }
 
-Item::~Item() {
-}
-
-void Item::getXYZ(float *x, float *y, float *z) {
+void Item::getXYZ(float *x, float *y, float *z) const {
 	*x = _position.x;
 	*y = _position.y;
 	*z = _position.z;
 }
 
-void Item::getWidthHeight(int *width, int *height) {
+void Item::getWidthHeight(int *width, int *height) const {
 	*width = _width;
 	*height = _height;
 }
 
-bool Item::isTargetable() {
+bool Item::isTargetable() const {
 	return _isTargetable;
 }
 
@@ -86,7 +83,7 @@ bool Item::tick(Common::Rect *screenRect, bool special) {
 
 	Vector3 position(_position.x, -_position.z, _position.y);
 	int animationId = _animationId + (special ? 1 : 0);
-	_vm->_sliceRenderer->drawInWorld(animationId, 0, position, M_PI - _angle, 1.0f, _vm->_surfaceGame, _vm->_zbuffer->getData());
+	_vm->_sliceRenderer->drawInWorld(animationId, 0, position, M_PI - _angle, 1.0f, _vm->_surfaceFront, _vm->_zbuffer->getData());
 	_vm->_sliceRenderer->getScreenRectangle(&_screenRectangle, animationId, 0, position, M_PI - _angle, 1.0f);
 
 	if (!_screenRectangle.isEmpty()) {

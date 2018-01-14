@@ -31,9 +31,8 @@
 
 namespace BladeRunner {
 
-Overlays::Overlays(BladeRunnerEngine *vm)
-	: _vm(vm)
-{
+Overlays::Overlays(BladeRunnerEngine *vm) {
+	_vm = vm;
 }
 
 bool Overlays::init() {
@@ -65,7 +64,7 @@ int Overlays::play(const Common::String &name, int loopId, int loopForever, int 
 			return index;
 		}
 		_videos[index].id = id;
-		_videos[index].vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceGame);
+		_videos[index].vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront);
 
 		// repeat forever
 		_videos[index].vqaPlayer->setBeginAndEndFrame(0, 0, -1, kLoopSetModeJustStart, nullptr, nullptr);

@@ -22,6 +22,7 @@
 
 #include "bladerunner/audio_speech.h"
 
+#include "bladerunner/actor.h"
 #include "bladerunner/aud_stream.h"
 #include "bladerunner/audio_mixer.h"
 #include "bladerunner/bladerunner.h"
@@ -30,7 +31,7 @@
 
 namespace BladeRunner {
 
-#define BUFFER_SIZE 200000
+const int AudioSpeech::kSpeechSamples[] = { 65, 355, 490, 465, 480, 485, 505, 760, 7655, 7770, 7740, 8170, 2705, 7200, 6460, 5560, 4870, 4555, 3880, 3525, 3595, 3250, 3070 };
 
 void AudioSpeech::ended() {
 	//Common::StackLock lock(_mutex);
@@ -39,14 +40,15 @@ void AudioSpeech::ended() {
 }
 
 void AudioSpeech::mixerChannelEnded(int channel, void *data) {
-	AudioSpeech *audioSpeech = (AudioSpeech*)data;
+	AudioSpeech *audioSpeech = (AudioSpeech *)data;
 	audioSpeech->ended();
 }
 
-AudioSpeech::AudioSpeech(BladeRunnerEngine *vm) : _vm(vm) {
-	_volume = 50;
+AudioSpeech::AudioSpeech(BladeRunnerEngine *vm) {
+	_vm = vm;
+	_speechVolume = 50;
 	_isActive = false;
-	_data = new byte[BUFFER_SIZE];
+	_data = new byte[kBufferSize];
 	_channel = -1;
 }
 
@@ -63,8 +65,8 @@ bool AudioSpeech::playSpeech(const char *name, int pan) {
 		return false;
 	}
 
-	if (r->size() > BUFFER_SIZE) {
-		warning("AudioSpeech::playSpeech: AUD larger than buffer size (%d > %d)", r->size(), BUFFER_SIZE);
+	if (r->size() > kBufferSize) {
+		warning("AudioSpeech::playSpeech: AUD larger than buffer size (%d > %d)", r->size(), kBufferSize);
 		return false;
 	}
 
@@ -87,7 +89,7 @@ bool AudioSpeech::playSpeech(const char *name, int pan) {
 		audioStream,
 		100,
 		false,
-		_volume,
+		_speechVolume,
 		pan,
 		mixerChannelEnded,
 		this);
@@ -104,11 +106,23 @@ void AudioSpeech::stopSpeech() {
 	}
 }
 
-bool AudioSpeech::isPlaying() {
+bool AudioSpeech::isPlaying() const {
 	if (_channel == -1) {
 		return  false;
 	}
 	return _isActive;
+}
+
+void AudioSpeech::setVolume(int volume) {
+	_speechVolume = volume;
+}
+
+int AudioSpeech::getVolume() const {
+	return _speechVolume;
+}
+
+void AudioSpeech::playSample() {
+	_vm->_playerActor->speechPlay(kSpeechSamples[_vm->_rnd.getRandomNumber(22)], true);
 }
 
 } // End of namespace BladeRunner

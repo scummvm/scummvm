@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/adq.h"
+#include "bladerunner/actor_dialogue_queue.h"
 
 #include "bladerunner/bladerunner.h"
 
@@ -32,55 +32,55 @@
 
 namespace BladeRunner {
 
-ADQEntry::ADQEntry() {
-	this->_isNotPause = false;
-	this->_isPause = false;
-	this->_actorId = -1;
-	this->_delay = -1;
-	this->_sentenceId = -1;
-	this->_animationMode = -1;
+ActorDialogueQueue::Entry::Entry() {
+	isNotPause = false;
+	isPause = false;
+	actorId = -1;
+	delay = -1;
+	sentenceId = -1;
+	animationMode = -1;
 }
 
-ADQ::ADQ(BladeRunnerEngine *vm) {
+ActorDialogueQueue::ActorDialogueQueue(BladeRunnerEngine *vm) {
 	_vm = vm;
 	clear();
 }
 
-ADQ::~ADQ() {
+ActorDialogueQueue::~ActorDialogueQueue() {
 }
 
-void ADQ::add(int actorId, int sentenceId, int animationMode) {
-	if (actorId == 0 || actorId == VOICEOVER_ACTOR) {
+void ActorDialogueQueue::add(int actorId, int sentenceId, int animationMode) {
+	if (actorId == 0 || actorId == BladeRunnerEngine::kActorVoiceOver) {
 		animationMode = -1;
 	}
 	if (_entries.size() < 25) {
-		ADQEntry entry;
-		entry._isNotPause = true;
-		entry._isPause = false;
-		entry._actorId = actorId;
-		entry._sentenceId = sentenceId;
-		entry._animationMode = animationMode;
-		entry._delay = -1;
+		Entry entry;
+		entry.isNotPause = true;
+		entry.isPause = false;
+		entry.actorId = actorId;
+		entry.sentenceId = sentenceId;
+		entry.animationMode = animationMode;
+		entry.delay = -1;
 
 		_entries.push_back(entry);
 	}
 }
 
-void ADQ::addPause(int delay) {
+void ActorDialogueQueue::addPause(int delay) {
 	if (_entries.size() < 25) {
-		ADQEntry entry;
-		entry._isNotPause = false;
-		entry._isPause = true;
-		entry._actorId = -1;
-		entry._sentenceId = -1;
-		entry._animationMode = -1;
-		entry._delay = delay;
+		Entry entry;
+		entry.isNotPause = false;
+		entry.isPause = true;
+		entry.actorId = -1;
+		entry.sentenceId = -1;
+		entry.animationMode = -1;
+		entry.delay = delay;
 
 		_entries.push_back(entry);
 	}
 }
 
-void ADQ::flush(int a1, bool callScript) {
+void ActorDialogueQueue::flush(int a1, bool callScript) {
 	if (_isNotPause && _vm->_audioSpeech->isPlaying()) {
 		_vm->_audioSpeech->stopSpeech();
 		if (_animationModePrevious >= 0) {
@@ -103,7 +103,7 @@ void ADQ::flush(int a1, bool callScript) {
 	}
 }
 
-void ADQ::tick() {
+void ActorDialogueQueue::tick() {
 	if (!_vm->_audioSpeech->isPlaying()) {
 		if (_isPause) {
 			int time = _vm->getTotalPlayTime();
@@ -134,32 +134,32 @@ void ADQ::tick() {
 			}
 		}
 		if (!_entries.empty()) {
-			ADQEntry firstEntry = _entries.remove_at(0);
-			if (firstEntry._isNotPause) {
-				_animationMode = firstEntry._animationMode;
-				if (_vm->_actors[firstEntry._actorId]->getSetId() != _vm->_scene->getSetId()) {
+			Entry firstEntry = _entries.remove_at(0);
+			if (firstEntry.isNotPause) {
+				_animationMode = firstEntry.animationMode;
+				if (_vm->_actors[firstEntry.actorId]->getSetId() != _vm->_scene->getSetId()) {
 					_animationMode = -1;
 				}
-				_vm->_actors[firstEntry._actorId]->speechPlay(firstEntry._sentenceId, false);
+				_vm->_actors[firstEntry.actorId]->speechPlay(firstEntry.sentenceId, false);
 				_isNotPause = true;
-				_actorId = firstEntry._actorId;
-				_sentenceId = firstEntry._sentenceId;
+				_actorId = firstEntry.actorId;
+				_sentenceId = firstEntry.sentenceId;
 				if (_animationMode >= 0) {
-					_animationModePrevious = _vm->_actors[firstEntry._actorId]->getAnimationMode();
-					_vm->_actors[firstEntry._actorId]->changeAnimationMode(_animationMode, false);
+					_animationModePrevious = _vm->_actors[firstEntry.actorId]->getAnimationMode();
+					_vm->_actors[firstEntry.actorId]->changeAnimationMode(_animationMode, false);
 				} else {
 					_animationModePrevious = -1;
 				}
-			} else if (firstEntry._isPause) {
+			} else if (firstEntry.isPause) {
 				_isPause = true;
-				_delay = firstEntry._delay;
+				_delay = firstEntry.delay;
 				_timeLast = _vm->getTotalPlayTime();
 			}
 		}
 	}
 }
 
-void ADQ::clear() {
+void ActorDialogueQueue::clear() {
 	_entries.clear();
 	_isNotPause = false;
 	_actorId = -1;

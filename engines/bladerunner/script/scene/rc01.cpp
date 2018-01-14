@@ -27,20 +27,24 @@ namespace BladeRunner {
 void SceneScriptRC01::InitializeScene() {
 #if _DEBUG
 	//TODO: not part of game, remove
-	//Game_Flag_Set(kFlagIntroPlayed); // force skip intro
+	// Game_Flag_Set(kFlagIntroPlayed); // force skip intro
+	// Game_Flag_Set(kFlagRC02toRC01); // no landing
+	// Game_Flag_Set(kFlagRC01PoliceDone);
+	// Game_Flag_Set(249);
+	// Game_Flag_Set(kFlagKIAPrivacyAddon);
 #endif
 
 	if (!Game_Flag_Query(kFlagIntroPlayed)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(28, 1, -1); // WSTLGO_E.VQA
-		Outtake_Play(41, 1, -1); // BRLOGO_E.VQA
-		Outtake_Play(0, 0, -1); // INTRO_E.VQA
-		Outtake_Play(33, 1, -1); // DSCENT_E.VQA
+		Outtake_Play(kOuttakeWestwood, true, -1);
+		Outtake_Play(kOuttakeBladeRunner, true, -1);
+		Outtake_Play(kOuttakeIntro, false, -1);
+		Outtake_Play(kOuttakeDescent, true, -1);
 	}
-	if (Game_Flag_Query(9)) {
+	if (Game_Flag_Query(kFlagRC02toRC01)) {
 		Setup_Scene_Information(-171.16f, 5.55f, 27.28f, 616);
-	} else if (Game_Flag_Query(114)) {
+	} else if (Game_Flag_Query(kFlagRC03toRC01)) {
 		Setup_Scene_Information(-471.98f, -0.30f, 258.15f, 616);
 	} else {
 		Setup_Scene_Information(-10.98f, -0.30f, 318.15f, 616);
@@ -84,7 +88,7 @@ void SceneScriptRC01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(87, 20, 80, 20, 40, -100, 100, -101, -101, 0, 0); // SIREN2.AUD
 
 	if (Game_Flag_Query(kFlagRC01PoliceDone)) {
-		if (!Game_Flag_Query(9) && !Game_Flag_Query(114)) {
+		if (!Game_Flag_Query(kFlagRC02toRC01) && !Game_Flag_Query(kFlagRC03toRC01)) {
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 5, false);
 		}
 		if (Game_Flag_Query(249)) {
@@ -93,7 +97,7 @@ void SceneScriptRC01::InitializeScene() {
 			Scene_Loop_Set_Default(10);
 		}
 	} else {
-		if (!Game_Flag_Query(9) && !Game_Flag_Query(114)) {
+		if (!Game_Flag_Query(kFlagRC02toRC01) && !Game_Flag_Query(kFlagRC03toRC01)) {
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		}
 		Scene_Loop_Set_Default(1);
@@ -185,7 +189,7 @@ void SceneScriptRC01::SceneLoaded() {
 		ADQ_Flush();
 		Actor_Voice_Over(1830, kActorVoiceOver);
 		Actor_Voice_Over(1850, kActorVoiceOver);
-		if (!Game_Flag_Query(378)) {
+		if (!Game_Flag_Query(kFlagDirectorsCut)) {
 			Actor_Voice_Over(1860, kActorVoiceOver);
 			I_Sez("MG: Is David Leary a self-respecting human or is he powered by rechargeable");
 			I_Sez("batteries?\n");
@@ -574,22 +578,22 @@ void SceneScriptRC01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptRC01::PlayerWalkedIn() {
-	if (Game_Flag_Query(249) && !Game_Flag_Query(9) && !Game_Flag_Query(114)) {
+	if (Game_Flag_Query(249) && !Game_Flag_Query(kFlagRC02toRC01) && !Game_Flag_Query(kFlagRC03toRC01)) {
 		walkToCenter();
 	}
 
-	if (Game_Flag_Query(114)) {
+	if (Game_Flag_Query(kFlagRC03toRC01)) {
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -415.98f, -0.30f, 262.15f, 0, 0, false, 0);
 		Player_Gains_Control();
-		Game_Flag_Reset(114);
+		Game_Flag_Reset(kFlagRC03toRC01);
 	}
 
-	if (Game_Flag_Query(9)) {
+	if (Game_Flag_Query(kFlagRC02toRC01)) {
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -203.45f, 5.55f, 85.05f, 0, 0, false, 0);
 		Player_Gains_Control();
-		Game_Flag_Reset(9);
+		Game_Flag_Reset(kFlagRC02toRC01);
 
 		if (Game_Flag_Query(1) && !Game_Flag_Query(4)) {
 			Actor_Voice_Over(1910, kActorVoiceOver);

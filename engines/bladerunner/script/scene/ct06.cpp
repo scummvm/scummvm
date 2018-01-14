@@ -99,7 +99,7 @@ bool SceneScriptCT06::ClickedOnActor(int actorId) {
 		Actor_Voice_Over(350, kActorVoiceOver);
 		Actor_Voice_Over(360, kActorVoiceOver);
 		Actor_Voice_Over(370, kActorVoiceOver);
-		if (!Game_Flag_Query(378)) {
+		if (!Game_Flag_Query(kFlagDirectorsCut)) {
 			Actor_Voice_Over(380, kActorVoiceOver);
 			Actor_Voice_Over(390, kActorVoiceOver);
 			Actor_Voice_Over(400, kActorVoiceOver);

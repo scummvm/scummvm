@@ -22,14 +22,14 @@
 
 #include "bladerunner/combat.h"
 
-#include "bladerunner/bladerunner.h"
 
 #include "bladerunner/actor.h"
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/settings.h"
 
 namespace BladeRunner {
 
-Combat::Combat(BladeRunnerEngine* vm) {
+Combat::Combat(BladeRunnerEngine *vm) {
 	_vm = vm;
 
 	_active = false;
@@ -74,12 +74,20 @@ void Combat::disable() {
 	_enabled = false;
 }
 
-void Combat::setHitSoundId(int row, int column, int soundId) {
-	_hitSoundId[row * 3 + column] = soundId;
+void Combat::setHitSound(int ammoType, int column, int soundId) {
+	_hitSoundId[ammoType * 3 + column] = soundId;
 }
 
-void Combat::setMissSoundId(int row, int column, int soundId) {
-	_missSoundId[row * 3 + column] = soundId;
+void Combat::setMissSound(int ammoType, int column, int soundId) {
+	_missSoundId[ammoType * 3 + column] = soundId;
+}
+
+int Combat::getHitSound() {
+	return _hitSoundId[3 * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
+}
+
+int Combat::getMissSound() {
+	return _hitSoundId[3 * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
 }
 
 } // End of namespace BladeRunner

@@ -23,10 +23,21 @@
 #include "bladerunner/script/kia.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/mouse.h"
+#include "bladerunner/ui/kia.h"
 
 namespace BladeRunner {
 
-void ScriptKIA::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int a1, int clueId) {
+KIAScript::KIAScript(BladeRunnerEngine *vm) : ScriptBase(vm) {}
+
+void KIAScript::playClueAssetScript(int a1, int clueId) {
+	_vm->_kia->playerReset();
+	_vm->_mouse->disable();
+	SCRIPT_KIA_DLL_Play_Clue_Asset_Script(a1, clueId);
+	_vm->_mouse->enable();
+}
+
+void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int a1, int clueId) {
 	int v1;
 	switch (clueId) {
 	case 0:

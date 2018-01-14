@@ -38,7 +38,7 @@ public:
 	void close();
 	bool isOpen() const;
 
-	Common::String getName() { return _fd.getName(); }
+	Common::String getName() const { return _fd.getName(); }
 
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name);
 

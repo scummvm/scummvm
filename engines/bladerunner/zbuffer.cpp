@@ -57,7 +57,7 @@ void ZBufferDirtyRects::extendExisting() {
 	}
 }
 
-int ZBufferDirtyRects::getCount() {
+int ZBufferDirtyRects::getCount() const {
 	return _count;
 }
 
@@ -93,9 +93,9 @@ static int decodePartialZBuffer(const uint8 *src, uint16 *curZBUF, uint32 srcLen
 	uint32 dstRemain = dstSize;
 
 	uint16 *curzp = curZBUF;
-	const uint16 *inp = (const uint16*)src;
+	const uint16 *inp = (const uint16 *)src;
 
-	while (dstRemain && (inp - (const uint16*)src) < (std::ptrdiff_t)srcLen) {
+	while (dstRemain && (inp - (const uint16 *)src) < (std::ptrdiff_t)srcLen) {
 		uint32 count = FROM_LE_16(*inp++);
 
 		if (count & 0x8000) {
@@ -147,7 +147,7 @@ bool ZBuffer::decodeData(const uint8 *data, int size) {
 	if (complete) {
 		resetUpdates();
 		size_t zbufOutSize;
-		decompress_lzo1x(data, size, (uint8*)_zbuf1, &zbufOutSize);
+		decompress_lzo1x(data, size, (uint8 *)_zbuf1, &zbufOutSize);
 		memcpy(_zbuf2, _zbuf1, 2 * _width * _height);
 	} else {
 		clean();
@@ -158,16 +158,17 @@ bool ZBuffer::decodeData(const uint8 *data, int size) {
 	return true;
 }
 
-uint16 *ZBuffer::getData() {
+uint16 *ZBuffer::getData() const {
 	return _zbuf2;
 }
 
-uint16 ZBuffer::getZValue(int x, int y) {
+uint16 ZBuffer::getZValue(int x, int y) const {
 	assert(x >= 0 && x < _width);
 	assert(y >= 0 && y < _height);
 
-	if (!_zbuf2)
+	if (!_zbuf2) {
 		return 0;
+	}
 
 	return _zbuf2[y * _width + x];
 }

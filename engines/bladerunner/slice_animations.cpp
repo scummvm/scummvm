@@ -67,27 +67,14 @@ bool SliceAnimations::open(const Common::String &name) {
 	_animations.resize(animationCount);
 
 	for (uint32 i = 0; i != animationCount; ++i) {
-		_animations[i].frameCount = file.readUint32LE();
-		_animations[i].frameSize  = file.readUint32LE();
-		_animations[i].fps        = file.readFloatLE();
+		_animations[i].frameCount       = file.readUint32LE();
+		_animations[i].frameSize        = file.readUint32LE();
+		_animations[i].fps              = file.readFloatLE();
 		_animations[i].positionChange.x = file.readFloatLE();
 		_animations[i].positionChange.y = file.readFloatLE();
 		_animations[i].positionChange.z = file.readFloatLE();
-		_animations[i].facingChange = file.readFloatLE();
-		_animations[i].offset     = file.readUint32LE();
-
-#if 0
-		debug("%4d  %6d %6x  %7.2g %7.2g %7.2g %7.2g %7.2g %8x",
-			i,
-			_animations[i].frameCount,
-			_animations[i].frameSize,
-			_animations[i].fps,
-			_animations[i].unk0,
-			_animations[i].unk1,
-			_animations[i].unk2,
-			_animations[i].unk3,
-			_animations[i].offset);
-#endif
+		_animations[i].facingChange     = file.readFloatLE();
+		_animations[i].offset           = file.readUint32LE();
 	}
 
 	_pages.resize(_pageCount);
@@ -171,14 +158,14 @@ void *SliceAnimations::getFramePtr(uint32 animation, uint32 frame) {
 
 	_pages[page]._lastAccess = _vm->_system->getMillis();
 
-	return (byte*)_pages[page]._data + pageOffset;
+	return (byte *)_pages[page]._data + pageOffset;
 }
 
-Vector3 SliceAnimations::getPositionChange(int animation) {
+Vector3 SliceAnimations::getPositionChange(int animation) const {
 	return _animations[animation].positionChange;
 }
 
-float SliceAnimations::getFacingChange(int animation) {
+float SliceAnimations::getFacingChange(int animation) const {
 	return _animations[animation].facingChange;
 }
 

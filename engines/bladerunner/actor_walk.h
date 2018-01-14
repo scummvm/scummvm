@@ -33,21 +33,20 @@ class BladeRunnerEngine;
 class ActorWalk {
 	BladeRunnerEngine *_vm;
 
-private:
-	int     _walking;
-	int     _running;
-	Vector3 _destination;
-	Vector3 _originalDestination;
-	Vector3 _current;
-	Vector3 _next;
-	int     _facing;
+	int                        _walking;
+	int                        _running;
+	Vector3                    _destination;
+	Vector3                    _originalDestination;
+	Vector3                    _current;
+	Vector3                    _next;
+	int                        _facing;
 	Common::HashMap<int, bool> _nearActors;
-	int     _status;
+	int                        _status;
 
 public:
 	ActorWalk(BladeRunnerEngine *vm);
 	~ActorWalk();
-	
+
 	bool setup(int actorId, bool run, const Vector3 &from, const Vector3 &to, bool unk1, bool *arrived);
 	void getCurrentPosition(int actorId, Vector3 *pos, int *facing) const;
 	bool tick(int actorId, float stepDistance, bool flag);

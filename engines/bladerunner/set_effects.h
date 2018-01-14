@@ -34,19 +34,18 @@ namespace BladeRunner {
 class SetEffects {
 	BladeRunnerEngine *_vm;
 
-private:
 	Color _distanceColor;
 	float _distanceCoeficient;
 	Color _fadeColor;
 	float _fadeDensity;
-	int   _fogsCount;
+	int   _fogCount;
 	Fog  *_fogs;
 
 public:
 	SetEffects(BladeRunnerEngine *vm);
 	~SetEffects();
 
-	void read(Common::ReadStream *stream, int framesCount);
+	void read(Common::ReadStream *stream, int frameCount);
 
 	void reset();
 
@@ -54,14 +53,13 @@ public:
 
 	void setFadeColor(float r, float g, float b);
 	void setFadeDensity(float density);
-	void setFogColor(const char* fogName, float r, float g, float b);
-	void setFogDensity(const char* fogName, float density);
+	void setFogColor(const char *fogName, float r, float g, float b);
+	void setFogDensity(const char *fogName, float density);
 
-	void calculateColor(Vector3 viewPosition, Vector3 position, float *outCoeficient, Color *outColor);
+	void calculateColor(Vector3 viewPosition, Vector3 position, float *outCoeficient, Color *outColor) const;
+
 private:
-
-	Fog *findFog(const char* fogName);
-
+	Fog *findFog(const char *fogName) const;
 };
 
 } // End of namespace BladeRunner

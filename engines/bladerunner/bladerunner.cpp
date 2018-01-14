@@ -23,7 +23,7 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/actor.h"
-#include "bladerunner/adq.h"
+#include "bladerunner/actor_dialogue_queue.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_mixer.h"
 #include "bladerunner/audio_player.h"
@@ -32,10 +32,10 @@
 #include "bladerunner/combat.h"
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/dialogue_menu.h"
-#include "bladerunner/elevator.h"
 #include "bladerunner/font.h"
-#include "bladerunner/gameflags.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/game_constants.h"
+#include "bladerunner/game_flags.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/image.h"
 #include "bladerunner/item_pickup.h"
 #include "bladerunner/items.h"
@@ -49,16 +49,20 @@
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/screen_effects.h"
-#include "bladerunner/script/init.h"
-#include "bladerunner/script/scene.h"
+#include "bladerunner/set.h"
 #include "bladerunner/script/ai.h"
+#include "bladerunner/script/init.h"
+#include "bladerunner/script/kia.h"
+#include "bladerunner/script/scene.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
-#include "bladerunner/spinner.h"
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/ui/elevator.h"
+#include "bladerunner/ui/kia.h"
+#include "bladerunner/ui/spinner.h"
 #include "bladerunner/vqa_decoder.h"
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
@@ -78,21 +82,10 @@ namespace BladeRunner {
 BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc)
 	: Engine(syst),
 	  _rnd("bladerunner") {
+
 	_windowIsActive = true;
 	_gameIsRunning = true;
 	_playerLosesControlCounter = 0;
-
-	//TODO(peterkohaut): move these to init
-
-	_crimesDatabase = nullptr;
-	_sceneScript = new SceneScript(this);
-	_settings = new Settings(this);
-	_lights = new Lights(this);
-	_screenEffects = new ScreenEffects(this, 0x8000);
-	_combat = new Combat(this);
-	_adq = new ADQ(this);
-	_obstacles = new Obstacles(this);
-	_itemPickup = new ItemPickup(this);
 
 	_playerActorIdle = false;
 	_playerDead = false;
@@ -105,6 +98,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_walkSoundId = -1;
 	_walkSoundVolume = 0;
 	_walkSoundBalance = 0;
+
+	_crimesDatabase = nullptr;
 
 	switch (desc->language) {
 		case Common::EN_ANY:
@@ -131,30 +126,6 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
-	// delete _sliceRenderer;
-	// delete _sliceAnimations;
-	// delete _settings;
-	// delete _script;
-	// delete _scene;
-	// delete[] _gameVars;
-	// delete _gameFlags;
-	// delete _gameInfo;
-	// delete _clues;
-	// delete _chapters;
-	// delete _audioSpeech;
-	// delete _audioPlayer;
-	// delete _ambientSounds;
-
-	delete _zbuffer;
-
-	delete _itemPickup;
-	delete _obstacles;
-	delete _adq;
-	delete _combat;
-	delete _screenEffects;
-	delete _lights;
-	delete _settings;
-	delete _sceneScript;
 }
 
 bool BladeRunnerEngine::hasFeature(EngineFeature f) const {
@@ -185,10 +156,42 @@ Common::Error BladeRunnerEngine::run() {
 }
 
 bool BladeRunnerEngine::startup(bool hasSavegames) {
+	// These are static objects in original game
+
+	_screenEffects = new ScreenEffects(this, 0x8000);
+
+	_combat = new Combat(this);
+
+	// TODO: end credits
+
+	_actorDialogueQueue = new ActorDialogueQueue(this);
+
+	// TODO: esper script
+
+	_settings = new Settings(this);
+
+	_itemPickup = new ItemPickup(this);
+
+	_lights = new Lights(this);
+
+	// TODO: outtake player - but this is done bit differently
+
+	// TODO: police maze
+
+	_obstacles = new Obstacles(this);
+
+	// TODO: slice renderer shadow
+
+	// TODO: voight-kampf script
+
+	_sceneScript = new SceneScript(this);
+
+	// This is the original startup in the game
+
 	bool r;
 
-	_surfaceGame.create(640, 480, createRGB555());
-	_surfaceInterface.create(640, 480, createRGB555());
+	_surfaceFront.create(640, 480, createRGB555());
+	_surfaceBack.create(640, 480, createRGB555());
 	_surface4.create(640, 480, createRGB555());
 
 	r = openArchive("STARTUP.MIX");
@@ -272,12 +275,12 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_zbuffer->init(640, 480);
 
 	int actorCount = (int)_gameInfo->getActorCount();
-	assert(actorCount < ACTORS_COUNT);
+	assert(actorCount < kActorCount);
 	for (int i = 0; i != actorCount; ++i) {
 		_actors[i] = new Actor(this, i);
 		_actors[i]->setup(i);
 	}
-	_actors[VOICEOVER_ACTOR] = new Actor(this, VOICEOVER_ACTOR);
+	_actors[kActorVoiceOver] = new Actor(this, kActorVoiceOver);
 	_playerActor = _actors[_gameInfo->getPlayerId()];
 
 	_playerActor->setFPS(15);
@@ -296,8 +299,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!_textCrimes->open("CRIMES"))
 		return false;
 
-	_textCluetype = new TextResource(this);
-	if (!_textCluetype->open("CLUETYPE"))
+	_textClueTypes = new TextResource(this);
+	if (!_textClueTypes->open("CLUETYPE"))
 		return false;
 
 	_textKIA = new TextResource(this);
@@ -320,9 +323,9 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!_dialogueMenu->loadText("DLGMENU"))
 		return false;
 
-	_suspectsDatabase = new SuspectsDatabase(this, _gameInfo->getSuspectsDatabaseSize());
+	_suspectsDatabase = new SuspectsDatabase(this, _gameInfo->getSuspectCount());
 
-	// TODO: KIA
+	_kia = new KIA(this);
 
 	_spinner = new Spinner(this);
 
@@ -446,8 +449,8 @@ void BladeRunnerEngine::shutdown() {
 	delete _textCrimes;
 	_textCrimes = nullptr;
 
-	delete _textCluetype;
-	_textCluetype = nullptr;
+	delete _textClueTypes;
+	_textClueTypes = nullptr;
 
 	delete _textKIA;
 	_textKIA = nullptr;
@@ -535,7 +538,8 @@ void BladeRunnerEngine::shutdown() {
 	delete _spinner;
 	_spinner = nullptr;
 
-	// TODO: Delete KIA
+	delete _kia;
+	_kia = nullptr;
 
 	delete _suspectsDatabase;
 	_suspectsDatabase = nullptr;
@@ -547,8 +551,8 @@ void BladeRunnerEngine::shutdown() {
 		delete _actors[i];
 		_actors[i] = nullptr;
 	}
-	delete _actors[VOICEOVER_ACTOR];
-	_actors[VOICEOVER_ACTOR] = nullptr;
+	delete _actors[kActorVoiceOver];
+	_actors[kActorVoiceOver] = nullptr;
 
 	_playerActor = nullptr;
 
@@ -560,8 +564,8 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete graphics surfaces here
 	_surface4.free();
-	_surfaceInterface.free();
-	_surfaceGame.free();
+	_surfaceBack.free();
+	_surfaceFront.free();
 
 	if (isArchiveOpen("STARTUP.MIX")) {
 		closeArchive("STARTUP.MIX");
@@ -570,6 +574,37 @@ void BladeRunnerEngine::shutdown() {
 	// TODO: Delete MIXArchives here
 
 	// TODO: Delete Timer
+
+
+
+	// These are static objects in original game
+
+	delete _zbuffer;
+	_zbuffer = nullptr;
+
+	delete _itemPickup;
+	_itemPickup = nullptr;
+
+	delete _obstacles;
+	_obstacles = nullptr;
+
+	delete _actorDialogueQueue;
+	_actorDialogueQueue = nullptr;
+
+	delete _combat;
+	_combat = nullptr;
+
+	delete _screenEffects;
+	_screenEffects = nullptr;
+
+	delete _lights;
+	_lights = nullptr;
+
+	delete _settings;
+	_settings = nullptr;
+
+	delete _sceneScript;
+	_sceneScript = nullptr;
 }
 
 bool BladeRunnerEngine::loadSplash() {
@@ -578,9 +613,9 @@ bool BladeRunnerEngine::loadSplash() {
 		return false;
 	}
 
-	img.copyToSurface(&_surfaceGame);
+	img.copyToSurface(&_surfaceFront);
 
-	blitToScreen(_surfaceGame);
+	blitToScreen(_surfaceFront);
 
 	return true;
 }
@@ -589,7 +624,7 @@ bool BladeRunnerEngine::init2() {
 	return true;
 }
 
-Common::Point BladeRunnerEngine::getMousePos() {
+Common::Point BladeRunnerEngine::getMousePos() const {
 	return _eventMan->getMousePos();
 }
 
@@ -601,7 +636,7 @@ void BladeRunnerEngine::gameLoop() {
 	} while (_gameIsRunning);
 }
 
-#if _DEBUG
+#if BLADERUNNER_DEBUG_RENDERING
 
 void drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color) {
 	Vector3 bfl = view->calculateScreenPosition(Vector3(start.x, start.y, start.z));
@@ -645,7 +680,10 @@ void BladeRunnerEngine::gameTick() {
 		//probably not needed, this version of tick is just loading data from buffer
 		//_audioMixer->tick();
 
-		// TODO: Kia
+		if (_kia->_currentSectionId) {
+			_kia->tick();
+			return;
+		}
 
 		if (_spinner->isOpen()) {
 			_spinner->tick();
@@ -664,7 +702,7 @@ void BladeRunnerEngine::gameTick() {
 
 		// TODO: Scores
 
-		_adq->tick();
+		_actorDialogueQueue->tick();
 		if (_scene->didPlayerWalkIn()) {
 			_sceneScript->PlayerWalkedIn();
 		}
@@ -685,10 +723,10 @@ void BladeRunnerEngine::gameTick() {
 			backgroundChanged = true;
 		}
 		(void)backgroundChanged;
-		blit(_surfaceInterface, _surfaceGame);
+		blit(_surfaceBack, _surfaceFront);
 
 		// TODO: remove zbuffer draw
-		// _surfaceGame.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
+		// _surfaceFront.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
 
 		_overlays->tick();
 
@@ -725,11 +763,11 @@ void BladeRunnerEngine::gameTick() {
 
 			if (_dialogueMenu->isVisible()) {
 				_dialogueMenu->tick(p.x, p.y);
-				_dialogueMenu->draw(_surfaceGame);
+				_dialogueMenu->draw(_surfaceFront);
 			}
 
 			_mouse->tick(p.x, p.y);
-			_mouse->draw(_surfaceGame, p.x, p.y);
+			_mouse->draw(_surfaceFront, p.x, p.y);
 
 			// TODO: Process AUD
 
@@ -739,69 +777,69 @@ void BladeRunnerEngine::gameTick() {
 				_walkSoundId = -1;
 			}
 
-#if 0
+#if BLADERUNNER_DEBUG_RENDERING
 			//draw scene objects
 			int count = _sceneObjects->_count;
 			if (count > 0) {
 				for (int i = 0; i < count; i++) {
-					SceneObject *sceneObject = &_sceneObjects->_sceneObjects[_sceneObjects->_sceneObjectsSortedByDistance[i]];
+					SceneObjects::SceneObject *sceneObject = &_sceneObjects->_sceneObjects[_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
-					BoundingBox *bbox = &sceneObject->_boundingBox;
+					BoundingBox *bbox = &sceneObject->boundingBox;
 					Vector3 a, b;
 					bbox->getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
 					Vector3 pos = _view->calculateScreenPosition(0.5 * (a + b));
 					int color;
 
-					switch (sceneObject->_sceneObjectType) {
-					case SceneObjectTypeActor:
+					switch (sceneObject->sceneObjectType) {
+					case kSceneObjectTypeActor:
 						color = 0b111110000000000;
-						drawBBox(a, b, _view, &_surfaceGame, color);
-						_mainFont->drawColor(_textActorNames->getText(sceneObject->_sceneObjectId - SCENE_OBJECTS_ACTORS_OFFSET), _surfaceGame, pos.x, pos.y, color);
+						drawBBox(a, b, _view, &_surfaceFront, color);
+						_mainFont->drawColor(_textActorNames->getText(sceneObject->sceneObjectId - kSceneObjectOffsetActors), _surfaceFront, pos.x, pos.y, color);
 						break;
-					case SceneObjectTypeItem:
+					case kSceneObjectTypeItem:
 						char itemText[40];
-						drawBBox(a, b, _view, &_surfaceGame, color);
-						sprintf(itemText, "item %i", sceneObject->_sceneObjectId - SCENE_OBJECTS_ITEMS_OFFSET);
-						_mainFont->drawColor(itemText, _surfaceGame, pos.x, pos.y, color);
+						drawBBox(a, b, _view, &_surfaceFront, color);
+						sprintf(itemText, "item %i", sceneObject->sceneObjectId - kSceneObjectOffsetItems);
+						_mainFont->drawColor(itemText, _surfaceFront, pos.x, pos.y, color);
 						break;
-					case SceneObjectTypeObject:
+					case kSceneObjectTypeObject:
 						color = 0b011110111101111;
 						//if (sceneObject->_isObstacle)
 						//	color += 0b100000000000000;
-						if (sceneObject->_isClickable) {
+						if (sceneObject->isClickable) {
 							color = 0b000001111100000;
 						}
-						drawBBox(a, b, _view, &_surfaceGame, color);
-						_mainFont->drawColor(_scene->objectGetName(sceneObject->_sceneObjectId - SCENE_OBJECTS_OBJECTS_OFFSET), _surfaceGame, pos.x, pos.y, color);
+						drawBBox(a, b, _view, &_surfaceFront, color);
+						_mainFont->drawColor(_scene->objectGetName(sceneObject->sceneObjectId - kSceneObjectOffsetObjects), _surfaceFront, pos.x, pos.y, color);
 						break;
 					}
-					_surfaceGame.frameRect(sceneObject->_screenRectangle, color);
+					_surfaceFront.frameRect(sceneObject->screenRectangle, color);
 				}
 			}
 
 			//draw regions
 			for (int i = 0; i < 10; i++) {
-				Region *region = &_scene->_regions->_regions[i];
-				if (!region->_present) continue;
-				_surfaceGame.frameRect(region->_rectangle, 0b000000000011111);
+				Regions::Region *region = &_scene->_regions->_regions[i];
+				if (!region->present) continue;
+				_surfaceFront.frameRect(region->rectangle, 0b000000000011111);
 			}
 
 			for (int i = 0; i < 10; i++) {
-				Region *region = &_scene->_exits->_regions[i];
-				if (!region->_present) continue;
-				_surfaceGame.frameRect(region->_rectangle, 0b111111111111111);
+				Regions::Region *region = &_scene->_exits->_regions[i];
+				if (!region->present) continue;
+				_surfaceFront.frameRect(region->rectangle, 0b111111111111111);
 			}
 
 			//draw walkboxes
 			for (int i = 0; i < _scene->_set->_walkboxCount; i++) {
-				Walkbox *walkbox = &_scene->_set->_walkboxes[i];
+				Set::Walkbox *walkbox = &_scene->_set->_walkboxes[i];
 
-				for (int j = 0; j < walkbox->_vertexCount; j++) {
-					Vector3 start = _view->calculateScreenPosition(walkbox->_vertices[j]);
-					Vector3 end = _view->calculateScreenPosition(walkbox->_vertices[(j + 1) % walkbox->_vertexCount]);
-					_surfaceGame.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
+				for (int j = 0; j < walkbox->vertexCount; j++) {
+					Vector3 start = _view->calculateScreenPosition(walkbox->vertices[j]);
+					Vector3 end = _view->calculateScreenPosition(walkbox->vertices[(j + 1) % walkbox->vertexCount]);
+					_surfaceFront.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
 					Vector3 pos = _view->calculateScreenPosition(0.5 * (start + end));
-					_mainFont->drawColor(walkbox->_name, _surfaceGame, pos.x, pos.y, 0b111111111100000);
+					_mainFont->drawColor(walkbox->name, _surfaceFront, pos.x, pos.y, 0b111111111100000);
 				}
 			}
 
@@ -827,30 +865,30 @@ void BladeRunnerEngine::gameTick() {
 				int colorB = (light->_color.b * 31.0f);
 				int color = (colorR << 10) + (colorG << 5) + colorB;
 
-				drawBBox(posOrigin - size, posOrigin + size, _view, &_surfaceGame, color);
+				drawBBox(posOrigin - size, posOrigin + size, _view, &_surfaceFront, color);
 
 				Vector3 posOriginT = _view->calculateScreenPosition(posOrigin);
 				Vector3 posTargetT = _view->calculateScreenPosition(posTarget);
-				_surfaceGame.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
-				_mainFont->drawColor(light->_name, _surfaceGame, posOriginT.x, posOriginT.y, color);
+				_surfaceFront.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
+				_mainFont->drawColor(light->_name, _surfaceFront, posOriginT.x, posOriginT.y, color);
 			}
 
 			//draw waypoints
 			for(int i = 0; i < _waypoints->_count; i++) {
-				Waypoint *waypoint = &_waypoints->_waypoints[i];
-				if(waypoint->_setId != _scene->getSetId())
+				Waypoints::Waypoint *waypoint = &_waypoints->_waypoints[i];
+				if(waypoint->setId != _scene->getSetId())
 					continue;
-				Vector3 pos = waypoint->_position;
+				Vector3 pos = waypoint->position;
 				Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
 				int color = 0b111111111111111;
-				drawBBox(pos - size, pos + size, _view, &_surfaceGame, color);
+				drawBBox(pos - size, pos + size, _view, &_surfaceFront, color);
 				Vector3 spos = _view->calculateScreenPosition(pos);
 				char waypointText[40];
 				sprintf(waypointText, "waypoint %i", i);
-				_mainFont->drawColor(waypointText, _surfaceGame, spos.x, spos.y, color);
+				_mainFont->drawColor(waypointText, _surfaceFront, spos.x, spos.y, color);
 			}
 #endif
-#if 0
+#if BLADERUNNER_DEBUG_RENDERING
 			//draw aesc
 			for (uint i = 0; i < _screenEffects->_entries.size(); i++) {
 				ScreenEffects::Entry &entry = _screenEffects->_entries[i];
@@ -868,13 +906,13 @@ void BladeRunnerEngine::gameTick() {
 							CLIP(color.r * bladeToScummVmConstant, 0, 255),
 							CLIP(color.g * bladeToScummVmConstant, 0, 255),
 							CLIP(color.b * bladeToScummVmConstant, 0, 255));
-						_surfaceGame.fillRect(r, color555);
+						_surfaceFront.fillRect(r, color555);
 					}
 				}
 			}
 #endif
 
-			blitToScreen(_surfaceGame);
+			blitToScreen(_surfaceFront);
 			_system->delayMillis(10);
 		}
 	}
@@ -936,14 +974,48 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 	if (event.kbd.keycode == Common::KEYCODE_RETURN) {
 		_speechSkipped = true;
 	}
+
+	// TODO(peterkohaut):
+	if (!playerHasControl() /*|| ActorInWalkingLoop*/) {
+		return;
+	}
+
+	if (_kia->_currentSectionId) {
+		_kia->handleKeyUp(event.kbd);
+		return;
+	}
+
+	if (event.kbd.keycode == Common::KEYCODE_TAB) {
+		_kia->openLastOpened();
+	} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+		_kia->openOptions();
+	} else if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+		// TODO(peterkohaut):
+		// combat::switchCombatMode(&Combat);
+	}
 }
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
+	// if ( PlayerHasControl <= 0 && ActorWalkingLoop != 1 && PlayingSpeechLine != 1 && VqaIsPlaying != 1 ) {
+	if (_kia->_currentSectionId) {
+		_kia->handleKeyDown(event.kbd);
+	}
+	// }
 }
 
 void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool buttonDown) {
-	if (!playerHasControl() || _mouse->isDisabled())
+	if (!playerHasControl() || _mouse->isDisabled()) {
 		return;
+	}
+
+	if (_kia->_currentSectionId) {
+		if (buttonDown) {
+			_kia->handleMouseDown(x, y, buttonLeft);
+		} else {
+			_kia->handleMouseUp(x, y, buttonLeft);
+		}
+		return;
+	}
 
 	if (_spinner->isOpen()) {
 		if (buttonDown) {
@@ -1086,14 +1158,16 @@ bool BladeRunnerEngine::openArchive(const Common::String &name) {
 
 	// If archive is already open, return true
 	for (i = 0; i != kArchiveCount; ++i) {
-		if (_archives[i].isOpen() && _archives[i].getName() == name)
+		if (_archives[i].isOpen() && _archives[i].getName() == name) {
 			return true;
+		}
 	}
 
 	// Find first available slot
 	for (i = 0; i != kArchiveCount; ++i) {
-		if (!_archives[i].isOpen())
+		if (!_archives[i].isOpen()) {
 			break;
+		}
 	}
 	if (i == kArchiveCount) {
 		/* TODO: BLADE.EXE retires the least recently used
@@ -1108,7 +1182,7 @@ bool BladeRunnerEngine::openArchive(const Common::String &name) {
 }
 
 bool BladeRunnerEngine::closeArchive(const Common::String &name) {
-	for (uint i = 0; i != 10; ++i) {
+	for (uint i = 0; i != kArchiveCount; ++i) {
 		if (_archives[i].isOpen() && _archives[i].getName() == name) {
 			_archives[i].close();
 			return true;
@@ -1119,8 +1193,8 @@ bool BladeRunnerEngine::closeArchive(const Common::String &name) {
 	return false;
 }
 
-bool BladeRunnerEngine::isArchiveOpen(const Common::String &name) {
-	for (uint i = 0; i != 10; ++i) {
+bool BladeRunnerEngine::isArchiveOpen(const Common::String &name) const {
+	for (uint i = 0; i != kArchiveCount; ++i) {
 		if (_archives[i].isOpen() && _archives[i].getName() == name)
 			return true;
 	}
@@ -1129,7 +1203,7 @@ bool BladeRunnerEngine::isArchiveOpen(const Common::String &name) {
 }
 
 Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::String &name) {
-	for (uint i = 0; i != 10; ++i) {
+	for (uint i = 0; i != kArchiveCount; ++i) {
 		if (!_archives[i].isOpen()) {
 			continue;
 		}

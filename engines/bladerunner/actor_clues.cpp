@@ -23,7 +23,7 @@
 #include "bladerunner/actor_clues.h"
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/crimes_database.h"
 
 #include "common/debug.h"
@@ -34,7 +34,6 @@ ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesType) {
 	_vm = vm;
 	_count = 0;
 	_maxCount = 0;
-	_clues = 0;
 	switch (cluesType) {
 	case 4:
 		_maxCount = _vm->_gameInfo->getClueCount();
@@ -56,84 +55,97 @@ ActorClues::ActorClues(BladeRunnerEngine *vm, int cluesType) {
 	}
 
 	if (_maxCount > 0) {
-		_clues = new ActorClue[_maxCount];
-	} else {
-		_clues = nullptr;
+		_clues.resize(_maxCount);
 	}
 
-	if (_clues) {
-		removeAll();
-	} else {
-		_maxCount = 0;
-	}
-}
-
-ActorClues::~ActorClues() {
-	delete[] _clues;
-
-	_maxCount = 0;
-	_count = 0;
+	removeAll();
 }
 
 void ActorClues::acquire(int clueId, bool flag2, int fromActorId) {
 	int clueIndex = findClueIndex(clueId);
-	_clues[clueIndex]._flags |= 0x01;
-	_clues[clueIndex]._flags = (_clues[clueIndex]._flags & ~0x02) | ((flag2 << 1) & 0x02);
-	_clues[clueIndex]._fromActorId = fromActorId;
+	_clues[clueIndex].flags |= 0x01;
+	_clues[clueIndex].flags = (_clues[clueIndex].flags & ~0x02) | ((flag2 << 1) & 0x02);
+	_clues[clueIndex].fromActorId = fromActorId;
 
 	debug("Actor acquired clue: \"%s\" from %d", _vm->_crimesDatabase->getClueText(clueId), fromActorId);
 }
 
 void ActorClues::lose(int clueId) {
 	int clueIndex = findClueIndex(clueId);
-	_clues[clueIndex]._flags = 0;
+	_clues[clueIndex].flags = 0;
 }
 
-bool ActorClues::isAcquired(int clueId) {
+bool ActorClues::isAcquired(int clueId) const {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {
 		return false;
 	}
-	return _clues[clueIndex]._flags & 0x01;
+	return _clues[clueIndex].flags & 0x01;
 }
 
-int ActorClues::getFromActorId(int clueId) {
+int ActorClues::getFromActorId(int clueId) const {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {
 		return  -1;
 	}
 
-	return _clues[clueIndex]._fromActorId;
+	return _clues[clueIndex].fromActorId;
 }
 
-bool ActorClues::isFlag2(int clueId) {
+bool ActorClues::isFlag2(int clueId) const {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {
 		return false;
 	}
 
-	return (_clues[clueIndex]._flags & 0x02) >> 1;
+	return _clues[clueIndex].flags & 0x02;
 }
 
-bool ActorClues::isViewed(int clueId) {
+bool ActorClues::isViewed(int clueId) const {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {
 		return false;
 	}
 
-	return (_clues[clueIndex]._flags & 0x04) >> 2;
+	return _clues[clueIndex].flags & 0x04;
 }
 
-bool ActorClues::isFlag4(int clueId) {
+void ActorClues::setViewed(int clueId, bool viewed) {
+	int clueIndex = findClueIndex(clueId);
+	if (clueIndex == -1) {
+		return;
+	}
+
+	if (viewed) {
+		_clues[clueIndex].flags |= 0x04;
+	} else {
+		_clues[clueIndex].flags &= ~0x04;
+	}
+}
+
+bool ActorClues::isPrivate(int clueId) const {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {
 		return false;
 	}
 
-	return (_clues[clueIndex]._flags & 0x08) >> 3;
+	return _clues[clueIndex].flags & 0x08;
 }
 
-int ActorClues::getField1(int clueId) {
+void ActorClues::setPrivate(int clueId, bool isPrivate) {
+	int clueIndex = findClueIndex(clueId);
+	if (clueIndex == -1) {
+		return;
+	}
+
+	if (isPrivate) {
+		_clues[clueIndex].flags |= 0x08;
+	} else {
+		_clues[clueIndex].flags &= ~0x08;
+	}
+}
+
+int ActorClues::getField1(int clueId) const {
 	if (!_count) {
 		return 0;
 	}
@@ -143,10 +155,10 @@ int ActorClues::getField1(int clueId) {
 		return 0;
 	}
 
-	return _clues[clueIndex]._weight;
+	return _clues[clueIndex].weight;
 }
 
-int ActorClues::getCount() {
+int ActorClues::getCount() const {
 	return _count;
 }
 
@@ -157,9 +169,9 @@ void ActorClues::removeAll() {
 	}
 }
 
-int ActorClues::findClueIndex(int clueId) {
+int ActorClues::findClueIndex(int clueId) const {
 	for (int i = 0; i < _count; i++) {
-		if (clueId == _clues[i]._clueId) {
+		if (clueId == _clues[i].clueId) {
 			return i;
 		}
 	}
@@ -171,35 +183,36 @@ void ActorClues::add(int actorId, int clueId, int weight, bool acquired, bool un
 
 	//debug("Actor %d added clue: \"%s\" from %d", actorId, _vm->_crimesDatabase->getClueText(clueId), fromActorId);
 
-	_clues[_count]._clueId = clueId;
-	_clues[_count]._weight = weight;
+	_clues[_count].clueId = clueId;
+	_clues[_count].weight = weight;
 
-	_clues[_count]._flags = 0;
-	_clues[_count]._flags = (_clues[_count]._flags & ~0x01) | (acquired & 0x01);
-	_clues[_count]._flags = (_clues[_count]._flags & ~0x02) | ((unknownFlag << 1) & 0x02);
+	_clues[_count].flags = 0;
+	_clues[_count].flags = (_clues[_count].flags & ~0x01) | (acquired & 0x01);
+	_clues[_count].flags = (_clues[_count].flags & ~0x02) | ((unknownFlag << 1) & 0x02);
 
-	_clues[_count]._fromActorId = fromActorId;
+	_clues[_count].fromActorId = fromActorId;
 	++_count;
 }
 
 void ActorClues::remove(int index) {
-	if (_vm->_crimesDatabase)
-		debug("Actor removed clue: \"%s\"", _vm->_crimesDatabase->getClueText(_clues[index]._clueId));
+	if (_vm->_crimesDatabase) {
+		debug("Actor removed clue: \"%s\"", _vm->_crimesDatabase->getClueText(_clues[index].clueId));
+	}
 
-	_clues[index]._clueId = -1;
-	_clues[index]._weight = 0;
-	_clues[index]._flags = 0;
-	_clues[index]._fromActorId = -1;
+	_clues[index].clueId      = -1;
+	_clues[index].weight      = 0;
+	_clues[index].flags       = 0;
+	_clues[index].fromActorId = -1;
 
-	_clues[index]._field3 = -1;
-	_clues[index]._field4 = 0;
-	_clues[index]._field5 = -1;
-	_clues[index]._field6 = 0;
-	_clues[index]._field7 = -1;
-	_clues[index]._field8 = 0;
+	_clues[index].field3 = -1;
+	_clues[index].field4 = 0;
+	_clues[index].field5 = -1;
+	_clues[index].field6 = 0;
+	_clues[index].field7 = -1;
+	_clues[index].field8 = 0;
 }
 
-bool ActorClues::exists(int clueId) {
+bool ActorClues::exists(int clueId) const {
 	return findClueIndex(clueId) != -1;
 }
 

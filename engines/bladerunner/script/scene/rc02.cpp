@@ -314,7 +314,7 @@ bool SceneScriptRC02::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptRC02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -71.51f, -1238.89f, 108587.15f, 0, 1, false, 0)) {
-			Game_Flag_Set(9);
+			Game_Flag_Set(kFlagRC02toRC01);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_Looping_Sound(71, true);
 			Ambient_Sounds_Remove_Looping_Sound(75, true);

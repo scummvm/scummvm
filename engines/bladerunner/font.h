@@ -33,21 +33,21 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-struct FontCharacter {
-	int _x;
-	int _y;
-	int _width;
-	int _height;
-	int _dataOffset;
-};
-
 class Font {
+	struct Character {
+		int x;
+		int y;
+		int width;
+		int height;
+		int dataOffset;
+	};
+
 	BladeRunnerEngine *_vm;
 
 	int           _characterCount;
 	int           _maxWidth;
 	int           _maxHeight;
-	FontCharacter _characters[256];
+	Character     _characters[256];
 	int           _dataSize;
 	uint16       *_data;
 	int           _screenWidth;
@@ -67,17 +67,17 @@ public:
 	void setSpacing(int spacing1, int spacing2);
 	void setColor(uint16 color);
 
-	void draw(const Common::String &text, Graphics::Surface &surface, int x, int y);
+	void draw(const Common::String &text, Graphics::Surface &surface, int x, int y) const;
 	void drawColor(const Common::String &text, Graphics::Surface &surface, int x, int y, uint16 color);
 
-	int getTextWidth(const Common::String &text);
-	int getTextHeight(const Common::String &text);
+	int getTextWidth(const Common::String &text) const;
+	int getTextHeight(const Common::String &text) const;
 
 private:
 	void reset();
 	void replaceColor(uint16 oldColor, uint16 newColor);
 
-	void drawCharacter(const char character, Graphics::Surface &surface, int x, int y);
+	void drawCharacter(const char character, Graphics::Surface &surface, int x, int y) const;
 };
 
 } // End of namespace BladeRunner

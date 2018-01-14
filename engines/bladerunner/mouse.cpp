@@ -35,7 +35,8 @@
 
 namespace BladeRunner {
 
-Mouse::Mouse(BladeRunnerEngine *vm) : _vm(vm) {
+Mouse::Mouse(BladeRunnerEngine *vm) {
+	_vm = vm;
 	_cursor = 0;
 	_frame = 3;
 	_hotspotX = 0;
@@ -149,7 +150,7 @@ void Mouse::setCursor(int cursor) {
 	}
 }
 
-void Mouse::getXY(int *x, int *y) {
+void Mouse::getXY(int *x, int *y) const {
 	*x = _x;
 	*y = _y;
 }
@@ -164,7 +165,7 @@ void Mouse::enable() {
 	}
 }
 
-bool Mouse::isDisabled() {
+bool Mouse::isDisabled() const {
 	return _disabledCounter > 0;
 }
 
@@ -311,7 +312,7 @@ void Mouse::tick(int x, int y) {
 }
 
 // TEST: RC01 after intro: [290, 216] -> [-204.589249 51.450668 7.659241]
-Vector3 Mouse::getXYZ(int x, int y) {
+Vector3 Mouse::getXYZ(int x, int y) const {
 	if (_vm->_scene->getSetId() == -1)
 		return Vector3();
 

@@ -45,24 +45,24 @@ int Fog::readCommon(Common::ReadStream *stream) {
 void Fog::readAnimationData(Common::ReadStream *stream, int size) {
 	_animatedParameters = stream->readUint32LE();
 	
-	int floatsCount = size / 4;
-	_animationData = new float[floatsCount];
-	for (int i = 0; i < floatsCount; i++) {
+	int floatCount = size / 4;
+	_animationData = new float[floatCount];
+	for (int i = 0; i < floatCount; i++) {
 		_animationData[i] = stream->readFloatLE();
 	}
 
 	_m11ptr = _animationData;
-	_m12ptr = _m11ptr + (_animatedParameters & 0x1 ? _framesCount : 1);
-	_m13ptr = _m12ptr + (_animatedParameters & 0x2 ? _framesCount : 1);
-	_m14ptr = _m13ptr + (_animatedParameters & 0x4 ? _framesCount : 1);
-	_m21ptr = _m14ptr + (_animatedParameters & 0x08 ? _framesCount : 1);
-	_m22ptr = _m21ptr + (_animatedParameters & 0x10 ? _framesCount : 1);
-	_m23ptr = _m22ptr + (_animatedParameters & 0x20 ? _framesCount : 1);
-	_m24ptr = _m23ptr + (_animatedParameters & 0x40 ? _framesCount : 1);
-	_m31ptr = _m24ptr + (_animatedParameters & 0x80 ? _framesCount : 1);
-	_m32ptr = _m31ptr + (_animatedParameters & 0x100 ? _framesCount : 1);
-	_m33ptr = _m32ptr + (_animatedParameters & 0x200 ? _framesCount : 1);
-	_m34ptr = _m33ptr + (_animatedParameters & 0x400 ? _framesCount : 1);
+	_m12ptr = _m11ptr + (_animatedParameters & 0x1 ? _frameCount : 1);
+	_m13ptr = _m12ptr + (_animatedParameters & 0x2 ? _frameCount : 1);
+	_m14ptr = _m13ptr + (_animatedParameters & 0x4 ? _frameCount : 1);
+	_m21ptr = _m14ptr + (_animatedParameters & 0x08 ? _frameCount : 1);
+	_m22ptr = _m21ptr + (_animatedParameters & 0x10 ? _frameCount : 1);
+	_m23ptr = _m22ptr + (_animatedParameters & 0x20 ? _frameCount : 1);
+	_m24ptr = _m23ptr + (_animatedParameters & 0x40 ? _frameCount : 1);
+	_m31ptr = _m24ptr + (_animatedParameters & 0x80 ? _frameCount : 1);
+	_m32ptr = _m31ptr + (_animatedParameters & 0x100 ? _frameCount : 1);
+	_m33ptr = _m32ptr + (_animatedParameters & 0x200 ? _frameCount : 1);
+	_m34ptr = _m33ptr + (_animatedParameters & 0x400 ? _frameCount : 1);
 
 	setupFrame(0);
 }
@@ -71,7 +71,7 @@ void Fog::reset() {
 }
 
 void Fog::setupFrame(int frame) {
-	int offset = frame % _framesCount;
+	int offset = frame % _frameCount;
 	_matrix._m[0][0] = (_animatedParameters & 0x1 ? _m11ptr[offset] : *_m11ptr);
 	_matrix._m[0][1] = (_animatedParameters & 0x2 ? _m12ptr[offset] : *_m12ptr);
 	_matrix._m[0][2] = (_animatedParameters & 0x4 ? _m13ptr[offset] : *_m13ptr);
@@ -87,8 +87,8 @@ void Fog::setupFrame(int frame) {
 	_inverted = invertMatrix(_matrix);
 }
 
-void FogCone::read(Common::ReadStream *stream, int framesCount) {
-	_framesCount = framesCount;
+void FogCone::read(Common::ReadStream *stream, int frameCount) {
+	_frameCount = frameCount;
 	int size = readCommon(stream);
 	_parameter1 = stream->readFloatLE();
 	readAnimationData(stream, size - 52);
@@ -133,8 +133,8 @@ void FogCone::calculateCoeficient(Vector3 position, Vector3 viewPosition, float 
 	}
 }
 
-void FogSphere::read(Common::ReadStream *stream, int framesCount) {
-	_framesCount = framesCount;
+void FogSphere::read(Common::ReadStream *stream, int frameCount) {
+	_frameCount = frameCount;
 	int size = readCommon(stream);
 	_parameter1 = stream->readFloatLE();
 	readAnimationData(stream, size - 52);
@@ -261,8 +261,8 @@ void FogSphere::calculateCoeficient(Vector3 position, Vector3 viewPosition, floa
 	}
 }
 
-void FogBox::read(Common::ReadStream *stream, int framesCount) {
-	_framesCount = framesCount;
+void FogBox::read(Common::ReadStream *stream, int frameCount) {
+	_frameCount = frameCount;
 	int size = readCommon(stream);
 	_parameter1 = stream->readFloatLE();
 	_parameter2 = stream->readFloatLE();

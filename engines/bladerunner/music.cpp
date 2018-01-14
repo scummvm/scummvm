@@ -25,15 +25,16 @@
 #include "bladerunner/audio_mixer.h"
 #include "bladerunner/aud_stream.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_info.h"
 
 #include "common/timer.h"
 
 namespace BladeRunner {
 
-Music::Music(BladeRunnerEngine *vm)
-	: _vm(vm) {
+Music::Music(BladeRunnerEngine *vm) {
+	_vm = vm;
 	_channel = -1;
-	_volume = 65;
+	_musicVolume = 65;
 	_isPlaying = false;
 	_isPaused = false;
 	_current.loop = false;
@@ -52,14 +53,14 @@ Music::~Music() {
 	_vm->getTimerManager()->removeTimerProc(timerCallbackNext);
 }
 
-bool Music::play(const char *trackName, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut) {
+bool Music::play(const Common::String &trackName, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut) {
 	//Common::StackLock lock(_mutex);
 
-	if (_volume <= 0) {
+	if (_musicVolume <= 0) {
 		return false;
 	}
 
-	int volumeAdjusted = volume * _volume / 100;
+	int volumeAdjusted = volume * _musicVolume / 100;
 	int volumeStart = volumeAdjusted;
 	if (timeFadeIn > 0) {
 		volumeStart = 1;
@@ -134,7 +135,7 @@ void Music::stop(int delay) {
 
 void Music::adjust(int volume, int pan, int delay) {
 	if (volume != -1) {
-		adjustVolume(_volume * volume/ 100, delay);
+		adjustVolume(_musicVolume * volume/ 100, delay);
 	}
 	if (pan != -101) {
 		adjustPan(pan, delay);
@@ -146,11 +147,21 @@ bool Music::isPlaying() {
 }
 
 void Music::setVolume(int volume) {
-	_volume = volume;
+	_musicVolume = volume;
 	if (volume <= 0) {
 		stop(2);
 	} else if (isPlaying()) {
-		_vm->_audioMixer->adjustVolume(_channel, _volume * _current.volume / 100, 120);
+		_vm->_audioMixer->adjustVolume(_channel, _musicVolume * _current.volume / 100, 120);
+	}
+}
+
+int Music::getVolume() {
+	return _musicVolume;
+}
+
+void Music::playSample() {
+	if (!isPlaying()) {
+		play(_vm->_gameInfo->getSfxTrack(512), 100, 0, 2, -1, 0, 3);
 	}
 }
 
@@ -214,7 +225,7 @@ void Music::timerCallbackNext(void *refCon) {
 	((Music *)refCon)->next();
 }
 
-byte *Music::getData(const char *name) {
+byte *Music::getData(const Common::String &name) {
 	// NOTE: This is not part original game, loading data is done in the mixer and its using buffering to limit memory usage
 	Common::SeekableReadStream *stream = _vm->getResourceStream(name);
 	if (stream == nullptr) {

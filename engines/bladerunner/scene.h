@@ -36,7 +36,6 @@ class VQAPlayer;
 class Scene {
 	BladeRunnerEngine *_vm;
 
-private:
 	int         _setId;
 	int         _sceneId;
 	VQAPlayer  *_vqaPlayer;
@@ -59,9 +58,6 @@ public:
 	Set        *_set;
 	Regions    *_regions;
 	Regions    *_exits;
-
-	// _default_loop_id = 0;
-	// _scene_vqa_frame_number = -1;
 
 public:
 	Scene(BladeRunnerEngine *vm);
@@ -91,7 +87,7 @@ public:
 
 private:
 	void loopEnded(int frame, int loopId);
-	static void loopEndedStatic(void* data, int frame, int loopId);
+	static void loopEndedStatic(void *data, int frame, int loopId);
 };
 
 } // End of namespace BladeRunner

@@ -36,27 +36,26 @@ class VQADecoder;
 class SetEffects;
 class SceneObjects;
 
-struct Object {
-	char        _name[20];
-	BoundingBox _bbox;
-	uint8       _isObstacle;
-	uint8       _isClickable;
-	uint8       _isHotMouse;
-	uint8       _isTarget;
-	uint8       _unknown1;
-};
-
-struct Walkbox {
-	char    _name[20];
-	float   _altitude;
-	int     _vertexCount;
-	Vector3 _vertices[8];
-};
-
 class Set {
-#if _DEBUG
+#if BLADERUNNER_DEBUG_RENDERING
 	friend class BladeRunnerEngine;
 #endif
+	struct Object {
+		char        name[20];
+		BoundingBox bbox;
+		uint8       isObstacle;
+		uint8       isClickable;
+		uint8       isHotMouse;
+		uint8       isTarget;
+		uint8       unknown1;
+	};
+
+	struct Walkbox {
+		char    name[20];
+		float   altitude;
+		int     vertexCount;
+		Vector3 vertices[8];
+	};
 
 	BladeRunnerEngine *_vm;
 
@@ -68,6 +67,7 @@ class Set {
 	int         _walkboxStepSound[85];
 	int         _footstepSoundOverride;
 //	float       _unknown[10];
+
 public:
 	SetEffects *_effects;
 
@@ -87,19 +87,21 @@ public:
 
 	bool objectSetHotMouse(int objectId) const;
 	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox) const;
-	void objectSetIsClickable(int objectId, bool isClickable) const;
-	void objectSetIsObstacle(int objectId, bool isObstacle) const;
-	void objectSetIsTarget(int objectId, bool isTarget) const;
+	void objectSetIsClickable(int objectId, bool isClickable);
+	void objectSetIsObstacle(int objectId, bool isObstacle);
+	void objectSetIsTarget(int objectId, bool isTarget);
 	const char *objectGetName(int objectId) const;
 
 	void setWalkboxStepSound(int walkboxId, int soundId);
 	void setFoodstepSoundOverride(int soundId);
 	void resetFoodstepSoundOverride();
-	int getWalkboxSoundWalkLeft(int walkboxId);
-	int getWalkboxSoundWalkRight(int walkboxId);
-	int getWalkboxSoundRunLeft(int walkboxId);
-	int getWalkboxSoundRunRight(int walkboxId);
-	
+	int getWalkboxSoundWalkLeft(int walkboxId) const;
+	int getWalkboxSoundWalkRight(int walkboxId) const;
+	int getWalkboxSoundRunLeft(int walkboxId) const;
+	int getWalkboxSoundRunRight(int walkboxId) const;
+
+private:
+	static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox);
 };
 
 } // End of namespace BladeRunner

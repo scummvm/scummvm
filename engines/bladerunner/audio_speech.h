@@ -30,12 +30,15 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class AudioSpeech {
-	BladeRunnerEngine  *_vm;
+	static const int kBufferSize = 200000;
+	static const int kSpeechSamples[];
 
-	int                 _volume;
-	bool                _isActive;
-	int                 _channel;
-	byte               *_data;
+	BladeRunnerEngine *_vm;
+
+	int   _speechVolume;
+	bool  _isActive;
+	int   _channel;
+	byte *_data;
 
 public:
 	AudioSpeech(BladeRunnerEngine *vm);
@@ -43,8 +46,11 @@ public:
 
 	bool playSpeech(const char *name, int balance = 0);
 	void stopSpeech();
-	bool isPlaying();
-	void setVolume(int volume) { _volume = volume; }
+	bool isPlaying() const;
+
+	void setVolume(int volume);
+	int getVolume() const;
+	void playSample();
 
 private:
 	void ended();

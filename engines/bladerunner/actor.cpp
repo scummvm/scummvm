@@ -28,7 +28,7 @@
 #include "bladerunner/actor_walk.h"
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/boundingbox.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/items.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/movement_track.h"
@@ -345,10 +345,10 @@ void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool 
 
 	setBoundingBox(_position, retired);
 
-	_vm->_sceneObjects->remove(_id + SCENE_OBJECTS_ACTORS_OFFSET);
+	_vm->_sceneObjects->remove(_id + kSceneObjectOffsetActors);
 
 	if (_vm->_scene->getSetId() == _setId) {
-		_vm->_sceneObjects->addActor(_id + SCENE_OBJECTS_ACTORS_OFFSET, _bbox, &_screenRectangle, 1, moving, _isTargetable, retired);
+		_vm->_sceneObjects->addActor(_id + kSceneObjectOffsetActors, _bbox, &_screenRectangle, 1, moving, _isTargetable, retired);
 	}
 }
 
@@ -650,7 +650,7 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 				this->_position.z = this->_position.z + positionChange.x * sinx + positionChange.y * cosx;
 				this->_position.y = this->_position.y + positionChange.z;
 
-				if (_vm->_sceneObjects->existsOnXZ(this->_id + SCENE_OBJECTS_ACTORS_OFFSET, this->_position.x, this->_position.z, false, false) == 1 && !this->_isImmuneToObstacles) {
+				if (_vm->_sceneObjects->existsOnXZ(this->_id + kSceneObjectOffsetActors, this->_position.x, this->_position.z, false, false) == 1 && !this->_isImmuneToObstacles) {
 					this->_position.x = originalX;
 					this->_position.y = originalY;
 					this->_position.z = originalZ;
@@ -691,13 +691,13 @@ bool Actor::draw(Common::Rect *screenRect) {
 
 	// TODO: Handle SHORTY mode
 
-	_vm->_sliceRenderer->drawInWorld(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surfaceGame, _vm->_zbuffer->getData());
+	_vm->_sliceRenderer->drawInWorld(_animationId, _animationFrame, drawPosition, drawAngle, drawScale, _vm->_surfaceFront, _vm->_zbuffer->getData());
 	_vm->_sliceRenderer->getScreenRectangle(screenRect, _animationId, _animationFrame, drawPosition, drawAngle, drawScale);
 
 	return !screenRect->isEmpty();
 }
 
-int Actor::getSetId() {
+int Actor::getSetId() const {
 	return _setId;
 }
 
@@ -943,7 +943,7 @@ void Actor::setFlagDamageAnimIfMoving(bool value) {
 	_damageAnimIfMoving = value;
 }
 
-bool Actor::getFlagDamageAnimIfMoving() {
+bool Actor::getFlagDamageAnimIfMoving() const {
 	return _damageAnimIfMoving;
 }
 
@@ -1009,29 +1009,29 @@ float Actor::distanceFromActor(int otherActorId) {
 	return (_position - _vm->_actors[otherActorId]->_position).length();
 }
 
-float Actor::getX() {
+float Actor::getX() const {
 	return _position.x;
 }
 
-float Actor::getY() {
+float Actor::getY() const {
 	return _position.y;
 }
 
-float Actor::getZ() {
+float Actor::getZ() const {
 	return _position.z;
 }
 
-void Actor::getXYZ(float *x, float *y, float *z) {
+void Actor::getXYZ(float *x, float *y, float *z) const {
 	*x = _position.x;
 	*y = _position.y;
 	*z = _position.z;
 }
 
-int Actor::getFacing() {
+int Actor::getFacing() const {
 	return _facing;
 }
 
-int Actor::getAnimationMode() {
+int Actor::getAnimationMode() const {
 	return _animationMode;
 }
 
@@ -1046,7 +1046,7 @@ void Actor::setGoal(int goalNumber) {
 	_vm->_sceneScript->ActorChangedGoal(_id, goalNumber, oldGoalNumber, _vm->_scene->getSetId() == _setId);
 }
 
-int Actor::getGoal() {
+int Actor::getGoal() const {
 	return _goalNumber;
 }
 
@@ -1055,7 +1055,7 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 	sprintf(name, "%02d-%04d%s.AUD", _id, sentenceId, _vm->_languageCode);
 	int balance;
 
-	if (voiceOver || _id == VOICEOVER_ACTOR) {
+	if (voiceOver || _id == BladeRunnerEngine::kActorVoiceOver) {
 		balance = 0;
 	} else {
 		// Vector3 pos = _vm->_view->_frameViewMatrix * _position;
@@ -1092,16 +1092,16 @@ void Actor::loseClue(int clueId) {
 	_clues->lose(clueId);
 }
 
-bool Actor::hasClue(int clueId) {
+bool Actor::hasClue(int clueId) const {
 	return _clues->isAcquired(clueId);
 }
 
 void Actor::copyClues(int actorId) {
 	Actor *otherActor = _vm->_actors[actorId];
 	for (int i = 0; i < (int)_vm->_gameInfo->getClueCount(); i++) {
-		if (hasClue(i) && !_clues->isFlag4(i) && !otherActor->hasClue(i)) {
+		if (hasClue(i) && !_clues->isPrivate(i) && !otherActor->hasClue(i)) {
 			int fromActorId = _id;
-			if (_id == VOICEOVER_ACTOR) {
+			if (_id == BladeRunnerEngine::kActorVoiceOver) {
 				fromActorId = _clues->getFromActorId(i);
 			}
 			otherActor->acquireClue(i, false, fromActorId);

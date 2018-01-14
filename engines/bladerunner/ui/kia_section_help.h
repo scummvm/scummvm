@@ -20,49 +20,35 @@
  *
  */
 
-#include "bladerunner/gameflags.h"
+#ifndef BLADERUNNER_KIA_SECTION_HELP_H
+#define BLADERUNNER_KIA_SECTION_HELP_H
 
-#include "common/debug.h"
+#include "bladerunner/ui/kia_section_base.h"
 
 namespace BladeRunner {
 
-GameFlags::GameFlags()
-	: flags(nullptr), flagCount(0) {
-}
+class BladeRunnerEngine;
+class UIContainer;
+class UIScrollBox;
 
-GameFlags::~GameFlags() {
-	delete[] flags;
-}
+class KIASectionHelp : public KIASectionBase {
+	UIContainer *_uiContainer;
+	UIScrollBox *_scrollBox;
 
-void GameFlags::setFlagCount(int count) {
-	assert(count > 0);
+public:
+	KIASectionHelp(BladeRunnerEngine *vm);
+	~KIASectionHelp();
 
-	flagCount = count;
-	flags = new uint32[count / 32 + 1];
+	void open();
+	void close();
 
-	for (int i = 0; i <= flagCount; ++i)
-		reset(i);
-}
+	void draw(Graphics::Surface &surface);
 
-void GameFlags::set(int flag) {
-	debug("GameFlags::set(%d)", flag);
-	assert(flag >= 0 && flag <= flagCount);
-
-	flags[flag / 32] |= (1 << (flag % 32));
-}
-
-void GameFlags::reset(int flag) {
-	debug("GameFlags::reset(%d)", flag);
-	assert(flag >= 0 && flag <= flagCount);
-
-	flags[flag / 32] &= ~(1 << (flag % 32));
-}
-
-bool GameFlags::query(int flag) {
-	//debug("GameFlags::query(%d): %d", flag, !!(flags[flag / 32] & (1 << (flag % 32))));
-	assert(flag >= 0 && flag <= flagCount);
-
-	return !!(flags[flag / 32] & (1 << (flag % 32)));
-}
+	void handleKeyUp(const Common::KeyState &kbd);
+	void handleMouseMove(int mouseX, int mouseY);
+	void handleMouseDown(bool mainButton);
+	void handleMouseUp(bool mainButton);
+};
 
 } // End of namespace BladeRunner
+#endif

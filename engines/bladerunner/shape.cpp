@@ -32,8 +32,9 @@
 
 namespace BladeRunner {
 
-Shape::Shape(BladeRunnerEngine *vm)
-	: _vm(vm), _data(nullptr) {
+Shape::Shape(BladeRunnerEngine *vm) {
+	_vm = vm;
+	_data = nullptr;
 }
 
 Shape::~Shape() {
@@ -86,7 +87,7 @@ bool Shape::readFromContainer(const Common::String &container, int index) {
 	return true;
 }
 
-void Shape::draw(Graphics::Surface &surface, int x, int y) {
+void Shape::draw(Graphics::Surface &surface, int x, int y) const {
 	// debug("x=%d, y=%d", x, y);
 	// debug("w=%d, h=%d", _width, _height);
 
@@ -110,13 +111,13 @@ void Shape::draw(Graphics::Surface &surface, int x, int y) {
 	}
 
 	byte *src_p = _data + 2 * (src_y * _width + src_x);
-	byte *dst_p = (byte*)surface.getBasePtr(dst_x, dst_y);
+	byte *dst_p = (byte *)surface.getBasePtr(dst_x, dst_y);
 
 	for (int yi = 0; yi != rect_h; ++yi) {
 		for (int xi = 0; xi != rect_w; ++xi) {
 			uint16 color = READ_LE_UINT16(src_p);
 			if ((color & 0x8000) == 0) {
-				*(uint16*)dst_p = color;
+				*(uint16 *)dst_p = color;
 			}
 
 			src_p += 2;

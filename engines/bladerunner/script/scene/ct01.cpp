@@ -385,7 +385,7 @@ void SceneScriptCT01::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, 0, false, 0);
 		if (!Game_Flag_Query(25)) {
 			Game_Flag_Set(25);
-			if (!Game_Flag_Query(378)) {
+			if (!Game_Flag_Query(kFlagDirectorsCut)) {
 				Actor_Voice_Over(200, kActorVoiceOver);
 				Actor_Voice_Over(210, kActorVoiceOver);
 				Actor_Voice_Over(220, kActorVoiceOver);

@@ -182,7 +182,7 @@ bool VQADecoder::loadStream(Common::SeekableReadStream *s) {
 	_videoTrack = new VQAVideoTrack(this, _surface);
 	_audioTrack = new VQAAudioTrack(this);
 
-#if 0
+#if BLADERUNNER_DEBUG_CONSOLE
 	for (int i = 0; i != _loopInfo.loopCount; ++i) {
 		debug("LOOP %2d: %4d %4d %s", i,
 			_loopInfo.loops[i].begin,
@@ -507,7 +507,14 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size) {
 	uint16 loopUnk3       = s->readUint16LE();
 	uint16 loopUnk4       = s->readUint16LE();
 
+#if BLADERUNNER_DEBUG_CONSOLE
 	debug("VQADecoder::readLNIN() Unknown Values: 0x%04x 0x%04x 0x%04x 0x%04x", loopUnk1, loopUnk2, loopUnk3, loopUnk4);
+#else
+	(void)loopUnk1;
+	(void)loopUnk2;
+	(void)loopUnk3;
+	(void)loopUnk4;
+#endif
 
 	if (loopNamesCount != _loopInfo.loopCount)
 		return false;
@@ -516,7 +523,7 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size) {
 	if (chd.id != kLNIO || chd.size != 4u * loopNamesCount)
 		return false;
 
-	uint32 *loopNameOffsets = (uint32*)malloc(loopNamesCount * sizeof(uint32));
+	uint32 *loopNameOffsets = (uint32 *)malloc(loopNamesCount * sizeof(uint32));
 	for (int i = 0; i != loopNamesCount; ++i) {
 		loopNameOffsets[i] = s->readUint32LE();
 	}
@@ -527,7 +534,7 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size) {
 		return false;
 	}
 
-	char *names = (char*)malloc(roundup(chd.size));
+	char *names = (char *)malloc(roundup(chd.size));
 	s->read(names, roundup(chd.size));
 
 	for (int i = 0; i != loopNamesCount; ++i) {
@@ -630,7 +637,7 @@ Common::Rational VQADecoder::VQAVideoTrack::getFrameRate() const {
 
 void VQADecoder::VQAVideoTrack::decodeVideoFrame(bool forceDraw) {
 	if (_hasNewFrame || forceDraw) {
-		decodeFrame((uint16*)_surface->getPixels());
+		decodeFrame((uint16 *)_surface->getPixels());
 		_hasNewFrame = false;
 	}
 }
@@ -917,14 +924,14 @@ VQADecoder::VQAAudioTrack::~VQAAudioTrack() {
 }
 
 Audio::SeekableAudioStream *VQADecoder::VQAAudioTrack::decodeAudioFrame() {
-	int16 *audioFrame = (int16*)malloc(4 * 735);
+	int16 *audioFrame = (int16 *)malloc(4 * 735);
 	memset(audioFrame, 0, 4 * 735);
 
 	_adpcmDecoder.decode(_compressedAudioFrame, 735, audioFrame);
 
 	uint flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
-	return Audio::makeRawStream((byte*)audioFrame, 4 * 735, _frequency, flags, DisposeAfterUse::YES);
+	return Audio::makeRawStream((byte *)audioFrame, 4 * 735, _frequency, flags, DisposeAfterUse::YES);
 }
 
 bool VQADecoder::VQAAudioTrack::readSND2(Common::SeekableReadStream *s, uint32 size) {

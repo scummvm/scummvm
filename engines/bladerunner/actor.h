@@ -39,6 +39,7 @@ class View;
 
 class Actor {
 	friend class ScriptBase;
+	friend class KIA;
 
 	BladeRunnerEngine *_vm;
 
@@ -80,9 +81,9 @@ private:
 
 	// Movement
 	bool _movementTrackPaused;
-	int _movementTrackNextWaypointId;
-	int _movementTrackNextDelay; // probably not used
-	int _movementTrackNextAngle; // probably not used
+	int  _movementTrackNextWaypointId;
+	int  _movementTrackNextDelay; // probably not used
+	int  _movementTrackNextAngle; // probably not used
 	bool _movementTrackNextRunning;
 
 	int _movementTrackWalkingToWaypointId;
@@ -119,14 +120,14 @@ public:
 	void setAtXYZ(const Vector3 &pos, int facing, bool setFacing = true, bool moving = false, bool retired = false);
 	void setAtWaypoint(int waypointId, int angle, int unknown, bool retired);
 
-	float getX();
-	float getY();
-	float getZ();
-	void getXYZ(float* x, float* y, float* z);
-	int getFacing();
-	int getAnimationMode();
+	float getX() const;
+	float getY() const;
+	float getZ() const;
+	void getXYZ(float *x, float *y, float *z) const;
+	int getFacing() const;
+	int getAnimationMode() const;
 
-	Vector3 getPosition() { return _position; }
+	Vector3 getPosition() const { return _position; }
 
 	void changeAnimationMode(int animationMode, bool force = false);
 	void setFPS(int fps);
@@ -153,12 +154,12 @@ public:
 	bool tick(bool forceUpdate, Common::Rect *screenRect);
 	bool draw(Common::Rect *screenRect);
 
-	int getSetId();
+	int getSetId()  const;
 	void setSetId(int setId);
 	BoundingBox *getBoundingBox() const { return _bbox; }
 	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
 	int getWalkbox() const { return _walkboxId; }
-	bool isRetired()const { return _isRetired; }
+	bool isRetired() const { return _isRetired; }
 	bool isTargetable() const { return _isTargetable; }
 	void setTargetable(bool targetable);
 	bool isImmuneToObstacles() const { return _isImmuneToObstacles; }
@@ -192,7 +193,7 @@ public:
 	void modifyIntelligence(signed int change);
 	void modifyStability(signed int change);
 	void setFlagDamageAnimIfMoving(bool value);
-	bool getFlagDamageAnimIfMoving();
+	bool getFlagDamageAnimIfMoving()  const;
 	void setHealth(int hp, int maxHp);
 
 	void retire(bool isRetired, int width, int height, int retiredByActorId);
@@ -201,7 +202,7 @@ public:
 	void combatModeOff();
 
 	void setGoal(int goalNumber);
-	int getGoal();
+	int getGoal()  const;
 
 	float distanceFromActor(int otherActorId);
 
@@ -212,15 +213,16 @@ public:
 	void addClueToDatabase(int clueId, int unknown, bool clueAcquired, bool unknownFlag, int fromActorId);
 	void acquireClue(int clueId, bool unknownFlag, int fromActorId);
 	void loseClue(int clueId);
-	bool hasClue(int clueId);
+	bool hasClue(int clueId)  const;
 	void copyClues(int actorId);
 
 	int soundVolume() const;
 	int soundBalance() const;
+
 private:
 	void setFacing(int facing, bool halfOrSet = true);
 	void setBoundingBox(const Vector3 &position, bool retired);
-	float distanceFromView(View* view) const;
+	float distanceFromView(View *view) const;
 	
 	bool loopWalk(const Vector3 &destination, int destinationOffset, bool a3, bool run, const Vector3 &start, float a6, float a7, bool a8, bool *isRunning, bool async);
 	bool walkTo(bool run, const Vector3 &destination, bool a3);

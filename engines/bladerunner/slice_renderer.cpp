@@ -234,7 +234,7 @@ void SliceRenderer::loadFrame(int animation, int frame) {
 	_frame = frame;
 	_sliceFramePtr = _vm->_sliceAnimations->getFramePtr(_animation, _frame);
 
-	Common::MemoryReadStream stream((byte*)_sliceFramePtr, _vm->_sliceAnimations->_animations[_animation].frameSize);
+	Common::MemoryReadStream stream((byte *)_sliceFramePtr, _vm->_sliceAnimations->_animations[_animation].frameSize);
 
 	_frameScale.x = stream.readFloatLE();
 	_frameScale.y = stream.readFloatLE();
@@ -398,7 +398,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 
 	int frameY = sliceLineIterator._startY;
 
-	uint16 *frameLinePtr  = (uint16*)surface.getPixels() + 640 * frameY;
+	uint16 *frameLinePtr  = (uint16 *)surface.getPixels() + 640 * frameY;
 	uint16 *zBufferLinePtr = zbuffer + 640 * frameY;
 
 	while (sliceLineIterator._currentY <= sliceLineIterator._endY) {
@@ -433,7 +433,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	}
 }
 
-void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer) {
+void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface) {
 	if (scale == 0.0f) {
 		return;
 	}
@@ -481,7 +481,7 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	float currentSlice = 0;
 	float sliceStep = 1.0f / size / _frameSliceHeight;
 
-	uint16 *frameLinePtr = (uint16*)surface.getPixels() + 640 * frameY;
+	uint16 *frameLinePtr = (uint16 *)surface.getPixels() + 640 * frameY;
 	uint16 lineZbuffer[640];
 
 	while (currentSlice < _frameSliceCount) {
@@ -499,13 +499,13 @@ void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, ui
 	if (slice < 0 || (uint32)slice >= _frameSliceCount)
 		return;
 
-	SlicePalette &palette = _vm->_sliceAnimations->getPalette(_framePaletteIndex);
+	SliceAnimations::Palette &palette = _vm->_sliceAnimations->getPalette(_framePaletteIndex);
 
-	byte *p = (byte*)_sliceFramePtr + 0x20 + 4 * slice;
+	byte *p = (byte *)_sliceFramePtr + 0x20 + 4 * slice;
 
 	uint32 polyOffset = READ_LE_UINT32(p);
 
-	p = (byte*)_sliceFramePtr + polyOffset;
+	p = (byte *)_sliceFramePtr + polyOffset;
 
 	uint32 polyCount = READ_LE_UINT32(p);
 	p += 4;

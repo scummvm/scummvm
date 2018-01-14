@@ -36,18 +36,18 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class Shape;
 
-typedef void UIImagePickerCallback(int, void*);
-
-struct UIImagePickerImage {
-	int             active;
-	Common::Rect    rect;
-	Shape          *shapeUp;
-	Shape          *shapeHovered;
-	Shape          *shapeDown;
-	Common::String  tooltip;
-};
+typedef void UIImagePickerCallback(int, void *);
 
 class UIImagePicker {
+	struct Image {
+		int             active;
+		Common::Rect    rect;
+		const Shape    *shapeUp;
+		const Shape    *shapeHovered;
+		const Shape    *shapeDown;
+		Common::String  tooltip;
+	};
+
 	BladeRunnerEngine *_vm;
 
 	int _isVisible;
@@ -56,7 +56,7 @@ class UIImagePicker {
 	int _pressedImageIndex;
 	uint32 _hoverStartTimestamp;
 	int _isButtonDown;
-	Common::Array<UIImagePickerImage> _images;
+	Common::Array<Image> _images;
 
 	UIImagePickerCallback *_mouseInCallback;
 	UIImagePickerCallback *_mouseOutCallback;
@@ -69,13 +69,13 @@ public:
 	~UIImagePicker();
 
 	void resetImages();
-	bool defineImage(int i, Common::Rect rect, Shape *shapeUp, Shape *shapeHovered, Shape *shapeDown, const char *tooltip);
+	bool defineImage(int i, Common::Rect rect, const Shape *shapeUp, const Shape *shapeHovered, const Shape *shapeDown, const char *tooltip);
 
 	bool setImageTop(int i, int top);
 	bool setImageLeft(int i, int left);
-	bool setImageShapeUp(int i, Shape *shapeUp);
-	bool setImageShapeHovered(int i, Shape *shapeHovered);
-	bool setImageShapeDown(int i, Shape *shapeDown);
+	bool setImageShapeUp(int i, const Shape *shapeUp);
+	bool setImageShapeHovered(int i, const Shape *shapeHovered);
+	bool setImageShapeDown(int i, const Shape *shapeDown);
 	bool setImageTooltip(int i, const char *tooltip);
 
 	bool resetActiveImage(int i);

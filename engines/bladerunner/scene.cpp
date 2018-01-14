@@ -23,10 +23,10 @@
 #include "bladerunner/scene.h"
 
 #include "bladerunner/actor.h"
-#include "bladerunner/adq.h"
+#include "bladerunner/actor_dialogue_queue.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/chapters.h"
-#include "bladerunner/gameinfo.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/items.h"
 #include "bladerunner/overlays.h"
 #include "bladerunner/regions.h"
@@ -35,9 +35,9 @@
 #include "bladerunner/set.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/slice_renderer.h"
-#include "bladerunner/vqa_player.h"
 #include "bladerunner/script/scene.h"
-#include "bladerunner/spinner.h"
+#include "bladerunner/ui/spinner.h"
+#include "bladerunner/vqa_player.h"
 
 #include "common/str.h"
 
@@ -73,7 +73,7 @@ Scene::~Scene() {
 
 bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	if (!isLoadingGame) {
-		_vm->_adq->flush(1, false);
+		_vm->_actorDialogueQueue->flush(1, false);
 	}
 
 	_setId = setId;
@@ -108,7 +108,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		delete _vqaPlayer;
 	}
 
-	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceInterface);
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
 
 	Common::String sceneName = _vm->_gameInfo->getSceneName(sceneId);
 	if (!_vm->_sceneScript->Open(sceneName)) {
@@ -157,7 +157,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		Actor *actor = _vm->_actors[i];
 		if (actor->getSetId() == setId) {
 			_vm->_sceneObjects->addActor(
-				   i + SCENE_OBJECTS_ACTORS_OFFSET,
+				   i + kSceneObjectOffsetActors,
 				   actor->getBoundingBox(),
 				   actor->getScreenRectangle(),
 				   1,
@@ -208,7 +208,7 @@ bool Scene::close(bool isLoadingGame) {
 int Scene::advanceFrame() {
 	int frame = _vqaPlayer->update();
 	if (frame >= 0) {
-		blit(_vm->_surfaceInterface, _vm->_surfaceGame);
+		blit(_vm->_surfaceBack, _vm->_surfaceFront);
 		_vqaPlayer->updateZBuffer(_vm->_zbuffer);
 		_vqaPlayer->updateView(_vm->_view);
 		_vqaPlayer->updateScreenEffects(_vm->_screenEffects);
@@ -288,14 +288,14 @@ bool Scene::objectGetBoundingBox(int objectId, BoundingBox *boundingBox) {
 void Scene::objectSetIsClickable(int objectId, bool isClickable, bool sceneLoaded) {
 	_set->objectSetIsClickable(objectId, isClickable);
 	if (sceneLoaded) {
-		_vm->_sceneObjects->setIsClickable(objectId + SCENE_OBJECTS_OBJECTS_OFFSET, isClickable);
+		_vm->_sceneObjects->setIsClickable(objectId + kSceneObjectOffsetObjects, isClickable);
 	}
 }
 
 void Scene::objectSetIsObstacle(int objectId, bool isObstacle, bool sceneLoaded, bool updateWalkpath) {
 	_set->objectSetIsObstacle(objectId, isObstacle);
 	if (sceneLoaded) {
-		_vm->_sceneObjects->setIsObstacle(objectId + SCENE_OBJECTS_OBJECTS_OFFSET, isObstacle);
+		_vm->_sceneObjects->setIsObstacle(objectId + kSceneObjectOffsetObjects, isObstacle);
 		if (updateWalkpath) {
 			_vm->_sceneObjects->updateObstacles();
 		}
@@ -307,7 +307,7 @@ void Scene::objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded) {
 	for (i = 0; i < (int)_set->getObjectCount(); i++) {
 		_set->objectSetIsObstacle(i, isObstacle);
 		if (sceneLoaded) {
-			_vm->_sceneObjects->setIsObstacle(i + SCENE_OBJECTS_OBJECTS_OFFSET, isObstacle);
+			_vm->_sceneObjects->setIsObstacle(i + kSceneObjectOffsetObjects, isObstacle);
 		}
 	}
 }
@@ -315,7 +315,7 @@ void Scene::objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded) {
 void Scene::objectSetIsTarget(int objectId, bool isTarget, bool sceneLoaded) {
 	_set->objectSetIsTarget(objectId, isTarget);
 	if (sceneLoaded) {
-		_vm->_sceneObjects->setIsTarget(objectId + SCENE_OBJECTS_OBJECTS_OFFSET, isTarget);
+		_vm->_sceneObjects->setIsTarget(objectId + kSceneObjectOffsetObjects, isTarget);
 	}
 }
 
@@ -353,6 +353,6 @@ void Scene::loopEnded(int frame, int loopId) {
 }
 
 void Scene::loopEndedStatic(void *data, int frame, int loopId) {
-	((Scene*)data)->loopEnded(frame, loopId);
+	((Scene *)data)->loopEnded(frame, loopId);
 }
 } // End of namespace BladeRunner

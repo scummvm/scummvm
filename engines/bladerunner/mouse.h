@@ -26,7 +26,7 @@
 #include "bladerunner/vector.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace BladeRunner {
@@ -52,11 +52,11 @@ public:
 
 	void setCursor(int cursor);
 
-	void getXY(int *x, int *y);
+	void getXY(int *x, int *y) const;
 
 	void disable();
 	void enable();
-	bool isDisabled();
+	bool isDisabled() const;
 
 	void draw(Graphics::Surface &surface, int x, int y);
 	void updateCursorFrame();
@@ -64,7 +64,7 @@ public:
 	void tick(int x, int y);
 
 // private:
-	Vector3 getXYZ(int x, int y);
+	Vector3 getXYZ(int x, int y) const;
 };
 
 } // End of namespace BladeRunner

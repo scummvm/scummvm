@@ -26,7 +26,7 @@
 
 namespace BladeRunner {
 
-bool ScriptVK::SCRIPT_VK_DLL_Initialize(int a1) {
+bool VKScript::SCRIPT_VK_DLL_Initialize(int a1) {
 	VK_Add_Question(0, 7400, -1);
 	VK_Add_Question(0, 7405, -1);
 	VK_Add_Question(0, 7410, -1);
@@ -82,7 +82,7 @@ bool ScriptVK::SCRIPT_VK_DLL_Initialize(int a1) {
 	}
 }
 
-void ScriptVK::SCRIPT_VK_DLL_Calibrate(int a1) {
+void VKScript::SCRIPT_VK_DLL_Calibrate(int a1) {
 	if (unknown1 == 0) {
 		VK_Play_Speech_Line(0, 7370, 0.5f);
 		VK_Play_Speech_Line(0, 7385, 0.5f);
@@ -101,12 +101,12 @@ void ScriptVK::SCRIPT_VK_DLL_Calibrate(int a1) {
 	}
 }
 
-bool ScriptVK::SCRIPT_VK_DLL_Begin_Test() {
+bool VKScript::SCRIPT_VK_DLL_Begin_Test() {
 	unknown2 = 0;
 	return false;
 }
 
-void ScriptVK::SCRIPT_VK_DLL_McCoy_Asks_Question(int a1, int a2) {
+void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int a1, int a2) {
 	switch (a2) {
 	case 7400:
 		VK_Play_Speech_Line(0, 7400, 0.5f);
@@ -300,7 +300,7 @@ void ScriptVK::SCRIPT_VK_DLL_McCoy_Asks_Question(int a1, int a2) {
 	}
 }
 
-void ScriptVK::SCRIPT_VK_DLL_Question_Asked(int a1, int a2) {
+void VKScript::SCRIPT_VK_DLL_Question_Asked(int a1, int a2) {
 	switch (a1) {
 	case 15:
 		sub_407CF8(a2);
@@ -320,7 +320,7 @@ void ScriptVK::SCRIPT_VK_DLL_Question_Asked(int a1, int a2) {
 	}
 }
 
-void ScriptVK::SCRIPT_VK_DLL_Shutdown(int a1, signed int a2, signed int a3) {
+void VKScript::SCRIPT_VK_DLL_Shutdown(int a1, signed int a2, signed int a3) {
 	if (a2 > 79 && a3 > 79) {
 		VK_Play_Speech_Line(39, 450, 0.5f);
 	} else if (a3 > 79) {
@@ -367,7 +367,7 @@ void ScriptVK::SCRIPT_VK_DLL_Shutdown(int a1, signed int a2, signed int a3) {
 	VK_Play_Speech_Line(39, 460, 0.5f);
 }
 
-void ScriptVK::sub_402604(int a1) {
+void VKScript::sub_402604(int a1) {
 	switch (a1) {
 	case 7385:
 		VK_Subject_Reacts(40, 0, 0, 0);
@@ -858,7 +858,7 @@ void ScriptVK::sub_402604(int a1) {
 	}
 }
 
-void ScriptVK::sub_404B44(int a1) {
+void VKScript::sub_404B44(int a1) {
 	switch (a1) {
 	case 7385:
 		VK_Subject_Reacts(20, 0, 0, 5);
@@ -1117,7 +1117,7 @@ void ScriptVK::sub_404B44(int a1) {
 	}
 }
 
-void ScriptVK::sub_406088(int a1) {
+void VKScript::sub_406088(int a1) {
 	switch (a1) {
 	case 7385:
 		VK_Subject_Reacts(36, 0, 0, 0);
@@ -1472,7 +1472,7 @@ void ScriptVK::sub_406088(int a1) {
 	}
 }
 
-void ScriptVK::sub_407CF8(int a1) {
+void VKScript::sub_407CF8(int a1) {
 	switch (a1) {
 	case 7385:
 		VK_Subject_Reacts(20, 10, 20, 0);
@@ -1651,7 +1651,7 @@ void ScriptVK::sub_407CF8(int a1) {
 	}
 }
 
-void ScriptVK::sub_40897C(int a1) {
+void VKScript::sub_40897C(int a1) {
 	switch (a1) {
 	case 7385:
 		VK_Eye_Animates(1);
@@ -1980,7 +1980,7 @@ void ScriptVK::sub_40897C(int a1) {
 	}
 }
 
-void ScriptVK::sub_40A300(int a1, int a2) {
+void VKScript::sub_40A300(int a1, int a2) {
 	switch (a1) {
 	case 15:
 		sub_407CF8(7385);
@@ -2000,7 +2000,7 @@ void ScriptVK::sub_40A300(int a1, int a2) {
 	}
 }
 
-void ScriptVK::sub_40A350(int a1, int a2) {
+void VKScript::sub_40A350(int a1, int a2) {
 	switch (a1) {
 	case 15:
 		sub_407CF8(7390);
@@ -2020,7 +2020,7 @@ void ScriptVK::sub_40A350(int a1, int a2) {
 	}
 }
 
-void ScriptVK::sub_40A3A0(int a1, int a2) {
+void VKScript::sub_40A3A0(int a1, int a2) {
 	switch (a1) {
 	case 15:
 		sub_407CF8(7395);
@@ -2040,14 +2040,14 @@ void ScriptVK::sub_40A3A0(int a1, int a2) {
 	}
 }
 
-void ScriptVK::sub_40A3F0(int a1) {
+void VKScript::sub_40A3F0(int a1) {
 	VK_Play_Speech_Line(3, 1470, 0.5f);
 	VK_Subject_Reacts(40, 4, 4, 0);
 	VK_Play_Speech_Line(0, 7795, 0.5f);
 	VK_Play_Speech_Line(3, 1480, 0.5f);
 }
 
-void ScriptVK::sub_40A470(int a1) {
+void VKScript::sub_40A470(int a1) {
 	VK_Subject_Reacts(40, 2, 2, 0);
 	VK_Play_Speech_Line(3, 1450, 0.5f);
 	VK_Play_Speech_Line(0, 7785, 0.5f);
@@ -2055,7 +2055,7 @@ void ScriptVK::sub_40A470(int a1) {
 	VK_Play_Speech_Line(0, 7790, 0.5f);
 }
 
-void ScriptVK::sub_40A510(int a1) {
+void VKScript::sub_40A510(int a1) {
 	VK_Subject_Reacts(36, 0, 0, 0);
 	VK_Play_Speech_Line(3, 1440, 0.5f);
 }

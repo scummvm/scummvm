@@ -33,6 +33,9 @@
 
 #include "graphics/surface.h"
 
+#define BLADERUNNER_DEBUG_RENDERING 0
+#define BLADERUNNER_DEBUG_CONSOLE 0
+
 namespace Common {
 struct Event;
 }
@@ -58,7 +61,7 @@ enum SceneLoopMode {
 };
 
 class Actor;
-class ADQ;
+class ActorDialogueQueue;
 class ScreenEffects;
 class AIScripts;
 class AmbientSounds;
@@ -75,6 +78,7 @@ class GameFlags;
 class GameInfo;
 class ItemPickup;
 class Items;
+class KIA;
 class Lights;
 class Mouse;
 class Music;
@@ -90,72 +94,75 @@ class SliceRenderer;
 class Spinner;
 class SuspectsDatabase;
 class TextResource;
+class KIAShapes;
 class Vector3;
 class View;
 class Waypoints;
 class ZBuffer;
 
-#define ACTORS_COUNT 100
-#define VOICEOVER_ACTOR (ACTORS_COUNT - 1)
-
 class BladeRunnerEngine : public Engine {
 public:
+	static const int kArchiveCount = 10;
+	static const int kActorCount = 100;
+	static const int kActorVoiceOver = kActorCount - 1;
+
 	bool       _gameIsRunning;
 	bool       _windowIsActive;
 	int        _playerLosesControlCounter;
 	const char *_languageCode;
 
-	ADQ              *_adq;
-	ScreenEffects    *_screenEffects;
-	AIScripts        *_aiScripts;
-	AmbientSounds    *_ambientSounds;
-	AudioMixer       *_audioMixer;
-	AudioPlayer      *_audioPlayer;
-	AudioSpeech      *_audioSpeech;
-	Chapters         *_chapters;
-	CrimesDatabase   *_crimesDatabase;
-	Combat           *_combat;
-	DialogueMenu     *_dialogueMenu;
-	Elevator         *_elevator;
-	GameFlags        *_gameFlags;
-	GameInfo         *_gameInfo;
-	ItemPickup       *_itemPickup;
-	Items            *_items;
-	Lights           *_lights;
-	Font             *_mainFont;
-	Mouse            *_mouse;
-	Music            *_music;
-	Obstacles        *_obstacles;
-	Overlays         *_overlays;
-	Scene            *_scene;
-	SceneObjects     *_sceneObjects;
-	SceneScript      *_sceneScript;
-	Settings         *_settings;
-	SliceAnimations  *_sliceAnimations;
-	SliceRenderer    *_sliceRenderer;
-	Spinner          *_spinner;
-	SuspectsDatabase *_suspectsDatabase;
-	View             *_view;
-	Waypoints        *_waypoints;
-	int              *_gameVars;
+	ActorDialogueQueue *_actorDialogueQueue;
+	ScreenEffects      *_screenEffects;
+	AIScripts          *_aiScripts;
+	AmbientSounds      *_ambientSounds;
+	AudioMixer         *_audioMixer;
+	AudioPlayer        *_audioPlayer;
+	AudioSpeech        *_audioSpeech;
+	Chapters           *_chapters;
+	CrimesDatabase     *_crimesDatabase;
+	Combat             *_combat;
+	DialogueMenu       *_dialogueMenu;
+	Elevator           *_elevator;
+	GameFlags          *_gameFlags;
+	GameInfo           *_gameInfo;
+	ItemPickup         *_itemPickup;
+	Items              *_items;
+	KIA                *_kia;
+	Lights             *_lights;
+	Font               *_mainFont;
+	Mouse              *_mouse;
+	Music              *_music;
+	Obstacles          *_obstacles;
+	Overlays           *_overlays;
+	Scene              *_scene;
+	SceneObjects       *_sceneObjects;
+	SceneScript        *_sceneScript;
+	Settings           *_settings;
+	SliceAnimations    *_sliceAnimations;
+	SliceRenderer      *_sliceRenderer;
+	Spinner            *_spinner;
+	SuspectsDatabase   *_suspectsDatabase;
+	View               *_view;
+	Waypoints          *_waypoints;
+	int                *_gameVars;
 
-	TextResource    *_textActorNames;
-	TextResource    *_textCrimes;
-	TextResource    *_textCluetype;
-	TextResource    *_textKIA;
-	TextResource    *_textSpinnerDestinations;
-	TextResource    *_textVK;
-	TextResource    *_textOptions;
+	TextResource       *_textActorNames;
+	TextResource       *_textCrimes;
+	TextResource       *_textClueTypes;
+	TextResource       *_textKIA;
+	TextResource       *_textSpinnerDestinations;
+	TextResource       *_textVK;
+	TextResource       *_textOptions;
 
 	Common::Array<Shape*> _shapes;
 
-	Actor *_actors[ACTORS_COUNT];
+	Actor *_actors[kActorCount];
 	Actor *_playerActor;
 
 	int in_script_counter;
 
-	Graphics::Surface  _surfaceGame;
-	Graphics::Surface  _surfaceInterface;
+	Graphics::Surface  _surfaceFront;
+	Graphics::Surface  _surfaceBack;
 	Graphics::Surface  _surface4;
 
 	ZBuffer           *_zbuffer;
@@ -174,8 +181,8 @@ public:
 	int _walkSoundVolume;
 	int _walkSoundBalance;
 	int _walkingActorId;
+
 private:
-	static const uint kArchiveCount = 10;
 	MIXArchive _archives[kArchiveCount];
 
 public:
@@ -193,7 +200,7 @@ public:
 	bool loadSplash();
 	bool init2();
 
-	Common::Point getMousePos();
+	Common::Point getMousePos() const;
 
 	void gameLoop();
 	void gameTick();
@@ -215,7 +222,7 @@ public:
 
 	bool openArchive(const Common::String &name);
 	bool closeArchive(const Common::String &name);
-	bool isArchiveOpen(const Common::String &name);
+	bool isArchiveOpen(const Common::String &name) const;
 
 	Common::SeekableReadStream *getResourceStream(const Common::String &name);
 

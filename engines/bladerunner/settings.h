@@ -58,6 +58,8 @@ class Settings {
 	int   _ammoType;
 	int   _ammoAmounts[3];
 
+	bool  _learyMode;
+
 public:
 	Settings(BladeRunnerEngine *vm);
 
@@ -104,11 +106,20 @@ public:
 
 	int getAmmoType();
 	int getAmmoAmount(int ammoType);
+	void setAmmoType(int ammoType);
 
 	int getDifficulty();
 	int getPlayerAgenda();
 	void setPlayerAgenda(int agenda);
 	void addAmmo(int ammoType, int ammo);
+
+	bool getLearyMode() {
+		return _learyMode;
+	}
+
+	void setLearyMode(bool learyMode) {
+		_learyMode = learyMode;
+	}
 };
 
 } // End of namespace BladeRunner

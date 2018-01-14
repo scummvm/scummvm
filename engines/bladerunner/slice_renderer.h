@@ -104,7 +104,7 @@ public:
 	void getScreenRectangle(Common::Rect *screenRectangle, int animationId, int animationFrame, Vector3 position, float facing, float scale);
 	void drawInWorld(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer);
 
-	void drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer);
+	void drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface);
 
 	void preload(int animationId);
 

@@ -23,46 +23,54 @@
 #ifndef BLADERUNNER_ACTOR_CLUES_H
 #define BLADERUNNER_ACTOR_CLUES_H
 
+#include "common/array.h"
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-struct ActorClue {
-	int _clueId;
-	int _weight;
-	int _fromActorId;
-	int _field3;
-	int _field4;
-	int _field5;
-	int _field6;
-	int _field7;
-	int _field8;
-	unsigned char _flags;
-};
-
 class ActorClues {
+	struct Clue {
+		int clueId;
+		int weight;
+		int fromActorId;
+		int field3;
+		int field4;
+		int field5;
+		int field6;
+		int field7;
+		int field8;
+		unsigned char flags;
+	};
+
 	BladeRunnerEngine *_vm;
 
-private:
-	int _count;
-	int _maxCount;
-	ActorClue *_clues;
+	int                 _count;
+	int                 _maxCount;
+	Common::Array<Clue> _clues;
 
 public:
 	ActorClues(BladeRunnerEngine *_vm, int cluesType);
-	~ActorClues();
 
 	void add(int actorId, int clueId, int unknown, bool acquired, bool unknownFlag, int fromActorId);
+
 	void acquire(int clueId, bool flag2, int fromActorId);
 	void lose(int clueId);
-	bool isAcquired(int clueId);
-	int getFromActorId(int clueId);
-	bool isFlag2(int clueId);
-	bool isViewed(int clueId);
-	bool isFlag4(int clueId);
-	int getField1(int clueId);
+	bool isAcquired(int clueId) const;
 
-	int getCount();
+	int getFromActorId(int clueId) const;
+
+	bool isFlag2(int clueId) const;
+
+	bool isViewed(int clueId) const;
+	void setViewed(int clueId, bool viewed);
+
+	bool isPrivate(int clueId) const;
+	void setPrivate(int clueId, bool isPrivate);
+
+	int getField1(int clueId) const;
+
+	int getCount() const;
 
 	void removeAll();
 
@@ -70,8 +78,8 @@ public:
 	//loadgame
 
 private:
-	bool exists(int clueId);
-	int findClueIndex(int clueId);
+	bool exists(int clueId) const;
+	int findClueIndex(int clueId) const;
 	void remove(int clueIndex);
 };
 

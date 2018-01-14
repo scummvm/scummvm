@@ -27,29 +27,31 @@
 
 namespace BladeRunner {
 
-struct ObstaclesPolygon {
-	bool    _isPresent;
-	int     _verticesCount;
-	float   _left;
-	float   _bottom;
-	float   _right;
-	float   _top;
-	Vector2 _vertices[160];
-	int     _vertexType[160];
-};
-
 class BladeRunnerEngine;
 
 class Obstacles {
+	static const int kPolygonCount = 50;
+	static const int kVertexCount = 160;
+
+	struct Polygon {
+		bool    isPresent;
+		int     verticeCount;
+		float   left;
+		float   bottom;
+		float   right;
+		float   top;
+		Vector2 vertices[kVertexCount];
+		int     vertexType[kVertexCount];
+	};
+
 	BladeRunnerEngine *_vm;
 
-private:
-	ObstaclesPolygon *_polygons;
-	ObstaclesPolygon *_polygonsBackup;
-	Vector2          *_vertices;
-	int               _verticesCount;
-	int               _count;
-	bool              _backup;
+	Polygon  _polygons[kPolygonCount];
+	Polygon  _polygonsBackup[kPolygonCount];
+	Vector2 *_vertices;
+	int      _verticeCount;
+	int      _count;
+	bool     _backup;
 
 public:
 	Obstacles(BladeRunnerEngine *vm);
@@ -57,7 +59,7 @@ public:
 
 	void clear();
 	void add(float x0, float z0, float x1, float z1);
-	bool find(const Vector3 &from, const Vector3 &to, Vector3 *next);
+	bool find(const Vector3 &from, const Vector3 &to, Vector3 *next) const;
 	void backup();
 	void restore();
 };

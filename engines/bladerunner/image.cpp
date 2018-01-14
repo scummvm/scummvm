@@ -30,8 +30,8 @@
 
 namespace BladeRunner {
 
-Image::Image(BladeRunnerEngine *vm)
-	: _vm(vm) {
+Image::Image(BladeRunnerEngine *vm) {
+	_vm = vm;
 }
 
 Image::~Image() {
@@ -64,7 +64,7 @@ bool Image::open(const Common::String &name) {
 	if (strcmp(tag, "LZO") == 0) {
 		debug("LZO");
 	} else if (strcmp(tag, "LCW") == 0) {
-		decompress_lcw(buf, bufSize, (uint8*)data, dataSize);
+		decompress_lcw(buf, bufSize, (uint8 *)data, dataSize);
 	}
 
 	const Graphics::PixelFormat pixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);

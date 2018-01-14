@@ -43,7 +43,7 @@ public:
 	void reset();
 	bool add(Common::Rect rect);
 	void extendExisting();
-	int getCount();
+	int  getCount() const;
 	bool popRect(Common::Rect *rect);
 };
 
@@ -65,8 +65,8 @@ public:
 	void init(int width, int height);
 	bool decodeData(const uint8 *data, int size);
 
-	uint16 *getData();
-	uint16 getZValue(int x, int y);
+	uint16 *getData() const;
+	uint16 getZValue(int x, int y) const;
 
 private:
 	void reset();

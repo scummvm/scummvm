@@ -38,14 +38,14 @@ Items::~Items() {
 	}
 }
 
-void Items::getXYZ(int itemId, float *x, float *y, float *z) {
+void Items::getXYZ(int itemId, float *x, float *y, float *z) const {
 	int itemIndex = findItem(itemId);
 	assert(itemIndex != -1);
 
 	_items[itemIndex]->getXYZ(x, y, z);
 }
 
-void Items::getWidthHeight(int itemId, int *width, int *height) {
+void Items::getWidthHeight(int itemId, int *width, int *height) const {
 	int itemIndex = findItem(itemId);
 	assert(itemIndex != -1);
 
@@ -80,20 +80,20 @@ bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position,
 	_items.push_back(item);
 
 	if (addToSetFlag && setId == _vm->_scene->getSetId()) {
-		return _vm->_sceneObjects->addItem(itemId + SCENE_OBJECTS_ITEMS_OFFSET, &item->_boundingBox, &item->_screenRectangle, isTargetableFlag, isVisibleFlag);
+		return _vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, isTargetableFlag, isVisibleFlag);
 	}
 	return true;
 }
 
 bool Items::addToSet(int setId) {
-	int itemsCount = _vm->_items->_items.size();
-	if (itemsCount == 0) {
+	int itemCount = _vm->_items->_items.size();
+	if (itemCount == 0) {
 		return true;
 	}
-	for (int i = 0; i < itemsCount; i++) {
+	for (int i = 0; i < itemCount; i++) {
 		Item *item = _vm->_items->_items[i];
 		if (item->_setId == setId) {
-			_vm->_sceneObjects->addItem(item->_itemId + SCENE_OBJECTS_ITEMS_OFFSET, &item->_boundingBox, &item->_screenRectangle, item->isTargetable(), item->_isVisible);
+			_vm->_sceneObjects->addItem(item->_itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, item->isTargetable(), item->_isVisible);
 		}
 	}
 	return true;
@@ -109,13 +109,13 @@ bool Items::remove(int itemId) {
 	}
 
 	if (_items[itemIndex]->_setId == _vm->_scene->getSetId()) {
-		_vm->_sceneObjects->remove(itemId + SCENE_OBJECTS_ITEMS_OFFSET);
+		_vm->_sceneObjects->remove(itemId + kSceneObjectOffsetItems);
 	}
 	_items.remove_at(itemIndex);
 	return true;
 }
 
-int Items::findItem(int itemId) {
+int Items::findItem(int itemId) const {
 	for (int i = 0; i < (int)_items.size(); i++) {
 		if (_items[i]->_itemId == itemId)
 			return i;

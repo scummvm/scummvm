@@ -32,7 +32,12 @@
 
 namespace BladeRunner {
 
-Settings::Settings(BladeRunnerEngine *vm) : _vm(vm) {
+Settings::Settings(BladeRunnerEngine *vm) {
+	_vm = vm;
+
+	_difficulty = 1;
+	_playerAgenda = 1;
+
 	_chapter = 1;
 	_gamma = 1.0f;
 
@@ -46,6 +51,13 @@ Settings::Settings(BladeRunnerEngine *vm) : _vm(vm) {
 
 	_fullHDFrames = true;
 	_mst3k = false;
+
+	_ammoType = 0;
+	_ammoAmounts[0] = 0;
+	_ammoAmounts[1] = 0;
+	_ammoAmounts[2] = 0;
+
+	_learyMode = false;
 }
 
 bool Settings::openNewScene() {
@@ -105,6 +117,12 @@ int Settings::getAmmoType() {
 
 int Settings::getAmmoAmount(int ammoType) {
 	return _ammoAmounts[ammoType];
+}
+
+void Settings::setAmmoType(int ammoType) {
+	if (_ammoAmounts[ammoType] > 0) {
+		_ammoType = ammoType;
+	}
 }
 
 void Settings::addAmmo(int ammoType, int ammo) {

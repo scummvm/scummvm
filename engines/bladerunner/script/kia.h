@@ -29,15 +29,14 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-class ScriptKIA : ScriptBase {
+class KIAScript : ScriptBase {
 public:
-	ScriptKIA(BladeRunnerEngine *vm)
-		: ScriptBase(vm) {
-	}
+	KIAScript(BladeRunnerEngine *vm);
 
-	void SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int a1, int clueId);
+	void playClueAssetScript(int a1, int clueId);
 
 private:
+	void SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int a1, int clueId);
 };
 
 } // End of namespace BladeRunner
