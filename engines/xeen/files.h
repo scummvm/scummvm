@@ -62,9 +62,9 @@ class SavesManager;
  */
 struct CCEntry {
 	uint16 _id;
-	uint32 _offset;
+	int _offset;
 	uint16 _size;
-	uint32 _writeOffset;
+	int _writeOffset;
 
 	CCEntry() : _id(0), _offset(0), _size(0), _writeOffset(0) {}
 	CCEntry(uint16 id, uint32 offset, uint32 size)
