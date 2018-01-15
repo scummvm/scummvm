@@ -584,7 +584,7 @@ void Party::giveTreasure() {
 	if (_vm->_mode != MODE_RECORD_EVENTS && monstersPresent)
 		return;
 
-	Common::fill(&combat._shooting[0], &combat._shooting[MAX_PARTY_COUNT], 0);
+	combat.clearShooting();
 	intf._charsShooting = false;
 	intf.draw3d(true);
 

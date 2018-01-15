@@ -116,7 +116,7 @@ public:
 	int _elemScale[PARTY_AND_MONSTERS];
 	int _missedShot[8];
 	Common::Array<int> _speedTable;
-	int _shooting[8];
+	int _shootingRow[8];
 	int _globalCombat;
 	int _whosTurn;
 	bool _itemFlag;
@@ -154,6 +154,11 @@ public:
 	 * Clear the list of blocked characters
 	 */
 	void clearBlocked();
+
+	/**
+	 * Clear the list of ros projectiles are on headed for part members
+	 */
+	void clearShooting();
 
 	void giveCharDamage(int damage, DamageType attackType, int charIndex);
 

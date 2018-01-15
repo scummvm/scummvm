@@ -436,7 +436,7 @@ void InterfaceScene::drawOutdoorsScene() {
 		_outdoorList[Res.OUTDOOR_DRAWSTRUCT_INDEXES[idx]]._frame = -1;
 
 	if (combat._monstersAttacking) {
-		for (int idx = 0; idx < 8; ++idx) {
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
 			if (_outdoorList._attackImgs4[idx]._sprites)
 				_outdoorList._attackImgs4[idx]._frame = 0;
 			else if (_outdoorList._attackImgs3[idx]._sprites)
@@ -447,7 +447,7 @@ void InterfaceScene::drawOutdoorsScene() {
 				_outdoorList._attackImgs1[idx]._frame = 0;
 		}
 	} else if (_charsShooting) {
-		for (int idx = 0; idx < 8; ++idx) {
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
 			if (_outdoorList._attackImgs1[idx]._sprites)
 				_outdoorList._attackImgs1[idx]._frame = 0;
 			else if (_outdoorList._attackImgs2[idx]._sprites)
@@ -581,7 +581,7 @@ void InterfaceScene::drawIndoorsScene() {
 			}
 		}
 	} else if (_charsShooting) {
-		for (int idx = 0; idx < 8; ++idx) {
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
 			if (_indoorList._attackImgs1[idx]._sprites != nullptr) {
 				_indoorList._attackImgs1[idx]._frame = 0;
 			} else if (_indoorList._attackImgs2[idx]._sprites != nullptr) {
@@ -766,10 +766,10 @@ void InterfaceScene::animate3d() {
 	DrawStruct *combatImgs4 = map._isOutdoors ? _outdoorList._attackImgs4 : _indoorList._attackImgs4;
 
 	if (combat._monstersAttacking) {
-		for (int idx = 0; idx < 8; ++idx) {
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
 			if (combatImgs1[idx]._sprites) {
 				combatImgs1[idx]._sprites = nullptr;
-				combat._shooting[idx] = false;
+				combat._shootingRow[idx] = false;
 			} else if (combatImgs2[idx]._sprites) {
 				combatImgs1[idx]._sprites = combatImgs2[idx]._sprites;
 				combatImgs2[idx]._sprites = nullptr;
@@ -782,7 +782,7 @@ void InterfaceScene::animate3d() {
 			}
 		}
 	} else if (_charsShooting) {
-		for (int idx = 0; idx < 8; ++idx) {
+		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
 			if (combatImgs4[idx]._sprites) {
 				combatImgs4[idx]._sprites = nullptr;
 			} else if (combatImgs3[idx]._sprites) {
@@ -4376,7 +4376,7 @@ void InterfaceScene::drawIndoors() {
 	// Check for any character shooting
 	_isAttacking = false;
 	for (uint idx = 0; idx < _vm->_party->_activeParty.size(); ++idx) {
-		if (_vm->_combat->_shooting[idx])
+		if (_vm->_combat->_shootingRow[idx])
 			_isAttacking = true;
 	}
 
@@ -4457,7 +4457,7 @@ void InterfaceScene::drawOutdoors() {
 	// Check for any character shooting
 	_isAttacking = false;
 	for (uint idx = 0; idx < _vm->_party->_activeParty.size(); ++idx) {
-		if (_vm->_combat->_shooting[idx])
+		if (_vm->_combat->_shootingRow[idx])
 			_isAttacking = true;
 	}
 
