@@ -842,7 +842,7 @@ void TlcGame::tatResultQuest() {
 	for (int i = 0; i < 5; i++) {
 		questName[i] = _scriptVariables[0x41 + i] + 0x30;
 	}
-	questName[6] = '\0';
+	questName[5] = '\0';
 
 	// search for question in the database
 	questIdx = -1;
@@ -862,7 +862,7 @@ void TlcGame::tatResultQuest() {
 	// Add answer score for each bin to the dedicated script variables
 	for (int iBin = 0; iBin < 16; iBin++) {
 		int score = _tatQuestions[questIdx].answerData[selectedAns].binScore[iBin];
-		setScriptVar(0x4d + iBin, _scriptVariables[0x4D] + score);
+		setScriptVar(0x4d + iBin, _scriptVariables[0x4D + iBin] + score);
 	}
 }
 
@@ -887,7 +887,7 @@ void TlcGame::tatResultEpisode() {
 
 		// Find the two biggest bin ratios. Remeber idx and ratio, A is biggest, B second
 		if (binScoreSum != 0) {
-			ratioCur = binScoreSum / _tatHeaders[episode].binDividends[iBin];
+			ratioCur = (float)binScoreSum / (float)_tatHeaders[episode].binDividends[iBin];
 			if (ratioCur > ratioA) {
 				ratioB = ratioA;
 				idxB = idxA;
