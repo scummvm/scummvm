@@ -100,10 +100,10 @@ class ZBuffer;
 
 class BladeRunnerEngine : public Engine {
 public:
-	bool      _gameIsRunning;
-	bool      _windowIsActive;
-	int       _playerLosesControlCounter;
-	char*     _languageCode;
+	bool       _gameIsRunning;
+	bool       _windowIsActive;
+	int        _playerLosesControlCounter;
+	const char *_languageCode;
 
 	ADQ              *_adq;
 	ScreenEffects    *_screenEffects;
