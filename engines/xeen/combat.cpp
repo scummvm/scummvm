@@ -659,10 +659,13 @@ void Combat::setupMonsterAttack(int monsterDataIndex, const Common::Point &pt) {
 					for (int charNum = 0; charNum < MAX_PARTY_COUNT; ++charNum) {
 						if (!_shooting[charNum]) {
 							_shooting[charNum] = COMBAT_SHOOTING[result - 1];
+							break;
 						}
 					}
 				}
 			}
+
+			break;
 		}
 	}
 }
