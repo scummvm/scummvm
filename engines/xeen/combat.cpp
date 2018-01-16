@@ -1125,7 +1125,11 @@ void Combat::setSpeedTable() {
 }
 
 bool Combat::allHaveGone() const {
-	for (uint idx = 0; idx < _charsGone.size(); ++idx) {
+	int monsCount = (_attackMonsters[0] != -1 ? 1 : 0)
+		+ (_attackMonsters[1] != -1 ? 1 : 0)
+		+ (_attackMonsters[2] != -1 ? 1 : 0);
+
+	for (uint idx = 0; idx < (_combatParty.size() + monsCount); ++idx) {
 		if (!_charsGone[idx]) {
 			if (idx >= _combatParty.size()) {
 				return false;
