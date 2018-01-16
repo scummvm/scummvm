@@ -729,7 +729,7 @@ void InterfaceScene::animate3d() {
 			} else {
 				++monster._frame;
 				if (monster._frame == 11) {
-					--monster._frame;
+					--monster._fieldA;
 					monster._frame = monster._fieldA ? 10 : 0;
 				}
 			}
