@@ -808,7 +808,7 @@ void Combat::doMonsterTurn(int monsterId) {
 			return;
 
 		monster._frame = 8;
-		monster._fieldA = 3;
+		monster._postAttackDelay = 3;
 		monster._field9 = 0;
 		intf.draw3d(true);
 		intf.draw3d(true);
@@ -1422,7 +1422,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			_charsArray1[_monsterIndex] = 3;
 			_monPow[_monsterIndex] = _damageType == DT_PHYSICAL && (rangeType == 3 || rangeType == 0);
 			monster._frame = 11;
-			monster._fieldA = 5;
+			monster._postAttackDelay = 5;
 		}
 
 		int monsterResist = getMonsterResistence(rangeType);

@@ -265,7 +265,7 @@ struct MazeMonster {
 	bool _isAttacking;
 	DamageType _damageType;
 	int _field9;
-	int _fieldA;
+	int _postAttackDelay;
 	int _hp;
 	int _effect1, _effect2;
 	int _effect3;

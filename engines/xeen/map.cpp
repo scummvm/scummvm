@@ -685,7 +685,7 @@ MazeMonster::MazeMonster() {
 	_isAttacking = false;
 	_damageType = DT_PHYSICAL;
 	_field9 = 0;
-	_fieldA = 0;
+	_postAttackDelay = 0;
 	_hp = 0;
 	_effect1 = _effect2 = 0;
 	_effect3 = 0;

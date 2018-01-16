@@ -723,14 +723,14 @@ void InterfaceScene::animate3d() {
 						monster._field9 = 0;
 				}
 			} else if (monster._frame == 11) {
-				--monster._fieldA;
-				if (monster._fieldA == 0)
+				--monster._postAttackDelay;
+				if (monster._postAttackDelay == 0)
 					monster._frame = 0;
 			} else {
 				++monster._frame;
 				if (monster._frame == 11) {
-					--monster._fieldA;
-					monster._frame = monster._fieldA ? 10 : 0;
+					--monster._postAttackDelay;
+					monster._frame = monster._postAttackDelay ? 10 : 0;
 				}
 			}
 		}
