@@ -1008,6 +1008,15 @@ Mausrad: Durch Items (Inventar, etc) und Konversations-Log scrollen
 Pfeiltasten: Bewegung. Pfeil nach unten/zurück ist nur verfügbar, wenn die aktuelle
 Ansicht die Bewegung nach unten explizit verfügbar hat.
 
+Funktionstasten:
+F1: Zum Chat-O-Mat umschalten
+F2: Zum persönlichen Gepäck umschalten
+F3: Zum Remote Thingummy umschalten
+F4: Zum Designer-Raum umschalten (Zeichen-Liste)
+F5: Spiel speichern (GMM)
+F6: Zum echten Leben wechseln
+F7: Spiel laden (GMM)
+
 Steuerung für das Starfield-Puzzle am Ende des Spiels:
 Tab: Zwischen Sternenkarte und Himmelslandschaft umschalten
 Mausklick: Stern auf der Himmelslandschaft auswählen
@@ -2068,7 +2077,9 @@ den Originalversionen verwendet werden.
     - Benennen Sie die Spielstanddatei in „simon2.xxx“ um.
 
   Starship Titanic
-    - Benennen Sie die Spielstanddatei in "titanic-win.xxx" um.
+    - Benennen Sie für Spielstände der englischen Version die Spielstanddatei in "titanic-win.xxx"
+      und für Spielstände der deutschen VErsion in "titanic-win-de.xxx" um.
+    - Spielstand-Dateien sind nicht zwischen den unterschiedlichen Sprachversionen austauschbar.
 
   Floyd - Es gibt noch Helden
     - Benennen Sie die Spielstanddatei in „feeble.xxx“ um.
