@@ -1840,10 +1840,17 @@ void Scripts::display(bool justifyFlag, int var46) {
 		w.open();
 
 	while (!_vm->shouldQuit()) {
-		_displayMessage = w.writeString(_displayMessage);
+		const char *newPos = w.writeString(_displayMessage);
 		w.update();
+
+		// Check for end of message
+		if (!newPos)
+			break;
+		_displayMessage = Common::String(newPos);
 		if (_displayMessage.empty())
 			break;
+
+		// Wait for click
 		events.clearEvents();
 
 		do {
