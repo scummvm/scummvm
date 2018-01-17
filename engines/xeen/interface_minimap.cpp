@@ -78,7 +78,7 @@ void InterfaceMinimap::drawOutdoorsMinimap() {
 			assert(v != INVALID_CELL);
 			frame = map.mazeDataCurrent()._surfaceTypes[v];
 
-			if (frame && (map._currentSteppedOn || party._wizardEyeActive)) {
+			if (map._currentSteppedOn || party._wizardEyeActive) {
 				map._tileSprites.draw(1, frame, Common::Point(xp, yp));
 			}
 		}
