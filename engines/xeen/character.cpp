@@ -1192,13 +1192,6 @@ int Character::itemScan(int itemId) const {
 				if (mIndex == itemId)
 					result += Res.ELEMENTAL_RESISTENCES[item._material];
 			}
-
-			if (itemId == 9) {
-				result += Res.ARMOR_STRENGTHS[item._id];
-				if (item._material >= 37 && item._material <= 58) {
-					result += Res.METAL_LAC[item._material - 37];
-				}
-			}
 		}
 	}
 

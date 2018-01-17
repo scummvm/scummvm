@@ -929,9 +929,11 @@ void Combat::doMonsterTurn(int monsterId) {
 				} else {
 					int v = _vm->getRandomNumber(1, 20);
 					if (v == 1) {
+						// Critical Save
 						sound.playFX(6);
 					} else {
 						if (v == 20)
+							// Critical failure
 							doCharDamage(c, charNum, monsterId);
 						v += monsterData._hitChance / 4 + _vm->getRandomNumber(1,
 							monsterData._hitChance);
