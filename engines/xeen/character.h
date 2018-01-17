@@ -334,7 +334,7 @@ public:
 	int _tempAge;
 	int _skills[18];
 	int _awards[128];
-	int _spells[MAX_SPELLS_PER_CLASS];
+	bool _spells[MAX_SPELLS_PER_CLASS];
 	int _lloydMap;
 	Common::Point _lloydPosition;
 	bool _hasSpells;

@@ -1031,7 +1031,7 @@ bool PartyDialog::saveCharacter(Character &c, int classId,
 		if (Res.NEW_CHARACTER_SPELLS[c._class][idx] != -1) {
 			c._hasSpells = true;
 			c._currentSpell = Res.NEW_CHARACTER_SPELLS[c._class][idx];
-			c._spells[c._currentSpell] = 1;
+			c._spells[c._currentSpell] = true;
 		}
 	}
 

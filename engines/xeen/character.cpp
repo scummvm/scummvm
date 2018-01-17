@@ -702,7 +702,7 @@ void Character::clear() {
 	_tempAge = 0;
 	Common::fill(&_skills[0], &_skills[18], 0);
 	Common::fill(&_awards[0], &_awards[128], 0);
-	Common::fill(&_spells[0], &_spells[39], 0);
+	Common::fill(&_spells[0], &_spells[39], false);
 	_lloydMap = 0;
 	_hasSpells = false;
 	_currentSpell = 0;

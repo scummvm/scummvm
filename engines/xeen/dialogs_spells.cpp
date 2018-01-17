@@ -237,7 +237,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 					if (Confirm::show(_vm, msg, castingCopy + 1)) {
 						if (party.subtract(CONS_GOLD, spellCost, WHERE_PARTY, WT_FREEZE_WAIT)) {
-							++c->_spells[spellIndex];
+							c->_spells[spellIndex] = true;
 							sound.stopSound();
 							intf._overallFrame = 0;
 							sound.playSound(isDarkCc ? "guild12.voc" : "parrot2.voc", 1);

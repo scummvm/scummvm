@@ -47,6 +47,7 @@ static int strToInt(const char *s) {
 Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
+	registerCmd("spells", WRAP_METHOD(Debugger, cmdSpells));
 	registerCmd("dump", WRAP_METHOD(Debugger, cmdDump));
 	registerCmd("gold", WRAP_METHOD(Debugger, cmdGold));
 	registerCmd("gems", WRAP_METHOD(Debugger, cmdGems));
@@ -85,6 +86,19 @@ bool Debugger::cmdSpell(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Debugger::cmdSpells(int argc, const char **argv) {
+	Party &party = *_vm->_party;
+
+	for (uint charIdx = 0; charIdx < party._activeParty.size(); ++charIdx) {
+		Character &c = party._activeParty[charIdx];
+		Common::fill(c._spells, c._spells + MAX_SPELLS_PER_CLASS, true);
+		c._currentSp = 500;
+	}
+
+	party._gems += 500;
+	return false;
 }
 
 bool Debugger::cmdDump(int argc, const char **argv) {

@@ -817,7 +817,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 
 		for (int idx = 0; idx < 39; ++idx) {
 			if (Res.SPELLS_ALLOWED[idx2][idx] == takeVal) {
-				ps._spells[idx] = 0;
+				ps._spells[idx] = false;
 				break;
 			}
 		}
@@ -1086,7 +1086,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 
 		for (int idx = 0; idx < 39; ++idx) {
 			if (Res.SPELLS_ALLOWED[idx2][idx] == giveVal) {
-				ps._spells[idx] = 1;
+				ps._spells[idx] = true;
 				intf.spellFX(&ps);
 				break;
 			}
