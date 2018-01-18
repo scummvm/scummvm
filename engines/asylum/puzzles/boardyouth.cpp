@@ -42,7 +42,9 @@ static const PuzzleBoard::PuzzleData puzzleYouthData = {
 	{'H', Common::Point(417, 152)},
 	{'T', Common::Point(223, 181)},
 	{'H', Common::Point(497, 198)},
-	{'Y', Common::Point(435, 231)}},
+	{'Y', Common::Point(435, 231)},
+	{'\0', Common::Point(0, 0)},
+	{'\0', Common::Point(0, 0)}},
 	true,
 	"T H E   Y O U T H "
 };
