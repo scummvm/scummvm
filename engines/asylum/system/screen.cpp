@@ -940,7 +940,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	byte *mirroredBuffer = NULL;
 	int16 frameRight = frame->surface.pitch;
 	uint16 maskHeight = (uint16)sourceMask->height(); // for debugging only
-	byte zoom = abs(sourceMask->left) & 7;
+	byte zoom = ABS(sourceMask->left) & 7;
 
 	// Prepare temporary source buffer if needed
 	if (flags & kDrawFlagMirrorLeftRight) {
