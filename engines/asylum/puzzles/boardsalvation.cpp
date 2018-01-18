@@ -47,7 +47,8 @@ static const PuzzleBoard::PuzzleData puzzleSalvationData = {
 	{'A', Common::Point( 66, 199)},
 	{'T', Common::Point(436, 229)},
 	{'O', Common::Point(172, 262)},
-	{'N', Common::Point(393, 296)}},
+	{'N', Common::Point(393, 296)},
+	{'\0', Common::Point(0, 0)}},
 	false,
 	"S A L V A T I O N "
 };

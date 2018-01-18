@@ -554,7 +554,7 @@ void PuzzlePipes::setup() {
 
 	if (i) {
 		_frameIndexSpider = new uint32[_spiders.size()];
-		memset(_frameIndexSpider, 0, sizeof(_frameIndexSpider));
+		memset(_frameIndexSpider, 0, _spiders.size()*sizeof(uint32));
 	}
 
 	startUpWater();
