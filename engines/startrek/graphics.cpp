@@ -89,6 +89,11 @@ void Graphics::drawImage(const char *filename) {
 	uint16 width = (_vm->getPlatform() == Common::kPlatformAmiga) ? imageStream->readUint16BE() : imageStream->readUint16LE();
 	uint16 height = (_vm->getPlatform() == Common::kPlatformAmiga) ? imageStream->readUint16BE() : imageStream->readUint16LE();	
 
+	if (xoffset >= 320)
+		xoffset = 0;
+	if (yoffset >= 200)
+		yoffset = 0;
+
 	byte *pixels = (byte *)malloc(width * height);
 
 	if (_egaMode && _egaData) {
