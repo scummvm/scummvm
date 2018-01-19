@@ -696,7 +696,7 @@ tunes.tab.
 For this game, you will need all of the files from the clusters
 directories on both CDs. (Actually, a few of them may not be strictly
 necessary, but the ones that I'm uncertain about are all fairly small.)
-You will need to rename the speech.clu, and music.clu files speech1.clu,
+You will need to rename the speech.clu and music.clu files speech1.clu,
 speech2.clu, music1.clu and music2.clu so that ScummVM can tell which
 ones are from CD 1 and which ones are from CD 2. Any other files that
 appear in both cluster directories are identical. Use whichever you
