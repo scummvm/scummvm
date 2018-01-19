@@ -48,6 +48,11 @@ protected:
 	 * intros, main menus, or to play the actual game
 	 */
 	virtual void outerGameLoop();
+
+	/**
+	 * Death cutscene
+	 */
+	virtual void death();
 public:
 	bool _seenDarkSideIntro;
 	WOXGameAction _pendingAction;

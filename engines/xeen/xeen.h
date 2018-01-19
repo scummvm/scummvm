@@ -127,6 +127,11 @@ protected:
 	 * Play the game
 	 */
 	virtual void playGame();
+
+	/**
+	 * Death cutscene
+	 */
+	virtual void death() = 0;
 public:
 	Combat *_combat;
 	Debugger *_debugger;

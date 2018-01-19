@@ -200,6 +200,9 @@ void XeenEngine::play() {
 	_combat->_moveMonsters = true;
 
 	gameLoop();
+
+	if (_party->_dead)
+		death();
 }
 
 void XeenEngine::gameLoop() {
