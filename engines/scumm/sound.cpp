@@ -444,6 +444,9 @@ void Sound::processSfxQueues() {
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
+#if defined(ENABLE_SCUMM_7_8)
+			_curSoundPos = _vm->_imuseDigital->getSoundElapsedTimeInMs(kTalkSoundID) * 60 / 1000;
+#endif
 		} else if (_vm->_game.heversion >= 60) {
 			finished = !isSoundRunning(1);
 		} else {
@@ -451,20 +454,16 @@ void Sound::processSfxQueues() {
 			// calculate speech sound position simulating increment at 60FPS
 			_curSoundPos = (_mixer->getSoundElapsedTime(*_talkChannelHandle) * 60) / 1000;
 		}
-
 		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
-				if (isMouthSyncOff(_curSoundPos) && _mouthSyncMode) {
+				if (finished || (isMouthSyncOff(_curSoundPos) && _mouthSyncMode)) {
 					a->runActorTalkScript(a->_talkStopFrame);
 					_mouthSyncMode = 0;
-				} else  if (isMouthSyncOff(_curSoundPos) == 0 && !_mouthSyncMode) {
+				} else if (isMouthSyncOff(_curSoundPos) == 0 && !_mouthSyncMode) {
 					a->runActorTalkScript(a->_talkStartFrame);
 					_mouthSyncMode = 1;
 				}
-
-				if (_vm->_game.version <= 6 && finished)
-					a->runActorTalkScript(a->_talkStopFrame);
 			}
 		}
 

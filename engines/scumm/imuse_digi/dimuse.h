@@ -161,6 +161,7 @@ public:
 	int32 getCurVoiceLipSyncHeight();
 	int32 getCurMusicLipSyncWidth(int syncId);
 	int32 getCurMusicLipSyncHeight(int syncId);
+	int32 getSoundElapsedTimeInMs(int soundId);
 };
 
 } // End of namespace Scumm
