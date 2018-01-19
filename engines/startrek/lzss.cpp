@@ -23,9 +23,11 @@
  *
  */
 
-#include "startrek/lzss.h"
-#include "common/util.h"
+#include "common/textconsole.h"
 #include "common/memstream.h"
+#include "common/util.h"
+
+#include "startrek/lzss.h"
 
 namespace StarTrek {
 
@@ -72,6 +74,10 @@ Common::SeekableReadStream *decodeLZSS(Common::SeekableReadStream *indata, uint3
 	}
 
 	delete[] histbuff;	
+
+	if (outstreampos != uncompressedSize)
+		error("Size mismatch in LZSS decompression; expected %d bytes, got %d bytes", uncompressedSize, outstreampos);
+
 	return new Common::MemoryReadStream(outLzssBufData, uncompressedSize, DisposeAfterUse::YES);
 }
 

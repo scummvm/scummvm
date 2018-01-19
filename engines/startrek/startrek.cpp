@@ -100,7 +100,6 @@ Common::Error StarTrekEngine::run() {
 			_gfx->setPalette("BRIDGE.PAL");
 			//_gfx->loadEGAData("BRIDGE.EGA");
 			_gfx->drawImage("DEMON5.BMP");
-			//_gfx->drawImage("BRIDGE.BMP");
 		}
 		
 		if (getPlatform() == Common::kPlatformAmiga)
@@ -134,6 +133,7 @@ Common::Error StarTrekEngine::run() {
 }
 
 Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, int fileIndex) {
+	filename.toUppercase();
 	Common::String basename, extension;
 
 	for (int i=filename.size()-1; ; i--) {
@@ -216,9 +216,10 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, in
 	delete indexFile;
 
 	if (!foundData) {
-		// Files with a number at the end are stored a bit differently; they are accessed
-		// based on a "base number". See if there's an earlier number that can be opened.
-		if (basename.lastChar() >= '1' && basename.lastChar() <= '9') {
+		// Files can be accessed "sequentially" if their filenames are the same except for
+		// the last character being incremented by one.
+		if ((basename.lastChar() >= '1' && basename.lastChar() <= '9') ||
+				(basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
 			basename.setChar(basename.lastChar()-1, basename.size()-1);
 			return openFile(basename + "." + extension, fileIndex+1);
 		} else
@@ -252,6 +253,7 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, in
 		assert(fileCount == 1); // Sanity check...
 		Common::SeekableReadStream *stream = dataFile->readStream(uncompressedSize);
 		delete dataFile;
+		delete dataRunFile;
 		return stream;
 	} else {
 		if (fileCount != 1) {
@@ -271,7 +273,9 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, in
 		uint16 compressedSize = (getPlatform() == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
 
 		Common::SeekableReadStream *stream = decodeLZSS(dataFile->readStream(compressedSize), uncompressedSize);
+
 		delete dataFile;
+		delete dataRunFile;
 		return stream;
 	}
 	
