@@ -69,6 +69,13 @@ private:
 	 * Changes the party's position in the current map
 	 */
 	bool cmdPos(int argc, const char **argv);
+
+	/**
+	 * Flags whether to make the party invincible
+	 */
+	bool cmdInvincible(int argc, const char **argv);
+public:
+	bool _invincible;
 public:
 	Debugger(XeenEngine *vm);
 

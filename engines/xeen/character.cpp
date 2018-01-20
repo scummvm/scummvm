@@ -1287,7 +1287,7 @@ void Character::setValue(int id, uint value) {
 		// Set condition
 		if (value == 16) {
 			// Clear all the conditions
-			Common::fill(&_conditions[CURSED], &_conditions[NO_CONDITION], false);
+			clearConditions();
 		} else if (value == 6) {
 			_conditions[value] = 1;
 		} else {
@@ -1785,7 +1785,14 @@ void Character::addHitPoints(int amount) {
 }
 
 void Character::subtractHitPoints(int amount) {
-	Sound &sound = *Party::_vm->_sound;
+	Debugger &debugger = *g_vm->_debugger;
+	Sound &sound = *g_vm->_sound;
+
+	// If invincibility is turned on in the debugger, ignore all damage
+	if (debugger._invincible)
+		return;
+
+	// Subtract the given HP amount
 	_currentHp -= amount;
 	bool flag = _currentHp <= 10;
 
@@ -1845,6 +1852,10 @@ int Character::getClassCategory() const {
 	default:
 		return 0;
 	}
+}
+
+void Character::clearConditions() {
+	Common::fill(&_conditions[CURSED], &_conditions[NO_CONDITION], false);
 }
 
 } // End of namespace Xeen

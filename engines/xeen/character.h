@@ -529,6 +529,11 @@ public:
 	 * Returns a category index for a character, used such for indexing into spell data
 	 */
 	int getClassCategory() const;
+
+	/**
+	 * Clears the character of any currently set conditions
+	 */
+	void clearConditions();
 };
 
 } // End of namespace Xeen

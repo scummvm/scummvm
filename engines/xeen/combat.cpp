@@ -267,6 +267,7 @@ loop:
 }
 
 void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
+	Debugger &debugger = *g_vm->_debugger;
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
@@ -434,7 +435,12 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 			break;
 		}
 
-		c.subtractHitPoints(damage);
+		if (debugger._invincible)
+			// Invincibility mode is on, so reset conditions that were set
+			c.clearConditions();
+		else
+			// Standard gameplay, deal out the damage
+			c.subtractHitPoints(damage);
 	}
 
 	events.ipause(2);

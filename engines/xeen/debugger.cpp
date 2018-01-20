@@ -44,7 +44,8 @@ static int strToInt(const char *s) {
 
 /*------------------------------------------------------------------------*/
 
-Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
+Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm),
+		_invincible(false) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
 	registerCmd("spells", WRAP_METHOD(Debugger, cmdSpells));
@@ -53,6 +54,7 @@ Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("gems", WRAP_METHOD(Debugger, cmdGems));
 	registerCmd("map", WRAP_METHOD(Debugger, cmdMap));
 	registerCmd("pos", WRAP_METHOD(Debugger, cmdPos));
+	registerCmd("invincible", WRAP_METHOD(Debugger, cmdInvincible));
 
 	_spellId = -1;
 }
@@ -190,6 +192,12 @@ bool Debugger::cmdPos(int argc, const char **argv) {
 		party._stepped = true;
 		return false;
 	}
+}
+
+bool Debugger::cmdInvincible(int argc, const char **argv) {
+	_invincible = (argc < 2) || strcmp(argv[1], "off");
+	debugPrintf("Invincibility is %s\n", _invincible ? "on" : "off");
+	return true;
 }
 
 } // End of namespace Xeen
