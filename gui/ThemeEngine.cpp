@@ -227,7 +227,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDWidgetBackgroundEditText,   "widget_textedit",  true,   kDDNone},
 	{kDDWidgetBackgroundSlider,     "widget_slider",    true,   kDDNone},
 
-	{kDDButtonIdle,                 "button_idle",      true,   kDDWidgetBackgroundSlider},
+	{kDDButtonIdle,                 "button_idle",      true,   kDDNone},
 	{kDDButtonHover,                "button_hover",     false,  kDDButtonIdle},
 	{kDDButtonDisabled,             "button_disabled",  true,   kDDNone},
 	{kDDButtonPressed,              "button_pressed",   false,  kDDButtonIdle},
