@@ -1971,9 +1971,9 @@ void TuckerEngine::clearItemsGfx() {
 }
 
 void TuckerEngine::drawPausedInfoBar() {
-	int len = getStringWidth(36, _infoBarBuf);
-	int x = 159 - len / 2;
-	drawItemString(326 + x, 36, _infoBarBuf);
+	const int len = getStringWidth(36, _infoBarBuf);
+	const int x = (kScreenWidth / 2) - 1 - (len / 2);
+	drawItemString(x, 36, _infoBarBuf);
 }
 
 const uint8 *TuckerEngine::getStringBuf(int type) const {
@@ -2023,7 +2023,7 @@ void TuckerEngine::drawInfoString() {
 			infoStringWidth += getStringWidth(_actionObj2Num + 1, obj2StrBuf);
 		}
 	}
-	const int xPos = 159 - infoStringWidth / 2;
+	const int xPos = (kScreenWidth / 2) - 1 - (infoStringWidth / 2);
 	if (_gameLang == Common::EN_ANY || (_actionObj2Num == 0 && _actionObj2Type == 0) || verbPreposition == 0) {
 		drawItemString(xPos, _actionVerb + 1, infoStrBuf);
 		if (_actionObj1Num > 0 || _actionObj1Type > 0) {
@@ -2040,8 +2040,8 @@ void TuckerEngine::drawInfoString() {
 
 void TuckerEngine::drawGameHintString() {
 	const int len = getStringWidth(_gameHintsStringNum + 29, _infoBarBuf);
-	const int x = 159 - len / 2;
-	drawItemString(326 + x, _gameHintsStringNum + 29, _infoBarBuf);
+	const int x = (kScreenWidth / 2) - 1 - (len / 2);
+	drawItemString(x, _gameHintsStringNum + 29, _infoBarBuf);
 }
 
 void TuckerEngine::updateCharacterAnimation() {
@@ -2902,7 +2902,11 @@ void TuckerEngine::drawItemString(int x, int num, const uint8 *str) {
 	int pos = getPositionForLine(num, str);
 	while (str[pos] != '\n') {
 		const uint8 chr = str[pos];
-		Graphics::drawStringChar(_itemsGfxBuf, x, 0, 320, chr, 1, _charsetGfxBuf);
+		// Different versions of the game use different character set dimensions (charset.pcx).
+		// The default (English) set uses a height of 8 pixels whereas others use 10 pixels.
+		// This needs to be taken into consideration when drawing the language bar so text
+		// gets vertically centered in all languages.
+		Graphics::drawStringChar(_itemsGfxBuf, x, (10 - (Graphics::_charset._charH)) / 2, 320, chr, 1, _charsetGfxBuf);
 		x += _charWidthTable[chr];
 		++pos;
 	}
