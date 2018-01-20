@@ -40,32 +40,31 @@ void WorldOfXeenEngine::outerGameLoop() {
 	//_pendingAction = getGameID() == GType_DarkSide ? WOX_DARKSIDE_INTRO : WOX_CLOUDS_INTRO;
 	_pendingAction = WOX_MENU;
 
-	if (_loadSaveSlot != -1 || gDebugLevel >= 1)
-		// Skip main menu and go straight to the game
+	if (_loadSaveSlot != -1)
+		// Loading savegame from launcher, so Skip menu and go straight to game
 		_pendingAction = WOX_PLAY_GAME;
 
 	while (!shouldQuit() && _pendingAction != WOX_QUIT) {
-		switch (_pendingAction) {
+		WOXGameAction action = _pendingAction;
+		_pendingAction = WOX_MENU;
+
+		switch (action) {
 		case WOX_CLOUDS_INTRO:
 			if (showCloudsTitle())
 				showCloudsIntro();
-			_pendingAction = WOX_MENU;
 			break;
 
 		case WOX_CLOUDS_ENDING:
 			showCloudsEnding();
-			_pendingAction = WOX_MENU;
 			break;
 
 		case WOX_DARKSIDE_INTRO:
 			if (showDarkSideTitle())
 				showDarkSideIntro();
-			_pendingAction = WOX_MENU;
 			break;
 
 		case WOX_DARKSIDE_ENDING:
 			showDarkSideEnding();
-			_pendingAction = WOX_MENU;
 			break;
 
 		case WOX_WORLD_ENDING:

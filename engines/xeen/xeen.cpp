@@ -225,6 +225,9 @@ void XeenEngine::gameLoop() {
 
 		// Main user interface handler for waiting for and processing user input
 		_interface->perform();
+
+		if (_party->_dead)
+			break;
 	}
 }
 
