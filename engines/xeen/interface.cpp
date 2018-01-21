@@ -1487,7 +1487,9 @@ void Interface::doCombat() {
 	combat._combatMode = COMBATMODE_2;
 	_vm->_mode = MODE_COMBAT;
 
-	_iconSprites.load("combat.icn");
+	SpriteResource *oldSprites = _mainList[1]._sprites;
+	SpriteResource iconSprites;
+	iconSprites.load("combat.icn");
 	for (int idx = 1; idx < 16; ++idx)
 		_mainList[idx]._sprites = &_iconSprites;
 
@@ -1501,7 +1503,7 @@ void Interface::doCombat() {
 	combat._charsArray1[0] = 0;
 	combat._charsArray1[1] = 0;
 	combat._charsArray1[2] = 0;
-	combat._monstersAttacking = 0;
+	combat._monstersAttacking = false;
 	combat._partyRan = false;
 
 	// Set up the combat party
@@ -1537,8 +1539,8 @@ void Interface::doCombat() {
 
 			// Write out the description of the monsters being battled
 			w.writeString(combat.getMonsterDescriptions());
-			_iconSprites.draw(0, 32, Common::Point(233, combat._monsterIndex * 10 + 27),
-				0x8010000);
+			iconSprites.draw(0, 32, Common::Point(233, combat._monsterIndex * 10 + 27),
+				SPRFLAG_800, 1);
 			w.update();
 
 			// Wait for keypress
@@ -1752,9 +1754,9 @@ void Interface::doCombat() {
 		drawParty(true);
 	}
 
-	_iconSprites.load("main.icn");
+	// Restore old sprites
 	for (int idx = 1; idx < 16; ++idx)
-		_mainList[idx]._sprites = &_iconSprites;
+		_mainList[idx]._sprites = oldSprites;
 
 	setMainButtons();
 	mainIconsPrint();
