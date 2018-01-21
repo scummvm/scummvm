@@ -301,7 +301,7 @@ bool File::open(const Common::String &filename, int ccMode) {
 	int oldMode = files._isDarkCc ? 1 : 0;
 
 	files.setGameCc(ccMode);
-	File::open(filename);
+	File::open(filename, *_currentArchive);
 	files.setGameCc(oldMode);
 
 	return true;

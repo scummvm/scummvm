@@ -1282,8 +1282,8 @@ int ReaperCutscene::show() {
 	Sound &sound = *g_vm->_sound;
 	Windows &windows = *g_vm->_windows;
 
-	SpriteResource sprites1(_isDarkCc ? "tower1.zom" : "tower.vga");
-	SpriteResource sprites2(_isDarkCc ? "tower2.zom" : "freap.vga");
+	SpriteResource sprites1(_isDarkCc ? "tower1.zom" : "tower.vga", _isDarkCc);
+	SpriteResource sprites2(_isDarkCc ? "tower2.zom" : "freap.vga", _isDarkCc);
 
 	Graphics::ManagedSurface savedBg;
 	savedBg.copyFrom(screen);
