@@ -523,7 +523,7 @@ void InterfaceScene::drawOutdoorsScene() {
 		_outdoorList[123] = _outdoorList[114];
 		_outdoorList[112]._sprites = nullptr;
 		_outdoorList[113]._sprites = nullptr;
-		_outdoorList[124]._sprites = nullptr;
+		_outdoorList[114]._sprites = nullptr;
 		monsterIndex = 2;
 	} else if (combat._attackMonsters[2] != -1 && map._mobData._monsters[combat._attackMonsters[2]]._frame >= 8) {
 		_outdoorList[121] = _outdoorList[115];
