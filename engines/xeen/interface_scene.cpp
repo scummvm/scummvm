@@ -760,40 +760,44 @@ void InterfaceScene::animate3d() {
 		}
 	}
 
-	DrawStruct *combatImgs1 = map._isOutdoors ? _outdoorList._attackImgs1 : _indoorList._attackImgs1;
-	DrawStruct *combatImgs2 = map._isOutdoors ? _outdoorList._attackImgs2 : _indoorList._attackImgs2;
-	DrawStruct *combatImgs3 = map._isOutdoors ? _outdoorList._attackImgs3 : _indoorList._attackImgs3;
-	DrawStruct *combatImgs4 = map._isOutdoors ? _outdoorList._attackImgs4 : _indoorList._attackImgs4;
+	DrawStruct *rangedImgs1 = map._isOutdoors ? _outdoorList._attackImgs1 : _indoorList._attackImgs1;
+	DrawStruct *rangedImgs2 = map._isOutdoors ? _outdoorList._attackImgs2 : _indoorList._attackImgs2;
+	DrawStruct *rangedImgs3 = map._isOutdoors ? _outdoorList._attackImgs3 : _indoorList._attackImgs3;
+	DrawStruct *rangedImgs4 = map._isOutdoors ? _outdoorList._attackImgs4 : _indoorList._attackImgs4;
 
 	if (combat._monstersAttacking) {
+		// Monsters doing ranged attacks. Sequentially move the attack from
+		// whichever row it started in to the front (where the party is)
 		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
-			if (combatImgs1[idx]._sprites) {
-				combatImgs1[idx]._sprites = nullptr;
-				combat._shootingRow[idx] = false;
-			} else if (combatImgs2[idx]._sprites) {
-				combatImgs1[idx]._sprites = combatImgs2[idx]._sprites;
-				combatImgs2[idx]._sprites = nullptr;
-			} else if (combatImgs3[idx]._sprites) {
-				combatImgs2[idx]._sprites = combatImgs3[idx]._sprites;
-				combatImgs3[idx]._sprites = nullptr;
-			} else if (combatImgs4[idx]._sprites) {
-				combatImgs3[idx]._sprites = combatImgs4[idx]._sprites;
-				combatImgs4[idx]._sprites = nullptr;
+			if (rangedImgs1[idx]._sprites) {
+				rangedImgs1[idx]._sprites = nullptr;
+				combat._shootingRow[idx] = 0;
+			} else if (rangedImgs2[idx]._sprites) {
+				rangedImgs1[idx]._sprites = rangedImgs2[idx]._sprites;
+				rangedImgs2[idx]._sprites = nullptr;
+			} else if (rangedImgs3[idx]._sprites) {
+				rangedImgs2[idx]._sprites = rangedImgs3[idx]._sprites;
+				rangedImgs3[idx]._sprites = nullptr;
+			} else if (rangedImgs4[idx]._sprites) {
+				rangedImgs3[idx]._sprites = rangedImgs4[idx]._sprites;
+				rangedImgs4[idx]._sprites = nullptr;
 			}
 		}
 	} else if (_charsShooting) {
+		// Characters shooting at monsters. Sequentially move the attack
+		// away from the party
 		for (int idx = 0; idx < MAX_PARTY_COUNT; ++idx) {
-			if (combatImgs4[idx]._sprites) {
-				combatImgs4[idx]._sprites = nullptr;
-			} else if (combatImgs3[idx]._sprites) {
-				combatImgs4[idx]._sprites = combatImgs3[idx]._sprites;
-				combatImgs3[idx]._sprites = nullptr;
-			} else if (combatImgs2[idx]._sprites) {
-				combatImgs3[idx]._sprites = combatImgs2[idx]._sprites;
-				combatImgs2[idx]._sprites = nullptr;
-			} else if (combatImgs1[idx]._sprites) {
-				combatImgs2[idx]._sprites = combatImgs1[idx]._sprites;
-				combatImgs1[idx]._sprites = nullptr;
+			if (rangedImgs4[idx]._sprites) {
+				rangedImgs4[idx]._sprites = nullptr;
+			} else if (rangedImgs3[idx]._sprites) {
+				rangedImgs4[idx]._sprites = rangedImgs3[idx]._sprites;
+				rangedImgs3[idx]._sprites = nullptr;
+			} else if (rangedImgs2[idx]._sprites) {
+				rangedImgs3[idx]._sprites = rangedImgs2[idx]._sprites;
+				rangedImgs2[idx]._sprites = nullptr;
+			} else if (rangedImgs1[idx]._sprites) {
+				rangedImgs2[idx]._sprites = rangedImgs1[idx]._sprites;
+				rangedImgs1[idx]._sprites = nullptr;
 			}
 		}
 	}

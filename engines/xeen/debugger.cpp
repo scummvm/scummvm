@@ -96,11 +96,13 @@ bool Debugger::cmdSpells(int argc, const char **argv) {
 	for (uint charIdx = 0; charIdx < party._activeParty.size(); ++charIdx) {
 		Character &c = party._activeParty[charIdx];
 		Common::fill(c._spells, c._spells + MAX_SPELLS_PER_CLASS, true);
-		c._currentSp = 500;
+		c._currentSp = 9999;
 	}
 
-	party._gems += 500;
-	return false;
+	party._gems += 1000;
+
+	debugPrintf("Spells given to party.\n");
+	return true;
 }
 
 bool Debugger::cmdDump(int argc, const char **argv) {
