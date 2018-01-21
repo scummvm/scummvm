@@ -39,12 +39,13 @@
 #endif
 
 //
-// Replacement for the override keyword. This allows compilation of code
-// which uses it, but does not feature any semantic.
+// Replacement for the override & final keywords. This allows compilation of
+// code which uses it, but does not feature any semantic.
 //
-// MSVC 2012 and newer fully support override: http://msdn.microsoft.com/en-us/library/hh567368.aspx
+// MSVC 2012 and newer fully support these: http://msdn.microsoft.com/en-us/library/hh567368.aspx
 #if !defined(_MSC_VER) || _MSC_VER < 1700
 #define override
+#define final
 #endif
 
 #endif
