@@ -711,12 +711,12 @@ void TuckerEngine::execData3PreUpdate_locationNum9() {
 	if (_flagsTable[7] < 2) {
 		_flagsTable[7] = 2;
 	}
-	if (_flagsTable[8] == 0 && _locationMusicsTable[0]._volume != 0) {
-		_locationMusicsTable[0]._volume = 0;
-	} else {
-		_locationMusicsTable[0]._volume = _xPosCurrent / 40;
-	}
+
+	// If the door to the dentist is open play the dentist room music based on
+	// Bud's proximity to the door (the closer the louder the music is played)
+	_locationMusicsTable[0]._volume = _flagsTable[8] == 0 ? 0 : _xPosCurrent / 40;
 	setVolumeMusic(0, _locationMusicsTable[0]._volume);
+
 	if (!isSoundPlaying(1) && getRandomNumber() > 32000) {
 		int i = getRandomNumber() / 5500 + 3;
 		assert(i >= 0 && i < kLocationSoundsTableSize);
