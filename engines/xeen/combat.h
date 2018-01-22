@@ -58,7 +58,7 @@ enum ElementalCategory {
 };
 
 enum RangeType {
-	RT_SINGLE = 0, RT_GROUP = 1, RT_ALL = 2, RT_3 = 3
+	RT_SINGLE = 0, RT_GROUP = 1, RT_ALL = 2, RT_HIT = 3
 };
 
 enum ShootType {

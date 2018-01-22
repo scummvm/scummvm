@@ -1085,8 +1085,8 @@ void Combat::setupCombatParty() {
 void Combat::setSpeedTable() {
 	Map &map = *_vm->_map;
 	Common::Array<int> charSpeeds;
-	bool hasSpeed = _whosSpeed != -1 && _whosSpeed < (int)_speedTable.size();
-	int oldSpeed = hasSpeed ? _speedTable[_whosSpeed] : 0;
+	bool hasSpeed = _whosSpeed != -1;
+	int oldSpeed = hasSpeed && _whosSpeed < (int)_speedTable.size() ? _speedTable[_whosSpeed] : 0;
 
 	// Set up speeds for party membres
 	int maxSpeed = 0;
@@ -1122,12 +1122,13 @@ void Combat::setSpeedTable() {
 
 	if (hasSpeed) {
 		if (_speedTable[_whosSpeed] != oldSpeed) {
-			for (uint idx = 0; idx < charSpeeds.size(); ++idx) {
-				if (oldSpeed == _speedTable[idx]) {
-					_whosSpeed = idx;
+			for (_whosSpeed = 0; _whosSpeed < (int)charSpeeds.size(); ++_whosSpeed) {
+				if (oldSpeed == _speedTable[_whosSpeed])
 					break;
-				}
 			}
+
+			if (_whosSpeed == (int)charSpeeds.size())
+				error("Could not reset next speedy character. Beep beep.");
 		}
 	}
 }
@@ -1211,7 +1212,6 @@ void Combat::attack(Character &c, RangeType rangeType) {
 					_vm->getRandomNumber(1, 100 + _oldCharacter->getCurrentLevel())) {
 				if (_monsterDamage != 0) {
 					attack2(damage, rangeType);
-					setSpeedTable();
 				} else {
 					switch (_damageType) {
 					case DT_SLEEP:
@@ -1225,18 +1225,15 @@ void Combat::attack(Character &c, RangeType rangeType) {
 							&& !monsterSavingThrow(monsterDataIndex)) {
 							damage = MIN(monster._hp, 50);
 							attack2(damage, RT_ALL);
-							setSpeedTable();
 						}
 						break;
 					case DT_HOLYWORD:
 						if (monsterData._monsterType == MONSTER_UNDEAD) {
 							attack2(monster._hp, RT_ALL);
-							setSpeedTable();
 						}
 						break;
 					case DT_MASS_DISTORTION:
 						attack2(MAX(monster._hp / 2, 1), RT_ALL);
-						setSpeedTable();
 						break;
 					case DT_UNDEAD:
 						if (monsterData._monsterType == MONSTER_UNDEAD)
@@ -1244,7 +1241,6 @@ void Combat::attack(Character &c, RangeType rangeType) {
 						else
 							rangeType = RT_ALL;
 						attack2(damage, rangeType);
-						setSpeedTable();
 						break;
 					case DT_BEASTMASTER:
 						if ((monsterData._monsterType == MONSTER_ANIMAL || monsterData._monsterType == MONSTER_HUMANOID)
@@ -1259,7 +1255,6 @@ void Combat::attack(Character &c, RangeType rangeType) {
 					case DT_GOLEMSTOPPER:
 						if (monsterData._monsterType == MONSTER_GOLEM) {
 							attack2(100, rangeType);
-							setSpeedTable();
 						}
 						break;
 					case DT_HYPNOTIZE:
@@ -1271,12 +1266,10 @@ void Combat::attack(Character &c, RangeType rangeType) {
 					case DT_INSECT_SPRAY:
 						if (monsterData._monsterType == MONSTER_INSECT) {
 							attack2(25, rangeType);
-							setSpeedTable();
 						}
 						break;
 					case DT_MAGIC_ARROW:
 						attack2(8, rangeType);
-						setSpeedTable();
 						break;
 					default:
 						break;
@@ -1296,7 +1289,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 					} else {
 						damage = _monsterDamage ? _monsterDamage : _weaponDamage;
 						_shootingRow[charIndex] = 0;
-						attack2(damage, rangeType);
+						attack2(damage, RT_HIT);
 
 						if (map._isOutdoors) {
 							intf._outdoorList._attackImgs1[charIndex]._scale = 0;
@@ -1393,8 +1386,9 @@ void Combat::attack(Character &c, RangeType rangeType) {
 		}
 
 		attack2(damage, rangeType);
-		setSpeedTable();
 	}
+
+	setSpeedTable();
 }
 
 void Combat::attack2(int damage, RangeType rangeType) {
@@ -1742,7 +1736,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 	MonsterStruct &monsterData = *monster._monsterData;
 	int resistence = 0, damage = 0;
 
-	if (rangeType != RT_SINGLE && rangeType != RT_3) {
+	if (rangeType != RT_SINGLE && rangeType != RT_HIT) {
 		switch (_damageType) {
 		case DT_PHYSICAL:
 			resistence = monsterData._phsyicalResistence;
