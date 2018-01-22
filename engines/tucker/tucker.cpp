@@ -496,12 +496,9 @@ void TuckerEngine::mainLoop() {
 			}
 			_currentGfxBackground = _quadBackgroundGfxBuf + (_currentGfxBackgroundCounter / 10) * 44800;
 			if (_fadePaletteCounter < 34 && _locationNum == 22) {
-				_spritesTable[0]._gfxBackgroundOffset = (_currentGfxBackgroundCounter / 10) * 640;
-				_mainSpritesBaseOffset = _currentGfxBackgroundCounter / 10;
-				if (_locationNum == 22 && _currentGfxBackgroundCounter <= 29) {
-					_spritesTable[0]._gfxBackgroundOffset = 640;
-					_mainSpritesBaseOffset = 1;
-				}
+				int offset = (_currentGfxBackgroundCounter > 29 ? 1 : (_currentGfxBackgroundCounter / 10));
+				_spritesTable[0]._gfxBackgroundOffset = offset * 640;
+				_mainSpritesBaseOffset = offset;
 			}
 			_fullRedraw = true;
 		} else {
