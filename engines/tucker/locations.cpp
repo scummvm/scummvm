@@ -972,9 +972,12 @@ void TuckerEngine::updateSprite_locationNum14(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum14() {
-	if (_yPosCurrent >= 127)
-		return;
+	if (_yPosCurrent >= 127) {
+		execData3Update_locationNum14();
+	}
+}
 
+void TuckerEngine::execData3Update_locationNum14() {
 	if (!isSoundPlaying(0)) {
 		int num = -1;
 		const int i = getRandomNumber();
@@ -1058,7 +1061,7 @@ void TuckerEngine::execData3PreUpdate_locationNum14Helper2(int i) {
 
 void TuckerEngine::execData3PostUpdate_locationNum14() {
 	if (_yPosCurrent < 127) {
-		execData3PreUpdate_locationNum14();
+		execData3Update_locationNum14();
 	}
 }
 

@@ -440,6 +440,7 @@ protected:
 	void updateSprite_locationNum13(int i);
 	void execData3PreUpdate_locationNum13();
 	void updateSprite_locationNum14(int i);
+	void execData3Update_locationNum14();
 	void execData3PreUpdate_locationNum14();
 	void execData3PreUpdate_locationNum14Helper1(int i);
 	void execData3PreUpdate_locationNum14Helper2(int i);
