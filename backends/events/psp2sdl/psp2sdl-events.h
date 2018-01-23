@@ -34,11 +34,22 @@ public:
 	PSP2EventSource();
 protected:
 	void preprocessEvents(SDL_Event *event) override;
+private:
 	typedef struct {
 		int id; // -1: no touch
 		int timeLastDown;
 	} Touch;
-	Touch _finger[SCE_TOUCH_PORT_MAX_NUM][2]; // track only two fingers per panel
+
+	enum {
+		MAX_NUM_FINGERS = 3,
+	}; // track three fingers per panel
+	Touch _finger[SCE_TOUCH_PORT_MAX_NUM][MAX_NUM_FINGERS]; // keep track of finger status
+
+	void preprocessFingerDown(SDL_Event *event);
+	void preprocessFingerUp(SDL_Event *event);
+	void preprocessFingerMotion(SDL_Event *event);
+	void convertTouchToGameXY(float touchX, float touchY, int *gameX, int *gameY);
+	SceTouchPanelInfo panelInfo;
 };
 
 #endif /* BACKEND_EVENTS_PSP2_H */

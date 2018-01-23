@@ -80,6 +80,7 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 2);
 	ConfMan.registerDefault("shader", 0);
+	ConfMan.registerDefault("touchpad_mouse_mode", true);
 
 	if (!ConfMan.hasKey("fullscreen")) {
 		ConfMan.setBool("fullscreen", true);
@@ -96,7 +97,10 @@ void OSystem_PSP2::initBackend() {
 	if (!ConfMan.hasKey("shader")) {
 		ConfMan.setInt("shader", 2);
 	}
-
+	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
+		ConfMan.setBool("touchpad_mouse_mode", false);
+	}
+	
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new DefaultSaveFileManager("ux0:data/scummvm/saves");
@@ -125,7 +129,28 @@ bool OSystem_PSP2::hasFeature(Feature f) {
 	return (f == kFeatureKbdMouseSpeed ||
 		f == kFeatureJoystickDeadzone ||
 		f == kFeatureShader ||
+		f == kFeatureTouchpadMode ||
 		OSystem_SDL::hasFeature(f));
+}
+
+void OSystem_PSP2::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureTouchpadMode:
+		ConfMan.setBool("touchpad_mouse_mode", enable);
+		break;
+	}
+	OSystem_SDL::setFeatureState(f, enable);
+}
+
+bool OSystem_PSP2::getFeatureState(Feature f) {
+	switch (f) {
+	case kFeatureTouchpadMode:
+		return ConfMan.getBool("touchpad_mouse_mode");
+		break;
+	default:
+		return OSystem_SDL::getFeatureState(f);
+		break;
+	}
 }
 
 void OSystem_PSP2::logMessage(LogMessageType::Type type, const char *message) {
