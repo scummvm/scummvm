@@ -3858,7 +3858,15 @@ void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, 
 		x += _charWidthTable[dataPtr[pos]];
 		++pos;
 	}
-	addDirtyRect(xStart, y, x - xStart, Graphics::_charset._charH);
+	// At least in the English version of the game many glyphs in the character set are one pixel
+	// wider than specified in the character width table. This ensures that, when rendering text,
+	// characters are overlapping one pixel (i.e. their outlines overlap).
+	// This has the negative side effect that when a text line ends with a glyph whose specified
+	// size is narrower than its actual size, the calculated width for the dirty rect is wrong.
+	// To compensate for this we add the current character set's maximum glyph width to make sure
+	// that the dirty rect always covers the whole line.
+	// This fixes Bug #6370.
+	addDirtyRect(xStart, y, x - xStart + Graphics::_charset._charW, Graphics::_charset._charH);
 }
 
 void TuckerEngine::redrawScreen(int offset) {
