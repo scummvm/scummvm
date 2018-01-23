@@ -1791,11 +1791,14 @@ void TuckerEngine::execData3PreUpdate_locationNum29() {
 		const int d = _updateLocationFadePaletteCounter / 2;
 		uint8 scrollPal[5 * 3];
 		for (int i = 0; i < 5; ++i) {
-			scrollPal[i * 3]     = r[i + d];
-			scrollPal[i * 3 + 1] = g[i + d];
-			scrollPal[i * 3 + 2] = b[i + d];
+			// TODO: Why is this needed? 6-bit colors?
+			// Bug Trac#6378. Shift the palette two bits to the left.
+			scrollPal[i * 3 + 0] = r[i + d] << 2;
+			scrollPal[i * 3 + 1] = g[i + d] << 2;
+			scrollPal[i * 3 + 2] = b[i + d] << 2;
 		}
 		_system->getPaletteManager()->setPalette(scrollPal, 118, 5);
+
 		if (_flagsTable[143] == 1) {
 			_locationObjectsTable[2]._xPos = 999;
 			_locationObjectsTable[3]._xPos = 187;
