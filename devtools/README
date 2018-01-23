@@ -84,6 +84,12 @@ create_project (LordHoto, Littleboy)
     any arguments for further help.
 
 
+create_supernova (criezy)
+----------------
+    Creates supernova.dat files which contains static data contained in the
+    original executable as well as translations into additional languages.
+
+
 create_toon (Strangerke)
 -----------
     This tool creates toon.dat, which contains all the game's texts 
