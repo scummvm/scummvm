@@ -24,13 +24,21 @@
 #define BACKEND_EVENTS_PSP2_H
 
 #include "backends/events/sdl/sdl-events.h"
+#include <psp2/touch.h>
 
 /**
  * SDL Events manager for the PSP2.
  */
 class PSP2EventSource : public SdlEventSource {
+public:
+	PSP2EventSource();
 protected:
-	void preprocessEvents(SDL_Event *event);
+	void preprocessEvents(SDL_Event *event) override;
+	typedef struct {
+		int id; // -1: no touch
+		int timeLastDown;
+	} Touch;
+	Touch _finger[SCE_TOUCH_PORT_MAX_NUM][2]; // track only two fingers per panel
 };
 
 #endif /* BACKEND_EVENTS_PSP2_H */
