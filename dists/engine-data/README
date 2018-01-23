@@ -40,6 +40,10 @@ mp3/ogg/flac encoded need the datafile.
 sky.cpt:
 TODO
 
+supernova.dat
+File created partially by extracting the German text from the original source
+code. It also contains the custom-made English translation.
+
 teenagent.dat
 TODO
 

@@ -287,6 +287,9 @@ endif
 ifdef ENABLE_SKY
 DIST_FILES_ENGINEDATA+=sky.cpt
 endif
+ifdef ENABLE_SUPERNOVA
+DIST_FILES_ENGINEDATA+=supernova.dat
+endif
 ifdef ENABLE_TEENAGENT
 DIST_FILES_ENGINEDATA+=teenagent.dat
 endif
