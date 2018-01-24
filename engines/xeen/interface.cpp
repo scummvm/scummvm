@@ -1678,7 +1678,9 @@ void Interface::doCombat() {
 				for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 					MazeMonster &monster = map._mobData._monsters[idx];
 					if (monster._spriteId == 53) {
-						warning("TODO: Monster 53's HP is altered here?!");
+						// For Medusa sprites, their HP keeps getting reset
+						MonsterStruct &monsData = map._monsterData[53];
+						monster._hp = monsData._hp;
 					}
 				}
 
