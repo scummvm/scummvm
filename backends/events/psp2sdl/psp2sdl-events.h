@@ -48,7 +48,7 @@ private:
 	void preprocessFingerDown(SDL_Event *event);
 	void preprocessFingerUp(SDL_Event *event);
 	void preprocessFingerMotion(SDL_Event *event);
-	void convertTouchToGameXY(float touchX, float touchY, int *gameX, int *gameY);
+	void convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY);
 	SceTouchPanelInfo panelInfo;
 };
 

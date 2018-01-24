@@ -43,8 +43,6 @@ PSP2EventSource::PSP2EventSource() {
 			_finger[i][j].id = -1;
 		}
 	}
-	// need specs of front panel for accurate direct touch
-	sceTouchGetPanelInfo(0, &panelInfo);
 }
 
 void PSP2EventSource::preprocessEvents(SDL_Event *event) {
@@ -117,7 +115,7 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 	int y = _km.y / MULTIPLIER;
 
 	if (!ConfMan.getBool("touchpad_mouse_mode") && port == 0) {
-		convertTouchToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+		convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 	}
 
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
@@ -164,11 +162,11 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 
 	if (numFingersDown == 1) {
 
-		int x = _km.x / MULTIPLIER;;
+		int x = _km.x / MULTIPLIER;
 		int y = _km.y / MULTIPLIER;
 
 		if (!ConfMan.getBool("touchpad_mouse_mode") && port == 0) {
-			convertTouchToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 		} else {
 			// for relative mode, use the pointer speed setting
 			float speedFactor = 1.0;
@@ -235,34 +233,33 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 	}
 }
 
-void PSP2EventSource::convertTouchToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
+void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
+	int screenWidth = 960;
+	int screenHeight = 544;
 	// Find touch coordinates in terms of Vita screen pixels
-	float aaTouchX = touchX * (panelInfo.maxAaX - panelInfo.minAaX) + panelInfo.minAaX;
-	float aaTouchY = touchY * (panelInfo.maxAaY - panelInfo.minAaY) + panelInfo.minAaY;
-
-	float screenTouchX = (aaTouchX - panelInfo.minDispX) * 960 / panelInfo.maxDispX;
-	float screenTouchY = (aaTouchY - panelInfo.minDispY) * 544 / panelInfo.maxDispY;
+	int screenTouchX = (int) (touchX * (float)screenWidth);
+	int screenTouchY = (int) (touchY * (float)screenHeight);
 
 	// Find four corners of game screen in Vita screen coordinates
 	// This depends on the fullscreen and aspect ratio correction settings (at least on Vita)
 
-	float gameXMin = 0;
-	float gameXMax = 0;
-	float gameYMin = 0;
-	float gameYMax = 0;
+	int gameXMin = 0;
+	int gameXMax = 0;
+	int gameYMin = 0;
+	int gameYMax = 0;
 	float aspectRatio = 4.0 / 3.0;
 
 	// vertical
 	if (ConfMan.getBool("fullscreen")) {
-		gameYMin = 0.0;
-		gameYMax = 544.0;
+		gameYMin = 0;
+		gameYMax = screenHeight;
 	} else {
 		if (_km.y_max <= 272) {
-			gameYMin = (544.0 - (_km.y_max * 2.0)) / 2.0;
-			gameYMax = 544.0 - gameYMin;
+			gameYMin = (screenHeight - (_km.y_max * 2)) / 2;
+			gameYMax = screenHeight - gameYMin;
 		} else {
-			gameYMin = (544.0 - (_km.y_max)) / 2.0;
-			gameYMax = 544 - gameYMin;
+			gameYMin = (screenHeight - (_km.y_max)) / 2;
+			gameYMax = screenHeight - gameYMin;
 		}
 	}
 	// horizontal
@@ -271,12 +268,12 @@ void PSP2EventSource::convertTouchToGameXY(float touchX, float touchY, int *game
 	} else {
 		aspectRatio = (float)_km.x_max / (float)_km.y_max;
 	}
-	gameXMin = (960 - (gameYMax - gameYMin) * aspectRatio) / 2.0;
-	gameXMax = 960.0 - gameXMin;
+	gameXMin = (960 - ((float)(gameYMax - gameYMin) * aspectRatio)) / 2;
+	gameXMax = 960 - gameXMin;
 
 	// find game pixel coordinates corresponding to front panel touch coordinates
-	int x = (screenTouchX - gameXMin) / (gameXMax - gameXMin) * _km.x_max;
-	int y = (screenTouchY - gameYMin) / (gameYMax - gameYMin) * _km.y_max;
+	int x = ((screenTouchX - gameXMin) * _km.x_max) / (gameXMax - gameXMin);
+	int y = ((screenTouchY - gameYMin) * _km.y_max) / (gameYMax - gameYMin);
 
 	if (x < 0) {
 		x = 0;
