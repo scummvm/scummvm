@@ -799,8 +799,13 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			obj._id = mobStruct._id;
 			obj._direction = mobStruct._direction;
 			obj._frame = 100;
-			obj._spriteId = _objectSprites[obj._id]._spriteId;
-			obj._sprites = &_objectSprites[obj._id]._sprites;
+
+			if (obj._id < (int)_objectSprites.size()) {
+				obj._spriteId = _objectSprites[obj._id]._spriteId;
+				obj._sprites = &_objectSprites[obj._id]._sprites;
+			} else {
+				assert(!obj._id);
+			}
 
 			_objects.push_back(obj);
 			mobStruct.synchronize(s);
@@ -812,11 +817,16 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			MazeMonster mon;
 			mon._position = mobStruct._pos;
 			mon._id = mobStruct._id;
-			mon._spriteId = _monsterSprites[mon._id]._spriteId;
-			mon._sprites = &_monsterSprites[mon._id]._sprites;
-			mon._attackSprites = &_monsterSprites[mon._id]._attackSprites;
 			mon._monsterData = &monsterData[mon._spriteId];
 			mon._frame = _vm->getRandomNumber(7);
+
+			if (mon._id < (int)_monsterSprites.size()) {
+				mon._spriteId = _monsterSprites[mon._id]._spriteId;
+				mon._sprites = &_monsterSprites[mon._id]._sprites;
+				mon._attackSprites = &_monsterSprites[mon._id]._attackSprites;
+			} else {
+				assert(!mon._id);
+			}
 
 			MonsterStruct &md = *mon._monsterData;
 			mon._hp = md._hp;
