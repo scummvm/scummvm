@@ -1614,7 +1614,9 @@ void Interface::doCombat() {
 				nextChar();
 
 				if (_vm->_mode == MODE_1) {
-					warning("TODO: loss of treasure");
+					party._treasure._gems = 0;
+					party._treasure._gold = 0;
+					party._treasure._hasItems = false;
 					party.moveToRunLocation();
 					breakFlag = true;
 				}
