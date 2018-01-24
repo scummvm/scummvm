@@ -151,27 +151,6 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceScene(vm),
 	_upDoorText = false;
 	_tillMove = 0;
 	Common::fill(&_charFX[0], &_charFX[MAX_ACTIVE_PARTY], 0);
-
-	initDrawStructs();
-}
-
-void Interface::initDrawStructs() {
-	_mainList[0] = DrawStruct(7, 232, 74);
-	_mainList[1] = DrawStruct(0, 235, 75);
-	_mainList[2] = DrawStruct(2, 260, 75);
-	_mainList[3] = DrawStruct(4, 286, 75);
-	_mainList[4] = DrawStruct(6, 235, 96);
-	_mainList[5] = DrawStruct(8, 260, 96);
-	_mainList[6] = DrawStruct(10, 286, 96);
-	_mainList[7] = DrawStruct(12, 235, 117);
-	_mainList[8] = DrawStruct(14, 260, 117);
-	_mainList[9] = DrawStruct(16, 286, 117);
-	_mainList[10] = DrawStruct(20, 235, 148);
-	_mainList[11] = DrawStruct(22, 260, 148);
-	_mainList[12] = DrawStruct(24, 286, 148);
-	_mainList[13] = DrawStruct(26, 235, 169);
-	_mainList[14] = DrawStruct(28, 260, 169);
-	_mainList[15] = DrawStruct(30, 286, 169);
 }
 
 void Interface::setup() {
@@ -181,6 +160,8 @@ void Interface::setup() {
 	_blessSprites.load("bless.icn");
 	_charPowSprites.load("charpow.icn");
 	_uiSprites.load("inn.icn");
+	_stdIcons.load("main.icn");
+	_combatIcons.load("combat.icn");
 
 	Party &party = *_vm->_party;
 	party.loadActiveParty();
@@ -190,7 +171,6 @@ void Interface::setup() {
 void Interface::startup() {
 	Resources &res = *_vm->_resources;
 	Windows &windows = *_vm->_windows;
-	_iconSprites.load("main.icn");
 
 	animate3d();
 	if (_vm->_map->_isOutdoors) {
@@ -204,50 +184,50 @@ void Interface::startup() {
 
 	res._globalSprites.draw(windows[1], 5, Common::Point(232, 9));
 	drawParty(false);
-
-	_mainList[0]._sprites = &res._globalSprites;
-	for (int i = 1; i < 16; ++i)
-		_mainList[i]._sprites = &_iconSprites;
-
 	setMainButtons();
 
 	_tillMove = false;
 }
 
 void Interface::mainIconsPrint() {
+	Resources &res = *_vm->_resources;
 	Windows &windows = *_vm->_windows;
 	windows[38].close();
 	windows[12].close();
-	windows[0].drawList(_mainList, 16);
+	
+	res._globalSprites.draw(0, 7, Common::Point(232, 74));
+	drawButtons(&windows[0]);
 	windows[34].update();
 }
 
-void Interface::setMainButtons(bool combatMode) {
+void Interface::setMainButtons(IconsMode mode) {
 	clearButtons();
+	_iconsMode = mode;
+	SpriteResource *spr = mode == ICONS_COMBAT ? &_combatIcons : &_stdIcons;
 
-	addButton(Common::Rect(235,  75, 259,  95),  Common::KEYCODE_s, &_iconSprites);
-	addButton(Common::Rect(260,  75, 284,  95),  Common::KEYCODE_c, &_iconSprites);
-	addButton(Common::Rect(286,  75, 310,  95),  Common::KEYCODE_r, &_iconSprites);
-	addButton(Common::Rect(235,  96, 259, 116),  Common::KEYCODE_b, &_iconSprites);
-	addButton(Common::Rect(260,  96, 284, 116),  Common::KEYCODE_d, &_iconSprites);
-	addButton(Common::Rect(286,  96, 310, 116),  Common::KEYCODE_v, &_iconSprites);
-	addButton(Common::Rect(235, 117, 259, 137),  Common::KEYCODE_m, &_iconSprites);
-	addButton(Common::Rect(260, 117, 284, 137),  Common::KEYCODE_i, &_iconSprites);
-	addButton(Common::Rect(286, 117, 310, 137),  Common::KEYCODE_q, &_iconSprites);
-	addButton(Common::Rect(109, 137, 122, 147), Common::KEYCODE_TAB, &_iconSprites);
-	addButton(Common::Rect(235, 148, 259, 168), Common::KEYCODE_LEFT, &_iconSprites);
-	addButton(Common::Rect(260, 148, 284, 168), Common::KEYCODE_UP, &_iconSprites);
-	addButton(Common::Rect(286, 148, 310, 168), Common::KEYCODE_RIGHT, &_iconSprites);
-	addButton(Common::Rect(235, 169, 259, 189), (Common::KBD_CTRL << 16) |Common::KEYCODE_LEFT, &_iconSprites);
-	addButton(Common::Rect(260, 169, 284, 189), Common::KEYCODE_DOWN, &_iconSprites);
-	addButton(Common::Rect(286, 169, 310, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT, &_iconSprites);
+	addButton(Common::Rect(235,  75, 259,  95),  Common::KEYCODE_s, spr);
+	addButton(Common::Rect(260,  75, 284,  95),  Common::KEYCODE_c, spr);
+	addButton(Common::Rect(286,  75, 310,  95),  Common::KEYCODE_r, spr);
+	addButton(Common::Rect(235,  96, 259, 116),  Common::KEYCODE_b, spr);
+	addButton(Common::Rect(260,  96, 284, 116),  Common::KEYCODE_d, spr);
+	addButton(Common::Rect(286,  96, 310, 116),  Common::KEYCODE_v, spr);
+	addButton(Common::Rect(235, 117, 259, 137),  Common::KEYCODE_m, spr);
+	addButton(Common::Rect(260, 117, 284, 137),  Common::KEYCODE_i, spr);
+	addButton(Common::Rect(286, 117, 310, 137),  Common::KEYCODE_q, spr);
+	addButton(Common::Rect(109, 137, 122, 147), Common::KEYCODE_TAB, spr);
+	addButton(Common::Rect(235, 148, 259, 168), Common::KEYCODE_LEFT, spr);
+	addButton(Common::Rect(260, 148, 284, 168), Common::KEYCODE_UP, spr);
+	addButton(Common::Rect(286, 148, 310, 168), Common::KEYCODE_RIGHT, spr);
+	addButton(Common::Rect(235, 169, 259, 189), (Common::KBD_CTRL << 16) |Common::KEYCODE_LEFT, spr);
+	addButton(Common::Rect(260, 169, 284, 189), Common::KEYCODE_DOWN, spr);
+	addButton(Common::Rect(286, 169, 310, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT, spr);
 	addButton(Common::Rect(236,  11, 308,  69),  Common::KEYCODE_EQUALS);
 	addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1);
 	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2);
 	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3);
 	addPartyButtons(_vm);
 
-	if (combatMode) {
+	if (mode == ICONS_COMBAT) {
 		_buttons[0]._value = Common::KEYCODE_f;
 		_buttons[1]._value = Common::KEYCODE_c;
 		_buttons[2]._value = Common::KEYCODE_a;
@@ -1487,14 +1467,9 @@ void Interface::doCombat() {
 	combat._combatMode = COMBATMODE_2;
 	_vm->_mode = MODE_COMBAT;
 
-	SpriteResource *oldSprites = _mainList[1]._sprites;
-	SpriteResource iconSprites;
-	iconSprites.load("combat.icn");
-	for (int idx = 1; idx < 16; ++idx)
-		_mainList[idx]._sprites = &_iconSprites;
-
 	// Set the combat buttons
-	setMainButtons(true);
+	IconsMode oldMode = _iconsMode;
+	setMainButtons(ICONS_COMBAT);
 	mainIconsPrint();
 
 	combat._combatParty.clear();
@@ -1539,7 +1514,7 @@ void Interface::doCombat() {
 
 			// Write out the description of the monsters being battled
 			w.writeString(combat.getMonsterDescriptions());
-			iconSprites.draw(0, 32, Common::Point(233, combat._monsterIndex * 10 + 27),
+			_combatIcons.draw(0, 32, Common::Point(233, combat._monsterIndex * 10 + 27),
 				SPRFLAG_800, 1);
 			w.update();
 
@@ -1754,11 +1729,8 @@ void Interface::doCombat() {
 		drawParty(true);
 	}
 
-	// Restore old sprites
-	for (int idx = 1; idx < 16; ++idx)
-		_mainList[idx]._sprites = oldSprites;
-
-	setMainButtons();
+	// Restore old icons
+	setMainButtons(oldMode);
 	mainIconsPrint();
 	combat._monster2Attack = -1;
 

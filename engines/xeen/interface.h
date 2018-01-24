@@ -42,6 +42,11 @@ enum Obscurity {
 	OBSCURITY_NONE = 4
 };
 
+enum IconsMode {
+	ICONS_STANDARD = 0,
+	ICONS_COMBAT = 1
+};
+
 #define HILIGHT_CHAR_DISABLED -2
 #define HILIGHT_CHAR_NONE -1
 
@@ -75,12 +80,12 @@ class Interface: public ButtonContainer, public InterfaceScene,
 private:
 	XeenEngine *_vm;
 	SpriteResource _uiSprites;
-	SpriteResource _iconSprites;
 	SpriteResource _borderSprites;
 	SpriteResource _spellFxSprites;
 	SpriteResource _fecpSprites;
 	SpriteResource _blessSprites;
-	DrawStruct _mainList[16];
+	SpriteResource _stdIcons;
+	SpriteResource _combatIcons;
 
 	bool _buttonsLoaded;
 	int _steppingFX;
@@ -90,13 +95,14 @@ private:
 	int _heroismUIFrame;
 	int _flipUIFrame;
 
-	void initDrawStructs();
-
 	void loadSprites();
 
 	void setupBackground();
 
-	void setMainButtons(bool combatMode = false);
+	/**
+	 * Sets the main user interface icons for either standard mode or combat mode
+	 */
+	void setMainButtons(IconsMode mode = ICONS_STANDARD);
 
 	void chargeStep();
 
@@ -143,6 +149,7 @@ public:
 	Common::String _screenText;
 	byte _tillMove;
 	int _charFX[6];
+	IconsMode _iconsMode;
 public:
 	Interface(XeenEngine *vm);
 
