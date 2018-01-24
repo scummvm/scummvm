@@ -2872,6 +2872,7 @@ void TuckerEngine::updateSprite(int i) {
 }
 
 void TuckerEngine::drawStringInteger(int num, int x, int y, int digits) {
+	const int xStart = x;
 	char numStr[4];
 	assert(num < 1000);
 	sprintf(numStr, "%03d", num);
@@ -2880,7 +2881,7 @@ void TuckerEngine::drawStringInteger(int num, int x, int y, int digits) {
 		Graphics::drawStringChar(_locationBackgroundGfxBuf, _scrollOffset + x, y, 640, numStr[i], 102, _charsetGfxBuf);
 		x += 8;
 	}
-	addDirtyRect(_scrollOffset + x, y, Graphics::_charset._charW * 3, Graphics::_charset._charH);
+	addDirtyRect(_scrollOffset + xStart, y, Graphics::_charset._charW * 3, Graphics::_charset._charH);
 }
 
 void TuckerEngine::drawStringAlt(int x, int y, int color, const uint8 *str, int strLen) {
