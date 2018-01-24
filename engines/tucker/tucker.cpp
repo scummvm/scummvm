@@ -3754,7 +3754,7 @@ int TuckerEngine::setLocationAnimationUnderCursor() {
 			continue;
 		}
 		if (_locationAnimationsTable[i]._selectable == 0) {
-			return -1;
+			continue;
 		}
 		_selectedObjectType = 1;
 		_selectedCharacterNum = i;
