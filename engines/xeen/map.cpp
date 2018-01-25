@@ -1103,9 +1103,6 @@ void Map::load(int mapId) {
 				_headData.synchronize(headFile);
 				headFile.close();
 
-				if (!isDarkCc && party._mazeId)
-					_mobData._monsters.clear();
-
 				if (!isDarkCc && mapId == 15) {
 					if ((_mobData._monsters[0]._position.x > 31 || _mobData._monsters[0]._position.y > 31) &&
 						(_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) &&
