@@ -817,13 +817,13 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			MazeMonster mon;
 			mon._position = mobStruct._pos;
 			mon._id = mobStruct._id;
-			mon._monsterData = &monsterData[mon._spriteId];
 			mon._frame = _vm->getRandomNumber(7);
 
 			if (mon._id < (int)_monsterSprites.size()) {
 				mon._spriteId = _monsterSprites[mon._id]._spriteId;
 				mon._sprites = &_monsterSprites[mon._id]._sprites;
 				mon._attackSprites = &_monsterSprites[mon._id]._attackSprites;
+				mon._monsterData = &monsterData[mon._spriteId];
 			} else {
 				assert(!mon._id);
 			}
