@@ -80,7 +80,7 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("kbdmouse_speed", 3);
 	ConfMan.registerDefault("joystick_deadzone", 2);
 	ConfMan.registerDefault("shader", 0);
-	ConfMan.registerDefault("touchpad_mouse_mode", true);
+	ConfMan.registerDefault("touchpad_mouse_mode", false);
 
 	if (!ConfMan.hasKey("fullscreen")) {
 		ConfMan.setBool("fullscreen", true);
