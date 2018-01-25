@@ -59,16 +59,21 @@ void PSP2EventSource::preprocessEvents(SDL_Event *event) {
 		// front (0) or back (1) panel
 		SDL_TouchID port = event->tfinger.touchId;
 		if (port < SCE_TOUCH_PORT_MAX_NUM && port >= 0) {
-			switch (event->type) {
-			case SDL_FINGERDOWN:
-				preprocessFingerDown(event);
-				break;
-			case SDL_FINGERUP:
-				preprocessFingerUp(event);
-				break;
-			case SDL_FINGERMOTION:
-				preprocessFingerMotion(event);
-				break;
+			// touchpad_mouse_mode off: use only front panel for direct touch control of pointer
+			// touchpad_mouse_mode on: use both front and rear for indirect touch control
+			// where the finger can be somewhere else than the pointer and still move it
+			if (port == 0 || ConfMan.getBool("touchpad_mouse_mode")) {
+				switch (event->type) {
+				case SDL_FINGERDOWN:
+					preprocessFingerDown(event);
+					break;
+				case SDL_FINGERUP:
+					preprocessFingerUp(event);
+					break;
+				case SDL_FINGERMOTION:
+					preprocessFingerMotion(event);
+					break;
+				}
 			}
 		}
 	}
