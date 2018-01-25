@@ -459,14 +459,23 @@ public:
 public:
 	Map(XeenEngine *vm);
 
+	/**
+	 * Loads a specified map
+	 */
 	void load(int mapId);
 
 	int mazeLookup(const Common::Point &pt, int layerShift, int wallMask = 0xf);
 
 	void cellFlagLookup(const Common::Point &pt);
 
+	/**
+	 * Sets the surface flags for a given position
+	 */
 	void setCellSurfaceFlags(const Common::Point &pt, int bits);
 
+	/**
+	 * Sets the value for the wall in a given direction from a given point
+	 */
 	void setWall(const Common::Point &pt, Direction dir, int v);
 
 	/**
@@ -474,14 +483,32 @@ public:
 	 */
 	void saveMaze();
 
+	/**
+	 * Gets the data for a map position at one of the relative indexes
+	 * surrounding the current position
+	 */
 	int getCell(int idx);
 
+	/**
+	 * Returns the data for the primary active map
+	 */
 	MazeData &mazeData() { return _mazeData[0]; }
 
+	/**
+	 * Returns the data for the currently indexed map
+	 */
 	MazeData &mazeDataCurrent() { return _mazeData[_mazeDataIndex]; }
 
+	/**
+	 * Loads the sprites needed for rendering the skyline
+	 */
 	void loadSky();
 
+	/**
+	 * Tests the current position, and if it's moved beyond the valid (0,0) to (15,15)
+	 * range for a map, loads in the correct surrounding map, and adjusts the
+	 * position to the relative position on the new map
+	 */
 	void getNewMaze();
 };
 

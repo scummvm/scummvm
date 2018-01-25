@@ -791,7 +791,7 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 
 	} else {
 		// Load monster/obbject data and merge together with sprite Ids
-		// Merge together object data
+		// Load objects
 		mobStruct.synchronize(s);
 		do {
 			MazeObject obj;
@@ -811,7 +811,7 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			mobStruct.synchronize(s);
 		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
 
-		// Merge together monster data
+		// Load monsters
 		mobStruct.synchronize(s);
 		do {
 			MazeMonster mon;
@@ -838,7 +838,7 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			mobStruct.synchronize(s);
 		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
 
-		// Merge together wall item data
+		// Load wall items
 		mobStruct.synchronize(s);
 		do {
 			if (mobStruct._id < (int)_wallItemSprites.size()) {
