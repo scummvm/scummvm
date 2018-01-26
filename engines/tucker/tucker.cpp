@@ -1941,12 +1941,12 @@ void TuckerEngine::drawSprite(int num) {
 		int srcH = READ_LE_UINT16(p + frameOffset + 2);
 		int srcX = READ_LE_UINT16(p + frameOffset + 8);
 		int srcY = READ_LE_UINT16(p + frameOffset + 10);
+		s->_gfxBackgroundOffset += s->_backgroundOffset;
 		int xPos = s->_gfxBackgroundOffset + srcX;
 		if (xPos < 600 && (_scrollOffset + 320 < xPos || _scrollOffset - srcW > xPos)) {
 			return;
 		}
 		s->_xSource = srcX;
-		s->_gfxBackgroundOffset += s->_backgroundOffset;
 		uint8 *dstPtr = _locationBackgroundGfxBuf + srcY * 640 + xPos;
 		const uint8 *srcPtr = p + frameOffset + 12;
 		switch (s->_colorType) {
