@@ -40,7 +40,7 @@
 namespace Xeen {
 
 enum {
-	SCENE_WINDOW = 11
+	SCENE_WINDOW = 11, SCENE_WIDTH = 216, SCENE_HEIGHT = 132
 };
 
 PartyDrawer::PartyDrawer(XeenEngine *vm): _vm(vm) {
@@ -1297,13 +1297,13 @@ void Interface::handleFalling() {
 	sound.playFX(11);
 	sound.playSound("scream.voc");
 
-	for (int idx = 0, incr = 2; idx < 133; ++incr, idx += incr) {
+	for (int idx = 0, incr = 2; idx <= SCENE_HEIGHT; ++incr, idx += incr) {
 		fall(idx);
 		assembleBorder();
 		w.update();
 	}
 
-	fall(132);
+	fall(SCENE_HEIGHT);
 	assembleBorder();
 	w.update();
 
@@ -1311,19 +1311,19 @@ void Interface::handleFalling() {
 	sound.playSound("unnh.voc");
 	sound.playFX(31);
 
-	fall(127);
+	fall(SCENE_HEIGHT - 5);
 	assembleBorder();
 	w.update();
 
-	fall(132);
+	fall(SCENE_HEIGHT);
 	assembleBorder();
 	w.update();
 
-	fall(129);
+	fall(SCENE_HEIGHT - 3);
 	assembleBorder();
 	w.update();
 
-	fall(132);
+	fall(SCENE_HEIGHT);
 	assembleBorder();
 	w.update();
 
@@ -1335,16 +1335,15 @@ void Interface::handleFalling() {
 
 void Interface::setupFallSurface(bool isTop) {
 	Window &w = (*g_vm->_windows)[SCENE_WINDOW];
-	const Common::Rect &r = w.getBounds();
 
 	if (_fallSurface.empty())
-		_fallSurface.create(r.width(), r.height() * 2);
-	_fallSurface.blitFrom(w, Common::Point(0, isTop ? 0 : r.height()));
+		_fallSurface.create(SCENE_WIDTH, SCENE_HEIGHT * 2);
+	_fallSurface.blitFrom(w, Common::Point(0, isTop ? 0 : SCENE_HEIGHT));
 }
 
 void Interface::fall(int yp) {
 	Window &w = (*g_vm->_windows)[SCENE_WINDOW];
-	w.blitFrom(_fallSurface, Common::Rect(0, yp, _fallSurface.w, yp + (_fallSurface.h / 2)), Common::Point(0, 0));
+	w.blitFrom(_fallSurface, Common::Rect(0, yp, SCENE_WIDTH, yp + SCENE_HEIGHT), Common::Point(0, 0));
 }
 
 void Interface::shake(int time) {
