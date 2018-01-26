@@ -878,17 +878,19 @@ void Interface::startFalling(bool flag) {
 	_falling = FALL_1;
 	map.load(party._mazeId);
 
-	if (flag && map._isOutdoors && ((party._mazePosition.x & 16) || (party._mazePosition.y & 16)))
-		map.getNewMaze();
+	if (flag) {
+		if (map._isOutdoors && ((party._mazePosition.x & 16) || (party._mazePosition.y & 16)))
+			map.getNewMaze();
 
-	_flipGround ^= 1;
-	draw3d(true);
-	int tempVal = scripts._v2;
-	scripts._v2 = 0;
-	combat.giveCharDamage(party._fallDamage, DT_PHYSICAL, 0);
-	scripts._v2 = tempVal;
+		_flipGround ^= 1;
+		draw3d(true);
+		int tempVal = scripts._v2;
+		scripts._v2 = 0;
+		combat.giveCharDamage(party._fallDamage, DT_PHYSICAL, 0);
 
-	_flipGround ^= 1;
+		scripts._v2 = tempVal;
+		_flipGround ^= 1;
+	}
 }
 
 bool Interface::checkMoveDirection(int key) {

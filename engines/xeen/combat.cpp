@@ -140,6 +140,7 @@ void Combat::clearShooting() {
 }
 
 void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
+	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
@@ -228,7 +229,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 
 			// Draw the attack effect on the character sprite
 			sound.playFX(fx);
-			_powSprites.draw(0, frame, Common::Point(Res.CHAR_FACES_X[selectedIndex1], 150));
+			intf._charPowSprites.draw(0, frame, Common::Point(Res.CHAR_FACES_X[selectedIndex1], 150));
 			windows[33].update();
 
 			// Reduce damage if power shield active, and set it zero
