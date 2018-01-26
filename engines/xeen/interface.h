@@ -92,7 +92,7 @@ private:
 	SpriteResource _blessSprites;
 	SpriteResource _stdIcons;
 	SpriteResource _combatIcons;
-
+	Graphics::ManagedSurface _fallSurface;
 	bool _buttonsLoaded;
 	int _steppingFX;
 	int _blessedUIFrame;
@@ -129,9 +129,18 @@ private:
 	 */
 	void handleFalling();
 
-	void saveFall();
+	/**
+	 * Sets up a passed surface with a double height combination of the previously
+	 * saved scene background and the newly rendered (but not displayed) scene
+	 * below it. This will be used by the fall sequence to vertically shift from the
+	 * prior "upper" scene to the lower ground scene
+	 */
+	void setupFallSurface(bool isTop);
 
-	void fall(int v);
+	/**
+	 * Handles a frame of falling animation
+	 */
+	void fall(int yp);
 
 	/**
 	 * Shake the screen

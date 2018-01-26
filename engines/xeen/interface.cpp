@@ -39,6 +39,10 @@
 
 namespace Xeen {
 
+enum {
+	SCENE_WINDOW = 11
+};
+
 PartyDrawer::PartyDrawer(XeenEngine *vm): _vm(vm) {
 	_restoreSprites.load("restorex.icn");
 	_hpSprites.load("hpbars.icn");
@@ -1220,7 +1224,7 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 	Windows &windows = *_vm->_windows;
 
 	events.timeMark5();
-	if (windows[11]._enabled)
+	if (windows[SCENE_WINDOW]._enabled)
 		return;
 
 	_flipUIFrame = (_flipUIFrame + 1) % 4;
@@ -1245,7 +1249,7 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 		handleFalling();
 
 	if (_falling == FALL_START) {
-		screen.saveBackground(1);
+		setupFallSurface(true);
 	}
 
 	assembleBorder();
@@ -1280,10 +1284,12 @@ void Interface::handleFalling() {
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[3];
-	saveFall();
+
+	Graphics::ManagedSurface savedBg;
+	setupFallSurface(false);
 
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-		party._activeParty[idx]._faceSprites->draw(windows[0], 4,
+		party._activeParty[idx]._faceSprites->draw(0, 4,
 			Common::Point(Res.CHAR_FACES_X[idx], 150));
 	}
 
@@ -1322,14 +1328,23 @@ void Interface::handleFalling() {
 	w.update();
 
 	shake(10);
+
+	_falling = FALL_NONE;
+	drawParty(true);
 }
 
-void Interface::saveFall() {
-	// TODO
+void Interface::setupFallSurface(bool isTop) {
+	Window &w = (*g_vm->_windows)[SCENE_WINDOW];
+	const Common::Rect &r = w.getBounds();
+
+	if (_fallSurface.empty())
+		_fallSurface.create(r.width(), r.height() * 2);
+	_fallSurface.blitFrom(w, Common::Point(0, isTop ? 0 : r.height()));
 }
 
-void Interface::fall(int v) {
-	// TODO
+void Interface::fall(int yp) {
+	Window &w = (*g_vm->_windows)[SCENE_WINDOW];
+	w.blitFrom(_fallSurface, Common::Rect(0, yp, _fallSurface.w, yp + (_fallSurface.h / 2)), Common::Point(0, 0));
 }
 
 void Interface::shake(int time) {
@@ -1861,11 +1876,11 @@ void Interface::spellFX(Character *c) {
 		_spellFxSprites.draw(0, frameNum, Common::Point(
 			Res.CHAR_FACES_X[charIndex], 150));
 
-		if (!windows[11]._enabled)
+		if (!windows[SCENE_WINDOW]._enabled)
 			draw3d(false);
 
 		windows[0].update();
-		events.wait(windows[11]._enabled ? 2 : 1,false);
+		events.wait(windows[SCENE_WINDOW]._enabled ? 2 : 1,false);
 	}
 
 	drawParty(true);
