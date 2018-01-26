@@ -112,9 +112,9 @@ const char *const Resources::TERRAIN_TYPES[6] = {
 	"town", "cave", "towr", "cstl", "dung", "scfi"
 };
 
-const char *const Resources::SURFACE_TYPE_NAMES[15] = {
-	nullptr, "mount", "ltree", "dtree", "grass", "snotree", "snomnt",
-	"dedltree", "mount", "lavamnt", "palm", "dmount", "dedltree",
+const char *const Resources::OUTDOORS_WALL_TYPES[16] = {
+	nullptr, "mount", "ltree", "dtree", "grass", "snotree", "dsnotree",
+	"snomnt", "dedltree", "mount", "lavamnt", "palm", "dmount", "dedltree",
 	"dedltree", "dedltree"
 };
 

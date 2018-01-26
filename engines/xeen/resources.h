@@ -50,7 +50,7 @@ public:
 	static const char *const IN_NO_CONDITION;
 	static const char *const NOTHING_HERE;
 	static const char *const TERRAIN_TYPES[6];
-	static const char *const SURFACE_TYPE_NAMES[15];
+	static const char *const OUTDOORS_WALL_TYPES[16];
 	static const char *const SURFACE_NAMES[16];
 	static const char *const WHO_ACTIONS[32];
 	static const char *const WHO_WILL_ACTIONS[4];

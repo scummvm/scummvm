@@ -1205,7 +1205,7 @@ void Map::load(int mapId) {
 
 			if (_mazeData[0]._wallTypes[i] != 0) {
 				_wallSprites._surfaces[i].load(Common::String::format("%s.wal",
-					Res.SURFACE_TYPE_NAMES[_mazeData[0]._wallTypes[i]]));
+					Res.OUTDOORS_WALL_TYPES[_mazeData[0]._wallTypes[i]]));
 			}
 
 			_surfaceSprites[i].clear();
