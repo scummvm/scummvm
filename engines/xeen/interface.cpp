@@ -639,7 +639,7 @@ void Interface::doStepCode() {
 		// We can fly, we can.. oh wait, we can't!
 		damage = 100;
 		party._damageType = DT_PHYSICAL;
-		_falling = FALL_1;
+		_falling = FALL_IN_PROGRESS;
 		break;
 	case SURFTYPE_DESERT:
 		// Without navigation skills, simulate getting lost by adding extra time
@@ -649,7 +649,7 @@ void Interface::doStepCode() {
 	case SURFTYPE_CLOUD:
 		if (!party._levitateCount) {
 			party._damageType = DT_PHYSICAL;
-			_falling = FALL_1;
+			_falling = FALL_IN_PROGRESS;
 			damage = 100;
 		}
 		break;
@@ -698,7 +698,7 @@ void Interface::startFalling(bool flag) {
 
 	_falling = FALL_NONE;
 	draw3d(true);
-	_falling = FALL_2;
+	_falling = FALL_START;
 	draw3d(false);
 
 	if (flag && (!isDarkCc || party._fallMaze != 0)) {
@@ -875,7 +875,7 @@ void Interface::startFalling(bool flag) {
 		}
 	}
 
-	_falling = FALL_1;
+	_falling = FALL_IN_PROGRESS;
 	map.load(party._mazeId);
 
 	if (flag) {
@@ -1241,10 +1241,10 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 	// Handle any darkness-based oscurity
 	obscureScene(_obscurity);
 
-	if (_falling == 1)
+	if (_falling == FALL_IN_PROGRESS)
 		handleFalling();
 
-	if (_falling == 2) {
+	if (_falling == FALL_START) {
 		screen.saveBackground(1);
 	}
 

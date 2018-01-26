@@ -49,8 +49,8 @@ enum IconsMode {
 
 enum FallState {
 	FALL_NONE = 0,
-	FALL_1 = 1,
-	FALL_2 = 2
+	FALL_IN_PROGRESS = 1,
+	FALL_START = 2
 };
 
 #define HILIGHT_CHAR_DISABLED -2
