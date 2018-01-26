@@ -69,7 +69,7 @@ void TopMenu::onMouseMove(const Common::Point &pos) {
 		Button *hoveredButton = getButtonAtPosition(pos);
 		if (hoveredButton) {
 			_cursor->setCursorType(Cursor::kActive);
-			_cursor->setMouseHint(hoveredButton->getText(), &hoveredButton->getHintPosition());
+			_cursor->setMouseHint(hoveredButton->getText(), hoveredButton->getHintPosition());
 		} else {
 			_cursor->setCursorType(Cursor::kDefault);
 			_cursor->setMouseHint("");

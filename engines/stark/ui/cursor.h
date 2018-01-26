@@ -66,7 +66,7 @@ public:
 
 	void setCursorType(CursorType type);
 	void setCursorImage(VisualImageXMG *image);
-	void setMouseHint(const Common::String &hint, Common::Point *hintPosition = nullptr);
+	void setMouseHint(const Common::String &hint, const Common::Point &hintPosition = Common::Point());
 private:
 	void updateFadeLevel();
 

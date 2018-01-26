@@ -137,12 +137,12 @@ Common::Point Cursor::getMousePosition(bool unscaled) const {
 	}
 }
 
-void Cursor::setMouseHint(const Common::String &hint, Common::Point *hintPosition) {
+void Cursor::setMouseHint(const Common::String &hint, const Common::Point &hintPosition) {
 	if (hint != _currentHint) {
 		delete _mouseText;
 		delete _mouseHintPos;
-		if (hintPosition) {
-			_mouseHintPos = new Common::Point(hintPosition->x, hintPosition->y);
+		if (hintPosition.x > 0 || hintPosition.y > 0) {
+			_mouseHintPos = new Common::Point(hintPosition.x, hintPosition.y);
 		} else {
 			_mouseHintPos = nullptr;
 		}
