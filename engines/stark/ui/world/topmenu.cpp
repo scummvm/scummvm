@@ -41,9 +41,9 @@ TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
 
-	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(32, 2));
-	_optionsButton = new Button("Options", StaticProvider::kDiaryNormal, Common::Point(560, 2));
-	_exitButton = new Button("Quit", StaticProvider::kQuit, Common::Point(608, 2));
+	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(32, 2), Common::Point(64, 20));
+	_optionsButton = new Button("Options", StaticProvider::kDiaryNormal, Common::Point(560, 2), Common::Point(523, 20));
+	_exitButton = new Button("Quit", StaticProvider::kQuit, Common::Point(608, 2), Common::Point(587, 20));
 }
 
 TopMenu::~TopMenu() {
@@ -69,7 +69,7 @@ void TopMenu::onMouseMove(const Common::Point &pos) {
 		Button *hoveredButton = getButtonAtPosition(pos);
 		if (hoveredButton) {
 			_cursor->setCursorType(Cursor::kActive);
-			_cursor->setMouseHint(hoveredButton->getText());
+			_cursor->setMouseHint(hoveredButton->getText(), &hoveredButton->getHintPosition());
 		} else {
 			_cursor->setCursorType(Cursor::kDefault);
 			_cursor->setMouseHint("");

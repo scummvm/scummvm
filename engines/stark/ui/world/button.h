@@ -40,13 +40,16 @@ class Anim;
 class Button {
 	StaticProvider::UIElement _stockElement;
 	Common::Point _position;
+	Common::Point _hintPosition;
 	Common::String _text;
 public:
-	Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos);
+	Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos, Common::Point hintPos);
 	void setPosition(Common::Point pos) { _position = pos; }
+	void setHintPosition(Common::Point pos) { _hintPosition = pos; }
 	void render();
 	bool containsPoint(Common::Point point);
 	Common::String getText() const { return _text; }
+	Common::Point getHintPosition() const { return _hintPosition; }
 };
 
 } // End of namespace Stark

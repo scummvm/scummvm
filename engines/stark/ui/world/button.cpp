@@ -28,10 +28,11 @@
 
 namespace Stark {
 
-Button::Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos) :
+Button::Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos, Common::Point hintPos) :
 		_position(pos),
 		_stockElement(stockElement),
-		_text(text) {
+		_text(text),
+		_hintPosition(hintPos) {
 }
 
 void Button::render() {

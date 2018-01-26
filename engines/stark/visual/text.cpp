@@ -58,7 +58,7 @@ Common::Rect VisualText::getRect() {
 		createTexture();
 	}
 
-	return _originalRect;
+	return Common::Rect(_texture->width(), _texture->height());
 }
 
 void VisualText::setText(const Common::String &text) {
@@ -109,7 +109,7 @@ void VisualText::createTexture() {
 
 	// Render the lines to the surface
 	for (uint i = 0; i < lines.size(); i++) {
-		font->drawString(&surface, lines[i], 0, scaledLineHeight * i, scaledRect.width(), _color);
+		font->drawString(&surface, lines[i], 0, scaledLineHeight * i - 1, scaledRect.width(), _color);
 	}
 
 	// Create a texture from the surface

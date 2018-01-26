@@ -42,6 +42,7 @@ Cursor::Cursor(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursorImage(nullptr),
 		_mouseText(nullptr),
+		_mouseHintPos(nullptr),
 		_currentCursorType(kNone),
 		_currentHint(""),
 		_fading(false),
@@ -101,13 +102,29 @@ void Cursor::render() {
 	updateFadeLevel();
 
 	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
+	if (_mouseText) {
+		// TODO: Should probably query the image for the width of the cursor
+		// TODO: Add delay to the mouse hints like in the game
+		const int16 cursorDistance = 32;
+		Common::Point pos;
+		Common::Rect viewportRect = _gfx->getScreenViewport();
+		if (_mouseHintPos) {
+			pos.x = _gfx->scaleWidthOriginalToCurrent(_mouseHintPos->x) + viewportRect.left;
+			pos.y = _gfx->scaleHeightOriginalToCurrent(_mouseHintPos->y);
+		} else {
+			Common::Rect hintRect = _mouseText->getRect();
+			int16 sideBorderWidth = _gfx->scaleWidthOriginalToCurrent(48);
+			int16 bottomBorderHeight = _gfx->scaleHeightOriginalToCurrent(_gfx->kBottomBorderHeight);
+			pos.x = CLIP<int16>(_mousePos.x, viewportRect.left + sideBorderWidth, viewportRect.right - sideBorderWidth);
+			pos.y = CLIP<int16>(_mousePos.y, viewportRect.top, viewportRect.bottom - bottomBorderHeight - cursorDistance - hintRect.height());
+			pos.x -= hintRect.width() / 2;
+			pos.y += cursorDistance;
+		}
+		_mouseText->render(pos);
+	}
 	if (_cursorImage) {
 		_cursorImage->setFadeLevel(_fadeLevel);
 		_cursorImage->render(_mousePos, true);
-	}
-	if (_mouseText) {
-		// TODO: Should probably query the image for the width of the cursor
-		_mouseText->render(Common::Point(_mousePos.x + 20, _mousePos.y));
 	}
 }
 
@@ -120,14 +137,22 @@ Common::Point Cursor::getMousePosition(bool unscaled) const {
 	}
 }
 
-void Cursor::setMouseHint(const Common::String &hint) {
+void Cursor::setMouseHint(const Common::String &hint, Common::Point *hintPosition) {
 	if (hint != _currentHint) {
 		delete _mouseText;
+		delete _mouseHintPos;
+		if (hintPosition) {
+			_mouseHintPos = new Common::Point(hintPosition->x, hintPosition->y);
+		} else {
+			_mouseHintPos = nullptr;
+		}
 		if (hint != "") {
 			_mouseText = new VisualText(_gfx);
 			_mouseText->setText(hint);
 			_mouseText->setColor(0xFFFFFFFF);
-			_mouseText->setBackgroundColor(0x80000000);
+			if (!_mouseHintPos) { // Topmenu buttons does not have background colors
+				_mouseText->setBackgroundColor(0x80000000);
+			}
 			_mouseText->setFont(FontProvider::kSmallFont);
 			_mouseText->setTargetWidth(96);
 		} else {
