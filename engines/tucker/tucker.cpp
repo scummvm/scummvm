@@ -810,10 +810,10 @@ void TuckerEngine::updateCharPositionHelper() {
 }
 
 void TuckerEngine::updateCharPosition() {
-	if (_currentActionVerb == 0 || _locationMaskCounter == 0) {
+	if (_currentActionVerb == kVerbWalk || _locationMaskCounter == 0) {
 		return;
 	}
-	if (_currentActionVerb == 1 && _locationNum != 18) {
+	if (_currentActionVerb == kVerbLook && _locationNum != 18) {
 		int pos;
 		_actionPosX = _xPosCurrent;
 		_actionPosY = _yPosCurrent - 64;
@@ -1035,7 +1035,7 @@ void TuckerEngine::updateCursor() {
 	}
 	if (!_actionVerbLocked) {
 		setActionVerbUnderCursor();
-		if (_actionVerb == 0 && _locationNum == 63) {
+		if (_actionVerb == kVerbWalk && _locationNum == 63) {
 			_actionVerb = 8;
 		}
 	}
@@ -1054,10 +1054,10 @@ void TuckerEngine::updateCursor() {
 		}
 	}
 	handleMouseClickOnInventoryObject();
-	if (_actionVerb == 2 && _selectedObjectType != 2) {
+	if (_actionVerb == kVerbTalk && _selectedObjectType != 2) {
 		_selectedObjectNum = 0;
 		_selectedObjectType = 0;
-	} else if (_actionVerb == 5 && _selectedObjectType != 3 && !_actionRequiresTwoObjects) {
+	} else if (_actionVerb == kVerbGive && _selectedObjectType != 3 && !_actionRequiresTwoObjects) {
 		_selectedObjectNum = 0;
 		_selectedObjectType = 0;
 	}
@@ -2008,7 +2008,7 @@ void TuckerEngine::drawInfoString() {
 	int verbPreposition = 0;
 	int verbPrepositionWidth = 0;
 	if (_actionRequiresTwoObjects) {
-		verbPreposition = (_actionVerb == 5) ? 12 : 11;
+		verbPreposition = (_actionVerb == kVerbGive) ? 12 : 11;
 		verbPrepositionWidth = getStringWidth(verbPreposition, infoStrBuf) + 4;
 		if (_gameLang != Common::EN_ANY && (_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
 			infoStringWidth = 0;
@@ -3454,7 +3454,7 @@ void TuckerEngine::setSelectedObjectKey() {
 		} else {
 			_selectedObject._xPos = _locationObjectsTable[_selectedCharacterNum]._standX;
 			_selectedObject._yPos = _locationObjectsTable[_selectedCharacterNum]._standY;
-			if (_actionVerb == 0 || _actionVerb == 8) {
+			if (_actionVerb == kVerbWalk || _actionVerb == kVerbUse) {
 				_selectedObject._locationObjectLocationNum = _locationObjectsTable[_selectedCharacterNum]._locationNum;
 				_selectedObject._locationObjectToX = _locationObjectsTable[_selectedCharacterNum]._toX;
 				_selectedObject._locationObjectToY = _locationObjectsTable[_selectedCharacterNum]._toY;
@@ -3591,7 +3591,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 		}
 		break;
 	case 1:
-		if (_actionVerb == 8 && _leftMouseButtonPressed) {
+		if (_actionVerb == kVerbUse && _leftMouseButtonPressed) {
 			if (_mapSequenceFlagsLocationTable[_locationNum - 1] == 1) {
 				handleMapSequence();
 			} else {
@@ -3676,13 +3676,13 @@ int TuckerEngine::setLocationAnimationUnderCursor() {
 }
 
 void TuckerEngine::setActionForInventoryObject() {
-	if (_actionVerb == 0 || _actionVerb == 2 || _actionVerb == 6 || _actionVerb == 7) {
+	if (_actionVerb == kVerbWalk || _actionVerb == kVerbTalk || _actionVerb == kVerbTake || _actionVerb == kVerbMove) {
 		playSpeechForAction(_actionVerb);
 		_actionVerbLocked = false;
 		_actionRequiresTwoObjects = false;
 		return;
 	}
-	if (_actionVerb == 3 || _actionVerb == 4) {
+	if (_actionVerb == kVerbOpen || _actionVerb == kVerbClose) {
 		if (!(_partNum == 2 && _selectedObjectNum == 19) && !(_partNum == 3 && _selectedObjectNum == 42)) {
 			playSpeechForAction(_actionVerb);
 			_actionVerbLocked = false;
@@ -3694,7 +3694,7 @@ void TuckerEngine::setActionForInventoryObject() {
 	_currentInfoString1SourceType = _actionObj1Type;
 	_currentActionObj2Num = _actionObj2Num;
 	_currentInfoString2SourceType = _actionObj2Type;
-	if (_actionVerb == 1 && _selectedObjectType == 3) {
+	if (_actionVerb == kVerbLook && _selectedObjectType == 3) {
 		if (_panelLockedFlag) {
 			if (_locationMaskType != 0) {
 				return;
@@ -3739,7 +3739,7 @@ void TuckerEngine::setActionForInventoryObject() {
 }
 
 void TuckerEngine::setActionState() {
-	_currentActionVerb = (_actionVerb == 0) ? 8 : _actionVerb;
+	_currentActionVerb = (_actionVerb == kVerbWalk) ? 8 : _actionVerb;
 	_currentActionObj1Num = _actionObj1Num;
 	_currentInfoString1SourceType = _actionObj1Type;
 	_currentActionObj2Num = _actionObj2Num;
@@ -3758,7 +3758,7 @@ void TuckerEngine::playSpeechForAction(int i) {
 		_speechActionCounterTable[i] = 0;
 	}
 	if (speechActionTable[i] >= 2000) {
-		if (_currentActionVerb == 8 && _currentActionObj1Num == 6 && _currentInfoString1SourceType == 3) {
+		if (_currentActionVerb == kVerbUse && _currentActionObj1Num == 6 && _currentInfoString1SourceType == 3) {
 			_speechSoundNum = 2395;
 		} else {
 			_speechSoundNum = _speechActionCounterTable[i] + speechActionTable[i];
