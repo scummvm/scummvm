@@ -136,7 +136,7 @@ Interface::Interface(XeenEngine *vm) : ButtonContainer(vm), InterfaceScene(vm),
 	_buttonsLoaded = false;
 	_obscurity = OBSCURITY_NONE;
 	_steppingFX = 0;
-	_falling = false;
+	_falling = FALL_NONE;
 	_blessedUIFrame = 0;
 	_powerShieldUIFrame = 0;
 	_holyBonusUIFrame = 0;
@@ -639,7 +639,7 @@ void Interface::doStepCode() {
 		// We can fly, we can.. oh wait, we can't!
 		damage = 100;
 		party._damageType = DT_PHYSICAL;
-		_falling = true;
+		_falling = FALL_1;
 		break;
 	case SURFTYPE_DESERT:
 		// Without navigation skills, simulate getting lost by adding extra time
@@ -649,7 +649,7 @@ void Interface::doStepCode() {
 	case SURFTYPE_CLOUD:
 		if (!party._levitateCount) {
 			party._damageType = DT_PHYSICAL;
-			_falling = true;
+			_falling = FALL_1;
 			damage = 100;
 		}
 		break;
@@ -658,9 +658,9 @@ void Interface::doStepCode() {
 	}
 
 	if (_vm->_files->_isDarkCc && party._gameFlags[1][118]) {
-		_falling = false;
+		_falling = FALL_NONE;
 	} else {
-		if (_falling)
+		if (_falling != FALL_NONE)
 			startFalling(false);
 
 		if ((party._mazePosition.x & 16) || (party._mazePosition.y & 16)) {
@@ -692,32 +692,19 @@ void Interface::startFalling(bool flag) {
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if (isDarkCc && party._gameFlags[1][118]) {
-		_falling = 0;
+		_falling = FALL_NONE;
 		return;
 	}
 
-	_falling = false;
+	_falling = FALL_NONE;
 	draw3d(true);
-	_falling = 2;
+	_falling = FALL_2;
 	draw3d(false);
 
-	if (flag) {
-		if (!isDarkCc || party._fallMaze != 0) {
-			party._mazeId = party._fallMaze;
-			party._mazePosition = party._fallPosition;
-		}
-	}
-
-	_falling = true;
-	map.load(party._mazeId);
-	if (flag) {
-		if (((party._mazePosition.x & 16) || (party._mazePosition.y & 16)) &&
-				map._isOutdoors) {
-			map.getNewMaze();
-		}
-	}
-
-	if (isDarkCc) {
+	if (flag && (!isDarkCc || party._fallMaze != 0)) {
+		party._mazeId = party._fallMaze;
+		party._mazePosition = party._fallPosition;
+	} else if (!isDarkCc) {
 		switch (party._mazeId - 25) {
 		case 0:
 		case 26:
@@ -887,6 +874,12 @@ void Interface::startFalling(bool flag) {
 			}
 		}
 	}
+
+	_falling = FALL_1;
+	map.load(party._mazeId);
+
+	if (flag && map._isOutdoors && ((party._mazePosition.x & 16) || (party._mazePosition.y & 16)))
+		map.getNewMaze();
 
 	_flipGround ^= 1;
 	draw3d(true);
