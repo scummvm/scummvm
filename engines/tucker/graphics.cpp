@@ -170,10 +170,10 @@ void Graphics::drawStringChar(uint8 *dst, int xDst, int yDst, int pitch, uint8 c
 	const int w = MIN(_charset._charW, pitch - xDst);
 	dst += yDst * pitch + xDst;
 	int offset = (chr - 32) * _charset._charH * _charset._charW;
-	for (int y = 0; y < h; ++y) {
-		for (int x = 0; x < w; ++x) {
-			const int color = src[offset++];
-			if (color != 0) {
+	for (int y = 0; y < _charset._charH; ++y) {
+		for (int x = 0; x < _charset._charW; ++x, ++offset) {
+			const int color = src[offset];
+			if (y < h && x < w && color != 0) {
 				if (_charsetType == kCharsetTypeCredits) {
 					dst[x] = color;
 				} else {
