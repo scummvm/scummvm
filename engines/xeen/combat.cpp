@@ -144,7 +144,6 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
-	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	int charIndex1 = charIndex + 1;

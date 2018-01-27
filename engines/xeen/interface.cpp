@@ -620,7 +620,6 @@ void Interface::doStepCode() {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Scripts &scripts = *_vm->_scripts;
 	int damage = 0;
 
 	party._stepped = true;
@@ -692,7 +691,6 @@ void Interface::startFalling(bool flag) {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Scripts &scripts = *_vm->_scripts;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
 	if (isDarkCc && party._gameFlags[1][118]) {
@@ -1279,7 +1277,6 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 }
 
 void Interface::handleFalling() {
-	EventsManager &events = *g_vm->_events;
 	Party &party = *_vm->_party;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -1337,8 +1334,30 @@ void Interface::fall(int yp) {
 	w.blitFrom(_fallSurface, Common::Rect(0, yp, SCENE_WIDTH, yp + SCENE_HEIGHT), Common::Point(8, 8));
 }
 
-void Interface::shake(int time) {
-	// TODO
+void Interface::shake(int count) {
+	Screen &screen = *g_vm->_screen;
+	byte b;
+
+	for (int idx = 0; idx < count * 2; ++idx) {
+		for (int yp = 0; yp < screen.h; ++yp) {
+			byte *lineP = (byte *)screen.getBasePtr(0, yp);
+			if (idx % 2) {
+				// Shift back right
+				b = lineP[SCREEN_WIDTH - 1];
+				Common::copy_backward(lineP, lineP + SCREEN_WIDTH - 1, lineP + SCREEN_WIDTH);
+				lineP[0] = b;
+			} else {
+				// Scroll left one pixel
+				b = lineP[0];
+				Common::copy(lineP + 1, lineP + SCREEN_WIDTH, lineP);
+				lineP[SCREEN_WIDTH - 1] = b;
+			}
+		}
+
+		screen.markAllDirty();
+		screen.update();
+		g_system->delayMillis(5);
+	}
 }
 
 void Interface::assembleBorder() {

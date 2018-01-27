@@ -144,8 +144,9 @@ private:
 
 	/**
 	 * Shake the screen
+	 * @param count		Number of times
 	 */
-	void shake(int time);
+	void shake(int count);
 
 	/**
 	 * Select next character or monster to be attacking
