@@ -379,7 +379,7 @@ void ItemVisual::setPosition2D(const Common::Point &position) {
 }
 
 Common::String ItemVisual::getHotspotTitle(uint32 hotspotIndex) {
-	PATTable *table = findChildWithIndex<PATTable>(hotspotIndex);
+	PATTable *table = findChildWithOrder<PATTable>(hotspotIndex);
 	Common::String title;
 	if (table) {
 		title = table->getName();
