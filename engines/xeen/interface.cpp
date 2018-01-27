@@ -1219,7 +1219,6 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 	Combat &combat = *_vm->_combat;
 	EventsManager &events = *_vm->_events;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
 	Scripts &scripts = *_vm->_scripts;
 	Windows &windows = *_vm->_windows;
 
@@ -1280,14 +1279,17 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 }
 
 void Interface::handleFalling() {
+	EventsManager &events = *g_vm->_events;
 	Party &party = *_vm->_party;
+	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[3];
 
-	Graphics::ManagedSurface savedBg;
+	// Set the bottom half of the fall surface (area that is being fallen to)
 	setupFallSurface(false);
 
+	// Update character faces and start scream
 	for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 		party._activeParty[idx]._faceSprites->draw(0, 4,
 			Common::Point(Res.CHAR_FACES_X[idx], 150));
@@ -1297,35 +1299,24 @@ void Interface::handleFalling() {
 	sound.playFX(11);
 	sound.playSound("scream.voc");
 
-	for (int idx = 0, incr = 2; idx <= SCENE_HEIGHT; ++incr, idx += incr) {
-		fall(idx);
+	// Fall down to the ground
+	#define YINDEX (SCENE_HEIGHT / 2)
+	const int Y_LIST[] = {
+		SCENE_HEIGHT, SCENE_HEIGHT - 5, SCENE_HEIGHT, SCENE_HEIGHT - 3, SCENE_HEIGHT
+	};
+	for (int idx = 1; idx < YINDEX + 5; ++idx) {
+		fall((idx < YINDEX) ? idx * 2 : Y_LIST[idx - YINDEX]);
 		assembleBorder();
 		w.update();
+		screen.update();
+		g_system->delayMillis(5);
+
+		if (idx == YINDEX) {
+			sound.stopSound();
+			sound.playSound("unnh.voc");
+			sound.playFX(31);
+		}
 	}
-
-	fall(SCENE_HEIGHT);
-	assembleBorder();
-	w.update();
-
-	sound.stopSound();
-	sound.playSound("unnh.voc");
-	sound.playFX(31);
-
-	fall(SCENE_HEIGHT - 5);
-	assembleBorder();
-	w.update();
-
-	fall(SCENE_HEIGHT);
-	assembleBorder();
-	w.update();
-
-	fall(SCENE_HEIGHT - 3);
-	assembleBorder();
-	w.update();
-
-	fall(SCENE_HEIGHT);
-	assembleBorder();
-	w.update();
 
 	shake(10);
 
@@ -1338,12 +1329,12 @@ void Interface::setupFallSurface(bool isTop) {
 
 	if (_fallSurface.empty())
 		_fallSurface.create(SCENE_WIDTH, SCENE_HEIGHT * 2);
-	_fallSurface.blitFrom(w, Common::Point(0, isTop ? 0 : SCENE_HEIGHT));
+	_fallSurface.blitFrom(w, w.getBounds(), Common::Point(0, isTop ? 0 : SCENE_HEIGHT));
 }
 
 void Interface::fall(int yp) {
 	Window &w = (*g_vm->_windows)[SCENE_WINDOW];
-	w.blitFrom(_fallSurface, Common::Rect(0, yp, SCENE_WIDTH, yp + SCENE_HEIGHT), Common::Point(0, 0));
+	w.blitFrom(_fallSurface, Common::Rect(0, yp, SCENE_WIDTH, yp + SCENE_HEIGHT), Common::Point(8, 8));
 }
 
 void Interface::shake(int time) {
