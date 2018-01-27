@@ -157,11 +157,11 @@ void TuckerEngine::resetVariables() {
 	_mainLoopCounter1 = _mainLoopCounter2 = 0;
 	_timerCounter2 = 0;
 	_part = _currentPart = kPartInit;
-	_locationNum = 0;
-	_nextLocationNum = (_gameFlags & kGameFlagDemo) == 0 ? kStartupLocationGame : kStartupLocationDemo;
+	_location = kLocationNone;
+	_nextLocation = (_gameFlags & kGameFlagDemo) ? kLocationInitDemo : kLocationInit;
 	_gamePaused = false;
 	_gameDebug = false;
-	_displaySpeechText = (_gameFlags & kGameFlagNoSubtitles) == 0 ? ConfMan.getBool("subtitles") : false;
+	_displaySpeechText = (_gameFlags & kGameFlagNoSubtitles) ? false : ConfMan.getBool("subtitles");
 	memset(_flagsTable, 0, sizeof(_flagsTable));
 
 	_gameHintsIndex = 0;
@@ -400,7 +400,7 @@ void TuckerEngine::mainLoop() {
 			loadGameState(slot);
 		}
 	} else if (ConfMan.hasKey("boot_param")) {
-		_nextLocationNum = ConfMan.getInt("boot_param");
+		_nextLocation = (Location)ConfMan.getInt("boot_param");
 	}
 
 	do {
@@ -427,7 +427,7 @@ void TuckerEngine::mainLoop() {
 		if (_nextAction != 0) {
 			loadActionsTable();
 		}
-		if (_nextLocationNum > 0) {
+		if (_nextLocation != kLocationNone) {
 			setupNewLocation();
 		}
 		updateCharPosition();
@@ -499,13 +499,13 @@ void TuckerEngine::mainLoop() {
 			}
 		}
 		_mainSpritesBaseOffset = 0;
-		if (_locationWidthTable[_locationNum] > 3) {
+		if (_locationWidthTable[_location] > 3) {
 			++_currentGfxBackgroundCounter;
 			if (_currentGfxBackgroundCounter > 39) {
 				_currentGfxBackgroundCounter = 0;
 			}
 			_currentGfxBackground = _quadBackgroundGfxBuf + (_currentGfxBackgroundCounter / 10) * 44800;
-			if (_fadePaletteCounter < 34 && _locationNum == 22) {
+			if (_fadePaletteCounter < 34 && _location == kLocationFishingTrawler) {
 				int offset = (_currentGfxBackgroundCounter > 29 ? 1 : (_currentGfxBackgroundCounter / 10));
 				_spritesTable[0]._gfxBackgroundOffset = offset * 640;
 				_mainSpritesBaseOffset = offset;
@@ -589,7 +589,7 @@ void TuckerEngine::mainLoop() {
 		}
 		if (_inputKeys[kInputKeyPause]) {
 			_inputKeys[kInputKeyPause] = false;
-			if (_locationNum != 70) {
+			if (_location != kLocationComputerScreen) {
 				_gamePaused = true;
 			}
 		}
@@ -757,10 +757,10 @@ void TuckerEngine::showCursor(bool visible) {
 }
 
 void TuckerEngine::setupNewLocation() {
-	debug(2, "setupNewLocation() current %d next %d", _locationNum, _nextLocationNum);
-	_locationNum = _nextLocationNum;
+	debug(2, "setupNewLocation() current %d next %d", _location, _nextLocation);
+	_location = _nextLocation;
 	loadObj();
-	_nextLocationNum = 0;
+	_nextLocation = kLocationNone;
 	_fadePaletteCounter = 0;
 	_mainLoopCounter2 = 0;
 	_mainLoopCounter1 = 0;
@@ -772,7 +772,7 @@ void TuckerEngine::setupNewLocation() {
 		_backgroundSpriteCurrentAnimation = -1;
 		_backgroundSpriteCurrentFrame = 0;
 	}
-	if (!_panelLockedFlag || (_backgroundSpriteCurrentAnimation > 0 && _locationNum != 25)) {
+	if (!_panelLockedFlag || (_backgroundSpriteCurrentAnimation > 0 && _location != kLocationVentSystem)) {
 		_locationMaskType = 0;
 	} else {
 		_locationMaskType = 3;
@@ -803,7 +803,7 @@ void TuckerEngine::setupNewLocation() {
 
 void TuckerEngine::copyLocBitmap(const char *filename, int offset, bool isMask) {
 	int type = !isMask ? 1 : 0;
-	if (offset > 0 && _locationNum == 16) {
+	if (offset > 0 && _location == kLocationPark) {
 		type = 0;
 	}
 	loadImage(filename, _loadTempBuf, type);
@@ -863,7 +863,7 @@ void TuckerEngine::updateCharPosition() {
 	if (_currentActionVerb == kVerbWalk || _locationMaskCounter == 0) {
 		return;
 	}
-	if (_currentActionVerb == kVerbLook && _locationNum != 18) {
+	if (_currentActionVerb == kVerbLook && _location != kLocationRoystonsHomeBoxroom) {
 		int pos;
 		_actionPosX = _xPosCurrent;
 		_actionPosY = _yPosCurrent - 64;
@@ -1066,10 +1066,10 @@ void TuckerEngine::setBlackPalette() {
 
 void TuckerEngine::updateCursor() {
 	setCursorStyle(kCursorNormal);
-	if (_backgroundSpriteCurrentAnimation == -1 && !_panelLockedFlag && _selectedObject._locationObjectLocationNum > 0) {
-		_selectedObject._locationObjectLocationNum = 0;
+	if (_backgroundSpriteCurrentAnimation == -1 && !_panelLockedFlag && _selectedObject._locationObjectLocation != kLocationNone) {
+		_selectedObject._locationObjectLocation = kLocationNone;
 	}
-	if (_locationMaskType > 0 || _selectedObject._locationObjectLocationNum > 0 || _pendingActionDelay > 0) {
+	if (_locationMaskType > 0 || _selectedObject._locationObjectLocation != kLocationNone || _pendingActionDelay > 0) {
 		return;
 	}
 	if (_rightMouseButtonPressed) {
@@ -1088,7 +1088,7 @@ void TuckerEngine::updateCursor() {
 	}
 	if (!_actionVerbLocked) {
 		setActionVerbUnderCursor();
-		if (_actionVerb == kVerbWalk && _locationNum == 63) {
+		if (_actionVerb == kVerbWalk && _location == kLocationTV) {
 			_actionVerb = kVerbUse;
 		}
 	}
@@ -1201,7 +1201,7 @@ void TuckerEngine::updateCharactersPath() {
 	if (!_panelLockedFlag) {
 		return;
 	}
-	if (_backgroundSpriteCurrentAnimation != -1 && _locationNum != 25) {
+	if (_backgroundSpriteCurrentAnimation != -1 && _location != kLocationVentSystem) {
 		if (_xPosCurrent == _selectedObject._xPos && _yPosCurrent == _selectedObject._yPos) {
 			_locationMaskCounter = 1;
 			_panelLockedFlag = false;
@@ -1255,7 +1255,7 @@ void TuckerEngine::updateCharactersPath() {
 			}
 		}
 	}
-	if (_locationNum == 25) {
+	if (_location == kLocationVentSystem) {
 		if ((_backgroundSpriteCurrentAnimation != 3 || _characterBackFrontFacing) && (_backgroundSpriteCurrentAnimation != 6 || !_characterBackFrontFacing)) {
 			_xPosCurrent = xPos;
 			_yPosCurrent = yPos;
@@ -1274,7 +1274,7 @@ void TuckerEngine::updateCharactersPath() {
 	if (_characterPrevFacingDirection <= 0 || _characterPrevFacingDirection >= 5) {
 		return;
 	}
-	if (_selectedObject._locationObjectLocationNum == 0) {
+	if (_selectedObject._locationObjectLocation == kLocationNone) {
 		_characterFacingDirection = 5;
 		while (_spriteAnimationFramesTable[_spriteAnimationFrameIndex] != 999) {
 			++_spriteAnimationFrameIndex;
@@ -1319,7 +1319,7 @@ void TuckerEngine::updateData3() {
 				a->_animCurrentCounter = a->_animInitCounter;
 				a->_drawFlag = false;
 			}
-			if (_locationNum == 24 && i == 0) {
+			if (_location == kLocationStoreRoom && i == 0) {
 				// workaround bug #2872385: update fish animation sequence for correct
 				// position in aquarium.
 				if (a->_animInitCounter == 505 && a->_animCurrentCounter == 513) {
@@ -1541,11 +1541,11 @@ void TuckerEngine::drawConversationTexts() {
 
 void TuckerEngine::updateScreenScrolling() {
 	int scrollPrevOffset = _scrollOffset;
-	if (_locationWidthTable[_locationNum] != 2) {
+	if (_locationWidthTable[_location] != 2) {
 		_scrollOffset = 0;
 	} else if (_validInstructionId) {
 		_scrollOffset = _xPosCurrent - 200;
-	} else if (_locationNum == 16 && _backgroundSpriteCurrentAnimation == 6 && _scrollOffset + 200 < _xPosCurrent) {
+	} else if (_location == kLocationPark && _backgroundSpriteCurrentAnimation == 6 && _scrollOffset + 200 < _xPosCurrent) {
 		++_scrollOffset;
 		if (_scrollOffset > 320) {
 			_scrollOffset = 320;
@@ -1641,7 +1641,7 @@ void TuckerEngine::drawData3() {
 }
 
 void TuckerEngine::execData3PreUpdate() {
-	switch (_locationNum) {
+	switch (_location) {
 	case 1:
 		execData3PreUpdate_locationNum1();
 		break;
@@ -1774,11 +1774,13 @@ void TuckerEngine::execData3PreUpdate() {
 	case 70:
 		execData3PreUpdate_locationNum70();
 		break;
+	default:
+		break;
 	}
 }
 
 void TuckerEngine::execData3PostUpdate() {
-	switch (_locationNum) {
+	switch (_location) {
 	case 1:
 		execData3PostUpdate_locationNum1();
 		break;
@@ -1815,6 +1817,8 @@ void TuckerEngine::execData3PostUpdate() {
 	case 66:
 		execData3PostUpdate_locationNum66();
 		break;
+	default:
+		break;
 	}
 }
 
@@ -1825,18 +1829,18 @@ void TuckerEngine::drawBackgroundSprites() {
 		int srcH = READ_LE_UINT16(_backgroundSpriteDataPtr + frameOffset + 2);
 		int srcX = READ_LE_UINT16(_backgroundSpriteDataPtr + frameOffset + 8);
 		int srcY = READ_LE_UINT16(_backgroundSpriteDataPtr + frameOffset + 10);
-		if (_locationNum == 22 && _backgroundSpriteCurrentAnimation > 1) {
+		if (_location == kLocationFishingTrawler && _backgroundSpriteCurrentAnimation > 1) {
 			srcY += _mainSpritesBaseOffset;
 		}
-		if (_locationNum == 29 && _backgroundSpriteCurrentAnimation == 3) {
+		if (_location == kLocationSubmarineHangar && _backgroundSpriteCurrentAnimation == 3) {
 			srcX += 228;
-		} else if (_locationNum == 58 && _backgroundSpriteCurrentAnimation == 1) {
+		} else if (_location == kLocationInsideMuseumPartThree && _backgroundSpriteCurrentAnimation == 1) {
 			srcX += 100;
 		} else if (_xPosCurrent > 320 && _xPosCurrent < 640) {
 			srcX += 320;
 		}
 		srcX += _backgroundSprOffset;
-		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + srcY * 640 + srcX, _backgroundSpriteDataPtr + frameOffset + 12, srcW, srcH, 0, _locationHeightTable[_locationNum], false);
+		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + srcY * 640 + srcX, _backgroundSpriteDataPtr + frameOffset + 12, srcW, srcH, 0, _locationHeightTable[_location], false);
 		addDirtyRect(srcX, srcY, srcW, srcH);
 	}
 }
@@ -1854,14 +1858,17 @@ void TuckerEngine::drawCurrentSprite() {
 	//                                                      [0xE0, ...                            ..., 0xEF]
 	static const int whitelistReservedColorsLocation48[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
 	static const int whitelistReservedColorsLocation61[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1 };
-	switch (_locationNum) {
-		case 48:
+	switch (_location) {
+		case kLocationCorridor:
 			whitelistReservedColors = (const int *)&whitelistReservedColorsLocation48;
 			break;
 
-		case 61:
+		case kLocationParkPartThree:
 			if (_xPosCurrent <= 565)
 				whitelistReservedColors = (const int *)&whitelistReservedColorsLocation61;
+			break;
+
+		default:
 			break;
 	}
 
@@ -1874,7 +1881,7 @@ void TuckerEngine::drawCurrentSprite() {
 		xPos -= chr->_xSize + chr->_xOffset - 14;
 	}
 	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->_sourceOffset, chr->_xSize, chr->_ySize,
-		chr->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, whitelistReservedColors);
+		chr->_yOffset, _locationHeightTable[_location], _mirroredDrawing, whitelistReservedColors);
 	addDirtyRect(xPos, yPos, chr->_xSize, chr->_ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
@@ -1886,7 +1893,7 @@ void TuckerEngine::drawCurrentSprite() {
 			xPos -= chr2->_xSize + chr2->_xOffset - 14;
 		}
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->_sourceOffset, chr2->_xSize, chr2->_ySize,
-			chr2->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, whitelistReservedColors);
+			chr2->_yOffset, _locationHeightTable[_location], _mirroredDrawing, whitelistReservedColors);
 		addDirtyRect(xPos, yPos, chr2->_xSize, chr2->_ySize);
 	}
 }
@@ -2171,7 +2178,7 @@ void TuckerEngine::updateCharacterAnimation() {
 				assert(_backgroundSpriteCurrentAnimation >= 0 && _backgroundSpriteCurrentAnimation < kSprA02TableSize);
 				_backgroundSpriteDataPtr = _sprA02Table[_backgroundSpriteCurrentAnimation];
 				_backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
-			} else if (_locationNum == 25 && !_panelLockedFlag && (_backgroundSpriteCurrentAnimation == 3 || _backgroundSpriteCurrentAnimation == 6)) {
+			} else if (_location == kLocationVentSystem && !_panelLockedFlag && (_backgroundSpriteCurrentAnimation == 3 || _backgroundSpriteCurrentAnimation == 6)) {
 				_backgroundSpriteCurrentFrame = 0;
 				_backgroundSpriteCurrentAnimation = -1;
 			} else {
@@ -2186,10 +2193,10 @@ void TuckerEngine::updateCharacterAnimation() {
 			}
 		}
 	}
-	if (_locationNum == 24 && _flagsTable[103] == 0) {
+	if (_location == kLocationStoreRoom && _flagsTable[103] == 0) {
 		if (_panelLockedFlag) {
 			_panelLockedFlag = false;
-			_selectedObject._locationObjectLocationNum = 0;
+			_selectedObject._locationObjectLocation = kLocationNone;
 			if (_actionVerb != kVerbTalk) {
 				_speechSoundNum = 2236;
 				startSpeechSound(_speechSoundNum, _speechVolume);
@@ -2222,7 +2229,7 @@ void TuckerEngine::updateCharacterAnimation() {
 			_backgroundSpriteDataPtr = _sprA02Table[_backgroundSpriteCurrentAnimation];
 			_backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
 		}
-	} else if (_locationNum == 25) {
+	} else if (_location == kLocationVentSystem) {
 		if (_backgroundSpriteCurrentFrame == 0) {
 			if (!_characterBackFrontFacing) {
 				if (_characterBackFrontFacing != _characterPrevBackFrontFacing) {
@@ -2251,7 +2258,7 @@ void TuckerEngine::updateCharacterAnimation() {
 			_backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
 		}
 		_backgroundSprOffset = _xPosCurrent - 160;
-	} else if (_locationNum == 63 && _backgroundSpriteCurrentFrame == 0) {
+	} else if (_location == kLocationTV && _backgroundSpriteCurrentFrame == 0) {
 		if (_charSpeechSoundCounter > 0 && _actionCharacterNum == 99) {
 			_backgroundSpriteCurrentAnimation = 1;
 		} else {
@@ -2262,7 +2269,7 @@ void TuckerEngine::updateCharacterAnimation() {
 		_backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
 	}
 	int frame = _spriteAnimationFramesTable[_spriteAnimationFrameIndex];
-	if (!_panelLockedFlag && _characterFacingDirection < 5 && _selectedObject._locationObjectLocationNum == 0) {
+	if (!_panelLockedFlag && _characterFacingDirection < 5 && _selectedObject._locationObjectLocation == kLocationNone) {
 		_characterFacingDirection = 0;
 	}
 	if (_charSpeechSoundCounter > 0 && _characterFacingDirection != 6 && _actionCharacterNum == 99) {
@@ -2321,7 +2328,7 @@ void TuckerEngine::updateCharacterAnimation() {
 				num = 13;
 			} else if (getRandomNumber() < 3000) {
 				num = 14;
-				if (_locationNum == 57) {
+				if (_location == kLocationFishShopPartThree) {
 					num = 18;
 				}
 			} else {
@@ -2409,7 +2416,7 @@ void TuckerEngine::handleMap() {
 			_panelLockedFlag = false;
 		}
 	}
-	if (!_panelLockedFlag && (_backgroundSpriteCurrentAnimation == -1 || _locationNum == 25) && _locationMaskType == 3) {
+	if (!_panelLockedFlag && (_backgroundSpriteCurrentAnimation == -1 || _location == kLocationVentSystem) && _locationMaskType == 3) {
 		setCursorState(kCursorStateNormal);
 		if (_locationMaskCounter == 1) {
 			_characterFacingDirection = 0;
@@ -2417,10 +2424,10 @@ void TuckerEngine::handleMap() {
 		}
 		return;
 	}
-	if (_selectedObject._locationObjectLocationNum != 0 && _locationMaskCounter != 0 && (_backgroundSpriteCurrentAnimation <= -1 || _locationNum == 25)) {
+	if (_selectedObject._locationObjectLocation != kLocationNone && _locationMaskCounter != 0 && (_backgroundSpriteCurrentAnimation <= -1 || _location == kLocationVentSystem)) {
 		// TODO
 		// This is actually "_locationNum != 25" in disassembly. Is this a typo?
-		if (_locationNum == 25 || _backgroundSpriteCurrentAnimation != 4) {
+		if (_location == kLocationVentSystem || _backgroundSpriteCurrentAnimation != 4) {
 			if (_locationMaskType == 0) {
 				_locationMaskType = 1;
 				setCursorState(kCursorStateDisabledHidden);
@@ -2435,7 +2442,7 @@ void TuckerEngine::handleMap() {
 					}
 					_backgroundSpriteCurrentFrame = 0;
 					_mirroredDrawing = false;
-					if (_locationNum == 25) {
+					if (_location == kLocationVentSystem) {
 						_backgroundSpriteDataPtr = _sprA02Table[_backgroundSpriteCurrentAnimation];
 						_backgroundSpriteLastFrame = READ_LE_UINT16(_backgroundSpriteDataPtr);
 						_backgroundSpriteCurrentFrame = 1;
@@ -2452,7 +2459,7 @@ void TuckerEngine::handleMap() {
 			_locationMaskType = 2;
 			_panelType = kPanelTypeNormal;
 			setCursorState(kCursorStateNormal);
-			if (_selectedObject._locationObjectLocationNum == 99) {
+			if (_selectedObject._locationObjectLocation == kLocationMap) {
 				_noPositionChangeAfterMap = true;
 				handleMapSequence();
 				return;
@@ -2462,7 +2469,7 @@ void TuckerEngine::handleMap() {
 				redrawScreen(_scrollOffset);
 				_fadePaletteCounter = 34;
 			}
-			_nextLocationNum = _selectedObject._locationObjectLocationNum;
+			_nextLocation = _selectedObject._locationObjectLocation;
 			_xPosCurrent = _selectedObject._locationObjectToX;
 			_yPosCurrent = _selectedObject._locationObjectToY;
 			if (_selectedObject._locationObjectToX2 > 800) {
@@ -2483,7 +2490,7 @@ void TuckerEngine::handleMap() {
 			_scrollOffset = 0;
 			_handleMapCounter = 0;
 			_locationMaskCounter = 0;
-			_selectedObject._locationObjectLocationNum = 0;
+			_selectedObject._locationObjectLocation = kLocationNone;
 		}
 	}
 }
@@ -2497,7 +2504,7 @@ void TuckerEngine::clearSprites() {
 }
 
 void TuckerEngine::updateSprites() {
-	const int count = (_locationNum == 9) ? 3 : _spritesCount;
+	const int count = (_location == kLocationMall) ? 3 : _spritesCount;
 	for (int i = 0; i < count; ++i) {
 		if (_spritesTable[i]._stateIndex > -1) {
 			++_spritesTable[i]._stateIndex;
@@ -2564,7 +2571,7 @@ void TuckerEngine::updateSprite(int i) {
 	_updateSpriteFlag2 = false;
 	_spritesTable[i]._defaultUpdateDelay = 0;
 	_spritesTable[i]._updateDelay = 0;
-	switch (_locationNum) {
+	switch (_location) {
 	case 2:
 		updateSprite_locationNum2();
 		break;
@@ -2937,6 +2944,8 @@ void TuckerEngine::updateSprite(int i) {
 	case 98:
 		_spritesTable[0]._state = 1;
 		break;
+	default:
+		break;
 	}
 	if (_spritesTable[i]._stateIndex <= -1) {
 		if (!_updateSpriteFlag1) {
@@ -3049,7 +3058,7 @@ bool TuckerEngine::testLocationMask(int x, int y) {
 	if (_locationMaskType > 0 || _locationMaskIgnore) {
 		return true;
 	}
-	if (_locationNum == 26 || _locationNum == 32) {
+	if (_location == kLocationSubwayTunnel || _location == kLocationKitchen) {
 		y -= 3;
 	}
 	const int offset = y * 640 + x;
@@ -3308,7 +3317,7 @@ int TuckerEngine::executeTableInstruction() {
 		// As a workaround, do not ignore the location mask during this specific
 		// action when entering the club.
 		// This fixes Trac#5838.
-		if (!(_locationNum == 6 && _nextAction == 59)) {
+		if (!(_location == kLocationStripJoint && _nextAction == 59)) {
 			_locationMaskIgnore = true;
 		}
 		_panelLockedFlag = true;
@@ -3383,7 +3392,7 @@ int TuckerEngine::executeTableInstruction() {
 		_characterAnimationNum = readTableInstructionParam(2);
 		return 0;
 	case kCode_loc:
-		_nextLocationNum = readTableInstructionParam(2);
+		_nextLocation = (Location)readTableInstructionParam(2);
 		return 1;
 	case kCode_mof:
 		setCursorState(kCursorStateDisabledHidden);
@@ -3471,7 +3480,7 @@ int TuckerEngine::executeTableInstruction() {
 		// To work around the issue in the problematic versions we inject these two
 		// instructions after the first occurence of the 'wsm' instruction (which
 		// proves good enough).
-		if (_locationNum == 24 && _nextAction == 61) {
+		if (_location == kLocationStoreRoom && _nextAction == 61) {
 			setCursorState(kCursorStateDisabledHidden);
 			_panelType = kPanelTypeEmpty;
 		}
@@ -3583,7 +3592,7 @@ void TuckerEngine::setSelectedObjectKey() {
 	_locationMaskCounter = 0;
 	_actionRequiresTwoObjects = false;
 	_selectedObject._yPos = 0;
-	_selectedObject._locationObjectLocationNum = 0;
+	_selectedObject._locationObjectLocation = kLocationNone;
 	_pendingActionIndex = 0;
 	if (_selectedObjectType == 0) {
 		if (_selectedObjectNum == 0) {
@@ -3593,7 +3602,7 @@ void TuckerEngine::setSelectedObjectKey() {
 			_selectedObject._xPos = _locationObjectsTable[_selectedCharacterNum]._standX;
 			_selectedObject._yPos = _locationObjectsTable[_selectedCharacterNum]._standY;
 			if (_actionVerb == kVerbWalk || _actionVerb == kVerbUse) {
-				_selectedObject._locationObjectLocationNum = _locationObjectsTable[_selectedCharacterNum]._locationNum;
+				_selectedObject._locationObjectLocation = _locationObjectsTable[_selectedCharacterNum]._location;
 				_selectedObject._locationObjectToX = _locationObjectsTable[_selectedCharacterNum]._toX;
 				_selectedObject._locationObjectToY = _locationObjectsTable[_selectedCharacterNum]._toY;
 				_selectedObject._locationObjectToX2 = _locationObjectsTable[_selectedCharacterNum]._toX2;
@@ -3623,14 +3632,14 @@ void TuckerEngine::setSelectedObjectKey() {
 		_selectedObject._yPos = _mousePosY;
 	}
 	_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
-	if (!_selectedObjectLocationMask && _objectKeysLocationTable[_locationNum] == 1) {
-		if (_selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
-			while (!_selectedObjectLocationMask && _selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
+	if (!_selectedObjectLocationMask && _objectKeysLocationTable[_location] == 1) {
+		if (_selectedObject._yPos < _objectKeysPosYTable[_location]) {
+			while (!_selectedObjectLocationMask && _selectedObject._yPos < _objectKeysPosYTable[_location]) {
 				++_selectedObject._yPos;
 				_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
 			}
 		} else {
-			while (!_selectedObjectLocationMask && _selectedObject._yPos < _objectKeysPosYTable[_locationNum]) {
+			while (!_selectedObjectLocationMask && _selectedObject._yPos < _objectKeysPosYTable[_location]) {
 				--_selectedObject._yPos;
 				_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
 			}
@@ -3638,12 +3647,12 @@ void TuckerEngine::setSelectedObjectKey() {
 	}
 	if (_selectedObjectLocationMask) {
 		_selectedObjectLocationMask = testLocationMaskArea(_xPosCurrent, _yPosCurrent, _selectedObject._xPos, _selectedObject._yPos);
-		if (_selectedObjectLocationMask && _objectKeysPosXTable[_locationNum] > 0) {
+		if (_selectedObjectLocationMask && _objectKeysPosXTable[_location] > 0) {
 			_selectedObject._xDefaultPos = _selectedObject._xPos;
 			_selectedObject._yDefaultPos = _selectedObject._yPos;
-			_selectedObject._xPos = _objectKeysPosXTable[_locationNum];
-			_selectedObject._yPos = _objectKeysPosYTable[_locationNum];
-			if (_objectKeysLocationTable[_locationNum] == 1) {
+			_selectedObject._xPos = _objectKeysPosXTable[_location];
+			_selectedObject._yPos = _objectKeysPosYTable[_location];
+			if (_objectKeysLocationTable[_location] == 1) {
 				_selectedObject._xPos = _selectedObject._xDefaultPos;
 			}
 		}
@@ -3730,7 +3739,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 		break;
 	case 1:
 		if (_actionVerb == kVerbUse && _leftMouseButtonPressed) {
-			if (_mapSequenceFlagsLocationTable[_locationNum - 1] == 1) {
+			if (_mapSequenceFlagsLocationTable[_location - 1] == 1) {
 				handleMapSequence();
 			} else {
 				_actionPosX = _xPosCurrent;

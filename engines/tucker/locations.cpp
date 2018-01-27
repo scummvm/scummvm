@@ -217,7 +217,7 @@ void TuckerEngine::execData3PreUpdate_locationNum2Helper() {
 		return;
 	}
 	int start, end;
-	if (_locationNum == 2) {
+	if (_location == kLocationBackAlley) {
 		start = 116;
 		end = 125;
 	} else {
@@ -2050,8 +2050,8 @@ void TuckerEngine::execData3PreUpdate_locationNum41() {
 	if (_panelLockedFlag && _yPosCurrent > 130 && _selectedObject._yPos > 135 && _nextAction == 0 && _flagsTable[223] == 0) {
 		_panelLockedFlag = false;
 		_csDataLoaded = false;
-		_nextLocationNum = 0;
-		_selectedObject._locationObjectLocationNum = 0;
+		_nextLocation = kLocationNone;
+		_selectedObject._locationObjectLocation = kLocationNone;
 		_locationMaskType = 0;
 		_nextAction = _flagsTable[163] + 32;
 		++_flagsTable[163];
@@ -2482,7 +2482,7 @@ void TuckerEngine::updateSprite_locationNum58(int i) {
 
 void TuckerEngine::execData3PreUpdate_locationNum58() {
 	// workaround original game glitch #2872348: do not change position on location change
-	if (_nextLocationNum == 0 && _flagsTable[190] < 3 && _xPosCurrent > 310) {
+	if (_nextLocation == kLocationNone && _flagsTable[190] < 3 && _xPosCurrent > 310) {
 		_xPosCurrent = 310;
 		_panelLockedFlag = false;
 	}
@@ -2903,15 +2903,15 @@ void TuckerEngine::execData3PreUpdate_locationNum66() {
 	// To work around this we only trigger Violet if Bud actually _walked_ past
 	// the trigger coordinates (as opposed to using the map).
 	// Fixes Trac#10452.
-	if (_nextLocationNum != 0)
+	if (_nextLocation != kLocationNone)
 		return;
 
 	_flagsTable[137] = 0;
 	if (_xPosCurrent > 583 && _flagsTable[191] == 0 && _nextAction == 0 && _locationMaskType == 0) {
 		_panelLockedFlag = false;
 		_csDataLoaded = false;
-		_nextLocationNum = 0;
-		_selectedObject._locationObjectLocationNum = 0;
+		_nextLocation = kLocationNone;
+		_selectedObject._locationObjectLocation = kLocationNone;
 		if (_flagsTable[131] == 0) {
 			_nextAction = 13;
 		} else if (_flagsTable[130] == 0) {

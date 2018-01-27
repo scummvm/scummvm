@@ -50,13 +50,13 @@ void TuckerEngine::handleCreditsSequence() {
 	int counter3 = 0;
 	int num = 0;
 	int imgNum = 0;
-	int prevLocationNum = _locationNum;
+	Location prevLocation = _location;
 	int counter2 = 0;
 	int counter1 = 0;
 	loadCharset2();
 	showCursor(false);
 	stopSounds();
-	_locationNum = 74;
+	_location = kLocationCredits;
 	_flagsTable[236] = 74;
 	uint8 *imgBuf = (uint8 *)malloc(16 * 64000);
 	loadSprC02_01();
@@ -151,7 +151,7 @@ void TuckerEngine::handleCreditsSequence() {
 		}
 	} while (!_quitGame && isSpeechSoundPlaying());
 	free(imgBuf);
-	_locationNum = prevLocationNum;
+	_location = prevLocation;
 	do {
 		if (_fadePaletteCounter > 0) {
 			fadeInPalette();
@@ -211,8 +211,8 @@ void TuckerEngine::handleNewPartSequence() {
 	loadImage(filename.c_str(), _quadBackgroundGfxBuf, 1);
 	_spritesCount = 1;
 	clearSprites();
-	int currentLocation = _locationNum;
-	_locationNum = 98;
+	Location currentLocation = _location;
+	_location = kLocationNewPart;
 	unloadSprA02_01();
 	unloadSprC02_01();
 	switch (_part) {
@@ -260,7 +260,7 @@ void TuckerEngine::handleNewPartSequence() {
 		redrawScreen(0);
 		waitForTimer(3);
 	} while (_fadePaletteCounter > 0 && !_quitGame);
-	_locationNum = currentLocation;
+	_location = currentLocation;
 	showCursor(true);
 }
 
@@ -309,7 +309,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 void TuckerEngine::handleMapSequence() {
 	loadImage("map2.pcx", _quadBackgroundGfxBuf + 89600, 0);
 	loadImage("map1.pcx", _loadTempBuf, 1);
-	_selectedObject._locationObjectLocationNum = 0;
+	_selectedObject._locationObjectLocation = kLocationNone;
 	if (_flagsTable[7] > 0) {
 		copyMapRect(0, 0, 140, 86);
 	}
@@ -334,45 +334,45 @@ void TuckerEngine::handleMapSequence() {
 		_fullRedraw = true;
 		if (_flagsTable[7] > 0 && _mousePosX > 30 && _mousePosX < 86 && _mousePosY > 36 && _mousePosY < 86) {
 			textNum = 13;
-			_nextLocationNum = (_part == kPartOne) ? 3 : 65;
+			_nextLocation = (_part == kPartOne) ? kLocationSeedyStreet : kLocationSeedyStreetPartThree;
 			xPos = 620;
 			yPos = 130;
 		} else if (_flagsTable[7] > 1 && _mousePosX > 60 && _mousePosX < 120 && _mousePosY > 120 && _mousePosY < 170) {
 			textNum = 14;
-			_nextLocationNum = (_part == kPartOne) ? 9 : 66;
+			_nextLocation = (_part == kPartOne) ? kLocationMall : kLocationMallPartThree;
 			xPos = 344;
 			yPos = 120;
 		} else if (_flagsTable[7] > 2 && _mousePosX > 160 && _mousePosX < 210 && _mousePosY > 110 && _mousePosY < 160) {
 			textNum = 15;
-			_nextLocationNum = (_part == kPartOne) ? 16 : 61;
+			_nextLocation = (_part == kPartOne) ? kLocationPark : kLocationParkPartThree;
 			xPos = 590;
 			yPos = 130;
 		} else if ((_flagsTable[7] == 4 || _flagsTable[7] == 6) && _mousePosX > 150 && _mousePosX < 200 && _mousePosY > 20 && _mousePosY < 70) {
 			textNum = 16;
-			_nextLocationNum = (_part == kPartOne) ? 20 : 68;
+			_nextLocation = (_part == kPartOne) ? kLocationOutsideMuseum : kLocationOutsideMuseumPartThree;
 			xPos = 20;
 			yPos = 130;
 		} else if (_flagsTable[120] == 1 && _mousePosX > 240 && _mousePosX < 290 && _mousePosY > 35 && _mousePosY < 90) {
 			textNum = 17;
-			_nextLocationNum = (_part == kPartOne) ? 19 : 62;
+			_nextLocation = (_part == kPartOne) ? kLocationDocks : kLocationDocksPartThree;
 			xPos = 20;
 			yPos = 124;
 		} else if (_mousePosX > 135 && _mousePosX < 185 && _mousePosY > 170 && _mousePosY < 200) {
 			textNum = 18;
-			_nextLocationNum = _locationNum;
+			_nextLocation = _location;
 			if (!_noPositionChangeAfterMap) {
 				xPos = _xPosCurrent;
 				yPos = _yPosCurrent;
-			} else if (_locationNum == 3 || _locationNum == 65) {
+			} else if (_location == kLocationSeedyStreet || _location == kLocationSeedyStreetPartThree) {
 				xPos = 620;
 				yPos = 130;
-			} else if (_locationNum == 9 || _locationNum == 66) {
+			} else if (_location == kLocationMall || _location == kLocationMallPartThree) {
 				xPos = 344;
 				yPos = 120;
-			} else if (_locationNum == 16 || _locationNum == 61) {
+			} else if (_location == kLocationPark || _location == kLocationParkPartThree) {
 				xPos = 590;
 				yPos = 130;
-			} else if (_locationNum == 20 || _locationNum == 68) {
+			} else if (_location == kLocationOutsideMuseum || _location == kLocationOutsideMuseumPartThree) {
 				xPos = 20;
 				yPos = 130;
 			} else {
@@ -398,11 +398,11 @@ void TuckerEngine::handleMapSequence() {
 		--_fadePaletteCounter;
 	}
 	_mouseClick = 1;
-	if (_nextLocationNum == 9 && _noPositionChangeAfterMap) {
+	if (_nextLocation == kLocationMall && _noPositionChangeAfterMap) {
 		_backgroundSpriteCurrentAnimation = 2;
 		_backgroundSpriteCurrentFrame = 0;
 		setCursorState(kCursorStateDisabledHidden);
-	} else if (_nextLocationNum == 66 && _noPositionChangeAfterMap) {
+	} else if (_nextLocation == kLocationMallPartThree && _noPositionChangeAfterMap) {
 		_backgroundSpriteCurrentAnimation = 1;
 		_backgroundSpriteCurrentFrame = 0;
 		setCursorState(kCursorStateDisabledHidden);

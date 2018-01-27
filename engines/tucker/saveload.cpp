@@ -50,36 +50,44 @@ Common::String generateGameStateFileName(const char *target, int slot, bool pref
 	return name;
 }
 
-static void saveOrLoadInt(Common::WriteStream &stream, int &i) {
+static void saveOrLoadVar(Common::WriteStream &stream, int &i) {
 	stream.writeSint32LE(i);
 }
 
-static void saveOrLoadInt(Common::ReadStream &stream, int &i) {
+static void saveOrLoadVar(Common::ReadStream &stream, int &i) {
 	i = stream.readSint32LE();
+}
+
+static void saveOrLoadVar(Common::WriteStream &stream, Location &location) {
+	stream.writeSint32LE((int)location);
+}
+
+static void saveOrLoadVar(Common::ReadStream &stream, Location &location) {
+	location = (Location)stream.readSint32LE();
 }
 
 template<class S>
 TuckerEngine::SavegameError TuckerEngine::saveOrLoadGameStateData(S &s) {
 	for (int i = 0; i < kFlagsTableSize; ++i) {
-		saveOrLoadInt(s, _flagsTable[i]);
+		saveOrLoadVar(s, _flagsTable[i]);
 	}
 	for (int i = 0; i < 40; ++i) {
-		saveOrLoadInt(s, _inventoryObjectsList[i]);
+		saveOrLoadVar(s, _inventoryObjectsList[i]);
 	}
 	for (int i = 0; i < 50; ++i) {
-		saveOrLoadInt(s, _inventoryItemsState[i]);
+		saveOrLoadVar(s, _inventoryItemsState[i]);
 	}
 	for (int i = 0; i < 50; ++i) {
-		saveOrLoadInt(s, _panelObjectsOffsetTable[i]);
+		saveOrLoadVar(s, _panelObjectsOffsetTable[i]);
 	}
-	saveOrLoadInt(s, _mainSpritesBaseOffset);
-	saveOrLoadInt(s, _selectedObject._xPos);
-	saveOrLoadInt(s, _selectedObject._yPos);
-	saveOrLoadInt(s, _locationNum);
-	saveOrLoadInt(s, _xPosCurrent);
-	saveOrLoadInt(s, _yPosCurrent);
-	saveOrLoadInt(s, _inventoryObjectsCount);
-	saveOrLoadInt(s, _inventoryObjectsOffset);
+	saveOrLoadVar(s, _mainSpritesBaseOffset);
+	saveOrLoadVar(s, _selectedObject._xPos);
+	saveOrLoadVar(s, _selectedObject._yPos);
+	saveOrLoadVar(s, _location);
+	saveOrLoadVar(s, _xPosCurrent);
+	saveOrLoadVar(s, _yPosCurrent);
+	saveOrLoadVar(s, _inventoryObjectsCount);
+	saveOrLoadVar(s, _inventoryObjectsOffset);
 
 	return s.err() ? kSavegameIoError : kSavegameNoError;
 }
@@ -121,7 +129,7 @@ Common::Error TuckerEngine::loadGameState(int slot) {
 
 	g_engine->setTotalPlayTime(header.playTime * 1000);
 
-	_nextLocationNum = _locationNum;
+	_nextLocation = _location;
 	setBlackPalette();
 	loadBudSpr();
 	_forceRedrawPanelItems = true;

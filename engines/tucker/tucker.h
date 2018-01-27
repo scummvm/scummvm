@@ -116,6 +116,99 @@ enum Part {
   kPartThree = 3
 };
 
+enum Location {
+	kLocationNone                      =  0,
+
+	kLocationHotelRoom                 =  1,
+	kLocationBackAlley                 =  2,
+	kLocationSeedyStreet               =  3,
+	kLocationBakersShop                =  4,
+	kLocationBakersKitchen             =  5,
+	kLocationStripJoint                =  6,
+	kLocationPoliceHQ                  =  7,
+	kLocationPoliceCell                =  8,
+	kLocationMall                      =  9,
+	kLocationFishShop                  = 10,
+	kLocationBurgerJoint               = 11,
+	kLocationRecordShop                = 12,
+	kLocationDentist                   = 13,
+	kLocationPlugShop                  = 14,
+	kLocationTouristInfo               = 15,
+	kLocationPark                      = 16,
+	kLocationRoystonsHomeHallway       = 17,
+	kLocationRoystonsHomeBoxroom       = 18,
+	kLocationDocks                     = 19,
+	kLocationOutsideMuseum             = 20,
+	kLocationInsideMuseum              = 21,
+	kLocationFishingTrawler            = 22,
+	kLocationWarehouseCutscene         = 23,
+	kLocationStoreRoom                 = 24,
+	kLocationVentSystem                = 25,
+	kLocationSubwayTunnel              = 26,
+	kLocationStrangeRoom               = 27,
+	kLocationTopCorridor               = 28,
+	kLocationSubmarineHangar           = 29,
+	kLocationBunkRoom                  = 30,
+	kLocationBottomCorridor            = 31,
+	kLocationKitchen                   = 32,
+	kLocationCommandCentre             = 33,
+	kLocationSubmarineHatch            = 34,
+	kLocationSubmarineWalkway          = 35,
+	kLocationSubmarineBridge           = 36,
+	kLocationSubmarineOffice           = 37,
+	kLocationSubmarineEngineRoom       = 38,
+	kLocationLuxuryApartment           = 39,
+	kLocationFarDocks                  = 40,
+	kLocationAlleyway                  = 41,
+	kLocationBasement                  = 42,
+	kLocationTateTowerEntrance         = 43,
+	kLocationRooftop                   = 44,
+	kLocationConferenceRoom            = 45,
+	kLocationAnteChamber               = 46,
+	kLocationHelipad                   = 47,
+	kLocationCorridor                  = 48,
+	kLocationWaitingRoom               = 49,
+	kLocationkLocationCorridorCutscene = 50,
+	kLocationCells                     = 51,
+	kLocationMachineRoom               = 52,
+	kLocationRecordShopPartThree       = 53,
+	kLocationPlugShopPartThree         = 54,
+	kLocationTouristInfoPartThree      = 55,
+	kLocationDentistPartThree          = 56,
+	kLocationFishShopPartThree         = 57,
+	kLocationInsideMuseumPartThree     = 58,
+	kLocationBakersShopPartThree       = 59,
+	kLocationStripJointPartThree       = 60,
+	kLocationParkPartThree             = 61,
+	kLocationDocksPartThree            = 62,
+	kLocationTV                        = 63,
+	kLocationSewer                     = 64,
+	kLocationSeedyStreetPartThree      = 65,
+	kLocationMallPartThree             = 66,
+	kLocationBurgerJointPartThree      = 67,
+	kLocationOutsideMuseumPartThree    = 68,
+	kLocation69Cutscene                = 69,
+	kLocationComputerScreen            = 70,
+	kLocationParkCutscene              = 71,
+	kLocationSeedyStreetCutscene       = 72,
+	kLocationJesusCutscene1            = 73,
+	kLocationCredits                   = 74,
+	kLocation75Cutscene                = 75,
+	kLocationBeachCutscene             = 76,
+	kLocationHospitalCutscene          = 77,
+	kLocation78Cutscene                = 78,
+	kLocationElvisCutscene             = 79,
+	kLocationPyramidCutscene           = 80,
+	kLocationCleopatraCutscene         = 81,
+	kLocationJesusCutscene2            = 82,
+
+	kLocationNewPart                   = 98,
+	kLocationMap                       = 99,
+
+	kLocationInit                      =  1,
+	kLocationInitDemo                  =  9
+};
+
 struct Action {
 	int _key;
 	int _testFlag1Num;
@@ -212,7 +305,7 @@ struct LocationObject {
 	int _xSize;
 	int _ySize;
 	int _textNum;
-	int _locationNum;
+	Location _location;
 	int _toX;
 	int _toY;
 	int _toX2;
@@ -251,8 +344,6 @@ enum {
 	kScreenHeight = 200,
 	kScreenPitch = 640,
 	kFadePaletteStep = 5,
-	kStartupLocationDemo = 9,
-	kStartupLocationGame = 1,
 	kDefaultCharSpeechSoundCounter = 1,
 	kMaxSoundVolume = 127,
 	kLastSaveSlot = 99,
@@ -719,8 +810,8 @@ protected:
 	int _flagsTable[kFlagsTableSize];
 	Part _part;
 	Part _currentPart;
-	int _locationNum;
-	int _nextLocationNum;
+	Location _location;
+	Location _nextLocation;
 	bool _gamePaused;
 	bool _gameDebug;
 	bool _displayGameHints;
@@ -850,7 +941,7 @@ protected:
 		int _yDefaultPos;
 		int _xPos;
 		int _yPos;
-		int _locationObjectLocationNum;
+		Location _locationObjectLocation;
 		int _locationObjectToX;
 		int _locationObjectToY;
 		int _locationObjectToX2;
