@@ -150,6 +150,12 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename,
 				continue;
 			}
 
+			if (track >= 35 || sector >= sectorsPerTrack) {
+				warning("NIB: sector out of bounds @ (%x, %x)", track, sector);
+				sawAddress = false;
+				continue;
+			}
+
 			if (!firstGoodTrackPos)
 				firstGoodTrackPos = pos;
 
