@@ -26,6 +26,7 @@
 #include "adl/display.h"
 #include "adl/graphics.h"
 #include "adl/adl.h"
+#include "adl/disk.h"
 
 namespace Adl {
 
@@ -42,6 +43,7 @@ Console::Console(AdlEngine *engine) : GUI::Debugger() {
 	registerCmd("give_item", WRAP_METHOD(Console, Cmd_GiveItem));
 	registerCmd("vars", WRAP_METHOD(Console, Cmd_Vars));
 	registerCmd("var", WRAP_METHOD(Console, Cmd_Var));
+	registerCmd("convert_disk", WRAP_METHOD(Console, Cmd_ConvertDisk));
 }
 
 Common::String Console::toAscii(const Common::String &str) {
@@ -382,6 +384,43 @@ void Console::printWordMap(const WordMap &wordMap) {
 	Common::sort(words.begin(), words.end());
 
 	debugPrintColumns(words);
+}
+
+bool Console::Cmd_ConvertDisk(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: %s <source> <dest>\n", argv[0]);
+		return true;
+	}
+
+	DiskImage inDisk;
+	if (!inDisk.open(argv[1])) {
+		debugPrintf("Failed to open '%s' for reading\n", argv[1]);
+		return true;
+	}
+
+	Common::DumpFile outDisk;
+	if (!outDisk.open(argv[2])) {
+		debugPrintf("Failed to open '%s' for writing\n", argv[2]);
+		return true;
+	}
+
+	const uint sectors = inDisk.getTracks() * inDisk.getSectorsPerTrack();
+	const uint size = sectors * inDisk.getBytesPerSector();
+
+	byte *const buf = new byte[size];
+
+	StreamPtr stream(inDisk.createReadStream(0, 0, 0, sectors - 1));
+	if (stream->read(buf, size) < size) {
+		debugPrintf("Failed to read from stream");
+		delete[] buf;
+		return true;
+	}
+
+	if (outDisk.write(buf, size) < size)
+		debugPrintf("Failed to write to '%s'", argv[2]);
+
+	delete[] buf;
+	return true;
 }
 
 } // End of namespace Adl

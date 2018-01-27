@@ -89,6 +89,7 @@ public:
 	void setSectorLimit(uint sectorLimit) { _sectorLimit = sectorLimit; } // Maximum number of sectors to read per track before stepping
 	uint getBytesPerSector() const { return _bytesPerSector; }
 	uint getSectorsPerTrack() const { return _sectorsPerTrack; }
+	uint getTracks() const { return _tracks; }
 
 protected:
 	class DataBlock : public Adl::DataBlock {

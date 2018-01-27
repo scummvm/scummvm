@@ -54,6 +54,7 @@ private:
 	bool Cmd_GiveItem(int argc, const char **argv);
 	bool Cmd_Vars(int argc, const char **argv);
 	bool Cmd_Var(int argc, const char **argv);
+	bool Cmd_ConvertDisk(int argc, const char **argv);
 
 	void printItem(const Item &item);
 	void printWordMap(const Common::HashMap<Common::String, uint> &wordMap);
