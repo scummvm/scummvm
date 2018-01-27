@@ -712,7 +712,7 @@ void ConsoleDialog::drawCaret(bool erase) {
 	int y = _y + _topPadding + displayLine * kConsoleLineHeight;
 
 	_caretVisible = !erase;
-	g_gui.theme()->drawCaret(Common::Rect(x, y, x+1, y+kConsoleLineHeight), erase);
+	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + kConsoleLineHeight), erase);
 }
 
 void ConsoleDialog::scrollToCurrent() {

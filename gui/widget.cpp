@@ -54,31 +54,6 @@ void Widget::init() {
 	_needsRedraw = true;
 }
 
-Common::Rect Widget::getBossClipRect() const {
-	int bx = _boss->getAbsX();
-	int by = _boss->getAbsY();
-	Common::Rect result = Common::Rect(bx, by, bx + _boss->getWidth(), by + _boss->getHeight());
-	bool needsClipping = false;
-
-	//check whether clipping area is inside the screen
-	if (result.left < 0 && (needsClipping = true))
-		warning("Widget <%s> has clipping area x < 0 (%d)", _name.c_str(), result.left);
-	if (result.left >= g_gui.getWidth() && (needsClipping = true))
-		warning("Widget <%s> has clipping area x > %d (%d)", _name.c_str(), g_gui.getWidth(), result.left);
-	if (result.right > g_gui.getWidth() && (needsClipping = true))
-		warning("Widget <%s> has clipping area x + w > %d (%d)", _name.c_str(), g_gui.getWidth(), result.right);
-	if (result.top < 0 && (needsClipping = true))
-		warning("Widget <%s> has clipping area y < 0 (%d)", _name.c_str(), result.top);
-	if (result.top >= g_gui.getHeight() && (needsClipping = true))
-		warning("Widget <%s> has clipping area y > %d (%d)", _name.c_str(), g_gui.getHeight(), result.top);
-	if (result.bottom > g_gui.getHeight() && (needsClipping = true))
-		warning("Widget <%s> has clipping area y + h > %d (%d)", _name.c_str(), g_gui.getHeight(), result.bottom);
-
-	if (needsClipping)
-		result.clip(g_gui.getWidth(), g_gui.getHeight());
-	return result;
-}
-
 Widget::~Widget() {
 	delete _next;
 	_next = 0;
@@ -134,9 +109,12 @@ void Widget::draw() {
 		_x = getAbsX();
 		_y = getAbsY();
 
+		Common::Rect oldClip = g_gui.theme()->swapClipRect(_boss->getClipRect());
+
 		// Draw border
 		if (_flags & WIDGET_BORDER) {
-			g_gui.theme()->drawWidgetBackgroundClip(Common::Rect(_x, _y, _x+_w, _y+_h), getBossClipRect(), 0, ThemeEngine::kWidgetBackgroundBorder);
+			g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0,
+			                                    ThemeEngine::kWidgetBackgroundBorder);
 			_x += 4;
 			_y += 4;
 			_w -= 8;
@@ -145,6 +123,8 @@ void Widget::draw() {
 
 		// Now perform the actual widget draw
 		drawWidget();
+
+		g_gui.theme()->swapClipRect(oldClip);
 
 		// Restore x/y
 		if (_flags & WIDGET_BORDER) {
@@ -318,9 +298,9 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 
 
 void StaticTextWidget::drawWidget() {
-	g_gui.theme()->drawTextClip(
-		Common::Rect(_x, _y, _x+_w, _y+_h),	getBossClipRect(),
-		_label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font
+	g_gui.theme()->drawText(
+			Common::Rect(_x, _y, _x + _w, _y + _h),
+			_label, _state, _align, ThemeEngine::kTextInversionNone, 0, true, _font
 	);
 }
 
@@ -360,10 +340,7 @@ void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void ButtonWidget::drawWidget() {
-	g_gui.theme()->drawButtonClip(
-		Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(),
-		_label, _state, getFlags()
-	);
+	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, getFlags());
 }
 
 void ButtonWidget::setLabel(const Common::String &label) {
@@ -491,7 +468,7 @@ void PicButtonWidget::drawWidget() {
 		const int x = _x + (_w - gfx->w) / 2;
 		const int y = _y + (_h - gfx->h) / 2;
 
-		g_gui.theme()->drawSurfaceClip(Common::Rect(x, y, x + gfx->w,  y + gfx->h), getBossClipRect(), *gfx, _state, _alpha, _transparency);
+		g_gui.theme()->drawSurface(Common::Rect(x, y, x + gfx->w, y + gfx->h), *gfx, _transparency);
 	}
 }
 
@@ -526,7 +503,7 @@ void CheckboxWidget::setState(bool state) {
 }
 
 void CheckboxWidget::drawWidget() {
-	g_gui.theme()->drawCheckboxClip(Common::Rect(_x, _y, _x+_w, _y+_h), getBossClipRect(), _label, _state, Widget::_state);
+	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state);
 }
 
 #pragma mark -
@@ -595,7 +572,7 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 }
 
 void RadiobuttonWidget::drawWidget() {
-	g_gui.theme()->drawRadiobuttonClip(Common::Rect(_x, _y, _x+_w, _y+_h), getBossClipRect(), _label, _state, Widget::_state);
+	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, Widget::_state);
 }
 
 #pragma mark -
@@ -663,7 +640,7 @@ void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 }
 
 void SliderWidget::drawWidget() {
-	g_gui.theme()->drawSliderClip(Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(), valueToBarWidth(_value), _state);
+	g_gui.theme()->drawSlider(Common::Rect(_x, _y, _x + _w, _y + _h), valueToBarWidth(_value), _state);
 }
 
 int SliderWidget::valueToBarWidth(int value) {
@@ -742,7 +719,7 @@ void GraphicsWidget::drawWidget() {
 		const int x = _x + (_w - _gfx.w) / 2;
 		const int y = _y + (_h - _gfx.h) / 2;
 
-		g_gui.theme()->drawSurfaceClip(Common::Rect(x, y, x + _gfx.w,  y + _gfx.h), getBossClipRect(), _gfx, _state, _alpha, _transparency);
+		g_gui.theme()->drawSurface(Common::Rect(x, y, x + _gfx.w, y + _gfx.h), _gfx, _transparency);
 	}
 }
 
@@ -783,7 +760,8 @@ void ContainerWidget::removeWidget(Widget *widget) {
 }
 
 void ContainerWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackgroundClip(Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(), 0, ThemeEngine::kWidgetBackgroundBorder);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0,
+	                                    ThemeEngine::kWidgetBackgroundBorder);
 }
 
 } // End of namespace GUI
