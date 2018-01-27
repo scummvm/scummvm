@@ -87,7 +87,6 @@ protected:
 public:
 	ListWidget(Dialog *boss, const String &name, const char *tooltip = 0, uint32 cmd = 0);
 	ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
-	virtual ~ListWidget();
 
 	virtual bool containsWidget(Widget *) const;
 	virtual Widget *findWidget(int x, int y);
@@ -149,8 +148,6 @@ protected:
 	void lostFocusWidget();
 	void checkBounds();
 	void scrollToCurrent();
-
-	int *_textWidth;
 };
 
 } // End of namespace GUI
