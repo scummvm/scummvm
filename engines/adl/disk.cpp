@@ -193,8 +193,10 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename,
 			}
 
 			byte checksum = buffer[pos++ % trackLen];
-			if (checksum < 0x96 || oldVal != c_6and2_lookup[checksum - 0x96])
+			if (checksum < 0x96 || oldVal != c_6and2_lookup[checksum - 0x96]) {
 				warning("NIB: checksum mismatch @ (%x, %x)", track, sector);
+				continue;
+			}
 
 			for (uint n = 0; n < 256; ++n) {
 				output[n] = inbuffer[86 + n] << 2;
@@ -244,10 +246,14 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename,
 				oldVal = val ^ oldVal;
 				inbuffer[n] = oldVal;
 			}
-			if (!truncated) {
-				byte checksum = buffer[pos++ % trackLen];
-				if (checksum < 0xaa || oldVal != c_5and3_lookup[checksum - 0xaa])
-					warning("NIB: checksum mismatch @ (%x, %x)", track, sector);
+
+			if (truncated)
+				continue;
+
+			byte checksum = buffer[pos++ % trackLen];
+			if (checksum < 0xaa || oldVal != c_5and3_lookup[checksum - 0xaa]) {
+				warning("NIB: checksum mismatch @ (%x, %x)", track, sector);
+				continue;
 			}
 
 			// 8 bytes of nibbles expand to 5 bytes
