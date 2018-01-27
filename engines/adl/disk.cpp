@@ -39,6 +39,38 @@ static Common::SeekableReadStream *readImage(const Common::String &filename) {
 	return f;
 }
 
+static bool detectDOS33_NIB(const Common::String &filename) {
+	Common::File f;
+
+	if (!f.open(filename))
+		error("Failed to open '%s'", filename.c_str());
+
+	if (f.size() != 232960)
+		error("Unrecognized NIB image '%s' of size %d bytes", filename.c_str(), f.size());
+
+	uint count = 0;
+	uint dos32 = 0, dos33 = 0;
+	uint32 window = 0;
+
+	while (count++ < 6656) {
+		window &= 0xffff;
+		window <<= 8;
+		window |= f.readByte();
+
+		if (f.err() || f.eos())
+			error("Failed to read '%s'", filename.c_str());
+
+		if (window == 0xd5aa96)
+			++dos33;
+		else if (window == 0xd5aab5)
+			++dos32;
+	}
+
+	f.close();
+
+	return dos33 > dos32;
+}
+
 const uint trackLen = 256 * 26;
 
 // 4-and-4 encoding (odd-even)
@@ -48,7 +80,7 @@ static uint8 read44(byte *buffer, uint &pos) {
 	return ((ret << 1) | 1) & buffer[pos++ % trackLen];
 }
 
-static Common::SeekableReadStream *readImage_NIB(const Common::String &filename) {
+static Common::SeekableReadStream *readImage_NIB(const Common::String &filename, bool dos33) {
 	Common::File f;
 
 	if (!f.open(filename))
@@ -62,15 +94,13 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 	// starting at 0x96, 64 is invalid (see below)
 	const byte c_6and2_lookup[] = { 0, 1, 64, 64, 2, 3, 64, 4, 5, 6, 64, 64, 64, 64, 64, 64, 7, 8, 64, 64, 64, 9, 10, 11, 12, 13, 64, 64, 14, 15, 16, 17, 18, 19, 64, 20, 21, 22, 23, 24, 25, 26, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 27, 64, 28, 29, 30, 64, 64, 64, 31, 64, 64, 32, 33, 64, 34, 35, 36, 37, 38, 39, 40, 64, 64, 64, 64, 64, 41, 42, 43, 64, 44, 45, 46, 47, 48, 49, 50, 64, 64, 51, 52, 53, 54, 55, 56, 64, 57, 58, 59, 60, 61, 62, 63 };
 
-	// we always pad it out
-	const uint sectorsPerTrack = 16;
+	const uint sectorsPerTrack = (dos33 ? 16 : 13);
 	const uint bytesPerSector = 256;
 	const uint imageSize = 35 * sectorsPerTrack * bytesPerSector;
 	byte *const diskImage = (byte *)calloc(imageSize, 1);
 
 	bool sawAddress = false;
 	uint8 volNo = 0, track = 0, sector = 0;
-	bool newStyle;
 
 	byte buffer[trackLen];
 	uint firstGoodTrackPos = 0;
@@ -92,20 +122,17 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 
 		byte prologue = buffer[pos++ % trackLen];
 
-		if (sawAddress && (prologue == 0xb5 || prologue == 0x96)) {
+		if (sawAddress && prologue == (dos33 ? 0x96 : 0xb5)) {
 			sawAddress = false;
 		}
 
 		if (!sawAddress) {
 			sawAddress = true;
-			newStyle = false;
 
 			// We should always find the address field first.
-			if (prologue != 0xb5) {
+			if (prologue != (dos33 ? 0x96 : 0xb5)) {
 				// Accept a DOS 3.3(?) header at the start.
-				if (prologue == 0x96) {
-					newStyle = true;
-				} else if (prologue == 0xad || prologue == 0xfd) {
+				if (prologue == (dos33 ? 0xb5 : 0x96) || prologue == 0xad || prologue == 0xfd) {
 					sawAddress = false;
 					continue;
 				} else {
@@ -136,7 +163,7 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename)
 		// TODO: we ignore volNo?
 		byte *output = diskImage + (track * sectorsPerTrack + sector) * bytesPerSector;
 
-		if (newStyle) {
+		if (dos33) {
 			// We hardcode the DOS 3.3 mapping here. TODO: Do we also need raw/prodos?
 			int raw2dos[16] = { 0, 7, 14, 6, 13, 5, 12, 4, 11, 3, 10, 2, 9, 1, 8, 15 };
 			sector = raw2dos[sector];
@@ -250,25 +277,30 @@ bool DiskImage::open(const Common::String &filename) {
 	lcName.toLowercase();
 
 	if (lcName.hasSuffix(".dsk")) {
-		_stream = readImage(filename);
 		_tracks = 35;
 		_sectorsPerTrack = 16;
 		_bytesPerSector = 256;
-	} else if (lcName.hasSuffix(".d13")) {
 		_stream = readImage(filename);
+	} else if (lcName.hasSuffix(".d13")) {
 		_tracks = 35;
 		_sectorsPerTrack = 13;
 		_bytesPerSector = 256;
-	} else if (lcName.hasSuffix(".nib")) {
-		_stream = readImage_NIB(filename);
-		_tracks = 35;
-		_sectorsPerTrack = 16;
-		_bytesPerSector = 256;
-	} else if (lcName.hasSuffix(".xfd")) {
 		_stream = readImage(filename);
+	} else if (lcName.hasSuffix(".nib")) {
+		_tracks = 35;
+
+		if (detectDOS33_NIB(filename))
+			_sectorsPerTrack = 16;
+		else
+			_sectorsPerTrack = 13;
+
+		_bytesPerSector = 256;
+		_stream = readImage_NIB(filename, _sectorsPerTrack == 16);
+	} else if (lcName.hasSuffix(".xfd")) {
 		_tracks = 40;
 		_sectorsPerTrack = 18;
 		_bytesPerSector = 128;
+		_stream = readImage(filename);
 	}
 
 	int expectedSize = _tracks * _sectorsPerTrack * _bytesPerSector;
