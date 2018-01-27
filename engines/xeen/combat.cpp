@@ -140,6 +140,7 @@ void Combat::clearShooting() {
 }
 
 void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
+	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
@@ -153,7 +154,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	windows.closeAll();
 
 	int idx = (int)party._activeParty.size();
-	if (!scripts._v2) {
+	if (scripts._v2 == 2) {
 		for (idx = 0; idx < (int)party._activeParty.size(); ++idx) {
 			Character &c = party._activeParty[idx];
 			Condition condition = c.worstCondition();
@@ -163,22 +164,21 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 					selectedIndex1 = idx + 1;
 				} else {
 					selectedIndex2 = idx + 1;
+					--selectedIndex1;
 					break;
 				}
 			}
 		}
 	}
 	if (idx == (int)party._activeParty.size()) {
-		selectedIndex1 = scripts._v2 ? charIndex : 0;
-		goto loop;
+		if (!scripts._v2)
+			selectedIndex1 = 0;
 	}
 
 	for (;;) {
-		// The if below is to get around errors due to the
-		// goto I was forced to use when reimplementing this method
-		if (true) {
+		for (; selectedIndex1 < (scripts._v2 ? charIndex1 : (int)party._activeParty.size()); ++selectedIndex1) {
 			Character &c = party._activeParty[selectedIndex1];
-			c._conditions[ASLEEP] = 0;	// Force character to be awake
+			c._conditions[ASLEEP] = 0;	// Force attacked character to be awake
 
 			int frame = 0, fx = 0;
 			switch (attackType) {
@@ -249,12 +249,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 
 			// Subtract the hit points from the character
 			c.subtractHitPoints(damage);
-		}
-
-		if (selectedIndex2) {
-			++selectedIndex1;
-loop:
-			if ((scripts._v2 ? charIndex1 : (int)party._activeParty.size()) > selectedIndex1)
+			if (selectedIndex2)
 				break;
 		}
 
@@ -265,6 +260,10 @@ loop:
 		selectedIndex1 = selectedIndex2 - 1;
 		breakFlag = true;
 	}
+
+	events.ipause(5);
+	intf.drawParty(true);
+	party.checkPartyDead();
 }
 
 void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
