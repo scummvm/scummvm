@@ -125,6 +125,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.vo
 	_dangerPresent = false;
 	_moveMonsters = false;
 	_rangeType = RT_SINGLE;
+	_combatTarget = 0;
 }
 
 void Combat::clearAttackers() {
@@ -154,7 +155,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	windows.closeAll();
 
 	int idx = (int)party._activeParty.size();
-	if (scripts._v2 == 2) {
+	if (_combatTarget == 2) {
 		for (idx = 0; idx < (int)party._activeParty.size(); ++idx) {
 			Character &c = party._activeParty[idx];
 			Condition condition = c.worstCondition();
@@ -171,12 +172,12 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 		}
 	}
 	if (idx == (int)party._activeParty.size()) {
-		if (!scripts._v2)
+		if (!_combatTarget)
 			selectedIndex1 = 0;
 	}
 
 	for (;;) {
-		for (; selectedIndex1 < (scripts._v2 ? charIndex1 : (int)party._activeParty.size()); ++selectedIndex1) {
+		for (; selectedIndex1 < (_combatTarget ? charIndex1 : (int)party._activeParty.size()); ++selectedIndex1) {
 			Character &c = party._activeParty[selectedIndex1];
 			c._conditions[ASLEEP] = 0;	// Force attacked character to be awake
 

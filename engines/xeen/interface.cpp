@@ -676,11 +676,11 @@ void Interface::doStepCode() {
 			_flipGround = !_flipGround;
 			draw3d(true);
 
-			int oldVal = scripts._v2;
-			scripts._v2 = 0;
+			int oldTarget = combat._combatTarget;
+			combat._combatTarget = 0;
 			combat.giveCharDamage(damage, combat._damageType, 0);
 
-			scripts._v2 = oldVal;
+			combat._combatTarget = oldTarget;
 			_flipGround = !_flipGround;
 		} else if (party._partyDead) {
 			draw3d(true);
@@ -888,11 +888,11 @@ void Interface::startFalling(bool flag) {
 
 		_flipGround ^= 1;
 		draw3d(true);
-		int tempVal = scripts._v2;
-		scripts._v2 = 0;
+		int oldTarget = combat._combatTarget;
+		combat._combatTarget = 0;
 		combat.giveCharDamage(party._fallDamage, DT_PHYSICAL, 0);
 
-		scripts._v2 = tempVal;
+		combat._combatTarget = oldTarget;
 		_flipGround ^= 1;
 	}
 }

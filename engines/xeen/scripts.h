@@ -546,7 +546,6 @@ public:
 	int _whoWill;
 	DamageType _nEdamageType;
 	int _itemType;
-	int _v2;
 	Common::Array<MirrorEntry> _mirror;
 public:
 	Scripts(XeenEngine *vm);

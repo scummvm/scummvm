@@ -686,7 +686,7 @@ void Party::giveTreasure() {
 		_treasure._armor[idx].clear();
 	}
 
-	scripts._v2 = 1;
+	combat._combatTarget = 1;
 }
 
 bool Party::arePacksFull() const {

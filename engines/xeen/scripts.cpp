@@ -116,7 +116,6 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_treasureItems = 0;
 	_lineNum = 0;
 	_charIndex = 0;
-	_v2 = 0;
 	_nEdamageType = DT_PHYSICAL;
 	_animCounter = 0;
 	_eventSkipped = false;
@@ -169,7 +168,7 @@ int Scripts::checkEvents() {
 		_redrawDone = false;
 		_currentPos = party._mazePosition;
 		_charIndex = 1;
-		_v2 = 1;
+		combat._combatTarget = 1;
 		_nEdamageType = DT_PHYSICAL;
 //		int var40 = -1;
 
@@ -266,7 +265,7 @@ int Scripts::checkEvents() {
 		party._treasure = party._savedTreasure;
 	}
 
-	_v2 = 1;
+	combat._combatTarget = 1;
 	Common::fill(&intf._charFX[0], &intf._charFX[6], 0);
 
 	return _scriptResult;
@@ -532,6 +531,7 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 }
 
 bool Scripts::cmdIf(ParamsIterator &params) {
+	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	uint32 val;
 	int newLineNum;
@@ -561,7 +561,7 @@ bool Scripts::cmdIf(ParamsIterator &params) {
 	} else {
 		result = false;
 		for (int idx = 0; idx < (int)party._activeParty.size() && !result; ++idx) {
-			if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+			if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
 				result = ifProc(mode, val, _event->_opcode - 8, idx);
 			}
 		}
@@ -591,6 +591,7 @@ bool Scripts::cmdMoveObj(ParamsIterator &params) {
 }
 
 bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
+	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	Windows &windows = *_vm->_windows;
 	int mode1, mode2, mode3, param2;
@@ -658,7 +659,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	case OP_TakeOrGive_2:
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
 					if (ifProc(mode1, val1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
 						party.giveTake(0, 0, mode2, val2, idx);
 						if (mode2 == 82)
@@ -674,7 +675,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	case OP_TakeOrGive_3:
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
 					if (ifProc(mode1, val1, 1, idx) && ifProc(mode2, val2, 1, idx)) {
 						party.giveTake(0, 0, mode2, val3, idx);
 						if (mode2 == 82)
@@ -691,7 +692,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	case OP_TakeOrGive_4:
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
 					if (ifProc(mode1, val1, _event->_opcode == OP_TakeOrGive_4 ? 2 : 1, idx)) {
 						party.giveTake(0, 0, mode2, val2, idx);
 						if (mode2 == 82)
@@ -707,7 +708,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	default:
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != _v2)) {
+				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
 					party.giveTake(mode1, val1, mode2, val2, idx);
 
 					switch (mode1) {
@@ -805,16 +806,17 @@ bool Scripts::cmdRemove(ParamsIterator &params) {
 }
 
 bool Scripts::cmdSetChar(ParamsIterator &params) {
+	Combat &combat = *_vm->_combat;
 	int charId = params.readByte();
 
 	if (charId == 0) {
 		_charIndex = 0;
-		_v2 = 0;
+		combat._combatTarget = 0;
 	} else if (charId < 7) {
-		_v2 = charId;
+		combat._combatTarget = charId;
 	} else if (charId == 7) {
 		_charIndex = _vm->getRandomNumber(1, _vm->_party->_activeParty.size());
-		_v2 = 1;
+		combat._combatTarget = 1;
 	} else {
 		_charIndex = WhoWill::show(_vm, 22, 3, false);
 		if (_charIndex == 0)
@@ -1041,6 +1043,7 @@ bool Scripts::cmdReturn(ParamsIterator &params) {
 }
 
 bool Scripts::cmdSetVar(ParamsIterator &params) {
+	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	uint val;
 	_refreshIcons = true;
@@ -1068,7 +1071,7 @@ bool Scripts::cmdSetVar(ParamsIterator &params) {
 	} else {
 		// Set value for entire party
 		for (int idx = 0; idx < (int)party._activeParty.size(); ++idx) {
-			if (_charIndex == 0 || (_charIndex == 8 && _v2 != idx)) {
+			if (_charIndex == 0 || (_charIndex == 8 && combat._combatTarget != idx)) {
 				party._activeParty[idx].setValue(mode, val);
 			}
 		}

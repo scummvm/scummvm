@@ -142,6 +142,7 @@ public:
 	bool _moveMonsters;
 	RangeType _rangeType;
 	ShootType _shootType;
+	int _combatTarget;
 public:
 	Combat(XeenEngine *vm);
 
