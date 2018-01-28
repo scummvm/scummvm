@@ -28,25 +28,9 @@
 
 namespace Adl {
 
-static Common::SeekableReadStream *readImage(const Common::String &filename) {
-	Common::File *f = new Common::File;
-
-	if (!f->open(filename)) {
-		delete f;
-		return nullptr;
-	}
-
-	return f;
-}
-
-static bool detectDOS33_NIB(const Common::String &filename) {
-	Common::File f;
-
-	if (!f.open(filename))
-		error("Failed to open '%s'", filename.c_str());
-
+static bool detectDOS33_NIB(Common::SeekableReadStream &f) {
 	if (f.size() != 232960)
-		error("Unrecognized NIB image '%s' of size %d bytes", filename.c_str(), f.size());
+		return false;
 
 	uint count = 0;
 	uint dos32 = 0, dos33 = 0;
@@ -58,7 +42,7 @@ static bool detectDOS33_NIB(const Common::String &filename) {
 		window |= f.readByte();
 
 		if (f.err() || f.eos())
-			error("Failed to read '%s'", filename.c_str());
+			return false;
 
 		if (window == 0xd5aa96)
 			++dos33;
@@ -66,12 +50,50 @@ static bool detectDOS33_NIB(const Common::String &filename) {
 			++dos32;
 	}
 
-	f.close();
-
 	return dos33 > dos32;
 }
 
 const uint trackLen = 256 * 26;
+
+static bool readSector_NIB(byte outBuf[], const byte inBuf[], uint size, uint &pos, const byte minNibble, const byte lookup[], const uint track, const uint sector) {
+	uint z = trackLen - (pos % trackLen);
+	if (z < size) {
+		memcpy(outBuf, inBuf + (pos % trackLen), z);
+		memcpy(outBuf + z, inBuf, size - z);
+	} else
+		memcpy(outBuf, inBuf + (pos % trackLen), size);
+	pos += size;
+
+	byte oldVal = 0;
+	for (uint n = 0; n < size; ++n) {
+		// expand
+		assert(outBuf[n] >= minNibble); // corrupt file (TODO: assert?)
+		if (outBuf[n] == 0xd5) {
+			// Early end of block.
+			pos -= (size - n);
+			warning("NIB: early end of block @ %x (%d, %d)", n, track, sector);
+			return false;
+		}
+		byte val = lookup[outBuf[n] - minNibble];
+		if (val == 0x40) {
+			// Badly-encoded nibbles, stop trying to decode here.
+			pos -= (size - n);
+			warning("NIB: bad nibble %02x @ %x (%d, %d)", outBuf[n], n, track, sector);
+			return false;
+		}
+		// undo checksum
+		oldVal = val ^ oldVal;
+		outBuf[n] = oldVal;
+	}
+
+	byte checksum = inBuf[pos++ % trackLen];
+	if (checksum < minNibble || oldVal != lookup[checksum - minNibble]) {
+		warning("NIB: checksum mismatch @ (%d, %d)", track, sector);
+		return false;
+	}
+
+	return true;
+}
 
 // 4-and-4 encoding (odd-even)
 static uint8 read44(byte *buffer, uint &pos) {
@@ -80,17 +102,14 @@ static uint8 read44(byte *buffer, uint &pos) {
 	return ((ret << 1) | 1) & buffer[pos++ % trackLen];
 }
 
-static Common::SeekableReadStream *readImage_NIB(const Common::String &filename, bool dos33) {
-	Common::File f;
-
-	if (!f.open(filename))
+static Common::SeekableReadStream *readImage_NIB(Common::File &f, bool dos33) {
+	if (f.size() != 232960) {
+		warning("NIB: image '%s' has invalid size of %d bytes", f.getName(), f.size());
 		return nullptr;
+	}
 
-	if (f.size() != 232960)
-		error("Unrecognized NIB image '%s' of size %d bytes", filename.c_str(), f.size());
-
-	// starting at 0xaa, 32 is invalid (see below)
-	const byte c_5and3_lookup[] = { 32, 0, 32, 1, 2, 3, 32, 32, 32, 32, 32, 4, 5, 6, 32, 32, 7, 8, 32, 9, 10, 11, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 12, 13, 32, 32, 14, 15, 32, 16, 17, 18, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 19, 20, 32, 21, 22, 23, 32, 32, 32, 32, 32, 24, 25, 26, 32, 32, 27, 28, 32, 29, 30, 31 };
+	// starting at 0xaa, 64 is invalid (see below)
+	const byte c_5and3_lookup[] = { 64, 0, 64, 1, 2, 3, 64, 64, 64, 64, 64, 4, 5, 6, 64, 64, 7, 8, 64, 9, 10, 11, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 12, 13, 64, 64, 14, 15, 64, 16, 17, 18, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 19, 20, 64, 21, 22, 23, 64, 64, 64, 64, 64, 24, 25, 26, 64, 64, 27, 28, 64, 29, 30, 31 };
 	// starting at 0x96, 64 is invalid (see below)
 	const byte c_6and2_lookup[] = { 0, 1, 64, 64, 2, 3, 64, 4, 5, 6, 64, 64, 64, 64, 64, 64, 7, 8, 64, 64, 64, 9, 10, 11, 12, 13, 64, 64, 14, 15, 16, 17, 18, 19, 64, 20, 21, 22, 23, 24, 25, 26, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 27, 64, 28, 29, 30, 64, 64, 64, 31, 64, 64, 32, 33, 64, 34, 35, 36, 37, 38, 39, 40, 64, 64, 64, 64, 64, 41, 42, 43, 64, 44, 45, 46, 47, 48, 49, 50, 64, 64, 51, 52, 53, 54, 55, 56, 64, 57, 58, 59, 60, 61, 62, 63 };
 
@@ -132,12 +151,10 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename,
 			// We should always find the address field first.
 			if (prologue != (dos33 ? 0x96 : 0xb5)) {
 				// Accept a DOS 3.3(?) header at the start.
-				if (prologue == (dos33 ? 0xb5 : 0x96) || prologue == 0xad || prologue == 0xfd) {
-					sawAddress = false;
-					continue;
-				} else {
-					error("unknown NIB field prologue %02x", prologue);
-				}
+				if (prologue != (dos33 ? 0xb5 : 0x96) && prologue != 0xad && prologue != 0xfd)
+					warning("NIB: unknown field prologue %02x", prologue);
+				sawAddress = false;
+				continue;
 			}
 
 			volNo = read44(buffer, pos);
@@ -145,7 +162,7 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename,
 			sector = read44(buffer, pos);
 			uint8 checksum = read44(buffer, pos);
 			if ((volNo ^ track ^ sector) != checksum) {
-				warning("invalid NIB checksum (volNo %d, track %d, sector %d)", volNo, track, sector);
+				warning("NIB: invalid checksum (volNo %d, track %d, sector %d)", volNo, track, sector);
 				sawAddress = false;
 				continue;
 			}
@@ -175,34 +192,10 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename,
 			sector = raw2dos[sector];
 			output = diskImage + (track * sectorsPerTrack + sector) * bytesPerSector;
 
-			// 6-and-2 uses 342 on-disk bytes
 			byte inbuffer[342];
-			uint z = trackLen - (pos % trackLen);
-			if (z < 342) {
-				memcpy(inbuffer, buffer + (pos % trackLen), z);
-				memcpy(inbuffer + z, buffer, 342 - z);
-			} else
-				memcpy(inbuffer, buffer + (pos % trackLen), 342);
-			pos += 342;
 
-			byte oldVal = 0;
-			for (uint n = 0; n < 342; ++n) {
-				// expand
-				assert(inbuffer[n] >= 0x96); // corrupt file (TODO: assert?)
-				byte val = c_6and2_lookup[inbuffer[n] - 0x96];
-				if (val == 0x40) {
-					error("NIB: invalid nibble value %02x", inbuffer[n]);
-				}
-				// undo checksum
-				oldVal = val ^ oldVal;
-				inbuffer[n] = oldVal;
-			}
-
-			byte checksum = buffer[pos++ % trackLen];
-			if (checksum < 0x96 || oldVal != c_6and2_lookup[checksum - 0x96]) {
-				warning("NIB: checksum mismatch @ (%x, %x)", track, sector);
+			if (!readSector_NIB(inbuffer, buffer, sizeof(inbuffer), pos, 0x96, c_6and2_lookup, track, sector))
 				continue;
-			}
 
 			for (uint n = 0; n < 256; ++n) {
 				output[n] = inbuffer[86 + n] << 2;
@@ -220,47 +213,9 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename,
 		} else {
 			// 5-and-3 uses 410 on-disk bytes, decoding to just over 256 bytes
 			byte inbuffer[410];
-			uint z = trackLen - (pos % trackLen);
-			if (z < 410) {
-				memcpy(inbuffer, buffer + (pos % trackLen), z);
-				memcpy(inbuffer + z, buffer, 410 - z);
-			} else
-				memcpy(inbuffer, buffer + (pos % trackLen), 410);
-			pos += 410;
 
-			bool truncated = false;
-			byte oldVal = 0;
-			for (uint n = 0; n < 410; ++n) {
-				// expand
-				assert(inbuffer[n] >= 0xaa); // corrupt file (TODO: assert?)
-				if (inbuffer[n] == 0xd5) {
-					// Early end of block.
-					truncated = true;
-					pos -= (410 - n);
-					warning("NIB: early end of block @ 0x%x (%x, %x)", f.pos(), track, sector);
-					break;
-				}
-				byte val = c_5and3_lookup[inbuffer[n] - 0xaa];
-				if (val == 0x20) {
-					// Badly-encoded nibbles, stop trying to decode here.
-					truncated = true;
-					warning("NIB: bad nibble %02x @ 0x%x (%x, %x)", inbuffer[n], f.pos(), track, sector);
-					pos -= (410 - n);
-					break;
-				}
-				// undo checksum
-				oldVal = val ^ oldVal;
-				inbuffer[n] = oldVal;
-			}
-
-			if (truncated)
+			if (!readSector_NIB(inbuffer, buffer, sizeof(inbuffer), pos, 0xaa, c_5and3_lookup, track, sector))
 				continue;
-
-			byte checksum = buffer[pos++ % trackLen];
-			if (checksum < 0xaa || oldVal != c_5and3_lookup[checksum - 0xaa]) {
-				warning("NIB: checksum mismatch @ (%x, %x)", track, sector);
-				continue;
-			}
 
 			// 8 bytes of nibbles expand to 5 bytes
 			// so we have 51 of these batches (255 bytes), plus 2 bytes of 'leftover' nibbles for byte 256
@@ -285,6 +240,14 @@ static Common::SeekableReadStream *readImage_NIB(const Common::String &filename,
 }
 
 bool DiskImage::open(const Common::String &filename) {
+	Common::File *f = new Common::File;
+
+	if (!f->open(filename)) {
+		warning("Failed to open '%s'", filename.c_str());
+		delete f;
+		return false;
+	}
+
 	Common::String lcName(filename);
 	lcName.toLowercase();
 
@@ -292,27 +255,29 @@ bool DiskImage::open(const Common::String &filename) {
 		_tracks = 35;
 		_sectorsPerTrack = 16;
 		_bytesPerSector = 256;
-		_stream = readImage(filename);
+		_stream = f;
 	} else if (lcName.hasSuffix(".d13")) {
 		_tracks = 35;
 		_sectorsPerTrack = 13;
 		_bytesPerSector = 256;
-		_stream = readImage(filename);
+		_stream = f;
 	} else if (lcName.hasSuffix(".nib")) {
 		_tracks = 35;
 
-		if (detectDOS33_NIB(filename))
+		if (detectDOS33_NIB(*f))
 			_sectorsPerTrack = 16;
 		else
 			_sectorsPerTrack = 13;
 
 		_bytesPerSector = 256;
-		_stream = readImage_NIB(filename, _sectorsPerTrack == 16);
+		f->seek(0);
+		_stream = readImage_NIB(*f, _sectorsPerTrack == 16);
+		delete f;
 	} else if (lcName.hasSuffix(".xfd")) {
 		_tracks = 40;
 		_sectorsPerTrack = 18;
 		_bytesPerSector = 128;
-		_stream = readImage(filename);
+		_stream = f;
 	}
 
 	int expectedSize = _tracks * _sectorsPerTrack * _bytesPerSector;
