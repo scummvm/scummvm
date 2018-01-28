@@ -24,8 +24,10 @@
 #include "common/algorithm.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/translation.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
+#include "gui/saveload.h"
 #include "xeen/saves.h"
 #include "xeen/files.h"
 #include "xeen/xeen.h"
@@ -222,13 +224,32 @@ Common::String SavesManager::generateSaveName(int slot) {
 }
 
 bool SavesManager::loadGame() {
-	// TODO
-	return false;
+	if (!g_vm->canLoadGameStateCurrently())
+		return false;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	int slotNum = dialog->runModalWithCurrentTarget();
+	delete dialog;
+
+	if (slotNum != -1)
+		loadGameState(slotNum);
+
+	return slotNum != -1;
 }
 
 bool SavesManager::saveGame() {
-	// TODO
-	return false;
+	if (!g_vm->canSaveGameStateCurrently())
+		return false;
+
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	int slotNum = dialog->runModalWithCurrentTarget();
+	Common::String saveName = dialog->getResultString();
+	delete dialog;
+
+	if (slotNum)
+		saveGameState(slotNum, saveName);
+
+	return slotNum != -1;
 }
 
 } // End of namespace Xeen
