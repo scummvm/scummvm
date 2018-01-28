@@ -251,40 +251,50 @@ SDL_Surface *PSP2SdlGraphicsManager::SDL_SetVideoMode(int width, int height, int
 }
 
 void PSP2SdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrects, SDL_Rect *rects) {
+	int screenH = screen->h;
+	int screenW = screen->w;
+
+	bool fullscreen = _videoMode.fullscreen;
+	bool aspectRatioCorrection = _hardwareAspectRatioCorrection;
+
+	const int dispW = 960;
+	const int dispH = 544;
+
 	int x, y, w, h;
 	float sx, sy;
-	float ratio = (float)screen->w / (float)screen->h;
+	float ratio = (float)screenW / (float)screenH;
 
-	if ((_videoMode.screenHeight == 200 || _videoMode.screenHeight == 400) && _hardwareAspectRatioCorrection) {
-		ratio = ratio * (200.0f / 240.0f);
+	if (aspectRatioCorrection) {
+		ratio = 4.0 / 3.0;
 	}
 
-	if (_videoMode.fullscreen || screen->h >= 544) {
-		h = 544; 
+	if (fullscreen || screenH >= dispH) {
+		h = dispH;
 		w = h * ratio;
 	} else {
-		if (screen->h <= 277 && screen->w <= 480) {
+		if (screenH <= dispH / 2 && screenW <= dispW / 2) {
 			// Use Vita hardware 2x scaling if the picture is really small
 			// this uses the current shader and filtering mode
-			h = screen->h * 2;
-			w = screen->w * 2;
+			h = screenH * 2;
+			w = screenW * 2;
 		} else {
-			h = screen->h;
-			w = screen->w;
+			h = screenH;
+			w = screenW;
 		}
-		if ((_videoMode.screenHeight == 200 || _videoMode.screenHeight == 400) && _hardwareAspectRatioCorrection) {
+		if (aspectRatioCorrection) {
 			// stretch the height only if it fits, otherwise make the width smaller
-			if (((float)w * (1.0f / ratio)) <= 544.0f) {
-				h = w * (1.0f / ratio);
+			if (((float)w * (1.0 / ratio)) <= (float)dispH) {
+				h = w * (1.0 / ratio);
 			} else {
 				w = h * ratio;
 			}
 		}
 	}
-	
-	x = (960 - w) / 2; y = (544 - h) / 2;
-	sx = (float)w / (float)screen->w;
-	sy = (float)h / (float)screen->h;
+
+	x = (dispW - w) / 2;
+	y = (dispH - h) / 2;
+	sx = (float)w / (float)screenW;
+	sy = (float)h / (float)screenH;
 	if (_vitatex_hwscreen) {
 		vita2d_start_drawing();
 		vita2d_draw_texture_scale(_vitatex_hwscreen, x, y, sx, sy);

@@ -239,58 +239,71 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 }
 
 void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY) {
-	int screenWidth = 960;
-	int screenHeight = 544;
-	// Find touch coordinates in terms of Vita screen pixels
-	int screenTouchX = (int) (touchX * (float)screenWidth);
-	int screenTouchY = (int) (touchY * (float)screenHeight);
+	int screenH = _km.y_max;
+	int screenW = _km.x_max;
 
-	// Find four corners of game screen in Vita screen coordinates
-	// This depends on the fullscreen and aspect ratio correction settings (at least on Vita)
+	bool fullscreen = ConfMan.getBool("fullscreen");
+	bool aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 
-	int gameXMin = 0;
-	int gameXMax = 0;
-	int gameYMin = 0;
-	int gameYMax = 0;
-	float aspectRatio = 4.0 / 3.0;
+	const int dispW = 960;
+	const int dispH = 544;
 
-	// vertical
-	if (ConfMan.getBool("fullscreen")) {
-		gameYMin = 0;
-		gameYMax = screenHeight;
+	int x, y, w, h;
+	float sx, sy;
+	float ratio = (float)screenW / (float)screenH;
+
+	if (aspectRatioCorrection) {
+		ratio = 4.0 / 3.0;
+	}
+
+	if (fullscreen || screenH >= dispH) {
+		h = dispH;
+		if (aspectRatioCorrection) {
+			ratio = ratio * 1.1;
+		}
+		w = h * ratio;
 	} else {
-		if (_km.y_max <= 272) {
-			gameYMin = (screenHeight - (_km.y_max * 2)) / 2;
-			gameYMax = screenHeight - gameYMin;
+		if (screenH <= dispH / 2 && screenW <= dispW / 2) {
+			// Use Vita hardware 2x scaling if the picture is really small
+			// this uses the current shader and filtering mode
+			h = screenH * 2;
+			w = screenW * 2;
 		} else {
-			gameYMin = (screenHeight - (_km.y_max)) / 2;
-			gameYMax = screenHeight - gameYMin;
+			h = screenH;
+			w = screenW;
+		}
+		if (aspectRatioCorrection) {
+			// stretch the height only if it fits, otherwise make the width smaller
+			if (((float)w * (1.0 / ratio)) <= (float)dispH) {
+				h = w * (1.0 / ratio);
+			} else {
+				w = h * ratio;
+			}
 		}
 	}
-	// horizontal
-	if (ConfMan.getBool("aspect_ratio")) {
-		aspectRatio = 4.0/3.0;
-	} else {
-		aspectRatio = (float)_km.x_max / (float)_km.y_max;
-	}
-	gameXMin = (960 - ((float)(gameYMax - gameYMin) * aspectRatio)) / 2;
-	gameXMax = 960 - gameXMin;
 
-	// find game pixel coordinates corresponding to front panel touch coordinates
-	int x = ((screenTouchX - gameXMin) * _km.x_max) / (gameXMax - gameXMin);
-	int y = ((screenTouchY - gameYMin) * _km.y_max) / (gameYMax - gameYMin);
+	x = (dispW - w) / 2;
+	y = (dispH - h) / 2;
 
-	if (x < 0) {
-		x = 0;
-	} else if (x > _km.x_max) {
-		x = _km.x_max;
-	} else if (y < 0) {
-		y = 0;
-	} else if (y > _km.y_max) {
-		y = _km.y_max;
+	sy = (float)h / (float)screenH;
+	sx = (float)w / (float)screenW;
+
+	// Find touch coordinates in terms of Vita screen pixels
+	float dispTouchX = (touchX * (float)dispW);
+	float dispTouchY = (touchY * (float)dispH);
+
+	*gameX = (dispTouchX - x) / sx;
+	*gameY = (dispTouchY - y) / sy;
+
+	if (*gameX < 0) {
+		*gameX = 0;
+	} else if (*gameX > _km.x_max) {
+		*gameX = _km.x_max;
 	}
-	*gameX = x;
-	*gameY = y;
+	if (*gameY < 0) {
+		*gameY = 0;
+	} else if (*gameY > _km.y_max) {
+		*gameY = _km.y_max;
+	}
 }
-
 #endif
