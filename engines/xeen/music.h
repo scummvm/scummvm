@@ -321,7 +321,7 @@ public:
 	int _musicSide;
 public:
 	Music();
-	~Music();
+	virtual ~Music();
 
 	/**
 	 * Starts an effect playing
