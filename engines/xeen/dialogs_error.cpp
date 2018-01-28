@@ -49,12 +49,14 @@ void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
 
 		events.clearEvents();
 		break;
-	case WT_3:
-		if (w._enabled || _vm->_mode == MODE_17) {
-			warning("TODO: sub_26D8F");
+
+	case WT_ANIMATED_WAIT:
+		if (windows[11]._enabled || _vm->_mode == MODE_17) {
+			g_vm->_locations->wait();
 			break;
 		}
 		// fall through
+
 	case WT_NONFREEZED_WAIT:
 		do {
 			events.updateGameCounter();
@@ -65,9 +67,11 @@ void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
 				break;
 		} while (!_vm->shouldQuit() && !_buttonValue);
 		break;
-	case WT_2:
-		warning("TODO: sub_26D8F");
+
+	case WT_LOC_WAIT:
+		g_vm->_locations->wait();
 		break;
+
 	default:
 		break;
 	}

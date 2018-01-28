@@ -869,11 +869,11 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		changeTime(takeVal);
 		break;
 	case 34:
-		if (!subtract(CONS_GOLD, takeVal, WHERE_PARTY, WT_3))
+		if (!subtract(CONS_GOLD, takeVal, WHERE_PARTY, WT_ANIMATED_WAIT))
 			return true;
 		break;
 	case 35:
-		if (!subtract(CONS_GEMS, takeVal, WHERE_PARTY, WT_3))
+		if (!subtract(CONS_GEMS, takeVal, WHERE_PARTY, WT_ANIMATED_WAIT))
 			return true;
 		break;
 	case 37:
@@ -958,7 +958,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		ps._level._permanent -= takeVal;
 		break;
 	case 65:
-		if (!subtract(CONS_FOOD, takeVal, WHERE_PARTY, WT_3))
+		if (!subtract(CONS_FOOD, takeVal, WHERE_PARTY, WT_ANIMATED_WAIT))
 			return true;
 		break;
 	case 69:

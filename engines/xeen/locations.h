@@ -62,11 +62,6 @@ protected:
 	void drawWindow();
 
 	/**
-	 * Waits for a brief pause, checking for any key or mouse events
-	 */
-	int wait();
-
-	/**
 	 * Generates the display text for the location, for a given character
 	 */
 	virtual Common::String createLocationText(Character &ch) { return ""; }
@@ -98,6 +93,11 @@ public:
 	 * Draws the animated parts
 	 */
 	void drawAnim(bool flag);
+
+	/**
+	 * Waits for a brief pause, checking for any key or mouse events
+	 */
+	int wait();
 };
 
 class BankLocation : public BaseLocation {
@@ -368,19 +368,24 @@ public:
 	LocationManager();
 
 	/**
-	* Show a given location, and return any result
-	*/
+	 * Show a given location, and return any result
+	 */
 	int doAction(LocationAction actionId);
 
 	/**
-	* Returns true if a town location (bank, blacksmith, etc.) is currently active
-	*/
+	 * Returns true if a town location (bank, blacksmith, etc.) is currently active
+	 */
 	bool isActive() const;
 
 	/**
-	* Draws a currently active town location's animation
-	*/
+	 * Draws a currently active town location's animation
+	 */
 	void drawAnim(bool flag);
+
+	/**
+	 * Calls the waiting for any currently active town location
+	 */
+	int wait();
 };
 
 } // End of namespace Xeen

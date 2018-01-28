@@ -1048,7 +1048,7 @@ bool Character::noActions() {
 	case DRUNK: {
 		Common::String msg = Common::String::format(Res.IN_NO_CONDITION, _name.c_str());
 		ErrorScroll::show(Party::_vm, msg,
-			Party::_vm->_mode == 17 ? WT_2 : WT_NONFREEZED_WAIT);
+			Party::_vm->_mode == 17 ? WT_LOC_WAIT : WT_NONFREEZED_WAIT);
 		return true;
 	}
 	default:

@@ -29,7 +29,7 @@
 namespace Xeen {
 
 enum ErrorWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1,
-	WT_2 = 2, WT_3 = 3 };
+	WT_LOC_WAIT = 2, WT_ANIMATED_WAIT = 3 };
 
 class ErrorDialog : public ButtonContainer {
 private:

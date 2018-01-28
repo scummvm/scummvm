@@ -73,7 +73,6 @@ void WorldOfXeenMenu::execute() {
 			firstTime = false;
 			events.setCursor(0);
 			events.showCursor();
-			warning("TODO: Read existing save file");
 		}
 
 		showTitles1(title1Sprites);

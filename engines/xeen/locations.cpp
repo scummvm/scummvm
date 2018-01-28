@@ -385,14 +385,14 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 			(whereId == WHERE_BANK && !party._bankGold && consType == CONS_GOLD) ||
 			(whereId == WHERE_PARTY && !party._gems && consType == CONS_GEMS) ||
 			(whereId == WHERE_PARTY && !party._gold && consType == CONS_GOLD)) {
-			party.notEnough(consType, whereId, WHERE_BANK, WT_2);
+			party.notEnough(consType, whereId, WHERE_BANK, WT_LOC_WAIT);
 		} else {
 			windows[35].writeString(Res.AMOUNT);
 			int amount = NumericInput::show(_vm, 35, 10, 77);
 
 			if (amount) {
 				if (consType == CONS_GEMS) {
-					if (party.subtract(CONS_GEMS, amount, whereId, WT_2)) {
+					if (party.subtract(CONS_GEMS, amount, whereId, WT_LOC_WAIT)) {
 						if (whereId == WHERE_BANK) {
 							party._gems += amount;
 						} else {
@@ -400,7 +400,7 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 						}
 					}
 				} else {
-					if (party.subtract(CONS_GOLD, amount, whereId, WT_2)) {
+					if (party.subtract(CONS_GOLD, amount, whereId, WT_LOC_WAIT)) {
 						if (whereId == WHERE_BANK) {
 							party._gold += amount;
 						} else {
@@ -587,7 +587,7 @@ Character *TavernLocation::doOptions(Character *c) {
 	case Common::KEYCODE_d:
 		// Drink
 		if (!c->noActions()) {
-			if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_2)) {
+			if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_LOC_WAIT)) {
 				sound.stopSound();
 				sound.playSound("gulp.voc");
 				_v21 = 1;
@@ -645,8 +645,8 @@ Character *TavernLocation::doOptions(Character *c) {
 
 		if (YesNo::show(_vm, false, true)) {
 			if (party._food >= _v22) {
-				ErrorScroll::show(_vm, Res.FOOD_PACKS_FULL, WT_2);
-			} else if (party.subtract(CONS_GOLD, _v23, WHERE_PARTY, WT_2)) {
+				ErrorScroll::show(_vm, Res.FOOD_PACKS_FULL, WT_LOC_WAIT);
+			} else if (party.subtract(CONS_GOLD, _v23, WHERE_PARTY, WT_LOC_WAIT)) {
 				party._food = _v22;
 				sound.stopSound();
 				sound.playSound(_isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
@@ -733,7 +733,7 @@ Character *TavernLocation::doOptions(Character *c) {
 					drawButtons(&windows[0]);
 					windows[10].update();
 					wait();
-				} else if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_2)) {
+				} else if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_LOC_WAIT)) {
 					sound.stopSound();
 					sound.playSound(_isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
 
@@ -893,7 +893,7 @@ Character *TempleLocation::doOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_d:
-		if (_donation && party.subtract(CONS_GOLD, _donation, WHERE_PARTY, WT_2)) {
+		if (_donation && party.subtract(CONS_GOLD, _donation, WHERE_PARTY, WT_LOC_WAIT)) {
 			sound.stopSound();
 			sound.playSound("coina.voc", 1);
 			_dayOfWeek = (_dayOfWeek + 1) / 10;
@@ -918,7 +918,7 @@ Character *TempleLocation::doOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_h:
-		if (_healCost && party.subtract(CONS_GOLD, _healCost, WHERE_PARTY, WT_2)) {
+		if (_healCost && party.subtract(CONS_GOLD, _healCost, WHERE_PARTY, WT_LOC_WAIT)) {
 			c->_magicResistence._temporary = 0;
 			c->_energyResistence._temporary = 0;
 			c->_poisonResistence._temporary = 0;
@@ -945,7 +945,7 @@ Character *TempleLocation::doOptions(Character *c) {
 		break;
 
 	case Common::KEYCODE_u:
-		if (_uncurseCost && party.subtract(CONS_GOLD, _uncurseCost, WHERE_PARTY, WT_2)) {
+		if (_uncurseCost && party.subtract(CONS_GOLD, _uncurseCost, WHERE_PARTY, WT_LOC_WAIT)) {
 			for (int idx = 0; idx < 9; ++idx) {
 				c->_weapons[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
 				c->_armor[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
@@ -1078,7 +1078,7 @@ Character *TrainingLocation::doOptions(Character *c) {
 			sound.playSound(name);
 
 		} else if (!c->noActions()) {
-			if (party.subtract(CONS_GOLD, (c->_level._permanent * c->_level._permanent) * 10, WHERE_PARTY, WT_2)) {
+			if (party.subtract(CONS_GOLD, (c->_level._permanent * c->_level._permanent) * 10, WHERE_PARTY, WT_LOC_WAIT)) {
 				_drawFrameIndex = 0;
 				sound.stopSound();
 				sound.playSound(_isDarkCc ? "prtygd.voc" : "trainin2.voc", 1);
@@ -2350,6 +2350,10 @@ bool LocationManager::isActive() const {
 void LocationManager::drawAnim(bool flag) {
 	if (_location)
 		_location->drawAnim(flag);
+}
+
+int LocationManager::wait() {
+	return _location ? _location->wait() : 0;
 }
 
 /*------------------------------------------------------------------------*/
