@@ -221,4 +221,14 @@ Common::String SavesManager::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
 }
 
+bool SavesManager::loadGame() {
+	// TODO
+	return false;
+}
+
+bool SavesManager::saveGame() {
+	// TODO
+	return false;
+}
+
 } // End of namespace Xeen

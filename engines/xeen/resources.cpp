@@ -1672,4 +1672,25 @@ const char *const Resources::PICKS_THE_LOCK = "\x3""c\xB""010%s picks the lock!\
 
 const char *const Resources::UNABLE_TO_PICK_LOCK = "\x3""c\v010%s was unable to pick the lock!\nPress any key.";
 
+const char *const Resources::CONTROL_PANEL_TEXT =
+	"\x1\xC""00\x3""c\xB""000\t000Control Panel\x3r"
+	"\xB""022\t045\xC""06E\xC""dfx:\t124\xC""06S\xC""dave:"
+	"\xB""041\t045\xC""06M\xC""dusic:\t124S\xC""06a\xC""dve:"
+	"\xB""060\t045\xC""06L\xC""doad:\t124\xC""06Q\xC""duit:"
+	"\xB""080\t084Mr \xC""06W\xC""dizard:%s\t000";
+const char *const Resources::CONTROL_PANEL_BUTTONS =
+	"\x3""c\xB""022\t062load\t141%s"
+	"\xB""041\t062save\t141%s"
+	"\xB""060\t062exit"
+	"\xB""079\t102Help\xC""d";
+const char *const Resources::ON = "on";
+const char *const Resources::OFF = "off";
+const char *const Resources::CONFIRM_QUIT = "Are you sure you want to quit?";
+const char *const Resources::MR_WIZARD =
+	"Are you sure you want Mr.Wizard''s Help ?";
+const char *const Resources::NO_LOADING_IN_COMBAT =
+	"No Loading Allowed in Combat!";
+const char *const Resources::NO_SAVING_IN_COMBAT =
+	"No Saving Allowed in Combat!";
+
 } // End of namespace Xeen

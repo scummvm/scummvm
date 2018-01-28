@@ -81,6 +81,18 @@ public:
 	 * Save the game
 	 */
 	Common::Error saveGameState(int slot, const Common::String &desc);
+
+	/**
+	 * Shows the load game dialog, and lets the user load a game
+	 * @returns		True if a savegame was loaded
+	 */
+	bool loadGame();
+
+	/**
+	 * Shows the save game dialog, and lets the user save their game
+	 * @returns		True if a savegame was saved
+	 */
+	bool saveGame();
 };
 
 } // End of namespace Xeen

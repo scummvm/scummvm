@@ -353,6 +353,14 @@ public:
 	static const char *const WARZONE_HOW_MANY;
 	static const char *const PICKS_THE_LOCK;
 	static const char *const UNABLE_TO_PICK_LOCK;
+	static const char *const CONTROL_PANEL_TEXT;
+	static const char *const CONTROL_PANEL_BUTTONS;
+	static const char *const ON;
+	static const char *const OFF;
+	static const char *const CONFIRM_QUIT;
+	static const char *const MR_WIZARD;
+	static const char *const NO_LOADING_IN_COMBAT;
+	static const char *const NO_SAVING_IN_COMBAT;
 public:
 	/**
 	 * Initializes an instnace of the resources

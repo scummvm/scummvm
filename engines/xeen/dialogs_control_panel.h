@@ -29,10 +29,35 @@ namespace Xeen {
 
 class ControlPanel : public ButtonContainer {
 private:
-	ControlPanel(XeenEngine *vm) : ButtonContainer(vm) {}
+	SpriteResource _iconSprites;
+	Common::String _btnSoundText, _btnMusicText;
+	bool _debugFlag;
+private:
+	ControlPanel(XeenEngine *vm) : ButtonContainer(vm), _debugFlag(false) {}
 
+	/**
+	 * Inner handler for showing the dialog
+	 */
 	int execute();
+
+	/**
+	 * Loads the buttons for the dialog
+	 */
+	void loadButtons();
+
+	/**
+	 * Gets the text for the dialog buttons
+	 */
+	Common::String getButtonText();
+
+	/**
+	 * Gets the current time
+	 */
+	Common::String getTimeText() const;
 public:
+	/**
+	 * Show the control panel
+	 */
 	static int show(XeenEngine *vm);
 };
 

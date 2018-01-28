@@ -71,7 +71,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 		Common::Point pt = events._mousePos;
 
 		for (uint i = 0; i < _buttons.size(); ++i) {
-			if (_buttons[i]._bounds.contains(pt)) {
+			if (_buttons[i]._draw && _buttons[i]._bounds.contains(pt)) {
 				events.debounceMouse();
 
 				_buttonValue = _buttons[i]._value;

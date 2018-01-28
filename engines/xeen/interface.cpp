@@ -313,13 +313,11 @@ void Interface::perform() {
 
 	switch (_buttonValue) {
 	case Common::KEYCODE_TAB:
-		// Stop mosters doing any movement
+		// Show control panel
 		combat._moveMonsters = false;
-		if (ControlPanel::show(_vm) == -1) {
-			_vm->_quitMode = 2;
-		} else {
-			combat._moveMonsters = 1;
-		}
+		ControlPanel::show(_vm);
+		if (!g_vm->shouldQuit() && !g_vm->_quitMode)
+			combat._moveMonsters = true;
 		break;
 
 	case Common::KEYCODE_SPACE:

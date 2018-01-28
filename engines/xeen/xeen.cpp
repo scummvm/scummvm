@@ -59,7 +59,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_eventData = nullptr;
 	_noDirectionSense = false;
 	_startupWindowActive = false;
-	_quitMode = 0;
+	_quitMode = QMODE_NONE;
 	_mode = MODE_0;
 	_endingScore = 0;
 	_loadSaveSlot = -1;
@@ -160,7 +160,7 @@ void XeenEngine::playGame() {
 
 void XeenEngine::play() {
 	// TODO: Init variables
-	_quitMode = 0;
+	_quitMode = QMODE_NONE;
 
 	_interface->setup();
 	_screen->loadBackground("back.raw");
@@ -217,7 +217,7 @@ void XeenEngine::gameLoop() {
 
 		_map->cellFlagLookup(_party->_mazePosition);
 		if (_map->_currentIsEvent) {
-			_quitMode = _scripts->checkEvents();
+			_quitMode = (QuitMode)_scripts->checkEvents();
 			if (shouldQuit() || _quitMode)
 				return;
 		}

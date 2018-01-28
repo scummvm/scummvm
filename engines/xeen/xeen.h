@@ -93,6 +93,12 @@ enum Mode {
 	MODE_86 = 86
 };
 
+enum QuitMode {
+	QMODE_NONE = 0,
+	QMODE_QUIT = 1,
+	QMODE_MENU = 2
+};
+
 struct XeenGameDescription;
 
 #define XEEN_SAVEGAME_VERSION 1
@@ -151,7 +157,7 @@ public:
 	Mode _mode;
 	GameEvent _gameEvent;
 	Common::SeekableReadStream *_eventData;
-	int _quitMode;
+	QuitMode _quitMode;
 	bool _noDirectionSense;
 	bool _startupWindowActive;
 	uint _endingScore;

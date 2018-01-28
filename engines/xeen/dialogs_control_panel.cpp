@@ -21,6 +21,7 @@
  */
 
 #include "xeen/dialogs_control_panel.h"
+#include "xeen/dialogs_query.h"
 #include "xeen/party.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
@@ -36,7 +37,190 @@ int ControlPanel::show(XeenEngine *vm) {
 }
 
 int ControlPanel::execute() {
-	error("TODO: ControlPanel");
+	EventsManager &events = *_vm->_events;
+	Interface &intf = *_vm->_interface;
+	Map &map = *_vm->_map;
+	Party &party = *_vm->_party;
+	SavesManager &saves = *_vm->_saves;
+	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[23];
+	Window &w3 = windows[3];
+
+	loadButtons();
+
+	int result = 0, debugCtr = 0;
+	while (!g_vm->shouldQuit()) {
+		w.open();
+
+		while (!g_vm->shouldQuit()) {
+			Common::String btnText = getButtonText();
+			Common::String text = Common::String::format(Res.CONTROL_PANEL_TEXT, btnText.c_str());
+
+			drawButtons(&w);
+			w.writeString(text);
+			w.writeString("\xB""000\t000\x1");
+			w.update();
+
+			do {
+				events.updateGameCounter();
+				intf.draw3d(false);
+				w.writeString("\r");
+				drawButtons(&w);
+				w.writeString(text);
+				w.writeString("\v000\t000");
+				w.frame();
+
+				if (_debugFlag)
+					w.writeString(getTimeText());
+
+				w3.update();
+				w.update();
+
+				events.pollEventsAndWait();
+				checkEvents(_vm);
+				if (_vm->shouldQuit())
+					return 0;
+				if (!_buttonValue && !events.timeElapsed())
+					continue;
+
+				switch (_buttonValue) {
+				case Common::KEYCODE_q:
+					if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
+						g_vm->_quitMode = QMODE_QUIT;
+						result = 1;
+					}
+					break;
+
+				case Common::KEYCODE_w:
+					if (Confirm::show(g_vm, Res.MR_WIZARD)) {
+						w.close();
+						if (!windows[2]._enabled) {
+							sound.playFX(51);
+
+							if (g_vm->getGameID() == GType_WorldOfXeen) {
+								map._loadDarkSide = false;
+								map.load(29);
+								party._mazeDirection = DIR_EAST;
+							} else {
+								map._loadDarkSide = true;
+								map.load(28);
+								party._mazeDirection = DIR_SOUTH;
+							}
+							party.moveToRunLocation();
+						}
+
+						party._gems = 0;
+						result = 2;
+					}
+					break;
+
+				case Common::KEYCODE_l:
+					if (_vm->_mode == MODE_COMBAT) {
+						ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
+					} else {
+						// Close dialog and show loading dialog
+						result = 3;
+					}
+					break;
+
+				case Common::KEYCODE_s:
+					if (_vm->_mode == MODE_COMBAT) {
+						ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
+					} else {
+						// Close dialog and show saving dialog
+						result = 4;
+					}
+					break;
+
+				case Common::KEYCODE_e:
+					// TODO: Toggle sound effects
+					break;
+
+				case Common::KEYCODE_m:
+					// TODO: Toggle music
+					break;
+
+				case Common::KEYCODE_ESCAPE:
+					result = 1;
+					break;
+
+				// Goober cheat sequence
+				case Common::KEYCODE_g:
+					debugCtr = 1;
+					break;
+				case Common::KEYCODE_o:
+					debugCtr = (debugCtr == 1) ? 2 : 0;
+					break;
+				case Common::KEYCODE_b:
+					debugCtr = (debugCtr == 2) ? 3 : 0;
+				case Common::KEYCODE_r:
+					if (debugCtr == 3)
+						_debugFlag = true;
+					else
+						debugCtr = 0;
+					break;
+
+				default:
+					break;
+				}
+			} while (!result);
+		}
+
+
+	}
+
+	w.close();
+	intf.drawParty(true);
+
+	if (result == 3) {
+		saves.loadGame();
+	} else if (result == 4) {
+		saves.saveGame();
+	}
+
+	return result;
+}
+
+void ControlPanel::loadButtons() {
+	_iconSprites.load("cpanel.icn");
+
+	addButton(Common::Rect(214, 56, 244, 69), Common::KEYCODE_f);
+	addButton(Common::Rect(214, 75, 244, 88), Common::KEYCODE_m);
+	addButton(Common::Rect(135, 56, 165, 69), Common::KEYCODE_l, &_iconSprites);
+	addButton(Common::Rect(135, 75, 165, 88), Common::KEYCODE_s);
+
+	// For ScummVM we've merged both Save and Save As into a single
+	// save item, so we don't need this one
+	addButton(Common::Rect(), 0);
+	_buttons.end()->_draw = false;
+
+	addButton(Common::Rect(135, 94, 165, 107), Common::KEYCODE_q);
+	addButton(Common::Rect(175, 113, 205, 126), Common::KEYCODE_w);
+}
+
+Common::String ControlPanel::getButtonText() {
+	Sound &sound = *g_vm->_sound;
+	_btnSoundText = sound._soundOn ? Res.ON : Res.OFF;
+	_btnMusicText = sound._musicOn ? Res.ON : Res.OFF;
+
+	return Common::String::format(Res.CONTROL_PANEL_BUTTONS,
+		_btnSoundText.c_str(), _btnMusicText.c_str());
+}
+
+Common::String ControlPanel::getTimeText() const {
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	Common::String timeStr = Common::String::format("%d:%.2d:%.2d%c",
+		td.tm_hour == 0 || td.tm_hour == 12 ? 12 : (td.tm_hour % 12),
+		td.tm_min, td.tm_sec, (td.tm_hour >= 12) ? 'p' : 'c');
+
+	uint32 playtime = g_vm->_events->playTime();
+	Common::String playtimeStr = Common::String::format("%d:%.2d:%.2d",
+		playtime / 3600, (playtime / 60) % 60, playtime % 60);
+	return Common::String::format(
+		"\x2\x3l\xB""000\t000\x4""160%s\x3r\xB""000\t000%s\x1",
+		timeStr.c_str(), playtimeStr.c_str());
 }
 
 } // End of namespace Xeen
