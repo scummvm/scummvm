@@ -92,9 +92,15 @@ public:
 	void restoreButtons();
 
 	void addButton(const Common::Rect &bounds, int val,
-		SpriteResource *sprites = nullptr);
+		SpriteResource *sprites);
 	void addButton(const Common::Rect &bounds, int val,
-		uint frameNum, SpriteResource *sprites = nullptr);
+		uint frameNum, SpriteResource *sprites);
+	void addButton(const Common::Rect &bounds, int val) {
+		addButton(bounds, val, nullptr);
+	}
+	void addButton(const Common::Rect &bounds, int val, uint frameNum) {
+		addButton(bounds, val, frameNum, nullptr);
+	}
 
 	void addPartyButtons(XeenEngine *vm);
 
