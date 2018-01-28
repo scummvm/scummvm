@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/str-array.h"
 #include "xeen/dialogs.h"
-#include "xeen/dialogs_error.h"
+#include "xeen/dialogs_message.h"
 #include "xeen/party.h"
 
 namespace Xeen {

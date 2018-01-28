@@ -21,19 +21,19 @@
  */
 
 #include "common/scummsys.h"
-#include "xeen/dialogs_error.h"
+#include "xeen/dialogs_message.h"
 #include "xeen/events.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
 
-void ErrorDialog::show(XeenEngine *vm, const Common::String &msg, ErrorWaitType waitType) {
-	ErrorDialog *dlg = new ErrorDialog(vm);
+void MessageDialog::show(XeenEngine *vm, const Common::String &msg, MessageWaitType waitType) {
+	MessageDialog *dlg = new MessageDialog(vm);
 	dlg->execute(msg, waitType);
 	delete dlg;
 }
 
-void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
+void MessageDialog::execute(const Common::String &msg, MessageWaitType waitType) {
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[6];
@@ -81,9 +81,9 @@ void ErrorDialog::execute(const Common::String &msg, ErrorWaitType waitType) {
 
 /*------------------------------------------------------------------------*/
 
-void ErrorScroll::show(XeenEngine *vm, const Common::String &msg, ErrorWaitType waitType) {
+void ErrorScroll::show(XeenEngine *vm, const Common::String &msg, MessageWaitType waitType) {
 	Common::String s = Common::String::format("\x3""c\v010\t000%s", msg.c_str());
-	ErrorDialog::show(vm, s, waitType);
+	MessageDialog::show(vm, s, waitType);
 }
 
 /*------------------------------------------------------------------------*/

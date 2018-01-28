@@ -23,7 +23,7 @@
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "xeen/party.h"
-#include "xeen/dialogs_error.h"
+#include "xeen/dialogs_message.h"
 #include "xeen/dialogs_input.h"
 #include "xeen/files.h"
 #include "xeen/resources.h"
@@ -480,7 +480,7 @@ void Party::handleLight() {
 		(map.mazeData()._mazeFlags2 & FLAG_IS_DARK) == 0 ? OBSCURITY_NONE : OBSCURITY_BLACK;
 }
 
-int Party::subtract(ConsumableType consumableId, uint amount, PartyBank whereId, ErrorWaitType wait) {
+int Party::subtract(ConsumableType consumableId, uint amount, PartyBank whereId, MessageWaitType wait) {
 	switch (consumableId) {
 	case CONS_GOLD:
 		// Gold
@@ -537,7 +537,7 @@ int Party::subtract(ConsumableType consumableId, uint amount, PartyBank whereId,
 	return true;
 }
 
-void Party::notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, ErrorWaitType wait) {
+void Party::notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, MessageWaitType wait) {
 	assert(consumableId < 4 && whereId < 2);
 	Common::String msg = Common::String::format(
 		mode ? Res.NO_X_IN_THE_Y : Res.NOT_ENOUGH_X_IN_THE_Y,

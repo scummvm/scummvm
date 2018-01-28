@@ -23,7 +23,7 @@
 #include "xeen/interface.h"
 #include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_control_panel.h"
-#include "xeen/dialogs_error.h"
+#include "xeen/dialogs_message.h"
 #include "xeen/dialogs_fight_options.h"
 #include "xeen/dialogs_info.h"
 #include "xeen/dialogs_items.h"

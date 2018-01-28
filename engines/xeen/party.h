@@ -29,7 +29,7 @@
 #include "common/serializer.h"
 #include "xeen/character.h"
 #include "xeen/combat.h"
-#include "xeen/dialogs_error.h"
+#include "xeen/dialogs_message.h"
 
 namespace Xeen {
 
@@ -198,9 +198,9 @@ public:
 
 	void handleLight();
 
-	int subtract(ConsumableType consumableId, uint amount, PartyBank whereId, ErrorWaitType wait = WT_FREEZE_WAIT);
+	int subtract(ConsumableType consumableId, uint amount, PartyBank whereId, MessageWaitType wait = WT_FREEZE_WAIT);
 
-	void notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, ErrorWaitType wait);
+	void notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, MessageWaitType wait);
 
 	void checkPartyDead();
 

@@ -22,7 +22,7 @@
 
 #include "xeen/character.h"
 #include "xeen/dialogs_query.h"
-#include "xeen/dialogs_error.h"
+#include "xeen/dialogs_message.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
@@ -215,10 +215,10 @@ void InventoryItems::equipError(int itemIndex1, ItemCategory category1, int item
 		Common::String itemName1 = _character->_items[category1].getName(itemIndex1);
 		Common::String itemName2 = _character->_items[category2].getName(itemIndex2);
 
-		ErrorDialog::show(vm, Common::String::format(Res.REMOVE_X_TO_EQUIP_Y,
+		MessageDialog::show(vm, Common::String::format(Res.REMOVE_X_TO_EQUIP_Y,
 			itemName1.c_str(), itemName2.c_str()));
 	} else {
-		ErrorDialog::show(vm, Common::String::format(Res.EQUIPPED_ALL_YOU_CAN,
+		MessageDialog::show(vm, Common::String::format(Res.EQUIPPED_ALL_YOU_CAN,
 			(itemIndex1 == -1) ? Res.RING : Res.MEDAL));
 	}
 }

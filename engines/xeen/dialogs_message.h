@@ -20,31 +20,31 @@
  *
  */
 
-#ifndef XEEN_DIALOGS_ERROR_H
-#define XEEN_DIALOGS_ERROR_H
+#ifndef XEEN_dialogs_message_H
+#define XEEN_dialogs_message_H
 
 #include "xeen/dialogs.h"
 #include "xeen/character.h"
 
 namespace Xeen {
 
-enum ErrorWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1,
+enum MessageWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1,
 	WT_LOC_WAIT = 2, WT_ANIMATED_WAIT = 3 };
 
-class ErrorDialog : public ButtonContainer {
+class MessageDialog : public ButtonContainer {
 private:
-	ErrorDialog(XeenEngine *vm) : ButtonContainer(vm) {}
+	MessageDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	void execute(const Common::String &msg, ErrorWaitType waitType);
+	void execute(const Common::String &msg, MessageWaitType waitType);
 public:
 	static void show(XeenEngine *vm, const Common::String &msg,
-		ErrorWaitType waitType = WT_FREEZE_WAIT);
+		MessageWaitType waitType = WT_FREEZE_WAIT);
 };
 
 class ErrorScroll {
 public:
 	static void show(XeenEngine *vm, const Common::String &msg,
-		ErrorWaitType waitType = WT_FREEZE_WAIT);
+		MessageWaitType waitType = WT_FREEZE_WAIT);
 };
 
 class CantCast: public ButtonContainer {
@@ -58,4 +58,4 @@ public:
 
 } // End of namespace Xeen
 
-#endif /* XEEN_DIALOGS_ERROR_H */
+#endif /* XEEN_dialogs_message_H */
