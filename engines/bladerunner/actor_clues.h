@@ -66,7 +66,7 @@ public:
 	void setViewed(int clueId, bool viewed);
 
 	bool isPrivate(int clueId) const;
-	void setPrivate(int clueId, bool isPrivate);
+	void setPrivate(int clueId, bool value);
 
 	int getField1(int clueId) const;
 

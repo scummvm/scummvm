@@ -132,13 +132,13 @@ bool ActorClues::isPrivate(int clueId) const {
 	return _clues[clueIndex].flags & 0x08;
 }
 
-void ActorClues::setPrivate(int clueId, bool isPrivate) {
+void ActorClues::setPrivate(int clueId, bool value) {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {
 		return;
 	}
 
-	if (isPrivate) {
+	if (value) {
 		_clues[clueIndex].flags |= 0x08;
 	} else {
 		_clues[clueIndex].flags &= ~0x08;

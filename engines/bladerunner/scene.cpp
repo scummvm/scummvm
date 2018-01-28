@@ -53,7 +53,7 @@ Scene::Scene(BladeRunnerEngine *vm)
 	_specialLoopMode(0),
 	_specialLoop(0),
 	_specialLoopAtEnd(false),
-	_introFinished(false),
+	// _introFinished(false),
 	_nextSetId(-1),
 	_nextSceneId(-1),
 	_frame(0),

@@ -45,7 +45,7 @@ class Scene {
 	int         _specialLoopMode;
 	int         _specialLoop;
 	bool        _specialLoopAtEnd;
-	int         _introFinished;
+	// int         _introFinished;
 	int         _nextSetId;
 	int         _nextSceneId;
 	int         _frame;

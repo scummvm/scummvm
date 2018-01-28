@@ -315,7 +315,7 @@ void ScriptBase::Actor_Start_Speech_Sample(int actorId, int sentenceId) {
 
 void ScriptBase::Actor_Start_Voice_Over_Sample(int sentenceId) {
 	_vm->loopActorSpeaking();
-	_vm->_actors[Actors::kActorVoiceOver]->speechPlay(sentenceId, true);
+	_vm->_actors[kActorVoiceOver]->speechPlay(sentenceId, true);
 }
 
 int ScriptBase::Actor_Query_Which_Set_In(int actorId) {
@@ -572,11 +572,11 @@ bool ScriptBase::Actor_Clue_Query(int actorId, int clueId) {
 }
 
 void ScriptBase::Actor_Clues_Transfer_New_To_Mainframe(int actorId) {
-	_vm->_actors[actorId]->copyClues(Actors::kActorVoiceOver);
+	_vm->_actors[actorId]->copyClues(kActorVoiceOver);
 }
 
 void ScriptBase::Actor_Clues_Transfer_New_From_Mainframe(int actorId) {
-	_vm->_actors[Actors::kActorVoiceOver]->copyClues(actorId);
+	_vm->_actors[kActorVoiceOver]->copyClues(actorId);
 }
 
 void ScriptBase::Actor_Set_Invisible(int actorId, bool isInvisible) {

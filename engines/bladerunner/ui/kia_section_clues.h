@@ -38,6 +38,12 @@ class UIScrollBox;
 class KIASectionClues : public KIASectionBase {
 	static const int kClueCount = 288;
 
+	struct Line {
+		Common::String crimeName;
+		int lineData;
+		int flags;
+	};
+
 	UIContainer         *_uiContainer;
 	UIImagePicker       *_buttons;
 	UIScrollBox         *_cluesScrollBox;

@@ -321,12 +321,6 @@ void KIASectionClues::populateFilters() {
 
 		_filterScrollBox->addLine(_vm->_textKIA->getText(12), -1, 0x04);
 
-		struct Line {
-			Common::String crimeName;
-			int lineData;
-			int flags;
-		};
-
 		Common::Array<Line> crimeLines;
 		crimeLines.reserve(crimeFiltersAvailable);
 

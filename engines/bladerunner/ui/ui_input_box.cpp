@@ -109,7 +109,7 @@ bool UIInputBox::charIsValid(const Common::KeyState &kbd)
 		&& kbd.ascii != '|'
 		&& kbd.ascii != '?'
 		&& kbd.ascii != '*'
-		&& (kbd.ascii <= '¿' || kbd.ascii == '¡' || kbd.ascii == 'ß');
+		&& kbd.ascii <= '~';// || kbd.ascii == '¡' || kbd.ascii == 'ß');
 }
 
 } // End of namespace BladeRunner

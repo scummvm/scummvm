@@ -1154,7 +1154,7 @@ void BladeRunnerEngine::outtakePlay(int id, bool noLocalization, int container) 
 }
 
 bool BladeRunnerEngine::openArchive(const Common::String &name) {
-	uint i;
+	int i;
 
 	// If archive is already open, return true
 	for (i = 0; i != kArchiveCount; ++i) {
@@ -1182,7 +1182,7 @@ bool BladeRunnerEngine::openArchive(const Common::String &name) {
 }
 
 bool BladeRunnerEngine::closeArchive(const Common::String &name) {
-	for (uint i = 0; i != kArchiveCount; ++i) {
+	for (int i = 0; i != kArchiveCount; ++i) {
 		if (_archives[i].isOpen() && _archives[i].getName() == name) {
 			_archives[i].close();
 			return true;
@@ -1194,7 +1194,7 @@ bool BladeRunnerEngine::closeArchive(const Common::String &name) {
 }
 
 bool BladeRunnerEngine::isArchiveOpen(const Common::String &name) const {
-	for (uint i = 0; i != kArchiveCount; ++i) {
+	for (int i = 0; i != kArchiveCount; ++i) {
 		if (_archives[i].isOpen() && _archives[i].getName() == name)
 			return true;
 	}
@@ -1203,7 +1203,7 @@ bool BladeRunnerEngine::isArchiveOpen(const Common::String &name) const {
 }
 
 Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::String &name) {
-	for (uint i = 0; i != kArchiveCount; ++i) {
+	for (int i = 0; i != kArchiveCount; ++i) {
 		if (!_archives[i].isOpen()) {
 			continue;
 		}
