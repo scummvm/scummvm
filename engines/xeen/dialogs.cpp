@@ -51,7 +51,7 @@ void ButtonContainer::addButton(const Common::Rect &bounds, int val,
 }
 
 void ButtonContainer::addButton(const Common::Rect &bounds, int val,
-		uint frameNum, SpriteResource *sprites) {
+		int frameNum, SpriteResource *sprites) {
 	_buttons.push_back(UIButton(bounds, val, frameNum, sprites, sprites != nullptr));
 }
 
