@@ -68,6 +68,17 @@ public:
 	 * Stops all playing music, FX, and sound samples
 	 */
 	void stopAllAudio();
+
+	/**
+	 * Sets whether sound effects is on
+	 */
+	void setEffectsOn(bool isOn);
+
+	/**
+	 * Called to reload sound settings
+	 */
+	virtual void updateSoundSettings();
+
 };
 
 } // End of namespace Xeen

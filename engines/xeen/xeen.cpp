@@ -246,4 +246,9 @@ Common::String XeenEngine::printK2(uint value) {
 		Common::String::format("%u", value);
 }
 
+void XeenEngine::syncSoundSettings() {
+	if (_sound)
+		_sound->updateSoundSettings();
+}
+
 } // End of namespace Xeen

@@ -22,6 +22,7 @@
 
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
+#include "common/config-manager.h"
 #include "xeen/sound.h"
 #include "xeen/xeen.h"
 
@@ -39,6 +40,8 @@ Sound::~Sound() {
 
 void Sound::playSound(Common::SeekableReadStream &s, int unused) {
 	stopSound();
+	if (!_soundOn)
+		return;
 
 	s.seek(0);
 	Common::SeekableReadStream *srcStream = s.readStream(s.size());
@@ -67,6 +70,22 @@ void Sound::stopAllAudio() {
 	stopSong();
 	stopFX();
 	stopSound();
+}
+
+void Sound::setEffectsOn(bool isOn) {
+	ConfMan.setBool("sfx_mute", !isOn);
+	if (isOn)
+		ConfMan.setBool("mute", false);
+
+	g_vm->syncSoundSettings();
+}
+
+void Sound::updateSoundSettings() {
+	_soundOn = !ConfMan.getBool("sfx_mute");
+	if (!_soundOn)
+		stopFX();
+
+	Music::updateSoundSettings();
 }
 
 } // End of namespace Xeen

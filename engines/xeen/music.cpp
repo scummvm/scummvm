@@ -21,6 +21,7 @@
  */
 
 #include "common/md5.h"
+#include "common/config-manager.h"
 #include "xeen/music.h"
 #include "xeen/xeen.h"
 #include "xeen/files.h"
@@ -725,6 +726,8 @@ int Music::songCommand(uint commandId, byte volume) {
 
 void Music::playSong(Common::SeekableReadStream &stream) {
 	stopSong();
+	if (!_musicOn)
+		return;
 
 	byte *songData = new byte[stream.size()];
 	stream.seek(0);
@@ -740,6 +743,20 @@ void Music::playSong(const Common::String &name, int param) {
 
 	File f(name, _musicSide);
 	playSong(f);
+}
+
+void Music::setMusicOn(bool isOn) {
+	ConfMan.setBool("music_mute", !isOn);
+	if (isOn)
+		ConfMan.setBool("mute", false);
+
+	g_vm->syncSoundSettings();
+}
+
+void Music::updateSoundSettings() {
+	_musicOn = !ConfMan.getBool("music_mute");
+	if (!_musicOn)
+		stopSong();
 }
 
 } // End of namespace Xeen

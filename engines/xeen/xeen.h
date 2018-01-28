@@ -186,6 +186,11 @@ public:
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 
 	/**
+	 * Updates sound settings
+	 */
+	virtual void syncSoundSettings();
+
+	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
 	bool canLoadGameStateCurrently();

@@ -369,6 +369,16 @@ public:
 	void playSong(const byte *data) {
 		_musicDriver->playSong(data);
 	}
+
+	/**
+	 * Sets whether music is on
+	 */
+	void setMusicOn(bool isOn);
+
+	/**
+	 * Called to reload sound settings
+	 */
+	virtual void updateSoundSettings();
 };
 
 } // End of namespace Xeen

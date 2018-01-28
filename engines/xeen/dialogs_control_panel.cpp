@@ -132,11 +132,11 @@ int ControlPanel::execute() {
 			break;
 
 		case Common::KEYCODE_e:
-			// TODO: Toggle sound effects
+			sound.setEffectsOn(!sound._soundOn);
 			break;
 
 		case Common::KEYCODE_m:
-			// TODO: Toggle music
+			sound.setMusicOn(!sound._musicOn);
 			break;
 
 		case Common::KEYCODE_ESCAPE:
@@ -180,7 +180,7 @@ int ControlPanel::execute() {
 void ControlPanel::loadButtons() {
 	_iconSprites.load("cpanel.icn");
 
-	addButton(Common::Rect(214, 56, 244, 69), Common::KEYCODE_f, 0, &_iconSprites);
+	addButton(Common::Rect(214, 56, 244, 69), Common::KEYCODE_e, 0, &_iconSprites);
 	addButton(Common::Rect(214, 75, 244, 88), Common::KEYCODE_m, 0, &_iconSprites);
 	addButton(Common::Rect(135, 56, 165, 69), Common::KEYCODE_l, 0, &_iconSprites);
 	addButton(Common::Rect(135, 75, 165, 88), Common::KEYCODE_s, 0, &_iconSprites);
