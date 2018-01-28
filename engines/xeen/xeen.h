@@ -102,7 +102,6 @@ enum QuitMode {
 struct XeenGameDescription;
 
 #define XEEN_SAVEGAME_VERSION 1
-#define GAME_FRAME_TIME 50
 
 class XeenEngine : public Engine {
 private:

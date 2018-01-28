@@ -39,12 +39,14 @@ public:
 	Common::Rect _bounds;
 	SpriteResource *_sprites;
 	int _value;
+	uint _frameNum;
 	bool _draw;
 
-	UIButton(const Common::Rect &bounds, int value, SpriteResource *sprites, bool draw) :
-		_bounds(bounds), _value(value), _sprites(sprites), _draw(draw) {}
+	UIButton(const Common::Rect &bounds, int value, uint frameNum, SpriteResource *sprites, bool draw) :
+		_bounds(bounds), _value(value), _frameNum(frameNum),
+		_sprites(sprites), _draw(draw) {}
 
-	UIButton() : _value(0), _sprites(nullptr), _draw(false) {}
+	UIButton() : _value(0), _frameNum(0), _sprites(nullptr), _draw(false) {}
 };
 
 class ButtonContainer : public Cutscenes {
@@ -89,9 +91,10 @@ public:
 
 	void restoreButtons();
 
-	void addButton(const Common::Rect &bounds, int val, SpriteResource *sprites);
-
-	void addButton(const Common::Rect &bounds, int val);
+	void addButton(const Common::Rect &bounds, int val,
+		SpriteResource *sprites = nullptr);
+	void addButton(const Common::Rect &bounds, int val,
+		uint frameNum, SpriteResource *sprites = nullptr);
 
 	void addPartyButtons(XeenEngine *vm);
 

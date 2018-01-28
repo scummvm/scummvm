@@ -30,7 +30,8 @@
 
 namespace Xeen {
 
-#define GAME_FRAME_RATE (1000 / 18.2)
+#define GAME_FRAME_RATE (1000 / 50)
+#define GAME_FRAME_TIME 50
 
 class XeenEngine;
 
