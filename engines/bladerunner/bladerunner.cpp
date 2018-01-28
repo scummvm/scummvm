@@ -143,7 +143,11 @@ Common::Error BladeRunnerEngine::run() {
 		return Common::Error(Common::kUnknownError, "Failed to initialize resources");
 	}
 
+#if BLADERUNNER_DEBUG_GAME
+	{
+#else
 	if (warnUserAboutUnsupportedGame()) {
+#endif
 		init2();
 
 		/* TODO: Check for save games and enter KIA */

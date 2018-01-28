@@ -33,8 +33,10 @@
 
 #include "graphics/surface.h"
 
+// remove these when game is playable
 #define BLADERUNNER_DEBUG_RENDERING 0
 #define BLADERUNNER_DEBUG_CONSOLE 0
+#define BLADERUNNER_DEBUG_GAME 0
 
 namespace Common {
 struct Event;

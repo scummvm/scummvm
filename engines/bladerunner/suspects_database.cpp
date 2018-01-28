@@ -96,19 +96,23 @@ bool SuspectDatabaseEntry::addPhotoClue(int shapeId, int clueId) {
 	if (_photoClueCount >= kPhotoClueCount) {
 		return false;
 	}
-	_photoClues[_photoClueCount][0] = clueId;
-	_photoClues[_photoClueCount][1] = shapeId;
-	_photoClues[_photoClueCount][2] = -1;
+	_photoClues[_photoClueCount].clueId = clueId;
+	_photoClues[_photoClueCount].shapeId = shapeId;
+	_photoClues[_photoClueCount].notUsed = -1;
 
 	_photoClueCount++;
 	return true;
 }
 
-const char *SuspectDatabaseEntry::getName() {
+const char *SuspectDatabaseEntry::getName() const {
 	return _vm->_textActorNames->getText(_actorId);
 }
 
-bool SuspectDatabaseEntry::hasMOClue(int clueId) {
+int SuspectDatabaseEntry::getSex() const {
+	return _sex;
+}
+
+bool SuspectDatabaseEntry::hasMOClue(int clueId) const {
 	for (int i = 0; i < _moClueCount; i++) {
 		if (_moClues[i] == clueId) {
 			return true;
@@ -117,7 +121,7 @@ bool SuspectDatabaseEntry::hasMOClue(int clueId) {
 	return false;
 }
 
-bool SuspectDatabaseEntry::hasWhereaboutsClue(int clueId) {
+bool SuspectDatabaseEntry::hasWhereaboutsClue(int clueId) const {
 	for (int i = 0; i < _whereaboutsClueCount; i++) {
 		if (_whereaboutsClues[i] == clueId) {
 			return true;
@@ -126,7 +130,7 @@ bool SuspectDatabaseEntry::hasWhereaboutsClue(int clueId) {
 	return false;
 }
 
-bool SuspectDatabaseEntry::hasReplicantClue(int clueId) {
+bool SuspectDatabaseEntry::hasReplicantClue(int clueId) const {
 	for (int i = 0; i < _replicantClueCount; i++) {
 		if (_replicantClues[i] == clueId) {
 			return true;
@@ -135,7 +139,7 @@ bool SuspectDatabaseEntry::hasReplicantClue(int clueId) {
 	return false;
 }
 
-bool SuspectDatabaseEntry::hasNonReplicantClue(int clueId) {
+bool SuspectDatabaseEntry::hasNonReplicantClue(int clueId) const {
 	for (int i = 0; i < _nonReplicantClueCount; i++) {
 		if (_nonReplicantClues[i] == clueId) {
 			return true;
@@ -144,7 +148,7 @@ bool SuspectDatabaseEntry::hasNonReplicantClue(int clueId) {
 	return false;
 }
 
-bool SuspectDatabaseEntry::hasOtherClue(int clueId) {
+bool SuspectDatabaseEntry::hasOtherClue(int clueId) const {
 	for (int i = 0; i < _otherClueCount; i++) {
 		if (_otherClues[i] == clueId) {
 			return true;
@@ -153,7 +157,7 @@ bool SuspectDatabaseEntry::hasOtherClue(int clueId) {
 	return false;
 }
 
-bool SuspectDatabaseEntry::hasIdentityClue(int clueId) {
+bool SuspectDatabaseEntry::hasIdentityClue(int clueId) const {
 	for (int i = 0; i < _identityClueCount; i++) {
 		if (_identityClues[i] == clueId) {
 			return true;
@@ -162,7 +166,7 @@ bool SuspectDatabaseEntry::hasIdentityClue(int clueId) {
 	return false;
 }
 
-bool SuspectDatabaseEntry::hasClue(int clueId) {
+bool SuspectDatabaseEntry::hasClue(int clueId) const {
 	return hasMOClue(clueId)
 		|| hasWhereaboutsClue(clueId)
 		|| hasReplicantClue(clueId)
@@ -170,16 +174,20 @@ bool SuspectDatabaseEntry::hasClue(int clueId) {
 		|| hasOtherClue(clueId);
 }
 
-int SuspectDatabaseEntry::getPhotoClue1(int photoId) {
-	return _photoClues[photoId][0];
+int SuspectDatabaseEntry::getPhotoCount() const {
+	return _photoClueCount;
 }
 
-int SuspectDatabaseEntry::getPhotoClue2(int photoId) {
-	return _photoClues[photoId][1];
+int SuspectDatabaseEntry::getPhotoClueId(int photoId) const {
+	return _photoClues[photoId].clueId;
 }
 
-int SuspectDatabaseEntry::getPhotoClue3(int photoId) {
-	return _photoClues[photoId][2];
+int SuspectDatabaseEntry::getPhotoShapeId(int photoId) const {
+	return _photoClues[photoId].shapeId;
+}
+
+int SuspectDatabaseEntry::getPhotoNotUsed(int photoId) const {
+	return _photoClues[photoId].notUsed;
 }
 
 void SuspectDatabaseEntry::reset() {

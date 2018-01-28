@@ -77,7 +77,7 @@ private:
 	void reset();
 	void replaceColor(uint16 oldColor, uint16 newColor);
 
-	void drawCharacter(const char character, Graphics::Surface &surface, int x, int y) const;
+	void drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const;
 };
 
 } // End of namespace BladeRunner

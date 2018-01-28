@@ -36,6 +36,7 @@ class UIImagePicker;
 class UIScrollBox;
 
 class KIASectionClues : public KIASectionBase {
+	//TODO: use gameInfo->getClueCount(), not in original game
 	static const int kClueCount = 288;
 
 	struct Line {
@@ -49,7 +50,7 @@ class KIASectionClues : public KIASectionBase {
 	UIScrollBox         *_cluesScrollBox;
 	UIScrollBox         *_filterScrollBox;
 
-	bool                _isVisible;
+	bool                _isOpen;
 	bool                _debugIntangible;
 	int                 _debugNop;
 	ActorClues         *_clues;

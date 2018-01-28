@@ -33,7 +33,6 @@ class Shape;
 class VQAPlayer;
 class UIImagePicker;
 
-
 class Spinner {
 	static const int kSpinnerDestinations = 10;
 
@@ -41,10 +40,6 @@ class Spinner {
 		int          id;
 		Common::Rect rect;
 	};
-
-	static const Destination kSpinnerDestinationsNear[];
-	static const Destination kSpinnerDestinationsMedium[];
-	static const Destination kSpinnerDestinationsFar[];
 
 	BladeRunnerEngine      *_vm;
 	bool                    _isDestinationSelectable[kSpinnerDestinations];
@@ -77,6 +72,9 @@ public:
 
 private:
 	static void mouseUpCallback(int, void *);
+	static const Destination *getDestinationsFar();
+	static const Destination *getDestinationsMedium();
+	static const Destination *getDestinationsNear();
 };
 
 } // End of namespace BladeRunner

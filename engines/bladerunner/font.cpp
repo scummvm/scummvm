@@ -104,7 +104,7 @@ void Font::draw(const Common::String &text, Graphics::Surface &surface, int x, i
 	x = CLIP(x, 0, _screenWidth - getTextWidth(text) + 1);
 	y = CLIP(y, 0, _screenHeight - _maxHeight);
 
-	const char *character = text.c_str();
+	const uint8 *character = (const uint8 *)text.c_str();
 	while (*character != 0) {
 		drawCharacter(*character, surface, x, y);
 		x += _spacing1 + _characters[*character + 1].width;
@@ -121,7 +121,7 @@ void Font::drawColor(const Common::String &text, Graphics::Surface &surface, int
 }
 
 int Font::getTextWidth(const Common::String &text) const {
-	const char *character = text.c_str();
+	const uint8 *character = (const uint8 *)text.c_str();
 
 	if (!_data) {
 		return 0;
@@ -168,8 +168,8 @@ void Font::replaceColor(uint16 oldColor, uint16 newColor) {
 	}
 }
 
-void Font::drawCharacter(const char character, Graphics::Surface &surface, int x, int y) const {
-	uint8 characterIndex = (uint8)character + 1;
+void Font::drawCharacter(const uint8 character, Graphics::Surface &surface, int x, int y) const {
+	uint8 characterIndex = character + 1;
 	if (x < 0 || x >= _screenWidth || y < 0 || y >= _screenHeight || !_data || characterIndex >= _characterCount) {
 		return;
 	}

@@ -107,8 +107,8 @@ KIA::KIA(BladeRunnerEngine *vm) {
 
 	_buttons = new UIImagePicker(_vm, 22);
 
-	_crimesSection     = new KIASectionCrimes(_vm); // PlayerActor->_clues
-	_suspectsSection   = new KIASectionSuspects(_vm); // PlayerActor->_clues
+	_crimesSection     = new KIASectionCrimes(_vm, _vm->_playerActor->_clues);
+	_suspectsSection   = new KIASectionSuspects(_vm, _vm->_playerActor->_clues);
 	_cluesSection      = new KIASectionClues(_vm, _vm->_playerActor->_clues);
 	_settingsSection   = new KIASectionSettings(_vm);
 	_helpSection       = new KIASectionHelp(_vm);
@@ -318,15 +318,15 @@ void KIA::handleMouseUp(int mouseX, int mouseY, bool mainButton) {
 	if (_currentSection) {
 		_currentSection->handleMouseUp(mainButton);
 	}
-	if (_currentSection && _currentSection->_field0) {
+	if (_currentSection && _currentSection->_scheduledSwitch) {
 		if (_currentSectionId == kKIASectionCrimes) {
 			open(kKIASectionSuspects);
-			// kiaSuspects::sub_45290C(_suspectsMenu, _crimesMenu->selectedSuspectId);
+			_suspectsSection->selectSuspect(_crimesSection->_suspectSelected);
 			_log->next();
 			_log->clearFuture();
 		} else if (_currentSectionId == kKIASectionSuspects) {
 			open(kKIASectionCrimes);
-			// kiaCrimes::updateCrime(_crimesMenu, *&_suspectsMenu->data[8052]);
+			_crimesSection->selectCrime(_suspectsSection->_crimeSelected);
 			_log->next();
 			_log->clearFuture();
 		} else {
@@ -361,7 +361,7 @@ void KIA::handleKeyUp(const Common::KeyState &kbd) {
 			_currentSection->handleKeyUp(kbd);
 		}
 	}
-	if (_currentSection && _currentSection->_field0) {
+	if (_currentSection && _currentSection->_scheduledSwitch) {
 		open(kKIASectionNone);
 	}
 }
@@ -418,7 +418,7 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 			}
 			break;
 	}
-	if (_currentSection && _currentSection->_field0) {
+	if (_currentSection && _currentSection->_scheduledSwitch) {
 		open(kKIASectionNone);
 	}
 }

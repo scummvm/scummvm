@@ -218,7 +218,6 @@ private:
 
 		uint8   *_codebook;
 		uint8   *_cbfz;
-		bool     _zbufChunkComplete;
 		uint32   _zbufChunkSize;
 		uint8   *_zbufChunk;
 

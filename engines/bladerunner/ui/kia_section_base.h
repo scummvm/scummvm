@@ -41,7 +41,7 @@ protected:
 	BladeRunnerEngine *_vm;
 
 public:
-	bool _field0;
+	bool _scheduledSwitch;
 
 	KIASectionBase(BladeRunnerEngine *vm);
 	virtual ~KIASectionBase();

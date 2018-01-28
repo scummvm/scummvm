@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 KIASectionBase::KIASectionBase(BladeRunnerEngine *vm) {
     _vm = vm;
-    _field0 = false;
+    _scheduledSwitch = false;
 }
 
 KIASectionBase::~KIASectionBase() {

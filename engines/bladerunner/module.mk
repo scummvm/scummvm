@@ -183,6 +183,7 @@ MODULE_OBJS = \
 	ui/kia_section_crimes.o \
 	ui/kia_section_help.o \
 	ui/kia_section_settings.o \
+	ui/kia_section_suspects.o \
 	ui/kia_shapes.o \
 	ui/spinner.o \
 	ui/ui_check_box.o \

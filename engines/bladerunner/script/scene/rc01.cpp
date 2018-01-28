@@ -25,13 +25,13 @@
 namespace BladeRunner {
 
 void SceneScriptRC01::InitializeScene() {
-#if _DEBUG
+#if BLADERUNNER_DEBUG_GAME
 	//TODO: not part of game, remove
-	// Game_Flag_Set(kFlagIntroPlayed); // force skip intro
-	// Game_Flag_Set(kFlagRC02toRC01); // no landing
+	Game_Flag_Set(kFlagIntroPlayed); // force skip intro
+	Game_Flag_Set(kFlagRC02toRC01); // no landing
 	// Game_Flag_Set(kFlagRC01PoliceDone);
 	// Game_Flag_Set(249);
-	// Game_Flag_Set(kFlagKIAPrivacyAddon);
+	Game_Flag_Set(kFlagKIAPrivacyAddon);
 #endif
 
 	if (!Game_Flag_Query(kFlagIntroPlayed)) {

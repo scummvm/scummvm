@@ -61,41 +61,6 @@ bool Spinner::querySelectableDestinationFlag(int destination) const {
 	return _isDestinationSelectable[destination];
 }
 
-const Spinner::Destination Spinner::kSpinnerDestinationsNear[] = {
-	{  0, Common::Rect(210, 263, 263, 332) },
-	{  1, Common::Rect(307, 330, 361, 381) },
-	{  2, Common::Rect(338, 137, 362, 169) },
-	{  3, Common::Rect(248, 135, 289, 168) },
-	{  4, Common::Rect(352, 222, 379, 238) },
-	{ -1, Common::Rect(-1,-1,-1,-1) }
-};
-
-const Spinner::Destination Spinner::kSpinnerDestinationsMedium[] = {
-	{  0, Common::Rect(252, 242, 279, 283) },
-	{  1, Common::Rect(301, 273, 328, 304) },
-	{  2, Common::Rect(319, 182, 336, 200) },
-	{  3, Common::Rect(269, 181, 293, 200) },
-	{  4, Common::Rect(325, 227, 345, 240) },
-	{  5, Common::Rect(259,  74, 380, 119) },
-	{  6, Common::Rect(203, 124, 224, 136) },
-	{  7, Common::Rect(200, 147, 222, 170) },
-	{ -1, Common::Rect(-1,-1,-1,-1) }
-};
-
-const Spinner::Destination Spinner::kSpinnerDestinationsFar[] = {
-	{  0, Common::Rect(220, 227, 246, 262) },
-	{  1, Common::Rect(260, 252, 286, 279) },
-	{  2, Common::Rect(286, 178, 302, 196) },
-	{  3, Common::Rect(244, 178, 263, 195) },
-	{  4, Common::Rect(288, 216, 306, 228) },
-	{  5, Common::Rect(249,  77, 353, 124) },
-	{  6, Common::Rect(190, 127, 208, 138) },
-	{  7, Common::Rect(185, 149, 206, 170) },
-	{  8, Common::Rect(398, 249, 419, 268) },
-	{  9, Common::Rect(390, 218, 419, 236) },
-	{ -1, Common::Rect(-1, -1, -1, -1) }
-};
-
 int Spinner::chooseDestination(int loopId, bool immediately) {
 	_selectedDestination = 0;
 	if (!_vm->openArchive("MODE.MIX")) {
@@ -137,17 +102,17 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	mapmask = 1;
 
 	if (mapmask & 4) {
-		_destinations = kSpinnerDestinationsFar;
+		_destinations = getDestinationsFar();
 		firstShapeId = 26;
 		shapeCount = 20;
 		spinnerLoopId = 4;
 	} else if (mapmask & 2) {
-		_destinations = kSpinnerDestinationsMedium;
+		_destinations = getDestinationsMedium();
 		firstShapeId = 10;
 		shapeCount = 16;
 		spinnerLoopId = 2;
 	} else if (mapmask & 1) {
-		_destinations = kSpinnerDestinationsNear;
+		_destinations = getDestinationsNear();
 		firstShapeId = 0;
 		shapeCount = 10;
 		spinnerLoopId = 0;
@@ -298,6 +263,50 @@ void Spinner::resume() {
 	_vqaPlayer->setLoop(0, -1, kLoopSetModeImmediate, nullptr, nullptr);
 	tick();
 	_vqaPlayer->setLoop(1, -1, kLoopSetModeJustStart, nullptr, nullptr);
+}
+
+const Spinner::Destination *Spinner::getDestinationsFar() {
+	static const Destination destinations[] = {
+		{  0, Common::Rect(220, 227, 246, 262) },
+		{  1, Common::Rect(260, 252, 286, 279) },
+		{  2, Common::Rect(286, 178, 302, 196) },
+		{  3, Common::Rect(244, 178, 263, 195) },
+		{  4, Common::Rect(288, 216, 306, 228) },
+		{  5, Common::Rect(249,  77, 353, 124) },
+		{  6, Common::Rect(190, 127, 208, 138) },
+		{  7, Common::Rect(185, 149, 206, 170) },
+		{  8, Common::Rect(398, 249, 419, 268) },
+		{  9, Common::Rect(390, 218, 419, 236) },
+		{ -1, Common::Rect(-1, -1, -1, -1) }
+	};
+	return destinations;
+}
+
+const Spinner::Destination *Spinner::getDestinationsMedium() {
+	static const Destination destinations[] = {
+		{  0, Common::Rect(252, 242, 279, 283) },
+		{  1, Common::Rect(301, 273, 328, 304) },
+		{  2, Common::Rect(319, 182, 336, 200) },
+		{  3, Common::Rect(269, 181, 293, 200) },
+		{  4, Common::Rect(325, 227, 345, 240) },
+		{  5, Common::Rect(259,  74, 380, 119) },
+		{  6, Common::Rect(203, 124, 224, 136) },
+		{  7, Common::Rect(200, 147, 222, 170) },
+		{ -1, Common::Rect(-1,-1,-1,-1) }
+	};
+	return destinations;
+}
+
+const Spinner::Destination *Spinner::getDestinationsNear() {
+	static const Destination destinations[] = {
+		{  0, Common::Rect(210, 263, 263, 332) },
+		{  1, Common::Rect(307, 330, 361, 381) },
+		{  2, Common::Rect(338, 137, 362, 169) },
+		{  3, Common::Rect(248, 135, 289, 168) },
+		{  4, Common::Rect(352, 222, 379, 238) },
+		{ -1, Common::Rect(-1,-1,-1,-1) }
+	};
+	return destinations;
 }
 
 } // End of namespace BladeRunner

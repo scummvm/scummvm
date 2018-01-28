@@ -46,7 +46,7 @@ namespace BladeRunner {
 KIASectionClues::KIASectionClues(BladeRunnerEngine *vm, ActorClues *clues) : KIASectionBase(vm) {
 	_uiContainer = new UIContainer(_vm);
 
-	_isVisible = false;
+	_isOpen = false;
 
 	_debugIntangible = false;
 	_debugNop = 0;
@@ -81,13 +81,13 @@ KIASectionClues::~KIASectionClues() {
 }
 
 void KIASectionClues::open() {
-	_isVisible = true;
+	_isOpen = true;
 
 	_buttons->resetImages();
 	_buttons->defineImage(0, Common::Rect(142, 380, 191, 395), _vm->_kia->_shapes->get(79), _vm->_kia->_shapes->get(80), _vm->_kia->_shapes->get(81), _vm->_textKIA->getText(30));
 	_buttons->defineImage(1, Common::Rect(193, 380, 242, 395), _vm->_kia->_shapes->get(76), _vm->_kia->_shapes->get(77), _vm->_kia->_shapes->get(78), _vm->_textKIA->getText(31));
-
 	_buttons->activate(nullptr, nullptr, nullptr, mouseUpCallback, this);
+
 	_cluesScrollBox->show();
 	_filterScrollBox->show();
 
@@ -96,8 +96,8 @@ void KIASectionClues::open() {
 }
 
 void KIASectionClues::close() {
-	if (_isVisible) {
-		_isVisible = false;
+	if (_isOpen) {
+		_isOpen = false;
 
 		_buttons->deactivate();
 		_cluesScrollBox->hide();
@@ -385,22 +385,22 @@ void KIASectionClues::populateClues() {
 	_cluesScrollBox->sortLines();
 }
 
-int KIASectionClues::getClueFilterTypeTextId(int i) {
-	if (i) {
-		return i - 1;
+int KIASectionClues::getClueFilterTypeTextId(int filterId) {
+	if (filterId) {
+		return filterId - 1;
 	}
 	return -1;
 }
 
 int KIASectionClues::getClueFilterCrimeId(int filterId) {
-	if (filterId == _assetTypeFilterCount) {
-		return -1;
+	if (filterId != _assetTypeFilterCount) {
+		return filterId - (_assetTypeFilterCount + 1);
 	}
-	return filterId - (_assetTypeFilterCount + 1);
+	return -1;
 }
 
 int KIASectionClues::getLineIdForAssetType(int assetType) {
-	if (assetType == -1) {
+	if (assetType == kClueTypeIntangible) {
 		return 0;
 	}
 	return assetType + 1;

@@ -80,7 +80,11 @@ bool ActorClues::isAcquired(int clueId) const {
 	if (clueIndex == -1) {
 		return false;
 	}
+#if BLADERUNNER_DEBUG_GAME
+	return true;
+#else
 	return _clues[clueIndex].flags & 0x01;
+#endif
 }
 
 int ActorClues::getFromActorId(int clueId) const {

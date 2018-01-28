@@ -394,10 +394,23 @@ enum Clues {
 };
 
 enum ClueTypes {
-	kClueTypePhotograph  = 0,
+	kClueTypeIntangible = -1,
+	kClueTypePhotograph = 0,
 	kClueTypeVideoClip = 1,
 	kClueTypeAudioRecording = 2,
 	kClueTypeObject = 3
+};
+
+enum Suspects {
+	kSuspectSadik = 0,
+	kSuspectClovis = 1,
+	kSuspectZuben = 2,
+	kSuspectLucy = 3,
+	kSuspectDekora = 4,
+	kSuspectGordo = 5,
+	kSuspectIzo = 6,
+	kSuspectMcCoy = 7,
+	kSuspectGuzza = 8
 };
 
 enum Crimes {

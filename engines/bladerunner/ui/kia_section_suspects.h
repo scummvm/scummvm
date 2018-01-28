@@ -25,15 +25,102 @@
 
 #include "bladerunner/ui/kia_section_base.h"
 
+#include "common/array.h"
+
 namespace BladeRunner {
 
+class ActorClues;
+class BladeRunnerEngine;
+class Shape;
+class UICheckBox;
+class UIContainer;
+class UIImagePicker;
+class UIScrollBox;
+
 class KIASectionSuspects : public KIASectionBase {
+	// _vm->_gameInfo->getClueCount()
+	static const int kClueCount = 288;
+
+	struct AcquiredClue {
+		int clueId;
+		int actorId;
+	};
+
+	bool           _isOpen;
+
+	UIContainer     *_uiContainer;
+	UIImagePicker   *_buttons;
+	UIScrollBox     *_cluesScrollBox;
+	UIScrollBox     *_crimesScrollBox;
+	UICheckBox      *_whereaboutsCheckBox;
+	UICheckBox      *_MOCheckBox;
+	UICheckBox      *_replicantCheckBox;
+	UICheckBox      *_nonReplicantCheckBox;
+	UICheckBox      *_othersCheckBox;
+
+	bool _whereaboutsFilter;
+	bool _MOFilter;
+	bool _replicantFilter;
+	bool _nonReplicantFilter;
+	bool _othersFilter;
+
+	ActorClues    *_clues;
+
+	int            _acquiredClueCount;
+	AcquiredClue   _acquiredClues[kClueCount];
+
+	int                 _suspectSelected;
+	int                 _suspectsFoundCount;
+	Common::Array<bool> _suspectsFound;
+	Common::Array<bool> _suspectsWithIdentity;
+
+	int   _mouseX;
+	int   _mouseY;
+
+	int    _suspectPhotoShapeId;
+	Shape *_suspectPhotoShape;
 
 public:
-	KIASectionSuspects(BladeRunnerEngine *vm): KIASectionBase(vm) {}
+	int                 _crimeSelected;
 
-	void saveToLog() {}
-	void loadFromLog() {}
+public:
+	KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues);
+	~KIASectionSuspects();
+
+	void open();
+	void close();
+
+	void draw(Graphics::Surface &surface);
+
+	void handleMouseMove(int mouseX, int mouseY);
+	void handleMouseDown(bool mainButton);
+	void handleMouseUp(bool mainButton);
+
+	void saveToLog();
+	void loadFromLog();
+
+	void selectSuspect(int suspectId);
+
+	static const char *scrambleSuspectsName(const char *name);
+
+private:
+	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
+	static void checkBoxCallback(void *callbackData, void *source);
+	static void mouseUpCallback(int buttonId, void *callbackData);
+
+	void onButtonPressed(int buttonId);
+
+	void populateAcquiredClues();
+	void populateSuspects();
+	void populateCrimes();
+	void populateVisibleClues();
+	void updateSuspectPhoto();
+
+	void nextSuspect();
+	void prevSuspect();
+
+	void enableAllFilters();
+	void disableAllFilters();
 };
 
 } // End of namespace BladeRunner

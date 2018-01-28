@@ -49,7 +49,6 @@ class VQAPlayer {
 	BladeRunnerEngine           *_vm;
 	Common::SeekableReadStream  *_s;
 	VQADecoder                   _decoder;
-	const uint16                *_zBuffer;
 	Audio::QueuingAudioStream   *_audioStream;
 
 	int _frame;
@@ -79,7 +78,6 @@ public:
 		: _vm(vm),
 		  _s(nullptr),
 		  _decoder(surface),
-		  _zBuffer(nullptr),
 		  _audioStream(nullptr),
 		  _frameNext(-1),
 		  _frameBegin(-1),
