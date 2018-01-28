@@ -130,7 +130,7 @@ public:
 	bool _cloudsEnd;
 	bool _darkSideEnd;
 	bool _worldEnd;
-	int _ctr24;	// TODO: Figure out proper name
+	int _ctr24;		// Unused counter
 	int _day;
 	uint _year;
 	int _minutes;

@@ -1122,8 +1122,6 @@ void Map::load(int mapId) {
 		}
 	}
 
-	// TODO: Switch setting flags that don't seem to ever be used
-
 	// Reload the monster data for the main maze that we're loading
 	mapId = party._mazeId;
 	Common::String filename = Common::String::format("maze%c%03d.mob",

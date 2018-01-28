@@ -159,7 +159,6 @@ void XeenEngine::playGame() {
 }
 
 void XeenEngine::play() {
-	// TODO: Init variables
 	_quitMode = QMODE_NONE;
 
 	_interface->setup();
