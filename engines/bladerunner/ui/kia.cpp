@@ -195,8 +195,7 @@ void KIA::tick() {
 		} else {
 			if (_playerVqaFrame > 0) {
 				int newVqaFrame = MAX(_playerVqaFrame - timeDiffDiv48, 0);
-				if (_playerVqaFrame >= 8 && newVqaFrame < 8)
-				{
+				if (_playerVqaFrame >= 8 && newVqaFrame < 8) {
 					_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(496), 100, 70, 70, 50, 0);
 				}
 				_playerVqaFrame = newVqaFrame;
@@ -1222,8 +1221,8 @@ void KIA::playTransitionSound(int transitionId) {
 void KIA::playPrivateAddon() {
 	playerReset();
 	playSliceModel(524);
-	playActorDialogue(14, 2060);
-	playActorDialogue(14, 2070);
+	playActorDialogue(kActorBulletBob, 2060);
+	playActorDialogue(kActorBulletBob, 2070);
 }
 
 } // End of namespace BladeRunner

@@ -31,9 +31,8 @@
 
 namespace BladeRunner {
 
-AudioMixer::AudioMixer(BladeRunnerEngine *vm):
-	_vm(vm)
-{
+AudioMixer::AudioMixer(BladeRunnerEngine *vm) {
+	_vm = vm;
 	for (int i = 0; i < kChannels; i++) {
 		_channels[i].isPresent = false;
 	}
@@ -137,8 +136,7 @@ void AudioMixer::timerCallback(void *self) {
 	((AudioMixer *)self)->tick();
 }
 
-void AudioMixer::adjustVolume(int channel, int newVolume, int time)
-{
+void AudioMixer::adjustVolume(int channel, int newVolume, int time) {
 	Common::StackLock lock(_mutex);
 
 	if (_channels[channel].isPresent) {
@@ -147,8 +145,7 @@ void AudioMixer::adjustVolume(int channel, int newVolume, int time)
 	}
 }
 
-void AudioMixer::adjustPan(int channel, int newPan, int time)
-{
+void AudioMixer::adjustPan(int channel, int newPan, int time) {
 	Common::StackLock lock(_mutex);
 
 	if (_channels[channel].isPresent) {
@@ -158,8 +155,7 @@ void AudioMixer::adjustPan(int channel, int newPan, int time)
 	}
 }
 
-void AudioMixer::tick()
-{
+void AudioMixer::tick() {
 	Common::StackLock lock(_mutex);
 
 	for (int i = 0; i < kChannels; i++) {

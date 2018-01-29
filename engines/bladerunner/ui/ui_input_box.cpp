@@ -97,8 +97,7 @@ void UIInputBox::handleKeyUp(const Common::KeyState &kbd) {
 	}
 }
 
-bool UIInputBox::charIsValid(const Common::KeyState &kbd)
-{
+bool UIInputBox::charIsValid(const Common::KeyState &kbd) {
 	return kbd.ascii >= ' '
 		&& kbd.ascii != '<'
 		&& kbd.ascii != '>'

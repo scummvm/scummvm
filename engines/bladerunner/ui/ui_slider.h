@@ -29,9 +29,7 @@
 
 namespace BladeRunner {
 
-class UISlider : public UIComponent
-{
-private:
+class UISlider : public UIComponent {
 	static const uint16   kColors[];
 
 	UIComponentCallback *_valueChangedCallback;

@@ -30,9 +30,7 @@
 
 namespace BladeRunner {
 
-class UIInputBox : public UIComponent
-{
-private:
+class UIInputBox : public UIComponent {
 	UIComponentCallback *_valueChangedCallback;
 	void                *_callbackData;
 

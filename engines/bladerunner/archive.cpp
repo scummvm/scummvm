@@ -87,8 +87,7 @@ int32 mix_id(const Common::String &name) {
 		buffer[i] = (char)toupper(name[i]);
 
 	uint32 id = 0;
-	for (int i = 0; i < 12 && buffer[i]; i += 4)
-	{
+	for (int i = 0; i < 12 && buffer[i]; i += 4) {
 		uint32 t = (uint32)buffer[i + 3] << 24
 		         | (uint32)buffer[i + 2] << 16
 		         | (uint32)buffer[i + 1] <<  8

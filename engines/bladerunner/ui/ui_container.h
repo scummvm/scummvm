@@ -31,9 +31,7 @@ namespace BladeRunner {
 
 class UIComponent;
 
-class UIContainer : public UIComponent
-{
-private:
+class UIContainer : public UIComponent {
 	Common::Array<UIComponent*> _components;
 
 public:

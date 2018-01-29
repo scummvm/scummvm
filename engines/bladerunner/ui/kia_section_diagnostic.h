@@ -27,11 +27,23 @@
 
 namespace BladeRunner {
 
+class TextResource;
+
 class KIASectionDiagnostic : public KIASectionBase {
+	static const int kTextColors[];
+	static const int kLineHeight = 18;
+
+	TextResource *_text;
+	int           _offset;
+	int           _timeLast;
 
 public:
-	KIASectionDiagnostic(BladeRunnerEngine *vm) : KIASectionBase(vm){}
+	KIASectionDiagnostic(BladeRunnerEngine *vm);
 
+	void open();
+	void close();
+
+	void draw(Graphics::Surface &surface);
 };
 
 } // End of namespace BladeRunner

@@ -95,8 +95,7 @@ void VKScript::SCRIPT_VK_DLL_Calibrate(int a1) {
 		sub_40A3A0(a1, 7395);
 	}
 	unknown1++;
-	if (unknown1 > 3) //bug?
-	{
+	if (unknown1 > 3) { //bug?
 		unknown1 = 0;
 	}
 }

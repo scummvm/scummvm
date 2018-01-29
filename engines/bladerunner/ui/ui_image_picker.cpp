@@ -154,8 +154,7 @@ void UIImagePicker::activate(UIImagePickerCallback *mouseInCallback,
                              UIImagePickerCallback *mouseOutCallback,
                              UIImagePickerCallback *mouseDownCallback,
                              UIImagePickerCallback *mouseUpCallback,
-                             void *callbackData)
-{
+                             void *callbackData) {
 	_isButtonDown = false;
 	_mouseInCallback   = mouseInCallback;
 	_mouseOutCallback  = mouseOutCallback;

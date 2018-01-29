@@ -28,10 +28,26 @@
 namespace BladeRunner {
 
 class KIASectionPogo : public KIASectionBase {
+	static const int   kStringCount = 158;
+	static const int   kLineCount = 22;
+	static const char *kStrings[];
+	static const int   kTextColors[];
+
+	const char *_strings[kStringCount];
+	int         _stringIndex;
+
+	const char *_lineTexts[kLineCount];
+	int         _lineTimeouts[kLineCount];
+	int         _lineOffsets[kLineCount];
+
+	int         _timeLast;
 
 public:
-	KIASectionPogo(BladeRunnerEngine *vm): KIASectionBase(vm){}
+	KIASectionPogo(BladeRunnerEngine *vm);
 
+	void open();
+
+	void draw(Graphics::Surface &surface);
 };
 
 } // End of namespace BladeRunner

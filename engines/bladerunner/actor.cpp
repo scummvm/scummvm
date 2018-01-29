@@ -369,12 +369,10 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3,
 		}
 		while (true) {
 			_vm->gameTick();
-			if (!_walkInfo->isWalking() && !_walkInfo->isRunning())
-			{
+			if (!_walkInfo->isWalking() && !_walkInfo->isRunning()) {
 				break;
 			}
-			if (!_vm->_gameIsRunning)
-			{
+			if (!_vm->_gameIsRunning) {
 				break;
 			}
 		}

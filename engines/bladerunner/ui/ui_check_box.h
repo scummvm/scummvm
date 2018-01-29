@@ -29,9 +29,7 @@
 
 namespace BladeRunner {
 
-class UICheckBox : public UIComponent
-{
-private:
+class UICheckBox : public UIComponent {
 	UIComponentCallback *_valueChangedCallback;
 	void                *_callbackData;
 

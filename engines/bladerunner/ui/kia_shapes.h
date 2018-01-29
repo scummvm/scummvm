@@ -31,9 +31,7 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-class KIAShapes
-{
-private:
+class KIAShapes {
 	static const int kShapeCount = 132;
 
 	BladeRunnerEngine *_vm;

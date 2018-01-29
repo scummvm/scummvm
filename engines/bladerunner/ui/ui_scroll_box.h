@@ -33,9 +33,7 @@ namespace BladeRunner {
 
 typedef void UIScrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
 
-class UIScrollBox : public UIComponent
-{
-private:
+class UIScrollBox : public UIComponent {
 	static const int kLineHeight = 10;
 	static const int k3DFrameColors[];
 	static const int kTextBackgroundColors[];

@@ -37,8 +37,7 @@ class BladeRunnerEngine;
 
 typedef void UIComponentCallback(void *callbackData, void *source);
 
-class UIComponent
-{
+class UIComponent {
 protected:
 	BladeRunnerEngine *_vm;
 
