@@ -38,10 +38,11 @@
 #include "math.h"
 
 PSP2EventSource::PSP2EventSource() {
-	for (int i = 0; i < SCE_TOUCH_PORT_MAX_NUM; i++) {
-		for (int j = 0; j < MAX_NUM_FINGERS; j++) {
-			_finger[i][j].id = -1;
+	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
+		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+			_finger[port][i].id = -1;
 		}
+		_multiFingerDragging[port] = false;
 	}
 }
 
@@ -85,18 +86,22 @@ void PSP2EventSource::preprocessFingerDown(SDL_Event *event) {
 	// id (for multitouch)
 	SDL_FingerID id = event->tfinger.fingerId;
 
-	// find out how many fingers were down before this event
-	int numFingersDown = 0;
-	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
-		if (_finger[port][i].id >= 0) {
-			numFingersDown++;
-		}
+	int x = _km.x / MULTIPLIER;
+	int y = _km.y / MULTIPLIER;
+
+	if (port == 0) {
+		convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 	}
 
+	// we need the timestamps to decide later if the user performed a short tap (click)
+	// or a long tap (drag)
+	// we also need the last coordinates for each finger to keep track of dragging
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 		if (_finger[port][i].id == -1) {
 			_finger[port][i].id = id;
 			_finger[port][i].timeLastDown = event->tfinger.timestamp;
+			_finger[port][i].lastX = x;
+			_finger[port][i].lastY = y;
 			break;
 		}
 	}
@@ -126,28 +131,37 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 		if (_finger[port][i].id == id) {
 			_finger[port][i].id = -1;
-			if ((event->tfinger.timestamp - _finger[port][i].timeLastDown) <= 250) {
-				// short (<250 ms) tap is interpreted as right/left mouse click depending on # fingers already down
-				if (numFingersDown == 2 || numFingersDown == 1) {
-					Uint8 simulatedButton = 0;
-					if (numFingersDown == 2) {
-						simulatedButton = SDL_BUTTON_RIGHT;
-					} else if (numFingersDown == 1) {
-						simulatedButton = SDL_BUTTON_LEFT;
+			if (!_multiFingerDragging[port]) {
+				if ((event->tfinger.timestamp - _finger[port][i].timeLastDown) <= MAX_TAP_TIME) {
+					// short (<MAX_TAP_TIME ms) tap is interpreted as right/left mouse click depending on # fingers already down
+					if (numFingersDown == 2 || numFingersDown == 1) {
+						Uint8 simulatedButton = 0;
+						if (numFingersDown == 2) {
+							simulatedButton = SDL_BUTTON_RIGHT;
+						} else if (numFingersDown == 1) {
+							simulatedButton = SDL_BUTTON_LEFT;
+						}
+
+						event->type = SDL_MOUSEBUTTONDOWN;
+						event->button.button = simulatedButton;
+						event->button.x = x;
+						event->button.y = y;
+
+						SDL_Event ev;
+						ev.type = SDL_MOUSEBUTTONUP;
+						ev.button.button = simulatedButton;
+						ev.button.x = x;
+						ev.button.y = y;
+						SDL_PushEvent(&ev);
 					}
-
-					event->type = SDL_MOUSEBUTTONDOWN;
-					event->button.button = simulatedButton;
-					event->button.x = x;
-					event->button.y = y;
-
-					SDL_Event ev;
-					ev.type = SDL_MOUSEBUTTONUP;
-					ev.button.button = simulatedButton;
-					ev.button.x = x;
-					ev.button.y = y;
-					SDL_PushEvent(&ev);
 				}
+			} else if (numFingersDown == 1) {
+				// when dragging, and the last finger is lifted, the drag is over
+				event->type = SDL_MOUSEBUTTONUP;
+				event->button.button = SDL_BUTTON_LEFT;
+				event->button.x = x;
+				event->button.y = y;
+				_multiFingerDragging[port] = false;
 			}
 		}
 	}
@@ -156,6 +170,8 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 	// front (0) or back (1) panel
 	SDL_TouchID port = event->tfinger.touchId;
+	// id (for multitouch)
+	SDL_FingerID id = event->tfinger.fingerId;
 
 	// find out how many fingers were down before this event
 	int numFingersDown = 0;
@@ -165,14 +181,13 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 		}
 	}
 
-	if (numFingersDown == 1) {
-
+	if (numFingersDown >= 1) {
 		int x = _km.x / MULTIPLIER;
 		int y = _km.y / MULTIPLIER;
 
 		if (port == 0) {
 			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
-		} else {
+		}	else {
 			// for relative mode, use the pointer speed setting
 			float speedFactor = 1.0;
 
@@ -232,9 +247,76 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 			y = 0;
 		}
 
-		event->type = SDL_MOUSEMOTION;
-		event->motion.x = x;
-		event->motion.y = y;
+		// update the current finger's coordinates so we can track it later
+		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+			if (_finger[port][i].id == id) {
+				_finger[port][i].lastX = x;
+				_finger[port][i].lastY = y;
+			}
+		}
+
+		// Check if we are starting a two-finger drag and push mouse button if neccessary
+		if (numFingersDown >= 2) {
+			if (!_multiFingerDragging[port]) {
+				// only start a multi-finger drag if at least two fingers have been down long enough
+				int numFingersDownLong = 0;
+				for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+					if (_finger[port][i].id >= 0) {
+						if (event->tfinger.timestamp - _finger[port][i].timeLastDown > MAX_TAP_TIME) {
+							numFingersDownLong++;
+						}
+					}
+				}
+				if (numFingersDownLong >= 2) {
+					// starting drag, so push mouse down at current location (back) 
+					// or location of "oldest" finger (front)
+					int mouseDownX = x;
+					int mouseDownY = y;
+					if (port == 0) {
+						for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+							if (_finger[port][i].id == id) {
+								for (int j = 0; j < MAX_NUM_FINGERS; j++) {
+									if (_finger[port][j].id >= 0 && (i != j) ) {
+										if (_finger[port][j].timeLastDown < _finger[port][i].timeLastDown) {
+											mouseDownX = _finger[port][j].lastX;
+											mouseDownY = _finger[port][j].lastY;
+										}
+									}
+								}
+							}
+						}
+					}
+					SDL_Event ev;
+					ev.type = SDL_MOUSEBUTTONDOWN;
+					ev.button.button = SDL_BUTTON_LEFT;
+					ev.button.x = mouseDownX;
+					ev.button.y = mouseDownY;
+					SDL_PushEvent(&ev);
+					_multiFingerDragging[port] = true;
+				}
+			}
+		}
+
+		//check if this is the "oldest" finger down (or the only finger down), otherwise it will not affect mouse motion
+		bool updatePointer = true;
+		if (numFingersDown > 1) {
+			for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+				if (_finger[port][i].id == id) {
+					for (int j = 0; j < MAX_NUM_FINGERS; j++) {
+						if (_finger[port][j].id >= 0 && (i != j) ) {
+							if (_finger[port][j].timeLastDown < _finger[port][i].timeLastDown) {
+								updatePointer = false;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (updatePointer) {
+			event->type = SDL_MOUSEMOTION;
+			event->motion.x = x;
+			event->motion.y = y;
+		}
 	}
 }
 
