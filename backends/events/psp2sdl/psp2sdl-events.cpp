@@ -124,10 +124,6 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 	int x = _km.x / MULTIPLIER;
 	int y = _km.y / MULTIPLIER;
 
-	if (port == 0) {
-		convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
-	}
-
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 		if (_finger[port][i].id == id) {
 			_finger[port][i].id = -1;
@@ -140,6 +136,9 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 							simulatedButton = SDL_BUTTON_RIGHT;
 						} else if (numFingersDown == 1) {
 							simulatedButton = SDL_BUTTON_LEFT;
+							if (port == 0) {
+								convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+							}
 						}
 
 						event->type = SDL_MOUSEBUTTONDOWN;
@@ -157,6 +156,9 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 				}
 			} else if (numFingersDown == 1) {
 				// when dragging, and the last finger is lifted, the drag is over
+				if (port == 0) {
+					convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+				}
 				event->type = SDL_MOUSEBUTTONUP;
 				event->button.button = SDL_BUTTON_LEFT;
 				event->button.x = x;
@@ -255,7 +257,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 			}
 		}
 
-		// Check if we are starting a two-finger drag and push mouse button if neccessary
+		// If we are starting a multi-finger drag, start holding down the mouse button
 		if (numFingersDown >= 2) {
 			if (!_multiFingerDragging[port]) {
 				// only start a multi-finger drag if at least two fingers have been down long enough
