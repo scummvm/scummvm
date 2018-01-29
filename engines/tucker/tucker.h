@@ -579,6 +579,7 @@ protected:
 	virtual Common::Error saveGameState(int num, const Common::String &description);
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
+	virtual bool existsSavegame();
 
 	TuckerConsole *_console;
 

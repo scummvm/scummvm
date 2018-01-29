@@ -27,6 +27,7 @@
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/keyboard.h"
+#include "common/savefile.h"
 #include "common/textconsole.h"
 
 #include "engines/util.h"
@@ -1314,13 +1315,19 @@ void TuckerEngine::updateSfxData3_2() {
 }
 
 void TuckerEngine::saveOrLoad() {
+	bool hasSavegame = existsSavegame();
+
 	if (!_leftMouseButtonPressed) {
 		_mouseClick = 0;
 	}
 	if (_currentSaveLoadGameState > 0) {
-		drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, _saveOrLoadGamePanel + 19, 102);
-		int len = getStringWidth(_saveOrLoadGamePanel + 19, _infoBarBuf);
-		drawStringInteger(_currentSaveLoadGameState, len / 2 + 128, 160, 2);
+		if (_saveOrLoadGamePanel == 0 && !hasSavegame) {
+			drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, _saveOrLoadGamePanel + 21, 102);
+		} else {
+			drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, _saveOrLoadGamePanel + 19, 102);
+			int len = getStringWidth(_saveOrLoadGamePanel + 19, _infoBarBuf);
+			drawStringInteger(_currentSaveLoadGameState, len / 2 + 128, 160, 2);
+		}
 	} else {
 		drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, 21, 102);
 	}
@@ -1348,7 +1355,7 @@ void TuckerEngine::saveOrLoad() {
 		if (_mousePosX > 260 && _mousePosX < 290 && _mousePosY > 152 && _mousePosY < 168) {
 			if (_saveOrLoadGamePanel == 1) {
 				saveGameState(_currentSaveLoadGameState, "");
-			} else if (_currentSaveLoadGameState > 0) {
+			} else if (hasSavegame && _currentSaveLoadGameState > 0) {
 				loadGameState(_currentSaveLoadGameState);
 			}
 			_forceRedrawPanelItems = true;
