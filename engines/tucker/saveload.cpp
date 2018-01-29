@@ -126,4 +126,9 @@ bool TuckerEngine::canSaveGameStateCurrently() {
 	return !_player && _cursorType < 2;
 }
 
+bool TuckerEngine::existsSavegame() {
+	Common::String pattern = generateGameStateFileName(_targetName.c_str(), 0, true);
+	return !_saveFileMan->listSavefiles(pattern).empty();
+}
+
 } // namespace Tucker
