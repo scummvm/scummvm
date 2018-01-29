@@ -314,7 +314,7 @@ void Actor::movementTrackUnpause() {
 
 void Actor::movementTrackWaypointReached() {
 	int seconds;
-	if (!_movementTrack->isPaused() && _id != 0) {
+	if (!_movementTrack->isPaused() && _id != kActorMcCoy) {
 		if (_movementTrackWalkingToWaypointId >= 0 && _movementTrackDelayOnNextWaypoint) {
 			if (!_movementTrackDelayOnNextWaypoint) {
 				_movementTrackDelayOnNextWaypoint = 1;
@@ -358,112 +358,90 @@ void Actor::setAtWaypoint(int waypointId, int angle, int moving, bool retired) {
 	setAtXYZ(waypointPosition, angle, true, moving, retired);
 }
 
-bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool a3, bool run, const Vector3 &start, float targetWidth, float targetSize, bool a8, bool *flagIsRunning, bool async) {
-	if (true) { // simple walking
-		*flagIsRunning = false;
-		bool arrived;
-		_walkInfo->setup(_id, false, _position, destination, false, &arrived);
+bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, const Vector3 &start, float targetWidth, float targetSize, bool a8, bool *flagIsRunning, bool async) {
+	*flagIsRunning = false;
 
-		if (async) {
+	if (destinationOffset > 0) {
+		float dist = distance(_position, destination);
+		if (dist - targetSize <= destinationOffset) {
 			return false;
 		}
-		while (true) {
-			_vm->gameTick();
-			if (!_walkInfo->isWalking() && !_walkInfo->isRunning()) {
-				break;
-			}
-			if (!_vm->_gameIsRunning) {
-				break;
-			}
-		}
-		return false;
-	} else {
-		//TODO:
-		// original code, not yet working
-		*flagIsRunning = false;
-
-		if (destinationOffset > 0) {
-			float dist = distance(_position, destination);
-			if (dist - targetSize <= destinationOffset) {
-				return false;
-			}
-		}
-
-		if (a8 && !async && _id && destinationOffset <= 24) {
-			if (distance(_vm->_playerActor->_position, destination) <= 24.0f) {
-				_vm->_playerActor->walkToNearestPoint(destination, 48.0f);
-			}
-		}
-
-		if (_id) {
-			a3 = false;
-		}
-
-		Vector3 destinationX(destination);
-
-		if (destinationOffset > 0) {
-			walkFindU2(&destinationX, targetWidth, destinationOffset, targetSize, _position, destination);
-		}
-
-		bool walking = walkTo(run, destinationX, a8);
-
-		if (async) {
-			return false;
-		}
-
-		if (!walking && destinationOffset > 0) {
-			walking = walkTo(run, destination, a8);
-		}
-
-		if (!walking) {
-			return false;
-		}
-
-		if (async) {
-			return false;
-		}
-		if (_id) {
-			_vm->_mouse->disable();
-		}
-		if (a3) {
-			//			TODO:
-			//			dword_482990 = 1;
-			//			dword_482994 = 0;
-		} else {
-			_vm->playerLosesControl();
-		}
-
-		if (a8) {
-			_inWalkLoop = true;
-		}
-
-		bool v46 = false;
-		while (_walkInfo->isWalking() && _vm->_gameIsRunning) {
-			if (_walkInfo->isRunning()) {
-				*flagIsRunning = true;
-			}
-			_vm->gameTick();
-			if (_id == 0 && a3 /*&& dword_482994*/) {
-				stopWalking(false);
-				v46 = true;
-			}
-		}
-		if (a8) {
-			_inWalkLoop = false;
-		}
-		if (a3) {
-			//			dword_482990 = 1;
-		} else {
-			_vm->playerGainsControl();
-		}
-		if (!v46 && destinationOffset == 0 /* && !PlayerActorIdle*/) {
-			setAtXYZ(destination, _facing, true, false, false);
-		}
-		if (_id) {
-			_vm->_mouse->enable();
-		}
-		return v46;
 	}
+
+	if (a8 && !async && _id != kActorMcCoy && destinationOffset <= 24) {
+		if (distance(_vm->_playerActor->_position, destination) <= 24.0f) {
+			_vm->_playerActor->walkToNearestPoint(destination, 48.0f);
+		}
+	}
+
+	if (_id != kActorMcCoy) {
+		interruptible = false;
+	}
+
+	Vector3 destinationX(destination);
+
+	if (destinationOffset > 0) {
+		walkFindU2(&destinationX, targetWidth, destinationOffset, targetSize, _position, destination);
+	}
+
+	bool walking = walkTo(run, destinationX, a8);
+
+	if (async) {
+		return false;
+	}
+
+	if (!walking && destinationOffset > 0) {
+		walking = walkTo(run, destination, a8);
+	}
+
+	if (!walking) {
+		faceXYZ(destination.x, destination.y, destination.z, false);
+		return false;
+	}
+
+	if (async) {
+		return false;
+	}
+	if (_id != kActorMcCoy) {
+		_vm->_mouse->disable();
+	}
+	if (interruptible) {
+		_vm->_isWalkingInterruptible = 1;
+		_vm->_interruptWalking = 0;
+	} else {
+		_vm->playerLosesControl();
+	}
+
+	if (a8) {
+		_inWalkLoop = true;
+	}
+
+	bool wasInterrupted = false;
+	while (_walkInfo->isWalking() && _vm->_gameIsRunning) {
+		if (_walkInfo->isRunning()) {
+			*flagIsRunning = true;
+		}
+		_vm->gameTick();
+		if (_id == kActorMcCoy && interruptible && _vm->_interruptWalking) {
+			stopWalking(false);
+			wasInterrupted = true;
+		}
+	}
+	if (a8) {
+		_inWalkLoop = false;
+	}
+	if (interruptible) {
+		_vm->_isWalkingInterruptible = false;
+	} else {
+		_vm->playerGainsControl();
+	}
+	if (!wasInterrupted && destinationOffset == 0 && !_vm->_playerActorIdle) {
+		setAtXYZ(destination, _facing, true, false, false);
+	}
+	if (_id != kActorMcCoy) {
+		_vm->_mouse->enable();
+	}
+	return wasInterrupted;
 }
 
 bool Actor::walkTo(bool run, const Vector3 &destination, bool a3) {
@@ -472,21 +450,21 @@ bool Actor::walkTo(bool run, const Vector3 &destination, bool a3) {
 	return _walkInfo->setup(_id, run, _position, destination, a3, &arrived);
 }
 
-bool Actor::loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
-	return loopWalk(_vm->_actors[otherActorId]->_position, destinationOffset, a3, run, _position, 24.0f, 24.0f, a5, flagIsRunning, false);
+bool Actor::loopWalkToActor(int otherActorId, int destinationOffset, int interruptible, bool run, bool a5, bool *flagIsRunning) {
+	return loopWalk(_vm->_actors[otherActorId]->_position, destinationOffset, interruptible, run, _position, 24.0f, 24.0f, a5, flagIsRunning, false);
 }
 
-bool Actor::loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
+bool Actor::loopWalkToItem(int itemId, int destinationOffset, int interruptible, bool run, bool a5, bool *flagIsRunning) {
 	float x, y, z;
 	int width, height;
 	_vm->_items->getXYZ(itemId, &x, &y, &z);
 	_vm->_items->getWidthHeight(itemId, &width, &height);
 	Vector3 itemPosition(x, y, z);
 
-	return loopWalk(itemPosition, destinationOffset, a3, run, _position, width, 24.0f, a5, flagIsRunning, false);
+	return loopWalk(itemPosition, destinationOffset, interruptible, run, _position, width, 24.0f, a5, flagIsRunning, false);
 }
 
-bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning) {
+bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset, bool interruptible, bool run, bool a5, bool *flagIsRunning) {
 	int sceneObject = _vm->_scene->_set->findObject(objectName);
 	if (sceneObject < 0) {
 		return true;
@@ -528,17 +506,17 @@ bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset,
 	float y = _vm->_scene->_set->getAltitudeAtXZ(closestX, closestZ, &inWalkbox);
 	Vector3 destination(closestX, y, closestZ);
 
-	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
+	return loopWalk(destination, destinationOffset, interruptible, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
 }
 
-bool Actor::loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning) {
+bool Actor::loopWalkToWaypoint(int waypointId, int destinationOffset, int interruptible, bool run, bool a5, bool *flagIsRunning) {
 	Vector3 waypointPosition;
 	_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
-	return loopWalk(waypointPosition, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
+	return loopWalk(waypointPosition, destinationOffset, interruptible, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
 }
 
-bool Actor::loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning) {
-	return loopWalk(destination, destinationOffset, a3, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
+bool Actor::loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, bool a5, bool *flagIsRunning) {
+	return loopWalk(destination, destinationOffset, interruptible, run, _position, 0.0f, 24.0f, a5, flagIsRunning, false);
 }
 
 bool Actor::asyncWalkToWaypoint(int waypointId, int destinationOffset, bool run, bool a5) {
@@ -581,7 +559,7 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 		Vector3 positionChange = _vm->_sliceAnimations->getPositionChange(_animationId);
 		float angleChange = _vm->_sliceAnimations->getFacingChange(_animationId);
 
-		if (_id == 47) {
+		if (_id == kActorHysteriaPatron1) {
 			positionChange.x = 0.0f;
 			positionChange.y = 0.0f;
 			positionChange.z = 0.0f;
@@ -797,7 +775,7 @@ bool Actor::isRunning() const {
 }
 
 void Actor::stopWalking(bool value) {
-	if (value && _id == 0) {
+	if (value && _id == kActorMcCoy) {
 		_vm->_playerActorIdle = true;
 	}
 
@@ -949,7 +927,7 @@ void Actor::retire(bool retired, int width, int height, int retiredByActorId) {
 	_isRetired = retired;
 	_retiredWidth = MAX(width, 0);
 	_retiredHeight = MAX(height, 0);
-	if (_id == 0 && _isRetired) {
+	if (_id == kActorMcCoy && _isRetired) {
 		_vm->playerLosesControl();
 		_vm->_playerDead = true;
 	}
@@ -975,7 +953,7 @@ void Actor::combatModeOn(int a2, int a3, int otherActorId, int a5, int animation
 	_animationModeCombatWalk = animationModeCombatWalk;
 	_animationModeCombatRun = animationModeCombatRun;
 	_inCombat = true;
-	if (_id > 0)
+	if (_id != kActorMcCoy)
 		_combatInfo->combatOn(_id, a2, a3, otherActorId, a5, a9, a10, a11, ammoDamage, a13, a14);
 	stopWalking(false);
 	changeAnimationMode(_animationModeCombatIdle, false);

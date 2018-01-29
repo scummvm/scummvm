@@ -629,7 +629,10 @@ bool BladeRunnerEngine::init2() {
 }
 
 Common::Point BladeRunnerEngine::getMousePos() const {
-	return _eventMan->getMousePos();
+	Common::Point p = _eventMan->getMousePos();
+	p.x = CLIP(p.x, int16(0), int16(639));
+	p.y = CLIP(p.y, int16(0), int16(479));
+	return p;
 }
 
 void BladeRunnerEngine::gameLoop() {

@@ -171,6 +171,8 @@ public:
 
 	Common::RandomSource _rnd;
 
+	bool _isWalkingInterruptible;
+	bool _interruptWalking;
 	bool _playerActorIdle;
 	bool _playerDead;
 	bool _speechSkipped;

@@ -143,11 +143,11 @@ public:
 	void movementTrackUnpause();
 	void movementTrackWaypointReached();
 
-	bool loopWalkToActor(int otherActorId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning);
-	bool loopWalkToItem(int itemId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning);
-	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning);
-	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int a3, bool run, bool a5, bool *flagIsRunning);
-	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool a3, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalkToActor(int otherActorId, int destinationOffset, int interruptible, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalkToItem(int itemId, int destinationOffset, int interruptible, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool interruptible, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int interruptible, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, bool a5, bool *flagIsRunning);
 	bool asyncWalkToWaypoint(int waypointId, int destinationOffset, bool run, bool a5);
 	void asyncWalkToXYZ(const Vector3 &destination, int destinationOffset, bool run, int a6);
 
@@ -223,8 +223,8 @@ private:
 	void setFacing(int facing, bool halfOrSet = true);
 	void setBoundingBox(const Vector3 &position, bool retired);
 	float distanceFromView(View *view) const;
-	
-	bool loopWalk(const Vector3 &destination, int destinationOffset, bool a3, bool run, const Vector3 &start, float a6, float a7, bool a8, bool *isRunning, bool async);
+
+	bool loopWalk(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, const Vector3 &start, float a6, float a7, bool a8, bool *isRunning, bool async);
 	bool walkTo(bool run, const Vector3 &destination, bool a3);
 
 	bool walkFindU1(const Vector3 &startPosition, const Vector3 &targetPosition, float a3, Vector3 *newDestination);
