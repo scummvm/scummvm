@@ -1334,8 +1334,22 @@ bool Scripts::cmdDisplayBottomTwoLines(ParamsIterator &params) {
 }
 
 bool Scripts::cmdDisplayLarge(ParamsIterator &params) {
-	error("TODO: Implement event text loading");
+	Party &party = *g_vm->_party;
+	Common::String filename = Common::String::format("aaze2%03u.txt", party._mazeId);
+	uint offset = params.readByte();
 
+	// Get the text data for the current maze
+	File f(filename);
+	char *data = new char[f.size()];
+	f.read(data, f.size());
+	f.close();
+
+	// Get the message at the specified offset
+	_message = Common::String(data + offset);
+	delete[] data;
+
+	// Display the message
+	_windowIndex = 11;
 	display(true, 0);
 	return true;
 }
