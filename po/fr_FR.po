@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-01-27 18:18+0100\n"
-"PO-Revision-Date: 2017-11-12 22:44+0000\n"
+"PO-Revision-Date: 2018-01-30 22:19+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -4511,17 +4511,19 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Utiliser l'intro de la version disquette (version CD uniquement)"
 
 #: engines/supernova/supernova.cpp:308
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
 "La bonne version du fichier de données '%s' n'a pu être trouvée. Version "
-"attendue : %d.%d ; version trouvée : %d.%d."
+"attendue : %d ; version trouvée : %d."
 
 #: engines/supernova/supernova.cpp:335
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
-msgstr "Le fichier de données '%s' n'a pu être trouvé."
+msgstr ""
+"Impossible de trouver les données pour la langue %s dans le fichier de "
+"donnée '%s'."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
