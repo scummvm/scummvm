@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-01-27 18:18+0100\n"
 "PO-Revision-Date: 2018-01-30 12:11+0000\n"
-"Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
+"Last-Translator: Jennifer McMurray <mcmurray.jennifer@gmail.com>\n"
 "Language-Team: Italian "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/it/>\n"
 "Language: it_IT\n"
@@ -1810,7 +1810,7 @@ msgstr ""
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr "Sigle identificative dei giochi trovate:"
+msgstr "Identificatori di gioco corrispondenti:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
