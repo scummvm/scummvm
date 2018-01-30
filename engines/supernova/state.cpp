@@ -216,11 +216,11 @@ GuiElement::GuiElement()
 	, _textColorHighlighted(kColorLightGreen)
 	, _textColor(kColorGreen)
 {
-	_text[0] = '\0';
+	memset(_text, 0, sizeof(_text));
 }
 
 void GuiElement::setText(const char *text) {
-	strncpy(_text, text, sizeof(_text));
+	strncpy(_text, text, sizeof(_text) - 1);
 }
 
 void GuiElement::setTextPosition(int x, int y) {
