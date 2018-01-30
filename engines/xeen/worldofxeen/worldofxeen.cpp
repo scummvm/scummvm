@@ -166,5 +166,20 @@ void WorldOfXeenEngine::death() {
 	w.update();
 }
 
+void WorldOfXeenEngine::showCutscene(const Common::String &name) {
+	_sound->stopAllAudio();
+
+	if (name == "ENDGAME")
+		showCloudsEnding();
+	else if (name == "ENDGAME2")
+		showDarkSideEnding();
+	else if (name == "WORLDEND")
+		showWorldOfXeenEnding();
+}
+
+void WorldOfXeenEngine::showWorldOfXeenEnding() {
+	// TODO
+}
+
 } // End of namespace WorldOfXeen
 } // End of namespace Xeen

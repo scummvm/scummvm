@@ -42,6 +42,11 @@ enum WOXGameAction {
  */
 class WorldOfXeenEngine: public XeenEngine, public CloudsCutscenes,
 		public DarkSideCutscenes {
+private:
+	/**
+	 * Show World of Xeen ending
+	 */
+	void showWorldOfXeenEnding();
 protected:
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific
@@ -59,6 +64,11 @@ public:
 public:
 	WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~WorldOfXeenEngine() {}
+
+	/**
+	 * Show a cutscene
+	 */
+	virtual void showCutscene(const Common::String &name);
 
 	/**
 	 * Set the next overall game action to do

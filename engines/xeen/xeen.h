@@ -193,12 +193,17 @@ public:
 	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
-	bool canLoadGameStateCurrently();
+	virtual bool canLoadGameStateCurrently();
 
 	/**
 	* Returns true if the game can currently be saved
 	*/
-	bool canSaveGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
+
+	/**
+	 * Show a cutscene
+	 */
+	virtual void showCutscene(const Common::String &name) {}
 
 	static Common::String printMil(uint value);
 

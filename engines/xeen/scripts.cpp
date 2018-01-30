@@ -1442,8 +1442,6 @@ void Scripts::doWorldEnding() {
 }
 
 void Scripts::doEnding(const Common::String &endStr) {
-	//_vm->_saves->saveChars();
-
 	Party &party = *_vm->_party;
 
 	int state = 0;
@@ -1458,7 +1456,8 @@ void Scripts::doEnding(const Common::String &endStr) {
 		}
 	}
 
-	error("TODO: doEnding state:%d", state);
+	g_vm->showCutscene(endStr);
+	g_vm->_quitMode = QMODE_MENU;
 }
 
 bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
