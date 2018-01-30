@@ -966,7 +966,6 @@ $engines_help
 Optional Features:
   --force-c++98            force building as C++98 even if the compiler supports a
                            newer standard
-  --enable-static          build a static binary instead of using shared objects
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
   --enable-release         enable building in release mode (this activates
@@ -976,6 +975,8 @@ Optional Features:
   --enable-optimizations=FLAG enable a specific optimization level (e.g. -O2)
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
+  --enable-static-libs     use static linking information from system library
+                           configuration scripts
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-16bit          don't enable 16bit color support
@@ -1118,7 +1119,8 @@ EOF
 
 for ac_option in $@; do
 	case "$ac_option" in
-	--enable-static)         _static_build=yes    ;;
+	--enable-static-libs)     _static_libs=yes ;;
+	--disable-static-libs)    _static_libs=no ;;
 	--disable-16bit)          _16bit=no       ;;
 	--enable-highres)         _highres=yes    ;;
 	--disable-highres)        _highres=no     ;;
@@ -1350,6 +1352,7 @@ for ac_option in $@; do
 		_nasmpath="$arg:$arg/bin"
 		;;
 	--with-staticlib-prefix=*)
+		_static_libs=yes
 		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--with-xcodetools-path=*)
@@ -3476,7 +3479,7 @@ case $_backend in
 	androidsdl | dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
 		find_sdlconfig
 		append_var INCLUDES "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		if test "$_static_build" = yes ; then
+		if test "$_static_libs" = yes; then
 			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
 		else
 			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
@@ -4353,7 +4356,7 @@ if test "$_libcurl" != "no"; then
 	if test -z "$_libcurlconfig"; then
 		_libcurl=no
 	else
-		if test -n "$_staticlibpath"; then
+		if test "$_static_libs" = yes; then
 			LIBCURL_LIBS=`$_libcurlconfig --static-libs`
 		else
 			LIBCURL_LIBS=`$_libcurlconfig --libs`
@@ -4634,7 +4637,11 @@ if test "$_freetype2" != "no"; then
 			fi
 		fi
 
-		FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
+		if test "$_static_libs" = yes; then
+			FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --static --libs`
+		else
+			FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
+		fi
 		FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$freetypeprefix" --cflags`
 
 		if test "$_freetype2" = "auto"; then
@@ -5092,6 +5099,23 @@ case $_backend in
 		;;
 esac
 
+# The Apple linker intentionally refuses to know about -Bstatic or -static, so
+# instead it is necessary to give full paths to the static libraries to generate
+# a static build in this environment
+case $_host_os in darwin*)
+	if test "$_static_libs" = yes; then
+		newlibs=
+		for lib in $LIBS; do
+			newlib=`echo $lib | sed "s@-l\(.*\)@$_staticlibpath/lib/lib\\1.a@"`
+			if test -f "$newlib"; then
+				newlibs="$newlibs $newlib"
+			else
+				newlibs="$newlibs $lib"
+			fi
+		done
+		LIBS=$newlibs
+	fi
+esac
 
 #
 # Engine selection
