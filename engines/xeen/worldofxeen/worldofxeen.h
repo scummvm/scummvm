@@ -47,6 +47,11 @@ private:
 	 * Show World of Xeen ending
 	 */
 	void showWorldOfXeenEnding();
+
+	/**
+	 * Sets a subtitle during the world of xeen ending
+	 */
+	void setWorldEndingSubtitle(const Common::String &msg);
 protected:
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific

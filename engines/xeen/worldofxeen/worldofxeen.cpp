@@ -178,7 +178,203 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name) {
 }
 
 void WorldOfXeenEngine::showWorldOfXeenEnding() {
+	Windows &windows = *_windows;
+	Window &w0 = windows[0];
+
+	_files->setGameCc(1);
+	_sound->playSong("outday3.m");
+	showPharaohEndText(Res.WORLD_END_TEXT[0], nullptr, nullptr);
+	_sound->playSound("elect.voc");
+
+	Graphics::ManagedSurface savedBg;
+	_screen->loadBackground("skymain.raw");
+	savedBg.copyFrom(*_screen);
+	_screen->loadBackground("twrsky1.raw");
+	_screen->loadPage(0);
+	_screen->loadPage(1);
+	_screen->loadPalette("skymain.pal");
+
+	SpriteResource sc02("sc02.eg2"), tower1("tower1.eg2"), tower2("tower2.eg2"),
+		sc3a("sc3a.eg2"), sc06("sc06.eg2"), sc14("sc14.eg2"), sc13("sc13.eg2"),
+		sc17("sc17.eg2"), cube("cube.eg2"), hands("hands.eg2"),
+		sc20a("sc20a.eg2"), sc20b("sc20b.eg2"), sc20c("sc20c.eg2"),
+		sc20d("sc20d.eg2"), sc22a("sc22a.eg2"), sc22b("sc22b.eg2"),
+		sc10("sc10.eg2"), staff("staff.eg2");
+	SpriteResource sc3b[2] = {
+		SpriteResource("sc3b1.eg2"), SpriteResource("sc3b2.eg2")
+	};
+
+	windows[41].writeString("\x1\xD");
+	_screen->fadeOut();
+	while (!shouldQuit() && _sound->isPlaying())
+		_events->pollEventsAndWait();
+
+	_sound->playSong("nwblksmt.m");
+	_screen->blitFrom(savedBg);
+	setWorldEndingSubtitle(Res.WORLD_END_TEXT[1]);
+	w0.update();
+	_screen->fadeIn();
+
+	_events->updateGameCounter();
+	_events->wait(60);
+
+	for (int idx = 0; idx < 50 && !shouldQuit(); ++idx) {
+		if (idx == 9 || idx == 22 || idx == 33 || idx == 44)
+			_sound->playSound("whoosh.voc");
+
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc02.draw(0, idx);
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[1]);
+		w0.update();
+
+		_events->wait(2);
+	}
+
+	for (int idx = 0; idx < 40 && !shouldQuit(); ++idx) {
+		_screen->horizMerge();
+		_events->updateGameCounter();
+		tower1.draw(0, 0, Common::Point(0, 0), SPRFLAG_800);
+		sc3a.draw(0, idx, Common::Point(91, 86), SPRFLAG_800);
+
+		w0.update();
+		_events->wait(2);
+	}
+
+	int frame = 40, frame2 = 0;
+	for (int idx = 0, xp = 0; idx < SCREEN_WIDTH && !shouldQuit(); ++idx) {
+		_events->updateGameCounter();
+		_screen->horizMerge(xp);
+		tower1.draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
+		sc3a.draw(0, frame, Common::Point(idx + 91, 86), SPRFLAG_800);
+		tower2.draw(0, 0, Common::Point(idx - 320, 0), SPRFLAG_800);
+		tower2.draw(0, 1, Common::Point(idx - (SCREEN_WIDTH / 2), 0), SPRFLAG_800);
+		sc3b[frame2 / 30].draw(0, frame2 % 30, Common::Point(idx - 277, 65), SPRFLAG_800);
+
+		frame = (frame + 1) % 57;
+		if (idx > (SCREEN_WIDTH / 2))
+			frame2 = (frame2 + 1) % 60;
+		xp -= 2;
+		if (xp < 1)
+			xp = SCREEN_WIDTH;
+
+		if (idx > 120)
+			setWorldEndingSubtitle(Res.WORLD_END_TEXT[2]);
+		w0.update();
+		_events->wait(2);
+	}
+
+	for (; frame2 < 60 && !shouldQuit(); ++frame2) {
+		_events->updateGameCounter();
+		_screen->horizMerge(frame);
+		tower2.draw(0, 0, Common::Point(0, 0), SPRFLAG_800);
+		tower2.draw(0, 1, Common::Point(SCREEN_WIDTH / 2, 0), SPRFLAG_800);
+		sc3b[frame2 / 30].draw(frame2 % 30, 0, Common::Point(43, 65), SPRFLAG_800);
+
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[2]);
+		w0.update();
+		_events->wait(2);
+	}
+
+	if (shouldQuit())
+		return;
+	_screen->freePages();
+	_screen->fadeOut();
+	_screen->loadBackground("foura.raw");
+	savedBg.blitFrom(*_screen);
+
+	sc06.draw(0, 0, Common::Point(26, 25));
+	w0.update();
+	_screen->fadeIn();
+
+	for (int idx = 0; idx < 26 && !shouldQuit(); ++idx) {
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc06.draw(0, idx, Common::Point(26, 75));
+		_events->wait(2);
+	}
+
+	if (shouldQuit())
+		return;
+	_screen->fadeOut();
+	_screen->loadBackground("eg140001.raw");
+	savedBg.blitFrom(*_screen);
+	w0.update();
+	setWorldEndingSubtitle(Res.WORLD_END_TEXT[3]);
+	_screen->fadeIn();
+
+	for (int idx1 = 0; idx1 < 2 && !shouldQuit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 15 && !shouldQuit(); ++idx2) {
+			_events->updateGameCounter();
+			_screen->blitFrom(savedBg);
+			sc14.draw(0, idx2, Common::Point(141, 63));
+			setWorldEndingSubtitle(Res.WORLD_END_TEXT[3]);
+
+			w0.update();
+			_events->wait(2);
+		}
+	}
+
+	_screen->loadBackground("eg100001.raw");
+	_screen->loadPage(0);
+	savedBg.blitFrom(*_screen);
+
+	for (int idx1 = 0; idx1 < 2 && !shouldQuit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 6 && !shouldQuit(); ++idx2) {
+			_events->updateGameCounter();
+			_screen->blitFrom(savedBg);
+			sc14.draw(0, idx2, Common::Point(26, 21));
+			setWorldEndingSubtitle(Res.WORLD_END_TEXT[4]);
+
+			w0.update();
+			_events->wait(2);
+		}
+	}
+
+	_screen->blitFrom(savedBg);
+	sc13.draw(0, 5, Common::Point(26, 21));
+	savedBg.blitFrom(*_screen);
+	setWorldEndingSubtitle(Res.WORLD_END_TEXT[4]);
+	w0.update();
+
+	frame = 0;
+	for (int idx = 185; idx > 68 && !shouldQuit(); idx -= 3) {
+		if (!_sound->isPlaying())
+			_sound->playSound("cast.voc");
+
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc17.draw(0, 0, Common::Point(33, idx), SPRFLAG_4000);
+		sc17.draw(0, frame, Common::Point(33, idx), SPRFLAG_4000);
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[4]);
+
+		w0.update();
+		_events->wait(2);
+		frame = (frame + 1) % 17;
+	}
+
+	for (int idx = 0; idx < 17 && !shouldQuit(); ++idx) {
+		if (!_sound->isPlaying())
+			_sound->playSound("cast.voc");
+
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc17.draw(0, 0, Common::Point(33, 68), SPRFLAG_4000);
+		sc17.draw(0, idx, Common::Point(33, 68), SPRFLAG_4000);
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[4]);
+
+		w0.update();
+		_events->wait(2);
+	}
 	// TODO
+}
+
+void WorldOfXeenEngine::setWorldEndingSubtitle(const Common::String &msg) {
+	Windows &windows = *_windows;
+	const char *const FORMAT1 = "\xB""000\t000\xC""38\x3""c%s";
+	const char *const FORMAT2 = "\xB""000\t000\xC""39\x3""c%s";
+	windows[28].writeString(Common::String::format(FORMAT1, msg.c_str()));
+	windows[28].writeString(Common::String::format(FORMAT2, msg.c_str()));
 }
 
 } // End of namespace WorldOfXeen

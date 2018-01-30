@@ -1693,5 +1693,18 @@ const char *const Resources::NO_LOADING_IN_COMBAT =
 	"No Loading Allowed in Combat!";
 const char *const Resources::NO_SAVING_IN_COMBAT =
 	"No Saving Allowed in Combat!";
+const char *const Resources::WORLD_END_TEXT[8] = {
+	"\n\n\n\n\n\n\n"
+	"Congratulations Adventurers!\n\n"
+	"Let the unification ceremony begin!",
+	"And so the call went out to the people throughout the lands of Xeen"
+	" that the prophecy was nearing completion.",
+	"They came in great numbers to witness the momentous occasion.",
+	"\xB""026The Dragon Pharoah presided over the ceremony.",
+	"\xB""026Queen Kalindra presented the Cube of Power.",
+	"\xB""026Prince Roland presented the Xeen Sceptre.",
+	"\xB""026Together, they placed the Cube of Power...",
+	"\xB""026and the Sceptre, onto the Altar of Joining."
+};
 
 } // End of namespace Xeen
