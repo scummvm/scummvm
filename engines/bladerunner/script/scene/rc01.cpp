@@ -30,8 +30,9 @@ void SceneScriptRC01::InitializeScene() {
 	Game_Flag_Set(kFlagIntroPlayed); // force skip intro
 	Game_Flag_Set(kFlagRC02toRC01); // no landing
 	// Game_Flag_Set(kFlagRC01PoliceDone);
-	// Game_Flag_Set(249);
-	Game_Flag_Set(kFlagKIAPrivacyAddon);
+	// Game_Flag_Set(kFlagKIAPrivacyAddon);
+
+	// ESPER_Flag_To_Activate();
 #endif
 
 	if (!Game_Flag_Query(kFlagIntroPlayed)) {

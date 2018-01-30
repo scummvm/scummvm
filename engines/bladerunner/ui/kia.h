@@ -54,6 +54,21 @@ class Shape;
 class UIImagePicker;
 class VQAPlayer;
 
+enum KIASections {
+	kKIASectionNone       = 0,
+	kKIASectionCrimes     = 1,
+	kKIASectionSuspects   = 2,
+	kKIASectionClues      = 3,
+	kKIASectionSettings   = 4,
+	kKIASectionHelp       = 5,
+	kKIASectionSave       = 6,
+	kKIASectionLoad       = 7,
+	kKIASectionQuit       = 8,
+	kKIASectionDiagnostic = 9,
+	kKIASectionPogo       = 10
+};
+
+
 class KIA {
 	static const char *kPogo;
 	static const int kPlayerActorDialogueQueueCapacity = 31;
@@ -67,9 +82,6 @@ class KIA {
 
 	int _forceOpen;
 	int _transitionId;
-
-	int _lastSectionIdKIA;
-	int _lastSectionIdOptions;
 
 	int        _playerVqaTimeLast;
 	VQAPlayer *_playerVqaPlayer;
@@ -86,7 +98,11 @@ class KIA {
 	int                     _playerActorDialogueQueueSize;
 	int                     _playerActorDialogueState;
 
+	KIASections           _currentSectionId;
+	KIASections           _lastSectionIdKIA;
+	KIASections           _lastSectionIdOptions;
 	KIASectionBase       *_currentSection;
+
 	KIASectionClues      *_cluesSection;
 	KIASectionCrimes     *_crimesSection;
 	KIASectionDiagnostic *_diagnosticSection;
@@ -104,19 +120,21 @@ class KIA {
 	int                   _pogoPos;
 
 public:
-	int        _currentSectionId;
-	KIALog    *_log;
-	KIAScript *_script;
-	KIAShapes *_shapes;
+	KIALog     *_log;
+	KIAScript  *_script;
+	KIAShapes  *_shapes;
 
 public:
 	KIA(BladeRunnerEngine *vm);
 	~KIA();
 
 	void openLastOpened();
-	void openOptions();
+	void open(KIASections sectionId);
+	bool isOpen();
 
 	void tick();
+
+	void resume();
 
 	void handleMouseDown(int mouseX, int mouseY, bool mainButton);
 	void handleMouseUp(int mouseX, int mouseY, bool mainButton);
@@ -133,7 +151,6 @@ private:
 	static void mouseUpCallback(int buttonId, void *callbackData);
 	static void loopEnded(void *callbackData, int frame, int loopId);
 
-	void open(int sectionId);
 	void init();
 	void unload();
 	void switchSection(int sectionId);

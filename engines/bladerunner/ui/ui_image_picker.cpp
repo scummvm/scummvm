@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/shape.h"
 
@@ -207,6 +208,7 @@ void UIImagePicker::draw(Graphics::Surface &surface) {
 		}
 #if BLADERUNNER_DEBUG_RENDERING
 		surface.frameRect(img.rect, 0x7fff);
+		_vm->_mainFont->drawColor(Common::String::format("%d", i), surface, (img.rect.left + img.rect.right) / 2, (img.rect.top + img.rect.bottom) / 2, 0x7fff);
 #endif
 	}
 }
@@ -252,11 +254,11 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 	_vm->_mainFont->drawColor(tooltip, surface, rect.left + 2, rect.top, 0x7FFF);
 }
 
-void UIImagePicker::handleMouseAction(int x, int y, bool down, bool up, bool ignore) {
+bool UIImagePicker::handleMouseAction(int x, int y, bool down, bool up, bool ignore) {
 	if (!_isVisible || ignore) {
-		return;
+		return false;
 	}
-
+	bool actionHandled = false;
 	int hoveredImageIndex = -1;
 	for (int i = 0; i != _imageCount; ++i) {
 		if (_images[i].rect.contains(x, y)) {
@@ -286,9 +288,10 @@ void UIImagePicker::handleMouseAction(int x, int y, bool down, bool up, bool ign
 	if (down && !_isButtonDown) {
 		_isButtonDown = true;
 		_pressedImageIndex = _hoveredImageIndex;
-		if (_hoveredImageIndex != 1) {
+		if (_hoveredImageIndex != -1) {
 			if (_mouseDownCallback) {
 				_mouseDownCallback(_hoveredImageIndex, _callbackData);
+				actionHandled = true;
 			}
 		}
 	}
@@ -297,13 +300,17 @@ void UIImagePicker::handleMouseAction(int x, int y, bool down, bool up, bool ign
 	if (up) {
 		if (_isButtonDown) {
 			if (_hoveredImageIndex == _pressedImageIndex && _pressedImageIndex != -1) {
-				if (_mouseUpCallback)
+				if (_mouseUpCallback) {
 					_mouseUpCallback(_hoveredImageIndex, _callbackData);
+					actionHandled = true;
+				}
 			}
 		}
 		_isButtonDown = false;
 		_pressedImageIndex = -1;
 	}
+
+	return actionHandled;
 }
 
 void UIImagePicker::resetImage(int i) {

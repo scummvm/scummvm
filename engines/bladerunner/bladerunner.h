@@ -33,11 +33,6 @@
 
 #include "graphics/surface.h"
 
-// remove these when game is playable
-#define BLADERUNNER_DEBUG_RENDERING 0
-#define BLADERUNNER_DEBUG_CONSOLE 0
-#define BLADERUNNER_DEBUG_GAME 0
-
 namespace Common {
 struct Event;
 }
@@ -45,22 +40,6 @@ struct Event;
 struct ADGameDescription;
 
 namespace BladeRunner {
-
-enum AnimationModes {
-	kAnimationModeIdle = 0,
-	kAnimationModeWalk = 1,
-	kAnimationModeRun = 2,
-	kAnimationModeCombatIdle = 4,
-	kAnimationModeCombatWalk = 7,
-	kAnimationModeCombatRun = 8
-};
-
-enum SceneLoopMode {
-	kSceneLoopModeLoseControl = 0,
-	kSceneLoopModeChangeSet = 1,
-	kSceneLoopMode2 = 2,
-	kSceneLoopModeSpinner = 3
-};
 
 class Actor;
 class ActorDialogueQueue;
@@ -75,6 +54,7 @@ class CrimesDatabase;
 class Combat;
 class DialogueMenu;
 class Elevator;
+class ESPER;
 class Font;
 class GameFlags;
 class GameInfo;
@@ -125,6 +105,7 @@ public:
 	Combat             *_combat;
 	DialogueMenu       *_dialogueMenu;
 	Elevator           *_elevator;
+	ESPER              *_esper;
 	GameFlags          *_gameFlags;
 	GameInfo           *_gameInfo;
 	ItemPickup         *_itemPickup;

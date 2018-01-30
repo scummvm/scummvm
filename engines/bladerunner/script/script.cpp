@@ -50,6 +50,7 @@
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/elevator.h"
+#include "bladerunner/ui/esper.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/spinner.h"
 #include "bladerunner/vector.h"
@@ -1076,8 +1077,12 @@ int ScriptBase::Spinner_Interface_Choose_Dest(int loopId, bool immediately) {
 }
 
 void ScriptBase::ESPER_Flag_To_Activate() {
-	//TODO
-	warning("ESPER_Flag_To_Activate()");
+	if (!_vm->_esper->isOpen()) {
+		_vm->_esper->open(&_vm->_surfaceBack);
+		while (_vm->_esper->isOpen()) {
+			_vm->gameTick();
+		}
+	}
 }
 
 bool ScriptBase::Voight_Kampff_Activate(int a1, int a2){
@@ -1282,14 +1287,12 @@ void ScriptBase::KIA_Play_Photograph(int photographId) {
 	_vm->_kia->playPhotograph(photographId);
 }
 
-void ScriptBase::ESPER_Add_Photo(const char *fileName, int a2, int a3) {
-	//TODO
-	warning("ESPER_Add_Photo(%s, %d, %d)", fileName, a2, a3);
+void ScriptBase::ESPER_Add_Photo(const char *name, int photoId, int shapeId) {
+	_vm->_esper->addPhoto(name, photoId, shapeId);
 }
 
-void ScriptBase::ESPER_Define_Special_Region(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, const char *name) {
-	//TODO
-	warning("ESPER_Define_Special_Region(%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %s)",  a1,  a2,  a3,  a4,  a5,  a6,  a7,  a8,  a9,  a10,  a11,  a12,  a13, name);
+void ScriptBase::ESPER_Define_Special_Region(int regionId, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, const char *name) {
+	_vm->_esper->defineRegion(regionId, Common::Rect(a2, a3, a4, a5), Common::Rect(a6, a7, a8, a9), Common::Rect(a10, a11, a12, a13), name);
 }
 
 void ScriptBase::VK_Add_Question(int a1, int a2, int a3) {

@@ -20,10 +20,10 @@
  *
  */
 
-
 #include "bladerunner/text_resource.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 
 #include "common/debug.h"
 #include "common/util.h"

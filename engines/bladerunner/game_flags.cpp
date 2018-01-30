@@ -22,6 +22,8 @@
 
 #include "bladerunner/game_flags.h"
 
+#include "bladerunner/game_constants.h"
+
 #include "common/debug.h"
 
 namespace BladeRunner {

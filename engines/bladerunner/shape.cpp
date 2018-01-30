@@ -43,16 +43,16 @@ Shape::~Shape() {
 	delete[] _data;
 }
 
-bool Shape::readFromContainer(const Common::String &container, int index) {
+bool Shape::open(const Common::String &container, int index) {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_vm->getResourceStream(container));
 	if (!stream) {
-		debug("Shape::readFromContainer failed to open '%s'", container.c_str());
+		debug("Shape::open failed to open '%s'", container.c_str());
 		return false;
 	}
 
 	uint32 count = stream->readUint32LE();
 	if (index < 0 || (uint32)index >= count) {
-		debug("Shape::readFromContainer invalid index %d (count %u)", index, count);
+		debug("Shape::open invalid index %d (count %u)", index, count);
 		return false;
 	}
 
@@ -63,7 +63,7 @@ bool Shape::readFromContainer(const Common::String &container, int index) {
 		size   = stream->readUint32LE();
 
 		if (size != width * height * 2) {
-			debug("Shape::readFromContainer size mismatch (w %d, h %d, sz %d)", width, height, size);
+			debug("Shape::open size mismatch (w %d, h %d, sz %d)", width, height, size);
 			return false;
 		}
 
@@ -74,7 +74,7 @@ bool Shape::readFromContainer(const Common::String &container, int index) {
 
 	// Enfoce a reasonable size limit
 	if (width >= 2048 || height >= 2048) {
-		warning("Shape::readFromContainer shape too big (%d, %d)", width, height);
+		warning("Shape::open shape too big (%d, %d)", width, height);
 	}
 
 	_width  = width;
@@ -82,7 +82,7 @@ bool Shape::readFromContainer(const Common::String &container, int index) {
 	_data   = new byte[size];
 
 	if (stream->read(_data, size) != size) {
-		debug("Shape::readFromContainer error reading shape %d (w %d, h %d, sz %d)", index, width, height, size);
+		debug("Shape::open error reading shape %d (w %d, h %d, sz %d)", index, width, height, size);
 		return false;
 	}
 

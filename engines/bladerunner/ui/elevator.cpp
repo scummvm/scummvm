@@ -76,7 +76,7 @@ int Elevator::activate(int elevatorId) {
 
 	for (int i = 0; i != 16; ++i) {
 		_shapes.push_back(new Shape(_vm));
-		_shapes[i]->readFromContainer("ELEVATOR.SHP", i);
+		_shapes[i]->open("ELEVATOR.SHP", i);
 	}
 
 	_imagePicker->resetImages();

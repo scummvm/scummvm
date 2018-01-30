@@ -31,10 +31,13 @@ class BladeRunnerEngine;
 
 class ESPERScript : ScriptBase {
 public:
-	ESPERScript(BladeRunnerEngine *vm)
-		: ScriptBase(vm) {
-	}
+	ESPERScript(BladeRunnerEngine *vm) : ScriptBase(vm) {}
 
+	void initialize();
+	void photoSelected(int photoId);
+	void specialRegionSelected(int photoId, int regionId);
+
+private:
 	void SCRIPT_ESPER_DLL_Initialize();
 	void SCRIPT_ESPER_DLL_Photo_Selected(int photo);
 	bool SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region);

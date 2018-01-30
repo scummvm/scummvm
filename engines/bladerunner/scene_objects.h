@@ -46,9 +46,7 @@ enum SceneObjectOffset {
 };
 
 class SceneObjects {
-#if BLADERUNNER_DEBUG_RENDERING
 	friend class BladeRunnerEngine;
-#endif
 	static const int kSceneObjectCount = 115;
 
 	struct SceneObject {

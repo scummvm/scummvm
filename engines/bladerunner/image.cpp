@@ -23,7 +23,6 @@
 #include "bladerunner/image.h"
 
 #include "bladerunner/bladerunner.h"
-
 #include "bladerunner/decompress_lcw.h"
 
 #include "common/rect.h"

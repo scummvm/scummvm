@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/actor.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/obstacles.h"
 #include "bladerunner/scene.h"

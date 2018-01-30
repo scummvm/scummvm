@@ -23,8 +23,27 @@
 #include "bladerunner/script/esper.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/mouse.h"
 
 namespace BladeRunner {
+
+void ESPERScript::initialize() {
+	_vm->_mouse->disable();
+	SCRIPT_ESPER_DLL_Initialize();
+	_vm->_mouse->enable();
+}
+
+void ESPERScript::photoSelected(int photoId) {
+	_vm->_mouse->disable();
+	SCRIPT_ESPER_DLL_Photo_Selected(photoId);
+	_vm->_mouse->enable();
+}
+
+void ESPERScript::specialRegionSelected(int photoId, int regionId) {
+	_vm->_mouse->disable();
+	SCRIPT_ESPER_DLL_Special_Region_Selected(photoId, regionId);
+	_vm->_mouse->enable();
+}
 
 void ESPERScript::SCRIPT_ESPER_DLL_Initialize() {
 	int v0 = 0;
@@ -39,7 +58,7 @@ void ESPERScript::SCRIPT_ESPER_DLL_Initialize() {
 		if (!Actor_Clue_Query(kActorMcCoy, kClueRuncitersViewB)) {
 			Actor_Clue_Acquire(kActorMcCoy, kClueRuncitersViewB, 1, kActorRunciter);
 		}
-		ESPER_Add_Photo("RC02_FA.IMG", 1, 1);
+		ESPER_Add_Photo("RC02_RA.IMG", 1, 1);
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueEarlyQsClub)) {
 		if (!Actor_Clue_Query(kActorMcCoy, kClueOuterDressingRoom)) {

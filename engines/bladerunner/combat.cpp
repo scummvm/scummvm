@@ -25,6 +25,7 @@
 
 #include "bladerunner/actor.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/settings.h"
 
 namespace BladeRunner {

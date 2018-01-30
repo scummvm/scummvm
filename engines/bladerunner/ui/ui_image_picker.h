@@ -91,7 +91,7 @@ public:
 	void draw(Graphics::Surface &surface);
 	void drawTooltip(Graphics::Surface &surface, int x, int y);
 
-	void handleMouseAction(int x, int y, bool down, bool up, bool ignore = false);
+	bool handleMouseAction(int x, int y, bool down, bool up, bool ignore = false);
 
 	void resetImage(int i);
 	bool hasHoveredImage();

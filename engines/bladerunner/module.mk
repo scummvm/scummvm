@@ -176,6 +176,7 @@ MODULE_OBJS = \
 	suspects_database.o \
 	text_resource.o \
 	ui/elevator.o \
+	ui/esper.o \
 	ui/kia.o \
 	ui/kia_log.o \
 	ui/kia_section_base.o \

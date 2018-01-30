@@ -23,6 +23,11 @@
 #ifndef BLADERUNNER_GAME_CONSTANTS_H
 #define BLADERUNNER_GAME_CONSTANTS_H
 
+//TODO: remove these when game is playable
+#define BLADERUNNER_DEBUG_RENDERING 0
+#define BLADERUNNER_DEBUG_CONSOLE 0
+#define BLADERUNNER_DEBUG_GAME 0
+
 namespace BladeRunner {
 
 enum Actors {
@@ -470,6 +475,23 @@ enum Outtakes {
 	kOuttakeDescent = 33,
 	kOuttakeBladeRunner = 41
 };
+
+enum AnimationModes {
+	kAnimationModeIdle = 0,
+	kAnimationModeWalk = 1,
+	kAnimationModeRun = 2,
+	kAnimationModeCombatIdle = 4,
+	kAnimationModeCombatWalk = 7,
+	kAnimationModeCombatRun = 8
+};
+
+enum SceneLoopMode {
+	kSceneLoopModeLoseControl = 0,
+	kSceneLoopModeChangeSet = 1,
+	kSceneLoopMode2 = 2,
+	kSceneLoopModeSpinner = 3
+};
+
 
 } // End of namespace BladeRunner
 

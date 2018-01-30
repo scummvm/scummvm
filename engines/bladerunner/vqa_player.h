@@ -50,6 +50,7 @@ class VQAPlayer {
 	Common::SeekableReadStream  *_s;
 	VQADecoder                   _decoder;
 	Audio::QueuingAudioStream   *_audioStream;
+	Graphics::Surface           *_surface;
 
 	int _frame;
 	int _frameNext;
@@ -77,7 +78,8 @@ public:
 	VQAPlayer(BladeRunnerEngine *vm, Graphics::Surface *surface)
 		: _vm(vm),
 		  _s(nullptr),
-		  _decoder(surface),
+		  _surface(surface),
+		  _decoder(),
 		  _audioStream(nullptr),
 		  _frame(-1),
 		  _frameNext(-1),
@@ -102,7 +104,7 @@ public:
 	bool open(const Common::String &name);
 	void close();
 
-	int  update(bool forceDraw = false);
+	int  update(bool forceDraw = false, bool advanceFrame = true, Graphics::Surface *customSurface = nullptr);
 	void updateZBuffer(ZBuffer *zbuffer);
 	void updateView(View *view);
 	void updateScreenEffects(ScreenEffects *screenEffects);
@@ -115,6 +117,8 @@ public:
 
 	int getLoopBeginFrame(int loop);
 	int getLoopEndFrame(int loop);
+
+	int getFrameCount();
 
 private:
 	void queueAudioFrame(Audio::AudioStream *audioStream);

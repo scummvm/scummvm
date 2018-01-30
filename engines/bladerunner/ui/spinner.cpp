@@ -23,6 +23,7 @@
 #include "bladerunner/ui/spinner.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/shape.h"
@@ -123,7 +124,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 
 	for (int j = 0; j != shapeCount; ++j) {
 		_shapes.push_back(new Shape(_vm));
-		_shapes[j]->readFromContainer("SPINNER.SHP", firstShapeId + j);
+		_shapes[j]->open("SPINNER.SHP", firstShapeId + j);
 	}
 
 	_imagePicker->resetImages();

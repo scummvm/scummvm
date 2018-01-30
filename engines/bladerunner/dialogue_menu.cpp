@@ -42,7 +42,7 @@ DialogueMenu::DialogueMenu(BladeRunnerEngine *vm) {
 	_shapes.reserve(8);
 	for (int i = 0; i != 8; ++i) {
 		_shapes.push_back(Shape(_vm));
-		bool r = _shapes[i].readFromContainer("DIALOG.SHP", i);
+		bool r = _shapes[i].open("DIALOG.SHP", i);
 		assert(r);
 		(void)r;
 	}

@@ -23,6 +23,7 @@
 #include "bladerunner/vqa_player.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 
 #include "audio/decoders/raw.h"
 
@@ -71,7 +72,7 @@ void VQAPlayer::close() {
 	_s = nullptr;
 }
 
-int VQAPlayer::update(bool forceDraw) {
+int VQAPlayer::update(bool forceDraw, bool advanceFrame, Graphics::Surface *customSurface) {
 	uint32 now = 60 * _vm->_system->getMillis();
 	int result = -1;
 
@@ -104,14 +105,14 @@ int VQAPlayer::update(bool forceDraw) {
 		}
 
 		result = -1;
-	} else 	if (_frameNext > _frameEnd) {
+	} else if (_frameNext > _frameEnd) {
 		result = -3;
 	} else if (now < _frameNextTime) {
 		result = -1;
-	} else {
+	} else if (advanceFrame) {
 		_frame = _frameNext;
 		_decoder.readFrame(_frameNext, kVQAReadVideo);
-		_decoder.decodeVideoFrame(_frameNext);
+		_decoder.decodeVideoFrame(customSurface != nullptr ? customSurface : _surface, _frameNext);
 
 		int audioPreloadFrames = 14;
 
@@ -140,8 +141,9 @@ int VQAPlayer::update(bool forceDraw) {
 		_frameNext++;
 		result = _frame;
 	}
+
 	if (result < 0 && forceDraw && _frame != -1) {
-		_decoder.decodeVideoFrame(_frame, true);
+		_decoder.decodeVideoFrame(customSurface != nullptr ? customSurface : _surface, _frame, true);
 		result = _frame;
 	}
 	return result;
@@ -238,6 +240,10 @@ int VQAPlayer::getLoopEndFrame(int loop) {
 		return -1;
 	}
 	return end;
+}
+
+int VQAPlayer::getFrameCount() {
+	return _decoder.numFrames();
 }
 
 void VQAPlayer::queueAudioFrame(Audio::AudioStream *audioStream) {

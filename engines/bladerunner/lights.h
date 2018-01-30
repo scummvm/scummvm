@@ -32,9 +32,7 @@
 namespace BladeRunner {
 
 class Lights {
-#if BLADERUNNER_DEBUG_RENDERING
 	friend class BladeRunnerEngine;
-#endif
 	friend class SliceRendererLights;
 
 	BladeRunnerEngine *_vm;

@@ -498,7 +498,7 @@ void KIASectionSuspects::updateSuspectPhoto() {
 
 	if (_suspectPhotoShapeId != -1) {
 		_suspectPhotoShape = new Shape(_vm);
-		_suspectPhotoShape->readFromContainer("photos.shp", _suspectPhotoShapeId);
+		_suspectPhotoShape->open("photos.shp", _suspectPhotoShapeId);
 	}
 }
 

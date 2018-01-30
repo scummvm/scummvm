@@ -61,6 +61,7 @@
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/elevator.h"
+#include "bladerunner/ui/esper.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/spinner.h"
 #include "bladerunner/vqa_decoder.h"
@@ -218,8 +219,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// TODO: end credits
 
 	_actorDialogueQueue = new ActorDialogueQueue(this);
-
-	// TODO: esper script
 
 	_settings = new Settings(this);
 
@@ -392,11 +391,11 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	for (int i = 0; i != 43; ++i) {
 		Shape *shape = new Shape(this);
-		shape->readFromContainer("SHAPES.SHP", i);
+		shape->open("SHAPES.SHP", i);
 		_shapes.push_back(shape);
 	}
 
-	// TODO: Esper
+	_esper = new ESPER(this);
 
 	// TODO: VK
 
@@ -467,7 +466,8 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Shutdown VK
 
-	// TODO: Shutdown Esper
+	delete _esper;
+	_esper = nullptr;
 
 	delete _mouse;
 	_mouse = nullptr;
@@ -736,7 +736,7 @@ void BladeRunnerEngine::gameTick() {
 		//probably not needed, this version of tick is just loading data from buffer
 		//_audioMixer->tick();
 
-		if (_kia->_currentSectionId) {
+		if (_kia->isOpen()) {
 			_kia->tick();
 			return;
 		}
@@ -747,7 +747,11 @@ void BladeRunnerEngine::gameTick() {
 			return;
 		}
 
-		// TODO: Esper
+		if (_esper->isOpen()) {
+			_esper->tick();
+			return;
+		}
+
 		// TODO: VK
 
 		if (_elevator->isOpen()) {
@@ -1031,32 +1035,101 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 		_speechSkipped = true;
 	}
 
-	// TODO(peterkohaut):
+	// TODO:
 	if (!playerHasControl() /*|| ActorInWalkingLoop*/) {
 		return;
 	}
 
-	if (_kia->_currentSectionId) {
+	if (_kia->isOpen()) {
 		_kia->handleKeyUp(event.kbd);
 		return;
 	}
 
-	if (event.kbd.keycode == Common::KEYCODE_TAB) {
-		_kia->openLastOpened();
-	} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-		_kia->openOptions();
-	} else if (event.kbd.keycode == Common::KEYCODE_SPACE) {
-		// TODO(peterkohaut):
-		// combat::switchCombatMode(&Combat);
+	if (_spinner->isOpen()) {
+		return;
+	}
+
+	if (_elevator->isOpen()) {
+		return;
+	}
+
+	if (_esper->isOpen()) {
+		return;
+	}
+
+	if (_dialogueMenu->isOpen()) {
+		return;
+	}
+
+	//TODO: scores
+	switch (event.kbd.keycode) {
+		case Common::KEYCODE_TAB:
+			_kia->openLastOpened();
+			break;
+		case Common::KEYCODE_ESCAPE:
+			_kia->open(kKIASectionSettings);
+			break;
+		case Common::KEYCODE_SPACE:
+			// TODO: combat::switchCombatMode(&Combat);
+			break;
+		default:
+			break;
 	}
 }
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
-	// if ( PlayerHasControl <= 0 && ActorWalkingLoop != 1 && PlayingSpeechLine != 1 && VqaIsPlaying != 1 ) {
-	if (_kia->_currentSectionId) {
+	//TODO:
+	if (!playerHasControl() /* || ActorWalkingLoop || PlayingSpeechLine || VqaIsPlaying */) {
+		return;
+	}
+
+	if (_kia->isOpen()) {
 		_kia->handleKeyDown(event.kbd);
 	}
-	// }
+
+	if (_spinner->isOpen()) {
+		return;
+	}
+
+	if (_elevator->isOpen()) {
+		return;
+	}
+
+	if (_esper->isOpen()) {
+		return;
+	}
+
+	if (_dialogueMenu->isOpen()) {
+		return;
+	}
+
+	//TODO: scores
+
+	switch (event.kbd.keycode) {
+		case Common::KEYCODE_F1:
+			_kia->open(kKIASectionHelp);
+			break;
+		case Common::KEYCODE_F2:
+			_kia->open(kKIASectionSave);
+			break;
+		case Common::KEYCODE_F3:
+			_kia->open(kKIASectionLoad);
+			break;
+		case Common::KEYCODE_F4:
+			_kia->open(kKIASectionCrimes);
+			break;
+		case Common::KEYCODE_F5:
+			_kia->open(kKIASectionSuspects);
+			break;
+		case Common::KEYCODE_F6:
+			_kia->open(kKIASectionClues);
+			break;
+		case Common::KEYCODE_F10:
+			_kia->open(kKIASectionQuit);
+			break;
+		default:
+			break;
+	}
 }
 
 void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool buttonDown) {
@@ -1064,7 +1137,7 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 		return;
 	}
 
-	if (_kia->_currentSectionId) {
+	if (_kia->isOpen()) {
 		if (buttonDown) {
 			_kia->handleMouseDown(x, y, buttonLeft);
 		} else {
@@ -1078,6 +1151,15 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 			_spinner->handleMouseDown(x, y);
 		} else {
 			_spinner->handleMouseUp(x, y);
+		}
+		return;
+	}
+
+	if (_esper->isOpen()) {
+		if (buttonDown) {
+			_esper->handleMouseDown(x, y, buttonLeft);
+		} else {
+			_esper->handleMouseUp(x, y, buttonLeft);
 		}
 		return;
 	}

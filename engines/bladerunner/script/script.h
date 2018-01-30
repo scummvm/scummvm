@@ -272,7 +272,7 @@ protected:
 	void AI_Movement_Track_Append(int actorId, int waypointId, int delay);
 	void AI_Movement_Track_Flush(int actorId);
 
-	void ESPER_Add_Photo(const char *fileName, int a2, int a3);
+	void ESPER_Add_Photo(const char *name, int photoId, int shapeId);
 	void ESPER_Define_Special_Region(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, const char *name);
 
 	void KIA_Play_Actor_Dialogue(int actorId, int sentenceId);

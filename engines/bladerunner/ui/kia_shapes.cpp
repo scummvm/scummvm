@@ -45,7 +45,7 @@ void KIAShapes::load() {
 
 	for (uint i = 0; i < kShapeCount; ++i) {
 		Shape *shape = new Shape(_vm);
-		shape->readFromContainer("kiaopt.shp", i);
+		shape->open("kiaopt.shp", i);
 		_shapes[i] = shape;
 	}
 

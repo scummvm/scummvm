@@ -59,20 +59,6 @@ namespace BladeRunner {
 
 const char *KIA::kPogo = "POGO";
 
-enum KIASections {
-	kKIASectionNone = 0,
-	kKIASectionCrimes = 1,
-	kKIASectionSuspects = 2,
-	kKIASectionClues = 3,
-	kKIASectionSettings = 4,
-	kKIASectionHelp = 5,
-	kKIASectionSave = 6,
-	kKIASectionLoad = 7,
-	kKIASectionQuit = 8,
-	kKIASectionDiagnostic = 9,
-	kKIASectionPogo = 10
-};
-
 KIA::KIA(BladeRunnerEngine *vm) {
 	_vm = vm;
 
@@ -137,12 +123,81 @@ void KIA::openLastOpened() {
 	open(_lastSectionIdKIA);
 }
 
-void KIA::openOptions() {
-	open(kKIASectionSettings);
+void KIA::open(KIASections sectionId) {
+	if (_currentSectionId == sectionId) {
+		return;
+	}
+
+	if (!sectionId) {
+		unload();
+		return;
+	}
+
+	if (!isOpen()) {
+		init();
+	}
+
+	switch (_currentSectionId) {
+		case kKIASectionCrimes:
+			_crimesSection->saveToLog();
+			break;
+		case kKIASectionSuspects:
+			_suspectsSection->saveToLog();
+			break;
+		case kKIASectionClues:
+			_cluesSection->saveToLog();
+			break;
+		default:
+			break;
+	}
+
+	if (sectionId != kKIASectionCrimes && sectionId != kKIASectionSuspects && sectionId != kKIASectionClues) {
+		playerReset();
+	}
+
+	_transitionId = getTransitionId(_currentSectionId, sectionId);
+	const char *name = getSectionVqaName(sectionId);
+	if (getSectionVqaName(_currentSectionId) != name) {
+		if (_mainVqaPlayer) {
+			_mainVqaPlayer->close();
+			delete _mainVqaPlayer;
+			_mainVqaPlayer = nullptr;
+		}
+
+		_mainVqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
+		_mainVqaPlayer->open(name);
+	}
+
+	if (_transitionId) {
+		playTransitionSound(_transitionId);
+		_mainVqaPlayer->setLoop(getVqaLoopTransition(_transitionId), -1, kLoopSetModeImmediate, nullptr, nullptr);
+		_mainVqaPlayer->setLoop(getVqaLoopMain(sectionId), -1, kLoopSetModeEnqueue, loopEnded, this);
+	} else {
+		int loopId = getVqaLoopMain(sectionId);
+		_mainVqaPlayer->setLoop(loopId, -1, kLoopSetModeImmediate, nullptr, nullptr);
+		_mainVqaPlayer->setLoop(loopId + 1, -1, kLoopSetModeJustStart, nullptr, nullptr);
+	}
+
+	_buttons->resetImages();
+	createButtons(sectionId);
+	switchSection(sectionId);
+	_currentSectionId = sectionId;
+
+	if (sectionId == kKIASectionCrimes || sectionId == kKIASectionSuspects || sectionId == kKIASectionClues) {
+		_lastSectionIdKIA = _currentSectionId;
+	}
+
+	if (sectionId == kKIASectionSettings || sectionId == kKIASectionHelp || sectionId == kKIASectionSave || sectionId == kKIASectionLoad) {
+		 _lastSectionIdOptions = _currentSectionId;
+	}
+}
+
+bool KIA::isOpen() {
+	return _currentSectionId != kKIASectionNone;
 }
 
 void KIA::tick() {
-	if (!_currentSectionId) {
+	if (!isOpen()) {
 		return;
 	}
 
@@ -235,8 +290,9 @@ void KIA::tick() {
 			_shapes->get(39)->draw(_vm->_surfaceFront, 583, 342);
 		}
 	}
+	//TODO: implement frame loading after seek, then advanceFrame can be removed
 	_playerVqaPlayer->seekToFrame(_playerVqaFrame);
-	_playerVqaPlayer->update(true); //_vm->_surfaceFront, 3
+	_playerVqaPlayer->update(true, true);
 
 	_playerSliceModelAngle += (float)(timeDiff) * 1.0f/400.0f;
 	while (_playerSliceModelAngle >= 2 * M_PI) {
@@ -296,11 +352,24 @@ void KIA::tick() {
 	_vm->_mouse->draw(_vm->_surfaceFront, mouse.x, mouse.y);
 	_vm->blitToScreen(_vm->_surfaceFront);
 
+	_vm->_system->delayMillis(10);
+
 	_timeLast = timeNow;
 }
 
+void KIA::resume() {
+	// vqaPlayer::clear(this->_vqaPlayerMain);
+	if (_transitionId) {
+		_mainVqaPlayer->setLoop(getVqaLoopTransition(_transitionId), -1, kLoopSetModeImmediate, nullptr, nullptr);
+		_mainVqaPlayer->setLoop(getVqaLoopMain(_currentSectionId), -1, kLoopSetModeEnqueue, loopEnded, this);
+	} else {
+		_mainVqaPlayer->setLoop(getVqaLoopMain(_currentSectionId), -1, kLoopSetModeImmediate, nullptr, nullptr);
+		_mainVqaPlayer->setLoop(getVqaLoopMain(_currentSectionId) + 1, -1, kLoopSetModeJustStart, nullptr, nullptr);
+	}
+}
+
 void KIA::handleMouseDown(int mouseX, int mouseY, bool mainButton) {
-	if (!_currentSectionId) {
+	if (!isOpen()) {
 		return;
 	}
 	if (mainButton) {
@@ -312,7 +381,7 @@ void KIA::handleMouseDown(int mouseX, int mouseY, bool mainButton) {
 }
 
 void KIA::handleMouseUp(int mouseX, int mouseY, bool mainButton) {
-	if (!_currentSectionId) {
+	if (!isOpen()) {
 		return;
 	}
 	if (mainButton) {
@@ -339,7 +408,7 @@ void KIA::handleMouseUp(int mouseX, int mouseY, bool mainButton) {
 }
 
 void KIA::handleKeyUp(const Common::KeyState &kbd) {
-	if (!_currentSectionId) {
+	if (!isOpen()) {
 		return;
 	}
 
@@ -370,7 +439,7 @@ void KIA::handleKeyUp(const Common::KeyState &kbd) {
 }
 
 void KIA::handleKeyDown(const Common::KeyState &kbd) {
-	if (!_currentSectionId) {
+	if (!isOpen()) {
 		return;
 	}
 	switch (kbd.keycode) {
@@ -473,7 +542,7 @@ void KIA::playPhotograph(int photographId) {
 	}
 	_playerPhotographId = photographId;
 	_playerPhotograph = new Shape(_vm);
-	_playerPhotograph->readFromContainer("photos.shp", photographId);
+	_playerPhotograph->open("photos.shp", photographId);
 }
 
 void KIA::mouseDownCallback(int buttonId, void *callbackData) {
@@ -544,73 +613,6 @@ void KIA::loopEnded(void *callbackData, int frame, int loopId) {
 	self->_transitionId = 0;
 }
 
-void KIA::open(int sectionId) {
-	if (_currentSectionId == sectionId) {
-		return;
-	}
-
-	if (!sectionId) {
-		unload();
-		return;
-	}
-
-	if (!_currentSectionId) {
-		init();
-	}
-
-	switch (_currentSectionId) {
-		case kKIASectionCrimes:
-			_crimesSection->saveToLog();
-			break;
-		case kKIASectionSuspects:
-			_suspectsSection->saveToLog();
-			break;
-		case kKIASectionClues:
-			_cluesSection->saveToLog();
-			break;
-	}
-
-	if (sectionId != kKIASectionCrimes && sectionId != kKIASectionSuspects && sectionId != kKIASectionClues) {
-		playerReset();
-	}
-
-	_transitionId = getTransitionId(_currentSectionId, sectionId);
-	const char *name = getSectionVqaName(sectionId);
-	if (getSectionVqaName(_currentSectionId) != name) {
-		if (_mainVqaPlayer) {
-			_mainVqaPlayer->close();
-			delete _mainVqaPlayer;
-			_mainVqaPlayer = nullptr;
-		}
-
-		_mainVqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
-		_mainVqaPlayer->open(name);
-	}
-
-	if (_transitionId) {
-		playTransitionSound(_transitionId);
-		_mainVqaPlayer->setLoop(getVqaLoopTransition(_transitionId), -1, kLoopSetModeImmediate, nullptr, nullptr);
-		_mainVqaPlayer->setLoop(getVqaLoopMain(sectionId), -1, kLoopSetModeEnqueue, loopEnded, this);
-	} else {
-		int loopId = getVqaLoopMain(sectionId);
-		_mainVqaPlayer->setLoop(loopId, -1, kLoopSetModeImmediate, nullptr, nullptr);
-		_mainVqaPlayer->setLoop(loopId + 1, -1, kLoopSetModeJustStart, nullptr, nullptr);
-	}
-
-	_buttons->resetImages();
-	createButtons(sectionId);
-	switchSection(sectionId);
-	_currentSectionId = sectionId;
-
-	if (sectionId == kKIASectionCrimes || sectionId == kKIASectionSuspects || sectionId == kKIASectionClues) {
-		_lastSectionIdKIA = _currentSectionId;
-	}
-
-	if (sectionId == kKIASectionSettings || sectionId == kKIASectionHelp || sectionId == kKIASectionSave || sectionId == kKIASectionLoad) {
-		 _lastSectionIdOptions = _currentSectionId;
-	}
-}
-
 void KIA::init() {
 	if (!_vm->openArchive("MODE.MIX")) {
 		return;
@@ -641,7 +643,7 @@ void KIA::init() {
 }
 
 void KIA::unload() {
-	if (!_currentSectionId) {
+	if (!isOpen()) {
 		return;
 	}
 
@@ -671,7 +673,7 @@ void KIA::unload() {
 
 	_vm->closeArchive("MODE.MIX");
 
-	_currentSectionId = 0;
+	_currentSectionId = kKIASectionNone;
 
 	// TODO: Unfreeze game time
 
@@ -846,7 +848,7 @@ void KIA::createButtons(int sectionId) {
 void KIA::buttonClicked(int buttonId) {
 	int soundId = 0;
 
-	if (!_currentSectionId) {
+	if (!isOpen()) {
 		return;
 	}
 	switch (buttonId) {
