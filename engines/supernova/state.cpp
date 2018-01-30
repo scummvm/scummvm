@@ -1422,7 +1422,7 @@ int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number
 
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 
-	if (number && _texts[_rowsStart[_currentSentence]] != kStringDialogSeparator)
+	if (number && _currentSentence != -1 && _texts[_rowsStart[_currentSentence]] != kStringDialogSeparator)
 		_currentRoom->removeSentence(_currentSentence, number);
 
 	_guiEnabled = true;
