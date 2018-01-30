@@ -2110,6 +2110,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Laura Bow 2 - Spanish DOS floppy (from sluicebox)
+	// Executable scanning reports "2.000.274", VERSION file reports "1.1"
+	{"laurabow2", "", {
+		{"resource.map", 0, "3b6dfbcda210bbc3f23fd1927113bf98", 6483},
+		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
+		{"resource.msg", 0, "c28ba1d0326d06eab69f94d9a70f5389", 285797},
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformDOS, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Laura Bow 2 - Spanish DOS CD (from jvprat)
 	// Executable scanning reports "2.000.274", VERSION file reports "1.000.000, May 10, 1994"
 	{"laurabow2", "CD", {
