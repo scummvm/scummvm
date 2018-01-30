@@ -201,7 +201,7 @@ protected:
 	 * @param x	The new X position of the mouse in virtual screen coordinates.
 	 * @param y	The new Y position of the mouse in virtual screen coordinates.
 	 */
-	void warpMouse(const int x, const int y) {
+	void warpMouse(const int x, const int y) override {
 		// Check active coordinate instead of window coordinate to avoid warping
 		// the mouse if it is still within the same virtual pixel
 		const Common::Point virtualCursor = convertWindowToVirtual(_cursorX, _cursorY);
