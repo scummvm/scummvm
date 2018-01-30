@@ -54,7 +54,9 @@ Animation::Animation() {
 }
 
 Animation::~Animation() {
-	gfxobj->release();
+	if (gfxobj) {
+		gfxobj->release();
+	}
 }
 
 void Animation::getFrameRect(Common::Rect &r) const {
