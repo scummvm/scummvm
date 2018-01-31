@@ -518,7 +518,7 @@ protected:
 public:
 	// IMuse interface
 	void pause(bool paused);
-	void saveLoadWithSerializer(Common::Serializer &ser, ScummEngine *scumm, bool fixAfterLoad = true);
+	void saveLoadIMuse(Common::Serializer &ser, ScummEngine *scumm, bool fixAfterLoad = true);
 	bool get_sound_active(int sound) const;
 	int32 doCommand(int numargs, int args[]);
 	uint32 property(int prop, uint32 value);

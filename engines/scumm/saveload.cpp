@@ -1460,7 +1460,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	// Save/load the iMuse status
 	//
 	if (_imuse && (_saveSound || !_saveTemporaryState)) {
-		_imuse->saveLoadWithSerializer(s, this);
+		_imuse->saveLoadIMuse(s, this);
 	}
 
 

@@ -372,8 +372,8 @@ static void syncWithSerializer(Common::Serializer &s, ImTrigger &it) {
 	s.syncArray(it.command, 8, Common::Serializer::Uint16LE, VER(54));
 }
 
-void IMuseInternal::saveLoadWithSerializer(Common::Serializer &s, ScummEngine *scumm, bool fixAfterLoad) {
-	Common::StackLock lock(_mutex, "IMuseInternal::saveLoadWithSerializer()");
+void IMuseInternal::saveLoadIMuse(Common::Serializer &s, ScummEngine *scumm, bool fixAfterLoad) {
+	Common::StackLock lock(_mutex, "IMuseInternal::saveLoadIMuse()");
 
 	int i;
 

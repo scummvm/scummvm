@@ -195,7 +195,7 @@ void Player_AD::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.getVersion() < VER(95)) {
 		IMuse *dummyImuse = IMuse::create(_vm->_system, NULL, NULL);
-		dummyImuse->saveLoadWithSerializer(s, _vm, false);
+		dummyImuse->saveLoadIMuse(s, _vm, false);
 		delete dummyImuse;
 		return;
 	}

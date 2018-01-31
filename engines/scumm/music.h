@@ -28,8 +28,6 @@
 
 namespace Scumm {
 
-class ScummEngine;
-
 /**
  * Pure virtual base class for the various music/sound engines used in Scumm
  * games. In particular, the iMuse code provides a subclass of this. There are
@@ -86,7 +84,6 @@ public:
 	 * Save or load the music state.
 	 */
 	virtual void saveLoadWithSerializer(Common::Serializer &ser) {}
-	virtual void saveLoadWithSerializer(Common::Serializer &ser, ScummEngine *scumm, bool fixAfterLoad = true) {}
 };
 
 } // End of namespace Scumm
