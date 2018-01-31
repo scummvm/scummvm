@@ -462,13 +462,22 @@ void GameManager::initRooms() {
 }
 
 void GameManager::initGui() {
+	int cmdCount = ARRAYSIZE(_guiCommandButton);
+	int cmdAvailableSpace = 320 - (cmdCount - 1) * 2;
+	for (int i = 0; i < cmdCount; ++i) {
+		const Common::String &text = _vm->getGameString(guiCommands[i]);
+		cmdAvailableSpace -= _vm->textWidth(text);
+	}
+
 	int commandButtonX = 0;
 	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
 		const Common::String &text = _vm->getGameString(guiCommands[i]);
 		int width;
-		if (i < 9)
-			width = _vm->textWidth(text) + 2;
-		else
+		if (i < cmdCount - 1) {
+			int space = cmdAvailableSpace / (cmdCount - i);
+			cmdAvailableSpace -= space;
+			width = _vm->textWidth(text) + space;
+		} else
 			width = 320 - commandButtonX;
 
 		_guiCommandButton[i].setSize(commandButtonX, 150, commandButtonX + width, 159);
@@ -1476,8 +1485,9 @@ void GameManager::drawCommandBox() {
 		               _guiCommandButton[i].width(),
 		               _guiCommandButton[i].height(),
 		               _guiCommandButton[i]._bgColor);
+		int space = (_guiCommandButton[i].width() - _vm->textWidth(_guiCommandButton[i]._text)) / 2;
 		_vm->renderText(_guiCommandButton[i]._text,
-		                _guiCommandButton[i]._textPosition.x,
+		                _guiCommandButton[i]._textPosition.x + space,
 		                _guiCommandButton[i]._textPosition.y,
 		                _guiCommandButton[i]._textColor);
 	}
