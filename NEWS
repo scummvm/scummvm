@@ -8,6 +8,11 @@ For a more comprehensive changelog of the latest experimental code, see:
  PS Vita port:
    - Implemented front touch and optional rear touch controls
 
+ PSP port:
+   - Implemented aspect ratio correction
+   - Improved smoothness of mouse pointer motion
+   - Added mouse pointer speed and analog nub deadzone settings
+
 2.0.0 (2017-12-17)
  New Games:
    - Added support for Full Pipe.
