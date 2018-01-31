@@ -991,13 +991,13 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncBytes(_charsetColorMap, 16, VER(8));
 
 	// _charsetData grew from 10*16, to 15*16, to 23*16 bytes
-	for (int i = 0; i < 10; ++i) {
+	for (i = 0; i < 10; ++i) {
 		s.syncBytes(_charsetData[i], 16, VER(8));
 	}
-	for (int i = 10; i < 15; ++i) {
+	for (; i < 15; ++i) {
 		s.syncBytes(_charsetData[i], 16, VER(10));
 	}
-	for (int i = 15; i < 23; ++i) {
+	for (; i < 23; ++i) {
 		s.syncBytes(_charsetData[i], 16, VER(67));
 	}
 
