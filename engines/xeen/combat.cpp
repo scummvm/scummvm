@@ -286,7 +286,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 
 
 	int fx = 29, frame = 0;
-	if (monsterData._attackType) {
+	if (monsterData._attackType != DT_PHYSICAL) {
 		if (c.charSavingThrow(monsterData._attackType))
 			damage /= 2;
 
@@ -491,7 +491,7 @@ void Combat::moveMonsters() {
 								// Check for range attacks
 								if (monsterData._rangeAttack && !_rangeAttacking[idx]
 									&& _attackMonsters[0] != idx && _attackMonsters[1] != idx
-									&& _attackMonsters[2] != idx && !monster._damageType) {
+									&& _attackMonsters[2] != idx && monster._damageType == DT_PHYSICAL) {
 									// Setup monster for attacking
 									setupMonsterAttack(monster._spriteId, pt);
 									_rangeAttacking[idx] = true;
@@ -727,7 +727,7 @@ void Combat::moveMonster(int monsterId, const Common::Point &moveDelta) {
 	MazeMonster &monster = map._mobData._monsters[monsterId];
 	Common::Point newPos = monster._position + moveDelta;
 
-	if (_monsterMap[newPos.y][newPos.x] < 3 && !monster._damageType && _moveMonsters) {
+	if (_monsterMap[newPos.y][newPos.x] < 3 && monster._damageType == DT_PHYSICAL && _moveMonsters) {
 		// Adjust monster's position
 		++_monsterMap[newPos.y][newPos.x];
 		--_monsterMap[monster._position.y][monster._position.x];
@@ -810,7 +810,7 @@ void Combat::doMonsterTurn(int monsterId) {
 		assert(monsterIndex != -1);
 		MazeMonster &monster = map._mobData._monsters[monsterIndex];
 		MonsterStruct &monsterData = *monster._monsterData;
-		if (monster._damageType)
+		if (monster._damageType != DT_PHYSICAL)
 			return;
 
 		monster._frame = 8;
