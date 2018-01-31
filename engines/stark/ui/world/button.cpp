@@ -23,21 +23,44 @@
 #include "engines/stark/ui/world/button.h"
 
 #include "engines/stark/services/services.h"
+#include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
 
 #include "engines/stark/visual/image.h"
+#include "engines/stark/visual/text.h"
 
 namespace Stark {
 
-Button::Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos, Common::Point hintPos) :
+Button::Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos, HintAlign align, Common::Point hintPos) :
 		_position(pos),
 		_stockElement(stockElement),
 		_text(text),
-		_hintPosition(hintPos) {
+		_hintPosition(hintPos),
+		_align(align),
+		_mouseText(nullptr),
+		_renderHint(false) {
+}
+
+Button::~Button() {
+	delete _mouseText;
 }
 
 void Button::render() {
 	VisualImageXMG *image = StarkStaticProvider->getUIElement(_stockElement);
 	image->render(_position, false);
+	if (_renderHint)
+	{
+		Gfx::Driver *gfx = StarkGfx;
+		Common::Point pos(_hintPosition);
+		Common::Rect viewportRect = gfx->getScreenViewport();
+		if (_align == HintAlign::kRight) {
+			pos.x -= _mouseText->getTexture()->width();
+		}
+		pos.x = gfx->scaleWidthOriginalToCurrent(pos.x) + viewportRect.left;
+		pos.y = gfx->scaleHeightOriginalToCurrent(pos.y);
+		_mouseText->render(pos);
+	}
+	_renderHint = false;
 }
 
 bool Button::containsPoint(Common::Point point) {
@@ -49,6 +72,18 @@ bool Button::containsPoint(Common::Point point) {
 	r.setWidth(image->getWidth());
 	r.setHeight(image->getHeight());
 	return r.contains(point);
+}
+
+void Button::showButtonHint() {
+	if (!_mouseText)
+	{
+		_mouseText = new VisualText(StarkGfx);
+		_mouseText->setText(_text);
+		_mouseText->setColor(0xFFFFFFFF);
+		_mouseText->setFont(FontProvider::kSmallFont);
+		_mouseText->setTargetWidth(96);
+	}
+	_renderHint = true;
 }
 
 } // End of namespace Stark

@@ -32,24 +32,34 @@
 namespace Stark {
 
 class VisualImageXMG;
+class VisualText;
 
 namespace Resources {
 class Anim;
 }
 
 class Button {
+public:
+	enum HintAlign { kLeft, kRight };
+
+	Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos, HintAlign align, Common::Point hintPos);
+	~Button();
+
+	void setPosition(const Common::Point &pos) { _position = pos; }
+	void setHintPosition(const Common::Point &pos) { _hintPosition = pos; }
+	/** Set hint to render for one frame */
+	void showButtonHint();
+	void render();
+	bool containsPoint(Common::Point point);
+	Common::String getText() const { return _text; }
+private:
 	StaticProvider::UIElement _stockElement;
 	Common::Point _position;
 	Common::Point _hintPosition;
 	Common::String _text;
-public:
-	Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos, Common::Point hintPos);
-	void setPosition(Common::Point pos) { _position = pos; }
-	void setHintPosition(Common::Point pos) { _hintPosition = pos; }
-	void render();
-	bool containsPoint(Common::Point point);
-	Common::String getText() const { return _text; }
-	Common::Point getHintPosition() const { return _hintPosition; }
+	VisualText *_mouseText;
+	const HintAlign _align;
+	bool _renderHint;
 };
 
 } // End of namespace Stark

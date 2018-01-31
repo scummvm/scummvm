@@ -48,6 +48,7 @@ public:
 	virtual ~VisualText();
 
 	Common::Rect getRect();
+	Gfx::Texture *getTexture();
 
 	void setText(const Common::String &text);
 	void setColor(uint32 color);

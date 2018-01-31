@@ -23,6 +23,7 @@
 #include "engines/stark/ui/cursor.h"
 
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
 
 #include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/global.h"
@@ -42,7 +43,6 @@ Cursor::Cursor(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursorImage(nullptr),
 		_mouseText(nullptr),
-		_mouseHintPos(nullptr),
 		_currentCursorType(kNone),
 		_currentHint(""),
 		_fading(false),
@@ -108,18 +108,13 @@ void Cursor::render() {
 		const int16 cursorDistance = 32;
 		Common::Point pos;
 		Common::Rect viewportRect = _gfx->getScreenViewport();
-		if (_mouseHintPos) {
-			pos.x = _gfx->scaleWidthOriginalToCurrent(_mouseHintPos->x) + viewportRect.left;
-			pos.y = _gfx->scaleHeightOriginalToCurrent(_mouseHintPos->y);
-		} else {
-			Common::Rect hintRect = _mouseText->getRect();
-			int16 sideBorderWidth = _gfx->scaleWidthOriginalToCurrent(48);
-			int16 bottomBorderHeight = _gfx->scaleHeightOriginalToCurrent(_gfx->kBottomBorderHeight);
-			pos.x = CLIP<int16>(_mousePos.x, viewportRect.left + sideBorderWidth, viewportRect.right - sideBorderWidth);
-			pos.y = CLIP<int16>(_mousePos.y, viewportRect.top, viewportRect.bottom - bottomBorderHeight - cursorDistance - hintRect.height());
-			pos.x -= hintRect.width() / 2;
-			pos.y += cursorDistance;
-		}
+		Gfx::Texture *hintTexture = _mouseText->getTexture();
+		int16 sideBorderWidth = _gfx->scaleWidthOriginalToCurrent(48);
+		int16 bottomBorderHeight = _gfx->scaleHeightOriginalToCurrent(_gfx->kBottomBorderHeight);
+		pos.x = CLIP<int16>(_mousePos.x, viewportRect.left + sideBorderWidth, viewportRect.right - sideBorderWidth);
+		pos.y = CLIP<int16>(_mousePos.y, viewportRect.top, viewportRect.bottom - bottomBorderHeight - cursorDistance - hintTexture->height());
+		pos.x -= hintTexture->width() / 2;
+		pos.y += cursorDistance;
 		_mouseText->render(pos);
 	}
 	if (_cursorImage) {
@@ -137,22 +132,14 @@ Common::Point Cursor::getMousePosition(bool unscaled) const {
 	}
 }
 
-void Cursor::setMouseHint(const Common::String &hint, const Common::Point &hintPosition) {
+void Cursor::setMouseHint(const Common::String &hint) {
 	if (hint != _currentHint) {
 		delete _mouseText;
-		delete _mouseHintPos;
-		if (hintPosition.x > 0 || hintPosition.y > 0) {
-			_mouseHintPos = new Common::Point(hintPosition.x, hintPosition.y);
-		} else {
-			_mouseHintPos = nullptr;
-		}
 		if (hint != "") {
 			_mouseText = new VisualText(_gfx);
 			_mouseText->setText(hint);
 			_mouseText->setColor(0xFFFFFFFF);
-			if (!_mouseHintPos) { // Topmenu buttons does not have background colors
-				_mouseText->setBackgroundColor(0x80000000);
-			}
+			_mouseText->setBackgroundColor(0x80000000);
 			_mouseText->setFont(FontProvider::kSmallFont);
 			_mouseText->setTargetWidth(96);
 		} else {

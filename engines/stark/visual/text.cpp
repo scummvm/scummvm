@@ -57,8 +57,14 @@ Common::Rect VisualText::getRect() {
 	if (!_texture) {
 		createTexture();
 	}
+	return _originalRect;
+}
 
-	return Common::Rect(_texture->width(), _texture->height());
+Gfx::Texture *VisualText::getTexture() {
+	if (!_texture) {
+		createTexture();
+	}
+	return _texture;
 }
 
 void VisualText::setText(const Common::String &text) {
