@@ -86,7 +86,7 @@ bool Console::cmdList(int argc, const char **argv) {
 }
 
 bool Console::cmdInventory(int argc, const char **argv) {
-	if (argc != 2 || argc != 3) {
+	if (argc != 2 && argc != 3) {
 		debugPrintf("Usage: inventory [list][add/remove [object]]");
 		return true;
 	}
