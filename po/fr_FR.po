@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-01-27 18:18+0100\n"
+"POT-Creation-Date: 2018-01-31 17:58+0100\n"
 "PO-Revision-Date: 2018-01-30 22:19+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
+"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -3621,20 +3621,20 @@ msgstr ""
 "Veuillez utiliser une application externe pour ouvrir le fichier d'Aide du "
 "jeu : %s"
 
-#: engines/sci/engine/savegame.cpp:1290
+#: engines/sci/engine/savegame.cpp:1284
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 "Le format de ce fichier de sauvegarde est obsolète. Le fichier ne peut être "
 "chargé."
 
-#: engines/sci/engine/savegame.cpp:1292
+#: engines/sci/engine/savegame.cpp:1286
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
 "La version du fichier de sauvegarde est %d, mais la version maximum "
 "supportée est %0d"
 
-#: engines/sci/engine/savegame.cpp:1303
+#: engines/sci/engine/savegame.cpp:1297
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
