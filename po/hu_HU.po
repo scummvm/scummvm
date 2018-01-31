@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-01-31 17:58+0100\n"
+"POT-Creation-Date: 2018-01-31 21:01+0100\n"
 "PO-Revision-Date: 2018-01-24 04:01+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3665,7 +3665,7 @@ msgstr ""
 "ScummVM-ben, ezért javasoljuk, távolítsa el ezt a javítást a játék "
 "mappájából, hogy elkerülje a váratlan és / vagy késõbbi hibákat."
 
-#: engines/scumm/detection.cpp:1126
+#: engines/scumm/detection.cpp:1129
 msgid ""
 "Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 "version (in particular, not a fan-made translation), please, report the\n"
@@ -3678,7 +3678,7 @@ msgstr ""
 " a kapcsolatot a ScummVM csapatában és részletesen\n"
 " írd meg a játék nevét, verzióját , stb...\n"
 
-#: engines/scumm/detection.cpp:1144
+#: engines/scumm/detection.cpp:1147
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -3687,11 +3687,11 @@ msgstr ""
 "A Putt-Putt Saves the Zoo iOS Lite verziója nem támogatott.\n"
 "A teljes változat elérhetõ az iTunes Áruházban."
 
-#: engines/scumm/detection.cpp:1347
+#: engines/scumm/detection.cpp:1350
 msgid "Show Object Line"
 msgstr "Tárgynév sor látható"
 
-#: engines/scumm/detection.cpp:1348
+#: engines/scumm/detection.cpp:1351
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Tárgyak neveinek megjelenítése a képernyõ alján"
 
