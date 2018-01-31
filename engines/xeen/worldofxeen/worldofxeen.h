@@ -24,8 +24,7 @@
 #define XEEN_WORLDOFXEEN_WORLDOFXEEN_H
 
 #include "xeen/xeen.h"
-#include "xeen/worldofxeen/clouds_cutscenes.h"
-#include "xeen/worldofxeen/darkside_cutscenes.h"
+#include "xeen/worldofxeen/worldofxeen_cutscenes.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
@@ -40,18 +39,7 @@ enum WOXGameAction {
  * Clouds of Xeen, Dark Side of Xeen, and Worlds of Xeen specific
  * game code
  */
-class WorldOfXeenEngine: public XeenEngine, public CloudsCutscenes,
-		public DarkSideCutscenes {
-private:
-	/**
-	 * Show World of Xeen ending
-	 */
-	void showWorldOfXeenEnding();
-
-	/**
-	 * Sets a subtitle during the world of xeen ending
-	 */
-	void setWorldEndingSubtitle(const Common::String &msg);
+class WorldOfXeenEngine: public XeenEngine, public WorldOfXeenCutscenes {
 protected:
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific

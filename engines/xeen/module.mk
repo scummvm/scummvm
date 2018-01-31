@@ -3,6 +3,7 @@ MODULE := engines/xeen
 MODULE_OBJS := \
 	worldofxeen/clouds_cutscenes.o \
 	worldofxeen/darkside_cutscenes.o \
+	worldofxeen/worldofxeen_cutscenes.o \
 	worldofxeen/worldofxeen_menu.o \
 	worldofxeen/worldofxeen.o \
 	worldofxeen/worldofxeen_resources.o \
