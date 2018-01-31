@@ -197,11 +197,16 @@ void WorldOfXeenEngine::showWorldOfXeenEnding() {
 	SpriteResource sc02("sc02.eg2"), tower1("tower1.eg2"), tower2("tower2.eg2"),
 		sc3a("sc3a.eg2"), sc06("sc06.eg2"), sc14("sc14.eg2"), sc13("sc13.eg2"),
 		sc17("sc17.eg2"), cube("cube.eg2"), hands("hands.eg2"),
-		sc20a("sc20a.eg2"), sc20b("sc20b.eg2"), sc20c("sc20c.eg2"),
-		sc20d("sc20d.eg2"), sc22a("sc22a.eg2"), sc22b("sc22b.eg2"),
 		sc10("sc10.eg2"), staff("staff.eg2");
 	SpriteResource sc3b[2] = {
 		SpriteResource("sc3b1.eg2"), SpriteResource("sc3b2.eg2")
+	};
+	SpriteResource sc20[4] = {
+		SpriteResource("sc20[0].eg2"), SpriteResource("sc20b.eg2"),
+		SpriteResource("sc20c.eg2"), SpriteResource("sc20d.eg2")
+	};
+	SpriteResource sc22[2] = {
+		SpriteResource("sc22a.eg2"), SpriteResource("sc22b.eg2")
 	};
 
 	windows[41].writeString("\x1\xD");
@@ -366,6 +371,240 @@ void WorldOfXeenEngine::showWorldOfXeenEnding() {
 		w0.update();
 		_events->wait(2);
 	}
+
+	if (shouldQuit())
+		return;
+	_screen->blitFrom(savedBg);
+	sc17.draw(0, 0, Common::Point(33, 68), SPRFLAG_4000);
+	setWorldEndingSubtitle(Res.WORLD_END_TEXT[4]);
+	w0.update();
+	_screen->fadeOut();
+
+	_screen->loadBackground("eg140001.raw");
+	savedBg.blitFrom(*_screen);
+	w0.update();
+	_screen->fadeIn();
+
+	for (int idx1 = 0; idx1 < 2 && !shouldQuit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 15 && !shouldQuit(); ++idx2) {
+			_events->updateGameCounter();
+			_screen->blitFrom(savedBg);
+			sc14.draw(0, idx2, Common::Point(141, 63));
+
+			w0.update();
+			_events->wait(3);
+		}
+	}
+
+	_screen->horizMerge(0);
+	savedBg.blitFrom(*_screen);
+
+	for (int idx1 = 0; idx1 < 3 && !shouldQuit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 15 && !shouldQuit(); ++idx2) {
+			_events->updateGameCounter();
+			_screen->blitFrom(savedBg);
+			sc10.draw(0, idx2, Common::Point(26, 21));
+			setWorldEndingSubtitle(Res.WORLD_END_TEXT[5]);
+
+			w0.update();
+			_events->wait(3);
+		}
+	}
+
+	_screen->blitFrom(savedBg);
+	setWorldEndingSubtitle(Res.WORLD_END_TEXT[5]);
+	w0.update();
+
+	for (int idx = 185; idx > 13 && !shouldQuit(); idx -= 6) {
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		staff.draw(0, 0, Common::Point(196, idx), SPRFLAG_4000);
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[5]);
+
+		w0.update();
+		_events->wait(2);
+	}
+
+	_events->updateGameCounter();
+	_events->wait(30);
+	if (shouldQuit())
+		return;
+
+	_screen->fadeOut();
+	_screen->loadBackground("eg140001.raw");
+	savedBg.blitFrom(*_screen);
+	w0.update();
+	_screen->fadeIn();
+
+	for (int idx1 = 0; idx1 < 2 && !shouldQuit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 15 && !shouldQuit(); ++idx2) {
+			_events->updateGameCounter();
+			_screen->blitFrom(savedBg);
+			sc14.draw(0, idx2, Common::Point(141, 63));
+
+			w0.update();
+			_events->wait(3);
+		}
+	}
+
+	if (shouldQuit())
+		return;
+	_screen->loadBackground("tablmain.raw");
+	savedBg.blitFrom(*_screen);
+	_screen->loadPage(1);
+	sc20[0].draw(0, 0, Common::Point(26, 55));
+	hands.draw(0, 0, Common::Point(58, 17));
+	cube.draw(0, 0, Common::Point(101, 11), SPRFLAG_4000);
+	w0.update();
+	_sound->playSound("cast.voc");
+
+	for (int idx = 0; idx < 5 && !shouldQuit(); ++idx) {
+		if (!_sound->isPlaying())
+			_sound->playSound("cast.voc");
+
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc20[0].draw(0, 0, Common::Point(26, 55));
+		hands.draw(0, 0, Common::Point(58, 17));
+		cube.draw(0, 0, Common::Point(101, 11), SPRFLAG_4000);
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[6]);
+
+		w0.update();
+		_events->wait(2);
+	}
+
+	frame = 0;
+	for (int idx = 0; idx < 16 && !shouldQuit(); ++idx) {
+		if (!_sound->isPlaying())
+			_sound->playSound("cast.voc");
+
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc20[0].draw(0, 0, Common::Point(26, 55));
+		hands.draw(0, 0, Common::Point(58, 17));
+		cube.draw(0, frame, Common::Point(101, 11), SPRFLAG_4000);
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[6]);
+
+		w0.update();
+		_events->wait(2);
+		frame = (frame + 1) % 5;
+	}
+
+	frame = 0;
+	for (int idx = 11; idx < 82 && !shouldQuit(); ++idx) {
+		if (!_sound->isPlaying())
+			_sound->playSound("cast.voc");
+
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc20[0].draw(0, 0, Common::Point(26, 55));
+		cube.draw(0, frame, Common::Point(101, idx), SPRFLAG_4000);
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[6]);
+
+		w0.update();
+		_events->wait(2);
+		frame = (frame + 1) % 5;
+	}
+
+	_sound->stopSound();
+	if (shouldQuit())
+		return;
+
+	_sound->playSound("click.voc");
+	_sound->playSound("padspell.voc");
+
+	for (int idx = 0; idx < 14 && !shouldQuit(); ++idx) {
+		if (idx == 10)
+			_sound->playSound("padspell.voc");
+
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc20[idx / 7].draw(0, idx % 7, Common::Point(26, 55));
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[6]);
+
+		w0.update();
+		_events->wait(2);
+	}
+
+	for (int idx = 0; idx < 17 && !shouldQuit(); ++idx) {
+		if (idx == 10)
+			_sound->playSound("padspell.voc");
+
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc20[2].draw(0, idx, Common::Point(26, 55));
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[6]);
+
+		w0.update();
+		_events->wait(3);
+	}
+
+	for (int idx = 0; idx < 6 && !shouldQuit(); ++idx) {
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc20[3].draw(0, idx, Common::Point(26, 55));
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[6]);
+
+		w0.update();
+		_events->wait(4);
+	}
+
+	if (shouldQuit())
+		return;
+	_screen->blitFrom(savedBg);
+	setWorldEndingSubtitle(Res.WORLD_END_TEXT[6]);
+	w0.update();
+	_events->updateGameCounter();
+	_events->wait(30);
+
+	_screen->horizMerge(SCREEN_WIDTH);
+	savedBg.blitFrom(*_screen);
+	_screen->freePages();
+
+	for (int idx = 0; idx < 35 && !shouldQuit(); ++idx) {
+		if (idx == 3)
+			_sound->playSound("click.voc");
+		else if (idx == 5 || idx == 15)
+			_sound->playSound("elect.voc");
+		else if (idx == 22)
+			_sound->playSound("explosio.voc");
+
+		_events->updateGameCounter();
+		_screen->blitFrom(savedBg);
+		sc22[idx / 20].draw(0, idx % 20, Common::Point(112, 17));
+		setWorldEndingSubtitle(Res.WORLD_END_TEXT[7]);
+
+		w0.update();
+		_events->wait(3);
+	}
+
+	if (shouldQuit())
+		return;
+	SpriteResource sc23[8] = {
+		SpriteResource("sc23a.eg2"), SpriteResource("sc23b.eg2"),
+		SpriteResource("sc23c.eg2"), SpriteResource("sc23d.eg2"),
+		SpriteResource("sc23e.eg2"), SpriteResource("sc23f.eg2"),
+		SpriteResource("sc23g.eg2"), SpriteResource("sc23h.eg2")
+	};
+	SpriteResource sc24("sc24.eg2");
+
+	_screen->fadeOut();
+	_screen->loadBackground("eg23prt2.raw");
+	savedBg.blitFrom(*_screen);
+	sc23[0].draw(0, 0);
+	w0.update();
+	_screen->fadeIn();
+
+	for (int idx = 0; idx < 61 && !shouldQuit(); ++idx) {
+		if (idx == 2 || idx == 15 || idx == 25 || idx == 33 || idx == 41)
+			_sound->playSound("gascompr.voc");
+
+		_events->updateGameCounter();
+		sc23[idx / 8].draw(0, frame % 8);
+		w0.update();
+		_events->wait(4);
+	}
+
 	// TODO
 }
 
