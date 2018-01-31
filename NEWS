@@ -1,6 +1,10 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
+2.1.0 (2018-??-??)
+ SCUMM:
+   - Implemented lipsync for v6 and v7+ games
+
 2.0.0 (2017-12-17)
  New Games:
    - Added support for Full Pipe.
