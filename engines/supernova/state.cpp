@@ -895,6 +895,7 @@ void GameManager::telomat(int nr) {
 				_vm->renderText(kStringShipSleepCabin9, 100, 120, kColorGreen);
 				wait2(10);
 			}
+			// fallthrough
 		case Common::KEYCODE_ESCAPE:
 			_vm->renderBox(0, 0, 320, 200, kColorBlack);
 			_vm->renderRoom(*_currentRoom);
