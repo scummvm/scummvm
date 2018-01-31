@@ -83,7 +83,7 @@ public:
 	/**
 	 * Save or load the music state.
 	 */
-	virtual void saveLoadWithSerializer(Common::Serializer &ser) {}
+	virtual void saveLoadWithSerializer(Common::Serializer &ser, ScummEngine *scumm, bool fixAfterLoad = true) {}
 };
 
 } // End of namespace Scumm
