@@ -24,6 +24,7 @@
 #define GRAPHICS_MODE_H
 
 #include "common/array.h"
+#include "common/frac.h"
 
 namespace Graphics {
 
@@ -31,13 +32,36 @@ namespace Graphics {
  * Represents a hardware video mode.
  */
 struct Mode {
-	int16 width; ///< The width in pixels
+	int16 width;  ///< The width in pixels
 	int16 height; ///< The height in pixels
+	frac_t par;   ///< The pixel aspect ratio (pixel height / pixel width)
 
 	Mode(const int16 w, const int16 h) :
 		width(w),
-		height(h) {}
+		height(h) {
+			if ((w == 320 && h == 200) || (w == 640 && h == 400))
+				par = intToFrac(6) / 5;
+			else
+				par = intToFrac(1);
+		}
+	Mode(const int16 w, const int16 h, const frac_t ar) :
+		width(w),
+		height(h),
+		par(ar) {}
 
+	int16 correctedHeight() const {
+		return fracToInt(height * par);
+	}
+
+	/// Return a Mode with height scaled by the pixel aspect ratio correction (and the par set to 1).
+	/// This can for example be used to compare two corrected modes.
+	Mode corrected() const {
+		return Mode(width, correctedHeight(), intToFrac(1));
+	}
+
+	/// Compare two modes. Return true if both the width and the height of this mode are smaller than
+	/// the width and height of the other mode. The pixel aspect ratio is not applied to do this
+	/// comparison. See corrected() if you want to compare corrected modes.
 	bool operator<(const Mode &other) const {
 		return width < other.width && height < other.height;
 	}
