@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-01-31 21:01+0100\n"
+"POT-Creation-Date: 2018-02-01 08:05+0100\n"
 "PO-Revision-Date: 2017-11-28 19:36+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -3681,7 +3681,7 @@ msgstr ""
 "памылкі ў ScummVM не ўзнікаюць, таму рэкамендуецца выдаліць іх з тэчкі з "
 "гульнёй, каб вымінуць неспадзяваныя праблемы надалей."
 
-#: engines/scumm/detection.cpp:1129
+#: engines/scumm/detection.cpp:1126
 msgid ""
 "Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
 "version (in particular, not a fan-made translation), please, report the\n"
@@ -3694,7 +3694,7 @@ msgstr ""
 "калі ласка, паведаміце камандзе ScummVM наступныя дадзеныя\n"
 "разам з назвай гульні, яе версіяй, мовай і інш.:\n"
 
-#: engines/scumm/detection.cpp:1147
+#: engines/scumm/detection.cpp:1144
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -3703,11 +3703,11 @@ msgstr ""
 "Каб пазбегнуць пірацтва, Lite-версія гульні Putt-Putt Saves the Zoo для iOS\n"
 "не падтрымваецца. Поўную версію гульні можна набыць у iTunes Store."
 
-#: engines/scumm/detection.cpp:1350
+#: engines/scumm/detection.cpp:1347
 msgid "Show Object Line"
 msgstr "Паказваць радок аб'ектаў"
 
-#: engines/scumm/detection.cpp:1351
+#: engines/scumm/detection.cpp:1348
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Паказваць назвы аб'ектаў унізе экрана"
 
