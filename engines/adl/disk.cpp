@@ -23,10 +23,13 @@
 #include "common/stream.h"
 #include "common/substream.h"
 #include "common/memstream.h"
+#include "common/md5.h"
 
 #include "adl/disk.h"
 
 namespace Adl {
+
+const uint trackLen = 256 * 26;
 
 static bool detectDOS33_NIB(Common::SeekableReadStream &f) {
 	if (f.size() != 232960)
@@ -36,7 +39,7 @@ static bool detectDOS33_NIB(Common::SeekableReadStream &f) {
 	uint dos32 = 0, dos33 = 0;
 	uint32 window = 0;
 
-	while (count++ < 6656) {
+	while (count++ < trackLen) {
 		window &= 0xffff;
 		window <<= 8;
 		window |= f.readByte();
@@ -52,8 +55,6 @@ static bool detectDOS33_NIB(Common::SeekableReadStream &f) {
 
 	return dos33 > dos32;
 }
-
-const uint trackLen = 256 * 26;
 
 static bool readSector_NIB(byte outBuf[], const byte inBuf[], uint size, uint &pos, const byte minNibble, const byte lookup[], const uint track, const uint sector) {
 	uint z = trackLen - (pos % trackLen);
@@ -102,8 +103,8 @@ static uint8 read44(byte *buffer, uint &pos) {
 	return ((ret << 1) | 1) & buffer[pos++ % trackLen];
 }
 
-static Common::SeekableReadStream *readImage_NIB(Common::File &f, bool dos33) {
-	if (f.size() != 232960) {
+static Common::SeekableReadStream *readImage_NIB(Common::File &f, bool dos33, uint tracks = 35) {
+	if (f.size() != 35 * trackLen) {
 		warning("NIB: image '%s' has invalid size of %d bytes", f.getName(), f.size());
 		return nullptr;
 	}
@@ -115,7 +116,7 @@ static Common::SeekableReadStream *readImage_NIB(Common::File &f, bool dos33) {
 
 	const uint sectorsPerTrack = (dos33 ? 16 : 13);
 	const uint bytesPerSector = 256;
-	const uint imageSize = 35 * sectorsPerTrack * bytesPerSector;
+	const uint imageSize = tracks * sectorsPerTrack * bytesPerSector;
 	byte *const diskImage = (byte *)calloc(imageSize, 1);
 
 	bool sawAddress = false;
@@ -127,7 +128,7 @@ static Common::SeekableReadStream *readImage_NIB(Common::File &f, bool dos33) {
 
 	while (true) {
 		if (pos >= trackLen+firstGoodTrackPos) {
-			if (f.pos() == f.size())
+			if (f.pos() == (int)(tracks * trackLen))
 				break;
 			f.read(buffer, sizeof(buffer));
 			firstGoodTrackPos = 0;
@@ -167,7 +168,7 @@ static Common::SeekableReadStream *readImage_NIB(Common::File &f, bool dos33) {
 				continue;
 			}
 
-			if (track >= 35 || sector >= sectorsPerTrack) {
+			if (track >= tracks || sector >= sectorsPerTrack) {
 				warning("NIB: sector out of bounds @ (%x, %x)", track, sector);
 				sawAddress = false;
 				continue;
@@ -325,6 +326,41 @@ Common::SeekableReadStream *DiskImage::createReadStream(uint track, uint sector,
 	}
 
 	return new Common::MemoryReadStream(data, bytesToRead, DisposeAfterUse::YES);
+}
+
+int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Bytes) {
+	Common::File f;
+
+	if (!f.open(node))
+		return -1;
+
+	if (node.getName().matchString("*.nib", true) && f.size() == 35 * trackLen) {
+		uint lastSector = md5Bytes / 256;
+		uint tracks;
+		bool isDOS33 = detectDOS33_NIB(f);
+
+		if (isDOS33)
+			tracks = (lastSector / 16) + 1;
+		else
+			tracks = (lastSector / 13) + 1;
+
+		// Tracks 1 and 2 are swapped in some copy protections, so we read three tracks when two tracks are needed
+		if (tracks == 2)
+			tracks = 3;
+
+		f.seek(0);
+		Common::SeekableReadStream *stream = readImage_NIB(f, isDOS33, tracks);
+		if (stream) {
+			md5 = Common::computeStreamMD5AsString(*stream, md5Bytes);
+			delete stream;
+			return 35 * (isDOS33 ? 16 : 13) * 256;
+		}
+
+		return -1;
+	} else {
+		md5 = Common::computeStreamMD5AsString(f, md5Bytes);
+		return f.size();
+	}
 }
 
 const DataBlockPtr Files_Plain::getDataBlock(const Common::String &filename, uint offset) const {

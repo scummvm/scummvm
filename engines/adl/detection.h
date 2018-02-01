@@ -46,6 +46,8 @@ struct AdlGameDescription {
 	GameType gameType;
 };
 
+Common::String getDiskImageName(const ADGameDescription &desc, byte volume);
+
 } // End of namespace Adl
 
 #endif

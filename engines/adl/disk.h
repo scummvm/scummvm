@@ -34,6 +34,9 @@ class String;
 
 namespace Adl {
 
+// Used for disk image detection
+int32 computeMD5(const Common::FSNode &node, Common::String &md5, uint32 md5Bytes);
+
 class DataBlock {
 public:
 	virtual ~DataBlock() { }

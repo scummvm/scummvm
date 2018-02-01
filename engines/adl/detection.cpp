@@ -23,12 +23,16 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/translation.h"
+#include "common/file.h"
+#include "common/md5.h"
+#include "common/debug.h"
 
 #include "graphics/thumbnail.h"
 
 #include "engines/advancedDetector.h"
 
 #include "adl/detection.h"
+#include "adl/disk.h"
 
 namespace Adl {
 
@@ -83,8 +87,8 @@ static const PlainGameDescriptor adlGames[] = {
 	{ 0, 0 }
 };
 
-static const AdlGameDescription gameDescriptions[] = {
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - 1987 PD release - Plain files
+static const AdlGameDescription gameFileDescriptions[] = {
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - 1987 PD release
 		{
 			"hires1", 0,
 			{
@@ -100,11 +104,15 @@ static const AdlGameDescription gameDescriptions[] = {
 		},
 		GAME_TYPE_HIRES1
 	},
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - 1987 PD release - .DSK format
+	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE }
+};
+
+static const AdlGameDescription gameDiskDescriptions[] = {
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
 		{
 			"hires1", 0,
 			{
-				{ "MYSTHOUS.DSK", 0, "34ba05e62bf51404c4475c349ca48921", 143360 },
+				{ "mysthous", 0, "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -118,7 +126,7 @@ static const AdlGameDescription gameDescriptions[] = {
 		{
 			"hires2", 0,
 			{
-				{ "WIZARD.DSK", 0, "816fdfc35e25496213c8db40ecf26569", 143360 },
+				{ "wizard", 0, "72b114bf8f94fafe5672daac2a70c765", 143360 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -132,7 +140,7 @@ static const AdlGameDescription gameDescriptions[] = {
 		{
 			"hires0", 0,
 			{
-				{ "MISSION.NIB", 0, "b158f6f79681d4edd651e1932f9e01d7", 232960 },
+				{ "mission", 0, "6bc53f51a3c8ee65c020af55fb8bd875", 116480 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -146,7 +154,7 @@ static const AdlGameDescription gameDescriptions[] = {
 		{
 			"hires3", 0,
 			{
-				{ "CRANSTON.D13", 0, "474d92b845337ec189867fac035304c7", 116480 },
+				{ "cranston", 0, "e4d35440791a36e55299c7be1ccd2b04", 116480 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -160,8 +168,8 @@ static const AdlGameDescription gameDescriptions[] = {
 		{
 			"hires4", 0,
 			{
-				{ "ULYSSESA.DSK", 0, "df21f28ae94440f958dbbcfdfaf0c36e", 143360 },
-				{ "ULYSSESB.DSK", 1, "c204e8fe265e9534049f3c0f816cc9fc", 143360 },
+				{ "ulyssesa", 0, "1eaeb2f1a773ce2d1cb9f16b2ef09049", 143360 },
+				{ "ulyssesb", 1, "9fa8552255ae651b252844168b8b6617", 143360 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -175,10 +183,10 @@ static const AdlGameDescription gameDescriptions[] = {
 		{
 			"hires4", 0,
 			{
-				{ "ULYS1A.XFD", 0, "26365d2b06509fd21e7a7919e33f7199", 92160 },
-				{ "ULYS1B.XFD", 0, "37919c72a4103e6f897ee7daa8261d1d", 92160 },
+				{ "ulys1b", 0, "bb6aab9a35b41d160b6eefa088165f56", 92160 },
+				{ "ulys1a", 0, "c227eeee34d0bacd62b2d6231c409204", 92160 },
 				// Load 'N' Go Software release XAG-0646 appears to be missing the second disk
-				{ "ULYS2C.XFD", 0, "ff33830246e65dc71c954acb7fd5621a", 92160 },
+				{ "ulys2c", 0, "8c6a76d1767e4ffa2f0118c9c56c0e90", 92160 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -192,18 +200,18 @@ static const AdlGameDescription gameDescriptions[] = {
 		{
 			"hires5", 0,
 			{
-				{ "TZONE1A.NIB", 2, "475dedb7396fdcea81c1a2a4046caebe", 232960 },
-				{ "TZONE1B.NIB", 3, "f8aaea094ebbe41cf4354d9fe2c30d9a", 232960 },
-				{ "TZONE2C.NIB", 4, "b351a367dc48e776bf08e42a3f50ae74", 232960 },
-				{ "TZONE2D.NIB", 5, "9583b287a5c95960f5335878102bb8b1", 232960 },
-				{ "TZONE3E.NIB", 6, "502e42a0cb69ffe4a48cd51c1ff210cf", 232960 },
-				{ "TZONE3F.NIB", 7, "3d6e0aae15f590b72b6759535b6b7d3c", 232960 },
-				{ "TZONE4G.NIB", 8, "ede4113a9c9e17745faf71d099808a18", 232960 },
-				{ "TZONE4H.NIB", 9, "f95dae4aae1155a27f7120230464d4e1", 232960 },
-				{ "TZONE5I.NIB", 10, "92b3b376877f81a7b7ae426bf1e65456", 232960 },
-				{ "TZONE5J.NIB", 11, "c9ef796fa596548dbf8f085901f0bac3", 232960 },
-				{ "TZONE6K.NIB", 12, "2e5323be637002efce1d4c813ae20a3f", 232960 },
-				{ "TZONE6L.NIB", 13, "7c9268f0ea2d02120c77a46337b3d975", 232960 },
+				{ "tzone1a", 2, "731844b1d19c2801e3a5bc61d109af54", 143360 },
+				{ "tzone1b", 3, "4eaf8d790e3f93097cca9ddbe863df50", 143360 },
+				{ "tzone2c", 4, "e3aa4f56e727339b1ec00978ce9d435b", 143360 },
+				{ "tzone2d", 5, "77b8219a380410015c986fa192d4c3bf", 143360 },
+				{ "tzone3e", 6, "f7acc03edd8d8aecb90711cd5f9e5593", 143360 },
+				{ "tzone3f", 7, "ed74c056976ecea2eab07448c8a72eb8", 143360 },
+				{ "tzone4g", 8, "de7bda8a641169fc2dedd8a7b0b7e7de", 143360 },
+				{ "tzone4h", 9, "21cf76d97505ff09fff5d5e4711bc47c", 143360 },
+				{ "tzone5i", 10, "d665df374e594cd0978b73c3490e5de2", 143360 },
+				{ "tzone5j", 11, "5095be23d13201d0897b9169c4e473df", 143360 },
+				{ "tzone6k", 12, "bef044503f21af5f0a4088e99aa778b1", 143360 },
+				{ "tzone6l", 13, "84801b7c2ab6c09e62a2a0809b94d16a", 143360 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -217,10 +225,10 @@ static const AdlGameDescription gameDescriptions[] = {
 		{
 			"hires6", 0,
 			{
-				{ "DARK1A.DSK", 0, "00c2646d6943d1405717332a6f42d493", 143360 },
-				{ "DARK1B.NIB", 3, "dbedd736617343ade0e6bead8bf2b10c", 232960 },
-				{ "DARK2A.NIB", 4, "271eb92db107e8d5829437f8ba77991e", 232960 },
-				{ "DARK2B.NIB", 5, "cb72044a9b391c4285f4752f746bea2e", 232960 },
+				{ "dark1a", 0, "9a5968a8f378c84454d88f4cd4e143a9", 143360 },
+				{ "dark1b", 3, "1271ff9c3e1bdb4942301dd37dd0ef87", 143360 },
+				{ "dark2a", 4, "090e77563add7b4c9ab25f444d727316", 143360 },
+				{ "dark2b", 5, "f2db96af0955324900b800505af4d91f", 143360 },
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -233,9 +241,22 @@ static const AdlGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE }
 };
 
+struct DiskImageExt {
+	Common::Platform platform;
+	const char *extension;
+};
+
+const DiskImageExt diskImageExts[] {
+	{ Common::kPlatformApple2, ".nib" },
+	{ Common::kPlatformApple2, ".dsk" },
+	{ Common::kPlatformApple2, ".d13" },
+	{ Common::kPlatformAtari8Bit, ".xfd" },
+	{ Common::kPlatformUnknown, nullptr }
+};
+
 class AdlMetaEngine : public AdvancedMetaEngine {
 public:
-	AdlMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
+	AdlMetaEngine() : AdvancedMetaEngine(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
 
 	const char *getName() const {
 		return "ADL";
@@ -250,6 +271,9 @@ public:
 	int getMaximumSaveSlot() const { return 'O' - 'A'; }
 	SaveStateList listSaves(const char *target) const;
 	void removeSaveState(const char *target, int slot) const;
+	virtual ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
+
+	bool addFileProps(const FileMap &allFiles, Common::String fname, ADFilePropertiesMap &filePropsMap) const;
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
 };
@@ -367,6 +391,147 @@ SaveStateList AdlMetaEngine::listSaves(const char *target) const {
 void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("%s.s%02d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+Common::String getDiskImageName(const ADGameDescription &desc, byte volume) {
+	for (uint i = 0; desc.filesDescriptions[i].fileName; ++i) {
+		const ADGameFileDescription &fDesc = desc.filesDescriptions[i];
+
+		if (fDesc.fileType == volume) {
+			for (uint e = 0; e < ARRAYSIZE(diskImageExts); ++e) {
+				if (diskImageExts[e].platform == desc.platform) {
+					Common::String testFileName(fDesc.fileName);
+					testFileName += diskImageExts[e].extension;
+					if (Common::File::exists(testFileName))
+						return testFileName;
+				}
+			}
+
+			error("Failed to find disk image '%s'", fDesc.fileName);
+		}
+	}
+
+	error("Disk volume %d not found", volume);
+}
+
+bool AdlMetaEngine::addFileProps(const FileMap &allFiles, Common::String fname, ADFilePropertiesMap &filePropsMap) const {
+	if (filePropsMap.contains(fname))
+		return true;
+
+	if (!allFiles.contains(fname))
+		return false;
+
+	ADFileProperties fileProps;
+	fileProps.size = computeMD5(allFiles[fname], fileProps.md5, 16384);
+
+	if (fileProps.size != -1) {
+		debug(3, "> '%s': '%s'", fname.c_str(), fileProps.md5.c_str());
+		filePropsMap[fname] = fileProps;
+	}
+
+	return true;
+}
+
+// Based on AdvancedMetaEngine::detectGame
+ADGameDescList AdlMetaEngine::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const {
+	// We run the file-based detector first and then add to the returned list
+	ADGameDescList matched = AdvancedMetaEngine::detectGame(parent, allFiles, language, platform, extra);
+
+	debug(3, "Starting disk image detection in dir '%s'", parent.getPath().c_str());
+
+	ADFilePropertiesMap filesProps;
+	ADGameIdList matchedGameIds;
+	bool gotAnyMatchesWithAllFiles = false;
+
+	for (uint g = 0; gameDiskDescriptions[g].desc.gameId != 0; ++g) {
+		const ADGameDescription &desc = gameDiskDescriptions[g].desc;
+
+		// Skip games that don't meet the language/platform/extra criteria
+		if (language != Common::UNK_LANG && desc.language != Common::UNK_LANG) {
+			if (desc.language != language && !(language == Common::EN_ANY && (desc.flags & ADGF_ADDENGLISH)))
+			    continue;
+		}
+
+		if (platform != Common::kPlatformUnknown && desc.platform != Common::kPlatformUnknown && desc.platform != platform)
+			continue;
+
+		if ((_flags & kADFlagUseExtraAsHint) && !extra.empty() && desc.extra != extra)
+			continue;
+
+		bool fileMissing = false;
+		bool allFilesPresent = true;
+		bool hashOrSizeMismatch = false;
+
+		for (uint f = 0;  desc.filesDescriptions[f].fileName; ++f) {
+			const ADGameFileDescription &fDesc = desc.filesDescriptions[f];
+			Common::String fileName;
+			bool foundDiskImage = false;
+
+			for (uint e = 0; e < ARRAYSIZE(diskImageExts); ++e) {
+				if (diskImageExts[e].platform == desc.platform) {
+					Common::String testFileName(fDesc.fileName);
+					testFileName += diskImageExts[e].extension;
+
+					if (addFileProps(allFiles, testFileName, filesProps)) {
+						if (foundDiskImage) {
+							warning("Ignoring '%s' (already found '%s')", testFileName.c_str(), fileName.c_str());
+							filesProps.erase(testFileName);
+						} else {
+							foundDiskImage = true;
+							fileName = testFileName;
+						}
+					}
+				}
+			}
+
+			if (!foundDiskImage) {
+				fileMissing = true;
+				allFilesPresent = false;
+				break;
+			}
+
+			if (hashOrSizeMismatch)
+				continue;
+
+			if (fDesc.md5 && fDesc.md5 != filesProps[fileName].md5) {
+				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fDesc.md5, filesProps[fileName].md5.c_str());
+				fileMissing = true;
+				hashOrSizeMismatch = true;
+				continue;
+			}
+
+			if (fDesc.fileSize != -1 && fDesc.fileSize != filesProps[fileName].size) {
+				debug(3, "Size Mismatch. Skipping");
+				fileMissing = true;
+				hashOrSizeMismatch = true;
+				continue;
+			}
+
+			debug(3, "Matched file: %s", fileName.c_str());
+		}
+
+		if (!fileMissing) {
+			debug(2, "Found game: %s (%s/%s) (%d)", desc.gameId, getPlatformDescription(desc.platform), getLanguageDescription(desc.language), g);
+			matched.push_back(&desc);
+		} else {
+			if (allFilesPresent) {
+				gotAnyMatchesWithAllFiles = true;
+				if (!matchedGameIds.size() || strcmp(matchedGameIds.back(), desc.gameId) != 0)
+					matchedGameIds.push_back(desc.gameId);
+			}
+
+			debug(5, "Skipping game: %s (%s/%s) (%d)", desc.gameId, getPlatformDescription(desc.platform), getLanguageDescription(desc.language), g);
+		}
+	}
+
+	// TODO: This should be improved to handle matched and unknown games together in a single directory
+	if (matched.empty()) {
+		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
+			reportUnknown(parent, filesProps, matchedGameIds);
+		}
+	}
+
+	return matched;
 }
 
 Engine *HiRes1Engine_create(OSystem *syst, const AdlGameDescription *gd);
