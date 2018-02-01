@@ -313,7 +313,7 @@ protected:
 	 * @param extra		restrict results to specified extra string (only if kADFlagUseExtraAsHint is set)
 	 * @return	list of ADGameDescription pointers corresponding to matched games
 	 */
-	ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
+	virtual ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
 
 	/**
 	 * Iterates over all ADFileBasedFallback records inside fileBasedFallback.
