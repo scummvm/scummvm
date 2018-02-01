@@ -49,6 +49,7 @@ SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 
 	state.screenWidth   = getWidth();
 	state.screenHeight  = getHeight();
+	state.pixelAspectRatio = gamePixelAspectRatio();
 	state.aspectRatio   = getFeatureState(OSystem::kFeatureAspectRatioCorrection);
 	state.fullscreen    = getFeatureState(OSystem::kFeatureFullscreenMode);
 	state.cursorPalette = getFeatureState(OSystem::kFeatureCursorPalette);
@@ -61,9 +62,9 @@ SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 bool SdlGraphicsManager::setState(const State &state) {
 	beginGFXTransaction();
 #ifdef USE_RGB_COLOR
-		initSize(state.screenWidth, state.screenHeight, &state.pixelFormat);
+		initSize(Graphics::Mode(state.screenWidth, state.screenHeight, state.pixelAspectRatio), &state.pixelFormat);
 #else
-		initSize(state.screenWidth, state.screenHeight, nullptr);
+		initSize(Graphics::Mode(state.screenWidth, state.screenHeight, state.pixelAspectRatio), nullptr);
 #endif
 		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
@@ -126,13 +127,8 @@ void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
 	for (Graphics::ModeList::const_iterator it = modes.begin(); it != end; ++it) {
 		int16 width = it->width, height = it->height;
 
-		// TODO: Normalize AR correction by passing a PAR in the mode list
-		// instead of checking the dimensions here like this, since not all
-		// 320x200/640x400 uses are with non-square pixels (e.g. DreamWeb).
 		if (ConfMan.getBool("aspect_ratio")) {
-			if ((width == 320 && height == 200) || (width == 640 && height == 400)) {
-				height = real2Aspect(height);
-			}
+			height = fracToInt(it->height * it->par);
 		}
 
 		if (!useDefault || width <= 320) {

@@ -628,11 +628,10 @@ public:
 	 * a backend may perform color lookup of 8-bit graphics before pushing
 	 * a screen to hardware, or correct the ARGB color order.
 	 *
-	 * @param width		the new virtual screen width
-	 * @param height	the new virtual screen height
+	 * @param mode		the new virtual screen size
 	 * @param format	the new virtual screen pixel format
 	 */
-	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
 	 * Send a list of graphics modes to the backend so it can make a decision

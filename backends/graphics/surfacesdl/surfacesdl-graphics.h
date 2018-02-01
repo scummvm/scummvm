@@ -98,7 +98,7 @@ public:
 	virtual const OSystem::GraphicsMode *getSupportedShaders() const override;
 	virtual int getShader() const override;
 	virtual bool setShader(int id) override;
-	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
+	virtual void initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format = NULL) override;
 	virtual int getScreenChangeID() const override { return _screenChangeCount; }
 
 	virtual void beginGFXTransaction() override;
@@ -175,6 +175,10 @@ protected:
 		return _videoMode.aspectRatioCorrection;
 	}
 
+	virtual frac_t gamePixelAspectRatio() const override {
+		return _videoMode.pixelAspectRatio;
+	}
+
 	virtual void handleResizeImpl(const int width, const int height) override;
 
 	virtual int getGraphicsModeScale(int mode) const override;
@@ -249,6 +253,7 @@ protected:
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
 		int hardwareWidth, hardwareHeight;
+		frac_t pixelAspectRatio;
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat format;
 #endif

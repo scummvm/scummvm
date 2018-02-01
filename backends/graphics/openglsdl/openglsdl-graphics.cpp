@@ -266,19 +266,19 @@ bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	}
 }
 
-void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+void OpenGLSdlGraphicsManager::initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format) {
 	// HACK: This is stupid but the SurfaceSDL backend defaults to 2x. This
 	// assures that the launcher (which requests 320x200) has a reasonable
 	// size. It also makes small games have a reasonable size (i.e. at least
 	// 640x400). We follow the same logic here until we have a better way to
 	// give hints to our backend for that.
-	if (w > 320) {
+	if (mode.width > 320) {
 		_graphicsScale = 1;
 	} else {
 		_graphicsScale = 2;
 	}
 
-	return OpenGLGraphicsManager::initSize(w, h, format);
+	return OpenGLGraphicsManager::initSize(mode, format);
 }
 
 #ifdef USE_RGB_COLOR

@@ -72,6 +72,11 @@ protected:
 	virtual bool gameNeedsAspectRatioCorrection() const = 0;
 
 	/**
+	 * @return the game pixel aspect ratio.
+	 */
+	virtual frac_t gamePixelAspectRatio() const = 0;
+
+	/**
 	 * Backend-specific implementation for updating internal surfaces that need
 	 * to reflect the new window size.
 	 */
@@ -128,8 +133,11 @@ protected:
 	 * @returns the desired aspect ratio of the game surface.
 	 */
 	frac_t getDesiredGameAspectRatio() const {
-		if (getHeight() == 0 || gameNeedsAspectRatioCorrection()) {
+		if (getHeight() == 0) {
 			return intToFrac(4) / 3;
+		} else if (gameNeedsAspectRatioCorrection()) {
+			// Assume that the display pixels are square
+			return intToFrac(getWidth()) / fracToInt(getHeight() * gamePixelAspectRatio());
 		}
 
 		return intToFrac(getWidth()) / getHeight();

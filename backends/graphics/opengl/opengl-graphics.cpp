@@ -241,7 +241,8 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 				if (_oldState.valid && _oldState != _currentState) {
 					// Give some hints on what failed to set up.
 					if (   _oldState.gameWidth  != _currentState.gameWidth
-					    || _oldState.gameHeight != _currentState.gameHeight) {
+					    || _oldState.gameHeight != _currentState.gameHeight
+						|| _oldState.gamePixelAspectRatio != _currentState.gamePixelAspectRatio) {
 						transactionError |= OSystem::kTransactionSizeChangeFailed;
 					}
 
@@ -329,7 +330,7 @@ int OpenGLGraphicsManager::getScreenChangeID() const {
 	return _screenChangeID;
 }
 
-void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
+void OpenGLGraphicsManager::initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format) {
 	Graphics::PixelFormat requestedFormat;
 #ifdef USE_RGB_COLOR
 	if (!format) {
@@ -340,8 +341,9 @@ void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::Pi
 	_currentState.gameFormat = requestedFormat;
 #endif
 
-	_currentState.gameWidth = width;
-	_currentState.gameHeight = height;
+	_currentState.gameWidth = mode.width;
+	_currentState.gameHeight = mode.height;
+	_currentState.gamePixelAspectRatio = mode.par;
 	_gameScreenShakeOffset = 0;
 }
 
@@ -1090,17 +1092,11 @@ bool OpenGLGraphicsManager::getGLPixelFormat(const Graphics::PixelFormat &pixelF
 }
 
 bool OpenGLGraphicsManager::gameNeedsAspectRatioCorrection() const {
-	if (_currentState.aspectRatioCorrection) {
-		const uint width = getWidth();
-		const uint height = getHeight();
+	return _currentState.aspectRatioCorrection;
+}
 
-		// In case we enable aspect ratio correction we force a 4/3 ratio.
-		// But just for 320x200 and 640x400 games, since other games do not need
-		// this.
-		return (width == 320 && height == 200) || (width == 640 && height == 400);
-	}
-
-	return false;
+frac_t OpenGLGraphicsManager::gamePixelAspectRatio() const {
+	return _currentState.gamePixelAspectRatio;
 }
 
 void OpenGLGraphicsManager::recalculateDisplayAreas() {

@@ -61,4 +61,8 @@ void initGraphics(int width, int height);
 void initGraphics(int width, int height, const Graphics::PixelFormat *format);
 void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList);
 
+void initGraphics(const Graphics::Mode &mode);
+void initGraphics(const Graphics::Mode &mode, const Graphics::PixelFormat *format);
+void initGraphics(const Graphics::Mode &mode, const Common::List<Graphics::PixelFormat> &formatList);
+
 #endif

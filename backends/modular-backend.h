@@ -74,7 +74,7 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
-	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL);
+	virtual void initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format = NULL);
 	virtual void initSizeHint(const Graphics::ModeList &modes) override;
 	virtual int getScreenChangeID() const;
 

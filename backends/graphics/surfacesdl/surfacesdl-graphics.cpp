@@ -94,7 +94,7 @@ static const int s_gfxModeSwitchTable[][4] = {
 	};
 
 #ifdef USE_SCALERS
-static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
+static int cursorCorrectAspectRatio(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, frac_t pixelAspectRatio);
 #endif
 
 AspectRatio::AspectRatio(int w, int h) {
@@ -366,11 +366,12 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			_videoMode.format = _oldVideoMode.format;
 			_screenFormat = _videoMode.format;
 #endif
-		} else if (_videoMode.screenWidth != _oldVideoMode.screenWidth || _videoMode.screenHeight != _oldVideoMode.screenHeight) {
+		} else if (_videoMode.screenWidth != _oldVideoMode.screenWidth || _videoMode.screenHeight != _oldVideoMode.screenHeight || _videoMode.pixelAspectRatio != _oldVideoMode.pixelAspectRatio) {
 			errors |= OSystem::kTransactionSizeChangeFailed;
 
 			_videoMode.screenWidth = _oldVideoMode.screenWidth;
 			_videoMode.screenHeight = _oldVideoMode.screenHeight;
+			_videoMode.pixelAspectRatio = _oldVideoMode.pixelAspectRatio;
 			_videoMode.overlayWidth = _oldVideoMode.overlayWidth;
 			_videoMode.overlayHeight = _oldVideoMode.overlayHeight;
 		}
@@ -382,7 +383,8 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 			_videoMode.filtering == _oldVideoMode.filtering &&
 #endif
 			_videoMode.screenWidth == _oldVideoMode.screenWidth &&
-			_videoMode.screenHeight == _oldVideoMode.screenHeight) {
+			_videoMode.screenHeight == _oldVideoMode.screenHeight &&
+			_videoMode.pixelAspectRatio == _oldVideoMode.pixelAspectRatio) {
 
 			// Our new video mode would now be exactly the same as the
 			// old one. Since we still can not assume SDL_SetVideoMode
@@ -745,7 +747,7 @@ bool SurfaceSdlGraphicsManager::setShader(int id) {
 	return true;
 }
 
-void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+void SurfaceSdlGraphicsManager::initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
 	_newShakePos = 0;
@@ -772,21 +774,28 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 	// actually be redundant if ScummVM is switching between game engines and
 	// the screen dimensions are being reinitialized, since window resizing is
 	// supposed to reset when this happens
-	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
+	if ((int)mode.width == _videoMode.screenWidth && (int)mode.height == _videoMode.screenHeight && mode.par == _videoMode.pixelAspectRatio)
 		return;
 #endif
 
-	if ((int)w != _videoMode.screenWidth || (int)h != _videoMode.screenHeight) {
+	if ((int)mode.width != _videoMode.screenWidth || (int)mode.height != _videoMode.screenHeight) {
 		const bool useDefault = defaultGraphicsModeConfig();
-		if (useDefault && w > 320) {
+		if (useDefault && mode.width > 320) {
 			resetGraphicsScale();
 		} else {
 			setGraphicsMode(getGraphicsModeIdByName(ConfMan.get("gfx_mode")));
 		}
 	}
 
-	_videoMode.screenWidth = w;
-	_videoMode.screenHeight = h;
+	_videoMode.screenWidth = mode.width;
+	_videoMode.screenHeight = mode.height;
+	_videoMode.pixelAspectRatio = mode.par;
+
+	// For now, force pixelAspectRatio to be either 1 or 6/5.
+	// To support other aspect ratio correction factors we will need to rewrite the strecth code
+	// in graphics/scaler/aspect.cpp, or maybe let SDL do the scaling.
+	if (_videoMode.pixelAspectRatio != intToFrac(6) / 5)
+		_videoMode.pixelAspectRatio = intToFrac(1);
 
 	_transactionDetails.sizeChanged = true;
 }
@@ -857,15 +866,16 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
-	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
+	if (_videoMode.pixelAspectRatio == intToFrac(1))
 		_videoMode.aspectRatioCorrection = false;
 
 	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
 	if (_videoMode.aspectRatioCorrection) {
-		_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
-		_videoMode.hardwareHeight = real2Aspect(_videoMode.hardwareHeight);
+		// Assume square pixel display for the aspect ratio correction
+		_videoMode.overlayHeight = fracToInt(_videoMode.overlayHeight * _videoMode.pixelAspectRatio);
+		_videoMode.hardwareHeight = fracToInt(_videoMode.hardwareHeight * _videoMode.pixelAspectRatio);
 	}
 
 // On GPH devices ALL the _videoMode.hardware... are setup in GPHGraphicsManager::loadGFXMode()
@@ -1144,7 +1154,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
+			blackrect.h = fracToInt((blackrect.h - 1) * _videoMode.pixelAspectRatio) + 1;
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
 
@@ -1243,7 +1253,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				dst_y = dst_y * scale1;
 
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-					dst_y = real2Aspect(dst_y);
+					dst_y = fracToInt(dst_y * _videoMode.pixelAspectRatio);
 
 				assert(scalerProc != NULL);
 				scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
@@ -1294,7 +1304,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				y *= scale1;
 
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-					y = real2Aspect(y);
+					y = fracToInt(y * _videoMode.pixelAspectRatio);
 
 				if (h > 0 && w > 0) {
 					SDL_LockSurface(_hwScreen);
@@ -1975,8 +1985,8 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 #endif
 
 	if (!_cursorDontScale && _videoMode.aspectRatioCorrection) {
-		rH = real2Aspect(rH - 1) + 1;
-		_mouseCurState.rHotY = real2Aspect(_mouseCurState.rHotY);
+		rH = fracToInt((rH - 1) * _videoMode.pixelAspectRatio) + 1;
+		_mouseCurState.rHotY = fracToInt(_mouseCurState.rHotY * _videoMode.pixelAspectRatio);
 	}
 
 	bool sizeChanged = false;
@@ -2129,7 +2139,7 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 
 #ifdef USE_SCALERS
 	if (!_cursorDontScale && _videoMode.aspectRatioCorrection)
-		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0);
+		cursorCorrectAspectRatio((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0, _videoMode.pixelAspectRatio);
 #endif
 
 	SDL_UnlockSurface(_mouseSurface);
@@ -2139,14 +2149,14 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 #ifdef USE_SCALERS
 // Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from
 // common/scale/aspect.cpp
-static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {
-	int maxDstY = real2Aspect(origSrcY + height - 1);
+static int cursorCorrectAspectRatio(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, frac_t pixelAspectRatio) {
+	int maxDstY = fracToInt((origSrcY + height - 1) * pixelAspectRatio);
 	int y;
 	const uint8 *startSrcPtr = buf + srcX * 2 + (srcY - origSrcY) * pitch;
 	uint8 *dstPtr = buf + srcX * 2 + maxDstY * pitch;
 
 	for (y = maxDstY; y >= srcY; y--) {
-		const uint8 *srcPtr = startSrcPtr + aspect2Real(y) * pitch;
+		const uint8 *srcPtr = startSrcPtr + intToFrac(y) / pixelAspectRatio * pitch;
 
 		if (srcPtr == dstPtr)
 			break;
@@ -2214,7 +2224,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	dst.y += _currentShakePos;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-		dst.y = real2Aspect(dst.y);
+		dst.y = fracToInt(dst.y * _videoMode.pixelAspectRatio);
 
 	dst.x = scale * dst.x - _mouseCurState.rHotX;
 	dst.y = scale * dst.y - _mouseCurState.rHotY;

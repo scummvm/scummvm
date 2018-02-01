@@ -259,14 +259,14 @@ void ScalpelEngine::setupGraphics() {
 		// First try for a 640x400 mode
 		g_system->beginGFXTransaction();
 		initCommonGFX();
-		g_system->initSize(640, 400, &pixelFormatRGB565);
+		g_system->initSize(Graphics::Mode(640, 400), &pixelFormatRGB565);
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 		if (gfxError == OSystem::kTransactionSuccess) {
 			_isScreenDoubled = true;
 		} else {
 			// System doesn't support it, so fall back on 320x200 mode
-			initGraphics(320, 200, &pixelFormatRGB565);
+			initGraphics(Graphics::Mode(320, 200), &pixelFormatRGB565);
 		}
 	}
 }
