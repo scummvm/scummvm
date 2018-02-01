@@ -1303,13 +1303,12 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 #ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
 	byte hasTownsData = 0;
-	if (_game.platform == Common::kPlatformFMTowns && s->getVersion() > VER(87))
-		s->saveLoadArrayOf(&hasTownsData, 1, sizeof(byte), sleByte);
+	if (_game.platform == Common::kPlatformFMTowns && s.getVersion() > VER(87))
+		s.syncAsByte(hasTownsData);
 
 	if (hasTownsData) {
 		// Skip FM-Towns specific data
-		for (i = 69 * sizeof(uint8) + 44 * sizeof(int16); i; i--)
-			s->loadByte();
+		s.skip(69 + 44 * sizeof(int16));
 	}
 
 #else
