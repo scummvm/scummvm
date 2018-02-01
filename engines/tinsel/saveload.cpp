@@ -57,14 +57,6 @@ namespace Tinsel {
  */
 #define CURRENT_VER 2
 
-/**
- * An auxillary macro, used to specify savegame versions. We use this instead
- * of just writing the raw version, because this way they stand out more to
- * the reading eye, making it a bit easier to navigate through the code.
- */
-#define VER(x) x
-
-
 //----------------- GLOBAL GLOBAL DATA --------------------
 
 int	g_thingHeld = 0;
