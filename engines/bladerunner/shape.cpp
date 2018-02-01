@@ -33,8 +33,10 @@
 namespace BladeRunner {
 
 Shape::Shape(BladeRunnerEngine *vm) {
-	_vm = vm;
-	_data = nullptr;
+	_vm     = vm;
+	_data   = nullptr;
+	_width  = 0;
+	_height = 0;
 }
 
 Shape::~Shape() {

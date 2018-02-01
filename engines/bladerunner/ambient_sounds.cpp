@@ -136,7 +136,8 @@ void AmbientSounds::addLoopingSound(int sfxId, int volume, int pan, int delay) {
 	LoopingSound &track = _loopingSounds[i];
 
 	track.isActive = true;
-	strcpy(track.name, name);
+	strncpy(track.name, name, sizeof(track.name));
+	track.name[sizeof(track.name) - 1] = 0;
 	track.hash = hash;
 	track.pan = pan;
 	track.volume = volume;
@@ -318,7 +319,8 @@ void AmbientSounds::addSoundByName(
 	uint32 now = _vm->getTotalPlayTime();
 
 	track.isActive = true;
-	strcpy(track.name, name);
+	strncpy(track.name, name, sizeof(track.name));
+	track.name[sizeof(track.name) - 1] = 0;
 	track.hash = mix_id(name);
 	track.timeMin = 1000 * timeMin;
 	track.timeMax = 1000 * timeMax;

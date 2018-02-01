@@ -75,8 +75,10 @@ UIScrollBox::UIScrollBox(BladeRunnerEngine *vm, UIScrollBoxCallback *lineSelecte
 	_maxLineCount = maxLineCount;
 
 	_firstLineVisible = 0;
+	_maxLinesVisible  = _rect.height() / kLineHeight;
 
-	_maxLinesVisible = _rect.height() / kLineHeight;
+	_mouseButton = false;
+
 	_rect.bottom = _rect.top + kLineHeight * _maxLinesVisible - 1;
 
 	_lines.resize(_maxLineCount);

@@ -45,6 +45,7 @@ Mouse::Mouse(BladeRunnerEngine *vm) {
 	_y = 0;
 	_disabledCounter = 0;
 	_lastFrameTime = 0;
+	_animCounter = 0;
 }
 
 Mouse::~Mouse() {

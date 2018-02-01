@@ -35,7 +35,10 @@ CrimesDatabase::CrimesDatabase(BladeRunnerEngine *vm, const char *cluesResource,
 	_assetTypes.resize(_crimeCount);
 
 	_cluesText = new TextResource(vm);
-	_cluesText->open(cluesResource);
+	if (!_cluesText->open(cluesResource)) {
+		delete _cluesText;
+		return;
+	}
 
 	for (int i = 0; i != _crimeCount; ++i) {
 		_crimes[i] = -1;

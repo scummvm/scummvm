@@ -56,6 +56,7 @@ class VQAPlayer;
 
 class KIA {
 	static const char *kPogo;
+	static const int kPlayerActorDialogueQueueCapacity = 31;
 
 	struct ActorDialogueQueueEntry {
 		int actorId;
@@ -80,11 +81,10 @@ class KIA {
 	float      _playerSliceModelAngle;
 	int        _timeLast;
 
-	ActorDialogueQueueEntry *_playerActorDialogueQueue;
-	int                      _playerActorDialogueQueueCapacity;
-	int                      _playerActorDialogueQueuePosition;
-	int                      _playerActorDialogueQueueSize;
-	int                      _playerActorDialogueState;
+	ActorDialogueQueueEntry _playerActorDialogueQueue[kPlayerActorDialogueQueueCapacity];
+	int                     _playerActorDialogueQueuePosition;
+	int                     _playerActorDialogueQueueSize;
+	int                     _playerActorDialogueState;
 
 	KIASectionBase       *_currentSection;
 	KIASectionClues      *_cluesSection;

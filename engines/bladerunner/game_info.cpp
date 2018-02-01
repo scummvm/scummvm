@@ -31,10 +31,26 @@ namespace BladeRunner {
 
 GameInfo::GameInfo(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_sceneNames  = nullptr;
-	_sfxTracks   = nullptr;
-	_musicTracks = nullptr;
-	_outtakes    = nullptr;
+	_sceneNames         = nullptr;
+	_sfxTracks          = nullptr;
+	_musicTracks        = nullptr;
+	_outtakes           = nullptr;
+	_actorCount         = 0;
+	_playerId           = 0;
+	_flagCount          = 0;
+	_clueCount          = 0;
+	_globalVarCount     = 0;
+	_setNamesCount      = 0;
+	_initialSceneId     = 0;
+	_initialSetId       = 0;
+	_waypointCount      = 0;
+	_sfxTrackCount      = 0;
+	_musicTrackCount    = 0;
+	_outtakeCount       = 0;
+	_crimeCount         = 0;
+	_suspectCount       = 0;
+	_coverWaypointCount = 0;
+	_fleeWaypointCount  = 0;
 }
 
 GameInfo::~GameInfo() {

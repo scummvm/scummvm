@@ -72,7 +72,7 @@ class KIASectionCrimes : public KIASectionBase {
 	Shape *_suspectPhotoShape;
 
 public:
-	int                 _suspectSelected;
+	int _suspectSelected;
 
 public:
 	KIASectionCrimes(BladeRunnerEngine *vm, ActorClues *clues);

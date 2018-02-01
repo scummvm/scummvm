@@ -46,7 +46,9 @@ KIASectionHelp::~KIASectionHelp() {
 
 void KIASectionHelp::open() {
 	TextResource textResource(_vm);
-	textResource.open("HELP");
+	if (!textResource.open("HELP")) {
+		return;
+	}
 
 	_scrollBox->clearLines();
 

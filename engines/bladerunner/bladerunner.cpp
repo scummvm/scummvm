@@ -95,6 +95,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_gameIsLoading = false;
 	_sceneIsLoading = false;
 
+	_walkingActorId = -1;
+
 	_walkSoundId = -1;
 	_walkSoundVolume = 0;
 	_walkSoundBalance = 0;
@@ -122,6 +124,53 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 			break;
 		default:
 			this->_languageCode = "E";
+	}
+
+	_screenEffects           = nullptr;
+	_combat                  = nullptr;
+	_actorDialogueQueue      = nullptr;
+	_settings                = nullptr;
+	_itemPickup              = nullptr;
+	_lights                  = nullptr;
+	_obstacles               = nullptr;
+	_sceneScript             = nullptr;
+	_gameInfo                = nullptr;
+	_waypoints               = nullptr;
+	_gameVars                = nullptr;
+	_view                    = nullptr;
+	_sceneObjects            = nullptr;
+	_gameFlags               = nullptr;
+	_items                   = nullptr;
+	_audioMixer              = nullptr;
+	_audioPlayer             = nullptr;
+	_music                   = nullptr;
+	_audioSpeech             = nullptr;
+	_ambientSounds           = nullptr;
+	_chapters                = nullptr;
+	_overlays                = nullptr;
+	_zbuffer                 = nullptr;
+	_playerActor             = nullptr;
+	_textActorNames          = nullptr;
+	_textCrimes              = nullptr;
+	_textClueTypes           = nullptr;
+	_textKIA                 = nullptr;
+	_textSpinnerDestinations = nullptr;
+	_textVK                  = nullptr;
+	_textOptions             = nullptr;
+	_dialogueMenu            = nullptr;
+	_suspectsDatabase        = nullptr;
+	_kia                     = nullptr;
+	_spinner                 = nullptr;
+	_elevator                = nullptr;
+	_mainFont                = nullptr;
+	_mouse                   = nullptr;
+	_sliceAnimations         = nullptr;
+	_sliceRenderer           = nullptr;
+	_crimesDatabase          = nullptr;
+	_scene                   = nullptr;
+	_aiScripts               = nullptr;
+	for (int i = 0; i != kActorCount; ++i) {
+		_actors[i] = nullptr;
 	}
 }
 

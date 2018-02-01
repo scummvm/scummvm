@@ -27,6 +27,27 @@
 namespace BladeRunner {
 
 Fog::Fog() {
+	_name[0]            = 0;
+	_frameCount         = 0;
+	_animatedParameters = 0;
+	_fogDensity         = 0.0f;
+	_animationData      = nullptr;
+	_m11ptr             = nullptr;
+	_m12ptr             = nullptr;
+	_m13ptr             = nullptr;
+	_m14ptr             = nullptr;
+	_m21ptr             = nullptr;
+	_m22ptr             = nullptr;
+	_m23ptr             = nullptr;
+	_m24ptr             = nullptr;
+	_m31ptr             = nullptr;
+	_m32ptr             = nullptr;
+	_m33ptr             = nullptr;
+	_m34ptr             = nullptr;
+	_parameter1         = 0.0f;
+	_parameter2         = 0.0f;
+	_parameter3         = 0.0f;
+	_next               = nullptr;
 }
 
 Fog::~Fog() {

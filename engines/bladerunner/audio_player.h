@@ -81,8 +81,6 @@ class AudioPlayer {
 		int                 volume;
 		int                 pan;
 		Audio::AudioStream *stream;
-
-		Track() : isActive(false) {}
 	};
 
 	BladeRunnerEngine *_vm;

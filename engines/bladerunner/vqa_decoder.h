@@ -123,7 +123,7 @@ private:
 		uint32  flags;
 		Loop   *loops;
 
-		LoopInfo() : loopCount(0), loops(nullptr) {}
+		LoopInfo() : loopCount(0), loops(nullptr), flags(0) {}
 		~LoopInfo() {
 			delete[] loops;
 		}

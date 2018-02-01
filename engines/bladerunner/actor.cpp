@@ -55,6 +55,33 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 	_combatInfo = new ActorCombat(vm);
 
 	_friendlinessToOther = new int[_vm->_gameInfo->getActorCount()];
+
+	_isMoving                         = false;
+	_isTargetable                     = false;
+	_inCombat                         = false;
+	_isInvisible                      = false;
+	_isImmuneToObstacles              = false;
+	_damageAnimIfMoving               = false;
+	_movementTrackPaused              = false;
+	_movementTrackNextWaypointId      = -1;
+	_movementTrackNextDelay           = -1;
+	_movementTrackNextAngle           = -1;
+	_movementTrackNextRunning         = false;
+	_movementTrackWalkingToWaypointId = -1;
+	_movementTrackDelayOnNextWaypoint = -1;
+	_width                            = 0;
+	_height                           = 0;
+	_animationMode                    = -1;
+	_animationModeCombatIdle          = -1;
+	_animationModeCombatWalk          = -1;
+	_animationModeCombatRun           = -1;
+	_fps                              = 0;
+	_frame_ms                         = 0;
+	_animationId                      = 0;
+	_animationFrame                   = 0;
+	_retiredWidth                     = 0;
+	_retiredHeight                    = 0;
+	_scale                            = 0.0f;
 }
 
 Actor::~Actor() {
@@ -101,7 +128,7 @@ void Actor::setup(int actorId) {
 		_timersStart[i] = _vm->getTotalPlayTime();
 	}
 
-	_scale = 1.0;
+	_scale = 1.0f;
 
 	_honesty = 50;
 	_intelligence = 50;

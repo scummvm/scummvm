@@ -28,12 +28,19 @@
 
 namespace BladeRunner {
 
-AudStream::AudStream(byte *data) : _cache(nullptr) {
+AudStream::AudStream(byte *data) {
+	_hash  = 0;
+	_cache = nullptr;
+
 	init(data);
 }
 
-AudStream::AudStream(AudioCache *cache, int32 hash)
-		: _cache(cache), _hash(hash) {
+AudStream::AudStream(AudioCache *cache, int32 hash) {
+	assert(cache != nullptr);
+
+	_cache = cache;
+	_hash  = hash;
+
 	_cache->incRef(_hash);
 
 	init(_cache->findByHash(_hash));

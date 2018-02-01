@@ -236,14 +236,14 @@ void SliceRenderer::loadFrame(int animation, int frame) {
 
 	Common::MemoryReadStream stream((byte *)_sliceFramePtr, _vm->_sliceAnimations->_animations[_animation].frameSize);
 
-	_frameScale.x = stream.readFloatLE();
-	_frameScale.y = stream.readFloatLE();
-	_frameSliceHeight = stream.readFloatLE();
-	_framePos.x = stream.readFloatLE();
-	_framePos.y = stream.readFloatLE();
-	_frameBottomZ = stream.readFloatLE();
+	_frameScale.x      = stream.readFloatLE();
+	_frameScale.y      = stream.readFloatLE();
+	_frameSliceHeight  = stream.readFloatLE();
+	_framePos.x        = stream.readFloatLE();
+	_framePos.y        = stream.readFloatLE();
+	_frameBottomZ      = stream.readFloatLE();
 	_framePaletteIndex = stream.readUint32LE();
-	_frameSliceCount = stream.readUint32LE();
+	_frameSliceCount   = stream.readUint32LE();
 }
 
 struct SliceLineIterator {
@@ -581,6 +581,8 @@ SliceRendererLights::SliceRendererLights(Lights *lights) {
 		_cacheColor[i].g = 0.0f;
 		_cacheColor[i].b = 0.0f;
 	}
+
+	_cacheRecalculation = 0.0f;
 }
 
 void SliceRendererLights::calculateColorBase(Vector3 position1, Vector3 position2, float height) {

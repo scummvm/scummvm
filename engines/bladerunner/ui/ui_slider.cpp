@@ -44,6 +44,7 @@ UISlider::UISlider(BladeRunnerEngine *vm, UIComponentCallback *valueChangedCallb
 	_currentFrameColor = 0;
 	_hasFocus = false;
 	_pressedStatus = 0;
+	_mouseX = 0;
 }
 
 void UISlider::draw(Graphics::Surface &surface) {

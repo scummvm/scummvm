@@ -99,8 +99,6 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	int shapeCount = 0;
 	int spinnerLoopId = 4;
 
-	mapmask = 1;
-
 	if (mapmask & 4) {
 		_destinations = getDestinationsFar();
 		firstShapeId = 26;
@@ -168,11 +166,9 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	}
 	_shapes.clear();
 
-	if (_vqaPlayer != nullptr) {
-		_vqaPlayer->close();
-		delete _vqaPlayer;
-		_vqaPlayer = nullptr;
-	}
+	_vqaPlayer->close();
+	delete _vqaPlayer;
+	_vqaPlayer = nullptr;
 
 	_vm->closeArchive("MODE.MIX");
 

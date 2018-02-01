@@ -79,6 +79,7 @@ public:
 		  _s(nullptr),
 		  _decoder(surface),
 		  _audioStream(nullptr),
+		  _frame(-1),
 		  _frameNext(-1),
 		  _frameBegin(-1),
 		  _frameEnd(-1),

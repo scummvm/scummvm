@@ -27,11 +27,15 @@
 namespace BladeRunner {
 
 MIXArchive::MIXArchive() {
+	_isTLK      = false;
+	_entryCount = 0;
+	_size       = 0;
 }
 
 MIXArchive::~MIXArchive() {
-	if (_fd.isOpen())
+	if (_fd.isOpen()) {
 		debug("~MIXArchive: fd not closed: %s", _fd.getName());
+	}
 }
 
 bool MIXArchive::open(const Common::String &filename) {
@@ -42,21 +46,23 @@ bool MIXArchive::open(const Common::String &filename) {
 
 	_isTLK = filename.hasSuffix(".TLK");
 
-	_entry_count = _fd.readUint16LE();
-	_size        = _fd.readUint32LE();
+	_entryCount = _fd.readUint16LE();
+	_size       = _fd.readUint32LE();
 
-	_entries.resize(_entry_count);
-	for (uint16 i = 0; i != _entry_count; ++i) {
+	_entries.resize(_entryCount);
+	for (uint16 i = 0; i != _entryCount; ++i) {
 		_entries[i].id     = _fd.readSint32LE();
 		_entries[i].offset = _fd.readUint32LE();
 		_entries[i].length = _fd.readUint32LE();
 
-		if (false)
-			debug("%08x %-12d %-12d", _entries[i].id, _entries[i].offset, _entries[i].length);
+#if BLADERUNNER_DEBUG_CONSOLE
+		debug("%08x %-12d %-12d", _entries[i].id, _entries[i].offset, _entries[i].length);
+#endif
 
 		// Verify that the entries are sorted by id. Note that id is signed.
-		if (i > 0)
+		if (i > 0) {
 			assert(_entries[i].id > _entries[i - 1].id);
+		}
 	}
 
 	if (_fd.err()) {
@@ -83,8 +89,9 @@ bool MIXArchive::isOpen() const {
 int32 mix_id(const Common::String &name) {
 	char buffer[12] = { 0 };
 
-	for (uint i = 0; i != name.size() && i < 12u; ++i)
+	for (uint i = 0; i != name.size() && i < 12u; ++i) {
 		buffer[i] = (char)toupper(name[i]);
+	}
 
 	uint32 id = 0;
 	for (int i = 0; i < 12 && buffer[i]; i += 4) {
@@ -118,19 +125,20 @@ int32 tlk_id(const Common::String &name) {
 }
 
 uint32 MIXArchive::indexForId(int32 id) const {
-	uint32 lo = 0, hi = _entry_count;
+	uint32 lo = 0, hi = _entryCount;
 
 	while (lo < hi) {
 		uint32 mid = lo + (hi - lo) / 2;
 
-		if (id > _entries[mid].id)
+		if (id > _entries[mid].id) {
 			lo = mid + 1;
-		else if (id < _entries[mid].id)
+		} else if (id < _entries[mid].id) {
 			hi = mid;
-		else
+		} else {
 			return mid;
+		}
 	}
-	return _entry_count;
+	return _entryCount;
 }
 
 Common::SeekableReadStream *MIXArchive::createReadStreamForMember(const Common::String &name) {
@@ -143,10 +151,11 @@ Common::SeekableReadStream *MIXArchive::createReadStreamForMember(const Common::
 
 	uint32 i = indexForId(id);
 
-	if (i == _entry_count)
+	if (i == _entryCount) {
 		return nullptr;
+	}
 
-	uint32 start = _entries[i].offset + 6 + 12 * _entry_count;
+	uint32 start = _entries[i].offset + 6 + 12 * _entryCount;
 	uint32 end   = _entries[i].length + start;
 
 	return new Common::SafeSeekableSubReadStream(&_fd, start, end, DisposeAfterUse::NO);

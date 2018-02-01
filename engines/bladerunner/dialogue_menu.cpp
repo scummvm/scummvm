@@ -46,6 +46,11 @@ DialogueMenu::DialogueMenu(BladeRunnerEngine *vm) {
 		assert(r);
 		(void)r;
 	}
+
+	_screenX = 0;
+	_screenY = 0;
+	_maxItemWidth = 0;
+	_fadeInItemIndex = 0;
 }
 
 DialogueMenu::~DialogueMenu() {

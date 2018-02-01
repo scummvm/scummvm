@@ -60,7 +60,7 @@ class SliceAnimations {
 		void   *_data;
 		uint32 _lastAccess;
 
-		Page() : _data(nullptr) {}
+		Page() : _data(nullptr), _lastAccess(0) {}
 	};
 
 	struct PageFile {
@@ -90,10 +90,13 @@ class SliceAnimations {
 
 public:
 	SliceAnimations(BladeRunnerEngine *vm)
-		: _vm(vm),
-		  _coreAnimPageFile(this),
-		  _framesPageFile(this) {
-	}
+		: _vm(vm)
+		, _coreAnimPageFile(this)
+		, _framesPageFile(this)
+		, _timestamp(0)
+		, _pageSize(0)
+		, _pageCount(0)
+		, _paletteCount(0) {}
 	~SliceAnimations();
 
 	bool open(const Common::String &name);

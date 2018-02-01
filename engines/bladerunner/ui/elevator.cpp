@@ -241,6 +241,7 @@ void Elevator::reset() {
 	_actorId = -1;
 	_sentenceId = -1;
 	_timeSpeakDescription = 0;
+	_buttonClicked = false;
 }
 
 void Elevator::buttonFocus(int buttonId) {

@@ -27,7 +27,33 @@
 namespace BladeRunner {
 
 Light::Light() {
-	_animationData = nullptr;
+	_frameCount         = 0;
+	_animated           = 0;
+	_animationData      = nullptr;
+	_animatedParameters = 0;
+	_falloffStart       = 0.0f;
+	_falloffEnd         = 0.0f;
+	_angleStart         = 0.0f;
+	_angleEnd           = 0.0f;
+	_m11ptr             = nullptr;
+	_m12ptr             = nullptr;
+	_m13ptr             = nullptr;
+	_m14ptr             = nullptr;
+	_m21ptr             = nullptr;
+	_m22ptr             = nullptr;
+	_m23ptr             = nullptr;
+	_m24ptr             = nullptr;
+	_m31ptr             = nullptr;
+	_m32ptr             = nullptr;
+	_m33ptr             = nullptr;
+	_m34ptr             = nullptr;
+	_colorRPtr          = nullptr;
+	_colorGPtr          = nullptr;
+	_colorBPtr          = nullptr;
+	_falloffStartPtr    = nullptr;
+	_falloffEndPtr      = nullptr;
+	_angleStartPtr      = nullptr;
+	_angleEndPtr        = nullptr;
 }
 
 Light::~Light() {

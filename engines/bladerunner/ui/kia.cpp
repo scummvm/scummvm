@@ -91,17 +91,14 @@ KIA::KIA(BladeRunnerEngine *vm) {
 	_playerPhotograph = nullptr;
 	_playerSliceModelId = -1;
 	_playerSliceModelAngle = 0.0f;
-	// _playerImage = nullptr;
 	_timeLast = _vm->getTotalPlayTime();
-	_playerActorDialogueQueueCapacity = 31;
 	_playerActorDialogueQueuePosition = 0;
 	_playerActorDialogueQueueSize = 0;
-	_playerActorDialogueQueue = new ActorDialogueQueueEntry[_playerActorDialogueQueueCapacity];
 	_playerActorDialogueState = 0;
 	_currentSection = nullptr;
 	_mainVqaPlayer = nullptr;
 	_playerVqaPlayer = nullptr;
-	// _thumbnail = nullptr;
+	_transitionId = 0;
 
 	_pogoPos = 0;
 
@@ -119,10 +116,17 @@ KIA::KIA(BladeRunnerEngine *vm) {
 }
 
 KIA::~KIA() {
-	delete _playerPhotograph;
-	// delete _playerImage;
-	// delete _thumbnail;
+	delete _crimesSection;
+	delete _suspectsSection;
+	delete _cluesSection;
 	delete _settingsSection;
+	delete _helpSection;
+	delete _saveSection;
+	delete _loadSection;
+	delete _diagnosticSection;
+	delete _pogoSection;
+
+	delete _playerPhotograph;
 	delete _buttons;
 	delete _shapes;
 	delete _log;
@@ -155,7 +159,7 @@ void KIA::tick() {
 	} else if (_playerActorDialogueState == 200) {
 		if (!_vm->_actors[_playerActorDialogueQueue[_playerActorDialogueQueuePosition].actorId]->isSpeeching()) {
 			if (_playerActorDialogueQueueSize != _playerActorDialogueQueuePosition) {
-				_playerActorDialogueQueuePosition = (_playerActorDialogueQueuePosition + 1) % _playerActorDialogueQueueCapacity;
+				_playerActorDialogueQueuePosition = (_playerActorDialogueQueuePosition + 1) % kPlayerActorDialogueQueueCapacity;
 			}
 			if (_playerActorDialogueQueueSize != _playerActorDialogueQueuePosition) {
 				_vm->_actors[_playerActorDialogueQueue[_playerActorDialogueQueuePosition].actorId]->speechPlay(_playerActorDialogueQueue[_playerActorDialogueQueuePosition].sentenceId, true);
@@ -444,7 +448,7 @@ void KIA::playerReset() {
 }
 
 void KIA::playActorDialogue(int actorId, int sentenceId) {
-	int newQueueSize = (_playerActorDialogueQueueSize + 1) % _playerActorDialogueQueueCapacity;
+	int newQueueSize = (_playerActorDialogueQueueSize + 1) % kPlayerActorDialogueQueueCapacity;
 	if (newQueueSize != _playerActorDialogueQueuePosition) {
 		_playerActorDialogueQueue[_playerActorDialogueQueueSize].actorId = actorId;
 		_playerActorDialogueQueue[_playerActorDialogueQueueSize].sentenceId = sentenceId;

@@ -46,7 +46,7 @@ private:
 	Common::File _fd;
 	bool _isTLK;
 
-	uint16 _entry_count;
+	uint16 _entryCount;
 	uint32 _size;
 
 	struct ArchiveEntry {

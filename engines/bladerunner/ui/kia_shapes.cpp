@@ -29,6 +29,9 @@ namespace BladeRunner {
 KIAShapes::KIAShapes(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_isLoaded = false;
+	for (uint i = 0; i < kShapeCount; ++i) {
+		_shapes[i] = nullptr;
+	}
 }
 
 KIAShapes::~KIAShapes() {
