@@ -28,21 +28,31 @@ namespace Xeen {
 namespace WorldOfXeen {
 
 void WorldOfXeenCutscenes::showWorldOfXeenEnding() {
+	worldEnding1();
+	if (!_vm->shouldQuit())
+		worldEnding2();
+	if (!_vm->shouldQuit())
+		worldEnding3();
+	if (!_vm->shouldQuit())
+		worldEnding4();
+}
+
+void WorldOfXeenCutscenes::worldEnding1() {
 	EventsManager &events = *_vm->_events;
 	FileManager &files = *_vm->_files;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	Window &w0 = windows[0];
+	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	files.setGameCc(1);
 	sound.playSong("outday3.m");
 	showPharaohEndText(Res.WORLD_END_TEXT[0], nullptr, nullptr);
 	sound.playSound("elect.voc");
 
-	Graphics::ManagedSurface savedBg;
 	screen.loadBackground("skymain.raw");
-	savedBg.copyFrom(screen);
+	savedBg.blitFrom(screen);
 	screen.loadBackground("twrsky1.raw");
 	screen.loadPage(0);
 	screen.loadPage(1);
@@ -431,9 +441,16 @@ void WorldOfXeenCutscenes::showWorldOfXeenEnding() {
 		w0.update();
 		events.wait(3);
 	}
+}
 
-	if (_vm->shouldQuit())
-		return;
+void WorldOfXeenCutscenes::worldEnding2() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
+	Window &w0 = windows[0];
+	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
+
 	SpriteResource sc23[8] = {
 		SpriteResource("sc23a.eg2"), SpriteResource("sc23b.eg2"),
 		SpriteResource("sc23c.eg2"), SpriteResource("sc23d.eg2"),
@@ -449,6 +466,7 @@ void WorldOfXeenCutscenes::showWorldOfXeenEnding() {
 	w0.update();
 	screen.fadeIn();
 
+	int frame = 0;
 	for (int idx = 0; idx < 61 && !_vm->shouldQuit(); ++idx) {
 		if (idx == 2 || idx == 15 || idx == 25 || idx == 33 || idx == 41)
 			sound.playSound("gascompr.voc");
@@ -458,6 +476,121 @@ void WorldOfXeenCutscenes::showWorldOfXeenEnding() {
 		w0.update();
 		events.wait(4);
 	}
+}
+
+void WorldOfXeenCutscenes::worldEnding3() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
+	Window &w0 = windows[0];
+	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	SpriteResource sc25("sc25.eg2"), sc262("sc262.eg2"), sc263("sc263.eg2"),
+		sc264("sc264.eg2");
+	SpriteResource sc261[2] = {
+		SpriteResource("sc261a.eg2"), SpriteResource("sc261b.eg2")
+	};
+
+	screen.fadeOut();
+	screen.loadBackground("eg250001.raw");
+	screen.loadPalette("eg250001.pal");
+	w0.update();
+	screen.fadeIn();
+	sound.playSound("comet.voc");
+
+	for (int idx = 0; idx < 52 && !_vm->shouldQuit(); ++idx) {
+		if (idx == 28)
+			sound.playSound("click.voc");
+		if (!sound.isPlaying())
+			sound.playSound("comet.voc");
+
+		events.updateGameCounter();
+		sc25.draw(0, idx);
+		w0.update();
+		events.wait(2);
+	}
+	sound.stopSound();
+
+	screen.loadBackground("blank.raw");
+	screen.loadPalette("skymain.pal");
+	sc261[0].draw(0, 0, Common::Point(7, 4));
+	sc262.draw(0, 0, Common::Point(86, 4));
+	sc263.draw(0, 0, Common::Point(164, 4));
+	sc264.draw(0, 0, Common::Point(242, 4));
+	w0.update();
+	screen.fadeIn(0x81);
+
+	int frame1 = 0, frame2 = 0, frame3 = 0, ctr = 0;
+	for (int idx = 0; idx < 78 && !_vm->shouldQuit(); ++idx) {
+		events.updateGameCounter();
+		sc261[ctr / 14].draw(0, idx % 17, Common::Point(7, 4));
+		sc262.draw(0, frame1, Common::Point(86, 4));
+		sc263.draw(0, frame2, Common::Point(164, 4));
+		sc264.draw(0, frame3, Common::Point(242, 4));
+
+		if (idx == 10 || idx == 28 || idx == 43 || idx == 56)
+			sound.playSound("photon.voc");
+
+		ctr = (ctr + 1) % 28;
+		frame1 = (frame1 + 1) % 9;
+		frame2 = (frame2 + 1) % 19;
+		frame3 = (frame3 + 1) % 10;
+
+		if (idx > 12 && ctr < 13)
+			ctr = 13;
+		if (idx < 23)
+			frame1 = 0;
+		else if (idx > 26 && frame1 < 5)
+			frame1 = 5;
+
+		if (idx < 34)
+			frame2 = 0;
+		else if (idx > 43 && frame2 < 12)
+			frame2 = 12;
+
+		if (idx < 53)
+			frame3 = 0;
+		else if (idx > 57 && frame3 < 5)
+			frame3 = 5;
+
+		w0.update();
+		events.wait(2);
+	}
+}
+
+void WorldOfXeenCutscenes::worldEnding4() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
+	Window &w0 = windows[0];
+	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	SpriteResource sc27("sc27.eg2");
+
+	screen.fadeOut();
+	screen.loadBackground("eg270001.raw");
+	screen.loadPalette("eg250001.pal");
+	screen.fadeIn();
+
+	for (int idx = 0; idx < 89 && !_vm->shouldQuit(); ++idx) {
+		if (!sound.isPlaying())
+			sound.playSound("comet.voc");
+		if (idx == 19 || idx == 60)
+			sound.playSound("click.voc");
+
+		events.updateGameCounter();
+		sc27.draw(0, idx);
+		w0.update();
+		events.wait(2);
+	}
+
+	if (_vm->shouldQuit())
+		return;
+	sound.stopSound();
+	screen.fadeOut();
+
 
 	// TODO
 }

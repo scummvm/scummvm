@@ -39,6 +39,26 @@ private:
 	 * Sets a subtitle during the world of xeen ending
 	 */
 	void setWorldEndingSubtitle(const Common::String &msg);
+
+	/**
+	 * Part 1 of World of Xeen ending
+	 */
+	void worldEnding1();
+
+	/**
+	 * Part 2 of World of Xeen ending
+	 */
+	void worldEnding2();
+
+	/**
+	 * Part 3 of World of Xeen ending
+	 */
+	void worldEnding3();
+
+	/**
+	 * Part 4 of World of Xeen ending
+	 */
+	void worldEnding4();
 protected:
 	/**
 	 * Shows the World of Xeen ending sequence
