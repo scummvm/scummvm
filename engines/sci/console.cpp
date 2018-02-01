@@ -913,7 +913,7 @@ bool Console::cmdResourceIntegrityDump(int argc, const char **argv) {
 		// with VMDs in GK2.)
 		Common::List<ResourceId> resources = _engine->getResMan()->listResources(resType);
 
-		const char *extension;
+		const char *extension = "";
 		if (videoFiles) {
 			switch (resType) {
 			case kResourceTypeRobot:
@@ -937,7 +937,7 @@ bool Console::cmdResourceIntegrityDump(int argc, const char **argv) {
 				break;
 			}
 			default:
-				extension = "";
+				break;
 			}
 		}
 
