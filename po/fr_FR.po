@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-02-01 08:05+0100\n"
+"POT-Creation-Date: 2018-02-01 14:45+0100\n"
 "PO-Revision-Date: 2018-01-30 22:19+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -3010,12 +3010,12 @@ msgid "Display graphics using the game's bright palette"
 msgstr "Utiliser la palette lumineuse du jeu pour l'affichage"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
-#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
+#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:524
 msgid "Failed to load saved game from file."
 msgstr "Échec du chargement de la sauvegarde depuis le disque."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
-#: engines/tinsel/saveload.cpp:545
+#: engines/tinsel/saveload.cpp:537
 msgid "Failed to save game to file."
 msgstr "Échec de l'enregistrement de la sauvegarde sur le disque."
 

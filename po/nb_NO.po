@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-02-01 08:05+0100\n"
+"POT-Creation-Date: 2018-02-01 14:45+0100\n"
 "PO-Revision-Date: 2016-12-26 17:36+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2982,13 +2982,13 @@ msgid "Display graphics using the game's bright palette"
 msgstr "Vis grafikk med spillets lyse palett"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
-#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
+#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:524
 #, fuzzy
 msgid "Failed to load saved game from file."
 msgstr "Klarte ikke åpne spilltilstand fra fil."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
-#: engines/tinsel/saveload.cpp:545
+#: engines/tinsel/saveload.cpp:537
 #, fuzzy
 msgid "Failed to save game to file."
 msgstr "Klarte ikke lagre spilltilstand fra fil."
