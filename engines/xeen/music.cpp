@@ -759,4 +759,8 @@ void Music::updateSoundSettings() {
 		stopSong();
 }
 
+bool Music::isMusicPlaying() const {
+	return _musicDriver->isPlaying();
+}
+
 } // End of namespace Xeen

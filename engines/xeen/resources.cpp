@@ -1693,7 +1693,7 @@ const char *const Resources::NO_LOADING_IN_COMBAT =
 	"No Loading Allowed in Combat!";
 const char *const Resources::NO_SAVING_IN_COMBAT =
 	"No Saving Allowed in Combat!";
-const char *const Resources::WORLD_END_TEXT[8] = {
+const char *const Resources::WORLD_END_TEXT[9] = {
 	"\n\n\n\n\n\n\n"
 	"Congratulations Adventurers!\n\n"
 	"Let the unification ceremony begin!",
@@ -1704,7 +1704,30 @@ const char *const Resources::WORLD_END_TEXT[8] = {
 	"\xB""026Queen Kalindra presented the Cube of Power.",
 	"\xB""026Prince Roland presented the Xeen Sceptre.",
 	"\xB""026Together, they placed the Cube of Power...",
-	"\xB""026and the Sceptre, onto the Altar of Joining."
+	"\xB""026and the Sceptre, onto the Altar of Joining.",
+	"With the prophecy complete, the two sides of Xeen were united as one",
+};
+
+const char *const Resources::WORLD_CONGRATULATIONS =
+	"\x3""cCongratulations\n\n"
+	"Your Final Score is:\n\n"
+	"%010lu\n"
+	"\x3l\n"
+	"Please send this score to the Ancient's Headquarters where "
+	"you'll be added to the Hall of Legends!\n\n"
+	"Ancient's Headquarters\n"
+	"New World Computing, Inc.\n"
+	"P.O. Box 4302\n"
+	"Hollywood, CA 90078";
+const char *const Resources::WORLD_CONGRATULATIONS2 =
+	"\n\n\n\n\n\n"
+	"But wait... there's more!\n"
+	"\n\n"
+	"Include the message\n"
+	"\"%s\"\n"
+	"with your final score and receive a special bonus.";
+const char *const Resources::GOOBER[3] = {
+	"", "I am a Goober!", "I am a Super Goober!"
 };
 
 } // End of namespace Xeen

@@ -361,7 +361,10 @@ public:
 	static const char *const MR_WIZARD;
 	static const char *const NO_LOADING_IN_COMBAT;
 	static const char *const NO_SAVING_IN_COMBAT;
-	static const char *const WORLD_END_TEXT[8];
+	static const char *const WORLD_END_TEXT[9];
+	static const char *const WORLD_CONGRATULATIONS;
+	static const char *const WORLD_CONGRATULATIONS2;
+	static const char *const GOOBER[3];
 public:
 	/**
 	 * Initializes an instnace of the resources

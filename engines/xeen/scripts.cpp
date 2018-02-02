@@ -1456,7 +1456,8 @@ void Scripts::doEnding(const Common::String &endStr) {
 		}
 	}
 
-	g_vm->showCutscene(endStr);
+	// TODO: Pass proper score
+	g_vm->showCutscene(endStr, state, 42);
 	g_vm->_quitMode = QMODE_MENU;
 }
 

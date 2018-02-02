@@ -165,7 +165,7 @@ void WorldOfXeenEngine::death() {
 	w.update();
 }
 
-void WorldOfXeenEngine::showCutscene(const Common::String &name) {
+void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uint score) {
 	_sound->stopAllAudio();
 
 	if (name == "ENDGAME")
@@ -173,7 +173,7 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name) {
 	else if (name == "ENDGAME2")
 		showDarkSideEnding();
 	else if (name == "WORLDEND")
-		showWorldOfXeenEnding();
+		showWorldOfXeenEnding((GooberState)status, score);
 }
 
 } // End of namespace WorldOfXeen

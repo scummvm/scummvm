@@ -202,8 +202,11 @@ public:
 
 	/**
 	 * Show a cutscene
+	 * @param name		Name of cutscene
+	 * @param status	For World of Xeen, Goober status
+	 * @param score		Final score
 	 */
-	virtual void showCutscene(const Common::String &name) {}
+	virtual void showCutscene(const Common::String &name, int status, uint score) {}
 
 	static Common::String printMil(uint value);
 

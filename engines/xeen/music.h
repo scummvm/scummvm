@@ -171,6 +171,11 @@ public:
 	 * Executes special music command
 	 */
 	virtual int songCommand(uint commandId, byte volume = 0);
+
+	/**
+	 * Returns whether music is currently playing
+	 */
+	bool isPlaying() const { return _musicPlaying; }
 };
 
 class AdlibMusicDriver : public MusicDriver {
@@ -369,6 +374,11 @@ public:
 	void playSong(const byte *data) {
 		_musicDriver->playSong(data);
 	}
+
+	/**
+	 * Returns true if music is playing
+	 */
+	bool isMusicPlaying() const;
 
 	/**
 	 * Sets whether music is on

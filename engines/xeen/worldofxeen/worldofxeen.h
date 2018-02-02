@@ -61,7 +61,7 @@ public:
 	/**
 	 * Show a cutscene
 	 */
-	virtual void showCutscene(const Common::String &name);
+	virtual void showCutscene(const Common::String &name, int status, uint score);
 
 	/**
 	 * Set the next overall game action to do
