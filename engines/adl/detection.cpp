@@ -524,7 +524,7 @@ ADGameDescList AdlMetaEngine::detectGame(const Common::FSNode &parent, const Fil
 		}
 	}
 
-	// TODO: This should be improved to handle matched and unknown games together in a single directory
+	// TODO: This could be improved to handle matched and unknown games together in a single directory
 	if (matched.empty()) {
 		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
 			reportUnknown(parent, filesProps, matchedGameIds);
