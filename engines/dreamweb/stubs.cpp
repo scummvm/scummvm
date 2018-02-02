@@ -565,7 +565,7 @@ void DreamWebEngine::dreamweb() {
 	}
 
 	Graphics::ModeList modes;
-	modes.push_back(Graphics::Mode(320, 200));
+	modes.push_back(Graphics::Mode(320, 200, intToFrac(1)));
 	modes.push_back(Graphics::Mode(640, 480));
 	initGraphicsModes(modes);
 
