@@ -76,7 +76,8 @@ Windows::Windows() {
 		Window(Common::Rect(226, 26, 319, 146), 30, 8, 0, 0, 0, 0),
 		Window(Common::Rect(225, 74, 319, 154), 31, 8, 0, 0, 0, 0),
 		Window(Common::Rect(27, 6, 195, 142), 0, 8, 0, 0, 0, 0),
-		Window(Common::Rect(225, 140, 319, 199), 0, 8, 0, 0, 0, 0)
+		Window(Common::Rect(225, 140, 319, 199), 0, 8, 0, 0, 0, 0),
+		Window(Common::Rect(12, 8, 162, 198), 0, 0, 128, 0, 119, 0)
 	};
 
 	_windows = Common::Array<Window>(windows, 40);

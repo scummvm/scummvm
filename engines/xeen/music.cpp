@@ -741,8 +741,13 @@ void Music::playSong(const Common::String &name, int param) {
 	_priorMusic = _currentMusic;
 	_currentMusic = name;
 
-	File f(name, _musicSide);
-	playSong(f);
+	Common::File mf;
+	if (mf.open(name)) {
+		playSong(mf);
+	} else {
+		File f(name, _musicSide);
+		playSong(f);
+	}
 }
 
 void Music::setMusicOn(bool isOn) {

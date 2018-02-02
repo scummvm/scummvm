@@ -1205,6 +1205,7 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 		// Show each page until a key is pressed
 		do {
 			// Draw the dragon pharoah
+			events.updateGameCounter();
 			screen.restoreBackground();
 			claw.draw(0, 5, Common::Point(CUTSCENES_XLIST[idx], CUTSCENES_YLIST[idx]), SPRFLAG_800);
 			claw.draw(0, 6, Common::Point(145, 185));
@@ -1220,10 +1221,9 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 				text[pageNum]);
 			windows[39].writeString(str2);
 
+			windows[0].update();
+			events.wait(3);
 			idx = (idx + 1) % 32;
-			screen.update();
-
-			events.pollEventsAndWait();
 		} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
 
 		events.clearEvents();

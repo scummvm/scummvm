@@ -49,7 +49,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	Window &w0 = windows[0];
 	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	files.setGameCc(1);
+	files.setGameCc(0);
 	sound.playSong("outday3.m");
 	showPharaohEndText(Res.WORLD_END_TEXT[0], nullptr, nullptr);
 	sound.playSound("elect.voc");
@@ -659,9 +659,10 @@ void WorldOfXeenCutscenes::worldEnding4() {
 
 	Common::String gooberStr = Res.GOOBER[_goober];
 	Common::String congratsStr1 = Common::String::format(Res.WORLD_CONGRATULATIONS, _finalScore);
-	Common::String congratsStr2 = _goober == NON_GOOBER ? "" :
-		Common::String::format(Res.WORLD_CONGRATULATIONS2, gooberStr.c_str());
-	showPharaohEndText(congratsStr1.c_str(), congratsStr2.c_str());
+	showPharaohEndText(congratsStr1.c_str(),
+		_goober == NON_GOOBER ? nullptr :
+		Common::String::format(Res.WORLD_CONGRATULATIONS2, gooberStr.c_str()).c_str()
+	);
 }
 
 void WorldOfXeenCutscenes::setSubtitle(const Common::String &msg) {
