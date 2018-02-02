@@ -484,7 +484,7 @@ bool AdlEngine::playTones(const Tones &tones, bool isMusic, bool allowSkip) cons
 	Audio::SoundHandle handle;
 	Audio::AudioStream *stream = new Sound(tones);
 
-	g_system->getMixer()->playStream((isMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType), &handle, stream);
+	g_system->getMixer()->playStream((isMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType), &handle, stream, -1, 25);
 
 	while (!g_engine->shouldQuit() && g_system->getMixer()->isSoundHandleActive(handle)) {
 		Common::Event event;
