@@ -34,13 +34,13 @@ namespace Graphics {
 struct Mode {
 	int16 width;  ///< The width in pixels
 	int16 height; ///< The height in pixels
-	frac_t par;   ///< The pixel aspect ratio (pixel height / pixel width)
+	frac_t par;   ///< The pixel aspect ratio (pixel width / pixel height)
 
 	Mode(const int16 w, const int16 h) :
 		width(w),
 		height(h) {
 			if ((w == 320 && h == 200) || (w == 640 && h == 400))
-				par = intToFrac(6) / 5;
+				par = intToFrac(5) / 6;
 			else
 				par = intToFrac(1);
 		}

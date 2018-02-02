@@ -137,7 +137,7 @@ protected:
 			return intToFrac(4) / 3;
 		} else if (gameNeedsAspectRatioCorrection()) {
 			// Assume that the display pixels are square
-			return intToFrac(getWidth()) / fracToInt(getHeight() * gamePixelAspectRatio());
+			return intToFrac(getWidth()) / (intToFrac(getHeight()) / gamePixelAspectRatio());
 		}
 
 		return intToFrac(getWidth()) / getHeight();

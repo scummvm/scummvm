@@ -128,7 +128,7 @@ void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
 		int16 width = it->width, height = it->height;
 
 		if (ConfMan.getBool("aspect_ratio")) {
-			height = fracToInt(it->height * it->par);
+			height = intToFrac(it->height) / it->par;
 		}
 
 		if (!useDefault || width <= 320) {
