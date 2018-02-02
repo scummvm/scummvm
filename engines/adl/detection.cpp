@@ -250,8 +250,7 @@ const DiskImageExt diskImageExts[] = {
 	{ Common::kPlatformApple2, ".nib" },
 	{ Common::kPlatformApple2, ".dsk" },
 	{ Common::kPlatformApple2, ".d13" },
-	{ Common::kPlatformAtari8Bit, ".xfd" },
-	{ Common::kPlatformUnknown, nullptr }
+	{ Common::kPlatformAtari8Bit, ".xfd" }
 };
 
 class AdlMetaEngine : public AdvancedMetaEngine {
