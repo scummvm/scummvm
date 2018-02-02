@@ -681,7 +681,7 @@ void AdlEngine::gameLoop() {
 }
 
 Common::Error AdlEngine::run() {
-	initGraphics(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2);
+	initGraphics(Graphics::Mode(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, intToFrac(32) / 35));
 
 	_console = new Console(this);
 	_display = new Display();
