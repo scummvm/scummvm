@@ -60,9 +60,6 @@ public:
 	/** Load all the fonts to memory */
 	void initFonts();
 
-	/** Scale a width value from original resolution to current resolution */
-	uint scaleWidthOriginalToCurrent(uint width);
-
 private:
 	struct FontHolder {
 		Common::String _name;
