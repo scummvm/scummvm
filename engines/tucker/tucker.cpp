@@ -682,6 +682,12 @@ void TuckerEngine::parseEvents() {
 		case Common::EVENT_RBUTTONUP:
 			updateCursorPos(ev.mouse.x, ev.mouse.y);
 			break;
+		case Common::EVENT_WHEELUP:
+			_mouseButtonsMask |= 4;
+			break;
+		case Common::EVENT_WHEELDOWN:
+			_mouseButtonsMask |= 8;
+			break;
 		default:
 			break;
 		}
@@ -782,6 +788,8 @@ void TuckerEngine::updateMouseState() {
 			_gameHintsStringNum = 0;
 		}
 		_rightMouseButtonPressed = (_mouseButtonsMask & 2) != 0;
+		_mouseWheelUp   = _mouseButtonsMask & 4;
+		_mouseWheelDown = _mouseButtonsMask & 8;
 		_mouseButtonsMask = 0;
 		if (_prevMousePosX == _mousePosX && _prevMousePosY == _mousePosY) {
 			++_mouseIdleCounter;
@@ -1082,6 +1090,12 @@ void TuckerEngine::updateCursor() {
 	if (!_leftMouseButtonPressed) {
 		_mouseClick = 0;
 	}
+	if (_mousePosY >= 150) {
+		if (_mouseWheelUp)
+			moveDownInventoryObjects();
+		else if (_mouseWheelDown)
+			moveUpInventoryObjects();
+	}
 	if (_leftMouseButtonPressed && _mouseClick == 0) {
 		_fadedPanel = 0;
 		_mouseClick = 1;
@@ -1330,6 +1344,17 @@ void TuckerEngine::saveOrLoad() {
 		}
 	} else {
 		drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, 21, 102);
+	}
+	if (_mousePosY > 140) {
+		if (_mouseWheelUp && _currentSaveLoadGameState < 99) {
+			++_currentSaveLoadGameState;
+			_forceRedrawPanelItems = true;
+			return;
+		} else if (_mouseWheelDown && _currentSaveLoadGameState > 1) {
+			--_currentSaveLoadGameState;
+			_forceRedrawPanelItems = true;
+			return;
+		}
 	}
 	if (_leftMouseButtonPressed && _mouseClick == 0) {
 		_mouseClick = 1;

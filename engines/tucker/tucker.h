@@ -683,6 +683,8 @@ protected:
 	int _mouseIdleCounter;
 	bool _leftMouseButtonPressed;
 	bool _rightMouseButtonPressed;
+	bool _mouseWheelUp;
+	bool _mouseWheelDown;
 	int _lastKeyPressed;
 	bool _inputKeys[kInputKeyCount];
 	int _cursorNum;
