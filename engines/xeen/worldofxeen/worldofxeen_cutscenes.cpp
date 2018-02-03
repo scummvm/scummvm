@@ -52,7 +52,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	files.setGameCc(0);
 	sound.playSong("outday3.m");
 	showPharaohEndText(Res.WORLD_END_TEXT[0], nullptr, nullptr);
-	sound.playSound("elect.voc");
+	sound.playSound("elect.voc", 1, 0);
 
 	screen.loadBackground("skymain.raw");
 	savedBg.blitFrom(screen);
@@ -69,7 +69,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		SpriteResource("sc3b1.eg2"), SpriteResource("sc3b2.eg2")
 	};
 	SpriteResource sc20[4] = {
-		SpriteResource("sc20[0].eg2"), SpriteResource("sc20b.eg2"),
+		SpriteResource("sc20a.eg2"), SpriteResource("sc20b.eg2"),
 		SpriteResource("sc20c.eg2"), SpriteResource("sc20d.eg2")
 	};
 	SpriteResource sc22[2] = {
@@ -432,7 +432,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		if (idx == 3)
 			sound.playSound("click.voc");
 		else if (idx == 5 || idx == 15)
-			sound.playSound("elect.voc");
+			sound.playSound("elect.voc", 1, 0);
 		else if (idx == 22)
 			sound.playSound("explosio.voc");
 
@@ -667,18 +667,28 @@ void WorldOfXeenCutscenes::worldEnding4() {
 
 void WorldOfXeenCutscenes::setSubtitle(const Common::String &msg) {
 	Windows &windows = *_vm->_windows;
+	Window &w = windows[28];
+
 	const char *const FORMAT1 = "\xB""000\t000\xC""38\x3""c%s";
+	w.setBounds(Common::Rect(2, 157, SCREEN_WIDTH, SCREEN_HEIGHT - 2));
+	w.writeString(Common::String::format(FORMAT1, msg.c_str()));
+
 	const char *const FORMAT2 = "\xB""000\t000\xC""39\x3""c%s";
-	windows[28].writeString(Common::String::format(FORMAT1, msg.c_str()));
-	windows[28].writeString(Common::String::format(FORMAT2, msg.c_str()));
+	w.setBounds(Common::Rect(1, 156, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 4));
+	w.writeString(Common::String::format(FORMAT2, msg.c_str()));
 }
 
 void WorldOfXeenCutscenes::setSubtitle2(const Common::String &msg) {
 	Windows &windows = *_vm->_windows;
+	Window &w = windows[28];
+
 	const char *const FORMAT1 = "\xB""000\t000\xC""05\x3""c%s";
+	w.setBounds(Common::Rect(2, 157, SCREEN_WIDTH, SCREEN_HEIGHT - 2));
+	w.writeString(Common::String::format(FORMAT1, msg.c_str()));
+
 	const char *const FORMAT2 = "\xB""000\t000\xC""11\x3""c%s";
-	windows[28].writeString(Common::String::format(FORMAT1, msg.c_str()));
-	windows[28].writeString(Common::String::format(FORMAT2, msg.c_str()));
+	w.setBounds(Common::Rect(1, 156, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 4));
+	w.writeString(Common::String::format(FORMAT2, msg.c_str()));
 }
 
 } // End of namespace WorldOfXeen

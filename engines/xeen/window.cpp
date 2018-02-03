@@ -37,7 +37,7 @@ Windows::Windows() {
 	_fontReduced = false;
 	_fontJustify = JUSTIFY_NONE;
 
-	Window windows[40] = {
+	Window windows[48] = {
 		Window(Common::Rect(0, 0, 320, 200), 0, 0, 0, 0, 320, 200),
 		Window(Common::Rect(237, 9, 317, 74), 0, 0, 237, 12, 307, 68),
 		Window(Common::Rect(225, 1, 319, 73), 1, 8, 225, 1, 319, 73),
@@ -77,10 +77,12 @@ Windows::Windows() {
 		Window(Common::Rect(225, 74, 319, 154), 31, 8, 0, 0, 0, 0),
 		Window(Common::Rect(27, 6, 195, 142), 0, 8, 0, 0, 0, 0),
 		Window(Common::Rect(225, 140, 319, 199), 0, 8, 0, 0, 0, 0),
-		Window(Common::Rect(12, 8, 162, 198), 0, 0, 128, 0, 119, 0)
+		Window(Common::Rect(12, 8, 162, 198), 0, 0, 128, 0, 119, 0),
+		Window(Common::Rect(0, 0, 320, 200), 32, 8, 0, 0, 320, 190),
+		Window(Common::Rect(0, 0, 320, 200), 33, 8, 0, 0, 320, 200)
 	};
 
-	_windows = Common::Array<Window>(windows, 40);
+	_windows = Common::Array<Window>(windows, 42);
 }
 
 Windows::~Windows() {

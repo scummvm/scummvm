@@ -53,6 +53,11 @@ public:
 	void playSound(const Common::String &name, int unused = 0);
 
 	/**
+	 * Play a given sound
+	 */
+	void playSound(const Common::String &name, int ccNum, int unused);
+
+	/**
 	 * Stop playing a sound
 	 * @remarks		In the original, passing 1 to playSound stopped the sound
 	 */

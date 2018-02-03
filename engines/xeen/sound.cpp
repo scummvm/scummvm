@@ -58,6 +58,14 @@ void Sound::playSound(const Common::String &name, int unused) {
 	playSound(f);
 }
 
+void Sound::playSound(const Common::String &name, int ccNum, int unused) {
+	File f;
+	if (!f.open(name, ccNum))
+		error("Could not open sound - %s", name.c_str());
+
+	playSound(f);
+}
+
 void Sound::stopSound() {
 	_mixer->stopHandle(_soundHandle);
 }
