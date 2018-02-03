@@ -99,13 +99,14 @@ void VisualText::createTexture() {
 	const Graphics::Font *font = StarkFontProvider->getScaledFont(_fontType, _fontCustomIndex);
 	uint scaledLineHeight = StarkFontProvider->getScaledFontHeight(_fontType, _fontCustomIndex);
 	uint originalLineHeight = StarkFontProvider->getOriginalFontHeight(_fontType, _fontCustomIndex);
-	uint maxScaledLineWidth = StarkFontProvider->scaleWidthOriginalToCurrent(_originalRect.width());
+	uint maxScaledLineWidth = StarkGfx->scaleWidthOriginalToCurrent(_originalRect.width());
 
 	// Word wrap the text and compute the scaled and original resolution bounding boxes
 	Common::Rect scaledRect;
 	Common::Array<Common::String> lines;
 	scaledRect.right = scaledRect.left + font->wordWrapText(_text, maxScaledLineWidth, lines);
 	scaledRect.bottom = scaledRect.top + scaledLineHeight * lines.size();
+	_originalRect.right = _originalRect.left + StarkGfx->scaleWidthCurrentToOriginal(scaledRect.width());
 	_originalRect.bottom = _originalRect.top + originalLineHeight * lines.size();
 
 	// Create a surface to render to

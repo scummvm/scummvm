@@ -120,6 +120,10 @@ uint Driver::scaleHeightOriginalToCurrent(uint height) const {
 	return _screenViewport.height() * height / kOriginalHeight;
 }
 
+uint Driver::scaleWidthCurrentToOriginal(uint width) const {
+	return kOriginalWidth * width / _screenViewport.width();
+}
+
 void Driver::flipVertical(Graphics::Surface *s) {
 	for (int y = 0; y < s->h / 2; ++y) {
 		// Flip the lines

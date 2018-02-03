@@ -114,7 +114,4 @@ uint FontProvider::getOriginalFontHeight(FontProvider::FontType type, int32 cust
 	return holder->_originalHeight;
 }
 
-uint FontProvider::scaleWidthOriginalToCurrent(uint width) {
-	return StarkGfx->scaleWidthOriginalToCurrent(width);
-}
 } // End of namespace Stark
