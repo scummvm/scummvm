@@ -35,7 +35,6 @@ namespace Adl {
 
 #define IDS_HR1_EXE_0    "AUTO LOAD OBJ"
 #define IDS_HR1_EXE_1    "ADVENTURE"
-#define IDS_HR1_LOADER   "MYSTERY.HELLO"
 #define IDS_HR1_MESSAGES "MESSAGES"
 
 #define IDI_HR1_NUM_ROOMS         41
@@ -73,7 +72,6 @@ namespace Adl {
 #define IDI_HR1_OFS_GAME_OR_HELP 0x000f
 
 #define IDI_HR1_OFS_LOGO_0       0x1003
-#define IDI_HR1_OFS_LOGO_1       0x1800
 
 #define IDI_HR1_OFS_ITEMS        0x0100
 #define IDI_HR1_OFS_ROOMS        0x050a
@@ -133,31 +131,44 @@ void HiRes1Engine::runIntro() {
 	_display->setMode(DISPLAY_MODE_HIRES);
 	_display->loadFrameBuffer(*stream);
 	_display->updateHiResScreen();
-	delay(4000);
 
-	if (shouldQuit())
-		return;
+	if (getGameVersion() == GAME_VER_HR1_PD) {
+		// Only the PD version shows a title screen during the load
+		delay(4000);
 
-	_display->setMode(DISPLAY_MODE_TEXT);
+		if (shouldQuit())
+			return;
+	}
 
-	StreamPtr basic(_files->createReadStream(IDS_HR1_LOADER));
 	Common::String str;
 
-	str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_0, '"');
-	_display->printAsciiString(str + '\r');
+	// Show the PD disclaimer for the PD release
+	if (getGameVersion() == GAME_VER_HR1_PD) {
+		// The PD release on the Roberta Williams Anthology disc has a PDE
+		// splash screen. The original HELLO file has been renamed to
+		// MYSTERY.HELLO. It's unclear whether or not this splash screen
+		// was present in the original PD release back in 1987.
+		StreamPtr basic(_files->createReadStream("MYSTERY.HELLO"));
 
-	str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_1, '"');
-	_display->printAsciiString(str + "\r\r");
+		_display->setMode(DISPLAY_MODE_TEXT);
+		_display->home();
 
-	str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_2, '"');
-	_display->printAsciiString(str + "\r\r");
+		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_0, '"');
+		_display->printAsciiString(str + '\r');
 
-	str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_3, '"');
-	_display->printAsciiString(str + '\r');
+		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_1, '"');
+		_display->printAsciiString(str + "\r\r");
 
-	inputKey();
-	if (g_engine->shouldQuit())
-		return;
+		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_2, '"');
+		_display->printAsciiString(str + "\r\r");
+
+		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_3, '"');
+		_display->printAsciiString(str + '\r');
+
+		inputKey();
+		if (g_engine->shouldQuit())
+			return;
+	}
 
 	_display->setMode(DISPLAY_MODE_MIXED);
 
@@ -213,25 +224,24 @@ void HiRes1Engine::runIntro() {
 
 	_display->setMode(DISPLAY_MODE_MIXED);
 
-	// Title screen shown during loading
-	stream.reset(_files->createReadStream(IDS_HR1_EXE_1));
-	stream->seek(IDI_HR1_OFS_LOGO_1);
-	_display->loadFrameBuffer(*stream);
-	_display->updateHiResScreen();
-	delay(2000);
+	// As we switch back to graphics mode, the title screen is briefly visible here
+	// (and in the PD version, it's a different title screen from the initial one).
+	// As this is probably non-intentional, we skip it and go straight to the game.
 }
 
 void HiRes1Engine::init() {
 	if (Common::File::exists("ADVENTURE")) {
 		_files = new Files_Plain();
 	} else {
-		Files_DOS33 *files = new Files_DOS33();
-		if (!files->open(getDiskImageName(0)))
+		Files_AppleDOS *files = new Files_AppleDOS();
+		// The 2nd release obfuscates the VTOC (same may be true for the 1st release)
+		if (!files->open(getDiskImageName(0), (getGameVersion() == GAME_VER_HR1_COARSE ? 16 : 17)))
 			error("Failed to open '%s'", getDiskImageName(0).c_str());
 		_files = files;
 	}
 
 	_graphics = new GraphicsMan(*_display);
+	_display->moveCursorTo(Common::Point(0, 3));
 
 	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_1));
 

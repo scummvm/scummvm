@@ -273,7 +273,7 @@ void HiRes6Engine::runIntro() {
 	_display->loadFrameBuffer(*stream);
 
 	// Load copyright string from boot file
-	Files_DOS33 *files(new Files_DOS33());
+	Files_AppleDOS *files(new Files_AppleDOS());
 
 	if (!files->open(getDiskImageName(0)))
 		error("Failed to open disk volume 0");

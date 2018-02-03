@@ -405,15 +405,15 @@ Common::SeekableReadStream *Files_Plain::createReadStream(const Common::String &
 		return new Common::SeekableSubReadStream(f, offset, f->size(), DisposeAfterUse::YES);
 }
 
-Files_DOS33::~Files_DOS33() {
+Files_AppleDOS::~Files_AppleDOS() {
 	delete _disk;
 }
 
-Files_DOS33::Files_DOS33() :
+Files_AppleDOS::Files_AppleDOS() :
 		_disk(nullptr) {
 }
 
-void Files_DOS33::readSectorList(TrackSector start, Common::Array<TrackSector> &list) {
+void Files_AppleDOS::readSectorList(TrackSector start, Common::Array<TrackSector> &list) {
 	TrackSector index = start;
 
 	while (index.track != 0) {
@@ -445,8 +445,8 @@ void Files_DOS33::readSectorList(TrackSector start, Common::Array<TrackSector> &
 	}
 }
 
-void Files_DOS33::readVTOC() {
-	Common::ScopedPtr<Common::SeekableReadStream> stream(_disk->createReadStream(0x11, 0x00));
+void Files_AppleDOS::readVTOC(uint trackVTOC) {
+	Common::ScopedPtr<Common::SeekableReadStream> stream(_disk->createReadStream(trackVTOC, 0x00));
 	stream->readByte();
 	byte track = stream->readByte();
 	byte sector = stream->readByte();
@@ -491,11 +491,11 @@ void Files_DOS33::readVTOC() {
 	}
 }
 
-const DataBlockPtr Files_DOS33::getDataBlock(const Common::String &filename, uint offset) const {
+const DataBlockPtr Files_AppleDOS::getDataBlock(const Common::String &filename, uint offset) const {
 	return Common::SharedPtr<Files::DataBlock>(new Files::DataBlock(this, filename, offset));
 }
 
-Common::SeekableReadStream *Files_DOS33::createReadStreamText(const TOCEntry &entry) const {
+Common::SeekableReadStream *Files_AppleDOS::createReadStreamText(const TOCEntry &entry) const {
 	byte *buf = (byte *)malloc(entry.sectors.size() * kSectorSize);
 	byte *p = buf;
 
@@ -520,7 +520,7 @@ Common::SeekableReadStream *Files_DOS33::createReadStreamText(const TOCEntry &en
 	return new Common::MemoryReadStream(buf, p - buf, DisposeAfterUse::YES);
 }
 
-Common::SeekableReadStream *Files_DOS33::createReadStreamBinary(const TOCEntry &entry) const {
+Common::SeekableReadStream *Files_AppleDOS::createReadStreamBinary(const TOCEntry &entry) const {
 	byte *buf = (byte *)malloc(entry.sectors.size() * kSectorSize);
 
 	Common::ScopedPtr<Common::SeekableReadStream> stream(_disk->createReadStream(entry.sectors[0].track, entry.sectors[0].sector));
@@ -553,7 +553,7 @@ Common::SeekableReadStream *Files_DOS33::createReadStreamBinary(const TOCEntry &
 	return new Common::MemoryReadStream(buf, size, DisposeAfterUse::YES);
 }
 
-Common::SeekableReadStream *Files_DOS33::createReadStream(const Common::String &filename, uint offset) const {
+Common::SeekableReadStream *Files_AppleDOS::createReadStream(const Common::String &filename, uint offset) const {
 	if (!_toc.contains(filename))
 		error("Failed to locate '%s'", filename.c_str());
 
@@ -576,12 +576,12 @@ Common::SeekableReadStream *Files_DOS33::createReadStream(const Common::String &
 	return new Common::SeekableSubReadStream(stream, offset, stream->size(), DisposeAfterUse::YES);
 }
 
-bool Files_DOS33::open(const Common::String &filename) {
+bool Files_AppleDOS::open(const Common::String &filename, uint trackVTOC) {
 	_disk = new DiskImage();
 	if (!_disk->open(filename))
 		return false;
 
-	readVTOC();
+	readVTOC(trackVTOC);
 	return true;
 }
 

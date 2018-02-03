@@ -74,10 +74,6 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 	DebugMan.addDebugChannel(kDebugChannelScript, "Script", "Trace script execution");
 }
 
-Common::String AdlEngine::getDiskImageName(byte volume) const {
-	return Adl::getDiskImageName(_gameDescription->desc, volume);
-}
-
 bool AdlEngine::pollEvent(Common::Event &event) const {
 	_console->onFrame();
 
@@ -256,15 +252,15 @@ void AdlEngine::loadWords(Common::ReadStream &stream, WordMap &map, Common::Stri
 			break;
 
 		// WORKAROUND: Missing verb list terminator in hires3
-		if (_gameDescription->gameType == GAME_TYPE_HIRES3 && index == 72 && synonyms == 0)
+		if (getGameType() == GAME_TYPE_HIRES3 && index == 72 && synonyms == 0)
 			return;
 
 		// WORKAROUND: Missing noun list terminator in hires3
-		if (_gameDescription->gameType == GAME_TYPE_HIRES3 && index == 113)
+		if (getGameType() == GAME_TYPE_HIRES3 && index == 113)
 			return;
 
 		// WORKAROUND: Missing noun list terminator in hires5 region 15
-		if (_gameDescription->gameType == GAME_TYPE_HIRES5 && _state.region == 15 && index == 81)
+		if (getGameType() == GAME_TYPE_HIRES5 && _state.region == 15 && index == 81)
 			return;
 
 		for (uint i = 0; i < synonyms; ++i) {

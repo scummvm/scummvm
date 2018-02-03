@@ -40,6 +40,7 @@
 #include "adl/console.h"
 #include "adl/disk.h"
 #include "adl/sound.h"
+#include "adl/detection.h"
 
 namespace Common {
 class ReadStream;
@@ -241,7 +242,9 @@ protected:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	bool canSaveGameStateCurrently();
 
-	Common::String getDiskImageName(byte volume) const;
+	Common::String getDiskImageName(byte volume) const { return Adl::getDiskImageName(*_gameDescription, volume); }
+	GameType getGameType() const { return Adl::getGameType(*_gameDescription); }
+	GameVersion getGameVersion() const { return Adl::getGameVersion(*_gameDescription); }
 	virtual void gameLoop();
 	virtual void loadState(Common::ReadStream &stream);
 	virtual void saveState(Common::WriteStream &stream);

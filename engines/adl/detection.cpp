@@ -87,8 +87,30 @@ static const PlainGameDescriptor adlGames[] = {
 	{ 0, 0 }
 };
 
+struct AdlGameDescription {
+	ADGameDescription desc;
+	GameType gameType;
+	GameVersion version;
+};
+
 static const AdlGameDescription gameFileDescriptions[] = {
-	{ // Hi-Res Adventure #1: Mystery House - Apple II - 1987 PD release
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - 2nd release
+		{
+			"hires1", 0,
+			{
+				{ "ADVENTURE", 0, "22d9e63a11d69fa033ba1738715ad09a", 29952 },
+				{ "AUTO LOAD OBJ", 0, "f6a6ac60c04c6ba6dff68b92cc279ba2", 12291 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_COARSE
+	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
 		{
 			"hires1", 0,
 			{
@@ -102,9 +124,10 @@ static const AdlGameDescription gameFileDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
 		},
-		GAME_TYPE_HIRES1
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_PD
 	},
-	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE }
+	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE, GAME_VER_NONE }
 };
 
 static const AdlGameDescription gameDiskDescriptions[] = {
@@ -120,7 +143,23 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
 		},
-		GAME_TYPE_HIRES1
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_PD
+	},
+	{ // Hi-Res Adventure #1: Mystery House - Apple II - 2nd release
+		{
+			"hires1", 0,
+			{
+				{ "mysthous", 0, "8df0b3b3e609a2e40237e2419c1cb767", 116480 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformApple2,
+			ADGF_NO_FLAGS,
+			GUIO2(GAMEOPTION_COLOR_DEFAULT_OFF, GAMEOPTION_SCANLINES)
+		},
+		GAME_TYPE_HIRES1,
+		GAME_VER_HR1_COARSE
 	},
 	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Roberta Williams Anthology
 		{
@@ -134,7 +173,8 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
-		GAME_TYPE_HIRES2
+		GAME_TYPE_HIRES2,
+		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #0: Mission Asteroid - Apple II - Roberta Williams Anthology
 		{
@@ -148,7 +188,8 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
-		GAME_TYPE_HIRES0
+		GAME_TYPE_HIRES0,
+		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #3: Cranston Manor - Apple II
 		{
@@ -162,7 +203,8 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
-		GAME_TYPE_HIRES3
+		GAME_TYPE_HIRES3,
+		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Apple II - Load 'N' Go
 		{
@@ -177,7 +219,8 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
-		GAME_TYPE_HIRES4
+		GAME_TYPE_HIRES4,
+		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #4: Ulysses and the Golden Fleece - Atari 8-bit - Re-release
 		{
@@ -194,7 +237,8 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
-		GAME_TYPE_HIRES4
+		GAME_TYPE_HIRES4,
+		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #5: Time Zone - Apple II - Version 1.1 - Roberta Williams Anthology
 		{
@@ -219,7 +263,8 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
-		GAME_TYPE_HIRES5
+		GAME_TYPE_HIRES5,
+		GAME_VER_NONE
 	},
 	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - Roberta Williams Anthology
 		{
@@ -236,9 +281,10 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO2(GAMEOPTION_COLOR_DEFAULT_ON, GAMEOPTION_SCANLINES)
 		},
-		GAME_TYPE_HIRES6
+		GAME_TYPE_HIRES6,
+		GAME_VER_NONE
 	},
-	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE }
+	{ AD_TABLE_END_MARKER, GAME_TYPE_NONE, GAME_VER_NONE }
 };
 
 struct DiskImageExt {
@@ -392,7 +438,8 @@ void AdlMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-Common::String getDiskImageName(const ADGameDescription &desc, byte volume) {
+Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume) {
+	const ADGameDescription &desc = adlDesc.desc;
 	for (uint i = 0; desc.filesDescriptions[i].fileName; ++i) {
 		const ADGameFileDescription &fDesc = desc.filesDescriptions[i];
 
@@ -411,6 +458,18 @@ Common::String getDiskImageName(const ADGameDescription &desc, byte volume) {
 	}
 
 	error("Disk volume %d not found", volume);
+}
+
+GameType getGameType(const AdlGameDescription &adlDesc) {
+	return adlDesc.gameType;
+}
+
+GameVersion getGameVersion(const AdlGameDescription &adlDesc) {
+	return adlDesc.version;
+}
+
+Common::Platform getPlatform(const AdlGameDescription &adlDesc) {
+	return adlDesc.desc.platform;
 }
 
 bool AdlMetaEngine::addFileProps(const FileMap &allFiles, Common::String fname, ADFilePropertiesMap &filePropsMap) const {

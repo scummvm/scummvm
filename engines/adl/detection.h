@@ -23,8 +23,6 @@
 #ifndef ADL_DETECTION_H
 #define ADL_DETECTION_H
 
-#include "engines/advancedDetector.h"
-
 namespace Adl {
 
 #define SAVEGAME_VERSION 0
@@ -41,12 +39,19 @@ enum GameType {
 	GAME_TYPE_HIRES6
 };
 
-struct AdlGameDescription {
-	ADGameDescription desc;
-	GameType gameType;
+enum GameVersion {
+	GAME_VER_NONE = 0,
+	GAME_VER_HR1_SIMI = 0, // On-Line Systems (Simi Valley)
+	GAME_VER_HR1_COARSE, // On-Line Systems (Coarsegold)
+	GAME_VER_HR1_PD // Sierra On-Line PD release
 };
 
-Common::String getDiskImageName(const ADGameDescription &desc, byte volume);
+struct AdlGameDescription;
+
+Common::String getDiskImageName(const AdlGameDescription &adlDesc, byte volume);
+GameType getGameType(const AdlGameDescription &desc);
+GameVersion getGameVersion(const AdlGameDescription &desc);
+Common::Platform getPlatform(const AdlGameDescription &desc);
 
 } // End of namespace Adl
 

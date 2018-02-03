@@ -128,12 +128,12 @@ public:
 };
 
 // Data in files contained in Apple DOS 3.3 disk image
-class Files_DOS33 : public Files {
+class Files_AppleDOS : public Files {
 public:
-	Files_DOS33();
-	~Files_DOS33();
+	Files_AppleDOS();
+	~Files_AppleDOS();
 
-	bool open(const Common::String &filename);
+	bool open(const Common::String &filename, uint trackVTOC = 17);
 	const DataBlockPtr getDataBlock(const Common::String &filename, uint offset = 0) const;
 	Common::SeekableReadStream *createReadStream(const Common::String &filename, uint offset = 0) const;
 
@@ -160,7 +160,7 @@ private:
 		Common::Array<TrackSector> sectors;
 	};
 
-	void readVTOC();
+	void readVTOC(uint trackVTOC);
 	void readSectorList(TrackSector start, Common::Array<TrackSector> &list);
 	Common::SeekableReadStream *createReadStreamText(const TOCEntry &entry) const;
 	Common::SeekableReadStream *createReadStreamBinary(const TOCEntry &entry) const;
