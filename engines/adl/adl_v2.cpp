@@ -47,10 +47,6 @@ AdlEngine_v2::AdlEngine_v2(OSystem *syst, const AdlGameDescription *gd) :
 	_random = new Common::RandomSource("adl");
 }
 
-Common::String AdlEngine_v2::getDiskImageName(byte volume) const {
-	return Adl::getDiskImageName(_gameDescription->desc, volume);
-}
-
 void AdlEngine_v2::insertDisk(byte volume) {
 	delete _disk;
 	_disk = new DiskImage();

@@ -74,6 +74,10 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 	DebugMan.addDebugChannel(kDebugChannelScript, "Script", "Trace script execution");
 }
 
+Common::String AdlEngine::getDiskImageName(byte volume) const {
+	return Adl::getDiskImageName(_gameDescription->desc, volume);
+}
+
 bool AdlEngine::pollEvent(Common::Event &event) const {
 	_console->onFrame();
 

@@ -222,12 +222,14 @@ void HiRes1Engine::runIntro() {
 }
 
 void HiRes1Engine::init() {
-	if (Common::File::exists("MYSTHOUS.DSK")) {
-		_files = new Files_DOS33();
-		if (!static_cast<Files_DOS33 *>(_files)->open("MYSTHOUS.DSK"))
-			error("Failed to open MYSTHOUS.DSK");
-	} else
+	if (Common::File::exists("ADVENTURE")) {
 		_files = new Files_Plain();
+	} else {
+		Files_DOS33 *files = new Files_DOS33();
+		if (!files->open(getDiskImageName(0)))
+			error("Failed to open '%s'", getDiskImageName(0).c_str());
+		_files = files;
+	}
 
 	_graphics = new GraphicsMan(*_display);
 

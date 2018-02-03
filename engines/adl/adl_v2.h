@@ -54,7 +54,6 @@ protected:
 	// Engine
 	bool canSaveGameStateCurrently();
 
-	Common::String getDiskImageName(byte volume) const;
 	void insertDisk(byte volume);
 	virtual DataBlockPtr readDataBlockPtr(Common::ReadStream &f) const;
 	virtual void adjustDataBlockPtr(byte &track, byte &sector, byte &offset, byte &size) const { }
