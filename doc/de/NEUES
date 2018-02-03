@@ -2,6 +2,18 @@ Umfangreichere Informationen über die Änderungen des aktuellen experimentellen
 Programmcodes finden Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
+2.1.0 (??.??.2018)
+ SCUMM:
+   - Lippensynchronisation für v6- und v7+-Spiele hinzugefügt.
+
+ PS Vita-Portierung:
+   - Unterstützung für Touch-Steuerung hinzugefügt.
+
+ PSP-Portierung:
+   - Unterstützung für Seitenverhältniskorrektur hinzugefügt.
+   - Bewegung des Mauszeigers ist nun gleichmäßiger.
+   - Einstell-Möglichkeit für Mauszeiger-Geschwindigkeit und Joystick-Deadzone hinzugefügt.
+
 2.0.0 (17.12.2017)
  Neue Spiele:
    - Unterstützung für Full Pipe hinzugefügt.
