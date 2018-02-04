@@ -74,8 +74,7 @@ Player_HE::~Player_HE() {
 
 void Player_HE::setMusicVolume(int vol) {
 	_masterVolume = vol;
-	for (int chan = 0; chan < 16; chan++)
-	{
+	for (int chan = 0; chan < 16; chan++) {
 		byte volume = (_channelVolume[chan] * vol) / 256;
 		if (_midi)
 			_midi->send(0x07b0 | chan | (volume << 16));
@@ -83,7 +82,7 @@ void Player_HE::setMusicVolume(int vol) {
 }
 
 void Player_HE::onTimer(void *data) {
-	Player_HE *player = (Player_HE*)data;
+	Player_HE *player = (Player_HE *)data;
 	Common::StackLock lock(player->_mutex);
 	if (player->_parser)
 		player->_parser->onTimer();
@@ -228,8 +227,7 @@ void Player_HE::send(uint32 b) {
 	byte cmd = b & 0xf0;
 	byte op1 = (b >> 8) & 0x7f;
 	byte op2 = (b >> 16) & 0x7f;
-	if (cmd == 0xb0 && op1 == 0x07)
-	{
+	if (cmd == 0xb0 && op1 == 0x07) {
 		_channelVolume[chan] = op2;
 		op2 = (op2 * _masterVolume) / 256;
 		b = (b & 0xffff) | (op2 << 16);
