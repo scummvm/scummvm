@@ -71,15 +71,14 @@ static const char HELP_STRING[] =
 	"  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified\n"
 	"  -a, --add                Add all games from current or specified directory.\n"
 	"                           If --game=ID is passed only the game with id ID is added. See also --detect\n"
-	"                           Use --path=PATH before -a, --add to specify a directory.\n"
+	"                           Use --path=PATH to specify a directory.\n"
 	"  --detect                 Display a list of games with their ID from current or\n"
 	"                           specified directory without adding it to the config.\n"
-	"                           Use --path=PATH before --detect to specify a directory.\n"
+	"                           Use --path=PATH to specify a directory.\n"
 	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
 	"                           detect the game with id ID.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
-	"                           and start the first one. Use --path=PATH before --auto-detect\n"
-	"                           to specify a directory.\n"
+	"                           and start the first one. Use --path=PATH to specify a directory.\n"
 	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	"  --console                Enable the console window (default:enabled)\n"
@@ -194,6 +193,11 @@ static void usage(const char *s, ...) {
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
 #endif
 	exit(1);
+}
+
+static void ensureFirstCommand(const Common::String &existingCommand, const char *newCommand) {
+	if (!existingCommand.empty())
+		usage("--%s: Cannot accept more than one command (Already found --%s).", newCommand, existingCommand.c_str());
 }
 
 #endif // DISABLE_COMMAND_LINE
@@ -355,7 +359,8 @@ void registerDefaults() {
 		if (isLongCmd) \
 			s += sizeof(longCmd) - 1; \
 		if (*s != '\0') goto unknownOption; \
-		return longCmd;
+		ensureFirstCommand(command, longCmd); \
+		command = longCmd;
 
 
 #define DO_LONG_OPTION_OPT(longCmd, d)  DO_OPTION_OPT(0, longCmd, d)
@@ -371,14 +376,16 @@ void registerDefaults() {
 
 // End an option handler
 #define END_COMMAND \
+		continue; \
 	}
 
 
 Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv) {
 	const char *s, *s2;
+	Common::String command;
 
 	if (!argv)
-		return Common::String();
+		return command;
 
 	// argv[0] contains the name of the executable.
 	if (argv[0]) {
@@ -452,10 +459,11 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #endif
 
 			DO_LONG_OPTION("list-saves")
-				// FIXME: Need to document this.
 				// TODO: Make the argument optional. If no argument is given, list all saved games
 				// for all configured targets.
-				return "list-saves";
+				// TODO: Consider breaking the command line interface to pass the argument via the --game option
+				ensureFirstCommand(command, "list-saves");
+				command = "list-saves";
 			END_OPTION
 
 			DO_OPTION('c', "config")
@@ -673,7 +681,7 @@ unknownOption:
 		}
 	}
 
-	return Common::String();
+	return command;
 }
 
 /** List all supported game IDs, i.e. all games which any loaded plugin supports. */
@@ -891,10 +899,10 @@ static Common::String detectGames(const Common::String &path, const Common::Stri
 	if (candidates.empty()) {
 		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().c_str());
 		if (noPath) {
-			printf("WARNING: Consider using --path=<path> *before* --add or --detect to specify a directory\n");
+			printf("WARNING: Consider using --path=<path> to specify a directory\n");
 		}
 		if (!recursive) {
-			printf("WARNING: Consider using --recursive *before* --add or --detect to search inside subdirectories\n");
+			printf("WARNING: Consider using --recursive to search inside subdirectories\n");
 		}
 		return Common::String();
 	}

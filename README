@@ -1467,15 +1467,15 @@ arguments -- see the next section.
   -a, --add                Add all games from current or specified directory.
                            If --game=ID is passed only the game with id ID is
                            added. See also --detect.
-                           Use --path=PATH before -a, --add to specify a directory.
+                           Use --path=PATH to specify a directory.
   --detect                 Display a list of games with their ID from current or
                            specified directory without adding it to the config.
-                           Use --path=PATH before --detect to specify a directory.
+                           Use --path=PATH to specify a directory.
   --game=ID                In combination with --add or --detect only adds or attempts to
                            detect the game with id ID.
   --auto-detect            Display a list of games from current or specified directory
-                           and start the first one. Use --path=PATH before --auto-detect
-                           to specify a directory.
+                           and start the first one. Use --path=PATH to specify
+                           a directory.
   --recursive              In combination with --add or --detect recurse down all
                            subdirectories
   --console                Enable the console window (default: enabled) (Windows only)
