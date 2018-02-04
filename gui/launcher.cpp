@@ -376,58 +376,6 @@ void LauncherDialog::addGame() {
 	} while (looping);
 }
 
-namespace {
-
-static void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
-	if (!value.empty())
-		ConfMan.set(key, value, domain);
-}
-
-} // End of anonymous namespace
-
-Common::String addGameToConf(const GameDescriptor &result) {
-	// The auto detector or the user made a choice.
-	// Pick a domain name which does not yet exist (after all, we
-	// are *adding* a game to the config, not replacing).
-	Common::String domain = result.preferredTarget;
-
-	assert(!domain.empty());
-	if (ConfMan.hasGameDomain(domain)) {
-		int suffixN = 1;
-		Common::String gameid(domain);
-
-		while (ConfMan.hasGameDomain(domain)) {
-			domain = gameid + Common::String::format("-%d", suffixN);
-			suffixN++;
-		}
-	}
-
-	// Add the name domain
-	ConfMan.addGameDomain(domain);
-
-	// Copy all non-empty relevant values into the new domain
-	// FIXME: Factor out
-	addStringToConf("gameid", result.gameId, domain);
-	addStringToConf("description", result.description, domain);
-	addStringToConf("language", Common::getLanguageCode(result.language), domain);
-	addStringToConf("platform", Common::getPlatformCode(result.platform), domain);
-	addStringToConf("path", result.path, domain);
-	addStringToConf("extra", result.extra, domain);
-	addStringToConf("guioptions", result.getGUIOptions(), domain);
-
-	// TODO: Setting the description field here has the drawback
-	// that the user does never notice when we upgrade our descriptions.
-	// It might be nice ot leave this field empty, and only set it to
-	// a value when the user edits the description string.
-	// However, at this point, that's impractical. Once we have a method
-	// to query all backends for the proper & full description of a given
-	// game target, we can change this (currently, you can only query
-	// for the generic gameid description; it's not possible to obtain
-	// a description which contains extended information like language, etc.).
-
-	return domain;
-}
-
 void LauncherDialog::removeGame(int item) {
 	MessageDialog alert(_("Do you really want to remove this game configuration?"), _("Yes"), _("No"));
 
@@ -623,7 +571,7 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 	if (0 <= idx && idx < (int)candidates.size()) {
 		const GameDescriptor &result = candidates[idx].matchedGame;
 
-		Common::String domain = addGameToConf(result);
+		Common::String domain = EngineMan.createTargetForGame(result);
 
 		// Display edit dialog for the new entry
 		EditGameDialog editDialog(domain);

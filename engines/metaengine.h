@@ -271,6 +271,13 @@ public:
 	PlainGameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL) const;
 	DetectionResults detectGames(const Common::FSList &fslist) const;
 	const PluginList &getPlugins() const;
+
+	/**
+	 * Create a target from the supplied game descriptor
+	 *
+	 * Returns the created target name.
+	 */
+	Common::String createTargetForGame(const GameDescriptor &game);
 };
 
 /** Convenience shortcut for accessing the engine manager. */

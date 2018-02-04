@@ -24,6 +24,7 @@
 #define MASSADD_DIALOG_H
 
 #include "gui/dialog.h"
+#include "gui/widgets/list.h"
 #include "common/fs.h"
 #include "common/hashmap.h"
 #include "common/stack.h"

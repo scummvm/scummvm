@@ -28,10 +28,7 @@
 #include "common/taskbar.h"
 #include "common/translation.h"
 
-#include "gui/launcher.h"	// For addGameToConf()
 #include "gui/massadd.h"
-#include "gui/widget.h"
-#include "gui/widgets/list.h"
 
 #ifndef DISABLE_MASS_ADD
 namespace GUI {
@@ -149,7 +146,7 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 			debug(1, "  Added gameid '%s', desc '%s'\n",
 				iter->gameId.c_str(),
 				iter->description.c_str());
-			iter->gameId = addGameToConf(*iter);
+			iter->gameId = EngineMan.createTargetForGame(*iter);
 		}
 
 		// Write everything to disk

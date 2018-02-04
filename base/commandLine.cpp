@@ -881,45 +881,6 @@ static GameList getGameList(const Common::FSNode &dir) {
 	return candidates;
 }
 
-namespace {
-
-static void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
-	if (!value.empty())
-		ConfMan.set(key, value, domain);
-}
-
-} // End of anonymous namespace
-
-static bool addGameToConf(const GameDescriptor &gd) {
-	const Common::String &domain = gd.preferredTarget;
-
-	// If game has already been added, don't add
-	if (ConfMan.hasGameDomain(domain))
-		return false;
-
-	// Add the name domain
-	ConfMan.addGameDomain(domain);
-
-	// Copy all non-empty relevant values into the new domain
-	// FIXME: Factor out
-	addStringToConf("gameid", gd.gameId, domain);
-	addStringToConf("description", gd.description, domain);
-	addStringToConf("language", Common::getLanguageCode(gd.language), domain);
-	addStringToConf("platform", Common::getPlatformCode(gd.platform), domain);
-	addStringToConf("path", gd.path, domain);
-	addStringToConf("extra", gd.extra, domain);
-	addStringToConf("guioptions", gd.getGUIOptions(), domain);
-
-	// Display added game info
-	printf("Game Added: \n  GameID:   %s\n  Name:     %s\n  Language: %s\n  Platform: %s\n",
-			gd.gameId.c_str(),
-			gd.description.c_str(),
-			Common::getLanguageDescription(gd.language),
-			Common::getPlatformDescription(gd.platform));
-
-	return true;
-}
-
 static GameList recListGames(const Common::FSNode &dir, const Common::String &gameId, bool recursive) {
 	GameList list = getGameList(dir);
 
@@ -971,11 +932,12 @@ static int recAddGames(const Common::FSNode &dir, const Common::String &game, bo
 	for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
 		if (v->gameId != game && !game.empty()) {
 			printf("Found %s, only adding %s per --game option, ignoring...\n", v->gameId.c_str(), game.c_str());
-		} else if (!addGameToConf(*v)) {
-			// TODO Is it reall the case that !addGameToConf iff already added?
+		} else if (ConfMan.hasGameDomain(v->preferredTarget)) {
+			// TODO Better check for game already added?
 			printf("Found %s, but has already been added, skipping\n", v->gameId.c_str());
 		} else {
 			printf("Found %s, adding...\n", v->gameId.c_str());
+			EngineMan.createTargetForGame(*v);
 			count++;
 		}
 	}

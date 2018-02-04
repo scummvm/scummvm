@@ -545,6 +545,57 @@ const PluginList &EngineManager::getPlugins() const {
 	return PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
 }
 
+namespace {
+
+void addStringToConf(const Common::String &key, const Common::String &value, const Common::String &domain) {
+	if (!value.empty())
+		ConfMan.set(key, value, domain);
+}
+
+} // End of anonymous namespace
+
+Common::String EngineManager::createTargetForGame(const GameDescriptor &game) {
+	// The auto detector or the user made a choice.
+	// Pick a domain name which does not yet exist (after all, we
+	// are *adding* a game to the config, not replacing).
+	Common::String domain = game.preferredTarget;
+
+	assert(!domain.empty());
+	if (ConfMan.hasGameDomain(domain)) {
+		int suffixN = 1;
+		Common::String gameid(domain);
+
+		while (ConfMan.hasGameDomain(domain)) {
+			domain = gameid + Common::String::format("-%d", suffixN);
+			suffixN++;
+		}
+	}
+
+	// Add the name domain
+	ConfMan.addGameDomain(domain);
+
+	// Copy all non-empty relevant values into the new domain
+	addStringToConf("gameid", game.gameId, domain);
+	addStringToConf("description", game.description, domain);
+	addStringToConf("language", Common::getLanguageCode(game.language), domain);
+	addStringToConf("platform", Common::getPlatformCode(game.platform), domain);
+	addStringToConf("path", game.path, domain);
+	addStringToConf("extra", game.extra, domain);
+	addStringToConf("guioptions", game.getGUIOptions(), domain);
+
+	// TODO: Setting the description field here has the drawback
+	// that the user does never notice when we upgrade our descriptions.
+	// It might be nice to leave this field empty, and only set it to
+	// a value when the user edits the description string.
+	// However, at this point, that's impractical. Once we have a method
+	// to query all backends for the proper & full description of a given
+	// game target, we can change this (currently, you can only query
+	// for the generic gameid description; it's not possible to obtain
+	// a description which contains extended information like language, etc.).
+
+	return domain;
+}
+
 // Music plugins
 
 #include "audio/musicplugin.h"
