@@ -73,19 +73,19 @@ class ESPER {
 	static const Common::Rect kScreen;
 
 	struct Photo {
-		bool isPresent;
-		char name[13];
-		int photoId;
-		int shapeId;
+		bool           isPresent;
+		int            photoId;
+		int            shapeId;
+		Common::String name;
 	};
 
 	struct Region {
-		bool isPresent;
-		int regionId;
-		Common::Rect rectInner;
-		Common::Rect rectOuter;
-		Common::Rect rectSelection;
-		char name[13];
+		bool           isPresent;
+		int            regionId;
+		Common::Rect   rectInner;
+		Common::Rect   rectOuter;
+		Common::Rect   rectSelection;
+		Common::String name;
 	};
 
 	BladeRunnerEngine     *_vm;
@@ -135,6 +135,8 @@ class ESPER {
 	bool _isZoomingOut;
 	int  _timeZoomOutNext;
 
+	Common::Rect _screen;
+
 	Common::Rect _viewport;
 	Common::Rect _viewportNext;
 	int          _viewportPositionX;
@@ -153,9 +155,9 @@ class ESPER {
 
 	int _flash;
 
-	Common::Rect _selectionRect;
-	Common::Rect _selectionRectTarget;
-	Common::Rect _selectionRectDelta;
+	Common::Rect _selection;
+	Common::Rect _selectionTarget;
+	Common::Rect _selectionDelta;
 	int          _selectionCrosshairX;
 	int          _selectionCrosshairY;
 
@@ -277,7 +279,6 @@ private:
 
 	int viewportXToScreenX(int x);
 	int viewportYToScreenY(int y);
-
 };
 
 } // End of namespace BladeRunner
