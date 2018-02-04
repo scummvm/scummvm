@@ -108,6 +108,7 @@ private:
 	void loadRoom(byte roomNr);
 	void showRoom();
 
+	void showInstructions(Common::SeekableReadStream &stream, const uint pages[], bool goHome);
 	void wordWrap(Common::String &str) const;
 
 	Files *_files;
@@ -124,20 +125,46 @@ private:
 	} _gameStrings;
 };
 
-void HiRes1Engine::runIntro() {
-	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_0));
+void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream, const uint pages[], bool goHome) {
+	_display->setMode(DISPLAY_MODE_TEXT);
 
-	stream->seek(IDI_HR1_OFS_LOGO_0);
-	_display->setMode(DISPLAY_MODE_HIRES);
-	_display->loadFrameBuffer(*stream);
-	_display->updateHiResScreen();
+	uint page = 0;
+	while (pages[page] != 0) {
+		if (goHome)
+			_display->home();
 
-	if (getGameVersion() == GAME_VER_HR1_PD) {
-		// Only the PD version shows a title screen during the load
-		delay(4000);
+		uint count = pages[page++];
+		for (uint i = 0; i < count; ++i) {
+			_display->printString(readString(stream));
+			stream.seek(3, SEEK_CUR);
+		}
+
+		inputString();
 
 		if (shouldQuit())
 			return;
+
+		stream.seek((goHome ? 6 : 3), SEEK_CUR);
+	}
+}
+
+void HiRes1Engine::runIntro() {
+	StreamPtr stream(_files->createReadStream(IDS_HR1_EXE_0));
+
+	// Early version have no bitmap in 'AUTO LOAD OBJ'
+	if (getGameVersion() >= GAME_VER_HR1_COARSE) {
+		stream->seek(IDI_HR1_OFS_LOGO_0);
+		_display->setMode(DISPLAY_MODE_HIRES);
+		_display->loadFrameBuffer(*stream);
+		_display->updateHiResScreen();
+
+		if (getGameVersion() == GAME_VER_HR1_PD) {
+			// Only the PD version shows a title screen during the load
+			delay(4000);
+
+			if (shouldQuit())
+				return;
+		}
 	}
 
 	Common::String str;
@@ -166,7 +193,7 @@ void HiRes1Engine::runIntro() {
 		_display->printAsciiString(str + '\r');
 
 		inputKey();
-		if (g_engine->shouldQuit())
+		if (shouldQuit())
 			return;
 	}
 
@@ -174,59 +201,60 @@ void HiRes1Engine::runIntro() {
 
 	str = readStringAt(*stream, IDI_HR1_OFS_GAME_OR_HELP);
 
-	bool instructions = false;
+	if (getGameVersion() >= GAME_VER_HR1_COARSE) {
+		bool instructions = false;
 
-	while (1) {
-		_display->printString(str);
-		Common::String s = inputString();
+		while (1) {
+			_display->printString(str);
+			Common::String s = inputString();
 
-		if (g_engine->shouldQuit())
-			break;
+			if (shouldQuit())
+				break;
 
-		if (s.empty())
-			continue;
+			if (s.empty())
+				continue;
 
-		if (s[0] == APPLECHAR('I')) {
-			instructions = true;
-			break;
-		} else if (s[0] == APPLECHAR('G')) {
-			break;
-		}
-	};
-
-	if (instructions) {
-		_display->setMode(DISPLAY_MODE_TEXT);
-		stream->seek(IDI_HR1_OFS_INTRO_TEXT);
-
-		const uint pages[] = { 6, 6, 4, 5, 8, 7, 0 };
-
-		uint page = 0;
-		while (pages[page] != 0) {
-			_display->home();
-
-			uint count = pages[page++];
-			for (uint i = 0; i < count; ++i) {
-				str = readString(*stream);
-				_display->printString(str);
-				stream->seek(3, SEEK_CUR);
+			if (s[0] == APPLECHAR('I')) {
+				instructions = true;
+				break;
+			} else if (s[0] == APPLECHAR('G')) {
+				break;
 			}
-
-			inputString();
-
-			if (g_engine->shouldQuit())
-				return;
-
-			stream->seek(6, SEEK_CUR);
 		}
+
+		if (instructions) {
+			// This version shows the last page during the loading of the game
+			// We wait for a key instead (even though there's no prompt for that).
+			const uint pages[] = { 6, 6, 4, 5, 8, 7, 0 };
+			stream->seek(IDI_HR1_OFS_INTRO_TEXT);
+			showInstructions(*stream, pages, true);
+			_display->printAsciiString("\r");
+		}
+	} else {
+		const uint pages[] = { 6, 6, 8, 6, 0 };
+		stream->seek(6);
+		showInstructions(*stream, pages, false);
 	}
 
-	_display->printAsciiString("\r");
+	stream.reset(_files->createReadStream(IDS_HR1_EXE_1));
+	stream->seek(0x1800);
+	_display->loadFrameBuffer(*stream);
+	_display->updateHiResScreen();
 
 	_display->setMode(DISPLAY_MODE_MIXED);
 
-	// As we switch back to graphics mode, the title screen is briefly visible here
-	// (and in the PD version, it's a different title screen from the initial one).
-	// As this is probably non-intentional, we skip it and go straight to the game.
+	if (getGameVersion() == GAME_VER_HR1_SIMI) {
+		// The original waits for the key after initializing the state.
+		// This causes it to also wait for a key on a blank screen when
+		// a game is restarted. We only wait for a key here during the
+		// intro.
+
+		// This does mean we need to push out some extra line feeds to clear the screen
+		_display->printString(_strings.lineFeeds);
+		inputKey();
+		if (shouldQuit())
+			return;
+	}
 }
 
 void HiRes1Engine::init() {

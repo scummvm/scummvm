@@ -39,11 +39,27 @@ enum GameType {
 	GAME_TYPE_HIRES6
 };
 
+/*
+ * ====== Mystery House supported versions ======
+ * GAME_VER_HR1_SIMI:
+ * - Instructions always shown (no prompt)
+ * - Instructions contain Simi Valley address
+ * - On-Line Systems title screen in main executable only and waits for key
+ * GAME_VER_HR1_COARSE:
+ * - Longer instructions, now containing Coarsegold address
+ * - On-Line Systems title screen with instructions prompt
+ * GAME_VER_HR1_PD:
+ * - Public Domain disclaimer on startup
+ * - Sierra On-Line title screen with instructions prompt
+ *
+ * Note: there are probably at least two or three more variants
+ */
+
 enum GameVersion {
 	GAME_VER_NONE = 0,
-	GAME_VER_HR1_SIMI = 0, // On-Line Systems (Simi Valley)
-	GAME_VER_HR1_COARSE, // On-Line Systems (Coarsegold)
-	GAME_VER_HR1_PD // Sierra On-Line PD release
+	GAME_VER_HR1_SIMI = 0,
+	GAME_VER_HR1_COARSE,
+	GAME_VER_HR1_PD
 };
 
 struct AdlGameDescription;
