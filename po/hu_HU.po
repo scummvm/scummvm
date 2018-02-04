@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-02-02 22:39+0100\n"
+"POT-Creation-Date: 2018-02-04 12:56+0100\n"
 "PO-Revision-Date: 2018-01-24 04:01+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -161,7 +161,7 @@ msgstr ""
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
 #: engines/sci/engine/kgraphics.cpp:74 engines/sci/graphics/controls32.cpp:817
-#: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1882
+#: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1883
 #: engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
@@ -2903,7 +2903,7 @@ msgstr "Játékmenet visszaállítása:"
 msgid "Restore"
 msgstr "Visszaállítás"
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2441
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -2914,7 +2914,7 @@ msgstr ""
 "\n"
 "%s fájlból"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2434
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -2925,7 +2925,7 @@ msgstr ""
 "\n"
 "%s fájlba"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2452
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -4360,7 +4360,7 @@ msgstr "Zene hangereje: "
 msgid "Subtitle speed: "
 msgstr "Felirat sebesség: "
 
-#: engines/scumm/scumm.cpp:1880
+#: engines/scumm/scumm.cpp:1881
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -4369,7 +4369,7 @@ msgstr ""
 "Native MIDI támogatáshoz kell a Roland Upgrade a LucasArts-tól,\n"
 "a %s hiányzik. AdLib-ot használok helyette."
 
-#: engines/scumm/scumm.cpp:2733
+#: engines/scumm/scumm.cpp:2738
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
