@@ -2666,7 +2666,7 @@ case $_host_os in
 		_libcurlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
 
 		append_var DEFINES "-DPLAYSTATION3"
-		append_var CXXFLAGS "-mcpu=cell -mminimal-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
+		append_var CXXFLAGS "-mcpu=cell -mno-fp-in-toc -I$PSL1GHT/ppu/include -I$PS3DEV/portlibs/ppu/include"
 		append_var LDFLAGS "-L$PSL1GHT/ppu/lib -L$PS3DEV/portlibs/ppu/lib"
 		# The network libraries are statically linked and need to be specified in the following order
 		append_var SDL_NET_LIBS "-lSDL_net -lnet -lsysmodule"
