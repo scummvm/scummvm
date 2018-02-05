@@ -48,16 +48,11 @@ Button::~Button() {
 void Button::render() {
 	VisualImageXMG *image = StarkStaticProvider->getUIElement(_stockElement);
 	image->render(_position, false);
-	if (_renderHint)
-	{
-		Gfx::Driver *gfx = StarkGfx;
+	if (_renderHint) {
 		Common::Point pos(_hintPosition);
-		Common::Rect viewportRect = gfx->getScreenViewport();
 		if (_align == HintAlign::kRight) {
-			pos.x -= _mouseText->getTexture()->width();
+			//pos.x -= _mouseText->actualTextWidth();
 		}
-		pos.x = gfx->scaleWidthOriginalToCurrent(pos.x) + viewportRect.left;
-		pos.y = gfx->scaleHeightOriginalToCurrent(pos.y);
 		_mouseText->render(pos);
 	}
 	_renderHint = false;
@@ -75,8 +70,7 @@ bool Button::containsPoint(Common::Point point) {
 }
 
 void Button::showButtonHint() {
-	if (!_mouseText)
-	{
+	if (!_mouseText) {
 		_mouseText = new VisualText(StarkGfx);
 		_mouseText->setText(_text);
 		_mouseText->setColor(0xFFFFFFFF);

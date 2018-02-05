@@ -60,13 +60,6 @@ Common::Rect VisualText::getRect() {
 	return _originalRect;
 }
 
-Gfx::Texture *VisualText::getTexture() {
-	if (!_texture) {
-		createTexture();
-	}
-	return _texture;
-}
-
 void VisualText::setText(const Common::String &text) {
 	freeTexture();
 	_text = text;

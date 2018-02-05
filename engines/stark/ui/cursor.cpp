@@ -101,22 +101,19 @@ void Cursor::updateFadeLevel() {
 void Cursor::render() {
 	updateFadeLevel();
 
-	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
+	_gfx->setScreenViewport(false);
 	if (_mouseText) {
 		// TODO: Should probably query the image for the width of the cursor
 		// TODO: Add delay to the mouse hints like in the game
-		const int16 cursorDistance = 32;
-		Common::Point pos;
-		Common::Rect viewportRect = _gfx->getScreenViewport();
-		Gfx::Texture *hintTexture = _mouseText->getTexture();
-		int16 sideBorderWidth = _gfx->scaleWidthOriginalToCurrent(48);
-		int16 bottomBorderHeight = _gfx->scaleHeightOriginalToCurrent(_gfx->kBottomBorderHeight);
-		pos.x = CLIP<int16>(_mousePos.x, viewportRect.left + sideBorderWidth, viewportRect.right - sideBorderWidth);
-		pos.y = CLIP<int16>(_mousePos.y, viewportRect.top, viewportRect.bottom - bottomBorderHeight - cursorDistance - hintTexture->height());
-		pos.x -= hintTexture->width() / 2;
+		const int16 cursorDistance = _gfx->scaleHeightCurrentToOriginal(32);
+		Common::Point pos = _gfx->convertCoordinateCurrentToOriginal(_mousePos);
+		pos.x = CLIP<int16>(pos.x, 48, _gfx->kOriginalWidth - 48);
+		pos.y = CLIP<int16>(pos.y, _gfx->kTopBorderHeight, _gfx->kOriginalHeight - _gfx->kBottomBorderHeight - cursorDistance /* -_mouseText->actualTextHeight() */ );
+		//pos.x -= _mouseText->actualTextWidth() / 2;
 		pos.y += cursorDistance;
 		_mouseText->render(pos);
 	}
+	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
 	if (_cursorImage) {
 		_cursorImage->setFadeLevel(_fadeLevel);
 		_cursorImage->render(_mousePos, true);
