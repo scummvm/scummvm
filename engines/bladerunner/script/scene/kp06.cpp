@@ -101,7 +101,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(577);
-			Set_Enter(9, 45);
+			Set_Enter(9, kSceneKP05);
 		}
 		return true;
 	}
@@ -120,7 +120,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(578);
-				Set_Enter(48, 47);
+				Set_Enter(48, kSceneKP07);
 			}
 		} else if (Actor_Clue_Query(kActorMcCoy, kCluePowerSource) ) {
 			Actor_Says(kActorSadik, 280, 3);
@@ -131,7 +131,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(578);
-			Set_Enter(48, 47);
+			Set_Enter(48, kSceneKP07);
 		} else {
 			Actor_Set_Goal_Number(kActorSadik, 417);
 		}
@@ -175,7 +175,7 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			Delay(3000);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Outtake_Play(25, 0, -1);
+			Outtake_Play(kOuttakeEnd6, false, -1);
 			Game_Over();
 			//return true;
 			return;
@@ -206,7 +206,7 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			Async_Actor_Walk_To_Waypoint(kActorGaff, 551, 0, 0);
 			Actor_Says(kActorGaff, 310, -1);
 			Delay(3000);
-			Outtake_Play(26, 0, -1);
+			Outtake_Play(kOuttakeEnd7, false, -1);
 			Game_Over();
 			//return true;
 			return;

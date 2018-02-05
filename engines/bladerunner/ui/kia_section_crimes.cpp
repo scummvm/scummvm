@@ -27,7 +27,6 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/font.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/shape.h"
@@ -245,23 +244,23 @@ void KIASectionCrimes::mouseUpCallback(int buttonId, void *callbackData) {
 
 void KIASectionCrimes::onButtonPressed(int buttonId) {
 	switch (buttonId) {
-		case 0:
-			prevSuspect();
-			break;
-		case 1:
-			nextSuspect();
-			break;
-		case 2:
-			prevCrime();
-			break;
-		case 3:
-			nextCrime();
-			break;
-		case 4:
-			if (_suspectSelected != -1) {
-				_scheduledSwitch = true;
-			}
-			break;
+	case 0:
+		prevSuspect();
+		break;
+	case 1:
+		nextSuspect();
+		break;
+	case 2:
+		prevCrime();
+		break;
+	case 3:
+		nextCrime();
+		break;
+	case 4:
+		if (_suspectSelected != -1) {
+			_scheduledSwitch = true;
+		}
+		break;
 	}
 }
 

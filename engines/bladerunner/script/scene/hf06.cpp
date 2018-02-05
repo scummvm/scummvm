@@ -126,7 +126,7 @@ bool SceneScriptHF06::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(530);
-			Set_Enter(41, 38);
+			Set_Enter(41, kSceneHF05);
 		}
 		return true;
 	}

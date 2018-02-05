@@ -37,7 +37,9 @@ class SetEffects;
 class SceneObjects;
 
 class Set {
+#if BLADERUNNER_DEBUG_RENDERING
 	friend class BladeRunnerEngine;
+#endif
 
 	struct Object {
 		char        name[20];

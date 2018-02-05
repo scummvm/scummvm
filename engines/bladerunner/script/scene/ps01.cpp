@@ -80,7 +80,7 @@ bool SceneScriptPS01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1920.0f, 16581.0f, -2653.0f, 12, 1, false, 0)) {
 			Game_Flag_Set(718);
-			Set_Enter(62, 66);
+			Set_Enter(62, kScenePS02);
 		}
 		return true;
 	}
@@ -101,63 +101,63 @@ bool SceneScriptPS01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(182);
 				Game_Flag_Reset(251);
 				Game_Flag_Set(249);
-				Set_Enter(69, 78);
+				Set_Enter(69, kSceneRC01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 1:
 				Game_Flag_Set(179);
 				Game_Flag_Reset(251);
 				Game_Flag_Set(250);
-				Set_Enter(49, 48);
+				Set_Enter(49, kSceneMA01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 3:
 				Game_Flag_Set(176);
 				Game_Flag_Reset(251);
 				Game_Flag_Set(248);
-				Set_Enter(4, 13);
+				Set_Enter(4, kSceneCT01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 5:
 				Game_Flag_Set(261);
 				Game_Flag_Reset(251);
 				Game_Flag_Set(307);
-				Set_Enter(17, 82);
+				Set_Enter(17, kSceneTB02);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 4:
 				Game_Flag_Set(180);
 				Game_Flag_Reset(251);
 				Game_Flag_Set(252);
-				Set_Enter(0, 0);
+				Set_Enter(0, kSceneAR01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 6:
 				Game_Flag_Set(177);
 				Game_Flag_Reset(251);
 				Game_Flag_Set(253);
-				Set_Enter(7, 25);
+				Set_Enter(7, kSceneDR01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 7:
 				Game_Flag_Set(258);
 				Game_Flag_Reset(251);
 				Game_Flag_Set(254);
-				Set_Enter(20, 2);
+				Set_Enter(20, kSceneBB01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 8:
 				Game_Flag_Set(181);
 				Game_Flag_Reset(251);
 				Game_Flag_Set(255);
-				Set_Enter(54, 54);
+				Set_Enter(54, kSceneNR01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 9:
 				Game_Flag_Set(257);
 				Game_Flag_Reset(251);
 				Game_Flag_Set(256);
-				Set_Enter(37, 34);
+				Set_Enter(37, kSceneHF01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			default:
@@ -267,7 +267,7 @@ void SceneScriptPS01::PlayerWalkedOut() {
 	if (!Game_Flag_Query(718) && Global_Variable_Query(1) == 1) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(38, 1, -1);
+		Outtake_Play(kOuttakeTowards3, true, -1);
 	}
 }
 

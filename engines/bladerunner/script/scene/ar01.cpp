@@ -172,7 +172,7 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 			Game_Flag_Set(464);
 			Game_Flag_Reset(180);
 			Game_Flag_Set(479);
-			Set_Enter(8, 31);
+			Set_Enter(8, kSceneHC01);
 			Actor_Set_Goal_Number(kActorFishDealer, 3);
 		}
 		return true;
@@ -181,7 +181,7 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.0, 0.0, -551.0, 0, 1, false, 0)) {
 			Game_Flag_Set(320);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -222.0, 0.0, -690.0, 0, false);
-			Set_Enter(0, 1);
+			Set_Enter(0, kSceneAR02);
 			Actor_Set_Goal_Number(kActorFishDealer, 3);
 		}
 		return true;
@@ -229,63 +229,63 @@ bool SceneScriptAR01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(178);
 				Game_Flag_Reset(252);
 				Game_Flag_Set(251);
-				Set_Enter(61, 65);
+				Set_Enter(61, kScenePS01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			case 1:
 				Game_Flag_Set(179);
 				Game_Flag_Reset(252);
 				Game_Flag_Set(250);
-				Set_Enter(49, 48);
+				Set_Enter(49, kSceneMA01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			case 2:
 				Game_Flag_Set(182);
 				Game_Flag_Reset(252);
 				Game_Flag_Set(249);
-				Set_Enter(69, 78);
+				Set_Enter(69, kSceneRC01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			case 3:
 				Game_Flag_Set(176);
 				Game_Flag_Reset(252);
 				Game_Flag_Set(248);
-				Set_Enter(4, 13);
+				Set_Enter(4, kSceneCT01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			case 5:
 				Game_Flag_Set(261);
 				Game_Flag_Reset(252);
 				Game_Flag_Set(307);
-				Set_Enter(17, 82);
+				Set_Enter(17, kSceneTB02);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			case 6:
 				Game_Flag_Set(177);
 				Game_Flag_Reset(252);
 				Game_Flag_Set(253);
-				Set_Enter(7, 25);
+				Set_Enter(7, kSceneDR01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			case 7:
 				Game_Flag_Set(258);
 				Game_Flag_Reset(252);
 				Game_Flag_Set(254);
-				Set_Enter(20, 2);
+				Set_Enter(20, kSceneBB01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			case 8:
 				Game_Flag_Set(181);
 				Game_Flag_Reset(252);
 				Game_Flag_Set(255);
-				Set_Enter(54, 54);
+				Set_Enter(54, kSceneNR01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			case 9:
 				Game_Flag_Set(257);
 				Game_Flag_Reset(252);
 				Game_Flag_Set(256);
-				Set_Enter(37, 34);
+				Set_Enter(37, kSceneHF01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			default:
@@ -351,7 +351,7 @@ void SceneScriptAR01::PlayerWalkedOut() {
 	if (!Game_Flag_Query(322) && !Game_Flag_Query(320)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(38, 1, -1);
+		Outtake_Play(kOuttakeTowards3, true, -1);
 	}
 }
 

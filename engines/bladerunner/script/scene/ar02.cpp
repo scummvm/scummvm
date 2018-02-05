@@ -201,7 +201,7 @@ bool SceneScriptAR02::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -182.0f, 0.0f, -551.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(321);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -182.0f, 0.0f, -407.0f, 0, false);
-			Set_Enter(0, 0);
+			Set_Enter(0, kSceneAR01);
 		}
 		return true;
 	}
@@ -212,7 +212,7 @@ bool SceneScriptAR02::ClickedOnExit(int exitId) {
 			Game_Flag_Reset(180);
 			Game_Flag_Set(182);
 			Music_Stop(3);
-			Set_Enter(70, 80);
+			Set_Enter(70, kSceneRC03);
 		}
 		return true;
 	}

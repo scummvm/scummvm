@@ -219,7 +219,7 @@ bool SceneScriptPS13::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 10, 12, 1, false)) {
 			Game_Flag_Set(19);
 			sub_40267C();
-			Set_Enter(14, 75);
+			Set_Enter(14, kScenePS12);
 		}
 		return true;
 	}
@@ -237,7 +237,7 @@ bool SceneScriptPS13::ClickedOnExit(int exitId) {
 			Global_Variable_Reset(12);
 			Global_Variable_Reset(13);
 			Global_Variable_Reset(9);
-			Set_Enter(15, 69);
+			Set_Enter(15, kScenePS05);
 		}
 		return true;
 	}

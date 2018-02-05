@@ -116,19 +116,19 @@ bool SceneScriptUG05::ClickedOnExit(int exitId) {
 		if (Game_Flag_Query(663) && !Game_Flag_Query(368)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -356.35f, 132.77f, -1092.36f, 0, 0, false, 0);
 			Game_Flag_Set(361);
-			Set_Enter(43, 40);
+			Set_Enter(43, kSceneHF07);
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -156.72f, 3.03f, -1118.17f, 0, 1, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 760, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 1, 0);
 			Game_Flag_Set(361);
-			Set_Enter(43, 40);
+			Set_Enter(43, kSceneHF07);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 4.0f, -11.67f, -4.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(339);
-			Set_Enter(77, 89);
+			Set_Enter(77, kSceneUG04);
 		}
 		return true;
 	}
@@ -237,7 +237,7 @@ void SceneScriptUG05::sub_402218() {
 		Actor_Face_Actor(kActorMcCoy, v0, true);
 		Actor_Face_Actor(v0, kActorMcCoy, true);
 		Actor_Says(kActorMcCoy, 5535, 13);
-		if (v0 == 3) {
+		if (v0 == kActorDektora) {
 			Actor_Says(kActorDektora, 1110, 15);
 		} else {
 			Actor_Says(kActorLucy, 670, 17);
@@ -248,27 +248,27 @@ void SceneScriptUG05::sub_402218() {
 	if (v0 == kActorLucy) {
 		if (Game_Flag_Query(46)) {
 			if (Global_Variable_Query(48) > 3) {
-				Outtake_Play(13, 0, -1);
+				Outtake_Play(kOuttakeEnd1B, false, -1);
 			} else {
-				Outtake_Play(14, 0, -1);
+				Outtake_Play(kOuttakeEnd1C, false, -1);
 			}
 		} else {
-			Outtake_Play(12, 0, -1);
+			Outtake_Play(kOuttakeEnd1A, false, -1);
 		}
 	} else if (v0 == kActorDektora) {
 		if (Game_Flag_Query(47)) {
 			if (Global_Variable_Query(48) > 3) {
-				Outtake_Play(16, 0, -1);
+				Outtake_Play(kOuttakeEnd1E, false, -1);
 			} else {
-				Outtake_Play(17, 0, -1);
+				Outtake_Play(kOuttakeEnd1F, false, -1);
 			}
 		} else {
-			Outtake_Play(15, 0, -1);
+			Outtake_Play(kOuttakeEnd1D, false, -1);
 		}
 	} else {
-		Outtake_Play(19, 0, -1);
+		Outtake_Play(kOuttakeEnd3, false, -1);
 	}
-	Outtake_Play(18, 0, -1);
+	Outtake_Play(kOuttakeEnd2, false, -1);
 	Game_Over();
 }
 

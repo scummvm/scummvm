@@ -23,7 +23,6 @@
 #include "bladerunner/vqa_player.h"
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/game_constants.h"
 
 #include "audio/decoders/raw.h"
 

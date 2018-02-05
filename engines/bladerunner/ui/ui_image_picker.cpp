@@ -24,7 +24,6 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/shape.h"
 

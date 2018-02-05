@@ -34,7 +34,7 @@ void SceneScriptTB02::InitializeScene() {
 	} else {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(27, 0, -1);
+		Outtake_Play(kOuttakeTyrellBuildingFly, false, -1);
 		Setup_Scene_Information(-304.0f, -81.46f, 1434.0f, 250);
 	}
 	if (Global_Variable_Query(1) > 3) {
@@ -158,7 +158,7 @@ bool SceneScriptTB02::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(154);
 			Game_Flag_Reset(450);
-			Set_Enter(17, 83);
+			Set_Enter(17, kSceneTB03);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1890.0f, 0, false);
 		}
 		return true;
@@ -170,9 +170,9 @@ bool SceneScriptTB02::ClickedOnExit(int exitId) {
 			if (Global_Variable_Query(1) < 4) {
 				Game_Flag_Set(451);
 				Game_Flag_Set(96);
-				Set_Enter(72, 84);
+				Set_Enter(72, kSceneTB05);
 			} else {
-				Set_Enter(18, 108);
+				Set_Enter(18, kSceneTB07);
 			}
 		}
 		return true;
@@ -197,55 +197,55 @@ bool SceneScriptTB02::ClickedOnExit(int exitId) {
 					Game_Flag_Set(257);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(256);
-					Set_Enter(37, 34);
+					Set_Enter(37, kSceneHF01);
 					break;
 				case 8:
 					Game_Flag_Set(181);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(255);
-					Set_Enter(54, 54);
+					Set_Enter(54, kSceneNR01);
 					break;
 				case 7:
 					Game_Flag_Set(258);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(254);
-					Set_Enter(20, 2);
+					Set_Enter(20, kSceneBB01);
 					break;
 				case 6:
 					Game_Flag_Set(177);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(253);
-					Set_Enter(7, 25);
+					Set_Enter(7, kSceneDR01);
 					break;
 				case 4:
 					Game_Flag_Set(180);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(252);
-					Set_Enter(0, 0);
+					Set_Enter(0, kSceneAR01);
 					break;
 				case 3:
 					Game_Flag_Set(176);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(248);
-					Set_Enter(4, 13);
+					Set_Enter(4, kSceneCT01);
 					break;
 				case 2:
 					Game_Flag_Set(182);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(249);
-					Set_Enter(69, 78);
+					Set_Enter(69, kSceneRC01);
 					break;
 				case 1:
 					Game_Flag_Set(179);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(250);
-					Set_Enter(49, 48);
+					Set_Enter(49, kSceneMA01);
 					break;
 				case 0:
 					Game_Flag_Set(178);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(251);
-					Set_Enter(61, 65);
+					Set_Enter(61, kScenePS01);
 					break;
 				default:
 					Game_Flag_Set(261);
@@ -270,7 +270,7 @@ void SceneScriptTB02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptTB02::PlayerWalkedIn() {
 	if (Game_Flag_Query(625) && ((Game_Flag_Reset(625) , Global_Variable_Query(1) == 2) || Global_Variable_Query(1) == 3)) {
-		Set_Enter(18, 108);
+		Set_Enter(18, kSceneTB07);
 		//return true;
 		return;
 	}

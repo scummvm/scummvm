@@ -83,11 +83,11 @@ void SceneScriptMA06::PlayerWalkedIn() {
 	Game_Flag_Reset(kFlagMA07toMA06);
 
 	if (Game_Flag_Query(kFlagMA06toMA01)) {
-		Set_Enter(49, 48);
+		Set_Enter(49, kSceneMA01);
 	} else if (Game_Flag_Query(kFlagMA06ToMA02)) {
-		Set_Enter(10, 49);
+		Set_Enter(10, kSceneMA02);
 	} else { // kFlagMA06ToMA07
-		Set_Enter(53, 53);
+		Set_Enter(53, kSceneMA07);
 	}
 	Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 	Sound_Play(208, 100, 50, 50, 50);

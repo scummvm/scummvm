@@ -101,7 +101,7 @@ bool SceneScriptRC51::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptRC51::ClickedOnExit(int exitId) {
 	if (exitId == 0 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -8.87f, -1238.89f, 108173.27f, 0, 1, false, 0)) {
-		Set_Enter(16, 79);
+		Set_Enter(16, kSceneRC02);
 		return true;
 	}
 	return false;

@@ -103,7 +103,7 @@ bool SceneScriptPS04::ClickedOnExit(int exitId) {
 			Game_Flag_Set(39);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Set_Enter(63, 67);
+			Set_Enter(63, kScenePS03);
 		}
 		return true;
 	}

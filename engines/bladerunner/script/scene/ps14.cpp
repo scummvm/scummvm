@@ -83,7 +83,7 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 				Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 0, 0);
 			} else {
 				Game_Flag_Set(135);
-				Set_Enter(63, 67);
+				Set_Enter(63, kScenePS03);
 			}
 		}
 		return true;
@@ -93,7 +93,7 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 			Game_Flag_Set(673);
 			Game_Flag_Reset(178);
 			Game_Flag_Set(179);
-			Set_Enter(53, 53);
+			Set_Enter(53, kSceneMA07);
 		}
 		return true;
 	}

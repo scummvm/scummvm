@@ -128,7 +128,7 @@ bool SceneScriptDR03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 330.31f, 4.27f, -910.91f, 24, 1, false, 0)) {
 			Game_Flag_Set(227);
-			Set_Enter(7, 26);
+			Set_Enter(7, kSceneDR02);
 		}
 		return true;
 	}

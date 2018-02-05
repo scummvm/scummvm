@@ -232,7 +232,7 @@ protected:
 	// Spinner_Query_Selectable_Destination_Flag(int destination);
 	int Spinner_Interface_Choose_Dest(int loopId, bool immediately);
 	void ESPER_Flag_To_Activate();
-	bool Voight_Kampff_Activate(int a1, int a2);
+	bool Voight_Kampff_Activate(int actorId, int a2);
 	int Elevator_Activate(int elevatorId);
 	void View_Score_Board();
 	// Query_Score
@@ -279,8 +279,8 @@ protected:
 	void KIA_Play_Slice_Model(int sliceModelId);
 	void KIA_Play_Photograph(int photographId);
 
-	void VK_Play_Speech_Line(int actorIndex, int a2, float a3);
-	void VK_Add_Question(int a1, int a2, int a3);
+	void VK_Play_Speech_Line(int actorId, int sentenceId, float a3);
+	void VK_Add_Question(int intensity, int questionId, int a3);
 	void VK_Subject_Reacts(int a1, int a2, int a3, int a4);
 	void VK_Eye_Animates(int a1);
 };

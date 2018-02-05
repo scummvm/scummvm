@@ -276,7 +276,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 231:
 		Player_Set_Combat_Mode(false);
 		Preload(18);
-		Set_Enter(59, 63);
+		Set_Enter(59, kSceneNR10);
 		Player_Loses_Control();
 		Actor_Force_Stop_Walking(kActorMcCoy);
 		Actor_Put_In_Set(kActorMcCoy, 59);
@@ -427,7 +427,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Global_Variable_Set(1, 5);
-		Outtake_Play(10, 0, -1);
+		Outtake_Play(kOuttakeMovieD, false, -1);
 		if (Game_Flag_Query(666)) {
 			Chapter_Enter(5, 53, 53);
 		} else {
@@ -442,7 +442,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		dword_45A0D0_animation_state = 0;
 		dword_45A0D4_animation_frame = 0;
 		Game_Flag_Set(465);
-		Set_Enter(67, 72);
+		Set_Enter(67, kScenePS09);
 		return true;
 	}
 	return false;

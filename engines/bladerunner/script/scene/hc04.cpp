@@ -113,14 +113,14 @@ bool SceneScriptHC04::ClickedOnExit(int exitId) {
 			Game_Flag_Set(107);
 			Game_Flag_Reset(479);
 			Game_Flag_Set(182);
-			Set_Enter(70, 80);
+			Set_Enter(70, kSceneRC03);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -72.0f, 0.14f, -399.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(109);
-			Set_Enter(8, 32);
+			Set_Enter(8, kSceneHC02);
 		}
 		return true;
 	}

@@ -227,7 +227,7 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(234);
 			Game_Flag_Set(68);
-			Set_Enter(4, 13);
+			Set_Enter(4, kSceneCT01);
 		}
 		return true;
 	}
@@ -242,7 +242,7 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(69);
-			Set_Enter(5, 15);
+			Set_Enter(5, kSceneCT03);
 		}
 		return true;
 	}

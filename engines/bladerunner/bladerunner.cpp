@@ -33,7 +33,6 @@
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/dialogue_menu.h"
 #include "bladerunner/font.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/image.h"
@@ -105,26 +104,26 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_crimesDatabase = nullptr;
 
 	switch (desc->language) {
-		case Common::EN_ANY:
-			this->_languageCode = "E";
-			break;
-		case Common::DE_DEU:
-			this->_languageCode = "G";
-			break;
-		case Common::FR_FRA:
-			this->_languageCode = "F";
-			break;
-		case Common::IT_ITA:
-			this->_languageCode = "I";
-			break;
-		case Common::RU_RUS:
-			this->_languageCode = "R";
-			break;
-		case Common::ES_ESP:
-			this->_languageCode = "S";
-			break;
-		default:
-			this->_languageCode = "E";
+	case Common::EN_ANY:
+		this->_languageCode = "E";
+		break;
+	case Common::DE_DEU:
+		this->_languageCode = "G";
+		break;
+	case Common::FR_FRA:
+		this->_languageCode = "F";
+		break;
+	case Common::IT_ITA:
+		this->_languageCode = "I";
+		break;
+	case Common::RU_RUS:
+		this->_languageCode = "R";
+		break;
+	case Common::ES_ESP:
+		this->_languageCode = "S";
+		break;
+	default:
+		this->_languageCode = "E";
 	}
 
 	_screenEffects           = nullptr;
@@ -1183,9 +1182,9 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 	if (buttonLeft && !buttonDown) {
 		Vector3 scenePosition = _mouse->getXYZ(x, y);
 
-		int isClickable;
-		int isObstacle;
-		int isTarget;
+		bool isClickable;
+		bool isObstacle;
+		bool isTarget;
 
 		int sceneObjectId = _sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, scenePosition.x, scenePosition.y, scenePosition.z, true, false, true);
 		int exitIndex = _scene->_exits->getRegionAtXY(x, y);

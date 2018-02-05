@@ -82,7 +82,7 @@ bool SceneScriptMA05::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 953.97f, 1685.0f, 0, false);
-			Set_Enter(50, 50);
+			Set_Enter(50, kSceneMA04);
 		}
 		return true;
 	}

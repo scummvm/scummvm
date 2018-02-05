@@ -119,7 +119,7 @@ bool SceneScriptNR05::ClickedOnExit(int exitId) {
 			Actor_Face_Heading(kActorMcCoy, 1021, false);
 			Actor_Change_Animation_Mode(kActorMcCoy, 53);
 			Game_Flag_Set(537);
-			Set_Enter(55, 56);
+			Set_Enter(55, kSceneNR03);
 			Scene_Loop_Start_Special(1, 3, 0);
 		}
 		return true;
@@ -127,7 +127,7 @@ bool SceneScriptNR05::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -777.56f, 0.0f, -166.86f, 0, 1, false, 0)) {
 			Game_Flag_Set(546);
-			Set_Enter(13, 61);
+			Set_Enter(13, kSceneNR08);
 		}
 		return true;
 	}

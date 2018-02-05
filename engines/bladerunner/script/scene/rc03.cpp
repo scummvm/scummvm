@@ -141,7 +141,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 				Game_Flag_Set(702);
 			}
 			Game_Flag_Set(kFlagRC03toRC01);
-			Set_Enter(69, 78);
+			Set_Enter(69, kSceneRC01);
 			Actor_Set_Goal_Number(kActorDektora, 100);
 		}
 		return true;
@@ -154,7 +154,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 			Game_Flag_Set(116);
 			Game_Flag_Reset(182);
 			Game_Flag_Set(180);
-			Set_Enter(0, 1);
+			Set_Enter(0, kSceneAR02);
 		}
 		return true;
 	}
@@ -166,7 +166,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 			if (Game_Flag_Query(289)) {
 				Game_Flag_Set(702);
 			}
-			Set_Enter(74, 86);
+			Set_Enter(74, kSceneUG01);
 			Actor_Set_Goal_Number(kActorDektora, 100);
 		}
 		return true;
@@ -179,7 +179,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 			if (Game_Flag_Query(289)) {
 				Game_Flag_Set(702);
 			}
-			Set_Enter(8, 106);
+			Set_Enter(8, kSceneHC04);
 			Actor_Set_Goal_Number(kActorDektora, 100);
 		}
 		return true;
@@ -190,7 +190,7 @@ bool SceneScriptRC03::ClickedOnExit(int exitId) {
 				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {
 				Game_Flag_Set(120);
-				Set_Enter(71, 81);
+				Set_Enter(71, kSceneRC04);
 			}
 		}
 		return true;

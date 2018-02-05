@@ -48,30 +48,30 @@ SceneObjects::~SceneObjects() {
 
 void SceneObjects::clear() {
 	for (int i = 0; i < kSceneObjectCount; ++i) {
-		_sceneObjects[i].sceneObjectId = -1;
-		_sceneObjects[i].sceneObjectType = kSceneObjectTypeUnknown;
+		_sceneObjects[i].sceneObjectId    = -1;
+		_sceneObjects[i].sceneObjectType  = kSceneObjectTypeUnknown;
 		_sceneObjects[i].distanceToCamera = 0;
-		_sceneObjects[i].present = 0;
-		_sceneObjects[i].isClickable = 0;
-		_sceneObjects[i].isObstacle = 0;
-		_sceneObjects[i].unknown1 = 0;
-		_sceneObjects[i].isTarget = 0;
-		_sceneObjects[i].isMoving = 0;
-		_sceneObjects[i].isRetired = 0;
+		_sceneObjects[i].isPresent        = false;
+		_sceneObjects[i].isClickable      = false;
+		_sceneObjects[i].isObstacle       = false;
+		_sceneObjects[i].unknown1         = 0;
+		_sceneObjects[i].isTarget         = false;
+		_sceneObjects[i].isMoving         = false;
+		_sceneObjects[i].isRetired        = false;
 	}
 	_count = 0;
 }
 
-bool SceneObjects::addActor(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 isMoving, uint8 isTarget, uint8 isRetired) {
-	return addSceneObject(sceneObjectId, kSceneObjectTypeActor, boundingBox, screenRectangle, isClickable, 0, 0, isTarget, isMoving, isRetired);
+bool SceneObjects::addActor(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isClickable, bool isMoving, bool isTarget, bool isRetired) {
+	return addSceneObject(sceneObjectId, kSceneObjectTypeActor, boundingBox, screenRectangle, isClickable, false, 0, isTarget, isMoving, isRetired);
 }
 
-bool SceneObjects::addObject(int sceneObjectId, BoundingBox *boundingBox, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget) {
+bool SceneObjects::addObject(int sceneObjectId, BoundingBox *boundingBox, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget) {
 	Common::Rect rect(-1, -1, -1, -1);
-	return addSceneObject(sceneObjectId, kSceneObjectTypeObject, boundingBox, &rect, isClickable, isObstacle, unknown1, isTarget, 0, 0);
+	return addSceneObject(sceneObjectId, kSceneObjectTypeObject, boundingBox, &rect, isClickable, isObstacle, unknown1, isTarget, false, false);
 }
 
-bool SceneObjects::addItem(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isTarget, uint8 isObstacle) {
+bool SceneObjects::addItem(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isTarget, bool isObstacle) {
 	return addSceneObject(sceneObjectId, kSceneObjectTypeItem, boundingBox, screenRectangle, isObstacle, 0, 0, isTarget, 0, 0);
 }
 
@@ -80,7 +80,7 @@ bool SceneObjects::remove(int sceneObjectId) {
 	if (i == -1) {
 		return false;
 	}
-	_sceneObjects[i].present = 0;
+	_sceneObjects[i].isPresent = false;
 	int j;
 	for (j = 0; j < _count; ++j) {
 		if (_sceneObjectsSortedByDistance[j] == i) {
@@ -95,10 +95,10 @@ bool SceneObjects::remove(int sceneObjectId) {
 	return true;
 }
 
-int SceneObjects::findByXYZ(int *isClickable, int *isObstacle, int *isTarget, float x, float y, float z, int findClickables, int findObstacles, int findTargets) const {
-	*isClickable = 0;
-	*isObstacle = 0;
-	*isTarget = 0;
+int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget, float x, float y, float z, bool findClickables, bool findObstacles, bool findTargets) const {
+	*isClickable = false;
+	*isObstacle  = false;
+	*isTarget    = false;
 
 	for (int i = 0; i < _count; ++i) {
 		assert(_sceneObjectsSortedByDistance[i] < kSceneObjectCount);
@@ -116,8 +116,8 @@ int SceneObjects::findByXYZ(int *isClickable, int *isObstacle, int *isTarget, fl
 
 			if (boundingBox.inside(x, y, z)) {
 				*isClickable = sceneObject->isClickable;
-				*isObstacle = sceneObject->isObstacle;
-				*isTarget = sceneObject->isTarget;
+				*isObstacle  = sceneObject->isObstacle;
+				*isTarget    = sceneObject->isTarget;
 
 				return sceneObject->sceneObjectId;
 			}
@@ -167,30 +167,30 @@ int SceneObjects::findById(int sceneObjectId) const {
 	for (int i = 0; i < _count; ++i) {
 		int j = this->_sceneObjectsSortedByDistance[i];
 
-		if (_sceneObjects[j].present && _sceneObjects[j].sceneObjectId == sceneObjectId) {
+		if (_sceneObjects[j].isPresent && _sceneObjects[j].sceneObjectId == sceneObjectId) {
 			return j;
 		}
 	}
 	return -1;
 }
 
-bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget, uint isMoving, uint isRetired) {
+bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget, bool isMoving, bool isRetired) {
 	int index = findEmpty();
 	if (index == -1) {
 		return false;
 	}
 
-	_sceneObjects[index].sceneObjectId = sceneObjectId;
+	_sceneObjects[index].sceneObjectId   = sceneObjectId;
 	_sceneObjects[index].sceneObjectType = sceneObjectType;
-	_sceneObjects[index].present = 1;
-	_sceneObjects[index].boundingBox = *boundingBox;
+	_sceneObjects[index].isPresent       = true;
+	_sceneObjects[index].boundingBox     = *boundingBox;
 	_sceneObjects[index].screenRectangle = *screenRectangle;
-	_sceneObjects[index].isClickable = isClickable;
-	_sceneObjects[index].isObstacle = isObstacle;
-	_sceneObjects[index].unknown1 = unknown1;
-	_sceneObjects[index].isTarget = isTarget;
-	_sceneObjects[index].isMoving = isMoving;
-	_sceneObjects[index].isRetired = isRetired;
+	_sceneObjects[index].isClickable     = isClickable;
+	_sceneObjects[index].isObstacle      = isObstacle;
+	_sceneObjects[index].unknown1        = unknown1;
+	_sceneObjects[index].isTarget        = isTarget;
+	_sceneObjects[index].isMoving        = isMoving;
+	_sceneObjects[index].isRetired       = isRetired;
 
 	float centerZ = (_sceneObjects[index].boundingBox.getZ0() + _sceneObjects[index].boundingBox.getZ1()) / 2.0;
 
@@ -215,7 +215,7 @@ bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObject
 
 int SceneObjects::findEmpty() const {
 	for (int i = 0; i < kSceneObjectCount; ++i) {
-		if (!_sceneObjects[i].present)
+		if (!_sceneObjects[i].isPresent)
 			return i;
 	}
 	return -1;

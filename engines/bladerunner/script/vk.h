@@ -35,28 +35,28 @@ public:
 		: ScriptBase(vm) {
 	}
 
-	bool SCRIPT_VK_DLL_Initialize(int a1);
-	void SCRIPT_VK_DLL_Calibrate(int a1);
+	bool SCRIPT_VK_DLL_Initialize(int actorId);
+	void SCRIPT_VK_DLL_Calibrate(int actorId);
 	bool SCRIPT_VK_DLL_Begin_Test();
-	void SCRIPT_VK_DLL_McCoy_Asks_Question(int a1, int a2);
-	void SCRIPT_VK_DLL_Question_Asked(int a1, int a2);
- 	void SCRIPT_VK_DLL_Shutdown(int a1, signed int a2, signed int a3);
+	void SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId);
+	void SCRIPT_VK_DLL_Question_Asked(int actorId, int questionId);
+ 	void SCRIPT_VK_DLL_Shutdown(int actorId, signed int humanPercentage, signed int replicantPercentage);
 
 private:
-	int unknown1;
+	int calibrationQuestionCounter;
 	int unknown2;
 
-	void sub_402604(int a1);
-	void sub_404B44(int a1);
-	void sub_406088(int a1);
-	void sub_407CF8(int a1);
-	void sub_40897C(int a1);
-	void sub_40A300(int a1, int a2);
-	void sub_40A350(int a1, int a2);
-	void sub_40A3A0(int a1, int a2);
-	void sub_40A3F0(int a1);
-	void sub_40A470(int a1);
-	void sub_40A510(int a1);
+	void askLucy(int questionId);
+	void askGrigorian(int questionId);
+	void askDektora(int questionId);
+	void askRunciter(int questionId);
+	void askBulletBob(int questionId);
+	void askCalibrationQuestion1(int actorId, int notUsed);
+	void askCalibrationQuestion2(int actorId, int notUsed);
+	void askCalibrationQuestion3(int actorId, int notUsed);
+	void askCalibrationDektora3(int questionId);
+	void askCalibrationDektora2(int questionId);
+	void askCalibrationDektora1(int questionId);
 };
 
 } // End of namespace BladeRunner

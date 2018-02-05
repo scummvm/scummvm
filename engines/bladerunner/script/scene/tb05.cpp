@@ -151,7 +151,7 @@ bool SceneScriptTB05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 151.53f, -205.0f, 12, 1, false, 0)) {
 			Game_Flag_Set(97);
-			Set_Enter(73, 85);
+			Set_Enter(73, kSceneTB06);
 			Scene_Loop_Start_Special(1, 2, 1);
 		}
 		return true;
@@ -159,7 +159,7 @@ bool SceneScriptTB05::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 14.0f, 147.12f, 123.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(95);
-			Set_Enter(17, 82);
+			Set_Enter(17, kSceneTB02);
 		}
 		return true;
 	}

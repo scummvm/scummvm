@@ -37,7 +37,7 @@ class GameInfo {
 	uint32 _flagCount;
 	uint32 _clueCount;
 	uint32 _globalVarCount;
-	uint32 _setNamesCount;
+	uint32 _sceneNamesCount;
 	uint32 _initialSceneId;
 	uint32 _initialSetId;
 	uint32 _waypointCount;
@@ -65,7 +65,7 @@ public:
 	uint32 getFlagCount() const            { return _flagCount; }
 	uint32 getClueCount() const            { return _clueCount; }
 	uint32 getGlobalVarCount() const       { return _globalVarCount; }
-	uint32 getSetNamesCount() const        { return _setNamesCount; }
+	uint32 getSceneNamesCount() const      { return _sceneNamesCount; }
 	uint32 getInitialSceneId() const       { return _initialSceneId; }
 	uint32 getInitialSetId() const         { return _initialSetId; }
 	uint32 getWaypointCount() const        { return _waypointCount; }

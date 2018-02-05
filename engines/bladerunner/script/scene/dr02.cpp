@@ -120,7 +120,7 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, 1, false, 0)) {
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -727.0f, -0.04f, -118.0f, 0, false);
 			Game_Flag_Set(225);
-			Set_Enter(7, 25);
+			Set_Enter(7, kSceneDR01);
 		}
 		Ambient_Sounds_Adjust_Looping_Sound(219, 12, -101, 1);
 		Ambient_Sounds_Adjust_Looping_Sound(98, 14, -101, 1);
@@ -132,7 +132,7 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 				Actor_Says(kActorMcCoy, 8522, 15);
 			} else {
 				Game_Flag_Set(226);
-				Set_Enter(34, 27);
+				Set_Enter(34, kSceneDR03);
 			}
 		}
 		return true;
@@ -142,7 +142,7 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 			Game_Flag_Set(265);
 			Game_Flag_Reset(177);
 			Game_Flag_Set(258);
-			Set_Enter(20, 2);
+			Set_Enter(20, kSceneBB01);
 		}
 		return true;
 	}

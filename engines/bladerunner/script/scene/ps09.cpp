@@ -179,7 +179,7 @@ bool SceneScriptPS09::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -559.15f, 0.0f, -85.06f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Set_Enter(62, 66);
+			Set_Enter(62, kScenePS02);
 			Game_Flag_Reset(211);
 		}
 		return true;
@@ -340,7 +340,7 @@ void SceneScriptPS09::sub_402090() {
 		Actor_Says(kActorGrigorian, 410, 16);
 		Actor_Says(kActorMcCoy, 4405, 14);
 		Actor_Says(kActorMcCoy, 4410, 15);
-		Voight_Kampff_Activate(11, 20);
+		Voight_Kampff_Activate(kActorGrigorian, 20);
 		Actor_Modify_Friendliness_To_Other(kActorGrigorian, kActorMcCoy, -10);
 		break;
 	case 210:

@@ -372,7 +372,7 @@ bool SceneScriptRC04::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 45.0f, 0.15f, 68.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(121);
-			Set_Enter(70, 80);
+			Set_Enter(70, kSceneRC03);
 		}
 		return true;
 	}

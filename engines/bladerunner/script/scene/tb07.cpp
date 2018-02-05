@@ -83,7 +83,7 @@ bool SceneScriptTB07::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			if (Global_Variable_Query(1) == 4) {
 				Game_Flag_Set(608);
-				Set_Enter(17, 82);
+				Set_Enter(17, kSceneTB02);
 			} else {
 				Game_Flag_Reset(176);
 				Game_Flag_Reset(182);
@@ -98,55 +98,55 @@ bool SceneScriptTB07::ClickedOnExit(int exitId) {
 					Game_Flag_Set(257);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(256);
-					Set_Enter(37, 34);
+					Set_Enter(37, kSceneHF01);
 					break;
 				case 8:
 					Game_Flag_Set(181);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(255);
-					Set_Enter(54, 54);
+					Set_Enter(54, kSceneNR01);
 					break;
 				case 7:
 					Game_Flag_Set(258);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(254);
-					Set_Enter(20, 2);
+					Set_Enter(20, kSceneBB01);
 					break;
 				case 6:
 					Game_Flag_Set(177);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(253);
-					Set_Enter(7, 25);
+					Set_Enter(7, kSceneDR01);
 					break;
 				case 4:
 					Game_Flag_Set(180);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(252);
-					Set_Enter(0, 0);
+					Set_Enter(0, kSceneAR01);
 					break;
 				case 3:
 					Game_Flag_Set(176);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(248);
-					Set_Enter(4, 13);
+					Set_Enter(4, kSceneCT01);
 					break;
 				case 2:
 					Game_Flag_Set(182);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(249);
-					Set_Enter(69, 78);
+					Set_Enter(69, kSceneRC01);
 					break;
 				case 1:
 					Game_Flag_Set(179);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(250);
-					Set_Enter(49, 48);
+					Set_Enter(49, kSceneMA01);
 					break;
 				case 0:
 					Game_Flag_Set(178);
 					Game_Flag_Reset(307);
 					Game_Flag_Set(251);
-					Set_Enter(61, 65);
+					Set_Enter(61, kScenePS01);
 					break;
 				default:
 					Game_Flag_Set(261);
@@ -198,7 +198,7 @@ void SceneScriptTB07::sub_401B0C() {
 	Actor_Put_In_Set(kActorRachael, 18);
 	Actor_Set_At_XYZ(kActorRachael, -260.15f, 12.0f, -19.16f, 256);
 	Actor_Change_Animation_Mode(kActorRachael, 0);
-	Outtake_Play(39, 1, -1);
+	Outtake_Play(kOuttakeRachel, true, -1);
 	Loop_Actor_Walk_To_XYZ(kActorRachael, -146.15f, 12.0f, -5.84f, 0, 0, false, 0);
 	Actor_Face_Actor(kActorRachael, kActorMcCoy, true);
 	Actor_Says(kActorRachael, 480, 14);

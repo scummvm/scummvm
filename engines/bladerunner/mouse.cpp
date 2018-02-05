@@ -270,9 +270,9 @@ void Mouse::tick(int x, int y) {
 	Vector3 mousePosition = getXYZ(x, y);
 	int cursorId = 0;
 
-	int isClickable = 0;
-	int isObstacle  = 0;
-	int isTarget    = 0;
+	bool isClickable = false;
+	bool isObstacle  = false;
+	bool isTarget    = false;
 
 	int sceneObjectId = _vm->_sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
 	int exitType = _vm->_scene->_exits->getTypeAtXY(x, y);
@@ -283,17 +283,17 @@ void Mouse::tick(int x, int y) {
 
 	if (exitType != -1) {
 		switch (exitType) {
-			case 1:
-				cursorId = 13;
-				break;
-			case 2:
-				cursorId = 14;
-				break;
-			case 3:
-				cursorId = 15;
-				break;
-			default:
-				cursorId = 12;
+		case 1:
+			cursorId = 13;
+			break;
+		case 2:
+			cursorId = 14;
+			break;
+		case 3:
+			cursorId = 15;
+			break;
+		default:
+			cursorId = 12;
 		}
 		setCursor(cursorId);
 		return;

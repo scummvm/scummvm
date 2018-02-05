@@ -127,7 +127,7 @@ bool SceneScriptKP03::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(417);
 				Game_Flag_Reset(420);
 				Game_Flag_Set(419);
-				Set_Enter(9, 45);
+				Set_Enter(9, kSceneKP05);
 			}
 			return true;
 		}
@@ -139,7 +139,7 @@ bool SceneScriptKP03::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(417);
 				Game_Flag_Reset(420);
 				Game_Flag_Set(418);
-				Set_Enter(44, 41);
+				Set_Enter(44, kSceneKP01);
 			}
 			return true;
 		}
@@ -255,7 +255,7 @@ void SceneScriptKP03::sub_401E54() {
 	Game_Flag_Reset(417);
 	Game_Flag_Reset(420);
 	Game_Flag_Set(419);
-	Set_Enter(9, 45);
+	Set_Enter(9, kSceneKP05);
 	Player_Gains_Control();
 }
 

@@ -104,7 +104,7 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 		if ((!Game_Flag_Query(474) && x > 125.0f) || Game_Flag_Query(474)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 235.0f, 1.15f, 29.0f, 0, 1, false, 0)) {
 				Game_Flag_Set(317);
-				Set_Enter(74, 86);
+				Set_Enter(74, kSceneUG01);
 				return true;
 			}
 		} else if (!Game_Flag_Query(474)) {
@@ -117,7 +117,7 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 				Loop_Actor_Travel_Stairs(kActorMcCoy, 9, 1, 0);
 				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -92.0f, 81.83f, -652.0f, 0, 0, false, 0);
 				Game_Flag_Set(337);
-				Set_Enter(76, 88);
+				Set_Enter(76, kSceneUG03);
 				return true;
 			}
 		} else if (!Game_Flag_Query(474)) {
@@ -129,7 +129,7 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 				Actor_Face_Heading(kActorMcCoy, 1001, false);
 				Loop_Actor_Travel_Ladder(kActorMcCoy, 1, 1, 0);
 				Game_Flag_Set(424);
-				Set_Enter(80, 92);
+				Set_Enter(80, kSceneUG07);
 				return true;
 			}
 		} else if (!Game_Flag_Query(474)) {
@@ -139,7 +139,7 @@ bool SceneScriptUG10::ClickedOnExit(int exitId) {
 		if ((!Game_Flag_Query(474) && x < 120.0f) || Game_Flag_Query(474)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 2.5f, 1.15f, 405.0f, 0, 1, false, 0)) {
 				Game_Flag_Set(347);
-				Set_Enter(86, 98);
+				Set_Enter(86, kSceneUG14);
 				return true;
 			}
 		} else if (!Game_Flag_Query(474)) {

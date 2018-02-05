@@ -106,7 +106,7 @@ bool SceneScriptPS06::ClickedOnExit(int exitId) {
 		Game_Flag_Set(23);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Set_Enter(15, 69);
+		Set_Enter(15, kScenePS05);
 		return true;
 	}
 	return false;

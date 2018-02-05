@@ -122,7 +122,7 @@ bool SceneScriptKP07::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(579);
-			Set_Enter(9, 46);
+			Set_Enter(9, kSceneKP06);
 		}
 		return true;
 	}

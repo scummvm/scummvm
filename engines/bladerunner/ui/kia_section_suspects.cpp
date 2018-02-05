@@ -27,7 +27,6 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/crimes_database.h"
 #include "bladerunner/font.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/shape.h"
@@ -41,7 +40,6 @@
 #include "bladerunner/ui/ui_container.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/ui/ui_scroll_box.h"
-
 
 #include "graphics/surface.h"
 
@@ -340,18 +338,18 @@ void KIASectionSuspects::mouseUpCallback(int buttonId, void *callbackData) {
 
 void KIASectionSuspects::onButtonPressed(int buttonId) {
 	switch (buttonId) {
-		case 0:
-			enableAllFilters();
-			break;
-		case 1:
-			disableAllFilters();
-			break;
-		case 2:
-			prevSuspect();
-			break;
-		case 3:
-			nextSuspect();
-			break;
+	case 0:
+		enableAllFilters();
+		break;
+	case 1:
+		disableAllFilters();
+		break;
+	case 2:
+		prevSuspect();
+		break;
+	case 3:
+		nextSuspect();
+		break;
 	}
 }
 

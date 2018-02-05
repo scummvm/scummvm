@@ -26,7 +26,7 @@
 #include "common/str.h"
 
 namespace Graphics {
-	struct Surface;
+struct Surface;
 }
 
 namespace BladeRunner {

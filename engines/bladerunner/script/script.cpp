@@ -1085,9 +1085,9 @@ void ScriptBase::ESPER_Flag_To_Activate() {
 	}
 }
 
-bool ScriptBase::Voight_Kampff_Activate(int a1, int a2){
+bool ScriptBase::Voight_Kampff_Activate(int actorId, int a2){
 	//TODO
-	warning("Voight_Kampff_Activate(%d, %d)", a1, a2);
+	warning("Voight_Kampff_Activate(%d, %d)", actorId, a2);
 	return false;
 }
 
@@ -1295,9 +1295,9 @@ void ScriptBase::ESPER_Define_Special_Region(int regionId, int a2, int a3, int a
 	_vm->_esper->defineRegion(regionId, Common::Rect(a2, a3, a4, a5), Common::Rect(a6, a7, a8, a9), Common::Rect(a10, a11, a12, a13), name);
 }
 
-void ScriptBase::VK_Add_Question(int a1, int a2, int a3) {
+void ScriptBase::VK_Add_Question(int intensity, int questionId, int a3) {
 	//TODO
-	warning("VK_Add_Question(%d, %d, %d)", a1, a2, a3);
+	warning("VK_Add_Question(%d, %d, %d)", intensity, questionId, a3);
 }
 
 void ScriptBase::VK_Eye_Animates(int a1) {
@@ -1310,9 +1310,9 @@ void ScriptBase::VK_Subject_Reacts(int a1, int a2, int a3, int a4) {
 	warning("VK_Subject_Reacts(%d, %d, %d, %d)", a1, a2, a3, a4);
 }
 
-void ScriptBase::VK_Play_Speech_Line(int actorIndex, int a2, float a3) {
+void ScriptBase::VK_Play_Speech_Line(int actorId, int sentenceId, float a3) {
 	//TODO
-	warning("VK_Play_Speech_Line(%d, %d, %g)", actorIndex, a2, a3);
+	warning("VK_Play_Speech_Line(%d, %d, %g)", actorId, sentenceId, a3);
 }
 
 } // End of namespace BladeRunner

@@ -121,7 +121,7 @@ bool SceneScriptNR07::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(442);
-			Set_Enter(56, 59);
+			Set_Enter(56, kSceneNR06);
 		}
 		return true;
 	}
@@ -307,7 +307,7 @@ void SceneScriptNR07::sub_402284() {
 	Actor_Says(kActorDektora, 720, 30);
 	Actor_Says(kActorDektora, 730, 30);
 	Actor_Says(kActorMcCoy, 3685, 13);
-	Voight_Kampff_Activate(3, 40);
+	Voight_Kampff_Activate(kActorDektora, 40);
 	if (Game_Flag_Query(47)) {
 		sub_401A10();
 	} else {

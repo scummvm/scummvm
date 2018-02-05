@@ -23,7 +23,6 @@
 #include "bladerunner/actor_clues.h"
 
 #include "bladerunner/bladerunner.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/crimes_database.h"
 

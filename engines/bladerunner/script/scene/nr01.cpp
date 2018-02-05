@@ -116,7 +116,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
 				Game_Flag_Set(535);
-				Set_Enter(55, 56);
+				Set_Enter(55, kSceneNR03);
 			}
 		}
 		return true;
@@ -128,7 +128,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(343);
-			Set_Enter(79, 91);
+			Set_Enter(79, kSceneUG06);
 		}
 		return true;
 	}
@@ -137,7 +137,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(532);
-			Set_Enter(11, 55);
+			Set_Enter(11, kSceneNR02);
 		}
 		return true;
 	}
@@ -156,7 +156,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(257);
 				Game_Flag_Reset(255);
 				Game_Flag_Set(256);
-				Set_Enter(37, 34);
+				Set_Enter(37, kSceneHF01);
 				Scene_Loop_Start_Special(1, 3, 1);
 				break;
 			case 7:
@@ -164,7 +164,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(255);
 				Game_Flag_Reset(247);
 				Game_Flag_Set(254);
-				Set_Enter(20, 2);
+				Set_Enter(20, kSceneBB01);
 				Scene_Loop_Start_Special(1, 3, 1);
 				break;
 			case 6:
@@ -172,7 +172,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(255);
 				Game_Flag_Reset(247);
 				Game_Flag_Set(253);
-				Set_Enter(7, 25);
+				Set_Enter(7, kSceneDR01);
 				Scene_Loop_Start_Special(1, 3, 1);
 				break;
 			case 5:
@@ -180,7 +180,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(255);
 				Game_Flag_Reset(247);
 				Game_Flag_Set(307);
-				Set_Enter(17, 82);
+				Set_Enter(17, kSceneTB02);
 				Scene_Loop_Start_Special(1, 3, 1);
 				break;
 			case 4:
@@ -188,7 +188,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(255);
 				Game_Flag_Reset(247);
 				Game_Flag_Set(252);
-				Set_Enter(0, 0);
+				Set_Enter(0, kSceneAR01);
 				Scene_Loop_Start_Special(1, 3, 1);
 				break;
 			case 3:
@@ -196,7 +196,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(255);
 				Game_Flag_Reset(247);
 				Game_Flag_Set(248);
-				Set_Enter(4, 13);
+				Set_Enter(4, kSceneCT01);
 				Scene_Loop_Start_Special(1, 3, 1);
 				break;
 			case 2:
@@ -204,7 +204,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(255);
 				Game_Flag_Reset(247);
 				Game_Flag_Set(249);
-				Set_Enter(69, 78);
+				Set_Enter(69, kSceneRC01);
 				Scene_Loop_Start_Special(1, 3, 1);
 				break;
 			case 1:
@@ -212,7 +212,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(255);
 				Game_Flag_Reset(247);
 				Game_Flag_Set(250);
-				Set_Enter(49, 48);
+				Set_Enter(49, kSceneMA01);
 				Scene_Loop_Start_Special(1, 3, 1);
 				break;
 			case 0:
@@ -220,7 +220,7 @@ bool SceneScriptNR01::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(255);
 				Game_Flag_Reset(247);
 				Game_Flag_Set(251);
-				Set_Enter(61, 65);
+				Set_Enter(61, kScenePS01);
 				Scene_Loop_Start_Special(1, 3, 1);
 				break;
 			default:
@@ -303,7 +303,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 	}
 	if (Game_Flag_Query(632)) {
 		Delay(3500);
-		Set_Enter(60, 64);
+		Set_Enter(60, kSceneNR11);
 		//return true;
 		return;
 	}
@@ -421,8 +421,8 @@ void SceneScriptNR01::PlayerWalkedOut() {
 	if (!Game_Flag_Query(343) && !Game_Flag_Query(532) && !Game_Flag_Query(535) && !Game_Flag_Query(632) && !Game_Flag_Query(722)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(30, 1, -1);
-		Outtake_Play(35, 1, -1);
+		Outtake_Play(kOuttakeAway1, true, -1);
+		Outtake_Play(kOuttakeInside2, true, -1);
 	}
 	Game_Flag_Reset(722);
 }

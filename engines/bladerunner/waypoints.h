@@ -31,8 +31,9 @@
 namespace BladeRunner {
 
 class Waypoints {
+#if BLADERUNNER_DEBUG_RENDERING
 	friend class BladeRunnerEngine;
-
+#endif
 	struct Waypoint {
 		int     setId;
 		Vector3 position;

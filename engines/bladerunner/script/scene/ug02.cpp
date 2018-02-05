@@ -157,7 +157,7 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 				int v4 = Player_Query_Combat_Mode();
 				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -95.0f, 74.870003f, -503.0f, 0, 0, v4, 0);
 				Game_Flag_Set(315);
-				Set_Enter(74, 86);
+				Set_Enter(74, kSceneUG01);
 			}
 		}
 		return true;
@@ -181,7 +181,7 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 			Game_Flag_Set(403);
 			Item_Remove_From_World(121);
 		}
-		Set_Enter(8, 33);
+		Set_Enter(8, kSceneHC03);
 		return true;
 	}
 	return false;

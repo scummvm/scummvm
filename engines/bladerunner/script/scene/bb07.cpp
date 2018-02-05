@@ -111,7 +111,7 @@ bool SceneScriptBB07::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Overlay_Remove("BB07OVER");
 			Game_Flag_Set(300);
-			Set_Enter(22, 6);
+			Set_Enter(22, kSceneBB05);
 		}
 		return true;
 	}
@@ -121,7 +121,7 @@ bool SceneScriptBB07::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Overlay_Remove("BB07OVER");
 			Game_Flag_Set(364);
-			Set_Enter(102, 120);
+			Set_Enter(102, kSceneBB12);
 		}
 		return true;
 	}
@@ -131,7 +131,7 @@ bool SceneScriptBB07::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Overlay_Remove("BB07OVER");
 			Game_Flag_Set(362);
-			Set_Enter(2, 7);
+			Set_Enter(2, kSceneBB06);
 		}
 		return true;
 	}

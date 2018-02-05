@@ -409,12 +409,12 @@ DECLARE_SCRIPT(PS15)
 END_SCRIPT
 
 DECLARE_SCRIPT(RC01)
-	void sub_403850();
+	void investigateCrowd();
 	void walkToCenter();
 END_SCRIPT
 
 DECLARE_SCRIPT(RC02)
-	void sub_402A7C();
+	void dialogueWithRunciter();
 END_SCRIPT
 
 DECLARE_SCRIPT(RC03)

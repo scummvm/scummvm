@@ -108,7 +108,7 @@ bool SceneScriptPS15::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(204);
-			Set_Enter(15, 69);
+			Set_Enter(15, kScenePS05);
 		}
 		return true;
 	}
@@ -119,7 +119,7 @@ bool SceneScriptPS15::ClickedOnExit(int exitId) {
 			Sound_Play(155, 90, 0, 0, 50);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Set_Enter(14, 73);
+			Set_Enter(14, kScenePS10);
 		}
 		return true;
 	}

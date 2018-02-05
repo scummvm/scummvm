@@ -50,7 +50,7 @@ Scene::Scene(BladeRunnerEngine *vm)
 	_vqaPlayer(nullptr),
 	_defaultLoop(0),
 	_defaultLoopSet(false),
-	_specialLoopMode(0),
+	_specialLoopMode(kSceneLoopModeLoseControl),
 	_specialLoop(0),
 	_specialLoopAtEnd(false),
 	// _introFinished(false),
@@ -79,7 +79,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	_setId = setId;
 	_sceneId = sceneId;
 
-	const Common::String setName = _vm->_gameInfo->getSceneName(_sceneId);
+	const Common::String sceneName = _vm->_gameInfo->getSceneName(_sceneId);
 
 	if (isLoadingGame) {
 		// TODO: Set up overlays
@@ -99,9 +99,9 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	Common::String vqaName;
 	int currentResourceId = _vm->_chapters->currentResourceId();
 	if (currentResourceId == 1) {
-		vqaName = Common::String::format("%s.VQA", setName.c_str());
+		vqaName = Common::String::format("%s.VQA", sceneName.c_str());
 	} else {
-		vqaName = Common::String::format("%s_%d.VQA", setName.c_str(), MIN(currentResourceId, 3));
+		vqaName = Common::String::format("%s_%d.VQA", sceneName.c_str(), MIN(currentResourceId, 3));
 	}
 
 	if (_vqaPlayer != nullptr) {
@@ -110,7 +110,6 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 
 	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
 
-	Common::String sceneName = _vm->_gameInfo->getSceneName(sceneId);
 	if (!_vm->_sceneScript->Open(sceneName)) {
 		return false;
 	}
@@ -128,8 +127,9 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 
 	if (isLoadingGame) {
 		// TODO: Advance VQA frame
-		if (sceneId >= 73 && sceneId <= 76)
+		if (sceneId == kScenePS10 || sceneId == kScenePS11 || sceneId == kScenePS12 || sceneId == kScenePS13) { // police maze?
 			_vm->_sceneScript->SceneLoaded();
+		}
 		return true;
 	}
 
@@ -173,7 +173,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	// TODO: add all items to scene
 	// TODO: calculate walking obstacles??
 
-	if (_specialLoopMode) {
+	if (_specialLoopMode != kSceneLoopModeLoseControl) {
 		_vm->_sceneScript->PlayerWalkedIn();
 	}
 

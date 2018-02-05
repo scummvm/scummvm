@@ -98,7 +98,7 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(kFlagMA01toMA06);
-			Set_Enter(52, 52);
+			Set_Enter(52, kSceneMA06);
 		}
 		return true;
 	}
@@ -121,63 +121,63 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(178);
 				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(251);
-				Set_Enter(61, 65);
+				Set_Enter(61, kScenePS01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationRuncitersAnimals:
 				Game_Flag_Set(182);
 				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(249);
-				Set_Enter(69, 78);
+				Set_Enter(69, kSceneRC01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationChinatown:
 				Game_Flag_Set(176);
 				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(248);
-				Set_Enter(4, 13);
+				Set_Enter(4, kSceneCT01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationTyrellBuilding:
 				Game_Flag_Set(261);
 				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(307);
-				Set_Enter(17, 82);
+				Set_Enter(17, kSceneTB02);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationAnimoidRow:
 				Game_Flag_Set(180);
 				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(252);
-				Set_Enter(0, 0);
+				Set_Enter(0, kSceneAR01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationDNARow:
 				Game_Flag_Set(177);
 				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(253);
-				Set_Enter(7, 25);
+				Set_Enter(7, kSceneDR01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationBradburyBuilding:
 				Game_Flag_Set(258);
 				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(254);
-				Set_Enter(20, 2);
+				Set_Enter(20, kSceneBB01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationNightclubRow:
 				Game_Flag_Set(181);
 				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(255);
-				Set_Enter(54, 54);
+				Set_Enter(54, kSceneNR01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationHysteriaHall:
 				Game_Flag_Set(257);
 				Game_Flag_Reset(kFlagMA01Locked);
 				Game_Flag_Set(256);
-				Set_Enter(37, 34);
+				Set_Enter(37, kSceneHF01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			default:
@@ -245,9 +245,9 @@ void SceneScriptMA01::PlayerWalkedOut() {
 	if (!Game_Flag_Query(37) && Global_Variable_Query(1) == 1) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(37, 1, -1);
-		Outtake_Play(34, 1, -1);
-		Outtake_Play(36, 1, -1);
+		Outtake_Play(kOuttakeTowards2, true, -1);
+		Outtake_Play(kOuttakeInside1, true, -1);
+		Outtake_Play(kOuttakeTowards1, true, -1);
 	}
 }
 

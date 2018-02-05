@@ -27,7 +27,7 @@ namespace BladeRunner {
 void SceneScriptRC01::InitializeScene() {
 #if BLADERUNNER_DEBUG_GAME
 	//TODO: not part of game, remove
-	Game_Flag_Set(kFlagIntroPlayed); // force skip intro
+	// Game_Flag_Set(kFlagIntroPlayed); // force skip intro
 	Game_Flag_Set(kFlagRC02toRC01); // no landing
 	// Game_Flag_Set(kFlagRC01PoliceDone);
 	// Game_Flag_Set(kFlagKIAPrivacyAddon);
@@ -212,7 +212,7 @@ bool SceneScriptRC01::ClickedOn3DObject(const char *objectName, bool a2) {
 		|| Object_Query_Click("70_3", objectName)
 		|| Object_Query_Click("70_5", objectName)
 		|| Object_Query_Click("70_6", objectName)) {
-		sub_403850();
+		investigateCrowd();
 		return true;
 	}
 
@@ -345,7 +345,6 @@ bool SceneScriptRC01::ClickedOnItem(int itemId, bool a2) {
 		return true;
 	}
 	return false;
-
 }
 
 void SceneScriptRC01::walkToCenter() {
@@ -367,7 +366,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				case 1:
 				case 4:
 					Game_Flag_Set(8);
-					Set_Enter(16, 79);
+					Set_Enter(16, kSceneRC02);
 					break;
 				case 2:
 				case 3:
@@ -416,7 +415,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(178);
 				Game_Flag_Reset(249);
 				Game_Flag_Set(251);
-				Set_Enter(61, 65);
+				Set_Enter(61, kScenePS01);
 				if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 					Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 9, true);
 				} else {
@@ -427,7 +426,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(179);
 				Game_Flag_Reset(249);
 				Game_Flag_Set(250);
-				Set_Enter(49, 48);
+				Set_Enter(49, kSceneMA01);
 				if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 					Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 9, true);
 				} else {
@@ -438,7 +437,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(176);
 				Game_Flag_Reset(249);
 				Game_Flag_Set(248);
-				Set_Enter(4, 13);
+				Set_Enter(4, kSceneCT01);
 				if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 					Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 9, true);
 				} else {
@@ -449,7 +448,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(261);
 				Game_Flag_Reset(249);
 				Game_Flag_Set(307);
-				Set_Enter(17, 82);
+				Set_Enter(17, kSceneTB02);
 				if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 					Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 9, true);
 				} else {
@@ -460,7 +459,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(180);
 				Game_Flag_Reset(249);
 				Game_Flag_Set(252);
-				Set_Enter(0, 0);
+				Set_Enter(0, kSceneAR01);
 				if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 					Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 9, true);
 				} else {
@@ -471,7 +470,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(177);
 				Game_Flag_Reset(249);
 				Game_Flag_Set(253);
-				Set_Enter(7, 25);
+				Set_Enter(7, kSceneDR01);
 				if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 					Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 9, true);
 				} else {
@@ -482,7 +481,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(258);
 				Game_Flag_Reset(249);
 				Game_Flag_Set(254);
-				Set_Enter(20, 2);
+				Set_Enter(20, kSceneBB01);
 				if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 					Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 9, true);
 				} else {
@@ -493,7 +492,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(181);
 				Game_Flag_Reset(249);
 				Game_Flag_Set(255);
-				Set_Enter(54, 54);
+				Set_Enter(54, kSceneNR01);
 				if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 					Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 9, true);
 				} else {
@@ -504,7 +503,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 				Game_Flag_Set(257);
 				Game_Flag_Reset(249);
 				Game_Flag_Set(256);
-				Set_Enter(37, 34);
+				Set_Enter(37, kSceneHF01);
 				if (Game_Flag_Query(kFlagRC01PoliceDone)) {
 					Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 9, true);
 				} else {
@@ -523,14 +522,14 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 			Game_Flag_Set(115);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Set_Enter(70, 80);
+			Set_Enter(70, kSceneRC03);
 		}
 		return true;
 	}
 	return false;
 }
 
-void SceneScriptRC01::sub_403850() {
+void SceneScriptRC01::investigateCrowd() {
 	if (!Game_Flag_Query(kFlagRC01PoliceDone) && !Loop_Actor_Walk_To_Scene_Object(kActorMcCoy, "BARICADE03", 36, true, false)) {
 		Actor_Set_Goal_Number(kActorOfficerLeary, 0);
 		Actor_Face_Object(kActorMcCoy, "BARICADE03", true);
@@ -545,7 +544,7 @@ void SceneScriptRC01::sub_403850() {
 
 bool SceneScriptRC01::ClickedOn2DRegion(int region) {
 	if (region == 0) {
-		sub_403850();
+		investigateCrowd();
 		return true;
 	}
 	return false;
@@ -613,7 +612,7 @@ void SceneScriptRC01::PlayerWalkedOut() {
 	if (!Game_Flag_Query(8) && !Game_Flag_Query(115) && Global_Variable_Query(1)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Outtake_Play(31, 1, -1);
+		Outtake_Play(kOuttakeAway2, 1, -1);
 	}
 	//	return 1;
 }

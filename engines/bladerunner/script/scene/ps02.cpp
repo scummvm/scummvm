@@ -53,34 +53,34 @@ bool SceneScriptPS02::ClickedOn3DObject(const char *objectName, bool a2) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Set_Enter(61, 65);
+				Set_Enter(61, kScenePS01);
 				Scene_Loop_Start_Special(1, 3, 1);
 			}
 		} else if (Game_Flag_Query(22) ) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Set_Enter(15, 69);
+				Set_Enter(15, kScenePS05);
 				Scene_Loop_Start_Special(1, 3, 1);
 			}
 		} else if (Game_Flag_Query(131) ) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Set_Enter(66, 71);
+				Set_Enter(66, kScenePS07);
 				Scene_Loop_Start_Special(1, 3, 1);
 			}
 		} else if (Game_Flag_Query(132) ) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Set_Enter(63, 67);
+				Set_Enter(63, kScenePS03);
 				Scene_Loop_Start_Special(1, 3, 1);
 			}
 		} else if (Game_Flag_Query(133)  && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Set_Enter(67, 72);
+			Set_Enter(67, kScenePS09);
 			Scene_Loop_Start_Special(1, 3, 1);
 		}
 	}
@@ -123,19 +123,19 @@ void SceneScriptPS02::PlayerWalkedIn() {
 	sub_4018BC();
 	Player_Loses_Control();
 	if (Game_Flag_Query(130) ) {
-		Set_Enter(61, 65);
+		Set_Enter(61, kScenePS01);
 		Scene_Loop_Start_Special(1, 3, 1);
 	} else if (Game_Flag_Query(22) ) {
-		Set_Enter(15, 69);
+		Set_Enter(15, kScenePS05);
 		Scene_Loop_Start_Special(1, 3, 1);
 	} else if (Game_Flag_Query(131) ) {
-		Set_Enter(66, 71);
+		Set_Enter(66, kScenePS07);
 		Scene_Loop_Start_Special(1, 3, 1);
 	} else if (Game_Flag_Query(132) ) {
-		Set_Enter(63, 67);
+		Set_Enter(63, kScenePS03);
 		Scene_Loop_Start_Special(1, 3, 1);
 	} else if (Game_Flag_Query(133) ) {
-		Set_Enter(67, 72);
+		Set_Enter(67, kScenePS09);
 		Scene_Loop_Start_Special(1, 3, 1);
 	}
 	//return true;

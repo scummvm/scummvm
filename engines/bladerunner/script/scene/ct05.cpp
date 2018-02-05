@@ -142,7 +142,7 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 			if (Actor_Query_Goal_Number(kActorGaff) == 1) {
 				Overlay_Remove("ct05over");
 			}
-			Set_Enter(4, 24);
+			Set_Enter(4, kSceneCT12);
 		}
 		return true;
 	}
@@ -154,7 +154,7 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 				Actor_Set_Goal_Number(kActorGaff, 5);
 				Game_Flag_Set(409);
 			}
-			Set_Enter(5, 16);
+			Set_Enter(5, kSceneCT04);
 		}
 		return true;
 	}
@@ -170,7 +170,7 @@ bool SceneScriptCT05::ClickedOnExit(int exitId) {
 			if (Actor_Query_Goal_Number(kActorGaff) == 1) {
 				Overlay_Remove("ct05over");
 			}
-			Set_Enter(29, 18);
+			Set_Enter(29, kSceneCT06);
 		}
 		return true;
 	}

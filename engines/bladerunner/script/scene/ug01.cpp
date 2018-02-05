@@ -101,7 +101,7 @@ bool SceneScriptUG01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -32.0f, -50.13f, -1350.0f, 12, 1, false, 0)) {
 			Game_Flag_Set(316);
-			Set_Enter(83, 95);
+			Set_Enter(83, kSceneUG10);
 		}
 		return true;
 	}
@@ -112,14 +112,14 @@ bool SceneScriptUG01::ClickedOnExit(int exitId) {
 			Game_Flag_Set(119);
 			Game_Flag_Reset(259);
 			Game_Flag_Set(182);
-			Set_Enter(70, 80);
+			Set_Enter(70, kSceneRC03);
 		}
 		return true;
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -126.0f, -50.13f, -286.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(314);
-			Set_Enter(75, 87);
+			Set_Enter(75, kSceneUG02);
 		}
 		return true;
 	}

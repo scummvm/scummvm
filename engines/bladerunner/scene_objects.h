@@ -34,19 +34,21 @@ class View;
 
 enum SceneObjectType {
 	kSceneObjectTypeUnknown = -1,
-	kSceneObjectTypeActor = 0,
-	kSceneObjectTypeObject = 1,
-	kSceneObjectTypeItem = 2
+	kSceneObjectTypeActor   = 0,
+	kSceneObjectTypeObject  = 1,
+	kSceneObjectTypeItem    = 2
 };
 
 enum SceneObjectOffset {
-	kSceneObjectOffsetActors = 0,
-	kSceneObjectOffsetItems = 74,
+	kSceneObjectOffsetActors  = 0,
+	kSceneObjectOffsetItems   = 74,
 	kSceneObjectOffsetObjects = 198
 };
 
 class SceneObjects {
+#if BLADERUNNER_DEBUG_RENDERING
 	friend class BladeRunnerEngine;
+#endif
 	static const int kSceneObjectCount = 115;
 
 	struct SceneObject {
@@ -55,13 +57,13 @@ class SceneObjects {
 		BoundingBox     boundingBox;
 		Common::Rect    screenRectangle;
 		float           distanceToCamera;
-		int             present;
-		int             isClickable;
-		int             isObstacle;
+		bool            isPresent;
+		bool            isClickable;
+		bool            isObstacle;
 		int             unknown1;
-		int             isTarget;
-		int             isMoving;
-		int             isRetired;
+		bool            isTarget;
+		bool            isMoving;
+		bool            isRetired;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -75,12 +77,12 @@ public:
 	SceneObjects(BladeRunnerEngine *vm, View *view);
 	~SceneObjects();
 
-	bool addActor(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 unknown1, uint8 isTarget, uint8 isRetired);
-	bool addObject(int sceneObjectId, BoundingBox *boundingBox, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget);
-	bool addItem(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isTarget, uint8 isObstacle);
+	bool addActor(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isClickable, bool isMoving, bool isTarget, bool isRetired);
+	bool addObject(int sceneObjectId, BoundingBox *boundingBox, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget);
+	bool addItem(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isTarget, bool isObstacle);
 	bool remove(int sceneObjectId);
 	void clear();
-	int findByXYZ(int *isClickable, int *isObstacle, int *isTarget, float x, float y, float z, int findClickables, int findObstacles, int findTargets) const;
+	int findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget, float x, float y, float z, bool findClickables, bool findObstacles, bool findTargets) const;
 	bool existsOnXZ(int exceptSceneObjectId, float x, float z, bool a5, bool a6) const;
 	void setMoving(int sceneObjectId, bool isMoving);
 	void setRetired(int sceneObjectId, bool isRetired);
@@ -92,7 +94,7 @@ public:
 
 private:
 	int findById(int sceneObjectId) const;
-	bool addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox *boundingBox, Common::Rect *screenRectangle, uint8 isClickable, uint8 isObstacle, uint8 unknown1, uint8 isTarget, uint unknown2, uint isRetired);
+	bool addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget, bool isMoving, bool isRetired);
 	int findEmpty() const;
 };
 

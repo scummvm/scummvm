@@ -138,17 +138,17 @@ void KIA::open(KIASections sectionId) {
 	}
 
 	switch (_currentSectionId) {
-		case kKIASectionCrimes:
-			_crimesSection->saveToLog();
-			break;
-		case kKIASectionSuspects:
-			_suspectsSection->saveToLog();
-			break;
-		case kKIASectionClues:
-			_cluesSection->saveToLog();
-			break;
-		default:
-			break;
+	case kKIASectionCrimes:
+		_crimesSection->saveToLog();
+		break;
+	case kKIASectionSuspects:
+		_suspectsSection->saveToLog();
+		break;
+	case kKIASectionClues:
+		_cluesSection->saveToLog();
+		break;
+	default:
+		break;
 	}
 
 	if (sectionId != kKIASectionCrimes && sectionId != kKIASectionSuspects && sectionId != kKIASectionClues) {
@@ -443,52 +443,52 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 		return;
 	}
 	switch (kbd.keycode) {
-		case Common::KEYCODE_F1:
-			open(kKIASectionHelp);
-			break;
-		case Common::KEYCODE_F2:
+	case Common::KEYCODE_F1:
+		open(kKIASectionHelp);
+		break;
+	case Common::KEYCODE_F2:
+		if (!_forceOpen) {
+			open(kKIASectionSave);
+		}
+		break;
+	case Common::KEYCODE_F3:
+		open(kKIASectionLoad);
+		break;
+	case Common::KEYCODE_F10:
+		open(kKIASectionQuit);
+		break;
+	case Common::KEYCODE_F4:
+		if (_currentSectionId != kKIASectionCrimes) {
 			if (!_forceOpen) {
-				open(kKIASectionSave);
+				open(kKIASectionCrimes);
+				_log->next();
+				_log->clearFuture();
 			}
-			break;
-		case Common::KEYCODE_F3:
-			open(kKIASectionLoad);
-			break;
-		case Common::KEYCODE_F10:
-			open(kKIASectionQuit);
-			break;
-		case Common::KEYCODE_F4:
-			if (_currentSectionId != kKIASectionCrimes) {
-				if (!_forceOpen) {
-					open(kKIASectionCrimes);
-					_log->next();
-					_log->clearFuture();
-				}
+		}
+		break;
+	case Common::KEYCODE_F5:
+		if (_currentSectionId != kKIASectionSuspects) {
+			if (_forceOpen) {
+				open(kKIASectionSuspects);
+				_log->next();
+				_log->clearFuture();
 			}
-			break;
-		case Common::KEYCODE_F5:
-			if (_currentSectionId != kKIASectionSuspects) {
-				if (_forceOpen) {
-					open(kKIASectionSuspects);
-					_log->next();
-					_log->clearFuture();
-				}
+		}
+		break;
+	case Common::KEYCODE_F6:
+		if (_currentSectionId != kKIASectionClues) {
+			if (!_forceOpen) {
+				open(kKIASectionClues);
+				_log->next();
+				_log->clearFuture();
 			}
-			break;
-		case Common::KEYCODE_F6:
-			if (_currentSectionId != kKIASectionClues) {
-				if (!_forceOpen) {
-					open(kKIASectionClues);
-					_log->next();
-					_log->clearFuture();
-				}
-			}
-			break;
-		default:
-			if (_currentSection) {
-				_currentSection->handleKeyDown(kbd);
-			}
-			break;
+		}
+		break;
+	default:
+		if (_currentSection) {
+			_currentSection->handleKeyDown(kbd);
+		}
+		break;
 	}
 	if (_currentSection && _currentSection->_scheduledSwitch) {
 		open(kKIASectionNone);
@@ -548,61 +548,63 @@ void KIA::playPhotograph(int photographId) {
 void KIA::mouseDownCallback(int buttonId, void *callbackData) {
 	KIA *self = (KIA *)callbackData;
 	switch (buttonId) {
-		case 0:
-		case 6:
-			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(503), 100, -65, -65, 50, 0);
-			break;
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 7:
-		case 8:
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-		case 13:
-		case 14:
-			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(505), 70, 0, 0, 50, 0);
-			if (buttonId == 12){
-				self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(596), 70, 0, 0, 50, 0);
-			}
-			break;
-		case 15:
-			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(503), 70, 0, 0, 50, 0);
-			break;
+	case 0:
+	case 6:
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(503), 100, -65, -65, 50, 0);
+		break;
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(505), 70, 0, 0, 50, 0);
+		if (buttonId == 12){
+			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(596), 70, 0, 0, 50, 0);
+		}
+		break;
+	case 15:
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(503), 70, 0, 0, 50, 0);
+		break;
+	default:
+		break;
 	}
 }
 
 void KIA::mouseUpCallback(int buttonId, void *callbackData) {
 	KIA *self = (KIA *)callbackData;
 	switch (buttonId) {
-		case 0:
-		case 6:
-			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(504), 100, -65, -65, 50, 0);
-			break;
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 7:
-		case 8:
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-		case 13:
-		case 14:
-			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(506), 70, 0, 0, 50, 0);
-			break;
-		case 15:
-			self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(504), 100, 0, 0, 50, 0);
-			break;
-		default:
-			break;
+	case 0:
+	case 6:
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(504), 100, -65, -65, 50, 0);
+		break;
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+	case 14:
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(506), 70, 0, 0, 50, 0);
+		break;
+	case 15:
+		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(504), 100, 0, 0, 50, 0);
+		break;
+	default:
+		break;
 	}
 	self->buttonClicked(buttonId);
 }
@@ -705,112 +707,112 @@ void KIA::createButtons(int sectionId) {
 	const Shape *shapeDown = nullptr;
 
 	switch (sectionId) {
-		case kKIASectionCrimes:
-		case kKIASectionSuspects:
-		case kKIASectionClues:
-			_buttons->defineImage(0, kiaButton6, nullptr, nullptr, _shapes->get(1), _vm->_textKIA->getText(23));
+	case kKIASectionCrimes:
+	case kKIASectionSuspects:
+	case kKIASectionClues:
+		_buttons->defineImage(0, kiaButton6, nullptr, nullptr, _shapes->get(1), _vm->_textKIA->getText(23));
 
-			if (sectionId == kKIASectionCrimes) {
-				shapeUp = _shapes->get(2);
-				shapeHovered = _shapes->get(2);
-				shapeDown = _shapes->get(10);
-			} else {
-				shapeUp = nullptr;
-				shapeHovered = nullptr;
-				shapeDown = _shapes->get(18);
-			}
-			_buttons->defineImage(1, kiaButton7, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(24));
+		if (sectionId == kKIASectionCrimes) {
+			shapeUp = _shapes->get(2);
+			shapeHovered = _shapes->get(2);
+			shapeDown = _shapes->get(10);
+		} else {
+			shapeUp = nullptr;
+			shapeHovered = nullptr;
+			shapeDown = _shapes->get(18);
+		}
+		_buttons->defineImage(1, kiaButton7, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(24));
 
-			if (sectionId == kKIASectionSuspects) {
-				shapeUp = _shapes->get(3);
-				shapeHovered = _shapes->get(3);
-				shapeDown = _shapes->get(11);
-			} else {
-				shapeUp = nullptr;
-				shapeHovered = nullptr;
-				shapeDown = _shapes->get(19);
-			}
-			_buttons->defineImage(2, kiaButton8, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(25));
+		if (sectionId == kKIASectionSuspects) {
+			shapeUp = _shapes->get(3);
+			shapeHovered = _shapes->get(3);
+			shapeDown = _shapes->get(11);
+		} else {
+			shapeUp = nullptr;
+			shapeHovered = nullptr;
+			shapeDown = _shapes->get(19);
+		}
+		_buttons->defineImage(2, kiaButton8, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(25));
 
-			if (sectionId == kKIASectionClues) {
-				shapeUp = _shapes->get(4);
-				shapeHovered = _shapes->get(4);
-				shapeDown = _shapes->get(12);
-			} else {
-				shapeUp = nullptr;
-				shapeHovered = nullptr;
-				shapeDown = _shapes->get(20);
-			}
-			_buttons->defineImage(3, kiaButton9, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(26));
+		if (sectionId == kKIASectionClues) {
+			shapeUp = _shapes->get(4);
+			shapeHovered = _shapes->get(4);
+			shapeDown = _shapes->get(12);
+		} else {
+			shapeUp = nullptr;
+			shapeHovered = nullptr;
+			shapeDown = _shapes->get(20);
+		}
+		_buttons->defineImage(3, kiaButton9, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(26));
 
-			_buttons->defineImage(4, kiaButton10, nullptr, nullptr, _shapes->get(21), _vm->_textKIA->getText(27));
+		_buttons->defineImage(4, kiaButton10, nullptr, nullptr, _shapes->get(21), _vm->_textKIA->getText(27));
 
-			_buttons->defineImage(5, kiaButton11, nullptr, nullptr, _shapes->get(22), _vm->_textKIA->getText(28));
+		_buttons->defineImage(5, kiaButton11, nullptr, nullptr, _shapes->get(22), _vm->_textKIA->getText(28));
 
-			_buttons->defineImage(14, kiaButton14, nullptr, nullptr, _shapes->get(23), _vm->_textKIA->getText(29));
+		_buttons->defineImage(14, kiaButton14, nullptr, nullptr, _shapes->get(23), _vm->_textKIA->getText(29));
 
-			break;
-		case kKIASectionSettings:
-		case kKIASectionHelp:
-		case kKIASectionSave:
-		case kKIASectionLoad:
-		case kKIASectionDiagnostic:
-		case kKIASectionPogo:
-			_buttons->defineImage(6, kiaButton6, nullptr, nullptr, _shapes->get(0), _vm->_textKIA->getText(37));
+		break;
+	case kKIASectionSettings:
+	case kKIASectionHelp:
+	case kKIASectionSave:
+	case kKIASectionLoad:
+	case kKIASectionDiagnostic:
+	case kKIASectionPogo:
+		_buttons->defineImage(6, kiaButton6, nullptr, nullptr, _shapes->get(0), _vm->_textKIA->getText(37));
 
-			if (sectionId == kKIASectionSettings) {
-				shapeUp = _shapes->get(5);
-				shapeHovered = _shapes->get(5);
-				shapeDown = _shapes->get(13);
-			} else {
-				shapeUp = nullptr;
-				shapeHovered = nullptr;
-				shapeDown = _shapes->get(24);
-			}
-			_buttons->defineImage(7, kiaButton7, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(38));
+		if (sectionId == kKIASectionSettings) {
+			shapeUp = _shapes->get(5);
+			shapeHovered = _shapes->get(5);
+			shapeDown = _shapes->get(13);
+		} else {
+			shapeUp = nullptr;
+			shapeHovered = nullptr;
+			shapeDown = _shapes->get(24);
+		}
+		_buttons->defineImage(7, kiaButton7, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(38));
 
-			if (sectionId == kKIASectionHelp) {
-				shapeUp = _shapes->get(6);
-				shapeHovered = _shapes->get(6);
-				shapeDown = _shapes->get(14);
-			} else {
-				shapeUp = nullptr;
-				shapeHovered = nullptr;
-				shapeDown = _shapes->get(25);
-			}
-			_buttons->defineImage(8, kiaButton8, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(41));
+		if (sectionId == kKIASectionHelp) {
+			shapeUp = _shapes->get(6);
+			shapeHovered = _shapes->get(6);
+			shapeDown = _shapes->get(14);
+		} else {
+			shapeUp = nullptr;
+			shapeHovered = nullptr;
+			shapeDown = _shapes->get(25);
+		}
+		_buttons->defineImage(8, kiaButton8, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(41));
 
-			if (sectionId == kKIASectionSave) {
-				shapeUp = _shapes->get(7);
-				shapeHovered = _shapes->get(7);
-				shapeDown = _shapes->get(15);
-			} else {
-				shapeUp = nullptr;
-				shapeHovered = nullptr;
-				shapeDown = _shapes->get(26);
-			}
-			_buttons->defineImage(9, kiaButton9, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(39));
+		if (sectionId == kKIASectionSave) {
+			shapeUp = _shapes->get(7);
+			shapeHovered = _shapes->get(7);
+			shapeDown = _shapes->get(15);
+		} else {
+			shapeUp = nullptr;
+			shapeHovered = nullptr;
+			shapeDown = _shapes->get(26);
+		}
+		_buttons->defineImage(9, kiaButton9, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(39));
 
-			if (sectionId == kKIASectionLoad) {
-				shapeUp = _shapes->get(8);
-				shapeHovered = _shapes->get(8);
-				shapeDown = _shapes->get(16);
-			} else {
-				shapeUp = nullptr;
-				shapeHovered = nullptr;
-				shapeDown = _shapes->get(27);
-			}
-			_buttons->defineImage(10, kiaButton10, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(40));
+		if (sectionId == kKIASectionLoad) {
+			shapeUp = _shapes->get(8);
+			shapeHovered = _shapes->get(8);
+			shapeDown = _shapes->get(16);
+		} else {
+			shapeUp = nullptr;
+			shapeHovered = nullptr;
+			shapeDown = _shapes->get(27);
+		}
+		_buttons->defineImage(10, kiaButton10, shapeUp, shapeHovered, shapeDown, _vm->_textKIA->getText(40));
 
-			_buttons->defineImage(11, kiaButton11, nullptr, nullptr, _shapes->get(28), _vm->_textKIA->getText(42));
+		_buttons->defineImage(11, kiaButton11, nullptr, nullptr, _shapes->get(28), _vm->_textKIA->getText(42));
 
-			_buttons->defineImage(14, kiaButton14, nullptr, nullptr, _shapes->get(29), _vm->_textKIA->getText(29));
+		_buttons->defineImage(14, kiaButton14, nullptr, nullptr, _shapes->get(29), _vm->_textKIA->getText(29));
 
-			break;
-		case 8:
-			_buttons->defineImage(12, kiaButton12, _shapes->get(124), _shapes->get(124), _shapes->get(48), _vm->_textKIA->getText(42));
+		break;
+	case kKIASectionQuit:
+		_buttons->defineImage(12, kiaButton12, _shapes->get(124), _shapes->get(124), _shapes->get(48), _vm->_textKIA->getText(42));
 
-			_buttons->defineImage(13, kiaButton13, _shapes->get(125), _shapes->get(125), _shapes->get(49), _vm->_textKIA->getText(29));
+		_buttons->defineImage(13, kiaButton13, _shapes->get(125), _shapes->get(125), _shapes->get(49), _vm->_textKIA->getText(29));
 			break;
 	}
 
@@ -852,146 +854,146 @@ void KIA::buttonClicked(int buttonId) {
 		return;
 	}
 	switch (buttonId) {
-		case 0:
-			open(kKIASectionSettings);
-			break;
-		case 1:
-			if (_currentSectionId != kKIASectionCrimes) {
+	case 0:
+		open(kKIASectionSettings);
+		break;
+	case 1:
+		if (_currentSectionId != kKIASectionCrimes) {
+			open(kKIASectionCrimes);
+			_log->next();
+			_log->clearFuture();
+		}
+		break;
+	case 2:
+		if (_currentSectionId != kKIASectionSuspects) {
+			open(kKIASectionSuspects);
+			_log->next();
+			_log->clearFuture();
+		}
+		break;
+	case 3:
+		if (_currentSectionId != kKIASectionClues) {
+			open(kKIASectionClues);
+			_log->next();
+			_log->clearFuture();
+		}
+		break;
+	case 4:
+		if (_log->hasPrev()) {
+			int kiaLogPrevType = _log->getPrevType();
+			switch (kiaLogPrevType) {
+			case 2:
+				open(kKIASectionCrimes);
+				_log->prev();
+				_crimesSection->loadFromLog();
+				break;
+			case 1:
+				open(kKIASectionSuspects);
+				_log->prev();
+				_suspectsSection->loadFromLog();
+				break;
+			case 0:
+				open(kKIASectionClues);
+				_log->prev();
+				_cluesSection->loadFromLog();
+				break;
+			}
+		}
+		break;
+	case 5:
+		if (_log->hasNext()) {
+			int kiaLogNextType = _log->getNextType();
+			switch (kiaLogNextType) {
+			case 2:
 				open(kKIASectionCrimes);
 				_log->next();
-				_log->clearFuture();
-			}
-			break;
-		case 2:
-			if (_currentSectionId != kKIASectionSuspects) {
+				_crimesSection->loadFromLog();
+				break;
+			case 1:
 				open(kKIASectionSuspects);
 				_log->next();
-				_log->clearFuture();
-			}
-			break;
-		case 3:
-			if (_currentSectionId != kKIASectionClues) {
+				_suspectsSection->loadFromLog();
+				break;
+			case 0:
 				open(kKIASectionClues);
 				_log->next();
-				_log->clearFuture();
+				_cluesSection->loadFromLog();
+				break;
 			}
-			break;
-		case 4:
-			if (_log->hasPrev()) {
-				int kiaLogPrevType = _log->getPrevType();
-				switch (kiaLogPrevType) {
-					case 2:
-						open(kKIASectionCrimes);
-						_log->prev();
-						_crimesSection->loadFromLog();
-						break;
-					case 1:
-						open(kKIASectionSuspects);
-						_log->prev();
-						_suspectsSection->loadFromLog();
-						break;
-					case 0:
-						open(kKIASectionClues);
-						_log->prev();
-						_cluesSection->loadFromLog();
-						break;
-				}
-			}
-			break;
-		case 5:
-			if (_log->hasNext()) {
-				int kiaLogNextType = _log->getNextType();
-				switch (kiaLogNextType) {
-					case 2:
-						open(kKIASectionCrimes);
-						_log->next();
-						_crimesSection->loadFromLog();
-						break;
-					case 1:
-						open(kKIASectionSuspects);
-						_log->next();
-						_suspectsSection->loadFromLog();
-						break;
-					case 0:
-						open(kKIASectionClues);
-						_log->next();
-						_cluesSection->loadFromLog();
-						break;
-				}
-			}
-			break;
-		case 6:
-			if (!_forceOpen) {
-				open(_lastSectionIdKIA);
-			}
-			break;
-		case 7:
-			open(kKIASectionSettings);
-			break;
-		case 8:
-			open(kKIASectionHelp);
-			break;
-		case 9:
-			if (!_forceOpen) {
-				open(kKIASectionSave);
-			}
-			break;
-		case 10:
-			open(kKIASectionLoad);
-			break;
-		case 11:
-			open(kKIASectionQuit);
-			break;
-		case 12:
-			_vm->_gameIsRunning = false;
+		}
+		break;
+	case 6:
+		if (!_forceOpen) {
+			open(_lastSectionIdKIA);
+		}
+		break;
+	case 7:
+		open(kKIASectionSettings);
+		break;
+	case 8:
+		open(kKIASectionHelp);
+		break;
+	case 9:
+		if (!_forceOpen) {
+			open(kKIASectionSave);
+		}
+		break;
+	case 10:
+		open(kKIASectionLoad);
+		break;
+	case 11:
+		open(kKIASectionQuit);
+		break;
+	case 12:
+		_vm->_gameIsRunning = false;
+		open(kKIASectionNone);
+		break;
+	case 13:
+		open(_lastSectionIdOptions);
+		break;
+	case 14:
+		if (!_forceOpen) {
 			open(kKIASectionNone);
-			break;
-		case 13:
-			open(_lastSectionIdOptions);
-			break;
-		case 14:
-			if (!_forceOpen) {
-				open(kKIASectionNone);
-			}
-			break;
-		case 15:
-			open(kKIASectionDiagnostic);
-			break;
-		case 16:
-			_vm->_settings->setAmmoType(0);
-			if (_vm->_rnd.getRandomNumber(1)) {
-				soundId = _vm->_combat->getHitSound();
-			} else {
-				soundId = _vm->_combat->getMissSound();
-			}
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(soundId), 70, 0, 0, 50, 0);
-			break;
-		case 17:
-			_vm->_settings->setAmmoType(1);
-			if (_vm->_rnd.getRandomNumber(1)) {
-				soundId = _vm->_combat->getHitSound();
-			} else {
-				soundId = _vm->_combat->getMissSound();
-			}
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(soundId), 70, 0, 0, 50, 0);
-			break;
-		case 18:
-			_vm->_settings->setAmmoType(2);
-			if (_vm->_rnd.getRandomNumber(1)) {
-				soundId = _vm->_combat->getHitSound();
-			} else {
-				soundId = _vm->_combat->getMissSound();
-			}
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(soundId), 70, 0, 0, 50, 0);
-			break;
-		case 19:
-			return;
-		case 20:
-			playerReset();
-			break;
-		case 21:
-			playPrivateAddon();
-			break;
+		}
+		break;
+	case 15:
+		open(kKIASectionDiagnostic);
+		break;
+	case 16:
+		_vm->_settings->setAmmoType(0);
+		if (_vm->_rnd.getRandomNumber(1)) {
+			soundId = _vm->_combat->getHitSound();
+		} else {
+			soundId = _vm->_combat->getMissSound();
+		}
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(soundId), 70, 0, 0, 50, 0);
+		break;
+	case 17:
+		_vm->_settings->setAmmoType(1);
+		if (_vm->_rnd.getRandomNumber(1)) {
+			soundId = _vm->_combat->getHitSound();
+		} else {
+			soundId = _vm->_combat->getMissSound();
+		}
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(soundId), 70, 0, 0, 50, 0);
+		break;
+	case 18:
+		_vm->_settings->setAmmoType(2);
+		if (_vm->_rnd.getRandomNumber(1)) {
+			soundId = _vm->_combat->getHitSound();
+		} else {
+			soundId = _vm->_combat->getMissSound();
+		}
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(soundId), 70, 0, 0, 50, 0);
+		break;
+	case 19:
+		return;
+	case 20:
+		playerReset();
+		break;
+	case 21:
+		playPrivateAddon();
+		break;
 	}
 }
 
@@ -1000,39 +1002,39 @@ void KIA::switchSection(int sectionId) {
 		_currentSection->close();
 	}
 	switch (sectionId) {
-		case kKIASectionCrimes:
-			_currentSection = _crimesSection;
-			break;
-		case kKIASectionSuspects:
-			_currentSection = _suspectsSection;
-			break;
-		case kKIASectionClues:
-			_currentSection = _cluesSection;
-			break;
-		case kKIASectionSettings:
-			_currentSection = _settingsSection;
-			break;
-		case kKIASectionHelp:
-			_currentSection = _helpSection;
-			break;
-		case kKIASectionSave:
-			_currentSection = _saveSection;
-			break;
-		case kKIASectionLoad:
-			_currentSection = _loadSection;
-			break;
-		case kKIASectionQuit:
-			_currentSection = nullptr;
-			break;
-		case kKIASectionDiagnostic:
-			_currentSection = _diagnosticSection;
-			break;
-		case kKIASectionPogo:
-			_currentSection = _pogoSection;
-			break;
-		default:
-			_currentSection = nullptr;
-			break;
+	case kKIASectionCrimes:
+		_currentSection = _crimesSection;
+		break;
+	case kKIASectionSuspects:
+		_currentSection = _suspectsSection;
+		break;
+	case kKIASectionClues:
+		_currentSection = _cluesSection;
+		break;
+	case kKIASectionSettings:
+		_currentSection = _settingsSection;
+		break;
+	case kKIASectionHelp:
+		_currentSection = _helpSection;
+		break;
+	case kKIASectionSave:
+		_currentSection = _saveSection;
+		break;
+	case kKIASectionLoad:
+		_currentSection = _loadSection;
+		break;
+	case kKIASectionQuit:
+		_currentSection = nullptr;
+		break;
+	case kKIASectionDiagnostic:
+		_currentSection = _diagnosticSection;
+		break;
+	case kKIASectionPogo:
+		_currentSection = _pogoSection;
+		break;
+	default:
+		_currentSection = nullptr;
+		break;
 	}
 	if (_currentSection) {
 		_currentSection->open();
@@ -1041,131 +1043,120 @@ void KIA::switchSection(int sectionId) {
 
 const char *KIA::getSectionVqaName(int sectionId) {
 	switch (sectionId) {
-		case kKIASectionCrimes:
-			return "kia_crim.vqa";
-		case kKIASectionSuspects:
-			return "kia_susp.vqa";
-		case kKIASectionClues:
-			return "kia_clue.vqa";
-		case kKIASectionSettings:
-		case kKIASectionHelp:
-		case kKIASectionSave:
-		case kKIASectionLoad:
-		case kKIASectionQuit:
-		case kKIASectionDiagnostic:
-		case kKIASectionPogo:
-			return "kia_ingm.vqa";
-		default:
-			return nullptr;
+	case kKIASectionCrimes:
+		return "kia_crim.vqa";
+	case kKIASectionSuspects:
+		return "kia_susp.vqa";
+	case kKIASectionClues:
+		return "kia_clue.vqa";
+	case kKIASectionSettings:
+	case kKIASectionHelp:
+	case kKIASectionSave:
+	case kKIASectionLoad:
+	case kKIASectionQuit:
+	case kKIASectionDiagnostic:
+	case kKIASectionPogo:
+		return "kia_ingm.vqa";
+	default:
+		return nullptr;
 	}
 }
 
 int KIA::getVqaLoopMain(int sectionId) {
 	switch (sectionId) {
-		case kKIASectionCrimes:
-		case kKIASectionSuspects:
-		case kKIASectionClues:
-			return 3;
-		case kKIASectionSettings:
-		case kKIASectionHelp:
-		case kKIASectionSave:
-		case kKIASectionLoad:
-		case kKIASectionDiagnostic:
-		case kKIASectionPogo:
-			return 4;
-		case kKIASectionQuit:
-			return 7;
-		default:
-			return 0;
+	case kKIASectionCrimes:
+	case kKIASectionSuspects:
+	case kKIASectionClues:
+		return 3;
+	case kKIASectionSettings:
+	case kKIASectionHelp:
+	case kKIASectionSave:
+	case kKIASectionLoad:
+	case kKIASectionDiagnostic:
+	case kKIASectionPogo:
+		return 4;
+	case kKIASectionQuit:
+		return 7;
+	default:
+		return 0;
 	}
 }
 
 int KIA::getVqaLoopTransition(int transitionId) {
 	switch (transitionId) {
-		case 0:
-		case 2:
-		case 7:
-		case 8:
-			return 0;
-		case 1:
-		case 4:
-		case 5:
-		case 9:
-			return 1;
-		case 3:
-		case 10:
-		case 11:
-		case 12:
-			return 2;
-		case 6:
-			return 3;
-		case 13:
-			return 6;
-		default:
-			return 0;
+	case 0:
+	case 2:
+	case 7:
+	case 8:
+		return 0;
+	case 1:
+	case 4:
+	case 5:
+	case 9:
+		return 1;
+	case 3:
+	case 10:
+	case 11:
+	case 12:
+		return 2;
+	case 6:
+		return 3;
+	case 13:
+		return 6;
+	default:
+		return 0;
 	}
 }
 
 int KIA::getTransitionId(int oldSectionId, int newSectionId) {
 	switch (oldSectionId) {
-		case kKIASectionNone:
-			return 0;
+	case kKIASectionNone:
+		return 0;
+	case kKIASectionCrimes:
+		switch (newSectionId) {
 		case kKIASectionCrimes:
-			switch (newSectionId) {
-				case kKIASectionCrimes:
-					return 0;
-				case kKIASectionSuspects:
-					return 1;
-				case kKIASectionClues:
-					return 2;
-				case kKIASectionSettings:
-				case kKIASectionHelp:
-				case kKIASectionSave:
-				case kKIASectionLoad:
-				case kKIASectionDiagnostic:
-				case kKIASectionPogo:
-					return 3;
-				case kKIASectionQuit:
-					return 13;
-			}
 			return 0;
 		case kKIASectionSuspects:
-			switch (newSectionId) {
-				case kKIASectionCrimes:
-					return 4;
-				case kKIASectionSuspects:
-					return 0;
-				case kKIASectionClues:
-					return 5;
-				case kKIASectionSettings:
-				case kKIASectionHelp:
-				case kKIASectionSave:
-				case kKIASectionLoad:
-				case kKIASectionDiagnostic:
-				case kKIASectionPogo:
-					return 6;
-				case kKIASectionQuit:
-					return 13;
-			}
+			return 1;
+		case kKIASectionClues:
+			return 2;
+		case kKIASectionSettings:
+		case kKIASectionHelp:
+		case kKIASectionSave:
+		case kKIASectionLoad:
+		case kKIASectionDiagnostic:
+		case kKIASectionPogo:
+			return 3;
+		case kKIASectionQuit:
+			return 13;
+		}
+		return 0;
+	case kKIASectionSuspects:
+		switch (newSectionId) {
+		case kKIASectionCrimes:
+			return 4;
+		case kKIASectionSuspects:
 			return 0;
 		case kKIASectionClues:
-			switch (newSectionId) {
-				case kKIASectionCrimes:
-					return 7;
-				case kKIASectionSuspects:
-					return 8;
-				case kKIASectionClues:
-					return 0;
-				case kKIASectionSettings:
-				case kKIASectionHelp:
-				case kKIASectionSave:
-				case kKIASectionLoad:
-				case kKIASectionDiagnostic:
-				case kKIASectionPogo:
-					return 9;
-				case kKIASectionQuit:
-					return 13;
-			}
+			return 5;
+		case kKIASectionSettings:
+		case kKIASectionHelp:
+		case kKIASectionSave:
+		case kKIASectionLoad:
+		case kKIASectionDiagnostic:
+		case kKIASectionPogo:
+			return 6;
+		case kKIASectionQuit:
+			return 13;
+		}
+		return 0;
+	case kKIASectionClues:
+		switch (newSectionId) {
+		case kKIASectionCrimes:
+			return 7;
+		case kKIASectionSuspects:
+			return 8;
+		case kKIASectionClues:
 			return 0;
 		case kKIASectionSettings:
 		case kKIASectionHelp:
@@ -1173,54 +1164,65 @@ int KIA::getTransitionId(int oldSectionId, int newSectionId) {
 		case kKIASectionLoad:
 		case kKIASectionDiagnostic:
 		case kKIASectionPogo:
-			switch (newSectionId) {
-				case kKIASectionCrimes:
-					return 10;
-				case kKIASectionSuspects:
-					return 11;
-				case kKIASectionClues:
-					return 12;
-				case kKIASectionSettings:
-				case kKIASectionHelp:
-				case kKIASectionSave:
-				case kKIASectionLoad:
-				case kKIASectionDiagnostic:
-				case kKIASectionPogo:
-					return 0;
-				case kKIASectionQuit:
-					return 13;
-			}
+			return 9;
+		case kKIASectionQuit:
+			return 13;
+		}
+		return 0;
+	case kKIASectionSettings:
+	case kKIASectionHelp:
+	case kKIASectionSave:
+	case kKIASectionLoad:
+	case kKIASectionDiagnostic:
+	case kKIASectionPogo:
+		switch (newSectionId) {
+		case kKIASectionCrimes:
+			return 10;
+		case kKIASectionSuspects:
+			return 11;
+		case kKIASectionClues:
+			return 12;
+		case kKIASectionSettings:
+		case kKIASectionHelp:
+		case kKIASectionSave:
+		case kKIASectionLoad:
+		case kKIASectionDiagnostic:
+		case kKIASectionPogo:
 			return 0;
 		case kKIASectionQuit:
-			if (newSectionId != kKIASectionQuit) {
-				return 14;
-			}
+			return 13;
+		}
+		return 0;
+	case kKIASectionQuit:
+		if (newSectionId != kKIASectionQuit) {
+			return 14;
+		}
 	}
 	return 0;
 }
 
 void KIA::playTransitionSound(int transitionId) {
 	switch (transitionId) {
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(498), 100, 0, 0, 50, 0);
-			break;
-		case 13:
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(499), 100, 0, 0, 50, 0);
-			break;
-		case 14:
-			_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(500), 100, 0, 0, 50, 0);
-			break;
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(498), 100, 0, 0, 50, 0);
+		break;
+	case 13:
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(499), 100, 0, 0, 50, 0);
+		break;
+	case 14:
+		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(500), 100, 0, 0, 50, 0);
+		break;
 	}
 }
 

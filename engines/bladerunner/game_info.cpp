@@ -40,7 +40,7 @@ GameInfo::GameInfo(BladeRunnerEngine *vm) {
 	_flagCount          = 0;
 	_clueCount          = 0;
 	_globalVarCount     = 0;
-	_setNamesCount      = 0;
+	_sceneNamesCount    = 0;
 	_initialSceneId     = 0;
 	_initialSetId       = 0;
 	_waypointCount      = 0;
@@ -72,7 +72,7 @@ bool GameInfo::open(const Common::String &name) {
 	_flagCount            = s->readUint32LE();   /* 02 */
 	_clueCount            = s->readUint32LE();   /* 03 */
 	_globalVarCount       = s->readUint32LE();   /* 04 */
-	_setNamesCount        = s->readUint32LE();   /* 05 */
+	_sceneNamesCount      = s->readUint32LE();   /* 05 */
 	_initialSceneId       = s->readUint32LE();   /* 06 */
 	unk                   = s->readUint32LE();   /* 07 */
 	_initialSetId         = s->readUint32LE();   /* 08 */
@@ -88,8 +88,8 @@ bool GameInfo::open(const Common::String &name) {
 
 	(void)unk;
 
-	_sceneNames = new char[_setNamesCount][5];
-	for (uint32 i = 0; i != _setNamesCount; ++i)
+	_sceneNames = new char[_sceneNamesCount][5];
+	for (uint32 i = 0; i != _sceneNamesCount; ++i)
 		s->read(_sceneNames[i], 5);
 
 	_sfxTracks = new char[_sfxTrackCount][13];
@@ -108,16 +108,27 @@ bool GameInfo::open(const Common::String &name) {
 	for (uint32 i = 0; i != _outtakeCount; ++i)
 		s->read(_outtakes[i], 9);
 
-	if (false) {
-		for (uint32 i = 0; i != _setNamesCount; ++i)
-			debug("%3d: %s", i, _sceneNames[i]);
-		for (uint32 i = 0; i != _sfxTrackCount; ++i)
-			debug("%3d: %s", i, _sfxTracks[i]);
-		for (uint32 i = 0; i != _musicTrackCount; ++i)
-			debug("%s", _musicTracks[i]);
-		for (uint32 i = 0; i != _outtakeCount; ++i)
-			debug("%2d: %s.VQA", i, _outtakes[i]);
+#if BLADERUNNER_DEBUG_CONSOLE
+	debug("\nScene names\n----------------");
+	for (uint32 i = 0; i != _sceneNamesCount; ++i) {
+		debug("%3d: %s", i, _sceneNames[i]);
 	}
+
+	debug("\nSfx tracks\n----------------");
+	for (uint32 i = 0; i != _sfxTrackCount; ++i) {
+		debug("%3d: %s", i, _sfxTracks[i]);
+	}
+
+	debug("\nMusic tracks\n----------------");
+	for (uint32 i = 0; i != _musicTrackCount; ++i) {
+		debug("%3d: %s", i, _musicTracks[i]);
+	}
+
+	debug("\nOuttakes\n----------------");
+	for (uint32 i = 0; i != _outtakeCount; ++i) {
+		debug("%2d: %s.VQA", i, _outtakes[i]);
+	}
+#endif
 
 	bool err = s->err();
 	delete s;

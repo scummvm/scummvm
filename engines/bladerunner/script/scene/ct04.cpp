@@ -195,7 +195,7 @@ bool SceneScriptCT04::ClickedOnExit(int exitId) {
 				Actor_Set_Goal_Number(kActorTransient, 2);
 			}
 			Game_Flag_Set(74);
-			Set_Enter(28, 17);
+			Set_Enter(28, kSceneCT05);
 		}
 		return true;
 	}
@@ -204,7 +204,7 @@ bool SceneScriptCT04::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(73);
-			Set_Enter(5, 15);
+			Set_Enter(5, kSceneCT03);
 		}
 		return true;
 	}

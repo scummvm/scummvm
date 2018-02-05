@@ -146,7 +146,7 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 483.0f, 40.63f, -189.0f, 0, 1, false, 0) && !Game_Flag_Query(684)) {
 			Game_Flag_Set(313);
-			Set_Enter(37, 34);
+			Set_Enter(37, kSceneHF01);
 		}
 		return true;
 	}
@@ -158,14 +158,14 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 				Actor_Says(kActorMcCoy, 1810, 16);
 			}
 			Game_Flag_Set(359);
-			Set_Enter(43, 40);
+			Set_Enter(43, kSceneHF07);
 		}
 		return true;
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.631f, 410.0f, 0, 1, false, 0) && !Game_Flag_Query(684)) {
 			Game_Flag_Set(529);
-			Set_Enter(42, 39);
+			Set_Enter(42, kSceneHF06);
 		}
 		return true;
 	}
@@ -469,10 +469,10 @@ void SceneScriptHF05::sub_403738() {
 		Actor_Set_Goal_Number(kActorCrazylegs, 699);
 		Game_Flag_Set(652);
 		if (Game_Flag_Query(255)) {
-			Set_Enter(54, 54);
+			Set_Enter(54, kSceneNR01);
 		} else {
 			Game_Flag_Set(313);
-			Set_Enter(37, 34);
+			Set_Enter(37, kSceneHF01);
 		}
 	} else if (answer == 1260) {
 		Actor_Says(kActorMcCoy, 1965, 12);
@@ -588,7 +588,7 @@ void SceneScriptHF05::sub_403A34(int actorId) {
 		Async_Actor_Walk_To_XYZ(actorId, 309.0f, 40.63f, 402.0f, 0, false);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, 0, false, 0);
 		Game_Flag_Set(529);
-		Set_Enter(42, 39);
+		Set_Enter(42, kSceneHF06);
 	}
 }
 

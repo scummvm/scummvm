@@ -137,7 +137,7 @@ bool SceneScriptPS07::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptPS07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 609.07f, 0.22f, -598.67f, 0, 0, false, 0)) {
-			Set_Enter(62, 66);
+			Set_Enter(62, kScenePS02);
 		}
 		return true;
 	}

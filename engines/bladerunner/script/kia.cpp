@@ -30,931 +30,932 @@ namespace BladeRunner {
 
 KIAScript::KIAScript(BladeRunnerEngine *vm) : ScriptBase(vm) {}
 
-void KIAScript::playClueAssetScript(int a1, int clueId) {
+void KIAScript::playClueAssetScript(int notUsed, int clueId) {
 	_vm->_kia->playerReset();
 	_vm->_mouse->disable();
-	SCRIPT_KIA_DLL_Play_Clue_Asset_Script(a1, clueId);
+	SCRIPT_KIA_DLL_Play_Clue_Asset_Script(notUsed, clueId);
 	_vm->_mouse->enable();
 }
 
-void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int a1, int clueId) {
-	int v1;
+void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 	switch (clueId) {
-	case 0:
-		KIA_Play_Actor_Dialogue(23, 40);
+	case kClueOfficersStatement:
+		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 40);
 		break;
-	case 2:
-		KIA_Play_Actor_Dialogue(23, 0);
+	case kClueDoorForced2:
+		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 0);
 		break;
-	case 3:
-		KIA_Play_Actor_Dialogue(99, 1970);
-		KIA_Play_Actor_Dialogue(99, 1980);
-		KIA_Play_Actor_Dialogue(99, 1990);
+	case kClueLimpingFootprints:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1970);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1980);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1990);
 		break;
-	case 4:
-		KIA_Play_Actor_Dialogue(99, 1970);
-		KIA_Play_Actor_Dialogue(99, 1980);
-		KIA_Play_Actor_Dialogue(99, 1990);
+	case kClueGracefulFootprints:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1970);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1980);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1990);
 		break;
-	case 5:
+	case kClueShellCasings:
 		KIA_Play_Slice_Model(966);
-		KIA_Play_Actor_Dialogue(99, 1960);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1960);
 		break;
-	case 6:
+	case kClueCandy:
 		KIA_Play_Slice_Model(933);
 		break;
-	case 7:
+	case kClueToyDog:
 		KIA_Play_Slice_Model(971);
 		break;
-	case 8:
+	case kClueChopstickWrapper:
 		KIA_Play_Slice_Model(937);
-		KIA_Play_Actor_Dialogue(99, 2010);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2010);
 		break;
-	case 9:
+	case kClueSushiMenu:
 		KIA_Play_Photograph(6);
-		KIA_Play_Actor_Dialogue(99, 2020);
-		KIA_Play_Actor_Dialogue(99, 2030);
-		KIA_Play_Actor_Dialogue(99, 2040);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2020);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2030);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2040);
 		break;
-	case 10:
-		KIA_Play_Actor_Dialogue(30, 140);
+	case kClueLabCorpses:
+		KIA_Play_Actor_Dialogue(kActorKlein, 140);
 		break;
-	case 11:
-		KIA_Play_Actor_Dialogue(30, 50);
-		KIA_Play_Actor_Dialogue(30, 60);
-		KIA_Play_Actor_Dialogue(30, 70);
-		KIA_Play_Actor_Dialogue(30, 80);
-		KIA_Play_Actor_Dialogue(30, 90);
+	case kClueLabShellCasings:
+		KIA_Play_Actor_Dialogue(kActorKlein, 50);
+		KIA_Play_Actor_Dialogue(kActorKlein, 60);
+		KIA_Play_Actor_Dialogue(kActorKlein, 70);
+		KIA_Play_Actor_Dialogue(kActorKlein, 80);
+		KIA_Play_Actor_Dialogue(kActorKlein, 90);
 		break;
-	case 12:
+	case kClueRuncitersVideo:
 		KIA_Play_Slice_Model(975);
 		break;
-	case 13:
+	case kClueLucy:
 		KIA_Play_Photograph(5);
 		break;
-	case 14:
+	case kClueDragonflyAnklet:
 		KIA_Play_Photograph(4);
-		KIA_Play_Actor_Dialogue(99, 4050);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4050);
 		break;
-	case 15:
+	case kClueReferenceLetter:
 		KIA_Play_Slice_Model(964);
-		KIA_Play_Actor_Dialogue(15, 280);
-		KIA_Play_Actor_Dialogue(15, 290);
+		KIA_Play_Actor_Dialogue(kActorRunciter, 280);
+		KIA_Play_Actor_Dialogue(kActorRunciter, 290);
 		break;
-	case 16:
-		KIA_Play_Actor_Dialogue(23, 100);
+	case kClueCrowdInterviewA:
+		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 100);
 		break;
-	case 17:
-		KIA_Play_Actor_Dialogue(23, 120);
-		KIA_Play_Actor_Dialogue(23, 130);
+	case kClueCrowdInterviewB:
+		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 120);
+		KIA_Play_Actor_Dialogue(kActorOfficerLeary, 130);
 		break;
-	case 19:
-		KIA_Play_Actor_Dialogue(0, 380);
-		KIA_Play_Actor_Dialogue(19, 30);
-		KIA_Play_Actor_Dialogue(19, 40);
-		KIA_Play_Actor_Dialogue(0, 410);
-		KIA_Play_Actor_Dialogue(19, 50);
+	case kClueZubenInterview:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 380);
+		KIA_Play_Actor_Dialogue(kActorZuben, 30);
+		KIA_Play_Actor_Dialogue(kActorZuben, 40);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 410);
+		KIA_Play_Actor_Dialogue(kActorZuben, 50);
 		break;
-	case 20:
+	case kClueZuben:
 		KIA_Play_Photograph(33);
-		KIA_Play_Actor_Dialogue(99, 350);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
 		break;
-	case 21:
-		KIA_Play_Actor_Dialogue(12, 10);
+	case kClueBigManLimping:
+		KIA_Play_Actor_Dialogue(kActorTransient, 10);
 		break;
-	case 22:
-		KIA_Play_Actor_Dialogue(15, 40);
-		KIA_Play_Actor_Dialogue(15, 50);
-		KIA_Play_Actor_Dialogue(0, 4565);
-		KIA_Play_Actor_Dialogue(15, 60);
+	case kClueRunciterInterviewA:
+		KIA_Play_Actor_Dialogue(kActorRunciter, 40);
+		KIA_Play_Actor_Dialogue(kActorRunciter, 50);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 4565);
+		KIA_Play_Actor_Dialogue(kActorRunciter, 60);
 		break;
-	case 23:
-		KIA_Play_Actor_Dialogue(15, 250);
-		KIA_Play_Actor_Dialogue(15, 270);
+	case kClueRunciterInterviewB1:
+		KIA_Play_Actor_Dialogue(kActorRunciter, 250);
+		KIA_Play_Actor_Dialogue(kActorRunciter, 270);
 		break;
-	case 24:
-		KIA_Play_Actor_Dialogue(15, 260);
-		KIA_Play_Actor_Dialogue(15, 270);
+	case kClueRunciterInterviewB2:
+		KIA_Play_Actor_Dialogue(kActorRunciter, 260);
+		KIA_Play_Actor_Dialogue(kActorRunciter, 270);
 		break;
-	case 25:
-		KIA_Play_Actor_Dialogue(0, 295);
-		KIA_Play_Actor_Dialogue(28, 90);
-		KIA_Play_Actor_Dialogue(28, 100);
+	case kClueHowieLeeInterview:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 295);
+		KIA_Play_Actor_Dialogue(kActorHowieLee, 90);
+		KIA_Play_Actor_Dialogue(kActorHowieLee, 100);
 		break;
-	case 26:
-		KIA_Play_Actor_Dialogue(99, 1880);
-		KIA_Play_Actor_Dialogue(99, 1890);
+	case kCluePaintTransfer:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1880);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1890);
 		break;
-	case 27:
+	case kClueChromeDebris:
 		KIA_Play_Slice_Model(938);
 		break;
-	case 28:
+	case kClueRuncitersViewA:
 		KIA_Play_Photograph(11);
 		break;
-	case 29:
+	case kClueRuncitersViewB:
 		KIA_Play_Photograph(12);
 		break;
-	case 30:
+	case kClueCarColorAndMake:
 		KIA_Play_Photograph(10);
 		break;
-	case 31:
+	case kCluePartialLicenseNumber:
 		KIA_Play_Photograph(9);
 		break;
-	case 32:
+	case kClueBriefcase:
 		KIA_Play_Slice_Model(987);
-		KIA_Play_Actor_Dialogue(0, 5870);
-		KIA_Play_Actor_Dialogue(4, 810);
-		KIA_Play_Actor_Dialogue(4, 820);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5870);
+		KIA_Play_Actor_Dialogue(kActorGuzza, 810);
+		KIA_Play_Actor_Dialogue(kActorGuzza, 820);
 		break;
-	case 33:
-		KIA_Play_Actor_Dialogue(53, 20);
-		KIA_Play_Actor_Dialogue(0, 680);
-		KIA_Play_Actor_Dialogue(53, 30);
+	case kClueGaffsInformation:
+		KIA_Play_Actor_Dialogue(kActorGaff, 20);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 680);
+		KIA_Play_Actor_Dialogue(kActorGaff, 30);
 		break;
-	case 37:
+	case kClueLicensePlate:
 		KIA_Play_Slice_Model(952);
 		break;
-	case 39:
-		KIA_Play_Actor_Dialogue(30, 170);
-		KIA_Play_Actor_Dialogue(30, 180);
-		KIA_Play_Actor_Dialogue(30, 190);
-		KIA_Play_Actor_Dialogue(30, 200);
+	case kClueLabPaintTransfer:
+		KIA_Play_Actor_Dialogue(kActorKlein, 170);
+		KIA_Play_Actor_Dialogue(kActorKlein, 180);
+		KIA_Play_Actor_Dialogue(kActorKlein, 190);
+		KIA_Play_Actor_Dialogue(kActorKlein, 200);
 		break;
-	case 40:
-		KIA_Play_Actor_Dialogue(38, 90);
-		KIA_Play_Actor_Dialogue(38, 100);
-		KIA_Play_Actor_Dialogue(38, 110);
-		KIA_Play_Actor_Dialogue(38, 120);
-		KIA_Play_Actor_Dialogue(38, 130);
-		KIA_Play_Actor_Dialogue(38, 140);
-		KIA_Play_Actor_Dialogue(38, 150);
+	case kClueDispatchHitAndRun:
+		KIA_Play_Actor_Dialogue(kActorDispatcher, 90);
+		KIA_Play_Actor_Dialogue(kActorDispatcher, 100);
+		KIA_Play_Actor_Dialogue(kActorDispatcher, 110);
+		KIA_Play_Actor_Dialogue(kActorDispatcher, 120);
+		KIA_Play_Actor_Dialogue(kActorDispatcher, 130);
+		KIA_Play_Actor_Dialogue(kActorDispatcher, 140);
+		KIA_Play_Actor_Dialogue(kActorDispatcher, 150);
 		break;
-	case 43:
-		KIA_Play_Actor_Dialogue(4, 30);
-		KIA_Play_Actor_Dialogue(4, 50);
-		KIA_Play_Actor_Dialogue(4, 70);
+	case kCluePhoneCallGuzza:
+		KIA_Play_Actor_Dialogue(kActorGuzza, 30);
+		KIA_Play_Actor_Dialogue(kActorGuzza, 50);
+		KIA_Play_Actor_Dialogue(kActorGuzza, 70);
 		break;
-	case 44:
+	case kClueDragonflyEarring:
 		KIA_Play_Slice_Model(940);
-		KIA_Play_Actor_Dialogue(99, 2140);
-		KIA_Play_Actor_Dialogue(99, 2150);
-		KIA_Play_Actor_Dialogue(99, 2160);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2140);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2150);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2160);
 		break;
-	case 45:
+	case kClueTyrellSecurity:
 		KIA_Play_Slice_Model(975);
 		break;
-	case 46:
-		KIA_Play_Actor_Dialogue(0, 5140);
-		KIA_Play_Actor_Dialogue(17, 30);
-		KIA_Play_Actor_Dialogue(17, 40);
+	case kClueTyrellGuardInterview:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5140);
+		KIA_Play_Actor_Dialogue(kActorTyrellGuard, 30);
+		KIA_Play_Actor_Dialogue(kActorTyrellGuard, 40);
 		break;
-	case 47:
+	case kClueBombingSuspect:
 		KIA_Play_Photograph(31);
-		KIA_Play_Actor_Dialogue(99, 2140);
-		KIA_Play_Actor_Dialogue(99, 2150);
-		KIA_Play_Actor_Dialogue(99, 2160);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2140);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2150);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2160);
 		break;
-	case 49:
+	case kClueDetonatorWire:
 		KIA_Play_Slice_Model(974);
-		KIA_Play_Actor_Dialogue(99, 2320);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2320);
 		if (Game_Flag_Query(48)) {
-			KIA_Play_Actor_Dialogue(99, 2330);
-			KIA_Play_Actor_Dialogue(99, 2340);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2330);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2340);
 		}
-		KIA_Play_Actor_Dialogue(99, 2350);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2350);
 		break;
-	case 50:
-		KIA_Play_Actor_Dialogue(17, 100);
-		KIA_Play_Actor_Dialogue(17, 110);
-		KIA_Play_Actor_Dialogue(17, 120);
-		KIA_Play_Actor_Dialogue(17, 130);
+	case kClueVictimInformation:
+		KIA_Play_Actor_Dialogue(kActorTyrellGuard, 100);
+		KIA_Play_Actor_Dialogue(kActorTyrellGuard, 110);
+		KIA_Play_Actor_Dialogue(kActorTyrellGuard, 120);
+		KIA_Play_Actor_Dialogue(kActorTyrellGuard, 130);
 		break;
-	case 51:
-		KIA_Play_Actor_Dialogue(99, 2170);
-		KIA_Play_Actor_Dialogue(99, 2180);
-		KIA_Play_Actor_Dialogue(99, 2190);
-		KIA_Play_Actor_Dialogue(99, 2200);
+	case kClueAttemptedFileAccess:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2170);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2180);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2190);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2200);
 		break;
-	case 52:
-		KIA_Play_Actor_Dialogue(1, 2230);
-		KIA_Play_Actor_Dialogue(1, 2260);
-		KIA_Play_Actor_Dialogue(1, 2270);
-		KIA_Play_Actor_Dialogue(1, 2280);
+	case kClueCrystalsCase:
+		KIA_Play_Actor_Dialogue(kActorSteele, 2230);
+		KIA_Play_Actor_Dialogue(kActorSteele, 2260);
+		KIA_Play_Actor_Dialogue(kActorSteele, 2270);
+		KIA_Play_Actor_Dialogue(kActorSteele, 2280);
 		break;
-	case 53:
+	case kClueKingstonKitchenBox1:
 		KIA_Play_Slice_Model(955);
 		if (Query_Difficulty_Level() == 0) {
-			KIA_Play_Actor_Dialogue(99, 4140);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4140);
 		} else {
-			KIA_Play_Actor_Dialogue(99, 4150);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4150);
 		}
 		break;
-	case 54:
+	case kClueTyrellSalesPamphlet1:
 		KIA_Play_Slice_Model(973);
-		KIA_Play_Actor_Dialogue(99, 4280);
-		KIA_Play_Actor_Dialogue(99, 4290);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4280);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4290);
 		break;
-	case 55:
+	case kClueTyrellSalesPamphlet2:
 		KIA_Play_Slice_Model(973);
-		KIA_Play_Actor_Dialogue(99, 4280);
-		KIA_Play_Actor_Dialogue(99, 4300);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4280);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4300);
 		break;
-	case 56:
-		KIA_Play_Actor_Dialogue(16, 90);
-		KIA_Play_Actor_Dialogue(16, 100);
-		KIA_Play_Actor_Dialogue(16, 110);
-		KIA_Play_Actor_Dialogue(16, 120);
-		KIA_Play_Actor_Dialogue(16, 130);
+	case kCluePeruvianLadyInterview:
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 90);
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 100);
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 110);
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 120);
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 130);
 		break;
-	case 57:
-		KIA_Play_Actor_Dialogue(20, 90);
-		KIA_Play_Actor_Dialogue(20, 100);
+	case kClueHasanInterview:
+		KIA_Play_Actor_Dialogue(kActorHasan, 90);
+		KIA_Play_Actor_Dialogue(kActorHasan, 100);
 		break;
-	case 58:
-		KIA_Play_Actor_Dialogue(14, 320);
-		KIA_Play_Actor_Dialogue(14, 330);
-		KIA_Play_Actor_Dialogue(14, 340);
-		KIA_Play_Actor_Dialogue(14, 380);
-		KIA_Play_Actor_Dialogue(14, 390);
-		KIA_Play_Actor_Dialogue(14, 400);
+	case kClueBobInterview1:
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 320);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 330);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 340);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 380);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 390);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 400);
 		break;
-	case 59:
-		KIA_Play_Actor_Dialogue(14, 320);
-		KIA_Play_Actor_Dialogue(14, 330);
-		KIA_Play_Actor_Dialogue(14, 410);
-		KIA_Play_Actor_Dialogue(14, 420);
-		KIA_Play_Actor_Dialogue(14, 440);
-		KIA_Play_Actor_Dialogue(14, 450);
+	case kClueBobInterview2:
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 320);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 330);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 410);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 420);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 440);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 450);
 		break;
-	case 60:
-		KIA_Play_Actor_Dialogue(7, 210);
-		KIA_Play_Actor_Dialogue(7, 220);
-		KIA_Play_Actor_Dialogue(7, 240);
-		KIA_Play_Actor_Dialogue(7, 250);
+	case kClueIzoInterview:
+		KIA_Play_Actor_Dialogue(kActorIzo, 210);
+		KIA_Play_Actor_Dialogue(kActorIzo, 220);
+		KIA_Play_Actor_Dialogue(kActorIzo, 240);
+		KIA_Play_Actor_Dialogue(kActorIzo, 250);
 		break;
-	case 61:
-		KIA_Play_Actor_Dialogue(7, 750);
-		KIA_Play_Actor_Dialogue(7, 760);
-		KIA_Play_Actor_Dialogue(0, 5500);
-		KIA_Play_Actor_Dialogue(7, 780);
-		KIA_Play_Actor_Dialogue(7, 790);
+	case kClueIzosWarning:
+		KIA_Play_Actor_Dialogue(kActorIzo, 750);
+		KIA_Play_Actor_Dialogue(kActorIzo, 760);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5500);
+		KIA_Play_Actor_Dialogue(kActorIzo, 780);
+		KIA_Play_Actor_Dialogue(kActorIzo, 790);
 		break;
-	case 62:
+	case kClueRadiationGoggles:
 		KIA_Play_Slice_Model(963);
 		break;
-	case 63:
-		KIA_Play_Actor_Dialogue(14, 560);
-		KIA_Play_Actor_Dialogue(14, 570);
-		KIA_Play_Actor_Dialogue(14, 580);
+	case kClueGogglesReplicantIssue:
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 560);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 570);
+		KIA_Play_Actor_Dialogue(kActorBulletBob, 580);
 		break;
-	case 64:
-		KIA_Play_Actor_Dialogue(29, 120);
-		KIA_Play_Actor_Dialogue(29, 130);
+	case kClueFishLadyInterview:
+		KIA_Play_Actor_Dialogue(kActorFishDealer, 120);
+		KIA_Play_Actor_Dialogue(kActorFishDealer, 130);
 		break;
-	case 65:
+	case kClueDogCollar1:
 		KIA_Play_Slice_Model(942);
-		KIA_Play_Actor_Dialogue(99, 4160);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4160);
 		break;
-	case 66:
-		KIA_Play_Actor_Dialogue(99, 2430);
-		KIA_Play_Actor_Dialogue(99, 2440);
-		KIA_Play_Actor_Dialogue(99, 2450);
+	case kClueWeaponsCache:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2430);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2440);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2450);
 		break;
-	case 67:
-		KIA_Play_Actor_Dialogue(52, 140);
-		KIA_Play_Actor_Dialogue(52, 150);
-		KIA_Play_Actor_Dialogue(52, 170);
-		KIA_Play_Actor_Dialogue(52, 180);
-		KIA_Play_Actor_Dialogue(52, 190);
+	case kClueChewInterview:
+		KIA_Play_Actor_Dialogue(kActorChew, 140);
+		KIA_Play_Actor_Dialogue(kActorChew, 150);
+		KIA_Play_Actor_Dialogue(kActorChew, 170);
+		KIA_Play_Actor_Dialogue(kActorChew, 180);
+		KIA_Play_Actor_Dialogue(kActorChew, 190);
 		break;
-	case 68:
-		KIA_Play_Actor_Dialogue(35, 20);
-		KIA_Play_Actor_Dialogue(35, 30);
-		KIA_Play_Actor_Dialogue(35, 40);
-		KIA_Play_Actor_Dialogue(35, 50);
+	case kClueMorajiInterview:
+		KIA_Play_Actor_Dialogue(kActorMoraji, 20);
+		KIA_Play_Actor_Dialogue(kActorMoraji, 30);
+		KIA_Play_Actor_Dialogue(kActorMoraji, 40);
+		KIA_Play_Actor_Dialogue(kActorMoraji, 50);
 		break;
-	case 69:
-		KIA_Play_Actor_Dialogue(2, 1010);
-		KIA_Play_Actor_Dialogue(0, 6495);
-		KIA_Play_Actor_Dialogue(2, 1020);
-		KIA_Play_Actor_Dialogue(0, 6500);
-		KIA_Play_Actor_Dialogue(2, 1030);
+	case kClueGordoInterview1:
+		KIA_Play_Actor_Dialogue(kActorGordo, 1010);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 6495);
+		KIA_Play_Actor_Dialogue(kActorGordo, 1020);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 6500);
+		KIA_Play_Actor_Dialogue(kActorGordo, 1030);
 		break;
-	case 70:
-		KIA_Play_Actor_Dialogue(2, 1040);
-		KIA_Play_Actor_Dialogue(2, 1050);
-		KIA_Play_Actor_Dialogue(0, 6505);
-		KIA_Play_Actor_Dialogue(2, 1060);
-		KIA_Play_Actor_Dialogue(2, 1070);
-		KIA_Play_Actor_Dialogue(0, 6510);
-		KIA_Play_Actor_Dialogue(2, 1080);
+	case kClueGordoInterview2:
+		KIA_Play_Actor_Dialogue(kActorGordo, 1040);
+		KIA_Play_Actor_Dialogue(kActorGordo, 1050);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 6505);
+		KIA_Play_Actor_Dialogue(kActorGordo, 1060);
+		KIA_Play_Actor_Dialogue(kActorGordo, 1070);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 6510);
+		KIA_Play_Actor_Dialogue(kActorGordo, 1080);
 		break;
-	case 71:
-		KIA_Play_Actor_Dialogue(56, 0);
-		KIA_Play_Actor_Dialogue(56, 10);
-		KIA_Play_Actor_Dialogue(56, 20);
-		KIA_Play_Actor_Dialogue(56, 30);
-		KIA_Play_Actor_Dialogue(56, 40);
-		KIA_Play_Actor_Dialogue(56, 50);
+	case kClueAnsweringMachineMessage:
+		KIA_Play_Actor_Dialogue(kActorSebastian, 0);
+		KIA_Play_Actor_Dialogue(kActorSebastian, 10);
+		KIA_Play_Actor_Dialogue(kActorSebastian, 20);
+		KIA_Play_Actor_Dialogue(kActorSebastian, 30);
+		KIA_Play_Actor_Dialogue(kActorSebastian, 40);
+		KIA_Play_Actor_Dialogue(kActorSebastian, 50);
 		break;
-	case 72:
-		KIA_Play_Actor_Dialogue(99, 80);
-		KIA_Play_Actor_Dialogue(99, 90);
+	case kClueChessTable:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 80);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 90);
 		break;
-	case 74:
-		KIA_Play_Actor_Dialogue(99, 4370);
-		KIA_Play_Actor_Dialogue(99, 4380);
-		KIA_Play_Actor_Dialogue(99, 4390);
-		KIA_Play_Actor_Dialogue(99, 4400);
+	case kClueStaggeredbyPunches:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4370);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4380);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4390);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4400);
 		break;
-	case 75:
+	case kClueMaggieBracelet:
 		KIA_Play_Slice_Model(956);
 		break;
-	case 76:
+	case kClueEnvelope:
 		KIA_Play_Slice_Model(944);
-		KIA_Play_Actor_Dialogue(99, 850);
-		KIA_Play_Actor_Dialogue(99, 860);
-		KIA_Play_Actor_Dialogue(99, 870);
-		KIA_Play_Actor_Dialogue(99, 880);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 850);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 860);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 870);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 880);
 		break;
-	case 77:
+	case kClueIzosFriend:
 		KIA_Play_Photograph(25);
 		break;
-	case 78:
+	case kClueChinaBarSecurityPhoto:
 		KIA_Play_Photograph(20);
 		break;
-	case 79:
-		KIA_Play_Actor_Dialogue(0, 220);
-		KIA_Play_Actor_Dialogue(16, 320);
-		KIA_Play_Actor_Dialogue(0, 225);
-		KIA_Play_Actor_Dialogue(16, 330);
-		KIA_Play_Actor_Dialogue(0, 230);
-		KIA_Play_Actor_Dialogue(16, 340);
+	case kCluePurchasedScorpions:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 220);
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 320);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 225);
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 330);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 230);
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 340);
 		break;
-	case 80:
+	case kClueWeaponsOrderForm:
 		KIA_Play_Slice_Model(965);
 		break;
-	case 81:
+	case kClueShippingForm:
 		KIA_Play_Slice_Model(965);
 		break;
-	case 82:
-		KIA_Play_Actor_Dialogue(4, 520);
-		KIA_Play_Actor_Dialogue(4, 530);
-		KIA_Play_Actor_Dialogue(4, 540);
-		KIA_Play_Actor_Dialogue(4, 550);
+	case kClueGuzzasCash:
+		KIA_Play_Actor_Dialogue(kActorGuzza, 520);
+		KIA_Play_Actor_Dialogue(kActorGuzza, 530);
+		KIA_Play_Actor_Dialogue(kActorGuzza, 540);
+		KIA_Play_Actor_Dialogue(kActorGuzza, 550);
 		break;
-	case 84:
+	case kClueHysteriaToken:
 		KIA_Play_Slice_Model(970);
 		break;
-	case 85:
+	case kClueRagDoll:
 		KIA_Play_Slice_Model(943);
 		break;
-	case 86:
+	case kClueMoonbus1:
 		KIA_Play_Photograph(34);
 		break;
-	case 87:
+	case kClueCheese:
 		KIA_Play_Slice_Model(936);
 		break;
-	case 88:
+	case kClueDektorasDressingRoom:
 		KIA_Play_Photograph(16);
 		break;
-	case 89:
+	case kClueEarlyQsClub:
 		KIA_Play_Slice_Model(975);
 		break;
-	case 90:
-		KIA_Play_Actor_Dialogue(16, 290);
-		KIA_Play_Actor_Dialogue(16, 300);
+	case kClueDragonflyCollection:
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 290);
+		KIA_Play_Actor_Dialogue(kActorInsectDealer, 300);
 		break;
-	case 91:
+	case kClueDragonflyBelt:
 		KIA_Play_Slice_Model(939);
-		KIA_Play_Actor_Dialogue(99, 4050);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4050);
 		break;
-	case 92:
-		KIA_Play_Actor_Dialogue(18, 140);
-		KIA_Play_Actor_Dialogue(18, 150);
+	case kClueEarlyQInterview:
+		KIA_Play_Actor_Dialogue(kActorEarlyQ, 140);
+		KIA_Play_Actor_Dialogue(kActorEarlyQ, 150);
 		break;
-	case 93:
+	case kClueStrangeScale1:
 		KIA_Play_Slice_Model(969);
 		break;
-	case 94:
-		KIA_Play_Actor_Dialogue(3, 650);
-		KIA_Play_Actor_Dialogue(3, 660);
-		KIA_Play_Actor_Dialogue(0, 3665);
-		KIA_Play_Actor_Dialogue(3, 670);
-		KIA_Play_Actor_Dialogue(3, 680);
-		KIA_Play_Actor_Dialogue(3, 690);
+	case kClueDektoraInterview1:
+		KIA_Play_Actor_Dialogue(kActorDektora, 650);
+		KIA_Play_Actor_Dialogue(kActorDektora, 660);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 3665);
+		KIA_Play_Actor_Dialogue(kActorDektora, 670);
+		KIA_Play_Actor_Dialogue(kActorDektora, 680);
+		KIA_Play_Actor_Dialogue(kActorDektora, 690);
 		break;
-	case 96:
-		KIA_Play_Actor_Dialogue(3, 580);
+	case kClueDektoraInterview2:
+		KIA_Play_Actor_Dialogue(kActorDektora, 580);
 		break;
-	case 97:
-		KIA_Play_Actor_Dialogue(0, 3600);
-		KIA_Play_Actor_Dialogue(3, 550);
+	case kClueDektoraInterview3:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 3600);
+		KIA_Play_Actor_Dialogue(kActorDektora, 550);
 		break;
-	case 98:
+	case kClueDektorasCard:
 		KIA_Play_Slice_Model(935);
 		break;
-	case 99:
+	case kClueGrigoriansNote:
 		KIA_Play_Slice_Model(957);
 		break;
-	case 100:
+	case kClueCollectionReceipt:
 		KIA_Play_Slice_Model(961);
 		break;
-	case 101:
-		KIA_Play_Actor_Dialogue(31, 210);
-		KIA_Play_Actor_Dialogue(31, 220);
-		KIA_Play_Actor_Dialogue(22, 140);
-		KIA_Play_Actor_Dialogue(31, 230);
+	case kClueSpecialIngredient:
+		KIA_Play_Actor_Dialogue(kActorMurray, 210);
+		KIA_Play_Actor_Dialogue(kActorMurray, 220);
+		KIA_Play_Actor_Dialogue(kActorMia, 140);
+		KIA_Play_Actor_Dialogue(kActorMurray, 230);
 		break;
-	case 102:
-		KIA_Play_Actor_Dialogue(59, 210);
-		KIA_Play_Actor_Dialogue(59, 260);
-		KIA_Play_Actor_Dialogue(0, 1390);
-		KIA_Play_Actor_Dialogue(59, 300);
+	case kClueStolenCheese:
+		KIA_Play_Actor_Dialogue(kActorIsabella, 210);
+		KIA_Play_Actor_Dialogue(kActorIsabella, 260);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 1390);
+		KIA_Play_Actor_Dialogue(kActorIsabella, 300);
 		break;
-	case 103:
-		KIA_Play_Actor_Dialogue(2, 450);
-		KIA_Play_Actor_Dialogue(0, 3280);
+	case kClueGordoInterview3:
+		KIA_Play_Actor_Dialogue(kActorGordo, 450);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 3280);
 		break;
-	case 104:
-		KIA_Play_Actor_Dialogue(0, 3250);
-		KIA_Play_Actor_Dialogue(2, 540);
-		KIA_Play_Actor_Dialogue(2, 550);
+	case kClueGordoConfession:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 3250);
+		KIA_Play_Actor_Dialogue(kActorGordo, 540);
+		KIA_Play_Actor_Dialogue(kActorGordo, 550);
 		break;
-	case 105:
+	case kClueGordosLighter1:
 		KIA_Play_Slice_Model(953);
-		KIA_Play_Actor_Dialogue(99, 350);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 350);
 		break;
-	case 106:
+	case kClueGordosLighter2:
 		KIA_Play_Slice_Model(954);
 		break;
-	case 107:
-		KIA_Play_Actor_Dialogue(0, 3860);
-		KIA_Play_Actor_Dialogue(3, 1030);
-		KIA_Play_Actor_Dialogue(3, 1040);
-		KIA_Play_Actor_Dialogue(0, 3865);
-		KIA_Play_Actor_Dialogue(3, 1050);
-		KIA_Play_Actor_Dialogue(3, 1060);
+	case kClueDektoraInterview4:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 3860);
+		KIA_Play_Actor_Dialogue(kActorDektora, 1030);
+		KIA_Play_Actor_Dialogue(kActorDektora, 1040);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 3865);
+		KIA_Play_Actor_Dialogue(kActorDektora, 1050);
+		KIA_Play_Actor_Dialogue(kActorDektora, 1060);
 		break;
-	case 108:
-		KIA_Play_Actor_Dialogue(33, 0);
-		KIA_Play_Actor_Dialogue(33, 10);
+	case kClueHollowayInterview:
+		KIA_Play_Actor_Dialogue(kActorHolloway, 0);
+		KIA_Play_Actor_Dialogue(kActorHolloway, 10);
 		break;
-	case 109:
+	case kClueBakersBadge:
 		KIA_Play_Slice_Model(931);
 		break;
-	case 110:
+	case kClueHoldensBadge:
 		KIA_Play_Slice_Model(931);
-		KIA_Play_Actor_Dialogue(99, 4420);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4420);
 		break;
-	case 112:
-		KIA_Play_Actor_Dialogue(99, 3780);
-		KIA_Play_Actor_Dialogue(99, 3790);
+	case kClueCarIdentified:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3780);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3790);
 		break;
-	case 113:
-		KIA_Play_Actor_Dialogue(99, 3800);
-		KIA_Play_Actor_Dialogue(99, 3810);
-		KIA_Play_Actor_Dialogue(99, 3820);
-		KIA_Play_Actor_Dialogue(99, 3830);
+	case kClueCarRegistration1:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3800);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3810);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3820);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3830);
 		break;
-	case 114:
-		KIA_Play_Actor_Dialogue(99, 3840);
-		KIA_Play_Actor_Dialogue(99, 3850);
-		KIA_Play_Actor_Dialogue(99, 3860);
-		KIA_Play_Actor_Dialogue(99, 3870);
+	case kClueCarRegistration2:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3840);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3850);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3860);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3870);
 		break;
-	case 115:
-		KIA_Play_Actor_Dialogue(99, 3880);
-		KIA_Play_Actor_Dialogue(99, 3890);
-		KIA_Play_Actor_Dialogue(99, 3900);
+	case kClueCarRegistration3:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3880);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3890);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3900);
 		break;
-	case 116:
-		KIA_Play_Actor_Dialogue(9, 830);
-		KIA_Play_Actor_Dialogue(9, 840);
-		KIA_Play_Actor_Dialogue(9, 850);
+	case kClueCrazylegsInterview1:
+		KIA_Play_Actor_Dialogue(kActorCrazylegs, 830);
+		KIA_Play_Actor_Dialogue(kActorCrazylegs, 840);
+		KIA_Play_Actor_Dialogue(kActorCrazylegs, 850);
 		break;
-	case 118:
+	case kClueLichenDogWrapper:
 		KIA_Play_Slice_Model(951);
 		break;
-	case 119:
+	case kClueRequisitionForm:
 		KIA_Play_Slice_Model(962);
-		KIA_Play_Actor_Dialogue(99, 3930);
-		KIA_Play_Actor_Dialogue(99, 3940);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3930);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3940);
 		break;
-	case 120:
-		KIA_Play_Actor_Dialogue(99, 2550);
-		KIA_Play_Actor_Dialogue(99, 2560);
-		KIA_Play_Actor_Dialogue(99, 2570);
-		KIA_Play_Actor_Dialogue(99, 2580);
-		KIA_Play_Actor_Dialogue(99, 2590);
+	case kClueScaryChair:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2550);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2560);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2570);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2580);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2590);
 		break;
-	case 121:
-		KIA_Play_Actor_Dialogue(99, 2470);
-		KIA_Play_Actor_Dialogue(99, 2480);
-		KIA_Play_Actor_Dialogue(99, 2490);
-		KIA_Play_Actor_Dialogue(99, 2500);
+	case kClueIzosStashRaided:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2470);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2480);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2490);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2500);
 		break;
-	case 122:
-		KIA_Play_Actor_Dialogue(0, 5615);
-		KIA_Play_Actor_Dialogue(12, 170);
-		KIA_Play_Actor_Dialogue(0, 5625);
-		KIA_Play_Actor_Dialogue(12, 180);
-		KIA_Play_Actor_Dialogue(0, 5630);
-		KIA_Play_Actor_Dialogue(12, 190);
-		KIA_Play_Actor_Dialogue(0, 5635);
-		KIA_Play_Actor_Dialogue(12, 200);
+	case kClueHomelessManInterview1:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5615);
+		KIA_Play_Actor_Dialogue(kActorTransient, 170);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5625);
+		KIA_Play_Actor_Dialogue(kActorTransient, 180);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5630);
+		KIA_Play_Actor_Dialogue(kActorTransient, 190);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5635);
+		KIA_Play_Actor_Dialogue(kActorTransient, 200);
 		break;
-	case 123:
-		KIA_Play_Actor_Dialogue(0, 5640);
-		KIA_Play_Actor_Dialogue(12, 230);
-		KIA_Play_Actor_Dialogue(0, 5645);
-		KIA_Play_Actor_Dialogue(12, 240);
-		KIA_Play_Actor_Dialogue(12, 250);
-		KIA_Play_Actor_Dialogue(0, 5650);
-		KIA_Play_Actor_Dialogue(12, 260);
+	case kClueHomelessManInterview2:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5640);
+		KIA_Play_Actor_Dialogue(kActorTransient, 230);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5645);
+		KIA_Play_Actor_Dialogue(kActorTransient, 240);
+		KIA_Play_Actor_Dialogue(kActorTransient, 250);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5650);
+		KIA_Play_Actor_Dialogue(kActorTransient, 260);
 		break;
-	case 124:
-		KIA_Play_Actor_Dialogue(12, 340);
-		KIA_Play_Actor_Dialogue(12, 350);
-		KIA_Play_Actor_Dialogue(12, 360);
-		KIA_Play_Actor_Dialogue(99, 2710);
-		KIA_Play_Actor_Dialogue(99, 2730);
+	case kClueHomelessManKid:
+		KIA_Play_Actor_Dialogue(kActorTransient, 340);
+		KIA_Play_Actor_Dialogue(kActorTransient, 350);
+		KIA_Play_Actor_Dialogue(kActorTransient, 360);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2710);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2730);
 		break;
-	case 125:
+	case kClueFolder:
 		KIA_Play_Slice_Model(946);
-		KIA_Play_Actor_Dialogue(99, 2740);
-		KIA_Play_Actor_Dialogue(99, 2750);
-		KIA_Play_Actor_Dialogue(99, 2760);
-		KIA_Play_Actor_Dialogue(99, 2770);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2740);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2750);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2760);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2770);
 		break;
-	case 126:
-		KIA_Play_Actor_Dialogue(99, 3320);
+	case kClueGuzzaFramedMcCoy:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 3320);
 		break;
-	case 127:
+	case kClueOriginalShippingForm:
 		KIA_Play_Slice_Model(959);
 		break;
-	case 128:
+	case kClueOriginalRequisitionForm:
 		KIA_Play_Slice_Model(958);
 		break;
-	case 129:
+	case kClueCandyWrapper:
 		KIA_Play_Slice_Model(934);
 		break;
-	case 131:
+	case kClueFlaskOfAbsinthe:
 		KIA_Play_Slice_Model(945);
 		break;
-	case 136:
-		KIA_Play_Actor_Dialogue(10, 240);
-		KIA_Play_Actor_Dialogue(13, 200);
-		KIA_Play_Actor_Dialogue(13, 210);
-		KIA_Play_Actor_Dialogue(10, 260);
-		KIA_Play_Actor_Dialogue(10, 270);
+	case kClueLutherLanceInterview:
+		KIA_Play_Actor_Dialogue(kActorLuther, 240);
+		KIA_Play_Actor_Dialogue(kActorLance, 200);
+		KIA_Play_Actor_Dialogue(kActorLance, 210);
+		KIA_Play_Actor_Dialogue(kActorLuther, 260);
+		KIA_Play_Actor_Dialogue(kActorLuther, 270);
 		break;
-	case 139:
-		KIA_Play_Actor_Dialogue(3, 360);
-		KIA_Play_Actor_Dialogue(3, 380);
+	case kCluePhoneCallDektora1:
+		KIA_Play_Actor_Dialogue(kActorDektora, 360);
+		KIA_Play_Actor_Dialogue(kActorDektora, 380);
 		break;
-	case 140:
-		KIA_Play_Actor_Dialogue(0, 2505);
-		KIA_Play_Actor_Dialogue(3, 430);
-		KIA_Play_Actor_Dialogue(3, 440);
-		KIA_Play_Actor_Dialogue(0, 2530);
-		KIA_Play_Actor_Dialogue(3, 450);
-		KIA_Play_Actor_Dialogue(0, 2535);
-		KIA_Play_Actor_Dialogue(3, 460);
-		KIA_Play_Actor_Dialogue(3, 470);
+	case kCluePhoneCallDektora2:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 2505);
+		KIA_Play_Actor_Dialogue(kActorDektora, 430);
+		KIA_Play_Actor_Dialogue(kActorDektora, 440);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 2530);
+		KIA_Play_Actor_Dialogue(kActorDektora, 450);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 2535);
+		KIA_Play_Actor_Dialogue(kActorDektora, 460);
+		KIA_Play_Actor_Dialogue(kActorDektora, 470);
 		break;
-	case 141:
-		KIA_Play_Actor_Dialogue(6, 590);
-		KIA_Play_Actor_Dialogue(6, 630);
+	case kCluePhoneCallLucy1:
+		KIA_Play_Actor_Dialogue(kActorLucy, 590);
+		KIA_Play_Actor_Dialogue(kActorLucy, 630);
 		break;
-	case 142:
-		KIA_Play_Actor_Dialogue(6, 540);
-		KIA_Play_Actor_Dialogue(6, 550);
-		KIA_Play_Actor_Dialogue(0, 2550);
-		KIA_Play_Actor_Dialogue(6, 560);
+	case kCluePhoneCallLucy2:
+		KIA_Play_Actor_Dialogue(kActorLucy, 540);
+		KIA_Play_Actor_Dialogue(kActorLucy, 550);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 2550);
+		KIA_Play_Actor_Dialogue(kActorLucy, 560);
 		break;
-	case 143:
-		KIA_Play_Actor_Dialogue(5, 530);
-		KIA_Play_Actor_Dialogue(5, 540);
+	case kCluePhoneCallClovis:
+		KIA_Play_Actor_Dialogue(kActorClovis, 530);
+		KIA_Play_Actor_Dialogue(kActorClovis, 540);
 		break;
-	case 144:
-		KIA_Play_Actor_Dialogue(1, 700);
-		KIA_Play_Actor_Dialogue(1, 750);
-		KIA_Play_Actor_Dialogue(1, 760);
+	case kCluePhoneCallCrystal:
+		KIA_Play_Actor_Dialogue(kActorSteele, 700);
+		KIA_Play_Actor_Dialogue(kActorSteele, 750);
+		KIA_Play_Actor_Dialogue(kActorSteele, 760);
 		break;
-	case 145:
+	case kCluePowerSource:
 		KIA_Play_Slice_Model(960);
 		break;
-	case 146:
+	case kClueBomb:
 		KIA_Play_Slice_Model(932);
 		break;
-	case 147:
-	case 148:
-	case 149:
-	case 150:
-	case 151:
-	case 152:
-		v1 = Global_Variable_Query(48) - 1;
-		if (v1 == 1) {
-			KIA_Play_Slice_Model(988);
-		} else if (v1 == 2) {
-			KIA_Play_Slice_Model(990);
-		} else if (v1 == 3) {
-			KIA_Play_Slice_Model(991);
-		} else if (v1 == 4) {
-			KIA_Play_Slice_Model(993);
+	case kClueDNATyrell:
+	case kClueDNASebastian:
+	case kClueDNAChew:
+	case kClueDNAMoraji:
+	case kClueDNALutherLance:
+	case kClueDNAMarcus:
+		{
+			int v1 = Global_Variable_Query(48) - 1;
+			if (v1 == 1) {
+				KIA_Play_Slice_Model(988);
+			} else if (v1 == 2) {
+				KIA_Play_Slice_Model(990);
+			} else if (v1 == 3) {
+				KIA_Play_Slice_Model(991);
+			} else if (v1 == 4) {
+				KIA_Play_Slice_Model(993);
+			}
 		}
 		break;
-	case 153:
+	case kClueGarterSnake:
 		KIA_Play_Slice_Model(950);
 		break;
-	case 154:
+	case kClueSlug:
 		KIA_Play_Slice_Model(967);
 		break;
-	case 155:
+	case kClueGoldfish:
 		KIA_Play_Slice_Model(947);
 		break;
-	case 156:
-		KIA_Play_Actor_Dialogue(19, 230);
-		KIA_Play_Actor_Dialogue(19, 240);
+	case kClueZubenTalksAboutLucy1:
+		KIA_Play_Actor_Dialogue(kActorZuben, 230);
+		KIA_Play_Actor_Dialogue(kActorZuben, 240);
 		break;
-	case 157:
-		KIA_Play_Actor_Dialogue(19, 250);
-		KIA_Play_Actor_Dialogue(19, 260);
+	case kClueZubenTalksAboutLucy2:
+		KIA_Play_Actor_Dialogue(kActorZuben, 250);
+		KIA_Play_Actor_Dialogue(kActorZuben, 260);
 		break;
-	case 158:
-		KIA_Play_Actor_Dialogue(19, 280);
-		KIA_Play_Actor_Dialogue(0, 7350);
-		KIA_Play_Actor_Dialogue(19, 290);
-		KIA_Play_Actor_Dialogue(19, 300);
-		KIA_Play_Actor_Dialogue(19, 310);
+	case kClueZubensMotive:
+		KIA_Play_Actor_Dialogue(kActorZuben, 280);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 7350);
+		KIA_Play_Actor_Dialogue(kActorZuben, 290);
+		KIA_Play_Actor_Dialogue(kActorZuben, 300);
+		KIA_Play_Actor_Dialogue(kActorZuben, 310);
 		break;
-	case 162:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 430);
+	case kClueVKDektoraReplicant:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 430);
 		break;
-	case 163:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 440);
+	case kClueVKDektoraHuman:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 440);
 		break;
-	case 164:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 430);
+	case kClueVKBobGorskyReplicant:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 430);
 		break;
-	case 165:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 440);
+	case kClueVKBobGorskyHuman:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 440);
 		break;
-	case 166:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 430);
+	case kClueVKLutherLanceReplicant:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 430);
 		break;
-	case 167:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 440);
+	case kClueVKLutherLanceHuman:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 440);
 		break;
-	case 168:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 430);
+	case kClueVKGrigorianReplicant:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 430);
 		break;
-	case 169:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 440);
+	case kClueVKGrigorianHuman:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 440);
 		break;
-	case 170:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 430);
+	case kClueVKIzoReplicant:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 430);
 		break;
-	case 171:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 440);
+	case kClueVKIzoHuman:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 440);
 		break;
-	case 172:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 430);
+	case kClueVKCrazylegsReplicant:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 430);
 		break;
-	case 173:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 440);
+	case kClueVKCrazylegsHuman:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 440);
 		break;
-	case 174:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 430);
+	case kClueVKRunciterReplicant:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 430);
 		break;
-	case 175:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 440);
+	case kClueVKRunciterHuman:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 440);
 		break;
-	case 176:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 430);
+	case kClueVKEarlyQReplicant:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 430);
 		break;
-	case 177:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 440);
+	case kClueVKEarlyQHuman:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 440);
 		break;
-	case 178:
-		KIA_Play_Actor_Dialogue(1, 3310);
-		KIA_Play_Actor_Dialogue(1, 3320);
-		KIA_Play_Actor_Dialogue(1, 3330);
-		KIA_Play_Actor_Dialogue(1, 3350);
-		KIA_Play_Actor_Dialogue(1, 3360);
-		KIA_Play_Actor_Dialogue(1, 3370);
-		KIA_Play_Actor_Dialogue(1, 3380);
+	case kClueCrimeSceneNotes:
+		KIA_Play_Actor_Dialogue(kActorSteele, 3310);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3320);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3330);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3350);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3360);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3370);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3380);
 		break;
-	case 179:
-		KIA_Play_Actor_Dialogue(1, 3390);
-		KIA_Play_Actor_Dialogue(1, 3400);
-		KIA_Play_Actor_Dialogue(1, 3410);
-		KIA_Play_Actor_Dialogue(11, 1260);
-		KIA_Play_Actor_Dialogue(1, 3420);
-		KIA_Play_Actor_Dialogue(1, 3430);
-		KIA_Play_Actor_Dialogue(1, 3440);
-		KIA_Play_Actor_Dialogue(11, 1270);
-		KIA_Play_Actor_Dialogue(1, 3450);
-		KIA_Play_Actor_Dialogue(1, 3460);
-		KIA_Play_Actor_Dialogue(11, 1280);
-		KIA_Play_Actor_Dialogue(1, 3470);
-		KIA_Play_Actor_Dialogue(11, 1300);
-		KIA_Play_Actor_Dialogue(11, 1310);
-		KIA_Play_Actor_Dialogue(1, 3480);
-		KIA_Play_Actor_Dialogue(1, 3500);
-		KIA_Play_Actor_Dialogue(11, 1320);
-		KIA_Play_Actor_Dialogue(11, 1330);
-		KIA_Play_Actor_Dialogue(1, 3510);
-		KIA_Play_Actor_Dialogue(11, 1340);
-		KIA_Play_Actor_Dialogue(1, 3520);
-		KIA_Play_Actor_Dialogue(11, 1350);
-		KIA_Play_Actor_Dialogue(1, 3530);
-		KIA_Play_Actor_Dialogue(1, 3540);
+	case kClueGrigorianInterviewA:
+		KIA_Play_Actor_Dialogue(kActorSteele, 3390);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3400);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3410);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1260);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3420);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3430);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3440);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1270);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3450);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3460);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1280);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3470);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1300);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1310);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3480);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3500);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1320);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1330);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3510);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1340);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3520);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1350);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3530);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3540);
 		break;
-	case 180:
-		KIA_Play_Actor_Dialogue(1, 3550);
-		KIA_Play_Actor_Dialogue(11, 1360);
-		KIA_Play_Actor_Dialogue(11, 1370);
-		KIA_Play_Actor_Dialogue(1, 3560);
-		KIA_Play_Actor_Dialogue(1, 3570);
+	case kClueGrigorianInterviewB1:
+		KIA_Play_Actor_Dialogue(kActorSteele, 3550);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1360);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1370);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3560);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3570);
 		break;
-	case 181:
-		KIA_Play_Actor_Dialogue(1, 3580);
-		KIA_Play_Actor_Dialogue(11, 1400);
-		KIA_Play_Actor_Dialogue(1, 3590);
-		KIA_Play_Actor_Dialogue(11, 1410);
-		KIA_Play_Actor_Dialogue(1, 3600);
-		KIA_Play_Actor_Dialogue(11, 1420);
-		KIA_Play_Actor_Dialogue(11, 1430);
-		KIA_Play_Actor_Dialogue(1, 3610);
-		KIA_Play_Actor_Dialogue(11, 1440);
-		KIA_Play_Actor_Dialogue(1, 3620);
-		KIA_Play_Actor_Dialogue(1, 3630);
-		KIA_Play_Actor_Dialogue(11, 1450);
-		KIA_Play_Actor_Dialogue(1, 3640);
-		KIA_Play_Actor_Dialogue(11, 1460);
-		KIA_Play_Actor_Dialogue(1, 3650);
+	case kClueGrigorianInterviewB2:
+		KIA_Play_Actor_Dialogue(kActorSteele, 3580);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1400);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3590);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1410);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3600);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1420);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1430);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3610);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1440);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3620);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3630);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1450);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3640);
+		KIA_Play_Actor_Dialogue(kActorGrigorian, 1460);
+		KIA_Play_Actor_Dialogue(kActorSteele, 3650);
 		break;
-	case 243:
+	case kClueAnimalMurderSuspect:
 		KIA_Play_Photograph(7);
 		break;
-	case 244:
+	case kClueMilitaryBoots:
 		KIA_Play_Photograph(8);
-		KIA_Play_Actor_Dialogue(99, 4110);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4110);
 		break;
-	case 245:
+	case kClueOuterDressingRoom:
 		KIA_Play_Photograph(15);
 		break;
-	case 246:
+	case kCluePhotoOfMcCoy1:
 		KIA_Play_Photograph(17);
 		break;
-	case 247:
+	case kCluePhotoOfMcCoy2:
 		KIA_Play_Photograph(18);
 		break;
-	case 248:
+	case kClueEarlyQAndLucy:
 		KIA_Play_Photograph(1);
-		KIA_Play_Actor_Dialogue(99, 4260);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4260);
 		break;
-	case 249:
+	case kClueClovisflowers:
 		KIA_Play_Photograph(3);
-		KIA_Play_Actor_Dialogue(99, 4230);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4230);
 		break;
-	case 250:
+	case kClueLucyWithDektora:
 		KIA_Play_Photograph(2);
-		KIA_Play_Actor_Dialogue(99, 4040);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4040);
 		break;
-	case 251:
+	case kClueWomanInAnimoidRow:
 		KIA_Play_Photograph(21);
 		break;
-	case 252:
+	case kClueScorpions:
 		KIA_Play_Photograph(22);
-		KIA_Play_Actor_Dialogue(99, 4180);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4180);
 		break;
-	case 253:
+	case kClueStrangeScale2:
 		KIA_Play_Photograph(23);
 		break;
-	case 254:
+	case kClueChinaBarSecurityCamera:
 		KIA_Play_Photograph(24);
 		break;
-	case 255:
+	case kClueIzo:
 		KIA_Play_Photograph(26);
 		break;
-	case 256:
+	case kClueGuzza:
 		KIA_Play_Photograph(27);
 		break;
-	case 257:
+	case kClueChinaBarSecurityDisc:
 		KIA_Play_Slice_Model(975);
 		break;
-	case 258:
+	case kClueScorpionbox:
 		KIA_Play_Photograph(0);
 		break;
-	case 259:
+	case kClueTyrellSecurityPhoto:
 		KIA_Play_Photograph(28);
 		break;
-	case 260:
+	case kClueChinaBar:
 		KIA_Play_Photograph(19);
 		break;
-	case 261:
+	case kCluePlasticExplosive:
 		KIA_Play_Photograph(32);
 		break;
-	case 262:
+	case kClueDogCollar2:
 		KIA_Play_Photograph(30);
-		KIA_Play_Actor_Dialogue(99, 4160);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4160);
 		break;
-	case 263:
+	case kClueKingstonKitchenBox2:
 		KIA_Play_Photograph(29);
 		if (Query_Difficulty_Level() == 0) {
-			KIA_Play_Actor_Dialogue(99, 4140);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4140);
 		} else {
-			KIA_Play_Actor_Dialogue(99, 4150);
+			KIA_Play_Actor_Dialogue(kActorVoiceOver, 4150);
 		}
 		break;
-	case 264:
+	case kClueCrystalsCigarette:
 		KIA_Play_Slice_Model(985);
-		KIA_Play_Actor_Dialogue(99, 1770);
-		KIA_Play_Actor_Dialogue(99, 1150);
-		KIA_Play_Actor_Dialogue(99, 1180);
-		KIA_Play_Actor_Dialogue(99, 1190);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1770);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1150);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1180);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 1190);
 		break;
-	case 265:
+	case kClueSpinnerKeys:
 		KIA_Play_Slice_Model(986);
 		break;
-	case 269:
-		KIA_Play_Actor_Dialogue(99, 730);
-		KIA_Play_Actor_Dialogue(99, 740);
-		KIA_Play_Actor_Dialogue(99, 750);
-		KIA_Play_Actor_Dialogue(99, 760);
+	case kClueExpertBomber:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 730);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 740);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 750);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 760);
 		break;
-	case 270:
-		KIA_Play_Actor_Dialogue(99, 670);
-		KIA_Play_Actor_Dialogue(99, 680);
-		KIA_Play_Actor_Dialogue(99, 700);
-		KIA_Play_Actor_Dialogue(99, 710);
-		KIA_Play_Actor_Dialogue(99, 720);
+	case kClueAmateurBomber:
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 670);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 680);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 700);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 710);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 720);
 		break;
-	case 271:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 430);
+	case kClueVKLucyReplicant:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 430);
 		break;
-	case 272:
-		KIA_Play_Actor_Dialogue(39, 420);
-		KIA_Play_Actor_Dialogue(39, 440);
+	case kClueVKLucyHuman:
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 420);
+		KIA_Play_Actor_Dialogue(kActorAnsweringMachine, 440);
 		break;
-	case 273:
-		KIA_Play_Actor_Dialogue(0, 1645);
-		KIA_Play_Actor_Dialogue(6, 240);
-		KIA_Play_Actor_Dialogue(6, 250);
-		KIA_Play_Actor_Dialogue(0, 1675);
-		KIA_Play_Actor_Dialogue(6, 260);
-		KIA_Play_Actor_Dialogue(6, 270);
+	case kClueLucyInterview:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 1645);
+		KIA_Play_Actor_Dialogue(kActorLucy, 240);
+		KIA_Play_Actor_Dialogue(kActorLucy, 250);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 1675);
+		KIA_Play_Actor_Dialogue(kActorLucy, 260);
+		KIA_Play_Actor_Dialogue(kActorLucy, 270);
 		break;
-	case 274:
+	case kClueMoonbusReflection:
 		KIA_Play_Photograph(35);
 		break;
-	case 275:
+	case kClueMcCoyAtMoonbus:
 		KIA_Play_Photograph(36);
-		KIA_Play_Actor_Dialogue(99, 4240);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4240);
 		break;
-	case 276:
+	case kClueClovisAtMoonbus:
 		KIA_Play_Photograph(37);
-		KIA_Play_Actor_Dialogue(99, 4220);
+		KIA_Play_Actor_Dialogue(kActorVoiceOver, 4220);
 		break;
-	case 277:
+	case kClueSadikAtMoonbus:
 		KIA_Play_Photograph(38);
 		break;
-	case 278:
-		KIA_Play_Actor_Dialogue(0, 5365);
-		KIA_Play_Actor_Dialogue(57, 600);
-		KIA_Play_Actor_Dialogue(0, 5370);
-		KIA_Play_Actor_Dialogue(57, 610);
+	case kClueRachaelInterview:
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5365);
+		KIA_Play_Actor_Dialogue(kActorRachael, 600);
+		KIA_Play_Actor_Dialogue(kActorMcCoy, 5370);
+		KIA_Play_Actor_Dialogue(kActorRachael, 610);
 		break;
-	case 279:
-		KIA_Play_Actor_Dialogue(51, 0);
-		KIA_Play_Actor_Dialogue(51, 10);
-		KIA_Play_Actor_Dialogue(51, 20);
-		KIA_Play_Actor_Dialogue(51, 30);
+	case kClueTyrellInterview:
+		KIA_Play_Actor_Dialogue(kActorTyrell, 0);
+		KIA_Play_Actor_Dialogue(kActorTyrell, 10);
+		KIA_Play_Actor_Dialogue(kActorTyrell, 20);
+		KIA_Play_Actor_Dialogue(kActorTyrell, 30);
 		break;
-	case 280:
-		KIA_Play_Actor_Dialogue(15, 630);
-		KIA_Play_Actor_Dialogue(15, 640);
-		KIA_Play_Actor_Dialogue(15, 650);
+	case kClueRuncitersConfession1:
+		KIA_Play_Actor_Dialogue(kActorRunciter, 630);
+		KIA_Play_Actor_Dialogue(kActorRunciter, 640);
+		KIA_Play_Actor_Dialogue(kActorRunciter, 650);
 		break;
 	}
 }

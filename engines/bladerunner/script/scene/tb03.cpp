@@ -108,7 +108,7 @@ bool SceneScriptTB03::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(447);
-			Set_Enter(88, 101);
+			Set_Enter(88, kSceneUG17);
 		}
 		return true;
 	}
@@ -117,7 +117,7 @@ bool SceneScriptTB03::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(155);
-			Set_Enter(17, 82);
+			Set_Enter(17, kSceneTB02);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1702.0f, 0, false);
 		}
 		return true;

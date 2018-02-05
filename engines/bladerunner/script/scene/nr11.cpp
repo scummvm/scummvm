@@ -208,7 +208,7 @@ bool SceneScriptNR11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 100.0f, 1.75f, -8.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(477);
-			Set_Enter(59, 63);
+			Set_Enter(59, kSceneNR10);
 			return true;
 		}
 	}

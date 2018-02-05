@@ -31,7 +31,7 @@
 namespace BladeRunner {
 
 class Regions {
-#ifdef _DEBUG
+#if BLADERUNNER_DEBUG_RENDERING
 	friend class BladeRunnerEngine;
 #endif
 

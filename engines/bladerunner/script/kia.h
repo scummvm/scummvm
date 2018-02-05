@@ -33,10 +33,10 @@ class KIAScript : ScriptBase {
 public:
 	KIAScript(BladeRunnerEngine *vm);
 
-	void playClueAssetScript(int a1, int clueId);
+	void playClueAssetScript(int notUsed, int clueId);
 
 private:
-	void SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int a1, int clueId);
+	void SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId);
 };
 
 } // End of namespace BladeRunner

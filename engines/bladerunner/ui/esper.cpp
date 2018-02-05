@@ -29,7 +29,6 @@
 #include "bladerunner/decompress_lcw.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_info.h"
-#include "bladerunner/game_constants.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/script/esper.h"
@@ -568,92 +567,92 @@ void ESPER::draw(Graphics::Surface &surface) {
 	}
 	_vqaMainPlayer->update(false);
 	switch (_stateMain) {
-		case kEsperMainStateOpening:
-		case kEsperMainStateList:
-			return;
-		case kEsperMainStatePhotoOpening:
-			drawPhotoOpening(surface);
-			break;
-		case kEsperMainStateClear:
-			surface.fillRect(_screen, 0x0000);
-			break;
-		case kEsperMainStatePhoto:
-			if (_isScrolling) {
-				tickScroll();
+	case kEsperMainStateOpening:
+	case kEsperMainStateList:
+		return;
+	case kEsperMainStatePhotoOpening:
+		drawPhotoOpening(surface);
+		break;
+	case kEsperMainStateClear:
+		surface.fillRect(_screen, 0x0000);
+		break;
+	case kEsperMainStatePhoto:
+		if (_isScrolling) {
+			tickScroll();
+		}
+		switch (_statePhoto) {
+		case kEsperPhotoStateShow:
+			drawPhotoWithGrid(surface);
+			if (_isDrawingSelection) {
+				drawSelection(surface, true, 1);
 			}
-			switch (_statePhoto) {
-				case kEsperPhotoStateShow:
-					drawPhotoWithGrid(surface);
-					if (_isDrawingSelection) {
-						drawSelection(surface, true, 1);
-					}
 #if BLADERUNNER_DEBUG_RENDERING
-					for (int i = 0; i < kRegionCount; ++i) {
-						if (_regions[i].isPresent) {
-							surface.frameRect(
-								Common::Rect(
-									viewportXToScreenX(_regions[i].rectInner.left),
-									viewportYToScreenY(_regions[i].rectInner.top),
-									viewportXToScreenX(_regions[i].rectInner.right),
-									viewportYToScreenY(_regions[i].rectInner.bottom)
-								),
-								0x7FE0
-							);
-							surface.frameRect(
-								Common::Rect(
-									viewportXToScreenX(_regions[i].rectOuter.left),
-									viewportYToScreenY(_regions[i].rectOuter.top),
-									viewportXToScreenX(_regions[i].rectOuter.right),
-									viewportYToScreenY(_regions[i].rectOuter.bottom)
-								),
-								0x7FE0
-							);
-						}
-					}
-#endif
-					break;
-				case kEsperPhotoStateScrolling:
-					scrollUpdate();
-					drawPhotoWithGrid(surface);
-					break;
-				case kEsperPhotoStateSelectionZooming:
-					drawPhotoWithGrid(surface);
-					if (!drawSelectionZooming(surface)) {
-						setStatePhoto(kEsperPhotoStateSelectionBlinking);
-						playSound(418, 25);
-					}
-					break;
-				case kEsperPhotoStateSelectionBlinking:
-					drawPhotoWithGrid(surface);
-					if (!drawSelectionBlinking(surface)) {
-						setStatePhoto(kEsperPhotoStatePhotoZooming);
-					}
-					break;
-				case kEsperPhotoStatePhotoZooming:
-					drawPhotoZooming(surface);
-					break;
-				case kEsperPhotoStatePhotoSharpening:
-					drawPhotoSharpening(surface);
-					break;
-				case kEsperPhotoStatePhotoZoomOut:
-					drawPhotoZoomOut(surface);
-					break;
-				case kEsperPhotoStateVideoZooming:
-					drawVideoZooming(surface);
-					break;
-				case kEsperPhotoStateVideoShow:
-					drawVideoFrame(surface);
-					drawGrid(surface);
-					break;
-				case kEsperPhotoStateVideoZoomOut:
-					drawVideoZoomOut(surface);
-					break;
-				default:
-					break;
+			for (int i = 0; i < kRegionCount; ++i) {
+				if (_regions[i].isPresent) {
+					surface.frameRect(
+						Common::Rect(
+							viewportXToScreenX(_regions[i].rectInner.left),
+							viewportYToScreenY(_regions[i].rectInner.top),
+							viewportXToScreenX(_regions[i].rectInner.right),
+							viewportYToScreenY(_regions[i].rectInner.bottom)
+						),
+						0x7FE0
+					);
+					surface.frameRect(
+						Common::Rect(
+							viewportXToScreenX(_regions[i].rectOuter.left),
+							viewportYToScreenY(_regions[i].rectOuter.top),
+							viewportXToScreenX(_regions[i].rectOuter.right),
+							viewportYToScreenY(_regions[i].rectOuter.bottom)
+						),
+						0x7FE0
+					);
+				}
 			}
-			drawTextCoords(surface);
-
+#endif
 			break;
+		case kEsperPhotoStateScrolling:
+			scrollUpdate();
+			drawPhotoWithGrid(surface);
+			break;
+		case kEsperPhotoStateSelectionZooming:
+			drawPhotoWithGrid(surface);
+			if (!drawSelectionZooming(surface)) {
+				setStatePhoto(kEsperPhotoStateSelectionBlinking);
+				playSound(418, 25);
+			}
+			break;
+		case kEsperPhotoStateSelectionBlinking:
+			drawPhotoWithGrid(surface);
+			if (!drawSelectionBlinking(surface)) {
+				setStatePhoto(kEsperPhotoStatePhotoZooming);
+			}
+			break;
+		case kEsperPhotoStatePhotoZooming:
+			drawPhotoZooming(surface);
+			break;
+		case kEsperPhotoStatePhotoSharpening:
+			drawPhotoSharpening(surface);
+			break;
+		case kEsperPhotoStatePhotoZoomOut:
+			drawPhotoZoomOut(surface);
+			break;
+		case kEsperPhotoStateVideoZooming:
+			drawVideoZooming(surface);
+			break;
+		case kEsperPhotoStateVideoShow:
+			drawVideoFrame(surface);
+			drawGrid(surface);
+			break;
+		case kEsperPhotoStateVideoZoomOut:
+			drawVideoZoomOut(surface);
+			break;
+		default:
+			break;
+		}
+		drawTextCoords(surface);
+
+		break;
 	}
 }
 
