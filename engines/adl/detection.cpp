@@ -282,7 +282,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 		GAME_TYPE_HIRES5,
 		GAME_VER_NONE
 	},
-	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - Roberta Williams Anthology
+	{ // Hi-Res Adventure #6: The Dark Crystal - Apple II - Roberta Williams Anthology / SierraVenture
 		{
 			"hires6", 0,
 			{
