@@ -336,7 +336,12 @@ bool CloudsCutscenes::showCloudsIntro() {
 	return true;
 }
 
-bool CloudsCutscenes::showCloudsEnding() {
+void CloudsCutscenes::showCloudsEnding() {
+	if (showCloudsEnding1())
+		showCloudsEnding2();
+}
+
+bool CloudsCutscenes::showCloudsEnding1() {
 	EventsManager &events = *_vm->_events;
 	FileManager &files = *_vm->_files;
 	Screen &screen = *_vm->_screen;
@@ -361,12 +366,13 @@ bool CloudsCutscenes::showCloudsEnding() {
 	sound.playFX(1);
 	sound.playFX(34);
 
+	// prec loop
 	for (int idx = 1; idx < 42; ++idx) {
 		// Load up the background frame of swirling clouds
 		loadScreen(Common::String::format("prec00%02u.frm", idx));
 
 		// Render castle in front of it
-		prec.draw(0, 0);
+		prec.draw(0, 0, Common::Point(0, 0));
 		prec.draw(0, 1, Common::Point(160, 0));
 		screen.update();
 
@@ -391,22 +397,181 @@ bool CloudsCutscenes::showCloudsEnding() {
 
 	prec.clear();
 
-	// Show swirling vortex
-	// TODO? SpriteResource vort[21];
-	SpriteResource cast[16], darkLord[4];
+	SpriteResource cast[16], darkLord[3];
 	for (int idx = 1; idx < 7; ++idx)
 		cast[idx - 1].load(Common::String::format("cast%02u.end", idx));
 	for (int idx = 1; idx < 4; ++idx)
-		darkLord[idx].load(Common::String::format("darklrd%d.end", idx));
+		darkLord[idx - 1].load(Common::String::format("darklrd%d.end", idx));
 
+	// First vortex loop
+	int cloudsCtr = 1;
 	for (int idx = 1; idx < 16; ++idx) {
-		loadScreen(Common::String::format("vort%02u.frm", idx));
+		loadScreen(Common::String::format("vort%02u.frm", cloudsCtr++));
 		cast[0].draw(0, 0);
-		cast[idx - 1].draw(0, 0, Common::Point(0, 100));
+		cast[0].draw(0, 0, Common::Point(0, 100));
+		WAIT(3);
 	}
 
+	screen.loadPalette("mm4.pal");
+	screen.fadeIn(0x81);
+
+	const byte COUNTS1[6] = { 9, 3, 2, 2, 3, 15 };
+	bool flag = false;
+	for (int idx1 = 1; idx1 < 7; ++idx1) {
+		for (int idx2 = 0; idx2 < COUNTS1[idx1 - 1]; ++idx2) {
+			loadScreen(Common::String::format("vort%02u.frm", cloudsCtr));
+			if (cloudsCtr++ > 20)
+				cloudsCtr = 1;
+
+			if (flag && !sound.isPlaying()) {
+				flag = false;
+				sound.playFX(34);
+			} else if (!flag && idx1 == 1 && idx2 == 6) {
+				flag = true;
+				sound.playSound("xeenlaff.voc");
+			}
+
+			switch (cloudsCtr) {
+			case 0:
+			case 1:
+			case 5:
+			case 9:
+			case 15:
+				sound.playFX(34);
+				break;
+			case 2:
+			case 7:
+			case 10:
+			case 13:
+				sound.playFX(33);
+				break;
+			default:
+				break;
+			}
+
+			cast[idx1 - 1].draw(0, idx2, Common::Point(0, 0));
+			cast[idx1 - 1].draw(0, idx2, Common::Point(0, 100));
+			WAIT(3);
+		}
+	}
+
+	for (int idx = 0; idx < 16; ++idx) {
+		loadScreen(Common::String::format("vort%02u.frm", cloudsCtr));
+		if (cloudsCtr++ > 20)
+			cloudsCtr = 1;
+
+		if (idx < 7)
+			darkLord[0].draw(0, idx);
+		else if (idx < 11)
+			darkLord[1].draw(0, idx - 7);
+		else
+			darkLord[2].draw(0, idx - 11);
+
+		switch (cloudsCtr - 1) {
+		case 0:
+		case 4:
+		case 8:
+		case 14:
+			sound.playFX(34);
+			break;
+		case 1:
+		case 6:
+		case 9:
+		case 12:
+			sound.playFX(33);
+			break;
+		default:
+			break;
+		}
+
+		WAIT(3);
+	}
+	sound.setMusicVolume(75);
+
+	for (int idx = 0; idx < 3; ++idx) {
+		switch (idx) {
+		case 0:
+			sound.playSound("dark1.voc");
+			break;
+		case 1:
+			sound.playSound("dark2.voc");
+			break;
+		case 2:
+			sound.playSound("dark3.voc");
+			break;
+		}
+
+		do {
+			loadScreen(Common::String::format("vort%02u.frm", cloudsCtr));
+			if (cloudsCtr++ > 20)
+				cloudsCtr = 1;
+
+			darkLord[2].draw(0, getSpeakingFrame(2, 6));
+
+			switch (cloudsCtr - 1) {
+			case 0:
+			case 4:
+			case 8:
+			case 14:
+				sound.playFX(34);
+				break;
+			case 1:
+			case 6:
+			case 9:
+			case 12:
+				sound.playFX(33);
+				break;
+			default:
+				break;
+			}
+
+			showSubtitles(0);
+			WAIT(3);
+		} while (sound.isPlaying() || _subtitleSize > 0);
+	}
+
+	sound.playSound("darklaff.voc");
+	sound.setMusicVolume(95);
+
+	for (int idx = 12; idx >= 0; --idx) {
+		loadScreen(Common::String::format("vort%02u.frm", cloudsCtr));
+		if (cloudsCtr++ > 20)
+			cloudsCtr = 1;
+
+		if (idx < 7)
+			darkLord[0].draw(0, idx);
+		else if (idx < 11)
+			darkLord[1].draw(0, idx - 7);
+		else
+			darkLord[2].draw(0, idx - 11);
+
+		switch (cloudsCtr - 1) {
+		case 0:
+		case 4:
+		case 8:
+		case 14:
+			sound.playFX(34);
+			break;
+		case 1:
+		case 6:
+		case 9:
+		case 12:
+			sound.playFX(33);
+			break;
+		default:
+			break;
+		}
+
+		WAIT(3);
+	}
+
+	sound.stopSound();
+	screen.fadeOut();
+	return true;
+}
+
+bool CloudsCutscenes::showCloudsEnding2() {
 	// TODO
-	WAIT(5000);
 	return true;
 }
 

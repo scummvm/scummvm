@@ -39,6 +39,16 @@ private:
 	static const byte _DECODE_TABLE2[256];
 private:
 	void loadScreen(const Common::String &name);
+
+	/**
+	 * Shows part 1 of the Clouds of Xeen ending
+	 */
+	bool showCloudsEnding1();
+
+	/**
+	 * Shows part 1 of the Clouds of Xeen ending
+	 */
+	bool showCloudsEnding2();
 public:
 	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 
@@ -55,7 +65,7 @@ public:
 	/**
 	 * Shows the Clouds of Xeen ending sequence
 	 */
-	bool showCloudsEnding();
+	void showCloudsEnding();
 };
 
 } // End of namespace WorldOfXeen
