@@ -1652,6 +1652,22 @@ const KYRAGameDescription adGameDescs[] = {
 		EOB_FLAGS
 	},
 
+	{	// Unofficial v1.9
+		{
+			"eob",
+			0,
+			{
+				{ "EOBDATA3.PAK", 0, "8a25bce460866bd47b278dcf57de460c", 346303 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS)
+		},
+		EOB_FLAGS
+	},
+
 	{
 		{
 			"eob2",
