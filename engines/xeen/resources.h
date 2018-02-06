@@ -364,6 +364,8 @@ public:
 	static const char *const WORLD_END_TEXT[9];
 	static const char *const WORLD_CONGRATULATIONS;
 	static const char *const WORLD_CONGRATULATIONS2;
+	static const char *const CLOUDS_CONGRATULATIONS1;
+	static const char *const CLOUDS_CONGRATULATIONS2;
 	static const char *const GOOBER[3];
 public:
 	/**

@@ -46,9 +46,20 @@ private:
 	bool showCloudsEnding1();
 
 	/**
-	 * Shows part 1 of the Clouds of Xeen ending
+	 * Shows part 2 of the Clouds of Xeen ending
 	 */
 	bool showCloudsEnding2();
+
+	/**
+	 * Shows part 3 of the Clouds of Xeen ending, which shows a display
+	 * of the game's monsters
+	 */
+	bool showCloudsEnding3();
+
+	/**
+	 * Shows part 4 of the Clouds of Xeen ending, the final score
+	 */
+	bool showCloudsEnding4(uint finalScore);
 public:
 	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 
@@ -65,7 +76,7 @@ public:
 	/**
 	 * Shows the Clouds of Xeen ending sequence
 	 */
-	void showCloudsEnding();
+	void showCloudsEnding(uint finalScore);
 };
 
 } // End of namespace WorldOfXeen

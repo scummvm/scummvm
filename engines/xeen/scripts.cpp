@@ -1080,7 +1080,15 @@ bool Scripts::cmdSetVar(ParamsIterator &params) {
 	return true;
 }
 
-bool Scripts::cmdCutsceneEndClouds(ParamsIterator &params) { error("TODO"); }
+bool Scripts::cmdCutsceneEndClouds(ParamsIterator &params) {
+	Party &party = *_vm->_party;
+	party._gameFlags[0][75] = true;
+	party._mazeId = 28;
+	party._mazePosition = Common::Point(18, 4);
+
+	doCloudsEnding();
+	return false;
+}
 
 bool Scripts::cmdWhoWill(ParamsIterator &params) {
 	int msg = params.readByte();

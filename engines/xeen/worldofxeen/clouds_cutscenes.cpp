@@ -336,9 +336,11 @@ bool CloudsCutscenes::showCloudsIntro() {
 	return true;
 }
 
-void CloudsCutscenes::showCloudsEnding() {
+void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 	if (showCloudsEnding1())
-		showCloudsEnding2();
+		if (showCloudsEnding2())
+			if (!showCloudsEnding3())
+				showCloudsEnding4(finalScore);
 }
 
 bool CloudsCutscenes::showCloudsEnding1() {
@@ -571,6 +573,255 @@ bool CloudsCutscenes::showCloudsEnding1() {
 }
 
 bool CloudsCutscenes::showCloudsEnding2() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+
+	SpriteResource king("king.end"), room("room.end"), bigSky("bigsky.end"),
+		mirror("mirror.end"), mirrBack("mirrback.end"), people("people.end"),
+		crodo("crodo.end"), kingCord("kingcord.end");
+
+	screen.loadPalette("endgame.pal");
+	screen.loadBackground("later.raw");
+	screen.fadeIn();
+	WAIT(100);
+	screen.fadeOut();
+
+	screen.loadBackground("throne1.raw");
+	screen.loadPage(0);
+	screen.loadBackground("throne2.raw");
+	screen.loadPage(1);
+
+	int ctr1 = 0, ctr3 = -1, ctr4 = 0, ctr5 = 0;
+	int xp2 = SCREEN_WIDTH;
+	for (int ctr2 = SCREEN_WIDTH, xp1 = 117, xp3 = 0; ctr2 > 0; ) {
+		events.updateGameCounter();
+		screen.horizMerge(xp3);
+		people.draw(0, 0, Common::Point(xp1, 68), SPRFLAG_800);
+		if (xp3 > 250) {
+			crodo.draw(0, 0, Common::Point(xp2, 68), SPRFLAG_800);
+			xp2 -= ctr1 * 2;
+		}
+
+		events.pollEventsAndWait();
+		if (_vm->shouldQuit())
+			return false;
+
+		if (!ctr4) {
+			ctr1 = events.timeElapsed();
+			if (!ctr1)
+				ctr1 = 1;
+			ctr4 = 1;
+			ctr5 = ctr1 * 2;
+		}
+
+		xp3 += ctr1;
+		ctr2 -= ctr1;
+		xp1 -= ctr5;
+		if (xp2 < 181)
+			xp2 = 181;
+		if (ctr3) {
+			screen.fadeIn();
+			ctr3 = 0;
+		}
+	}
+
+	screen.horizMerge(SCREEN_WIDTH);
+	crodo.draw(0, 0, Common::Point(xp2, 68), SPRFLAG_800);
+	screen.freePages();
+	WAIT(5);
+
+	Graphics::ManagedSurface savedBg;
+	savedBg.blitFrom(screen);
+
+	const int XLIST1[13] = { 0, -5, -10, -15, -20, -25, -30, -33, -27, -22, -17 };
+	const int XLIST2[13] = { 60, 145, 130, 115, 100, 85, 70, 57, 53, 48, 42, 39, 34 };
+	const int YLIST[13] = { 42, 39, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+	for (int idx = 12; idx >= 0; --idx) {
+		screen.blitFrom(savedBg);
+		king.draw(0, 0, Common::Point(XLIST1[idx], YLIST[idx]));
+		king.draw(0, 1, Common::Point(XLIST2[idx], YLIST[idx]));
+		WAIT(1);
+	}
+
+	const char *const VOC_NAMES[3] = { "king1.voc", "king2.voc", "king3.voc" };
+	_subtitleSize = 0;
+	for (int idx = 0; idx < 3; ++idx) {
+		sound.playSound(VOC_NAMES[idx]);
+
+		do {
+			king.draw(0, 0, Common::Point(0, 0));
+			king.draw(0, 1, Common::Point(160, 0));
+
+			int frame = getSpeakingFrame(1, 6);
+			if (frame > 1)
+				king.draw(0, frame);
+
+			showSubtitles();
+			WAIT(3);
+		} while (sound.isPlaying() || _subtitleSize);
+
+		king.draw(0, 0, Common::Point(0, 0));
+		king.draw(0, 1, Common::Point(160, 0));
+		WAIT(1);
+	}
+
+	screen.fadeOut();
+	screen.loadPalette("mirror.pal");
+	screen.loadBackground("miror-s.raw");
+	screen.loadPage(0);
+	screen.loadPage(1);
+
+	room.draw(0, 0, Common::Point(0, 0));
+	room.draw(0, 1, Common::Point(160, 0));
+	screen.fadeIn();
+
+	for (int idx = 0; idx < 83; ++idx) {
+		screen.horizMerge(idx);
+		room.draw(0, 0, Common::Point(0, 0));
+		room.draw(0, 1, Common::Point(160, 0));
+		WAIT(1);
+	}
+
+	screen.freePages();
+	savedBg.blitFrom(screen);
+
+	const int XLIST3[9] = { 0, -5, -10, -15, -24, -30, -39, -50, -59 };
+	const int YLIST3[9] = { 0, 12, 25, 37, 46, 52, 59, 64, 68 };
+	for (int idx = 8; idx >= 0; --idx) {
+		screen.blitFrom(savedBg);
+		bigSky.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
+		mirrBack.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
+		WAIT(1);
+	}
+
+	int mergeX = 0;
+	const int DELTA = 2;
+	for (int idx = 0, xc1 = -115, yp = SCREEN_HEIGHT, xc2 = 335;
+			idx < 115; idx += DELTA, xc1 += DELTA, yp -= DELTA, xc2 -= DELTA) {
+		screen.horizMerge(mergeX);
+		mergeX = (mergeX + 1) % SCREEN_WIDTH;
+
+		mirrBack.draw(0, 0);
+		mirror.draw(0, 0);
+		kingCord.draw(0, 0, Common::Point(xc1, yp), SPRFLAG_800);
+		kingCord.draw(0, 1, Common::Point(xc2, yp), SPRFLAG_800);
+		WAIT(1);
+	}
+
+	screen.horizMerge(mergeX);
+	mergeX = (mergeX + 1) % SCREEN_WIDTH;
+	mirrBack.draw(0, 0);
+	mirror.draw(0, 0);
+	kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
+	kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
+
+	return true;
+}
+
+bool CloudsCutscenes::showCloudsEnding3() {
+	SpriteResource mon088("088.mon"), att034("034.att");
+
+	// TODO
+	doScroll(true, false);
+
+	return true;
+}
+
+bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Windows &windows = *_vm->_windows;
+	SpriteResource mirror("mirror.end"), mirrBack("mirrback.end"),
+		endText("endtext.end");
+
+	int mergeX = 298;
+	screen.horizMerge(mergeX);
+	mirrBack.draw(0, 0);
+	mirror.draw(0, 0);
+	doScroll(false, false);
+
+	for (int idx = 0; idx < 19; ++idx) {
+		screen.horizMerge(mergeX);
+		mergeX = (mergeX + 1) % SCREEN_WIDTH;
+
+		mirrBack.draw(0, 0);
+		mirror.draw(0, 0);
+		endText.draw(0, idx);
+		WAIT(1);
+	}
+
+	int frames[10];
+	const int FRAMEX[10] = { 64, 83, 102, 121, 140, 159, 178, 197, 216, 235 };
+	for (int idx1 = 0; idx1 < 30; ++idx1) {
+		for (int idx2 = 0; idx2 < 10; ++idx2)
+			frames[idx2] = getSpeakingFrame(20, 29);
+
+		screen.horizMerge(mergeX);
+		mergeX = (mergeX + 1) % SCREEN_WIDTH;
+
+		mirrBack.draw(0, 0);
+		mirror.draw(0, 0);
+		endText.draw(0, 19);
+		for (int idx2 = 0; idx2 < 10; ++idx2)
+			endText.draw(0, frames[idx2], Common::Point(FRAMEX[idx2], 73));
+
+		WAIT(2);
+	}
+
+	Common::String scoreStr = Common::String::format("%.10u", finalScore);
+	for (int idx1 = 0; idx1 < 10; ++idx1) {
+		for (int idx2 = 0; idx2 < 10; ++idx2)
+			frames[idx2] = getSpeakingFrame(20, 29);
+
+		for (int idx2 = 0; idx2 <= idx1; ++idx2)
+			frames[9 - idx2] = (byte)scoreStr[9 - idx2] - 28;
+
+		screen.horizMerge(mergeX);
+		mergeX = (mergeX + 1) % SCREEN_WIDTH;
+
+		mirrBack.draw(0, 0);
+		mirror.draw(0, 0);
+		endText.draw(0, 19);
+
+		for (int idx2 = 0; idx2 < 10; ++idx2)
+			endText.draw(0, frames[idx2], Common::Point(FRAMEX[idx2], 73));
+
+		WAIT(2);
+	}
+
+	// Move the score down
+	for (int idx1 = 0; idx1 < 38; ++idx1) {
+		screen.horizMerge(mergeX);
+		mergeX = (mergeX + 1) % SCREEN_WIDTH;
+
+		mirrBack.draw(0, 0);
+		mirror.draw(0, 0);
+		endText.draw(0, 19);
+
+		for (int idx2 = 0; idx2 < 10; ++idx2)
+			endText.draw(0, frames[idx2], Common::Point(FRAMEX[idx2], 73 + idx1));
+
+		WAIT(1);
+	}
+
+	windows[28].setBounds(Common::Rect(63, 60, 254, 160));
+
+	for (int idx1 = 0; idx1 < 38; ++idx1) {
+		screen.horizMerge(mergeX);
+		mergeX = (mergeX + 1) % SCREEN_WIDTH;
+
+		mirrBack.draw(0, 0);
+		mirror.draw(0, 0);
+		endText.draw(0, 19);
+
+		for (int idx2 = 0; idx2 < 10; ++idx2)
+			endText.draw(0, frames[idx2], Common::Point(FRAMEX[idx2], 110));
+		windows[28].writeString(Res.CLOUDS_CONGRATULATIONS1);
+
+		WAIT(1);
+	}
 	// TODO
 	return true;
 }

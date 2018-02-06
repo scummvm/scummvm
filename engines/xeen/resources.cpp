@@ -1726,6 +1726,18 @@ const char *const Resources::WORLD_CONGRATULATIONS2 =
 	"Include the message\n"
 	"\"%s\"\n"
 	"with your final score and receive a special bonus.";
+const char *const Resources::CLOUDS_CONGRATULATIONS1 =
+	"\xC""23\x3l"
+	"\xB""000\t000Please send this score to the Ancient's Headquarters "
+	"where you'll be added to the Hall of Legends!\xC""33\x3""c"
+	"\xB""070\t000Press a Key";
+const char *const Resources::CLOUDS_CONGRATULATIONS2 =
+	"\xC""23\x3l"
+	"\xB""000\t000Ancient's Headquarters\n"
+	"New World Computing, Inc.\n"
+	"P.O. Box 4302\n"
+	"Hollywood, CA 90078-4302\xC""33\x3""c"
+	"\xB""070\t000Press a Key";
 const char *const Resources::GOOBER[3] = {
 	"", "I am a Goober!", "I am a Super Goober!"
 };
