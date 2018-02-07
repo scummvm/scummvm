@@ -1637,4 +1637,19 @@ void Party::giveBankInterest() {
 	_bankGems += _bankGems / 100;
 }
 
+uint Party::getScore() {
+	uint score = 0;
+	for (uint idx = 0; idx < _activeParty.size(); ++idx)
+		score += _activeParty[idx].getCurrentExperience();
+	score = score / _activeParty.size() / 10000;
+	score *= 100000;
+
+	uint time = _vm->_events->playTime() / GAME_FRAME_RATE;
+	int minutes = (time % 3600) / 60;
+	int hours = time / 3600;
+	
+	score += minutes + (hours * 100);
+	return score;
+}
+
 } // End of namespace Xeen

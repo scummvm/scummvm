@@ -235,6 +235,11 @@ public:
 	 * Resets the inventory that Blacksmiths sell
 	 */
 	void resetBlacksmithWares();
+
+	/**
+	 * Returns the current total score
+	 */
+	uint getScore();
 };
 
 } // End of namespace Xeen

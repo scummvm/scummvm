@@ -1464,8 +1464,10 @@ void Scripts::doEnding(const Common::String &endStr) {
 		}
 	}
 
-	// TODO: Pass proper score
-	g_vm->showCutscene(endStr, state, 42);
+	// Get the current total score
+	uint finalScore = party.getScore();
+
+	g_vm->showCutscene(endStr, state, finalScore);
 	g_vm->_quitMode = QMODE_MENU;
 }
 
