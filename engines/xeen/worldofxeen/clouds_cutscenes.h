@@ -60,6 +60,11 @@ private:
 	 * Shows part 4 of the Clouds of Xeen ending, the final score
 	 */
 	bool showCloudsEnding4(uint finalScore);
+
+	/**
+	 * Shows part 5 of the Clouds of Xeen ending, final king display
+	 */
+	bool showCloudsEnding5();
 public:
 	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 

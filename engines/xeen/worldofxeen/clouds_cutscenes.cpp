@@ -340,7 +340,8 @@ void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 	if (showCloudsEnding1())
 		if (showCloudsEnding2())
 			if (!showCloudsEnding3())
-				showCloudsEnding4(finalScore);
+				if (!showCloudsEnding4(finalScore))
+					showCloudsEnding5();
 }
 
 bool CloudsCutscenes::showCloudsEnding1() {
@@ -721,7 +722,9 @@ bool CloudsCutscenes::showCloudsEnding2() {
 }
 
 bool CloudsCutscenes::showCloudsEnding3() {
-	SpriteResource mon088("088.mon"), att034("034.att");
+	SpriteResource mon, att;
+
+
 
 	// TODO
 	doScroll(true, false);
@@ -808,21 +811,58 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 
 	windows[28].setBounds(Common::Rect(63, 60, 254, 160));
 
-	for (int idx1 = 0; idx1 < 38; ++idx1) {
-		screen.horizMerge(mergeX);
-		mergeX = (mergeX + 1) % SCREEN_WIDTH;
+	for (int idx = 1; idx <= 2; ++idx) {
+		events.clearEvents();
+		do {
+			screen.horizMerge(mergeX);
+			mergeX = (mergeX + 1) % SCREEN_WIDTH;
 
-		mirrBack.draw(0, 0);
-		mirror.draw(0, 0);
-		endText.draw(0, 19);
+			mirrBack.draw(0, 0);
+			mirror.draw(0, 0);
+			endText.draw(0, 19);
 
-		for (int idx2 = 0; idx2 < 10; ++idx2)
-			endText.draw(0, frames[idx2], Common::Point(FRAMEX[idx2], 110));
-		windows[28].writeString(Res.CLOUDS_CONGRATULATIONS1);
+			for (int idx2 = 0; idx2 < 10; ++idx2)
+				endText.draw(0, frames[idx2], Common::Point(FRAMEX[idx2], 110));
+			windows[28].writeString(idx == 1 ? Res.CLOUDS_CONGRATULATIONS1 :
+				Res.CLOUDS_CONGRATULATIONS2);
 
-		WAIT(1);
+			WAIT(1);
+		} while (!events.isKeyMousePressed());
 	}
-	// TODO
+
+	doScroll(true, false);
+	screen.fadeOut();
+
+	return true;
+}
+
+bool CloudsCutscenes::showCloudsEnding5() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	SpriteResource king("king.end");
+
+	king.draw(0, 0, Common::Point(0, 0));
+	king.draw(0, 1, Common::Point(160, 0));
+	screen.fadeIn();
+	
+	sound.playSound("king4.voc");
+	do {
+		king.draw(0, 0, Common::Point(0, 0));
+		king.draw(0, 1, Common::Point(160, 0));
+		int frame = getSpeakingFrame(1, 6);
+		if (frame > 1)
+			king.draw(0, frame);
+
+		showSubtitles();
+		WAIT(3);
+	} while (sound.isPlaying() || _subtitleSize);
+
+	king.draw(0, 0, Common::Point(0, 0));
+	king.draw(0, 1, Common::Point(160, 0));
+	WAIT(1);
+	doScroll(true, false);
+
 	return true;
 }
 

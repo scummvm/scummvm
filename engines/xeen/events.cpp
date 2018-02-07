@@ -179,6 +179,16 @@ void EventsManager::waitForPressAnimated() {
 	clearEvents();
 }
 
+void EventsManager::waitForPress() {
+	clearEvents();
+
+	do {
+		pollEventsAndWait();
+	} while (!_vm->shouldQuit() && !isKeyMousePressed());
+
+	clearEvents();
+}
+
 void EventsManager::nextFrame() {
 	++_frameCounter;
 	++_playTime;

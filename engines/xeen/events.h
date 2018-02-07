@@ -128,6 +128,11 @@ public:
 	 * Waits for a key or mouse press, animating the 3d view in the background
 	 */
 	void waitForPressAnimated();
+
+	/**
+	 * Waits for a key or mouse press
+	 */
+	void waitForPress();
 };
 
 class GameEvent {

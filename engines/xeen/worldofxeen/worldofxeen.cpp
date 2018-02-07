@@ -167,6 +167,7 @@ void WorldOfXeenEngine::death() {
 
 void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uint score) {
 	_sound->stopAllAudio();
+	_events->clearEvents();
 
 	if (name == "ENDGAME")
 		showCloudsEnding(score);
@@ -174,6 +175,9 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uin
 		showDarkSideEnding();
 	else if (name == "WORLDEND")
 		showWorldOfXeenEnding((GooberState)status, score);
+
+	_events->clearEvents();
+	_quitMode = QMODE_MENU;
 }
 
 } // End of namespace WorldOfXeen
