@@ -697,8 +697,7 @@ ADDetectedGame SciMetaEngine::fallbackDetect(const FileMap &allFiles, const Comm
 		return ADDetectedGame();
 
 	Common::String gameId = convertSierraGameId(sierraGameId, &s_fallbackDesc.flags, resMan);
-	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
-	s_fallbackGameIdBuf[sizeof(s_fallbackGameIdBuf) - 1] = 0;	// Make sure string is NULL terminated
+	Common::strlcpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf));
 	s_fallbackDesc.gameId = s_fallbackGameIdBuf;
 
 	// Try to determine the game language
