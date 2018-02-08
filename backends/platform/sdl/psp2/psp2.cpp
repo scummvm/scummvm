@@ -81,6 +81,7 @@ void OSystem_PSP2::initBackend() {
 	ConfMan.registerDefault("joystick_deadzone", 2);
 	ConfMan.registerDefault("shader", 0);
 	ConfMan.registerDefault("touchpad_mouse_mode", false);
+	ConfMan.registerDefault("frontpanel_touchpad_mode", false);
 
 	if (!ConfMan.hasKey("fullscreen")) {
 		ConfMan.setBool("fullscreen", true);
@@ -100,6 +101,10 @@ void OSystem_PSP2::initBackend() {
 	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
 		ConfMan.setBool("touchpad_mouse_mode", false);
 	}
+	if (!ConfMan.hasKey("frontpanel_touchpad_mode")) {
+		ConfMan.setBool("frontpanel_touchpad_mode", false);
+	}
+
 	
 	// Create the savefile manager
 	if (_savefileManager == 0)

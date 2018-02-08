@@ -89,7 +89,7 @@ void PSP2EventSource::preprocessFingerDown(SDL_Event *event) {
 	int x = _km.x / MULTIPLIER;
 	int y = _km.y / MULTIPLIER;
 
-	if (port == 0) {
+	if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 		convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 	}
 
@@ -136,7 +136,7 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 							simulatedButton = SDL_BUTTON_RIGHT;
 						} else if (numFingersDown == 1) {
 							simulatedButton = SDL_BUTTON_LEFT;
-							if (port == 0) {
+							if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 								convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 							}
 						}
@@ -156,7 +156,7 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 				}
 			} else if (numFingersDown == 1) {
 				// when dragging, and the last finger is lifted, the drag is over
-				if (port == 0) {
+				if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 					convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 				}
 				event->type = SDL_MOUSEBUTTONUP;
@@ -187,7 +187,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 		int x = _km.x / MULTIPLIER;
 		int y = _km.y / MULTIPLIER;
 
-		if (port == 0) {
+		if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 			convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 		}	else {
 			// for relative mode, use the pointer speed setting
@@ -274,7 +274,7 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 					// or location of "oldest" finger (front)
 					int mouseDownX = x;
 					int mouseDownY = y;
-					if (port == 0) {
+					if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 						for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 							if (_finger[port][i].id == id) {
 								for (int j = 0; j < MAX_NUM_FINGERS; j++) {
