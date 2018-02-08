@@ -52,6 +52,25 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst
+	// English Windows 3.11
+	// Version 1.0.1
+	// From rootfather
+	{
+		{
+			"myst",
+			"",
+			AD_ENTRY1("MYST.DAT", "4beb3366ed3f3b9bfb6e81a14a43bdcc"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST
+		},
+		GType_MYST,
+		0,
+		0,
+	},
+
+	// Myst
 	// English Windows 3.11, v1.0
 	// From vonLeheCreative, #9645
 	{
