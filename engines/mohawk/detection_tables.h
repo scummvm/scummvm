@@ -52,8 +52,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst
-	// English Windows 3.11
-	// Version 1.0.1
+	// English Windows 3.11, v1.0.1
 	// From rootfather
 	{
 		{
@@ -74,18 +73,18 @@ static const MohawkGameDescription gameDescriptions[] = {
 	// English Windows 3.11, v1.0
 	// From vonLeheCreative, #9645
 	{
-			{
-					"myst",
-					"",
-					AD_ENTRY1("MYST.DAT", "0e4b6fcbd2419d4371365314fb7443f8"),
-					Common::EN_ANY,
-					Common::kPlatformWindows,
-					ADGF_NO_FLAGS,
-					GUI_OPTIONS_MYST
-			},
-			GType_MYST,
-			0,
-			0,
+		{
+			"myst",
+			"",
+			AD_ENTRY1("MYST.DAT", "0e4b6fcbd2419d4371365314fb7443f8"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST
+		},
+		GType_MYST,
+		0,
+		0,
 	},
 
 	// Myst Demo
