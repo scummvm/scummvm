@@ -64,13 +64,24 @@ void ButtonContainer::addPartyButtons(XeenEngine *vm) {
 
 bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	EventsManager &events = *vm->_events;
+	Party &party = *vm->_party;
 	Windows &windows = *_vm->_windows;
 	_buttonValue = 0;
 
 	if (events._leftButton) {
-		// Check whether any button is selected
 		Common::Point pt = events._mousePos;
 
+		// Check for party member glyphs being clicked
+		Common::Rect r(0, 0, 32, 32);
+		for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+			r.moveTo(Res.CHAR_FACES_X[idx], 150);
+			if (r.contains(pt)) {
+				_buttonValue = Common::KEYCODE_F1 + idx;
+				break;
+			}
+		}
+
+		// Check whether any button is selected
 		for (uint i = 0; i < _buttons.size(); ++i) {
 			if (_buttons[i]._draw && _buttons[i]._bounds.contains(pt)) {
 				events.debounceMouse();
