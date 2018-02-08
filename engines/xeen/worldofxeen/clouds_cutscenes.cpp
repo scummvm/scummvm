@@ -768,7 +768,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 
 		for (int frameCtr = 0; frameCtr < 3; ++frameCtr) {
 			if (frameCtr == 2)
-				sound.playSound(Common::String::format("%s.voc", mon._attackVoc));
+				sound.playSound(Common::String::format("%s.voc", mon._attackVoc.c_str()));
 
 			ROTATE_BG;
 			counter1 = (counter1 + 1) % 8;
