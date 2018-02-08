@@ -27,6 +27,10 @@
 namespace Xeen {
 namespace WorldOfXeen {
 
+#define ROTATE_BG screen.horizMerge(_mergeX); \
+	_mergeX = (_mergeX + 1) % SCREEN_WIDTH
+
+
 bool CloudsCutscenes::showCloudsTitle() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -337,6 +341,10 @@ bool CloudsCutscenes::showCloudsIntro() {
 }
 
 void CloudsCutscenes::showCloudsEnding(uint finalScore) {
+	_mirror.load("mirror.end");
+	_mirrBack.load("mirrback.end");
+	_mergeX = 0;
+
 	if (showCloudsEnding1())
 		if (showCloudsEnding2())
 			if (!showCloudsEnding3())
@@ -579,8 +587,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	Sound &sound = *_vm->_sound;
 
 	SpriteResource king("king.end"), room("room.end"), bigSky("bigsky.end"),
-		mirror("mirror.end"), mirrBack("mirrback.end"), people("people.end"),
-		crodo("crodo.end"), kingCord("kingcord.end");
+		people("people.end"), crodo("crodo.end"), kingCord("kingcord.end");
 
 	screen.loadPalette("endgame.pal");
 	screen.loadBackground("later.raw");
@@ -669,7 +676,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	}
 
 	screen.fadeOut();
-	screen.loadPalette("mirror.pal");
+	screen.loadPalette("_mirror.pal");
 	screen.loadBackground("miror-s.raw");
 	screen.loadPage(0);
 	screen.loadPage(1);
@@ -693,42 +700,140 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	for (int idx = 8; idx >= 0; --idx) {
 		screen.blitFrom(savedBg);
 		bigSky.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
-		mirrBack.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
+		_mirrBack.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
 		WAIT(1);
 	}
 
-	int mergeX = 0;
 	const int DELTA = 2;
 	for (int idx = 0, xc1 = -115, yp = SCREEN_HEIGHT, xc2 = 335;
 			idx < 115; idx += DELTA, xc1 += DELTA, yp -= DELTA, xc2 -= DELTA) {
-		screen.horizMerge(mergeX);
-		mergeX = (mergeX + 1) % SCREEN_WIDTH;
+		ROTATE_BG;
 
-		mirrBack.draw(0, 0);
-		mirror.draw(0, 0);
+		_mirrBack.draw(0, 0);
+		_mirror.draw(0, 0);
 		kingCord.draw(0, 0, Common::Point(xc1, yp), SPRFLAG_800);
 		kingCord.draw(0, 1, Common::Point(xc2, yp), SPRFLAG_800);
 		WAIT(1);
 	}
 
-	screen.horizMerge(mergeX);
-	mergeX = (mergeX + 1) % SCREEN_WIDTH;
-	mirrBack.draw(0, 0);
-	mirror.draw(0, 0);
+	ROTATE_BG;
+	_mirrBack.draw(0, 0);
+	_mirror.draw(0, 0);
 	kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
 	kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
 
 	return true;
 }
 
+const byte MONSTER_INDEXES[73] = {
+	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 76,
+	23, 16, 17, 80, 19, 20, 83, 22, 24, 25, 26, 27, 28, 29, 30,
+	31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 84,
+	47, 48, 49, 50, 51, 52, 53, 55, 56, 57, 58, 59, 60, 61, 62,
+	63, 64, 65, 66, 67, 68, 70, 71, 72, 73, 75, 88, 89
+};
+const int8 XARRAY[8] = { -2, -1, 0, 1, 2, 1, 0, -1 };
+const int8 YARRAY[8] = { -2, 0, 2, 0, -1, 0, 2, 0 };
+
 bool CloudsCutscenes::showCloudsEnding3() {
-	SpriteResource mon, att;
+	EventsManager &events = *_vm->_events;
+	Map &map = *_vm->_map;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	SpriteResource monSprites, attackSprites;
+	SpriteResource kingCord("kingcord.end");
+	int counter1 = 0;
 
+	for (int monsterCtr = 0; monsterCtr < 73; ++monsterCtr) {
+		MonsterStruct &mon = map._monsterData[MONSTER_INDEXES[monsterCtr]];
+		monSprites.load(Common::String::format("%03d.mon", mon._imageNumber));
+		attackSprites.load(Common::String::format("%03d.att", mon._imageNumber));
 
+		for (int frameCtr = 0; frameCtr < 8; ++frameCtr) {
+			ROTATE_BG;
+			counter1 = (counter1 + 1) % 8;
+			Common::Point monPos(31, 10);
+			if (mon._loopAnimation) {
+				monPos.x += XARRAY[counter1];
+				monPos.y += YARRAY[counter1];
+			}
 
-	// TODO
+			_mirrBack.draw(0, 0);
+			monSprites.draw(0, frameCtr, monPos);
+			_mirror.draw(0, 0);
+			kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
+			kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
+			WAIT(1);
+		}
+
+		for (int frameCtr = 0; frameCtr < 3; ++frameCtr) {
+			if (frameCtr == 2)
+				sound.playSound(Common::String::format("%s.voc", mon._attackVoc));
+
+			ROTATE_BG;
+			counter1 = (counter1 + 1) % 8;
+			Common::Point monPos(31, 10);
+			if (mon._loopAnimation) {
+				monPos.x += XARRAY[counter1];
+				monPos.y += YARRAY[counter1];
+			}
+
+			_mirrBack.draw(0, 0);
+			attackSprites.draw(0, frameCtr, monPos);
+			_mirror.draw(0, 0);
+			kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
+			kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
+			WAIT(1);
+		}
+
+		events.updateGameCounter();
+		while (events.timeElapsed() < 15) {
+			ROTATE_BG;
+			counter1 = (counter1 + 1) % 8;
+			Common::Point monPos(31, 10);
+			if (mon._loopAnimation) {
+				monPos.x += XARRAY[counter1];
+				monPos.y += YARRAY[counter1];
+			}
+
+			_mirrBack.draw(0, 0);
+			attackSprites.draw(0, 2, monPos);
+			_mirror.draw(0, 0);
+			kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
+			kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
+
+			events.wait(1, false);
+			if (_vm->shouldQuit())
+				return false;
+		}
+
+		int powNum = getSpeakingFrame(0, 5);
+		sound.stopSound();
+		sound.playSound(Common::String::format("pow%d.voc", powNum));
+
+		events.updateGameCounter();
+		while (events.timeElapsed() < 7) {
+			ROTATE_BG;
+			counter1 = (counter1 + 1) % 8;
+			Common::Point monPos(31, 10);
+			if (mon._loopAnimation) {
+				monPos.x += XARRAY[counter1];
+				monPos.y += YARRAY[counter1];
+			}
+
+			_mirrBack.draw(0, 0);
+			attackSprites.draw(0, 2, monPos);
+			_mirror.draw(0, 0);
+			kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
+			kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
+
+			events.wait(1, false);
+			if (_vm->shouldQuit())
+				return false;
+		}
+	}
+
 	doScroll(true, false);
-
 	return true;
 }
 
@@ -736,21 +841,17 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
-	SpriteResource mirror("mirror.end"), mirrBack("mirrback.end"),
-		endText("endtext.end");
+	SpriteResource endText("endtext.end");
 
-	int mergeX = 298;
-	screen.horizMerge(mergeX);
-	mirrBack.draw(0, 0);
-	mirror.draw(0, 0);
+	ROTATE_BG;
+	_mirrBack.draw(0, 0);
+	_mirror.draw(0, 0);
 	doScroll(false, false);
 
 	for (int idx = 0; idx < 19; ++idx) {
-		screen.horizMerge(mergeX);
-		mergeX = (mergeX + 1) % SCREEN_WIDTH;
-
-		mirrBack.draw(0, 0);
-		mirror.draw(0, 0);
+		ROTATE_BG;
+		_mirrBack.draw(0, 0);
+		_mirror.draw(0, 0);
 		endText.draw(0, idx);
 		WAIT(1);
 	}
@@ -761,11 +862,9 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 		for (int idx2 = 0; idx2 < 10; ++idx2)
 			frames[idx2] = getSpeakingFrame(20, 29);
 
-		screen.horizMerge(mergeX);
-		mergeX = (mergeX + 1) % SCREEN_WIDTH;
-
-		mirrBack.draw(0, 0);
-		mirror.draw(0, 0);
+		ROTATE_BG;
+		_mirrBack.draw(0, 0);
+		_mirror.draw(0, 0);
 		endText.draw(0, 19);
 		for (int idx2 = 0; idx2 < 10; ++idx2)
 			endText.draw(0, frames[idx2], Common::Point(FRAMEX[idx2], 73));
@@ -781,11 +880,9 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 		for (int idx2 = 0; idx2 <= idx1; ++idx2)
 			frames[9 - idx2] = (byte)scoreStr[9 - idx2] - 28;
 
-		screen.horizMerge(mergeX);
-		mergeX = (mergeX + 1) % SCREEN_WIDTH;
-
-		mirrBack.draw(0, 0);
-		mirror.draw(0, 0);
+		ROTATE_BG;
+		_mirrBack.draw(0, 0);
+		_mirror.draw(0, 0);
 		endText.draw(0, 19);
 
 		for (int idx2 = 0; idx2 < 10; ++idx2)
@@ -796,11 +893,9 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 
 	// Move the score down
 	for (int idx1 = 0; idx1 < 38; ++idx1) {
-		screen.horizMerge(mergeX);
-		mergeX = (mergeX + 1) % SCREEN_WIDTH;
-
-		mirrBack.draw(0, 0);
-		mirror.draw(0, 0);
+		ROTATE_BG;
+		_mirrBack.draw(0, 0);
+		_mirror.draw(0, 0);
 		endText.draw(0, 19);
 
 		for (int idx2 = 0; idx2 < 10; ++idx2)
@@ -814,11 +909,9 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 	for (int idx = 1; idx <= 2; ++idx) {
 		events.clearEvents();
 		do {
-			screen.horizMerge(mergeX);
-			mergeX = (mergeX + 1) % SCREEN_WIDTH;
-
-			mirrBack.draw(0, 0);
-			mirror.draw(0, 0);
+			ROTATE_BG;
+			_mirrBack.draw(0, 0);
+			_mirror.draw(0, 0);
 			endText.draw(0, 19);
 
 			for (int idx2 = 0; idx2 < 10; ++idx2)

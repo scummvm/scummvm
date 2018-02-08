@@ -38,6 +38,9 @@ private:
 	static const byte _DECODE_TABLE1[256];
 	static const byte _DECODE_TABLE2[256];
 private:
+	SpriteResource _mirror, _mirrBack;
+	int _mergeX;
+private:
 	void loadScreen(const Common::String &name);
 
 	/**
