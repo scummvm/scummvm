@@ -109,8 +109,8 @@ void Cursor::render() {
 		Common::Point pos = _gfx->convertCoordinateCurrentToOriginal(_mousePos);
 		Common::Rect mouseRect = _mouseText->getRect();
 		pos.x = CLIP<int16>(pos.x, 48, _gfx->kOriginalWidth - 48);
-		pos.y = CLIP<int16>(pos.y, _gfx->kTopBorderHeight, _gfx->kOriginalHeight - _gfx->kBottomBorderHeight - cursorDistance - mouseRect.bottom);
-		pos.x -= mouseRect.right / 2;
+		pos.y = CLIP<int16>(pos.y, _gfx->kTopBorderHeight, _gfx->kOriginalHeight - _gfx->kBottomBorderHeight - cursorDistance - mouseRect.height());
+		pos.x -= mouseRect.width() / 2;
 		pos.y += cursorDistance;
 		_mouseText->render(pos);
 	}
