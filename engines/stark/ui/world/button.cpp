@@ -51,7 +51,7 @@ void Button::render() {
 	if (_renderHint) {
 		Common::Point pos(_hintPosition);
 		if (_align == HintAlign::kRight) {
-			//pos.x -= _mouseText->actualTextWidth();
+			pos.x -= _mouseText->getRect().right;
 		}
 		_mouseText->render(pos);
 	}
