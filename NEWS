@@ -5,7 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Improved GUI rendering and overall GUI performance.
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
-   - Updated the Roland MT-32 emulation code to Munt 2.3.0
+   - Updated the Roland MT-32 emulation code to Munt 2.3.0.
 
  MOHAWK:
    - Fixed video playback if videos are skipped in Riven.
@@ -29,7 +29,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added mouse wheel support for inventory scrolling.
 
  ZVISION:
-   - Fixed graphical glitch in Zork: Grand Inquisitor
+   - Fixed graphical glitch in Zork: Grand Inquisitor.
 
  PS Vita port:
    - Implemented front touch and optional rear touch controls.
