@@ -1809,16 +1809,12 @@ void TuckerEngine::drawBackgroundSprites() {
 }
 
 void TuckerEngine::drawCurrentSprite() {
-	// WORKAROUND: original game glitch
-	// Skip first Bud frame drawing when entering location
-	// Fixes SF#2597763
+	// Workaround original game glitch: skip first bud frame drawing when entering location (tracker item #2597763)
 	if ((_locationNum == 17 || _locationNum == 18) && _currentSpriteAnimationFrame == 16) {
 		return;
 	}
-	// WORKAROUND: original game glitch
-	// Locations 14 and 61 contain some colors from [0xE0-0xF8] in a walkable area
-	// Fixes SF#3106542 and Trac#10423
-	const bool color248Only = (_locationNum == 14 || _locationNum == 61);
+	// Workaround original game glitch: location 14 contains some colors from [0xE0-0xF8] in a walkable area (tracker item #3106542)
+	const bool color248Only = (_locationNum == 14);
 	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
 	int yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr->_yOffset;
 	int xPos = _xPosCurrent;
