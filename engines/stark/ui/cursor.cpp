@@ -23,6 +23,7 @@
 #include "engines/stark/ui/cursor.h"
 
 #include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/texture.h"
 
 #include "engines/stark/services/gameinterface.h"
 #include "engines/stark/services/global.h"
@@ -100,14 +101,23 @@ void Cursor::updateFadeLevel() {
 void Cursor::render() {
 	updateFadeLevel();
 
+	_gfx->setScreenViewport(false);
+	if (_mouseText) {
+		// TODO: Should probably query the image for the width of the cursor
+		// TODO: Add delay to the mouse hints like in the game
+		const int16 cursorDistance = _gfx->scaleHeightCurrentToOriginal(32);
+		Common::Point pos = _gfx->convertCoordinateCurrentToOriginal(_mousePos);
+		Common::Rect mouseRect = _mouseText->getRect();
+		pos.x = CLIP<int16>(pos.x, 48, _gfx->kOriginalWidth - 48);
+		pos.y = CLIP<int16>(pos.y, _gfx->kTopBorderHeight, _gfx->kOriginalHeight - _gfx->kBottomBorderHeight - cursorDistance - mouseRect.height());
+		pos.x -= mouseRect.width() / 2;
+		pos.y += cursorDistance;
+		_mouseText->render(pos);
+	}
 	_gfx->setScreenViewport(true); // The cursor is drawn unscaled
 	if (_cursorImage) {
 		_cursorImage->setFadeLevel(_fadeLevel);
 		_cursorImage->render(_mousePos, true);
-	}
-	if (_mouseText) {
-		// TODO: Should probably query the image for the width of the cursor
-		_mouseText->render(Common::Point(_mousePos.x + 20, _mousePos.y));
 	}
 }
 

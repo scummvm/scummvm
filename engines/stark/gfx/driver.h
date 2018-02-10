@@ -115,8 +115,11 @@ public:
 	/** Scale a height value from original resolution to current resolution */
 	uint scaleHeightOriginalToCurrent(uint height) const;
 
-	/** Scale a width value from original resolution to current resolution */
+	/** Scale a width value from current resolution to original resolution */
 	uint scaleWidthCurrentToOriginal(uint width) const;
+
+	/** Scale a height value from current resolution to original resolution */
+	uint scaleHeightCurrentToOriginal(uint width) const;
 
 	/**
 	 * Textures are expected to be in the RGBA byte order

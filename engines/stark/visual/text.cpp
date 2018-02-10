@@ -57,7 +57,6 @@ Common::Rect VisualText::getRect() {
 	if (!_texture) {
 		createTexture();
 	}
-
 	return _originalRect;
 }
 
