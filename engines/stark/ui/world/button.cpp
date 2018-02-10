@@ -31,7 +31,7 @@
 
 namespace Stark {
 
-Button::Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos, HintAlign align, Common::Point hintPos) :
+Button::Button(const Common::String &text, StaticProvider::UIElement stockElement, const Common::Point &pos, HintAlign align, const Common::Point &hintPos) :
 		_position(pos),
 		_stockElement(stockElement),
 		_text(text),
@@ -78,6 +78,11 @@ void Button::showButtonHint() {
 		_mouseText->setTargetWidth(96);
 	}
 	_renderHint = true;
+}
+
+void Button::resetHintVisual() {
+	delete _mouseText;
+	_mouseText = nullptr;
 }
 
 } // End of namespace Stark

@@ -103,7 +103,7 @@ void OpenGLSDriver::setScreenViewport(bool noScaling) {
 	glViewport(_viewport.left, _viewport.top, _viewport.width(), _viewport.height());
 }
 
-void OpenGLSDriver::setViewport(Common::Rect rect, bool noScaling) {
+void OpenGLSDriver::setViewport(const Common::Rect &rect, bool noScaling) {
 	if (noScaling) {
 		_viewport = rect;
 		_unscaledViewport = rect;

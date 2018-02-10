@@ -117,6 +117,7 @@ void GameScreen::dispatchEvent(WindowHandler handler) {
 
 void GameScreen::onScreenChanged() {
 	_dialogPanel->onScreenChanged();
+	_topMenu->onScreenChanged();
 }
 
 } // End of namespace Stark

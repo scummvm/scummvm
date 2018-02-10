@@ -42,16 +42,18 @@ class Button {
 public:
 	enum HintAlign { kLeft, kRight };
 
-	Button(const Common::String &text, StaticProvider::UIElement stockElement, Common::Point pos, HintAlign align, Common::Point hintPos);
+	Button(const Common::String &text, StaticProvider::UIElement stockElement, const Common::Point &pos, HintAlign align, const Common::Point &hintPos);
 	~Button();
 
 	void setPosition(const Common::Point &pos) { _position = pos; }
-	void setHintPosition(const Common::Point &pos) { _hintPosition = pos; }
 	/** Set hint to render for one frame */
 	void showButtonHint();
 	void render();
 	bool containsPoint(Common::Point point);
-	Common::String getText() const { return _text; }
+
+	/** Reset the hint text visual so it is rebuilt with the appropriate texture size */
+	void resetHintVisual();
+
 private:
 	StaticProvider::UIElement _stockElement;
 	Common::Point _position;

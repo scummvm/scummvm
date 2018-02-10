@@ -43,6 +43,9 @@ public:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
 
+	/** The screen resolution changed, rebuild the text textures accordingly */
+	void onScreenChanged();
+
 private:
 	Button *getButtonAtPosition(const Common::Point &point) const;
 

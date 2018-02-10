@@ -57,7 +57,7 @@ public:
 	void computeScreenViewport();
 	virtual void setScreenViewport(bool noScaling) = 0; // deprecated
 
-	virtual void setViewport(Common::Rect rect, bool noScaling) = 0;
+	virtual void setViewport(const Common::Rect &rect, bool noScaling) = 0;
 
 	/** Get the screen viewport in actual resolution */
 	Common::Rect getScreenViewport() { return _screenViewport; }

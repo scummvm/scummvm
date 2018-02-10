@@ -111,4 +111,10 @@ Button *TopMenu::getButtonAtPosition(const Common::Point &point) const {
 	return nullptr;
 }
 
+void TopMenu::onScreenChanged() {
+	_exitButton->resetHintVisual();
+	_inventoryButton->resetHintVisual();
+	_optionsButton->resetHintVisual();
+}
+
 } // End of namespace Stark
