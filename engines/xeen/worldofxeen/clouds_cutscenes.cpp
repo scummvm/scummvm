@@ -29,7 +29,9 @@ namespace WorldOfXeen {
 
 #define ROTATE_BG screen.horizMerge(_mergeX); \
 	_mergeX = (_mergeX + 1) % SCREEN_WIDTH
-
+#define LOAD_VORTEX loadScreen(Common::String::format("vort%02u.frm", cloudsCtr)); \
+	if (cloudsCtr++ > 20) \
+		cloudsCtr = 1
 
 bool CloudsCutscenes::showCloudsTitle() {
 	EventsManager &events = *_vm->_events;
@@ -370,14 +372,13 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	loadScreen(Common::String::format("prec00%02u.frm", 1));
 	prec.draw(0, 0);
 	prec.draw(0, 1, Common::Point(160, 0));
-	screen.update();
 	screen.fadeIn();
 	WAIT(15);
 
 	sound.playFX(1);
 	sound.playFX(34);
 
-	// prec loop
+	// Initial animation of vortex & lightning in the sky
 	for (int idx = 1; idx < 42; ++idx) {
 		// Load up the background frame of swirling clouds
 		loadScreen(Common::String::format("prec00%02u.frm", idx));
@@ -417,7 +418,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	// First vortex loop
 	int cloudsCtr = 1;
 	for (int idx = 1; idx < 16; ++idx) {
-		loadScreen(Common::String::format("vort%02u.frm", cloudsCtr++));
+		LOAD_VORTEX;
 		cast[0].draw(0, 0);
 		cast[0].draw(0, 0, Common::Point(0, 100));
 		WAIT(3);
@@ -430,10 +431,6 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	bool flag = false;
 	for (int idx1 = 1; idx1 < 7; ++idx1) {
 		for (int idx2 = 0; idx2 < COUNTS1[idx1 - 1]; ++idx2) {
-			loadScreen(Common::String::format("vort%02u.frm", cloudsCtr));
-			if (cloudsCtr++ > 20)
-				cloudsCtr = 1;
-
 			if (flag && !sound.isPlaying()) {
 				flag = false;
 				sound.playFX(34);
@@ -460,6 +457,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 				break;
 			}
 
+			LOAD_VORTEX;
 			cast[idx1 - 1].draw(0, idx2, Common::Point(0, 0));
 			cast[idx1 - 1].draw(0, idx2, Common::Point(0, 100));
 			WAIT(3);
@@ -467,9 +465,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	}
 
 	for (int idx = 0; idx < 16; ++idx) {
-		loadScreen(Common::String::format("vort%02u.frm", cloudsCtr));
-		if (cloudsCtr++ > 20)
-			cloudsCtr = 1;
+		LOAD_VORTEX;
 
 		if (idx < 7)
 			darkLord[0].draw(0, idx);
@@ -513,10 +509,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 		}
 
 		do {
-			loadScreen(Common::String::format("vort%02u.frm", cloudsCtr));
-			if (cloudsCtr++ > 20)
-				cloudsCtr = 1;
-
+			LOAD_VORTEX;
 			darkLord[2].draw(0, getSpeakingFrame(2, 6));
 
 			switch (cloudsCtr - 1) {
@@ -545,9 +538,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	sound.setMusicVolume(95);
 
 	for (int idx = 12; idx >= 0; --idx) {
-		loadScreen(Common::String::format("vort%02u.frm", cloudsCtr));
-		if (cloudsCtr++ > 20)
-			cloudsCtr = 1;
+		LOAD_VORTEX;
 
 		if (idx < 7)
 			darkLord[0].draw(0, idx);
@@ -753,7 +744,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 			ROTATE_BG;
 			counter1 = (counter1 + 1) % 8;
 			Common::Point monPos(31, 10);
-			if (mon._loopAnimation) {
+			if (mon._flying) {
 				monPos.x += XARRAY[counter1];
 				monPos.y += YARRAY[counter1];
 			}
@@ -773,7 +764,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 			ROTATE_BG;
 			counter1 = (counter1 + 1) % 8;
 			Common::Point monPos(31, 10);
-			if (mon._loopAnimation) {
+			if (mon._flying) {
 				monPos.x += XARRAY[counter1];
 				monPos.y += YARRAY[counter1];
 			}
@@ -791,7 +782,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 			ROTATE_BG;
 			counter1 = (counter1 + 1) % 8;
 			Common::Point monPos(31, 10);
-			if (mon._loopAnimation) {
+			if (mon._flying) {
 				monPos.x += XARRAY[counter1];
 				monPos.y += YARRAY[counter1];
 			}
@@ -816,7 +807,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 			ROTATE_BG;
 			counter1 = (counter1 + 1) % 8;
 			Common::Point monPos(31, 10);
-			if (mon._loopAnimation) {
+			if (mon._flying) {
 				monPos.x += XARRAY[counter1];
 				monPos.y += YARRAY[counter1];
 			}
