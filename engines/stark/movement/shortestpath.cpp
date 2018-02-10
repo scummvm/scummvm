@@ -22,7 +22,8 @@
 
 #include "engines/stark/movement/shortestpath.h"
 
-#include "engines/stark/hash-ptr.h"
+#include "common/hash-ptr.h"
+
 #include "engines/stark/resources/floor.h"
 
 namespace Stark {

@@ -25,8 +25,8 @@
 
 #include "common/array.h"
 #include "common/hashmap.h"
+#include "common/hash-ptr.h"
 
-#include "engines/stark/hash-ptr.h"
 #include "engines/stark/resources/command.h"
 
 namespace Stark {

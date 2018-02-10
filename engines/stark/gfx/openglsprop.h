@@ -24,8 +24,8 @@
 #define STARK_GFX_OPENGL_S_RENDERED_H
 
 #include "common/hashmap.h"
+#include "common/hash-ptr.h"
 
-#include "engines/stark/hash-ptr.h"
 #include "engines/stark/model/model.h"
 #include "engines/stark/visual/prop.h"
 

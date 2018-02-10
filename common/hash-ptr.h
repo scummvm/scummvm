@@ -1,7 +1,7 @@
-/* ResidualVM - A 3D game interpreter
+/* ScummVM - Graphic Adventure Engine
  *
- * ResidualVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the AUTHORS
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARK_HASH_PTR_H
-#define STARK_HASH_PTR_H
+#ifndef COMMON_HASH_PTR_H
+#define COMMON_HASH_PTR_H
 
 #include "common/func.h"
 
@@ -33,7 +33,7 @@ namespace Common {
 template<typename T>
 struct Hash<T *> {
 	uint operator()(T * const &v) const {
-		uint x = static_cast<uint>(reinterpret_cast<size_t>(v));
+		uint x = static_cast<uint>(reinterpret_cast<uintptr>(v));
 		return x + (x >> 3);
 	}
 };
