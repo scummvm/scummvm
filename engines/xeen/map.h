@@ -52,7 +52,7 @@ public:
 	Common::String _name;
 	int _experience;
 	int _hp;
-	int _accuracy;
+	int _armorClass;
 	int _speed;
 	int _numberOfAttacks;
 	int _hatesClass;

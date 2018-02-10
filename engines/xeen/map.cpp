@@ -59,7 +59,7 @@ const char *const MUSIC_FILES2[6][7] = {
 MonsterStruct::MonsterStruct() {
 	_experience = 0;
 	_hp = 0;
-	_accuracy = 0;
+	_armorClass = 0;
 	_speed = 0;
 	_numberOfAttacks = 0;
 	_hatesClass = CLASS_KNIGHT;
@@ -88,7 +88,7 @@ MonsterStruct::MonsterStruct() {
 	_fx = 0;
 }
 
-MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int accuracy,
+MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int armorClass,
 		int speed, int numberOfAttacks, CharacterClass hatesClass, int strikes,
 		int dmgPerStrike, DamageType attackType, SpecialAttack specialAttack,
 		int hitChance, int rangeAttack, MonsterType monsterType,
@@ -97,7 +97,7 @@ MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int ac
 		int phsyicalResistence, int field29, int gold, int gems, int itemDrop,
 		bool flying, int imageNumber, int loopAnimation, int animationEffect,
 		int fx, Common::String attackVoc):
-		_name(name), _experience(experience), _hp(hp), _accuracy(accuracy),
+		_name(name), _experience(experience), _hp(hp), _armorClass(armorClass),
 		_speed(speed), _numberOfAttacks(numberOfAttacks), _hatesClass(hatesClass),
 		_strikes(strikes), _dmgPerStrike(dmgPerStrike), _attackType(attackType),
 		_specialAttack(specialAttack), _hitChance(hitChance), _rangeAttack(rangeAttack),
@@ -118,7 +118,7 @@ void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
 
 	_experience = s.readUint32LE();
 	_hp = s.readUint16LE();
-	_accuracy = s.readByte();
+	_armorClass = s.readByte();
 	_speed = s.readByte();
 	_numberOfAttacks = s.readByte();
 	_hatesClass = (CharacterClass)s.readByte();

@@ -1019,7 +1019,7 @@ void IdentifyMonster::execute() {
 		monsterDesc[monIndex] = Common::String::format(Res.MONSTER_DETAILS,
 			monsterData._name.c_str(),
 			_vm->printK2(monster._hp).c_str(),
-			monsterData._accuracy, monsterData._numberOfAttacks,
+			monsterData._armorClass, monsterData._numberOfAttacks,
 			Res.MONSTER_SPECIAL_ATTACKS[monsterData._specialAttack]
 		);
 	}

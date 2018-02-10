@@ -1670,7 +1670,7 @@ bool Combat::hitMonster(Character &c, RangeType rangeType) {
 	if (monster._damageType != DT_PHYSICAL)
 		chance += 20;
 
-	return chance >= (monsterData._accuracy + 10);
+	return chance >= (monsterData._armorClass + 10);
 }
 
 void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
