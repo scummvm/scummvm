@@ -41,8 +41,8 @@ struct LightEntry;
 }
 
 class Model;
-class Face;
-class Material;
+struct Face;
+struct Material;
 class SkeletonAnim;
 class AnimHandler;
 

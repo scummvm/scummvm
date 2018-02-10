@@ -124,7 +124,7 @@ protected:
 	void printData() override;
 
 	// Image API
-	void initVisual();
+	void initVisual() override;
 
 	Common::Point _size;
 	Common::String _text;

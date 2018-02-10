@@ -61,7 +61,7 @@ public:
 
 	void start2DMode();
 	void end2DMode();
-	void set3DMode();
+	void set3DMode() override;
 
 	Common::Rect getViewport() const;
 	Common::Rect getUnscaledViewport() const;

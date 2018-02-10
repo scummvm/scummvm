@@ -181,7 +181,7 @@ public:
 	void onPostRead() override;
 
 	// Anim API
-	Visual *getVisual();
+	Visual *getVisual() override;
 	uint32 getMovementSpeed() const override;
 
 protected:

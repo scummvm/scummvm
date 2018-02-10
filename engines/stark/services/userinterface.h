@@ -29,8 +29,8 @@
 #include "common/str-array.h"
 
 namespace Common {
-struct SeekableReadStream;
-struct WriteStream;
+class SeekableReadStream;
+class WriteStream;
 }
 
 namespace Graphics {
