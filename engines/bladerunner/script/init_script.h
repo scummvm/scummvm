@@ -29,9 +29,9 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 
-class ScriptInit : ScriptBase {
+class InitScript : ScriptBase {
 public:
-	ScriptInit(BladeRunnerEngine *vm)
+	InitScript(BladeRunnerEngine *vm)
 		: ScriptBase(vm) {
 	}
 

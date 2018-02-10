@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -62,11 +62,11 @@ void SceneScriptAR02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(375, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(376, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 10, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	if (Game_Flag_Query(252) && Game_Flag_Query(320)) {
+	if (Game_Flag_Query(kFlagSpinnerToAR01) && Game_Flag_Query(320)) {
 		Scene_Loop_Start_Special(0, 1, 0);
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Reset(320);
-	} else if (!Game_Flag_Query(252) && Game_Flag_Query(320)) {
+	} else if (!Game_Flag_Query(kFlagSpinnerToAR01) && Game_Flag_Query(320)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Reset(320);

@@ -30,7 +30,7 @@
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/shape.h"
-#include "bladerunner/script/kia.h"
+#include "bladerunner/script/kia_script.h"
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/kia.h"

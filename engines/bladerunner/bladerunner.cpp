@@ -49,10 +49,10 @@
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/screen_effects.h"
 #include "bladerunner/set.h"
-#include "bladerunner/script/ai.h"
-#include "bladerunner/script/init.h"
-#include "bladerunner/script/kia.h"
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/ai_script.h"
+#include "bladerunner/script/init_script.h"
+#include "bladerunner/script/kia_script.h"
+#include "bladerunner/script/scene_script.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/slice_animations.h"
@@ -63,6 +63,7 @@
 #include "bladerunner/ui/esper.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/spinner.h"
+#include "bladerunner/ui/vk.h"
 #include "bladerunner/vqa_decoder.h"
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
@@ -396,7 +397,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_esper = new ESPER(this);
 
-	// TODO: VK
+	_vk = new VK(this);
 
 	_mouse = new Mouse(this);
 	// _mouse->setCursorPosition(320, 240);
@@ -428,7 +429,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_scene = new Scene(this);
 
 	// Load INIT.DLL
-	ScriptInit initScript(this);
+	InitScript initScript(this);
 	initScript.SCRIPT_Initialize_Game();
 
 	// TODO: Load AI-ACT1.DLL
@@ -442,7 +443,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 void BladeRunnerEngine::initChapterAndScene() {
 	// TODO: Init actors...
 	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
-		_aiScripts->Initialize(i);
+		_aiScripts->initialize(i);
 	}
 
 	for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
@@ -463,7 +464,8 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Write BLADE.INI
 
-	// TODO: Shutdown VK
+	delete _vk;
+	_vk = nullptr;
 
 	delete _esper;
 	_esper = nullptr;
@@ -569,7 +571,6 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete sine and cosine lookup tables
 
-	// TODO: Unload AI dll
 	delete _aiScripts;
 	_aiScripts = nullptr;
 
@@ -585,7 +586,8 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete Scores
 
-	// TODO: Delete Elevators
+	delete _elevator;
+	_elevator = nullptr;
 
 	delete _spinner;
 	_spinner = nullptr;
@@ -683,6 +685,10 @@ Common::Point BladeRunnerEngine::getMousePos() const {
 	return p;
 }
 
+bool BladeRunnerEngine::isMouseButtonDown() const {
+	return _eventMan->getButtonState() != 0;
+}
+
 void BladeRunnerEngine::gameLoop() {
 	_gameIsRunning = true;
 	do {
@@ -726,7 +732,7 @@ void BladeRunnerEngine::gameTick() {
 
 	if (_gameIsRunning && _windowIsActive) {
 		// TODO: Only run if not in Kia, script, nor AI
-		if (!_sceneScript->IsInsideScript() && !_aiScripts->IsInsideScript()) {
+		if (!_sceneScript->isInsideScript() && !_aiScripts->isInsideScript()) {
 			_settings->openNewScene();
 		}
 
@@ -751,7 +757,11 @@ void BladeRunnerEngine::gameTick() {
 			return;
 		}
 
-		// TODO: VK
+		if (_vk->isOpen()) {
+			_vk->tick();
+			_ambientSounds->tick();
+			return;
+		}
 
 		if (_elevator->isOpen()) {
 			_elevator->tick();
@@ -763,7 +773,7 @@ void BladeRunnerEngine::gameTick() {
 
 		_actorDialogueQueue->tick();
 		if (_scene->didPlayerWalkIn()) {
-			_sceneScript->PlayerWalkedIn();
+			_sceneScript->playerWalkedIn();
 		}
 		bool inDialogueMenu = _dialogueMenu->isVisible();
 		if (!inDialogueMenu) {
@@ -778,7 +788,7 @@ void BladeRunnerEngine::gameTick() {
 		bool backgroundChanged = false;
 		int frame = _scene->advanceFrame();
 		if (frame >= 0) {
-			_sceneScript->SceneFrameAdvanced(frame);
+			_sceneScript->sceneFrameAdvanced(frame);
 			backgroundChanged = true;
 		}
 		(void)backgroundChanged;
@@ -793,7 +803,7 @@ void BladeRunnerEngine::gameTick() {
 			actorsUpdate();
 		}
 
-		if (_settings->getNewScene() == -1 || _sceneScript->IsInsideScript() || _aiScripts->IsInsideScript()) {
+		if (_settings->getNewScene() == -1 || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
 			_sliceRenderer->setView(*_view);
 
 			// Tick and draw all actors in current set
@@ -982,11 +992,11 @@ void BladeRunnerEngine::actorsUpdate() {
 	int setId = _scene->getSetId();
 
 	//TODO: original game updates every non-visible characters by updating only one character in one frame
-	if (setId != 89 || _gameVars[1] != 4 || _gameFlags->query(670) != 1 || !_aiScripts->IsInsideScript()) {
+	if (setId != 89 || _gameVars[1] != 4 || _gameFlags->query(670) != 1 || !_aiScripts->isInsideScript()) {
 		for (int i = 0; i < actorCount; i++) {
 			Actor *actor = _actors[i];
 			if (actor->getSetId() == setId) {
-				_aiScripts->Update(i);
+				_aiScripts->update(i);
 				actor->countdownTimersUpdate();
 			}
 		}
@@ -1056,6 +1066,10 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 		return;
 	}
 
+	if (_vk->isOpen()) {
+		return;
+	}
+
 	if (_dialogueMenu->isOpen()) {
 		return;
 	}
@@ -1078,7 +1092,7 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	//TODO:
-	if (!playerHasControl() /* || ActorWalkingLoop || PlayingSpeechLine || VqaIsPlaying */) {
+	if (!playerHasControl() /* || ActorWalkingLoop || ActorSpeaking || VqaIsPlaying */) {
 		return;
 	}
 
@@ -1163,6 +1177,15 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 		return;
 	}
 
+	if (_vk->isOpen()) {
+		if (buttonDown) {
+			_vk->handleMouseDown(x, y, buttonLeft);
+		} else {
+			_vk->handleMouseUp(x, y, buttonLeft);
+		}
+		return;
+	}
+
 	if (_elevator->isOpen()) {
 		if (buttonDown) {
 			_elevator->handleMouseDown(x, y);
@@ -1222,27 +1245,26 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 
 void BladeRunnerEngine::handleMouseClickExit(int x, int y, int exitIndex) {
 	debug("clicked on exit %d %d %d", exitIndex, x, y);
-	_sceneScript->ClickedOnExit(exitIndex);
+	_sceneScript->clickedOnExit(exitIndex);
 }
 
 void BladeRunnerEngine::handleMouseClickRegion(int x, int y, int regionIndex) {
 	debug("clicked on region %d %d %d", regionIndex, x, y);
-	_sceneScript->ClickedOn2DRegion(regionIndex);
+	_sceneScript->clickedOn2DRegion(regionIndex);
 }
 
 void BladeRunnerEngine::handleMouseClick3DObject(int x, int y, int objectId, bool isClickable, bool isTarget) {
 	const char *objectName = _scene->objectGetName(objectId);
 	debug("Clicked on object %s", objectName);
-	_sceneScript->ClickedOn3DObject(objectName, false);
+	_sceneScript->clickedOn3DObject(objectName, false);
 }
 
 void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &mousePosition) {
-	bool sceneMouseClick = _sceneScript->MouseClick(x, y);
+	bool sceneMouseClick = _sceneScript->mouseClick(x, y);
 
 	if (sceneMouseClick) {
 		return;
 	}
-
 
 	bool isRunning;
 	debug("Clicked on nothing %f, %f, %f", mousePosition.x, mousePosition.y, mousePosition.z);
@@ -1251,14 +1273,14 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &mousePositi
 
 void BladeRunnerEngine::handleMouseClickItem(int x, int y, int itemId) {
 	debug("Clicked on item %d", itemId);
-	_sceneScript->ClickedOnItem(itemId, false);
+	_sceneScript->clickedOnItem(itemId, false);
 }
 
 void BladeRunnerEngine::handleMouseClickActor(int x, int y, int actorId) {
 	debug("Clicked on actor %d", actorId);
-	bool t = _sceneScript->ClickedOnActor(actorId);
+	bool t = _sceneScript->clickedOnActor(actorId);
 	if (!_combat->isActive() && !t) {
-		_aiScripts->ClickedByPlayer(actorId);
+		_aiScripts->clickedByPlayer(actorId);
 	}
 }
 

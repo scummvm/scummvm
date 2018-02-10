@@ -20,14 +20,14 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
 void SceneScriptRC03::InitializeScene() {
-	if (Game_Flag_Query(115) ) {
+	if (Game_Flag_Query(kFlagRC01toRC03) ) {
 		Setup_Scene_Information(298.0f, -4.0f, 405.0f, 800);
-		Game_Flag_Reset(115);
+		Game_Flag_Reset(kFlagRC01toRC03);
 	} else if (Game_Flag_Query(117) ) {
 		Setup_Scene_Information(-469.0f, -4.0f, 279.0f, 250);
 	} else if (Game_Flag_Query(119) ) {
@@ -247,13 +247,13 @@ void SceneScriptRC03::PlayerWalkedIn() {
 			Actor_Says_With_Pause(kActorIzo, 630, 0, -1);
 			Actor_Says_With_Pause(kActorIzo, 640, 0, -1);
 			Actor_Says_With_Pause(kActorIzo, 650, 0, -1);
-			if (Game_Flag_Query(44) ) {
+			if (Game_Flag_Query(kFlagIzoIsReplicant) ) {
 				Actor_Set_Goal_Number(kActorSteele, 100);
 			}
 			Actor_Change_Animation_Mode(kActorMcCoy, 20);
 			Loop_Actor_Walk_To_XYZ(kActorIzo, 180.0f, -4.0f, 184.0f, 0, 0, false, 0);
 			Actor_Change_Animation_Mode(kActorIzo, 6);
-			if (!Game_Flag_Query(44)) {
+			if (!Game_Flag_Query(kFlagIzoIsReplicant)) {
 				Actor_Set_Goal_Number(kActorSteele, 100);
 			}
 			Player_Gains_Control();

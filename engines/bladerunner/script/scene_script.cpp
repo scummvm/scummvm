@@ -20,11 +20,20 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
-bool SceneScript::Open(const Common::String &name) {
+SceneScript::SceneScript(BladeRunnerEngine *vm)
+	: _vm(vm)
+	, _inScriptCounter(0)
+	, _currentScript(nullptr) {}
+
+SceneScript::~SceneScript() {
+	delete _currentScript;
+}
+
+bool SceneScript::open(const Common::String &name) {
 	delete _currentScript;
 
 	if (name == "AR01") { _currentScript = new SceneScriptAR01(_vm); return true; }
@@ -145,23 +154,19 @@ bool SceneScript::Open(const Common::String &name) {
 	return false;
 }
 
-SceneScript::~SceneScript() {
-	delete _currentScript;
-}
-
-void SceneScript::InitializeScene() {
+void SceneScript::initializeScene() {
 	_inScriptCounter++;
 	_currentScript->InitializeScene();
 	_inScriptCounter--;
 }
 
-void SceneScript::SceneLoaded() {
+void SceneScript::sceneLoaded() {
 	_inScriptCounter++;
 	_currentScript->SceneLoaded();
 	_inScriptCounter--;
 }
 
-bool SceneScript::MouseClick(int x, int y) {
+bool SceneScript::mouseClick(int x, int y) {
 	if (_inScriptCounter > 0)
 		return true;
 
@@ -176,9 +181,10 @@ bool SceneScript::MouseClick(int x, int y) {
 	return result;
 }
 
-bool SceneScript::ClickedOn3DObject(const char *objectName, bool a2) {
-	if (_inScriptCounter > 0)
+bool SceneScript::clickedOn3DObject(const char *objectName, bool a2) {
+	if (_inScriptCounter > 0) {
 		return true;
+	}
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOn3DObject(objectName, a2);
@@ -186,9 +192,10 @@ bool SceneScript::ClickedOn3DObject(const char *objectName, bool a2) {
 	return result;
 }
 
-bool SceneScript::ClickedOnActor(int actorId) {
-	if (_inScriptCounter > 0)
+bool SceneScript::clickedOnActor(int actorId) {
+	if (_inScriptCounter > 0) {
 		return true;
+	}
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOnActor(actorId);
@@ -196,9 +203,10 @@ bool SceneScript::ClickedOnActor(int actorId) {
 	return result;
 }
 
-bool SceneScript::ClickedOnItem(int itemId, bool a2) {
-	if (_inScriptCounter > 0)
+bool SceneScript::clickedOnItem(int itemId, bool a2) {
+	if (_inScriptCounter > 0) {
 		return true;
+	}
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOnItem(itemId, a2);
@@ -206,9 +214,10 @@ bool SceneScript::ClickedOnItem(int itemId, bool a2) {
 	return result;
 }
 
-bool SceneScript::ClickedOnExit(int exitId) {
-	if (_inScriptCounter > 0)
+bool SceneScript::clickedOnExit(int exitId) {
+	if (_inScriptCounter > 0) {
 		return true;
+	}
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOnExit(exitId);
@@ -216,9 +225,10 @@ bool SceneScript::ClickedOnExit(int exitId) {
 	return result;
 }
 
-bool SceneScript::ClickedOn2DRegion(int region) {
-	if (_inScriptCounter > 0)
+bool SceneScript::clickedOn2DRegion(int region) {
+	if (_inScriptCounter > 0) {
 		return true;
+	}
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOn2DRegion(region);
@@ -226,13 +236,13 @@ bool SceneScript::ClickedOn2DRegion(int region) {
 	return result;
 }
 
-void SceneScript::SceneFrameAdvanced(int frame) {
+void SceneScript::sceneFrameAdvanced(int frame) {
 	_inScriptCounter++;
 	_currentScript->SceneFrameAdvanced(frame);
 	_inScriptCounter--;
 }
 
-void SceneScript::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
+void SceneScript::actorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet) {
 	_inScriptCounter++;
 	//TODO remove this check
 	if(_currentScript)
@@ -240,19 +250,19 @@ void SceneScript::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool c
 	_inScriptCounter--;
 }
 
-void SceneScript::PlayerWalkedIn() {
+void SceneScript::playerWalkedIn() {
 	_inScriptCounter++;
 	_currentScript->PlayerWalkedIn();
 	_inScriptCounter--;
 }
 
-void SceneScript::PlayerWalkedOut() {
+void SceneScript::playerWalkedOut() {
 	_inScriptCounter++;
 	_currentScript->PlayerWalkedOut();
 	_inScriptCounter--;
 }
 
-void SceneScript::DialogueQueueFlushed(int a1) {
+void SceneScript::dialogueQueueFlushed(int a1) {
 	_inScriptCounter++;
 	_currentScript->DialogueQueueFlushed(a1);
 	_inScriptCounter--;

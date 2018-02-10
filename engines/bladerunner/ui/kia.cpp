@@ -33,7 +33,7 @@
 #include "bladerunner/mouse.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/shape.h"
-#include "bladerunner/script/kia.h"
+#include "bladerunner/script/kia_script.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/text_resource.h"
@@ -192,7 +192,7 @@ void KIA::open(KIASections sectionId) {
 	}
 }
 
-bool KIA::isOpen() {
+bool KIA::isOpen() const {
 	return _currentSectionId != kKIASectionNone;
 }
 
@@ -350,8 +350,8 @@ void KIA::tick() {
 		_buttons->drawTooltip(_vm->_surfaceFront, mouse.x, mouse.y);
 	}
 	_vm->_mouse->draw(_vm->_surfaceFront, mouse.x, mouse.y);
-	_vm->blitToScreen(_vm->_surfaceFront);
 
+	_vm->blitToScreen(_vm->_surfaceFront);
 	_vm->_system->delayMillis(10);
 
 	_timeLast = timeNow;

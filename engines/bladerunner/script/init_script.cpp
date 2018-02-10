@@ -20,13 +20,13 @@
  *
  */
 
-#include "bladerunner/script/init.h"
+#include "bladerunner/script/init_script.h"
 
 #include "bladerunner/bladerunner.h"
 
 namespace BladeRunner {
 
-void ScriptInit::SCRIPT_Initialize_Game() {
+void InitScript::SCRIPT_Initialize_Game() {
 	Assign_Player_Gun_Hit_Sounds(0, 517, 518, 519);
 	Assign_Player_Gun_Hit_Sounds(1, 520, 521, 522);
 	Assign_Player_Gun_Hit_Sounds(2, 523, 524, 525);
@@ -54,7 +54,7 @@ void ScriptInit::SCRIPT_Initialize_Game() {
 	Init_Shadows();
 }
 
-void ScriptInit::Init_Globals() {
+void InitScript::Init_Globals() {
 	for (int i = 0; i != 55; ++i)
 		Global_Variable_Set(i, 0);
 
@@ -71,38 +71,38 @@ void ScriptInit::Init_Globals() {
 	Set_Score(6, 28);
 }
 
-void ScriptInit::Init_Game_Flags() {
+void InitScript::Init_Game_Flags() {
 	for (int i = 0; i != 730; ++i) {
 		Game_Flag_Reset(i);
 	}
 
 	if (Random_Query(1, 2) == 1) {
-		Game_Flag_Set(44);
+		Game_Flag_Set(kFlagIzoIsReplicant);
 	}
 	if (Random_Query(1, 2) == 1) {
-		Game_Flag_Set(45);
+		Game_Flag_Set(kFlagGordoIsReplicant);
 	}
 	if (Random_Query(1, 2) == 1) {
-		Game_Flag_Set(46);
+		Game_Flag_Set(kFlagLucyIsReplicant);
 	}
 	if (Random_Query(1, 2) == 1) {
-		Game_Flag_Set(47);
+		Game_Flag_Set(kFlagDektoraIsReplicant);
 	}
 	if (Random_Query(1, 2) == 1) {
-		Game_Flag_Set(48);
+		Game_Flag_Set(kFlagSadikIsReplicant);
 	}
 	if (Random_Query(1, 2) == 1) {
 		Game_Flag_Set(560);
 	}
-	if (!Game_Flag_Query(45) && !Game_Flag_Query(46) && !Game_Flag_Query(47)) {
-		Game_Flag_Set(47);
+	if (!Game_Flag_Query(kFlagGordoIsReplicant) && !Game_Flag_Query(kFlagLucyIsReplicant) && !Game_Flag_Query(kFlagDektoraIsReplicant)) {
+		Game_Flag_Set(kFlagDektoraIsReplicant);
 	}
 
-	if (Game_Flag_Query(47)) {
+	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 		Global_Variable_Set(40, 1);
-	} else if (Game_Flag_Query(45) && !Game_Flag_Query(46)) {
+	} else if (Game_Flag_Query(kFlagGordoIsReplicant) && !Game_Flag_Query(kFlagLucyIsReplicant)) {
 		Global_Variable_Set(40, 2);
-	} else if (!Game_Flag_Query(45) && Game_Flag_Query(46)) {
+	} else if (!Game_Flag_Query(kFlagGordoIsReplicant) && Game_Flag_Query(kFlagLucyIsReplicant)) {
 		Global_Variable_Set(40, 3);
 	} else if (Random_Query(1, 2) == 1) {
 		Global_Variable_Set(40, 2);
@@ -111,10 +111,10 @@ void ScriptInit::Init_Game_Flags() {
 	}
 
 	Game_Flag_Set(182);
-	Game_Flag_Set(249);
+	Game_Flag_Set(kFlagSpinnerToRC01);
 }
 
-void ScriptInit::Init_Clues() {
+void InitScript::Init_Clues() {
 	for (int i = 0; i != 288; ++i) {
 		Actor_Clue_Add_To_Database(kActorMcCoy, i, 0, false, false, -1);
 	}
@@ -526,7 +526,7 @@ static ClueWeight ClueWeightsForLuther[44] = {
 	{kClueHowieLeeInterview, 30}
 };
 
-void ScriptInit::Init_Clues2() {
+void InitScript::Init_Clues2() {
 	for (int i = 0; i != 288; ++i) {
 		Actor_Clue_Add_To_Database(kActorVoiceOver, i, 100, false, false, -1);
 	}
@@ -1651,7 +1651,7 @@ void ScriptInit::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorGenwalkerC, kClueMcCoyIsABladeRunner, 65, false, false, -1);
 }
 
-void ScriptInit::Init_World_Waypoints() {
+void InitScript::Init_World_Waypoints() {
 	World_Waypoint_Set(0, 7, -676.0f, -0.04f, -94.0f);
 	World_Waypoint_Set(1, 7, -807.0f, -0.04f, 109.0f);
 	World_Waypoint_Set(2, 15, 541.8f, 0.38f, -435.68f);
@@ -2186,7 +2186,7 @@ void ScriptInit::Init_World_Waypoints() {
 	World_Waypoint_Set(335, 102, -50.0f, 0.0f, 212.0f);
 }
 
-void ScriptInit::Init_SDB() {
+void InitScript::Init_SDB() {
 	SDB_Set_Actor(kSuspectSadik, kActorSadik);
 	SDB_Set_Sex(kSuspectSadik, 1);
 	SDB_Add_MO_Clue(kSuspectSadik, kClueCrystalsCase);
@@ -2367,7 +2367,7 @@ void ScriptInit::Init_SDB() {
 	SDB_Add_Photo_Clue(kSuspectGuzza, kClueGuzza, 27);
 }
 
-void ScriptInit::Init_CDB() {
+void InitScript::Init_CDB() {
 	CDB_Set_Crime(kClueOfficersStatement, kCrimeAnimalMurder);
 	CDB_Set_Crime(kClueDoorForced1, kCrimeAnimalMurder);
 	CDB_Set_Crime(kClueDoorForced2, kCrimeAnimalMurder);
@@ -2657,7 +2657,7 @@ void ScriptInit::Init_CDB() {
 	CDB_Set_Clue_Asset_Type(kClueFolder, kClueTypeObject);
 }
 
-void ScriptInit::Init_Spinner() {
+void InitScript::Init_Spinner() {
 	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationPoliceStation, true);
 	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationMcCoysApartment, true);
 	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationRuncitersAnimals, true);
@@ -2670,7 +2670,7 @@ void ScriptInit::Init_Spinner() {
 	Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationHysteriaHall, false);
 }
 
-void ScriptInit::Init_Actor_Friendliness() {
+void InitScript::Init_Actor_Friendliness() {
 	Actor_Set_Friendliness_To_Other(kActorSteele, kActorMcCoy, 65);
 	Actor_Set_Friendliness_To_Other(kActorSteele, kActorGuzza, 60);
 	Actor_Set_Friendliness_To_Other(kActorSteele, kActorGrigorian, 30);
@@ -2800,7 +2800,7 @@ void ScriptInit::Init_Actor_Friendliness() {
 	Actor_Set_Friendliness_To_Other(kActorGaff, kActorSergeantWalls, 70);
 }
 
-void ScriptInit::Init_Actor_Combat_Aggressiveness() {
+void InitScript::Init_Actor_Combat_Aggressiveness() {
 	Actor_Set_Combat_Aggressiveness(kActorGuzza, 50);
 	Actor_Set_Combat_Aggressiveness(kActorBulletBob, 50);
 	Actor_Set_Combat_Aggressiveness(kActorTyrellGuard, 50);
@@ -2820,11 +2820,11 @@ void ScriptInit::Init_Actor_Combat_Aggressiveness() {
 	Actor_Set_Combat_Aggressiveness(kActorFreeSlotA, 100);
 }
 
-void ScriptInit::Init_Actor_Honesty() {
+void InitScript::Init_Actor_Honesty() {
 	Actor_Set_Honesty(kActorZuben, 90);
 }
 
-void ScriptInit::Init_Actor_Intelligence() {
+void InitScript::Init_Actor_Intelligence() {
 	Actor_Set_Intelligence(kActorZuben, 20);
 	Actor_Set_Intelligence(kActorGordo, 70);
 	Actor_Set_Intelligence(kActorLucy, 60);
@@ -2841,11 +2841,11 @@ void ScriptInit::Init_Actor_Intelligence() {
 	Actor_Set_Intelligence(kActorFreeSlotA, 10);
 }
 
-void ScriptInit::Init_Actor_Stability() {
+void InitScript::Init_Actor_Stability() {
 	Actor_Set_Stability(kActorZuben, 35);
 }
 
-void ScriptInit::Init_Actor_Health() {
+void InitScript::Init_Actor_Health() {
 	Actor_Set_Health(kActorMcCoy, 50, 50);
 	Actor_Set_Health(kActorSteele, 50, 50);
 	Actor_Set_Health(kActorGordo, 50, 50);
@@ -2925,24 +2925,24 @@ void ScriptInit::Init_Actor_Health() {
 	Actor_Set_Health(kActorMutant3, 20, 20);
 	Actor_Set_Health(kActorFreeSlotA, 20, 20);
 	Actor_Set_Health(kActorFreeSlotB, 20, 20);
-	if (Game_Flag_Query(45) == 1) {
+	if (Game_Flag_Query(kFlagGordoIsReplicant)) {
 		Actor_Set_Health(kActorGordo, 60, 60);
 	}
-	if (Game_Flag_Query(46) == 1) {
+	if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 		Actor_Set_Health(kActorLucy, 40, 40);
 	}
-	if (Game_Flag_Query(44) == 1) {
+	if (Game_Flag_Query(kFlagIzoIsReplicant)) {
 		Actor_Set_Health(kActorIzo, 65, 65);
 	}
-	if (Game_Flag_Query(47) == 1) {
+	if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 		Actor_Set_Health(kActorDektora, 70, 70);
 	}
-	if (Game_Flag_Query(48) == 1) {
+	if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 		Actor_Set_Health(kActorSadik, 80, 80);
 	}
 }
 
-void ScriptInit::Init_Combat_Cover_Waypoints() {
+void InitScript::Init_Combat_Cover_Waypoints() {
 	Combat_Cover_Waypoint_Set_Data(0, 0, 7, 25, -603.0f, 0.0f, 32.0f);
 	Combat_Cover_Waypoint_Set_Data(1, 0, 7, 25, -670.0f, 0.0f, -24.0f);
 	Combat_Cover_Waypoint_Set_Data(2, 0, 7, 25, -604.0f, 0.0f, -96.0f);
@@ -2982,7 +2982,7 @@ void ScriptInit::Init_Combat_Cover_Waypoints() {
 	Combat_Cover_Waypoint_Set_Data(36, 20, 41, 38, 357.81f, 40.63f, 387.9f);
 }
 
-void ScriptInit::Init_Combat_Flee_Waypoints() {
+void InitScript::Init_Combat_Flee_Waypoints() {
 	Combat_Flee_Waypoint_Set_Data(0, 4, 37, 34, 187.0f, 8.0f, -197.0f, -1);
 	Combat_Flee_Waypoint_Set_Data(1, 4, 37, 34, 454.0f, 8.0f, -717.0f, -1);
 	Combat_Flee_Waypoint_Set_Data(2, 4, 38, 35, -10.87f, 47.76f, -141.32f, -1);
@@ -3062,7 +3062,7 @@ void ScriptInit::Init_Combat_Flee_Waypoints() {
 	Combat_Flee_Waypoint_Set_Data(76, 20, 41, 38, 435.13f, 37.18f, -292.34f, -1);
 }
 
-void ScriptInit::Init_Shadows() {
+void InitScript::Init_Shadows() {
 	int list[] = {440, 37, 38, 83, 874};
 	Disable_Shadows(list, 5);
 }

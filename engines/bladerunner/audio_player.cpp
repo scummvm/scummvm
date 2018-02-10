@@ -274,7 +274,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	AudStream *audioStream = new AudStream(_cache, hash);
 
 	int actualVolume = volume;
-	if (!(flags & OVERRIDE_VOLUME)) {
+	if (!(flags & kAudioPlayerOverrideVolume)) {
 		actualVolume = _sfxVolume * volume / 100;
 	}
 
@@ -284,7 +284,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 		Audio::Mixer::kPlainSoundType,
 		audioStream,
 		priority,
-		flags & LOOP,
+		flags & kAudioPlayerLoop,
 		actualVolume,
 		panFrom,
 		mixerChannelEnded,

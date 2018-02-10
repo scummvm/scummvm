@@ -70,6 +70,12 @@ public:
 	void  decRef(int32 hash);
 };
 
+
+enum AudioPlayerFlags {
+	kAudioPlayerLoop = 1,
+	kAudioPlayerOverrideVolume = 2
+};
+
 class AudioPlayer {
 	static const int kTracks = 6;
 
@@ -93,11 +99,6 @@ class AudioPlayer {
 public:
 	AudioPlayer(BladeRunnerEngine *vm);
 	~AudioPlayer();
-
-	enum {
-		LOOP = 1,
-		OVERRIDE_VOLUME = 2
-	};
 
 	int playAud(const Common::String &name, int volume, int panStart, int panEnd, int priority, byte flags = 0);
 	bool isActive(int track) const;

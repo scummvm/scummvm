@@ -29,7 +29,7 @@
 #include "bladerunner/game_flags.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/font.h"
-#include "bladerunner/script/kia.h"
+#include "bladerunner/script/kia_script.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/kia_log.h"
@@ -76,6 +76,7 @@ KIASectionClues::~KIASectionClues() {
 	_uiContainer->clear();
 	delete _filterScrollBox;
 	delete _cluesScrollBox;
+	delete _buttons;
 	delete _uiContainer;
 }
 

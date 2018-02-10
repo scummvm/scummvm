@@ -529,29 +529,25 @@ protected:
 	SceneScriptBase   *_currentScript;
 
 public:
-	SceneScript(BladeRunnerEngine *vm)
-		: _vm(vm),
-		  _inScriptCounter(0),
-		  _currentScript(nullptr) {
-	}
+	SceneScript(BladeRunnerEngine *vm);
 	~SceneScript();
 
-	bool Open(const Common::String &name);
+	bool open(const Common::String &name);
 
-	void InitializeScene();
-	void SceneLoaded();
-	bool MouseClick(int x, int y);
-	bool ClickedOn3DObject(const char *objectName, bool a2);
-	bool ClickedOnActor(int actorId);
-	bool ClickedOnItem(int itemId, bool a2);
-	bool ClickedOnExit(int exitId);
-	bool ClickedOn2DRegion(int region);
-	void SceneFrameAdvanced(int frame);
-	void ActorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet);
-	void PlayerWalkedIn();
-	void PlayerWalkedOut();
-	void DialogueQueueFlushed(int a1);
-	bool IsInsideScript() { return _inScriptCounter > 0; }
+	void initializeScene();
+	void sceneLoaded();
+	bool mouseClick(int x, int y);
+	bool clickedOn3DObject(const char *objectName, bool a2);
+	bool clickedOnActor(int actorId);
+	bool clickedOnItem(int itemId, bool a2);
+	bool clickedOnExit(int exitId);
+	bool clickedOn2DRegion(int region);
+	void sceneFrameAdvanced(int frame);
+	void actorChangedGoal(int actorId, int newGoal, int oldGoal, bool currentSet);
+	void playerWalkedIn();
+	void playerWalkedOut();
+	void dialogueQueueFlushed(int a1);
+	bool isInsideScript() const { return _inScriptCounter > 0; }
 };
 
 } // End of namespace BladeRunner

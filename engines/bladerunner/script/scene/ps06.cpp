@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -66,13 +66,13 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 			Delay(2000);
 			Actor_Voice_Over(3780, kActorVoiceOver);
 			Actor_Voice_Over(3790, kActorVoiceOver);
-			if (Game_Flag_Query(47)) {
+			if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 				Actor_Voice_Over(3800, kActorVoiceOver);
 				Actor_Voice_Over(3810, kActorVoiceOver);
 				Actor_Voice_Over(3820, kActorVoiceOver);
 				Actor_Voice_Over(3830, kActorVoiceOver);
 				Actor_Clue_Acquire(kActorMcCoy, kClueCarRegistration1, 1, -1);
-			} else if (Game_Flag_Query(45)) {
+			} else if (Game_Flag_Query(kFlagGordoIsReplicant)) {
 				Actor_Voice_Over(3840, kActorVoiceOver);
 				Actor_Voice_Over(3850, kActorVoiceOver);
 				Actor_Voice_Over(3860, kActorVoiceOver);

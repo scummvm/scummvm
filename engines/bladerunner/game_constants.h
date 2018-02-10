@@ -439,6 +439,9 @@ enum SpinnerDestinations {
 };
 
 enum Flags {
+	kFlagRC02Discovered = 1,
+	kFlagGotOfficersStatement = 3,
+	kFlagRC01toRC02 = 8,
 	kFlagRC02toRC01 = 9,
 	kFlagIntroPlayed = 24,
 	kFlagMA02toMA06 = 33,
@@ -447,14 +450,33 @@ enum Flags {
 	kFlagMA04ToMA02 = 36,
 	kFlagMA01toMA06 = 37,
 	kFlagMA06toMA01 = 38,
+	kFlagIzoIsReplicant = 44,
+	kFlagGordoIsReplicant = 45,
+	kFlagLucyIsReplicant = 46,
+	kFlagDektoraIsReplicant = 47,
+	kFlagSadikIsReplicant = 48,
 	kFlagMA07toMA06 = 57,
 	kFlagMA06toMA07 = 58,
 	kFlagMA04toMA05 = 62,
 	kFlagMA05toMA04 = 63,
 	kFlagRC03toRC01 = 114,
+	kFlagRC01toRC03 = 115,
+	kFlagChromeDebrisTaken = 163,
 	kFlagRC01PoliceDone = 186,
-	kFlagMA01Locked = 250,
+	kFlagShellCasingsTaken = 190,
+	kFlagSpinnerToCT01 = 248,
+	kFlagSpinnerToRC01 = 249,
+	kFlagSpinnerToMA01 = 250,
+	kFlagSpinnerToPS01 = 251,
+	kFlagSpinnerToAR01 = 252,
+	kFlagSpinnerToDR01 = 253,
+	kFlagSpinnerToBB01 = 254,
+	kFlagSpinnerToNR01 = 255,
+	kFlagSpinnerToHF01 = 256,
+	kFlagSpinnerToTB02 = 307,
 	kFlagDirectorsCut = 378,
+	KFlagMcCoyAndOfficerLearyTalking = 392,
+	KFlagMcCoyAndOfficerLearyArtMetaphor = 397,
 	kFlagKIAPrivacyAddon = 487,
 	kFlagKIAPrivacyAddonIntro = 599
 };
@@ -643,6 +665,12 @@ enum Sets {
 	kSetRunciterInterior = 16
 };
 
+enum GameItems {
+	kItemChromeDebris = 66,
+	kItemShellCasingA = 100,
+	kItemShellCasingB = 101,
+	kItemShellCasingC = 102
+};
 
 } // End of namespace BladeRunner
 

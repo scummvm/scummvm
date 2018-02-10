@@ -25,7 +25,6 @@
 
 #include "common/str.h"
 
-
 namespace Common {
 struct KeyState;
 }
@@ -67,7 +66,6 @@ enum KIASections {
 	kKIASectionDiagnostic = 9,
 	kKIASectionPogo       = 10
 };
-
 
 class KIA {
 	static const char *kPogo;
@@ -130,7 +128,7 @@ public:
 
 	void openLastOpened();
 	void open(KIASections sectionId);
-	bool isOpen();
+	bool isOpen() const;
 
 	void tick();
 

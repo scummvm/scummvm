@@ -136,7 +136,11 @@ bool UIImagePicker::setImageTooltip(int i, const char *tooltip) {
 		return false;
 	}
 
-	_images[i].tooltip = tooltip;
+	if (tooltip != nullptr) {
+		_images[i].tooltip = tooltip;
+	} else {
+		_images[i].tooltip.clear();
+	}
 
 	return true;
 }
@@ -191,14 +195,17 @@ void UIImagePicker::draw(Graphics::Surface &surface) {
 			continue;
 		}
 
-		// TODO: Check interaction with Mouse::isDisabled
 		if (i == _hoveredImageIndex && i == _pressedImageIndex && _isButtonDown) {
-			if (img.shapeDown) {
-				img.shapeDown->draw(surface, img.rect.left, img.rect.top);
+			if (!_vm->_mouse->isDisabled()) {
+				if (img.shapeDown) {
+					img.shapeDown->draw(surface, img.rect.left, img.rect.top);
+				}
 			}
 		} else if (i == _hoveredImageIndex && !_isButtonDown) {
-			if (img.shapeHovered) {
-				img.shapeHovered->draw(surface, img.rect.left, img.rect.top);
+			if (!_vm->_mouse->isDisabled()) {
+				if (img.shapeHovered) {
+					img.shapeHovered->draw(surface, img.rect.left, img.rect.top);
+				}
 			}
 		} else {
 			if (img.shapeUp) {
@@ -222,6 +229,11 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 	}
 
 	Common::String &tooltip = _images[_hoveredImageIndex].tooltip;
+
+	if (tooltip.empty()) {
+		return;
+	}
+
 	int width = _vm->_mainFont->getTextWidth(tooltip) + 1;
 	int height = _vm->_mainFont->getTextHeight(tooltip) + 1;
 

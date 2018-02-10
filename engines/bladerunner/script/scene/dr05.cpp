@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -142,7 +142,7 @@ void SceneScriptDR05::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -10.0f, 0.3f, 133.0f, 0, 0, false, 0);
 		if (!Game_Flag_Query(511)) {
 			Game_Flag_Set(511);
-			if (Game_Flag_Query(48)) {
+			if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 				Actor_Voice_Over(730, kActorVoiceOver);
 				Actor_Voice_Over(740, kActorVoiceOver);
 				Actor_Voice_Over(750, kActorVoiceOver);

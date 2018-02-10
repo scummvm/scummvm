@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -67,7 +67,7 @@ void SceneScriptUG02::SceneLoaded() {
 	Clickable_Object("CRATE_3");
 	Footstep_Sounds_Set(0, 0);
 	Footstep_Sounds_Set(8, 2);
-	if (!Game_Flag_Query(656) && Game_Flag_Query(44)) {
+	if (!Game_Flag_Query(656) && Game_Flag_Query(kFlagIzoIsReplicant)) {
 		Item_Add_To_World(88, 963, 75, -300.37f, 120.16f, -81.31f, 0, 8, 8, false, true, false, true);
 	}
 }

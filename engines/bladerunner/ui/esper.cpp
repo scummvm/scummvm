@@ -31,15 +31,13 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/shape.h"
-#include "bladerunner/script/esper.h"
+#include "bladerunner/script/esper_script.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/ui/ui_image_picker.h"
 #include "bladerunner/vqa_player.h"
 
 #include "common/rect.h"
 #include "common/str.h"
-
-#include "graphics/surface.h"
 
 namespace BladeRunner {
 
@@ -55,12 +53,10 @@ ESPER::ESPER(BladeRunnerEngine *vm) {
 	_isDrawingSelection = false;
 
 	_isOpen         = false;
-	_photoData      = nullptr;
-	_viewportData   = nullptr;
 	_shapeButton    = nullptr;
 	_shapeThumbnail = nullptr;
-	_vqaMainPlayer  = nullptr;
-	_vqaPhotoPlayer = nullptr;
+	_vqaPlayerMain  = nullptr;
+	_vqaPlayerPhoto = nullptr;
 	_script         = nullptr;
 
 	reset();
@@ -94,11 +90,9 @@ void ESPER::open(Graphics::Surface *surface) {
 		return;
 	}
 
-	_photoData = new Graphics::Surface();
-	_photoData->create(kPhotoWidth, kPhotoHeight, createRGB555());
+	_surfacePhoto.create(kPhotoWidth, kPhotoHeight, createRGB555());
 
-	_viewportData = new Graphics::Surface();
-	_viewportData->create(_screen.width(), _screen.height(), createRGB555());
+	_surfaceViewport.create(_screen.width(), _screen.height(), createRGB555());
 
 	_viewportNext = _viewport;
 
@@ -111,11 +105,11 @@ void ESPER::open(Graphics::Surface *surface) {
 
 	_shapesPhotos.resize(10);
 
-	_vqaMainPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
-	if (!_vqaMainPlayer->open("ESPER.VQA")) {
+	_vqaPlayerMain = new VQAPlayer(_vm, &_vm->_surfaceBack);
+	if (!_vqaPlayerMain->open("ESPER.VQA")) {
 		return;
 	}
-	_vqaMainPlayer->setLoop(2, -1, kLoopSetModeJustStart, nullptr, nullptr);
+	_vqaPlayerMain->setLoop(2, -1, kLoopSetModeJustStart, nullptr, nullptr);
 
 	_isOpen = true;
 	_flash = false;
@@ -143,16 +137,14 @@ void ESPER::close() {
 	delete _shapeButton;
 	_shapeButton = nullptr;
 
-	delete _photoData;
-	_photoData = nullptr;
+	_surfacePhoto.free();
 
-	delete _viewportData;
-	_viewportData = nullptr;
+	_surfaceViewport.free();
 
-	if (_vqaMainPlayer) {
-		_vqaMainPlayer->close();
-		delete _vqaMainPlayer;
-		_vqaMainPlayer= nullptr;
+	if (_vqaPlayerMain) {
+		_vqaPlayerMain->close();
+		delete _vqaPlayerMain;
+		_vqaPlayerMain= nullptr;
 	}
 
 	_vm->closeArchive("MODE.MIX");
@@ -163,7 +155,7 @@ void ESPER::close() {
 	reset();
 }
 
-bool ESPER::isOpen() {
+bool ESPER::isOpen() const {
 	return _isOpen;
 }
 
@@ -197,7 +189,7 @@ void ESPER::handleMouseDown(int x, int y, bool mainButton) {
 				_isMouseDown = true;
 				playSound(460, 100);
 			}
-			if ( _mouseOverScroll >= 0 && _mouseOverScroll <= 3 && !_isScrolling) {
+			if (_mouseOverScroll >= 0 && _mouseOverScroll <= 3 && !_isScrolling) {
 				scrollingStart(_mouseOverScroll);
 			}
 			tick();
@@ -210,7 +202,7 @@ void ESPER::handleMouseDown(int x, int y, bool mainButton) {
 }
 
 void ESPER::tick() {
-	if (!_vm->_windowIsActive) {
+	if (!_vm->_gameIsRunning) {
 		return;
 	}
 
@@ -230,7 +222,8 @@ void ESPER::tick() {
 
 	draw(_vm->_surfaceFront);
 	_buttons->draw(_vm->_surfaceFront);
-	tickMouse(_vm->_surfaceFront);
+	drawMouse(_vm->_surfaceFront);
+
 	tickSound();
 
 	_vm->blitToScreen(_vm->_surfaceFront);
@@ -315,11 +308,9 @@ void ESPER::mouseUpCallback(int buttonId, void *callbackData) {
 }
 
 void ESPER::reset() {
-	delete _photoData;
-	_photoData = nullptr;
+	_surfacePhoto.free();
 
-	delete _viewportData;
-	_viewportData = nullptr;
+	_surfaceViewport.free();
 
 	delete _shapeButton;
 	_shapeButton = nullptr;
@@ -327,11 +318,11 @@ void ESPER::reset() {
 	delete _shapeThumbnail;
 	_shapeThumbnail = nullptr;
 
-	delete _vqaMainPlayer;
-	_vqaMainPlayer = nullptr;
+	delete _vqaPlayerMain;
+	_vqaPlayerMain = nullptr;
 
-	delete _vqaPhotoPlayer;
-	_vqaPhotoPlayer = nullptr;
+	delete _vqaPlayerPhoto;
+	_vqaPlayerPhoto = nullptr;
 
 	delete _script;
 	_script = nullptr;
@@ -343,10 +334,10 @@ void ESPER::reset() {
 }
 
 void ESPER::resetData() {
-	if (_vqaPhotoPlayer) {
-		_vqaPhotoPlayer->close();
-		delete _vqaPhotoPlayer;
-		_vqaPhotoPlayer = nullptr;
+	if (_vqaPlayerPhoto) {
+		_vqaPlayerPhoto->close();
+		delete _vqaPlayerPhoto;
+		_vqaPlayerPhoto = nullptr;
 	}
 
 	if (_shapeThumbnail) {
@@ -565,7 +556,7 @@ void ESPER::draw(Graphics::Surface &surface) {
 	if (!_isOpen) {
 		return;
 	}
-	_vqaMainPlayer->update(false);
+	_vqaPlayerMain->update(false);
 	switch (_stateMain) {
 	case kEsperMainStateOpening:
 	case kEsperMainStateList:
@@ -669,7 +660,7 @@ void ESPER::drawPhotoOpening(Graphics::Surface &surface) {
 
 		_timePhotoOpeningNext = timeNow + 20;
 	}
-	copyImageScale(_photoData, _viewport, &surface, Common::Rect(_screen.left, _screen.top, _photoOpeningWidth, _photoOpeningHeight));
+	copyImageScale(&_surfacePhoto, _viewport, &surface, Common::Rect(_screen.left, _screen.top, _photoOpeningWidth, _photoOpeningHeight));
 
 	surface.hLine(_screen.left,           _photoOpeningHeight,     _screen.right  - 1, 0x03E0);
 	surface.vLine(_photoOpeningWidth,     _screen.top,             _screen.bottom - 1, 0x03E0);
@@ -819,13 +810,13 @@ void ESPER::drawPhotoSharpening(Graphics::Surface &surface) {
 	}
 
 	if (_regionSelectedAck && !_regions[_regionSelected].name.empty()) {
-		_vqaPhotoPlayer->update(true, false);
-		copyImageBlur(_viewportData, Common::Rect(0, 0, 299, 263), &surface, _screen, _blur);
-		copyImageBlit(_viewportData, Common::Rect(0, 0, 0, 0), &surface, Common::Rect(_screen.left, _screen.top, _photoOpeningWidth, _photoOpeningHeight));
+		_vqaPlayerPhoto->update(true, false);
+		copyImageBlur(&_surfaceViewport, Common::Rect(0, 0, 299, 263), &surface, _screen, _blur);
+		copyImageBlit(&_surfaceViewport, Common::Rect(0, 0, 0, 0), &surface, Common::Rect(_screen.left, _screen.top, _photoOpeningWidth, _photoOpeningHeight));
 	} else {
 		drawPhoto(surface);
-		copyImageScale(_photoData, _viewport, _viewportData, Common::Rect(0, 0, _screen.width(), _screen.height()));
-		copyImageBlit(_viewportData, Common::Rect(0, 0, 0, 0), &surface, Common::Rect(_screen.left, _screen.top, _photoOpeningWidth, _photoOpeningHeight));
+		copyImageScale(&_surfacePhoto, _viewport, &_surfaceViewport, Common::Rect(0, 0, _screen.width(), _screen.height()));
+		copyImageBlit(&_surfaceViewport, Common::Rect(0, 0, 0, 0), &surface, Common::Rect(_screen.left, _screen.top, _photoOpeningWidth, _photoOpeningHeight));
 
 	}
 	drawGrid(surface);
@@ -871,14 +862,14 @@ void ESPER::drawPhotoZoomOut(Graphics::Surface &surface) {
 }
 
 void ESPER::drawVideoZooming(Graphics::Surface &surface) {
-	if (_vqaPhotoPlayer == nullptr) {
-		_vqaPhotoPlayer = new VQAPlayer(_vm, _viewportData);
-		if (!_vqaPhotoPlayer->open(Common::String(_regions[_regionSelected].name) + ".VQA")) {
+	if (_vqaPlayerPhoto == nullptr) {
+		_vqaPlayerPhoto = new VQAPlayer(_vm, &_surfaceViewport);
+		if (!_vqaPlayerPhoto->open(Common::String(_regions[_regionSelected].name) + ".VQA")) {
 			setStatePhoto(kEsperPhotoStateShow);
 			_vm->_mouse->enable();
 
-			delete _vqaPhotoPlayer;
-			_vqaPhotoPlayer = nullptr;
+			delete _vqaPlayerPhoto;
+			_vqaPlayerPhoto = nullptr;
 
 			return;
 		}
@@ -897,8 +888,8 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 		_blur += _zoomDelta * 5.0f;
 	}
 
-	int frame = _vqaPhotoPlayer->update(true, advanceFrame);
-	if (frame == _vqaPhotoPlayer->getFrameCount() - 1) {
+	int frame = _vqaPlayerPhoto->update(true, advanceFrame);
+	if (frame == _vqaPlayerPhoto->getFrameCount() - 1) {
 		_vqaLastFrame = frame;
 		setStatePhoto(kEsperPhotoStatePhotoSharpening);
 	}
@@ -906,7 +897,7 @@ void ESPER::drawVideoZooming(Graphics::Surface &surface) {
 	if (flash) {
 		flashViewport();
 	}
-	copyImageBlur(_viewportData, Common::Rect(0, 0, 299, 263), &surface, _screen, _blur);
+	copyImageBlur(&_surfaceViewport, Common::Rect(0, 0, 299, 263), &surface, _screen, _blur);
 	drawGrid(surface);
 }
 
@@ -918,8 +909,8 @@ void ESPER::drawVideoZoomOut(Graphics::Surface &surface) {
 		_timeZoomNext = timeNow + 300;
 		playSound(419, 25);
 		//TODO: implement frame loading after seek, then advanceFrame can be removed
-		_vqaPhotoPlayer->seekToFrame(_vqaLastFrame);
-		int nextFrame = _vqaPhotoPlayer->getFrameCount() / 4;
+		_vqaPlayerPhoto->seekToFrame(_vqaLastFrame);
+		int nextFrame = _vqaPlayerPhoto->getFrameCount() / 4;
 		if (nextFrame <= 0) {
 			nextFrame = 1;
 		} else if (nextFrame > 4) {
@@ -930,29 +921,27 @@ void ESPER::drawVideoZoomOut(Graphics::Surface &surface) {
 		_vqaLastFrame -= nextFrame;
 	}
 
-	_vqaPhotoPlayer->update(true, advanceFrame);
+	_vqaPlayerPhoto->update(true, advanceFrame);
 	if (flash) {
 		flashViewport();
 	}
-	copyImageBlit(_viewportData, Common::Rect(0, 0, 0, 0), &surface, _screen);
+	copyImageBlit(&_surfaceViewport, Common::Rect(0, 0, 0, 0), &surface, _screen);
 	drawGrid(surface);
 	if (timeNow > _timeZoomNext && _vqaLastFrame <= 0) {
-		_vqaPhotoPlayer->close();
-		delete _vqaPhotoPlayer;
-		_vqaPhotoPlayer = nullptr;
+		_vqaPlayerPhoto->close();
+		delete _vqaPlayerPhoto;
+		_vqaPlayerPhoto = nullptr;
 
-		//TODO: there is code to stop zooming, but it is not working properly in original game
-		// if (_isMouseDown) {
-		// 	zoomOutStart();
-		// } else {
-		// 	zoomOutStop();
-		// }
-		zoomOutStart();
+		if (_vm->isMouseButtonDown()) {
+			zoomOutStart();
+		} else {
+			zoomOutStop();
+		}
 	}
 }
 
 void ESPER::drawPhoto(Graphics::Surface &surface) {
-	copyImageBlur(_photoData, _viewport, &surface, _screen, _blur);
+	copyImageBlur(&_surfacePhoto, _viewport, &surface, _screen, _blur);
 }
 
 void ESPER::drawGrid(Graphics::Surface &surface) {
@@ -966,7 +955,7 @@ void ESPER::drawGrid(Graphics::Surface &surface) {
 }
 
 void ESPER::drawPhotoWithGrid(Graphics::Surface &surface) {
-	copyImageScale(_photoData, _viewport, &surface, _screen);
+	copyImageScale(&_surfacePhoto, _viewport, &surface, _screen);
 	drawGrid(surface);
 }
 
@@ -1028,8 +1017,8 @@ void ESPER::drawSelection(Graphics::Surface &surface, bool crosshair, int style)
 }
 
 void ESPER::drawVideoFrame(Graphics::Surface &surface) {
-	_vqaPhotoPlayer->update(true, false);
-	copyImageBlit(_viewportData, Common::Rect(0, 0, 0, 0), &surface, _screen);
+	_vqaPlayerPhoto->update(true, false);
+	copyImageBlit(&_surfaceViewport, Common::Rect(0, 0, 0, 0), &surface, _screen);
 }
 
 void ESPER::drawTextCoords(Graphics::Surface &surface) {
@@ -1038,9 +1027,92 @@ void ESPER::drawTextCoords(Graphics::Surface &surface) {
 	_vm->_mainFont->drawColor(Common::String::format("EW %04d",   12 * _viewport.left + 167), surface, 364, 364, 0x001F);
 }
 
+void ESPER::drawMouse(Graphics::Surface &surface) {
+	if (_vm->_mouse->isDisabled()) {
+		return;
+	}
+
+	int cursor = -1;
+
+	Common::Point p = _vm->getMousePos();
+
+	_mouseOverScroll = 4;
+	if (_stateMain == kEsperMainStatePhoto) {
+		if (_screen.contains(p)) {
+			if ((_statePhoto == kEsperPhotoStateShow) && ( _zoom != 2.0f)) {
+				if (_isMouseDown) {
+					if (_isDrawingSelection) {
+						_selection.right  = p.x;
+						_selection.bottom = p.y;
+					} else {
+						_selection.left   = p.x;
+						_selection.top    = p.y;
+						_selection.right  = p.x + 1;
+						_selection.bottom = p.y + 1;
+						_isDrawingSelection = true;
+					}
+				} else {
+					if (_isDrawingSelection) {
+						_selection.right  = p.x;
+						_selection.bottom = p.y;
+
+						if (_selection.right < _selection.left) {
+							SWAP(_selection.left, _selection.right);
+						}
+						if (_selection.bottom < _selection.top) {
+							SWAP(_selection.bottom, _selection.top);
+						}
+
+						if (_selection.right >= _selection.left + 3) {
+							updateSelection();
+							_vm->_mouse->disable();
+							zoomingStart();
+						} else {
+							resetSelectionRect();
+						}
+					}
+					_isDrawingSelection = false;
+				}
+			}
+			surface.vLine(p.x,     p.y - 8, p.y - 1, 0x03E0);
+			surface.vLine(p.x,     p.y + 8, p.y + 1, 0x03E0);
+			surface.hLine(p.x - 8, p.y,     p.x - 1, 0x03E0);
+			surface.hLine(p.x + 8, p.y,     p.x + 1, 0x03E0);
+			_mouseOverScroll = -1;
+		} else if (p.x >= 85 && p.y >= 73 && p.x <= 484 && p.y <= 436) {
+			if (!_isDrawingSelection && _statePhoto != kEsperPhotoStateVideoShow && _zoom != 2.0f) {
+				_mouseOverScroll = (angle_1024((_screen.left + _screen.right) / 2, (_screen.top + _screen.bottom) / 2, p.x, p.y) + 128) / 256;
+				if (_mouseOverScroll >= 4) {
+					_mouseOverScroll = 0;
+				}
+				if (_mouseOverScroll == 0 && this->_viewport.top == 0) {
+					_mouseOverScroll = 4;
+				} else if (_mouseOverScroll == 1 && this->_viewport.right == kPhotoWidth - 1) {
+					_mouseOverScroll = 4;
+				} else if (_mouseOverScroll == 2 && this->_viewport.bottom ==  kPhotoHeight - 1) {
+					_mouseOverScroll = 4;
+				} else if (_mouseOverScroll == 3 && this->_viewport.left == 0) {
+					_mouseOverScroll = 4;
+				}
+				if (_mouseOverScroll != 4) {
+					cursor = _mouseOverScroll + 2;
+				}
+			}
+		}
+	}
+
+	if (_mouseOverScroll == 4) {
+		cursor = _buttons->hasHoveredImage() ? 1 : 0;
+	}
+	if (cursor != -1) {
+		_vm->_mouse->setCursor(cursor);
+		_vm->_mouse->draw(surface, p.x, p.y);
+	}
+}
+
 void ESPER::flashViewport() {
-	uint16 *ptr = (uint16 *)_viewportData->getPixels();
-	for (int i = 0; i < _viewportData->w * _viewportData->h; ++i) {
+	uint16 *ptr = (uint16 *)_surfaceViewport.getPixels();
+	for (int i = 0; i < _surfaceViewport.w * _surfaceViewport.h; ++i) {
 		int8 r = (*ptr >> 10) & 0x1F;
 		int8 g = (*ptr >>  5) & 0x1F;
 		int8 b = (*ptr      ) & 0x1F;
@@ -1303,89 +1375,6 @@ void ESPER::tickSound() {
 	}
 }
 
-void ESPER::tickMouse(Graphics::Surface &surface) {
-	if (_vm->_mouse->isDisabled()) {
-		return;
-	}
-
-	int cursor = -1;
-
-	Common::Point p = _vm->getMousePos();
-
-	_mouseOverScroll = 4;
-	if (_stateMain == kEsperMainStatePhoto) {
-		if (_screen.contains(p)) {
-			if ((_statePhoto == kEsperPhotoStateShow) && ( _zoom != 2.0f)) {
-				if (_isMouseDown) {
-					if (_isDrawingSelection) {
-						_selection.right  = p.x;
-						_selection.bottom = p.y;
-					} else {
-						_selection.left   = p.x;
-						_selection.top    = p.y;
-						_selection.right  = p.x + 1;
-						_selection.bottom = p.y + 1;
-						_isDrawingSelection = true;
-					}
-				} else {
-					if (_isDrawingSelection) {
-						_selection.right  = p.x;
-						_selection.bottom = p.y;
-
-						if (_selection.right < _selection.left) {
-							SWAP(_selection.left, _selection.right);
-						}
-						if (_selection.bottom < _selection.top) {
-							SWAP(_selection.bottom, _selection.top);
-						}
-
-						if (_selection.right >= _selection.left + 3) {
-							updateSelection();
-							_vm->_mouse->disable();
-							zoomingStart();
-						} else {
-							resetSelectionRect();
-						}
-					}
-					_isDrawingSelection = false;
-				}
-			}
-			surface.vLine(p.x,     p.y - 8, p.y - 1, 0x03E0);
-			surface.vLine(p.x,     p.y + 8, p.y + 1, 0x03E0);
-			surface.hLine(p.x - 8, p.y,     p.x - 1, 0x03E0);
-			surface.hLine(p.x + 8, p.y,     p.x + 1, 0x03E0);
-			_mouseOverScroll = -1;
-		} else if (p.x >= 85 && p.y >= 73 && p.x <= 484 && p.y <= 436) {
-			if (!_isDrawingSelection && _statePhoto != kEsperPhotoStateVideoShow && _zoom != 2.0f) {
-				_mouseOverScroll = (angle_1024((_screen.left + _screen.right) / 2, (_screen.top + _screen.bottom) / 2, p.x, p.y) + 128) / 256;
-				if (_mouseOverScroll >= 4) {
-					_mouseOverScroll = 0;
-				}
-				if (_mouseOverScroll == 0 && this->_viewport.top == 0) {
-					_mouseOverScroll = 4;
-				} else if (_mouseOverScroll == 1 && this->_viewport.right == kPhotoWidth - 1) {
-					_mouseOverScroll = 4;
-				} else if (_mouseOverScroll == 2 && this->_viewport.bottom ==  kPhotoHeight - 1) {
-					_mouseOverScroll = 4;
-				} else if (_mouseOverScroll == 3 && this->_viewport.left == 0) {
-					_mouseOverScroll = 4;
-				}
-				if (_mouseOverScroll != 4) {
-					cursor = _mouseOverScroll + 2;
-				}
-			}
-		}
-	}
-
-	if (_mouseOverScroll == 4) {
-		cursor = _buttons->hasHoveredImage() ? 1 : 0;
-	}
-	if (cursor != -1) {
-		_vm->_mouse->setCursor(cursor);
-		_vm->_mouse->draw(surface, p.x, p.y);
-	}
-}
-
 void ESPER::tickScroll() {
 	int timeNow = _vm->getTotalPlayTime();
 	if (timeNow <= _timeScrollNext) {
@@ -1425,20 +1414,20 @@ void ESPER::selectPhoto(int photoId) {
 		reset();
 	}
 
-	int photoSize = _photoData->w * _photoData->h * _photoData->format.bytesPerPixel;
+	int photoSize = _surfacePhoto.w * _surfacePhoto.h * _surfacePhoto.format.bytesPerPixel;
 
 	s->skip(3); // not used, but there is compression type
 	uint width  = s->readUint32LE();
 	uint height = s->readUint32LE();
 	int photoCompressedSize = s->size() - s->pos();
-	uint8 *photoCompressed = (uint8 *)_photoData->getPixels() + photoSize - photoCompressedSize;
+	uint8 *photoCompressed = (uint8 *)_surfacePhoto.getPixels() + photoSize - photoCompressedSize;
 	s->read(photoCompressed, photoCompressedSize);
 
-	decompress_lcw(photoCompressed, photoCompressedSize, (uint8 *)_photoData->getPixels(), photoSize);
+	decompress_lcw(photoCompressed, photoCompressedSize, (uint8 *)_surfacePhoto.getPixels(), photoSize);
 
 	// apply palette
 	for (uint j = 0; j < width * height; ++j) {
-		// _photoData[j] = Palette[_photoData[j]];
+		// _surfacePhoto[j] = Palette[_surfacePhoto[j]];
 	}
 
 	_shapeThumbnail = new Shape(_vm);

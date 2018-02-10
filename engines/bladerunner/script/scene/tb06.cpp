@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -79,7 +79,7 @@ bool SceneScriptTB06::ClickedOnActor(int actorId) {
 		Actor_Voice_Over(2310, kActorVoiceOver);
 		Item_Pickup_Spin_Effect(974, 66, 397);
 		Actor_Voice_Over(2320, kActorVoiceOver);
-		if (Game_Flag_Query(48)) {
+		if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 			Actor_Voice_Over(2330, kActorVoiceOver);
 			Actor_Voice_Over(2340, kActorVoiceOver);
 		}

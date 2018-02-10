@@ -46,7 +46,7 @@ Elevator::Elevator(BladeRunnerEngine *vm) {
 
 Elevator::~Elevator() {
 	delete _imagePicker;
-	reset();
+	_imagePicker = nullptr;
 }
 
 int Elevator::activate(int elevatorId) {

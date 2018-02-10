@@ -20,20 +20,20 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
 void SceneScriptMA01::InitializeScene() {
 	Setup_Scene_Information(381.0f, 0.0f, 54.0f, 992);
-	if (Game_Flag_Query(kFlagMA01Locked)) {
+	if (Game_Flag_Query(kFlagSpinnerToMA01)) {
 		Setup_Scene_Information(381.0f, 0.0f, 54.0f, 992);
 	}
 	if (Game_Flag_Query(kFlagMA06toMA01)) {
 		Setup_Scene_Information(1446.0f, 0.0f, -725.0f, 660);
 	}
 	Scene_Exit_Add_2D_Exit(0, 328, 132, 426, 190, 0);
-	if (Game_Flag_Query(kFlagMA01Locked)) {
+	if (Game_Flag_Query(kFlagSpinnerToMA01)) {
 		Scene_Exit_Add_2D_Exit(1, 234, 240, 398, 328, 2);
 	}
 	Ambient_Sounds_Add_Looping_Sound(101, 90, 0, 1);
@@ -119,64 +119,64 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 			switch (spinnerDest) {
 			case kSpinnerDestinationPoliceStation:
 				Game_Flag_Set(178);
-				Game_Flag_Reset(kFlagMA01Locked);
-				Game_Flag_Set(251);
+				Game_Flag_Reset(kFlagSpinnerToMA01);
+				Game_Flag_Set(kFlagSpinnerToPS01);
 				Set_Enter(61, kScenePS01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationRuncitersAnimals:
 				Game_Flag_Set(182);
-				Game_Flag_Reset(kFlagMA01Locked);
-				Game_Flag_Set(249);
+				Game_Flag_Reset(kFlagSpinnerToMA01);
+				Game_Flag_Set(kFlagSpinnerToRC01);
 				Set_Enter(69, kSceneRC01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationChinatown:
 				Game_Flag_Set(176);
-				Game_Flag_Reset(kFlagMA01Locked);
-				Game_Flag_Set(248);
+				Game_Flag_Reset(kFlagSpinnerToMA01);
+				Game_Flag_Set(kFlagSpinnerToCT01);
 				Set_Enter(4, kSceneCT01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationTyrellBuilding:
 				Game_Flag_Set(261);
-				Game_Flag_Reset(kFlagMA01Locked);
-				Game_Flag_Set(307);
+				Game_Flag_Reset(kFlagSpinnerToMA01);
+				Game_Flag_Set(kFlagSpinnerToTB02);
 				Set_Enter(17, kSceneTB02);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationAnimoidRow:
 				Game_Flag_Set(180);
-				Game_Flag_Reset(kFlagMA01Locked);
-				Game_Flag_Set(252);
+				Game_Flag_Reset(kFlagSpinnerToMA01);
+				Game_Flag_Set(kFlagSpinnerToAR01);
 				Set_Enter(0, kSceneAR01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationDNARow:
 				Game_Flag_Set(177);
-				Game_Flag_Reset(kFlagMA01Locked);
-				Game_Flag_Set(253);
+				Game_Flag_Reset(kFlagSpinnerToMA01);
+				Game_Flag_Set(kFlagSpinnerToDR01);
 				Set_Enter(7, kSceneDR01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationBradburyBuilding:
 				Game_Flag_Set(258);
-				Game_Flag_Reset(kFlagMA01Locked);
-				Game_Flag_Set(254);
+				Game_Flag_Reset(kFlagSpinnerToMA01);
+				Game_Flag_Set(kFlagSpinnerToBB01);
 				Set_Enter(20, kSceneBB01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationNightclubRow:
 				Game_Flag_Set(181);
-				Game_Flag_Reset(kFlagMA01Locked);
-				Game_Flag_Set(255);
+				Game_Flag_Reset(kFlagSpinnerToMA01);
+				Game_Flag_Set(kFlagSpinnerToNR01);
 				Set_Enter(54, kSceneNR01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
 			case kSpinnerDestinationHysteriaHall:
 				Game_Flag_Set(257);
-				Game_Flag_Reset(kFlagMA01Locked);
-				Game_Flag_Set(256);
+				Game_Flag_Reset(kFlagSpinnerToMA01);
+				Game_Flag_Set(kFlagSpinnerToHF01);
 				Set_Enter(37, kSceneHF01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 4, true);
 				break;
@@ -242,7 +242,7 @@ void SceneScriptMA01::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	if (!Game_Flag_Query(37) && Global_Variable_Query(1) == 1) {
+	if (!Game_Flag_Query(kFlagMA01toMA06) && Global_Variable_Query(1) == 1) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeTowards2, true, -1);

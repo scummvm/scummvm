@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -64,13 +64,13 @@ void SceneScriptCT12::InitializeScene() {
 		Actor_Set_At_XYZ(kActorGaff, -534.0f, -6.5f, 952.0f, 367);
 		Game_Flag_Set(294);
 	}
-	if (Game_Flag_Query(123) && Game_Flag_Query(248)) {
+	if (Game_Flag_Query(123) && Game_Flag_Query(kFlagSpinnerToCT01)) {
 		if (Global_Variable_Query(1) != 2 && Global_Variable_Query(1) != 3) {
 			Scene_Loop_Start_Special(0, 1, 0);
 		}
 		Scene_Loop_Set_Default(2);
 		Game_Flag_Reset(123);
-	} else if (Game_Flag_Query(123) && !Game_Flag_Query(248)) {
+	} else if (Game_Flag_Query(123) && !Game_Flag_Query(kFlagSpinnerToCT01)) {
 		if (Global_Variable_Query(1) != 2 && Global_Variable_Query(1) != 3) {
 			Scene_Loop_Start_Special(0, 0, 0);
 		}

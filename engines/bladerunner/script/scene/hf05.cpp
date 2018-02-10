@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -468,7 +468,7 @@ void SceneScriptHF05::sub_403738() {
 		Actor_Set_At_XYZ(kActorCrazylegs, -315.15f, 0.0f, 241.06f, 583);
 		Actor_Set_Goal_Number(kActorCrazylegs, 699);
 		Game_Flag_Set(652);
-		if (Game_Flag_Query(255)) {
+		if (Game_Flag_Query(kFlagSpinnerToNR01)) {
 			Set_Enter(54, kSceneNR01);
 		} else {
 			Game_Flag_Set(313);

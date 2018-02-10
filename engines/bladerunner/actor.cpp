@@ -34,8 +34,8 @@
 #include "bladerunner/movement_track.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
-#include "bladerunner/script/scene.h"
-#include "bladerunner/script/ai.h"
+#include "bladerunner/script/scene_script.h"
+#include "bladerunner/script/ai_script.h"
 #include "bladerunner/set.h"
 #include "bladerunner/slice_animations.h"
 #include "bladerunner/slice_renderer.h"
@@ -170,7 +170,7 @@ void Actor::changeAnimationMode(int animationMode, bool force) {
 	}
 
 	if (animationMode != _animationMode) {
-		_vm->_aiScripts->ChangeAnimationMode(_id, animationMode);
+		_vm->_aiScripts->changeAnimationMode(_id, animationMode);
 		_animationMode = animationMode;
 	}
 }
@@ -229,8 +229,8 @@ void Actor::countdownTimerUpdate(int timerId) {
 		case 0:
 		case 1:
 		case 2:
-			if (!_vm->_aiScripts->IsInsideScript() && !_vm->_sceneScript->IsInsideScript()) {
-				_vm->_aiScripts->TimerExpired(this->_id, timerId);
+			if (!_vm->_aiScripts->isInsideScript() && !_vm->_sceneScript->isInsideScript()) {
+				_vm->_aiScripts->timerExpired(this->_id, timerId);
 				this->_timersRemain[timerId] = 0;
 			} else {
 				this->_timersRemain[timerId] = 1;
@@ -311,7 +311,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 		//return true;
 	} else {
 		if (!omitAiScript) {
-			_vm->_aiScripts->CompletedMovementTrack(_id);
+			_vm->_aiScripts->completedMovementTrack(_id);
 		}
 		//return false;
 	}
@@ -346,7 +346,7 @@ void Actor::movementTrackWaypointReached() {
 			if (!_movementTrackDelayOnNextWaypoint) {
 				_movementTrackDelayOnNextWaypoint = 1;
 			}
-			if (_vm->_aiScripts->ReachedMovementTrackWaypoint(_id, _movementTrackWalkingToWaypointId)) {
+			if (_vm->_aiScripts->reachedMovementTrackWaypoint(_id, _movementTrackWalkingToWaypointId)) {
 				seconds = _movementTrackDelayOnNextWaypoint;
 				if (seconds > 1) {
 					changeAnimationMode(kAnimationModeIdle, false);
@@ -572,7 +572,7 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 
 	if (needsUpdate) {
 		int newAnimation = 0, newFrame = 0;
-		_vm->_aiScripts->UpdateAnimation(_id, &newAnimation, &newFrame);
+		_vm->_aiScripts->updateAnimation(_id, &newAnimation, &newFrame);
 
 		if (_animationId != newAnimation) {
 			if (_fps != 0 && _fps != -1) {
@@ -714,16 +714,16 @@ void Actor::setSetId(int setId) {
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				_vm->_aiScripts->OtherAgentExitedThisScene(i, _id);
+				_vm->_aiScripts->otherAgentExitedThisScene(i, _id);
 			}
 		}
 	}
 	_setId = setId;
-	_vm->_aiScripts->EnteredScene(_id, _setId);
+	_vm->_aiScripts->enteredScene(_id, _setId);
 	if (_setId > 0) {
 		for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 			if (_vm->_actors[i]->_id != _id && _vm->_actors[i]->_setId == _setId) {
-				_vm->_aiScripts->OtherAgentEnteredThisScene(i, _id);
+				_vm->_aiScripts->otherAgentEnteredThisScene(i, _id);
 			}
 		}
 	}
@@ -959,7 +959,7 @@ void Actor::retire(bool retired, int width, int height, int retiredByActorId) {
 		_vm->_playerDead = true;
 	}
 	if (_isRetired) {
-		_vm->_aiScripts->Retired(_id, retiredByActorId);
+		_vm->_aiScripts->retired(_id, retiredByActorId);
 	}
 }
 
@@ -1045,8 +1045,8 @@ void Actor::setGoal(int goalNumber) {
 		return;
 	}
 
-	_vm->_aiScripts->GoalChanged(_id, oldGoalNumber, goalNumber);
-	_vm->_sceneScript->ActorChangedGoal(_id, goalNumber, oldGoalNumber, _vm->_scene->getSetId() == _setId);
+	_vm->_aiScripts->goalChanged(_id, oldGoalNumber, goalNumber);
+	_vm->_sceneScript->actorChangedGoal(_id, goalNumber, oldGoalNumber, _vm->_scene->getSetId() == _setId);
 }
 
 int Actor::getGoal() const {
@@ -1087,7 +1087,7 @@ void Actor::acquireClue(int clueId, bool unknownFlag, int fromActorId) {
 	bool hasAlready = hasClue(clueId);
 	_clues->acquire(clueId, unknownFlag, fromActorId);
 	if (!hasAlready) {
-		_vm->_aiScripts->ReceivedClue(_id, clueId, fromActorId);
+		_vm->_aiScripts->receivedClue(_id, clueId, fromActorId);
 	}
 }
 

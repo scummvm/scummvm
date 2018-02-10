@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -164,7 +164,7 @@ void SceneScriptPS05::DialogueQueueFlushed(int a1) {
 void SceneScriptPS05::sub_401B34() {
 	int i = 0;
 	int arr[7];
-	if (Global_Variable_Query(1) < 4 && Game_Flag_Query(45)) {
+	if (Global_Variable_Query(1) < 4 && Game_Flag_Query(kFlagGordoIsReplicant)) {
 		arr[i++] = 0;
 	}
 	arr[i++] = 1;

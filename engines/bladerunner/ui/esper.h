@@ -26,9 +26,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 
-namespace Graphics {
-struct Surface;
-}
+#include "graphics/surface.h"
 
 namespace BladeRunner {
 
@@ -96,11 +94,11 @@ class ESPER {
 
 	UIImagePicker     *_buttons;
 
-	Graphics::Surface *_photoData;
-	Graphics::Surface *_viewportData;
+	Graphics::Surface _surfacePhoto;
+	Graphics::Surface _surfaceViewport;
 
-	VQAPlayer *_vqaMainPlayer;
-	VQAPlayer *_vqaPhotoPlayer;
+	VQAPlayer *_vqaPlayerMain;
+	VQAPlayer *_vqaPlayerPhoto;
 	int        _vqaLastFrame;
 
 	Shape                 *_shapeButton;
@@ -190,7 +188,7 @@ public:
 
 	void open(Graphics::Surface *surface);
 	void close();
-	bool isOpen();
+	bool isOpen() const;
 
 	void handleMouseUp(int x, int y, bool buttonLeft);
 	void handleMouseDown(int x, int y, bool buttonLeft);
@@ -242,6 +240,7 @@ private:
 	void drawSelection(Graphics::Surface &surface, bool crosshair, int style);
 	void drawVideoFrame(Graphics::Surface &surface);
 	void drawTextCoords(Graphics::Surface &surface);
+	void drawMouse(Graphics::Surface &surface);
 
 	void flashViewport();
 
@@ -250,7 +249,6 @@ private:
 	void copyImageBlit(Graphics::Surface *src, Common::Rect srcRect, Graphics::Surface *dst, Common::Rect dstRect);
 
 	void tickSound();
-	void tickMouse(Graphics::Surface &surface);
 	void tickScroll();
 
 	int findEmptyPhoto();

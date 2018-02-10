@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -30,7 +30,7 @@ void SceneScriptMA04::InitializeScene() {
 		if (Global_Variable_Query(1) != 2 && Global_Variable_Query(1) != 3) {
 			Scene_Loop_Start_Special(kSceneLoopModeLoseControl, 0, false);
 		}
-	} else if (Game_Flag_Query(35)) {
+	} else if (Game_Flag_Query(kFlagMA02ToMA04)) {
 		Setup_Scene_Information(-7099.0f, 954.0f, 1866.0f, 502);
 	} else if (Game_Flag_Query(647)) {
 		Setup_Scene_Information(-7107.0f, 954.0f, 1742.0f, 502);
@@ -239,10 +239,10 @@ void SceneScriptMA04::PlayerWalkedIn() {
 	}
 	if (Game_Flag_Query(647)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7139.0f, 954.0f, 1746.0f, 0, 1, false, 0);
-	} else if (Game_Flag_Query(35)) {
+	} else if (Game_Flag_Query(kFlagMA02ToMA04)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7143.0f, 954.0f, 1868.0f, 0, 1, false, 0);
 	}
-	Game_Flag_Reset(35);
+	Game_Flag_Reset(kFlagMA02ToMA04);
 	Game_Flag_Reset(kFlagMA05toMA04);
 	Game_Flag_Reset(647);
 	if (Game_Flag_Query(61)) {
@@ -268,9 +268,9 @@ void SceneScriptMA04::PlayerWalkedIn() {
 			Actor_Clue_Acquire(kActorMcCoy, kCluePhoneCallGuzza, false, kActorGuzza);
 			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationTyrellBuilding, true);
 			Game_Flag_Set(kFlagRC01PoliceDone);
-			if (!Game_Flag_Query(163)) {
-				Game_Flag_Set(163);
-				Item_Remove_From_World(66);
+			if (!Game_Flag_Query(kFlagChromeDebrisTaken)) {
+				Game_Flag_Set(kFlagChromeDebrisTaken);
+				Item_Remove_From_World(kItemChromeDebris);
 			}
 			Actor_Set_Goal_Number(kActorOfficerLeary, 99);
 			Actor_Put_In_Set(kActorOfficerLeary, 93);

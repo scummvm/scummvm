@@ -74,6 +74,7 @@ ZBuffer::ZBuffer() {
 }
 
 ZBuffer::~ZBuffer() {
+	delete _dirtyRects;
 	delete[] _zbuf1;
 	delete[] _zbuf2;
 }

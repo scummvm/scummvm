@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/kia.h"
+#include "bladerunner/script/kia_script.h"
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/mouse.h"
@@ -216,7 +216,7 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 	case kClueDetonatorWire:
 		KIA_Play_Slice_Model(974);
 		KIA_Play_Actor_Dialogue(kActorVoiceOver, 2320);
-		if (Game_Flag_Query(48)) {
+		if (Game_Flag_Query(kFlagSadikIsReplicant)) {
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2330);
 			KIA_Play_Actor_Dialogue(kActorVoiceOver, 2340);
 		}

@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -29,7 +29,7 @@ void SceneScriptKP07::InitializeScene() {
 	Game_Flag_Reset(578);
 	Scene_Exit_Add_2D_Exit(0, 315, 185, 381, 285, 0);
 	if (Game_Flag_Query(653)) {
-		if (Game_Flag_Query(47) && Actor_Query_Goal_Number(kActorDektora) < 599) {
+		if (Game_Flag_Query(kFlagDektoraIsReplicant) && Actor_Query_Goal_Number(kActorDektora) < 599) {
 			Actor_Set_Targetable(kActorDektora, true);
 			Global_Variable_Increment(51, 1);
 			Actor_Put_In_Set(kActorDektora, 48);
@@ -41,19 +41,19 @@ void SceneScriptKP07::InitializeScene() {
 			Actor_Put_In_Set(kActorZuben, 48);
 			Actor_Set_At_XYZ(kActorZuben, -26.0f, -41.52f, -135.0f, 0);
 		}
-		if (Game_Flag_Query(44) && Actor_Query_Goal_Number(kActorIzo) < 599) {
+		if (Game_Flag_Query(kFlagIzoIsReplicant) && Actor_Query_Goal_Number(kActorIzo) < 599) {
 			Global_Variable_Increment(51, 1);
 			Actor_Set_Targetable(kActorIzo, true);
 			Actor_Put_In_Set(kActorIzo, 48);
 			Actor_Set_At_XYZ(kActorIzo, -38.0f, -41.52f, -175.0f, 500);
 		}
-		if (Game_Flag_Query(45) && Actor_Query_Goal_Number(kActorGordo) < 599) {
+		if (Game_Flag_Query(kFlagGordoIsReplicant) && Actor_Query_Goal_Number(kActorGordo) < 599) {
 			Global_Variable_Increment(51, 1);
 			Actor_Set_Targetable(kActorGordo, true);
 			Actor_Put_In_Set(kActorGordo, 48);
 			Actor_Set_At_XYZ(kActorGordo, 61.0f, -41.52f, -3.0f, 921);
 		}
-		if (Game_Flag_Query(46) && Actor_Query_Goal_Number(kActorLucy) < 599) {
+		if (Game_Flag_Query(kFlagLucyIsReplicant) && Actor_Query_Goal_Number(kActorLucy) < 599) {
 			Global_Variable_Increment(51, 1);
 			Actor_Put_In_Set(kActorLucy, 48);
 			Actor_Set_At_XYZ(kActorLucy, 78.0f, -41.52f, -119.0f, 659);

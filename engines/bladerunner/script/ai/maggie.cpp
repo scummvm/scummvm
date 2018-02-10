@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/ai.h"
+#include "bladerunner/script/ai_script.h"
 #include "bladerunner/vector.h"
 
 namespace BladeRunner {

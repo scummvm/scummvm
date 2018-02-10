@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -34,7 +34,7 @@ void SceneScriptBB01::InitializeScene() {
 	}
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 72, 299, 3);
 	Scene_Exit_Add_2D_Exit(1, 151, 218, 322, 290, 3);
-	if (Game_Flag_Query(254)) {
+	if (Game_Flag_Query(kFlagSpinnerToBB01)) {
 		Scene_Exit_Add_2D_Exit(2, 0, 311, 312, 479, 2);
 	}
 	Ambient_Sounds_Add_Looping_Sound(54, 50, 0, 1);
@@ -51,12 +51,12 @@ void SceneScriptBB01::InitializeScene() {
 	Ambient_Sounds_Add_Speech_Sound(60, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Speech_Sound(60, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	if (Game_Flag_Query(254) && !Game_Flag_Query(265) && !Game_Flag_Query(263)) {
+	if (Game_Flag_Query(kFlagSpinnerToBB01) && !Game_Flag_Query(265) && !Game_Flag_Query(263)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
-	} else if (Game_Flag_Query(254) && Game_Flag_Query(265)) {
+	} else if (Game_Flag_Query(kFlagSpinnerToBB01) && Game_Flag_Query(265)) {
 		Scene_Loop_Set_Default(1);
-	} else if (Game_Flag_Query(254) && Game_Flag_Query(263)) {
+	} else if (Game_Flag_Query(kFlagSpinnerToBB01) && Game_Flag_Query(263)) {
 		Scene_Loop_Set_Default(1);
 	} else {
 		Scene_Loop_Set_Default(5);
@@ -112,64 +112,64 @@ bool SceneScriptBB01::ClickedOnExit(int exitId) {
 			switch (spinnerDest) {
 			case 0:
 				Game_Flag_Set(178);
-				Game_Flag_Reset(254);
-				Game_Flag_Set(251);
+				Game_Flag_Reset(kFlagSpinnerToBB01);
+				Game_Flag_Set(kFlagSpinnerToPS01);
 				Set_Enter(61, kScenePS01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 1:
 				Game_Flag_Set(179);
-				Game_Flag_Reset(254);
-				Game_Flag_Set(250);
+				Game_Flag_Reset(kFlagSpinnerToBB01);
+				Game_Flag_Set(kFlagSpinnerToMA01);
 				Set_Enter(49, kSceneMA01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 2:
 				Game_Flag_Set(182);
-				Game_Flag_Reset(254);
-				Game_Flag_Set(249);
+				Game_Flag_Reset(kFlagSpinnerToBB01);
+				Game_Flag_Set(kFlagSpinnerToRC01);
 				Set_Enter(69, kSceneRC01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 3:
 				Game_Flag_Set(176);
-				Game_Flag_Reset(254);
-				Game_Flag_Set(248);
+				Game_Flag_Reset(kFlagSpinnerToBB01);
+				Game_Flag_Set(kFlagSpinnerToCT01);
 				Set_Enter(4, kSceneCT01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 5:
 				Game_Flag_Set(261);
-				Game_Flag_Reset(254);
-				Game_Flag_Set(307);
+				Game_Flag_Reset(kFlagSpinnerToBB01);
+				Game_Flag_Set(kFlagSpinnerToTB02);
 				Set_Enter(17, kSceneTB02);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 4:
 				Game_Flag_Set(180);
-				Game_Flag_Reset(254);
-				Game_Flag_Set(252);
+				Game_Flag_Reset(kFlagSpinnerToBB01);
+				Game_Flag_Set(kFlagSpinnerToAR01);
 				Set_Enter(0, kSceneAR01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 6:
 				Game_Flag_Set(177);
-				Game_Flag_Reset(254);
-				Game_Flag_Set(253);
+				Game_Flag_Reset(kFlagSpinnerToBB01);
+				Game_Flag_Set(kFlagSpinnerToDR01);
 				Set_Enter(7, kSceneDR01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 8:
 				Game_Flag_Set(181);
-				Game_Flag_Reset(254);
-				Game_Flag_Set(255);
+				Game_Flag_Reset(kFlagSpinnerToBB01);
+				Game_Flag_Set(kFlagSpinnerToNR01);
 				Set_Enter(54, kSceneNR01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;
 			case 9:
 				Game_Flag_Set(257);
-				Game_Flag_Reset(254);
-				Game_Flag_Set(256);
+				Game_Flag_Reset(kFlagSpinnerToBB01);
+				Game_Flag_Set(kFlagSpinnerToHF01);
 				Set_Enter(37, kSceneHF01);
 				Scene_Loop_Start_Special(1, 4, 1);
 				break;

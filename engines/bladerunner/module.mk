@@ -44,17 +44,17 @@ MODULE_OBJS = \
 	scene_objects.o \
 	screen_effects.o \
 	script/script.o \
-	script/init.o \
-	script/kia.o \
-	script/vk.o \
-	script/esper.o \
-	script/ai.o \
+	script/init_script.o \
+	script/kia_script.o \
+	script/vk_script.o \
+	script/esper_script.o \
+	script/ai_script.o \
 	script/ai/leon.o \
 	script/ai/maggie.o \
 	script/ai/mccoy.o \
 	script/ai/officer_leary.o \
 	script/ai/runciter.o \
-	script/scene.o \
+	script/scene_script.o \
 	script/scene/ar01.o \
 	script/scene/ar02.o \
 	script/scene/bb01.o \
@@ -195,6 +195,7 @@ MODULE_OBJS = \
 	ui/ui_input_box.o \
 	ui/ui_scroll_box.o \
 	ui/ui_slider.o \
+	ui/vk.o \
 	view.o \
 	vqa_decoder.o \
 	vqa_player.o \

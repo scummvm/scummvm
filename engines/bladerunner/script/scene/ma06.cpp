@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -131,7 +131,7 @@ void SceneScriptMA06::activateElevator() {
 		if (floor > 1) {
 			Game_Flag_Set(kFlagMA06toMA07);
 		} else if (floor == 1) {
-			if (Game_Flag_Query(kFlagMA01Locked)) {
+			if (Game_Flag_Query(kFlagSpinnerToMA01)) {
 				Game_Flag_Set(kFlagMA06toMA01);
 			} else {
 				Sound_Play(412, 100, 0, 0, 50);

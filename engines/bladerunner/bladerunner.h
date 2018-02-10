@@ -84,6 +84,7 @@ class TextResource;
 class KIAShapes;
 class Vector3;
 class View;
+class VK;
 class Waypoints;
 class ZBuffer;
 
@@ -131,6 +132,7 @@ public:
 	Spinner            *_spinner;
 	SuspectsDatabase   *_suspectsDatabase;
 	View               *_view;
+	VK                 *_vk;
 	Waypoints          *_waypoints;
 	int                *_gameVars;
 
@@ -191,6 +193,7 @@ public:
 	bool init2();
 
 	Common::Point getMousePos() const;
+	bool isMouseButtonDown() const;
 
 	void gameLoop();
 	void gameTick();

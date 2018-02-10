@@ -117,7 +117,7 @@ void AmbientSounds::addSpeech(int actorId, int sentenceId, int timeMin, int time
 void AmbientSounds::playSound(int sfxId, int volume, int panStart, int panEnd, int priority) {
 	const char *name = _vm->_gameInfo->getSfxTrack(sfxId);
 
-	_vm->_audioPlayer->playAud(name, volume * _ambientVolume / 100, panStart, panEnd, priority, AudioPlayer::OVERRIDE_VOLUME);
+	_vm->_audioPlayer->playAud(name, volume * _ambientVolume / 100, panStart, panEnd, priority, kAudioPlayerOverrideVolume);
 }
 
 void AmbientSounds::addLoopingSound(int sfxId, int volume, int pan, int delay) {
@@ -149,7 +149,7 @@ void AmbientSounds::addLoopingSound(int sfxId, int volume, int pan, int delay) {
 		actualVolumeStart = 0;
 	}
 
-	track.audioPlayerTrack = _vm->_audioPlayer->playAud(name, actualVolumeStart, pan, pan, 99, AudioPlayer::LOOP | AudioPlayer::OVERRIDE_VOLUME);
+	track.audioPlayerTrack = _vm->_audioPlayer->playAud(name, actualVolumeStart, pan, pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume);
 
 	if (track.audioPlayerTrack == -1) {
 		removeLoopingSoundByIndex(i, 0);
@@ -212,14 +212,12 @@ void AmbientSounds::tick() {
 
 		track.volume = _vm->_rnd.getRandomNumberRng(track.volumeMin, track.volumeMax);
 
-		track.audioPlayerTrack = _vm->_audioPlayer->playAud(
-															 track.name,
-															 track.volume * _ambientVolume / 100,
-															 panStart,
-															 panEnd,
-															 track.priority,
-															 AudioPlayer::OVERRIDE_VOLUME
-															);
+		track.audioPlayerTrack = _vm->_audioPlayer->playAud(track.name,
+															track.volume * _ambientVolume / 100,
+															panStart,
+															panEnd,
+															track.priority,
+															kAudioPlayerOverrideVolume);
 
 		track.nextPlayTime = now + _vm->_rnd.getRandomNumberRng(track.timeMin, track.timeMax);
 	}
@@ -233,7 +231,7 @@ void AmbientSounds::setVolume(int volume) {
 				if (_vm->_audioPlayer->isActive(_loopingSounds[i].audioPlayerTrack)) {
 					_vm->_audioPlayer->adjustVolume(_loopingSounds[i].audioPlayerTrack, newVolume, 1, false);
 				} else {
-					_loopingSounds[i].audioPlayerTrack = _vm->_audioPlayer->playAud(_loopingSounds[i].name, 1, _loopingSounds[i].pan, _loopingSounds[i].pan, 99, AudioPlayer::LOOP | AudioPlayer::OVERRIDE_VOLUME);
+					_loopingSounds[i].audioPlayerTrack = _vm->_audioPlayer->playAud(_loopingSounds[i].name, 1, _loopingSounds[i].pan, _loopingSounds[i].pan, 99, kAudioPlayerLoop | kAudioPlayerOverrideVolume);
 					if (_loopingSounds[i].audioPlayerTrack == -1) {
 						removeLoopingSound(i, 0);
 					} else {

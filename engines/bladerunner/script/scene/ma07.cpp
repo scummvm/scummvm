@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -128,8 +128,8 @@ void SceneScriptMA07::PlayerWalkedIn() {
 	if (Actor_Query_Goal_Number(kActorRachael) == 300) {
 		Actor_Set_Goal_Number(kActorRachael, 305);
 	}
-	if (Game_Flag_Query(58)) {
-		Game_Flag_Reset(58);
+	if (Game_Flag_Query(kFlagMA06toMA07)) {
+		Game_Flag_Reset(kFlagMA06toMA07);
 	}
 	if (!Game_Flag_Query(648) && Game_Flag_Query(671) && Global_Variable_Query(1) == 4) {
 		Scene_Exits_Disable();

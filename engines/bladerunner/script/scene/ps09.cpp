@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -250,7 +250,7 @@ void SceneScriptPS09::sub_402090() {
 		Actor_Says(kActorGrigorian, 50, 13);
 		Actor_Says(kActorMcCoy, 4275, 18);
 		Actor_Says(kActorMcCoy, 4280, 19);
-		if (Game_Flag_Query(44)) {
+		if (Game_Flag_Query(kFlagIzoIsReplicant)) {
 			Actor_Says(kActorGrigorian, 60, 14);
 			Actor_Says(kActorMcCoy, 4285, 13);
 			Actor_Says(kActorGrigorian, 70, 12);
@@ -262,7 +262,7 @@ void SceneScriptPS09::sub_402090() {
 			Actor_Says(kActorMcCoy, 4300, 17);
 			return;
 		}
-		if (!Game_Flag_Query(44)) {
+		if (!Game_Flag_Query(kFlagIzoIsReplicant)) {
 			Actor_Says(kActorGrigorian, 130, 15);
 			Actor_Says(kActorGrigorian, 140, 13);
 			Actor_Says(kActorMcCoy, 4305, 13);

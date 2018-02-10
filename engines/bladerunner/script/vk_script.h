@@ -30,21 +30,29 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class VKScript : ScriptBase {
-public:
-	VKScript(BladeRunnerEngine *vm)
-		: ScriptBase(vm) {
-	}
+	int _inScriptCounter;
+	int _calibrationQuestionCounter;
+	int _questionCounter;
 
-	bool SCRIPT_VK_DLL_Initialize(int actorId);
-	void SCRIPT_VK_DLL_Calibrate(int actorId);
-	bool SCRIPT_VK_DLL_Begin_Test();
-	void SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId);
-	void SCRIPT_VK_DLL_Question_Asked(int actorId, int questionId);
- 	void SCRIPT_VK_DLL_Shutdown(int actorId, signed int humanPercentage, signed int replicantPercentage);
+public:
+	VKScript(BladeRunnerEngine *vm);
+
+	void initialize(int actorId);
+	void calibrate(int actorId);
+	void beginTest(int actorId);
+	void mcCoyAsksQuestion(int actorId, int questionId);
+	void questionAsked(int actorId, int questionId);
+	void shutdown(int actorId, int humanPercentage, int replicantPercentage, int anxiety);
+
+	bool isInsideScript() const;
 
 private:
-	int calibrationQuestionCounter;
-	int unknown2;
+	bool SCRIPT_VK_DLL_Initialize(int actorId);
+	void SCRIPT_VK_DLL_Calibrate(int actorId);
+	bool SCRIPT_VK_DLL_Begin_Test(int actorId);
+	void SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId);
+	void SCRIPT_VK_DLL_Question_Asked(int actorId, int questionId);
+ 	void SCRIPT_VK_DLL_Shutdown(int actorId, int humanPercentage, int replicantPercentage, int anxiety);
 
 	void askLucy(int questionId);
 	void askGrigorian(int questionId);
@@ -62,4 +70,3 @@ private:
 } // End of namespace BladeRunner
 
 #endif
-

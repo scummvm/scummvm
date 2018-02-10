@@ -181,22 +181,22 @@ public:
 	AIScripts(BladeRunnerEngine *vm, int actorCount);
 	~AIScripts();
 
-	void Initialize(int actor);
-	void Update(int actor);
-	void TimerExpired(int actor, int timer);
-	void CompletedMovementTrack(int actor);
-	void ReceivedClue(int actor, int clueId, int fromActorId);
-	void ClickedByPlayer(int actor);
-	void EnteredScene(int actor, int setId);
-	void OtherAgentEnteredThisScene(int actor, int otherActorId);
-	void OtherAgentExitedThisScene(int actor, int otherActorId);
-	void Retired(int actor, int retiredByActorId);
-	void GoalChanged(int actor, int currentGoalNumber, int newGoalNumber);
-	bool ReachedMovementTrackWaypoint(int actor, int waypointId);
-	void UpdateAnimation(int actor, int *animation, int *frame);
-	void ChangeAnimationMode(int actor, int mode);
+	void initialize(int actor);
+	void update(int actor);
+	void timerExpired(int actor, int timer);
+	void completedMovementTrack(int actor);
+	void receivedClue(int actor, int clueId, int fromActorId);
+	void clickedByPlayer(int actor);
+	void enteredScene(int actor, int setId);
+	void otherAgentEnteredThisScene(int actor, int otherActorId);
+	void otherAgentExitedThisScene(int actor, int otherActorId);
+	void retired(int actor, int retiredByActorId);
+	void goalChanged(int actor, int currentGoalNumber, int newGoalNumber);
+	bool reachedMovementTrackWaypoint(int actor, int waypointId);
+	void updateAnimation(int actor, int *animation, int *frame);
+	void changeAnimationMode(int actor, int mode);
 
-	bool IsInsideScript() const { return _inScriptCounter > 0; }
+	bool isInsideScript() const { return _inScriptCounter > 0; }
 };
 
 } // End of namespace BladeRunner

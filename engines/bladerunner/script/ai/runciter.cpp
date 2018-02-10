@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/ai.h"
+#include "bladerunner/script/ai_script.h"
 
 namespace BladeRunner {
 
@@ -99,7 +99,7 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 			Actor_Says(kActorRunciter, 610, 18);
 			Actor_Says(kActorMcCoy, 4785, -1);
 			Actor_Says(kActorRunciter, 620, 15);
-			if (Game_Flag_Query(46)) {
+			if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 				Actor_Says(kActorRunciter, 630, 12);
 				Actor_Says(kActorRunciter, 640, 17);
 				Actor_Says(kActorMcCoy, 4790, -1);

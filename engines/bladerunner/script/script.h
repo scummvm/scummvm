@@ -37,9 +37,7 @@ protected:
 	BladeRunnerEngine *_vm;
 
 public:
-	ScriptBase(BladeRunnerEngine *vm) {
-		_vm = vm;
-	}
+	ScriptBase(BladeRunnerEngine *vm);
 	virtual ~ScriptBase() {}
 
 protected:
@@ -232,7 +230,7 @@ protected:
 	// Spinner_Query_Selectable_Destination_Flag(int destination);
 	int Spinner_Interface_Choose_Dest(int loopId, bool immediately);
 	void ESPER_Flag_To_Activate();
-	bool Voight_Kampff_Activate(int actorId, int a2);
+	void Voight_Kampff_Activate(int actorId, int calibrationRatio);
 	int Elevator_Activate(int elevatorId);
 	void View_Score_Board();
 	// Query_Score
@@ -273,16 +271,16 @@ protected:
 	void AI_Movement_Track_Flush(int actorId);
 
 	void ESPER_Add_Photo(const char *name, int photoId, int shapeId);
-	void ESPER_Define_Special_Region(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, const char *name);
+	void ESPER_Define_Special_Region(int regionId, int innerLeft, int innerTop, int innerRight, int innerBottom, int outerLeft, int outerTop, int outerRight, int outerBottom, int selectionLeft, int selectionTop, int selectionRight, int selectionBottom, const char *name);
 
 	void KIA_Play_Actor_Dialogue(int actorId, int sentenceId);
 	void KIA_Play_Slice_Model(int sliceModelId);
 	void KIA_Play_Photograph(int photographId);
 
-	void VK_Play_Speech_Line(int actorId, int sentenceId, float a3);
-	void VK_Add_Question(int intensity, int questionId, int a3);
-	void VK_Subject_Reacts(int a1, int a2, int a3, int a4);
-	void VK_Eye_Animates(int a1);
+	void VK_Play_Speech_Line(int actorId, int sentenceId, float duration);
+	void VK_Add_Question(int intensity, int sentenceId, int relatedSentenceId);
+	void VK_Subject_Reacts(int intensity, int humanResponse, int replicantResponse, int anxiety);
+	void VK_Eye_Animates(int loopId);
 };
 
 } // End of namespace BladeRunner

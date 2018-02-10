@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -36,7 +36,7 @@ void SceneScriptDR01::InitializeScene() {
 	}
 	Scene_Exit_Add_2D_Exit(0, 240, 60, 450, 250, 0);
 	Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
-	if (Game_Flag_Query(253) && Global_Variable_Query(1) < 4) {
+	if (Game_Flag_Query(kFlagSpinnerToDR01) && Global_Variable_Query(1) < 4) {
 		Scene_Exit_Add_2D_Exit(2, 610, 0, 639, 479, 1);
 	}
 	if (Global_Variable_Query(1) >= 3) {
@@ -136,56 +136,56 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 			switch (spinnerDest) {
 			case 2:
 				Game_Flag_Set(182);
-				Game_Flag_Reset(253);
-				Game_Flag_Set(249);
+				Game_Flag_Reset(kFlagSpinnerToDR01);
+				Game_Flag_Set(kFlagSpinnerToRC01);
 				Set_Enter(69, kSceneRC01);
 				break;
 			case 3:
 				Game_Flag_Set(176);
-				Game_Flag_Reset(253);
-				Game_Flag_Set(248);
+				Game_Flag_Reset(kFlagSpinnerToDR01);
+				Game_Flag_Set(kFlagSpinnerToCT01);
 				Set_Enter(4, kSceneCT01);
 				break;
 			case 1:
 				Game_Flag_Set(179);
-				Game_Flag_Reset(253);
-				Game_Flag_Set(250);
+				Game_Flag_Reset(kFlagSpinnerToDR01);
+				Game_Flag_Set(kFlagSpinnerToMA01);
 				Set_Enter(49, kSceneMA01);
 				break;
 			case 0:
 				Game_Flag_Set(178);
-				Game_Flag_Reset(253);
-				Game_Flag_Set(251);
+				Game_Flag_Reset(kFlagSpinnerToDR01);
+				Game_Flag_Set(kFlagSpinnerToPS01);
 				Set_Enter(61, kScenePS01);
 				break;
 			case 5:
 				Game_Flag_Set(261);
-				Game_Flag_Reset(253);
-				Game_Flag_Set(307);
+				Game_Flag_Reset(kFlagSpinnerToDR01);
+				Game_Flag_Set(kFlagSpinnerToTB02);
 				Set_Enter(17, kSceneTB02);
 				break;
 			case 4:
 				Game_Flag_Set(180);
-				Game_Flag_Reset(253);
-				Game_Flag_Set(252);
+				Game_Flag_Reset(kFlagSpinnerToDR01);
+				Game_Flag_Set(kFlagSpinnerToAR01);
 				Set_Enter(0, kSceneAR01);
 				break;
 			case 7:
 				Game_Flag_Set(258);
-				Game_Flag_Reset(253);
-				Game_Flag_Set(254);
+				Game_Flag_Reset(kFlagSpinnerToDR01);
+				Game_Flag_Set(kFlagSpinnerToBB01);
 				Set_Enter(20, kSceneBB01);
 				break;
 			case 8:
 				Game_Flag_Set(181);
-				Game_Flag_Reset(253);
-				Game_Flag_Set(255);
+				Game_Flag_Reset(kFlagSpinnerToDR01);
+				Game_Flag_Set(kFlagSpinnerToNR01);
 				Set_Enter(54, kSceneNR01);
 				break;
 			case 9:
 				Game_Flag_Set(257);
-				Game_Flag_Reset(253);
-				Game_Flag_Set(256);
+				Game_Flag_Reset(kFlagSpinnerToDR01);
+				Game_Flag_Set(kFlagSpinnerToHF01);
 				Set_Enter(37, kSceneHF01);
 				break;
 			default:

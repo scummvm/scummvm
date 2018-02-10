@@ -53,10 +53,15 @@
 #include "bladerunner/ui/esper.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/spinner.h"
+#include "bladerunner/ui/vk.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/waypoints.h"
 
 namespace BladeRunner {
+
+ScriptBase::ScriptBase(BladeRunnerEngine *vm) {
+	_vm = vm;
+}
 
 void ScriptBase::Preload(int animationId) {
 	_vm->_sliceRenderer->preload(animationId);
@@ -243,13 +248,13 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 
 	Actor *actor = _vm->_actors[actorId];
 
-	if(animationMode != -1) {
+	if (animationMode != -1) {
 		actor->stopWalking(false);
 	}
 
 	actor->speechPlay(sentenceId, false);
 	bool animationModeChanged = false;
-	if(animationMode >= 0) {
+	if (animationMode >= 0) {
 		if (actorId != 0) {
 			actor->changeAnimationMode(animationMode, false);
 			animationModeChanged = true;
@@ -1079,16 +1084,17 @@ int ScriptBase::Spinner_Interface_Choose_Dest(int loopId, bool immediately) {
 void ScriptBase::ESPER_Flag_To_Activate() {
 	if (!_vm->_esper->isOpen()) {
 		_vm->_esper->open(&_vm->_surfaceBack);
-		while (_vm->_esper->isOpen()) {
+		while (_vm->_esper->isOpen() && _vm->_gameIsRunning) {
 			_vm->gameTick();
 		}
 	}
 }
 
-bool ScriptBase::Voight_Kampff_Activate(int actorId, int a2){
-	//TODO
-	warning("Voight_Kampff_Activate(%d, %d)", actorId, a2);
-	return false;
+void ScriptBase::Voight_Kampff_Activate(int actorId, int calibrationRatio){
+	_vm->_vk->open(actorId, calibrationRatio);
+	while (_vm->_vk->isOpen() && _vm->_gameIsRunning) {
+		_vm->gameTick();
+	}
 }
 
 int ScriptBase::Elevator_Activate(int elevatorId) {
@@ -1102,7 +1108,7 @@ void ScriptBase::View_Score_Board() {
 // ScriptBase::Query_Score
 
 void ScriptBase::Set_Score(int a0, int a1) {
-	// debug("STUB: Set_Score(%d, %d)", a0, a1);
+	warning("Set_Score(%d, %d)", a0, a1);
 }
 
 void ScriptBase::Give_McCoy_Ammo(int ammoType, int ammo) {
@@ -1291,28 +1297,25 @@ void ScriptBase::ESPER_Add_Photo(const char *name, int photoId, int shapeId) {
 	_vm->_esper->addPhoto(name, photoId, shapeId);
 }
 
-void ScriptBase::ESPER_Define_Special_Region(int regionId, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, const char *name) {
-	_vm->_esper->defineRegion(regionId, Common::Rect(a2, a3, a4, a5), Common::Rect(a6, a7, a8, a9), Common::Rect(a10, a11, a12, a13), name);
+void ScriptBase::ESPER_Define_Special_Region(int regionId, int innerLeft, int innerTop, int innerRight, int innerBottom, int outerLeft, int outerTop, int outerRight, int outerBottom, int selectionLeft, int selectionTop, int selectionRight, int selectionBottom, const char *name) {
+	_vm->_esper->defineRegion(regionId, Common::Rect(innerLeft, innerTop, innerRight, innerBottom), Common::Rect(outerLeft, outerTop, outerRight, outerBottom), Common::Rect(selectionLeft, selectionTop, selectionRight, selectionBottom), name);
 }
 
-void ScriptBase::VK_Add_Question(int intensity, int questionId, int a3) {
-	//TODO
-	warning("VK_Add_Question(%d, %d, %d)", intensity, questionId, a3);
+void ScriptBase::VK_Play_Speech_Line(int actorId, int sentenceId, float duration) {
+	_vm->_vk->playSpeechLine(actorId, sentenceId, duration);
 }
 
-void ScriptBase::VK_Eye_Animates(int a1) {
-	//TODO
-	warning("VK_Eye_Animates(%d)", a1);
+void ScriptBase::VK_Add_Question(int intensity, int sentenceId, int relatedSentenceId) {
+	_vm->_vk->addQuestion(intensity, sentenceId, relatedSentenceId);
 }
 
-void ScriptBase::VK_Subject_Reacts(int a1, int a2, int a3, int a4) {
-	//TODO
-	warning("VK_Subject_Reacts(%d, %d, %d, %d)", a1, a2, a3, a4);
+void ScriptBase::VK_Subject_Reacts(int intensity, int humanResponse, int replicantResponse, int anxiety) {
+	_vm->gameWaitForActive();
+	_vm->_vk->subjectReacts(intensity, humanResponse, replicantResponse, anxiety);
 }
 
-void ScriptBase::VK_Play_Speech_Line(int actorId, int sentenceId, float a3) {
-	//TODO
-	warning("VK_Play_Speech_Line(%d, %d, %g)", actorId, sentenceId, a3);
+void ScriptBase::VK_Eye_Animates(int loopId) {
+	_vm->_vk->eyeAnimates(loopId);
 }
 
 } // End of namespace BladeRunner

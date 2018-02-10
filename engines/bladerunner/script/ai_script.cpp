@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/ai.h"
+#include "bladerunner/script/ai_script.h"
 
 #include "bladerunner/bladerunner.h"
 
@@ -55,14 +55,14 @@ AIScripts::~AIScripts() {
 	delete[] _actorUpdating;
 }
 
-void AIScripts::Initialize(int actor) {
+void AIScripts::initialize(int actor) {
 	assert(actor < _actorCount);
 	if (_AIScripts[actor]) {
 		_AIScripts[actor]->Initialize();
 	}
 }
 
-void AIScripts::Update(int actor) {
+void AIScripts::update(int actor) {
 	assert(actor < _actorCount);
 	if (this->_actorUpdating[actor] != 1) {
 		this->_actorUpdating[actor] = true;
@@ -74,7 +74,7 @@ void AIScripts::Update(int actor) {
 	}
 }
 
-void AIScripts::TimerExpired(int actor, int timer) {
+void AIScripts::timerExpired(int actor, int timer) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
@@ -83,7 +83,7 @@ void AIScripts::TimerExpired(int actor, int timer) {
 	_inScriptCounter--;
 }
 
-void AIScripts::CompletedMovementTrack(int actor) {
+void AIScripts::completedMovementTrack(int actor) {
 	assert(actor < _actorCount);
 	if (!_vm->_actors[actor]->inCombat()) {
 		_inScriptCounter++;
@@ -94,7 +94,7 @@ void AIScripts::CompletedMovementTrack(int actor) {
 	}
 }
 
-void AIScripts::ReceivedClue(int actor, int clueId, int fromActorId) {
+void AIScripts::receivedClue(int actor, int clueId, int fromActorId) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
@@ -103,7 +103,7 @@ void AIScripts::ReceivedClue(int actor, int clueId, int fromActorId) {
 	_inScriptCounter--;
 }
 
-void AIScripts::ClickedByPlayer(int actor) {
+void AIScripts::clickedByPlayer(int actor) {
 	assert(actor < _actorCount);
 
 	if(_vm->_actors[actor]->inCombat()) {
@@ -117,7 +117,7 @@ void AIScripts::ClickedByPlayer(int actor) {
 	_inScriptCounter--;
 }
 
-void AIScripts::EnteredScene(int actor, int setId) {
+void AIScripts::enteredScene(int actor, int setId) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
@@ -126,7 +126,7 @@ void AIScripts::EnteredScene(int actor, int setId) {
 	_inScriptCounter--;
 }
 
-void AIScripts::OtherAgentEnteredThisScene(int actor, int otherActorId) {
+void AIScripts::otherAgentEnteredThisScene(int actor, int otherActorId) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
@@ -135,7 +135,7 @@ void AIScripts::OtherAgentEnteredThisScene(int actor, int otherActorId) {
 	_inScriptCounter--;
 }
 
-void AIScripts::OtherAgentExitedThisScene(int actor, int otherActorId) {
+void AIScripts::otherAgentExitedThisScene(int actor, int otherActorId) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
@@ -144,7 +144,7 @@ void AIScripts::OtherAgentExitedThisScene(int actor, int otherActorId) {
 	_inScriptCounter--;
 }
 
-void AIScripts::Retired(int actor, int retiredByActorId) {
+void AIScripts::retired(int actor, int retiredByActorId) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
@@ -153,7 +153,7 @@ void AIScripts::Retired(int actor, int retiredByActorId) {
 	_inScriptCounter--;
 }
 
-void AIScripts::GoalChanged(int actor, int currentGoalNumber, int newGoalNumber) {
+void AIScripts::goalChanged(int actor, int currentGoalNumber, int newGoalNumber) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
@@ -162,7 +162,7 @@ void AIScripts::GoalChanged(int actor, int currentGoalNumber, int newGoalNumber)
 	_inScriptCounter--;
 }
 
-bool AIScripts::ReachedMovementTrackWaypoint(int actor, int waypointId) {
+bool AIScripts::reachedMovementTrackWaypoint(int actor, int waypointId) {
 	assert(actor < _actorCount);
 	bool result = false;
 	if (!_vm->_actors[actor]->inCombat()) {
@@ -175,7 +175,7 @@ bool AIScripts::ReachedMovementTrackWaypoint(int actor, int waypointId) {
 	return result;
 }
 
-void AIScripts::UpdateAnimation(int actor, int *animation, int *frame) {
+void AIScripts::updateAnimation(int actor, int *animation, int *frame) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
@@ -184,7 +184,7 @@ void AIScripts::UpdateAnimation(int actor, int *animation, int *frame) {
 	_inScriptCounter--;
 }
 
-void AIScripts::ChangeAnimationMode(int actor, int mode) {
+void AIScripts::changeAnimationMode(int actor, int mode) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {

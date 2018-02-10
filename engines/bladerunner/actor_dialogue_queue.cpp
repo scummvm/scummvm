@@ -28,7 +28,7 @@
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/scene.h"
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -99,7 +99,7 @@ void ActorDialogueQueue::flush(int a1, bool callScript) {
 	}
 	clear();
 	if (callScript) {
-		_vm->_sceneScript->DialogueQueueFlushed(a1);
+		_vm->_sceneScript->dialogueQueueFlushed(a1);
 	}
 }
 

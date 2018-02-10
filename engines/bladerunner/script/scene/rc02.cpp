@@ -20,12 +20,12 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
 void SceneScriptRC02::InitializeScene() {
-	if (Game_Flag_Query(8)) {
+	if (Game_Flag_Query(kFlagRC01toRC02)) {
 		Setup_Scene_Information(-103.0f, -1238.89f, 108603.04f, 1007);
 	} else {
 		Setup_Scene_Information(-20.2f, -1238.89f, 108100.73f, 539);
@@ -79,10 +79,10 @@ void SceneScriptRC02::SceneLoaded() {
 	if (Actor_Clue_Query(kActorMcCoy, kClueRuncitersVideo) || Global_Variable_Query(1) > 1) {
 		Unclickable_Object("SCRTY CA03");
 	}
-	if (!Game_Flag_Query(190)) {
-		Item_Add_To_World(100, 966, 16, -52.88f, -1238.89f, 108467.74f, 256, 6, 6, false, true, false, true);
-		Item_Add_To_World(101, 966, 16, -37.16f, -1238.89f, 108456.59f, 512, 6, 6, false, true, false, true);
-		Item_Add_To_World(102, 966, 16, -62.86f, -1238.89f, 108437.52f, 625, 6, 6, false, true, false, true);
+	if (!Game_Flag_Query(kFlagShellCasingsTaken)) {
+		Item_Add_To_World(kItemShellCasingA, 966, 16, -52.88f, -1238.89f, 108467.74f, 256, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemShellCasingB, 966, 16, -37.16f, -1238.89f, 108456.59f, 512, 6, 6, false, true, false, true);
+		Item_Add_To_World(kItemShellCasingC, 966, 16, -62.86f, -1238.89f, 108437.52f, 625, 6, 6, false, true, false, true);
 	}
 }
 
@@ -152,7 +152,7 @@ void SceneScriptRC02::dialogueWithRunciter() {
 	case 10:
 		Actor_Says(kActorMcCoy, 4585, 13);
 		Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
-		if (Game_Flag_Query(46)) {
+		if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 			Actor_Says(kActorRunciter, 250, 13);
 			Actor_Says(kActorRunciter, 270, 13);
 			Actor_Clue_Acquire(kActorMcCoy, kClueRunciterInterviewB1, 1, kActorRunciter);
@@ -295,14 +295,14 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 }
 
 bool SceneScriptRC02::ClickedOnItem(int itemId, bool a2) {
-	if (itemId == 100 || itemId == 101 || itemId == 102) {
-		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, 100, 24, 1, false)) {
-			Actor_Face_Item(kActorMcCoy, 100, true);
+	if (itemId == kItemShellCasingA || itemId == kItemShellCasingB || itemId == kItemShellCasingC) {
+		if (!Loop_Actor_Walk_To_Item(kActorMcCoy, kItemShellCasingA, 24, 1, false)) {
+			Actor_Face_Item(kActorMcCoy, kItemShellCasingA, true);
 			Actor_Clue_Acquire(kActorMcCoy, kClueShellCasings, 1, -1);
-			Game_Flag_Set(190);
-			Item_Remove_From_World(100);
-			Item_Remove_From_World(101);
-			Item_Remove_From_World(102);
+			Game_Flag_Set(kFlagShellCasingsTaken);
+			Item_Remove_From_World(kItemShellCasingA);
+			Item_Remove_From_World(kItemShellCasingB);
+			Item_Remove_From_World(kItemShellCasingC);
 			Item_Pickup_Spin_Effect(966, 395, 352);
 			Actor_Voice_Over(1960, kActorVoiceOver);
 		}
@@ -346,18 +346,18 @@ void SceneScriptRC02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptRC02::PlayerWalkedIn() {
 	Player_Set_Combat_Mode(false);
-	if (Game_Flag_Query(8)) {
+	if (Game_Flag_Query(kFlagRC01toRC02)) {
 		Player_Loses_Control();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -72.2f, -1238.89f, 108496.73f, 0, 0, false, 0);
 		Player_Gains_Control();
-		Game_Flag_Reset(8);
-		if (!Game_Flag_Query(1)) {
+		Game_Flag_Reset(kFlagRC01toRC02);
+		if (!Game_Flag_Query(kFlagRC02Discovered)) {
 			Actor_Voice_Over(1970, kActorVoiceOver);
 			Actor_Voice_Over(1980, kActorVoiceOver);
 			Actor_Voice_Over(1990, kActorVoiceOver);
 			Actor_Clue_Acquire(kActorMcCoy, kClueLimpingFootprints, 1, -1);
 			Actor_Clue_Acquire(kActorMcCoy, kClueGracefulFootprints, 1, -1);
-			Game_Flag_Set(1);
+			Game_Flag_Set(kFlagRC02Discovered);
 		}
 		if (Actor_Query_Which_Set_In(kActorRunciter) == 16 && Actor_Query_Goal_Number(kActorRunciter) < 300) {
 			Actor_Set_Goal_Number(kActorRunciter, 1);

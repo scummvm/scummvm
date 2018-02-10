@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -289,7 +289,7 @@ void SceneScriptNR11::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptNR11::PlayerWalkedIn() {
 	if (Actor_Query_Goal_Number(kActorDektora) == 250) {
 		Player_Set_Combat_Mode(true);
-		if (Game_Flag_Query(47)) {
+		if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 			Actor_Set_Goal_Number(kActorSteele, 210);
 		}
 	}
@@ -301,7 +301,7 @@ void SceneScriptNR11::PlayerWalkedIn() {
 		Actor_Set_Invisible(kActorMcCoy, false);
 		Player_Set_Combat_Mode(false);
 		Player_Gains_Control();
-		if (Game_Flag_Query(47)) {
+		if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 			if (Actor_Query_Goal_Number(kActorSteele) == 211) {
 				Actor_Set_At_XYZ(kActorMcCoy, -37.41f, 0.33f, -86.0f, 26);
 				Delay(500);

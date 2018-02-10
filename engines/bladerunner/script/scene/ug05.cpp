@@ -20,7 +20,7 @@
  *
  */
 
-#include "bladerunner/script/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -246,7 +246,7 @@ void SceneScriptUG05::sub_402218() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (v0 == kActorLucy) {
-		if (Game_Flag_Query(46)) {
+		if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 			if (Global_Variable_Query(48) > 3) {
 				Outtake_Play(kOuttakeEnd1B, false, -1);
 			} else {
@@ -256,7 +256,7 @@ void SceneScriptUG05::sub_402218() {
 			Outtake_Play(kOuttakeEnd1A, false, -1);
 		}
 	} else if (v0 == kActorDektora) {
-		if (Game_Flag_Query(47)) {
+		if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
 			if (Global_Variable_Query(48) > 3) {
 				Outtake_Play(kOuttakeEnd1E, false, -1);
 			} else {
