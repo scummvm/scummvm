@@ -1810,8 +1810,8 @@ void Combat::giveExperience(int experience) {
 					++count;
 				} else {
 					int exp = experience / count;
-					if (c._level._permanent < 15)
-						exp /= 2;
+					if (c._level._permanent < 15 && _vm->getGameID() != GType_Clouds)
+						exp *= 2;
 					c._experience += exp;
 				}
 			}
