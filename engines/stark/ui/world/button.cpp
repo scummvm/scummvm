@@ -50,7 +50,7 @@ void Button::render() {
 	image->render(_position, false);
 	if (_renderHint) {
 		Common::Point pos(_hintPosition);
-		if (_align == HintAlign::kRight) {
+		if (_align == kAlignRight) {
 			pos.x -= _mouseText->getRect().width();
 		}
 		_mouseText->render(pos);

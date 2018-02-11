@@ -41,9 +41,9 @@ TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
 
-	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(32, 2), Button::HintAlign::kLeft, Common::Point(64, 20));
-	_optionsButton = new Button("Options", StaticProvider::kDiaryNormal, Common::Point(560, 2), Button::HintAlign::kRight, Common::Point(560, 20));
-	_exitButton = new Button("Quit", StaticProvider::kQuit, Common::Point(608, 2), Button::HintAlign::kRight, Common::Point(608, 20));
+	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(32, 2), Button::kAlignLeft, Common::Point(64, 20));
+	_optionsButton = new Button("Options", StaticProvider::kDiaryNormal, Common::Point(560, 2), Button::kAlignRight, Common::Point(560, 20));
+	_exitButton = new Button("Quit", StaticProvider::kQuit, Common::Point(608, 2), Button::kAlignRight, Common::Point(608, 20));
 }
 
 TopMenu::~TopMenu() {

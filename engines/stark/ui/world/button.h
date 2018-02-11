@@ -40,7 +40,7 @@ class Anim;
 
 class Button {
 public:
-	enum HintAlign { kLeft, kRight };
+	enum HintAlign { kAlignLeft, kAlignRight };
 
 	Button(const Common::String &text, StaticProvider::UIElement stockElement, const Common::Point &pos, HintAlign align, const Common::Point &hintPos);
 	~Button();
