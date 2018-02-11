@@ -88,6 +88,8 @@ protected:
 	virtual void onDoubleClick(const Common::Point &pos) {}
 	virtual void onRender() = 0;
 
+        Common::Rect getScaledPosition() const;
+
 	Common::Point getRelativeMousePosition() const;
 
 	Gfx::Driver *_gfx;
