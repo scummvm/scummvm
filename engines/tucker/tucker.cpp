@@ -3757,21 +3757,15 @@ void TuckerEngine::setActionForInventoryObject() {
 	}
 	// Items with unary usage i.e. "Use X", rather than "Use X on Y"
 	if (
-		(_partNum == 3 && (_actionObj1Num == 6 || _actionObj1Num == 3 || _actionObj1Num == 17 || _actionObj1Num == 33)) ||
-		// WORKAROUND Trac#5511.
-		// Object 18 is the glue you are supposed to use on the museum floor in part
-		// three. However, there is no hotspot for you to use the glue on, you are
-		// supposed to blindly click on the floor to trigger the correct action,
-		// which many players (myself included) find very confusing and inconsistent.
-		// The next line turns the glue into a unary usage object which means that
-		// it's enough to be inside the museum and use the glue.
-		// While this makes the puzzle slightly easier, this is consistent with other
-		// similar puzzles/items (for example the peg/manhole puzzle).
-		// As a possible future TODO we could inject a hotspot for the floor or the
-		// curator on-the-fly, but this would need to take the language into account.
-		(_partNum == 3 &&  _actionObj1Num == 18) ||
-		(_partNum == 2 &&  _actionObj1Num == 19) ||
-		(_partNum == 3 && (_actionObj1Num == 42  && _selectedObjectNum == 18))
+		(_partNum == 2 && _actionObj1Num == 19) || // radio
+		(_partNum == 3 && (
+			 _actionObj1Num ==  3 || // pizza
+			 _actionObj1Num ==  6 || // raincoat
+			 _actionObj1Num == 17 || // ear plugs
+			 _actionObj1Num == 18 || // glue
+			 _actionObj1Num == 33 || // peg
+			(_actionObj1Num == 42 && _selectedObjectNum == 18) // skate + cue
+		))
 	) {
 		_actionVerbLocked = false;
 		_actionRequiresTwoObjects = false;
