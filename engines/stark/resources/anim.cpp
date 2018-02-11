@@ -469,7 +469,7 @@ void AnimSkeleton::readData(Formats::XRCReadStream *stream) {
 	_loop = stream->readBool();
 	_movementSpeed = stream->readUint32LE();
 
-	  if (_movementSpeed < 1) {
+	if (_movementSpeed < 1) {
 		_movementSpeed = 100;
 	}
 
