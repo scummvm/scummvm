@@ -1033,7 +1033,7 @@ void TuckerEngine::updateCursor() {
 		if (!_updateCursorFlag) {
 			++_actionVerb;
 			if (_actionVerb > 8) {
-				_actionVerb = 0;
+				_actionVerb = kVerbWalk;
 			}
 			_updateCursorFlag = true;
 			_actionVerbLocked = true;
@@ -1045,7 +1045,7 @@ void TuckerEngine::updateCursor() {
 	if (!_actionVerbLocked) {
 		setActionVerbUnderCursor();
 		if (_actionVerb == kVerbWalk && _locationNum == 63) {
-			_actionVerb = 8;
+			_actionVerb = kVerbUse;
 		}
 	}
 	_selectedObjectNum = 0;
@@ -1071,7 +1071,7 @@ void TuckerEngine::updateCursor() {
 		_selectedObjectType = 0;
 	}
 	if (!_actionVerbLocked && _selectedObjectType == 2 && _selectedObjectNum != 21) {
-		_actionVerb = 2;
+		_actionVerb = kVerbTalk;
 	}
 	if (!_actionRequiresTwoObjects) {
 		_actionObj1Num = _selectedObjectNum;
@@ -1114,7 +1114,7 @@ void TuckerEngine::updateCursor() {
 		} else {
 			if (_selectedObjectType == 3) {
 				setActionForInventoryObject();
-			} else if (_actionVerb != 0) {
+			} else if (_actionVerb != kVerbWalk) {
 				_actionVerbLocked = false;
 				setActionState();
 			} else if (_actionObj1Num == 261 || (_actionObj1Num == 205 && _flagsTable[143] == 0)) {
@@ -2139,7 +2139,7 @@ void TuckerEngine::updateCharacterAnimation() {
 		if (_panelLockedFlag) {
 			_panelLockedFlag = false;
 			_selectedObject._locationObjectLocationNum = 0;
-			if (_actionVerb != 2) {
+			if (_actionVerb != kVerbTalk) {
 				_speechSoundNum = 2236;
 				startSpeechSound(_speechSoundNum, _speechVolume);
 				_characterSpeechDataPtr = _ptTextBuf + getPositionForLine(_speechSoundNum, _ptTextBuf);
@@ -3276,7 +3276,7 @@ int TuckerEngine::executeTableInstruction() {
 		return 0;
 	case kCode_fw:
 		_selectedCharacterNum = readTableInstructionParam(2);
-		_actionVerb = 0;
+		_actionVerb = kVerbWalk;
 		_selectedObjectType = 0;
 		_selectedObjectNum = 1;
 		setSelectedObjectKey();
@@ -3415,33 +3415,33 @@ void TuckerEngine::moveDownInventoryObjects() {
 
 void TuckerEngine::setActionVerbUnderCursor() {
 	if (_mousePosY < 150) {
-		_actionVerb = 0;
+		_actionVerb = kVerbWalk;
 	} else if (_mousePosX > 195) {
-		_actionVerb = 1;
+		_actionVerb = kVerbLook;
 	} else if (_panelNum == 0) {
 		_actionVerb = ((_mousePosY - 150) / 17) * 3 + (_mousePosX / 67);
 	} else {
-		_actionVerb = 0;
+		_actionVerb = kVerbWalk;
 		if (_mousePosX < 30) {
-			_actionVerb = 7;
+			_actionVerb = kVerbMove;
 		} else if (_mousePosX > 130 && _mousePosX < 165) {
-			_actionVerb = 5;
+			_actionVerb = kVerbGive;
 		} else {
 			if (_mousePosY < 175) {
 				if (_mousePosX < 67) {
-					_actionVerb = 3;
+					_actionVerb = kVerbOpen;
 				} else if (_mousePosX > 164) {
-					_actionVerb = 6;
+					_actionVerb = kVerbTake;
 				} else if (_mousePosX > 99) {
-					_actionVerb = 4;
+					_actionVerb = kVerbClose;
 				}
 			} else {
 				if (_mousePosX < 85) {
-					_actionVerb = 1;
+					_actionVerb = kVerbLook;
 				} else if (_mousePosX > 165) {
-					_actionVerb = 2;
+					_actionVerb = kVerbTalk;
 				} else {
-					_actionVerb = 8;
+					_actionVerb = kVerbUse;
 				}
 			}
 		}
@@ -3620,7 +3620,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 		if (_leftMouseButtonPressed) {
 			_selectedObjectType = 0;
 			_selectedObjectNum = 0;
-			_actionVerb = 0;
+			_actionVerb = kVerbWalk;
 			_actionVerbLocked = false;
 			_forceRedrawPanelItems = true;
 			_panelState = 2;
@@ -3643,7 +3643,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 				startSpeechSound(_speechSoundNum, _speechVolume);
 				_characterSpeechDataPtr = _ptTextBuf + getPositionForLine(_speechSoundNum, _ptTextBuf);
 				_speechSoundNum = 0;
-				_actionVerb = 0;
+				_actionVerb = kVerbWalk;
 				_selectedObjectType = 0;
 				_selectedObjectNum = 0;
 				_actionVerbLocked = false;
@@ -3790,7 +3790,7 @@ void TuckerEngine::setActionForInventoryObject() {
 }
 
 void TuckerEngine::setActionState() {
-	_currentActionVerb = (_actionVerb == kVerbWalk) ? 8 : _actionVerb;
+	_currentActionVerb = (_actionVerb == kVerbWalk) ? kVerbUse : _actionVerb;
 	_currentActionObj1Num = _actionObj1Num;
 	_currentInfoString1SourceType = _actionObj1Type;
 	_currentActionObj2Num = _actionObj2Num;
