@@ -472,6 +472,7 @@ void VK::draw() {
 		_soundTrackId2 = _vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(426), 33, 0, 0, 50, 0);
 		_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(431), 50, 0, 0, 50, 0);
 	} else if (frame == 26) {
+		setAdjustment(158);
 		_vm->_audioPlayer->stop(_soundTrackId2, false);
 		_soundTrackId1 = _vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(429), 50, 30, 30, 50, kAudioPlayerLoop);
 	} else if (frame == 40) {
@@ -664,8 +665,8 @@ void VK::drawNeedle(Graphics::Surface &surface) {
 		x = CLIP(x + (int)_vm->_rnd.getRandomNumberRng(0, 4) - 2, 165, 245);
 	}
 
-	float needleOffset = ABS(38.0f - _needleValue);
-	float y = 345 - sqrt(72.0f * 72.0f - needleOffset * needleOffset);
+	int needleOffset = abs(38 - _needleValue);
+	int y = 345 - sqrt(72 * 72 - needleOffset * needleOffset);
 
 	float colorIntensity = MIN(78.0f, _needleValue + 39.0f) / 78.0f;
 
@@ -846,8 +847,8 @@ void VK::animateAdjustment(int target) {
 
 void VK::setAdjustment(int x) {
 	_adjustment = CLIP(x - 4, 154, 246);
-	float offset = ABS(199.0f - _adjustment);
-	int y = sqrt(88.0f * 88.0f - offset * offset);
+	int offset = abs(199 - _adjustment);
+	int y = sqrt(88 * 88 - offset * offset);
 	_buttons->setImageLeft(1, _adjustment);
 	_buttons->setImageTop(1, 345 - y);
 }

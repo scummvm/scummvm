@@ -115,8 +115,9 @@ void SliceRenderer::calculateBoundingRect() {
 
 	top = bottom + _scale * (top - bottom);
 
-	if (bottom.z < 0.0f || top.z < 0.0f)
+	if (bottom.z < 0.0f || top.z < 0.0f) {
 		return;
+	}
 
 	Matrix3x2 facingRotation = calculateFacingRotationMatrix();
 
@@ -345,6 +346,10 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 
 	_vm->_sliceRenderer->setupFrameInWorld(animationId, animationFrame, position, facing);
 	assert(_sliceFramePtr);
+
+	if (_screenRectangle.isEmpty()) {
+		return;
+	}
 
 	SliceLineIterator sliceLineIterator;
 	sliceLineIterator.setup(
