@@ -992,6 +992,7 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 
 	for (int byteIdx = 0; byteIdx < count; ) {
 		assert(fSrc.pos() < fSrc.size());
+
 		int vMin = array2[(ARRAY_SIZE - 1) * 2];
 		int vThreshold = ARRAY_SIZE * 4 - 2;
 		while (vMin < vThreshold) {
@@ -1045,34 +1046,33 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 			}
 		}
 
-		for (int offset = array4[627 + vMin / 2]; offset; offset = array4[offset / 2]) {
-			uint *arrP = &array3[offset / 2];
-			uint threshold = ++arrP[0];
-			if (threshold <= arrP[1])
-				continue;
+		int offset = array4[627 + vMin / 2] / 2;
+		do {
+			int offset2 = offset;
+			uint val = ++array3[offset2];
+			if (val > array3[offset2 + 1]) {
+				while (val > array3[++offset2])
+					;
+				--offset2;
 
-			uint *currP = arrP + 2;
-			while (threshold > *currP)
-				++currP;
-			--currP;
+				array3[offset] = array3[offset2];
+				array3[offset2] = val;
 
-			*arrP = *currP;
-			*currP = threshold;
-			int offset4 = array2[offset / 2];
-			int newIndex = currP - array3;
-			array4[offset4 / 2] = newIndex * 2;
-			if (offset4 < (ARRAY_SIZE * 4 - 2))
-				array4[offset4 / 2 + 1] = newIndex * 2;
+				int offset3 = array2[offset] / 2;
+				array4[offset3] = offset2 * 2;
+				if ((offset3 * 2) < (ARRAY_SIZE * 4 - 2))
+					array4[offset3 + 1] = offset2 * 2;
 
-			int newIndex2 = array2[newIndex] / 2;
-			array2[newIndex] = offset4;
-			array4[newIndex2] = offset;
-			if ((newIndex2 * 2) <= (ARRAY_SIZE * 4 - 2))
-				array4[newIndex2 + 1] = offset;
+				int offset4 = array2[offset2] / 2;
+				array2[offset2] = offset3 * 2;
+				array4[offset4] = offset * 2;
+				if ((offset4 * 2) < (ARRAY_SIZE * 4 - 2))
+					array4[offset4 + 1] = offset * 2;
 
-			array2[offset / 2] = newIndex2 * 2;
-			offset = newIndex * 2;
-		}
+				array2[offset] = offset4 * 2;
+				offset = offset2;
+			}
+		} while ((offset = array4[offset] / 2) != 0);
 
 		vMin /= 2;
 		if (vMin < 256) {
@@ -1122,16 +1122,16 @@ void CloudsCutscenes::loadScreen(const Common::String &name) {
 		}
 
 		t2Val |= (bitsHigh & 0x3F);
-		int buffOffset = array2[ARRAY_LAST2] - t2Val - 1;
+		uint &last2 = array2[ARRAY_LAST2];
+		int buffOffset = last2 - t2Val - 1;
 
 		for (int ctr = 0; ctr < vMin - 253; ++ctr, ++buffOffset) {
 			buffOffset &= 0xfff;
 			byte b = buffer[buffOffset];
 			*destP++ = b;
 
-			uint &buffOffset2 = array2[ARRAY_LAST2];
-			buffer[buffOffset2] = b;
-			buffOffset2 = (buffOffset2 + 1) & 0xfff;
+			buffer[last2] = b;
+			last2 = (last2 + 1) & 0xfff;
 			++byteIdx;
 		}
 	}
