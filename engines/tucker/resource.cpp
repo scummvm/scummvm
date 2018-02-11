@@ -430,10 +430,20 @@ int TuckerEngine::loadCTable01(int *framesCount) {
 				continue;
 			}
 			const int y = t.getNextInteger();
-			SpriteFrame *c = &_spriteFramesTable[lastSpriteNum++];
+			SpriteFrame *c = &_spriteFramesTable[lastSpriteNum];
 			c->_sourceOffset = y * 320 + x;
 			c->_xSize = t.getNextInteger();
 			c->_ySize = t.getNextInteger();
+
+			// WORKAROUND: original game glitch
+			// The sprite grab animation table incorrectly states a height of 24
+			// pixels for sprite number 57 while the correct size is 54 pixels.
+			// This fixes a glitch in animation sequence 8 (the only to use sprite 57)
+			// which gets triggered when picking up the nail in front of the museum.
+			// Fixes Trac#10430
+			if (lastSpriteNum == 57)
+				c->_ySize = 54;
+
 			c->_xOffset = t.getNextInteger();
 			if (c->_xOffset > 300) {
 				c->_xOffset -= 500;
@@ -442,6 +452,7 @@ int TuckerEngine::loadCTable01(int *framesCount) {
 			if (c->_yOffset > 300) {
 				c->_yOffset -= 500;
 			}
+			++lastSpriteNum;
 		}
 	}
 	framesCount[count] = -1;
