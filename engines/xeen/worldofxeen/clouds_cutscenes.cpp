@@ -30,7 +30,7 @@ namespace WorldOfXeen {
 #define ROTATE_BG screen.horizMerge(_mergeX); \
 	_mergeX = (_mergeX + 1) % SCREEN_WIDTH
 #define LOAD_VORTEX loadScreen(Common::String::format("vort%02u.frm", cloudsCtr)); \
-	if (cloudsCtr++ > 20) \
+	if (++cloudsCtr > 20) \
 		cloudsCtr = 1
 
 bool CloudsCutscenes::showCloudsTitle() {
@@ -409,24 +409,27 @@ bool CloudsCutscenes::showCloudsEnding1() {
 
 	prec.clear();
 
-	SpriteResource cast[16], darkLord[3];
+	SpriteResource cast1[7], cast2[7], darkLord[3];
 	for (int idx = 1; idx < 7; ++idx)
-		cast[idx - 1].load(Common::String::format("cast%02u.end", idx));
+		cast1[idx - 1].load(Common::String::format("cast%02d.end", idx));
+	for (int idx = 1; idx < 7; ++idx)
+		cast2[idx - 1].load(Common::String::format("casb%02d.end", idx));
 	for (int idx = 1; idx < 4; ++idx)
 		darkLord[idx - 1].load(Common::String::format("darklrd%d.end", idx));
 
-	// First vortex loop
+	// Castle close-up
 	int cloudsCtr = 1;
 	for (int idx = 1; idx < 16; ++idx) {
 		LOAD_VORTEX;
-		cast[0].draw(0, 0);
-		cast[0].draw(0, 0, Common::Point(0, 100));
+		cast1[0].draw(0, 0);
+		cast2[0].draw(0, 0, Common::Point(0, 100));
 		WAIT(3);
 	}
 
 	screen.loadPalette("mm4.pal");
 	screen.fadeIn(0x81);
 
+	// Castle gets destroyed / sucked into the vortex
 	const byte COUNTS1[6] = { 9, 3, 2, 2, 3, 15 };
 	bool flag = false;
 	for (int idx1 = 1; idx1 < 7; ++idx1) {
@@ -458,12 +461,13 @@ bool CloudsCutscenes::showCloudsEnding1() {
 			}
 
 			LOAD_VORTEX;
-			cast[idx1 - 1].draw(0, idx2, Common::Point(0, 0));
-			cast[idx1 - 1].draw(0, idx2, Common::Point(0, 100));
+			cast1[idx1 - 1].draw(0, idx2, Common::Point(0, 0));
+			cast2[idx1 - 1].draw(0, idx2, Common::Point(0, 100));
 			WAIT(3);
 		}
 	}
 
+	// Fade in of Alamar
 	for (int idx = 0; idx < 16; ++idx) {
 		LOAD_VORTEX;
 
@@ -495,15 +499,19 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	}
 	sound.setMusicVolume(75);
 
+	// Alamar's monologue
 	for (int idx = 0; idx < 3; ++idx) {
 		switch (idx) {
 		case 0:
+			// You have defeated my general, Lord Xeen
 			sound.playSound("dark1.voc");
 			break;
 		case 1:
+			// And foiled my plans to conquer this world
 			sound.playSound("dark2.voc");
 			break;
 		case 2:
+			// But the Dark Side will always be mine
 			sound.playSound("dark3.voc");
 			break;
 		}
@@ -534,9 +542,11 @@ bool CloudsCutscenes::showCloudsEnding1() {
 		} while (sound.isPlaying() || _subtitleSize > 0);
 	}
 
+	// Laugh
 	sound.playSound("darklaff.voc");
 	sound.setMusicVolume(95);
 
+	// Alamar fade out
 	for (int idx = 12; idx >= 0; --idx) {
 		LOAD_VORTEX;
 
@@ -580,12 +590,14 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	SpriteResource king("king.end"), room("room.end"), bigSky("bigsky.end"),
 		people("people.end"), crodo("crodo.end"), kingCord("kingcord.end");
 
+	// Later at Castle Burlock
 	screen.loadPalette("endgame.pal");
 	screen.loadBackground("later.raw");
 	screen.fadeIn();
 	WAIT(100);
 	screen.fadeOut();
 
+	// Horizontal pan to the right within throne room
 	screen.loadBackground("throne1.raw");
 	screen.loadPage(0);
 	screen.loadBackground("throne2.raw");
@@ -594,7 +606,6 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	int ctr1 = 0, ctr3 = -1, ctr4 = 0, ctr5 = 0;
 	int xp2 = SCREEN_WIDTH;
 	for (int ctr2 = SCREEN_WIDTH, xp1 = 117, xp3 = 0; ctr2 > 0; ) {
-		events.updateGameCounter();
 		screen.horizMerge(xp3);
 		people.draw(0, 0, Common::Point(xp1, 68), SPRFLAG_800);
 		if (xp3 > 250) {
@@ -633,6 +644,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	Graphics::ManagedSurface savedBg;
 	savedBg.blitFrom(screen);
 
+	// Close up of King Roland
 	const int XLIST1[13] = { 0, -5, -10, -15, -20, -25, -30, -33, -27, -22, -17 };
 	const int XLIST2[13] = { 60, 145, 130, 115, 100, 85, 70, 57, 53, 48, 42, 39, 34 };
 	const int YLIST[13] = { 42, 39, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };

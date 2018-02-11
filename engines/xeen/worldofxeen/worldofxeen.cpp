@@ -176,6 +176,7 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uin
 	else if (name == "WORLDEND")
 		showWorldOfXeenEnding((GooberState)status, score);
 
+	_screen->freePages();
 	_events->clearEvents();
 	_quitMode = QMODE_MENU;
 }
