@@ -664,7 +664,7 @@ void VK::drawNeedle(Graphics::Surface &surface) {
 		x = CLIP(x + (int)_vm->_rnd.getRandomNumberRng(0, 4) - 2, 165, 245);
 	}
 
-	float needleOffset = abs(38.0f - _needleValue);
+	float needleOffset = ABS(38.0f - _needleValue);
 	float y = 345 - sqrt(72.0f * 72.0f - needleOffset * needleOffset);
 
 	float colorIntensity = MIN(78.0f, _needleValue + 39.0f) / 78.0f;
@@ -846,7 +846,7 @@ void VK::animateAdjustment(int target) {
 
 void VK::setAdjustment(int x) {
 	_adjustment = CLIP(x - 4, 154, 246);
-	float offset = abs(199.0f - _adjustment);
+	float offset = ABS(199.0f - _adjustment);
 	int y = sqrt(88.0f * 88.0f - offset * offset);
 	_buttons->setImageLeft(1, _adjustment);
 	_buttons->setImageTop(1, 345 - y);
