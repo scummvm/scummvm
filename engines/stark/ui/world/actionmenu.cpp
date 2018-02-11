@@ -25,6 +25,8 @@
 #include "engines/stark/ui/cursor.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 
+#include "engines/stark/gfx/driver.h"
+
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
 #include "engines/stark/resources/knowledgeset.h"
@@ -66,7 +68,30 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 	_visible = true;
 
 	Common::Point screenMousePos = _cursor->getMousePosition(true);
+
+	// TODO: tidy up logic for preventing actionMenu overlapping viewport
+	Common::Rect viewportPosition = Common::Rect(_gfx->scaleWidthOriginalToCurrent(Gfx::Driver::kGameViewportWidth),
+						     _gfx->scaleHeightOriginalToCurrent(Gfx::Driver::kGameViewportHeight));
+
+	viewportPosition.translate(0, _gfx->scaleHeightOriginalToCurrent(Gfx::Driver::kTopBorderHeight));
+
 	_position = Common::Rect::center(screenMousePos.x, screenMousePos.y, 160, 111);
+
+	if (_position.top < 0) {
+	  _position.translate(0, 0 - _position.top);
+	}
+
+	if (_position.left < 0) {
+	  _position.translate(0 - _position.left, 0);
+	}
+
+	if (_position.bottom > viewportPosition.bottom) {
+	  _position.translate(0, viewportPosition.bottom - _position.bottom);
+	}
+
+	if (_position.right > viewportPosition.right) {
+	  _position.translate(viewportPosition.right - _position.right, 0);
+	}
 
 	_itemRelativePos = itemRelativePos;
 	_item = item;
