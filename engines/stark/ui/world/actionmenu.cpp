@@ -69,29 +69,7 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 
 	Common::Point screenMousePos = _cursor->getMousePosition(true);
 
-	// TODO: tidy up logic for preventing actionMenu overlapping viewport
-	Common::Rect viewportPosition = Common::Rect(_gfx->scaleWidthOriginalToCurrent(Gfx::Driver::kGameViewportWidth),
-						     _gfx->scaleHeightOriginalToCurrent(Gfx::Driver::kGameViewportHeight));
-
-	viewportPosition.translate(0, _gfx->scaleHeightOriginalToCurrent(Gfx::Driver::kTopBorderHeight));
-
-	_position = Common::Rect::center(screenMousePos.x, screenMousePos.y, 160, 111);
-
-	if (_position.top < 0) {
-	  _position.translate(0, 0 - _position.top);
-	}
-
-	if (_position.left < 0) {
-	  _position.translate(0 - _position.left, 0);
-	}
-
-	if (_position.bottom > viewportPosition.bottom) {
-	  _position.translate(0, viewportPosition.bottom - _position.bottom);
-	}
-
-	if (_position.right > viewportPosition.right) {
-	  _position.translate(viewportPosition.right - _position.right, 0);
-	}
+        _position = getPosition(screenMousePos);
 
 	_itemRelativePos = itemRelativePos;
 	_item = item;
@@ -119,6 +97,21 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 void ActionMenu::close() {
 	_visible = false;
 	_item = nullptr;
+}
+
+Common::Rect ActionMenu::getPosition(const Common::Point &pos) {
+  Common::Rect screenWindow = getScaledPosition();
+  Common::Rect position = Common::Rect::center(pos.x, pos.y, 160, 111);
+
+  // offset screen by top border for correct boundary calculations
+  screenWindow.translate(0, _gfx->scaleHeightOriginalToCurrent(Gfx::Driver::kTopBorderHeight));
+
+  if (_position.top < 0) position.translate(0, 0 - _position.top);
+  if (_position.left < 0) position.translate(0 - _position.left, 0);
+  if (_position.bottom > screenWindow.bottom) position.translate(0, screenWindow.bottom - _position.bottom);
+  if (_position.right > screenWindow.right) position.translate(screenWindow.right - _position.right, 0);
+
+  return position;
 }
 
 void ActionMenu::onRender() {
