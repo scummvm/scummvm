@@ -375,7 +375,7 @@ void TuckerEngine::mainLoop() {
 
 	_currentSaveLoadGameState = 1;
 
-	loadBudSpr(0);
+	loadBudSpr();
 	loadCursor();
 	setCursorNum(_cursorNum);
 	setCursorType(_cursorType);
@@ -397,7 +397,7 @@ void TuckerEngine::mainLoop() {
 	do {
 		++_syncCounter;
 		if (_flagsTable[137] != _flagsTable[138]) {
-			loadBudSpr(0);
+			loadBudSpr();
 			_flagsTable[138] = _flagsTable[137];
 		}
 		if (_syncCounter >= 2) {

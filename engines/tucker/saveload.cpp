@@ -90,7 +90,7 @@ Common::Error TuckerEngine::loadGameState(int num) {
 			} else {
 				_nextLocationNum = _locationNum;
 				setBlackPalette();
-				loadBudSpr(0);
+				loadBudSpr();
 				_forceRedrawPanelItems = true;
 			}
 		}

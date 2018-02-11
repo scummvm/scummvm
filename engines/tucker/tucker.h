@@ -600,13 +600,13 @@ protected:
 	void loadCharsetHelper();
 	void loadCharSizeDta();
 	void loadPanel();
-	void loadBudSpr(int startOffset);
-	int loadCTable01(int index, int firstSpriteNum, int *framesCount);
-	void loadCTable02(int fl);
+	void loadBudSpr();
+	int  loadCTable01(int *framesCount);
+	void loadCTable02();
 	void loadLoc();
 	void loadObj();
 	void loadData();
-	int loadDataHelper(int offset, int index);
+	int  loadDataHelper(int offset, int index);
 	void loadPanObj();
 	void loadData3();
 	void loadData4();

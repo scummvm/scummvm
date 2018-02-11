@@ -380,14 +380,14 @@ void TuckerEngine::loadPanel() {
 	loadImage((_panelNum == 0) ? "panel1.pcx" : "panel2.pcx", _panelGfxBuf, 0);
 }
 
-void TuckerEngine::loadBudSpr(int startOffset) {
+void TuckerEngine::loadBudSpr() {
 	int framesCount[20];
 	memset(framesCount, 0, sizeof(framesCount));
-	int endOffset = loadCTable01(0, startOffset, framesCount);
-	loadCTable02(0);
+	int endOffset = loadCTable01(framesCount);
+	loadCTable02();
 	int frame = 0;
 	int spriteOffset = 0;
-	for (int i = startOffset; i < endOffset; ++i) {
+	for (int i = 0; i < endOffset; ++i) {
 		if (framesCount[frame] == i) {
 			Common::String filename;
 			switch (_flagsTable[137]) {
@@ -414,12 +414,12 @@ void TuckerEngine::loadBudSpr(int startOffset) {
 	}
 }
 
-int TuckerEngine::loadCTable01(int index, int firstSpriteNum, int *framesCount) {
+int TuckerEngine::loadCTable01(int *framesCount) {
 	loadFile("ctable01.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf,  _fileLoadSize);
-	int lastSpriteNum = firstSpriteNum;
+	int lastSpriteNum = 0;
 	int count = 0;
-	if (t.findIndex(index)) {
+	if (t.findIndex(0)) {
 		while (t.findNextToken(kDataTokenDw)) {
 			const int x = t.getNextInteger();
 			if (x < 0) {
@@ -448,8 +448,7 @@ int TuckerEngine::loadCTable01(int index, int firstSpriteNum, int *framesCount) 
 	return lastSpriteNum;
 }
 
-void TuckerEngine::loadCTable02(int fl) {
-	assert(fl == 0);
+void TuckerEngine::loadCTable02() {
 	int entry = 0;
 	int i = 0;
 	loadFile("ctable02.c", _loadTempBuf);
@@ -461,7 +460,7 @@ void TuckerEngine::loadCTable02(int fl) {
 		}
 		_spriteAnimationsTable[entry]._rotateFlag = t.getNextInteger();
 		int num = t.getNextInteger();
-		if (num != fl) {
+		if (num != 0) {
 			continue;
 		}
 		int start = 0;
