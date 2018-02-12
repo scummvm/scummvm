@@ -23,7 +23,10 @@
 #include "engines/stark/ui/world/actionmenu.h"
 
 #include "engines/stark/ui/cursor.h"
+#include "engines/stark/ui/world/gamewindow.h"
 #include "engines/stark/ui/world/inventorywindow.h"
+
+#include "engines/stark/gfx/driver.h"
 
 #include "engines/stark/resources/anim.h"
 #include "engines/stark/resources/item.h"
@@ -44,6 +47,8 @@ namespace Stark {
 
 ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor) {
+	_gameWindow = nullptr;
+
 	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
 
 	_unscaled = true;
@@ -66,7 +71,8 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 	_visible = true;
 
 	Common::Point screenMousePos = _cursor->getMousePosition(true);
-	_position = Common::Rect::center(screenMousePos.x, screenMousePos.y, 160, 111);
+
+	_position = getPosition(screenMousePos);
 
 	_itemRelativePos = itemRelativePos;
 	_item = item;
@@ -94,6 +100,19 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 void ActionMenu::close() {
 	_visible = false;
 	_item = nullptr;
+}
+
+Common::Rect ActionMenu::getPosition(const Common::Point &pos) const {
+	Common::Rect position = Common::Rect::center(pos.x, pos.y, 160, 111);
+
+	Common::Rect screenPos = _gameWindow->getScaledPosition();
+
+	if (position.top < 0) position.translate(0, 0 - position.top);
+	if (position.left < 0) position.translate(0 - position.left, 0);
+	if (position.bottom > screenPos.bottom) position.translate(0, screenPos.bottom - position.bottom);
+	if (position.right > screenPos.right) position.translate(screenPos.right - position.right, 0);
+
+	return position;
 }
 
 void ActionMenu::onRender() {
@@ -159,6 +178,10 @@ void ActionMenu::onClick(const Common::Point &pos) {
 			close();
 		}
 	}
+}
+
+void ActionMenu::setGameWindow(GameWindow *gameWindow) {
+	_gameWindow = gameWindow;
 }
 
 void ActionMenu::setInventory(InventoryWindow *inventory) {

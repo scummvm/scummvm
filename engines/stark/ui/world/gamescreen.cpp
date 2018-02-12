@@ -45,6 +45,7 @@ GameScreen::GameScreen(Gfx::Driver *gfx, Cursor *cursor) :
 	_inventoryWindow = new InventoryWindow(_gfx, _cursor, _actionMenu);
 	_actionMenu->setInventory(_inventoryWindow);
 	_gameWindow = new GameWindow(_gfx, _cursor, _actionMenu, _inventoryWindow);
+	_actionMenu->setGameWindow(_gameWindow);
 
 	_gameScreenWindows.push_back(_actionMenu);
 	_gameScreenWindows.push_back(_inventoryWindow);
