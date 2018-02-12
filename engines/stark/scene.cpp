@@ -103,7 +103,7 @@ Math::Ray Scene::makeRayFromMouse(const Common::Point &mouse) const {
 
 	Math::Vector4d in;
 	in.x() = (mouse.x - gameViewport.left) * 2 / (float) gameViewport.width() - 1.0;
-	in.y() = (g_system->getHeight() - mouse.y - gameViewport.top) * 2 / (float) gameViewport.height() - 1.0;
+	in.y() = (gameViewport.bottom - mouse.y) * 2 / (float) gameViewport.height() - 1.0;
 	in.z() = 1.0;
 	in.w() = 1.0;
 

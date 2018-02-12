@@ -47,7 +47,6 @@ namespace Stark {
 
 ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor) {
-	_gameWindow = nullptr;
 
 	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
 
@@ -102,15 +101,15 @@ void ActionMenu::close() {
 	_item = nullptr;
 }
 
-Common::Rect ActionMenu::getPosition(const Common::Point &pos) const {
-	Common::Rect position = Common::Rect::center(pos.x, pos.y, 160, 111);
+Common::Rect ActionMenu::getPosition(const Common::Point &mouse) const {
+	Common::Rect position = Common::Rect::center(mouse.x, mouse.y, 160, 111);
 
-	Common::Rect screenPos = _gameWindow->getScaledPosition();
+	Common::Rect gameWindowRect = StarkGfx->gameViewport();
 
-	if (position.top < 0) position.translate(0, 0 - position.top);
-	if (position.left < 0) position.translate(0 - position.left, 0);
-	if (position.bottom > screenPos.bottom) position.translate(0, screenPos.bottom - position.bottom);
-	if (position.right > screenPos.right) position.translate(screenPos.right - position.right, 0);
+	if (position.top < gameWindowRect.top)       position.translate(0, gameWindowRect.top - position.top);
+	if (position.left < gameWindowRect.left)     position.translate(gameWindowRect.left - position.left, 0);
+	if (position.bottom > gameWindowRect.bottom) position.translate(0, gameWindowRect.bottom - position.bottom);
+	if (position.right > gameWindowRect.right)   position.translate(gameWindowRect.right - position.right, 0);
 
 	return position;
 }
@@ -178,10 +177,6 @@ void ActionMenu::onClick(const Common::Point &pos) {
 			close();
 		}
 	}
-}
-
-void ActionMenu::setGameWindow(GameWindow *gameWindow) {
-	_gameWindow = gameWindow;
 }
 
 void ActionMenu::setInventory(InventoryWindow *inventory) {

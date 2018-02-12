@@ -87,7 +87,7 @@ void Driver::computeScreenViewport() {
 
 Common::Rect Driver::gameViewport() const {
 	Common::Rect game = Common::Rect(_screenViewport.width(), _screenViewport.height() * kGameViewportHeight / kOriginalHeight);
-	game.translate(_screenViewport.left, _screenViewport.top + _screenViewport.height() * kBottomBorderHeight / kOriginalHeight);
+	game.translate(_screenViewport.left, _screenViewport.top + _screenViewport.height() * kTopBorderHeight / kOriginalHeight);
 
 	return game;
 }
