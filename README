@@ -16,7 +16,7 @@ Table of Contents:
  * 2.1 Reporting Bugs
 3.0) Supported Games
  * 3.1 Copy Protection
- * 3.2 Datafiles
+ * 3.2 Data files
  * 3.3 Multi-CD games notes
  * 3.4 Known Problems
  * 3.5 Beneath a Steel Sky notes
@@ -119,7 +119,7 @@ continually improving, so check back often.
 Among the systems on which you can play those games are regular desktop
 computers (running Windows, Linux, Mac OS X, ...), game consoles
 (Dreamcast, Nintendo DS & Wii, PS2, PSP, ...), smartphones (Android,
-iPhone, PocketPC, Symbian ...) and more.
+iPhone, PocketPC, Symbian ...) and even more.
 
 At this time ScummVM is still under heavy development. Be aware that
 whilst we attempt to make sure that many games can be completed with few
@@ -137,7 +137,7 @@ ScummVM homepage. This will help us buy utilities needed to develop
 ScummVM easier and quicker. If you cannot donate, help and contribute a
 patch!
 
-1.2) Quick start:
+1.2) Quickstart:
 ---- ------------
 For the impatient among you, here is how to get ScummVM running in five
 simple steps.
@@ -145,12 +145,12 @@ simple steps.
 1. Download ScummVM from <http://www.scummvm.org/downloads.php> and
 install it.
 
-2. Create a directory on your hard drive and copy the game datafiles
+2. Create a directory on your hard drive and copy the game data files
 from the original media to this directory. Repeat this for every game
 you want to play.
 
 3. Start ScummVM, choose 'Add game', select the directory with the game
-datafiles (do not try to select the datafiles themselves!) and press
+data files (do not try to select the data files themselves!) and press
 'Choose'.
 
 4. A dialog should pop up allowing you to configure various settings if
@@ -554,12 +554,12 @@ ScummVM will skip copy protection in the following games:
   * Zak McKracken and the Alien Mindbenders
 
 
-3.2) Datafiles:
+3.2) Data files:
 ---- ----------
-For a comprehensive list of required Datafiles for supported games
+For a comprehensive list of required Data files for supported games
 visit:
 
-  <http://wiki.scummvm.org/index.php/Datafiles>
+  <http://wiki.scummvm.org/index.php/Data files>
 
 
 3.3) Multi-CD games notes:
