@@ -132,7 +132,7 @@ void SceneScriptKP05::PlayerWalkedIn() {
 		Game_Flag_Reset(574);
 	} else {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -846.0f, 0.0f, 972.0f, 0, 0, false, 0);
-		Game_Flag_Query(419);
+		Game_Flag_Query(419); // bug in game?
 	}
 	if (Actor_Query_Goal_Number(kActorMaggie) == 411) {
 		Actor_Set_Goal_Number(kActorMaggie, 412);

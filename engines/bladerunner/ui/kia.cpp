@@ -99,6 +99,11 @@ KIA::KIA(BladeRunnerEngine *vm) {
 	_loadSection       = new KIASectionLoad(_vm);
 	_diagnosticSection = new KIASectionDiagnostic(_vm);
 	_pogoSection       = new KIASectionPogo(_vm);
+
+	for (int i = 0; i < kPlayerActorDialogueQueueCapacity; ++i) {
+		_playerActorDialogueQueue[i].actorId    = -1;
+		_playerActorDialogueQueue[i].sentenceId = -1;
+	}
 }
 
 KIA::~KIA() {

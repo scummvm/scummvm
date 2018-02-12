@@ -208,7 +208,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 		}
 	}
 	if (Game_Flag_Query(663)) {
-		Game_Flag_Query(368);
+		Game_Flag_Query(368); // bug in game?
 	}
 	Game_Flag_Reset(360);
 }

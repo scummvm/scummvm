@@ -77,6 +77,12 @@ KIASectionSuspects::KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues)
 	_uiContainer->add(_crimesScrollBox);
 
 	_acquiredClueCount = 0;
+	for (int i = 0; i < kClueCount; ++i) {
+		_acquiredClues[i].clueId  = -1;
+		_acquiredClues[i].actorId = -1;
+	}
+
+	_crimeSelected = -1;
 
 	_suspectSelected = -1;
 	_suspectPhotoShapeId = -1;
@@ -84,8 +90,6 @@ KIASectionSuspects::KIASectionSuspects(BladeRunnerEngine *vm, ActorClues *clues)
 	_suspectsFoundCount = 0;
 	_suspectsFound.resize(_vm->_gameInfo->getSuspectCount());
 	_suspectsWithIdentity.resize(_vm->_gameInfo->getSuspectCount());
-
-	_crimeSelected = -1;
 }
 
 KIASectionSuspects::~KIASectionSuspects() {

@@ -125,7 +125,7 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 		}
 		return false;
 	}
-	if (actorId == v1) {
+	if (v1 != -1 && actorId == v1) {
 		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, actorId, 28, 1, false)) {
 			if (Actor_Query_Goal_Number(v1) == 599) {
 				Actor_Says(kActorMcCoy, 8630, 13);

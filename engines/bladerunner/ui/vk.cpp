@@ -73,11 +73,11 @@ void VK::open(int actorId, int calibrationRatio) {
 	}
 
 	_volumeAmbient = _vm->_ambientSounds->getVolume();
-	_volumeMusic = _vm->_music->getVolume();
+	_volumeMusic   = _vm->_music->getVolume();
 
-	_actorId = actorId;
+	_actorId          = actorId;
 	_calibrationRatio = calibrationRatio;
-	_calibration = 0;
+	_calibration      = 0;
 
 	_buttons = new UIImagePicker(_vm, 8);
 
@@ -371,9 +371,12 @@ void VK::loopEnded(void *callbackData, int frame, int loopId) {
 }
 
 void VK::reset() {
+	_actorId = -1;
+
 	_buttons       = nullptr;
 	_vqaPlayerMain = nullptr;
 	_vqaPlayerEye  = nullptr;
+	_vqaFrameMain  = -1;
 
 	_script = nullptr;
 
@@ -381,6 +384,10 @@ void VK::reset() {
 
 	_shapes.clear();
 
+	_volumeAmbient = 0;
+	_volumeMusic   = 0;
+
+	_calibrationRatio   = 0;
 	_calibrationCounter = 0;
 	_calibrationStarted = false;
 	_calibration        = 0;
@@ -390,6 +397,7 @@ void VK::reset() {
 	_needleValue             = 0;
 	_needleValueTarget       = 0;
 	_needleValueDelta        = 0;
+	_needleValueMax          = 0;
 	_timeNextNeedleStep      = 0;
 	_timeNeedleReturn        = 0;
 	_timeNextNeedleOscillate = 0;
@@ -415,10 +423,11 @@ void VK::reset() {
 	_isClosing = false;
 	_timeClose = 0;
 
-	_isAdjusting      = false;
-	_adjustment       = 154;
-	_adjustmentTarget = 154;
-	_adjustmentDelta  = 0;
+	_isAdjusting             = false;
+	_adjustment              = 154;
+	_adjustmentTarget        = 154;
+	_adjustmentDelta         = 0;
+	_timeNextAdjustementStep = 0;
 
 	_eyeLineSelected      = 1;
 	_eyeLineX             = 315;
@@ -877,24 +886,24 @@ void VK::askQuestion(int intensity) {
 		return;
 	}
 
-	int foundQuestionIndex = -1;
+	int foundQuestionIndex     = -1;
 	int foundQuestionIndexLast = -1;
 
 	for (int i = 0; i < (int)_questions[intensity].size(); ++i) {
 		if (_questions[intensity][i].isPresent && !_questions[intensity][i].wasAsked) {
-			int relatedQuestion = -1;
-			if (_questions[intensity][i].relatedSentenceId >= 0) {
-				// TODO: but not used in game
-				// relatedQuestion = vk::findQuestionById(this, questions, relatedQuestionId);
-			}
+			// TODO: related questions are not used in game
+			// int relatedQuestion = -1;
+			// if (_questions[intensity][i].relatedSentenceId >= 0) {
+			// 	relatedQuestion = vk::findQuestionById(this, questions, relatedQuestionId);
+			// }
 
-			if (relatedQuestion < 0 || _questions[intensity][relatedQuestion].wasAsked) {
-				foundQuestionIndexLast = i;
-				if (_vm->_rnd.getRandomNumberRng(0, 100) < 20) {
-					foundQuestionIndex = i;
-					break;
-				}
+			// if (relatedQuestion < 0 || _questions[intensity][relatedQuestion].wasAsked) {
+			foundQuestionIndexLast = i;
+			if (_vm->_rnd.getRandomNumberRng(0, 100) < 20) {
+				foundQuestionIndex = i;
+				break;
 			}
+			// }
 		}
 	}
 

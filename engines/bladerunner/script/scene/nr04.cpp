@@ -320,7 +320,7 @@ void SceneScriptNR04::sub_402860(int frame) {
 		0.0f, 0.0f, 1.0f,
 		0.5f, 0.0f, 0.8f};
 
-	float v3 = (frame - 60) / 10;
+	float v3 = (frame - 60) * 0.1f;
 	float v4 = (frame % 10) * 0.1f;
 	float coef = 1.0f;
 	if (frame > 100) {

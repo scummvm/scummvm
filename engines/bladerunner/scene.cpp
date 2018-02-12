@@ -123,7 +123,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		return false;
 	}
 
-	_vm->_sliceRenderer->setView(*_vm->_view);
+	_vm->_sliceRenderer->setView(_vm->_view);
 
 	if (isLoadingGame) {
 		// TODO: Advance VQA frame

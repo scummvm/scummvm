@@ -159,29 +159,29 @@ void UIImagePicker::activate(UIImagePickerCallback *mouseInCallback,
                              UIImagePickerCallback *mouseDownCallback,
                              UIImagePickerCallback *mouseUpCallback,
                              void *callbackData) {
-	_isButtonDown = false;
-	_mouseInCallback   = mouseInCallback;
-	_mouseOutCallback  = mouseOutCallback;
-	_mouseDownCallback = mouseDownCallback;
-	_mouseUpCallback   = mouseUpCallback;
-	_callbackData      = callbackData;
+	_isButtonDown        = false;
+	_mouseInCallback     = mouseInCallback;
+	_mouseOutCallback    = mouseOutCallback;
+	_mouseDownCallback   = mouseDownCallback;
+	_mouseUpCallback     = mouseUpCallback;
+	_callbackData        = callbackData;
 	_hoverStartTimestamp = 0;
-	_isVisible = true;
-	_hoveredImageIndex = -1;
-	_pressedImageIndex = -1;
+	_isVisible           = true;
+	_hoveredImageIndex   = -1;
+	_pressedImageIndex   = -1;
 }
 
 void UIImagePicker::deactivate() {
-	_isButtonDown = false;
-	_mouseInCallback   = nullptr;
-	_mouseOutCallback  = nullptr;
-	_mouseDownCallback = nullptr;
-	_mouseUpCallback   = nullptr;
-	_callbackData      = nullptr;
+	_isButtonDown        = false;
+	_mouseInCallback     = nullptr;
+	_mouseOutCallback    = nullptr;
+	_mouseDownCallback   = nullptr;
+	_mouseUpCallback     = nullptr;
+	_callbackData        = nullptr;
 	_hoverStartTimestamp = 0;
-	_isVisible = false;
-	_hoveredImageIndex = -1;
-	_pressedImageIndex = -1;
+	_isVisible           = false;
+	_hoveredImageIndex   = -1;
+	_pressedImageIndex   = -1;
 }
 
 void UIImagePicker::draw(Graphics::Surface &surface) {
@@ -343,6 +343,17 @@ bool UIImagePicker::hasHoveredImage() {
 	return _hoveredImageIndex >= 0;
 }
 
-void UIImagePicker::reset() {}
+void UIImagePicker::reset() {
+	_isVisible           = false;
+	_hoveredImageIndex   = -1;
+	_pressedImageIndex   = -1;
+	_hoverStartTimestamp = 0;
+	_isButtonDown        = false;
+	_mouseInCallback     = nullptr;
+	_mouseOutCallback    = nullptr;
+	_mouseDownCallback   = nullptr;
+	_mouseUpCallback     = nullptr;
+	_callbackData        = nullptr;
+}
 
 } // End of namespace BladeRunner

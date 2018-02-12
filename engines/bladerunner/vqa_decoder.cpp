@@ -117,14 +117,37 @@ const char *strTag(uint32 tag) {
 	return s;
 }
 
-VQADecoder::VQADecoder() :
-	  _s(nullptr),
-	  _frameInfo(nullptr),
-	  _videoTrack(nullptr),
-	  _audioTrack(nullptr),
-	  _maxVIEWChunkSize(0),
-	  _maxZBUFChunkSize(0),
-	  _maxAESCChunkSize(0) {
+VQADecoder::VQADecoder() {
+	_s                   = nullptr;
+	_frameInfo           = nullptr;
+	_videoTrack          = nullptr;
+	_audioTrack          = nullptr;
+	_maxVIEWChunkSize    = 0;
+	_maxZBUFChunkSize    = 0;
+	_maxAESCChunkSize    = 0;
+	_header.version      = 0;
+	_header.flags        = 0;
+	_header.numFrames    = 0;
+	_header.width        = 0;
+	_header.height       = 0;
+	_header.blockW       = 0;
+	_header.blockH       = 0;
+	_header.frameRate    = 0;
+	_header.cbParts      = 0;
+	_header.colors       = 0;
+	_header.maxBlocks    = 0;
+	_header.offsetX      = 0;
+	_header.offsetY      = 0;
+	_header.maxVPTRSize  = 0;
+	_header.freq         = 0;
+	_header.channels     = 0;
+	_header.bits         = 0;
+	_header.unk3         = 0;
+	_header.unk4         = 0;
+	_header.maxCBFZSize  = 0;
+	_header.unk5         = 0;
+	_readingFrame        = -1;
+	_decodingFrame       = -1;
 }
 
 VQADecoder::~VQADecoder() {
@@ -592,20 +615,25 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_maxCBFZSize = header->maxCBFZSize;
 	_maxZBUFChunkSize = vqaDecoder->_maxZBUFChunkSize;
 
-	_codebook  = nullptr;
-	_cbfz      = nullptr;
-	_zbufChunk = nullptr;
+	_codebook = nullptr;
+	_cbfz     = nullptr;
 
 	_vpointerSize = 0;
 	_vpointer = nullptr;
 
 	_curFrame = -1;
 
-	_zbufChunk = new uint8[roundup(_maxZBUFChunkSize)];
+	_zbufChunkSize = 0;
+	_zbufChunk     = new uint8[roundup(_maxZBUFChunkSize)];
 
-	_viewData = nullptr;
-	_screenEffectsData = nullptr;
-	_lightsData = nullptr;
+	_viewDataSize = 0;
+	_viewData     = nullptr;
+
+	_screenEffectsDataSize = 0;
+	_screenEffectsData     = nullptr;
+
+	_lightsDataSize = 0;
+	_lightsData     = nullptr;
 }
 
 VQADecoder::VQAVideoTrack::~VQAVideoTrack() {

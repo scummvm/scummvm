@@ -32,11 +32,17 @@ namespace BladeRunner {
 
 const int KIASectionDiagnostic::kTextColors[] = { 0x0000, 0x0821, 0x1061, 0x1C82, 0x24C2, 0x2CE3, 0x3524, 0x4145, 0x4586, 0x4DC7, 0x5609, 0x5E4B, 0x668C, 0x6EEE, 0x7730, 0x7B92 };
 
-KIASectionDiagnostic::KIASectionDiagnostic(BladeRunnerEngine *vm) : KIASectionBase(vm) {}
+KIASectionDiagnostic::KIASectionDiagnostic(BladeRunnerEngine *vm) : KIASectionBase(vm) {
+	_text     = nullptr;
+	_offset   = 0;
+	_timeLast = 0;
+}
 
 void KIASectionDiagnostic::open() {
 	_text = new TextResource(_vm);
-	_text->open("KIACRED");
+	if (!_text->open("KIACRED")) {
+		return;
+	}
 	_vm->_kia->playActorDialogue(kActorRunciter, 140);
 	_offset = 0;
 	_timeLast = _vm->getTotalPlayTime();

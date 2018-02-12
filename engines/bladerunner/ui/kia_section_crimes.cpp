@@ -60,6 +60,10 @@ KIASectionCrimes::KIASectionCrimes(BladeRunnerEngine *vm, ActorClues *clues) : K
 	_uiContainer->add(_cluesScrollBox);
 
 	_acquiredClueCount = 0;
+	for (int i = 0; i < kClueCount; ++i) {
+		_acquiredClues[i].clueId  = -1;
+		_acquiredClues[i].actorId = -1;
+	}
 
 	_crimeSelected = -1;
 	_crimesFoundCount = 0;

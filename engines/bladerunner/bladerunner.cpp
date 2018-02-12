@@ -85,21 +85,24 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	  _rnd("bladerunner") {
 
 	_windowIsActive = true;
-	_gameIsRunning = true;
+	_gameIsRunning  = true;
+
 	_playerLosesControlCounter = 0;
 
 	_playerActorIdle = false;
-	_playerDead = false;
-	_speechSkipped = false;
-	_gameOver = false;
-	_gameAutoSave = 0;
-	_gameIsLoading = false;
-	_sceneIsLoading = false;
+	_playerDead      = false;
+	_speechSkipped   = false;
+	_gameOver        = false;
+	_gameAutoSave    = 0;
+	_gameIsLoading   = false;
+	_sceneIsLoading  = false;
 
-	_walkingActorId = -1;
+	_walkingActorId         = -1;
+	_isWalkingInterruptible = false;
+	_interruptWalking       = false;
 
-	_walkSoundId = -1;
-	_walkSoundVolume = 0;
+	_walkSoundId      = -1;
+	_walkSoundVolume  = 0;
 	_walkSoundBalance = 0;
 
 	_crimesDatabase = nullptr;
@@ -164,6 +167,8 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_spinner                 = nullptr;
 	_elevator                = nullptr;
 	_mainFont                = nullptr;
+	_esper                   = nullptr;
+	_vk                      = nullptr;
 	_mouse                   = nullptr;
 	_sliceAnimations         = nullptr;
 	_sliceRenderer           = nullptr;
@@ -456,7 +461,6 @@ void BladeRunnerEngine::initChapterAndScene() {
 
 	_settings->setChapter(1);
 	_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
-//	_settings->setNewSetAndScene(52, 52);
 }
 
 void BladeRunnerEngine::shutdown() {
@@ -804,7 +808,7 @@ void BladeRunnerEngine::gameTick() {
 		}
 
 		if (_settings->getNewScene() == -1 || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
-			_sliceRenderer->setView(*_view);
+			_sliceRenderer->setView(_view);
 
 			// Tick and draw all actors in current set
 			int setId = _scene->getSetId();

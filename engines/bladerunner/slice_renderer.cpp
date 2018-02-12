@@ -37,11 +37,29 @@ namespace BladeRunner {
 SliceRenderer::SliceRenderer(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_pixelFormat = createRGB555();
-	int i;
 
-	for (i = 0; i < 942; i++) { // yes, its going just to 942 and not 997
+	for (int i = 0; i < 942; i++) { // yes, its going just to 942 and not 997
 		_animationsShadowEnabled[i] = true;
 	}
+	_animation = -1;
+	_frame     = -1;
+	_facing    = 0.0f;
+	_scale     = 0.0f;
+
+	_screenEffects = nullptr;
+	_view          = nullptr;
+	_lights        = nullptr;
+	_setEffects    = nullptr;
+	_sliceFramePtr = nullptr;
+
+	_frameBottomZ      = 0.0f;
+	_frameSliceHeight  = 0.0f;
+	_framePaletteIndex = 0;
+	_frameSliceCount   = 0;
+	_startSlice        = 0.0f;
+	_endSlice          = 0.0f;
+	_m13               = 0;
+	_m23               = 0;
 }
 
 SliceRenderer::~SliceRenderer() {
@@ -51,7 +69,7 @@ void SliceRenderer::setScreenEffects(ScreenEffects *screenEffects) {
 	_screenEffects = screenEffects;
 }
 
-void SliceRenderer::setView(const View &view) {
+void SliceRenderer::setView(View *view) {
 	_view = view;
 }
 
@@ -82,7 +100,7 @@ void SliceRenderer::getScreenRectangle(Common::Rect *screenRectangle, int animat
 Matrix3x2 SliceRenderer::calculateFacingRotationMatrix() {
 	assert(_sliceFramePtr);
 
-	Matrix4x3 viewMatrix = _view._sliceViewMatrix;
+	Matrix4x3 viewMatrix = _view->_sliceViewMatrix;
 	Vector3 viewPos = viewMatrix * _position;
 	float dir = atan2f(viewPos.x, viewPos.z) + _facing;
 	float s = sinf(dir);
@@ -105,7 +123,7 @@ void SliceRenderer::calculateBoundingRect() {
 	_screenRectangle.top    = 0;
 	_screenRectangle.bottom = 0;
 
-	Matrix4x3 viewMatrix = _view._sliceViewMatrix;
+	Matrix4x3 viewMatrix = _view->_sliceViewMatrix;
 
 	Vector3 frameBottom = Vector3(0.0f, 0.0f, _frameBottomZ);
 	Vector3 frameTop    = Vector3(0.0f, 0.0f, _frameBottomZ + _frameSliceCount * _frameSliceHeight);
@@ -121,7 +139,7 @@ void SliceRenderer::calculateBoundingRect() {
 
 	Matrix3x2 facingRotation = calculateFacingRotationMatrix();
 
-	Matrix3x2 m_projection(_view._viewportDistance / bottom.z,  0.0f, 0.0f,
+	Matrix3x2 m_projection(_view->_viewportDistance / bottom.z,  0.0f, 0.0f,
 	                                                     0.0f, 25.5f, 0.0f);
 
 	Matrix3x2 m_frame(_frameScale.x,          0.0f, _framePos.x,
@@ -130,14 +148,14 @@ void SliceRenderer::calculateBoundingRect() {
 	_modelMatrix = m_projection * (facingRotation * m_frame);
 
 	Vector4 startScreenVector(
-	           _view._viewportHalfWidth   + top.x / top.z * _view._viewportDistance,
-	           _view._viewportHalfHeight  + top.y / top.z * _view._viewportDistance,
+	           _view->_viewportHalfWidth   + top.x / top.z * _view->_viewportDistance,
+	           _view->_viewportHalfHeight  + top.y / top.z * _view->_viewportDistance,
 	           1.0f / top.z,
 	           _frameSliceCount * (1.0f / top.z));
 
 	Vector4 endScreenVector(
-	           _view._viewportHalfWidth   + bottom.x / bottom.z * _view._viewportDistance,
-	           _view._viewportHalfHeight  + bottom.y / bottom.z * _view._viewportDistance,
+	           _view->_viewportHalfWidth   + bottom.x / bottom.z * _view->_viewportDistance,
+	           _view->_viewportHalfHeight  + bottom.y / bottom.z * _view->_viewportDistance,
 	           1.0f / bottom.z,
 	           0.0f);
 
@@ -359,12 +377,12 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 		_modelMatrix
 	);
 
-	Vector3 cameraPosition(_view._cameraPosition.x, _view._cameraPosition.z, _view._cameraPosition.y); // not a bug
+	Vector3 cameraPosition(_view->_cameraPosition.x, _view->_cameraPosition.z, _view->_cameraPosition.y); // not a bug
 
 	SliceRendererLights sliceRendererLights = SliceRendererLights(_lights);
 
-	_lights->setupFrame(_view._frame);
-	_setEffects->setupFrame(_view._frame);
+	_lights->setupFrame(_view->_frame);
+	_setEffects->setupFrame(_view->_frame);
 
 	float sliceLine = sliceLineIterator.line();
 

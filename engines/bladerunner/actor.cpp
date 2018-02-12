@@ -48,44 +48,21 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 	_vm = vm;
 	_id = actorId;
 
-	_walkInfo = new ActorWalk(vm);
+	_walkInfo      = new ActorWalk(vm);
 	_movementTrack = new MovementTrack();
-	_clues = new ActorClues(vm, (actorId && actorId != 99) ? 2 : 4);
-	_bbox = new BoundingBox();
-	_combatInfo = new ActorCombat(vm);
+	_clues         = new ActorClues(vm, (actorId && actorId != 99) ? 2 : 4);
+	_bbox          = new BoundingBox();
+	_combatInfo    = new ActorCombat(vm);
 
-	_friendlinessToOther = new int[_vm->_gameInfo->getActorCount()];
+	_friendlinessToOther.resize(_vm->_gameInfo->getActorCount());
 
-	_isMoving                         = false;
-	_isTargetable                     = false;
-	_inCombat                         = false;
-	_isInvisible                      = false;
-	_isImmuneToObstacles              = false;
+	_inWalkLoop                       = false;
 	_damageAnimIfMoving               = false;
-	_movementTrackPaused              = false;
-	_movementTrackNextWaypointId      = -1;
-	_movementTrackNextDelay           = -1;
-	_movementTrackNextAngle           = -1;
-	_movementTrackNextRunning         = false;
-	_movementTrackWalkingToWaypointId = -1;
-	_movementTrackDelayOnNextWaypoint = -1;
-	_width                            = 0;
-	_height                           = 0;
-	_animationMode                    = -1;
-	_animationModeCombatIdle          = -1;
-	_animationModeCombatWalk          = -1;
-	_animationModeCombatRun           = -1;
-	_fps                              = 0;
-	_frame_ms                         = 0;
-	_animationId                      = 0;
-	_animationFrame                   = 0;
-	_retiredWidth                     = 0;
-	_retiredHeight                    = 0;
-	_scale                            = 0.0f;
+
+	setup(actorId);
 }
 
 Actor::~Actor() {
-	delete[] _friendlinessToOther;
 	delete _combatInfo;
 	delete _bbox;
 	delete _clues;
@@ -94,31 +71,31 @@ Actor::~Actor() {
 }
 
 void Actor::setup(int actorId) {
-	_id = actorId;
+	_id    = actorId;
 	_setId = -1;
 
-	_position = Vector3(0.0, 0.0, 0.0);
-	_facing = 512;
+	_position     = Vector3(0.0, 0.0, 0.0);
+	_facing       = 512;
 	_targetFacing = -1;
-	_walkboxId = -1;
+	_walkboxId    = -1;
 
-	_animationId = 0;
+	_animationId    = 0;
 	_animationFrame = 0;
-	_fps = 15;
-	_frame_ms = 1000 / _fps;
+	_fps            = 15;
+	_frame_ms       = 1000 / _fps;
 
-	_isMoving = false;
-	_isTargetable = false;
-	_inCombat = false;
-	_isInvisible = false;
+	_isMoving            = false;
+	_isTargetable        = false;
+	_inCombat            = false;
+	_isInvisible         = false;
 	_isImmuneToObstacles = false;
+	_isRetired           = false;
 
-	_isRetired = false;
-
-	_width = 0;
-	_height = 0;
-	_retiredWidth = 0;
+	_width         = 0;
+	_height        = 0;
+	_retiredWidth  = 0;
 	_retiredHeight = 0;
+	_scale         = 1.0f;
 
 	_movementTrackWalkingToWaypointId = -1;
 	_movementTrackDelayOnNextWaypoint = -1;
@@ -128,30 +105,28 @@ void Actor::setup(int actorId) {
 		_timersStart[i] = _vm->getTotalPlayTime();
 	}
 
-	_scale = 1.0f;
-
-	_honesty = 50;
-	_intelligence = 50;
+	_honesty              = 50;
+	_intelligence         = 50;
 	_combatAggressiveness = 50;
-	_stability = 50;
+	_stability            = 50;
 
-	_currentHP = 50;
-	_maxHP = 50;
+	_currentHP  = 50;
+	_maxHP      = 50;
 	_goalNumber = -1;
 
-	_movementTrackPaused = false;
+	_movementTrackPaused         = false;
 	_movementTrackNextWaypointId = -1;
-	_movementTrackNextDelay = -1;
-	_movementTrackNextAngle = -1;
-	_movementTrackNextRunning = false;
+	_movementTrackNextDelay      = -1;
+	_movementTrackNextAngle      = -1;
+	_movementTrackNextRunning    = false;
 
 	_timersRemain[4] = 60000;
-	_animationMode = -1;
+	_animationMode   = -1;
 	_screenRectangle = Common::Rect(-1, -1, -1, -1);
 
 	_animationModeCombatIdle = kAnimationModeCombatIdle;
 	_animationModeCombatWalk = kAnimationModeCombatWalk;
-	_animationModeCombatRun = kAnimationModeCombatRun;
+	_animationModeCombatRun  = kAnimationModeCombatRun;
 
 	int actorCount = (int)_vm->_gameInfo->getActorCount();
 	for (int i = 0; i != actorCount; ++i)
@@ -426,12 +401,10 @@ bool Actor::loopWalk(const Vector3 &destination, int destinationOffset, bool int
 		return false;
 	}
 
-	if (async) {
-		return false;
-	}
 	if (_id != kActorMcCoy) {
 		_vm->_mouse->disable();
 	}
+
 	if (interruptible) {
 		_vm->_isWalkingInterruptible = 1;
 		_vm->_interruptWalking = 0;

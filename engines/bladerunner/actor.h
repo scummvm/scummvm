@@ -25,6 +25,7 @@
 
 #include "bladerunner/vector.h"
 
+#include "common/array.h"
 #include "common/rect.h"
 
 namespace BladeRunner {
@@ -50,12 +51,12 @@ private:
 	ActorWalk     *_walkInfo;
 	ActorCombat   *_combatInfo;
 
-	int  _honesty;
-	int  _intelligence;
-	int  _stability;
-	int  _combatAggressiveness;
-	int  _goalNumber;
-	int *_friendlinessToOther;
+	int                _honesty;
+	int                _intelligence;
+	int                _stability;
+	int                _combatAggressiveness;
+	int                _goalNumber;
+	Common::Array<int> _friendlinessToOther;
 
 	int _currentHP;
 	int _maxHP;

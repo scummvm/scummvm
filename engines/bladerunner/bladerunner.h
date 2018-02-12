@@ -149,8 +149,6 @@ public:
 	Actor *_actors[kActorCount];
 	Actor *_playerActor;
 
-	int in_script_counter;
-
 	Graphics::Surface  _surfaceFront;
 	Graphics::Surface  _surfaceBack;
 	Graphics::Surface  _surface4;

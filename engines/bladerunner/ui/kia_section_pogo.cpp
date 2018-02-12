@@ -193,7 +193,20 @@ const char *KIASectionPogo::kStrings[] = {
 	"Zion National Park"
 };
 
-KIASectionPogo::KIASectionPogo(BladeRunnerEngine *vm) : KIASectionBase(vm) {}
+KIASectionPogo::KIASectionPogo(BladeRunnerEngine *vm) : KIASectionBase(vm) {
+	_stringIndex = 0;
+	_timeLast    = 0;
+
+	for (int i = 0; i < kStringCount; ++i) {
+		_strings[i] = nullptr;
+	}
+
+	for (int i = 0; i < kLineCount; ++i) {
+		_lineTexts[i]    = nullptr;
+		_lineTimeouts[i] = 0;
+		_lineOffsets[i]  = 0;
+	}
+}
 
 void KIASectionPogo::open() {
 	_stringIndex = 0;

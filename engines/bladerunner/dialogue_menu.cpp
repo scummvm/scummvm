@@ -166,7 +166,6 @@ int DialogueMenu::queryInput() {
 
 	if (answer == -1) {
 		int agenda = _vm->_settings->getPlayerAgenda();
-		agenda = kPlayerAgendaUserChoice;
 		if (agenda == kPlayerAgendaUserChoice) {
 			_waitingForInput = true;
 			do {

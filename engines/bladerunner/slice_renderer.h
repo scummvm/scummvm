@@ -52,12 +52,12 @@ class SliceRenderer {
 	float     _facing;
 	float     _scale;
 
-	ScreenEffects       *_screenEffects;
-	View        _view;
-	Lights     *_lights;
-	SetEffects *_setEffects;
+	ScreenEffects *_screenEffects;
+	View          *_view;
+	Lights        *_lights;
+	SetEffects    *_setEffects;
 
-	void       *_sliceFramePtr;
+	void *_sliceFramePtr;
 
 	// Animation frame data
 	Vector2 _frameScale;
@@ -96,7 +96,7 @@ public:
 	~SliceRenderer();
 
 	void setScreenEffects(ScreenEffects *aesc);
-	void setView(const View &view);
+	void setView(View *view);
 	void setLights(Lights *lights);
 	void setSetEffects(SetEffects *setEffects);
 

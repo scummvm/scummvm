@@ -240,11 +240,7 @@ void SceneScriptMA02::sub_402044() {
 	if (Game_Flag_Query(171) && Game_Flag_Query(170)) {
 		arr[i++] = 4;
 	}
-	if (i == 0) {
-		Global_Variable_Set(52, -1);
-	} else {
-		Global_Variable_Set(52, arr[Random_Query(0, i - 1)]);
-	}
+	Global_Variable_Set(52, arr[Random_Query(0, i - 1)]);
 }
 
 } // End of namespace BladeRunner
