@@ -127,7 +127,7 @@ major bugs, crashes can happen and we offer no warranty. That being said,
 some of the games have been supported for a long time and should work
 fine with any recent stable release. You can get a feeling of how well
 each game is working in ScummVM by looking at the compatibility page.
-Actually if you browse a bit around you might discover that ScummVM is
+Actually, if you browse a bit around you might discover that ScummVM is
 even being used commercially to re-release some of the supported games on
 modern platforms. This shows that several companies are happy with the
 quality of the software and how well it can run some of the games.
@@ -163,7 +163,7 @@ In the future, you should be able to directly skip to step 5, unless you
 want to add more games.
 
 Hint: If you want to add multiple games in one go, try pressing and
-holding the shift key before clicking 'Add game' -- it's label will
+holding the shift key before clicking 'Add game' -- its label will
 change to 'Mass Add' and if you press it, you are again asked to select
 a directory, only this time ScummVM will search through all
 subdirectories for supported games.
@@ -195,7 +195,7 @@ on our website for that game, to ensure the issue is not already known:
 
   <http://scummvm.org/compatibility/>
 
-Please do not report bugs on games that are not listed as being
+Please do not report bugs for games that are not listed as being
 completeable in the 'Supported Games' section, or compatibility list. We
 -know- those games have bugs.
 
@@ -472,7 +472,7 @@ Humongous Entertainment (SCUMM) Games:
      SPY Fox in Cheese Chase                     [chase]
      SPY Fox in Hold the Mustard                 [mustard]
 
-The following games should load, but are not yet fully playable. Play
+The following games should load but are not yet fully playable. Play
 these at your own risk, and please do not file bug reports about them.
 If you want the latest updates on game compatibility, visit our web site
 and view the compatibility chart.
@@ -1214,7 +1214,7 @@ Torin's Passage CD:
 3.27) Zork games notes:
 ----- -----------------
 To run the supported Zork games (Zork Nemesis: The Forbidden Lands
-and Zork: Grand Inquisitor) you need to copy some (extra) data to it's
+and Zork: Grand Inquisitor) you need to copy some (extra) data to its
 corresponding destination.
 
 Zork Nemesis: The Forbidden Lands
