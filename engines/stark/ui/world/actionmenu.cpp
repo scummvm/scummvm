@@ -23,6 +23,7 @@
 #include "engines/stark/ui/world/actionmenu.h"
 
 #include "engines/stark/ui/cursor.h"
+#include "engines/stark/ui/world/gamewindow.h"
 #include "engines/stark/ui/world/inventorywindow.h"
 
 #include "engines/stark/gfx/driver.h"
@@ -46,6 +47,8 @@ namespace Stark {
 
 ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor) {
+	_gameWindow = nullptr;
+
 	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
 
 	_unscaled = true;
@@ -69,7 +72,7 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 
 	Common::Point screenMousePos = _cursor->getMousePosition(true);
 
-        _position = getPosition(screenMousePos);
+	_position = getPosition(screenMousePos);
 
 	_itemRelativePos = itemRelativePos;
 	_item = item;
@@ -99,19 +102,17 @@ void ActionMenu::close() {
 	_item = nullptr;
 }
 
-Common::Rect ActionMenu::getPosition(const Common::Point &pos) {
-  Common::Rect screenWindow = getScaledPosition();
-  Common::Rect position = Common::Rect::center(pos.x, pos.y, 160, 111);
+Common::Rect ActionMenu::getPosition(const Common::Point &pos) const {
+	Common::Rect position = Common::Rect::center(pos.x, pos.y, 160, 111);
 
-  // offset screen by top border for correct boundary calculations
-  screenWindow.translate(0, _gfx->scaleHeightOriginalToCurrent(Gfx::Driver::kTopBorderHeight));
+	Common::Rect screenPos = _gameWindow->getScaledPosition();
 
-  if (_position.top < 0) position.translate(0, 0 - _position.top);
-  if (_position.left < 0) position.translate(0 - _position.left, 0);
-  if (_position.bottom > screenWindow.bottom) position.translate(0, screenWindow.bottom - _position.bottom);
-  if (_position.right > screenWindow.right) position.translate(screenWindow.right - _position.right, 0);
+	if (position.top < 0) position.translate(0, 0 - position.top);
+	if (position.left < 0) position.translate(0 - position.left, 0);
+	if (position.bottom > screenPos.bottom) position.translate(0, screenPos.bottom - position.bottom);
+	if (position.right > screenPos.right) position.translate(screenPos.right - position.right, 0);
 
-  return position;
+	return position;
 }
 
 void ActionMenu::onRender() {
@@ -177,6 +178,10 @@ void ActionMenu::onClick(const Common::Point &pos) {
 			close();
 		}
 	}
+}
+
+void ActionMenu::setGameWindow(GameWindow *gameWindow) {
+	_gameWindow = gameWindow;
 }
 
 void ActionMenu::setInventory(InventoryWindow *inventory) {

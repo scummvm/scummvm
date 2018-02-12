@@ -148,7 +148,7 @@ void GameWindow::onClick(const Common::Point &pos) {
 
 	if (_objectUnderCursor) {
 		if (singlePossibleAction != -1) {
-			StarkGameInterface->itemDoActionAt(_objectUnderCursor, singlePossibleAction, _objectRelativePosition);
+                        StarkGameInterface->itemDoActionAt(_objectUnderCursor, singlePossibleAction, _objectRelativePosition);
 		} else if (selectedInventoryItem == -1) {
 			_actionMenu->open(_objectUnderCursor, _objectRelativePosition);
 		}
