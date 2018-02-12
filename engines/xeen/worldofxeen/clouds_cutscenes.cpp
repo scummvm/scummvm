@@ -578,6 +578,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	}
 
 	sound.stopSound();
+	sound.playSong("endgame.m");
 	screen.fadeOut();
 	return true;
 }
@@ -721,7 +722,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 		WAIT(1);
 	}
 
-	// Roland moving in to look at mirror
+	// Roland and Crodo moving in to look at mirror
 	const int DELTA = 2;
 	for (int idx = 0, xc1 = -115, yp = SCREEN_HEIGHT, xc2 = 335;
 	idx < 115; idx += DELTA, xc1 += DELTA, yp -= DELTA, xc2 -= DELTA) {

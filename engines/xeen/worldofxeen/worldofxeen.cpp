@@ -177,6 +177,7 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uin
 		showWorldOfXeenEnding((GooberState)status, score);
 
 	_screen->freePages();
+	_sound->stopAllAudio();
 	_events->clearEvents();
 	_quitMode = QMODE_MENU;
 }
