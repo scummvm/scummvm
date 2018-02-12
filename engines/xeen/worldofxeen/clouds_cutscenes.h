@@ -44,12 +44,12 @@ private:
 	void loadScreen(const Common::String &name);
 
 	/**
-	 * Shows part 1 of the Clouds of Xeen ending
+	 * Shows part 1 of the Clouds of Xeen ending, with the castle being destroyed
 	 */
 	bool showCloudsEnding1();
 
 	/**
-	 * Shows part 2 of the Clouds of Xeen ending
+	 * Shows part 2 of the Clouds of Xeen ending, King Roland's throneroom
 	 */
 	bool showCloudsEnding2();
 

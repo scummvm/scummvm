@@ -349,8 +349,8 @@ void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 
 	if (showCloudsEnding1())
 		if (showCloudsEnding2())
-			if (!showCloudsEnding3())
-				if (!showCloudsEnding4(finalScore))
+			if (showCloudsEnding3())
+				if (showCloudsEnding4(finalScore))
 					showCloudsEnding5();
 }
 
@@ -587,8 +587,8 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
-	SpriteResource king("king.end"), room("room.end"), bigSky("bigsky.end"),
-		people("people.end"), crodo("crodo.end"), kingCord("kingcord.end");
+	SpriteResource king("king.end"), people("people.end"), crodo("crodo.end"),
+		kingCord("kingcord.end");
 
 	// Later at Castle Burlock
 	screen.loadPalette("endgame.pal");
@@ -603,36 +603,24 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	screen.loadBackground("throne2.raw");
 	screen.loadPage(1);
 
-	int ctr1 = 0, ctr3 = -1, ctr4 = 0, ctr5 = 0;
 	int xp2 = SCREEN_WIDTH;
-	for (int ctr2 = SCREEN_WIDTH, xp1 = 117, xp3 = 0; ctr2 > 0; ) {
+	bool fadeFlag = true;
+	for (int ctr = SCREEN_WIDTH, xp1 = 117, xp3 = 0; ctr > 0; --ctr, xp1 -=   2, ++xp3) {
 		screen.horizMerge(xp3);
 		people.draw(0, 0, Common::Point(xp1, 68), SPRFLAG_800);
 		if (xp3 > 250) {
 			crodo.draw(0, 0, Common::Point(xp2, 68), SPRFLAG_800);
-			xp2 -= ctr1 * 2;
+			xp2 -= 2;
+			if (xp2 < 181)
+				xp2 = 181;
 		}
 
-		events.pollEventsAndWait();
-		if (_vm->shouldQuit())
-			return false;
-
-		if (!ctr4) {
-			ctr1 = events.timeElapsed();
-			if (!ctr1)
-				ctr1 = 1;
-			ctr4 = 1;
-			ctr5 = ctr1 * 2;
+		if (ctr % 2) {
+			WAIT(1);
 		}
-
-		xp3 += ctr1;
-		ctr2 -= ctr1;
-		xp1 -= ctr5;
-		if (xp2 < 181)
-			xp2 = 181;
-		if (ctr3) {
+		if (fadeFlag) {
 			screen.fadeIn();
-			ctr3 = 0;
+			fadeFlag = false;
 		}
 	}
 
@@ -646,16 +634,17 @@ bool CloudsCutscenes::showCloudsEnding2() {
 
 	// Close up of King Roland
 	const int XLIST1[13] = { 0, -5, -10, -15, -20, -25, -30, -33, -27, -22, -17 };
-	const int XLIST2[13] = { 60, 145, 130, 115, 100, 85, 70, 57, 53, 48, 42, 39, 34 };
-	const int YLIST[13] = { 42, 39, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	const int XLIST2[13] = { 160, 145, 130, 115, 100, 85, 70, 57, 53, 48, 42, 39, 34 };
+	const int YLIST[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4 };
 
 	for (int idx = 12; idx >= 0; --idx) {
 		screen.blitFrom(savedBg);
-		king.draw(0, 0, Common::Point(XLIST1[idx], YLIST[idx]));
-		king.draw(0, 1, Common::Point(XLIST2[idx], YLIST[idx]));
+		king.draw(0, 0, Common::Point(XLIST1[idx], YLIST[idx]), 0, idx);
+		king.draw(0, 1, Common::Point(XLIST2[idx], YLIST[idx]), 0, idx);
 		WAIT(1);
 	}
 
+	// Congratulations adventurers
 	const char *const VOC_NAMES[3] = { "king1.voc", "king2.voc", "king3.voc" };
 	_subtitleSize = 0;
 	for (int idx = 0; idx < 3; ++idx) {
@@ -679,52 +668,6 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	}
 
 	screen.fadeOut();
-	screen.loadPalette("_mirror.pal");
-	screen.loadBackground("miror-s.raw");
-	screen.loadPage(0);
-	screen.loadPage(1);
-
-	room.draw(0, 0, Common::Point(0, 0));
-	room.draw(0, 1, Common::Point(160, 0));
-	screen.fadeIn();
-
-	for (int idx = 0; idx < 83; ++idx) {
-		screen.horizMerge(idx);
-		room.draw(0, 0, Common::Point(0, 0));
-		room.draw(0, 1, Common::Point(160, 0));
-		WAIT(1);
-	}
-
-	screen.freePages();
-	savedBg.blitFrom(screen);
-
-	const int XLIST3[9] = { 0, -5, -10, -15, -24, -30, -39, -50, -59 };
-	const int YLIST3[9] = { 0, 12, 25, 37, 46, 52, 59, 64, 68 };
-	for (int idx = 8; idx >= 0; --idx) {
-		screen.blitFrom(savedBg);
-		bigSky.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
-		_mirrBack.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
-		WAIT(1);
-	}
-
-	const int DELTA = 2;
-	for (int idx = 0, xc1 = -115, yp = SCREEN_HEIGHT, xc2 = 335;
-			idx < 115; idx += DELTA, xc1 += DELTA, yp -= DELTA, xc2 -= DELTA) {
-		ROTATE_BG;
-
-		_mirrBack.draw(0, 0);
-		_mirror.draw(0, 0);
-		kingCord.draw(0, 0, Common::Point(xc1, yp), SPRFLAG_800);
-		kingCord.draw(0, 1, Common::Point(xc2, yp), SPRFLAG_800);
-		WAIT(1);
-	}
-
-	ROTATE_BG;
-	_mirrBack.draw(0, 0);
-	_mirror.draw(0, 0);
-	kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
-	kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
-
 	return true;
 }
 
@@ -744,9 +687,60 @@ bool CloudsCutscenes::showCloudsEnding3() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	SpriteResource monSprites, attackSprites;
-	SpriteResource kingCord("kingcord.end");
+	SpriteResource kingCord("kingcord.end"), room("room.end"), bigSky("bigsky.end");
+	Graphics::ManagedSurface savedBg;
 	int counter1 = 0;
 
+	// Show the mirror room
+	screen.loadPalette("mirror.pal");
+	screen.loadBackground("miror-s.raw");
+	screen.loadPage(0);
+	screen.loadPage(1);
+
+	room.draw(0, 0, Common::Point(0, 0));
+	room.draw(0, 1, Common::Point(160, 0));
+	screen.fadeIn();
+
+	for (int idx = 0; idx < 83; ++idx) {
+		screen.horizMerge(idx);
+		room.draw(0, 0, Common::Point(0, 0));
+		room.draw(0, 1, Common::Point(160, 0));
+		WAIT(1);
+	}
+
+	// Zooming into the mirror
+	screen.freePages();
+	savedBg.blitFrom(screen);
+
+	const int XLIST3[9] = { 0, -5, -10, -15, -24, -30, -39, -50, -59 };
+	const int YLIST3[9] = { 0, 12, 25, 37, 46, 52, 59, 64, 68 };
+	for (int idx = 8; idx >= 0; --idx) {
+		screen.blitFrom(savedBg);
+		bigSky.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
+		_mirrBack.draw(0, 0, Common::Point(XLIST3[idx], YLIST3[idx]), 0, idx);
+		WAIT(1);
+	}
+
+	// Roland moving in to look at mirror
+	const int DELTA = 2;
+	for (int idx = 0, xc1 = -115, yp = SCREEN_HEIGHT, xc2 = 335;
+	idx < 115; idx += DELTA, xc1 += DELTA, yp -= DELTA, xc2 -= DELTA) {
+		ROTATE_BG;
+
+		_mirrBack.draw(0, 0);
+		_mirror.draw(0, 0);
+		kingCord.draw(0, 0, Common::Point(xc1, yp), SPRFLAG_800);
+		kingCord.draw(0, 1, Common::Point(xc2, yp), SPRFLAG_800);
+		WAIT(1);
+	}
+
+	ROTATE_BG;
+	_mirrBack.draw(0, 0);
+	_mirror.draw(0, 0);
+	kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
+	kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
+
+	// Loop through showing each monster
 	for (int monsterCtr = 0; monsterCtr < 73; ++monsterCtr) {
 		MonsterStruct &mon = map._monsterData[MONSTER_INDEXES[monsterCtr]];
 		monSprites.load(Common::String::format("%03d.mon", mon._imageNumber));
@@ -789,8 +783,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 			WAIT(1);
 		}
 
-		events.updateGameCounter();
-		while (events.timeElapsed() < 15) {
+		for (int idx = 0; idx < 15; ++idx) {
 			ROTATE_BG;
 			counter1 = (counter1 + 1) % 8;
 			Common::Point monPos(31, 10);
@@ -804,18 +797,14 @@ bool CloudsCutscenes::showCloudsEnding3() {
 			_mirror.draw(0, 0);
 			kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
 			kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
-
-			events.wait(1, false);
-			if (_vm->shouldQuit())
-				return false;
+			WAIT(1);
 		}
 
 		int powNum = getSpeakingFrame(0, 5);
 		sound.stopSound();
 		sound.playSound(Common::String::format("pow%d.voc", powNum));
 
-		events.updateGameCounter();
-		while (events.timeElapsed() < 7) {
+		for (int idx = 0; idx < 7; ++idx) {
 			ROTATE_BG;
 			counter1 = (counter1 + 1) % 8;
 			Common::Point monPos(31, 10);
@@ -829,10 +818,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 			_mirror.draw(0, 0);
 			kingCord.draw(0, 0, Common::Point(0, 85), SPRFLAG_800);
 			kingCord.draw(0, 1, Common::Point(220, 85), SPRFLAG_800);
-
-			events.wait(1, false);
-			if (_vm->shouldQuit())
-				return false;
+			WAIT(1);
 		}
 	}
 
@@ -851,6 +837,7 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 	_mirror.draw(0, 0);
 	doScroll(false, false);
 
+	// Congratulations your final score
 	for (int idx = 0; idx < 19; ++idx) {
 		ROTATE_BG;
 		_mirrBack.draw(0, 0);
@@ -859,6 +846,7 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 		WAIT(1);
 	}
 
+	// Random animation of score numbers
 	int frames[10];
 	const int FRAMEX[10] = { 64, 83, 102, 121, 140, 159, 178, 197, 216, 235 };
 	for (int idx1 = 0; idx1 < 30; ++idx1) {
@@ -875,6 +863,7 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 		WAIT(2);
 	}
 
+	// Animate changing the score digits to the actual final score
 	Common::String scoreStr = Common::String::format("%.10u", finalScore);
 	for (int idx1 = 0; idx1 < 10; ++idx1) {
 		for (int idx2 = 0; idx2 < 10; ++idx2)
@@ -894,7 +883,7 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 		WAIT(2);
 	}
 
-	// Move the score down
+	// Move the score vertically down
 	for (int idx1 = 0; idx1 < 38; ++idx1) {
 		ROTATE_BG;
 		_mirrBack.draw(0, 0);
@@ -907,6 +896,7 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 		WAIT(1);
 	}
 
+	// Show two screens worth of text, with prompt to press a key
 	windows[28].setBounds(Common::Rect(63, 60, 254, 160));
 
 	for (int idx = 1; idx <= 2; ++idx) {
@@ -922,7 +912,8 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 			windows[28].writeString(idx == 1 ? Res.CLOUDS_CONGRATULATIONS1 :
 				Res.CLOUDS_CONGRATULATIONS2);
 
-			WAIT(1);
+			events.updateGameCounter();
+			events.wait(1, false);
 		} while (!events.isKeyMousePressed());
 	}
 
