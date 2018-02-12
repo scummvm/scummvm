@@ -125,7 +125,7 @@ void Screen::fadeOut(int step) {
 }
 
 void Screen::fadeInner(int step) {
-	for (int idx = 128; idx >= 0 && !_vm->shouldQuit(); idx -= step) {
+	for (int idx = 128; idx >= 0 && !_vm->shouldExit(); idx -= step) {
 		int val = MAX(idx, 0);
 		bool flag = !_fadeIn;
 		if (!flag) {

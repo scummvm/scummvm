@@ -306,7 +306,7 @@ void Interface::perform() {
 		}
 		if (eventsFlag) {
 			scripts.checkEvents();
-			if (_vm->shouldQuit())
+			if (_vm->shouldExit())
 				return;
 		}
 	}
@@ -316,7 +316,7 @@ void Interface::perform() {
 		// Show control panel
 		combat._moveMonsters = false;
 		ControlPanel::show(_vm);
-		if (!g_vm->shouldQuit() && !g_vm->_quitMode)
+		if (!g_vm->shouldExit() && !g_vm->_quitMode)
 			combat._moveMonsters = true;
 		break;
 
@@ -1056,19 +1056,19 @@ void Interface::rest() {
 			screen.fadeIn();
 
 			events.updateGameCounter();
-			while (!_vm->shouldQuit() && events.timeElapsed() < 7)
+			while (!_vm->shouldExit() && events.timeElapsed() < 7)
 				events.pollEventsAndWait();
 
 			sound.playSound("dreams2.voc", 1);
-			while (!_vm->shouldQuit() && sound.isPlaying())
+			while (!_vm->shouldExit() && sound.isPlaying())
 				events.pollEventsAndWait();
 
 			sound.playSound("laff1.voc", 1);
-			while (!_vm->shouldQuit() && sound.isPlaying())
+			while (!_vm->shouldExit() && sound.isPlaying())
 				events.pollEventsAndWait();
 
 			events.updateGameCounter();
-			while (!_vm->shouldQuit() && events.timeElapsed() < 7)
+			while (!_vm->shouldExit() && events.timeElapsed() < 7)
 				events.pollEventsAndWait();
 
 			screen.fadeOut();
@@ -1525,7 +1525,7 @@ void Interface::doCombat() {
 		w.open();
 		bool breakFlag = false;
 
-		while (!_vm->shouldQuit() && !breakFlag) {
+		while (!_vm->shouldExit() && !breakFlag) {
 			highlightChar(combat._whosTurn);
 			combat.setSpeedTable();
 
@@ -1550,9 +1550,9 @@ void Interface::doCombat() {
 				do {
 					events.pollEventsAndWait();
 					checkEvents(_vm);
-				} while (!_vm->shouldQuit() && events.timeElapsed() < 1 && !_buttonValue);
-			} while (!_vm->shouldQuit() && !_buttonValue);
-			if (_vm->shouldQuit())
+				} while (!_vm->shouldExit() && events.timeElapsed() < 1 && !_buttonValue);
+			} while (!_vm->shouldExit() && !_buttonValue);
+			if (_vm->shouldExit())
 				return;
 
 			switch (_buttonValue) {

@@ -77,7 +77,7 @@ void QuickReferenceDialog::execute() {
 
 	// Wait for a key/mouse press
 	events.clearEvents();
-	while (!_vm->shouldQuit() && !events.isKeyMousePressed())
+	while (!_vm->shouldExit() && !events.isKeyMousePressed())
 		events.pollEventsAndWait();
 	events.clearEvents();
 

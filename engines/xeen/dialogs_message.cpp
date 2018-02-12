@@ -44,7 +44,7 @@ void MessageDialog::execute(const Common::String &msg, MessageWaitType waitType)
 
 	switch (waitType) {
 	case WT_FREEZE_WAIT:
-		while (!_vm->shouldQuit() && !events.isKeyMousePressed())
+		while (!_vm->shouldExit() && !events.isKeyMousePressed())
 			events.pollEventsAndWait();
 
 		events.clearEvents();
@@ -65,7 +65,7 @@ void MessageDialog::execute(const Common::String &msg, MessageWaitType waitType)
 			events.wait(1);
 			if (checkEvents(_vm))
 				break;
-		} while (!_vm->shouldQuit() && !_buttonValue);
+		} while (!_vm->shouldExit() && !_buttonValue);
 		break;
 
 	case WT_LOC_WAIT:
@@ -113,7 +113,7 @@ void CantCast::execute(int spellId, int componentNum) {
 
 	do {
 		events.pollEventsAndWait();
-	} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
+	} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 	events.clearEvents();
 
 	w.close();

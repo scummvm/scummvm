@@ -46,6 +46,7 @@ void WorldOfXeenEngine::outerGameLoop() {
 	while (!shouldQuit() && _pendingAction != WOX_QUIT) {
 		WOXGameAction action = _pendingAction;
 		_pendingAction = WOX_MENU;
+		_quitMode = QMODE_NONE;
 
 		switch (action) {
 		case WOX_CLOUDS_INTRO:

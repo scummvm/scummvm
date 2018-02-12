@@ -172,7 +172,7 @@ int Scripts::checkEvents() {
 		_nEdamageType = DT_PHYSICAL;
 //		int var40 = -1;
 
-		while (!_vm->shouldQuit() && _lineNum >= 0) {
+		while (!_vm->shouldExit() && _lineNum >= 0) {
 			// Break out of the events if there's an attacking monster
 			if (combat._attackMonsters[0] != -1) {
 				_eventSkipped = true;
@@ -181,7 +181,7 @@ int Scripts::checkEvents() {
 
 			_eventSkipped = false;
 			uint eventIndex;
-			for (eventIndex = 0; eventIndex < map._events.size() && !_vm->shouldQuit(); ++eventIndex) {
+			for (eventIndex = 0; eventIndex < map._events.size() && !_vm->shouldExit(); ++eventIndex) {
 				MazeEvent &event = map._events[eventIndex];
 
 				if (event._position == _currentPos && party._mazeDirection !=
@@ -199,7 +199,7 @@ int Scripts::checkEvents() {
 			if (eventIndex == map._events.size())
 				_lineNum = -1;
 		}
-	} while (!_vm->shouldQuit() && !_eventSkipped && _lineNum != -1);
+	} while (!_vm->shouldExit() && !_eventSkipped && _lineNum != -1);
 
 	intf._face1State = intf._face2State = 2;
 	if (_refreshIcons) {
@@ -1866,7 +1866,7 @@ void Scripts::display(bool justifyFlag, int var46) {
 	if (!w._enabled)
 		w.open();
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		const char *newPos = w.writeString(_displayMessage);
 		w.update();
 
@@ -1885,7 +1885,7 @@ void Scripts::display(bool justifyFlag, int var46) {
 			intf.draw3d(true);
 
 			events.wait(1);
-		} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
+		} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
 		w.writeString(justifyFlag ? "\r" : "\r\x3""c");
 	}

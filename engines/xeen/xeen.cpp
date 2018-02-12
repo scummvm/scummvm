@@ -206,7 +206,7 @@ void XeenEngine::play() {
 
 void XeenEngine::gameLoop() {
 	// Main game loop
-	while (!shouldQuit()) {
+	while (!shouldExit()) {
 		if (_loadSaveSlot >= 0) {
 			// Load any pending savegame
 			int saveSlot = _loadSaveSlot;
@@ -217,7 +217,7 @@ void XeenEngine::gameLoop() {
 		_map->cellFlagLookup(_party->_mazePosition);
 		if (_map->_currentIsEvent) {
 			_quitMode = (QuitMode)_scripts->checkEvents();
-			if (shouldQuit() || _quitMode)
+			if (shouldExit() || _quitMode)
 				return;
 		}
 		_party->giveTreasure();

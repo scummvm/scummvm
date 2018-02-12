@@ -67,7 +67,7 @@ void CharacterInfo::execute(int charIndex) {
 		events.updateGameCounter();
 		bool cursorFlag = false;
 		_buttonValue = 0;
-		while (!_vm->shouldQuit() && !_buttonValue) {
+		while (!_vm->shouldExit() && !_buttonValue) {
 			events.pollEventsAndWait();
 			if (events.timeElapsed() > 4) {
 				cursorFlag = !cursorFlag;
@@ -208,7 +208,7 @@ void CharacterInfo::execute(int charIndex) {
 		case Common::KEYCODE_ESCAPE:
 			goto exit;
 		}
-	} while (!_vm->shouldQuit());
+	} while (!_vm->shouldExit());
 exit:
 	w.close();
 	intf.unhighlightChar();
@@ -560,7 +560,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 
 	// Wait for a user key/click
 	EventsManager &events = *_vm->_events;
-	while (!_vm->shouldQuit() && !events.isKeyMousePressed())
+	while (!_vm->shouldExit() && !events.isKeyMousePressed())
 		events.pollEventsAndWait();
 	events.clearEvents();
 

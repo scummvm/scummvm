@@ -308,11 +308,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 		// Wait for a selection
 		_buttonValue = 0;
-		while (!_vm->shouldQuit() && !_buttonValue) {
+		while (!_vm->shouldExit() && !_buttonValue) {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
 		}
-		if (_vm->shouldQuit())
+		if (_vm->shouldExit())
 			return nullptr;
 
 		// Handle escaping out of dialog
@@ -808,11 +808,11 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 		_iconSprites.draw(0, 0, Common::Point(235, 111));
 		w.update();
 
-		while (!_vm->shouldQuit()) {
+		while (!_vm->shouldExit()) {
 			while (!_buttonValue) {
 				events.pollEventsAndWait();
 				checkEvents(_vm);
-				if (_vm->shouldQuit())
+				if (_vm->shouldExit())
 					return false;
 			}
 
@@ -1017,7 +1017,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				saveButtons();
 				clearButtons();
 
-				while (!_vm->shouldQuit() && !events.isKeyMousePressed())
+				while (!_vm->shouldExit() && !events.isKeyMousePressed())
 					events.pollEventsAndWait();
 				events.clearEvents();
 

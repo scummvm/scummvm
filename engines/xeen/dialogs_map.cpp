@@ -111,7 +111,7 @@ void MapDialog::execute() {
 
 		events.ipause5(2);
 		drawFlag = false;
-	} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
+	} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
 	events.clearEvents();
 	windows[5].close();

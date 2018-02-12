@@ -61,7 +61,7 @@ void Quests::execute() {
 	windows[29].writeString(Res.QUESTS_DIALOG_TEXT);
 	drawButtons(&windows[0]);
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		Common::String lines[MAX_DIALOG_LINES];
 
 		switch (mode) {
@@ -179,7 +179,7 @@ void Quests::execute() {
 
 		// Key handling
 		_buttonValue = 0;
-		while (!_vm->shouldQuit() && !_buttonValue) {
+		while (!_vm->shouldExit() && !_buttonValue) {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
 		}

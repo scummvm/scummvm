@@ -78,7 +78,7 @@ int ControlPanel::execute() {
 
 			events.pollEventsAndWait();
 			checkEvents(_vm);
-			if (_vm->shouldQuit())
+			if (_vm->shouldExit())
 				return 0;
 		} while (!_buttonValue && !events.timeElapsed());
 

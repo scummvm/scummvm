@@ -74,7 +74,7 @@ void InfoDialog::execute() {
 		w.update();
 
 		events.wait(1);
-	} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
+	} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
 	events.clearEvents();
 	w.close();

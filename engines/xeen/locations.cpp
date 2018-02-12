@@ -86,7 +86,7 @@ int BaseLocation::show() {
 	do {
 		wait();
 		charP = doOptions(charP);
-		if (_vm->shouldQuit() || _exitToUi)
+		if (_vm->shouldExit() || _exitToUi)
 			return 0;
 
 		Common::String msg = createLocationText(*charP);
@@ -279,9 +279,9 @@ int BaseLocation::wait() {
 	Windows &windows = *g_vm->_windows;
 
 	_buttonValue = 0;
-	while (!_vm->shouldQuit() && !_buttonValue) {
+	while (!_vm->shouldExit() && !_buttonValue) {
 		events.updateGameCounter();
-		while (!_vm->shouldQuit() && !_buttonValue && events.timeElapsed() < 3) {
+		while (!_vm->shouldExit() && !_buttonValue && events.timeElapsed() < 3) {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
 		}
@@ -424,7 +424,7 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 			windows[35].writeString(msg);
 			windows[35].update();
 		}
-	} while (!g_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
+	} while (!g_vm->shouldExit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
 	for (uint idx = 0; idx < _buttons.size(); ++idx)
 		_buttons[idx]._sprites = &_icons1;
@@ -1171,14 +1171,14 @@ int ArenaLocation::show() {
 	do {
 		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_LEVEL, 2);
 		level = NumericInput::show(g_vm, 11, 2, 200);
-	} while (!g_vm->shouldQuit() && level > 10);
+	} while (!g_vm->shouldExit() && level > 10);
 	if (level == 0)
 		goto exit;
 
 	do {
 		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, Res.WARZONE_HOW_MANY, 2);
 		howMany = NumericInput::show(g_vm, 11, 2, 200);
-	} while (!g_vm->shouldQuit() && howMany > 20);
+	} while (!g_vm->shouldExit() && howMany > 20);
 	if (howMany == 0)
 		goto exit;
 
@@ -1298,7 +1298,7 @@ int ReaperCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	}
 
@@ -1313,7 +1313,7 @@ int ReaperCutscene::show() {
 
 			events.wait(1);
 			checkEvents(g_vm);
-			if (g_vm->shouldQuit() || _buttonValue)
+			if (g_vm->shouldExit() || _buttonValue)
 				goto exit;
 		}
 	} else {
@@ -1324,7 +1324,7 @@ int ReaperCutscene::show() {
 
 			events.wait(1);
 			checkEvents(g_vm);
-			if (g_vm->shouldQuit() || _buttonValue)
+			if (g_vm->shouldExit() || _buttonValue)
 				goto exit;
 		}
 	}
@@ -1353,7 +1353,7 @@ int ReaperCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	} while (sound.isPlaying() || _subtitleCtr);
 
@@ -1384,9 +1384,9 @@ int ReaperCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
-	} while (!g_vm->shouldQuit() && sound.isPlaying());
+	} while (!g_vm->shouldExit() && sound.isPlaying());
 
 	sprites2.draw(0, 0, Common::Point(0, 0));
 	if (_isDarkCc)
@@ -1411,7 +1411,7 @@ int ReaperCutscene::show() {
 
 			events.wait(1);
 			checkEvents(g_vm);
-			if (g_vm->shouldQuit() || _buttonValue)
+			if (g_vm->shouldExit() || _buttonValue)
 				goto exit;
 		}
 
@@ -1591,7 +1591,7 @@ int GolemCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	}
 
@@ -1614,7 +1614,7 @@ int GolemCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	}
 
@@ -1631,7 +1631,7 @@ int GolemCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	}
 	sound.setMusicVolume(48);
@@ -1657,7 +1657,7 @@ int GolemCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	} while (sound.isPlaying() || _subtitleCtr);
 
@@ -1674,7 +1674,7 @@ int GolemCutscene::show() {
 
 	if (!_isDarkCc) {
 		sound.playSound("ogre.voc");
-		while (!g_vm->shouldQuit() && sound.isPlaying())
+		while (!g_vm->shouldExit() && sound.isPlaying())
 			events.pollEventsAndWait();
 
 		sound.playSound(_mazeFlag ? "golem16.voc" : "golem14.voc");
@@ -1702,9 +1702,9 @@ int GolemCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
-	} while (!g_vm->shouldQuit() && sound.isPlaying());
+	} while (!g_vm->shouldExit() && sound.isPlaying());
 
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
@@ -1714,18 +1714,18 @@ int GolemCutscene::show() {
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
-	while (!g_vm->shouldQuit() && sound.isPlaying()) {
+	while (!g_vm->shouldExit() && sound.isPlaying()) {
 		events.updateGameCounter();
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	}
 
 	sound.setMusicVolume(95);
 
 	if (!_mazeFlag) {
-		for (int idx = 0; !g_vm->shouldQuit() && idx < (_isDarkCc ? 9 : 12); ++idx) {
+		for (int idx = 0; !g_vm->shouldExit() && idx < (_isDarkCc ? 9 : 12); ++idx) {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sprites1.draw(0, 0,
@@ -1737,7 +1737,7 @@ int GolemCutscene::show() {
 
 			events.wait(1);
 			checkEvents(g_vm);
-			if (g_vm->shouldQuit() || _buttonValue)
+			if (g_vm->shouldExit() || _buttonValue)
 				goto exit;
 		}
 	}
@@ -1911,14 +1911,14 @@ int DwarfCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	}
 
 	// Have character rise up from the bottom of the screen
 	savedBg.copyFrom(screen);
 	for (int idx = 15; idx >= 0; --idx) {
-		if (g_vm->shouldQuit())
+		if (g_vm->shouldExit())
 			return 0;
 		events.updateGameCounter();
 
@@ -1928,7 +1928,7 @@ int DwarfCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	}
 
@@ -1950,7 +1950,7 @@ int DwarfCutscene::show() {
 				updateSubtitles();
 
 				events.timeMark5();
-				while (!g_vm->shouldQuit() && events.timeElapsed5() < 7)
+				while (!g_vm->shouldExit() && events.timeElapsed5() < 7)
 					events.pollEventsAndWait();
 
 				sound.playSound(_mazeFlag ? "ok2.voc" : "back2.voc");
@@ -1974,12 +1974,12 @@ int DwarfCutscene::show() {
 			while (events.timeElapsed5() < 2) {
 				events.pollEventsAndWait();
 				checkEvents(g_vm);
-				if (g_vm->shouldQuit() || _buttonValue)
+				if (g_vm->shouldExit() || _buttonValue)
 					goto exit;
 			}
 		} while (sound.isPlaying() || _subtitleCtr);
 
-		while (!g_vm->shouldQuit() && events.timeElapsed() < 3)
+		while (!g_vm->shouldExit() && events.timeElapsed() < 3)
 			events.pollEventsAndWait();
 	}
 
@@ -2129,7 +2129,7 @@ int SphinxCutscene::show() {
 
 		events.wait(1);
 		checkEvents(g_vm);
-		if (g_vm->shouldQuit() || _buttonValue)
+		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	}
 
@@ -2157,7 +2157,7 @@ int SphinxCutscene::show() {
 
 			events.wait(1);
 			checkEvents(g_vm);
-			if (g_vm->shouldQuit() || _buttonValue)
+			if (g_vm->shouldExit() || _buttonValue)
 				goto exit;
 		} while (sound.isPlaying() || _subtitleCtr);
 
@@ -2177,7 +2177,7 @@ int SphinxCutscene::show() {
 
 			events.wait(1);
 			checkEvents(g_vm);
-			if (g_vm->shouldQuit() || _buttonValue)
+			if (g_vm->shouldExit() || _buttonValue)
 				goto exit;
 		}
 
@@ -2435,7 +2435,7 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 				events.pollEventsAndWait();
 				checkEvents(_vm);
 
-				if (_vm->shouldQuit())
+				if (_vm->shouldExit())
 					return false;
 
 				while (events.timeElapsed() >= 3) {

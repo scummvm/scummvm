@@ -62,7 +62,7 @@ int WhoWill::execute(int message, int action, bool type) {
 	intf._face1State = map._headData[party._mazePosition.y][party._mazePosition.x]._left;
 	intf._face2State = map._headData[party._mazePosition.y][party._mazePosition.x]._right;
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		events.updateGameCounter();
 
 		if (windows[11]._enabled) {

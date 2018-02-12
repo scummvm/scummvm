@@ -116,7 +116,7 @@ void EventsManager::clearEvents() {
 }
 
 void EventsManager::debounceMouse() {
-	while (_leftButton && !_vm->shouldQuit()) {
+	while (_leftButton && !_vm->shouldExit()) {
 		pollEventsAndWait();
 	}
 }
@@ -142,13 +142,13 @@ bool EventsManager::isKeyMousePressed() {
 }
 
 bool EventsManager::wait(uint numFrames, bool interruptable) {
-	while (!_vm->shouldQuit() && timeElapsed() < numFrames) {
+	while (!_vm->shouldExit() && timeElapsed() < numFrames) {
 		pollEventsAndWait();
 		if (interruptable && (_leftButton || _rightButton || isKeyPending()))
 			return true;
 	}
 
-	return _vm->shouldQuit();
+	return _vm->shouldExit();
 }
 
 void EventsManager::ipause(uint amount) {
@@ -156,13 +156,13 @@ void EventsManager::ipause(uint amount) {
 	do {
 		_vm->_interface->draw3d(true);
 		pollEventsAndWait();
-	} while (!_vm->shouldQuit() && timeElapsed() < amount);
+	} while (!_vm->shouldExit() && timeElapsed() < amount);
 }
 
 void EventsManager::ipause5(uint amount) {
 	do {
 		pollEventsAndWait();
-	} while (!_vm->shouldQuit() && timeElapsed5() < amount);
+	} while (!_vm->shouldExit() && timeElapsed5() < amount);
 }
 
 void EventsManager::waitForPressAnimated() {
@@ -172,9 +172,9 @@ void EventsManager::waitForPressAnimated() {
 		updateGameCounter();
 		_vm->_interface->draw3d(true);
 
-		while (!_vm->shouldQuit() && timeElapsed() == 0)
+		while (!_vm->shouldExit() && timeElapsed() == 0)
 			pollEventsAndWait();
-	} while (!_vm->shouldQuit() && !isKeyMousePressed());
+	} while (!_vm->shouldExit() && !isKeyMousePressed());
 
 	clearEvents();
 }
@@ -184,7 +184,7 @@ void EventsManager::waitForPress() {
 
 	do {
 		pollEventsAndWait();
-	} while (!_vm->shouldQuit() && !isKeyMousePressed());
+	} while (!_vm->shouldExit() && !isKeyMousePressed());
 
 	clearEvents();
 }

@@ -626,7 +626,7 @@ void Combat::monstersAttack() {
 	do {
 		intf.draw3d(true);
 		events.pollEventsAndWait();
-	} while (!_vm->shouldQuit() && intf._isAttacking);
+	} while (!_vm->shouldExit() && intf._isAttacking);
 
 	endAttack();
 

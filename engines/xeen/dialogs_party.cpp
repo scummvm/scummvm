@@ -57,7 +57,7 @@ void PartyDialog::execute() {
 	loadButtons();
 	setupBackground();
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		_vm->_mode = MODE_1;
 
 		// Build up a list of available characters in the Roster that are on the
@@ -104,11 +104,11 @@ void PartyDialog::execute() {
 		}
 
 		bool breakFlag = false;
-		while (!_vm->shouldQuit() && !breakFlag) {
+		while (!_vm->shouldExit() && !breakFlag) {
 			do {
 				events.pollEventsAndWait();
 				checkEvents(_vm);
-			} while (!_vm->shouldQuit() && !_buttonValue);
+			} while (!_vm->shouldExit() && !_buttonValue);
 
 			switch (_buttonValue) {
 			case Common::KEYCODE_ESCAPE:
@@ -435,7 +435,7 @@ void PartyDialog::createChar() {
 	screen.loadBackground("create.raw");
 	events.setCursor(0);
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		classId = -1;
 
 		if (restartFlag) {
@@ -511,7 +511,7 @@ void PartyDialog::createChar() {
 
 		// Animate the dice until a user action occurs
 		_buttonValue = 0;
-		while (!_vm->shouldQuit() && !_buttonValue)
+		while (!_vm->shouldExit() && !_buttonValue)
 			drawDice(dice);
 
 		// Handling for different actions
@@ -689,7 +689,7 @@ void PartyDialog::createChar() {
 		}
 
 		printSelectionArrow(icons, selectedClass);
-	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
+	} while (!_vm->shouldExit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
 	_vm->_mode = oldMode;
 }
@@ -720,9 +720,9 @@ int PartyDialog::selectCharacter(bool isDelete, int firstDisplayChar) {
 	addPartyButtons(_vm);
 
 	int result = -1, v;
-	while (!_vm->shouldQuit() && result == -1) {
+	while (!_vm->shouldExit() && result == -1) {
 		_buttonValue = 0;
-		while (!_vm->shouldQuit() && !_buttonValue) {
+		while (!_vm->shouldExit() && !_buttonValue) {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
 		}
@@ -921,12 +921,12 @@ int PartyDialog::exchangeAttribute(int srcAttr) {
 
 	int result = 0;
 	bool breakFlag = false;
-	while (!_vm->shouldQuit() && !breakFlag) {
+	while (!_vm->shouldExit() && !breakFlag) {
 		// Wait for an action
 		do {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
-		} while (!_vm->shouldQuit() && !_buttonValue);
+		} while (!_vm->shouldExit() && !_buttonValue);
 
 		Attribute destAttr;
 		switch (_buttonValue) {

@@ -667,7 +667,7 @@ void Party::giveTreasure() {
 
 		while (!events.isKeyMousePressed() && events.timeElapsed() < 1)
 			events.pollEventsAndWait();
-	} while (!_vm->shouldQuit() && events.timeElapsed() == 1);
+	} while (!_vm->shouldExit() && events.timeElapsed() == 1);
 
 	if (_vm->_mode != MODE_COMBAT)
 		_vm->_mode = MODE_1;

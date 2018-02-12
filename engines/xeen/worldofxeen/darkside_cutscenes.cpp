@@ -70,7 +70,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 
 	// Initial loop for dragon roaring
 	int nwcIndex = 0, nwcFrame = 0;
-	for (int idx = 0; idx < 55 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 55 && !_vm->shouldExit(); ++idx) {
 		// Render the next frame
 		screen.vertMerge(0);
 		nwc[nwcIndex].draw(0, nwcFrame);
@@ -96,7 +96,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	}
 
 	// Loop for dragon using flyspray
-	for (int idx = 0; idx < 42 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 42 && !_vm->shouldExit(); ++idx) {
 		screen.vertMerge(SCREEN_HEIGHT);
 		nwc[3].draw(0, idx);
 		screen.draw();
@@ -124,7 +124,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 
 		WAIT(2);
 	}
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return false;
 
 	// Pause for a bit
@@ -449,7 +449,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	// Play landing thud
 	sound.playSound("thud.voc");
-	while (!_vm->shouldQuit() && !events.isKeyMousePressed()
+	while (!_vm->shouldExit() && !events.isKeyMousePressed()
 			&& sound.isPlaying()) {
 		events.pollEventsAndWait();
 	}
@@ -1051,7 +1051,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.loadBackground("sc270001.raw");
 	screen.saveBackground();
 
-	while (sound.isPlaying() && !_vm->shouldQuit()) {
+	while (sound.isPlaying() && !_vm->shouldExit()) {
 		events.pollEventsAndWait();
 		if (events.isKeyMousePressed())
 			return false;
@@ -1201,7 +1201,7 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 
 	// Iterate through showing the pages
 	int idx = 1;
-	for (int pageNum = 0; !_vm->shouldQuit() && pageNum < numPages; ++pageNum) {
+	for (int pageNum = 0; !_vm->shouldExit() && pageNum < numPages; ++pageNum) {
 		// Show each page until a key is pressed
 		do {
 			// Draw the dragon pharoah
@@ -1224,7 +1224,7 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 			windows[0].update();
 			events.wait(3);
 			idx = (idx + 1) % 32;
-		} while (!_vm->shouldQuit() && !events.isKeyMousePressed());
+		} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
 		events.clearEvents();
 	}

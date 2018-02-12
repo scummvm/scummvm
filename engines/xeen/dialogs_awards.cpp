@@ -54,7 +54,7 @@ void Awards::execute(const Character *ch) {
 	windows[29].writeString(Res.AWARDS_TEXT);
 	drawButtons(&windows[0]);
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		// Build up a list of awards the character has
 		awards.clear();
 		awards.resize(AWARDS_TOTAL);
@@ -100,7 +100,7 @@ void Awards::execute(const Character *ch) {
 		do {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
-		} while (!g_vm->shouldQuit() && !_buttonValue);
+		} while (!g_vm->shouldExit() && !_buttonValue);
 
 		if (_buttonValue == Common::KEYCODE_ESCAPE) {
 			break;

@@ -45,7 +45,7 @@ void ExchangeDialog::execute(Character *&c, int &charIndex) {
 	_iconSprites.draw(w, 0, Common::Point(225, 120));
 	w.update();
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		events.pollEventsAndWait();
 		checkEvents(_vm);
 

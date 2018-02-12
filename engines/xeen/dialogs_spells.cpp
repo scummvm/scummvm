@@ -118,7 +118,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		do {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
-		} while (!_vm->shouldQuit() && !_buttonValue);
+		} while (!_vm->shouldExit() && !_buttonValue);
 
 		switch (_buttonValue) {
 		case Common::KEYCODE_F1:
@@ -271,11 +271,11 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 				++topIndex;
 			break;
 		}
-	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
+	} while (!_vm->shouldExit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
 	windows[25].close();
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		selection = -1;
 	if (isCasting && selection != -1)
 		c->_currentSpell = _spells[selection]._spellIndex;
@@ -491,7 +491,7 @@ int CastSpell::show(XeenEngine *vm, Character *&c) {
 	do {
 		spellId = dlg->execute(c);
 
-		if (g_vm->shouldQuit() || spellId == -1) {
+		if (g_vm->shouldExit() || spellId == -1) {
 			result = 0;
 		} else {
 			result = spells.castSpell(c, (MagicSpell)spellId);
@@ -536,7 +536,7 @@ int CastSpell::execute(Character *&c) {
 		do {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
-		} while (!_vm->shouldQuit() && events.timeElapsed() < 1 && !_buttonValue);
+		} while (!_vm->shouldExit() && events.timeElapsed() < 1 && !_buttonValue);
 
 		switch (_buttonValue) {
 		case Common::KEYCODE_F1:
@@ -579,9 +579,9 @@ int CastSpell::execute(Character *&c) {
 		default:
 			break;
 		}
-	} while (!_vm->shouldQuit() && _buttonValue != Common::KEYCODE_ESCAPE);
+	} while (!_vm->shouldExit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		spellId = -1;
 	return spellId;
 }
@@ -634,7 +634,7 @@ int SpellOnWho::execute(int spellId) {
 
 			do {
 				events.pollEventsAndWait();
-				if (_vm->shouldQuit())
+				if (_vm->shouldExit())
 					return -1;
 
 				checkEvents(_vm);
@@ -706,7 +706,7 @@ int SelectElement::execute(int spellId) {
 
 			do {
 				events.pollEventsAndWait();
-				if (_vm->shouldQuit())
+				if (_vm->shouldExit())
 					return -1;
 
 				checkEvents(_vm);
@@ -770,7 +770,7 @@ void NotWhileEngaged::execute(int spellId) {
 		spells._spellNames[spellId].c_str()));
 	w.update();
 
-	while (!_vm->shouldQuit() && !events.isKeyMousePressed())
+	while (!_vm->shouldExit() && !events.isKeyMousePressed())
 		events.pollEventsAndWait();
 	events.clearEvents();
 
@@ -838,7 +838,7 @@ bool LloydsBeacon::execute() {
 
 			do {
 				events.pollEventsAndWait();
-				if (_vm->shouldQuit())
+				if (_vm->shouldExit())
 					return true;
 
 				checkEvents(_vm);

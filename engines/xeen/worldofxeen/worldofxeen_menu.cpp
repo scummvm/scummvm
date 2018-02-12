@@ -66,7 +66,7 @@ void WorldOfXeenMenu::execute() {
 	SpriteResource title1Sprites(title1), title2Sprites(title2);
 
 	bool firstTime = true, doFade = true;
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		setBackground(doFade);
 
 		if (firstTime) {
@@ -82,11 +82,11 @@ void WorldOfXeenMenu::execute() {
 		setupButtons(&title2Sprites);
 		openWindow();
 
-		while (!_vm->shouldQuit()) {
+		while (!_vm->shouldExit()) {
 			// Show the dialog with a continually animating background
-			while (!_vm->shouldQuit() && !_buttonValue)
+			while (!_vm->shouldExit() && !_buttonValue)
 				showContents(title1Sprites, true);
-			if (_vm->shouldQuit())
+			if (_vm->shouldExit())
 				return;
 
 			// Handle keypress
@@ -117,7 +117,7 @@ void WorldOfXeenMenu::showTitles1(SpriteResource &sprites) {
 	EventsManager &events = *_vm->_events;
 
 	int frameNum = 0;
-	while (!_vm->shouldQuit() && !events.isKeyMousePressed()) {
+	while (!_vm->shouldExit() && !events.isKeyMousePressed()) {
 		events.updateGameCounter();
 
 		frameNum = (frameNum + 1) % (_vm->getGameID() == GType_WorldOfXeen ? 5 : 10);
@@ -147,7 +147,7 @@ void WorldOfXeenMenu::showTitles2() {
 	screen.saveBackground();
 	sound.playSound("elect.voc");
 
-	for (int i = 0; i < 30 && !_vm->shouldQuit(); ++i) {
+	for (int i = 0; i < 30 && !_vm->shouldExit(); ++i) {
 		events.updateGameCounter();
 		screen.restoreBackground();
 		title2Sprites[i / 4].draw(0, i % 4);
@@ -156,7 +156,7 @@ void WorldOfXeenMenu::showTitles2() {
 		if (i == 19)
 			sound.stopSound();
 
-		while (!_vm->shouldQuit() && events.timeElapsed() < 2)
+		while (!_vm->shouldExit() && events.timeElapsed() < 2)
 			events.pollEventsAndWait();
 	}
 
@@ -239,7 +239,7 @@ void WorldOptionsMenu::showContents(SpriteResource &title1, bool waitFlag) {
 	screen.update();
 
 	if (waitFlag) {
-		while (!_vm->shouldQuit() && !_buttonValue && events.timeElapsed() < 3) {
+		while (!_vm->shouldExit() && !_buttonValue && events.timeElapsed() < 3) {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
 		}

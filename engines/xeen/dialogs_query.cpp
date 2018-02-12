@@ -66,8 +66,8 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 	w.update();
 
 	events.clearEvents();
-	while (!_vm->shouldQuit()) {
-		while (!_vm->shouldQuit() && !_buttonValue) {
+	while (!_vm->shouldExit()) {
+		while (!_vm->shouldExit() && !_buttonValue) {
 			events.pollEvents();
 			checkEvents(_vm);
 		}
@@ -124,7 +124,7 @@ bool YesNo::execute(bool type, bool townFlag) {
 		intf._face2State = map._headData[party._mazePosition.y][party._mazePosition.x]._right;
 	}
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		events.updateGameCounter();
 
 		if (loc.isActive()) {

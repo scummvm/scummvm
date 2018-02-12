@@ -176,6 +176,11 @@ public:
 	int getRandomNumber(int minNumber, int maxNumber);
 
 	/**
+	 * Returns true if the game should be exited (and likely return to game menu)
+	 */
+	bool shouldExit() const { return _quitMode != QMODE_NONE || shouldQuit(); }
+
+	/**
 	 * Load a savegame
 	 */
 	virtual Common::Error loadGameState(int slot);

@@ -32,11 +32,11 @@ void WorldOfXeenCutscenes::showWorldOfXeenEnding(GooberState state, uint score) 
 	_finalScore = score;
 
 	worldEnding1();
-	if (!_vm->shouldQuit())
+	if (!_vm->shouldExit())
 		worldEnding2();
-	if (!_vm->shouldQuit())
+	if (!_vm->shouldExit())
 		worldEnding3();
-	if (!_vm->shouldQuit())
+	if (!_vm->shouldExit())
 		worldEnding4();
 }
 
@@ -78,7 +78,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 
 	windows[41].writeString("\x1\xD");
 	screen.fadeOut();
-	while (!_vm->shouldQuit() && sound.isPlaying())
+	while (!_vm->shouldExit() && sound.isPlaying())
 		events.pollEventsAndWait();
 
 	sound.playSong("nwblksmt.m");
@@ -90,7 +90,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	events.updateGameCounter();
 	events.wait(60);
 
-	for (int idx = 0; idx < 50 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 50 && !_vm->shouldExit(); ++idx) {
 		if (idx == 9 || idx == 22 || idx == 33 || idx == 44)
 			sound.playSound("whoosh.voc");
 
@@ -103,7 +103,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		events.wait(2);
 	}
 
-	for (int idx = 0; idx < 40 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 40 && !_vm->shouldExit(); ++idx) {
 		screen.horizMerge();
 		events.updateGameCounter();
 		tower1.draw(0, 0, Common::Point(0, 0), SPRFLAG_800);
@@ -114,7 +114,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	}
 
 	int frame = 40, frame2 = 0;
-	for (int idx = 0, xp = 0; idx < SCREEN_WIDTH && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0, xp = 0; idx < SCREEN_WIDTH && !_vm->shouldExit(); ++idx) {
 		events.updateGameCounter();
 		screen.horizMerge(xp);
 		tower1.draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
@@ -136,7 +136,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		events.wait(2);
 	}
 
-	for (; frame2 < 60 && !_vm->shouldQuit(); ++frame2) {
+	for (; frame2 < 60 && !_vm->shouldExit(); ++frame2) {
 		events.updateGameCounter();
 		screen.horizMerge(frame);
 		tower2.draw(0, 0, Common::Point(0, 0), SPRFLAG_800);
@@ -148,7 +148,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		events.wait(2);
 	}
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 	screen.freePages();
 	screen.fadeOut();
@@ -159,14 +159,14 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	w0.update();
 	screen.fadeIn();
 
-	for (int idx = 0; idx < 26 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 26 && !_vm->shouldExit(); ++idx) {
 		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc06.draw(0, idx, Common::Point(26, 75));
 		events.wait(2);
 	}
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 	screen.fadeOut();
 	screen.loadBackground("eg140001.raw");
@@ -175,8 +175,8 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	setSubtitle(Res.WORLD_END_TEXT[3]);
 	screen.fadeIn();
 
-	for (int idx1 = 0; idx1 < 2 && !_vm->shouldQuit(); ++idx1) {
-		for (int idx2 = 0; idx2 < 15 && !_vm->shouldQuit(); ++idx2) {
+	for (int idx1 = 0; idx1 < 2 && !_vm->shouldExit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 15 && !_vm->shouldExit(); ++idx2) {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sc14.draw(0, idx2, Common::Point(141, 63));
@@ -191,8 +191,8 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	screen.loadPage(0);
 	savedBg.blitFrom(screen);
 
-	for (int idx1 = 0; idx1 < 2 && !_vm->shouldQuit(); ++idx1) {
-		for (int idx2 = 0; idx2 < 6 && !_vm->shouldQuit(); ++idx2) {
+	for (int idx1 = 0; idx1 < 2 && !_vm->shouldExit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 6 && !_vm->shouldExit(); ++idx2) {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sc14.draw(0, idx2, Common::Point(26, 21));
@@ -210,7 +210,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	w0.update();
 
 	frame = 0;
-	for (int idx = 185; idx > 68 && !_vm->shouldQuit(); idx -= 3) {
+	for (int idx = 185; idx > 68 && !_vm->shouldExit(); idx -= 3) {
 		if (!sound.isPlaying())
 			sound.playSound("cast.voc");
 
@@ -225,7 +225,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		frame = (frame + 1) % 17;
 	}
 
-	for (int idx = 0; idx < 17 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 17 && !_vm->shouldExit(); ++idx) {
 		if (!sound.isPlaying())
 			sound.playSound("cast.voc");
 
@@ -239,7 +239,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		events.wait(2);
 	}
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 	screen.blitFrom(savedBg);
 	sc17.draw(0, 0, Common::Point(33, 68), SPRFLAG_4000);
@@ -252,8 +252,8 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	w0.update();
 	screen.fadeIn();
 
-	for (int idx1 = 0; idx1 < 2 && !_vm->shouldQuit(); ++idx1) {
-		for (int idx2 = 0; idx2 < 15 && !_vm->shouldQuit(); ++idx2) {
+	for (int idx1 = 0; idx1 < 2 && !_vm->shouldExit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 15 && !_vm->shouldExit(); ++idx2) {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sc14.draw(0, idx2, Common::Point(141, 63));
@@ -266,8 +266,8 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	screen.horizMerge(0);
 	savedBg.blitFrom(screen);
 
-	for (int idx1 = 0; idx1 < 3 && !_vm->shouldQuit(); ++idx1) {
-		for (int idx2 = 0; idx2 < 15 && !_vm->shouldQuit(); ++idx2) {
+	for (int idx1 = 0; idx1 < 3 && !_vm->shouldExit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 15 && !_vm->shouldExit(); ++idx2) {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sc10.draw(0, idx2, Common::Point(26, 21));
@@ -282,7 +282,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	setSubtitle(Res.WORLD_END_TEXT[5]);
 	w0.update();
 
-	for (int idx = 185; idx > 13 && !_vm->shouldQuit(); idx -= 6) {
+	for (int idx = 185; idx > 13 && !_vm->shouldExit(); idx -= 6) {
 		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		staff.draw(0, 0, Common::Point(196, idx), SPRFLAG_4000);
@@ -294,7 +294,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 
 	events.updateGameCounter();
 	events.wait(30);
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 
 	screen.fadeOut();
@@ -303,8 +303,8 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	w0.update();
 	screen.fadeIn();
 
-	for (int idx1 = 0; idx1 < 2 && !_vm->shouldQuit(); ++idx1) {
-		for (int idx2 = 0; idx2 < 15 && !_vm->shouldQuit(); ++idx2) {
+	for (int idx1 = 0; idx1 < 2 && !_vm->shouldExit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 15 && !_vm->shouldExit(); ++idx2) {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sc14.draw(0, idx2, Common::Point(141, 63));
@@ -314,7 +314,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		}
 	}
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 	screen.loadBackground("tablmain.raw");
 	savedBg.blitFrom(screen);
@@ -325,7 +325,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	w0.update();
 	sound.playSound("cast.voc");
 
-	for (int idx = 0; idx < 5 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 5 && !_vm->shouldExit(); ++idx) {
 		if (!sound.isPlaying())
 			sound.playSound("cast.voc");
 
@@ -341,7 +341,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	}
 
 	frame = 0;
-	for (int idx = 0; idx < 16 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 16 && !_vm->shouldExit(); ++idx) {
 		if (!sound.isPlaying())
 			sound.playSound("cast.voc");
 
@@ -358,7 +358,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	}
 
 	frame = 0;
-	for (int idx = 11; idx < 82 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 11; idx < 82 && !_vm->shouldExit(); ++idx) {
 		if (!sound.isPlaying())
 			sound.playSound("cast.voc");
 
@@ -374,13 +374,13 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	}
 
 	sound.stopSound();
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 
 	sound.playSound("click.voc");
 	sound.playSound("padspell.voc");
 
-	for (int idx = 0; idx < 14 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 14 && !_vm->shouldExit(); ++idx) {
 		if (idx == 10)
 			sound.playSound("padspell.voc");
 
@@ -393,7 +393,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		events.wait(2);
 	}
 
-	for (int idx = 0; idx < 17 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 17 && !_vm->shouldExit(); ++idx) {
 		if (idx == 10)
 			sound.playSound("padspell.voc");
 
@@ -406,7 +406,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		events.wait(3);
 	}
 
-	for (int idx = 0; idx < 6 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 6 && !_vm->shouldExit(); ++idx) {
 		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc20[3].draw(0, idx, Common::Point(26, 55));
@@ -416,7 +416,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 		events.wait(4);
 	}
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 	screen.blitFrom(savedBg);
 	setSubtitle(Res.WORLD_END_TEXT[6]);
@@ -428,7 +428,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	savedBg.blitFrom(screen);
 	screen.freePages();
 
-	for (int idx = 0; idx < 35 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 35 && !_vm->shouldExit(); ++idx) {
 		if (idx == 3)
 			sound.playSound("click.voc");
 		else if (idx == 5 || idx == 15)
@@ -470,7 +470,7 @@ void WorldOfXeenCutscenes::worldEnding2() {
 	screen.fadeIn();
 
 	int frame = 0;
-	for (int idx = 0; idx < 61 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 61 && !_vm->shouldExit(); ++idx) {
 		if (idx == 2 || idx == 15 || idx == 25 || idx == 33 || idx == 41)
 			sound.playSound("gascompr.voc");
 
@@ -502,7 +502,7 @@ void WorldOfXeenCutscenes::worldEnding3() {
 	screen.fadeIn();
 	sound.playSound("comet.voc");
 
-	for (int idx = 0; idx < 52 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 52 && !_vm->shouldExit(); ++idx) {
 		if (idx == 28)
 			sound.playSound("click.voc");
 		if (!sound.isPlaying())
@@ -525,7 +525,7 @@ void WorldOfXeenCutscenes::worldEnding3() {
 	screen.fadeIn(0x81);
 
 	int frame1 = 0, frame2 = 0, frame3 = 0, ctr = 0;
-	for (int idx = 0; idx < 78 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 78 && !_vm->shouldExit(); ++idx) {
 		events.updateGameCounter();
 		sc261[ctr / 14].draw(0, idx % 17, Common::Point(7, 4));
 		sc262.draw(0, frame1, Common::Point(86, 4));
@@ -586,7 +586,7 @@ void WorldOfXeenCutscenes::worldEnding4() {
 	screen.loadPalette("eg250001.pal");
 	screen.fadeIn();
 
-	for (int idx = 0; idx < 89 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 89 && !_vm->shouldExit(); ++idx) {
 		if (!sound.isPlaying())
 			sound.playSound("comet.voc");
 		if (idx == 19 || idx == 60)
@@ -598,7 +598,7 @@ void WorldOfXeenCutscenes::worldEnding4() {
 		events.wait(2);
 	}
 
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 	sound.stopSound();
 	screen.fadeOut();
@@ -608,7 +608,7 @@ void WorldOfXeenCutscenes::worldEnding4() {
 	w0.update();
 	screen.fadeIn();
 
-	for (int idx = 0; idx < 138 && !_vm->shouldQuit(); ++idx) {
+	for (int idx = 0; idx < 138 && !_vm->shouldExit(); ++idx) {
 		if (!sound.isPlaying() && idx > 98)
 			sound.playSound("rumble.voc");
 
@@ -620,7 +620,7 @@ void WorldOfXeenCutscenes::worldEnding4() {
 	}
 
 	sound.stopSound();
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 
 	screen.loadPalette("white.pal");
@@ -628,14 +628,14 @@ void WorldOfXeenCutscenes::worldEnding4() {
 	sound.playSound("explosio.voc");
 	events.updateGameCounter();
 	events.wait(10);
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 
 	screen.loadPalette("eg250001.pal");
 	screen.fadeOut();
 
-	for (int idx1 = 0; idx1 < 20 && !_vm->shouldQuit(); ++idx1) {
-		for (int idx2 = 0; idx2 < 4 && !_vm->shouldQuit(); ++idx2) {
+	for (int idx1 = 0; idx1 < 20 && !_vm->shouldExit(); ++idx1) {
+		for (int idx2 = 0; idx2 < 4 && !_vm->shouldExit(); ++idx2) {
 			sc30.draw(0, idx2);
 			setSubtitle2(Res.WORLD_END_TEXT[8]);
 			w0.update();
@@ -648,11 +648,11 @@ void WorldOfXeenCutscenes::worldEnding4() {
 	}
 
 	screen.fadeOut();
-	while (sound.isMusicPlaying() && !_vm->shouldQuit()) {
+	while (sound.isMusicPlaying() && !_vm->shouldExit()) {
 		events.updateGameCounter();
 		events.wait(2);
 	}
-	if (_vm->shouldQuit())
+	if (_vm->shouldExit())
 		return;
 
 	sound.playSong("outday3.m");

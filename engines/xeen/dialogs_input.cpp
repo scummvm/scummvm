@@ -41,7 +41,7 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 	_window->writeString(msg);
 	_window->update();
 
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		Common::KeyCode keyCode = waitForKey(msg);
 
 		bool refresh = false;
@@ -86,7 +86,7 @@ Common::KeyCode Input::waitForKey(const Common::String &msg) {
 		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_17;
 
 	Common::KeyCode ch = Common::KEYCODE_INVALID;
-	while (!_vm->shouldQuit()) {
+	while (!_vm->shouldExit()) {
 		events.updateGameCounter();
 
 		if (flag)
@@ -247,7 +247,7 @@ int Choose123::execute(int numOptions) {
 			}
 
 			events.wait(delay);
-			if (_vm->shouldQuit())
+			if (_vm->shouldExit())
 				return 0;
 		} while (!_buttonValue);
 

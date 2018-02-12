@@ -46,7 +46,7 @@ void Dismiss::execute() {
 	w.update();
 
 	bool breakFlag = false;
-	while (!_vm->shouldQuit() && !breakFlag) {
+	while (!_vm->shouldExit() && !breakFlag) {
 		do {
 			events.updateGameCounter();
 			intf.draw3d(false);
@@ -59,8 +59,8 @@ void Dismiss::execute() {
 			do {
 				events.pollEventsAndWait();
 				checkEvents(_vm);
-			} while (!_vm->shouldQuit() && !_buttonValue && events.timeElapsed() == 0);
-		} while (!_vm->shouldQuit() && !_buttonValue);
+			} while (!_vm->shouldExit() && !_buttonValue && events.timeElapsed() == 0);
+		} while (!_vm->shouldExit() && !_buttonValue);
 
 		if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
 			_buttonValue -= Common::KEYCODE_F1;

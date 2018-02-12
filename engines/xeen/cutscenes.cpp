@@ -38,7 +38,7 @@ void Cutscenes::showSubtitles(uint windowIndex) {
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 
-	if (sound._soundOn || _vm->shouldQuit()) {
+	if (sound._soundOn || _vm->shouldExit()) {
 		// Sound is on, so subtitles aren't needed
 		resetSubtitles(0, 0);
 	} else {
@@ -124,7 +124,7 @@ bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 	if (_vm->_files->_isDarkCc) {
 		if (fadeIn)
 			screen.fadeIn(2);
-		return _vm->shouldQuit();
+		return _vm->shouldExit();
 	}
 
 	screen.saveBackground();
@@ -145,7 +145,7 @@ bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 
 	if (rollUp) {
 		for (int i = 22, ctr = 7; i > 0 && !events.isKeyMousePressed()
-				&& !_vm->shouldQuit(); --i) {
+				&& !_vm->shouldExit(); --i) {
 			events.updateGameCounter();
 			screen.restoreBackground();
 
@@ -161,7 +161,7 @@ bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 				marb[(i - 1) / 5]->draw(0, (i - 1) % 5);
 			screen.update();
 
-			while (!_vm->shouldQuit() && events.timeElapsed() == 0)
+			while (!_vm->shouldExit() && events.timeElapsed() == 0)
 				events.pollEventsAndWait();
 
 			if (i == 0 && fadeIn)
@@ -169,7 +169,7 @@ bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 		}
 	} else {
 		for (int i = 0, ctr = 0; i < 22 && !events.isKeyMousePressed()
-				&& !_vm->shouldQuit(); ++i) {
+				&& !_vm->shouldExit(); ++i) {
 			events.updateGameCounter();
 			screen.restoreBackground();
 
@@ -186,7 +186,7 @@ bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 			}
 			screen.update();
 
-			while (!_vm->shouldQuit() && events.timeElapsed() == 0)
+			while (!_vm->shouldExit() && events.timeElapsed() == 0)
 				events.pollEventsAndWait();
 
 			if (i == 0 && fadeIn)
@@ -208,7 +208,7 @@ bool Cutscenes::doScroll(bool rollUp, bool fadeIn) {
 	for (int i = 0; i < 16; ++i)
 		delete hand[i];
 
-	return _vm->shouldQuit() || events.isKeyMousePressed();
+	return _vm->shouldExit() || events.isKeyMousePressed();
 }
 
 } // End of namespace Xeen
