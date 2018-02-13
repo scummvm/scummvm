@@ -43,14 +43,20 @@ private:
 
 	typedef struct {
 		int id; // -1: no touch
-		int timeLastDown;
+		Uint32 timeLastDown;
 		int lastX; // last known screen coordinates
 		int lastY; // last known screen coordinates
 	} Touch;
 
 	Touch _finger[SCE_TOUCH_PORT_MAX_NUM][MAX_NUM_FINGERS]; // keep track of finger status
 
-	bool _multiFingerDragging[SCE_TOUCH_PORT_MAX_NUM]; // keep track whether we are currently drag-and-dropping
+	typedef enum DraggingType {
+		DRAG_NONE = 0,
+		DRAG_TWO_FINGER,
+		DRAG_THREE_FINGER,
+	} DraggingType;
+
+	DraggingType _multiFingerDragging[SCE_TOUCH_PORT_MAX_NUM]; // keep track whether we are currently drag-and-dropping
 
 	void preprocessFingerDown(SDL_Event *event);
 	void preprocessFingerUp(SDL_Event *event);

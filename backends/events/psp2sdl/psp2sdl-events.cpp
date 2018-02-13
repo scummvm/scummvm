@@ -42,7 +42,7 @@ PSP2EventSource::PSP2EventSource() {
 		for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 			_finger[port][i].id = -1;
 		}
-		_multiFingerDragging[port] = false;
+		_multiFingerDragging[port] = DRAG_NONE;
 	}
 }
 
@@ -91,6 +91,13 @@ void PSP2EventSource::preprocessFingerDown(SDL_Event *event) {
 
 	if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 		convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+	}
+
+	// make sure each finger is not reported down multiple times
+	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
+		if (_finger[port][i].id == id) {
+			_finger[port][i].id = -1;
+		}
 	}
 
 	// we need the timestamps to decide later if the user performed a short tap (click)
@@ -159,11 +166,17 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 				if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 					convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 				}
+				Uint8 simulatedButton = 0;
+				if (_multiFingerDragging[port] == DRAG_THREE_FINGER)
+					simulatedButton = SDL_BUTTON_RIGHT;
+				else {
+					simulatedButton = SDL_BUTTON_LEFT;
+				}
 				event->type = SDL_MOUSEBUTTONUP;
-				event->button.button = SDL_BUTTON_LEFT;
+				event->button.button = simulatedButton;
 				event->button.x = x;
 				event->button.y = y;
-				_multiFingerDragging[port] = false;
+				_multiFingerDragging[port] = DRAG_NONE;
 			}
 		}
 	}
@@ -272,29 +285,39 @@ void PSP2EventSource::preprocessFingerMotion(SDL_Event *event) {
 				if (numFingersDownLong >= 2) {
 					// starting drag, so push mouse down at current location (back) 
 					// or location of "oldest" finger (front)
-					int mouseDownX = x;
-					int mouseDownY = y;
+					int mouseDownX = _km.x / MULTIPLIER;
+					int mouseDownY = _km.y / MULTIPLIER;
 					if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 						for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 							if (_finger[port][i].id == id) {
+								Uint32 earliestTime = _finger[port][i].timeLastDown;
 								for (int j = 0; j < MAX_NUM_FINGERS; j++) {
 									if (_finger[port][j].id >= 0 && (i != j) ) {
-										if (_finger[port][j].timeLastDown < _finger[port][i].timeLastDown) {
+										if (_finger[port][j].timeLastDown < earliestTime) {
 											mouseDownX = _finger[port][j].lastX;
 											mouseDownY = _finger[port][j].lastY;
+											earliestTime = _finger[port][j].timeLastDown;
 										}
 									}
 								}
+								break;
 							}
 						}
 					}
+					Uint8 simulatedButton = 0;
+					if (numFingersDownLong == 2) {
+						simulatedButton = SDL_BUTTON_LEFT;
+						_multiFingerDragging[port] = DRAG_TWO_FINGER;
+					} else {
+						simulatedButton = SDL_BUTTON_RIGHT;
+						_multiFingerDragging[port] = DRAG_THREE_FINGER;
+					}
 					SDL_Event ev;
 					ev.type = SDL_MOUSEBUTTONDOWN;
-					ev.button.button = SDL_BUTTON_LEFT;
+					ev.button.button = simulatedButton;
 					ev.button.x = mouseDownX;
 					ev.button.y = mouseDownY;
 					SDL_PushEvent(&ev);
-					_multiFingerDragging[port] = true;
 				}
 			}
 		}
