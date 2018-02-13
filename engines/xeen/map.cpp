@@ -992,7 +992,11 @@ void Map::load(int mapId) {
 		_sideTownPortal = _loadDarkSide ? 1 : 0;
 	}
 
-	if (_vm->getGameID() == GType_WorldOfXeen) {
+	if (_vm->getGameID() == GType_Swords) {
+		_animationInfo.load("dark.dat");
+		_monsterData.load("dark.mon");
+		_wallPicSprites.load("darkpic.dat");
+	} else if (_vm->getGameID() == GType_WorldOfXeen) {
 		files.setGameCc(1);
 
 		if (!_loadDarkSide) {
