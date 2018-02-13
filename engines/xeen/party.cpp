@@ -660,14 +660,15 @@ void Party::giveTreasure() {
 
 	w.writeString(Res.HIT_A_KEY);
 	w.update();
+	events.clearEvents();
 
 	do {
 		events.updateGameCounter();
 		intf.draw3d(true);
 
-		while (!events.isKeyMousePressed() && events.timeElapsed() < 1)
-			events.pollEventsAndWait();
-	} while (!_vm->shouldExit() && events.timeElapsed() == 1);
+		events.wait(1, false);
+	} while (!_vm->shouldExit() && !events.isKeyMousePressed());
+	events.clearEvents();
 
 	if (_vm->_mode != MODE_COMBAT)
 		_vm->_mode = MODE_1;
