@@ -216,6 +216,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 	map._loadDarkSide = files._isDarkCc;
 	map.load(party._mazeId);
 
+	delete saveFile;
 	return Common::kNoError;
 }
 
