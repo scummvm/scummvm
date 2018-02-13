@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	worldofxeen/worldofxeen_menu.o \
 	worldofxeen/worldofxeen.o \
 	worldofxeen/worldofxeen_resources.o \
+	swordsofxeen/swordsofxeen.o \
 	character.o \
 	combat.o \
 	cutscenes.o \

@@ -22,6 +22,7 @@
 
 #include "xeen/xeen.h"
 #include "xeen/worldofxeen/worldofxeen.h"
+#include "xeen/swordsofxeen/swordsofxeen.h"
 
 #include "base/plugins.h"
 #include "common/savefile.h"
@@ -66,6 +67,7 @@ static const PlainGameDescriptor XeenGames[] = {
 	{ "clouds", "Clouds of Xeen" },
 	{ "darkside", "Dark Side of Xeen" },
 	{ "worldofxeen", "World of Xeen" },
+	{ "swordsofxeen", "Swords of Xeen" },
 	{0, 0}
 };
 
@@ -82,7 +84,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Xeen Engine (c) ???";
+		return "Xeen Engine (c) 1992-1993 New World Computing, Inc.";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -120,6 +122,9 @@ bool XeenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	case Xeen::GType_DarkSide:
 	case Xeen::GType_WorldOfXeen:
 		*engine = new Xeen::WorldOfXeen::WorldOfXeenEngine(syst, gd);
+		break;
+	case Xeen::GType_Swords:
+		*engine = new Xeen::SwordsOfXeen::SwordsOfXeenEngine(syst, gd);
 		break;
 	default:
 		error("Invalid game");

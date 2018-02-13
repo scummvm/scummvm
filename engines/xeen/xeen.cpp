@@ -165,7 +165,8 @@ void XeenEngine::play() {
 	_screen->loadBackground("back.raw");
 	_screen->loadPalette("mm4.pal");
 
-	if (getGameID() != GType_WorldOfXeen && !_map->_loadDarkSide) {
+	if (getGameID() != GType_WorldOfXeen && getGameID() != GType_Swords
+			&& !_map->_loadDarkSide) {
 		_map->_loadDarkSide = true;
 		_party->_mazeId = 29;
 		_party->_mazeDirection = DIR_NORTH;

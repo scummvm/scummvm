@@ -43,12 +43,12 @@ SavesManager::SavesManager(const Common::String &targetName): _targetName(target
 		File::_darkSave = new SaveArchive(g_vm->_party);
 		File::_darkSave->reset(File::_darkCc);
 	}
-	if (g_vm->getGameID() != GType_DarkSide) {
+	if (g_vm->getGameID() != GType_DarkSide && g_vm->getGameID() != GType_Swords) {
 		File::_xeenSave = new SaveArchive(g_vm->_party);
 		File::_xeenSave->reset(File::_xeenCc);
 	}
 
-	File::_currentSave = g_vm->getGameID() == GType_DarkSide ?
+	File::_currentSave = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
 		File::_darkSave : File::_xeenSave;
 	assert(File::_currentSave);
 

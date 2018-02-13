@@ -221,16 +221,22 @@ FileManager::FileManager(XeenEngine *vm) {
 	Common::File f;
 	_isDarkCc = vm->getGameID() == GType_DarkSide;
 	
-	File::_xeenCc = (vm->getGameID() == GType_DarkSide) ? nullptr :
-		new CCArchive("xeen.cc", "xeen", true);
-	File::_darkCc = (vm->getGameID() == GType_Clouds) ? nullptr :
-		new CCArchive("dark.cc", "dark", true);
+	if (vm->getGameID() == GType_Swords) {
+		File::_xeenCc = nullptr;
+		File::_darkCc = new CCArchive("swrd.cc", "xeen", true);
+	} else {
+		File::_xeenCc = (vm->getGameID() == GType_DarkSide) ? nullptr :
+			new CCArchive("xeen.cc", "xeen", true);
+		File::_darkCc = (vm->getGameID() == GType_Clouds) ? nullptr :
+			new CCArchive("dark.cc", "dark", true);
+	}
+
 	if (Common::File::exists("intro.cc")) {
 		CCArchive *introCc = new CCArchive("intro.cc", "intro", true);
 		SearchMan.add("intro", introCc);
 	}
 
-	File::_currentArchive = vm->getGameID() == GType_DarkSide ?
+	File::_currentArchive = vm->getGameID() == GType_DarkSide || vm->getGameID() == GType_Swords ?
 		File::_darkCc : File::_xeenCc;
 	assert(File::_currentArchive);
 }

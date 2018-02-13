@@ -80,6 +80,24 @@ static const XeenGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{
+		// Swords of Xeen (GOG)
+		{
+			"swordsofxeen",
+			nullptr,
+			{
+				{"swrd.cc", 0, "0d51c3457070cc7d1a596da9241924a5", 13026924 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GType_Swords,
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
