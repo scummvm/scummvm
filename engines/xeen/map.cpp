@@ -112,6 +112,7 @@ MonsterStruct::MonsterStruct(Common::String name, int experience, int hp, int ar
 
 void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
 	char name[16];
+	Common::fill(name, name + 16, '\0');
 	s.read(name, 16);
 	name[15] = '\0';
 	_name = Common::String(name);
@@ -147,6 +148,7 @@ void MonsterStruct::synchronize(Common::SeekableReadStream &s) {
 	_fx = s.readByte();
 
 	char attackVoc[10];
+	Common::fill(attackVoc, attackVoc + 10, '\0');
 	s.read(attackVoc, 9);
 	attackVoc[9] = '\0';
 	_attackVoc = Common::String(attackVoc);

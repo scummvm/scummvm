@@ -467,7 +467,8 @@ void Combat::moveMonsters() {
 
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
-		if (monster._position.y < 32) {
+		if ((uint)monster._position.y < 32) {
+			assert((uint)monster._position.x < 32);
 			_monsterMap[monster._position.y][monster._position.x]++;
 		}
 	}
