@@ -374,7 +374,7 @@ public:
 	byte _walkMaxXYCountInc;
 
 	Common::Point _tmp_Pos;
-	Common::Point _tmp_Dest;
+	Common::Point _tmp_NewPos;
 	byte _tmp_WalkBox;
 	bool _tmp_NewWalkBoxEntered;
 
@@ -407,8 +407,8 @@ public:
 	bool calcWalkDistances();
 	void walkActor();
 	void actorSetWalkTo();
-	byte actorWalkX();
-	byte actorWalkY();
+	byte actorWalkXCalculate();
+	byte actorWalkYCalculate();
 	byte updateWalkbox();
 
 	void walkBoxQueueReset();
@@ -417,8 +417,8 @@ public:
 	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
 	AdjustBoxResult adjustPosInBorderWalkbox(AdjustBoxResult box);
 
-	void setTmpFromActor();
-	void setActorFromTmp();
+	void setActorToTempPosition();
+	void setActorToOriginalPosition();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };

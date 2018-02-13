@@ -595,20 +595,20 @@ bool Actor_v0::calcWalkDistances() {
 	_walkYCountGreaterThanXCount = 0;
 	uint16 A = 0;
 
-	if (_CurrentWalkTo.x >= _tmp_Dest.x) {
-		A = _CurrentWalkTo.x - _tmp_Dest.x;
+	if (_CurrentWalkTo.x >= _tmp_NewPos.x) {
+		A = _CurrentWalkTo.x - _tmp_NewPos.x;
 		_walkDirX = 1;
 	} else {
-		A = _tmp_Dest.x - _CurrentWalkTo.x;
+		A = _tmp_NewPos.x - _CurrentWalkTo.x;
 	}
 
 	_walkXCountInc = A;
 
-	if (_CurrentWalkTo.y >= _tmp_Dest.y) {
-		A = _CurrentWalkTo.y - _tmp_Dest.y;
+	if (_CurrentWalkTo.y >= _tmp_NewPos.y) {
+		A = _CurrentWalkTo.y - _tmp_NewPos.y;
 		_walkDirY = 1;
 	} else {
-		A = _tmp_Dest.y - _CurrentWalkTo.y;
+		A = _tmp_NewPos.y - _CurrentWalkTo.y;
 	}
 
 	_walkYCountInc = A;
@@ -631,63 +631,65 @@ bool Actor_v0::calcWalkDistances() {
 	return false;
 }
 
-byte Actor_v0::actorWalkX() {
+/* Calculate the result of moving X+1 or X-1 */
+byte Actor_v0::actorWalkXCalculate() {
 	byte A = _walkXCount;
 	A += _walkXCountInc;
 	if (A >= _walkCountModulo) {
 		if (!_walkDirX) {
-			_tmp_Dest.x--;
+			_tmp_NewPos.x--;
 		} else {
-			_tmp_Dest.x++;
+			_tmp_NewPos.x++;
 		}
 
 		A -= _walkCountModulo;
 	}
 	// 2EAC
 	_walkXCount = A;
-	setTmpFromActor();
+	setActorToTempPosition();
 	if (updateWalkbox() == kInvalidBox) {
 		// 2EB9
-		setActorFromTmp();
+		setActorToOriginalPosition();
 
 		return 3;
 	}
 	// 2EBF
-	if (_tmp_Dest.x == _CurrentWalkTo.x)
+	if (_tmp_NewPos.x == _CurrentWalkTo.x)
 		return 1;
 
 	return 0;
 }
 
-byte Actor_v0::actorWalkY() {
+/* Calculate the result of moving Y+1 or Y-1 */
+byte Actor_v0::actorWalkYCalculate() {
 	byte A = _walkYCount;
 	A += _walkYCountInc;
 	if (A >= _walkCountModulo) {
 		if (!_walkDirY) {
-			_tmp_Dest.y--;
+			_tmp_NewPos.y--;
 		} else {
-			_tmp_Dest.y++;
+			_tmp_NewPos.y++;
 		}
 
 		A -= _walkCountModulo;
 	}
 	// 2EEB
 	_walkYCount = A;
-	setTmpFromActor();
+	setActorToTempPosition();
 	if (updateWalkbox() == kInvalidBox) {
 		// 2EF8
-		setActorFromTmp();
+		setActorToOriginalPosition();
 		return 4;
 	}
 	// 2EFE
 	if (_walkYCountInc != 0) {
 		if (_walkYCountInc == 0xFF) {
-			setActorFromTmp();
+			setActorToOriginalPosition();
 			return 4;
 		}
 	}
 	// 2F0D
-	if (_CurrentWalkTo.y == _tmp_Dest.y)
+	if (_CurrentWalkTo.y == _tmp_NewPos.y)
 		return 1;
 
 	return 0;
@@ -880,9 +882,8 @@ void Actor_v0::walkActor() {
 	if (_NewWalkTo != _CurrentWalkTo) {
 		_CurrentWalkTo = _NewWalkTo;
 
-L2A33:;
-		_moving &= 0xF0;
-		_tmp_Dest = _pos;
+UpdateActorDirection:;
+		_tmp_NewPos = _pos;
 
 		byte tmp = calcWalkDistances();
 		_moving &= 0xF0;
@@ -904,6 +905,7 @@ L2A33:;
 
 		directionUpdate();
 
+		// Need to turn again?
 		if (_moving & 0x80)
 			return;
 
@@ -918,25 +920,30 @@ L2A33:;
 		}
 	}
 
-	// 2A9A
+	// 2A9A: Nothing to do
 	if (_moving == 2)
 		return;
 
+	// Reached Target
 	if ((_moving & 0x0F) == 1)
 		return stopActorMoving();
 
-	// 2AAD
+	// 2AAD: Turn actor?
 	if (_moving & 0x80) {
 		directionUpdate();
 
+		// Turn again?
 		if (_moving & 0x80)
 			return;
 
+		// Start Walk animation
 		animateActor(newDirToOldDir(_facing));
 	}
 
+	// Walk X
 	if ((_moving & 0x0F) == 3) {
-		setTmpFromActor();
+	WalkX:;
+		setActorToTempPosition();
 
 		if (!_walkDirX) {
 			_pos.x--;
@@ -945,79 +952,98 @@ L2A33:;
 		}
 
 		// 2C51
+		// Does this move us into the walkbox?
 		if (updateWalkbox() != kInvalidBox) {
 
-			setActorFromTmp();
-			goto L2A33;
+			// Yes, Lets update our direction
+			setActorToOriginalPosition();
+			goto UpdateActorDirection;
 		}
 
-		setActorFromTmp();
+		setActorToOriginalPosition();
 
-		if (_CurrentWalkTo.y == _tmp_Dest.y) {
+		// Have we reached Y Target?
+		if (_CurrentWalkTo.y == _tmp_NewPos.y) {
 			stopActorMoving();
 			return;
 		}
 
+		// Lets check one more pixel up or down
 		if (!_walkDirY) {
-			_tmp_Dest.y--;
+			_tmp_NewPos.y--;
 		} else {
-			_tmp_Dest.y++;
+			_tmp_NewPos.y++;
 		}
 
-		setTmpFromActor();
+		setActorToTempPosition();
 
-		byte A = updateWalkbox();
-		if (A == 0xFF) {
-			setActorFromTmp();
+		// Are we still inside an invalid walkbox?
+		if (updateWalkbox() == kInvalidBox) {
+			setActorToOriginalPosition();
 			stopActorMoving();
 			return;
 		}
 
+		// Found a valid walkbox
 		return;
 	}
 
-	// 2ADA
+	// 2ADA: Walk Y
 	if ((_moving & 0x0F) == 4) {
-		setTmpFromActor();
+		setActorToTempPosition();
 
 		if (!_walkDirY) {
 			_pos.y--;
 		} else {
 			_pos.y++;
 		}
+
+		// Moved out of walkbox?
 		if (updateWalkbox() == kInvalidBox) {
 			// 2CC7
-			setActorFromTmp();
-			if (_CurrentWalkTo.x == _tmp_Dest.x) {
+			setActorToOriginalPosition();
+
+			// Reached X?
+			if (_CurrentWalkTo.x == _tmp_NewPos.x) {
 				stopActorMoving();
 				return;
 			}
 
+			// Lets check one more pixel to left or right
 			if (!_walkDirX) {
-				_tmp_Dest.x--;
+				_tmp_NewPos.x--;
 			} else {
-				_tmp_Dest.x++;
+				_tmp_NewPos.x++;
 			}
-			setTmpFromActor();
 
+			setActorToTempPosition();
+
+			// Still in an invalid walkbox?
 			if (updateWalkbox() == kInvalidBox) {
-				setActorFromTmp();
+
+				setActorToOriginalPosition();
 				stopActorMoving();
 			}
 
 			return;
 		} else {
-			setActorFromTmp();
-			goto L2A33;
+
+			// Lets update our direction
+			setActorToOriginalPosition();
+			goto UpdateActorDirection;
 		}
 	}
 
 	if ((_moving & 0x0F) == 0) {
 		// 2AE8
-		byte A = actorWalkX();
+		byte A = actorWalkXCalculate();
 
+		// Will X movement reach destination
 		if (A == 1) {
-			A = actorWalkY();
+
+			A = actorWalkYCalculate();
+
+			// Will Y movement also reach destination?
 			if (A == 1) {
 				_moving &= 0xF0;
 				_moving |= A;
@@ -1029,7 +1055,7 @@ L2A33:;
 			return;
 
 		} else {
-			// 2B0C
+			// 2B0C: Moving X will put us in an invalid walkbox
 			if (A == 3) {
 				_moving &= 0xF0;
 				_moving |= A;
@@ -1042,14 +1068,27 @@ L2A33:;
 
 				directionUpdate();
 				animateActor(newDirToOldDir(_facing));
+
+				// FIXME: During the hands-free-demo in the library (room 5), Purple Tentacle gets stuck following Sandy due to the corner of the stairs, 
+				//        This is due to distance, and walkbox gap/layout. This works fine with the original engine, because it 'brute forces' 
+				//        another pixel move in the walk direction before giving up, allowing us to move enough pixels to hit the next walkbox.
+				//        Why this fails with the return is because script-10 is executing a 'walkActorToActor' every cycle, which restarts the movement process
+				//        As a work around, we implement the original engine behaviour only for Purple Tentacle in the Demo. Doing this for other actors
+				//        causes a skipping effect while transitioning walkboxes (the original has another bug in this situation, in which the actor just changes direction for 1 frame during this moment)
+				if ((_vm->_game.features & GF_DEMO) && _number == 13)
+					goto WalkX;
+
 				return;
 
 			} else {
-				// 2B39
-				A = actorWalkY();
+				// 2B39: Moving X was ok, do we also move Y
+				A = actorWalkYCalculate();
+
+				// Are we in a valid walkbox?
 				if (A != 4)
 					return;
 
+				// No, we need to change direction
 				_moving &= 0xF0;
 				_moving |= A;
 
@@ -1061,6 +1100,7 @@ L2A33:;
 
 				directionUpdate();
 				animateActor(newDirToOldDir(_facing));
+
 				return;
 			}
 		}
@@ -3409,16 +3449,16 @@ void Actor_v0::directionUpdate() {
 	_moving &= ~0x80;
 }
 
-void Actor_v0::setTmpFromActor() {
+void Actor_v0::setActorToTempPosition() {
 	_tmp_Pos = _pos;
-	_pos = _tmp_Dest;
+	_pos = _tmp_NewPos;
 	_tmp_WalkBox = _walkbox;
 	_tmp_NewWalkBoxEntered = _newWalkBoxEntered;
 }
 
-void Actor_v0::setActorFromTmp() {
+void Actor_v0::setActorToOriginalPosition() {
 	_pos = _tmp_Pos;
-	_tmp_Dest = _tmp_Pos;
+	_tmp_NewPos = _tmp_Pos;
 	_walkbox = _tmp_WalkBox;
 	_newWalkBoxEntered = _tmp_NewWalkBoxEntered;
 }
