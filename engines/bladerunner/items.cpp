@@ -22,6 +22,7 @@
 
 #include "bladerunner/items.h"
 
+#include "bladerunner/game_constants.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/zbuffer.h"
@@ -58,7 +59,7 @@ void Items::tick() {
 		if (_items[i]->_setId != setId) {
 			continue;
 		}
-		bool set14NotTarget = setId == 14 && !_items[i]->isTargetable();
+		bool set14NotTarget = setId == kSetPS10_PS11_PS12_PS13 && !_items[i]->isTargetable();
 		Common::Rect screenRect;
 		if (_items[i]->tick(&screenRect, set14NotTarget)) {
 			_vm->_zbuffer->mark(screenRect);

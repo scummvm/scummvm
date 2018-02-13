@@ -36,10 +36,10 @@ void SceneScriptDR01::InitializeScene() {
 	}
 	Scene_Exit_Add_2D_Exit(0, 240, 60, 450, 250, 0);
 	Scene_Exit_Add_2D_Exit(1, 0, 0, 30, 479, 3);
-	if (Game_Flag_Query(kFlagSpinnerToDR01) && Global_Variable_Query(1) < 4) {
+	if (Game_Flag_Query(kFlagSpinnerToDR01) && Global_Variable_Query(kVariableChapter) < 4) {
 		Scene_Exit_Add_2D_Exit(2, 610, 0, 639, 479, 1);
 	}
-	if (Global_Variable_Query(1) >= 3) {
+	if (Global_Variable_Query(kVariableChapter) >= 3) {
 		Scene_Exit_Add_2D_Exit(3, 0, 45, 142, 201, 0);
 	}
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);

@@ -36,7 +36,7 @@ void SceneScriptCT01::InitializeScene() {
 	} else if (Game_Flag_Query(88)) {
 		Game_Flag_Reset(88);
 		Setup_Scene_Information(-419.0f, -6.5f, 696.0f, 28);
-		if (Global_Variable_Query(1) != 2 && Global_Variable_Query(1) != 3) {
+		if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 			if (Game_Flag_Query(kFlagSpinnerToCT01)) {
 				Scene_Loop_Start_Special(0, 0, 0);
 			} else {
@@ -403,7 +403,7 @@ void SceneScriptCT01::PlayerWalkedOut() {
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	}
 	Music_Stop(5);
-	if (!Game_Flag_Query(176) && Global_Variable_Query(1)) {
+	if (!Game_Flag_Query(176) && Global_Variable_Query(kVariableChapter)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeTowards3, true, -1);

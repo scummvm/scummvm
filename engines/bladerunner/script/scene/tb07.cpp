@@ -37,7 +37,7 @@ void SceneScriptTB07::InitializeScene() {
 	Ambient_Sounds_Add_Sound(214, 1, 20, 20, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(215, 1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(216, 1, 15, 20, 25, -100, 100, -101, -101, 0, 0);
-	if (Global_Variable_Query(1) == 4 && !Actor_Clue_Query(kActorMcCoy, kClueDNATyrell)) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && !Actor_Clue_Query(kActorMcCoy, kClueDNATyrell)) {
 		Item_Add_To_World(83, 941, 18, 9.7f, 48.7f, -174.22f, 0, 12, 12, false, true, false, true);
 	}
 	if (Game_Flag_Query(661)) {
@@ -81,7 +81,7 @@ bool SceneScriptTB07::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 68.0f, 12.0f, 288.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			if (Global_Variable_Query(1) == 4) {
+			if (Global_Variable_Query(kVariableChapter) == 4) {
 				Game_Flag_Set(608);
 				Set_Enter(17, kSceneTB02);
 			} else {
@@ -175,7 +175,7 @@ void SceneScriptTB07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptTB07::PlayerWalkedIn() {
-	int v0 = Global_Variable_Query(1);
+	int v0 = Global_Variable_Query(kVariableChapter);
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 44.0f, 12.0f, 176.0f, 0, 0, false, 0);
 	if ((v0 == 2 || v0 == 3) && !Game_Flag_Query(612)) {
 		Player_Set_Combat_Mode(false);

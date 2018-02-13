@@ -290,7 +290,7 @@ void KIA::tick() {
 	}
 	if (_currentSectionId != kKIASectionQuit && _transitionId != 14) {
 		if (_vm->_settings->getDifficulty() > 0) {
-			_vm->_mainFont->drawColor(Common::String::format("%04d", _vm->_gameVars[2]), _vm->_surfaceFront, 580, 341, 0x2991);
+			_vm->_mainFont->drawColor(Common::String::format("%04d", _vm->_gameVars[kVariableChinyen]), _vm->_surfaceFront, 580, 341, 0x2991);
 		} else {
 			_shapes->get(39)->draw(_vm->_surfaceFront, 583, 342);
 		}

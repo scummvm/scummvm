@@ -30,6 +30,12 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class AIScriptBase : public ScriptBase {
+protected:
+	int _animationState;
+	int _animationFrame;
+	int _animationStateNext;
+	int _animationNext;
+
 public:
 	AIScriptBase(BladeRunnerEngine *vm) : ScriptBase(vm) {}
 
@@ -50,8 +56,8 @@ public:
 	virtual bool GoalChanged(int currentGoalNumber, int newGoalNumber) = 0;
 	virtual bool UpdateAnimation(int *animation, int *frame) = 0;
 	virtual bool ChangeAnimationMode(int mode) = 0;
-	virtual void QueryAnimationState(int *animationState, int *animationFrame, int *a3, int *a4) = 0;
-	virtual void SetAnimationState(int animationState, int animationFrame, int a3, int a4) = 0;
+	virtual void QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *nextAnimation) = 0;
+	virtual void SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) = 0;
 	virtual bool ReachedMovementTrackWaypoint(int waypointId) = 0;
 	virtual void FledCombat() = 0;
 };
@@ -79,16 +85,14 @@ public: \
 	bool GoalChanged(int currentGoalNumber, int newGoalNumber); \
 	bool UpdateAnimation(int *animation, int *frame); \
 	bool ChangeAnimationMode(int mode); \
-	void QueryAnimationState(int *animationState, int *animationFrame, int *a3, int *a4); \
-	void SetAnimationState(int animationState, int animationFrame, int a3, int a4); \
+	void QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext); \
+	void SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext); \
 	bool ReachedMovementTrackWaypoint(int waypointId); \
 	void FledCombat(); \
 private:
 #define END_SCRIPT };
 
 DECLARE_SCRIPT(McCoy)
-	int dword_45A0D0_animation_state;
-	int dword_45A0D4_animation_frame;
 	int dword_45A0D8;
 	int dword_45A0DC;
 	int dword_45A0E0;
@@ -99,8 +103,6 @@ DECLARE_SCRIPT(McCoy)
 	int dword_45A0F4;
 	int dword_45A0F8;
 	int dword_45A0FC;
-	int dword_462718;
-	int dword_46271C;
 	float off_45A100;
 	float flt_462710;
 	float flt_462714;
@@ -116,10 +118,6 @@ DECLARE_SCRIPT(McCoy)
 END_SCRIPT
 
 DECLARE_SCRIPT(Runciter)
-	int var_45CD70_animation_state;
-	int var_45CD74_animation_frame;
-	int var_462800;
-	int var_462804;
 	int var_45CD78;
 	int var_45CD7C;
 	int var_45CD80;
@@ -128,23 +126,15 @@ DECLARE_SCRIPT(Runciter)
 END_SCRIPT
 
 DECLARE_SCRIPT(OfficerLeary)
-	int var_45D5B0_animation_state;
-	int var_45D5B4_animation_frame;
 	int var_45D5B8;
 	int var_45D5BC;
-	int var_462880;
-	int var_462884;
 
 	bool sub_431408();
 	bool sub_431420();
 END_SCRIPT
 
 DECLARE_SCRIPT(Leon)
-	int var_45EDB0_animation_state;
-	int var_45EDB4_animation_frame;
 	int var_45EDAC;
-	int var_462AF0;
-	int var_462AF4;
 	float var_45EDA0_z;
 	float var_45EDA4_y;
 	float var_45EDA8_x;
@@ -153,10 +143,6 @@ DECLARE_SCRIPT(Leon)
 END_SCRIPT
 
 DECLARE_SCRIPT(Maggie)
-	int var_45F3F0_animation_state;
-	int var_45F3F4_animation_frame;
-	int var_462B30;
-	int var_462B34;
 	int var_45F3F8;
 	int var_45F3FC;
 	int var_45F400;

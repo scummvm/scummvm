@@ -161,7 +161,7 @@ void SceneScriptPS07::PlayerWalkedIn() {
 }
 
 void SceneScriptPS07::PlayerWalkedOut() {
-	if (!Game_Flag_Query(138) && Global_Variable_Query(1) == 1) {
+	if (!Game_Flag_Query(138) && Global_Variable_Query(kVariableChapter) == 1) {
 		Actor_Set_Goal_Number(kActorKlein, 0);
 	}
 }

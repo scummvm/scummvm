@@ -441,6 +441,7 @@ enum SpinnerDestinations {
 enum Flags {
 	kFlagRC02Discovered = 1,
 	kFlagGotOfficersStatement = 3,
+	kFlagRC02FirstLeave = 4,
 	kFlagRC01toRC02 = 8,
 	kFlagRC02toRC01 = 9,
 	kFlagIntroPlayed = 24,
@@ -450,6 +451,8 @@ enum Flags {
 	kFlagMA04ToMA02 = 36,
 	kFlagMA01toMA06 = 37,
 	kFlagMA06toMA01 = 38,
+	kFlagZubenRetired = 40,
+	kFlagZubenSpared = 41,
 	kFlagIzoIsReplicant = 44,
 	kFlagGordoIsReplicant = 45,
 	kFlagLucyIsReplicant = 46,
@@ -457,10 +460,18 @@ enum Flags {
 	kFlagSadikIsReplicant = 48,
 	kFlagMA07toMA06 = 57,
 	kFlagMA06toMA07 = 58,
+	kFlagChapter1Ended = 61,
 	kFlagMA04toMA05 = 62,
 	kFlagMA05toMA04 = 63,
 	kFlagRC03toRC01 = 114,
 	kFlagRC01toRC03 = 115,
+	kFlagRC02LucyDeskAvailable = 141,
+	kFlagChapter1Ending = 146,
+	kFlagChopstickWrapperTaken = 147,
+	kFlagCandyTaken = 148,
+	kFlagDogTaken = 149,
+	kFlagGuzzaTalkZubenRetired = 159,
+	kFlagGuzzaTalkZubenEscaped = 160,
 	kFlagChromeDebrisTaken = 163,
 	kFlagRC01PoliceDone = 186,
 	kFlagShellCasingsTaken = 190,
@@ -477,13 +488,25 @@ enum Flags {
 	kFlagDirectorsCut = 378,
 	KFlagMcCoyAndOfficerLearyTalking = 392,
 	KFlagMcCoyAndOfficerLearyArtMetaphor = 397,
+	kFlagMaggieIsHurt = 461,
 	kFlagKIAPrivacyAddon = 487,
-	kFlagKIAPrivacyAddonIntro = 599
+	kFlagKIAPrivacyAddonIntro = 599,
+	kFlagMcCoySleeping = 647,
+	kFlagPhoneMessageFromClovis = 649,
+	kFlagPhoneMessageFromLucy = 650,
+	kFlagChapter2Intro = 678,
+	kFlagRC51Discovered = 709,
+	kFlagMA04WatchedTV = 711,
+	kFlagZubenBountyPaid = 723
 };
 
 enum Variables {
+	kVariableChapter = 1,
+	kVariableChinyen = 2,
 	kVariableWalkLoopActor = 37,
-	kVariableWalkLoopRun = 38
+	kVariableWalkLoopRun = 38,
+	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
+	kVariableNextTvNews = 52
 };
 
 enum Outtakes {
@@ -547,7 +570,7 @@ enum SceneLoopMode {
 	kSceneLoopModeSpinner = 3
 };
 
-enum kScenes {
+enum Scenes {
 	kSceneAR01 = 0,
 	kSceneAR02 = 1,
 	kSceneBB01 = 2,
@@ -596,12 +619,12 @@ enum kScenes {
 	kSceneKP05 = 45,
 	kSceneKP06 = 46,
 	kSceneKP07 = 47,
-	kSceneMA01 = 48,
-	kSceneMA02 = 49,
-	kSceneMA04 = 50,
-	kSceneMA05 = 51,
-	kSceneMA06 = 52,
-	kSceneMA07 = 53,
+	kSceneMA01 = 48, // McCoy's Apartment - Roof
+	kSceneMA02 = 49, // McCoy's Apartment - Living room
+	kSceneMA04 = 50, // McCoy's Apartment - Sleeping room
+	kSceneMA05 = 51, // McCoy's Apartment - Balcony
+	kSceneMA06 = 52, // McCoy's Apartment - Elevator
+	kSceneMA07 = 53, // McCoy's Apartment - Ground floor
 	kSceneNR01 = 54,
 	kSceneNR02 = 55,
 	kSceneNR03 = 56,
@@ -613,10 +636,10 @@ enum kScenes {
 	kSceneNR09 = 62,
 	kSceneNR10 = 63,
 	kSceneNR11 = 64,
-	kScenePS01 = 65,
-	kScenePS02 = 66,
+	kScenePS01 = 65, // Police Station - Roof
+	kScenePS02 = 66, // Police Station - Elevator
 	kScenePS03 = 67,
-	kScenePS04 = 68,
+	kScenePS04 = 68, // Police Station - Guzza's Office
 	kScenePS05 = 69,
 	kScenePS06 = 70,
 	kScenePS07 = 71,
@@ -626,8 +649,8 @@ enum kScenes {
 	kScenePS12 = 75,
 	kScenePS13 = 76,
 	kScenePS14 = 77,
-	kSceneRC01 = 78,
-	kSceneRC02 = 79,
+	kSceneRC01 = 78, // Runciter - Outside
+	kSceneRC02 = 79, // Runciter - Inside
 	kSceneRC03 = 80,
 	kSceneRC04 = 81,
 	kSceneTB02 = 82,
@@ -655,21 +678,130 @@ enum kScenes {
 	kSceneBB51 = 104,
 	kSceneCT51 = 105,
 	kSceneHC04 = 106,
-	kSceneRC51 = 107,
+	kSceneRC51 = 107, // Runciter - Lucy's desk
 	kSceneTB07 = 108,
 	kScenePS15 = 119,
 	kSceneBB12 = 120
 };
 
 enum Sets {
-	kSetRunciterInterior = 16
+	kSetAR01_AR02 = 0,
+	kSetBB02_BB04_BB06_BB51 = 1,
+	kSetBB06_BB07 = 2, //BB06
+	kSetBB07 = 3,
+	kSetCT01_CT12 = 4,
+	kSetCT03_CT04 = 5,
+	kSetCT08_CT51_UG12 = 6, //UG12
+	kSetDR01_DR02_DR04 = 7,
+	kSetHC01_HC02_HC03_HC04 = 8,
+	kSetKP05_KP06 = 9,
+	kSetMA02_MA04 = 10, //MA04
+	kSetNR02 = 11,
+	kSetNR04 = 12,
+	kSetNR05_NR08 = 13,
+	kSetPS10_PS11_PS12_PS13 = 14,
+	kSetPS05 = 15,
+	kSetRC02_RC51 = 16,
+	kSetTB02_TB03 = 17,
+	kSetTB07 = 18,
+	kSetUG16 = 19,
+	kSetBB01 = 20,
+	kSetBB03 = 21,
+	kSetBB05 = 22,
+	kSetBB08 = 23,
+	kSetBB09 = 24,
+	kSetBB10 = 25,
+	kSetBB11 = 26,
+	kSetCT02 = 27,
+	kSetCT05 = 28,
+	kSetCT06 = 29,
+	kSetCT09 = 31,
+	kSetCT10 = 32,
+	kSetCT11 = 33,
+	kSetDR03 = 34,
+	kSetDR05 = 35,
+	kSetDR06 = 36,
+	kSetHF01 = 37,
+	kSetHF02 = 38,
+	kSetHF03 = 39,
+	kSetHF04 = 40,
+	kSetHF05 = 41,
+	kSetHF06 = 42,
+	kSetHF07 = 43,
+	kSetKP01 = 44,
+	kSetKP02 = 45,
+	kSetKP03 = 46,
+	kSetKP04 = 47,
+	kSetKP07 = 48,
+	kSetMA01 = 49,
+	kSetMA04 = 50,
+	kSetMA05 = 51,
+	kSetMA06 = 52,
+	kSetMA07 = 53,
+	kSetNR01 = 54,
+	kSetNR03 = 55,
+	kSetNR06 = 56,
+	kSetNR07 = 57,
+	kSetNR09 = 58,
+	kSetNR10 = 59,
+	kSetNR11 = 60,
+	kSetPS01 = 61,
+	kSetPS02 = 62,
+	kSetPS03 = 63,
+	kSetPS04 = 64,
+	kSetPS06 = 65,
+	kSetPS07 = 66,
+	kSetPS09 = 67,
+	kSetPS14 = 68,
+	kSetRC01 = 69,
+	kSetRC03 = 70,
+	kSetRC04 = 71,
+	kSetTB05 = 72,
+	kSetTB06 = 73,
+	kSetUG01 = 74,
+	kSetUG02 = 75,
+	kSetUG03 = 76,
+	kSetUG04 = 77,
+	kSetUG05 = 78,
+	kSetUG06 = 79,
+	kSetUG07 = 80,
+	kSetUG08 = 81,
+	kSetUG09 = 82,
+	kSetUG10 = 83,
+	kSetUG12 = 84,
+	kSetUG13 = 85,
+	kSetUG14 = 86,
+	kSetUG15 = 87,
+	kSetUG17 = 88,
+	kSetUG18 = 89,
+	kSetUG19 = 90,
+	kSetFreeSlotA = 91,
+	kSetFreeSlotB = 92,
+	kSetFreeSlotC = 93,
+	kSetFreeSlotD = 94,
+	kSetFreeSlotE = 95,
+	kSetFreeSlotF = 96,
+	kSetFreeSlotG = 97,
+	kSetFreeSlotH = 98,
+	kSetFreeSlotI = 99,
+	kSetFreeSlotJ = 100,
+	kSetPS15 = 101,
+	kSetBB12 = 102
 };
 
 enum GameItems {
 	kItemChromeDebris = 66,
+	kItemCandy = 79,
+	kItemChopstickWrapper = 82,
+	kItemToyDog = 98,
 	kItemShellCasingA = 100,
 	kItemShellCasingB = 101,
 	kItemShellCasingC = 102
+};
+
+enum Elevators {
+	kElevatorMA = 1,
+	kElevatorPS = 2
 };
 
 } // End of namespace BladeRunner

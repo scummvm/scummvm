@@ -134,7 +134,7 @@ void SceneScriptUG06::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 66.0f, 0.0f, -36.91f, 0, 0, false, 0);
 		Game_Flag_Reset(343);
 	}
-	if (Global_Variable_Query(1) == 4 && !Game_Flag_Query(524)) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(524)) {
 		Player_Loses_Control();
 		Actor_Voice_Over(2620, kActorVoiceOver);
 		Actor_Voice_Over(2630, kActorVoiceOver);

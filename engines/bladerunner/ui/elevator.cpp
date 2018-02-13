@@ -52,10 +52,10 @@ Elevator::~Elevator() {
 int Elevator::activate(int elevatorId) {
 	const char *vqaName;
 
-	if (elevatorId == 1) {
+	if (elevatorId == kElevatorMA) {
 		_buttonClicked = 3;
 		vqaName = "MA06ELEV.VQA";
-	} else if (elevatorId == 2) {
+	} else if (elevatorId == kElevatorPS) {
 		_buttonClicked = 1;
 		vqaName = "PS02ELEV.VQA";
 	} else {
@@ -81,7 +81,7 @@ int Elevator::activate(int elevatorId) {
 
 	_imagePicker->resetImages();
 
-	if (elevatorId == 1) {
+	if (elevatorId == kElevatorMA) {
 		_imagePicker->defineImage(
 			0,
 			Common::Rect(220, 298, 308, 392),
@@ -103,7 +103,7 @@ int Elevator::activate(int elevatorId) {
 			_shapes[12],
 			_shapes[15],
 			nullptr);
-	} else {
+	} else { // kElevatorPS
 		_imagePicker->defineImage(
 			4,
 			Common::Rect(395, 131, 448, 164),

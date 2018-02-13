@@ -152,7 +152,7 @@ void SceneScriptPS02::DialogueQueueFlushed(int a1) {
 
 void SceneScriptPS02::sub_4018BC() {
 	Scene_Exits_Disable();
-	switch (Elevator_Activate(2)) {
+	switch (Elevator_Activate(kElevatorPS)) {
 	case 7:
 		Game_Flag_Set(133);
 		break;

@@ -255,10 +255,10 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 	actor->speechPlay(sentenceId, false);
 	bool animationModeChanged = false;
 	if (animationMode >= 0) {
-		if (actorId != 0) {
+		if (actorId != kActorMcCoy) {
 			actor->changeAnimationMode(animationMode, false);
 			animationModeChanged = true;
-		} else if(_vm->_combat->isActive()) {
+		} else if (_vm->_combat->isActive()) {
 			actor->changeAnimationMode(animationMode, false);
 			animationModeChanged = true;
 		}
@@ -934,12 +934,12 @@ bool ScriptBase::Dialogue_Menu_Add_To_List_Never_Repeat_Once_Selected(int answer
 	return _vm->_dialogueMenu->addToListNeverRepeatOnceSelected(answer, 5, 5, 5);
 }
 
-bool ScriptBase::DM_Add_To_List(int answer, int a2, int a3, int a4) {
-	return _vm->_dialogueMenu->addToList(answer, 0, a2, a3, a4);
+bool ScriptBase::DM_Add_To_List(int answer, int priorityPolite, int priorityNormal, int prioritySurly) {
+	return _vm->_dialogueMenu->addToList(answer, false, priorityPolite, priorityNormal, prioritySurly);
 }
 
-bool ScriptBase::DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int a2, int a3, int a4) {
-	return _vm->_dialogueMenu->addToListNeverRepeatOnceSelected(answer, a2, a3, a4);
+bool ScriptBase::DM_Add_To_List_Never_Repeat_Once_Selected(int answer, int priorityPolite, int priorityNormal, int prioritySurly) {
+	return _vm->_dialogueMenu->addToListNeverRepeatOnceSelected(answer, priorityPolite, priorityNormal, prioritySurly);
 }
 
 void ScriptBase::Dialogue_Menu_Remove_From_List(int answer) {

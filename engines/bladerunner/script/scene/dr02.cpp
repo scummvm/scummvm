@@ -128,7 +128,7 @@ bool SceneScriptDR02::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1162.0f, 7.18f, -322.0f, 0, 1, false, 0)) {
-			if (Global_Variable_Query(1) > 2) {
+			if (Global_Variable_Query(kVariableChapter) > 2) {
 				Actor_Says(kActorMcCoy, 8522, 15);
 			} else {
 				Game_Flag_Set(226);

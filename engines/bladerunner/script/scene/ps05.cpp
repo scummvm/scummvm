@@ -145,8 +145,8 @@ void SceneScriptPS05::PlayerWalkedIn() {
 	if (Game_Flag_Query(23)) {
 		Actor_Set_At_XYZ(kActorMcCoy, 718.72f, 0.37f, -461.26f, 600);
 	} else if (Game_Flag_Query(22)) {
-		sub_401B34();
-		sub_401C30();
+		selectNextTvNews();
+		turnOnTV();
 	}
 	Game_Flag_Reset(22);
 	Game_Flag_Reset(23);
@@ -161,27 +161,27 @@ void SceneScriptPS05::DialogueQueueFlushed(int a1) {
 	Overlay_Remove("PS05OVER");
 }
 
-void SceneScriptPS05::sub_401B34() {
+void SceneScriptPS05::selectNextTvNews() {
 	int i = 0;
 	int arr[7];
-	if (Global_Variable_Query(1) < 4 && Game_Flag_Query(kFlagGordoIsReplicant)) {
+	if (Global_Variable_Query(kVariableChapter) < 4 && Game_Flag_Query(kFlagGordoIsReplicant)) {
 		arr[i++] = 0;
 	}
 	arr[i++] = 1;
-	if (Global_Variable_Query(1) >= 3) {
+	if (Global_Variable_Query(kVariableChapter) >= 3) {
 		arr[i++] = 2;
 	}
-	if (Global_Variable_Query(1) >= 2 && Global_Variable_Query(1) <= 4) {
+	if (Global_Variable_Query(kVariableChapter) >= 2 && Global_Variable_Query(kVariableChapter) <= 4) {
 		arr[i++] = 3;
 	}
 	if (Game_Flag_Query(171) && Game_Flag_Query(170)) {
 		arr[i++] = 4;
 	}
-	Global_Variable_Set(52, arr[Random_Query(0, i - 1)]);
+	Global_Variable_Set(kVariableNextTvNews, arr[Random_Query(0, i - 1)]);
 }
 
-void SceneScriptPS05::sub_401C30() {
-	switch (Global_Variable_Query(52)) {
+void SceneScriptPS05::turnOnTV() {
+	switch (Global_Variable_Query(kVariableNextTvNews)) {
 	case 4:
 		if (!Game_Flag_Query(692)) {
 			Overlay_Play("PS05OVER", 0, 1, 0, 0);

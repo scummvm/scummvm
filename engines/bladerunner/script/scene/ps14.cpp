@@ -70,14 +70,14 @@ bool SceneScriptPS14::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -2101.0f, 508.14f, -1361.0f, 0, 1, false, 0)) {
 			Actor_Face_Heading(kActorMcCoy, 819, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 1, 0);
-			if (Global_Variable_Query(1) == 4 && Game_Flag_Query(671)) {
+			if (Global_Variable_Query(kVariableChapter) == 4 && Game_Flag_Query(671)) {
 				if (Actor_Clue_Query(kActorMcCoy, kClueBriefcase)) {
 					Game_Flag_Set(666);
 					Actor_Set_Goal_Number(kActorMcCoy, 400);
 				} else {
 					Actor_Set_Goal_Number(kActorMcCoy, 500);
 				}
-			} else if (Global_Variable_Query(1) > 3) {
+			} else if (Global_Variable_Query(kVariableChapter) > 3) {
 				Actor_Says(kActorMcCoy, 8522, 12);
 				Actor_Face_Heading(kActorMcCoy, 307, false);
 				Loop_Actor_Travel_Stairs(kActorMcCoy, 3, 0, 0);

@@ -43,7 +43,7 @@ void SceneScriptNR01::InitializeScene() {
 		Setup_Scene_Information(76.0f, 23.88f, -109.0f, 966);
 	}
 	Scene_Exit_Add_2D_Exit(0, 31, 270, 97, 373, 3);
-	if (Global_Variable_Query(1) > 3) {
+	if (Global_Variable_Query(kVariableChapter) > 3) {
 		Scene_Exit_Add_2D_Exit(1, 201, 320, 276, 357, 2);
 	}
 	Scene_Exit_Add_2D_Exit(2, 583, 262, 639, 365, 1);
@@ -110,7 +110,7 @@ bool SceneScriptNR01::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptNR01::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -380.0f, 31.93f, -841.0f, 0, 1, false, 0)) {
-			if (Global_Variable_Query(1) > 3) {
+			if (Global_Variable_Query(kVariableChapter) > 3) {
 				Actor_Says(kActorMcCoy, 8522, 12);
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);

@@ -41,7 +41,7 @@ void SceneScriptCT11::InitializeScene() {
 	Ambient_Sounds_Add_Sound(378, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(379, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(380, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
-	if (Global_Variable_Query(1) <= 3) {
+	if (Global_Variable_Query(kVariableChapter) <= 3) {
 		Scene_Loop_Set_Default(0);
 	} else {
 		Scene_Loop_Set_Default(2);
@@ -52,7 +52,7 @@ void SceneScriptCT11::SceneLoaded() {
 	Obstacle_Object("TRASH CAN", true);
 	Unobstacle_Object("BOX NORTHWEST 1", true);
 	Unobstacle_Object("BOX SOUTH 1", true);
-	if (Global_Variable_Query(1) < 4) {
+	if (Global_Variable_Query(kVariableChapter) < 4) {
 		if (!Game_Flag_Query(645)) {
 			Item_Add_To_World(115, 951, 33, 640.21002f, 30.0f, 470.0f, 512, 12, 12, false, true, false, true);
 			Scene_2D_Region_Add(0, 505, 316, 513, 321);

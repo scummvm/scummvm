@@ -109,25 +109,25 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 
 	switch (desc->language) {
 	case Common::EN_ANY:
-		this->_languageCode = "E";
+		_languageCode = "E";
 		break;
 	case Common::DE_DEU:
-		this->_languageCode = "G";
+		_languageCode = "G";
 		break;
 	case Common::FR_FRA:
-		this->_languageCode = "F";
+		_languageCode = "F";
 		break;
 	case Common::IT_ITA:
-		this->_languageCode = "I";
+		_languageCode = "I";
 		break;
 	case Common::RU_RUS:
-		this->_languageCode = "R";
+		_languageCode = "R";
 		break;
 	case Common::ES_ESP:
-		this->_languageCode = "S";
+		_languageCode = "S";
 		break;
 	default:
-		this->_languageCode = "E";
+		_languageCode = "E";
 	}
 
 	_screenEffects           = nullptr;
@@ -996,7 +996,7 @@ void BladeRunnerEngine::actorsUpdate() {
 	int setId = _scene->getSetId();
 
 	//TODO: original game updates every non-visible characters by updating only one character in one frame
-	if (setId != 89 || _gameVars[1] != 4 || _gameFlags->query(670) != 1 || !_aiScripts->isInsideScript()) {
+	if (setId != kSetUG18 || _gameVars[kVariableChapter] != 4 || !_gameFlags->query(670) || !_aiScripts->isInsideScript()) {
 		for (int i = 0; i < actorCount; i++) {
 			Actor *actor = _actors[i];
 			if (actor->getSetId() == setId) {

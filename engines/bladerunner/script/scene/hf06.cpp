@@ -244,7 +244,7 @@ void SceneScriptHF06::sub_401EF4() {
 	Actor_Change_Animation_Mode(kActorSteele, 7);
 	Loop_Actor_Walk_To_XYZ(kActorSteele, 92.0f, 367.93f, 107.0f, 0, 0, false, 0);
 	Actor_Face_Actor(kActorSteele, kActorMcCoy, true);
-	Actor_Change_Animation_Mode(kActorSteele, 4);
+	Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
 	Actor_Says(kActorSteele, 290, 58);
 	Actor_Says(kActorMcCoy, 2130, -1);
 	Actor_Says(kActorSteele, 300, 59);
@@ -256,7 +256,7 @@ void SceneScriptHF06::sub_401EF4() {
 	Actor_Says(kActorSteele, 330, 58);
 	Actor_Says(kActorSteele, 340, 58);
 	Actor_Says(kActorSteele, 350, 58);
-	Actor_Change_Animation_Mode(kActorSteele, 4);
+	Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
 	Game_Flag_Set(644);
 	Actor_Set_Goal_Number(kActorSteele, 402);
 	Actor_Face_Actor(kActorSteele, actorId, true);

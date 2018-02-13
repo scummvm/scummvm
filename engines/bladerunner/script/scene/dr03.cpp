@@ -31,7 +31,7 @@ void SceneScriptDR03::InitializeScene() {
 	}
 	Setup_Scene_Information(330.31f, 4.27f, -910.91f, 297);
 	Scene_Exit_Add_2D_Exit(0, 377, 122, 445, 266, 0);
-	if (Global_Variable_Query(1) == 3) {
+	if (Global_Variable_Query(kVariableChapter) == 3) {
 		Actor_Put_In_Set(kActorChew, 34);
 		Actor_Set_At_XYZ(kActorChew, 431.21f, 4.27f, -776.26f, 0);
 	} else {

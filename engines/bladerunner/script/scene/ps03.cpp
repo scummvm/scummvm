@@ -38,7 +38,7 @@ void SceneScriptPS03::InitializeScene() {
 	}
 	Scene_Exit_Add_2D_Exit(0, 0, 460, 639, 479, 2);
 	Scene_Exit_Add_2D_Exit(1, 449, 273, 508, 329, 0);
-	if (Global_Variable_Query(1) > 1) {
+	if (Global_Variable_Query(kVariableChapter) > 1) {
 		Scene_Exit_Add_2D_Exit(2, 358, 245, 411, 288, 0);
 	}
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
@@ -89,7 +89,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Set_Enter(62, kScenePS02);
 			Game_Flag_Reset(478);
-			if (Global_Variable_Query(1) < 4) {
+			if (Global_Variable_Query(kVariableChapter) < 4) {
 				Actor_Set_Goal_Number(kActorGuzza, 100);
 			}
 		}

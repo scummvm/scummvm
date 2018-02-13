@@ -90,7 +90,11 @@ class ZBuffer;
 
 class BladeRunnerEngine : public Engine {
 public:
+#if BLADERUNNER_DEBUG_GAME
+	static const int kArchiveCount = 100;
+#else
 	static const int kArchiveCount = 10;
+#endif
 	static const int kActorCount = 100;
 	static const int kActorVoiceOver = kActorCount - 1;
 

@@ -55,7 +55,7 @@ void SceneScriptUG18::InitializeScene() {
 	Ambient_Sounds_Add_Sound(198, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(199, 5, 50, 27, 37, -100, 100, -101, -101, 0, 0);
 	Scene_Loop_Set_Default(4);
-	if (Game_Flag_Query(670) && !Game_Flag_Query(671) && Global_Variable_Query(1) == 4) {
+	if (Game_Flag_Query(670) && !Game_Flag_Query(671) && Global_Variable_Query(kVariableChapter) == 4) {
 		Actor_Set_Goal_Number(kActorGuzza, 300);
 		Actor_Set_Goal_Number(kActorClovis, 300);
 		Actor_Set_Goal_Number(kActorSadik, 300);
@@ -77,7 +77,7 @@ void SceneScriptUG18::SceneLoaded() {
 			Actor_Set_At_Waypoint(kActorSadik, 33, 0);
 		}
 	}
-	if (Game_Flag_Query(670) && !Game_Flag_Query(671) && Global_Variable_Query(1) == 4) {
+	if (Game_Flag_Query(670) && !Game_Flag_Query(671) && Global_Variable_Query(kVariableChapter) == 4) {
 		Item_Add_To_World(91, 987, 89, -55.21f, 0.0f, -302.17f, 0, 12, 12, false, true, false, true);
 	}
 }

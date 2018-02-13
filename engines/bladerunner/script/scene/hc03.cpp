@@ -34,7 +34,7 @@ void SceneScriptHC03::InitializeScene() {
 		Game_Flag_Reset(386);
 	}
 	Scene_Exit_Add_2D_Exit(0, 0, 0, 30, 479, 3);
-	if (Game_Flag_Query(403) || Global_Variable_Query(1) > 3) {
+	if (Game_Flag_Query(403) || Global_Variable_Query(kVariableChapter) > 3) {
 		Item_Remove_From_World(121);
 		Game_Flag_Set(403);
 		Scene_Exit_Add_2D_Exit(1, 400, 275, 515, 375, 2);
@@ -67,7 +67,7 @@ void SceneScriptHC03::InitializeScene() {
 	Ambient_Sounds_Add_Sound(195, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	if (Game_Flag_Query(388)) {
 		Scene_Loop_Set_Default(6);
-	} else if (Game_Flag_Query(403) || Global_Variable_Query(1) > 3) {
+	} else if (Game_Flag_Query(403) || Global_Variable_Query(kVariableChapter) > 3) {
 		Scene_Loop_Set_Default(3);
 	} else {
 		Scene_Loop_Set_Default(0);
@@ -76,7 +76,7 @@ void SceneScriptHC03::InitializeScene() {
 
 void SceneScriptHC03::SceneLoaded() {
 	Obstacle_Object("GUITAR01", true);
-	if (Game_Flag_Query(403) || Game_Flag_Query(388) || Global_Variable_Query(1) > 3) {
+	if (Game_Flag_Query(403) || Game_Flag_Query(388) || Global_Variable_Query(kVariableChapter) > 3) {
 		Unobstacle_Object("GPscisGate", true);
 	} else {
 		Obstacle_Object("GPscisGate", true);

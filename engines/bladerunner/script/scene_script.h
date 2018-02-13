@@ -261,27 +261,26 @@ DECLARE_SCRIPT(MA01)
 END_SCRIPT
 
 DECLARE_SCRIPT(MA02)
-	void sub_401E4C();
-	bool sub_401F7C();
-	void sub_402044();
+	void dialogueWithRajif();
+	bool isPhoneRinging();
+	void selectNextTvNews();
 END_SCRIPT
 
 //MA03 does not exists
 
 DECLARE_SCRIPT(MA04)
-	bool sub_402758();
-	bool sub_402820();
-	bool sub_402888();
-	void sub_4028A8();
-	void sub_402F2C();
-	void sub_4032A0();
-	void sub_4034D8();
+	bool isPhoneRinging();
+	bool isPhoneMessageWaiting();
+	void phoneCallWithDektora();
+	void phoneCallWithLucy();
+	void phoneCallWithSteele();
+	void phoneCallWithClovis();
 	void turnOnTV();
 	void sleep();
 END_SCRIPT
 
 DECLARE_SCRIPT(MA05)
-	bool sub_401990();
+	bool isPhoneRinging();
 END_SCRIPT
 
 DECLARE_SCRIPT(MA06)
@@ -369,8 +368,8 @@ DECLARE_SCRIPT(PS04)
 END_SCRIPT
 
 DECLARE_SCRIPT(PS05)
-	void sub_401B34();
-	void sub_401C30();
+	void selectNextTvNews();
+	void turnOnTV();
 END_SCRIPT
 
 DECLARE_SCRIPT(PS06)

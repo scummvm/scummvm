@@ -104,7 +104,7 @@ bool SceneScriptBB03::ClickedOnExit(int exitId) {
 	}
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 204.0f, 60.16f, -164.0f, 0, 1, false, 0)) {
-			if (Global_Variable_Query(1) < 4) {
+			if (Global_Variable_Query(kVariableChapter) < 4) {
 				if (Actor_Query_Goal_Number(kActorSebastian) == 200) {
 					Actor_Says(kActorSebastian, 70, 3);
 					Actor_Says(kActorMcCoy, 7010, 13);

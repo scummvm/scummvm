@@ -113,7 +113,7 @@ void SceneScriptBB11::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptBB11::PlayerWalkedIn() {
-	if (Actor_Query_Goal_Number(kActorSadik) == 102 && Global_Variable_Query(1) == 2) {
+	if (Actor_Query_Goal_Number(kActorSadik) == 102 && Global_Variable_Query(kVariableChapter) == 2) {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Actor_Set_Goal_Number(kActorSadik, 103);
 		Music_Play(11, 61, 0, 1, -1, 0, 0);

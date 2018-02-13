@@ -100,7 +100,7 @@ bool SceneScriptUG03::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptUG03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -139.0f, 0.0f, -13.0f, 0, 1, false, 0)) {
-			if (Global_Variable_Query(1) < 4) {
+			if (Global_Variable_Query(kVariableChapter) < 4) {
 				Actor_Says(kActorMcCoy, 8522, 14);
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);

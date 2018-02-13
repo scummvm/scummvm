@@ -199,7 +199,7 @@ void SceneScriptNR07::sub_401A10() {
 	Async_Actor_Walk_To_XYZ(kActorMcCoy, -193.0f, -73.5f, -13.0f, 0, false);
 	Actor_Says(kActorDektora, 950, 31);
 	Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
-	Actor_Change_Animation_Mode(kActorDektora, 4);
+	Actor_Change_Animation_Mode(kActorDektora, kAnimationModeCombatIdle);
 	Actor_Face_Actor(kActorMcCoy, kActorDektora, true);
 	Actor_Says(kActorMcCoy, 3760, 19);
 	Actor_Says(kActorDektora, 960, 53);

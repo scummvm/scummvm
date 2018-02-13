@@ -288,7 +288,7 @@ bool SceneScriptRC04::ClickedOnActor(int actorId) {
 	if (Player_Query_Combat_Mode()) {
 		return false;
 	}
-	if (actorId == 14 && Global_Variable_Query(1) == 2 && !Game_Flag_Query(289)) {
+	if (actorId == 14 && Global_Variable_Query(kVariableChapter) == 2 && !Game_Flag_Query(289)) {
 		Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 104, 0, 0, false);
 		Actor_Face_Actor(kActorMcCoy, kActorBulletBob, true);
 		if (Game_Flag_Query(287) && !Game_Flag_Query(292) && Actor_Query_Friendliness_To_Other(kActorBulletBob, kActorMcCoy) > 45) {
@@ -391,8 +391,8 @@ void SceneScriptRC04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptRC04::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 103, 0, 0, false);
-	if (Global_Variable_Query(1) != 2 || Game_Flag_Query(287) || Player_Query_Combat_Mode()) {
-		if (Global_Variable_Query(1) == 4 && !Game_Flag_Query(289) && !Game_Flag_Query(306)) {
+	if (Global_Variable_Query(kVariableChapter) != 2 || Game_Flag_Query(287) || Player_Query_Combat_Mode()) {
+		if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(289) && !Game_Flag_Query(306)) {
 			Actor_Says(kActorDispatcher, 40, 3);
 			Actor_Says(kActorBulletBob, 890, 37);
 			Actor_Set_Goal_Number(kActorBulletBob, 2);

@@ -35,7 +35,7 @@ void SceneScriptUG04::InitializeScene() {
 		Game_Flag_Reset(334);
 	}
 	Scene_Exit_Add_2D_Exit(0, 123, 308, 159, 413, 3);
-	if (Global_Variable_Query(1) > 3) {
+	if (Global_Variable_Query(kVariableChapter) > 3) {
 		Scene_Exit_Add_2D_Exit(1, 256, 333, 290, 373, 0);
 	}
 	Scene_Exit_Add_2D_Exit(2, 344, 298, 451, 390, 1);

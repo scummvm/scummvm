@@ -38,7 +38,7 @@ void SceneScriptTB03::InitializeScene() {
 	Ambient_Sounds_Add_Sound(214, 2, 20, 16, 20, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(215, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(216, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
-	if (Global_Variable_Query(1) <= 3) {
+	if (Global_Variable_Query(kVariableChapter) <= 3) {
 		Ambient_Sounds_Add_Looping_Sound(45, 25, 0, 1);
 		Ambient_Sounds_Add_Sound(181, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 		Ambient_Sounds_Add_Sound(182, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
@@ -57,7 +57,7 @@ void SceneScriptTB03::InitializeScene() {
 	}
 	Actor_Put_In_Set(kActorTyrellGuard, 17);
 	Actor_Set_At_XYZ(kActorTyrellGuard, -38.53f, 2.93f, 1475.97f, 673);
-	if (Global_Variable_Query(1) == 4) {
+	if (Global_Variable_Query(kVariableChapter) == 4) {
 		int goal = Actor_Query_Goal_Number(kActorTyrellGuard);
 		if (goal == 304) {
 			Actor_Change_Animation_Mode(kActorTyrellGuard, 0);

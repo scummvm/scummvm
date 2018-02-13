@@ -74,7 +74,7 @@ bool SceneScriptCT09::ClickedOnActor(int actorId) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 270.0f, 348.52f, 846.0f, 12, 1, false, 0)) {
 				Player_Loses_Control();
 				Actor_Face_Actor(kActorMcCoy, kActorDeskClerk, true);
-				if (Global_Variable_Query(1) < 3) {
+				if (Global_Variable_Query(kVariableChapter) < 3) {
 					Actor_Says(kActorMcCoy, 650, 3);
 					Actor_Says(kActorDeskClerk, 250, 12);
 					Actor_Says(kActorMcCoy, 665, 18);
@@ -152,7 +152,7 @@ void SceneScriptCT09::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptCT09::PlayerWalkedIn() {
 	bool v0 = false;
-	if (Global_Variable_Query(1) == 3 && !Game_Flag_Query(538)) {
+	if (Global_Variable_Query(kVariableChapter) == 3 && !Game_Flag_Query(538)) {
 		Game_Flag_Set(538);
 		Actor_Set_Goal_Number(kActorLeon, 1);
 		v0 = true;

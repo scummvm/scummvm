@@ -37,7 +37,7 @@ void SceneScriptTB02::InitializeScene() {
 		Outtake_Play(kOuttakeTyrellBuildingFly, false, -1);
 		Setup_Scene_Information(-304.0f, -81.46f, 1434.0f, 250);
 	}
-	if (Global_Variable_Query(1) > 3) {
+	if (Global_Variable_Query(kVariableChapter) > 3) {
 		Scene_Exit_Add_2D_Exit(0, 0, 455, 639, 479, 2);
 	}
 	Ambient_Sounds_Add_Looping_Sound(211, 20, 0, 1);
@@ -46,7 +46,7 @@ void SceneScriptTB02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(214, 2, 20, 16, 20, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(215, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(216, 2, 15, 16, 20, 0, 0, -101, -101, 0, 0);
-	if (Global_Variable_Query(1) <= 3) {
+	if (Global_Variable_Query(kVariableChapter) <= 3) {
 		Ambient_Sounds_Add_Looping_Sound(45, 35, 0, 1);
 		Ambient_Sounds_Add_Sound(181, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 		Ambient_Sounds_Add_Sound(182, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
@@ -63,7 +63,7 @@ void SceneScriptTB02::InitializeScene() {
 		Ambient_Sounds_Add_Sound(194, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 		Ambient_Sounds_Add_Sound(195, 5, 70, 12, 12, -100, 100, -101, -101, 0, 0);
 	}
-	if (Game_Flag_Query(kFlagSpinnerToTB02) && Global_Variable_Query(1) < 4) {
+	if (Game_Flag_Query(kFlagSpinnerToTB02) && Global_Variable_Query(kVariableChapter) < 4) {
 		Scene_Exit_Add_2D_Exit(2, 67, 0, 233, 362, 3);
 	}
 	if (Game_Flag_Query(155)) {
@@ -74,7 +74,7 @@ void SceneScriptTB02::InitializeScene() {
 	}
 	Actor_Put_In_Set(kActorTyrellGuard, 17);
 	Actor_Set_At_XYZ(kActorTyrellGuard, -38.53f, 2.93f, 1475.97f, 673);
-	if (Global_Variable_Query(1) == 4) {
+	if (Global_Variable_Query(kVariableChapter) == 4) {
 		if (Actor_Query_Goal_Number(kActorTyrellGuard) < 300) {
 			Actor_Set_Goal_Number(kActorTyrellGuard, 300);
 		}
@@ -99,7 +99,7 @@ bool SceneScriptTB02::ClickedOnActor(int actorId) {
 	if (actorId == 17) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.35f, 0.15f, 1564.2f, 0, 1, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorTyrellGuard, true);
-			int v1 = Global_Variable_Query(1);
+			int v1 = Global_Variable_Query(kVariableChapter);
 			if (v1 == 2) {
 				if (Game_Flag_Query(450) && !Game_Flag_Query(451)) {
 					Actor_Says(kActorMcCoy, 5150, 18);
@@ -167,7 +167,7 @@ bool SceneScriptTB02::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -32.0f, 0.0f, 1578.0f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			if (Global_Variable_Query(1) < 4) {
+			if (Global_Variable_Query(kVariableChapter) < 4) {
 				Game_Flag_Set(451);
 				Game_Flag_Set(96);
 				Set_Enter(72, kSceneTB05);
@@ -269,7 +269,7 @@ void SceneScriptTB02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptTB02::PlayerWalkedIn() {
-	if (Game_Flag_Query(625) && ((Game_Flag_Reset(625) , Global_Variable_Query(1) == 2) || Global_Variable_Query(1) == 3)) {
+	if (Game_Flag_Query(625) && ((Game_Flag_Reset(625) , Global_Variable_Query(kVariableChapter) == 2) || Global_Variable_Query(kVariableChapter) == 3)) {
 		Set_Enter(18, kSceneTB07);
 		//return true;
 		return;
@@ -289,7 +289,7 @@ void SceneScriptTB02::PlayerWalkedIn() {
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 9, 1, 0);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -140.0f, 0.79f, 1470.0f, 0, 0, false, 0);
 	}
-	int v0 = Global_Variable_Query(1);
+	int v0 = Global_Variable_Query(kVariableChapter);
 	if (v0 > 4) {
 		//return false;
 		return;

@@ -132,13 +132,13 @@ void SceneScriptUG09::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptUG09::PlayerWalkedIn() {
-	if (Global_Variable_Query(1) == 4 && Game_Flag_Query(623)) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && Game_Flag_Query(623)) {
 		Game_Flag_Set(630);
 	}
 }
 
 void SceneScriptUG09::PlayerWalkedOut() {
-	if (Global_Variable_Query(1) == 4 && Global_Variable_Query(1) != 5) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && Global_Variable_Query(kVariableChapter) != 5) {
 		Game_Flag_Reset(630);
 	}
 	if (Game_Flag_Query(432)) {

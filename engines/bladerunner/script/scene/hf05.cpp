@@ -33,7 +33,7 @@ void SceneScriptHF05::InitializeScene() {
 		Setup_Scene_Information(483.0f, 40.63f, -189.0f, 600);
 	}
 	Scene_Exit_Add_2D_Exit(0, 443, 270, 515, 350, 0);
-	if (Global_Variable_Query(1) > 3) {
+	if (Global_Variable_Query(kVariableChapter) > 3) {
 		Scene_Exit_Add_2D_Exit(1, 367, 298, 399, 349, 2);
 	}
 	Scene_Exit_Add_2D_Exit(2, 589, 0, 639, 479, 1);
@@ -273,7 +273,7 @@ void SceneScriptHF05::PlayerWalkedIn() {
 	}
 	if (Actor_Query_In_Set(kActorCrazylegs, 41)) {
 		if (Game_Flag_Query(562)) {
-			if (!Game_Flag_Query(563) && Global_Variable_Query(1) == 3) {
+			if (!Game_Flag_Query(563) && Global_Variable_Query(kVariableChapter) == 3) {
 				sub_402970();
 				Game_Flag_Set(563);
 			}
@@ -317,7 +317,7 @@ void SceneScriptHF05::sub_402970() {
 
 void SceneScriptHF05::sub_402AE4() {
 	Dialogue_Menu_Clear_List();
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) == 1 && Global_Variable_Query(1) == 3) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) == 1 && Global_Variable_Query(kVariableChapter) == 3) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1180, 3, 6, 7);
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueCrazylegsInterview1) == 1) {
@@ -329,7 +329,7 @@ void SceneScriptHF05::sub_402AE4() {
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy) == 1 && Actor_Query_Goal_Number(kActorLucy) != 599) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1210, 4, 6, 2);
 	}
-	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansResources) == 1 || (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) == 1 && Global_Variable_Query(1) == 3)) {
+	if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansResources) == 1 || (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote) == 1 && Global_Variable_Query(kVariableChapter) == 3)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(1220, -1, 2, 8);
 	}
 	if (Actor_Clue_Query(kActorMcCoy, kClueCarRegistration1) == 1 || Actor_Clue_Query(kActorMcCoy, kClueCarRegistration3) == 1) {
@@ -594,7 +594,7 @@ void SceneScriptHF05::sub_403A34(int actorId) {
 
 void SceneScriptHF05::sub_402370() {
 	Player_Loses_Control();
-	if (Global_Variable_Query(1) == 3) {
+	if (Global_Variable_Query(kVariableChapter) == 3) {
 		ADQ_Flush();
 		ADQ_Add(kActorCrazylegs, 130, 18);
 		ADQ_Add(kActorCrazylegs, 140, 18);

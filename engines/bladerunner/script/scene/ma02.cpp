@@ -24,22 +24,27 @@
 
 namespace BladeRunner {
 
+enum kMA02Exits {
+	kMA02ExitMA06 = 0,
+	kMA02ExitMA04 = 1
+};
+
 void SceneScriptMA02::InitializeScene() {
 	if (Game_Flag_Query(kFlagMA04ToMA02)) {
 		Setup_Scene_Information(-172.0f, -144.13f, 6.27f, 500);
-	} else {
+	} else { // From MA06
 		Setup_Scene_Information(23.19f, -144.12f, 378.27f, 750);
-		if (Global_Variable_Query(1) == 4) {
+		if (Global_Variable_Query(kVariableChapter) == 4) {
 			Actor_Set_Goal_Number(kActorRajif, 300);
 		}
-		Game_Flag_Reset(711);
+		Game_Flag_Reset(kFlagMA04WatchedTV);
 	}
-	Scene_Exit_Add_2D_Exit(0, 538, 84, 639, 327, 1);
-	Scene_Exit_Add_2D_Exit(1, 56, 98, 150, 260, 0);
-	if (Global_Variable_Query(1) >= 4 && Global_Variable_Query(1) == 5 && Game_Flag_Query(653)) {
+	Scene_Exit_Add_2D_Exit(kMA02ExitMA06, 538, 84, 639, 327, 1);
+	Scene_Exit_Add_2D_Exit(kMA02ExitMA04, 56, 98, 150, 260, 0);
+	if (Global_Variable_Query(kVariableChapter) >= 4 && Global_Variable_Query(kVariableChapter) == 5 && Game_Flag_Query(653)) {
 		Actor_Set_Goal_Number(kActorMaggie, 599);
 		Actor_Change_Animation_Mode(kActorMaggie, 88);
-		Actor_Put_In_Set(kActorMaggie, 10);
+		Actor_Put_In_Set(kActorMaggie, kSetMA02_MA04);
 		Actor_Set_At_XYZ(kActorMaggie, -35.51f, -144.12f, 428.0f, 0);
 		Actor_Retired_Here(kActorMaggie, 24, 24, 1, -1);
 	}
@@ -53,10 +58,10 @@ void SceneScriptMA02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(87, 10, 60, 12, 12, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(68, 60, 180, 14, 14, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(69, 60, 180, 14, 14, 0, 0, -101, -101, 0, 0);
-	if (sub_401F7C()) {
+	if (isPhoneRinging()) {
 		Ambient_Sounds_Add_Sound(403, 3, 3, 27, 27, -100, -100, -100, -100, 99, 0);
 	}
-	if (Global_Variable_Query(1) == 5 && Game_Flag_Query(653) && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)) {
+	if (Global_Variable_Query(kVariableChapter) == 5 && Game_Flag_Query(653) && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)) {
 		Overlay_Play("MA02OVER", 0, 1, 0, 0);
 	}
 }
@@ -81,9 +86,9 @@ bool SceneScriptMA02::ClickedOn3DObject(const char *objectName, bool a2) {
 	}
 	if (Object_Query_Click("BAR-MAIN", objectName) && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, -29.0f, -140.4f, 298.0f, 36, 1, false, 0)) {
 		Actor_Face_Object(kActorMcCoy, "BAR-MAIN", true);
-		if (Global_Variable_Query(1) < 4) {
+		if (Global_Variable_Query(kVariableChapter) < 4) {
 			Actor_Set_Goal_Number(kActorMaggie, 3);
-		} else if (Global_Variable_Query(1) == 5 && Game_Flag_Query(653) && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)) {
+		} else if (Global_Variable_Query(kVariableChapter) == 5 && Game_Flag_Query(653) && !Actor_Clue_Query(kActorMcCoy, kClueCrystalsCigarette)) {
 			Overlay_Remove("MA02OVER");
 			Item_Pickup_Spin_Effect(985, 480, 240);
 			Actor_Voice_Over(1150, kActorVoiceOver);
@@ -103,7 +108,7 @@ bool SceneScriptMA02::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptMA02::ClickedOnActor(int actorId) {
 	if (actorId == kActorMaggie && Actor_Query_Goal_Number(kActorMaggie) == 599) {
-		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorMaggie, 30, 1, false)) {
+		if (!Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorMaggie, 30, true, false)) {
 			Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
 			Actor_Voice_Over(1140, kActorVoiceOver);
 		}
@@ -116,18 +121,18 @@ bool SceneScriptMA02::ClickedOnItem(int itemId, bool a2) {
 }
 
 bool SceneScriptMA02::ClickedOnExit(int exitId) {
-	if (exitId == 0) {
+	if (exitId == kMA02ExitMA06) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.19f, -144.12f, 378.27f, 0, 1, false, 0)) {
 			Music_Stop(10);
 			Game_Flag_Set(kFlagMA02toMA06);
-			Set_Enter(52, kSceneMA06);
+			Set_Enter(kSetMA06, kSceneMA06);
 		}
 		return true;
 	}
-	if (exitId == 1) {
+	if (exitId == kMA02ExitMA04) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -168.0f, -144.13f, 10.27f, 0, 1, false, 0)) {
 			Game_Flag_Set(kFlagMA02ToMA04);
-			Set_Enter(50, kSceneMA04);
+			Set_Enter(kSetMA04, kSceneMA04);
 		}
 		return true;
 	}
@@ -146,22 +151,22 @@ void SceneScriptMA02::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptMA02::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagMA06ToMA02)) {
-		sub_402044();
+		selectNextTvNews();
 	}
 	if (Game_Flag_Query(kFlagMA04ToMA02)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -148.12f, -144.13f, 34.27f, 0, 1, false, 0);
 	}
-	if (Global_Variable_Query(1) == 4 && !Game_Flag_Query(655)) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && !Game_Flag_Query(655)) {
 		Game_Flag_Set(623);
 		Game_Flag_Set(655);
-		sub_401E4C();
+		dialogueWithRajif();
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.19f, -144.12f, 378.27f, 0, 0, false, 0);
 		Game_Flag_Set(kFlagMA02toMA06);
-		Set_Enter(52, kSceneMA06);
+		Set_Enter(kSetMA06, kSceneMA06);
 		//	return true;
 		return;
 	}
-	if (Global_Variable_Query(1) == 5 && !Game_Flag_Query(654)) {
+	if (Global_Variable_Query(kVariableChapter) == 5 && !Game_Flag_Query(654)) {
 		if (Game_Flag_Query(653)) {
 			Actor_Says(kActorMcCoy, 2390, 0);
 			Music_Play(2, 25, 0, 3, -1, 0, 0);
@@ -171,7 +176,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 		Game_Flag_Set(654);
 		Autosave_Game(3);
 	}
-	if (Global_Variable_Query(1) < 4 && !Game_Flag_Query(kFlagMA04ToMA02) && Actor_Query_Goal_Number(kActorMaggie) != 2) {
+	if (Global_Variable_Query(kVariableChapter) < 4 && !Game_Flag_Query(kFlagMA04ToMA02) && Actor_Query_Goal_Number(kActorMaggie) != 2) {
 		Actor_Set_Goal_Number(kActorMaggie, 1);
 		if (!Game_Flag_Query(60)) {
 			Game_Flag_Set(60);
@@ -201,7 +206,7 @@ void SceneScriptMA02::PlayerWalkedOut() {
 void SceneScriptMA02::DialogueQueueFlushed(int a1) {
 }
 
-void SceneScriptMA02::sub_401E4C() {
+void SceneScriptMA02::dialogueWithRajif() {
 	Actor_Says(kActorMcCoy, 2365, 13);
 	Actor_Says(kActorRajif, 0, 13);
 	Actor_Says(kActorMcCoy, 2370, 13);
@@ -214,8 +219,8 @@ void SceneScriptMA02::sub_401E4C() {
 	Delay(3000);
 }
 
-bool SceneScriptMA02::sub_401F7C() {
-	return Global_Variable_Query(1) == 5
+bool SceneScriptMA02::isPhoneRinging() {
+	return Global_Variable_Query(kVariableChapter) == 5
 		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallClovis)
 		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallCrystal)
 		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1)
@@ -224,23 +229,23 @@ bool SceneScriptMA02::sub_401F7C() {
 		&& !Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy2);
 }
 
-void SceneScriptMA02::sub_402044() {
+void SceneScriptMA02::selectNextTvNews() {
 	int i = 0;
 	int arr[7];
-	if (Global_Variable_Query(1) < 4 && Game_Flag_Query(kFlagGordoIsReplicant)) {
+	if (Global_Variable_Query(kVariableChapter) < 4 && Game_Flag_Query(kFlagGordoIsReplicant)) {
 		arr[i++] = 0;
 	}
 	arr[i++] = 1;
-	if (Global_Variable_Query(1) >= 3) {
+	if (Global_Variable_Query(kVariableChapter) >= 3) {
 		arr[i++] = 2;
 	}
-	if (Global_Variable_Query(1) >= 2 && Global_Variable_Query(1) <= 4) {
+	if (Global_Variable_Query(kVariableChapter) >= 2 && Global_Variable_Query(kVariableChapter) <= 4) {
 		arr[i++] = 3;
 	}
 	if (Game_Flag_Query(171) && Game_Flag_Query(170)) {
 		arr[i++] = 4;
 	}
-	Global_Variable_Set(52, arr[Random_Query(0, i - 1)]);
+	Global_Variable_Set(kVariableNextTvNews, arr[Random_Query(0, i - 1)]);
 }
 
 } // End of namespace BladeRunner

@@ -30,7 +30,7 @@ void SceneScriptPS04::InitializeScene() {
 		Game_Flag_Reset(42);
 	}
 	Setup_Scene_Information(-668.0f, -354.0f, 974.0f, 475);
-	if (Global_Variable_Query(1) == 1) {
+	if (Global_Variable_Query(kVariableChapter) == 1) {
 		Actor_Put_In_Set(kActorGuzza, 64);
 		Actor_Set_At_XYZ(kActorGuzza, -728.0f, -354.0f, 1090.0f, 150);
 		Actor_Change_Animation_Mode(kActorGuzza, 53);
@@ -56,7 +56,7 @@ void SceneScriptPS04::SceneLoaded() {
 	Unobstacle_Object("B.DOOR", true);
 	Unobstacle_Object("B.CHAIR01", true);
 	Unclickable_Object("CHAIR07");
-	if (Global_Variable_Query(1) == 2 && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm) && !Game_Flag_Query(727)) {
+	if (Global_Variable_Query(kVariableChapter) == 2 && !Actor_Clue_Query(kActorMcCoy, kClueWeaponsOrderForm) && !Game_Flag_Query(727)) {
 		Item_Add_To_World(111, 958, 64, -643.5f, -318.82f, 1148.87f, 525, 16, 12, false, true, false, true);
 		Game_Flag_Set(727);
 	}
@@ -136,7 +136,7 @@ void SceneScriptPS04::DialogueQueueFlushed(int a1) {
 
 void SceneScriptPS04::sub_4017E4() {
 	Dialogue_Menu_Clear_List();
-	if (Global_Variable_Query(1) > 1) {
+	if (Global_Variable_Query(kVariableChapter) > 1) {
 		if (Actor_Clue_Query(kActorMcCoy, kClueAttemptedFileAccess)) {
 			DM_Add_To_List_Never_Repeat_Once_Selected(110, 5, 7, 4);
 		}
@@ -155,7 +155,7 @@ void SceneScriptPS04::sub_4017E4() {
 	Dialogue_Menu_Disappear();
 	switch (answer) {
 	case 130:
-		if (Game_Flag_Query(40) && !Game_Flag_Query(159)) {
+		if (Game_Flag_Query(kFlagZubenRetired) && !Game_Flag_Query(kFlagGuzzaTalkZubenRetired)) {
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 140, 30);
 			Actor_Face_Current_Camera(kActorGuzza, true);
@@ -182,12 +182,12 @@ void SceneScriptPS04::sub_4017E4() {
 			Actor_Says(kActorGuzza, 250, 34);
 			Actor_Says(kActorGuzza, 260, 33);
 			Actor_Says(kActorGuzza, 270, 32);
-			Game_Flag_Set(159);
+			Game_Flag_Set(kFlagGuzzaTalkZubenRetired);
 			if (Query_Difficulty_Level() != 0) {
-				Global_Variable_Increment(2, 200);
+				Global_Variable_Increment(kVariableChinyen, 200);
 			}
-			Game_Flag_Set(723);
-		} else if (Game_Flag_Query(41) && !Game_Flag_Query(160)) {
+			Game_Flag_Set(kFlagZubenBountyPaid);
+		} else if (Game_Flag_Query(kFlagZubenSpared) && !Game_Flag_Query(kFlagGuzzaTalkZubenEscaped)) {
 			Actor_Says(kActorMcCoy, 3955, 13);
 			Actor_Says(kActorGuzza, 280, 30);
 			Actor_Says(kActorMcCoy, 3960, 18);
@@ -196,7 +196,7 @@ void SceneScriptPS04::sub_4017E4() {
 			Actor_Says(kActorMcCoy, 3965, 13);
 			Actor_Says(kActorGuzza, 310, 33);
 			Actor_Says(kActorGuzza, 320, 34);
-			Game_Flag_Set(160);
+			Game_Flag_Set(kFlagGuzzaTalkZubenEscaped);
 		} else if ((Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper) || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu)) && Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA) && Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 50 && !Game_Flag_Query(161)) {
 			Actor_Says(kActorMcCoy, 3970, 18);
 			Actor_Says(kActorGuzza, 330, 30);

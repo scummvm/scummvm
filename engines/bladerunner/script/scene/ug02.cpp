@@ -91,7 +91,7 @@ bool SceneScriptUG02::MouseClick(int x, int y) {
 bool SceneScriptUG02::ClickedOn3DObject(const char *objectName, bool a2) {
 	if (Object_Query_Click("GUN_1", objectName) || Object_Query_Click("GUN_2", objectName) || Object_Query_Click("CRATE_3", objectName)) {
 		Actor_Face_Object(kActorMcCoy, "GUN_1", true);
-		if (!Game_Flag_Query(449) && Global_Variable_Query(1) < 4) {
+		if (!Game_Flag_Query(449) && Global_Variable_Query(kVariableChapter) < 4) {
 			Actor_Voice_Over(2430, kActorVoiceOver);
 			Actor_Voice_Over(2440, kActorVoiceOver);
 			Actor_Voice_Over(2450, kActorVoiceOver);
@@ -100,7 +100,7 @@ bool SceneScriptUG02::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Clue_Acquire(kActorMcCoy, kClueWeaponsCache, 1, -1);
 			return true;
 		}
-		if (Global_Variable_Query(1) <= 3) {
+		if (Global_Variable_Query(kVariableChapter) <= 3) {
 			Actor_Says(kActorMcCoy, 8580, 14);
 			return false;
 		}

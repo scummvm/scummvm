@@ -264,7 +264,7 @@ void SceneScriptPS01::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
-	if (!Game_Flag_Query(718) && Global_Variable_Query(1) == 1) {
+	if (!Game_Flag_Query(718) && Global_Variable_Query(kVariableChapter) == 1) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeTowards3, true, -1);

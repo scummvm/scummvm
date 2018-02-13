@@ -31,7 +31,7 @@ void SceneScriptDR06::InitializeScene() {
 		Setup_Scene_Information(-707.57001f, 136.60001f, -1132.64f, 472);
 	}
 	Scene_Exit_Add_2D_Exit(0, 601, 11, 639, 479, 1);
-	if (Global_Variable_Query(1) > 3 && Game_Flag_Query(715)) {
+	if (Global_Variable_Query(kVariableChapter) > 3 && Game_Flag_Query(715)) {
 		Scene_Exit_Add_2D_Exit(1, 0, 272, 46, 477, 2);
 	}
 	Ambient_Sounds_Add_Looping_Sound(383, 25, 0, 1);

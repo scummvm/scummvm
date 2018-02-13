@@ -25,12 +25,12 @@
 namespace BladeRunner {
 
 void AIScriptOfficerLeary::Initialize() {
-	var_45D5B0_animation_state = 0;
-	var_45D5B4_animation_frame = 0;
-	var_462880 = 0;
+	_animationState = 0;
+	_animationFrame = 0;
+	_animationStateNext = 0;
 	var_45D5B8 = 0;
 	var_45D5BC = 0;
-	var_462884 = 0;
+	_animationNext = 0;
 
 	Actor_Put_In_Set(kActorOfficerLeary, 69);
 	Actor_Set_At_XYZ(kActorOfficerLeary, -261.80f, 6.00f, 79.58f, 512);
@@ -39,13 +39,13 @@ void AIScriptOfficerLeary::Initialize() {
 }
 
 bool AIScriptOfficerLeary::Update() {
-	if (Global_Variable_Query(1) == 4 && Actor_Query_Goal_Number(kActorOfficerLeary) < 300) {
+	if (Global_Variable_Query(kVariableChapter) == 4 && Actor_Query_Goal_Number(kActorOfficerLeary) < 300) {
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 300);
-	} else if (Global_Variable_Query(1) == 5 && Actor_Query_Goal_Number(kActorOfficerLeary) < 400) {
+	} else if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorOfficerLeary) < 400) {
 		AI_Movement_Track_Flush(kActorOfficerLeary);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 400);
-	} else if (!Game_Flag_Query(182) && Game_Flag_Query(147) == 1 && Game_Flag_Query(kFlagChromeDebrisTaken) == 1 && Player_Query_Current_Scene() != 78 && Global_Variable_Query(1) < 3) {
+	} else if (!Game_Flag_Query(182) && Game_Flag_Query(147) == 1 && Game_Flag_Query(kFlagChromeDebrisTaken) == 1 && Player_Query_Current_Scene() != 78 && Global_Variable_Query(kVariableChapter) < 3) {
 		Game_Flag_Set(kFlagRC01PoliceDone);
 		Actor_Set_Goal_Number(kActorOfficerLeary, 3);
 	} else if (Actor_Query_Goal_Number(kActorOfficerLeary) != 1 && Actor_Query_Goal_Number(kActorOfficerLeary) != 2 && Game_Flag_Query(199) == 1) {
@@ -491,324 +491,324 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 	int v57;
 	int a1;
 
-	switch (var_45D5B0_animation_state) {
+	switch (_animationState) {
 	case 32:
 		*animation = 603;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(603)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(603)) {
 			*animation = 589;
-			var_45D5B0_animation_state = 0;
+			_animationState = 0;
 			var_45D5B8 = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 31:
 		*animation = 604;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(604)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(604)) {
 			*animation = 601;
-			var_45D5B0_animation_state = 1;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 1;
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 30:
 		*animation = 587;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(587)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(587)) {
 			*animation = 589;
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 0);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 29:
 		*animation = 586;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(586)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(586)) {
 			*animation = 589;
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 0);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 28:
 		*animation = 576;
-		if (var_45D5B4_animation_frame < Slice_Animation_Query_Number_Of_Frames(576) - 1) {
-			++var_45D5B4_animation_frame;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(576) - 1) {
+			++_animationFrame;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 27:
 		*animation = 588;
-		if (var_45D5B4_animation_frame < Slice_Animation_Query_Number_Of_Frames(588) - 1) {
-			++var_45D5B4_animation_frame;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(588) - 1) {
+			++_animationFrame;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 26:
 		*animation = 573;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(573)) {
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(573)) {
+			_animationState = 21;
+			_animationFrame = 0;
 			*animation = 571;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 25:
 		*animation = 572;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(572)) {
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(572)) {
+			_animationState = 21;
+			_animationFrame = 0;
 			*animation = 571;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 24:
 		*animation = 581;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame == 4) {
+		_animationFrame++;
+		if (_animationFrame == 4) {
 			if (Random_Query(1, 2) == 1) {
 				Sound_Play_Speech_Line(kActorOfficerLeary, 9010, 75, 0, 99);
 			} else {
 				Sound_Play_Speech_Line(kActorOfficerLeary, 9015, 75, 0, 99);
 			}
 		}
-		if (var_45D5B4_animation_frame == 5) {
+		if (_animationFrame == 5) {
 			Actor_Combat_AI_Hit_Attempt(kActorOfficerLeary);
 		}
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(581)) {
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(581)) {
+			_animationState = 21;
+			_animationFrame = 0;
 			*animation = 571;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 23:
 		*animation = 580;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(580)) {
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(580)) {
 			*animation = 589;
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 22:
 		*animation = 579;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(579)) {
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(579)) {
+			_animationState = 21;
+			_animationFrame = 0;
 			*animation = 571;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 21:
 		*animation = 571;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(571)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(571)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 20:
 		*animation = 571;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame > Slice_Animation_Query_Number_Of_Frames(571) - 1) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(571) - 1) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 19:
 		*animation = 600;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(600)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(600)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 18:
 		*animation = 599;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(599)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(599)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 17:
 		*animation = 598;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(598)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(598)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 16:
 		*animation = 597;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(597)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(597)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 15:
 		*animation = 596;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(596)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(596)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 14:
 		*animation = 595;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(595)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(595)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 13:
 		*animation = 594;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(594)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(594)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 12:
 		*animation = 593;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(593)) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(593)) {
+			_animationState = 11;
+			_animationFrame = 0;
 			*animation = 592;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 11:
-		if (var_45D5BC && var_45D5B4_animation_frame <= 2) {
+		if (_animationFrame <= 2) {
 			var_45D5BC = 0;
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 			*animation = 589;
 			var_45D5B8 = Random_Query(0, 1);
-			*frame = var_45D5B4_animation_frame;
+			*frame = _animationFrame;
 			return true;
 		}
 
 		*animation = 592;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(592)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(592)) {
+			_animationFrame = 0;
 			if (var_45D5BC) {
 				var_45D5BC = 0;
-				var_45D5B0_animation_state = 0;
-				var_45D5B4_animation_frame = 0;
+				_animationState = 0;
+				_animationFrame = 0;
 				*animation = 589;
 				var_45D5B8 = Random_Query(0, 1);
 			} else {
-				var_45D5B0_animation_state = Random_Query(0, 8) + 11;
+				_animationState = Random_Query(0, 8) + 11;
 			}
-			var_45D5B4_animation_frame = 0;
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 10:
 		*animation = 578;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(578)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(578)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 9:
 		*animation = 577;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(577)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(577)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 8:
 		*animation = 575;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(575)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(575)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 7:
 		*animation = 574;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(574)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(574)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 6:
 		*animation = 585;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(585)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(585)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 5:
 		*animation = 584;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(584)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(584)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 4:
 		*animation = 583;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(583)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(583)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 3:
 		*animation = 582;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(582)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(582)) {
+			_animationFrame = 0;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 2:
 		if (Game_Flag_Query(199)) {
 			*animation = 603;
-			var_45D5B4_animation_frame++;
-			if (var_45D5B4_animation_frame > Slice_Animation_Query_Number_Of_Frames(603) - 1) {
+			_animationFrame++;
+			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(603) - 1) {
 				Game_Flag_Reset(199);
-				var_45D5B4_animation_frame = 0;
-				var_45D5B0_animation_state = var_462880;
-				*animation = var_462884;
+				_animationFrame = 0;
+				_animationState = _animationStateNext;
+				*animation = _animationNext;
 			}
 		} else {
 			if (var_45D5B8 == 0) {
@@ -820,71 +820,71 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 			if (var_45D5B8 == 2) {
 				*animation = 591;
 			}
-			if (var_45D5B4_animation_frame > Slice_Animation_Query_Number_Of_Frames(*animation) / 2) {
+			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(*animation) / 2) {
 				a1 = *animation;
-				var_45D5B4_animation_frame += 3;
-				v57 = var_45D5B4_animation_frame;
+				_animationFrame += 3;
+				v57 = _animationFrame;
 				if (v57 > Slice_Animation_Query_Number_Of_Frames(a1) - 1) {
-					var_45D5B4_animation_frame = 0;
-					var_45D5B0_animation_state = var_462880;
-					*animation = var_462884;
+					_animationFrame = 0;
+					_animationState = _animationStateNext;
+					*animation = _animationNext;
 				}
 			} else {
-				var_45D5B4_animation_frame -= 3;
-				if (var_45D5B4_animation_frame < 0) {
-					var_45D5B4_animation_frame = 0;
-					var_45D5B0_animation_state = var_462880;
-					*animation = var_462884;
+				_animationFrame -= 3;
+				if (_animationFrame < 0) {
+					_animationFrame = 0;
+					_animationState = _animationStateNext;
+					*animation = _animationNext;
 				}
 			}
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 1:
 		*animation = 601;
-		var_45D5B4_animation_frame++;
-		if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(601)) {
-			var_45D5B4_animation_frame = 0;
+		_animationFrame++;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(601)) {
+			_animationFrame = 0;
 		}
 		if (!Game_Flag_Query(199)) {
-			var_45D5B0_animation_state = 32;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 32;
+			_animationFrame = 0;
 			*animation = 603;
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	case 0:
 		if (Game_Flag_Query(199) && !Game_Flag_Query(KFlagMcCoyAndOfficerLearyTalking)) {
-			var_45D5B0_animation_state = 31;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 31;
+			_animationFrame = 0;
 			*animation = 604;
 		} else if (var_45D5B8 == 1) {
 			*animation = 590;
-			var_45D5B4_animation_frame++;
-			if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(590)) {
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(590)) {
 				var_45D5B8 = Random_Query(0, 2);
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		} else if (var_45D5B8 == 2) {
 			*animation = 591;
-			var_45D5B4_animation_frame++;
-			if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(591)) {
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(591)) {
 				var_45D5B8 = Random_Query(0, 2);
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		} else if (var_45D5B8 == 0) {
 			*animation = 589;
-			var_45D5B4_animation_frame++;
-			if (var_45D5B4_animation_frame >= Slice_Animation_Query_Number_Of_Frames(589)) {
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(589)) {
 				var_45D5B8 = Random_Query(0, 2);
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		}
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	default:
 		*animation = 399;
-		*frame = var_45D5B4_animation_frame;
+		*frame = _animationFrame;
 		return true;
 	}
 }
@@ -894,17 +894,17 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 
 	switch (mode) {
 	case kAnimationModeIdle:
-		switch (var_45D5B0_animation_state) {
+		switch (_animationState) {
 		case 21:
 		case 24:
-			var_45D5B0_animation_state = 23;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 23;
+			_animationFrame = 0;
 			break;
 		case 20:
-			v1 = var_45D5B4_animation_frame;
+			v1 = _animationFrame;
 			Actor_Change_Animation_Mode(kActorOfficerLeary, 4);
-			var_45D5B4_animation_frame = v1;
-			var_45D5B0_animation_state = 21;
+			_animationFrame = v1;
+			_animationState = 21;
 			break;
 		case 11:
 		case 12:
@@ -921,37 +921,37 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		case 23:
 			break;
 		default:
-			var_45D5B0_animation_state = 0;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 0;
+			_animationFrame = 0;
 			var_45D5B8 = Random_Query(0, 1);
 			break;
 		}
 		break;
 	case kAnimationModeWalk:
-		var_45D5B0_animation_state = 3;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 3;
+		_animationFrame = 0;
 		break;
 	case kAnimationModeRun:
-		var_45D5B0_animation_state = 4;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 4;
+		_animationFrame = 0;
 		break;
 	case 3:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 11;
-			var_462884 = 592;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 11;
+			_animationNext = 592;
 			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 11;
-			var_45D5B4_animation_frame = 0;
+		else if (_animationState > 19) {
+			_animationState = 11;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case kAnimationModeCombatIdle:
-		switch (var_45D5B0_animation_state) {
+		switch (_animationState) {
 		case 21:
 		case 22:
 		case 24:
@@ -960,173 +960,173 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		case 8:
 		case 9:
 		case 10:
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 21;
+			_animationFrame = 0;
 			break;
 		case 0:
-			var_45D5B0_animation_state = 22;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 22;
+			_animationFrame = 0;
 			break;
 		default:
-			var_45D5B0_animation_state = 21;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 21;
+			_animationFrame = 0;
 			break;
 		}
 		break;
 	case 6:
-		var_45D5B0_animation_state = 24;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 24;
+		_animationFrame = 0;
 		break;
 	case kAnimationModeCombatWalk:
-		var_45D5B0_animation_state = 7;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 7;
+		_animationFrame = 0;
 		break;
 	case kAnimationModeCombatRun:
-		var_45D5B0_animation_state = 8;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 8;
+		_animationFrame = 0;
 		break;
 	case 12:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 12;
-			var_462884 = 593;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 12;
+			_animationNext = 593;
 			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 12;
-			var_45D5B4_animation_frame = 0;
+		else if (_animationState > 19) {
+			_animationState = 12;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 13:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 13;
-			var_462884 = 594;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 13;
+			_animationNext = 594;
 			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 13;
-			var_45D5B4_animation_frame = 0;
+		else if (_animationState > 19) {
+			_animationState = 13;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 14:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 14;
-			var_462884 = 595;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 14;
+			_animationNext = 595;
 			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 14;
-			var_45D5B4_animation_frame = 0;
+		else if (_animationState > 19) {
+			_animationState = 14;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 15:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 15;
-			var_462884 = 596;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 15;
+			_animationNext = 596;
 			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 15;
-			var_45D5B4_animation_frame = 0;
+		else if (_animationState > 19) {
+			_animationState = 15;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 16:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 16;
-			var_462884 = 597;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 16;
+			_animationNext = 597;
 			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 16;
-			var_45D5B4_animation_frame = 0;
+		else if (_animationState > 19) {
+			_animationState = 16;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 17:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 17;
-			var_462884 = 598;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 17;
+			_animationNext = 598;
 			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
 		}
-		else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 17;
-			var_45D5B4_animation_frame = 0;
+		else if (_animationState > 19) {
+			_animationState = 17;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 18:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 18;
-			var_462884 = 599;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 18;
+			_animationNext = 599;
 			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
-		} else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 18;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 18;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 19:
-		if (var_45D5B0_animation_state == 0 || var_45D5B0_animation_state == 1) {
-			var_45D5B0_animation_state = 2;
-			var_462880 = 19;
-			var_462884 = 600;
+		if (_animationState == 1) {
+			_animationState = 2;
+			_animationStateNext = 19;
+			_animationNext = 600;
 			if (Game_Flag_Query(199) == 1) {
-				var_45D5B4_animation_frame = 0;
+				_animationFrame = 0;
 			}
-		} else if (var_45D5B0_animation_state < 11 || var_45D5B0_animation_state > 19) {
-			var_45D5B0_animation_state = 19;
-			var_45D5B4_animation_frame = 0;
+		} else if (_animationState > 19) {
+			_animationState = 19;
+			_animationFrame = 0;
 			var_45D5BC = 0;
 		}
 		break;
 	case 21:
-		if (var_45D5B0_animation_state == 21 || var_45D5B0_animation_state == 24) {
+		if (_animationState == 24) {
 			if (Random_Query(0, 1)) {
-				var_45D5B0_animation_state = 25;
+				_animationState = 25;
 			} else {
-				var_45D5B0_animation_state = 26;
+				_animationState = 26;
 			}
-			var_45D5B4_animation_frame = 0;
+			_animationFrame = 0;
 		} else {
 			if (Random_Query(0, 1)) {
-				var_45D5B0_animation_state = 29;
+				_animationState = 29;
 			} else {
-				var_45D5B0_animation_state = 30;
+				_animationState = 30;
 			}
-			var_45D5B4_animation_frame = 0;
+			_animationFrame = 0;
 		}
 		break;
 	case 22:
 		if (Random_Query(0, 1)) {
-			var_45D5B0_animation_state = 25;
+			_animationState = 25;
 		} else {
-			var_45D5B0_animation_state = 26;
+			_animationState = 26;
 		}
-		var_45D5B4_animation_frame = 0;
+		_animationFrame = 0;
 		break;
 	case 27:
 		Game_Flag_Reset(199);
@@ -1135,50 +1135,50 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		Game_Flag_Set(199);
 		break;
 	case 44:
-		var_45D5B0_animation_state = 5;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 5;
+		_animationFrame = 0;
 		break;
 	case 45:
-		var_45D5B0_animation_state = 6;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 6;
+		_animationFrame = 0;
 		break;
 	case 46:
-		var_45D5B0_animation_state = 9;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 9;
+		_animationFrame = 0;
 		break;
 	case 47:
-		var_45D5B0_animation_state = 10;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 10;
+		_animationFrame = 0;
 		break;
 	case 48:
-		if (var_45D5B0_animation_state == 21 || var_45D5B0_animation_state == 22 || var_45D5B0_animation_state == 24) {
-			var_45D5B0_animation_state = 28;
-			var_45D5B4_animation_frame = 0;
+		if (_animationState == 24) {
+			_animationState = 28;
+			_animationFrame = 0;
 		} else {
-			var_45D5B0_animation_state = 27;
-			var_45D5B4_animation_frame = 0;
+			_animationState = 27;
+			_animationFrame = 0;
 		}
 		break;
 	case 58:
-		var_45D5B0_animation_state = 20;
-		var_45D5B4_animation_frame = 0;
+		_animationState = 20;
+		_animationFrame = 0;
 		break;
 	}
 	return true;
 }
 
-void AIScriptOfficerLeary::QueryAnimationState(int *animationState, int *animationFrame, int *a3, int *a4) {
-	*animationState = var_45D5B0_animation_state;
-	*animationFrame = var_45D5B4_animation_frame;
-	*a3 = var_462880;
-	*a4 = var_462884;
+void AIScriptOfficerLeary::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
+	*animationState     = _animationState;
+	*animationFrame     = _animationFrame;
+	*animationStateNext = _animationStateNext;
+	*animationNext      = _animationNext;
 }
 
-void AIScriptOfficerLeary::SetAnimationState(int animationState, int animationFrame, int a3, int a4) {
-	var_45D5B0_animation_state = animationState;
-	var_45D5B4_animation_frame = animationFrame;
-	var_462880 = a3;
-	var_462884 = a4;
+void AIScriptOfficerLeary::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
+	_animationState     = animationState;
+	_animationFrame     = animationFrame;
+	_animationStateNext = animationStateNext;
+	_animationNext      = animationNext;
 }
 
 bool AIScriptOfficerLeary::ReachedMovementTrackWaypoint(int waypointId) {

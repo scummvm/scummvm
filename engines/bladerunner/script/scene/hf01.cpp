@@ -131,7 +131,7 @@ bool SceneScriptHF01::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 8630, 13);
 				return true;
 			}
-			if (Global_Variable_Query(1) == 5 && (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1) || Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)) && !Game_Flag_Query(165) && Actor_Query_Goal_Number(kActorCrazylegs) != 2 && Game_Flag_Query(653) && !Game_Flag_Query(662)) {
+			if (Global_Variable_Query(kVariableChapter) == 5 && (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1) || Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1)) && !Game_Flag_Query(165) && Actor_Query_Goal_Number(kActorCrazylegs) != 2 && Game_Flag_Query(653) && !Game_Flag_Query(662)) {
 				Game_Flag_Set(662);
 				Actor_Face_Actor(kActorMcCoy, v1, true);
 				Actor_Face_Actor(v1, kActorMcCoy, true);
@@ -321,7 +321,7 @@ void SceneScriptHF01::PlayerWalkedIn() {
 		Actor_Voice_Over(960, kActorVoiceOver);
 		Actor_Voice_Over(970, kActorVoiceOver);
 		Actor_Voice_Over(980, kActorVoiceOver);
-	} else if (!Game_Flag_Query(377) && Global_Variable_Query(1) < 4) {
+	} else if (!Game_Flag_Query(377) && Global_Variable_Query(kVariableChapter) < 4) {
 		ADQ_Flush();
 		ADQ_Add(kActorMurray, 0, 14);
 		ADQ_Add(kActorMurray, 10, 3);
