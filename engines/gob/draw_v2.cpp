@@ -562,6 +562,7 @@ void Draw_v2::printTotText(int16 id) {
 
 		default:
 			str[strPos] = (char) cmd;
+			// fall through
 		case 32:
 			mask[strPos++] = maskChar;
 			ptr++;
