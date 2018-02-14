@@ -473,9 +473,7 @@ void Interface::perform() {
 	case Common::KEYCODE_EQUALS:
 	case Common::KEYCODE_KP_EQUALS:
 		// Toggle minimap
-		combat._moveMonsters = false;
 		party._automapOn = !party._automapOn;
-		combat._moveMonsters = true;
 		break;
 
 	case Common::KEYCODE_b:
