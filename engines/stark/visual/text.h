@@ -44,8 +44,8 @@ class VisualText : public Visual {
 public:
 	static const VisualType TYPE = Visual::kImageText;
 
-	VisualText(Gfx::Driver *gfx);
-	virtual ~VisualText();
+	explicit VisualText(Gfx::Driver *gfx);
+	~VisualText() override;
 
 	Common::Rect getRect();
 
@@ -68,6 +68,7 @@ private:
 	Common::String _text;
 	uint32 _color;
 	uint32 _backgroundColor;
+	uint32 _targetWidth;
 	Common::Rect _originalRect;
 
 	FontProvider::FontType _fontType;

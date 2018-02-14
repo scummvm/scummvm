@@ -41,7 +41,7 @@ VisualText::VisualText(Gfx::Driver *gfx) :
 		_texture(nullptr),
 		_color(0),
 		_backgroundColor(0),
-		_originalRect(600, 0),
+		_targetWidth(600),
 		_fontCustomIndex(-1),
 		_fontType(FontProvider::kBigFont) {
 	_surfaceRenderer = _gfx->createSurfaceRenderer();
@@ -61,30 +61,39 @@ Common::Rect VisualText::getRect() {
 }
 
 void VisualText::setText(const Common::String &text) {
-	freeTexture();
-	_text = text;
+	if (_text != text) {
+		freeTexture();
+		_text = text;
+	}
 }
 
 void VisualText::setColor(uint32 color) {
-	freeTexture();
-	_color = color;
+	if (_color != color) {
+		freeTexture();
+		_color = color;
+	}
 }
 
 void VisualText::setBackgroundColor(uint32 color) {
-	freeTexture();
-	_backgroundColor = color;
+	if (color != _backgroundColor) {
+		freeTexture();
+		_backgroundColor = color;
+	}
 }
 
 void VisualText::setTargetWidth(uint32 width) {
-	freeTexture();
-	_originalRect.right = width;
+	if (width != _targetWidth) {
+		freeTexture();
+		_targetWidth = width;
+	}
 }
 
 void VisualText::setFont(FontProvider::FontType type, int32 customFontIndex) {
-	freeTexture();
-
-	_fontType = type;
-	_fontCustomIndex = customFontIndex;
+	if (type != _fontType || customFontIndex != _fontCustomIndex) {
+		freeTexture();
+		_fontType = type;
+		_fontCustomIndex = customFontIndex;
+	}
 }
 
 void VisualText::createTexture() {
@@ -92,7 +101,7 @@ void VisualText::createTexture() {
 	const Graphics::Font *font = StarkFontProvider->getScaledFont(_fontType, _fontCustomIndex);
 	uint scaledLineHeight = StarkFontProvider->getScaledFontHeight(_fontType, _fontCustomIndex);
 	uint originalLineHeight = StarkFontProvider->getOriginalFontHeight(_fontType, _fontCustomIndex);
-	uint maxScaledLineWidth = StarkGfx->scaleWidthOriginalToCurrent(_originalRect.width());
+	uint maxScaledLineWidth = StarkGfx->scaleWidthOriginalToCurrent(_targetWidth);
 
 	// Word wrap the text and compute the scaled and original resolution bounding boxes
 	Common::Rect scaledRect;

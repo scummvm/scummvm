@@ -42,7 +42,7 @@ public:
 		kEffectSmoke   = 11
 	};
 
-	Visual(VisualType type) : _type(type) {}
+	explicit Visual(VisualType type) : _type(type) {}
 	virtual ~Visual() {}
 
 	/**
