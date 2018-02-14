@@ -20,49 +20,30 @@
  *
  */
 
+#ifndef MUTATIONOFJB_ROOM_H
+#define MUTATIONOFJB_ROOM_H
+
 #include "common/scummsys.h"
 
-#include "common/debug.h"
-#include "common/error.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "graphics/screen.h"
-
-#include "engines/util.h"
-
-#include "mutationofjb/mutationofjb.h"
-#include "mutationofjb/room.h"
+namespace Graphics {
+	class Screen;
+}
 
 namespace MutationOfJB {
 
-MutationOfJBEngine::MutationOfJBEngine(OSystem *syst)
-: Engine(syst),
-  _console(nullptr),
-  _room(nullptr),
-  _screen(nullptr)
-{
-	debug("MutationOfJBEngine::MutationOfJBEngine");
+class EncryptedFile;
+
+class Room {
+public:
+	Room(Graphics::Screen *screen);
+	bool load(uint8 roomNumber, bool roomB);
+private:
+	void loadPalette(EncryptedFile &file);
+	void loadBackground(EncryptedFile &file, uint32 size);
+
+	Graphics::Screen *_screen;
+};
+
 }
 
-MutationOfJBEngine::~MutationOfJBEngine() {
-	debug("MutationOfJBEngine::~MutationOfJBEngine");
-}
-
-Common::Error MutationOfJBEngine::run() {
-	debug("MutationOfJBEngine::run");
-
-	initGraphics(320, 200);
-	_console = new Console(this);
-	_screen = new Graphics::Screen;
-	_room = new Room(_screen);
-	_room->load(13, false);
-
-	while(!shouldQuit()) {
-		Common::Event event;
-		while (_eventMan->pollEvent(event));
-		_system->delayMillis(100);
-	}
-
-	return Common::kNoError;
-}
-}
+#endif
