@@ -64,8 +64,8 @@ Common::Platform XeenEngine::getPlatform() const {
 
 static const PlainGameDescriptor XeenGames[] = {
 	{ "xeen", "Xeen" },
-	{ "clouds", "Clouds of Xeen" },
-	{ "darkside", "Dark Side of Xeen" },
+	{ "cloudsofxeen", "Clouds of Xeen" },
+	{ "darksideofxeen", "Dark Side of Xeen" },
 	{ "worldofxeen", "World of Xeen" },
 	{ "swordsofxeen", "Swords of Xeen" },
 	{0, 0}

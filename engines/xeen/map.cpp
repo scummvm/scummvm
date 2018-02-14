@@ -992,10 +992,14 @@ void Map::load(int mapId) {
 		_sideTownPortal = _loadDarkSide ? 1 : 0;
 	}
 
-	if (_vm->getGameID() == GType_Swords) {
+	if (_vm->getGameID() == GType_Swords || _vm->getGameID() == GType_DarkSide) {
 		_animationInfo.load("dark.dat");
 		_monsterData.load("dark.mon");
 		_wallPicSprites.load("darkpic.dat");
+	} else if (_vm->getGameID() == GType_Clouds) {
+		_animationInfo.load("clouds.dat");
+		_monsterData.load("xeen.mon");
+		_wallPicSprites.load("xeenpic.dat");
 	} else if (_vm->getGameID() == GType_WorldOfXeen) {
 		files.setGameCc(1);
 

@@ -81,6 +81,42 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Clouds of Xeen
+		{
+			"cloudsofxeen",
+			nullptr,
+			{
+				{ "xeen.cc", 0, "0cffbab533d9afe140e69ec93096f43e", 13435646 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GType_Clouds,
+		0
+	},
+
+	{
+		// Dark Side of Xeen
+		{
+			"darksideofxeen",
+			nullptr,
+			{
+				{ "dark.cc", 0, "df194483ecea6abc0511637d712ced7c", 11217676 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GType_DarkSide,
+		0
+	},
+
+	{
 		// Swords of Xeen (GOG)
 		{
 			"swordsofxeen",
