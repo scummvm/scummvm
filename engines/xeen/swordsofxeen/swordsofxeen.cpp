@@ -39,6 +39,10 @@ void SwordsOfXeenEngine::death() {
 	error("TODO: Swords of Xeen death screen");
 }
 
+void SwordsOfXeenEngine::dream() {
+	error("TODO: Swords of Xeen dream sequence, if any");
+}
+
 void SwordsOfXeenEngine::showCutscene(const Common::String &name, int status, uint score) {
 	_quitMode = QMODE_MENU;
 }

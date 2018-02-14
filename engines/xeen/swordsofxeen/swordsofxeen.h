@@ -53,6 +53,11 @@ public:
 	 * Show a cutscene
 	 */
 	virtual void showCutscene(const Common::String &name, int status, uint score);
+
+	/**
+	 * Dream sequence
+	 */
+	virtual void dream();
 };
 
 #define SWORDS_VM (*(::Xeen::SwordsOfXeen::SwordsOfXeenEngine *)g_vm)

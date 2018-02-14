@@ -64,6 +64,11 @@ public:
 	virtual void showCutscene(const Common::String &name, int status, uint score);
 
 	/**
+	 * Dream sequence
+	 */
+	virtual void dream();
+
+	/**
 	 * Set the next overall game action to do
 	 */
 	void setPendingAction(WOXGameAction action) { _pendingAction = action; }

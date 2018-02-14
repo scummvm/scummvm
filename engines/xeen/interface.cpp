@@ -991,12 +991,8 @@ bool Interface::checkMoveDirection(int key) {
 }
 
 void Interface::rest() {
-	EventsManager &events = *_vm->_events;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
 
 	map.cellFlagLookup(party._mazePosition);
 
@@ -1043,39 +1039,8 @@ void Interface::rest() {
 			party.changeTime(map._isOutdoors ? 380 : 470);
 		}
 
-		if (_vm->getRandomNumber(1, 20) == 1) {
-			// Show dream
-			screen.saveBackground();
-			screen.fadeOut();
-			events.hideCursor();
-
-			screen.loadBackground("scene1.raw");
-			windows[0].update();
-			screen.fadeIn();
-
-			events.updateGameCounter();
-			while (!_vm->shouldExit() && events.timeElapsed() < 7)
-				events.pollEventsAndWait();
-
-			sound.playSound("dreams2.voc", 1);
-			while (!_vm->shouldExit() && sound.isPlaying())
-				events.pollEventsAndWait();
-
-			sound.playSound("laff1.voc", 1);
-			while (!_vm->shouldExit() && sound.isPlaying())
-				events.pollEventsAndWait();
-
-			events.updateGameCounter();
-			while (!_vm->shouldExit() && events.timeElapsed() < 7)
-				events.pollEventsAndWait();
-
-			screen.fadeOut();
-			events.setCursor(0);
-			screen.restoreBackground();
-			windows[0].update();
-
-			screen.fadeIn();
-		}
+		if (_vm->getRandomNumber(1, 20) == 1)
+			_vm->dream();
 
 		party.resetTemps();
 

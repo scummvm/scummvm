@@ -213,6 +213,11 @@ public:
 	 */
 	virtual void showCutscene(const Common::String &name, int status, uint score) {}
 
+	/**
+	 * Dream sequence
+	 */
+	virtual void dream() = 0;
+
 	static Common::String printMil(uint value);
 
 	static Common::String printK(uint value);

@@ -170,6 +170,42 @@ void WorldOfXeenEngine::death() {
 	w.update();
 }
 
+void WorldOfXeenEngine::dream() {
+	Windows &windows = *_windows;
+	Graphics::ManagedSurface savedBg;
+
+	savedBg.copyFrom(*_screen);
+	_screen->fadeOut();
+	_events->hideCursor();
+
+	_screen->loadBackground("scene1.raw");
+	windows[0].update();
+	_screen->fadeIn();
+
+	_events->updateGameCounter();
+	while (!shouldExit() && _events->timeElapsed() < 7)
+		_events->pollEventsAndWait();
+
+	_sound->playSound("dreams2.voc", 1);
+	while (!shouldExit() && _sound->isPlaying())
+		_events->pollEventsAndWait();
+
+	_sound->playSound("laff1.voc", 1);
+	while (!shouldExit() && _sound->isPlaying())
+		_events->pollEventsAndWait();
+
+	_events->updateGameCounter();
+	while (!shouldExit() && _events->timeElapsed() < 7)
+		_events->pollEventsAndWait();
+
+	_screen->fadeOut();
+	_events->setCursor(0);
+	_screen->blitFrom(savedBg);
+	windows[0].update();
+
+	_screen->fadeIn();
+}
+
 void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uint score) {
 	_sound->stopAllAudio();
 	_events->clearEvents();
