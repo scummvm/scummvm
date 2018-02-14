@@ -26,9 +26,14 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
+namespace Graphics {
+	class Screen;
+}
+
 namespace MutationOfJB {
 
 class Console;
+class Room;
 
 class MutationOfJBEngine : public Engine {
 public:
@@ -38,6 +43,8 @@ public:
 	virtual Common::Error run();
 private:
 	Console *_console;
+	Room *_room;
+	Graphics::Screen *_screen;
 };
 
 class Console : public GUI::Debugger {
