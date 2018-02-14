@@ -77,16 +77,16 @@ void StaticProvider::shutdown() {
 	_archiveLoader->unloadUnused();
 }
 
-VisualImageXMG *StaticProvider::getCursorImage(uint32 cursor) {
+VisualImageXMG *StaticProvider::getCursorImage(uint32 cursor) const {
 	Resources::Anim *anim = _stockAnims[cursor];
 	return anim->getVisual()->get<VisualImageXMG>();
 }
 
-VisualImageXMG *StaticProvider::getUIElement(UIElement element) {
+VisualImageXMG *StaticProvider::getUIElement(UIElement element) const {
 	return getCursorImage(element);
 }
 
-VisualImageXMG *StaticProvider::getUIImage(UIImage image) {
+VisualImageXMG *StaticProvider::getUIImage(UIImage image) const {
 	Resources::Image *anim = _stockImages[image];
 	return anim->getVisual()->get<VisualImageXMG>();
 }

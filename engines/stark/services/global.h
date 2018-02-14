@@ -82,7 +82,6 @@ public:
 	Resources::Root *getRoot() const { return _root; }
 	Resources::Level *getLevel() const { return _level; }
 	Current *getCurrent() const { return _current; }
-	bool isDebug() const { return _debug; }
 	bool isFastForward() const { return _fastForward; }
 	uint getMillisecondsPerGameloop() const { return _millisecondsPerGameloop; }
 	Resources::GlobalItemTemplate *getApril() const { return _april; }
@@ -91,7 +90,6 @@ public:
 	void setRoot(Resources::Root *root) { _root = root; }
 	void setLevel(Resources::Level *level) { _level = level; }
 	void setCurrent(Current *current) { _current = current; }
-	void setDebug(bool debug) { _debug = debug; }
 	void setFastForward() { _fastForward = true; }
 	void setNormalSpeed() { _fastForward = false; }
 	void setMillisecondsPerGameloop(uint millisecondsPerGameloop) { _millisecondsPerGameloop = millisecondsPerGameloop; }
@@ -119,7 +117,6 @@ private:
 	Resources::KnowledgeSet *_inventory;
 	Resources::GlobalItemTemplate *_april;
 	Current *_current;
-	bool _debug;
 	bool _fastForward;
 };
 

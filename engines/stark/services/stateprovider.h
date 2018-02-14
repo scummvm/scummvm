@@ -43,7 +43,7 @@ class Location;
 
 class StateReadStream : public Common::SeekableSubReadStream {
 public:
-	StateReadStream(Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
+	explicit StateReadStream(Common::SeekableReadStream *parentStream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
 	virtual ~StateReadStream();
 
 	Common::String readString();
@@ -141,8 +141,8 @@ private:
 
 	typedef Common::HashMap<Common::String, ResourceTreeState *> ResourceTreeStateMap;
 
-	void restoreResourceTreeState(Common::String storeKey, Resources::Object *root, bool current);
-	void saveResourceTreeState(Common::String storeKey, Resources::Object *root, bool current);
+	void restoreResourceTreeState(const Common::String &storeKey, Resources::Object *root, bool current);
+	void saveResourceTreeState(const Common::String &storeKey, Resources::Object *root, bool current);
 
 	void readResourceTree(Resources::Object *resource, Common::SeekableReadStream *stream, bool current, uint32 version);
 	void writeResourceTree(Resources::Object *resource, Common::WriteStream *stream, bool current);

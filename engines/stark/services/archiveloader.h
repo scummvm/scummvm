@@ -84,24 +84,24 @@ public:
 	bool returnRoot(const Common::String &archiveName);
 
 	/** Build the archive filename for a level or a location */
-	Common::String buildArchiveName(Resources::Level *level, Resources::Location *location = nullptr);
+	Common::String buildArchiveName(Resources::Level *level, Resources::Location *location = nullptr) const;
 
 	/** Retrieve a file relative to a specified archive */
-	Common::SeekableReadStream *getExternalFile(const Common::String &fileName, const Common::String &archiveName);
+	Common::SeekableReadStream *getExternalFile(const Common::String &fileName, const Common::String &archiveName) const;
 
 private:
 	class LoadedArchive {
 	public:
-		LoadedArchive(const Common::String &archiveName);
+		explicit LoadedArchive(const Common::String &archiveName);
 		~LoadedArchive();
 
-		Common::String &getFilename() { return _filename; }
-		Formats::XARCArchive &getXArc() { return _xarc; }
-		Resources::Object *getRoot() { return _root; }
+		const Common::String &getFilename() const { return _filename; }
+		const Formats::XARCArchive &getXArc() const { return _xarc; }
+		Resources::Object *getRoot() const { return _root; }
 
 		void importResources();
 
-		bool isInUse() { return _useCount > 0; }
+		bool isInUse() const { return _useCount > 0; }
 		void incUsage() { _useCount++; }
 		void decUsage() { _useCount = MAX<int>(_useCount - 1, 0); }
 
@@ -114,8 +114,8 @@ private:
 
 	typedef Common::List<LoadedArchive *> LoadedArchiveList;
 
-	bool hasArchive(const Common::String &archiveName);
-	LoadedArchive *findArchive(const Common::String &archiveName);
+	bool hasArchive(const Common::String &archiveName) const;
+	LoadedArchive *findArchive(const Common::String &archiveName) const;
 
 	LoadedArchiveList _archives;
 };

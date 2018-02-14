@@ -83,7 +83,7 @@ void ResourceProvider::initGlobal() {
 	_global->setApril(global->findChildWithSubtype<Resources::GlobalItemTemplate>(Resources::Item::kItemGlobalTemplate));
 }
 
-Current *ResourceProvider::findLevel(uint16 level) {
+Current *ResourceProvider::findLevel(uint16 level) const {
 	for (CurrentList::const_iterator it = _locations.begin(); it != _locations.end(); it++) {
 		if ((*it)->getLevel()->getIndex() == level) {
 			return *it;
@@ -93,7 +93,7 @@ Current *ResourceProvider::findLevel(uint16 level) {
 	return nullptr;
 }
 
-Current *ResourceProvider::findLocation(uint16 level, uint16 location) {
+Current *ResourceProvider::findLocation(uint16 level, uint16 location) const {
 	for (CurrentList::const_iterator it = _locations.begin(); it != _locations.end(); it++) {
 		if ((*it)->getLevel()->getIndex() == level
 				&& (*it)->getLocation()->getIndex() == location) {
@@ -104,7 +104,7 @@ Current *ResourceProvider::findLocation(uint16 level, uint16 location) {
 	return nullptr;
 }
 
-Resources::Level *ResourceProvider::getLevel(uint16 level) {
+Resources::Level *ResourceProvider::getLevel(uint16 level) const {
 	Current *current = findLevel(level);
 
 	if (current) {
@@ -114,7 +114,7 @@ Resources::Level *ResourceProvider::getLevel(uint16 level) {
 	return nullptr;
 }
 
-Resources::Location *ResourceProvider::getLocation(uint16 level, uint16 location) {
+Resources::Location *ResourceProvider::getLocation(uint16 level, uint16 location) const {
 	Current *current = findLocation(level, location);
 
 	if (current) {
@@ -371,7 +371,7 @@ void ResourceProvider::shutdown() {
 	_archiveLoader->unloadUnused();
 }
 
-Resources::Level *ResourceProvider::getLevelFromLocation(Resources::Location *location) {
+Resources::Level *ResourceProvider::getLevelFromLocation(Resources::Location *location) const {
 	for (CurrentList::const_iterator it = _locations.begin(); it != _locations.end(); it++) {
 		if ((*it)->getLocation() == location) {
 			return (*it)->getLevel();

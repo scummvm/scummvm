@@ -62,7 +62,7 @@ void FontProvider::initFonts() {
 	_customFonts[7] = FontHolder(this, "Florentine Script", 13);
 }
 
-FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, Common::String name, uint32 height, uint32 charset) {
+FontProvider::FontHolder::FontHolder(FontProvider *fontProvider, const Common::String &name, uint32 height, uint32 charset) {
 	_name = name;
 	_originalHeight = height;
 	_scaledHeight = StarkGfx->scaleHeightOriginalToCurrent(_originalHeight);

@@ -82,13 +82,13 @@ public:
 	Resources::Level *getLevel() const { return _level; }
 
 	/** Get an image for a static cursor */
-	VisualImageXMG *getCursorImage(uint32 cursor);
+	VisualImageXMG *getCursorImage(uint32 cursor) const;
 
 	/** Get an image for a static UI element */
-	VisualImageXMG *getUIElement(UIElement element);
+	VisualImageXMG *getUIElement(UIElement element) const;
 
 	/** Get an image for a static UI element */
-	VisualImageXMG *getUIImage(UIImage image);
+	VisualImageXMG *getUIImage(UIImage image) const;
 
 	/** Load a static location and set it as current */
 	Resources::Location *loadLocation(const char *locationName);

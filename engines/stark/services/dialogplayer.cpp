@@ -67,7 +67,7 @@ void DialogPlayer::playSingle(Resources::Speech *speech) {
 	_speechReady = true;
 }
 
-bool DialogPlayer::isRunning() {
+bool DialogPlayer::isRunning() const {
 	return _currentDialog != nullptr || _interruptedDialog != nullptr;
 }
 

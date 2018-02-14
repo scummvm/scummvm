@@ -81,7 +81,7 @@ void ArchiveLoader::unloadUnused() {
 
 ArchiveReadStream *ArchiveLoader::getFile(const Common::String &fileName, const Common::String &archiveName) {
 	LoadedArchive *archive = findArchive(archiveName);
-	Formats::XARCArchive &xarc = archive->getXArc();
+	const Formats::XARCArchive &xarc = archive->getXArc();
 
 	Common::SeekableReadStream *stream = xarc.createReadStreamForMember(fileName);
 	if (!stream) {
@@ -98,8 +98,8 @@ bool ArchiveLoader::returnRoot(const Common::String &archiveName) {
 	return !archive->isInUse();
 }
 
-bool ArchiveLoader::hasArchive(const Common::String &archiveName) {
-	for (LoadedArchiveList::iterator it = _archives.begin(); it != _archives.end(); it++) {
+bool ArchiveLoader::hasArchive(const Common::String &archiveName) const {
+	for (LoadedArchiveList::const_iterator it = _archives.begin(); it != _archives.end(); it++) {
 		if ((*it)->getFilename() == archiveName) {
 			return true;
 		}
@@ -108,8 +108,8 @@ bool ArchiveLoader::hasArchive(const Common::String &archiveName) {
 	return false;
 }
 
-ArchiveLoader::LoadedArchive *ArchiveLoader::findArchive(const Common::String &archiveName) {
-	for (LoadedArchiveList::iterator it = _archives.begin(); it != _archives.end(); it++) {
+ArchiveLoader::LoadedArchive *ArchiveLoader::findArchive(const Common::String &archiveName) const {
+	for (LoadedArchiveList::const_iterator it = _archives.begin(); it != _archives.end(); it++) {
 		if ((*it)->getFilename() == archiveName) {
 			return *it;
 		}
@@ -118,7 +118,7 @@ ArchiveLoader::LoadedArchive *ArchiveLoader::findArchive(const Common::String &a
 	error("The archive with name '%s' is not loaded.", archiveName.c_str());
 }
 
-Common::String ArchiveLoader::buildArchiveName(Resources::Level *level, Resources::Location *location) {
+Common::String ArchiveLoader::buildArchiveName(Resources::Level *level, Resources::Location *location) const {
 	Common::String archive;
 
 	if (!location) {
@@ -139,7 +139,7 @@ Common::String ArchiveLoader::buildArchiveName(Resources::Level *level, Resource
 	return archive;
 }
 
-Common::SeekableReadStream *ArchiveLoader::getExternalFile(const Common::String &fileName, const Common::String &archiveName) {
+Common::SeekableReadStream *ArchiveLoader::getExternalFile(const Common::String &fileName, const Common::String &archiveName) const {
 	static const char separator = '/';
 
 	// Build a path of the type 45/00/

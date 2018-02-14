@@ -62,7 +62,7 @@ public:
 	void playSingle(Resources::Speech *speech);
 
 	/** Check if a dialog is running */
-	bool isRunning();
+	bool isRunning() const;
 
 	/** Update the currently running dialog */
 	void update();

@@ -40,14 +40,14 @@ class Driver;
  */
 class Cursor {
 public:
-	Cursor(Gfx::Driver *gfx);
+	explicit Cursor(Gfx::Driver *gfx);
 	~Cursor();
 
 	/** Render the Cursor */
 	void render();
 
 	/** Update the mouse position */
-	void setMousePosition(Common::Point pos);
+	void setMousePosition(const Common::Point &pos);
 
 	/** Make cycle the cursor's brightness */
 	void setFading(bool fading);

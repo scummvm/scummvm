@@ -71,7 +71,7 @@ private:
 		Common::SharedPtr<Graphics::Font> _font;
 
 		FontHolder() : _originalHeight(0), _scaledHeight(0), _charset(0) {}
-		FontHolder(FontProvider *fontProvider, Common::String name, uint32 height, uint32 charset = 0);
+		FontHolder(FontProvider *fontProvider, const Common::String &name, uint32 height, uint32 charset = 0);
 
 	};
 

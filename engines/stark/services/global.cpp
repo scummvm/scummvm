@@ -35,7 +35,6 @@ Global::Global() :
 		_root(nullptr),
 		_level(nullptr),
 		_current(nullptr),
-		_debug(false),
 		_fastForward(false),
 		_inventory(nullptr) {
 }

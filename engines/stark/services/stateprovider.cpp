@@ -95,7 +95,7 @@ void StateProvider::restoreGlobalState(Resources::Level *level) {
 	restoreResourceTreeState("CurrentGlobal", level, true);
 }
 
-void StateProvider::restoreResourceTreeState(Common::String storeKey, Resources::Object *root, bool current) {
+void StateProvider::restoreResourceTreeState(const Common::String &storeKey, Resources::Object *root, bool current) {
 	if (_stateStore.contains(storeKey)) {
 		ResourceTreeState *state = _stateStore[storeKey];
 
@@ -155,7 +155,7 @@ void StateProvider::saveGlobalState(Resources::Level *level) {
 	saveResourceTreeState("CurrentGlobal", level, true);
 }
 
-void StateProvider::saveResourceTreeState(Common::String storeKey, Resources::Object *root, bool current) {
+void StateProvider::saveResourceTreeState(const Common::String &storeKey, Resources::Object *root, bool current) {
 	// Delete any previous data
 	if (_stateStore.contains(storeKey)) {
 		delete _stateStore[storeKey];

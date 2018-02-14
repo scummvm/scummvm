@@ -73,7 +73,7 @@ void Cursor::setCursorImage(VisualImageXMG *image) {
 }
 
 
-void Cursor::setMousePosition(Common::Point pos) {
+void Cursor::setMousePosition(const Common::Point &pos) {
 	_mousePos = _gfx->getScreenPosBounded(pos);
 }
 

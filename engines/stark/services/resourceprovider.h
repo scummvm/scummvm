@@ -57,7 +57,7 @@ public:
 	void requestLocationChange(uint16 level, uint16 location);
 
 	/** Is a location change pending? */
-	bool hasLocationChangeRequest() { return _locationChangeRequest; }
+	bool hasLocationChangeRequest() const { return _locationChangeRequest; }
 
 	void setShouldRestoreCurrentState() { _restoreCurrentState = true; }
 
@@ -82,13 +82,13 @@ public:
 	void shutdown();
 
 	/** Obtain the root resource for a loaded level */
-	Resources::Level *getLevel(uint16 level);
+	Resources::Level *getLevel(uint16 level) const;
 
 	/** Obtain the root resource for a loaded location */
-	Resources::Location *getLocation(uint16 level, uint16 location);
+	Resources::Location *getLocation(uint16 level, uint16 location) const;
 
 	/** Get the parent level from a currently loaded location */
-	Resources::Level *getLevelFromLocation(Resources::Location *location);
+	Resources::Level *getLevelFromLocation(Resources::Location *location) const;
 
 private:
 	struct PreviousLocation {
@@ -102,8 +102,8 @@ private:
 	Common::List<PreviousLocation> _locationStack;
 	typedef Common::List<Current *> CurrentList;
 
-	Current *findLevel(uint16 level);
-	Current *findLocation(uint16 level, uint16 location);
+	Current *findLevel(uint16 level) const;
+	Current *findLocation(uint16 level, uint16 location) const;
 
 	void purgeOldLocations();
 
