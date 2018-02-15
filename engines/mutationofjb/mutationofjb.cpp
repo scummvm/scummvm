@@ -27,11 +27,15 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "graphics/screen.h"
+#include "graphics/cursorman.h"
 
 #include "engines/util.h"
 
 #include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/room.h"
+#include "mutationofjb/game.h"
+#include "mutationofjb/encryptedfile.h"
+#include "mutationofjb/util.h"
 
 namespace MutationOfJB {
 
@@ -48,19 +52,73 @@ MutationOfJBEngine::~MutationOfJBEngine() {
 	debug("MutationOfJBEngine::~MutationOfJBEngine");
 }
 
+bool MutationOfJBEngine::loadGameData(bool partB) {
+	EncryptedFile file;
+	const char *fileName = !partB ? "startup.dat" : "startupb.dat";
+	file.open(fileName);
+	if (!file.isOpen()) {
+		reportFileMissingError(fileName);
+		return false;
+	}
+
+	_gameData->loadFromStream(file);
+
+	file.close();
+
+	return true;
+}
+
+void MutationOfJBEngine::setupCursor()
+{
+	const uint8 white[] = {0xFF, 0xFF, 0xFF};
+	const uint8 cursor[] = {0xFF};
+
+	_screen->setPalette(white, 0xFF, 1);
+
+	CursorMan.disableCursorPalette(true);
+	CursorMan.pushCursor(cursor, 1, 1, 0, 0, 0);
+	CursorMan.showMouse(true);
+}
+
 Common::Error MutationOfJBEngine::run() {
 	debug("MutationOfJBEngine::run");
 
 	initGraphics(320, 200);
+
 	_console = new Console(this);
 	_screen = new Graphics::Screen;
+	setupCursor();
+
+	_gameData = new GameData;
+	_gameData->_currentScene = 13;
+	loadGameData(false);
+
 	_room = new Room(_screen);
-	_room->load(13, false);
+	_room->load(_gameData->_currentScene, false);
 
 	while(!shouldQuit()) {
 		Common::Event event;
-		while (_eventMan->pollEvent(event));
-		_system->delayMillis(100);
+		while (_eventMan->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_LBUTTONDOWN:
+			{
+				const SceneInfo &sceneInfo = _gameData->_scenes[_gameData->_currentScene - 1];
+				for (int i = 0; i < MIN(ARRAYSIZE(sceneInfo._doors), (int) sceneInfo._noDoors); ++i) {
+					const Door &door = sceneInfo._doors[i];
+					if ((event.mouse.x >= door._x) && (event.mouse.x < door._x + door._width) && (event.mouse.y >= door._y) && (event.mouse.y < door._y + door._height)) {
+						_gameData->_currentScene = door._destSceneId;
+						_room->load(_gameData->_currentScene, false);
+					}
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		}
+
+		_system->delayMillis(40);
+		_screen->update();
 	}
 
 	return Common::kNoError;
