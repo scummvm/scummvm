@@ -22,9 +22,9 @@
 
 #include "mutationofjb/room.h"
 #include "mutationofjb/encryptedfile.h"
+#include "mutationofjb/util.h"
+#include "common/str.h"
 #include "graphics/screen.h"
-#include "engines/engine.h"
-#include "common/translation.h"
 
 namespace MutationOfJB {
 
@@ -37,9 +37,7 @@ bool Room::load(uint8 roomNumber, bool roomB) {
 	file.open(fileName);
 
 	if (!file.isOpen()) {
-		Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file."), fileName.c_str());
-		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.c_str());
+		reportFileMissingError(fileName.c_str());
 
 		return false;
 	}
@@ -90,7 +88,7 @@ void Room::loadPalette(EncryptedFile &file) {
 		palette[j] <<= 2; // Uses 6-bit colors.
 	}
 
-	_screen->setPalette(palette);
+	_screen->setPalette(palette, 0x00, 0xBF); // Load only 0xBF colors.
 }
 
 void Room::loadBackground(EncryptedFile &file, uint32 size) {

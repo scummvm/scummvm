@@ -20,44 +20,16 @@
  *
  */
 
-#ifndef MUTATIONOFJB_MUTATIONOFJB_H
-#define MUTATIONOFJB_MUTATIONOFJB_H
-
+#include "mutationofjb/util.h"
+#include "common/str.h"
+#include "common/translation.h"
 #include "engines/engine.h"
-#include "gui/debugger.h"
-
-namespace Graphics {
-	class Screen;
-}
 
 namespace MutationOfJB {
-
-class Console;
-class Room;
-struct GameData;
-
-class MutationOfJBEngine : public Engine {
-public:
-	MutationOfJBEngine(OSystem *syst);
-	~MutationOfJBEngine();
-
-	virtual Common::Error run();
-private:
-	bool loadGameData(bool partB);
-	void setupCursor();
-
-	Console *_console;
-	Room *_room;
-	GameData *_gameData;
-	Graphics::Screen *_screen;
-};
-
-class Console : public GUI::Debugger {
-public:
-	Console(MutationOfJBEngine *vm) {}
-	virtual ~Console(void) {}
-};
-
+	void reportFileMissingError(const char *fileName) {
+		Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file."), fileName);
+		GUIErrorMessage(errorMessage);
+		warning("%s", errorMessage.c_str());
+	}
 }
 
-#endif

@@ -1,10 +1,12 @@
 MODULE := engines/mutationofjb
 
 MODULE_OBJS := \
-	encryptedfile.o \
 	detection.o \
+	encryptedfile.o \
+	game.o \
 	mutationofjb.o \
-	room.o
+	room.o \
+	util.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MUTATIONOFJB), DYNAMIC_PLUGIN)
