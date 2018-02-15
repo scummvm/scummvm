@@ -232,8 +232,8 @@ FileManager::FileManager(XeenEngine *vm) {
 	}
 
 	if (Common::File::exists("intro.cc")) {
-		CCArchive *introCc = new CCArchive("intro.cc", "intro", true);
-		SearchMan.add("intro", introCc);
+		File::_introCc = new CCArchive("intro.cc", "intro", true);
+		SearchMan.add("intro", File::_introCc);
 	}
 
 	File::_currentArchive = vm->getGameID() == GType_DarkSide || vm->getGameID() == GType_Swords ?
@@ -267,6 +267,7 @@ void FileManager::save(Common::WriteStream &s) {
 
 CCArchive *File::_xeenCc;
 CCArchive *File::_darkCc;
+CCArchive *File::_introCc;
 SaveArchive *File::_xeenSave;
 SaveArchive *File::_darkSave;
 BaseCCArchive *File::_currentArchive;
@@ -323,6 +324,11 @@ void File::setCurrentArchive(int ccMode) {
 	case 1:
 		_currentArchive = _darkCc;
 		_currentSave = _darkSave;
+		break;
+
+	case 2:
+		_currentArchive = _introCc;
+		_currentSave = nullptr;
 		break;
 
 	default:

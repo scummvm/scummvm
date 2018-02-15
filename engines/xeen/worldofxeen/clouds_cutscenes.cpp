@@ -346,12 +346,14 @@ void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 	_mirror.load("mirror.end");
 	_mirrBack.load("mirrback.end");
 	_mergeX = 0;
+	doScroll(true, false);
 
 	if (showCloudsEnding1())
 		if (showCloudsEnding2())
 			if (showCloudsEnding3())
 				if (showCloudsEnding4(finalScore))
-					showCloudsEnding5();
+					if (showCloudsEnding5())
+						doScroll(true, false);
 }
 
 bool CloudsCutscenes::showCloudsEnding1() {
@@ -949,8 +951,6 @@ bool CloudsCutscenes::showCloudsEnding5() {
 	king.draw(0, 0, Common::Point(0, 0));
 	king.draw(0, 1, Common::Point(160, 0));
 	WAIT(1);
-	doScroll(true, false);
-
 	return true;
 }
 

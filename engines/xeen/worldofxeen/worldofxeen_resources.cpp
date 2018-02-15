@@ -46,12 +46,12 @@ const char *const WorldOfXeenResources::DARKSIDE_ENDING1 = "\n\x3" "cCongratulat
 const char *const WorldOfXeenResources::DARKSIDE_ENDING2 = "\n"
 	"Adventurers,\n"
 	"\n"
-	"I have saved your game in Castleview.\n"
+	"I will save your game in Castleview.\n"
 	"\n"
 	"The World of Xeen still needs you!\n"
 	"\n"
-	"Load your game and come visit me in the Great Pyramid "
-	"for further instructions";
+	"Load your game afterwards and come visit me in the "
+	"Great Pyramid for further instructions";
 
 const char *const WorldOfXeenResources::PHAROAH_ENDING_TEXT1 = "\xC" "d\xB"
 	"001\x9" "001%s\x3" "c\x9" "000\xB" "180Press a Key!\x3" "l";

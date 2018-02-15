@@ -68,7 +68,7 @@ void WorldOfXeenEngine::outerGameLoop() {
 			break;
 
 		case WOX_DARKSIDE_ENDING:
-			showDarkSideEnding();
+			//showDarkSideEnding();
 			break;
 
 		case WOX_WORLD_ENDING:
@@ -213,7 +213,7 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uin
 	if (name == "ENDGAME")
 		showCloudsEnding(score);
 	else if (name == "ENDGAME2")
-		showDarkSideEnding();
+		showDarkSideEnding(score);
 	else if (name == "WORLDEND")
 		showWorldOfXeenEnding((GooberState)status, score);
 

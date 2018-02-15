@@ -114,7 +114,7 @@ class File : public Common::File {
 	friend class OutFile;
 	friend class SavesManager;
 private:
-	static CCArchive *_xeenCc, *_darkCc;
+	static CCArchive *_xeenCc, *_darkCc, *_introCc;
 	static SaveArchive *_xeenSave, *_darkSave;
 	static BaseCCArchive *_currentArchive;
 	static SaveArchive *_currentSave;

@@ -32,6 +32,31 @@ class XeenEngine;
 namespace WorldOfXeen {
 
 class DarkSideCutscenes : public Cutscenes {
+private:
+	/**
+	 * Shows the part 1 of the Dark Side ending, everything up to Corak appearing
+	 */
+	bool showDarkSideEnding1();
+
+	/**
+	 * Shows the part 2 of the Dark Side ending, exposition until start of fighting
+	 */
+	bool showDarkSideEnding2();
+
+	/**
+	 * Shows the part 3 of the Dark Side ending, the fighting
+	 */
+	bool showDarkSideEnding3();
+
+	/**
+	 * Shows the part 4 of the Dark Side ending, the self-destruct and castle explosion
+	 */
+	bool showDarkSideEnding4();
+
+	/**
+	 * Last part of the Dark Side ending, shows the final score and saves the game/
+	 */
+	 void showDarkSideScore(uint endingScore);
 protected:
 	/**
 	 * Shows the Pharaoh ending screen where score text is shown
@@ -53,12 +78,7 @@ public:
 	/**
 	 * Shows the Dark Side of Xeen ending sequence
 	 */
-	bool showDarkSideEnding();
-
-	/**
-	 * Show the ending score
-	 */
-	void showDarkSideScore();
+	void showDarkSideEnding(uint endingScore);
 };
 
 } // End of namespace WorldOfXeen

@@ -327,11 +327,25 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	return true;
 }
 
-bool DarkSideCutscenes::showDarkSideEnding() {
+void DarkSideCutscenes::showDarkSideEnding(uint endingScore) {
+	_vm->_files->setGameCc(1);
+	_vm->_files->_isDarkCc = true;
+	_vm->_sound->_musicSide = 1;
+	_vm->_screen->fadeOut();
+
+	if (showDarkSideEnding1())
+		if (showDarkSideEnding2())
+			if (showDarkSideEnding3())
+				showDarkSideEnding4();
+
+	showDarkSideScore(endingScore);
+	_vm->_screen->fadeOut();
+}
+
+bool DarkSideCutscenes::showDarkSideEnding1() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	_vm->_files->_isDarkCc = true;
 
 	sound.playSong("dngon3.m");
 	screen.loadBackground("scene1.raw");
@@ -450,7 +464,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	// Play landing thud
 	sound.playSound("thud.voc");
 	while (!_vm->shouldExit() && !events.isKeyMousePressed()
-			&& sound.isPlaying()) {
+		&& sound.isPlaying()) {
 		events.pollEventsAndWait();
 	}
 
@@ -502,7 +516,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	// Zoomed out throneroom view of beam coming out of box
 	for (int idx = 0; idx < 20; ++idx) {
 		if (idx == 6 || idx == 8 || idx == 9 || idx == 10
-				|| idx == 13 || idx == 15 || idx == 16)
+			|| idx == 13 || idx == 15 || idx == 16)
 			sound.playFX(3);
 
 		screen.restoreBackground();
@@ -549,8 +563,13 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 			sound.playSound("windstor.voc");
 	}
 
-	for (int idx = 0; idx < 8; ++idx)
-		sc07[idx].clear();
+	return true;
+}
+
+bool DarkSideCutscenes::showDarkSideEnding2() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
 
 	// Corak?!
 	sound.playSound("corak2.voc");
@@ -726,7 +745,14 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 		events.pollEventsAndWait();
 		showSubtitles();
 	}
-	sc14.clear();
+
+	return true;
+}
+
+bool DarkSideCutscenes::showDarkSideEnding3() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
 
 	// Fighting start
 	SpriteResource sc15("sc15.end");
@@ -971,8 +997,14 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	screen.update();
 	screen.fadeOut();
 
-	sc23[0].clear();
-	sc23[1].clear();
+	return true;
+}
+
+bool DarkSideCutscenes::showDarkSideEnding4() {
+	EventsManager &events = *_vm->_events;
+	FileManager &files = *_vm->_files;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
 
 	// Corak does a ricochet shot on Sheltem
 	SpriteResource sc24[2] = {
@@ -1079,6 +1111,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	sc27.clear();
 
 	// Vortex is opened and the two are sucked in, obliterating them
+	files.setGameCc(2);
 	SpriteResource sc28[11] = {
 		SpriteResource("sca28.end"), SpriteResource("scb28.end"),
 		SpriteResource("scc28.end"), SpriteResource("scd28.end"),
@@ -1096,6 +1129,7 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 	sc28[0].draw(0, 0, Common::Point(74, 0));
 	screen.update();
 	screen.fadeIn();
+	files.setGameCc(1);
 
 	for (int idx = 0; idx < 44; ++idx) {
 		screen.restoreBackground();
@@ -1151,16 +1185,20 @@ bool DarkSideCutscenes::showDarkSideEnding() {
 
 	screen.fadeOut();
 	sound.stopSong();
-	for (int idx = 0; idx < 6; ++idx)
-		sc29[idx].clear();
-
 	freeSubtitles();
-	return true;
 }
 
-void DarkSideCutscenes::showDarkSideScore() {
-	Common::String str = Common::String::format(Res.DARKSIDE_ENDING1, _vm->_endingScore);
+void DarkSideCutscenes::showDarkSideScore(uint endingScore) {
+	SavesManager &saves = *_vm->_saves;
+	Sound &sound = *_vm->_sound;
+
+	sound.stopAllAudio();
+	sound.playSong("outday3.m");
+
+	Common::String str = Common::String::format(Res.DARKSIDE_ENDING1, endingScore);
 	showPharaohEndText(str.c_str(), Res.DARKSIDE_ENDING2);
+
+	saves.saveGame();
 }
 
 void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, const char *msg3) {
