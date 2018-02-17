@@ -162,6 +162,7 @@ public:
 
 	bool  _inputEditEnabled;
 	byte  _inputCursorChar;
+	bool  _inputCursorCharDrawn;
 
 	bool  _optionCommandPromptWindow;
 

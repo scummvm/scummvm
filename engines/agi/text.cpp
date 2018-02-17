@@ -59,6 +59,7 @@ TextMgr::TextMgr(AgiEngine *vm, Words *words, GfxMgr *gfx) {
 
 	_inputEditEnabled = false;
 	_inputCursorChar = 0;
+	_inputCursorCharDrawn = false;
 
 	_statusEnabled = false;
 	_statusRow = 0;
@@ -629,8 +630,9 @@ bool TextMgr::inputGetEditStatus() {
 void TextMgr::inputEditOn() {
 	if (!_inputEditEnabled) {
 		_inputEditEnabled = true;
-		if (_inputCursorChar) {
+		if (_inputCursorCharDrawn) {
 			displayCharacter(0x08); // backspace
+			_inputCursorCharDrawn = false;
 		}
 	}
 }
@@ -640,6 +642,7 @@ void TextMgr::inputEditOff() {
 		_inputEditEnabled = false;
 		if (_inputCursorChar) {
 			displayCharacter(_inputCursorChar);
+			_inputCursorCharDrawn = true;
 		}
 	}
 }
@@ -887,7 +890,7 @@ void TextMgr::stringEdit(int16 stringMaxLen) {
 	_inputStringRow = _textPos.row;
 	_inputStringColumn = _textPos.column;
 
-	if (_inputCursorChar) {
+	if (_inputCursorCharDrawn) {
 		// Cursor character is shown, which means we are one beyond the start of the input
 		// Adjust the column for predictive input dialog
 		_inputStringColumn--;
