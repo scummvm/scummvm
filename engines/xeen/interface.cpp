@@ -1384,11 +1384,11 @@ void Interface::assembleBorder() {
 	} else {
 		_fecpSprites.draw(0, _vm->_party->_fireResistence ? 9 : 8,
 			Common::Point(8, 8));
-		_fecpSprites.draw(0, _vm->_party->_electricityResistence ? 10 : 11,
+		_fecpSprites.draw(0, _vm->_party->_electricityResistence ? 11 : 10,
 			Common::Point(219, 8));
-		_fecpSprites.draw(0, _vm->_party->_coldResistence ? 12 : 13,
+		_fecpSprites.draw(0, _vm->_party->_coldResistence ? 13 : 12,
 			Common::Point(8, 134));
-		_fecpSprites.draw(0, _vm->_party->_poisonResistence ? 14 : 15,
+		_fecpSprites.draw(0, _vm->_party->_poisonResistence ? 15 : 14,
 			Common::Point(219, 134));
 	}
 

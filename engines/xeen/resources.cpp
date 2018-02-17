@@ -748,16 +748,16 @@ const int Resources::TOWN_ACTION_FILES[2][7] = {
 	{ 3, 2, 4, 2, 4, 2, 1 }, { 5, 3, 7, 5, 4, 6, 1 }
 };
 
-const char *const Resources::BANK_TEXT = "\x0D\x02\x03""c\x0B""122\x09""013"
-	"\x0C""37D\x0C""dep\x09""040\x0C""37W\x0C""dith\x09""067ESC"
-	"\x01\x09""000\x0B""000Bank of Xeen\x0B""015\n"
-	"Bank\x03l\n"
-	"Gold\x03r\x09""000%s\x03l\n"
-	"Gems\x03r\x09""000%s\x03""c\n"
+const char *const Resources::BANK_TEXT = "\xD\x2\x3""c\xB""122\t013"
+	"\xC""37D\xC""dep\t040\xC""37W\xC""dith\t067ESC"
+	"\x1\t000\xB""000Bank of Xeen\xB""015\n"
+	"Bank\x3l\n"
+	"Gold\x3r\t000%s\x3l\n"
+	"Gems\x3r\t000%s\x3""c\n"
 	"\n"
-	"Party\x03l\n"
-	"Gold\x03r\x09""000%s\x03l\n"
-	"Gems\x03r\x09""000%s";
+	"Party\x3l\n"
+	"Gold\x3r\t000%s\x3l\n"
+	"Gems\x3r\t000%s";
 
 const char *const Resources::BLACKSMITH_TEXT = "\x01\x0D\x03""c\x0B""000\x09""000"
 	"Store Options for\x09""039\x0B""027%s\x03""l\x0B""046\n"
