@@ -135,6 +135,9 @@ static const char HELP_STRING[] =
 #ifndef DISABLE_NUKED_OPL
                                                                      ", nuked"
 #endif
+#ifdef ENABLE_OPL2LPT
+                                                                     ", opl2lpt"
+#endif
                                                                               ")\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,\n"
@@ -224,6 +227,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("music_driver", "auto");
 	ConfMan.registerDefault("mt32_device", "null");
 	ConfMan.registerDefault("gm_device", "null");
+	ConfMan.registerDefault("opl2lpt_parport", "null");
 
 	ConfMan.registerDefault("cdrom", 0);
 

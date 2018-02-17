@@ -134,6 +134,7 @@ _tremor=auto
 _tremolo=no
 _flac=auto
 _mad=auto
+_opl2lpt=no
 _alsa=auto
 _seq_midi=auto
 _sndio=auto
@@ -1049,6 +1050,9 @@ Optional Libraries:
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
+  --with-ieee1284-prefix=DIR prefix where libieee1284 is installed (optional)
+  --enable-opl2lpt         enable OPL2LPT support
+
   --with-sparkle-prefix=DIR    prefix where sparkle is installed
                            (OS X/Windows only - optional)
   --disable-sparkle        disable sparkle automatic update support
@@ -1134,6 +1138,8 @@ for ac_option in $@; do
 	--disable-vorbis)         _vorbis=no      ;;
 	--enable-tremor)          _tremor=yes     ;;
 	--disable-tremor)         _tremor=no      ;;
+	--enable-opl2lpt)         _opl2lpt=yes    ;;
+	--disable-opl2lpt)        _opl2lpt=no     ;;
 	--enable-flac)            _flac=yes       ;;
 	--disable-flac)           _flac=no        ;;
 	--enable-mad)             _mad=yes        ;;
@@ -1229,6 +1235,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		TREMOR_CFLAGS="-I$arg/include"
 		TREMOR_LIBS="-L$arg/lib"
+		;;
+	--with-ieee1284-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		IEEE1284_CFLAGS="-I$arg/include"
+		IEEE1284_LIBS="-L$arg/lib"
 		;;
 	--with-flac-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -4021,6 +4032,27 @@ else
 fi
 add_to_config_mk_if_yes "$_tremor" 'USE_TREMOR = 1'
 echo "$_tremor"
+
+#
+# Check for IEEE1284 for OPL2lPT
+#
+echocheck "OPL2LPT"
+if test "$_opl2lpt" = yes ; then
+	_opl2lpt=no
+	cat > $TMPC << EOF
+#include <ieee1284.h>
+struct parport_list parports;
+int main(void) { ieee1284_find_ports(&parports, 0); return 0; }
+EOF
+	cc_check $IEEE1284_CFLAGS $IEEE1284_LIBS -lieee1284 && \
+	_opl2lpt=yes
+fi
+if test "$_opl2lpt" = yes; then
+	append_var LIBS "$IEEE1284_LIBS -lieee1284"
+	append_var INCLUDES "$IEEE1284_CFLAGS"
+fi
+define_in_config_if_yes "$_opl2lpt" 'ENABLE_OPL2LPT'
+echo "$_opl2lpt"
 
 #
 # Check for FLAC

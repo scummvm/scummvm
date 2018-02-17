@@ -72,6 +72,11 @@ MODULE_OBJS += \
 	alsa_opl.o
 endif
 
+ifdef ENABLE_OPL2LPT
+MODULE_OBJS += \
+	opl2lpt.o
+endif
+
 ifndef USE_ARM_SOUND_ASM
 MODULE_OBJS += \
 	rate.o
