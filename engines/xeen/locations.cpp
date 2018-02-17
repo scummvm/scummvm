@@ -33,7 +33,7 @@ namespace Xeen {
 namespace Locations {
 
 BaseLocation::BaseLocation(LocationAction action) : ButtonContainer(g_vm),
-		_LocationActionId(action), _isDarkCc(g_vm->_files->_isDarkCc),
+		_locationActionId(action), _isDarkCc(g_vm->_files->_isDarkCc),
 		_vocName("hello1.voc"), _exitToUi(false) {
 	_townMaxId = (action >= SPHINX) ? 0 : Res.TOWN_MAXES[_isDarkCc][action];
 	if (action < NO_ACTION) {
@@ -45,7 +45,7 @@ BaseLocation::BaseLocation(LocationAction action) : ButtonContainer(g_vm),
 	_drawFrameIndex = 0;
 	_farewellTime = 0;
 	_drawCtr1 = _drawCtr2 = 0;
-	_townPos = Common::Point(8, 8);
+	_animPos = Common::Point(8, 8);
 }
 
 BaseLocation::~BaseLocation() {
@@ -69,7 +69,7 @@ int BaseLocation::show() {
 	// Load the needed sprite sets for the location
 	for (uint idx = 0; idx < _townSprites.size(); ++idx) {
 		Common::String shapesName = Common::String::format("%s%d.twn",
-			Res.TOWN_ACTION_SHAPES[_LocationActionId], idx + 1);
+			Res.TOWN_ACTION_SHAPES[_locationActionId], idx + 1);
 		_townSprites[idx].load(shapesName);
 	}
 
@@ -118,7 +118,7 @@ void BaseLocation::drawBackground() {
 	intf._dangerSenseUIFrame = 0;
 	intf._spotDoorsUIFrame = 0;
 	intf._levitateUIFrame = 0;
-	_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+	_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 }
 
 void BaseLocation::drawWindow() {
@@ -145,28 +145,28 @@ void BaseLocation::drawAnim(bool flag) {
 	Windows &windows = *g_vm->_windows;
 
 	// TODO: Figure out a clean way to split method into individual location classes
-	if (_LocationActionId == BLACKSMITH) {
+	if (_locationActionId == BLACKSMITH) {
 		if (sound.isPlaying()) {
 			if (_isDarkCc) {
-				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
 					Common::Point(34, 33));
 				_townSprites[2].draw(0, _vm->getRandomNumber(5) + 3,
 					Common::Point(34, 54));
 			}
 		} else {
-			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 			if (_isDarkCc) {
 				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
 					Common::Point(34, 33));
 			}
 		}
-	} else if (!_isDarkCc || _LocationActionId != TRAINING) {
+	} else if (!_isDarkCc || _locationActionId != TRAINING) {
 		if (!_townSprites[_drawFrameIndex / 8].empty())
-			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 	}
 
-	switch (_LocationActionId) {
+	switch (_locationActionId) {
 	case BANK:
 		if (sound.isPlaying() || (_isDarkCc && _animFrame)) {
 			if (_isDarkCc) {
@@ -186,13 +186,13 @@ void BaseLocation::drawAnim(bool flag) {
 		break;
 
 	case GUILD:
-		if (sound.isPlaying()) {
+		if (!sound.isPlaying()) {
 			if (_isDarkCc) {
 				if (_animFrame) {
 					_animFrame ^= 1;
 					_townSprites[6].draw(0, _animFrame, Common::Point(8, 106));
 				} else {
-					_townSprites[6].draw(0, _vm->getRandomNumber(3), Common::Point(16, 48));
+					_townSprites[6].draw(0, _vm->getRandomNumber(3), Common::Point(161, 48));
 				}
 			}
 		}
@@ -214,7 +214,7 @@ void BaseLocation::drawAnim(bool flag) {
 	case TRAINING:
 		if (sound.isPlaying()) {
 			if (_isDarkCc) {
-				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _townPos);
+				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 			}
 		} else {
 			if (_isDarkCc) {
@@ -242,21 +242,24 @@ void BaseLocation::drawAnim(bool flag) {
 
 	if (windows[11]._enabled) {
 		_drawCtr1 = (_drawCtr1 + 1) % 2;
+		int newFrame = _vm->getRandomNumber(3);
+
 		if (!_drawCtr1 || !_drawCtr2) {
-			_drawFrameIndex = 0;
-			_drawCtr2 = 0;
-		} else {
-			_drawFrameIndex = _vm->getRandomNumber(3);
+			if (--_drawCtr2 <= 0) {
+				newFrame = 0;
+				_drawCtr2 = 0;
+			}
 		}
+		_drawFrameIndex = newFrame;
 	} else {
 		_drawFrameIndex = (_drawFrameIndex + 1) % _townMaxId;
 	}
 
 	if (_isDarkCc) {
-		if (_LocationActionId == BLACKSMITH && (_drawFrameIndex == 4 || _drawFrameIndex == 13))
+		if (_locationActionId == BLACKSMITH && (_drawFrameIndex == 4 || _drawFrameIndex == 13))
 			sound.playFX(45);
 
-		if (_LocationActionId == TRAINING && _drawFrameIndex == 23) {
+		if (_locationActionId == TRAINING && _drawFrameIndex == 23) {
 			sound.playSound("spit1.voc");
 		}
 	} else {
@@ -264,13 +267,13 @@ void BaseLocation::drawAnim(bool flag) {
 			_drawFrameIndex = 17;
 		if (_townMaxId == 26 && _drawFrameIndex == 0)
 			_drawFrameIndex = 20;
-		if (_LocationActionId == BLACKSMITH && (_drawFrameIndex == 3 || _drawFrameIndex == 9))
+		if (_locationActionId == BLACKSMITH && (_drawFrameIndex == 3 || _drawFrameIndex == 9))
 			sound.playFX(45);
 	}
 
 	windows[3].update();
 
-	if (_LocationActionId == BANK)
+	if (_locationActionId == BANK)
 		_animFrame = 2;
 }
 
@@ -686,8 +689,8 @@ Character *TavernLocation::doOptions(Character *c) {
 		// Set location and position for afterwards
 		idx = _isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
 		assert(idx >= 0);
-		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_LocationActionId][idx][0];
-		party._mazePosition.y = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_LocationActionId][idx][1];
+		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_locationActionId][idx][0];
+		party._mazePosition.y = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_locationActionId][idx][1];
 
 		if (!_isDarkCc || party._mazeId == 29)
 			party._mazeDirection = DIR_WEST;
@@ -2379,7 +2382,7 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 
 	_townMaxId = 4;
 	_drawFrameIndex = 0;
-	_townPos = Common::Point(23, 22);
+	_animPos = Common::Point(23, 22);
 
 	if (!confirm)
 		loadButtons();

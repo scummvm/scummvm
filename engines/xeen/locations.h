@@ -43,14 +43,14 @@ namespace Locations {
 
 class BaseLocation : public ButtonContainer {
 protected:
-	LocationAction _LocationActionId;
+	LocationAction _locationActionId;
 	Common::Array<SpriteResource> _townSprites;
 	SpriteResource _icons1, _icons2;
 	int _townMaxId;
 	const bool &_isDarkCc;
 	int _animFrame;
 	Common::String _vocName, _songName;
-	Common::Point _townPos;
+	Common::Point _animPos;
 	int _drawFrameIndex;
 	uint _farewellTime;
 	int _drawCtr1, _drawCtr2;
