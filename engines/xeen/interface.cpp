@@ -1372,7 +1372,7 @@ void Interface::assembleBorder() {
 
 	// Draw resistence indicators
 	if (!windows[10]._enabled && !windows[2]._enabled
-		&& windows[38]._enabled) {
+		&& !windows[38]._enabled) {
 		_fecpSprites.draw(0, _vm->_party->_fireResistence ? 1 : 0,
 			Common::Point(2, 2));
 		_fecpSprites.draw(0, _vm->_party->_electricityResistence ? 3 : 2,
