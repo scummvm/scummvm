@@ -24,6 +24,7 @@
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/util.h"
 #include "common/str.h"
+#include "common/translation.h"
 #include "graphics/screen.h"
 
 namespace MutationOfJB {
@@ -65,6 +66,9 @@ bool Room::load(uint8 roomNumber, bool roomB) {
 					loadPalette(file);
 				} else if (type == 0x0F) {
 					loadBackground(file, subLength - 6);
+				} else {
+					debug(_("Unsupported record type %02X."), type);
+					file.seek(subLength - 6, SEEK_CUR);
 				}
 			}
 		}
@@ -88,7 +92,7 @@ void Room::loadPalette(EncryptedFile &file) {
 		palette[j] <<= 2; // Uses 6-bit colors.
 	}
 
-	_screen->setPalette(palette, 0x00, 0xBF); // Load only 0xBF colors.
+	_screen->setPalette(palette, 0x00, 0xC0); // Load only 0xC0 colors.
 }
 
 void Room::loadBackground(EncryptedFile &file, uint32 size) {
@@ -97,8 +101,15 @@ void Room::loadBackground(EncryptedFile &file, uint32 size) {
 	uint8 * const pixels = static_cast<uint8 *>(_screen->getPixels());
 	uint8 *ptr = pixels;
 	uint32 readBytes = 0;
+	uint32 lines = 0;
 
 	while (readBytes != size) {
+		if (lines == 200) {
+			// Some background files have an unknown byte at the end,
+			// so break when we encounter all 200 lines.
+			break;
+		}
+
 		uint8 no = file.readByte();
 		readBytes++;
 		while (no--) {
@@ -119,6 +130,7 @@ void Room::loadBackground(EncryptedFile &file, uint32 size) {
 				ptr += rawlen;
 			}
 		}
+		lines++;
 	}
 
 	_screen->update();
