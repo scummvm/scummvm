@@ -499,8 +499,12 @@ GuildLocation::GuildLocation() : BaseLocation(GUILD) {
 }
 
 Common::String GuildLocation::createLocationText(Character &ch) {
-	return !ch.guildMember() ? Res.GUILD_NOT_MEMBER_TEXT :
+	Party &party = *g_vm->_party;
+
+	Common::String desc = !ch.guildMember() ? Res.GUILD_NOT_MEMBER_TEXT :
 		Common::String::format(Res.GUILD_TEXT, ch._name.c_str());
+	return Common::String::format(Res.GUILD_OPTIONS, desc.c_str(),
+		g_vm->printMil(party._gold).c_str());
 }
 
 Character *GuildLocation::doOptions(Character *c) {
