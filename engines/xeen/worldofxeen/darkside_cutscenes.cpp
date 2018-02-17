@@ -1186,6 +1186,8 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 	screen.fadeOut();
 	sound.stopSong();
 	freeSubtitles();
+
+	return true;
 }
 
 void DarkSideCutscenes::showDarkSideScore(uint endingScore) {
