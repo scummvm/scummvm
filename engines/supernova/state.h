@@ -146,8 +146,6 @@ public:
 	GuiElement _guiCommandButton[10];
 	GuiElement _guiInventory[8];
 	GuiElement _guiInventoryArrow[2];
-	// 0 PC Speaker | 1 SoundBlaster | 2 No Sound
-	int _soundDevice;
 	// Dialog
 	int _currentSentence;
 	int _sentenceNumber[6];
