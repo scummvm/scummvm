@@ -1396,10 +1396,9 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 	FileManager &files = *g_vm->_files;
 	Interface &intf = *g_vm->_interface;
 	Map &map = *g_vm->_map;
-	Party &party = *g_vm->_party;
 	Scripts &scripts = *g_vm->_scripts;
 	Sound &sound = *g_vm->_sound;
-	Character &c = party._activeParty[charId];
+	Character &c = _itemsCharacter;
 
 	if (intf._objNumber && !scripts._animCounter) {
 		MazeObject &obj = map._mobData._objects[intf._objNumber - 1];
@@ -1451,15 +1450,14 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 
 		switch (mode) {
 		case 34:
-			party._treasure._gold += val;
+			_treasure._gold += val;
 			break;
 
 		case 35:
-			party._treasure._gems += val;
+			_treasure._gems += val;
 			break;
 
 		case 66:
-			c = _itemsCharacter;
 			c.clear();
 
 			if (giveTake(0, 0, mode, val, charId))
@@ -1475,7 +1473,7 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 			break;
 
 		case 106:
-			party._food += g_vm->getRandomNumber(1, val);
+			_food += g_vm->getRandomNumber(1, val);
 			break;
 
 		case 67:

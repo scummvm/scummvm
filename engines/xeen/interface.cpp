@@ -61,11 +61,12 @@ void PartyDrawer::drawParty(bool updateFlag) {
 	// Handle drawing the party faces
 	uint partyCount = inCombat ? combat._combatParty.size() : party._activeParty.size();
 	for (uint idx = 0; idx < partyCount; ++idx) {
-		Character &ps = inCombat ? *combat._combatParty[idx] : party._activeParty[idx];
-		Condition charCondition = ps.worstCondition();
+		Character &c = inCombat ? *combat._combatParty[idx] : party._activeParty[idx];
+		Condition charCondition = c.worstCondition();
 		int charFrame = Res.FACE_CONDITION_FRAMES[charCondition];
 
-		SpriteResource *sprites = (charFrame > 4) ? &_dseFace : ps._faceSprites;
+		SpriteResource *sprites = (charFrame > 4) ? &_dseFace : c._faceSprites;
+		assert(sprites);
 		if (charFrame > 4)
 			charFrame -= 5;
 
@@ -73,18 +74,18 @@ void PartyDrawer::drawParty(bool updateFlag) {
 	}
 
 	for (uint idx = 0; idx < partyCount; ++idx) {
-		Character &ps = inCombat ? *combat._combatParty[idx] : party._activeParty[idx];
+		Character &c = inCombat ? *combat._combatParty[idx] : party._activeParty[idx];
 
 		// Draw the Hp bar
-		int maxHp = ps.getMaxHP();
+		int maxHp = c.getMaxHP();
 		int frame;
-		if (ps._currentHp < 1)
+		if (c._currentHp < 1)
 			frame = 4;
-		else if (ps._currentHp > maxHp)
+		else if (c._currentHp > maxHp)
 			frame = 3;
-		else if (ps._currentHp == maxHp)
+		else if (c._currentHp == maxHp)
 			frame = 0;
-		else if (ps._currentHp < (maxHp / 4))
+		else if (c._currentHp < (maxHp / 4))
 			frame = 2;
 		else
 			frame = 1;
