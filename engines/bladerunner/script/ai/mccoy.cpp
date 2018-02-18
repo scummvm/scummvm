@@ -219,7 +219,8 @@ void AIScriptMcCoy::OtherAgentEnteredCombatMode(int otherActorId, int combatMode
 void AIScriptMcCoy::ShotAtAndMissed() {
 }
 
-void AIScriptMcCoy::ShotAtAndHit() {
+bool AIScriptMcCoy::ShotAtAndHit() {
+	return false;
 }
 
 void AIScriptMcCoy::Retired(int byActorId) {
@@ -633,7 +634,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		*animation = 32;
 		_animationFrame++;
 		if (_animationFrame == 7) {
-			Actor_Change_Animation_Mode(kActorMaggie, 52);
+			Actor_Change_Animation_Mode(kActorMaggie, kAnimationModeFeeding);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			*animation = 19;
@@ -1244,7 +1245,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationState = 70;
 		}
 		return true;
-	case 52:
+	case kAnimationModeFeeding:
 		_animationState = 55;
 		_animationFrame = 0;
 		return true;
@@ -1488,19 +1489,19 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			dword_45A0F4 = 21;
 		}
 		return true;
-	case 8:
+	case kAnimationModeCombatRun:
 		if (_animationState != 27 && _animationState != 50) {
 			_animationState = 37;
 			_animationFrame = 0;
 		}
 		return true;
-	case 7:
+	case kAnimationModeCombatWalk:
 		if (_animationState != 27 && _animationState != 50) {
 			_animationState = 36;
 			_animationFrame = 0;
 		}
 		return true;
-	case 6:
+	case kAnimationModeCombatShoot:
 		_animationState = 21;
 		_animationFrame = 0;
 		return true;
@@ -1524,7 +1525,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			break;
 		}
 		return true;
-	case 4:
+	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 22:
 			_animationState = 19;
@@ -1586,7 +1587,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationNext = 20;
 		}
 		return true;
-	case 2:
+	case kAnimationModeRun:
 		if (_animationState == 27 || _animationState == 50) {
 			return true;
 		}
@@ -1598,7 +1599,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		_animationState = 58;
 		_animationFrame = 4;
 		return true;
-	case 1:
+	case kAnimationModeWalk:
 		if (_animationState == 27 || _animationState == 50) {
 			return true;
 		}
@@ -1610,7 +1611,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		_animationState = 58;
 		_animationFrame = 0;
 		return true;
-	case 0:
+	case kAnimationModeIdle:
 		if (Game_Flag_Query(550)) {
 			if (_animationFrame > 6) {
 				_animationState = 57;

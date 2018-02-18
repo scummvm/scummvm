@@ -97,7 +97,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_gameIsLoading   = false;
 	_sceneIsLoading  = false;
 
-	_walkingActorId         = -1;
+	_runningActorId         = -1;
 	_isWalkingInterruptible = false;
 	_interruptWalking       = false;
 
@@ -178,6 +178,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	for (int i = 0; i != kActorCount; ++i) {
 		_actors[i] = nullptr;
 	}
+	walkingReset();
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -341,8 +342,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_playerActor = _actors[_gameInfo->getPlayerId()];
 
 	_playerActor->setFPS(15);
-
-	// TODO: set _playerActor countdown timer 6
+	_playerActor->timerStart(6, 200);
 
 	// TODO: Set actor ids (redundant?)
 
@@ -863,16 +863,16 @@ void BladeRunnerEngine::gameTick() {
 					Vector3 pos = _view->calculateScreenPosition(0.5 * (a + b));
 					int color;
 
-					switch (sceneObject->sceneObjectType) {
+					switch (sceneObject->type) {
 					case kSceneObjectTypeActor:
 						color = 0b111110000000000;
 						drawBBox(a, b, _view, &_surfaceFront, color);
-						_mainFont->drawColor(_textActorNames->getText(sceneObject->sceneObjectId - kSceneObjectOffsetActors), _surfaceFront, pos.x, pos.y, color);
+						_mainFont->drawColor(_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors), _surfaceFront, pos.x, pos.y, color);
 						break;
 					case kSceneObjectTypeItem:
 						char itemText[40];
 						drawBBox(a, b, _view, &_surfaceFront, color);
-						sprintf(itemText, "item %i", sceneObject->sceneObjectId - kSceneObjectOffsetItems);
+						sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
 						_mainFont->drawColor(itemText, _surfaceFront, pos.x, pos.y, color);
 						break;
 					case kSceneObjectTypeObject:
@@ -883,10 +883,10 @@ void BladeRunnerEngine::gameTick() {
 							color = 0b000001111100000;
 						}
 						drawBBox(a, b, _view, &_surfaceFront, color);
-						_mainFont->drawColor(_scene->objectGetName(sceneObject->sceneObjectId - kSceneObjectOffsetObjects), _surfaceFront, pos.x, pos.y, color);
+						_mainFont->drawColor(_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects), _surfaceFront, pos.x, pos.y, color);
 						break;
 					}
-					_surfaceFront.frameRect(sceneObject->screenRectangle, color);
+					_surfaceFront.frameRect(*sceneObject->screenRectangle, color);
 				}
 			}
 
@@ -1001,10 +1001,29 @@ void BladeRunnerEngine::actorsUpdate() {
 			Actor *actor = _actors[i];
 			if (actor->getSetId() == setId) {
 				_aiScripts->update(i);
-				actor->countdownTimersUpdate();
+				actor->timersUpdate();
 			}
 		}
 	}
+}
+
+void BladeRunnerEngine::walkingReset() {
+	_mouseClickTimeLast   = 0;
+	_mouseClickTimeDiff   = 0;
+	_walkingToExitId      = -1;
+	_isInsideScriptExit   = false;
+	_walkingToRegionId    = -1;
+	_isInsideScriptRegion = false;
+	_walkingToObjectId    = -1;
+	_isInsideScriptObject = false;
+	_walkingToItemId      = -1;
+	_isInsideScriptItem   = false;
+	_walkingToEmpty       = false;
+	_walkingToEmptyX      = 0;
+	_walkingToEmptyY      = 0;
+	_isInsideScriptEmpty  = false;
+	_walkingToActorId     = -1;
+	_isInsideScriptActor  = false;
 }
 
 void BladeRunnerEngine::handleEvents() {
@@ -1149,16 +1168,23 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	}
 }
 
-void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool buttonDown) {
+void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool buttonDown) {
+	int timeNow = getTotalPlayTime();
+
+	if (buttonDown) {
+		_mouseClickTimeDiff = timeNow - _mouseClickTimeLast;
+		_mouseClickTimeLast = timeNow;
+	}
+
 	if (!playerHasControl() || _mouse->isDisabled()) {
 		return;
 	}
 
 	if (_kia->isOpen()) {
 		if (buttonDown) {
-			_kia->handleMouseDown(x, y, buttonLeft);
+			_kia->handleMouseDown(x, y, mainButton);
 		} else {
-			_kia->handleMouseUp(x, y, buttonLeft);
+			_kia->handleMouseUp(x, y, mainButton);
 		}
 		return;
 	}
@@ -1174,18 +1200,18 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 
 	if (_esper->isOpen()) {
 		if (buttonDown) {
-			_esper->handleMouseDown(x, y, buttonLeft);
+			_esper->handleMouseDown(x, y, mainButton);
 		} else {
-			_esper->handleMouseUp(x, y, buttonLeft);
+			_esper->handleMouseUp(x, y, mainButton);
 		}
 		return;
 	}
 
 	if (_vk->isOpen()) {
 		if (buttonDown) {
-			_vk->handleMouseDown(x, y, buttonLeft);
+			_vk->handleMouseDown(x, y, mainButton);
 		} else {
-			_vk->handleMouseUp(x, y, buttonLeft);
+			_vk->handleMouseUp(x, y, mainButton);
 		}
 		return;
 	}
@@ -1200,91 +1226,379 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool buttonLeft, bool bu
 	}
 
 	if (_dialogueMenu->waitingForInput()) {
-		if (buttonLeft && !buttonDown) {
+		if (mainButton && !buttonDown) {
 			_dialogueMenu->mouseUp();
 		}
 		return;
 	}
 
-	if (buttonLeft && !buttonDown) {
+	if (mainButton) {
 		Vector3 scenePosition = _mouse->getXYZ(x, y);
 
 		bool isClickable;
 		bool isObstacle;
 		bool isTarget;
 
-		int sceneObjectId = _sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, scenePosition.x, scenePosition.y, scenePosition.z, true, false, true);
+		int sceneObjectId = _sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, scenePosition, true, false, true);
 		int exitIndex = _scene->_exits->getRegionAtXY(x, y);
-
-		if ((sceneObjectId < 0 || sceneObjectId > 73) && exitIndex >= 0) {
-			handleMouseClickExit(x, y, exitIndex);
-			return;
-		}
-
 		int regionIndex = _scene->_regions->getRegionAtXY(x, y);
-		if (regionIndex >= 0) {
-			handleMouseClickRegion(x, y, regionIndex);
-			return;
+
+		if ((sceneObjectId < kSceneObjectOffsetActors || sceneObjectId >= kSceneObjectOffsetActors) && exitIndex >= 0) {
+			handleMouseClickExit(exitIndex, x, y, buttonDown);
+		} else if (regionIndex >= 0) {
+			handleMouseClickRegion(regionIndex, x, y, buttonDown);
+		} else if (sceneObjectId == -1) {
+			handleMouseClickEmpty(x, y, scenePosition, buttonDown);
+		} else if (sceneObjectId >= kSceneObjectOffsetActors && sceneObjectId < kSceneObjectOffsetItems) {
+			handleMouseClickActor(sceneObjectId - kSceneObjectOffsetActors, mainButton, buttonDown, scenePosition, x, y);
+		} else if (sceneObjectId >= kSceneObjectOffsetItems && sceneObjectId < kSceneObjectOffsetObjects) {
+			handleMouseClickItem(sceneObjectId - kSceneObjectOffsetItems, buttonDown);
+		} else if (sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= 293) {
+			handleMouseClick3DObject(sceneObjectId - kSceneObjectOffsetObjects, buttonDown, isClickable, isTarget);
 		}
-
-		if (sceneObjectId == -1) {
-			handleMouseClickEmpty(x, y, scenePosition);
-			return;
-		} else if (sceneObjectId >= 0 && sceneObjectId <= 73) {
-			handleMouseClickActor(x, y, sceneObjectId);
-			return;
-		} else if (sceneObjectId >= 74 && sceneObjectId <= 197) {
-			handleMouseClickItem(x, y, sceneObjectId - 74);
-			return;
-		} else if (sceneObjectId >= 198 && sceneObjectId <= 293) {
-			handleMouseClick3DObject(x, y, sceneObjectId - 198, isClickable, isTarget);
-			return;
+	} else if (buttonDown) {
+		if (_playerActor->inWalkLoop()) {
+			_playerActor->stopWalking(false);
 		}
+		_combat->change();
 	}
-	if (!buttonLeft && buttonDown) {
-		// TODO: stop walking && switch combat mode
+}
+
+void BladeRunnerEngine::handleMouseClickExit(int exitId, int x, int y, bool buttonDown) {
+	debug("clicked on exit %d %d %d", exitId, x, y);
+
+	if (_isWalkingInterruptible && exitId != _walkingToExitId) {
+		_isWalkingInterruptible = false;
+		_interruptWalking = true;
+		walkingReset();
+		_walkingToExitId = exitId;
+		return;
 	}
 
+	if (buttonDown) {
+		return;
+	}
+
+	if (_isInsideScriptExit && exitId == _walkingToExitId) {
+		_playerActor->run();
+		if (_mouseClickTimeDiff <= 10000) {
+			_playerActor->increaseFPS();
+		}
+	} else {
+		_walkingToExitId   = exitId;
+		_walkingToRegionId = -1;
+		_walkingToObjectId = -1;
+		_walkingToItemId   = -1;
+		_walkingToEmpty    = false;
+		_walkingToActorId  = -1;
+
+		_isInsideScriptExit = true;
+		_sceneScript->clickedOnExit(exitId);
+		_isInsideScriptExit = false;
+	}
 }
 
-void BladeRunnerEngine::handleMouseClickExit(int x, int y, int exitIndex) {
-	debug("clicked on exit %d %d %d", exitIndex, x, y);
-	_sceneScript->clickedOnExit(exitIndex);
+void BladeRunnerEngine::handleMouseClickRegion(int regionId, int x, int y, bool buttonDown) {
+	debug("clicked on region %d %d %d", regionId, x, y);
+
+	if (_isWalkingInterruptible && regionId != _walkingToRegionId) {
+		_isWalkingInterruptible = false;
+		_interruptWalking = true;
+		walkingReset();
+		_walkingToRegionId = regionId;
+		return;
+	}
+
+	if (buttonDown || _mouse->isInactive()) {
+		return;
+	}
+
+	if (_isInsideScriptRegion && regionId == _walkingToRegionId) {
+		_playerActor->run();
+		if (_mouseClickTimeDiff <= 10000) {
+			_playerActor->increaseFPS();
+		}
+	} else {
+		_walkingToExitId   = -1;
+		_walkingToRegionId = regionId;
+		_walkingToObjectId = -1;
+		_walkingToItemId   = -1;
+		_walkingToEmpty    = false;
+		_walkingToActorId  = -1;
+
+		_isInsideScriptRegion = true;
+		_sceneScript->clickedOn2DRegion(regionId);
+		_isInsideScriptRegion = false;
+	}
 }
 
-void BladeRunnerEngine::handleMouseClickRegion(int x, int y, int regionIndex) {
-	debug("clicked on region %d %d %d", regionIndex, x, y);
-	_sceneScript->clickedOn2DRegion(regionIndex);
-}
-
-void BladeRunnerEngine::handleMouseClick3DObject(int x, int y, int objectId, bool isClickable, bool isTarget) {
+void BladeRunnerEngine::handleMouseClick3DObject(int objectId, bool buttonDown, bool isClickable, bool isTarget) {
 	const char *objectName = _scene->objectGetName(objectId);
 	debug("Clicked on object %s", objectName);
-	_sceneScript->clickedOn3DObject(objectName, false);
+
+	if (_isWalkingInterruptible && objectId != _walkingToObjectId) {
+		_isWalkingInterruptible = false;
+		_interruptWalking = true;
+		walkingReset();
+		_walkingToObjectId = objectId;
+		return;
+	}
+
+	if (_mouse->isInactive()) {
+		return;
+	}
+
+	if (!_combat->isActive()) {
+		if (buttonDown || !isClickable) {
+			return;
+		}
+
+		if (_isInsideScriptObject && objectId == _walkingToObjectId) {
+			_playerActor->run();
+			if (_mouseClickTimeDiff <= 10000) {
+				_playerActor->increaseFPS();
+			}
+		} else {
+			_walkingToExitId   = -1;
+			_walkingToRegionId = -1;
+			_walkingToObjectId = objectId;
+			_walkingToItemId   = -1;
+			_walkingToEmpty    = false;
+			_walkingToActorId  = -1;
+
+			_isInsideScriptObject = true;
+			_sceneScript->clickedOn3DObject(objectName, false);
+			_isInsideScriptObject = false;
+		}
+	} else {
+		if (!buttonDown || !isTarget) {
+			return;
+		}
+		_playerActor->stopWalking(false);
+		_playerActor->faceObject(objectName, false);
+		_playerActor->changeAnimationMode(kAnimationModeCombatShoot, false);
+		_settings->decreaseAmmo();
+		_audioPlayer->playAud(_gameInfo->getSfxTrack(_combat->getHitSound()), 100, 0, 0, 90, 0);
+
+		//TODO mouse::randomize(Mouse);
+
+		_isInsideScriptObject = true;
+		_sceneScript->clickedOn3DObject(objectName, true);
+		_isInsideScriptObject = false;
+	}
 }
 
-void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &mousePosition) {
+void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePosition, bool buttonDown) {
+	debug("Clicked on nothing %f, %f, %f", scenePosition.x, scenePosition.y, scenePosition.z);
+
+	if (_isWalkingInterruptible) {
+		_isWalkingInterruptible = false;
+		_interruptWalking = true;
+		walkingReset();
+		_walkingToEmpty = false;
+		return;
+	}
+
+	_isInsideScriptEmpty = true;
 	bool sceneMouseClick = _sceneScript->mouseClick(x, y);
+	_isInsideScriptEmpty = false;
 
 	if (sceneMouseClick) {
 		return;
 	}
 
-	bool isRunning;
-	debug("Clicked on nothing %f, %f, %f", mousePosition.x, mousePosition.y, mousePosition.z);
-	_playerActor->loopWalkToXYZ(mousePosition, 0, false, false, false, &isRunning);
+	int actorId = Actor::findTargetUnderMouse(this, x, y);
+	int itemId = _items->findTargetUnderMouse(x, y);
+
+	if (_combat->isActive() && buttonDown && actorId > 0 && itemId > 0) {
+		_playerActor->stopWalking(false);
+		if (actorId > 0) {
+			_playerActor->faceActor(actorId, false);
+		} else {
+			_playerActor->faceItem(itemId, false);
+		}
+		_playerActor->changeAnimationMode(kAnimationModeCombatShoot, false);
+		_settings->decreaseAmmo();
+		_audioPlayer->playAud(_gameInfo->getSfxTrack(_combat->getMissSound()), 100, 0, 0, 90, 0);
+
+		//TODO mouse::randomize(Mouse);
+
+		if (actorId) {
+			_aiScripts->shotAtAndMissed(actorId);
+		}
+	} else {
+		if (buttonDown) {
+			return;
+		}
+
+		_walkingToExitId   = -1;
+		_walkingToRegionId = -1;
+		_walkingToObjectId = -1;
+		_walkingToItemId   = -1;
+		_walkingToEmpty    = true;
+		_walkingToActorId  = -1;
+
+		if (_combat->isActive() && (actorId > 0 || itemId > 0)) {
+			return;
+		}
+
+		int xDist = abs(_walkingToEmptyX - x);
+		int yDist = abs(_walkingToEmptyY - y);
+
+		_walkingToEmptyX = x;
+		_walkingToEmptyY = y;
+
+		bool inWalkbox = false;
+		float altitude = _scene->_set->getAltitudeAtXZ(scenePosition.x, scenePosition.z, &inWalkbox);
+
+		if (!inWalkbox || scenePosition.y >= altitude + 6.0f) {
+			return;
+		}
+
+		bool run = _playerActor->isRunning();;
+		if (_mouseClickTimeDiff <= 10000 && xDist < 10 && yDist < 10) {
+			run = true;
+		}
+
+		_playerActor->walkTo(run, scenePosition, false);
+
+		if (run && _playerActor->isWalking()) {
+			_playerActor->increaseFPS();
+		}
+	}
 }
 
-void BladeRunnerEngine::handleMouseClickItem(int x, int y, int itemId) {
+void BladeRunnerEngine::handleMouseClickItem(int itemId, bool buttonDown) {
 	debug("Clicked on item %d", itemId);
-	_sceneScript->clickedOnItem(itemId, false);
+
+	if (_isWalkingInterruptible && itemId != _walkingToItemId) {
+		_isWalkingInterruptible = false;
+		_interruptWalking = true;
+		walkingReset();
+		_walkingToItemId = itemId;
+		return;
+	}
+
+	if (_mouse->isInactive()) {
+		return;
+	}
+
+	if (!_combat->isActive()) {
+		if (buttonDown) {
+			return;
+		}
+
+		if (_isInsideScriptItem && itemId == _walkingToItemId) {
+			_playerActor->run();
+			if (_mouseClickTimeDiff <= 10000) {
+				_playerActor->increaseFPS();
+			}
+		} else {
+			_walkingToExitId = -1;
+			_walkingToRegionId = -1;
+			_walkingToObjectId = -1;
+			_walkingToItemId = itemId;
+			_walkingToEmpty = false;
+			_walkingToActorId = -1;
+
+			_isInsideScriptItem = true;
+			_sceneScript->clickedOnItem(itemId, false);
+			_isInsideScriptItem = false;
+		}
+	} else {
+		if (!buttonDown || !_items->isTarget(itemId) /* || _mouse->isRandomized() */) {
+			return;
+		}
+
+		_playerActor->stopWalking(false);
+		_playerActor->faceItem(itemId, false);
+		_playerActor->changeAnimationMode(kAnimationModeCombatShoot, false);
+		_settings->decreaseAmmo();
+		_audioPlayer->playAud(_gameInfo->getSfxTrack(_combat->getHitSound()), 100, 0, 0, 90, 0);
+
+		//TODO mouse::randomize(Mouse);
+		_isInsideScriptItem = true;
+		_sceneScript->clickedOnItem(itemId, true);
+		_isInsideScriptItem = false;
+	}
 }
 
-void BladeRunnerEngine::handleMouseClickActor(int x, int y, int actorId) {
+void BladeRunnerEngine::handleMouseClickActor(int actorId, bool mainButton, bool buttonDown, Vector3 &scenePosition, int x, int y) {
 	debug("Clicked on actor %d", actorId);
-	bool t = _sceneScript->clickedOnActor(actorId);
-	if (!_combat->isActive() && !t) {
-		_aiScripts->clickedByPlayer(actorId);
+
+	if (_isWalkingInterruptible && actorId != _walkingToActorId) {
+		_isWalkingInterruptible = false;
+		_interruptWalking = true;
+		walkingReset();
+		_walkingToActorId = actorId;
+		return;
+	}
+
+	if (_mouse->isInactive()) {
+		return;
+	}
+
+	if (!buttonDown) {
+		if (actorId == kActorMcCoy) {
+			if (mainButton) {
+				if (!_combat->isActive()) {
+					_kia->openLastOpened();
+				}
+			} else if (!_playerActor->inWalkLoop()) {
+				_combat->change();
+			}
+			return;
+		}
+
+		if (_isInsideScriptActor && actorId == _walkingToActorId) {
+			_playerActor->run();
+			if (_mouseClickTimeDiff <= 10000) {
+				_playerActor->increaseFPS();
+			}
+		} else {
+			_walkingToExitId = -1;
+			_walkingToRegionId = -1;
+			_walkingToObjectId = -1;
+			_walkingToItemId = -1;
+			_walkingToEmpty = false;
+			_walkingToActorId = actorId;
+
+			_isInsideScriptActor = true;
+			bool processedBySceneScript = _sceneScript->clickedOnActor(actorId);
+			_isInsideScriptActor = false;
+
+			if (!_combat->isActive() && !processedBySceneScript) {
+				_aiScripts->clickedByPlayer(actorId);
+			}
+		}
+	} else {
+		if (!_combat->isActive() || actorId == kActorMcCoy || !_actors[actorId]->isTarget() || _actors[actorId]->isRetired() /*|| _mouse->isRandomized()*/) {
+			return;
+		}
+		_playerActor->stopWalking(false);
+		_playerActor->faceActor(actorId, false);
+		_playerActor->changeAnimationMode(kAnimationModeCombatShoot, false);
+		_settings->decreaseAmmo();
+
+		float targetX = _actors[actorId]->getX();
+		float targetZ = _actors[actorId]->getZ();
+
+		bool missed = _playerActor->isObstacleBetween(targetX, targetZ);
+
+		_audioPlayer->playAud(_gameInfo->getSfxTrack(missed ? _combat->getMissSound() : _combat->getHitSound()), 100, 0, 0, 90, 0);
+
+		//TODO mouse::randomize(Mouse);
+
+		if (missed) {
+			_aiScripts->shotAtAndMissed(actorId);
+		} else {
+			_isInsideScriptActor = true;
+			bool canShoot = _aiScripts->shotAtAndHit(actorId);
+			_isInsideScriptActor = false;
+			if (!canShoot) {
+				_combat->shoot(actorId, scenePosition, x);
+			}
+		}
 	}
 }
 

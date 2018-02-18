@@ -36,7 +36,7 @@ public:
 	virtual void InitializeScene() = 0;
 	virtual void SceneLoaded() = 0;
 	virtual bool MouseClick(int x, int y) = 0;
-	virtual bool ClickedOn3DObject(const char *objectName, bool a2) = 0;
+	virtual bool ClickedOn3DObject(const char *objectName, bool attack) = 0;
 	virtual bool ClickedOnActor(int actorId) = 0;
 	virtual bool ClickedOnItem(int itemId, bool a2) = 0;
 	virtual bool ClickedOnExit(int exitId) = 0;
@@ -57,7 +57,7 @@ public: \
 	void InitializeScene(); \
 	void SceneLoaded(); \
 	bool MouseClick(int x, int y); \
-	bool ClickedOn3DObject(const char *objectName, bool a2); \
+	bool ClickedOn3DObject(const char *objectName, bool attack); \
 	bool ClickedOnActor(int actorId); \
 	bool ClickedOnItem(int itemId, bool a2); \
 	bool ClickedOnExit(int exitId); \
@@ -536,7 +536,7 @@ public:
 	void initializeScene();
 	void sceneLoaded();
 	bool mouseClick(int x, int y);
-	bool clickedOn3DObject(const char *objectName, bool a2);
+	bool clickedOn3DObject(const char *objectName, bool attack);
 	bool clickedOnActor(int actorId);
 	bool clickedOnItem(int itemId, bool a2);
 	bool clickedOnExit(int exitId);

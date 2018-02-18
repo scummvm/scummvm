@@ -209,10 +209,11 @@ void AIScriptOfficerLeary::OtherAgentEnteredCombatMode(int otherActorId, int com
 
 void AIScriptOfficerLeary::ShotAtAndMissed() {}
 
-void AIScriptOfficerLeary::ShotAtAndHit() {
+bool AIScriptOfficerLeary::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorOfficerLeary) == 307) {
 		Actor_Set_Health(kActorOfficerLeary, 50, 50);
 	}
+	return false;
 }
 
 void AIScriptOfficerLeary::Retired(int byActorId) {

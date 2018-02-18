@@ -111,12 +111,8 @@ bool Settings::openNewScene() {
 	return true;
 }
 
-int Settings::getAmmoType() {
+int Settings::getAmmoType() const {
 	return _ammoType;
-}
-
-int Settings::getAmmoAmount(int ammoType) {
-	return _ammoAmounts[ammoType];
 }
 
 void Settings::setAmmoType(int ammoType) {
@@ -125,22 +121,54 @@ void Settings::setAmmoType(int ammoType) {
 	}
 }
 
+int Settings::getAmmo(int ammoType) const {
+	return _ammoAmounts[ammoType];
+}
+
 void Settings::addAmmo(int ammoType, int ammo) {
-	if (ammoType > _ammoType || _ammoAmounts[_ammoType] == 0)
+	if (ammoType > _ammoType || _ammoAmounts[_ammoType] == 0) {
 		_ammoType = ammoType;
+	}
 	_ammoAmounts[ammoType] += ammo;
 }
 
-int Settings::getDifficulty() {
+void Settings::decreaseAmmo() {
+	if (_difficulty == 0 || _ammoType == 0) {
+		return;
+	}
+
+	if (_ammoAmounts[_ammoType] > 0) {
+		--_ammoAmounts[_ammoType];
+	}
+
+	if (_ammoAmounts[_ammoType] == 0) {
+		for (int i = 2; i >= 0; --i) {
+			if (_ammoAmounts[i] > 0) {
+				_ammoType = i;
+				return;
+			}
+		}
+	}
+}
+
+int Settings::getDifficulty() const {
 	return _difficulty;
 }
 
-int Settings::getPlayerAgenda() {
+int Settings::getPlayerAgenda() const {
 	return _playerAgenda;
 }
 
 void Settings::setPlayerAgenda(int agenda) {
 	_playerAgenda = agenda;
+}
+
+bool Settings::getLearyMode() const {
+	return _learyMode;
+}
+
+void Settings::setLearyMode(bool learyMode) {
+	_learyMode = learyMode;
 }
 
 } // End of namespace BladeRunner

@@ -174,7 +174,25 @@ public:
 	int _walkSoundId;
 	int _walkSoundVolume;
 	int _walkSoundBalance;
-	int _walkingActorId;
+	int _runningActorId;
+
+	int _mouseClickTimeLast;
+	int _mouseClickTimeDiff;
+
+	int  _walkingToExitId;
+	bool _isInsideScriptExit;
+	int  _walkingToRegionId;
+	bool _isInsideScriptRegion;
+	int  _walkingToObjectId;
+	bool _isInsideScriptObject;
+	int  _walkingToItemId;
+	bool _isInsideScriptItem;
+	bool _walkingToEmpty;
+	int _walkingToEmptyX;
+	int _walkingToEmptyY;
+	bool _isInsideScriptEmpty;
+	int _walkingToActorId;
+	bool _isInsideScriptActor;
 
 private:
 	MIXArchive _archives[kArchiveCount];
@@ -199,17 +217,22 @@ public:
 
 	void gameLoop();
 	void gameTick();
+
 	void actorsUpdate();
+
+	void walkingReset();
+
 	void handleEvents();
 	void handleKeyUp(Common::Event &event);
 	void handleKeyDown(Common::Event &event);
-	void handleMouseAction(int x, int y, bool buttonLeft, bool buttonDown);
-	void handleMouseClickExit(int x, int y, int exitIndex);
-	void handleMouseClickRegion(int x, int y, int regionIndex);
-	void handleMouseClickItem(int x, int y, int itemId);
-	void handleMouseClickActor(int x, int y, int actorId);
-	void handleMouseClick3DObject(int x, int y, int objectId, bool isClickable, bool isTarget);
-	void handleMouseClickEmpty(int x, int y, Vector3 &mousePosition);
+	void handleMouseAction(int x, int y, bool mainButton, bool buttonDown);
+	void handleMouseClickExit(int exitId, int x, int y, bool buttonDown);
+	void handleMouseClickRegion(int regionId, int x, int y, bool buttonDown);
+	void handleMouseClickItem(int itemId, bool buttonDown);
+	void handleMouseClickActor(int actorId, bool mainButton, bool buttonDown, Vector3 &scenePosition, int x, int y);
+	void handleMouseClick3DObject(int objectId, bool buttonDown, bool isClickable, bool isTarget);
+	void handleMouseClickEmpty(int x, int y, Vector3 &scenePosition, bool buttonDown);
+
 	void gameWaitForActive();
 	void loopActorSpeaking();
 

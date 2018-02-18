@@ -329,21 +329,21 @@ void KIA::tick() {
 			_currentSection->draw(_vm->_surfaceFront);
 		}
 	}
-	if (_vm->_settings->getAmmoAmount(0) > 0) {
+	if (_vm->_settings->getAmmo(0) > 0) {
 		if (_vm->_settings->getAmmoType() == 0) {
 			_shapes->get(42)->draw(_vm->_surfaceFront, 147, 405);
 		} else {
 			_shapes->get(45)->draw(_vm->_surfaceFront, 140, 446);
 		}
 	}
-	if (_vm->_settings->getAmmoAmount(1) > 0) {
+	if (_vm->_settings->getAmmo(1) > 0) {
 		if (_vm->_settings->getAmmoType() == 1) {
 			_shapes->get(43)->draw(_vm->_surfaceFront, 167, 394);
 		} else {
 			_shapes->get(46)->draw(_vm->_surfaceFront, 160, 446);
 		}
 	}
-	if (_vm->_settings->getAmmoAmount(2) > 0) {
+	if (_vm->_settings->getAmmo(2) > 0) {
 		if (_vm->_settings->getAmmoType() == 2) {
 			_shapes->get(44)->draw(_vm->_surfaceFront, 189, 385);
 		} else {
@@ -826,21 +826,21 @@ void KIA::createButtons(int sectionId) {
 
 		_buttons->defineImage(19, kiaButton19, nullptr, nullptr, nullptr, _vm->_textKIA->getText(44));
 
-		if (_vm->_settings->getAmmoAmount(0) > 0) {
+		if (_vm->_settings->getAmmo(0) > 0) {
 			_buttons->defineImage(16, kiaButton16, nullptr, nullptr, nullptr, _vm->_textKIA->getText(50));
 		}
 		Common::String tooltip;
-		if (_vm->_settings->getAmmoAmount(1) > 0) {
+		if (_vm->_settings->getAmmo(1) > 0) {
 			if (_vm->_settings->getDifficulty() > 0) {
-				tooltip = Common::String::format("%d", _vm->_settings->getAmmoAmount(1));
+				tooltip = Common::String::format("%d", _vm->_settings->getAmmo(1));
 			} else {
 				tooltip = _vm->_textKIA->getText(50);
 			}
 			_buttons->defineImage(17, kiaButton17, nullptr, nullptr, nullptr, tooltip.c_str());
 		}
-		if (_vm->_settings->getAmmoAmount(2) > 0) {
+		if (_vm->_settings->getAmmo(2) > 0) {
 			if (_vm->_settings->getDifficulty() > 0) {
-				tooltip = Common::String::format("%d", _vm->_settings->getAmmoAmount(2));
+				tooltip = Common::String::format("%d", _vm->_settings->getAmmo(2));
 			} else {
 				tooltip = _vm->_textKIA->getText(50);
 			}

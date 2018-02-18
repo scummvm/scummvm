@@ -50,6 +50,10 @@ bool BoundingBox::inside(float x, float y, float z) const {
 	    && z >= _vertices[0].z && z <= _vertices[1].z;
 }
 
+bool BoundingBox::inside(Vector3 &position) const {
+	return inside(position.x, position.y, position.z);
+}
+
 void BoundingBox::setXYZ(float x0, float y0, float z0, float x1, float y1, float z1) {
 	_vertices[0].x = x0;
 	_vertices[0].y = y0;

@@ -52,7 +52,7 @@ class Item {
 	int          _screenX;
 	int          _screenY;
 	float        _depth;
-	bool         _isTargetable;
+	bool         _isTarget;
 	bool         _isSpinning;
 	int          _facingChange;
 	bool         _isVisible;
@@ -65,10 +65,12 @@ public:
 	void setXYZ(Vector3 position);
 	void getWidthHeight(int *width, int *height) const;
 
-	bool isTargetable() const;
+	bool isTarget() const;
 	bool tick(Common::Rect *screenRect, bool special);
 
-	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetableFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag);
+	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTarget, bool isVisible, bool isPoliceMazeEnemy);
+
+	bool isUnderMouse(int mouseX, int mouseY) const;
 };
 
 }

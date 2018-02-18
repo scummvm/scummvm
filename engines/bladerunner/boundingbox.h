@@ -36,6 +36,7 @@ public:
 
 	void expand(float x0, float y0, float z0, float x1, float y1, float z1);
 	bool inside(float x, float y, float z) const;
+	bool inside(Vector3 &position) const;
 
 	void setXYZ(float x0, float y0, float z0, float x1, float y1, float z1);
 	void getXYZ(float *x0, float *y0, float *z0, float *x1, float *y1, float *z1) const;

@@ -22,11 +22,16 @@
 
 #include "bladerunner/mouse.h"
 
+#include "bladerunner/actor.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/combat.h"
 #include "bladerunner/dialogue_menu.h"
+#include "bladerunner/game_constants.h"
+#include "bladerunner/items.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/settings.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/view.h"
 #include "bladerunner/zbuffer.h"
@@ -267,22 +272,25 @@ void Mouse::tick(int x, int y) {
 		return;
 	}
 
-	Vector3 mousePosition = getXYZ(x, y);
+	Vector3 scenePosition = getXYZ(x, y);
 	int cursorId = 0;
 
 	bool isClickable = false;
 	bool isObstacle  = false;
 	bool isTarget    = false;
 
-	int sceneObjectId = _vm->_sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, mousePosition.x, mousePosition.y, mousePosition.z, 1, 0, 1);
+	int sceneObjectId = _vm->_sceneObjects->findByXYZ(&isClickable, &isObstacle, &isTarget, scenePosition, true, false, true);
 	int exitType = _vm->_scene->_exits->getTypeAtXY(x, y);
 
-	if (sceneObjectId >= 0 && sceneObjectId <= 74) {
+	if (sceneObjectId >= kSceneObjectOffsetActors && sceneObjectId < kSceneObjectOffsetItems) {
 		exitType = -1;
 	}
 
 	if (exitType != -1) {
 		switch (exitType) {
+		case 0:
+			cursorId = 12;
+			break;
 		case 1:
 			cursorId = 13;
 			break;
@@ -292,24 +300,74 @@ void Mouse::tick(int x, int y) {
 		case 3:
 			cursorId = 15;
 			break;
-		default:
-			cursorId = 12;
 		}
 		setCursor(cursorId);
 		return;
 	}
 
-	if (true /* not in combat */) {
-		if (sceneObjectId == 0
-		 || (sceneObjectId >= 0 && isClickable)
-		 || _vm->_scene->_regions->getRegionAtXY(x, y) >= 0) {
+	if (!_vm->_combat->isActive()) {
+		if (sceneObjectId == kActorMcCoy + kSceneObjectOffsetActors
+		|| (sceneObjectId > 0 && isClickable)
+		|| _vm->_scene->_regions->getRegionAtXY(x, y) >= 0) {
 			cursorId = 1;
 		}
 		setCursor(cursorId);
 		return;
 	}
 
+	int animationMode = _vm->_playerActor->getAnimationMode();
+	int actorId = Actor::findTargetUnderMouse(_vm, x, y);
+	int itemId = _vm->_items->findTargetUnderMouse(x, y);
+
+	bool isObject = isTarget && sceneObjectId >= kSceneObjectOffsetObjects && sceneObjectId <= 293;
+
+	if (!_vm->_playerActor->isMoving()) {
+		if (actorId >= 0) {
+			_vm->_playerActor->faceActor(actorId, false);
+		} else if (itemId >= 0) {
+			_vm->_playerActor->faceItem(itemId, false);
+		} else if (isObject) {
+			_vm->_playerActor->faceXYZ(scenePosition, false);
+		}
+	}
+
+	if (actorId >= 0 || itemId >= 0 || isObject) {
+		switch (_vm->_settings->getAmmoType()) {
+		case 0:
+			cursorId = 7;
+			break;
+		case 1:
+			cursorId = 9;
+			break;
+		case 2:
+			cursorId = 11;
+			break;
+		}
+
+		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatAim && animationMode != 22 && animationMode != 49) {
+			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatAim, false);
+		}
+	} else {
+		switch (_vm->_settings->getAmmoType()) {
+		case 0:
+			cursorId = 6;
+			break;
+		case 1:
+			cursorId = 8;
+			break;
+		case 2:
+			cursorId = 10;
+			break;
+		}
+		if (!_vm->_playerActor->isMoving() && animationMode != kAnimationModeCombatIdle && animationMode != 22 && animationMode != 49) {
+			_vm->_playerActor->changeAnimationMode(kAnimationModeCombatIdle, false);
+		}
+	}
 	setCursor(cursorId);
+}
+
+bool Mouse::isInactive() const {
+	return _cursor == 6 || _cursor == 8 || _cursor == 10;
 }
 
 // TEST: RC01 after intro: [290, 216] -> [-204.589249 51.450668 7.659241]

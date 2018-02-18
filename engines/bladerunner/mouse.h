@@ -62,6 +62,7 @@ public:
 	void updateCursorFrame();
 
 	void tick(int x, int y);
+	bool isInactive() const;
 
 // private:
 	Vector3 getXYZ(int x, int y) const;

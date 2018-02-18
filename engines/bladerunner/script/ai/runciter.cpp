@@ -139,7 +139,7 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 
 void AIScriptRunciter::ShotAtAndMissed() {}
 
-void AIScriptRunciter::ShotAtAndHit() {
+bool AIScriptRunciter::ShotAtAndHit() {
 	Actor_Set_Targetable(kActorRunciter, false);
 	Actor_Change_Animation_Mode(kActorRunciter, 48);
 	Actor_Set_Goal_Number(kActorRunciter, 599);
@@ -153,6 +153,7 @@ void AIScriptRunciter::ShotAtAndHit() {
 		Actor_Voice_Over(2090, kActorVoiceOver);
 	}
 	Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 3);
+	return false;
 }
 
 void AIScriptRunciter::Retired(int byActorId) {}
@@ -472,8 +473,8 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case kAnimationModeCombatIdle:
-		if (_animationState <= 11) {
+	case kAnimationModeIdle:
+		if (_animationState >= 2 && _animationState <= 11) {
 			var_45CD88 = 1;
 		} else {
 			_animationState = 0;
@@ -485,14 +486,14 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		if (_animationState > 1) {
 			_animationState = 1;
 			_animationFrame = 0;
-		} else if (!_animationState) {
+		} else if (_animationState == 0) {
 			_animationState = 13;
 			_animationStateNext = 1;
 			_animationNext = 526;
 		}
 		break;
 	case 3:
-		if (_animationState) {
+		if (_animationState  != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -503,7 +504,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		var_45CD88 = 0;
 		break;
 	case 12:
-		if (_animationState) {
+		if (_animationState != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -514,7 +515,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		var_45CD88 = 0;
 		break;
 	case 13:
-		if (_animationState) {
+		if (_animationState != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -525,7 +526,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		var_45CD88 = 0;
 		break;
 	case 14:
-		if (_animationState) {
+		if (_animationState != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -536,7 +537,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		var_45CD88 = 0;
 		break;
 	case 15:
-		if (_animationState) {
+		if (_animationState != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -547,7 +548,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		var_45CD88 = 0;
 		break;
 	case 16:
-		if (_animationState) {
+		if (_animationState != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -558,7 +559,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		var_45CD88 = 0;
 		break;
 	case 17:
-		if (_animationState) {
+		if (_animationState != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -569,7 +570,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		var_45CD88 = 0;
 		break;
 	case 18:
-		if (_animationState) {
+		if (_animationState != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -580,7 +581,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 		var_45CD88 = 0;
 		break;
 	case 19:
-		if (_animationState) {
+		if (_animationState != 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {

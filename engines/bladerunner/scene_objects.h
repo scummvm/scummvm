@@ -39,12 +39,6 @@ enum SceneObjectType {
 	kSceneObjectTypeItem    = 2
 };
 
-enum SceneObjectOffset {
-	kSceneObjectOffsetActors  = 0,
-	kSceneObjectOffsetItems   = 74,
-	kSceneObjectOffsetObjects = 198
-};
-
 class SceneObjects {
 #if BLADERUNNER_DEBUG_RENDERING
 	friend class BladeRunnerEngine;
@@ -52,10 +46,10 @@ class SceneObjects {
 	static const int kSceneObjectCount = 115;
 
 	struct SceneObject {
-		int             sceneObjectId;
-		SceneObjectType sceneObjectType;
+		int             id;
+		SceneObjectType type;
 		BoundingBox     boundingBox;
-		Common::Rect    screenRectangle;
+		Common::Rect   *screenRectangle;
 		float           distanceToCamera;
 		bool            isPresent;
 		bool            isClickable;
@@ -82,15 +76,17 @@ public:
 	bool addItem(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isTarget, bool isObstacle);
 	bool remove(int sceneObjectId);
 	void clear();
-	int findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget, float x, float y, float z, bool findClickables, bool findObstacles, bool findTargets) const;
-	bool existsOnXZ(int exceptSceneObjectId, float x, float z, bool a5, bool a6) const;
+	int findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget, Vector3 &position, bool findClickables, bool findObstacles, bool findTargets) const;
+	bool existsOnXZ(int exceptSceneObjectId, float x, float z, bool movingActorIsObstacle, bool standingActorIsObstacle) const;
 	void setMoving(int sceneObjectId, bool isMoving);
 	void setRetired(int sceneObjectId, bool isRetired);
-	bool isBetweenTwoXZ(int sceneObjectId, float x1, float z1, float x2, float z2) const;
+	bool isBetween(float sourceX, float sourceZ, float targetX, float targetZ, int sceneObjectId) const;
+	bool isObstacleBetween(float sourceX, float sourceZ, float targetX, float targetZ, float altitude, int exceptSceneObjectId) const;
 	void setIsClickable(int sceneObjectId, bool isClickable);
 	void setIsObstacle(int sceneObjectId, bool isObstacle);
 	void setIsTarget(int sceneObjectId, bool isTarget);
 	void updateObstacles();
+
 
 private:
 	int findById(int sceneObjectId) const;

@@ -23,6 +23,7 @@
 #include "bladerunner/set.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/game_constants.h"
 #include "bladerunner/lights.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/set_effects.h"

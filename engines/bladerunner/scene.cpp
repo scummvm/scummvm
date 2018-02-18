@@ -76,13 +76,15 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		_vm->_actorDialogueQueue->flush(1, false);
 	}
 
+	_vm->walkingReset();
+
 	_setId = setId;
 	_sceneId = sceneId;
 
 	const Common::String sceneName = _vm->_gameInfo->getSceneName(_sceneId);
 
 	if (isLoadingGame) {
-		// TODO: Set up overlays
+		// TODO: _vm->overlays->resume()
 	} else {
 		_regions->clear();
 		_exits->clear();
@@ -162,7 +164,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 				   actor->getScreenRectangle(),
 				   1,
 				   0,
-				   actor->isTargetable(),
+				   actor->isTarget(),
 				   actor->isRetired());
 		}
 	}

@@ -139,7 +139,7 @@ void AIScriptMaggie::ClickedByPlayer() {
 			Actor_Set_Targetable(kActorMaggie, true);
 			AI_Movement_Track_Flush(kActorMaggie);
 			Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
-			Actor_Says(kActorMcCoy, 2400, 52);
+			Actor_Says(kActorMcCoy, 2400, kAnimationModeFeeding);
 		}
 		return; // true
 	}
@@ -210,10 +210,11 @@ void AIScriptMaggie::OtherAgentEnteredCombatMode(int otherActorId, int combatMod
 void AIScriptMaggie::ShotAtAndMissed() {
 }
 
-void AIScriptMaggie::ShotAtAndHit() {
+bool AIScriptMaggie::ShotAtAndHit() {
 	AI_Movement_Track_Flush(kActorMaggie);
 	Actor_Set_Goal_Number(kActorMaggie, 414);
 	Actor_Set_Targetable(kActorMaggie, false);
+	return false;
 }
 
 void AIScriptMaggie::Retired(int byActorId) {
@@ -270,7 +271,7 @@ bool AIScriptMaggie::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Loop_Actor_Walk_To_Actor(kActorMaggie, kActorMcCoy, 48, false, false);
 		Actor_Face_Actor(kActorMcCoy, kActorMaggie, true);
 		Actor_Face_Actor(kActorMaggie, kActorMcCoy, false);
-		Actor_Says(kActorMcCoy, 2400, 52);
+		Actor_Says(kActorMcCoy, 2400, kAnimationModeFeeding);
 		Actor_Set_Goal_Number(kActorMaggie, 8);
 		Player_Gains_Control();
 		return true;
@@ -593,7 +594,7 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 			}
 		}
 		break;
-	case 52:
+	case kAnimationModeFeeding:
 		if (Game_Flag_Query(kFlagMaggieIsHurt)) {
 			_animationState = kMaggieStateHurtJumping;
 			_animationFrame = 0;

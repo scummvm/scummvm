@@ -34,10 +34,10 @@ class MovementTrack {
 	static const int kSize = 100;
 
 	struct Entry {
-		int waypointId;
-		int delay;
-		int angle;
-		int running;
+		int  waypointId;
+		int  delay;
+		int  angle;
+		bool run;
 	};
 
 	int   _currentIndex;
@@ -49,15 +49,15 @@ class MovementTrack {
 public:
 	MovementTrack();
 	~MovementTrack();
-	int append(int waypointId, int delay, int running);
-	int append(int waypointId, int delay, int angle, int running);
+	int append(int waypointId, int delay, bool run);
+	int append(int waypointId, int delay, int angle, bool run);
 	void flush();
 	void repeat();
 	void pause();
 	void unpause();
 	bool isPaused() const;
 	bool hasNext() const;
-	bool next(int *waypointId, int *delay, int *angle, int *running);
+	bool next(int *waypointId, int *delay, int *angle, bool *run);
 
 	//int saveGame();
 

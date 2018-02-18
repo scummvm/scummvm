@@ -50,7 +50,7 @@ public:
 	virtual void OtherAgentExitedThisScene(int otherActorId) = 0;
 	virtual void OtherAgentEnteredCombatMode(int otherActorId, int combatMode) = 0;
 	virtual void ShotAtAndMissed() = 0;
-	virtual void ShotAtAndHit() = 0;
+	virtual bool ShotAtAndHit() = 0;
 	virtual void Retired(int byActorId) = 0;
 	virtual int GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) = 0;
 	virtual bool GoalChanged(int currentGoalNumber, int newGoalNumber) = 0;
@@ -79,7 +79,7 @@ public: \
 	void OtherAgentExitedThisScene(int otherActorId); \
 	void OtherAgentEnteredCombatMode(int otherActorId, int combatMode); \
 	void ShotAtAndMissed(); \
-	void ShotAtAndHit(); \
+	bool ShotAtAndHit(); \
 	void Retired(int byActorId); \
 	int GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId); \
 	bool GoalChanged(int currentGoalNumber, int newGoalNumber); \
@@ -176,6 +176,9 @@ public:
 	void enteredScene(int actor, int setId);
 	void otherAgentEnteredThisScene(int actor, int otherActorId);
 	void otherAgentExitedThisScene(int actor, int otherActorId);
+	void otherAgentEnteredCombatMode(int actorId, int otherActorId, int combatMode);
+	void shotAtAndMissed(int actorId);
+	bool shotAtAndHit(int actorId);
 	void retired(int actor, int retiredByActorId);
 	void goalChanged(int actor, int currentGoalNumber, int newGoalNumber);
 	bool reachedMovementTrackWaypoint(int actor, int waypointId);

@@ -231,7 +231,7 @@ void ScriptBase::Actor_Set_Health(int actorId, int hp, int maxHp) {
 }
 
 void ScriptBase::Actor_Set_Targetable(int actorId, bool targetable) {
-	_vm->_actors[actorId]->setTargetable(targetable);
+	_vm->_actors[actorId]->setTarget(targetable);
 
 }
 
@@ -258,7 +258,7 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 		if (actorId != kActorMcCoy) {
 			actor->changeAnimationMode(animationMode, false);
 			animationModeChanged = true;
-		} else if (_vm->_combat->isActive()) {
+		} else if (!_vm->_combat->isActive()) {
 			actor->changeAnimationMode(animationMode, false);
 			animationModeChanged = true;
 		}
@@ -364,11 +364,11 @@ bool ScriptBase::Actor_Query_In_Between_Two_Actors(int actorId, int otherActor1I
 	float z1 = _vm->_actors[otherActor1Id]->getZ();
 	float x2 = _vm->_actors[otherActor2Id]->getX();
 	float z2 = _vm->_actors[otherActor2Id]->getZ();
-	return _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1, z1, x2, z1)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1 - 12.0f, z1 - 12.0f, x2 - 12.0f, z2 - 12.0f)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1 + 12.0f, z1 - 12.0f, x2 + 12.0f, z2 - 12.0f)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1 + 12.0f, z1 + 12.0f, x2 + 12.0f, z2 + 12.0f)
-		|| _vm->_sceneObjects->isBetweenTwoXZ(actorId + kSceneObjectOffsetActors, x1 - 12.0f, z1 + 12.0f, x2 - 12.0f, z2 + 12.0f);
+	return _vm->_sceneObjects->isBetween(x1,         z1,         x2,         z1,         actorId + kSceneObjectOffsetActors)
+		|| _vm->_sceneObjects->isBetween(x1 - 12.0f, z1 - 12.0f, x2 - 12.0f, z2 - 12.0f, actorId + kSceneObjectOffsetActors)
+		|| _vm->_sceneObjects->isBetween(x1 + 12.0f, z1 - 12.0f, x2 + 12.0f, z2 - 12.0f, actorId + kSceneObjectOffsetActors)
+		|| _vm->_sceneObjects->isBetween(x1 + 12.0f, z1 + 12.0f, x2 + 12.0f, z2 + 12.0f, actorId + kSceneObjectOffsetActors)
+		|| _vm->_sceneObjects->isBetween(x1 - 12.0f, z1 + 12.0f, x2 - 12.0f, z2 + 12.0f, actorId + kSceneObjectOffsetActors);
 }
 
 void ScriptBase::Actor_Set_Goal_Number(int actorId, int goalNumber) {
@@ -408,20 +408,21 @@ int ScriptBase::Actor_Query_Animation_Mode(int actorId) {
 bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int distance, bool interruptible, bool run) {
 	_vm->gameWaitForActive();
 
-	if (_vm->_walkingActorId == actorId) {
+	if (_vm->_runningActorId == actorId) {
 		run = true;
 	}
-	_vm->_playerActorIdle = false;
-	bool isRunning;
 
+	_vm->_playerActorIdle = false;
+
+	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToActor(otherActorId, distance, interruptible, run, true, &isRunning);
 
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
-	if (isRunning == 1) {
-		_vm->_walkingActorId = actorId;
+	if (isRunning) {
+		_vm->_runningActorId = actorId;
 	}
 	Global_Variable_Set(kVariableWalkLoopActor, actorId);
 	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
@@ -431,20 +432,21 @@ bool ScriptBase::Loop_Actor_Walk_To_Actor(int actorId, int otherActorId, int dis
 bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int destinationOffset, bool interruptible, bool run) {
 	_vm->gameWaitForActive();
 
-	if (_vm->_walkingActorId == actorId) {
+	if (_vm->_runningActorId == actorId) {
 		run = true;
 	}
-	_vm->_playerActorIdle = false;
-	bool isRunning;
 
+	_vm->_playerActorIdle = false;
+
+	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToItem(itemId, destinationOffset, interruptible, run, true, &isRunning);
 
-	if (_vm->_playerActorIdle == 1) {
+	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
-	if (isRunning == 1) {
-		_vm->_walkingActorId = actorId;
+	if (isRunning) {
+		_vm->_runningActorId = actorId;
 	}
 	Global_Variable_Set(kVariableWalkLoopActor, actorId);
 	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
@@ -454,20 +456,21 @@ bool ScriptBase::Loop_Actor_Walk_To_Item(int actorId, int itemId, int destinatio
 bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *objectName, int destinationOffset, bool interruptible, bool run) {
 	_vm->gameWaitForActive();
 
-	if (_vm->_walkingActorId == actorId) {
+	if (_vm->_runningActorId == actorId) {
 		run = true;
 	}
-	_vm->_playerActorIdle = false;
-	bool isRunning;
 
+	_vm->_playerActorIdle = false;
+
+	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToSceneObject(objectName, destinationOffset, interruptible, run, true, &isRunning);
 
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
-	if (isRunning == 1) {
-		_vm->_walkingActorId = actorId;
+	if (isRunning) {
+		_vm->_runningActorId = actorId;
 	}
 	Global_Variable_Set(kVariableWalkLoopActor, actorId);
 	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
@@ -477,20 +480,21 @@ bool ScriptBase::Loop_Actor_Walk_To_Scene_Object(int actorId, const char *object
 bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, bool interruptible, bool run) {
 	_vm->gameWaitForActive();
 
-	if (_vm->_walkingActorId == actorId) {
+	if (_vm->_runningActorId == actorId) {
 		run = true;
 	}
-	_vm->_playerActorIdle = false;
-	bool isRunning;
 
+	_vm->_playerActorIdle = false;
+
+	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToWaypoint(waypointId, destinationOffset, interruptible, run, true, &isRunning);
 
 	if (_vm->_playerActorIdle) {
 		result = true;
 		_vm->_playerActorIdle = false;
 	}
-	if (isRunning == 1) {
-		_vm->_walkingActorId = actorId;
+	if (isRunning) {
+		_vm->_runningActorId = actorId;
 	}
 	Global_Variable_Set(kVariableWalkLoopActor, actorId);
 	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
@@ -500,16 +504,16 @@ bool ScriptBase::Loop_Actor_Walk_To_Waypoint(int actorId, int waypointId, int de
 bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, bool interruptible, bool run, int a7) {
 	_vm->gameWaitForActive();
 
-	if (_vm->_walkingActorId == actorId) {
+	if (_vm->_runningActorId == actorId) {
 		if (a7) {
-			_vm->_walkingActorId = -1;
+			_vm->_runningActorId = -1;
 		} else {
 			run = true;
 		}
 	}
 	_vm->_playerActorIdle = false;
-	bool isRunning;
 
+	bool isRunning;
 	bool result = _vm->_actors[actorId]->loopWalkToXYZ(Vector3(x, y, z), destinationOffset, interruptible, run, true, &isRunning);
 
 	if (_vm->_playerActorIdle) {
@@ -517,7 +521,7 @@ bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, 
 		_vm->_playerActorIdle = false;
 	}
 	if (isRunning) {
-		_vm->_walkingActorId = actorId;
+		_vm->_runningActorId = actorId;
 	}
 	Global_Variable_Set(kVariableWalkLoopActor, actorId);
 	Global_Variable_Set(kVariableWalkLoopRun, isRunning);
@@ -527,7 +531,7 @@ bool ScriptBase::Loop_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, 
 void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, bool run) {
 	_vm->gameWaitForActive();
 
-	if (_vm->_walkingActorId == actorId) {
+	if (_vm->_runningActorId == actorId) {
 		run = true;
 	}
 
@@ -537,7 +541,7 @@ void ScriptBase::Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int d
 void ScriptBase::Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, bool run) {
 	_vm->gameWaitForActive();
 
-	if (_vm->_walkingActorId == actorId) {
+	if (_vm->_runningActorId == actorId) {
 		run = true;
 	}
 
@@ -1234,13 +1238,13 @@ void ScriptBase::I_Sez(const char *str) {
 
 void ScriptBase::AI_Countdown_Timer_Start(int actorId, signed int timer, int seconds) {
 	if (timer >= 0 && timer <= 2) {
-		_vm->_actors[actorId]->countdownTimerStart(timer, 1000 * seconds);
+		_vm->_actors[actorId]->timerStart(timer, 1000 * seconds);
 	}
 }
 
 void ScriptBase::AI_Countdown_Timer_Reset(int actorId, int timer) {
 	if (timer >= 0 && timer <= 2) {
-		_vm->_actors[actorId]->countdownTimerReset(timer);
+		_vm->_actors[actorId]->timerReset(timer);
 	}
 }
 
@@ -1258,19 +1262,19 @@ void ScriptBase::AI_Movement_Track_Repeat(int actorId) {
 }
 
 void ScriptBase::AI_Movement_Track_Append_Run_With_Facing(int actorId, int waypointId, int delay, int angle) {
-	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay, angle, 1);
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, angle, true);
 }
 
 void ScriptBase::AI_Movement_Track_Append_With_Facing(int actorId, int waypointId, int delay, int angle) {
-	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay, angle, 0);
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, angle, false);
 }
 
 void ScriptBase::AI_Movement_Track_Append_Run(int actorId, int waypointId, int delay) {
-	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay, 1);
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, true);
 }
 
 void ScriptBase::AI_Movement_Track_Append(int actorId, int waypointId, int delay) {
-	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay, 0);
+	_vm->_actors[actorId]->_movementTrack->append(waypointId, delay * 1000, false);
 }
 
 void ScriptBase::AI_Movement_Track_Flush(int actorId) {

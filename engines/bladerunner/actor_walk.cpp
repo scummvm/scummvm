@@ -37,8 +37,8 @@ namespace BladeRunner {
 ActorWalk::ActorWalk(BladeRunnerEngine *vm) {
 	_vm = vm;
 
-	_walking = 0;
-	_running = 0;
+	_walking = false;
+	_running = false;
 	_facing = -1;
 	_status = 0;
 
@@ -226,6 +226,16 @@ void ActorWalk::stop(int actorId, bool immediately, int combatAnimationMode, int
 		_running = false;
 		_status = 5;
 	}
+}
+
+void ActorWalk::run(int actorId) {
+	_running = true;
+
+	int animationMode = kAnimationModeRun;
+	if (_vm->_actors[actorId]->inCombat()) {
+		animationMode = kAnimationModeCombatRun;
+	}
+	_vm->_actors[actorId]->changeAnimationMode(animationMode, false);
 }
 
 bool ActorWalk::isXYZEmpty(float x, float y, float z, int actorId) const {

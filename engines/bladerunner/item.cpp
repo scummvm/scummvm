@@ -47,7 +47,7 @@ Item::Item(BladeRunnerEngine *vm) {
 	_screenX = 0;
 	_screenY = 0;
 	_depth = 0.0f;
-	_isTargetable = false;
+	_isTarget = false;
 	_isSpinning = false;
 	_facingChange = 0;
 	_isVisible = true;
@@ -69,8 +69,8 @@ void Item::getWidthHeight(int *width, int *height) const {
 	*height = _height;
 }
 
-bool Item::isTargetable() const {
-	return _isTargetable;
+bool Item::isTarget() const {
+	return _isTarget;
 }
 
 bool Item::tick(Common::Rect *screenRect, bool special) {
@@ -134,7 +134,7 @@ void Item::setXYZ(Vector3 position) {
 	_depth = screenPosition.z * 25.5f;
 }
 
-void Item::setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetableFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag) {
+void Item::setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTarget, bool isVisible, bool isPoliceMazeEnemy) {
 	_itemId = itemId;
 	_setId = setId;
 	_animationId = animationId;
@@ -142,14 +142,22 @@ void Item::setup(int itemId, int setId, int animationId, Vector3 position, int f
 	_angle = facing * (M_PI / 512.0f);
 	_width = width;
 	_height = height;
-	_isTargetable = isTargetableFlag;
-	_isVisible = isVisibleFlag;
-	_isPoliceMazeEnemy = isPoliceMazeEnemyFlag;
+	_isTarget = isTarget;
+	_isVisible = isVisible;
+	_isPoliceMazeEnemy = isPoliceMazeEnemy;
 	setXYZ(position);
 	_screenRectangle.bottom = -1;
 	_screenRectangle.right = -1;
 	_screenRectangle.top = -1;
 	_screenRectangle.left = -1;
+}
+
+bool Item::isUnderMouse(int mouseX, int mouseY) const {
+	return _isVisible
+	    && mouseX >= _screenRectangle.left   - 10
+	    && mouseX <= _screenRectangle.right  + 10
+	    && mouseY >= _screenRectangle.top    - 10
+	    && mouseY <= _screenRectangle.bottom + 10;
 }
 
 } // End of namespace BladeRunner

@@ -559,8 +559,11 @@ enum AnimationModes {
 	kAnimationModeWalk = 1,
 	kAnimationModeRun = 2,
 	kAnimationModeCombatIdle = 4,
+	kAnimationModeCombatAim = 5,
+	kAnimationModeCombatShoot = 6,
 	kAnimationModeCombatWalk = 7,
-	kAnimationModeCombatRun = 8
+	kAnimationModeCombatRun = 8,
+	kAnimationModeFeeding = 52
 };
 
 enum SceneLoopMode {
@@ -802,6 +805,21 @@ enum GameItems {
 enum Elevators {
 	kElevatorMA = 1,
 	kElevatorPS = 2
+};
+
+// enum SceneObjectOffset {
+// 	kSceneObjectActorIdStart  = 0,
+// 	kSceneObjectActorIdEnd    = kSceneObjectActorIdStart  +  73,
+// 	kSceneObjectItemIdStart   = kSceneObjectActorIdEnd    +   1,
+// 	kSceneObjectItemIdEnd     = kSceneObjectItemIdStart   + 123,
+// 	kSceneObjectObjectIdStart = kSceneObjectItemIdEnd     +   1,
+// 	kSceneObjectObjectIdEnd   = kSceneObjectObjectIdStart +  95
+// };
+
+enum SceneObjectOffset {
+	kSceneObjectOffsetActors  = 0,
+	kSceneObjectOffsetItems   = 74,
+	kSceneObjectOffsetObjects = 198
 };
 
 } // End of namespace BladeRunner

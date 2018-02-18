@@ -43,9 +43,12 @@ public:
 	void getWidthHeight(int itemId, int *width, int *height) const;
 
 	void tick();
-	bool addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetableFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag, bool addToSetFlag);
+	bool addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTarget, bool isVisible, bool isPoliceMazeEnemy, bool addToSet);
 	bool addToSet(int itemId);
 	bool remove(int itemId);
+
+	bool isTarget(int itemId) const;
+	int findTargetUnderMouse(int mouseX, int mouseY) const;
 
 private:
 	int findItem(int itemId) const;

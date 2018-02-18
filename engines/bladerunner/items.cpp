@@ -59,15 +59,15 @@ void Items::tick() {
 		if (_items[i]->_setId != setId) {
 			continue;
 		}
-		bool set14NotTarget = setId == kSetPS10_PS11_PS12_PS13 && !_items[i]->isTargetable();
+		bool notPoliceMazeTarget = setId == kSetPS10_PS11_PS12_PS13 && !_items[i]->isTarget();
 		Common::Rect screenRect;
-		if (_items[i]->tick(&screenRect, set14NotTarget)) {
+		if (_items[i]->tick(&screenRect, notPoliceMazeTarget)) {
 			_vm->_zbuffer->mark(screenRect);
 		}
 	}
 }
 
-bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetableFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag, bool addToSetFlag) {
+bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTarget, bool isVisible, bool isPoliceMazeEnemy, bool addToSet) {
 	if (_items.size() >= 100) {
 		return false;
 	}
@@ -77,11 +77,11 @@ bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position,
 	}
 
 	Item *item = new Item(_vm);
-	item->setup(itemId, setId, animationId, position, facing, height, width, isTargetableFlag, isVisibleFlag, isPoliceMazeEnemyFlag);
+	item->setup(itemId, setId, animationId, position, facing, height, width, isTarget, isVisible, isPoliceMazeEnemy);
 	_items.push_back(item);
 
-	if (addToSetFlag && setId == _vm->_scene->getSetId()) {
-		return _vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, isTargetableFlag, isVisibleFlag);
+	if (addToSet && setId == _vm->_scene->getSetId()) {
+		return _vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, isTarget, isVisible);
 	}
 	return true;
 }
@@ -94,7 +94,7 @@ bool Items::addToSet(int setId) {
 	for (int i = 0; i < itemCount; i++) {
 		Item *item = _vm->_items->_items[i];
 		if (item->_setId == setId) {
-			_vm->_sceneObjects->addItem(item->_itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, item->isTargetable(), item->_isVisible);
+			_vm->_sceneObjects->addItem(item->_itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, item->isTarget(), item->_isVisible);
 		}
 	}
 	return true;
@@ -116,10 +116,29 @@ bool Items::remove(int itemId) {
 	return true;
 }
 
+bool Items::isTarget(int itemId) const {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return false;
+	}
+	return _items[itemIndex]->isTarget();
+}
+
+int Items::findTargetUnderMouse(int mouseX, int mouseY) const {
+	int setId = _vm->_scene->getSetId();
+	for (int i = 0 ; i < (int)_items.size(); ++i) {
+		if (_items[i]->_setId == setId && _items[i]->isTarget() && _items[i]->isUnderMouse(mouseX, mouseY)) {
+			return _items[i]->_itemId;
+		}
+	}
+	return -1;
+}
+
 int Items::findItem(int itemId) const {
 	for (int i = 0; i < (int)_items.size(); i++) {
-		if (_items[i]->_itemId == itemId)
+		if (_items[i]->_itemId == itemId) {
 			return i;
+		}
 	}
 	return -1;
 }

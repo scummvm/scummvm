@@ -144,6 +144,35 @@ void AIScripts::otherAgentExitedThisScene(int actor, int otherActorId) {
 	_inScriptCounter--;
 }
 
+void AIScripts::otherAgentEnteredCombatMode(int actorId, int otherActorId, int combatMode) {
+	assert(actorId < _actorCount);
+	_inScriptCounter++;
+	if (_AIScripts[actorId]) {
+		_AIScripts[actorId]->OtherAgentEnteredCombatMode(otherActorId, combatMode);
+	}
+	_inScriptCounter--;
+}
+
+void AIScripts::shotAtAndMissed(int actorId) {
+	assert(actorId < _actorCount);
+	_inScriptCounter++;
+	if (_AIScripts[actorId]) {
+		_AIScripts[actorId]->ShotAtAndMissed();
+	}
+	_inScriptCounter--;
+}
+
+bool AIScripts::shotAtAndHit(int actorId) {
+	assert(actorId < _actorCount);
+	bool result = true;
+	_inScriptCounter++;
+	if (_AIScripts[actorId]) {
+		result = _AIScripts[actorId]->ShotAtAndHit();
+	}
+	_inScriptCounter--;
+	return result;
+}
+
 void AIScripts::retired(int actor, int retiredByActorId) {
 	assert(actor < _actorCount);
 	_inScriptCounter++;

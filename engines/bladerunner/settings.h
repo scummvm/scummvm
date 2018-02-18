@@ -77,11 +77,11 @@ public:
 		_newScene = -1;
 	}
 
-	int getNewScene() {
+	int getNewScene() const {
 		return _newScene;
 	}
 
-	int getNewSet() {
+	int getNewSet() const {
 		return _newSet;
 	}
 
@@ -94,7 +94,7 @@ public:
 		_loadingGame = loadingGame;
 	}
 
-	bool getLoadingGame() {
+	bool getLoadingGame() const {
 		return _loadingGame;
 	}
 
@@ -104,22 +104,19 @@ public:
 
 	bool openNewScene();
 
-	int getAmmoType();
-	int getAmmoAmount(int ammoType);
+	int getAmmoType() const;
 	void setAmmoType(int ammoType);
-
-	int getDifficulty();
-	int getPlayerAgenda();
-	void setPlayerAgenda(int agenda);
+	int getAmmo(int ammoType) const;
 	void addAmmo(int ammoType, int ammo);
+	void decreaseAmmo();
 
-	bool getLearyMode() {
-		return _learyMode;
-	}
+	int getDifficulty() const;
 
-	void setLearyMode(bool learyMode) {
-		_learyMode = learyMode;
-	}
+	int getPlayerAgenda() const;
+	void setPlayerAgenda(int agenda);
+
+	bool getLearyMode() const;
+	void setLearyMode(bool learyMode);
 };
 
 } // End of namespace BladeRunner

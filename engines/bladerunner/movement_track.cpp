@@ -41,15 +41,15 @@ void MovementTrack::reset() {
 		_entries[i].waypointId = -1;
 		_entries[i].delay = -1;
 		_entries[i].angle = -1;
-		_entries[i].running = 0;
+		_entries[i].run = false;
 	}
 }
 
-int MovementTrack::append(int waypointId, int delay, int running) {
-	return append(waypointId, delay, -1, running);
+int MovementTrack::append(int waypointId, int delay, bool run) {
+	return append(waypointId, delay, -1, run);
 }
 
-int MovementTrack::append(int waypointId, int delay, int angle, int running) {	
+int MovementTrack::append(int waypointId, int delay, int angle, bool run) {
 	if (_lastIndex >= kSize) {
 		return 0;
 	}
@@ -57,7 +57,7 @@ int MovementTrack::append(int waypointId, int delay, int angle, int running) {
 	_entries[_lastIndex].waypointId = waypointId;
 	_entries[_lastIndex].delay = delay;
 	_entries[_lastIndex].angle = angle;
-	_entries[_lastIndex].running = running;
+	_entries[_lastIndex].run = run;
 
 	_lastIndex++;
 	_hasNext = true;
@@ -90,18 +90,18 @@ bool MovementTrack::hasNext() const {
 	return _hasNext;
 }
 
-bool MovementTrack::next(int *waypointId, int *delay, int *angle, int *running) {
+bool MovementTrack::next(int *waypointId, int *delay, int *angle, bool *run) {
 	if (_currentIndex < _lastIndex && _hasNext) {
 		*waypointId = _entries[_currentIndex].waypointId;
 		*delay = _entries[_currentIndex].delay;
 		*angle = _entries[_currentIndex].angle;
-		*running = _entries[_currentIndex++].running;
+		*run = _entries[_currentIndex++].run;
 		return true;
 	} else {
 		*waypointId = -1;
 		*delay = -1;
 		*angle = -1;
-		*running = 0;
+		*run = false;
 		_hasNext = false;
 		return false;
 	}

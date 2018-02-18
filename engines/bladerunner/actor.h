@@ -71,7 +71,7 @@ private:
 	int     _walkboxId;
 
 	// Flags
-	bool _isTargetable;
+	bool _isTarget;
 	bool _isInvisible;
 	bool _isImmuneToObstacles;
 	bool _inWalkLoop;
@@ -98,15 +98,15 @@ private:
 	int _animationModeCombatWalk;
 	int _animationModeCombatRun;
 	int _fps;
-	int _frame_ms;
+	int _frameMs;
 	int _animationId;
 	int _animationFrame;
 
 	int _retiredWidth;
 	int _retiredHeight;
 
-	int _timersRemain[7];
-	int _timersStart[7];
+	int _timersLeft[7];
+	int _timersLast[7];
 
 	float _scale;
 
@@ -132,25 +132,29 @@ public:
 
 	void changeAnimationMode(int animationMode, bool force = false);
 	void setFPS(int fps);
+	void increaseFPS();
 
-	void countdownTimerStart(int timerId, int interval);
-	void countdownTimerReset(int timerId);
-	int  countdownTimerGetRemainingTime(int timerId);
-	void countdownTimersUpdate();
-	void countdownTimerUpdate(int timerId);
+	void timerStart(int timerId, int interval);
+	void timerReset(int timerId);
+	int  timerLeft(int timerId);
+	void timersUpdate();
+	void timerUpdate(int timerId);
 
 	void movementTrackNext(bool omitAiScript);
 	void movementTrackPause();
 	void movementTrackUnpause();
 	void movementTrackWaypointReached();
 
-	bool loopWalkToActor(int otherActorId, int destinationOffset, int interruptible, bool run, bool a5, bool *flagIsRunning);
-	bool loopWalkToItem(int itemId, int destinationOffset, int interruptible, bool run, bool a5, bool *flagIsRunning);
-	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool interruptible, bool run, bool a5, bool *flagIsRunning);
-	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int interruptible, bool run, bool a5, bool *flagIsRunning);
-	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, bool a5, bool *flagIsRunning);
+	bool loopWalk(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, const Vector3 &start, float a6, float a7, bool a8, bool *isRunning, bool async);
+	bool walkTo(bool run, const Vector3 &destination, bool a3);
+	bool loopWalkToActor(int otherActorId, int destinationOffset, int interruptible, bool run, bool a5, bool *isRunning);
+	bool loopWalkToItem(int itemId, int destinationOffset, int interruptible, bool run, bool a5, bool *isRunning);
+	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool interruptible, bool run, bool a5, bool *isRunning);
+	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int interruptible, bool run, bool a5, bool *isRunning);
+	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, bool a5, bool *isRunning);
 	bool asyncWalkToWaypoint(int waypointId, int destinationOffset, bool run, bool a5);
 	void asyncWalkToXYZ(const Vector3 &destination, int destinationOffset, bool run, int a6);
+	void run();
 
 	bool tick(bool forceUpdate, Common::Rect *screenRect);
 	bool draw(Common::Rect *screenRect);
@@ -161,8 +165,8 @@ public:
 	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
 	int getWalkbox() const { return _walkboxId; }
 	bool isRetired() const { return _isRetired; }
-	bool isTargetable() const { return _isTargetable; }
-	void setTargetable(bool targetable);
+	bool isTarget() const { return _isTarget; }
+	void setTarget(bool targetable);
 	bool isImmuneToObstacles() const { return _isImmuneToObstacles; }
 	bool inCombat() const { return _inCombat; }
 	bool isMoving() const { return _isMoving; }
@@ -177,6 +181,7 @@ public:
 	void faceItem(int itemId, bool animate);
 	void faceWaypoint(int waypointId, bool animate);
 	void faceXYZ(float x, float y, float z, bool animate);
+	void faceXYZ(const Vector3 &pos, bool animate);
 	void faceCurrentCamera(bool animate);
 	void faceHeading(int heading, bool animate);
 	void modifyFriendlinessToOther(int otherActorId, signed int change);
@@ -203,7 +208,7 @@ public:
 	void combatModeOff();
 
 	void setGoal(int goalNumber);
-	int getGoal()  const;
+	int getGoal() const;
 
 	float distanceFromActor(int otherActorId);
 
@@ -220,13 +225,13 @@ public:
 	int soundVolume() const;
 	int soundBalance() const;
 
+	bool isObstacleBetween(float targetX, float targetZ);
+
+	static int findTargetUnderMouse(BladeRunnerEngine *vm, int mouseX, int mouseY);
 private:
 	void setFacing(int facing, bool halfOrSet = true);
 	void setBoundingBox(const Vector3 &position, bool retired);
 	float distanceFromView(View *view) const;
-
-	bool loopWalk(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, const Vector3 &start, float a6, float a7, bool a8, bool *isRunning, bool async);
-	bool walkTo(bool run, const Vector3 &destination, bool a3);
 
 	bool walkFindU1(const Vector3 &startPosition, const Vector3 &targetPosition, float a3, Vector3 *newDestination);
 	bool walkFindU2(Vector3 *newDestination, float targetWidth, int destinationOffset, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition);

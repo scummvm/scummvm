@@ -143,6 +143,23 @@ inline float cos_1024(int angle1024) {
 inline float sin_1024(int angle1024) {
 	return sin(angle1024 * (M_PI / 512.0f));
 }
+
+inline bool lineIntersection(Vector2 a1, Vector2 a2, Vector2 b1, Vector2 b2, Vector2 *intersection) {
+	Vector2 s1(a2.x - a1.x, a2.y - a1.y);
+	Vector2 s2(b2.x - b1.x, b2.y - b1.y);
+
+	float s = (s1.x * (a1.y - b1.y) - s1.y * (a1.x - b1.x)) / (s1.x * s2.y - s2.x * s1.y);
+	float t = (s2.x * (a1.y - b1.y) - s2.y * (a1.x - b1.x)) / (s1.x * s2.y - s2.x * s1.y);
+
+	if (s >= 0.0f && s <= 1.0f && t >= 0.0f && t <= 1.0f) {
+		intersection->x = a1.x + (t * s1.x);
+		intersection->y = a1.y + (t * s1.y);
+		return true;
+	}
+
+	return false; // No collision
+}
+
 } // End of namespace BladeRunner
 
 #endif

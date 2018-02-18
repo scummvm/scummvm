@@ -174,20 +174,21 @@ bool SceneScript::mouseClick(int x, int y) {
 	//MouseX = x;
 	//MouseY = y;
 	bool result = _currentScript->MouseClick(x, y);
-	//SelectedEntity = -1;
+	_vm->_runningActorId = -1;
 	_inScriptCounter--;
 	//MouseX = -1;
 	//MouseY = -1;
 	return result;
 }
 
-bool SceneScript::clickedOn3DObject(const char *objectName, bool a2) {
+bool SceneScript::clickedOn3DObject(const char *objectName, bool attack) {
 	if (_inScriptCounter > 0) {
 		return true;
 	}
 
 	_inScriptCounter++;
-	bool result = _currentScript->ClickedOn3DObject(objectName, a2);
+	bool result = _currentScript->ClickedOn3DObject(objectName, attack);
+	_vm->_runningActorId = -1;
 	_inScriptCounter--;
 	return result;
 }
@@ -199,6 +200,7 @@ bool SceneScript::clickedOnActor(int actorId) {
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOnActor(actorId);
+	_vm->_runningActorId = -1;
 	_inScriptCounter--;
 	return result;
 }
@@ -210,6 +212,7 @@ bool SceneScript::clickedOnItem(int itemId, bool a2) {
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOnItem(itemId, a2);
+	_vm->_runningActorId = -1;
 	_inScriptCounter--;
 	return result;
 }
@@ -221,6 +224,7 @@ bool SceneScript::clickedOnExit(int exitId) {
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOnExit(exitId);
+	_vm->_runningActorId = -1;
 	_inScriptCounter--;
 	return result;
 }
@@ -232,6 +236,7 @@ bool SceneScript::clickedOn2DRegion(int region) {
 
 	_inScriptCounter++;
 	bool result = _currentScript->ClickedOn2DRegion(region);
+	_vm->_runningActorId = -1;
 	_inScriptCounter--;
 	return result;
 }

@@ -33,6 +33,13 @@ namespace BladeRunner {
 Combat::Combat(BladeRunnerEngine *vm) {
 	_vm = vm;
 
+	reset();
+}
+
+Combat::~Combat() {
+}
+
+void Combat::reset() {
 	_active = false;
 	_enabled = true;
 
@@ -40,13 +47,10 @@ Combat::Combat(BladeRunnerEngine *vm) {
 	_ammoDamage[1] = 20;
 	_ammoDamage[2] = 30;
 
-	for (int i = 0; i < 9; i++) {
+	for (int i = 0; i < kSoundCount; i++) {
 		_hitSoundId[i] = -1;
 		_missSoundId[i] = -1;
 	}
-}
-
-Combat::~Combat() {
 }
 
 void Combat::activate() {
@@ -63,7 +67,17 @@ void Combat::deactivate() {
 	}
 }
 
-bool Combat::isActive() {
+void Combat::change() {
+	if (!_vm->_playerActor->inWalkLoop() && _enabled) {
+		if (_active) {
+			deactivate();
+		} else {
+			activate();
+		}
+	}
+}
+
+bool Combat::isActive() const{
 	return _active;
 }
 
@@ -89,6 +103,10 @@ int Combat::getHitSound() {
 
 int Combat::getMissSound() {
 	return _hitSoundId[3 * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
+}
+
+void Combat::shoot(int actorId, Vector3 &to, int screenX) {
+
 }
 
 } // End of namespace BladeRunner

@@ -48,9 +48,9 @@ SceneObjects::~SceneObjects() {
 
 void SceneObjects::clear() {
 	for (int i = 0; i < kSceneObjectCount; ++i) {
-		_sceneObjects[i].sceneObjectId    = -1;
-		_sceneObjects[i].sceneObjectType  = kSceneObjectTypeUnknown;
-		_sceneObjects[i].distanceToCamera = 0;
+		_sceneObjects[i].id               = -1;
+		_sceneObjects[i].type             = kSceneObjectTypeUnknown;
+		_sceneObjects[i].distanceToCamera = 0.0f;
 		_sceneObjects[i].isPresent        = false;
 		_sceneObjects[i].isClickable      = false;
 		_sceneObjects[i].isObstacle       = false;
@@ -95,7 +95,7 @@ bool SceneObjects::remove(int sceneObjectId) {
 	return true;
 }
 
-int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget, float x, float y, float z, bool findClickables, bool findObstacles, bool findTargets) const {
+int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget, Vector3 &position, bool findClickables, bool findObstacles, bool findTargets) const {
 	*isClickable = false;
 	*isObstacle  = false;
 	*isTarget    = false;
@@ -110,16 +110,16 @@ int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget,
 			(findTargets    && sceneObject->isTarget)) {
 			BoundingBox boundingBox = sceneObject->boundingBox;
 
-			if (sceneObject->sceneObjectType == kSceneObjectTypeObject || sceneObject->sceneObjectType == kSceneObjectTypeItem) {
+			if (sceneObject->type == kSceneObjectTypeObject || sceneObject->type == kSceneObjectTypeItem) {
 				boundingBox.expand(-4.0, 0.0, -4.0, 4.0, 0.0, 4.0);
 			}
 
-			if (boundingBox.inside(x, y, z)) {
+			if (boundingBox.inside(position)) {
 				*isClickable = sceneObject->isClickable;
 				*isObstacle  = sceneObject->isObstacle;
 				*isTarget    = sceneObject->isTarget;
 
-				return sceneObject->sceneObjectId;
+				return sceneObject->id;
 			}
 		}
 	}
@@ -127,7 +127,7 @@ int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget,
 	return -1;
 }
 
-bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool a5, bool a6) const {
+bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool movingActorIsObstacle, bool standingActorIsObstacle) const {
 	float xMin = x - 12.5f;
 	float xMax = x + 12.5f;
 	float zMin = z - 12.5f;
@@ -138,20 +138,20 @@ bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool a5
 	if (count > 0) {
 		for (int i = 0; i < count; i++) {
 			const SceneObject *sceneObject = &_sceneObjects[_sceneObjectsSortedByDistance[i]];
-			bool v13 = false;
-			if (sceneObject->sceneObjectType == kSceneObjectTypeActor) {
+			bool isObstacle = false;
+			if (sceneObject->type == kSceneObjectTypeActor) {
 				if (sceneObject->isRetired) {
-					v13 = false;
+					isObstacle = false;
 				} else if (sceneObject->isMoving) {
-					v13 = a5 != 0;
+					isObstacle = movingActorIsObstacle != 0;
 				} else {
-					v13 = a6 != 0;
+					isObstacle = standingActorIsObstacle != 0;
 				}
 			} else {
-				v13 = sceneObject->isObstacle;
+				isObstacle = sceneObject->isObstacle;
 			}
 
-			if (v13 && sceneObject->sceneObjectId != exceptSceneObjectId) {
+			if (isObstacle && sceneObject->id != exceptSceneObjectId) {
 				float x1, y1, z1, x2, y2, z2;
 				sceneObject->boundingBox.getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
 				if (z1 <= zMax && z2 >= zMin && x1 <= xMax && x2 >= xMin) {
@@ -167,7 +167,7 @@ int SceneObjects::findById(int sceneObjectId) const {
 	for (int i = 0; i < _count; ++i) {
 		int j = this->_sceneObjectsSortedByDistance[i];
 
-		if (_sceneObjects[j].isPresent && _sceneObjects[j].sceneObjectId == sceneObjectId) {
+		if (_sceneObjects[j].isPresent && _sceneObjects[j].id == sceneObjectId) {
 			return j;
 		}
 	}
@@ -180,11 +180,11 @@ bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObject
 		return false;
 	}
 
-	_sceneObjects[index].sceneObjectId   = sceneObjectId;
-	_sceneObjects[index].sceneObjectType = sceneObjectType;
+	_sceneObjects[index].id              = sceneObjectId;
+	_sceneObjects[index].type            = sceneObjectType;
 	_sceneObjects[index].isPresent       = true;
 	_sceneObjects[index].boundingBox     = *boundingBox;
-	_sceneObjects[index].screenRectangle = *screenRectangle;
+	_sceneObjects[index].screenRectangle = screenRectangle;
 	_sceneObjects[index].isClickable     = isClickable;
 	_sceneObjects[index].isObstacle      = isObstacle;
 	_sceneObjects[index].unknown1        = unknown1;
@@ -237,7 +237,7 @@ void SceneObjects::setRetired(int sceneObjectId, bool isRetired) {
 	_sceneObjects[i].isRetired = isRetired;
 }
 
-bool SceneObjects::isBetweenTwoXZ(int sceneObjectId, float x1, float z1, float x2, float z2) const {
+bool SceneObjects::isBetween(float sourceX, float sourceZ, float targetX, float targetZ, int sceneObjectId) const {
 	int i = findById(sceneObjectId);
 	if (i == -1) {
 		return false;
@@ -246,15 +246,46 @@ bool SceneObjects::isBetweenTwoXZ(int sceneObjectId, float x1, float z1, float x
 	float objectX1, objectY1, objectZ1, objectX2, objectY2, objectZ2;
 	_sceneObjects[i].boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
 
-	//TODO
-	//		if (!lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX1, objectZ1, objectX2, objectZ1, &intersectionX, &intersectionY, &v18)
-	//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX2, objectZ1, objectX2, objectZ2, &intersectionX, &intersectionY, &v18)
-	//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX2, objectZ2, objectX1, objectZ2, &intersectionX, &intersectionY, &v18)
-	//			&& !lineIntersectection(sourceX, sourceZ, targetX, targetZ, objectX1, objectZ2, objectX1, objectZ1, &intersectionX, &intersectionY, &v18))
-	//			return false;
-	return true;
+	Vector2 intersection;
+	return lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
+	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
+	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
+	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection);
 }
 
+bool SceneObjects::isObstacleBetween(float sourceX, float sourceZ, float targetX, float targetZ, float altitude, int exceptSceneObjectId) const {
+	for (int i = 0; i < _count; ++i) {
+		const SceneObject *sceneObject = &_sceneObjects[_sceneObjectsSortedByDistance[i]];
+
+		if (sceneObject->type == kSceneObjectTypeActor || !sceneObject->isObstacle || sceneObject->id == exceptSceneObjectId) {
+			continue;
+		}
+
+		float objectX1, objectY1, objectZ1, objectX2, objectY2, objectZ2;
+		_sceneObjects[i].boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
+
+		if (84.0f <= objectY1 - altitude || 72.0f >= objectY2 - altitude) {
+			continue;
+		}
+
+		float xAdjustement = (objectX2 - objectX1) * 0.1f;
+		float zAdjustement = (objectZ2 - objectZ1) * 0.1f;
+
+		objectX1 = objectX1 + xAdjustement;
+		objectZ1 = objectZ1 + zAdjustement;
+		objectX2 = objectX2 - xAdjustement;
+		objectZ2 = objectZ2 - zAdjustement;
+
+		Vector2 intersection;
+		if (lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
+		 || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
+		 || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
+		 || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection)) {
+			return true;
+		}
+	}
+	return false;
+}
 
 void SceneObjects::setIsClickable(int sceneObjectId, bool isClickable) {
 	int i = findById(sceneObjectId);
@@ -282,12 +313,12 @@ void SceneObjects::setIsTarget(int sceneObjectId, bool isTarget) {
 
 void SceneObjects::updateObstacles() {
 	_vm->_obstacles->clear();
-	for(int i = 0; i < _count; i++) {
+	for (int i = 0; i < _count; ++i) {
 		int index = _sceneObjectsSortedByDistance[i];
-		SceneObject sceneObject = _sceneObjects[index];
-		if(sceneObject.isObstacle) {
+		const SceneObject *sceneObject = &_sceneObjects[index];
+		if (sceneObject->isObstacle) {
 			float x0, y0, z0, x1, y1, z1;
-			sceneObject.boundingBox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
+			sceneObject->boundingBox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
 			_vm->_obstacles->add(x0, z0, x1, z1);
 		}
 	}

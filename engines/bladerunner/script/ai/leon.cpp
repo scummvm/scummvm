@@ -128,10 +128,11 @@ void AIScriptLeon::OtherAgentEnteredCombatMode(int otherActorId, int combatMode)
 
 void AIScriptLeon::ShotAtAndMissed() {}
 
-void AIScriptLeon::ShotAtAndHit() {
+bool AIScriptLeon::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorLeon) != 7) {
 		Actor_Set_Goal_Number(kActorLeon, 7);
 	}
+	return false;
 }
 
 void AIScriptLeon::Retired(int byActorId) {}
@@ -351,7 +352,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptLeon::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 2:
 		case 3:
@@ -370,7 +371,7 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
-	case 1:
+	case kAnimationModeWalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
@@ -379,7 +380,7 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		var_45EDAC = 0;
 		break;
-	case 6:
+	case kAnimationModeCombatShoot:
 		_animationState = 10;
 		_animationFrame = 0;
 		break;

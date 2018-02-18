@@ -25,15 +25,19 @@
 
 namespace BladeRunner {
 
+class Vector3;
+
 class BladeRunnerEngine;
 
 class Combat {
+	static const int kSoundCount = 9;
+
 	BladeRunnerEngine *_vm;
 
 	bool _active;
 	bool _enabled;
-	int _hitSoundId[9];
-	int _missSoundId[9];
+	int _hitSoundId[kSoundCount];
+	int _missSoundId[kSoundCount];
 //	int _random1;
 //	int _random2;
 
@@ -44,9 +48,12 @@ public:
 	Combat(BladeRunnerEngine *vm);
 	~Combat();
 
+	void reset();
+
 	void activate();
 	void deactivate();
-	bool isActive();
+	void change();
+	bool isActive() const;
 
 	void enable();
 	void disable();
@@ -55,6 +62,8 @@ public:
 	void setMissSound(int ammoType, int column, int soundId);
 	int getHitSound();
 	int getMissSound();
+
+	void shoot(int actorId, Vector3 &to, int screenX);
 };
 
 } // End of namespace BladeRunner
