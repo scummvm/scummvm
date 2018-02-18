@@ -1264,8 +1264,8 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		}
 
 		// Create the item and it's category
-		ItemCategory itemCat = tempChar.makeItem(giveVal, 0, (idx == -1) ? 12 : 0);
-		XeenItem &srcItem = _treasure[itemCat][0];
+		ItemCategory itemCat = tempChar.makeItem(giveVal, 0, (idx == -1) ? 0 : 12);
+		XeenItem &srcItem = tempChar._items[itemCat][0];
 		XeenItem *trItems = _treasure[itemCat];
 
 		// Check for a free treasure slot
