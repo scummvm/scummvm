@@ -350,4 +350,22 @@ uint SpriteResource::getScaledVal(int xy, uint16 &scaleMask) {
 	return result;
 }
 
+Common::Point SpriteResource::getFrameSize(int frame) const {
+	Common::MemoryReadStream f(_data, _filesize);
+	Common::Point size;
+
+	for (int idx = 0; idx < (_index[frame]._offset2 ? 2 : 1); ++idx) {
+		f.seek((idx == 0) ? _index[frame]._offset1 : _index[frame]._offset2);
+		int xOffset = f.readUint16LE();
+		int width = f.readUint16LE();
+		int yOffset = f.readUint16LE();
+		int height = f.readUint16LE();
+
+		size.x = MAX((int)size.x, xOffset + width);
+		size.y = MAX((int)size.y, yOffset + height);
+	}
+
+	return size;
+}
+
 } // End of namespace Xeen

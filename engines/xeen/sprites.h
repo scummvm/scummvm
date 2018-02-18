@@ -160,6 +160,11 @@ public:
 	void draw(int windowIndex, int frame);
 
 	/**
+	 * Gets the size of a sprite
+	 */
+	Common::Point getFrameSize(int frame) const;
+
+	/**
 	 * Returns the number of frames the sprite resource has
 	 */
 	size_t size() const { return _index.size(); }

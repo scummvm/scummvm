@@ -461,7 +461,7 @@ void PartyDialog::createChar() {
 			// Get the display of the rolled character details
 			selectedClass = newCharDetails(attribs, allowedClasses,
 				race, sex, classId, selectedClass, details);
-			Common::String msg = Common::String::format(Res.CREATE_CHAR_DETAILS,
+			msg = Common::String::format(Res.CREATE_CHAR_DETAILS,
 				details.c_str());
 
 			// Draw the screen
@@ -867,6 +867,9 @@ void PartyDialog::drawDice(SpriteResource &dice) {
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[32];
+	Common::Point diceSize = dice.getFrameSize(0);
+
+	events.updateGameCounter();
 	dice.draw(w, 7, Common::Point(12, 11));
 
 	for (int diceNum = 0; diceNum < 3; ++diceNum) {
@@ -876,16 +879,16 @@ void PartyDialog::drawDice(SpriteResource &dice) {
 		if (_dicePos[diceNum].x < 13) {
 			_dicePos[diceNum].x = 13;
 			_diceInc[diceNum].x *= -1;
-		} else if (_dicePos[diceNum].x >= 163) {
-			_dicePos[diceNum].x = 163;
+		} else if (_dicePos[diceNum].x >= (163 - diceSize.x)) {
+			_dicePos[diceNum].x = 163 - diceSize.x;
 			_diceInc[diceNum].x *= -1;
 		}
 
 		if (_dicePos[diceNum].y < 12) {
 			_dicePos[diceNum].y = 12;
 			_diceInc[diceNum].y *= -1;
-		} else if (_dicePos[diceNum].y >= 93) {
-			_dicePos[diceNum].y = 93;
+		} else if (_dicePos[diceNum].y >= (93 - diceSize.y)) {
+			_dicePos[diceNum].y = 93 - diceSize.y;
 			_diceInc[diceNum].y *= -1;
 		}
 
