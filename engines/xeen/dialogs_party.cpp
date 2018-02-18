@@ -388,13 +388,13 @@ void PartyDialog::createChar() {
 	bool allowedClasses[TOTAL_CLASSES];
 	Race race = HUMAN;
 	Sex sex = MALE;
-	Common::String msg;
+	Common::String msg, details;
 	int charIndex = 0;
 
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_4;
 	dice.load("dice.vga");
-	icons.load("create.raw");
+	icons.load("create.icn");
 
 	_dicePos[0] = Common::Point(20, 17);
 	_dicePos[1] = Common::Point(112, 35);
@@ -420,16 +420,16 @@ void PartyDialog::createChar() {
 	addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_s, nullptr);
 	addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_a, nullptr);
 	addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_l, nullptr);
-	addButton(Common::Rect(227, 19, 139, 29), 1000, nullptr);
-	addButton(Common::Rect(227, 30, 139, 40), 1001, nullptr);
-	addButton(Common::Rect(227, 41, 139, 51), 1002, nullptr);
-	addButton(Common::Rect(227, 52, 139, 62), 1003, nullptr);
-	addButton(Common::Rect(227, 63, 139, 73), 1004, nullptr);
-	addButton(Common::Rect(227, 74, 139, 84), 1005, nullptr);
-	addButton(Common::Rect(227, 85, 139, 95), 1006, nullptr);
-	addButton(Common::Rect(227, 96, 139, 106), 1007, nullptr);
-	addButton(Common::Rect(227, 107, 139, 117), 1008, nullptr);
-	addButton(Common::Rect(227, 118, 139, 128), 1009, nullptr);
+	addButton(Common::Rect(227, 19, 239, 29), 1000, nullptr);
+	addButton(Common::Rect(227, 30, 239, 40), 1001, nullptr);
+	addButton(Common::Rect(227, 41, 239, 51), 1002, nullptr);
+	addButton(Common::Rect(227, 52, 239, 62), 1003, nullptr);
+	addButton(Common::Rect(227, 63, 239, 73), 1004, nullptr);
+	addButton(Common::Rect(227, 74, 239, 84), 1005, nullptr);
+	addButton(Common::Rect(227, 85, 239, 95), 1006, nullptr);
+	addButton(Common::Rect(227, 96, 239, 106), 1007, nullptr);
+	addButton(Common::Rect(227, 107, 239, 117), 1008, nullptr);
+	addButton(Common::Rect(227, 118, 239, 128), 1009, nullptr);
 
 	// Load the background
 	screen.loadBackground("create.raw");
@@ -458,9 +458,11 @@ void PartyDialog::createChar() {
 			// Randomly determine attributes, and which classes they allow
 			throwDice(attribs, allowedClasses);
 
-			// Set up display of the rolled character details
+			// Get the display of the rolled character details
 			selectedClass = newCharDetails(attribs, allowedClasses,
-				race, sex, classId, selectedClass, msg);
+				race, sex, classId, selectedClass, details);
+			Common::String msg = Common::String::format(Res.CREATE_CHAR_DETAILS,
+				details.c_str());
 
 			// Draw the screen
 			icons.draw(w, 10, Common::Point(168, 19));
