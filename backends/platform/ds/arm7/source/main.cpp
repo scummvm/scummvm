@@ -443,11 +443,11 @@ void InterruptTimer3() {
 	  x = p.rawx;
 	  y = p.rawy;
 
-	  xpx = p.px;
-	  ypx = p.py;
+	  //xpx = p.px;
+	  //ypx = p.py;
 
-//      xpx = ( ((SCREEN_WIDTH -60) * x) / TOUCH_WIDTH  ) - TOUCH_OFFSET_X;
-  //    ypx = ( ((SCREEN_HEIGHT-60) * y) / TOUCH_HEIGHT ) - TOUCH_OFFSET_Y;
+      xpx = ( ((SCREEN_WIDTH -60) * x) / TOUCH_WIDTH  ) - TOUCH_OFFSET_X;
+      ypx = ( ((SCREEN_HEIGHT-60) * y) / TOUCH_HEIGHT ) - TOUCH_OFFSET_Y;
 
 //	  xpx = (IPC->touchX - (int16) TOUCH_CAL_X1) * CNTRL_WIDTH  / TOUCH_WIDTH  + (int16) (TOUCH_CNTRL_X1 - 8);
 	//  ypx = (IPC->touchY - (int16) TOUCH_CAL_Y1) * CNTRL_HEIGHT / TOUCH_HEIGHT + (int16) (TOUCH_CNTRL_Y1 - 8);
