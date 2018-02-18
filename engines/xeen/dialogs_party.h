@@ -31,6 +31,9 @@
 
 namespace Xeen {
 
+/**
+ * Shows the Party dialog that's shown when signing into an inn
+ */
 class PartyDialog : public ButtonContainer, public PartyDrawer {
 private:
 	XeenEngine *_vm;
@@ -38,18 +41,30 @@ private:
 	DrawStruct _faceDrawStructs[4];
 	Common::String _partyDetails;
 	Common::Array<int> _charList;
-	int _diceFrame[3];
-	Common::Point _dicePos[3];
-	Common::Point _diceInc[3];
 
+	/**
+	 * Constructor
+	 */
 	PartyDialog(XeenEngine *vm);
 
+	/**
+	 * Executes the dialog
+	 */
 	void execute();
 
+	/**
+	 * Loads buttons for the dialog
+	 */
 	void loadButtons();
 
+	/**
+	 * Initialises a list of elements to draw
+	 */
 	void initDrawStructs();
 
+	/**
+	 * Sets up the background
+	 */
 	void setupBackground();
 
 	/**
@@ -59,50 +74,11 @@ private:
 
 	void startingCharChanged(int firstDisplayChar);
 
-	void createChar();
-
 	int selectCharacter(bool isDelete, int firstDisplayChar);
-
-	/**
-	 * Roll up some random values for the attributes, and return both them as
-	 * well as a list of classes that the attributes meet the requirements for
-	 */
-	void throwDice(uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]);
-
-	/**
-	 * Set a list of flags for which classes the passed attribute set meet the
-	 * minimum requirements of
-	 */
-	void checkClass(const uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]);
-
-	/**
-	 * Return details of the generated character
-	 */
-	int newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
-		bool allowedClasses[TOTAL_CLASSES], Race race, Sex sex, int classId,
-		int selectedClass, Common::String &msg);
-
-	/**
-	 * Print the selection arrow to indicate the selected class
-	 */
-	void printSelectionArrow(SpriteResource &icons, int selectedClass);
-
-	/**
-	 * Print the dice animation
-	 */
-	void drawDice(SpriteResource &dice);
-
-	/**
-	 * Exchanging two attributes for the character being rolled
-	 */
-	int exchangeAttribute(int srcAttr);
-
-	/**
-	 * Saves the rolled character into the roster
-	 */
-	bool saveCharacter(Character &c, int classId, Race race,
-		Sex sex, uint attribs[TOTAL_ATTRIBUTES]);
 public:
+	/**
+	 * Show the Party dialog
+	 */
 	static void show(XeenEngine *vm);
 };
 

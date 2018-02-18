@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	dialogs_awards.o \
 	dialogs_char_info.o \
 	dialogs_control_panel.o \
+	dialogs_create_char.o \
 	dialogs_dismiss.o \
 	dialogs_exchange.o \
 	dialogs_fight_options.o \
