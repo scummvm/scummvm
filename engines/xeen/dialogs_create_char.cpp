@@ -33,6 +33,20 @@ void CreateCharacterDialog::show(XeenEngine *vm) {
 }
 
 CreateCharacterDialog::CreateCharacterDialog(XeenEngine *vm) : ButtonContainer(vm) {
+	_dicePos[0] = Common::Point(20, 17);
+	_dicePos[1] = Common::Point(112, 35);
+	_dicePos[2] = Common::Point(61, 50);
+	_diceFrame[0] = 0;
+	_diceFrame[1] = 2;
+	_diceFrame[2] = 4;
+	_diceInc[0] = Common::Point(10, -10);
+	_diceInc[1] = Common::Point(-10, -10);
+	_diceInc[2] = Common::Point(-10, 10);
+
+	_dice.load("dice.vga");
+	_diceSize = _dice.getFrameSize(0);
+
+	loadButtons();
 }
 
 void CreateCharacterDialog::execute() {
@@ -41,7 +55,6 @@ void CreateCharacterDialog::execute() {
 	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[0];
-	SpriteResource dice, icons;
 	Common::Array<int> freeCharList;
 	int classId;
 	int selectedClass = 0;
@@ -56,43 +69,6 @@ void CreateCharacterDialog::execute() {
 
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_4;
-	dice.load("dice.vga");
-	icons.load("create.icn");
-
-	_dicePos[0] = Common::Point(20, 17);
-	_dicePos[1] = Common::Point(112, 35);
-	_dicePos[2] = Common::Point(61, 50);
-	_diceFrame[0] = 0;
-	_diceFrame[1] = 2;
-	_diceFrame[2] = 4;
-	_diceInc[0] = Common::Point(10, -10);
-	_diceInc[1] = Common::Point(-10, -10);
-	_diceInc[2] = Common::Point(-10, 10);
-
-	// Add buttons
-	saveButtons();
-	addButton(Common::Rect(132, 98, 156, 118), Common::KEYCODE_r, &icons);
-	addButton(Common::Rect(132, 128, 156, 148), Common::KEYCODE_c, &icons);
-	addButton(Common::Rect(132, 158, 156, 178), Common::KEYCODE_ESCAPE, &icons);
-	addButton(Common::Rect(86, 98, 110, 118), Common::KEYCODE_UP, &icons);
-	addButton(Common::Rect(86, 120, 110, 140), Common::KEYCODE_DOWN, &icons);
-	addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_n, nullptr);
-	addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_i, nullptr);
-	addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_p, nullptr);
-	addButton(Common::Rect(168, 91, 192, 111), Common::KEYCODE_e, nullptr);
-	addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_s, nullptr);
-	addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_a, nullptr);
-	addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_l, nullptr);
-	addButton(Common::Rect(227, 19, 239, 29), 1000, nullptr);
-	addButton(Common::Rect(227, 30, 239, 40), 1001, nullptr);
-	addButton(Common::Rect(227, 41, 239, 51), 1002, nullptr);
-	addButton(Common::Rect(227, 52, 239, 62), 1003, nullptr);
-	addButton(Common::Rect(227, 63, 239, 73), 1004, nullptr);
-	addButton(Common::Rect(227, 74, 239, 84), 1005, nullptr);
-	addButton(Common::Rect(227, 85, 239, 95), 1006, nullptr);
-	addButton(Common::Rect(227, 96, 239, 106), 1007, nullptr);
-	addButton(Common::Rect(227, 107, 239, 117), 1008, nullptr);
-	addButton(Common::Rect(227, 118, 239, 128), 1009, nullptr);
 
 	// Load the background
 	screen.loadBackground("create.raw");
@@ -127,45 +103,21 @@ void CreateCharacterDialog::execute() {
 			msg = Common::String::format(Res.CREATE_CHAR_DETAILS,
 				details.c_str());
 
-			// Draw the screen
-			icons.draw(w, 10, Common::Point(168, 19));
-			icons.draw(w, 12, Common::Point(168, 43));
-			icons.draw(w, 14, Common::Point(168, 67));
-			icons.draw(w, 16, Common::Point(168, 91));
-			icons.draw(w, 18, Common::Point(168, 115));
-			icons.draw(w, 20, Common::Point(168, 139));
-			icons.draw(w, 22, Common::Point(168, 163));
-			for (int idx = 0; idx < 9; ++idx)
-				icons.draw(w, 24 + idx * 2, Common::Point(227, 19 + 11 * idx));
-
-			for (int idx = 0; idx < 7; ++idx)
-				icons.draw(w, 50 + idx, Common::Point(195, 31 + 24 * idx));
-
-			icons.draw(w, 57, Common::Point(62, 148));
-			icons.draw(w, 58, Common::Point(62, 158));
-			icons.draw(w, 59, Common::Point(62, 168));
-			icons.draw(w, 61, Common::Point(220, 19));
-			icons.draw(w, 64, Common::Point(220, 155));
-			icons.draw(w, 65, Common::Point(220, 170));
-
+			// Draw the icons and the currently selected headshot
+			drawIcons();
 			party._roster[freeCharList[charIndex]]._faceSprites->draw(
 				w, 0, Common::Point(27, 102));
 
-			icons.draw(w, 0, Common::Point(132, 98));
-			icons.draw(w, 2, Common::Point(132, 128));
-			icons.draw(w, 4, Common::Point(132, 158));
-			icons.draw(w, 6, Common::Point(86, 98));
-			icons.draw(w, 8, Common::Point(86, 120));
-
+			// Render all on-screen text
 			w.writeString(msg);
 			w.update();
 
 			// Draw the arrow for the selected class, if applicable
 			if (selectedClass != -1)
-				printSelectionArrow(icons, selectedClass);
+				printSelectionArrow(selectedClass);
 
 			// Draw the dice
-			drawDice(dice);
+			drawDice();
 			if (!hasFadedIn) {
 				screen.fadeIn();
 				hasFadedIn = true;
@@ -177,7 +129,7 @@ void CreateCharacterDialog::execute() {
 		// Animate the dice until a user action occurs
 		_buttonValue = 0;
 		while (!_vm->shouldExit() && !_buttonValue)
-			drawDice(dice);
+			drawDice();
 
 		// Handling for different actions
 		switch (_buttonValue) {
@@ -207,7 +159,7 @@ void CreateCharacterDialog::execute() {
 				}
 			}
 
-			printSelectionArrow(icons, selectedClass);
+			printSelectionArrow(selectedClass);
 			continue;
 
 		case Common::KEYCODE_PAGEDOWN:
@@ -237,14 +189,14 @@ void CreateCharacterDialog::execute() {
 				srcAttrib = LUCK;
 
 			_vm->_mode = MODE_86;
-			icons.draw(w, srcAttrib * 2 + 11, Common::Point(
+			_icons.draw(w, srcAttrib * 2 + 11, Common::Point(
 				_buttons[srcAttrib + 5]._bounds.left, _buttons[srcAttrib + 5]._bounds.top));
 			w.update();
 
 			int destAttribVal = exchangeAttribute(srcAttrib + 1);
 			if (destAttribVal) {
 				destAttrib = (Attribute)(destAttribVal - 1);
-				icons.draw(w, destAttrib * 2 + 11, Common::Point(
+				_icons.draw(w, destAttrib * 2 + 11, Common::Point(
 					_buttons[destAttrib + 10]._bounds.left,
 					_buttons[destAttrib + 10]._bounds.top));
 				w.update();
@@ -255,7 +207,7 @@ void CreateCharacterDialog::execute() {
 				selectedClass = newCharDetails(attribs, allowedClasses,
 					race, sex, classId, selectedClass, msg);
 			} else {
-				icons.draw(w, srcAttrib * 2 + 10, Common::Point(
+				_icons.draw(w, srcAttrib * 2 + 10, Common::Point(
 					_buttons[srcAttrib + 5]._bounds.left,
 					_buttons[srcAttrib + 5]._bounds.top));
 				w.update();
@@ -312,34 +264,15 @@ void CreateCharacterDialog::execute() {
 			selectedClass = newCharDetails(attribs, allowedClasses,
 				race, sex, classId, selectedClass, msg);
 
-			for (int idx = 0; idx < 7; ++idx)
-				icons.draw(w, 10 + idx * 2, Common::Point(168, 19 + idx * 24));
-			for (int idx = 0; idx < 10; ++idx)
-				icons.draw(w, 24 + idx * 2, Common::Point(227, 19 + idx * 11));
-			for (int idx = 0; idx < 8; ++idx)
-				icons.draw(w, 50 + idx, Common::Point(195, 31 + idx * 24));
-
-			icons.draw(w, 57, Common::Point(62, 148));
-			icons.draw(w, 58, Common::Point(62, 158));
-			icons.draw(w, 59, Common::Point(62, 168));
-			icons.draw(w, 61, Common::Point(220, 19));
-			icons.draw(w, 64, Common::Point(220, 155));
-			icons.draw(w, 65, Common::Point(220, 170));
-
+			drawIcons2();
 			party._roster[freeCharList[charIndex]]._faceSprites->draw(w, 0,
 				Common::Point(27, 102));
-
-			icons.draw(w, 0, Common::Point(132, 98));
-			icons.draw(w, 2, Common::Point(132, 128));
-			icons.draw(w, 4, Common::Point(132, 158));
-			icons.draw(w, 6, Common::Point(86, 98));
-			icons.draw(w, 8, Common::Point(86, 120));
 
 			w.writeString(msg);
 			w.update();
 
 			if (selectedClass != -1) {
-				printSelectionArrow(icons, selectedClass);
+				printSelectionArrow(selectedClass);
 				continue;
 			}
 		}
@@ -353,21 +286,89 @@ void CreateCharacterDialog::execute() {
 			}
 		}
 
-		printSelectionArrow(icons, selectedClass);
+		printSelectionArrow(selectedClass);
 	} while (!_vm->shouldExit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
 	_vm->_mode = oldMode;
 }
 
 void CreateCharacterDialog::loadButtons() {
-	_icons.load("inn.icn");
-	addButton(Common::Rect(16, 100, 40, 120), Common::KEYCODE_UP, &_icons);
-	addButton(Common::Rect(52, 100, 76, 120), Common::KEYCODE_DOWN, &_icons);
-	addButton(Common::Rect(87, 100, 111, 120), Common::KEYCODE_d, &_icons);
-	addButton(Common::Rect(122, 100, 146, 120), Common::KEYCODE_r, &_icons);
-	addButton(Common::Rect(157, 100, 181, 120), Common::KEYCODE_c, &_icons);
-	addButton(Common::Rect(192, 100, 216, 120), Common::KEYCODE_x, &_icons);
-	addButton(Common::Rect(0, 0, 0, 0), Common::KEYCODE_ESCAPE);
+	_icons.load("create.icn");
+
+	// Add buttons
+	addButton(Common::Rect(132, 98, 156, 118), Common::KEYCODE_r, &_icons);
+	addButton(Common::Rect(132, 128, 156, 148), Common::KEYCODE_c, &_icons);
+	addButton(Common::Rect(132, 158, 156, 178), Common::KEYCODE_ESCAPE, &_icons);
+	addButton(Common::Rect(86, 98, 110, 118), Common::KEYCODE_UP, &_icons);
+	addButton(Common::Rect(86, 120, 110, 140), Common::KEYCODE_DOWN, &_icons);
+	addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_n, nullptr);
+	addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_i, nullptr);
+	addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_p, nullptr);
+	addButton(Common::Rect(168, 91, 192, 111), Common::KEYCODE_e, nullptr);
+	addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_s, nullptr);
+	addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_a, nullptr);
+	addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_l, nullptr);
+	addButton(Common::Rect(227, 19, 239, 29), 1000, nullptr);
+	addButton(Common::Rect(227, 30, 239, 40), 1001, nullptr);
+	addButton(Common::Rect(227, 41, 239, 51), 1002, nullptr);
+	addButton(Common::Rect(227, 52, 239, 62), 1003, nullptr);
+	addButton(Common::Rect(227, 63, 239, 73), 1004, nullptr);
+	addButton(Common::Rect(227, 74, 239, 84), 1005, nullptr);
+	addButton(Common::Rect(227, 85, 239, 95), 1006, nullptr);
+	addButton(Common::Rect(227, 96, 239, 106), 1007, nullptr);
+	addButton(Common::Rect(227, 107, 239, 117), 1008, nullptr);
+	addButton(Common::Rect(227, 118, 239, 128), 1009, nullptr);
+}
+
+void CreateCharacterDialog::drawIcons() {
+	// Draw the screen
+	_icons.draw(0, 10, Common::Point(168, 19));
+	_icons.draw(0, 12, Common::Point(168, 43));
+	_icons.draw(0, 14, Common::Point(168, 67));
+	_icons.draw(0, 16, Common::Point(168, 91));
+	_icons.draw(0, 18, Common::Point(168, 115));
+	_icons.draw(0, 20, Common::Point(168, 139));
+	_icons.draw(0, 22, Common::Point(168, 163));
+	for (int idx = 0; idx < 9; ++idx)
+		_icons.draw(0, 24 + idx * 2, Common::Point(227, 19 + 11 * idx));
+
+	for (int idx = 0; idx < 7; ++idx)
+		_icons.draw(0, 50 + idx, Common::Point(195, 31 + 24 * idx));
+
+	_icons.draw(0, 57, Common::Point(62, 148));
+	_icons.draw(0, 58, Common::Point(62, 158));
+	_icons.draw(0, 59, Common::Point(62, 168));
+	_icons.draw(0, 61, Common::Point(220, 19));
+	_icons.draw(0, 64, Common::Point(220, 155));
+	_icons.draw(0, 65, Common::Point(220, 170));
+
+	_icons.draw(0, 0, Common::Point(132, 98));
+	_icons.draw(0, 2, Common::Point(132, 128));
+	_icons.draw(0, 4, Common::Point(132, 158));
+	_icons.draw(0, 6, Common::Point(86, 98));
+	_icons.draw(0, 8, Common::Point(86, 120));
+}
+
+void CreateCharacterDialog::drawIcons2() {
+	for (int idx = 0; idx < 7; ++idx)
+		_icons.draw(0, 10 + idx * 2, Common::Point(168, 19 + idx * 24));
+	for (int idx = 0; idx < 10; ++idx)
+		_icons.draw(0, 24 + idx * 2, Common::Point(227, 19 + idx * 11));
+	for (int idx = 0; idx < 8; ++idx)
+		_icons.draw(0, 50 + idx, Common::Point(195, 31 + idx * 24));
+
+	_icons.draw(0, 57, Common::Point(62, 148));
+	_icons.draw(0, 58, Common::Point(62, 158));
+	_icons.draw(0, 59, Common::Point(62, 168));
+	_icons.draw(0, 61, Common::Point(220, 19));
+	_icons.draw(0, 64, Common::Point(220, 155));
+	_icons.draw(0, 65, Common::Point(220, 170));
+
+	_icons.draw(0, 0, Common::Point(132, 98));
+	_icons.draw(0, 2, Common::Point(132, 128));
+	_icons.draw(0, 4, Common::Point(132, 158));
+	_icons.draw(0, 6, Common::Point(86, 98));
+	_icons.draw(0, 8, Common::Point(86, 120));
 }
 
 void CreateCharacterDialog::throwDice(uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]) {
@@ -457,23 +458,25 @@ int CreateCharacterDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
 	return classId == -1 ? foundClass : selectedClass;
 }
 
-void CreateCharacterDialog::printSelectionArrow(SpriteResource &icons, int selectedClass) {
+void CreateCharacterDialog::printSelectionArrow(int selectedClass) {
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[0];
-	icons.draw(w, 61, Common::Point(220, 19));
-	icons.draw(w, 63, Common::Point(220, selectedClass * 11 + 21));
+
+	_icons.draw(0, 61, Common::Point(220, 19));
+	_icons.draw(0, 63, Common::Point(220, selectedClass * 11 + 21));
 	w.update();
 }
 
-void CreateCharacterDialog::drawDice(SpriteResource &dice) {
+void CreateCharacterDialog::drawDice() {
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[32];
-	Common::Point diceSize = dice.getFrameSize(0);
 
+	// Draw the dice area background
 	events.updateGameCounter();
-	dice.draw(w, 7, Common::Point(12, 11));
+	_dice.draw(w, 7, Common::Point(12, 11));
 
+	// Iterate through each of the three dice
 	for (int diceNum = 0; diceNum < 3; ++diceNum) {
 		_diceFrame[diceNum] = (_diceFrame[diceNum] + 1) % 7;
 		_dicePos[diceNum] += _diceInc[diceNum];
@@ -481,25 +484,24 @@ void CreateCharacterDialog::drawDice(SpriteResource &dice) {
 		if (_dicePos[diceNum].x < 13) {
 			_dicePos[diceNum].x = 13;
 			_diceInc[diceNum].x *= -1;
-		} else if (_dicePos[diceNum].x >= (163 - diceSize.x)) {
-			_dicePos[diceNum].x = 163 - diceSize.x;
+		} else if (_dicePos[diceNum].x >= (163 - _diceSize.x)) {
+			_dicePos[diceNum].x = 163 - _diceSize.x;
 			_diceInc[diceNum].x *= -1;
 		}
 
 		if (_dicePos[diceNum].y < 12) {
 			_dicePos[diceNum].y = 12;
 			_diceInc[diceNum].y *= -1;
-		} else if (_dicePos[diceNum].y >= (93 - diceSize.y)) {
-			_dicePos[diceNum].y = 93 - diceSize.y;
+		} else if (_dicePos[diceNum].y >= (93 - _diceSize.y)) {
+			_dicePos[diceNum].y = 93 - _diceSize.y;
 			_diceInc[diceNum].y *= -1;
 		}
 
-		dice.draw(w, _diceFrame[diceNum], _dicePos[diceNum]);
+		_dice.draw(w, _diceFrame[diceNum], _dicePos[diceNum]);
 	}
 
+	// Wait for a single frame, checking for any events
 	w.update();
-
-	// Wait for keypress
 	events.wait(1);
 	checkEvents(_vm);
 }
@@ -511,7 +513,7 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 	icons.load("create2.icn");
 
 	saveButtons();
-	addButton(Common::Rect(118, 58, 142, 78), Common::KEYCODE_ESCAPE, &icons);
+	addButton(Common::Rect(118, 58, 142, 78), Common::KEYCODE_ESCAPE, &_icons);
 	addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_m);
 	addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_i);
 	addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_p);
@@ -574,8 +576,6 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 
 	w.close();
 	_buttonValue = 0;
-	restoreButtons();
-
 	return result;
 }
 

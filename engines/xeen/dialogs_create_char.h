@@ -32,6 +32,7 @@ class CreateCharacterDialog : public ButtonContainer  {
 private:
 	SpriteResource _icons;
 	SpriteResource _dice;
+	Common::Point _diceSize;
 	int _diceFrame[3];
 	Common::Point _dicePos[3];
 	Common::Point _diceInc[3];
@@ -47,9 +48,19 @@ private:
 	void loadButtons();
 
 	/**
-	 * Print the dice animation
+	 * Draws on-screen icons
 	 */
-	void drawDice(SpriteResource &dice);
+	void drawIcons();
+
+	/**
+	 * Draws on-screen icons
+	 */
+	void drawIcons2();
+
+	/**
+	 * Animate the dice rolling around
+	 */
+	void drawDice();
 
 	/**
 	 * Executes the dialog
@@ -77,7 +88,7 @@ private:
 	/**
 	 * Print the selection arrow to indicate the selected class
 	 */
-	void printSelectionArrow(SpriteResource &icons, int selectedClass);
+	void printSelectionArrow(int selectedClass);
 
 	/**
 	 * Saves the rolled character into the roster
