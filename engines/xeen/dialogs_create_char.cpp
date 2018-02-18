@@ -380,7 +380,7 @@ void CreateCharacterDialog::throwDice(uint attribs[TOTAL_ATTRIBUTES], bool allow
 		// Assign random amounts to each attribute
 		for (int idx1 = 0; idx1 < 3; ++idx1) {
 			for (int idx2 = 0; idx2 < TOTAL_ATTRIBUTES; ++idx2) {
-				attribs[idx1] += _vm->getRandomNumber(10, 79) / 10;
+				attribs[idx2] += _vm->getRandomNumber(10, 79) / 10;
 			}
 		}
 
