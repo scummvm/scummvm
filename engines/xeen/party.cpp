@@ -622,7 +622,7 @@ void Party::giveTreasure() {
 			}
 
 			// If there's no treasure item to be distributed, skip to next slot
-			if (!_treasure._categories[categoryNum][itemNum]._id)
+			if (!_treasure[categoryNum][itemNum]._id)
 				continue;
 
 			int charIndex = scripts._whoWill - 1;
@@ -1255,8 +1255,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_food += giveVal;
 		break;
 	case 66: {
-		warning("TODO: Verify case 66");
-		Character &c = _itemsCharacter;
+		Character &tempChar = _itemsCharacter;
 		int idx = -1;
 		if (scripts._itemType != 0) {
 			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx);
@@ -1264,55 +1263,21 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 				return true;
 		}
 
-		int result = ps.makeItem(giveVal, 0, (idx == -1) ? 12 : 0);
-		switch (result) {
-		case 0:
-			for (idx = 0; idx < 10 && _treasure._weapons[idx]._id; ++idx);
-			if (idx == 10)
-				return true;
+		// Create the item and it's category
+		ItemCategory itemCat = tempChar.makeItem(giveVal, 0, (idx == -1) ? 12 : 0);
+		XeenItem &srcItem = _treasure[itemCat][0];
+		XeenItem *trItems = _treasure[itemCat];
 
-			ps._weapons[idx]._material = c._weapons[0]._material;
-			ps._weapons[idx]._id = c._weapons[0]._id;
-			ps._weapons[idx]._bonusFlags = c._weapons[0]._bonusFlags;
-			_treasure._hasItems = true;
-			break;
-
-		case 1:
-			for (idx = 0; idx < 10 && _treasure._armor[idx]._id; ++idx);
-			if (idx == 10)
-				return true;
-
-			ps._armor[idx]._material = c._armor[0]._material;
-			ps._armor[idx]._id = c._armor[0]._id;
-			ps._armor[idx]._bonusFlags = c._armor[0]._bonusFlags;
-			_treasure._hasItems = true;
-			break;
-
-		case 2:
-			for (idx = 0; idx < 10 && _treasure._accessories[idx]._id; ++idx);
-			if (idx == 10)
-				return true;
-
-			ps._accessories[idx]._material = c._accessories[0]._material;
-			ps._accessories[idx]._id = c._accessories[0]._id;
-			ps._accessories[idx]._bonusFlags = c._accessories[0]._bonusFlags;
-			_treasure._hasItems = true;
-			break;
-
-		case 3:
-			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx);
-			if (idx == 10)
-				return true;
-
-			ps._misc[idx]._material = c._misc[0]._material;
-			ps._misc[idx]._id = c._misc[0]._id;
-			ps._misc[idx]._bonusFlags = c._misc[0]._bonusFlags;
-			_treasure._hasItems = true;
-			break;
-
-		default:
+		// Check for a free treasure slot
+		for (idx = 0; idx < 10 && trItems[idx]._id; ++idx);
+		if (idx == 10)
 			return true;
-		}
+
+		// Found a free slot, so copy the created item into it
+		trItems[idx]._material = srcItem._material;
+		trItems[idx]._id = srcItem._id;
+		trItems[idx]._bonusFlags = srcItem._bonusFlags;
+		_treasure._hasItems = true;
 		break;
 	}
 	case 69:

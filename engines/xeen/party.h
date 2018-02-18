@@ -77,6 +77,11 @@ public:
 	int _gems, _gold;
 public:
 	Treasure();
+
+	/**
+	 * Returns a particular category's array
+	 */
+	XeenItem *operator[](int category) { return _categories[category]; }
 };
 
 class Party {

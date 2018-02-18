@@ -503,7 +503,7 @@ public:
 	/**
 	 * Creates an item and adds it to the inventory
 	 */
-	int makeItem(int p1, int itemIndex, int p3);
+	ItemCategory makeItem(int p1, int itemIndex, int p3);
 
 	/**
 	 * Add hit points to a character

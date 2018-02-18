@@ -1525,12 +1525,12 @@ int Character::getNumAwards() const {
 	return total;
 }
 
-int Character::makeItem(int p1, int itemIndex, int p3) {
+ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 	XeenEngine *vm = Party::_vm;
 	Scripts &scripts = *vm->_scripts;
 
 	if (!p1)
-		return 0;
+		return CATEGORY_WEAPON;
 
 	int itemId = 0;
 	int v4 = vm->getRandomNumber(100);
