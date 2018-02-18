@@ -146,11 +146,8 @@ dsclean:
 
 # TODO: Add a 'dsdist' target ?
 
-%.bin: %.elf
-	$(OBJCOPY) -S -O binary $< $@
-
-%.nds: %.bin $(ndsdir)/arm7/arm7.bin
-	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.bin -b $(srcdir)/$(ndsdir)/$(LOGO) "$(@F);ScummVM $(VERSION);DS Port"
+%.nds: %.elf $(ndsdir)/arm7/arm7.elf
+	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.elf -b $(srcdir)/$(ndsdir)/$(LOGO) "$(@F);ScummVM $(VERSION);DS Port"
 
 %.ds.gba: %.nds
 	dsbuild $< -o $@ -l $(srcdir)/$(ndsdir)/arm9/ndsloader.bin
@@ -172,9 +169,6 @@ dsclean:
 # HACK/FIXME: C compiler, for cartreset.c -- we should switch this to use CXX
 # as soon as possible.
 CC := $(DEVKITPRO)/devkitARM/bin/arm-none-eabi-gcc
-
-# HACK/TODO: Pointer to objcopy. This should really be set by configure
-OBJCOPY := $(DEVKITPRO)/devkitARM/bin/arm-none-eabi-objcopy
 
 #
 # Set various flags
@@ -218,10 +212,6 @@ $(ndsdir)/arm7/arm7.elf: \
 	$(ndsdir)/arm7/source/libcartreset/cartreset.o \
 	$(ndsdir)/arm7/source/main.o
 	$(CXX) $(ARM7_LDFLAGS) -specs=ds_arm7.specs $+ -L$(DEVKITPRO)/libnds/lib -lnds7  -o $@
-
-# Rule for creating ARM7 .bin files from .elf files
-$(ndsdir)/arm7/arm7.bin: $(ndsdir)/arm7/arm7.elf
-	$(OBJCOPY) -O binary  $< $@
 
 
 
