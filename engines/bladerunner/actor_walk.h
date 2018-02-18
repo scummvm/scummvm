@@ -47,7 +47,7 @@ public:
 	ActorWalk(BladeRunnerEngine *vm);
 	~ActorWalk();
 
-	bool setup(int actorId, bool run, const Vector3 &from, const Vector3 &to, bool unk1, bool *arrived);
+	bool setup(int actorId, bool runFlag, const Vector3 &from, const Vector3 &to, bool unk1, bool *arrived);
 	void getCurrentPosition(int actorId, Vector3 *pos, int *facing) const;
 	bool tick(int actorId, float stepDistance, bool flag);
 

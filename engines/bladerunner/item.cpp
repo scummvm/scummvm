@@ -134,7 +134,7 @@ void Item::setXYZ(Vector3 position) {
 	_depth = screenPosition.z * 25.5f;
 }
 
-void Item::setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTarget, bool isVisible, bool isPoliceMazeEnemy) {
+void Item::setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisible, bool isPoliceMazeEnemy) {
 	_itemId = itemId;
 	_setId = setId;
 	_animationId = animationId;
@@ -142,7 +142,7 @@ void Item::setup(int itemId, int setId, int animationId, Vector3 position, int f
 	_angle = facing * (M_PI / 512.0f);
 	_width = width;
 	_height = height;
-	_isTarget = isTarget;
+	_isTarget = isTargetFlag;
 	_isVisible = isVisible;
 	_isPoliceMazeEnemy = isPoliceMazeEnemy;
 	setXYZ(position);

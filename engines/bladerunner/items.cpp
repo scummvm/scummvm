@@ -67,7 +67,7 @@ void Items::tick() {
 	}
 }
 
-bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTarget, bool isVisible, bool isPoliceMazeEnemy, bool addToSet) {
+bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTarget, bool isVisible, bool isPoliceMazeEnemy, bool addToSetFlag) {
 	if (_items.size() >= 100) {
 		return false;
 	}
@@ -80,7 +80,7 @@ bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position,
 	item->setup(itemId, setId, animationId, position, facing, height, width, isTarget, isVisible, isPoliceMazeEnemy);
 	_items.push_back(item);
 
-	if (addToSet && setId == _vm->_scene->getSetId()) {
+	if (addToSetFlag && setId == _vm->_scene->getSetId()) {
 		return _vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, isTarget, isVisible);
 	}
 	return true;

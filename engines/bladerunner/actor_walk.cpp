@@ -47,7 +47,7 @@ ActorWalk::ActorWalk(BladeRunnerEngine *vm) {
 
 ActorWalk::~ActorWalk() {}
 
-bool ActorWalk::setup(int actorId, bool run, const Vector3 &from, const Vector3 &to, bool unk1, bool *arrived) {
+bool ActorWalk::setup(int actorId, bool runFlag, const Vector3 &from, const Vector3 &to, bool unk1, bool *arrived) {
 	Vector3 next;
 
 	*arrived = false;
@@ -76,14 +76,14 @@ bool ActorWalk::setup(int actorId, bool run, const Vector3 &from, const Vector3 
 	_vm->_actors[actorId]->setMoving(true);
 
 	if (_running) {
-		run = true;
+		runFlag = true;
 	}
 
 	int animationMode;
 	if (_vm->_actors[actorId]->inCombat()) {
-		animationMode = run ? kAnimationModeCombatRun : kAnimationModeCombatWalk;
+		animationMode = runFlag ? kAnimationModeCombatRun : kAnimationModeCombatWalk;
 	} else {
-		animationMode = run ? kAnimationModeRun : kAnimationModeWalk;
+		animationMode = runFlag ? kAnimationModeRun : kAnimationModeWalk;
 	}
 
 	_vm->_actors[actorId]->changeAnimationMode(animationMode);
@@ -101,7 +101,7 @@ bool ActorWalk::setup(int actorId, bool run, const Vector3 &from, const Vector3 
 
 	_facing = angle_1024(_current, next);
 	_walking = true;
-	_running = run;
+	_running = runFlag;
 	_status = 2;
 
 	return true;

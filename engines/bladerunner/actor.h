@@ -145,13 +145,13 @@ public:
 	void movementTrackUnpause();
 	void movementTrackWaypointReached();
 
-	bool loopWalk(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, const Vector3 &start, float a6, float a7, bool a8, bool *isRunning, bool async);
+	bool loopWalk(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, const Vector3 &start, float a6, float a7, bool a8, bool *isRunningFlag, bool async);
 	bool walkTo(bool run, const Vector3 &destination, bool a3);
-	bool loopWalkToActor(int otherActorId, int destinationOffset, int interruptible, bool run, bool a5, bool *isRunning);
-	bool loopWalkToItem(int itemId, int destinationOffset, int interruptible, bool run, bool a5, bool *isRunning);
-	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool interruptible, bool run, bool a5, bool *isRunning);
-	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int interruptible, bool run, bool a5, bool *isRunning);
-	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, bool a5, bool *isRunning);
+	bool loopWalkToActor(int otherActorId, int destinationOffset, int interruptible, bool run, bool a5, bool *isRunningFlag);
+	bool loopWalkToItem(int itemId, int destinationOffset, int interruptible, bool run, bool a5, bool *isRunningFlag);
+	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool interruptible, bool run, bool a5, bool *isRunningFlag);
+	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int interruptible, bool run, bool a5, bool *isRunningFlag);
+	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool interruptible, bool run, bool a5, bool *isRunningFlag);
 	bool asyncWalkToWaypoint(int waypointId, int destinationOffset, bool run, bool a5);
 	void asyncWalkToXYZ(const Vector3 &destination, int destinationOffset, bool run, int a6);
 	void run();

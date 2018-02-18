@@ -1455,14 +1455,14 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePositi
 			return;
 		}
 
-		bool run = _playerActor->isRunning();;
+		bool shouldRun = _playerActor->isRunning();
 		if (_mouseClickTimeDiff <= 10000 && xDist < 10 && yDist < 10) {
-			run = true;
+			shouldRun = true;
 		}
 
-		_playerActor->walkTo(run, scenePosition, false);
+		_playerActor->walkTo(shouldRun, scenePosition, false);
 
-		if (run && _playerActor->isWalking()) {
+		if (shouldRun && _playerActor->isWalking()) {
 			_playerActor->increaseFPS();
 		}
 	}
