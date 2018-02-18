@@ -2499,7 +2499,7 @@ void penUpdate() {
 
 //	if (getKeysHeld() & KEY_L) consolePrintf("%d, %d   penX=%d, penY=%d tz=%d\n", IPC->touchXpx, IPC->touchYpx, penX, penY, IPC->touchZ1);
 
-	bool penDownThisFrame = (IPC->touchZ1 > 0) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0);
+	bool penDownThisFrame = (!(IPC->buttons & 0x40)) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0);
 	static bool moved = false;
 
 	if (( (tapScreenClicks) || getKeyboardEnable() ) && (getIsDisplayMode8Bit())) {
@@ -2626,7 +2626,7 @@ void penUpdate() {
 				penDownSaved = true;
 			}
 
-			if ((IPC->touchZ1 > 0) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0)) {
+			if ((!(IPC->buttons & 0x40)) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0)) {
 				penX = IPC->touchXpx + touchXOffset;
 				penY = IPC->touchYpx + touchYOffset;
 				moved = true;
@@ -2648,7 +2648,7 @@ void penUpdate() {
 
 
 
-	if ((IPC->touchZ1 > 0) || ((penDownFrames == 2)) ) {
+	if ((!(IPC->buttons & 0x40)) || ((penDownFrames == 2)) ) {
 		penDownLastFrame = true;
 		penDownFrames++;
 	} else {
