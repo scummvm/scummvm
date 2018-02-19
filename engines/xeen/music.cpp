@@ -268,7 +268,8 @@ AdlibMusicDriver::AdlibMusicDriver() : _field180(0), _field181(0), _field182(0),
 
 	_opl = OPL::Config::create();
 	_opl->init();
-	_opl->start(new Common::Functor0Mem<void, AdlibMusicDriver>(this, &AdlibMusicDriver::onTimer), CALLBACKS_PER_SECOND);
+	_opl->start(new Common::Functor0Mem<void, AdlibMusicDriver>(this, &AdlibMusicDriver::onTimer),
+		CALLBACKS_PER_SECOND, Audio::Mixer::kMusicSoundType);
 	initialize();
 }
 
