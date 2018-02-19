@@ -36,6 +36,8 @@ private:
 	int _diceFrame[3];
 	Common::Point _dicePos[3];
 	Common::Point _diceInc[3];
+	uint _attribs[TOTAL_ATTRIBUTES];
+	bool _allowedClasses[TOTAL_CLASSES];
 private:
 	/**
 	 * Constructor
@@ -68,6 +70,18 @@ private:
 	void execute();
 
 	/**
+	 * Returns the attribute that a given keycode represents
+	 */
+	int getAttribFromKeycode(int keycode) const;
+
+	/**
+	 * Handles the logic for swapping attributes
+	 * @param keycode		Key pressed representing one of the attributes
+	 * @returns		True if swap occurred
+	 */
+	bool swapAttributes(int keycode);
+
+	/**
 	 * Exchanging two attributes for the character being rolled
 	 */
 	int exchangeAttribute(int srcAttr);
@@ -76,14 +90,12 @@ private:
 	 * Set a list of flags for which classes the passed attribute set meet the
 	 * minimum requirements of
 	 */
-	void checkClass(const uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]);
+	void checkClass();
 
 	/**
 	 * Return details of the generated character
 	 */
-	int newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
-		bool allowedClasses[TOTAL_CLASSES], Race race, Sex sex, int classId,
-		int selectedClass, Common::String &msg);
+	int newCharDetails(Race race, Sex sex, int classId, int selectedClass, Common::String &msg);
 
 	/**
 	 * Print the selection arrow to indicate the selected class
@@ -93,14 +105,13 @@ private:
 	/**
 	 * Saves the rolled character into the roster
 	 */
-	bool saveCharacter(Character &c, int classId, Race race,
-		Sex sex, uint attribs[TOTAL_ATTRIBUTES]);
+	bool saveCharacter(Character &c, int classId, Race race, Sex sex);
 
 	/**
 	 * Roll up some random values for the attributes, and return both them as
 	 * well as a list of classes that the attributes meet the requirements for
 	 */
-	void throwDice(uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]);
+	void rollAttributes();
 public:
 	/**
 	 * Shows the Create Character dialog

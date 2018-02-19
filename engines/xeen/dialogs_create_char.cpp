@@ -33,6 +33,8 @@ void CreateCharacterDialog::show(XeenEngine *vm) {
 }
 
 CreateCharacterDialog::CreateCharacterDialog(XeenEngine *vm) : ButtonContainer(vm) {
+	Common::fill(&_attribs[0], &_attribs[TOTAL_ATTRIBUTES], 0);
+	Common::fill(&_allowedClasses[0], &_allowedClasses[TOTAL_CLASSES], false);
 	_dicePos[0] = Common::Point(20, 17);
 	_dicePos[1] = Common::Point(112, 35);
 	_dicePos[2] = Common::Point(61, 50);
@@ -60,8 +62,6 @@ void CreateCharacterDialog::execute() {
 	int selectedClass = 0;
 	bool hasFadedIn = false;
 	bool restartFlag = true;
-	uint attribs[TOTAL_ATTRIBUTES];
-	bool allowedClasses[TOTAL_CLASSES];
 	Race race = HUMAN;
 	Sex sex = MALE;
 	Common::String msg, details;
@@ -95,11 +95,10 @@ void CreateCharacterDialog::execute() {
 			sex = (Sex)(freeCharList[charIndex] & 1);
 
 			// Randomly determine attributes, and which classes they allow
-			throwDice(attribs, allowedClasses);
+			rollAttributes();
 
 			// Get the display of the rolled character details
-			selectedClass = newCharDetails(attribs, allowedClasses,
-				race, sex, classId, selectedClass, details);
+			selectedClass = newCharDetails(race, sex, classId, selectedClass, details);
 			msg = Common::String::format(Res.CREATE_CHAR_DETAILS,
 				details.c_str());
 
@@ -153,7 +152,7 @@ void CreateCharacterDialog::execute() {
 
 		case Common::KEYCODE_PAGEUP:
 			for (int tempClass = selectedClass - 1; tempClass >= 0; --tempClass) {
-				if (allowedClasses[tempClass]) {
+				if (_allowedClasses[tempClass]) {
 					selectedClass = tempClass;
 					break;
 				}
@@ -171,51 +170,13 @@ void CreateCharacterDialog::execute() {
 		case Common::KEYCODE_e:
 		case Common::KEYCODE_s:
 		case Common::KEYCODE_a:
-		case Common::KEYCODE_l: {
-			Attribute srcAttrib, destAttrib;
-			if (_buttonValue == Common::KEYCODE_m)
-				srcAttrib = MIGHT;
-			else if (_buttonValue == Common::KEYCODE_i)
-				srcAttrib = INTELLECT;
-			else if (_buttonValue == Common::KEYCODE_p)
-				srcAttrib = PERSONALITY;
-			else if (_buttonValue == Common::KEYCODE_e)
-				srcAttrib = ENDURANCE;
-			else if (_buttonValue == Common::KEYCODE_s)
-				srcAttrib = SPEED;
-			else if (_buttonValue == Common::KEYCODE_a)
-				srcAttrib = ACCURACY;
-			else
-				srcAttrib = LUCK;
-
-			_vm->_mode = MODE_86;
-			_icons.draw(w, srcAttrib * 2 + 11, Common::Point(
-				_buttons[srcAttrib + 5]._bounds.left, _buttons[srcAttrib + 5]._bounds.top));
-			w.update();
-
-			int destAttribVal = exchangeAttribute(srcAttrib + 1);
-			if (destAttribVal) {
-				destAttrib = (Attribute)(destAttribVal - 1);
-				_icons.draw(w, destAttrib * 2 + 11, Common::Point(
-					_buttons[destAttrib + 10]._bounds.left,
-					_buttons[destAttrib + 10]._bounds.top));
-				w.update();
-
-				SWAP(attribs[srcAttrib], attribs[destAttrib]);
-				checkClass(attribs, allowedClasses);
+		case Common::KEYCODE_l:
+			if (swapAttributes(_buttonValue)) {
+				checkClass();
 				classId = -1;
-				selectedClass = newCharDetails(attribs, allowedClasses,
-					race, sex, classId, selectedClass, msg);
-			} else {
-				_icons.draw(w, srcAttrib * 2 + 10, Common::Point(
-					_buttons[srcAttrib + 5]._bounds.left,
-					_buttons[srcAttrib + 5]._bounds.top));
-				w.update();
-				_vm->_mode = MODE_SLEEPING;
-				continue;
+				selectedClass = newCharDetails(race, sex, classId, selectedClass, msg);
 			}
 			break;
-		}
 
 		case 1000:
 		case 1001:
@@ -227,7 +188,7 @@ void CreateCharacterDialog::execute() {
 		case 1007:
 		case 1008:
 		case 1009:
-			if (allowedClasses[_buttonValue - 1000]) {
+			if (_allowedClasses[_buttonValue - 1000]) {
 				selectedClass = classId = _buttonValue - 1000;
 			}
 			break;
@@ -235,7 +196,7 @@ void CreateCharacterDialog::execute() {
 		case Common::KEYCODE_c: {
 			_vm->_mode = MODE_FF;
 			bool result = saveCharacter(party._roster[freeCharList[charIndex]],
-				classId, race, sex, attribs);
+				classId, race, sex);
 			_vm->_mode = MODE_4;
 
 			if (result)
@@ -250,7 +211,7 @@ void CreateCharacterDialog::execute() {
 		case Common::KEYCODE_SPACE:
 		case Common::KEYCODE_r:
 			// Re-roll the attributes
-			throwDice(attribs, allowedClasses);
+			rollAttributes();
 			classId = -1;
 			break;
 
@@ -261,8 +222,7 @@ void CreateCharacterDialog::execute() {
 		}
 
 		if (_buttonValue != Common::KEYCODE_PAGEDOWN) {
-			selectedClass = newCharDetails(attribs, allowedClasses,
-				race, sex, classId, selectedClass, msg);
+			selectedClass = newCharDetails(race, sex, classId, selectedClass, msg);
 
 			drawIcons2();
 			party._roster[freeCharList[charIndex]]._faceSprites->draw(w, 0,
@@ -280,7 +240,7 @@ void CreateCharacterDialog::execute() {
 		// Move to next available class, or if the code block above resulted in
 		// selectedClass being -1, move to select the first available class
 		for (int tempClass = selectedClass + 1; tempClass <= CLASS_RANGER; ++tempClass) {
-			if (allowedClasses[tempClass]) {
+			if (_allowedClasses[tempClass]) {
 				selectedClass = tempClass;
 				break;
 			}
@@ -371,47 +331,46 @@ void CreateCharacterDialog::drawIcons2() {
 	_icons.draw(0, 8, Common::Point(86, 120));
 }
 
-void CreateCharacterDialog::throwDice(uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]) {
+void CreateCharacterDialog::rollAttributes() {
 	bool repeat = true;
 	do {
 		// Default all the attributes to zero
-		Common::fill(&attribs[0], &attribs[TOTAL_ATTRIBUTES], 0);
+		Common::fill(&_attribs[0], &_attribs[TOTAL_ATTRIBUTES], 0);
 
 		// Assign random amounts to each attribute
 		for (int idx1 = 0; idx1 < 3; ++idx1) {
 			for (int idx2 = 0; idx2 < TOTAL_ATTRIBUTES; ++idx2) {
-				attribs[idx2] += _vm->getRandomNumber(10, 79) / 10;
+				_attribs[idx2] += _vm->getRandomNumber(10, 79) / 10;
 			}
 		}
 
 		// Check which classes are allowed based on the rolled attributes
-		checkClass(attribs, allowedClasses);
+		checkClass();
 
 		// Only exit if the attributes allow for at least one class
 		for (int idx = 0; idx < TOTAL_CLASSES; ++idx) {
-			if (allowedClasses[idx])
+			if (_allowedClasses[idx])
 				repeat = false;
 		}
 	} while (repeat);
 }
 
-void CreateCharacterDialog::checkClass(const uint attribs[TOTAL_ATTRIBUTES], bool allowedClasses[TOTAL_CLASSES]) {
-	allowedClasses[CLASS_KNIGHT] = attribs[MIGHT] >= 15;
-	allowedClasses[CLASS_PALADIN] = attribs[MIGHT] >= 13
-		&& attribs[PERSONALITY] >= 13 && attribs[ENDURANCE] >= 13;
-	allowedClasses[CLASS_ARCHER] = attribs[INTELLECT] >= 13 && attribs[ACCURACY] >= 13;
-	allowedClasses[CLASS_CLERIC] = attribs[PERSONALITY] >= 13;
-	allowedClasses[CLASS_SORCERER] = attribs[INTELLECT] >= 13;
-	allowedClasses[CLASS_ROBBER] = attribs[LUCK] >= 13;
-	allowedClasses[CLASS_NINJA] = attribs[SPEED] >= 13 && attribs[ACCURACY] >= 13;
-	allowedClasses[CLASS_BARBARIAN] = attribs[ENDURANCE] >= 15;
-	allowedClasses[CLASS_DRUID] = attribs[INTELLECT] >= 15 && attribs[PERSONALITY] >= 15;
-	allowedClasses[CLASS_RANGER] = attribs[INTELLECT] >= 12 && attribs[PERSONALITY] >= 12
-		&& attribs[ENDURANCE] >= 12 && attribs[SPEED] >= 12;
+void CreateCharacterDialog::checkClass() {
+	_allowedClasses[CLASS_KNIGHT] = _attribs[MIGHT] >= 15;
+	_allowedClasses[CLASS_PALADIN] = _attribs[MIGHT] >= 13
+		&& _attribs[PERSONALITY] >= 13 && _attribs[ENDURANCE] >= 13;
+	_allowedClasses[CLASS_ARCHER] = _attribs[INTELLECT] >= 13 && _attribs[ACCURACY] >= 13;
+	_allowedClasses[CLASS_CLERIC] = _attribs[PERSONALITY] >= 13;
+	_allowedClasses[CLASS_SORCERER] = _attribs[INTELLECT] >= 13;
+	_allowedClasses[CLASS_ROBBER] = _attribs[LUCK] >= 13;
+	_allowedClasses[CLASS_NINJA] = _attribs[SPEED] >= 13 && _attribs[ACCURACY] >= 13;
+	_allowedClasses[CLASS_BARBARIAN] = _attribs[ENDURANCE] >= 15;
+	_allowedClasses[CLASS_DRUID] = _attribs[INTELLECT] >= 15 && _attribs[PERSONALITY] >= 15;
+	_allowedClasses[CLASS_RANGER] = _attribs[INTELLECT] >= 12 && _attribs[PERSONALITY] >= 12
+		&& _attribs[ENDURANCE] >= 12 && _attribs[SPEED] >= 12;
 }
 
-int CreateCharacterDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
-		bool allowedClasses[TOTAL_CLASSES], Race race, Sex sex, int classId,
+int CreateCharacterDialog::newCharDetails(Race race, Sex sex, int classId,
 		int selectedClass, Common::String &msg) {
 	int foundClass = -1;
 	Common::String skillStr, classStr, raceSkillStr;
@@ -437,7 +396,7 @@ int CreateCharacterDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
 	int classColors[TOTAL_CLASSES];
 	Common::fill(&classColors[0], &classColors[TOTAL_CLASSES], 0);
 	for (int classNum = CLASS_KNIGHT; classNum <= CLASS_RANGER; ++classNum) {
-		if (allowedClasses[classNum]) {
+		if (_allowedClasses[classNum]) {
 			if (classId == -1 && (foundClass == -1 || foundClass < classNum))
 				foundClass = classNum;
 			classColors[classNum] = 4;
@@ -446,8 +405,8 @@ int CreateCharacterDialog::newCharDetails(const uint attribs[TOTAL_ATTRIBUTES],
 
 	// Return stats details and character class
 	msg = Common::String::format(Res.NEW_CHAR_STATS, Res.RACE_NAMES[race], Res.SEX_NAMES[sex],
-		attribs[MIGHT], attribs[INTELLECT], attribs[PERSONALITY],
-		attribs[ENDURANCE], attribs[SPEED], attribs[ACCURACY], attribs[LUCK],
+		_attribs[MIGHT], _attribs[INTELLECT], _attribs[PERSONALITY],
+		_attribs[ENDURANCE], _attribs[SPEED], _attribs[ACCURACY], _attribs[LUCK],
 		classColors[CLASS_KNIGHT], classColors[CLASS_PALADIN],
 		classColors[CLASS_ARCHER], classColors[CLASS_CLERIC],
 		classColors[CLASS_SORCERER], classColors[CLASS_ROBBER],
@@ -506,6 +465,58 @@ void CreateCharacterDialog::drawDice() {
 	checkEvents(_vm);
 }
 
+int CreateCharacterDialog::getAttribFromKeycode(int keycode) const {
+	switch (keycode) {
+	case Common::KEYCODE_m:
+		return MIGHT;
+	case Common::KEYCODE_i:
+		return INTELLECT;
+	case Common::KEYCODE_p:
+		return PERSONALITY;
+	case Common::KEYCODE_e:
+		return ENDURANCE;
+	case Common::KEYCODE_s:
+		return SPEED;
+	case Common::KEYCODE_a:
+		return ACCURACY;
+	case Common::KEYCODE_l:
+		return LUCK;
+	default:
+		return -1;
+	}
+}
+
+bool CreateCharacterDialog::swapAttributes(int keycode) {
+	Windows &windows = *_vm->_windows;
+	Window &w = windows[0];
+
+	int srcAttrib = getAttribFromKeycode(keycode);
+	assert(srcAttrib >= 0);
+
+	_vm->_mode = MODE_86;
+	_icons.draw(w, srcAttrib * 2 + 11, Common::Point(
+		_buttons[srcAttrib + 5]._bounds.left, _buttons[srcAttrib + 5]._bounds.top));
+	w.update();
+
+	int destAttrib = exchangeAttribute(srcAttrib);
+	if (destAttrib != -1) {
+		_icons.draw(w, destAttrib * 2 + 11, Common::Point(
+			_buttons[destAttrib + 5]._bounds.left,
+			_buttons[destAttrib + 5]._bounds.top));
+
+		SWAP(_attribs[srcAttrib], _attribs[destAttrib]);
+		return true;
+
+	} else {
+		_icons.draw(w, srcAttrib * 2 + 10, Common::Point(
+			_buttons[srcAttrib + 5]._bounds.left,
+			_buttons[srcAttrib + 5]._bounds.top));
+		w.update();
+		_vm->_mode = MODE_SLEEPING;
+		return false;
+	}
+}
+
 int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
@@ -524,11 +535,11 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 
 	Window &w = windows[26];
 	w.open();
-	w.writeString(Common::String::format(Res.EXCHANGE_ATTR_WITH, Res.STAT_NAMES[srcAttr - 1]));
+	w.writeString(Common::String::format(Res.EXCHANGE_ATTR_WITH, Res.STAT_NAMES[srcAttr]));
 	icons.draw(w, 0, Common::Point(118, 58));
 	w.update();
 
-	int result = 0;
+	int result = -1;
 	bool breakFlag = false;
 	while (!_vm->shouldExit() && !breakFlag) {
 		// Wait for an action
@@ -536,51 +547,24 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
 		} while (!_vm->shouldExit() && !_buttonValue);
+		if (_buttonValue == Common::KEYCODE_ESCAPE)
+			break;
 
-		Attribute destAttr;
-		switch (_buttonValue) {
-		case Common::KEYCODE_m:
-			destAttr = MIGHT;
-			break;
-		case Common::KEYCODE_i:
-			destAttr = INTELLECT;
-			break;
-		case Common::KEYCODE_p:
-			destAttr = PERSONALITY;
-			break;
-		case Common::KEYCODE_e:
-			destAttr = ENDURANCE;
-			break;
-		case Common::KEYCODE_s:
-			destAttr = SPEED;
-			break;
-		case Common::KEYCODE_a:
-			destAttr = ACCURACY;
-			break;
-		case Common::KEYCODE_l:
-			destAttr = LUCK;
-			break;
-		case Common::KEYCODE_ESCAPE:
-			result = 0;
-			breakFlag = true;
-			continue;
-		default:
-			continue;
-		}
-
-		if ((srcAttr - 1) != destAttr) {
-			result = destAttr + 1;
+		int destAttr = getAttribFromKeycode(_buttonValue);
+		
+		if (destAttr != -1 && srcAttr != destAttr) {
+			result = destAttr;
 			break;
 		}
 	}
 
 	w.close();
+	restoreButtons();
 	_buttonValue = 0;
 	return result;
 }
 
-bool CreateCharacterDialog::saveCharacter(Character &c, int classId,
-		Race race, Sex sex, uint attribs[TOTAL_ATTRIBUTES]) {
+bool CreateCharacterDialog::saveCharacter(Character &c, int classId, Race race, Sex sex) {
 	if (classId == -1) {
 		ErrorScroll::show(_vm, Res.SELECT_CLASS_BEFORE_SAVING);
 		return false;
@@ -613,13 +597,13 @@ bool CreateCharacterDialog::saveCharacter(Character &c, int classId,
 	c._class = (CharacterClass)classId;
 	c._level._permanent = isDarkCc ? 5 : 1;
 
-	c._might._permanent = attribs[MIGHT];
-	c._intellect._permanent = attribs[INTELLECT];
-	c._personality._permanent = attribs[PERSONALITY];
-	c._endurance._permanent = attribs[ENDURANCE];
-	c._speed._permanent = attribs[SPEED];
-	c._accuracy._permanent = attribs[ACCURACY];
-	c._luck._permanent = attribs[LUCK];
+	c._might._permanent = _attribs[MIGHT];
+	c._intellect._permanent = _attribs[INTELLECT];
+	c._personality._permanent = _attribs[PERSONALITY];
+	c._endurance._permanent = _attribs[ENDURANCE];
+	c._speed._permanent = _attribs[SPEED];
+	c._accuracy._permanent = _attribs[ACCURACY];
+	c._luck._permanent = _attribs[LUCK];
 
 	c._magicResistence._permanent = Res.RACE_MAGIC_RESISTENCES[race];
 	c._fireResistence._permanent = Res.RACE_FIRE_RESISTENCES[race];
