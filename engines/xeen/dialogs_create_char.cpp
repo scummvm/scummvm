@@ -58,7 +58,7 @@ void CreateCharacterDialog::execute() {
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[0];
 	Common::Array<int> freeCharList;
-	int classId;
+	int classId = -1;
 	int selectedClass = 0;
 	bool hasFadedIn = false;
 	bool restartFlag = true;
@@ -75,8 +75,6 @@ void CreateCharacterDialog::execute() {
 	events.setCursor(0);
 
 	while (!_vm->shouldExit()) {
-		classId = -1;
-
 		if (restartFlag) {
 			// Build up list of roster slot indexes that are free
 			freeCharList.clear();
@@ -85,7 +83,6 @@ void CreateCharacterDialog::execute() {
 					freeCharList.push_back(idx);
 			}
 			charIndex = 0;
-			//bool flag9 = true;
 
 			if (freeCharList.size() == XEEN_TOTAL_CHARACTERS)
 				break;
@@ -131,11 +128,15 @@ void CreateCharacterDialog::execute() {
 			drawDice();
 
 		// Handling for different actions
+		if (_buttonValue == Common::KEYCODE_ESCAPE)
+			break;
+
 		switch (_buttonValue) {
 		case Common::KEYCODE_UP:
 			if (charIndex == 0)
 				continue;
 
+			--charIndex;
 			race = (Race)((freeCharList[charIndex] / 4) % 5);
 			sex = (Sex)(freeCharList[charIndex] & 1);
 			break;
@@ -402,6 +403,8 @@ int CreateCharacterDialog::newCharDetails(Race race, Sex sex, int classId,
 			classColors[classNum] = 4;
 		}
 	}
+	if (classId != -1)
+		classColors[selectedClass] = 12;
 
 	// Return stats details and character class
 	msg = Common::String::format(Res.NEW_CHAR_STATS, Res.RACE_NAMES[race], Res.SEX_NAMES[sex],
@@ -578,13 +581,16 @@ bool CreateCharacterDialog::saveCharacter(Character &c, int classId, Race race, 
 	int result;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
-	saveButtons();
+	// Prompt for a character name
+	w.open();
 	w.writeString(Res.NAME_FOR_NEW_CHARACTER);
-
+	saveButtons();
 	result = Input::show(_vm, &w, name, 10, 200);
-	w.close();
 	restoreButtons();
+	w.close();
+
 	if (!result)
+		// Name aborted, so exit
 		return false;
 
 	// Save new character details

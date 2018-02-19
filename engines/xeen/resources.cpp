@@ -1519,14 +1519,14 @@ const char *const Resources::NEW_CHAR_STATS =
 	"\t022Sex\t055: %s\n"
 	"\t022Class\t055:\n"
 	"\x3r\t215\v031%d\t215\v055%d\t215\v079%d\t215\v103%d\t215\v127%d"
-	"\t215\v151%d\t215\v175%d\x3l\t242\v020\f%2dKnight\t242\v031\f%2d"
-	"Paladin\t242\v042\f%2dArcher\t242\v053\f%2dCleric\t242\v064\f%2d"
-	"Sorcerer\t242\v075\f%2dRobber\t242\v086\f%2dNinja\t242\v097\f%2d"
-	"Barbarian\t242\v108\f%2dDruid\t242\v119\f%2dRanger\f04\x3""c"
+	"\t215\v151%d\t215\v175%d\x3l\t242\v020\f%.2dKnight\t242\v031\f%.2d"
+	"Paladin\t242\v042\f%.2dArcher\t242\v053\f%.2dCleric\t242\v064\f%.2d"
+	"Sorcerer\t242\v075\f%.2dRobber\t242\v086\f%.2dNinja\t242\v097\f%.2d"
+	"Barbarian\t242\v108\f%.2dDruid\t242\v119\f%.2dRanger\f04\x3""c"
 	"\t265\v142Skills\x3l\t223\v155%s\t223\v170%s%s";
 
 const char *const Resources::NAME_FOR_NEW_CHARACTER =
-	"\x3""cEnter a Name for this Character";
+	"\x3""cEnter a Name for this Character\n\n";
 const char *const Resources::SELECT_CLASS_BEFORE_SAVING =
 	"\v006\x3""cSelect a Class before saving.\x3l";
 const char *const Resources::EXCHANGE_ATTR_WITH = "Exchange %s with...";
