@@ -247,7 +247,7 @@ void SceneScriptUG05::sub_402218() {
 	Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	if (v0 == kActorLucy) {
 		if (Game_Flag_Query(kFlagLucyIsReplicant)) {
-			if (Global_Variable_Query(48) > 3) {
+			if (Global_Variable_Query(kVariableDNAEvidences) > 3) {
 				Outtake_Play(kOuttakeEnd1B, false, -1);
 			} else {
 				Outtake_Play(kOuttakeEnd1C, false, -1);
@@ -257,7 +257,7 @@ void SceneScriptUG05::sub_402218() {
 		}
 	} else if (v0 == kActorDektora) {
 		if (Game_Flag_Query(kFlagDektoraIsReplicant)) {
-			if (Global_Variable_Query(48) > 3) {
+			if (Global_Variable_Query(kVariableDNAEvidences) > 3) {
 				Outtake_Play(kOuttakeEnd1E, false, -1);
 			} else {
 				Outtake_Play(kOuttakeEnd1F, false, -1);

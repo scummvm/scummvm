@@ -839,6 +839,9 @@ void BladeRunnerEngine::gameTick() {
 				_dialogueMenu->draw(_surfaceFront);
 			}
 
+			// TODO: remove zbuffer draw
+			// _surfaceFront.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
+
 			_mouse->tick(p.x, p.y);
 			_mouse->draw(_surfaceFront, p.x, p.y);
 
@@ -857,7 +860,7 @@ void BladeRunnerEngine::gameTick() {
 				for (int i = 0; i < count; i++) {
 					SceneObjects::SceneObject *sceneObject = &_sceneObjects->_sceneObjects[_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
-					BoundingBox *bbox = &sceneObject->boundingBox;
+					const BoundingBox *bbox = sceneObject->boundingBox;
 					Vector3 a, b;
 					bbox->getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
 					Vector3 pos = _view->calculateScreenPosition(0.5 * (a + b));
@@ -1410,7 +1413,7 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePositi
 	int actorId = Actor::findTargetUnderMouse(this, x, y);
 	int itemId = _items->findTargetUnderMouse(x, y);
 
-	if (_combat->isActive() && buttonDown && actorId > 0 && itemId > 0) {
+	if (_combat->isActive() && buttonDown && (actorId > 0 || itemId > 0)) {
 		_playerActor->stopWalking(false);
 		if (actorId > 0) {
 			_playerActor->faceActor(actorId, false);

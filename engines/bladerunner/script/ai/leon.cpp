@@ -24,6 +24,13 @@
 
 namespace BladeRunner {
 
+AIScriptLeon::AIScriptLeon(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	var_45EDA0_z = 0.0f;
+	var_45EDA4_y = 0.0f;
+	var_45EDA8_x = 0.0f;
+	var_45EDAC = 0;
+}
+
 void AIScriptLeon::Initialize() {
 	var_45EDA0_z = 0.0f;
 	var_45EDA4_y = 0.0f;

@@ -654,14 +654,14 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 	case kClueDNALutherLance:
 	case kClueDNAMarcus:
 		{
-			int v1 = Global_Variable_Query(48) - 1;
-			if (v1 == 1) {
+			int dnaEvidences = Global_Variable_Query(kVariableDNAEvidences);
+			if (dnaEvidences == 1) {
 				KIA_Play_Slice_Model(988);
-			} else if (v1 == 2) {
+			} else if (dnaEvidences == 2) {
 				KIA_Play_Slice_Model(990);
-			} else if (v1 == 3) {
+			} else if (dnaEvidences == 3) {
 				KIA_Play_Slice_Model(991);
-			} else if (v1 == 4) {
+			} else if (dnaEvidences >= 4) {
 				KIA_Play_Slice_Model(993);
 			}
 		}

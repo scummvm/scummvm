@@ -506,6 +506,7 @@ enum Variables {
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
+	kVariableDNAEvidences = 48,
 	kVariableNextTvNews = 52
 };
 

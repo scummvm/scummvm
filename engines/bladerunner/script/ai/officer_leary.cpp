@@ -24,6 +24,11 @@
 
 namespace BladeRunner {
 
+AIScriptOfficerLeary::AIScriptOfficerLeary(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	var_45D5B8 = 0;
+	var_45D5BC = 0;
+}
+
 void AIScriptOfficerLeary::Initialize() {
 	_animationState = 0;
 	_animationFrame = 0;

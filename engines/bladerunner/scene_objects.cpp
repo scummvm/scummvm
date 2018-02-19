@@ -108,9 +108,9 @@ int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget,
 		if ((findClickables && sceneObject->isClickable) ||
 			(findObstacles  && sceneObject->isObstacle) ||
 			(findTargets    && sceneObject->isTarget)) {
-			BoundingBox boundingBox = sceneObject->boundingBox;
+			BoundingBox boundingBox = *sceneObject->boundingBox;
 
-			if (sceneObject->type == kSceneObjectTypeObject || sceneObject->type == kSceneObjectTypeItem) {
+			if (sceneObject->type == kSceneObjectTypeActor) {
 				boundingBox.expand(-4.0, 0.0, -4.0, 4.0, 0.0, 4.0);
 			}
 
@@ -153,7 +153,7 @@ bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool mo
 
 			if (isObstacle && sceneObject->id != exceptSceneObjectId) {
 				float x1, y1, z1, x2, y2, z2;
-				sceneObject->boundingBox.getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
+				sceneObject->boundingBox->getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
 				if (z1 <= zMax && z2 >= zMin && x1 <= xMax && x2 >= xMin) {
 					return true;
 				}
@@ -183,7 +183,7 @@ bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObject
 	_sceneObjects[index].id              = sceneObjectId;
 	_sceneObjects[index].type            = sceneObjectType;
 	_sceneObjects[index].isPresent       = true;
-	_sceneObjects[index].boundingBox     = *boundingBox;
+	_sceneObjects[index].boundingBox     = boundingBox;
 	_sceneObjects[index].screenRectangle = screenRectangle;
 	_sceneObjects[index].isClickable     = isClickable;
 	_sceneObjects[index].isObstacle      = isObstacle;
@@ -192,7 +192,7 @@ bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObject
 	_sceneObjects[index].isMoving        = isMoving;
 	_sceneObjects[index].isRetired       = isRetired;
 
-	float centerZ = (_sceneObjects[index].boundingBox.getZ0() + _sceneObjects[index].boundingBox.getZ1()) / 2.0;
+	float centerZ = (_sceneObjects[index].boundingBox->getZ0() + _sceneObjects[index].boundingBox->getZ1()) / 2.0;
 
 	float distanceToCamera = fabs(_view->_cameraPosition.z - centerZ);
 	_sceneObjects[index].distanceToCamera = distanceToCamera;
@@ -244,7 +244,7 @@ bool SceneObjects::isBetween(float sourceX, float sourceZ, float targetX, float 
 	}
 
 	float objectX1, objectY1, objectZ1, objectX2, objectY2, objectZ2;
-	_sceneObjects[i].boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
+	_sceneObjects[i].boundingBox->getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
 
 	Vector2 intersection;
 	return lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
@@ -262,7 +262,7 @@ bool SceneObjects::isObstacleBetween(float sourceX, float sourceZ, float targetX
 		}
 
 		float objectX1, objectY1, objectZ1, objectX2, objectY2, objectZ2;
-		_sceneObjects[i].boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
+		_sceneObjects[i].boundingBox->getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
 
 		if (84.0f <= objectY1 - altitude || 72.0f >= objectY2 - altitude) {
 			continue;
@@ -318,7 +318,7 @@ void SceneObjects::updateObstacles() {
 		const SceneObject *sceneObject = &_sceneObjects[index];
 		if (sceneObject->isObstacle) {
 			float x0, y0, z0, x1, y1, z1;
-			sceneObject->boundingBox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
+			sceneObject->boundingBox->getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
 			_vm->_obstacles->add(x0, z0, x1, z1);
 		}
 	}

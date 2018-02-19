@@ -24,12 +24,28 @@
 
 namespace BladeRunner {
 
+AIScriptMcCoy::AIScriptMcCoy(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	dword_45A0D8 = 0;
+	dword_45A0DC = 0;
+	_animationFrameDelta = 0;
+	dword_45A0E4 = 0;
+	off_45A0EC = 0.0f;
+	dword_45A0E8 = 0;
+	dword_45A0F0 = 0;
+	dword_45A0F4 = 0;
+	dword_45A0F8 = 0;
+	dword_45A0FC = 0;
+	off_45A100 = 0.0f;
+	flt_462710 = 0.0f;
+	flt_462714 = 0.0f;
+}
+
 void AIScriptMcCoy::Initialize() {
 	_animationState = 0;
 	_animationFrame = 0;
 	dword_45A0D8 = 0;
 	dword_45A0DC = 30;
-	dword_45A0E0 = 1;
+	_animationFrameDelta = 1;
 	dword_45A0E4 = 0;
 	off_45A0EC = 0;
 	dword_45A0E8 = 3;
@@ -61,11 +77,11 @@ bool AIScriptMcCoy::Update() {
 		return true;
 	case 201:
 		Actor_Set_Goal_Number(kActorMcCoy, 0);
-		if (Player_Query_Current_Set() == 55) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -166.0f, -70.19f, -501.0f, 0, 0, false, 0);
+		if (Player_Query_Current_Set() == kSetNR03) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -166.0f, -70.19f, -501.0f, 0, false, false, 0);
 			Actor_Face_Heading(kActorMcCoy, 300, false);
 		} else {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -461.0f, 0.0f, -373.0f, 0, 0, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -461.0f, 0.0f, -373.0f, 0, false, false, 0);
 		}
 		Player_Gains_Control();
 		return true;
@@ -102,84 +118,84 @@ void AIScriptMcCoy::CompletedMovementTrack() {
 
 void AIScriptMcCoy::ReceivedClue(int clueId, int fromActorId) {
 	switch (clueId) {
-	case 8:
-	case 9:
-		Spinner_Set_Selectable_Destination_Flag(3, 1);
+	case kClueChopstickWrapper:
+	case kClueSushiMenu:
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationChinatown, true);
 		break;
-	case 44:
-	case 47:
-		Spinner_Set_Selectable_Destination_Flag(4, 1);
+	case kClueDragonflyEarring:
+	case kClueBombingSuspect:
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, true);
 		break;
-	case 53:
-	case 263:
+	case kClueKingstonKitchenBox1:
+	case kClueKingstonKitchenBox2:
 		if (Query_Difficulty_Level() == 0) {
-			Spinner_Set_Selectable_Destination_Flag(4, 1);
+			Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationAnimoidRow, true);
 		}
 		break;
-	case 90:
-		Spinner_Set_Selectable_Destination_Flag(8, 1);
+	case kClueDragonflyCollection:
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationNightclubRow, true);
 		break;
-	case 84:
-	case 113:
-	case 114:
-	case 115:
-	case 118:
-		Spinner_Set_Selectable_Destination_Flag(9, 1);
-		Spinner_Set_Selectable_Destination_Flag(8, 1);
+	case kClueHysteriaToken:
+	case kClueCarRegistration1:
+	case kClueCarRegistration2:
+	case kClueCarRegistration3:
+	case kClueLichenDogWrapper:
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationHysteriaHall, true);
+		Spinner_Set_Selectable_Destination_Flag(kSpinnerDestinationNightclubRow, true);
 		break;
-	case 66:
-	case 80:
-	case 82:
-	case 83:
+	case kClueWeaponsCache:
+	case kClueWeaponsOrderForm:
+	case kClueShippingForm:
+	case kCluePoliceIssueWeapons:
 		Global_Variable_Increment(49, 1);
 		break;
-	case 125:
+	case kClueFolder:
 		Global_Variable_Increment(49, 5);
 		break;
-	case 124:
-	case 128:
+	case kClueHomelessManKid:
+	case kClueOriginalRequisitionForm:
 		Global_Variable_Increment(49, 3);
 		break;
-	case 120:
-	case 121:
+	case kClueScaryChair:
+	case kClueIzosStashRaided:
 		Global_Variable_Increment(49, 2);
 		break;
-	case 147:
-	case 148:
-	case 149:
-	case 150:
-	case 151:
-	case 152:
-		Global_Variable_Increment(48, 1);
+	case kClueDNATyrell:
+	case kClueDNASebastian:
+	case kClueDNAChew:
+	case kClueDNAMoraji:
+	case kClueDNALutherLance:
+	case kClueDNAMarcus:
+		Global_Variable_Increment(kVariableDNAEvidences, 1);
 		break;
 	}
 	if (Global_Variable_Query(49) > 6 && Global_Variable_Query(kVariableChapter) > 3 && !Actor_Clue_Query(kActorMcCoy, kClueGuzzaFramedMcCoy)) {
 		Delay(500);
 		Actor_Voice_Over(3320, kActorVoiceOver);
 		switch (clueId) {
-		case 66:
-		case 80:
-		case 82:
-		case 83:
-		case 121:
-		case 128:
+		case kClueWeaponsCache:
+		case kClueWeaponsOrderForm:
+		case kClueGuzzasCash:
+		case kCluePoliceIssueWeapons:
+		case kClueIzosStashRaided:
+		case kClueOriginalRequisitionForm:
 			Actor_Voice_Over(3340, kActorVoiceOver);
 			Actor_Voice_Over(3350, kActorVoiceOver);
 			Actor_Voice_Over(3360, kActorVoiceOver);
 			Actor_Voice_Over(3370, kActorVoiceOver);
 			Actor_Voice_Over(3380, kActorVoiceOver);
 			break;
-		case 124:
+		case kClueHomelessManKid:
 			Actor_Voice_Over(3330, kActorVoiceOver);
 			break;
-		case 120:
+		case kClueScaryChair:
 			Actor_Voice_Over(3390, kActorVoiceOver);
 			Actor_Voice_Over(3400, kActorVoiceOver);
 			Actor_Voice_Over(3420, kActorVoiceOver);
 			break;
 		}
 		Actor_Clue_Acquire(kActorMcCoy, kClueGuzzaFramedMcCoy, 1, -1);
-		if (clueId == 125) {
+		if (clueId == kClueFolder) {
 			Actor_Voice_Over(2780, kActorVoiceOver);
 			Actor_Voice_Over(2800, kActorVoiceOver);
 			Actor_Voice_Over(2810, kActorVoiceOver);
@@ -224,23 +240,23 @@ bool AIScriptMcCoy::ShotAtAndHit() {
 }
 
 void AIScriptMcCoy::Retired(int byActorId) {
-	if (byActorId == kActorSteele && Actor_Query_In_Set(kActorSteele, 42)) {
-		if (Actor_Query_In_Set(kActorDektora, 42) && Actor_Query_Goal_Number(kActorDektora) != 599) {
+	if (byActorId == kActorSteele && Actor_Query_In_Set(kActorSteele, kSetHF06)) {
+		if (Actor_Query_In_Set(kActorDektora, kSetHF06) && Actor_Query_Goal_Number(kActorDektora) != 599) {
 			Non_Player_Actor_Combat_Mode_On(kActorSteele, 3, 1, kActorDektora, 15, 4, 7, 8, 0, 0, 100, 25, 300, 0);
-		} else if (Actor_Query_In_Set(kActorLucy, 42) && Actor_Query_Goal_Number(kActorLucy) != 599) {
+		} else if (Actor_Query_In_Set(kActorLucy, kSetHF06) && Actor_Query_Goal_Number(kActorLucy) != 599) {
 			Non_Player_Actor_Combat_Mode_On(kActorSteele, 3, 1, kActorLucy, 15, 4, 7, 8, 0, 0, 100, 25, 300, 0);
 		}
 	}
-	if (Actor_Query_In_Set(kActorMcCoy, 41) && Actor_Query_In_Set(kActorOfficerLeary, 41) && Actor_Query_In_Set(kActorDektora, 41) && Actor_Query_Goal_Number(kActorDektora) != 599) {
+	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05) && Actor_Query_In_Set(kActorOfficerLeary, kSetHF05) && Actor_Query_In_Set(kActorDektora, kSetHF05) && Actor_Query_Goal_Number(kActorDektora) != 599) {
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 3, 1, kActorDektora, 4, 4, 7, 8, 0, 0, 100, 25, 300, 0);
 	}
-	if (Actor_Query_In_Set(kActorMcCoy, 41) && Actor_Query_In_Set(kActorOfficerGrayford, 41) && Actor_Query_In_Set(kActorDektora, 41) && Actor_Query_Goal_Number(kActorDektora) != 599) {
+	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05) && Actor_Query_In_Set(kActorOfficerGrayford, kSetHF05) && Actor_Query_In_Set(kActorDektora, kSetHF05) && Actor_Query_Goal_Number(kActorDektora) != 599) {
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, 3, 1, kActorDektora, 4, 4, 7, 8, 0, 0, 100, 25, 300, 0);
 	}
-	if (Actor_Query_In_Set(kActorMcCoy, 41) && Actor_Query_In_Set(kActorOfficerLeary, 41) && Actor_Query_In_Set(kActorLucy, 41) && Actor_Query_Goal_Number(kActorLucy) != 599) {
+	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05) && Actor_Query_In_Set(kActorOfficerLeary, kSetHF05) && Actor_Query_In_Set(kActorLucy, kSetHF05) && Actor_Query_Goal_Number(kActorLucy) != 599) {
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 3, 1, kActorLucy, 4, 4, 7, 8, 0, 0, 100, 25, 300, 0);
 	}
-	if (Actor_Query_In_Set(kActorMcCoy, 41) && Actor_Query_In_Set(kActorOfficerGrayford, 41) && Actor_Query_In_Set(kActorLucy, 41) && Actor_Query_Goal_Number(kActorLucy) != 599) {
+	if (Actor_Query_In_Set(kActorMcCoy, kSetHF05) && Actor_Query_In_Set(kActorOfficerGrayford, kSetHF05) && Actor_Query_In_Set(kActorLucy, kSetHF05) && Actor_Query_Goal_Number(kActorLucy) != 599) {
 		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, 3, 1, kActorLucy, 4, 4, 7, 8, 0, 0, 100, 25, 300, 0);
 	}
 }
@@ -269,7 +285,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Invisible(kActorMcCoy, false);
 		return true;
 	case 102:
-		Async_Actor_Walk_To_Waypoint(kActorMcCoy, 316, 0, 1);
+		Async_Actor_Walk_To_Waypoint(kActorMcCoy, 316, 0, true);
 		return true;
 	case 103:
 		Actor_Face_Actor(kActorMcCoy, kActorSadik, true);
@@ -277,10 +293,10 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 231:
 		Player_Set_Combat_Mode(false);
 		Preload(18);
-		Set_Enter(59, kSceneNR10);
+		Set_Enter(kSetNR10, kSceneNR10);
 		Player_Loses_Control();
 		Actor_Force_Stop_Walking(kActorMcCoy);
-		Actor_Put_In_Set(kActorMcCoy, 59);
+		Actor_Put_In_Set(kActorMcCoy, kSetNR10);
 		Actor_Set_At_XYZ(kActorMcCoy, 14.0f, 110.84f, -300.0f, 926);
 		Actor_Change_Animation_Mode(kActorMcCoy, 48);
 		_animationState = 27;
@@ -291,7 +307,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 	case 230:
 		dword_45A0FC = Actor_Query_Goal_Number(kActorSteele) == 215;
-		Actor_Change_Animation_Mode(kActorMcCoy, 6);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatShoot);
 		return true;
 	case 220:
 		Actor_Change_Animation_Mode(kActorMcCoy, 75);
@@ -313,12 +329,12 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Change_Animation_Mode(kActorMcCoy, 16);
 		}
 		Delay(150);
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		Actor_Set_Goal_Number(kActorMcCoy, 0);
 		Player_Gains_Control();
 		return true;
 	case 210:
-		Actor_Put_In_Set(kActorMcCoy, 54);
+		Actor_Put_In_Set(kActorMcCoy, kSetNR01);
 		Actor_Set_At_XYZ(kActorMcCoy, -204.0, 24.0, -817.0, 256);
 		Actor_Set_Invisible(kActorMcCoy, false);
 		if (Game_Flag_Query(627)) {
@@ -331,7 +347,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 	case 200:
 		Player_Loses_Control();
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		return true;
 	case 301:
 		_animationState = 62;
@@ -427,23 +443,23 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Global_Variable_Set(1, 5);
+		Global_Variable_Set(kVariableChapter, 5);
 		Outtake_Play(kOuttakeMovieD, false, -1);
 		if (Game_Flag_Query(666)) {
-			Chapter_Enter(5, 53, 53);
+			Chapter_Enter(5, kSetMA07, kSceneMA07);
 		} else {
 			Game_Flag_Set(kFlagMA06ToMA02);
-			Chapter_Enter(5, 10, 49);
+			Chapter_Enter(5, kSetMA02_MA04, kSceneMA02);
 		}
 		return true;
 	case 500:
 		Music_Stop(3);
 		Player_Set_Combat_Mode(false);
-		Actor_Change_Animation_Mode(kActorMcCoy, 0);
+		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		_animationState = 0;
 		_animationFrame = 0;
 		Game_Flag_Set(465);
-		Set_Enter(67, kScenePS09);
+		Set_Enter(kSetPS09, kScenePS09);
 		return true;
 	}
 	return false;
@@ -456,7 +472,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		*animation = 52;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(52)) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			*animation = 19;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -487,7 +503,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame--;
 		}
 		if (_animationFrame <= 0) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			*animation = 19;
 			_animationState = 0;
 			_animationFrame = 0;
@@ -501,7 +517,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		*animation = 53;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(53)) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			*animation = 19;
 			_animationState = 0;
 			_animationFrame = 0;
@@ -514,7 +530,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		*animation = 40;
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(40)) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			*animation = 19;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -600,7 +616,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			}
 			Ambient_Sounds_Play_Sound(v19, 39, 0, 0, 99);
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1? 
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) { //why -1?
 			_animationFrame = 0;
 		}
 		break;
@@ -621,12 +637,12 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame++;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(49)) {
 			_animationFrame = 0;
-			if (Actor_Query_Which_Set_In(kActorMcCoy) == 87) {
+			if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetUG15) {
 				_animationState = 27;
 			} else {
 				*animation = 19;
 				_animationState = 0;
-				Actor_Change_Animation_Mode(kActorMcCoy, 0);
+				Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			}
 		}
 		break;
@@ -645,7 +661,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		*animation = 18;
 		_animationFrame--;
 		if (_animationFrame <= 0) {
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			*animation = 19;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -745,7 +761,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 	case 43:
 		*animation = 38;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(38) - 1) { //why -1? 
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(38) - 1) { //why -1?
 			_animationFrame = 0;
 		}
 		switch (_animationFrame) {
@@ -763,7 +779,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 	case 42:
 		*animation = 37;
 		_animationFrame++;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(37) - 1) { //why -1? 
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(37) - 1) { //why -1?
 			_animationFrame = 0;
 		}
 		switch (_animationFrame) {
@@ -898,11 +914,11 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 	case 29:
-		v46 = _animationFrame + dword_45A0E0;
+		v46 = _animationFrame + _animationFrameDelta;
 		*animation = 18;
 		_animationFrame = v46;
 		if (v46 < 14) {
-			dword_45A0E0 = 1;
+			_animationFrameDelta = 1;
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorMcCoy, 48);
@@ -939,7 +955,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			*animation = 19;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		}
 		break;
 	case 25:
@@ -949,7 +965,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			*animation = 19;
 			_animationFrame = 0;
 			_animationState = 0;
-			Actor_Change_Animation_Mode(kActorMcCoy, 0);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		}
 		break;
 	case 24:
@@ -1163,20 +1179,20 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		*animation = 19;
 		if (dword_45A0D8 < dword_45A0DC) {
 			//*frame = dword_45A0E8;
-			_animationFrame += dword_45A0E0;
+			_animationFrame += _animationFrameDelta;
 			if (_animationFrame > dword_45A0E8) {
 				_animationFrame = dword_45A0E8;
-				dword_45A0E0 = -1;
+				_animationFrameDelta = -1;
 			} else if (_animationFrame < dword_45A0E4) {
 				_animationFrame = dword_45A0E4;
-				dword_45A0E0 = 1;
+				_animationFrameDelta = 1;
 			}
 			dword_45A0D8++;
 		} else {
-			_animationFrame += dword_45A0E0;
+			_animationFrame += _animationFrameDelta;
 			dword_45A0DC = 0;
 			if (_animationFrame == 18 && Random_Query(0, 2)) {
-				dword_45A0E0 = -1;
+				_animationFrameDelta = -1;
 				dword_45A0D8 = 0;
 				dword_45A0E4 = 14;
 				dword_45A0E8 = 18;
@@ -1184,7 +1200,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 			}
 			if (_animationFrame == 26) {
 				if (Random_Query(0, 2)) {
-					dword_45A0E0 = -1;
+					_animationFrameDelta = -1;
 					dword_45A0D8 = 0;
 					dword_45A0E4 = 23;
 					dword_45A0E8 = 26;
@@ -1211,272 +1227,177 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 }
 
 bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
-	int v2;
 	switch (mode) {
-	case 85:
-		_animationFrame = 0;
-		_animationState = 69;
-		return true;
-	case 75:
-		_animationState = 67;
-		_animationFrame = 0;
-		return true;
-	case 68:
-		_animationState = 29;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
-		dword_45A0E0 = -1;
-		return true;
-	case 65:
-	case 67:
-		_animationState = 43;
-		_animationFrame = 0;
-		return true;
-	case 64:
-	case 66:
-		_animationState = 42;
-		_animationFrame = 0;
-		return true;
-	case 53:
-		if (_animationState != 60 && (Player_Query_Current_Set() == 55 || Player_Query_Current_Set() == 13)) {
-			_animationState = 60;
-			_animationFrame = 0;
+	case kAnimationModeIdle:
+		if (!Game_Flag_Query(550)) {
+			switch (_animationState) {
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+			case 10:
+			case 11:
+			case 12:
+				Game_Flag_Set(236);
+				dword_45A0D8 = 0;
+				dword_45A0DC = 30;
+				dword_45A0E4 = 0;
+				_animationFrameDelta = 1;
+				dword_45A0E8 = 3;
+				return true;
+			case 14:
+			case 17:
+			case 20:
+			case 21:
+			case 36:
+				_animationState = 16;
+				_animationFrame = 0;
+				return true;
+			case 15:
+				_animationState = 16;
+				_animationFrame = 16 - 16 * _animationFrame / 12;
+				return true;
+			case 16:
+			case 25:
+			case 26:
+			case 55:
+				return true;
+			case 60:
+				_animationState = 61;
+				return true;
+			default:
+				_animationState = 0;
+				_animationFrame = 0;
+				dword_45A0DC = 0;
+				return true;
+			}
 		} else {
+			if (_animationFrame <= 6) {
+				int v3 = Random_Query(0, 2);
+				int v4 = 0;
+				if (v3 == 0) {
+					v4 = 595;
+				} else if (v3 == 1) {
+					v4 = 594;
+				} else if (v3 == 2) {
+					v4 = 593;
+				}
+				Ambient_Sounds_Play_Sound(v4, 39, 0, 0, 99);
+			}
+			_animationState = 57;
 			_animationFrame = 0;
-			_animationState = 70;
+			return true;
 		}
-		return true;
-	case kAnimationModeFeeding:
-		_animationState = 55;
-		_animationFrame = 0;
-		return true;
-	case 51:
-		_animationState = 27;
-		_animationFrame = 0;
-		return true;
-	case 49:
-		_animationState = 28;
-		_animationFrame = 0;
-		return true;
-	case 48:
+	case kAnimationModeWalk:
+		if (_animationState != 27 && _animationState != 50) {
+			if (!Game_Flag_Query(550)) {
+				_animationState = 32;
+				_animationFrame = 0;
+			} else {
+				_animationState = 58;
+				_animationFrame = 0;
+			}
+		}
+		break;
+	case kAnimationModeRun:
+		if (_animationState != 27 && _animationState != 50) {
+			if (!Game_Flag_Query(550)) {
+				_animationState = 31;
+				_animationFrame = 0;
+			} else {
+				_animationState = 58;
+				_animationFrame = 4;
+			}
+		}
+		break;
+	case 3:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 3;
+			_animationNext = 20;
+		} else {
+			Game_Flag_Reset(236);
+			dword_45A0F0 = 4;
+			dword_45A0F4 = 20;
+		}
+		break;
+	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 14:
-			_animationState = 28;
+		case 15:
+		case 19:
+		case 21:
+			break;
+		case 16:
+			_animationState = 15;
+			_animationFrame = 12 - 12 * _animationFrame / 16;
+			break;
+		case 17:
+		case 20:
+			_animationState = 19;
 			_animationFrame = 0;
 			break;
-		case 13:
-			_animationState = 22;
-			_animationFrame = 0;
-			return true;
-		case 10:
-			_animationState = 18;
-			_animationFrame = 8 * (13 - _animationFrame) / 13;
-			return true;
-		case 8:
-		case 9:
-		case 12:
-			return true;
-		case 11:
-			_animationState = 18;
-			_animationFrame = 0;
+		case 18:
+			_animationState = 19;
+			_animationFrame = 13 * ((8 - _animationFrame) / 8);
 			break;
-		case 7:
+		case 22:
+			_animationState = 19;
+			_animationFrame = 41;
+			break;
+		case 36:
+		case 37:
+		case 40:
+		case 41:
+		case 51:
 			_animationState = 14;
 			_animationFrame = 0;
 			break;
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
+		default:
 			_animationState = 15;
 			_animationFrame = 0;
 			break;
-		default:
-			if (_animationState != 50) {
-				_animationState = 27;
-				_animationFrame = 0;
-			}
-			break;
 		}
-		return true;
-	case 47:
-		_animationState = 41;
-		_animationFrame = 0;
-		return true;
-	case 46:
-		_animationState = 40;
-		_animationFrame = 0;
-		return true;
-	case 45:
-		_animationState = 39;
-		_animationFrame = 0;
-		return true;
-	case 44:
-		_animationState = 38;
-		_animationFrame = 0;
-		return true;
-	case 42:
-		_animationState = 46;
-		_animationFrame = 0;
-		Player_Loses_Control();
-		return true;
-	case 41:
-		_animationState = 45;
-		_animationFrame = 0;
-		return true;
-	case 40:
-		_animationState = 44;
-		_animationFrame = 0;
-		return true;
-	case 39:
-		_animationFrame = 0;
-		_animationState = 52;
-		if (Player_Query_Current_Set() == 27) {
-			_animationFrame = 23;
-		}
-		return true;
-	case 38:
-		_animationState = 47;
-		_animationFrame = 0;
-		return true;
-	case 29:
-		Player_Loses_Control();
-		_animationFrame = 0;
-		_animationState = 71;
-		return true;
-	case 23:
-		_animationState = 66;
-		_animationFrame = 0;
-		return true;
-	case 22:
-		if (Random_Query(0, 1)) {
-			_animationState = 23;
-		} else {
-			_animationState = 24;
-		}
-		_animationFrame = 0;
-		return true;
-	case 21:
+		break;
+	case 5:
 		switch (_animationState) {
-		case 0:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-			_animationState = 28;
-			_animationFrame = 0;
+		case 17:
+		case 18:
+		case 21:
 			break;
-		case 1:
-		case 8:
-			_animationState = 27;
+		case 19:
+			_animationState = 18;
+			_animationFrame = 8 * (13 - _animationFrame) / 13;
+			break;
+		case 22:
+			_animationState = 22;
 			_animationFrame = 0;
 			break;
 		default:
-
-			if (Random_Query(0, 1)) {
-				_animationState = 26;
-			} else {
-				_animationState = 25;
-			}
+			_animationState = 18;
 			_animationFrame = 0;
 			break;
 		}
-		return true;
-	case 20:
-		v2 = Actor_Query_Which_Set_In(kActorMcCoy);
-		if (v2 == 27) {
-			_animationState = 51;
-			_animationFrame = 0;
-			Player_Loses_Control();
-			Game_Flag_Set(210);
-		} else if (v2 == 70 || v2 == 87) {
-			_animationState = 56;
+		break;
+	case kAnimationModeCombatShoot:
+		_animationState = 21;
+		_animationFrame = 0;
+		break;
+	case kAnimationModeCombatWalk:
+		if (_animationState != 27 && _animationState != 50) {
+			_animationState = 36;
 			_animationFrame = 0;
 		}
-		return true;
-	case 19:
-		if (_animationState < 3 || _animationState > 12) {
-			_animationState = 13;
-			_animationStateNext = 12;
-			_animationNext = 27;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 12;
-			dword_45A0F4 = 27;
+		break;
+	case kAnimationModeCombatRun:
+		if (_animationState != 27 && _animationState != 50) {
+			_animationState = 37;
+			_animationFrame = 0;
 		}
-		return true;
-	case 18:
-		if (_animationState < 3 || _animationState > 12) {
-			_animationState = 13;
-			_animationStateNext = 11;
-			_animationNext = 26;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 11;
-			dword_45A0F4 = 26;
-		}
-		return true;
-	case 17:
-		if (_animationState < 3 || _animationState > 12) {
-			_animationState = 13;
-			_animationStateNext = 10;
-			_animationNext = 25;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 10;
-			dword_45A0F4 = 25;
-		}
-		return true;
-	case 16:
-		if (_animationState < 3 || _animationState > 12) {
-			_animationState = 13;
-			_animationStateNext = 9;
-			_animationNext = 24;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 9;
-			dword_45A0F4 = 24;
-		}
-		return true;
-	case 15:
-		if (_animationState < 3 || _animationState > 12) {
-			_animationState = 13;
-			_animationStateNext = 8;
-			_animationNext = 23;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 8;
-			dword_45A0F4 = 23;
-		}
-		return true;
-	case 11:
-	case 14:
-		if (_animationState < 3 || _animationState > 12) {
-			_animationState = 13;
-			_animationStateNext = 7;
-			_animationNext = 22;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 7;
-			dword_45A0F4 = 22;
-		}
-		return true;
-	case 10:
-	case 13:
-		if (_animationState < 3 || _animationState > 12) {
-			_animationState = 13;
-			_animationStateNext = 6;
-			_animationNext = 27;
-		} else {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 6;
-			dword_45A0F4 = 27;
-		}
-		return true;
+		break;
 	case 9:
 	case 12:
 		if (_animationState < 3 || _animationState > 12) {
@@ -1488,158 +1409,251 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			dword_45A0F0 = 5;
 			dword_45A0F4 = 21;
 		}
-		return true;
-	case kAnimationModeCombatRun:
-		if (_animationState != 27 && _animationState != 50) {
-			_animationState = 37;
-			_animationFrame = 0;
+		break;
+	case 10:
+	case 13:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 6;
+			_animationNext = 27;
+		} else {
+			Game_Flag_Reset(236);
+			dword_45A0F0 = 6;
+			dword_45A0F4 = 27;
 		}
-		return true;
-	case kAnimationModeCombatWalk:
-		if (_animationState != 27 && _animationState != 50) {
-			_animationState = 36;
-			_animationFrame = 0;
+		break;
+	case 11:
+	case 14:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 7;
+			_animationNext = 22;
+		} else {
+			Game_Flag_Reset(236);
+			dword_45A0F0 = 7;
+			dword_45A0F4 = 22;
 		}
-		return true;
-	case kAnimationModeCombatShoot:
-		_animationState = 21;
-		_animationFrame = 0;
-		return true;
-	case 5:
+		break;
+	case 15:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 8;
+			_animationNext = 23;
+		} else {
+			Game_Flag_Reset(236);
+			dword_45A0F0 = 8;
+			dword_45A0F4 = 23;
+		}
+		break;
+	case 16:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 9;
+			_animationNext = 24;
+		} else {
+			Game_Flag_Reset(236);
+			dword_45A0F0 = 9;
+			dword_45A0F4 = 24;
+		}
+		break;
+	case 17:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 10;
+			_animationNext = 25;
+		} else {
+			Game_Flag_Reset(236);
+			dword_45A0F0 = 10;
+			dword_45A0F4 = 25;
+		}
+		break;
+	case 18:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 11;
+			_animationNext = 26;
+		} else {
+			Game_Flag_Reset(236);
+			dword_45A0F0 = 11;
+			dword_45A0F4 = 26;
+		}
+		break;
+	case 19:
+		if (_animationState < 3 || _animationState > 12) {
+			_animationState = 13;
+			_animationStateNext = 12;
+			_animationNext = 27;
+		} else {
+			Game_Flag_Reset(236);
+			dword_45A0F0 = 12;
+			dword_45A0F4 = 27;
+		}
+		break;
+	case 20:
+		{
+			int setId = Actor_Query_Which_Set_In(kActorMcCoy);
+			if (setId == kSetCT02) {
+				_animationState = 51;
+				_animationFrame = 0;
+				Player_Loses_Control();
+				Game_Flag_Set(210);
+			} else if (setId == kSetRC03 || setId == kSetUG15) {
+				_animationState = 56;
+				_animationFrame = 0;
+			}
+		}
+		break;
+	case 21:
 		switch (_animationState) {
-		case 1:
-		case 2:
-		case 5:
-			_animationState = 14;
-			_animationFrame = 0;
-			break;
-		case 0:
-		case 3:
-		case 4:
-			_animationState = 15;
-			_animationFrame = 0;
-			break;
-		default:
-			_animationState = 18;
-			_animationFrame = 0;
-			break;
-		}
-		return true;
-	case kAnimationModeCombatIdle:
-		switch (_animationState) {
-		case 22:
-			_animationState = 19;
-			_animationFrame = 41;
-			break;
-		case 18:
-			_animationState = 19;
-			_animationFrame = 13 * ((8 - _animationFrame) / 8);
-			break;
+		case 14:
+		case 15:
 		case 17:
+		case 18:
+		case 19:
 		case 20:
-			_animationState = 19;
+		case 21:
+		case 22:
+			if (Random_Query(0, 1) == 1) {
+				_animationState = 24;
+			} else {
+				_animationState = 23;
+			}
 			_animationFrame = 0;
 			break;
 		case 16:
-			_animationState = 15;
-			_animationFrame = 12 - 12 * _animationFrame / 16;
+			if (Random_Query(0, 1) == 1) {
+				_animationState = 26;
+			} else {
+				_animationState = 25;
+			}
+			_animationFrame = 0;
 			break;
+		}
+		break;
+	case 22:
+		if (Random_Query(0, 1) == 1) {
+			_animationState = 23;
+		} else {
+			_animationState = 24;
+		}
+		_animationFrame = 0;
+		break;
+	case 23:
+		_animationState = 66;
+		_animationFrame = 0;
+		break;
+	case 29:
+		Player_Loses_Control();
+		_animationFrame = 0;
+		_animationState = 71;
+		break;
+	case 38:
+		_animationState = 47;
+		_animationFrame = 0;
+		break;
+	case 39:
+		_animationFrame = 0;
+		_animationState = 52;
+		if (Player_Query_Current_Set() == kSetCT02) {
+			_animationFrame = 23;
+		}
+		break;
+	case 40:
+		_animationState = 44;
+		_animationFrame = 0;
+		break;
+	case 41:
+		_animationState = 45;
+		_animationFrame = 0;
+		break;
+	case 42:
+		_animationState = 46;
+		_animationFrame = 0;
+		Player_Loses_Control();
+		break;
+	case 44:
+		_animationState = 38;
+		_animationFrame = 0;
+		break;
+	case 45:
+		_animationState = 39;
+		_animationFrame = 0;
+		break;
+	case 46:
+		_animationState = 40;
+		_animationFrame = 0;
+		break;
+	case 47:
+		_animationState = 41;
+		_animationFrame = 0;
+		break;
+	case 48:
+		switch (_animationState) {
 		case 14:
 		case 15:
+		case 17:
+		case 18:
 		case 19:
+		case 20:
 		case 21:
-		case 2:
-		case 3:
-			return true;
+		case 22:
+			_animationState = 28;
+			_animationFrame = 0;
+			break;
+		case 27:
+		case 28:
+		case 50:
+			break;
 		default:
-			_animationState = 15;
+			_animationState = 27;
 			_animationFrame = 0;
-			break;
-		case 13:
-			_animationState = 16;
-			_animationFrame = 0;
-			break;
-		case 0:
-		case 1:
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-		case 8:
-		case 9:
-		case 10:
-		case 11:
-		case 12:
-			_animationState = 0;
-			_animationFrame = 0;
-			dword_45A0DC = 0;
 			break;
 		}
-		return true;
-	case 3:
-		if (_animationState >= 3 && _animationState <= 12) {
-			Game_Flag_Reset(236);
-			dword_45A0F0 = 4;
-			dword_45A0F4 = 20;
+		break;
+	case 49:
+		_animationState = 28;
+		_animationFrame = 0;
+		break;
+	case 51:
+		_animationState = 27;
+		_animationFrame = 0;
+		break;
+	case 52:
+		_animationState = 55;
+		_animationFrame = 0;
+		break;
+	case 53:
+		if (_animationState != 60 && (Player_Query_Current_Set() == kSetNR03 || Player_Query_Current_Set() == kSetNR05_NR08)) {
+			_animationState = 60;
+			_animationFrame = 0;
 		} else {
-			_animationState = 13;
-			_animationStateNext = 3;
-			_animationNext = 20;
-		}
-		return true;
-	case kAnimationModeRun:
-		if (_animationState == 27 || _animationState == 50) {
-			return true;
-		}
-		if (!Game_Flag_Query(550)) {
-			_animationState = 31;
 			_animationFrame = 0;
-			return true;
+			_animationState = 70;
 		}
-		_animationState = 58;
-		_animationFrame = 4;
-		return true;
-	case kAnimationModeWalk:
-		if (_animationState == 27 || _animationState == 50) {
-			return true;
-		}
-		if (!Game_Flag_Query(550)) {
-			_animationState = 32;
-			_animationFrame = 0;
-			return true;
-		}
-		_animationState = 58;
+		break;
+	case 64:
+	case 66:
+		_animationState = 42;
 		_animationFrame = 0;
-		return true;
-	case kAnimationModeIdle:
-		if (Game_Flag_Query(550)) {
-			if (_animationFrame > 6) {
-				_animationState = 57;
-				_animationFrame = 0;
-				return true;
-			}
-			int v3 = Random_Query(0, 2);
-			int v4 = 0;
-			if (v3 == 0) {
-				v4 = 595;
-			} else if (v3 == 1) {
-				v4 = 594;
-			} else if (v3 == 2) {
-				v4 = 593;
-			}
-			Ambient_Sounds_Play_Sound(v4, 39, 0, 0, 99);
-			_animationState = 57;
-			_animationFrame = 0;
-			return true;
-		}
-		if (_animationState == 60) {
-			_animationState = 61;
-			return true;
-		}
-		_animationState = 0;
+		break;
+	case 65:
+	case 67:
+		_animationState = 43;
 		_animationFrame = 0;
-		dword_45A0DC = 0;
-		return true;
+		break;
+	case 68:
+		_animationState = 29;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_animationFrameDelta = -1;
+		break;
+	case 75:
+		_animationState = 67;
+		_animationFrame = 0;
+		break;
+	case 85:
+		_animationFrame = 0;
+		_animationState = 69;
+		break;
 	}
 	return true;
 }
@@ -1679,7 +1693,7 @@ void AIScriptMcCoy::sub_4053E0() {
 }
 
 void AIScriptMcCoy::sub_4054F0() {
-	if (Actor_Query_Which_Set_In(kActorMcCoy) == 87 && Actor_Query_Goal_Number(kActorMcCoy) != 390 && !Game_Flag_Query(682)) {
+	if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetUG15 && Actor_Query_Goal_Number(kActorMcCoy) != 390 && !Game_Flag_Query(682)) {
 		float x, y, z;
 		Actor_Query_XYZ(kActorMcCoy, &x, &y, &z);
 		if ((z < 220.0f) && (-210.0f < x) && (-70.0f > x)) {
@@ -1749,7 +1763,7 @@ void AIScriptMcCoy::sub_405660() {
 		dword_45A0D8 = 0;
 		dword_45A0DC = 30;
 		dword_45A0E4 = 0;
-		dword_45A0E0 = 1;
+		_animationFrameDelta = 1;
 		dword_45A0E8 = 3;
 		break;
 	case 60:
@@ -1802,13 +1816,13 @@ void AIScriptMcCoy::sub_405800() {
 }
 
 void AIScriptMcCoy::sub_4058B0() {
-	int v0 = Actor_Query_Which_Set_In(kActorMcCoy);
-	if (v0 == 27) {
+	int setId = Actor_Query_Which_Set_In(kActorMcCoy);
+	if (setId == kSetCT02) {
 		_animationState = 51;
 		_animationFrame = 0;
 		Player_Loses_Control();
 		Game_Flag_Set(210);
-	} else if (v0 == 70 || v0 == 87) {
+	} else if (setId == kSetRC03 || setId == kSetUG15) {
 		_animationState = 56;
 		_animationFrame = 0;
 	}

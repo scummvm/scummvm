@@ -224,9 +224,7 @@ int DialogueMenu::queryInput() {
 		}
 	}
 
-	if (_selectedItemIndex >= 0) {
-		debug("DM Query Input: %d %s", answer, _items[_selectedItemIndex].text.c_str());
-	}
+	debug("DM Query Input: %d %s", answer, _items[_selectedItemIndex].text.c_str());
 
 	return answer;
 }

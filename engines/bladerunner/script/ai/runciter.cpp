@@ -31,6 +31,14 @@ enum kRunciterStates {
 	kRunciterStateDead         = 15
 };
 
+AIScriptRunciter::AIScriptRunciter(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	var_45CD78 = 0;
+	var_45CD7C = 0;
+	var_45CD80 = 0;
+	var_45CD84 = 0;
+	var_45CD88 = 0;
+}
+
 void AIScriptRunciter::Initialize() {
 	_animationState = 0;
 	_animationFrame = 0;

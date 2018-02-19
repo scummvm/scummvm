@@ -37,7 +37,12 @@ protected:
 	int _animationNext;
 
 public:
-	AIScriptBase(BladeRunnerEngine *vm) : ScriptBase(vm) {}
+	AIScriptBase(BladeRunnerEngine *vm) : ScriptBase(vm) {
+		_animationState = 0;
+		_animationFrame = 0;
+		_animationStateNext = 0;
+		_animationNext = 0;
+	}
 
 	virtual void Initialize() = 0;
 	virtual bool Update() = 0;
@@ -65,9 +70,7 @@ public:
 #define DECLARE_SCRIPT(name) \
 class AIScript##name : public AIScriptBase { \
 public: \
-	AIScript##name(BladeRunnerEngine *vm) \
-		: AIScriptBase(vm) \
-	{} \
+	AIScript##name(BladeRunnerEngine *vm); \
 	void Initialize(); \
 	bool Update(); \
 	void TimerExpired(int timer); \
@@ -95,7 +98,7 @@ private:
 DECLARE_SCRIPT(McCoy)
 	int dword_45A0D8;
 	int dword_45A0DC;
-	int dword_45A0E0;
+	int _animationFrameDelta;
 	int dword_45A0E4;
 	float off_45A0EC;
 	int dword_45A0E8;

@@ -46,18 +46,18 @@ class SceneObjects {
 	static const int kSceneObjectCount = 115;
 
 	struct SceneObject {
-		int             id;
-		SceneObjectType type;
-		BoundingBox     boundingBox;
-		Common::Rect   *screenRectangle;
-		float           distanceToCamera;
-		bool            isPresent;
-		bool            isClickable;
-		bool            isObstacle;
-		int             unknown1;
-		bool            isTarget;
-		bool            isMoving;
-		bool            isRetired;
+		int                 id;
+		SceneObjectType     type;
+		const BoundingBox  *boundingBox;
+		const Common::Rect *screenRectangle;
+		float               distanceToCamera;
+		bool                isPresent;
+		bool                isClickable;
+		bool                isObstacle;
+		int                 unknown1;
+		bool                isTarget;
+		bool                isMoving;
+		bool                isRetired;
 	};
 
 	BladeRunnerEngine *_vm;

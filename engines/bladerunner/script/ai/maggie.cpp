@@ -45,6 +45,14 @@ enum kMaggieStates {
 	kMaggieStateDead         = 16
 };
 
+AIScriptMaggie::AIScriptMaggie(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	var_45F3F8 = 0;
+	var_45F3FC = 0;
+	var_45F400 = 0;
+	var_45F404 = 0;
+	var_45F408 = 0;
+}
+
 void AIScriptMaggie::Initialize() {
 	_animationState = kMaggieStateIdle;
 	_animationFrame = 0;

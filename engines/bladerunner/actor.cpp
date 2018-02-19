@@ -249,18 +249,18 @@ void Actor::timerUpdate(int timerId) {
 void Actor::movementTrackNext(bool omitAiScript) {
 	bool hasNextMovement;
 	int waypointSetId;
-	bool run;
+	bool running;
 	int angle;
 	int delay;
 	int waypointId;
 	Vector3 waypointPosition;
 	bool arrived;
 
-	hasNextMovement = _movementTrack->next(&waypointId, &delay, &angle, &run);
+	hasNextMovement = _movementTrack->next(&waypointId, &delay, &angle, &running);
 	_movementTrackNextWaypointId = waypointId;
 	_movementTrackNextDelay = delay;
 	_movementTrackNextAngle = angle;
-	_movementTrackNextRunning = run;
+	_movementTrackNextRunning = running;
 	if (hasNextMovement) {
 		if (angle == -1) {
 			angle = 0;
@@ -269,7 +269,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 		_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
 		if (_setId == waypointSetId && waypointSetId == _vm->_actors[0]->_setId) {
 			stopWalking(false);
-			_walkInfo->setup(_id, run, _position, waypointPosition, false, &arrived);
+			_walkInfo->setup(_id, running, _position, waypointPosition, false, &arrived);
 
 			_movementTrackWalkingToWaypointId = waypointId;
 			_movementTrackDelayOnNextWaypoint = delay;
@@ -966,22 +966,24 @@ void Actor::combatModeOn(int a2, int a3, int otherActorId, int a5, int animation
 	_animationModeCombatWalk = animationModeCombatWalk;
 	_animationModeCombatRun = animationModeCombatRun;
 	_inCombat = true;
-	if (_id != kActorMcCoy)
+	if (_id != kActorMcCoy) {
 		_combatInfo->combatOn(_id, a2, a3, otherActorId, a5, a9, a10, a11, ammoDamage, a13, a14);
+	}
 	stopWalking(false);
 	changeAnimationMode(_animationModeCombatIdle, false);
 	int i;
 	for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 		Actor *otherActor = _vm->_actors[i];
 		if (i != _id && otherActor->_setId == _setId && !otherActor->_isRetired) {
-			//TODO: _vm->actorScript->OtherAgentEnteredCombatMode(i, _id, 1);
+			_vm->_aiScripts->otherAgentEnteredCombatMode(i, _id, true);
 		}
 	}
 }
 
 void Actor::combatModeOff() {
-	if (_id > 0)
+	if (_id != kActorMcCoy) {
 		_combatInfo->combatOff();
+	}
 	_inCombat = false;
 	stopWalking(false);
 	changeAnimationMode(kAnimationModeIdle, false);
@@ -989,7 +991,7 @@ void Actor::combatModeOff() {
 	for (i = 0; i < (int)_vm->_gameInfo->getActorCount(); i++) {
 		Actor *otherActor = _vm->_actors[i];
 		if (i != _id && otherActor->_setId == _setId && !otherActor->_isRetired) {
-			//TODO: _vm->actorScript->OtherAgentEnteredCombatMode(i, _id, 0);
+			_vm->_aiScripts->otherAgentEnteredCombatMode(i, _id, false);
 		}
 	}
 }
