@@ -42,7 +42,8 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 	_window->update();
 
 	while (!_vm->shouldExit()) {
-		Common::KeyCode keyCode = waitForKey(msg);
+		Common::KeyState keyState = waitForKey(msg);
+		const Common::KeyCode keyCode = keyState.keycode;
 
 		bool refresh = false;
 		if ((keyCode == Common::KEYCODE_BACKSPACE || keyCode == Common::KEYCODE_DELETE)
@@ -50,9 +51,9 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 			line.deleteLastChar();
 			refresh = true;
 		} else if (line.size() < maxLen && (line.size() > 0 || keyCode != Common::KEYCODE_SPACE)
-				&& ((isNumeric && keyCode >= Common::KEYCODE_0 && keyCode < Common::KEYCODE_9) ||
-				   (!isNumeric && keyCode >= Common::KEYCODE_SPACE && keyCode < Common::KEYCODE_DELETE))) {
-			line += (char)keyCode;
+				&& ((isNumeric && keyState.ascii >= '0' && keyState.ascii <= '9') ||
+				   (!isNumeric && keyState.ascii >= ' ' && keyState.ascii <= (char)127))) {
+			line += keyState.ascii;
 			refresh = true;
 		} else if (keyCode == Common::KEYCODE_RETURN || keyCode == Common::KEYCODE_KP_ENTER) {
 			break;
@@ -72,7 +73,7 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 	return line.size();
 }
 
-Common::KeyCode Input::waitForKey(const Common::String &msg) {
+Common::KeyState Input::waitForKey(const Common::String &msg) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Windows &windows = *_vm->_windows;
@@ -85,7 +86,7 @@ Common::KeyCode Input::waitForKey(const Common::String &msg) {
 	bool flag = !_vm->_startupWindowActive && !windows[25]._enabled
 		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_17;
 
-	Common::KeyCode ch = Common::KEYCODE_INVALID;
+	Common::KeyState ks;
 	while (!_vm->shouldExit()) {
 		events.updateGameCounter();
 
@@ -101,9 +102,7 @@ Common::KeyCode Input::waitForKey(const Common::String &msg) {
 		events.wait(1);
 
 		if (events.isKeyPending()) {
-			Common::KeyState keyState;
-			events.getKey(keyState);
-			ch = keyState.keycode;
+			events.getKey(ks);
 			break;
 		}
 	}
@@ -114,7 +113,7 @@ Common::KeyCode Input::waitForKey(const Common::String &msg) {
 	intf._tillMove = oldTillMove;
 	intf._upDoorText = oldUpDoorText;
 
-	return ch;
+	return ks;
 }
 
 void Input::animateCursor() {

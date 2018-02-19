@@ -34,7 +34,7 @@ private:
 	/**
 	 * Draws the text input and cursor and waits until the user presses a key
 	 */
-	Common::KeyCode waitForKey(const Common::String &msg);
+	Common::KeyState waitForKey(const Common::String &msg);
 
 	/**
 	 * Animates the box text cursor
