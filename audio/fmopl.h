@@ -24,6 +24,7 @@
 #define AUDIO_FMOPL_H
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 #include "common/func.h"
 #include "common/ptr.h"
@@ -163,7 +164,7 @@ public:
 	/**
 	 * Start the OPL with callbacks.
 	 */
-	void start(TimerCallback *callback, int timerFrequency = kDefaultCallbackFrequency);
+	void start(TimerCallback *callback, int timerFrequency = kDefaultCallbackFrequency, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 
 	/**
 	 * Stop the OPL
@@ -187,7 +188,7 @@ protected:
 	/**
 	 * Start the callbacks.
 	 */
-	virtual void startCallbacks(int timerFrequency) = 0;
+	virtual void startCallbacks(int timerFrequency, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) = 0;
 
 	/**
 	 * Stop the callbacks.
@@ -216,7 +217,7 @@ public:
 
 protected:
 	// OPL API
-	void startCallbacks(int timerFrequency);
+	virtual void startCallbacks(int timerFrequency, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	void stopCallbacks();
 
 private:
@@ -252,7 +253,7 @@ public:
 
 protected:
 	// OPL API
-	void startCallbacks(int timerFrequency);
+	virtual void startCallbacks(int timerFrequency, Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	void stopCallbacks();
 
 	/**

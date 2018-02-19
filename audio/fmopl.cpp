@@ -191,9 +191,9 @@ OPL *Config::create(DriverId driver, OplType type) {
 	}
 }
 
-void OPL::start(TimerCallback *callback, int timerFrequency) {
+void OPL::start(TimerCallback *callback, int timerFrequency, Audio::Mixer::SoundType soundType) {
 	_callback.reset(callback);
-	startCallbacks(timerFrequency);
+	startCallbacks(timerFrequency, soundType);
 }
 
 void OPL::stop() {
@@ -219,7 +219,7 @@ void RealOPL::setCallbackFrequency(int timerFrequency) {
 	startCallbacks(timerFrequency);
 }
 
-void RealOPL::startCallbacks(int timerFrequency) {
+void RealOPL::startCallbacks(int timerFrequency, Audio::Mixer::SoundType soundType) {
 	_baseFreq = timerFrequency;
 	assert(_baseFreq > 0);
 
@@ -308,9 +308,9 @@ int EmulatedOPL::getRate() const {
 	return g_system->getMixer()->getOutputRate();
 }
 
-void EmulatedOPL::startCallbacks(int timerFrequency) {
+void EmulatedOPL::startCallbacks(int timerFrequency, Audio::Mixer::SoundType soundType) {
 	setCallbackFrequency(timerFrequency);
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	g_system->getMixer()->playStream(soundType, _handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 void EmulatedOPL::stopCallbacks() {
