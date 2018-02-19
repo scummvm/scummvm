@@ -28,14 +28,17 @@
 
 namespace Xeen {
 
-/*------------------------------------------------------------------------*/
-
-Sound::Sound(XeenEngine *vm, Audio::Mixer *mixer): Music(),
-		_mixer(mixer), _soundOn(true) {
+Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _soundOn(true), _musicOn(true),
+		_songData(nullptr), _effectsData(nullptr), _musicSide(0) {
+	_SoundDriver = new AdlibSoundDriver();
 }
 
 Sound::~Sound() {
-	stopSound();
+	stopAllAudio();
+
+	delete _SoundDriver;
+	delete[] _effectsData;
+	delete[] _songData;
 }
 
 void Sound::playSound(Common::SeekableReadStream &s, int unused) {
@@ -70,7 +73,7 @@ void Sound::stopSound() {
 	_mixer->stopHandle(_soundHandle);
 }
 
-bool Sound::isPlaying() const {
+bool Sound::isSoundPlaying() const {
 	return _mixer->isSoundHandleActive(_soundHandle);
 }
 
@@ -93,7 +96,100 @@ void Sound::updateSoundSettings() {
 	if (!_soundOn)
 		stopFX();
 
-	Music::updateSoundSettings();
+	_musicOn = !ConfMan.getBool("music_mute");
+	if (!_musicOn)
+		stopSong();
+}
+
+void Sound::loadEffectsData() {
+	// Stop any prior FX
+	stopFX();
+	delete[] _effectsData;
+
+	// Load in an entire driver so we have quick access to the effects data
+	// that's hardcoded within it
+	File file("blastmus");
+	byte *effectsData = new byte[file.size()];
+	file.seek(0);
+	file.read(effectsData, file.size());
+	file.close();
+	_effectsData = effectsData;
+
+	// Locate the playFX routine
+	const byte *fx = effectsData + READ_LE_UINT16(effectsData + 10) + 12;
+	assert(READ_BE_UINT16(fx + 28) == 0x81FB);
+	uint numEffects = READ_LE_UINT16(fx + 30);
+
+	assert(READ_BE_UINT16(fx + 36) == 0x8B87);
+	const byte *table = effectsData + READ_LE_UINT16(fx + 38);
+
+	// Extract the effects offsets
+	_effectsOffsets.resize(numEffects);
+	for (uint idx = 0; idx < numEffects; ++idx)
+		_effectsOffsets[idx] = READ_LE_UINT16(&table[idx * 2]);
+}
+
+void Sound::playFX(uint effectId) {
+	stopFX();
+	loadEffectsData();
+
+	if (effectId < _effectsOffsets.size()) {
+		const byte *dataP = &_effectsData[_effectsOffsets[effectId]];
+		_SoundDriver->playFX(effectId, dataP);
+	}
+}
+
+void Sound::stopFX() {
+	_SoundDriver->stopFX();
+}
+
+int Sound::songCommand(uint commandId, byte volume) {
+	int result = _SoundDriver->songCommand(commandId, volume);
+	if (commandId == STOP_SONG) {
+		delete[] _songData;
+		_songData = nullptr;
+	}
+
+	return result;
+}
+
+void Sound::playSong(Common::SeekableReadStream &stream) {
+	stopSong();
+	if (!_musicOn)
+		return;
+
+	byte *songData = new byte[stream.size()];
+	stream.seek(0);
+	stream.read(songData, stream.size());
+	_songData = songData;
+
+	_SoundDriver->playSong(_songData);
+}
+
+void Sound::playSong(const Common::String &name, int param) {
+	_priorMusic = _currentMusic;
+	_currentMusic = name;
+
+	Common::File mf;
+	if (mf.open(name)) {
+		playSong(mf);
+	}
+	else {
+		File f(name, _musicSide);
+		playSong(f);
+	}
+}
+
+void Sound::setMusicOn(bool isOn) {
+	ConfMan.setBool("music_mute", !isOn);
+	if (isOn)
+		ConfMan.setBool("mute", false);
+
+	g_vm->syncSoundSettings();
+}
+
+bool Sound::isMusicPlaying() const {
+	return _SoundDriver->isPlaying();
 }
 
 } // End of namespace Xeen

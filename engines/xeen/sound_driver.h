@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef XEEN_MUSIC_H
-#define XEEN_MUSIC_H
+#ifndef XEEN_SOUND_DRIVER_H
+#define XEEN_SOUND_DRIVER_H
 
 #include "audio/fmopl.h"
 #include "audio/mixer.h"
@@ -44,14 +44,14 @@ enum MusicCommand {
 	GET_STATUS = 0xFFE0
 };
 
-class MusicDriver;
+class SoundDriver;
 
-typedef bool (MusicDriver::*CommandFn)(const byte *&srcP, byte param);
+typedef bool (SoundDriver::*CommandFn)(const byte *&srcP, byte param);
 
 /**
- * Base class for music drivers
+ * Base class for sound drivers
  */
-class MusicDriver {
+class SoundDriver {
 protected:
 	struct Subroutine {
 		const byte *_returnP;
@@ -145,12 +145,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	MusicDriver();
+	SoundDriver();
 
 	/**
 	 * Destructor
 	 */
-	virtual ~MusicDriver();
+	virtual ~SoundDriver();
 
 	/**
 	 * Starts an special effect playing
@@ -178,7 +178,7 @@ public:
 	bool isPlaying() const { return _musicPlaying; }
 };
 
-class AdlibMusicDriver : public MusicDriver {
+class AdlibSoundDriver : public SoundDriver {
 	struct RegisterValue {
 		uint8 _regNum;
 		uint8 _value;
@@ -281,12 +281,12 @@ public:
 	/**
 	 * Constructor
 	 */
-	AdlibMusicDriver();
+	AdlibSoundDriver();
 
 	/**
 	 * Destructor
 	 */
-	virtual ~AdlibMusicDriver();
+	virtual ~AdlibSoundDriver();
 
 	/**
 	 * Starts an special effect playing
@@ -304,93 +304,6 @@ public:
 	virtual int songCommand(uint commandId, byte volume = 0);
 };
 
-class Music {
-private:
-	MusicDriver *_musicDriver;
-	const byte *_effectsData;
-	Common::Array<uint16> _effectsOffsets;
-	const byte *_songData;
-private:
-	/**
-	 * Loads effects data that was embedded in the music driver
-	 */
-	void loadEffectsData();
-
-	/**
-	 * Updates any playing music
-	 */
-	void update();
-public:
-	bool _musicOn;
-	Common::String _currentMusic, _priorMusic;
-	int _musicSide;
-public:
-	Music();
-	virtual ~Music();
-
-	/**
-	 * Starts an effect playing
-	 */
-	void playFX(uint effectId);
-
-	/**
-	 * Stops any currently playing FX
-	 */
-	void stopFX();
-
-	/**
-	 * Executes special music command
-	 */
-	int songCommand(uint commandId, byte volume = 0);
-
-	/**
-	 * Stops any currently playing music
-	 */
-	void stopSong() { songCommand(STOP_SONG); }
-
-	/**
-	 * Restart a previously playing song (which must still be loaded)
-	 */
-	void restartSong() { songCommand(RESTART_SONG); }
-
-	/**
-	 * Sets the music volume
-	 */
-	void setMusicVolume(byte volume) { songCommand(SET_VOLUME, volume); }
-
-	/**
-	 * Plays a song
-	 */
-	void playSong(Common::SeekableReadStream &stream);
-
-	/**
-	 * Plays a song
-	 */
-	void playSong(const Common::String &name, int param = 0);
-
-	/**
-	 * Plays a song
-	 */
-	void playSong(const byte *data) {
-		_musicDriver->playSong(data);
-	}
-
-	/**
-	 * Returns true if music is playing
-	 */
-	bool isMusicPlaying() const;
-
-	/**
-	 * Sets whether music is on
-	 */
-	void setMusicOn(bool isOn);
-
-	/**
-	 * Called to reload sound settings
-	 */
-	virtual void updateSoundSettings();
-};
-
 } // End of namespace Xeen
 
-#endif /* XEEN_MUSIC_H */
+#endif /* XEEN_SOUND_DRIVER_H */

@@ -100,7 +100,7 @@ void XeenEngine::initialize() {
 	_saves = new SavesManager(_targetName);
 	_screen = new Screen(this);
 	_scripts = new Scripts(this);
-	_sound = new Sound(this, _mixer);
+	_sound = new Sound(_mixer);
 	_spells = new Spells(this);
 	_windows = new Windows();
 

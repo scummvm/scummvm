@@ -40,13 +40,13 @@ MODULE_OBJS := \
 	interface_scene.o \
 	locations.o \
 	map.o \
-	music.o \
 	party.o \
 	resources.o \
 	saves.o \
 	screen.o \
 	scripts.o \
 	sound.o \
+	sound_driver.o \
 	spells.o \
 	sprites.o \
 	window.o \

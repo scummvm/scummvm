@@ -146,7 +146,7 @@ void BaseLocation::drawAnim(bool flag) {
 
 	// TODO: Figure out a clean way to split method into individual location classes
 	if (_locationActionId == BLACKSMITH) {
-		if (sound.isPlaying()) {
+		if (sound.isSoundPlaying()) {
 			if (_isDarkCc) {
 				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
@@ -168,9 +168,9 @@ void BaseLocation::drawAnim(bool flag) {
 
 	switch (_locationActionId) {
 	case BANK:
-		if (sound.isPlaying() || (_isDarkCc && _animFrame)) {
+		if (sound.isSoundPlaying() || (_isDarkCc && _animFrame)) {
 			if (_isDarkCc) {
-				if (sound.isPlaying() || _animFrame == 1) {
+				if (sound.isSoundPlaying() || _animFrame == 1) {
 					_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
 						Common::Point(8, 30));
 				} else if (_animFrame > 1) {
@@ -186,7 +186,7 @@ void BaseLocation::drawAnim(bool flag) {
 		break;
 
 	case GUILD:
-		if (!sound.isPlaying()) {
+		if (!sound.isSoundPlaying()) {
 			if (_isDarkCc) {
 				if (_animFrame) {
 					_animFrame ^= 1;
@@ -199,20 +199,20 @@ void BaseLocation::drawAnim(bool flag) {
 		break;
 
 	case TAVERN:
-		if (sound.isPlaying() && _isDarkCc) {
+		if (sound.isSoundPlaying() && _isDarkCc) {
 			_townSprites[4].draw(0, _vm->getRandomNumber(7), Common::Point(153, 49));
 		}
 		break;
 
 	case TEMPLE:
-		if (sound.isPlaying()) {
+		if (sound.isSoundPlaying()) {
 			_townSprites[3].draw(0, _vm->getRandomNumber(2, 4), Common::Point(8, 8));
 
 		}
 		break;
 
 	case TRAINING:
-		if (sound.isPlaying()) {
+		if (sound.isSoundPlaying()) {
 			if (_isDarkCc) {
 				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 			}
@@ -1362,7 +1362,7 @@ int ReaperCutscene::show() {
 		checkEvents(g_vm);
 		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
-	} while (sound.isPlaying() || _subtitleCtr);
+	} while (sound.isSoundPlaying() || _subtitleCtr);
 
 	sprites2.draw(0, 0, Common::Point(0, 0));
 	if (_isDarkCc)
@@ -1393,7 +1393,7 @@ int ReaperCutscene::show() {
 		checkEvents(g_vm);
 		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
-	} while (!g_vm->shouldExit() && sound.isPlaying());
+	} while (!g_vm->shouldExit() && sound.isSoundPlaying());
 
 	sprites2.draw(0, 0, Common::Point(0, 0));
 	if (_isDarkCc)
@@ -1616,7 +1616,7 @@ int GolemCutscene::show() {
 			sprites2[0].draw(0, 2, Common::Point(idx + g_vm->getRandomNumber(9) - 5,
 				g_vm->getRandomNumber(9) - 5), SPRFLAG_800);
 		
-		if (!_isDarkCc && !sound.isPlaying())
+		if (!_isDarkCc && !sound.isSoundPlaying())
 			sound.playSound("ogre.voc");
 
 		events.wait(1);
@@ -1633,7 +1633,7 @@ int GolemCutscene::show() {
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
-	while (sound.isPlaying()) {
+	while (sound.isSoundPlaying()) {
 		events.updateGameCounter();
 
 		events.wait(1);
@@ -1666,7 +1666,7 @@ int GolemCutscene::show() {
 		checkEvents(g_vm);
 		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
-	} while (sound.isPlaying() || _subtitleCtr);
+	} while (sound.isSoundPlaying() || _subtitleCtr);
 
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
@@ -1681,7 +1681,7 @@ int GolemCutscene::show() {
 
 	if (!_isDarkCc) {
 		sound.playSound("ogre.voc");
-		while (!g_vm->shouldExit() && sound.isPlaying())
+		while (!g_vm->shouldExit() && sound.isSoundPlaying())
 			events.pollEventsAndWait();
 
 		sound.playSound(_mazeFlag ? "golem16.voc" : "golem14.voc");
@@ -1711,7 +1711,7 @@ int GolemCutscene::show() {
 		checkEvents(g_vm);
 		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
-	} while (!g_vm->shouldExit() && sound.isPlaying());
+	} while (!g_vm->shouldExit() && sound.isSoundPlaying());
 
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
@@ -1721,7 +1721,7 @@ int GolemCutscene::show() {
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
-	while (!g_vm->shouldExit() && sound.isPlaying()) {
+	while (!g_vm->shouldExit() && sound.isSoundPlaying()) {
 		events.updateGameCounter();
 		events.wait(1);
 		checkEvents(g_vm);
@@ -1984,7 +1984,7 @@ int DwarfCutscene::show() {
 				if (g_vm->shouldExit() || _buttonValue)
 					goto exit;
 			}
-		} while (sound.isPlaying() || _subtitleCtr);
+		} while (sound.isSoundPlaying() || _subtitleCtr);
 
 		while (!g_vm->shouldExit() && events.timeElapsed() < 3)
 			events.pollEventsAndWait();
@@ -2166,7 +2166,7 @@ int SphinxCutscene::show() {
 			checkEvents(g_vm);
 			if (g_vm->shouldExit() || _buttonValue)
 				goto exit;
-		} while (sound.isPlaying() || _subtitleCtr);
+		} while (sound.isSoundPlaying() || _subtitleCtr);
 
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));

@@ -242,7 +242,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 			sound.playSound(_INTRO_VOCS[lineCtr]);
 		}
 
-		for (int frameCtr = 0, lookup = 0; sound.isPlaying() || _subtitleSize; ) {
+		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() || _subtitleSize; ) {
 			groupo.draw(0, 0);
 			groupo.draw(0, 1, Common::Point(160, 0));
 
@@ -315,7 +315,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 
 			events.updateGameCounter();
 			while (events.timeElapsed() < _INTRO_FRAMES_WAIT[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup]
-					&& sound.isPlaying()) {
+					&& sound.isSoundPlaying()) {
 				events.pollEventsAndWait();
 				if (events.isKeyMousePressed())
 					return false;
@@ -436,7 +436,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	bool flag = false;
 	for (int idx1 = 1; idx1 < 7; ++idx1) {
 		for (int idx2 = 0; idx2 < COUNTS1[idx1 - 1]; ++idx2) {
-			if (flag && !sound.isPlaying()) {
+			if (flag && !sound.isSoundPlaying()) {
 				flag = false;
 				sound.playFX(34);
 			} else if (!flag && idx1 == 1 && idx2 == 6) {
@@ -541,7 +541,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 
 			showSubtitles(0);
 			WAIT(3);
-		} while (sound.isPlaying() || _subtitleSize > 0);
+		} while (sound.isSoundPlaying() || _subtitleSize > 0);
 	}
 
 	// Laugh
@@ -663,7 +663,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 
 			showSubtitles();
 			WAIT(3);
-		} while (sound.isPlaying() || _subtitleSize);
+		} while (sound.isSoundPlaying() || _subtitleSize);
 
 		king.draw(0, 0, Common::Point(0, 0));
 		king.draw(0, 1, Common::Point(160, 0));
@@ -946,7 +946,7 @@ bool CloudsCutscenes::showCloudsEnding5() {
 
 		showSubtitles();
 		WAIT(3);
-	} while (sound.isPlaying() || _subtitleSize);
+	} while (sound.isSoundPlaying() || _subtitleSize);
 
 	king.draw(0, 0, Common::Point(0, 0));
 	king.draw(0, 1, Common::Point(160, 0));

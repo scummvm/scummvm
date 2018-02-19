@@ -162,7 +162,7 @@ void WorldOfXeenEngine::death() {
 			}
 		}
 
-		if (!_sound->isPlaying())
+		if (!_sound->isSoundPlaying())
 			idx = 23;
 	}
 
@@ -187,11 +187,11 @@ void WorldOfXeenEngine::dream() {
 		_events->pollEventsAndWait();
 
 	_sound->playSound("dreams2.voc", 1);
-	while (!shouldExit() && _sound->isPlaying())
+	while (!shouldExit() && _sound->isSoundPlaying())
 		_events->pollEventsAndWait();
 
 	_sound->playSound("laff1.voc", 1);
-	while (!shouldExit() && _sound->isPlaying())
+	while (!shouldExit() && _sound->isSoundPlaying())
 		_events->pollEventsAndWait();
 
 	_events->updateGameCounter();

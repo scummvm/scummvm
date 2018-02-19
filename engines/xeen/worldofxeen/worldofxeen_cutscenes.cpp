@@ -78,7 +78,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 
 	windows[41].writeString("\x1\xD");
 	screen.fadeOut();
-	while (!_vm->shouldExit() && sound.isPlaying())
+	while (!_vm->shouldExit() && sound.isSoundPlaying())
 		events.pollEventsAndWait();
 
 	sound.playSong("nwblksmt.m");
@@ -211,7 +211,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 
 	frame = 0;
 	for (int idx = 185; idx > 68 && !_vm->shouldExit(); idx -= 3) {
-		if (!sound.isPlaying())
+		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
 		events.updateGameCounter();
@@ -226,7 +226,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	}
 
 	for (int idx = 0; idx < 17 && !_vm->shouldExit(); ++idx) {
-		if (!sound.isPlaying())
+		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
 		events.updateGameCounter();
@@ -326,7 +326,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 	sound.playSound("cast.voc");
 
 	for (int idx = 0; idx < 5 && !_vm->shouldExit(); ++idx) {
-		if (!sound.isPlaying())
+		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
 		events.updateGameCounter();
@@ -342,7 +342,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 
 	frame = 0;
 	for (int idx = 0; idx < 16 && !_vm->shouldExit(); ++idx) {
-		if (!sound.isPlaying())
+		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
 		events.updateGameCounter();
@@ -359,7 +359,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 
 	frame = 0;
 	for (int idx = 11; idx < 82 && !_vm->shouldExit(); ++idx) {
-		if (!sound.isPlaying())
+		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
 		events.updateGameCounter();
@@ -505,7 +505,7 @@ void WorldOfXeenCutscenes::worldEnding3() {
 	for (int idx = 0; idx < 52 && !_vm->shouldExit(); ++idx) {
 		if (idx == 28)
 			sound.playSound("click.voc");
-		if (!sound.isPlaying())
+		if (!sound.isSoundPlaying())
 			sound.playSound("comet.voc");
 
 		events.updateGameCounter();
@@ -587,7 +587,7 @@ void WorldOfXeenCutscenes::worldEnding4() {
 	screen.fadeIn();
 
 	for (int idx = 0; idx < 89 && !_vm->shouldExit(); ++idx) {
-		if (!sound.isPlaying())
+		if (!sound.isSoundPlaying())
 			sound.playSound("comet.voc");
 		if (idx == 19 || idx == 60)
 			sound.playSound("click.voc");
@@ -609,7 +609,7 @@ void WorldOfXeenCutscenes::worldEnding4() {
 	screen.fadeIn();
 
 	for (int idx = 0; idx < 138 && !_vm->shouldExit(); ++idx) {
-		if (!sound.isPlaying() && idx > 98)
+		if (!sound.isSoundPlaying() && idx > 98)
 			sound.playSound("rumble.voc");
 
 		events.updateGameCounter();

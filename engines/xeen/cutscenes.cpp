@@ -92,7 +92,7 @@ bool Cutscenes::subtitlesWait(uint minTime) {
 }
 
 bool Cutscenes::waitForLineOrSound() {
-	while (_vm->_sound->isPlaying() || _subtitleSize) {
+	while (_vm->_sound->isSoundPlaying() || _subtitleSize) {
 		showSubtitles();
 		_vm->_events->pollEventsAndWait();
 		if (_vm->_events->isKeyMousePressed())

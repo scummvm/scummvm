@@ -245,7 +245,7 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 		pyramid.draw(0, idx, Common::Point(132, 62));
 		showSubtitles();
 
-		if (!sound.isPlaying() && !phar2)
+		if (!sound.isSoundPlaying() && !phar2)
 			sound.playSound("pharoh1b.voc");
 
 		events.updateGameCounter();
@@ -303,11 +303,11 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 
 		if (idx == SCREEN_WIDTH)
 			sound.playSound(PHAR2_VOC[0]);
-		if (!sound.isPlaying() && phar2Index < 4)
+		if (!sound.isSoundPlaying() && phar2Index < 4)
 			sound.playSound(PHAR2_VOC[1 + phar2Index++]);
 
 		if (phar2Index == 4) {
-			if (!sound.isPlaying() && !_subtitleSize)
+			if (!sound.isSoundPlaying() && !_subtitleSize)
 				break;
 		}
 
@@ -464,7 +464,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 	// Play landing thud
 	sound.playSound("thud.voc");
 	while (!_vm->shouldExit() && !events.isKeyMousePressed()
-		&& sound.isPlaying()) {
+		&& sound.isSoundPlaying()) {
 		events.pollEventsAndWait();
 	}
 
@@ -585,7 +585,7 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 			sound.playSound("yes1.voc");
 
 		// Animate Corak speaking
-		sc08.draw(0, sound.isPlaying() ? getSpeakingFrame(0, 2) : 0);
+		sc08.draw(0, sound.isSoundPlaying() ? getSpeakingFrame(0, 2) : 0);
 		showSubtitles();
 		WAIT(3);
 	}
@@ -938,7 +938,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 	screen.saveBackground();
 	screen.horizMerge(SCREEN_WIDTH);
 
-	while (sound.isPlaying()) {
+	while (sound.isSoundPlaying()) {
 		WAIT(1);
 	}
 
@@ -1072,7 +1072,7 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 	showSubtitles();
 	sound.playSound("ido2.voc");
 
-	for (int idx = 0; sound.isPlaying() || _subtitleSize; ) {
+	for (int idx = 0; sound.isSoundPlaying() || _subtitleSize; ) {
 		screen.restoreBackground();
 		sc26[idx / 8].draw(0, idx % 8, Common::Point(58, 25));
 		WAIT(2);
@@ -1083,7 +1083,7 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 	screen.loadBackground("sc270001.raw");
 	screen.saveBackground();
 
-	while (sound.isPlaying() && !_vm->shouldExit()) {
+	while (sound.isSoundPlaying() && !_vm->shouldExit()) {
 		events.pollEventsAndWait();
 		if (events.isKeyMousePressed())
 			return false;

@@ -22,7 +22,7 @@
 
 #include "common/md5.h"
 #include "common/config-manager.h"
-#include "xeen/music.h"
+#include "xeen/sound_driver.h"
 #include "xeen/xeen.h"
 #include "xeen/files.h"
 
@@ -32,19 +32,19 @@ namespace Xeen {
 
 /*------------------------------------------------------------------------*/
 
-MusicDriver::MusicDriver() : _musicPlaying(false), _fxPlaying(false),
+SoundDriver::SoundDriver() : _musicPlaying(false), _fxPlaying(false),
 		_musCountdownTimer(0), _fxCountdownTimer(0), _musDataPtr(nullptr),
 		_fxDataPtr(nullptr), _fxStartPtr(nullptr), _musStartPtr(nullptr),
 		_exclude7(false), _frameCtr(0) {
 	_channels.resize(CHANNEL_COUNT);
 }
 
-MusicDriver::~MusicDriver() {
+SoundDriver::~SoundDriver() {
 	_musicPlaying = _fxPlaying = false;
 	_musCountdownTimer = _fxCountdownTimer = 0;
 }
 
-void MusicDriver::execute() {
+void SoundDriver::execute() {
 	bool isFX = false;
 	const byte *srcP = nullptr;
 	const byte *startP = nullptr;
@@ -72,7 +72,7 @@ void MusicDriver::execute() {
 	} while (0);
 
 	++_frameCtr;
-	debugC(3, kDebugSound, "\nMusicDriver frame - #%x", _frameCtr);
+	debugC(3, kDebugSound, "\nSoundDriver frame - #%x", _frameCtr);
 
 	// Main loop
 	bool breakFlag = false;
@@ -88,7 +88,7 @@ void MusicDriver::execute() {
 }
 
 
-bool MusicDriver::musCallSubroutine(const byte *&srcP, byte param) {
+bool SoundDriver::musCallSubroutine(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musCallSubroutine");
 	if (_musSubroutines.size() < 16) {
 		const byte *returnP = srcP + 2;
@@ -100,7 +100,7 @@ bool MusicDriver::musCallSubroutine(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool MusicDriver::musSetCountdown(const byte *&srcP, byte param) {
+bool SoundDriver::musSetCountdown(const byte *&srcP, byte param) {
 	// Set the countdown timer
 	if (!param)
 		param = *srcP++;
@@ -113,24 +113,24 @@ bool MusicDriver::musSetCountdown(const byte *&srcP, byte param) {
 	return true;
 }
 
-bool MusicDriver::cmdNoOperation(const byte *&srcP, byte param) {
+bool SoundDriver::cmdNoOperation(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "cmdNoOperation");
 	return false;
 }
 
-bool MusicDriver::musSkipWord(const byte *&srcP, byte param) {
+bool SoundDriver::musSkipWord(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musSkipWord");
 	srcP += 2;
 	return false;
 }
 
-bool MusicDriver::cmdFreezeFrequency(const byte *&srcP, byte param) {
+bool SoundDriver::cmdFreezeFrequency(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "cmdFreezeFrequency %d", param);
 	_channels[param]._changeFrequency = false;
 	return false;
 }
 
-bool MusicDriver::cmdChangeFrequency(const byte *&srcP, byte param) {
+bool SoundDriver::cmdChangeFrequency(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "cmdChangeFrequency %d", param);
 
 	if (param != 7 || !_exclude7) {
@@ -146,7 +146,7 @@ bool MusicDriver::cmdChangeFrequency(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool MusicDriver::musEndSubroutine(const byte *&srcP, byte param) {
+bool SoundDriver::musEndSubroutine(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musEndSubroutine %d", param);
 
 	if (param != 15) {
@@ -160,7 +160,7 @@ bool MusicDriver::musEndSubroutine(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool MusicDriver::fxCallSubroutine(const byte *&srcP, byte param) {
+bool SoundDriver::fxCallSubroutine(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxCallSubroutine");
 
 	if (_fxSubroutines.size() < 16) {
@@ -173,7 +173,7 @@ bool MusicDriver::fxCallSubroutine(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool MusicDriver::fxSetCountdown(const byte *&srcP, byte param) {
+bool SoundDriver::fxSetCountdown(const byte *&srcP, byte param) {
 	// Set the countdown timer
 	if (!param)
 		param = *srcP++;
@@ -186,7 +186,7 @@ bool MusicDriver::fxSetCountdown(const byte *&srcP, byte param) {
 	return true;
 }
 
-bool MusicDriver::fxEndSubroutine(const byte *&srcP, byte param) {
+bool SoundDriver::fxEndSubroutine(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxEndSubroutine %d", param);
 
 	if (param != 15) {
@@ -199,7 +199,7 @@ bool MusicDriver::fxEndSubroutine(const byte *&srcP, byte param) {
 	return false;
 }
 
-void MusicDriver::playFX(uint effectId, const byte *data) {
+void SoundDriver::playFX(uint effectId, const byte *data) {
 	if (!_fxPlaying || effectId < 7 || effectId >= 11) {
 		_fxDataPtr = _fxStartPtr = data;
 		_fxCountdownTimer = 0;
@@ -211,13 +211,13 @@ void MusicDriver::playFX(uint effectId, const byte *data) {
 	debugC(1, kDebugSound, "Starting FX %d", effectId);
 }
 
-void MusicDriver::stopFX() {
+void SoundDriver::stopFX() {
 	resetFX();
 	_fxPlaying = false;
 	_fxStartPtr = _fxDataPtr = nullptr;
 }
 
-void MusicDriver::playSong(const byte *data) {
+void SoundDriver::playSong(const byte *data) {
 	_musDataPtr = _musStartPtr = data;
 	_musSubroutines.clear();
 	_musCountdownTimer = 0;
@@ -225,7 +225,7 @@ void MusicDriver::playSong(const byte *data) {
 	debugC(1, kDebugSound, "Starting song");
 }
 
-int MusicDriver::songCommand(uint commandId, byte volume) {
+int SoundDriver::songCommand(uint commandId, byte volume) {
 	if (commandId == STOP_SONG) {
 		_musicPlaying = false;
 	} else if (commandId == RESTART_SONG) {
@@ -237,76 +237,76 @@ int MusicDriver::songCommand(uint commandId, byte volume) {
 	return 0;
 }
 
-const CommandFn MusicDriver::MUSIC_COMMANDS[16] = {
-	&MusicDriver::musCallSubroutine,   &MusicDriver::musSetCountdown,
-	&MusicDriver::musSetInstrument,    &MusicDriver::cmdNoOperation,
-	&MusicDriver::musSetPitchWheel,    &MusicDriver::musSkipWord,
-	&MusicDriver::musSetPanning,       &MusicDriver::cmdNoOperation,
-	&MusicDriver::musFade,             &MusicDriver::musStartNote,
-	&MusicDriver::musSetVolume,        &MusicDriver::musInjectMidi,
-	&MusicDriver::musPlayInstrument,   &MusicDriver::cmdFreezeFrequency,
-	&MusicDriver::cmdChangeFrequency,  &MusicDriver::musEndSubroutine
+const CommandFn SoundDriver::MUSIC_COMMANDS[16] = {
+	&SoundDriver::musCallSubroutine,   &SoundDriver::musSetCountdown,
+	&SoundDriver::musSetInstrument,    &SoundDriver::cmdNoOperation,
+	&SoundDriver::musSetPitchWheel,    &SoundDriver::musSkipWord,
+	&SoundDriver::musSetPanning,       &SoundDriver::cmdNoOperation,
+	&SoundDriver::musFade,             &SoundDriver::musStartNote,
+	&SoundDriver::musSetVolume,        &SoundDriver::musInjectMidi,
+	&SoundDriver::musPlayInstrument,   &SoundDriver::cmdFreezeFrequency,
+	&SoundDriver::cmdChangeFrequency,  &SoundDriver::musEndSubroutine
 };
 
-const CommandFn MusicDriver::FX_COMMANDS[16] = {
-	&MusicDriver::fxCallSubroutine,    &MusicDriver::fxSetCountdown,
-	&MusicDriver::fxSetInstrument,     &MusicDriver::fxSetVolume,
-	&MusicDriver::fxMidiReset,         &MusicDriver::fxMidiDword,
-	&MusicDriver::fxSetPanning,        &MusicDriver::fxChannelOff,
-	&MusicDriver::fxFade,              &MusicDriver::fxStartNote,
-	&MusicDriver::cmdNoOperation,      &MusicDriver::fxInjectMidi,
-	&MusicDriver::fxPlayInstrument,    &MusicDriver::cmdFreezeFrequency,
-	&MusicDriver::cmdChangeFrequency,  &MusicDriver::fxEndSubroutine
+const CommandFn SoundDriver::FX_COMMANDS[16] = {
+	&SoundDriver::fxCallSubroutine,    &SoundDriver::fxSetCountdown,
+	&SoundDriver::fxSetInstrument,     &SoundDriver::fxSetVolume,
+	&SoundDriver::fxMidiReset,         &SoundDriver::fxMidiDword,
+	&SoundDriver::fxSetPanning,        &SoundDriver::fxChannelOff,
+	&SoundDriver::fxFade,              &SoundDriver::fxStartNote,
+	&SoundDriver::cmdNoOperation,      &SoundDriver::fxInjectMidi,
+	&SoundDriver::fxPlayInstrument,    &SoundDriver::cmdFreezeFrequency,
+	&SoundDriver::cmdChangeFrequency,  &SoundDriver::fxEndSubroutine
 };
 
 /*------------------------------------------------------------------------*/
 
-AdlibMusicDriver::AdlibMusicDriver() : _field180(0), _field181(0), _field182(0),
+AdlibSoundDriver::AdlibSoundDriver() : _field180(0), _field181(0), _field182(0),
 		_volume(127) {
 	Common::fill(&_musInstrumentPtrs[0], &_musInstrumentPtrs[16], (const byte *)nullptr);
 	Common::fill(&_fxInstrumentPtrs[0], &_fxInstrumentPtrs[16], (const byte *)nullptr);
 
 	_opl = OPL::Config::create();
 	_opl->init();
-	_opl->start(new Common::Functor0Mem<void, AdlibMusicDriver>(this, &AdlibMusicDriver::onTimer), CALLBACKS_PER_SECOND);
+	_opl->start(new Common::Functor0Mem<void, AdlibSoundDriver>(this, &AdlibSoundDriver::onTimer), CALLBACKS_PER_SECOND);
 	initialize();
 }
 
-AdlibMusicDriver::~AdlibMusicDriver() {
+AdlibSoundDriver::~AdlibSoundDriver() {
 	_opl->stop();
 	delete _opl;
 }
 
-void AdlibMusicDriver::onTimer() {
+void AdlibSoundDriver::onTimer() {
 	Common::StackLock slock(_driverMutex);
 	execute();
 	flush();
 }
 
-void AdlibMusicDriver::initialize() {
+void AdlibSoundDriver::initialize() {
 	write(1, 0x20);
 	write(8, 0);
 	write(0xBD, 0);
 
 	resetFrequencies();
-	AdlibMusicDriver::resetFX();
+	AdlibSoundDriver::resetFX();
 }
 
-void AdlibMusicDriver::playFX(uint effectId, const byte *data) {
+void AdlibSoundDriver::playFX(uint effectId, const byte *data) {
 	Common::StackLock slock(_driverMutex);
-	MusicDriver::playFX(effectId, data);
+	SoundDriver::playFX(effectId, data);
 }
 
-void AdlibMusicDriver::playSong(const byte *data) {
+void AdlibSoundDriver::playSong(const byte *data) {
 	Common::StackLock slock(_driverMutex);
-	MusicDriver::playSong(data);
+	SoundDriver::playSong(data);
 	_field180 = 0;
 	resetFrequencies();
 }
 
-int AdlibMusicDriver::songCommand(uint commandId, byte volume) {
+int AdlibSoundDriver::songCommand(uint commandId, byte volume) {
 	Common::StackLock slock(_driverMutex);
-	MusicDriver::songCommand(commandId, volume);
+	SoundDriver::songCommand(commandId, volume);
 
 	if (commandId == STOP_SONG) {
 		_field180 = 0;
@@ -328,12 +328,12 @@ int AdlibMusicDriver::songCommand(uint commandId, byte volume) {
 	return 0;
 }
 
-void AdlibMusicDriver::write(int reg, int val) {
+void AdlibSoundDriver::write(int reg, int val) {
 	_queue.push(RegisterValue(reg, val));
 	debugC(9, kDebugSound, "%.2x %.2x", reg, val);
 }
 
-void AdlibMusicDriver::flush() {
+void AdlibSoundDriver::flush() {
 	Common::StackLock slock(_driverMutex);
 
 	while (!_queue.empty()) {
@@ -342,7 +342,7 @@ void AdlibMusicDriver::flush() {
 	}
 }
 
-void AdlibMusicDriver::pausePostProcess() {
+void AdlibSoundDriver::pausePostProcess() {
 	if (_field180 && ((_field181 += _field180) < 0)) {
 		if (--_field182 < 0) {
 			_musicPlaying = false;
@@ -393,7 +393,7 @@ void AdlibMusicDriver::pausePostProcess() {
 	}
 }
 
-void AdlibMusicDriver::resetFX() {
+void AdlibSoundDriver::resetFX() {
 	if (!_exclude7) {
 		_channels[7]._frequency = 0;
 		setFrequency(7, 0);
@@ -407,28 +407,28 @@ void AdlibMusicDriver::resetFX() {
 	setOutputLevel(8, 63);
 }
 
-void AdlibMusicDriver::resetFrequencies() {
+void AdlibSoundDriver::resetFrequencies() {
 	for (int opNum = 6; opNum >= 0; --opNum) {
 		_channels[opNum]._frequency = 0;
 		setFrequency(opNum, 0);
 	}
 }
 
-void AdlibMusicDriver::setFrequency(byte operatorNum, uint frequency) {
+void AdlibSoundDriver::setFrequency(byte operatorNum, uint frequency) {
 	write(0xA0 + operatorNum, frequency & 0xff);
 	write(0xB0 + operatorNum, (frequency >> 8));
 }
 
-uint AdlibMusicDriver::calcFrequency(byte note) {
+uint AdlibSoundDriver::calcFrequency(byte note) {
 	return WAVEFORMS[note & 0x1F] + ((note & 0xE0) << 5);
 }
 
-void AdlibMusicDriver::setOutputLevel(byte channelNum, uint level) {
+void AdlibSoundDriver::setOutputLevel(byte channelNum, uint level) {
 	write(0x40 + OPERATOR2_INDEXES[channelNum], level |
 		(_channels[channelNum]._scalingValue & 0xC0));
 }
 
-void AdlibMusicDriver::playInstrument(byte channelNum, const byte *data) {
+void AdlibSoundDriver::playInstrument(byte channelNum, const byte *data) {
 	byte op1 = OPERATOR1_INDEXES[channelNum];
 	byte op2 = OPERATOR2_INDEXES[channelNum];
 	debugC(2, kDebugSound, "---START-playInstrument - %d", channelNum);
@@ -458,7 +458,7 @@ void AdlibMusicDriver::playInstrument(byte channelNum, const byte *data) {
 	debugC(2, kDebugSound, "---END-playInstrument");
 }
 
-bool AdlibMusicDriver::musSetInstrument(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::musSetInstrument(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musSetInstrument %d", param);
 	_musInstrumentPtrs[param] = srcP;
 	srcP += 26;
@@ -466,21 +466,21 @@ bool AdlibMusicDriver::musSetInstrument(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::musSetPitchWheel(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::musSetPitchWheel(const byte *&srcP, byte param) {
 	// Adlib does not support this
 	debugC(3, kDebugSound, "musSetPitchWheel");
 	srcP += 2;
 	return false;
 }
 
-bool AdlibMusicDriver::musSetPanning(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::musSetPanning(const byte *&srcP, byte param) {
 	// Adlib does not support this
 	debugC(3, kDebugSound, "musSetPanning");
 	++srcP;
 	return false;
 }
 
-bool AdlibMusicDriver::musFade(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::musFade(const byte *&srcP, byte param) {
 	++srcP;
 	if (param < 7)
 		setFrequency(param, _channels[param]._frequency);
@@ -489,7 +489,7 @@ bool AdlibMusicDriver::musFade(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::musStartNote(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::musStartNote(const byte *&srcP, byte param) {
 	if (param < 7) {
 		byte note = *srcP++;
 		++srcP;		// Second byte is fade, which is unused by Adlib
@@ -508,7 +508,7 @@ bool AdlibMusicDriver::musStartNote(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::musSetVolume(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::musSetVolume(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "musSetVolume %d", (int)*srcP);
 
 	if (*srcP++ == 5 && !_field180) {
@@ -520,7 +520,7 @@ bool AdlibMusicDriver::musSetVolume(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::musInjectMidi(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::musInjectMidi(const byte *&srcP, byte param) {
 	// Adlib does not support MIDI. So simply keep skipping over bytes
 	// until an 'F7' byte is found that flags the end of the MIDI data
 	debugC(3, kDebugSound, "musInjectMidi");
@@ -530,7 +530,7 @@ bool AdlibMusicDriver::musInjectMidi(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::musPlayInstrument(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::musPlayInstrument(const byte *&srcP, byte param) {
 	byte instrument = *srcP++;
 	debugC(3, kDebugSound, "musPlayInstrument %d, %d", param, instrument);
 
@@ -540,7 +540,7 @@ bool AdlibMusicDriver::musPlayInstrument(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::fxSetInstrument(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxSetInstrument(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxSetInstrument %d", param);
 	_fxInstrumentPtrs[param] = srcP;
 	srcP += 11;
@@ -548,7 +548,7 @@ bool AdlibMusicDriver::fxSetInstrument(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::fxSetVolume(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxSetVolume(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxSetVolume %d", (int)*srcP);
 
 	if (!_field180 && (!_exclude7 || param != 7)) {
@@ -560,17 +560,17 @@ bool AdlibMusicDriver::fxSetVolume(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::fxMidiReset(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxMidiReset(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxMidiReset");
 	return false;
 }
 
-bool AdlibMusicDriver::fxMidiDword(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxMidiDword(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxMidiDword");
 	return false;
 }
 
-bool AdlibMusicDriver::fxSetPanning(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxSetPanning(const byte *&srcP, byte param) {
 	byte note = *srcP++;
 	debugC(3, kDebugSound, "fxSetPanning - %x", note);
 
@@ -583,14 +583,14 @@ bool AdlibMusicDriver::fxSetPanning(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::fxChannelOff(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxChannelOff(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "fxChannelOff %d", param);
 	_channels[param]._frequency &= ~0x2000;
 	write(0xB0 + param, _channels[param]._frequency);
 	return false;
 }
 
-bool AdlibMusicDriver::fxFade(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxFade(const byte *&srcP, byte param) {
 	uint freq = calcFrequency(*srcP++);
 	debugC(3, kDebugSound, "fxFade %d %x", param, freq);
 
@@ -602,7 +602,7 @@ bool AdlibMusicDriver::fxFade(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::fxStartNote(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxStartNote(const byte *&srcP, byte param) {
 	if (!_exclude7 || param != 7) {
 		byte note = *srcP++;
 		uint freq = calcFrequency(note);
@@ -620,7 +620,7 @@ bool AdlibMusicDriver::fxStartNote(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::fxInjectMidi(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxInjectMidi(const byte *&srcP, byte param) {
 	// Surpringly, unlike the musInjectMidi, this version doesn't have
 	// any logic to skip over following MIDI data. Which must mean the opcode
 	// and/or it's data aren't present in the admus driver file
@@ -628,7 +628,7 @@ bool AdlibMusicDriver::fxInjectMidi(const byte *&srcP, byte param) {
 	return false;
 }
 
-bool AdlibMusicDriver::fxPlayInstrument(const byte *&srcP, byte param) {
+bool AdlibSoundDriver::fxPlayInstrument(const byte *&srcP, byte param) {
 	byte instrument = *srcP++;
 	debugC(3, kDebugSound, "fxPlayInstrument %d, %d", param, instrument);
 
@@ -638,134 +638,20 @@ bool AdlibMusicDriver::fxPlayInstrument(const byte *&srcP, byte param) {
 	return false;
 }
 
+/*------------------------------------------------------------------------*/
 
-const byte AdlibMusicDriver::OPERATOR1_INDEXES[CHANNEL_COUNT] = {
+const byte AdlibSoundDriver::OPERATOR1_INDEXES[CHANNEL_COUNT] = {
 	0, 1, 2, 8, 9, 0xA, 0x10, 0x11, 0x12
 };
 
-const byte AdlibMusicDriver::OPERATOR2_INDEXES[CHANNEL_COUNT] = {
+const byte AdlibSoundDriver::OPERATOR2_INDEXES[CHANNEL_COUNT] = {
 	3, 4, 5, 0xB, 0xC, 0xD, 0x13, 0x14, 0x15
 };
 
-const uint AdlibMusicDriver::WAVEFORMS[24] = {
+const uint AdlibSoundDriver::WAVEFORMS[24] = {
 	0, 347, 388, 436, 462, 519, 582, 646,
 	0, 362, 406, 455, 484, 542, 607, 680,
 	0, 327, 367, 412, 436, 489, 549, 618
 };
-
-/*------------------------------------------------------------------------*/
-
-Music::Music() : _musicDriver(nullptr), _songData(nullptr),
-		_effectsData(nullptr), _musicOn(true), _musicSide(0) {
-	_musicDriver = new AdlibMusicDriver();
-}
-
-Music::~Music() {
-	stopSong();
-	delete _musicDriver;
-	delete[] _effectsData;
-	delete[] _songData;
-}
-
-void Music::loadEffectsData() {
-	// Check whether it's the first load, or switching from intro to game data
-//	if (_effectsData && !(_archiveType == INTRO_ARCHIVE && File::_currentArchive != INTRO_ARCHIVE))
-//		return;
-
-	// Stop any prior FX
-	stopFX();
-	delete[] _effectsData;
-//	_archiveType = File::_currentArchive;
-
-	// Load in an entire driver so we have quick access to the effects data
-	// that's hardcoded within it
-	File file("blastmus");
-	byte *effectsData = new byte[file.size()];
-	file.seek(0);
-	file.read(effectsData, file.size());
-	file.close();
-	_effectsData = effectsData;
-
-	// Locate the playFX routine
-	const byte *fx = effectsData + READ_LE_UINT16(effectsData + 10) + 12;
-	assert(READ_BE_UINT16(fx + 28) == 0x81FB);
-	uint numEffects = READ_LE_UINT16(fx + 30);
-
-	assert(READ_BE_UINT16(fx + 36) == 0x8B87);
-	const byte *table = effectsData + READ_LE_UINT16(fx + 38);
-
-	// Extract the effects offsets
-	_effectsOffsets.resize(numEffects);
-	for (uint idx = 0; idx < numEffects; ++idx)
-		_effectsOffsets[idx] = READ_LE_UINT16(&table[idx * 2]);
-}
-
-void Music::playFX(uint effectId) {
-	stopFX();
-	loadEffectsData();
-
-	if (effectId < _effectsOffsets.size()) {
-		const byte *dataP = &_effectsData[_effectsOffsets[effectId]];
-		_musicDriver->playFX(effectId, dataP);
-	}
-}
-
-void Music::stopFX() {
-	_musicDriver->stopFX();
-}
-
-int Music::songCommand(uint commandId, byte volume) {
-	int result = _musicDriver->songCommand(commandId, volume);
-	if (commandId == STOP_SONG) {
-		delete[] _songData;
-		_songData = nullptr;
-	}
-
-	return result;
-}
-
-void Music::playSong(Common::SeekableReadStream &stream) {
-	stopSong();
-	if (!_musicOn)
-		return;
-
-	byte *songData = new byte[stream.size()];
-	stream.seek(0);
-	stream.read(songData, stream.size());
-	_songData = songData;
-
-	_musicDriver->playSong(_songData);
-}
-
-void Music::playSong(const Common::String &name, int param) {
-	_priorMusic = _currentMusic;
-	_currentMusic = name;
-
-	Common::File mf;
-	if (mf.open(name)) {
-		playSong(mf);
-	} else {
-		File f(name, _musicSide);
-		playSong(f);
-	}
-}
-
-void Music::setMusicOn(bool isOn) {
-	ConfMan.setBool("music_mute", !isOn);
-	if (isOn)
-		ConfMan.setBool("mute", false);
-
-	g_vm->syncSoundSettings();
-}
-
-void Music::updateSoundSettings() {
-	_musicOn = !ConfMan.getBool("music_mute");
-	if (!_musicOn)
-		stopSong();
-}
-
-bool Music::isMusicPlaying() const {
-	return _musicDriver->isPlaying();
-}
 
 } // End of namespace Xeen
