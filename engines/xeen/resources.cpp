@@ -1693,6 +1693,12 @@ const char *const Resources::NO_LOADING_IN_COMBAT =
 	"No Loading Allowed in Combat!";
 const char *const Resources::NO_SAVING_IN_COMBAT =
 	"No Saving Allowed in Combat!";
+const char *const Resources::QUICK_FIGHT_TEXT = "\r\fd\x3""c\v000\t000QuickFight Options\n\n"
+	"%s\x3l\n\n"
+	"Current\x3r\n"
+	"\t000%s\x2\x3""c\v122\t021\f37N\f04ext\t060Exit\x1";
+const char *const Resources::QUICK_FIGHT_OPTIONS[4] = { "Attack", "Cast", "Block", "Run" };
+
 const char *const Resources::WORLD_END_TEXT[9] = {
 	"\n\n\n\n\n\n\n"
 	"Congratulations Adventurers!\n\n"

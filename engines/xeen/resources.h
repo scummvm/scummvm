@@ -361,6 +361,8 @@ public:
 	static const char *const MR_WIZARD;
 	static const char *const NO_LOADING_IN_COMBAT;
 	static const char *const NO_SAVING_IN_COMBAT;
+	static const char *const QUICK_FIGHT_TEXT;
+	static const char *const QUICK_FIGHT_OPTIONS[4];
 	static const char *const WORLD_END_TEXT[9];
 	static const char *const WORLD_CONGRATULATIONS;
 	static const char *const WORLD_CONGRATULATIONS2;

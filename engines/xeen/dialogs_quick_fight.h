@@ -20,22 +20,41 @@
  *
  */
 
-#ifndef XEEN_DIALOGS_FIGHT_OPTIONS_H
-#define XEEN_DIALOGS_FIGHT_OPTIONS_H
+#ifndef XEEN_DIALOGS_QUICK_FIGHT_H
+#define XEEN_DIALOGS_QUICK_FIGHT_H
 
+#include "xeen/character.h"
 #include "xeen/dialogs.h"
+#include "xeen/sprites.h"
 
 namespace Xeen {
 
-class FightOptions : public ButtonContainer {
+class QuickFight : public ButtonContainer {
 private:
-	FightOptions(XeenEngine *vm) : ButtonContainer(vm) {}
+	SpriteResource _icons;
+	Character *_currentChar;
+private:
+	/**
+	 * Constructor
+	 */
+	QuickFight(XeenEngine *vm, Character *currentChar);
 
+	/**
+	 * Executes the display of the dialog
+	 */
 	void execute();
+
+	/**
+	 * Load butons for the dialog
+	 */
+	void loadButtons();
 public:
-	static void show(XeenEngine *vm);
+	/**
+	 * Show the dialog
+	 */
+	static void show(XeenEngine *vm, Character *currentChar);
 };
 
 } // End of namespace Xeen
 
-#endif /* XEEN_DIALOGS_FIGHT_OPTIONS_H */
+#endif /* XEEN_DIALOGS_QUICK_FIGHT_H */

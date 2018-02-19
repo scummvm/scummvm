@@ -20,7 +20,6 @@ MODULE_OBJS := \
 	dialogs_create_char.o \
 	dialogs_dismiss.o \
 	dialogs_exchange.o \
-	dialogs_fight_options.o \
 	dialogs_info.o \
 	dialogs_input.o \
 	dialogs_items.o \
@@ -29,6 +28,7 @@ MODULE_OBJS := \
 	dialogs_party.o \
 	dialogs_query.o \
 	dialogs_quests.o \
+	dialogs_quick_fight.o \
 	dialogs_quick_ref.o \
 	dialogs_spells.o \
 	dialogs_whowill.o \

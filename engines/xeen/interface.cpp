@@ -24,7 +24,7 @@
 #include "xeen/dialogs_char_info.h"
 #include "xeen/dialogs_control_panel.h"
 #include "xeen/dialogs_message.h"
-#include "xeen/dialogs_fight_options.h"
+#include "xeen/dialogs_quick_fight.h"
 #include "xeen/dialogs_info.h"
 #include "xeen/dialogs_items.h"
 #include "xeen/dialogs_map.h"
@@ -1578,8 +1578,8 @@ void Interface::doCombat() {
 				break;
 
 			case Common::KEYCODE_o:
-				// Fight Options
-				FightOptions::show(_vm);
+				// Quick Fight Options
+				QuickFight::show(_vm, combat._combatParty[combat._whosTurn]);
 				highlightChar(combat._whosTurn);
 				break;
 
