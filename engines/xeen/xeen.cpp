@@ -110,6 +110,9 @@ void XeenEngine::initialize() {
 	// Set graphics mode
 	initGraphics(320, 200);
 
+	// Setup mixer
+	syncSoundSettings();
+
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
 		int saveSlot = ConfMan.getInt("save_slot");
@@ -247,6 +250,8 @@ Common::String XeenEngine::printK2(uint value) {
 }
 
 void XeenEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
 	if (_sound)
 		_sound->updateSoundSettings();
 }
