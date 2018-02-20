@@ -90,6 +90,12 @@ public:
 	~FileManager();
 
 	/**
+	 * Sets up the CC files
+	 * @returns		Returns true if the setup was successful
+	 */
+	bool setup();
+
+	/**
 	 * Set which game side files to use
 	 * @param ccMode	0=Clouds, 1=Dark Side
 	 */

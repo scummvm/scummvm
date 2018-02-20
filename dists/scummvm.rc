@@ -71,6 +71,9 @@ toon.dat               FILE    "dists/engine-data/toon.dat"
 #if ENABLE_WINTERMUTE == STATIC_PLUGIN
 wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
 #endif
+#if ENABLE_XEEN == STATIC_PLUGIN
+xeen.ccs         FILE    "dists/engine-data/xeen.ccs"
+#endif
 #if ENABLE_AGI        == STATIC_PLUGIN
 pred.dic               FILE    "dists/pred.dic"
 #endif

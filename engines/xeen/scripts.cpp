@@ -1560,7 +1560,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 
 		// Check if the character class can cast the particular spell
 		for (int idx = 0; idx < 39; ++idx) {
-			if (Res.SPELLS_ALLOWED[category][idx] == val) {
+			if (Res.SPELLS_ALLOWED[category][idx] == (int)val) {
 				// Can cast it. Check if the player has it in their spellbook
 				if (ps._spells[idx])
 					v = val;

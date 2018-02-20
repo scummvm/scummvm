@@ -1203,7 +1203,7 @@ void DarkSideCutscenes::showDarkSideScore(uint endingScore) {
 	saves.saveGame();
 }
 
-void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, const char *msg3) {
+void DarkSideCutscenes::showPharaohEndText(const Common::String &msg1, const Common::String &msg2, const Common::String &msg3) {
 	const int YLIST[32] = {
 		-3, -3, -3, -3, -3, -3, -3, -3, -1, 0, 0, 0, 0, 0, 0, 0,
 		-1, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3
@@ -1225,8 +1225,12 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 	Windows &windows = *_vm->_windows;
 	SpriteResource claw("claw.int");
 	SpriteResource dragon1("dragon1.int");
-	int numPages = 0 + (msg1 ? 1 : 0) + (msg2 ? 1 : 0) + (msg3 ? 1 : 0);
-	const char *const text[3] = { msg1, msg2, msg3 };
+	int numPages = 0 + (msg1.empty() ? 0 : 1) + (msg2.empty() ? 0 : 1) + (msg3.empty() ? 0 : 1);
+	const char *const text[3] = { 
+		msg1.empty() ? nullptr : msg1.c_str(),
+		msg2.empty() ? nullptr : msg2.c_str(),
+		msg3.empty() ? nullptr : msg3.c_str()
+	};
 
 	screen.loadBackground("3room.raw");
 	screen.saveBackground();

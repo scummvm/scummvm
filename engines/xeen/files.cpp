@@ -218,16 +218,25 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
 /*------------------------------------------------------------------------*/
 
 FileManager::FileManager(XeenEngine *vm) {
-	Common::File f;
 	_isDarkCc = vm->getGameID() == GType_DarkSide;
-	
-	if (vm->getGameID() == GType_Swords) {
+	File::_xeenCc = File::_darkCc = nullptr;
+}
+
+FileManager::~FileManager() {
+	SearchMan.remove("intro");
+	SearchMan.remove("data");
+	delete File::_xeenCc;
+	delete File::_darkCc;
+}
+
+bool FileManager::setup() {
+	if (g_vm->getGameID() == GType_Swords) {
 		File::_xeenCc = nullptr;
 		File::_darkCc = new CCArchive("swrd.cc", "xeen", true);
 	} else {
-		File::_xeenCc = (vm->getGameID() == GType_DarkSide) ? nullptr :
+		File::_xeenCc = (g_vm->getGameID() == GType_DarkSide) ? nullptr :
 			new CCArchive("xeen.cc", "xeen", true);
-		File::_darkCc = (vm->getGameID() == GType_Clouds) ? nullptr :
+		File::_darkCc = (g_vm->getGameID() == GType_Clouds) ? nullptr :
 			new CCArchive("dark.cc", "dark", true);
 	}
 
@@ -236,15 +245,26 @@ FileManager::FileManager(XeenEngine *vm) {
 		SearchMan.add("intro", File::_introCc);
 	}
 
-	File::_currentArchive = vm->getGameID() == GType_DarkSide || vm->getGameID() == GType_Swords ?
+	File::_currentArchive = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
 		File::_darkCc : File::_xeenCc;
 	assert(File::_currentArchive);
-}
 
-FileManager::~FileManager() {
-	SearchMan.remove("intro");
-	delete File::_xeenCc;
-	delete File::_darkCc;
+	// Ensure the custom CC archive is present
+	File f;
+	if (!f.exists("xeen.ccs")) {
+		g_vm->GUIError("Could not find xeen.ccs data file");
+		return false;
+	}
+
+	// Verify the version of the CC is correct
+	CCArchive *dataCc = new CCArchive("xeen.ccs", "data", true);
+	if (!f.open("VERSION", *dataCc) || f.readUint32LE() != 1) {
+		g_vm->GUIError("xeen.ccs is out of date");
+		return false;
+	}
+	SearchMan.add("data", dataCc);
+
+	return true;
 }
 
 void FileManager::setGameCc(int ccMode) {

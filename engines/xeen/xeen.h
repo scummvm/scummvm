@@ -108,7 +108,10 @@ private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 private:
-	void initialize();
+	/**
+	 * Initializes all the engine sub-objects
+	 */
+	bool initialize();
 
 	// Engine APIs
 	virtual Common::Error run();
@@ -174,6 +177,11 @@ public:
 	int getRandomNumber(int maxNumber);
 
 	int getRandomNumber(int minNumber, int maxNumber);
+
+	/**
+	 * Displays an error message in a GUI dialog
+	 */
+	void GUIError(const char *msg, ...) GCC_PRINTF(2, 3);
 
 	/**
 	 * Returns true if the game should be exited (and likely return to game menu)

@@ -308,6 +308,9 @@ endif
 ifdef ENABLE_MACVENTURE
 DIST_FILES_ENGINEDATA+=macventure.dat
 endif
+ifdef ENABLE_XEEN
+DIST_FILES_ENGINEDATA+=xeen.ccs
+endif
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 
 # pred.dic is currently only used for the AGI engine

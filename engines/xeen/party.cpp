@@ -720,7 +720,7 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	w.update();
 	events.ipause(5);
 
-	const char *itemName = XeenItem::getItemName(category, treasureItem._id);
+	const char *itemName = XeenItem::getItemName(category, treasureItem._id).c_str();
 	w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), itemName));
 	w.update();
 	events.ipause(5);
@@ -817,7 +817,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		}
 
 		for (int idx = 0; idx < 39; ++idx) {
-			if (Res.SPELLS_ALLOWED[idx2][idx] == takeVal) {
+			if (Res.SPELLS_ALLOWED[idx2][idx] == (int)takeVal) {
 				ps._spells[idx] = false;
 				break;
 			}
@@ -1086,7 +1086,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		}
 
 		for (int idx = 0; idx < 39; ++idx) {
-			if (Res.SPELLS_ALLOWED[idx2][idx] == giveVal) {
+			if (Res.SPELLS_ALLOWED[idx2][idx] == (int)giveVal) {
 				ps._spells[idx] = true;
 				intf.spellFX(&ps);
 				break;

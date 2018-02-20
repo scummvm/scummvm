@@ -91,7 +91,7 @@ void Quests::execute() {
 					case 83:
 					case 84:
 						lines[count++] = Common::String::format("%d %s%c",
-							party._questItems[idx], Res.QUEST_ITEM_NAMES[idx],
+							party._questItems[idx], Res.QUEST_ITEM_NAMES[idx].c_str(),
 							party._questItems[idx] == 1 ? ' ' : 's');
 						break;
 					default:

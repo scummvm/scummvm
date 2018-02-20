@@ -86,10 +86,13 @@ XeenEngine::~XeenEngine() {
 	g_vm = nullptr;
 }
 
-void XeenEngine::initialize() {
+bool XeenEngine::initialize() {
 	// Create sub-objects of the engine
 	_files = new FileManager(this);
-	_resources = Resources::init(this);
+	if (!_files->setup())
+		return false;
+
+	_resources = new Resources();
 	_combat = new Combat(this);
 	_debugger = new Debugger(this);
 	_events = new EventsManager(this);
@@ -119,12 +122,13 @@ void XeenEngine::initialize() {
 		if (saveSlot >= 0 && saveSlot <= 999)
 			_loadSaveSlot = saveSlot;
 	}
+
+	return true;
 }
 
 Common::Error XeenEngine::run() {
-	initialize();
-
-	outerGameLoop();
+	if (initialize())
+		outerGameLoop();
 
 	return Common::kNoError;
 }
@@ -254,6 +258,18 @@ void XeenEngine::syncSoundSettings() {
 
 	if (_sound)
 		_sound->updateSoundSettings();
+}
+
+void XeenEngine::GUIError(const char *msg, ...) {
+	char buffer[STRINGBUFLEN];
+	va_list va;
+
+	// Generate the full error message
+	va_start(va, msg);
+	vsnprintf(buffer, STRINGBUFLEN, msg, va);
+	va_end(va);
+
+	GUIErrorMessage(buffer);
 }
 
 } // End of namespace Xeen

@@ -61,7 +61,7 @@ AttributeCategory XeenItem::getAttributeCategory() const {
 	return (AttributeCategory)idx;
 }
 
-const char *XeenItem::getItemName(ItemCategory category, uint id) {
+const Common::String &XeenItem::getItemName(ItemCategory category, uint id) {
 	if (id < 82)
 		return Res.ITEM_NAMES[category][id];
 
@@ -294,7 +294,7 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
 		displayNum,
-		Res.WEAPON_NAMES[i._id],
+		Res.WEAPON_NAMES[i._id].c_str(),
 		!i._bonusFlags ? "" : Res.BONUS_NAMES[i._bonusFlags & ITEMFLAG_BONUS_MASK],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
@@ -451,10 +451,10 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN.c_str() : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED.c_str() : "",
 		displayNum,
-		Res.ARMOR_NAMES[i._id],
+		Res.ARMOR_NAMES[i._id].c_str(),
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
@@ -568,10 +568,10 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN.c_str() : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED.c_str() : "",
 		displayNum,
-		Res.ARMOR_NAMES[i._id],
+		Res.ARMOR_NAMES[i._id].c_str(),
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
@@ -614,10 +614,10 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 
 	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
-		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
-		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
+		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN.c_str() : "",
+		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED.c_str() : "",
 		displayNum,
-		Res.ARMOR_NAMES[i._id],
+		Res.ARMOR_NAMES[i._id].c_str(),
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._id ? "\b " : ""
 	);
@@ -993,7 +993,7 @@ int Character::statColor(int amount, int threshold) {
 
 int Character::statBonus(uint statValue) const {
 	int idx;
-	for (idx = 0; Res.STAT_VALUES[idx] <= statValue; ++idx)
+	for (idx = 0; Res.STAT_VALUES[idx] <= (int)statValue; ++idx)
 		;
 
 	return Res.STAT_BONUSES[idx];

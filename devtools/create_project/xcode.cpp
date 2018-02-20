@@ -764,6 +764,7 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("dists/engine-data/toon.dat");
 		files.push_back("dists/engine-data/wintermute.zip");
 		files.push_back("dists/engine-data/macventure.dat");
+		files.push_back("dists/engine-data/xeen.ccs");
 		files.push_back("dists/pred.dic");
 		files.push_back("icons/scummvm.icns");
 	}

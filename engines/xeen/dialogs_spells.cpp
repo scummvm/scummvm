@@ -345,7 +345,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 			if (party._mazeId == 49 || party._mazeId == 37) {
 				for (uint spellId = 0; spellId < 76; ++spellId) {
 					int idx = 0;
-					while (idx < MAX_SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != spellId)
+					while (idx < MAX_SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != (int)spellId)
 						++idx;
 
 					// Handling if the spell is appropriate for the character's class
