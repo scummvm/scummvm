@@ -147,6 +147,93 @@ void Intro::onEntrance() {
 	leaveCutscene();
 }
 
+class Marquee {
+public:
+	enum MarqueeIndex {
+		kMarqueeIntro,
+		kMarqueeOutro
+	};
+
+	Marquee(SupernovaEngine *vm, MarqueeIndex id, const char *text)
+	    : _text(text)
+	    , _textBegin(text)
+	    , _delay(0)
+	    , _color(kColorLightBlue)
+	    , _loop(false)
+	    , _vm(vm)
+	{
+		if (id == kMarqueeIntro) {
+			_y = 191;
+			_loop = true;
+		} else if (id == kMarqueeOutro) {
+			_y = 1;
+		}
+		_textWidth = _vm->textWidth(_text);
+		_x = kScreenWidth / 2 - _textWidth / 2;
+		_vm->_textCursorX = _x;
+		_vm->_textCursorY = _y;
+		_vm->_textColor = _color;
+	}
+
+	void renderCharacter();
+
+private:
+	void clearText();
+
+	SupernovaEngine *_vm;
+	MarqueeIndex _id;
+	const char *const _textBegin;
+	const char *_text;
+	bool _loop;
+	int _delay;
+	int _color;
+	int _x;
+	int _y;
+	int _textWidth;
+};
+
+void Marquee::clearText() {
+	_vm->renderBox(_x, _y - 1, _textWidth + 1, 9, kColorBlack);
+}
+
+void Marquee::renderCharacter() {
+	if (_delay != 0) {
+		_delay--;
+		return;
+	}
+
+	switch (*_text) {
+	case '\233':
+		if (_loop) {
+			_loop = false;
+			_text = _textBegin;
+		}
+		break;
+	case '\0':
+		clearText();
+		_text++;
+		_textWidth = _vm->textWidth(_text);
+		_x = kScreenWidth / 2 - _textWidth / 2;
+		_vm->_textCursorX = _x;
+		_color = kColorLightBlue;
+		_vm->_textColor = _color;
+		break;
+	case '^':
+		_color = kColorLightYellow;
+		_vm->_textColor = _color;
+		_text++;
+		break;
+	case '#':
+		_delay = 50;
+		_text++;
+		break;
+	default:
+		_vm->renderText((uint16)*_text++);
+		_delay = 1;
+		break;
+	}
+}
+
 void Intro::titleScreen() {
 	// Newspaper
 	CursorMan.showMouse(false);
@@ -178,8 +265,16 @@ void Intro::titleScreen() {
 	_gm->wait2(1);
 	CursorMan.showMouse(true);
 	_vm->playSoundMod(kMusicIntro);
-	_gm->getInput();
-	// TODO: render animated text
+
+	Marquee marquee(_vm, Marquee::kMarqueeIntro, _introText.c_str());
+	while (!_vm->shouldQuit()) {
+		_vm->updateEvents();
+		marquee.renderCharacter();
+		if (_gm->_mouseClicked || _gm->_keyPressed)
+			break;
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	}
 	_vm->playSound(kAudioVoiceYeah);
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
 		_gm->wait2(1);
@@ -916,7 +1011,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 					_gm->wait2(3);
 				}
 			}
-			
+
 			_vm->renderImage(15);
 			setSectionVisible(14, false);
 			setSectionVisible(13, false);
@@ -3128,25 +3223,10 @@ bool AxacussStation::interact(Action verb, Object &obj1, Object &obj2) {
 		_gm->changeRoom(SIGN);
 	} else if ((verb == ACTION_WALK) && (obj1._id == DOOR) && obj1.hasProperty(OPENED)) {
 		_gm->great(0);
+		_gm->_guiEnabled = false;
 		_vm->paletteFadeOut();
-		_vm->setCurrentImage(35);
-		_vm->renderImage(0);
-		_vm->renderImage(1);
-		_vm->paletteFadeIn();
-		_gm->wait2(10);
-		for (int i = 8; i <= 21; i++) {
-			_vm->renderImage(i);
-			_gm->wait2(2);
-			_vm->renderImage(_gm->invertSection(i));
-		}
-		_gm->wait2(18);
-		_vm->renderImage(_gm->invertSection(1));
-		for (int i = 2; i <= 7; i++) {
-			_vm->renderImage(i);
-			_gm->wait2(3);
-			_vm->renderImage(_gm->invertSection(i));
-		}
-		_gm->outro();
+		_vm->_system->fillScreen(kColorBlack);
+		_gm->changeRoom(OUTRO);
 	} else
 		return false;
 
@@ -3192,6 +3272,45 @@ Outro::Outro(SupernovaEngine *vm, GameManager *gm) {
 }
 
 void Outro::onEntrance() {
+	_vm->setCurrentImage(35);
+	_vm->renderImage(0);
+	_vm->renderImage(1);
+	_vm->paletteFadeIn();
+	_gm->wait2(10);
+	for (int i = 8; i <= 21; i++) {
+		_vm->renderImage(i);
+		_gm->wait2(2);
+		_vm->renderImage(_gm->invertSection(i));
+	}
+	_gm->wait2(18);
+	_vm->renderImage(_gm->invertSection(1));
+	for (int i = 2; i <= 7; i++) {
+		_vm->renderImage(i);
+		_gm->wait2(3);
+		_vm->renderImage(_gm->invertSection(i));
+	}
+
+	_vm->playSoundMod(kMusicOutro);
+	Marquee marquee(_vm, Marquee::kMarqueeOutro, _outroText.c_str());
+	while (!_vm->shouldQuit()) {
+		_vm->updateEvents();
+		marquee.renderCharacter();
+		if (_gm->_mouseClicked || _gm->_keyPressed)
+			break;
+		g_system->updateScreen();
+		g_system->delayMillis(_vm->_delay);
+	}
+	_vm->paletteFadeOut();
+	_vm->setCurrentImage(55);
+	_vm->renderImage(0);
+	_vm->paletteFadeIn();
+	_gm->getInput();
+	_vm->paletteFadeOut();
+	_vm->_brightness = 1;
+
+	Common::Event event;
+	event.type = Common::EVENT_RTL;
+	_vm->getEventManager()->pushEvent(event);
 }
 
 void Outro::animation() {
