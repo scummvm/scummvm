@@ -50,6 +50,7 @@ void Context::reset() {
 	packedDepthStencilSupported = false;
 	unpackSubImageSupported = false;
 	framebufferObjectMultisampleSupported = false;
+	OESDepth24 = false;
 	multisampleMaxSamples = -1;
 }
 
@@ -96,7 +97,10 @@ void Context::initialize(ContextType contextType) {
 			EXTFramebufferMultisample = true;
 		} else if (token == "GL_EXT_framebuffer_blit") {
 			EXTFramebufferBlit = true;
+		} else if (token == "GL_OES_depth24") {
+			OESDepth24 = true;
 		}
+		
 	}
 
 	int glslVersion = getGLSLVersion();

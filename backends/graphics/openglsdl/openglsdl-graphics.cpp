@@ -476,10 +476,14 @@ void OpenGLSdlGraphicsManager::showOverlay() {
 	_overlayBackground = nullptr;
 
 	if (g_engine) {
+		if (_frameBuffer)
+			_frameBuffer->detach();
 		// If there is a game running capture the screen, so that it can be shown "below" the overlay.
 		_overlayBackground = new OpenGL::TiledSurface(_overlayWidth, _overlayHeight, _overlayFormat);
 		Graphics::Surface *background = _overlayBackground->getBackingSurface();
 		glReadPixels(0, 0, background->w, background->h, GL_RGBA, GL_UNSIGNED_BYTE, background->getPixels());
+		if (_frameBuffer)
+			_frameBuffer->attach();
 	}
 }
 

@@ -49,6 +49,7 @@
 
 #ifdef USE_GLES2
 #define GL_DEPTH24_STENCIL8 GL_DEPTH24_STENCIL8_OES
+#define GL_DEPTH_COMPONENT24 GL_DEPTH_COMPONENT24_OES
 #endif
 
 namespace OpenGL {
@@ -115,6 +116,9 @@ static void grabFramebufferObjectPointers() {
 static bool usePackedBuffer() {
 	return OpenGLContext.packedDepthStencilSupported;
 }
+static bool useDepthComponent24() {
+	return OpenGLContext.OESDepth24;
+}
 
 FrameBuffer::FrameBuffer(uint width, uint height) :
 		Texture(width, height) {
@@ -154,7 +158,7 @@ void FrameBuffer::init() {
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	} else {
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, _texWidth, _texHeight);
+		glRenderbufferStorage(GL_RENDERBUFFER, useDepthComponent24() ? GL_DEPTH_COMPONENT24 : GL_DEPTH_COMPONENT16, _texWidth, _texHeight);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
 
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[1]);
