@@ -26,6 +26,7 @@
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 
+#include "backends/events/sdl/sdl-events.h"
 #include "common/config-manager.h"
 #include "engines/engine.h"
 #include "graphics/pixelbuffer.h"
@@ -195,6 +196,8 @@ void OpenGLSdlGraphicsManager::createOrUpdateScreen() {
 	_screenFormat = _overlayFormat;
 
 	_screenChangeCount++;
+
+	_eventSource->resetKeyboardEmulation(effectiveWidth - 1, effectiveHeight - 1);
 
 #if !defined(AMIGAOS)
 	if (gameRenderTarget == kFramebuffer) {

@@ -33,11 +33,14 @@ protected:
 	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event) override;
 	bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) override;
+	bool handleKbdMouse(Common::Event &event) override;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) override;
 	bool handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) override;
 #endif
+
+	bool shouldGenerateMouseEvents();
 };
 
 #endif

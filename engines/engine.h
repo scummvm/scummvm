@@ -139,7 +139,14 @@ public:
 		 * The engine will need to read the actual resolution used by the
 		 * backend using OSystem::getWidth and OSystem::getHeight.
 		 */
-		kSupportsArbitraryResolutions // ResidualVM specific
+		kSupportsArbitraryResolutions, // ResidualVM specific
+
+		/**
+		 * Engine must receive joystick events because the game uses them.
+		 * For engines which have not this feature, joystick events are converted
+		 * to mouse events.
+		 */
+		kSupportsJoystick // ResidualVM specific
 	};
 
 

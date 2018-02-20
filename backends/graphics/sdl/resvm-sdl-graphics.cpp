@@ -265,7 +265,6 @@ bool ResVmSdlGraphicsManager::showMouse(bool visible) {
 	return true;
 }
 
-// ResidualVM specific method
 bool ResVmSdlGraphicsManager::lockMouse(bool lock) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (lock)
@@ -279,6 +278,14 @@ bool ResVmSdlGraphicsManager::lockMouse(bool lock) {
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
 #endif
 	return true;
+}
+
+bool ResVmSdlGraphicsManager::isMouseLocked() const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	return SDL_GetRelativeMouseMode() == SDL_TRUE;
+#else
+	return SDL_GrabMode() == SDL_GRAB_ON;
+#endif
 }
 
 void ResVmSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {

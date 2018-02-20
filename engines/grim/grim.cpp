@@ -1378,7 +1378,8 @@ void GrimEngine::clearEventQueue() {
 bool GrimEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime);
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsJoystick);
 }
 
 void GrimEngine::pauseEngineIntern(bool pause) {

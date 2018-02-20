@@ -122,6 +122,12 @@ public:
 	// Common::EventObserver API
 	bool notifyEvent(const Common::Event &event) override;
 
+	/**
+	 * Checks if mouse is locked or not.
+	 * Avoid to emulate a mouse movement from joystick if locked.
+	 */
+	bool isMouseLocked() const;
+
 protected:
 	const Capabilities &_capabilities;
 
