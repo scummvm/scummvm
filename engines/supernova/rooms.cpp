@@ -122,20 +122,20 @@ Intro::Intro(SupernovaEngine *vm, GameManager *gm) {
 
 	_shouldExit = false;
 
-	introText =
-		_vm->getGameString(kStringIntro1) +
-		_vm->getGameString(kStringIntro2) +
-		_vm->getGameString(kStringIntro3) +
-		_vm->getGameString(kStringIntro4) +
-		_vm->getGameString(kStringIntro5) +
-		_vm->getGameString(kStringIntro6) +
-		_vm->getGameString(kStringIntro7) +
-		_vm->getGameString(kStringIntro8) +
-		_vm->getGameString(kStringIntro9) +
-		_vm->getGameString(kStringIntro10) +
-		_vm->getGameString(kStringIntro11) +
-		_vm->getGameString(kStringIntro12) +
-		_vm->getGameString(kStringIntro13);
+	_introText =
+		_vm->getGameString(kStringIntro1) + '\0' +
+		_vm->getGameString(kStringIntro2) + '\0' +
+		_vm->getGameString(kStringIntro3) + '\0' +
+		_vm->getGameString(kStringIntro4) + '\0' +
+		_vm->getGameString(kStringIntro5) + '\0' +
+		_vm->getGameString(kStringIntro6) + '\0' +
+		_vm->getGameString(kStringIntro7) + '\0' +
+		_vm->getGameString(kStringIntro8) + '\0' +
+		_vm->getGameString(kStringIntro9) + '\0' +
+		_vm->getGameString(kStringIntro10) + '\0' +
+		_vm->getGameString(kStringIntro11) + '\0' +
+		_vm->getGameString(kStringIntro12) + '\0' +
+		_vm->getGameString(kStringIntro13) + '\0';
 }
 
 void Intro::onEntrance() {
@@ -3174,21 +3174,21 @@ Outro::Outro(SupernovaEngine *vm, GameManager *gm) {
 	_id = OUTRO;
 	_shown[0] = kShownFalse;
 
-	outroText =
-		_vm->getGameString(kStringOutro1) +
-		_vm->getGameString(kStringOutro2) +
-		_vm->getGameString(kStringOutro3) +
-		_vm->getGameString(kStringOutro4) +
-		_vm->getGameString(kStringOutro5) +
-		_vm->getGameString(kStringOutro6) +
-		_vm->getGameString(kStringOutro7) +
-		_vm->getGameString(kStringOutro8) +
-		_vm->getGameString(kStringOutro9) +
-		_vm->getGameString(kStringOutro10) +
-		_vm->getGameString(kStringOutro11) +
-		_vm->getGameString(kStringOutro12) +
-		_vm->getGameString(kStringOutro13) +
-		_vm->getGameString(kStringOutro14);
+	_outroText =
+		_vm->getGameString(kStringOutro1) + '\0' +
+		_vm->getGameString(kStringOutro2) + '\0' +
+		_vm->getGameString(kStringOutro3) + '\0' +
+		_vm->getGameString(kStringOutro4) + '\0' +
+		_vm->getGameString(kStringOutro5) + '\0' +
+		_vm->getGameString(kStringOutro6) + '\0' +
+		_vm->getGameString(kStringOutro7) + '\0' +
+		_vm->getGameString(kStringOutro8) + '\0' +
+		_vm->getGameString(kStringOutro9) + '\0' +
+		_vm->getGameString(kStringOutro10) + '\0' +
+		_vm->getGameString(kStringOutro11) + '\0' +
+		_vm->getGameString(kStringOutro12) + '\0' +
+		_vm->getGameString(kStringOutro13) + '\0' +
+		_vm->getGameString(kStringOutro14) + '\0';
 }
 
 void Outro::onEntrance() {

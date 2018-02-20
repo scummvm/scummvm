@@ -139,7 +139,7 @@ private:
 	void leaveCutscene();
 
 	bool _shouldExit;
-	Common::String introText;
+	Common::String _introText;
 };
 
 // Spaceship
@@ -1381,7 +1381,7 @@ private:
 	void animate(int filenumber, int section1, int section2, int section3, int section4, int duration,
 	             MessagePosition position, const char *text);
 
-	Common::String outroText;
+	Common::String _outroText;
 };
 
 }
