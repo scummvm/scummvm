@@ -202,6 +202,23 @@ static const DrasculaGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// Drascula Russian version (ScummVM repacked files)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.006", 1, "e464b99de7f226391337510d5c328258", 697173},
+				{NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			GF_PACKED,
+			GUIO1(GUIO_LINKSPEECHTOSFX)
+		},
+	},
+
 	//// Unpacked versions ////////////////////////////////////////////////////
 
 	{
@@ -289,6 +306,18 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("14.ald", "0746ed1a5cc8d9728f790c29813f4b43", 23059),
 			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_LINKSPEECHTOSFX)
+		},
+	},
+	{
+		// Drascula Russian version
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "4dfab170eae935a2e9889196df427a4a", 1426),
+			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_LINKSPEECHTOSFX)

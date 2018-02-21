@@ -246,6 +246,9 @@ Common::Error DrasculaEngine::run() {
 	case Common::IT_ITA:
 		_lang = kItalian;
 		break;
+	case Common::RU_RUS:
+		_lang = kRussian;
+		break;
 	default:
 		warning("Unknown game language. Falling back to English");
 		_lang = kEnglish;
