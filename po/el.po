@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-02-04 12:56+0100\n"
+"POT-Creation-Date: 2018-02-21 22:44+0100\n"
 "PO-Revision-Date: 2017-04-28 11:12+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2817,7 +2817,7 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Έλεγχος Ενημερώσεων..."
 
-#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:963
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:966
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
 #: engines/supernova/supernova.cpp:290 engines/teenagent/resources.cpp:97
@@ -2826,7 +2826,7 @@ msgstr "Έλεγχος Ενημερώσεων..."
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."
 
-#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:977
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:980
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
 #: engines/mortevielle/mortevielle.cpp:315 engines/supernova/supernova.cpp:300
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4930
@@ -2834,7 +2834,7 @@ msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."
 msgid "The '%s' engine data file is corrupt."
 msgstr "Το αρχειο παιχνιδιού '%s' είναι κατεστραμμένο."
 
-#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:988
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:991
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
 #: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
 #: engines/toon/toon.cpp:4941
@@ -2863,7 +2863,7 @@ msgid "Show scanlines"
 msgstr "Προβολή γραμμών σάρωσης"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
-#: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
+#: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
 #: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:452
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
@@ -2871,7 +2871,7 @@ msgid "Use original save/load screens"
 msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτωσης"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
-#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
+#: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
 msgid "Use the original save/load screens instead of the ScummVM ones"
