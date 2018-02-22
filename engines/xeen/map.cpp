@@ -738,27 +738,37 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 
 	if (s.isSaving()) {
 		// Save objects
-		for (uint i = 0; i < _objects.size(); ++i) {
-			mobStruct._pos = _objects[i]._position;
-			mobStruct._id = _objects[i]._id;
-			mobStruct._direction = _objects[i]._direction;
-			mobStruct.synchronize(s);
+		if (_objects.empty()) {
+			MobStruct nullStruct;
+			nullStruct.synchronize(s);
+		} else {
+			for (uint i = 0; i < _objects.size(); ++i) {
+				mobStruct._pos = _objects[i]._position;
+				mobStruct._id = _objects[i]._id;
+				mobStruct._direction = _objects[i]._direction;
+				mobStruct.synchronize(s);
+			}
 		}
 		mobStruct.endOfList();
 		mobStruct.synchronize(s);
 
 		// Save monsters
-		for (uint i = 0; i < _monsters.size(); ++i) {
-			mobStruct._pos = _monsters[i]._position;
-			mobStruct._id = _monsters[i]._id;
-			mobStruct._direction = DIR_NORTH;
-			mobStruct.synchronize(s);
+		if (_monsters.empty()) {
+			MobStruct nullStruct;
+			nullStruct.synchronize(s);
+		} else {
+			for (uint i = 0; i < _monsters.size(); ++i) {
+				mobStruct._pos = _monsters[i]._position;
+				mobStruct._id = _monsters[i]._id;
+				mobStruct._direction = DIR_NORTH;
+				mobStruct.synchronize(s);
+			}
 		}
 		mobStruct.endOfList();
 		mobStruct.synchronize(s);
 
 		// Save wall items
-		if (_wallItems.size() == 0) {
+		if (_wallItems.empty()) {
 			MobStruct nullStruct;
 			nullStruct._pos.x = nullStruct._pos.y = 0x80;
 			nullStruct.synchronize(s);
