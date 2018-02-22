@@ -253,7 +253,7 @@ int Scripts::checkEvents() {
 			intf.draw3d(true);
 			events.updateGameCounter();
 			events.wait(1);
-		} while (!events.isKeyMousePressed());
+		} while (!events.isKeyMousePressed() && !_vm->shouldExit());
 		events.clearEvents();
 
 		w.close();
