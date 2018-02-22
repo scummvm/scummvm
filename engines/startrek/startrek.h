@@ -74,7 +74,7 @@ public:
 	Common::Language getLanguage();
 
 	// Resource related functions
-	Common::SeekableReadStream *openFile(Common::String filename, int fileIndex=0);
+	Common::SeekableReadStreamEndian *openFile(Common::String filename, int fileIndex=0);
 
 	// Movie related functions
 	void playMovie(Common::String filename);
