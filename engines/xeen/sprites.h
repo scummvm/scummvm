@@ -54,6 +54,7 @@ private:
 	int32 _filesize;
 	byte *_data;
 	int _scaledWidth, _scaledHeight;
+	Common::String _filename;
 
 	/**
 	 * Load a sprite resource from a stream

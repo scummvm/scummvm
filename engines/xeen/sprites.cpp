@@ -71,11 +71,13 @@ SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 }
 
 void SpriteResource::load(const Common::String &filename) {
+	_filename = filename;
 	File f(filename);
 	load(f);
 }
 
 void SpriteResource::load(const Common::String &filename, int ccMode) {
+	_filename = filename;
 	File f(filename, ccMode);
 	load(f);
 }
