@@ -808,17 +808,18 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 				mon._sprites = &_monsterSprites[mon._id]._sprites;
 				mon._attackSprites = &_monsterSprites[mon._id]._attackSprites;
 				mon._monsterData = &monsterData[mon._spriteId];
+
+				MonsterStruct &md = *mon._monsterData;
+				mon._hp = md._hp;
+				mon._effect1 = mon._effect2 = md._animationEffect;
+				if (md._animationEffect)
+					mon._effect3 = _vm->getRandomNumber(7);
+
+				_monsters.push_back(mon);
 			} else {
 				assert(!mon._id);
 			}
 
-			MonsterStruct &md = *mon._monsterData;
-			mon._hp = md._hp;
-			mon._effect1 = mon._effect2 = md._animationEffect;
-			if (md._animationEffect)
-				mon._effect3 = _vm->getRandomNumber(7);
-
-			_monsters.push_back(mon);
 			mobStruct.synchronize(s);
 		} while (mobStruct._id != 255 || mobStruct._pos.x != -1);
 
