@@ -132,6 +132,9 @@ void Room::loadBackground(EncryptedFile &file, uint32 size) {
 		}
 		lines++;
 	}
+	if (readBytes < size) {
+		file.seek(size - readBytes, SEEK_CUR);
+	}
 
 	_screen->update();
 }

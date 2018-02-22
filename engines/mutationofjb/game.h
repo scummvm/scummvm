@@ -22,13 +22,11 @@
 
 #include "common/scummsys.h"
 
-namespace Common
-{
+namespace Common {
 	class ReadStream;
 }
 
-namespace MutationOfJB
-{
+namespace MutationOfJB {
 
 static const uint8 MAX_STR_LENGTH = 0x14;
 
@@ -93,7 +91,10 @@ struct Bitmap {
 };
 
 
-struct SceneInfo {
+struct Scene {
+
+	Object *getObject(uint8 objectId);
+
 	uint8 _startup;
 	uint8 _unknown001;
 	uint8 _unknown002;
@@ -123,12 +124,16 @@ struct SceneInfo {
 
 struct GameData
 {
+public:
 	GameData();
-
-	SceneInfo _scenes[45];
-	uint8 _currentScene;
+	Scene *getScene(uint8 sceneId);
 
 	bool loadFromStream(Common::ReadStream &stream);
+
+	uint8 _currentScene;
+private:
+	Scene _scenes[45];
+
 };
 
 }

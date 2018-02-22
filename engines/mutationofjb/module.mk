@@ -1,11 +1,16 @@
 MODULE := engines/mutationofjb
 
 MODULE_OBJS := \
+	commands/command.o \
+	commands/conditionalcommand.o \
+	commands/ifcommand.o \
+	commands/seqcommand.o \
 	detection.o \
 	encryptedfile.o \
 	game.o \
 	mutationofjb.o \
 	room.o \
+	script.o \
 	util.o
 
 # This module can be built as a plugin

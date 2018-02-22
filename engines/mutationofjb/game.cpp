@@ -23,6 +23,7 @@
 #include "mutationofjb/game.h"
 #include "common/stream.h"
 #include "common/util.h"
+#include "common/translation.h"
 
 namespace MutationOfJB {
 
@@ -101,7 +102,7 @@ bool Bitmap::loadFromStream(Common::ReadStream &stream) {
 	return true;
 }
 
-bool SceneInfo::loadFromStream(Common::ReadStream &stream) {
+bool Scene::loadFromStream(Common::ReadStream &stream) {
 	int i;
 
 	_startup = stream.readByte();
@@ -111,16 +112,19 @@ bool SceneInfo::loadFromStream(Common::ReadStream &stream) {
 	_DL = stream.readByte();
 
 	_noDoors = stream.readByte();
+	_noDoors = MIN(_noDoors, (uint8) ARRAYSIZE(_doors));
 	for (i = 0; i < ARRAYSIZE(_doors); ++i) {
 		_doors[i].loadFromStream(stream);
 	}
 
 	_noObjects = stream.readByte();
+	_noObjects = MIN(_noObjects, (uint8) ARRAYSIZE(_objects));
 	for (i = 0; i < ARRAYSIZE(_objects); ++i) {
 		_objects[i].loadFromStream(stream);
 	}
 
 	_noStatics = stream.readByte();
+	_noStatics = MIN(_noStatics, (uint8) ARRAYSIZE(_statics));
 	for (i = 0; i < ARRAYSIZE(_statics); ++i) {
 		_statics[i].loadFromStream(stream);
 	}
@@ -139,7 +143,26 @@ bool SceneInfo::loadFromStream(Common::ReadStream &stream) {
 	return true;
 }
 
+Object *Scene::getObject(uint8 objectId) {
+	if (objectId == 0 || objectId > _noObjects) {
+		warning(_("Object %d does not exist"), objectId);
+		return nullptr;
+	}
+
+	return &_objects[objectId - 1];
+}
+
 GameData::GameData() : _currentScene(0) {}
+
+Scene *GameData::getScene(uint8 sceneId)
+{
+	if (sceneId == 0 || sceneId > ARRAYSIZE(_scenes)) {
+		warning(_("Scene %d does not exist"), sceneId);
+		return nullptr;
+	}
+
+	return &_scenes[sceneId - 1];
+}
 
 bool GameData::loadFromStream(Common::ReadStream &stream) {
 	for (int i = 0; i < ARRAYSIZE(_scenes); ++i) {
