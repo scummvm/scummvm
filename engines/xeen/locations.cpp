@@ -69,7 +69,7 @@ int BaseLocation::show() {
 	// Load the needed sprite sets for the location
 	for (uint idx = 0; idx < _townSprites.size(); ++idx) {
 		Common::String shapesName = Common::String::format("%s%d.twn",
-			Res.TOWN_ACTION_SHAPES[_locationActionId].c_str(), idx + 1);
+			Res.TOWN_ACTION_SHAPES[_locationActionId], idx + 1);
 		_townSprites[idx].load(shapesName);
 	}
 

@@ -384,7 +384,7 @@ int CreateCharacterDialog::newCharDetails(Race race, Sex sex, int classId,
 
 	// If a class is provided, set the class name
 	if (classId != -1) {
-		classStr = Common::String::format("\t062\v168%s", Res.CLASS_NAMES[classId].c_str());
+		classStr = Common::String::format("\t062\v168%s", Res.CLASS_NAMES[classId]);
 	}
 
 	// Set up default skill for the race, if any

@@ -52,7 +52,7 @@ Resources::Resources() {
 }
 
 void Resources::loadData() {
-	ResFile file;
+	ResFile file(_buffer);
 	file.syncString(CREDITS);
 	file.syncString(OPTIONS_TITLE);
 	file.syncString(THE_PARTY_NEEDS_REST);
@@ -61,7 +61,7 @@ void Resources::loadData() {
 	file.syncString(WHATS_THE_PASSWORD);
 	file.syncString(IN_NO_CONDITION);
 	file.syncString(NOTHING_HERE);
-	file.syncStrings(TERRAIN_TYPES, 6);
+	file.syncStrings(&TERRAIN_TYPES[0], 6);
 	file.syncStrings(OUTDOORS_WALL_TYPES, 16);
 	file.syncStrings(SURFACE_NAMES, 16);
 	file.syncStrings(WHO_ACTIONS, 32);
@@ -136,7 +136,7 @@ void Resources::loadData() {
 	file.syncNumbers2D((int *)MAKE_ITEM_ARR5, 8, 2);
 	file.syncNumbers(OUTDOOR_DRAWSTRUCT_INDEXES, 44);
 	file.syncNumbers2D((int *)TOWN_MAXES, 2, 11);
-	file.syncStrings2D((String *)TOWN_ACTION_MUSIC, 2, 7);
+	file.syncStrings2D(&TOWN_ACTION_MUSIC[0][0], 2, 7);
 	file.syncStrings(TOWN_ACTION_SHAPES, 7);
 	file.syncNumbers2D((int *)TOWN_ACTION_FILES, 2, 7);
 	file.syncString(BANK_TEXT);
@@ -376,7 +376,7 @@ void Resources::loadData() {
 	file.syncString(CLOUDS_CONGRATULATIONS2);
 	file.syncStrings(GOOBER, 3);
 	file.syncStrings(MUSIC_FILES1, 5);
-	file.syncStrings2D((String *)MUSIC_FILES2, 6, 7);
+	file.syncStrings2D(&MUSIC_FILES2[0][0], 6, 7);
 }
 
 } // End of namespace Xeen

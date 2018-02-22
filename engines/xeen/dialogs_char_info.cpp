@@ -434,9 +434,9 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 				if (c._skills[skill]) {
 					if (skill == THIEVERY) {
 						lines[0] = Common::String::format("\n\t020%s%u",
-							Res.SKILL_NAMES[THIEVERY].c_str(), c.getThievery());
+							Res.SKILL_NAMES[THIEVERY], c.getThievery());
 					} else {
-						lines[skill] = Common::String::format("\n\t020%s", Res.SKILL_NAMES[skill].c_str());
+						lines[skill] = Common::String::format("\n\t020%s", Res.SKILL_NAMES[skill]);
 					}
 				}
 			}
@@ -446,7 +446,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		}
 
 		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
-			Res.STAT_NAMES[attrib].c_str(), lines[0].c_str(), lines[1].c_str(),
+			Res.STAT_NAMES[attrib], lines[0].c_str(), lines[1].c_str(),
 			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(), lines[5].c_str(),
 			lines[17].c_str(), lines[6].c_str(), lines[7].c_str(), lines[8].c_str(),
 			lines[9].c_str(), lines[10].c_str(), lines[11].c_str(), lines[12].c_str(),
@@ -505,10 +505,10 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			if (c._conditions[condition]) {
 				if (condition >= UNCONSCIOUS) {
 					lines[condition] = Common::String::format("\n\t020%s",
-						Res.CONDITION_NAMES[condition].c_str());
+						Res.CONDITION_NAMES[condition]);
 				} else {
 					lines[condition] = Common::String::format("\n\t020%s\t095-%d",
-						Res.CONDITION_NAMES[condition].c_str(), c._conditions[condition]);
+						Res.CONDITION_NAMES[condition], c._conditions[condition]);
 				}
 
 				++total;
@@ -517,7 +517,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 
 		Condition condition = c.worstCondition();
 		if (condition == NO_CONDITION) {
-			lines[0] = Common::String::format("\n\t020%s", Res.GOOD.c_str());
+			lines[0] = Common::String::format("\n\t020%s", Res.GOOD);
 			++total;
 		}
 
@@ -531,7 +531,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			lines[19] = Common::String::format(Res.HEROISM, party._heroism);
 
 		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\x1",
-			Res.CONSUMABLE_NAMES[3].c_str(), lines[0].c_str(), lines[1].c_str(),
+			Res.CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),
 			lines[2].c_str(), lines[3].c_str(), lines[4].c_str(),
 			lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 			lines[8].c_str(), lines[9].c_str(), lines[10].c_str(),

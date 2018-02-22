@@ -106,7 +106,7 @@ public:
 	/**
 	 * Return the name of the item
 	 */
-	static const Common::String &getItemName(ItemCategory category, uint id);
+	static const char *getItemName(ItemCategory category, uint id);
 public:
 	XeenItem();
 
@@ -140,7 +140,7 @@ class InventoryItems : public Common::Array<XeenItem> {
 protected:
 	Character *_character;
 	ItemCategory _category;
-	const Common::String *_names;
+	const char **_names;
 
 	XeenEngine *getVm();
 	void equipError(int itemIndex1, ItemCategory category1, int itemIndex2,
