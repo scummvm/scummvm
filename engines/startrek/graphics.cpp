@@ -31,6 +31,25 @@
 
 namespace StarTrek {
 
+// Bitmap class
+
+Bitmap::Bitmap(Common::ReadStreamEndian *stream) {
+	xoffset = stream->readUint16();
+	yoffset = stream->readUint16();
+	width = stream->readUint16();
+	height = stream->readUint16();
+
+	pixels = (byte*)malloc(width*height);
+	stream->read(pixels, width*height);
+}
+
+Bitmap::~Bitmap() {
+	free(pixels);
+}
+
+
+// Graphics class
+
 Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_font = 0;
 	_egaData = 0;
@@ -67,6 +86,19 @@ void Graphics::setPalette(const char *paletteFile) {
 	delete palStream;
 }
 
+void Graphics::drawBitmap(Bitmap *bitmap) {
+	int xoffset = bitmap->xoffset;
+	int yoffset = bitmap->yoffset;
+	if (xoffset >= 320)
+		xoffset = 0;
+	if (yoffset >= 200)
+		yoffset = 0;
+
+	_vm->_system->copyRectToScreen(bitmap->pixels, bitmap->width, xoffset, yoffset, bitmap->width, bitmap->height);
+	_vm->_system->updateScreen();
+}
+
+
 void Graphics::loadEGAData(const char *filename) {
 	// Load EGA palette data
 	if (!_egaMode)
@@ -78,34 +110,6 @@ void Graphics::loadEGAData(const char *filename) {
 	Common::SeekableReadStream *egaStream = _vm->openFile(filename);
 	egaStream->read(_egaData, 256);
 	delete egaStream;
-}
-
-void Graphics::drawImage(const char *filename) {
-	// Draw a regular bitmap
-
-	Common::SeekableReadStream *imageStream = _vm->openFile(filename);
-	uint16 xoffset = (_vm->getPlatform() == Common::kPlatformAmiga) ? imageStream->readUint16BE() : imageStream->readUint16LE();
-	uint16 yoffset = (_vm->getPlatform() == Common::kPlatformAmiga) ? imageStream->readUint16BE() : imageStream->readUint16LE();
-	uint16 width = (_vm->getPlatform() == Common::kPlatformAmiga) ? imageStream->readUint16BE() : imageStream->readUint16LE();
-	uint16 height = (_vm->getPlatform() == Common::kPlatformAmiga) ? imageStream->readUint16BE() : imageStream->readUint16LE();	
-
-	if (xoffset >= 320)
-		xoffset = 0;
-	if (yoffset >= 200)
-		yoffset = 0;
-
-	byte *pixels = (byte *)malloc(width * height);
-
-	if (_egaMode && _egaData) {
-		// FIXME: This doesn't work right
-		for (uint32 i = 0; i < (uint32)(width * height); i++)
-			pixels[i] = _egaData[imageStream->readByte()];
-	} else {
-		imageStream->read(pixels, width * height);
-	}
-
-	_vm->_system->copyRectToScreen(pixels, width, xoffset, yoffset, width, height);
-	_vm->_system->updateScreen();
 }
 
 void Graphics::drawBackgroundImage(const char *filename) {

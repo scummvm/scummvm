@@ -29,10 +29,52 @@
 #include "startrek/startrek.h"
 #include "startrek/font.h"
 
+#include "common/stream.h"
+
 namespace StarTrek {
 
 class Font;
 class StarTrekEngine;
+
+
+class Bitmap {
+public:
+	uint16 xoffset;
+	uint16 yoffset;
+	uint16 width;
+	uint16 height;
+	byte *pixels;
+
+public:
+	Bitmap(Common::ReadStreamEndian *stream);
+	~Bitmap();
+};
+
+class Rectangle {
+	uint16 left;
+	uint16 top;
+	uint16 right;
+	uint16 bottom;
+};
+
+class Sprite {
+	uint16 x,y;
+	uint16 drawPriority;
+	uint16 field6;
+	uint16 field8;
+	Bitmap *bitmap;
+	uint16 drawMode;
+	uint16 fieldE;
+	uint16 bitmapChanged;
+	uint16 redrawCondition2;
+	uint16 redrawCondition3;
+	uint16 field16;
+	Rectangle rectangle1;
+	Rectangle clickRectangle;
+	Rectangle rectangle2;
+	uint16 drawX,drawY;
+};
+
 
 class Graphics {
 public:
@@ -40,8 +82,9 @@ public:
 	~Graphics();
 	
 	void setPalette(const char *paletteFile);
+	void drawBitmap(Bitmap *bitmap);
+
 	void loadEGAData(const char *egaFile);
-	void drawImage(const char *filename);
 	void drawBackgroundImage(const char *filename);
 	
 	

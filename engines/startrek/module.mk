@@ -2,6 +2,7 @@ MODULE := engines/startrek
 
 MODULE_OBJS = \
 	detection.o \
+	filestream.o \
 	font.o \
 	lzss.o \
 	graphics.o \

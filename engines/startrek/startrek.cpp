@@ -35,6 +35,7 @@
 #include "engines/util.h"
 #include "video/qt_decoder.h"
 
+#include "startrek/filestream.h"
 #include "startrek/lzss.h"
 #include "startrek/startrek.h"
 
@@ -87,20 +88,10 @@ Common::Error StarTrekEngine::run() {
 // EGA not supported
 #if 1
 	if (getGameType() == GType_ST25) {
-		if (getPlatform() == Common::kPlatformMacintosh) {
-			if (getFeatures() & GF_DEMO) {
-				_gfx->setPalette("BRIDGE.PAL");
-				_gfx->drawImage("BRIDGE.BMP");
-			} else {
-				playMovie("Voice Data/Additional Audio/Intro Movie");
-				_gfx->setPalette("BRIDGES.PAL");
-				_gfx->drawImage("BRIDGE0.BMP");
-			}
-		} else {
-			_gfx->setPalette("BRIDGE.PAL");
-			//_gfx->loadEGAData("BRIDGE.EGA");
-			_gfx->drawImage("DEMON5.BMP");
-		}
+		_gfx->setPalette("PALETTE.PAL");
+		Bitmap *b = new Bitmap(openFile("DEMON5.BMP"));
+		_gfx->drawBitmap(b);
+		delete b;
 		
 		if (getPlatform() == Common::kPlatformAmiga)
 			_sound->playSoundEffect("TREK2");
@@ -132,9 +123,11 @@ Common::Error StarTrekEngine::run() {
 	return Common::kNoError;
 }
 
-Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, int fileIndex) {
+Common::SeekableReadStreamEndian *StarTrekEngine::openFile(Common::String filename, int fileIndex) {
 	filename.toUppercase();
 	Common::String basename, extension;
+
+	bool bigEndian = getPlatform() == Common::kPlatformAmiga;
 
 	for (int i=filename.size()-1; ; i--) {
 		if (filename[i] == '.') {
@@ -151,7 +144,7 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, in
 		Common::File *file = new Common::File();
 		if (!file->open(filename.c_str()))
 			error ("Could not find file \'%s\'", filename.c_str());
-		return file;
+		return new FileStream(file, bigEndian);
 	}
 
 	Common::SeekableReadStream *indexFile = 0;
@@ -210,7 +203,7 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, in
 		if (filename.matchString(testfile)) {
 			foundData = true;
 			break;
-		}		
+		}
 	}
 
 	delete indexFile;
@@ -230,7 +223,7 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, in
 		error("Tried to access file index %d for file '%s' which doesn't exist.", fileIndex, filename.c_str());
 
 	Common::SeekableReadStream *dataFile = 0;
-	Common::SeekableReadStream *dataRunFile = 0; // FIXME: Amiga & Mac code don't implement this
+	Common::SeekableReadStream *dataRunFile = 0; // FIXME: Amiga & Mac need this implemented
 
 	if (getPlatform() == Common::kPlatformAmiga) {
 		dataFile = SearchMan.createReadStreamForMember("data.000");
@@ -254,7 +247,7 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, in
 		Common::SeekableReadStream *stream = dataFile->readStream(uncompressedSize);
 		delete dataFile;
 		delete dataRunFile;
-		return stream;
+		return new FileStream(stream, bigEndian);
 	} else {
 		if (fileCount != 1) {
 			dataRunFile->seek(indexOffset);
@@ -276,12 +269,12 @@ Common::SeekableReadStream *StarTrekEngine::openFile(Common::String filename, in
 
 		delete dataFile;
 		delete dataRunFile;
-		return stream;
+		return new FileStream(stream, bigEndian);
 	}
-	
+
 	// We should not get to this point...
 	error("Could not find data for \'%s\'", filename.c_str());
-		
+
 	return NULL;
 }
 
