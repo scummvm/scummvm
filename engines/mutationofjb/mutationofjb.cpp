@@ -102,12 +102,14 @@ Common::Error MutationOfJBEngine::run() {
 			switch (event.type) {
 			case Common::EVENT_LBUTTONDOWN:
 			{
-				const SceneInfo &sceneInfo = _gameData->_scenes[_gameData->_currentScene - 1];
-				for (int i = 0; i < MIN(ARRAYSIZE(sceneInfo._doors), (int) sceneInfo._noDoors); ++i) {
-					const Door &door = sceneInfo._doors[i];
-					if ((event.mouse.x >= door._x) && (event.mouse.x < door._x + door._width) && (event.mouse.y >= door._y) && (event.mouse.y < door._y + door._height)) {
-						_gameData->_currentScene = door._destSceneId;
-						_room->load(_gameData->_currentScene, false);
+				const Scene* const scene = _gameData->getScene(_gameData->_currentScene);
+				if (scene) {
+					for (int i = 0; i < MIN(ARRAYSIZE(scene->_doors), (int) scene->_noDoors); ++i) {
+						const Door &door = scene->_doors[i];
+						if ((event.mouse.x >= door._x) && (event.mouse.x < door._x + door._width) && (event.mouse.y >= door._y) && (event.mouse.y < door._y + door._height)) {
+							_gameData->_currentScene = door._destSceneId;
+							_room->load(_gameData->_currentScene, false);
+						}
 					}
 				}
 				break;
