@@ -17,37 +17,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/font.h $
- * $Id: font.h 2 2009-09-12 20:13:40Z clone2727 $
- *
  */
 
-#ifndef STARTREK_FONT_H
-#define STARTREK_FONT_H
- 
+#include "startrek/bitmap.h"
 #include "startrek/startrek.h"
- 
+
 namespace StarTrek {
 
-class StarTrekEngine;
+Bitmap::Bitmap(Common::ReadStreamEndian *stream) {
+	xoffset = stream->readUint16();
+	yoffset = stream->readUint16();
+	width = stream->readUint16();
+	height = stream->readUint16();
 
-class Font {
-public:
-	Font(StarTrekEngine *vm);
-	~Font();
+	pixels = new byte[width*height];
+	stream->read(pixels, width*height);
+}
 
-	byte *getCharData(int i);
-	
-private:
-	StarTrekEngine *_vm;
+Bitmap::Bitmap(int w, int h) : width(w), height(h), xoffset(0), yoffset(0) {
+	pixels = new byte[width*height];
+}
 
-	struct Character {
-		byte data[0x40];
-	} *_characters;
-};
+Bitmap::~Bitmap() {
+	delete[] pixels;
+}
 
 
-} 
+TextBitmap::TextBitmap(int w, int h) {
+	width = w;
+	height = h;
+	// Width and Height are the total dimensions. Since each character takes 8 pixels in
+	// each dimension, the "pixels" array (which actually stores character indices) must
+	// be smaller.
+	pixels = new byte[width/8*height/8];
+}
 
-#endif
+}
