@@ -61,7 +61,7 @@ void Resources::loadData() {
 	file.syncString(WHATS_THE_PASSWORD);
 	file.syncString(IN_NO_CONDITION);
 	file.syncString(NOTHING_HERE);
-	file.syncStrings(&TERRAIN_TYPES[0], 6);
+	file.syncStrings(TERRAIN_TYPES, 6);
 	file.syncStrings(OUTDOORS_WALL_TYPES, 16);
 	file.syncStrings(SURFACE_NAMES, 16);
 	file.syncStrings(WHO_ACTIONS, 32);
@@ -156,12 +156,12 @@ void Resources::loadData() {
 	file.syncString(TRAINING_TEXT);
 	file.syncString(GOLD_GEMS);
 	file.syncString(GOLD_GEMS_2);
-	file.syncString(DEPOSIT_WITHDRAWL[2]);
+	file.syncStrings(DEPOSIT_WITHDRAWL, 2);
 	file.syncString(NOT_ENOUGH_X_IN_THE_Y);
 	file.syncString(NO_X_IN_THE_Y);
-	file.syncString(STAT_NAMES[16]);
-	file.syncString(CONSUMABLE_NAMES[4]);
-	file.syncString(WHERE_NAMES[2]);
+	file.syncStrings(STAT_NAMES, 16);
+	file.syncStrings(CONSUMABLE_NAMES, 4);
+	file.syncStrings(WHERE_NAMES, 2);
 	file.syncString(AMOUNT);
 	file.syncString(FOOD_PACKS_FULL);
 	file.syncString(BUY_SPELLS);

@@ -1872,12 +1872,12 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(TRAINING_TEXT);
 	file.syncString(GOLD_GEMS);
 	file.syncString(GOLD_GEMS_2);
-	file.syncString(DEPOSIT_WITHDRAWL[2]);
+	file.syncStrings(DEPOSIT_WITHDRAWL, 2);
 	file.syncString(NOT_ENOUGH_X_IN_THE_Y);
 	file.syncString(NO_X_IN_THE_Y);
-	file.syncString(STAT_NAMES[16]);
-	file.syncString(CONSUMABLE_NAMES[4]);
-	file.syncString(WHERE_NAMES[2]);
+	file.syncStrings(STAT_NAMES, 16);
+	file.syncStrings(CONSUMABLE_NAMES, 4);
+	file.syncStrings(WHERE_NAMES, 2);
 	file.syncString(AMOUNT);
 	file.syncString(FOOD_PACKS_FULL);
 	file.syncString(BUY_SPELLS);
