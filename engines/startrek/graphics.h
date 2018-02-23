@@ -26,6 +26,7 @@
 #ifndef STARTREK_GRAPHICS_H
 #define STARTREK_GRAPHICS_H
 
+#include "startrek/bitmap.h"
 #include "startrek/startrek.h"
 #include "startrek/font.h"
 
@@ -42,18 +43,6 @@ const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 200;
 
 
-struct Bitmap {
-	uint16 xoffset;
-	uint16 yoffset;
-	uint16 width;
-	uint16 height;
-	byte *pixels;
-
-	Bitmap(Common::ReadStreamEndian *stream);
-	Bitmap(int w, int h);
-	~Bitmap();
-};
-
 struct Sprite {
 	uint16 x,y;
 	uint16 drawPriority;
@@ -61,7 +50,7 @@ struct Sprite {
 	uint16 field8;
 	Bitmap *bitmap;
 	uint16 drawMode;
-	uint16 fieldE;
+	uint16 textColor;
 	uint16 bitmapChanged;
 	uint16 redrawCondition2;
 	uint16 redrawCondition3;
@@ -78,10 +67,11 @@ public:
 	Graphics(StarTrekEngine *vm);
 	~Graphics();
 	
-	void loadPalette(const char *paletteFile);
+	void loadPalette(const Common::String &paletteFile);
 	void loadPri(const char *priFile);
 
 	void redrawScreen();
+	void drawSprite(const Sprite &sprite);
 	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
 
 	void loadEGAData(const char *egaFile);
@@ -98,7 +88,9 @@ private:
 	bool _egaMode;
 	byte *_egaData;
 	byte *_priData;
+	byte *_lutData;
 
+	Common::Rect _screenRect;
 	Bitmap *_backgroundImage;
 	Bitmap *_canvas;
 };

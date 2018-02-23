@@ -88,7 +88,7 @@ Common::Error StarTrekEngine::run() {
 // EGA not supported
 #if 1
 	if (getGameType() == GType_ST25) {
-		_gfx->loadPalette("PALETTE.PAL");
+		_gfx->loadPalette("PALETTE");
 		_gfx->loadPri("DEMON0.PRI");
 		_gfx->redrawScreen();
 		
@@ -116,6 +116,7 @@ Common::Error StarTrekEngine::run() {
 					break;
 			}
 		}
+		_system->updateScreen();
 
 		_system->delayMillis(1000/60);
 	}

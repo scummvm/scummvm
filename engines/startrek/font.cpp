@@ -66,4 +66,8 @@ Font::~Font() {
 	delete[] _characters;
 }
 
+byte *Font::getCharData(int i) {
+	return _characters[i].data;
+}
+
 }

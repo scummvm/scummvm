@@ -17,10 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/graphics.cpp $
- * $Id: graphics.cpp 14 2010-05-26 15:44:12Z clone2727 $
- *
  */
 
 #include "startrek/graphics.h"
@@ -31,33 +27,14 @@
 
 namespace StarTrek {
 
-// Bitmap class
-
-Bitmap::Bitmap(Common::ReadStreamEndian *stream) {
-	xoffset = stream->readUint16();
-	yoffset = stream->readUint16();
-	width = stream->readUint16();
-	height = stream->readUint16();
-
-	pixels = (byte*)malloc(width*height);
-	stream->read(pixels, width*height);
-}
-
-Bitmap::Bitmap(int w, int h) : width(w), height(h) {
-	pixels = (byte*)malloc(width*height);
-}
-
-Bitmap::~Bitmap() {
-	free(pixels);
-}
-
-
-// Graphics class
-
 Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
-	_font = 0;
-	_egaData = 0;
-	_priData = 0;
+	_font = nullptr;
+
+	_egaData = nullptr;
+	_priData = nullptr;
+	_lutData = nullptr;
+
+	_screenRect = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	if (ConfMan.hasKey("render_mode"))
 		_egaMode = (Common::parseRenderMode(ConfMan.get("render_mode").c_str()) == Common::kRenderEGA) && (_vm->getGameType() != GType_STJR) && !(_vm->getFeatures() & GF_DEMO);
@@ -70,20 +47,21 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 }
 
 Graphics::~Graphics() {
-	if (_egaData)
-		free(_egaData);
-	if (_priData)
-		free(_priData);
+	delete[] _egaData;
+	delete[] _priData;
+	delete[] _lutData;
 
 	delete _font;
 	delete _backgroundImage;
 	delete _canvas;
 }
 
-void Graphics::loadPalette(const char *paletteFile) {
+void Graphics::loadPalette(const Common::String &paletteName) {
 	// Set the palette from a PAL file
+	Common::String palFile = paletteName + ".PAL";
+	Common::String lutFile = paletteName + ".LUT";
 
-	Common::SeekableReadStream *palStream = _vm->openFile(paletteFile);
+	Common::SeekableReadStream *palStream = _vm->openFile(palFile.c_str());
 	byte *palette = new byte[256 * 3];
 	palStream->read(palette, 256 * 3);
 
@@ -96,13 +74,22 @@ void Graphics::loadPalette(const char *paletteFile) {
 
 	delete[] palette;
 	delete palStream;
+
+	// Load LUT file
+	Common::SeekableReadStream *lutStream = _vm->openFile(lutFile.c_str());
+
+	delete[] _lutData;
+	_lutData = new byte[256];
+	lutStream->read(_lutData, 256);
+
+	delete lutStream;
 }
 
 void Graphics::loadPri(const char *priFile) {
 	Common::SeekableReadStream *priStream = _vm->openFile(priFile);
 
-	free(_priData);
-	_priData = (byte*)malloc(SCREEN_WIDTH*SCREEN_HEIGHT/2);
+	delete[] _priData;
+	_priData = new byte[SCREEN_WIDTH*SCREEN_HEIGHT/2];
 	priStream->read(_priData, SCREEN_WIDTH*SCREEN_HEIGHT/2);
 }
 
@@ -110,70 +97,177 @@ void Graphics::redrawScreen() {
 	// TODO: get rid of _canvas for efficiency
 	memcpy(_canvas->pixels, _backgroundImage->pixels, SCREEN_WIDTH*SCREEN_HEIGHT);
 
-	// drawSprite test
+	// drawSprite tests
+
+	// Draw mode 0
 	Sprite spr;
 	memset(&spr,0,sizeof(Sprite));
 	spr.bitmap = new Bitmap(_vm->openFile("MWALKE00.BMP"));
 	spr.drawPriority = 1;
 	spr.drawX = 150;
 	spr.drawY = 30;
+	spr.drawMode = 0;
+	drawSprite(spr);
 
-	drawSprite(spr, Common::Rect(spr.drawX,spr.drawY,spr.drawX+spr.bitmap->width,spr.drawY+spr.bitmap->height));
+	// Draw mode 2 (translucent background)
+	memset(&spr,0,sizeof(Sprite));
+	spr.bitmap = new Bitmap(_vm->openFile("KWALKS00.BMP"));
+	spr.drawPriority = 1;
+	spr.drawX = 200;
+	spr.drawY = 40;
+	spr.drawMode = 2;
+	drawSprite(spr);
+
+	// Draw mode 3 (text)
+	memset(&spr,0,sizeof(Sprite));
+	spr.bitmap = new Bitmap(8*8,8*8);
+	for (int i=0;i<8*8;i++)
+		spr.bitmap->pixels[i] = 0x40+i;
+	spr.drawX = 8*10;
+	spr.drawY = 50;
+	spr.textColor = 0xb3;
+	spr.drawMode = 3;
+	drawSprite(spr);
 
 	drawBitmapToScreen(_canvas);
 }
 
-// rect is the rectangle on-screen to draw. It should encompass the sprite itself, but if
-// it doesn't, part of the sprite will be cut off.
-void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
-	int drawWidth = rect.right - rect.left;
-	int drawHeight = rect.bottom - rect.top;
+void Graphics::drawSprite(const Sprite &sprite) {
+	drawSprite(sprite, Common::Rect(sprite.drawX,sprite.drawY,sprite.drawX+sprite.bitmap->width-1,sprite.drawY+sprite.bitmap->height-1));
+}
 
-	if (drawWidth <= 0 || drawHeight <= 0)
-		error("drawSprite: w/h <= 0");
-	
+// rect is the portion of the sprite to update. It must be entirely contained within the
+// sprite's actual, full rectangle.
+void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
+	Common::Rect spriteRect = Common::Rect(sprite.drawX, sprite.drawY,
+			sprite.drawX+sprite.bitmap->width-1, sprite.drawY+sprite.bitmap->height-1);
+
+	assert(_screenRect.contains(rect));
+	assert(spriteRect.contains(rect));
 
 	byte *dest = _canvas->pixels + rect.top*SCREEN_WIDTH + rect.left;
-	int canvasOffsetToNextLine = SCREEN_WIDTH - drawWidth;
 
 	switch(sprite.drawMode) {
 	case 0: { // Normal sprite
 		byte *src = sprite.bitmap->pixels + (rect.left - sprite.drawX)
 			+ (rect.top - sprite.drawY) * sprite.bitmap->width;
 
-		int spriteOffsetToNextLine = sprite.bitmap->width - drawWidth;
 		int priOffset = rect.top*SCREEN_WIDTH + rect.left;
 
 		for (int y=rect.top; y<rect.bottom; y++) {
 			for (int x=rect.left; x<rect.right; x++) {
 				byte priByte = _priData[priOffset/2];
-				byte bgPri;
+				byte bgPriority;
 				if ((priOffset%2) == 1)
-					bgPri = (priByte)&0xf;
+					bgPriority = priByte&0xf;
 				else
-					bgPri = (priByte)>>4;
+					bgPriority = priByte>>4;
 				priOffset++;
 
 				byte b = *src++;
-				if (b == 0 || sprite.drawPriority < bgPri) {
+				if (b == 0 || sprite.drawPriority < bgPriority) {
 					dest++;
 					continue;
 				}
 				*dest++ = b;
 			}
 
-			src += spriteOffsetToNextLine;
-			dest += canvasOffsetToNextLine;
-			priOffset += canvasOffsetToNextLine;
+			src       += sprite.bitmap->width - rect.width();
+			dest      += SCREEN_WIDTH - rect.width();
+			priOffset += SCREEN_WIDTH - rect.width();
 		}
 		break;
 	}
 
-	case 1:
-	case 2:
-	case 3:
+	case 1: // Invisible
+		break;
+
+	case 2: { // Normal sprite with darkened background for "transparent" pixels (and no priority)
+		byte *src = sprite.bitmap->pixels + (rect.left - sprite.drawX)
+			+ (rect.top - sprite.drawY) * sprite.bitmap->width;
+
+		for (int y=rect.top; y<rect.bottom; y++) {
+			for (int x=rect.left; x<rect.right; x++) {
+				byte b = *src;
+
+				if (b == 0) // Transparent (darken the pixel)
+					*dest = _lutData[*dest];
+				else // Solid color
+					*dest = b;
+
+				src++;
+				dest++;
+			}
+
+			src += sprite.bitmap->width - rect.width();
+			dest += SCREEN_WIDTH - rect.width();
+		}
+
+		break;
+	}
+
+	case 3: { // Text
+		// The sprite's "bitmap" is not actually a bitmap, but instead the list of
+		// characters to display.
+
+		Common::Rect rectangle1;
+
+		rectangle1.left   = (rect.left   - sprite.drawX)/8;
+		rectangle1.top    = (rect.top    - sprite.drawY)/8;
+		rectangle1.right  = (rect.right  - sprite.drawX)/8;
+		rectangle1.bottom = (rect.bottom - sprite.drawY)/8;
+
+		int drawWidth = rectangle1.width() + 1;
+		int drawHeight = rectangle1.height() + 1;
+
+		dest =_canvas->pixels + sprite.drawY*SCREEN_WIDTH + sprite.drawX
+			+ rectangle1.top*8*SCREEN_WIDTH + rectangle1.left*8;
+
+		byte *src = sprite.bitmap->pixels + rectangle1.top*sprite.bitmap->width/8 + rectangle1.left;
+
+		for (int y=0; y<drawHeight; y++) {
+			for (int x=0; x<drawWidth; x++) {
+				byte c = *src;
+
+				int textColor;
+				if (c >= 0x10 && c <= 0x1A) // Border characters
+					textColor = 0xb3;
+				else
+					textColor = sprite.textColor;
+
+				byte *fontData = _font->getCharData(c);
+
+				for (int i=0;i<8;i++) {
+					for (int j=0;j<8;j++) {
+						byte b = *fontData;
+
+						if (b == 0) // Transparent: use lookup table to darken this pixel
+							*dest = _lutData[*dest];
+						else if (b == 0x78) // Inner part of character
+							*dest = textColor;
+						else // Outline of character
+							*dest = b;
+
+						fontData++;
+						dest++;
+					}
+					dest += SCREEN_WIDTH - 8;
+				}
+
+				dest -= (SCREEN_WIDTH*8 - 8);
+				src++;
+			}
+
+			src += sprite.bitmap->width/8 - drawWidth;
+			dest += SCREEN_WIDTH*8 - drawWidth*8;
+
+		}
+
+		break;
+	}
+
 	default:
-		error("drawSprite: draw mode %d not implemented", sprite.drawMode);
+		error("drawSprite: draw mode %d invalid", sprite.drawMode);
 		break;
 	}
 }
@@ -185,7 +279,7 @@ void Graphics::loadEGAData(const char *filename) {
 		return;
 
 	if (!_egaData)
-		_egaData = (byte *)malloc(256);
+		_egaData = new byte[256];
 
 	Common::SeekableReadStream *egaStream = _vm->openFile(filename);
 	egaStream->read(_egaData, 256);
@@ -208,7 +302,7 @@ void Graphics::drawBackgroundImage(const char *filename) {
 	uint16 width = imageStream->readUint16LE();
 	uint16 height = imageStream->readUint16LE();	
 
-	byte *pixels = (byte *)malloc(width * height);
+	byte *pixels = new byte[width * height];
 	imageStream->read(pixels, width * height);
 
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
