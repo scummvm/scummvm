@@ -20,48 +20,19 @@
  *
  */
 
- // Disable symbol overrides so that we can use system headers.
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
+#ifndef MAP_H
+#define MAP_H
 
-// HACK to allow building with the SDL backend on MinGW
-// see bug #1800764 "TOOLS: MinGW tools building broken"
-#ifdef main
-#undef main
-#endif // main
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "common/scummsys.h"
 #include "cc.h"
-#include "file.h"
-#include "constants.h"
-#include "map.h"
 
-#define VERSION_NUMBER 1
+struct MirrorEntry {
+	char _name[28];
+	byte _mapId;
+	int8 _posX, _posY;
+	byte _direction;
+};
 
-Common::File outputFile;
+extern void writeMap(CCArchive &cc);
 
-void NORETURN_PRE error(const char *s, ...) {
-	printf("%s\n", s);
-	exit(1);
-}
-
-void writeVersion(CCArchive &cc) {
-	Common::MemFile f;
-	f.writeLong(VERSION_NUMBER);
-	cc.add("VERSION", f);	
-}
-
-int main(int argc, char *argv[]) {
-	if (!outputFile.open(argc == 1 ? "xeen.ccs" : argv[1], Common::kFileWriteMode)) {
-		error("Could not open input file");
-	}
-
-	CCArchive cc(outputFile);
-	writeVersion(cc);
-	writeConstants(cc);
-	writeMap(cc);
-
-	cc.close();
-	return 0;
-}
+#endif

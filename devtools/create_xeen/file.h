@@ -98,6 +98,9 @@ public:
 	void writeByte(byte v) {
 		write(&v, sizeof(byte));
 	}
+	void writeShort(int8 v) {
+		write(&v, sizeof(int8));
+	}
 	void writeByte(byte v, int len) {
 		byte *b = new byte[len];
 		memset(b, v, len);

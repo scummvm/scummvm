@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	cc.o \
 	constants.o \
 	hashmap.o \
+	map.o \
 	memorypool.o \
 	str.o
 

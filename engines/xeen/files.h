@@ -187,9 +187,19 @@ public:
 	 * Checks if a given file exists
 	 *
 	 * @param	filename	the file to check for
+	 * @param	ccMode		Archive to use
 	 * @return	true if the file exists, false otherwise
 	 */
 	static bool exists(const Common::String &filename, int ccMode);
+
+	/**
+	 * Checks if a given file exists
+	 *
+	 * @param	filename	the file to check for
+	 * @param	archive		Archive to use
+	 * @return	true if the file exists, false otherwise
+	 */
+	static bool exists(const Common::String &filename, Common::Archive &archive);
 };
 
 /**

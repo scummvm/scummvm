@@ -328,7 +328,11 @@ bool File::open(const Common::String &filename, int ccMode) {
 	int oldMode = files._isDarkCc ? 1 : 0;
 
 	files.setGameCc(ccMode);
-	File::open(filename, *_currentArchive);
+	if (File::exists(filename, *_currentArchive))
+		File::open(filename, *_currentArchive);
+	else
+		File::open(filename);
+
 	files.setGameCc(oldMode);
 
 	return true;
@@ -388,6 +392,10 @@ bool File::exists(const Common::String &filename, int ccMode) {
 	files.setGameCc(oldMode);
 
 	return result;
+}
+
+bool File::exists(const Common::String &filename, Common::Archive &archive) {
+	return archive.hasFile(filename);
 }
 
 void File::syncBitFlags(Common::Serializer &s, bool *startP, bool *endP) {
