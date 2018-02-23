@@ -29,6 +29,7 @@
 #include "startrek/startrek.h"
 #include "startrek/font.h"
 
+#include "common/rect.h"
 #include "common/stream.h"
 
 namespace StarTrek {
@@ -37,27 +38,23 @@ class Font;
 class StarTrekEngine;
 
 
-class Bitmap {
-public:
+const int SCREEN_WIDTH = 320;
+const int SCREEN_HEIGHT = 200;
+
+
+struct Bitmap {
 	uint16 xoffset;
 	uint16 yoffset;
 	uint16 width;
 	uint16 height;
 	byte *pixels;
 
-public:
 	Bitmap(Common::ReadStreamEndian *stream);
+	Bitmap(int w, int h);
 	~Bitmap();
 };
 
-class Rectangle {
-	uint16 left;
-	uint16 top;
-	uint16 right;
-	uint16 bottom;
-};
-
-class Sprite {
+struct Sprite {
 	uint16 x,y;
 	uint16 drawPriority;
 	uint16 field6;
@@ -69,9 +66,9 @@ class Sprite {
 	uint16 redrawCondition2;
 	uint16 redrawCondition3;
 	uint16 field16;
-	Rectangle rectangle1;
-	Rectangle clickRectangle;
-	Rectangle rectangle2;
+	Common::Rect rectangle1;
+	Common::Rect clickRectangle;
+	Common::Rect rectangle2;
 	uint16 drawX,drawY;
 };
 
@@ -81,19 +78,29 @@ public:
 	Graphics(StarTrekEngine *vm);
 	~Graphics();
 	
-	void setPalette(const char *paletteFile);
-	void drawBitmap(Bitmap *bitmap);
+	void loadPalette(const char *paletteFile);
+	void loadPri(const char *priFile);
+
+	void redrawScreen();
+	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
 
 	void loadEGAData(const char *egaFile);
 	void drawBackgroundImage(const char *filename);
 	
 	
 private:
+	void drawBitmapToScreen(Bitmap *bitmap);
+
+
 	StarTrekEngine *_vm;
 	Font *_font;
 	
 	bool _egaMode;
 	byte *_egaData;
+	byte *_priData;
+
+	Bitmap *_backgroundImage;
+	Bitmap *_canvas;
 };
 
 }

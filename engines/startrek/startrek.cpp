@@ -88,10 +88,9 @@ Common::Error StarTrekEngine::run() {
 // EGA not supported
 #if 1
 	if (getGameType() == GType_ST25) {
-		_gfx->setPalette("PALETTE.PAL");
-		Bitmap *b = new Bitmap(openFile("DEMON5.BMP"));
-		_gfx->drawBitmap(b);
-		delete b;
+		_gfx->loadPalette("PALETTE.PAL");
+		_gfx->loadPri("DEMON0.PRI");
+		_gfx->redrawScreen();
 		
 		if (getPlatform() == Common::kPlatformAmiga)
 			_sound->playSoundEffect("TREK2");
@@ -117,6 +116,8 @@ Common::Error StarTrekEngine::run() {
 					break;
 			}
 		}
+
+		_system->delayMillis(1000/60);
 	}
 #endif
 
