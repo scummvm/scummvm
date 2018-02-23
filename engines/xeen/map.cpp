@@ -655,9 +655,9 @@ void Map::load(int mapId) {
 		_monsterData.load("dark.mon");
 		_wallPicSprites.load("darkpic.dat");
 	} else if (_vm->getGameID() == GType_Clouds) {
-		_animationInfo.load("clouds.dat");
-		_monsterData.load("xeen.mon");
-		_wallPicSprites.load("xeenpic.dat");
+		_animationInfo.load("animinfo.cld");
+		_monsterData.load("monsters.cld");
+		_wallPicSprites.load("wallpics.cld");
 	} else if (_vm->getGameID() == GType_WorldOfXeen) {
 		files.setGameCc(1);
 
@@ -747,15 +747,19 @@ void Map::load(int mapId) {
 			if (!textLoaded) {
 				textLoaded = true;
 
-				Common::String txtName = Common::String::format("%s%c%03d.txt",
-					isDarkCc ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
-				File fText(txtName, 1);
-				char mazeName[33];
-				fText.read(mazeName, 33);
-				mazeName[32] = '\0';
+				if (g_vm->getGameID() == GType_Clouds) {
+					_mazeName = Res._cloudsMapNames[mapId];
+				} else {
+					Common::String txtName = Common::String::format("%s%c%03d.txt",
+						isDarkCc ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
+					File fText(txtName, 1);
+					char mazeName[33];
+					fText.read(mazeName, 33);
+					mazeName[32] = '\0';
 
-				_mazeName = Common::String(mazeName);
-				fText.close();
+					_mazeName = Common::String(mazeName);
+					fText.close();
+				}
 
 				// Load the monster/object data
 				Common::String mobName = Common::String::format("maze%c%03d.mob",

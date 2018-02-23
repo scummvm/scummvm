@@ -57,6 +57,33 @@ uint16 CCArchive::convertNameToId(const Common::String &resourceName) {
 	return total;
 }
 
+void CCArchive::loadIndex() {
+	int count = _file.readUint16LE();
+
+	// Read in the data for the archive's index
+	byte *rawIndex = new byte[count * 8];
+	_file.read(rawIndex, count * 8);
+
+	// Decrypt the index
+	int seed = 0xac;
+	for (int i = 0; i < count * 8; ++i, seed += 0x67) {
+		rawIndex[i] = (byte)((((rawIndex[i] << 2) | (rawIndex[i] >> 6)) + seed) & 0xff);
+	}
+
+	// Extract the index data into entry structures
+	_index.resize(count);
+	const byte *entryP = &rawIndex[0];
+	for (int idx = 0; idx < count; ++idx, entryP += 8) {
+		CCEntry &entry = _index[idx];
+		entry._id = READ_LE_UINT16(entryP);
+		entry._offset = READ_LE_UINT32(entryP + 2) & 0xffffff;
+		entry._size = READ_LE_UINT16(entryP + 5);
+		assert(!entryP[7]);
+	}
+
+	delete[] rawIndex;
+}
+
 void CCArchive::saveIndex() {
 	// Fill up the data for the index entries into a raw data block
 	byte *rawIndex = new byte[_index.size() * 8];
@@ -107,10 +134,34 @@ void CCArchive::saveEntries() {
 }
 
 void CCArchive::close() {
-	saveIndex();
-	saveEntries();
+	if (_mode == kWrite) {
+		saveIndex();
+		saveEntries();
+	}
 }
 
 void CCArchive::add(const Common::String &name, Common::MemFile &f) {
+	assert(_mode == kWrite);
 	_index.push_back(CCEntry(convertNameToId(name), f.getData(), f.size()));
+}
+
+Common::MemFile CCArchive::getMember(const Common::String &name) {
+	uint16 id = convertNameToId(name);
+
+	for (uint idx = 0; idx < _index.size(); ++idx) {
+		CCEntry &entry = _index[idx];
+		if (entry._id == id) {
+			assert(entry._size < MAX_MEM_SIZE);
+			_file.seek(entry._offset);
+			_file.read(entry._data, entry._size);
+
+			// Decrypt the entry
+			for (int i = 0; i < entry._size; ++i)
+				entry._data[i] ^= 0x35;
+
+			return Common::MemFile(entry._data, entry._size);
+		}
+	}
+
+	error("Failed to find %s", name.c_str());
 }

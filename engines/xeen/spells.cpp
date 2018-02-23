@@ -36,7 +36,7 @@ Spells::Spells(XeenEngine *vm) : _vm(vm) {
 }
 
 void Spells::load() {
-	File f1("spells.xen", 1);
+	File f1((g_vm->getGameID() == GType_Clouds) ? "spells.cld" : "spells.xen", 1);
 	while (f1.pos() < f1.size())
 		_spellNames.push_back(f1.readString());
 	f1.close();

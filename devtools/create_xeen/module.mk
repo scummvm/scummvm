@@ -3,6 +3,7 @@ MODULE := devtools/create_xeen
 MODULE_OBJS := \
 	create_xeen.o \
 	cc.o \
+	clouds.o \
 	constants.o \
 	hashmap.o \
 	map.o \

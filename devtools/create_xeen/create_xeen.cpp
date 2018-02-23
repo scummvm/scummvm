@@ -34,6 +34,7 @@
 #include <string.h>
 #include "cc.h"
 #include "file.h"
+#include "clouds.h"
 #include "constants.h"
 #include "map.h"
 
@@ -57,10 +58,13 @@ int main(int argc, char *argv[]) {
 		error("Could not open input file");
 	}
 
-	CCArchive cc(outputFile);
+	CCArchive cc(outputFile, kWrite);
 	writeVersion(cc);
 	writeConstants(cc);
 	writeMap(cc);
+
+	const char *darkName = argc > 2 ? argv[2] : "dark.cc";
+	writeCloudsData(cc, darkName);
 
 	cc.close();
 	return 0;

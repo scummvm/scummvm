@@ -110,7 +110,8 @@ private:
 	void loadData();
 public:
 	SpriteResource _globalSprites;
-	Common::StringArray _maeNames;		// Magic and equipment names
+	Common::StringArray _maeNames;			// Magic and equipment names
+	Common::StringArray _cloudsMapNames;	// Clouds of Xeen map names
 	const char **ITEM_NAMES[4];
 
 	// Data loaded from xeen.ccs

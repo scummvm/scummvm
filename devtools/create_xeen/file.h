@@ -118,8 +118,7 @@ public:
 	void writeString(const char *msg) {
 		if (!msg) {
 			writeByte(0);
-		}
-		else {
+		} else {
 			do {
 				writeByte(*msg);
 			} while (*msg++);
@@ -178,6 +177,9 @@ private:
 public:
 	MemFile() : _size(0), _offset(0) {
 		memset(_data, 0, MAX_MEM_SIZE);
+	}
+	MemFile(const byte *data, size_t size) : _size(size), _offset(0) {
+		memcpy(_data, data, size);
 	}
 	virtual ~MemFile() {}
 

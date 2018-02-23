@@ -36,10 +36,17 @@ Resources::Resources() {
 	
 	_globalSprites.load("global.icn");
 
-	File f("mae.xen");
+	File f((g_vm->getGameID() == GType_Clouds) ? "mae.cld" : "mae.xen");
 	while (f.pos() < f.size())
 		_maeNames.push_back(f.readString());
 	f.close();
+
+	if (g_vm->getGameID() == GType_Clouds) {
+		f.open("mapnames.cld");
+		while (f.pos() < f.size())
+			_cloudsMapNames.push_back(f.readString());
+		f.close();
+	}
 
 	// Set up items array to map to the names of items in each category
 	ITEM_NAMES[CATEGORY_WEAPON] = &WEAPON_NAMES[0];
