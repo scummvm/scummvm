@@ -44,6 +44,8 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 
 	_backgroundImage = new Bitmap(_vm->openFile("DEMON0.BMP"));
 	_canvas = new Bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	_numSprites = 0;
 }
 
 Graphics::~Graphics() {
@@ -55,6 +57,48 @@ Graphics::~Graphics() {
 	delete _backgroundImage;
 	delete _canvas;
 }
+
+
+void Graphics::loadEGAData(const char *filename) {
+	// Load EGA palette data
+	if (!_egaMode)
+		return;
+
+	if (!_egaData)
+		_egaData = new byte[256];
+
+	Common::SeekableReadStream *egaStream = _vm->openFile(filename);
+	egaStream->read(_egaData, 256);
+	delete egaStream;
+}
+
+void Graphics::drawBackgroundImage(const char *filename) {
+	// Draw an stjr BGD image (palette built-in)
+
+	Common::SeekableReadStream *imageStream = _vm->openFile(filename);
+	byte *palette = new byte[256 * 3];
+	imageStream->read(palette, 256 * 3);
+
+	// Expand color components
+	for (uint16 i = 0; i < 256 * 3; i++)
+		palette[i] <<= 2;
+
+	uint16 xoffset = imageStream->readUint16LE();
+	uint16 yoffset = imageStream->readUint16LE();
+	uint16 width = imageStream->readUint16LE();
+	uint16 height = imageStream->readUint16LE();
+
+	byte *pixels = new byte[width * height];
+	imageStream->read(pixels, width * height);
+
+	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
+	_vm->_system->copyRectToScreen(pixels, width, xoffset, yoffset, width, height);
+	_vm->_system->updateScreen();
+
+	delete[] palette;
+	delete imageStream;
+}
+
 
 void Graphics::loadPalette(const Common::String &paletteName) {
 	// Set the palette from a PAL file
@@ -97,37 +141,7 @@ void Graphics::redrawScreen() {
 	// TODO: get rid of _canvas for efficiency
 	memcpy(_canvas->pixels, _backgroundImage->pixels, SCREEN_WIDTH*SCREEN_HEIGHT);
 
-	// drawSprite tests
-
-	// Draw mode 0
-	Sprite spr;
-	memset(&spr,0,sizeof(Sprite));
-	spr.bitmap = new Bitmap(_vm->openFile("MWALKE00.BMP"));
-	spr.drawPriority = 1;
-	spr.drawX = 150;
-	spr.drawY = 30;
-	spr.drawMode = 0;
-	drawSprite(spr);
-
-	// Draw mode 2 (translucent background)
-	memset(&spr,0,sizeof(Sprite));
-	spr.bitmap = new Bitmap(_vm->openFile("KWALKS00.BMP"));
-	spr.drawPriority = 1;
-	spr.drawX = 200;
-	spr.drawY = 40;
-	spr.drawMode = 2;
-	drawSprite(spr);
-
-	// Draw mode 3 (text)
-	memset(&spr,0,sizeof(Sprite));
-	spr.bitmap = new Bitmap(8*8,8*8);
-	for (int i=0;i<8*8;i++)
-		spr.bitmap->pixels[i] = 0x40+i;
-	spr.drawX = 8*10;
-	spr.drawY = 50;
-	spr.textColor = 0xb3;
-	spr.drawMode = 3;
-	drawSprite(spr);
+	drawAllSprites();
 
 	drawBitmapToScreen(_canvas);
 }
@@ -272,45 +286,42 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 	}
 }
 
-
-void Graphics::loadEGAData(const char *filename) {
-	// Load EGA palette data
-	if (!_egaMode)
-		return;
-
-	if (!_egaData)
-		_egaData = new byte[256];
-
-	Common::SeekableReadStream *egaStream = _vm->openFile(filename);
-	egaStream->read(_egaData, 256);
-	delete egaStream;
+void Graphics::drawAllSprites() {
+	// TODO: implement properly
+	for (int i=0; i<_numSprites; i++) {
+		Sprite *spr = _sprites[i];
+		drawSprite(*spr);
+	}
 }
 
-void Graphics::drawBackgroundImage(const char *filename) {
-	// Draw an stjr BGD image (palette built-in)
+void Graphics::addSprite(Sprite *sprite) {
+	if (_numSprites >= MAX_SPRITES)
+		error("addSprite: too many sprites");
 
-	Common::SeekableReadStream *imageStream = _vm->openFile(filename);
-	byte *palette = new byte[256 * 3];
-	imageStream->read(palette, 256 * 3);
+	// Initialize some fields
+	sprite->drawMode = 0;
+	sprite->field8 = 0;
+	sprite->field16 = 0;
 
-	// Expand color components
-	for (uint16 i = 0; i < 256 * 3; i++)
-		palette[i] <<= 2;
+	sprite->rectangle1.top = -1;
+	sprite->rectangle1.left = -1;
+	sprite->rectangle1.bottom = -2;
+	sprite->rectangle1.right = -2;
 
-	uint16 xoffset = imageStream->readUint16LE();
-	uint16 yoffset = imageStream->readUint16LE();
-	uint16 width = imageStream->readUint16LE();
-	uint16 height = imageStream->readUint16LE();	
+	_sprites[_numSprites++] = sprite;
+}
 
-	byte *pixels = new byte[width * height];
-	imageStream->read(pixels, width * height);
+void Graphics::delSprite(Sprite *sprite) {
+	for (int i=0; i<_numSprites; i++) {
+		if (sprite != _sprites[i])
+			continue;
 
-	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
-	_vm->_system->copyRectToScreen(pixels, width, xoffset, yoffset, width, height);
-	_vm->_system->updateScreen();
+		_numSprites--;
+		_sprites[i] = _sprites[_numSprites];
+		return;
+	}
 
-	delete[] palette;
-	delete imageStream;
+	error("delSprite: sprite not in list");
 }
 
 

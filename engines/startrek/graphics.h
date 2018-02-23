@@ -42,6 +42,8 @@ class StarTrekEngine;
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 200;
 
+const int MAX_SPRITES = 32;
+
 
 struct Sprite {
 	uint16 x,y;
@@ -67,15 +69,19 @@ public:
 	Graphics(StarTrekEngine *vm);
 	~Graphics();
 	
+	void loadEGAData(const char *egaFile);
+	void drawBackgroundImage(const char *filename);
+
 	void loadPalette(const Common::String &paletteFile);
 	void loadPri(const char *priFile);
 
 	void redrawScreen();
 	void drawSprite(const Sprite &sprite);
 	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
+	void drawAllSprites();
 
-	void loadEGAData(const char *egaFile);
-	void drawBackgroundImage(const char *filename);
+	void addSprite(Sprite *sprite);
+	void delSprite(Sprite *sprite);
 	
 	
 private:
@@ -93,6 +99,9 @@ private:
 	Common::Rect _screenRect;
 	Bitmap *_backgroundImage;
 	Bitmap *_canvas;
+
+	Sprite *_sprites[MAX_SPRITES];
+	int _numSprites;
 };
 
 }
