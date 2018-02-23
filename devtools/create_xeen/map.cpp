@@ -208,8 +208,8 @@ void writeMonstersObjects(CCArchive &cc) {
 			f.writeShort(0);
 			break;
 		case 4:
-			f.writeShort(0x80);
-			f.writeShort(0x80);
+			f.writeByte(0x80);
+			f.writeByte(0x80);
 			f.writeByte(0);
 			f.writeShort(0);
 			break;

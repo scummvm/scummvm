@@ -64,11 +64,17 @@ void writeCloudsData(CCArchive &cc, const char *darkName) {
 	if (darkFile.open(darkName, Common::kFileReadMode)) {
 		CCArchive darkCc(darkFile, kRead);
 
-		cc.add("mae.cld", darkCc.getMember("mae.xen"));
-		cc.add("spells.cld", darkCc.getMember("spells.xen"));
-		cc.add("animinfo.cld", darkCc.getMember("clouds.dat"));
-		cc.add("monsters.cld", darkCc.getMember("xeen.mon"));
-		cc.add("wallpics.cld", darkCc.getMember("xeenpic.dat"));
+		Common::MemFile mae = darkCc.getMember("mae.xen");
+		Common::MemFile spells = darkCc.getMember("spells.xen");
+		Common::MemFile animInfo = darkCc.getMember("clouds.dat");
+		Common::MemFile monsters = darkCc.getMember("xeen.mon");
+		Common::MemFile wallPics = darkCc.getMember("xeenpic.dat");
+
+		cc.add("mae.cld", mae);
+		cc.add("spells.cld", spells);
+		cc.add("animinfo.cld", animInfo);
+		cc.add("monsters.cld", monsters);
+		cc.add("wallpics.cld", wallPics);
 
 		Common::MemFile mapNames;
 		for (int idx = 0; idx < 86; ++idx)

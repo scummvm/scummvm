@@ -186,6 +186,7 @@ public:
 	bool open() {
 		memset(_data, 0, MAX_MEM_SIZE);
 		_size = _offset = 0;
+		return true;
 	}
 	void close() {
 	}
