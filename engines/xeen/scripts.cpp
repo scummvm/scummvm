@@ -123,7 +123,7 @@ Scripts::Scripts(XeenEngine *vm) : _vm(vm) {
 	_refreshIcons = false;
 	_scriptResult = false;
 	_scriptExecuted = false;
-	_var50 = false;
+	_dirFlag = false;
 	_redrawDone = false;
 	_windowIndex = -1;
 	_event = nullptr;
@@ -143,11 +143,10 @@ int Scripts::checkEvents() {
 	_refreshIcons = false;
 	_itemType = 0;
 	_scriptExecuted = false;
-	_var50 = false;
+	_dirFlag = false;
 	_whoWill = 0;
 	Mode oldMode = _vm->_mode;
 	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
-	//int items = _treasureItems;
 
 	if (party._treasure._gold & party._treasure._gems) {
 		// Backup any current treasure data
@@ -170,16 +169,15 @@ int Scripts::checkEvents() {
 		_charIndex = 1;
 		combat._combatTarget = 1;
 		_nEdamageType = DT_PHYSICAL;
-//		int var40 = -1;
 
 		while (!_vm->shouldExit() && _lineNum >= 0) {
-			// Break out of the events if there's an attacking monster
+			// Stop processing events if there's an attacking monster
 			if (combat._attackMonsters[0] != -1) {
 				_eventSkipped = true;
+				_lineNum = SCRIPT_ABORT;
 				break;
 			}
 
-			_eventSkipped = false;
 			uint eventIndex;
 			for (eventIndex = 0; eventIndex < map._events.size() && !_vm->shouldExit(); ++eventIndex) {
 				MazeEvent &event = map._events[eventIndex];
@@ -192,14 +190,14 @@ int Scripts::checkEvents() {
 						doOpcode(event);
 						break;
 					} else {
-						_var50 = true;
+						_dirFlag = true;
 					}
 				}
 			}
 			if (eventIndex == map._events.size())
-				_lineNum = -1;
+				_lineNum = SCRIPT_ABORT;
 		}
-	} while (!_vm->shouldExit() && !_eventSkipped && _lineNum != -1);
+	} while (!_vm->shouldExit() && _lineNum != SCRIPT_ABORT);
 
 	intf._face1State = intf._face2State = 2;
 	if (_refreshIcons) {
@@ -239,8 +237,8 @@ int Scripts::checkEvents() {
 	_vm->_mode = oldMode;
 	windows.closeAll();
 
-	if (_scriptExecuted || !intf._objNumber || _var50) {
-		if (_var50 && !_scriptExecuted && intf._objNumber && !map._currentIsEvent) {
+	if (_scriptExecuted || !intf._objNumber || _dirFlag) {
+		if (_dirFlag && !_scriptExecuted && intf._objNumber && !map._currentIsEvent) {
 			sound.playFX(21);
 		}
 	} else {
@@ -522,8 +520,8 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 	if (restartFlag) {
 		// Draw the new location and start any script at that location
 		intf.draw3d(true);
-		_lineNum = 0;
-		return true;
+		_lineNum = SCRIPT_RESET;
+		return false;
 	} else {
 		// Stop executing the script
 		return cmdExit(params);
@@ -855,7 +853,7 @@ bool Scripts::cmdDoTownEvent(ParamsIterator &params) {
 }
 
 bool Scripts::cmdExit(ParamsIterator &params) {
-	_lineNum = -1;
+	_lineNum = SCRIPT_ABORT;
 	return false;
 }
 
@@ -1384,7 +1382,7 @@ bool Scripts::cmdFallToMap(ParamsIterator &params) {
 	party._fallDamage = params.readByte();
 	intf.startFalling(true);
 
-	_lineNum = -1;
+	_lineNum = SCRIPT_RESET;
 	return false;
 }
 

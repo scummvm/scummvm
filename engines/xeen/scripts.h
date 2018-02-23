@@ -97,6 +97,11 @@ enum Opcode {
 	OP_PlayCD                = 0x3C
 };
 
+enum {
+	SCRIPT_ABORT = -1,
+	SCRIPT_RESET = -2
+};
+
 class XeenEngine;
 
 /**
@@ -209,7 +214,7 @@ private:
 	int _refreshIcons;
 	int _scriptResult;
 	bool _scriptExecuted;
-	bool _var50;
+	bool _dirFlag;
 	int _windowIndex;
 	bool _redrawDone;
 	MazeEvent *_event;
