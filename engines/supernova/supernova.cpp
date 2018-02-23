@@ -807,6 +807,69 @@ void SupernovaEngine::setTextSpeed() {
 	_gm->animationOn();
 }
 
+bool SupernovaEngine::quitGameDialog() {
+	bool quit = false;
+
+	// TODO: Center text position dynamically
+	//       Get translated strings
+	//       Create on startup
+	GuiElement guiQuitBox;
+	guiQuitBox.setColor(kColorRed, kColorWhite99, kColorRed, kColorWhite99);
+	guiQuitBox.setSize(112, 97, 112 + 96, 97 + 27);
+	guiQuitBox.setText("Spiel abbrechen?");
+	guiQuitBox.setTextPosition(guiQuitBox.left + 3, guiQuitBox.top + 3);
+	GuiElement guiQuitYes;
+	guiQuitYes.setColor(kColorWhite35, kColorWhite99, kColorWhite35, kColorWhite99);
+	guiQuitYes.setSize(115, 111, 158, 121);
+	guiQuitYes.setText("Ja");
+	guiQuitYes.setTextPosition(132, 112);
+	GuiElement guiQuitNo;
+	guiQuitNo.setColor(kColorWhite35, kColorWhite99, kColorWhite35, kColorWhite99);
+	guiQuitNo.setSize(162, 111, 205, 121);
+	guiQuitNo.setText("Nein");
+	guiQuitNo.setTextPosition(173, 112);
+
+	_gm->animationOff();
+	_gm->saveTime();
+	saveScreen(guiQuitBox.left, guiQuitBox.top, guiQuitBox.width(), guiQuitBox.height());
+
+	renderBox(guiQuitBox.left, guiQuitBox.top, guiQuitBox.width(), guiQuitBox.height(), guiQuitBox._bgColorNormal);
+	renderText(guiQuitBox._text, guiQuitBox._textPosition.x, guiQuitBox._textPosition.y, guiQuitBox._textColorNormal);
+	renderBox(guiQuitYes.left, guiQuitYes.top, guiQuitYes.width(), guiQuitYes.height(), guiQuitYes._bgColorNormal);
+	renderText(guiQuitYes._text, guiQuitYes._textPosition.x, guiQuitYes._textPosition.y, guiQuitYes._textColorNormal);
+	renderBox(guiQuitNo.left, guiQuitNo.top, guiQuitNo.width(), guiQuitNo.height(), guiQuitNo._bgColorNormal);
+	renderText(guiQuitNo._text, guiQuitNo._textPosition.x, guiQuitNo._textPosition.y, guiQuitNo._textColorNormal);
+
+	do {
+		_gm->getInput();
+		if (_gm->_keyPressed) {
+			if (_gm->_key.keycode == Common::KEYCODE_j) {
+				quit = true;
+				break;
+			} else if (_gm->_key.keycode == Common::KEYCODE_n) {
+				quit = false;
+				break;
+			}
+		}
+		if (_gm->_mouseClicked) {
+			if (guiQuitYes.contains(_gm->_mouseX, _gm->_mouseY)) {
+				quit = true;
+				break;
+			} else if (guiQuitNo.contains(_gm->_mouseX, _gm->_mouseY)) {
+				quit = false;
+				break;
+			}
+		}
+	} while (true);
+
+	_gm->resetInputState();
+	restoreScreen();
+	_gm->loadTime();
+	_gm->animationOn();
+
+	return quit;
+}
+
 Common::MemoryReadStream *SupernovaEngine::convertToMod(const char *filename, int version) {
 	// MSN format
 	struct {

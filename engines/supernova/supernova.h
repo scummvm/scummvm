@@ -152,6 +152,7 @@ public:
 	void setColor63(byte value);
 	bool loadGame(int slot);
 	bool saveGame(int slot, const Common::String &description);
+	bool quitGameDialog();
 	void errorTempSave(bool saving);
 	void setTextSpeed();
 
