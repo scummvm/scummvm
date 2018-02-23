@@ -56,7 +56,6 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_sound = nullptr;
 	_spells = nullptr;
 	_windows = nullptr;
-	_eventData = nullptr;
 	_noDirectionSense = false;
 	_startupWindowActive = false;
 	_quitMode = QMODE_NONE;
@@ -80,7 +79,6 @@ XeenEngine::~XeenEngine() {
 	delete _sound;
 	delete _spells;
 	delete _windows;
-	delete _eventData;
 	delete _resources;
 	delete _files;
 	g_vm = nullptr;
@@ -106,9 +104,6 @@ bool XeenEngine::initialize() {
 	_sound = new Sound(_mixer);
 	_spells = new Spells(this);
 	_windows = new Windows();
-
-	File f("029.obj", 1);
-	_eventData = f.readStream(f.size());
 
 	// Set graphics mode
 	initGraphics(320, 200);

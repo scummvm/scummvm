@@ -158,7 +158,6 @@ public:
 	Windows *_windows;
 	Mode _mode;
 	GameEvent _gameEvent;
-	Common::SeekableReadStream *_eventData;
 	QuitMode _quitMode;
 	bool _noDirectionSense;
 	bool _startupWindowActive;

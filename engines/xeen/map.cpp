@@ -916,15 +916,15 @@ void Map::load(int mapId) {
 			_wallSprites._surfaces[i].clear();
 
 		_wallSprites._fwl1.load(Common::String::format("f%s1.fwl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
 		_wallSprites._fwl2.load(Common::String::format("f%s2.fwl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
 		_wallSprites._fwl3.load(Common::String::format("f%s3.fwl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
 		_wallSprites._fwl4.load(Common::String::format("f%s4.fwl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
 		_wallSprites._swl.load(Common::String::format("s%s.swl",
-			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]));
+			Res.TERRAIN_TYPES[_mazeData[0]._wallKind]), _sidePictures);
 
 		// Set entries in the indoor draw list to the correct sprites
 		// for drawing various parts of the background

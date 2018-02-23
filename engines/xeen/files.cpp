@@ -219,7 +219,10 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
 
 FileManager::FileManager(XeenEngine *vm) {
 	_isDarkCc = vm->getGameID() == GType_DarkSide;
-	File::_xeenCc = File::_darkCc = nullptr;
+	File::_xeenCc = File::_darkCc = File::_introCc = nullptr;
+	File::_xeenSave = File::_darkSave = nullptr;
+	File::_currentSave = nullptr;
+	File::_currentArchive = nullptr;
 }
 
 FileManager::~FileManager() {

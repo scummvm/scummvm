@@ -1767,6 +1767,49 @@ const char *const MUSIC_FILES2[6][7] = {
 	{ "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m" }
 };
 
+const char *const SPELL_NAMES[77] = {
+	"Acid Spray", "Awaken", "Beast Master", "Bless", "Clairvoyance", "Cold Ray",
+	"Create Food", "Cure Disease", "Cure Paralysis", "Cure Poison", "Cure Wounds",
+	"Dancing Sword", "Day of Protection", "Day of Sorcery", "Deadly Swarm",
+	"Detect Monster", "Divine Intervention", "Dragon Sleep", "Elemental Storm",
+	"Enchant Item", "Energy Blast", "Etherealize", "Fantastic Freeze", "Fiery Flail",
+	"Finger of Death", "Fire Ball", "First Aid", "Flying Fist", "Frost Bite",
+	"Golem Stopper", "Heroism", "Holy Bonus", "Holy Word", "Hypnotize",
+	"Identify Monster", "Implosion", "Incinerate", "Inferno", "Insect Spray",
+	"Item to Gold", "Jump", "Levitate", "Light", "Lightning Bolt", "Lloyd's Beacon",
+	"Magic Arrow", "Mass Distortion", "Mega Volts", "Moon Ray", "Nature's Cure",
+	"Pain", "Poison Volley", "Power Cure", "Power Shield", "Prismatic Light",
+	"Prot. from Elements", "Raise Dead", "Recharge Item", "Resurrect", "Revitalize",
+	"Shrapmetal", "Sleep", "Sparks", "Star Burst", "Stone to Flesh", "Sun Ray",
+	"Super Shelter", "Suppress Disease", "Suppress Poison", "Teleport",
+	"Time Distortion", "Town Portal", "Toxic Cloud", "Turn Undead", "Walk on Water",
+	"Wizard Eye", "None Ready"
+};
+
+const char *const MAE_NAMES[131] = {
+	"", "burning ", "fiery ", "pyric ", "fuming ", "flaming ", "seething ",
+	"blazing ", "scorching ", "flickering ", "sparking ", "static ",
+	"flashing ", "shocking ", "electric ", "dyna ", "icy ", "frost ",
+	"freezing ", "cold ", "cryo ", "acidic ", "venemous ", "poisonous ",
+	"toxic ", "noxious ", "glowing ", "incandescent ", "dense ", "sonic ",
+	"power ", "thermal ", "radiating ", "kinetic ", "mystic ", "magical ",
+	"ectoplasmic ", "wooden ", "leather ", "brass ", "bronze ", "iron ",
+	"silver ", "steel ", "gold ", "platinum ", "glass ", "coral ", "crystal ",
+	"lapis ", "pearl ", "amber ", "ebony ", "quartz ", "ruby ", "emerald ",
+	"sapphire ", "diamond ", "obsidian ", "might ", "strength ", "warrior ",
+	"ogre ", "giant ", "thunder ", "force ", "power ", "dragon ", "photon ",
+	"clever ", "mind ", "sage ", "thought ", "knowledge ", "intellect ",
+	"wisdom ", "genius ", "buddy ", "friendship ", "charm ", "personality ",
+	"charisma ", "leadership ", "ego ", "holy ", "quick ", "swift ", "fast ",
+	"rapid ", "speed ", "wind ", "accelerator ", "velocity ", "sharp ",
+	"accurate ", "marksman ", "precision ", "true ", "exacto ", "clover ",
+	"chance ", "winners ", "lucky ", "gamblers ", "leprechauns ", "vigor ",
+	"health ", "life ", "troll ", "vampiric ", "spell ", "castors ", "witch ",
+	"mage ", "archmage ", "arcane ", "protection ", "armored ", "defender ",
+	"stealth ", "divine ", "mugger ", "burgler ", "looter ", "brigand ",
+	"filch ", "thief ", "rogue ", "plunder ", "criminal ", "pirate "
+};
+
 void writeConstants(CCArchive &cc) {
 	Common::MemFile file;
 	file.syncString(CREDITS);
@@ -2095,4 +2138,14 @@ void writeConstants(CCArchive &cc) {
 	file.syncStrings2D((const char *const *)MUSIC_FILES2, 6, 7);
 
 	cc.add("CONSTANTS", file);
+
+	// Fallback spell names list needed for Clouds of Xeen
+	Common::MemFile spells;
+	spells.syncStrings(SPELL_NAMES, 77);
+	cc.add("spells.xen", spells);
+
+	// Fallback MAE names list needed for Clouds of Xeen
+	Common::MemFile mae;
+	mae.syncStrings(MAE_NAMES, 131);
+	cc.add("mae.xen", mae);
 }
