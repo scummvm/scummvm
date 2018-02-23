@@ -506,6 +506,9 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		}
 	}
 
+	windows[30].close();
+	windows[29].close();
+
 	intf.drawParty(true);
 	if (updateStock)
 		charData2BlackData();
