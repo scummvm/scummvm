@@ -103,6 +103,39 @@ Common::Error StarTrekEngine::run() {
 	} else {
 		_gfx->drawBackgroundImage("BRIDGE.BGD");
 	}
+
+
+	// Sprite tests
+
+	// Draw mode 0
+	Sprite *spr = new Sprite;
+	_gfx->addSprite(spr);
+	spr->bitmap = new Bitmap(openFile("MWALKE00.BMP"));
+	spr->drawPriority = 1;
+	spr->drawX = 150;
+	spr->drawY = 30;
+	spr->drawMode = 0;
+
+	// Draw mode 2 (translucent background)
+	spr = new Sprite;
+	_gfx->addSprite(spr);
+	spr->bitmap = new Bitmap(openFile("KWALKS00.BMP"));
+	spr->drawPriority = 1;
+	spr->drawX = 200;
+	spr->drawY = 40;
+	spr->drawMode = 2;
+
+	// Draw mode 3 (text)
+	spr = new Sprite;
+	_gfx->addSprite(spr);
+	spr->bitmap = new TextBitmap(8*8,8*8);
+	for (int i=0;i<8*8;i++)
+		spr->bitmap->pixels[i] = 0x40+i;
+	spr->drawX = 8*10;
+	spr->drawY = 50;
+	spr->textColor = 0xb3;
+	spr->drawMode = 3;
+
 	
 	Common::Event event;
 	
@@ -116,7 +149,7 @@ Common::Error StarTrekEngine::run() {
 					break;
 			}
 		}
-		_system->updateScreen();
+		_gfx->redrawScreen();
 
 		_system->delayMillis(1000/60);
 	}
