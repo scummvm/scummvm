@@ -506,6 +506,9 @@ bool SupernovaEngine::setCurrentImage(int filenumber) {
 void SupernovaEngine::saveScreen(int x, int y, int width, int height) {
 	_screenBuffer.push(x, y, width, height);
 }
+void SupernovaEngine::saveScreen(const GuiElement &guiElement) {
+	saveScreen(guiElement.left, guiElement.top, guiElement.width(), guiElement.height());
+}
 
 void SupernovaEngine::restoreScreen() {
 	_screenBuffer.restore();
@@ -692,6 +695,10 @@ void SupernovaEngine::renderText(const uint16 character) {
 	text[1] = 0;
 	renderText(text, _textCursorX, _textCursorY, _textColor);
 }
+void SupernovaEngine::renderText(const GuiElement &guiElement) {
+	renderText(guiElement.getText(), guiElement.getTextPos().x,
+	           guiElement.getTextPos().y, guiElement.getTextColor());
+}
 
 void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color) {
 	Graphics::Surface *screen = _system->lockScreen();
@@ -699,6 +706,10 @@ void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color)
 	_system->unlockScreen();
 }
 
+void SupernovaEngine::renderBox(const GuiElement &guiElement) {
+	renderBox(guiElement.left, guiElement.top, guiElement.width(),
+	          guiElement.height(), guiElement.getBackgroundColor());
+}
 void SupernovaEngine::paletteBrightness() {
 	byte palette[768];
 
@@ -831,14 +842,14 @@ bool SupernovaEngine::quitGameDialog() {
 
 	_gm->animationOff();
 	_gm->saveTime();
-	saveScreen(guiQuitBox.left, guiQuitBox.top, guiQuitBox.width(), guiQuitBox.height());
+	saveScreen(guiQuitBox);
 
-	renderBox(guiQuitBox.left, guiQuitBox.top, guiQuitBox.width(), guiQuitBox.height(), guiQuitBox._bgColorNormal);
-	renderText(guiQuitBox._text, guiQuitBox._textPosition.x, guiQuitBox._textPosition.y, guiQuitBox._textColorNormal);
-	renderBox(guiQuitYes.left, guiQuitYes.top, guiQuitYes.width(), guiQuitYes.height(), guiQuitYes._bgColorNormal);
-	renderText(guiQuitYes._text, guiQuitYes._textPosition.x, guiQuitYes._textPosition.y, guiQuitYes._textColorNormal);
-	renderBox(guiQuitNo.left, guiQuitNo.top, guiQuitNo.width(), guiQuitNo.height(), guiQuitNo._bgColorNormal);
-	renderText(guiQuitNo._text, guiQuitNo._textPosition.x, guiQuitNo._textPosition.y, guiQuitNo._textColorNormal);
+	renderBox(guiQuitBox);
+	renderText(guiQuitBox);
+	renderBox(guiQuitYes);
+	renderText(guiQuitYes);
+	renderBox(guiQuitNo);
+	renderText(guiQuitNo);
 
 	do {
 		_gm->getInput();

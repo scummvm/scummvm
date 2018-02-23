@@ -91,6 +91,23 @@ public:
 	void setColor(int bgColor, int textColor, int bgColorHighlighted, int textColorHightlighted);
 	void setHighlight(bool isHighlighted);
 
+	const char *getText() const {
+		return _text;
+	}
+	int getBackgroundColor() const {
+		return _bgColor;
+	}
+	int getTextColor() const {
+		return _textColor;
+	}
+	const Common::Point &getTextPos() const {
+		return _textPosition;
+	}
+	bool isHighlighted() const {
+		return _isHighlighted;
+	}
+
+private:
 	Common::Point _textPosition;
 	char _text[128];
 	int _bgColor;

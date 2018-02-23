@@ -90,6 +90,7 @@ struct SoundSample {
 	int _length;
 };
 
+class GuiElement;
 class SupernovaEngine : public Engine {
 public:
 	explicit SupernovaEngine(OSystem *syst);
@@ -140,6 +141,7 @@ public:
 	void renderImage(int section);
 	bool setCurrentImage(int filenumber);
 	void saveScreen(int x, int y, int width, int height);
+	void saveScreen(const GuiElement &guiElement);
 	void restoreScreen();
 	void renderRoom(Room &room);
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
@@ -148,7 +150,9 @@ public:
 	void renderText(const uint16 character, int x, int y, byte color);
 	void renderText(const char *text);
 	void renderText(const uint16 character);
+	void renderText(const GuiElement &guiElement);
 	void renderBox(int x, int y, int width, int height, byte color);
+	void renderBox(const GuiElement &guiElement);
 	void setColor63(byte value);
 	bool loadGame(int slot);
 	bool saveGame(int slot, const Common::String &description);

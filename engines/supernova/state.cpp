@@ -1464,56 +1464,31 @@ void GameManager::takeObject(Object &obj) {
 
 void GameManager::drawCommandBox() {
 	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
-		_vm->renderBox(_guiCommandButton[i].left,
-					   _guiCommandButton[i].top,
-					   _guiCommandButton[i].width(),
-					   _guiCommandButton[i].height(),
-					   _guiCommandButton[i]._bgColor);
-		int space = (_guiCommandButton[i].width() - _vm->textWidth(_guiCommandButton[i]._text)) / 2;
-		_vm->renderText(_guiCommandButton[i]._text,
-						_guiCommandButton[i]._textPosition.x + space,
-						_guiCommandButton[i]._textPosition.y,
-						_guiCommandButton[i]._textColor);
+		_vm->renderBox(_guiCommandButton[i]);
+		int space = (_guiCommandButton[i].width() - _vm->textWidth(_guiCommandButton[i].getText())) / 2;
+		_vm->renderText(_guiCommandButton[i].getText(),
+						_guiCommandButton[i].getTextPos().x + space,
+						_guiCommandButton[i].getTextPos().y,
+						_guiCommandButton[i].getTextColor());
 	}
 }
 
 void GameManager::drawInventory() {
 	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
-		_vm->renderBox(_guiInventory[i].left,
-					   _guiInventory[i].top,
-					   _guiInventory[i].width(),
-					   _guiInventory[i].height(),
-					   _guiInventory[i]._bgColor);
-
+		_vm->renderBox(_guiInventory[i]);
 		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name,
-						_guiInventory[i]._textPosition.x,
-						_guiInventory[i]._textPosition.y,
-						_guiInventory[i]._textColor);
+						_guiInventory[i].getTextPos().x,
+						_guiInventory[i].getTextPos().y,
+						_guiInventory[i].getTextColor());
 	}
 
-	_vm->renderBox(_guiInventoryArrow[0].left,
-				   _guiInventoryArrow[0].top,
-				   _guiInventoryArrow[0].width(),
-				   _guiInventoryArrow[0].height(),
-				   _guiInventoryArrow[0]._bgColor);
-	_vm->renderBox(_guiInventoryArrow[1].left,
-				   _guiInventoryArrow[1].top,
-				   _guiInventoryArrow[1].width(),
-				   _guiInventoryArrow[1].height(),
-				   _guiInventoryArrow[1]._bgColor);
+	_vm->renderBox(_guiInventoryArrow[0]);
+	_vm->renderBox(_guiInventoryArrow[1]);
 	if (_inventory.getSize() > ARRAYSIZE(_guiInventory)) {
-		if (_inventoryScroll != 0) {
-			_vm->renderText(_guiInventoryArrow[0]._text,
-							_guiInventoryArrow[0]._textPosition.x,
-							_guiInventoryArrow[0]._textPosition.y,
-							_guiInventoryArrow[0]._textColor);
-		}
-		if (_inventoryScroll + ARRAYSIZE(_guiInventory) < _inventory.getSize()) {
-			_vm->renderText(_guiInventoryArrow[1]._text,
-							_guiInventoryArrow[1]._textPosition.x,
-							_guiInventoryArrow[1]._textPosition.y,
-							_guiInventoryArrow[1]._textColor);
-		}
+		if (_inventoryScroll != 0)
+			_vm->renderText(_guiInventoryArrow[0]);
+		if (_inventoryScroll + ARRAYSIZE(_guiInventory) < _inventory.getSize())
+			_vm->renderText(_guiInventoryArrow[1]);
 	}
 }
 
