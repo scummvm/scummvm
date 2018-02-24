@@ -1459,9 +1459,9 @@ void Interface::doCombat() {
 	combat._combatParty.clear();
 	combat._charsGone.clear();
 	combat.clearBlocked();
-	combat._charsArray1[0] = 0;
-	combat._charsArray1[1] = 0;
-	combat._charsArray1[2] = 0;
+	combat._pow[0]._duration = 0;
+	combat._pow[1]._duration = 0;
+	combat._pow[2]._duration = 0;
 	combat._monstersAttacking = false;
 	combat._partyRan = false;
 
@@ -1498,7 +1498,7 @@ void Interface::doCombat() {
 
 			// Write out the description of the monsters being battled
 			w.writeString(combat.getMonsterDescriptions());
-			_combatIcons.draw(0, 32, Common::Point(233, combat._monsterIndex * 10 + 27),
+			_combatIcons.draw(0, 32, Common::Point(233, combat._attackDurationCtr * 10 + 27),
 				SPRFLAG_800, 1);
 			w.update();
 
@@ -1539,7 +1539,7 @@ void Interface::doCombat() {
 				_buttonValue -= Common::KEYCODE_1;
 				if (combat._attackMonsters[_buttonValue] != -1) {
 					combat._monster2Attack = combat._attackMonsters[_buttonValue];
-					combat._monsterIndex = _buttonValue;
+					combat._attackDurationCtr = _buttonValue;
 				}
 				break;
 

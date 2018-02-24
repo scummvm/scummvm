@@ -28,8 +28,8 @@
 namespace Xeen {
 
 const int COMBAT_POS_X[3][2] = { { 102, 134 },{ 36, 67 },{ 161, 161 } };
-const int INDOOR_INDEXES[3] = { 157, 151, 154 };
-const int OUTDOOR_INDEXES[3] = { 119, 113, 116 };
+const int INDOOR_POW_INDEXES[3] = { 157, 151, 154 };
+const int OUTDOOR_POW_INDEXES[3] = { 119, 113, 116 };
 const int COMBAT_OFFSET_X[4] = { 8, 6, 4, 2 };
 
 OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
@@ -462,20 +462,21 @@ void InterfaceScene::drawOutdoorsScene() {
 	_isAnimReset = false;
 	int attackMon2 = combat._attackMonsters[2];
 
+	// Only the front rank of pow points result in a Pow splatter effect
 	for (int idx = 0; idx < 3; ++idx) {
-		DrawStruct &ds1 = _outdoorList[OUTDOOR_INDEXES[idx] + 1];
-		DrawStruct &ds2 = _outdoorList[OUTDOOR_INDEXES[idx]];
+		DrawStruct &ds1 = _outdoorList[OUTDOOR_POW_INDEXES[idx] + 1];
+		DrawStruct &ds2 = _outdoorList[OUTDOOR_POW_INDEXES[idx]];
 		ds1._sprites = nullptr;
 		ds2._sprites = nullptr;
 
-		if (combat._charsArray1[idx]) {
+		if (combat._pow[idx]._duration) {
 			int vIndex = combat._attackMonsters[1] && !attackMon2 ? 1 : 0;
-			combat._charsArray1[idx]--;
+			combat._pow[idx]._duration--;
 
-			if (combat._monPow[idx]) {
+			if (combat._pow[idx]._active) {
 				ds2._x = COMBAT_POS_X[idx][vIndex];
 				ds2._frame = 0;
-				ds2._scale = combat._monsterScale[idx];
+				ds2._scale = combat._pow[idx]._scale;
 
 				if (ds2._scale == SCALE_ENLARGE) {
 					ds2._x /= 3;
@@ -488,10 +489,10 @@ void InterfaceScene::drawOutdoorsScene() {
 				ds2._sprites = &_charPowSprites;
 			}
 
-			if (combat._elemPow[idx]) {
+			if (combat._pow[idx]._elemFrame) {
 				ds1._x = COMBAT_POS_X[idx][vIndex] + COMBAT_OFFSET_X[idx];
-				ds1._frame = combat._elemPow[idx];
-				ds1._scale = combat._elemScale[idx];
+				ds1._frame = combat._pow[idx]._elemFrame;
+				ds1._scale = combat._pow[idx]._elemScale;
 
 				if (ds1._scale == SCALE_ENLARGE)
 					ds1._x /= 3;
@@ -600,20 +601,21 @@ void InterfaceScene::drawIndoorsScene() {
 	// Code in the original that's not being used
 	//MazeObject &objObject = map._mobData._objects[_objNumber - 1];
 
+	// Only the front rank of pow points result in a Pow splatter effect
 	for (int idx = 0; idx < 3; ++idx) {
-		DrawStruct &ds1 = _indoorList[INDOOR_INDEXES[idx]];
-		DrawStruct &ds2 = _indoorList[INDOOR_INDEXES[idx] + 1];
+		DrawStruct &ds1 = _indoorList[INDOOR_POW_INDEXES[idx]];
+		DrawStruct &ds2 = _indoorList[INDOOR_POW_INDEXES[idx] + 1];
 		ds1._sprites = nullptr;
 		ds2._sprites = nullptr;
 
-		if (combat._charsArray1[idx]) {
+		if (combat._pow[idx]._duration) {
 			int posIndex = combat._attackMonsters[1] && !combat._attackMonsters[2] ? 1 : 0;
-			--combat._charsArray1[idx];
+			--combat._pow[idx]._duration;
 
-			if (combat._monPow[idx]) {
+			if (combat._pow[idx]._active) {
 				ds1._x = COMBAT_POS_X[idx][posIndex];
 				ds1._frame = 0;
-				ds1._scale = combat._monsterScale[idx];
+				ds1._scale = combat._pow[idx]._scale;
 				if (ds1._scale == SCALE_ENLARGE) {
 					ds1._x /= 3;
 					ds1._y = 60;
@@ -625,10 +627,10 @@ void InterfaceScene::drawIndoorsScene() {
 				ds1._sprites = &_charPowSprites;
 			}
 
-			if (combat._elemPow[idx]) {
+			if (combat._pow[idx]._elemFrame) {
 				ds2._x = COMBAT_POS_X[idx][posIndex] + COMBAT_OFFSET_X[idx];
-				ds2._frame = combat._elemPow[idx];
-				ds2._scale = combat._elemScale[idx];
+				ds2._frame = combat._pow[idx]._elemFrame;
+				ds2._scale = combat._pow[idx]._elemScale;
 				if (ds2._scale == SCALE_ENLARGE)
 					ds2._x /= 3;
 				ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;

@@ -93,11 +93,6 @@ static const int MONSTER_ITEM_RANGES[6] = { 10, 20, 50, 100, 100, 100 };
 
 Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[26], 0);
-	Common::fill(&_charsArray1[0], &_charsArray1[12], 0);
-	Common::fill(&_monPow[0], &_monPow[12], 0);
-	Common::fill(&_monsterScale[0], &_monsterScale[12], 0);
-	Common::fill(&_elemPow[0], &_elemPow[12], ELEM_FIRE);
-	Common::fill(&_elemScale[0], &_elemScale[12], 0);
 	Common::fill(&_shootingRow[0], &_shootingRow[MAX_PARTY_COUNT], 0);
 	Common::fill(&_monsterMap[0][0], &_monsterMap[32][32], 0);
 	Common::fill(&_monsterMoved[0], &_monsterMoved[MAX_NUM_MONSTERS], false);
@@ -109,7 +104,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
 	_itemFlag = false;
 	_monstersAttacking = false;
 	_combatMode = COMBATMODE_0;
-	_monsterIndex = 0;
+	_attackDurationCtr = 0;
 	_partyRan = false;
 	_monster2Attack = -1;
 	_whosSpeed = 0;
@@ -1181,13 +1176,13 @@ Common::String Combat::getMonsterDescriptions() {
 		}
 	}
 
-	if (_monsterIndex == 2 && _attackMonsters[2] != -1) {
+	if (_attackDurationCtr == 2 && _attackMonsters[2] != -1) {
 		_monster2Attack = _attackMonsters[2];
-	} if (_monsterIndex == 1 && _attackMonsters[1] != -1) {
+	} if (_attackDurationCtr == 1 && _attackMonsters[1] != -1) {
 		_monster2Attack = _attackMonsters[1];
 	} else {
 		_monster2Attack = _attackMonsters[0];
-		_monsterIndex = 0;
+		_attackDurationCtr = 0;
 	}
 
 	return Common::String::format(Res.COMBAT_DETAILS, lines[0].c_str(),
@@ -1278,7 +1273,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 				}
 			}
 		} else {
-			Common::fill(&_elemPow[0], &_elemPow[PARTY_AND_MONSTERS], ELEM_FIRE);
+			_pow.resetElementals();
 			damage = 0;
 
 			for (uint charIndex = 0; charIndex < party._activeParty.size(); ++charIndex) {
@@ -1427,8 +1422,8 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		}
 
 		if (damage) {
-			_charsArray1[_monsterIndex] = 3;
-			_monPow[_monsterIndex] = _damageType == DT_PHYSICAL && (rangeType == 3 || rangeType == 0);
+			_pow[_attackDurationCtr]._duration = 3;
+			_pow[_attackDurationCtr]._active = _damageType == DT_PHYSICAL && (rangeType == RT_HIT || rangeType == RT_SINGLE);
 			monster._frame = 11;
 			monster._postAttackDelay = 5;
 		}
@@ -1436,13 +1431,13 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		int monsterResist = getMonsterResistence(rangeType);
 		damage += monsterResist;
 		if (monsterResist > 0) {
-			_elemPow[_monsterIndex] = _attackWeapon->getElementalCategory();
-			_elemScale[_monsterIndex] = getDamageScale(monsterResist);
+			_pow[_attackDurationCtr]._elemFrame = _attackWeapon->getElementalCategory();
+			_pow[_attackDurationCtr]._elemScale = getDamageScale(monsterResist);
 		} else if (rangeType != 3) {
-			_elemPow[_monsterIndex] = ELEM_FIRE;
+			_pow[_attackDurationCtr]._elemFrame = 0;
 		}
 
-		if (rangeType != 0 && rangeType != 3) {
+		if (rangeType != RT_SINGLE && rangeType != RT_HIT) {
 			monster._effect2 = DAMAGE_TYPE_EFFECTS[_damageType];
 			monster._effect1 = 0;
 		}
@@ -1473,7 +1468,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			sound.playSound(_missVoc, 1);
 			sound.playFX(6);
 		} else {
-			_monsterScale[_monsterIndex] = getDamageScale(damage);
+			_pow[_attackDurationCtr]._scale = getDamageScale(damage);
 			intf.draw3d(true);
 
 			sound.stopSound();
@@ -1572,13 +1567,13 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		}
 
 		monster._position = Common::Point(0x80, 0x80);
-		_charsArray1[_monsterIndex] = 0;
+		_pow[_attackDurationCtr]._duration = 0;
 		_monster2Attack = -1;
 		intf.draw3d(true);
 
 		if (_attackMonsters[0] != -1) {
 			_monster2Attack = _attackMonsters[0];
-			_monsterIndex = 0;
+			_attackDurationCtr = 0;
 		}
 	}
 }
@@ -1861,7 +1856,7 @@ void Combat::rangedAttack(PowType powNum) {
 
 	intf._charsShooting = true;
 	_powSprites.load(Common::String::format("pow%d.icn", (int)powNum));
-	int monsterIndex = _monsterIndex;
+	int monsterIndex = _attackDurationCtr;
 	int monster2Attack = _monster2Attack;
 	bool attackedFlag = false;
 
@@ -1871,9 +1866,9 @@ void Combat::rangedAttack(PowType powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	_monsterIndex = -1;
+	_attackDurationCtr = -1;
 	if (_monster2Attack != -1) {
-		_monsterIndex--;
+		_attackDurationCtr--;
 		if (attackMonsters.empty())
 			attackMonsters.resize(1);
 		attackMonsters[0] = monster2Attack;
@@ -1905,8 +1900,8 @@ void Combat::rangedAttack(PowType powNum) {
 
 	intf.draw3d(true);
 
-	++_monsterIndex;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
+	++_attackDurationCtr;
+	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_attackDurationCtr) {
 		Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
 		_monster2Attack = attackMonsters[monIdx];
 		attack(*_oldCharacter, RT_GROUP);
@@ -1955,8 +1950,8 @@ void Combat::rangedAttack(PowType powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	++_monsterIndex;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
+	++_attackDurationCtr;
+	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_attackDurationCtr) {
 		Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
 		_monster2Attack = attackMonsters[monIdx];
 		attack(*_oldCharacter, RT_GROUP);
@@ -2005,8 +2000,8 @@ void Combat::rangedAttack(PowType powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	++_monsterIndex;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
+	++_attackDurationCtr;
+	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_attackDurationCtr) {
 		Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
 		_monster2Attack = attackMonsters[monIdx];
 		attack(*_oldCharacter, RT_GROUP);
@@ -2055,8 +2050,8 @@ void Combat::rangedAttack(PowType powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	++_monsterIndex;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_monsterIndex) {
+	++_attackDurationCtr;
+	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_attackDurationCtr) {
 		Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
 		_monster2Attack = attackMonsters[monIdx];
 		attack(*_oldCharacter, RT_GROUP);
@@ -2076,7 +2071,7 @@ finished:
 done:
 	clearShooting();
 	_monster2Attack = monster2Attack;
-	_monsterIndex = monsterIndex;
+	_attackDurationCtr = monsterIndex;
 	party.giveTreasure();
 }
 

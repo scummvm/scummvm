@@ -32,6 +32,7 @@ namespace Xeen {
 
 #define MAX_NUM_MONSTERS 107
 #define PARTY_AND_MONSTERS 12
+#define POW_COUNT 12
 #define ATTACK_MONSTERS_COUNT 26
 
 enum DamageType {
@@ -82,6 +83,38 @@ class XeenEngine;
 class Character;
 class XeenItem;
 
+struct PowSlot {
+	bool _active;
+	int _duration;
+	int _scale;
+	int _elemFrame;
+	int _elemScale;
+
+	PowSlot() : _active(false), _duration(0), _scale(0),
+		_elemFrame(0), _elemScale(0) {}
+};
+
+class PowSlots {
+private:
+	PowSlot _data[POW_COUNT];
+public:
+	/**
+	 * Gets a slot entry
+	 */
+	PowSlot &operator[](uint idx) {
+		assert(idx < POW_COUNT);
+		return _data[idx];
+	}
+
+	/**
+	 * Resets the elemental frame used in all the slots
+	 */
+	void resetElementals() {
+		for (int idx = 0; idx < POW_COUNT; ++idx)
+			_data[idx]._elemFrame = 0;
+	}
+};
+
 class Combat {
 private:
 	XeenEngine *_vm;
@@ -109,11 +142,7 @@ public:
 	SpriteResource _powSprites;
 	int _attackMonsters[ATTACK_MONSTERS_COUNT];
 	int _monster2Attack;
-	int _charsArray1[PARTY_AND_MONSTERS];
-	bool _monPow[PARTY_AND_MONSTERS];
-	int _monsterScale[PARTY_AND_MONSTERS];
-	ElementalCategory _elemPow[PARTY_AND_MONSTERS];
-	int _elemScale[PARTY_AND_MONSTERS];
+	PowSlots _pow;
 	int _missedShot[8];
 	Common::Array<int> _speedTable;
 	int _shootingRow[8];
@@ -126,7 +155,7 @@ public:
 	int _gmonHit[36];
 	bool _monstersAttacking;
 	CombatMode _combatMode;
-	int _monsterIndex;
+	int _attackDurationCtr;
 	bool _partyRan;
 	int _whosSpeed;
 	DamageType _damageType;
