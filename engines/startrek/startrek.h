@@ -26,17 +26,22 @@
 #ifndef STARTREK_H
 #define STARTREK_H
 
-#include "common/scummsys.h"
-#include "common/util.h"
-#include "common/system.h"
+#include "common/ptr.h"
 #include "common/rect.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/system.h"
+#include "common/util.h"
 
 #include "engines/engine.h"
 
+#include "startrek/filestream.h"
 #include "startrek/graphics.h"
 #include "startrek/sound.h"
+
+
+using Common::SharedPtr;
 
 namespace Common {
 	class MacResManager;
@@ -65,6 +70,9 @@ public:
 	StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc);
 	virtual ~StarTrekEngine();
 
+	// Running the game
+	void pollEvents();
+
 	// Detection related functions
 	const StarTrekGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -74,7 +82,7 @@ public:
 	Common::Language getLanguage();
 
 	// Resource related functions
-	Common::SeekableReadStreamEndian *openFile(Common::String filename, int fileIndex=0);
+	SharedPtr<FileStream> openFile(Common::String filename, int fileIndex=0);
 
 	// Movie related functions
 	void playMovie(Common::String filename);
@@ -84,8 +92,6 @@ private:
 	Graphics *_gfx;
 	Sound *_sound;
 	Common::MacResManager *_macResFork;
-	
-	byte getStartingIndex(Common::String filename);
 };
 
 } // End of namespace StarTrek

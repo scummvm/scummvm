@@ -42,7 +42,7 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	if (_vm->getGameType() == GType_ST25 && _vm->getPlatform() == Common::kPlatformDOS)
 		_font = new Font(_vm);
 
-	_backgroundImage = new Bitmap(_vm->openFile("DEMON0.BMP"));
+	_backgroundImage = new Bitmap(_vm->openFile("DEMON0.BMP").get());
 	_canvas = new Bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	_numSprites = 0;
@@ -67,15 +67,14 @@ void Graphics::loadEGAData(const char *filename) {
 	if (!_egaData)
 		_egaData = new byte[256];
 
-	Common::SeekableReadStream *egaStream = _vm->openFile(filename);
+	SharedPtr<Common::SeekableReadStream> egaStream = _vm->openFile(filename);
 	egaStream->read(_egaData, 256);
-	delete egaStream;
 }
 
 void Graphics::drawBackgroundImage(const char *filename) {
 	// Draw an stjr BGD image (palette built-in)
 
-	Common::SeekableReadStream *imageStream = _vm->openFile(filename);
+	SharedPtr<Common::SeekableReadStream> imageStream = _vm->openFile(filename);
 	byte *palette = new byte[256 * 3];
 	imageStream->read(palette, 256 * 3);
 
@@ -96,7 +95,6 @@ void Graphics::drawBackgroundImage(const char *filename) {
 	_vm->_system->updateScreen();
 
 	delete[] palette;
-	delete imageStream;
 }
 
 
@@ -105,7 +103,7 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	Common::String palFile = paletteName + ".PAL";
 	Common::String lutFile = paletteName + ".LUT";
 
-	Common::SeekableReadStream *palStream = _vm->openFile(palFile.c_str());
+	SharedPtr<Common::SeekableReadStream> palStream = _vm->openFile(palFile.c_str());
 	byte *palette = new byte[256 * 3];
 	palStream->read(palette, 256 * 3);
 
@@ -117,24 +115,25 @@ void Graphics::loadPalette(const Common::String &paletteName) {
 	_vm->_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	delete[] palette;
-	delete palStream;
 
 	// Load LUT file
-	Common::SeekableReadStream *lutStream = _vm->openFile(lutFile.c_str());
+	SharedPtr<Common::SeekableReadStream> lutStream = _vm->openFile(lutFile.c_str());
 
 	delete[] _lutData;
 	_lutData = new byte[256];
 	lutStream->read(_lutData, 256);
-
-	delete lutStream;
 }
 
 void Graphics::loadPri(const char *priFile) {
-	Common::SeekableReadStream *priStream = _vm->openFile(priFile);
+	SharedPtr<Common::SeekableReadStream> priStream = _vm->openFile(priFile);
 
 	delete[] _priData;
 	_priData = new byte[SCREEN_WIDTH*SCREEN_HEIGHT/2];
 	priStream->read(_priData, SCREEN_WIDTH*SCREEN_HEIGHT/2);
+}
+
+SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
+	return SharedPtr<Bitmap>(new Bitmap(_vm->openFile(basename+".BMP").get()));
 }
 
 void Graphics::redrawScreen() {

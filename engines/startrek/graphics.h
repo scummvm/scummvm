@@ -27,11 +27,15 @@
 #define STARTREK_GRAPHICS_H
 
 #include "startrek/bitmap.h"
-#include "startrek/startrek.h"
 #include "startrek/font.h"
+#include "startrek/startrek.h"
+#include "startrek/sprite.h"
 
+#include "common/ptr.h"
 #include "common/rect.h"
 #include "common/stream.h"
+
+using Common::SharedPtr;
 
 namespace StarTrek {
 
@@ -44,24 +48,11 @@ const int SCREEN_HEIGHT = 200;
 
 const int MAX_SPRITES = 32;
 
+const int TEXTBOX_WIDTH = 26;
 
-struct Sprite {
-	uint16 x,y;
-	uint16 drawPriority;
-	uint16 field6;
-	uint16 field8;
-	Bitmap *bitmap;
-	uint16 drawMode;
-	uint16 textColor;
-	uint16 bitmapChanged;
-	uint16 redrawCondition2;
-	uint16 redrawCondition3;
-	uint16 field16;
-	Common::Rect rectangle1;
-	Common::Rect clickRectangle;
-	Common::Rect rectangle2;
-	uint16 drawX,drawY;
-};
+
+class Graphics;
+typedef Common::String (Graphics::*TextGetterFunc)(int, int, Common::String *);
 
 
 class Graphics {
@@ -74,6 +65,8 @@ public:
 
 	void loadPalette(const Common::String &paletteFile);
 	void loadPri(const char *priFile);
+
+	SharedPtr<Bitmap> loadBitmap(Common::String basename);
 
 	void redrawScreen();
 	void drawSprite(const Sprite &sprite);
@@ -102,6 +95,32 @@ private:
 
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;
+
+	Common::Point _mousePos;
+	Sprite _mouseSprite;
+
+
+	// text.cpp (TODO: separate class)
+public:
+	int showText(TextGetterFunc textGetter, int var, int xoffset, int yoffset, int textColor, int argC, int maxTextLines, int arg10);
+	Common::String tmpFunction(int choiceIndex, int var, Common::String *speakerTextOutput);
+	SharedPtr<TextBitmap> initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
+
+private:
+	Common::String skipOverAudioPrompt(const Common::String &str);
+	int getNumLines(const Common::String &str);
+	Common::String readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
+	void loadTextButtons(Common::String mnuFilename, int xpos, int ypos);
+	void warpMousePosition(int x, int y);
+
+	uint16 _textboxVar1;
+	uint32 _textboxVar2;
+	uint32 _textboxVar3;
+	uint16 _textboxVar4;
+	uint16 _textboxVar5;
+	uint16 _textboxVar6;
+	uint16 _textboxVar7;
+	bool _textboxHasMultipleChoices;
 };
 
 }

@@ -107,12 +107,11 @@ void Sound::playSMFSound(const char *baseSoundName) {
 	}
 	
 	debug(0, "Playing sound \'%s\'\n", soundName.c_str());
-	Common::SeekableReadStream *soundStream = _vm->openFile(soundName.c_str());
+	SharedPtr<Common::SeekableReadStream> soundStream = _vm->openFile(soundName.c_str());
 	
 	byte *soundData = (byte *)malloc(soundStream->size());
 	soundStream->read(soundData, soundStream->size());
 	_midiParser->loadMusic(soundData, soundStream->size());
-	delete soundStream;
 	
 	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
 }
@@ -135,12 +134,11 @@ void Sound::playXMIDISound(const char *baseSoundName) {
 	}
 	
 	debug(0, "Playing sound \'%s\'\n", soundName.c_str());
-	Common::SeekableReadStream *soundStream = _vm->openFile(soundName.c_str());
+	SharedPtr<Common::SeekableReadStream> soundStream = _vm->openFile(soundName.c_str());
 	
 	byte *soundData = (byte *)malloc(soundStream->size());
 	soundStream->read(soundData, soundStream->size());
 	_midiParser->loadMusic(soundData, soundStream->size());
-	delete soundStream;
 	
 	_midiDriver->setTimerCallback(_midiParser, MidiParser::timerCallback);
 }
@@ -165,7 +163,7 @@ void Sound::playAmigaSoundEffect(const char *baseSoundName) {
 	if (_vm->_mixer->isSoundHandleActive(*_soundHandle))
 		_vm->_mixer->stopHandle(*_soundHandle);
 
-	Audio::AudioStream *audStream = (Audio::AudioStream *)Audio::makeRawStream(_vm->openFile(soundName.c_str()), 11025, 0);
+	Audio::AudioStream *audStream = (Audio::AudioStream *)Audio::makeRawStream(_vm->openFile(soundName.c_str()).get(), 11025, 0);
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, _soundHandle, audStream);
 }
 

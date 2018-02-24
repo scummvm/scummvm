@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/startrek.cpp $
- * $Id: startrek.cpp 17 2010-12-16 02:29:35Z clone2727 $
- *
  */
 
 #include "base/plugins.h"
@@ -110,7 +107,7 @@ Common::Error StarTrekEngine::run() {
 	// Draw mode 0
 	Sprite *spr = new Sprite;
 	_gfx->addSprite(spr);
-	spr->bitmap = new Bitmap(openFile("MWALKE00.BMP"));
+	spr->bitmap = _gfx->loadBitmap("MWALKE00");
 	spr->drawPriority = 1;
 	spr->drawX = 150;
 	spr->drawY = 30;
@@ -119,7 +116,7 @@ Common::Error StarTrekEngine::run() {
 	// Draw mode 2 (translucent background)
 	spr = new Sprite;
 	_gfx->addSprite(spr);
-	spr->bitmap = new Bitmap(openFile("KWALKS00.BMP"));
+	spr->bitmap = _gfx->loadBitmap("KWALKS00");
 	spr->drawPriority = 1;
 	spr->drawX = 200;
 	spr->drawY = 40;
@@ -128,7 +125,7 @@ Common::Error StarTrekEngine::run() {
 	// Draw mode 3 (text)
 	spr = new Sprite;
 	_gfx->addSprite(spr);
-	spr->bitmap = new TextBitmap(8*8,8*8);
+	spr->bitmap = SharedPtr<Bitmap>(new TextBitmap(8*8,8*8));
 	for (int i=0;i<8*8;i++)
 		spr->bitmap->pixels[i] = 0x40+i;
 	spr->drawX = 8*10;
@@ -136,29 +133,41 @@ Common::Error StarTrekEngine::run() {
 	spr->textColor = 0xb3;
 	spr->drawMode = 3;
 
-	
-	Common::Event event;
+	// initTextSprite function
+	spr = new Sprite;
+	int x=0,y=0;
+	_gfx->initTextSprite(&x, &y, 0xb3, 3, false, spr);
+	spr->drawY = 150;
+
+
+	_gfx->showText(&Graphics::tmpFunction, 0, 0, 0, 0xb3, 0, 10, 0);
 	
 	while (!shouldQuit()) {
-		while (_eventMan->pollEvent(event)) {
-			switch (event.type) {
-				case Common::EVENT_QUIT:
-					_system->quit();
-					break;
-				default:
-					break;
-			}
-		}
-		_gfx->redrawScreen();
-
-		_system->delayMillis(1000/60);
+		pollEvents();
 	}
 #endif
 
 	return Common::kNoError;
 }
 
-Common::SeekableReadStreamEndian *StarTrekEngine::openFile(Common::String filename, int fileIndex) {
+void StarTrekEngine::pollEvents() {
+	Common::Event event;
+
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_system->quit();
+			break;
+		default:
+			break;
+		}
+	}
+	_gfx->redrawScreen();
+
+	_system->delayMillis(1000/60);
+}
+
+SharedPtr<FileStream> StarTrekEngine::openFile(Common::String filename, int fileIndex) {
 	filename.toUppercase();
 	Common::String basename, extension;
 
@@ -179,7 +188,7 @@ Common::SeekableReadStreamEndian *StarTrekEngine::openFile(Common::String filena
 		Common::File *file = new Common::File();
 		if (!file->open(filename.c_str()))
 			error ("Could not find file \'%s\'", filename.c_str());
-		return new FileStream(file, bigEndian);
+		return SharedPtr<FileStream>(new FileStream(file, bigEndian));
 	}
 
 	Common::SeekableReadStream *indexFile = 0;
@@ -282,7 +291,7 @@ Common::SeekableReadStreamEndian *StarTrekEngine::openFile(Common::String filena
 		Common::SeekableReadStream *stream = dataFile->readStream(uncompressedSize);
 		delete dataFile;
 		delete dataRunFile;
-		return new FileStream(stream, bigEndian);
+		return SharedPtr<FileStream>(new FileStream(stream, bigEndian));
 	} else {
 		if (fileCount != 1) {
 			dataRunFile->seek(indexOffset);
@@ -304,13 +313,13 @@ Common::SeekableReadStreamEndian *StarTrekEngine::openFile(Common::String filena
 
 		delete dataFile;
 		delete dataRunFile;
-		return new FileStream(stream, bigEndian);
+		return SharedPtr<FileStream>(new FileStream(stream, bigEndian));
 	}
 
 	// We should not get to this point...
 	error("Could not find data for \'%s\'", filename.c_str());
 
-	return NULL;
+	return SharedPtr<FileStream>();
 }
 
 void StarTrekEngine::playMovie(Common::String filename) {
