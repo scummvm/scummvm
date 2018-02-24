@@ -61,13 +61,7 @@ protected:
 	/**
 	 * Shows the Pharaoh ending screen where score text is shown
 	 */
-	void showPharaohEndText(const Common::String &msg1, const Common::String &msg2, const Common::String &msg3);
-	void showPharaohEndText(const Common::String &msg1) {
-		showPharaohEndText(msg1, "", "");
-	}
-	void showPharaohEndText(const Common::String &msg1, const Common::String &msg2) {
-		showPharaohEndText(msg1, msg2, "");
-	}
+	void showPharaohEndText(const char *msg1, const char *msg2 = nullptr, const char *msg3 = nullptr);
 public:
 	DarkSideCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 

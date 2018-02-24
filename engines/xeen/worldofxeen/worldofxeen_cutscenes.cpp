@@ -51,7 +51,7 @@ void WorldOfXeenCutscenes::worldEnding1() {
 
 	files.setGameCc(0);
 	sound.playSong("outday3.m");
-	showPharaohEndText(Res.WORLD_END_TEXT[0], nullptr, nullptr);
+	showPharaohEndText(Res.WORLD_END_TEXT[0]);
 	sound.playSound("elect.voc", 1, 0);
 
 	screen.loadBackground("skymain.raw");
