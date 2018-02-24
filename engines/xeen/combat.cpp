@@ -1856,7 +1856,7 @@ void Combat::rangedAttack(PowType powNum) {
 
 	intf._charsShooting = true;
 	_powSprites.load(Common::String::format("pow%d.icn", (int)powNum));
-	int monsterIndex = _attackDurationCtr;
+	int attackDurationCtr = _attackDurationCtr;
 	int monster2Attack = _monster2Attack;
 	bool attackedFlag = false;
 
@@ -1900,16 +1900,20 @@ void Combat::rangedAttack(PowType powNum) {
 
 	intf.draw3d(true);
 
-	++_attackDurationCtr;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_attackDurationCtr) {
-		Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
-		_monster2Attack = attackMonsters[monIdx];
-		attack(*_oldCharacter, RT_GROUP);
-		attackedFlag = true;
+	// Iterate through the three possible monster positions in the first row
+	for (uint monIdx = 0; monIdx < 3; ++monIdx) {
+		++_attackDurationCtr;
 
-		if (_rangeType == RT_SINGLE)
-			// Only single shot, so exit now that the attack is done
-			goto finished;
+		if (monIdx < attackMonsters.size()) {
+			Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
+			_monster2Attack = attackMonsters[monIdx];
+			attack(*_oldCharacter, RT_GROUP);
+			attackedFlag = true;
+
+			if (_rangeType == RT_SINGLE)
+				// Only single shot, so exit now that the attack is done
+				goto finished;
+		}
 	}
 
 	if (attackedFlag && _rangeType == RT_GROUP)
@@ -1950,16 +1954,20 @@ void Combat::rangedAttack(PowType powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	++_attackDurationCtr;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_attackDurationCtr) {
-		Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
-		_monster2Attack = attackMonsters[monIdx];
-		attack(*_oldCharacter, RT_GROUP);
-		attackedFlag = true;
+	// Iterate through the three possible monster positions in the second row
+	for (uint monIdx = 0; monIdx < 3; ++monIdx) {
+		++_attackDurationCtr;
 
-		if (_rangeType == RT_SINGLE)
-			// Only single shot, so exit now that the attack is done
-			goto finished;
+		if (monIdx < attackMonsters.size()) {
+			Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
+			_monster2Attack = attackMonsters[monIdx];
+			attack(*_oldCharacter, RT_GROUP);
+			attackedFlag = true;
+
+			if (_rangeType == RT_SINGLE)
+				// Only single shot, so exit now that the attack is done
+				goto finished;
+		}
 	}
 
 	if (attackedFlag && _rangeType == RT_GROUP)
@@ -2000,16 +2008,20 @@ void Combat::rangedAttack(PowType powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	++_attackDurationCtr;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_attackDurationCtr) {
-		Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
-		_monster2Attack = attackMonsters[monIdx];
-		attack(*_oldCharacter, RT_GROUP);
-		attackedFlag = true;
+	// Iterate through the three possible monster positions in the third row
+	for (uint monIdx = 0; monIdx < 3; ++monIdx) {
+		++_attackDurationCtr;
 
-		if (_rangeType == RT_SINGLE)
-			// Only single shot, so exit now that the attack is done
-			goto finished;
+		if (monIdx < attackMonsters.size()) {
+			Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
+			_monster2Attack = attackMonsters[monIdx];
+			attack(*_oldCharacter, RT_GROUP);
+			attackedFlag = true;
+
+			if (_rangeType == RT_SINGLE)
+				// Only single shot, so exit now that the attack is done
+				goto finished;
+		}
 	}
 
 	if (attackedFlag && _rangeType == RT_GROUP)
@@ -2050,16 +2062,20 @@ void Combat::rangedAttack(PowType powNum) {
 			attackMonsters.push_back(_attackMonsters[idx]);
 	}
 
-	++_attackDurationCtr;
-	for (uint monIdx = 0; monIdx < attackMonsters.size(); ++monIdx, ++_attackDurationCtr) {
-		Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
-		_monster2Attack = attackMonsters[monIdx];
-		attack(*_oldCharacter, RT_GROUP);
-		attackedFlag = true;
+	// Iterate through the three possible monster positions in the fourth row
+	for (uint monIdx = 0; monIdx < 3; ++monIdx) {
+		++_attackDurationCtr;
 
-		if (_rangeType == RT_SINGLE)
-			// Only single shot, so exit now that the attack is done
-			goto finished;
+		if (monIdx < attackMonsters.size()) {
+			Common::fill(&_missedShot[0], &_missedShot[MAX_PARTY_COUNT], false);
+			_monster2Attack = attackMonsters[monIdx];
+			attack(*_oldCharacter, RT_GROUP);
+			attackedFlag = true;
+
+			if (_rangeType == RT_SINGLE)
+				// Only single shot, so exit now that the attack is done
+				goto finished;
+		}
 	}
 
 	if (!(attackedFlag && _rangeType == RT_GROUP))
@@ -2071,7 +2087,7 @@ finished:
 done:
 	clearShooting();
 	_monster2Attack = monster2Attack;
-	_attackDurationCtr = monsterIndex;
+	_attackDurationCtr = attackDurationCtr;
 	party.giveTreasure();
 }
 
