@@ -213,6 +213,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 	files.load(*saveFile);
 
 	// Load the new map
+	map.clearMaze();
 	map._loadDarkSide = files._isDarkCc;
 	map.load(party._mazeId);
 

@@ -484,6 +484,12 @@ public:
 	void saveMaze();
 
 	/**
+	 * Clears the current maze. This is used during savegame loads so that
+	 * the previous games maze data isn't saved as the new map is loaded
+	 */
+	void clearMaze();
+
+	/**
 	 * Gets the data for a map position at one of the relative indexes
 	 * surrounding the current position
 	 */

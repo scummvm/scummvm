@@ -1169,6 +1169,10 @@ void Map::saveMaze() {
 	saveMonsters();
 }
 
+void Map::clearMaze() {
+	_mazeData[0]._mazeNumber = 0;
+}
+
 void Map::cellFlagLookup(const Common::Point &pt) {
 	Common::Point pos = pt;
 	findMap();
