@@ -136,7 +136,7 @@ public:
 	int _weaponDie, _weaponDice;
 	XeenItem *_attackWeapon;
 	int _attackWeaponId;
-	File _missVoc, _pow1Voc;
+	File _missVoc;
 	int _hitChanceBonus;
 	bool _dangerPresent;
 	bool _moveMonsters;

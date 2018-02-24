@@ -91,7 +91,7 @@ static const int MONSTER_ITEM_RANGES[6] = { 10, 20, 50, 100, 100, 100 };
 
 /*------------------------------------------------------------------------*/
 
-Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc"), _pow1Voc("pow1.voc") {
+Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
 	Common::fill(&_attackMonsters[0], &_attackMonsters[26], 0);
 	Common::fill(&_charsArray1[0], &_charsArray1[12], 0);
 	Common::fill(&_monPow[0], &_monPow[12], 0);
@@ -1414,13 +1414,14 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		if (monster._damageType == DT_SLEEP || monster._damageType == DT_DRAGONSLEEP)
 			monster._damageType = DT_PHYSICAL;
 
-		if ((!rangeType || !_damageType) && _attackWeaponId != 34) {
+		if ((rangeType == RT_SINGLE || _damageType == DT_PHYSICAL) && _attackWeaponId != 34) {
 			if (monsterData._phsyicalResistence != 0) {
 				if (monsterData._phsyicalResistence == 100) {
+					// Completely immune to the damage
 					damage = 0;
 				} else {
-					// This doesn't seem to have any effect?
-					damage = (damage * 100) / 100;
+					// Reduce the damage based on physical resistance
+					damage = damage * (100 - monsterData._phsyicalResistence) / 100;
 				}
 			}
 		}
