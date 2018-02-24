@@ -1813,8 +1813,30 @@ void TuckerEngine::drawCurrentSprite() {
 	if ((_locationNum == 17 || _locationNum == 18) && _currentSpriteAnimationFrame == 16) {
 		return;
 	}
-	// Workaround original game glitch: location 14 contains some colors from [0xE0-0xF8] in a walkable area (tracker item #3106542)
-	const bool color248Only = (_locationNum == 14);
+
+	// WORKAROUND: original game glitch
+	// Locations 48 and 61 contain reserved colors from [0xE0-0xF8] in a walkable area which
+	// results in a number of pixels being falsely drawn in the foreground (on top of Bud).
+	// Even worse, location 61 uses some of the same colors in places which actually _should_
+	// be drawn in the foreground.
+	// We whitelist these colors based on location number and, in case of location 61, also
+	// based on Bud's location (pun not intended).
+	// This fixes Trac#10423.
+	const int *whitelistReservedColors = nullptr;
+	//                                                      [0xE0, ...                            ..., 0xEF]
+	static const int whitelistReservedColorsLocation48[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
+	static const int whitelistReservedColorsLocation61[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1 };
+	switch (_locationNum) {
+		case 48:
+			whitelistReservedColors = (const int *)&whitelistReservedColorsLocation48;
+			break;
+
+		case 61:
+			if (_xPosCurrent <= 565)
+				whitelistReservedColors = (const int *)&whitelistReservedColorsLocation61;
+			break;
+	}
+
 	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
 	int yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr->_yOffset;
 	int xPos = _xPosCurrent;
@@ -1824,7 +1846,7 @@ void TuckerEngine::drawCurrentSprite() {
 		xPos -= chr->_xSize + chr->_xOffset - 14;
 	}
 	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->_sourceOffset, chr->_xSize, chr->_ySize,
-		chr->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, color248Only);
+		chr->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, whitelistReservedColors);
 	addDirtyRect(xPos, yPos, chr->_xSize, chr->_ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
@@ -1836,7 +1858,7 @@ void TuckerEngine::drawCurrentSprite() {
 			xPos -= chr2->_xSize + chr2->_xOffset - 14;
 		}
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->_sourceOffset, chr2->_xSize, chr2->_ySize,
-			chr2->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, color248Only);
+			chr2->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, whitelistReservedColors);
 		addDirtyRect(xPos, yPos, chr2->_xSize, chr2->_ySize);
 	}
 }
