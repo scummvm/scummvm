@@ -84,7 +84,7 @@ void SwordsOfXeenEngine::death() {
 }
 
 void SwordsOfXeenEngine::dream() {
-	error("TODO: Swords of Xeen dream sequence, if any");
+	// Swords of Xeen doesn't have any dreams
 }
 
 void SwordsOfXeenEngine::showCutscene(const Common::String &name, int status, uint score) {
