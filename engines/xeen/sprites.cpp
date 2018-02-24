@@ -104,6 +104,7 @@ void SpriteResource::clear() {
 	delete[] _data;
 	_data = nullptr;
 	_filesize = 0;
+	_index.clear();
 }
 
 void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Point &pt,

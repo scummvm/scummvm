@@ -4427,31 +4427,31 @@ void InterfaceScene::drawOutdoors() {
 		map.getCell(TERRAIN_INDEXES1[idx]);
 		assert(map._currentWall != INVALID_CELL);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];
-		_outdoorList[28 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
+		_outdoorList[28 + idx]._sprites = spr.empty() ? (SpriteResource *)nullptr : &spr;
 	}
 	for (int idx = 0; idx < 5; ++idx) {
 		map.getCell(TERRAIN_INDEXES2[idx]);
 		assert(map._currentWall != INVALID_CELL);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];
-		_outdoorList[61 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
+		_outdoorList[61 + idx]._sprites = spr.empty() ? (SpriteResource *)nullptr : &spr;
 	}
 	for (int idx = 0; idx < 3; ++idx) {
 		map.getCell(TERRAIN_INDEXES3[idx]);
 		assert(map._currentWall != INVALID_CELL);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];
-		_outdoorList[84 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
+		_outdoorList[84 + idx]._sprites = spr.empty() ? (SpriteResource *)nullptr : &spr;
 	}
 	for (int idx = 0; idx < 5; ++idx) {
 		map.getCell(TERRAIN_INDEXES4[idx]);
 		assert(map._currentWall != INVALID_CELL);
 		SpriteResource &spr = map._wallSprites._surfaces[map._currentWall];
-		_outdoorList[103 + idx]._sprites = spr.size() == 0 ? (SpriteResource *)nullptr : &spr;
+		_outdoorList[103 + idx]._sprites = spr.empty() ? (SpriteResource *)nullptr : &spr;
 	}
 
 	map.getCell(1);
 	assert(map._currentWall != INVALID_CELL);
 	SpriteResource &surface = map._wallSprites._surfaces[map._currentWall];
-	_outdoorList[108]._sprites = surface.size() == 0 ? (SpriteResource *)nullptr : &surface;
+	_outdoorList[108]._sprites = surface.empty() ? (SpriteResource *)nullptr : &surface;
 	_outdoorList[109]._sprites = _outdoorList[108]._sprites;
 	_outdoorList[110]._sprites = _outdoorList[108]._sprites;
 	_outdoorList._sky1._flags = _outdoorList._sky2._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
