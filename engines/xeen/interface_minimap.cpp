@@ -42,7 +42,10 @@ void InterfaceMinimap::drawMinimap() {
 		return;
 	if (!party._automapOn && !party._wizardEyeActive) {
 		// Draw the Might & Magic logo
-		res._globalSprites.draw(1, 5, Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 9));
+		if (g_vm->getGameID() == GType_Swords)
+			res._logoSprites.draw(1, 0, Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 9));
+		else
+			res._globalSprites.draw(1, 5, Common::Point(MINIMAP_XSTART - (TILE_WIDTH / 2), 9));
 		return;
 	}
 

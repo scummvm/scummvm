@@ -175,7 +175,6 @@ void Interface::setup() {
 
 void Interface::startup() {
 	Resources &res = *_vm->_resources;
-	Windows &windows = *_vm->_windows;
 
 	animate3d();
 	if (_vm->_map->_isOutdoors) {
@@ -187,7 +186,11 @@ void Interface::startup() {
 	}
 	draw3d(false);
 
-	res._globalSprites.draw(windows[1], 5, Common::Point(232, 9));
+	if (g_vm->getGameID() == GType_Swords)
+		res._logoSprites.draw(1, 0, Common::Point(232, 9));
+	else
+		res._globalSprites.draw(1, 5, Common::Point(232, 9));
+
 	drawParty(false);
 	setMainButtons();
 

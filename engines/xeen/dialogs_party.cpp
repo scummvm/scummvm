@@ -83,6 +83,9 @@ void PartyDialog::execute() {
 		_uiSprites.draw(w, 6, Common::Point(122, 100));
 		_uiSprites.draw(w, 8, Common::Point(157, 100));
 		_uiSprites.draw(w, 10, Common::Point(192, 100));
+		if (g_vm->getGameID() == GType_Swords)
+			Res._logoSprites.draw(1, 0, Common::Point(232, 9));
+
 		screen.loadPalette("mm4.pal");
 
 		if (modeFlag) {

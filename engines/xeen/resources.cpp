@@ -35,6 +35,8 @@ Resources::Resources() {
 	g_vm->_files->setGameCc(1);
 	
 	_globalSprites.load("global.icn");
+	if (g_vm->getGameID() == GType_Swords)
+		_logoSprites.load("logo.int");
 
 	File f((g_vm->getGameID() == GType_Clouds) ? "mae.cld" : "mae.xen");
 	while (f.pos() < f.size())
