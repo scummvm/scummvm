@@ -36,7 +36,51 @@ void SwordsOfXeenEngine::outerGameLoop() {
 }
 
 void SwordsOfXeenEngine::death() {
-	error("TODO: Swords of Xeen death screen");
+	Windows &windows = *g_vm->_windows;
+
+	_screen->loadBackground("blank.raw");
+	windows[28].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	_screen->fadeIn(0x81);
+	_screen->loadPalette("scr.pal");
+	_screen->fadeIn(0x81);
+
+	SpriteResource lose("lose.int");
+	lose.draw(0, 0, Common::Point(0, 0));
+	lose.draw(0, 1, Common::Point(160, 0));
+	_sound->playSound("laff1.voc");
+
+	bool breakFlag = false;
+	for (int idx = 0, idx2 = 0; idx < (_files->_isDarkCc ? 10 : 23); ++idx) {
+		_events->updateGameCounter();
+
+		if (_files->_isDarkCc) {
+			breakFlag = _events->wait(2);
+		} else {
+			if (idx == 1 || idx == 11)
+				_sound->playFX(33);
+			breakFlag = _events->wait(2);
+
+			if (idx == 15)
+				_sound->playFX(34);
+		}
+
+		if ((_files->_isDarkCc ? 9 : 10) == idx) {
+			if ((_files->_isDarkCc ? 2 : 1) > idx2) {
+				// Restart loop
+				idx = -1;
+				++idx2;
+			}
+		}
+	}
+
+	// Wait for press
+	if (!breakFlag)
+		_events->waitForPress();
+
+	_screen->fadeOut(4);
+	_screen->loadBackground("blank.raw");
+	_screen->loadPalette("dark.pal");
+	_sound->stopAllAudio();
 }
 
 void SwordsOfXeenEngine::dream() {
