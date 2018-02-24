@@ -33,6 +33,10 @@ namespace Stark {
 class VisualImageXMG;
 class Button;
 
+namespace Resources {
+class Sound;
+}
+
 class TopMenu : public Window {
 public:
 	TopMenu(Gfx::Driver *gfx, Cursor *cursor);
@@ -46,6 +50,9 @@ public:
 	/** The screen resolution changed, rebuild the text textures accordingly */
 	void onScreenChanged();
 
+	/** A new item has been added to the player's inventory. Play relevant animation */
+	void notifyInventoryItemEnabled(uint16 itemIndex);
+
 private:
 	Button *getButtonAtPosition(const Common::Point &point) const;
 
@@ -54,6 +61,8 @@ private:
 	Button *_inventoryButton;
 	Button *_exitButton;
 	Button *_optionsButton;
+	int _forceVisibleTimeRemaining;
+	Resources::Sound *_inventoryNewItemSound;
 };
 
 } // End of namespace Stark

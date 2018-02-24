@@ -120,4 +120,8 @@ void GameScreen::onScreenChanged() {
 	_topMenu->onScreenChanged();
 }
 
+void GameScreen::notifyInventoryItemEnabled(uint16 itemIndex) {
+	_topMenu->notifyInventoryItemEnabled(itemIndex);
+}
+
 } // End of namespace Stark

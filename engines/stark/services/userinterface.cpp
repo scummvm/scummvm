@@ -247,4 +247,8 @@ void UserInterface::onScreenChanged() {
 	_gameScreen->onScreenChanged();
 }
 
+void UserInterface::notifyInventoryItemEnabled(uint16 itemIndex) {
+	_gameScreen->notifyInventoryItemEnabled(itemIndex);
+}
+
 } // End of namespace Stark

@@ -85,4 +85,8 @@ void Button::resetHintVisual() {
 	_mouseText = nullptr;
 }
 
+void Button::goToAnimStatement(int animScriptItemIndex) {
+	StarkStaticProvider->goToAnimScriptStatement(_stockElement, animScriptItemIndex);
+}
+
 } // End of namespace Stark

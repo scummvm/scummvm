@@ -582,6 +582,10 @@ Command *Command::opItemEnable(const ResourceReference &itemRef, int32 enable) {
 	case 1:
 		if (!previousState) {
 			item->setEnabled(true);
+
+			if (item->getSubType() == Item::kItemInventory) {
+				StarkUserInterface->notifyInventoryItemEnabled(item->getIndex());
+			}
 		}
 		break;
 	case 2:

@@ -27,6 +27,9 @@
 
 #include "engines/stark/gfx/driver.h"
 
+#include "engines/stark/resources/sound.h"
+
+#include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
 
@@ -36,7 +39,8 @@ namespace Stark {
 
 TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
-	_widgetsVisible(false) {
+	_widgetsVisible(false),
+	_forceVisibleTimeRemaining(0) {
 
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
@@ -44,6 +48,8 @@ TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_inventoryButton = new Button("Inventory", StaticProvider::kInventory, Common::Point(32, 2), Button::kAlignLeft, Common::Point(64, 20));
 	_optionsButton = new Button("Options", StaticProvider::kDiaryNormal, Common::Point(560, 2), Button::kAlignRight, Common::Point(560, 20));
 	_exitButton = new Button("Quit", StaticProvider::kQuit, Common::Point(608, 2), Button::kAlignRight, Common::Point(608, 20));
+
+	_inventoryNewItemSound = StarkStaticProvider->getUISound(StaticProvider::kInventoryNewItem);
 }
 
 TopMenu::~TopMenu() {
@@ -53,10 +59,18 @@ TopMenu::~TopMenu() {
 }
 
 void TopMenu::onRender() {
-	_widgetsVisible = isMouseInside() && StarkUserInterface->isInteractive();
+	_widgetsVisible = (isMouseInside() && StarkUserInterface->isInteractive()) || _forceVisibleTimeRemaining > 0;
 
 	if (!_widgetsVisible) {
 		return;
+	}
+
+	if (_forceVisibleTimeRemaining > 0) {
+		_forceVisibleTimeRemaining -= StarkGlobal->getMillisecondsPerGameloop();
+
+		if (_forceVisibleTimeRemaining <= 0) {
+			_inventoryButton->goToAnimStatement(12);
+		}
 	}
 
 	_inventoryButton->render();
@@ -115,6 +129,13 @@ void TopMenu::onScreenChanged() {
 	_exitButton->resetHintVisual();
 	_inventoryButton->resetHintVisual();
 	_optionsButton->resetHintVisual();
+}
+
+void TopMenu::notifyInventoryItemEnabled(uint16 itemIndex) {
+	_forceVisibleTimeRemaining = 128 * 33; // 128 frames at 30 fps
+	_inventoryButton->goToAnimStatement(2);
+	_inventoryNewItemSound->stop();
+	_inventoryNewItemSound->play();
 }
 
 } // End of namespace Stark

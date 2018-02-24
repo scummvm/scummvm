@@ -61,8 +61,11 @@ public:
 	/** Clear any location dependant state */
 	void reset();
 
-	/** Called when the screen resoltion changes */
+	/** Called when the screen resolution changes */
 	void onScreenChanged();
+
+	/** A new item has been added to the player's inventory */
+	void notifyInventoryItemEnabled(uint16 itemIndex);
 
 private:
 	Gfx::Driver *_gfx;

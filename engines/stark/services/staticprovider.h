@@ -69,6 +69,10 @@ public:
 		kDialogOptionBullet = 4
 	};
 
+	enum UISound {
+		kInventoryNewItem = 2
+	};
+
 	/** Load the static level archive */
 	void init();
 
@@ -89,6 +93,12 @@ public:
 
 	/** Get an image for a static UI element */
 	VisualImageXMG *getUIImage(UIImage image) const;
+
+	/** Get a static UI sound resource */
+	Resources::Sound *getUISound(UISound sound) const;
+
+	/** Move execution of a static UI element anim script to the specified item */
+	void goToAnimScriptStatement(UIElement stockUIElement, int animScriptItemIndex);
 
 	/** Load a static location and set it as current */
 	Resources::Location *loadLocation(const char *locationName);

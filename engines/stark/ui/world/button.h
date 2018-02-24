@@ -54,6 +54,9 @@ public:
 	/** Reset the hint text visual so it is rebuilt with the appropriate texture size */
 	void resetHintVisual();
 
+	/** Move execution of the button's icon anim script to the specified item */
+	void goToAnimStatement(int animScriptItemIndex);
+
 private:
 	StaticProvider::UIElement _stockElement;
 	Common::Point _position;

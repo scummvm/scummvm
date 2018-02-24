@@ -95,9 +95,11 @@ public:
 	/** Allow or forbid interaction with the game world */
 	void setInteractive(bool interactive);
 
-	int16 getSelectedInventoryItem() const;
+	/** A new item has been added to the player's inventory */
+	void notifyInventoryItemEnabled(uint16 itemIndex);
 
-	/** Set the selected inventory item */
+	/** Access the selected inventory item */
+	int16 getSelectedInventoryItem() const;
 	void selectInventoryItem(int16 itemIndex);
 
 	/** Clears all the pointers to data that may be location dependent */
