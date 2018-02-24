@@ -8,7 +8,9 @@ MODULE_OBJS = \
 	lzss.o \
 	graphics.o \
 	sound.o \
-	startrek.o
+	sprite.o \
+	startrek.o \
+	text.o
 	
 
 
