@@ -55,8 +55,20 @@ SavesManager::SavesManager(const Common::String &targetName): _targetName(target
 	// Set any final initial values
 	Party &party = *g_vm->_party;
 	party.resetBlacksmithWares();
-	party._year = g_vm->getGameID() == GType_WorldOfXeen ? 610 : 850;
 	party._totalTime = 0;
+
+	switch (g_vm->getGameID()) {
+	case GType_Swords:
+		party._year = 1050;
+		break;
+	case GType_DarkSide:
+		party._year = 850;
+		break;
+	default:
+		party._year = 610;
+		break;
+	}
+	party._day = 1;
 }
 
 SavesManager::~SavesManager() {
