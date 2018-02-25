@@ -1767,6 +1767,8 @@ const char *const MUSIC_FILES2[6][7] = {
 	{ "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m", "sf05.m" }
 };
 
+const char *const DIFFICULTY_TEXT = "\v000\t000\x3""cSelect Game Preference";
+
 void writeConstants(CCArchive &cc) {
 	Common::MemFile file;
 	file.syncString(CREDITS);
@@ -2093,6 +2095,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncStrings(GOOBER, 3);
 	file.syncStrings(MUSIC_FILES1, 5);
 	file.syncStrings2D((const char *const *)MUSIC_FILES2, 6, 7);
+	file.syncString(DIFFICULTY_TEXT);
 
 	cc.add("CONSTANTS", file);
 }

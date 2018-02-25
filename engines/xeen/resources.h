@@ -441,6 +441,7 @@ public:
 	const char *GOOBER[3];
 	const char *MUSIC_FILES1[5];
 	const char *MUSIC_FILES2[6][7];
+	const char *DIFFICULTY_TEXT;
 public:
 	/**
 	 * Constructor

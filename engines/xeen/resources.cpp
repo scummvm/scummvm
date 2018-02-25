@@ -386,6 +386,7 @@ void Resources::loadData() {
 	file.syncStrings(GOOBER, 3);
 	file.syncStrings(MUSIC_FILES1, 5);
 	file.syncStrings2D(&MUSIC_FILES2[0][0], 6, 7);
+	file.syncString(DIFFICULTY_TEXT);
 }
 
 } // End of namespace Xeen

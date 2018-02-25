@@ -1708,7 +1708,7 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 
 	if (_weaponDamage < 1)
 		_weaponDamage = 0;
-	if (!party._difficulty) {
+	if (party._difficulty == ADVENTURER) {
 		_hitChanceBonus += 5;
 		_weaponDamage *= 3;
 	}

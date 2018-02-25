@@ -22,8 +22,9 @@
 
 #include "common/scummsys.h"
 #include "xeen/worldofxeen/worldofxeen_menu.h"
-#include "xeen/resources.h"
 #include "xeen/worldofxeen/worldofxeen.h"
+#include "xeen/dialogs_difficulty.h"
+#include "xeen/resources.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
@@ -104,6 +105,11 @@ void WorldOfXeenMenu::execute() {
 				break;
 			} else if (key == 'S') {
 				// Start new game
+				int result = DifficultyDialog::show(_vm);
+				if (result == -1)
+					break;
+
+				_vm->_party->_difficulty = (Difficulty)result;
 				WOX_VM._pendingAction = WOX_PLAY_GAME;
 				closeWindow();
 				return;
