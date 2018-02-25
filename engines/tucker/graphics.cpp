@@ -122,7 +122,7 @@ void Graphics::decodeRLE_248(uint8 *dst, const uint8 *src, int w, int h, int y1,
 				}
 			}
 			if (color != 0) {
-				if (( (whitelistReservedColors != nullptr && (*(whitelistReservedColors + dst[offset] - 0xE0) == 1) && dst[offset] <= 0xEF) || dst[offset] < 0xE0 || y + y1 < y2) && dst[offset] < 0xF8) {
+				if (( (whitelistReservedColors != nullptr && (dst[offset] & 0xE0) == 0xE0 && *(whitelistReservedColors + dst[offset] - 0xE0) == 1) || dst[offset] < 0xE0 || y + y1 < y2) && dst[offset] < 0xF8) {
 					dst[offset] = color;
 				}
 			} else {
