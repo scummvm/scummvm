@@ -93,14 +93,24 @@ public:
 	 */
 	void vertMerge(int yp);
 
-	void draw(void *data = nullptr);
-
+	/**
+	 * Fades in the screen
+	 */
 	void fadeIn(int step = 4);
 
+	/**
+	 * Fades out the screen
+	 */
 	void fadeOut(int step = 4);
 
+	/**
+	 * Saves a copy of the current screen into a specified slot
+	 */
 	void saveBackground(int slot = 1);
 
+	/**
+	 * Restores a previously saved screen
+	 */
 	void restoreBackground(int slot = 1);
 };
 

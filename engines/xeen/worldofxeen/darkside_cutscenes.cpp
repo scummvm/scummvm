@@ -62,7 +62,6 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 
 	// Draw the screen and fade it in
 	screen.horizMerge(0);
-	screen.draw();
 	screen.fadeIn();
 
 	sound.setMusicVolume(0x5f);
@@ -74,8 +73,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 		// Render the next frame
 		screen.vertMerge(0);
 		nwc[nwcIndex].draw(0, nwcFrame);
-		screen.draw();
-
+	
 		switch (idx) {
 		case 17:
 			sound.playSound(voc[0]);
@@ -99,8 +97,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	for (int idx = 0; idx < 42 && !_vm->shouldExit(); ++idx) {
 		screen.vertMerge(SCREEN_HEIGHT);
 		nwc[3].draw(0, idx);
-		screen.draw();
-
+	
 		switch (idx) {
 		case 3:
 			sound.playFX(40);
@@ -134,7 +131,6 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 
 	screen.fadeOut(8);
 	screen.loadBackground("jvc.raw");
-	screen.draw();
 	screen.fadeIn();
 
 	WAIT(60);
@@ -196,7 +192,6 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 		if (!idx1)
 			frameNum = (frameNum + 1) % 10;
 
-		screen.draw();
 		if (!skipElapsed) {
 			timeExpired = MAX((int)events.timeElapsed() - 1, 1);
 			skipElapsed = true;
@@ -215,7 +210,6 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 
 	screen.vertMerge(SCREEN_HEIGHT);
 	screen.saveBackground(1);
-	screen.draw();
 	screen.freePages();
 
 	WAIT(30);
@@ -224,7 +218,6 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	for (int idx = 14; idx >= 0; --idx) {
 		pyraTop.draw(0, 0, Common::Point(XLIST1[idx], YLIST1[idx]));
 		pyraTop.draw(0, 1, Common::Point(XLIST2[idx], YLIST1[idx]));
-		screen.draw();
 
 		if (idx == 2)
 			sound.setMusicVolume(48);

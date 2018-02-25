@@ -104,12 +104,6 @@ void Screen::vertMerge(int yp) {
 	markAllDirty();
 }
 
-void Screen::draw(void *data) {
-	// TODO: Figure out data structure that can be passed to method
-	assert(!data);
-	drawScreen();
-}
-
 void Screen::drawScreen() {
 	addDirtyRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
