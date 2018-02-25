@@ -24,6 +24,10 @@
 #include "common/scummsys.h"
 
 namespace MutationOfJB {
+
+void CommandParser::transition(ScriptParseContext &, Command *, Command *) {}
+CommandParser::~CommandParser() {}
+
 Command::~Command() {}
 
 SeqCommand *Command::asSeqCommand() {

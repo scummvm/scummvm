@@ -32,7 +32,9 @@ namespace Common {
 
 namespace MutationOfJB {
 
+class Command;
 class ConditionalCommand;
+typedef Common::Array<Command*> Commands;
 
 class ScriptParseContext
 {
@@ -40,23 +42,45 @@ public:
 	ScriptParseContext(Common::SeekableReadStream &stream);
 	bool readLine(Common::String &line);
 	void addConditionalCommand(ConditionalCommand *command, char tag);
-	//void setLastIfCommand(IfCommand *command);
+	void addLookSection(const Common::String & item, bool walkTo);
 
-private:
 	Common::SeekableReadStream &_stream;
+	Command *_currentCommand;
+	Command *_lastCommand;
 
 	struct ConditionalCommandInfo {
-		ConditionalCommand *command;
-		char tag;
+		ConditionalCommand *_command;
+		char _tag;
 	};
-	Common::Array<ConditionalCommandInfo> _pendingCondCommands;
+	typedef Common::Array<ConditionalCommandInfo> ConditionalCommandInfos;
+
+	ConditionalCommandInfos _pendingCondCommands;
+
+	enum Action {
+		Walk,
+		Talk,
+		Look,
+		Use
+	};
+
+	struct ActionInfo {
+		Action _action;
+		Common::String _object1Name;
+		Common::String _object2Name;
+		bool walkTo;
+	};
+	typedef Common::Array<ActionInfo> ActionInfos;
+	ActionInfos _actionInfos;
+private:
 };
 
 class Script {
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream);
+	~Script();
 private:
-
+	void destroy();
+	Commands _allCommands;
 };
 
 }

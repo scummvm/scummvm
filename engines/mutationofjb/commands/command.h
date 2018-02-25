@@ -38,6 +38,15 @@ class Command;
 
 typedef bool (*CommandParseFunc)(const Common::String &line, ScriptParseContext &parseContext, Command *&command);
 
+class CommandParser {
+public:
+	virtual ~CommandParser();
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) = 0;
+
+	/* Old command - created by this parser. */
+	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand);
+};
+
 class Command {
 public:
 	enum ExecuteResult {

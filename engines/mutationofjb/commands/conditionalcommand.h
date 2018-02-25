@@ -28,6 +28,10 @@ namespace MutationOfJB {
 class ConditionalCommand : public Command {
 public:
 	ConditionalCommand();
+
+	Command *getTrueCommand() const;
+	Command *getFalseCommand() const;
+
 	void setTrueCommand(Command *command);
 	void setFalseCommand(Command *command);
 

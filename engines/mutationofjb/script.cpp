@@ -25,25 +25,37 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stream.h"
+#include "common/debug.h"
 #include "mutationofjb/commands/command.h"
+#include "mutationofjb/commands/ifcommand.h"
+#include "mutationofjb/commands/endblockcommand.h"
 
 namespace MutationOfJB {
 
-static CommandParseFunc* getParseFuncs() {
-	static CommandParseFunc funcs[] = {
+static CommandParser** getParsers() {
+	static CommandParser* parsers[] = {
+		new IfCommandParser,
+		new EndBlockCommandParser,
 		nullptr
 	};
 
-	return funcs;
+	return parsers;
 }
 
 
-ScriptParseContext::ScriptParseContext(Common::SeekableReadStream &stream) : _stream(stream) {}
+ScriptParseContext::ScriptParseContext(Common::SeekableReadStream &stream) :
+	_stream(stream),
+	_currentCommand(nullptr),
+	_lastCommand(nullptr)
+{}
 
 bool ScriptParseContext::readLine(Common::String &line) {
 	do {
 		Common::String str = _stream.readLine();
-		if (str.empty() || str[0] != '.') {
+		if (str.empty())
+			continue;
+
+		if (str[0] != '.') {
 			line = str;
 			if (line[0] == '*') {
 				line.deleteChar(0);
@@ -61,15 +73,52 @@ void ScriptParseContext::addConditionalCommand(ConditionalCommand *command, char
 }
 
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
+	destroy();
 
-	CommandParseFunc * const parseFuncs = getParseFuncs();
+	CommandParser **parsers = getParsers();
 
 	ScriptParseContext parseCtx(stream);
+
+	Common::String line;
+
+	Command *lastCmd = nullptr;
+	CommandParser *lastParser = nullptr;
+	while (parseCtx.readLine(line)) {
+		Command *currentCmd = nullptr;
+		CommandParser *currentParser = nullptr;
+
+		for (CommandParser **parser = parsers; *parser; ++parser) {
+			if ((*parser)->parse(line, parseCtx, currentCmd)) {
+				currentParser = *parser;
+				break;
+			}
+		}
+		if (lastParser) {
+			lastParser->transition(parseCtx, lastCmd, currentCmd);
+		}
+
+		if (currentCmd) {
+			_allCommands.push_back(currentCmd);
+		}
+
+		lastParser = currentParser;
+	}
 
 	Common::HashMap<Common::String, Command *> macros;
 	Common::HashMap<Common::String, Command *> labels;
 
 	return true;
+}
+
+void Script::destroy() {
+	for (Commands::iterator it = _allCommands.begin(); it != _allCommands.end(); ++it) {
+		delete *it;
+	}
+	_allCommands.clear();
+}
+
+Script::~Script() {
+	destroy();
 }
 
 }

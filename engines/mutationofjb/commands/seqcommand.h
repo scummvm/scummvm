@@ -28,6 +28,11 @@
 
 namespace MutationOfJB {
 
+class SeqCommandParser : public CommandParser
+{
+	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand) override;
+};
+
 class SeqCommand : public Command {
 public:
 	void setNextCommand(Command *nextCommand);
