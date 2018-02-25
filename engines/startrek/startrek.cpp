@@ -109,8 +109,8 @@ Common::Error StarTrekEngine::run() {
 	_gfx->addSprite(spr);
 	spr->bitmap = _gfx->loadBitmap("MWALKE00");
 	spr->drawPriority = 1;
-	spr->drawX = 150;
-	spr->drawY = 30;
+	spr->pos.x = 150;
+	spr->pos.y = 30;
 	spr->drawMode = 0;
 
 	// Draw mode 2 (translucent background)
@@ -118,8 +118,8 @@ Common::Error StarTrekEngine::run() {
 	_gfx->addSprite(spr);
 	spr->bitmap = _gfx->loadBitmap("KWALKS00");
 	spr->drawPriority = 1;
-	spr->drawX = 200;
-	spr->drawY = 40;
+	spr->pos.x = 200;
+	spr->pos.y = 40;
 	spr->drawMode = 2;
 
 	// Draw mode 3 (text)
@@ -128,19 +128,21 @@ Common::Error StarTrekEngine::run() {
 	spr->bitmap = SharedPtr<Bitmap>(new TextBitmap(8*8,8*8));
 	for (int i=0;i<8*8;i++)
 		spr->bitmap->pixels[i] = 0x40+i;
-	spr->drawX = 8*10;
-	spr->drawY = 50;
+	spr->pos.x = 8*10;
+	spr->pos.y = 50;
 	spr->textColor = 0xb3;
 	spr->drawMode = 3;
 
 	// initTextSprite function
+	/*
 	spr = new Sprite;
 	int x=0,y=0;
 	_gfx->initTextSprite(&x, &y, 0xb3, 3, false, spr);
-	spr->drawY = 150;
+	spr->pos.y = 150;
 
 
-	_gfx->showText(&Graphics::tmpFunction, 0, 0, 0, 0xb3, 0, 10, 0);
+	_gfx->showText(&Graphics::tmpFunction, 0, 50, 50, 0xb3, 0, 10, 0);
+	*/
 	
 	while (!shouldQuit()) {
 		pollEvents();

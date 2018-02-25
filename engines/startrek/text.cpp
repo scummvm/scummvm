@@ -64,6 +64,8 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	Sprite textboxSprite;
 	SharedPtr<TextBitmap> textBitmap = initTextSprite(&xoffset, &yoffset, textColor, numTextboxLines, numChoicesWithNames, &textboxSprite);
 
+	debug("X: %d, Y: %d\n", xoffset, yoffset);
+
 	int choiceIndex = 0;
 	int var28 = 0;
 	if (tmpTextboxVar1 != 0 && tmpTextboxVar1 != 1 && numChoices == 1
@@ -84,7 +86,7 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 		// TODO
 	}
 	else {
-		loadTextButtons("textbtns", xoffset+0x96, yoffset-0x11);
+		loadMenuButtons("textbtns", xoffset+0x96, yoffset-0x11);
 
 		Common::Point oldMousePos = _mousePos;
 		SharedPtr<Bitmap> oldMouseBitmap = _mouseSprite.bitmap;
@@ -140,15 +142,13 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	return choiceIndex;
 }
 
-const char* text = "Text test";
-
 Common::String Graphics::tmpFunction(int choiceIndex, int var, Common::String *speakerTextOutput) {
 	if (speakerTextOutput != nullptr)
 		*speakerTextOutput = "Speaker";
 
 	if (choiceIndex >= 1)
 		return NULL;
-	return text;
+	return "Text test";
 }
 
 /**
@@ -178,16 +178,24 @@ SharedPtr<TextBitmap> Graphics::initTextSprite(int *xoffsetPtr, int *yoffsetPtr,
 	if (varC < 0)
 		xoffset += varC;
 
+	debug("xoffset A: %d", xoffset);
+
 	varC = xoffset - (bitmap->width+0x1d)/2;
 	if (varC < 1)
 		xoffset += varC-1;
+
+	debug("xoffset B: %d", xoffset);
 
 	varC = yoffset - (bitmap->height+0x11) - 20;
 	if (varC < 0)
 		yoffset -= varC;
 
+	debug("Mid xoffset: %d", xoffset);
+
 	xoffset -= (bitmap->width+0x1d)/2;
 	yoffset -= bitmap->height;
+
+	debug("Final xoffset: %d", xoffset);
 
 	bitmap->pixels[0] = 0x10;
 	memset(&bitmap->pixels[1], 0x11, TEXTBOX_WIDTH-2);
@@ -242,7 +250,7 @@ Common::String Graphics::readLineFormattedText(TextGetterFunc textGetter, int va
 	// TODO
 	*numPrintedLines = 1;
 
-	int numChars = textBitmap->width*textBitmap->height;
+	uint numChars = textBitmap->width*textBitmap->height;
 
 	Common::String text = (this->*textGetter)(choiceIndex, var, nullptr);
 	while (text.size() < numChars) text += ' ';
@@ -257,11 +265,37 @@ Common::String Graphics::readLineFormattedText(TextGetterFunc textGetter, int va
 	return text;
 }
 
-void Graphics::loadTextButtons(Common::String mnuFilename, int xpos, int ypos) {
-	// TODO: start of function
+void Graphics::loadMenuButtons(Common::String mnuFilename, int xpos, int ypos) {
+	SharedPtr<Menu> oldMenu = _activeMenu;
+	_activeMenu = SharedPtr<Menu>(new Menu());
+	_activeMenu->nextMenu = oldMenu;
 
-	SharedPtr<Common::SeekableReadStream> mnuFile = _vm->openFile(mnuFilename + ".MNU");
-	int numEntries = mnuFile->size()/16;
+	SharedPtr<FileStream> stream = _vm->openFile(mnuFilename + ".MNU");
+
+	_activeMenu->menuFile = stream;
+	_activeMenu->numButtons = _activeMenu->menuFile->size()/16;
+
+	for (int i=0; i<_activeMenu->numButtons; i++) {
+		memset(&_activeMenu->sprites[i], 0, sizeof(Sprite));
+		addSprite(&_activeMenu->sprites[i]);
+		_activeMenu->sprites[i].drawMode = 2;
+
+		char bitmapBasename[11];
+		stream->seek(i*16, SEEK_SET);
+		stream->read(bitmapBasename, 10);
+		for (int j=0; j<10; j++) {
+			if (bitmapBasename[j] == ' ')
+				bitmapBasename[j] = '\0';
+		}
+		bitmapBasename[10] = '\0';
+
+		_activeMenu->sprites[i].bitmap = loadBitmap(bitmapBasename);
+		_activeMenu->sprites[i].pos.x = stream->readUint16() + xpos;
+		_activeMenu->sprites[i].pos.y = stream->readUint16() + ypos;
+		_activeMenu->retvals[i] = stream->readUint16();
+
+		_activeMenu->sprites[i].field6 = 8;
+	}
 }
 
 void Graphics::warpMousePosition(int x, int y) {
