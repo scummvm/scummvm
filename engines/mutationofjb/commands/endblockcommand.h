@@ -20,39 +20,34 @@
  *
  */
 
-#include "mutationofjb/commands/conditionalcommand.h"
+#ifndef MUTATIONOFJB_ENDBLOCKCOMMAND_H
+#define MUTATIONOFJB_ENDBLOCKCOMMAND_H
+
+#include "mutationofjb/commands/command.h"
 #include "common/scummsys.h"
 
 namespace MutationOfJB {
 
-ConditionalCommand::ConditionalCommand() :
-	_trueCommand(nullptr),
-	_falseCommand(nullptr),
-	_cachedResult(false)
-{}
+class EndBlockCommandParser : public CommandParser {
+public:
+	EndBlockCommandParser() : _elseFound(false), _ifTag(0) {}
 
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand);
 
-Command *ConditionalCommand::getTrueCommand() const {
-	return _trueCommand;
+private:
+	bool _elseFound;
+	char _ifTag;
+};
+
+class EndBlockCommand : public Command {
+public:
+	static bool ParseFunc(const Common::String &line, ScriptParseContext &parseContext, Command *&command);
+
+	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual Command *next() const override;
+};
+
 }
 
-Command *ConditionalCommand::getFalseCommand() const {
-	return _falseCommand;
-}
-
-void ConditionalCommand::setTrueCommand(Command *command) {
-	_trueCommand = command;
-}
-
-void ConditionalCommand::setFalseCommand(Command *command) {
-	_falseCommand = command;
-}
-
-Command *ConditionalCommand::next() const {
-	if (_cachedResult) {
-		return _trueCommand;
-	} else {
-		return _falseCommand;
-	}
-}
-}
+#endif

@@ -20,9 +20,19 @@
  *
  */
 
-#include "seqcommand.h"
+#include "mutationofjb/commands/seqcommand.h"
+#include "common/translation.h"
 
 namespace MutationOfJB {
+
+void SeqCommandParser::transition(ScriptParseContext &, Command * oldCommand, Command * newCommand) {
+	if (!oldCommand || !newCommand) {
+		warning(_("Unexpected empty command in transition"));
+		return;
+	}
+
+	static_cast<SeqCommand *>(oldCommand)->setNextCommand(newCommand);
+}
 
 void SeqCommand::setNextCommand(Command *nextCommand)
 {

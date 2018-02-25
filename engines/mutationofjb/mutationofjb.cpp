@@ -36,6 +36,7 @@
 #include "mutationofjb/game.h"
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/util.h"
+#include "mutationofjb/script.h"
 
 namespace MutationOfJB {
 
@@ -96,10 +97,24 @@ Common::Error MutationOfJBEngine::run() {
 	_room = new Room(_screen);
 	_room->load(_gameData->_currentScene, false);
 
+	EncryptedFile globalScriptFile;
+	globalScriptFile.open("global.atn");
+	Script *script = new Script;
+	script->loadFromStream(globalScriptFile);
+	globalScriptFile.close();
+
 	while(!shouldQuit()) {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_KEYDOWN:
+			{
+				if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) ||
+						event.kbd.ascii == '~' || event.kbd.ascii == '#') {
+					_console->attach();
+				}
+				break;
+			}
 			case Common::EVENT_LBUTTONDOWN:
 			{
 				const Scene* const scene = _gameData->getScene(_gameData->_currentScene);
@@ -119,6 +134,7 @@ Common::Error MutationOfJBEngine::run() {
 			}
 		}
 
+		_console->onFrame();
 		_system->delayMillis(40);
 		_screen->update();
 	}

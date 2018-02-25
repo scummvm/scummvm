@@ -30,6 +30,12 @@ namespace MutationOfJB {
 
 class ScriptParseContext;
 
+class IfCommandParser : public CommandParser {
+public:
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand);
+};
+
 class IfCommand : public ConditionalCommand {
 public:
 	static bool ParseFunc(const Common::String &line, ScriptParseContext &parseContext, Command *&command);

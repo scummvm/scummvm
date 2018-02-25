@@ -3,6 +3,7 @@ MODULE := engines/mutationofjb
 MODULE_OBJS := \
 	commands/command.o \
 	commands/conditionalcommand.o \
+	commands/endblockcommand.o \
 	commands/ifcommand.o \
 	commands/seqcommand.o \
 	detection.o \

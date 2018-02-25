@@ -28,8 +28,7 @@
 
 namespace MutationOfJB {
 
-bool IfCommand::ParseFunc(const Common::String &line, ScriptParseContext &parseContext, Command *&command)
-{
+bool IfCommandParser::parse(const Common::String &line, ScriptParseContext &parseContext, Command *&command) {
 	// IFtss oo val!
 	// <t>   1B Tag.
 	// <ss>  2B Scene.
@@ -57,6 +56,15 @@ bool IfCommand::ParseFunc(const Common::String &line, ScriptParseContext &parseC
 	command = ifCommand;
 	parseContext.addConditionalCommand(ifCommand, tag);
 	return true;
+}
+
+void IfCommandParser::transition(ScriptParseContext &, Command *oldCommand, Command *newCommand) {
+	if (!oldCommand || !newCommand) {
+		warning(_("Unexpected empty command in transition"));
+		return;
+	}
+
+	static_cast<IfCommand *>(oldCommand)->setTrueCommand(newCommand);
 }
 
 IfCommand::IfCommand(uint8 sceneId, uint8 objectId, uint16 value, bool negative) :
