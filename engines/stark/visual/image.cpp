@@ -24,13 +24,10 @@
 
 #include "graphics/surface.h"
 
-#include "engines/stark/debug.h"
 #include "engines/stark/formats/xmg.h"
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/surfacerenderer.h"
 #include "engines/stark/gfx/texture.h"
-#include "engines/stark/scene.h"
-#include "engines/stark/services/services.h"
 
 namespace Stark {
 
@@ -92,6 +89,11 @@ int VisualImageXMG::getWidth() const {
 int VisualImageXMG::getHeight() const {
 	assert(_surface);
 	return _surface->h;
+}
+
+const Graphics::Surface *VisualImageXMG::getSurface() const {
+	assert(_surface);
+	return _surface;
 }
 
 } // End of namespace Stark

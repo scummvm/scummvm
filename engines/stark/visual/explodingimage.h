@@ -20,13 +20,17 @@
  *
  */
 
-#ifndef STARK_VISUAL_IMAGE_H
-#define STARK_VISUAL_IMAGE_H
+#ifndef STARK_VISUAL_EXPLODING_IMAGE_H
+#define STARK_VISUAL_EXPLODING_IMAGE_H
 
 #include "engines/stark/visual/visual.h"
 
+#include "common/array.h"
 #include "common/rect.h"
-#include "common/stream.h"
+
+#include "graphics/pixelformat.h"
+
+#include "math/vector2d.h"
 
 namespace Graphics {
 struct Surface;
@@ -41,49 +45,51 @@ class Texture;
 }
 
 /**
- * XMG (still image) renderer
+ * An image with an animated explosion effect
+ *
+ * Used by the top bar when picking up an inventory item
  */
-class VisualImageXMG : public Visual {
+class VisualExplodingImage : public Visual {
 public:
-	static const VisualType TYPE = Visual::kImageXMG;
+	static const VisualType TYPE = Visual::kExplodingImage;
 
-	VisualImageXMG(Gfx::Driver *gfx);
-	virtual ~VisualImageXMG();
+	explicit VisualExplodingImage(Gfx::Driver *gfx);
+	~VisualExplodingImage() override;
 
-	void load(Common::ReadStream *stream);
-	void render(const Common::Point &position, bool useOffset);
+	/** Prepare exploding the specified image */
+	void initFromSurface(const Graphics::Surface *surface);
 
-	/** Set an offset used when rendering */
-	void setHotSpot(const Common::Point &hotspot);
-	Common::Point getHotspot() const { return _hotspot; }
-
-	/**
-	 * The fade level is added to the color value of each pixel
-	 *
-	 * It is a value between -1 and 1
-	 */
-	void setFadeLevel(float fadeLevel);
-
-	/** Perform a transparency hit test on an image point */
-	bool isPointSolid(const Common::Point &point) const;
-
-	/** Get the width in pixels */
-	int getWidth() const;
-
-	/** Get the height in pixels */
-	int getHeight() const;
-
-	/** Get a read only pointer to the surface backing the image */
-	const Graphics::Surface *getSurface() const;
+	/** Render the image at the specified position */
+	void render(const Common::Point &position);
 
 private:
+	struct ExplosionUnit {
+		ExplosionUnit();
+
+		void setPosition(int x, int y);
+		void setExplosionSettings(const Common::Point &center, const Common::Point &amplitude);
+		void setColor(uint32 color, const Graphics::PixelFormat &format);
+		void update();
+		void draw(Graphics::Surface *surface);
+
+		Math::Vector2d _position;
+		Math::Vector2d _speed;
+		Math::Vector2d _center;
+
+		int _stillImageTimeRemaining;
+		int _explosionFastAccelerationTimeRemaining;
+		uint32 _mainColor;
+		uint32 _darkColor;
+	};
+
 	Gfx::Driver *_gfx;
 	Gfx::SurfaceRenderer *_surfaceRenderer;
 	Gfx::Texture *_texture;
 	Graphics::Surface *_surface;
-	Common::Point _hotspot;
+
+	Common::Array<ExplosionUnit> _units;
 };
 
 } // End of namespace Stark
 
-#endif // STARK_VISUAL_IMAGE_H
+#endif // STARK_VISUAL_EXPLODING_IMAGE_H

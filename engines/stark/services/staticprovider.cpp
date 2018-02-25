@@ -20,10 +20,10 @@
  *
  */
 
-#include <engines/stark/resources/animscript.h>
 #include "engines/stark/services/staticprovider.h"
 
 #include "engines/stark/resources/anim.h"
+#include "engines/stark/resources/animscript.h"
 #include "engines/stark/resources/container.h"
 #include "engines/stark/resources/image.h"
 #include "engines/stark/resources/item.h"

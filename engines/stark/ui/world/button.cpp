@@ -26,6 +26,7 @@
 #include "engines/stark/gfx/driver.h"
 #include "engines/stark/gfx/texture.h"
 
+#include "engines/stark/visual/explodingimage.h"
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/text.h"
 
@@ -38,27 +39,34 @@ Button::Button(const Common::String &text, StaticProvider::UIElement stockElemen
 		_hintPosition(hintPos),
 		_align(align),
 		_mouseText(nullptr),
-		_renderHint(false) {
+		_renderHint(false),
+		_explodingImageAnimation(nullptr) {
 }
 
 Button::~Button() {
+	delete _explodingImageAnimation;
 	delete _mouseText;
 }
 
 void Button::render() {
 	VisualImageXMG *image = StarkStaticProvider->getUIElement(_stockElement);
 	image->render(_position, false);
+
+	if (_explodingImageAnimation) {
+		_explodingImageAnimation->render(_position);
+	}
+
 	if (_renderHint) {
 		Common::Point pos(_hintPosition);
 		if (_align == kAlignRight) {
 			pos.x -= _mouseText->getRect().width();
 		}
 		_mouseText->render(pos);
+		_renderHint = false;
 	}
-	_renderHint = false;
 }
 
-bool Button::containsPoint(Common::Point point) {
+bool Button::containsPoint(const Common::Point &point) {
 	VisualImageXMG *image = StarkStaticProvider->getUIElement(_stockElement);
 
 	Common::Rect r;
@@ -87,6 +95,19 @@ void Button::resetHintVisual() {
 
 void Button::goToAnimStatement(int animScriptItemIndex) {
 	StarkStaticProvider->goToAnimScriptStatement(_stockElement, animScriptItemIndex);
+}
+
+void Button::startImageExplosion(VisualImageXMG *image) {
+	assert(image);
+
+	stopImageExplosion();
+	_explodingImageAnimation = new VisualExplodingImage(StarkGfx);
+	_explodingImageAnimation->initFromSurface(image->getSurface());
+}
+
+void Button::stopImageExplosion() {
+	delete _explodingImageAnimation;
+	_explodingImageAnimation = nullptr;
 }
 
 } // End of namespace Stark

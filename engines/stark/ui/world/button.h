@@ -31,6 +31,7 @@
 
 namespace Stark {
 
+class VisualExplodingImage;
 class VisualImageXMG;
 class VisualText;
 
@@ -49,7 +50,7 @@ public:
 	/** Set hint to render for one frame */
 	void showButtonHint();
 	void render();
-	bool containsPoint(Common::Point point);
+	bool containsPoint(const Common::Point &point);
 
 	/** Reset the hint text visual so it is rebuilt with the appropriate texture size */
 	void resetHintVisual();
@@ -57,12 +58,19 @@ public:
 	/** Move execution of the button's icon anim script to the specified item */
 	void goToAnimStatement(int animScriptItemIndex);
 
+	/** Start overlaying an explosion animation of an image on top of the button */
+	void startImageExplosion(VisualImageXMG *image);
+
+	/** Remove the currently playing exploding image animation, if any */
+	void stopImageExplosion();
+
 private:
 	StaticProvider::UIElement _stockElement;
 	Common::Point _position;
 	Common::Point _hintPosition;
 	Common::String _text;
 	VisualText *_mouseText;
+	VisualExplodingImage *_explodingImageAnimation;
 	const HintAlign _align;
 	bool _renderHint;
 };

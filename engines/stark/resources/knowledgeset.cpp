@@ -40,7 +40,7 @@ KnowledgeSet::KnowledgeSet(Object *parent, byte subType, uint16 index, const Com
 void KnowledgeSet::printData() {
 }
 
-Gfx::RenderEntryArray KnowledgeSet::getInventoryRenderEntries() {
+Gfx::RenderEntryArray KnowledgeSet::getInventoryRenderEntries() const {
 	Common::Array<Resources::Item *> inventoryItems = listChildren<Resources::Item>(Resources::Item::kItemInventory);
 
 	// First add the inventory items from old saves which don't have an order
@@ -95,6 +95,13 @@ void KnowledgeSet::saveLoad(ResourceSerializer *serializer) {
 			serializer->syncAsUint16LE(_inventoryItemOrder[i]);
 		}
 	}
+}
+
+Visual *KnowledgeSet::getInventoryItemVisual(uint16 itemIndex) {
+	InventoryItem *item = findChildWithIndex<InventoryItem>(itemIndex, Item::kItemInventory);
+	assert(item);
+
+	return item->getCursorVisual();
 }
 
 } // End of namespace Resources

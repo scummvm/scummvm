@@ -98,6 +98,7 @@ MODULE_OBJS := \
 	ui/world/gamewindow.o \
 	ui/world/inventorywindow.o \
 	visual/actor.o \
+	visual/explodingimage.o \
 	visual/image.o \
 	visual/prop.o \
 	visual/smacker.o \

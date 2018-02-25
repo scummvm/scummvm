@@ -27,6 +27,7 @@
 
 #include "engines/stark/gfx/driver.h"
 
+#include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/sound.h"
 
 #include "engines/stark/services/global.h"
@@ -69,6 +70,7 @@ void TopMenu::onRender() {
 		_forceVisibleTimeRemaining -= StarkGlobal->getMillisecondsPerGameloop();
 
 		if (_forceVisibleTimeRemaining <= 0) {
+			_inventoryButton->stopImageExplosion();
 			_inventoryButton->goToAnimStatement(12);
 		}
 	}
@@ -134,6 +136,9 @@ void TopMenu::onScreenChanged() {
 void TopMenu::notifyInventoryItemEnabled(uint16 itemIndex) {
 	_forceVisibleTimeRemaining = 128 * 33; // 128 frames at 30 fps
 	_inventoryButton->goToAnimStatement(2);
+
+	Visual *inventoryItemImage = StarkGlobal->getInventory()->getInventoryItemVisual(itemIndex);
+	_inventoryButton->startImageExplosion(inventoryItemImage->get<VisualImageXMG>());
 	_inventoryNewItemSound->stop();
 	_inventoryNewItemSound->play();
 }

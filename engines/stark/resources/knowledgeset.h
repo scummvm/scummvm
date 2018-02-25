@@ -66,7 +66,10 @@ public:
 	void removeItem(InventoryItem *item);
 
 	/** Get the render entries for the inventory items, in the order they were obtained */
-	Gfx::RenderEntryArray getInventoryRenderEntries();
+	Gfx::RenderEntryArray getInventoryRenderEntries() const;
+
+	/** Get a cursor style visual for an inventory item */
+	Visual *getInventoryItemVisual(uint16 itemIndex);
 
 protected:
 	void printData() override;
