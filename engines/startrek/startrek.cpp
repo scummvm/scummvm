@@ -101,7 +101,6 @@ Common::Error StarTrekEngine::run() {
 		_gfx->drawBackgroundImage("BRIDGE.BGD");
 	}
 
-
 	// Sprite tests
 
 	// Draw mode 0
@@ -110,7 +109,7 @@ Common::Error StarTrekEngine::run() {
 	spr->bitmap = _gfx->loadBitmap("MWALKE00");
 	spr->drawPriority = 1;
 	spr->pos.x = 150;
-	spr->pos.y = 30;
+	spr->pos.y = 100;
 	spr->drawMode = 0;
 
 	// Draw mode 2 (translucent background)
@@ -119,9 +118,10 @@ Common::Error StarTrekEngine::run() {
 	spr->bitmap = _gfx->loadBitmap("KWALKS00");
 	spr->drawPriority = 1;
 	spr->pos.x = 200;
-	spr->pos.y = 40;
+	spr->pos.y = 140;
 	spr->drawMode = 2;
 
+	/*
 	// Draw mode 3 (text)
 	spr = new Sprite;
 	_gfx->addSprite(spr);
@@ -134,15 +134,14 @@ Common::Error StarTrekEngine::run() {
 	spr->drawMode = 3;
 
 	// initTextSprite function
-	/*
 	spr = new Sprite;
 	int x=0,y=0;
 	_gfx->initTextSprite(&x, &y, 0xb3, 3, false, spr);
 	spr->pos.y = 150;
-
-
-	_gfx->showText(&Graphics::tmpFunction, 0, 50, 50, 0xb3, 0, 10, 0);
 	*/
+
+
+	_gfx->showText(&Graphics::tmpFunction, 0, 150, 50, 0xb3, 0, 10, 0);
 	
 	while (!shouldQuit()) {
 		pollEvents();
@@ -164,7 +163,7 @@ void StarTrekEngine::pollEvents() {
 			break;
 		}
 	}
-	_gfx->redrawScreen();
+	_gfx->drawAllSprites();
 
 	_system->delayMillis(1000/60);
 }

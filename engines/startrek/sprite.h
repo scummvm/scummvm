@@ -37,6 +37,12 @@ using Common::SharedPtr;
 namespace StarTrek {
 
 
+// Note: Rects in Star Trek are probably considered to have their bottom-right pixel
+// contained in the rectangle, but ScummVM is the opposite... (Trek might be inconsistent)
+// Be careful when using some of Rect's functions, including:
+// * The width/height constructor
+// * width/height methods
+// * "contains" method for points (it should work for other rects)
 struct Sprite {
 	Common::Point pos;
 	uint16 drawPriority;
@@ -45,16 +51,16 @@ struct Sprite {
 	SharedPtr<Bitmap> bitmap;
 	uint16 drawMode;
 	uint16 textColor;
-	uint16 bitmapChanged;
-	uint16 redrawCondition2;
-	uint16 redrawCondition3;
-	uint16 field16;
-	Common::Rect rectangle1;
-	Common::Rect clickRectangle;
+	bool bitmapChanged;
+	bool rect2Valid;
+	bool isOnScreen;
+	uint16 field16; // When set, sprite isn't drawn next refresh? (Gets reset to 0 after)
+	Common::Rect lastDrawRect; // Rect encompassing the sprite last time it was drawn
+	Common::Rect drawRect;     // Rect encompassing the sprite currently
 	Common::Rect rectangle2;
-	uint16 drawX,drawY;
+	int16 drawX,drawY;
 
-
+	Sprite() { memset(this, 0, sizeof(Sprite)); }
 	void setBitmap(SharedPtr<Bitmap> b);
 };
 

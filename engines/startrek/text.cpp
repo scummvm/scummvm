@@ -64,8 +64,6 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	Sprite textboxSprite;
 	SharedPtr<TextBitmap> textBitmap = initTextSprite(&xoffset, &yoffset, textColor, numTextboxLines, numChoicesWithNames, &textboxSprite);
 
-	debug("X: %d, Y: %d\n", xoffset, yoffset);
-
 	int choiceIndex = 0;
 	int var28 = 0;
 	if (tmpTextboxVar1 != 0 && tmpTextboxVar1 != 1 && numChoices == 1
@@ -178,24 +176,16 @@ SharedPtr<TextBitmap> Graphics::initTextSprite(int *xoffsetPtr, int *yoffsetPtr,
 	if (varC < 0)
 		xoffset += varC;
 
-	debug("xoffset A: %d", xoffset);
-
 	varC = xoffset - (bitmap->width+0x1d)/2;
 	if (varC < 1)
 		xoffset += varC-1;
-
-	debug("xoffset B: %d", xoffset);
 
 	varC = yoffset - (bitmap->height+0x11) - 20;
 	if (varC < 0)
 		yoffset -= varC;
 
-	debug("Mid xoffset: %d", xoffset);
-
 	xoffset -= (bitmap->width+0x1d)/2;
 	yoffset -= bitmap->height;
-
-	debug("Final xoffset: %d", xoffset);
 
 	bitmap->pixels[0] = 0x10;
 	memset(&bitmap->pixels[1], 0x11, TEXTBOX_WIDTH-2);
