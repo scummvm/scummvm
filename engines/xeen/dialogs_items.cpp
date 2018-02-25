@@ -136,6 +136,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				DrawStruct &ds = _itemsDrawList[idx];
+				XeenItem &i = c->_items[category][idx];
+
 				ds._sprites = nullptr;
 				ds._x = 8;
 				ds._y = 18 + idx * 9;
@@ -143,10 +145,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				switch (category) {
 				case CATEGORY_WEAPON:
 				case CATEGORY_ARMOR:
-				case CATEGORY_ACCESSORY: {
-					XeenItem &i = (category == CATEGORY_WEAPON) ? c->_weapons[idx] :
-						((category == CATEGORY_ARMOR) ? c->_armor[idx] : c->_accessories[idx]);
-
+				case CATEGORY_ACCESSORY:
 					if (i._id) {
 						if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
 								|| mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
@@ -172,11 +171,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						lines.push_back(Res.NO_ITEMS_AVAILABLE);
 					}
 					break;
-				}
 
-				case CATEGORY_MISC: {
-					XeenItem &i = c->_misc[idx];
-
+				case CATEGORY_MISC:
 					if (i._material == 0) {
 						// No item
 						if (idx == 0) {
@@ -200,7 +196,6 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						));
 					}
 					break;
-				}
 
 				default:
 					break;

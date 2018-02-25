@@ -1511,6 +1511,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			party._treasure._gems = monsterData._gems;
 
 			if (!isDarkCc && monster._spriteId == 89) {
+				// Xeen's Scepter of Temporal Distortion
 				party._treasure._weapons[0]._id = 90;
 				party._treasure._weapons[0]._bonusFlags = 0;
 				party._treasure._weapons[0]._material = 0;

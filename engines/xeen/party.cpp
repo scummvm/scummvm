@@ -720,9 +720,10 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	w.update();
 	events.ipause(5);
 
-	const char *itemName = XeenItem::getItemName(category, treasureItem._id);
+ 	const char *itemName = XeenItem::getItemName(category, treasureItem._id);
 	w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), itemName));
 	w.update();
+	c._items[category].sort();
 	events.ipause(5);
 }
 
