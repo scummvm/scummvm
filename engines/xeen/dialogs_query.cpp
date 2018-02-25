@@ -37,7 +37,6 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
 	SpriteResource confirmSprites;
-	bool result = false;
 
 	confirmSprites.load("confirm.icn");
 	addButton(Common::Rect(129, 112, 153, 122), Common::KEYCODE_y, &confirmSprites);
@@ -66,11 +65,11 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 	w.update();
 
 	events.clearEvents();
+	bool result = false;
+
 	while (!_vm->shouldExit()) {
-		while (!_vm->shouldExit() && !_buttonValue) {
-			events.pollEvents();
-			checkEvents(_vm);
-		}
+		events.pollEvents();
+		checkEvents(_vm);
 
 		if ((mode & 0x80) || _buttonValue == Common::KEYCODE_ESCAPE
 				|| _buttonValue == Common::KEYCODE_n)
