@@ -653,6 +653,10 @@ void TuckerEngine::parseEvents() {
 				break;
 			case Common::KEYCODE_ESCAPE:
 				_inputKeys[kInputKeyEscape] = true;
+				_inputKeys[kInputKeySkipSpeech] = true;
+				break;
+			case Common::KEYCODE_PERIOD:
+				_inputKeys[kInputKeySkipSpeech] = true;
 				break;
 			case Common::KEYCODE_d:
 				if (ev.kbd.hasFlags(Common::KBD_CTRL)) {
@@ -678,6 +682,7 @@ void TuckerEngine::parseEvents() {
 		case Common::EVENT_RBUTTONDOWN:
 			updateCursorPos(ev.mouse.x, ev.mouse.y);
 			_mouseButtonsMask |= 2;
+			_inputKeys[kInputKeySkipSpeech] = true;
 			break;
 		case Common::EVENT_RBUTTONUP:
 			updateCursorPos(ev.mouse.x, ev.mouse.y);
@@ -691,6 +696,12 @@ void TuckerEngine::parseEvents() {
 		default:
 			break;
 		}
+	}
+	if (_inputKeys[kInputKeySkipSpeech]) {
+		if (isSpeechSoundPlaying()) {
+			stopSpeechSound();
+		}
+		_inputKeys[kInputKeySkipSpeech] = false;
 	}
 	_quitGame = shouldQuit();
 }
