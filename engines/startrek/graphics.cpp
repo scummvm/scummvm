@@ -289,6 +289,8 @@ void Graphics::drawAllSprites() {
 	// TODO: implement properly
 	for (int i=0; i<_numSprites; i++) {
 		Sprite *spr = _sprites[i];
+		spr->drawX = spr->pos.x;
+		spr->drawY = spr->pos.y;
 		drawSprite(*spr);
 	}
 }

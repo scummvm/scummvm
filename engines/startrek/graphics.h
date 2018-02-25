@@ -47,9 +47,23 @@ const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 200;
 
 const int MAX_SPRITES = 32;
+const int MAX_MENUBUTTONS = 16; // This is arbitrary, the original game has no such limit
 
 const int TEXTBOX_WIDTH = 26;
 
+
+// Keeps track of data for a list of buttons making up a menu
+struct Menu {
+	Sprite sprites[MAX_MENUBUTTONS];
+	uint16 retvals[MAX_MENUBUTTONS];
+	uint16 buttonVar2;
+	SharedPtr<FileStream> menuFile;
+	uint16 numButtons;
+	uint16 buttonVar1;
+	SharedPtr<Menu> nextMenu;
+
+	Menu() : nextMenu(SharedPtr<Menu>()) {}
+};
 
 class Graphics;
 typedef Common::String (Graphics::*TextGetterFunc)(int, int, Common::String *);
@@ -110,7 +124,7 @@ private:
 	Common::String skipOverAudioPrompt(const Common::String &str);
 	int getNumLines(const Common::String &str);
 	Common::String readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
-	void loadTextButtons(Common::String mnuFilename, int xpos, int ypos);
+	void loadMenuButtons(Common::String mnuFilename, int xpos, int ypos);
 	void warpMousePosition(int x, int y);
 
 	uint16 _textboxVar1;
@@ -121,6 +135,8 @@ private:
 	uint16 _textboxVar6;
 	uint16 _textboxVar7;
 	bool _textboxHasMultipleChoices;
+
+	SharedPtr<Menu> _activeMenu;
 };
 
 }

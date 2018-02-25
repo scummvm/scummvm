@@ -36,6 +36,7 @@ private:
 	Common::SeekableReadStream *_stream;
 	bool _bigEndian;
 
+public:
 	// ReadStream functions
 	virtual bool eos() const;
 	virtual uint32 read(void* dataPtr, uint32 dataSize);
