@@ -3256,7 +3256,19 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_buw:
 		_selectedObject._xPos = readTableInstructionParam(3);
 		_selectedObject._yPos = readTableInstructionParam(3);
-		_locationMaskIgnore = true;
+
+		// WORKAROUND: original game bug
+		// When Bud is walked to specific coordinates using the 'buw' opcode the
+		// walkable area is not enforced (_locationMaskIgnore == true).
+		// This is usually not a problem because the player is not allowed to click,
+		// however, when entering the club, this allows the player to move Bud to
+		// coordinates from which he can never return, leaving him stuck there.
+		// As a workaround, do not ignore the location mask during this specific
+		// action when entering the club.
+		// This fixes Trac#5838.
+		if (!(_locationNum == 6 && _nextAction == 59)) {
+			_locationMaskIgnore = true;
+		}
 		_panelLockedFlag = true;
 		return 0;
 	case kCode_bux:
