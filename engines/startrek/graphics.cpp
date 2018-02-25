@@ -19,11 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "startrek/common.h"
 #include "startrek/graphics.h"
 
 #include "common/config-manager.h"
 #include "common/rendermode.h"
 #include "graphics/palette.h"
+#include "graphics/surface.h"
 
 namespace StarTrek {
 
@@ -34,7 +36,7 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_priData = nullptr;
 	_lutData = nullptr;
 
-	_screenRect = Common::Rect(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_screenRect = Common::Rect(SCREEN_WIDTH-1, SCREEN_HEIGHT-1);
 
 	if (ConfMan.hasKey("render_mode"))
 		_egaMode = (Common::parseRenderMode(ConfMan.get("render_mode").c_str()) == Common::kRenderEGA) && (_vm->getGameType() != GType_STJR) && !(_vm->getFeatures() & GF_DEMO);
@@ -43,7 +45,6 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 		_font = new Font(_vm);
 
 	_backgroundImage = new Bitmap(_vm->openFile("DEMON0.BMP").get());
-	_canvas = new Bitmap(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	_numSprites = 0;
 }
@@ -55,7 +56,6 @@ Graphics::~Graphics() {
 
 	delete _font;
 	delete _backgroundImage;
-	delete _canvas;
 }
 
 
@@ -137,12 +137,8 @@ SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
 }
 
 void Graphics::redrawScreen() {
-	// TODO: get rid of _canvas for efficiency
-	memcpy(_canvas->pixels, _backgroundImage->pixels, SCREEN_WIDTH*SCREEN_HEIGHT);
-
+	_vm->_system->copyRectToScreen(_backgroundImage->pixels, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	drawAllSprites();
-
-	drawBitmapToScreen(_canvas);
 }
 
 void Graphics::drawSprite(const Sprite &sprite) {
@@ -158,7 +154,9 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 	assert(_screenRect.contains(rect));
 	assert(spriteRect.contains(rect));
 
-	byte *dest = _canvas->pixels + rect.top*SCREEN_WIDTH + rect.left;
+	::Graphics::Surface *surface = _vm->_system->lockScreen();
+
+	byte *dest = (byte*)surface->getPixels() + rect.top*SCREEN_WIDTH + rect.left;
 
 	switch(sprite.drawMode) {
 	case 0: { // Normal sprite
@@ -233,7 +231,7 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 		int drawWidth = rectangle1.width() + 1;
 		int drawHeight = rectangle1.height() + 1;
 
-		dest =_canvas->pixels + sprite.drawY*SCREEN_WIDTH + sprite.drawX
+		dest = (byte*)surface->getPixels() + sprite.drawY*SCREEN_WIDTH + sprite.drawX
 			+ rectangle1.top*8*SCREEN_WIDTH + rectangle1.left*8;
 
 		byte *src = sprite.bitmap->pixels + rectangle1.top*sprite.bitmap->width/8 + rectangle1.left;
@@ -283,16 +281,120 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 		error("drawSprite: draw mode %d invalid", sprite.drawMode);
 		break;
 	}
+
+	_vm->_system->unlockScreen();
 }
 
 void Graphics::drawAllSprites() {
-	// TODO: implement properly
+	if (_numSprites == 0)
+		return;
+
+	// TODO: calculateSpriteDrawPriority()
+
+	// Update sprite rectangles
 	for (int i=0; i<_numSprites; i++) {
 		Sprite *spr = _sprites[i];
-		spr->drawX = spr->pos.x;
-		spr->drawY = spr->pos.y;
-		drawSprite(*spr);
+		spr->bitmapChanged = true; // FIXME (delete this later)
+		Common::Rect rect;
+
+		rect.left   = spr->pos.x - spr->bitmap->xoffset;
+		rect.top    = spr->pos.y - spr->bitmap->yoffset;
+		rect.right  = rect.left + spr->bitmap->width - 1;
+		rect.bottom = rect.top + spr->bitmap->height - 1;
+
+		spr->drawX = rect.left;
+		spr->drawY = rect.top;
+
+		spr->drawRect = rect.findIntersectingRect(_screenRect);
+
+		if (!spr->drawRect.isEmpty()) { // At least partly on-screen
+			if (spr->lastDrawRect.left <= spr->lastDrawRect.right) {
+				// If the sprite's position is close to where it was last time it was
+				// drawn, combine the two rectangles and redraw that whole section.
+				// Otherwise, redraw the old position and current position separately.
+				rect = spr->drawRect.findIntersectingRect(spr->lastDrawRect);
+
+				if (rect.isEmpty())
+					spr->rect2Valid = 0;
+				else {
+					spr->rectangle2 = getRectEncompassing(spr->drawRect, spr->lastDrawRect);
+					spr->rect2Valid = 1;
+				}
+			}
+			else {
+				spr->rectangle2 = spr->drawRect;
+				spr->rect2Valid = 1;
+			}
+
+			spr->isOnScreen = 1;
+		}
+		else { // Off-screen
+			spr->rect2Valid = 0;
+			spr->isOnScreen = 0;
+		}
 	}
+
+	// Determine what portions of the screen need to be updated
+	Common::Rect dirtyRects[MAX_SPRITES*2];
+	int numDirtyRects = 0;
+
+	for (int i=0; i<_numSprites; i++) {
+		Sprite *spr = _sprites[i];
+
+		if (spr->bitmapChanged) {
+			if (spr->isOnScreen) {
+				if (spr->rect2Valid) {
+					dirtyRects[numDirtyRects++] = spr->rectangle2;
+				}
+				else {
+					dirtyRects[numDirtyRects++] = spr->drawRect;
+					dirtyRects[numDirtyRects++] = spr->lastDrawRect;
+				}
+			}
+			else {
+				dirtyRects[numDirtyRects++] = spr->lastDrawRect;
+			}
+		}
+	}
+
+	// Redraw the background on every dirty rectangle
+	for (int i=0; i<numDirtyRects; i++) {
+		Common::Rect &r = dirtyRects[i];
+
+		int offset = r.top*SCREEN_WIDTH + r.left;
+		_vm->_system->copyRectToScreen(_backgroundImage->pixels+offset, SCREEN_WIDTH, r.left, r.top, r.width(), r.height());
+	}
+
+	// For each sprite, merge the rectangles that overlap with it and redraw the sprite.
+	for (int i=0; i<_numSprites; i++) {
+		Sprite *spr = _sprites[i];
+
+		if (spr->field16 == 0 && spr->isOnScreen) {
+			bool mustRedrawSprite = false;
+			Common::Rect rect2;
+
+			for (int j=0; j<numDirtyRects; j++) {
+				Common::Rect rect1 = spr->drawRect.findIntersectingRect(dirtyRects[j]);
+
+				if (!rect1.isEmpty()) {
+					if (mustRedrawSprite)
+						rect2 = getRectEncompassing(rect1, rect2);
+					else
+						rect2 = rect1;
+					mustRedrawSprite = true;
+				}
+			}
+
+			if (mustRedrawSprite)
+				drawSprite(*spr, rect2);
+		}
+
+		spr->field16 = 0;
+		spr->bitmapChanged = 0;
+		spr->lastDrawRect = spr->drawRect;
+	}
+
+	_vm->_system->updateScreen();
 }
 
 void Graphics::addSprite(Sprite *sprite) {
@@ -304,10 +406,10 @@ void Graphics::addSprite(Sprite *sprite) {
 	sprite->field8 = 0;
 	sprite->field16 = 0;
 
-	sprite->rectangle1.top = -1;
-	sprite->rectangle1.left = -1;
-	sprite->rectangle1.bottom = -2;
-	sprite->rectangle1.right = -2;
+	sprite->lastDrawRect.top = -1;
+	sprite->lastDrawRect.left = -1;
+	sprite->lastDrawRect.bottom = -2;
+	sprite->lastDrawRect.right = -2;
 
 	_sprites[_numSprites++] = sprite;
 }

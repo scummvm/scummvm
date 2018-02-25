@@ -105,7 +105,6 @@ private:
 
 	Common::Rect _screenRect;
 	Bitmap *_backgroundImage;
-	Bitmap *_canvas;
 
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;
