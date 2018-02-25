@@ -52,7 +52,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	bool updateStock = mode == ITEMMODE_BLACKSMITH;
 	int itemIndex = -1;
 	Common::StringArray lines;
-	int arr[40];
+	uint arr[40];
 	int actionIndex = -1;
 
 	events.setCursor(0);

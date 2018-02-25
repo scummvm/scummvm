@@ -1145,7 +1145,7 @@ const char *const ITEMS_DIALOG_TEXT1 =
 const char *const ITEMS_DIALOG_TEXT2 =
 	"\r\x2\x3""c\v021\t017\f37W\fdeap\t051\f37A\fdrmor\t085A"
 	"\f37c\fdces\t119\f37M\fdisc\t153\f37%s\t289Exit";
-const char *const ITEMS_DIALOG_LINE1 = "\x3r\f%02u\f023%2d)\x3l\t028%s\n";
+const char *const ITEMS_DIALOG_LINE1 = "\x3r\f%02u\t023%2d)\x3l\t028%s\n";
 const char *const ITEMS_DIALOG_LINE2 = "\x3r\f%02u\t023%2d)\x3l\t028%s\x3r\t000%lu\n";
 
 const char *const BTN_BUY = "\f37B\fduy";
