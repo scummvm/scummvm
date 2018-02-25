@@ -58,6 +58,8 @@ void SceneObjects::clear() {
 		_sceneObjects[i].isTarget         = false;
 		_sceneObjects[i].isMoving         = false;
 		_sceneObjects[i].isRetired        = false;
+
+		_sceneObjectsSortedByDistance[i]  = -1;
 	}
 	_count = 0;
 }

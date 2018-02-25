@@ -20,40 +20,42 @@
  *
  */
 
-#ifndef BLADERUNNER_LIGHTS_H
-#define BLADERUNNER_LIGHTS_H
+#ifndef BLADERUNNER_DEBUGGER_H
+#define BLADERUNNER_DEBUGGER_H
 
-#include "bladerunner/bladerunner.h"
-#include "bladerunner/color.h"
-#include "bladerunner/light.h"
+#include "bladerunner/vector.h"
 
-#include "common/stream.h"
+#include "gui/debugger.h"
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace BladeRunner {
 
-class Lights {
-	friend class Debugger;
-	friend class SliceRendererLights;
+class BladeRunnerEngine;
+class View;
 
+class Debugger : public GUI::Debugger{
 	BladeRunnerEngine *_vm;
 
-	Color                  _ambientLightColor;
-	Common::Array<Light *> _lights;
-	int                    _frame;
-
 public:
-	Lights(BladeRunnerEngine *vm);
-	~Lights();
+	bool _viewSceneObjects;
+	bool _viewUI;
+	bool _viewZBuffer;
 
-	void read(Common::ReadStream *stream, int frameCount);
-	void readVqa(Common::ReadStream *stream);
+	Debugger(BladeRunnerEngine *vm);
+	~Debugger();
 
-	void reset();
+	bool cmdDraw(int argc, const char **argv);
+	bool cmdScene(int argc, const char **argv);
+	bool cmdChapter(int argc, const char **argv);
+	bool cmdFlag(int argc, const char **argv);
+	bool cmdVariable(int argc, const char **argv);
 
-	void setupFrame(int frame);
-
-private:
-	void removeAnimated();
+	void drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color);
+	void drawSceneObjects();
+	void drawZBuffer();
 };
 
 } // End of namespace BladeRunner

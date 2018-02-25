@@ -108,8 +108,10 @@ bool Music::play(const Common::String &trackName, int volume, int pan, int timeF
 	}
 	_current.name = trackName;
 	if (timePlay > 0) {
+		_vm->getTimerManager()->removeTimerProc(timerCallbackFadeOut);
 		_vm->getTimerManager()->installTimerProc(timerCallbackFadeOut, timePlay * 1000 * 1000, this, "BladeRunnerMusicFadeoutTimer");
 	} else if (timeFadeOut > 0) {
+		_vm->getTimerManager()->removeTimerProc(timerCallbackFadeOut);
 		_vm->getTimerManager()->installTimerProc(timerCallbackFadeOut, (_stream->getLength() - timeFadeOut * 1000) * 1000, this, "BladeRunnerMusicFadeoutTimer");
 	}
 	_isPlaying = true;

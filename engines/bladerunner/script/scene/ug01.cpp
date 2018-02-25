@@ -80,7 +80,7 @@ bool SceneScriptUG01::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -9.0f, -50.13f, -148.0f, 0, 1, false, 0) && !Game_Flag_Query(324)) {
 			Actor_Says(kActorMcCoy, 8525, 13);
 			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
 			Game_Flag_Set(324);
 		} else {
 			Actor_Says(kActorMcCoy, 8525, 13);

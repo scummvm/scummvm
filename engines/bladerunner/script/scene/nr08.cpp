@@ -150,7 +150,7 @@ void SceneScriptNR08::SceneFrameAdvanced(int frame) {
 		Game_Flag_Set(636);
 		Scene_Exits_Disable();
 		Scene_Loop_Set_Default(1);
-		Scene_Loop_Start_Special(kSceneLoopMode2, 3, true);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, 3, true);
 	}
 	if (frame == 95) {
 		Actor_Put_In_Set(kActorDektora, 91);

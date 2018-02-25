@@ -488,6 +488,7 @@ enum Flags {
 	kFlagDirectorsCut = 378,
 	KFlagMcCoyAndOfficerLearyTalking = 392,
 	KFlagMcCoyAndOfficerLearyArtMetaphor = 397,
+	kFlagGenericWalkerWaiting = 443,
 	kFlagMaggieIsHurt = 461,
 	kFlagKIAPrivacyAddon = 487,
 	kFlagKIAPrivacyAddonIntro = 599,
@@ -503,6 +504,9 @@ enum Flags {
 enum Variables {
 	kVariableChapter = 1,
 	kVariableChinyen = 2,
+	kVariableGenericWalkerAModel = 32,
+	kVariableGenericWalkerBModel = 33,
+	kVariableGenericWalkerCModel = 34,
 	kVariableWalkLoopActor = 37,
 	kVariableWalkLoopRun = 38,
 	kVariableAffectionTowards = 45, // 0 none, 1 steele, 2 dektora, 3 lucy
@@ -568,9 +572,10 @@ enum AnimationModes {
 };
 
 enum SceneLoopMode {
+	kSceneLoopModeNone = -1,
 	kSceneLoopModeLoseControl = 0,
 	kSceneLoopModeChangeSet = 1,
-	kSceneLoopMode2 = 2,
+	kSceneLoopModeOnce = 2,
 	kSceneLoopModeSpinner = 3
 };
 

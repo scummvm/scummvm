@@ -34,12 +34,15 @@
 #include "graphics/surface.h"
 
 //TODO: remove these when game is playable
-#define BLADERUNNER_DEBUG_RENDERING 0
 #define BLADERUNNER_DEBUG_CONSOLE 0
 #define BLADERUNNER_DEBUG_GAME 0
 
 namespace Common {
 struct Event;
+}
+
+namespace GUI {
+class Debugger;
 }
 
 struct ADGameDescription;
@@ -57,6 +60,7 @@ class AudioSpeech;
 class Chapters;
 class CrimesDatabase;
 class Combat;
+class Debugger;
 class DialogueMenu;
 class Elevator;
 class ESPER;
@@ -161,6 +165,8 @@ public:
 
 	Common::RandomSource _rnd;
 
+	Debugger *_debugger;
+
 	bool _isWalkingInterruptible;
 	bool _interruptWalking;
 	bool _playerActorIdle;
@@ -193,6 +199,8 @@ public:
 	bool _isInsideScriptEmpty;
 	int _walkingToActorId;
 	bool _isInsideScriptActor;
+
+	int _actorUpdateCounter;
 
 private:
 	MIXArchive _archives[kArchiveCount];
@@ -251,6 +259,8 @@ public:
 	void ISez(const char *str);
 
 	void blitToScreen(const Graphics::Surface &src);
+
+	GUI::Debugger *getDebugger();
 };
 
 static inline const Graphics::PixelFormat createRGB555() {

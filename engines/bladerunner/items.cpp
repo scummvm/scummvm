@@ -74,11 +74,11 @@ bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position,
 	int itemIndex = findItem(itemId);
 	if (itemIndex == -1) {
 		itemIndex = _items.size();
+		_items.push_back(new Item(_vm));
 	}
 
-	Item *item = new Item(_vm);
+	Item *item = _items[itemIndex];
 	item->setup(itemId, setId, animationId, position, facing, height, width, isTargetFlag, isVisible, isPoliceMazeEnemy);
-	_items.push_back(item);
 
 	if (addToSetFlag && setId == _vm->_scene->getSetId()) {
 		return _vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, isTargetFlag, isVisible);
@@ -87,12 +87,12 @@ bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position,
 }
 
 bool Items::addToSet(int setId) {
-	int itemCount = _vm->_items->_items.size();
+	int itemCount = _items.size();
 	if (itemCount == 0) {
 		return true;
 	}
 	for (int i = 0; i < itemCount; i++) {
-		Item *item = _vm->_items->_items[i];
+		Item *item = _items[i];
 		if (item->_setId == setId) {
 			_vm->_sceneObjects->addItem(item->_itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, item->isTarget(), item->_isVisible);
 		}
@@ -112,7 +112,9 @@ bool Items::remove(int itemId) {
 	if (_items[itemIndex]->_setId == _vm->_scene->getSetId()) {
 		_vm->_sceneObjects->remove(itemId + kSceneObjectOffsetItems);
 	}
-	_items.remove_at(itemIndex);
+
+	delete _items.remove_at(itemIndex);
+
 	return true;
 }
 

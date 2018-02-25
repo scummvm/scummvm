@@ -122,7 +122,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool a2) {
 			}
 			Actor_Set_Goal_Number(kActorMcCoy, 230);
 			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
 		} else if (Actor_Query_Goal_Number(kActorDektora) == 250) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 24.0f, 0.33f, 0.0f, 0, 1, false, 0)) {
 				Actor_Face_XYZ(kActorMcCoy, -180.0f, 0.0f, -170.0f, true);
@@ -260,7 +260,7 @@ void SceneScriptNR11::SceneFrameAdvanced(int frame) {
 		}
 		Actor_Set_Goal_Number(kActorMcCoy, 230);
 		Scene_Loop_Set_Default(3);
-		Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
 		Game_Flag_Reset(635);
 	} else {
 		if (frame < 61 || frame > 120) {

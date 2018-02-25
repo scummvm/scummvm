@@ -59,8 +59,8 @@ void InitScript::Init_Globals() {
 		Global_Variable_Set(i, 0);
 
 	Global_Variable_Set(35, 2);
-	Global_Variable_Set(1, 1);
-	Global_Variable_Set(2, 100);
+	Global_Variable_Set(kVariableChapter, 1);
+	Global_Variable_Set(kVariableChinyen, 100);
 
 	Set_Score(0, 0);
 	Set_Score(1, 64);

@@ -117,7 +117,7 @@ void SceneScriptMA05::PlayerWalkedIn() {
 	Music_Play(2, 52, 0, 2, -1, 0, 0);
 	if ((Random_Query(0, 4) == 1 || (Game_Flag_Query(kFlagChapter1Ending) && !Game_Flag_Query(kFlagChapter1Ended))) && Global_Variable_Query(kVariableChapter) == 1) {
 		Scene_Loop_Set_Default(kMA05LoopMain);
-		Scene_Loop_Start_Special(kSceneLoopMode2, kMA05LoopSpinner, true);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA05LoopSpinner, true);
 		Sound_Play(69, 100, 0, 0, 50);
 	}
 	if (Game_Flag_Query(kFlagChapter1Ending) && !Game_Flag_Query(kFlagChapter1Ended)) {

@@ -31,9 +31,7 @@
 namespace BladeRunner {
 
 class Regions {
-#if BLADERUNNER_DEBUG_RENDERING
-	friend class BladeRunnerEngine;
-#endif
+	friend class Debugger;
 
 	struct Region {
 		Common::Rect rectangle;

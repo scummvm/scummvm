@@ -29,7 +29,7 @@
 #include "common/stream.h"
 
 namespace Common{
-	class ReadStream;
+class ReadStream;
 }
 
 namespace BladeRunner {
@@ -37,9 +37,7 @@ namespace BladeRunner {
 class Lights;
 
 class Light {
-#if BLADERUNNER_DEBUG_RENDERING
-	friend class BladeRunnerEngine;
-#endif
+	friend class Debugger;
 	friend class Lights;
 	friend class SliceRenderer;
 

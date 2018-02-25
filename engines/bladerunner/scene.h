@@ -42,9 +42,9 @@ class Scene {
 
 	int         _defaultLoop;
 	bool        _defaultLoopSet;
+	bool        _defaultLoopPreloadedSet;
 	int         _specialLoopMode;
 	int         _specialLoop;
-	bool        _specialLoopAtEnd;
 	// int         _introFinished;
 	int         _nextSetId;
 	int         _nextSceneId;

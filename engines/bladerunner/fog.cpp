@@ -118,13 +118,13 @@ void FogCone::read(Common::ReadStream *stream, int frameCount) {
 void FogCone::calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) {
 	*coeficient = 0.0f;
 
-	Vector3 positionT = this->_matrix * position;
-	Vector3 viewPositionT = this->_matrix * viewPosition;
+	Vector3 positionT = _matrix * position;
+	Vector3 viewPositionT = _matrix * viewPosition;
 
 	Vector3 vectorT = (viewPositionT - positionT).normalize();
 
 	float v67 = - positionT.x * vectorT.x - positionT.y * vectorT.y - positionT.z * vectorT.z;
-	float v66 = - (positionT.z * positionT.z) - (positionT.y * positionT.y) - (positionT.x * positionT.x) + (v67 * v67) + (this->_parameter1 * this->_parameter1);
+	float v66 = - (positionT.z * positionT.z) - (positionT.y * positionT.y) - (positionT.x * positionT.x) + (v67 * v67) + (_parameter1 * _parameter1);
 
 	if (v66 >= 0.0f) {
 		float v24 = sqrt(v66);
@@ -132,8 +132,8 @@ void FogCone::calculateCoeficient(Vector3 position, Vector3 viewPosition, float 
 		Vector3 v29 = positionT + (v67 - v24) * vectorT;
 		Vector3 v36 = positionT + (v67 + v24) * vectorT;
 
-		Vector3 v39 = this->_inverted * v29;
-		Vector3 v42 = this->_inverted * v36;
+		Vector3 v39 = _inverted * v29;
+		Vector3 v42 = _inverted * v36;
 
 		float v74 = (v39 - position).length();
 		float v76 = (v42 - position).length();
@@ -164,8 +164,8 @@ void FogSphere::read(Common::ReadStream *stream, int frameCount) {
 void FogSphere::calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) {
 	*coeficient = 0.0f;
 
-	Vector3 positionT = this->_matrix * position;
-	Vector3 viewPositionT = this->_matrix * viewPosition;
+	Vector3 positionT = _matrix * position;
+	Vector3 viewPositionT = _matrix * viewPosition;
 
 	Vector3 v158 = Vector3::cross(positionT, viewPositionT);
 
@@ -176,12 +176,12 @@ void FogSphere::calculateCoeficient(Vector3 position, Vector3 viewPosition, floa
 		}
 
 		float v173 = sqrt(1.0f - v167.z * v167.z);
-		if (v173 > cos(this->_parameter1)) {
+		if (v173 > cos(_parameter1)) {
 			Vector3 v37 = Vector3(v167.y, -v167.x, 0.0f).normalize();
 
 			float v41 = 1.0f / v173 / v173 - 1.0f;
 			float v42 = sqrt(v41);
-			float v43 = tan(this->_parameter1);
+			float v43 = tan(_parameter1);
 			float v44 = sqrt(v43 * v43 - v41);
 
 			Vector3 v45 = v44 * v37;
@@ -271,10 +271,10 @@ void FogSphere::calculateCoeficient(Vector3 position, Vector3 viewPosition, floa
 				}
 
 				Vector3 v139 = positionT + (v88 * vector);
-				Vector3 v142 = this->_inverted * v139;
+				Vector3 v142 = _inverted * v139;
 
 				Vector3 v148 = positionT + (v114 * vector);
-				Vector3 v151 = this->_inverted * v148;
+				Vector3 v151 = _inverted * v148;
 
 				*coeficient = (v151 - v142).length();
 			}
@@ -292,102 +292,102 @@ void FogBox::read(Common::ReadStream *stream, int frameCount) {
 }
 
 void FogBox::calculateCoeficient(Vector3 position, Vector3 viewPosition, float *coeficient) {
-	Vector3 v159 = this->_matrix * position;
-	Vector3 v146 = v159;
-	Vector3 v156 = this->_matrix * viewPosition;
-	Vector3 v153 = v156;
-	Vector3 v150 = v156 - v159;
+	Vector3 positionT = _matrix * position;
+	Vector3 viewPositionT = _matrix * viewPosition;
 
-	float v149 = this->_parameter1 * 0.5f;
-	if (v159.x < -v149) {
-		if (v156.x < -v149) {
+	Vector3 positionTadj = positionT;
+	Vector3 viewPositionTadj = viewPositionT;
+
+	Vector3 direction = viewPositionT - positionT;
+
+	float parameter1half = _parameter1 * 0.5f;
+	if (positionT.x < -parameter1half) {
+		if (viewPositionT.x < -parameter1half) {
+			*coeficient = 0.0f;
 			return;
 		}
-		float v28 = (-v159.x - v149) / v150.x;
-		Vector3 v29 = v28 * v150;
-		v146 = v159 + v29;
-	} else {
-		if (v156.x < -v149) {
-			float v19 = (-v156.x - v149) / v150.x;
-			Vector3 v20 = v19 * v150;
-			v153 = v156 + v20;
-		}
-	}
-	if (v149 < v146.x) {
-		if (v149 < v153.x) {
-			return;
-		}
-		float v48 = (v149 - v146.x) / v150.x;
-		Vector3 v49 = v48 * v150;
-		v146 = v146 + v49;
-	} else {
-		if (v149 < v153.x) {
-			float v40 = (v149 - v153.x) / v150.x;
-			Vector3 v41 = v40 * v150;
-			v153 = v153 + v41;
-		}
-	}
-	float v162 = this->_parameter2 * 0.5f;
-	if (v146.y < -v162) {
-		if (v153.y < -v162) {
-			return;
-		}
-		float v71 = (-v146.y - v162) / v150.y;
-		Vector3 v72 = v71 * v150;
-		v146 = v146 + v72;
-	} else {
-		if (v153.y < -v162) {
-			float v62 = (-v153.y - v162) / v150.y;
-			Vector3 v63 = v62 * v150;
-			v153 = v153 + v63;
-		}
-	}
-	if (v162 < v146.y) {
-		if (v162 < v153.y) {
-			return;
-		}
-		float v91 = (v162 - v146.y) / v150.y;
-		Vector3 v92 = v91 * v150;
-		v146 = v146 + v92;
-	} else {
-		if (v162 < v153.y) {
-			float v83 = (v162 - v153.y) / v150.y;
-			Vector3 v84 = v83 * v150;
-			v153 = v153 + v84;
-		}
+		float v28 = (-positionT.x - parameter1half) / direction.x;
+		Vector3 v29 = v28 * direction;
+		positionTadj = positionT + v29;
+	} else if (viewPositionT.x < -parameter1half) {
+		float v19 = (-viewPositionT.x - parameter1half) / direction.x;
+		Vector3 v20 = v19 * direction;
+		viewPositionTadj = viewPositionT + v20;
 	}
 
-	if (0.0f <= v146.z) {
-		if (0.0f > v153.z) {
-			float v103 = -v153.z / v150.z;
-			Vector3 v104 = v103 * v150;
-			v153 = v153 + v104;
-		}
-	} else {
-		if (0.0f > v153.z) {
+	if (parameter1half < positionTadj.x) {
+		if (parameter1half < viewPositionTadj.x) {
+			*coeficient = 0.0f;
 			return;
 		}
-		float v111 = -v146.z / v150.z;
-		Vector3 v112 = v111 * v150;
-		v146 = v146 + v112;
+		float v48 = (parameter1half - positionTadj.x) / direction.x;
+		Vector3 v49 = v48 * direction;
+		positionTadj = positionTadj + v49;
+	} else if (parameter1half < viewPositionTadj.x) {
+		float v40 = (parameter1half - viewPositionTadj.x) / direction.x;
+		Vector3 v41 = v40 * direction;
+		viewPositionTadj = viewPositionTadj + v41;
 	}
 
-	if (v146.z <= this->_parameter3) {
-		if (v153.z > this->_parameter3) {
-			float v124 = (this->_parameter3 - v153.z) / v150.z;
-			Vector3 v125 = v124 * v150;
-			v153 = v153 + v125;
+	float parameter2half = _parameter2 * 0.5f;
+	if (positionTadj.y < -parameter2half) {
+		if (viewPositionTadj.y < -parameter2half) {
+			*coeficient = 0.0f;
+			return;
 		}
-	} else {
-		if (v153.z <= this->_parameter3) {
-			float v132 = (this->_parameter3 - v146.z) / v150.z;
-			Vector3 v133 = v132 * v150;
-			v146 = v146 + v133;
-		}
+		float v71 = (-positionTadj.y - parameter2half) / direction.y;
+		Vector3 v72 = v71 * direction;
+		positionTadj = positionTadj + v72;
+	} else if (viewPositionTadj.y < -parameter2half) {
+		float v62 = (-viewPositionTadj.y - parameter2half) / direction.y;
+		Vector3 v63 = v62 * direction;
+		viewPositionTadj = viewPositionTadj + v63;
 	}
 
-	Vector3 v137 = this->_inverted * v146;
-	Vector3 v140 = this->_inverted * v153;
+	if (parameter2half < positionTadj.y) {
+		if (parameter2half < viewPositionTadj.y) {
+			*coeficient = 0.0f;
+			return;
+		}
+		float v91 = (parameter2half - positionTadj.y) / direction.y;
+		Vector3 v92 = v91 * direction;
+		positionTadj = positionTadj + v92;
+	} else if (parameter2half < viewPositionTadj.y) {
+		float v83 = (parameter2half - viewPositionTadj.y) / direction.y;
+		Vector3 v84 = v83 * direction;
+		viewPositionTadj = viewPositionTadj + v84;
+	}
+
+	if (0.0f > positionTadj.z) {
+		if (0.0f > viewPositionTadj.z) {
+			*coeficient = 0.0f;
+			return;
+		}
+		float v111 = -positionTadj.z / direction.z;
+		Vector3 v112 = v111 * direction;
+		positionTadj = positionTadj + v112;
+	} else if (0.0f > viewPositionTadj.z) {
+		float v103 = -viewPositionTadj.z / direction.z;
+		Vector3 v104 = v103 * direction;
+		viewPositionTadj = viewPositionTadj + v104;
+	}
+
+	if (positionTadj.z > _parameter3) {
+		if (viewPositionTadj.z > _parameter3) {
+			*coeficient = 0.0f;
+			return;
+		}
+		float v132 = (_parameter3 - positionTadj.z) / direction.z;
+		Vector3 v133 = v132 * direction;
+		positionTadj = positionTadj + v133;
+	} else if (viewPositionTadj.z > _parameter3) {
+		float v124 = (_parameter3 - viewPositionTadj.z) / direction.z;
+		Vector3 v125 = v124 * direction;
+		viewPositionTadj = viewPositionTadj + v125;
+	}
+
+	Vector3 v137 = _inverted * positionTadj;
+	Vector3 v140 = _inverted * viewPositionTadj;
 	Vector3 v143 = v140 - v137;
 
 	*coeficient = v143.length();

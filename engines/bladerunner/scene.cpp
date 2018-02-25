@@ -52,7 +52,7 @@ Scene::Scene(BladeRunnerEngine *vm)
 	_defaultLoopSet(false),
 	_specialLoopMode(kSceneLoopModeLoseControl),
 	_specialLoop(0),
-	_specialLoopAtEnd(false),
+	_defaultLoopPreloadedSet(false),
 	// _introFinished(false),
 	_nextSetId(-1),
 	_nextSceneId(-1),
@@ -92,8 +92,8 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		_vm->_overlays->removeAll();
 		_defaultLoop = 0;
 		_defaultLoopSet = false;
-		_specialLoopAtEnd = false;
-		_specialLoopMode = -1;
+		_defaultLoopPreloadedSet = false;
+		_specialLoopMode = kSceneLoopModeNone;
 		_specialLoop = -1;
 		_frame = -1;
 	}
@@ -139,10 +139,10 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 		return false;
 	}
 
-	if (_specialLoop == -1) {
+	if (_specialLoopMode == kSceneLoopModeNone) {
 		_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeImmediate, nullptr, nullptr);
 		_defaultLoopSet = true;
-		_specialLoopAtEnd = false;
+		_defaultLoopPreloadedSet = false;
 	}
 	_vm->_scene->advanceFrame();
 
@@ -162,8 +162,8 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 				   i + kSceneObjectOffsetActors,
 				   actor->getBoundingBox(),
 				   actor->getScreenRectangle(),
-				   1,
-				   0,
+				   true,
+				   false,
 				   actor->isTarget(),
 				   actor->isRetired());
 		}
@@ -216,21 +216,24 @@ int Scene::advanceFrame() {
 		_vqaPlayer->updateScreenEffects(_vm->_screenEffects);
 		_vqaPlayer->updateLights(_vm->_lights);
 	}
-	if (_specialLoopMode && _specialLoopMode != kSceneLoopMode2 && _specialLoopMode != kSceneLoopModeSpinner) {
-		if (_specialLoopMode == kSceneLoopModeChangeSet) {
-			if (frame == -3) { // TODO: when will this happen? bad data in/eof of vqa
-				_vm->_settings->setNewSetAndScene(_nextSetId, _nextSceneId);
-				_vm->playerGainsControl();
+
+	if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeOnce || _specialLoopMode == kSceneLoopModeSpinner) {
+		if (!_defaultLoopSet) {
+			_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeEnqueue, &Scene::loopEndedStatic, this);
+			_defaultLoopSet = true;
+			if (_specialLoopMode == kSceneLoopModeLoseControl) {
+				_vm->playerLosesControl();
 			}
-		} else if (!_specialLoopAtEnd) {
-			_vqaPlayer->setLoop(_defaultLoop + 1, -1, kLoopSetModeJustStart, &Scene::loopEndedStatic, this);
-			_specialLoopAtEnd = true;
 		}
-	} else if (!_defaultLoopSet) {
-		_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeEnqueue, &Scene::loopEndedStatic, this);
-		_defaultLoopSet = true;
-		if (_specialLoopMode == kSceneLoopModeLoseControl) {
-			_vm->playerLosesControl();
+	} else if (_specialLoopMode == kSceneLoopModeChangeSet) {
+		if (frame == -3) { // EOF
+			_vm->_settings->setNewSetAndScene(_nextSetId, _nextSceneId);
+			_vm->playerGainsControl();
+		}
+	} else if (_specialLoopMode == kSceneLoopModeNone) {
+		if (!_defaultLoopPreloadedSet) {
+			_vqaPlayer->setLoop(_defaultLoop + 1, -1, kLoopSetModeJustStart, &Scene::loopEndedStatic, this);
+			_defaultLoopPreloadedSet = true;
 		}
 	}
 
@@ -270,7 +273,7 @@ void Scene::loopStartSpecial(int specialLoopMode, int loopId, bool immediately) 
 		_nextSceneId = _vm->_settings->getNewScene();
 	}
 	if (immediately) {
-		_specialLoopAtEnd = true;
+		_defaultLoopPreloadedSet = true;
 		loopEnded(0, _specialLoop);
 	}
 }
@@ -326,31 +329,31 @@ const char *Scene::objectGetName(int objectId) {
 }
 
 void Scene::loopEnded(int frame, int loopId) {
-	if (_specialLoopMode && _specialLoopMode != kSceneLoopMode2 && _specialLoopMode != kSceneLoopModeSpinner) {
-		if (_specialLoopMode == kSceneLoopModeChangeSet) {
+	if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeOnce || _specialLoopMode == kSceneLoopModeSpinner) {
+		if (_defaultLoopPreloadedSet) {
+			_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeEnqueue, &Scene::loopEndedStatic, this);
 			_defaultLoopSet = true;
-			_specialLoopAtEnd = false;
-			_vm->playerLosesControl();
+			_defaultLoopPreloadedSet = false;
+			if (_specialLoopMode == kSceneLoopModeLoseControl) {
+				_vm->playerLosesControl();
+			}
+		} else {
+			if (_specialLoopMode == kSceneLoopModeLoseControl) {
+				_vm->playerGainsControl();
+				_playerWalkedIn = true;
+			}
+			if (_specialLoopMode == kSceneLoopModeSpinner) {
+				_vm->_spinner->open();
+			}
+			_specialLoopMode = kSceneLoopModeNone;
+			_specialLoop = -1;
+			_vqaPlayer->setLoop(_defaultLoop + 1, -1, kLoopSetModeJustStart, nullptr, nullptr);
+			_defaultLoopPreloadedSet = true;
 		}
-	} else if (_specialLoopAtEnd) {
-		_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeEnqueue, &Scene::loopEndedStatic, this);
+	} else if (_specialLoopMode == kSceneLoopModeChangeSet) {
 		_defaultLoopSet = true;
-		_specialLoopAtEnd = false;
-		if (_specialLoopMode == kSceneLoopModeLoseControl) {
-			_vm->playerLosesControl();
-		}
-	} else {
-		if (_specialLoopMode == kSceneLoopModeLoseControl) {
-			_vm->playerGainsControl();
-			_playerWalkedIn = true;
-		}
-		if (_specialLoopMode == kSceneLoopModeSpinner) {
-			_vm->_spinner->open();
-		}
-		_specialLoopMode = -1;
-		_specialLoop = -1;
-		_vqaPlayer->setLoop(_defaultLoop + 1, -1, kLoopSetModeJustStart, nullptr, nullptr);
-		_specialLoopAtEnd = true;
+		_defaultLoopPreloadedSet = false;
+		_vm->playerLosesControl();
 	}
 }
 

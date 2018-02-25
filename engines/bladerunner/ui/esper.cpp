@@ -26,6 +26,7 @@
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/debugger.h"
 #include "bladerunner/decompress_lcw.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_info.h"
@@ -577,30 +578,31 @@ void ESPER::draw(Graphics::Surface &surface) {
 			if (_isDrawingSelection) {
 				drawSelection(surface, true, 1);
 			}
-#if BLADERUNNER_DEBUG_RENDERING
-			for (int i = 0; i < kRegionCount; ++i) {
-				if (_regions[i].isPresent) {
-					surface.frameRect(
-						Common::Rect(
-							viewportXToScreenX(_regions[i].rectInner.left),
-							viewportYToScreenY(_regions[i].rectInner.top),
-							viewportXToScreenX(_regions[i].rectInner.right),
-							viewportYToScreenY(_regions[i].rectInner.bottom)
-						),
-						0x7FE0
-					);
-					surface.frameRect(
-						Common::Rect(
-							viewportXToScreenX(_regions[i].rectOuter.left),
-							viewportYToScreenY(_regions[i].rectOuter.top),
-							viewportXToScreenX(_regions[i].rectOuter.right),
-							viewportYToScreenY(_regions[i].rectOuter.bottom)
-						),
-						0x7FE0
-					);
+
+			if (_vm->_debugger->_viewUI) {
+				for (int i = 0; i < kRegionCount; ++i) {
+					if (_regions[i].isPresent) {
+						surface.frameRect(
+							Common::Rect(
+								viewportXToScreenX(_regions[i].rectInner.left),
+								viewportYToScreenY(_regions[i].rectInner.top),
+								viewportXToScreenX(_regions[i].rectInner.right),
+								viewportYToScreenY(_regions[i].rectInner.bottom)
+							),
+							0x7FE0
+						);
+						surface.frameRect(
+							Common::Rect(
+								viewportXToScreenX(_regions[i].rectOuter.left),
+								viewportYToScreenY(_regions[i].rectOuter.top),
+								viewportXToScreenX(_regions[i].rectOuter.right),
+								viewportYToScreenY(_regions[i].rectOuter.bottom)
+							),
+							0x7FE0
+						);
+					}
 				}
 			}
-#endif
 			break;
 		case kEsperPhotoStateScrolling:
 			scrollUpdate();

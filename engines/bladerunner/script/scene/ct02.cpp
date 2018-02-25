@@ -152,7 +152,7 @@ void SceneScriptCT02::sub_401ACC() {
 			Actor_Set_Goal_Number(kActorZuben, 8);
 			Game_Flag_Set(293);
 			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
 		}
 		break;
 	case 280:
@@ -165,7 +165,7 @@ void SceneScriptCT02::sub_401ACC() {
 			Actor_Set_Goal_Number(kActorZuben, 8);
 			Game_Flag_Set(293);
 			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
 		}
 		break;
 	case 290:
@@ -181,7 +181,7 @@ void SceneScriptCT02::sub_401ACC() {
 			Actor_Set_Goal_Number(kActorZuben, 8);
 			Game_Flag_Set(293);
 			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
 		}
 		break;
 	case 300:
@@ -192,7 +192,7 @@ void SceneScriptCT02::sub_401ACC() {
 			Actor_Set_Goal_Number(kActorZuben, 8);
 			Game_Flag_Set(293);
 			Scene_Loop_Set_Default(3);
-			Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
+			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
 		}
 		break;
 	}

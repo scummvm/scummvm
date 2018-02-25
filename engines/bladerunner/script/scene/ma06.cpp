@@ -134,7 +134,7 @@ void SceneScriptMA06::activateElevator() {
 		Player_Gains_Control();
 		int floor = Elevator_Activate(kElevatorMA);
 		Player_Loses_Control();
-		Scene_Loop_Start_Special(kSceneLoopMode2, 1, true);
+		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA06LoopMain, true);
 		if (floor > 1) {
 			Game_Flag_Set(kFlagMA06toMA07);
 		} else if (floor == 1) {

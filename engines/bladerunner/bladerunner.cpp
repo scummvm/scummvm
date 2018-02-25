@@ -31,6 +31,7 @@
 #include "bladerunner/chapters.h"
 #include "bladerunner/combat.h"
 #include "bladerunner/crimes_database.h"
+#include "bladerunner/debugger.h"
 #include "bladerunner/dialogue_menu.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_flags.h"
@@ -176,9 +177,12 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_scene                   = nullptr;
 	_aiScripts               = nullptr;
 	for (int i = 0; i != kActorCount; ++i) {
-		_actors[i] = nullptr;
+		_actors[i]           = nullptr;
 	}
+	_debugger                = nullptr;
 	walkingReset();
+
+	_actorUpdateCounter = 0;
 }
 
 BladeRunnerEngine::~BladeRunnerEngine() {
@@ -243,6 +247,8 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// TODO: voight-kampf script
 
 	_sceneScript = new SceneScript(this);
+
+	_debugger = new Debugger(this);
 
 	// This is the original startup in the game
 
@@ -637,6 +643,9 @@ void BladeRunnerEngine::shutdown() {
 
 	// These are static objects in original game
 
+	delete _debugger;
+	_debugger = nullptr;
+
 	delete _zbuffer;
 	_zbuffer = nullptr;
 
@@ -700,36 +709,6 @@ void BladeRunnerEngine::gameLoop() {
 		gameTick();
 	} while (_gameIsRunning);
 }
-
-#if BLADERUNNER_DEBUG_RENDERING
-
-void drawBBox(Vector3 start, Vector3 end, View *view, Graphics::Surface *surface, int color) {
-	Vector3 bfl = view->calculateScreenPosition(Vector3(start.x, start.y, start.z));
-	Vector3 bfr = view->calculateScreenPosition(Vector3(start.x, end.y, start.z));
-	Vector3 bbr = view->calculateScreenPosition(Vector3(end.x, end.y, start.z));
-	Vector3 bbl = view->calculateScreenPosition(Vector3(end.x, start.y, start.z));
-
-	Vector3 tfl = view->calculateScreenPosition(Vector3(start.x, start.y, end.z));
-	Vector3 tfr = view->calculateScreenPosition(Vector3(start.x, end.y, end.z));
-	Vector3 tbr = view->calculateScreenPosition(Vector3(end.x, end.y, end.z));
-	Vector3 tbl = view->calculateScreenPosition(Vector3(end.x, start.y, end.z));
-
-	surface->drawLine(bfl.x, bfl.y, bfr.x, bfr.y, color);
-	surface->drawLine(bfr.x, bfr.y, bbr.x, bbr.y, color);
-	surface->drawLine(bbr.x, bbr.y, bbl.x, bbl.y, color);
-	surface->drawLine(bbl.x, bbl.y, bfl.x, bfl.y, color);
-
-	surface->drawLine(tfl.x, tfl.y, tfr.x, tfr.y, color);
-	surface->drawLine(tfr.x, tfr.y, tbr.x, tbr.y, color);
-	surface->drawLine(tbr.x, tbr.y, tbl.x, tbl.y, color);
-	surface->drawLine(tbl.x, tbl.y, tfl.x, tfl.y, color);
-
-	surface->drawLine(bfl.x, bfl.y, tfl.x, tfl.y, color);
-	surface->drawLine(bfr.x, bfr.y, tfr.x, tfr.y, color);
-	surface->drawLine(bbr.x, bbr.y, tbr.x, tbr.y, color);
-	surface->drawLine(bbl.x, bbl.y, tbl.x, tbl.y, color);
-}
-#endif
 
 void BladeRunnerEngine::gameTick() {
 	handleEvents();
@@ -814,15 +793,9 @@ void BladeRunnerEngine::gameTick() {
 			int setId = _scene->getSetId();
 			for (int i = 0, end = _gameInfo->getActorCount(); i != end; ++i) {
 				if (_actors[i]->getSetId() == setId) {
-					// TODO: remove this limitation
-					if (i == kActorMcCoy
-						|| i == kActorRunciter
-						|| i == kActorOfficerLeary
-						|| i == kActorMaggie) {
-						Common::Rect screenRect;
-						if (_actors[i]->tick(backgroundChanged, &screenRect)) {
-							_zbuffer->mark(screenRect);
-						}
+					Common::Rect screenRect;
+					if (_actors[i]->tick(backgroundChanged, &screenRect)) {
+						_zbuffer->mark(screenRect);
 					}
 				}
 			}
@@ -839,8 +812,9 @@ void BladeRunnerEngine::gameTick() {
 				_dialogueMenu->draw(_surfaceFront);
 			}
 
-			// TODO: remove zbuffer draw
-			// _surfaceFront.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
+			if (_debugger->_viewZBuffer) {
+				_surfaceFront.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
+			}
 
 			_mouse->tick(p.x, p.y);
 			_mouse->draw(_surfaceFront, p.x, p.y);
@@ -853,140 +827,9 @@ void BladeRunnerEngine::gameTick() {
 				_walkSoundId = -1;
 			}
 
-#if BLADERUNNER_DEBUG_RENDERING
-			//draw scene objects
-			int count = _sceneObjects->_count;
-			if (count > 0) {
-				for (int i = 0; i < count; i++) {
-					SceneObjects::SceneObject *sceneObject = &_sceneObjects->_sceneObjects[_sceneObjects->_sceneObjectsSortedByDistance[i]];
-
-					const BoundingBox *bbox = sceneObject->boundingBox;
-					Vector3 a, b;
-					bbox->getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
-					Vector3 pos = _view->calculateScreenPosition(0.5 * (a + b));
-					int color;
-
-					switch (sceneObject->type) {
-					case kSceneObjectTypeActor:
-						color = 0b111110000000000;
-						drawBBox(a, b, _view, &_surfaceFront, color);
-						_mainFont->drawColor(_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors), _surfaceFront, pos.x, pos.y, color);
-						break;
-					case kSceneObjectTypeItem:
-						char itemText[40];
-						drawBBox(a, b, _view, &_surfaceFront, color);
-						sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
-						_mainFont->drawColor(itemText, _surfaceFront, pos.x, pos.y, color);
-						break;
-					case kSceneObjectTypeObject:
-						color = 0b011110111101111;
-						//if (sceneObject->_isObstacle)
-						//	color += 0b100000000000000;
-						if (sceneObject->isClickable) {
-							color = 0b000001111100000;
-						}
-						drawBBox(a, b, _view, &_surfaceFront, color);
-						_mainFont->drawColor(_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects), _surfaceFront, pos.x, pos.y, color);
-						break;
-					}
-					_surfaceFront.frameRect(*sceneObject->screenRectangle, color);
-				}
+			if (_debugger->_viewSceneObjects) {
+				_debugger->drawSceneObjects();
 			}
-
-			//draw regions
-			for (int i = 0; i < 10; i++) {
-				Regions::Region *region = &_scene->_regions->_regions[i];
-				if (!region->present) continue;
-				_surfaceFront.frameRect(region->rectangle, 0b000000000011111);
-			}
-
-			for (int i = 0; i < 10; i++) {
-				Regions::Region *region = &_scene->_exits->_regions[i];
-				if (!region->present) continue;
-				_surfaceFront.frameRect(region->rectangle, 0b111111111111111);
-			}
-
-			//draw walkboxes
-			for (int i = 0; i < _scene->_set->_walkboxCount; i++) {
-				Set::Walkbox *walkbox = &_scene->_set->_walkboxes[i];
-
-				for (int j = 0; j < walkbox->vertexCount; j++) {
-					Vector3 start = _view->calculateScreenPosition(walkbox->vertices[j]);
-					Vector3 end = _view->calculateScreenPosition(walkbox->vertices[(j + 1) % walkbox->vertexCount]);
-					_surfaceFront.drawLine(start.x, start.y, end.x, end.y, 0b111111111100000);
-					Vector3 pos = _view->calculateScreenPosition(0.5 * (start + end));
-					_mainFont->drawColor(walkbox->name, _surfaceFront, pos.x, pos.y, 0b111111111100000);
-				}
-			}
-
-			// draw lights
-			for (int i = 0; i < (int)_lights->_lights.size(); i++) {
-				Light *light = _lights->_lights[i];
-				Matrix4x3 m = light->_matrix;
-				m = invertMatrix(m);
-				//todo do this properly
-				Vector3 posOrigin = m * Vector3(0.0f, 0.0f, 0.0f);
-				float t = posOrigin.y;
-				posOrigin.y = posOrigin.z;
-				posOrigin.z = -t;
-
-				Vector3 posTarget = m * Vector3(0.0f, 0.0f, -100.0f);
-				t = posTarget.y;
-				posTarget.y = posTarget.z;
-				posTarget.z = -t;
-
-				Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
-				int colorR = (light->_color.r * 31.0f);
-				int colorG = (light->_color.g * 31.0f);
-				int colorB = (light->_color.b * 31.0f);
-				int color = (colorR << 10) + (colorG << 5) + colorB;
-
-				drawBBox(posOrigin - size, posOrigin + size, _view, &_surfaceFront, color);
-
-				Vector3 posOriginT = _view->calculateScreenPosition(posOrigin);
-				Vector3 posTargetT = _view->calculateScreenPosition(posTarget);
-				_surfaceFront.drawLine(posOriginT.x, posOriginT.y, posTargetT.x, posTargetT.y, color);
-				_mainFont->drawColor(light->_name, _surfaceFront, posOriginT.x, posOriginT.y, color);
-			}
-
-			//draw waypoints
-			for(int i = 0; i < _waypoints->_count; i++) {
-				Waypoints::Waypoint *waypoint = &_waypoints->_waypoints[i];
-				if(waypoint->setId != _scene->getSetId())
-					continue;
-				Vector3 pos = waypoint->position;
-				Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
-				int color = 0b111111111111111;
-				drawBBox(pos - size, pos + size, _view, &_surfaceFront, color);
-				Vector3 spos = _view->calculateScreenPosition(pos);
-				char waypointText[40];
-				sprintf(waypointText, "waypoint %i", i);
-				_mainFont->drawColor(waypointText, _surfaceFront, spos.x, spos.y, color);
-			}
-#endif
-#if BLADERUNNER_DEBUG_RENDERING
-			//draw aesc
-			for (uint i = 0; i < _screenEffects->_entries.size(); i++) {
-				ScreenEffects::Entry &entry = _screenEffects->_entries[i];
-				int j = 0;
-				for (int y = 0; y < entry.height; y++) {
-					for (int x = 0; x < entry.width; x++) {
-						Common::Rect r((entry.x + x) * 2, (entry.y + y) * 2, (entry.x + x) * 2 + 2, (entry.y + y) * 2 + 2);
-
-						int ec = entry.data[j++];
-						Color256 color = entry.palette[ec];
-						int bladeToScummVmConstant = 256 / 16;
-
-						Graphics::PixelFormat _pixelFormat = createRGB555();
-						int color555 = _pixelFormat.RGBToColor(
-							CLIP(color.r * bladeToScummVmConstant, 0, 255),
-							CLIP(color.g * bladeToScummVmConstant, 0, 255),
-							CLIP(color.b * bladeToScummVmConstant, 0, 255));
-						_surfaceFront.fillRect(r, color555);
-					}
-				}
-			}
-#endif
 
 			blitToScreen(_surfaceFront);
 			_system->delayMillis(10);
@@ -998,14 +841,17 @@ void BladeRunnerEngine::actorsUpdate() {
 	int actorCount = (int)_gameInfo->getActorCount();
 	int setId = _scene->getSetId();
 
-	//TODO: original game updates every non-visible characters by updating only one character in one frame
 	if (setId != kSetUG18 || _gameVars[kVariableChapter] != 4 || !_gameFlags->query(670) || !_aiScripts->isInsideScript()) {
 		for (int i = 0; i < actorCount; i++) {
 			Actor *actor = _actors[i];
-			if (actor->getSetId() == setId) {
+			if (actor->getSetId() == setId || i == _actorUpdateCounter) {
 				_aiScripts->update(i);
 				actor->timersUpdate();
 			}
+		}
+		++_actorUpdateCounter;
+		if (_actorUpdateCounter >= actorCount) {
+			_actorUpdateCounter = 0;
 		}
 	}
 }
@@ -1117,6 +963,12 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 }
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
+	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
+		getDebugger()->attach();
+		getDebugger()->onFrame();
+		return;
+	}
+
 	//TODO:
 	if (!playerHasControl() /* || ActorWalkingLoop || ActorSpeaking || VqaIsPlaying */) {
 		return;
@@ -1426,7 +1278,7 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePositi
 
 		//TODO mouse::randomize(Mouse);
 
-		if (actorId) {
+		if (actorId > 0) {
 			_aiScripts->shotAtAndMissed(actorId);
 		}
 	} else {
@@ -1696,7 +1548,7 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 		}
 	}
 
-	debug("getResource: Resource %s not found.", name.c_str());
+	error("getResource: Resource %s not found", name.c_str());
 	return nullptr;
 }
 
@@ -1733,6 +1585,10 @@ void BladeRunnerEngine::ISez(const char *str) {
 void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) {
 	_system->copyRectToScreen(src.getPixels(), src.pitch, 0, 0, src.w, src.h);
 	_system->updateScreen();
+}
+
+GUI::Debugger *BladeRunnerEngine::getDebugger() {
+	return _debugger;
 }
 
 void blit(const Graphics::Surface &src, Graphics::Surface &dst) {

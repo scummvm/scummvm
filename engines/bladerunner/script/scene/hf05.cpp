@@ -92,7 +92,7 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Face_Heading(kActorMcCoy, 0, false);
 				Actor_Change_Animation_Mode(kActorMcCoy, 23);
 				Scene_Loop_Set_Default(5);
-				Scene_Loop_Start_Special(kSceneLoopMode2, 4, true);
+				Scene_Loop_Start_Special(kSceneLoopModeOnce, 4, true);
 				if (sub_4048C0()) {
 					if (sub_4048C0() == 3) {
 						Actor_Face_Heading(kActorDektora, 0, false);

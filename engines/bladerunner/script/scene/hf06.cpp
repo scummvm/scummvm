@@ -263,7 +263,7 @@ void SceneScriptHF06::sub_401EF4() {
 	Actor_Change_Animation_Mode(kActorSteele, 6);
 	Delay(500);
 	Scene_Loop_Set_Default(3);
-	Scene_Loop_Start_Special(kSceneLoopMode2, 2, true);
+	Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true);
 	Sound_Play(562, 50, 0, 0, 50);
 	Game_Flag_Set(559);
 	Scene_Exits_Disable();

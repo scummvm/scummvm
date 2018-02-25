@@ -50,12 +50,12 @@ void SceneScriptRC01::InitializeScene() {
 #if BLADERUNNER_DEBUG_GAME
 	//TODO: not part of game, remove
 	Game_Flag_Set(kFlagIntroPlayed); // force skip intro
-	Game_Flag_Set(kFlagRC02toRC01); // no landing
+	 Game_Flag_Set(kFlagRC02toRC01); // no landing
 	// Game_Flag_Set(kFlagRC01PoliceDone);
 	// Game_Flag_Set(kFlagKIAPrivacyAddon);
 	// Game_Flag_Set(kFlagZubenRetired);
 	// Game_Flag_Set(kFlagSpinnerToMA01);
-	// Set_Enter(kSetMA02_MA04, kSceneMA02);
+	// Set_Enter(kSetMA02_MA04, kSceneMA04);
 
 	// Spinner_Set_Selectable_Destination_Flag(0, true);
 	// Spinner_Set_Selectable_Destination_Flag(1, true);
@@ -70,6 +70,10 @@ void SceneScriptRC01::InitializeScene() {
 
 	// ESPER_Flag_To_Activate();
 	// Voight_Kampff_Activate(kActorLucy, 50);
+
+	// Global_Variable_Set(kVariableChapter, 2);
+	// Chapter_Enter(2, kSetRC03, kSceneRC03);
+
 #endif
 
 	if (!Game_Flag_Query(kFlagIntroPlayed)) {

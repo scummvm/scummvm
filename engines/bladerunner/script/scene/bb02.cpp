@@ -100,7 +100,7 @@ bool SceneScriptBB02::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -415.06f, -27.0f, 0, 1, false, 0)) {
 			Player_Loses_Control();
 			if (!Game_Flag_Query(493)) {
-				Scene_Loop_Start_Special(kSceneLoopMode2, 0, true);
+				Scene_Loop_Start_Special(kSceneLoopModeOnce, 0, true);
 			}
 			Game_Flag_Set(332);
 			Game_Flag_Reset(493);

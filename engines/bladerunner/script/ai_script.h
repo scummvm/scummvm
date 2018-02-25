@@ -156,6 +156,39 @@ DECLARE_SCRIPT(Maggie)
 	float sub_44B200(int actorId, float x, float y, float z);
 END_SCRIPT
 
+DECLARE_SCRIPT(GenericWalkerA)
+	bool isInside;
+	float deltaX;
+	float deltaZ;
+
+	void movingStart();
+	void movingUpdate();
+	bool prepareWalker();
+	bool preparePath();
+END_SCRIPT
+
+DECLARE_SCRIPT(GenericWalkerB)
+	bool isInside;
+	float deltaX;
+	float deltaZ;
+
+	void movingStart();
+	void movingUpdate();
+	bool prepareWalker();
+	bool preparePath();
+END_SCRIPT
+
+DECLARE_SCRIPT(GenericWalkerC)
+	bool isInside;
+	float deltaX;
+	float deltaZ;
+
+	void movingStart();
+	void movingUpdate();
+	bool prepareWalker();
+	bool preparePath();
+END_SCRIPT
+
 #undef DECLARE_SCRIPT
 #undef END_SCRIPT
 

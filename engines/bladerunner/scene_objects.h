@@ -40,9 +40,8 @@ enum SceneObjectType {
 };
 
 class SceneObjects {
-#if BLADERUNNER_DEBUG_RENDERING
-	friend class BladeRunnerEngine;
-#endif
+	friend class Debugger;
+
 	static const int kSceneObjectCount = 115;
 
 	struct SceneObject {

@@ -848,7 +848,7 @@ void ScriptBase::Scene_Loop_Set_Default(int loopId) {
 }
 
 void ScriptBase::Scene_Loop_Start_Special(int sceneLoopMode, int loopId, bool immediately) {
-	if (sceneLoopMode == kSceneLoopModeChangeSet) {
+	if (sceneLoopMode == kSceneLoopModeOnce) {
 		immediately = true;
 	}
 	_vm->_scene->loopStartSpecial(sceneLoopMode, loopId, immediately);

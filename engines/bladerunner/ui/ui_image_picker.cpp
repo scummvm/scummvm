@@ -23,6 +23,7 @@
 #include "bladerunner/ui/ui_image_picker.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/debugger.h"
 #include "bladerunner/font.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/shape.h"
@@ -212,10 +213,11 @@ void UIImagePicker::draw(Graphics::Surface &surface) {
 				img.shapeUp->draw(surface, img.rect.left, img.rect.top);
 			}
 		}
-#if BLADERUNNER_DEBUG_RENDERING
-		surface.frameRect(img.rect, 0x7fff);
-		_vm->_mainFont->drawColor(Common::String::format("%d", i), surface, (img.rect.left + img.rect.right) / 2, (img.rect.top + img.rect.bottom) / 2, 0x7fff);
-#endif
+
+		if (_vm->_debugger->_viewUI) {
+			surface.frameRect(img.rect, 0x7fff);
+			_vm->_mainFont->drawColor(Common::String::format("%d", i), surface, (img.rect.left + img.rect.right) / 2, (img.rect.top + img.rect.bottom) / 2, 0x7fff);
+		}
 	}
 }
 

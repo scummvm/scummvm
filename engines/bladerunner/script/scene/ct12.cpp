@@ -271,7 +271,7 @@ void SceneScriptCT12::PlayerWalkedIn() {
 }
 
 void SceneScriptCT12::PlayerWalkedOut() {
-	Game_Flag_Reset(443);
+	Game_Flag_Reset(kFlagGenericWalkerWaiting);
 	if (Game_Flag_Query(433)) {
 		Game_Flag_Reset(176);
 		Game_Flag_Set(259);
