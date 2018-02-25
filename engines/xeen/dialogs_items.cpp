@@ -468,7 +468,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			// Quests
 			if (mode == ITEMMODE_CHAR_INFO) {
 				Quests::show(_vm);
-				redrawFlag = REDRAW_TEXT;
+				redrawFlag = REDRAW_FULL;
 			}
 			break;
 
