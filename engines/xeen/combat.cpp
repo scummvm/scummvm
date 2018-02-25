@@ -235,8 +235,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 			if (damage < 0)
 				damage = 0;
 
-			// TODO: This seems weird.. maybe I've got attack types wrong..
-			// why should attack type 7 (DT_SLEEP) set the dead condition?
+			// Attacked characters which are asleep are killed
 			if (attackType == DT_SLEEP) {
 				damage = c._currentHp;
 				c._conditions[DEAD] = 1;

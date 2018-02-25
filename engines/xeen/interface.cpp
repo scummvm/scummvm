@@ -579,9 +579,6 @@ void Interface::perform() {
 		Quests::show(_vm);
 		break;
 
-	case Common::KEYCODE_x:
-		// ****DEBUG***
-		PartyDialog::show(_vm); //***DEBUG****
 	default:
 		break;
 	}

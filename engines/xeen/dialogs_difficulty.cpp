@@ -40,8 +40,6 @@ DifficultyDialog::DifficultyDialog(XeenEngine *vm) : ButtonContainer(vm) {
 
 int DifficultyDialog::execute() {
 	EventsManager &events = *_vm->_events;
-	Interface &intf = *_vm->_interface;
-	Party &party = *_vm->_party;
 	Windows &windows = *_vm->_windows;
 
 	Window &w = windows[6];
