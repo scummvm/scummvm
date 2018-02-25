@@ -1178,7 +1178,7 @@ const char *const WEAPON_NAMES[35] = {
 };
 
 const char *const ARMOR_NAMES[14] = {
-	nullptr, "robes ", "sale armor ", "ring mail ", "chain mail ",
+	nullptr, "robes ", "scale armor ", "ring mail ", "chain mail ",
 	"splint mail ", "plate mail ", "plate armor ", "shield ",
 	"helm ", "boots ", "cloak ", "cape ", "gauntlets "
 };
