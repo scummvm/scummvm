@@ -165,8 +165,8 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 
 		int priOffset = rect.top*SCREEN_WIDTH + rect.left;
 
-		for (int y=rect.top; y<rect.bottom; y++) {
-			for (int x=rect.left; x<rect.right; x++) {
+		for (int y=rect.top; y<=rect.bottom; y++) {
+			for (int x=rect.left; x<=rect.right; x++) {
 				byte priByte = _priData[priOffset/2];
 				byte bgPriority;
 				if ((priOffset%2) == 1)
@@ -183,9 +183,9 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 				*dest++ = b;
 			}
 
-			src       += sprite.bitmap->width - rect.width();
-			dest      += SCREEN_WIDTH - rect.width();
-			priOffset += SCREEN_WIDTH - rect.width();
+			src       += sprite.bitmap->width - rect.width() - 1;
+			dest      += SCREEN_WIDTH - rect.width() - 1;
+			priOffset += SCREEN_WIDTH - rect.width() - 1;
 		}
 		break;
 	}
@@ -197,8 +197,8 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 		byte *src = sprite.bitmap->pixels + (rect.left - sprite.drawX)
 			+ (rect.top - sprite.drawY) * sprite.bitmap->width;
 
-		for (int y=rect.top; y<rect.bottom; y++) {
-			for (int x=rect.left; x<rect.right; x++) {
+		for (int y=rect.top; y<=rect.bottom; y++) {
+			for (int x=rect.left; x<=rect.right; x++) {
 				byte b = *src;
 
 				if (b == 0) // Transparent (darken the pixel)
@@ -210,8 +210,8 @@ void Graphics::drawSprite(const Sprite &sprite, const Common::Rect &rect) {
 				dest++;
 			}
 
-			src += sprite.bitmap->width - rect.width();
-			dest += SCREEN_WIDTH - rect.width();
+			src += sprite.bitmap->width - rect.width() - 1;
+			dest += SCREEN_WIDTH - rect.width() - 1;
 		}
 
 		break;

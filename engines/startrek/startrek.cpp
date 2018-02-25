@@ -117,8 +117,8 @@ Common::Error StarTrekEngine::run() {
 	_gfx->addSprite(spr);
 	spr->bitmap = _gfx->loadBitmap("KWALKS00");
 	spr->drawPriority = 1;
-	spr->pos.x = 200;
-	spr->pos.y = 140;
+	spr->pos.x = 230;
+	spr->pos.y = 100;
 	spr->drawMode = 2;
 
 	/*
@@ -141,7 +141,7 @@ Common::Error StarTrekEngine::run() {
 	*/
 
 
-	_gfx->showText(&Graphics::tmpFunction, 0, 150, 50, 0xb3, 0, 10, 0);
+	_gfx->showText(&Graphics::tmpFunction, 0, 150, 180, 0xb3, 0, 10, 0);
 	
 	while (!shouldQuit()) {
 		pollEvents();
