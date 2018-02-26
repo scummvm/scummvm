@@ -82,6 +82,9 @@ public:
 
 	SharedPtr<Bitmap> loadBitmap(Common::String basename);
 
+	Common::Point getMousePos();
+	void setMouseCursor(SharedPtr<Bitmap> bitmap);
+
 	void redrawScreen();
 	void drawSprite(const Sprite &sprite);
 	void drawSprite(const Sprite &sprite, const Common::Rect &rect);
@@ -109,8 +112,7 @@ private:
 	Sprite *_sprites[MAX_SPRITES];
 	int _numSprites;
 
-	Common::Point _mousePos;
-	Sprite _mouseSprite;
+	SharedPtr<Bitmap> _mouseBitmap;
 
 
 	// text.cpp (TODO: separate class)
@@ -124,7 +126,6 @@ private:
 	int getNumLines(const Common::String &str);
 	Common::String readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
 	void loadMenuButtons(Common::String mnuFilename, int xpos, int ypos);
-	void warpMousePosition(int x, int y);
 
 	uint16 _textboxVar1;
 	uint32 _textboxVar2;

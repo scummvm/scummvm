@@ -20,6 +20,7 @@
  */
 
 #include "common/stream.h"
+#include "graphics/cursorman.h"
 
 #include "startrek/graphics.h"
 
@@ -86,16 +87,11 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	else {
 		loadMenuButtons("textbtns", xoffset+0x96, yoffset-0x11);
 
-		Common::Point oldMousePos = _mousePos;
-		SharedPtr<Bitmap> oldMouseBitmap = _mouseSprite.bitmap;
+		Common::Point oldMousePos = getMousePos();
+		SharedPtr<Bitmap> oldMouseBitmap = _mouseBitmap;
 
-		_mousePos.x = xoffset + 0xde;
-		_mousePos.y = yoffset - 0x08;
-		_mouseSprite.pos = _mousePos;
-		_mouseSprite.drawPriority = 15;
-
-		_mouseSprite.setBitmap(loadBitmap("pushbtn"));
-		warpMousePosition(_mousePos.x, _mousePos.y);
+		_vm->_system->warpMouse(xoffset + 0xde, yoffset - 0x08);
+		setMouseCursor(loadBitmap("pushbtn"));
 
 		uint16 tmpTextboxVar7 = _textboxVar7;
 		_textboxVar7 = 0;
@@ -119,11 +115,8 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 			_vm->pollEvents();
 		}
 
-		_mousePos = oldMousePos;
-		_mouseSprite.pos = _mousePos;
-		_mouseSprite.drawPriority = 15;
-		_mouseSprite.setBitmap(oldMouseBitmap);
-		warpMousePosition(_mousePos.x, _mousePos.y);
+		setMouseCursor(oldMouseBitmap);
+		_vm->_system->warpMouse(oldMousePos.x, oldMousePos.y);
 
 		_textboxVar7 = tmpTextboxVar7;
 		// sub_29326();
@@ -286,10 +279,6 @@ void Graphics::loadMenuButtons(Common::String mnuFilename, int xpos, int ypos) {
 
 		_activeMenu->sprites[i].field6 = 8;
 	}
-}
-
-void Graphics::warpMousePosition(int x, int y) {
-	// TODO
 }
 
 }
