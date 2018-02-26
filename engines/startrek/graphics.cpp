@@ -23,7 +23,9 @@
 #include "startrek/graphics.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/rendermode.h"
+#include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
@@ -47,6 +49,8 @@ Graphics::Graphics(StarTrekEngine *vm) : _vm(vm), _egaMode(false) {
 	_backgroundImage = new Bitmap(_vm->openFile("DEMON0.BMP").get());
 
 	_numSprites = 0;
+
+	CursorMan.showMouse(true);
 }
 
 Graphics::~Graphics() {
@@ -134,6 +138,15 @@ void Graphics::loadPri(const char *priFile) {
 
 SharedPtr<Bitmap> Graphics::loadBitmap(Common::String basename) {
 	return SharedPtr<Bitmap>(new Bitmap(_vm->openFile(basename+".BMP").get()));
+}
+
+Common::Point Graphics::getMousePos() {
+	return _vm->_system->getEventManager()->getMousePos();
+}
+
+void Graphics::setMouseCursor(SharedPtr<Bitmap> bitmap) {
+	_mouseBitmap = bitmap;
+	_vm->_system->setMouseCursor(bitmap->pixels, bitmap->width, bitmap->height, bitmap->xoffset, bitmap->yoffset, 0);
 }
 
 void Graphics::redrawScreen() {
