@@ -38,37 +38,6 @@ SavesManager::SavesManager(const Common::String &targetName): _targetName(target
 		_wonWorld(false), _wonDarkSide(false) {
 	File::_xeenSave = nullptr;
 	File::_darkSave = nullptr;
-
-	if (g_vm->getGameID() != GType_Clouds) {
-		File::_darkSave = new SaveArchive(g_vm->_party);
-		File::_darkSave->reset(File::_darkCc);
-	}
-	if (g_vm->getGameID() != GType_DarkSide && g_vm->getGameID() != GType_Swords) {
-		File::_xeenSave = new SaveArchive(g_vm->_party);
-		File::_xeenSave->reset(File::_xeenCc);
-	}
-
-	File::_currentSave = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
-		File::_darkSave : File::_xeenSave;
-	assert(File::_currentSave);
-
-	// Set any final initial values
-	Party &party = *g_vm->_party;
-	party.resetBlacksmithWares();
-	party._totalTime = 0;
-
-	switch (g_vm->getGameID()) {
-	case GType_Swords:
-		party._year = 1050;
-		break;
-	case GType_DarkSide:
-		party._year = 850;
-		break;
-	default:
-		party._year = 610;
-		break;
-	}
-	party._day = 1;
 }
 
 SavesManager::~SavesManager() {
@@ -235,6 +204,44 @@ Common::Error SavesManager::loadGameState(int slot) {
 
 Common::String SavesManager::generateSaveName(int slot) {
 	return Common::String::format("%s.%03d", _targetName.c_str(), slot);
+}
+
+void SavesManager::newGame() {
+	delete File::_xeenSave;
+	delete File::_darkSave;
+	File::_xeenSave = nullptr;
+	File::_darkSave = nullptr;
+
+	if (g_vm->getGameID() != GType_Clouds) {
+		File::_darkSave = new SaveArchive(g_vm->_party);
+		File::_darkSave->reset(File::_darkCc);
+	}
+	if (g_vm->getGameID() != GType_DarkSide && g_vm->getGameID() != GType_Swords) {
+		File::_xeenSave = new SaveArchive(g_vm->_party);
+		File::_xeenSave->reset(File::_xeenCc);
+	}
+
+	File::_currentSave = g_vm->getGameID() == GType_DarkSide || g_vm->getGameID() == GType_Swords ?
+		File::_darkSave : File::_xeenSave;
+	assert(File::_currentSave);
+
+	// Set any final initial values
+	Party &party = *g_vm->_party;
+	party.resetBlacksmithWares();
+	party._totalTime = 0;
+
+	switch (g_vm->getGameID()) {
+	case GType_Swords:
+		party._year = 1050;
+		break;
+	case GType_DarkSide:
+		party._year = 850;
+		break;
+	default:
+		party._year = 610;
+		break;
+	}
+	party._day = 1;
 }
 
 bool SavesManager::loadGame() {

@@ -109,7 +109,10 @@ void WorldOfXeenMenu::execute() {
 				if (result == -1)
 					break;
 
+				// Load a new game state and set the difficulty
+				_vm->_saves->newGame();
 				_vm->_party->_difficulty = (Difficulty)result;
+
 				WOX_VM._pendingAction = WOX_PLAY_GAME;
 				closeWindow();
 				return;

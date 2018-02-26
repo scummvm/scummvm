@@ -45,8 +45,10 @@ void WorldOfXeenEngine::outerGameLoop() {
 
 	while (!shouldQuit() && _pendingAction != WOX_QUIT) {
 		// TODO: Remove this once proper startup menus are added for Clouds & Dark Side
-		if (g_vm->getGameID() != GType_WorldOfXeen)
+		if (g_vm->getGameID() != GType_WorldOfXeen) {
+			_saves->newGame();
 			_pendingAction = WOX_PLAY_GAME;
+		}
 
 		WOXGameAction action = _pendingAction;
 		_pendingAction = WOX_MENU;

@@ -83,6 +83,11 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc);
 
 	/**
+	 * Sets up a new game
+	 */
+	void newGame();
+
+	/**
 	 * Shows the load game dialog, and lets the user load a game
 	 * @returns		True if a savegame was loaded
 	 */
