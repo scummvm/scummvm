@@ -93,7 +93,9 @@ struct Bitmap {
 
 struct Scene {
 
+	Door *getDoor(uint8 objectId);
 	Object *getObject(uint8 objectId);
+	Static *getStatic(uint8 staticId);
 
 	uint8 _startup;
 	uint8 _unknown001;

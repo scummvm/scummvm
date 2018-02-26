@@ -40,7 +40,7 @@ bool IfCommandParser::parse(const Common::String &line, ScriptParseContext &pars
 		return false;
 	}
 	
-	if (strncmp(line.c_str(), "IF", 2) != 0) {
+	if (!line.hasPrefix("IF")) {
 		return false;
 	}
 
