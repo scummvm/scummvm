@@ -143,6 +143,15 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 	return true;
 }
 
+Door *Scene::getDoor(uint8 doorId) {
+	if (doorId == 0 || doorId > _noDoors) {
+		warning(_("Door %d does not exist"), doorId);
+		return nullptr;
+	}
+
+	return &_doors[doorId - 1];
+}
+
 Object *Scene::getObject(uint8 objectId) {
 	if (objectId == 0 || objectId > _noObjects) {
 		warning(_("Object %d does not exist"), objectId);
@@ -150,6 +159,15 @@ Object *Scene::getObject(uint8 objectId) {
 	}
 
 	return &_objects[objectId - 1];
+}
+
+Static *Scene::getStatic(uint8 staticId) {
+	if (staticId == 0 || staticId > _noStatics) {
+		warning(_("Static %d does not exist"), staticId);
+		return nullptr;
+	}
+
+	return &_statics[staticId - 1];
 }
 
 GameData::GameData() : _currentScene(0) {}

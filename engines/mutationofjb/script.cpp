@@ -29,6 +29,7 @@
 #include "mutationofjb/commands/command.h"
 #include "mutationofjb/commands/ifcommand.h"
 #include "mutationofjb/commands/endblockcommand.h"
+#include "mutationofjb/commands/changecommand.h"
 
 namespace MutationOfJB {
 
@@ -36,6 +37,9 @@ static CommandParser** getParsers() {
 	static CommandParser* parsers[] = {
 		new IfCommandParser,
 		new EndBlockCommandParser,
+		new ChangeDoorCommandParser,
+		new ChangeObjectCommandParser,
+		new ChangeStaticCommandParser,
 		nullptr
 	};
 
@@ -101,6 +105,7 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 			_allCommands.push_back(currentCmd);
 		}
 
+		lastCmd = currentCmd;
 		lastParser = currentParser;
 	}
 

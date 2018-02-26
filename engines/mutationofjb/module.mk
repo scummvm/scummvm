@@ -1,6 +1,7 @@
 MODULE := engines/mutationofjb
 
 MODULE_OBJS := \
+	commands/changecommand.o \
 	commands/command.o \
 	commands/conditionalcommand.o \
 	commands/endblockcommand.o \

@@ -36,8 +36,6 @@ class CallMacroCommand;
 class ScriptParseContext;
 class Command;
 
-typedef bool (*CommandParseFunc)(const Common::String &line, ScriptParseContext &parseContext, Command *&command);
-
 class CommandParser {
 public:
 	virtual ~CommandParser();
