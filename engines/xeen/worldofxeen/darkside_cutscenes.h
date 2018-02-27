@@ -34,22 +34,27 @@ namespace WorldOfXeen {
 class DarkSideCutscenes : public Cutscenes {
 private:
 	/**
-	 * Shows the part 1 of the Dark Side ending, everything up to Corak appearing
+	 * Shows part 1 of the Dark Side intro
+	 */
+	bool showDarkSideIntro1();
+
+	/**
+	 * Shows part 1 of the Dark Side ending, everything up to Corak appearing
 	 */
 	bool showDarkSideEnding1();
 
 	/**
-	 * Shows the part 2 of the Dark Side ending, exposition until start of fighting
+	 * Shows part 2 of the Dark Side ending, exposition until start of fighting
 	 */
 	bool showDarkSideEnding2();
 
 	/**
-	 * Shows the part 3 of the Dark Side ending, the fighting
+	 * Shows part 3 of the Dark Side ending, the fighting
 	 */
 	bool showDarkSideEnding3();
 
 	/**
-	 * Shows the part 4 of the Dark Side ending, the self-destruct and castle explosion
+	 * Shows part 4 of the Dark Side ending, the self-destruct and castle explosion
 	 */
 	bool showDarkSideEnding4();
 

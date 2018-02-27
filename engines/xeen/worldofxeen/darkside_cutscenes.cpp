@@ -134,10 +134,18 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	screen.fadeIn();
 
 	WAIT(60);
+	screen.fadeOut(8);
 	return true;
 }
 
 bool DarkSideCutscenes::showDarkSideIntro() {
+	_vm->_files->_isDarkCc = true;
+	_vm->_files->setGameCc(1);
+
+	return showDarkSideIntro1();
+}
+
+bool DarkSideCutscenes::showDarkSideIntro1() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -151,15 +159,13 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 		160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105, 98, 90, 82
 	};
 
-	_vm->_files->_isDarkCc = true;
 	_subtitles.load("special.bin");
-	screen.fadeOut(8);
 	screen.loadPalette("dark.pal");
 	screen.loadBackground("pyramid2.raw");
 	screen.loadPage(0);
 	screen.loadPage(1);
 	screen.loadBackground("pyramid3.raw");
-	screen.saveBackground(1);
+	screen.saveBackground();
 
 	SpriteResource title("title.int");
 	SpriteResource pyraTop("pyratop.int");

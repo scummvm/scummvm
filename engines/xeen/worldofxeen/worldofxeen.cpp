@@ -25,6 +25,7 @@
 #include "xeen/worldofxeen/clouds_cutscenes.h"
 #include "xeen/worldofxeen/worldofxeen_menu.h"
 #include "xeen/sound.h"
+#include "common/config-manager.h"
 
 namespace Xeen {
 namespace WorldOfXeen {
@@ -176,12 +177,22 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uin
 }
 
 void WorldOfXeenEngine::showStartup() {
-	if (getGameID() == GType_Clouds) {
-		if (showCloudsTitle())
+	bool seenIntro = ConfMan.hasKey("seen_intro") && ConfMan.getBool("seen_intro");
+
+	// Show the title animation
+	bool completedTitle = (getGameID() == GType_Clouds) ?
+		showCloudsTitle() : showDarkSideTitle();
+	_sound->stopAllAudio();
+
+	// Unless user aborted the title, go
+	if (completedTitle && !seenIntro) {
+		if (getGameID() == GType_Clouds)
 			showCloudsIntro();
-	} else {
-		if (showDarkSideTitle())
+		else
 			showDarkSideIntro();
+
+		ConfMan.setBool("seen_intro", true);
+		ConfMan.flushToDisk();
 	}
 
 	_gameMode = GMODE_MENU;

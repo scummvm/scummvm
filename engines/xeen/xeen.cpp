@@ -190,8 +190,6 @@ void XeenEngine::playGame() {
 }
 
 void XeenEngine::play() {
-	_gameMode = GMODE_NONE;
-
 	_interface->setup();
 	_screen->loadBackground("back.raw");
 	_screen->loadPalette("mm4.pal");
