@@ -31,8 +31,6 @@ namespace WorldOfXeen {
 
 WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: XeenEngine(syst, gameDesc), WorldOfXeenCutscenes(this) {
-	_seenDarkSideIntro = false;
-	_gameMode = GMODE_STARTUP;
 }
 
 void WorldOfXeenEngine::death() {

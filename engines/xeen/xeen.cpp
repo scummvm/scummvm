@@ -106,7 +106,7 @@ bool XeenEngine::initialize() {
 	_windows = new Windows();
 
 	// Set graphics mode
-	initGraphics(320, 200);
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Setup mixer
 	syncSoundSettings();
