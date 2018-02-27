@@ -85,7 +85,7 @@ int ControlPanel::execute() {
 		switch (_buttonValue) {
 		case Common::KEYCODE_q:
 			if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
-				g_vm->_quitMode = QMODE_QUIT;
+				g_vm->_gameMode = GMODE_QUIT;
 				result = 1;
 			}
 			break;

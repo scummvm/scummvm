@@ -320,7 +320,7 @@ void Interface::perform() {
 		// Show control panel
 		combat._moveMonsters = false;
 		ControlPanel::show(_vm);
-		if (!g_vm->shouldExit() && !g_vm->_quitMode)
+		if (!g_vm->shouldExit() && !g_vm->_gameMode)
 			combat._moveMonsters = true;
 		break;
 

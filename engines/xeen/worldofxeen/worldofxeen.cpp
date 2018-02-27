@@ -32,63 +32,7 @@ namespace WorldOfXeen {
 WorldOfXeenEngine::WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: XeenEngine(syst, gameDesc), WorldOfXeenCutscenes(this) {
 	_seenDarkSideIntro = false;
-	_pendingAction = WOX_PLAY_GAME;
-}
-
-void WorldOfXeenEngine::outerGameLoop() {
-	//_pendingAction = getGameID() == GType_DarkSide ? WOX_DARKSIDE_INTRO : WOX_CLOUDS_INTRO;
-	_pendingAction = WOX_MENU;
-
-	if (_loadSaveSlot != -1)
-		// Loading savegame from launcher, so Skip menu and go straight to game
-		_pendingAction = WOX_PLAY_GAME;
-
-	while (!shouldQuit() && _pendingAction != WOX_QUIT) {
-		// TODO: Remove this once proper startup menus are added for Clouds & Dark Side
-		if (g_vm->getGameID() != GType_WorldOfXeen) {
-			_saves->newGame();
-			_pendingAction = WOX_PLAY_GAME;
-		}
-
-		WOXGameAction action = _pendingAction;
-		_pendingAction = WOX_MENU;
-		_quitMode = QMODE_NONE;
-
-		switch (action) {
-		case WOX_CLOUDS_INTRO:
-			if (showCloudsTitle())
-				showCloudsIntro();
-			break;
-
-		case WOX_CLOUDS_ENDING:
-			//showCloudsEnding();
-			break;
-
-		case WOX_DARKSIDE_INTRO:
-			if (showDarkSideTitle())
-				showDarkSideIntro();
-			break;
-
-		case WOX_DARKSIDE_ENDING:
-			//showDarkSideEnding();
-			break;
-
-		case WOX_WORLD_ENDING:
-			// TODO
-			return;
-
-		case WOX_MENU:
-			WorldOfXeenMenu::show(this);
-			break;
-
-		case WOX_PLAY_GAME:
-			playGame();
-			break;
-
-		default:
-			break;
-		}
-	}
+	_gameMode = GMODE_STARTUP;
 }
 
 void WorldOfXeenEngine::death() {
@@ -218,11 +162,42 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uin
 		showDarkSideEnding(score);
 	else if (name == "WORLDEND")
 		showWorldOfXeenEnding((GooberState)status, score);
+	else if (name == "CLOUDS_TITLE")
+		showCloudsTitle();
+	else if (name == "CLOUDS_INTRO")
+		showCloudsIntro();
+	else if (name == "DARKSIDE_TITLE")
+		showDarkSideTitle();
+	else if (name == "DARKSIDE_INTRO")
+		showDarkSideIntro();
 
 	_screen->freePages();
 	_sound->stopAllAudio();
 	_events->clearEvents();
-	_quitMode = QMODE_MENU;
+	_gameMode = GMODE_MENU;
+}
+
+void WorldOfXeenEngine::showStartup() {
+	if (getGameID() == GType_Clouds) {
+		if (showCloudsTitle())
+			showCloudsIntro();
+	} else {
+		if (showDarkSideTitle())
+			showDarkSideIntro();
+	}
+
+	_gameMode = GMODE_MENU;
+}
+
+void WorldOfXeenEngine::showMainMenu() {
+	if (getGameID() != GType_WorldOfXeen) {
+		// TODO: Implement menus for Clouds and Dark Side of Xeen
+		_saves->newGame();
+		_gameMode = GMODE_PLAY_GAME;
+		return;
+	}
+
+	WorldOfXeenMenu::show(this);
 }
 
 } // End of namespace WorldOfXeen

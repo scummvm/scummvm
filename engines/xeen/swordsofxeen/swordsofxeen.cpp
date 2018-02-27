@@ -29,10 +29,10 @@ SwordsOfXeenEngine::SwordsOfXeenEngine(OSystem *syst, const XeenGameDescription 
 		: XeenEngine(syst, gameDesc) {
 }
 
-void SwordsOfXeenEngine::outerGameLoop() {
-	// TODO: Implement Swords of Xeen main menu
-
-	playGame();
+void SwordsOfXeenEngine::showMainMenu() {
+	// TODO: Implement Swords of Xeen main menu. For now, skip to playing game
+	_saves->newGame();
+	_gameMode = GMODE_PLAY_GAME;
 }
 
 void SwordsOfXeenEngine::death() {
@@ -88,7 +88,7 @@ void SwordsOfXeenEngine::dream() {
 }
 
 void SwordsOfXeenEngine::showCutscene(const Common::String &name, int status, uint score) {
-	_quitMode = QMODE_MENU;
+	_gameMode = GMODE_MENU;
 }
 
 } // End of namespace SwordsOfXeen

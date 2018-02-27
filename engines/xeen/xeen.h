@@ -93,10 +93,12 @@ enum Mode {
 	MODE_86 = 86
 };
 
-enum QuitMode {
-	QMODE_NONE = 0,
-	QMODE_QUIT = 1,
-	QMODE_MENU = 2
+enum GameMode {
+	GMODE_NONE = 0,
+	GMODE_STARTUP = 1,
+	GMODE_MENU = 2,
+	GMODE_PLAY_GAME = 3,
+	GMODE_QUIT = 4
 };
 
 struct XeenGameDescription;
@@ -117,19 +119,38 @@ private:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 
-	void play();
-
-	void pleaseWait();
-
-	void gameLoop();
-protected:
-	int _loadSaveSlot;
-protected:
 	/**
 	 * Outer gameplay loop responsible for dispatching control to game-specific
 	 * intros, main menus, or to play the actual game
 	 */
-	virtual void outerGameLoop() = 0;
+	void outerGameLoop();
+
+	/**
+	 * Inner game loop
+	 */
+	void gameLoop();
+
+	/**
+	 * Plays the actual game
+	 */
+	void play();
+
+	/**
+	 * Shows a please wait dialog
+	 */
+	void pleaseWait();
+protected:
+	int _loadSaveSlot;
+protected:
+	/**
+	 * Show the starting sequence/intro
+	 */
+	virtual void showStartup() = 0;
+
+	/**
+	 * Show the startup menu
+	 */
+	virtual void showMainMenu() = 0;
 
 	/**
 	 * Play the game
@@ -158,7 +179,7 @@ public:
 	Windows *_windows;
 	Mode _mode;
 	GameEvent _gameEvent;
-	QuitMode _quitMode;
+	GameMode _gameMode;
 	bool _noDirectionSense;
 	bool _startupWindowActive;
 	uint _endingScore;
@@ -185,7 +206,7 @@ public:
 	/**
 	 * Returns true if the game should be exited (and likely return to game menu)
 	 */
-	bool shouldExit() const { return _quitMode != QMODE_NONE || shouldQuit(); }
+	bool shouldExit() const { return _gameMode != GMODE_NONE || shouldQuit(); }
 
 	/**
 	 * Load a savegame

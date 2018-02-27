@@ -29,11 +29,6 @@
 namespace Xeen {
 namespace WorldOfXeen {
 
-enum WOXGameAction {
-	WOX_QUIT, WOX_CLOUDS_INTRO, WOX_CLOUDS_ENDING, WOX_DARKSIDE_INTRO,
-	WOX_DARKSIDE_ENDING, WOX_WORLD_ENDING, WOX_MENU, WOX_PLAY_GAME
-};
-
 /**
  * Implements a descendant of the base Xeen engine to handle
  * Clouds of Xeen, Dark Side of Xeen, and Worlds of Xeen specific
@@ -42,10 +37,14 @@ enum WOXGameAction {
 class WorldOfXeenEngine: public XeenEngine, public WorldOfXeenCutscenes {
 protected:
 	/**
-	 * Outer gameplay loop responsible for dispatching control to game-specific
-	 * intros, main menus, or to play the actual game
+	 * Show the starting sequence/intro
 	 */
-	virtual void outerGameLoop();
+	virtual void showStartup();
+
+	/**
+	 * Show the startup menu
+	 */
+	virtual void showMainMenu();
 
 	/**
 	 * Death cutscene
@@ -53,7 +52,6 @@ protected:
 	virtual void death();
 public:
 	bool _seenDarkSideIntro;
-	WOXGameAction _pendingAction;
 public:
 	WorldOfXeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~WorldOfXeenEngine() {}
@@ -67,11 +65,6 @@ public:
 	 * Dream sequence
 	 */
 	virtual void dream();
-
-	/**
-	 * Set the next overall game action to do
-	 */
-	void setPendingAction(WOXGameAction action) { _pendingAction = action; }
 };
 
 #define WOX_VM (*(::Xeen::WorldOfXeen::WorldOfXeenEngine *)g_vm)

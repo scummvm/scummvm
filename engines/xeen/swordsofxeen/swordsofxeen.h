@@ -36,10 +36,17 @@ namespace SwordsOfXeen {
 class SwordsOfXeenEngine: public XeenEngine {
 protected:
 	/**
-	 * Outer gameplay loop responsible for dispatching control to game-specific
-	 * intros, main menus, or to play the actual game
+	 * Show the starting sequence/intro
 	 */
-	virtual void outerGameLoop();
+	virtual void showStartup() { 
+		// Swords of Xeen doesn't have a starting title or intro
+		_gameMode = GMODE_MENU;
+	}
+
+	/**
+	 * Show the startup menu
+	 */
+	virtual void showMainMenu();
 
 	/**
 	 * Death cutscene

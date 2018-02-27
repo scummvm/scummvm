@@ -1466,7 +1466,7 @@ void Scripts::doEnding(const Common::String &endStr) {
 	uint finalScore = party.getScore();
 
 	g_vm->showCutscene(endStr, state, finalScore);
-	g_vm->_quitMode = QMODE_MENU;
+	g_vm->_gameMode = GMODE_MENU;
 }
 
 bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {

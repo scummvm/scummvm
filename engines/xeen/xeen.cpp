@@ -58,7 +58,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_windows = nullptr;
 	_noDirectionSense = false;
 	_startupWindowActive = false;
-	_quitMode = QMODE_NONE;
+	_gameMode = GMODE_STARTUP;
 	_mode = MODE_0;
 	_endingScore = 0;
 	_loadSaveSlot = -1;
@@ -128,6 +128,35 @@ Common::Error XeenEngine::run() {
 	return Common::kNoError;
 }
 
+void XeenEngine::outerGameLoop() {
+	if (_loadSaveSlot != -1)
+		// Loading savegame from launcher, so Skip menu and go straight to game
+		_gameMode = GMODE_PLAY_GAME;
+
+	while (!shouldQuit() && _gameMode != GMODE_QUIT) {
+		GameMode mode = _gameMode;
+		_gameMode = GMODE_NONE;
+		assert(mode != GMODE_NONE);
+
+		switch (mode) {
+		case GMODE_STARTUP:
+			showStartup();
+			break;
+
+		case GMODE_MENU:
+			showMainMenu();
+			break;
+
+		case GMODE_PLAY_GAME:
+			playGame();
+			break;
+
+		default:
+			break;
+		}
+	}
+}
+
 int XeenEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
@@ -161,7 +190,7 @@ void XeenEngine::playGame() {
 }
 
 void XeenEngine::play() {
-	_quitMode = QMODE_NONE;
+	_gameMode = GMODE_NONE;
 
 	_interface->setup();
 	_screen->loadBackground("back.raw");
@@ -218,8 +247,8 @@ void XeenEngine::gameLoop() {
 
 		_map->cellFlagLookup(_party->_mazePosition);
 		if (_map->_currentIsEvent) {
-			_quitMode = (QuitMode)_scripts->checkEvents();
-			if (shouldExit() || _quitMode)
+			_gameMode = (GameMode)_scripts->checkEvents();
+			if (shouldExit() || _gameMode)
 				return;
 		}
 		_party->giveTreasure();
