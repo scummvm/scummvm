@@ -40,6 +40,7 @@ static CommandParser** getParsers() {
 		new ChangeDoorCommandParser,
 		new ChangeObjectCommandParser,
 		new ChangeStaticCommandParser,
+		new ChangeSceneCommandParser,
 		nullptr
 	};
 
@@ -97,8 +98,12 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 				break;
 			}
 		}
+		if (!currentParser) {
+			continue;
+		}
+
 		if (lastParser) {
-			lastParser->transition(parseCtx, lastCmd, currentCmd);
+			lastParser->transition(parseCtx, lastCmd, currentCmd, currentParser);
 		}
 
 		if (currentCmd) {
@@ -108,6 +113,11 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 		lastCmd = currentCmd;
 		lastParser = currentParser;
 	}
+
+	_lookActionInfos = parseCtx._lookActionInfos;
+	_walkActionInfos = parseCtx._walkActionInfos;
+	_talkActionInfos = parseCtx._talkActionInfos;
+	_useActionInfos = parseCtx._useActionInfos;
 
 	Common::HashMap<Common::String, Command *> macros;
 	Common::HashMap<Common::String, Command *> labels;
@@ -124,6 +134,22 @@ void Script::destroy() {
 
 Script::~Script() {
 	destroy();
+}
+
+const ActionInfos &Script::getLookActionInfos() const {
+	return _lookActionInfos;
+}
+
+const ActionInfos &Script::getWalkActionInfos() const {
+	return _walkActionInfos;
+}
+
+const ActionInfos &Script::getTalkActionInfos() const {
+	return _talkActionInfos;
+}
+
+const ActionInfos &Script::getUseActionInfos() const {
+	return _useActionInfos;
 }
 
 }

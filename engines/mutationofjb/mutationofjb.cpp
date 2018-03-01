@@ -37,14 +37,17 @@
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/util.h"
 #include "mutationofjb/script.h"
+#include "mutationofjb/debug.h"
 
 namespace MutationOfJB {
 
 MutationOfJBEngine::MutationOfJBEngine(OSystem *syst)
 : Engine(syst),
-  _console(nullptr),
-  _room(nullptr),
-  _screen(nullptr)
+ _console(nullptr),
+ _room(nullptr),
+ _screen(nullptr),
+ _globalScript(nullptr),
+ _localScript(nullptr)
 {
 	debug("MutationOfJBEngine::MutationOfJBEngine");
 }
@@ -99,8 +102,8 @@ Common::Error MutationOfJBEngine::run() {
 
 	EncryptedFile globalScriptFile;
 	globalScriptFile.open("global.atn");
-	Script *script = new Script;
-	script->loadFromStream(globalScriptFile);
+	_globalScript = new Script;
+	_globalScript->loadFromStream(globalScriptFile);
 	globalScriptFile.close();
 
 	while(!shouldQuit()) {
@@ -141,4 +144,13 @@ Common::Error MutationOfJBEngine::run() {
 
 	return Common::kNoError;
 }
+
+Script *MutationOfJBEngine::getGlobalScript() {
+	return _globalScript;
+}
+
+Script *MutationOfJBEngine::getLocalScript() {
+	return _localScript;
+}
+
 }

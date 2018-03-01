@@ -96,6 +96,30 @@ bool ChangeCommandParser::parseValueString(const Common::String &valueString, ui
 	} else if (valueString.hasPrefix("CA")) {
 		reg = ChangeCommand::CA;
 		ccv._byteVal = parseInteger(val, op);
+	} else if (valueString.hasPrefix("DS")) {
+		reg = ChangeCommand::DS;
+		ccv._byteVal = parseInteger(val, op);
+	} else if (valueString.hasPrefix("DL")) {
+		reg = ChangeCommand::DL;
+		ccv._byteVal = parseInteger(val, op);
+	} else if (valueString.hasPrefix("ND")) {
+		reg = ChangeCommand::ND;
+		ccv._byteVal = parseInteger(val, op);
+	} else if (valueString.hasPrefix("NO")) {
+		reg = ChangeCommand::NO;
+		ccv._byteVal = parseInteger(val, op);
+	} else if (valueString.hasPrefix("NS")) {
+		reg = ChangeCommand::NS;
+		ccv._byteVal = parseInteger(val, op);
+	} else if (valueString.hasPrefix("PF")) {
+		reg = ChangeCommand::PF;
+		ccv._byteVal = parseInteger(val, op);
+	} else if (valueString.hasPrefix("PL")) {
+		reg = ChangeCommand::PL;
+		ccv._byteVal = parseInteger(val, op);
+	} else if (valueString.hasPrefix("PD")) {
+		reg = ChangeCommand::PD;
+		ccv._byteVal = parseInteger(val, op);
 	}
 
 	return true;
@@ -115,7 +139,7 @@ bool ChangeDoorCommandParser::parse(const Common::String &line, ScriptParseConte
 		return false;
 	}
 
-	command = new ChangeObjectCommand(sceneId, objectId, reg, op, val);
+	command = new ChangeDoorCommand(sceneId, objectId, reg, op, val);
 	return true;
 }
 
@@ -149,7 +173,24 @@ bool ChangeStaticCommandParser::parse(const Common::String &line, ScriptParseCon
 		return false;
 	}
 
-	command = new ChangeObjectCommand(sceneId, objectId, reg, op, val);
+	command = new ChangeStaticCommand(sceneId, objectId, reg, op, val);
+	return true;
+}
+
+bool ChangeSceneCommandParser::parse(const Common::String &line, ScriptParseContext &, Command *&command) {
+	if (!line.hasPrefix("CHANGE ")) {
+		return false;
+	}
+	uint8 sceneId = 0;
+	uint8 objectId = 0;
+	ChangeCommand::ChangeRegister reg;
+	ChangeCommand::ChangeOperation op;
+	ChangeCommandValue val;
+	if (!parseValueString(line.c_str() + 8, sceneId, objectId, reg, op, val)) {
+		return false;
+	}
+
+	command = new ChangeSceneCommand(sceneId, objectId, reg, op, val);
 	return true;
 }
 
@@ -171,6 +212,86 @@ int ChangeCommandParser::parseInteger(const char *val, ChangeCommand::ChangeOper
 	}
 
 	return atoi(val);
+}
+
+
+const char *ChangeCommand::getRegisterAsString() const {
+	switch (_register) {
+	case NM: return "NM";
+	case LT: return "LT";
+	case SX: return "SX";
+	case SY: return "SY";
+	case XX: return "XX";
+	case YY: return "YY";
+	case XL: return "XL";
+	case YL: return "YL";
+	case WX: return "WX";
+	case WY: return "WY";
+	case SP: return "SP";
+	case AC: return "AC";
+	case FA: return "FA";
+	case FR: return "FR";
+	case NA: return "NA";
+	case FS: return "FS";
+	case CA: return "CA";
+	case DS: return "DS";
+	case DL: return "DL";
+	case ND: return "ND";
+	case NO: return "NO";
+	case NS: return "NS";
+	case PF: return "PF";
+	case PL: return "PL";
+	case PD: return "PD";
+	default: return "(unknown)";
+	}
+}
+
+Common::String ChangeCommand::getValueAsString() const {
+	switch (_register) {
+	case NM:
+		return Common::String::format("\"%s\"", _value._strVal);
+	case LT:
+	case YY:
+	case YL:
+	case WY:
+	case SP:
+	case AC:
+	case FA:
+	case FR:
+	case NA:
+	case FS:
+	case CA:
+	case DS:
+	case DL:
+	case ND:
+	case NO:
+	case NS:
+	case PF:
+	case PL:
+	case PD:
+		return Common::String::format("%d", (int)_value._byteVal);
+	case SX:
+	case SY:
+	case XX:
+	case XL:
+	case WX:
+		return Common::String::format("%d", (int)_value._wordVal);
+	default:
+		return "(unknown)";
+	}
+}
+
+const char *ChangeCommand::getOperationAsString() const {
+	switch (_operation) {
+	case SetValue:
+		return "=";
+	case AddValue:
+		return "+=";
+	case SubtractValue:
+		return "-=";
+	default:
+		return "(unknown)";
+	}
 }
 
 Command::ExecuteResult ChangeDoorCommand::execute(GameData &gameData) {
@@ -224,6 +345,10 @@ Command::ExecuteResult ChangeDoorCommand::execute(GameData &gameData) {
 	}
 
 	return Finished;
+}
+
+Common::String ChangeDoorCommand::debugString() const {
+	return Common::String::format("scene%d.door%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 
 Command::ExecuteResult ChangeObjectCommand::execute(GameData &gameData) {
@@ -285,6 +410,10 @@ Command::ExecuteResult ChangeObjectCommand::execute(GameData &gameData) {
 	return Finished;
 }
 
+Common::String ChangeObjectCommand::debugString() const {
+	return Common::String::format("scene%d.object%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
+}
+
 Command::ExecuteResult ChangeStaticCommand::execute(GameData &gameData) {
 	Scene *const scene = gameData.getScene(_sceneId);
 	if (!scene) {
@@ -330,5 +459,52 @@ Command::ExecuteResult ChangeStaticCommand::execute(GameData &gameData) {
 	}
 
 	return Finished;
+}
+
+Common::String ChangeStaticCommand::debugString() const {
+	return Common::String::format("scene%d.static%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
+}
+
+Command::ExecuteResult ChangeSceneCommand::execute(GameData &gameData) {
+	Scene *const scene = gameData.getScene(_sceneId);
+	if (!scene) {
+		return Finished;
+	}
+
+	switch (_register) {
+	case DS:
+		scene->_startup = _value._byteVal;
+		break;
+	case DL:
+		scene->_DL = _value._byteVal;
+		break;
+	case ND:
+		scene->_noDoors = _value._byteVal;
+		break;
+	case NO:
+		scene->_noObjects = _value._byteVal;
+		break;
+	case NS:
+		scene->_noStatics = _value._byteVal;
+		break;
+	case PF:
+		scene->_palRotStart = _value._byteVal;
+		break;
+	case PL:
+		scene->_palRotEnd = _value._byteVal;
+		break;
+	case PD:
+		scene->_palRotPeriod = _value._byteVal;
+		break;
+	default:
+		warning("Scene does not support changing this register.");
+		break;
+	}
+
+	return Finished;
+}
+
+Common::String ChangeSceneCommand::debugString() const {
+	return Common::String::format("scene%d.%s %s %s", _sceneId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 }

@@ -50,7 +50,15 @@ public:
 		FR,
 		NA,
 		FS,
-		CA
+		CA,
+		DS, // Startup
+		DL,
+		ND, // Number of doors
+		NO, // Number of objects
+		NS, // Number of statics
+		PF, // Palette rotation first
+		PL, // Palette rotation last
+		PD  // Palette rotation delay
 	};
 
 	enum ChangeOperation {
@@ -63,6 +71,10 @@ public:
 		_sceneId(sceneId), _entityId(entityId), _register(reg), _operation(op), _value(val)
 	{}
 protected:
+	const char *getRegisterAsString() const;
+	Common::String getValueAsString() const;
+	const char *getOperationAsString() const;
+
 	uint8 _sceneId;
 	uint8 _entityId;
 	ChangeRegister _register;
@@ -91,7 +103,10 @@ public:
 	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
-
+class ChangeSceneCommandParser : public ChangeCommandParser {
+public:
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+};
 
 class ChangeDoorCommand : public ChangeCommand {
 public:
@@ -99,6 +114,7 @@ public:
 		: ChangeCommand(sceneId, doorId, reg, op, val)
 	{}
 	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual Common::String debugString() const;
 };
 
 class ChangeObjectCommand : public ChangeCommand {
@@ -107,6 +123,7 @@ public:
 		: ChangeCommand(sceneId, objectId, reg, op, val)
 	{}
 	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual Common::String debugString() const;
 };
 
 class ChangeStaticCommand : public ChangeCommand {
@@ -115,6 +132,16 @@ public:
 		: ChangeCommand(sceneId, staticId, reg, op, val)
 	{}
 	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual Common::String debugString() const;
+};
+
+class ChangeSceneCommand : public ChangeCommand {
+public:
+	ChangeSceneCommand(uint8 sceneId, uint8 staticId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue& val)
+		: ChangeCommand(sceneId, staticId, reg, op, val)
+	{}
+	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual Common::String debugString() const;
 };
 
 }

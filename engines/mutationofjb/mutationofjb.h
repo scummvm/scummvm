@@ -24,7 +24,6 @@
 #define MUTATIONOFJB_MUTATIONOFJB_H
 
 #include "engines/engine.h"
-#include "gui/debugger.h"
 
 namespace Graphics {
 	class Screen;
@@ -35,6 +34,7 @@ namespace MutationOfJB {
 class Console;
 class Room;
 struct GameData;
+class Script;
 
 class MutationOfJBEngine : public Engine {
 public:
@@ -42,6 +42,9 @@ public:
 	~MutationOfJBEngine();
 
 	virtual Common::Error run();
+	Script *getGlobalScript();
+	Script *getLocalScript();
+
 private:
 	bool loadGameData(bool partB);
 	void setupCursor();
@@ -50,13 +53,10 @@ private:
 	Room *_room;
 	GameData *_gameData;
 	Graphics::Screen *_screen;
+	Script *_globalScript;
+	Script *_localScript;
 };
 
-class Console : public GUI::Debugger {
-public:
-	Console(MutationOfJBEngine *vm) {}
-	virtual ~Console(void) {}
-};
 
 }
 
