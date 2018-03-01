@@ -58,7 +58,7 @@ bool IfCommandParser::parse(const Common::String &line, ScriptParseContext &pars
 	return true;
 }
 
-void IfCommandParser::transition(ScriptParseContext &, Command *oldCommand, Command *newCommand) {
+void IfCommandParser::transition(ScriptParseContext &, Command *oldCommand, Command *newCommand, CommandParser *) {
 	if (!oldCommand || !newCommand) {
 		warning(_("Unexpected empty command in transition"));
 		return;
@@ -92,5 +92,10 @@ Command::ExecuteResult IfCommand::execute(GameData &gameData) {
 
 	return Finished;
 }
+
+Common::String IfCommand::debugString() const {
+	return Common::String::format("IF scene%d.object%d.WX %s %d", _sceneId, _objectId, _negative ? "!=" : "==", _value);
+}
+
 }
 

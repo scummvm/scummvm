@@ -36,6 +36,24 @@ class Command;
 class ConditionalCommand;
 typedef Common::Array<Command*> Commands;
 
+
+struct ActionInfo {
+	enum Action {
+		Walk,
+		Talk,
+		Look,
+		Use
+	};
+
+	Action _action;
+	Common::String _object1Name;
+	Common::String _object2Name;
+	bool _walkTo;
+	Command *_command;
+};
+
+typedef Common::Array<ActionInfo> ActionInfos;
+
 class ScriptParseContext
 {
 public:
@@ -56,21 +74,11 @@ public:
 
 	ConditionalCommandInfos _pendingCondCommands;
 
-	enum Action {
-		Walk,
-		Talk,
-		Look,
-		Use
-	};
+	ActionInfos _lookActionInfos;
+	ActionInfos _walkActionInfos;
+	ActionInfos _talkActionInfos;
+	ActionInfos _useActionInfos;
 
-	struct ActionInfo {
-		Action _action;
-		Common::String _object1Name;
-		Common::String _object2Name;
-		bool walkTo;
-	};
-	typedef Common::Array<ActionInfo> ActionInfos;
-	ActionInfos _actionInfos;
 private:
 };
 
@@ -78,9 +86,19 @@ class Script {
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream);
 	~Script();
+
+	const ActionInfos &getLookActionInfos() const;
+	const ActionInfos &getWalkActionInfos() const;
+	const ActionInfos &getTalkActionInfos() const;
+	const ActionInfos &getUseActionInfos() const;
+
 private:
 	void destroy();
 	Commands _allCommands;
+	ActionInfos _lookActionInfos;
+	ActionInfos _walkActionInfos;
+	ActionInfos _talkActionInfos;
+	ActionInfos _useActionInfos;
 };
 
 }

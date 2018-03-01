@@ -42,7 +42,7 @@ public:
 	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) = 0;
 
 	/* Old command - created by this parser. */
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand);
+	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
 };
 
 class Command {
@@ -59,6 +59,7 @@ public:
 	virtual Command *next() const = 0;
 
 	virtual SeqCommand *asSeqCommand();
+	virtual Common::String debugString() const = 0;
 };
 }
 

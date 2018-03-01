@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	commands/endblockcommand.o \
 	commands/ifcommand.o \
 	commands/seqcommand.o \
+	debug.o \
 	detection.o \
 	encryptedfile.o \
 	game.o \

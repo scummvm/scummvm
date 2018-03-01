@@ -20,39 +20,21 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ENDBLOCKCOMMAND_H
-#define MUTATIONOFJB_ENDBLOCKCOMMAND_H
-
-#include "mutationofjb/commands/command.h"
-#include "common/scummsys.h"
-#include "common/array.h"
+#include "gui/debugger.h"
 
 namespace MutationOfJB {
 
-class ActionInfo;
+class MutationOfJBEngine;
 
-class EndBlockCommandParser : public CommandParser {
+class Console : public GUI::Debugger {
 public:
-	EndBlockCommandParser() : _elseFound(false), _ifTag(0) {}
-
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
-
+	Console(MutationOfJBEngine *vm);
+	virtual ~Console(void) {}
 private:
-	bool _elseFound;
-	char _ifTag;
-	Common::Array<ActionInfo*> _pendingActionInfos;
-};
-
-class EndBlockCommand : public Command {
-public:
-	static bool ParseFunc(const Common::String &line, ScriptParseContext &parseContext, Command *&command);
-
-	virtual ExecuteResult execute(GameData &gameData) override;
-	virtual Command *next() const override;
-	virtual Common::String debugString() const;
+	bool cmd_listsections(int argc, const char **argv);
+	bool cmd_showsection(int argc, const char **argv);
+	MutationOfJBEngine *_vm;
 };
 
 }
 
-#endif
