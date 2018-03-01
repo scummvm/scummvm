@@ -33,10 +33,24 @@ namespace WorldOfXeen {
 
 class DarkSideCutscenes : public Cutscenes {
 private:
+	SpriteResource _ball, _claw, _dragon1;
+private:
 	/**
-	 * Shows part 1 of the Dark Side intro
+	 * Shows part 1 of the Dark Side intro - up to the point where
+	 * Dragon Pharoah ends "contact the Queen"
 	 */
 	bool showDarkSideIntro1();
+
+	/**
+	 * Animaes the dragon pharoah
+	 */
+	void animatePharoah(int frame);
+
+	/**
+	 * Shows part 2 of the Dark Side intro
+	 */
+	bool showDarkSideIntro2();
+
 
 	/**
 	 * Shows part 1 of the Dark Side ending, everything up to Corak appearing

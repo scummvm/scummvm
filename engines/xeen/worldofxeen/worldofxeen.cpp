@@ -180,19 +180,23 @@ void WorldOfXeenEngine::showStartup() {
 	bool seenIntro = ConfMan.hasKey("seen_intro") && ConfMan.getBool("seen_intro");
 
 	// Show the title animation
-	bool completedTitle = (getGameID() == GType_Clouds) ?
-		showCloudsTitle() : showDarkSideTitle();
+	bool completedTitle = true;
+	//(getGameID() == GType_Clouds) ?
+	//	showCloudsTitle() : showDarkSideTitle();
 	_sound->stopAllAudio();
 
 	// Unless user aborted the title, go
 	if (completedTitle && !seenIntro) {
 		if (getGameID() == GType_Clouds)
-			showCloudsIntro();
+			seenIntro = showCloudsIntro();
 		else
-			showDarkSideIntro();
+			seenIntro = showDarkSideIntro();
 
-		ConfMan.setBool("seen_intro", true);
-		ConfMan.flushToDisk();
+		seenIntro = false;//****DEBUG****
+		if (seenIntro) {
+			ConfMan.setBool("seen_intro", true);
+			ConfMan.flushToDisk();
+		}
 	}
 
 	_gameMode = GMODE_MENU;

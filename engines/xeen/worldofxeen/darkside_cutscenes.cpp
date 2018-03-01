@@ -27,16 +27,47 @@
 #include "xeen/worldofxeen/worldofxeen_resources.h"
 
 namespace Xeen {
-namespace WorldOfXeen {
+	namespace WorldOfXeen {
 
-static const int CUTSCENES_XLIST[32] = {
+#define	WAIT_SUBTITLES(time) \
+	showSubtitles(); \
+	WAIT(time)
+
+static const int PHAROAH_FRAMES[32] = {
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 2, 1,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+const int PHAROAH_YLIST[32] = {
+	-3, -3, -3, -3, -3, -3, -3, -3, -1, 0, 0, 0, 0, 0, 0, 0,
+	-1, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3
+};
+const int CLAW_XLIST[32] = {
+	223, 208, 187, 158, 129, 104, 85, 70, 61, 53, 49,
+	46, 46, 49, 53, 56, 61, 67, 72, 82, 91, 103,
+	117, 130, 142, 156, 170, 184, 199, 210, 221, 227
+};
+const int CLAW_YLIST[32] = {
+	116, 111, 105, 103, 101, 96, 93, 92, 92, 95, 98,
+	100, 104, 107, 107, 105, 102, 100, 98, 99, 101, 104,
+	107, 109, 110, 111, 114, 115, 115, 116, 116, 118
+};
+static const int CLAW_XLIST2[32] = {
 	146, 145, 143, 141, 141, 141, 141, 141, 141, 141, 141, 142, 143, 144, 145, 146,
 	146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146, 146
 };
-static const int CUTSCENES_YLIST[32] = {
+static const int CLAW_YLIST2[32] = {
 	143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143, 143,
 	143, 143, 144, 145, 145, 145, 145, 145, 145, 145, 145, 144, 143, 143, 143, 143
 };
+const int CLAW_XLIST3[32] = {
+	223, 222, 220, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219,
+	219, 219, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 221
+};
+const int CLAW_YLIST3[32] = {
+	116, 116, 116, 117, 117, 117, 117, 117, 118, 118, 118, 118, 118, 118, 118, 118,
+	118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118
+};
+
 
 bool DarkSideCutscenes::showDarkSideTitle() {
 	EventsManager &events = *_vm->_events;
@@ -126,15 +157,8 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 
 	// Pause for a bit
 	WAIT(10);
-
-	sound.setMusicVolume(95);
-
 	screen.fadeOut(8);
-	screen.loadBackground("jvc.raw");
-	screen.fadeIn();
 
-	WAIT(60);
-	screen.fadeOut(8);
 	return true;
 }
 
@@ -142,7 +166,19 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	_vm->_files->_isDarkCc = true;
 	_vm->_files->setGameCc(1);
 
-	return showDarkSideIntro1();
+	_ball.load("ball.int");
+	_dragon1.load("dragon1.int");
+	_claw.load("claw.int");
+
+	bool result = showDarkSideIntro1() && showDarkSideIntro2();
+
+	_vm->_sound->stopAllAudio();
+	_vm->_sound->setMusicVolume(100);
+	_ball.clear();
+	_dragon1.clear();
+	_claw.clear();
+
+	return result;
 }
 
 bool DarkSideCutscenes::showDarkSideIntro1() {
@@ -159,8 +195,18 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105, 98, 90, 82
 	};
 
-	_subtitles.load("special.bin");
+	// Play the intro music
+	sound.setMusicVolume(95);
+//	sound.playSong("bigtheme.m");
+
+	screen.loadBackground("jvc.raw");
 	screen.loadPalette("dark.pal");
+	screen.fadeIn();
+
+	WAIT(60);
+	screen.fadeOut(8);
+
+	_subtitles.load("special.bin");
 	screen.loadBackground("pyramid2.raw");
 	screen.loadPage(0);
 	screen.loadPage(1);
@@ -176,18 +222,10 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	screen.restoreBackground();
 	screen.loadPage(1);
 
-	// Play the intro music
-	sound.playSong("bigtheme.m");
-
 	// Show Might and Magic Darkside of Xeen title, and gradualy scroll
 	// the background vertically down to show the Pharoah's base
-	int yp = 0;
-	int idx1 = 0;
-	bool skipElapsed = false;
-	uint32 timeExpired = 0;
 	bool fadeFlag = true;
-
-	for (int yCtr = SCREEN_HEIGHT, frameNum = 0; yCtr > 0; ) {
+	for (int yp = 0, frameNum = 0, idx1 = 0; yp < SCREEN_HEIGHT && !_vm->shouldExit(); ++yp) {
 		screen.vertMerge(yp);
 
 		title.draw(0, 0);
@@ -198,14 +236,6 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		if (!idx1)
 			frameNum = (frameNum + 1) % 10;
 
-		if (!skipElapsed) {
-			timeExpired = MAX((int)events.timeElapsed() - 1, 1);
-			skipElapsed = true;
-		}
-
-		yCtr -= timeExpired;
-		yp = MIN((uint)(yp + timeExpired), (uint)200);
-
 		WAIT(1);
 
 		if (fadeFlag) {
@@ -215,15 +245,15 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	}
 
 	screen.vertMerge(SCREEN_HEIGHT);
-	screen.saveBackground(1);
+	screen.saveBackground();
 	screen.freePages();
 
 	WAIT(30);
 
 	// Zoom into the Pharoah's base closeup view
-	for (int idx = 14; idx >= 0; --idx) {
-		pyraTop.draw(0, 0, Common::Point(XLIST1[idx], YLIST1[idx]));
-		pyraTop.draw(0, 1, Common::Point(XLIST2[idx], YLIST1[idx]));
+	for (int idx = 14; idx >= 0 && !_vm->shouldExit(); --idx) {
+		pyraTop.draw(0, 0, Common::Point(XLIST1[idx], YLIST1[idx]), 0, idx);
+		pyraTop.draw(0, 1, Common::Point(XLIST2[idx], YLIST1[idx]), 0, idx);
 
 		if (idx == 2)
 			sound.setMusicVolume(48);
@@ -239,7 +269,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	_subtitleLineNum = 0;
 
 	bool phar2 = false;
-	for (int idx = 0; idx < 19; ++idx) {
+	for (int idx = 0; idx < 19 && !_vm->shouldExit(); ++idx) {
 		screen.restoreBackground();
 		pyramid.draw(0, idx, Common::Point(132, 62));
 		showSubtitles();
@@ -247,24 +277,12 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		if (!sound.isSoundPlaying() && !phar2)
 			sound.playSound("pharoh1b.voc");
 
-		events.updateGameCounter();
-		while (timeElapsed() < 4) {
-			showSubtitles();
-			events.pollEventsAndWait();
-			if (events.isKeyMousePressed())
-				return false;
-		}
+		WAIT_SUBTITLES(4);
 	}
 
 	waitForLineOrSound();
 	screen.fadeOut();
-	screen.freePages();
-	title.clear();
-	pyraTop.clear();
-	pyramid.clear();
 
-	//
-	SpriteResource dragon("dragon.int");
 	const int XLIST3[10] = { 102, 103, 104, 104, 104, 103, 102, 101, 101, 101 };
 	const int YLIST3[10] = { 30, 29, 28, 27, 26, 25, 24, 25, 26, 28 };
 	const int FRAMES3[70] = {
@@ -274,9 +292,11 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		29, 10,  -6, -26, -40, -56, -72, -83, 154, 141, 125, 105, 94, 83, 74,
 		69, 68, 70, 73, 77, 83, 89, 94, 99, 109
 	};
-	const char *const PHAR2_VOC[5] = {
+	const char *const PHAR_VOC[5] = {
 		"pharoh2a.voc", "pharoh2b.voc", "pharoh2c.voc", "pharoh2d.voc", "pharoh2e.voc"
 	};
+
+	SpriteResource dragon("dragon.int");
 	recordTime();
 	resetSubtitles(0);
 	_subtitleLineNum = 0;
@@ -287,8 +307,12 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	screen.loadBackground("3room.raw");
 	screen.loadPage(0);
 	screen.loadBackground("1room.raw");
+	screen.saveBackground();
 	screen.horizMerge(SCREEN_WIDTH);
-	dragon.draw(0, 0, Common::Point(XLIST3[0], YLIST3[0]), SPRFLAG_800);
+	dragon.draw(0, 9, Common::Point(XLIST3[0], YLIST3[0]), SPRFLAG_800);
+
+	showSubtitles();
+	screen.fadeIn();
 
 	int posNum = 0, phar2Index = 0, ctr = 0;
 	for (int idx = SCREEN_WIDTH, frameNum = 0; idx >= 0; --idx) {
@@ -301,9 +325,9 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 			return false;
 
 		if (idx == SCREEN_WIDTH)
-			sound.playSound(PHAR2_VOC[0]);
+			sound.playSound(PHAR_VOC[0]);
 		if (!sound.isSoundPlaying() && phar2Index < 4)
-			sound.playSound(PHAR2_VOC[1 + phar2Index++]);
+			sound.playSound(PHAR_VOC[1 + phar2Index++]);
 
 		if (phar2Index == 4) {
 			if (!sound.isSoundPlaying() && !_subtitleSize)
@@ -322,6 +346,324 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 
 		WAIT(1);
 	}
+
+	sound.stopSound();
+	screen.fadeOut();
+	screen.freePages();
+	return true;
+}
+
+void DarkSideCutscenes::animatePharoah(int frame) {
+	if (frame)
+		_ball.draw(0, frame - 1);
+	_claw.draw(0, 5, Common::Point(CLAW_XLIST2[frame], CLAW_YLIST2[frame]), SPRFLAG_800);
+	_claw.draw(0, 6, Common::Point(149, 184));
+	_dragon1.draw(0, PHAROAH_FRAMES[frame], Common::Point(139, PHAROAH_YLIST[frame]), SPRFLAG_800);
+	_claw.draw(0, frame % 5, Common::Point(CLAW_XLIST2[frame], CLAW_YLIST2[frame]), SPRFLAG_800);
+}
+
+#define ANIMATE_PHAROAH \
+	screen.restoreBackground(); \
+	animatePharoah(clawCtr); \
+	clawCtr = (clawCtr + 1) % 32
+
+bool DarkSideCutscenes::showDarkSideIntro2() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	SpriteResource goon("goon.int"), darkLord("darklord.int"), queen("queen.int"),
+		wizard("wizard.int"), fizzle("fizzle.int"), wizMth("izmth.int");
+	int idx, clawCtr;
+
+	screen.loadBackground("ball.raw");
+	screen.saveBackground();
+
+	for (idx = 0; idx < 32; ++idx) {
+		screen.restoreBackground();
+		animatePharoah(idx);
+
+		if (idx == 0)
+			screen.fadeIn();
+		WAIT(3);
+	}
+
+	for (idx = 0, clawCtr = 0; idx < 11; ++idx) {
+		ANIMATE_PHAROAH;
+		if (idx > 3)
+			queen.draw(0, 0, Common::Point(9, 57));
+		fizzle.draw(0, idx, Common::Point(9, 57));
+
+		if (idx == 6) {
+			sound.playSound("ido2.voc");
+			//sound.stopSong(); ?
+		}
+
+		clawCtr = (clawCtr + 1) % 32;
+		if (idx > 6)
+			showSubtitles();
+		WAIT(3);
+	}
+
+	const char *const VOC_NAMES[4] = { "queen1.voc", "queen2.voc", "queenhis.voc", "pharoh4.voc" };
+	int nwcIndex = 0, vocIndex = 0;
+	do {
+		ANIMATE_PHAROAH;
+
+		if (!sound.isSoundPlaying() && vocIndex < 3) {
+			if (!_subtitleSize) {
+				if (!vocIndex) {
+					// TODO: Subtitle stuff
+					recordTime();
+					_subtitleSize = 1;
+				}
+
+				sound.playSound(VOC_NAMES[vocIndex++]);
+				if (vocIndex == 3)
+					nwcIndex = 7;
+			}
+		}
+
+		if (nwcIndex) {
+			queen.draw(0, (nwcIndex >= 17) ? 0 : nwcIndex,
+				Common::Point(9, 57));
+			if (nwcIndex < 17)
+				++nwcIndex;
+		} else {
+			queen.draw(0, (vocIndex == 0) ? 0 : getSpeakingFrame(0, 5),
+				Common::Point(9, 57));
+		}
+
+		clawCtr = (clawCtr + 1) % 32;
+		showSubtitles();
+		WAIT(3);
+	} while (vocIndex < 3 || sound.isSoundPlaying() || _subtitleSize);
+
+	// TODO: Subtitle stuff
+	recordTime();
+	_subtitleSize = 1;
+
+	idx = 34;
+	do {
+		ANIMATE_PHAROAH;
+		queen.draw(0, 0, Common::Point(9, 57));
+
+		clawCtr = (clawCtr + 1) % 32;
+		if (++idx <= 37)
+			idx = 34;
+
+		showSubtitles();
+		WAIT(3);
+	} while (sound.isSoundPlaying() || _subtitleSize);
+
+	// TODO: Subtitle stuff
+	recordTime();
+	_subtitleSize = 1;
+	sound.playSound("dark3.voc");
+
+	const char *const VOC_NAMES2[3] = { "pharoh5a.voc", "pharoh5b.voc", "laff1.voc" };
+	vocIndex = 0;
+
+	do {
+		ANIMATE_PHAROAH;
+		darkLord.draw(0, vocIndex == 1 ? getSpeakingFrame(0, 3) : 0, Common::Point(9, 57));
+
+		clawCtr = (clawCtr + 1) % 32;
+		showSubtitles();
+		WAIT(3);
+		if (!sound.isSoundPlaying())
+			sound.playSound(VOC_NAMES2[vocIndex++]);
+	} while (vocIndex < 3 && _subtitleSize);
+
+	// TODO: Subtitle stuff
+	recordTime();
+	_subtitleSize = 1;
+
+	sound.playFX(42);
+	vocIndex = 0;
+
+	for (idx = 10; idx >= 0; --idx) {
+		ANIMATE_PHAROAH;
+
+		if (!sound.isSoundPlaying() && !vocIndex) {
+			sound.playSound("laff1.voc");
+			vocIndex = 1;
+		}
+
+		if (idx > 3)
+			darkLord.draw(0, getSpeakingFrame(0, 3), Common::Point(9, 57));
+		fizzle.draw(0, idx, Common::Point(9, 57));
+
+		clawCtr = (clawCtr + 1) % 32;
+		showSubtitles();
+		WAIT(3);
+	}
+
+	sound.playFX(0);
+
+	do {
+		ANIMATE_PHAROAH;
+		queen.draw(0, 0, Common::Point(9, 57));
+
+		clawCtr = (clawCtr + 1) % 32;
+		showSubtitles();
+		WAIT(3);
+	} while (sound.isSoundPlaying() || _subtitleSize);
+
+	for (idx = 0; idx < 32; ++idx) {
+		screen.restoreBackground();
+		animatePharoah(idx);
+
+		showSubtitles();
+		WAIT(3);
+	}
+
+	for (idx = 0, clawCtr = 0; idx < 11; ++idx) {
+		ANIMATE_PHAROAH;
+
+		if (idx > 3)
+			goon.draw(0, 0, Common::Point(9, 57));
+		if (idx == 6)
+			sound.playSound("pharoh6w.voc");
+
+		fizzle.draw(0, idx, Common::Point(9, 57));
+		clawCtr = (clawCtr + 1) % 32;
+
+		if (idx > 6)
+			showSubtitles();
+		WAIT(3);
+	}
+
+	const char *const VOC_NAMES3[2] = { "alamar1.voc", "pharoh7t.voc" };
+	vocIndex = nwcIndex = 0;
+
+	do {
+		ANIMATE_PHAROAH;
+		goon.draw(0, (vocIndex == 0) ? 0 : nwcIndex, Common::Point(9, 57));
+
+		if (!sound.isSoundPlaying() && !vocIndex && !_subtitleSize) {
+			// TODO: Subtitles stuff
+			recordTime();
+			_subtitleSize = 1;
+			sound.playSound(VOC_NAMES3[vocIndex++]);
+			sound.playFX(0);
+		}
+
+		nwcIndex = (nwcIndex + 1) % 17;
+		clawCtr = (clawCtr + 1) % 32;
+
+		showSubtitles();
+		WAIT(3);
+	} while (!vocIndex || sound.isSoundPlaying() || _subtitleSize);
+
+	// TODO: Subtitle stuff
+	recordTime();
+	_subtitleSize = 1;
+	sound.playFX(42);
+
+	for (idx = 10; idx >= 0; --idx) {
+		ANIMATE_PHAROAH;
+		if (idx > 4)
+			goon.draw(0, 0, Common::Point(9, 57));
+		fizzle.draw(0, idx, Common::Point(9, 57));
+
+		if (!sound.isSoundPlaying() && !vocIndex) {
+			sound.playSound("pharoh7t.voc");
+			vocIndex = 1;
+		}
+
+		showSubtitles();
+		WAIT(3);
+	}
+
+	sound.playFX(0);
+
+	for (idx = 0; idx < 32; ++idx) {
+		screen.restoreBackground();
+		animatePharoah(idx);
+
+		if (_subtitleSize)
+			showSubtitles();
+		WAIT(3);
+	}
+
+	// TODO: Subtitle stuff
+	recordTime();
+	_subtitleSize = 1;
+
+	for (idx = 0, clawCtr = 0; idx < 11; ++idx) {
+		ANIMATE_PHAROAH;
+
+		if (idx > 3)
+			wizard.draw(0, 0, Common::Point(9, 57));
+		fizzle.draw(0, 0, Common::Point(9, 57));
+
+		clawCtr = (clawCtr + 1) % 32;
+		if (idx == 5)
+			sound.playSound("pharoh8.voc");
+		if (idx > 6)
+			showSubtitles();
+
+		WAIT(3);
+	}
+
+	const char *const VOC_NAMES4[3] = { "ellinger.voc", "pharoh9a.voc", "pharoh9b.voc" };
+	vocIndex = 0;
+
+	do {
+		ANIMATE_PHAROAH;
+		wizard.draw(0, (vocIndex == 1) ? getSpeakingFrame(0, 3) : 0, Common::Point(9, 57));
+
+		if (!sound.isSoundPlaying() && vocIndex < 2 && !_subtitleSize) {
+			// TODO: Subtitle stuff
+			if (vocIndex == 0) {
+				recordTime();
+				_subtitleSize = 1;
+			} else {
+				_subtitleSize = 0;
+			}
+
+			sound.playSound(VOC_NAMES4[vocIndex++]);
+			sound.playFX(0);
+		}
+
+		clawCtr = (clawCtr + 1) % 32;
+		showSubtitles();
+		WAIT(3);
+	} while (vocIndex < 2 || sound.isSoundPlaying() || _subtitleSize);
+
+	sound.playFX(42);
+
+	for (idx = 10; idx >= 0; --idx) {
+		ANIMATE_PHAROAH;
+		if (idx > 4)
+			wizard.draw(0, 0, Common::Point(9, 57));
+		fizzle.draw(0, idx, Common::Point(9, 57));
+
+		if (!sound.isSoundPlaying() && !vocIndex) {
+			sound.playSound("pharoh7t.voc");
+			vocIndex = 1;
+		}
+
+		showSubtitles();
+		WAIT(3);
+	}
+
+	// TODO: Subtitle stuff
+	recordTime();
+	_subtitleSize = 1;
+	vocIndex = 0;
+
+	do {
+		ANIMATE_PHAROAH;
+
+		if (!sound.isSoundPlaying() && !vocIndex) {
+			sound.playSound("pharoh9b.voc");
+			vocIndex = 1;
+		}
+
+		showSubtitles();
+		WAIT(3);
+	} while (sound.isSoundPlaying() || !vocIndex || _subtitleSize);
 
 	return true;
 }
@@ -1203,22 +1545,6 @@ void DarkSideCutscenes::showDarkSideScore(uint endingScore) {
 }
 
 void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, const char *msg3) {
-	const int YLIST[32] = {
-		-3, -3, -3, -3, -3, -3, -3, -3, -1, 0, 0, 0, 0, 0, 0, 0,
-		-1, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3, -3
-	};
-	const int FRAMES[32] = {
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 2, 1,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	};
-	const int XLIST2[32] = {
-		223, 222, 220, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219, 219,
-		219, 219, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 220, 221
-	};
-	const int YLIST2[32] = {
-		116, 116, 116, 117, 117, 117, 117, 117, 118, 118, 118, 118, 118, 118, 118, 118,
-		118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118
-	};
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
@@ -1230,10 +1556,10 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 	screen.loadBackground("3room.raw");
 	screen.saveBackground();
 	screen.loadPalette("dark.pal");
-	claw.draw(0, 5, Common::Point(CUTSCENES_XLIST[0], CUTSCENES_YLIST[0]), SPRFLAG_800);
+	claw.draw(0, 5, Common::Point(CLAW_XLIST3[0], CLAW_YLIST3[0]), SPRFLAG_800);
 	claw.draw(0, 6, Common::Point(149, 184));
-	dragon1.draw(0, FRAMES[0], Common::Point(139, YLIST[0]), SPRFLAG_800);
-	claw.draw(0, 0, Common::Point(XLIST2[0], YLIST2[0]), SPRFLAG_800);
+	dragon1.draw(0, PHAROAH_FRAMES[0], Common::Point(139, PHAROAH_YLIST[0]), SPRFLAG_800);
+	claw.draw(0, 0, Common::Point(CLAW_XLIST3[0], CLAW_YLIST3[0]), SPRFLAG_800);
 	screen.update();
 	screen.fadeIn();
 	events.clearEvents();
@@ -1246,10 +1572,10 @@ void DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 			// Draw the dragon pharoah
 			events.updateGameCounter();
 			screen.restoreBackground();
-			claw.draw(0, 5, Common::Point(CUTSCENES_XLIST[idx], CUTSCENES_YLIST[idx]), SPRFLAG_800);
+			claw.draw(0, 5, Common::Point(CLAW_XLIST3[idx], CLAW_YLIST3[idx]), SPRFLAG_800);
 			claw.draw(0, 6, Common::Point(145, 185));
-			dragon1.draw(0, FRAMES[idx], Common::Point(139, YLIST[idx]), SPRFLAG_800);
-			claw.draw(0, idx % 5, Common::Point(XLIST2[idx], YLIST2[idx]), SPRFLAG_800);
+			dragon1.draw(0, PHAROAH_FRAMES[idx], Common::Point(139, PHAROAH_YLIST[idx]), SPRFLAG_800);
+			claw.draw(0, idx % 5, Common::Point(CLAW_XLIST3[idx], CLAW_YLIST3[idx]), SPRFLAG_800);
 
 			// Form the text string to display the text
 			Common::String str1 = Common::String::format(Res.PHAROAH_ENDING_TEXT1,
