@@ -827,17 +827,17 @@ bool SupernovaEngine::quitGameDialog() {
 	GuiElement guiQuitBox;
 	guiQuitBox.setColor(kColorRed, kColorWhite99, kColorRed, kColorWhite99);
 	guiQuitBox.setSize(112, 97, 112 + 96, 97 + 27);
-	guiQuitBox.setText("Spiel abbrechen?");
+	guiQuitBox.setText(getGameString(kStringLeaveGame).c_str());
 	guiQuitBox.setTextPosition(guiQuitBox.left + 3, guiQuitBox.top + 3);
 	GuiElement guiQuitYes;
 	guiQuitYes.setColor(kColorWhite35, kColorWhite99, kColorWhite35, kColorWhite99);
 	guiQuitYes.setSize(115, 111, 158, 121);
-	guiQuitYes.setText("Ja");
+	guiQuitYes.setText(getGameString(kStringYes).c_str());
 	guiQuitYes.setTextPosition(132, 112);
 	GuiElement guiQuitNo;
 	guiQuitNo.setColor(kColorWhite35, kColorWhite99, kColorWhite35, kColorWhite99);
 	guiQuitNo.setSize(162, 111, 205, 121);
-	guiQuitNo.setText("Nein");
+	guiQuitNo.setText(getGameString(kStringNo).c_str());
 	guiQuitNo.setTextPosition(173, 112);
 
 	_gm->animationOff();
