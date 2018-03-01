@@ -351,6 +351,8 @@ void TuckerEngine::resetVariables() {
 	_updateLocationFlag = false;
 	_updateLocation70StringLen = 0;
 	memset(_updateLocation70String, 0, sizeof(_updateLocation70String));
+
+	_lastSaveTime = _system->getMillis();
 }
 
 void TuckerEngine::mainLoop() {
@@ -616,7 +618,15 @@ void TuckerEngine::mainLoop() {
 			handleCreditsSequence();
 			_quitGame = true;
 		}
+
+		if (shouldPerformAutoSave(_lastSaveTime)) {
+			writeAutosave();
+		}
 	} while (!_quitGame && _flagsTable[100] == 0);
+
+	// auto save on quit
+	writeAutosave();
+
 	if (_flagsTable[100] == 1) {
 		handleCongratulationsSequence();
 	}

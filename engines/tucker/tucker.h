@@ -28,6 +28,7 @@
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/random.h"
+#include "common/savefile.h"
 #include "common/stream.h"
 
 #include "video/flic_decoder.h"
@@ -254,7 +255,8 @@ enum {
 	kStartupLocationGame = 1,
 	kDefaultCharSpeechSoundCounter = 1,
 	kMaxSoundVolume = 127,
-	kLastSaveSlot = 99
+	kLastSaveSlot = 99,
+	kAutoSaveSlot = kLastSaveSlot
 };
 
 enum InputKey {
@@ -334,6 +336,24 @@ public:
 		kMaxDirtyRects = 32
 	};
 
+	struct SavegameHeader {
+		uint16 version;
+		uint32 flags;
+		Common::String description;
+		uint32 saveDate;
+		uint32 saveTime;
+		uint32 playTime;
+		Graphics::Surface *thumbnail;
+	};
+
+	enum SavegameError {
+		kSavegameNoError = 0,
+		kSavegameInvalidTypeError,
+		kSavegameInvalidVersionError,
+		kSavegameNotFoundError,
+		kSavegameIoError
+	};
+
 	TuckerEngine(OSystem *system, Common::Language language, uint32 flags);
 	virtual ~TuckerEngine();
 
@@ -341,6 +361,10 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	GUI::Debugger *getDebugger() { return _console; }
 
+	static SavegameError readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool loadThumbnail = false);
+	static SavegameError readSavegameHeader(const char *target, int slot, SavegameHeader &header);
+	bool isAutosaveAllowed();
+	static bool isAutosaveAllowed(const char *target);
 protected:
 
 	int getRandomNumber();
@@ -627,9 +651,13 @@ protected:
 	void updateSprite_locationNum81_1(int i);
 	void updateSprite_locationNum82(int i);
 
-	template<class S> void saveOrLoadGameStateData(S &s);
-	virtual Common::Error loadGameState(int num);
-	virtual Common::Error saveGameState(int num, const Common::String &description);
+	template<class S> SavegameError saveOrLoadGameStateData(S &s);
+	virtual Common::Error loadGameState(int slot);
+	virtual Common::Error saveGameState(int slot, const Common::String &description);
+	Common::Error writeSavegame(int slot, const Common::String &description, bool autosave = false);
+	SavegameError writeSavegameHeader(Common::OutSaveFile *file, SavegameHeader &header);
+	void writeAutosave();
+	bool canLoadOrSave() const;
 	virtual bool canLoadGameStateCurrently();
 	virtual bool canSaveGameStateCurrently();
 	virtual bool existsSavegame();
@@ -679,6 +707,7 @@ protected:
 	Common::Language _gameLang;
 	uint32 _gameFlags;
 	int _startSlot;
+	uint32 _lastSaveTime;
 
 	bool _quitGame;
 	bool _fastMode;
