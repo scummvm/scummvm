@@ -207,8 +207,8 @@ void TuckerEngine::resetVariables() {
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
 	_lastKeyPressed = 0;
 	memset(_inputKeys, 0, sizeof(_inputKeys));
-	_cursorNum = 0;
-	_cursorType = 0;
+	_cursorStyle = kCursorNormal;
+	_cursorState = kCursorStateNormal;
 	_updateCursorFlag = false;
 
 	_panelNum = 1;
@@ -377,8 +377,8 @@ void TuckerEngine::mainLoop() {
 
 	loadBudSpr();
 	loadCursor();
-	setCursorNum(_cursorNum);
-	setCursorType(_cursorType);
+	setCursorStyle(_cursorStyle);
+	setCursorState(_cursorState);
 
 	_flagsTable[219] = 1;
 	_flagsTable[105] = 1;
@@ -422,7 +422,7 @@ void TuckerEngine::mainLoop() {
 			setupNewLocation();
 		}
 		updateCharPosition();
-		if (_cursorType == 0) {
+		if (_cursorState == kCursorStateNormal) {
 			updateCursor();
 		} else if (_panelState == 2) {
 			handleMouseOnPanel();
@@ -713,16 +713,16 @@ void TuckerEngine::updateCursorPos(int x, int y) {
 	_mousePosY = y;
 }
 
-void TuckerEngine::setCursorNum(int num) {
-	_cursorNum = num;
+void TuckerEngine::setCursorStyle(CursorStyle style) {
+	_cursorStyle = style;
 	static const int cursorW = 16;
 	static const int cursorH = 16;
-	CursorMan.replaceCursor(_cursorGfxBuf + _cursorNum * 256, cursorW, cursorH, 1, 1, 0);
+	CursorMan.replaceCursor(_cursorGfxBuf + _cursorStyle * 256, cursorW, cursorH, 1, 1, 0);
 }
 
-void TuckerEngine::setCursorType(int type) {
-	_cursorType = type;
-	CursorMan.showMouse(_cursorType < 2);
+void TuckerEngine::setCursorState(CursorState state) {
+	_cursorState = state;
+	CursorMan.showMouse(_cursorState != kCursorStateDisabledHidden);
 }
 
 void TuckerEngine::showCursor(bool visible) {
@@ -792,7 +792,7 @@ void TuckerEngine::copyLocBitmap(const char *filename, int offset, bool isMask) 
 }
 
 void TuckerEngine::updateMouseState() {
-	if (_cursorType < 2) {
+	if (_cursorState != kCursorStateDisabledHidden) {
 		_leftMouseButtonPressed = (_mouseButtonsMask & 1) != 0;
 		if (_leftMouseButtonPressed) {
 			_mouseIdleCounter = 0;
@@ -809,9 +809,9 @@ void TuckerEngine::updateMouseState() {
 			_gameHintsStringNum = 0;
 		}
 	}
-	if (_cursorType == 1) {
+	if (_cursorState == kCursorStateDialog) {
 		if (_panelState == 1) {
-			setCursorNum(1);
+			setCursorStyle(kCursorTalk);
 		}
 		if (_mousePosY < 140) {
 			_mousePosY = 140;
@@ -820,7 +820,7 @@ void TuckerEngine::updateMouseState() {
 }
 
 void TuckerEngine::updateCharPositionHelper() {
-	setCursorType(2);
+	setCursorState(kCursorStateDisabledHidden );
 	_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 	_currentActionVerb = 0;
 	startSpeechSound(_speechSoundNum, _speechVolume);
@@ -1033,7 +1033,7 @@ void TuckerEngine::setBlackPalette() {
 }
 
 void TuckerEngine::updateCursor() {
-	setCursorNum(0);
+	setCursorStyle(kCursorNormal);
 	if (_backgroundSpriteCurrentAnimation == -1 && !_panelLockedFlag && _selectedObject._locationObjectLocationNum > 0) {
 		_selectedObject._locationObjectLocationNum = 0;
 	}
@@ -1396,7 +1396,7 @@ void TuckerEngine::saveOrLoad() {
 			}
 			_forceRedrawPanelItems = true;
 			_panelState = 0;
-			setCursorType(0);
+			setCursorState(kCursorStateNormal);
 			return;
 		}
 	}
@@ -1425,7 +1425,7 @@ void TuckerEngine::handleMouseOnPanel() {
 		} else if (_mousePosX < 218) {
 			_forceRedrawPanelItems = true;
 			_panelState = 0;
-			setCursorType(0);
+			setCursorState(kCursorStateNormal);
 		} else {
 			_quitGame = true;
 		}
@@ -2119,7 +2119,7 @@ void TuckerEngine::updateCharacterAnimation() {
 			_characterAnimationIndex = -1;
 			_backgroundSpriteCurrentAnimation = -1;
 			if (_nextAction == 0) {
-				setCursorType(0);
+				setCursorState(kCursorStateNormal);
 			}
 		} else {
 			_backgroundSpriteCurrentFrame = _characterAnimationsTable[_characterAnimationIndex];
@@ -2143,7 +2143,7 @@ void TuckerEngine::updateCharacterAnimation() {
 					_backgroundSpriteCurrentFrame = 0;
 					_changeBackgroundSprite = false;
 					if (_nextAction == 0) {
-						setCursorType(0);
+						setCursorState(kCursorStateNormal);
 					}
 				}
 			}
@@ -2162,7 +2162,7 @@ void TuckerEngine::updateCharacterAnimation() {
 					_backgroundSpriteCurrentAnimation = -1;
 					_backgroundSpriteCurrentFrame = 0;
 					if (_nextAction == 0 && _panelState == 0) {
-						setCursorType(0);
+						setCursorState(kCursorStateNormal);
 					}
 				}
 			}
@@ -2181,7 +2181,7 @@ void TuckerEngine::updateCharacterAnimation() {
 				_actionPosY = _yPosCurrent - 64;
 				_actionTextColor = 1;
 				_actionCharacterNum = 99;
-				setCursorType(2);
+				setCursorState(kCursorStateDisabledHidden);
 				_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 			}
 		}
@@ -2392,7 +2392,7 @@ void TuckerEngine::handleMap() {
 		}
 	}
 	if (!_panelLockedFlag && (_backgroundSpriteCurrentAnimation == -1 || _locationNum == 25) && _locationMaskType == 3) {
-		setCursorType(0);
+		setCursorState(kCursorStateNormal);
 		if (_locationMaskCounter == 1) {
 			_characterFacingDirection = 0;
 			_locationMaskType = 0;
@@ -2403,7 +2403,7 @@ void TuckerEngine::handleMap() {
 		if (_locationNum == 25 || _backgroundSpriteCurrentAnimation != 4) {
 			if (_locationMaskType == 0) {
 				_locationMaskType = 1;
-				setCursorType(2);
+				setCursorState(kCursorStateDisabledHidden);
 				if (_selectedObject._locationObjectToWalkX2 > 800) {
 					_backgroundSpriteCurrentAnimation = _selectedObject._locationObjectToWalkX2 - 900;
 					if (_selectedObject._locationObjectToWalkY2 > 499) {
@@ -2431,7 +2431,7 @@ void TuckerEngine::handleMap() {
 			}
 			_locationMaskType = 2;
 			_panelState = 0;
-			setCursorType(0);
+			setCursorState(kCursorStateNormal);
 			if (_selectedObject._locationObjectLocationNum == 99) {
 				_noPositionChangeAfterMap = true;
 				handleMapSequence();
@@ -3001,7 +3001,7 @@ void TuckerEngine::updateCharSpeechSound(bool displayText) {
 		}
 	}
 	if (_charSpeechSoundCounter == 0 && !_csDataHandled) {
-		setCursorType(0);
+		setCursorState(kCursorStateNormal);
 	} else if (displayText) {
 		drawSpeechText(_actionPosX, _actionPosY, _characterSpeechDataPtr, _speechSoundNum, _actionTextColor);
 	}
@@ -3364,7 +3364,7 @@ int TuckerEngine::executeTableInstruction() {
 			_nextTableToLoadTable[i] = readTableInstructionParam(3);
 		}
 		_nextTableToLoadIndex = -1;
-		setCursorType(1);
+		setCursorState(kCursorStateDialog);
 		return 1;
 	case kCode_opf:
 		_conversationOptionsCount = 0;
@@ -3384,7 +3384,7 @@ int TuckerEngine::executeTableInstruction() {
 			}
 		}
 		_nextTableToLoadIndex = -1;
-		setCursorType(1);
+		setCursorState(kCursorStateDialog);
 		return 1;
 	case kCode_ofg:
 		i = readTableInstructionParam(3);
@@ -3512,7 +3512,7 @@ int TuckerEngine::getObjectUnderCursor() {
 		}
 		_selectedObjectType = 0;
 		_selectedCharacterNum = i;
-		setCursorNum(_locationObjectsTable[i]._cursorNum);
+		setCursorStyle(_locationObjectsTable[i]._cursorStyle);
 		return i;
 	}
 	return -1;
@@ -3669,7 +3669,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 			_actionVerbLocked = false;
 			_forceRedrawPanelItems = true;
 			_panelState = 2;
-			setCursorType(1);
+			setCursorState(kCursorStateDialog);
 		}
 		break;
 	case 1:
@@ -3681,7 +3681,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 				_actionPosY = _yPosCurrent - 64;
 				_actionTextColor = 1;
 				_actionCharacterNum = 99;
-				setCursorType(2);
+				setCursorState(kCursorStateDisabledHidden);
 				_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 				_currentActionVerb = 0;
 				_speechSoundNum = 2235;
@@ -3794,7 +3794,7 @@ void TuckerEngine::setActionForInventoryObject() {
 		_actionPosY = _yPosCurrent - 64;
 		_actionTextColor = 1;
 		_actionCharacterNum = 99;
-		setCursorType(2);
+		setCursorState(kCursorStateDisabledHidden);
 		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 		_actionVerbLocked = false;
 		_actionRequiresTwoObjects = false;
@@ -3860,7 +3860,7 @@ void TuckerEngine::playSpeechForAction(int i) {
 		_actionPosY = _yPosCurrent - 64;
 		_actionTextColor = 1;
 		_actionCharacterNum = 99;
-		setCursorType(2);
+		setCursorState(kCursorStateDisabledHidden);
 		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 	}
 }

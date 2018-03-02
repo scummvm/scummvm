@@ -52,6 +52,34 @@ class RewindableAudioStream;
  */
 namespace Tucker {
 
+enum CursorStyle {
+	kCursorNormal     = 0,
+	kCursorTalk       = 1,
+	kCursorArrowRight = 2,
+	kCursorArrowUp    = 3,
+	kCursorArrowLeft  = 4,
+	kCursorArrowDown  = 5,
+	kCursorMap        = 6
+};
+
+enum CursorState {
+	kCursorStateNormal         = 0,
+	kCursorStateDialog         = 1,
+	kCursorStateDisabledHidden = 2
+};
+
+enum Verb {
+	kVerbWalk  = 0,
+	kVerbLook  = 1,
+	kVerbTalk  = 2,
+	kVerbOpen  = 3,
+	kVerbClose = 4,
+	kVerbGive  = 5,
+	kVerbTake  = 6,
+	kVerbMove  = 7,
+	kVerbUse   = 8
+};
+
 struct Action {
 	int _key;
 	int _testFlag1Num;
@@ -157,7 +185,7 @@ struct LocationObject {
 	int _toWalkY2;
 	int _standX;
 	int _standY;
-	int _cursorNum;
+	CursorStyle _cursorStyle;
 };
 
 struct LocationSound {
@@ -192,18 +220,6 @@ enum {
 	kDefaultCharSpeechSoundCounter = 1,
 	kMaxSoundVolume = 127,
 	kLastSaveSlot = 99
-};
-
-enum Verb {
-	kVerbWalk  = 0,
-	kVerbLook  = 1,
-	kVerbTalk  = 2,
-	kVerbOpen  = 3,
-	kVerbClose = 4,
-	kVerbGive  = 5,
-	kVerbTake  = 6,
-	kVerbMove  = 7,
-	kVerbUse   = 8
 };
 
 enum InputKey {
@@ -299,8 +315,8 @@ protected:
 	void waitForTimer(int ticksCount);
 	void parseEvents();
 	void updateCursorPos(int x, int y);
-	void setCursorNum(int num);
-	void setCursorType(int type);
+	void setCursorStyle(CursorStyle num);
+	void setCursorState(CursorState state);
 	void showCursor(bool visible);
 	void setupNewLocation();
 	void copyLocBitmap(const char *filename, int offset, bool isMask);
@@ -688,8 +704,8 @@ protected:
 	bool _mouseWheelDown;
 	int _lastKeyPressed;
 	bool _inputKeys[kInputKeyCount];
-	int _cursorNum;
-	int _cursorType;
+	CursorStyle _cursorStyle;
+	CursorState _cursorState;
 	bool _updateCursorFlag;
 
 	int _panelNum;

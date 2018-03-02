@@ -414,11 +414,11 @@ void TuckerEngine::handleMapSequence() {
 	if (_nextLocationNum == 9 && _noPositionChangeAfterMap) {
 		_backgroundSpriteCurrentAnimation = 2;
 		_backgroundSpriteCurrentFrame = 0;
-		setCursorType(2);
+		setCursorState(kCursorStateDisabledHidden);
 	} else if (_nextLocationNum == 66 && _noPositionChangeAfterMap) {
 		_backgroundSpriteCurrentAnimation = 1;
 		_backgroundSpriteCurrentFrame = 0;
-		setCursorType(2);
+		setCursorState(kCursorStateDisabledHidden);
 	}
 	_noPositionChangeAfterMap = false;
 	_xPosCurrent = xPos;

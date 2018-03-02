@@ -119,11 +119,11 @@ Common::Error TuckerEngine::saveGameState(int num, const Common::String &descrip
 
 
 bool TuckerEngine::canLoadGameStateCurrently() {
-	return !_player && _cursorType < 2;
+	return !_player && _cursorState != kCursorStateDisabledHidden;
 }
 
 bool TuckerEngine::canSaveGameStateCurrently() {
-	return !_player && _cursorType < 2;
+	return !_player && _cursorState != kCursorStateDisabledHidden;
 }
 
 bool TuckerEngine::existsSavegame() {

@@ -3021,11 +3021,11 @@ void TuckerEngine::execData3PreUpdate_locationNum70() {
 		_updateLocation70StringLen = 0;
 		_forceRedrawPanelItems = true;
 		_panelState = 1;
-		setCursorType(2);
+		setCursorState(kCursorStateDisabledHidden);
 	}
 	_forceRedrawPanelItems = true;
 	_panelState = 1;
-	setCursorType(2);
+	setCursorState(kCursorStateDisabledHidden);
 	int pos = getPositionForLine(22, _infoBarBuf);
 	const int yPos = (_flagsTable[143] == 0) ? 90 : 72;
 	drawStringAlt(88, yPos, color, &_infoBarBuf[pos]);

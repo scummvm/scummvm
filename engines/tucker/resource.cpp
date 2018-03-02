@@ -693,7 +693,7 @@ void TuckerEngine::loadData4() {
 			d->_standX = t.getNextInteger();
 			d->_standY = t.getNextInteger();
 			d->_textNum = t.getNextInteger();
-			d->_cursorNum = t.getNextInteger();
+			d->_cursorStyle = (CursorStyle)t.getNextInteger();
 			d->_locationNum = t.getNextInteger();
 			if (d->_locationNum > 0) {
 				d->_toX = t.getNextInteger();
@@ -983,7 +983,7 @@ void TuckerEngine::loadActionsTable() {
 			}
 			_forceRedrawPanelItems = true;
 			_panelState = 1;
-			setCursorType(2);
+			setCursorState(kCursorStateDisabledHidden);
 			_tableInstructionsPtr = _csDataBuf + t._pos + 1;
 			_csDataLoaded = true;
 			_csDataHandled = true;
@@ -1032,7 +1032,7 @@ void TuckerEngine::loadActionsTable() {
 				_nextAction = _nextTableToLoadTable[_nextTableToLoadIndex];
 				_csDataLoaded = false;
 				 _conversationOptionsCount = 0;
-				setCursorType(2);
+				setCursorState(kCursorStateDisabledHidden);
 			}
 			break;
 		}
@@ -1045,7 +1045,7 @@ void TuckerEngine::loadActionsTable() {
 		_csDataLoaded = false;
 		_forceRedrawPanelItems = true;
 		_panelState = 0;
-		setCursorType(0);
+		setCursorState(kCursorStateNormal);
 		_csDataHandled = false;
 		_actionVerbLocked = false;
 		_mouseClick = 1;
