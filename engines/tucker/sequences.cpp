@@ -197,23 +197,25 @@ void TuckerEngine::handleNewPartSequence() {
 		_inventoryObjectsOffset = 0;
 		_inventoryObjectsCount = 0;
 		addObjectToInventory(30);
-		if (_partNum == 1 || _partNum == 3) {
+		if (_part == kPartOne || _part == kPartThree) {
 			addObjectToInventory(1);
 			addObjectToInventory(0);
 		}
 		_redrawPanelItemsCounter = 0;
 	}
 	_scrollOffset = 0;
-	switch (_partNum) {
-	case 1:
-		strcpy(filename, "pt1bak.pcx");
-		break;
-	case 2:
-		strcpy(filename, "pt2bak.pcx");
-		break;
-	default:
-		strcpy(filename, "pt3bak.pcx");
-		break;
+	switch (_part) {
+		case kPartOne:
+			strcpy(filename, "pt1bak.pcx");
+			break;
+		case kPartTwo:
+			strcpy(filename, "pt2bak.pcx");
+			break;
+		case kPartThree:
+			strcpy(filename, "pt3bak.pcx");
+			break;
+		default:
+			break;
 	}
 	loadImage(filename, _quadBackgroundGfxBuf, 1);
 	_spritesCount = 1;
@@ -222,16 +224,18 @@ void TuckerEngine::handleNewPartSequence() {
 	_locationNum = 98;
 	unloadSprA02_01();
 	unloadSprC02_01();
-	switch (_partNum) {
-	case 1:
-		strcpy(filename, "sprites/partone.spr");
-		break;
-	case 2:
-		strcpy(filename, "sprites/parttwo.spr");
-		break;
-	default:
-		strcpy(filename, "sprites/partthr.spr");
-		break;
+	switch (_part) {
+		case kPartOne:
+			strcpy(filename, "sprites/partone.spr");
+			break;
+		case kPartTwo:
+			strcpy(filename, "sprites/parttwo.spr");
+			break;
+		case kPartThree:
+			strcpy(filename, "sprites/partthr.spr");
+			break;
+		default:
+			break;
 	}
 	_sprC02Table[1] = loadFile(filename, 0);
 	startSpeechSound(9000, 60);
@@ -273,16 +277,18 @@ void TuckerEngine::handleMeanwhileSequence() {
 	char filename[40];
 	uint8 backupPalette[256 * 3];
 	memcpy(backupPalette, _currentPalette, 256 * 3);
-	switch (_partNum) {
-	case 1:
-		strcpy(filename, "meanw01.pcx");
-		break;
-	case 2:
-		strcpy(filename, "meanw02.pcx");
-		break;
-	default:
-		strcpy(filename, "meanw03.pcx");
-		break;
+	switch (_part) {
+		case kPartOne:
+			strcpy(filename, "meanw01.pcx");
+			break;
+		case kPartTwo:
+			strcpy(filename, "meanw02.pcx");
+			break;
+		case kPartThree:
+			strcpy(filename, "meanw03.pcx");
+			break;
+		default:
+			break;
 	}
 	if (_flagsTable[215] == 0 && _flagsTable[231] == 1) {
 		strcpy(filename, "loc80.pcx");
@@ -347,27 +353,27 @@ void TuckerEngine::handleMapSequence() {
 		_fullRedraw = true;
 		if (_flagsTable[7] > 0 && _mousePosX > 30 && _mousePosX < 86 && _mousePosY > 36 && _mousePosY < 86) {
 			textNum = 13;
-			_nextLocationNum = (_partNum == 1) ? 3 : 65;
+			_nextLocationNum = (_part == kPartOne) ? 3 : 65;
 			xPos = 620;
 			yPos = 130;
 		} else if (_flagsTable[7] > 1 && _mousePosX > 60 && _mousePosX < 120 && _mousePosY > 120 && _mousePosY < 170) {
 			textNum = 14;
-			_nextLocationNum = (_partNum == 1) ? 9 : 66;
+			_nextLocationNum = (_part == kPartOne) ? 9 : 66;
 			xPos = 344;
 			yPos = 120;
 		} else if (_flagsTable[7] > 2 && _mousePosX > 160 && _mousePosX < 210 && _mousePosY > 110 && _mousePosY < 160) {
 			textNum = 15;
-			_nextLocationNum = (_partNum == 1) ? 16 : 61;
+			_nextLocationNum = (_part == kPartOne) ? 16 : 61;
 			xPos = 590;
 			yPos = 130;
 		} else if ((_flagsTable[7] == 4 || _flagsTable[7] == 6) && _mousePosX > 150 && _mousePosX < 200 && _mousePosY > 20 && _mousePosY < 70) {
 			textNum = 16;
-			_nextLocationNum = (_partNum == 1) ? 20 : 68;
+			_nextLocationNum = (_part == kPartOne) ? 20 : 68;
 			xPos = 20;
 			yPos = 130;
 		} else if (_flagsTable[120] == 1 && _mousePosX > 240 && _mousePosX < 290 && _mousePosY > 35 && _mousePosY < 90) {
 			textNum = 17;
-			_nextLocationNum = (_partNum == 1) ? 19 : 62;
+			_nextLocationNum = (_part == kPartOne) ? 19 : 62;
 			xPos = 20;
 			yPos = 124;
 		} else if (_mousePosX > 135 && _mousePosX < 185 && _mousePosY > 170 && _mousePosY < 200) {
@@ -437,14 +443,14 @@ void TuckerEngine::copyMapRect(int x, int y, int w, int h) {
 
 bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 	char filename[40];
-	if (_partNum == 1 && _selectedObjectNum == 6) {
+	if (_part == kPartOne && _selectedObjectNum == 6) {
 		strcpy(filename, "news1.pcx");
 		_flagsTable[7] = 4;
-	} else if (_partNum == 3 && _selectedObjectNum == 45) {
+	} else if (_part == kPartThree && _selectedObjectNum == 45) {
 		strcpy(filename, "profnote.pcx");
-	} else if (_partNum == 1 && _selectedObjectNum == 26) {
+	} else if (_part == kPartOne && _selectedObjectNum == 26) {
 		strcpy(filename, "photo.pcx");
-	} else if (_partNum == 3 && _selectedObjectNum == 39) {
+	} else if (_part == kPartThree && _selectedObjectNum == 39) {
 		strcpy(filename, "news2.pcx");
 		_flagsTable[135] = 1;
 	} else if (_currentInfoString1SourceType == 0 && _currentActionObj1Num == 259) {
@@ -474,7 +480,7 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 		if (!_leftMouseButtonPressed && _mouseClick == 1) {
 			_mouseClick = 0;
 		}
-		if (_partNum == 3 && _selectedObjectNum == 45) {
+		if (_part == kPartThree && _selectedObjectNum == 45) {
 			for (int i = 0; i < 13; ++i) {
 				const int offset = _dataTable[204 + i]._yDest * 640 + _dataTable[204 + i]._xDest;
 				static const int itemsTable[] = { 15, 44, 25, 19, 21, 24, 12, 27, 20, 29, 35, 23, 3 };

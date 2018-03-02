@@ -156,7 +156,7 @@ void TuckerEngine::resetVariables() {
 	_lastFrameTime = _system->getMillis();
 	_mainLoopCounter1 = _mainLoopCounter2 = 0;
 	_timerCounter2 = 0;
-	_partNum = _currentPartNum = 0;
+	_part = _currentPart = kPartInit;
 	_locationNum = 0;
 	_nextLocationNum = (_gameFlags & kGameFlagDemo) == 0 ? kStartupLocationGame : kStartupLocationDemo;
 	_gamePaused = false;
@@ -1926,7 +1926,7 @@ void TuckerEngine::rememberSpeechSound() {
 	for (int i = 4; i > 0; --i) {
 		_speechHistoryTable[i] = _speechHistoryTable[i - 1];
 	}
-	_speechHistoryTable[0] = _partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000;
+	_speechHistoryTable[0] = _part * 3000 + _ptTextOffset + _speechSoundNum - 3000;
 }
 
 void TuckerEngine::redrawPanelItems() {
@@ -3257,7 +3257,7 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_bus:
 		_speechSoundNum = readTableInstructionParam(3) - 1;
 		rememberSpeechSound();
-		startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, _speechVolume);
+		startSpeechSound(_part * 3000 + _ptTextOffset + _speechSoundNum - 3000, _speechVolume);
 		_actionPosX = _xPosCurrent;
 		_actionPosY = _yPosCurrent - 64;
 		_actionTextColor = 1;
@@ -3302,7 +3302,7 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_c0s:
 		_speechSoundNum = readTableInstructionParam(3) - 1;
 		rememberSpeechSound();
-		startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, kMaxSoundVolume);
+		startSpeechSound(_part * 3000 + _ptTextOffset + _speechSoundNum - 3000, kMaxSoundVolume);
 		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 		_actionTextColor = 181 + index;
 		if (!_tableInstructionFlag) {
@@ -3765,7 +3765,7 @@ void TuckerEngine::setActionForInventoryObject() {
 		return;
 	}
 	if (_actionVerb == kVerbOpen || _actionVerb == kVerbClose) {
-		if (!(_partNum == 2 && _selectedObjectNum == 19) && !(_partNum == 3 && _selectedObjectNum == 42)) {
+		if (!(_part == kPartTwo && _selectedObjectNum == 19) && !(_part == kPartThree && _selectedObjectNum == 42)) {
 			playSpeechForAction(_actionVerb);
 			_actionVerbLocked = false;
 			_actionRequiresTwoObjects = false;
@@ -3802,8 +3802,8 @@ void TuckerEngine::setActionForInventoryObject() {
 	}
 	// Items with unary usage i.e. "Use X", rather than "Use X on Y"
 	if (
-		(_partNum == 2 && _actionObj1Num == 19) || // radio
-		(_partNum == 3 && (
+		(_part == kPartTwo && _actionObj1Num == 19) || // radio
+		(_part == kPartThree && (
 			 _actionObj1Num ==  3 || // pizza
 			 _actionObj1Num ==  6 || // raincoat
 			 _actionObj1Num == 17 || // ear plugs

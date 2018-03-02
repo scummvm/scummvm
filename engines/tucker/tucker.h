@@ -80,6 +80,13 @@ enum Verb {
 	kVerbUse   = 8
 };
 
+enum Part {
+  kPartInit  = 0,
+  kPartOne   = 1,
+  kPartTwo   = 2,
+  kPartThree = 3
+};
+
 struct Action {
 	int _key;
 	int _testFlag1Num;
@@ -652,8 +659,8 @@ protected:
 	int _mainLoopCounter2;
 	int _timerCounter2;
 	int _flagsTable[kFlagsTableSize];
-	int _partNum;
-	int _currentPartNum;
+	Part _part;
+	Part _currentPart;
 	int _locationNum;
 	int _nextLocationNum;
 	bool _gamePaused;

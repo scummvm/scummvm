@@ -532,32 +532,32 @@ void TuckerEngine::loadObj() {
 		return;
 	}
 	if (_locationNum < 24) {
-		_partNum = 1;
+		_part = kPartOne;
 		_speechSoundBaseNum = 2639;
 	} else if (_locationNum < 41 || (_locationNum > 69 && _locationNum < 73) || (_locationNum > 78 && _locationNum < 83)) {
-		_partNum = 2;
+		_part = kPartTwo;
 		_speechSoundBaseNum = 2679;
 	} else {
-		_partNum = 3;
+		_part = kPartThree;
 		_speechSoundBaseNum = 2719;
 	}
-	if (_partNum == _currentPartNum) {
+	if (_part == _currentPart) {
 		return;
 	}
-	debug(2, "loadObj() partNum %d locationNum %d", _partNum, _locationNum);
+	debug(2, "loadObj() part %d locationNum %d", _part, _locationNum);
 	// If a savegame is loaded from the launcher, skip the display chapter
 	if (_startSlot != -1)
 		_startSlot = -1;
 	else if ((_gameFlags & kGameFlagDemo) == 0) {
 		handleNewPartSequence();
 	}
-	_currentPartNum = _partNum;
+	_currentPart = _part;
 
 	Common::String filename;
-	filename = Common::String::format("objtxt%d.c", _partNum);
+	filename = Common::String::format("objtxt%d.c", _part);
 	free(_objTxtBuf);
 	_objTxtBuf = loadFile(filename.c_str(), 0);
-	filename = Common::String::format("pt%dtext.c", _partNum);
+	filename = Common::String::format("pt%dtext.c", _part);
 	free(_ptTextBuf);
 	_ptTextBuf = loadFile(filename.c_str(), 0);
 	_characterSpeechDataPtr = _ptTextBuf;
@@ -566,7 +566,7 @@ void TuckerEngine::loadObj() {
 }
 
 void TuckerEngine::loadData() {
-	int objNum = _partNum * 10;
+	int objNum = _part * 10;
 	loadFile("data.c", _loadTempBuf);
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_dataCount = 0;
@@ -597,7 +597,7 @@ void TuckerEngine::loadData() {
 	_dataCount = maxCount;
 	int offset = 0;
 	for (int i = 0; i < count; ++i) {
-		Common::String filename = Common::String::format("scrobj%d%d.pcx", _partNum, i);
+		Common::String filename = Common::String::format("scrobj%d%d.pcx", _part, i);
 		loadImage(filename.c_str(), _loadTempBuf, 0);
 		offset = loadDataHelper(offset, i);
 	}
@@ -615,7 +615,7 @@ int TuckerEngine::loadDataHelper(int offset, int index) {
 }
 
 void TuckerEngine::loadPanObj() {
-	Common::String filename = Common::String::format("panobjs%d.pcx", _partNum);
+	Common::String filename = Common::String::format("panobjs%d.pcx", _part);
 	loadImage(filename.c_str(), _loadTempBuf, 0);
 	int offset = 0;
 	for (int y = 0; y < 5; ++y) {
@@ -712,16 +712,18 @@ void TuckerEngine::loadActionFile() {
 	if ((_gameFlags & kGameFlagDemo) != 0) {
 		strcpy(filename, "action.c");
 	} else {
-		switch (_partNum) {
-		case 1:
-			strcpy(filename, "action1.c");
-			break;
-		case 2:
-			strcpy(filename, "action2.c");
-			break;
-		default:
-			strcpy(filename, "action3.c");
-			break;
+		switch (_part) {
+			case kPartOne:
+				strcpy(filename, "action1.c");
+				break;
+			case kPartTwo:
+				strcpy(filename, "action2.c");
+				break;
+			case kPartThree:
+				strcpy(filename, "action3.c");
+				break;
+			default:
+				break;
 		}
 	}
 	loadFile(filename, _loadTempBuf);
