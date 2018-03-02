@@ -377,7 +377,7 @@ void TuckerEngine::loadCharSizeDta() {
 }
 
 void TuckerEngine::loadPanel() {
-	loadImage((_panelNum == 0) ? "panel1.pcx" : "panel2.pcx", _panelGfxBuf, 0);
+	loadImage((_panelStyle == kPanelStyleVerbs) ? "panel1.pcx" : "panel2.pcx", _panelGfxBuf, 0);
 }
 
 void TuckerEngine::loadBudSpr() {
@@ -984,7 +984,7 @@ void TuckerEngine::loadActionsTable() {
 				assert(found);
 			}
 			_forceRedrawPanelItems = true;
-			_panelState = 1;
+			_panelType = kPanelTypeEmpty;
 			setCursorState(kCursorStateDisabledHidden);
 			_tableInstructionsPtr = _csDataBuf + t._pos + 1;
 			_csDataLoaded = true;
@@ -1046,7 +1046,7 @@ void TuckerEngine::loadActionsTable() {
 		_nextAction = 0;
 		_csDataLoaded = false;
 		_forceRedrawPanelItems = true;
-		_panelState = 0;
+		_panelType = kPanelTypeNormal;
 		setCursorState(kCursorStateNormal);
 		_csDataHandled = false;
 		_actionVerbLocked = false;

@@ -3020,11 +3020,11 @@ void TuckerEngine::execData3PreUpdate_locationNum70() {
 		_flagsTable[143] = 0;
 		_updateLocation70StringLen = 0;
 		_forceRedrawPanelItems = true;
-		_panelState = 1;
+		_panelType = kPanelTypeEmpty;
 		setCursorState(kCursorStateDisabledHidden);
 	}
 	_forceRedrawPanelItems = true;
-	_panelState = 1;
+	_panelType = kPanelTypeEmpty;
 	setCursorState(kCursorStateDisabledHidden);
 	int pos = getPositionForLine(22, _infoBarBuf);
 	const int yPos = (_flagsTable[143] == 0) ? 90 : 72;

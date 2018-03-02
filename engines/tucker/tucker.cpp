@@ -211,11 +211,11 @@ void TuckerEngine::resetVariables() {
 	_cursorState = kCursorStateNormal;
 	_updateCursorFlag = false;
 
-	_panelNum = 1;
-	_panelState = 0;
+	_panelStyle = kPanelStyleIcons;
+	_panelState = kPanelStateNormal;
+	_panelType  = kPanelTypeNormal;
 	_forceRedrawPanelItems = true;
 	_redrawPanelItemsCounter = 0;
-	_switchPanelFlag = 0;
 	memset(_panelObjectsOffsetTable, 0, sizeof(_panelObjectsOffsetTable));
 	_switchPanelCounter = 0;
 	_conversationOptionsCount = 0;
@@ -424,7 +424,7 @@ void TuckerEngine::mainLoop() {
 		updateCharPosition();
 		if (_cursorState == kCursorStateNormal) {
 			updateCursor();
-		} else if (_panelState == 2) {
+		} else if (_panelType == kPanelTypeLoadSavePlayQuit) {
 			handleMouseOnPanel();
 		}
 		if (_mainLoopCounter2 == 0) {
@@ -465,12 +465,12 @@ void TuckerEngine::mainLoop() {
 			_mainLoopCounter1 = 0;
 		}
 		if (_locationHeight == 140) {
-			switchPanelType();
+			togglePanelStyle();
 			redrawPanelItems();
 			if (_displayGameHints && _gameHintsIndex < 6) {
 				updateGameHints();
 			}
-			if (_panelState == 0) {
+			if (_panelType == kPanelTypeNormal) {
 				if (_panelLockedFlag || _pendingActionDelay > 0) {
 					if (!_fadedPanel) {
 						updateItemsGfxColors(0x60, 0x80);
@@ -531,7 +531,7 @@ void TuckerEngine::mainLoop() {
 		if (_locationHeight == 140) {
 			redrawPanelOverBackground();
 		}
-		if (_panelState == 3) {
+		if (_panelType == kPanelTypeLoadSaveSavegame) {
 			saveOrLoad();
 		}
 		execData3PostUpdate();
@@ -643,7 +643,7 @@ void TuckerEngine::parseEvents() {
 				_inputKeys[kInputKeyPause] = true;
 				break;
 			case Common::KEYCODE_F1:
-				_inputKeys[kInputKeyToggleInventory] = true;
+				_inputKeys[kInputKeyTogglePanelStyle] = true;
 				break;
 			case Common::KEYCODE_F2:
 				_inputKeys[kInputKeyToggleTextSpeech] = true;
@@ -697,12 +697,22 @@ void TuckerEngine::parseEvents() {
 			break;
 		}
 	}
+
+	if (_inputKeys[kInputKeyTogglePanelStyle]) {
+		if (_panelType == kPanelTypeNormal && _panelState == kPanelStateNormal) {
+			_switchPanelCounter = 1;
+			_panelState = kPanelStateShrinking;
+		}
+		_inputKeys[kInputKeyTogglePanelStyle] = false;
+	}
+
 	if (_inputKeys[kInputKeySkipSpeech]) {
 		if (isSpeechSoundPlaying()) {
 			stopSpeechSound();
 		}
 		_inputKeys[kInputKeySkipSpeech] = false;
 	}
+
 	_quitGame = shouldQuit();
 }
 
@@ -733,7 +743,6 @@ void TuckerEngine::setupNewLocation() {
 	debug(2, "setupNewLocation() current %d next %d", _locationNum, _nextLocationNum);
 	_locationNum = _nextLocationNum;
 	loadObj();
-	_switchPanelFlag = 0;
 	_nextLocationNum = 0;
 	_fadePaletteCounter = 0;
 	_mainLoopCounter2 = 0;
@@ -810,7 +819,7 @@ void TuckerEngine::updateMouseState() {
 		}
 	}
 	if (_cursorState == kCursorStateDialog) {
-		if (_panelState == 1) {
+		if (_panelType == kPanelTypeEmpty) {
 			setCursorStyle(kCursorTalk);
 		}
 		if (_mousePosY < 140) {
@@ -1385,7 +1394,7 @@ void TuckerEngine::saveOrLoad() {
 		}
 		if (_mousePosX > 244 && _mousePosX < 310 && _mousePosY > 170 && _mousePosY < 188) {
 			_forceRedrawPanelItems = true;
-			_panelState = 2;
+			_panelType = kPanelTypeLoadSavePlayQuit;
 			return;
 		}
 		if (_mousePosX > 260 && _mousePosX < 290 && _mousePosY > 152 && _mousePosY < 168) {
@@ -1395,7 +1404,7 @@ void TuckerEngine::saveOrLoad() {
 				loadGameState(_currentSaveLoadGameState);
 			}
 			_forceRedrawPanelItems = true;
-			_panelState = 0;
+			_panelType = kPanelTypeNormal;
 			setCursorState(kCursorStateNormal);
 			return;
 		}
@@ -1417,14 +1426,14 @@ void TuckerEngine::handleMouseOnPanel() {
 		if (_mousePosX < 96) {
 			_saveOrLoadGamePanel = 0;
 			_forceRedrawPanelItems = true;
-			_panelState = 3;
+			_panelType = kPanelTypeLoadSaveSavegame;
 		} else if (_mousePosX < 158) {
 			_saveOrLoadGamePanel = 1;
 			_forceRedrawPanelItems = true;
-			_panelState = 3;
+			_panelType = kPanelTypeLoadSaveSavegame;
 		} else if (_mousePosX < 218) {
 			_forceRedrawPanelItems = true;
-			_panelState = 0;
+			_panelType = kPanelTypeNormal;
 			setCursorState(kCursorStateNormal);
 		} else {
 			_quitGame = true;
@@ -1432,36 +1441,25 @@ void TuckerEngine::handleMouseOnPanel() {
 	}
 }
 
-void TuckerEngine::switchPanelType() {
-	if (_inputKeys[kInputKeyToggleInventory]) {
-		_inputKeys[kInputKeyToggleInventory] = false;
-		if (_panelState == 0 && _switchPanelFlag == 0) {
-			_switchPanelFlag = 1;
-			_switchPanelCounter = 1;
-			return;
-		}
-	}
-	if (_switchPanelFlag == 0) {
-		return;
-	}
-	if (_switchPanelFlag == 1) {
-		if (_switchPanelCounter == 25) {
-			if (_panelNum == 0) {
-				_panelNum = 1;
-			} else {
-				_panelNum = 0;
+void TuckerEngine::togglePanelStyle() {
+	switch (_panelState) {
+		case kPanelStateShrinking:
+			if (++_switchPanelCounter == 25) {
+				_panelStyle = (_panelStyle == kPanelStyleVerbs) ? kPanelStyleIcons : kPanelStyleVerbs;
+				loadPanel();
+				_forceRedrawPanelItems = true;
+				_panelState = kPanelStateExpanding;
 			}
-			_switchPanelFlag = 2;
-			loadPanel();
-			_forceRedrawPanelItems = true;
-		} else {
-			++_switchPanelCounter;
-		}
-	} else {
-		--_switchPanelCounter;
-		if (_switchPanelCounter == 0) {
-			_switchPanelFlag = 0;
-		}
+			break;
+
+		case kPanelStateExpanding:
+			if (--_switchPanelCounter == 0) {
+				_panelState = kPanelStateNormal;
+			}
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -1930,7 +1928,7 @@ void TuckerEngine::rememberSpeechSound() {
 }
 
 void TuckerEngine::redrawPanelItems() {
-	if (_forceRedrawPanelItems || (_redrawPanelItemsCounter != 0 && _panelState == 0)) {
+	if (_forceRedrawPanelItems || (_redrawPanelItemsCounter != 0 && _panelType == kPanelTypeNormal)) {
 		_forceRedrawPanelItems = false;
 		if (_redrawPanelItemsCounter > 0) {
 			--_redrawPanelItemsCounter;
@@ -1940,34 +1938,36 @@ void TuckerEngine::redrawPanelItems() {
 		uint8 *dst = nullptr;
 		int sz = 0;
 
-		switch (_panelState) {
-		case 0:
-			src = _panelGfxBuf;
-			dst = _itemsGfxBuf + 3200;
-			sz = 16000;
-			break;
-		case 1:
-			src = _panelGfxBuf + 16320;
-			dst = _itemsGfxBuf;
-			sz = 19200;
-			break;
-		case 2:
-			src = _panelGfxBuf + 16320;
-			dst = _itemsGfxBuf;
-			sz = 19200;
-			memcpy(dst, src, sz);
-			src = _panelGfxBuf + 55040;
-			dst = _itemsGfxBuf + 6400;
-			sz = 5120;
-			break;
-		case 3:
-			src = _panelGfxBuf + 35200;
-			dst = _itemsGfxBuf;
-			sz = 19200;
-			break;
+		switch (_panelType) {
+			case kPanelTypeNormal:
+				src = _panelGfxBuf;
+				dst = _itemsGfxBuf + 3200;
+				sz = 16000;
+				break;
+			case kPanelTypeEmpty:
+				src = _panelGfxBuf + 16320;
+				dst = _itemsGfxBuf;
+				sz = 19200;
+				break;
+			case kPanelTypeLoadSavePlayQuit:
+				src = _panelGfxBuf + 16320;
+				dst = _itemsGfxBuf;
+				sz = 19200;
+				memcpy(dst, src, sz);
+				src = _panelGfxBuf + 55040;
+				dst = _itemsGfxBuf + 6400;
+				sz = 5120;
+				break;
+			case kPanelTypeLoadSaveSavegame:
+				src = _panelGfxBuf + 35200;
+				dst = _itemsGfxBuf;
+				sz = 19200;
+				break;
+			default:
+				break;
 		}
 		memcpy(dst, src, sz);
-		if (_panelState == 0) {
+		if (_panelType == kPanelTypeNormal) {
 			redrawPanelItemsHelper();
 		}
 	}
@@ -2161,7 +2161,7 @@ void TuckerEngine::updateCharacterAnimation() {
 				if (_backgroundSpriteCurrentFrame > _backgroundSpriteLastFrame) {
 					_backgroundSpriteCurrentAnimation = -1;
 					_backgroundSpriteCurrentFrame = 0;
-					if (_nextAction == 0 && _panelState == 0) {
+					if (_nextAction == 0 && _panelType == kPanelTypeNormal) {
 						setCursorState(kCursorStateNormal);
 					}
 				}
@@ -2430,7 +2430,7 @@ void TuckerEngine::handleMap() {
 				return;
 			}
 			_locationMaskType = 2;
-			_panelState = 0;
+			_panelType = kPanelTypeNormal;
 			setCursorState(kCursorStateNormal);
 			if (_selectedObject._locationObjectLocationNum == 99) {
 				_noPositionChangeAfterMap = true;
@@ -3218,7 +3218,7 @@ int TuckerEngine::executeTableInstruction() {
 	const int code = readTableInstructionCode(&index);
 	switch (code) {
 	case kCode_pan:
-		_panelState = readTableInstructionParam(2);
+		_panelType = (PanelType)readTableInstructionParam(2);
 		_forceRedrawPanelItems = true;
 		return 0;
 	case kCode_bua:
@@ -3463,7 +3463,7 @@ void TuckerEngine::setActionVerbUnderCursor() {
 		_actionVerb = kVerbWalk;
 	} else if (_mousePosX > 195) {
 		_actionVerb = kVerbLook;
-	} else if (_panelNum == 0) {
+	} else if (_panelStyle == kPanelStyleVerbs) {
 		_actionVerb = ((_mousePosY - 150) / 17) * 3 + (_mousePosX / 67);
 	} else {
 		_actionVerb = kVerbWalk;
@@ -3647,7 +3647,7 @@ bool TuckerEngine::testLocationMaskArea(int xBase, int yBase, int xPos, int yPos
 }
 
 void TuckerEngine::handleMouseClickOnInventoryObject() {
-	if (_panelState != 0) {
+	if (_panelType != kPanelTypeNormal) {
 		return;
 	}
 	if (_mousePosY < 150 || _mousePosX < 212) {
@@ -3668,7 +3668,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 			_actionVerb = kVerbWalk;
 			_actionVerbLocked = false;
 			_forceRedrawPanelItems = true;
-			_panelState = 2;
+			_panelType = kPanelTypeLoadSavePlayQuit;
 			setCursorState(kCursorStateDialog);
 		}
 		break;

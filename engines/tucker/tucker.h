@@ -68,6 +68,24 @@ enum CursorState {
 	kCursorStateDisabledHidden = 2
 };
 
+enum PanelState {
+	kPanelStateNormal    = 0,
+	kPanelStateShrinking = 1,
+	kPanelStateExpanding = 2
+};
+
+enum PanelStyle {
+	kPanelStyleVerbs = 0,
+	kPanelStyleIcons = 1
+};
+
+enum PanelType {
+	kPanelTypeNormal           = 0,
+	kPanelTypeEmpty            = 1,
+	kPanelTypeLoadSavePlayQuit = 2,
+	kPanelTypeLoadSaveSavegame = 3
+};
+
 enum Verb {
 	kVerbWalk  = 0,
 	kVerbLook  = 1,
@@ -232,7 +250,7 @@ enum {
 enum InputKey {
 	kInputKeyPause = 0,
 	kInputKeyEscape,
-	kInputKeyToggleInventory,
+	kInputKeyTogglePanelStyle,
 	kInputKeyToggleTextSpeech,
 	kInputKeyHelp,
 	kInputKeyCount,
@@ -346,7 +364,7 @@ protected:
 	void updateSfxData3_2();
 	void saveOrLoad();
 	void handleMouseOnPanel();
-	void switchPanelType();
+	void togglePanelStyle();
 	void redrawPanelOverBackground();
 	void drawConversationTexts();
 	void updateScreenScrolling();
@@ -715,11 +733,11 @@ protected:
 	CursorState _cursorState;
 	bool _updateCursorFlag;
 
-	int _panelNum;
-	int _panelState;
+	PanelStyle _panelStyle;
+	PanelState _panelState;
+	PanelType  _panelType;
 	bool _forceRedrawPanelItems;
 	int _redrawPanelItemsCounter;
-	int _switchPanelFlag;
 	int _panelObjectsOffsetTable[50];
 	int _switchPanelCounter;
 	int _conversationOptionsCount;
