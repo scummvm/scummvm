@@ -181,6 +181,24 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	return result;
 }
 
+void DarkSideCutscenes::animatePharoah2(int frame) {
+	if (frame)
+		_ball.draw(0, frame - 1);
+	_claw.draw(0, 5, Common::Point(CLAW_XLIST2[frame], CLAW_YLIST2[frame]), SPRFLAG_800);
+	_claw.draw(0, 6, Common::Point(149, 184));
+	_dragon1.draw(0, PHAROAH_FRAMES[frame], Common::Point(139, PHAROAH_YLIST[frame]), SPRFLAG_800);
+	_claw.draw(0, frame % 5, Common::Point(CLAW_XLIST[frame], CLAW_YLIST[frame]), SPRFLAG_800);
+}
+
+void DarkSideCutscenes::animatePharoah(int frame) {
+	if (frame)
+		_ball.draw(0, frame - 1);
+	_claw.draw(0, 5, Common::Point(CLAW_XLIST2[frame], CLAW_YLIST2[frame]), SPRFLAG_800);
+	_claw.draw(0, 6, Common::Point(149, 184));
+	_dragon1.draw(0, PHAROAH_FRAMES[frame], Common::Point(139, PHAROAH_YLIST[frame]), SPRFLAG_800);
+	_claw.draw(0, frame % 5, Common::Point(CLAW_XLIST2[frame], CLAW_YLIST2[frame]), SPRFLAG_800);
+}
+
 bool DarkSideCutscenes::showDarkSideIntro1() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -353,15 +371,6 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	return true;
 }
 
-void DarkSideCutscenes::animatePharoah(int frame) {
-	if (frame)
-		_ball.draw(0, frame - 1);
-	_claw.draw(0, 5, Common::Point(CLAW_XLIST2[frame], CLAW_YLIST2[frame]), SPRFLAG_800);
-	_claw.draw(0, 6, Common::Point(149, 184));
-	_dragon1.draw(0, PHAROAH_FRAMES[frame], Common::Point(139, PHAROAH_YLIST[frame]), SPRFLAG_800);
-	_claw.draw(0, frame % 5, Common::Point(CLAW_XLIST2[frame], CLAW_YLIST2[frame]), SPRFLAG_800);
-}
-
 #define ANIMATE_PHAROAH \
 	screen.restoreBackground(); \
 	animatePharoah(clawCtr); \
@@ -380,7 +389,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 
 	for (idx = 0; idx < 32; ++idx) {
 		screen.restoreBackground();
-		animatePharoah(idx);
+		animatePharoah2(idx);
 
 		if (idx == 0)
 			screen.fadeIn();
@@ -511,7 +520,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 
 	for (idx = 0; idx < 32; ++idx) {
 		screen.restoreBackground();
-		animatePharoah(idx);
+		animatePharoah2(idx);
 
 		showSubtitles();
 		WAIT(3);
@@ -579,7 +588,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 
 	for (idx = 0; idx < 32; ++idx) {
 		screen.restoreBackground();
-		animatePharoah(idx);
+		animatePharoah2(idx);
 
 		if (_subtitleSize)
 			showSubtitles();
@@ -664,6 +673,132 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		showSubtitles();
 		WAIT(3);
 	} while (sound.isSoundPlaying() || !vocIndex || _subtitleSize);
+
+	sound.playFX(0);
+	screen.fadeOut();
+
+	return true;
+}
+
+bool DarkSideCutscenes::showDarkSideIntro3() {
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+	SpriteResource fly("fly.int");
+	SpriteResource bird[11];
+	SpriteResource drop[4];
+	for (int idx = 0; idx < 11; ++idx)
+		bird[idx].load(Common::String::format("bird%02d.int", idx));
+	for (int idx = 0; idx < 4; ++idx)
+		drop[idx].load(Common::String::format("drop%d.int", idx));
+
+	screen.loadPalette("fly.pal");
+	screen.loadBackground("fly.raw");
+	screen.saveBackground();
+
+	// TODO: Subtitle stuff
+	recordTime();
+	showSubtitles();
+
+	screen.fadeIn();
+	sound.playSound("pharoh11.voc");
+
+	for (int idx = 0; idx < 35; ++idx) {
+		screen.restoreBackground();
+		fly.draw(0, idx);
+
+		if (idx == 16 || idx == 28)
+			sound.playFX(43);
+		WAIT(2);
+	}
+
+	sound.playFX(0);
+	screen.fadeOut();
+	sound.setMusicVolume(95);
+	screen.loadBackground("bird.raw");
+	screen.saveBackground();
+	screen.fadeIn();
+
+	for (int idx = 0; idx < 81; ++idx) {
+		screen.restoreBackground();
+		bird[idx % 8].draw(0, 0);
+
+		switch (idx) {
+		case 1:
+			sound.playSound("comet.voc");
+			sound.playFX(43);
+			break;
+		case 16:
+		case 39:
+			sound.playFX(43);
+			break;
+		case 21:
+			sound.playSound("comet.voc");
+			break;
+		case 56:
+			sound.playSound("screech.voc");
+			break;
+		case 61:
+			sound.playSound("disint.voc");
+			break;
+		case 73:
+			sound.playSound("laff1.voc");
+			break;
+		default:
+			break;
+		}
+
+		WAIT(2);
+	}
+
+	sound.playFX(0);
+	screen.loadBackground("drop.raw");
+	screen.saveBackground();
+
+	for (int idx = 0; idx < 39; ++idx) {
+		screen.restoreBackground();
+		drop[idx / 12].draw(0, idx % 12);
+
+		if (idx == 9)
+			sound.playSound("branch.voc");
+		else if (idx == 22)
+			sound.playSound("vine.voc");
+
+		WAIT(2);
+	}
+
+	sound.playSound("thud.voc");
+	screen.fadeOut(24);
+
+	SpriteResource end[3] = {
+		SpriteResource("end1.int"), SpriteResource("end2.int"), SpriteResource("end3.int")
+	};
+	screen.loadBackground("end.raw");
+	screen.saveBackground();
+	screen.fadeIn();
+	//sound.playSong(16);
+
+	for (int idx = 0; idx < 19; ++idx) {
+		screen.restoreBackground();
+		end[idx / 8].draw(0, idx % 8);
+		WAIT(4);
+	}
+
+	SpriteResource title2("title2.int");
+	const byte TITLE_XLIST1[] = { 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55 };
+	const byte TITLE_XLIST2[] = { 160, 155, 150, 145, 140, 135, 130, 125, 120, 115, 110, 105 };
+	const byte TITLE_YLIST[] = { 0, 5, 10, 15, 20, 25, 30, 36, 44, 51, 57, 62 };
+
+	screen.saveBackground();
+	WAIT(20);
+
+	for (int idx = 11; idx >= 0; --idx) {
+		screen.restoreBackground();
+		title2.draw(0, 0, Common::Point(TITLE_XLIST1[idx], TITLE_YLIST[idx]), 0, idx);
+		title2.draw(0, 1, Common::Point(TITLE_XLIST2[idx], TITLE_YLIST[idx]), 0, idx);
+
+		WAIT(2);
+	}
 
 	return true;
 }
