@@ -247,7 +247,8 @@ void TuckerEngine::resetVariables() {
 	_pendingActionDelay = 0;
 	_charPositionFlagNum = 0;
 	_charPositionFlagValue = 0;
-	_actionVerb = kVerbWalk;
+	_actionVerb = _currentActionVerb = _previousActionVerb = kVerbWalk;
+	_actionVerbLocked = false;
 	_nextAction = 0;
 	_selectedObjectNum = 0;
 	_selectedObjectType = 0;
@@ -255,7 +256,6 @@ void TuckerEngine::resetVariables() {
 	_actionObj1Type = _actionObj2Type = 0;
 	_actionObj1Num = _actionObj2Num = 0;
 	_actionRequiresTwoObjects = false;
-	_actionVerbLocked = false;
 	_actionPosX = 0;
 	_actionPosY = 0;
 	_selectedObjectLocationMask = false;
@@ -302,8 +302,6 @@ void TuckerEngine::resetVariables() {
 	memset(_characterAnimationsTable, 0, sizeof(_characterAnimationsTable));
 	memset(_characterStateTable, 0, sizeof(_characterStateTable));
 	_backgroundSprOffset = 0;
-	_currentActionVerb = 0;
-	_previousActionVerb = 0;
 	_mainSpritesBaseOffset = 0;
 	_currentSpriteAnimationLength = 0;
 	_currentSpriteAnimationFrame = 0;
@@ -831,7 +829,7 @@ void TuckerEngine::updateMouseState() {
 void TuckerEngine::updateCharPositionHelper() {
 	setCursorState(kCursorStateDisabledHidden );
 	_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-	_currentActionVerb = 0;
+	_currentActionVerb = kVerbWalk;
 	startSpeechSound(_speechSoundNum, _speechVolume);
 	int pos = getPositionForLine(_speechSoundNum, _characterSpeechDataPtr);
 	_characterSpeechDataPtr += pos;
@@ -855,7 +853,7 @@ void TuckerEngine::updateCharPosition() {
 			}
 			if (_currentActionObj1Num == 259) {
 				handleSpecialObjectSelectionSequence();
-				_currentActionVerb = 0;
+				_currentActionVerb = kVerbWalk;
 				return;
 			}
 			_speechSoundNum = _currentActionObj1Num;
@@ -897,7 +895,7 @@ void TuckerEngine::updateCharPosition() {
 				return;
 			} else if (_currentActionObj1Num == 91) {
 				handleSpecialObjectSelectionSequence();
-				_currentActionVerb = 0;
+				_currentActionVerb = kVerbWalk;
 				return;
 			}
 			break;
@@ -945,7 +943,7 @@ void TuckerEngine::updateCharPosition() {
 	}
 	if (!skip) {
 		playSpeechForAction(_currentActionVerb);
-		_currentActionVerb = 0;
+		_currentActionVerb = kVerbWalk;
 		return;
 	}
 	assert(action);
@@ -969,7 +967,7 @@ void TuckerEngine::updateCharPosition() {
 	_characterSoundFxDelayCounter = action->_fxDelay;
 	_characterSoundFxNum = action->_fxNum;
 	_previousActionVerb = _currentActionVerb;
-	_currentActionVerb = 0;
+	_currentActionVerb = kVerbWalk;
 }
 
 void TuckerEngine::updateFlagsForCharPosition() {
@@ -1143,7 +1141,7 @@ void TuckerEngine::updateCursor() {
 			} else {
 				_actionVerbLocked = false;
 				_actionRequiresTwoObjects = false;
-				_currentActionVerb = 0;
+				_currentActionVerb = kVerbWalk;
 				setSelectedObjectKey();
 			}
 		}
@@ -3683,7 +3681,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 				_actionCharacterNum = 99;
 				setCursorState(kCursorStateDisabledHidden);
 				_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-				_currentActionVerb = 0;
+				_currentActionVerb = kVerbWalk;
 				_speechSoundNum = 2235;
 				startSpeechSound(_speechSoundNum, _speechVolume);
 				_characterSpeechDataPtr = _ptTextBuf + getPositionForLine(_speechSoundNum, _ptTextBuf);

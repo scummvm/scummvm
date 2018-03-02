@@ -1350,7 +1350,7 @@ void TuckerEngine::updateSprite_locationNum21() {
 
 void TuckerEngine::execData3PreUpdate_locationNum21() {
 	if (_xPosCurrent > 460 && _flagsTable[58] == 0 && _nextAction == 0) {
-		_currentActionVerb = 0;
+		_currentActionVerb = kVerbWalk;
 		_pendingActionDelay = 0;
 		_flagsTable[59] = 1;
 		_nextAction = 2;
@@ -1754,7 +1754,7 @@ void TuckerEngine::execData3PreUpdate_locationNum28() {
 		_csDataLoaded = false;
 		_pendingActionDelay = 0;
 		_pendingActionIndex = 0;
-		_currentActionVerb = 0;
+		_currentActionVerb = kVerbWalk;
 	}
 }
 
@@ -2356,7 +2356,7 @@ void TuckerEngine::execData3PreUpdate_locationNum53() {
 		_csDataLoaded = false;
 		_pendingActionDelay = 0;
 		_pendingActionIndex = 0;
-		_currentActionVerb = 0;
+		_currentActionVerb = kVerbWalk;
 	}
 }
 
