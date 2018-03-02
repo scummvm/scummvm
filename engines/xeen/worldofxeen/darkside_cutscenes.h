@@ -36,9 +36,11 @@ private:
 	SpriteResource _ball, _claw, _dragon1;
 private:
 	/**
-	 * Initial animation of the dragon pharoah
+	 * Initial animation of the Dragon Pharoah moving his hands to the
+	 * crystal ball, and then moving them back again
+	 * @param fadeIn		If set, fades in screen after first frame
 	 */
-	void animatePharoah2(int frame);
+	bool rubCrystalBall(bool fadeIn = false);
 
 	/**
 	 * Animates the dragon pharoah
@@ -89,7 +91,7 @@ protected:
 	/**
 	 * Shows the Pharaoh ending screen where score text is shown
 	 */
-	void showPharaohEndText(const char *msg1, const char *msg2 = nullptr, const char *msg3 = nullptr);
+	bool showPharaohEndText(const char *msg1, const char *msg2 = nullptr, const char *msg3 = nullptr);
 public:
 	DarkSideCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 

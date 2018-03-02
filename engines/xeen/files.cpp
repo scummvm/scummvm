@@ -271,8 +271,10 @@ bool FileManager::setup() {
 }
 
 void FileManager::setGameCc(int ccMode) {
-	if (g_vm->getGameID() != GType_WorldOfXeen)
-		ccMode = g_vm->getGameID() == GType_Clouds ? 0 : 1;
+	if (ccMode != 2) {
+		if (g_vm->getGameID() != GType_WorldOfXeen)
+			ccMode = g_vm->getGameID() == GType_Clouds ? 0 : 1;
+	}
 
 	File::setCurrentArchive(ccMode);
 	_isDarkCc = ccMode != 0;
