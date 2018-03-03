@@ -69,7 +69,7 @@ const int LEFT_CLAW_IDLE_Y[32] = {
 };
 
 
-bool DarkSideCutscenes::showDarkSideTitle() {
+bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -162,7 +162,7 @@ bool DarkSideCutscenes::showDarkSideTitle() {
 	return true;
 }
 
-bool DarkSideCutscenes::showDarkSideIntro() {
+bool DarkSideCutscenes::showDarkSideIntro(bool seenIntro) {
 	FileManager &files = *g_vm->_files;
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
@@ -170,20 +170,31 @@ bool DarkSideCutscenes::showDarkSideIntro() {
 	files._isDarkCc = true;
 	files.setGameCc(1);
 
-	_ball.load("ball.int");
-	_dragon1.load("dragon1.int");
-	_claw.load("claw.int");
+	if (showDarkSideTitle(seenIntro)) {
+		if (seenIntro) {
+			if (g_vm->getGameID() == GType_WorldOfXeen)
+				seenIntro = showWorldOfXeenLogo();
+		} else {
+			_ball.load("ball.int");
+			_dragon1.load("dragon1.int");
+			_claw.load("claw.int");
 
-	bool result = showDarkSideIntro1() && showDarkSideIntro2() && showDarkSideIntro3();
+			seenIntro = showDarkSideIntro1() && showDarkSideIntro2() && showDarkSideIntro3();
+
+			_ball.clear();
+			_dragon1.clear();
+			_claw.clear();
+
+			if (seenIntro && g_vm->getGameID() == GType_WorldOfXeen)
+				seenIntro = showWorldOfXeenLogo();
+		}
+	}
 
 	sound.stopAllAudio();
 	sound.setMusicVolume(100);
 	screen.freePages();
-	_ball.clear();
-	_dragon1.clear();
-	_claw.clear();
 
-	return result;
+	return seenIntro;
 }
 
 bool DarkSideCutscenes::rubCrystalBall(bool fadeIn) {
@@ -799,6 +810,61 @@ bool DarkSideCutscenes::showDarkSideIntro3() {
 		WAIT(2);
 	}
 
+	screen.fadeOut();
+	return true;
+}
+
+bool DarkSideCutscenes::showWorldOfXeenLogo() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	SpriteResource fizzle("fizzle.int");
+	SpriteResource wfire[7];
+	for (uint idx = 0; idx < 7; ++idx)
+		wfire[idx].load(Common::String::format("wfire%u.int", idx + 1));
+
+	screen.loadBackground("firemain.raw");
+	screen.loadPalette("firemain.pal");
+	screen.saveBackground();
+	screen.fadeIn();
+	WAIT(10);
+
+	for (int idx = 0; idx < 28; ++idx) {
+		if (idx == 17)
+			sound.playSound("explosio.voc");
+		if (!sound.isSoundPlaying() && idx < 17)
+			sound.playSound("rumble.voc");
+
+		screen.restoreBackground();
+		wfire[idx / 5].draw(0, idx % 5, Common::Point(0, 45));
+		WAIT(2);
+	}
+
+	screen.saveBackground();
+
+	for (int loopCtr = 0; loopCtr < 2; ++loopCtr) {
+		for (int idx = 0; idx < 21; ++idx) {
+			screen.restoreBackground();
+			wfire[6].draw(0, idx, Common::Point(0, 45));
+			
+			switch (idx) {
+			case 0:
+			case 11:
+				sound.playSound("thud.voc");
+				break;
+			case 3:
+				sound.playFX(60);
+				break;
+			default:
+				break;
+			}
+
+			WAIT(2);
+		}
+	}
+
+	WAIT(10);
+	screen.fadeOut();
 	return true;
 }
 

@@ -48,6 +48,11 @@ private:
 	void animatePharoah(int frame);
 
 	/**
+	 * Shows the Dark Side of Xeen title screen
+	 */
+	bool showDarkSideTitle(bool seenIntro);
+
+	/**
 	 * Shows part 1 of the Dark Side intro - up to the point where
 	 * Dragon Pharoah ends "contact the Queen"
 	 */
@@ -62,6 +67,11 @@ private:
 	 * Shows part 3 of the Dark Side intro
 	 */
 	bool showDarkSideIntro3();
+
+	/**
+	 * Shows the World of Xeen logo from the end of the Dark Side intro
+	 */
+	bool showWorldOfXeenLogo();
 
 	/**
 	 * Shows part 1 of the Dark Side ending, everything up to Corak appearing
@@ -96,14 +106,9 @@ public:
 	DarkSideCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 
 	/**
-	 * Shows the Dark Side of Xeen title screen
-	 */
-	bool showDarkSideTitle();
-
-	/**
 	 * Shows the Dark Side of Xeen intro sequence
 	 */
-	bool showDarkSideIntro();
+	bool showDarkSideIntro(bool seenIntro);
 
 	/**
 	 * Shows the Dark Side of Xeen ending sequence

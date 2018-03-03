@@ -161,14 +161,6 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uin
 		showDarkSideEnding(score);
 	else if (name == "WORLDEND")
 		showWorldOfXeenEnding((GooberState)status, score);
-	else if (name == "CLOUDS_TITLE")
-		showCloudsTitle();
-	else if (name == "CLOUDS_INTRO")
-		showCloudsIntro();
-	else if (name == "DARKSIDE_TITLE")
-		showDarkSideTitle();
-	else if (name == "DARKSIDE_INTRO")
-		showDarkSideIntro();
 
 	_screen->freePages();
 	_sound->stopAllAudio();
@@ -178,25 +170,16 @@ void WorldOfXeenEngine::showCutscene(const Common::String &name, int status, uin
 
 void WorldOfXeenEngine::showStartup() {
 	bool seenIntro = ConfMan.hasKey("seen_intro") && ConfMan.getBool("seen_intro");
+	bool completedIntro;
 
-	// Show the title animation
-	bool completedTitle = true;
-	//(getGameID() == GType_Clouds) ?
-	//	showCloudsTitle() : showDarkSideTitle();
-	_sound->stopAllAudio();
+	if (getGameID() == GType_Clouds)
+		completedIntro = showCloudsIntro();
+	else
+		completedIntro = showDarkSideIntro(seenIntro);
 
-	// Unless user aborted the title, go
-	if (completedTitle && !seenIntro) {
-		if (getGameID() == GType_Clouds)
-			seenIntro = showCloudsIntro();
-		else
-			seenIntro = showDarkSideIntro();
-
-		seenIntro = false;//****DEBUG****
-		if (seenIntro) {
-			ConfMan.setBool("seen_intro", true);
-			ConfMan.flushToDisk();
-		}
+	if (!seenIntro && completedIntro) {
+		ConfMan.setBool("seen_intro", true);
+		ConfMan.flushToDisk();
 	}
 
 	_gameMode = GMODE_MENU;
