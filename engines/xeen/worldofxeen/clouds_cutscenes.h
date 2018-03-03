@@ -44,6 +44,16 @@ private:
 	void loadScreen(const Common::String &name);
 
 	/**
+	 * Shows the Clouds of Xeen title screen
+	 */
+	bool showCloudsTitle();
+
+	/**
+	 * Inner implementation of the the Clouds of Xeen intro sequence
+	 */
+	bool showCloudsIntroInner();
+
+	/**
 	 * Shows part 1 of the Clouds of Xeen ending, with the castle being destroyed
 	 */
 	bool showCloudsEnding1();
@@ -70,11 +80,6 @@ private:
 	bool showCloudsEnding5();
 public:
 	CloudsCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
-
-	/**
-	 * Shows the Clouds of Xeen title screen
-	 */
-	bool showCloudsTitle();
 
 	/**
 	 * Shows the Clouds of Xeen intro sequence

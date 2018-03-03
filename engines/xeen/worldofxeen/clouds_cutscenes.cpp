@@ -33,6 +33,23 @@ namespace WorldOfXeen {
 	if (++cloudsCtr > 20) \
 		cloudsCtr = 1
 
+bool CloudsCutscenes::showCloudsIntro() {
+	FileManager &files = *g_vm->_files;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+
+	files._isDarkCc = false;
+	files.setGameCc(0);
+
+	bool seenIntro = showCloudsTitle() && showCloudsIntroInner();
+
+	sound.stopAllAudio();
+	sound.setMusicVolume(100);
+	screen.freePages();
+
+	return seenIntro;
+}
+
 bool CloudsCutscenes::showCloudsTitle() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
@@ -90,7 +107,7 @@ bool CloudsCutscenes::showCloudsTitle() {
 	return true;
 }
 
-bool CloudsCutscenes::showCloudsIntro() {
+bool CloudsCutscenes::showCloudsIntroInner() {
 	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
