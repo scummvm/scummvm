@@ -113,25 +113,6 @@ public:
 	virtual ~SettingsBaseDialog() {}
 };
 
-class CreditsScreen: public ButtonContainer {
-private:
-	CreditsScreen(XeenEngine *vm) : ButtonContainer(vm) {}
-
-	void execute(const char *content);
-public:
-	static void show(XeenEngine *vm);
-};
-
-class PleaseWait {
-private:
-	Common::String _msg;
-public:
-	PleaseWait(bool isOops = false);
-	~PleaseWait();
-
-	void show();
-};
-
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_H */

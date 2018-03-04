@@ -9,11 +9,7 @@ MODULE_OBJS := \
 	worldofxeen/worldofxeen_resources.o \
 	swordsofxeen/swordsofxeen.o \
 	swordsofxeen/swordsofxeen_menu.o \
-	character.o \
-	combat.o \
-	cutscenes.o \
-	debugger.o \
-	detection.o \
+	dialogs/credits_screen.o \
 	dialogs/dialogs.o \
 	dialogs/dialogs_awards.o \
 	dialogs/dialogs_char_info.o \
@@ -34,6 +30,12 @@ MODULE_OBJS := \
 	dialogs/dialogs_quick_ref.o \
 	dialogs/dialogs_spells.o \
 	dialogs/dialogs_whowill.o \
+	dialogs/please_wait.o \
+	character.o \
+	combat.o \
+	cutscenes.o \
+	debugger.o \
+	detection.o \
 	events.o \
 	files.o \
 	font.o \

@@ -27,6 +27,7 @@
 #include "xeen/saves.h"
 #include "xeen/screen.h"
 #include "xeen/xeen.h"
+#include "xeen/dialogs/please_wait.h"
 
 namespace Xeen {
 
