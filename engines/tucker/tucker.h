@@ -98,6 +98,13 @@ enum Verb {
 	kVerbUse   = 8
 };
 
+enum VerbPreposition {
+	kVerbPrepositionNone = 0,
+
+	kVerbPrepositionWith = 11,
+	kVerbPrepositionTo   = 12
+};
+
 enum Part {
   kPartInit  = 0,
   kPartOne   = 1,

@@ -2068,12 +2068,12 @@ void TuckerEngine::drawInfoString() {
 	} else {
 		infoStringWidth = verbWidth;
 	}
-	int verbPreposition = 0;
+	VerbPreposition verbPreposition = kVerbPrepositionNone;
 	int verbPrepositionWidth = 0;
 	if (_actionRequiresTwoObjects) {
-		verbPreposition = (_actionVerb == kVerbGive) ? 12 : 11;
+		verbPreposition = (_actionVerb == kVerbGive) ? kVerbPrepositionTo : kVerbPrepositionWith;
 		verbPrepositionWidth = getStringWidth(verbPreposition, infoStrBuf) + 4;
-		if (_gameLang != Common::EN_ANY && (_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition > 0) {
+		if (_gameLang != Common::EN_ANY && (_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition != kVerbPrepositionNone) {
 			infoStringWidth = 0;
 			verbWidth = 0;
 			object1NameWidth = 0;
@@ -2084,7 +2084,7 @@ void TuckerEngine::drawInfoString() {
 		}
 	}
 	const int xPos = (kScreenWidth / 2) - 1 - (infoStringWidth / 2);
-	if (_gameLang == Common::EN_ANY || (_actionObj2Num == 0 && _actionObj2Type == 0) || verbPreposition == 0) {
+	if (_gameLang == Common::EN_ANY || (_actionObj2Num == 0 && _actionObj2Type == 0) || verbPreposition == kVerbPrepositionNone) {
 		drawItemString(xPos, _actionVerb + 1, infoStrBuf);
 		if (_actionObj1Num > 0 || _actionObj1Type > 0) {
 			drawItemString(xPos + 4 + verbWidth, _actionObj1Num + 1, obj1StrBuf);
