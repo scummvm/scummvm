@@ -21,6 +21,7 @@
  */
 
 #include "xeen/swordsofxeen/swordsofxeen.h"
+#include "xeen/swordsofxeen/swordsofxeen_menu.h"
 
 namespace Xeen {
 namespace SwordsOfXeen {
@@ -30,9 +31,7 @@ SwordsOfXeenEngine::SwordsOfXeenEngine(OSystem *syst, const XeenGameDescription 
 }
 
 void SwordsOfXeenEngine::showMainMenu() {
-	// TODO: Implement Swords of Xeen main menu. For now, skip to playing game
-	_saves->newGame();
-	_gameMode = GMODE_PLAY_GAME;
+	MainMenu::show(this);
 }
 
 void SwordsOfXeenEngine::death() {

@@ -186,8 +186,8 @@ void WorldOfXeenEngine::showStartup() {
 }
 
 void WorldOfXeenEngine::showMainMenu() {
-	if (getGameID() != GType_WorldOfXeen) {
-		// TODO: Implement menus for Clouds and Dark Side of Xeen
+	// TODO: Remove this as the game main menus are properly implemented
+	if (getGameID() == GType_Clouds) {
 		_saves->newGame();
 		_gameMode = GMODE_PLAY_GAME;
 		return;
