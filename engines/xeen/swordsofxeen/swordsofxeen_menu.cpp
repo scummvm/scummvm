@@ -21,7 +21,7 @@
  */
 
 #include "xeen/swordsofxeen/swordsofxeen_menu.h"
-#include "xeen/dialogs_difficulty.h"
+#include "xeen/dialogs/dialogs_difficulty.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {

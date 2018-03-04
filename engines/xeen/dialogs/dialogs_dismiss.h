@@ -20,41 +20,27 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_DISMISS_H
+#define XEEN_DIALOGS_DISMISS_H
 
 #include "xeen/dialogs/dialogs.h"
+#include "xeen/party.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class Dismiss : public ButtonContainer {
 private:
-	SpriteResource _start;
+	SpriteResource _iconSprites;
 
-	/**
-	 * Constructor
-	 */
-	MainMenu(XeenEngine *vm);
+	Dismiss(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	/**
-	 * Shows the menu
-	 */
 	void execute();
 
-	/**
-	 * Loads buttons for the menu
-	 */
 	void loadButtons();
 public:
-	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
-	 */
 	static void show(XeenEngine *vm);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_DISMISS_H */

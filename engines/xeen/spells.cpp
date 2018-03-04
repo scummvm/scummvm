@@ -21,8 +21,8 @@
  */
 
 #include "xeen/spells.h"
-#include "xeen/dialogs_items.h"
-#include "xeen/dialogs_spells.h"
+#include "xeen/dialogs/dialogs_items.h"
+#include "xeen/dialogs/dialogs_spells.h"
 #include "xeen/files.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"

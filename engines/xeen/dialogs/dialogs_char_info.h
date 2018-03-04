@@ -20,41 +20,50 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_CHAR_INFO_H
+#define XEEN_DIALOGS_CHAR_INFO_H
 
 #include "xeen/dialogs/dialogs.h"
+#include "xeen/party.h"
+#include "xeen/window.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class CharacterInfo : public ButtonContainer {
 private:
-	SpriteResource _start;
+	SpriteResource _iconSprites;
+	DrawStruct _drawList[24];
+	int _cursorCell;
+
+	CharacterInfo(XeenEngine *vm) : ButtonContainer(vm), _cursorCell(0) {}
+
+	void execute(int charIndex);
 
 	/**
-	 * Constructor
+	 * Load the draw structure list with frame numbers and positions
 	 */
-	MainMenu(XeenEngine *vm);
+	void loadDrawStructs();
 
 	/**
-	 * Shows the menu
+	 * Set up the button list for the dialog
 	 */
-	void execute();
+	void addButtons();
 
 	/**
-	 * Loads buttons for the menu
+	 * Return a string containing the details of the character
 	 */
-	void loadButtons();
+	Common::String loadCharacterDetails(const Character &c);
+
+	/**
+	 * Cursor display handling
+	 */
+	void showCursor(bool flag);
+
+	bool expandStat(int attrib, const Character &c);
 public:
-	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
-	 */
-	static void show(XeenEngine *vm);
+	static void show(XeenEngine *vm, int charIndex);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_CHAR_INFO_H */

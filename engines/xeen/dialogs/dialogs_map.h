@@ -20,41 +20,43 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_MAP_H
+#define XEEN_DIALOGS_MAP_H
 
 #include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class XeenEngine;
+
+class MapDialog: public ButtonContainer {
 private:
-	SpriteResource _start;
+	int _animFrame;
+	SpriteResource _globalSprites;
+	Common::Point _pt, _arrowPt;
+	bool _frameEndFlag;
+private:
+	MapDialog(XeenEngine *vm) : ButtonContainer(vm),
+		_animFrame(0), _frameEndFlag(false) {}
 
 	/**
-	 * Constructor
+	 * Draws the map contents when outdoors
 	 */
-	MainMenu(XeenEngine *vm);
+	void drawOutdoors();
 
 	/**
-	 * Shows the menu
+	 * Draws the map contents when indoors
+	 */
+	void drawIndoors();
+
+	/**
+	 * Handles the display of the dialog
 	 */
 	void execute();
-
-	/**
-	 * Loads buttons for the menu
-	 */
-	void loadButtons();
 public:
-	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
-	 */
 	static void show(XeenEngine *vm);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_AUTOMAP_H */

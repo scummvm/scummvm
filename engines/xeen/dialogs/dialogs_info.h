@@ -20,41 +20,27 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_INFO_H
+#define XEEN_DIALOGS_INFO_H
 
+#include "common/str-array.h"
 #include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class InfoDialog : public ButtonContainer {
 private:
-	SpriteResource _start;
+	Common::StringArray _lines;
 
-	/**
-	 * Constructor
-	 */
-	MainMenu(XeenEngine *vm);
+	InfoDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	/**
-	 * Shows the menu
-	 */
 	void execute();
 
-	/**
-	 * Loads buttons for the menu
-	 */
-	void loadButtons();
+	void protectionText();
 public:
-	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
-	 */
 	static void show(XeenEngine *vm);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_INFO_H */

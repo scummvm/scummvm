@@ -20,41 +20,41 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_QUICK_FIGHT_H
+#define XEEN_DIALOGS_QUICK_FIGHT_H
 
+#include "xeen/character.h"
 #include "xeen/dialogs/dialogs.h"
+#include "xeen/sprites.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class QuickFight : public ButtonContainer {
 private:
-	SpriteResource _start;
-
+	SpriteResource _icons;
+	Character *_currentChar;
+private:
 	/**
 	 * Constructor
 	 */
-	MainMenu(XeenEngine *vm);
+	QuickFight(XeenEngine *vm, Character *currentChar);
 
 	/**
-	 * Shows the menu
+	 * Executes the display of the dialog
 	 */
 	void execute();
 
 	/**
-	 * Loads buttons for the menu
+	 * Load butons for the dialog
 	 */
 	void loadButtons();
 public:
 	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
+	 * Show the dialog
 	 */
-	static void show(XeenEngine *vm);
+	static void show(XeenEngine *vm, Character *currentChar);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_QUICK_FIGHT_H */

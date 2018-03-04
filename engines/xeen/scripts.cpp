@@ -22,9 +22,9 @@
 
 #include "common/config-manager.h"
 #include "xeen/scripts.h"
-#include "xeen/dialogs_input.h"
-#include "xeen/dialogs_whowill.h"
-#include "xeen/dialogs_query.h"
+#include "xeen/dialogs/dialogs_input.h"
+#include "xeen/dialogs/dialogs_whowill.h"
+#include "xeen/dialogs/dialogs_query.h"
 #include "xeen/party.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"

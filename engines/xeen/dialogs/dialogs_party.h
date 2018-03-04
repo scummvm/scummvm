@@ -20,41 +20,68 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_PARTY_H
+#define XEEN_DIALOGS_PARTY_H
 
+#include "common/array.h"
 #include "xeen/dialogs/dialogs.h"
+#include "xeen/interface.h"
+#include "xeen/screen.h"
+#include "xeen/sprites.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+/**
+ * Shows the Party dialog that's shown when signing into an inn
+ */
+class PartyDialog : public ButtonContainer, public PartyDrawer {
 private:
-	SpriteResource _start;
+	XeenEngine *_vm;
+	SpriteResource _uiSprites;
+	DrawStruct _faceDrawStructs[4];
+	Common::String _partyDetails;
+	Common::Array<int> _charList;
 
 	/**
 	 * Constructor
 	 */
-	MainMenu(XeenEngine *vm);
+	PartyDialog(XeenEngine *vm);
 
 	/**
-	 * Shows the menu
+	 * Executes the dialog
 	 */
 	void execute();
 
 	/**
-	 * Loads buttons for the menu
+	 * Loads buttons for the dialog
 	 */
 	void loadButtons();
+
+	/**
+	 * Initialises a list of elements to draw
+	 */
+	void initDrawStructs();
+
+	/**
+	 * Sets up the background
+	 */
+	void setupBackground();
+
+	/**
+	 * Sets up the faces from the avaialble roster for display in the party dialog
+	 */
+	void setupFaces(int firstDisplayChar, bool updateFlag);
+
+	void startingCharChanged(int firstDisplayChar);
+
+	int selectCharacter(bool isDelete, int firstDisplayChar);
 public:
 	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
+	 * Show the Party dialog
 	 */
 	static void show(XeenEngine *vm);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_PARTY_H */

@@ -20,41 +20,47 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_CONTROL_PANEL_H
+#define XEEN_DIALOGS_CONTROL_PANEL_H
 
 #include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class ControlPanel : public ButtonContainer {
 private:
-	SpriteResource _start;
+	SpriteResource _iconSprites;
+	Common::String _btnSoundText, _btnMusicText;
+	bool _debugFlag;
+private:
+	ControlPanel(XeenEngine *vm) : ButtonContainer(vm), _debugFlag(false) {}
 
 	/**
-	 * Constructor
+	 * Inner handler for showing the dialog
 	 */
-	MainMenu(XeenEngine *vm);
+	int execute();
 
 	/**
-	 * Shows the menu
-	 */
-	void execute();
-
-	/**
-	 * Loads buttons for the menu
+	 * Loads the buttons for the dialog
 	 */
 	void loadButtons();
+
+	/**
+	 * Gets the text for the dialog buttons
+	 */
+	Common::String getButtonText();
+
+	/**
+	 * Gets the current time
+	 */
+	Common::String getTimeText() const;
 public:
 	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
+	 * Show the control panel
 	 */
-	static void show(XeenEngine *vm);
+	static int show(XeenEngine *vm);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_CONTROL_PANEL_H */

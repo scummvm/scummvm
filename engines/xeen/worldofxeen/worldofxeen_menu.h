@@ -24,7 +24,7 @@
 #define XEEN_WORLDOFXEEN_WORLDOFXEEN_MENU_H
 
 #include "xeen/xeen.h"
-#include "xeen/dialogs.h"
+#include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
 namespace WorldOfXeen {

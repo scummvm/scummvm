@@ -20,41 +20,42 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_dialogs_message_H
+#define XEEN_dialogs_message_H
 
 #include "xeen/dialogs/dialogs.h"
+#include "xeen/character.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+enum MessageWaitType { WT_FREEZE_WAIT = 0, WT_NONFREEZED_WAIT = 1,
+	WT_LOC_WAIT = 2, WT_ANIMATED_WAIT = 3 };
+
+class MessageDialog : public ButtonContainer {
 private:
-	SpriteResource _start;
+	MessageDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	/**
-	 * Constructor
-	 */
-	MainMenu(XeenEngine *vm);
-
-	/**
-	 * Shows the menu
-	 */
-	void execute();
-
-	/**
-	 * Loads buttons for the menu
-	 */
-	void loadButtons();
+	void execute(const Common::String &msg, MessageWaitType waitType);
 public:
-	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
-	 */
-	static void show(XeenEngine *vm);
+	static void show(XeenEngine *vm, const Common::String &msg,
+		MessageWaitType waitType = WT_FREEZE_WAIT);
 };
 
-} // End of namespace SwordsOfXeen
+class ErrorScroll {
+public:
+	static void show(XeenEngine *vm, const Common::String &msg,
+		MessageWaitType waitType = WT_FREEZE_WAIT);
+};
+
+class CantCast: public ButtonContainer {
+private:
+	CantCast(XeenEngine *vm) : ButtonContainer(vm) {}
+
+	void execute(int spellId, int componentNum);
+public:
+	static void show(XeenEngine *vm, int spellId, int componentNum);
+};
+
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_dialogs_message_H */

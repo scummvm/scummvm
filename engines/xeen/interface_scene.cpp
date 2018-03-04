@@ -21,7 +21,7 @@
  */
 
 #include "xeen/interface_scene.h"
-#include "xeen/dialogs_message.h"
+#include "xeen/dialogs/dialogs_message.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 

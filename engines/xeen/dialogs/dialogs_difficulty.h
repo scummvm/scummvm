@@ -20,41 +20,41 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_DIFFICULTY_H
+#define XEEN_DIALOGS_DIFFICULTY_H
 
 #include "xeen/dialogs/dialogs.h"
+#include "xeen/party.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class DifficultyDialog : public ButtonContainer {
 private:
-	SpriteResource _start;
+	SpriteResource _sprites;
 
 	/**
 	 * Constructor
 	 */
-	MainMenu(XeenEngine *vm);
+	DifficultyDialog(XeenEngine *vm);
 
 	/**
-	 * Shows the menu
+	 * Shows the dialog
 	 */
-	void execute();
+	int execute();
 
 	/**
-	 * Loads buttons for the menu
+	 * Loads buttons for the dialog
 	 */
 	void loadButtons();
 public:
 	/**
-	 * Shows the main menu
+	 * Shows the difficulty selection dialog
 	 * @param vm		Engine reference
+	 * @returns			0=Adventurer, 1=Warrior, -1 exit
 	 */
-	static void show(XeenEngine *vm);
+	static int show(XeenEngine *vm);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_DIFFICULTY_H */

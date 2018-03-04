@@ -23,7 +23,7 @@
 #include "common/scummsys.h"
 #include "xeen/worldofxeen/worldofxeen_menu.h"
 #include "xeen/worldofxeen/worldofxeen.h"
-#include "xeen/dialogs_difficulty.h"
+#include "xeen/dialogs/dialogs_difficulty.h"
 #include "xeen/resources.h"
 
 namespace Xeen {

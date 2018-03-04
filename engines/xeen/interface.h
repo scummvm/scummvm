@@ -24,7 +24,7 @@
 #define XEEN_INTERFACE_H
 
 #include "common/scummsys.h"
-#include "xeen/dialogs.h"
+#include "xeen/dialogs/dialogs.h"
 #include "xeen/interface_minimap.h"
 #include "xeen/interface_scene.h"
 #include "xeen/party.h"

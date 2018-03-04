@@ -20,41 +20,22 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_QUICK_REF_H
+#define XEEN_DIALOGS_QUICK_REF_H
 
 #include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class QuickReferenceDialog : public ButtonContainer {
 private:
-	SpriteResource _start;
+	QuickReferenceDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	/**
-	 * Constructor
-	 */
-	MainMenu(XeenEngine *vm);
-
-	/**
-	 * Shows the menu
-	 */
 	void execute();
-
-	/**
-	 * Loads buttons for the menu
-	 */
-	void loadButtons();
 public:
-	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
-	 */
 	static void show(XeenEngine *vm);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_QUICK_REF_H */

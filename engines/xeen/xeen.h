@@ -32,7 +32,7 @@
 #include "engines/engine.h"
 #include "xeen/combat.h"
 #include "xeen/debugger.h"
-#include "xeen/dialogs.h"
+#include "xeen/dialogs/dialogs.h"
 #include "xeen/events.h"
 #include "xeen/files.h"
 #include "xeen/interface.h"

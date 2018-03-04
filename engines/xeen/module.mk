@@ -14,26 +14,26 @@ MODULE_OBJS := \
 	cutscenes.o \
 	debugger.o \
 	detection.o \
-	dialogs.o \
-	dialogs_awards.o \
-	dialogs_char_info.o \
-	dialogs_control_panel.o \
-	dialogs_create_char.o \
-	dialogs_difficulty.o \
-	dialogs_dismiss.o \
-	dialogs_exchange.o \
-	dialogs_info.o \
-	dialogs_input.o \
-	dialogs_items.o \
-	dialogs_map.o \
-	dialogs_message.o \
-	dialogs_party.o \
-	dialogs_query.o \
-	dialogs_quests.o \
-	dialogs_quick_fight.o \
-	dialogs_quick_ref.o \
-	dialogs_spells.o \
-	dialogs_whowill.o \
+	dialogs/dialogs.o \
+	dialogs/dialogs_awards.o \
+	dialogs/dialogs_char_info.o \
+	dialogs/dialogs_control_panel.o \
+	dialogs/dialogs_create_char.o \
+	dialogs/dialogs_difficulty.o \
+	dialogs/dialogs_dismiss.o \
+	dialogs/dialogs_exchange.o \
+	dialogs/dialogs_info.o \
+	dialogs/dialogs_input.o \
+	dialogs/dialogs_items.o \
+	dialogs/dialogs_map.o \
+	dialogs/dialogs_message.o \
+	dialogs/dialogs_party.o \
+	dialogs/dialogs_query.o \
+	dialogs/dialogs_quests.o \
+	dialogs/dialogs_quick_fight.o \
+	dialogs/dialogs_quick_ref.o \
+	dialogs/dialogs_spells.o \
+	dialogs/dialogs_whowill.o \
 	events.o \
 	files.o \
 	font.o \

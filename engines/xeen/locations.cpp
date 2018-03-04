@@ -21,11 +21,11 @@
  */
 
 #include "xeen/locations.h"
-#include "xeen/dialogs_input.h"
-#include "xeen/dialogs_items.h"
-#include "xeen/dialogs_party.h"
-#include "xeen/dialogs_query.h"
-#include "xeen/dialogs_spells.h"
+#include "xeen/dialogs/dialogs_input.h"
+#include "xeen/dialogs/dialogs_items.h"
+#include "xeen/dialogs/dialogs_party.h"
+#include "xeen/dialogs/dialogs_query.h"
+#include "xeen/dialogs/dialogs_spells.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 

@@ -20,41 +20,22 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_WHOWHILL_H
+#define XEEN_DIALOGS_WHOWHILL_H
 
 #include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class WhoWill : public ButtonContainer {
 private:
-	SpriteResource _start;
+	WhoWill(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	/**
-	 * Constructor
-	 */
-	MainMenu(XeenEngine *vm);
-
-	/**
-	 * Shows the menu
-	 */
-	void execute();
-
-	/**
-	 * Loads buttons for the menu
-	 */
-	void loadButtons();
+	int execute(int message, int action, bool type);
 public:
-	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
-	 */
-	static void show(XeenEngine *vm);
+	static int show(XeenEngine *vm, int message, int action, bool type);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_WHOWHILL_H */

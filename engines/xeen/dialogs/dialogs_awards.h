@@ -20,41 +20,33 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_AWARDS_H
+#define XEEN_DIALOGS_AWARDS_H
 
 #include "xeen/dialogs/dialogs.h"
+#include "xeen/character.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class Awards : public ButtonContainer {
 private:
-	SpriteResource _start;
+	SpriteResource _iconSprites;
+private:
+	Awards(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	/**
-	 * Constructor
+	 * Executes the dialog
 	 */
-	MainMenu(XeenEngine *vm);
+	void execute(const Character *ch);
 
 	/**
-	 * Shows the menu
+	 * Add buttons for the dialog
 	 */
-	void execute();
-
-	/**
-	 * Loads buttons for the menu
-	 */
-	void loadButtons();
+	void addButtons();
 public:
-	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
-	 */
-	static void show(XeenEngine *vm);
+	static void show(XeenEngine *vm, const Character *ch);
 };
 
-} // End of namespace SwordsOfXeen
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_AWARDS_H */

@@ -21,21 +21,21 @@
  */
 
 #include "xeen/interface.h"
-#include "xeen/dialogs_char_info.h"
-#include "xeen/dialogs_control_panel.h"
-#include "xeen/dialogs_message.h"
-#include "xeen/dialogs_quick_fight.h"
-#include "xeen/dialogs_info.h"
-#include "xeen/dialogs_items.h"
-#include "xeen/dialogs_map.h"
-#include "xeen/dialogs_query.h"
-#include "xeen/dialogs_quests.h"
-#include "xeen/dialogs_quick_ref.h"
-#include "xeen/dialogs_spells.h"
+#include "xeen/dialogs/dialogs_char_info.h"
+#include "xeen/dialogs/dialogs_control_panel.h"
+#include "xeen/dialogs/dialogs_message.h"
+#include "xeen/dialogs/dialogs_quick_fight.h"
+#include "xeen/dialogs/dialogs_info.h"
+#include "xeen/dialogs/dialogs_items.h"
+#include "xeen/dialogs/dialogs_map.h"
+#include "xeen/dialogs/dialogs_query.h"
+#include "xeen/dialogs/dialogs_quests.h"
+#include "xeen/dialogs/dialogs_quick_ref.h"
+#include "xeen/dialogs/dialogs_spells.h"
 #include "xeen/resources.h"
 #include "xeen/xeen.h"
 
-#include "xeen/dialogs_party.h"
+#include "xeen/dialogs/dialogs_party.h"
 
 namespace Xeen {
 

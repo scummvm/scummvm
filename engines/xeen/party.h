@@ -29,7 +29,7 @@
 #include "common/serializer.h"
 #include "xeen/character.h"
 #include "xeen/combat.h"
-#include "xeen/dialogs_message.h"
+#include "xeen/dialogs/dialogs_message.h"
 
 namespace Xeen {
 

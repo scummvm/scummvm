@@ -20,41 +20,31 @@
  *
  */
 
-#ifndef XEEN_SWORDSOFXEEN_MENU_H
-#define XEEN_SWORDSOFXEEN_MENU_H
+#ifndef XEEN_DIALOGS_QUERY_H
+#define XEEN_DIALOGS_QUERY_H
 
 #include "xeen/dialogs/dialogs.h"
 
 namespace Xeen {
-namespace SwordsOfXeen {
 
-class MainMenu : public ButtonContainer {
+class Confirm : public ButtonContainer {
 private:
-	SpriteResource _start;
+	Confirm(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	/**
-	 * Constructor
-	 */
-	MainMenu(XeenEngine *vm);
-
-	/**
-	 * Shows the menu
-	 */
-	void execute();
-
-	/**
-	 * Loads buttons for the menu
-	 */
-	void loadButtons();
+	bool execute(const Common::String &msg, int mode);
 public:
-	/**
-	 * Shows the main menu
-	 * @param vm		Engine reference
-	 */
-	static void show(XeenEngine *vm);
+	static bool show(XeenEngine *vm, const Common::String &msg, int mode = 0);
 };
 
-} // End of namespace SwordsOfXeen
+class YesNo : public ButtonContainer {
+private:
+	YesNo(XeenEngine *vm) : ButtonContainer(vm) {}
+
+	bool execute(bool type, bool townFlag);
+public:
+	static bool show(XeenEngine *vm, bool type, bool townFlag = false);
+};
+
 } // End of namespace Xeen
 
-#endif /* XEEN_SWORDSOFXEEN_MENU_H */
+#endif /* XEEN_DIALOGS_QUERY_H */
