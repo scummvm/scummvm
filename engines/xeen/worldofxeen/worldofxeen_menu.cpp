@@ -70,12 +70,15 @@ void MainMenuContainer::draw() {
 
 void MainMenuContainer::execute() {
 	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
 	bool showFlag = false;
 
 	// Show the cursor
 	events.clearEvents();
 	events.setCursor(0);
 	events.showCursor();
+
+	screen.doScroll(true, false);
 
 	while (!g_vm->shouldExit() && g_vm->_gameMode == GMODE_NONE) {
 		// Draw the menu
@@ -86,7 +89,7 @@ void MainMenuContainer::execute() {
 		// Fade/scroll in screen if first frame
 		if (!showFlag) {
 			loadBackground();
-			// TODO: doScroll(false, false);
+			screen.doScroll(false, false);
 			showFlag = true;
 		}
 

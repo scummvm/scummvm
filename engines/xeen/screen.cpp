@@ -163,4 +163,100 @@ void Screen::restoreBackground(int slot) {
 	blitFrom(_savedScreens[slot - 1]);
 }
 
+bool Screen::doScroll(bool rollUp, bool fadeIn) {
+	Screen &screen = *_vm->_screen;
+	EventsManager &events = *_vm->_events;
+	const int SCROLL_L[8] = { 29, 23, 15, -5, -11, -23, -49, -71 };
+	const int SCROLL_R[8] = { 165, 171, 198, 218, 228, 245, 264, 281 };
+
+	if (_vm->_files->_isDarkCc) {
+		if (fadeIn)
+			screen.fadeIn(2);
+		return _vm->shouldExit();
+	}
+
+	screen.saveBackground();
+
+	// Load hand sprites
+	SpriteResource *hand[16];
+	for (int i = 0; i < 16; ++i) {
+		Common::String name = Common::String::format("hand%02d.vga", i);
+		hand[i] = new SpriteResource(name);
+	}
+
+	// Load marb sprites
+	SpriteResource *marb[5];
+	for (int i = 0; i < 4; ++i) {
+		Common::String name = Common::String::format("marb%02d.vga", i + 1);
+		marb[i] = new SpriteResource(name);
+	}
+
+	if (rollUp) {
+		for (int i = 22, ctr = 7; i > 0 && !events.isKeyMousePressed()
+				&& !_vm->shouldExit(); --i) {
+			events.updateGameCounter();
+			screen.restoreBackground();
+
+			if (i > 14) {
+				hand[14]->draw(0, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
+				hand[15]->draw(0, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
+				--ctr;
+			} else if (i != 0) {
+				hand[i - 1]->draw(0, 0);
+			}
+
+			if (i <= 20)
+				marb[(i - 1) / 5]->draw(0, (i - 1) % 5);
+			screen.update();
+
+			while (!_vm->shouldExit() && events.timeElapsed() == 0)
+				events.pollEventsAndWait();
+
+			if (i == 0 && fadeIn)
+				screen.fadeIn(2);
+		}
+	} else {
+		for (int i = 0, ctr = 0; i < 22 && !events.isKeyMousePressed()
+				&& !_vm->shouldExit(); ++i) {
+			events.updateGameCounter();
+			screen.restoreBackground();
+
+			if (i < 14) {
+				hand[i]->draw(0, 0);
+			} else {
+				hand[14]->draw(0, 0, Common::Point(SCROLL_L[ctr], 0), SPRFLAG_800);
+				hand[15]->draw(0, 0, Common::Point(SCROLL_R[ctr], 0), SPRFLAG_800);
+				++ctr;
+			}
+
+			if (i < 20) {
+				marb[i / 5]->draw(0, i % 5);
+			}
+			screen.update();
+
+			while (!_vm->shouldExit() && events.timeElapsed() == 0)
+				events.pollEventsAndWait();
+
+			if (i == 0 && fadeIn)
+				screen.fadeIn(2);
+		}
+	}
+
+	if (rollUp) {
+		hand[0]->draw(0, 0);
+		marb[0]->draw(0, 0);
+	} else {
+		screen.restoreBackground();
+	}
+	screen.update();
+
+	// Free resources
+	for (int i = 0; i < 4; ++i)
+		delete marb[i];
+	for (int i = 0; i < 16; ++i)
+		delete hand[i];
+
+	return _vm->shouldExit() || events.isKeyMousePressed();
+}
+
 } // End of namespace Xeen
