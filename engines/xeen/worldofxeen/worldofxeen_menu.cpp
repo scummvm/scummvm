@@ -94,7 +94,7 @@ void WorldOfXeenMenu::execute() {
 			int key = toupper(_buttonValue);
 			_buttonValue = 0;
 
-			if (key == 27) {
+			if (key == Common::KEYCODE_ESCAPE) {
 				// Hide the options menu
 				closeWindow();
 				break;
@@ -115,6 +115,12 @@ void WorldOfXeenMenu::execute() {
 				_vm->_gameMode = GMODE_PLAY_GAME;
 				closeWindow();
 				return;
+			} else if (key == 'L') {
+				_vm->_saves->newGame();
+				if (_vm->_saves->loadGame()) {
+					_vm->_gameMode = GMODE_PLAY_GAME;
+					break;
+				}
 			}
 		}
 	}

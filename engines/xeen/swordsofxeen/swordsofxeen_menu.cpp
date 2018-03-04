@@ -84,6 +84,7 @@ void MainMenu::execute() {
 				}
 				break;
 			case Common::KEYCODE_l:
+				_vm->_saves->newGame();
 				if (_vm->_saves->loadGame())
 					_vm->_gameMode = GMODE_PLAY_GAME;
 				break;

@@ -203,6 +203,7 @@ void XeenEngine::play() {
 	}
 
 	if (_loadSaveSlot >= 0) {
+		_saves->newGame();
 		_saves->loadGameState(_loadSaveSlot);
 		_loadSaveSlot = -1;
 	} else {
