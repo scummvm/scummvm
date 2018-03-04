@@ -183,6 +183,8 @@ public:
 	bool _noDirectionSense;
 	bool _startupWindowActive;
 	uint _endingScore;
+	bool _gameWon[2];
+	uint _finalScore[2];
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();
@@ -251,6 +253,11 @@ public:
 	static Common::String printK(uint value);
 
 	static Common::String printK2(uint value);
+
+	/**
+	 * Saves engine settings
+	 */
+	void saveSettings();
 };
 
 extern XeenEngine *g_vm;

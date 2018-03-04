@@ -62,8 +62,12 @@ Resources::Resources() {
 
 void Resources::loadData() {
 	ResFile file(_buffer);
-	file.syncString(CREDITS);
-	file.syncString(OPTIONS_TITLE);
+	file.syncString(CLOUDS_CREDITS);
+	file.syncString(DARK_SIDE_CREDITS);
+	file.syncString(SWORDS_CREDITS1);
+	file.syncString(SWORDS_CREDITS2);
+	file.syncString(CLOUDS_MAIN_MENU);
+	file.syncString(WORLD_MAIN_MENU);
 	file.syncString(THE_PARTY_NEEDS_REST);
 	file.syncString(WHO_WILL);
 	file.syncString(HOW_MUCH);

@@ -191,11 +191,24 @@ void SettingsBaseDialog::showContents(SpriteResource &title1, bool waitFlag) {
 
 void CreditsScreen::show(XeenEngine *vm) {
 	CreditsScreen *dlg = new CreditsScreen(vm);
-	dlg->execute();
+	
+	switch (vm->getGameID()) {
+	case GType_Clouds:
+		dlg->execute(Res.CLOUDS_CREDITS);
+		break;
+	case GType_Swords:
+		dlg->execute(Res.SWORDS_CREDITS1);
+		dlg->execute(Res.SWORDS_CREDITS2);
+		break;
+	default:
+		dlg->execute(Res.DARK_SIDE_CREDITS);
+		break;
+	}
+	
 	delete dlg;
 }
 
-void CreditsScreen::execute() {
+void CreditsScreen::execute(const char *content) {
 	Screen &screen = *_vm->_screen;
 	Windows &windows = *_vm->_windows;
 	EventsManager &events = *_vm->_events;
@@ -205,7 +218,7 @@ void CreditsScreen::execute() {
 	windows[GAME_WINDOW].close();
 
 	screen.loadBackground("marb.raw");
-	windows[0].writeString(Res.CREDITS);
+	windows[0].writeString(content);
 	doScroll(false, false);
 
 	events.setCursor(0);

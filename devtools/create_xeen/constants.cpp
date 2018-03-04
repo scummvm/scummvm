@@ -60,7 +60,42 @@ enum MagicSpell {
 	NO_SPELL = 76
 };
 
-const char *const CREDITS =
+const char *const CLOUDS_CREDITS = 
+	"\v012\t000\x3""c\f35Designed and Directed By:\n"
+	"\f17Jon Van Caneghem\x3""l\n"
+	"\n"
+	"\t025\f35Programming:\n"
+	"\t035\f17Mark Caldwell\n"
+	"\t035Dave Hathaway\n"
+	"\n"
+	"\t025\f35Sound System & FX:\n"
+	"\t035\f17Todd Hendrix\n"
+	"\n"
+	"\t025\f35Music & Speech:\n"
+	"\t035\f17Tim Tully\n"
+	"\n"
+	"\t025\f35Writing:\n"
+	"\t035\f17Paul Rattner\n"
+	"\t035Debbie Murphy\n"
+	"\t035Jon Van Caneghem\v012\n"
+	"\n"
+	"\n"
+	"\t180\f35Graphics:\n"
+	"\t190\f17Louis Johnson\n"
+	"\t190Jonathan P. Gwyn\n"
+	"\t190Bonita Long-Hemsath\n"
+	"\t190Julia Ulano\n"
+	"\t190Ricardo Barrera\n"
+	"\n"
+	"\t180\f35Testing:\n"
+	"\t190\f17Benjamin Bent\n"
+	"\t190Mario Escamilla\n"
+	"\t190Richard Espy\n"
+	"\t190Scott McDaniel\n"
+	"\t190Clayton Retzer\n"
+	"\t190Michael Suarez\x3""c";
+
+const char *const DARK_SIDE_CREDITS =
 	"\013""012\010""000\003""c\014""35Designed and Directed By:\n"
 	"\014""17Jon Van Caneghem\003""l\n"
 	"\n"
@@ -94,10 +129,47 @@ const char *const CREDITS =
 	"\t190Robert J. Lupo\n"
 	"\t190Clayton Retzer\n"
 	"\t190David Vela\003""c";
+const char *const SWORDS_CREDITS1 =
+	"\v012\x3""c35Published By New World Computing, Inc.\f17\n"
+	"Developed By CATware, Inc.\x3l\n"
+	"\f01Design and Direction\t180Series Created by\n"
+	"\t020Bill Fawcett\t190John Van Caneghem\n"
+	"\n"
+	"\t010Story Contributions\t180Producer & Manual\n"
+	"\t020Ellen Guon\t190Dean Rettig\n"
+	"\n"
+	"\t010Programming & Ideas\t180Original Programming\n"
+	"\t020David Potter\t190Mark Caldwell\n"
+	"\t020Rod Retterath\t190Dave Hathaway\n"
+	"\n"
+	"\t010Manual Illustrations\t180Graphic Artists\n"
+	"\t020Todd Cameron Hamilton\t190Jonathan P. Gwyn\n"
+	"\t020James Clouse\t190Bonnie Long-Hemsath\n"
+	"\t190Julia Ulano\n"
+	"\t190Ricardo Barrera\n";
+const char *const SWORDS_CREDITS2 =
+	"\f05v012\t000\x3l\n"
+	"\t100Sound Programming\n"
+	"\t110Todd Hendrix\n"
+	"\n"
+	"\t100Music\n"
+	"\t110Tim Tully\n"
+	"\t110Quality Assurance Manager\n"
+	"\t110Peter Ryu\n"
+	"\t100Testers\n"
+	"\t110Walter Johnson\n"
+	"\t110Bryan Farina\n"
+	"\t110David Baton\n"
+	"\t110Jack Nalls\n";
 
-const char *const OPTIONS_TITLE =
-	"\x0D\x01\003""c\014""dMight and Magic Options\n"
-	"World of Xeen\x02\n"
+const char *const CLOUDS_MAIN_MENU =
+	"\r\x1\x3""c\fdMight and Magic Options\n"
+	"Clouds of Xeen\x2\n"
+	"\v%03dCopyright (c) 1992 NWC, Inc.\n"
+	"All Rights Reserved\x1";
+const char *const WORLD_MAIN_MENU =
+	"\r\x1\x3""c\fdMight and Magic Options\n"
+	"World of Xeen\x2\n"
 	"\v117Copyright (c) 1993 NWC, Inc.\n"
 	"All Rights Reserved\x01";
 
@@ -1771,8 +1843,12 @@ const char *const DIFFICULTY_TEXT = "\v000\t000\x3""cSelect Game Preference";
 
 void writeConstants(CCArchive &cc) {
 	Common::MemFile file;
-	file.syncString(CREDITS);
-	file.syncString(OPTIONS_TITLE);
+	file.syncString(CLOUDS_CREDITS);
+	file.syncString(DARK_SIDE_CREDITS);
+	file.syncString(SWORDS_CREDITS1);
+	file.syncString(SWORDS_CREDITS2);
+	file.syncString(CLOUDS_MAIN_MENU);
+	file.syncString(WORLD_MAIN_MENU);
 	file.syncString(THE_PARTY_NEEDS_REST);
 	file.syncString(WHO_WILL);
 	file.syncString(HOW_MUCH);

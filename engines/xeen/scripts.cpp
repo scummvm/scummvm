@@ -1084,6 +1084,10 @@ bool Scripts::cmdCutsceneEndClouds(ParamsIterator &params) {
 	party._mazeId = 28;
 	party._mazePosition = Common::Point(18, 4);
 
+	g_vm->_gameWon[0] = true;
+	g_vm->_finalScore[0] = party.getScore();
+	g_vm->saveSettings();
+
 	doCloudsEnding();
 	return false;
 }
@@ -1415,6 +1419,10 @@ bool Scripts::cmdCutsceneEndDarkside(ParamsIterator &params) {
 	party._mazeId = 29;
 	party._mazeDirection = DIR_NORTH;
 	party._mazePosition = Common::Point(25, 21);
+
+	g_vm->_gameWon[1] = true;
+	g_vm->_finalScore[1] = party.getScore();
+	g_vm->saveSettings();
 
 	doDarkSideEnding();
 	return false;

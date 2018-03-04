@@ -117,7 +117,7 @@ class CreditsScreen: public ButtonContainer {
 private:
 	CreditsScreen(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	void execute();
+	void execute(const char *content);
 public:
 	static void show(XeenEngine *vm);
 };

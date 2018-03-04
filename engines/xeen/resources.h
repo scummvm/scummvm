@@ -116,8 +116,12 @@ public:
 	const char **ITEM_NAMES[4];
 
 	// Data loaded from xeen.ccs
-	const char *CREDITS;
-	const char *OPTIONS_TITLE;
+	const char *CLOUDS_CREDITS;
+	const char *DARK_SIDE_CREDITS;
+	const char *SWORDS_CREDITS1;
+	const char *SWORDS_CREDITS2;
+	const char *CLOUDS_MAIN_MENU;
+	const char *WORLD_MAIN_MENU;
 	const char *THE_PARTY_NEEDS_REST;
 	const char *WHO_WILL;
 	const char *HOW_MUCH;

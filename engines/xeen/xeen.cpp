@@ -62,6 +62,8 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_mode = MODE_0;
 	_endingScore = 0;
 	_loadSaveSlot = -1;
+	_gameWon[0] = _gameWon[1] = false;
+	_finalScore[0] = _finalScore[1] = 0;
 	g_vm = this;
 }
 
@@ -110,6 +112,12 @@ bool XeenEngine::initialize() {
 
 	// Setup mixer
 	syncSoundSettings();
+
+	// Load settings
+	_gameWon[0] = ConfMan.hasKey("game_won") && ConfMan.getBool("game_won");
+	_gameWon[1] = ConfMan.hasKey("game_won2") && ConfMan.getBool("game_won2");
+	_finalScore[0] = ConfMan.hasKey("final_score") ? ConfMan.getInt("final_score") : 0;
+	_finalScore[1] = ConfMan.hasKey("final_score2") ? ConfMan.getInt("final_score2") : 0;
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
@@ -292,6 +300,17 @@ void XeenEngine::GUIError(const char *msg, ...) {
 	va_end(va);
 
 	GUIErrorMessage(buffer);
+}
+
+void XeenEngine::saveSettings() {
+	if (_gameWon[0])
+		ConfMan.setBool("game_won", true);
+	if (_gameWon[1])
+		ConfMan.setBool("game_won2", true);
+
+	ConfMan.setInt("final_score", _finalScore[0]);
+	ConfMan.setInt("final_score2", _finalScore[1]);
+	ConfMan.flushToDisk();
 }
 
 } // End of namespace Xeen

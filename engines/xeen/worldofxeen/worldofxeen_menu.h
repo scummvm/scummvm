@@ -29,82 +29,181 @@
 namespace Xeen {
 namespace WorldOfXeen {
 
-class WorldOfXeenMenu : public SettingsBaseDialog {
+class MainMenuDialog;
+
+class MainMenuContainer {
 private:
+	int _animateCtr;
+	SpriteResource _backgroundSprites;
+	MainMenuDialog *_dialog;
+protected:
+	/**
+	 * Draws the main menu background
+	 */
+	void draw();
+
+	/**
+	 * Load the background
+	 */
+	virtual void loadBackground() = 0;
+
+	/**
+	 * Shows the main menu dialog
+	 */
+	virtual void showMenuDialog() = 0;
+public:
+	/**
+	 * Show the main menu for the correct game
+	 */
+	static void show();
+public:
+	/**
+	 * Constructor
+	 */
+	MainMenuContainer(const Common::String &spritesName);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~MainMenuContainer();
+
+	/**
+	 * Execute the menu
+	 */
 	void execute();
-protected:
-	WorldOfXeenMenu(XeenEngine *vm) : SettingsBaseDialog(vm) {}
-protected:
-	virtual void startup(Common::String &title1, Common::String &title2) = 0;
-
-	virtual void setBackground(bool doFade) {}
-
-	virtual void showTitles1(SpriteResource &sprites);
-
-	virtual void showTitles2();
-
-	virtual void setupButtons(SpriteResource *buttons);
 
 	/**
-	 * Opens the menu window
+	 * Sets the dialog being displayed in the menu
 	 */
-	virtual void openWindow() {}
+	void setOwner(MainMenuDialog *dlalog) {
+		_dialog = dlalog;
+	}
+};
+
+class CloudsMainMenuContainer : public MainMenuContainer {
+protected:
+	/**
+	 * Load the background
+	 */
+	virtual void loadBackground();
 
 	/**
-	 * Closes the menu window
+	 * Shows the main menu dialog
 	 */
-	virtual void closeWindow() {}
+	virtual void showMenuDialog();
 public:
-	virtual ~WorldOfXeenMenu() {}
-
-	static void show(XeenEngine *vm);
+	CloudsMainMenuContainer();
 };
 
-class CloudsOptionsMenu : public WorldOfXeenMenu {
+class DarkSideMainMenuContainer : public MainMenuContainer {
 protected:
-	virtual void startup(Common::String &title1, Common::String &title2);
-public:
-	CloudsOptionsMenu(XeenEngine *vm) : WorldOfXeenMenu(vm) {}
+	/**
+	 * Load the background
+	 */
+	virtual void loadBackground();
 
-	virtual ~CloudsOptionsMenu() {}
+	/**
+	* Shows the main menu dialog
+	*/
+	virtual void showMenuDialog();
+public:
+	DarkSideMainMenuContainer();
 };
 
-class DarkSideOptionsMenu : public WorldOfXeenMenu {
+class WorldOfXeenMainMenuContainer : public MainMenuContainer {
 protected:
-	virtual void startup(Common::String &title1, Common::String &title2);
-public:
-	DarkSideOptionsMenu(XeenEngine *vm) : WorldOfXeenMenu(vm) {}
+	/**
+	 * Load the background
+	 */
+	virtual void loadBackground();
 
-	virtual ~DarkSideOptionsMenu() {}
+	/**
+	* Shows the main menu dialog
+	*/
+	virtual void showMenuDialog();
+public:
+	WorldOfXeenMainMenuContainer();
 };
 
-class WorldOptionsMenu : public DarkSideOptionsMenu {
+class MenuContainerDialog : public ButtonContainer {
 private:
-	int _bgFrame;
-protected:
-	virtual void startup(Common::String &title1, Common::String &title2);
-
-	virtual void setBackground(bool doFade);
-
-	virtual void showTitles2() {}
-
-	virtual void setupButtons(SpriteResource *buttons);
-
-	/**
-	 * Opens the menu window
-	 */
-	virtual void openWindow();
-
-	/**
-	 * Closes the menu window
-	 */
-	virtual void closeWindow();
-
-	virtual void showContents(SpriteResource &title1, bool mode);
+	MainMenuContainer *_owner;
 public:
-	WorldOptionsMenu(XeenEngine *vm) : DarkSideOptionsMenu(vm), _bgFrame(0) {}
+	/**
+	 * Constructor
+	 */
+	MenuContainerDialog(MainMenuContainer *owner) : ButtonContainer(g_vm), _owner(owner) {}
 
-	virtual ~WorldOptionsMenu() {}
+	/**
+	 * Destructor
+	 */
+	virtual ~MenuContainerDialog() {
+		_owner->setOwner(nullptr);
+	}
+
+	/**
+	 * Draws the dialog
+	 */
+	virtual void draw() = 0;
+
+	/**
+	 * Handles events
+	 */
+	virtual bool handleEvents() = 0;
+};
+
+class MainMenuDialog : public MenuContainerDialog {
+public:
+	/**
+	 * Constructor
+	 */
+	MainMenuDialog(MainMenuContainer *owner) : MenuContainerDialog(owner) {}
+
+	/**
+	 * Destructor
+	 */
+	virtual ~MainMenuDialog() {}
+
+	/**
+	 * Draws the dialog
+	 */
+	virtual void draw() = 0;
+
+	/**
+	 * Handles events
+	 */
+	virtual bool handleEvents();
+
+};
+
+class CloudsMenuDialog : public MainMenuDialog {
+private:
+	SpriteResource _buttonSprites;
+private:
+	/**
+	 * Loads buttons for the dialog
+	 */
+	void loadButtons();
+public:
+	/**
+	 * Constructor
+	 */
+	CloudsMenuDialog(MainMenuContainer *owner);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~CloudsMenuDialog();
+
+	/**
+	 * Draws the dialog
+	 */
+	virtual void draw();
+
+	/**
+	 * Handles events
+	 */
+	virtual bool handleEvents();
 };
 
 } // End of namespace WorldOfXeen

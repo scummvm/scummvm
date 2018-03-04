@@ -186,14 +186,7 @@ void WorldOfXeenEngine::showStartup() {
 }
 
 void WorldOfXeenEngine::showMainMenu() {
-	// TODO: Remove this as the game main menus are properly implemented
-	if (getGameID() == GType_Clouds) {
-		_saves->newGame();
-		_gameMode = GMODE_PLAY_GAME;
-		return;
-	}
-
-	WorldOfXeenMenu::show(this);
+	WorldOfXeenMainMenuContainer::show();
 }
 
 } // End of namespace WorldOfXeen
