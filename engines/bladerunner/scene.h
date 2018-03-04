@@ -66,6 +66,8 @@ public:
 	bool open(int setId, int sceneId, bool isLoadingGame);
 	bool close(bool isLoadingGame);
 	int  advanceFrame();
+	void resume(bool isLoadingGame = false);
+	void startDefaultLoop();
 	void setActorStart(Vector3 position, int facing);
 
 	void loopSetDefault(int loopId);

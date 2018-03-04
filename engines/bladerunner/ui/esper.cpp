@@ -31,6 +31,7 @@
 #include "bladerunner/font.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/mouse.h"
+#include "bladerunner/scene.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/script/esper_script.h"
 #include "bladerunner/text_resource.h"
@@ -152,7 +153,7 @@ void ESPER::close() {
 
 	//TODO: time->unlock()
 	_vm->_ambientSounds->setVolume(_ambientVolume);
-	//TODO: _vm->_scene->resume(false);
+	_vm->_scene->resume();
 	reset();
 }
 

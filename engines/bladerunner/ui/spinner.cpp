@@ -176,7 +176,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 	_isOpen = false;
 
 	// TODO: Unfreeze game time
-	// TODO: _vm->_scene->resume();
+	_vm->_scene->resume();
 
 	return _selectedDestination;
 }

@@ -38,6 +38,7 @@
 #include "bladerunner/script/scene_script.h"
 #include "bladerunner/ui/spinner.h"
 #include "bladerunner/vqa_player.h"
+#include "bladerunner/zbuffer.h"
 
 #include "common/str.h"
 
@@ -128,7 +129,7 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	_vm->_sliceRenderer->setView(_vm->_view);
 
 	if (isLoadingGame) {
-		// TODO: Advance VQA frame
+		resume(true);
 		if (sceneId == kScenePS10 || sceneId == kScenePS11 || sceneId == kScenePS12 || sceneId == kScenePS13) { // police maze?
 			_vm->_sceneScript->sceneLoaded();
 		}
@@ -140,11 +141,9 @@ bool Scene::open(int setId, int sceneId, bool isLoadingGame) {
 	}
 
 	if (_specialLoopMode == kSceneLoopModeNone) {
-		_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeImmediate, nullptr, nullptr);
-		_defaultLoopSet = true;
-		_defaultLoopPreloadedSet = false;
+		startDefaultLoop();
 	}
-	_vm->_scene->advanceFrame();
+	advanceFrame();
 
 	_vm->_playerActor->setAtXYZ(_actorStartPosition, _actorStartFacing);
 	_vm->_playerActor->setSetId(setId);
@@ -242,6 +241,57 @@ int Scene::advanceFrame() {
 	}
 
 	return frame;
+}
+
+void Scene::resume(bool isLoadingGame) {
+	if (!_vqaPlayer) {
+		return;
+	}
+
+	int targetFrame = _frame;
+
+	if (!isLoadingGame) {
+		_vm->_zbuffer->disable();
+	}
+
+	if (_specialLoopMode == kSceneLoopModeNone) {
+		startDefaultLoop();
+	} else {
+		if (_specialLoopMode == kSceneLoopModeChangeSet) {
+			_vm->_settings->setNewSetAndScene(_setId, _sceneId);
+		}
+		if (_defaultLoopPreloadedSet) {
+			_specialLoopMode = kSceneLoopModeNone;
+			startDefaultLoop();
+			advanceFrame();
+			loopStartSpecial(_specialLoopMode, _specialLoop, false);
+		} else {
+			_defaultLoopPreloadedSet = true;
+			loopStartSpecial(_specialLoopMode, _specialLoop, true);
+			if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeChangeSet) {
+				_vm->playerGainsControl();
+
+			}
+		}
+		if (_specialLoopMode == kSceneLoopModeChangeSet) {
+			_vm->_settings->clearNewSetAndScene();
+		}
+	}
+
+	int frame;
+	do {
+		frame = advanceFrame();
+	} while (frame >= 0 && frame != targetFrame);
+
+	if (!isLoadingGame) {
+		_vm->_zbuffer->enable();
+	}
+}
+
+void Scene::startDefaultLoop() {
+	_vqaPlayer->setLoop(_defaultLoop, -1, kLoopSetModeImmediate, nullptr, nullptr);
+	_defaultLoopSet = true;
+	_defaultLoopPreloadedSet = false;
 }
 
 void Scene::setActorStart(Vector3 position, int facing) {

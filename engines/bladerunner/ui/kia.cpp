@@ -684,10 +684,9 @@ void KIA::unload() {
 
 	// TODO: Unfreeze game time
 
-	//if (!_vm->_settings->isLoadingGame(&Settings) && GameRunning)
-	// 	if (_vm->_gameIsRunning) {
-	// 	_vm->_scene->resume(false);
-	// }
+	if (!_vm->_settings->getLoadingGame() && _vm->_gameIsRunning) {
+		_vm->_scene->resume();
+	}
 }
 
 void KIA::createButtons(int sectionId) {

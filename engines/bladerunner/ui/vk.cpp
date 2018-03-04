@@ -183,7 +183,7 @@ void VK::close() {
 	_vm->_ambientSounds->setVolume(_volumeAmbient);
 
 	// TODO: time->unlock();
-	// _vm->_scene->resume(false);
+	_vm->_scene->resume();
 }
 
 void VK::tick() {
