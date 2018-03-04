@@ -95,7 +95,10 @@ enum Verb {
 	kVerbGive  = 5,
 	kVerbTake  = 6,
 	kVerbMove  = 7,
-	kVerbUse   = 8
+	kVerbUse   = 8,
+
+	kVerbFirst = kVerbWalk,
+	kVerbLast  = kVerbUse
 };
 
 enum VerbPreposition {
@@ -798,7 +801,9 @@ protected:
 	int _pendingActionDelay;
 	int _charPositionFlagNum;
 	int _charPositionFlagValue;
-	int _actionVerb;
+	Verb _actionVerb;
+	Verb _currentActionVerb;
+	Verb _previousActionVerb;
 	int _nextAction;
 	int _selectedObjectNum;
 	int _selectedObjectType;
@@ -865,8 +870,6 @@ protected:
 	int _characterAnimationsTable[200];
 	int _characterStateTable[200];
 	int _backgroundSprOffset;
-	int _currentActionVerb;
-	int _previousActionVerb;
 	int _mainSpritesBaseOffset;
 	int _currentSpriteAnimationLength;
 	int _currentSpriteAnimationFrame;

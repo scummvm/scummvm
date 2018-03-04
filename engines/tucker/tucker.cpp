@@ -986,18 +986,20 @@ void TuckerEngine::updateFlagsForCharPosition() {
 			return;
 		}
 		switch (_previousActionVerb) {
-		case 3:
-		case 4:
-		case 8:
-		case 2:
+		case kVerbTalk:
+		case kVerbOpen:
+		case kVerbClose:
+		case kVerbUse:
 			debug(3, "updateFlagsForCharPosition() set flag %d value %d", _charPositionFlagNum, _charPositionFlagValue);
 			_flagsTable[_charPositionFlagNum] = _charPositionFlagValue;
 			break;
-		case 6:
+		case kVerbTake:
 			if (_charPositionFlagValue == 1) {
 				addObjectToInventory(_charPositionFlagNum);
 				_forceRedrawPanelItems = true;
 			}
+			break;
+		default:
 			break;
 		}
 		if (_pendingActionIndex > 0) {
@@ -1058,9 +1060,10 @@ void TuckerEngine::updateCursor() {
 	}
 	if (_rightMouseButtonPressed) {
 		if (!_updateCursorFlag) {
-			++_actionVerb;
-			if (_actionVerb > 8) {
-				_actionVerb = kVerbWalk;
+			if (_actionVerb == kVerbLast) {
+				_actionVerb = kVerbFirst;
+			} else {
+				_actionVerb = (Verb)(_actionVerb + 1);
 			}
 			_updateCursorFlag = true;
 			_actionVerbLocked = true;
@@ -3473,7 +3476,7 @@ void TuckerEngine::setActionVerbUnderCursor() {
 	} else if (_mousePosX > 195) {
 		_actionVerb = kVerbLook;
 	} else if (_panelStyle == kPanelStyleVerbs) {
-		_actionVerb = ((_mousePosY - 150) / 17) * 3 + (_mousePosX / 67);
+		_actionVerb = (Verb)(((_mousePosY - 150) / 17) * 3 + (_mousePosX / 67));
 	} else {
 		_actionVerb = kVerbWalk;
 		if (_mousePosX < 30) {
