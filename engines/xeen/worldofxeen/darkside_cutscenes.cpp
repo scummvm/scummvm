@@ -869,10 +869,13 @@ bool DarkSideCutscenes::showWorldOfXeenLogo() {
 }
 
 void DarkSideCutscenes::showDarkSideEnding(uint endingScore) {
-	_vm->_files->setGameCc(1);
-	_vm->_files->_isDarkCc = true;
-	_vm->_sound->_musicSide = 1;
-	_vm->_screen->fadeOut();
+	FileManager &files = *g_vm->_files;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+	files.setGameCc(1);
+	files._isDarkCc = true;
+	sound._musicSide = 1;
+	screen.fadeOut();
 
 	if (showDarkSideEnding1())
 		if (showDarkSideEnding2())
@@ -880,7 +883,10 @@ void DarkSideCutscenes::showDarkSideEnding(uint endingScore) {
 				showDarkSideEnding4();
 
 	showDarkSideScore(endingScore);
-	_vm->_screen->fadeOut();
+
+	_claw.clear();
+	_dragon1.clear();
+	screen.fadeOut();
 }
 
 bool DarkSideCutscenes::showDarkSideEnding1() {
@@ -1736,24 +1742,27 @@ void DarkSideCutscenes::showDarkSideScore(uint endingScore) {
 	Sound &sound = *_vm->_sound;
 
 	sound.stopAllAudio();
-	sound.playSong("outday3.m");
 
-	Common::String str = Common::String::format(Res.DARKSIDE_ENDING1, endingScore);
-	showPharaohEndText(str.c_str(), Res.DARKSIDE_ENDING2);
+	if (_vm->shouldExit()) {
+		sound.playSong("outday3.m");
 
-	if (!_vm->shouldExit())
-		saves.saveGame();
+		Common::String str = Common::String::format(Res.DARKSIDE_ENDING1, endingScore);
+		showPharaohEndText(str.c_str(), Res.DARKSIDE_ENDING2);
+
+		if (!_vm->shouldExit())
+			saves.saveGame();
+	}
 }
 
 bool DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, const char *msg3) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
-	SpriteResource claw("claw.int");
-	SpriteResource dragon1("dragon1.int");
 	int numPages = 0 + (msg1 ? 1 : 0) + (msg2 ? 1 : 0) + (msg3 ? 1 : 0);
 	const char *const text[3] = { msg1, msg2, msg3 };
 
+	_claw.load("claw.int");
+	_dragon1.load("dragon1.int");
 	screen.loadBackground("3room.raw");
 	screen.saveBackground();
 	screen.loadPalette("dark.pal");
@@ -1785,6 +1794,8 @@ bool DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 		events.clearEvents();
 	}
 
+	_claw.clear();
+	_dragon1.clear();
 	return true;
 }
 

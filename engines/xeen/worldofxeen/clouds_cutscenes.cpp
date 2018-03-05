@@ -360,6 +360,8 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 }
 
 void CloudsCutscenes::showCloudsEnding(uint finalScore) {
+	EventsManager &events = *g_vm->_events;
+	Sound &sound = *g_vm->_sound;
 	_mirror.load("mirror.end");
 	_mirrBack.load("mirrback.end");
 	_mergeX = 0;
@@ -369,8 +371,13 @@ void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 		if (showCloudsEnding2())
 			if (showCloudsEnding3())
 				if (showCloudsEnding4(finalScore))
-					if (showCloudsEnding5())
-						doScroll(true, false);
+					showCloudsEnding5();
+
+	events.clearEvents();
+	sound.stopAllAudio();
+
+	if (!g_vm->shouldExit())
+		doScroll(true, false);
 }
 
 bool CloudsCutscenes::showCloudsEnding1() {

@@ -538,7 +538,6 @@ int Party::subtract(ConsumableType consumableId, uint amount, PartyBank whereId,
 }
 
 void Party::notEnough(ConsumableType consumableId, PartyBank whereId, bool mode, MessageWaitType wait) {
-	assert(consumableId < 4 && whereId < 2);
 	Common::String msg = Common::String::format(
 		mode ? Res.NO_X_IN_THE_Y : Res.NOT_ENOUGH_X_IN_THE_Y,
 		Res.CONSUMABLE_NAMES[consumableId], Res.WHERE_NAMES[whereId]);

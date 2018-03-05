@@ -44,9 +44,9 @@ protected:
 	void draw();
 
 	/**
-	 * Load the background
+	 * Called when the menu screen is first shown
 	 */
-	virtual void loadBackground() = 0;
+	virtual void display() = 0;
 
 	/**
 	 * Shows the main menu dialog
@@ -84,9 +84,9 @@ public:
 class CloudsMainMenuContainer : public MainMenuContainer {
 protected:
 	/**
-	 * Load the background
+	 * Called when the menu screen is first shown
 	 */
-	virtual void loadBackground();
+	virtual void display();
 
 	/**
 	 * Shows the main menu dialog
@@ -101,9 +101,9 @@ private:
 	SpriteResource _background;
 protected:
 	/**
-	 * Load the background
+	 * Called when the menu screen is first shown
 	 */
-	virtual void loadBackground();
+	virtual void display();
 
 	/**
 	* Shows the main menu dialog
@@ -116,9 +116,9 @@ public:
 class WorldOfXeenMainMenuContainer : public MainMenuContainer {
 protected:
 	/**
-	 * Load the background
+	 * Called when the menu screen is first shown
 	 */
-	virtual void loadBackground();
+	virtual void display();
 
 	/**
 	* Shows the main menu dialog

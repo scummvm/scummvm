@@ -89,8 +89,8 @@ void MainMenuContainer::execute() {
 
 		// Fade/scroll in screen if first frame showing screen
 		if (!showFlag) {
-			loadBackground();
-			screen.doScroll(false, false);
+			display();
+			screen.doScroll(false, true);
 			showFlag = true;
 		}
 
@@ -125,14 +125,22 @@ void MainMenuContainer::execute() {
 /*------------------------------------------------------------------------*/
 
 CloudsMainMenuContainer::CloudsMainMenuContainer() : MainMenuContainer("intro.vga", 9) {
-	g_vm->_sound->playSong("inn.m");
 }
 
-void CloudsMainMenuContainer::loadBackground() {
+void CloudsMainMenuContainer::display() {
+	FileManager &files = *g_vm->_files;
 	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+
+	sound._musicSide = 0;
+	files.setGameCc(0);
+
 	screen.loadPalette("mm4.pal");
 	screen.loadBackground("intro.raw");
 	screen.saveBackground();
+
+	if (!sound.isMusicPlaying())
+		sound.playSong("inn.m");
 }
 
 void CloudsMainMenuContainer::showMenuDialog() {
@@ -153,13 +161,22 @@ DarkSideMainMenuContainer::DarkSideMainMenuContainer() : MainMenuContainer("titl
 	_background.load("title2.int");
 }
 
-void DarkSideMainMenuContainer::loadBackground() {
+void DarkSideMainMenuContainer::display() {
+	FileManager &files = *g_vm->_files;
 	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+
 	_background.draw(0, 0, Common::Point(0, 0));
 	_background.draw(0, 1, Common::Point(160, 0));
 
+	sound._musicSide = 1;
+	files.setGameCc(1);
+
 	screen.loadPalette("dark.pal");
 	screen.saveBackground();
+
+	if (!sound.isMusicPlaying())
+		sound.playSong("newbrigh.m");
 }
 
 void DarkSideMainMenuContainer::showMenuDialog() {
@@ -169,16 +186,22 @@ void DarkSideMainMenuContainer::showMenuDialog() {
 /*------------------------------------------------------------------------*/
 
 WorldOfXeenMainMenuContainer::WorldOfXeenMainMenuContainer() : MainMenuContainer("world.int", 5) {
-	Sound &sound = *g_vm->_sound;
-	sound._musicSide = 1;
-	sound.playSong("newbrigh.m");
 }
 
-void WorldOfXeenMainMenuContainer::loadBackground() {
+void WorldOfXeenMainMenuContainer::display() {
+	FileManager &files = *g_vm->_files;
 	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+
+	sound._musicSide = 1;
+	files.setGameCc(1);
+
 	screen.loadPalette("dark.pal");
 	screen.loadBackground("world.raw");
 	screen.saveBackground();
+
+	if (!sound.isMusicPlaying())
+		sound.playSong("newbrigh.m");
 }
 
 void WorldOfXeenMainMenuContainer::showMenuDialog() {
