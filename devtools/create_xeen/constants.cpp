@@ -96,41 +96,41 @@ const char *const CLOUDS_CREDITS =
 	"\t190Michael Suarez\x3""c";
 
 const char *const DARK_SIDE_CREDITS =
-	"\013""012\010""000\003""c\014""35Designed and Directed By:\n"
-	"\014""17Jon Van Caneghem\003""l\n"
+	"\v012\t000\x3""c\f35Designed and Directed By:\n"
+	"\f17Jon Van Caneghem\x3""l\n"
 	"\n"
-	"\t025\014""35Programming:\n"
-	"\t035\014""17Mark Caldwell\n"
+	"\t025\f35Programming:\n"
+	"\t035\f17Mark Caldwell\n"
 	"\t035Dave Hathaway\n"
 	"\n"
-	"\t025\014""35Sound System & FX:\n"
-	"\t035\014""17Mike Heilemann\n"
+	"\t025\f35Sound System & FX:\n"
+	"\t035\f17Mike Heilemann\n"
 	"\n"
-	"\t025\014""35Music & Speech:\n"
-	"\t035\014""17Tim Tully\n"
+	"\t025\f35Music & Speech:\n"
+	"\t035\f17Tim Tully\n"
 	"\n"
-	"\t025\014""35Writing:\n"
-	"\t035\014""17Paul Rattner\n"
+	"\t025\f35Writing:\n"
+	"\t035\f17Paul Rattner\n"
 	"\t035Debbie Van Caneghem\n"
-	"\t035Jon Van Caneghem\013""012\n"
+	"\t035Jon Van Caneghem\v012\n"
 	"\n"
 	"\n"
-	"\t180\014""35Graphics:\n"
-	"\t190\014""17Jonathan P. Gwyn\n"
+	"\t180\f35Graphics:\n"
+	"\t190\f17Jonathan P. Gwyn\n"
 	"\t190Bonita Long-Hemsath\n"
 	"\t190Julia Ulano\n"
 	"\t190Ricardo Barrera\n"
 	"\n"
-	"\t180\014""35Testing:\n"
-	"\t190\014""17Benjamin Bent\n"
+	"\t180\f35Testing:\n"
+	"\t190\f17Benjamin Bent\n"
 	"\t190Christian Dailey\n"
 	"\t190Mario Escamilla\n"
 	"\t190Marco Hunter\n"
 	"\t190Robert J. Lupo\n"
 	"\t190Clayton Retzer\n"
-	"\t190David Vela\003""c";
+	"\t190David Vela\x3""c";
 const char *const SWORDS_CREDITS1 =
-	"\v012\x3""c35Published By New World Computing, Inc.\f17\n"
+	"\v012\x3""c\f35Published By New World Computing, Inc.\f17\n"
 	"Developed By CATware, Inc.\x3l\n"
 	"\f01Design and Direction\t180Series Created by\n"
 	"\t020Bill Fawcett\t190John Van Caneghem\n"
@@ -148,7 +148,7 @@ const char *const SWORDS_CREDITS1 =
 	"\t190Julia Ulano\n"
 	"\t190Ricardo Barrera\n";
 const char *const SWORDS_CREDITS2 =
-	"\f05v012\t000\x3l\n"
+	"\f05\v012\t000\x3l\n"
 	"\t100Sound Programming\n"
 	"\t110Todd Hendrix\n"
 	"\n"
@@ -162,16 +162,12 @@ const char *const SWORDS_CREDITS2 =
 	"\t110David Baton\n"
 	"\t110Jack Nalls\n";
 
-const char *const CLOUDS_MAIN_MENU =
+const char *const OPTIONS_MENU =
 	"\r\x1\x3""c\fdMight and Magic Options\n"
-	"Clouds of Xeen\x2\n"
-	"\v%03dCopyright (c) 1992 NWC, Inc.\n"
+	"%s of Xeen\x2\n"
+	"\v%.3dCopyright (c) %d NWC, Inc.\n"
 	"All Rights Reserved\x1";
-const char *const WORLD_MAIN_MENU =
-	"\r\x1\x3""c\fdMight and Magic Options\n"
-	"World of Xeen\x2\n"
-	"\v117Copyright (c) 1993 NWC, Inc.\n"
-	"All Rights Reserved\x01";
+const char *const GAME_NAMES[3] = { "Clouds", "Darkside", "World" };
 
 const char *const THE_PARTY_NEEDS_REST = "\x0B""012The Party needs rest!";
 
@@ -1847,8 +1843,8 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(DARK_SIDE_CREDITS);
 	file.syncString(SWORDS_CREDITS1);
 	file.syncString(SWORDS_CREDITS2);
-	file.syncString(CLOUDS_MAIN_MENU);
-	file.syncString(WORLD_MAIN_MENU);
+	file.syncString(OPTIONS_MENU);
+	file.syncStrings(GAME_NAMES, 3);
 	file.syncString(THE_PARTY_NEEDS_REST);
 	file.syncString(WHO_WILL);
 	file.syncString(HOW_MUCH);
