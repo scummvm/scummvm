@@ -146,6 +146,8 @@ DarkSideMainMenuContainer::DarkSideMainMenuContainer() : MainMenuContainer("titl
 	Sound &sound = *g_vm->_sound;
 	screen.loadPalette("dark.pal");
 	screen.fadeIn(0x81);
+
+	sound._musicSide = 1;
 	sound.playSong("newbrigh.m");
 
 	_background.load("title2.int");
@@ -168,6 +170,7 @@ void DarkSideMainMenuContainer::showMenuDialog() {
 
 WorldOfXeenMainMenuContainer::WorldOfXeenMainMenuContainer() : MainMenuContainer("world.int", 5) {
 	Sound &sound = *g_vm->_sound;
+	sound._musicSide = 1;
 	sound.playSong("newbrigh.m");
 }
 
@@ -179,7 +182,7 @@ void WorldOfXeenMainMenuContainer::loadBackground() {
 }
 
 void WorldOfXeenMainMenuContainer::showMenuDialog() {
-	setOwner(new CloudsMenuDialog(this));
+	setOwner(new WorldMenuDialog(this));
 }
 
 /*------------------------------------------------------------------------*/
@@ -402,7 +405,7 @@ void WorldMenuDialog::draw() {
 	Window &w = windows[GAME_WINDOW];
 
 	w.frame();
-	w.writeString(Common::String::format(Res.CLOUDS_MAIN_MENU, g_vm->_gameWon[0] ? 117 : 92));
+	w.writeString(Res.WORLD_MAIN_MENU);
 	drawButtons(&w);
 }
 

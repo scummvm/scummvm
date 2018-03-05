@@ -173,8 +173,7 @@ void Sound::playSong(const Common::String &name, int param) {
 	Common::File mf;
 	if (mf.open(name)) {
 		playSong(mf);
-	}
-	else {
+	} else {
 		File f(name, _musicSide);
 		playSong(f);
 	}
