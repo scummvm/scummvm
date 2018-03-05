@@ -147,7 +147,7 @@ const ADGameDescription *SludgeMetaEngine::fallbackDetect(const FileMap &allFile
 		s_fallbackFileNameBuffer[50] = '\0';
 		s_fallbackDesc.desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 
-		return (const ADGameDescription *)&s_fallbackDesc;;
+		return (const ADGameDescription *)&s_fallbackDesc;
 	}
 	return 0;
 }
