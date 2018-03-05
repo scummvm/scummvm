@@ -70,14 +70,14 @@ private:
 	 * Part 4 of World of Xeen ending
 	 */
 	void worldEnding4();
-protected:
+public:
+	WorldOfXeenCutscenes(XeenEngine *vm) : _vm(vm), CloudsCutscenes(vm),
+		DarkSideCutscenes(vm), _goober(NON_GOOBER), _finalScore(0) {}
+
 	/**
 	 * Shows the World of Xeen ending sequence
 	 */
 	void showWorldOfXeenEnding(GooberState state, uint score);
-public:
-	WorldOfXeenCutscenes(XeenEngine *vm) : _vm(vm), CloudsCutscenes(vm),
-		DarkSideCutscenes(vm), _goober(NON_GOOBER), _finalScore(0) {}
 };
 
 } // End of namespace WorldOfXeen

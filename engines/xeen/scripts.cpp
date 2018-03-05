@@ -1085,7 +1085,7 @@ bool Scripts::cmdCutsceneEndClouds(ParamsIterator &params) {
 	party._mazePosition = Common::Point(18, 4);
 
 	g_vm->_gameWon[0] = true;
-	g_vm->_finalScore[0] = party.getScore();
+	g_vm->_finalScore = party.getScore();
 	g_vm->saveSettings();
 
 	doCloudsEnding();
@@ -1421,7 +1421,7 @@ bool Scripts::cmdCutsceneEndDarkside(ParamsIterator &params) {
 	party._mazePosition = Common::Point(25, 21);
 
 	g_vm->_gameWon[1] = true;
-	g_vm->_finalScore[1] = party.getScore();
+	g_vm->_finalScore = party.getScore();
 	g_vm->saveSettings();
 
 	doDarkSideEnding();
@@ -1429,6 +1429,12 @@ bool Scripts::cmdCutsceneEndDarkside(ParamsIterator &params) {
 }
 
 bool Scripts::cmdCutsceneEndWorld(ParamsIterator &params) {
+	Party &party = *g_vm->_party;
+
+	g_vm->_gameWon[2] = true;
+	g_vm->_finalScore = party.getScore();
+	g_vm->saveSettings();
+
 	_vm->_saves->_wonWorld = true;
 	_vm->_party->_worldEnd = true;
 

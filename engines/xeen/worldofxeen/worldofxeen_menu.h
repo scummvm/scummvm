@@ -29,14 +29,14 @@
 namespace Xeen {
 namespace WorldOfXeen {
 
-class MainMenuDialog;
+class MenuContainerDialog;
 
 class MainMenuContainer {
 private:
 	uint _animateCtr;
 	uint _frameCount;
 	SpriteResource _backgroundSprites;
-	MainMenuDialog *_dialog;
+	MenuContainerDialog *_dialog;
 protected:
 	/**
 	 * Draws the main menu background
@@ -76,7 +76,7 @@ public:
 	/**
 	 * Sets the dialog being displayed in the menu
 	 */
-	void setOwner(MainMenuDialog *dlalog) {
+	void setOwner(MenuContainerDialog *dlalog) {
 		_dialog = dlalog;
 	}
 };
@@ -129,7 +129,7 @@ public:
 };
 
 class MenuContainerDialog : public ButtonContainer {
-private:
+protected:
 	MainMenuContainer *_owner;
 public:
 	/**
@@ -258,6 +258,36 @@ public:
 	* Destructor
 	*/
 	virtual ~WorldMenuDialog();
+
+	/**
+	 * Draws the dialog
+	 */
+	virtual void draw();
+
+	/**
+	 * Handles events
+	 */
+	virtual bool handleEvents();
+};
+
+class OtherOptionsDialog : public MenuContainerDialog {
+private:
+	SpriteResource _buttonSprites;
+private:
+	/**
+	* Loads buttons for the dialog
+	*/
+	void loadButtons();
+public:
+	/**
+	 * Constructor
+	 */
+	OtherOptionsDialog(MainMenuContainer *owner);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~OtherOptionsDialog();
 
 	/**
 	 * Draws the dialog

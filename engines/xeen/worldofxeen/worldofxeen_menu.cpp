@@ -264,7 +264,7 @@ void CloudsMenuDialog::draw() {
 	Window &w = windows[GAME_WINDOW];
 	
 	w.frame();
-	w.writeString(Common::String::format(Res.CLOUDS_MAIN_MENU, g_vm->_gameWon[0] ? 117 : 92));
+	w.writeString(Common::String::format(Res.OPTIONS_MENU, Res.GAME_NAMES[0], g_vm->_gameWon[0] ? 117 : 92, 1992));
 	drawButtons(&w);
 }
 
@@ -279,7 +279,8 @@ bool CloudsMenuDialog::handleEvents() {
 			delete this;
 
 			// Show clouds ending
-			WOX_VM.showCloudsEnding(g_vm->_finalScore[0]);
+			WOX_VM._sound->stopAllAudio();
+			WOX_VM.showCloudsEnding(g_vm->_finalScore);
 			return true;
 		}
 		break;
@@ -363,10 +364,16 @@ bool DarkSideMenuDialog::handleEvents() {
 		return true;
 
 	switch (_buttonValue) {
-	case Common::KEYCODE_o:
+	case Common::KEYCODE_o: {
 		// Show other options dialog
-		// TODO
-		break;
+		// Remove this dialog
+		MainMenuContainer *owner = _owner;
+		delete this;
+
+		// Set the new options dialog
+		owner->setOwner(new OtherOptionsDialog(owner));
+		return true;
+	}
 
 	default:
 		break;
@@ -405,7 +412,7 @@ void WorldMenuDialog::draw() {
 	Window &w = windows[GAME_WINDOW];
 
 	w.frame();
-	w.writeString(Res.WORLD_MAIN_MENU);
+	w.writeString(Common::String::format(Res.OPTIONS_MENU, Res.GAME_NAMES[2], 117, 1993));
 	drawButtons(&w);
 }
 
@@ -414,10 +421,16 @@ bool WorldMenuDialog::handleEvents() {
 		return true;
 
 	switch (_buttonValue) {
-	case Common::KEYCODE_o:
+	case Common::KEYCODE_o: {
 		// Show other options dialog
-		// TODO
-		break;
+		// Remove this dialog
+		MainMenuContainer *owner = _owner;
+		delete this;
+
+		// Set the new options dialog
+		owner->setOwner(new OtherOptionsDialog(owner));
+		return true;
+	}
 
 	default:
 		break;
@@ -426,6 +439,135 @@ bool WorldMenuDialog::handleEvents() {
 	return false;
 }
 
+/*------------------------------------------------------------------------*/
+
+OtherOptionsDialog::OtherOptionsDialog(MainMenuContainer *owner) : MenuContainerDialog(owner) {
+	Windows &windows = *g_vm->_windows;
+	Window &w = windows[GAME_WINDOW];
+
+	int height = (g_vm->getGameID() == GType_WorldOfXeen ? 25 : 0)
+		+ (g_vm->getGameID() == GType_WorldOfXeen && g_vm->_gameWon[0] ? 25 : 0)
+		+ (g_vm->_gameWon[1] ? 25 : 0)
+		+ (g_vm->_gameWon[2] ? 25 : 0)
+		+ 75;
+
+	w.setBounds(Common::Rect(72, 25, 248, 25 + height));
+	w.open();
+
+	loadButtons();
+}
+
+OtherOptionsDialog::~OtherOptionsDialog() {
+	Windows &windows = *g_vm->_windows;
+	Window &w = windows[GAME_WINDOW];
+	w.close();
+}
+
+void OtherOptionsDialog::loadButtons() {
+	_buttonSprites.load("special.icn");
+	Common::Rect r(93, 53, 227, 73);
+
+	// View Darkside Intro
+	addButton(r, Common::KEYCODE_d, &_buttonSprites);
+	r.translate(0, 25);
+
+	// View Clouds Intro
+	if (g_vm->getGameID() == GType_WorldOfXeen) {
+		addButton(r, Common::KEYCODE_c, &_buttonSprites);
+		r.translate(0, 25);
+	} else {
+		addButton(Common::Rect(), Common::KEYCODE_INVALID);
+	}
+
+	// View Darkside End
+	if (g_vm->_gameWon[1]) {
+		addButton(r, Common::KEYCODE_e, &_buttonSprites);
+		r.translate(0, 25);
+	} else {
+		addButton(Common::Rect(), Common::KEYCODE_INVALID);
+	}
+
+	// View Clouds End
+	if (g_vm->_gameWon[0]) {
+		addButton(r, Common::KEYCODE_v, &_buttonSprites);
+		r.translate(0, 25);
+	} else {
+		addButton(Common::Rect(), Common::KEYCODE_INVALID);
+	}
+
+	// View World End
+	if (g_vm->_gameWon[2]) {
+		addButton(r, Common::KEYCODE_w, &_buttonSprites);
+	} else {
+		addButton(Common::Rect(), Common::KEYCODE_INVALID);
+	}
+}
+
+void OtherOptionsDialog::draw() {
+	Windows &windows = *g_vm->_windows;
+	Window &w = windows[GAME_WINDOW];
+
+	w.frame();
+	w.writeString(Common::String::format(Res.OPTIONS_MENU,
+		Res.GAME_NAMES[g_vm->getGameID() == GType_WorldOfXeen ? 2 : 1], 
+		w.getBounds().height() - 33, 1993));
+	drawButtons(&w);
+}
+
+bool OtherOptionsDialog::handleEvents() {
+	Sound &sound = *g_vm->_sound;
+	checkEvents(g_vm);
+
+	switch (_buttonValue) {
+	case Common::KEYCODE_d:
+		delete this;
+		sound.stopAllAudio();
+		WOX_VM.showDarkSideIntro(false);
+		break;
+
+	case Common::KEYCODE_c:
+		if (g_vm->getGameID() == GType_WorldOfXeen) {
+			delete this;
+			sound.stopAllAudio();
+			WOX_VM.showCloudsIntro();
+		}
+		break;
+
+	case Common::KEYCODE_e:
+		if (g_vm->_gameWon[1]) {
+			delete this;
+			sound.stopAllAudio();
+			WOX_VM.showDarkSideEnding(g_vm->_finalScore);
+		}
+		break;
+
+	case Common::KEYCODE_v:
+		if (g_vm->_gameWon[0]) {
+			delete this;
+			sound.stopAllAudio();
+			WOX_VM.showCloudsEnding(g_vm->_finalScore);
+		}
+		break;
+
+	case Common::KEYCODE_w:
+		if (g_vm->_gameWon[2]) {
+			delete this;
+			sound.stopAllAudio();
+			WOX_VM.showWorldOfXeenEnding(NON_GOOBER, g_vm->_finalScore);
+		}
+		break;
+
+	case Common::KEYCODE_ESCAPE:
+		// Exit dialog
+		delete this;
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
+}
 
 } // End of namespace WorldOfXeen
 } // End of namespace Xeen

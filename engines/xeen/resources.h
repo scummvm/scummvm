@@ -120,8 +120,8 @@ public:
 	const char *DARK_SIDE_CREDITS;
 	const char *SWORDS_CREDITS1;
 	const char *SWORDS_CREDITS2;
-	const char *CLOUDS_MAIN_MENU;
-	const char *WORLD_MAIN_MENU;
+	const char *OPTIONS_MENU;
+	const char *GAME_NAMES[3];
 	const char *THE_PARTY_NEEDS_REST;
 	const char *WHO_WILL;
 	const char *HOW_MUCH;

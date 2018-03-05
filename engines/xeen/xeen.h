@@ -183,8 +183,8 @@ public:
 	bool _noDirectionSense;
 	bool _startupWindowActive;
 	uint _endingScore;
-	bool _gameWon[2];
-	uint _finalScore[2];
+	bool _gameWon[3];
+	uint _finalScore;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();
