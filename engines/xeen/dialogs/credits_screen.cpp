@@ -63,7 +63,7 @@ void CreditsScreen::execute(const char *content) {
 	clearButtons();
 
 	// Wait for keypress
-	while (!events.isKeyMousePressed())
+	while (!_vm->shouldExit() && !events.isKeyMousePressed())
 		events.pollEventsAndWait();
 
 	doScroll(true, false);

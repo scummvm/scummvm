@@ -33,7 +33,8 @@ class MainMenuDialog;
 
 class MainMenuContainer {
 private:
-	int _animateCtr;
+	uint _animateCtr;
+	uint _frameCount;
 	SpriteResource _backgroundSprites;
 	MainMenuDialog *_dialog;
 protected:
@@ -60,7 +61,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	MainMenuContainer(const Common::String &spritesName);
+	MainMenuContainer(const Common::String &spritesName, uint frameCount);
 
 	/**
 	 * Destructor
@@ -96,6 +97,8 @@ public:
 };
 
 class DarkSideMainMenuContainer : public MainMenuContainer {
+private:
+	SpriteResource _background;
 protected:
 	/**
 	 * Load the background
@@ -194,6 +197,67 @@ public:
 	 * Destructor
 	 */
 	virtual ~CloudsMenuDialog();
+
+	/**
+	 * Draws the dialog
+	 */
+	virtual void draw();
+
+	/**
+	 * Handles events
+	 */
+	virtual bool handleEvents();
+};
+
+class DarkSideMenuDialog : public MainMenuDialog {
+private:
+	SpriteResource _buttonSprites;
+	bool _firstDraw;
+private:
+	/**
+	 * Loads buttons for the dialog
+	 */
+	void loadButtons();
+public:
+	/**
+	 * Constructor
+	 */
+	DarkSideMenuDialog(MainMenuContainer *owner);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~DarkSideMenuDialog();
+
+	/**
+	 * Draws the dialog
+	 */
+	virtual void draw();
+
+	/**
+	 * Handles events
+	 */
+	virtual bool handleEvents();
+};
+
+class WorldMenuDialog : public MainMenuDialog {
+private:
+	SpriteResource _buttonSprites;
+private:
+	/**
+	* Loads buttons for the dialog
+	*/
+	void loadButtons();
+public:
+	/**
+	 * Constructor
+	 */
+	WorldMenuDialog(MainMenuContainer *owner);
+
+	/**
+	* Destructor
+	*/
+	virtual ~WorldMenuDialog();
 
 	/**
 	 * Draws the dialog
