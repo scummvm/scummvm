@@ -135,4 +135,36 @@ bool GameInfo::open(const Common::String &name) {
 	return !err;
 }
 
+const char *GameInfo::getSceneName(int i) const {
+	if (i < 0 || i >= (int)_sceneNamesCount) {
+		warning("GameInfo::getSceneName: unknown id \"%i\"", i);
+		return nullptr;
+	}
+	return _sceneNames[i];
+}
+
+const char *GameInfo::getSfxTrack(int i) const {
+	if (i < 0 || i >= (int)_sfxTrackCount) {
+		warning("GameInfo::getSfxTrack: unknown id \"%i\"", i);
+		return nullptr;
+	}
+	return _sfxTracks[i];
+}
+
+const char *GameInfo::getMusicTrack(int i) const {
+	if (i < 0 || i >= (int)_musicTrackCount) {
+		warning("GameInfo::getMusicTrack: unknown id \"%i\"", i);
+		return nullptr;
+	}
+	return _musicTracks[i];
+}
+
+const char *GameInfo::getOuttake(int i) const {
+	if (i < 0 || i >= (int)_outtakeCount) {
+		warning("GameInfo::getOuttake: unknown id \"%i\"", i);
+		return nullptr;
+	}
+	return _outtakes[i];
+}
+
 } // End of namespace BladeRunner

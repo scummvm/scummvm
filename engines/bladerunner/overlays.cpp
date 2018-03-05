@@ -55,7 +55,7 @@ Overlays::~Overlays() {
 	reset();
 }
 
-int Overlays::play(const Common::String &name, int loopId, int loopForever, int startNow, int a6) {
+int Overlays::play(const Common::String &name, int loopId, bool loopForever, bool startNow, int a6) {
 	int id = mix_id(name);
 	int index = findById(id);
 	if (index < 0) {

@@ -77,10 +77,10 @@ public:
 	uint32 getCoverWaypointCount() const   { return _coverWaypointCount; }
 	uint32 getFleeWaypointCount() const    { return _fleeWaypointCount; }
 
-	const char *getSceneName(int i) const  { return _sceneNames[i]; }
-	const char *getSfxTrack(int i) const   { return _sfxTracks[i]; }
-	const char *getMusicTrack(int i) const { return _musicTracks[i]; }
-	const char *getOuttake(int i) const    { return _outtakes[i]; }
+	const char *getSceneName(int i) const;
+	const char *getSfxTrack(int i) const;
+	const char *getMusicTrack(int i) const;
+	const char *getOuttake(int i) const;
 };
 
 } // End of namespace BladeRunner

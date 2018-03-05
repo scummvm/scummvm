@@ -56,7 +56,7 @@ public:
 	ActorDialogueQueue(BladeRunnerEngine *vm);
 	~ActorDialogueQueue();
 
-	void add(int actorId, int speechId, int animationMode);
+	void add(int actorId, int sentenceId, int animationMode);
 	void addPause(int delay);
 	void flush(int a1, bool callScript);
 	void tick();

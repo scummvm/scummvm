@@ -24,90 +24,90 @@
 
 namespace BladeRunner {
 
-AIScriptGenericWalkerA::AIScriptGenericWalkerA(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+AIScriptTemplate::AIScriptTemplate(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 }
 
-void AIScriptGenericWalkerA::Initialize() {
-	_animationStateNext = 0;
-	_animationNext = 0;
+void AIScriptTemplate::Initialize() {
 	_animationFrame = 0;
 	_animationState = 0;
+	_animationStateNext = 0;
+	_animationNext = 0;
 }
 
-bool AIScriptGenericWalkerA::Update() {
+bool AIScriptTemplate::Update() {
 	return false;
 }
 
-void AIScriptGenericWalkerA::TimerExpired(int timer) {
+void AIScriptTemplate::TimerExpired(int timer) {
 }
 
-void AIScriptGenericWalkerA::CompletedMovementTrack() {
+void AIScriptTemplate::CompletedMovementTrack() {
 }
 
-void AIScriptGenericWalkerA::ReceivedClue(int clueId, int fromActorId) {
+void AIScriptTemplate::ReceivedClue(int clueId, int fromActorId) {
 }
 
-void AIScriptGenericWalkerA::ClickedByPlayer() {
+void AIScriptTemplate::ClickedByPlayer() {
 }
 
-void AIScriptGenericWalkerA::EnteredScene(int sceneId) {
+void AIScriptTemplate::EnteredScene(int sceneId) {
 }
 
-void AIScriptGenericWalkerA::OtherAgentEnteredThisScene(int otherActorId) {
+void AIScriptTemplate::OtherAgentEnteredThisScene(int otherActorId) {
 }
 
-void AIScriptGenericWalkerA::OtherAgentExitedThisScene(int otherActorId) {
+void AIScriptTemplate::OtherAgentExitedThisScene(int otherActorId) {
 }
 
-void AIScriptGenericWalkerA::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
+void AIScriptTemplate::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
 }
 
-void AIScriptGenericWalkerA::ShotAtAndMissed() {
+void AIScriptTemplate::ShotAtAndMissed() {
 }
 
-bool AIScriptGenericWalkerA::ShotAtAndHit() {
+bool AIScriptTemplate::ShotAtAndHit() {
 	return false;
 }
 
-void AIScriptGenericWalkerA::Retired(int byActorId) {
+void AIScriptTemplate::Retired(int byActorId) {
 }
 
-int AIScriptGenericWalkerA::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
+int AIScriptTemplate::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
 	return 0;
 }
 
-bool AIScriptGenericWalkerA::GoalChanged(int currentGoalNumber, int newGoalNumber) {
+bool AIScriptTemplate::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	return false;
 }
 
-bool AIScriptGenericWalkerA::UpdateAnimation(int *animation, int *frame) {
+bool AIScriptTemplate::UpdateAnimation(int *animation, int *frame) {
 	*animation = 0;
 	*frame = _animationFrame;
 	return true;
 }
 
-bool AIScriptGenericWalkerA::ChangeAnimationMode(int mode) {
+bool AIScriptTemplate::ChangeAnimationMode(int mode) {
 	return true;
 }
 
-void AIScriptGenericWalkerA::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
+void AIScriptTemplate::QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
 	*animationState     = _animationState;
 	*animationFrame     = _animationFrame;
 	*animationStateNext = _animationStateNext;
 	*animationNext      = _animationNext;
 }
 
-void AIScriptGenericWalkerA::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
+void AIScriptTemplate::SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) {
 	_animationState     = animationState;
 	_animationFrame     = animationFrame;
 	_animationStateNext = animationStateNext;
 	_animationNext      = animationNext;
 }
 
-bool AIScriptGenericWalkerA::ReachedMovementTrackWaypoint(int waypointId) {
+bool AIScriptTemplate::ReachedMovementTrackWaypoint(int waypointId) {
 	return true;
 }
 
-void AIScriptGenericWalkerA::FledCombat() {}
+void AIScriptTemplate::FledCombat() {}
 
 } // End of namespace BladeRunner

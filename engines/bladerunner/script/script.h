@@ -153,7 +153,7 @@ protected:
 	int Global_Variable_Decrement(int, int);
 	int Random_Query(int min, int max);
 	void Sound_Play(int id, int volume, int panFrom, int panTo, int priority);
-	void Sound_Play_Speech_Line(int actorId, int speechId, int a3, int a4, int a5);
+	void Sound_Play_Speech_Line(int actorId, int sentenceId, int volume, int a4, int priority);
 	void Sound_Left_Footstep_Walk(int actorId);
 	void Sound_Right_Footstep_Walk(int actorId);
 	void Sound_Left_Footstep_Run(int actorId);
@@ -166,7 +166,7 @@ protected:
 	void Music_Adjust(int volume, int pan, int delay);
 	void Music_Stop(int delay);
 	bool Music_Is_Playing();
-	void Overlay_Play(const char *overlay, int loopId, int loopForever, int startNow, int a5);
+	void Overlay_Play(const char *overlay, int loopId, bool loopForever, bool startNow, int a5);
 	void Overlay_Remove(const char *overlay);
 	void Scene_Loop_Set_Default(int loopId);
 	void Scene_Loop_Start_Special(int sceneLoopMode, int loopId, bool immediately);

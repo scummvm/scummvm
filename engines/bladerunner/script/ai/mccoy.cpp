@@ -1618,7 +1618,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		_animationState = 27;
 		_animationFrame = 0;
 		break;
-	case 52:
+	case kAnimationModeFeeding:
 		_animationState = 55;
 		_animationFrame = 0;
 		break;

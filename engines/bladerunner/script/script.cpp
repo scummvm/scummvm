@@ -755,9 +755,8 @@ void ScriptBase::Sound_Play(int id, int volume, int panFrom, int panTo, int prio
 	_vm->_audioPlayer->playAud(name, volume, panFrom, panTo, priority);
 }
 
-void ScriptBase::Sound_Play_Speech_Line(int actorId, int speechId, int a3, int a4, int a5) {
-	//TODO
-	warning("Sound_Play_Speech_Line(%d, %d, %d, %d, %d)", actorId, speechId, a3, a4, a5);
+void ScriptBase::Sound_Play_Speech_Line(int actorId, int sentenceId, int volume, int a4, int priority) {
+	_vm->_audioSpeech->playSpeechLine(actorId, sentenceId, volume, a4, priority);
 }
 
 void ScriptBase::Sound_Left_Footstep_Walk(int actorId) {
@@ -835,7 +834,7 @@ bool ScriptBase::Music_Is_Playing() {
 	return _vm->_music->isPlaying();
 }
 
-void ScriptBase::Overlay_Play(const char *overlay, int loopId, int loopForever, int startNow, int a5) {
+void ScriptBase::Overlay_Play(const char *overlay, int loopId, bool loopForever, bool startNow, int a5) {
 	_vm->_overlays->play(overlay, loopId, loopForever, startNow, a5);
 }
 

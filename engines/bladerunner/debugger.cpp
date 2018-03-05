@@ -22,6 +22,7 @@
 
 #include "bladerunner/debugger.h"
 
+#include "bladerunner/actor.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/boundingbox.h"
 #include "bladerunner/font.h"
@@ -55,18 +56,82 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_viewUI = false;
 	_viewZBuffer = false;
 
+	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
+	registerCmd("goal", WRAP_METHOD(Debugger, cmdGoal));
 	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
 	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("chapter", WRAP_METHOD(Debugger, cmdChapter));
 	registerCmd("flag", WRAP_METHOD(Debugger, cmdFlag));
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
+	registerCmd("say", WRAP_METHOD(Debugger, cmdSay));
 }
 
 Debugger::~Debugger() {
 }
 
+bool Debugger::cmdAnimation(int argc, const char **argv) {
+	if (argc != 2 && argc != 3) {
+		debugPrintf("Get or set animation mode of the actor.\n");
+		debugPrintf("Usage: %s <actorId> [<animationMode>]\n", argv[0]);
+		return true;
+	}
+
+	int actorId = atoi(argv[1]);
+
+	Actor *actor = nullptr;
+	if (actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) {
+		actor = _vm->_actors[actorId];
+	}
+
+	if (actor == nullptr) {
+		debugPrintf("Unknown actor %i\n", actorId);
+		return true;
+	}
+
+	if (argc == 3) {
+		int animationMode = atoi(argv[2]);
+		debugPrintf("actorAnimationMode(%i) = %i\n", actorId, animationMode);
+		actor->changeAnimationMode(animationMode);
+		return false;
+	}
+
+	debugPrintf("actorAnimationMode(%i) = %i\n", actorId, actor->getAnimationMode());
+	return true;
+}
+
+bool Debugger::cmdGoal(int argc, const char **argv) {
+	if (argc != 2 && argc != 3) {
+		debugPrintf("Get or set goal of the actor.\n");
+		debugPrintf("Usage: %s <actorId> [<goal>]\n", argv[0]);
+		return true;
+	}
+
+	int actorId = atoi(argv[1]);
+
+	Actor *actor = nullptr;
+	if (actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) {
+		actor = _vm->_actors[actorId];
+	}
+
+	if (actor == nullptr) {
+		debugPrintf("Unknown actor %i\n", actorId);
+		return true;
+	}
+
+	if (argc == 3) {
+		int goal = atoi(argv[2]);
+		debugPrintf("actorGoal(%i) = %i\n", actorId, goal);
+		actor->setGoal(goal);
+		return false;
+	}
+
+	debugPrintf("actorGoal(%i) = %i\n", actorId, actor->getGoal());
+	return true;
+}
+
 bool Debugger::cmdDraw(int argc, const char **argv) {
 	if (argc != 2) {
+		debugPrintf("Enables debug rendering of scene objects, ui elements, zbuffer or disables debug rendering.\n");
 		debugPrintf("Usage: %s (obj | ui | zbuf | reset)\n", argv[0]);
 		return true;
 	}
@@ -93,28 +158,9 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdScene(int argc, const char **argv) {
-	if (argc != 1 && argc != 3) {
-		debugPrintf("Usage: %s [<set_id> <scene_id>]\n", argv[0]);
-		return true;
-	}
-
-	if (argc == 1) {
-		debugPrintf("set = %i\nscene = %i\n", _vm->_scene->getSetId(), _vm->_scene->getSceneId());
-		return true;
-	}
-
-	if (argc == 3) {
-		int setId = atoi(argv[1]);
-		int sceneId = atoi(argv[2]);
-		_vm->_settings->setNewSetAndScene(setId, sceneId);
-	}
-
-	return true;
-}
-
 bool Debugger::cmdChapter(int argc, const char **argv) {
 	if (argc != 2) {
+		debugPrintf("Changes chapter of the game without changing scene.\n");
 		debugPrintf("Usage: %s <chapter>\n", argv[0]);
 		return true;
 	}
@@ -131,7 +177,8 @@ bool Debugger::cmdChapter(int argc, const char **argv) {
 
 bool Debugger::cmdFlag(int argc, const char **argv) {
 	if (argc != 2 && argc != 3) {
-		debugPrintf("Usage: %s <id> [<new_value>]\n", argv[0]);
+		debugPrintf("Get or set game flag (boolean value).\n");
+		debugPrintf("Usage: %s <id> [<value>]\n", argv[0]);
 		return true;
 	}
 
@@ -154,9 +201,52 @@ bool Debugger::cmdFlag(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::cmdSay(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Actor will say specified line.\n");
+		debugPrintf("Usage: %s <actorId> <sentenceId>\n", argv[0]);
+		return true;
+	}
+
+	int actorId = atoi(argv[1]);
+	int sentenceId = atoi(argv[2]);
+
+	Actor *actor = nullptr;
+	if (actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) {
+		actor = _vm->_actors[actorId];
+	}
+
+	if (actor == nullptr) {
+		debugPrintf("Unknown actor %i\n", actorId);
+		return true;
+	}
+
+	actor->speechPlay(sentenceId, true);
+	return false;
+}
+
+bool Debugger::cmdScene(int argc, const char **argv) {
+	if (argc != 1 && argc != 3) {
+		debugPrintf("Changes set and scene.\n");
+		debugPrintf("Usage: %s [<setId> <sceneId>]\n", argv[0]);
+		return true;
+	}
+
+	if (argc == 3) {
+		int setId = atoi(argv[1]);
+		int sceneId = atoi(argv[2]);
+		_vm->_settings->setNewSetAndScene(setId, sceneId);
+		return false;
+	}
+
+	debugPrintf("set = %i\nscene = %i\n", _vm->_scene->getSetId(), _vm->_scene->getSceneId());
+	return true;
+}
+
 bool Debugger::cmdVariable(int argc, const char **argv) {
 	if (argc != 2 && argc != 3) {
-		debugPrintf("Usage: %s <id> [<new_value>]\n", argv[0]);
+		debugPrintf("Get or set game variable (integer).\n");
+		debugPrintf("Usage: %s <id> [<value>]\n", argv[0]);
 		return true;
 	}
 

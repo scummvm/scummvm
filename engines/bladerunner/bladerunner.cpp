@@ -1024,6 +1024,9 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 }
 
 void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool buttonDown) {
+	x = CLIP(x, 0, 639);
+	y = CLIP(y, 0, 479);
+
 	int timeNow = getTotalPlayTime();
 
 	if (buttonDown) {
@@ -1548,7 +1551,7 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 		}
 	}
 
-	error("getResource: Resource %s not found", name.c_str());
+	warning("getResource: Resource %s not found", name.c_str());
 	return nullptr;
 }
 

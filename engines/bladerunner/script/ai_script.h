@@ -128,6 +128,16 @@ DECLARE_SCRIPT(Runciter)
 	int var_45CD88;
 END_SCRIPT
 
+DECLARE_SCRIPT(Zuben)
+	int _var_45D258;
+	int _var_45D25C;
+	int _animationFrameTarget2;
+	int _animationFrameDelta;
+	int _animationFrameTarget1;
+
+	void dialogue();
+END_SCRIPT
+
 DECLARE_SCRIPT(OfficerLeary)
 	int var_45D5B8;
 	int var_45D5BC;

@@ -194,10 +194,10 @@ public:
 	int  _walkingToItemId;
 	bool _isInsideScriptItem;
 	bool _walkingToEmpty;
-	int _walkingToEmptyX;
-	int _walkingToEmptyY;
+	int  _walkingToEmptyX;
+	int  _walkingToEmptyY;
 	bool _isInsideScriptEmpty;
-	int _walkingToActorId;
+	int  _walkingToActorId;
 	bool _isInsideScriptActor;
 
 	int _actorUpdateCounter;

@@ -125,7 +125,7 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 				Game_Flag_Set(26);
 				Actor_Set_Goal_Number(kActorHowieLee, 0);
 			} else if (!Game_Flag_Query(30) && Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) >= 40) {
-				sub_40269C();
+				dialogueWithHowieLee();
 				Actor_Set_Goal_Number(kActorHowieLee, 0);
 			} else {
 				if (Game_Flag_Query(31)) {
@@ -395,7 +395,7 @@ void SceneScriptCT01::PlayerWalkedIn() {
 }
 
 void SceneScriptCT01::PlayerWalkedOut() {
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	if (Game_Flag_Query(123)) {
 		Ambient_Sounds_Remove_Looping_Sound(55, true);
 		Ambient_Sounds_Remove_Looping_Sound(56, true);
@@ -403,8 +403,8 @@ void SceneScriptCT01::PlayerWalkedOut() {
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 	}
 	Music_Stop(5);
-	if (!Game_Flag_Query(176) && Global_Variable_Query(kVariableChapter)) {
-		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+	if (!Game_Flag_Query(176) && Global_Variable_Query(kVariableChapter) == 1) {
+		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
 		Outtake_Play(kOuttakeTowards3, true, -1);
 	}
@@ -413,7 +413,7 @@ void SceneScriptCT01::PlayerWalkedOut() {
 void SceneScriptCT01::DialogueQueueFlushed(int a1) {
 }
 
-void SceneScriptCT01::sub_40269C() {
+void SceneScriptCT01::dialogueWithHowieLee() {
 	Dialogue_Menu_Clear_List();
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(40, 4, 5, 6);

@@ -57,7 +57,7 @@ public:
 	bool init();
 	~Overlays();
 
-	int play(const Common::String &name, int a3, int a4, int a5, int a6);
+	int play(const Common::String &name, int loopId, bool loopForever, bool startNow, int a6);
 	void remove(const Common::String &name);
 	void removeAll();
 	void tick();

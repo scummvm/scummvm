@@ -246,13 +246,13 @@ void VQADecoder::readPacket(uint readFlags) {
 	IFFChunkHeader chd;
 
 	if (remain(_s) < 8) {
-		warning("remain: %d", remain(_s));
+		warning("VQADecoder::readPacket: remain: %d", remain(_s));
 		assert(remain(_s) < 8);
 	}
 
 	do {
 		if (!readIFFChunkHeader(_s, &chd)) {
-			warning("Error reading chunk header");
+			error("VQADecoder::readPacket: Error reading chunk header");
 			return;
 		}
 
@@ -274,7 +274,7 @@ void VQADecoder::readPacket(uint readFlags) {
 		}
 
 		if (!rc) {
-			warning("Error handling chunk %s", strTag(chd.id));
+			warning("VQADecoder::readPacket: Error handling chunk %s", strTag(chd.id));
 			return;
 		}
 	} while (chd.id != kVQFR);
@@ -282,7 +282,7 @@ void VQADecoder::readPacket(uint readFlags) {
 
 void VQADecoder::readFrame(int frame, uint readFlags) {
 	if (frame < 0 || frame >= numFrames()) {
-		error("frame %d out of bounds, frame count is %d", frame, numFrames());
+		error("VQADecoder::readFrame: frame %d out of bounds, frame count is %d", frame, numFrames());
 	}
 
 	uint32 frameOffset = 2 * (_frameInfo[frame] & 0x0FFFFFFF);

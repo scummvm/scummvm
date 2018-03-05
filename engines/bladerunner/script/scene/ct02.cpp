@@ -105,7 +105,7 @@ bool SceneScriptCT02::ClickedOn3DObject(const char *objectName, bool a2) {
 	return false;
 }
 
-void SceneScriptCT02::sub_401ACC() {
+void SceneScriptCT02::dialogueWithZuben() {
 	Dialogue_Menu_Clear_List();
 	if (Actor_Clue_Query(kActorMcCoy, kClueLucy)) {
 		DM_Add_To_List_Never_Repeat_Once_Selected(270, 8, 5, 3);
@@ -209,7 +209,7 @@ bool SceneScriptCT02::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 375, 9);
 				Game_Flag_Set(59);
 			}
-			sub_401ACC();
+			dialogueWithZuben();
 			return true;
 		}
 	}

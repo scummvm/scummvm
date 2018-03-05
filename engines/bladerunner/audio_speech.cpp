@@ -25,9 +25,11 @@
 #include "bladerunner/actor.h"
 #include "bladerunner/aud_stream.h"
 #include "bladerunner/audio_mixer.h"
+#include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 
 #include "common/debug.h"
+#include "common/str.h"
 
 namespace BladeRunner {
 
@@ -111,6 +113,12 @@ bool AudioSpeech::isPlaying() const {
 		return  false;
 	}
 	return _isActive;
+}
+
+bool AudioSpeech::playSpeechLine(int actorId, int sentenceId, int volume, int a4, int priority) {
+	int balance = _vm->_actors[actorId]->soundBalance();
+	Common::String name = Common::String::format("%02d-%04d%s.AUD", actorId, sentenceId,  _vm->_languageCode);
+	return _vm->_audioPlayer->playAud(name, _speechVolume * volume / 100, balance, balance, priority, kAudioPlayerOverrideVolume);
 }
 
 void AudioSpeech::setVolume(int volume) {

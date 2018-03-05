@@ -119,11 +119,11 @@ DECLARE_SCRIPT(BB51)
 END_SCRIPT
 
 DECLARE_SCRIPT(CT01)
-	void sub_40269C();
+	void dialogueWithHowieLee();
 END_SCRIPT
 
 DECLARE_SCRIPT(CT02)
-	void sub_401ACC();
+	void dialogueWithZuben();
 END_SCRIPT
 
 DECLARE_SCRIPT(CT03)

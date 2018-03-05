@@ -630,8 +630,10 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 				float originalY = _position.y;
 				float originalZ = _position.z;
 
-				_position.x = _position.x + positionChange.x * cosx - positionChange.y * sinx;
-				_position.z = _position.z + positionChange.x * sinx + positionChange.y * cosx;
+				// Yes, Z & Y are switched between world space and model space. X is also negated for some unknown reason (wrong dirertion for angles?)
+
+				_position.x = _position.x - positionChange.x * cosx - positionChange.y * sinx;
+				_position.z = _position.z - positionChange.x * sinx + positionChange.y * cosx;
 				_position.y = _position.y + positionChange.z;
 
 				if (_vm->_sceneObjects->existsOnXZ(_id + kSceneObjectOffsetActors, _position.x, _position.z, false, false) == 1 && !_isImmuneToObstacles) {

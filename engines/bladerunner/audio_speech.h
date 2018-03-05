@@ -48,6 +48,8 @@ public:
 	void stopSpeech();
 	bool isPlaying() const;
 
+	bool playSpeechLine(int actorId, int sentenceId, int volume, int a4, int priority);
+
 	void setVolume(int volume);
 	int getVolume() const;
 	void playSample();

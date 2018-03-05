@@ -127,7 +127,7 @@ struct ClueWeight {
 
 static ClueWeight ClueWeightsForSteele[44] = {
 	{kClueMcCoyRetiredZuben, 100},
-	{kClueMcCoyShotZubenintheback, 100},
+	{kClueMcCoyShotZubenInTheBack, 100},
 	{kClueMcCoyRetiredLucy, 100},
 	{kClueMcCoyRetiredDektora, 100},
 	{kClueMcCoyRetiredSadik, 100},
@@ -173,7 +173,7 @@ static ClueWeight ClueWeightsForSteele[44] = {
 };
 
 static ClueWeight ClueWeightsForGordo[28] = {
-	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyShotZubenInTheBack, 70},
 	{kClueMcCoyIsAnnoying, 65},
 	{kClueMcCoyIsKind, 70},
 	{kClueMcCoyIsInsane, 95},
@@ -204,7 +204,7 @@ static ClueWeight ClueWeightsForGordo[28] = {
 };
 
 static ClueWeight ClueWeightsForDektora[46] = {
-	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyShotZubenInTheBack, 70},
 	{kClueMcCoyIsAnnoying, 45},
 	{kClueMcCoyIsKind, 70},
 	{kClueMcCoyIsInsane, 65},
@@ -279,7 +279,7 @@ static ClueWeight ClueWeightsForGuzza[23] = {
 };
 
 static ClueWeight ClueWeightsForClovis[46] = {
-	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyShotZubenInTheBack, 70},
 	{kClueMcCoyIsKind, 70},
 	{kClueMcCoyKilledRunciter1, 70},
 	{kClueMcCoysDescription, 70},
@@ -328,7 +328,7 @@ static ClueWeight ClueWeightsForClovis[46] = {
 };
 
 static ClueWeight ClueWeightsForLucy[47] = {
-	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyShotZubenInTheBack, 70},
 	{kClueMcCoyIsAnnoying, 45},
 	{kClueMcCoyIsKind, 70},
 	{kClueMcCoyIsInsane, 65},
@@ -378,7 +378,7 @@ static ClueWeight ClueWeightsForLucy[47] = {
 };
 
 static ClueWeight ClueWeightsForIzoAndSadik[47] = {
-	{kClueMcCoyShotZubenintheback, 70},
+	{kClueMcCoyShotZubenInTheBack, 70},
 	{kClueMcCoyIsAnnoying, 45},
 	{kClueMcCoyIsKind, 70},
 	{kClueMcCoyIsInsane, 65},
@@ -452,7 +452,7 @@ static ClueWeight ClueWeightsForCrazylegs[49] = {
 	{kClueDNALutherLance, 70},
 	{kClueDNAMarcus, 70},
 	{kCluePowerSource, 70},
-	{kClueMcCoyShotZubenintheback, 65},
+	{kClueMcCoyShotZubenInTheBack, 65},
 	{kClueMcCoyIsAnnoying, 65},
 	{kClueMcCoyIsInsane, 65},
 	{kClueMcCoysDescription, 65},
@@ -518,7 +518,7 @@ static ClueWeight ClueWeightsForLuther[44] = {
 	{kClueGordoInterview3, 50},
 	{kClueEarlyQInterview, 45},
 	{kClueCrystalArrestedCrazylegs, 45},
-	{kClueMcCoyShotZubenintheback, 35},
+	{kClueMcCoyShotZubenInTheBack, 35},
 	{kClueMcCoyKilledRunciter1, 35},
 	{kClueMcCoyKilledRunciter2, 35},
 	{kClueEarlyAttemptedToSeduceLucy, 35},
@@ -586,7 +586,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorTransient, kClueEarlyAttemptedToSeduceLucy, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTransient, kClueHomelessManKid, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTransient, kClueFlaskOfAbsinthe, 100, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyShotZubenintheback, 35, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyShotZubenInTheBack, 35, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyIsAnnoying, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyIsKind, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorLance, kClueMcCoyIsInsane, 55, false, false, -1);
@@ -636,7 +636,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyIsKind, 35, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyIsInsane, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyRetiredZuben, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyShotZubenInTheBack, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyKilledRunciter1, 40, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyLetZubenEscape, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBulletBob, kClueMcCoyWarnedIzo, 55, false, false, -1);
@@ -683,7 +683,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyRetiredSadik, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorRunciter, kClueMcCoyRetiredLutherLance, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorRunciter, kClueEarlyAttemptedToSeduceLucy, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyShotZubenInTheBack, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyIsAnnoying, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyIsKind, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorInsectDealer, kClueMcCoyIsInsane, 55, false, false, -1);
@@ -739,7 +739,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyIsKind, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyIsInsane, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyRetiredZuben, 100, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyShotZubenintheback, 100, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyShotZubenInTheBack, 100, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyLetZubenEscape, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueMcCoyWarnedIzo, 85, false, false, -1);
@@ -764,7 +764,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQ, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyIsKind, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyShotZubenInTheBack, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyKilledRunciter2, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorZuben, kClueMcCoyLetZubenEscape, 70, false, false, -1);
@@ -789,7 +789,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorZuben, kCluePowerSource, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorZuben, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorZuben, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyShotZubenInTheBack, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyIsAnnoying, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyIsKind, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHasan, kClueMcCoyIsInsane, 55, false, false, -1);
@@ -850,7 +850,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorMarcus, kClueCrazylegsInterview2, 60, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMarcus, kCluePowerSource, 50, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMarcus, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyShotZubenInTheBack, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyIsAnnoying, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyIsKind, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMia, kClueMcCoyIsInsane, 55, false, false, -1);
@@ -889,7 +889,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueCrowdInterviewB, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerLeary, kCluePaintTransfer, 25, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyIsKind, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyShotZubenintheback, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyShotZubenInTheBack, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyKilledRunciter2, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueMcCoyLetZubenEscape, 70, false, false, -1);
@@ -912,7 +912,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueRunciterConfession1, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerLeary, kClueRunciterConfession2, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyIsKind, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyShotZubenintheback, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyShotZubenInTheBack, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyKilledRunciter2, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorOfficerGrayford, kClueMcCoyLetZubenEscape, 70, false, false, -1);
@@ -950,7 +950,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyIsKind, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyIsInsane, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyRetiredZuben, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyShotZubenInTheBack, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyLetZubenEscape, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBaker, kClueMcCoyWarnedIzo, 85, false, false, -1);
@@ -980,7 +980,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorBaker, kClueHollowayInterview, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBaker, kClueRunciterConfession1, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorBaker, kClueRunciterConfession2, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyShotZubenintheback, 45, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyShotZubenInTheBack, 45, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyIsAnnoying, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyIsKind, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorDeskClerk, kClueMcCoyIsInsane, 65, false, false, -1);
@@ -1041,7 +1041,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyRetiredGordo, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHowieLee, kClueMcCoyRetiredZuben, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHowieLee, kClueEarlyAttemptedToSeduceLucy, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyShotZubenInTheBack, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyIsAnnoying, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyIsKind, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorFishDealer, kClueMcCoyIsInsane, 55, false, false, -1);
@@ -1089,7 +1089,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoysWeaponUsedonBob, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyRecoveredHoldensBadge, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyIsKind, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyShotZubenInTheBack, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyKilledRunciter2, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorKlein, kClueMcCoyLetZubenEscape, 70, false, false, -1);
@@ -1112,7 +1112,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorKlein, kClueHollowayInterview, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorKlein, kClueRunciterConfession1, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorKlein, kClueRunciterConfession2, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyShotZubenInTheBack, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsAnnoying, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsKind, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMurray, kClueMcCoyIsInsane, 55, false, false, -1);
@@ -1146,7 +1146,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorMurray, kClueCrazylegsInterview2, 50, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMurray, kCluePowerSource, 50, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorMurray, kClueSightingMcCoyRuncitersShop, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyShotZubenInTheBack, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyIsAnnoying, 60, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyIsKind, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHawkersBarkeep, kClueMcCoyIsInsane, 55, false, false, -1);
@@ -1199,7 +1199,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyIsKind, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyIsInsane, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyRetiredZuben, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyShotZubenInTheBack, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyLetZubenEscape, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorHolloway, kClueMcCoyWarnedIzo, 85, false, false, -1);
@@ -1244,7 +1244,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyRecoveredHoldensBadge, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyHelpedLucy, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyIsKind, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyShotZubenInTheBack, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyKilledRunciter2, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSergeantWalls, kClueMcCoyLetZubenEscape, 70, false, false, -1);
@@ -1303,7 +1303,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyIsKind, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyIsInsane, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyRetiredZuben, 70, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyShotZubenInTheBack, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyLetZubenEscape, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorPhotographer, kClueMcCoyWarnedIzo, 85, false, false, -1);
@@ -1338,7 +1338,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyIsKind, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyIsInsane, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyRetiredZuben, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyShotZubenintheback, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyShotZubenInTheBack, 50, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyKilledRunciter1, 50, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyLetZubenEscape, 50, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorEarlyQBartender, kClueMcCoyWarnedIzo, 50, false, false, -1);
@@ -1372,7 +1372,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueRunciterConfession2, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTaffyPatron, kClueMcCoyIsABladeRunner, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyIsKind, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyShotZubenintheback, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyShotZubenInTheBack, 40, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyLetZubenEscape, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTyrell, kClueMcCoyWarnedIzo, 65, false, false, -1);
@@ -1436,7 +1436,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorGaff, kClueCar, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyHelpedLucy, 90, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyIsKind, 90, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyShotZubenInTheBack, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyKilledRunciter1, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyKilledRunciter2, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorGaff, kClueMcCoyLetZubenEscape, 70, false, false, -1);
@@ -1465,7 +1465,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyIsKind, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyIsInsane, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyRetiredZuben, 50, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyShotZubenintheback, 50, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyShotZubenInTheBack, 50, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyKilledRunciter1, 50, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyLetZubenEscape, 50, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTaffy, kClueMcCoyWarnedIzo, 50, false, false, -1);
@@ -1490,7 +1490,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorTaffy, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorTaffy, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyRetiredZuben, 60, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyShotZubenintheback, 65, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyShotZubenInTheBack, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyIsAnnoying, 45, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyIsKind, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSebastian, kClueMcCoyIsInsane, 65, false, false, -1);
@@ -1535,7 +1535,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorSebastian, kClueCrystalArrestedCrazylegs, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorSebastian, kClueSightingMcCoyRuncitersShop, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyIsKind, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyShotZubenintheback, 40, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyShotZubenInTheBack, 40, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyLetZubenEscape, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyWarnedIzo, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorRachael, kClueMcCoyHelpedIzoIzoIsAReplicant, 65, false, false, -1);
@@ -1559,7 +1559,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorGeneralDoll, kClueMcCoyIsInsane, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorGeneralDoll, kClueMcCoyIsStupid, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorGeneralDoll, kClueMcCoyIsABladeRunner, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyShotZubenintheback, 55, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyShotZubenInTheBack, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyIsAnnoying, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyIsKind, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorIsabella, kClueMcCoyIsInsane, 55, false, false, -1);
@@ -1598,7 +1598,7 @@ void InitScript::Init_Clues2() {
 	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyIsKind, 55, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyIsInsane, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyRetiredZuben, 65, false, false, -1);
-	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyShotZubenintheback, 70, false, false, -1);
+	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyShotZubenInTheBack, 70, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyKilledRunciter1, 40, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyLetZubenEscape, 65, false, false, -1);
 	Actor_Clue_Add_To_Database(kActorLeon, kClueMcCoyWarnedIzo, 65, false, false, -1);
