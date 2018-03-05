@@ -1288,9 +1288,6 @@ void GameManager::searchStartEvent() {
 	_state._corridorSearch = true;
 }
 
-void GameManager::outro() {
-}
-
 void GameManager::great(uint number) {
 	if (number && (_state._greatFlag & (1 << number)))
 		return;

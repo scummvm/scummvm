@@ -234,7 +234,6 @@ public:
 	void guardWalkEvent();
 	void taxiEvent();
 	void searchStartEvent();
-	void outro();
 	void guardShot();
 	void guard3Shot();
 	void alarm();
