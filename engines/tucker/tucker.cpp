@@ -364,7 +364,16 @@ void TuckerEngine::mainLoop() {
 	}
 	loadCharset();
 	loadPanel();
+
 	loadFile("infobar.txt", _infoBarBuf);
+	// WORKAROUND capitalized "With"/"Con" in the English/Spanish versions
+	// Fixes Trac#10445.
+	if (_gameLang == Common::EN_ANY) {
+		_infoBarBuf[getPositionForLine(kVerbPrepositionWith, _infoBarBuf)] = 'w';
+	} else if (_gameLang == Common::ES_ESP) {
+		_infoBarBuf[getPositionForLine(kVerbPrepositionWith, _infoBarBuf)] = 'c';
+	}
+
 	_data5Buf = loadFile("data5.c", 0);
 	_bgTextBuf = loadFile("bgtext.c", 0);
 	_charNameBuf = loadFile("charname.c", 0);
