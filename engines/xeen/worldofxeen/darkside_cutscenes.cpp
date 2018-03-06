@@ -301,12 +301,11 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	WAIT(20);
 
 	// Zoom into the Pharoah's base closeup view
+	sound.setMusicPercent(38);
 	for (int idx = 14; idx >= 0 && !_vm->shouldExit(); --idx) {
 		pyraTop.draw(0, 0, Common::Point(XLIST1[idx], YLIST1[idx]), 0, idx);
 		pyraTop.draw(0, 1, Common::Point(XLIST2[idx], YLIST1[idx]), 0, idx);
 
-		if (idx == 2)
-			sound.setMusicPercent(38);
 		WAIT(2);
 	}
 
