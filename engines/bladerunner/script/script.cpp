@@ -553,16 +553,90 @@ void ScriptBase::Actor_Force_Stop_Walking(int actorId) {
 	warning("Loop_Actor_Travel_Stairs(%d)", actorId);
 }
 
-bool ScriptBase::Loop_Actor_Travel_Stairs(int actorId, int a2, int a3, int a4) {
-	//TODO
-	warning("Loop_Actor_Travel_Stairs(%d, %d, %d, %d)", actorId, a2, a3, a4);
-	return false;
+void ScriptBase::Loop_Actor_Travel_Stairs(int actorId, int stepCount, bool up, int animationModeEnd) {
+	_vm->gameWaitForActive();
+
+	Player_Loses_Control();
+
+	Actor *actor = _vm->_actors[actorId];
+
+	int animationModeWalk = 0;
+	if (actor->inCombat()) {
+		animationModeWalk = up ? kAnimationModeCombatWalkUp : kAnimationModeCombatWalkDown;
+		if (animationModeEnd == kAnimationModeIdle) {
+			animationModeEnd = kAnimationModeCombatIdle;
+		}
+	} else {
+		animationModeWalk = up ? kAnimationModeWalkUp : kAnimationModeWalkDown;
+	}
+	actor->changeAnimationMode(animationModeWalk, false);
+
+	int stairsHeight = stepCount * 9 * (up ? 1 : -1);
+	float targetY = actor->getY() + stairsHeight;
+
+	bool immunityToObstacles = actor->isImmuneToObstacles();
+	actor->setImmunityToObstacles(true);
+	do {
+		_vm->gameTick();
+		if (up) {
+			if (targetY <= actor->getY()) {
+				break;
+			}
+		} else {
+			if (targetY >= actor->getY()) {
+				break;
+			}
+		}
+	} while (true);
+	actor->setImmunityToObstacles(immunityToObstacles);
+
+	actor->setAtXYZ(Vector3(actor->getX(), targetY, actor->getZ()), actor->getFacing(), true, false, false);
+	actor->changeAnimationMode(animationModeEnd, false);
+
+	Player_Gains_Control();
 }
 
-bool ScriptBase::Loop_Actor_Travel_Ladder(int actorId, int a2, int a3, int a4) {
-	//TODO
-	warning("Loop_Actor_Travel_Ladder(%d, %d, %d, %d)", actorId,a2,a3,a4);
-	return false;
+void ScriptBase::Loop_Actor_Travel_Ladder(int actorId, int stepCount, bool up, int animationModeEnd) {
+	_vm->gameWaitForActive();
+
+	Player_Loses_Control();
+
+	Actor *actor = _vm->_actors[actorId];
+
+	int animationModeWalk = 0;
+	if (actor->inCombat()) {
+		animationModeWalk = up ? kAnimationModeCombatClimbUp : kAnimationModeCombatClimbDown;
+		if (animationModeEnd == kAnimationModeIdle) {
+			animationModeEnd = kAnimationModeCombatIdle;
+		}
+	} else {
+		animationModeWalk = up ? kAnimationModeClimbUp : kAnimationModeClimbDown;
+	}
+	actor->changeAnimationMode(animationModeWalk, false);
+
+	int ladderHeight = stepCount * 12 * (up ? 1 : -1);
+	float targetY = actor->getY() + ladderHeight;
+
+	bool immunityToObstacles = actor->isImmuneToObstacles();
+	actor->setImmunityToObstacles(true);
+	do {
+		_vm->gameTick();
+		if (up) {
+			if (targetY <= actor->getY()) {
+				break;
+			}
+		} else {
+			if (targetY >= actor->getY()) {
+				break;
+			}
+		}
+	} while (true);
+	actor->setImmunityToObstacles(immunityToObstacles);
+
+	actor->setAtXYZ(Vector3(actor->getX(), targetY, actor->getZ()), actor->getFacing(), true, false, false);
+	actor->changeAnimationMode(animationModeEnd, false);
+
+	Player_Gains_Control();
 }
 
 void ScriptBase::Actor_Clue_Add_To_Database(int actorId, int clueId, int weight, bool clueAcquired, bool unknownFlag, int fromActorId) {

@@ -1313,7 +1313,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			}
 		}
 		break;
-	case 3:
+	case kAnimationModeTalk:
 		if (_animationState < 3 || _animationState > 12) {
 			_animationState = 13;
 			_animationStateNext = 3;
@@ -1362,7 +1362,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
-	case 5:
+	case kAnimationModeCombatAim:
 		switch (_animationState) {
 		case 17:
 		case 18:
@@ -1571,19 +1571,19 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		Player_Loses_Control();
 		break;
-	case 44:
+	case kAnimationModeWalkUp:
 		_animationState = 38;
 		_animationFrame = 0;
 		break;
-	case 45:
+	case kAnimationModeWalkDown:
 		_animationState = 39;
 		_animationFrame = 0;
 		break;
-	case 46:
+	case kAnimationModeCombatWalkUp:
 		_animationState = 40;
 		_animationFrame = 0;
 		break;
-	case 47:
+	case kAnimationModeCombatWalkDown:
 		_animationState = 41;
 		_animationFrame = 0;
 		break;
@@ -1631,13 +1631,13 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			_animationState = 70;
 		}
 		break;
-	case 64:
-	case 66:
+	case kAnimationModeClimbUp:
+	case kAnimationModeCombatClimbUp:
 		_animationState = 42;
 		_animationFrame = 0;
 		break;
-	case 65:
-	case 67:
+	case kAnimationModeClimbDown:
+	case kAnimationModeCombatClimbDown:
 		_animationState = 43;
 		_animationFrame = 0;
 		break;

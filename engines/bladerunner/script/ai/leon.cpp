@@ -244,7 +244,6 @@ bool AIScriptLeon::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 }
 
 bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
-
 	switch (_animationState) {
 	case 10:
 		*animation = 856;
@@ -382,7 +381,7 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
 		var_45EDAC = 0;

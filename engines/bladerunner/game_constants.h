@@ -569,7 +569,15 @@ enum AnimationModes {
 	kAnimationModeCombatShoot = 6,
 	kAnimationModeCombatWalk = 7,
 	kAnimationModeCombatRun = 8,
-	kAnimationModeFeeding = 52
+	kAnimationModeWalkUp = 44,
+	kAnimationModeWalkDown = 45,
+	kAnimationModeCombatWalkUp = 46,
+	kAnimationModeCombatWalkDown = 47,
+	kAnimationModeFeeding = 52,
+	kAnimationModeClimbUp = 64,
+	kAnimationModeClimbDown = 65,
+	kAnimationModeCombatClimbUp = 66,
+	kAnimationModeCombatClimbDown = 67
 };
 
 enum SceneLoopMode {

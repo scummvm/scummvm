@@ -500,7 +500,7 @@ bool AIScriptRunciter::ChangeAnimationMode(int mode) {
 			_animationNext = 526;
 		}
 		break;
-	case 3:
+	case kAnimationModeTalk:
 		if (_animationState  != 0) {
 			_animationState = 2;
 			_animationFrame = 0;

@@ -109,8 +109,8 @@ protected:
 	void Async_Actor_Walk_To_Waypoint(int actorId, int waypointId, int destinationOffset, bool run);
 	void Async_Actor_Walk_To_XYZ(int actorId, float x, float y, float z, int destinationOffset, bool run);
 	void Actor_Force_Stop_Walking(int actorId);
-	bool Loop_Actor_Travel_Stairs(int actorId, int a2, int a3, int a4);
-	bool Loop_Actor_Travel_Ladder(int actorId, int a2, int a3, int a4);
+	void Loop_Actor_Travel_Stairs(int actorId, int stepCount, bool up, int animationModeEnd);
+	void Loop_Actor_Travel_Ladder(int actorId, int stepCount, bool up, int animationModeEnd);
 	void Actor_Clue_Add_To_Database(int actorId, int clueId, int weight, bool clueAcquired, bool unknownFlag, int fromActorId);
 	void Actor_Clue_Acquire(int actorId, int clueId, bool unknownFlag, int fromActorId);
 	void Actor_Clue_Lose(int actorId, int clueId);

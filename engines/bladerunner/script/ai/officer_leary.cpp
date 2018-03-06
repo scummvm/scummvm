@@ -941,7 +941,7 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 		_animationState = 4;
 		_animationFrame = 0;
 		break;
-	case 3:
+	case kAnimationModeTalk:
 		if (_animationState == 1) {
 			_animationState = 2;
 			_animationStateNext = 11;
@@ -979,7 +979,7 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
-	case 6:
+	case kAnimationModeCombatShoot:
 		_animationState = 24;
 		_animationFrame = 0;
 		break;
@@ -1140,19 +1140,19 @@ bool AIScriptOfficerLeary::ChangeAnimationMode(int mode) {
 	case 28:
 		Game_Flag_Set(199);
 		break;
-	case 44:
+	case kAnimationModeWalkUp:
 		_animationState = 5;
 		_animationFrame = 0;
 		break;
-	case 45:
+	case kAnimationModeWalkDown:
 		_animationState = 6;
 		_animationFrame = 0;
 		break;
-	case 46:
+	case kAnimationModeCombatWalkUp:
 		_animationState = 9;
 		_animationFrame = 0;
 		break;
-	case 47:
+	case kAnimationModeCombatWalkDown:
 		_animationState = 10;
 		_animationFrame = 0;
 		break;
