@@ -339,11 +339,11 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 			}
 
 			++lookup;
-			if (!sound._soundOn && lookup > 30)
+			if (!sound._fxOn && lookup > 30)
 				lookup = 0;
 		}
 
-		if (!sound._soundOn)
+		if (!sound._fxOn)
 			lineCtr = 20;
 
 		if (lineCtr == 5)

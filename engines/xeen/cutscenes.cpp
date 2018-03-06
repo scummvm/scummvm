@@ -38,7 +38,7 @@ void Cutscenes::showSubtitles(uint windowIndex) {
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 
-	if (sound._soundOn || _vm->shouldExit()) {
+	if (sound._fxOn || _vm->shouldExit()) {
 		// Sound is on, so subtitles aren't needed
 		resetSubtitles(0, 0);
 	} else {

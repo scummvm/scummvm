@@ -28,7 +28,7 @@
 
 namespace Xeen {
 
-Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _soundOn(true), _musicOn(true),
+Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _fxOn(true), _musicOn(true),
 		_songData(nullptr), _effectsData(nullptr), _musicSide(0) {
 	_SoundDriver = new AdlibSoundDriver();
 }
@@ -43,7 +43,7 @@ Sound::~Sound() {
 
 void Sound::playSound(Common::SeekableReadStream &s, int unused) {
 	stopSound();
-	if (!_soundOn)
+	if (!_fxOn)
 		return;
 
 	s.seek(0);
@@ -83,7 +83,7 @@ void Sound::stopAllAudio() {
 	stopSound();
 }
 
-void Sound::setEffectsOn(bool isOn) {
+void Sound::setFxOn(bool isOn) {
 	ConfMan.setBool("sfx_mute", !isOn);
 	if (isOn)
 		ConfMan.setBool("mute", false);
@@ -92,8 +92,8 @@ void Sound::setEffectsOn(bool isOn) {
 }
 
 void Sound::updateSoundSettings() {
-	_soundOn = !ConfMan.getBool("sfx_mute");
-	if (!_soundOn)
+	_fxOn = !ConfMan.getBool("sfx_mute");
+	if (!_fxOn)
 		stopFX();
 
 	_musicOn = !ConfMan.getBool("music_mute");

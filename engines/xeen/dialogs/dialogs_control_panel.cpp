@@ -132,7 +132,7 @@ int ControlPanel::execute() {
 			break;
 
 		case Common::KEYCODE_e:
-			sound.setEffectsOn(!sound._soundOn);
+			sound.setFxOn(!sound._fxOn);
 			break;
 
 		case Common::KEYCODE_m:
@@ -195,7 +195,7 @@ void ControlPanel::loadButtons() {
 
 Common::String ControlPanel::getButtonText() {
 	Sound &sound = *g_vm->_sound;
-	_btnSoundText = sound._soundOn ? Res.ON : Res.OFF;
+	_btnSoundText = sound._fxOn ? Res.ON : Res.OFF;
 	_btnMusicText = sound._musicOn ? Res.ON : Res.OFF;
 
 	return Common::String::format(Res.CONTROL_PANEL_BUTTONS,

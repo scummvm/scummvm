@@ -50,7 +50,7 @@ private:
 	 */
 	void update();
 public:
-	bool _soundOn;
+	bool _fxOn;
 	bool _musicOn;
 	Common::String _currentMusic, _priorMusic;
 	int _musicSide;
@@ -118,7 +118,7 @@ public:
 	/**
 	* Sets whether sound effects is on
 	*/
-	void setEffectsOn(bool isOn);
+	void setFxOn(bool isOn);
 
 	/**
 	 * Called to reload sound settings
