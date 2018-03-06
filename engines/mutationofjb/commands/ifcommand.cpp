@@ -26,6 +26,25 @@
 #include "common/str.h"
 #include "common/translation.h"
 
+/*
+	"IF" <tag> <sceneId> <objectId> <value> ["!"]
+
+	IF command compares the value of the WX pseudo-register of the object in the specified scene.
+	If the values match, execution continues to the next line.
+	Otherwise execution continues after first "#ELSE" with the same <tag>.
+	The logic can be reversed with exclamation mark at the end.
+
+	<tag> is always 1 character long, <sceneId> and <objectId> 2 characters long.
+
+	Please note that this does not work line you are used to from saner languages.
+	IF does not have any blocks. It only searches for first #ELSE, so you can have stuff like:
+		IF something
+		IF something else
+		#ELSE
+		...
+	This is effectively logical AND.
+*/
+
 namespace MutationOfJB {
 
 bool IfCommandParser::parse(const Common::String &line, ScriptParseContext &parseContext, Command *&command) {

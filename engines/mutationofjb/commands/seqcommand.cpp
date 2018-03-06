@@ -25,7 +25,7 @@
 
 namespace MutationOfJB {
 
-void SeqCommandParser::transition(ScriptParseContext &, Command * oldCommand, Command * newCommand) {
+void SeqCommandParser::transition(ScriptParseContext &, Command * oldCommand, Command * newCommand, CommandParser *) {
 	if (!oldCommand || !newCommand) {
 		warning(_("Unexpected empty command in transition"));
 		return;
