@@ -95,7 +95,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 	screen.horizMerge(0);
 	screen.fadeIn();
 
-	sound.setMusicVolume(0x5f);
+	sound.setMusicPercent(75);
 	sound.playFX(1);
 
 	// Initial loop for dragon roaring
@@ -191,7 +191,6 @@ bool DarkSideCutscenes::showDarkSideIntro(bool seenIntro) {
 	}
 
 	sound.stopAllAudio();
-	sound.setMusicVolume(100);
 	screen.freePages();
 
 	return seenIntro;
@@ -247,7 +246,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	};
 
 	// Play the intro music
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 	sound.playSong("bigtheme.m");
 
 	screen.loadBackground("jvc.raw");
@@ -299,7 +298,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	screen.saveBackground();
 	screen.freePages();
 
-	WAIT(30);
+	WAIT(20);
 
 	// Zoom into the Pharoah's base closeup view
 	for (int idx = 14; idx >= 0 && !_vm->shouldExit(); --idx) {
@@ -307,7 +306,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		pyraTop.draw(0, 1, Common::Point(XLIST2[idx], YLIST1[idx]), 0, idx);
 
 		if (idx == 2)
-			sound.setMusicVolume(48);
+			sound.setMusicPercent(38);
 		WAIT(2);
 	}
 
@@ -724,7 +723,7 @@ bool DarkSideCutscenes::showDarkSideIntro3() {
 
 	sound.playFX(0);
 	screen.fadeOut();
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 	screen.loadBackground("bird.raw");
 	screen.saveBackground();
 	screen.fadeIn();
@@ -1193,7 +1192,7 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 
 	// Closeup of side of Alamar's helmet
 	SpriteResource sc11("sc11.end");
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 	sound.playSong("dngon2.m");
 	screen.fadeOut();
 	screen.loadBackground("blank.raw");
@@ -1241,7 +1240,7 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 	// I'm ready for you this time
 	SpriteResource sc13("sc13.end");
 	resetSubtitles(26);
-	sound.setMusicVolume(48);
+	sound.setMusicPercent(38);
 
 	for (int idx = 0; idx < 16; ++idx) {
 		if (idx == 1)
@@ -1430,7 +1429,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 
 	// Corak waving his hands
 	SpriteResource sc20("sc20.end");
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 	sound.playSong("sf17.m");
 	screen.loadBackground("blank.raw");
 	screen.saveBackground();

@@ -44,7 +44,6 @@ bool CloudsCutscenes::showCloudsIntro() {
 	bool seenIntro = showCloudsTitle() && showCloudsIntroInner();
 
 	sound.stopAllAudio();
-	sound.setMusicVolume(100);
 	screen.freePages();
 
 	return seenIntro;
@@ -247,7 +246,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 	if (doScroll(false, true))
 		return false;
 
-	sound.setMusicVolume(75);
+	sound.setMusicPercent(60);
 	screen.restoreBackground();
 	screen.update();
 	resetSubtitles(0, 1);
@@ -523,7 +522,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 
 		WAIT(3);
 	}
-	sound.setMusicVolume(75);
+	sound.setMusicPercent(60);
 
 	// Alamar's monologue
 	for (int idx = 0; idx < 3; ++idx) {
@@ -570,7 +569,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 
 	// Laugh
 	sound.playSound("darklaff.voc");
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 
 	// Alamar fade out
 	for (int idx = 12; idx >= 0; --idx) {

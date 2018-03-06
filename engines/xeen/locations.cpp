@@ -1336,7 +1336,7 @@ int ReaperCutscene::show() {
 		}
 	}
 
-	sound.setMusicVolume(48);
+	sound.setMusicPercent(38);
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	if (_isDarkCc) {
 		sprites1.draw(0, 1, Common::Point(160, 0));
@@ -1433,7 +1433,7 @@ exit:
 
 	// Restore game screen
 	sound.stopSound();
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 
 	screen.loadBackground("back.raw");
 	intf.drawParty(false);
@@ -1641,7 +1641,7 @@ int GolemCutscene::show() {
 		if (g_vm->shouldExit() || _buttonValue)
 			goto exit;
 	}
-	sound.setMusicVolume(48);
+	sound.setMusicPercent(38);
 	sound.playSound(_mazeFlag ? "golem15.voc" : "golem13.voc");
 
 	do {
@@ -1729,7 +1729,7 @@ int GolemCutscene::show() {
 			goto exit;
 	}
 
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 
 	if (!_mazeFlag) {
 		for (int idx = 0; !g_vm->shouldExit() && idx < (_isDarkCc ? 9 : 12); ++idx) {
@@ -1756,7 +1756,7 @@ exit:
 	setNewLocation();
 
 	// Restore game screen
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 	sound.stopSound();
 
 	screen.loadBackground("back.raw");
@@ -1939,7 +1939,7 @@ int DwarfCutscene::show() {
 			goto exit;
 	}
 
-	sound.setMusicVolume(48);
+	sound.setMusicPercent(38);
 	screen.blitFrom(savedBg);
 	sprites2.draw(0, 0);
 	windows[0].update();
@@ -1999,7 +1999,7 @@ exit:
 	setNewLocation();
 
 	// Restore game screen
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 	sound.stopSound();
 
 	screen.loadBackground("back.raw");
@@ -2140,7 +2140,7 @@ int SphinxCutscene::show() {
 			goto exit;
 	}
 
-	sound.setMusicVolume(48);
+	sound.setMusicPercent(38);
 
 	for (int idx = 0; idx < (_mazeFlag ? 3 : 2); ++idx) {
 		switch (idx) {
@@ -2172,7 +2172,7 @@ int SphinxCutscene::show() {
 		sprites1.draw(0, 1, Common::Point(160, 0));
 	}
 
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 
 	if (!_mazeFlag) {
 		for (int idx = 0; idx < 8; ++idx) {
@@ -2198,7 +2198,7 @@ exit:
 	setNewLocation();
 
 	// Restore game screen
-	sound.setMusicVolume(95);
+	sound.setMusicPercent(75);
 	screen.loadBackground("back.raw");
 	intf.drawParty(false);
 	intf.draw3d(false, false);

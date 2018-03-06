@@ -29,7 +29,7 @@
 namespace Xeen {
 
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _fxOn(true), _musicOn(true),
-		_songData(nullptr), _effectsData(nullptr), _musicSide(0) {
+		_songData(nullptr), _effectsData(nullptr), _musicSide(0), _musicPercent(100) {
 	_SoundDriver = new AdlibSoundDriver();
 }
 
@@ -81,6 +81,7 @@ void Sound::stopAllAudio() {
 	stopSong();
 	stopFX();
 	stopSound();
+	setMusicPercent(100);
 }
 
 void Sound::setFxOn(bool isOn) {
@@ -190,5 +191,13 @@ void Sound::setMusicOn(bool isOn) {
 bool Sound::isMusicPlaying() const {
 	return _SoundDriver->isPlaying();
 }
+
+void Sound::setMusicPercent(byte percent) {
+	assert(percent <= 100);
+	_musicPercent = percent;
+
+	songCommand(SET_VOLUME, (int)percent * 127 / 100);
+}
+
 
 } // End of namespace Xeen

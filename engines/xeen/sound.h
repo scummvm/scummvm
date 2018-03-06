@@ -39,6 +39,7 @@ private:
 	const byte *_songData;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
+	byte _musicPercent;
 private:
 	/**
 	 * Loads effects data that was embedded in the music driver
@@ -84,9 +85,9 @@ public:
 	void restartSong() { songCommand(RESTART_SONG); }
 
 	/**
-	 * Sets the music volume
+	 * Sets the in-game music volume percent. This is separate from the ScummVM volume
 	 */
-	void setMusicVolume(byte volume) { songCommand(SET_VOLUME, volume); }
+	void setMusicPercent(byte percent);
 
 	/**
 	 * Plays a song
