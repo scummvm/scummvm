@@ -54,22 +54,22 @@ private:
 	/**
 	 * Part 1 of World of Xeen ending
 	 */
-	void worldEnding1();
+	bool worldEnding1();
 
 	/**
 	 * Part 2 of World of Xeen ending
 	 */
-	void worldEnding2();
+	bool worldEnding2();
 
 	/**
 	 * Part 3 of World of Xeen ending
 	 */
-	void worldEnding3();
+	bool worldEnding3();
 
 	/**
 	 * Part 4 of World of Xeen ending
 	 */
-	void worldEnding4();
+	bool worldEnding4();
 public:
 	WorldOfXeenCutscenes(XeenEngine *vm) : _vm(vm), CloudsCutscenes(vm),
 		DarkSideCutscenes(vm), _goober(NON_GOOBER), _finalScore(0) {}
