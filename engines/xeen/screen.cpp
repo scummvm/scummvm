@@ -163,14 +163,14 @@ void Screen::restoreBackground(int slot) {
 	blitFrom(_savedScreens[slot - 1]);
 }
 
-bool Screen::doScroll(bool rollUp, bool fadeIn) {
+bool Screen::doScroll(bool rollUp, bool fadeInFlag) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	const int SCROLL_L[8] = { 29, 23, 15, -5, -11, -23, -49, -71 };
 	const int SCROLL_R[8] = { 165, 171, 198, 218, 228, 245, 264, 281 };
 
 	if (_vm->_files->_isDarkCc) {
-		if (fadeIn)
+		if (fadeInFlag)
 			screen.fadeIn(2);
 		return _vm->shouldExit();
 	}
@@ -212,7 +212,7 @@ bool Screen::doScroll(bool rollUp, bool fadeIn) {
 			while (!_vm->shouldExit() && events.timeElapsed() == 0)
 				events.pollEventsAndWait();
 
-			if (i == 0 && fadeIn)
+			if (i == 0 && fadeInFlag)
 				screen.fadeIn(2);
 		}
 	} else {
@@ -237,7 +237,7 @@ bool Screen::doScroll(bool rollUp, bool fadeIn) {
 			while (!_vm->shouldExit() && events.timeElapsed() == 0)
 				events.pollEventsAndWait();
 
-			if (i == 0 && fadeIn)
+			if (i == 0 && fadeInFlag)
 				screen.fadeIn(2);
 		}
 	}

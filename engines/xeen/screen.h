@@ -115,11 +115,11 @@ public:
 
 	/**
 	 * Draws the scroll in the background
-	 * @param rollUp	If true, rolls up the scroll. If false, unrolls.
-	 * @param fadeIn	If true, does an initial fade in
+	 * @param rollUp		If true, rolls up the scroll. If false, unrolls.
+	 * @param fadeInFlag	If true, does an initial fade in
 	 * @returns		True if key or mouse pressed
 	 */
-	bool doScroll(bool rollUp, bool fadeIn);
+	bool doScroll(bool rollUp, bool fadeInFlag);
 };
 
 } // End of namespace Xeen
