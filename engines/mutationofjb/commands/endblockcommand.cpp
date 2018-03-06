@@ -102,7 +102,7 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, 
 	}
 
 	if (!_pendingActionInfos.empty() && newCommandParser != this) {
-		debug("Fixing pending action info.\n");
+		debug("Fixing pending action info.");
 		for (Common::Array<ActionInfo *>::iterator it = _pendingActionInfos.begin(); it != _pendingActionInfos.end(); ++it) {
 			(*it)->_command = newCommand;
 		}

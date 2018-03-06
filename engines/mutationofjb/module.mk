@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	commands/conditionalcommand.o \
 	commands/endblockcommand.o \
 	commands/ifcommand.o \
+	commands/saycommand.o \
 	commands/seqcommand.o \
 	debug.o \
 	detection.o \

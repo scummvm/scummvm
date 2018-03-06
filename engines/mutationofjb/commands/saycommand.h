@@ -20,31 +20,37 @@
  *
  */
 
-#ifndef MUTATIONOFJB_SEQCOMMAND_H
-#define MUTATIONOFJB_SEQCOMMAND_H 
+#ifndef MUTATIONOFJB_SAYCOMMAND_H
+#define MUTATIONOFJB_SAYCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
-#include "common/scummsys.h"
+#include "mutationofjb/commands/seqcommand.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 
-class SeqCommandParser : public CommandParser
-{
+class SayCommandParser : public SeqCommandParser {
 public:
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
+	SayCommandParser() {}
+
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
 };
 
-class SeqCommand : public Command {
+class SayCommand : public SeqCommand {
 public:
-	void setNextCommand(Command *nextCommand);
-	virtual Command *next() const override;
-	virtual SeqCommand *asSeqCommand();
-
+	SayCommand(Common::String &lineToSay, Common::String &voiceFile, bool waitForPrevious, bool talkingAnimation) :
+		_lineToSay(lineToSay),
+		_voiceFile(voiceFile),
+		_waitForPrevious(waitForPrevious),
+		_talkingAnimation(talkingAnimation) {}
+	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual Common::String debugString() const override;
 private:
-	Command *_nextCommand;
+	Common::String _lineToSay;
+	Common::String _voiceFile;
+	bool _waitForPrevious;
+	bool _talkingAnimation;
 };
 
 }
 
 #endif
-
