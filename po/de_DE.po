@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-02-21 22:44+0100\n"
-"PO-Revision-Date: 2018-01-27 14:25+0000\n"
+"PO-Revision-Date: 2018-03-07 21:17+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1825,7 +1825,7 @@ msgstr ""
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr "Übereinstimmende Spiele-Kennungen:"
+msgstr "Uebereinstimmende Spiele-Kennungen:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
