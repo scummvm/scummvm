@@ -57,16 +57,16 @@ void SceneScriptRC01::InitializeScene() {
 	// Game_Flag_Set(kFlagSpinnerToMA01);
 	// Set_Enter(kSetMA02_MA04, kSceneMA04);
 
-	// Spinner_Set_Selectable_Destination_Flag(0, true);
-	// Spinner_Set_Selectable_Destination_Flag(1, true);
-	// Spinner_Set_Selectable_Destination_Flag(2, true);
-	// Spinner_Set_Selectable_Destination_Flag(3, true);
-	// Spinner_Set_Selectable_Destination_Flag(4, true);
-	// Spinner_Set_Selectable_Destination_Flag(5, true);
-	// Spinner_Set_Selectable_Destination_Flag(6, true);
-	// Spinner_Set_Selectable_Destination_Flag(7, true);
-	// Spinner_Set_Selectable_Destination_Flag(8, true);
-	// Spinner_Set_Selectable_Destination_Flag(9, true);
+	Spinner_Set_Selectable_Destination_Flag(0, true);
+	Spinner_Set_Selectable_Destination_Flag(1, true);
+	Spinner_Set_Selectable_Destination_Flag(2, true);
+	Spinner_Set_Selectable_Destination_Flag(3, true);
+	Spinner_Set_Selectable_Destination_Flag(4, true);
+	Spinner_Set_Selectable_Destination_Flag(5, true);
+	Spinner_Set_Selectable_Destination_Flag(6, true);
+	Spinner_Set_Selectable_Destination_Flag(7, true);
+	Spinner_Set_Selectable_Destination_Flag(8, true);
+	Spinner_Set_Selectable_Destination_Flag(9, true);
 
 	// ESPER_Flag_To_Activate();
 	// Voight_Kampff_Activate(kActorLucy, 50);

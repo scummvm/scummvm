@@ -33,7 +33,7 @@ void SceneScriptCT05::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-375.0f, -109.91f, 750.0f, 600);
 	}
-	if (Game_Flag_Query(94)) {
+	if (Game_Flag_Query(kFlagWarehouseOpen)) {
 		Scene_Exit_Add_2D_Exit(0, 228, 205, 293, 300, 0);
 	}
 	Scene_Exit_Add_2D_Exit(1, 320, 458, 639, 479, 2);
@@ -44,7 +44,7 @@ void SceneScriptCT05::InitializeScene() {
 	Ambient_Sounds_Add_Sound(90, 5, 20, 8, 10, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(91, 5, 20, 8, 10, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(205, 5, 30, 18, 30, -100, 100, -101, -101, 0, 0);
-	if (Game_Flag_Query(94)) {
+	if (Game_Flag_Query(kFlagWarehouseOpen)) {
 		Scene_Loop_Set_Default(2);
 	} else {
 		Scene_Loop_Set_Default(0);
@@ -138,7 +138,7 @@ bool SceneScriptCT05::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptCT05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -128.42f, -109.91f, 112.83f, 0, 1, false, 0)) {
-			Game_Flag_Set(76);
+			Game_Flag_Set(kFlagCT05toCT12);
 			if (Actor_Query_Goal_Number(kActorGaff) == 1) {
 				Overlay_Remove("ct05over");
 			}

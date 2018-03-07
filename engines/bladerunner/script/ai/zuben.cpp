@@ -80,7 +80,7 @@ bool AIScriptZuben::Update() {
 	}
 	if (Actor_Query_Goal_Number(kActorZuben) == 12 && Player_Query_Current_Scene() == kSceneCT07) {
 		AI_Countdown_Timer_Reset(kActorZuben, 0);
-		Game_Flag_Set(94);
+		Game_Flag_Set(kFlagWarehouseOpen);
 		Actor_Set_Targetable(kActorZuben, true);
 		if (Actor_Query_Goal_Number(kActorGordo) == 0) {
 			Actor_Set_Goal_Number(kActorGordo, 1);
@@ -382,7 +382,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Set_Goal_Number(kActorZuben, 9);
 		return false;
 	case 21:
-		Game_Flag_Set(94);
+		Game_Flag_Set(kFlagWarehouseOpen);
 		Actor_Set_Targetable(kActorZuben, true);
 		AI_Movement_Track_Flush(kActorZuben);
 		AI_Movement_Track_Append_Run(kActorZuben, 125, 0);

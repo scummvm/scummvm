@@ -39,6 +39,8 @@
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vector.h"
 #include "bladerunner/view.h"
+#include "bladerunner/vqa_decoder.h"
+#include "bladerunner/vqa_player.h"
 #include "bladerunner/waypoints.h"
 #include "bladerunner/zbuffer.h"
 
@@ -57,13 +59,14 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_viewZBuffer = false;
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
-	registerCmd("goal", WRAP_METHOD(Debugger, cmdGoal));
-	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
-	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("chapter", WRAP_METHOD(Debugger, cmdChapter));
+	registerCmd("draw", WRAP_METHOD(Debugger, cmdDraw));
 	registerCmd("flag", WRAP_METHOD(Debugger, cmdFlag));
-	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
+	registerCmd("goal", WRAP_METHOD(Debugger, cmdGoal));
+	registerCmd("loop", WRAP_METHOD(Debugger, cmdLoop));
 	registerCmd("say", WRAP_METHOD(Debugger, cmdSay));
+	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
+	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
 }
 
 Debugger::~Debugger() {
@@ -96,36 +99,6 @@ bool Debugger::cmdAnimation(int argc, const char **argv) {
 	}
 
 	debugPrintf("actorAnimationMode(%i) = %i\n", actorId, actor->getAnimationMode());
-	return true;
-}
-
-bool Debugger::cmdGoal(int argc, const char **argv) {
-	if (argc != 2 && argc != 3) {
-		debugPrintf("Get or set goal of the actor.\n");
-		debugPrintf("Usage: %s <actorId> [<goal>]\n", argv[0]);
-		return true;
-	}
-
-	int actorId = atoi(argv[1]);
-
-	Actor *actor = nullptr;
-	if (actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) {
-		actor = _vm->_actors[actorId];
-	}
-
-	if (actor == nullptr) {
-		debugPrintf("Unknown actor %i\n", actorId);
-		return true;
-	}
-
-	if (argc == 3) {
-		int goal = atoi(argv[2]);
-		debugPrintf("actorGoal(%i) = %i\n", actorId, goal);
-		actor->setGoal(goal);
-		return false;
-	}
-
-	debugPrintf("actorGoal(%i) = %i\n", actorId, actor->getGoal());
 	return true;
 }
 
@@ -199,6 +172,62 @@ bool Debugger::cmdFlag(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Debugger::cmdGoal(int argc, const char **argv) {
+	if (argc != 2 && argc != 3) {
+		debugPrintf("Get or set goal of the actor.\n");
+		debugPrintf("Usage: %s <actorId> [<goal>]\n", argv[0]);
+		return true;
+	}
+
+	int actorId = atoi(argv[1]);
+
+	Actor *actor = nullptr;
+	if (actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) {
+		actor = _vm->_actors[actorId];
+	}
+
+	if (actor == nullptr) {
+		debugPrintf("Unknown actor %i\n", actorId);
+		return true;
+	}
+
+	if (argc == 3) {
+		int goal = atoi(argv[2]);
+		debugPrintf("actorGoal(%i) = %i\n", actorId, goal);
+		actor->setGoal(goal);
+		return false;
+	}
+
+	debugPrintf("actorGoal(%i) = %i\n", actorId, actor->getGoal());
+	return true;
+}
+
+bool Debugger::cmdLoop(int argc, const char **argv) {
+	if (argc != 1 && argc != 2) {
+		debugPrintf("Show scene loops or play scene loop.\n");
+		debugPrintf("Usage: %s [<loopId>]\n", argv[0]);
+		return true;
+	}
+
+	VQADecoder::LoopInfo &loopInfo = _vm->_scene->_vqaPlayer->_decoder._loopInfo;
+	if (argc == 1) {
+		debugPrintf("id start  end name\n");
+		for (int i = 0; i < loopInfo.loopCount; ++i) {
+			debugPrintf("%2d  %4d %4d %s\n", i, loopInfo.loops[i].begin, loopInfo.loops[i].end, loopInfo.loops[i].name.c_str());
+		}
+		return true;
+	}
+
+	int loopId = atoi(argv[1]);
+	if (loopId >= 0 && loopId < loopInfo.loopCount) {
+		_vm->_scene->loopStartSpecial(kSceneLoopModeOnce, loopId, false);
+		return false;
+	} else {
+		debugPrintf("Unknown loop %i\n", loopId);
+		return true;
+	}
 }
 
 bool Debugger::cmdSay(int argc, const char **argv) {

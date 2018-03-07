@@ -46,6 +46,8 @@ class ZBuffer;
 //TODO: split this into two components as it is in original game: universal vqa player, blade runner player functionality
 
 class VQAPlayer {
+	friend class Debugger;
+
 	BladeRunnerEngine           *_vm;
 	Common::SeekableReadStream  *_s;
 	VQADecoder                   _decoder;

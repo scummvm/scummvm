@@ -39,30 +39,39 @@ bool AIScriptTemplate::Update() {
 }
 
 void AIScriptTemplate::TimerExpired(int timer) {
+	//return false;
 }
 
 void AIScriptTemplate::CompletedMovementTrack() {
+	//return false;
 }
 
 void AIScriptTemplate::ReceivedClue(int clueId, int fromActorId) {
+	//return false;
 }
 
 void AIScriptTemplate::ClickedByPlayer() {
+	//return false;
 }
 
 void AIScriptTemplate::EnteredScene(int sceneId) {
+	// return false;
 }
 
 void AIScriptTemplate::OtherAgentEnteredThisScene(int otherActorId) {
+	// return false;
 }
 
 void AIScriptTemplate::OtherAgentExitedThisScene(int otherActorId) {
+	// return false;
 }
 
 void AIScriptTemplate::OtherAgentEnteredCombatMode(int otherActorId, int combatMode) {
+	// return false;
 }
 
 void AIScriptTemplate::ShotAtAndMissed() {
+	// return false;
 }
 
 bool AIScriptTemplate::ShotAtAndHit() {
@@ -70,6 +79,7 @@ bool AIScriptTemplate::ShotAtAndHit() {
 }
 
 void AIScriptTemplate::Retired(int byActorId) {
+	// return false;
 }
 
 int AIScriptTemplate::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueId) {
@@ -108,6 +118,8 @@ bool AIScriptTemplate::ReachedMovementTrackWaypoint(int waypointId) {
 	return true;
 }
 
-void AIScriptTemplate::FledCombat() {}
+void AIScriptTemplate::FledCombat() {
+	// return false;
+}
 
 } // End of namespace BladeRunner

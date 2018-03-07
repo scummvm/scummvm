@@ -24,6 +24,23 @@
 
 namespace BladeRunner {
 
+enum kCT01Loops {
+	kCT01LoopInshotFromCT12WithSpinner = 0,
+	kCT01LoopInshot                    = 1,
+	kCT01LoopMain                      = 2,
+	kCT01LoopDoorAnim                  = 4,
+	kCT01LoopOutshot                   = 5,
+	kCT01LoopInshotFromCT12NoSpinner   = 6,
+	kCT01LoopMainLoopNoSpinner         = 7
+};
+
+enum kCT01Exits {
+	kCT01ExitCT02    = 0,
+	kCT01ExitCT03    = 1,
+	kCT01ExitCT12    = 2,
+	kCT01ExitSpinner = 3
+};
+
 void SceneScriptCT01::InitializeScene() {
 	Music_Play(3, 28, 0, 2, -1, 1, 0);
 	Game_Flag_Reset(247);
@@ -38,9 +55,9 @@ void SceneScriptCT01::InitializeScene() {
 		Setup_Scene_Information(-419.0f, -6.5f, 696.0f, 28);
 		if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 			if (Game_Flag_Query(kFlagSpinnerToCT01)) {
-				Scene_Loop_Start_Special(0, 0, 0);
+				Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshotFromCT12WithSpinner, false);
 			} else {
-				Scene_Loop_Start_Special(0, 6, 0);
+				Scene_Loop_Start_Special(kSceneLoopModeLoseControl, kCT01LoopInshotFromCT12NoSpinner, false);
 			}
 		}
 	} else if (Game_Flag_Query(kFlagSpinnerToCT01)) {
@@ -49,15 +66,15 @@ void SceneScriptCT01::InitializeScene() {
 	} else {
 		Setup_Scene_Information(-397.0f, -6.5f, 471.0f, 250);
 	}
-	Scene_Exit_Add_2D_Exit(0, 290, 256, 360, 304, 1);
+	Scene_Exit_Add_2D_Exit(kCT01ExitCT02, 290, 256, 360, 304, 1);
 	if (Actor_Clue_Query(kActorMcCoy, kClueZubenRunsAway)) {
-		Scene_Exit_Add_2D_Exit(1, 571, 233, 639, 367, 1);
+		Scene_Exit_Add_2D_Exit(kCT01ExitCT03, 571, 233, 639, 367, 1);
 	}
-	if (Game_Flag_Query(94)) {
-		Scene_Exit_Add_2D_Exit(2, 506, 400, 639, 479, 2);
+	if (Game_Flag_Query(kFlagWarehouseOpen)) {
+		Scene_Exit_Add_2D_Exit(kCT01ExitCT12, 506, 400, 639, 479, 2);
 	}
 	if (Game_Flag_Query(kFlagSpinnerToCT01)) {
-		Scene_Exit_Add_2D_Exit(3, 0, 286, 158, 350, 2);
+		Scene_Exit_Add_2D_Exit(kCT01ExitSpinner, 0, 286, 158, 350, 2);
 	}
 	Ambient_Sounds_Add_Looping_Sound(54, 50, 1, 1);
 	Ambient_Sounds_Add_Looping_Sound(55, 40, -100, 1);
@@ -76,9 +93,9 @@ void SceneScriptCT01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(376, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
 	if (Game_Flag_Query(kFlagSpinnerToCT01)) {
-		Scene_Loop_Set_Default(2);
+		Scene_Loop_Set_Default(kCT01LoopMain);
 	} else {
-		Scene_Loop_Set_Default(7);
+		Scene_Loop_Set_Default(kCT01LoopMainLoopNoSpinner);
 	}
 }
 
@@ -144,14 +161,14 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 			return true;
 		}
 	}
-	if (actorId == 19) {
+	if (actorId == kActorZuben) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -335.23f, -6.5f, 578.97f, 12, 1, false, 0)) {
 			Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 			Actor_Says(kActorMcCoy, 355, 18);
-			if (!Actor_Query_Goal_Number(kActorZuben)) {
+			if (Actor_Query_Goal_Number(kActorZuben) == 0) {
 				Actor_Says(kActorZuben, 10, 16);
 				Actor_Face_Actor(kActorHowieLee, kActorMcCoy, true);
-				Actor_Says(kActorHowieLee, 150, 3);
+				Actor_Says(kActorHowieLee, 150, kAnimationModeTalk);
 				Actor_Face_Actor(kActorMcCoy, kActorHowieLee, true);
 				Actor_Says(kActorMcCoy, 360, 13);
 				Actor_Modify_Friendliness_To_Other(kActorHowieLee, kActorMcCoy, -5);
@@ -160,9 +177,9 @@ bool SceneScriptCT01::ClickedOnActor(int actorId) {
 			return true;
 		}
 	}
-	if (actorId == 2) {
+	if (actorId == kActorGordo) {
 		//todo: some weird code in assembly EBP is used but may not be initialized, loc_401C78
-		if (!Actor_Query_Goal_Number(kActorGordo)) {
+		if (Actor_Query_Goal_Number(kActorGordo) == 0) {
 			if (Loop_Actor_Walk_To_XYZ(kActorMcCoy, -338.1f, -6.5f, 419.65f, 6, 1, false, 0)) {
 				return false;
 			}
@@ -200,32 +217,32 @@ bool SceneScriptCT01::ClickedOnItem(int itemId, bool a2) {
 }
 
 bool SceneScriptCT01::ClickedOnExit(int exitId) {
-	if (exitId == 0) {
+	if (exitId == kCT01ExitCT02) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -327.5f, -6.5f, 352.28f, 0, 1, false, 0)) {
 			Player_Loses_Control();
 			Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 106, 0, 0, false);
 			Player_Gains_Control();
 			Game_Flag_Reset(247);
-			Set_Enter(27, kSceneCT02);
+			Set_Enter(kSetCT02, kSceneCT02);
 		}
 		return true;
 	}
-	if (exitId == 1) {
+	if (exitId == kCT01ExitCT03) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -259.0f, -6.5f, 710.0f, 0, 1, false, 0)) {
 			Game_Flag_Reset(247);
-			Set_Enter(5, kSceneCT03);
+			Set_Enter(kSetCT03_CT04, kSceneCT03);
 		}
 		return true;
 	}
-	if (exitId == 2) {
+	if (exitId == kCT01ExitCT12) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -419.0f, -6.5f, 696.0f, 0, 1, false, 0)) {
-			Game_Flag_Set(123);
+			Game_Flag_Set(kFlagCT01toCT12);
 			Game_Flag_Reset(247);
-			Set_Enter(4, kSceneCT12);
+			Set_Enter(kSetCT01_CT12, kSceneCT12);
 		}
 		return true;
 	}
-	if (exitId == 3) {
+	if (exitId == kCT01ExitSpinner) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -314.0f, -6.5f, 326.0f, 0, 1, false, 0)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -330.0f, -6.5f, 221.0f, 0, 0, true, 0);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -530.0f, -6.5f, 241.0f, 0, 0, true, 0);
@@ -240,76 +257,76 @@ bool SceneScriptCT01::ClickedOnExit(int exitId) {
 			int spinnerDest = Spinner_Interface_Choose_Dest(-1, 0);
 
 			switch (spinnerDest) {
-			case 0:
+			case kSpinnerDestinationPoliceStation:
 				Game_Flag_Set(178);
 				Game_Flag_Reset(247);
 				Game_Flag_Reset(kFlagSpinnerToCT01);
 				Game_Flag_Set(kFlagSpinnerToPS01);
-				Set_Enter(61, kScenePS01);
+				Set_Enter(kSetPS01, kScenePS01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
-			case 1:
+			case kSpinnerDestinationMcCoysApartment:
 				Game_Flag_Set(179);
 				Game_Flag_Reset(247);
 				Game_Flag_Reset(kFlagSpinnerToCT01);
 				Game_Flag_Set(kFlagSpinnerToMA01);
-				Set_Enter(49, kSceneMA01);
+				Set_Enter(kSetMA01, kSceneMA01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
-			case 2:
+			case kSpinnerDestinationRuncitersAnimals:
 				Game_Flag_Set(182);
 				Game_Flag_Reset(247);
 				Game_Flag_Reset(kFlagSpinnerToCT01);
 				Game_Flag_Set(kFlagSpinnerToRC01);
-				Set_Enter(69, kSceneRC01);
+				Set_Enter(kSetRC01, kSceneRC01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
-			case 4:
+			case kSpinnerDestinationAnimoidRow:
 				Game_Flag_Set(180);
 				Game_Flag_Reset(247);
 				Game_Flag_Reset(kFlagSpinnerToCT01);
 				Game_Flag_Set(kFlagSpinnerToAR01);
-				Set_Enter(0, kSceneAR01);
+				Set_Enter(kSetAR01_AR02, kSceneAR01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
-			case 5:
+			case kSpinnerDestinationTyrellBuilding:
 				Game_Flag_Set(261);
 				Game_Flag_Reset(kFlagSpinnerToCT01);
 				Game_Flag_Reset(247);
 				Game_Flag_Set(kFlagSpinnerToTB02);
-				Set_Enter(17, kSceneTB02);
+				Set_Enter(kSetTB02_TB03, kSceneTB02);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
-			case 6:
+			case kSpinnerDestinationDNARow:
 				Game_Flag_Set(177);
 				Game_Flag_Reset(247);
 				Game_Flag_Reset(kFlagSpinnerToCT01);
 				Game_Flag_Set(kFlagSpinnerToDR01);
-				Set_Enter(7, kSceneDR01);
+				Set_Enter(kSetDR01_DR02_DR04, kSceneDR01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
-			case 7:
+			case kSpinnerDestinationBradburyBuilding:
 				Game_Flag_Set(258);
 				Game_Flag_Reset(247);
 				Game_Flag_Reset(kFlagSpinnerToCT01);
 				Game_Flag_Set(kFlagSpinnerToBB01);
-				Set_Enter(20, kSceneBB01);
+				Set_Enter(kSetBB01, kSceneBB01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
-			case 8:
+			case kSpinnerDestinationNightclubRow:
 				Game_Flag_Set(181);
 				Game_Flag_Reset(247);
 				Game_Flag_Reset(kFlagSpinnerToCT01);
 				Game_Flag_Set(kFlagSpinnerToNR01);
-				Set_Enter(54, kSceneNR01);
+				Set_Enter(kSetNR01, kSceneNR01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
-			case 9:
+			case kSpinnerDestinationHysteriaHall:
 				Game_Flag_Set(257);
 				Game_Flag_Reset(247);
 				Game_Flag_Reset(kFlagSpinnerToCT01);
 				Game_Flag_Set(kFlagSpinnerToHF01);
-				Set_Enter(37, kSceneHF01);
+				Set_Enter(kSetHF01, kSceneHF01);
 				Scene_Loop_Start_Special(1, 5, 1);
 				break;
 			default:
@@ -333,15 +350,6 @@ bool SceneScriptCT01::ClickedOn2DRegion(int region) {
 
 void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 	if ((frame < 316 || frame > 435) && !((frame - 1) % 10)) {
-		/*int v1;
-		int v2 = Random_Query(0, 1);
-		if (v2 <= 1) {
-			if (v2) {
-				v1 = 60;
-			} else {
-				v1 = 59;
-			}
-		}*/
 		Ambient_Sounds_Play_Sound(/*v1*/Random_Query(59, 60), 25, 30, 30, 0);
 	}
 	if (frame == 23) {
@@ -353,14 +361,14 @@ void SceneScriptCT01::SceneFrameAdvanced(int frame) {
 	if (frame == 196 || frame == 452) {
 		int v3 = Random_Query(0, 6);
 		if (v3 == 0) {
-			Overlay_Play("ct01spnr", 0, 0, 1, 0);
+			Overlay_Play("ct01spnr", 0, false, true, 0);
 			if (Random_Query(0, 1)) {
 				Ambient_Sounds_Play_Sound(68, Random_Query(33, 50), 0, 0, 0);
 			} else {
 				Ambient_Sounds_Play_Sound(67, Random_Query(33, 50), 0, 0, 0);
 			}
 		} else if (v3 == 1) {
-			Overlay_Play("ct01spnr", 1, 0, 1, 0);
+			Overlay_Play("ct01spnr", 1, false, true, 0);
 			if (Random_Query(0, 1)) {
 				Ambient_Sounds_Play_Sound(69, Random_Query(33, 50), 0, 0, 0);
 			} else {
@@ -396,7 +404,7 @@ void SceneScriptCT01::PlayerWalkedIn() {
 
 void SceneScriptCT01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	if (Game_Flag_Query(123)) {
+	if (Game_Flag_Query(kFlagCT01toCT12)) {
 		Ambient_Sounds_Remove_Looping_Sound(55, true);
 		Ambient_Sounds_Remove_Looping_Sound(56, true);
 	} else {
@@ -480,16 +488,16 @@ void SceneScriptCT01::dialogueWithHowieLee() {
 		break;
 	case 70:
 		Actor_Says(kActorMcCoy, 290, 13);
-		if (Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) > 49 && (Global_Variable_Query(2) > 10 || Query_Difficulty_Level() == 0)) {
-			Actor_Says(kActorHowieLee, 50, 3);
-			Actor_Says(kActorHowieLee, 60, 3);
+		if (Actor_Query_Friendliness_To_Other(kActorHowieLee, kActorMcCoy) > 49 && (Global_Variable_Query(kVariableChinyen) > 10 || Query_Difficulty_Level() == 0)) {
+			Actor_Says(kActorHowieLee, 50, kAnimationModeTalk);
+			Actor_Says(kActorHowieLee, 60, kAnimationModeTalk);
 			Actor_Face_Actor(kActorHowieLee, kActorMcCoy, true);
 			Actor_Says(kActorHowieLee, 70, 16);
 			Actor_Says(kActorMcCoy, 325, 13);
 			if (Query_Difficulty_Level() != 0) {
-				Global_Variable_Decrement(2, 10);
+				Global_Variable_Decrement(kVariableChinyen, 10);
 			}
-			Game_Flag_Set(192);
+			Game_Flag_Set(kFlagBoughtHowieLeeFood);
 		} else {
 			Actor_Says(kActorHowieLee, 130, 15);
 		}

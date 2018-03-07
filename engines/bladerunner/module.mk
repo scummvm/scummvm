@@ -53,6 +53,7 @@ MODULE_OBJS = \
 	script/ai/generic_walker_a.o \
 	script/ai/generic_walker_b.o \
 	script/ai/generic_walker_c.o \
+	script/ai/howie_lee.o \
 	script/ai/leon.o \
 	script/ai/maggie.o \
 	script/ai/mccoy.o \

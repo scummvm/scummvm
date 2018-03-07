@@ -53,6 +53,8 @@ enum VQADecoderSkipFlags {
 };
 
 class VQADecoder {
+	friend class Debugger;
+
 public:
 	VQADecoder();
 	~VQADecoder();

@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptCT12::InitializeScene() {
-	if (Game_Flag_Query(123)) {
+	if (Game_Flag_Query(kFlagCT01toCT12)) {
 		Setup_Scene_Information(-419.0f, -6.5f, 696.0f, 616);
 	} else if (Game_Flag_Query(432)) {
 		Setup_Scene_Information(-292.0f, -6.5f, 990.0f, 827);
@@ -62,25 +62,25 @@ void SceneScriptCT12::InitializeScene() {
 	if (Global_Variable_Query(kVariableChapter) < 2 && Actor_Query_Goal_Number(kActorGaff) == 1) {
 		Actor_Put_In_Set(kActorGaff, 4);
 		Actor_Set_At_XYZ(kActorGaff, -534.0f, -6.5f, 952.0f, 367);
-		Game_Flag_Set(294);
+		Game_Flag_Set(kFlagGaffSpinnerCT12);
 	}
-	if (Game_Flag_Query(123) && Game_Flag_Query(kFlagSpinnerToCT01)) {
+	if (Game_Flag_Query(kFlagCT01toCT12) && Game_Flag_Query(kFlagSpinnerToCT01)) {
 		if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 			Scene_Loop_Start_Special(0, 1, 0);
 		}
 		Scene_Loop_Set_Default(2);
-		Game_Flag_Reset(123);
-	} else if (Game_Flag_Query(123) && !Game_Flag_Query(kFlagSpinnerToCT01)) {
+		Game_Flag_Reset(kFlagCT01toCT12);
+	} else if (Game_Flag_Query(kFlagCT01toCT12) && !Game_Flag_Query(kFlagSpinnerToCT01)) {
 		if (Global_Variable_Query(kVariableChapter) != 2 && Global_Variable_Query(kVariableChapter) != 3) {
 			Scene_Loop_Start_Special(0, 0, 0);
 		}
 		Scene_Loop_Set_Default(2);
-		Game_Flag_Reset(123);
-	} else if (Game_Flag_Query(76) && Game_Flag_Query(294)) {
-		Game_Flag_Reset(76);
+		Game_Flag_Reset(kFlagCT01toCT12);
+	} else if (Game_Flag_Query(kFlagCT05toCT12) && Game_Flag_Query(kFlagGaffSpinnerCT12)) {
+		Game_Flag_Reset(kFlagCT05toCT12);
 		Scene_Loop_Set_Default(4);
-	} else if (Game_Flag_Query(76) && !Game_Flag_Query(294)) {
-		Game_Flag_Reset(76);
+	} else if (Game_Flag_Query(kFlagCT05toCT12) && !Game_Flag_Query(kFlagGaffSpinnerCT12)) {
+		Game_Flag_Reset(kFlagCT05toCT12);
 		Scene_Loop_Set_Default(2);
 	} else {
 		Scene_Loop_Set_Default(2);

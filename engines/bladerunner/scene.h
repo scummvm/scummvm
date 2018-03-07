@@ -34,6 +34,8 @@ class Set;
 class VQAPlayer;
 
 class Scene {
+	friend class Debugger;
+
 	BladeRunnerEngine *_vm;
 
 	int         _setId;
