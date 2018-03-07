@@ -7,12 +7,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
    - Updated the Roland MT-32 emulation code to Munt 2.3.0.
 
- Drascula:
-   - Added support for Russian fan-made translation.
-
- Dreamweb:
-   - Added detection for Russian fan-made translation.
-
  MOHAWK:
    - Fixed video playback if videos are skipped in Riven.
    - Added support for keyboard shortcuts for loading and saving as documented in the game manual.
