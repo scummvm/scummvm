@@ -60,6 +60,7 @@ MODULE_OBJS = \
 	script/ai/mccoy.o \
 	script/ai/officer_leary.o \
 	script/ai/runciter.o \
+	script/ai/sergeant_walls.o \
 	script/ai/zuben.o \
 	script/scene_script.o \
 	script/scene/ar01.o \
