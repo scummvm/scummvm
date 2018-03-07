@@ -103,10 +103,10 @@ bool SceneScriptPS06::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		Game_Flag_Set(23);
+		Game_Flag_Set(kFlagPS06toPS05);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);
-		Set_Enter(15, kScenePS05);
+		Set_Enter(kSetPS05, kScenePS05);
 		return true;
 	}
 	return false;
@@ -123,8 +123,8 @@ void SceneScriptPS06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS06::PlayerWalkedIn() {
-	if (Game_Flag_Query(136)) {
-		Game_Flag_Reset(136);
+	if (Game_Flag_Query(kFlagPS05toPS06)) {
+		Game_Flag_Reset(kFlagPS05toPS06);
 	}
 }
 

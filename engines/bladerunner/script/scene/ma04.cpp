@@ -496,60 +496,60 @@ void SceneScriptMA04::phoneCallWithClovis() {
 }
 
 void SceneScriptMA04::turnOnTV() {
-	Overlay_Play("MA04OVR2", 0, 1, 0, 0);
+	Overlay_Play("MA04OVR2", 0, true, false, 0);
 	switch (Global_Variable_Query(kVariableNextTvNews)) {
-	case 4:
-		ADQ_Add(kActorNewscaster, 230, 3);
-		ADQ_Add(kActorNewscaster, 240, 3);
+	case 0:
+		ADQ_Add(kActorNewscaster, 0, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 10, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 20, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 30, kAnimationModeTalk);
+		ADQ_Add(kActorTyrell, 430, kAnimationModeTalk);
+		ADQ_Add(kActorTyrell, 440, kAnimationModeTalk);
+		ADQ_Add(kActorTyrell, 450, kAnimationModeTalk);
+		ADQ_Add(kActorTyrell, 460, kAnimationModeTalk);
 		break;
-	case 3:
-		ADQ_Add(kActorNewscaster, 170, 3);
-		ADQ_Add(kActorNewscaster, 180, 3);
-		ADQ_Add(kActorNewscaster, 190, 3);
-		ADQ_Add(kActorNewscaster, 200, 3);
-		ADQ_Add(kActorNewscaster, 210, 3);
-		ADQ_Add(kActorNewscaster, 220, 3);
-		ADQ_Add(kActorGovernorKolvig, 80, 3);
-		ADQ_Add(kActorGovernorKolvig, 90, 3);
-		ADQ_Add(kActorGovernorKolvig, 100, 3);
-		ADQ_Add(kActorGovernorKolvig, 110, 3);
-		ADQ_Add(kActorGovernorKolvig, 120, 3);
-		ADQ_Add(kActorGovernorKolvig, 130, 3);
+	case 1:
+		ADQ_Add(kActorNewscaster, 40, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 50, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 60, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 70, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 80, kAnimationModeTalk);
 		break;
 	case 2:
 		if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) <= Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy)) {
-			ADQ_Add(kActorNewscaster, 90, 3);
-			ADQ_Add(kActorNewscaster, 100, 3);
-			ADQ_Add(kActorNewscaster, 110, 3);
-			ADQ_Add(kActorGuzza, 1540, 3);
-			ADQ_Add(kActorGuzza, 1550, 3);
-			ADQ_Add(kActorGuzza, 1560, 3);
+			ADQ_Add(kActorNewscaster, 90, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 100, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 110, kAnimationModeTalk);
+			ADQ_Add(kActorGuzza, 1540, kAnimationModeTalk);
+			ADQ_Add(kActorGuzza, 1550, kAnimationModeTalk);
+			ADQ_Add(kActorGuzza, 1560, kAnimationModeTalk);
 		} else {
-			ADQ_Add(kActorNewscaster, 120, 3);
-			ADQ_Add(kActorNewscaster, 130, 3);
-			ADQ_Add(kActorNewscaster, 140, 3);
-			ADQ_Add(kActorNewscaster, 150, 3);
-			ADQ_Add(kActorGuzza, 1570, 3);
-			ADQ_Add(kActorGuzza, 1580, 3);
-			ADQ_Add(kActorGuzza, 1590, 3);
+			ADQ_Add(kActorNewscaster, 120, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 130, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 140, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 150, kAnimationModeTalk);
+			ADQ_Add(kActorGuzza, 1570, kAnimationModeTalk);
+			ADQ_Add(kActorGuzza, 1580, kAnimationModeTalk);
+			ADQ_Add(kActorGuzza, 1590, kAnimationModeTalk);
 		}
 		break;
-	case 1:
-		ADQ_Add(kActorNewscaster, 40, 3);
-		ADQ_Add(kActorNewscaster, 50, 3);
-		ADQ_Add(kActorNewscaster, 60, 3);
-		ADQ_Add(kActorNewscaster, 70, 3);
-		ADQ_Add(kActorNewscaster, 80, 3);
+	case 3:
+		ADQ_Add(kActorNewscaster, 170, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 180, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 190, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 200, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 210, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 220, kAnimationModeTalk);
+		ADQ_Add(kActorGovernorKolvig, 80, kAnimationModeTalk);
+		ADQ_Add(kActorGovernorKolvig, 90, kAnimationModeTalk);
+		ADQ_Add(kActorGovernorKolvig, 100, kAnimationModeTalk);
+		ADQ_Add(kActorGovernorKolvig, 110, kAnimationModeTalk);
+		ADQ_Add(kActorGovernorKolvig, 120, kAnimationModeTalk);
+		ADQ_Add(kActorGovernorKolvig, 130, kAnimationModeTalk);
 		break;
-	case 0:
-		ADQ_Add(kActorNewscaster, 0, 3);
-		ADQ_Add(kActorNewscaster, 10, 3);
-		ADQ_Add(kActorNewscaster, 20, 3);
-		ADQ_Add(kActorNewscaster, 30, 3);
-		ADQ_Add(kActorTyrell, 430, 3);
-		ADQ_Add(kActorTyrell, 440, 3);
-		ADQ_Add(kActorTyrell, 450, 3);
-		ADQ_Add(kActorTyrell, 460, 3);
+	case 4:
+		ADQ_Add(kActorNewscaster, 230, kAnimationModeTalk);
+		ADQ_Add(kActorNewscaster, 240, kAnimationModeTalk);
 		break;
 	}
 }

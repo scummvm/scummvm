@@ -34,7 +34,7 @@ void SceneScriptPS03::InitializeScene() {
 		Game_Flag_Reset(135);
 	} else {
 		Setup_Scene_Information(-569.54f, -354.62f, -1076.15f, 475);
-		Game_Flag_Reset(132);
+		Game_Flag_Reset(kFlagPS02toPS03);
 	}
 	Scene_Exit_Add_2D_Exit(0, 0, 460, 639, 479, 2);
 	Scene_Exit_Add_2D_Exit(1, 449, 273, 508, 329, 0);

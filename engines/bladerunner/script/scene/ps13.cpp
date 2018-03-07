@@ -216,16 +216,16 @@ bool SceneScriptPS13::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptPS13::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 10, 12, 1, false)) {
-			Game_Flag_Set(19);
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 10, 12, true, false)) {
+			Game_Flag_Set(kFlagPS13toPS12);
 			sub_40267C();
-			Set_Enter(14, kScenePS12);
+			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS12);
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 11, 12, 1, false)) {
-			Game_Flag_Set(21);
+		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 11, 12, true, false)) {
+			Game_Flag_Set(kFlagPS13toPS05);
 			Player_Set_Combat_Mode(false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
@@ -237,7 +237,7 @@ bool SceneScriptPS13::ClickedOnExit(int exitId) {
 			Global_Variable_Reset(12);
 			Global_Variable_Reset(13);
 			Global_Variable_Reset(9);
-			Set_Enter(15, kScenePS05);
+			Set_Enter(kSetPS05, kScenePS05);
 		}
 		return true;
 	}

@@ -215,8 +215,8 @@ void SceneScriptPS09::PlayerWalkedIn() {
 		Player_Gains_Control();
 		Game_Flag_Set(211);
 	}
-	if (Game_Flag_Query(133)) {
-		Game_Flag_Reset(133);
+	if (Game_Flag_Query(kFlagPS02toPS09)) {
+		Game_Flag_Reset(kFlagPS02toPS09);
 		//return true;
 		return;
 	}

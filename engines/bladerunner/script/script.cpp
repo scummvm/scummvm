@@ -330,7 +330,7 @@ int ScriptBase::Actor_Query_Which_Set_In(int actorId) {
 
 bool ScriptBase::Actor_Query_Is_In_Current_Set(int actorId) {
 	int actorSetId = _vm->_actors[actorId]->getSetId();
-	return actorSetId >= 0 && _vm->_scene->getSetId();
+	return actorSetId >= 0 && actorSetId == _vm->_scene->getSetId();
 }
 
 bool ScriptBase::Actor_Query_In_Set(int actorId, int setId) {

@@ -25,11 +25,11 @@
 namespace BladeRunner {
 
 void SceneScriptPS05::InitializeScene() {
-	if (Game_Flag_Query(21)) {
+	if (Game_Flag_Query(kFlagPS13toPS05)) {
 		Setup_Scene_Information(547.59f, 0.18f, -216.84f, 334);
-	} else if (Game_Flag_Query(22)) {
+	} else if (Game_Flag_Query(kFlagPS02toPS05)) {
 		Setup_Scene_Information(635.0f, 0.0f, -598.0f, 475);
-	} else {
+	} else { // kFlagPS06toPS05 || kFlagPS15toPS05
 		Setup_Scene_Information(630.72f, 0.38f, -469.26f, 400);
 	}
 	Scene_Exit_Add_2D_Exit(0, 218, 98, 280, 246, 3);
@@ -97,26 +97,26 @@ bool SceneScriptPS05::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptPS05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 2, 24, 1, false)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Set_Enter(101, kScenePS15);
+			Set_Enter(kSetPS15, kScenePS15);
 		}
 		return true;
 	}
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 635.0f, 0.0f, -598.0f, 0, 1, false, 0)) {
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Set_Enter(62, kScenePS02);
+			Set_Enter(kSetPS02, kScenePS02);
 		}
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 742.52002f, 0.37f, -457.69f, 0, 1, false, 0)) {
-			Game_Flag_Set(136);
-			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 742.52f, 0.37f, -457.69f, 0, 1, false, 0)) {
+			Game_Flag_Set(kFlagPS05toPS06);
+			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
-			Set_Enter(65, kScenePS06);
+			Set_Enter(kSetPS06, kScenePS06);
 		}
 		return true;
 	}
@@ -142,16 +142,16 @@ void SceneScriptPS05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS05::PlayerWalkedIn() {
-	if (Game_Flag_Query(23)) {
+	if (Game_Flag_Query(kFlagPS06toPS05)) {
 		Actor_Set_At_XYZ(kActorMcCoy, 718.72f, 0.37f, -461.26f, 600);
-	} else if (Game_Flag_Query(22)) {
+	} else if (Game_Flag_Query(kFlagPS02toPS05)) {
 		selectNextTvNews();
 		turnOnTV();
 	}
-	Game_Flag_Reset(22);
-	Game_Flag_Reset(23);
-	Game_Flag_Reset(21);
-	Game_Flag_Reset(204);
+	Game_Flag_Reset(kFlagPS02toPS05);
+	Game_Flag_Reset(kFlagPS06toPS05);
+	Game_Flag_Reset(kFlagPS13toPS05);
+	Game_Flag_Reset(kFlagPS15toPS05);
 }
 
 void SceneScriptPS05::PlayerWalkedOut() {
@@ -182,81 +182,79 @@ void SceneScriptPS05::selectNextTvNews() {
 
 void SceneScriptPS05::turnOnTV() {
 	switch (Global_Variable_Query(kVariableNextTvNews)) {
-	case 4:
-		if (!Game_Flag_Query(692)) {
-			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			ADQ_Add(kActorNewscaster, 230, 3);
-			ADQ_Add(kActorNewscaster, 240, 3);
-			Game_Flag_Set(692);
-		}
-		break;
-	case 3:
-		if (!Game_Flag_Query(691)) {
-			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			ADQ_Add(kActorNewscaster, 170, 3);
-			ADQ_Add(kActorNewscaster, 180, 3);
-			ADQ_Add(kActorNewscaster, 190, 3);
-			ADQ_Add(kActorNewscaster, 200, 3);
-			ADQ_Add(kActorNewscaster, 210, 3);
-			ADQ_Add(kActorNewscaster, 220, 3);
-			ADQ_Add(kActorGovernorKolvig, 80, 3);
-			ADQ_Add(kActorGovernorKolvig, 90, 3);
-			ADQ_Add(kActorGovernorKolvig, 100, 3);
-			ADQ_Add(kActorGovernorKolvig, 110, 3);
-			ADQ_Add(kActorGovernorKolvig, 120, 3);
-			ADQ_Add(kActorGovernorKolvig, 130, 3);
-			Game_Flag_Set(691);
-		}
-		break;
-	case 2:
-		if (!Game_Flag_Query(690)) {
-			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy)) {
-				ADQ_Add(kActorNewscaster, 120, 3);
-				ADQ_Add(kActorNewscaster, 130, 3);
-				ADQ_Add(kActorNewscaster, 140, 3);
-				ADQ_Add(kActorNewscaster, 150, 3);
-				ADQ_Add(kActorGuzza, 1570, 3);
-				ADQ_Add(kActorGuzza, 1580, 3);
-				ADQ_Add(kActorGuzza, 1590, 3);
-			} else {
-				ADQ_Add(kActorNewscaster, 90, 3);
-				ADQ_Add(kActorNewscaster, 100, 3);
-				ADQ_Add(kActorNewscaster, 110, 3);
-				ADQ_Add(kActorGuzza, 1540, 3);
-				ADQ_Add(kActorGuzza, 1550, 3);
-				ADQ_Add(kActorGuzza, 1560, 3);
-			}
-			Game_Flag_Set(690);
+	case 0:
+		if (!Game_Flag_Query(kFlagPS05TV0)) {
+			Overlay_Play("PS05OVER", 0, true, false, 0);
+			ADQ_Add(kActorNewscaster, 0, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 10, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 20, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 30, kAnimationModeTalk);
+			ADQ_Add(kActorTyrell, 430, kAnimationModeTalk);
+			ADQ_Add(kActorTyrell, 440, kAnimationModeTalk);
+			ADQ_Add(kActorTyrell, 450, kAnimationModeTalk);
+			ADQ_Add(kActorTyrell, 460, kAnimationModeTalk);
+			Game_Flag_Set(kFlagPS05TV0);
 		}
 		break;
 	case 1:
-		if (!Game_Flag_Query(689)) {
-			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			ADQ_Add(kActorNewscaster, 40, 3);
-			ADQ_Add(kActorNewscaster, 50, 3);
-			ADQ_Add(kActorNewscaster, 60, 3);
-			ADQ_Add(kActorNewscaster, 70, 3);
-			ADQ_Add(kActorNewscaster, 80, 3);
-			Game_Flag_Set(689);
+		if (!Game_Flag_Query(kFlagPS05TV1)) {
+			Overlay_Play("PS05OVER", 0, true, false, 0);
+			ADQ_Add(kActorNewscaster, 40, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 50, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 60, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 70, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 80, kAnimationModeTalk);
+			Game_Flag_Set(kFlagPS05TV1);
 		}
 		break;
-	case 0:
-		if (!Game_Flag_Query(688)) {
-			Overlay_Play("PS05OVER", 0, 1, 0, 0);
-			ADQ_Add(kActorNewscaster, 0, 3);
-			ADQ_Add(kActorNewscaster, 10, 3);
-			ADQ_Add(kActorNewscaster, 20, 3);
-			ADQ_Add(kActorNewscaster, 30, 3);
-			ADQ_Add(kActorTyrell, 430, 3);
-			ADQ_Add(kActorTyrell, 440, 3);
-			ADQ_Add(kActorTyrell, 450, 3);
-			ADQ_Add(kActorTyrell, 460, 3);
-			Game_Flag_Set(688);
+	case 2:
+		if (!Game_Flag_Query(kFlagPS05TV2)) {
+			Overlay_Play("PS05OVER", 0, true, false, 0);
+			if (Actor_Query_Friendliness_To_Other(kActorClovis, kActorMcCoy) > Actor_Query_Friendliness_To_Other(kActorSteele, kActorMcCoy)) {
+				ADQ_Add(kActorNewscaster, 120, kAnimationModeTalk);
+				ADQ_Add(kActorNewscaster, 130, kAnimationModeTalk);
+				ADQ_Add(kActorNewscaster, 140, kAnimationModeTalk);
+				ADQ_Add(kActorNewscaster, 150, kAnimationModeTalk);
+				ADQ_Add(kActorGuzza, 1570, kAnimationModeTalk);
+				ADQ_Add(kActorGuzza, 1580, kAnimationModeTalk);
+				ADQ_Add(kActorGuzza, 1590, kAnimationModeTalk);
+			} else {
+				ADQ_Add(kActorNewscaster, 90, kAnimationModeTalk);
+				ADQ_Add(kActorNewscaster, 100, kAnimationModeTalk);
+				ADQ_Add(kActorNewscaster, 110, kAnimationModeTalk);
+				ADQ_Add(kActorGuzza, 1540, kAnimationModeTalk);
+				ADQ_Add(kActorGuzza, 1550, kAnimationModeTalk);
+				ADQ_Add(kActorGuzza, 1560, kAnimationModeTalk);
+			}
+			Game_Flag_Set(kFlagPS05TV2);
 		}
 		break;
-	default:
-		return;
+	case 3:
+		if (!Game_Flag_Query(kFlagPS05TV3)) {
+			Overlay_Play("PS05OVER", 0, true, false, 0);
+			ADQ_Add(kActorNewscaster, 170, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 180, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 190, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 200, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 210, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 220, kAnimationModeTalk);
+			ADQ_Add(kActorGovernorKolvig, 80, kAnimationModeTalk);
+			ADQ_Add(kActorGovernorKolvig, 90, kAnimationModeTalk);
+			ADQ_Add(kActorGovernorKolvig, 100, kAnimationModeTalk);
+			ADQ_Add(kActorGovernorKolvig, 110, kAnimationModeTalk);
+			ADQ_Add(kActorGovernorKolvig, 120, kAnimationModeTalk);
+			ADQ_Add(kActorGovernorKolvig, 130, kAnimationModeTalk);
+			Game_Flag_Set(kFlagPS05TV3);
+		}
+		break;
+	case 4:
+		if (!Game_Flag_Query(kFlagPS05TV4)) {
+			Overlay_Play("PS05OVER", 0, true, false, 0);
+			ADQ_Add(kActorNewscaster, 230, kAnimationModeTalk);
+			ADQ_Add(kActorNewscaster, 240, kAnimationModeTalk);
+			Game_Flag_Set(kFlagPS05TV4);
+		}
+		break;
 	}
 }
 

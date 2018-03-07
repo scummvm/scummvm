@@ -150,6 +150,9 @@ DECLARE_SCRIPT(HowieLee)
 	bool var_45DFB8;
 END_SCRIPT
 
+DECLARE_SCRIPT(Klein)
+END_SCRIPT
+
 DECLARE_SCRIPT(Leon)
 	int var_45EDAC;
 	float var_45EDA0_z;

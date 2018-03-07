@@ -27,7 +27,7 @@ namespace BladeRunner {
 void SceneScriptPS07::InitializeScene() {
 	Setup_Scene_Information(609.07f, 0.22f, -598.67f, 768);
 	Scene_Exit_Add_2D_Exit(0, 610, 0, 639, 479, 1);
-	Ambient_Sounds_Remove_All_Non_Looping_Sounds(0);
+	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
 	Ambient_Sounds_Add_Looping_Sound(141, 80, 0, 1);
 	Ambient_Sounds_Add_Sound(142, 5, 20, 5, 10, -70, 70, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(146, 5, 30, 5, 10, -70, 70, -101, -101, 0, 0);
@@ -65,23 +65,23 @@ bool SceneScriptPS07::ClickedOn3DObject(const char *objectName, bool a2) {
 }
 
 bool SceneScriptPS07::ClickedOnActor(int actorId) {
-	if (actorId == 30) {
+	if (actorId == kActorKlein) {
 		Actor_Face_Actor(kActorMcCoy, kActorKlein, true);
 		Actor_Set_Goal_Number(kActorKlein, 3);
-		if (!Game_Flag_Query(111)) {
+		if (!Game_Flag_Query(kFlagKleinTalkClues)) {
 			Actor_Says(kActorMcCoy, 4115, 13);
 		}
-		if (!Game_Flag_Query(111) && (Game_Flag_Query(125) || Game_Flag_Query(126) || Game_Flag_Query(127) || Game_Flag_Query(128))) {
+		if (!Game_Flag_Query(kFlagKleinTalkClues) && (Game_Flag_Query(kFlagPlayerHasShellCasings) || Game_Flag_Query(kFlagPlayerHasOfficersStatement) || Game_Flag_Query(kFlagPlayerHasPaintTransfer) || Game_Flag_Query(kFlagPlayerHasChromeDebris))) {
 			Actor_Face_Actor(kActorKlein, kActorMcCoy, true);
 			Actor_Says(kActorKlein, 30, 12);
-			Game_Flag_Set(111);
+			Game_Flag_Set(kFlagKleinTalkClues);
 		} else {
-			if (Game_Flag_Query(111)) {
+			if (Game_Flag_Query(kFlagKleinTalkClues)) {
 				Actor_Says(kActorMcCoy, 4130, 18);
 			}
 		}
-		if (Game_Flag_Query(125) && !Game_Flag_Query(12)) {
-			Game_Flag_Set(12);
+		if (Game_Flag_Query(kFlagPlayerHasShellCasings) && !Game_Flag_Query(kFlagKleinTalkShellCasings)) {
+			Game_Flag_Set(kFlagKleinTalkShellCasings);
 			Actor_Clue_Acquire(kActorMcCoy, kClueLabShellCasings, 0, kActorKlein);
 			Actor_Says(kActorKlein, 50, 16);
 			Actor_Says(kActorMcCoy, 4135, 13);
@@ -93,15 +93,28 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
-		if (Game_Flag_Query(126) && !Game_Flag_Query(13)) {
-			Game_Flag_Set(13);
+		if (Game_Flag_Query(kFlagPlayerHasOfficersStatement) && !Game_Flag_Query(kFlagKleinTalkOfficersStatement)) {
+			Game_Flag_Set(kFlagKleinTalkOfficersStatement);
 			Actor_Clue_Acquire(kActorMcCoy, kClueLabCorpses, 0, kActorKlein);
-			sub_401D60();
+			Actor_Says(kActorKlein, 100, 13);
+			Actor_Says(kActorMcCoy, 4145, 13);
+			Actor_Says(kActorKlein, 110, 12);
+			Actor_Says(kActorMcCoy, 4150, 13);
+			Actor_Says(kActorKlein, 120, 14);
+			Actor_Says(kActorMcCoy, 4155, 17);
+			Actor_Says(kActorKlein, 130, 15);
+			Actor_Says(kActorMcCoy, 4160, 13);
+			Actor_Says(kActorKlein, 140, 16);
+			Actor_Says(kActorMcCoy, 4165, 18);
+			Actor_Says(kActorKlein, 160, 13);
+			Actor_Says(kActorMcCoy, 4170, 19);
+			Actor_Says(kActorMcCoy, 4175, 19);
+			Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, 3);
 			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
-		if (Game_Flag_Query(127) && !Game_Flag_Query(104)) {
-			Game_Flag_Set(104);
+		if (Game_Flag_Query(kFlagPlayerHasPaintTransfer) && !Game_Flag_Query(kFlagKleinTalkPaintTransfer)) {
+			Game_Flag_Set(kFlagKleinTalkPaintTransfer);
 			Actor_Clue_Acquire(kActorMcCoy, kClueLabPaintTransfer, 0, kActorKlein);
 			Actor_Says(kActorKlein, 170, 14);
 			Actor_Says(kActorMcCoy, 4180, 13);
@@ -114,8 +127,8 @@ bool SceneScriptPS07::ClickedOnActor(int actorId) {
 			Actor_Set_Goal_Number(kActorKlein, 1);
 			return true;
 		}
-		if (Game_Flag_Query(128) && !Game_Flag_Query(105)) {
-			Game_Flag_Set(105);
+		if (Game_Flag_Query(kFlagPlayerHasChromeDebris) && !Game_Flag_Query(kFlagKleinTalkChromeDebris)) {
+			Game_Flag_Set(kFlagKleinTalkChromeDebris);
 			Actor_Says(kActorKlein, 220, 12);
 			Actor_Says(kActorMcCoy, 4190, 13);
 			Actor_Says(kActorKlein, 230, 14);
@@ -137,7 +150,7 @@ bool SceneScriptPS07::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptPS07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 609.07f, 0.22f, -598.67f, 0, 0, false, 0)) {
-			Set_Enter(62, kScenePS02);
+			Set_Enter(kSetPS02, kScenePS02);
 		}
 		return true;
 	}
@@ -156,34 +169,17 @@ void SceneScriptPS07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptPS07::PlayerWalkedIn() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 561.07f, 0.34f, -606.67f, 6, 0, false, 0);
-	Game_Flag_Reset(131);
+	Game_Flag_Reset(kFlagPS02toPS07);
 	//return false;
 }
 
 void SceneScriptPS07::PlayerWalkedOut() {
-	if (!Game_Flag_Query(138) && Global_Variable_Query(kVariableChapter) == 1) {
+	if (!Game_Flag_Query(kFlagKleinInsulted) && Global_Variable_Query(kVariableChapter) == 1) {
 		Actor_Set_Goal_Number(kActorKlein, 0);
 	}
 }
 
 void SceneScriptPS07::DialogueQueueFlushed(int a1) {
-}
-
-void SceneScriptPS07::sub_401D60() {
-	Actor_Says(kActorKlein, 100, 13);
-	Actor_Says(kActorMcCoy, 4145, 13);
-	Actor_Says(kActorKlein, 110, 12);
-	Actor_Says(kActorMcCoy, 4150, 13);
-	Actor_Says(kActorKlein, 120, 14);
-	Actor_Says(kActorMcCoy, 4155, 17);
-	Actor_Says(kActorKlein, 130, 15);
-	Actor_Says(kActorMcCoy, 4160, 13);
-	Actor_Says(kActorKlein, 140, 16);
-	Actor_Says(kActorMcCoy, 4165, 18);
-	Actor_Says(kActorKlein, 160, 13);
-	Actor_Says(kActorMcCoy, 4170, 19);
-	Actor_Says(kActorMcCoy, 4175, 19);
-	Actor_Modify_Friendliness_To_Other(kActorKlein, kActorMcCoy, 3);
 }
 
 } // End of namespace BladeRunner

@@ -36,7 +36,7 @@ void SceneScriptPS01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(375, 60, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(376, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(377, 50, 180, 50, 100, 0, 0, -101, -101, 0, 0);
-	if (Game_Flag_Query(130)) {
+	if (Game_Flag_Query(kFlagPS02toPS01)) {
 		if (Game_Flag_Query(kFlagSpinnerToPS01)) {
 			Scene_Loop_Set_Default(1);
 		} else {
@@ -253,9 +253,9 @@ void SceneScriptPS01::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS01::PlayerWalkedIn() {
-	if (Game_Flag_Query(130)) {
+	if (Game_Flag_Query(kFlagPS02toPS01)) {
 		Actor_Set_At_XYZ(kActorMcCoy, 1920.0f, 16581.0f, -2653.0f, 150);
-		Game_Flag_Reset(130);
+		Game_Flag_Reset(kFlagPS02toPS01);
 	}
 	//return false;
 }
