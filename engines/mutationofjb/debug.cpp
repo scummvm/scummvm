@@ -24,6 +24,8 @@
 #include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/commands/command.h"
+#include "mutationofjb/commands/seqcommand.h"
+#include "mutationofjb/commands/conditionalcommand.h"
 #include "common/debug-channels.h"
 #include "common/translation.h"
 #include "common/scummsys.h"
@@ -87,6 +89,31 @@ bool Console::cmd_listsections(int argc, const char **argv) {
 	return true;
 }
 
+void Console::showIndent(int indentLevel) {
+	for (int i = 0; i < indentLevel; ++i) {
+		debugPrintf("  ");
+	}
+}
+
+void Console::showCommands(Command *command, int indentLevel) {
+	while (command) {
+		showIndent(indentLevel);
+		debugPrintf("%s\n", command->debugString().c_str());
+
+		if (SeqCommand *const seqCmd = dynamic_cast<SeqCommand *>(command)) {
+			command = seqCmd->next();
+		} else if (ConditionalCommand *const condCmd = dynamic_cast<ConditionalCommand *>(command)) {
+			showCommands(condCmd->getTrueCommand(), indentLevel + 1);
+			showIndent(indentLevel);
+			debugPrintf("ELSE\n");
+			showCommands(condCmd->getFalseCommand(), indentLevel + 1);
+			command = nullptr;
+		} else {
+			command = nullptr;
+		}
+	}
+}
+
 bool Console::cmd_showsection(int argc, const char **argv) {
 	if (argc == 4) {
 		Script *script = nullptr;
@@ -146,7 +173,7 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 
 			if (found) {
 				if (command) {
-					debugPrintf("%s\n", command->debugString().c_str());
+					showCommands(command);
 				}
 			} else {
 				debugPrintf("Section not found.\n");

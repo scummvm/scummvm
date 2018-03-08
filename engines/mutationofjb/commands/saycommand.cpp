@@ -93,7 +93,9 @@ bool SayCommandParser::parse(const Common::String &line, ScriptParseContext &par
 				break;
 			}
 		}
-		startPos++;
+		if (startPos != currentLine.size()) {
+			startPos++;
+		}
 
 		uint endPos;
 		for (endPos = startPos; endPos < currentLine.size(); ++endPos) {
@@ -120,7 +122,7 @@ bool SayCommandParser::parse(const Common::String &line, ScriptParseContext &par
 		if (lineToSay.empty()) {
 			lineToSay = talkStr;
 		} else {
-			lineToSay = " " + talkStr;
+			lineToSay += " " + talkStr;
 		}
 
 		if (cont) {

@@ -31,6 +31,9 @@
 #include "mutationofjb/commands/endblockcommand.h"
 #include "mutationofjb/commands/changecommand.h"
 #include "mutationofjb/commands/saycommand.h"
+#include "mutationofjb/commands/additemcommand.h"
+#include "mutationofjb/commands/removeitemcommand.h"
+#include "mutationofjb/commands/removeallitemscommand.h"
 
 namespace MutationOfJB {
 
@@ -43,6 +46,9 @@ static CommandParser** getParsers() {
 		new ChangeStaticCommandParser,
 		new ChangeSceneCommandParser,
 		new SayCommandParser,
+		new AddItemCommandParser,
+		new RemoveItemCommandParser,
+		new RemoveAllItemsCommandParser,
 		nullptr
 	};
 
