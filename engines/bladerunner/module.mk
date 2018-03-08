@@ -68,6 +68,7 @@ MODULE_OBJS = \
 	script/ai/officer_leary.o \
 	script/ai/runciter.o \
 	script/ai/sergeant_walls.o \
+	script/ai/shoeshine_man.o \
 	script/ai/zuben.o \
 	script/scene_script.o \
 	script/scene/ar01.o \
