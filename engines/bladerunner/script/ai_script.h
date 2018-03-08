@@ -120,6 +120,11 @@ DECLARE_SCRIPT(McCoy)
 	void sub_4059D0(float a1);
 END_SCRIPT
 
+DECLARE_SCRIPT(Grigorian)
+	int var_45CA10;
+	int var_45CA14;
+END_SCRIPT
+
 DECLARE_SCRIPT(Runciter)
 	int var_45CD78;
 	int var_45CD7C;
