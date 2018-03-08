@@ -312,7 +312,7 @@ void DialogueMenu::draw(Graphics::Surface &s) {
 	for (int i = 0; i != _listSize; ++i) {
 		_shapes[1].draw(s, x1, y);
 		_shapes[4].draw(s, x2, y);
-		uint16 color = ((_items[i].colorIntensity >> 1) << 10) | ((_items[i].colorIntensity >> 1) << 6) | _items[i].colorIntensity;
+		uint16 color = ((_items[i].colorIntensity >> 1) << 10) | ((_items[i].colorIntensity >> 1) << 5) | _items[i].colorIntensity;
 		_vm->_mainFont->drawColor(_items[i].text, s, x, y, color);
 		y += kLineHeight;
 	}
@@ -402,7 +402,7 @@ void DialogueMenu::darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int 
 		for (int y = y1; y != y2; ++y) {
 			for (int x = x1; x != x2; ++x) {
 				uint16 *p = (uint16 *)s.getBasePtr(x, y);
-				*p = (*p & 0x739C) >> 1; // 0 11100 11100 11100
+				*p = (*p & 0x739C) >> 2; // 0 11100 11100 11100
 			}
 		}
 	}
