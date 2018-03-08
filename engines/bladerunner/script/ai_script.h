@@ -168,6 +168,9 @@ DECLARE_SCRIPT(Leon)
 	float sub_446700(int actorId, float x, float y, float z);
 END_SCRIPT
 
+DECLARE_SCRIPT(MaleAnnouncer)
+END_SCRIPT
+
 DECLARE_SCRIPT(Maggie)
 	int var_45F3F8;
 	int var_45F3FC;
