@@ -56,7 +56,7 @@ void AIScriptShoeshineMan::ClickedByPlayer() {
 	if (Actor_Query_Goal_Number(kActorShoeshineMan) != 100)
 		return;
 
-	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1098.15, -0.039999999, -201.53, 0, true, false, 0)) {
+	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1098.15, -0.04, -201.53, 0, true, false, 0)) {
 		Actor_Set_Goal_Number(kActorShoeshineMan, 102);
 		Actor_Face_Actor(kActorMcCoy, kActorShoeshineMan, true);
 		Actor_Says_With_Pause(kActorShoeshineMan, 0, 1.2, 13);
@@ -104,7 +104,7 @@ bool AIScriptShoeshineMan::GoalChanged(int currentGoalNumber, int newGoalNumber)
 	if (newGoalNumber - 100 <= 1) {
 		if (newGoalNumber == 100) {
 			Actor_Put_In_Set(kActorShoeshineMan, kSetDR01_DR02_DR04);
-			Actor_Set_At_XYZ(kActorShoeshineMan, -1160.0, -0.039999999, -235.0, 524);
+			Actor_Set_At_XYZ(kActorShoeshineMan, -1160.0, -0.04, -235.0, 524);
 		} else {
 			AI_Movement_Track_Flush(kActorShoeshineMan);
 			AI_Movement_Track_Append(kActorShoeshineMan, 281, 0);

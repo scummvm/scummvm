@@ -33,17 +33,17 @@ void AIScriptBryant::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	World_Waypoint_Set(324, 22, 267.0, -60.299999, 203.0);
-	World_Waypoint_Set(325, 22, 84.0, -60.299999, 337.0);
+	World_Waypoint_Set(324, 22, 267.0, -60.30, 203.0);
+	World_Waypoint_Set(325, 22, 84.0, -60.30, 337.0);
 	World_Waypoint_Set(326, 2, -36.0, 0.0, 185.0);
 	World_Waypoint_Set(327, 2, -166.0, 0.0, -103.0);
 	World_Waypoint_Set(328, 3, -556.0, 252.59, -1018.11);
-	World_Waypoint_Set(329, 3, -655.0, 252.60001, -1012.0);
+	World_Waypoint_Set(329, 3, -655.0, 252.60, -1012.0);
 	World_Waypoint_Set(330, 3, -657.0, 253.0, -1127.0);
 	World_Waypoint_Set(331, 102, 163.8, 0.0, 67.0);
 	World_Waypoint_Set(332, 2, -39.0, 0.0, 11.5);
 	World_Waypoint_Set(333, 102, -34.0, 0.0, 33.0);
-	World_Waypoint_Set(334, 22, 3.0, -60.299999, -144.0);
+	World_Waypoint_Set(334, 22, 3.0, -60.30, -144.0);
 	World_Waypoint_Set(335, 102, -50.0, 0.0, 212.0);
 	Actor_Put_In_Set(kActorBryant, 22);
 	Actor_Set_Goal_Number(kActorBryant, 100);
