@@ -127,7 +127,6 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 			Game_Flag_Reset(258);
 			Game_Flag_Reset(178);
 			int spinnerDest = Spinner_Interface_Choose_Dest(kMA01LoopOutDoorAnim, false);
-
 			switch (spinnerDest) {
 			case kSpinnerDestinationPoliceStation:
 				Game_Flag_Set(178);
