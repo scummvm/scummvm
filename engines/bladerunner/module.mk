@@ -60,6 +60,7 @@ MODULE_OBJS = \
 	script/ai/maggie.o \
 	script/ai/male_announcer.o \
 	script/ai/mccoy.o \
+	script/ai/newscaster.o \
 	script/ai/officer_leary.o \
 	script/ai/runciter.o \
 	script/ai/sergeant_walls.o \
