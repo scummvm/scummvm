@@ -20,6 +20,11 @@
  *
  */
 
+#ifndef MUTATIONOFJB_UTIL_H
+#define MUTATIONOFJB_UTIL_H
+
 namespace MutationOfJB {
 	void reportFileMissingError(const char *fileName);
 }
+
+#endif

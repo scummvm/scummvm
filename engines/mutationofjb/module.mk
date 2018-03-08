@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	detection.o \
 	encryptedfile.o \
 	game.o \
+	inventory.o \
 	mutationofjb.o \
 	room.o \
 	script.o \
