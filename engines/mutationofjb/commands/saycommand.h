@@ -37,7 +37,7 @@ public:
 
 class SayCommand : public SeqCommand {
 public:
-	SayCommand(Common::String &lineToSay, Common::String &voiceFile, bool waitForPrevious, bool talkingAnimation) :
+	SayCommand(const Common::String &lineToSay, const Common::String &voiceFile, bool waitForPrevious, bool talkingAnimation) :
 		_lineToSay(lineToSay),
 		_voiceFile(voiceFile),
 		_waitForPrevious(waitForPrevious),

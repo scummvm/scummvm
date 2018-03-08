@@ -28,6 +28,7 @@
 namespace MutationOfJB {
 
 class MutationOfJBEngine;
+class Command;
 
 class Console : public GUI::Debugger {
 public:
@@ -36,6 +37,10 @@ public:
 private:
 	bool cmd_listsections(int argc, const char **argv);
 	bool cmd_showsection(int argc, const char **argv);
+
+	void showIndent(int indentLevel);
+	void showCommands(Command *command, int indentLevel = 0);
+
 	MutationOfJBEngine *_vm;
 };
 
