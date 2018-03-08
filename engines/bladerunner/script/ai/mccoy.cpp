@@ -588,7 +588,7 @@ bool AIScriptMcCoy::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(41) - 1) {
 			_animationFrame++;
 		}
-		return true;
+		break;
 	case 59:
 		*animation = 48;
 		_animationFrame++;

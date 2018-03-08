@@ -313,10 +313,10 @@ DECLARE_SCRIPT(NR04)
 END_SCRIPT
 
 DECLARE_SCRIPT(NR05)
-	void sub_401F74(int frame);
+	void rotateActorOnTable(int frame);
 	void sub_4020B4();
 	void sub_4022DC();
-	void sub_402A48(int actorId);
+	void rotateActorOnGround(int actorId);
 	void sub_402B9C();
 END_SCRIPT
 
