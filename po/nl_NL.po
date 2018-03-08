@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-02-21 22:44+0100\n"
-"PO-Revision-Date: 2018-03-08 09:01+0000\n"
+"PO-Revision-Date: 2018-03-08 09:03+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
@@ -700,7 +700,7 @@ msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
-"Wilt u echt de mass game detector draaien? Dit voegt potentieel een groot "
+"Wilt u echt de bulk spel import draaien? Dit voegt potentieel een groot "
 "aantal spellen toe."
 
 #: gui/launcher.cpp:368
@@ -735,7 +735,7 @@ msgstr "Kies het spel:"
 
 #: gui/launcher.cpp:712
 msgid "Mass Add..."
-msgstr "Voeg Meerdere Toe..."
+msgstr "Bulk Import..."
 
 #: gui/launcher.cpp:714
 msgid "Record..."
