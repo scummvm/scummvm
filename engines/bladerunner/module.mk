@@ -57,6 +57,7 @@ MODULE_OBJS = \
 	script/ai/howie_lee.o \
 	script/ai/hysteria_patron1.o \
 	script/ai/hysteria_patron2.o \
+	script/ai/hysteria_patron3.o \
 	script/ai/klein.o \
 	script/ai/leon.o \
 	script/ai/maggie.o \
