@@ -20,7 +20,11 @@
  *
  */
 
+#ifndef MUTATIONOFJB_GAME_H
+#define MUTATIONOFJB_GAME_H
+
 #include "common/scummsys.h"
+#include "mutationofjb/inventory.h"
 
 namespace Common {
 	class ReadStream;
@@ -133,9 +137,12 @@ public:
 	bool loadFromStream(Common::ReadStream &stream);
 
 	uint8 _currentScene;
+	Inventory _inventory;
 private:
 	Scene _scenes[45];
 
 };
 
 }
+
+#endif

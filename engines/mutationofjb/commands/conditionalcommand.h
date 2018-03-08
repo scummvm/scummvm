@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MUTATIONOFJB_CONDITIONALCOMMAND_H
+#define MUTATIONOFJB_CONDITIONALCOMMAND_H
+
 #include "mutationofjb/commands/command.h"
 #include "common/scummsys.h"
 
@@ -43,3 +46,5 @@ protected:
 };
 
 }
+
+#endif

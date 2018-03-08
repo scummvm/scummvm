@@ -69,7 +69,7 @@ bool ScriptParseContext::readLine(Common::String &line) {
 			}
 			return true;
 		}
-	} while(_stream.eos());
+	} while(!_stream.eos());
 
 	return false;
 }

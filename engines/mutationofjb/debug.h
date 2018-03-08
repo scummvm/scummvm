@@ -20,6 +20,9 @@
  *
  */
 
+#ifndef MUTATIONOFJB_DEBUG_H
+#define MUTATIONOFJB_DEBUG_H
+
 #include "gui/debugger.h"
 
 namespace MutationOfJB {
@@ -37,4 +40,6 @@ private:
 };
 
 }
+
+#endif
 

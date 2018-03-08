@@ -20,16 +20,31 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ENCRYPTEDFILE_H
-#define MUTATIONOFJB_ENCRYPTEDFILE_H
+#ifndef MUTATIONOFJB_INVENTORY_H
+#define MUTATIONOFJB_INVENTORY_H
 
-#include "common/file.h"
+#include "common/scummsys.h"
+#include "common/array.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 
-class EncryptedFile : public Common::File {
+class Inventory {
 public:
-	virtual uint32 read(void *dataPtr, uint32 dataSize) override;
+	typedef Common::Array<Common::String> Items;
+
+	const Items &getItems() const;
+	void addItem(const Common::String &item);
+	void removeItem(const Common::String &item);
+	void removeAllItems();
+
+	void rotateItemsRight(uint n);
+	void rotateItemsLeft(uint n);
+
+private:
+	void reverseItems(uint from, uint to);
+
+	Items _items;
 };
 
 }
