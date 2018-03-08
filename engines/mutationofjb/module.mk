@@ -1,11 +1,14 @@
 MODULE := engines/mutationofjb
 
 MODULE_OBJS := \
+	commands/additemcommand.o \
 	commands/changecommand.o \
 	commands/command.o \
 	commands/conditionalcommand.o \
 	commands/endblockcommand.o \
 	commands/ifcommand.o \
+	commands/removeallitemscommand.o \
+	commands/removeitemcommand.o \
 	commands/saycommand.o \
 	commands/seqcommand.o \
 	debug.o \
