@@ -697,7 +697,7 @@ void SupernovaEngine::renderText(const uint16 character) {
 }
 void SupernovaEngine::renderText(const GuiElement &guiElement) {
 	renderText(guiElement.getText(), guiElement.getTextPos().x,
-	           guiElement.getTextPos().y, guiElement.getTextColor());
+			   guiElement.getTextPos().y, guiElement.getTextColor());
 }
 
 void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color) {
@@ -708,7 +708,7 @@ void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color)
 
 void SupernovaEngine::renderBox(const GuiElement &guiElement) {
 	renderBox(guiElement.left, guiElement.top, guiElement.width(),
-	          guiElement.height(), guiElement.getBackgroundColor());
+			  guiElement.height(), guiElement.getBackgroundColor());
 }
 void SupernovaEngine::paletteBrightness() {
 	byte palette[768];
