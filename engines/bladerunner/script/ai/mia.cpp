@@ -25,6 +25,7 @@
 namespace BladeRunner {
 
 AIScriptMia::AIScriptMia(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	_flag1 = false;
 }
 
 void AIScriptMia::Initialize() {
