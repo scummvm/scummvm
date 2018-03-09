@@ -60,6 +60,7 @@ MODULE_OBJS = \
 	script/ai/hysteria_patron1.o \
 	script/ai/hysteria_patron2.o \
 	script/ai/hysteria_patron3.o \
+	script/ai/insect_dealer.o \
 	script/ai/klein.o \
 	script/ai/lance.o \
 	script/ai/leon.o \
