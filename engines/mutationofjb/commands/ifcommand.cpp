@@ -64,7 +64,7 @@ bool IfCommandParser::parse(const Common::String &line, ScriptParseContext &pars
 	}
 
 	const char *const cstr = line.c_str();
-	const char tag = cstr[2];
+	const char tag = cstr[2] == ' ' ? 0 : cstr[2];
 	const uint8 sceneId = atoi(cstr + 3);
 	const uint8 objectId = atoi(cstr + 6);
 	const uint8 value = atoi(cstr + 9);

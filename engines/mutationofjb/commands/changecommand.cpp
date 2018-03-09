@@ -195,8 +195,9 @@ bool ChangeSceneCommandParser::parse(const Common::String &line, ScriptParseCont
 }
 
 int ChangeCommandParser::parseInteger(const char *val, ChangeCommand::ChangeOperation &op) {
+	op = ChangeCommand::SetValue;
+
 	if (!val || !(*val)) {
-		op = ChangeCommand::SetValue;
 		return 0;
 	}
 

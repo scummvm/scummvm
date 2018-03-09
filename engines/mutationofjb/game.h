@@ -35,16 +35,33 @@ namespace MutationOfJB {
 static const uint8 MAX_STR_LENGTH = 0x14;
 
 struct Door {
+	/*
+		Door name.
+		Can be empty - deactivates door completely.
+	*/
 	char _name[MAX_STR_LENGTH + 1];
+	/*
+		Scene ID where the door leads.
+		Can be 0 - you can hover your mouse over it, but clicking it doesn't do anything (unless scripted).
+	*/
 	uint8  _destSceneId;
+	/* X coordinate for player's position after going through the door. */
 	uint16 _destX;
+	/* Y coordinate for player's position after going through the door. */
 	uint16 _destY;
+	/* X coordinate of the door rectangle. */
 	uint16 _x;
+	/* Y coordinate of the door rectangle. */
 	uint8  _y;
+	/* Width of the door rectangle. */
 	uint16 _width;
+	/* Height of the door rectangle. */
 	uint8  _height;
+	/* X coordinate for position towards player will walk after clicking the door. */
 	uint16 _walkToX;
+	/* Y coordinate for position towards player will walk after clicking the door. */
 	uint8  _walkToY;
+	/* Unknown for now - likely not even used. */
 	uint8  _SP;
 
 	bool loadFromStream(Common::ReadStream &stream);
@@ -84,7 +101,7 @@ struct Static {
 };
 
 struct Bitmap {
-	uint8  _unknown;
+	uint8  _frame;
 	uint8  _isVisible;
 	uint16 _x1;
 	uint8  _y1;
@@ -118,8 +135,7 @@ struct Scene {
 
 	Bitmap _bitmaps[10];
 
-	uint8 _obstacleY1;
-	uint8 _unknown386;
+	uint16 _obstacleY1;
 	uint8 _palRotStart;
 	uint8 _palRotEnd;
 	uint8 _palRotPeriod;

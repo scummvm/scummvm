@@ -92,7 +92,7 @@ bool Static::loadFromStream(Common::ReadStream &stream) {
 }
 
 bool Bitmap::loadFromStream(Common::ReadStream &stream) {
-	_unknown = stream.readByte();
+	_frame = stream.readByte();
 	_isVisible = stream.readByte();
 	_x1 = stream.readUint16LE();
 	_y1 = stream.readByte();
@@ -133,8 +133,7 @@ bool Scene::loadFromStream(Common::ReadStream &stream) {
 		_bitmaps[i].loadFromStream(stream);
 	}
 
-	_obstacleY1 = stream.readByte();
-	_unknown386 = stream.readByte();
+	_obstacleY1 = stream.readUint16LE();
 	_palRotStart = stream.readByte();
 	_palRotEnd = stream.readByte();
 	_palRotPeriod = stream.readByte();
