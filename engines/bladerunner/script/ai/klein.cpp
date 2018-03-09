@@ -165,40 +165,42 @@ int AIScriptKlein::GetFriendlinessModifierIfGetsClue(int otherActorId, int clueI
 }
 
 bool AIScriptKlein::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 1) {
+	switch (newGoalNumber) {
+	case 1:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 73, Random_Query(3, 20));
 		AI_Movement_Track_Repeat(kActorKlein);
-	}
-	if (newGoalNumber == 2) {
+		break;
+	case 2:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 74, Random_Query(10, 20));
 		AI_Movement_Track_Repeat(kActorKlein);
-	}
-	if (newGoalNumber == 3) {
+		break;
+	case 3:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 31, 3);
 		AI_Movement_Track_Repeat(kActorKlein);
-	}
-	if (newGoalNumber == 4) {
+		break;
+	case 4:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 32, 5);
 		AI_Movement_Track_Repeat(kActorKlein);
-	}
-	if (newGoalNumber == 5) {
+		break;
+	case 5:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 35, 60);
 		AI_Movement_Track_Repeat(kActorKlein);
-	}
-	if (newGoalNumber == 6) {
+		break;
+	case 6:
 		AI_Movement_Track_Flush(kActorKlein);
 		AI_Movement_Track_Append(kActorKlein, 32, 5);
 		AI_Movement_Track_Repeat(kActorKlein);
-	}
-	if (newGoalNumber == 100) {
+		break;
+	case 100:
 		AI_Movement_Track_Flush(kActorKlein);
 		Actor_Put_In_Set(kActorKlein, kSetFreeSlotC);
 		Actor_Set_At_Waypoint(kActorKlein, 35, 0);
+		break;
 	}
 	return false;
 }
@@ -327,8 +329,7 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 }
 
 bool AIScriptKlein::ChangeAnimationMode(int mode) {
-	switch (mode)
-	{
+	switch (mode) {
 	case kAnimationModeIdle:
 		_animationState = 0;
 		_animationFrame = 0;
@@ -402,8 +403,6 @@ bool AIScriptKlein::ChangeAnimationMode(int mode) {
 			_animationStateNext = 7;
 			_animationNext = 697;
 		}
-		break;
-	default:
 		break;
 	}
 	return true;

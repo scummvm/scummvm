@@ -25,6 +25,7 @@
 namespace BladeRunner {
 
 AIScriptShoeshineMan::AIScriptShoeshineMan(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	_state = false;
 }
 
 void AIScriptShoeshineMan::Initialize() {
@@ -53,17 +54,18 @@ void AIScriptShoeshineMan::ReceivedClue(int clueId, int fromActorId) {
 }
 
 void AIScriptShoeshineMan::ClickedByPlayer() {
-	if (Actor_Query_Goal_Number(kActorShoeshineMan) != 100)
+	if (Actor_Query_Goal_Number(kActorShoeshineMan) != 100) {
 		return;
+	}
 
-	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1098.15, -0.04, -201.53, 0, true, false, 0)) {
+	if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -1098.15f, -0.04f, -201.53f, 0, true, false, 0)) {
 		Actor_Set_Goal_Number(kActorShoeshineMan, 102);
 		Actor_Face_Actor(kActorMcCoy, kActorShoeshineMan, true);
-		Actor_Says_With_Pause(kActorShoeshineMan, 0, 1.2, 13);
+		Actor_Says_With_Pause(kActorShoeshineMan, 0, 1.2f, 13);
 		Actor_Says(kActorMcCoy, 730, 17);
 		Actor_Says(kActorShoeshineMan, 10, 13);
 		Actor_Says(kActorShoeshineMan, 20, 12);
-		Actor_Says_With_Pause(kActorMcCoy, 735, 1.0, 14);
+		Actor_Says_With_Pause(kActorMcCoy, 735, 1.0f, 14);
 		Actor_Change_Animation_Mode(kActorShoeshineMan, 29);
 	}
 }
@@ -101,18 +103,18 @@ int AIScriptShoeshineMan::GetFriendlinessModifierIfGetsClue(int otherActorId, in
 }
 
 bool AIScriptShoeshineMan::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber - 100 <= 1) {
-		if (newGoalNumber == 100) {
-			Actor_Put_In_Set(kActorShoeshineMan, kSetDR01_DR02_DR04);
-			Actor_Set_At_XYZ(kActorShoeshineMan, -1160.0, -0.04, -235.0, 524);
-		} else {
-			AI_Movement_Track_Flush(kActorShoeshineMan);
-			AI_Movement_Track_Append(kActorShoeshineMan, 281, 0);
-			AI_Movement_Track_Append(kActorShoeshineMan, 40, 0);
-			AI_Movement_Track_Repeat(kActorShoeshineMan);
-		}
+	switch (newGoalNumber) {
+	case 100:
+		Actor_Put_In_Set(kActorShoeshineMan, kSetDR01_DR02_DR04);
+		Actor_Set_At_XYZ(kActorShoeshineMan, -1160.0f, -0.04f, -235.0f, 524);
+		break;
+	case 101:
+		AI_Movement_Track_Flush(kActorShoeshineMan);
+		AI_Movement_Track_Append(kActorShoeshineMan, 281, 0);
+		AI_Movement_Track_Append(kActorShoeshineMan, 40, 0);
+		AI_Movement_Track_Repeat(kActorShoeshineMan);
+		break;
 	}
-
 	return false;
 }
 

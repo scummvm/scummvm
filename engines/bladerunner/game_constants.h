@@ -604,6 +604,7 @@ enum AnimationModes {
 	kAnimationModeWalkDown = 45,
 	kAnimationModeCombatWalkUp = 46,
 	kAnimationModeCombatWalkDown = 47,
+	kAnimationModeDie = 48, // or fall down?
 	kAnimationModeFeeding = 52,
 	kAnimationModeClimbUp = 64,
 	kAnimationModeClimbDown = 65,

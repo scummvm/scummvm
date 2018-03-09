@@ -33,19 +33,19 @@ void AIScriptBryant::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	World_Waypoint_Set(324, 22, 267.0, -60.30, 203.0);
-	World_Waypoint_Set(325, 22, 84.0, -60.30, 337.0);
-	World_Waypoint_Set(326, 2, -36.0, 0.0, 185.0);
-	World_Waypoint_Set(327, 2, -166.0, 0.0, -103.0);
-	World_Waypoint_Set(328, 3, -556.0, 252.59, -1018.11);
-	World_Waypoint_Set(329, 3, -655.0, 252.60, -1012.0);
-	World_Waypoint_Set(330, 3, -657.0, 253.0, -1127.0);
-	World_Waypoint_Set(331, 102, 163.8, 0.0, 67.0);
-	World_Waypoint_Set(332, 2, -39.0, 0.0, 11.5);
-	World_Waypoint_Set(333, 102, -34.0, 0.0, 33.0);
-	World_Waypoint_Set(334, 22, 3.0, -60.30, -144.0);
-	World_Waypoint_Set(335, 102, -50.0, 0.0, 212.0);
-	Actor_Put_In_Set(kActorBryant, 22);
+	World_Waypoint_Set(324, kSetBB05,       267.0f,  -60.3f,    203.0f);
+	World_Waypoint_Set(325, kSetBB05,        84.0f,  -60.3f,    337.0f);
+	World_Waypoint_Set(326, kSetBB06_BB07,  -36.0f,    0.0f,    185.0f);
+	World_Waypoint_Set(327, kSetBB06_BB07, -166.0f,    0.0f,   -103.0f);
+	World_Waypoint_Set(328, kSetBB07,      -556.0f, 252.59f, -1018.11f);
+	World_Waypoint_Set(329, kSetBB07,      -655.0f,  252.6f,  -1012.0f);
+	World_Waypoint_Set(330, kSetBB07,      -657.0f,  253.0f,  -1127.0f);
+	World_Waypoint_Set(331, kSetBB12,       163.8f,    0.0f,     67.0f);
+	World_Waypoint_Set(332, kSetBB06_BB07,  -39.0f,    0.0f,     11.5f);
+	World_Waypoint_Set(333, kSetBB12,       -34.0f,    0.0f,     33.0f);
+	World_Waypoint_Set(334, kSetBB05,         3.0f, -60.30f,   -144.0f);
+	World_Waypoint_Set(335, kSetBB12,       -50.0f,    0.0f,    212.0f);
+	Actor_Put_In_Set(kActorBryant, kSetBB05);
 	Actor_Set_Goal_Number(kActorBryant, 100);
 }
 
@@ -53,12 +53,12 @@ bool AIScriptBryant::Update() {
 	if (Global_Variable_Query(kVariableChapter) == 2 && Actor_Query_Goal_Number(kActorBryant) <= 101 && Player_Query_Current_Scene() == kSceneBB05) {
 		Actor_Set_Goal_Number(kActorBryant, 101);
 		return true;
-	} else if (Global_Variable_Query(kVariableChapter) != 3 || Game_Flag_Query(686) || Player_Query_Current_Scene() != kSceneBB05) {
-		return false;
-	} else {
+	}
+	if (Global_Variable_Query(kVariableChapter) == 3 && Player_Query_Current_Scene() == kSceneBB05 && !Game_Flag_Query(686)) {
 		Game_Flag_Set(686);
 		return true;
 	}
+	return false;
 }
 
 void AIScriptBryant::TimerExpired(int timer) {
@@ -68,13 +68,12 @@ void AIScriptBryant::TimerExpired(int timer) {
 void AIScriptBryant::CompletedMovementTrack() {
 	if (Actor_Query_Goal_Number(kActorBryant) == 101) {
 		Actor_Set_Goal_Number(kActorBryant, 102);
-		//result = true;
+		// return true;
 	} else if (Actor_Query_Goal_Number(kActorBryant) == 102) {
 		Actor_Set_Goal_Number(kActorBryant, 101);
-		//result = true;
-	} else {
-		//result = false;
+		// return true;
 	}
+	// return false;
 }
 
 void AIScriptBryant::ReceivedClue(int clueId, int fromActorId) {
@@ -123,137 +122,140 @@ int AIScriptBryant::GetFriendlinessModifierIfGetsClue(int otherActorId, int clue
 }
 
 bool AIScriptBryant::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if ((newGoalNumber - 101) <= 1) {
-		if (newGoalNumber == 101) {
-			AI_Movement_Track_Flush(kActorBryant);
+	switch (newGoalNumber) {
+	case 101:
+		AI_Movement_Track_Flush(kActorBryant);
 
-			switch (Random_Query(0, 9)) {
-			case 0:
-				AI_Movement_Track_Append(kActorBryant, 134, 0);
-				AI_Movement_Track_Append(kActorBryant, 135, 0);
-				AI_Movement_Track_Append(kActorBryant, 136, 0);
-				AI_Movement_Track_Append(kActorBryant, 137, 0);
-				AI_Movement_Track_Append(kActorBryant, 138, 0);
-				AI_Movement_Track_Append(kActorBryant, 139, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			case 1:
-				AI_Movement_Track_Append(kActorBryant, 139, 0);
-				AI_Movement_Track_Append(kActorBryant, 138, 0);
-				AI_Movement_Track_Append(kActorBryant, 137, 0);
-				AI_Movement_Track_Append(kActorBryant, 136, 0);
-				AI_Movement_Track_Append(kActorBryant, 135, 0);
-				AI_Movement_Track_Append(kActorBryant, 134, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			case 2:
-				AI_Movement_Track_Append(kActorBryant, 196, 0);
-				AI_Movement_Track_Append(kActorBryant, 197, 0);
-				AI_Movement_Track_Append(kActorBryant, 198, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			case 3:
-				AI_Movement_Track_Append(kActorBryant, 198, 0);
-				AI_Movement_Track_Append(kActorBryant, 197, 0);
-				AI_Movement_Track_Append(kActorBryant, 196, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			case 4:
-				AI_Movement_Track_Append(kActorBryant, 326, 0);
-				AI_Movement_Track_Append(kActorBryant, 332, 0);
-				AI_Movement_Track_Append(kActorBryant, 327, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			case 5:
-				AI_Movement_Track_Append(kActorBryant, 327, 0);
-				AI_Movement_Track_Append(kActorBryant, 332, 0);
-				AI_Movement_Track_Append(kActorBryant, 326, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			case 6:
-				AI_Movement_Track_Append(kActorBryant, 329, 0);
-				AI_Movement_Track_Append(kActorBryant, 328, 0);
-				AI_Movement_Track_Append(kActorBryant, 330, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			case 7:
-				AI_Movement_Track_Append(kActorBryant, 330, 0);
-				AI_Movement_Track_Append(kActorBryant, 328, 0);
-				AI_Movement_Track_Append(kActorBryant, 329, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			case 8:
-				AI_Movement_Track_Append(kActorBryant, 331, 0);
-				AI_Movement_Track_Append(kActorBryant, 333, 0);
-				AI_Movement_Track_Append(kActorBryant, 335, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			case 9:
-				AI_Movement_Track_Append(kActorBryant, 335, 0);
-				AI_Movement_Track_Append(kActorBryant, 333, 0);
-				AI_Movement_Track_Append(kActorBryant, 331, 0);
-				AI_Movement_Track_Repeat(kActorBryant);
-				break;
-			default:
-				break;
-			}
+		switch (Random_Query(0, 9)) {
+		case 0:
+			AI_Movement_Track_Append(kActorBryant, 134, 0);
+			AI_Movement_Track_Append(kActorBryant, 135, 0);
+			AI_Movement_Track_Append(kActorBryant, 136, 0);
+			AI_Movement_Track_Append(kActorBryant, 137, 0);
+			AI_Movement_Track_Append(kActorBryant, 138, 0);
+			AI_Movement_Track_Append(kActorBryant, 139, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
+		case 1:
+			AI_Movement_Track_Append(kActorBryant, 139, 0);
+			AI_Movement_Track_Append(kActorBryant, 138, 0);
+			AI_Movement_Track_Append(kActorBryant, 137, 0);
+			AI_Movement_Track_Append(kActorBryant, 136, 0);
+			AI_Movement_Track_Append(kActorBryant, 135, 0);
+			AI_Movement_Track_Append(kActorBryant, 134, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
+		case 2:
+			AI_Movement_Track_Append(kActorBryant, 196, 0);
+			AI_Movement_Track_Append(kActorBryant, 197, 0);
+			AI_Movement_Track_Append(kActorBryant, 198, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
+		case 3:
+			AI_Movement_Track_Append(kActorBryant, 198, 0);
+			AI_Movement_Track_Append(kActorBryant, 197, 0);
+			AI_Movement_Track_Append(kActorBryant, 196, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
+		case 4:
+			AI_Movement_Track_Append(kActorBryant, 326, 0);
+			AI_Movement_Track_Append(kActorBryant, 332, 0);
+			AI_Movement_Track_Append(kActorBryant, 327, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
+		case 5:
+			AI_Movement_Track_Append(kActorBryant, 327, 0);
+			AI_Movement_Track_Append(kActorBryant, 332, 0);
+			AI_Movement_Track_Append(kActorBryant, 326, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
+		case 6:
+			AI_Movement_Track_Append(kActorBryant, 329, 0);
+			AI_Movement_Track_Append(kActorBryant, 328, 0);
+			AI_Movement_Track_Append(kActorBryant, 330, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
+		case 7:
+			AI_Movement_Track_Append(kActorBryant, 330, 0);
+			AI_Movement_Track_Append(kActorBryant, 328, 0);
+			AI_Movement_Track_Append(kActorBryant, 329, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
+		case 8:
+			AI_Movement_Track_Append(kActorBryant, 331, 0);
+			AI_Movement_Track_Append(kActorBryant, 333, 0);
+			AI_Movement_Track_Append(kActorBryant, 335, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
+		case 9:
+			AI_Movement_Track_Append(kActorBryant, 335, 0);
+			AI_Movement_Track_Append(kActorBryant, 333, 0);
+			AI_Movement_Track_Append(kActorBryant, 331, 0);
+			AI_Movement_Track_Repeat(kActorBryant);
+			break;
 		}
-
+		// fallthrough
+	case 102:
 		AI_Movement_Track_Append(kActorBryant, 39, 0);
 		AI_Movement_Track_Repeat(kActorBryant);
+		break;
 	}
 
 	return false;
 }
 
 bool AIScriptBryant::UpdateAnimation(int *animation, int *frame) {
-	if (_animationState <= 3) {
-		if (_animationState) {
-			if (_animationState == 1) {
-				*animation = 805;
-				_animationFrame++;
+	switch (_animationState) {
+	case 0:
+		*animation = 806;
+		_animationFrame++;
 
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(805)) {
-					_animationFrame = 0;
-				}
-			} else if (_animationState == 2) {
-				*animation = 808;
-				_animationFrame++;
-
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(808) - 1) {
-					_animationState = 3;
-				}
-			} else {
-				*animation = 808;
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(808) - 1;
-			}
-		} else {
-			*animation = 806;
-			_animationFrame++;
-
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(806)) {
-				_animationFrame = 0;
-			}
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(806)) {
+			_animationFrame = 0;
 		}
+		break;
+	case 1:
+		*animation = 805;
+		_animationFrame++;
+
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(805)) {
+			_animationFrame = 0;
+		}
+		break;
+	case 2:
+		*animation = 808;
+		_animationFrame++;
+
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(808) - 1) {
+			_animationState = 3;
+		}
+		break;
+	case 3:
+		*animation = 808;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(808) - 1;
+		break;
 	}
 
 	*frame = _animationFrame;
-
 	return true;
 }
 
 bool AIScriptBryant::ChangeAnimationMode(int mode) {
-	if (mode > 1) {
-		if (mode == 48) {
-			_animationState = 2;
-			_animationFrame = 0;
-			Actor_Set_Goal_Number(kActorBryant, 0);
-		}
-	} else {
-		_animationState = (mode != 0);
+	switch (mode) {
+	case kAnimationModeIdle:
+		_animationState = 0;
 		_animationFrame = 0;
+		break;
+	case kAnimationModeWalk:
+		_animationState = 1;
+		_animationFrame = 0;
+		break;
+	case 48:
+		_animationState = 2;
+		_animationFrame = 0;
+		Actor_Set_Goal_Number(kActorBryant, 0);
+		break;
 	}
-
 	return true;
 }
 

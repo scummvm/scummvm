@@ -267,14 +267,14 @@ bool AIScriptGaff::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorGaff, 130, 13);
 		Actor_Says(kActorMcCoy, 2950, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 2955, 16);
-		Actor_Says_With_Pause(kActorGaff, 140, 1.0, 14);
+		Actor_Says_With_Pause(kActorGaff, 140, 1.0f, 14);
 		Loop_Actor_Walk_To_Actor(kActorMcCoy, kActorGaff, 36, false, false);
 		Actor_Says(kActorGaff, 150, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 2960, 12);
-		Actor_Says_With_Pause(kActorGaff, 160, 1.0, 16);
+		Actor_Says_With_Pause(kActorGaff, 160, 1.0f, 16);
 		Actor_Says(kActorMcCoy, 2965, 13);
-		Actor_Says_With_Pause(kActorGaff, 170, 1.0, kAnimationModeTalk);
-		Actor_Says_With_Pause(kActorGaff, 180, 1.0, 12);
+		Actor_Says_With_Pause(kActorGaff, 170, 1.0f, kAnimationModeTalk);
+		Actor_Says_With_Pause(kActorGaff, 180, 1.0f, 12);
 		Actor_Says(kActorGaff, 190, 14);
 		Actor_Says(kActorGaff, 200, 15);
 		Async_Actor_Walk_To_XYZ(kActorGaff, -388.44f, -162.8f, 165.08f, false, false);

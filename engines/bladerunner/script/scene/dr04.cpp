@@ -111,7 +111,7 @@ bool SceneScriptDR04::ClickedOnActor(int actorId) {
 			Actor_Says(kActorMoraji, 20, 3);
 			Actor_Says(kActorMoraji, 30, 3);
 			Actor_Says(kActorMcCoy, 955, 13);
-			Actor_Says_With_Pause(kActorMoraji, 40, 0, 3);
+			Actor_Says_With_Pause(kActorMoraji, 40, 0.0f, 3);
 			Actor_Says(kActorMoraji, 50, 3);
 			Actor_Clue_Acquire(kActorMcCoy, kClueMorajiInterview, 1, kActorMoraji);
 			Actor_Set_Goal_Number(kActorMoraji, 22);

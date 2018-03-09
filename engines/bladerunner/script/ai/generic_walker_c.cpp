@@ -317,7 +317,6 @@ void AIScriptGenericWalkerC::movingUpdate() {
 	deltaZ = deltaZ * 0.97f;
 
 	Actor_Set_At_XYZ(kActorGenwalkerC, walkerX, walkerY, walkerZ, facing);
-
 }
 
 bool AIScriptGenericWalkerC::prepareWalker() {

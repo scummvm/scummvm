@@ -141,7 +141,8 @@ int AIScriptHowieLee::GetFriendlinessModifierIfGetsClue(int otherActorId, int cl
 }
 
 bool AIScriptHowieLee::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber == 1) {
+	switch (newGoalNumber) {
+	case 1:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		if (Random_Query(1, 2) == 1) {
 			AI_Movement_Track_Append_With_Facing(kActorHowieLee, 67, Random_Query(3, 10), 720);
@@ -150,7 +151,7 @@ bool AIScriptHowieLee::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
-	} else if (newGoalNumber == 2) {
+	case 2:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		if (Random_Query(1, 2) == 1) {
 			AI_Movement_Track_Append_With_Facing(kActorHowieLee, 68, Random_Query(3, 10), 641);
@@ -159,7 +160,7 @@ bool AIScriptHowieLee::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
-	} else if (newGoalNumber == 3) {
+	case 3:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		if (Random_Query(1, 2) == 1) {
 			AI_Movement_Track_Append_With_Facing(kActorHowieLee, 69, Random_Query(3, 10), 640);
@@ -168,25 +169,25 @@ bool AIScriptHowieLee::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
-	} else if (newGoalNumber == 4) {
+	case 4:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 66, 30);
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
-	} else if (newGoalNumber == 5) {
+	case 5:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 40, 60);
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
-	} else if (newGoalNumber == 6) {
+	case 6:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 67, 90);
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
-	} else if (newGoalNumber == 50) {
+	case 50:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		return false;
-	} else if (newGoalNumber == 100) {
+	case 100:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		Actor_Put_In_Set(kActorHowieLee, kSetFreeSlotC);
 		Actor_Set_At_Waypoint(kActorHowieLee, 35, 0);
