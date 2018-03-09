@@ -952,7 +952,7 @@ a character be imported to the same game that was just completed.
 In other words, a character from Quest for Glory II cannot be imported
 into Quest for Glory II.
 
-If you want to use a saved character from the original sierra interpreter,
+If you want to use a saved character from the original Sierra interpreter,
 you will need to rename the character file to
 "qfg[game-number]-[character-filename].sav"
 and place it in the ScummVM save path (see section 6.0), otherwise the
