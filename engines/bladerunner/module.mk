@@ -61,6 +61,7 @@ MODULE_OBJS = \
 	script/ai/hysteria_patron2.o \
 	script/ai/hysteria_patron3.o \
 	script/ai/klein.o \
+	script/ai/lance.o \
 	script/ai/leon.o \
 	script/ai/maggie.o \
 	script/ai/male_announcer.o \
