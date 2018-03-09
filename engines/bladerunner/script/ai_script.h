@@ -181,6 +181,10 @@ END_SCRIPT
 DECLARE_SCRIPT(Marcus)
 END_SCRIPT
 
+DECLARE_SCRIPT(Mia)
+	bool _flag1;
+END_SCRIPT
+
 DECLARE_SCRIPT(OfficerLeary)
 	int var_45D5B8;
 	int var_45D5BC;
