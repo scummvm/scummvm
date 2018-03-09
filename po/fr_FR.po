@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-02-21 22:44+0100\n"
-"PO-Revision-Date: 2018-03-09 21:02+0000\n"
-"Last-Translator: Purple T <zeonk@hotmail.com>\n"
+"PO-Revision-Date: 2018-03-09 21:04+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -873,7 +873,7 @@ msgstr "Zone inactive du joystick :"
 
 #: gui/options.cpp:972
 msgid "HW Shader:"
-msgstr "Shader matériel:"
+msgstr "Shader matériel :"
 
 #: gui/options.cpp:972 gui/options.cpp:974
 msgid "Different hardware shaders give different visual effects"
