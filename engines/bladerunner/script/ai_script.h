@@ -139,6 +139,11 @@ DECLARE_SCRIPT(InsectDealer)
 	int _var3;
 END_SCRIPT
 
+DECLARE_SCRIPT(TyrellGuard)
+	int _animDirection;
+	bool _flag1;
+END_SCRIPT
+
 DECLARE_SCRIPT(Runciter)
 	int var_45CD78;
 	int var_45CD7C;
