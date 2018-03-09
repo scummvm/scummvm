@@ -64,8 +64,8 @@ struct GameState {
 class Inventory {
 public:
 	Inventory(int &inventoryScroll)
-	    : _numObjects(0)
-	    , _inventoryScroll(inventoryScroll)
+		: _numObjects(0)
+		, _inventoryScroll(inventoryScroll)
 	{}
 
 	void add(Object &obj);

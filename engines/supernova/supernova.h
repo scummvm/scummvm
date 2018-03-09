@@ -78,8 +78,8 @@ private:
 
 struct SoundSample {
 	SoundSample()
-	    : _buffer(NULL)
-	    , _length(0)
+		: _buffer(NULL)
+		, _length(0)
 	{}
 
 	~SoundSample() {
@@ -124,8 +124,8 @@ public:
 	int  _textCursorY;
 	int  _textColor;
 
-	int  textWidth(const char *text);
-	int  textWidth(const uint16 key);
+	int textWidth(const char *text);
+	int textWidth(const uint16 key);
 	Common::Error loadGameStrings();
 	void initData();
 	void initPalette();
@@ -169,7 +169,7 @@ public:
 		_gameStrings[idx] = string;
 	}
 
-	int  textWidth(const Common::String &text) {
+	int textWidth(const Common::String &text) {
 		if (text.empty())
 			return 0;
 		return textWidth(text.c_str());

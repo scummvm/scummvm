@@ -30,9 +30,9 @@
 #include "supernova/supernova.h"
 
 static const PlainGameDescriptor supernovaGames[] = {
-    {"msn1", "Mission Supernova 1"},
-    {"msn2", "Mission Supernova 2"},
-    {NULL, NULL}
+	{"msn1", "Mission Supernova 1"},
+	{"msn2", "Mission Supernova 2"},
+	{NULL, NULL}
 };
 
 namespace Supernova {
@@ -133,7 +133,7 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveFileList;
 	for (Common::StringArray::const_iterator file = filenames.begin();
-	     file != filenames.end(); ++file) {
+		 file != filenames.end(); ++file) {
 		int saveSlot = atoi(file->c_str() + file->size() - 3);
 		if (saveSlot >= 0 && saveSlot <= getMaximumSaveSlot()) {
 			Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(*file);
@@ -166,7 +166,7 @@ void SupernovaMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String fileName = Common::String::format("msn_save.%03d", slot);
 	Common::InSaveFile *savefile = g_system->getSavefileManager()->openForLoading(fileName);
-	
+
 	if (savefile) {
 		uint saveHeader = savefile->readUint32LE();
 		if (saveHeader != SAVEGAME_HEADER) {
@@ -178,7 +178,7 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 			delete savefile;
 			return SaveStateDescriptor();
 		}
-		
+
 		int descriptionSize = savefile->readSint16LE();
 		char* description = new char[descriptionSize];
 		savefile->read(description, descriptionSize);
@@ -205,10 +205,10 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 		}
 
 		delete savefile;
-		
+
 		return desc;
 	}
-	
+
 	return SaveStateDescriptor();
 }
 

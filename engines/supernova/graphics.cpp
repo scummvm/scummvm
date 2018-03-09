@@ -248,7 +248,7 @@ void MSNImageDecoder::destroy() {
 		_encodedImage = NULL;
 	}
 	for (Common::Array<Graphics::Surface *>::iterator it = _sectionSurfaces.begin();
-	     it != _sectionSurfaces.end(); ++it) {
+		 it != _sectionSurfaces.end(); ++it) {
 		(*it)->free();
 	}
 }

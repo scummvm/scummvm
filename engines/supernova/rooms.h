@@ -129,9 +129,9 @@ public:
 private:
 	bool animate(int section1, int section2, int duration);
 	bool animate(int section1, int section2, int duration, MessagePosition position,
-	             StringID text);
+				 StringID text);
 	bool animate(int section1, int section2, int section3, int section4, int duration,
-	             MessagePosition position, StringID text);
+				 MessagePosition position, StringID text);
 
 	void titleScreen();
 	void titleFadeIn();
@@ -1377,9 +1377,9 @@ public:
 private:
 	void animate(int filenumber, int section1, int section2, int duration);
 	void animate(int filenumber, int section1, int section2, int duration, MessagePosition position,
-	             const char *text);
+				 const char *text);
 	void animate(int filenumber, int section1, int section2, int section3, int section4, int duration,
-	             MessagePosition position, const char *text);
+				 MessagePosition position, const char *text);
 
 	Common::String _outroText;
 };

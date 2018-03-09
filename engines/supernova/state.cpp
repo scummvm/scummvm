@@ -286,8 +286,8 @@ StringID GameManager::guiStatusCommands[] = {
 };
 
 GameManager::GameManager(SupernovaEngine *vm)
-    : _inventory(_inventoryScroll)
-    , _vm(vm) {
+	: _inventory(_inventoryScroll)
+	, _vm(vm) {
 	initRooms();
 	changeRoom(INTRO);
 	initState();
@@ -669,13 +669,13 @@ void GameManager::processInput() {
 		} else {
 			/* normal item */
 			for (int i = 0; (_currentRoom->getObject(i)->_id != INVALIDOBJECT) &&
-			                (field == -1) && i < kMaxObject; i++) {
+							(field == -1) && i < kMaxObject; i++) {
 				click = _currentRoom->getObject(i)->_click;
 				if (click != 255 && _vm->_currentImage) {
 					MSNImageDecoder::ClickField *clickField = _vm->_currentImage->_clickField;
 					do {
 						if ((_mouseX >= clickField[click].x1) && (_mouseX <= clickField[click].x2) &&
-						    (_mouseY >= clickField[click].y1) && (_mouseY <= clickField[click].y2))
+							(_mouseY >= clickField[click].y1) && (_mouseY <= clickField[click].y2))
 							field = i;
 
 						click = clickField[click].next;
@@ -718,7 +718,7 @@ void GameManager::processInput() {
 				mouseLocation = onInventoryArrowDown;
 			else
 				mouseLocation = onNone;
-			
+
 			switch (mouseLocation) {
 			case onInventoryArrowUp:
 			case onInventoryArrowDown:
@@ -800,7 +800,7 @@ void GameManager::telomat(int nr) {
 			do
 				edit(input, 50, 105, 30);
 			while ((_key.keycode != Common::KEYCODE_RETURN) && (_key.keycode != Common::KEYCODE_ESCAPE));
-	
+
 			if (_key.keycode == Common::KEYCODE_ESCAPE) {
 				_vm->renderBox(0, 0, 320, 200, kColorBlack);
 				_vm->renderRoom(*_currentRoom);
@@ -1132,7 +1132,7 @@ void GameManager::walk(int imgId) {
 void GameManager::guardWalkEvent() {
 	_prevImgId = 0;
 	bool behind = (!_rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OCCUPIED) ||
-	               _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
+				   _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
 	_rooms[BCORRIDOR]->getObject(_state._origin + 4)->disableProperty(OCCUPIED);
 	if (_currentRoom == _rooms[BCORRIDOR]) {
 		if (_vm->_messageDisplayed)
@@ -1187,7 +1187,7 @@ void GameManager::guardWalkEvent() {
 			walk(19);
 			walk(18);
 		}
-	
+
 		if (!_state._playerHidden) {
 			if (_state._origin & 1)
 				walk(10);
@@ -1306,15 +1306,15 @@ void GameManager::great(uint number) {
 
 bool GameManager::airless() {
 	return (_currentRoom->getId() == HOLD ||
-	        _currentRoom->getId() == LANDINGMODULE ||
-	        _currentRoom->getId() == GENERATOR ||
-	        _currentRoom->getId() == OUTSIDE ||
-	        _currentRoom->getId() == ROCKS ||
-	        _currentRoom->getId() == CAVE ||
-	        _currentRoom->getId() == MEETUP ||
-	        _currentRoom->getId() == MEETUP2 ||
-	        _currentRoom->getId() == MEETUP3 ||
-	        (_currentRoom->getId() == AIRLOCK && _rooms[AIRLOCK]->getObject(1)->hasProperty(OPENED)));
+			_currentRoom->getId() == LANDINGMODULE ||
+			_currentRoom->getId() == GENERATOR ||
+			_currentRoom->getId() == OUTSIDE ||
+			_currentRoom->getId() == ROCKS ||
+			_currentRoom->getId() == CAVE ||
+			_currentRoom->getId() == MEETUP ||
+			_currentRoom->getId() == MEETUP2 ||
+			_currentRoom->getId() == MEETUP3 ||
+			(_currentRoom->getId() == AIRLOCK && _rooms[AIRLOCK]->getObject(1)->hasProperty(OPENED)));
 }
 
 void GameManager::sentence(int number, bool brightness) {
@@ -1470,54 +1470,54 @@ void GameManager::takeObject(Object &obj) {
 void GameManager::drawCommandBox() {
 	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
 		_vm->renderBox(_guiCommandButton[i].left,
-		               _guiCommandButton[i].top,
-		               _guiCommandButton[i].width(),
-		               _guiCommandButton[i].height(),
-		               _guiCommandButton[i]._bgColor);
+					   _guiCommandButton[i].top,
+					   _guiCommandButton[i].width(),
+					   _guiCommandButton[i].height(),
+					   _guiCommandButton[i]._bgColor);
 		int space = (_guiCommandButton[i].width() - _vm->textWidth(_guiCommandButton[i]._text)) / 2;
 		_vm->renderText(_guiCommandButton[i]._text,
-		                _guiCommandButton[i]._textPosition.x + space,
-		                _guiCommandButton[i]._textPosition.y,
-		                _guiCommandButton[i]._textColor);
+						_guiCommandButton[i]._textPosition.x + space,
+						_guiCommandButton[i]._textPosition.y,
+						_guiCommandButton[i]._textColor);
 	}
 }
 
 void GameManager::drawInventory() {
 	for (int i = 0; i < ARRAYSIZE(_guiInventory); ++i) {
 		_vm->renderBox(_guiInventory[i].left,
-		               _guiInventory[i].top,
-		               _guiInventory[i].width(),
-		               _guiInventory[i].height(),
-		               _guiInventory[i]._bgColor);
+					   _guiInventory[i].top,
+					   _guiInventory[i].width(),
+					   _guiInventory[i].height(),
+					   _guiInventory[i]._bgColor);
 
 		_vm->renderText(_inventory.get(i + _inventoryScroll)->_name,
-		                _guiInventory[i]._textPosition.x,
-		                _guiInventory[i]._textPosition.y,
-		                _guiInventory[i]._textColor);
+						_guiInventory[i]._textPosition.x,
+						_guiInventory[i]._textPosition.y,
+						_guiInventory[i]._textColor);
 	}
 
 	_vm->renderBox(_guiInventoryArrow[0].left,
-	               _guiInventoryArrow[0].top,
-	               _guiInventoryArrow[0].width(),
-	               _guiInventoryArrow[0].height(),
-	               _guiInventoryArrow[0]._bgColor);
+				   _guiInventoryArrow[0].top,
+				   _guiInventoryArrow[0].width(),
+				   _guiInventoryArrow[0].height(),
+				   _guiInventoryArrow[0]._bgColor);
 	_vm->renderBox(_guiInventoryArrow[1].left,
-	               _guiInventoryArrow[1].top,
-	               _guiInventoryArrow[1].width(),
-	               _guiInventoryArrow[1].height(),
-	               _guiInventoryArrow[1]._bgColor);
+				   _guiInventoryArrow[1].top,
+				   _guiInventoryArrow[1].width(),
+				   _guiInventoryArrow[1].height(),
+				   _guiInventoryArrow[1]._bgColor);
 	if (_inventory.getSize() > ARRAYSIZE(_guiInventory)) {
 		if (_inventoryScroll != 0) {
 			_vm->renderText(_guiInventoryArrow[0]._text,
-			                _guiInventoryArrow[0]._textPosition.x,
-			                _guiInventoryArrow[0]._textPosition.y,
-			                _guiInventoryArrow[0]._textColor);
+							_guiInventoryArrow[0]._textPosition.x,
+							_guiInventoryArrow[0]._textPosition.y,
+							_guiInventoryArrow[0]._textColor);
 		}
 		if (_inventoryScroll + ARRAYSIZE(_guiInventory) < _inventory.getSize()) {
 			_vm->renderText(_guiInventoryArrow[1]._text,
-			                _guiInventoryArrow[1]._textPosition.x,
-			                _guiInventoryArrow[1]._textPosition.y,
-			                _guiInventoryArrow[1]._textColor);
+							_guiInventoryArrow[1]._textPosition.x,
+							_guiInventoryArrow[1]._textPosition.y,
+							_guiInventoryArrow[1]._textColor);
 		}
 	}
 }
@@ -1528,15 +1528,15 @@ uint16 GameManager::getKeyInput(bool blockForPrintChar) {
 		if (_keyPressed) {
 			if (blockForPrintChar) {
 				if (Common::isPrint(_key.keycode) ||
-				    _key.keycode == Common::KEYCODE_BACKSPACE ||
-				    _key.keycode == Common::KEYCODE_DELETE ||
-				    _key.keycode == Common::KEYCODE_RETURN ||
-				    _key.keycode == Common::KEYCODE_SPACE ||
-				    _key.keycode == Common::KEYCODE_ESCAPE ||
-				    _key.keycode == Common::KEYCODE_UP ||
-				    _key.keycode == Common::KEYCODE_DOWN ||
-				    _key.keycode == Common::KEYCODE_LEFT ||
-				    _key.keycode == Common::KEYCODE_RIGHT) {
+					_key.keycode == Common::KEYCODE_BACKSPACE ||
+					_key.keycode == Common::KEYCODE_DELETE ||
+					_key.keycode == Common::KEYCODE_RETURN ||
+					_key.keycode == Common::KEYCODE_SPACE ||
+					_key.keycode == Common::KEYCODE_ESCAPE ||
+					_key.keycode == Common::KEYCODE_UP ||
+					_key.keycode == Common::KEYCODE_DOWN ||
+					_key.keycode == Common::KEYCODE_LEFT ||
+					_key.keycode == Common::KEYCODE_RIGHT) {
 					if (_key.flags & Common::KBD_SHIFT)
 						return toupper(_key.ascii);
 					else
@@ -1593,7 +1593,7 @@ void GameManager::roomBrightness() {
 
 	if (_vm->_brightness != 0)
 		_vm->_brightness = _roomBrightness;
-	
+
 	_vm->paletteBrightness();
 }
 
@@ -1734,7 +1734,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 	uint cursorIndex = input.size();
 	// NOTE: Pixels for char needed = kFontWidth + 2px left and right side bearing
 	int overdrawWidth = ((int)((length + 1) * (kFontWidth + 2)) > (kScreenWidth - x)) ?
-	                    kScreenWidth - x : (length + 1) * (kFontWidth + 2);
+						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
 
 	while (isEditing) {
 		_vm->_textCursorX = x;
@@ -1944,7 +1944,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 			takeObject(*_rooms[ENTRANCE]->getObject(17));
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == PILL_HULL) &&
-	           (_state._language == 2)) {
+			   (_state._language == 2)) {
 		_vm->renderMessage(kStringGenericInteract_6);
 		_state._language = 1;
 	} else if ((verb == ACTION_OPEN) && (obj1._id == WALLET)) {
@@ -2231,8 +2231,8 @@ void GameManager::handleInput() {
 
 		case ACTION_CLOSE:
 			if (!_inputObject[0]->hasProperty(OPENABLE) ||
-			    (_inputObject[0]->hasProperty(CLOSED) &&
-			     _inputObject[0]->hasProperty(OPENED))) {
+				(_inputObject[0]->hasProperty(CLOSED) &&
+				 _inputObject[0]->hasProperty(OPENED))) {
 				// This can't be closed.
 				_vm->renderMessage(kStringGenericInteract_41);
 			} else if (!_inputObject[0]->hasProperty(OPENED)) {

@@ -583,7 +583,7 @@ struct Object {
 		, _direction(0)
 	{}
 	Object(byte roomId, StringID name, StringID description, ObjectID id, ObjectType type,
-	       byte click, byte click2, byte section = 0, RoomID exitRoom = NULLROOM, byte direction = 0)
+		   byte click, byte click2, byte section = 0, RoomID exitRoom = NULLROOM, byte direction = 0)
 		: _name(name)
 		, _description(description)
 		, _id(id)
@@ -621,7 +621,7 @@ struct Object {
 	static bool combine(Object &obj1, Object &obj2, ObjectID id1, ObjectID id2) {
 		if (obj1.hasProperty(COMBINABLE))
 			return (((obj1._id == id1) && (obj2._id == id2)) ||
-			        ((obj1._id == id2) && (obj2._id == id1)));
+					((obj1._id == id2) && (obj2._id == id1)));
 		else
 			return false;
 	}

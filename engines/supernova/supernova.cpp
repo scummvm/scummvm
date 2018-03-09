@@ -228,11 +228,11 @@ void SupernovaEngine::updateEvents() {
 		case Common::EVENT_KEYDOWN:
 			_gm->_keyPressed = true;
 			if (event.kbd.keycode == Common::KEYCODE_d &&
-			    (event.kbd.flags & Common::KBD_CTRL)) {
+				(event.kbd.flags & Common::KBD_CTRL)) {
 				_console->attach();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_x &&
-			    (event.kbd.flags & Common::KBD_CTRL)) {
+				(event.kbd.flags & Common::KBD_CTRL)) {
 				// TODO: Draw exit box
 			}
 
@@ -301,7 +301,7 @@ Common::Error SupernovaEngine::loadGameStrings() {
 		GUIErrorMessage(msg);
 		return Common::kReadingFailed;
 	}
-		
+
 	int version = f.readByte();
 	if (version != SUPERNOVA_DAT_VERSION) {
 		Common::String msg = Common::String::format(
@@ -393,8 +393,8 @@ void SupernovaEngine::playSound(AudioIndex sample) {
 		return;
 
 	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
-	            _soundSamples[sample]._buffer, _soundSamples[sample]._length,
-	            11931, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
+				_soundSamples[sample]._buffer, _soundSamples[sample]._length,
+				11931, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
 	stopSound();
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audioStream);
 }
@@ -416,7 +416,7 @@ void SupernovaEngine::playSoundMod(int filenumber)
 
 	stopSound();
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream,
-	                   -1, Audio::Mixer::kMaxChannelVolume, 0);
+					   -1, Audio::Mixer::kMaxChannelVolume, 0);
 }
 
 void SupernovaEngine::renderImageSection(int section) {
@@ -431,9 +431,9 @@ void SupernovaEngine::renderImageSection(int section) {
 		return;
 
 	Common::Rect sectionRect(_currentImage->_section[section].x1,
-	                         _currentImage->_section[section].y1,
-	                         _currentImage->_section[section].x2 + 1,
-	                         _currentImage->_section[section].y2 + 1) ;
+							 _currentImage->_section[section].y1,
+							 _currentImage->_section[section].x2 + 1,
+							 _currentImage->_section[section].y2 + 1) ;
 	if (_currentImage->_filenumber == 1 || _currentImage->_filenumber == 2) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);
@@ -459,9 +459,9 @@ void SupernovaEngine::renderImageSection(int section) {
 	}
 
 	_system->copyRectToScreen(static_cast<const byte *>(_currentImage->_sectionSurfaces[section]->getPixels()) + offset,
-	                          pitch,
-	                          sectionRect.left, sectionRect.top,
-	                          sectionRect.width(), sectionRect.height());
+							  pitch,
+							  sectionRect.left, sectionRect.top,
+							  sectionRect.width(), sectionRect.height());
 }
 
 void SupernovaEngine::renderImage(int section) {
@@ -1025,7 +1025,7 @@ bool SupernovaEngine::loadGame(int slot) {
 		delete savefile;
 		return false; //Common::kUnknownError
 	}
-	
+
 	byte saveVersion = savefile->readByte();
 	// Save version 1 was used during development and is no longer supported
 	if (saveVersion > SAVEGAME_VERSION || saveVersion == 1) {
@@ -1065,7 +1065,7 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	Common::OutSaveFile *savefile = _saveFileMan->openForSaving(filename);
 	if (!savefile)
 		return false;
-	
+
 	savefile->writeUint32LE(SAVEGAME_HEADER);
 	savefile->writeByte(SAVEGAME_VERSION);
 
@@ -1092,7 +1092,7 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 }
 
 void SupernovaEngine::errorTempSave(bool saving) {
-	GUIErrorMessage(saving 
+	GUIErrorMessage(saving
 		? "Failed to save temporary game state. Make sure your save game directory is set in ScummVM and that you can write to it."
 		: "Failed to load temporary game state.");
 	error("Unrecoverable error");
@@ -1146,8 +1146,8 @@ void ScreenBufferStack::restore() {
 
 	--_last;
 	g_system->lockScreen()->copyRectToSurface(
-	            _last->_pixels, _last->_width, _last->_x, _last->_y,
-	            _last->_width, _last->_height);
+				_last->_pixels, _last->_width, _last->_x, _last->_y,
+				_last->_width, _last->_height);
 	g_system->unlockScreen();
 
 	delete[] _last->_pixels;
