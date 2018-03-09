@@ -164,7 +164,7 @@ DECLARE_SCRIPT(InsectDealer)
 END_SCRIPT
 
 DECLARE_SCRIPT(TyrellGuard)
-	int _animDirection;
+	int _frameDelta;
 	bool _flag1;
 END_SCRIPT
 

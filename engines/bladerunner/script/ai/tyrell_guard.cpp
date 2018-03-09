@@ -25,6 +25,8 @@
 namespace BladeRunner {
 
 AIScriptTyrellGuard::AIScriptTyrellGuard(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	_frameDelta = 1;
+	_flag1 = false;
 }
 
 void AIScriptTyrellGuard::Initialize() {
@@ -33,7 +35,7 @@ void AIScriptTyrellGuard::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_animDirection = 1;
+	_frameDelta = 1;
 	_flag1 = false;
 	Actor_Set_Goal_Number(kActorTyrellGuard, 0);
 }
@@ -43,17 +45,17 @@ bool AIScriptTyrellGuard::Update() {
 }
 
 void AIScriptTyrellGuard::TimerExpired(int timer) {
-	if (timer) {
-		if (timer == 1) {
-			AI_Countdown_Timer_Reset(kActorTyrellGuard, 1);
-			Actor_Set_Goal_Number(kActorTyrellGuard, 303);
-		}
-	} else {
+	switch (timer) {
+	case 0:
 		AI_Countdown_Timer_Reset(kActorTyrellGuard, 0);
-
-		if (Actor_Query_Which_Set_In(0) == kSetTB02_TB03) {
+		if (Actor_Query_Which_Set_In(kActorMcCoy) == kSetTB02_TB03) {
 			Actor_Set_Goal_Number(kActorTyrellGuard, 301);
 		}
+		break;
+	case 1:
+		AI_Countdown_Timer_Reset(kActorTyrellGuard, 1);
+		Actor_Set_Goal_Number(kActorTyrellGuard, 303);
+		break;
 	}
 }
 
@@ -109,219 +111,154 @@ bool AIScriptTyrellGuard::GoalChanged(int currentGoalNumber, int newGoalNumber) 
 			AI_Countdown_Timer_Start(kActorTyrellGuard, 0, 30);
 		}
 		return true;
-
 	case 301:
-		Actor_Change_Animation_Mode(kActorTyrellGuard, 0);
+		Actor_Change_Animation_Mode(kActorTyrellGuard, kAnimationModeIdle);
 		Delay(1000);
 		Actor_Says(kActorTyrellGuard, 320, 14);
 		Actor_Change_Animation_Mode(kActorTyrellGuard, 50);
 		Ambient_Sounds_Play_Sound(590, 100, 0, 0, 0);
 		Delay(1000);
-		Actor_Force_Stop_Walking(0);
-		Actor_Set_Goal_Number(0, 500);
-
+		Actor_Force_Stop_Walking(kActorMcCoy);
+		Actor_Set_Goal_Number(kActorMcCoy, 500);
 		return true;
-
 	case 302:
 		AI_Countdown_Timer_Reset(kActorTyrellGuard, 0);
 		Actor_Says(kActorTyrellGuard, 310, 14);
 		AI_Countdown_Timer_Start(kActorTyrellGuard, 1, 20);
-
 		return true;
-
 	case 303:
 		Actor_Change_Animation_Mode(kActorTyrellGuard, 50);
 		Ambient_Sounds_Play_Sound(590, 100, 0, 0, 0);
 		Delay(1000);
-		Actor_Force_Stop_Walking(0);
-		Actor_Set_Goal_Number(0, 500);
-
+		Actor_Force_Stop_Walking(kActorMcCoy);
+		Actor_Set_Goal_Number(kActorMcCoy, 500);
 		return true;
-
 	case 304:
 		AI_Countdown_Timer_Reset(kActorTyrellGuard, 1);
-
 		return true;
-
-	default:
-		return false;
 	}
+	return false;
 }
 
 bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
-	int frameRes;
-
 	switch (_animationState) {
 	case 0:
 		*animation = 555;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(555)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(555)) {
 			_animationFrame = 0;
-			frameRes = 0;
 		}
 		break;
 	case 1:
 		*animation = 564;
-
 		if (_animationFrame <= 5) {
-			_animDirection = 1;
+			_frameDelta = 1;
 		} else if (_animationFrame >= 12) {
-			_animDirection = -1;
+			_frameDelta = -1;
 		}
-
-		_animationFrame += _animDirection;
-		frameRes = _animationFrame;
+		_animationFrame += _frameDelta;
 		break;
 	case 2:
 		*animation = 564;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(564)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(564)) {
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 0;
 		}
 		break;
 	case 3:
-		frameRes = _animationFrame;
 		*animation = 558;
-
-		if (!frameRes && _flag1) {
+		if (_animationFrame == 0 && _flag1) {
 			*animation = 555;
 			_animationState = 0;
 		} else {
-			_animationFrame = frameRes + 1;
-
-			if (frameRes + 1 < Slice_Animation_Query_Number_Of_Frames(*animation)) {
-				frameRes = _animationFrame;
-			} else {
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
-				frameRes = 0;
 			}
 		}
 		break;
 	case 4:
 		*animation = 559;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(559)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 3;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(559)) {
 			*animation = 558;
+			_animationFrame = 0;
+			_animationState = 3;
 		}
 		break;
 	case 5:
 		*animation = 560;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(560)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 3;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(560)) {
 			*animation = 558;
+			_animationFrame = 0;
+			_animationState = 3;
 		}
 		break;
 	case 6:
 		*animation = 561;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(561)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 3;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(561)) {
 			*animation = 558;
+			_animationFrame = 0;
+			_animationState = 3;
 		}
 		break;
 	case 7:
 		*animation = 562;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(562)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 3;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(562)) {
 			*animation = 558;
+			_animationFrame = 0;
+			_animationState = 3;
 		}
 		break;
 	case 8:
 		*animation = 557;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(557)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(557)) {
 			*animation = 555;
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 0;
 		}
 		break;
 	case 9:
 		*animation = 563;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(563)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(563)) {
 			*animation = 555;
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 0;
 		}
 		break;
 	case 10:
 		*animation = 564;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(564)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(564)) {
 			*animation = 555;
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 0;
 		}
 		break;
 	case 11:
 		*animation = 565;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(565)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(565)) {
 			*animation = 555;
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 0;
 		}
 		break;
-	default:
-		frameRes = _animationFrame;
-		break;
 	}
 
-	*frame = frameRes;
-
+	*frame = _animationFrame;
 	return true;
 }
 
 bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 0:
 			_animationState = 8;
@@ -345,25 +282,7 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
-	case 1:
-	case 2:
-	case 4:
-	case 5:
-	case 6:
-	case 7:
-	case 8:
-	case 9:
-	case 10:
-	case 11:
-	case 16:
-	case 17:
-	case 18:
-	case 19:
-	case 20:
-	case 21:
-	case 22:
-		break;
-	case 3:
+	case kAnimationModeTalk:
 		if (_animationState == 1) {
 			_animationState = 2;
 		} else if ((_animationState - 1 != 7 && _animationState - 1 != 10) || _animationState - 1 > 10) {
@@ -412,21 +331,18 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 		_animationState = 8;
 		_animationFrame = 0;
 		break;
-	default:
-		if (mode - 43 > 12) {
-			break;
-		}
-		if (mode - 43 == 7) {
-			_animationState = 11;
+	case 50:
+		_animationState = 11;
+		_animationFrame = 0;
+		break;
+	case 43:
+	case 55:
+		if (_animationState != 1) {
+			_animationState = 1;
 			_animationFrame = 0;
-		} else if (mode - 43 == 12 || mode == 43) {
-			if (_animationState != 1) {
-				_animationState = 1;
-				_animationFrame = 0;
-			}
 		}
+		break;
 	}
-
 	return true;
 }
 

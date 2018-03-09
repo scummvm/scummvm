@@ -147,9 +147,9 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame++;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(569)) {
+			*animation = 568;
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 568;
 		}
 		break;
 
@@ -158,9 +158,9 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 		_animationFrame++;
 
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(570)) {
+			*animation = 568;
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 568;
 		}
 		break;
 
@@ -175,7 +175,7 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptMia::ChangeAnimationMode(int mode) {
 	switch (mode) {
-		case 0:
+	case kAnimationModeIdle:
 		if (_animationState >= 2 && _animationState <= 4) {
 			_flag1 = false;
 		} else {
@@ -183,7 +183,7 @@ bool AIScriptMia::ChangeAnimationMode(int mode) {
 			_animationState = 0;
 		}
 		break;
-	case 3:
+	case kAnimationModeTalk:
 		_animationFrame = 0;
 		_flag1 = false;
 		_animationState = 2;
@@ -201,8 +201,6 @@ bool AIScriptMia::ChangeAnimationMode(int mode) {
 	case 23:
 		_animationFrame = 0;
 		_animationState = 1;
-		break;
-	default:
 		break;
 	}
 
