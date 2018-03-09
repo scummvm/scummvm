@@ -25,6 +25,11 @@
 namespace BladeRunner {
 
 AIScriptInsectDealer::AIScriptInsectDealer(BladeRunnerEngine *vm) : AIScriptBase(vm) {
+	_flag1 = false;
+	_state = 0;
+	_frameDelta = 0;
+	_var2 = 0;
+	_counter = 0;
 }
 
 void AIScriptInsectDealer::Initialize() {
@@ -34,13 +39,13 @@ void AIScriptInsectDealer::Initialize() {
 	_animationNext = 0;
 
 	_flag1 = false;
-	_state1 = 0;
-	_var1 = 1;
+	_state = 0;
+	_frameDelta = 1;
 	_var2 = 6;
-	_var3 = 0;
+	_counter = 0;
 
-	Actor_Put_In_Set(kActorInsectDealer, 0);
-	Actor_Set_At_XYZ(kActorInsectDealer, -414.0, 0.0, -1199.0, 371);
+	Actor_Put_In_Set(kActorInsectDealer, kSetAR01_AR02);
+	Actor_Set_At_XYZ(kActorInsectDealer, -414.0f, 0.0f, -1199.0f, 371);
 	Actor_Set_Goal_Number(kActorInsectDealer, 0);
 }
 
@@ -114,77 +119,60 @@ bool AIScriptInsectDealer::GoalChanged(int currentGoalNumber, int newGoalNumber)
 }
 
 bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
-	int frameRes;
-
 	switch (_animationState) {
 	case 0:
-		if (_state1 > 1) {
-			frameRes = _animationFrame;
-		} else if (_state1) {
-			*animation = 546;
-			_animationFrame++;
-
-			if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(546)) {
-				frameRes = _animationFrame;
-			} else {
-				_animationFrame = 0;
-				_state1 = 0;
-				*animation = 545;
-				_var2 = Random_Query(6, 14);
-				frameRes = _animationFrame;
-				_var1 = 2 * Random_Query(0, 1) - 1;
-			}
-		} else {
+		switch (_state) {
+		case 0:
 			*animation = 545;
-
-			if (_var3) {
-				_var3--;
-
-				if (Random_Query(0, 6)) {
-					frameRes = _animationFrame;
-				} else {
-					frameRes = _animationFrame;
-					_var1 = -_var1;
+			if (_counter) {
+				_counter--;
+				if (Random_Query(0, 6) == 0) {
+					_frameDelta = -_frameDelta;
 				}
 			} else {
-				_animationFrame += _var1;
-
+				_animationFrame += _frameDelta;
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 					_animationFrame = 0;
-
-					if (!Random_Query(0, 2)) {
-						_state1 = 2 * Random_Query(0, 1);
+					if (Random_Query(0, 2) == 0) {
+						_state = 2 * Random_Query(0, 1);
 					}
 				}
-
 				if (_animationFrame < 0) {
 					_animationFrame = Slice_Animation_Query_Number_Of_Frames(*animation) - 1;
 				}
 
-				_var3 = Random_Query(0, 1);
-				frameRes = _animationFrame;
-
-				if (!_animationFrame) {
-					_state1 = Random_Query(0, 1);
-					frameRes = _animationFrame;
+				_counter = Random_Query(0, 1);
+				if (_animationFrame == 0) {
+					_state = Random_Query(0, 1);
 				}
 			}
+			break;
+		case 1:
+			*animation = 546;
+			_animationFrame++;
+
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(546)) {
+				*animation = 545;
+				_animationFrame = 0;
+				_state = 0;
+				_var2 = Random_Query(6, 14);
+				_frameDelta = 2 * Random_Query(0, 1) - 1;
+			}
+			break;
+		case 2:
+			// TEST: nothing? actor will stuck
+			break;
 		}
 		break;
 	case 1:
-		frameRes = _animationFrame;
-		if (!_animationFrame && _flag1) {
+		if (_animationFrame == 0 && _flag1) {
 			*animation = 545;
 			_animationState = 0;
 		} else {
 			*animation = 548;
-			_animationFrame = frameRes + 1;
-
-			if (frameRes + 1 < Slice_Animation_Query_Number_Of_Frames(548)) {
-				frameRes = _animationFrame;
-			} else {
+			_animationFrame++;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(548)) {
 				_animationFrame = 0;
-				frameRes = 0;
 				_animationState = 0;
 			}
 		}
@@ -192,101 +180,69 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 	case 2:
 		*animation = 549;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(549)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 1;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(549)) {
 			*animation = 548;
+			_animationFrame = 0;
+			_animationState = 1;
 		}
 		break;
 	case 3:
 		*animation = 550;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(550)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 1;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(550)) {
 			*animation = 548;
+			_animationFrame = 0;
+			_animationState = 1;
 		}
 		break;
 	case 4:
 		*animation = 551;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(551)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 1;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(551)) {
 			*animation = 548;
+			_animationFrame = 0;
+			_animationState = 1;
 		}
 		break;
 	case 5:
 		*animation = 552;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(552)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 1;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(552)) {
 			*animation = 548;
+			_animationFrame = 0;
+			_animationState = 1;
 		}
 		break;
 	case 6:
 		*animation = 553;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(553)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 1;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(553)) {
 			*animation = 548;
+			_animationFrame = 0;
+			_animationState = 1;
 		}
 		break;
 	case 7:
 		*animation = 554;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(554)) {
-			frameRes = _animationFrame;
-		} else {
-			_animationFrame = 0;
-			frameRes = 0;
-			_animationState = 1;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(554)) {
 			*animation = 548;
+			_animationFrame = 0;
+			_animationState = 1;
 		}
 		break;
 	case 8:
 		*animation = 547;
 		_animationFrame++;
-
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(547)) {
-			frameRes = _animationFrame;
-		} else {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(547)) {
 			*animation = 545;
 			_animationFrame = 0;
-			frameRes = 0;
 			_animationState = 0;
 		}
 		break;
-	default:
-		frameRes = _animationFrame;
-		break;
 	}
 
-	*frame = frameRes;
-
+	*frame = _animationFrame;
 	return true;
 }
 
@@ -294,7 +250,7 @@ bool AIScriptInsectDealer::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case 0:
 		if (_animationState > 0 && _animationState <= 7) {
-			_flag1 = 1;
+			_flag1 = true;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;
@@ -305,37 +261,37 @@ bool AIScriptInsectDealer::ChangeAnimationMode(int mode) {
 	case 19:
 		_animationState = 1;
 		_animationFrame = 0;
-		_flag1 = 0;
+		_flag1 = false;
 		break;
 	case 12:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag1 = 0;
+		_flag1 = false;
 		break;
 	case 13:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag1 = 0;
+		_flag1 = false;
 		break;
 	case 14:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag1 = 0;
+		_flag1 = false;
 		break;
 	case 15:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag1 = 0;
+		_flag1 = false;
 		break;
 	case 16:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag1 = 0;
+		_flag1 = false;
 		break;
 	case 17:
 		_animationState = 7;
 		_animationFrame = 0;
-		_flag1 = 0;
+		_flag1 = false;
 		break;
 	case 23:
 		_animationState = 8;

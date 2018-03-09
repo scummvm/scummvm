@@ -120,6 +120,22 @@ DECLARE_SCRIPT(McCoy)
 	void sub_4059D0(float a1);
 END_SCRIPT
 
+DECLARE_SCRIPT(Gordo)
+	int var_45B078;
+	int _counter;
+	int _counterTarget;
+	int _frameMin;
+	int _frameDelta;
+	int _frameMax;
+	int _state;
+
+	void sub_40FD00();
+	void sub_4103B8();
+	void sub_410590();
+	void sub_41090C();
+	void sub_41117C();
+END_SCRIPT
+
 DECLARE_SCRIPT(Grigorian)
 	int var_45CA10;
 	int var_45CA14;
@@ -141,10 +157,10 @@ END_SCRIPT
 
 DECLARE_SCRIPT(InsectDealer)
 	bool _flag1;
-	int _state1;
-	int _var1;
+	int _state;
+	int _frameDelta;
 	int _var2;
-	int _var3;
+	int _counter;
 END_SCRIPT
 
 DECLARE_SCRIPT(TyrellGuard)

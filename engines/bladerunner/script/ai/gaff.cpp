@@ -376,7 +376,7 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 			Actor_Set_Invisible(kActorGaff, true);
 			*animation = 794;
 			_animationFrame = 0;
-			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle); // TODO: check this, it was set directly by calling actor script
 			Actor_Set_Goal_Number(kActorGaff, 5);
 		}
 		break;
