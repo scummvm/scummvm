@@ -821,9 +821,6 @@ void SupernovaEngine::setTextSpeed() {
 bool SupernovaEngine::quitGameDialog() {
 	bool quit = false;
 
-	// TODO: Center text position dynamically
-	//       Get translated strings
-	//       Create on startup
 	GuiElement guiQuitBox;
 	guiQuitBox.setColor(kColorRed, kColorWhite99, kColorRed, kColorWhite99);
 	guiQuitBox.setSize(112, 97, 112 + 96, 97 + 27);
