@@ -196,6 +196,12 @@ END_SCRIPT
 DECLARE_SCRIPT(Baker)
 END_SCRIPT
 
+DECLARE_SCRIPT(DeskClerk)
+	int _var1;
+	int _var2;
+	int _var3;
+END_SCRIPT
+
 DECLARE_SCRIPT(HowieLee)
 	bool var_45DFB8;
 END_SCRIPT
