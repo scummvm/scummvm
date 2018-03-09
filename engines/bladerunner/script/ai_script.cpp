@@ -39,31 +39,31 @@ AIScripts::AIScripts(BladeRunnerEngine *vm, int actorCount) {
 		_actorUpdating[i] = false;
 	}
 
-	_AIScripts[kActorMcCoy] = new AIScriptMcCoy(_vm);
-	_AIScripts[kActorGrigorian] = new AIScriptGrigorian(_vm);
-	_AIScripts[kActorTransient] = new AIScriptTransient(_vm);
-	_AIScripts[kActorLance] = new AIScriptLance(_vm);
-	_AIScripts[kActorInsectDealer] = new AIScriptInsectDealer(_vm);
-	_AIScripts[kActorTyrellGuard] = new AIScriptTyrellGuard(_vm);
-	_AIScripts[kActorRunciter] = new AIScriptRunciter(_vm);
-	_AIScripts[kActorZuben] = new AIScriptZuben(_vm);
-	_AIScripts[kActorOfficerLeary] = new AIScriptOfficerLeary(_vm);
-	_AIScripts[kActorHowieLee] = new AIScriptHowieLee(_vm);
-	_AIScripts[kActorKlein] = new AIScriptKlein(_vm);
-	_AIScripts[kActorSergeantWalls] = new AIScriptSergeantWalls(_vm);
-	_AIScripts[kActorHysteriaPatron1] = new AIScriptHysteriaPatron1(_vm);
-	_AIScripts[kActorHysteriaPatron2] = new AIScriptHysteriaPatron2(_vm);
-	_AIScripts[kActorHysteriaPatron3] = new AIScriptHysteriaPatron3(_vm);
-	_AIScripts[kActorShoeshineMan] = new AIScriptShoeshineMan(_vm);
-	_AIScripts[kActorGaff] = new AIScriptGaff(_vm);
-	_AIScripts[kActorBryant] = new AIScriptBryant(_vm);
-	_AIScripts[kActorNewscaster] = new AIScriptNewscaster(_vm);
-	_AIScripts[kActorLeon] = new AIScriptLeon(_vm);
-	_AIScripts[kActorMaleAnnouncer] = new AIScriptMaleAnnouncer(_vm);
-	_AIScripts[kActorMaggie] = new AIScriptMaggie(_vm);
-	_AIScripts[kActorGenwalkerA] = new AIScriptGenericWalkerA(_vm);
-	_AIScripts[kActorGenwalkerB] = new AIScriptGenericWalkerB(_vm);
-	_AIScripts[kActorGenwalkerC] = new AIScriptGenericWalkerC(_vm);
+	_AIScripts[kActorMcCoy] = new AIScriptMcCoy(_vm);					// 0
+	_AIScripts[kActorGrigorian] = new AIScriptGrigorian(_vm);			// 11
+	_AIScripts[kActorTransient] = new AIScriptTransient(_vm);			// 12
+	_AIScripts[kActorLance] = new AIScriptLance(_vm);					// 13
+	_AIScripts[kActorRunciter] = new AIScriptRunciter(_vm);				// 15
+	_AIScripts[kActorInsectDealer] = new AIScriptInsectDealer(_vm);		// 16
+	_AIScripts[kActorTyrellGuard] = new AIScriptTyrellGuard(_vm);		// 17
+	_AIScripts[kActorZuben] = new AIScriptZuben(_vm);					// 19
+	_AIScripts[kActorOfficerLeary] = new AIScriptOfficerLeary(_vm);		// 23
+	_AIScripts[kActorHowieLee] = new AIScriptHowieLee(_vm);				// 28
+	_AIScripts[kActorKlein] = new AIScriptKlein(_vm);					// 30
+	_AIScripts[kActorSergeantWalls] = new AIScriptSergeantWalls(_vm);	// 34
+	_AIScripts[kActorHysteriaPatron1] = new AIScriptHysteriaPatron1(_vm);// 47
+	_AIScripts[kActorHysteriaPatron2] = new AIScriptHysteriaPatron2(_vm);// 48
+	_AIScripts[kActorHysteriaPatron3] = new AIScriptHysteriaPatron3(_vm);// 49
+	_AIScripts[kActorShoeshineMan] = new AIScriptShoeshineMan(_vm);		// 50
+	_AIScripts[kActorGaff] = new AIScriptGaff(_vm);						// 53
+	_AIScripts[kActorBryant] = new AIScriptBryant(_vm);					// 54
+	_AIScripts[kActorNewscaster] = new AIScriptNewscaster(_vm);			// 61
+	_AIScripts[kActorLeon] = new AIScriptLeon(_vm);						// 62
+	_AIScripts[kActorMaleAnnouncer] = new AIScriptMaleAnnouncer(_vm);	// 63
+	_AIScripts[kActorMaggie] = new AIScriptMaggie(_vm);					// 66
+	_AIScripts[kActorGenwalkerA] = new AIScriptGenericWalkerA(_vm);		// 67
+	_AIScripts[kActorGenwalkerB] = new AIScriptGenericWalkerB(_vm);		// 68
+	_AIScripts[kActorGenwalkerC] = new AIScriptGenericWalkerC(_vm);		// 69
 }
 
 AIScripts::~AIScripts() {
