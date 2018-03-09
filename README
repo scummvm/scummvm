@@ -35,19 +35,20 @@ Table of Contents:
  * 3.14 Mickey's Space Adventure notes
  * 3.15 Myst notes
  * 3.16 Nippon Safes Inc. Amiga notes
- * 3.17 Riven notes
- * 3.18 Simon the Sorcerer notes
- * 3.19 Starship Titanic notes
- * 3.20 The Curse of Monkey Island notes
- * 3.21 The Feeble Files notes
- * 3.22 The Legend of Kyrandia notes
- * 3.23 Troll's Tale notes
- * 3.24 Winnie the Pooh notes
- * 3.25 Sierra AGI games: Predictive Input Dialog notes
- * 3.26 Sierra SCI games: Simultaneous speech and subtitles
- * 3.27 Zork games notes
- * 3.28 Commodore64 games notes
- * 3.29 Macintosh games notes
+ * 3.17 Quest for Glory notes
+ * 3.18 Riven notes
+ * 3.19 Simon the Sorcerer notes
+ * 3.20 Starship Titanic notes
+ * 3.21 The Curse of Monkey Island notes
+ * 3.22 The Feeble Files notes
+ * 3.23 The Legend of Kyrandia notes
+ * 3.24 Troll's Tale notes
+ * 3.25 Winnie the Pooh notes
+ * 3.26 Sierra AGI games: Predictive Input Dialog notes
+ * 3.27 Sierra SCI games: Simultaneous speech and subtitles
+ * 3.28 Zork games notes
+ * 3.29 Commodore64 games notes
+ * 3.30 Macintosh games notes
 4.0) Supported Platforms
 5.0) Running ScummVM
  * 5.1 Command Line Options
@@ -918,8 +919,9 @@ that direction. The player can then simply click on the edges of the
 game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
+
 3.15) Myst game notes:
------ -------------------------------
+----- ----------------
 Left Click: Move/action
 Space: Pause the game
 Esc: Skip cutscene
@@ -935,8 +937,32 @@ In addition, you will need to rename disk image 2 to disk1,
 disk image 3 to disk2, disk image 4 to disk3 and disk image 5 to disk4.
 
 
-3.17) Riven game notes:
------ -------------------------------
+3.17) Quest for Glory notes:
+----- ----------------------
+It is possible to import characters, beginning with Quest for Glory II,
+from past games to future games and continue from the stats earned
+from those games.
+
+For example, a character can be imported from Quest for Glory I directly
+to Quest for Glory III without having to necessarily play
+Quest for Glory II.
+
+Characters cannot be imported from future games to past games, nor can
+a character be imported to the same game that was just completed.
+In other words, a character from Quest for Glory II cannot be imported
+into Quest for Glory II.
+
+If you want to use a saved character from the original sierra interpreter,
+you will need to rename the character file to
+"qfg[game-number]-[character-filename].sav"
+and place it in the ScummVM save path (see section 6.0), otherwise the
+file won't get listed on the import screen.
+
+Example: qfg2-thief.sav
+
+
+3.18) Riven game notes:
+----- -----------------
 Left Click: Move/action
 Arrow Keys: Movement
 Page Up: Look up
@@ -948,13 +974,14 @@ Ctrl-o: Load game
 Ctrl-s: Save game
 
 
-3.18) Simon the Sorcerer games notes:
+3.19) Simon the Sorcerer games notes:
 ----- -------------------------------
 If you have the dual version of Simon the Sorcerer 1 or 2 on CD, you
 will find the Windows version in the main directory of the CD and the
 DOS version in the DOS directory of the CD.
 
-3.19) Starship Titanic game notes:
+
+3.20) Starship Titanic game notes:
 ----------------------------------
 Basic Movements:
 Left Click: Move action
@@ -996,7 +1023,8 @@ Miscellaneous controls:
 Ctrl + C: Open up the developer's cheat room
 Ctrl + D: Open up the ScummVM Debugger
 
-3.20) The Curse of Monkey Island notes:
+
+3.21) The Curse of Monkey Island notes:
 ----- ---------------------------------
 For this game, you will need the comi.la0, comi.la1 and comi.la2 files.
 The comi.la0 file can be found on either CD, but since they are
@@ -1008,7 +1036,7 @@ two CDs. Some of the files appear on both CDs, but again they're
 identical.
 
 
-3.21) The Feeble Files notes:
+3.22) The Feeble Files notes:
 ----- -----------------------
 Amiga/Macintosh:
 You need to install a small pack of cutscenes that are missing in both
@@ -1035,7 +1063,7 @@ Rename voices.wav on CD3 to voices3.wav
 Rename voices.wav on CD4 to voices4.wav
 
 
-3.22) The Legend of Kyrandia notes:
+3.23) The Legend of Kyrandia notes:
 ----- -----------------------------
 To run The Legend of Kyrandia under ScummVM you need the 'kyra.dat'
 file. The file should always be included in official ScummVM packages.
@@ -1046,14 +1074,14 @@ thus you only need to grab it in case ScummVM complains about the file
 being missing.
 
 
-3.23) Troll's Tale notes:
+3.24) Troll's Tale notes:
 ----- -------------------
 The original game came in a PC booter disk, therefore it is necessary to
 dump the contents of that disk in an image file and name it "troll.img"
 to be able to play the game under ScummVM.
 
 
-3.24) Winnie the Pooh notes:
+3.25) Winnie the Pooh notes:
 ----- ----------------------
 It is possible to import saved games from the original interpreter of the
 game into ScummVM.
@@ -1068,7 +1096,7 @@ game's screen to change location, similar to many adventure games, which
 is simpler and more straightforward than moving around using the menu.
 
 
-3.25) Sierra AGI games: Predictive Input Dialog:
+3.26) Sierra AGI games: Predictive Input Dialog:
 ----- ------------------------------------------
 The Predictive Input Dialog is a ScummVM aid for running AGI engine
 games (which notoriously require command line input) on devices with
@@ -1122,7 +1150,7 @@ naturally mapping the functionality to the numeric keypad. Also, the
 dialog's buttons can be navigated with the arrow and the enter keys.
 
 
-3.26) Sierra SCI games: Simultaneous speech and subtitles:
+3.27) Sierra SCI games: Simultaneous speech and subtitles:
 ----- ----------------------------------------------------
 Certain CD versions of Sierra SCI games had both speech and text
 resources. Some have an option to toggle between the two, but there are
@@ -1211,7 +1239,8 @@ Torin's Passage CD:
     Mixer" from the in-game "Game" menu and setting the speech volume
     to zero.
 
-3.27) Zork games notes:
+
+3.28) Zork games notes:
 ----- -----------------
 To run the supported Zork games (Zork Nemesis: The Forbidden Lands
 and Zork: Grand Inquisitor) you need to copy some (extra) data to its
@@ -1308,7 +1337,7 @@ Copy the zassetsc directory into the game root directory
 Copy the zassetse directory into the game root directory
 
 
-3.28) Commodore64 games notes:
+3.29) Commodore64 games notes:
 ----- ------------------------
 Both Maniac Mansion and Zak McKracken run but Maniac Mansion is not yet
 playable. Simply name the D64 disks "maniac1.d64" and "maniac2.d64"
@@ -1322,7 +1351,7 @@ to Commodore64. We recommend using the much simpler approach described
 in the previous paragraph.
 
 
-3.29) Macintosh games notes:
+3.30) Macintosh games notes:
 ----- ----------------------
 All LucasArts SCUMM based adventures, except COMI, also exist in versions
 for the Macintosh. ScummVM can use most (all?) of them, however, in some
