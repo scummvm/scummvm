@@ -131,6 +131,14 @@ END_SCRIPT
 DECLARE_SCRIPT(Lance)
 END_SCRIPT
 
+DECLARE_SCRIPT(Runciter)
+	int var_45CD78;
+	int var_45CD7C;
+	int var_45CD80;
+	int var_45CD84;
+	int var_45CD88;
+END_SCRIPT
+
 DECLARE_SCRIPT(InsectDealer)
 	bool _flag1;
 	int _state1;
@@ -142,14 +150,6 @@ END_SCRIPT
 DECLARE_SCRIPT(TyrellGuard)
 	int _animDirection;
 	bool _flag1;
-END_SCRIPT
-
-DECLARE_SCRIPT(Runciter)
-	int var_45CD78;
-	int var_45CD7C;
-	int var_45CD80;
-	int var_45CD84;
-	int var_45CD88;
 END_SCRIPT
 
 DECLARE_SCRIPT(Zuben)
