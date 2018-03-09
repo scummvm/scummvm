@@ -94,12 +94,12 @@ IfCommand::IfCommand(uint8 sceneId, uint8 objectId, uint16 value, bool negative)
 {}
 
 Command::ExecuteResult IfCommand::execute(GameData &gameData) {
-	Scene* const scene = gameData.getScene(_sceneId);
+	Scene *const scene = gameData.getScene(_sceneId);
 	if (!scene) {
 		return Finished;
 	}
 
-	Object* const object = scene->getObject(_objectId);
+	Object *const object = scene->getObject(_objectId);
 	if (!object) {
 		return Finished;
 	}

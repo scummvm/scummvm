@@ -37,8 +37,8 @@
 
 namespace MutationOfJB {
 
-static CommandParser** getParsers() {
-	static CommandParser* parsers[] = {
+static CommandParser **getParsers() {
+	static CommandParser *parsers[] = {
 		new IfCommandParser,
 		new EndBlockCommandParser,
 		new ChangeDoorCommandParser,

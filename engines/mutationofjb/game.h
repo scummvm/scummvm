@@ -144,8 +144,7 @@ struct Scene {
 	bool loadFromStream(Common::ReadStream &stream);
 };
 
-struct GameData
-{
+struct GameData {
 public:
 	GameData();
 	Scene *getScene(uint8 sceneId);
