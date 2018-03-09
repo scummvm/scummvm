@@ -36,7 +36,7 @@ void AIScriptMia::Initialize() {
 
 	_flag1 = false;
 	Actor_Put_In_Set(kActorMia, kSetHF01);
-	Actor_Set_At_XYZ(kActorMia, 606.77, -0.01, -214.3, 511);
+	Actor_Set_At_XYZ(kActorMia, 606.77f, -0.01f, -214.3f, 511);
 	Actor_Set_Goal_Number(kActorMia, 0);
 }
 
