@@ -207,6 +207,10 @@ void Marquee::renderCharacter() {
 		if (_loop) {
 			_loop = false;
 			_text = _textBegin;
+			clearText();
+			_textWidth = _vm->textWidth(_text);
+			_x = kScreenWidth / 2 - _textWidth / 2;
+			_vm->_textCursorX = _x;
 		}
 		break;
 	case '\0':
