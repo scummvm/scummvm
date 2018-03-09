@@ -28,7 +28,7 @@
 
 namespace MutationOfJB {
 
-bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext &parseCtx, Command *& command) {
+bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) {
 	if (line.empty()) {
 		return false;
 	}

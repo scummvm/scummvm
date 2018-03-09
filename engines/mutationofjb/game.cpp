@@ -27,8 +27,7 @@
 
 namespace MutationOfJB {
 
-static bool readString(Common::ReadStream &stream, char *str)
-{
+static bool readString(Common::ReadStream &stream, char *str) {
 	char buf[MAX_STR_LENGTH];
 	memset(str, 0, MAX_STR_LENGTH + 1);
 
@@ -172,8 +171,7 @@ Static *Scene::getStatic(uint8 staticId) {
 
 GameData::GameData() : _currentScene(0) {}
 
-Scene *GameData::getScene(uint8 sceneId)
-{
+Scene *GameData::getScene(uint8 sceneId) {
 	if (sceneId == 0 || sceneId > ARRAYSIZE(_scenes)) {
 		warning(_("Scene %d does not exist"), sceneId);
 		return nullptr;

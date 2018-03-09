@@ -34,7 +34,7 @@ namespace MutationOfJB {
 
 class Command;
 class ConditionalCommand;
-typedef Common::Array<Command*> Commands;
+typedef Common::Array<Command *> Commands;
 
 
 struct ActionInfo {

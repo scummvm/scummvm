@@ -26,10 +26,12 @@
 #include "engines/engine.h"
 
 namespace MutationOfJB {
-	void reportFileMissingError(const char *fileName) {
-		Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file."), fileName);
-		GUIErrorMessage(errorMessage);
-		warning("%s", errorMessage.c_str());
-	}
+
+void reportFileMissingError(const char *fileName) {
+	Common::String errorMessage = Common::String::format(_("Unable to locate the '%s' engine data file."), fileName);
+	GUIErrorMessage(errorMessage);
+	warning("%s", errorMessage.c_str());
+}
+
 }
 

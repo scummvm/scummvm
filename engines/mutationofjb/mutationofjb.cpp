@@ -47,8 +47,7 @@ MutationOfJBEngine::MutationOfJBEngine(OSystem *syst)
  _room(nullptr),
  _screen(nullptr),
  _globalScript(nullptr),
- _localScript(nullptr)
-{
+ _localScript(nullptr) {
 	debug("MutationOfJBEngine::MutationOfJBEngine");
 }
 
@@ -72,8 +71,7 @@ bool MutationOfJBEngine::loadGameData(bool partB) {
 	return true;
 }
 
-void MutationOfJBEngine::setupCursor()
-{
+void MutationOfJBEngine::setupCursor() {
 	const uint8 white[] = {0xFF, 0xFF, 0xFF};
 	const uint8 cursor[] = {0xFF};
 
@@ -120,7 +118,7 @@ Common::Error MutationOfJBEngine::run() {
 			}
 			case Common::EVENT_LBUTTONDOWN:
 			{
-				const Scene* const scene = _gameData->getScene(_gameData->_currentScene);
+				const Scene *const scene = _gameData->getScene(_gameData->_currentScene);
 				if (scene) {
 					for (int i = 0; i < MIN(ARRAYSIZE(scene->_doors), (int) scene->_noDoors); ++i) {
 						const Door &door = scene->_doors[i];

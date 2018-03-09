@@ -60,7 +60,6 @@ void Inventory::rotateItemsRight(uint n) {
 	}
 
 	n %= _items.size();
-
 	reverseItems(0, _items.size() - 1);
 	reverseItems(0, n - 1);
 	reverseItems(n, _items.size() - 1);

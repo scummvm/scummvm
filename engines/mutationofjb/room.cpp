@@ -98,7 +98,7 @@ void Room::loadPalette(EncryptedFile &file) {
 void Room::loadBackground(EncryptedFile &file, uint32 size) {
 	_screen->clear();
 
-	uint8 * const pixels = static_cast<uint8 *>(_screen->getPixels());
+	uint8 *const pixels = static_cast<uint8 *>(_screen->getPixels());
 	uint8 *ptr = pixels;
 	uint32 readBytes = 0;
 	uint32 lines = 0;
