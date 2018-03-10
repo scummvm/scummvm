@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "xeen/files.h"
+#include "xeen/item.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -51,15 +52,6 @@ enum SpecialAttack {
 	SA_CURSE = 13, SA_PARALYZE = 14, SA_UNCONSCIOUS = 15,
 	SA_CONFUSE = 16, SA_BREAKWEAPON = 17, SA_WEAKEN = 18,
 	SA_ERADICATE = 19, SA_AGING = 20, SA_DEATH = 21, SA_STONE = 22
-};
-
-enum ElementalCategory {
-	ELEM_FIRE = 0, ELEM_ELECTRICITY = 1, ELEM_COLD = 2,
-	ELEM_ACID_POISON = 3, ELEM_ENERGY = 4, ELEM_MAGIC = 5
-};
-
-enum RangeType {
-	RT_SINGLE = 0, RT_GROUP = 1, RT_ALL = 2, RT_HIT = 3
 };
 
 enum ShootType {
@@ -119,16 +111,34 @@ class Combat {
 private:
 	XeenEngine *_vm;
 
+	/**
+	 * Handles the logic for attacking with a given amount of damage
+	 */
 	void attack2(int damage, RangeType rangeType);
 
+	/**
+	 * Returns true if the character successfully hits the monster
+	 */
 	bool hitMonster(Character &c, RangeType rangeType);
 
+	/**
+	 * Gets the damage a given character's equipped weapon will do
+	 */
 	void getWeaponDamage(Character &c, RangeType rangeType);
 
+	/**
+	 * Returns how much damage will be done to a monster
+	 */
 	int getMonsterDamage(Character &c);
 
+	/**
+	 * Gets the scale of damage, used for sprite display in the scene
+	 */
 	int getDamageScale(int v);
 
+	/**
+	 * Gets the current monster's damage resistance to the currently set damage type
+	 */
 	int getMonsterResistence(RangeType rangeType);
 
 	/**
@@ -190,6 +200,9 @@ public:
 	 */
 	void clearShooting();
 
+	/**
+	 * Gives damage to character or characters in the party
+	 */
 	void giveCharDamage(int damage, DamageType attackType, int charIndex);
 
 	/**
@@ -197,6 +210,9 @@ public:
 	 */
 	void doCharDamage(Character &c, int charNum, int monsterDataIndex);
 
+	/**
+	 * Handles moving monsters by a space between game turns
+	 */
 	void moveMonsters();
 
 	/**
@@ -204,6 +220,9 @@ public:
 	 */
 	void setupCombatParty();
 
+	/**
+	 * Sets up a table of speeds to determine the order in which characters and monsters fight
+	 */
 	void setSpeedTable();
 
 	/**
@@ -221,6 +240,9 @@ public:
 	 */
 	Common::String getMonsterDescriptions();
 
+	/**
+	 * Main method for characters to attack
+	 */
 	void attack(Character &c, RangeType rangeType);
 
 	/**
@@ -258,10 +280,16 @@ public:
 
 	void doMonsterTurn(int monsterId);
 
+	/**
+	 * Called when combat has ended
+	 */
 	void endAttack();
 
 	void monsterOvercome();
 
+	/**
+	 * Checks whether a given position on the map will stop a ranged attack
+	 */
 	int stopAttack(const Common::Point &diffPt);
 
 	/**

@@ -1678,25 +1678,26 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 	_hitChanceBonus = 0;
 
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		XeenItem &weapon = c._weapons[idx];
 		bool flag;
 		if (rangeType) {
-			flag = c._weapons[idx]._frame == 4;
+			flag = weapon._frame == 4;
 		} else {
-			flag = c._weapons[idx]._frame == 1 || c._weapons[idx]._frame == 13;
+			flag = weapon._frame == 1 || weapon._frame == 13;
 		}
 
 		if (flag) {
-			if (!(c._weapons[idx]._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED))) {
-				_attackWeapon = &c._weapons[idx];
+			if (!(weapon._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED))) {
+				_attackWeapon = &weapon;
 
-				if (c._weapons[idx]._material >= 37 && c._weapons[idx]._material < 59) {
-					_hitChanceBonus = Res.METAL_DAMAGE_PERCENT[c._weapons[idx]._material - 37];
-					_weaponDamage = Res.METAL_DAMAGE[c._weapons[idx]._material - 37];
+				if (weapon._material >= 37 && weapon._material < 59) {
+					_hitChanceBonus = Res.METAL_DAMAGE_PERCENT[weapon._material - 37];
+					_weaponDamage = Res.METAL_DAMAGE[weapon._material - 37];
 				}
 			}
 
 			_hitChanceBonus += party._heroism;
-			_attackWeaponId = c._weapons[idx]._id;
+			_attackWeaponId = weapon._id;
 			_weaponDice = Res.WEAPON_DAMAGE_BASE[_attackWeaponId];
 			_weaponDie = Res.WEAPON_DAMAGE_MULTIPLIER[_attackWeaponId];
 

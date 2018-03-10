@@ -27,7 +27,6 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/serializer.h"
-#include "xeen/combat.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -35,6 +34,7 @@ namespace Xeen {
 #define INV_ITEMS_TOTAL 9
 
 class XeenEngine;
+class Character;
 
 enum ItemCategory {
 	CATEGORY_WEAPON = 0, CATEGORY_ARMOR = 1, CATEGORY_ACCESSORY = 2, CATEGORY_MISC = 3,
@@ -45,6 +45,15 @@ enum AttributeCategory {
 	ATTR_MIGHT = 0, ATTR_INTELLECT = 1, ATTR_PERSONALITY = 2, ATTR_SPEED = 3,
 	ATTR_ACCURACY = 4, ATTR_LUCK = 5, ATTR_HIT_POINTS = 6, ATTR_SPELL_POINTS = 7,
 	ATTR_ARMOR_CLASS = 8, ATTR_THIEVERY = 9
+};
+
+enum RangeType {
+	RT_SINGLE = 0, RT_GROUP = 1, RT_ALL = 2, RT_HIT = 3
+};
+
+enum ElementalCategory {
+	ELEM_FIRE = 0, ELEM_ELECTRICITY = 1, ELEM_COLD = 2, ELEM_ACID_POISON = 3,
+	ELEM_ENERGY = 4, ELEM_MAGIC = 5
 };
 
 class XeenItem {
@@ -85,6 +94,8 @@ public:
 	 * Gets the attribute category for the item
 	 */
 	AttributeCategory getAttributeCategory() const;
+
+	void getWeaponDamage(Character &c, RangeType rangeType);
 };
 
 class InventoryItems : public Common::Array<XeenItem> {
@@ -98,7 +109,7 @@ protected:
 		ItemCategory category2);
 
 	/**
-	 ** Returns a text string listing all the stats/attributes of a given item
+	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes) = 0;
 public:
@@ -161,7 +172,7 @@ public:
 class WeaponItems: public InventoryItems {
 protected:
 	/**
-	 ** Returns a text string listing all the stats/attributes of a given item
+	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
@@ -188,7 +199,7 @@ public:
 class ArmorItems : public InventoryItems {
 protected:
 	/**
-	 ** Returns a text string listing all the stats/attributes of a given item
+	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
@@ -215,7 +226,7 @@ public:
 class AccessoryItems : public InventoryItems {
 protected:
 	/**
-	 ** Returns a text string listing all the stats/attributes of a given item
+	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
@@ -236,7 +247,7 @@ public:
 class MiscItems : public InventoryItems {
 protected:
 	/**
-	 ** Returns a text string listing all the stats/attributes of a given item
+	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes);
 public:
@@ -257,6 +268,9 @@ public:
 	InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
 		InventoryItems &accessories, InventoryItems &misc);
 
+	/**
+	 * Returns the inventory items for a given category
+	 */
 	InventoryItems &operator[](ItemCategory category);
 
 	/**
