@@ -42,33 +42,43 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 
 	if (line.size() >= 4 && (line.hasPrefix("#L ") || line.hasPrefix("-L "))) {
 		ActionInfo ai = {ActionInfo::Look, line.c_str() + 3, "", firstChar == '#', nullptr};
-		parseCtx._lookActionInfos.push_back(ai);
-		_pendingActionInfos.push_back(&parseCtx._lookActionInfos.back());
+		parseCtx._actionInfos.push_back(ai);
+		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if (line.size() >= 4 && (line.hasPrefix("#W ") || line.hasPrefix("-W "))) {
 		ActionInfo ai = {ActionInfo::Walk, line.c_str() + 3, "", firstChar == '#', nullptr};
-		parseCtx._walkActionInfos.push_back(ai);
-		_pendingActionInfos.push_back(&parseCtx._walkActionInfos.back());
+		parseCtx._actionInfos.push_back(ai);
+		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if (line.size() >= 4 && (line.hasPrefix("#T ") || line.hasPrefix("-T "))) {
 		ActionInfo ai = {ActionInfo::Talk, line.c_str() + 3, "", firstChar == '#', nullptr};
-		parseCtx._talkActionInfos.push_back(ai);
-		_pendingActionInfos.push_back(&parseCtx._talkActionInfos.back());
+		parseCtx._actionInfos.push_back(ai);
+		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if (line.size() >= 4 && (line.hasPrefix("#U ") || line.hasPrefix("-U "))) {
 		int secondObjPos = -1;
-		for (int i = 3; i < (int) line.size(); ++i) {
+		for (uint i = 3; i < line.size(); ++i) {
 			if (line[i] == ' ') {
 				secondObjPos = i + 1;
 				break;
 			}
 		}
+
+		Common::String obj1;
+		Common::String obj2;
+		if (secondObjPos == -1) {
+			obj1 = line.c_str() + 3;
+		} else {
+			obj1 = Common::String(line.c_str() + 3, secondObjPos - 4);
+			obj2 = line.c_str() + secondObjPos;
+		}
+
 		ActionInfo ai = {
 			ActionInfo::Use,
-			line.c_str() + 3,
-			(secondObjPos != -1) ? line.c_str() + secondObjPos : "",
+			obj1,
+			obj2,
 			firstChar == '#',
 			nullptr
 		};
-		parseCtx._useActionInfos.push_back(ai); 
-		_pendingActionInfos.push_back(&parseCtx._useActionInfos.back());
+		parseCtx._actionInfos.push_back(ai);
+		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if ((line.hasPrefix("#ELSE") || line.hasPrefix("=ELSE"))) {
 		_elseFound = true;
 		_ifTag = 0;
@@ -101,12 +111,13 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, 
 		_ifTag = 0;
 	}
 
-	if (!_pendingActionInfos.empty() && newCommandParser != this) {
-		debug("Fixing pending action info.");
-		for (Common::Array<ActionInfo *>::iterator it = _pendingActionInfos.begin(); it != _pendingActionInfos.end(); ++it) {
-			(*it)->_command = newCommand;
+	if (newCommandParser != this) {
+		if (!_pendingActionInfos.empty()) {
+			for (Common::Array<uint>::iterator it = _pendingActionInfos.begin(); it != _pendingActionInfos.end(); ++it) {
+				parseCtx._actionInfos[*it]._command = newCommand;
+			}
+			_pendingActionInfos.clear();
 		}
-		_pendingActionInfos.clear();
 	}
 }
 

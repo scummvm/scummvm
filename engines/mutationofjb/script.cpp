@@ -122,10 +122,20 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 		lastParser = currentParser;
 	}
 
-	_lookActionInfos = parseCtx._lookActionInfos;
-	_walkActionInfos = parseCtx._walkActionInfos;
-	_talkActionInfos = parseCtx._talkActionInfos;
-	_useActionInfos = parseCtx._useActionInfos;
+	for (ActionInfos::iterator it = parseCtx._actionInfos.begin(); it != parseCtx._actionInfos.end(); ++it) {
+		if (it->_action == ActionInfo::Look) {
+			_lookActionInfos.push_back(*it);
+		}
+		if (it->_action == ActionInfo::Walk) {
+			_walkActionInfos.push_back(*it);
+		}
+		if (it->_action == ActionInfo::Talk) {
+			_talkActionInfos.push_back(*it);
+		}
+		if (it->_action == ActionInfo::Use) {
+			_useActionInfos.push_back(*it);
+		}
+	}
 
 	Common::HashMap<Common::String, Command *> macros;
 	Common::HashMap<Common::String, Command *> labels;

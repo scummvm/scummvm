@@ -74,10 +74,7 @@ public:
 
 	ConditionalCommandInfos _pendingCondCommands;
 
-	ActionInfos _lookActionInfos;
-	ActionInfos _walkActionInfos;
-	ActionInfos _talkActionInfos;
-	ActionInfos _useActionInfos;
+	ActionInfos _actionInfos;
 
 private:
 };
