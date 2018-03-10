@@ -32,6 +32,11 @@ const Inventory::Items &Inventory::getItems() const {
 	return _items;
 }
 
+bool Inventory::hasItem(const Common::String &item) const {
+	Items::const_iterator it = find(_items.begin(), _items.end(), item);
+	return (it != _items.end());
+}
+
 void Inventory::addItem(const Common::String &item) {
 	_items.push_back(item);
 

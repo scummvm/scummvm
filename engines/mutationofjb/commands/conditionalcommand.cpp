@@ -21,9 +21,23 @@
  */
 
 #include "mutationofjb/commands/conditionalcommand.h"
+#include "mutationofjb/script.h"
 #include "common/scummsys.h"
+#include "common/translation.h"
 
 namespace MutationOfJB {
+
+void ConditionalCommandParser::transition(ScriptParseContext &parseContext, Command *oldCommand, Command *newCommand, CommandParser *) {
+	if (!oldCommand || !newCommand) {
+		warning(_("Unexpected empty command in transition"));
+		return;
+	}
+
+	ConditionalCommand *const condCommand = static_cast<ConditionalCommand *>(oldCommand);
+	parseContext.addConditionalCommand(condCommand, _lastTag);
+	condCommand->setTrueCommand(newCommand);
+}
+
 
 ConditionalCommand::ConditionalCommand() :
 	_trueCommand(nullptr),
