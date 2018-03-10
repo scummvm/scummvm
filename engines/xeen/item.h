@@ -47,10 +47,6 @@ enum AttributeCategory {
 	ATTR_ARMOR_CLASS = 8, ATTR_THIEVERY = 9
 };
 
-enum RangeType {
-	RT_SINGLE = 0, RT_GROUP = 1, RT_ALL = 2, RT_HIT = 3
-};
-
 enum ElementalCategory {
 	ELEM_FIRE = 0, ELEM_ELECTRICITY = 1, ELEM_COLD = 2, ELEM_ACID_POISON = 3,
 	ELEM_ENERGY = 4, ELEM_MAGIC = 5
@@ -94,8 +90,6 @@ public:
 	 * Gets the attribute category for the item
 	 */
 	AttributeCategory getAttributeCategory() const;
-
-	void getWeaponDamage(Character &c, RangeType rangeType);
 };
 
 class InventoryItems : public Common::Array<XeenItem> {

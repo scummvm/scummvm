@@ -1201,7 +1201,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 	int monsterDataIndex = monster._spriteId;
 	MonsterStruct &monsterData = map._monsterData[monsterDataIndex];
 
-	if (rangeType) {
+	if (rangeType != RT_SINGLE) {
 		if (_shootType != ST_1 || _damageType == DT_MAGIC_ARROW) {
 			if (!monsterData._magicResistence || monsterData._magicResistence <=
 					_vm->getRandomNumber(1, 100 + _oldCharacter->getCurrentLevel())) {
@@ -1396,7 +1396,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 	MonsterStruct &monsterData = *monster._monsterData;
 	bool monsterDied = false;
 
-	if (!isDarkCc && damage && rangeType && monster._spriteId == 89)
+	if (!isDarkCc && damage && rangeType != RT_SINGLE && monster._spriteId == 89)
 		damage = 0;
 
 	if (!damage) {
@@ -1432,7 +1432,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		if (monsterResist > 0) {
 			_pow[_attackDurationCtr]._elemFrame = _attackWeapon->getElementalCategory();
 			_pow[_attackDurationCtr]._elemScale = getDamageScale(monsterResist);
-		} else if (rangeType != 3) {
+		} else if (rangeType != RT_HIT) {
 			_pow[_attackDurationCtr]._elemFrame = 0;
 		}
 
@@ -1441,7 +1441,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			monster._effect1 = 0;
 		}
 
-		if (rangeType && monsterSavingThrow(monster._spriteId)) {
+		if (rangeType != RT_SINGLE && monsterSavingThrow(monster._spriteId)) {
 			switch (_damageType) {
 			case DT_FINGEROFDEATH:
 			case DT_MASS_DISTORTION:
@@ -1680,7 +1680,7 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		XeenItem &weapon = c._weapons[idx];
 		bool flag;
-		if (rangeType) {
+		if (rangeType != RT_SINGLE) {
 			flag = weapon._frame == 4;
 		} else {
 			flag = weapon._frame == 1 || weapon._frame == 13;

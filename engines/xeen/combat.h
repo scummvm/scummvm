@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 #include "common/rect.h"
 #include "xeen/files.h"
-#include "xeen/item.h"
 #include "xeen/sprites.h"
 
 namespace Xeen {
@@ -69,6 +68,10 @@ enum PowType {
 	POW_COLD_RAY = 8, POW_FROST_WAVE = 9, POW_SPRAY = 10,
 	POW_ARROW = 11, POW_MAGIC_ARROW = 12, POW_ENERGY_BLAST = 13,
 	POW_SPARKLES = 14, POW_DEADLY_SWARM = 15
+};
+
+enum RangeType {
+	RT_SINGLE = 0, RT_GROUP = 1, RT_ALL = 2, RT_HIT = 3
 };
 
 class XeenEngine;
