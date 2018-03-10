@@ -604,8 +604,9 @@ enum AnimationModes {
 	kAnimationModeWalkDown = 45,
 	kAnimationModeCombatWalkUp = 46,
 	kAnimationModeCombatWalkDown = 47,
-	kAnimationModeDie = 48, // or fall down?
+	kAnimationModeDie = 48, // TODO: check
 	kAnimationModeFeeding = 52,
+	kAnimationModeSit = 53, // TODO: check
 	kAnimationModeClimbUp = 64,
 	kAnimationModeClimbDown = 65,
 	kAnimationModeCombatClimbUp = 66,
@@ -688,12 +689,12 @@ enum Scenes {
 	kSceneNR11 = 64,
 	kScenePS01 = 65, // Police Station - Roof
 	kScenePS02 = 66, // Police Station - Elevator
-	kScenePS03 = 67,
+	kScenePS03 = 67, // Police Station - Ground floor
 	kScenePS04 = 68, // Police Station - Guzza's Office
 	kScenePS05 = 69,
 	kScenePS06 = 70,
 	kScenePS07 = 71,
-	kScenePS09 = 72,
+	kScenePS09 = 72, // Police Station - Lockup
 	kScenePS10 = 73,
 	kScenePS11 = 74,
 	kScenePS12 = 75,

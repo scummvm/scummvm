@@ -160,7 +160,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			}
 			break;
 		case 2:
-			// TEST: nothing? actor will stuck
+			// TODO: test... actor will be stuck
 			break;
 		}
 		break;

@@ -53,6 +53,7 @@ public:
 	bool cmdFlag(int argc, const char **argv);
 	bool cmdGoal(int argc, const char **argv);
 	bool cmdLoop(int argc, const char **argv);
+	bool cmdPosition(int argc, const char **argv);
 	bool cmdSay(int argc, const char **argv);
 	bool cmdScene(int argc, const char **argv);
 	bool cmdVariable(int argc, const char **argv);

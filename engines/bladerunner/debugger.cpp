@@ -64,6 +64,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("flag", WRAP_METHOD(Debugger, cmdFlag));
 	registerCmd("goal", WRAP_METHOD(Debugger, cmdGoal));
 	registerCmd("loop", WRAP_METHOD(Debugger, cmdLoop));
+	registerCmd("pos", WRAP_METHOD(Debugger, cmdPosition));
 	registerCmd("say", WRAP_METHOD(Debugger, cmdSay));
 	registerCmd("scene", WRAP_METHOD(Debugger, cmdScene));
 	registerCmd("var", WRAP_METHOD(Debugger, cmdVariable));
@@ -228,6 +229,65 @@ bool Debugger::cmdLoop(int argc, const char **argv) {
 		debugPrintf("Unknown loop %i\n", loopId);
 		return true;
 	}
+}
+
+bool Debugger::cmdPosition(int argc, const char **argv) {
+	if (argc != 2 && argc != 3 && argc != 7) {
+		debugPrintf("Get or set position of the actor.\n");
+		debugPrintf("Usage: %s <actorId> [(<setId> <x> <y> <z> <facing>)|<otherActorId>]\n", argv[0]);
+		return true;
+	}
+
+	int actorId = atoi(argv[1]);
+
+	Actor *actor = nullptr;
+	if (actorId >= 0 && actorId < (int)_vm->_gameInfo->getActorCount()) {
+		actor = _vm->_actors[actorId];
+	}
+
+	if (actor == nullptr) {
+		debugPrintf("Unknown actor %i\n", actorId);
+		return true;
+	}
+
+	if (argc == 2) {
+		debugPrintf("actorSet(%i) = %i\n", actorId, actor->getSetId());
+		debugPrintf("actorX(%i) = %f\n", actorId, actor->getX());
+		debugPrintf("actorY(%i) = %f\n", actorId, actor->getY());
+		debugPrintf("actorZ(%i) = %f\n", actorId, actor->getZ());
+		debugPrintf("actorFacing(%i) = %i\n", actorId, actor->getFacing());
+		return true;
+	}
+
+	if (argc == 3) {
+		int otherActorId = atoi(argv[2]);
+		Actor *otherActor = nullptr;
+		if (otherActorId >= 0 && otherActorId < (int)_vm->_gameInfo->getActorCount()) {
+			otherActor = _vm->_actors[otherActorId];
+		}
+
+		if (otherActor == nullptr) {
+			debugPrintf("Unknown actor %i\n", otherActorId);
+			return true;
+		}
+
+		Vector3 position;
+		otherActor->getXYZ(&position.x, &position.y, &position.z);
+		actor->setSetId(otherActor->getSetId());
+		actor->setAtXYZ(position, otherActor->getFacing());
+		return true;
+	}
+
+	if (argc == 7) {
+		int setId = atoi(argv[2]);
+		Vector3 position(atof(argv[3]), atof(argv[4]), atof(argv[5]));
+		int facing = atoi(argv[6]);
+
+		actor->setSetId(setId);
+		actor->setAtXYZ(position, facing);
+		return true;
+	}
+	return true;
 }
 
 bool Debugger::cmdSay(int argc, const char **argv) {

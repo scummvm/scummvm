@@ -354,7 +354,7 @@ void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool 
 	_vm->_sceneObjects->remove(_id + kSceneObjectOffsetActors);
 
 	if (_vm->_scene->getSetId() == _setId) {
-		_vm->_sceneObjects->addActor(_id + kSceneObjectOffsetActors, _bbox, &_screenRectangle, 1, moving, _isTarget, retired);
+		_vm->_sceneObjects->addActor(_id + kSceneObjectOffsetActors, _bbox, &_screenRectangle, true, moving, _isTarget, retired);
 	}
 }
 

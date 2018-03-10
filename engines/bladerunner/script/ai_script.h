@@ -136,6 +136,13 @@ DECLARE_SCRIPT(Gordo)
 	void sub_41117C();
 END_SCRIPT
 
+DECLARE_SCRIPT(Guzza)
+	int _frameDelta;
+	int _counter;
+	int _state;
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(Grigorian)
 	int var_45CA10;
 	int var_45CA14;
