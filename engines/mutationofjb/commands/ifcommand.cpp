@@ -31,12 +31,12 @@
 
 	IF command compares the value of the WX pseudo-register of the object in the specified scene.
 	If the values match, execution continues to the next line.
-	Otherwise execution continues after first "#ELSE" with the same <tag>.
+	Otherwise execution continues after first "#ELSE" or "=ELSE" with the same <tag>.
 	The logic can be reversed with exclamation mark at the end.
 
 	<tag> is always 1 character long, <sceneId> and <objectId> 2 characters long.
 
-	Please note that this does not work line you are used to from saner languages.
+	Please note that this does not work like you are used to from saner languages.
 	IF does not have any blocks. It only searches for first #ELSE, so you can have stuff like:
 		IF something
 		IF something else
@@ -70,20 +70,11 @@ bool IfCommandParser::parse(const Common::String &line, ScriptParseContext &pars
 	const uint8 value = atoi(cstr + 9);
 	const bool negative = (line.lastChar() == '!');
 
-	IfCommand *ifCommand = new IfCommand(sceneId, objectId, value, negative);
+	_lastTag = tag;
 
-	command = ifCommand;
-	parseContext.addConditionalCommand(ifCommand, tag);
+	command = new IfCommand(sceneId, objectId, value, negative);
+
 	return true;
-}
-
-void IfCommandParser::transition(ScriptParseContext &, Command *oldCommand, Command *newCommand, CommandParser *) {
-	if (!oldCommand || !newCommand) {
-		warning(_("Unexpected empty command in transition"));
-		return;
-	}
-
-	static_cast<IfCommand *>(oldCommand)->setTrueCommand(newCommand);
 }
 
 IfCommand::IfCommand(uint8 sceneId, uint8 objectId, uint16 value, bool negative) :

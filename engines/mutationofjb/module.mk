@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	commands/conditionalcommand.o \
 	commands/endblockcommand.o \
 	commands/ifcommand.o \
+	commands/ifitemcommand.o \
 	commands/removeallitemscommand.o \
 	commands/removeitemcommand.o \
 	commands/saycommand.o \

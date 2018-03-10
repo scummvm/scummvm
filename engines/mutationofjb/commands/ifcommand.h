@@ -30,16 +30,14 @@ namespace MutationOfJB {
 
 class ScriptParseContext;
 
-class IfCommandParser : public CommandParser {
+class IfCommandParser : public ConditionalCommandParser {
 public:
 	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
+private:
 };
 
 class IfCommand : public ConditionalCommand {
 public:
-	static bool ParseFunc(const Common::String &line, ScriptParseContext &parseContext, Command *&command);
-
 	IfCommand(uint8 sceneId, uint8 objectId, uint16 value, bool negative);
 	
 	virtual ExecuteResult execute(GameData &gameData) override;
@@ -50,8 +48,6 @@ private:
 	uint8 _objectId;
 	uint16 _value;
 	bool _negative;
-
-	bool _cachedResult;
 };
 
 }

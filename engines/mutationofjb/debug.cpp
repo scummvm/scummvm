@@ -115,7 +115,7 @@ void Console::showIndent(int indentLevel) {
 void Console::showCommands(Command *command, int indentLevel) {
 	while (command) {
 		showIndent(indentLevel);
-		debugPrintf("%s\n", command->debugString().c_str());
+		debugPrintf("%s\n", convertToASCII(command->debugString()).c_str());
 
 		if (SeqCommand *const seqCmd = dynamic_cast<SeqCommand *>(command)) {
 			command = seqCmd->next();

@@ -34,6 +34,7 @@ public:
 	typedef Common::Array<Common::String> Items;
 
 	const Items &getItems() const;
+	bool hasItem(const Common::String &item) const;
 	void addItem(const Common::String &item);
 	void removeItem(const Common::String &item);
 	void removeAllItems();

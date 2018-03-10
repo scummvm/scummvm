@@ -20,36 +20,32 @@
  *
  */
 
-#ifndef MUTATIONOFJB_CONDITIONALCOMMAND_H
-#define MUTATIONOFJB_CONDITIONALCOMMAND_H
+#ifndef MUTATIONOFJB_IFITEMCOMMAND_H
+#define MUTATIONOFJB_IFITEMCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
+#include "mutationofjb/commands/conditionalcommand.h"
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace MutationOfJB {
 
-class ConditionalCommandParser : public CommandParser {
+class ScriptParseContext;
+
+class IfItemCommandParser : public ConditionalCommandParser {
 public:
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
-protected:
-	char _lastTag;
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
 };
 
-class ConditionalCommand : public Command {
+class IfItemCommand : public ConditionalCommand {
 public:
-	ConditionalCommand();
+	IfItemCommand(const Common::String &item, bool negative);
+	
+	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual Common::String debugString() const;
 
-	Command *getTrueCommand() const;
-	Command *getFalseCommand() const;
-
-	void setTrueCommand(Command *command);
-	void setFalseCommand(Command *command);
-
-	virtual Command *next() const override;
-protected:
-	Command *_trueCommand;
-	Command *_falseCommand;
-	bool _cachedResult;
+private:
+	Common::String _item;
+	bool _negative;
 };
 
 }

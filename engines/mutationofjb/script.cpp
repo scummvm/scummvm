@@ -28,6 +28,7 @@
 #include "common/debug.h"
 #include "mutationofjb/commands/command.h"
 #include "mutationofjb/commands/ifcommand.h"
+#include "mutationofjb/commands/ifitemcommand.h"
 #include "mutationofjb/commands/endblockcommand.h"
 #include "mutationofjb/commands/changecommand.h"
 #include "mutationofjb/commands/saycommand.h"
@@ -39,6 +40,7 @@ namespace MutationOfJB {
 
 static CommandParser **getParsers() {
 	static CommandParser *parsers[] = {
+		new IfItemCommandParser,
 		new IfCommandParser,
 		new EndBlockCommandParser,
 		new ChangeDoorCommandParser,
