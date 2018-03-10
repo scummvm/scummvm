@@ -33,6 +33,8 @@ namespace Xeen {
 #define SCENE_CLIP_LEFT 8
 #define SCENE_CLIP_RIGHT 223
 
+int SpriteResource::_clippedBottom;
+
 SpriteResource::SpriteResource() {
 	_filesize = 0;
 	_data = nullptr;
@@ -324,11 +326,14 @@ void SpriteResource::draw(int windowIndex, int frame, const Common::Point &destP
 
 void SpriteResource::draw(XSurface &dest, int frame, const Common::Point &destPos,
 		const Common::Rect &bounds, uint flags, int scale) {
+	Common::Rect r = bounds;
+	if (flags & SPRFLAG_BOTTOM_CLIPPED)
+		r.clip(SCREEN_WIDTH, _clippedBottom);
 
 	// Sprites can consist of separate background & foreground
-	drawOffset(dest, _index[frame]._offset1, destPos, bounds, flags, scale);
+	drawOffset(dest, _index[frame]._offset1, destPos, r, flags, scale);
 	if (_index[frame]._offset2)
-		drawOffset(dest, _index[frame]._offset2, destPos, bounds, flags, scale);
+		drawOffset(dest, _index[frame]._offset2, destPos, r, flags, scale);
 }
 
 void SpriteResource::draw(XSurface &dest, int frame) {

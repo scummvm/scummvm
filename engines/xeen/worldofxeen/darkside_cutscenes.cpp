@@ -907,7 +907,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 
 	SpriteResource faceEnd("face.end");
 	screen.restoreBackground();
-	faceEnd.draw(0, 0, Common::Point(29, 76), SPRFLAG_4000);
+	faceEnd.draw(0, 0, Common::Point(29, 76), SPRFLAG_BOTTOM_CLIPPED);
 	screen.update();
 
 	screen.fadeIn();
@@ -924,7 +924,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 			sound.stopSong();
 
 		screen.restoreBackground();
-		faceEnd.draw(0, 0, Common::Point(29, idx), SPRFLAG_4000);
+		faceEnd.draw(0, 0, Common::Point(29, idx), SPRFLAG_BOTTOM_CLIPPED);
 		screen.update();
 
 		WAIT(2);

@@ -40,9 +40,8 @@ enum {
 };
 
 enum SpriteFlags {
-	SPRFLAG_800 = 0x800, SPRFLAG_SCENE_CLIPPED = 0x2000,
-	SPRFLAG_4000 = 0x4000, SPRFLAG_HORIZ_FLIPPED = 0x8000,
-	SPRFLAG_RESIZE = 0x10000
+	SPRFLAG_800 = 0x800, SPRFLAG_SCENE_CLIPPED = 0x2000, SPRFLAG_BOTTOM_CLIPPED = 0x4000,
+	SPRFLAG_HORIZ_FLIPPED = 0x8000, SPRFLAG_RESIZE = 0x10000
 };
 
 class SpriteResource {
@@ -55,6 +54,7 @@ private:
 	byte *_data;
 	int _scaledWidth, _scaledHeight;
 	Common::String _filename;
+	static int _clippedBottom;
 
 	/**
 	 * Load a sprite resource from a stream
@@ -174,6 +174,12 @@ public:
 	 * Returns true if the sprite resource is empty (ie. nothing is loaded)
 	 */
 	bool empty() const { return _index.size() == 0; }
+
+	/**
+	 * Set the bottom Y position where sprites are clipped if SPRFLAG_BOTTOM_CLIPPED
+	 * is applied
+	 */
+	static void setClippedBottom(int y) { _clippedBottom = y; }
 };
 
 } // End of namespace Xeen

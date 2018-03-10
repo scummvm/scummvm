@@ -145,18 +145,18 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[107] = DrawStruct(0, 200, 40, 0, SPRFLAG_HORIZ_FLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[108] = DrawStruct(0, 8, 47);
 	_data[109] = DrawStruct(0, 169, 47, 0, SPRFLAG_HORIZ_FLIPPED);
-	_data[110] = DrawStruct(1, -56, -4, SCALE_ENLARGE, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
-	_data[111] = DrawStruct(0, -5, 2, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
-	_data[112] = DrawStruct(0, -67, 2, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[110] = DrawStruct(1, -56, -4, SCALE_ENLARGE, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[111] = DrawStruct(0, -5, 2, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[112] = DrawStruct(0, -67, 2, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[113] = DrawStruct(0, 44, 73);
 	_data[114] = DrawStruct(0, 44, 73);
-	_data[115] = DrawStruct(0, 58, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[115] = DrawStruct(0, 58, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[116] = DrawStruct(0, 169, 73);
 	_data[117] = DrawStruct(0, 169, 73);
-	_data[118] = DrawStruct(0, -5, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[118] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[119] = DrawStruct(0, 110, 73);
 	_data[120] = DrawStruct(0, 110, 73);
-	_data[121] = DrawStruct(0, -5, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[121] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[122] = DrawStruct(0, 110, 73);
 	_data[123] = DrawStruct(0, 110, 73);
 	_data[124] = DrawStruct(0, 72, 43);
@@ -345,17 +345,17 @@ IndoorDrawList::IndoorDrawList() :
 	_data[146] = DrawStruct(0, 200, 12, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[147] = DrawStruct(0, 200, 24, 0, SPRFLAG_SCENE_CLIPPED);
 	_data[148] = DrawStruct(0, 32, 24);
-	_data[149] = DrawStruct(0, -5, 2, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
-	_data[150] = DrawStruct(0, -67, 10, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[149] = DrawStruct(0, -5, 2, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[150] = DrawStruct(0, -67, 10, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[151] = DrawStruct(0, 44, 73);
 	_data[152] = DrawStruct(0, 44, 73);
-	_data[153] = DrawStruct(0, 58, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[153] = DrawStruct(0, 58, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[154] = DrawStruct(0, 169, 73);
 	_data[155] = DrawStruct(0, 169, 73);
-	_data[156] = DrawStruct(0, -5, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[156] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[157] = DrawStruct(0, 110, 73);
 	_data[158] = DrawStruct(0, 110, 73);
-	_data[159] = DrawStruct(0, -5, 14, 0, SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED);
+	_data[159] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
 	_data[160] = DrawStruct(0, 110, 73);
 	_data[161] = DrawStruct(0, 110, 73);
 	_data[162] = DrawStruct(0, 72, 43);
@@ -485,7 +485,7 @@ void InterfaceScene::drawOutdoorsScene() {
 					ds2._y = 73;
 				}
 
-				ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds2._flags = SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED;
 				ds2._sprites = &_charPowSprites;
 			}
 
@@ -496,7 +496,7 @@ void InterfaceScene::drawOutdoorsScene() {
 
 				if (ds1._scale == SCALE_ENLARGE)
 					ds1._x /= 3;
-				ds1._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds1._flags = SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED;
 				ds1._sprites = &_charPowSprites;
 			}
 		}
@@ -623,7 +623,7 @@ void InterfaceScene::drawIndoorsScene() {
 					ds1._y = 73;
 				}
 
-				ds1._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds1._flags = SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED;
 				ds1._sprites = &_charPowSprites;
 			}
 
@@ -633,7 +633,7 @@ void InterfaceScene::drawIndoorsScene() {
 				ds2._scale = combat._pow[idx]._elemScale;
 				if (ds2._scale == SCALE_ENLARGE)
 					ds2._x /= 3;
-				ds2._flags = SPRFLAG_4000 | SPRFLAG_SCENE_CLIPPED;
+				ds2._flags = SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED;
 				ds2._sprites = &_charPowSprites;
 			}
 		}

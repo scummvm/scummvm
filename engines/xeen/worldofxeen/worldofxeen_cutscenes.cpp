@@ -42,9 +42,9 @@ void WorldOfXeenCutscenes::showWorldOfXeenEnding(GooberState state, uint score) 
 			if (worldEnding3())
 				worldEnding4();
 
-	windows[41].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	sound.stopAllAudio();
 	screen.fadeOut();
+	screen.freePages();
 }
 
 bool WorldOfXeenCutscenes::worldEnding1() {
@@ -55,6 +55,7 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	Window &w0 = windows[0];
 	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
 
+	SpriteResource::setClippedBottom(185);
 	sound.playSong("outday3.m");
 	if (!showPharaohEndText(Res.WORLD_END_TEXT[0]))
 		return false;
@@ -84,7 +85,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	// Fade out the screen and the music
 	sound.songCommand(223);
 	windows[41].writeString("\x1\xD");
-	windows[41].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, 185));
 
 	screen.fadeOut();
 	while (!_vm->shouldExit() && sound.isSoundPlaying())
@@ -221,8 +221,8 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 			sound.playSound("cast.voc");
 
 		screen.blitFrom(savedBg);
-		sc17.draw(41, 0, Common::Point(33, idx), SPRFLAG_4000);
-		sc17.draw(41, frame, Common::Point(33, idx), SPRFLAG_4000);
+		sc17.draw(41, 0, Common::Point(33, idx), SPRFLAG_BOTTOM_CLIPPED);
+		sc17.draw(41, frame, Common::Point(33, idx), SPRFLAG_BOTTOM_CLIPPED);
 		setSubtitle(Res.WORLD_END_TEXT[4]);
 
 		w0.update();
@@ -237,8 +237,8 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 			sound.playSound("cast.voc");
 
 		screen.blitFrom(savedBg);
-		sc17.draw(41, 0, Common::Point(33, 68), SPRFLAG_4000);
-		sc17.draw(41, idx, Common::Point(33, 68), SPRFLAG_4000);
+		sc17.draw(41, 0, Common::Point(33, 68), SPRFLAG_BOTTOM_CLIPPED);
+		sc17.draw(41, idx, Common::Point(33, 68), SPRFLAG_BOTTOM_CLIPPED);
 		setSubtitle(Res.WORLD_END_TEXT[4]);
 
 		w0.update();
@@ -246,7 +246,7 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	}
 
 	screen.blitFrom(savedBg);
-	sc17.draw(0, 0, Common::Point(33, 68), SPRFLAG_4000);
+	sc17.draw(0, 0, Common::Point(33, 68), SPRFLAG_BOTTOM_CLIPPED);
 	setSubtitle(Res.WORLD_END_TEXT[4]);
 	w0.update();
 	screen.fadeOut();
@@ -284,10 +284,11 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	screen.blitFrom(savedBg);
 	setSubtitle(Res.WORLD_END_TEXT[5]);
 	w0.update();
+	SpriteResource::setClippedBottom(185);
 
 	for (int yp = 185; yp > 13; yp -= 6) {
 		screen.blitFrom(savedBg);
-		staff.draw(41, 0, Common::Point(196, yp), SPRFLAG_4000);
+		staff.draw(41, 0, Common::Point(196, yp), SPRFLAG_BOTTOM_CLIPPED);
 		setSubtitle(Res.WORLD_END_TEXT[5]);
 
 		w0.update();
@@ -313,12 +314,13 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	}
 
 	// Together, they placed the Cube of Power...
+	SpriteResource::setClippedBottom(118);
 	screen.loadBackground("tablmain.raw");
 	savedBg.blitFrom(screen);
 	screen.loadPage(1);
 	sc20[0].draw(0, 0, Common::Point(26, 55));
 	hands.draw(0, 0, Common::Point(58, 17));
-	cube.draw(0, 0, Common::Point(101, 11), SPRFLAG_4000);
+	cube.draw(0, 0, Common::Point(101, 11), SPRFLAG_BOTTOM_CLIPPED);
 	w0.update();
 	sound.playSound("cast.voc");
 
@@ -329,7 +331,7 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		screen.blitFrom(savedBg);
 		sc20[0].draw(0, 0, Common::Point(26, 55));
 		hands.draw(0, 0, Common::Point(58, 17));
-		cube.draw(0, idx, Common::Point(101, 11), SPRFLAG_4000);
+		cube.draw(0, idx, Common::Point(101, 11), SPRFLAG_BOTTOM_CLIPPED);
 		setSubtitle(Res.WORLD_END_TEXT[6]);
 
 		w0.update();
@@ -344,7 +346,7 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		screen.blitFrom(savedBg);
 		sc20[0].draw(0, 0, Common::Point(26, 55));
 		hands.draw(0, idx, Common::Point(58, 17));
-		cube.draw(0, frame, Common::Point(101, 11), SPRFLAG_4000);
+		cube.draw(0, frame, Common::Point(101, 11), SPRFLAG_BOTTOM_CLIPPED);
 		setSubtitle(Res.WORLD_END_TEXT[6]);
 
 		w0.update();
@@ -360,7 +362,7 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 
 		screen.blitFrom(savedBg);
 		sc20[0].draw(0, 0, Common::Point(26, 55));
-		cube.draw(0, frame, Common::Point(101, yp), SPRFLAG_4000);
+		cube.draw(0, frame, Common::Point(101, yp), SPRFLAG_BOTTOM_CLIPPED);
 		setSubtitle(Res.WORLD_END_TEXT[6]);
 
 		w0.update();
@@ -433,6 +435,7 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		WAIT(3);
 	}
 
+	screen.fadeOut();
 	return true;
 }
 
@@ -452,7 +455,6 @@ bool WorldOfXeenCutscenes::worldEnding2() {
 	};
 	SpriteResource sc24("sc24.eg2");
 
-	screen.fadeOut();
 	screen.loadBackground("eg23prt2.raw");
 	savedBg.blitFrom(screen);
 	sc23[0].draw(0, 0);
