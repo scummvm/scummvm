@@ -113,24 +113,18 @@ int AIScriptDeskClerk::GetFriendlinessModifierIfGetsClue(int otherActorId, int c
 }
 
 bool AIScriptDeskClerk::GoalChanged(int currentGoalNumber, int newGoalNumber) {
-	if (newGoalNumber > 2) {
-		if (newGoalNumber == 400) {
-			Actor_Put_In_Set(kActorDeskClerk, kSetFreeSlotH);
-			Actor_Set_At_Waypoint(kActorDeskClerk, 40, 0);
-		}
-	} else if (newGoalNumber) {
-		if (newGoalNumber == 1) {
-			Actor_Put_In_Set(kActorDeskClerk, kSetFreeSlotH);
-			Actor_Set_At_Waypoint(kActorDeskClerk, 40, 0);
-		} else {
-			Actor_Put_In_Set(kActorDeskClerk, kSetCT09);
-			Actor_Set_At_XYZ(kActorDeskClerk, 282.0f, 360.52f, 743.0f, 513);
-		}
-	} else {
+	switch (newGoalNumber) {
+	case 0:
+	case 2:
 		Actor_Put_In_Set(kActorDeskClerk, kSetCT09);
 		Actor_Set_At_XYZ(kActorDeskClerk, 282.0f, 360.52f, 743.0f, 513);
+		break;
+	case 1:
+	case 400:
+		Actor_Put_In_Set(kActorDeskClerk, kSetFreeSlotH);
+		Actor_Set_At_Waypoint(kActorDeskClerk, 40, 0);
+		break;
 	}
-
 	return false;
 }
 
