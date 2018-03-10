@@ -77,7 +77,11 @@ bool Console::cmd_listsections(int argc, const char **argv) {
 				const ActionInfos &actionInfos = script->getUseActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					debugPrintf(_("Use %s\n"), actionInfo._object1Name.c_str());
+					if (actionInfo._object2Name.empty()) {
+						debugPrintf(_("Use %s\n"), actionInfo._object1Name.c_str());
+					} else {
+						debugPrintf(_("Use %s %s\n"), actionInfo._object1Name.c_str(), actionInfo._object2Name.c_str());
+					}
 				}
 			} else {
 				debugPrintf(_("Choose 'L' (look), 'W' (walk), 'T' (talk) or 'U' (use).\n"));
@@ -115,7 +119,7 @@ void Console::showCommands(Command *command, int indentLevel) {
 }
 
 bool Console::cmd_showsection(int argc, const char **argv) {
-	if (argc == 4) {
+	if (argc >= 4) {
 		Script *script = nullptr;
 		if (strcmp(argv[1], "G") == 0) {
 			script = _vm->getGlobalScript();
@@ -161,7 +165,7 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 				const ActionInfos &actionInfos = script->getUseActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					if (actionInfo._object1Name == argv[3]) {
+					if (actionInfo._object1Name == argv[3] && ((argc == 4 && actionInfo._object2Name.empty()) || (argc > 4 && actionInfo._object2Name == argv[4]))) {
 						found = true;
 						command = actionInfo._command;
 						break;

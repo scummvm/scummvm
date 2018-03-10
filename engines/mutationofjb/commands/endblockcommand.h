@@ -41,7 +41,8 @@ public:
 private:
 	bool _elseFound;
 	char _ifTag;
-	Common::Array<ActionInfo*> _pendingActionInfos;
+
+	Common::Array<uint> _pendingActionInfos;
 };
 
 class EndBlockCommand : public Command {
