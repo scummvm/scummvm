@@ -58,19 +58,16 @@ private:
 	bool worldEnding1();
 
 	/**
-	 * Part 2 of World of Xeen ending
+	 * Part 2 of World of Xeen ending, showing beams of light erupting from Altar,
+	 * and four beams arcing across the top and bottom sides of Xeen
 	 */
 	bool worldEnding2();
 
 	/**
-	 * Part 3 of World of Xeen ending
+	 * Part 3 of World of Xeen ending, with further beams covering Xeen, and it
+	 * transforming the world into a sphere
 	 */
 	bool worldEnding3();
-
-	/**
-	 * Part 4 of World of Xeen ending
-	 */
-	bool worldEnding4();
 public:
 	WorldOfXeenCutscenes(XeenEngine *vm) : _vm(vm), CloudsCutscenes(vm),
 		DarkSideCutscenes(vm), _goober(NON_GOOBER), _finalScore(0) {}

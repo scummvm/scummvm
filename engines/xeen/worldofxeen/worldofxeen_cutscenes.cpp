@@ -31,20 +31,20 @@ void WorldOfXeenCutscenes::showWorldOfXeenEnding(GooberState state, uint score) 
 	FileManager &files = *_vm->_files;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
 	files.setGameCc(2);
 
 	_goober = state;
 	_finalScore = score;
+	screen.loadPalette("skymain.pal");
 
 	if (worldEnding1())
 		if (worldEnding2())
-			if (worldEnding3())
-				worldEnding4();
+				worldEnding3();
 
 	sound.stopAllAudio();
 	screen.fadeOut();
 	screen.freePages();
+	files.setGameCc(1);
 }
 
 bool WorldOfXeenCutscenes::worldEnding1() {
@@ -65,7 +65,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	screen.loadBackground("twrsky1.raw");
 	screen.loadPage(0);
 	screen.loadPage(1);
-	screen.loadPalette("skymain.pal");
 
 	SpriteResource sc02("sc02.eg2"), tower1("tower1.eg2"), tower2("tower2.eg2"),
 		sc3a("sc3a.eg2"), sc06("sc06.eg2"), sc14("sc14.eg2"), sc13("sc13.eg2"),
@@ -461,34 +460,46 @@ bool WorldOfXeenCutscenes::worldEnding2() {
 	w0.update();
 	screen.fadeIn();
 
-	int frame = 0;
 	for (int idx = 0; idx < 61; ++idx) {
 		if (idx == 2 || idx == 15 || idx == 25 || idx == 33 || idx == 41)
 			sound.playSound("gascompr.voc");
 
-		sc23[idx / 8].draw(0, frame % 8);
+		sc23[idx / 8].draw(0, idx % 8);
 		w0.update();
 		WAIT(4);
 	}
 
-	return true;
-}
+	// Far out view of light emerging from tower
+	screen.loadBackground("skymain.raw");
+	savedBg.blitFrom(screen);
+	sc24.draw(0, 0, Common::Point(103, 6));
 
-bool WorldOfXeenCutscenes::worldEnding3() {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
-	Window &w0 = windows[0];
-	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
+	for (int idx = 0; idx < 35; ++idx) {
+		if (idx == 2 || idx == 15 || idx == 21)
+			sound.playSound("photon.voc", 1, 0);
 
+		screen.restoreBackground();
+		sc24.draw(0, idx, Common::Point(103, 6));
+
+		WAIT(3);
+	}
+
+	for (int idx = 20; idx < 35; ++idx) {
+		screen.restoreBackground();
+		sc24.draw(0, idx, Common::Point(103, 6));
+
+		WAIT(3);
+	}
+
+	screen.fadeOut();
+
+	// Green power lines spreading to four corners of the top half of Xeen
 	SpriteResource sc25("sc25.eg2"), sc262("sc262.eg2"), sc263("sc263.eg2"),
 		sc264("sc264.eg2");
 	SpriteResource sc261[2] = {
 		SpriteResource("sc261a.eg2"), SpriteResource("sc261b.eg2")
 	};
 
-	screen.fadeOut();
 	screen.loadBackground("eg250001.raw");
 	screen.loadPalette("eg250001.pal");
 	w0.update();
@@ -507,6 +518,7 @@ bool WorldOfXeenCutscenes::worldEnding3() {
 	}
 	sound.stopSound();
 
+	// Closeup view of the four collectors receiving the power beams
 	screen.loadBackground("blank.raw");
 	screen.loadPalette("skymain.pal");
 	sc261[0].draw(0, 0, Common::Point(7, 4));
@@ -516,23 +528,23 @@ bool WorldOfXeenCutscenes::worldEnding3() {
 	w0.update();
 	screen.fadeIn(0x81);
 
-	int frame1 = 0, frame2 = 0, frame3 = 0, ctr = 0;
+	int frame1 = 0, frame2 = 0, frame3 = 0, frame4 = 0;
 	for (int idx = 0; idx < 78; ++idx) {
-		sc261[ctr / 14].draw(0, idx % 17, Common::Point(7, 4));
+		sc261[frame4 / 14].draw(0, frame4 % 14, Common::Point(7, 4));
 		sc262.draw(0, frame1, Common::Point(86, 4));
 		sc263.draw(0, frame2, Common::Point(164, 4));
 		sc264.draw(0, frame3, Common::Point(242, 4));
 
 		if (idx == 10 || idx == 28 || idx == 43 || idx == 56)
-			sound.playSound("photon.voc");
+			sound.playSound("photon.voc", 1, 0);
 
-		ctr = (ctr + 1) % 28;
+		frame4 = (frame4 + 1) % 28;
 		frame1 = (frame1 + 1) % 9;
 		frame2 = (frame2 + 1) % 19;
 		frame3 = (frame3 + 1) % 10;
 
-		if (idx > 12 && ctr < 13)
-			ctr = 13;
+		if (idx > 12 && frame4 < 13)
+			frame4 = 13;
 		if (idx < 23)
 			frame1 = 0;
 		else if (idx > 26 && frame1 < 5)
@@ -552,29 +564,10 @@ bool WorldOfXeenCutscenes::worldEnding3() {
 		WAIT(2);
 	}
 
-	return true;
-}
-
-bool WorldOfXeenCutscenes::worldEnding4() {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
-	Windows &windows = *_vm->_windows;
-	Window &w0 = windows[0];
-	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	SpriteResource sc27("sc27.eg2"), sc30("sc30.eg2");
-	SpriteResource sc28[14] = {
-		SpriteResource("sc28a.eg2"), SpriteResource("sc28b1.eg2"),
-		SpriteResource("sc28c.eg2"), SpriteResource("sc28d.eg2"),
-		SpriteResource("sc28e.eg2"), SpriteResource("sc28f.eg2"),
-		SpriteResource("sc28g.eg2"), SpriteResource("sc28h.eg2"),
-		SpriteResource("sc28i.eg2"), SpriteResource("sc28j.eg2"),
-		SpriteResource("sc28k.eg2"), SpriteResource("sc28l.eg2"),
-		SpriteResource("sc28m.eg2"), SpriteResource("sc28n.eg2"),
-	};
-
 	screen.fadeOut();
+
+	// Four beams arc across bottom of Xeen
+	SpriteResource sc27("sc27.eg2");
 	screen.loadBackground("eg270001.raw");
 	screen.loadPalette("eg250001.pal");
 	screen.fadeIn();
@@ -593,7 +586,31 @@ bool WorldOfXeenCutscenes::worldEnding4() {
 	sound.stopSound();
 	screen.fadeOut();
 
+	return true;
+}
+
+bool WorldOfXeenCutscenes::worldEnding3() {
+	EventsManager &events = *_vm->_events;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
+	Window &w0 = windows[0];
+	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	SpriteResource sc30("sc30.eg2");
+	SpriteResource sc28[14] = {
+		SpriteResource("sc28a.eg2"), SpriteResource("sc28b1.eg2"),
+		SpriteResource("sc28c.eg2"), SpriteResource("sc28d.eg2"),
+		SpriteResource("sc28e.eg2"), SpriteResource("sc28f.eg2"),
+		SpriteResource("sc28g.eg2"), SpriteResource("sc28h.eg2"),
+		SpriteResource("sc28i.eg2"), SpriteResource("sc28j.eg2"),
+		SpriteResource("sc28k.eg2"), SpriteResource("sc28l.eg2"),
+		SpriteResource("sc28m.eg2"), SpriteResource("sc28n.eg2"),
+	};
+
+	// Transformation of Xeen into a globe
 	screen.loadBackground("eg280001.raw");
+	screen.loadPalette("eg250001.pal");
 	savedBg.blitFrom(screen);
 	w0.update();
 	screen.fadeIn();
@@ -609,6 +626,7 @@ bool WorldOfXeenCutscenes::worldEnding4() {
 
 	sound.stopSound();
 
+	// White screen with explosion sound
 	screen.loadPalette("white.pal");
 	screen.fadeIn();
 	sound.playSound("explosio.voc");
@@ -617,6 +635,7 @@ bool WorldOfXeenCutscenes::worldEnding4() {
 	screen.loadPalette("eg250001.pal");
 	screen.fadeOut();
 
+	// With the prophecy complete, the two sides of Xeen were united as one
 	for (int idx1 = 0; idx1 < 20; ++idx1) {
 		for (int idx2 = 0; idx2 < 4; ++idx2) {
 			sc30.draw(0, idx2);
@@ -625,7 +644,9 @@ bool WorldOfXeenCutscenes::worldEnding4() {
 
 			if (!idx1 && !idx2)
 				screen.fadeIn();
-			//if (idx1 == 17) ??MUSIC
+			if (idx1 == 17)
+				sound.songCommand(207);
+
 			WAIT(2);
 		}
 	}
