@@ -31,6 +31,7 @@ Windows::Windows() {
 	byte *data = new byte[f.size()];
 	f.read(data, f.size());
 	_fontData = data;
+	_fontWritePos = new Common::Point();
 
 	Common::fill(&_textColors[0], &_textColors[4], 0);
 	_bgColor = DEFAULT_BG_COLOR;
@@ -87,6 +88,7 @@ Windows::Windows() {
 
 Windows::~Windows() {
 	delete[] _fontData;
+	delete _fontWritePos;
 }
 
 void Windows::closeAll() {

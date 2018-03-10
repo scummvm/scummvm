@@ -27,18 +27,19 @@
 namespace Xeen {
 
 const byte *FontData::_fontData;
-Common::Point FontData::_writePos;
+Common::Point *FontData::_fontWritePos;
 byte FontData::_textColors[4];
 byte FontData::_bgColor;
 bool FontData::_fontReduced;
 Justify FontData::_fontJustify;
 
-FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr) {
+FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullptr),
+		_writePos(*FontData::_fontWritePos) {
 	setTextColor(0);
 }
 
 FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
-		_msgWraps(false), _displayString(nullptr) {
+		_msgWraps(false), _displayString(nullptr), _writePos(*FontData::_fontWritePos) {
 	create(w, h);
 	setTextColor(0);
 }
