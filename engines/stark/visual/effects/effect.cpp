@@ -20,51 +20,37 @@
  *
  */
 
-#ifndef STARK_VISUAL_VISUAL_H
-#define STARK_VISUAL_VISUAL_H
+#include "engines/stark/visual/effects/effect.h"
 
-#include "common/scummsys.h"
+#include "graphics/surface.h"
+
+#include "engines/stark/gfx/driver.h"
+#include "engines/stark/gfx/surfacerenderer.h"
+#include "engines/stark/gfx/texture.h"
 
 namespace Stark {
 
-class Visual {
-public:
-	enum VisualType {
-		kImageXMG       = 2,
-		kRendered       = 3,
-		kImageText      = 4,
-		kSmackerStream  = 5,
-		kActor          = 6,
-		kSmackerFMV     = 7,
-		kEffectFish     = 8,
-		kEffectBubbles  = 9,
-		kEffectFirefly  = 10,
-		kEffectSmoke    = 11,
-		kExplodingImage = 100
-	};
+VisualEffect::VisualEffect(VisualType type, const Common::Point &size, Gfx::Driver *gfx) :
+		Visual(type),
+		_size(size),
+		_gfx(gfx),
+		_timeBetweenTwoUpdates(3 * 33), // ms (frames @ 30 fps)
+		_timeRemainingUntilNextUpdate(0) {
+	_surface = new Graphics::Surface();
+	_surface->create(size.x, size.y, _gfx->getRGBAPixelFormat());
 
-	explicit Visual(VisualType type) : _type(type) {}
-	virtual ~Visual() {}
+	_texture = _gfx->createTexture(_surface);
 
-	/**
-	 * Returns the visual if it has the same type as the template argument
-	 */
-	template <class T>
-	T *get();
+	_surfaceRenderer = _gfx->createSurfaceRenderer();
+}
 
-private:
-	VisualType _type;
-};
-
-template<class T>
-T *Visual::get() {
-	if (_type != T::TYPE) {
-		return nullptr;
+VisualEffect::~VisualEffect() {
+	if (_surface) {
+		_surface->free();
 	}
-
-	return (T *) this;
+	delete _surface;
+	delete _texture;
+	delete _surfaceRenderer;
 }
 
 } // End of namespace Stark
-
-#endif // STARK_VISUAL_VISUAL_H

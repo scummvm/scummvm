@@ -20,51 +20,48 @@
  *
  */
 
-#ifndef STARK_VISUAL_VISUAL_H
-#define STARK_VISUAL_VISUAL_H
+#ifndef STARK_VISUAL_EFFECTS_EFFECT_H
+#define STARK_VISUAL_EFFECTS_EFFECT_H
 
-#include "common/scummsys.h"
+#include "engines/stark/visual/visual.h"
+
+#include "common/rect.h"
+
+#include "graphics/pixelformat.h"
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Stark {
 
-class Visual {
-public:
-	enum VisualType {
-		kImageXMG       = 2,
-		kRendered       = 3,
-		kImageText      = 4,
-		kSmackerStream  = 5,
-		kActor          = 6,
-		kSmackerFMV     = 7,
-		kEffectFish     = 8,
-		kEffectBubbles  = 9,
-		kEffectFirefly  = 10,
-		kEffectSmoke    = 11,
-		kExplodingImage = 100
-	};
-
-	explicit Visual(VisualType type) : _type(type) {}
-	virtual ~Visual() {}
-
-	/**
-	 * Returns the visual if it has the same type as the template argument
-	 */
-	template <class T>
-	T *get();
-
-private:
-	VisualType _type;
-};
-
-template<class T>
-T *Visual::get() {
-	if (_type != T::TYPE) {
-		return nullptr;
-	}
-
-	return (T *) this;
+namespace Gfx {
+class Driver;
+class SurfaceRenderer;
+class Texture;
 }
+
+/**
+ * A 2D visual effect overlay
+ *
+ * The backing surface is alpha blended on top of the scene
+ */
+class VisualEffect : public Visual {
+public:
+	explicit VisualEffect(VisualType type, const Common::Point &size, Gfx::Driver *gfx);
+	~VisualEffect() override;
+
+protected:
+	Gfx::Driver *_gfx;
+	Gfx::SurfaceRenderer *_surfaceRenderer;
+	Gfx::Texture *_texture;
+	Graphics::Surface *_surface;
+
+	uint _timeBetweenTwoUpdates;
+	int _timeRemainingUntilNextUpdate;
+	Common::Point _size;
+};
 
 } // End of namespace Stark
 
-#endif // STARK_VISUAL_VISUAL_H
+#endif // STARK_VISUAL_EFFECTS_EFFECT_H

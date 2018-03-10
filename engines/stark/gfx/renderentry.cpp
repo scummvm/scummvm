@@ -26,6 +26,7 @@
 #include "engines/stark/resources/item.h"
 
 #include "engines/stark/visual/actor.h"
+#include "engines/stark/visual/effects/bubbles.h"
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/prop.h"
 #include "engines/stark/visual/smacker.h"
@@ -73,6 +74,11 @@ void RenderEntry::render(const LightEntryArray &lights) {
 	VisualText *text = _visual->get<VisualText>();
 	if (text) {
 		text->render(_position);
+	}
+
+	VisualEffectBubbles *bubbles = _visual->get<VisualEffectBubbles>();
+	if (bubbles) {
+		bubbles->render(_position);
 	}
 }
 
