@@ -213,6 +213,10 @@ DECLARE_SCRIPT(HowieLee)
 	bool var_45DFB8;
 END_SCRIPT
 
+DECLARE_SCRIPT(FishDealer)
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(Klein)
 END_SCRIPT
 
