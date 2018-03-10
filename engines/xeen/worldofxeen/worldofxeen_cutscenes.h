@@ -52,7 +52,8 @@ private:
 	void setSubtitle2(const Common::String &msg);
 
 	/**
-	 * Part 1 of World of Xeen ending
+	 * Part 1 of World of Xeen ending, up to the point the Cube and Scepter have been
+	 * placed onto the Altar of Joining
 	 */
 	bool worldEnding1();
 

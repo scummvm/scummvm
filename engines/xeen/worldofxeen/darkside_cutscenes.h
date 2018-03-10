@@ -44,8 +44,10 @@ private:
 
 	/**
 	 * Animates the dragon pharoah
+	 * @param frame		Animation frame number
+	 * @param showBall	Flag whether to draw the crystal ball
 	 */
-	void animatePharoah(int frame);
+	void animatePharoah(int frame, bool showBall = true);
 
 	/**
 	 * Shows the Dark Side of Xeen title screen
@@ -97,6 +99,11 @@ private:
 	 * Last part of the Dark Side ending, shows the final score and saves the game/
 	 */
 	 void showDarkSideScore(uint endingScore);
+
+	/**
+	 * Shows the Pharaoh ending screen where score text is shown
+	 */
+	 bool showPharaohEndTextInner(const char *msg1, const char *msg2, const char *msg3);
 protected:
 	/**
 	 * Shows the Pharaoh ending screen where score text is shown

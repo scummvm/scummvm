@@ -222,8 +222,8 @@ bool DarkSideCutscenes::rubCrystalBall(bool fadeIn) {
 	return true;
 }
 
-void DarkSideCutscenes::animatePharoah(int frame) {
-	if (frame)
+void DarkSideCutscenes::animatePharoah(int frame, bool showBall) {
+	if (showBall && frame)
 		_ball.draw(0, frame - 1);
 	_claw.draw(0, 5, Common::Point(RIGHT_CLAW_IDLE_X[frame], RIGHT_CLAW_IDLE_Y[frame]), SPRFLAG_800);
 	_claw.draw(0, 6, Common::Point(149, 184));
@@ -1753,14 +1753,24 @@ void DarkSideCutscenes::showDarkSideScore(uint endingScore) {
 }
 
 bool DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, const char *msg3) {
+	_ball.load("ball.int");
+	_claw.load("claw.int");
+	_dragon1.load("dragon1.int");
+	bool result = showPharaohEndTextInner(msg1, msg2, msg3);
+
+	_ball.clear();
+	_claw.clear();
+	_dragon1.clear();
+	return result;
+}
+
+bool DarkSideCutscenes::showPharaohEndTextInner(const char *msg1, const char *msg2, const char *msg3) {
 	Screen &screen = *_vm->_screen;
 	EventsManager &events = *_vm->_events;
 	Windows &windows = *_vm->_windows;
 	int numPages = 0 + (msg1 ? 1 : 0) + (msg2 ? 1 : 0) + (msg3 ? 1 : 0);
 	const char *const text[3] = { msg1, msg2, msg3 };
 
-	_claw.load("claw.int");
-	_dragon1.load("dragon1.int");
 	screen.loadBackground("3room.raw");
 	screen.saveBackground();
 	screen.loadPalette("dark.pal");
@@ -1774,7 +1784,10 @@ bool DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 	for (int pageNum = 0; !_vm->shouldExit() && pageNum < numPages; ++pageNum) {
 		// Show each page until a key is pressed
 		do {
-			ANIMATE_PHAROAH;
+			events.updateGameCounter();
+			screen.restoreBackground();
+			animatePharoah(clawCtr, false);
+			clawCtr = (clawCtr + 1) % 32;
 
 			// Form the text string to display the text
 			Common::String str1 = Common::String::format(Res.PHAROAH_ENDING_TEXT1,
@@ -1786,14 +1799,12 @@ bool DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 			windows[39].writeString(str2);
 
 			windows[0].update();
-			WAIT(3);
+			events.wait(1);
 		} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
 		events.clearEvents();
 	}
 
-	_claw.clear();
-	_dragon1.clear();
 	return true;
 }
 

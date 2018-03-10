@@ -28,6 +28,12 @@ namespace Xeen {
 namespace WorldOfXeen {
 
 void WorldOfXeenCutscenes::showWorldOfXeenEnding(GooberState state, uint score) {
+	FileManager &files = *_vm->_files;
+	Screen &screen = *_vm->_screen;
+	Sound &sound = *_vm->_sound;
+	Windows &windows = *_vm->_windows;
+	files.setGameCc(2);
+
 	_goober = state;
 	_finalScore = score;
 
@@ -36,24 +42,22 @@ void WorldOfXeenCutscenes::showWorldOfXeenEnding(GooberState state, uint score) 
 			if (worldEnding3())
 				worldEnding4();
 
-	g_vm->_sound->stopAllAudio();
-	g_vm->_screen->fadeOut();
+	windows[41].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	sound.stopAllAudio();
+	screen.fadeOut();
 }
 
 bool WorldOfXeenCutscenes::worldEnding1() {
 	EventsManager &events = *_vm->_events;
-	FileManager &files = *_vm->_files;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	Window &w0 = windows[0];
 	Graphics::ManagedSurface savedBg(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	files.setGameCc(0);
 	sound.playSong("outday3.m");
 	if (!showPharaohEndText(Res.WORLD_END_TEXT[0]))
 		return false;
-	sound.playSound("elect.voc", 1, 0);
 
 	screen.loadBackground("skymain.raw");
 	savedBg.blitFrom(screen);
@@ -77,25 +81,30 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		SpriteResource("sc22a.eg2"), SpriteResource("sc22b.eg2")
 	};
 
+	// Fade out the screen and the music
+	sound.songCommand(223);
 	windows[41].writeString("\x1\xD");
+	windows[41].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, 185));
+
 	screen.fadeOut();
 	while (!_vm->shouldExit() && sound.isSoundPlaying())
 		events.pollEventsAndWait();
 
+	// And so the call went out to the people through the lands of Xeen that the
+	// prophecy was nearing completion.
 	sound.playSong("nwblksmt.m");
 	screen.blitFrom(savedBg);
 	setSubtitle(Res.WORLD_END_TEXT[1]);
 	w0.update();
 	screen.fadeIn();
 
-	events.updateGameCounter();
 	WAIT(60);
 
+	// Dragon approaching tower in distance
 	for (int idx = 0; idx < 50; ++idx) {
 		if (idx == 9 || idx == 22 || idx == 33 || idx == 44)
 			sound.playSound("whoosh.voc");
 
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc02.draw(0, idx);
 		setSubtitle(Res.WORLD_END_TEXT[1]);
@@ -104,9 +113,9 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		WAIT(2);
 	}
 
+	// Dragon landing on tower
 	for (int idx = 0; idx < 40; ++idx) {
 		screen.horizMerge();
-		events.updateGameCounter();
 		tower1.draw(0, 0, Common::Point(0, 0), SPRFLAG_800);
 		sc3a.draw(0, idx, Common::Point(91, 86), SPRFLAG_800);
 
@@ -114,13 +123,13 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		WAIT(2);
 	}
 
+	// They came in great numbers to witness the momentous occasion
 	int frame = 40, frame2 = 0;
-	for (int idx = 0, xp = 0; idx < SCREEN_WIDTH; ++idx) {
-		events.updateGameCounter();
+	for (int idx = 0, xp = 0; idx < SCREEN_WIDTH; idx += 5) {
 		screen.horizMerge(xp);
 		tower1.draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
 		sc3a.draw(0, frame, Common::Point(idx + 91, 86), SPRFLAG_800);
-		tower2.draw(0, 0, Common::Point(idx - 320, 0), SPRFLAG_800);
+		tower2.draw(0, 0, Common::Point(idx - SCREEN_WIDTH, 0), SPRFLAG_800);
 		tower2.draw(0, 1, Common::Point(idx - (SCREEN_WIDTH / 2), 0), SPRFLAG_800);
 		sc3b[frame2 / 30].draw(0, frame2 % 30, Common::Point(idx - 277, 65), SPRFLAG_800);
 
@@ -138,11 +147,10 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	}
 
 	for (; frame2 < 60; ++frame2) {
-		events.updateGameCounter();
 		screen.horizMerge(frame);
 		tower2.draw(0, 0, Common::Point(0, 0), SPRFLAG_800);
 		tower2.draw(0, 1, Common::Point(SCREEN_WIDTH / 2, 0), SPRFLAG_800);
-		sc3b[frame2 / 30].draw(frame2 % 30, 0, Common::Point(43, 65), SPRFLAG_800);
+		sc3b[frame2 / 30].draw(0, frame2 % 30, Common::Point(43, 65), SPRFLAG_800);
 
 		setSubtitle(Res.WORLD_END_TEXT[2]);
 		w0.update();
@@ -154,17 +162,18 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	screen.loadBackground("foura.raw");
 	savedBg.blitFrom(screen);
 
-	sc06.draw(0, 0, Common::Point(26, 25));
+	// Crowd sitting down in chamber
+	sc06.draw(0, 0, Common::Point(26, 75));
 	w0.update();
 	screen.fadeIn();
 
 	for (int idx = 0; idx < 26; ++idx) {
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc06.draw(0, idx, Common::Point(26, 75));
 		WAIT(2);
 	}
 
+	// The Dragon Pharoah presided over the ceremony
 	screen.fadeOut();
 	screen.loadBackground("eg140001.raw");
 	savedBg.blitFrom(screen);
@@ -174,7 +183,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 
 	for (int idx1 = 0; idx1 < 2; ++idx1) {
 		for (int idx2 = 0; idx2 < 15; ++idx2) {
-			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sc14.draw(0, idx2, Common::Point(141, 63));
 			setSubtitle(Res.WORLD_END_TEXT[3]);
@@ -184,15 +192,15 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		}
 	}
 
+	// Queen Kalindra presented the Cube of Power
 	screen.loadBackground("eg100001.raw");
 	screen.loadPage(0);
 	savedBg.blitFrom(screen);
 
 	for (int idx1 = 0; idx1 < 2; ++idx1) {
 		for (int idx2 = 0; idx2 < 6; ++idx2) {
-			events.updateGameCounter();
 			screen.blitFrom(savedBg);
-			sc14.draw(0, idx2, Common::Point(26, 21));
+			sc13.draw(0, idx2, Common::Point(26, 21));
 			setSubtitle(Res.WORLD_END_TEXT[4]);
 
 			w0.update();
@@ -200,6 +208,7 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		}
 	}
 
+	// Queen Kalindra lifts up the Cube of Power
 	screen.blitFrom(savedBg);
 	sc13.draw(0, 5, Common::Point(26, 21));
 	savedBg.blitFrom(screen);
@@ -211,25 +220,25 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
-		sc17.draw(0, 0, Common::Point(33, idx), SPRFLAG_4000);
-		sc17.draw(0, frame, Common::Point(33, idx), SPRFLAG_4000);
+		sc17.draw(41, 0, Common::Point(33, idx), SPRFLAG_4000);
+		sc17.draw(41, frame, Common::Point(33, idx), SPRFLAG_4000);
 		setSubtitle(Res.WORLD_END_TEXT[4]);
 
 		w0.update();
 		WAIT(2);
-		frame = (frame + 1) % 17;
+
+		// WORKAROUND: sc17.eg2 has 17 frames, but the last is malformed. So skip it
+		frame = (frame + 1) % 16;
 	}
 
-	for (int idx = 0; idx < 17; ++idx) {
+	for (int idx = 0; idx < 16; ++idx) {
 		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
-		sc17.draw(0, 0, Common::Point(33, 68), SPRFLAG_4000);
-		sc17.draw(0, idx, Common::Point(33, 68), SPRFLAG_4000);
+		sc17.draw(41, 0, Common::Point(33, 68), SPRFLAG_4000);
+		sc17.draw(41, idx, Common::Point(33, 68), SPRFLAG_4000);
 		setSubtitle(Res.WORLD_END_TEXT[4]);
 
 		w0.update();
@@ -249,7 +258,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 
 	for (int idx1 = 0; idx1 < 2; ++idx1) {
 		for (int idx2 = 0; idx2 < 15; ++idx2) {
-			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sc14.draw(0, idx2, Common::Point(141, 63));
 
@@ -258,12 +266,12 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		}
 	}
 
+	// Prince Roland presented the Xeen Sceptre
 	screen.horizMerge(0);
 	savedBg.blitFrom(screen);
 
 	for (int idx1 = 0; idx1 < 3; ++idx1) {
-		for (int idx2 = 0; idx2 < 15; ++idx2) {
-			events.updateGameCounter();
+		for (int idx2 = 0; idx2 < 5; ++idx2) {
 			screen.blitFrom(savedBg);
 			sc10.draw(0, idx2, Common::Point(26, 21));
 			setSubtitle(Res.WORLD_END_TEXT[5]);
@@ -277,20 +285,18 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	setSubtitle(Res.WORLD_END_TEXT[5]);
 	w0.update();
 
-	for (int idx = 185; idx > 13; idx -= 6) {
-		events.updateGameCounter();
+	for (int yp = 185; yp > 13; yp -= 6) {
 		screen.blitFrom(savedBg);
-		staff.draw(0, 0, Common::Point(196, idx), SPRFLAG_4000);
+		staff.draw(41, 0, Common::Point(196, yp), SPRFLAG_4000);
 		setSubtitle(Res.WORLD_END_TEXT[5]);
 
 		w0.update();
 		WAIT(2);
 	}
 
-	events.updateGameCounter();
 	WAIT(30);
-
 	screen.fadeOut();
+
 	screen.loadBackground("eg140001.raw");
 	savedBg.blitFrom(screen);
 	w0.update();
@@ -298,7 +304,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 
 	for (int idx1 = 0; idx1 < 2; ++idx1) {
 		for (int idx2 = 0; idx2 < 15; ++idx2) {
-			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sc14.draw(0, idx2, Common::Point(141, 63));
 
@@ -307,6 +312,7 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		}
 	}
 
+	// Together, they placed the Cube of Power...
 	screen.loadBackground("tablmain.raw");
 	savedBg.blitFrom(screen);
 	screen.loadPage(1);
@@ -320,11 +326,10 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc20[0].draw(0, 0, Common::Point(26, 55));
 		hands.draw(0, 0, Common::Point(58, 17));
-		cube.draw(0, 0, Common::Point(101, 11), SPRFLAG_4000);
+		cube.draw(0, idx, Common::Point(101, 11), SPRFLAG_4000);
 		setSubtitle(Res.WORLD_END_TEXT[6]);
 
 		w0.update();
@@ -336,10 +341,9 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc20[0].draw(0, 0, Common::Point(26, 55));
-		hands.draw(0, 0, Common::Point(58, 17));
+		hands.draw(0, idx, Common::Point(58, 17));
 		cube.draw(0, frame, Common::Point(101, 11), SPRFLAG_4000);
 		setSubtitle(Res.WORLD_END_TEXT[6]);
 
@@ -348,15 +352,15 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		frame = (frame + 1) % 5;
 	}
 
+	// Cube lowers into table
 	frame = 0;
-	for (int idx = 11; idx < 82; ++idx) {
+	for (int yp = 11; yp < 82; ++yp) {
 		if (!sound.isSoundPlaying())
 			sound.playSound("cast.voc");
 
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc20[0].draw(0, 0, Common::Point(26, 55));
-		cube.draw(0, frame, Common::Point(101, idx), SPRFLAG_4000);
+		cube.draw(0, frame, Common::Point(101, yp), SPRFLAG_4000);
 		setSubtitle(Res.WORLD_END_TEXT[6]);
 
 		w0.update();
@@ -366,6 +370,7 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 
 	sound.stopSound();
 
+	// Table is activating
 	sound.playSound("click.voc");
 	sound.playSound("padspell.voc");
 
@@ -373,7 +378,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		if (idx == 10)
 			sound.playSound("padspell.voc");
 
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc20[idx / 7].draw(0, idx % 7, Common::Point(26, 55));
 		setSubtitle(Res.WORLD_END_TEXT[6]);
@@ -386,7 +390,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		if (idx == 10)
 			sound.playSound("padspell.voc");
 
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc20[2].draw(0, idx, Common::Point(26, 55));
 		setSubtitle(Res.WORLD_END_TEXT[6]);
@@ -396,7 +399,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	}
 
 	for (int idx = 0; idx < 6; ++idx) {
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc20[3].draw(0, idx, Common::Point(26, 55));
 		setSubtitle(Res.WORLD_END_TEXT[6]);
@@ -408,9 +410,9 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 	screen.blitFrom(savedBg);
 	setSubtitle(Res.WORLD_END_TEXT[6]);
 	w0.update();
-	events.updateGameCounter();
 	WAIT(30);
 
+	// And the Scepotre, onto the Altar of Joining
 	screen.horizMerge(SCREEN_WIDTH);
 	savedBg.blitFrom(screen);
 	screen.freePages();
@@ -423,7 +425,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 		else if (idx == 22)
 			sound.playSound("explosio.voc");
 
-		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sc22[idx / 20].draw(0, idx % 20, Common::Point(112, 17));
 		setSubtitle(Res.WORLD_END_TEXT[7]);
@@ -463,7 +464,6 @@ bool WorldOfXeenCutscenes::worldEnding2() {
 		if (idx == 2 || idx == 15 || idx == 25 || idx == 33 || idx == 41)
 			sound.playSound("gascompr.voc");
 
-		events.updateGameCounter();
 		sc23[idx / 8].draw(0, frame % 8);
 		w0.update();
 		WAIT(4);
@@ -499,7 +499,6 @@ bool WorldOfXeenCutscenes::worldEnding3() {
 		if (!sound.isSoundPlaying())
 			sound.playSound("comet.voc");
 
-		events.updateGameCounter();
 		sc25.draw(0, idx);
 		w0.update();
 		WAIT(2);
@@ -517,7 +516,6 @@ bool WorldOfXeenCutscenes::worldEnding3() {
 
 	int frame1 = 0, frame2 = 0, frame3 = 0, ctr = 0;
 	for (int idx = 0; idx < 78; ++idx) {
-		events.updateGameCounter();
 		sc261[ctr / 14].draw(0, idx % 17, Common::Point(7, 4));
 		sc262.draw(0, frame1, Common::Point(86, 4));
 		sc263.draw(0, frame2, Common::Point(164, 4));
@@ -585,7 +583,6 @@ bool WorldOfXeenCutscenes::worldEnding4() {
 		if (idx == 19 || idx == 60)
 			sound.playSound("click.voc");
 
-		events.updateGameCounter();
 		sc27.draw(0, idx);
 		w0.update();
 		WAIT(2);
@@ -603,9 +600,7 @@ bool WorldOfXeenCutscenes::worldEnding4() {
 		if (!sound.isSoundPlaying() && idx > 98)
 			sound.playSound("rumble.voc");
 
-		events.updateGameCounter();
 		sc28[idx / 10].draw(0, idx % 10, Common::Point(52, 15));
-
 		w0.update();
 		WAIT(2);
 	}
@@ -615,7 +610,6 @@ bool WorldOfXeenCutscenes::worldEnding4() {
 	screen.loadPalette("white.pal");
 	screen.fadeIn();
 	sound.playSound("explosio.voc");
-	events.updateGameCounter();
 	WAIT(10);
 
 	screen.loadPalette("eg250001.pal");
@@ -636,7 +630,6 @@ bool WorldOfXeenCutscenes::worldEnding4() {
 
 	screen.fadeOut();
 	while (sound.isMusicPlaying()) {
-		events.updateGameCounter();
 		WAIT(2);
 	}
 
@@ -656,12 +649,12 @@ void WorldOfXeenCutscenes::setSubtitle(const Common::String &msg) {
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[28];
 
-	const char *const FORMAT1 = "\xB""000\t000\xC""38\x3""c%s";
-	w.setBounds(Common::Rect(2, 157, SCREEN_WIDTH, SCREEN_HEIGHT - 2));
+	const char *const FORMAT1 = "\v000\t000\f38\x3""c%s";
+	w.setBounds(Common::Rect(2, 157, SCREEN_WIDTH, 157 + 61));
 	w.writeString(Common::String::format(FORMAT1, msg.c_str()));
 
-	const char *const FORMAT2 = "\xB""000\t000\xC""39\x3""c%s";
-	w.setBounds(Common::Rect(1, 156, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 4));
+	const char *const FORMAT2 = "\v000\t000\f39\x3""c%s";
+	w.setBounds(Common::Rect(1, 156, SCREEN_WIDTH - 1, 156 + 60));
 	w.writeString(Common::String::format(FORMAT2, msg.c_str()));
 }
 
@@ -669,11 +662,11 @@ void WorldOfXeenCutscenes::setSubtitle2(const Common::String &msg) {
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[28];
 
-	const char *const FORMAT1 = "\xB""000\t000\xC""05\x3""c%s";
+	const char *const FORMAT1 = "\v000\t000\f05\x3""c%s";
 	w.setBounds(Common::Rect(2, 157, SCREEN_WIDTH, SCREEN_HEIGHT - 2));
 	w.writeString(Common::String::format(FORMAT1, msg.c_str()));
 
-	const char *const FORMAT2 = "\xB""000\t000\xC""11\x3""c%s";
+	const char *const FORMAT2 = "\v000\t000\f11\x3""c%s";
 	w.setBounds(Common::Rect(1, 156, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 4));
 	w.writeString(Common::String::format(FORMAT2, msg.c_str()));
 }
