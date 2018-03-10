@@ -42,6 +42,7 @@ MODULE_OBJS := \
 	interface.o \
 	interface_minimap.o \
 	interface_scene.o \
+	item.o \
 	locations.o \
 	map.o \
 	party.o \
