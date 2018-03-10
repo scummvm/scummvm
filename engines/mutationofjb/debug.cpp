@@ -32,12 +32,25 @@
 
 namespace MutationOfJB {
 
-/*
-TODO
-static Common::String convertTo7bitASCII() {
-	return Common::String();
+/* Converts CP895 string to 7bit ASCII, so we can show it in the console. */
+static Common::String convertToASCII(const Common::String &str) {
+	static const char conversionTable[] = {
+		'C', 'u', 'e', 'd', 'a', 'D', 'T', 'c', 'e', 'E', 'L', 'I', 'l', 'l', 'A', 'A', /* 0x80-0x8F */
+		'E', 'z', 'Z', 'o', 'o', 'O', 'u', 'U', 'y', 'O', 'U', 'S', 'L', 'Y', 'R', 't', /* 0x90-0x9F */
+		'a', 'i', 'o', 'u', 'n', 'N', 'U', 'O', 's', 'r', 'r', 'R'						/* 0xA0-0xAB */
+	};
+
+	Common::String ret = str;
+	for (Common::String::iterator it = ret.begin(); it != ret.end(); ++it) {
+		const byte cp895Byte = reinterpret_cast<const byte &>(*it);
+		if (cp895Byte >= 0x80 && cp895Byte <= 0xAB) {
+			*it = conversionTable[cp895Byte - 0x80];
+		} else if (cp895Byte == 0xE1) { // ß
+			*it = 's';
+		}
+	}
+	return ret;
 }
-*/
 
 Console::Console(MutationOfJBEngine *vm) : _vm(vm) {
 	registerCmd("listsections", WRAP_METHOD(Console, cmd_listsections));
@@ -59,28 +72,28 @@ bool Console::cmd_listsections(int argc, const char **argv) {
 				const ActionInfos &actionInfos = script->getLookActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					debugPrintf(_("Look %s\n"), actionInfo._object1Name.c_str());
+					debugPrintf(_("Look %s\n"), convertToASCII(actionInfo._object1Name).c_str());
 				}
 			} else if (strcmp(argv[2], "W") == 0) {
 				const ActionInfos &actionInfos = script->getWalkActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					debugPrintf(_("Walk %s\n"), actionInfo._object1Name.c_str());
+					debugPrintf(_("Walk %s\n"), convertToASCII(actionInfo._object1Name).c_str());
 				}
 			} else if (strcmp(argv[2], "T") == 0) {
 				const ActionInfos &actionInfos = script->getTalkActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					debugPrintf(_("Talk %s\n"), actionInfo._object1Name.c_str());
+					debugPrintf(_("Talk %s\n"), convertToASCII(actionInfo._object1Name).c_str());
 				}
 			} else if (strcmp(argv[2], "U") == 0) {
 				const ActionInfos &actionInfos = script->getUseActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
 					if (actionInfo._object2Name.empty()) {
-						debugPrintf(_("Use %s\n"), actionInfo._object1Name.c_str());
+						debugPrintf(_("Use %s\n"), convertToASCII(actionInfo._object1Name).c_str());
 					} else {
-						debugPrintf(_("Use %s %s\n"), actionInfo._object1Name.c_str(), actionInfo._object2Name.c_str());
+						debugPrintf(_("Use %s %s\n"), convertToASCII(actionInfo._object1Name).c_str(), convertToASCII(actionInfo._object2Name).c_str());
 					}
 				}
 			} else {
@@ -135,7 +148,7 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 				const ActionInfos &actionInfos = script->getLookActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					if (actionInfo._object1Name == argv[3]) {
+					if (convertToASCII(actionInfo._object1Name) == argv[3]) {
 						found = true;
 						command = actionInfo._command;
 						break;
@@ -145,7 +158,7 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 				const ActionInfos &actionInfos = script->getWalkActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					if (actionInfo._object1Name == argv[3]) {
+					if (convertToASCII(actionInfo._object1Name) == argv[3]) {
 						found = true;
 						command = actionInfo._command;
 						break;
@@ -155,7 +168,7 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 				const ActionInfos &actionInfos = script->getTalkActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					if (actionInfo._object1Name == argv[3]) {
+					if (convertToASCII(actionInfo._object1Name) == argv[3]) {
 						found = true;
 						command = actionInfo._command;
 						break;
@@ -165,7 +178,7 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 				const ActionInfos &actionInfos = script->getUseActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					if (actionInfo._object1Name == argv[3] && ((argc == 4 && actionInfo._object2Name.empty()) || (argc > 4 && actionInfo._object2Name == argv[4]))) {
+					if (convertToASCII(actionInfo._object1Name) == argv[3] && ((argc == 4 && actionInfo._object2Name.empty()) || (argc > 4 && convertToASCII(actionInfo._object2Name) == argv[4]))) {
 						found = true;
 						command = actionInfo._command;
 						break;
