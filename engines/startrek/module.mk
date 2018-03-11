@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	font.o \
 	lzss.o \
 	graphics.o \
+	room.o \
 	sound.o \
 	sprite.o \
 	startrek.o \

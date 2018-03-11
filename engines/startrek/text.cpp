@@ -24,9 +24,28 @@
 
 #include "startrek/graphics.h"
 
+
+// List of events that can be returned by handleTextEvents.
+enum TextEvent {
+	TEXTEVENT_RCLICK_OFFBUTTON = 0,
+	TEXTEVENT_ENABLEINPUT,          // Makes buttons selectable (occurs after a delay)
+	TEXTEVENT_RCLICK_ONBUTTON,
+	TEXTEVENT_LCLICK_OFFBUTTON,
+	TEXTEVENT_CONFIRM,
+	TEXTEVENT_SCROLLUP,
+	TEXTEVENT_SCROLLDOWN,
+	TEXTEVENT_PREVCHOICE,
+	TEXTEVENT_NEXTCHOICE,
+	TEXTEVENT_SCROLLUP_ONELINE,
+	TEXTEVENT_SCROLLDOWN_ONELINE,
+	TEXTEVENT_GOTO_TOP,
+	TEXTEVENT_GOTO_BOTTOM,
+	TEXTEVENT_SPEECH_DONE
+};
+
 namespace StarTrek {
 
-int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoffset, int textColor, int argC, int maxTextLines, int arg10) {
+int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10) {
 	uint16 tmpTextboxVar1 = _textboxVar1;
 
 	uint32 var7c = 8;
@@ -37,10 +56,10 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	int numChoicesWithNames = 0;
 	int numTextboxLines = 0;
 	int numChoices = 0;
-	Common::String speakerText;
+	String speakerText;
 
 	while(true) {
-		Common::String choiceText = (this->*textGetter)(numChoices, var, &speakerText);
+		String choiceText = (this->*textGetter)(numChoices, var, &speakerText);
 		if (choiceText.empty())
 			break;
 
@@ -66,7 +85,7 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	SharedPtr<TextBitmap> textBitmap = initTextSprite(&xoffset, &yoffset, textColor, numTextboxLines, numChoicesWithNames, &textboxSprite);
 
 	int choiceIndex = 0;
-	int var28 = 0;
+	int scrollOffset = 0;
 	if (tmpTextboxVar1 != 0 && tmpTextboxVar1 != 1 && numChoices == 1
 			&& _textboxVar5 != 0 && _textboxVar4 == 0)
 		_textboxHasMultipleChoices = false;
@@ -78,8 +97,8 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	else
 		_textboxVar6 = false;
 
-	int numPrintedLines;
-	Common::String lineFormattedText = readLineFormattedText(textGetter, var, choiceIndex, textBitmap, numTextboxLines, &numPrintedLines);
+	int numTextLines;
+	String lineFormattedText = readLineFormattedText(textGetter, var, choiceIndex, textBitmap, numTextboxLines, &numTextLines);
 
 	if (lineFormattedText.empty()) { // Technically should check for nullptr
 		// TODO
@@ -104,15 +123,129 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 		if (var7c == 0) {
 			// sub_28ACA(0x0001);
 		}
-		if (argC == 0) {
+		if (loopChoices == 0) {
 			// sub_28ACA(0x0008);
 		}
 
 		bool doneShowingText = false;
 
+		// Loop until text is done being displayed
 		while (!doneShowingText) {
-			// TODO
-			_vm->pollEvents();
+			int textboxReturnCode = handleTextboxEvents(var7c, true);
+
+			if (var7c == 0) {
+				clearMenuButtonVar2Bits(0x0001);
+			}
+
+			switch(textboxReturnCode) {
+
+			case TEXTEVENT_RCLICK_OFFBUTTON:
+			case TEXTEVENT_RCLICK_ONBUTTON:
+				if (var7c == 0) {
+					doneShowingText = true;
+					if (arg10)
+						choiceIndex = -1;
+				}
+				break;
+
+			case TEXTEVENT_CONFIRM:
+				doneShowingText = true;
+				break;
+
+			case TEXTEVENT_SCROLLUP:
+				scrollOffset -= numTextboxLines;
+				goto readjustScrollUp;
+
+			case TEXTEVENT_SCROLLDOWN:
+				scrollOffset += numTextboxLines;
+				goto readjustScrollDown;
+
+			case TEXTEVENT_SCROLLUP_ONELINE:
+				scrollOffset--;
+				goto readjustScrollUp;
+
+			case TEXTEVENT_SCROLLDOWN_ONELINE:
+				scrollOffset++;
+				goto readjustScrollDown;
+
+			case TEXTEVENT_GOTO_TOP:
+				scrollOffset = 0;
+				goto readjustScrollUp;
+
+			case TEXTEVENT_GOTO_BOTTOM:
+				scrollOffset = numTextLines - numTextboxLines;
+				goto readjustScrollDown;
+
+readjustScrollUp:
+				clearMenuButtonVar2Bits(0x0004);
+				if (scrollOffset < 0)
+					scrollOffset = 0;
+				if (scrollOffset == 0)
+					setMenuButtonVar2Bits(0x0002);
+				goto readjustScroll;
+
+readjustScrollDown:
+				clearMenuButtonVar2Bits(0x0002);
+				if (scrollOffset >= numTextLines)
+					scrollOffset -= numTextboxLines;
+				if (scrollOffset > numTextLines-1)
+					scrollOffset = numTextLines-1;
+				if (scrollOffset+numTextboxLines >= numTextLines)
+					setMenuButtonVar2Bits(0x0004);
+				goto readjustScroll;
+
+readjustScroll:
+				textboxSprite.bitmapChanged = true;
+				// sub_225d3(textBitmap, numTextLines-scrollOffset, numTextboxLines, lineFormattedText+scrollOffset*0x18);
+				break;
+
+			case TEXTEVENT_PREVCHOICE:
+				choiceIndex--;
+				if (!loopChoices && choiceIndex == 0) {
+					setMenuButtonVar2Bits(0x0008);
+				}
+				else {
+					if (choiceIndex < 0)
+						choiceIndex = numChoices-1;
+				}
+				clearMenuButtonVar2Bits(0x0010);
+				goto reloadText;
+
+			case TEXTEVENT_NEXTCHOICE:
+				clearMenuButtonVar2Bits(0x0008);
+				choiceIndex++;
+				if (!loopChoices && choiceIndex == numChoices-1) {
+					setMenuButtonVar2Bits(0x0010);
+				}
+				else {
+					choiceIndex %= numChoices;
+				}
+				goto reloadText;
+
+reloadText:
+				scrollOffset = 0;
+				lineFormattedText = readLineFormattedText(textGetter, var, choiceIndex, textBitmap, numTextboxLines, &numTextLines);
+				if (numTextLines <= numTextboxLines) {
+					// sub_288FB(0x0019);
+				}
+				else {
+					// sub_288FB(0x001F);
+				}
+				clearMenuButtonVar2Bits(0x0004);
+				setMenuButtonVar2Bits(0x0002);
+				textboxSprite.bitmapChanged = true;
+				break;
+
+			case TEXTEVENT_SPEECH_DONE:
+				if (numChoices == 1)
+					doneShowingText = true;
+				break;
+
+			case TEXTEVENT_ENABLEINPUT:
+			case TEXTEVENT_LCLICK_OFFBUTTON:
+			default:
+				break;
+			}
 		}
 
 		setMouseCursor(oldMouseBitmap);
@@ -133,13 +266,46 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	return choiceIndex;
 }
 
-Common::String Graphics::tmpFunction(int choiceIndex, int var, Common::String *speakerTextOutput) {
-	if (speakerTextOutput != nullptr)
-		*speakerTextOutput = "Speaker";
+int Graphics::handleTextboxEvents(uint32 arg0, bool arg4) {
+	// TODO
+	while (true) {
+		_vm->pollEvents();
+	}
+}
+
+String Graphics::tmpFunction(int choiceIndex, int var, String *headerTextOutput) {
+	if (headerTextOutput != nullptr)
+		*headerTextOutput = "Speaker                 ";
 
 	if (choiceIndex >= 1)
 		return NULL;
 	return "Text test";
+}
+
+String Graphics::readTextFromRdf(int choiceIndex, int rdfVar, String *headerTextOutput) {
+	Room *room = _vm->getRoom();
+
+	// FIXME: in original game "rdfVar" is a pointer to the variable holding the offset.
+	// Currently treating it as the offset itself.
+	uint16 textOffset = room->readRdfWord(rdfVar + (choiceIndex+1)*2);
+
+	if (textOffset == 0)
+		return "";
+
+	if (headerTextOutput != nullptr) {
+		uint16 speakerOffset = room->readRdfWord(rdfVar);
+		if (speakerOffset == 0 || room->_rdfData[speakerOffset] == '\0')
+			*headerTextOutput = "";
+		else {
+			char *speakerText = (char*)&room->_rdfData[speakerOffset];
+			if (room->readRdfWord(rdfVar+4) != 0) // Check if there's more than one option
+				getTextboxHeader(headerTextOutput, speakerText, choiceIndex+1);
+			else
+				getTextboxHeader(headerTextOutput, speakerText, 0);
+		}
+	}
+
+	return (char*)&room->_rdfData[textOffset];
 }
 
 /**
@@ -219,36 +385,220 @@ SharedPtr<TextBitmap> Graphics::initTextSprite(int *xoffsetPtr, int *yoffsetPtr,
 	return bitmap;
 }
 
-Common::String Graphics::skipOverAudioPrompt(const Common::String &str) {
-	// TODO
-	return str;
+/**
+ * Draws the "main" text (everything but the header which includes the speaker) to
+ * a TextBitmap.
+ */
+void Graphics::drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &_text, bool withHeader) {
+	byte *dest = bitmap->pixels + TEXTBOX_WIDTH + 1; // Start of 2nd row
+	const char *text = _text.c_str();
+
+	if (numTextLines >= numTextboxLines)
+		numTextLines = numTextboxLines;
+
+	if (withHeader)
+		dest += TEXTBOX_WIDTH*2; // Start of 4th row
+
+	int lineIndex = 0;
+	while (lineIndex != numTextLines) {
+		memcpy(dest, text, TEXTBOX_WIDTH-2);
+		text += TEXTBOX_WIDTH-2;
+		dest += TEXTBOX_WIDTH;
+		lineIndex++;
+	}
+
+	debug("%d, %d\n", numTextLines, numTextboxLines);
+	// Fill all remaining blank lines
+	while (lineIndex != numTextboxLines) {
+		memset(dest, ' ', TEXTBOX_WIDTH-2);
+		dest += TEXTBOX_WIDTH;
+		lineIndex++;
+	}
 }
 
-int Graphics::getNumLines(const Common::String &str) {
-	// TODO
-	return 1;
+/**
+ * Returns the number of lines this string will take up in a textbox.
+ */
+int Graphics::getNumLines(const String &str) {
+	const char *text = str.c_str();
+	char line[TEXTBOX_WIDTH];
+
+	int lines = 0;
+
+	while (text != nullptr) {
+		text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
+		lines++;
+	}
+	return lines-1;
 }
 
-Common::String Graphics::readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numPrintedLines) {
-	// TODO
-	*numPrintedLines = 1;
+void Graphics::getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex) {
+	String header = speakerText;
+
+	if (choiceIndex != 0)
+		header += String::format(" choice %d", choiceIndex);
+
+	if (header.size() > TEXTBOX_WIDTH-2)
+		header.erase(TEXTBOX_WIDTH-2);
+	while (header.size() < TEXTBOX_WIDTH-2)
+		header += ' ';
+
+	*headerTextOutput = header;
+}
+
+String Graphics::readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numTextLines) {
+	String headerText;
+	String text = (this->*textGetter)(choiceIndex, var, &headerText);
+
+	if (_textboxVar1 == 2 && _textboxVar5 == 1 && _textboxVar4 == 1) {
+		uint32 oldSize = text.size();
+		text = playTextAudio(text);
+		if (oldSize != text.size())
+			_textboxHasMultipleChoices = true;
+	}
+	else if ((_textboxVar1 == 0 || _textboxVar1 == 1) && _textboxVar5 == 1 && _textboxVar4 == 1) {
+		text = playTextAudio(text);
+	}
+	else {
+		text = skipTextAudioPrompt(text);
+	}
+
+	if (_textboxHasMultipleChoices) {
+		*numTextLines = getNumLines(text);
+
+		bool hasHeader = !headerText.empty();
+
+		String lineFormattedText = putTextIntoLines(text);
+		drawMainText(textBitmap, *numTextLines, numTextboxLines, lineFormattedText, hasHeader);
+
+		assert(headerText.size() == TEXTBOX_WIDTH-2);
+		memcpy(textBitmap->pixels+TEXTBOX_WIDTH+1, headerText.c_str(), TEXTBOX_WIDTH-2);
+
+		return lineFormattedText;
+	}
+	else
+		return nullptr;
+
+	/* Barebones implementation
+	*numTextLines = 1;
 
 	uint numChars = textBitmap->width*textBitmap->height;
 
-	Common::String text = (this->*textGetter)(choiceIndex, var, nullptr);
+	String text = (this->*textGetter)(choiceIndex, var, nullptr);
 	while (text.size() < numChars) text += ' ';
 
 	byte *dest = textBitmap->pixels + TEXTBOX_WIDTH + 1;
 
-	for (int y=0; y<*numPrintedLines; y++) {
+	for (int y=0; y<*numTextLines; y++) {
 		memcpy(dest, text.c_str(), TEXTBOX_WIDTH-2);
 		dest += TEXTBOX_WIDTH;
 	}
 
 	return text;
+	*/
 }
 
-void Graphics::loadMenuButtons(Common::String mnuFilename, int xpos, int ypos) {
+String Graphics::putTextIntoLines(const String &_text) {
+	char line[TEXTBOX_WIDTH];
+
+	const char *text = _text.c_str();
+	String output;
+
+	text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
+
+	while (text != nullptr) {
+		int len = strlen(line);
+		while (len != TEXTBOX_WIDTH-2) {
+			line[len++] = ' ';
+			line[len] = '\0';
+		}
+		output += line;
+
+		text = getNextTextLine(text, line, TEXTBOX_WIDTH-2);
+	}
+
+	return output;
+}
+
+/**
+ * Gets one line of text (does not include words that won't fit).
+ * Returns position of text to continue from, or nullptr if done.
+ */
+const char *Graphics::getNextTextLine(const char *text, char *lineOutput, int lineWidth) {
+	*lineOutput = '\0';
+	if (*text == '\0')
+		return nullptr;
+
+	const char *lastSpaceInput = nullptr;
+	char *lastSpaceOutput = nullptr;
+	int var4;
+	int charIndex = 0;
+
+	while (charIndex != lineWidth && *text != '\0') {
+		char c = *text;
+
+		if (c == '\n') {
+			*lineOutput = '\0';
+			return text+1;
+		}
+
+		if (c == ' ') {
+			var4 = charIndex;
+			lastSpaceInput = text;
+			lastSpaceOutput = lineOutput;
+		}
+
+		if (c == '\r') {
+			text++;
+			charIndex--;
+		}
+		else {
+			text++;
+			*(lineOutput++) = c;
+		}
+		charIndex++;
+	}
+
+	if (*text == '\0') {
+		*lineOutput = '\0';
+		return text;
+	}
+	if (*text == ' ') {
+		*lineOutput = '\0';
+		return text+1;
+	}
+	if (lastSpaceOutput == nullptr) { // Long word couldn't fit on line
+		*lineOutput = '\0';
+		return text;
+	}
+
+	// In the middle of a word; must go back to the start of it
+	*lastSpaceOutput = '\0';
+	return lastSpaceInput+1;
+}
+
+String Graphics::skipTextAudioPrompt(const String &str) {
+	const char *text = str.c_str();
+
+	if (*text != '#')
+		return str;
+
+	text++;
+	while (*text != '#') {
+		if (*text == '\0')
+			return str;
+		text++;
+	}
+
+	return String(text+1);
+}
+
+String Graphics::playTextAudio(const String &str) {
+	// TODO
+	return skipTextAudioPrompt(str);
+}
+
+void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	SharedPtr<Menu> oldMenu = _activeMenu;
 	_activeMenu = SharedPtr<Menu>(new Menu());
 	_activeMenu->nextMenu = oldMenu;
@@ -279,6 +629,18 @@ void Graphics::loadMenuButtons(Common::String mnuFilename, int xpos, int ypos) {
 
 		_activeMenu->sprites[i].field6 = 8;
 	}
+}
+
+// 0x0002: Disable scroll up
+// 0x0004: Disable scroll down
+// 0x0008: Disable prev choice
+// 0x0010: Disable next choice
+void Graphics::setMenuButtonVar2Bits(uint32 bits) {
+	// TODO
+}
+
+void Graphics::clearMenuButtonVar2Bits(uint32 bits) {
+	// TODO
 }
 
 }

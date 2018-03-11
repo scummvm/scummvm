@@ -39,13 +39,19 @@
 namespace StarTrek {
 
 StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc) {
-	_macResFork = 0;
+	_gfx = nullptr;
+	_sound = nullptr;
+	_macResFork = nullptr;
+
+	_room = nullptr;
 }
 
 StarTrekEngine::~StarTrekEngine() {
 	delete _gfx;
 	delete _sound;
 	delete _macResFork;
+
+	delete _room;
 }
 
 Common::Error StarTrekEngine::run() {
@@ -84,6 +90,7 @@ Common::Error StarTrekEngine::run() {
 // Judgment Rites Backgrounds supported too
 // EGA not supported
 #if 1
+	_room = new Room(this, "DEMON0");
 	if (getGameType() == GType_ST25) {
 		_gfx->loadPalette("PALETTE");
 		_gfx->loadPri("DEMON0.PRI");
@@ -141,7 +148,7 @@ Common::Error StarTrekEngine::run() {
 	*/
 
 
-	_gfx->showText(&Graphics::tmpFunction, 0, 150, 180, 0xb3, 0, 10, 0);
+	_gfx->showText(&Graphics::readTextFromRdf, 0x2220, 150, 160, 0xb3, 0, 10, 0);
 	
 	while (!shouldQuit()) {
 		pollEvents();
@@ -166,6 +173,10 @@ void StarTrekEngine::pollEvents() {
 	_gfx->drawAllSprites();
 
 	_system->delayMillis(1000/60);
+}
+
+Room *StarTrekEngine::getRoom() {
+	return _room;
 }
 
 SharedPtr<FileStream> StarTrekEngine::openFile(Common::String filename, int fileIndex) {

@@ -17,10 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/graphics.h $
- * $Id: graphics.h 2 2009-09-12 20:13:40Z clone2727 $
- *
  */
 
 #ifndef STARTREK_GRAPHICS_H
@@ -36,6 +32,7 @@
 #include "common/stream.h"
 
 using Common::SharedPtr;
+using Common::String;
 
 namespace StarTrek {
 
@@ -66,7 +63,7 @@ struct Menu {
 };
 
 class Graphics;
-typedef Common::String (Graphics::*TextGetterFunc)(int, int, Common::String *);
+typedef String (Graphics::*TextGetterFunc)(int, int, String *);
 
 
 class Graphics {
@@ -77,10 +74,10 @@ public:
 	void loadEGAData(const char *egaFile);
 	void drawBackgroundImage(const char *filename);
 
-	void loadPalette(const Common::String &paletteFile);
+	void loadPalette(const String &paletteFile);
 	void loadPri(const char *priFile);
 
-	SharedPtr<Bitmap> loadBitmap(Common::String basename);
+	SharedPtr<Bitmap> loadBitmap(String basename);
 
 	Common::Point getMousePos();
 	void setMouseCursor(SharedPtr<Bitmap> bitmap);
@@ -117,15 +114,29 @@ private:
 
 	// text.cpp (TODO: separate class)
 public:
-	int showText(TextGetterFunc textGetter, int var, int xoffset, int yoffset, int textColor, int argC, int maxTextLines, int arg10);
-	Common::String tmpFunction(int choiceIndex, int var, Common::String *speakerTextOutput);
-	SharedPtr<TextBitmap> initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
+	int showText(TextGetterFunc textGetter, int var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10);
+	String tmpFunction(int choiceIndex, int var, String *headerTextOutput);
+	String readTextFromRdf(int choiceIndex, int rdfVar, String *headerTextOutput);
 
 private:
-	Common::String skipOverAudioPrompt(const Common::String &str);
-	int getNumLines(const Common::String &str);
-	Common::String readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
-	void loadMenuButtons(Common::String mnuFilename, int xpos, int ypos);
+	int handleTextboxEvents(uint32 arg0, bool arg4);
+
+	SharedPtr<TextBitmap> initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
+	void drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
+
+	int getNumLines(const String &str);
+	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
+
+	String readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numLines);
+	String putTextIntoLines(const String &text);
+	const char *getNextTextLine(const char *text, char *line, int lineWidth);
+
+	String skipTextAudioPrompt(const String &str);
+	String playTextAudio(const String &str);
+
+	void loadMenuButtons(String mnuFilename, int xpos, int ypos);
+	void setMenuButtonVar2Bits(uint32 bits);
+	void clearMenuButtonVar2Bits(uint32 bits);
 
 	uint16 _textboxVar1;
 	uint32 _textboxVar2;

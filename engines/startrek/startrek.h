@@ -38,6 +38,7 @@
 
 #include "startrek/filestream.h"
 #include "startrek/graphics.h"
+#include "startrek/room.h"
 #include "startrek/sound.h"
 
 
@@ -72,6 +73,7 @@ public:
 
 	// Running the game
 	void pollEvents();
+	Room *getRoom();
 
 	// Detection related functions
 	const StarTrekGameDescription *_gameDescription;
@@ -92,6 +94,8 @@ private:
 	Graphics *_gfx;
 	Sound *_sound;
 	Common::MacResManager *_macResFork;
+
+	Room *_room;
 };
 
 } // End of namespace StarTrek
