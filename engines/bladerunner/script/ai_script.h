@@ -224,6 +224,13 @@ DECLARE_SCRIPT(Murray)
 	bool _flag;
 END_SCRIPT
 
+DECLARE_SCRIPT(HawkersBarkeep)
+	int _var1;
+	int _var2;
+	int _var3;
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(SergeantWalls)
 END_SCRIPT
 
