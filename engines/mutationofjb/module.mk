@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	commands/endblockcommand.o \
 	commands/ifcommand.o \
 	commands/ifitemcommand.o \
+	commands/ifpiggycommand.o \
 	commands/removeallitemscommand.o \
 	commands/removeitemcommand.o \
 	commands/saycommand.o \

@@ -153,6 +153,7 @@ public:
 
 	uint8 _currentScene;
 	Inventory _inventory;
+	Common::String _currentAPK;
 private:
 	Scene _scenes[45];
 
