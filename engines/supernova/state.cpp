@@ -370,7 +370,7 @@ void GameManager::initState() {
 	_oldTime = g_system->getMillis();
 	_timerPaused = 0;
 	_timePaused = false;
-	_timer1 = 0;
+	_messageDuration = 0;
 	_animationTimer = 0;
 
 	_currentSentence = -1;
@@ -913,7 +913,7 @@ void GameManager::telomat(int nr) {
 			_vm->renderRoom(*_currentRoom);
 			_vm->paletteBrightness();
 			_vm->renderMessage(kStringTelomat17, kMessageTop, name2[i]);
-			waitOnInput(_timer1);
+			waitOnInput(_messageDuration);
 			_vm->removeMessage();
 			if (_state._nameSeen[nr]) {
 				Common::String string = _vm->getGameString(kStringTelomat2);
@@ -925,7 +925,7 @@ void GameManager::telomat(int nr) {
 
 			switch (dialog(3, rows1, dial1, 1)) {
 			case 1: _vm->renderMessage(kStringTelomat18, kMessageTop);
-				waitOnInput(_timer1);
+				waitOnInput(_messageDuration);
 				_vm->removeMessage();
 				if ((_state._destination == 255) && !_rooms[BCORRIDOR]->isSectionVisible(7)) {
 					_state._eventTime = _state._time + ticksToMsec(150);
@@ -935,7 +935,7 @@ void GameManager::telomat(int nr) {
 				}
 				break;
 			case 0: _vm->renderMessage(kStringTelomat19, kMessageTop);
-				waitOnInput(_timer1);
+				waitOnInput(_messageDuration);
 				_vm->removeMessage();
 				if (dialog(4, rows2, dial2, 0) != 3) {
 					wait(10);
@@ -1099,7 +1099,7 @@ void GameManager::supernovaEvent() {
 	CursorMan.showMouse(false);
 	if (_currentRoom->getId() <= CAVE) {
 		_vm->renderMessage(kStringSupernova1);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		_vm->paletteFadeOut();
 		changeRoom(MEETUP);
@@ -1112,7 +1112,7 @@ void GameManager::supernovaEvent() {
 		_vm->paletteFadeIn();
 	}
 	_vm->renderMessage(kStringSupernova2);
-	waitOnInput(_timer1);
+	waitOnInput(_messageDuration);
 	_vm->removeMessage();
 	_vm->setCurrentImage(26);
 	_vm->renderImage(0);
@@ -1125,23 +1125,23 @@ void GameManager::supernovaEvent() {
 
 	if (_currentRoom->getId() == GLIDER) {
 		_vm->renderMessage(kStringSupernova3);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
 		_vm->paletteBrightness();
 		_vm->renderRoom(*_currentRoom);
 		_vm->paletteFadeIn();
 		_vm->renderMessage(kStringSupernova4, kMessageTop);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringSupernova5, kMessageTop);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringSupernova6, kMessageTop);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringSupernova7, kMessageTop);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		changeRoom(MEETUP2);
 		_rooms[MEETUP2]->setSectionVisible(1, true);
@@ -1151,7 +1151,7 @@ void GameManager::supernovaEvent() {
 		_inventory.remove(*(_rooms[ROGER]->getObject(8)));
 	} else {
 		_vm->renderMessage(kStringSupernova8);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		_vm->_menuBrightness = 0;
 		_vm->paletteBrightness();
@@ -1995,10 +1995,10 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		}
 	} else if ((verb == ACTION_LOOK) && (obj1._id == NEWSPAPER)) {
 		_vm->renderMessage(kStringGenericInteract_10);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringGenericInteract_11);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		_vm->setCurrentImage(2);
 		_vm->renderImage(0);
@@ -2196,7 +2196,7 @@ bool GameManager::genericInteract(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderMessage(kStringGenericInteract_30);
 	else if ((verb == ACTION_LOOK) && (obj1._id == BOOK2)) {
 		_vm->renderMessage(kStringGenericInteract_31);
-		waitOnInput(_timer1);
+		waitOnInput(_messageDuration);
 		_vm->removeMessage();
 		_vm->renderMessage(kStringGenericInteract_32);
 	} else
@@ -2406,7 +2406,7 @@ void GameManager::alarmSound() {
 	_vm->removeMessage();
 	_vm->renderMessage(kStringAlarm);
 
-	int32 end = _state._time + ticksToMsec(_timer1);
+	int32 end = _state._time + ticksToMsec(_messageDuration);
 	do {
 		_vm->playSound(kAudioAlarm);
 		while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle)) {

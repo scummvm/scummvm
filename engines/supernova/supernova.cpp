@@ -550,7 +550,7 @@ void SupernovaEngine::renderMessage(const char *text, MessagePosition position) 
 	}
 
 	_messageDisplayed = true;
-	_gm->_timer1 = (Common::strnlen(text, 512) + 20) * _textSpeed / 10;
+	_gm->_messageDuration = (Common::strnlen(text, 512) + 20) * _textSpeed / 10;
 }
 
 void SupernovaEngine::removeMessage() {

@@ -157,7 +157,7 @@ public:
 	int32 _oldTime;
 	uint _timePaused;
 	bool _timerPaused;
-	int32 _timer1;
+	int32 _messageDuration;
 	int32 _animationTimer;
 	int _inventoryScroll;
 	int _exitList[25];
