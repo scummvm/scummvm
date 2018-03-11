@@ -529,6 +529,10 @@ void GameManager::processInput(Common::KeyState &state) {
 				_vm->quitGame();
 		}
 		break;
+	case Common::KEYCODE_d:
+		if (state.flags & Common::KBD_CTRL)
+			_vm->_console->attach();
+		break;
 	default:
 		break;
 	}

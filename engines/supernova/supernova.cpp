@@ -227,14 +227,8 @@ void SupernovaEngine::updateEvents() {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			_gm->_keyPressed = true;
-			if (event.kbd.keycode == Common::KEYCODE_d &&
-				(event.kbd.flags & Common::KBD_CTRL)) {
-				_console->attach();
-			}
-
 			_gm->processInput(event.kbd);
 			break;
-
 		case Common::EVENT_LBUTTONUP:
 			// fallthrough
 		case Common::EVENT_RBUTTONUP:
@@ -249,7 +243,6 @@ void SupernovaEngine::updateEvents() {
 			if (_gm->_guiEnabled)
 				_gm->processInput();
 			break;
-
 		default:
 			break;
 		}
