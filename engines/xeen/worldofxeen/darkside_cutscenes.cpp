@@ -70,7 +70,6 @@ const int LEFT_CLAW_IDLE_Y[32] = {
 
 
 bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
-	EventsManager &events = *g_vm->_events;
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 	g_vm->_files->_isDarkCc = true;
@@ -197,7 +196,6 @@ bool DarkSideCutscenes::showDarkSideIntro(bool seenIntro) {
 }
 
 bool DarkSideCutscenes::rubCrystalBall(bool fadeIn) {
-	EventsManager &events = *g_vm->_events;
 	Screen &screen = *g_vm->_screen;
 
 	for (int frame = 0; frame < 32; ++frame) {
@@ -363,9 +361,6 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		screen.horizMerge(idx);
 		dragon.draw(0, FRAMES3[frameNum], Common::Point(XLIST3[posNum], YLIST3[posNum]), SPRFLAG_800);
 		_subtitles.show();
-		events.pollEventsAndWait();
-		if (events.isKeyMousePressed())
-			return false;
 
 		if (idx == SCREEN_WIDTH)
 			sound.playSound(PHAR_VOC[0]);
@@ -402,7 +397,6 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	clawCtr = (clawCtr + 1) % 32
 
 bool DarkSideCutscenes::showDarkSideIntro2() {
-	EventsManager &events = *g_vm->_events;
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 	SpriteResource goon("goon.int"), darkLord("darklord.int"), queen("queen.int"),
@@ -416,8 +410,8 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 	if (!rubCrystalBall(true))
 		return false;
 
-	// TODO: Subtitle stuff
-	_subtitles.setLine(1);
+	// Queen Kalindra?
+	_subtitles.setLine(9);
 	sound.playFX(42);
 
 	for (idx = 0, clawCtr = 0; idx < 11; ++idx) {
@@ -444,7 +438,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		if (!sound.isSoundPlaying() && vocIndex < 3) {
 			if (!_subtitles.active()) {
 				if (!vocIndex)
-					_subtitles.setLine(9 + vocIndex);
+					_subtitles.setLine(10);
 
 				sound.playSound(VOC_NAMES[vocIndex++]);
 				if (vocIndex == 3)
@@ -467,7 +461,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 	} while (vocIndex < 3 || sound.isSoundPlaying() || _subtitles.active());
 
 	sound.playSound(VOC_NAMES[3]);
-	_subtitles.setLine(10);
+	_subtitles.setLine(11);
 
 	idx = 34;
 	do {
@@ -481,8 +475,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		WAIT(3);
 	} while (sound.isSoundPlaying() || _subtitles.active());
 
-	// TODO: Subtitle stuff
-	_subtitles.setLine(0);
+	_subtitles.setLine(12);
 	sound.playSound("dark3.voc");
 
 	const char *const VOC_NAMES2[2] = { "pharoh5a.voc", "pharoh5b.voc" };
@@ -494,12 +487,12 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 
 		_subtitles.show();
 		WAIT(3);
-		if (!sound.isSoundPlaying() && vocIndex < 2)
+		if (!sound.isSoundPlaying() && vocIndex < 2) {
+			if (vocIndex)
+				_subtitles.setLine(13);
 			sound.playSound(VOC_NAMES2[vocIndex++]);
+		}
 	} while (vocIndex < 2 || sound.isSoundPlaying() || _subtitles.active());
-
-	// TODO: Subtitle stuff
-	_subtitles.setLine(0);
 
 	sound.playFX(42);
 	vocIndex = 0;
@@ -548,14 +541,14 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 
 	const char *const VOC_NAMES3[2] = { "alamar1.voc", "pharoh7t.voc" };
 	vocIndex = nwcIndex = 0;
+	_subtitles.setLine(14);
 
 	do {
 		ANIMATE_PHAROAH;
 		goon.draw(0, (vocIndex == 0) ? 0 : nwcIndex, Common::Point(9, 57));
 
 		if (!sound.isSoundPlaying() && !vocIndex && !_subtitles.active()) {
-			// TODO: Subtitles stuff
-			_subtitles.setLine(0);
+			_subtitles.setLine(15);
 			sound.playSound(VOC_NAMES3[vocIndex++]);
 			sound.playFX(0);
 		}
@@ -565,8 +558,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		WAIT(3);
 	} while (!vocIndex || sound.isSoundPlaying() || _subtitles.active());
 
-	// TODO: Subtitle stuff
-	_subtitles.setLine(0);
+	_subtitles.setLine(16);
 	sound.playFX(42);
 
 	for (idx = 10, vocIndex = 0; idx >= 0; --idx) {
@@ -589,8 +581,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 	if (!rubCrystalBall())
 		return false;
 
-	// TODO: Subtitle stuff
-	_subtitles.setLine(0);
+	_subtitles.setLine(17);
 
 	for (idx = 0, clawCtr = 0; idx < 11; ++idx) {
 		ANIMATE_PHAROAH;
@@ -615,13 +606,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		wizard.draw(0, (vocIndex == 1) ? getSpeakingFrame(0, 3) : 0, Common::Point(9, 57));
 
 		if (!sound.isSoundPlaying() && vocIndex < 2 && !_subtitles.active()) {
-			// TODO: Subtitle stuff
-			if (vocIndex == 0) {
-				_subtitles.setLine(0);
-			} else {
-				_subtitles.setLine(0);
-			}
-
+			_subtitles.setLine((vocIndex == 0) ? 18 : 19);
 			sound.playSound(VOC_NAMES4[vocIndex++]);
 			sound.playFX(0);
 		}
@@ -647,8 +632,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		WAIT(3);
 	}
 
-	// TODO: Subtitle stuff
-	_subtitles.setLine(0);
+	_subtitles.setLine(20);
 	vocIndex = 0;
 
 	do {
@@ -670,7 +654,6 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 }
 
 bool DarkSideCutscenes::showDarkSideIntro3() {
-	EventsManager &events = *g_vm->_events;
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 	SpriteResource fly("fly.int");
@@ -685,8 +668,7 @@ bool DarkSideCutscenes::showDarkSideIntro3() {
 	screen.loadBackground("fly.raw");
 	screen.saveBackground();
 
-	// TODO: Subtitle stuff
-	_subtitles.setLine(0);
+	_subtitles.setLine(6);
 	_subtitles.show();
 
 	screen.fadeIn();
@@ -794,7 +776,6 @@ bool DarkSideCutscenes::showDarkSideIntro3() {
 }
 
 bool DarkSideCutscenes::showWorldOfXeenLogo() {
-	EventsManager &events = *g_vm->_events;
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 	SpriteResource fizzle("fizzle.int");
@@ -1276,7 +1257,6 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 }
 
 bool DarkSideCutscenes::showDarkSideEnding3() {
-	EventsManager &events = *g_vm->_events;
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 
@@ -1583,7 +1563,7 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 			WAIT(3);
 		}
 	}
-	_subtitles.wait();
+
 	sc25.clear();
 
 	// I do. Kamakazi time
@@ -1633,7 +1613,6 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 		WAIT(3);
 	}
 
-	_subtitles.wait();
 	sc27.clear();
 
 	// Vortex is opened and the two are sucked in, obliterating them

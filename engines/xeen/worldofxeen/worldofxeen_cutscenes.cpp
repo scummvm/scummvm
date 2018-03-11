@@ -439,7 +439,6 @@ bool WorldOfXeenCutscenes::worldEnding1() {
 }
 
 bool WorldOfXeenCutscenes::worldEnding2() {
-	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
@@ -590,7 +589,6 @@ bool WorldOfXeenCutscenes::worldEnding2() {
 }
 
 bool WorldOfXeenCutscenes::worldEnding3() {
-	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;

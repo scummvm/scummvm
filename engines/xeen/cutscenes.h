@@ -25,25 +25,29 @@
 
 #include "xeen/files.h"
 #include "xeen/sprites.h"
+#include "xeen/subtitles.h"
 
 namespace Xeen {
 
-#define WAIT(TIME) \
-	events.timeMark5();             \
-	do {                            \
-		events.updateGameCounter(); \
-		if (events.wait(1))         \
-			return false;           \
-	} while (!g_vm->shouldExit() && events.timeElapsed5() < TIME)
+#define WAIT(TIME) if (Cutscenes::wait(TIME)) return false
 
 class XeenEngine;
 
 class Cutscenes {
 protected:
 	XeenEngine *_vm;
+	Subtitles _subtitles;
 protected:
 	Cutscenes(XeenEngine *vm) : _vm(vm) {}
 	virtual ~Cutscenes() {}
+
+	/**
+	 * Waits for a given number of frames
+	 * @param numFrames			Number of frames to wait
+	 * @param interruptable		If set, aborts if the mouse or a key is pressed
+	 * @returns		True if the wait was aborted
+	 */
+	bool wait(uint numFrames, bool interruptable = true);
 
 	/**
 	 * Get a speaking frame from a range

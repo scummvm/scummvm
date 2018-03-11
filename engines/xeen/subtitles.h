@@ -79,15 +79,16 @@ public:
 
 	/**
 	 * Shows any active subtitle
-	 * @param windowNum		Window to render to
 	 */
-	void show(uint windowNum = 0);
+	void show();
 
 	/**
-	 * Delays either the specified number of frames, or until
-	 * an entire subtitle line is shown if subtitles are on
+	 * Waits for a given number of frames
+	 * @param numFrames			Number of frames to wait
+	 * @param interruptable		If set, aborts if the mouse or a key is pressed
+	 * @returns		True if the wait was aborted
 	 */
-	bool wait(uint minTime = 0);
+	bool wait(uint numFrames, bool interruptable = true);
 
 	/**
 	 * Wait for the end of currently playing sound or subtitles line

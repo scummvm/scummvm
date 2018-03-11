@@ -112,6 +112,12 @@ public:
 	uint32 playTime() const { return _playTime; }
 	void setPlayTime(uint32 time) { _playTime = time; }
 
+	/**
+	 * Waits for a given number of frames
+	 * @param numFrames			Number of frames to wait
+	 * @param interruptable		If set, aborts if the mouse or a key is pressed
+	 * @returns		True if the wait was aborted
+	 */
 	bool wait(uint numFrames, bool interruptable = true);
 
 	/**

@@ -25,6 +25,10 @@
 
 namespace Xeen {
 
+bool Cutscenes::wait(uint numFrames, bool interruptable) {
+	return _subtitles.wait(numFrames, interruptable);
+}
+
 uint Cutscenes::getSpeakingFrame(uint minFrame, uint maxFrame) {
 	uint interval = g_system->getMillis() / 100;
 	return minFrame + interval % (maxFrame + 1 - minFrame);

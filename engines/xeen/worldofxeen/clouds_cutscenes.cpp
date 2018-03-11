@@ -50,7 +50,6 @@ bool CloudsCutscenes::showCloudsIntro() {
 }
 
 bool CloudsCutscenes::showCloudsTitle() {
-	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
@@ -379,7 +378,6 @@ void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 }
 
 bool CloudsCutscenes::showCloudsEnding1() {
-	EventsManager &events = *_vm->_events;
 	FileManager &files = *_vm->_files;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -561,7 +559,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 				break;
 			}
 
-			_subtitles.show(0);
+			_subtitles.show();
 			WAIT(3);
 		} while (sound.isSoundPlaying() || _subtitles.active());
 	}
@@ -608,7 +606,6 @@ bool CloudsCutscenes::showCloudsEnding1() {
 }
 
 bool CloudsCutscenes::showCloudsEnding2() {
-	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
@@ -707,7 +704,6 @@ const int8 XARRAY[8] = { -2, -1, 0, 1, 2, 1, 0, -1 };
 const int8 YARRAY[8] = { -2, 0, 2, 0, -1, 0, 2, 0 };
 
 bool CloudsCutscenes::showCloudsEnding3() {
-	EventsManager &events = *_vm->_events;
 	Map &map = *_vm->_map;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
@@ -949,7 +945,6 @@ bool CloudsCutscenes::showCloudsEnding4(uint finalScore) {
 }
 
 bool CloudsCutscenes::showCloudsEnding5() {
-	EventsManager &events = *_vm->_events;
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 	SpriteResource king("king.end");

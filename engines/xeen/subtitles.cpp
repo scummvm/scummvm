@@ -28,8 +28,6 @@
 
 namespace Xeen {
 
-#define SUBTITLE_FRAME_TIME 10
-
 static const char *SUBTITLE_LINE = "\f35\x3""c\v190\t000%s";
 
 Subtitles::Subtitles() : _lineNum(-1), _boxSprites(nullptr), _lineEnd(0), _lineSize(0), _frameExpiryTime(0) {
@@ -51,13 +49,11 @@ void Subtitles::reset() {
 }
 
 void Subtitles::markTime() {
-	_frameExpiryTime = g_system->getMillis() + SUBTITLE_FRAME_TIME;
-	//g_vm->_events->timeMark3();
+	g_vm->_events->timeMark3();
 }
 
 bool Subtitles::timeElapsed() const {
-	return g_system->getMillis() >= _frameExpiryTime;
-	//return g_vm->_events->timeElapsed3() > 1;
+	return g_vm->_events->timeElapsed3() >= 2;
 }
 
 void Subtitles::setLine(int line) {
@@ -75,20 +71,19 @@ bool Subtitles::active() const {
 	return _lineNum != -1;
 }
 
-bool Subtitles::wait(uint minTime) {
+bool Subtitles::wait(uint numFrames, bool interruptable) {
 	EventsManager &events = *g_vm->_events;
+	bool result = g_vm->shouldExit();
 
 	events.updateGameCounter();
-	markTime();
-	while (events.timeElapsed() < minTime || active()) {
-		events.pollEventsAndWait();
-		if (events.isKeyMousePressed())
-			return false;
-
+	while (!g_vm->shouldExit() && events.timeElapsed() < numFrames && !result) {
 		show();
+		events.pollEventsAndWait();
+		result = events.isKeyMousePressed();
 	}
 
-	return true;
+	events.clearEvents();
+	return result;
 }
 
 bool Subtitles::waitForLineOrSound() {
@@ -102,7 +97,7 @@ bool Subtitles::waitForLineOrSound() {
 	return true;
 }
 
-void Subtitles::show(uint windowNum) {
+void Subtitles::show() {
 	Sound &sound = *g_vm->_sound;
 	Windows &windows = *g_vm->_windows;
 
@@ -131,7 +126,7 @@ void Subtitles::show(uint windowNum) {
 		_boxSprites->draw(0, 0, Common::Point(36, 189));
 
 		// Write the subtitle line
-		windows[windowNum].writeString(_displayLine);
+		windows[0].writeString(_displayLine);
 
 		if (_lineEnd == 0)
 			reset();
