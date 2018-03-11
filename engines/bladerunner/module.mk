@@ -62,6 +62,7 @@ MODULE_OBJS = \
 	script/ai/generic_walker_b.o \
 	script/ai/generic_walker_c.o \
 	script/ai/gordo.o \
+	script/ai/governor_kolvig.o \
 	script/ai/grigorian.o \
 	script/ai/guzza.o \
 	script/ai/hawkers_barkeep.o \
