@@ -39,10 +39,7 @@ public:
 	uint32    _frame;
 
 	Vector3   _cameraPosition;
-
-	float     _viewportHalfWidth;
-	float     _viewportHalfHeight;
-	float     _viewportDistance;
+	Vector3   _viewportPosition;
 
 	bool readVqa(Common::ReadStream *stream);
 	Vector3 calculateScreenPosition(Vector3 worldPosition);

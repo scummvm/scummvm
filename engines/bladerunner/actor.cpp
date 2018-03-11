@@ -773,7 +773,7 @@ void Actor::setBoundingBox(const Vector3 &position, bool retired) {
 
 float Actor::distanceFromView(View *view) const{
 	float xDist = _position.x - view->_cameraPosition.x;
-	float zDist = _position.z + view->_cameraPosition.z;
+	float zDist = _position.z + view->_cameraPosition.y; // y<->z is intentional, not a bug
 	return sqrt(xDist * xDist + zDist * zDist);
 }
 
@@ -859,7 +859,7 @@ void Actor::faceXYZ(const Vector3 &pos, bool animate) {
 }
 
 void Actor::faceCurrentCamera(bool animate) {
-	faceXYZ(_vm->_view->_cameraPosition.x, _vm->_view->_cameraPosition.y, -_vm->_view->_cameraPosition.z, animate);
+	faceXYZ(_vm->_view->_cameraPosition.x, _vm->_view->_cameraPosition.z, -_vm->_view->_cameraPosition.y, animate); // y<->z is intentional, not a bug
 }
 
 void Actor::faceHeading(int heading, bool animate) {

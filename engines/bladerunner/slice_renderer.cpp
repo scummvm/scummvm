@@ -60,6 +60,23 @@ SliceRenderer::SliceRenderer(BladeRunnerEngine *vm) {
 	_endSlice          = 0.0f;
 	_m13               = 0;
 	_m23               = 0;
+
+	_shadowPolygonDefault[ 0] = Vector3( 16.0f,  96.0f, 0.0f);
+	_shadowPolygonDefault[ 1] = Vector3( 16.0f, 160.0f, 0.0f);
+	_shadowPolygonDefault[ 2] = Vector3( 64.0f, 192.0f, 0.0f);
+	_shadowPolygonDefault[ 3] = Vector3( 80.0f, 240.0f, 0.0f);
+	_shadowPolygonDefault[ 4] = Vector3(160.0f, 240.0f, 0.0f);
+	_shadowPolygonDefault[ 5] = Vector3(192.0f, 192.0f, 0.0f);
+	_shadowPolygonDefault[ 6] = Vector3(240.0f, 160.0f, 0.0f);
+	_shadowPolygonDefault[ 7] = Vector3(240.0f,  96.0f, 0.0f);
+	_shadowPolygonDefault[ 8] = Vector3(192.0f,  64.0f, 0.0f);
+	_shadowPolygonDefault[ 9] = Vector3(160.0f,  16.0f, 0.0f);
+	_shadowPolygonDefault[10] = Vector3( 96.0f,  16.0f, 0.0f);
+	_shadowPolygonDefault[11] = Vector3( 64.0f,  64.0f, 0.0f);
+
+	for (int i = 0; i < 12; ++i) {
+		_shadowPolygonCurrent[i] = Vector3(0.0f, 0.0f, 0.0f);
+	}
 }
 
 SliceRenderer::~SliceRenderer() {
@@ -100,19 +117,18 @@ void SliceRenderer::getScreenRectangle(Common::Rect *screenRectangle, int animat
 Matrix3x2 SliceRenderer::calculateFacingRotationMatrix() {
 	assert(_sliceFramePtr);
 
-	Matrix4x3 viewMatrix = _view->_sliceViewMatrix;
-	Vector3 viewPos = viewMatrix * _position;
+	Vector3 viewPos = _view->_sliceViewMatrix * _position;
 	float dir = atan2f(viewPos.x, viewPos.z) + _facing;
 	float s = sinf(dir);
 	float c = cosf(dir);
 
-	Matrix3x2 rotation( c, -s, 0.0f,
+	Matrix3x2 mRotation( c, -s, 0.0f,
 	                    s,  c, 0.0f);
 
-	Matrix3x2 viewRotation(viewMatrix(0,0), viewMatrix(0,1), 0.0f,
-	                       viewMatrix(2,0), viewMatrix(2,1), 0.0f);
+	Matrix3x2 mView(_view->_sliceViewMatrix(0,0), _view->_sliceViewMatrix(0,1), 0.0f,
+	                _view->_sliceViewMatrix(2,0), _view->_sliceViewMatrix(2,1), 0.0f);
 
-	return viewRotation * rotation;
+	return mView * mRotation;
 }
 
 void SliceRenderer::calculateBoundingRect() {
@@ -133,29 +149,32 @@ void SliceRenderer::calculateBoundingRect() {
 
 	top = bottom + _scale * (top - bottom);
 
-	if (bottom.z < 0.0f || top.z < 0.0f) {
+	if (bottom.z <= 0.0f || top.z <= 0.0f) {
 		return;
 	}
 
 	Matrix3x2 facingRotation = calculateFacingRotationMatrix();
 
-	Matrix3x2 m_projection(_view->_viewportDistance / bottom.z,  0.0f, 0.0f,
-	                                                     0.0f, 25.5f, 0.0f);
+	Matrix3x2 mProjection(_view->_viewportPosition.z / bottom.z,  0.0f, 0.0f,
+	                                                       0.0f, 25.5f, 0.0f);
 
-	Matrix3x2 m_frame(_frameScale.x,          0.0f, _framePos.x,
-	                           0.0f, _frameScale.y, _framePos.y);
+	Matrix3x2 mOffset(1.0f, 0.0f, _framePos.x,
+                      0.0f, 1.0f, _framePos.y);
 
-	_modelMatrix = m_projection * (facingRotation * m_frame);
+	Matrix3x2 mScale(_frameScale.x,          0.0f, 0.0f,
+	                          0.0f, _frameScale.y, 0.0f);
+
+	_modelMatrix = mProjection * (facingRotation * (mOffset * mScale));
 
 	Vector4 startScreenVector(
-	           _view->_viewportHalfWidth   + top.x / top.z * _view->_viewportDistance,
-	           _view->_viewportHalfHeight  + top.y / top.z * _view->_viewportDistance,
+	           _view->_viewportPosition.x + top.x / top.z * _view->_viewportPosition.z,
+	           _view->_viewportPosition.y + top.y / top.z * _view->_viewportPosition.z,
 	           1.0f / top.z,
 	           _frameSliceCount * (1.0f / top.z));
 
 	Vector4 endScreenVector(
-	           _view->_viewportHalfWidth   + bottom.x / bottom.z * _view->_viewportDistance,
-	           _view->_viewportHalfHeight  + bottom.y / bottom.z * _view->_viewportDistance,
+	           _view->_viewportPosition.x + bottom.x / bottom.z * _view->_viewportPosition.z,
+	           _view->_viewportPosition.y + bottom.y / bottom.z * _view->_viewportPosition.z,
 	           1.0f / bottom.z,
 	           0.0f);
 
@@ -377,8 +396,6 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 		_modelMatrix
 	);
 
-	Vector3 cameraPosition(_view->_cameraPosition.x, _view->_cameraPosition.z, _view->_cameraPosition.y); // not a bug
-
 	SliceRendererLights sliceRendererLights = SliceRendererLights(_lights);
 
 	_lights->setupFrame(_view->_frame);
@@ -394,7 +411,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	float setEffectsColorCoeficient;
 	Color setEffectColor;
 	_setEffects->calculateColor(
-		cameraPosition,
+		_view->_cameraPosition,
 		Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight),
 		&setEffectsColorCoeficient,
 		&setEffectColor);
@@ -414,9 +431,18 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	setupLookupTable(_m22lookup, sliceLineIterator._sliceMatrix[1][1]);
 	_m23 = sliceLineIterator._sliceMatrix[1][2];
 
+	if (_animationsShadowEnabled[_animation]) {
+		float coeficientShadow;
+		Color colorShadow;
+		_setEffects->calculateColor(
+				_view->_cameraPosition,
+				_position,
+				&coeficientShadow,
+				&colorShadow);
 
-	if(_animationsShadowEnabled[_animation]) {
-		//TODO: draw shadows
+		int transparency = 32.0f * sqrt(setEffectColor.r * setEffectColor.r + setEffectColor.g * setEffectColor.g + setEffectColor.b * setEffectColor.b);
+
+		drawShadowInWorld(transparency, surface, zbuffer);
 	}
 
 	int frameY = sliceLineIterator._startY;
@@ -431,7 +457,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 
 		if (sliceLineIterator._currentY & 1) {
 			_setEffects->calculateColor(
-				cameraPosition,
+				_view->_cameraPosition,
 				Vector3(_position.x, _position.y, _position.z + _frameBottomZ + sliceLine * _frameSliceHeight),
 				&setEffectsColorCoeficient,
 				&setEffectColor);
@@ -578,16 +604,145 @@ void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, ui
 	}
 }
 
+void SliceRenderer::drawShadowInWorld(int transparency, Graphics::Surface &surface, uint16 *zbuffer) {
+	Matrix4x3 mOffset(
+		1.0f, 0.0f, 0.0f, _framePos.x,
+		0.0f, 1.0f, 0.0f, _framePos.y,
+		0.0f, 0.0f, 1.0f, 0.0f);
+
+	Matrix4x3 mTransition(
+		1.0f, 0.0f, 0.0f, _position.x,
+		0.0f, 1.0f, 0.0f, _position.y,
+		0.0f, 0.0f, 1.0f, _position.z);
+
+	Matrix4x3 mRotation(
+		cosf(_facing), -sinf(_facing), 0.0f, 0.0f,
+		sinf(_facing),  cosf(_facing), 0.0f, 0.0f,
+		          0.0f,          0.0f, 1.0f, 0.0f);
+
+	Matrix4x3 mScale(
+		_frameScale.x,          0.0f,              0.0f, 0.0f,
+		         0.0f, _frameScale.y,              0.0f, 0.0f,
+		         0.0f,          0.0f, _frameSliceHeight, 0.0f);
+
+	Matrix4x3 m = _view->_sliceViewMatrix * (mTransition * (mRotation * (mOffset * mScale)));
+
+	for (int i = 0; i < 12; ++i) {
+		Vector3 t = m * _shadowPolygonDefault[i];
+		if (t.z > 0.0f) {
+			_shadowPolygonCurrent[i] = Vector3(
+				_view->_viewportPosition.x + t.x / t.z * _view->_viewportPosition.z,
+				_view->_viewportPosition.y + t.y / t.z * _view->_viewportPosition.z,
+				t.z * 25.5f
+			);
+		} else {
+			_shadowPolygonCurrent[i] = Vector3(0.0f, 0.0f, 0.0f);
+		}
+	}
+
+	drawShadowPolygon(transparency, surface, zbuffer);
+}
+
+void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surface, uint16 *zbuffer) {
+	// this simplified polygon drawing algo is in the game
+
+	int yMax = 0;
+	int yMin = 480;
+	uint16 zMin = 65535;
+
+	int polygonLeft[480] = {};
+	int polygonRight[480] = {};
+
+	int iNext = 11;
+	for (int i = 0; i < 12; ++i) {
+		int xCurrent = _shadowPolygonCurrent[i].x;
+		int yCurrent = _shadowPolygonCurrent[i].y;
+		int xNext = _shadowPolygonCurrent[iNext].x;
+		int yNext = _shadowPolygonCurrent[iNext].y;
+
+		if (yCurrent < yMin) {
+			yMin = yCurrent;
+		}
+		if (yCurrent > yMax) {
+			yMax = yCurrent;
+		}
+		if (_shadowPolygonCurrent[i].z < zMin) {
+			zMin = _shadowPolygonCurrent[i].z;
+		}
+
+		int xDelta = abs(xNext - xCurrent);
+		int yDelta = abs(yNext - yCurrent);
+
+		int xDirection = -1;
+		if (xCurrent < xNext) {
+			xDirection = 1;
+		}
+
+		int xCounter = 0;
+
+		int x = xCurrent;
+		int y = yCurrent;
+
+		if (yCurrent > yNext) {
+			while (y >= yNext) {
+				if (y >= 0 && y < 480) {
+					polygonLeft[y] = x;
+				}
+				xCounter += xDelta;
+				while (xCounter >= yDelta) {
+					x += xDirection;
+					xCounter -= yDelta;
+				}
+				--y;
+			}
+		} else if (yCurrent < yNext) {
+			while (y <= yNext) {
+				if (y >= 0 && y < 480) {
+					polygonRight[y] = x;
+				}
+				xCounter += xDelta;
+				while (xCounter >= yDelta) {
+					x += xDirection;
+					xCounter -= yDelta;
+				}
+				++y;
+			}
+		}
+		iNext = (iNext + 1) % 12;
+	}
+
+	yMax = CLIP(yMax, 0, 480);
+	yMin = CLIP(yMin, 0, 480);
+
+	int ditheringFactor[] = { 0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5 };
+
+	for (int y = yMin; y < yMax; ++y) {
+		int xMin = CLIP(polygonLeft[y], 0, 640);
+		int xMax = CLIP(polygonRight[y], 0, 640);
+
+		for (int x = MIN(xMin, xMax); x < MAX(xMin, xMax); ++x) {
+			uint16 z = zbuffer[x + y * 640];
+			uint16 *pixel = (uint16*)surface.getBasePtr(x, y);
+
+			if (z >= zMin) {
+				int index = (x & 3) + ((y & 3) << 2);
+				if (transparency - ditheringFactor[index] <= 0) {
+					*pixel = ((*pixel & 0x7BDE) >> 1) + ((*pixel & 0x739C) >> 2);
+				}
+			}
+		}
+	}
+}
+
 void SliceRenderer::preload(int animationId) {
-	int i;
 	int frameCount = _vm->_sliceAnimations->getFrameCount(animationId);
-	for (i = 0; i < frameCount; i++)
+	for (int i = 0; i < frameCount; ++i) {
 		_vm->_sliceAnimations->getFramePtr(animationId, i);
+	}
 }
 
 void SliceRenderer::disableShadows(int animationsIdsList[], int listSize) {
-	int i;
-	for (i = 0; i < listSize; i++) {
+	for (int i = 0; i < listSize; ++i) {
 		_animationsShadowEnabled[animationsIdsList[i]] = false;
 	}
 }

@@ -242,10 +242,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_obstacles = new Obstacles(this);
 
-	// TODO: slice renderer shadow
-
-	// TODO: voight-kampf script
-
 	_sceneScript = new SceneScript(this);
 
 	_debugger = new Debugger(this);
@@ -620,9 +616,6 @@ void BladeRunnerEngine::shutdown() {
 
 	_playerActor = nullptr;
 
-	delete _zbuffer;
-	_zbuffer = nullptr;
-
 	delete _gameInfo;
 	_gameInfo = nullptr;
 
@@ -638,7 +631,6 @@ void BladeRunnerEngine::shutdown() {
 	// TODO: Delete MIXArchives here
 
 	// TODO: Delete Timer
-
 
 
 	// These are static objects in original game

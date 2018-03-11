@@ -83,13 +83,13 @@ class SliceRenderer {
 
 	bool _animationsShadowEnabled[997];
 
+	Vector3 _shadowPolygonDefault[12];
+	Vector3 _shadowPolygonCurrent[12];
+
 	Color _setEffectColor;
 	Color _lightsColor;
 
 	Graphics::PixelFormat _pixelFormat;
-
-	Matrix3x2 calculateFacingRotationMatrix();
-	void drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr, int y);
 
 public:
 	SliceRenderer(BladeRunnerEngine *vm);
@@ -103,7 +103,6 @@ public:
 	void setupFrameInWorld(int animationId, int animationFrame, Vector3 position, float facing, float scale = 1.0f);
 	void getScreenRectangle(Common::Rect *screenRectangle, int animationId, int animationFrame, Vector3 position, float facing, float scale);
 	void drawInWorld(int animationId, int animationFrame, Vector3 position, float facing, float scale, Graphics::Surface &surface, uint16 *zbuffer);
-
 	void drawOnScreen(int animationId, int animationFrame, int screenX, int screenY, float facing, float scale, Graphics::Surface &surface);
 
 	void preload(int animationId);
@@ -111,9 +110,13 @@ public:
 	void disableShadows(int *animationsIdsList, int listSize);
 
 private:
-
 	void calculateBoundingRect();
+	Matrix3x2 calculateFacingRotationMatrix();
 	void loadFrame(int animation, int frame);
+
+	void drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr, int y);
+	void drawShadowInWorld(int transparency, Graphics::Surface &surface, uint16 *zbuffer);
+	void drawShadowPolygon(int transparency, Graphics::Surface &surface, uint16 *zbuffer);
 };
 
 class SliceRendererLights {
