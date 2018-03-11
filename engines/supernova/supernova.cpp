@@ -231,10 +231,6 @@ void SupernovaEngine::updateEvents() {
 				(event.kbd.flags & Common::KBD_CTRL)) {
 				_console->attach();
 			}
-			if (event.kbd.keycode == Common::KEYCODE_x &&
-				(event.kbd.flags & Common::KBD_CTRL)) {
-				// TODO: Draw exit box
-			}
 
 			_gm->processInput(event.kbd);
 			break;
