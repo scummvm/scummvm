@@ -185,7 +185,7 @@ public:
 	uint16 getKeyInput(bool blockForPrintChar = false);
 	void getInput();
 	void mouseInput3();
-	void wait2(int ticks);
+	void wait(int ticks);
 	void waitOnInput(int ticks);
 	bool waitOnInput(int ticks, Common::KeyCode &keycode);
 	void turnOff();

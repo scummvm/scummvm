@@ -813,7 +813,7 @@ void GameManager::telomat(int nr) {
 			i >>= 1;
 			if (i == 4) {
 				_vm->renderText(kStringTelomat14, 50, 120, kColorGreen);
-				wait2(10);
+				wait(10);
 				_vm->renderBox(0, 0, 320, 200, kColorBlack);
 				_vm->renderRoom(*_currentRoom);
 				_vm->paletteBrightness();
@@ -824,7 +824,7 @@ void GameManager::telomat(int nr) {
 
 			if ((i == nr) || _rooms[BCORRIDOR]->getObject(4 + i)->hasProperty(CAUGHT)) {
 				_vm->renderText(kStringTelomat15, 50, 120, kColorGreen);
-				wait2(10);
+				wait(10);
 				_vm->renderBox(0, 0, 320, 200, kColorBlack);
 				_vm->renderRoom(*_currentRoom);
 				_vm->paletteBrightness();
@@ -834,7 +834,7 @@ void GameManager::telomat(int nr) {
 			}
 
 			_vm->renderText(kStringTelomat16, 50, 120, kColorGreen);
-			wait2(10);
+			wait(10);
 			_vm->renderBox(0, 0, 320, 200, kColorBlack);
 			_vm->renderRoom(*_currentRoom);
 			_vm->paletteBrightness();
@@ -864,7 +864,7 @@ void GameManager::telomat(int nr) {
 				waitOnInput(_timer1);
 				_vm->removeMessage();
 				if (dialog(4, rows2, dial2, 0) != 3) {
-					wait2(10);
+					wait(10);
 					say(kStringTelomat20);
 				}
 				_rooms[BCORRIDOR]->setSectionVisible(7, true);
@@ -888,7 +888,7 @@ void GameManager::telomat(int nr) {
 
 			if (_key.keycode == Common::KEYCODE_RETURN) {
 				_vm->renderText(kStringShipSleepCabin9, 100, 120, kColorGreen);
-				wait2(10);
+				wait(10);
 			}
 			// fallthrough
 		case Common::KEYCODE_ESCAPE:
@@ -926,7 +926,7 @@ void GameManager::guardNoticed() {
 	_vm->paletteFadeIn();
 	_vm->renderImage(2);
 	reply(kStringGuardNoticed1, 2, 5);
-	wait2(2);
+	wait(2);
 	reply(kStringGuardNoticed2, 2, 5);
 	_vm->paletteFadeOut();
 	_currentRoom->setSectionVisible(2, false);
@@ -948,18 +948,18 @@ void GameManager::busted(int i) {
 			if (!_currentRoom->getObject(0)->hasProperty(OPENED)) {
 				_vm->renderImage(i - 1);
 				_vm->playSound(kAudioDoorOpen);
-				wait2(2);
+				wait(2);
 			}
 			_vm->renderImage(i);
-			wait2(3);
+			wait(3);
 			_vm->renderImage(i + 3);
 			_vm->playSound(kAudioVoiceHalt);
 			_vm->renderImage(i);
-			wait2(5);
+			wait(5);
 			if (_currentRoom->getId() == OFFICE_L2)
 				i = 13;
 			_vm->renderImage(i + 1);
-			wait2(3);
+			wait(3);
 			_vm->renderImage(i + 2);
 			shot(0, 0);
 		} else if (_currentRoom->getId() == BCORRIDOR)
@@ -974,7 +974,7 @@ void GameManager::busted(int i) {
 			_vm->renderImage(33); // above
 	}
 	_vm->playSound(kAudioVoiceHalt);
-	wait2(3);
+	wait(3);
 	shot(0, 0);
 }
 
@@ -1121,7 +1121,7 @@ void GameManager::walk(int imgId) {
 		_vm->renderImage(_prevImgId + 128);
 	_vm->renderImage(imgId);
 	_prevImgId = imgId;
-	wait2(3);
+	wait(3);
 }
 
 void GameManager::guardWalkEvent() {
@@ -1137,7 +1137,7 @@ void GameManager::guardWalkEvent() {
 			_vm->renderImage(_state._origin + 1);
 			_prevImgId = _state._origin + 1;
 			_vm->playSound(kAudioDoorOpen);
-			wait2(3);
+			wait(3);
 		}
 
 		int imgId;
@@ -1158,13 +1158,13 @@ void GameManager::guardWalkEvent() {
 		}
 		_vm->renderImage(imgId);
 		if (!behind) {
-			wait2(3);
+			wait(3);
 			_vm->renderImage(_prevImgId + 128);
 			_vm->playSound(kAudioDoorClose);
 		}
 
 		_prevImgId = imgId;
-		wait2(3);
+		wait(3);
 		switch (_state._origin) {
 		case 0:
 			walk(12);
@@ -1222,9 +1222,9 @@ void GameManager::guardWalkEvent() {
 		if (behind) {
 			_vm->renderImage(_state._destination + 1);
 			_vm->playSound(kAudioDoorOpen);
-			wait2(3);
+			wait(3);
 			_vm->renderImage(_prevImgId + 128);
-			wait2(3);
+			wait(3);
 			_vm->renderImage(_state._destination + 1 + 128);
 			_vm->playSound(kAudioDoorClose);
 			_rooms[BCORRIDOR]->getObject(_state._destination + 4)->setProperty(OCCUPIED);
@@ -1236,7 +1236,7 @@ void GameManager::guardWalkEvent() {
 			_state._eventTime = _state._time + ticksToMsec(60);
 			_state._eventCallback = kGuardWalkFn;
 		} else {
-			wait2(18);
+			wait(18);
 			SWAP(_state._origin, _state._destination);
 			_state._eventCallback = kGuardWalkFn;
 		}
@@ -1274,7 +1274,7 @@ void GameManager::taxiEvent() {
 	_currentRoom->setSectionVisible(2, false);
 	_vm->renderImage(3);
 	for (int i = 4; i <= 8; i++) {
-		wait2(2);
+		wait(2);
 		_vm->renderImage(invertSection(i - 1));
 		_vm->renderImage(i);
 	}
@@ -1569,7 +1569,7 @@ void GameManager::changeRoom(RoomID id) {
 	_newRoom = true;
 }
 
-void GameManager::wait2(int ticks) {
+void GameManager::wait(int ticks) {
 	int32 end = _state._time + ticksToMsec(ticks);
 	do {
 		g_system->delayMillis(_vm->_delay);
@@ -1652,9 +1652,9 @@ void GameManager::saveTime() {
 void GameManager::screenShake() {
 	for (int i = 0; i < 12; ++i) {
 		_vm->_system->setShakePos(8);
-		wait2(1);
+		wait(1);
 		_vm->_system->setShakePos(0);
-		wait2(1);
+		wait(1);
 	}
 }
 
@@ -1768,14 +1768,14 @@ void GameManager::shot(int a, int b) {
 	if (a)
 		_vm->renderImage(a);
 	_vm->playSound(kAudioGunShot);
-	wait2(2);
+	wait(2);
 	if (b)
 		_vm->renderImage(b);
-	wait2(2);
+	wait(2);
 	if (a)
 		_vm->renderImage(a);
 	_vm->playSound(kAudioGunShot);
-	wait2(2);
+	wait(2);
 	if (b)
 		_vm->renderImage(b);
 
@@ -2269,31 +2269,31 @@ void GameManager::executeRoom() {
 void GameManager::guardShot() {
 	_vm->renderImage(2);
 	_vm->renderImage(5);
-	wait2(3);
+	wait(3);
 	_vm->renderImage(2);
 
 	_vm->playSound(kAudioVoiceHalt);
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
-		wait2(1);
+		wait(1);
 
 	_vm->renderImage(5);
-	wait2(5);
+	wait(5);
 	_vm->renderImage(3);
-	wait2(3);
+	wait(3);
 
 	shot(4, 3);
 }
 
 void GameManager::guard3Shot() {
 	_vm->renderImage(1);
-	wait2(3);
+	wait(3);
 	_vm->playSound(kAudioVoiceHalt); // 46/0
 	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
-		wait2(1);
+		wait(1);
 
-	wait2(5);
+	wait(5);
 	_vm->renderImage(2);
-	wait2(3);
+	wait(3);
 	shot(3,2);
 }
 
