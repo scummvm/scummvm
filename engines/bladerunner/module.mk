@@ -50,6 +50,7 @@ MODULE_OBJS = \
 	script/vk_script.o \
 	script/esper_script.o \
 	script/ai_script.o \
+	script/ai/answering_machine.o \
 	script/ai/baker.o \
 	script/ai/bryant.o \
 	script/ai/crazylegs.o \
