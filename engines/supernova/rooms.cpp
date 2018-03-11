@@ -272,7 +272,7 @@ void Intro::titleScreen() {
 
 	Marquee marquee(_vm, Marquee::kMarqueeIntro, _introText.c_str());
 	while (!_vm->shouldQuit()) {
-		_vm->updateEvents();
+		_gm->updateEvents();
 		marquee.renderCharacter();
 		if (_gm->_mouseClicked || _gm->_keyPressed)
 			break;
@@ -3298,7 +3298,7 @@ void Outro::onEntrance() {
 	_vm->playSoundMod(kMusicOutro);
 	Marquee marquee(_vm, Marquee::kMarqueeOutro, _outroText.c_str());
 	while (!_vm->shouldQuit()) {
-		_vm->updateEvents();
+		_gm->updateEvents();
 		marquee.renderCharacter();
 		if (_gm->_mouseClicked || _gm->_keyPressed)
 			break;

@@ -133,7 +133,6 @@ public:
 	void paletteFadeIn();
 	void paletteFadeOut();
 	void paletteBrightness();
-	void updateEvents();
 	void playSound(AudioIndex sample);
 	void playSoundMod(int filenumber);
 	void stopSound();

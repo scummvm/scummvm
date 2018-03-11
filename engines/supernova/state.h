@@ -124,6 +124,7 @@ public:
 	GameManager(SupernovaEngine *vm);
 	~GameManager();
 
+	void updateEvents();
 	void processInput(Common::KeyState &state);
 	void processInput();
 	void executeRoom();

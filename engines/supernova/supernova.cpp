@@ -165,7 +165,7 @@ Common::Error SupernovaEngine::run() {
 
 	while (!shouldQuit()) {
 		uint32 start = _system->getMillis();
-		updateEvents();
+		_gm->updateEvents();
 		_gm->executeRoom();
 		_console->onFrame();
 		_system->updateScreen();
@@ -179,75 +179,6 @@ Common::Error SupernovaEngine::run() {
 	return Common::kNoError;
 }
 
-void SupernovaEngine::updateEvents() {
-	_gm->handleTime();
-	if (_gm->_animationEnabled && !_messageDisplayed && _gm->_animationTimer == 0)
-		_gm->_currentRoom->animation();
-
-	if (_gm->_state._eventCallback != kNoFn && _gm->_state._time >= _gm->_state._eventTime) {
-		_allowLoadGame = false;
-		_allowSaveGame = false;
-		_gm->_state._eventTime = kMaxTimerValue;
-		EventFunction fn = _gm->_state._eventCallback;
-		_gm->_state._eventCallback = kNoFn;
-		switch (fn) {
-		case kNoFn:
-			break;
-		case kSupernovaFn:
-			_gm->supernovaEvent();
-			break;
-		case kGuardReturnedFn:
-			_gm->guardReturnedEvent();
-			break;
-		case kGuardWalkFn:
-			_gm->guardWalkEvent();
-			break;
-		case kTaxiFn:
-			_gm->taxiEvent();
-			break;
-		case kSearchStartFn:
-			_gm->searchStartEvent();
-			break;
-		}
-		_allowLoadGame = true;
-		_allowSaveGame = true;
-		return;
-	}
-
-	if (_gm->_state._alarmOn && _gm->_state._timeAlarm <= _gm->_state._time) {
-		_gm->_state._alarmOn = false;
-		_gm->alarm();
-		return;
-	}
-
-	_gm->_mouseClicked = false;
-	_gm->_keyPressed = false;
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			_gm->_keyPressed = true;
-			_gm->processInput(event.kbd);
-			break;
-		case Common::EVENT_LBUTTONUP:
-			// fallthrough
-		case Common::EVENT_RBUTTONUP:
-			if (_gm->_currentRoom->getId() != INTRO && _mixer->isSoundHandleActive(_soundHandle))
-				return;
-			_gm->_mouseClicked = true;
-			// fallthrough
-		case Common::EVENT_MOUSEMOVE:
-			_gm->_mouseClickType = event.type;
-			_gm->_mouseX = event.mouse.x;
-			_gm->_mouseY = event.mouse.y;
-			if (_gm->_guiEnabled)
-				_gm->processInput();
-			break;
-		default:
-			break;
-		}
-	}
-}
 
 bool SupernovaEngine::hasFeature(EngineFeature f) const {
 	switch (f) {

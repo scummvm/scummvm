@@ -503,6 +503,76 @@ void GameManager::initGui() {
 	_guiInventoryArrow[1].setTextPosition(273, 186);
 }
 
+void GameManager::updateEvents() {
+	handleTime();
+	if (_animationEnabled && !_vm->_messageDisplayed && _animationTimer == 0)
+		_currentRoom->animation();
+
+	if (_state._eventCallback != kNoFn && _state._time >= _state._eventTime) {
+		_vm->_allowLoadGame = false;
+		_vm->_allowSaveGame = false;
+		_state._eventTime = kMaxTimerValue;
+		EventFunction fn = _state._eventCallback;
+		_state._eventCallback = kNoFn;
+		switch (fn) {
+		case kNoFn:
+			break;
+		case kSupernovaFn:
+			supernovaEvent();
+			break;
+		case kGuardReturnedFn:
+			guardReturnedEvent();
+			break;
+		case kGuardWalkFn:
+			guardWalkEvent();
+			break;
+		case kTaxiFn:
+			taxiEvent();
+			break;
+		case kSearchStartFn:
+			searchStartEvent();
+			break;
+		}
+		_vm->_allowLoadGame = true;
+		_vm->_allowSaveGame = true;
+		return;
+	}
+
+	if (_state._alarmOn && _state._timeAlarm <= _state._time) {
+		_state._alarmOn = false;
+		alarm();
+		return;
+	}
+
+	_mouseClicked = false;
+	_keyPressed = false;
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_KEYDOWN:
+			_keyPressed = true;
+			processInput(event.kbd);
+			break;
+		case Common::EVENT_LBUTTONUP:
+			// fallthrough
+		case Common::EVENT_RBUTTONUP:
+			if (_currentRoom->getId() != INTRO &&
+				_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+				return;
+			_mouseClicked = true;
+			// fallthrough
+		case Common::EVENT_MOUSEMOVE:
+			_mouseClickType = event.type;
+			_mouseX = event.mouse.x;
+			_mouseY = event.mouse.y;
+			if (_guiEnabled)
+				processInput();
+			break;
+		default:
+			break;
+		}
+	}
+}
 
 void GameManager::processInput(Common::KeyState &state) {
 	_key = state;
@@ -1412,7 +1482,7 @@ int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number
 	_currentSentence = -1;
 	do {
 		do {
-			_vm->updateEvents();
+			updateEvents();
 			mousePosDialog(_mouseX, _mouseY);
 			g_system->updateScreen();
 			g_system->delayMillis(_vm->_delay);
@@ -1500,7 +1570,7 @@ void GameManager::drawInventory() {
 
 uint16 GameManager::getKeyInput(bool blockForPrintChar) {
 	while (!_vm->shouldQuit()) {
-		_vm->updateEvents();
+		updateEvents();
 		if (_keyPressed) {
 			if (blockForPrintChar) {
 				if (Common::isPrint(_key.keycode) ||
@@ -1530,7 +1600,7 @@ uint16 GameManager::getKeyInput(bool blockForPrintChar) {
 
 Common::EventType GameManager::getMouseInput() {
 	while (!_vm->shouldQuit()) {
-		_vm->updateEvents();
+		updateEvents();
 		if (_mouseClicked)
 			return _mouseClickType;
 		g_system->updateScreen();
@@ -1541,7 +1611,7 @@ Common::EventType GameManager::getMouseInput() {
 
 void GameManager::getInput() {
 	while (!_vm->shouldQuit()) {
-		_vm->updateEvents();
+		updateEvents();
 		if (_mouseClicked || _keyPressed)
 			break;
 		g_system->updateScreen();
@@ -1573,7 +1643,7 @@ void GameManager::wait(int ticks) {
 	int32 end = _state._time + ticksToMsec(ticks);
 	do {
 		g_system->delayMillis(_vm->_delay);
-		_vm->updateEvents();
+		updateEvents();
 		g_system->updateScreen();
 	} while (_state._time < end && !_vm->shouldQuit());
 }
@@ -1582,7 +1652,7 @@ void GameManager::waitOnInput(int ticks) {
 	int32 end = _state._time + ticksToMsec(ticks);
 	do {
 		g_system->delayMillis(_vm->_delay);
-		_vm->updateEvents();
+		updateEvents();
 		g_system->updateScreen();
 	} while (_state._time < end && !_vm->shouldQuit() && !_keyPressed && !_mouseClicked);
 }
@@ -1592,7 +1662,7 @@ bool GameManager::waitOnInput(int ticks, Common::KeyCode &keycode) {
 	int32 end = _state._time + ticksToMsec(ticks);
 	do {
 		g_system->delayMillis(_vm->_delay);
-		_vm->updateEvents();
+		updateEvents();
 		g_system->updateScreen();
 		if (_keyPressed) {
 			keycode = _key.keycode;
@@ -2342,7 +2412,7 @@ void GameManager::alarmSound() {
 		_vm->playSound(kAudioAlarm);
 		while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle)) {
 			g_system->delayMillis(_vm->_delay);
-			_vm->updateEvents();
+			updateEvents();
 			g_system->updateScreen();
 		}
 	} while (_state._time < end && !_vm->shouldQuit());
