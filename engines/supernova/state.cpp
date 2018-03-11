@@ -1407,7 +1407,12 @@ int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number
 
 	_currentSentence = -1;
 	do {
-		mouseInput3();
+		do {
+			_vm->updateEvents();
+			mousePosDialog(_mouseX, _mouseY);
+			g_system->updateScreen();
+			g_system->delayMillis(_vm->_delay);
+		} while (!_mouseClicked && !_vm->shouldQuit());
 	} while (_currentSentence == -1 && !_vm->shouldQuit());
 
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
@@ -1538,15 +1543,6 @@ void GameManager::getInput() {
 		g_system->updateScreen();
 		g_system->delayMillis(_vm->_delay);
 	}
-}
-
-void GameManager::mouseInput3() {
-	do {
-		_vm->updateEvents();
-		mousePosDialog(_mouseX, _mouseY);
-		g_system->updateScreen();
-		g_system->delayMillis(_vm->_delay);
-	} while (!_mouseClicked && !_vm->shouldQuit());
 }
 
 void GameManager::roomBrightness() {
