@@ -34,6 +34,7 @@ namespace WorldOfXeen {
 		cloudsCtr = 1
 
 bool CloudsCutscenes::showCloudsIntro() {
+	EventsManager &events = *g_vm->_events;
 	FileManager &files = *g_vm->_files;
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
@@ -43,6 +44,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 
 	bool seenIntro = showCloudsTitle() && showCloudsIntroInner();
 
+	events.clearEvents();
 	sound.stopAllAudio();
 	screen.freePages();
 
@@ -247,16 +249,36 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 	sound.setMusicPercent(60);
 	screen.restoreBackground();
 	screen.update();
-	_subtitles.reset();
+	_subtitles.setLine(0);
 
 	// Loop through each spoken line
 	int ctr1 = 0, ctr2 = 0, ctr3 = 0, ctr4 = 0, ctr5 = 0, totalCtr = 0;
 	for (int lineCtr = 0; lineCtr < 14; ++lineCtr) {
 		if (lineCtr != 6 && lineCtr != 7) {
+			// Set subtitle to display (presuming subtitles are turned on)
+			switch (lineCtr) {
+			case 0:
+				_subtitles.setLine(0);
+				break;
+			case 1:
+				_subtitles.setLine(1);
+				break;
+			case 5:
+				_subtitles.setLine(2);
+				break;
+			case 11:
+				_subtitles.setLine(3);
+				break;
+			default:
+				break;
+			}
+
+			// Play the next sample
 			sound.playSound(_INTRO_VOCS[lineCtr]);
 		}
 
-		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() || _subtitles.active(); ) {
+		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() || 
+				(_subtitles.active() && (lineCtr == 0 || lineCtr == 4 || lineCtr == 10 || lineCtr == 13)); ) {
 			groupo.draw(0, 0);
 			groupo.draw(0, 1, Common::Point(160, 0));
 
@@ -309,8 +331,8 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 				windows[0].writeString(Res.CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
+				
 				WAIT(1);
-				_subtitles.show();
 				continue;
 			}
 
@@ -322,18 +344,13 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 				windows[0].writeString(Res.CLOUDS_INTRO1);
 
 				ctr5 = (ctr5 + 1) % 19;
-				WAIT(1);
-				_subtitles.show();
 				break;
 			}
 
-			events.updateGameCounter();
-			while (events.timeElapsed() < _INTRO_FRAMES_WAIT[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup]
-					&& sound.isSoundPlaying()) {
-				events.pollEventsAndWait();
-				if (events.isKeyMousePressed())
-					return false;
-			}
+			int duration = _INTRO_FRAMES_WAIT[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
+			if (duration == 0)
+				duration = 1;
+			WAIT(duration);
 
 			++lookup;
 			if (!sound._fxOn && lookup > 30)
