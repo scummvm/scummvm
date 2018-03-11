@@ -47,23 +47,24 @@ const int MAX_SPRITES = 32;
 const int MAX_MENUBUTTONS = 16; // This is arbitrary, the original game has no such limit
 
 const int TEXTBOX_WIDTH = 26;
+const int MAX_TEXTBOX_LINES = 12;
 
 
 // Keeps track of data for a list of buttons making up a menu
 struct Menu {
 	Sprite sprites[MAX_MENUBUTTONS];
 	uint16 retvals[MAX_MENUBUTTONS];
-	uint16 buttonVar2;
+	uint32 disabledButtons;
 	SharedPtr<FileStream> menuFile;
 	uint16 numButtons;
-	uint16 buttonVar1;
+	int16 selectedButton;
 	SharedPtr<Menu> nextMenu;
 
 	Menu() : nextMenu(SharedPtr<Menu>()) {}
 };
 
 class Graphics;
-typedef String (Graphics::*TextGetterFunc)(int, int, String *);
+typedef String (Graphics::*TextGetterFunc)(int, void *, String *);
 
 
 class Graphics {
@@ -115,11 +116,12 @@ private:
 	// text.cpp (TODO: separate class)
 public:
 	int showText(TextGetterFunc textGetter, int var, int xoffset, int yoffset, int textColor, bool loopChoices, int maxTextLines, int arg10);
-	String tmpFunction(int choiceIndex, int var, String *headerTextOutput);
-	String readTextFromRdf(int choiceIndex, int rdfVar, String *headerTextOutput);
+
+	String readTextFromRdf(int choiceIndex, void *data, String *headerTextOutput);
+	String readTextFromBuffer(int choiceIndex, void *data, String *headerTextOutput);
 
 private:
-	int handleTextboxEvents(uint32 arg0, bool arg4);
+	int handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4);
 
 	SharedPtr<TextBitmap> initTextSprite(int *xoffsetPtr, int *yoffsetPtr, byte textColor, int numTextLines, bool withHeader, Sprite *sprite);
 	void drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
@@ -134,20 +136,24 @@ private:
 	String skipTextAudioPrompt(const String &str);
 	String playTextAudio(const String &str);
 
+	int getMenuButtonAt(const Menu &menu, int x, int y);
+	void drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color);
 	void loadMenuButtons(String mnuFilename, int xpos, int ypos);
 	void setMenuButtonVar2Bits(uint32 bits);
 	void clearMenuButtonVar2Bits(uint32 bits);
 
+
 	uint16 _textboxVar1;
 	uint32 _textboxVar2;
 	uint32 _textboxVar3;
-	uint16 _textboxVar4;
-	uint16 _textboxVar5;
 	uint16 _textboxVar6;
 	uint16 _textboxVar7;
 	bool _textboxHasMultipleChoices;
 
 	SharedPtr<Menu> _activeMenu;
+
+	uint16 _textboxButtonVar4;
+	uint16 _word_4B422;
 };
 
 }

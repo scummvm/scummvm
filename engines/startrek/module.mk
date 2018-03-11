@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	bitmap.o \
 	common.o \
 	detection.o \
+	events.o \
 	filestream.o \
 	font.o \
 	lzss.o \

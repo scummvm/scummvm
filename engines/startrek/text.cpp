@@ -19,19 +19,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include "common/events.h"
 #include "common/stream.h"
 #include "graphics/cursorman.h"
 
 #include "startrek/graphics.h"
 
 
-// List of events that can be returned by handleTextEvents.
+// List of events that can be returned by handleTextboxEvents.
 enum TextEvent {
-	TEXTEVENT_RCLICK_OFFBUTTON = 0,
+	TEXTEVENT_RCLICK_OFFBUTTON = -4,
 	TEXTEVENT_ENABLEINPUT,          // Makes buttons selectable (occurs after a delay)
 	TEXTEVENT_RCLICK_ONBUTTON,
 	TEXTEVENT_LCLICK_OFFBUTTON,
-	TEXTEVENT_CONFIRM,
+	TEXTEVENT_CONFIRM = 0,
 	TEXTEVENT_SCROLLUP,
 	TEXTEVENT_SCROLLDOWN,
 	TEXTEVENT_PREVCHOICE,
@@ -59,7 +60,7 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	String speakerText;
 
 	while(true) {
-		String choiceText = (this->*textGetter)(numChoices, var, &speakerText);
+		String choiceText = (this->*textGetter)(numChoices, &var, &speakerText);
 		if (choiceText.empty())
 			break;
 
@@ -73,8 +74,8 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 		numChoices++;
 	}
 
-	if (maxTextLines == 0 || maxTextLines > 12)
-		maxTextLines = 12;
+	if (maxTextLines == 0 || maxTextLines > MAX_TEXTBOX_LINES)
+		maxTextLines = MAX_TEXTBOX_LINES;
 	if (numTextboxLines > maxTextLines)
 		numTextboxLines = maxTextLines;
 
@@ -87,12 +88,12 @@ int Graphics::showText(TextGetterFunc textGetter, int var, int xoffset, int yoff
 	int choiceIndex = 0;
 	int scrollOffset = 0;
 	if (tmpTextboxVar1 != 0 && tmpTextboxVar1 != 1 && numChoices == 1
-			&& _textboxVar5 != 0 && _textboxVar4 == 0)
+			&& _vm->_cdAudioEnabled && !_vm->_textboxVar4)
 		_textboxHasMultipleChoices = false;
 	else
 		_textboxHasMultipleChoices = true;
 
-	if (tmpTextboxVar1 >= 0 && tmpTextboxVar1 <= 2 && _textboxVar5 == 1 && _textboxVar4 == 0)
+	if (tmpTextboxVar1 >= 0 && tmpTextboxVar1 <= 2 && _vm->_cdAudioEnabled && !_vm->_textboxVar4)
 		_textboxVar6 = true;
 	else
 		_textboxVar6 = false;
@@ -196,7 +197,12 @@ readjustScrollDown:
 
 readjustScroll:
 				textboxSprite.bitmapChanged = true;
-				// sub_225d3(textBitmap, numTextLines-scrollOffset, numTextboxLines, lineFormattedText+scrollOffset*0x18);
+				drawMainText(
+						textBitmap,
+						numTextLines-scrollOffset,
+						numTextboxLines,
+						lineFormattedText.c_str() + scrollOffset*(TEXTBOX_WIDTH-2),
+						numChoicesWithNames != 0);
 				break;
 
 			case TEXTEVENT_PREVCHOICE:
@@ -266,27 +272,97 @@ reloadText:
 	return choiceIndex;
 }
 
-int Graphics::handleTextboxEvents(uint32 arg0, bool arg4) {
-	// TODO
+int Graphics::handleTextboxEvents(uint32 ticksUntilClickingEnabled, bool arg4) {
+	// TODO: finish
+
+	uint32 tickWhenClickingEnabled = _vm->_clockTicks + ticksUntilClickingEnabled;
+
 	while (true) {
-		_vm->pollEvents();
+		TrekEvent event;
+		while (_vm->popNextEvent(&event)) {
+			switch(event.type) {
+
+			case TREKEVENT_TICK: {
+			case TREKEVENT_MOUSEMOVE: // FIXME: actual game only uses TICK event here
+				Common::Point mousePos = getMousePos();
+				int buttonIndex = getMenuButtonAt(*_activeMenu, mousePos.x, mousePos.y);
+				if (buttonIndex != -1) {
+					if (_activeMenu->disabledButtons & (1<<buttonIndex))
+						buttonIndex = -1;
+				}
+
+				if (buttonIndex != _activeMenu->selectedButton) {
+					if (_activeMenu->selectedButton != -1) {
+						Sprite &spr = _activeMenu->sprites[_activeMenu->selectedButton];
+						drawMenuButtonOutline(spr.bitmap, 0x00);
+						spr.bitmapChanged = true;
+					}
+					if (buttonIndex != -1) {
+						Sprite &spr = _activeMenu->sprites[buttonIndex];
+						drawMenuButtonOutline(spr.bitmap, 0xda);
+						spr.bitmapChanged = true;
+					}
+					_activeMenu->selectedButton = buttonIndex;
+				}
+				// Not added: updating mouse position (scummvm handles that)
+
+				// sub_10492();
+				// sub_10A91();
+				drawAllSprites();
+				// sub_10BE7();
+				// sub_2A4B1();
+
+				if (_word_4B422 != 0) {
+					_word_4B422 = 0;
+					if (_textboxVar1 != 0) {
+						return TEXTEVENT_SPEECH_DONE;
+					}
+				}
+				// sub_1E88C();
+				_textboxVar3++;
+
+				if (ticksUntilClickingEnabled != 0 && _vm->_clockTicks >= tickWhenClickingEnabled)
+					return TEXTEVENT_ENABLEINPUT;
+				break;
+			}
+
+			case TREKEVENT_LBUTTONDOWN:
+				if (_activeMenu->selectedButton != -1) {
+					_vm->playSound(0x10);
+					return _activeMenu->retvals[_activeMenu->selectedButton];
+				}
+				else {
+					Common::Point mouse = getMousePos();
+					if (getMenuButtonAt(*_activeMenu, mouse.x, mouse.y) == -1) {
+						_vm->playSound(0x10);
+						return TEXTEVENT_LCLICK_OFFBUTTON;
+					}
+				}
+				break;
+
+			case TREKEVENT_RBUTTONDOWN:
+				// TODO
+				break;
+
+			case TREKEVENT_KEYDOWN:
+				// TODO
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 }
 
-String Graphics::tmpFunction(int choiceIndex, int var, String *headerTextOutput) {
-	if (headerTextOutput != nullptr)
-		*headerTextOutput = "Speaker                 ";
-
-	if (choiceIndex >= 1)
-		return NULL;
-	return "Text test";
-}
-
-String Graphics::readTextFromRdf(int choiceIndex, int rdfVar, String *headerTextOutput) {
+/**
+ * Text getter for showText which reads from an rdf file.
+ */
+String Graphics::readTextFromRdf(int choiceIndex, void *data, String *headerTextOutput) {
 	Room *room = _vm->getRoom();
 
-	// FIXME: in original game "rdfVar" is a pointer to the variable holding the offset.
-	// Currently treating it as the offset itself.
+	int rdfVar = *(int*)data;
+
 	uint16 textOffset = room->readRdfWord(rdfVar + (choiceIndex+1)*2);
 
 	if (textOffset == 0)
@@ -306,6 +382,20 @@ String Graphics::readTextFromRdf(int choiceIndex, int rdfVar, String *headerText
 	}
 
 	return (char*)&room->_rdfData[textOffset];
+}
+
+/**
+ * Text getter for showText which reads from a given buffer.
+ */
+String Graphics::readTextFromBuffer(int choiceIndex, void *data, String *headerTextOutput) {
+	char buf[TEXTBOX_WIDTH];
+	memcpy(buf, data, TEXTBOX_WIDTH-2);
+	buf[TEXTBOX_WIDTH-2] = '\0';
+
+	*headerTextOutput = String(buf);
+
+	char *text = (char*)data+TEXTBOX_WIDTH-2;
+	return String(text);
 }
 
 /**
@@ -407,7 +497,6 @@ void Graphics::drawMainText(SharedPtr<TextBitmap> bitmap, int numTextLines, int 
 		lineIndex++;
 	}
 
-	debug("%d, %d\n", numTextLines, numTextboxLines);
 	// Fill all remaining blank lines
 	while (lineIndex != numTextboxLines) {
 		memset(dest, ' ', TEXTBOX_WIDTH-2);
@@ -448,15 +537,15 @@ void Graphics::getTextboxHeader(String *headerTextOutput, String speakerText, in
 
 String Graphics::readLineFormattedText(TextGetterFunc textGetter, int var, int choiceIndex, SharedPtr<TextBitmap> textBitmap, int numTextboxLines, int *numTextLines) {
 	String headerText;
-	String text = (this->*textGetter)(choiceIndex, var, &headerText);
+	String text = (this->*textGetter)(choiceIndex, &var, &headerText);
 
-	if (_textboxVar1 == 2 && _textboxVar5 == 1 && _textboxVar4 == 1) {
+	if (_textboxVar1 == 2 && _vm->_cdAudioEnabled && _vm->_textboxVar4) {
 		uint32 oldSize = text.size();
 		text = playTextAudio(text);
 		if (oldSize != text.size())
 			_textboxHasMultipleChoices = true;
 	}
-	else if ((_textboxVar1 == 0 || _textboxVar1 == 1) && _textboxVar5 == 1 && _textboxVar4 == 1) {
+	else if ((_textboxVar1 == 0 || _textboxVar1 == 1) && _vm->_cdAudioEnabled && _vm->_textboxVar4) {
 		text = playTextAudio(text);
 	}
 	else {
@@ -598,6 +687,58 @@ String Graphics::playTextAudio(const String &str) {
 	return skipTextAudioPrompt(str);
 }
 
+/**
+ * Returns the index of the button at the given position, or -1 if none.
+ */
+int Graphics::getMenuButtonAt(const Menu &menu, int x, int y) {
+	for (int i=0; i<menu.numButtons; i++) {
+		const Sprite &spr = menu.sprites[i];
+
+		if (spr.drawMode != 2)
+			continue;
+
+		int left = spr.pos.x - spr.bitmap->xoffset;
+		int top = spr.pos.y - spr.bitmap->yoffset;
+
+		// Oddly, this doesn't account for x/yoffset...
+		int right = spr.pos.x + spr.bitmap->width - 1;
+		int bottom = spr.pos.y + spr.bitmap->height - 1;
+
+		if (x >= left && x <= right && y >= top && y <= bottom)
+			return i;
+	}
+
+	return -1;
+}
+
+/**
+ * Draws or removes the outline on menu buttons when the cursor hovers on them, or leaves
+ * them.
+ */
+void Graphics::drawMenuButtonOutline(SharedPtr<Bitmap> bitmap, byte color) {
+	int lineWidth = bitmap->width-2;
+	int offsetToBottom = (bitmap->height-3)*bitmap->width;
+
+	byte *dest = bitmap->pixels + bitmap->width + 1;
+
+	while (lineWidth--) {
+		*dest = color;
+		*(dest+offsetToBottom) = color;
+		dest++;
+	}
+
+	int lineHeight = bitmap->height - 2;
+	int offsetToRight = bitmap->width - 3;
+
+	dest = bitmap->pixels + bitmap->width + 1;
+
+	while (lineHeight--) {
+		*dest = color;
+		*(dest+offsetToRight) = color;
+		dest += bitmap->width;
+	}
+}
+
 void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 	SharedPtr<Menu> oldMenu = _activeMenu;
 	_activeMenu = SharedPtr<Menu>(new Menu());
@@ -629,6 +770,16 @@ void Graphics::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 
 		_activeMenu->sprites[i].field6 = 8;
 	}
+
+	if (_activeMenu->retvals[_activeMenu->numButtons-1] == 0) {
+		// Set default retvals for buttons
+		for (int i=0; i<_activeMenu->numButtons; i++)
+			_activeMenu->retvals[i] = i;
+	}
+
+	_activeMenu->selectedButton = -1;
+	_activeMenu->disabledButtons = 0;
+	_textboxButtonVar4 = 0;
 }
 
 // 0x0002: Disable scroll up
