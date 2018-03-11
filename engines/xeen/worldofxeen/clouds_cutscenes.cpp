@@ -375,7 +375,10 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 
 void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 	EventsManager &events = *g_vm->_events;
+	FileManager &files = *g_vm->_files;
 	Sound &sound = *g_vm->_sound;
+
+	files.setGameCc(0);
 	_mirror.load("mirror.end");
 	_mirrBack.load("mirrback.end");
 	_mergeX = 0;
@@ -537,9 +540,10 @@ bool CloudsCutscenes::showCloudsEnding1() {
 		WAIT(3);
 	}
 	sound.setMusicPercent(60);
+	_subtitles.setLine(11);
 
 	// Alamar's monologue
-	for (int idx = 0; idx < 3; ++idx) {
+	for (int idx = 0; idx < (sound._subtitles ? 4 : 3); ++idx) {
 		switch (idx) {
 		case 0:
 			// You have defeated my general, Lord Xeen
@@ -552,6 +556,11 @@ bool CloudsCutscenes::showCloudsEnding1() {
 		case 2:
 			// But the Dark Side will always be mine
 			sound.playSound("dark3.voc");
+			break;
+		default:
+			// Laugh
+			sound.playSound("darklaff.voc");
+			sound.setMusicPercent(75);
 			break;
 		}
 
@@ -578,12 +587,14 @@ bool CloudsCutscenes::showCloudsEnding1() {
 
 			_subtitles.show();
 			WAIT(3);
-		} while (sound.isSoundPlaying() || _subtitles.active());
+		} while (sound.isSoundPlaying() || (idx == 3 && _subtitles.active()));
 	}
 
-	// Laugh
-	sound.playSound("darklaff.voc");
-	sound.setMusicPercent(75);
+	if (!sound._subtitles) {
+		// Laugh
+		sound.playSound("darklaff.voc");
+		sound.setMusicPercent(75);
+	}
 
 	// Alamar fade out
 	for (int idx = 12; idx >= 0; --idx) {
@@ -685,7 +696,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 
 	// Congratulations adventurers
 	const char *const VOC_NAMES[3] = { "king1.voc", "king2.voc", "king3.voc" };
-	_subtitles.setLine(0);
+	_subtitles.setLine(12);
 	for (int idx = 0; idx < 3; ++idx) {
 		sound.playSound(VOC_NAMES[idx]);
 
@@ -699,7 +710,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 
 			_subtitles.show();
 			WAIT(3);
-		} while (sound.isSoundPlaying() || _subtitles.active());
+		} while (sound.isSoundPlaying() || (idx == 2 && _subtitles.active()));
 
 		king.draw(0, 0, Common::Point(0, 0));
 		king.draw(0, 1, Common::Point(160, 0));
@@ -969,6 +980,7 @@ bool CloudsCutscenes::showCloudsEnding5() {
 	king.draw(0, 0, Common::Point(0, 0));
 	king.draw(0, 1, Common::Point(160, 0));
 	screen.fadeIn();
+	_subtitles.setLine(13);
 	
 	sound.playSound("king4.voc");
 	do {
@@ -978,7 +990,6 @@ bool CloudsCutscenes::showCloudsEnding5() {
 		if (frame > 1)
 			king.draw(0, frame);
 
-		_subtitles.show();
 		WAIT(3);
 	} while (sound.isSoundPlaying() || _subtitles.active());
 
