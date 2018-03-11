@@ -1764,7 +1764,276 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 }
 
 bool AIScriptSteele::ChangeAnimationMode(int mode) {
-	warning("Steele: ChangeAnimationMode: TODO");
+	switch (mode) {
+	case 0:
+		if (Game_Flag_Query(603)) {
+			_var1 = 3;
+		} else {
+			_var1 = 0;
+		}
+		switch (_animationState) {
+		case 0:
+		case 24:
+		case 34:
+		case 35:
+		case 41:
+			return true;
+		case 4:
+			_animationState = 23;
+			_animationFrame = 0;
+			break;
+		case 14:
+		case 15:
+		case 16:
+		case 17:
+		case 18:
+		case 19:
+			_flag = 1;
+			break;
+		case 20:
+		case 21:
+		case 22:
+		case 37:
+			_flag = 1;
+			_animationState = 23;
+			_animationFrame = 0;
+			break;
+		case 23:
+		case 26:
+			_animationState = 24;
+			_animationFrame = 0;
+			break;
+		default:
+			_animationFrame = 0;
+			if (Game_Flag_Query(482) == 1) {
+				_animationState = 41;
+				_var1 = 1;
+			} else {
+				_animationState = 0;
+			}
+			break;
+		}
+		break;
+	case 1:
+		if ((_animationState != 4 && _animationState != 23 && _animationState != 25 && _animationState != 26)
+				|| _animationState > 26) {
+			if (Actor_Query_Goal_Number(kActorSteele) != 100 && Actor_Query_Goal_Number(kActorSteele) != 121) {
+				_animationState = 2;
+				_animationFrame = 0;
+			} else {
+				_animationState = 4;
+				_animationFrame = 0;
+			}
+		} else {
+			_animationState = 4;
+			_animationFrame = 0;
+		}
+		break;
+	case 2:
+		if (Actor_Query_Goal_Number(kActorSteele) != 100
+				&& Actor_Query_Goal_Number(kActorSteele) != 121
+				&& _animationState != 23) {
+			_animationState = 3;
+			_animationFrame = 0;
+		} else {
+			_animationState = 5;
+			_animationFrame = 0;
+		}
+		break;
+	case 3:
+		if (_animationState != 35) {
+			if (Game_Flag_Query(603)) {
+				_animationState = 37;
+				_animationFrame = 0;
+				_flag = 0;
+			} else {
+				if (_animationState) {
+					_animationState = 14;
+					_animationFrame = 0;
+				} else {
+					_animationState = 1;
+					_animationFrame = 0;
+					_animationStateNext = 14;
+					_animationNext = 77;
+				}
+				_flag = 0;
+			}
+		}
+		break;
+	case 4:
+		if (_animationState) {
+			if (_animationState > 25 || (_animationState != 23 && _animationState != 25)) {
+				_animationState = 23;
+				_animationFrame = 0;
+			}
+		} else {
+			_animationState = 25;
+			_animationFrame = 0;
+		}
+		break;
+	case 6:
+		if (Game_Flag_Query(603)) {
+			_animationState = 39;
+		} else {
+			_animationState = 26;
+		}
+		_animationFrame = 0;
+		break;
+	case 7:
+		_animationState = 4;
+		_animationFrame = 0;
+		break;
+	case 8:
+		_animationState = 5;
+		_animationFrame = 0;
+		break;
+	case 12:
+		if (_animationState) {
+			_animationState = 15;
+			_animationFrame = 0;
+		} else {
+			_animationState = 1;
+			_animationFrame = 0;
+			_animationStateNext = 15;
+			_animationNext = 78;
+		}
+		_flag = 0;
+		break;
+	case 13:
+		if (_animationState) {
+			_animationState = 16;
+			_animationFrame = 0;
+		} else {
+			_animationState = 1;
+			_animationFrame = 0;
+			_animationStateNext = 16;
+			_animationNext = 79;
+		}
+		_flag = 0;
+		break;
+	case 14:
+		if (_animationState) {
+			_animationState = 17;
+			_animationFrame = 0;
+		} else {
+			_animationState = 1;
+			_animationFrame = 0;
+			_animationStateNext = 17;
+			_animationNext = 80;
+		}
+		_flag = 0;
+		break;
+	case 15:
+		if (_animationState) {
+			_animationState = 18;
+			_animationFrame = 0;
+		} else {
+			_animationState = 1;
+			_animationFrame = 0;
+			_animationStateNext = 18;
+			_animationNext = 81;
+		}
+		_flag = 0;
+		break;
+	case 16:
+		if (_animationState) {
+			_animationState = 19;
+			_animationFrame = 0;
+		} else {
+			_animationState = 1;
+			_animationFrame = 0;
+			_animationStateNext = 19;
+			_animationNext = 81;
+		}
+		_flag = 0;
+		break;
+	case 21:
+		if (_animationState > 28) {
+			if (Random_Query(0, 1)) {
+				_animationState = 31;
+			} else {
+				_animationState = 32;
+			}
+		} else if (Random_Query(0, 1)) {
+			_animationState = 29;
+		} else {
+			_animationState = 30;
+		}
+		_animationFrame = 0;
+		break;
+	case 22:
+		if (Random_Query(0, 1)) {
+			_animationState = 29;
+		} else {
+			_animationState = 30;
+		}
+		_animationFrame = 0;
+		break;
+	case 43:
+		Game_Flag_Set(482);
+		_animationState = 41;
+		_animationFrame = 0;
+		_var2 = 0;
+		_var1 = 1;
+		break;
+	case 44:
+		_animationState = 6;
+		_animationFrame = 0;
+		break;
+	case 45:
+		_animationState = 7;
+		_animationFrame = 0;
+		break;
+	case 46:
+		_animationState = 8;
+		_animationFrame = 0;
+		break;
+	case 47:
+		_animationState = 9;
+		_animationFrame = 0;
+		break;
+	case 48:
+		if (_animationState != 33 && _animationState != 34) {
+			if (_animationState > 26 || (_animationState != 23 && _animationState != 25 && _animationState != 26)) {
+				_animationState = 34;
+				_animationFrame = 0;
+			} else {
+				_animationState = 33;
+				_animationFrame = 0;
+			}
+		}
+		break;
+	case 49:
+		if (_animationState != 33) {
+			_animationState = 33;
+			_animationFrame = 0;
+		}
+		break;
+	case 51:
+		_animationState = 35;
+		_animationFrame = 0;
+		break;
+	case 58:
+		_animationState = 20;
+		_animationFrame = 0;
+		_flag = 0;
+		break;
+	case 59:
+		_animationState = 21;
+		_animationFrame = 0;
+		_flag = 0;
+		break;
+	case 60:
+		_animationState = 22;
+		_animationFrame = 0;
+		_flag = 0;
+		break;
+	case 86:
+		_animationState = 10;
+		_animationFrame = 0;
+		break;
+	}
+
 	return true;
 }
 
