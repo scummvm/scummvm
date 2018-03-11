@@ -28,7 +28,7 @@
 
 namespace Xeen {
 
-Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _fxOn(true), _musicOn(true),
+Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _fxOn(true), _musicOn(true), _subtitles(false),
 		_songData(nullptr), _effectsData(nullptr), _musicSide(0), _musicPercent(100) {
 	_SoundDriver = new AdlibSoundDriver();
 }
@@ -100,6 +100,8 @@ void Sound::updateSoundSettings() {
 	_musicOn = !ConfMan.getBool("music_mute");
 	if (!_musicOn)
 		stopSong();
+
+	_subtitles = ConfMan.hasKey("subtitles") ? ConfMan.getBool("subtitles") : true;
 }
 
 void Sound::loadEffectsData() {

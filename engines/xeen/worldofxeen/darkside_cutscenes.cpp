@@ -30,7 +30,7 @@ namespace Xeen {
 	namespace WorldOfXeen {
 
 #define	WAIT_SUBTITLES(time) \
-	showSubtitles(); \
+	_subtitles.show(); \
 	WAIT(time)
 
 static const int PHAROAH_FRAMES[32] = {
@@ -70,10 +70,10 @@ const int LEFT_CLAW_IDLE_Y[32] = {
 
 
 bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
-	_vm->_files->_isDarkCc = true;
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
+	g_vm->_files->_isDarkCc = true;
 
 	screen.loadPalette("dark.pal");
 	SpriteResource nwc[4] = {
@@ -100,7 +100,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 
 	// Initial loop for dragon roaring
 	int nwcIndex = 0, nwcFrame = 0;
-	for (int idx = 0; idx < 55 && !_vm->shouldExit(); ++idx) {
+	for (int idx = 0; idx < 55 && !g_vm->shouldExit(); ++idx) {
 		// Render the next frame
 		screen.vertMerge(0);
 		nwc[nwcIndex].draw(0, nwcFrame);
@@ -125,7 +125,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 	}
 
 	// Loop for dragon using flyspray
-	for (int idx = 0; idx < 42 && !_vm->shouldExit(); ++idx) {
+	for (int idx = 0; idx < 42 && !g_vm->shouldExit(); ++idx) {
 		screen.vertMerge(SCREEN_HEIGHT);
 		nwc[3].draw(0, idx);
 	
@@ -152,7 +152,7 @@ bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 
 		WAIT(2);
 	}
-	if (_vm->shouldExit())
+	if (g_vm->shouldExit())
 		return false;
 
 	// Pause for a bit
@@ -211,8 +211,8 @@ bool DarkSideCutscenes::rubCrystalBall(bool fadeIn) {
 		_dragon1.draw(0, PHAROAH_FRAMES[frame], Common::Point(139, PHAROAH_YLIST[frame]), SPRFLAG_800);
 		_claw.draw(0, frame % 5, Common::Point(LEFT_CLAW_RUB_X[frame], LEFT_CLAW_RUB_Y[frame]), SPRFLAG_800);
 
-		if (_subtitleSize)
-			showSubtitles();
+		if (_subtitles.active())
+			_subtitles.show();
 
 		if (fadeIn && frame == 0)
 			screen.fadeIn();
@@ -232,9 +232,9 @@ void DarkSideCutscenes::animatePharoah(int frame, bool showBall) {
 }
 
 bool DarkSideCutscenes::showDarkSideIntro1() {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
 	const int XLIST1[] = {
 		0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 58, 60, 62
 	};
@@ -256,7 +256,6 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	WAIT(60);
 	screen.fadeOut(8);
 
-	_subtitles.load("special.bin");
 	screen.loadBackground("pyramid2.raw");
 	screen.loadPage(0);
 	screen.loadPage(1);
@@ -275,7 +274,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	// Show Might and Magic Darkside of Xeen title, and gradualy scroll
 	// the background vertically down to show the Pharoah's base
 	bool fadeFlag = true;
-	for (int yp = 0, frameNum = 0, idx1 = 0; yp < SCREEN_HEIGHT && !_vm->shouldExit(); ++yp) {
+	for (int yp = 0, frameNum = 0, idx1 = 0; yp < SCREEN_HEIGHT && !g_vm->shouldExit(); ++yp) {
 		screen.vertMerge(yp);
 
 		title.draw(0, 0);
@@ -302,7 +301,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 
 	// Zoom into the Pharoah's base closeup view
 	sound.setMusicPercent(38);
-	for (int idx = 14; idx >= 0 && !_vm->shouldExit(); --idx) {
+	for (int idx = 14; idx >= 0 && !g_vm->shouldExit(); --idx) {
 		pyraTop.draw(0, 0, Common::Point(XLIST1[idx], YLIST1[idx]), 0, idx);
 		pyraTop.draw(0, 1, Common::Point(XLIST2[idx], YLIST1[idx]), 0, idx);
 
@@ -313,15 +312,13 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	screen.saveBackground();
 	sound.playSound("pharoh1a.voc");
 
-	recordTime();
-	resetSubtitles(0);
-	_subtitleLineNum = 0;
+	_subtitles.setLine(0);
 
 	bool phar2 = false;
-	for (int idx = 0; idx < 19 && !_vm->shouldExit(); ++idx) {
+	for (int idx = 0; idx < 19 && !g_vm->shouldExit(); ++idx) {
 		screen.restoreBackground();
 		pyramid.draw(0, idx, Common::Point(132, 62));
-		showSubtitles();
+		_subtitles.show();
 
 		if (!sound.isSoundPlaying() && !phar2)
 			sound.playSound("pharoh1b.voc");
@@ -329,7 +326,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		WAIT_SUBTITLES(4);
 	}
 
-	waitForLineOrSound();
+	_subtitles.waitForLineOrSound();
 	screen.fadeOut();
 
 	const int XLIST3[10] = { 102, 103, 104, 104, 104, 103, 102, 101, 101, 101 };
@@ -346,10 +343,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	};
 
 	SpriteResource dragon("dragon.int");
-	recordTime();
-	resetSubtitles(0);
-	_subtitleLineNum = 0;
-	_subtitleSize = 25;
+	_subtitles.setLine(1);
 
 	screen.loadBackground("2room.raw");
 	screen.loadPage(1);
@@ -360,7 +354,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	screen.horizMerge(SCREEN_WIDTH);
 	dragon.draw(0, 9, Common::Point(XLIST3[0], YLIST3[0]), SPRFLAG_800);
 
-	showSubtitles();
+	_subtitles.show();
 	screen.fadeIn();
 
 	int posNum = 0, phar2Index = 0, ctr = 0;
@@ -368,7 +362,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		events.updateGameCounter();
 		screen.horizMerge(idx);
 		dragon.draw(0, FRAMES3[frameNum], Common::Point(XLIST3[posNum], YLIST3[posNum]), SPRFLAG_800);
-		showSubtitles();
+		_subtitles.show();
 		events.pollEventsAndWait();
 		if (events.isKeyMousePressed())
 			return false;
@@ -379,7 +373,7 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 			sound.playSound(PHAR_VOC[1 + phar2Index++]);
 
 		if (phar2Index == 4) {
-			if (!sound.isSoundPlaying() && !_subtitleSize)
+			if (!sound.isSoundPlaying() && !_subtitles.active())
 				break;
 		}
 
@@ -408,9 +402,9 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 	clawCtr = (clawCtr + 1) % 32
 
 bool DarkSideCutscenes::showDarkSideIntro2() {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
 	SpriteResource goon("goon.int"), darkLord("darklord.int"), queen("queen.int"),
 		wizard("wizard.int"), fizzle("fizzle.int"), wizMth("wizmth.int");
 	int idx, clawCtr;
@@ -423,8 +417,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		return false;
 
 	// TODO: Subtitle stuff
-	recordTime();
-	_subtitleSize = 1;
+	_subtitles.setLine(1);
 	sound.playFX(42);
 
 	for (idx = 0, clawCtr = 0; idx < 11; ++idx) {
@@ -439,7 +432,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		}
 
 		if (idx > 6)
-			showSubtitles();
+			_subtitles.show();
 		WAIT(3);
 	}
 
@@ -449,12 +442,9 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		ANIMATE_PHAROAH;
 
 		if (!sound.isSoundPlaying() && vocIndex < 3) {
-			if (!_subtitleSize) {
-				if (!vocIndex) {
-					// TODO: Subtitle stuff
-					recordTime();
-					_subtitleSize = 1;
-				}
+			if (!_subtitles.active()) {
+				if (!vocIndex)
+					_subtitles.setLine(9 + vocIndex);
 
 				sound.playSound(VOC_NAMES[vocIndex++]);
 				if (vocIndex == 3)
@@ -472,14 +462,12 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 				Common::Point(9, 57));
 		}
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
-	} while (vocIndex < 3 || sound.isSoundPlaying() || _subtitleSize);
+	} while (vocIndex < 3 || sound.isSoundPlaying() || _subtitles.active());
 
-	// TODO: Subtitle stuff
 	sound.playSound(VOC_NAMES[3]);
-	recordTime();
-	_subtitleSize = 1;
+	_subtitles.setLine(10);
 
 	idx = 34;
 	do {
@@ -489,13 +477,12 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		if (++idx <= 37)
 			idx = 34;
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
-	} while (sound.isSoundPlaying() || _subtitleSize);
+	} while (sound.isSoundPlaying() || _subtitles.active());
 
 	// TODO: Subtitle stuff
-	recordTime();
-	_subtitleSize = 1;
+	_subtitles.setLine(0);
 	sound.playSound("dark3.voc");
 
 	const char *const VOC_NAMES2[2] = { "pharoh5a.voc", "pharoh5b.voc" };
@@ -505,15 +492,14 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		ANIMATE_PHAROAH;
 		darkLord.draw(0, vocIndex == 0 ? getSpeakingFrame(0, 3) : 0, Common::Point(9, 57));
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
 		if (!sound.isSoundPlaying() && vocIndex < 2)
 			sound.playSound(VOC_NAMES2[vocIndex++]);
-	} while (vocIndex < 2 || sound.isSoundPlaying() || _subtitleSize);
+	} while (vocIndex < 2 || sound.isSoundPlaying() || _subtitles.active());
 
 	// TODO: Subtitle stuff
-	recordTime();
-	_subtitleSize = 1;
+	_subtitles.setLine(0);
 
 	sound.playFX(42);
 	vocIndex = 0;
@@ -530,7 +516,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 			darkLord.draw(0, getSpeakingFrame(0, 3), Common::Point(9, 57));
 		fizzle.draw(0, idx, Common::Point(9, 57));
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
 	}
 
@@ -539,9 +525,9 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 	do {
 		ANIMATE_PHAROAH;
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
-	} while (sound.isSoundPlaying() || _subtitleSize);
+	} while (sound.isSoundPlaying() || _subtitles.active());
 
 	if (!rubCrystalBall())
 		return false;
@@ -556,7 +542,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		if (idx == 6)
 			sound.playSound("pharoh6w.voc");
 		if (idx > 6)
-			showSubtitles();
+			_subtitles.show();
 		WAIT(3);
 	}
 
@@ -567,22 +553,20 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		ANIMATE_PHAROAH;
 		goon.draw(0, (vocIndex == 0) ? 0 : nwcIndex, Common::Point(9, 57));
 
-		if (!sound.isSoundPlaying() && !vocIndex && !_subtitleSize) {
+		if (!sound.isSoundPlaying() && !vocIndex && !_subtitles.active()) {
 			// TODO: Subtitles stuff
-			recordTime();
-			_subtitleSize = 1;
+			_subtitles.setLine(0);
 			sound.playSound(VOC_NAMES3[vocIndex++]);
 			sound.playFX(0);
 		}
 
 		nwcIndex = (nwcIndex + 1) % 17;
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
-	} while (!vocIndex || sound.isSoundPlaying() || _subtitleSize);
+	} while (!vocIndex || sound.isSoundPlaying() || _subtitles.active());
 
 	// TODO: Subtitle stuff
-	recordTime();
-	_subtitleSize = 1;
+	_subtitles.setLine(0);
 	sound.playFX(42);
 
 	for (idx = 10, vocIndex = 0; idx >= 0; --idx) {
@@ -596,7 +580,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 			vocIndex = 1;
 		}
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
 	}
 
@@ -606,8 +590,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		return false;
 
 	// TODO: Subtitle stuff
-	recordTime();
-	_subtitleSize = 1;
+	_subtitles.setLine(0);
 
 	for (idx = 0, clawCtr = 0; idx < 11; ++idx) {
 		ANIMATE_PHAROAH;
@@ -619,7 +602,7 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		if (idx == 5)
 			sound.playSound("pharoh8.voc");
 		if (idx > 6)
-			showSubtitles();
+			_subtitles.show();
 
 		WAIT(3);
 	}
@@ -631,22 +614,21 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 		ANIMATE_PHAROAH;
 		wizard.draw(0, (vocIndex == 1) ? getSpeakingFrame(0, 3) : 0, Common::Point(9, 57));
 
-		if (!sound.isSoundPlaying() && vocIndex < 2 && !_subtitleSize) {
+		if (!sound.isSoundPlaying() && vocIndex < 2 && !_subtitles.active()) {
 			// TODO: Subtitle stuff
 			if (vocIndex == 0) {
-				recordTime();
-				_subtitleSize = 1;
+				_subtitles.setLine(0);
 			} else {
-				_subtitleSize = 0;
+				_subtitles.setLine(0);
 			}
 
 			sound.playSound(VOC_NAMES4[vocIndex++]);
 			sound.playFX(0);
 		}
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
-	} while (vocIndex < 2 || sound.isSoundPlaying() || _subtitleSize);
+	} while (vocIndex < 2 || sound.isSoundPlaying() || _subtitles.active());
 
 	sound.playFX(42);
 
@@ -661,13 +643,12 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 			vocIndex = 1;
 		}
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
 	}
 
 	// TODO: Subtitle stuff
-	recordTime();
-	_subtitleSize = 1;
+	_subtitles.setLine(0);
 	vocIndex = 0;
 
 	do {
@@ -678,9 +659,9 @@ bool DarkSideCutscenes::showDarkSideIntro2() {
 			vocIndex = 1;
 		}
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
-	} while (sound.isSoundPlaying() || !vocIndex || _subtitleSize);
+	} while (sound.isSoundPlaying() || !vocIndex || _subtitles.active());
 
 	sound.playFX(0);
 	screen.fadeOut();
@@ -705,8 +686,8 @@ bool DarkSideCutscenes::showDarkSideIntro3() {
 	screen.saveBackground();
 
 	// TODO: Subtitle stuff
-	recordTime();
-	showSubtitles();
+	_subtitles.setLine(0);
+	_subtitles.show();
 
 	screen.fadeIn();
 	sound.playSound("pharoh11.voc", 2, 0);
@@ -813,9 +794,9 @@ bool DarkSideCutscenes::showDarkSideIntro3() {
 }
 
 bool DarkSideCutscenes::showWorldOfXeenLogo() {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
 	SpriteResource fizzle("fizzle.int");
 	SpriteResource wfire[7];
 	for (uint idx = 0; idx < 7; ++idx)
@@ -888,9 +869,9 @@ void DarkSideCutscenes::showDarkSideEnding(uint endingScore) {
 }
 
 bool DarkSideCutscenes::showDarkSideEnding1() {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
 
 	sound.playSong("dngon3.m");
 	screen.loadBackground("scene1.raw");
@@ -913,8 +894,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 	screen.fadeIn();
 	WAIT(1);
 
-	_subtitles.load("special.bin");
-	resetSubtitles(21, 0);
+	_subtitles.setLine(21);
 
 	// Alamar stands up
 	for (int idx = 74; idx > 20; idx -= 2) {
@@ -1008,7 +988,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 
 	// Play landing thud
 	sound.playSound("thud.voc");
-	while (!_vm->shouldExit() && !events.isKeyMousePressed()
+	while (!g_vm->shouldExit() && !events.isKeyMousePressed()
 		&& sound.isSoundPlaying()) {
 		events.pollEventsAndWait();
 	}
@@ -1089,20 +1069,20 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 	screen.fadeIn();
 	WAIT(2);
 
-	resetSubtitles(22, 0);
+	_subtitles.setLine(22);
 
 	for (int idx = 0; idx < 45; ++idx) {
 		screen.restoreBackground();
 		sc07[idx / 6].draw(0, idx % 6, Common::Point(61, 12));
 
-		if (_subtitleSize == 0)
+		if (_subtitles.active() == 0)
 			screen.update();
 		else
-			showSubtitles();
+			_subtitles.show();
 
 		WAIT(2);
 		if (idx == 40)
-			_subtitleSize = 1;
+			_subtitles.setLine(0);
 		else if (idx == 1 || idx == 19)
 			// Wind storm
 			sound.playSound("windstor.voc");
@@ -1112,17 +1092,17 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 }
 
 bool DarkSideCutscenes::showDarkSideEnding2() {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
 
 	// Corak?!
 	sound.playSound("corak2.voc");
-	subtitlesWait(30);
+	_subtitles.setLine(0);
 
 	// Yep, that's my name, don't wear it out
 	SpriteResource sc08("sc08.end");
-	resetSubtitles(23);
+	_subtitles.setLine(23);
 	sound.playFX(0);
 
 	for (int idx = 0; idx < 15; ++idx) {
@@ -1131,14 +1111,14 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 
 		// Animate Corak speaking
 		sc08.draw(0, sound.isSoundPlaying() ? getSpeakingFrame(0, 2) : 0);
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
 	}
 
 	do {
 		sc08.draw(0, 0);
-		showSubtitles();
-	} while (_subtitleSize);
+		_subtitles.show();
+	} while (_subtitles.active());
 
 	sc08.clear();
 
@@ -1149,7 +1129,7 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 	screen.saveBackground();
 	screen.update();
 
-	resetSubtitles(24);
+	_subtitles.setLine(24);
 
 	for (int idx = 0; idx < 15; ++idx) {
 		if (idx == 2)
@@ -1157,20 +1137,21 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 
 		screen.restoreBackground();
 		sc09.draw(0, getSpeakingFrame(0, 8));
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
 	}
 
 	do {
 		screen.restoreBackground();
-		showSubtitles();
-	} while (_subtitleSize);
+		_subtitles.show();
+	} while (_subtitles.active());
 
 	sc09.clear();
 
 	// Nor do you!
 	SpriteResource sc10("sc10.end");
-	resetSubtitles(25);
+	_subtitles.setLine(25);
+
 
 	for (int idx = 0; idx < 15; ++idx) {
 		if (idx == 3)
@@ -1178,14 +1159,14 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 
 		screen.restoreBackground();
 		sc10.draw(0, getSpeakingFrame(0, 1));
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
 	}
 
 	do {
 		screen.restoreBackground();
-		showSubtitles();
-	} while (_subtitleSize);
+		_subtitles.show();
+	} while (_subtitles.active());
 
 	sc10.clear();
 
@@ -1238,7 +1219,7 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 
 	// I'm ready for you this time
 	SpriteResource sc13("sc13.end");
-	resetSubtitles(26);
+	_subtitles.setLine(26);
 	sound.setMusicPercent(38);
 
 	for (int idx = 0; idx < 16; ++idx) {
@@ -1246,7 +1227,7 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 			sound.playSound("ready2.voc");
 
 		sc13.draw(0, getSpeakingFrame(0, 3));
-		showSubtitles();
+		_subtitles.show();
 
 		if (idx == 0)
 			screen.fadeIn();
@@ -1255,15 +1236,15 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 
 	do {
 		sc13.draw(0, 0);
-		showSubtitles();
+		_subtitles.show();
 		events.pollEventsAndWait();
-	} while (_subtitleSize);
+	} while (_subtitles.active());
 
 	sc13.clear();
 
 	// This fight will be your last
 	SpriteResource sc14("sc14.end");
-	resetSubtitles(27);
+	_subtitles.setLine(27);
 
 	screen.fadeOut();
 	screen.loadBackground("blank.raw");
@@ -1280,24 +1261,24 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 
 			screen.restoreBackground();
 			sc14.draw(0, idx, Common::Point(37, 37));
-			showSubtitles();
+			_subtitles.show();
 			WAIT(3);
 		}
 	}
 
-	while (_subtitleSize) {
-		showSubtitles();
+	while (_subtitles.active()) {
+		_subtitles.show();
 		events.pollEventsAndWait();
-		showSubtitles();
+		_subtitles.show();
 	}
 
 	return true;
 }
 
 bool DarkSideCutscenes::showDarkSideEnding3() {
-	EventsManager &events = *_vm->_events;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+	EventsManager &events = *g_vm->_events;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
 
 	// Fighting start
 	SpriteResource sc15("sc15.end");
@@ -1323,7 +1304,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 
 	// I can not fail
 	SpriteResource sc16("sc16.end");
-	resetSubtitles(28);
+	_subtitles.setLine(28);
 
 	screen.loadBackground("scene4.raw");
 	screen.loadPage(0);
@@ -1333,13 +1314,13 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 	screen.saveBackground();
 	screen.horizMerge(0);
 	sc16.draw(0, 0, Common::Point(7, 29));
-	showSubtitles();
+	_subtitles.show();
 	sound.playSound("fail1.voc");
 
 	for (int idx = 0; idx < 5; ++idx) {
 		screen.horizMerge(0);
 		sc16.draw(0, idx, Common::Point(7, 29));
-		showSubtitles();
+		_subtitles.show();
 		WAIT(4);
 	}
 
@@ -1353,7 +1334,7 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 		if (val > 10)
 			sc16.draw(0, 12, Common::Point(273, 70));
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(2);
 
 		if (idx == 48)
@@ -1546,10 +1527,10 @@ bool DarkSideCutscenes::showDarkSideEnding3() {
 }
 
 bool DarkSideCutscenes::showDarkSideEnding4() {
-	EventsManager &events = *_vm->_events;
-	FileManager &files = *_vm->_files;
-	Screen &screen = *_vm->_screen;
-	Sound &sound = *_vm->_sound;
+	EventsManager &events = *g_vm->_events;
+	FileManager &files = *g_vm->_files;
+	Screen &screen = *g_vm->_screen;
+	Sound &sound = *g_vm->_sound;
 
 	// Corak does a ricochet shot on Sheltem
 	SpriteResource sc24[2] = {
@@ -1585,7 +1566,7 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 	// Corak speaking here. It seems this was ditched in favor of the
 	// following closeup of him speaking "I do"
 	SpriteResource sc25("sc25a.end");
-	resetSubtitles(29);
+	_subtitles.setLine(29);
 
 	screen.loadBackground("sc250001.raw");
 	screen.saveBackground();
@@ -1598,11 +1579,11 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 				sound.playSound("admit2.voc");
 
 			sc25.draw(0, idx, Common::Point(27, 30));
-			showSubtitles();
+			_subtitles.show();
 			WAIT(3);
 		}
 	}
-	subtitlesWait();
+	_subtitles.wait();
 	sc25.clear();
 
 	// I do. Kamakazi time
@@ -1610,14 +1591,14 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 		SpriteResource("sc26a.end"), SpriteResource("sc26b.end"),
 		SpriteResource("sc26c.end"), SpriteResource("sc26d.end")
 	};
-	resetSubtitles(30);
+	_subtitles.setLine(30);
 
 	screen.loadBackground("sc260001.raw");
 	screen.saveBackground();
-	showSubtitles();
+	_subtitles.show();
 	sound.playSound("ido2.voc");
 
-	for (int idx = 0; sound.isSoundPlaying() || _subtitleSize; ) {
+	for (int idx = 0; sound.isSoundPlaying() || _subtitles.active(); ) {
 		screen.restoreBackground();
 		sc26[idx / 8].draw(0, idx % 8, Common::Point(58, 25));
 		WAIT(2);
@@ -1628,7 +1609,7 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 	screen.loadBackground("sc270001.raw");
 	screen.saveBackground();
 
-	while (sound.isSoundPlaying() && !_vm->shouldExit()) {
+	while (sound.isSoundPlaying() && !g_vm->shouldExit()) {
 		events.pollEventsAndWait();
 		if (events.isKeyMousePressed())
 			return false;
@@ -1639,8 +1620,8 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 
 	// What? No!
 	SpriteResource sc27("sc27.end");
-	resetSubtitles(31);
-	showSubtitles();
+	_subtitles.setLine(31);
+	_subtitles.show();
 
 	for (int idx = 0; idx < 12; ++idx) {
 		if (idx == 1)
@@ -1648,11 +1629,11 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 
 		screen.restoreBackground();
 		sc27.draw(0, idx, Common::Point(65, 22));
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
 	}
 
-	subtitlesWait();
+	_subtitles.wait();
 	sc27.clear();
 
 	// Vortex is opened and the two are sucked in, obliterating them
@@ -1730,24 +1711,22 @@ bool DarkSideCutscenes::showDarkSideEnding4() {
 
 	screen.fadeOut();
 	sound.stopSong();
-	freeSubtitles();
-
 	return true;
 }
 
 void DarkSideCutscenes::showDarkSideScore(uint endingScore) {
-	SavesManager &saves = *_vm->_saves;
-	Sound &sound = *_vm->_sound;
+	SavesManager &saves = *g_vm->_saves;
+	Sound &sound = *g_vm->_sound;
 
 	sound.stopAllAudio();
 
-	if (_vm->shouldExit()) {
+	if (g_vm->shouldExit()) {
 		sound.playSong("outday3.m");
 
 		Common::String str = Common::String::format(Res.DARKSIDE_ENDING1, endingScore);
 		showPharaohEndText(str.c_str(), Res.DARKSIDE_ENDING2);
 
-		if (!_vm->shouldExit())
+		if (!g_vm->shouldExit())
 			saves.saveGame();
 	}
 }
@@ -1765,9 +1744,9 @@ bool DarkSideCutscenes::showPharaohEndText(const char *msg1, const char *msg2, c
 }
 
 bool DarkSideCutscenes::showPharaohEndTextInner(const char *msg1, const char *msg2, const char *msg3) {
-	Screen &screen = *_vm->_screen;
-	EventsManager &events = *_vm->_events;
-	Windows &windows = *_vm->_windows;
+	Screen &screen = *g_vm->_screen;
+	EventsManager &events = *g_vm->_events;
+	Windows &windows = *g_vm->_windows;
 	int numPages = 0 + (msg1 ? 1 : 0) + (msg2 ? 1 : 0) + (msg3 ? 1 : 0);
 	const char *const text[3] = { msg1, msg2, msg3 };
 
@@ -1781,7 +1760,7 @@ bool DarkSideCutscenes::showPharaohEndTextInner(const char *msg1, const char *ms
 	events.clearEvents();
 
 	// Iterate through showing the pages
-	for (int pageNum = 0; !_vm->shouldExit() && pageNum < numPages; ++pageNum) {
+	for (int pageNum = 0; !g_vm->shouldExit() && pageNum < numPages; ++pageNum) {
 		// Show each page until a key is pressed
 		do {
 			events.updateGameCounter();
@@ -1800,7 +1779,7 @@ bool DarkSideCutscenes::showPharaohEndTextInner(const char *msg1, const char *ms
 
 			windows[0].update();
 			events.wait(1);
-		} while (!_vm->shouldExit() && !events.isKeyMousePressed());
+		} while (!g_vm->shouldExit() && !events.isKeyMousePressed());
 
 		events.clearEvents();
 	}

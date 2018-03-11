@@ -54,6 +54,7 @@ MODULE_OBJS := \
 	sound_driver.o \
 	spells.o \
 	sprites.o \
+	subtitles.o \
 	window.o \
 	xeen.o \
 	xsurface.o

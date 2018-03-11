@@ -116,7 +116,6 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 		lake("lake.vga"), xeen("xeen.vga"), wizTower("wiztower.vga"),
 		wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
 		xeen1("xeen1.vga");
-	_subtitles.load("special.bin", 0);
 	_vm->_files->_isDarkCc = false;
 
 	// Show the production splash screen
@@ -249,7 +248,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 	sound.setMusicPercent(60);
 	screen.restoreBackground();
 	screen.update();
-	resetSubtitles(0, 1);
+	_subtitles.reset();
 
 	// Loop through each spoken line
 	int ctr1 = 0, ctr2 = 0, ctr3 = 0, ctr4 = 0, ctr5 = 0, totalCtr = 0;
@@ -258,7 +257,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 			sound.playSound(_INTRO_VOCS[lineCtr]);
 		}
 
-		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() || _subtitleSize; ) {
+		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() || _subtitles.active(); ) {
 			groupo.draw(0, 0);
 			groupo.draw(0, 1, Common::Point(160, 0));
 
@@ -312,7 +311,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 
 				ctr5 = (ctr5 + 1) % 19;
 				WAIT(1);
-				showSubtitles();
+				_subtitles.show();
 				continue;
 			}
 
@@ -325,7 +324,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 
 				ctr5 = (ctr5 + 1) % 19;
 				WAIT(1);
-				showSubtitles();
+				_subtitles.show();
 				break;
 			}
 
@@ -562,9 +561,9 @@ bool CloudsCutscenes::showCloudsEnding1() {
 				break;
 			}
 
-			showSubtitles(0);
+			_subtitles.show(0);
 			WAIT(3);
-		} while (sound.isSoundPlaying() || _subtitleSize > 0);
+		} while (sound.isSoundPlaying() || _subtitles.active());
 	}
 
 	// Laugh
@@ -672,7 +671,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 
 	// Congratulations adventurers
 	const char *const VOC_NAMES[3] = { "king1.voc", "king2.voc", "king3.voc" };
-	_subtitleSize = 0;
+	_subtitles.setLine(0);
 	for (int idx = 0; idx < 3; ++idx) {
 		sound.playSound(VOC_NAMES[idx]);
 
@@ -684,9 +683,9 @@ bool CloudsCutscenes::showCloudsEnding2() {
 			if (frame > 1)
 				king.draw(0, frame);
 
-			showSubtitles();
+			_subtitles.show();
 			WAIT(3);
-		} while (sound.isSoundPlaying() || _subtitleSize);
+		} while (sound.isSoundPlaying() || _subtitles.active());
 
 		king.draw(0, 0, Common::Point(0, 0));
 		king.draw(0, 1, Common::Point(160, 0));
@@ -967,9 +966,9 @@ bool CloudsCutscenes::showCloudsEnding5() {
 		if (frame > 1)
 			king.draw(0, frame);
 
-		showSubtitles();
+		_subtitles.show();
 		WAIT(3);
-	} while (sound.isSoundPlaying() || _subtitleSize);
+	} while (sound.isSoundPlaying() || _subtitles.active());
 
 	king.draw(0, 0, Common::Point(0, 0));
 	king.draw(0, 1, Common::Point(160, 0));

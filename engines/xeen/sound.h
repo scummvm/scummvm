@@ -55,6 +55,7 @@ public:
 	bool _musicOn;
 	Common::String _currentMusic, _priorMusic;
 	int _musicSide;
+	bool _subtitles;
 public:
 	Sound(Audio::Mixer *mixer);
 	virtual ~Sound();

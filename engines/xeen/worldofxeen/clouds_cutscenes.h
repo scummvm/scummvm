@@ -24,6 +24,7 @@
 #define XEEN_WORLDOFXEEN_CLOUDS_CUTSCENES_H
 
 #include "xeen/cutscenes.h"
+#include "xeen/subtitles.h"
 #include "xeen/xeen.h"
 
 namespace Xeen {
@@ -38,6 +39,7 @@ private:
 	static const byte _DECODE_TABLE1[256];
 	static const byte _DECODE_TABLE2[256];
 private:
+	Subtitles _subtitles;
 	SpriteResource _mirror, _mirrBack;
 	int _mergeX;
 private:

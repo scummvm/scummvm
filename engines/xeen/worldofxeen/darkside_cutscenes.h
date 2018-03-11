@@ -24,6 +24,7 @@
 #define XEEN_WORLDOFXEEN_DARKSIDE_CUTSCENES_H
 
 #include "xeen/cutscenes.h"
+#include "xeen/subtitles.h"
 
 namespace Xeen {
 
@@ -33,6 +34,7 @@ namespace WorldOfXeen {
 
 class DarkSideCutscenes : public Cutscenes {
 private:
+	Subtitles _subtitles;
 	SpriteResource _ball, _claw, _dragon1;
 private:
 	/**

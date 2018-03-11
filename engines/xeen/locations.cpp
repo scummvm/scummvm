@@ -1238,7 +1238,6 @@ const char *const CUTSCENE_SUBTITLE = "\xC""35\x3""c\xB""190\t000%s";
 
 CutsceneLocation::CutsceneLocation(LocationAction action) : BaseLocation(action),
 		_subtitleCtr(0), _mazeFlag(false) {
-	EventsManager &events = *g_vm->_events;
 	Party &party = *g_vm->_party;
 	_mazeId = party._mazeId;
 	_mazePos = party._mazePosition;
@@ -1246,7 +1245,6 @@ CutsceneLocation::CutsceneLocation(LocationAction action) : BaseLocation(action)
 
 	loadStrings("special.bin");
 	_boxSprites.load("box.vga");
-	events.timeMark3();
 }
 
 void CutsceneLocation::updateSubtitles() {
