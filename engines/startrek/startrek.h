@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL: https://scummvm-startrek.googlecode.com/svn/trunk/startrek.h $
- * $Id: startrek.h 14 2010-05-26 15:44:12Z clone2727 $
- *
  */
 
 #ifndef STARTREK_H
 #define STARTREK_H
 
+#include "common/events.h"
+#include "common/list.h"
 #include "common/ptr.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
@@ -59,6 +57,24 @@ enum StarTrekGameFeatures {
 	GF_DEMO =    (1 << 0)
 };
 
+
+enum TrekEventType {
+	TREKEVENT_TICK = 0, // DOS clock changes (see updateClockTicks)
+	TREKEVENT_LBUTTONDOWN = 1,
+	TREKEVENT_MOUSEMOVE = 2,
+	TREKEVENT_LBUTTONUP = 3,
+	TREKEVENT_RBUTTONDOWN = 4,
+	TREKEVENT_RBUTTONUP = 5,
+	TREKEVENT_KEYDOWN = 6
+};
+
+struct TrekEvent {
+	TrekEventType type;
+	Common::KeyState kbd;
+	Common::Point mouse;
+	uint32 tick;
+};
+
 struct StarTrekGameDescription;
 class Graphics;
 class Sound;
@@ -72,9 +88,35 @@ public:
 	virtual ~StarTrekEngine();
 
 	// Running the game
-	void pollEvents();
 	Room *getRoom();
+	void pollSystemEvents();
 
+	void playSound(int id); // TODO: rename, figure out what it is
+
+	// Events
+public:
+	void initializeEventsAndMouse();
+	bool getNextEvent(TrekEvent *e);
+	void removeNextEvent();
+	bool popNextEvent(TrekEvent *e);
+	void addEventToQueue(const TrekEvent &e);
+	void clearEventBuffer();
+	uint32 getClockTicks();
+	void updateEvents();
+	void updateTimerEvent();
+	void updateMouseEvents();
+	void updateKeyboardEvents();
+	void updateClockTicks();
+	bool checkKeyPressed();
+
+	Common::EventManager *getEventMan() { return _eventMan; }
+
+private:
+	Common::List<TrekEvent> _eventQueue;
+	bool _mouseMoveEventInQueue;
+	bool _tickEventInQueue;
+
+public:
 	// Detection related functions
 	const StarTrekGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -89,6 +131,14 @@ public:
 	// Movie related functions
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
+
+
+	uint32 _clockTicks;
+
+	bool _midiAudioEnabled;
+	bool _cdAudioEnabled;
+	bool _textboxVar4;
+
 	
 private:
 	Graphics *_gfx;

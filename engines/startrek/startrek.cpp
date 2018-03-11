@@ -55,6 +55,9 @@ StarTrekEngine::~StarTrekEngine() {
 }
 
 Common::Error StarTrekEngine::run() {
+	_cdAudioEnabled = true;
+	_midiAudioEnabled = true;
+
 	_gfx = new Graphics(this);
 	_sound = new Sound(this);
 
@@ -66,6 +69,8 @@ Common::Error StarTrekEngine::run() {
 	}
 
 	initGraphics(320, 200);
+
+	initializeEventsAndMouse();
 	
 // Hexdump data
 #if 0
@@ -151,20 +156,37 @@ Common::Error StarTrekEngine::run() {
 	_gfx->showText(&Graphics::readTextFromRdf, 0x2220, 150, 160, 0xb3, 0, 10, 0);
 	
 	while (!shouldQuit()) {
-		pollEvents();
+		pollSystemEvents();
 	}
 #endif
 
 	return Common::kNoError;
 }
 
-void StarTrekEngine::pollEvents() {
+Room *StarTrekEngine::getRoom() {
+	return _room;
+}
+
+void StarTrekEngine::pollSystemEvents() {
 	Common::Event event;
+	TrekEvent trekEvent;
 
 	while (_eventMan->pollEvent(event)) {
+		trekEvent.mouse = event.mouse;
+		trekEvent.kbd = event.kbd;
+
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 			_system->quit();
+			break;
+
+		case Common::EVENT_MOUSEMOVE:
+			trekEvent.type = TREKEVENT_MOUSEMOVE;
+			addEventToQueue(trekEvent);
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			trekEvent.type = TREKEVENT_LBUTTONDOWN;
+			addEventToQueue(trekEvent);
 			break;
 		default:
 			break;
@@ -175,8 +197,14 @@ void StarTrekEngine::pollEvents() {
 	_system->delayMillis(1000/60);
 }
 
-Room *StarTrekEngine::getRoom() {
-	return _room;
+void StarTrekEngine::playSound(int id) {
+	// TODO
+}
+
+void StarTrekEngine::updateClockTicks() {
+	// TODO (based on DOS interrupt 1A, AH=0; read system clock counter)
+
+	_clockTicks = 0;
 }
 
 SharedPtr<FileStream> StarTrekEngine::openFile(Common::String filename, int fileIndex) {
