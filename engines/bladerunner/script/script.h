@@ -233,7 +233,7 @@ protected:
 	void Voight_Kampff_Activate(int actorId, int calibrationRatio);
 	int Elevator_Activate(int elevatorId);
 	void View_Score_Board();
-	// Query_Score
+	int Query_Score(int a0);
 	void Set_Score(int a0, int a1);
 	void Give_McCoy_Ammo(int ammoType, int ammo);
 	void Assign_Player_Gun_Hit_Sounds(int ammoType, int soundId1, int soundId2, int soundId3);

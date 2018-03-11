@@ -1182,7 +1182,12 @@ void ScriptBase::View_Score_Board() {
 	//TODO
 	warning("View_Score_Board()");
 }
-// ScriptBase::Query_Score
+
+int ScriptBase::Query_Score(int a0) {
+	warning("Query_Score(%d)", a0);
+
+	return 0;
+}
 
 void ScriptBase::Set_Score(int a0, int a1) {
 	warning("Set_Score(%d, %d)", a0, a1);

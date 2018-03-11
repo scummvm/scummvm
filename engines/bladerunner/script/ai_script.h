@@ -120,6 +120,14 @@ DECLARE_SCRIPT(McCoy)
 	void sub_4059D0(float a1);
 END_SCRIPT
 
+DECLARE_SCRIPT(Steele)
+	bool _flag;
+	int _var1;
+	int _var2;
+
+	double comp_distance(int actorId, float a5, float a6, int a1, float a2, float a3, float a4);
+END_SCRIPT
+
 DECLARE_SCRIPT(Gordo)
 	int var_45B078;
 	int _counter;
