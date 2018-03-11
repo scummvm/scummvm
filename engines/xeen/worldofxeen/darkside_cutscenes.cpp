@@ -324,7 +324,8 @@ bool DarkSideCutscenes::showDarkSideIntro1() {
 		WAIT_SUBTITLES(4);
 	}
 
-	_subtitles.waitForLineOrSound();
+	if (!_subtitles.waitForLineOrSound())
+		return false;
 	screen.fadeOut();
 
 	const int XLIST3[10] = { 102, 103, 104, 104, 104, 103, 102, 101, 101, 101 };
@@ -832,8 +833,8 @@ void DarkSideCutscenes::showDarkSideEnding(uint endingScore) {
 	FileManager &files = *g_vm->_files;
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
+
 	files.setGameCc(1);
-	files._isDarkCc = true;
 	sound._musicSide = 1;
 	screen.fadeOut();
 
@@ -866,6 +867,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 	screen.loadBackground("scene2-b.raw");
 	screen.update();
 	screen.saveBackground();
+	SpriteResource::setClippedBottom(171);
 
 	SpriteResource faceEnd("face.end");
 	screen.restoreBackground();
@@ -875,17 +877,15 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 	screen.fadeIn();
 	WAIT(1);
 
-	_subtitles.setLine(21);
-
 	// Alamar stands up
-	for (int idx = 74; idx > 20; idx -= 2) {
-		if (idx == 60)
+	for (int yp = 74; yp > 20; yp -= 2) {
+		if (yp == 60)
 			sound.songCommand(207);
-		else if (idx == 22)
+		else if (yp == 22)
 			sound.stopSong();
 
 		screen.restoreBackground();
-		faceEnd.draw(0, 0, Common::Point(29, idx), SPRFLAG_BOTTOM_CLIPPED);
+		faceEnd.draw(0, 0, Common::Point(29, yp), SPRFLAG_BOTTOM_CLIPPED);
 		screen.update();
 
 		WAIT(2);
@@ -894,6 +894,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 
 	// Alamar says "Come to me"
 	sound.playSound("come2.voc");
+	_subtitles.setLine(21);
 	WAIT(27);
 
 	// Show the entire throne room
@@ -1050,8 +1051,6 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 	screen.fadeIn();
 	WAIT(2);
 
-	_subtitles.setLine(22);
-
 	for (int idx = 0; idx < 45; ++idx) {
 		screen.restoreBackground();
 		sc07[idx / 6].draw(0, idx % 6, Common::Point(61, 12));
@@ -1063,7 +1062,7 @@ bool DarkSideCutscenes::showDarkSideEnding1() {
 
 		WAIT(2);
 		if (idx == 40)
-			_subtitles.setLine(0);
+			_subtitles.setLine(22);
 		else if (idx == 1 || idx == 19)
 			// Wind storm
 			sound.playSound("windstor.voc");
@@ -1079,16 +1078,18 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 
 	// Corak?!
 	sound.playSound("corak2.voc");
-	_subtitles.setLine(0);
 
 	// Yep, that's my name, don't wear it out
 	SpriteResource sc08("sc08.end");
-	_subtitles.setLine(23);
 	sound.playFX(0);
 
 	for (int idx = 0; idx < 15; ++idx) {
-		if (idx == 2)
+		if (idx == 2) {
+			if (!_subtitles.waitForLineOrSound())
+				return false;
 			sound.playSound("yes1.voc");
+			_subtitles.setLine(23);
+		}
 
 		// Animate Corak speaking
 		sc08.draw(0, sound.isSoundPlaying() ? getSpeakingFrame(0, 2) : 0);
@@ -1096,11 +1097,8 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 		WAIT(3);
 	}
 
-	do {
-		sc08.draw(0, 0);
-		_subtitles.show();
-	} while (_subtitles.active());
-
+	if (!_subtitles.waitForLineOrSound())
+		return false;
 	sc08.clear();
 
 	// Nowhere to run to
@@ -1122,17 +1120,13 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 		WAIT(3);
 	}
 
-	do {
-		screen.restoreBackground();
-		_subtitles.show();
-	} while (_subtitles.active());
-
+	if (!_subtitles.waitForLineOrSound())
+		return false;
 	sc09.clear();
 
 	// Nor do you!
 	SpriteResource sc10("sc10.end");
 	_subtitles.setLine(25);
-
 
 	for (int idx = 0; idx < 15; ++idx) {
 		if (idx == 3)
@@ -1144,11 +1138,8 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 		WAIT(3);
 	}
 
-	do {
-		screen.restoreBackground();
-		_subtitles.show();
-	} while (_subtitles.active());
-
+	if (!_subtitles.waitForLineOrSound())
+		return false;
 	sc10.clear();
 
 	// Closeup of side of Alamar's helmet
@@ -1219,7 +1210,7 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 		sc13.draw(0, 0);
 		_subtitles.show();
 		events.pollEventsAndWait();
-	} while (_subtitles.active());
+	} while (_subtitles.active() && !g_vm->shouldExit());
 
 	sc13.clear();
 
@@ -1247,11 +1238,8 @@ bool DarkSideCutscenes::showDarkSideEnding2() {
 		}
 	}
 
-	while (_subtitles.active()) {
-		_subtitles.show();
-		events.pollEventsAndWait();
-		_subtitles.show();
-	}
+	if (!_subtitles.waitForLineOrSound())
+		return false;
 
 	return true;
 }

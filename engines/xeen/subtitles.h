@@ -35,7 +35,6 @@ private:
 	SpriteResource *_boxSprites;
 	int _lineEnd, _lineSize;
 	Common::String _displayLine;
-	uint32 _frameExpiryTime;
 private:
 	/**
 	 * Loads the string list of all subtitles

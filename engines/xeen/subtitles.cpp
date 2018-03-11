@@ -30,7 +30,7 @@ namespace Xeen {
 
 static const char *SUBTITLE_LINE = "\f35\x3""c\v190\t000%s";
 
-Subtitles::Subtitles() : _lineNum(-1), _boxSprites(nullptr), _lineEnd(0), _lineSize(0), _frameExpiryTime(0) {
+Subtitles::Subtitles() : _lineNum(-1), _boxSprites(nullptr), _lineEnd(0), _lineSize(0) {
 }
 
 Subtitles::~Subtitles() {
@@ -90,7 +90,7 @@ bool Subtitles::waitForLineOrSound() {
 	while (g_vm->_sound->isSoundPlaying() || active()) {
 		show();
 		g_vm->_events->pollEventsAndWait();
-		if (g_vm->_events->isKeyMousePressed())
+		if (g_vm->_events->isKeyMousePressed() || g_vm->shouldExit())
 			return false;
 	}
 

@@ -1234,8 +1234,6 @@ exit:
 
 /*------------------------------------------------------------------------*/
 
-const char *const CUTSCENE_SUBTITLE = "\xC""35\x3""c\xB""190\t000%s";
-
 CutsceneLocation::CutsceneLocation(LocationAction action) : BaseLocation(action),
 		_subtitleCtr(0), _mazeFlag(false) {
 	Party &party = *g_vm->_party;
