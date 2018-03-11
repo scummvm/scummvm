@@ -1914,7 +1914,6 @@ void GameManager::dead(StringID messageId) {
 	_vm->paletteFadeOut();
 	_vm->removeMessage();
 
-	// TODO: Load screen
 	destroyRooms();
 	initRooms();
 	initState();
