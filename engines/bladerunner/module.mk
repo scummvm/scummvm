@@ -84,6 +84,7 @@ MODULE_OBJS = \
 	script/ai/sergeant_walls.o \
 	script/ai/shoeshine_man.o \
 	script/ai/steele.o \
+	script/ai/the_bard.o \
 	script/ai/transient.o \
 	script/ai/tyrell_guard.o \
 	script/ai/zuben.o \
