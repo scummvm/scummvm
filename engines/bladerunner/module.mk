@@ -76,6 +76,7 @@ MODULE_OBJS = \
 	script/ai/marcus.o \
 	script/ai/mccoy.o \
 	script/ai/mia.o \
+	script/ai/moraji.o \
 	script/ai/murray.o \
 	script/ai/newscaster.o \
 	script/ai/officer_leary.o \

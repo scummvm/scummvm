@@ -246,6 +246,11 @@ END_SCRIPT
 DECLARE_SCRIPT(SergeantWalls)
 END_SCRIPT
 
+DECLARE_SCRIPT(Moraji)
+	int _var1;
+	int _var2;
+END_SCRIPT
+
 DECLARE_SCRIPT(HysteriaPatron1)
 END_SCRIPT
 
