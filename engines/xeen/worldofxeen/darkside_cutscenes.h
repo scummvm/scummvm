@@ -33,6 +33,7 @@ namespace WorldOfXeen {
 
 class DarkSideCutscenes : public Cutscenes {
 private:
+	Subtitles _subtitles;
 	SpriteResource _ball, _claw, _dragon1;
 private:
 	/**

@@ -38,6 +38,7 @@ class WorldOfXeenCutscenes : public CloudsCutscenes,
 	public DarkSideCutscenes {
 private:
 	XeenEngine *_vm;
+	Subtitles _subtitles;
 	GooberState _goober;
 	uint _finalScore;
 private:
