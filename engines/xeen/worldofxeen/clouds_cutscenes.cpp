@@ -27,6 +27,7 @@
 namespace Xeen {
 namespace WorldOfXeen {
 
+#define WAIT(TIME) if (_subtitles.wait(TIME)) return false
 #define ROTATE_BG screen.horizMerge(_mergeX); \
 	_mergeX = (_mergeX + 1) % SCREEN_WIDTH
 #define LOAD_VORTEX loadScreen(Common::String::format("vort%02u.frm", cloudsCtr)); \

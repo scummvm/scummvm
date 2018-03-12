@@ -29,17 +29,17 @@
 namespace Xeen {
 
 class Subtitles {
-protected:
+private:
 	Common::StringArray _lines;
 	int _lineNum;
 	SpriteResource *_boxSprites;
 	int _lineEnd, _lineSize;
 	Common::String _displayLine;
-protected:
+private:
 	/**
 	 * Loads the string list of all subtitles
 	 */
-	virtual void loadSubtitles();
+	void loadSubtitles();
 
 	/**
 	 * Mark the current time
@@ -77,6 +77,11 @@ public:
 	bool active() const;
 
 	/**
+	 * Returns true if a subtitle is active or a voice line is currently being played
+	 */
+	bool lineActive() const;
+
+	/**
 	 * Shows any active subtitle
 	 */
 	void show();
@@ -93,16 +98,6 @@ public:
 	 * Wait for the end of currently playing sound or subtitles line
 	 */
 	bool waitForLineOrSound();
-};
-
-class CloudsSubtitles : public Subtitles {
-protected:
-	/**
-	 * Loads the string list of all subtitles
-	 */
-	virtual void loadSubtitles();
-public:
-	CloudsSubtitles() : Subtitles() {}
 };
 
 } // End of namespace Xeen

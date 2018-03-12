@@ -29,8 +29,6 @@
 
 namespace Xeen {
 
-#define WAIT(TIME) if (_subtitles.wait(TIME)) return false
-
 class XeenEngine;
 
 class Cutscenes {

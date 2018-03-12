@@ -26,6 +26,8 @@
 #include "xeen/worldofxeen/worldofxeen.h"
 #include "xeen/worldofxeen/worldofxeen_resources.h"
 
+#define WAIT(TIME) if (_subtitles.wait(TIME)) return false
+
 namespace Xeen {
 	namespace WorldOfXeen {
 

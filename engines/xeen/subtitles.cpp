@@ -39,6 +39,24 @@ Subtitles::~Subtitles() {
 
 void Subtitles::loadSubtitles() {
 	File f("special.bin");
+
+	if (!g_vm->_files->_isDarkCc) {
+		// The first subtitle line contains all the text for the Clouds intro. Since ScummVM allows
+		// both voice and subtitles at the same time, unlike the original, we need to split up the
+		// first subtitle into separate lines to allow them to better interleave with the voice
+		Common::String line = f.readString();
+		for (;;) {
+			const char *lineSep = strstr(line.c_str(), "   ");
+			if (!lineSep)
+				break;
+
+			_lines.push_back(Common::String(line.c_str(), lineSep));
+			line = Common::String(lineSep + 3);
+			while (line.hasPrefix(" "))
+				line.deleteChar(0);
+		}
+	}
+
 	while (f.pos() < f.size())
 		_lines.push_back(f.readString());
 	f.close();
@@ -68,7 +86,11 @@ void Subtitles::setLine(int line) {
 }
 
 bool Subtitles::active() const {
-	return _lineNum != -1;
+	return !g_vm->shouldExit() && _lineNum != -1;
+}
+
+bool Subtitles::lineActive() const {
+	return !g_vm->shouldExit() && (active() || g_vm->_sound->isSoundPlaying());
 }
 
 bool Subtitles::wait(uint numFrames, bool interruptable) {
@@ -131,32 +153,6 @@ void Subtitles::show() {
 		if (_lineEnd == 0)
 			reset();
 	}
-}
-
-/*------------------------------------------------------------------------*/
-
-void CloudsSubtitles::loadSubtitles() {
-	File f("special.bin");
-	
-	// The first subtitle line contains all the text for the Clouds intro. Since ScummVM allows
-	// both voice and subtitles at the same time, unlike the original, we need to split up the
-	// first subtitle into separate lines to allow them to better interleave with the voice
-	Common::String line = f.readString();
-	for (;;) {
-		const char *lineSep = strstr(line.c_str(), "   ");
-		if (!lineSep)
-			break;
-
-		_lines.push_back(Common::String(line.c_str(), lineSep));
-		line = Common::String(lineSep + 3);
-		while (line.hasPrefix(" "))
-			line.deleteChar(0);
-	}
-
-	// Read in remaining lines
-	while (f.pos() < f.size())
-		_lines.push_back(f.readString());
-	f.close();
 }
 
 } // End of namespace Xeen
