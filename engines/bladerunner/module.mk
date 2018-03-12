@@ -52,6 +52,7 @@ MODULE_OBJS = \
 	script/ai_script.o \
 	script/ai/answering_machine.o \
 	script/ai/baker.o \
+	script/ai/blimp_guy.o \
 	script/ai/bryant.o \
 	script/ai/crazylegs.o \
 	script/ai/desk_clerk.o \
