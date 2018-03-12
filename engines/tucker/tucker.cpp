@@ -2948,7 +2948,15 @@ void TuckerEngine::updateSprite(int i) {
 			_spritesTable[i]._animationFrame = 1;
 		}
 		if (_spritesTable[i]._state < 0 || !_sprC02Table[_spritesTable[i]._state]) {
-//			warning("Invalid state %d for sprite %d location %d", _spritesTable[i].state, i, _locationNum);
+			// WORKAROUND
+			// The original game unconditionally reads into _sprC02Table[] below which
+			// results in out-of-bounds reads when _spritesTable[i]._state == -1.
+			// We reset the sprite's animation data in this case so sprite updates
+			// are triggered correctly. This most prominently fixes a bug where Lola's
+			// transition from dancing -> sitting happens too late.
+			// This fixes Trac#6644.
+			_spritesTable[i]._animationData = nullptr;
+			_spritesTable[i]._firstFrame = 0;
 			return;
 		}
 		_spritesTable[i]._animationData = _sprC02Table[_spritesTable[i]._state];
