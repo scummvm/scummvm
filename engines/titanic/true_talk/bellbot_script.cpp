@@ -42,10 +42,6 @@ static const RoomDialogueId ROOM_DIALOGUE_IDS[] = {
 	{ 0, 0 }
 };
 
-static const uint PRERESPONSE_IDS_DE[] = {
-	0
-};
-
 BellbotScript::BellbotScript(int val1, const char *charClass, int v2,
 		const char *charName, int v3, int val2) :
 		TTnpcScript(val1, charClass, v2, charName, v3, val2, -1, -1, -1, 0),
