@@ -72,6 +72,7 @@ AIScripts::AIScripts(BladeRunnerEngine *vm, int actorCount) {
 	_AIScripts[kActorHawkersParrot] = new AIScriptHawkersParrot(_vm);     // 43
 	_AIScripts[kActorTaffyPatron] = new AIScriptTaffyPatron(_vm);         // 44
 	_AIScripts[kActorLockupGuard] = new AIScriptLockupGuard(_vm);         // 45
+	_AIScripts[kActorTeenager] = new AIScriptTeenager(_vm);               // 46
 	_AIScripts[kActorHysteriaPatron1] = new AIScriptHysteriaPatron1(_vm); // 47
 	_AIScripts[kActorHysteriaPatron2] = new AIScriptHysteriaPatron2(_vm); // 48
 	_AIScripts[kActorHysteriaPatron3] = new AIScriptHysteriaPatron3(_vm); // 49
