@@ -95,6 +95,7 @@ MODULE_OBJS = \
 	script/ai/teenager.o \
 	script/ai/the_bard.o \
 	script/ai/transient.o \
+	script/ai/tyrell.o \
 	script/ai/tyrell_guard.o \
 	script/ai/zuben.o \
 	script/scene_script.o \

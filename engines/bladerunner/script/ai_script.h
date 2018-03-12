@@ -297,6 +297,11 @@ DECLARE_SCRIPT(ShoeshineMan)
 	bool _state;
 END_SCRIPT
 
+DECLARE_SCRIPT(Tyrell)
+	bool _flag;
+	int _var;
+END_SCRIPT
+
 DECLARE_SCRIPT(Gaff)
 END_SCRIPT
 
