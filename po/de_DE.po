@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-02-21 22:44+0100\n"
+"POT-Creation-Date: 2018-03-12 11:46+0100\n"
 "PO-Revision-Date: 2018-03-07 21:17+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
+"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1618,28 +1618,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr "Thema auswählen"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
 msgstr "GFX ausgeschaltet"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX ausgeschaltet"
 
-#: gui/ThemeEngine.cpp:462
+#: gui/ThemeEngine.cpp:259
 msgid "Standard Renderer"
 msgstr "Standard-Renderer"
 
-#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:259 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Standard"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased Renderer"
 msgstr "Kantenglättung"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased"
 msgstr "Kantenglättung"
 
@@ -3846,36 +3846,36 @@ msgstr "~Z~urück"
 msgid "~N~ext"
 msgstr "~W~eiter"
 
-#: engines/scumm/dialogs.cpp:598
+#: engines/scumm/dialogs.cpp:599
 msgid "Speech Only"
 msgstr "Nur Sprache"
 
-#: engines/scumm/dialogs.cpp:599
+#: engines/scumm/dialogs.cpp:600
 msgid "Speech and Subtitles"
 msgstr "Sprachausgabe und Untertitel"
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:601
 msgid "Subtitles Only"
 msgstr "Nur Untertitel"
 
-#: engines/scumm/dialogs.cpp:608
+#: engines/scumm/dialogs.cpp:609
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Sprache & Text"
 
-#: engines/scumm/dialogs.cpp:654
+#: engines/scumm/dialogs.cpp:655
 msgid "Select a Proficiency Level."
 msgstr "Wähle einen Schwierigkeitsgrad."
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:657
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Für Hilfe schauen Sie ins Loom-Handbuch."
 
-#: engines/scumm/dialogs.cpp:660
+#: engines/scumm/dialogs.cpp:661
 msgid "Practice"
 msgstr "Anfänger"
 
-#: engines/scumm/dialogs.cpp:661
+#: engines/scumm/dialogs.cpp:662
 msgid "Expert"
 msgstr "Experte"
 

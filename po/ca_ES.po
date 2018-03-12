@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-02-21 22:44+0100\n"
+"POT-Creation-Date: 2018-03-12 11:46+0100\n"
 "PO-Revision-Date: 2017-02-20 14:15+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -1595,30 +1595,30 @@ msgstr ""
 msgid "Select a Theme"
 msgstr "Seleccioneu un Tema"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
 msgstr "GFX desactivats"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX desactivats"
 
-#: gui/ThemeEngine.cpp:462
+#: gui/ThemeEngine.cpp:259
 #, fuzzy
 msgid "Standard Renderer"
 msgstr "Pintat estàndard (16bpp)"
 
-#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:259 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Estàndard"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 #, fuzzy
 msgid "Antialiased Renderer"
 msgstr "Pintat amb antialias (16bpp)"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 #, fuzzy
 msgid "Antialiased"
 msgstr "Amb antialias (16bpp)"
@@ -3743,36 +3743,36 @@ msgstr "~A~nterior"
 msgid "~N~ext"
 msgstr "~S~egüent"
 
-#: engines/scumm/dialogs.cpp:598
+#: engines/scumm/dialogs.cpp:599
 msgid "Speech Only"
 msgstr "Només veus"
 
-#: engines/scumm/dialogs.cpp:599
+#: engines/scumm/dialogs.cpp:600
 msgid "Speech and Subtitles"
 msgstr "Veu i subtítols"
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:601
 msgid "Subtitles Only"
 msgstr "Només subtítols"
 
-#: engines/scumm/dialogs.cpp:608
+#: engines/scumm/dialogs.cpp:609
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Veus i sub."
 
-#: engines/scumm/dialogs.cpp:654
+#: engines/scumm/dialogs.cpp:655
 msgid "Select a Proficiency Level."
 msgstr "Seleccioneu el nivell de competència."
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:657
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Consulteu el manual de Loom(TM) per ajuda."
 
-#: engines/scumm/dialogs.cpp:660
+#: engines/scumm/dialogs.cpp:661
 msgid "Practice"
 msgstr "Pràctica"
 
-#: engines/scumm/dialogs.cpp:661
+#: engines/scumm/dialogs.cpp:662
 msgid "Expert"
 msgstr "Expert"
 

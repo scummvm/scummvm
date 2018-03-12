@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-02-21 22:44+0100\n"
+"POT-Creation-Date: 2018-03-12 11:46+0100\n"
 "PO-Revision-Date: 2017-11-28 19:36+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -1593,28 +1593,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr "Абярыце тэму"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
 msgstr "Без графікі"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Без графікі"
 
-#: gui/ThemeEngine.cpp:462
+#: gui/ThemeEngine.cpp:259
 msgid "Standard Renderer"
 msgstr "Стандартны растарызатар"
 
-#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:259 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Стандартны"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased Renderer"
 msgstr "Растарызатар са згладжваннем"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased"
 msgstr "Са згладжваннем"
 
@@ -3794,36 +3794,36 @@ msgstr "~П~апяр"
 msgid "~N~ext"
 msgstr "~Н~аст"
 
-#: engines/scumm/dialogs.cpp:598
+#: engines/scumm/dialogs.cpp:599
 msgid "Speech Only"
 msgstr "Толькі агучка"
 
-#: engines/scumm/dialogs.cpp:599
+#: engines/scumm/dialogs.cpp:600
 msgid "Speech and Subtitles"
 msgstr "Агучка і субтытры"
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:601
 msgid "Subtitles Only"
 msgstr "Толькі субтытры"
 
-#: engines/scumm/dialogs.cpp:608
+#: engines/scumm/dialogs.cpp:609
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Агучка і тэкст"
 
-#: engines/scumm/dialogs.cpp:654
+#: engines/scumm/dialogs.cpp:655
 msgid "Select a Proficiency Level."
 msgstr "Абярыце ўзровень складанасці."
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:657
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "За дапамогай звярніцеся да інструкцыі Loom(TM)."
 
-#: engines/scumm/dialogs.cpp:660
+#: engines/scumm/dialogs.cpp:661
 msgid "Practice"
 msgstr "Практыкант"
 
-#: engines/scumm/dialogs.cpp:661
+#: engines/scumm/dialogs.cpp:662
 msgid "Expert"
 msgstr "Эксперт"
 

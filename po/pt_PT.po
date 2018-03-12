@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-02-21 22:44+0100\n"
+"POT-Creation-Date: 2018-03-12 11:46+0100\n"
 "PO-Revision-Date: 2017-01-30 14:50+0000\n"
 "Last-Translator: Vitor Santos <vitorhgsantos90@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -1593,28 +1593,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:462
+#: gui/ThemeEngine.cpp:259
 msgid "Standard Renderer"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:259 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased Renderer"
 msgstr ""
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased"
 msgstr ""
 
@@ -3632,36 +3632,36 @@ msgstr ""
 msgid "~N~ext"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:598
+#: engines/scumm/dialogs.cpp:599
 msgid "Speech Only"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:599
+#: engines/scumm/dialogs.cpp:600
 msgid "Speech and Subtitles"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:601
 msgid "Subtitles Only"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:608
+#: engines/scumm/dialogs.cpp:609
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:654
+#: engines/scumm/dialogs.cpp:655
 msgid "Select a Proficiency Level."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:657
 msgid "Refer to your Loom(TM) manual for help."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:660
+#: engines/scumm/dialogs.cpp:661
 msgid "Practice"
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:661
+#: engines/scumm/dialogs.cpp:662
 msgid "Expert"
 msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-02-21 22:44+0100\n"
+"POT-Creation-Date: 2018-03-12 11:46+0100\n"
 "PO-Revision-Date: 2017-12-01 22:51+0000\n"
 "Last-Translator: TomasM <truido@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -1606,28 +1606,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr "Selecciona un tema"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
 msgstr "Gráf. desactivados"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Gráf. desactivados"
 
-#: gui/ThemeEngine.cpp:462
+#: gui/ThemeEngine.cpp:259
 msgid "Standard Renderer"
 msgstr "Estándar"
 
-#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:259 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Estándar"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased Renderer"
 msgstr "Suavizado"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased"
 msgstr "Suavizado"
 
@@ -3809,36 +3809,36 @@ msgstr "~A~nterior"
 msgid "~N~ext"
 msgstr "Si~g~uiente"
 
-#: engines/scumm/dialogs.cpp:598
+#: engines/scumm/dialogs.cpp:599
 msgid "Speech Only"
 msgstr "Solo voces"
 
-#: engines/scumm/dialogs.cpp:599
+#: engines/scumm/dialogs.cpp:600
 msgid "Speech and Subtitles"
 msgstr "Voces y subtítulos"
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:601
 msgid "Subtitles Only"
 msgstr "Solo subtítulos"
 
-#: engines/scumm/dialogs.cpp:608
+#: engines/scumm/dialogs.cpp:609
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Voces y subtítulos"
 
-#: engines/scumm/dialogs.cpp:654
+#: engines/scumm/dialogs.cpp:655
 msgid "Select a Proficiency Level."
 msgstr "Selecciona un nivel de dificultad."
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:657
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Consulta el manual para obtener más información."
 
-#: engines/scumm/dialogs.cpp:660
+#: engines/scumm/dialogs.cpp:661
 msgid "Practice"
 msgstr "Práctica"
 
-#: engines/scumm/dialogs.cpp:661
+#: engines/scumm/dialogs.cpp:662
 msgid "Expert"
 msgstr "Experto"
 
