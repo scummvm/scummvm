@@ -69,6 +69,20 @@ void Sound::playSound(const Common::String &name, int ccNum, int unused) {
 	playSound(f);
 }
 
+void Sound::playVoice(const Common::String &name, int ccMode) {
+	File f;
+	bool result = (ccMode == -1) ? f.open(name) : f.open(name, ccMode);
+	if (!result)
+		error("Could not open sound - %s", name.c_str());
+
+	stopSound();
+
+	Common::SeekableReadStream *srcStream = f.readStream(f.size());
+	Audio::SeekableAudioStream *stream = Audio::makeVOCStream(srcStream,
+		Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, stream);
+}
+
 void Sound::stopSound() {
 	_mixer->stopHandle(_soundHandle);
 }

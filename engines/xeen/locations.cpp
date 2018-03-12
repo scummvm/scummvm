@@ -1325,7 +1325,7 @@ int ReaperCutscene::show() {
 	}
 
 	_subtitles.setLine(_mazeFlag ? 5 : 6);
-	sound.playSound(_mazeFlag ? "reaper12.voc" : "reaper14.voc");
+	sound.playVoice(_mazeFlag ? "reaper12.voc" : "reaper14.voc");
 
 	do {
 		events.updateGameCounter();
@@ -1349,11 +1349,11 @@ int ReaperCutscene::show() {
 	windows[0].update();
 	WAIT(7);
 
-	sound.playSound(_mazeFlag ? "reaper12.voc" : "reaper14.voc");
+	sound.playVoice(_mazeFlag ? "reaper12.voc" : "reaper14.voc");
 	if (_mazeFlag)
-		sound.playSound(_isDarkCc ? "goin1.voc" : "reaper13.voc");
+		sound.playVoice(_isDarkCc ? "goin1.voc" : "reaper13.voc");
 	else
-		sound.playSound(_isDarkCc ? "needkey1.voc" : "reaper15.voc");
+		sound.playVoice(_isDarkCc ? "needkey1.voc" : "reaper15.voc");
 
 	do {
 		events.updateGameCounter();
@@ -1600,7 +1600,7 @@ int GolemCutscene::show() {
 
 	sound.setMusicPercent(38);
 	_subtitles.setLine(_mazeFlag ? 8 : 7);
-	sound.playSound(_mazeFlag ? "golem15.voc" : "golem13.voc");
+	sound.playVoice(_mazeFlag ? "golem15.voc" : "golem13.voc");
 
 	do {
 		events.updateGameCounter();
@@ -1633,13 +1633,13 @@ int GolemCutscene::show() {
 	events.wait(_isDarkCc ? 10 : 1);
 
 	if (!_isDarkCc) {
-		sound.playSound("ogre.voc");
+		sound.playVoice("ogre.voc");
 		while (sound.isSoundPlaying())
 			events.pollEventsAndWait();
 
-		sound.playSound(_mazeFlag ? "golem16.voc" : "golem14.voc");
+		sound.playVoice(_mazeFlag ? "golem16.voc" : "golem14.voc");
 	} else {
-		sound.playSound(_mazeFlag ? "go2.voc" : "key2.voc");
+		sound.playVoice(_mazeFlag ? "go2.voc" : "key2.voc");
 	}
 
 	do {

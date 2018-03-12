@@ -40,7 +40,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 
-	files._isDarkCc = false;
+	bool darkCc = files._isDarkCc;
 	files.setGameCc(0);
 
 	bool seenIntro = showCloudsTitle() && showCloudsIntroInner();
@@ -48,6 +48,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 	events.clearEvents();
 	sound.stopAllAudio();
 	screen.freePages();
+	files.setGameCc(darkCc ? 1 : 0);
 
 	return seenIntro;
 }
@@ -118,7 +119,6 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 		lake("lake.vga"), xeen("xeen.vga"), wizTower("wiztower.vga"),
 		wizTower2("wiztwer2.vga"), lake2("lake2.vga"), lake3("lake3.vga"),
 		xeen1("xeen1.vga");
-	_vm->_files->_isDarkCc = false;
 
 	// Show the production splash screen
 	sound.playSong("mm4theme.m");
@@ -275,7 +275,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 			}
 
 			// Play the next sample
-			sound.playSound(_INTRO_VOCS[lineCtr]);
+			sound.playVoice(_INTRO_VOCS[lineCtr]);
 		}
 
 		for (int frameCtr = 0, lookup = 0; sound.isSoundPlaying() || 
@@ -362,9 +362,9 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 			lineCtr = 20;
 
 		if (lineCtr == 5)
-			sound.playSound(_INTRO_VOCS[6]);
+			sound.playVoice(_INTRO_VOCS[6]);
 		else if (lineCtr == 6)
-			sound.playSound(_INTRO_VOCS[7]);
+			sound.playVoice(_INTRO_VOCS[7]);
 	}
 
 	// Roll up the scroll again
@@ -379,7 +379,9 @@ void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 	FileManager &files = *g_vm->_files;
 	Sound &sound = *g_vm->_sound;
 
+	bool darkCc = files._isDarkCc;
 	files.setGameCc(0);
+
 	_mirror.load("mirror.end");
 	_mirrBack.load("mirrback.end");
 	_mergeX = 0;
@@ -393,6 +395,7 @@ void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 
 	events.clearEvents();
 	sound.stopAllAudio();
+	files.setGameCc(darkCc ? 1 : 0);
 
 	if (!g_vm->shouldExit())
 		doScroll(true, false);
@@ -482,7 +485,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 				sound.playFX(34);
 			} else if (!flag && idx1 == 1 && idx2 == 6) {
 				flag = true;
-				sound.playSound("xeenlaff.voc");
+				sound.playVoice("xeenlaff.voc");
 			}
 
 			switch (cloudsCtr) {
@@ -548,19 +551,19 @@ bool CloudsCutscenes::showCloudsEnding1() {
 		switch (idx) {
 		case 0:
 			// You have defeated my general, Lord Xeen
-			sound.playSound("dark1.voc");
+			sound.playVoice("dark1.voc");
 			break;
 		case 1:
 			// And foiled my plans to conquer this world
-			sound.playSound("dark2.voc");
+			sound.playVoice("dark2.voc");
 			break;
 		case 2:
 			// But the Dark Side will always be mine
-			sound.playSound("dark3.voc");
+			sound.playVoice("dark3.voc");
 			break;
 		default:
 			// Laugh
-			sound.playSound("darklaff.voc");
+			sound.playVoice("darklaff.voc");
 			sound.setMusicPercent(75);
 			break;
 		}
@@ -593,7 +596,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 
 	if (!sound._subtitles) {
 		// Laugh
-		sound.playSound("darklaff.voc");
+		sound.playVoice("darklaff.voc");
 		sound.setMusicPercent(75);
 	}
 
@@ -699,7 +702,7 @@ bool CloudsCutscenes::showCloudsEnding2() {
 	const char *const VOC_NAMES[3] = { "king1.voc", "king2.voc", "king3.voc" };
 	_subtitles.setLine(12);
 	for (int idx = 0; idx < 3; ++idx) {
-		sound.playSound(VOC_NAMES[idx]);
+		sound.playVoice(VOC_NAMES[idx]);
 
 		do {
 			king.draw(0, 0, Common::Point(0, 0));
@@ -815,7 +818,7 @@ bool CloudsCutscenes::showCloudsEnding3() {
 
 		for (int frameCtr = 0; frameCtr < 3; ++frameCtr) {
 			if (frameCtr == 2)
-				sound.playSound(Common::String::format("%s.voc", mon._attackVoc.c_str()));
+				sound.playVoice(Common::String::format("%s.voc", mon._attackVoc.c_str()));
 
 			ROTATE_BG;
 			counter1 = (counter1 + 1) % 8;
@@ -983,7 +986,7 @@ bool CloudsCutscenes::showCloudsEnding5() {
 	screen.fadeIn();
 	_subtitles.setLine(13);
 	
-	sound.playSound("king4.voc");
+	sound.playVoice("king4.voc");
 	do {
 		king.draw(0, 0, Common::Point(0, 0));
 		king.draw(0, 1, Common::Point(160, 0));

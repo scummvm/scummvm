@@ -128,6 +128,11 @@ public:
 	void updateSoundSettings();
 
 	/**
+	 * Stops all playing music, FX, and sound samples
+	 */
+	void stopAllAudio();
+
+	/**
 	 * Play a given sound
 	 */
 	void playSound(Common::SeekableReadStream &s, int unused = 0);
@@ -155,9 +160,9 @@ public:
 	bool isSoundPlaying() const;
 
 	/**
-	 * Stops all playing music, FX, and sound samples
+	 * Play a given voice file
 	 */
-	void stopAllAudio();
+	void playVoice(const Common::String &name, int ccMode = -1);
 };
 
 } // End of namespace Xeen
