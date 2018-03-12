@@ -91,6 +91,7 @@ MODULE_OBJS = \
 	script/ai/sergeant_walls.o \
 	script/ai/shoeshine_man.o \
 	script/ai/steele.o \
+	script/ai/taffy.o \
 	script/ai/taffy_patron.o \
 	script/ai/teenager.o \
 	script/ai/the_bard.o \
