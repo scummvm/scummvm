@@ -1251,7 +1251,7 @@ Zork Nemesis: The Forbidden Lands
 All versions
 
 Download the Liberation(tm) fonts package
-<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
+<https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
 and unpack all the ttf files into your ScummVM extras directory.
 Alternatively, download the GNU FreeFont TTF package
 <https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> and unzip all the

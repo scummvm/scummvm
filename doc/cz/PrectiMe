@@ -825,7 +825,7 @@ Zork Nemesis: The Forbidden Lands
 Všechny verze
 
 Stáhněte si balíček písem Liberation(tm)
-<https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
+<https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz>
 a rozbalte všechny soubory ttf do vaší dodatečné složky ScummVM.
 Nebo si stáhněte balíček GNU FreeFont TTF
 <https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip> a umístěte všechny soubory ttf z adresáře sfd do dodatečné složky ScummVM, i když je třeba říci, že v současné době

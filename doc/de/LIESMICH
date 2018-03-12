@@ -1330,8 +1330,7 @@ Zork: Der Großinquisitor
 Alle Versionen
 
 Laden Sie das Liberation(tm)-Schriftartenpaket unter
-https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-ttf-
-2.00.1.tar.gz
+https://releases.pagure.org/liberation-fonts/liberation-fonts-ttf-2.00.1.tar.gz
 herunter und entpacken Sie alle ttf-Dateien in ScummVMs Extras-Pfad.
 Alternativ können Sie auch das GNU FreeFont TTF-Paket unter
 https://ftp.gnu.org/gnu/freefont/freefont-ttf.zip
