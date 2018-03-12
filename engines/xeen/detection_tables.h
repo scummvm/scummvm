@@ -128,7 +128,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_Swords,
 		0
