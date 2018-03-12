@@ -67,6 +67,7 @@ MODULE_OBJS = \
 	script/ai/grigorian.o \
 	script/ai/guzza.o \
 	script/ai/hawkers_barkeep.o \
+	script/ai/hawkers_parrot.o \
 	script/ai/howie_lee.o \
 	script/ai/hysteria_patron1.o \
 	script/ai/hysteria_patron2.o \

@@ -272,6 +272,9 @@ DECLARE_SCRIPT(EarlyQBartender)
 	bool _flag;
 END_SCRIPT
 
+DECLARE_SCRIPT(HawkersParrot)
+END_SCRIPT
+
 DECLARE_SCRIPT(HysteriaPatron1)
 END_SCRIPT
 
