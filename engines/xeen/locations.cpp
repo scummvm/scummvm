@@ -1597,7 +1597,9 @@ int GolemCutscene::show() {
 	while (sound.isSoundPlaying()) {
 		WAIT(1);
 	}
+
 	sound.setMusicPercent(38);
+	_subtitles.setLine(_mazeFlag ? 8 : 7);
 	sound.playSound(_mazeFlag ? "golem15.voc" : "golem13.voc");
 
 	do {
@@ -1616,9 +1618,8 @@ int GolemCutscene::show() {
 				g_vm->getRandomNumber(9) - 3));
 		}
 
-		_subtitles.show();
 		WAIT(1);
-	} while (_subtitles.lineActive());
+	} while (sound.isSoundPlaying());
 
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
@@ -1669,7 +1670,7 @@ int GolemCutscene::show() {
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
-	while (sound.isSoundPlaying()) {
+	while (_subtitles.lineActive()) {
 		WAIT(1);
 	}
 
@@ -1875,6 +1876,7 @@ int DwarfCutscene::show() {
 	screen.blitFrom(savedBg);
 	sprites2.draw(0, 0);
 	windows[0].update();
+	_subtitles.setLine(_isDarkCc ? 0 : 4);
 
 	for (int idx = 0; idx < (_isDarkCc ? 2 : 3); ++idx) {
 		switch (idx) {
@@ -1889,8 +1891,9 @@ int DwarfCutscene::show() {
 				_subtitles.show();
 
 				events.timeMark5();
-				while (!g_vm->shouldExit() && events.timeElapsed5() < 7)
-					events.pollEventsAndWait();
+				while (!g_vm->shouldExit() && events.timeElapsed5() < 7) {
+					WAIT(1);
+				}
 
 				sound.playSound(_mazeFlag ? "ok2.voc" : "back2.voc");
 			} else {
@@ -1915,8 +1918,7 @@ int DwarfCutscene::show() {
 			}
 		} while (_subtitles.lineActive());
 
-		while (!g_vm->shouldExit() && events.timeElapsed() < 3)
-			events.pollEventsAndWait();
+		WAIT(3);
 	}
 
 exit:
@@ -2070,6 +2072,7 @@ int SphinxCutscene::show() {
 	for (int idx = 0; idx < (_mazeFlag ? 3 : 2); ++idx) {
 		switch (idx) {
 		case 0:
+			_subtitles.setLine(_mazeFlag ? 9 : 10);
 			sound.playSound(_mazeFlag ? "sphinx10.voc" : "sphinx13.voc");
 			break;
 		case 1:
@@ -2081,22 +2084,24 @@ int SphinxCutscene::show() {
 		}
 
 		do {
-			events.updateGameCounter();
 			sprites1.draw(0, 0, Common::Point(0, 0));
 			sprites1.draw(0, 1, Common::Point(160, 0));
 			sprites1.draw(0, g_vm->getRandomNumber(2, 10));
 			WAIT(1);
-		} while (_subtitles.lineActive());
+		} while (sound.isSoundPlaying());
 
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));
+	}
+
+	while (_subtitles.lineActive()) {
+		WAIT(1);
 	}
 
 	sound.setMusicPercent(75);
 
 	if (!_mazeFlag) {
 		for (int idx = 0; idx < 8; ++idx) {
-			events.updateGameCounter();
 			screen.blitFrom(bgSurface);
 			sprites1.draw(0, 0, Common::Point(SPHINX_X1[idx], SPHINX_Y1[idx]), 0, idx);
 			sprites1.draw(0, 1, Common::Point(SPHINX_X2[idx], SPHINX_Y1[idx]), 0, idx);
