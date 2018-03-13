@@ -134,6 +134,7 @@ done
 # Default settings
 #
 # Default lib behavior yes/no/auto
+_sdl=no
 _ogg=auto
 _vorbis=auto
 _sdlnet=auto
@@ -3456,6 +3457,7 @@ case $_backend in
 		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/system/include"
 		;;
 	androidsdl)
+		_sdl=auto
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
@@ -3475,6 +3477,7 @@ case $_backend in
 		;;
 	dingux)
 		append_var DEFINES "-DDINGUX"
+		_sdl=auto
 		;;
 	ds)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/ds/arm9/source'
@@ -3489,6 +3492,7 @@ case $_backend in
 		if test "$_debug_build" = yes; then
 			append_var DEFINES "-DGPH_DEBUG"
 		fi
+		_sdl=auto
 		;;
 	iphone)
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
@@ -3510,9 +3514,11 @@ case $_backend in
 		;;
 	linuxmoto)
 		append_var DEFINES "-DLINUXMOTO"
+		_sdl=auto
 		;;
 	maemo)
 		append_var DEFINES "-DMAEMO"
+		_sdl=auto
 		;;
 	n64)
 		append_var INCLUDES '-I$(N64SDK)/include'
@@ -3526,6 +3532,7 @@ case $_backend in
 		append_var DEFINES "-DUSE_NULL_DRIVER"
 		;;
 	openpandora)
+		_sdl=auto
 		;;
 	ps2)
 		append_var DEFINES "-D_EE"
@@ -3561,9 +3568,8 @@ case $_backend in
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
 		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub -lSceAppMgr_stub -lScePgf_stub"
 		append_var LIBS "-lSceTouch_stub -lSceHid_stub"
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
-		add_line_to_config_mk "USE_SDL2 = 1"
+		_sdl=yes
+		_sdlversion=2.0.0
 		append_var MODULES "backends/platform/sdl"
 		append_var INCLUDES "-I$VITASDK/arm-vita-eabi/include/SDL2"
 		;;
@@ -3571,8 +3577,10 @@ case $_backend in
 		append_var DEFINES "-DSAMSUNGTV"
 		append_var LDFLAGS "-shared"
 		append_var LDFLAGS "-fpic"
+		_sdl=auto
 		;;
 	sdl)
+		_sdl=auto
 		;;
 	tizen)
 		# dirent.h not available. NONSTANDARD_PORT==ensure portdefs.h is included
@@ -3598,9 +3606,9 @@ case $_backend in
 		# The PDL library acts as the WebOS device toolchain, and is required to control the virtual keyboard among other OS-level events.
 		append_var LIBS "-lSDL -lpdl"
 		append_var DEFINES "-DWEBOS"
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
 		append_var MODULES "backends/platform/sdl"
+		_sdl=yes
+		_sdlversion=1.2.0
 		;;
 	wii)
 		append_var DEFINES "-D__WII__"
@@ -3619,8 +3627,8 @@ case $_backend in
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEgui'
 		append_var INCLUDES '-I$(srcdir)/backends/platform/wince/CEkeys'
 		append_var LIBS "-static -lSDL"
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
+		_sdl=yes
+		_sdlversion=1.2.0
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
@@ -3632,49 +3640,61 @@ append_var MODULES "backends/platform/$_backend"
 #
 # Setup SDL specifics for SDL based backends
 #
-case $_backend in
-	androidsdl | dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
-		find_sdlconfig
-		append_var INCLUDES "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		if test "$_static_build" = yes ; then
-			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
-		else
-			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
-		fi
-		append_var DEFINES "-DSDL_BACKEND"
-		add_line_to_config_mk "SDL_BACKEND = 1"
+if test "$_sdl" = auto ; then
+	find_sdlconfig
+	append_var SDL_CFLAGS "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
+	if test "$_static_build" = yes ; then
+		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
+	else
+		append_var SDL_LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
+	fi
+	_sdlversion=`$_sdlconfig --version`
 
-		_sdlversion=`$_sdlconfig --version`
-		case $_sdlversion in
-			2.0.*)
-				add_line_to_config_mk "USE_SDL2 = 1"
-				append_var SDL_NET_LIBS "-lSDL2_net"
-				;;
-			*)
-				append_var SDL_NET_LIBS "-lSDL_net"
-				;;
-		esac
+	echocheck "SDL"
+	_sdl=no
+	cat > $TMPC << EOF
+#include "SDL.h"
+int main(int argc, char *argv[]) { SDL_Init(0); return 0; }
+EOF
+	cc_check $LIBS $SDL_LIBS $INCLUDES $SDL_CFLAGS && _sdl=yes
+	echo "$_sdl"
+	if test "$_sdl" = no ; then
+		exit 1
+	fi
+fi
+if test "$_sdl" = yes ; then
+	append_var DEFINES "-DSDL_BACKEND"
+	add_line_to_config_mk "SDL_BACKEND = 1"
+	append_var INCLUDES "$SDL_CFLAGS"
+	append_var LIBS "$SDL_LIBS"
+	case $_sdlversion in
+		2.0.*)
+			add_line_to_config_mk "USE_SDL2 = 1"
+			append_var SDL_NET_LIBS "-lSDL2_net"
+			;;
+		*)
+			append_var SDL_NET_LIBS "-lSDL_net"
+			;;
+	esac
 
-		# Check for SDL_Net
-		echocheck "SDL_Net"
-		if test "$_sdlnet" = auto ; then
-			_sdlnet=no
-			cat > $TMPC << EOF
+	# Check for SDL_Net
+	echocheck "SDL_Net"
+	if test "$_sdlnet" = auto ; then
+		_sdlnet=no
+		cat > $TMPC << EOF
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
-			cc_check $SDL_NET_LIBS $LIBS $INCLUDES $SDL_NET_CFLAGS && _sdlnet=yes
-		fi
-		if test "$_sdlnet" = yes ; then
-			# Some platforms require SDL to be after SDL_Net, thus we prepend var
-			prepend_var LIBS "$SDL_NET_LIBS"
-			append_var INCLUDES "$SDL_NET_CFLAGS"
-		fi
-		define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
-		echo "$_sdlnet"
-
-		;;
-esac
+		cc_check $SDL_NET_LIBS $LIBS $INCLUDES $SDL_NET_CFLAGS && _sdlnet=yes
+	fi
+	if test "$_sdlnet" = yes ; then
+		# Some platforms require SDL to be after SDL_Net, thus we prepend var
+		prepend_var LIBS "$SDL_NET_LIBS"
+		append_var INCLUDES "$SDL_NET_CFLAGS"
+	fi
+	define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
+	echo "$_sdlnet"
+fi
 
 
 #
