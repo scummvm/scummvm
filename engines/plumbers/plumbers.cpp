@@ -182,8 +182,7 @@ void PlumbersGame::loadImage(const Common::String &dirname, const Common::String
 	if (!file->open(name))
 		error("unable to load image %s", name.c_str());
 
-	if (_image)
-		delete _image;
+	delete _image;
 
 	_image = new Image::BitmapDecoder();
 	_image->loadStream(*file);
