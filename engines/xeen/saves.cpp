@@ -267,7 +267,7 @@ bool SavesManager::saveGame() {
 	Common::String saveName = dialog->getResultString();
 	delete dialog;
 
-	if (slotNum)
+	if (slotNum != -1)
 		saveGameState(slotNum, saveName);
 
 	return slotNum != -1;
