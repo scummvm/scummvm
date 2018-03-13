@@ -325,6 +325,15 @@ DECLARE_SCRIPT(Sebastian)
 	void setMcCoyIsABladeRunner();
 END_SCRIPT
 
+DECLARE_SCRIPT(Rachael)
+	bool _flag;
+
+	void dialogue_start();
+	void dialogue_agenda1();
+	void dialogue_agenda2();
+	void dialogue_agenda3();
+END_SCRIPT
+
 DECLARE_SCRIPT(BlimpGuy)
 END_SCRIPT
 

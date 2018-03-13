@@ -83,6 +83,7 @@ AIScripts::AIScripts(BladeRunnerEngine *vm, int actorCount) {
 	_AIScripts[kActorBryant] = new AIScriptBryant(_vm);                   // 54
 	_AIScripts[kActorTaffy] = new AIScriptTaffy(_vm);                     // 55
 	_AIScripts[kActorSebastian] = new AIScriptSebastian(_vm);             // 56
+	_AIScripts[kActorRachael] = new AIScriptRachael(_vm);                 // 57
 	_AIScripts[kActorBlimpGuy] = new AIScriptBlimpGuy(_vm);               // 60
 	_AIScripts[kActorNewscaster] = new AIScriptNewscaster(_vm);           // 61
 	_AIScripts[kActorLeon] = new AIScriptLeon(_vm);                       // 62
