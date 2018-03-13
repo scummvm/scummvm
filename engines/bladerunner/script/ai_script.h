@@ -318,6 +318,13 @@ END_SCRIPT
 DECLARE_SCRIPT(Taffy)
 END_SCRIPT
 
+DECLARE_SCRIPT(Sebastian)
+	bool _flag;
+
+	void dialogue();
+	void setMcCoyIsABladeRunner();
+END_SCRIPT
+
 DECLARE_SCRIPT(BlimpGuy)
 END_SCRIPT
 

@@ -90,6 +90,7 @@ MODULE_OBJS = \
 	script/ai/officer_leary.o \
 	script/ai/rajif.o \
 	script/ai/runciter.o \
+	script/ai/sebastian.o \
 	script/ai/sergeant_walls.o \
 	script/ai/shoeshine_man.o \
 	script/ai/steele.o \
