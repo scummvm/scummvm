@@ -334,6 +334,13 @@ DECLARE_SCRIPT(Rachael)
 	void dialogue_agenda3();
 END_SCRIPT
 
+DECLARE_SCRIPT(Isabella)
+	int _var1;
+	int _var2;
+	int _var3;
+	int _var4;
+END_SCRIPT
+
 DECLARE_SCRIPT(BlimpGuy)
 END_SCRIPT
 

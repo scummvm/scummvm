@@ -164,7 +164,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 		if (_var2 == 2) {
 			*animation = 779;
 		}
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame += 2;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 				_animationFrame = 0;
