@@ -103,7 +103,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
 	_whosTurn = -1;
 	_itemFlag = false;
 	_monstersAttacking = false;
-	_combatMode = COMBATMODE_0;
+	_combatMode = COMBATMODE_STARTUP;
 	_attackDurationCtr = 0;
 	_partyRan = false;
 	_monster2Attack = -1;

@@ -40,7 +40,7 @@ void PleaseWait::show() {
 	Windows &windows = *g_vm->_windows;
 	Window &w = windows[9];
 
-	if (g_vm->_mode != MODE_0) {
+	if (g_vm->_mode != MODE_STARTUP) {
 		w.open();
 		w.writeString(_msg);
 		w.update();

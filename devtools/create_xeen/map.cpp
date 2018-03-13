@@ -145,16 +145,18 @@ void writeMazeEvents(CCArchive &cc) {
 	f.write(MIRROR_EVENTS, 32);
 	
 	// Bench 1 events
-	const byte BENCH1_EVENTS[21] = {
-		14,	7, 8, 0, 0, 20,		34, 10000 % 256, 10000 / 256, 0, 0, 0, 0, 0, 0, // Give gold
-		5,	7, 8, 0, 1, 18						// Exit
+	const byte BENCH1_EVENTS[32] = {
+		10,  7, 8, 0, 0,  5,	1, 2, 3, 1, 2,	// NPC
+		14,	7, 8, 0, 1, 20,		34, 10000 % 256, 10000 / 256, 0, 0, 0, 0, 0, 0, // Give gold
+		5,	7, 8, 0, 2, 18						// Exit
 	};
-	const byte BENCH2_EVENTS[19] = {
-		14,	8, 8, 0, 0, 20,		35, 1000 % 256, 1000 / 256, 0, 0, 0, 0,	// Give gems
-		5,	8, 8, 0, 1, 18						// Exit
+	const byte BENCH2_EVENTS[30] = {
+		10,  8, 8, 0, 0,  5,	1, 3, 3, 1, 2,	// NPC
+		14,	8, 8, 0, 1, 20,		35, 1000 % 256, 1000 / 256, 0, 0, 0, 0,	// Give gems
+		5,	8, 8, 0, 2, 18						// Exit
 	};
-	f.write(BENCH1_EVENTS, 21);
-	f.write(BENCH2_EVENTS, 19);
+	f.write(BENCH1_EVENTS, 32);
+	f.write(BENCH2_EVENTS, 30);
 
 	cc.add("mazex255.evt", f);
 }
@@ -166,6 +168,9 @@ void writeMazeText(CCArchive &cc) {
 	Common::MemFile f;
 
 	f.writeString("Where to?");
+	f.writeString("Isle of ScummVM");
+	f.writeString("You have done well to find this ancient isle. This will aid you on your journey.");
+	f.writeString("It is my hope that this isle will be but the first of many such new destinations the mirror may take you.");
 
 	cc.add("aazex255.txt", f);
 }

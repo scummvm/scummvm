@@ -121,7 +121,7 @@ void PartyDialog::execute() {
 				if (party._activeParty.size() == 0) {
 					ErrorScroll::show(_vm, Res.NO_ONE_TO_ADVENTURE_WITH);
 				} else {
-					if (_vm->_mode != MODE_0) {
+					if (_vm->_mode != MODE_STARTUP) {
 						for (int idx = OBSCURITY_NONE; idx >= OBSCURITY_BLACK; --idx) {
 							events.updateGameCounter();
 							intf.obscureScene((Obscurity)idx);

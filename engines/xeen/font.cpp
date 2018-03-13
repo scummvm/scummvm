@@ -23,6 +23,7 @@
 #include "common/endian.h"
 #include "xeen/font.h"
 #include "xeen/resources.h"
+#include "xeen/xeen.h"
 
 namespace Xeen {
 
@@ -320,7 +321,7 @@ int FontSurface::fontAtoi(int len) {
 }
 
 void FontSurface::setTextColor(int idx) {
-	const byte *colP = &Res.TEXT_COLORS[idx][0];
+	const byte *colP = (g_vm->_mode == MODE_STARTUP) ? &Res.TEXT_COLORS_STARTUP[idx][0] : &Res.TEXT_COLORS[idx][0];
 	Common::copy(colP, colP + 4, &_textColors[0]);
 }
 

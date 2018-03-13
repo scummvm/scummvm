@@ -435,7 +435,7 @@ bool Scripts::cmdSignText(ParamsIterator &params) {
 bool Scripts::cmdNPC(ParamsIterator &params) {
 	Map &map = *_vm->_map;
 
-	params.readByte();
+	params.readByte();					// _message already holds title
 	int textNum = params.readByte();
 	int portrait = params.readByte();
 	int confirm = params.readByte();
@@ -1479,6 +1479,7 @@ void Scripts::doEnding(const Common::String &endStr) {
 	// Get the current total score
 	uint finalScore = party.getScore();
 
+	g_vm->_mode = MODE_STARTUP;
 	g_vm->showCutscene(endStr, state, finalScore);
 	g_vm->_gameMode = GMODE_MENU;
 }

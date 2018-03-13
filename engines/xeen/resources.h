@@ -135,6 +135,7 @@ public:
 	const char *WHO_WILL_ACTIONS[4];
 	byte SYMBOLS[20][64];
 	byte TEXT_COLORS[40][4];
+	byte TEXT_COLORS_STARTUP[40][4];
 	const char *DIRECTION_TEXT_UPPER[4];
 	const char *DIRECTION_TEXT[4];
 	const char *RACE_NAMES[5];

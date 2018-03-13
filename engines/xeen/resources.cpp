@@ -81,6 +81,7 @@ void Resources::loadData() {
 	file.syncStrings(WHO_WILL_ACTIONS, 4);
 	file.syncBytes2D((byte *)SYMBOLS, 20, 64);
 	file.syncBytes2D((byte *)TEXT_COLORS, 40, 4);
+	file.syncBytes2D((byte *)TEXT_COLORS_STARTUP, 40, 4);
 	file.syncStrings(DIRECTION_TEXT_UPPER, 4);
 	file.syncStrings(DIRECTION_TEXT, 4);
 	file.syncStrings(RACE_NAMES, 5);

@@ -76,7 +76,7 @@ enum XeenDebugChannels {
 
 enum Mode {
 	MODE_FF = -1,
-	MODE_0 = 0,
+	MODE_STARTUP = 0,
 	MODE_1 = 1,
 	MODE_COMBAT = 2,
 	MODE_3 = 3,

@@ -59,7 +59,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_noDirectionSense = false;
 	_startupWindowActive = false;
 	_gameMode = GMODE_STARTUP;
-	_mode = MODE_0;
+	_mode = MODE_STARTUP;
 	_endingScore = 0;
 	_loadSaveSlot = -1;
 	_gameWon[0] = _gameWon[1] = _gameWon[2] = false;
@@ -220,7 +220,7 @@ void XeenEngine::play() {
 	}
 
 	_interface->startup();
-	if (_mode == MODE_0) {
+	if (_mode == MODE_STARTUP) {
 //		_screen->fadeOut();
 	}
 
@@ -230,7 +230,7 @@ void XeenEngine::play() {
 	_events->setCursor(0);
 
 	_combat->_moveMonsters = true;
-	if (_mode == MODE_0) {
+	if (_mode == MODE_STARTUP) {
 		_mode = MODE_1;
 		_screen->fadeIn();
 	}
@@ -241,6 +241,8 @@ void XeenEngine::play() {
 
 	if (_party->_dead)
 		death();
+
+	_mode = MODE_STARTUP;
 }
 
 void XeenEngine::gameLoop() {
