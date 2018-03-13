@@ -113,7 +113,7 @@ void Awards::execute(const Character *ch) {
 	}
 
 	// Close the window
-	if (win29Open) {
+	if (!win29Open) {
 		windows[30].close();
 		windows[29].close();
 	}
