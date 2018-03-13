@@ -302,6 +302,13 @@ DECLARE_SCRIPT(Tyrell)
 	int _var;
 END_SCRIPT
 
+DECLARE_SCRIPT(Chew)
+	int _var1;
+	int _var2;
+	int _var3;
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(Gaff)
 END_SCRIPT
 
