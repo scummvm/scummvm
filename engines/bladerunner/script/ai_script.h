@@ -144,6 +144,14 @@ DECLARE_SCRIPT(Gordo)
 	void sub_41117C();
 END_SCRIPT
 
+DECLARE_SCRIPT(Dektora)
+	bool _flag;
+	float _x, _y, _z;
+
+	double comp_distance(int actorId, float x1, float y1, float z1);
+	void checkCombat();
+END_SCRIPT
+
 DECLARE_SCRIPT(Guzza)
 	int _frameDelta;
 	int _counter;
