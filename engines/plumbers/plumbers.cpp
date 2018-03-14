@@ -186,7 +186,6 @@ void PlumbersGame::loadImage(const Common::String &dirname, const Common::String
 
 	_image = new Image::BitmapDecoder();
 	_image->loadStream(file);
-	file.close();
 }
 
 void PlumbersGame::drawScreen() {
@@ -360,7 +359,6 @@ void PlumbersGame::readTables(const Common::String &fileName) {
 		file.read(buf, kMaxName);
 		_bitmaps[i]._filename = Common::String(buf);
 	}
-	file.close();
 }
 
 int PlumbersGame::getSceneNumb(int sNo) {
