@@ -178,16 +178,15 @@ Common::Error PlumbersGame::run() {
 void PlumbersGame::loadImage(const Common::String &dirname, const Common::String &filename) {
 	Common::String name = dirname + "/" + filename;
 	debugC(1, kDebugGeneral, "%s : %s", __FUNCTION__, name.c_str());
-	Common::File *file = new Common::File();
-	if (!file->open(name))
+	Common::File file;
+	if (!file.open(name))
 		error("unable to load image %s", name.c_str());
 
 	delete _image;
 
 	_image = new Image::BitmapDecoder();
-	_image->loadStream(*file);
-	file->close();
-	delete file;
+	_image->loadStream(file);
+	file.close();
 }
 
 void PlumbersGame::drawScreen() {
