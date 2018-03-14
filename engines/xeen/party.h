@@ -47,7 +47,6 @@ enum PartyBank {
 	WHERE_PARTY = 0, WHERE_BANK = 1
 };
 
-#define ITEMS_COUNT 36
 #define TOTAL_CHARACTERS 30
 #define XEEN_TOTAL_CHARACTERS 24
 #define MAX_ACTIVE_PARTY 6
@@ -82,6 +81,62 @@ public:
 	 * Returns a particular category's array
 	 */
 	XeenItem *operator[](int category) { return _categories[category]; }
+};
+
+/**
+ * Each side of Xeen supports 4 blacksmith inventories of up to 9 items each
+ */
+typedef XeenItem BlacksmithItems[2][4][INV_ITEMS_TOTAL];
+
+class BlacksmithWares {
+private:
+	/**
+	 * Returns the slot containing the wares for the blacksmith of the currently active map
+	 */
+	uint getSlotIndex() const;
+
+public:
+	BlacksmithItems _weapons;
+	BlacksmithItems _armor;
+	BlacksmithItems _accessories;
+	BlacksmithItems _misc;
+public:
+	/**
+	 * Constructor
+	 */
+	BlacksmithWares() { clear(); }
+
+	/**
+	 * Clear all current blacksmith wares
+	 */
+	void clear();
+
+	/**
+	 * Generates a fresh set of blacksmith inventories
+	 */
+	void regenerate();
+
+	/**
+	 * Gets the items for a particular item category
+	 */
+	BlacksmithItems &operator[](ItemCategory category);
+
+	/**
+	 * Loads a passed temporary character with the item set the given blacksmith has available,
+	 * so the player can "view" the wares as if it were a standard character's inventory
+	 */
+	void blackData2CharData(Character &c);
+
+	/**
+	 * Saves the inventory from the passed temporary character back into the blacksmith storage,
+	 * so changes in blacksmith inventories remain persistent
+	 */
+	void charData2BlackData(Character &c);
+
+	/**
+	 * Synchronizes data for the blacksmith wares
+	 */
+	void synchronize(Common::Serializer &s, int ccNum);
 };
 
 class Party {
@@ -128,10 +183,7 @@ public:
 	int _holyBonus;
 	int _heroism;
 	Difficulty _difficulty;
-	XeenItem _blacksmithWeapons[2][ITEMS_COUNT];
-	XeenItem _blacksmithArmor[2][ITEMS_COUNT];
-	XeenItem _blacksmithAccessories[2][ITEMS_COUNT];
-	XeenItem _blacksmithMisc[2][ITEMS_COUNT];
+	BlacksmithWares _blacksmithWares;
 	bool _cloudsEnd;
 	bool _darkSideEnd;
 	bool _worldEnd;
@@ -178,6 +230,9 @@ public:
 public:
 	Party(XeenEngine *vm);
 
+	/**
+	 * Synchronizes data for the party
+	 */
 	void synchronize(Common::Serializer &s);
 
 	void loadActiveParty();

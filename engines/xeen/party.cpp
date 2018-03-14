@@ -72,6 +72,117 @@ Treasure::Treasure() {
 
 /*------------------------------------------------------------------------*/
 
+const int BLACKSMITH_DATA1[4][4] = {
+	{ 15, 5, 5, 5 },{ 5, 10, 5, 5 },{ 0, 5, 10, 5 },{ 0, 0, 0, 5 }
+};
+const int BLACKSMITH_DATA2[4][4] = {
+	{ 10, 5, 0, 5 },{ 10, 5, 5, 5 },{ 0, 5, 5, 10 },{ 0, 5, 10, 0 }
+};
+
+
+void BlacksmithWares::clear() {
+	for (ItemCategory cat = CATEGORY_WEAPON; cat <= CATEGORY_MISC; cat = (ItemCategory)((int)cat + 1))
+		for (int ccNum = 0; ccNum < 2; ++ccNum)
+			for (int slot = 0; slot < 4; ++slot)
+					for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx)
+						(*this)[cat][ccNum][slot][idx].clear();
+}
+
+void BlacksmithWares::regenerate() {
+	Character tempChar;
+	int catCount[4];
+
+	// Clear existing blacksmith wares
+	clear();
+
+	// Wares setup for Clouds of Xeen
+	for (int slotNum = 0; slotNum < 4; ++slotNum) {
+		Common::fill(&catCount[0], &catCount[4], 0);
+
+		for (int idx2 = 0; idx2 < 4; ++idx2) {
+			for (int idx3 = 0; idx3 < BLACKSMITH_DATA1[idx2][slotNum]; ++idx3) {
+				ItemCategory itemCat = tempChar.makeItem(idx2 + 1, 0, 0);
+				if (catCount[itemCat] < 8) {
+					XeenItem &item = (*this)[itemCat][0][slotNum][catCount[itemCat]];
+					item._id = tempChar._weapons[0]._id;
+					item._material = tempChar._weapons[0]._material;
+					item._bonusFlags = tempChar._weapons[0]._bonusFlags;
+
+					++catCount[itemCat];
+				}
+			}
+		}
+	}
+
+	// Wares setup for Dark Side/Swords of Xeen
+	for (int slotNum = 0; slotNum < 4; ++slotNum) {
+		Common::fill(&catCount[0], &catCount[4], 0);
+
+		for (int idx2 = 0; idx2 < 4; ++idx2) {
+			for (int idx3 = 0; idx3 < BLACKSMITH_DATA2[idx2][slotNum]; ++idx3) {
+				ItemCategory itemCat = tempChar.makeItem(idx2 + (slotNum >= 2 ? 3 : 1), 0, 0);
+				if (catCount[itemCat] < 8) {
+					XeenItem &item = (*this)[itemCat][1][slotNum][catCount[itemCat]];
+					item._id = tempChar._misc[0]._id;
+					item._material = tempChar._misc[0]._material;
+					item._bonusFlags = tempChar._misc[0]._bonusFlags;
+
+					++catCount[itemCat];
+				}
+			}
+		}
+	}
+}
+
+void BlacksmithWares::blackData2CharData(Character &c) {
+	bool isDarkCc = g_vm->_files->_isDarkCc;
+	int slotIndex = getSlotIndex();
+
+	for (ItemCategory cat = CATEGORY_WEAPON; cat <= CATEGORY_MISC; cat = (ItemCategory)((int)cat + 1))
+		for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx)
+			c._items[cat][idx] = (*this)[cat][isDarkCc][slotIndex][idx];
+}
+
+void BlacksmithWares::charData2BlackData(Character &c) {
+	bool isDarkCc = g_vm->_files->_isDarkCc;
+	int slotIndex = getSlotIndex();
+
+	for (ItemCategory cat = CATEGORY_WEAPON; cat <= CATEGORY_MISC; cat = (ItemCategory)((int)cat + 1))
+		for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx)
+			(*this)[cat][isDarkCc][slotIndex][idx] = c._items[cat][idx];
+}
+
+BlacksmithItems &BlacksmithWares::operator[](ItemCategory category) {
+	switch (category) {
+	case CATEGORY_WEAPON: return _weapons;
+	case CATEGORY_ARMOR: return _armor;
+	case CATEGORY_ACCESSORY: return _accessories;
+	default: return _misc;
+	}
+}
+
+uint BlacksmithWares::getSlotIndex() const {
+	Party &party = *g_vm->_party;
+	bool isDarkCc = g_vm->_files->_isDarkCc;
+
+	int slotIndex = 0;
+	while (slotIndex < 4 && party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex])
+		++slotIndex;
+	if (slotIndex == 4)
+		slotIndex = 0;
+
+	return slotIndex;
+}
+
+void BlacksmithWares::synchronize(Common::Serializer &s, int ccNum) {
+	for (ItemCategory cat = CATEGORY_WEAPON; cat <= CATEGORY_MISC; cat = (ItemCategory)((int)cat + 1))
+		for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx)
+			for (int slot = 0; slot < 4; ++slot)
+				(*this)[cat][ccNum][slot][idx].synchronize(s);
+}
+
+/*------------------------------------------------------------------------*/
+
 XeenEngine *Party::_vm;
 
 Party::Party(XeenEngine *vm) {
@@ -174,14 +285,7 @@ void Party::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_heroism);
 	s.syncAsByte(_difficulty);
 
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithWeapons[0][i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithArmor[0][i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithAccessories[0][i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithMisc[0][i].synchronize(s);
+	_blacksmithWares.synchronize(s, 0);
 
 	s.syncAsUint16LE(_cloudsEnd);
 	s.syncAsUint16LE(_darkSideEnd);
@@ -215,14 +319,7 @@ void Party::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < 85; ++i)
 		s.syncAsByte(_questItems[i]);
 
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithWeapons[1][i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithArmor[1][i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithAccessories[1][i].synchronize(s);
-	for (int i = 0; i < ITEMS_COUNT; ++i)
-		_blacksmithMisc[1][i].synchronize(s);
+	_blacksmithWares.synchronize(s, 1);
 
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
 		File::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][24]);
@@ -1474,126 +1571,8 @@ void Party::resetYearlyBits() {
 	_gameFlags[0][231] = false;
 }
 
-const int BLACKSMITH_DATA1[4][4] = {
-	{ 15, 5, 5, 5 },{ 5, 10, 5, 5 },{ 0, 5, 10, 5 },{ 0, 0, 0, 5 }
-};
-const int BLACKSMITH_DATA2[4][4] = {
-	{ 10, 5, 0, 5 },{ 10, 5, 5, 5 },{ 0, 5, 5, 10 },{ 0, 5, 10, 0 }
-};
-
 void Party::resetBlacksmithWares() {
-	Character &c = _itemsCharacter;
-	int catCount[4];
-
-	// Clear existing blacksmith wares
-	for (int i = 0; i < 2; ++i) {
-		for (int j = 0; j < ITEMS_COUNT; ++j) {
-			_blacksmithWeapons[i][j].clear();
-			_blacksmithArmor[i][j].clear();
-			_blacksmithAccessories[i][j].clear();
-			_blacksmithWeapons[i][j].clear();
-		}
-	}
-
-	for (int idx1 = 0; idx1 < 4; ++idx1) {
-		Common::fill(&catCount[0], &catCount[4], 0);
-
-		for (int idx2 = 0; idx2 < 4; ++idx2) {
-			for (int idx3 = 0; idx3 < BLACKSMITH_DATA1[idx2][idx1]; ++idx3) {
-				int itemCat = c.makeItem(idx2 + 1, 0, 0);
-				if (catCount[itemCat] < 8) {
-					switch (itemCat) {
-					case CATEGORY_WEAPON: {
-						XeenItem &item = _blacksmithWeapons[0][catCount[itemCat] * 4 + idx1];
-						item._id = c._weapons[0]._id;
-						item._material = c._weapons[0]._material;
-						item._bonusFlags = c._weapons[0]._bonusFlags;
-						break;
-					}
-
-					case CATEGORY_ARMOR: {
-						XeenItem &item = _blacksmithArmor[0][catCount[itemCat] * 4 + idx1];
-						item._id = c._armor[0]._id;
-						item._material = c._armor[0]._material;
-						item._bonusFlags = c._armor[0]._bonusFlags;
-						break;
-					}
-
-					case CATEGORY_ACCESSORY: {
-						XeenItem &item = _blacksmithAccessories[0][catCount[itemCat] * 4 + idx1];
-						item._id = c._accessories[0]._id;
-						item._material = c._accessories[0]._material;
-						item._bonusFlags = c._accessories[0]._bonusFlags;
-						break;
-					}
-
-					case CATEGORY_MISC: {
-						XeenItem &item = _blacksmithMisc[0][catCount[itemCat] * 4 + idx1];
-						item._id = c._misc[0]._id;
-						item._material = c._misc[0]._material;
-						item._bonusFlags = c._misc[0]._bonusFlags;
-						break;
-					}
-
-					default:
-						break;
-					}
-
-					++catCount[itemCat];
-				}
-			}
-		}
-	}
-
-	for (int idx1 = 0; idx1 < 4; ++idx1) {
-		Common::fill(&catCount[0], &catCount[4], 0);
-
-		for (int idx2 = 0; idx2 < 4; ++idx2) {
-			for (int idx3 = 0; idx3 < BLACKSMITH_DATA2[idx2][idx1]; ++idx3) {
-				int itemCat = c.makeItem(idx2 + (idx1 >= 2 ? 3 : 1), 0, 0);
-				if (catCount[itemCat] < 8) {
-					switch (itemCat) {
-					case CATEGORY_WEAPON: {
-						XeenItem &item = _blacksmithWeapons[1][catCount[itemCat] * 4 + idx1];
-						item._id = c._weapons[0]._id;
-						item._material = c._weapons[0]._material;
-						item._bonusFlags = c._weapons[0]._bonusFlags;
-						break;
-					}
-
-					case CATEGORY_ARMOR: {
-						XeenItem &item = _blacksmithArmor[1][catCount[itemCat] * 4 + idx1];
-						item._id = c._armor[0]._id;
-						item._material = c._armor[0]._material;
-						item._bonusFlags = c._armor[0]._bonusFlags;
-						break;
-					}
-
-					case CATEGORY_ACCESSORY: {
-						XeenItem &item = _blacksmithAccessories[1][catCount[itemCat] * 4 + idx1];
-						item._id = c._accessories[0]._id;
-						item._material = c._accessories[0]._material;
-						item._bonusFlags = c._accessories[0]._bonusFlags;
-						break;
-					}
-
-					case CATEGORY_MISC: {
-						XeenItem &item = _blacksmithMisc[1][catCount[itemCat] * 4 + idx1];
-						item._id = c._misc[0]._id;
-						item._material = c._misc[0]._material;
-						item._bonusFlags = c._misc[0]._bonusFlags;
-						break;
-					}
-
-					default:
-						break;
-					}
-
-					++catCount[itemCat];
-				}
-			}
-		}
-	}
+	_blacksmithWares.regenerate();
 }
 
 void Party::giveBankInterest() {

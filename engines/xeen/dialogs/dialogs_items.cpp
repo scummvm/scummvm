@@ -506,12 +506,13 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 	intf.drawParty(true);
 	if (updateStock)
-		charData2BlackData();
+		party._blacksmithWares.charData2BlackData(_itemsCharacter);
 
 	return c;
 }
 
 void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
+	Party &party = *g_vm->_party;
 	_iconSprites.load(Common::String::format("%s.icn",
 		(mode == ITEMMODE_CHAR_INFO) ? "items" : "buy"));
 	_equipSprites.load("equip.icn");
@@ -559,7 +560,7 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
 	if (mode == ITEMMODE_BLACKSMITH) {
 		_oldCharacter = c;
 		c = &_itemsCharacter;
-		blackData2CharData();
+		party._blacksmithWares.blackData2CharData(_itemsCharacter);
 
 		_buttons[4]._value = Common::KEYCODE_b;
 		_buttons[5]._value = Common::KEYCODE_s;
@@ -572,40 +573,6 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
 		_buttons[5]._value = Common::KEYCODE_r;
 		_buttons[6]._value = Common::KEYCODE_d;
 		_buttons[7]._value = Common::KEYCODE_q;
-	}
-}
-
-void ItemsDialog::blackData2CharData() {
-	Party &party = *_vm->_party;
-	bool isDarkCc = _vm->_files->_isDarkCc;
-	int slotIndex = 0;
-	while (slotIndex < 4 && party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex])
-		++slotIndex;
-	if (slotIndex == 4)
-		slotIndex = 0;
-
-	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-		_itemsCharacter._weapons[idx] = party._blacksmithWeapons[isDarkCc][idx];
-		_itemsCharacter._armor[idx] = party._blacksmithArmor[isDarkCc][idx];
-		_itemsCharacter._accessories[idx] = party._blacksmithAccessories[isDarkCc][idx];
-		_itemsCharacter._misc[idx] = party._blacksmithMisc[isDarkCc][idx];
-	}
-}
-
-void ItemsDialog::charData2BlackData() {
-	Party &party = *_vm->_party;
-	bool isDarkCc = _vm->_files->_isDarkCc;
-	int slotIndex = 0;
-	while (slotIndex < 4 && party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex])
-		++slotIndex;
-	if (slotIndex == 4)
-		slotIndex = 0;
-
-	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-		party._blacksmithWeapons[isDarkCc][idx] = _itemsCharacter._weapons[idx];
-		party._blacksmithArmor[isDarkCc][idx] = _itemsCharacter._armor[idx];
-		party._blacksmithAccessories[isDarkCc][idx] = _itemsCharacter._accessories[idx];
-		party._blacksmithMisc[isDarkCc][idx] = _itemsCharacter._misc[idx];
 	}
 }
 

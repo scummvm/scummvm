@@ -53,19 +53,6 @@ private:
 	void loadButtons(ItemsMode mode, Character *&c);
 
 	/**
-	 * Loads the temporary _itemsCharacter character with the item set
-	 * the given blacksmith has available, so the user can "view" the
-	 * set as if it were a standard character's inventory
-	 */
-	void blackData2CharData();
-
-	/**
-	 * Saves the inventory from the temporary _itemsCharacter character back into the
-	 * blacksmith storage, so changes in blacksmith inventory remain persistent
-	 */
-	void charData2BlackData();
-
-	/**
 	 * Sets the equipment icon to use for each item for display
 	 */
 	void setEquipmentIcons();
