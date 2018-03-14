@@ -74,7 +74,7 @@ public:
 	/**
 	 * Returns true if no item is set
 	 */
-	bool empty() const { return _id != 0; }
+	bool empty() const { return _id == 0; }
 
 	/**
 	 * Synchronizes the data for the item
