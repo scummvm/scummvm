@@ -90,6 +90,7 @@ static const byte cursorPalette[] = {
 Common::Error PlumbersGame::run() {
 	initGraphics(640, 480);
 	_console = new Console();
+	_image = new Image::BitmapDecoder();
 
 	CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
 	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
@@ -182,9 +183,6 @@ void PlumbersGame::loadImage(const Common::String &dirname, const Common::String
 	if (!file.open(name))
 		error("unable to load image %s", name.c_str());
 
-	delete _image;
-
-	_image = new Image::BitmapDecoder();
 	_image->loadStream(file);
 }
 
