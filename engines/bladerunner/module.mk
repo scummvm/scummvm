@@ -55,6 +55,7 @@ MODULE_OBJS = \
 	script/ai/blimp_guy.o \
 	script/ai/bryant.o \
 	script/ai/chew.o \
+	script/ai/clovis.o \
 	script/ai/crazylegs.o \
 	script/ai/dektora.o \
 	script/ai/desk_clerk.o \

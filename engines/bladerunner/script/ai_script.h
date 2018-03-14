@@ -159,6 +159,18 @@ DECLARE_SCRIPT(Guzza)
 	bool _flag;
 END_SCRIPT
 
+DECLARE_SCRIPT(Clovis)
+	int _var1;
+	int _var2;
+	int _var3;
+	int _var4;
+	int _var5;
+	bool _flag;
+
+	void shotAnim();
+	void someAnim();
+END_SCRIPT
+
 DECLARE_SCRIPT(Crazylegs)
 	bool _flag;
 END_SCRIPT
