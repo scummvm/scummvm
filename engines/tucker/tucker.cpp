@@ -2068,12 +2068,11 @@ const uint8 *TuckerEngine::getStringBuf(int type) const {
 }
 
 void TuckerEngine::drawInfoString() {
-	const uint8 *infoStrBuf = _infoBarBuf;
 	const uint8 *obj1StrBuf = getStringBuf(_actionObj1Type);
 	const uint8 *obj2StrBuf = getStringBuf(_actionObj2Type);
 	int infoStringWidth = 0;
 	int object1NameWidth = 0;
-	int verbWidth = getStringWidth(_actionVerb + 1, infoStrBuf);
+	int verbWidth = getStringWidth(_actionVerb + 1, _infoBarBuf);
 	if (_actionObj1Num > 0 || _actionObj1Type > 0) {
 		object1NameWidth = getStringWidth(_actionObj1Num + 1, obj1StrBuf) + 4;
 		infoStringWidth = verbWidth + object1NameWidth;
@@ -2084,7 +2083,7 @@ void TuckerEngine::drawInfoString() {
 	int verbPrepositionWidth = 0;
 	if (_actionRequiresTwoObjects) {
 		verbPreposition = (_actionVerb == kVerbGive) ? kVerbPrepositionTo : kVerbPrepositionWith;
-		verbPrepositionWidth = getStringWidth(verbPreposition, infoStrBuf) + 4;
+		verbPrepositionWidth = getStringWidth(verbPreposition, _infoBarBuf) + 4;
 		if (_gameLang != Common::EN_ANY && (_actionObj2Num > 0 || _actionObj2Type > 0) && verbPreposition != kVerbPrepositionNone) {
 			infoStringWidth = 0;
 			verbWidth = 0;
@@ -2097,13 +2096,13 @@ void TuckerEngine::drawInfoString() {
 	}
 	const int xPos = (kScreenWidth / 2) - 1 - (infoStringWidth / 2);
 	if (_gameLang == Common::EN_ANY || (_actionObj2Num == 0 && _actionObj2Type == 0) || verbPreposition == kVerbPrepositionNone) {
-		drawItemString(xPos, _actionVerb + 1, infoStrBuf);
+		drawItemString(xPos, _actionVerb + 1, _infoBarBuf);
 		if (_actionObj1Num > 0 || _actionObj1Type > 0) {
 			drawItemString(xPos + 4 + verbWidth, _actionObj1Num + 1, obj1StrBuf);
 		}
 	}
 	if (verbPreposition > 0) {
-		drawItemString(xPos + 4 + verbWidth + object1NameWidth, verbPreposition, infoStrBuf);
+		drawItemString(xPos + 4 + verbWidth + object1NameWidth, verbPreposition, _infoBarBuf);
 		if (_actionObj2Num > 0 || _actionObj2Type > 0) {
 			drawItemString(xPos + 4 + verbWidth + object1NameWidth + verbPrepositionWidth, _actionObj2Num + 1, obj2StrBuf);
 		}
