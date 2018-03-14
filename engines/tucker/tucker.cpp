@@ -829,9 +829,13 @@ void TuckerEngine::updateMouseState() {
 		if (_panelType == kPanelTypeEmpty) {
 			setCursorStyle(kCursorTalk);
 		}
+#if 0
+		// confine cursor to dialog area
 		if (_mousePosY < 140) {
 			_mousePosY = 140;
+			_system->warpMouse(_mousePosX, _mousePosY);
 		}
+#endif
 	}
 }
 
