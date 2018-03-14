@@ -2407,6 +2407,8 @@ void TuckerEngine::handleMap() {
 		return;
 	}
 	if (_selectedObject._locationObjectLocationNum != 0 && _locationMaskCounter != 0 && (_backgroundSpriteCurrentAnimation <= -1 || _locationNum == 25)) {
+		// TODO
+		// This is actually "_locationNum != 25" in disassembly. Is this a typo?
 		if (_locationNum == 25 || _backgroundSpriteCurrentAnimation != 4) {
 			if (_locationMaskType == 0) {
 				_locationMaskType = 1;
