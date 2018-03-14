@@ -900,6 +900,21 @@ void TuckerEngine::loadFx() {
 				break;
 			}
 			if (s->_type == 8) {
+				// type 8 is basically a pointer to another type 6 sample
+
+				// WORKAROUND
+				// There is at least one instance (namely in location 40) where the reference
+				// is to another sample which has not yet been read in.
+				// It seems that the original doesn't properly handle this case which
+				// results in the sample not being played at all.
+				// We just ignore and hop over these.
+				if (s->_num >= i) {
+					--i;
+					continue;
+				}
+
+				assert(s->_num >= 0 && s ->_num < i);
+				s->_num  = _locationSoundsTable[s->_num]._num;
 				s->_type = 6;
 			}
 		}
@@ -924,6 +939,7 @@ void TuckerEngine::loadFx() {
 	} else {
 		error("loadFx() - Index not found for location %d", _locationNum);
 	}
+
 }
 
 void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, bool loop, Audio::SoundHandle *handle) {
