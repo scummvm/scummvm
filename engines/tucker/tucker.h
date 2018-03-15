@@ -263,8 +263,9 @@ enum InputKey {
 	kInputKeyTogglePanelStyle,
 	kInputKeyToggleTextSpeech,
 	kInputKeyHelp,
-	kInputKeyCount,
-	kInputKeySkipSpeech
+	kInputKeySkipSpeech,
+
+	kInputKeyCount
 };
 
 enum GameFlag {
