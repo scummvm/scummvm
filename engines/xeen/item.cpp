@@ -229,6 +229,7 @@ void InventoryItems::enchantItem(int itemIndex, int amount) {
 }
 
 bool InventoryItems::isFull() const {
+	assert(size() == INV_ITEMS_TOTAL);
 	return operator[](size() - 1)._id != 0;
 }
 

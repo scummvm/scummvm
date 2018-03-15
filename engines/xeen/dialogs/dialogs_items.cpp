@@ -631,10 +631,8 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	int amount1 = 0, amount2 = 0, amount3 = 0, amount4 = 0;
 	int result = 0;
 	int level = skillLevel & 0x7f;
+	XeenItem &i = c->_items[category][itemIndex];
 
-	InventoryItems *invGroups[4] = {
-		&c->_weapons, &c->_armor, &c->_accessories, &c->_misc
-	};
 	const int *BASE_COSTS[4] = {
 		Res.WEAPON_BASE_COSTS, Res.ARMOR_BASE_COSTS, Res.ACCESSORY_BASE_COSTS, Res.MISC_BASE_COSTS
 	};
@@ -660,8 +658,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	switch (category) {
 	case CATEGORY_WEAPON:
 	case CATEGORY_ARMOR:
-	case CATEGORY_ACCESSORY: {
-		XeenItem &i = (*invGroups[category])[itemIndex];
+	case CATEGORY_ACCESSORY:
 		amount1 = (BASE_COSTS[category])[i._id];
 
 		if (i._material > 36 && i._material < 59) {
@@ -703,11 +700,9 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 			break;
 		}
 		break;
-	}
 
-	case CATEGORY_MISC: {
+	case CATEGORY_MISC:
 		// Misc
-		XeenItem &i = c->_misc[itemIndex];
 		amount1 = Res.MISC_MATERIAL_COSTS[i._material];
 		amount4 = Res.MISC_BASE_COSTS[i._id];
 
@@ -725,7 +720,6 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 			break;
 		}
 		break;
-	}
 
 	default:
 		break;
@@ -865,12 +859,12 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 
 		case ITEMMODE_BLACKSMITH: {
 			InventoryItems &invItems = _oldCharacter->_items[category];
-			if (invItems[INV_ITEMS_TOTAL - 1]._id) {
-				// If the last slot is in use, it means the list is full
+			if (invItems.isFull()) {
+				// Character's inventory for that category is already full
 				ErrorScroll::show(_vm, Common::String::format(Res.BACKPACK_IS_FULL,
 					_oldCharacter->_name.c_str()));
 			} else {
-				int cost = calcItemCost(_oldCharacter, itemIndex, mode, 0, category);
+				int cost = calcItemCost(&c, itemIndex, mode, 0, category);
 				Common::String desc = c._items[category].getFullDescription(itemIndex);
 				if (Confirm::show(_vm, Common::String::format(Res.BUY_X_FOR_Y_GOLD,
 						desc.c_str(), cost))) {
@@ -881,9 +875,9 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 						}
 
 						// Add entry to the end of the list
-						_oldCharacter->_items[category][8] = c._items[category][itemIndex];
-						_oldCharacter->_items[category][8]._frame = 0;
-						c._items[category].clear();
+						XeenItem &bsItem = c._items[category][itemIndex];
+						_oldCharacter->_items[category][INV_ITEMS_TOTAL - 1] = bsItem;
+						bsItem.clear();
 						c._items[category].sort();
 						_oldCharacter->_items[category].sort();
 					}
