@@ -171,6 +171,13 @@ DECLARE_SCRIPT(Clovis)
 	void someAnim();
 END_SCRIPT
 
+DECLARE_SCRIPT(Lucy)
+	bool _flag;
+
+	void voightKempTest();
+	void checkCombat();
+END_SCRIPT
+
 DECLARE_SCRIPT(Crazylegs)
 	bool _flag;
 END_SCRIPT

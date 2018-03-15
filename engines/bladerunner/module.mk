@@ -82,6 +82,7 @@ MODULE_OBJS = \
 	script/ai/lance.o \
 	script/ai/leon.o \
 	script/ai/lockup_guard.o \
+	script/ai/lucy.o \
 	script/ai/maggie.o \
 	script/ai/male_announcer.o \
 	script/ai/marcus.o \
