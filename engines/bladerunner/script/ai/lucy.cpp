@@ -785,7 +785,13 @@ bool AIScriptLucy::ReachedMovementTrackWaypoint(int waypointId) {
 }
 
 void AIScriptLucy::FledCombat() {
-	// return false;
+	if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_Goal_Number(kActorLucy) == 450) {
+		Actor_Put_In_Set(kActorLucy, kSetFreeSlotG);
+		Actor_Set_At_Waypoint(kActorLucy, 39, 0);
+		Actor_Set_Goal_Number(kActorLucy, 599);
+	}
+
+	return; //true;
 }
 
 void AIScriptLucy::voightKempTest() {
