@@ -23,41 +23,14 @@
 #include <gui/EventRecorder.h>
 #include "pink.h"
 
+
 static const PlainGameDescriptor pinkGames[] = {
         {"peril", "The Pink Panther: Passport to Peril"},
         {"pokus", "The Pink Panther: Hokus Pokus Pink"},
         {0, 0}
 };
 
-namespace Pink {
-
-static const ADGameDescription gameDescriptions[] = {
-        {
-                "peril",
-                0,{
-                        {"PPTP.ORB", NULL, NULL, -1},
-                        {"PPTP.BRO", NULL, NULL, -1},
-                        AD_LISTEND},
-                Common::RU_RUS,
-                Common::kPlatformWindows,
-                ADGF_UNSTABLE,
-                GUIO1(GUIO_NONE)
-        },
-
-        {
-                "peril",
-                0,
-                AD_ENTRY1s("hpp.ORB", NULL, -1),
-                Common::RU_RUS,
-                Common::kPlatformWindows,
-                ADGF_UNSTABLE,
-                GUIO1(GUIO_NONE)
-        },
-        AD_TABLE_END_MARKER
-};
-
-} // End of namespace Pink
-
+#include "detection_tables.h"
 
 class PinkMetaEngine : public AdvancedMetaEngine {
 public:
