@@ -299,6 +299,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 			// Otherwise, result and continue showing dialog
 			actionIndex = -1;
+			redrawFlag = REDRAW_FULL;
+			continue;
 		}
 
 		// Wait for a selection
@@ -342,8 +344,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						_oldCharacter = newChar;
 						startingChar = newChar;
 						c = &_itemsCharacter;
-					} else if (mode != ITEMMODE_2 && mode != ITEMMODE_REPAIR
-							&& mode != ITEMMODE_IDENTIFY && itemIndex != -1) {
+					} else if (mode == ITEMMODE_2 || mode == ITEMMODE_REPAIR || mode == ITEMMODE_IDENTIFY) {
+						_oldCharacter = newChar;
+						startingChar = newChar;
+						c = newChar;
+					} else if (itemIndex != -1) {
 						InventoryItems &destItems = newChar->_items[category];
 						XeenItem &destItem = destItems[INV_ITEMS_TOTAL - 1];
 						InventoryItems &srcItems = c->_items[category];
@@ -362,13 +367,13 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 							srcItems.sort();
 							destItems.sort();
 						}
-
-						continue;
+					} else {
+						c = newChar;
+						startingChar = newChar;
 					}
 
-					c = newChar;
-					startingChar = newChar;
 					intf.highlightChar(_buttonValue);
+					continue;
 				}
 			}
 			break;
