@@ -78,6 +78,7 @@ MODULE_OBJS = \
 	script/ai/hysteria_patron3.o \
 	script/ai/insect_dealer.o \
 	script/ai/isabella.o \
+	script/ai/izo.o \
 	script/ai/klein.o \
 	script/ai/lance.o \
 	script/ai/leon.o \

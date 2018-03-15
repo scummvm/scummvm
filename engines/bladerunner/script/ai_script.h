@@ -178,6 +178,17 @@ DECLARE_SCRIPT(Lucy)
 	void checkCombat();
 END_SCRIPT
 
+DECLARE_SCRIPT(Izo)
+	int _var1;
+	int _var2;
+	int _var3;
+	int _var4;
+	bool _flag;
+
+	void someDialog();
+	void modifyWaypoints();
+END_SCRIPT
+
 DECLARE_SCRIPT(Crazylegs)
 	bool _flag;
 END_SCRIPT

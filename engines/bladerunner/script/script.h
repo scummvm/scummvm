@@ -176,7 +176,7 @@ protected:
 	void Ambient_Sounds_Add_Speech_Sound(int actorId, int sentenceId, int timeMin, int timeMax, int volumeMin, int volumeMax, int panStartMin, int panStartMax, int panEndMin, int panEndMax, int priority, int unk);
 	// Ambient_Sounds_Remove_Speech_Sound
 	void Ambient_Sounds_Play_Sound(int sfxId, int volume, int panStart, int panEnd, int priority);
-	// Ambient_Sounds_Play_Speech_Sound
+	void Ambient_Sounds_Play_Speech_Sound(int actorId, int sfxId, int volume, int panStart, int panEnd, int priority);
 	void Ambient_Sounds_Remove_All_Non_Looping_Sounds(bool stopPlaying);
 	void Ambient_Sounds_Add_Looping_Sound(int sfxId, int volume, int pan, int delay);
 	void Ambient_Sounds_Adjust_Looping_Sound(int sfxId, int volume, int pan, int delay);

@@ -952,7 +952,9 @@ void ScriptBase::Ambient_Sounds_Play_Sound(int sfxId, int volume, int panStart, 
 	_vm->_ambientSounds->playSound(sfxId, volume, panStart, panEnd, priority);
 }
 
-// ScriptBase::Ambient_Sounds_Play_Speech_Sound
+void ScriptBase::Ambient_Sounds_Play_Speech_Sound(int actorId, int sfxId, int volume, int panStart, int panEnd, int priority) {
+	warning("STIB: Ambient_Sounds_Play_Speech_Sound()");
+}
 
 void ScriptBase::Ambient_Sounds_Remove_All_Non_Looping_Sounds(bool stopPlaying) {
 	_vm->_ambientSounds->removeAllNonLoopingSounds(stopPlaying);
