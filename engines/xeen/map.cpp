@@ -1300,7 +1300,7 @@ int Map::getCell(int idx) {
 			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._east;
 		} else {
 			pt.x += 16;
-			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._east;
+			mapId = _mazeData[_mazeDataIndex]._surroundingMazes._west;
 		}
 
 		if (!mapId) {
