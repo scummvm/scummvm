@@ -372,6 +372,10 @@ DECLARE_SCRIPT(Rachael)
 	void dialogue_agenda3();
 END_SCRIPT
 
+DECLARE_SCRIPT(GeneralDoll)
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(Isabella)
 	int _var1;
 	int _var2;
