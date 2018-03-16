@@ -94,6 +94,7 @@ MODULE_OBJS = \
 	script/ai/moraji.o \
 	script/ai/murray.o \
 	script/ai/mutant1.o \
+	script/ai/mutant2.o \
 	script/ai/newscaster.o \
 	script/ai/officer_leary.o \
 	script/ai/photographer.o \
