@@ -296,6 +296,12 @@ END_SCRIPT
 DECLARE_SCRIPT(TheBard)
 END_SCRIPT
 
+DECLARE_SCRIPT(Photographer)
+	int _var1;
+	int _var2;
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(Dispatcher)
 END_SCRIPT
 
