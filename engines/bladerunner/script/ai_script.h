@@ -455,6 +455,10 @@ DECLARE_SCRIPT(GenericWalkerC)
 	bool preparePath();
 END_SCRIPT
 
+DECLARE_SCRIPT(Mutant1)
+	bool _flag;
+END_SCRIPT
+
 #undef DECLARE_SCRIPT
 #undef END_SCRIPT
 
