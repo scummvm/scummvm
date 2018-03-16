@@ -55,7 +55,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0(),
+			GUIO0()
 		},
 		GType_WorldOfXeen,
 		0
@@ -128,7 +128,7 @@ static const XeenGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO0()
 		},
 		GType_Swords,
 		0

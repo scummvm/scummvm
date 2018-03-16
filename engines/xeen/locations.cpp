@@ -83,7 +83,7 @@ int BaseLocation::show() {
 	drawAnim(true);
 
 	// Play the welcome speech
-	sound.playSound(_vocName, 1);
+	sound.playVoice(_vocName, 1);
 
 	do {
 		wait();
@@ -481,7 +481,7 @@ void BlacksmithLocation::farewell() {
 
 	if (_isDarkCc) {
 		sound.stopSound();
-		sound.playSound("come1.voc", 1);
+		sound.playVoice("come1.voc", 1);
 	}
 }
 
@@ -786,7 +786,7 @@ void TavernLocation::farewell() {
 	Sound &sound = *g_vm->_sound;
 
 	sound.stopSound();
-	sound.playSound(_isDarkCc ? "gdluck1.voc" : "goodbye.voc", 1);
+	sound.playVoice(_isDarkCc ? "gdluck1.voc" : "goodbye.voc", 1);
 
 	map.mazeData()._mazeNumber = party._mazeId;
 }
