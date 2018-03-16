@@ -325,36 +325,28 @@ bool AIScriptMutant1::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case 410:
 		switch (Actor_Query_Which_Set_In(kActorMutant1)) {
-		case 74:
+		case kSetUG01:
 			Non_Player_Actor_Combat_Mode_On(kActorMutant1, 0, 0, 0, 11, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			break;
 
-		case 75:
-		case 76:
-		case 81:
-		case 82:
-		case 85:
-			return true;
-
-		case 77:
-		case 78:
-		case 79:
+		case kSetUG04:
+		case kSetUG05:
+		case kSetUG06:
 			Non_Player_Actor_Combat_Mode_On(kActorMutant1, 0, 0, 0, 10, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			break;
 
-		case 80:
+		case kSetUG07:
 			Non_Player_Actor_Combat_Mode_On(kActorMutant1, 0, 0, 0, 12, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			break;
 
-		case 83:
+		case kSetUG10:
 			Non_Player_Actor_Combat_Mode_On(kActorMutant1, 0, 0, 0, 14, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			break;
 
-		case 84:
+		case kSetUG12:
 			Non_Player_Actor_Combat_Mode_On(kActorMutant1, 0, 0, 0, 14, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			break;
-
-		case 86:
+		case kSetUG14:
 			Non_Player_Actor_Combat_Mode_On(kActorMutant1, 0, 0, 0, 14, 4, 7, 8, -1, -1, -1, 10, 300, 0);
 			break;
 		}
