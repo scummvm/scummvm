@@ -102,6 +102,7 @@ MODULE_OBJS = \
 	script/ai/rachael.o \
 	script/ai/rajif.o \
 	script/ai/runciter.o \
+	script/ai/sadik.o \
 	script/ai/sebastian.o \
 	script/ai/sergeant_walls.o \
 	script/ai/shoeshine_man.o \

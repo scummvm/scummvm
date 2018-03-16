@@ -189,6 +189,14 @@ DECLARE_SCRIPT(Izo)
 	void modifyWaypoints();
 END_SCRIPT
 
+DECLARE_SCRIPT(Sadik)
+	int _var1;
+	int _var2;
+	int _var3;
+	int _var4;
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(Crazylegs)
 	bool _flag;
 END_SCRIPT
