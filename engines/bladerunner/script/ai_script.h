@@ -281,6 +281,10 @@ DECLARE_SCRIPT(HawkersBarkeep)
 	bool _flag;
 END_SCRIPT
 
+DECLARE_SCRIPT(Holloway)
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(SergeantWalls)
 END_SCRIPT
 
