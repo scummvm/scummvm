@@ -37,7 +37,7 @@ enum {
 };
 
 enum SavegameFlag {
-	kSavegameFlagAutosave = 1 << 0,
+	kSavegameFlagAutosave = 1 << 0
 };
 
 Common::String generateGameStateFileName(const char *target, int slot, bool prefixOnly) {
