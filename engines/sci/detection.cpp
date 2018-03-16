@@ -437,6 +437,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 #endif
 
 	{
+		GAMEOPTION_LARRYSCALE,
+		{
+			_s("Use high-quality \"LarryScale\" cel scaling"),
+			_s("Use special cartoon scaler for drawing character sprites"),
+			"enable_larryscale",
+			true
+		}
+	},
+
+	{
 		GAMEOPTION_PREFER_DIGITAL_SFX,
 		{
 			_s("Prefer digital sound effects"),
