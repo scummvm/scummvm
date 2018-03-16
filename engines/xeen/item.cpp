@@ -93,7 +93,7 @@ void InventoryItems::clear() {
 		operator[](idx).clear();
 }
 
-bool InventoryItems::passRestrictions(int itemId, bool showError) const {
+bool InventoryItems::passRestrictions(int itemId, bool suppressError) const {
 	CharacterClass charClass = _character->_class;
 
 	switch (charClass) {
@@ -120,7 +120,7 @@ bool InventoryItems::passRestrictions(int itemId, bool showError) const {
 	}
 
 	Common::String name = _names[itemId];
-	if (showError) {
+	if (!suppressError) {
 		Common::String msg = Common::String::format(Res.NOT_PROFICIENT,
 			Res.CLASS_NAMES[charClass], name.c_str());
 		ErrorScroll::show(Party::_vm, msg, WT_FREEZE_WAIT);
@@ -239,7 +239,7 @@ void WeaponItems::equipItem(int itemIndex) {
 	XeenItem &item = operator[](itemIndex);
 
 	if (item._id <= 17) {
-		if (passRestrictions(item._id, false)) {
+		if (passRestrictions(item._id)) {
 			for (uint idx = 0; idx < size(); ++idx) {
 				XeenItem &i = operator[](idx);
 				if (i._frame == 13 || i._frame == 1) {
@@ -251,7 +251,7 @@ void WeaponItems::equipItem(int itemIndex) {
 			item._frame = 1;
 		}
 	} else if (item._id >= 30 && item._id <= 33) {
-		if (passRestrictions(item._id, false)) {
+		if (passRestrictions(item._id)) {
 			for (uint idx = 0; idx < size(); ++idx) {
 				XeenItem &i = operator[](idx);
 				if (i._frame == 4) {
@@ -263,7 +263,7 @@ void WeaponItems::equipItem(int itemIndex) {
 			item._frame = 4;
 		}
 	} else {
-		if (passRestrictions(item._id, false)) {
+		if (passRestrictions(item._id)) {
 			for (uint idx = 0; idx < size(); ++idx) {
 				XeenItem &i = operator[](idx);
 				if (i._frame == 13 || i._frame == 1) {
@@ -368,7 +368,7 @@ void ArmorItems::equipItem(int itemIndex) {
 	XeenItem &item = operator[](itemIndex);
 
 	if (item._id <= 7) {
-		if (passRestrictions(item._id, false)) {
+		if (passRestrictions(item._id)) {
 			for (uint idx = 0; idx < size(); ++idx) {
 				XeenItem &i = operator[](idx);
 				if (i._frame == 9) {
@@ -380,7 +380,7 @@ void ArmorItems::equipItem(int itemIndex) {
 			item._frame = 3;
 		}
 	} else if (item._id == 8) {
-		if (passRestrictions(item._id, false)) {
+		if (passRestrictions(item._id)) {
 			for (uint idx = 0; idx < size(); ++idx) {
 				XeenItem &i = operator[](idx);
 				if (i._frame == 2) {

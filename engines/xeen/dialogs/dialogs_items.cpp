@@ -163,7 +163,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						}
 
 						ds._sprites = &_equipSprites;
-						if (c->_weapons.passRestrictions(i._id, true))
+						if (c->_items[category].passRestrictions(i._id, true))
 							ds._frame = i._frame;
 						else
 							ds._frame = 14;

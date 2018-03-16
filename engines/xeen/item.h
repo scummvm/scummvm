@@ -117,8 +117,10 @@ public:
 
 	/**
 	 * Return whether a given item passes class-based usage restrictions
+	 * @param itemId		Item Index
+	 * @param suppressError	If true, no dialog is shown if the item doesn't pass restrictions
 	 */
-	bool passRestrictions(int itemId, bool showError) const;
+	bool passRestrictions(int itemId, bool suppressError = false) const;
 
 	/**
 	 * Return the bare name of a given inventory item
