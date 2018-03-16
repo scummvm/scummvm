@@ -156,8 +156,8 @@ void AIScriptMutant1::ShotAtAndMissed() {
 
 bool AIScriptMutant1::ShotAtAndHit() {
 	if (Actor_Query_Goal_Number(kActorMutant1) != 410) {
-		Actor_Modify_Combat_Aggressiveness(70, 10);
-		Actor_Modify_Friendliness_To_Other(kActorMutant1, kActorMcCoy, -10);
+		Actor_Modify_Combat_Aggressiveness(70, 15);
+		Actor_Modify_Friendliness_To_Other(kActorMutant1, kActorMcCoy, -15);
 	}
 
 	return false;
