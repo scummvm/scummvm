@@ -464,6 +464,11 @@ DECLARE_SCRIPT(Mutant2)
 	bool _flag;
 END_SCRIPT
 
+DECLARE_SCRIPT(Mutant3)
+	int _var1;
+	bool _flag;
+END_SCRIPT
+
 #undef DECLARE_SCRIPT
 #undef END_SCRIPT
 

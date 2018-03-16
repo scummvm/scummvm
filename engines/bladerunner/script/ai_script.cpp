@@ -102,6 +102,7 @@ AIScripts::AIScripts(BladeRunnerEngine *vm, int actorCount) {
 	_AIScripts[kActorGenwalkerC] = new AIScriptGenericWalkerC(_vm);       // 69
 	_AIScripts[kActorMutant1] = new AIScriptMutant1(_vm);                 // 70
 	_AIScripts[kActorMutant2] = new AIScriptMutant2(_vm);                 // 71
+	_AIScripts[kActorMutant3] = new AIScriptMutant3(_vm);                 // 72
 }
 
 AIScripts::~AIScripts() {
