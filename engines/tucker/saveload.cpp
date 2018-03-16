@@ -170,7 +170,7 @@ TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(Common::InSaveFile 
 		file->skip(2);
 	}
 
-	if (header.version > kSavegameVersionCurrent) {
+	if (header.version < kSavegameVersionMinimum || header.version > kSavegameVersionCurrent) {
 		return kSavegameInvalidVersionError;
 	}
 
