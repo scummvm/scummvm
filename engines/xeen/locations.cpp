@@ -83,7 +83,7 @@ int BaseLocation::show() {
 	drawAnim(true);
 
 	// Play the welcome speech
-	sound.playVoice(_vocName, 1);
+	sound.playVoice(_vocName);
 
 	do {
 		wait();
@@ -988,7 +988,7 @@ TrainingLocation::TrainingLocation() : BaseLocation(TRAINING) {
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
 	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_icons1);
 
-	_vocName = _isDarkCc ? "training.voc" : "youtrn1.voc";
+	_vocName = _isDarkCc ? "youtrn1.voc" : "training.voc";
 }
 
 Common::String TrainingLocation::createLocationText(Character &ch) {
