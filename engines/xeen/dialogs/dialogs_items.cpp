@@ -846,6 +846,11 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 								c._items[category][itemIndex].clear();
 								c._items[category].sort();
 							}
+
+							intf._charsShooting = false;
+							combat.moveMonsters();
+							combat._whosTurn = -1;
+							return 1;
 						} else {
 							ErrorScroll::show(_vm, Common::String::format(Res.NO_SPECIAL_ABILITIES,
 								c._items[category].getFullDescription(itemIndex).c_str()
@@ -855,7 +860,8 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				}
 				break;
 			case 3:
-				c._items[category].discardItem(itemIndex);
+				if (c._items[category].discardItem(itemIndex) && mode == ITEMMODE_8)
+					return 2;
 				break;
 			default:
 				break;
@@ -888,7 +894,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 					}
 				}
 			}
-			return 0;
+			break;
 		}
 
 		case ITEMMODE_2: {
@@ -919,7 +925,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 					party._gold += cost;
 				}
 			}
-			return 0;
+			break;
 		}
 
 		case ITEMMODE_RECHARGE:
@@ -941,7 +947,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			int amount = _vm->getRandomNumber(1, _oldCharacter->getCurrentLevel() / 5 + 1);
 			amount = MIN(amount, 5);
 			_oldCharacter->_items[category].enchantItem(itemIndex, amount);
-			break;
+			return 2;
 		}
 
 		case ITEMMODE_REPAIR:
@@ -1001,10 +1007,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 		}
 	}
 
-	intf._charsShooting = false;
-	combat.moveMonsters();
-	combat._whosTurn = -1;
-	return true;
+	return 0;
 }
 
 void ItemsDialog::itemToGold(Character &c, int itemIndex, ItemCategory category,
