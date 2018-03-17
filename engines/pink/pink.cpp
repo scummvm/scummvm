@@ -157,7 +157,7 @@ void PinkEngine::initModule() {
     assert(i < _modules.size());
 
     _module = static_cast<Module*>(_modules[i]);
-    _module->initPage(LoadingNotSave, 0); //TODO change to constants
+    _module->init(LoadingNotSave, 0);
 
 }
 

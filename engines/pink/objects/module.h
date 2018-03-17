@@ -36,24 +36,18 @@ namespace Pink {
 
 class ModuleProxy : public NamedObject {
 public:
-    ModuleProxy(){};
-    ModuleProxy(const Common::String &name)
-            : NamedObject(name)
-    {}
-
-
+    ModuleProxy();
+    ModuleProxy(const Common::String &name);
 };
 
 class PinkEngine;
 
 class Module : public NamedObject {
 public:
-    Module(PinkEngine *game, const Common::String &name)
-        : NamedObject(name), _game(game), _page(nullptr)
-    {}
+    Module(PinkEngine *game, const Common::String &name);
 
-    void deserialize(Archive &archive);
-    void initPage(bool isLoadingSave, const Common::String *pageName);
+    void load(Archive &archive);
+    void init(bool isLoadingSave, const Common::String *pageName);
 
     void OnLeftButtonDown();
     void OnMouseMove();
@@ -61,7 +55,6 @@ public:
 
 private:
     PinkEngine *_game;
-    //Common::String _directory; doesn't need this because it was used when game had data in directories
     GamePage *_page;
     PagesArray _pages;
     InventoryMgr _invMgr;
