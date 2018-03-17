@@ -267,7 +267,7 @@ void Interface::perform() {
 		_buttonValue = 0;
 		do {
 			events.pollEventsAndWait();
-			if (party._partyDead)
+			if (g_vm->shouldExit() || party._partyDead)
 				return;
 
 			if (events._leftButton && WAIT_BOUNDS.contains(events._mousePos))
