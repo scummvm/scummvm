@@ -3780,6 +3780,11 @@ int TuckerEngine::setLocationAnimationUnderCursor() {
 			continue;
 		}
 		if (_locationAnimationsTable[i]._selectable == 0) {
+			// WORKAROUND
+			// The original game does a "return -1" here which is not correct in
+			// case of overlapping hotspots.
+			// This most prominently fixes Trac#6645, a bug where the cellar in part three
+			// could be entered without having done the cellar door puzzle first.
 			continue;
 		}
 		_selectedObjectType = 1;
