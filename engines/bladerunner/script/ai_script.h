@@ -244,6 +244,13 @@ DECLARE_SCRIPT(TyrellGuard)
 	bool _flag1;
 END_SCRIPT
 
+DECLARE_SCRIPT(EarlyQ)
+	int _var1;
+	int _var2;
+	int _var3;
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(Zuben)
 	int _var_45D258;
 	int _var_45D25C;
@@ -521,6 +528,8 @@ public:
 	void changeAnimationMode(int actor, int mode);
 
 	bool isInsideScript() const { return _inScriptCounter > 0; }
+
+	void callChangeAnimationMode(int actor, int mode) { _AIScripts[actor]->ChangeAnimationMode(mode); }
 };
 
 } // End of namespace BladeRunner

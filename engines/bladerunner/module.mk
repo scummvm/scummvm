@@ -61,6 +61,7 @@ MODULE_OBJS = \
 	script/ai/dektora.o \
 	script/ai/desk_clerk.o \
 	script/ai/dispatcher.o \
+	script/ai/early_q.o \
 	script/ai/early_q_bartender.o \
 	script/ai/fish_dealer.o \
 	script/ai/gaff.o \
