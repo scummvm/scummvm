@@ -285,6 +285,12 @@ DECLARE_SCRIPT(OfficerLeary)
 	bool sub_431420();
 END_SCRIPT
 
+DECLARE_SCRIPT(OfficerGrayford)
+	int _var1;
+	int _var2;
+	int _var3;
+END_SCRIPT
+
 DECLARE_SCRIPT(Baker)
 END_SCRIPT
 
