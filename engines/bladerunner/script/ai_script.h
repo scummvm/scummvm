@@ -216,6 +216,13 @@ END_SCRIPT
 DECLARE_SCRIPT(Lance)
 END_SCRIPT
 
+DECLARE_SCRIPT(BulletBob)
+	int _var1;
+	int _var2;
+	int _var3;
+	int _var4;
+END_SCRIPT
+
 DECLARE_SCRIPT(Runciter)
 	int var_45CD78;
 	int var_45CD7C;
