@@ -990,7 +990,7 @@ bool Scripts::cmdDamage(ParamsIterator &params) {
 
 	int damage = params.readUint16LE();
 	DamageType damageType = (DamageType)params.readByte();
-	combat.giveCharDamage(damage, damageType, _charIndex);
+	combat.giveCharDamage(damage, damageType, _charIndex - 1);
 
 	return true;
 }
@@ -1114,7 +1114,7 @@ bool Scripts::cmdRndDamage(ParamsIterator &params) {
 
 	DamageType dmgType = (DamageType)params.readByte();
 	int max = params.readByte();
-	combat.giveCharDamage(_vm->getRandomNumber(1, max), dmgType, _charIndex);
+	combat.giveCharDamage(_vm->getRandomNumber(1, max), dmgType, _charIndex - 1);
 	return true;
 }
 

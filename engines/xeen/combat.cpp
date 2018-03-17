@@ -141,9 +141,8 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
-	int charIndex1 = charIndex + 1;
-	int selectedIndex1 = 0;
-	int selectedIndex2 = 0;
+	int endIndex = charIndex + 1;
+	int selectedIndex = 0;
 	bool breakFlag = false;
 
 	windows.closeAll();
@@ -155,11 +154,11 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 			Condition condition = c.worstCondition();
 
 			if (!(condition >= UNCONSCIOUS && condition <= ERADICATED)) {
-				if (!selectedIndex1) {
-					selectedIndex1 = idx + 1;
+				if (!charIndex) {
+					charIndex = idx + 1;
 				} else {
-					selectedIndex2 = idx + 1;
-					--selectedIndex1;
+					selectedIndex = idx + 1;
+					--charIndex;
 					break;
 				}
 			}
@@ -167,12 +166,12 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 	}
 	if (idx == (int)party._activeParty.size()) {
 		if (!_combatTarget)
-			selectedIndex1 = 0;
+			charIndex = 0;
 	}
 
 	for (;;) {
-		for (; selectedIndex1 < (_combatTarget ? charIndex1 : (int)party._activeParty.size()); ++selectedIndex1) {
-			Character &c = party._activeParty[selectedIndex1];
+		for (; charIndex < (_combatTarget ? endIndex : (int)party._activeParty.size()); ++charIndex) {
+			Character &c = party._activeParty[charIndex];
 			c._conditions[ASLEEP] = 0;	// Force attacked character to be awake
 
 			int frame = 0, fx = 0;
@@ -224,7 +223,7 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 
 			// Draw the attack effect on the character sprite
 			sound.playFX(fx);
-			intf._charPowSprites.draw(0, frame, Common::Point(Res.CHAR_FACES_X[selectedIndex1], 150));
+			intf._charPowSprites.draw(0, frame, Common::Point(Res.CHAR_FACES_X[charIndex], 150));
 			windows[33].update();
 
 			// Reduce damage if power shield active, and set it zero
@@ -235,7 +234,6 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 			if (damage < 0)
 				damage = 0;
 
-			// Attacked characters which are asleep are killed
 			if (attackType == DT_SLEEP) {
 				damage = c._currentHp;
 				c._conditions[DEAD] = 1;
@@ -243,15 +241,15 @@ void Combat::giveCharDamage(int damage, DamageType attackType, int charIndex) {
 
 			// Subtract the hit points from the character
 			c.subtractHitPoints(damage);
-			if (selectedIndex2)
+			if (selectedIndex)
 				break;
 		}
 
 		// Break check and if not, move to other index
-		if (!selectedIndex2 || breakFlag)
+		if (!selectedIndex || breakFlag)
 			break;
 
-		selectedIndex1 = selectedIndex2 - 1;
+		charIndex = selectedIndex - 1;
 		breakFlag = true;
 	}
 
