@@ -49,10 +49,10 @@ void ActorCombat::setup() {
 	reset();
 }
 
-void ActorCombat::combatOn(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool a12) {
+void ActorCombat::combatOn(int actorId, int initialState, bool rangedAttackFlag, int enemyId, int waypointType, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable) {
 	_actorId = actorId;
 	_state = initialState;
-	_rangedAttack = rangedAttack;
+	_rangedAttack = rangedAttackFlag;
 	_enemyId = enemyId;
 	_waypointType = waypointType;
 	_damage = damage;
@@ -63,12 +63,12 @@ void ActorCombat::combatOn(int actorId, int initialState, bool rangedAttack, int
 	_coverRatio = coverRatio;
 	_actionRatio = actionRatio;
 	_active = true;
-	if (rangedAttack == 1) {
+	if (_rangedAttack) {
 		_range = range;
 	} else {
 		_range = 300;
 	}
-	field_3C = a12;
+	_unstoppable = unstoppable;
 
 	Actor *actor = _vm->_actors[_actorId];
 
@@ -227,7 +227,7 @@ void ActorCombat::hitAttempt() {
 	Actor *actor = _vm->_actors[_actorId];
 	Actor *enemy = _vm->_actors[_enemyId];
 
-	if (_enemyId == kActorMcCoy && !_vm->playerHasControl() && field_3C == 0) {
+	if (_enemyId == kActorMcCoy && !_vm->playerHasControl() && !_unstoppable) {
 		return;
 	}
 
@@ -306,7 +306,7 @@ void ActorCombat::reset() {
 	_actionRatioConst    = -1;
 	_actorHp             = 0;
 	_range               = 300;
-	field_3C             = 0;
+	_unstoppable             = false;
 	_actorPosition       = Vector3(0.0f, 0.0f, 0.0f);
 	_enemyPosition       = Vector3(0.0f, 0.0f, 0.0f);
 	_coversWaypointCount = 0;
@@ -417,7 +417,7 @@ void ActorCombat::rangedAttack() {
 	} else {
 		faceEnemy();
 		if (actor->getAnimationMode() != kAnimationModeCombatAttack) {
-			if (_enemyId != kActorMcCoy || _vm->playerHasControl() || field_3C != 0) {
+			if (_enemyId != kActorMcCoy || _vm->playerHasControl() || _unstoppable) {
 				actor->changeAnimationMode(kAnimationModeCombatAttack, false);
 			}
 		}
@@ -432,7 +432,7 @@ void ActorCombat::closeAttack() {
 	} else {
 		faceEnemy();
 		if (actor->getAnimationMode() != kAnimationModeCombatAttack) {
-			if (_enemyId != kActorMcCoy || _vm->playerHasControl() || field_3C != 0) {
+			if (_enemyId != kActorMcCoy || _vm->playerHasControl() || _unstoppable) {
 				actor->changeAnimationMode(kAnimationModeCombatAttack, false);
 			}
 		}
@@ -504,7 +504,7 @@ int ActorCombat::getaggressivenessRangedAttack() const {
 		return 0;
 	}
 
-	float distance = MIN(actor->distanceFromActor(_enemyId), 900.0f);
+	int distance = MIN(actor->distanceFromActor(_enemyId), 900.0f);
 
 	int aggressiveness = 0;
 	if (enemy->isRunning()) {

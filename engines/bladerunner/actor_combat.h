@@ -47,7 +47,7 @@ class ActorCombat {
 	int _actionRatioConst;
 	int _actorHp;
 	int _range;
-	int field_3C;
+	bool _unstoppable;
 	Vector3 _actorPosition;
 	Vector3 _enemyPosition;
 	int _coversWaypointCount;
@@ -60,7 +60,7 @@ public:
 
 	void setup();
 
-	void combatOn(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool a12);
+	void combatOn(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable);
 	void combatOff();
 
 	void tick();

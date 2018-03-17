@@ -218,8 +218,8 @@ void ScriptBase::Actor_Combat_AI_Hit_Attempt(int actorId) {
 		_vm->_actors[actorId]->_combatInfo->hitAttempt();
 }
 
-void ScriptBase::Non_Player_Actor_Combat_Mode_On(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool a14) {
-	_vm->_actors[actorId]->combatModeOn(initialState, rangedAttack, enemyId, waypointType, animationModeCombatIdle, animationModeCombatWalk, animationModeCombatRun, fleeRatio, coverRatio, actionRatio, damage, range, a14);
+void ScriptBase::Non_Player_Actor_Combat_Mode_On(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable) {
+	_vm->_actors[actorId]->combatModeOn(initialState, rangedAttack, enemyId, waypointType, animationModeCombatIdle, animationModeCombatWalk, animationModeCombatRun, fleeRatio, coverRatio, actionRatio, damage, range, unstoppable);
 }
 
 void ScriptBase::Non_Player_Actor_Combat_Mode_Off(int actorId) {
