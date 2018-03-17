@@ -1751,7 +1751,12 @@ void Script::leverDrag(Context &c, const Opcode &cmd) {
 			_vm->_state->setVar(var, position);
 			_vm->runScriptsFromNode(abs(script));
 		}
-		previousPosition = position;
+
+		if (script > 0) {
+			// In this case the script is executed only if the lever position changed.
+			// Otherwise it is executed every frame
+			previousPosition = position;
+		}
 
 		if (!mousePressed || _vm->shouldQuit())
 			break;
@@ -1815,7 +1820,12 @@ void Script::leverDragPositions(Context &c, const Opcode &cmd) {
 			_vm->_state->setVar(var, position);
 			_vm->runScriptsFromNode(abs(script));
 		}
-		previousPosition = position;
+
+		if (script > 0) {
+			// In this case the script is executed only if the lever position changed.
+			// Otherwise it is executed every frame
+			previousPosition = position;
+		}
 
 		if (!mousePressed || _vm->shouldQuit())
 			break;
