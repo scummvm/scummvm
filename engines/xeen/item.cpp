@@ -215,7 +215,7 @@ void InventoryItems::equipError(int itemIndex1, ItemCategory category1, int item
 		Common::String itemName2 = _character->_items[category2].getName(itemIndex2);
 
 		MessageDialog::show(vm, Common::String::format(Res.REMOVE_X_TO_EQUIP_Y,
-			itemName1.c_str(), itemName2.c_str()));
+			itemName2.c_str(), itemName1.c_str()));
 	} else {
 		MessageDialog::show(vm, Common::String::format(Res.EQUIPPED_ALL_YOU_CAN,
 			(itemIndex1 == -1) ? Res.RING : Res.MEDAL));
