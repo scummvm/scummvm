@@ -243,6 +243,7 @@ void XeenEngine::play() {
 		death();
 
 	_mode = MODE_STARTUP;
+	_gameMode = GMODE_MENU;
 }
 
 void XeenEngine::gameLoop() {

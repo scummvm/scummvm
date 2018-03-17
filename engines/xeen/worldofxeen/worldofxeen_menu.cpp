@@ -53,6 +53,7 @@ void MainMenuContainer::show() {
 
 MainMenuContainer::MainMenuContainer(const Common::String &spritesName, uint frameCount) :
 		_frameCount(frameCount), _animateCtr(0), _dialog(nullptr) {
+	g_vm->_files->setGameCc(g_vm->getGameID() == GType_Clouds ? 0 : 1);
 	_backgroundSprites.load(spritesName);
 }
 
