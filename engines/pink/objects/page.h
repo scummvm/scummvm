@@ -33,7 +33,7 @@ class Archive;
 class Page : public NamedObject {
 public:
 
-
+    void load(Archive &archive);
 
 private:
     /*
@@ -48,23 +48,12 @@ private:
 
 class GamePage : public Page  {
 public:
-    void deserialize(Archive &archive){
-        Page::deserialize(archive);
-        _module = static_cast<Module*>(archive.readObject());
-        assert(dynamic_cast<Module*>(_module) != 0);
-    }
+    void deserialize(Archive &archive);
 
-    void load(Archive &archive){
-
-    }
+    void load(Archive &archive);
 
 
-    void init(bool isLoadingSave){
-        if (isLoadingSave){
-            assert(perhapsIsLoaded == 0);
-            // loadSerialize
-        }
-    }
+    void init(bool isLoadingSave);
 private:
     int perhapsIsLoaded;
     Module *_module;

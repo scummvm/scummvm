@@ -33,7 +33,6 @@ enum {
     kNullObject = 0
 };
 
-
 enum {
     kActionHide,
     kActionLoop,
@@ -90,20 +89,22 @@ static const struct RuntimeClass {
     int id;
 } classMap[] = {
         {"GamePage", kGamePage},
+        {"InventoryItem", kInventoryItem},
         {"ModuleProxy", kModuleProxy}
 };
 
 static Object* createObject(int objectId){
     switch (objectId){
         case kGamePage:
-            return new GamePage();
+            return new GamePage;
+        case kInventoryItem:
+            return new InventoryItem;
         case kModuleProxy:
-            return new ModuleProxy();
+            return new ModuleProxy;
         default:
             return nullptr;
     }
 }
-
 
 Archive::Archive(Common::File &file)
     : _file(file)

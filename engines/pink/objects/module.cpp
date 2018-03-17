@@ -25,20 +25,27 @@
 
 namespace Pink {
 
+ModuleProxy::ModuleProxy(const Common::String &name)
+        : NamedObject(name)
+{}
 
-void Module::deserialize(Archive &archive){
+ModuleProxy::ModuleProxy() {}
+
+Module::Module(PinkEngine *game, const Common::String &name)
+        : NamedObject(name), _game(game), _page(nullptr)
+{}
+
+void Module::load(Archive &archive){
     archive.mapObject(this);
     NamedObject::deserialize(archive);
+
     archive.readString(); // skip directory
 
-    //_invMgr.load(archive);
-    // intro has 0 items so we will skip
-    archive.readCount();
-
+    _invMgr.deserialize(archive);
     archive >> _pages;
 }
 
-void Module::initPage(bool isLoadingSave, const Common::String *pageName) {
+void Module::init(bool isLoadingSave, const Common::String *pageName) {
     // debugging original
     // 0 0  - new game
     // 0 1 - module changed

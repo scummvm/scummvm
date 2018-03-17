@@ -20,34 +20,8 @@
  *
  */
 
-#ifndef PINK_INVENTORY_H
-#define PINK_INVENTORY_H
-
-#include "named_object.h"
-
 namespace Pink {
 
 
-class InventoryItem : public NamedObject {
-public:
-    virtual void deserialize(Archive &archive);
-
-private:
-    Common::String _initialOwner;
-    Common::String _currentOwner;
-};
-
-class InventoryMgr : public Object {
-public:
-    virtual ~InventoryMgr();
-
-    virtual void deserialize(Archive &archive);
-
-private:
-    Common::Array<InventoryItem*> _invItems;
-    // other fields. haven't RE them yet
-};
 
 } // End of namespace Pink
-
-#endif

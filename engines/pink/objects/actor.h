@@ -20,32 +20,21 @@
  *
  */
 
-#ifndef PINK_INVENTORY_H
-#define PINK_INVENTORY_H
-
-#include "named_object.h"
+#ifndef PINK_ACTOR_H
+#define PINK_ACTOR_H
 
 namespace Pink {
 
+class GamePage;
 
-class InventoryItem : public NamedObject {
+class Actor {
 public:
-    virtual void deserialize(Archive &archive);
 
 private:
-    Common::String _initialOwner;
-    Common::String _currentOwner;
-};
-
-class InventoryMgr : public Object {
-public:
-    virtual ~InventoryMgr();
-
-    virtual void deserialize(Archive &archive);
-
-private:
-    Common::Array<InventoryItem*> _invItems;
-    // other fields. haven't RE them yet
+    GamePage *page;
+    //int possibly_isActionNotExist;
+    //CAction *action;
+    //CObArray actions;
 };
 
 } // End of namespace Pink

@@ -20,34 +20,39 @@
  *
  */
 
-#ifndef PINK_INVENTORY_H
-#define PINK_INVENTORY_H
-
-#include "named_object.h"
+#include "page.h"
 
 namespace Pink {
 
+void Page::load(Archive &archive) {
+    archive.mapObject(this);
+    NamedObject::deserialize(archive);
+    archive.readString(); //skip directory
+    // deserialize actors
+}
 
-class InventoryItem : public NamedObject {
-public:
-    virtual void deserialize(Archive &archive);
+void GamePage::deserialize(Archive &archive) {
+    Page::deserialize(archive);
+    _module = static_cast<Module*>(archive.readObject());
+    assert(dynamic_cast<Module*>(_module) != 0);
+}
 
-private:
-    Common::String _initialOwner;
-    Common::String _currentOwner;
-};
+void GamePage::load(Archive &archive) {
+    //archive.mapObject(_cursorMgr);
+    //archive.mapObject(_walkMgr);
+    //archive.mapObject(_sequencer);
+    //_leadActor = archive.readObject()
+    //serialize ccursormgr NullSub
+    //serialize walkmgr
+    //serialize sequencer
+    //serialize handlers
+}
 
-class InventoryMgr : public Object {
-public:
-    virtual ~InventoryMgr();
-
-    virtual void deserialize(Archive &archive);
-
-private:
-    Common::Array<InventoryItem*> _invItems;
-    // other fields. haven't RE them yet
-};
+void GamePage::init(bool isLoadingSave) {
+    if (isLoadingSave){
+        assert(perhapsIsLoaded == 0);
+        // loadSerialize
+    }
+}
 
 } // End of namespace Pink
-
-#endif
