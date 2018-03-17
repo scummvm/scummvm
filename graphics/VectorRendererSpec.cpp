@@ -3199,8 +3199,6 @@ drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType colo
 		while (x++ < y) {
 			BE_ALGORITHM();
 
-			if (y1 + r + y < _clippingArea.top || y1 + r + y > _clippingArea.bottom) continue;
-
 			color1 = calcGradient(real_radius - x, long_h);
 			color2 = calcGradient(real_radius - y, long_h);
 			color3 = calcGradient(long_h - r + x, long_h);
