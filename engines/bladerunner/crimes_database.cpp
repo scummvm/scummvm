@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/savefile.h"
 #include "bladerunner/text_resource.h"
 
 namespace BladeRunner {
@@ -68,6 +69,13 @@ int CrimesDatabase::getAssetType(int clueId) const {
 
 const char *CrimesDatabase::getClueText(int clueId) const {
 	return _cluesText->getText(clueId);
+}
+
+void CrimesDatabase::save(SaveFile &f) {
+	for (int i = 0; i < _crimeCount; ++i) {
+		uint8 c = _crimes[i];
+		f.write(c);
+	}
 }
 
 } // End of namespace BladeRunner

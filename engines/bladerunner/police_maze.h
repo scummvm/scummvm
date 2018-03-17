@@ -20,33 +20,33 @@
  *
  */
 
-#ifndef BLADERUNNER_BOUNDING_BOX_H
-#define BLADERUNNER_BOUNDING_BOX_H
-
-#include "bladerunner/vector.h"
+#ifndef BLADERUNNER_POLICE_MAZE_H
+#define BLADERUNNER_POLICE_MAZE_H
 
 namespace BladeRunner {
 
+class BladeRunnerEngine;
+class PoliceMazeTrack;
 class SaveFile;
 
-class BoundingBox {
-	Vector3 _vertices[2];
+class PoliceMaze {
+	BladeRunnerEngine *_vm;
+
+	PoliceMazeTrack *_tracks[64];
+	int              _tracksCount;
+	int              _a2;
+	int              _a3;
+	int              _a4;
+	int              _a5;
 
 public:
-	BoundingBox() {}
-	BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1);
+	PoliceMaze(BladeRunnerEngine *vm);
+	~PoliceMaze();
 
-	void expand(float x0, float y0, float z0, float x1, float y1, float z1);
-	bool inside(float x, float y, float z) const;
-	bool inside(Vector3 &position) const;
-
-	void setXYZ(float x0, float y0, float z0, float x1, float y1, float z1);
-	void getXYZ(float *x0, float *y0, float *z0, float *x1, float *y1, float *z1) const;
-
-	float getZ0() const;
-	float getZ1() const;
+	bool init();
 
 	void save(SaveFile &f);
+	void reset();
 };
 
 } // End of namespace BladeRunner

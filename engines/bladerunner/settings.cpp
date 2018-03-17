@@ -26,6 +26,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/chapters.h"
 #include "bladerunner/music.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 
 #include "common/debug.h"
@@ -39,14 +40,23 @@ Settings::Settings(BladeRunnerEngine *vm) {
 	_playerAgenda = 1;
 
 	_chapter = 1;
+	_scene = -1;
+	_set = -1;
+	_unk0 = 0;
 	_gamma = 1.0f;
 
+	_ammoType = 0;
+	_ammoAmounts[0] = 1;
+	_ammoAmounts[1] = 0;
+	_ammoAmounts[2] = 0;
+
+	// The remaining fields are not reset in BLADE.EXE
 	_chapterChanged = false;
 	_newChapter = -1;
 	_newScene = -1;
 	_newSet = -1;
 
-	_startingGame = true;
+	_startingGame = false;
 	_loadingGame = false;
 
 	_fullHDFrames = true;
@@ -83,8 +93,9 @@ bool Settings::openNewScene() {
 		_vm->_scene->close(!_loadingGame && !_startingGame);
 	}
 	if (_chapterChanged) {
-		if (_vm->_chapters->hasOpenResources())
+		if (_vm->_chapters->hasOpenResources()) {
 			_vm->_chapters->closeResources();
+		}
 
 		int newChapter = _newChapter;
 		_chapterChanged = false;
@@ -102,6 +113,9 @@ bool Settings::openNewScene() {
 		_vm->_gameIsRunning = false;
 		return false;
 	}
+
+	_set = newSet;
+	_scene = newScene;
 
 	if (!_loadingGame && currentSet != newSet) {
 		// TODO: Reset actors for new set
@@ -169,6 +183,19 @@ bool Settings::getLearyMode() const {
 
 void Settings::setLearyMode(bool learyMode) {
 	_learyMode = learyMode;
+}
+
+void Settings::save(SaveFile &f) {
+	f.write(_scene);
+	f.write(_set);
+	f.write(_chapter);
+	f.write(_playerAgenda);
+	f.write(_unk0);
+	f.write(_difficulty);
+	f.write(_ammoType);
+	for (int i = 0; i != 3; ++i) {
+		f.write(_ammoAmounts[i]);
+	}
 }
 
 } // End of namespace BladeRunner

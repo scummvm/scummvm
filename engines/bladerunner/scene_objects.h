@@ -30,6 +30,7 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 class View;
 
 enum SceneObjectType {
@@ -86,7 +87,7 @@ public:
 	void setIsTarget(int sceneObjectId, bool isTarget);
 	void updateObstacles();
 
-
+	void save(SaveFile &f);
 private:
 	int findById(int sceneObjectId) const;
 	bool addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget, bool isMoving, bool isRetired);

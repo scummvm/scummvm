@@ -25,6 +25,7 @@
 #include "bladerunner/audio_player.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
+#include "bladerunner/savefile.h"
 
 #include "common/debug.h"
 #include "common/system.h"
@@ -360,6 +361,42 @@ void AmbientSounds::removeLoopingSoundByIndex(int index, int delay) {
 	track.audioPlayerTrack = -1;
 	track.volume = 0;
 	track.pan = 0;
+}
+
+void AmbientSounds::save(SaveFile &f) {
+	f.write(false); // TODO: _isDisabled
+
+	for (int i = 0; i != kNonLoopingSounds; ++i) {
+		// 73 bytes per non-looping sound
+		NonLoopingSound &s = _nonLoopingSounds[i];
+		f.write(s.isActive);
+		f.write(s.name, 13);
+		f.write(s.hash);
+		f.write(s.audioPlayerTrack);
+		f.write(s.timeMin);
+		f.write(s.timeMax);
+		f.write(s.nextPlayTime);
+		f.write(s.volumeMin);
+		f.write(s.volumeMax);
+		f.write(s.volume);
+		f.write(s.panStartMin);
+		f.write(s.panStartMax);
+		f.write(s.panEndMin);
+		f.write(s.panEndMax);
+		f.write(s.priority);
+		f.padBytes(4); // field_45
+	}
+
+	for (int i = 0; i != kLoopingSounds; ++i) {
+		// 33 bytes per looping sound
+		LoopingSound &s = _loopingSounds[i];
+		f.write(s.isActive);
+		f.write(s.name, 13);
+		f.write(s.hash);
+		f.write(s.audioPlayerTrack);
+		f.write(s.volume);
+		f.write(s.pan);
+	}
 }
 
 } // End of namespace BladeRunner

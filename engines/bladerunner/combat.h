@@ -30,6 +30,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
+class Vector3;
 
 class Combat {
 	static const int kSoundCount = 9;
@@ -38,10 +40,10 @@ class Combat {
 
 	bool _active;
 	bool _enabled;
-	int _hitSoundId[kSoundCount];
-	int _missSoundId[kSoundCount];
-//	int _random1;
-//	int _random2;
+	int  _hitSoundId[kSoundCount];
+	int  _missSoundId[kSoundCount];
+	// int  _random1;
+	// int  _random2;
 
 public:
 	int _ammoDamage[3];
@@ -87,6 +89,8 @@ public:
 
 	int findFleeWaypoint(int setId, int enemyId, const Vector3& position) const;
 	int findCoverWaypoint(int waypointType, int actorId, int enemyId) const;
+
+	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner

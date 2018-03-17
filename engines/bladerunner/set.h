@@ -33,6 +33,7 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class VQADecoder;
+class SaveFile;
 class SetEffects;
 class SceneObjects;
 
@@ -94,10 +95,13 @@ public:
 	void setWalkboxStepSound(int walkboxId, int soundId);
 	void setFoodstepSoundOverride(int soundId);
 	void resetFoodstepSoundOverride();
+
 	int getWalkboxSoundWalkLeft(int walkboxId) const;
 	int getWalkboxSoundWalkRight(int walkboxId) const;
 	int getWalkboxSoundRunLeft(int walkboxId) const;
 	int getWalkboxSoundRunRight(int walkboxId) const;
+
+	void save(SaveFile &f);
 
 private:
 	static bool isXZInWalkbox(float x, float z, const Walkbox &walkbox);

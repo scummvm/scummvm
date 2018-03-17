@@ -28,10 +28,12 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 
 class Obstacles {
-	static const int kPolygonCount = 50;
-	static const int kVertexCount = 160;
+	static const int kVertexCount        = 150;
+	static const int kPolygonCount       =  50;
+	static const int kPolygonVertexCount = 160;
 
 	struct Polygon {
 		bool    isPresent;
@@ -40,14 +42,14 @@ class Obstacles {
 		float   bottom;
 		float   right;
 		float   top;
-		Vector2 vertices[kVertexCount];
-		int     vertexType[kVertexCount];
+		Vector2 vertices[kPolygonVertexCount];
+		int     vertexType[kPolygonVertexCount];
 	};
 
 	BladeRunnerEngine *_vm;
 
-	Polygon  _polygons[kPolygonCount];
-	Polygon  _polygonsBackup[kPolygonCount];
+	Polygon *_polygons;
+	Polygon *_polygonsBackup;
 	Vector2 *_vertices;
 	int      _verticeCount;
 	int      _count;
@@ -62,6 +64,7 @@ public:
 	bool find(const Vector3 &from, const Vector3 &to, Vector3 *next) const;
 	void backup();
 	void restore();
+	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner

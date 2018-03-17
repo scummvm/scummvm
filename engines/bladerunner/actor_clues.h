@@ -28,6 +28,7 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 
 class ActorClues {
 	struct Clue {
@@ -74,7 +75,7 @@ public:
 
 	void removeAll();
 
-	//savegame
+	void save(SaveFile &f);
 	//loadgame
 
 private:

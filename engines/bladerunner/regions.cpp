@@ -22,6 +22,8 @@
 
 #include "bladerunner/regions.h"
 
+#include "bladerunner/savefile.h"
+
 namespace BladeRunner {
 
 Regions::Regions() {
@@ -97,6 +99,15 @@ void Regions::setEnabled(bool enabled) {
 
 void Regions::enable() {
 	_enabled = true;
+}
+
+void Regions::save(SaveFile &f) {
+	f.write(_enabled);
+	for (int i = 0; i != 10; ++i) {
+		f.write(_regions[i].rectangle);
+		f.write(_regions[i].type);
+		f.write(_regions[i].present);
+	}
 }
 
 } // End of namespace BladeRunner

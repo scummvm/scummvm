@@ -22,11 +22,13 @@
 
 #ifndef BLADERUNNER_ACTOR_DIALOGUE_QUEUE_H
 #define BLADERUNNER_ACTOR_DIALOGUE_QUEUE_H
+
 #include "common/array.h"
 
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 
 class ActorDialogueQueue {
 	struct Entry {
@@ -60,6 +62,8 @@ public:
 	void addPause(int delay);
 	void flush(int a1, bool callScript);
 	void tick();
+
+	void save(SaveFile &f);
 
 private:
 	void clear();

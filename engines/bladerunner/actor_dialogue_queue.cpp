@@ -26,6 +26,7 @@
 
 #include "bladerunner/actor.h"
 #include "bladerunner/audio_speech.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 
 #include "bladerunner/script/scene_script.h"
@@ -159,6 +160,30 @@ void ActorDialogueQueue::tick() {
 	}
 }
 
+void ActorDialogueQueue::save(SaveFile &f) {
+	int count = (int)_entries.size();
+	f.write(count);
+	for (int i = 0; i < count; ++i) {
+		Entry &e = _entries[i];
+		f.write(e.isNotPause);
+		f.write(e.isPause);
+		f.write(e.actorId);
+		f.write(e.sentenceId);
+		f.write(e.animationMode);
+		f.write(e.delay);
+	}
+	f.padBytes((25 - count) * 24);
+
+	f.write(_isNotPause);
+	f.write(_actorId);
+	f.write(_sentenceId);
+	f.write(_animationMode);
+	f.write(_animationModePrevious);
+	f.write(_isPause);
+	f.write(_delay);
+	// f.write(_timeLast);
+}
+
 void ActorDialogueQueue::clear() {
 	_entries.clear();
 	_isNotPause = false;
@@ -170,4 +195,5 @@ void ActorDialogueQueue::clear() {
 	_delay = 0;
 	_timeLast = 0;
 }
+
 } // End of namespace BladeRunner

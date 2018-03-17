@@ -28,6 +28,7 @@
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/movement_track.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/settings.h"
 
@@ -202,6 +203,17 @@ int Combat::findCoverWaypoint(int waypointType, int actorId, int enemyId) const 
 		}
 	}
 	return result;
+}
+
+void Combat::save(SaveFile &f) {
+	f.write(_active);
+	f.write(_enabled);
+	for (int i = 0; i != 9; ++i) {
+		f.write(_hitSoundId[i]);
+	}
+	for (int i = 0; i != 9; ++i) {
+		f.write(_missSoundId[i]);
+	}
 }
 
 } // End of namespace BladeRunner

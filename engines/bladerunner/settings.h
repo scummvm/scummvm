@@ -26,6 +26,7 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 
 enum PlayerAgenda {
 	kPlayerAgendaPolite = 0,
@@ -39,6 +40,9 @@ class Settings {
 	BladeRunnerEngine *_vm;
 
 	int   _chapter;
+	int   _scene;
+	int   _set;
+	int   _unk0;
 	float _gamma;
 
 	bool  _chapterChanged;
@@ -48,6 +52,8 @@ class Settings {
 
 	bool  _startingGame;
 	bool  _loadingGame;
+
+	int   _unk1;
 
 	int   _fullHDFrames;
 	int   _mst3k;
@@ -117,6 +123,8 @@ public:
 
 	bool getLearyMode() const;
 	void setLearyMode(bool learyMode);
+
+	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner

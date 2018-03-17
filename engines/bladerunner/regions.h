@@ -30,6 +30,8 @@
 
 namespace BladeRunner {
 
+class SaveFile;
+
 class Regions {
 	friend class Debugger;
 
@@ -54,6 +56,8 @@ public:
 
 	void setEnabled(bool enabled);
 	void enable();
+
+	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner

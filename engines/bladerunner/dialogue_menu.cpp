@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
 #include "bladerunner/mouse.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/settings.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/text_resource.h"
@@ -362,6 +363,30 @@ void DialogueMenu::mouseUp() {
 
 bool DialogueMenu::waitingForInput() const {
 	return _waitingForInput;
+}
+
+void DialogueMenu::save(SaveFile &f) {
+	f.write(_isVisible);
+	f.write(_waitingForInput);
+	f.write(_selectedItemIndex);
+	f.write(_listSize);
+
+	f.write(_neverRepeatListSize);
+	for (int i = 0; i < 100; ++i) {
+		f.write(_neverRepeatValues[i]);
+	}
+	for (int i = 0; i < 100; ++i) {
+		f.write(_neverRepeatWasSelected[i]);
+	}
+	for (int i = 0; i < 10; ++i) {
+		f.write(_items[i].text, 50);
+		f.write(_items[i].answerValue);
+		f.write(_items[i].colorIntensity);
+		f.write(_items[i].priorityPolite);
+		f.write(_items[i].priorityNormal);
+		f.write(_items[i].prioritySurly);
+		f.write(_items[i].isDone);
+	}
 }
 
 void DialogueMenu::clear() {

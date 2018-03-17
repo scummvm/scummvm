@@ -32,6 +32,7 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 class Items;
+class SaveFile;
 
 class Item {
 	friend class Items;
@@ -84,6 +85,8 @@ public:
 	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisible, bool isPoliceMazeEnemy);
 
 	bool isUnderMouse(int mouseX, int mouseY) const;
+
+	void save(SaveFile &f);
 };
 
 }

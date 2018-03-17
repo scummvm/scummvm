@@ -260,6 +260,11 @@ public:
 	void playerLosesControl();
 	void playerGainsControl();
 
+	bool saveGame(const Common::String &filename, byte *thumbnail);
+	void loadGame();
+	void newGame();
+	void autoSaveGame();
+
 	void ISez(const char *str);
 
 	void blitToScreen(const Graphics::Surface &src);

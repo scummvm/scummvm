@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/obstacles.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/view.h"
 
 namespace BladeRunner {
@@ -325,6 +326,27 @@ void SceneObjects::updateObstacles() {
 		}
 	}
 	_vm->_obstacles->backup();
+}
+
+void SceneObjects::save(SaveFile &f) {
+	f.write(_count);
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		f.write(_sceneObjects[i].id);
+		f.write(_sceneObjects[i].type);
+		f.write(_sceneObjects[i].boundingBox);
+		f.write(_sceneObjects[i].screenRectangle);
+		f.write(_sceneObjects[i].distanceToCamera);
+		f.write(_sceneObjects[i].isPresent);
+		f.write(_sceneObjects[i].isClickable);
+		f.write(_sceneObjects[i].isObstacle);
+		f.write(_sceneObjects[i].unknown1);
+		f.write(_sceneObjects[i].isTarget);
+		f.write(_sceneObjects[i].isMoving);
+		f.write(_sceneObjects[i].isRetired);
+	}
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		f.write(_sceneObjectsSortedByDistance[i]);
+	}
 }
 
 } // End of namespace BladeRunner

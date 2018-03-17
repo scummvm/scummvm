@@ -30,6 +30,8 @@
 
 namespace BladeRunner {
 
+class SaveFile;
+
 class Waypoints {
 	friend class Debugger;
 
@@ -55,6 +57,8 @@ public:
 
 	bool set(int waypointId, int setId, Vector3 position);
 	bool reset(int waypointId);
+
+	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner

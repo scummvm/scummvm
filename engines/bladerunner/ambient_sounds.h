@@ -28,6 +28,7 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 
 class AmbientSounds {
 	static const int kNonLoopingSounds = 25;
@@ -102,6 +103,8 @@ public:
 	void setVolume(int volume);
 	int getVolume() const;
 	void playSample();
+
+	void save(SaveFile &f);
 
 private:
 	int findAvailableNonLoopingTrack() const;

@@ -29,9 +29,10 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 class Shape;
-class VQAPlayer;
 class UIImagePicker;
+class VQAPlayer;
 
 class Spinner {
 	static const int kSpinnerDestinations = 10;
@@ -69,6 +70,8 @@ public:
 	void setSelectedDestination(int destination);
 	void reset();
 	void resume();
+
+	void save(SaveFile &f);
 
 private:
 	static void mouseUpCallback(int, void *);

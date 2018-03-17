@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/lights.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/set_effects.h"
 #include "bladerunner/slice_renderer.h"
@@ -82,6 +83,7 @@ bool Set::open(const Common::String &name) {
 		_objects[i].isObstacle = s->readByte();
 		_objects[i].isClickable = s->readByte();
 		_objects[i].isHotMouse = 0;
+		_objects[i].unknown1 = 0;
 		_objects[i].isTarget = 0;
 		s->skip(4);
 
@@ -327,4 +329,40 @@ int Set::getWalkboxSoundRunLeft(int walkboxId) const {
 int Set::getWalkboxSoundRunRight(int walkboxId) const {
 	return getWalkboxSoundWalkRight(walkboxId);
 }
+
+void Set::save(SaveFile &f) {
+	f.write(_loaded);
+	f.write(_objectCount);
+	f.write(_walkboxCount);
+
+	for (int i = 0; i != _objectCount; ++i) {
+		f.write(_objects[i].name, 20);
+		f.write(_objects[i].bbox);
+		f.write(_objects[i].isObstacle);
+		f.write(_objects[i].isClickable);
+		f.write(_objects[i].isHotMouse);
+		f.write(_objects[i].unknown1);
+		f.write(_objects[i].isTarget);
+	}
+
+	for (int i = 0; i != _walkboxCount; ++i) {
+		f.write(_walkboxes[i].name, 20);
+		f.write(_walkboxes[i].altitude);
+		f.write(_walkboxes[i].vertexCount);
+		for (int j = 0; j != 8; ++j) {
+			f.write(_walkboxes[i].vertices[j]);
+
+			// In BLADE.EXE vertices are a vec5
+			f.write(0);
+			f.write(0);
+		}
+	}
+
+	for (int i = 0; i != 85; ++i) {
+		f.write(_walkboxStepSound[i]);
+	}
+
+	f.write(_footstepSoundOverride);
+}
+
 } // End of namespace BladeRunner

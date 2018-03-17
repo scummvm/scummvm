@@ -30,6 +30,7 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 class BoundingBox;
 class Regions;
+class SaveFile;
 class Set;
 class VQAPlayer;
 
@@ -88,6 +89,8 @@ public:
 	void objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded);
 	void objectSetIsTarget(int objectId, bool isTarget, bool sceneLoaded);
 	const char *objectGetName(int objectId);
+
+	void save(SaveFile &f);
 
 private:
 	void loopEnded(int frame, int loopId);

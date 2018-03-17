@@ -23,6 +23,7 @@
 #include "bladerunner/items.h"
 
 #include "bladerunner/game_constants.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/zbuffer.h"
@@ -240,6 +241,21 @@ int Items::findItem(int itemId) const {
 		}
 	}
 	return -1;
+}
+
+void Items::save(SaveFile &f) {
+	int size = (int)_items.size();
+
+	f.write(size);
+	int i;
+	for (i = 0; i != size; ++i) {
+		_items[i]->save(f);
+	}
+
+	// Always write out 100 items
+	for (; i != 100; ++i) {
+		f.padBytes(0x174); // bbox + rect + 18 float fields
+	}
 }
 
 } // End of namespace BladeRunner

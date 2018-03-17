@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 
 #include "bladerunner/archive.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/vqa_player.h"
 
 #include "graphics/surface.h"
@@ -56,6 +57,8 @@ Overlays::~Overlays() {
 }
 
 int Overlays::play(const Common::String &name, int loopId, bool loopForever, bool startNow, int a6) {
+	assert(name.size() <= 12);
+
 	int id = mix_id(name);
 	int index = findById(id);
 	if (index < 0) {
@@ -63,12 +66,13 @@ int Overlays::play(const Common::String &name, int loopId, bool loopForever, boo
 		if (index < 0) {
 			return index;
 		}
+		_videos[index].loaded = true;
+		_videos[index].name = name;
 		_videos[index].id = id;
 		_videos[index].vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront);
 
 		// repeat forever
 		_videos[index].vqaPlayer->setBeginAndEndFrame(0, 0, -1, kLoopSetModeJustStart, nullptr, nullptr);
-		_videos[index].loaded = true;
 	}
 
 	Common::String resourceName = Common::String::format("%s.VQA", name.c_str());
@@ -136,10 +140,26 @@ void Overlays::resetSingle(int i) {
 	_videos[i].loaded = false;
 	_videos[i].id = 0;
 	_videos[i].field2 = -1;
+	_videos[i].name.clear();
 }
 
 void Overlays::reset() {
 	_videos.clear();
+}
+
+void Overlays::save(SaveFile &f) {
+	for (int i = 0; i < kOverlayVideos; ++i) {
+		// 37 bytes per overlay
+		Video &ov = _videos[i];
+
+		f.write(ov.loaded);
+		f.write(nullptr);
+		f.write(ov.name, 13);
+		f.write(ov.id);
+		f.write(ov.field0);
+		f.write(ov.field1);
+		f.write(ov.field2);
+	}
 }
 
 } // End of namespace BladeRunner

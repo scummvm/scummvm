@@ -28,6 +28,7 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 class TextResource;
 
 class CrimesDatabase {
@@ -47,6 +48,8 @@ public:
 	int getAssetType(int clueId) const;
 
 	const char *getClueText(int clueId) const;
+
+	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner

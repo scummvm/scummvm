@@ -22,6 +22,8 @@
 
 #include "bladerunner/waypoints.h"
 
+#include "bladerunner/savefile.h"
+
 namespace BladeRunner {
 
 Waypoints::Waypoints(BladeRunnerEngine *vm, int count) {
@@ -87,6 +89,16 @@ float Waypoints::getY(int waypointId) const {
 
 float Waypoints::getZ(int waypointId) const {
 	return _waypoints[waypointId].position.z;
+}
+
+void Waypoints::save(SaveFile &f) {
+	f.write(_count);
+	for (int i = 0; i < _count; ++i) {
+		Waypoint &w = _waypoints[i];
+		f.write(w.setId);
+		f.write(w.position);
+		f.write(w.present);
+	}
 }
 
 } // End of namespace BladeRunner

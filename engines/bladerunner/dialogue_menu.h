@@ -33,6 +33,7 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 class TextResource;
 
 class DialogueMenu {
@@ -102,6 +103,10 @@ private:
 	const char *getText(int id) const;
 	void calculatePosition(int unusedX = 0, int unusedY = 0);
 
+public:
+	void save(SaveFile &f);
+
+private:
 	void clear();
 	void reset();
 

@@ -28,6 +28,7 @@
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/obstacles.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/set.h"
@@ -236,6 +237,27 @@ void ActorWalk::run(int actorId) {
 		animationMode = kAnimationModeCombatRun;
 	}
 	_vm->_actors[actorId]->changeAnimationMode(animationMode, false);
+}
+
+void ActorWalk::save(SaveFile &f) {
+	f.write(_walking);
+	f.write(_running);
+	f.write(_destination);
+	// _originalDestination is not saved
+	f.write(_current);
+	f.write(_next);
+	f.write(_facing);
+
+	assert(_nearActors.size() <= 20);
+	for (Common::HashMap<int, bool>::const_iterator it = _nearActors.begin(); it != _nearActors.end(); ++it) {
+		f.write(it->_key);
+		f.write(it->_value);
+	}
+	f.padBytes(8 * (20 - _nearActors.size()));
+	f.write((int)_nearActors.size());
+
+	f.write(0); // _notUsed
+	f.write(_status);
 }
 
 bool ActorWalk::isXYZEmpty(float x, float y, float z, int actorId) const {

@@ -20,33 +20,46 @@
  *
  */
 
-#ifndef BLADERUNNER_BOUNDING_BOX_H
-#define BLADERUNNER_BOUNDING_BOX_H
+#ifndef BLADERUNNER_SAVEFILE_H
+#define BLADERUNNER_SAVEFILE_H
 
-#include "bladerunner/vector.h"
+#include "common/memstream.h"
+#include "common/types.h"
+
+namespace Common {
+	class OutSaveFile;
+	class String;
+	struct Rect;
+}
 
 namespace BladeRunner {
 
-class SaveFile;
+class Vector2;
+class Vector3;
+class BoundingBox;
 
-class BoundingBox {
-	Vector3 _vertices[2];
-
+class SaveFile {
+	Common::OutSaveFile              *_saveFile;
+	Common::MemoryWriteStreamDynamic  _stream;
 public:
-	BoundingBox() {}
-	BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1);
+	SaveFile(Common::OutSaveFile *saveFile);
 
-	void expand(float x0, float y0, float z0, float x1, float y1, float z1);
-	bool inside(float x, float y, float z) const;
-	bool inside(Vector3 &position) const;
+	// bool err();
+	void finalize();
 
-	void setXYZ(float x0, float y0, float z0, float x1, float y1, float z1);
-	void getXYZ(float *x0, float *y0, float *z0, float *x1, float *y1, float *z1) const;
-
-	float getZ0() const;
-	float getZ1() const;
-
-	void save(SaveFile &f);
+	void padBytes(int count);
+	void write(bool v);
+	void write(int v);
+	void write(uint32 v);
+	void write(byte  v);
+	void write(float v);
+	void debug(char *p);
+	void write(char *p, int sz);
+	void write(Common::String &s, int sz);
+	void write(const Vector2 &v);
+	void write(const Vector3 &v);
+	void write(const Common::Rect &v);
+	void write(const BoundingBox &v);
 };
 
 } // End of namespace BladeRunner

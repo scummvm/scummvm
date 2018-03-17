@@ -45,7 +45,9 @@
 #include "bladerunner/outtake.h"
 #include "bladerunner/obstacles.h"
 #include "bladerunner/overlays.h"
+#include "bladerunner/police_maze.h"
 #include "bladerunner/regions.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/screen_effects.h"
@@ -74,6 +76,7 @@
 #include "common/array.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "engines/util.h"
@@ -290,7 +293,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// TODO: Flee waypoints
 
-	_gameVars = new int[_gameInfo->getGlobalVarCount()];
+	_gameVars = new int[_gameInfo->getGlobalVarCount()]();
 
 	// TODO: Actor AI DLL init
 
@@ -352,7 +355,9 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// TODO: Set actor ids (redundant?)
 
-	// TODO: Police Maze
+	_policeMaze = new PoliceMaze(this);
+	if (!_policeMaze->init())
+		return false;
 
 	_textActorNames = new TextResource(this);
 	if (!_textActorNames->open("ACTORS"))
@@ -1578,6 +1583,91 @@ void BladeRunnerEngine::playerGainsControl() {
 	if (_playerLosesControlCounter == 0) {
 		_mouse->enable();
 	}
+}
+
+bool BladeRunnerEngine::saveGame(const Common::String &filename, byte *thumbnail) {
+	warning("BladeRunnerEngine::saveGame not finished");
+
+	if (!playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
+		return false;
+	}
+
+	Common::OutSaveFile *commonSaveFile = getSaveFileManager()->openForSaving(filename, false);
+	if (commonSaveFile->err()) {
+		return false;
+	}
+
+	SaveFile s(commonSaveFile);
+
+	s.padBytes(9600); // TODO: thumbnail
+	s.write(-1.0f);
+
+	_settings->save(s);
+	// s.debug(" - SCENE - ");
+	_scene->save(s);
+	// s.debug(" - EXIST - ");
+	_scene->_exits->save(s);
+	// s.debug(" - REGIONS - ");
+	_scene->_regions->save(s);
+	// s.debug(" - SET - ");
+	_scene->_set->save(s);
+
+	// s.debug(" - GAMEVARS - ");
+	for (uint i = 0; i != _gameInfo->getGlobalVarCount(); ++i) {
+		s.write(_gameVars[i]);
+	}
+
+	// TODO
+	// _music->save(s);
+	// s.debug(" - MUSIC - ");
+	s.padBytes(0x56);
+
+	// _audioPlayer->save(s) // zero func
+	// _audioSpeech->save(s) // zero func
+
+	// s.debug(" - COMBAT - ");
+	_combat->save(s);
+	// s.debug(" - GAMEFLAGS - ");
+	_gameFlags->save(s);
+	// s.debug(" - ITEMS - ");
+	_items->save(s);
+	// s.debug(" - SCENEOBJECTS - ");
+	_sceneObjects->save(s);
+	// s.debug(" - AMBIENTSOUNDS - ");
+	_ambientSounds->save(s);
+	// s.debug(" - OVERLAYS - ");
+	_overlays->save(s);
+	// s.debug(" - SPINNER - ");
+	_spinner->save(s);
+
+	// TODO
+	// _scores->save(s);
+	s.padBytes(0x28);
+
+	_dialogueMenu->save(s);
+	_obstacles->save(s);
+	_actorDialogueQueue->save(s);
+	_waypoints->save(s);
+
+	for (uint i = 0; i != _gameInfo->getActorCount(); ++i) {
+		_actors[i]->save(s);
+
+		int animationState, animationFrame, a3, a4;
+		_aiScripts->queryAnimationState(i, &animationState, &animationFrame, &a3, &a4);
+		s.write(animationState);
+		s.write(animationFrame);
+		s.write(a3);
+		s.write(a4);
+	}
+	_actors[kActorVoiceOver]->save(s);
+
+	_policeMaze->save(s);
+	_crimesDatabase->save(s);
+
+	s.finalize();
+	assert(0 && "ok");
+
+	return !commonSaveFile->err();
 }
 
 void BladeRunnerEngine::ISez(const char *str) {

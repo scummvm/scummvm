@@ -30,6 +30,7 @@
 #include "bladerunner/items.h"
 #include "bladerunner/overlays.h"
 #include "bladerunner/regions.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/screen_effects.h"
 #include "bladerunner/set.h"
@@ -412,4 +413,21 @@ void Scene::loopEnded(int frame, int loopId) {
 void Scene::loopEndedStatic(void *data, int frame, int loopId) {
 	((Scene *)data)->loopEnded(frame, loopId);
 }
+
+void Scene::save(SaveFile &f) {
+	f.write(_setId);
+	f.write(_sceneId);
+	f.write(_defaultLoop);
+	f.write(_defaultLoopSet);
+	f.write(_defaultLoopPreloadedSet);
+	f.write(_specialLoopMode);
+	f.write(_specialLoop);
+	f.write(_nextSetId);
+	f.write(_nextSceneId);
+	f.write(_frame);
+	f.write(_actorStartPosition);
+	f.write(_actorStartFacing);
+	f.write(_playerWalkedIn);
+}
+
 } // End of namespace BladeRunner

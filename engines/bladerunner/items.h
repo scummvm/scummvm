@@ -30,6 +30,8 @@
 
 namespace BladeRunner {
 
+class SaveFile;
+
 class Items {
 	BladeRunnerEngine *_vm;
 
@@ -64,6 +66,7 @@ public:
 
 	void spinInWorld(int itemId);
 
+	void save(SaveFile &f);
 private:
 	int findItem(int itemId) const;
 };

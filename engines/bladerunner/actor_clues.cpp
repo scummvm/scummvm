@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/crimes_database.h"
+#include "bladerunner/savefile.h"
 
 #include "common/debug.h"
 
@@ -214,6 +215,24 @@ void ActorClues::remove(int index) {
 	_clues[index].field6 = 0;
 	_clues[index].field7 = -1;
 	_clues[index].field8 = 0;
+}
+
+void ActorClues::save(SaveFile &f) {
+	f.write(_count);
+	f.write(_maxCount);
+	for (int i = 0; i < _count; ++i) {
+		Clue &c = _clues[i];
+		f.write(c.clueId);
+		f.write(c.weight);
+		f.write(c.fromActorId);
+		f.write(c.field3);
+		f.write(c.field4);
+		f.write(c.field5);
+		f.write(c.field6);
+		f.write(c.field7);
+		f.write(c.field8);
+		f.write(c.flags);
+	}
 }
 
 bool ActorClues::exists(int clueId) const {

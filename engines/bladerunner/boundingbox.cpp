@@ -22,6 +22,8 @@
 
 #include "bladerunner/boundingbox.h"
 
+#include "bladerunner/savefile.h"
+
 namespace BladeRunner {
 
 BoundingBox::BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1) {
@@ -80,6 +82,18 @@ float BoundingBox::getZ0() const {
 
 float BoundingBox::getZ1() const {
 	return _vertices[1].z;
+}
+
+void BoundingBox::save(SaveFile &f) {
+	f.write(_vertices[0].x);
+	f.write(_vertices[0].y);
+	f.write(_vertices[0].z);
+	f.write(_vertices[1].x);
+	f.write(_vertices[1].y);
+	f.write(_vertices[1].z);
+
+	// Bounding boxes have a lot of extra data that's never actually used
+	f.padBytes(8*8*4);
 }
 
 } // End of namespace BladeRunner

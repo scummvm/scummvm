@@ -22,6 +22,8 @@
 
 #include "bladerunner/movement_track.h"
 
+#include "bladerunner/savefile.h"
+
 namespace BladeRunner {
 
 MovementTrack::MovementTrack() {
@@ -104,6 +106,20 @@ bool MovementTrack::next(int *waypointId, int *delay, int *angle, bool *run) {
 		*run = false;
 		_hasNext = false;
 		return false;
+	}
+}
+
+void MovementTrack::save(SaveFile &f) {
+	f.write(_currentIndex);
+	f.write(_lastIndex);
+	f.write(_hasNext);
+	f.write(_paused);
+	for (int i = 0; i < 100; ++i) {
+		Entry &e = _entries[i];
+		f.write(e.waypointId);
+		f.write(e.delay);
+		f.write(e.angle);
+		f.write(e.run);
 	}
 }
 

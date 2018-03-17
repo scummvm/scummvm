@@ -20,33 +20,44 @@
  *
  */
 
-#ifndef BLADERUNNER_BOUNDING_BOX_H
-#define BLADERUNNER_BOUNDING_BOX_H
+#ifndef BLADERUNNER_POLICE_MAZE_TRACK_H
+#define BLADERUNNER_POLICE_MAZE_TRACK_H
 
 #include "bladerunner/vector.h"
 
 namespace BladeRunner {
 
+class BladeRunnerEngine;
 class SaveFile;
 
-class BoundingBox {
-	Vector3 _vertices[2];
+class PoliceMazeTrack {
+	BladeRunnerEngine *_vm;
+
+	int     _time;
+	bool    _isPresent;
+	int     _itemId;
+	int     _count;
+	Vector2 _points[100];
+	int     _data;
+	int     _dataIndex;
+	int     _a4;
+	int     _a5;
+	int     _a6;
+	int     _a7;
+	int     _pointIndex;
+	int     _a9;
+	int     _rotating;
+	int     _maxAngle;
+	int     _angleChange;
+	int     _a13;
 
 public:
-	BoundingBox() {}
-	BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1);
-
-	void expand(float x0, float y0, float z0, float x1, float y1, float z1);
-	bool inside(float x, float y, float z) const;
-	bool inside(Vector3 &position) const;
-
-	void setXYZ(float x0, float y0, float z0, float x1, float y1, float z1);
-	void getXYZ(float *x0, float *y0, float *z0, float *x1, float *y1, float *z1) const;
-
-	float getZ0() const;
-	float getZ1() const;
+	PoliceMazeTrack(BladeRunnerEngine *vm);
+	~PoliceMazeTrack();
 
 	void save(SaveFile &f);
+
+	void reset();
 };
 
 } // End of namespace BladeRunner

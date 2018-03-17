@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/mouse.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/shape.h"
 #include "bladerunner/text_resource.h"
@@ -260,6 +261,14 @@ void Spinner::resume() {
 	_vqaPlayer->setLoop(0, -1, kLoopSetModeImmediate, nullptr, nullptr);
 	tick();
 	_vqaPlayer->setLoop(1, -1, kLoopSetModeJustStart, nullptr, nullptr);
+}
+
+void Spinner::save(SaveFile &f) {
+	assert(!_isOpen);
+
+	for (int i = 0; i != kSpinnerDestinations; ++i) {
+		f.write(_isDestinationSelectable[i]);
+	}
 }
 
 const Spinner::Destination *Spinner::getDestinationsFar() {

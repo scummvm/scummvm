@@ -22,6 +22,8 @@
 
 #include "bladerunner/game_flags.h"
 
+#include "bladerunner/savefile.h"
+
 #include "common/debug.h"
 
 namespace BladeRunner {
@@ -38,7 +40,7 @@ void GameFlags::setFlagCount(int count) {
 	assert(count > 0);
 
 	_flagCount = count;
-	_flags = new uint32[count / 32 + 1];
+	_flags = new uint32[count / 32 + 1]();
 
 	for (int i = 0; i <= _flagCount; ++i)
 		reset(i);
@@ -69,6 +71,12 @@ bool GameFlags::query(int flag) const {
 	assert(flag >= 0 && flag <= _flagCount);
 
 	return !!(_flags[flag / 32] & (1 << (flag % 32)));
+}
+
+void GameFlags::save(SaveFile &f) {
+	for (int i = 0; i != _flagCount / 32 + 1; ++i) {
+		f.write(_flags[i]);
+	}
 }
 
 } // End of namespace BladeRunner

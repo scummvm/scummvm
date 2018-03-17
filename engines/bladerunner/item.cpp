@@ -24,6 +24,7 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/savefile.h"
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/zbuffer.h"
 
@@ -171,6 +172,28 @@ bool Item::isUnderMouse(int mouseX, int mouseY) const {
 	    && mouseX <= _screenRectangle.right  + 10
 	    && mouseY >= _screenRectangle.top    - 10
 	    && mouseY <= _screenRectangle.bottom + 10;
+}
+
+void Item::save(SaveFile &f) {
+	f.write(_setId);
+	f.write(_itemId);
+	_boundingBox.save(f);
+	f.write(_screenRectangle);
+	f.write(_animationId);
+	f.write(_position);
+	f.write(_facing);
+	f.write(_angle);
+	f.write(_width);
+	f.write(_height);
+	f.write(_screenX);
+	f.write(_screenY);
+	f.write(_depth);
+	f.write(_isTarget);
+	f.write(_isSpinning);
+	f.write(_facingChange);
+	f.write(0.0f); // _viewAngle
+	f.write(_isVisible);
+	f.write(_isPoliceMazeEnemy);
 }
 
 } // End of namespace BladeRunner

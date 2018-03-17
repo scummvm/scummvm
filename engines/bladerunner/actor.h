@@ -36,6 +36,7 @@ class ActorWalk;
 class BladeRunnerEngine;
 class BoundingBox;
 class MovementTrack;
+class SaveFile;
 class View;
 
 class Actor {
@@ -256,6 +257,9 @@ private:
 	bool walkFindU2(Vector3 *newDestination, float targetWidth, int destinationOffset, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition);
 	bool walkToNearestPoint(const Vector3 &destination, float distance);
 	//bool walkFindU3(int actorId, Vector3 from, int distance, Vector3 *out);
+
+public:
+	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner

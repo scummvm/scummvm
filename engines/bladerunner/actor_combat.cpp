@@ -29,6 +29,7 @@
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/movement_track.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/ai_script.h"
@@ -47,6 +48,31 @@ ActorCombat::~ActorCombat() {
 
 void ActorCombat::setup() {
 	reset();
+}
+
+void ActorCombat::save(SaveFile &f) {
+	// TODO
+	f.write(0); // _actorId
+	f.write(0); // _combatOn
+	f.write(0); // _field2
+	f.write(0); // _field3
+	f.write(0); // _otherActorId
+	f.write(0); // _field5
+	f.write(0); // _field6
+	f.write(0); // _field7
+	f.write(0); // _field8
+	f.write(0); // _field9
+	f.write(0); // _field10
+	f.write(0); // _field11
+	f.write(0); // _field12
+	f.write(0); // _actorHp
+	f.write(0); // _field14
+	f.write(0); // _field15
+	f.write(0); // _actorPosition
+	f.write(0); // _otherActorPosition
+	f.write(0); // _availableCoversCount
+	f.write(0); // _availableFleeWaypointsCount
+	f.write(0); // _field24
 }
 
 void ActorCombat::combatOn(int actorId, int initialState, bool rangedAttackFlag, int enemyId, int waypointType, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable) {

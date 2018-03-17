@@ -24,11 +24,15 @@
 
 #include "bladerunner/bladerunner.h"
 
+#include "bladerunner/savefile.h"
+
 namespace BladeRunner {
 
 Obstacles::Obstacles(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_vertices       = new Vector2[150];
+	_polygons       = new Polygon[kPolygonCount];
+	_polygonsBackup = new Polygon[kPolygonCount];
+	_vertices       = new Vector2[kVertexCount];
 	clear();
 }
 
@@ -40,7 +44,7 @@ void Obstacles::clear() {
 	for (int i = 0; i < kPolygonCount; i++) {
 		_polygons[i].isPresent = false;
 		_polygons[i].verticeCount = 0;
-		for (int j = 0; j < kVertexCount; j++) {
+		for (int j = 0; j < kPolygonVertexCount; j++) {
 			_polygons[i].vertices[j].x = 0.0f;
 			_polygons[i].vertices[j].y = 0.0f;
 		}
@@ -63,6 +67,30 @@ void Obstacles::backup() {
 }
 
 void Obstacles::restore() {}
+
+void Obstacles::save(SaveFile &f) {
+	f.write(_backup);
+	f.write(_count);
+	for (int i = 0; i < _count; ++i) {
+		Polygon &p = _polygonsBackup[i];
+		f.write(p.isPresent);
+		f.write(p.verticeCount);
+		f.write(p.left);
+		f.write(p.bottom);
+		f.write(p.right);
+		f.write(p.top);
+		for (int j = 0; j < kPolygonVertexCount; ++j) {
+			f.write(p.vertices[j]);
+		}
+		for (int j = 0; j < kPolygonVertexCount; ++j) {
+			f.write(p.vertexType[j]);
+		}
+	}
+	for (int i = 0; i < kVertexCount; ++i) {
+		f.write(_vertices[i]);
+	}
+	f.write(_verticeCount);
+}
 
 
 } // End of namespace BladeRunner

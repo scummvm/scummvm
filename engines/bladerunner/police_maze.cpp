@@ -20,35 +20,45 @@
  *
  */
 
-#ifndef BLADERUNNER_BOUNDING_BOX_H
-#define BLADERUNNER_BOUNDING_BOX_H
+#include "bladerunner/police_maze.h"
 
-#include "bladerunner/vector.h"
+#include "bladerunner/bladerunner.h"
+
+#include "bladerunner/police_maze_track.h"
+#include "bladerunner/savefile.h"
 
 namespace BladeRunner {
 
-class SaveFile;
+PoliceMaze::PoliceMaze(BladeRunnerEngine *vm) : _vm(vm) {
+	reset();
+}
 
-class BoundingBox {
-	Vector3 _vertices[2];
+PoliceMaze::~PoliceMaze() {
+	reset();
+}
 
-public:
-	BoundingBox() {}
-	BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1);
+bool PoliceMaze::init() {
+	return true;
+}
 
-	void expand(float x0, float y0, float z0, float x1, float y1, float z1);
-	bool inside(float x, float y, float z) const;
-	bool inside(Vector3 &position) const;
+void PoliceMaze::save(SaveFile &f) {
+	f.write(_tracksCount);
+	f.write(_a2);
+	f.write(_a3);
+	for (int i = 0; i < 64; ++i) {
+		_tracks[i]->save(f);
+	}
+}
 
-	void setXYZ(float x0, float y0, float z0, float x1, float y1, float z1);
-	void getXYZ(float *x0, float *y0, float *z0, float *x1, float *y1, float *z1) const;
-
-	float getZ0() const;
-	float getZ1() const;
-
-	void save(SaveFile &f);
-};
+void PoliceMaze::reset() {
+	_tracksCount = 0;
+	_a2 = 0;
+	_a3 = 0;
+	for (int i = 0; i < 64; ++i) {
+		_tracks[i] = nullptr;
+	}
+	_a4 = 0;
+	_a5 = 0;
+}
 
 } // End of namespace BladeRunner
-
-#endif

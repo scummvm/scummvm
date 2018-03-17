@@ -33,20 +33,20 @@ struct Surface;
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class SaveFile;
 class VQAPlayer;
-
 
 class Overlays {
 	static const int kOverlayVideos = 5;
 
 	struct Video {
-		bool       loaded;
-		VQAPlayer *vqaPlayer;
-		// char       name[13];
-		int32      id;
-		int        field0;
-		int        field1;
-		int        field2;
+		bool            loaded;
+		VQAPlayer      *vqaPlayer;
+		Common::String  name;
+		int32           id;
+		int             field0;
+		int             field1;
+		int             field2;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -61,6 +61,8 @@ public:
 	void remove(const Common::String &name);
 	void removeAll();
 	void tick();
+
+	void save(SaveFile &f);
 
 private:
 	int findById(int32 id) const;

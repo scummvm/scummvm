@@ -27,6 +27,8 @@
 
 namespace BladeRunner {
 
+class SaveFile;
+
 class GameFlags {
 	uint32 *_flags;
 	int     _flagCount;
@@ -40,6 +42,8 @@ public:
 	void set(int flag);
 	void reset(int flag);
 	bool query(int flag) const;
+
+	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner

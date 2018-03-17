@@ -32,6 +32,7 @@
 #include "bladerunner/items.h"
 #include "bladerunner/mouse.h"
 #include "bladerunner/movement_track.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/scene_script.h"
@@ -1223,6 +1224,82 @@ bool Actor::walkToNearestPoint(const Vector3 &destination, float distance) {
 		return true;
 	}
 	return false;
+}
+
+void Actor::save(SaveFile &f) {
+	f.write(_id);
+	f.write(_setId);
+	f.write(_position);
+	f.write(_facing);
+	f.write(_targetFacing);
+	f.write(0); // TODO: _timer4RemainDefault
+
+	f.write(_honesty);
+	f.write(_intelligence);
+	f.write(_stability);
+	f.write(_combatAggressiveness);
+	f.write(_goalNumber);
+
+	f.write(_currentHP);
+	f.write(_maxHP);
+
+	f.write(_movementTrackPaused);
+	f.write(_movementTrackNextWaypointId);
+	f.write(_movementTrackNextDelay);
+	f.write(_movementTrackNextAngle);
+	f.write(_movementTrackNextRunning);
+
+	f.write(0); // TODO: _clueType
+	f.write(_isMoving);
+	f.write(_isTarget);
+	f.write(_inCombat);
+	f.write(_isInvisible);
+	f.write(_isRetired);
+	f.write(_isImmuneToObstacles);
+
+	f.write(_animationMode);
+	f.write(_fps);
+	f.write(_frameMs);
+	f.write(_animationId);
+	f.write(_animationFrame);
+
+	f.write(_movementTrackWalkingToWaypointId);
+	f.write(_movementTrackDelayOnNextWaypoint);
+
+	f.write(_screenRectangle);
+	f.write(_retiredWidth);
+	f.write(_retiredHeight);
+	f.write(_damageAnimIfMoving);
+	f.write(0); // TODO: _actorFieldU6
+	f.write(0); // TODO: _actorFieldU7
+	f.write(_scale);
+
+	for (int i = 0; i < 7; ++i) {
+		f.write(_timersLeft[i]);
+	}
+
+	uint32 now = _vm->getTotalPlayTime(); // TODO: should be last lock time
+	for (int i = 0; i < 7; ++i) {
+		f.write(_timersLast[i] - now);
+	}
+
+	int actorCount = _vm->_gameInfo->getActorCount();
+	for (int i = 0; i != actorCount; ++i) {
+		f.write(_friendlinessToOther[i]);
+	}
+
+	_clues->save(f);
+
+	_movementTrack->save(f);
+
+	_walkInfo->save(f);
+
+	_bbox->save(f);
+
+	_combatInfo->save(f);
+	f.write(_animationModeCombatIdle);
+	f.write(_animationModeCombatWalk);
+	f.write(_animationModeCombatRun);
 }
 
 } // End of namespace BladeRunner
