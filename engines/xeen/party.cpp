@@ -324,6 +324,9 @@ void Party::synchronize(Common::Serializer &s) {
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
 		File::syncBitFlags(s, &_characterFlags[i][0], &_characterFlags[i][24]);
 	s.syncBytes(&dummy[0], 30);
+
+	if (s.isLoading())
+		_newDay = _minutes < 300;
 }
 
 void Party::loadActiveParty() {
