@@ -840,9 +840,12 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 						}
 
 						// Add entry to the end of the list
-						XeenItem &bsItem = c._items[category][itemIndex];
-						_oldCharacter->_items[category][INV_ITEMS_TOTAL - 1] = bsItem;
-						bsItem.clear();
+						XeenItem &srcItem = c._items[category][itemIndex];
+						XeenItem &destItem = _oldCharacter->_items[category][INV_ITEMS_TOTAL - 1];
+						destItem = srcItem;
+						destItem._frame = 0;
+
+						srcItem.clear();
 						c._items[category].sort();
 						_oldCharacter->_items[category].sort();
 					}
