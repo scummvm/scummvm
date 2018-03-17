@@ -21,6 +21,7 @@
  */
 
 #include <common/str.h>
+#include "objects/page.h"
 #include "pink.h"
 
 namespace Pink {
@@ -30,13 +31,18 @@ OrbFile::OrbFile()
       _tableOffset(0),
       _tableSize(0),
       _table(nullptr)
-{}
+{
+    debug("Object Description size: %u", sizeof(ObjectDescription));
+    debug("Resource Description size: %u", sizeof(ResourceDescription));
+    debug("OrbFile size: %lu", sizeof(OrbFile));
+    debug("BroFile size: %lu", sizeof(BroFile));
+}
 
 OrbFile::~OrbFile() {
     delete[] _table;
 }
 
-bool OrbFile::open(Common::String &name) {
+bool OrbFile::open(const Common::String &name) {
     if (!File::open(name))
         return false;
 
@@ -47,7 +53,9 @@ bool OrbFile::open(Common::String &name) {
 
     uint16 minor = readUint16LE();
     uint16 major = readUint16LE();
-    //output
+
+    debug("Orb v%hu.%hu loaded", major, minor);
+
     if (minor || major != 2){
         return false;
     }
@@ -56,31 +64,74 @@ bool OrbFile::open(Common::String &name) {
     if (!_timestamp){
         return false;
     }
-    //convert to date
-    //output into debug
 
     _tableOffset = readUint32LE();
     _tableSize = readUint32LE();
     _table = new ObjectDescription[_tableSize];
 
+    debug("Orb has %u object descriptions", _tableSize);
+
+    seek(_tableOffset);
+
     for (size_t i = 0; i < _tableSize; ++i) {
-        _table[i].deserialize(*this);
+        _table[i].load(*this);
+        debug("Object description %s loaded", _table[i].name);
     }
 
     return true;
 }
 
-void OrbFile::LoadGame(PinkEngine *game) {
+void OrbFile::loadGame(PinkEngine *game) {
+    seekToObject("PinkGame");
 
+    Archive archive(*this);
+    archive.mapObject((Object *) game); // hack
+
+    game->load(archive);
 }
 
-void OrbFile::LoadObject(void *obj, Common::String &name) {
-
+void OrbFile::loadObject(Object *obj, const Common::String &name) {
+    seekToObject(name.c_str());
+    Archive archive(*this);
+    obj->load(archive);
 }
+
+void OrbFile::loadObject(Object *obj, ObjectDescription *objDesc) {
+    seek(objDesc->objectsOffset);
+    Archive archive(*this);
+    obj->load(archive);
+}
+
 
 uint32 OrbFile::getTimestamp() {
     return _timestamp;
 }
+
+void OrbFile::seekToObject(const char *name) {
+    ObjectDescription *desc = getObjDesc(name);
+    seek(desc->objectsOffset);
+}
+
+
+ObjectDescription *OrbFile::getObjDesc(const char *name){
+    ObjectDescription *desc = static_cast<ObjectDescription*>(bsearch(name, _table, _tableSize, sizeof(ObjectDescription),
+                                                                      [] (const void *a, const void *b) {
+                                                                          return scumm_stricmp((char *) a, (char *) b); }));
+    assert(desc != nullptr);
+    return desc;
+}
+
+ResourceDescription *OrbFile::getResDescTable(ObjectDescription *objDesc){
+    const uint32 size = objDesc->objectsCount;
+    ResourceDescription *table = new ResourceDescription[size];
+
+    for (uint i = 0; i < size; ++i) {
+        table[i].load(*this);
+    }
+
+    return table;
+}
+
 
 bool BroFile::open(Common::String &name, uint32 orbTimestamp) {
     if (!File::open(name) || readUint32BE() != 'BRO\0')
@@ -88,7 +139,8 @@ bool BroFile::open(Common::String &name, uint32 orbTimestamp) {
 
     uint16 minor = readUint16LE();
     uint16 major = readUint16LE();
-    // do output
+
+    debug("Bro v%hu.%hu loaded", major, minor);
 
     if (minor || major != 1){
         return false;
@@ -99,7 +151,7 @@ bool BroFile::open(Common::String &name, uint32 orbTimestamp) {
     return _timestamp == orbTimestamp;
 }
 
-void ObjectDescription::deserialize(Common::File &file) {
+void ObjectDescription::load(Common::File &file) {
     file.read(name, sizeof(name));
     file.read(&objectsOffset, sizeof(objectsOffset));
     file.read(&objectsCount, sizeof(objectsCount));
@@ -107,7 +159,7 @@ void ObjectDescription::deserialize(Common::File &file) {
     file.read(&resourcesCount, sizeof(resourcesCount));
 }
 
-void ResourseDescription::deserialize(Common::File &file) {
+void ResourceDescription::load(Common::File &file) {
     file.read(name, sizeof(name));
     file.read(&offset, sizeof(offset));
     file.read(&size, sizeof(offset));
