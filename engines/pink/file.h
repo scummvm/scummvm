@@ -24,11 +24,12 @@
 #define PINK_FILE_H
 
 #include <common/file.h>
+#include "sound.h"
 
 namespace Pink {
 
 struct ObjectDescription {
-    void deserialize(Common::File &file);
+    void load(Common::File &file);
 
     char name[16];
     uint32 objectsOffset;
@@ -37,8 +38,8 @@ struct ObjectDescription {
     uint32 resourcesCount;
 };
 
-struct ResourseDescription {
-    void deserialize(Common::File &file);
+struct ResourceDescription {
+    void load(Common::File &file);
 
     char name[16];
     uint32 offset;
@@ -48,20 +49,27 @@ struct ResourseDescription {
 };
 
 class PinkEngine;
+class Object;
 
 class OrbFile : public Common::File {
 public:
     OrbFile();
     virtual ~OrbFile();
 
-    virtual bool open(Common::String &name);
+    virtual bool open(const Common::String &name);
 
-    void LoadGame(PinkEngine *game);
-    void LoadObject(void *obj, Common::String &name);
+    void loadGame(PinkEngine *game);
+    void loadObject(Object *obj, const Common::String &name);
+    void loadObject(Object *obj, ObjectDescription *objDesc);
+
+    ObjectDescription *getObjDesc(const char *name);
+    ResourceDescription *getResDescTable(ObjectDescription *objDesc);
 
     uint32 getTimestamp();
 
 private:
+    void seekToObject(const char * name);
+
     uint32 _timestamp;
     uint32 _tableOffset;
     uint32 _tableSize;
@@ -73,7 +81,7 @@ public:
     BroFile() = default;
     virtual ~BroFile() = default;
 
-    virtual bool open(Common::String &name, uint32 orbId);
+    virtual bool open(Common::String &name, uint32 orbTimestamp);
 };
 
 } // End of namespace Pink

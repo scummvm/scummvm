@@ -23,11 +23,13 @@
 #ifndef PINK_PINK_H
 #define PINK_PINK_H
 
+#include <engines/pink/objects/named_object.h>
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/EventRecorder.h"
 #include "gui/debugger.h"
 #include "file.h"
+#include "utils.h"
 
 
 /*
@@ -35,7 +37,7 @@
  *
  *  Status of this engine: In Development
  *
- *  Internal name of original name: OxCart Runtime
+ *  Internal name of original engine: OxCart Runtime
  *
  *  Games using this engine:
  *  - The Pink Panther: Passport to Peril
@@ -45,27 +47,40 @@
 namespace Pink {
 
 class Console;
+class Archive;
+class Module;
 
 enum {
     kPinkDebugGeneral = 1 << 0,
-    kPinkDebugLoading = 1 << 1,
-    kPinkDebugSound = 1 << 2
+    kPinkDebugLoadingResources = 1 << 1,
+    kPinkDebugLoadingObjects = 1 << 2,
+    kPinkDebugGraphics = 1 << 3,
+    kPinkDebugSound = 1 << 4
 };
 
-class PinkEngine : public Engine {
+enum {
+    LoadingSave = 1,
+    LoadingNotSave = 0
+};
 
+
+class PinkEngine : public Engine {
 public:
     PinkEngine(OSystem *system, const ADGameDescription *desc);
-
     ~PinkEngine();
 
     virtual Common::Error run();
+    void load(Archive &archive);
+
+    void initModule();
+    void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
+
+    OrbFile *getOrb()  { return &_orb; }
+    BroFile *getBro()  { return _bro; }
 
 private:
     Common::Error init();
-
-    void handleEvent(Common::Event &event);
-    void update();
+    void changeProxyToModule(int index);
 
     Console *_console;
     Common::RandomSource _rnd;
@@ -75,6 +90,9 @@ private:
 
     OrbFile  _orb;
     BroFile *_bro;
+
+    Module *_module;
+    ModulesArray _modules;
 
     const ADGameDescription _desc;
 };

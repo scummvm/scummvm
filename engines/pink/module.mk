@@ -7,6 +7,9 @@ MODULE_OBJS = \
 	director.o \
 	sound.o \
 	file.o \
+	archive.o \
+    objects/object.o \
+    objects/module.o \
 
 
 # This module can be built as a plugin
