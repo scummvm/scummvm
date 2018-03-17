@@ -291,6 +291,13 @@ DECLARE_SCRIPT(OfficerGrayford)
 	int _var3;
 END_SCRIPT
 
+DECLARE_SCRIPT(Hanoi)
+	int _var1;
+	int _var2;
+	int _var3;
+	int _var4;
+END_SCRIPT
+
 DECLARE_SCRIPT(Baker)
 END_SCRIPT
 
