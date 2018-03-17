@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-03-12 11:46+0100\n"
-"PO-Revision-Date: 2018-03-07 21:17+0000\n"
+"PO-Revision-Date: 2018-03-17 20:20+0000\n"
 "Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -4514,7 +4514,7 @@ msgstr "Die Engine-Datendatei \"sky.cpt\" hat eine falsche Größe."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr "Disketten-Vorspann"
+msgstr "Vorspann der Diskettenversion"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
