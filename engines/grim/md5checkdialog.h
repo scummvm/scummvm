@@ -27,6 +27,10 @@
 
 #include "gui/dialog.h"
 
+namespace GUI {
+class SliderWidget;
+}
+
 namespace Grim {
 
 class MD5CheckDialog : public GUI::Dialog {
@@ -34,14 +38,13 @@ public:
 	MD5CheckDialog();
 
 protected:
-	virtual void handleTickle() override;
-	virtual void drawDialog() override;
+	void handleTickle() override;
 
 private:
 	void check();
 
-	Common::Rect _progressRect;
-	float _progress;
+	GUI::SliderWidget *_progressSliderWidget;
+
 	bool _checkOk;
 };
 

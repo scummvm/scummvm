@@ -158,7 +158,7 @@ dists/msvc*/**
 
 #Ignore Xcode output/project files
 out/
-residualvm.xcodeproj
+/*.xcodeproj
 
 #Ignore gmon.out created by gprof
 gmon.out

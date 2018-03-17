@@ -103,6 +103,7 @@ protected:
 
 private:
 	uint16		_flags;
+	bool		_needsRedraw;
 
 public:
 	static Widget *findWidgetInChain(Widget *start, int x, int y);
@@ -137,7 +138,12 @@ public:
 	virtual bool handleKeyUp(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
 
-	void draw();
+	/** Mark the widget and its children as dirty so they are redrawn on the next screen update */
+	virtual void markAsDirty();
+
+	/** Redraw the widget if it was marked as dirty, and recursively proceed with its children */
+	virtual void draw();
+
 	void receivedFocus() { _hasFocus = true; receivedFocusWidget(); }
 	void lostFocus() { _hasFocus = false; lostFocusWidget(); }
 	virtual bool wantsFocus() { return false; }
@@ -213,8 +219,8 @@ public:
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseDown(int x, int y, int button, int clickCount);
-	void handleMouseEntered(int button)	{ if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } draw(); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); draw(); }
+	void handleMouseEntered(int button)	{ if (_duringPress) { setFlags(WIDGET_PRESSED); } else { setFlags(WIDGET_HILITED); } markAsDirty(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED | WIDGET_PRESSED); markAsDirty(); }
 
 	void setHighLighted(bool enable);
 	void setPressedState();
@@ -262,8 +268,8 @@ public:
 	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
-	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); markAsDirty(); }
+	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
 	void setState(bool state);
 	void toggleState()			{ setState(!_state); }
@@ -308,8 +314,8 @@ public:
 	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
-	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
-	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); markAsDirty(); }
+	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 
 	void setState(bool state, bool setGroup = true);
 	void toggleState()			{ setState(!_state); }
@@ -348,8 +354,8 @@ public:
 	void handleMouseMoved(int x, int y, int button);
 	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseUp(int x, int y, int button, int clickCount);
-	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); markAsDirty(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); markAsDirty(); }
 	void handleMouseWheel(int x, int y, int direction);
 
 protected:

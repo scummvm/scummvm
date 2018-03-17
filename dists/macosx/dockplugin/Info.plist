@@ -19,7 +19,7 @@
 	<key>CFBundleVersion</key>
 	<string>0.4.0git</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright 2003-2016 The ResidualVM Team</string>
+	<string>Copyright 2003-2018 The ResidualVM Team</string>
 	<key>NSPrincipalClass</key>
 	<string>ResidualVMDockTilePlugIn</string>
 </dict>

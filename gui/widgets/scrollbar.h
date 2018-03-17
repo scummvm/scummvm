@@ -69,7 +69,7 @@ public:
 	void handleMouseWheel(int x, int y, int direction);
 	void handleMouseMoved(int x, int y, int button);
 	void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); }
-	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; draw(); }
+	void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); _part = kNoPart; markAsDirty(); }
 	void handleTickle();
 
 	// FIXME - this should be private, but then we also have to add accessors

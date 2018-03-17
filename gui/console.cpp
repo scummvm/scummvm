@@ -163,17 +163,11 @@ void ConsoleDialog::close() {
 	Dialog::close();
 }
 
-void ConsoleDialog::drawDialog() {
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x + _w, _y + _h), ThemeEngine::kDialogBackgroundPlain/*_backgroundType*/);
-	// FIXME: for the old theme the frame around the console vanishes
-	// when any action is processed if we enable this
-	// _drawingHints &= ~THEME_HINT_FIRST_DRAW;
+void ConsoleDialog::drawDialog(DrawLayer layerToDraw) {
+	Dialog::drawDialog(layerToDraw);
 
 	for (int line = 0; line < _linesPerPage; line++)
 		drawLine(line, false);
-
-	// Draw the scrollbar
-	_scrollBar->draw();
 }
 
 void ConsoleDialog::drawLine(int line, bool restoreBg) {
@@ -187,7 +181,6 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 	if (restoreBg) {
 		Common::Rect r(_x, y - 2, _x + _pageWidth * kConsoleCharWidth, y+kConsoleLineHeight);
 		g_gui.theme()->restoreBackground(r);
-		g_gui.theme()->addDirtyRect(r);
 	}
 
 	for (int column = 0; column < limit; column++) {
@@ -200,8 +193,6 @@ void ConsoleDialog::drawLine(int line, bool restoreBg) {
 		g_gui.theme()->drawChar(Common::Rect(x, y, x+kConsoleCharWidth, y+kConsoleLineHeight), c, _font);
 		x += kConsoleCharWidth;
 	}
-
-	g_gui.theme()->updateScreen();
 }
 
 void ConsoleDialog::reflowLayout() {
@@ -213,7 +204,7 @@ void ConsoleDialog::reflowLayout() {
 	updateScrollBuffer();
 
 	Dialog::reflowLayout();
-	draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void ConsoleDialog::handleTickle() {
@@ -236,13 +227,13 @@ void ConsoleDialog::handleTickle() {
 			// End the slide
 			_slideMode = kNoSlideMode;
 			_y = 0;
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		} else if (_slideMode == kUpSlideMode && _y <= -_h) {
 			// End the slide
 			//_slideMode = kNoSlideMode;
 			close();
 		} else
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 	}
 
 	_scrollBar->handleTickle();
@@ -291,7 +282,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		print(PROMPT);
 		_promptStartPos = _promptEndPos = _currentPos;
 
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		if (!keepRunning)
 			slideUpAndClose();
 		break;
@@ -376,7 +367,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		} else {
 			_currentPos = _promptEndPos;
 		}
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 
 	case Common::KEYCODE_KP2:
@@ -404,7 +395,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 					_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			}
 			updateScrollBuffer();
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 
@@ -445,7 +436,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 		} else {
 			_currentPos = _promptStartPos;
 		}
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 
 	case Common::KEYCODE_KP8:
@@ -470,7 +461,7 @@ void ConsoleDialog::handleKeyDown(Common::KeyState state) {
 			if (_scrollLine < _firstLineInBuffer + _linesPerPage - 1)
 				_scrollLine = _firstLineInBuffer + _linesPerPage - 1;
 			updateScrollBuffer();
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 
@@ -507,7 +498,7 @@ void ConsoleDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		int newPos = (int)data + _linesPerPage - 1 + _firstLineInBuffer;
 		if (newPos != _scrollLine) {
 			_scrollLine = newPos;
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	}
@@ -517,25 +508,25 @@ void ConsoleDialog::specialKeys(int keycode) {
 	switch (keycode) {
 	case Common::KEYCODE_a:
 		_currentPos = _promptStartPos;
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case Common::KEYCODE_d:
 		if (_currentPos < _promptEndPos) {
 			killChar();
-			draw();
+			g_gui.scheduleTopDialogRedraw();
 		}
 		break;
 	case Common::KEYCODE_e:
 		_currentPos = _promptEndPos;
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case Common::KEYCODE_k:
 		killLine();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case Common::KEYCODE_w:
 		killLastWord();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	}
 }
@@ -625,7 +616,7 @@ void ConsoleDialog::historyScroll(int direction) {
 	// Ensure once more the caret is visible (in case of very long history entries)
 	scrollToCurrent();
 
-	draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void ConsoleDialog::nextLine() {
@@ -703,7 +694,7 @@ void ConsoleDialog::print(const char *str) {
 	while (*str)
 		printCharIntern(*str++);
 
-	draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void ConsoleDialog::drawCaret(bool erase) {
@@ -732,7 +723,7 @@ void ConsoleDialog::scrollToCurrent() {
 	} else if (line > _scrollLine) {
 		_scrollLine = line;
 		updateScrollBuffer();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	}
 }
 

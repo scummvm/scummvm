@@ -37,7 +37,6 @@ class PopUpDialog : public Dialog {
 protected:
 	PopUpWidget	*_popUpBoss;
 	int			_clickX, _clickY;
-	byte		*_buffer;
 	int			_selection;
 	uint32		_openTime;
 	bool		_twoColumns;
@@ -49,7 +48,7 @@ protected:
 public:
 	PopUpDialog(PopUpWidget *boss, int clickX, int clickY);
 
-	void drawDialog();
+	void drawDialog(DrawLayer layerToDraw) override;
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
@@ -70,9 +69,9 @@ protected:
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	: Dialog(0, 0, 16, 16),
 	_popUpBoss(boss) {
+	_backgroundType = ThemeEngine::kDialogBackgroundNone;
 
 	_openTime = 0;
-	_buffer = nullptr;
 	_entriesPerColumn = 1;
 
 	// Copy the selection index
@@ -148,7 +147,9 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	_clickY = clickY - _y;
 }
 
-void PopUpDialog::drawDialog() {
+void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
+	Dialog::drawDialog(layerToDraw);
+
 	// Draw the menu border
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0);
 
@@ -409,7 +410,7 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		if (newSel != -1 && _selectedItem != newSel) {
 			_selectedItem = newSel;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
-			draw();
+			markAsDirty();
 		}
 	}
 }
@@ -429,7 +430,7 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 			(newSelection != _selectedItem)) {
 			_selectedItem = newSelection;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
-			draw();
+			markAsDirty();
 		}
 	}
 }

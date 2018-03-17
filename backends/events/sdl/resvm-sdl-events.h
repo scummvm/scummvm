@@ -30,9 +30,9 @@
  */
 class ResVmSdlEventSource : public SdlEventSource {
 protected:
-	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
-	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
-	bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event) override;
+	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event) override;
+	bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) override;
 };
 
 #endif

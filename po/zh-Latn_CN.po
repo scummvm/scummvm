@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2017-12-02 02:43+0100\n"
+"POT-Creation-Date: 2018-03-12 11:46+0100\n"
 "PO-Revision-Date: 2016-12-26 19:38+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -33,33 +33,33 @@ msgstr "Gongneng BianyiYu:"
 msgid "Available engines:"
 msgstr "KeyongDeYinQing:"
 
-#: gui/browser.cpp:68 gui/browser_osx.mm:84
+#: gui/browser.cpp:69 gui/browser_osx.mm:84
 msgid "Show hidden files"
 msgstr "Xianshi Yincang Wenjian"
 
-#: gui/browser.cpp:68
+#: gui/browser.cpp:69
 msgid "Show files marked with the hidden attribute"
 msgstr "Xianshi Suoyou Yincang Shuxing Wenjian"
 
-#: gui/browser.cpp:72 gui/remotebrowser.cpp:56
+#: gui/browser.cpp:73 gui/remotebrowser.cpp:57
 msgid "Go up"
 msgstr "ShangYiJi"
 
-#: gui/browser.cpp:72 gui/browser.cpp:74 gui/remotebrowser.cpp:56
-#: gui/remotebrowser.cpp:58
+#: gui/browser.cpp:73 gui/browser.cpp:75 gui/remotebrowser.cpp:57
+#: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
 msgstr "Fanhui Zhiqian Mulu"
 
-#: gui/browser.cpp:74 gui/remotebrowser.cpp:58
+#: gui/browser.cpp:75 gui/remotebrowser.cpp:59
 msgctxt "lowres"
 msgid "Go up"
 msgstr "ShangYiJi"
 
-#: gui/browser.cpp:75 gui/chooser.cpp:46 gui/editgamedialog.cpp:292
-#: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:64
-#: gui/fluidsynth-dialog.cpp:152 gui/KeysDialog.cpp:43 gui/massadd.cpp:95
-#: gui/options.cpp:1680 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
-#: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:59
+#: gui/browser.cpp:76 gui/chooser.cpp:46 gui/editgamedialog.cpp:293
+#: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
+#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:43 gui/massadd.cpp:95
+#: gui/options.cpp:1678 gui/predictivedialog.cpp:73 gui/recorderdialog.cpp:69
+#: gui/recorderdialog.cpp:155 gui/remotebrowser.cpp:60
 #: gui/saveload-dialog.cpp:383 gui/saveload-dialog.cpp:445
 #: gui/saveload-dialog.cpp:727 gui/saveload-dialog.cpp:1121
 #: gui/storagewizarddialog.cpp:68 gui/themebrowser.cpp:55
@@ -71,53 +71,53 @@ msgstr "ShangYiJi"
 msgid "Cancel"
 msgstr "Quxiao"
 
-#: gui/browser.cpp:76 gui/browser_osx.mm:151 gui/chooser.cpp:47
-#: gui/filebrowser-dialog.cpp:65 gui/remotebrowser.cpp:60
+#: gui/browser.cpp:77 gui/browser_osx.mm:151 gui/chooser.cpp:47
+#: gui/filebrowser-dialog.cpp:66 gui/remotebrowser.cpp:61
 #: gui/themebrowser.cpp:56
 msgid "Choose"
 msgstr "Xuanze"
 
-#: gui/downloaddialog.cpp:48
+#: gui/downloaddialog.cpp:49
 #, fuzzy
 msgid "Select directory where to download game data"
 msgstr "Xuanze Youxi Shuju Mulu"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:470 gui/launcher.cpp:197
+#: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:471 gui/launcher.cpp:197
 msgid "Select directory with game data"
 msgstr "Xuanze Youxi Shuju Mulu"
 
-#: gui/downloaddialog.cpp:51 gui/downloaddialog.cpp:263
+#: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "From: "
 msgstr ""
 
-#: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
+#: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:265
 msgid "To: "
 msgstr ""
 
-#: gui/downloaddialog.cpp:63
+#: gui/downloaddialog.cpp:64
 msgid "Cancel download"
 msgstr ""
 
-#: gui/downloaddialog.cpp:65
+#: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
 msgstr ""
 
-#: gui/downloaddialog.cpp:67
+#: gui/downloaddialog.cpp:68
 msgid "Hide"
 msgstr ""
 
-#: gui/downloaddialog.cpp:117
+#: gui/downloaddialog.cpp:118
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
 
-#: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
-#: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
+#: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
+#: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:310 gui/launcher.cpp:418 gui/launcher.cpp:477
 #: gui/storagewizarddialog.cpp:112
-#: backends/events/symbiansdl/symbiansdl-events.cpp:190
+#: backends/events/symbiansdl/symbiansdl-events.cpp:192
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
@@ -126,11 +126,11 @@ msgstr ""
 msgid "Yes"
 msgstr "Shi"
 
-#: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
-#: gui/filebrowser-dialog.cpp:132 gui/fluidsynth-dialog.cpp:217
+#: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
+#: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:310 gui/launcher.cpp:418 gui/launcher.cpp:477
 #: gui/storagewizarddialog.cpp:112
-#: backends/events/symbiansdl/symbiansdl-events.cpp:190
+#: backends/events/symbiansdl/symbiansdl-events.cpp:192
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 #: backends/platform/wince/CELauncherDialog.cpp:83
@@ -139,26 +139,26 @@ msgstr "Shi"
 msgid "No"
 msgstr "Fou"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:568
+#: gui/downloaddialog.cpp:137 gui/launcher.cpp:569
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM Wufa Dakai Zhiding Mulu!"
 
-#: gui/downloaddialog.cpp:146
+#: gui/downloaddialog.cpp:147
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
 
-#: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:293
-#: gui/fluidsynth-dialog.cpp:153 gui/KeysDialog.cpp:42 gui/launcher.cpp:525
-#: gui/launcher.cpp:529 gui/massadd.cpp:92 gui/options.cpp:1682
+#: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:294
+#: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:526
+#: gui/launcher.cpp:530 gui/massadd.cpp:92 gui/options.cpp:1680
 #: gui/saveload-dialog.cpp:1122 engines/engine.cpp:443 engines/engine.cpp:454
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:54
 #: engines/agos/animation.cpp:559 engines/drascula/saveload.cpp:49
 #: engines/groovie/script.cpp:407 engines/parallaction/saveload.cpp:271
 #: engines/sci/engine/kgraphics.cpp:74 engines/sci/graphics/controls32.cpp:817
-#: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1882
+#: engines/scumm/dialogs.cpp:189 engines/scumm/scumm.cpp:1883
 #: engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:141
 #: engines/sword1/animation.cpp:524 engines/sword1/animation.cpp:545
@@ -170,33 +170,33 @@ msgstr ""
 msgid "OK"
 msgstr "Queding"
 
-#: gui/downloaddialog.cpp:151
+#: gui/downloaddialog.cpp:152
 #, c-format
 msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
 
-#: gui/downloaddialog.cpp:251
+#: gui/downloaddialog.cpp:252
 #, c-format
 msgid "Downloaded %s %s / %s %s"
 msgstr ""
 
-#: gui/downloaddialog.cpp:258
+#: gui/downloaddialog.cpp:259
 #, fuzzy, c-format
 msgid "Download speed: %s %s"
 msgstr "Saomiao Wancheng!"
 
-#: gui/editgamedialog.cpp:132
+#: gui/editgamedialog.cpp:133
 msgid "Game"
 msgstr "Youxi"
 
-#: gui/editgamedialog.cpp:136
+#: gui/editgamedialog.cpp:137
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:136 gui/editgamedialog.cpp:138
-#: gui/editgamedialog.cpp:139
+#: gui/editgamedialog.cpp:137 gui/editgamedialog.cpp:139
+#: gui/editgamedialog.cpp:140
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
@@ -204,216 +204,216 @@ msgstr ""
 "Yige Jianduan de Biaoshifu lai Baocun Youxi huo Cong Minglinghang zhong "
 "Yunxing"
 
-#: gui/editgamedialog.cpp:138
+#: gui/editgamedialog.cpp:139
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:143 gui/editrecorddialog.cpp:59
+#: gui/editgamedialog.cpp:144 gui/editrecorddialog.cpp:59
 msgid "Name:"
 msgstr "Xingming:"
 
-#: gui/editgamedialog.cpp:143 gui/editgamedialog.cpp:145
-#: gui/editgamedialog.cpp:146
+#: gui/editgamedialog.cpp:144 gui/editgamedialog.cpp:146
+#: gui/editgamedialog.cpp:147
 msgid "Full title of the game"
 msgstr "Youxi Quanming"
 
-#: gui/editgamedialog.cpp:145
+#: gui/editgamedialog.cpp:146
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Mingcheng:"
 
-#: gui/editgamedialog.cpp:149
+#: gui/editgamedialog.cpp:150
 msgid "Language:"
 msgstr "Yuyan:"
 
-#: gui/editgamedialog.cpp:149 gui/editgamedialog.cpp:150
+#: gui/editgamedialog.cpp:150 gui/editgamedialog.cpp:151
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
 "Youxi de Yuyan. CiXiang buhui jiang Yige XibanyaYu Banben Zhuancheng Yingwen"
 
-#: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:165 gui/options.cpp:997
-#: gui/options.cpp:1010 gui/options.cpp:1575 audio/null.cpp:41
+#: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:166 gui/options.cpp:995
+#: gui/options.cpp:1008 gui/options.cpp:1573 audio/null.cpp:41
 msgid "<default>"
 msgstr "<Moren>"
 
-#: gui/editgamedialog.cpp:161
+#: gui/editgamedialog.cpp:162
 msgid "Platform:"
 msgstr "Pingtai:"
 
-#: gui/editgamedialog.cpp:161 gui/editgamedialog.cpp:163
-#: gui/editgamedialog.cpp:164
+#: gui/editgamedialog.cpp:162 gui/editgamedialog.cpp:164
+#: gui/editgamedialog.cpp:165
 msgid "Platform the game was originally designed for"
 msgstr "Youxi Chushi Yunxing de Pingtai"
 
-#: gui/editgamedialog.cpp:163
+#: gui/editgamedialog.cpp:164
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Pingtai:"
 
-#: gui/editgamedialog.cpp:176
+#: gui/editgamedialog.cpp:177
 msgid "Engine"
 msgstr "Yinqing"
 
-#: gui/editgamedialog.cpp:184 gui/options.cpp:1345 gui/options.cpp:1430
+#: gui/editgamedialog.cpp:185 gui/options.cpp:1343 gui/options.cpp:1428
 msgid "Graphics"
 msgstr "Tuxiang"
 
-#: gui/editgamedialog.cpp:184 gui/options.cpp:1345 gui/options.cpp:1430
+#: gui/editgamedialog.cpp:185 gui/options.cpp:1343 gui/options.cpp:1428
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/editgamedialog.cpp:187
+#: gui/editgamedialog.cpp:188
 msgid "Override global graphic settings"
 msgstr "Fugai Quanju Tuxiang Shezhi"
 
-#: gui/editgamedialog.cpp:189
+#: gui/editgamedialog.cpp:190
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Fugai Quanju Tuxiang Shezhi"
 
-#: gui/editgamedialog.cpp:196 gui/options.cpp:1457
+#: gui/editgamedialog.cpp:197 gui/options.cpp:1455
 msgid "Audio"
 msgstr "Yinpin"
 
-#: gui/editgamedialog.cpp:199
+#: gui/editgamedialog.cpp:200
 msgid "Override global audio settings"
 msgstr "Fugai Quanju Yinpin Shezhi"
 
-#: gui/editgamedialog.cpp:201
+#: gui/editgamedialog.cpp:202
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Fugai QUanju Yinpin Shezhi"
 
-#: gui/editgamedialog.cpp:210 gui/options.cpp:1462
+#: gui/editgamedialog.cpp:211 gui/options.cpp:1460
 msgid "Volume"
 msgstr "Yinliang"
 
-#: gui/editgamedialog.cpp:212 gui/options.cpp:1464
+#: gui/editgamedialog.cpp:213 gui/options.cpp:1462
 msgctxt "lowres"
 msgid "Volume"
 msgstr "YinLiang"
 
-#: gui/editgamedialog.cpp:215
+#: gui/editgamedialog.cpp:216
 msgid "Override global volume settings"
 msgstr "Fugai Quanju YinLiang Shezhi"
 
-#: gui/editgamedialog.cpp:217
+#: gui/editgamedialog.cpp:218
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Fugai Quanju YinLiang Shezhi"
 
-#: gui/editgamedialog.cpp:226 gui/options.cpp:1472
+#: gui/editgamedialog.cpp:227 gui/options.cpp:1470
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:229
+#: gui/editgamedialog.cpp:230
 msgid "Override global MIDI settings"
 msgstr "Fugai Quanju MIDI Shezhi"
 
-#: gui/editgamedialog.cpp:231
+#: gui/editgamedialog.cpp:232
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Fugai Quanju MIDI Shezhi"
 
-#: gui/editgamedialog.cpp:241 gui/options.cpp:1482
+#: gui/editgamedialog.cpp:242 gui/options.cpp:1480
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:244
+#: gui/editgamedialog.cpp:245
 msgid "Override global MT-32 settings"
 msgstr "Fugai Quanju MT-32 Shezhi"
 
-#: gui/editgamedialog.cpp:246
+#: gui/editgamedialog.cpp:247
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Fugai Quanju MT-32 Shezhi"
 
-#: gui/editgamedialog.cpp:255 gui/options.cpp:1489
+#: gui/editgamedialog.cpp:256 gui/options.cpp:1487
 msgid "Paths"
 msgstr "Lujing"
 
-#: gui/editgamedialog.cpp:257 gui/options.cpp:1491
+#: gui/editgamedialog.cpp:258 gui/options.cpp:1489
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Lujing"
 
-#: gui/editgamedialog.cpp:264
+#: gui/editgamedialog.cpp:265
 msgid "Game Path:"
 msgstr "Youxi Lujing:"
 
-#: gui/editgamedialog.cpp:266
+#: gui/editgamedialog.cpp:267
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Youxi Lujing:"
 
-#: gui/editgamedialog.cpp:271 gui/options.cpp:1515
+#: gui/editgamedialog.cpp:272 gui/options.cpp:1513
 msgid "Extra Path:"
 msgstr "Qita Lujing:"
 
-#: gui/editgamedialog.cpp:271 gui/editgamedialog.cpp:273
-#: gui/editgamedialog.cpp:274
+#: gui/editgamedialog.cpp:272 gui/editgamedialog.cpp:274
+#: gui/editgamedialog.cpp:275
 msgid "Specifies path to additional data used by the game"
 msgstr "Zhiding Youxi Suoyong de Shuju de Cunfang Lujing"
 
-#: gui/editgamedialog.cpp:273 gui/options.cpp:1517
+#: gui/editgamedialog.cpp:274 gui/options.cpp:1515
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Qita Lujing:"
 
-#: gui/editgamedialog.cpp:280 gui/options.cpp:1499
+#: gui/editgamedialog.cpp:281 gui/options.cpp:1497
 msgid "Save Path:"
 msgstr "Baocun Lujing:"
 
-#: gui/editgamedialog.cpp:280 gui/editgamedialog.cpp:282
-#: gui/editgamedialog.cpp:283 gui/options.cpp:1499 gui/options.cpp:1501
-#: gui/options.cpp:1502
+#: gui/editgamedialog.cpp:281 gui/editgamedialog.cpp:283
+#: gui/editgamedialog.cpp:284 gui/options.cpp:1497 gui/options.cpp:1499
+#: gui/options.cpp:1500
 msgid "Specifies where your saved games are put"
 msgstr "Zhiding Nin Jiang Youxi Baocun Zai le Nali"
 
-#: gui/editgamedialog.cpp:282 gui/options.cpp:1501
+#: gui/editgamedialog.cpp:283 gui/options.cpp:1499
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Baocun Lujing:"
 
-#: gui/editgamedialog.cpp:301 gui/editgamedialog.cpp:398
-#: gui/editgamedialog.cpp:457 gui/editgamedialog.cpp:518 gui/options.cpp:1510
-#: gui/options.cpp:1518 gui/options.cpp:1527 gui/options.cpp:1707
-#: gui/options.cpp:1713 gui/options.cpp:1721 gui/options.cpp:1744
-#: gui/options.cpp:1777 gui/options.cpp:1783 gui/options.cpp:1790
-#: gui/options.cpp:1798 gui/options.cpp:1993 gui/options.cpp:1996
-#: gui/options.cpp:2003 gui/options.cpp:2013
+#: gui/editgamedialog.cpp:302 gui/editgamedialog.cpp:399
+#: gui/editgamedialog.cpp:458 gui/editgamedialog.cpp:519 gui/options.cpp:1508
+#: gui/options.cpp:1516 gui/options.cpp:1525 gui/options.cpp:1705
+#: gui/options.cpp:1711 gui/options.cpp:1719 gui/options.cpp:1742
+#: gui/options.cpp:1775 gui/options.cpp:1781 gui/options.cpp:1788
+#: gui/options.cpp:1796 gui/options.cpp:1991 gui/options.cpp:1994
+#: gui/options.cpp:2001 gui/options.cpp:2011
 msgctxt "path"
 msgid "None"
 msgstr "Wu"
 
-#: gui/editgamedialog.cpp:306 gui/editgamedialog.cpp:404
-#: gui/editgamedialog.cpp:522 gui/options.cpp:1701 gui/options.cpp:1771
-#: gui/options.cpp:1999 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:307 gui/editgamedialog.cpp:405
+#: gui/editgamedialog.cpp:523 gui/options.cpp:1699 gui/options.cpp:1769
+#: gui/options.cpp:1997 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Moren"
 
-#: gui/editgamedialog.cpp:450 gui/options.cpp:2007
+#: gui/editgamedialog.cpp:451 gui/options.cpp:2005
 msgid "Select SoundFont"
 msgstr "Xuanze SoundFont"
 
-#: gui/editgamedialog.cpp:489
+#: gui/editgamedialog.cpp:490
 msgid "Select additional game directory"
 msgstr "Xuanze Qita Youxi Mulu"
 
-#: gui/editgamedialog.cpp:502 gui/options.cpp:1930
+#: gui/editgamedialog.cpp:503 gui/options.cpp:1928
 msgid "Select directory for saved games"
 msgstr "Xuanze Youxi Baocun Mulu"
 
-#: gui/editgamedialog.cpp:508
+#: gui/editgamedialog.cpp:509
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
 
-#: gui/editgamedialog.cpp:534
+#: gui/editgamedialog.cpp:535
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Ci Youxi ID Yi Bei Zhanyong. Qing Xuanze Qita Mingcheng."
 
@@ -429,103 +429,103 @@ msgstr "Beizhu:"
 msgid "Ok"
 msgstr "Queding"
 
-#: gui/filebrowser-dialog.cpp:49
+#: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
 msgstr "Xuanze YaoJiazai de Wenjian"
 
-#: gui/filebrowser-dialog.cpp:49
+#: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
 msgstr "Shuru Baocun de Wenjianming"
 
-#: gui/filebrowser-dialog.cpp:132
+#: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
 msgstr "Nin Shifou Queding Fugai Ciwenjian ?"
 
-#: gui/fluidsynth-dialog.cpp:68
+#: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
 msgstr "Hunxiang"
 
-#: gui/fluidsynth-dialog.cpp:70 gui/fluidsynth-dialog.cpp:102
+#: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
 msgid "Active"
 msgstr "Jihuo"
 
-#: gui/fluidsynth-dialog.cpp:72
+#: gui/fluidsynth-dialog.cpp:73
 msgid "Room:"
 msgstr "Fangjian:"
 
-#: gui/fluidsynth-dialog.cpp:79
+#: gui/fluidsynth-dialog.cpp:80
 msgid "Damp:"
 msgstr "Shiqi:"
 
-#: gui/fluidsynth-dialog.cpp:86
+#: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
 msgstr "Kuandu:"
 
-#: gui/fluidsynth-dialog.cpp:93 gui/fluidsynth-dialog.cpp:111
+#: gui/fluidsynth-dialog.cpp:94 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
 msgstr "Jibie:"
 
-#: gui/fluidsynth-dialog.cpp:100
+#: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
 msgstr "Hechang"
 
-#: gui/fluidsynth-dialog.cpp:104
+#: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
 msgstr "N:"
 
-#: gui/fluidsynth-dialog.cpp:118
+#: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
 msgstr "Sudu:"
 
-#: gui/fluidsynth-dialog.cpp:125
+#: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
 msgstr "Shendu:"
 
-#: gui/fluidsynth-dialog.cpp:132
+#: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
 msgstr "Leixing:"
 
-#: gui/fluidsynth-dialog.cpp:135
+#: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
 msgstr "Zhengxian"
 
-#: gui/fluidsynth-dialog.cpp:136
+#: gui/fluidsynth-dialog.cpp:137
 msgid "Triangle"
 msgstr "Sanjiaoxing"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:1535
+#: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1533
 msgid "Misc"
 msgstr "Zaxiang"
 
-#: gui/fluidsynth-dialog.cpp:140
+#: gui/fluidsynth-dialog.cpp:141
 msgid "Interpolation:"
 msgstr "Chazhi:"
 
-#: gui/fluidsynth-dialog.cpp:143
+#: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
 msgstr "Wu (Zuikuai)"
 
-#: gui/fluidsynth-dialog.cpp:144
+#: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
 msgstr "Xianxing"
 
-#: gui/fluidsynth-dialog.cpp:145
+#: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
 msgstr "DiSiXu"
 
-#: gui/fluidsynth-dialog.cpp:146
+#: gui/fluidsynth-dialog.cpp:147
 msgid "Seventh-order"
 msgstr "DiQiXu"
 
-#: gui/fluidsynth-dialog.cpp:150
+#: gui/fluidsynth-dialog.cpp:151
 msgid "Reset"
 msgstr "Chongzhi"
 
-#: gui/fluidsynth-dialog.cpp:150
+#: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
 msgstr "Chongzhi Suoyou de FluidSynth Shezhi."
 
-#: gui/fluidsynth-dialog.cpp:217
+#: gui/fluidsynth-dialog.cpp:218
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "Ni Shifou Yao Chongzhi Suoyou de FluidSynth Shezhi?"
@@ -541,15 +541,15 @@ msgstr "Guanbi"
 msgid "Mouse click"
 msgstr "Shubiao Danji"
 
-#: gui/gui-manager.cpp:126 base/main.cpp:340
+#: gui/gui-manager.cpp:126 base/main.cpp:341
 msgid "Display keyboard"
 msgstr "Xianshi Jianpan"
 
-#: gui/gui-manager.cpp:130 base/main.cpp:344
+#: gui/gui-manager.cpp:130 base/main.cpp:345
 msgid "Remap keys"
 msgstr "Yingshe Jianwei"
 
-#: gui/gui-manager.cpp:133 base/main.cpp:347 engines/scumm/help.cpp:87
+#: gui/gui-manager.cpp:133 base/main.cpp:348 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
 msgstr "Quanping Qiehuan"
 
@@ -665,12 +665,12 @@ msgstr "~R~Yichu Youxi"
 msgid "Search in game list"
 msgstr "Zai Youxi Liebiao zhong Sousuo"
 
-#: gui/launcher.cpp:176 gui/launcher.cpp:774
+#: gui/launcher.cpp:176 gui/launcher.cpp:775
 msgid "Search:"
 msgstr "Sousuo:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
-#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:517
+#: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:533
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
@@ -680,7 +680,7 @@ msgstr "Jiazai Youxi:"
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 #: engines/cruise/menu.cpp:214 engines/mohawk/dialogs.cpp:105
-#: engines/mohawk/riven.cpp:517 engines/parallaction/saveload.cpp:194
+#: engines/mohawk/riven.cpp:533 engines/parallaction/saveload.cpp:194
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
@@ -706,27 +706,27 @@ msgstr "Nin Zhende Xiangyao Yichu Zhege Youxi Peizhi?"
 msgid "Do you want to load saved game?"
 msgstr "Nin Yao Zairu Baocun de Youxi ma?"
 
-#: gui/launcher.cpp:525
+#: gui/launcher.cpp:526
 msgid "This game does not support loading games from the launcher."
 msgstr "Ci Youxi Bu Zhichi cong Jiazaiqi Zhong Jiazai Youxi."
 
-#: gui/launcher.cpp:529
+#: gui/launcher.cpp:530
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr "ScummVM Wufa Zhaodao Keyi Yunxing Ci Youxi de Yinqing!"
 
-#: gui/launcher.cpp:580
+#: gui/launcher.cpp:581
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM zai Zhiding Mulu Zhong Wufa Zhaodao Renhe Youxi!"
 
-#: gui/launcher.cpp:593
+#: gui/launcher.cpp:594
 msgid "Pick the game:"
 msgstr "Xuanze Youxi:"
 
-#: gui/launcher.cpp:711
+#: gui/launcher.cpp:712
 msgid "Mass Add..."
 msgstr "PiLiang Zengjia ..."
 
-#: gui/launcher.cpp:713
+#: gui/launcher.cpp:714
 msgid "Record..."
 msgstr "Luxiang ..."
 
@@ -789,215 +789,215 @@ msgstr "Mei 15 Fenzhong"
 msgid "every 30 mins"
 msgstr "Mei 30 Fenzhong"
 
-#: gui/options.cpp:343 gui/options.cpp:640 gui/options.cpp:778
-#: gui/options.cpp:853 gui/options.cpp:1114
+#: gui/options.cpp:339 gui/options.cpp:636 gui/options.cpp:774
+#: gui/options.cpp:851 gui/options.cpp:1112
 msgctxt "soundfont"
 msgid "None"
 msgstr "Wu"
 
-#: gui/options.cpp:514
+#: gui/options.cpp:510
 msgid "Failed to apply some of the graphic options changes:"
 msgstr "Tuxing Xuanxiang Genggai Shibai:"
 
-#: gui/options.cpp:526
+#: gui/options.cpp:522
 msgid "the video mode could not be changed."
 msgstr "Shipin Moshi Wufa Genggai."
 
-#: gui/options.cpp:532
+#: gui/options.cpp:528
 msgid "the aspect ratio setting could not be changed"
 msgstr "Bili Xuanxiang Wufa Genggai"
 
-#: gui/options.cpp:538
+#: gui/options.cpp:534
 msgid "the fullscreen setting could not be changed"
 msgstr "Quanping Shezhi Wufa Genggai"
 
-#: gui/options.cpp:544
+#: gui/options.cpp:540
 #, fuzzy
 msgid "the filtering setting could not be changed"
 msgstr "Quanping Shezhi Wufa Genggai"
 
-#: gui/options.cpp:932
+#: gui/options.cpp:930
 msgid "Show On-screen control"
 msgstr ""
 
-#: gui/options.cpp:936
+#: gui/options.cpp:934
 #, fuzzy
 msgid "Touchpad mouse mode"
 msgstr "Jinyong Chumoban Moshi."
 
-#: gui/options.cpp:940
+#: gui/options.cpp:938
 msgid "Swap Menu and Back buttons"
+msgstr ""
+
+#: gui/options.cpp:943
+#, fuzzy
+msgid "Pointer Speed:"
+msgstr "Sudu:"
+
+#: gui/options.cpp:943 gui/options.cpp:945 gui/options.cpp:946
+msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr ""
 
 #: gui/options.cpp:945
 #, fuzzy
-msgid "Pointer Speed:"
-msgstr "Sudu:"
-
-#: gui/options.cpp:945 gui/options.cpp:947 gui/options.cpp:948
-msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
-
-#: gui/options.cpp:947
-#, fuzzy
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "Sudu:"
 
-#: gui/options.cpp:958
+#: gui/options.cpp:956
 msgid "Joy Deadzone:"
 msgstr ""
 
-#: gui/options.cpp:958 gui/options.cpp:960 gui/options.cpp:961
+#: gui/options.cpp:956 gui/options.cpp:958 gui/options.cpp:959
 msgid "Analog joystick Deadzone"
 msgstr ""
 
-#: gui/options.cpp:960
+#: gui/options.cpp:958
 msgctxt "lowres"
 msgid "Joy Deadzone:"
 msgstr ""
 
-#: gui/options.cpp:974
+#: gui/options.cpp:972
 msgid "HW Shader:"
 msgstr ""
 
-#: gui/options.cpp:974 gui/options.cpp:976
+#: gui/options.cpp:972 gui/options.cpp:974
 msgid "Different hardware shaders give different visual effects"
 msgstr ""
 
-#: gui/options.cpp:976
+#: gui/options.cpp:974
 msgctxt "lowres"
 msgid "HW Shader:"
 msgstr ""
 
-#: gui/options.cpp:977
+#: gui/options.cpp:975
 msgid "Different shaders give different visual effects"
 msgstr ""
 
-#: gui/options.cpp:994
+#: gui/options.cpp:992
 msgid "Graphics mode:"
 msgstr "Tuxing Moshi:"
 
-#: gui/options.cpp:1008
+#: gui/options.cpp:1006
 msgid "Render mode:"
 msgstr "Xuanran Moshi:"
 
-#: gui/options.cpp:1008 gui/options.cpp:1009
+#: gui/options.cpp:1006 gui/options.cpp:1007
 msgid "Special dithering modes supported by some games"
 msgstr "Youxi Zhichi Teshu de Doudong Moshi"
 
-#: gui/options.cpp:1020 backends/graphics/openglsdl/openglsdl-graphics.cpp:587
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2574
+#: gui/options.cpp:1018 backends/graphics/openglsdl/openglsdl-graphics.cpp:588
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2590
 msgid "Fullscreen mode"
 msgstr "Quanping Moshi"
 
-#: gui/options.cpp:1023
+#: gui/options.cpp:1021
 #, fuzzy
 msgid "Filter graphics"
 msgstr "Tuxiang"
 
-#: gui/options.cpp:1023
+#: gui/options.cpp:1021
 msgid "Use linear filtering when scaling graphics"
 msgstr ""
 
-#: gui/options.cpp:1026
+#: gui/options.cpp:1024
 msgid "Aspect ratio correction"
 msgstr "Bili Jiaozheng"
 
-#: gui/options.cpp:1026
+#: gui/options.cpp:1024
 msgid "Correct aspect ratio for 320x200 games"
 msgstr "320x200 Youxi Bili Jiaozheng"
 
-#: gui/options.cpp:1034
+#: gui/options.cpp:1032
 msgid "Preferred Device:"
 msgstr "Youxian Shebei:"
 
-#: gui/options.cpp:1034
+#: gui/options.cpp:1032
 msgid "Music Device:"
 msgstr "Yinyue Shebei:"
 
-#: gui/options.cpp:1034 gui/options.cpp:1036
+#: gui/options.cpp:1032 gui/options.cpp:1034
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Zhiding Youxian Shengyin Shebei huo Shengka Moniqi"
 
-#: gui/options.cpp:1034 gui/options.cpp:1036 gui/options.cpp:1037
+#: gui/options.cpp:1032 gui/options.cpp:1034 gui/options.cpp:1035
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Zhiding Shuchu Shengyin Shebei huo Shengka Moniqi"
 
-#: gui/options.cpp:1036
+#: gui/options.cpp:1034
 msgctxt "lowres"
 msgid "Preferred Dev.:"
 msgstr "Youxian Shebei:"
 
-#: gui/options.cpp:1036
+#: gui/options.cpp:1034
 msgctxt "lowres"
 msgid "Music Device:"
 msgstr "Yinyue Shebei:"
 
-#: gui/options.cpp:1063
+#: gui/options.cpp:1061
 msgid "AdLib emulator:"
 msgstr "AdLib Moniqi:"
 
-#: gui/options.cpp:1063 gui/options.cpp:1064
+#: gui/options.cpp:1061 gui/options.cpp:1062
 msgid "AdLib is used for music in many games"
 msgstr "AdLib bei Henduo Youxi Yonglai Bofang Yinyue"
 
-#: gui/options.cpp:1077
+#: gui/options.cpp:1075
 msgid "GM Device:"
 msgstr "GM Shebei:"
 
-#: gui/options.cpp:1077
+#: gui/options.cpp:1075
 msgid "Specifies default sound device for General MIDI output"
 msgstr "Zhiding Tongyong MIDI Shuchu Moren Shengyin Shebei"
 
-#: gui/options.cpp:1088
+#: gui/options.cpp:1086
 msgid "Don't use General MIDI music"
 msgstr "Buyao Shiyong Tongyong MIDI Yinyue"
 
-#: gui/options.cpp:1099 gui/options.cpp:1161
+#: gui/options.cpp:1097 gui/options.cpp:1159
 msgid "Use first available device"
 msgstr "Shiyong Diyige keyong de Shebei"
 
-#: gui/options.cpp:1111
+#: gui/options.cpp:1109
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1111 gui/options.cpp:1113 gui/options.cpp:1114
+#: gui/options.cpp:1109 gui/options.cpp:1111 gui/options.cpp:1112
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr "Yixie Shengka Zhichi SoundFont, Biru FluidSynth He Timidity"
 
-#: gui/options.cpp:1113
+#: gui/options.cpp:1111
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1119
+#: gui/options.cpp:1117
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Hunhe AdLib/MIDI Moshi"
 
-#: gui/options.cpp:1119
+#: gui/options.cpp:1117
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "TongShi Shiyong MIDI He AdLib Shengyin Shengcheng"
 
-#: gui/options.cpp:1122
+#: gui/options.cpp:1120
 msgid "MIDI gain:"
 msgstr "MIDI gain:"
 
-#: gui/options.cpp:1132
+#: gui/options.cpp:1130
 msgid "MT-32 Device:"
 msgstr "MT-32 Shebei:"
 
-#: gui/options.cpp:1132
+#: gui/options.cpp:1130
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
 "QIng Zhiding Yongyu Roland MT-32/LAPC1/CM32I/CM64 Shuchu de Moren Shengyin "
 "Shebei"
 
-#: gui/options.cpp:1137
+#: gui/options.cpp:1135
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Zhen Roland MT-32 (Jinyong GM Moni)"
 
-#: gui/options.cpp:1137 gui/options.cpp:1139
+#: gui/options.cpp:1135 gui/options.cpp:1137
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -1005,16 +1005,16 @@ msgstr ""
 "Jiancha Shifou Nin Xiang Shiyong Lianjie Dao Jisuanji de Zhenshi de Yingjian "
 "Roland Jianrong Shengyin Shebei"
 
-#: gui/options.cpp:1139
+#: gui/options.cpp:1137
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Zhen Roland MT-32 Shebei (Wu GM Moni)"
 
-#: gui/options.cpp:1142
+#: gui/options.cpp:1140
 msgid "Roland GS Device (enable MT-32 mappings)"
 msgstr "Roland GS Shebei (Qiyong MT-32 Yingshe)"
 
-#: gui/options.cpp:1142
+#: gui/options.cpp:1140
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
@@ -1022,357 +1022,357 @@ msgstr ""
 "Jiancha Shifou Nin Xiang Qiyong patch Yingshe Lai Zai Roland GS Shebei "
 "Shangmian Moni MT-32"
 
-#: gui/options.cpp:1151
+#: gui/options.cpp:1149
 msgid "Don't use Roland MT-32 music"
 msgstr "Buyao Shiyong Roland MT-32 Yinyue"
 
-#: gui/options.cpp:1178
+#: gui/options.cpp:1176
 msgid "Text and Speech:"
 msgstr "Wenzi he Yuyin:"
 
-#: gui/options.cpp:1182 gui/options.cpp:1192
+#: gui/options.cpp:1180 gui/options.cpp:1190
 msgid "Speech"
 msgstr "Yuyin"
 
-#: gui/options.cpp:1183 gui/options.cpp:1193
+#: gui/options.cpp:1181 gui/options.cpp:1191
 msgid "Subtitles"
 msgstr "Zimu"
 
-#: gui/options.cpp:1184
+#: gui/options.cpp:1182
 msgid "Both"
 msgstr "Liangzhe"
 
-#: gui/options.cpp:1186
+#: gui/options.cpp:1184
 msgid "Subtitle speed:"
 msgstr "Zimu Sudu:"
 
-#: gui/options.cpp:1188
+#: gui/options.cpp:1186
 msgctxt "lowres"
 msgid "Text and Speech:"
 msgstr "Wenben he Yuyin:"
 
-#: gui/options.cpp:1192
+#: gui/options.cpp:1190
 msgid "Spch"
 msgstr "Zimu"
 
-#: gui/options.cpp:1193
+#: gui/options.cpp:1191
 msgid "Subs"
 msgstr "Yuyin"
 
-#: gui/options.cpp:1194
+#: gui/options.cpp:1192
 msgctxt "lowres"
 msgid "Both"
 msgstr "Dou"
 
-#: gui/options.cpp:1194
+#: gui/options.cpp:1192
 msgid "Show subtitles and play speech"
 msgstr "Xianshi Zimu Bing Bofang Yuyin"
 
-#: gui/options.cpp:1196
+#: gui/options.cpp:1194
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Zimu Sudu:"
 
-#: gui/options.cpp:1212
+#: gui/options.cpp:1210
 msgid "Music volume:"
 msgstr "Yinyue Yinliang:"
 
-#: gui/options.cpp:1214
+#: gui/options.cpp:1212
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Yinyue Yinliang:"
 
-#: gui/options.cpp:1221
+#: gui/options.cpp:1219
 msgid "Mute All"
 msgstr "Quanbu Jinyin"
 
-#: gui/options.cpp:1224
+#: gui/options.cpp:1222
 msgid "SFX volume:"
 msgstr "Yinxiao Yinliang:"
 
-#: gui/options.cpp:1224 gui/options.cpp:1226 gui/options.cpp:1227
+#: gui/options.cpp:1222 gui/options.cpp:1224 gui/options.cpp:1225
 msgid "Special sound effects volume"
 msgstr "Texiao Yinliang"
 
-#: gui/options.cpp:1226
+#: gui/options.cpp:1224
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Yinxiao Yinliang:"
 
-#: gui/options.cpp:1234
+#: gui/options.cpp:1232
 msgid "Speech volume:"
 msgstr "Yuyin Yinliang:"
 
-#: gui/options.cpp:1236
+#: gui/options.cpp:1234
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Yuyin Yinliang:"
 
-#: gui/options.cpp:1438
+#: gui/options.cpp:1436
 msgid "Shader"
 msgstr ""
 
-#: gui/options.cpp:1450
+#: gui/options.cpp:1448
 #, fuzzy
 msgid "Control"
 msgstr "Kongzhi Shubiao"
 
-#: gui/options.cpp:1476
+#: gui/options.cpp:1474
 msgid "FluidSynth Settings"
 msgstr "FluidSynth Xuanxiang"
 
-#: gui/options.cpp:1507
+#: gui/options.cpp:1505
 msgid "Theme Path:"
 msgstr "Zhuti Lujing:"
 
-#: gui/options.cpp:1509
+#: gui/options.cpp:1507
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Zhuti Lujing:"
 
-#: gui/options.cpp:1515 gui/options.cpp:1517 gui/options.cpp:1518
+#: gui/options.cpp:1513 gui/options.cpp:1515 gui/options.cpp:1516
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "Zhiding Suoyou Youxi huo ScummVM de Shuju Lujing"
 
-#: gui/options.cpp:1524
+#: gui/options.cpp:1522
 msgid "Plugins Path:"
 msgstr "Chajian Lujing:"
 
-#: gui/options.cpp:1526
+#: gui/options.cpp:1524
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Chajian Lujing:"
 
-#: gui/options.cpp:1537
+#: gui/options.cpp:1535
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Zaxiang"
 
-#: gui/options.cpp:1539
+#: gui/options.cpp:1537
 msgid "Theme:"
 msgstr "Zhuti:"
 
-#: gui/options.cpp:1543
+#: gui/options.cpp:1541
 msgid "GUI Renderer:"
 msgstr "Jiemian Xuanran:"
 
-#: gui/options.cpp:1555
+#: gui/options.cpp:1553
 msgid "Autosave:"
 msgstr "Zidong Baocun:"
 
-#: gui/options.cpp:1557
+#: gui/options.cpp:1555
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Zidong Baocun:"
 
-#: gui/options.cpp:1565
+#: gui/options.cpp:1563
 msgid "Keys"
 msgstr "Guanjianzi"
 
-#: gui/options.cpp:1572
+#: gui/options.cpp:1570
 msgid "GUI Language:"
 msgstr "Jiemian Yuyan:"
 
-#: gui/options.cpp:1572
+#: gui/options.cpp:1570
 msgid "Language of ScummVM GUI"
 msgstr "ScummVM Jiemian Yuyan"
 
-#: gui/options.cpp:1600 gui/updates-dialog.cpp:86
+#: gui/options.cpp:1598 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr ""
 
-#: gui/options.cpp:1600
+#: gui/options.cpp:1598
 msgid "How often to check ScummVM updates"
 msgstr ""
 
-#: gui/options.cpp:1612
+#: gui/options.cpp:1610
 msgid "Check now"
 msgstr ""
 
-#: gui/options.cpp:1620
+#: gui/options.cpp:1618
 msgid "Cloud"
 msgstr ""
 
-#: gui/options.cpp:1622
+#: gui/options.cpp:1620
 msgctxt "lowres"
 msgid "Cloud"
 msgstr ""
 
-#: gui/options.cpp:1627
+#: gui/options.cpp:1625
 msgid "Storage:"
 msgstr ""
 
-#: gui/options.cpp:1627
+#: gui/options.cpp:1625
 msgid "Active cloud storage"
 msgstr ""
 
-#: gui/options.cpp:1634 gui/options.cpp:2210
+#: gui/options.cpp:1632 gui/options.cpp:2208
 msgid "<none>"
 msgstr ""
 
-#: gui/options.cpp:1638 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:1636 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Yonghuming:"
 
-#: gui/options.cpp:1638
+#: gui/options.cpp:1636
 msgid "Username used by this storage"
 msgstr ""
 
-#: gui/options.cpp:1641
+#: gui/options.cpp:1639
 msgid "Used space:"
 msgstr ""
 
-#: gui/options.cpp:1641
+#: gui/options.cpp:1639
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
 
-#: gui/options.cpp:1644
+#: gui/options.cpp:1642
 msgid "Last sync time:"
 msgstr ""
 
-#: gui/options.cpp:1644
+#: gui/options.cpp:1642
 msgid "When the last saved games sync for this storage occured"
 msgstr ""
 
-#: gui/options.cpp:1647 gui/storagewizarddialog.cpp:71
+#: gui/options.cpp:1645 gui/storagewizarddialog.cpp:71
 msgid "Connect"
 msgstr ""
 
-#: gui/options.cpp:1647
+#: gui/options.cpp:1645
 msgid "Open wizard dialog to connect your cloud storage account"
 msgstr ""
 
-#: gui/options.cpp:1648
+#: gui/options.cpp:1646
 msgid "Refresh"
 msgstr ""
 
-#: gui/options.cpp:1648
+#: gui/options.cpp:1646
 msgid "Refresh current cloud storage information (username and usage)"
 msgstr ""
 
-#: gui/options.cpp:1649
+#: gui/options.cpp:1647
 #, fuzzy
 msgid "Download"
 msgstr "Xia"
 
-#: gui/options.cpp:1649
+#: gui/options.cpp:1647
 msgid "Open downloads manager dialog"
 msgstr ""
 
-#: gui/options.cpp:1651
+#: gui/options.cpp:1649
 msgid "Run server"
 msgstr ""
 
-#: gui/options.cpp:1651
+#: gui/options.cpp:1649
 msgid "Run local webserver"
 msgstr ""
 
-#: gui/options.cpp:1652 gui/options.cpp:2320
+#: gui/options.cpp:1650 gui/options.cpp:2318
 #, fuzzy
 msgid "Not running"
 msgstr "Youxi Yunxing Cuowu:"
 
-#: gui/options.cpp:1656
+#: gui/options.cpp:1654
 #, fuzzy
 msgid "/root/ Path:"
 msgstr "Qita Lujing:"
 
-#: gui/options.cpp:1656 gui/options.cpp:1658 gui/options.cpp:1659
+#: gui/options.cpp:1654 gui/options.cpp:1656 gui/options.cpp:1657
 #, fuzzy
 msgid "Specifies which directory the Files Manager can access"
 msgstr "Zhiding Nin Jiang Youxi Baocun Zai le Nali"
 
-#: gui/options.cpp:1658
+#: gui/options.cpp:1656
 #, fuzzy
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "Qita Lujing:"
 
-#: gui/options.cpp:1668
+#: gui/options.cpp:1666
 #, fuzzy
 msgid "Server's port:"
 msgstr "Fuwuqi:"
 
-#: gui/options.cpp:1668
+#: gui/options.cpp:1666
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
 
-#: gui/options.cpp:1681
+#: gui/options.cpp:1679
 msgid "Apply"
 msgstr ""
 
-#: gui/options.cpp:1824
+#: gui/options.cpp:1822
 #, fuzzy
 msgid "Failed to change cloud storage!"
 msgstr "Wufa baocun Youxi"
 
-#: gui/options.cpp:1827
+#: gui/options.cpp:1825
 msgid "Another cloud storage is already active."
 msgstr ""
 
-#: gui/options.cpp:1895
+#: gui/options.cpp:1893
 #, fuzzy
 msgid "Theme does not support selected language!"
 msgstr "Yingqing Chajian Buzhichi Baocun Zhuangtai"
 
-#: gui/options.cpp:1898
+#: gui/options.cpp:1896
 #, fuzzy
 msgid "Theme cannot be loaded!"
 msgstr "Youxi Meiyou Jiazai"
 
-#: gui/options.cpp:1901
+#: gui/options.cpp:1899
 msgid ""
 "\n"
 "Misc settings will be restored."
 msgstr ""
 
-#: gui/options.cpp:1937
+#: gui/options.cpp:1935
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Zhiding de Mulu Buneng Xieru. Qing Xuanze Qita de Mulu."
 
-#: gui/options.cpp:1946
+#: gui/options.cpp:1944
 msgid "Select directory for GUI themes"
 msgstr "Xuanze Jiemian Zhuti de Mulu"
 
-#: gui/options.cpp:1956
+#: gui/options.cpp:1954
 msgid "Select directory for extra files"
 msgstr "Xuanze QIta Wenjian Mulu"
 
-#: gui/options.cpp:1967
+#: gui/options.cpp:1965
 msgid "Select directory for plugins"
 msgstr "Xuanze Chajian Mulu"
 
-#: gui/options.cpp:1979
+#: gui/options.cpp:1977
 #, fuzzy
 msgid "Select directory for Files Manager /root/"
 msgstr "Xuanze QIta Wenjian Mulu"
 
-#: gui/options.cpp:2217
+#: gui/options.cpp:2215
 #, c-format
 msgid "%llu bytes"
 msgstr ""
 
-#: gui/options.cpp:2225
+#: gui/options.cpp:2223
 msgid "<right now>"
 msgstr ""
 
-#: gui/options.cpp:2227
+#: gui/options.cpp:2225
 #, fuzzy
 msgid "<never>"
 msgstr "Yongbu"
 
-#: gui/options.cpp:2311
+#: gui/options.cpp:2309
 #, fuzzy
 msgid "Stop server"
 msgstr "Fuwuqi:"
 
-#: gui/options.cpp:2312
+#: gui/options.cpp:2310
 msgid "Stop local webserver"
 msgstr ""
 
-#: gui/options.cpp:2403
+#: gui/options.cpp:2401
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -1431,13 +1431,13 @@ msgstr "Huifang"
 msgid "Edit"
 msgstr "Binaji"
 
-#: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:242
-#: gui/recorderdialog.cpp:252
+#: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
+#: gui/recorderdialog.cpp:251
 msgid "Author: "
 msgstr "Zuozhe: "
 
-#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:243
-#: gui/recorderdialog.cpp:253
+#: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:242
+#: gui/recorderdialog.cpp:252
 msgid "Notes: "
 msgstr "Zhushi: "
 
@@ -1445,11 +1445,11 @@ msgstr "Zhushi: "
 msgid "Do you really want to delete this record?"
 msgstr "Nin Zhende Xinagyao Shanchu Zhege Luxiang ma?"
 
-#: gui/recorderdialog.cpp:173
+#: gui/recorderdialog.cpp:172
 msgid "Unknown Author"
 msgstr "Weizhi Zuozhe"
 
-#: gui/remotebrowser.cpp:128
+#: gui/remotebrowser.cpp:129
 #, fuzzy
 msgid "ScummVM could not access the directory!"
 msgstr "ScummVM Wufa Dakai Zhiding Mulu!"
@@ -1594,28 +1594,28 @@ msgstr ""
 msgid "Select a Theme"
 msgstr "Xuanze Zhuti"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
 msgstr "Jinyong GFX"
 
-#: gui/ThemeEngine.cpp:461
+#: gui/ThemeEngine.cpp:258
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Jinyong GFX"
 
-#: gui/ThemeEngine.cpp:462
+#: gui/ThemeEngine.cpp:259
 msgid "Standard Renderer"
 msgstr "Biaozhun Xuanranqi"
 
-#: gui/ThemeEngine.cpp:462 engines/scumm/dialogs.cpp:659
+#: gui/ThemeEngine.cpp:259 engines/scumm/dialogs.cpp:660
 msgid "Standard"
 msgstr "Biaozhun"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased Renderer"
 msgstr "Fanjuchi Xuanranqi"
 
-#: gui/ThemeEngine.cpp:464
+#: gui/ThemeEngine.cpp:261
 msgid "Antialiased"
 msgstr "Fanjuchi"
 
@@ -1636,39 +1636,39 @@ msgstr ""
 msgid "Proceed"
 msgstr ""
 
-#: gui/widget.cpp:375 gui/widget.cpp:377 gui/widget.cpp:383 gui/widget.cpp:385
+#: gui/widget.cpp:379 gui/widget.cpp:381 gui/widget.cpp:387 gui/widget.cpp:389
 msgid "Clear value"
 msgstr "Qingchu Zhi"
 
-#: base/main.cpp:253
+#: base/main.cpp:254
 #, c-format
 msgid "Engine does not support debug level '%s'"
 msgstr "Yinqing Buzhichi Tiaoshi Jibie '%s'"
 
-#: base/main.cpp:327
+#: base/main.cpp:328
 msgid "Menu"
 msgstr "Caidan"
 
-#: base/main.cpp:330 backends/platform/symbian/src/SymbianActions.cpp:45
+#: base/main.cpp:331 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
 msgstr "Tiaoguo"
 
-#: base/main.cpp:333 backends/platform/symbian/src/SymbianActions.cpp:50
+#: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
 msgstr "Zanting"
 
-#: base/main.cpp:336
+#: base/main.cpp:337
 msgid "Skip line"
 msgstr "Tiaoguo Cihang"
 
-#: base/main.cpp:547
+#: base/main.cpp:548
 msgid "Error running game:"
 msgstr "Youxi Yunxing Cuowu:"
 
-#: base/main.cpp:594
+#: base/main.cpp:595
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Wufa Zhaodao Shihe Yunxing Youxi de Yinqing"
 
@@ -1834,8 +1834,8 @@ msgstr "~R~Fanhui Qidongqi"
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
 #: engines/gnap/menu.cpp:464 engines/hugo/file.cpp:298
 #: engines/mads/nebular/dialogs_nebular.cpp:350 engines/mohawk/dialogs.cpp:106
-#: engines/neverhood/menumodule.cpp:880 engines/pegasus/pegasus.cpp:379
-#: engines/sci/engine/guest_additions.cpp:658
+#: engines/mohawk/riven.cpp:545 engines/neverhood/menumodule.cpp:880
+#: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:658
 #: engines/sci/engine/kfile.cpp:1054 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
@@ -1854,9 +1854,9 @@ msgstr "Baocun Youxi:"
 #: engines/dm/loadsave.cpp:196 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/gnap/menu.cpp:464
 #: engines/hugo/file.cpp:298 engines/mads/nebular/dialogs_nebular.cpp:350
-#: engines/mohawk/dialogs.cpp:106 engines/neverhood/menumodule.cpp:880
-#: engines/parallaction/saveload.cpp:209 engines/pegasus/pegasus.cpp:379
-#: engines/sci/engine/guest_additions.cpp:659
+#: engines/mohawk/dialogs.cpp:106 engines/mohawk/riven.cpp:545
+#: engines/neverhood/menumodule.cpp:880 engines/parallaction/saveload.cpp:209
+#: engines/pegasus/pegasus.cpp:379 engines/sci/engine/guest_additions.cpp:659
 #: engines/sci/engine/kfile.cpp:1054 engines/scumm/dialogs.cpp:184
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/toltecs/menu.cpp:291
@@ -2169,7 +2169,7 @@ msgstr "Jinyong Dianji"
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Chuping 'Chumo Moshi' - Xuanting (Shoubing Dianji)"
 
-#: backends/events/symbiansdl/symbiansdl-events.cpp:190
+#: backends/events/symbiansdl/symbiansdl-events.cpp:192
 msgid "Do you want to quit ?"
 msgstr "Nin Zhende Yao Tuichu Ma?"
 
@@ -2207,34 +2207,34 @@ msgstr "Xiangyou Huadong San Gen Shouzhi Qiehuan."
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:589
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2576
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:590
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2592
 msgid "Windowed mode"
 msgstr "Chuangkou Moshi"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:703
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:704
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr ""
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2437
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:725
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2453
 msgid "Enabled aspect ratio correction"
 msgstr "Qiyong Bili Jiaozheng"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:726
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2443
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:727
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2459
 msgid "Disabled aspect ratio correction"
 msgstr "Jinyong Bili Jiaozheng"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:746
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2461
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:747
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Qidong Dianji"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:748
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2463
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:749
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Jinyong Dianji"
@@ -2250,7 +2250,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Putong"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2523
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2539
 msgid "Active graphics filter:"
 msgstr "Huodong de Tuxing Guolvqi:"
 
@@ -2383,11 +2383,11 @@ msgstr "Qiyong Chumoban Moshi."
 msgid "Touchpad mode disabled."
 msgstr "Jinyong Chumoban Moshi."
 
-#: backends/platform/maemo/maemo.cpp:208
+#: backends/platform/maemo/maemo.cpp:206
 msgid "Click Mode"
 msgstr "Danji Moshi"
 
-#: backends/platform/maemo/maemo.cpp:214
+#: backends/platform/maemo/maemo.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/tizen/form.cpp:274
 #: backends/platform/wince/CEActionsPocket.cpp:60
@@ -2395,11 +2395,11 @@ msgstr "Danji Moshi"
 msgid "Left Click"
 msgstr "Zuojian Danji"
 
-#: backends/platform/maemo/maemo.cpp:217
+#: backends/platform/maemo/maemo.cpp:215
 msgid "Middle Click"
 msgstr "Zhongjian Danji"
 
-#: backends/platform/maemo/maemo.cpp:220
+#: backends/platform/maemo/maemo.cpp:218
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
@@ -2773,24 +2773,24 @@ msgstr ""
 msgid "Check for Updates..."
 msgstr "Jiancha Gengxin..."
 
-#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:963
+#: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:966
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
-#: engines/teenagent/resources.cpp:97 engines/tony/tony.cpp:198
-#: engines/toon/toon.cpp:4918
+#: engines/supernova/supernova.cpp:290 engines/teenagent/resources.cpp:97
+#: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr ""
 
-#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:977
+#: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:980
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
-#: engines/mortevielle/mortevielle.cpp:315 engines/tony/tony.cpp:210
-#: engines/toon/toon.cpp:4930
+#: engines/mortevielle/mortevielle.cpp:315 engines/supernova/supernova.cpp:300
+#: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr ""
 
-#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:988
+#: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:991
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
 #: engines/mortevielle/mortevielle.cpp:326 engines/tony/tony.cpp:221
 #: engines/toon/toon.cpp:4941
@@ -2800,26 +2800,26 @@ msgid ""
 "%d.%d."
 msgstr ""
 
-#: engines/adl/detection.cpp:45 engines/adl/detection.cpp:55
+#: engines/adl/detection.cpp:49 engines/adl/detection.cpp:59
 #, fuzzy
 msgid "Color mode"
 msgstr "Semang Moshi"
 
-#: engines/adl/detection.cpp:46 engines/adl/detection.cpp:56
+#: engines/adl/detection.cpp:50 engines/adl/detection.cpp:60
 msgid "Use color graphics"
 msgstr ""
 
-#: engines/adl/detection.cpp:65
+#: engines/adl/detection.cpp:69
 msgid "Scanlines"
 msgstr ""
 
-#: engines/adl/detection.cpp:66
+#: engines/adl/detection.cpp:70
 #, fuzzy
 msgid "Show scanlines"
 msgstr "Xianshi Wuti Biaoqian"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
-#: engines/drascula/detection.cpp:302 engines/dreamweb/detection.cpp:48
+#: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
 #: engines/neverhood/detection.cpp:177 engines/sci/detection.cpp:452
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
@@ -2827,7 +2827,7 @@ msgid "Use original save/load screens"
 msgstr "Shiyong Yuanshi Baocun/Zairu Pingmu"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
-#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:49
+#: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
 #, fuzzy
@@ -2902,7 +2902,7 @@ msgstr "Huifu Youxi:"
 msgid "Restore"
 msgstr "Huifu"
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2436
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2441
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -2913,7 +2913,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2429
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2434
 #, fuzzy, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -2924,7 +2924,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2447
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2452
 #, fuzzy, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -2976,13 +2976,13 @@ msgid "Display graphics using the game's bright palette"
 msgstr "Shiyong youxi de Liang Tiaoseban Lai Xianshi Tuxiang"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
-#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:532
+#: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:524
 #, fuzzy
 msgid "Failed to load saved game from file."
 msgstr "Wufa Cong Cundang Wenjian Zhong Duqu"
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
-#: engines/tinsel/saveload.cpp:545
+#: engines/tinsel/saveload.cpp:537
 #, fuzzy
 msgid "Failed to save game to file."
 msgstr "Wufa Baocun Cundang "
@@ -3329,7 +3329,7 @@ msgid ""
 "works."
 msgstr ""
 
-#: engines/mohawk/riven.cpp:416
+#: engines/mohawk/riven.cpp:432
 msgid "You are missing the following required Riven data files:\n"
 msgstr ""
 
@@ -3574,16 +3574,16 @@ msgstr ""
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1290
+#: engines/sci/engine/savegame.cpp:1284
 msgid "The format of this saved game is obsolete, unable to load it"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1292
+#: engines/sci/engine/savegame.cpp:1286
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
 msgstr ""
 
-#: engines/sci/engine/savegame.cpp:1303
+#: engines/sci/engine/savegame.cpp:1297
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
@@ -3743,36 +3743,36 @@ msgstr "~P~Shangyige"
 msgid "~N~ext"
 msgstr "~N~Xiayige"
 
-#: engines/scumm/dialogs.cpp:598
+#: engines/scumm/dialogs.cpp:599
 msgid "Speech Only"
 msgstr "Jin Yuyin"
 
-#: engines/scumm/dialogs.cpp:599
+#: engines/scumm/dialogs.cpp:600
 msgid "Speech and Subtitles"
 msgstr "Yuyin he Zimu"
 
-#: engines/scumm/dialogs.cpp:600
+#: engines/scumm/dialogs.cpp:601
 msgid "Subtitles Only"
 msgstr "Jin Zimu"
 
-#: engines/scumm/dialogs.cpp:608
+#: engines/scumm/dialogs.cpp:609
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Yuyin He Zimu"
 
-#: engines/scumm/dialogs.cpp:654
+#: engines/scumm/dialogs.cpp:655
 msgid "Select a Proficiency Level."
 msgstr "Qing Xuanze Shulian Dengji."
 
-#: engines/scumm/dialogs.cpp:656
+#: engines/scumm/dialogs.cpp:657
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Qingchayue Loom(TM) Shouce Huoqu Bangzhu."
 
-#: engines/scumm/dialogs.cpp:660
+#: engines/scumm/dialogs.cpp:661
 msgid "Practice"
 msgstr "Lianxi"
 
-#: engines/scumm/dialogs.cpp:661
+#: engines/scumm/dialogs.cpp:662
 msgid "Expert"
 msgstr "Zhuanjia"
 
@@ -4327,7 +4327,7 @@ msgstr "Yinyue Yinliang: "
 msgid "Subtitle speed: "
 msgstr "Zimu Sudu: "
 
-#: engines/scumm/scumm.cpp:1880
+#: engines/scumm/scumm.cpp:1881
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -4336,7 +4336,7 @@ msgstr ""
 "Bendi MIDI Zhichi Xuyao Cong LucasArts Shengji Zhi Roland,\n"
 "Dnahsi %s meiyou zhaodao. Shiyong AdLib."
 
-#: engines/scumm/scumm.cpp:2733
+#: engines/scumm/scumm.cpp:2738
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -4415,6 +4415,17 @@ msgstr "Ruanpan Jieshao"
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Shiyong Ruanpan Banben JIeshao (jin CD banben)"
+
+#: engines/supernova/supernova.cpp:308
+#, c-format
+msgid ""
+"Incorrect version of the '%s' engine data file found. Expected %d but got %d."
+msgstr ""
+
+#: engines/supernova/supernova.cpp:335
+#, c-format
+msgid "Unable to locate the text for %s language in '%s' engine data file."
+msgstr ""
 
 #: engines/sword1/animation.cpp:524
 #, c-format

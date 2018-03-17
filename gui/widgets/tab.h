@@ -111,7 +111,8 @@ public:
 
 	virtual void reflowLayout();
 
-	virtual void draw();
+	void draw() override;
+	void markAsDirty() override;
 
 protected:
 	// We overload getChildY to make sure child widgets are positioned correctly.

@@ -85,6 +85,8 @@ OSystem_SDL::OSystem_SDL()
 	_eventSource(0),
 	_window(0) {
 
+	ConfMan.registerDefault("kbdmouse_speed", 3);
+	ConfMan.registerDefault("joystick_deadzone", 3);
 }
 
 OSystem_SDL::~OSystem_SDL() {
@@ -175,15 +177,10 @@ bool OSystem_SDL::hasFeature(Feature f) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (f == kFeatureClipboardSupport) return true;
 #endif
-#ifdef JOY_ANALOG
-	if (f == kFeatureJoystickDeadzone) return true;
-#endif
-	if (f == kFeatureKbdMouseSpeed) return true;
-
-	// ResidualVM specific code:
-	if (f == kFeatureSideTextures)
-		return true;
-
+	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
+		bool joystickSupportEnabled = ConfMan.getInt("joystick_num") >= 0;
+		return joystickSupportEnabled;
+	}
 	return ModularBackend::hasFeature(f);
 }
 
@@ -255,16 +252,6 @@ void OSystem_SDL::initBackend() {
 
 	_inited = true;
 
-	if (!ConfMan.hasKey("kbdmouse_speed")) {
-		ConfMan.registerDefault("kbdmouse_speed", 3);
-		ConfMan.setInt("kbdmouse_speed", 3);
-	}
-#ifdef JOY_ANALOG
-	if (!ConfMan.hasKey("joystick_deadzone")) {
-		ConfMan.registerDefault("joystick_deadzone", 3);
-		ConfMan.setInt("joystick_deadzone", 3);
-	}
-#endif
 	ModularBackend::initBackend();
 
 	// We have to initialize the graphics manager before the event manager

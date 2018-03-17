@@ -458,7 +458,7 @@ DECLARE_SINGLETON(EngineManager);
  * For the uncached version, we first try to find the plugin using the gameId
  * and only if we can't find it there, we loop through the plugins.
  **/
-GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
+GameDescriptor EngineManager::findGame(const Common::String &gameName, const Plugin **plugin) const {
 	GameDescriptor result;
 
 	// First look for the game using the plugins in memory. This is critical
@@ -494,18 +494,18 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 /**
  * Find the game within the plugins loaded in memory
  **/
-GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const EnginePlugin **plugin) const {
+GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin) const {
 	// Find the GameDescriptor for this target
-	const EnginePlugin::List &plugins = getPlugins();
+	const PluginList &plugins = getPlugins();
 	GameDescriptor result;
 
 	if (plugin)
 		*plugin = 0;
 
-	EnginePlugin::List::const_iterator iter;
+	PluginList::const_iterator iter;
 
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		result = (**iter)->findGame(gameName.c_str());
+		result = (*iter)->get<MetaEngine>().findGame(gameName.c_str());
 		if (!result.gameid().empty()) {
 			if (plugin)
 				*plugin = *iter;
@@ -517,22 +517,22 @@ GameDescriptor EngineManager::findGameInLoadedPlugins(const Common::String &game
 
 GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 	GameList candidates;
-	EnginePlugin::List plugins;
-	EnginePlugin::List::const_iterator iter;
+	PluginList plugins;
+	PluginList::const_iterator iter;
 	PluginManager::instance().loadFirstPlugin();
 	do {
 		plugins = getPlugins();
 		// Iterate over all known games and for each check if it might be
 		// the game in the presented directory.
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-			candidates.push_back((**iter)->detectGames(fslist));
+			candidates.push_back((*iter)->get<MetaEngine>().detectGames(fslist));
 		}
 	} while (PluginManager::instance().loadNextPlugin());
 	return candidates;
 }
 
-const EnginePlugin::List &EngineManager::getPlugins() const {
-	return (const EnginePlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
+const PluginList &EngineManager::getPlugins() const {
+	return PluginManager::instance().getPlugins(PLUGIN_TYPE_ENGINE);
 }
 
 
@@ -544,6 +544,6 @@ namespace Common {
 DECLARE_SINGLETON(MusicManager);
 }
 
-const MusicPlugin::List &MusicManager::getPlugins() const {
-	return (const MusicPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
+const PluginList &MusicManager::getPlugins() const {
+	return PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);
 }

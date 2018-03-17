@@ -74,21 +74,14 @@ MD5CheckDialog::MD5CheckDialog() :
 	}
 	height += 20;
 
-	_progressRect = Common::Rect(_x + 20, _y + height + 10, _x + _w - 20, _y + height + 20);
+	_progressSliderWidget = new GUI::SliderWidget(this, 20, height + 10, _w - 40, 10);
+
 	check();
-}
-
-void MD5CheckDialog::drawDialog() {
-	GUI::Dialog::drawDialog();
-
-	g_gui.theme()->drawSlider(_progressRect, (int)(_progressRect.width() * _progress));
 }
 
 void MD5CheckDialog::check() {
 	_checkOk = true;
 	MD5Check::startCheckFiles();
-	_progress = 0.f;
-	draw();
 }
 
 void MD5CheckDialog::handleTickle() {
@@ -97,13 +90,13 @@ void MD5CheckDialog::handleTickle() {
 	if (!MD5Check::advanceCheck(&p, &t)) {
 		_checkOk = false;
 	}
-	_progress = (float)p / (float)t;
+	_progressSliderWidget->setValue(p * 100 / t);
+	_progressSliderWidget->markAsDirty();
 
 	if (p == t) {
 		setResult(_checkOk);
 		close();
 	}
-	draw();
 }
 
 }
