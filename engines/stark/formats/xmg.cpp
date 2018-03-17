@@ -33,6 +33,15 @@
 namespace Stark {
 namespace Formats {
 
+XMGDecoder::XMGDecoder() :
+		_width(0),
+		_height(0),
+		_currX(0),
+		_currY(0),
+		_stream(nullptr),
+		_transColor(0) {
+}
+
 Graphics::Surface *XMGDecoder::decode(Common::ReadStream *stream) {
 	XMGDecoder dec;
 	return dec.decodeImage(stream);

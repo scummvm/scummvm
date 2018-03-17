@@ -46,6 +46,7 @@ LipSync::LipSync(Object *parent, byte subType, uint16 index, const Common::Strin
 		_item(nullptr),
 		_sceneItem(nullptr),
 		_faceTexture(nullptr),
+		_visual(nullptr),
 		_enabled(false),
         _checkForNewVisual(false),
         _positionMs(0) {

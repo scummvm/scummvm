@@ -46,12 +46,14 @@
 namespace Stark {
 
 ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
-		Window(gfx, cursor) {
-
-	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
+		Window(gfx, cursor),
+		_inventory(nullptr),
+		_item(nullptr),
+		_fromInventory(false) {
 
 	_unscaled = true;
-	_item = nullptr;
+
+	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
 
 	_buttons[kActionHand].action = Resources::PATTable::kActionUse;
 	_buttons[kActionHand].rect = Common::Rect(90, 15, 126, 63);
@@ -175,6 +177,7 @@ void ActionMenu::onClick(const Common::Point &pos) {
 			}
 
 			close();
+			break;
 		}
 	}
 }

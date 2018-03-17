@@ -88,6 +88,7 @@ Resources::Object *ResourceReference::resolve() const {
 
 			break;
 		default:
+			assert(resource);
 			resource = resource->findChildWithIndex(element.getType(), element.getIndex());
 			break;
 		}

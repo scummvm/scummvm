@@ -264,6 +264,8 @@ void GameInterface::setAprilRunning() {
 	Resources::ModelItem *april = current->getInteractive();
 	Movement *movement = april->getMovement();
 	Walk *walk = dynamic_cast<Walk *>(movement);
+
+	assert(walk);
 	walk->setRunning();
 }
 

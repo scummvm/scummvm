@@ -135,6 +135,8 @@ void Location::onGameLoop() {
 	}
 
 	if (_scrollFollowCharacter) {
+		assert(april);
+
 		Movement *movement = april->getMovement();
 
 		bool scrollComplete = scrollToCharacter(april);

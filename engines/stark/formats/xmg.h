@@ -40,7 +40,7 @@ public:
 	static Graphics::Surface *decode(Common::ReadStream *stream);
 
 private:
-	XMGDecoder() {}
+	XMGDecoder();
 
 	struct Block {
 		uint32 a1, a2;

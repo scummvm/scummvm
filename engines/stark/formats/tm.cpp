@@ -81,7 +81,8 @@ public:
 
 	Texture() :
 			BiffObject(),
-			_texture(nullptr) {
+			_texture(nullptr),
+			_u(0) {
 		_type = TYPE;
 	}
 
