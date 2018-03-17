@@ -261,6 +261,15 @@ DECLARE_SCRIPT(Zuben)
 	void dialogue();
 END_SCRIPT
 
+DECLARE_SCRIPT(Hasan)
+	int _var1;
+	int _var2;
+	int _var3;
+	int _var4;
+	int _var5;
+	int _var6;
+END_SCRIPT
+
 DECLARE_SCRIPT(Marcus)
 END_SCRIPT
 

@@ -73,6 +73,7 @@ MODULE_OBJS = \
 	script/ai/governor_kolvig.o \
 	script/ai/grigorian.o \
 	script/ai/guzza.o \
+	script/ai/hasan.o \
 	script/ai/hawkers_barkeep.o \
 	script/ai/hawkers_parrot.o \
 	script/ai/holloway.o \
