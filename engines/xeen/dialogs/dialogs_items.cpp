@@ -744,62 +744,16 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 	Windows &windows = *_vm->_windows;
 	bool isDarkCc = _vm->_files->_isDarkCc;
 
-	XeenItem *itemCategories[4] = { &c._weapons[0], &c._armor[0], &c._accessories[0], &c._misc[0] };
-	XeenItem *items = itemCategories[category];
-	if (!items[0]._id)
+	InventoryItems &items = c._items[category];
+	if (items[0].empty())
 		// Inventory is empty
 		return category == CATEGORY_MISC ? 0 : 2;
 
-	Window &w = windows[11];
-	SpriteResource escSprites;
-	if (itemIndex < 0 || itemIndex > 8) {
-		saveButtons();
-
-		escSprites.load("esc.icn");
-		addButton(Common::Rect(235, 111, 259, 131), Common::KEYCODE_ESCAPE, &escSprites);
-		addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1);
-		addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2);
-		addButton(Common::Rect(8, 38, 263, 46), Common::KEYCODE_3);
-		addButton(Common::Rect(8, 47, 263, 55), Common::KEYCODE_4);
-		addButton(Common::Rect(8, 56, 263, 64), Common::KEYCODE_5);
-		addButton(Common::Rect(8, 65, 263, 73), Common::KEYCODE_6);
-		addButton(Common::Rect(8, 74, 263, 82), Common::KEYCODE_7);
-		addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8);
-		addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9);
-
-		w.open();
-		w.writeString(Common::String::format(Res.WHICH_ITEM, Res.ITEM_ACTIONS[actionIndex]));
-		_iconSprites.draw(0, 0, Common::Point(235, 111));
-		w.update();
-
-		while (!_vm->shouldExit()) {
-			while (!_buttonValue) {
-				events.pollEventsAndWait();
-				checkEvents(_vm);
-				if (_vm->shouldExit())
-					return false;
-			}
-
-			if (_buttonValue == Common::KEYCODE_ESCAPE) {
-				itemIndex = -1;
-				break;
-			} else if (_buttonValue >= Common::KEYCODE_1 && _buttonValue <= Common::KEYCODE_9) {
-				// Check whether there's an item at the selected index
-				int selectedIndex = _buttonValue - Common::KEYCODE_1;
-				if (!items[selectedIndex]._id)
-					continue;
-
-				itemIndex = selectedIndex;
-				break;
-			}
-		}
-
-		w.close();
-		restoreButtons();
-	}
+	if (itemIndex < 0 || itemIndex > 8)
+		itemIndex = ItemSelectionDialog::show(actionIndex, items);
 
 	if (itemIndex != -1) {
-		XeenItem &item = c._items[category][itemIndex];
+		XeenItem &item = items[itemIndex];
 
 		switch (mode) {
 		case ITEMMODE_CHAR_INFO:
@@ -1030,6 +984,69 @@ void ItemsDialog::itemToGold(Character &c, int itemIndex, ItemCategory category,
 		item.clear();
 		c._items[category].sort();
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+int ItemSelectionDialog::show(int actionIndex, InventoryItems &items) {
+	ItemSelectionDialog *dlg = new ItemSelectionDialog(g_vm, actionIndex, items);
+	int result = dlg->execute();
+	delete dlg;
+
+	return result;
+}
+
+void ItemSelectionDialog::loadButtons() {
+	_icons.load("esc.icn");
+	addButton(Common::Rect(235, 111, 259, 131), Common::KEYCODE_ESCAPE, &_icons);
+	addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1);
+	addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2);
+	addButton(Common::Rect(8, 38, 263, 46), Common::KEYCODE_3);
+	addButton(Common::Rect(8, 47, 263, 55), Common::KEYCODE_4);
+	addButton(Common::Rect(8, 56, 263, 64), Common::KEYCODE_5);
+	addButton(Common::Rect(8, 65, 263, 73), Common::KEYCODE_6);
+	addButton(Common::Rect(8, 74, 263, 82), Common::KEYCODE_7);
+	addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8);
+	addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9);
+}
+
+int ItemSelectionDialog::execute() {
+	EventsManager &events = *g_vm->_events;
+	Windows &windows = *g_vm->_windows;
+	Window &w = windows[13];
+
+	w.open();
+	w.writeString(Common::String::format(Res.WHICH_ITEM, Res.ITEM_ACTIONS[_actionIndex]));
+	_icons.draw(0, 0, Common::Point(235, 111));
+	w.update();
+
+	int itemIndex = -1;
+	while (!_vm->shouldExit()) {
+		_buttonValue = 0;
+		while (!_buttonValue) {
+			events.pollEventsAndWait();
+			checkEvents(_vm);
+			if (_vm->shouldExit())
+				return false;
+		}
+
+		if (_buttonValue == Common::KEYCODE_ESCAPE) {
+			itemIndex = -1;
+			break;
+		}
+		else if (_buttonValue >= Common::KEYCODE_1 && _buttonValue <= Common::KEYCODE_9) {
+			// Check whether there's an item at the selected index
+			int selectedIndex = _buttonValue - Common::KEYCODE_1;
+			if (!_items[selectedIndex]._id)
+				continue;
+
+			itemIndex = selectedIndex;
+			break;
+		}
+	}
+
+	w.close();
+	return itemIndex;
 }
 
 } // End of namespace Xeen

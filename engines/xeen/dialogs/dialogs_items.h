@@ -71,6 +71,38 @@ public:
 	static Character *show(XeenEngine *vm, Character *c, ItemsMode mode);
 };
 
+class ItemSelectionDialog : public ButtonContainer {
+private:
+	SpriteResource _icons;
+	int _actionIndex;
+	InventoryItems &_items;
+
+	ItemSelectionDialog(XeenEngine *vm, int actionIndex, InventoryItems &items) : ButtonContainer(vm),
+			_actionIndex(actionIndex), _items(items) {
+		loadButtons();
+	}
+
+	/**
+	 * Executes the dialog
+	 * @returns					Selected item index
+	 */
+	int execute();
+
+	/**
+	 * Loads buttons
+	 */
+	void loadButtons();
+public:
+	/**
+	 * Shows the dialog
+	 * @param actionIndex		Current action type
+	 * @param items				Currently active items category
+	 * @returns					Selected item index
+	 */
+	static int show(int actionIndex, InventoryItems &items);
+};
+
+
 } // End of namespace Xeen
 
 #endif /* XEEN_DIALOGS_ITEMS_H */
