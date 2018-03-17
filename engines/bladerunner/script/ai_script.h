@@ -201,6 +201,10 @@ DECLARE_SCRIPT(Crazylegs)
 	bool _flag;
 END_SCRIPT
 
+DECLARE_SCRIPT(Luther)
+	bool _flag;
+END_SCRIPT
+
 DECLARE_SCRIPT(Grigorian)
 	int var_45CA10;
 	int var_45CA14;
