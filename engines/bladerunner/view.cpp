@@ -31,8 +31,9 @@ bool View::readVqa(Common::ReadStream *stream) {
 	_frame = stream->readUint32LE();
 
 	float d[12];
-	for (int i = 0; i != 12; ++i)
+	for (int i = 0; i != 12; ++i) {
 		d[i] = stream->readFloatLE();
+	}
 
 	_frameViewMatrix = Matrix4x3(d);
 
@@ -54,17 +55,11 @@ void View::setFovX(float fovX) {
 }
 
 void View::calculateSliceViewMatrix() {
-	Matrix4x3 m = _frameViewMatrix;
-
-	m = m * rotationMatrixX(float(M_PI) / 2.0f);
-
-	Matrix4x3 a(-1.0f,  0.0f, 0.0f, 0.0f,
-	             0.0f, -1.0f, 0.0f, 0.0f,
-	             0.0f,  0.0f, 1.0f, 0.0f);
-
-	m = a * m;
-
-	_sliceViewMatrix = m;
+	Matrix4x3 mRotation = rotationMatrixX(float(M_PI) / 2.0f);
+	Matrix4x3 mInvert(-1.0f,  0.0f, 0.0f, 0.0f,
+	                   0.0f, -1.0f, 0.0f, 0.0f,
+	                   0.0f,  0.0f, 1.0f, 0.0f);
+	_sliceViewMatrix = mInvert * (_frameViewMatrix * mRotation);
 }
 
 void View::calculateCameraPosition() {

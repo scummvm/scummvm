@@ -483,10 +483,10 @@ void SceneScriptHF05::sub_403738() {
 }
 
 int SceneScriptHF05::sub_404858() {
-	if (Global_Variable_Query(45) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
+	if (Global_Variable_Query(kVariableAffectionTowards) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
 		return kActorDektora;
 	}
-	if (Global_Variable_Query(45) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
+	if (Global_Variable_Query(kVariableAffectionTowards) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
 		return kActorLucy;
 	}
 	return -1;
@@ -494,15 +494,15 @@ int SceneScriptHF05::sub_404858() {
 
 void SceneScriptHF05::sub_4042E4() {
 	Actor_Force_Stop_Walking(kActorMcCoy);
-	Actor_Put_In_Set(kActorOfficerLeary, 41);
-	Actor_Set_At_XYZ(kActorOfficerLeary, 430.39999f, 40.630001f, -258.17999f, 300);
-	Actor_Put_In_Set(kActorOfficerGrayford, 41);
-	Actor_Set_At_XYZ(kActorOfficerGrayford, 526.40002f, 37.18f, -138.17999f, 300);
+	Actor_Put_In_Set(kActorOfficerLeary, kSetHF05);
+	Actor_Set_At_XYZ(kActorOfficerLeary, 430.4f, 40.63f, -258.18f, 300);
+	Actor_Put_In_Set(kActorOfficerGrayford, kSetHF05);
+	Actor_Set_At_XYZ(kActorOfficerGrayford, 526.4f, 37.18f, -138.18f, 300);
 	ADQ_Flush();
 	ADQ_Add(kActorOfficerGrayford, 260, -1);
 	Player_Loses_Control();
-	Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 3, 1, kActorMcCoy, 4, 4, 7, 8, 0, 0, 100, 100, 1200, 1);
-	return Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, 3, 1, kActorMcCoy, 4, 4, 7, 8, 0, 0, 100, 100, 300, 1);
+	Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateUncover, true, kActorMcCoy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 100, 1200, true);
+	Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateUncover, true, kActorMcCoy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 100, 300, true);
 }
 
 void SceneScriptHF05::sub_403F0C() {

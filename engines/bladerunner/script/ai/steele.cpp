@@ -419,7 +419,7 @@ bool AIScriptSteele::ShotAtAndHit() {
 		Actor_Set_Goal_Number(kActorSteele, 271);
 
 	if (/* !a1 && */ Actor_Query_In_Set(kActorSteele, kSetHF06))
-		Non_Player_Actor_Combat_Mode_On(1, 3, 1, 0, 15, 4, 7, 8, 0, 0, 100, 25, 300, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorMcCoy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 
 	return false;
 }

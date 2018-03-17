@@ -728,7 +728,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 		}
 		break;
-	case kAnimationModeCombatShoot:
+	case kAnimationModeCombatAttack:
 		_animationState = 31;
 		_animationFrame = 0;
 		break;

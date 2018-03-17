@@ -152,7 +152,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 			Set_Enter(kSetCT06, kSceneCT06);
 		}
 		if (Actor_Query_Goal_Number(kActorZuben) == 21) {
-			Non_Player_Actor_Combat_Mode_On(kActorZuben, 0, 0, kActorMcCoy, 6, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 15, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorZuben, kActorCombatStateIdle, false, kActorMcCoy, 6, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 15, 300, false);
 		}
 		int goal = Actor_Query_Goal_Number(kActorZuben);
 		if (goal == 200) {
@@ -977,7 +977,7 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
-	case kAnimationModeCombatShoot:
+	case kAnimationModeCombatAttack:
 		_animationState = 8;
 		_animationFrame = 0;
 		break;

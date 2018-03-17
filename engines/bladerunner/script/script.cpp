@@ -130,7 +130,7 @@ void ScriptBase::Actor_Face_Heading(int actorId, int heading, bool animate) {
 }
 
 int ScriptBase::Actor_Query_Friendliness_To_Other(int actorId, int otherActorId) {
-	return _vm->_actors[actorId]->_friendlinessToOther[otherActorId];
+	return _vm->_actors[actorId]->getFriendlinessToOther(otherActorId);
 }
 
 void ScriptBase::Actor_Modify_Friendliness_To_Other(int actorId, int otherActorId, signed int change) {
@@ -158,27 +158,27 @@ void ScriptBase::Actor_Set_Combat_Aggressiveness(int actorId, int combatAggressi
 }
 
 int ScriptBase::Actor_Query_Current_HP(int actorId) {
-	return _vm->_actors[actorId]->_currentHP;
+	return _vm->_actors[actorId]->getCurrentHP();
 }
 
 int ScriptBase::Actor_Query_Max_HP(int actorId) {
-	return _vm->_actors[actorId]->_maxHP;
+	return _vm->_actors[actorId]->getMaxHP();
 }
 
 int ScriptBase::Actor_Query_Combat_Aggressiveness(int actorId) {
-	return _vm->_actors[actorId]->_combatAggressiveness;
+	return _vm->_actors[actorId]->getCombatAggressiveness();
 }
 
 int ScriptBase::Actor_Query_Honesty(int actorId) {
-	return _vm->_actors[actorId]->_honesty;
+	return _vm->_actors[actorId]->getHonesty();
 }
 
 int ScriptBase::Actor_Query_Intelligence(int actorId) {
-	return _vm->_actors[actorId]->_intelligence;
+	return _vm->_actors[actorId]->getIntelligence();
 }
 
 int ScriptBase::Actor_Query_Stability(int actorId) {
-	return _vm->_actors[actorId]->_stability;
+	return _vm->_actors[actorId]->getStability();
 }
 
 void ScriptBase::Actor_Modify_Current_HP(int actorId, signed int change) {
@@ -218,8 +218,8 @@ void ScriptBase::Actor_Combat_AI_Hit_Attempt(int actorId) {
 		_vm->_actors[actorId]->_combatInfo->hitAttempt();
 }
 
-void ScriptBase::Non_Player_Actor_Combat_Mode_On(int actorId, int a2, int a3, int otherActorId, int a5, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int a9, int a10, int a11, int a12, int a13, int a14) {
-	_vm->_actors[actorId]->combatModeOn(a2, a3, otherActorId, a5, animationModeCombatIdle, animationModeCombatWalk, animationModeCombatRun, a9, a10, a11, a12, a13, a14);
+void ScriptBase::Non_Player_Actor_Combat_Mode_On(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool a14) {
+	_vm->_actors[actorId]->combatModeOn(initialState, rangedAttack, enemyId, waypointType, animationModeCombatIdle, animationModeCombatWalk, animationModeCombatRun, fleeRatio, coverRatio, actionRatio, damage, range, a14);
 }
 
 void ScriptBase::Non_Player_Actor_Combat_Mode_Off(int actorId) {
@@ -723,8 +723,9 @@ int ScriptBase::Animation_Skip_To_Frame() {
 void ScriptBase::Delay(int miliseconds) {
 	Player_Loses_Control();
 	int endTime = _vm->getTotalPlayTime() + miliseconds;
-	while ((int)_vm->getTotalPlayTime() < endTime)
+	while ((int)_vm->getTotalPlayTime() < endTime) {
 		_vm->gameTick();
+	}
 	Player_Gains_Control();
 }
 
@@ -1075,14 +1076,27 @@ float ScriptBase::World_Waypoint_Query_Z(int waypointId) {
 	return _vm->_waypoints->getZ(waypointId);
 }
 
-void ScriptBase::Combat_Cover_Waypoint_Set_Data(int combatCoverId, int type, int setId, int sceneId, float x, float y, float z) {
-	//TODO
-	warning("Combat_Cover_Waypoint_Set_Data(%d, %d, %d, %d, %f, %f, %f)", combatCoverId, type, setId, sceneId, x, y, z);
+void ScriptBase::Combat_Cover_Waypoint_Set_Data(int coverWaypointId, int type, int setId, int sceneId, float x, float y, float z) {
+	assert(coverWaypointId < (int)_vm->_combat->_coverWaypoints.size());
+
+	_vm->_combat->_coverWaypoints[coverWaypointId].type = type;
+	_vm->_combat->_coverWaypoints[coverWaypointId].setId = setId;
+	_vm->_combat->_coverWaypoints[coverWaypointId].sceneId = sceneId;
+	_vm->_combat->_coverWaypoints[coverWaypointId].position.x = x;
+	_vm->_combat->_coverWaypoints[coverWaypointId].position.y = y;
+	_vm->_combat->_coverWaypoints[coverWaypointId].position.z = z;
 }
 
-void ScriptBase::Combat_Flee_Waypoint_Set_Data(int combatFleeWaypointId, int type, int setId, int sceneId, float x, float y, float z, int a8) {
-	//TODO
-	warning("Combat_Cover_Waypoint_Set_Data(%d, %d, %d, %d, %f, %f, %f, %d)", combatFleeWaypointId, type, setId, sceneId, x, y, z, a8);
+void ScriptBase::Combat_Flee_Waypoint_Set_Data(int fleeWaypointId, int type, int setId, int sceneId, float x, float y, float z, int a8) {
+	assert(fleeWaypointId < (int)_vm->_combat->_fleeWaypoints.size());
+
+	_vm->_combat->_fleeWaypoints[fleeWaypointId].type = type;
+	_vm->_combat->_fleeWaypoints[fleeWaypointId].setId = setId;
+	_vm->_combat->_fleeWaypoints[fleeWaypointId].sceneId = sceneId;
+	_vm->_combat->_fleeWaypoints[fleeWaypointId].position.x = x;
+	_vm->_combat->_fleeWaypoints[fleeWaypointId].position.y = y;
+	_vm->_combat->_fleeWaypoints[fleeWaypointId].position.z = z;
+	_vm->_combat->_fleeWaypoints[fleeWaypointId].field7 = a8;
 }
 
 void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10) {
@@ -1221,10 +1235,8 @@ bool ScriptBase::Query_System_Currently_Loading_Game() {
 
 void ScriptBase::Actor_Retired_Here(int actorId, int width, int height, int retired, int retiredByActorId) {
 	Actor *actor = _vm->_actors[actorId];
-	Vector3 actorPosition;
-	actor->getXYZ(&actorPosition.x, &actorPosition.y, &actorPosition.z);
 	actor->retire(retired, width, height, retiredByActorId);
-	actor->setAtXYZ(actorPosition, actor->getFacing(), true, false, true);
+	actor->setAtXYZ(actor->getXYZ(), actor->getFacing(), true, false, true);
 	_vm->_sceneObjects->setRetired(actorId + kSceneObjectOffsetActors, true);
 }
 

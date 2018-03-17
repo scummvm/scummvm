@@ -384,7 +384,7 @@ void SceneScriptNR01::PlayerWalkedIn() {
 			if (Actor_Query_Goal_Number(kActorGordo) == 230) {
 				Scene_Exits_Disable();
 				Actor_Set_Goal_Number(kActorGordo, 231);
-				Non_Player_Actor_Combat_Mode_On(kActorGordo, 0, 1, kActorMcCoy, 3, 4, 7, 8, -1, -1, -1, 20, 300, 0);
+				Non_Player_Actor_Combat_Mode_On(kActorGordo, kActorCombatStateIdle, true, kActorMcCoy, 3, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 20, 300, false);
 			}
 		} else if (Game_Flag_Query(545)) {
 			Game_Flag_Reset(545);

@@ -23,9 +23,11 @@
 #ifndef BLADERUNNER_COMBAT_H
 #define BLADERUNNER_COMBAT_H
 
-namespace BladeRunner {
+#include "bladerunner/vector.h"
 
-class Vector3;
+#include "common/array.h"
+
+namespace BladeRunner {
 
 class BladeRunnerEngine;
 
@@ -44,6 +46,24 @@ class Combat {
 public:
 	int _ammoDamage[3];
 
+	struct CoverWaypoint {
+		int      type;
+		int      setId;
+		int      sceneId;
+		Vector3  position;
+	};
+
+	struct FleeWaypoint {
+		int     type;
+		int     setId;
+		int     sceneId;
+		Vector3 position;
+		int     field7;
+	};
+
+	Common::Array<CoverWaypoint> _coverWaypoints;
+	Common::Array<FleeWaypoint>  _fleeWaypoints;
+
 public:
 	Combat(BladeRunnerEngine *vm);
 	~Combat();
@@ -60,10 +80,13 @@ public:
 
 	void setHitSound(int ammoType, int column, int soundId);
 	void setMissSound(int ammoType, int column, int soundId);
-	int getHitSound();
-	int getMissSound();
+	int getHitSound() const;
+	int getMissSound() const;
 
 	void shoot(int actorId, Vector3 &to, int screenX);
+
+	int findFleeWaypoint(int setId, int enemyId, const Vector3& position) const;
+	int findCoverWaypoint(int waypointType, int actorId, int enemyId) const;
 };
 
 } // End of namespace BladeRunner

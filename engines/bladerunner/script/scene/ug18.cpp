@@ -323,9 +323,8 @@ void SceneScriptUG18::sub_402734() {
 }
 
 void SceneScriptUG18::sub_402DE8() {
-
 	if (Player_Query_Agenda()) {
-		if (Global_Variable_Query(45) > 1 || Player_Query_Agenda() == 2) {
+		if (Global_Variable_Query(kVariableAffectionTowards) > 1 || Player_Query_Agenda() == 2) {
 			sub_403114();
 		} else {
 			sub_402F8C();

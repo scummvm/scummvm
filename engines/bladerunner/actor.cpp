@@ -22,11 +22,11 @@
 
 #include "bladerunner/actor.h"
 
-#include "bladerunner/bladerunner.h"
 #include "bladerunner/actor_clues.h"
 #include "bladerunner/actor_combat.h"
 #include "bladerunner/actor_walk.h"
 #include "bladerunner/audio_speech.h"
+#include "bladerunner/bladerunner.h"
 #include "bladerunner/boundingbox.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/items.h"
@@ -671,6 +671,12 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 	return isVisible;
 }
 
+void Actor::tickCombat() {
+	if (_id != kActorMcCoy && !_isRetired && _inCombat) {
+		_combatInfo->tick();
+	}
+}
+
 bool Actor::draw(Common::Rect *screenRect) {
 	Vector3 drawPosition(_position.x, -_position.z, _position.y + 2.0);
 	float drawAngle = M_PI - _facing * (M_PI / 512.0f);
@@ -904,16 +910,6 @@ void Actor::setImmunityToObstacles(bool isImmune) {
 	_isImmuneToObstacles = isImmune;
 }
 
-void Actor::modifyCurrentHP(signed int change) {
-	_currentHP = CLIP(_currentHP + change, 0, 100);
-	if (_currentHP > 0)
-		retire(false, 0, 0, -1);
-}
-
-void Actor::modifyMaxHP(signed int change) {
-	_maxHP = CLIP(_maxHP + change, 0, 100);
-}
-
 void Actor::modifyCombatAggressiveness(signed int change) {
 	_combatAggressiveness = CLIP(_combatAggressiveness + change, 0, 100);
 }
@@ -955,6 +951,13 @@ void Actor::setTarget(bool target) {
 	_isTarget = target;
 }
 
+void Actor::setCurrentHP(int hp) {
+	_currentHP = hp;
+	if (hp > 0) {
+		retire(false, 0, 0, -1);
+	}
+}
+
 void Actor::setHealth(int hp, int maxHp) {
 	_currentHP = hp;
 	_maxHP = maxHp;
@@ -963,13 +966,25 @@ void Actor::setHealth(int hp, int maxHp) {
 	}
 }
 
-void Actor::combatModeOn(int a2, int a3, int otherActorId, int a5, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int a9, int a10, int a11, int ammoDamage, int a13, int a14) {
+void Actor::modifyCurrentHP(signed int change) {
+	_currentHP = CLIP(_currentHP + change, 0, 100);
+	if (_currentHP > 0) {
+		retire(false, 0, 0, -1);
+	}
+}
+
+void Actor::modifyMaxHP(signed int change) {
+	_maxHP = CLIP(_maxHP + change, 0, 100);
+}
+
+
+void Actor::combatModeOn(int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool a14) {
 	_animationModeCombatIdle = animationModeCombatIdle;
 	_animationModeCombatWalk = animationModeCombatWalk;
 	_animationModeCombatRun = animationModeCombatRun;
 	_inCombat = true;
 	if (_id != kActorMcCoy) {
-		_combatInfo->combatOn(_id, a2, a3, otherActorId, a5, a9, a10, a11, ammoDamage, a13, a14);
+		_combatInfo->combatOn(_id, initialState, rangedAttack, enemyId, waypointType, fleeRatio, coverRatio, actionRatio, damage, range, a14);
 	}
 	stopWalking(false);
 	changeAnimationMode(_animationModeCombatIdle, false);
@@ -1002,6 +1017,16 @@ float Actor::distanceFromActor(int otherActorId) {
 	return (_position - _vm->_actors[otherActorId]->_position).length();
 }
 
+int Actor::angleTo(const Vector3 &target) const {
+	int angle = angle_1024(_position.x, _position.z, target.x, target.z) - _facing;
+	if (angle < -512) {
+		angle += 1024;
+	} else if (angle > 512) {
+		angle -= 1024;
+	}
+	return angle;
+}
+
 float Actor::getX() const {
 	return _position.x;
 }
@@ -1014,10 +1039,8 @@ float Actor::getZ() const {
 	return _position.z;
 }
 
-void Actor::getXYZ(float *x, float *y, float *z) const {
-	*x = _position.x;
-	*y = _position.y;
-	*z = _position.z;
+Vector3 Actor::getXYZ() const {
+	return _position;
 }
 
 int Actor::getFacing() const {
@@ -1112,8 +1135,8 @@ int Actor::soundBalance() const {
 	return 35.0f * (CLIP(screenPosition.x / 640.0f, 0.0f, 1.0f) * 2.0f - 1.0f);
 }
 
-bool Actor::isObstacleBetween(float targetX, float targetZ) {
-	return _vm->_sceneObjects->isObstacleBetween(_position.x, _position.z, targetX, targetZ, _position.y, -1);
+bool Actor::isObstacleBetween(const Vector3 &target) {
+	return _vm->_sceneObjects->isObstacleBetween(_position, target, -1);
 }
 
 int Actor::findTargetUnderMouse(BladeRunnerEngine *vm, int mouseX, int mouseY) {

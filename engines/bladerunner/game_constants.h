@@ -597,14 +597,17 @@ enum AnimationModes {
 	kAnimationModeTalk = 3,
 	kAnimationModeCombatIdle = 4,
 	kAnimationModeCombatAim = 5,
-	kAnimationModeCombatShoot = 6,
+	kAnimationModeCombatAttack = 6,
 	kAnimationModeCombatWalk = 7,
 	kAnimationModeCombatRun = 8,
+	kAnimationModeHit = 21,
+	kAnimationModeCombatHit = 22,
 	kAnimationModeWalkUp = 44,
 	kAnimationModeWalkDown = 45,
 	kAnimationModeCombatWalkUp = 46,
 	kAnimationModeCombatWalkDown = 47,
-	kAnimationModeDie = 48, // TODO: check
+	kAnimationModeDie = 48,
+	kAnimationModeCombatDie = 49,
 	kAnimationModeFeeding = 52,
 	kAnimationModeSit = 53, // TODO: check
 	kAnimationModeClimbUp = 64,
@@ -869,6 +872,18 @@ enum SceneObjectOffset {
 	kSceneObjectOffsetActors  = 0,
 	kSceneObjectOffsetItems   = 74,
 	kSceneObjectOffsetObjects = 198
+};
+
+enum ActorCombatStates {
+	kActorCombatStateIdle = 0,
+	kActorCombatStateCover = 1,
+	kActorCombatStateApproachCloseAttack = 2,
+	kActorCombatStateUncover = 3,
+	kActorCombatStateAim = 4,
+	kActorCombatStateRangedAttack = 5,
+	kActorCombatStateCloseAttack = 6,
+	kActorCombatStateFlee = 7,
+	kActorCombatStateApproachRangedAttack = 8
 };
 
 } // End of namespace BladeRunner

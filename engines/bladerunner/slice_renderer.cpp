@@ -122,7 +122,7 @@ Matrix3x2 SliceRenderer::calculateFacingRotationMatrix() {
 	float s = sinf(dir);
 	float c = cosf(dir);
 
-	Matrix3x2 mRotation( c, -s, 0.0f,
+	Matrix3x2 mRotation(c, -s, 0.0f,
 	                    s,  c, 0.0f);
 
 	Matrix3x2 mView(_view->_sliceViewMatrix(0,0), _view->_sliceViewMatrix(0,1), 0.0f,
@@ -164,28 +164,19 @@ void SliceRenderer::calculateBoundingRect() {
 	Matrix3x2 mScale(_frameScale.x,          0.0f, 0.0f,
 	                          0.0f, _frameScale.y, 0.0f);
 
-	_modelMatrix = mProjection * (facingRotation * (mOffset * mScale));
+	_mvpMatrix = mProjection * (facingRotation * (mOffset * mScale));
 
 	Vector4 startScreenVector(
-	           _view->_viewportPosition.x + top.x / top.z * _view->_viewportPosition.z,
-	           _view->_viewportPosition.y + top.y / top.z * _view->_viewportPosition.z,
+	           _view->_viewportPosition.x + (top.x / top.z) * _view->_viewportPosition.z,
+	           _view->_viewportPosition.y + (top.y / top.z) * _view->_viewportPosition.z,
 	           1.0f / top.z,
 	           _frameSliceCount * (1.0f / top.z));
 
 	Vector4 endScreenVector(
-	           _view->_viewportPosition.x + bottom.x / bottom.z * _view->_viewportPosition.z,
-	           _view->_viewportPosition.y + bottom.y / bottom.z * _view->_viewportPosition.z,
+	           _view->_viewportPosition.x + (bottom.x / bottom.z) * _view->_viewportPosition.z,
+	           _view->_viewportPosition.y + (bottom.y / bottom.z) * _view->_viewportPosition.z,
 	           1.0f / bottom.z,
 	           0.0f);
-
-	_startScreenVector.x = startScreenVector.x;
-	_startScreenVector.y = startScreenVector.y;
-	_startScreenVector.z = startScreenVector.z;
-	_endScreenVector.x   = endScreenVector.x;
-	_endScreenVector.y   = endScreenVector.y;
-	_endScreenVector.z   = endScreenVector.z;
-	_startSlice          = startScreenVector.w;
-	_endSlice            = endScreenVector.w;
 
 	Vector4 delta = endScreenVector - startScreenVector;
 
@@ -197,60 +188,68 @@ void SliceRenderer::calculateBoundingRect() {
 	 * Calculate min and max Y
 	 */
 
-	float screenMinY =   0.0f;
-	float screenMaxY = 479.0f;
+	float screenTop    =   0.0f;
+	float screenBottom = 479.0f;
 
-	if (startScreenVector.y < screenMinY) {
-		if (endScreenVector.y < screenMinY)
+	if (startScreenVector.y < screenTop) {
+		if (endScreenVector.y < screenTop) {
 			return;
-
-		float f = (screenMinY - startScreenVector.y) / delta.y;
+		}
+		float f = (screenTop - startScreenVector.y) / delta.y;
 		startScreenVector = startScreenVector + f * delta;
-	} else if (startScreenVector.y > screenMaxY) {
-		if (endScreenVector.y >= screenMaxY)
+	} else if (startScreenVector.y > screenBottom) {
+		if (endScreenVector.y >= screenBottom) {
 			return;
-
-		float f = (screenMaxY - startScreenVector.y) / delta.y;
+		}
+		float f = (screenBottom - startScreenVector.y) / delta.y;
 		startScreenVector = startScreenVector + f * delta;
 	}
 
-	if (endScreenVector.y < screenMinY) {
-		float f = (screenMinY - endScreenVector.y) / delta.y;
+	if (endScreenVector.y < screenTop) {
+		float f = (screenTop - endScreenVector.y) / delta.y;
 		endScreenVector = endScreenVector + f * delta;
-	} else if (endScreenVector.y > screenMaxY) {
-		float f = (screenMaxY - endScreenVector.y) / delta.y;
+	} else if (endScreenVector.y > screenBottom) {
+		float f = (screenBottom - endScreenVector.y) / delta.y;
 		endScreenVector = endScreenVector + f * delta;
 	}
 
-	int bbox_min_y = (int)MIN(startScreenVector.y, endScreenVector.y);
-	int bbox_max_y = (int)MAX(startScreenVector.y, endScreenVector.y) + 1;
+	_screenRectangle.top    = (int)MIN(startScreenVector.y, endScreenVector.y);
+	_screenRectangle.bottom = (int)MAX(startScreenVector.y, endScreenVector.y) + 1;
 
 	/*
 	 * Calculate min and max X
 	 */
 
-	Matrix3x2 mB6 = _modelMatrix + Vector2(startScreenVector.x, 25.5f / startScreenVector.z);
-	Matrix3x2 mC2 = _modelMatrix + Vector2(endScreenVector.x,   25.5f / endScreenVector.z);
+	Matrix3x2 mStart(
+		1.0f, 0.0f, startScreenVector.x,
+		0.0f, 1.0f, 25.5f / startScreenVector.z
+	);
 
-	float min_x =  640.0f;
-	float max_x =    0.0f;
+	Matrix3x2 mEnd(
+		1.0f, 0.0f, endScreenVector.x,
+		0.0f, 1.0f, 25.5f / endScreenVector.z
+	);
+
+	Matrix3x2 mStartMVP = mStart * _mvpMatrix;
+	Matrix3x2 mEndMVP   = mEnd   * _mvpMatrix;
+
+	float minX =  640.0f;
+	float maxX =    0.0f;
 
 	for (float i = 0.0f; i <= 256.0f; i += 255.0f) {
 		for (float j = 0.0f; j <= 256.0f; j += 255.0f) {
-			Vector2 v1 = mB6 * Vector2(i, j);
+			Vector2 v1 = mStartMVP * Vector2(i, j);
+			minX = MIN(minX, v1.x);
+			maxX = MAX(maxX, v1.x);
 
-			min_x = MIN(min_x, v1.x);
-			max_x = MAX(max_x, v1.x);
-
-			Vector2 v2 = mC2 * Vector2(i, j);
-
-			min_x = MIN(min_x, v2.x);
-			max_x = MAX(max_x, v2.x);
+			Vector2 v2 = mEndMVP * Vector2(i, j);
+			minX = MIN(minX, v2.x);
+			maxX = MAX(maxX, v2.x);
 		}
 	}
 
-	int bbox_min_x = CLIP((int)min_x,     0, 640);
-	int bbox_max_x = CLIP((int)max_x + 1, 0, 640);
+	_screenRectangle.left  = CLIP((int)minX,     0, 640);
+	_screenRectangle.right = CLIP((int)maxX + 1, 0, 640);
 
 	_startScreenVector.x = startScreenVector.x;
 	_startScreenVector.y = startScreenVector.y;
@@ -260,11 +259,6 @@ void SliceRenderer::calculateBoundingRect() {
 	_endScreenVector.z   = endScreenVector.z;
 	_startSlice          = startScreenVector.w;
 	_endSlice            = endScreenVector.w;
-
-	_screenRectangle.left   = bbox_min_x;
-	_screenRectangle.right  = bbox_max_x;
-	_screenRectangle.top    = bbox_min_y;
-	_screenRectangle.bottom = bbox_max_y;
 }
 
 void SliceRenderer::loadFrame(int animation, int frame) {
@@ -285,7 +279,8 @@ void SliceRenderer::loadFrame(int animation, int frame) {
 }
 
 struct SliceLineIterator {
-	int _sliceMatrix[2][3];
+	// int _sliceMatrix[2][3];
+	Matrix3x2 _sliceMatrix;
 	int _startY;
 	int _endY;
 
@@ -316,8 +311,9 @@ void SliceLineIterator::setup(
 
 	float size = endScreenY - startScreenY;
 
-	if (size <= 0.0f || startScreenZ <= 0.0f)
+	if (size <= 0.0f || startScreenZ <= 0.0f) {
 		_currentY = _endY + 1;
+	}
 
 	_currentZ  = startScreenZ;
 	_stepZ     = (endScreenZ - startScreenZ) / size;
@@ -328,7 +324,7 @@ void SliceLineIterator::setup(
 	_currentX = startScreenX;
 	_stepX    = (endScreenX - startScreenX) / size;
 
-	_field_38 = (int)((25.5f / size) * (1.0f / endScreenZ - 1.0f / startScreenZ) * 64.0);
+	_field_38 = (int)((25.5f / size) * (1.0f / endScreenZ - 1.0f / startScreenZ) * 64.0f);
 	_currentY = _startY;
 
 	float offsetX =         _currentX;
@@ -342,9 +338,7 @@ void SliceLineIterator::setup(
 
 	m = scale_matrix * (translate_matrix * m);
 
-	for (int r = 0; r != 2; ++r)
-		for (int c = 0; c != 3; ++c)
-			_sliceMatrix[r][c] = m(r, c);
+	_sliceMatrix = m;
 }
 
 float SliceLineIterator::line() {
@@ -364,8 +358,8 @@ void SliceLineIterator::advance() {
 	_currentSlice      += _stepSlice;
 	_currentX          += _stepX;
 	_currentY          += 1;
-	_sliceMatrix[0][2] += (int)(65536.0f * _stepX);
-	_sliceMatrix[1][2] += _field_38;
+	_sliceMatrix._m[0][2] += (int)(65536.0f * _stepX);
+	_sliceMatrix._m[1][2] += _field_38;
 }
 
 static void setupLookupTable(int t[256], int inc) {
@@ -393,7 +387,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 		_endScreenVector.x,   _endScreenVector.y,   _endScreenVector.z,
 		_startScreenVector.x, _startScreenVector.y, _startScreenVector.z,
 		_endSlice,            _startSlice,
-		_modelMatrix
+		_mvpMatrix
 	);
 
 	SliceRendererLights sliceRendererLights = SliceRendererLights(_lights);
@@ -424,12 +418,12 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 	_setEffectColor.g = setEffectColor.g * 31.0f * 65536.0f;
 	_setEffectColor.b = setEffectColor.b * 31.0f * 65536.0f;
 
-	setupLookupTable(_m11lookup, sliceLineIterator._sliceMatrix[0][0]);
-	setupLookupTable(_m12lookup, sliceLineIterator._sliceMatrix[0][1]);
-	_m13 = sliceLineIterator._sliceMatrix[0][2];
-	setupLookupTable(_m21lookup, sliceLineIterator._sliceMatrix[1][0]);
-	setupLookupTable(_m22lookup, sliceLineIterator._sliceMatrix[1][1]);
-	_m23 = sliceLineIterator._sliceMatrix[1][2];
+	setupLookupTable(_m12lookup, sliceLineIterator._sliceMatrix(0, 1));
+	setupLookupTable(_m11lookup, sliceLineIterator._sliceMatrix(0, 0));
+	_m13 = sliceLineIterator._sliceMatrix(0, 2);
+	setupLookupTable(_m21lookup, sliceLineIterator._sliceMatrix(1, 0));
+	setupLookupTable(_m22lookup, sliceLineIterator._sliceMatrix(1, 1));
+	_m23 = sliceLineIterator._sliceMatrix(1, 2);
 
 	if (_animationsShadowEnabled[_animation]) {
 		float coeficientShadow;
@@ -545,8 +539,9 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 }
 
 void SliceRenderer::drawSlice(int slice, bool advanced, uint16 *frameLinePtr, uint16 *zbufLinePtr, int y) {
-	if (slice < 0 || (uint32)slice >= _frameSliceCount)
+	if (slice < 0 || (uint32)slice >= _frameSliceCount) {
 		return;
+	}
 
 	SliceAnimations::Palette &palette = _vm->_sliceAnimations->getPalette(_framePaletteIndex);
 
@@ -714,7 +709,12 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 	yMax = CLIP(yMax, 0, 480);
 	yMin = CLIP(yMin, 0, 480);
 
-	int ditheringFactor[] = { 0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5 };
+	int ditheringFactor[] = {
+		0,  8,  2, 10,
+		12, 4, 14,  6,
+		3, 11,  1,  9,
+		15, 7, 13,  5
+	};
 
 	for (int y = yMin; y < yMax; ++y) {
 		int xMin = CLIP(polygonLeft[y], 0, 640);

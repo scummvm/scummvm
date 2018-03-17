@@ -224,7 +224,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_screenEffects = new ScreenEffects(this, 0x8000);
 
-	_combat = new Combat(this);
 
 	// TODO: end credits
 
@@ -265,8 +264,11 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 		return false;
 
 	r = _gameInfo->open("GAMEINFO.DAT");
-	if (!r)
+	if (!r) {
 		return false;
+	}
+
+	_combat = new Combat(this);
 
 	// TODO: Create datetime - not used
 
@@ -751,8 +753,10 @@ void BladeRunnerEngine::gameTick() {
 			_sceneScript->playerWalkedIn();
 		}
 		bool inDialogueMenu = _dialogueMenu->isVisible();
-		if (!inDialogueMenu) {
-			// TODO: actors combat-tick
+		if  (!inDialogueMenu) {
+			for (int i = 0; i < (int)_gameInfo->getActorCount(); ++i) {
+				_actors[i]->tickCombat();
+			}
 		}
 
 		// TODO: Gun range announcements
@@ -768,9 +772,6 @@ void BladeRunnerEngine::gameTick() {
 		}
 		(void)backgroundChanged;
 		blit(_surfaceBack, _surfaceFront);
-
-		// TODO: remove zbuffer draw
-		// _surfaceFront.copyRectToSurface(_zbuffer->getData(), 1280, 0, 0, 640, 480);
 
 		_overlays->tick();
 
@@ -1226,7 +1227,7 @@ void BladeRunnerEngine::handleMouseClick3DObject(int objectId, bool buttonDown, 
 		}
 		_playerActor->stopWalking(false);
 		_playerActor->faceObject(objectName, false);
-		_playerActor->changeAnimationMode(kAnimationModeCombatShoot, false);
+		_playerActor->changeAnimationMode(kAnimationModeCombatAttack, false);
 		_settings->decreaseAmmo();
 		_audioPlayer->playAud(_gameInfo->getSfxTrack(_combat->getHitSound()), 100, 0, 0, 90, 0);
 
@@ -1267,7 +1268,7 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePositi
 		} else {
 			_playerActor->faceItem(itemId, false);
 		}
-		_playerActor->changeAnimationMode(kAnimationModeCombatShoot, false);
+		_playerActor->changeAnimationMode(kAnimationModeCombatAttack, false);
 		_settings->decreaseAmmo();
 		_audioPlayer->playAud(_gameInfo->getSfxTrack(_combat->getMissSound()), 100, 0, 0, 90, 0);
 
@@ -1362,7 +1363,7 @@ void BladeRunnerEngine::handleMouseClickItem(int itemId, bool buttonDown) {
 
 		_playerActor->stopWalking(false);
 		_playerActor->faceItem(itemId, false);
-		_playerActor->changeAnimationMode(kAnimationModeCombatShoot, false);
+		_playerActor->changeAnimationMode(kAnimationModeCombatAttack, false);
 		_settings->decreaseAmmo();
 		_audioPlayer->playAud(_gameInfo->getSfxTrack(_combat->getHitSound()), 100, 0, 0, 90, 0);
 
@@ -1422,18 +1423,17 @@ void BladeRunnerEngine::handleMouseClickActor(int actorId, bool mainButton, bool
 			}
 		}
 	} else {
-		if (!_combat->isActive() || actorId == kActorMcCoy || !_actors[actorId]->isTarget() || _actors[actorId]->isRetired() /*|| _mouse->isRandomized()*/) {
+		Actor *actor = _actors[actorId];
+
+		if (!_combat->isActive() || actorId == kActorMcCoy || !actor->isTarget() || actor->isRetired() /*|| _mouse->isRandomized()*/) {
 			return;
 		}
 		_playerActor->stopWalking(false);
 		_playerActor->faceActor(actorId, false);
-		_playerActor->changeAnimationMode(kAnimationModeCombatShoot, false);
+		_playerActor->changeAnimationMode(kAnimationModeCombatAttack, false);
 		_settings->decreaseAmmo();
 
-		float targetX = _actors[actorId]->getX();
-		float targetZ = _actors[actorId]->getZ();
-
-		bool missed = _playerActor->isObstacleBetween(targetX, targetZ);
+		bool missed = _playerActor->isObstacleBetween(actor->getXYZ());
 
 		_audioPlayer->playAud(_gameInfo->getSfxTrack(missed ? _combat->getMissSound() : _combat->getHitSound()), 100, 0, 0, 90, 0);
 

@@ -535,6 +535,7 @@ public:
 	bool reachedMovementTrackWaypoint(int actor, int waypointId);
 	void updateAnimation(int actor, int *animation, int *frame);
 	void changeAnimationMode(int actor, int mode);
+	void fledCombat(int actor);
 
 	bool isInsideScript() const { return _inScriptCounter > 0; }
 

@@ -1157,7 +1157,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
-	case kAnimationModeCombatShoot:
+	case kAnimationModeCombatAttack:
 		_animationState = 18;
 		_animationFrame = 0;
 		break;

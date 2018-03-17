@@ -158,7 +158,7 @@ void SceneScriptKP05::PlayerWalkedIn() {
 		Actor_Says(kActorMcCoy, 2220, 3);
 		Actor_Says(kActorSteele, 620, 15);
 		Actor_Says(kActorSteele, 630, 17);
-		Non_Player_Actor_Combat_Mode_On(kActorSteele, 0, 1, kActorMcCoy, 9, 4, 7, 8, 0, -1, -1, 20, 240, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateIdle, true, kActorMcCoy, 9, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 20, 240, false);
 	}
 }
 

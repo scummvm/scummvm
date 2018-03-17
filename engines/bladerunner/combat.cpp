@@ -22,16 +22,22 @@
 
 #include "bladerunner/combat.h"
 
-
 #include "bladerunner/actor.h"
+#include "bladerunner/audio_speech.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_constants.h"
+#include "bladerunner/game_info.h"
+#include "bladerunner/movement_track.h"
+#include "bladerunner/scene_objects.h"
 #include "bladerunner/settings.h"
 
 namespace BladeRunner {
 
 Combat::Combat(BladeRunnerEngine *vm) {
 	_vm = vm;
+
+	_coverWaypoints.resize(_vm->_gameInfo->getCoverWaypointCount());
+	_fleeWaypoints.resize(_vm->_gameInfo->getFleeWaypointCount());
 
 	reset();
 }
@@ -55,7 +61,7 @@ void Combat::reset() {
 
 void Combat::activate() {
 	if(_enabled) {
-		_vm->_playerActor->combatModeOn(-1, -1, -1, -1, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, _vm->_combat->_ammoDamage[_vm->_settings->getAmmoType()], 0, 0);
+		_vm->_playerActor->combatModeOn(-1, true, -1, -1, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, _vm->_combat->_ammoDamage[_vm->_settings->getAmmoType()], 0, false);
 		_active = true;
 	}
 }
@@ -97,16 +103,105 @@ void Combat::setMissSound(int ammoType, int column, int soundId) {
 	_missSoundId[ammoType * 3 + column] = soundId;
 }
 
-int Combat::getHitSound() {
+int Combat::getHitSound() const {
 	return _hitSoundId[3 * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
 }
 
-int Combat::getMissSound() {
+int Combat::getMissSound() const {
 	return _hitSoundId[3 * _vm->_settings->getAmmoType() + _vm->_rnd.getRandomNumber(2)];
 }
 
 void Combat::shoot(int actorId, Vector3 &to, int screenX) {
+	Actor *actor = _vm->_actors[actorId];
 
+	if (actor->isRetired()) {
+		return;
+	}
+
+	int sentenceId = -1;
+
+	/*
+	Distance from center as a percentage:
+	                            screenX - abs(right + left) / 2
+	distanceFromCenter = 100 *  -------------------------------
+	                                 abs(right - left) / 2
+	*/
+	Common::Rect *rect = actor->getScreenRectangle();
+	int distanceFromCenter = CLIP(100 * (screenX - abs((rect->right + rect->left) / 2)) / abs((rect->right - rect->left) / 2), 0, 100);
+
+	int damage = (100 - distanceFromCenter) * _ammoDamage[_vm->_settings->getAmmoType()] / 100;
+
+	int hp = MAX(actor->getCurrentHP() - damage, 0);
+
+	actor->setCurrentHP(hp);
+
+	bool setDamageAnimation = true;
+	if (actor->isWalking() == 1 && !actor->getFlagDamageAnimIfMoving()) {
+		setDamageAnimation = false;
+	}
+	if (actor->_movementTrack->hasNext() && !actor->_movementTrack->isPaused()) {
+		setDamageAnimation = false;
+	}
+	if (setDamageAnimation) {
+		if (actor->isWalking()) {
+			actor->stopWalking(false);
+		}
+		if (actor->getAnimationMode() != kAnimationModeHit && actor->getAnimationMode() != kAnimationModeCombatHit) {
+			actor->changeAnimationMode(kAnimationModeHit, false);
+			sentenceId = _vm->_rnd.getRandomNumberRng(0, 1) ? 9000 : 9005;
+		}
+	}
+
+	if (hp <= 0) {
+		actor->setTarget(false);
+		if (actor->inCombat()) {
+			actor->combatModeOff();
+		}
+		actor->stopWalking(false);
+		actor->changeAnimationMode(48, false);
+		actor->retire(true, 72, 36, kActorMcCoy);
+		actor->setAtXYZ(actor->getXYZ(), actor->getFacing(), true, false, true);
+		_vm->_sceneObjects->setRetired(actorId + kSceneObjectOffsetActors, true);
+		sentenceId = 9020;
+	}
+
+	if (sentenceId >= 0 && actor->inCombat()) {
+		_vm->_audioSpeech->playSpeechLine(actorId, sentenceId, 75, 0, 99);
+	}
+}
+
+int Combat::findFleeWaypoint(int setId, int enemyId, const Vector3& position) const {
+	float min = -1.0f;
+	int result = -1;
+	for (int i = 0; i < (int)_fleeWaypoints.size(); ++i) {
+		if (setId == _fleeWaypoints[i].setId) {
+			float dist = distance(position, _fleeWaypoints[i].position);
+			if (result == -1 || dist < min) {
+				result = i;
+				min = dist;
+			}
+		}
+	}
+	return result;
+}
+
+int Combat::findCoverWaypoint(int waypointType, int actorId, int enemyId) const {
+	Actor *actor = _vm->_actors[actorId];
+	Actor *enemy = _vm->_actors[enemyId];
+	int result = -1;
+	float min = -1.0f;
+	for (int i = 0; i < (int)_coverWaypoints.size(); ++i) {
+		if (waypointType == _coverWaypoints[i].type && actor->getSetId() == _coverWaypoints[i].setId) {
+			if (_vm->_sceneObjects->isObstacleBetween(_coverWaypoints[i].position, enemy->getXYZ(), enemyId)) {
+				float dist = distance(_coverWaypoints[i].position, actor->getXYZ());
+				if (result == -1 || dist < min) {
+					result = i;
+					min = dist;
+				}
+			}
+		}
+	}
+	return result;
 }
 
 } // End of namespace BladeRunner

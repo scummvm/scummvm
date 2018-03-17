@@ -89,7 +89,7 @@ void SceneScriptCT07::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptCT07::PlayerWalkedIn() {
 	Player_Gains_Control();
-	Non_Player_Actor_Combat_Mode_On(kActorZuben, 0, 0, kActorMcCoy, 2, 4, 7, 8, 0, 0, 100, 15, 300, 0);
+	Non_Player_Actor_Combat_Mode_On(kActorZuben, kActorCombatStateIdle, false, kActorMcCoy, 2, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 15, 300, false);
 	Game_Flag_Set(516);
 	Actor_Face_Actor(kActorMcCoy, kActorZuben, true);
 }

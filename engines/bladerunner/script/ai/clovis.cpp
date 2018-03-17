@@ -440,22 +440,22 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Global_Variable_Decrement(51, 1);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorDektora, kSetKP07)) {
-			Non_Player_Actor_Combat_Mode_On(kActorDektora, 0, 0, 0, 19, 4, 7, 8, 0, 0, 100, 10, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorDektora, kActorCombatStateIdle, false, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorZuben, kSetKP07)) {
-			Non_Player_Actor_Combat_Mode_On(kActorZuben, 0, 0, 0, 19, 4, 7, 8, 0, 0, 100, 10, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorZuben, kActorCombatStateIdle, false, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorSadik, kSetKP07)) {
-			Non_Player_Actor_Combat_Mode_On(kActorSadik, 0, 1, 0, 19, 4, 7, 8, 0, 0, 100, 10, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorSadik, kActorCombatStateIdle, true, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorIzo, kSetKP07)) {
-			Non_Player_Actor_Combat_Mode_On(kActorIzo, 0, 0, 0, 19, 4, 7, 8, 0, 0, 100, 10, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorIzo, kActorCombatStateIdle, false, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorGordo, kSetKP07)) {
-			Non_Player_Actor_Combat_Mode_On(kActorGordo, 0, 1, 0, 19, 4, 7, 8, 0, 0, 100, 10, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorGordo, kActorCombatStateIdle, true, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 		if (Global_Variable_Query(kVariableChapter) == 5 && Actor_Query_In_Set(kActorClovis, kSetKP07)) {
-			Non_Player_Actor_Combat_Mode_On(kActorClovis, 0, 0, 0, 19, 4, 7, 8, 0, 0, 100, 10, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorClovis, kActorCombatStateIdle, false, kActorMcCoy, 19, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 		}
 		return true;
 

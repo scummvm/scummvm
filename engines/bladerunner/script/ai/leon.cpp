@@ -386,7 +386,7 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		var_45EDAC = 0;
 		break;
-	case kAnimationModeCombatShoot:
+	case kAnimationModeCombatAttack:
 		_animationState = 10;
 		_animationFrame = 0;
 		break;

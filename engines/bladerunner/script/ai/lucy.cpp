@@ -227,7 +227,7 @@ void AIScriptLucy::Retired(int byActorId) {
 	if ((byActorId == kActorSteele || byActorId == kActorMcCoy)
 			&& Actor_Query_In_Set(kActorSteele, kSetHF06)
 			&& Actor_Query_In_Set(kActorMcCoy, kSetHF06)) {
-		Non_Player_Actor_Combat_Mode_On(kActorSteele, 3, 1, 0, 15, 4, 7, 8, 0, 0, 100, 25, 300, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, kActorMcCoy, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 25, 300, false);
 	}
 	if (Query_Difficulty_Level() && byActorId == kActorMcCoy && Game_Flag_Query(46)) {
 		Global_Variable_Increment(2, 200);
@@ -861,10 +861,10 @@ void AIScriptLucy::checkCombat() {
 			&& Global_Variable_Query(kVariableChapter) == 5
 			&& Actor_Query_Goal_Number(kActorLucy) != 450) {
 		if (Global_Variable_Query(kVariableAffectionTowards) == 3) {
-			Global_Variable_Set(45, 0);
+			Global_Variable_Set(kVariableAffectionTowards, 0);
 		}
 		Actor_Set_Goal_Number(kActorLucy, 450);
-		Non_Player_Actor_Combat_Mode_On(kActorLucy, 0, 0, 0, 4, 0, 1, 2, -1, 0, 0, 10, 300, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorLucy, kActorCombatStateIdle, false, kActorMcCoy, 4, kAnimationModeIdle, kAnimationModeWalk, kAnimationModeRun, -1, 0, 0, 10, 300, false);
 	}
 }
 

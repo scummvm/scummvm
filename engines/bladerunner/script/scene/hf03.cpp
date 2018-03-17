@@ -96,8 +96,8 @@ void SceneScriptHF03::sub_401C80() {
 			Actor_Says(kActorLucy, 210, 13);
 			Actor_Says(kActorMcCoy, 1655, 15);
 			Actor_Modify_Friendliness_To_Other(kActorLucy, kActorMcCoy, Random_Query(9, 10));
-			if (Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 59 && !Global_Variable_Query(45)) {
-				Global_Variable_Set(45, 3);
+			if (Actor_Query_Friendliness_To_Other(kActorLucy, kActorMcCoy) > 59 && Global_Variable_Query(kVariableAffectionTowards) == 0) {
+				Global_Variable_Set(kVariableAffectionTowards, 3);
 				Actor_Says(kActorLucy, 940, 14);
 				Actor_Says(kActorMcCoy, 6780, 11);
 				Actor_Says(kActorLucy, 950, 12);

@@ -25,6 +25,7 @@
 #include "bladerunner/actor.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/boundingbox.h"
+#include "bladerunner/combat.h"
 #include "bladerunner/font.h"
 #include "bladerunner/game_constants.h"
 #include "bladerunner/game_flags.h"
@@ -271,8 +272,7 @@ bool Debugger::cmdPosition(int argc, const char **argv) {
 			return true;
 		}
 
-		Vector3 position;
-		otherActor->getXYZ(&position.x, &position.y, &position.z);
+		Vector3 position = otherActor->getXYZ();
 		actor->setSetId(otherActor->getSetId());
 		actor->setAtXYZ(position, otherActor->getFacing());
 		return true;
@@ -481,18 +481,51 @@ void Debugger::drawSceneObjects() {
 	}
 
 	//draw waypoints
-	for(int i = 0; i < _vm->_waypoints->_count; i++) {
+	for (int i = 0; i < _vm->_waypoints->_count; i++) {
 		Waypoints::Waypoint *waypoint = &_vm->_waypoints->_waypoints[i];
-		if(waypoint->setId != _vm->_scene->getSetId())
+		if(waypoint->setId != _vm->_scene->getSetId()) {
 			continue;
+		}
 		Vector3 pos = waypoint->position;
-		Vector3 size = Vector3(5.0f, 5.0f, 5.0f);
+		Vector3 size = Vector3(3.0f, 3.0f, 3.0f);
 		int color = 0x7FFF; // 11111 11111 11111
 		drawBBox(pos - size, pos + size, _vm->_view, &_vm->_surfaceFront, color);
 		Vector3 spos = _vm->_view->calculateScreenPosition(pos);
 		char waypointText[40];
 		sprintf(waypointText, "waypoint %i", i);
 		_vm->_mainFont->drawColor(waypointText, _vm->_surfaceFront, spos.x, spos.y, color);
+	}
+
+	//draw combat cover waypoints
+	for (int i = 0; i < (int)_vm->_combat->_coverWaypoints.size(); i++) {
+		Combat::CoverWaypoint *cover = &_vm->_combat->_coverWaypoints[i];
+		if (cover->setId != _vm->_scene->getSetId()) {
+			continue;
+		}
+		Vector3 pos = cover->position;
+		Vector3 size = Vector3(3.0f, 3.0f, 3.0f);
+		int color = 0x7C1F; // 11111 00000 11111
+		drawBBox(pos - size, pos + size, _vm->_view, &_vm->_surfaceFront, color);
+		Vector3 spos = _vm->_view->calculateScreenPosition(pos);
+		char coverText[40];
+		sprintf(coverText, "cover %i", i);
+		_vm->_mainFont->drawColor(coverText, _vm->_surfaceFront, spos.x, spos.y, color);
+	}
+
+	//draw combat flee waypoints
+	for (int i = 0; i < (int)_vm->_combat->_fleeWaypoints.size(); i++) {
+		Combat::FleeWaypoint *flee = &_vm->_combat->_fleeWaypoints[i];
+		if (flee->setId != _vm->_scene->getSetId()) {
+			continue;
+		}
+		Vector3 pos = flee->position;
+		Vector3 size = Vector3(3.0f, 3.0f, 3.0f);
+		int color = 0x03FF; // 00000 11111 11111
+		drawBBox(pos - size, pos + size, _vm->_view, &_vm->_surfaceFront, color);
+		Vector3 spos = _vm->_view->calculateScreenPosition(pos);
+		char fleeText[40];
+		sprintf(fleeText, "flee %i", i);
+		_vm->_mainFont->drawColor(fleeText, _vm->_surfaceFront, spos.x, spos.y, color);
 	}
 
 #if 0

@@ -255,7 +255,7 @@ bool SceneObjects::isBetween(float sourceX, float sourceZ, float targetX, float 
 	    || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection);
 }
 
-bool SceneObjects::isObstacleBetween(float sourceX, float sourceZ, float targetX, float targetZ, float altitude, int exceptSceneObjectId) const {
+bool SceneObjects::isObstacleBetween(const Vector3 &source, const Vector3 &target, int exceptSceneObjectId) const {
 	for (int i = 0; i < _count; ++i) {
 		const SceneObject *sceneObject = &_sceneObjects[_sceneObjectsSortedByDistance[i]];
 
@@ -264,9 +264,9 @@ bool SceneObjects::isObstacleBetween(float sourceX, float sourceZ, float targetX
 		}
 
 		float objectX1, objectY1, objectZ1, objectX2, objectY2, objectZ2;
-		_sceneObjects[i].boundingBox->getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
+		sceneObject->boundingBox->getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
 
-		if (84.0f <= objectY1 - altitude || 72.0f >= objectY2 - altitude) {
+		if (84.0f <= objectY1 - source.y || 72.0f >= objectY2 - source.y) {
 			continue;
 		}
 
@@ -279,10 +279,10 @@ bool SceneObjects::isObstacleBetween(float sourceX, float sourceZ, float targetX
 		objectZ2 = objectZ2 - zAdjustement;
 
 		Vector2 intersection;
-		if (lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
-		 || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
-		 || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
-		 || lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection)) {
+		if (lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
+		 || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX2, objectZ1), Vector2(objectX2, objectZ2), &intersection)
+		 || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX2, objectZ2), Vector2(objectX1, objectZ2), &intersection)
+		 || lineIntersection(Vector2(source.x, source.z), Vector2(target.x, target.z), Vector2(objectX1, objectZ2), Vector2(objectX1, objectZ1), &intersection)) {
 			return true;
 		}
 	}

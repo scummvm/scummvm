@@ -39,18 +39,17 @@ class MovementTrack;
 class View;
 
 class Actor {
-	friend class ScriptBase;
-	friend class KIA;
-
 	BladeRunnerEngine *_vm;
 
-private:
+public:
 	BoundingBox   *_bbox;
 	Common::Rect   _screenRectangle;
 	MovementTrack *_movementTrack;
 	ActorWalk     *_walkInfo;
 	ActorCombat   *_combatInfo;
+	ActorClues    *_clues;
 
+private:
 	int                _honesty;
 	int                _intelligence;
 	int                _stability;
@@ -60,8 +59,6 @@ private:
 
 	int _currentHP;
 	int _maxHP;
-
-	ActorClues *_clues;
 
 	int     _id;
 	int     _setId;
@@ -124,7 +121,7 @@ public:
 	float getX() const;
 	float getY() const;
 	float getZ() const;
-	void getXYZ(float *x, float *y, float *z) const;
+	Vector3 getXYZ() const;
 	int getFacing() const;
 	int getAnimationMode() const;
 
@@ -157,6 +154,7 @@ public:
 	void run();
 
 	bool tick(bool forceUpdate, Common::Rect *screenRect);
+	void tickCombat();
 	bool draw(Common::Rect *screenRect);
 
 	int getSetId()  const;
@@ -164,13 +162,16 @@ public:
 	BoundingBox *getBoundingBox() const { return _bbox; }
 	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
 	int getWalkbox() const { return _walkboxId; }
+
 	bool isRetired() const { return _isRetired; }
-	bool isTarget() const { return _isTarget; }
+	bool isTarget() const { return true;/*return _isTarget; */}
 	void setTarget(bool targetable);
 	bool isImmuneToObstacles() const { return _isImmuneToObstacles; }
 	bool inCombat() const { return _inCombat; }
+
 	bool isMoving() const { return _isMoving; }
 	void setMoving(bool value) { _isMoving = value; }
+
 	bool inWalkLoop() const { return _inWalkLoop; }
 	bool isWalking() const;
 	bool isRunning() const;
@@ -184,33 +185,51 @@ public:
 	void faceXYZ(const Vector3 &pos, bool animate);
 	void faceCurrentCamera(bool animate);
 	void faceHeading(int heading, bool animate);
-	void modifyFriendlinessToOther(int otherActorId, signed int change);
-	void setFriendlinessToOther(int otherActorId, int friendliness);
-	void setHonesty(int honesty);
-	void setIntelligence(int intelligence);
-	void setStability(int stability);
-	void setCombatAggressiveness(int combatAggressiveness);
-	void setInvisible(bool isInvisible);
-	void setImmunityToObstacles(bool isImmune);
+	void setFacing(int facing, bool halfOrSet = true);
+
+	int getCurrentHP() const { return _currentHP; }
+	int getMaxHP() const { return _maxHP; }
+	void setCurrentHP(int hp);
+	void setHealth(int hp, int maxHp);
 	void modifyCurrentHP(signed int change);
 	void modifyMaxHP(signed int change);
-	void modifyCombatAggressiveness(signed int change);
+
+	int getFriendlinessToOther(int otherActorId) const { return _friendlinessToOther[otherActorId]; }
+	void setFriendlinessToOther(int otherActorId, int friendliness);
+	void modifyFriendlinessToOther(int otherActorId, signed int change);
+
+	int getHonesty() const { return _honesty; }
+	void setHonesty(int honesty);
 	void modifyHonesty(signed int change);
+
+	int getIntelligence() const { return _intelligence; }
+	void setIntelligence(int intelligence);
 	void modifyIntelligence(signed int change);
+
+	int getStability() const { return _stability; }
+	void setStability(int stability);
 	void modifyStability(signed int change);
+
+	int getCombatAggressiveness() const { return _combatAggressiveness; }
+	void setCombatAggressiveness(int combatAggressiveness);
+	void modifyCombatAggressiveness(signed int change);
+
+	void setInvisible(bool isInvisible);
+	void setImmunityToObstacles(bool isImmune);
+
 	void setFlagDamageAnimIfMoving(bool value);
-	bool getFlagDamageAnimIfMoving()  const;
-	void setHealth(int hp, int maxHp);
+	bool getFlagDamageAnimIfMoving() const;
 
 	void retire(bool isRetired, int width, int height, int retiredByActorId);
 
-	void combatModeOn(int a2, int a3, int a4, int a5, int combatAnimationMode, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14);
+	void combatModeOn(int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool a14);
 	void combatModeOff();
 
 	void setGoal(int goalNumber);
 	int getGoal() const;
 
 	float distanceFromActor(int otherActorId);
+	int angleTo(const Vector3 &target) const;
 
 	void speechPlay(int sentenceId, bool voiceOver);
 	void speechStop();
@@ -225,11 +244,11 @@ public:
 	int soundVolume() const;
 	int soundBalance() const;
 
-	bool isObstacleBetween(float targetX, float targetZ);
+	bool isObstacleBetween(const Vector3 &target);
 
 	static int findTargetUnderMouse(BladeRunnerEngine *vm, int mouseX, int mouseY);
+
 private:
-	void setFacing(int facing, bool halfOrSet = true);
 	void setBoundingBox(const Vector3 &position, bool retired);
 	float distanceFromView(View *view) const;
 

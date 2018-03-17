@@ -356,7 +356,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 413:
 		Loop_Actor_Walk_To_XYZ(kActorSadik, -1062.0f, 0.0f, 219.0f, 0, 0, 1, 0);
 		Actor_Set_Targetable(kActorSadik, 1);
-		Non_Player_Actor_Combat_Mode_On(kActorSadik, 0, 1, 0, 9, 4, 7, 8, 0, -1, -1, 15, 300, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorSadik, kActorCombatStateIdle, true, kActorMcCoy, 9, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, false);
 		Actor_Set_Goal_Number(kActorSadik, 450);
 		return true;
 
@@ -412,7 +412,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 418:
 		Game_Flag_Reset(653);
 		Actor_Set_Goal_Number(kActorClovis, 518);
-		Non_Player_Actor_Combat_Mode_On(kActorSadik, 0, 1, 0, 9, 4, 7, 8, 0, -1, -1, 15, 300, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorSadik, kActorCombatStateIdle, true, kActorMcCoy, 9, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, -1, -1, 15, 300, false);
 		return true;
 
 	case 419:
@@ -999,6 +999,7 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 			_animationState = 33;
 			_animationFrame = 0;
 		}
+		break;
 
 	case 63:
 		if (Actor_Query_Goal_Number(kActorSadik) != 105 && Actor_Query_Goal_Number(kActorSadik) != 106) {

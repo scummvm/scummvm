@@ -142,11 +142,11 @@ void SceneScriptHF07::DialogueQueueFlushed(int a1) {
 }
 
 int SceneScriptHF07::sub_401864() {
-	if (Global_Variable_Query(45) == 2 && Actor_Query_Goal_Number(3) != 599) {
-		return 3;
+	if (Global_Variable_Query(kVariableAffectionTowards) == 2 && Actor_Query_Goal_Number(3) != 599) {
+		return kActorDektora;
 	}
-	if (Global_Variable_Query(45) == 3 && Actor_Query_Goal_Number(6) != 599) {
-		return 6;
+	if (Global_Variable_Query(kVariableAffectionTowards) == 3 && Actor_Query_Goal_Number(6) != 599) {
+		return kActorLucy;
 	}
 	return -1;
 }

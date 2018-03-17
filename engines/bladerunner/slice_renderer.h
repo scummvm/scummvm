@@ -67,7 +67,7 @@ class SliceRenderer {
 	uint32  _framePaletteIndex;
 	uint32  _frameSliceCount;
 
-	Matrix3x2    _modelMatrix;
+	Matrix3x2    _mvpMatrix;
 	Vector3      _startScreenVector;
 	Vector3      _endScreenVector;
 	float        _startSlice;

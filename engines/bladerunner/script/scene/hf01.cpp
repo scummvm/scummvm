@@ -90,9 +90,9 @@ bool SceneScriptHF01::ClickedOn3DObject(const char *objectName, bool a2) {
 
 bool SceneScriptHF01::ClickedOnActor(int actorId) {
 	int v1;
-	if (Global_Variable_Query(45) == 2) {
+	if (Global_Variable_Query(kVariableAffectionTowards) == 2) {
 		v1 = kActorDektora;
-	} else if (Global_Variable_Query(45) == 3) {
+	} else if (Global_Variable_Query(kVariableAffectionTowards) == 3) {
 		v1 = kActorLucy;
 	} else {
 		v1 = -1;
@@ -295,15 +295,15 @@ void SceneScriptHF01::PlayerWalkedIn() {
 		Actor_Set_At_XYZ(kActorOfficerLeary, 8.2f, 8.0f, -346.67f, 1021);
 		Actor_Put_In_Set(kActorOfficerGrayford, 37);
 		Actor_Set_At_XYZ(kActorOfficerGrayford, 51.21f, 8.0f, -540.78f, 796);
-		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, 3, 1, kActorMcCoy, 4, 4, 7, 8, 0, 0, 0, 100, 300, 0);
-		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, 3, 1, kActorMcCoy, 4, 4, 7, 8, 0, 0, 0, 100, 300, 0);
+		Non_Player_Actor_Combat_Mode_On(kActorOfficerLeary, kActorCombatStateUncover, true, kActorMcCoy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 0, 100, 300, false);
+		Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateUncover, true, kActorMcCoy, 4, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 0, 100, 300, false);
 	}
 	if (!Game_Flag_Query(165) && Actor_Query_Goal_Number(kActorCrazylegs) != 2) {
-		if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1) && Global_Variable_Query(45) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
+		if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallLucy1) && Global_Variable_Query(kVariableAffectionTowards) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
 			Actor_Put_In_Set(kActorLucy, 37);
 			Actor_Set_At_XYZ(kActorLucy, -5.0f, 8.0f, -622.0f, 419);
 			Actor_Set_Targetable(kActorLucy, true);
-		} else if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1) && Global_Variable_Query(45) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
+		} else if (Actor_Clue_Query(kActorMcCoy, kCluePhoneCallDektora1) && Global_Variable_Query(kVariableAffectionTowards) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
 			Actor_Put_In_Set(kActorDektora, 37);
 			Actor_Set_At_XYZ(kActorDektora, -5.0f, 8.0f, -622.0f, 419);
 			Actor_Set_Targetable(kActorDektora, true);

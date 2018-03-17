@@ -305,25 +305,19 @@ bool AIScriptMutant2::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case 410:
 		switch (Actor_Query_Which_Set_In(kActorMutant2)) {
 		case kSetUG01:
-			Non_Player_Actor_Combat_Mode_On(kActorMutant2, 0, 0, 0, 11, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorMutant2, kActorCombatStateIdle, false, kActorMcCoy, 11, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			break;
 
 		case kSetUG04:
 		case kSetUG05:
 		case kSetUG06:
-			Non_Player_Actor_Combat_Mode_On(kActorMutant2, 0, 0, 0, 10, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorMutant2, kActorCombatStateIdle, false, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			break;
 
 		case kSetUG10:
-			Non_Player_Actor_Combat_Mode_On(kActorMutant2, 0, 0, 0, 14, 4, 7, 8, -1, -1, -1, 10, 300, 0);
-			break;
-
 		case kSetUG12:
-			Non_Player_Actor_Combat_Mode_On(kActorMutant2, 0, 0, 0, 14, 4, 7, 8, -1, -1, -1, 10, 300, 0);
-			break;
-
 		case kSetUG14:
-			Non_Player_Actor_Combat_Mode_On(kActorMutant2, 0, 0, 0, 14, 4, 7, 8, -1, -1, -1, 10, 300, 0);
+			Non_Player_Actor_Combat_Mode_On(kActorMutant2, kActorCombatStateIdle, false, kActorMcCoy, 14, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			break;
 		}
 		return true;

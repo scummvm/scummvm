@@ -222,10 +222,10 @@ void SceneScriptUG05::DialogueQueueFlushed(int a1) {
 }
 
 int SceneScriptUG05::sub_4021B0() {
-	if (Global_Variable_Query(45) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
+	if (Global_Variable_Query(kVariableAffectionTowards) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
 		return kActorDektora;
 	}
-	if (Global_Variable_Query(45) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
+	if (Global_Variable_Query(kVariableAffectionTowards) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
 		return kActorLucy;
 	}
 	return -1;

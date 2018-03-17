@@ -80,7 +80,7 @@ public:
 	void setMoving(int sceneObjectId, bool isMoving);
 	void setRetired(int sceneObjectId, bool isRetired);
 	bool isBetween(float sourceX, float sourceZ, float targetX, float targetZ, int sceneObjectId) const;
-	bool isObstacleBetween(float sourceX, float sourceZ, float targetX, float targetZ, float altitude, int exceptSceneObjectId) const;
+	bool isObstacleBetween(const Vector3 &source, const Vector3 &target, int exceptSceneObjectId) const;
 	void setIsClickable(int sceneObjectId, bool isClickable);
 	void setIsObstacle(int sceneObjectId, bool isObstacle);
 	void setIsTarget(int sceneObjectId, bool isTarget);

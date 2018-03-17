@@ -180,12 +180,13 @@ void SceneScriptHF06::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptHF06::PlayerWalkedIn() {
 	if (Game_Flag_Query(662)) {
-		int actorId;
-		if (Global_Variable_Query(45) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
+		int actorId = -1;
+		if (Global_Variable_Query(kVariableAffectionTowards) == 3 && Actor_Query_Goal_Number(kActorLucy) != 599) {
 			actorId = kActorLucy;
-		} else {
-			actorId = Global_Variable_Query(45) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599 ? kActorDektora : -1;
-		}
+		} else if (Global_Variable_Query(kVariableAffectionTowards) == 2 && Actor_Query_Goal_Number(kActorDektora) != 599) {
+			actorId = kActorDektora;
+		} 
+
 		if (actorId != -1) {
 			Actor_Put_In_Set(actorId, 42);
 			if (Game_Flag_Query(559)) {
@@ -267,7 +268,7 @@ void SceneScriptHF06::sub_401EF4() {
 	Sound_Play(562, 50, 0, 0, 50);
 	Game_Flag_Set(559);
 	Scene_Exits_Disable();
-	Non_Player_Actor_Combat_Mode_On(kActorSteele, 3, 1, actorId, 15, 4, 7, 8, 0, 0, 100, 10, 300, 0);
+	Non_Player_Actor_Combat_Mode_On(kActorSteele, kActorCombatStateUncover, true, actorId, 15, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, 0, 0, 100, 10, 300, false);
 }
 
 void SceneScriptHF06::sub_4023E0() {

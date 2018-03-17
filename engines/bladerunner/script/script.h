@@ -78,7 +78,7 @@ protected:
 	void Actor_Set_Flag_Damage_Anim_If_Moving(int actorId, bool value);
 	bool Actor_Query_Flag_Damage_Anim_If_Moving(int actorId);
 	void Actor_Combat_AI_Hit_Attempt(int actorId);
-	void Non_Player_Actor_Combat_Mode_On(int actorId, int a2, int a3, int otherActorId, int a5, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int a9, int a10, int a11, int a12, int a13, int a14);
+	void Non_Player_Actor_Combat_Mode_On(int actorId, int initialState, bool rangedAttack, int enemyId, int waypointType, int animationModeCombatIdle, int animationModeCombatWalk, int animationModeCombatRun, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool a14);
 	void Non_Player_Actor_Combat_Mode_Off(int actorId);
 	void Actor_Set_Health(int actorId, int hp, int maxHp);
 	void Actor_Set_Targetable(int actorId, bool targetable);
@@ -205,8 +205,8 @@ protected:
 	float World_Waypoint_Query_X(int waypointId);
 	float World_Waypoint_Query_Y(int waypointId);
 	float World_Waypoint_Query_Z(int waypointId);
-	void Combat_Cover_Waypoint_Set_Data(int combatCoverId, int a2, int setId, int a4, float x, float y, float z);
-	void Combat_Flee_Waypoint_Set_Data(int combatFleeWaypointId, int a2, int setId, int a4, float x, float y, float z, int a8);
+	void Combat_Cover_Waypoint_Set_Data(int coverWaypointId, int a2, int setId, int a4, float x, float y, float z);
+	void Combat_Flee_Waypoint_Set_Data(int fleeWaypointId, int a2, int setId, int a4, float x, float y, float z, int a8);
 	void Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10);
 	// Police_Maze_Query_Score
 	// Police_Maze_Zero_Score

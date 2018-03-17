@@ -57,8 +57,8 @@ inline Matrix3x2 operator*(const Matrix3x2 &a, const Matrix3x2 &b) {
 inline Matrix3x2 operator+(const Matrix3x2 &a, Vector2 b) {
 	Matrix3x2 t(a);
 
-	t(0,2) += b.x;
-	t(1,2) += b.y;
+	t(0, 2) += b.x;
+	t(1, 2) += b.y;
 
 	return t;
 }

@@ -95,13 +95,13 @@ bool AIScriptTaffyPatron::GoalChanged(int currentGoalNumber, int newGoalNumber) 
 
 	case 250:
 		Actor_Put_In_Set(kActorTaffyPatron, kSetNR01);
-		Actor_Set_At_XYZ(kActorTaffyPatron, -170.39999, 23.68, -850.0, 324);
-		Async_Actor_Walk_To_XYZ(kActorTaffyPatron, -390.0, 31.549999, -429.0, 24, 1);
+		Actor_Set_At_XYZ(kActorTaffyPatron, -170.4f, 23.68f, -850.0f, 324);
+		Async_Actor_Walk_To_XYZ(kActorTaffyPatron, -390.0f, 31.55f, -429.0f, 24, 1);
 		return true;
 
 	case 255:
 		Actor_Put_In_Set(kActorTaffyPatron, kSetNR01);
-		Actor_Set_At_XYZ(kActorTaffyPatron, -170.39999, 23.68, -850.0, 324);
+		Actor_Set_At_XYZ(kActorTaffyPatron, -170.4f, 23.68f, -850.0f, 324);
 		Actor_Change_Animation_Mode(kActorTaffyPatron, 48);
 		return true;
 

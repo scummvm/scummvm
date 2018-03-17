@@ -140,7 +140,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool a2) {
 				} else {
 					Actor_Says(kActorMcCoy, 3840, 18);
 					Delay(1000);
-					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 59 && !Global_Variable_Query(45)) {
+					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 59 && Global_Variable_Query(kVariableAffectionTowards) == 0) {
 						Music_Play(21, 35, 0, 3, -1, 0, 0);
 					}
 					Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, 0, false, 0);
@@ -164,8 +164,8 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool a2) {
 					Actor_Says(kActorMcCoy, 3870, 3);
 					Actor_Says(kActorDektora, 1070, 14);
 					Actor_Modify_Friendliness_To_Other(kActorDektora, kActorMcCoy, 5);
-					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 55 && !Global_Variable_Query(45)) {
-						Global_Variable_Set(45, 2);
+					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 55 && Global_Variable_Query(kVariableAffectionTowards) == 0) {
+						Global_Variable_Set(kVariableAffectionTowards, 2);
 						Actor_Says(kActorDektora, 1130, 17);
 						Actor_Says(kActorMcCoy, 6365, 12);
 						Actor_Says(kActorDektora, 1140, 14);

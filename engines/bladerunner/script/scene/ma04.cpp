@@ -176,9 +176,9 @@ bool SceneScriptMA04::ClickedOn2DRegion(int region) {
 				Overlay_Remove("MA04OVER");
 				Delay(500);
 				if (Game_Flag_Query(653)) {
-					if (Global_Variable_Query(45) == 2) {
+					if (Global_Variable_Query(kVariableAffectionTowards) == 2) {
 						phoneCallWithDektora();
-					} else if (Global_Variable_Query(45) == 3) {
+					} else if (Global_Variable_Query(kVariableAffectionTowards) == 3) {
 						phoneCallWithLucy();
 					} else {
 						phoneCallWithClovis();

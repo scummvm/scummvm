@@ -329,4 +329,16 @@ void AIScripts::changeAnimationMode(int actor, int mode) {
 	_inScriptCounter--;
 }
 
+void AIScripts::fledCombat(int actor) {
+	if (actor >= _actorCount) {
+		return;
+	}
+
+	_inScriptCounter++;
+	if (_AIScripts[actor]) {
+		_AIScripts[actor]->FledCombat();
+	}
+	_inScriptCounter--;
+}
+
 } // End of namespace BladeRunner
