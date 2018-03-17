@@ -1108,7 +1108,7 @@ void Combat::setSpeedTable() {
 	// Populate the _speedTable list with the character/monster indexes
 	// in order of attacking speed
 	_speedTable.clear();
-	for (; maxSpeed >= 0; --maxSpeed) {
+	for (; maxSpeed > 0; --maxSpeed) {
 		for (uint idx = 0; idx < charSpeeds.size(); ++idx) {
 			if (charSpeeds[idx] == maxSpeed)
 				_speedTable.push_back(idx);
