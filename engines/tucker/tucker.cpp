@@ -3146,7 +3146,8 @@ enum TableInstructionCode {
 	kCode_was,
 	kCode_wfx,
 	kCode_xhr,
-	kCode_xhm
+	kCode_xhm,
+	kCode_no3 // NOOP, throw away 3-byte parameter
 };
 
 static const struct {
@@ -3166,12 +3167,14 @@ static const struct {
 	{ "bso", kCode_bso },
 	{ "bus", kCode_bus },
 	{ "b0s", kCode_bus }, // only ref 65.25
+	{ "buv", kCode_no3 },
 	{ "buw", kCode_buw },
 	{ "bdx", kCode_bux },
 	{ "bux", kCode_bux },
 	{ "c0a", kCode_c0a },
 	{ "c0c", kCode_c0c },
 	{ "c0s", kCode_c0s },
+	{ "c0v", kCode_no3 },
 	{ "end", kCode_end },
 	{ "fad", kCode_fad },
 	{ "fw",  kCode_fw  },
@@ -3472,6 +3475,10 @@ int TuckerEngine::executeTableInstruction() {
 		return 0;
 	case kCode_xhm:
 		_validInstructionId = false;
+		return 0;
+	case kCode_no3:
+		// opcodes mapped here are treated as NOOPs
+		readTableInstructionParam(3);
 		return 0;
 	}
 	return 2;
