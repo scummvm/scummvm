@@ -20,19 +20,15 @@
  *
  */
 
-#include "lead_actor.h"
-#include "../walk/walk_mgr.h"
-#include "../cursor_mgr.h"
-#include "engines/pink/sequences/sequencer.h"
+#include "sequence.h"
 #include "../archive.h"
 
 namespace Pink {
 
-void LeadActor::deserialize(Archive &archive) {
-    Actor::deserialize(archive);
-    _cursorMgr = static_cast<CursorMgr*>(archive.readObject());
-    _walkMgr = static_cast<WalkMgr*>(archive.readObject());
+void Sequence::deserialize(Archive &archive) {
+    NamedObject::deserialize(archive);
     _sequencer = static_cast<Sequencer*>(archive.readObject());
+    archive >> _items;
 }
 
 } // End of namespace Pink

@@ -24,7 +24,7 @@
 #include "page.h"
 #include "cursor_mgr.h"
 #include "actors/lead_actor.h"
-#include "sequencer.h"
+#include "engines/pink/sequences/sequencer.h"
 
 namespace Pink {
 
