@@ -20,6 +20,7 @@
  *
  */
 
+#include <common/debug.h>
 #include "action_play.h"
 #include "../archive.h"
 
@@ -28,6 +29,8 @@ namespace Pink {
 void ActionPlay::deserialize(Archive &archive) {
     ActionStill::deserialize(archive);
     archive >> _stopFrame;
+    debug("\tActionPlay: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
+                  " _endFrame = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
 }
 
 } // End of namespace Pink

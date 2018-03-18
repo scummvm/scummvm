@@ -33,7 +33,7 @@ class Action : public NamedObject {
 public:
     virtual void deserialize(Archive &archive);
 
-private:
+protected:
     Actor *_actor;
 };
 

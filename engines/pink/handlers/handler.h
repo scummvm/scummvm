@@ -34,7 +34,7 @@ class Handler : public Object {
 public:
     virtual void deserialize(Archive &archive);
 
-private:
+protected:
     //_conditions
     Common::Array<SideEffect*> _sideEffects;
 };

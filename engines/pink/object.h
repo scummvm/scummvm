@@ -48,7 +48,7 @@ public:
 
     const Common::String &getName() const;
 
-private:
+protected:
     Common::String _name;
 };
 

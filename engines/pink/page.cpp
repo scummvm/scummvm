@@ -71,7 +71,7 @@ void GamePage::loadFields() {
 
     _resMgr.init(_module->getGame(), this);
 
-    // memfile manipulations
+    // memfile manipulations if from save or page changing
 
 }
 

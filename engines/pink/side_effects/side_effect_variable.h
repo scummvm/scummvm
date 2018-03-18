@@ -31,7 +31,7 @@ class SideEffectVariable : public SideEffect {
 public:
     virtual void deserialize(Archive &archive);
 
-private:
+protected:
     Common::String _name;
     Common::String _value;
 };
