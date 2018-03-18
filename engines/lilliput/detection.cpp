@@ -65,7 +65,7 @@ static const LilliputGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		kGameTypeRobin
@@ -81,7 +81,7 @@ static const LilliputGameDescription gameDescriptions[] = {
 			},
 			Common::FR_FRA,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		kGameTypeRobin
@@ -97,7 +97,7 @@ static const LilliputGameDescription gameDescriptions[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		kGameTypeRobin
@@ -113,7 +113,7 @@ static const LilliputGameDescription gameDescriptions[] = {
 			},
 			Common::IT_ITA,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO0()
 		},
 		kGameTypeRobin
