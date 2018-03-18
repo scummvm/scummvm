@@ -3223,6 +3223,8 @@ void LilliputScript::OC_displayTitleScreen() {
 		
 		if ((_vm->_byte184F4 != 0) && (_vm->_sound_byte16F06 == 0))
 			break;
+
+		_vm->_system->delayMillis(1);
 	}
 	
 	_vm->_mouseButton = 0;
