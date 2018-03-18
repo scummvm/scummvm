@@ -529,12 +529,12 @@ Character *GuildLocation::doOptions(Character *c) {
 		}
 	} else if (_buttonValue == Common::KEYCODE_s) {
 		if (c->guildMember())
-			c = SpellsDialog::show(_vm, nullptr, c, 0x80);
+			c = SpellsDialog::show(_vm, this, c, 0x80);
 		_buttonValue = 0;
-	} else if (_buttonValue == Common::KEYCODE_c) {
+	} else if (_buttonValue == Common::KEYCODE_b) {
 		if (!c->noActions()) {
 			if (c->guildMember())
-				c = SpellsDialog::show(_vm, nullptr, c, 0);
+				c = SpellsDialog::show(_vm, this, c, 0);
 			_buttonValue = 0;
 		}
 	}

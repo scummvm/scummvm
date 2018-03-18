@@ -39,20 +39,39 @@ struct SpellEntry {
 		_name(name), _spellIndex(spellIndex), _spellId(spellId), _color(9) {}
 };
 
+/**
+ * Spells list dialog. Used for both selecting spells to cast, as well as the
+ * spells listing when visiting Guild locations
+ */
 class SpellsDialog : public ButtonContainer {
 private:
 	SpriteResource _iconSprites;
 	SpriteResource _scrollSprites;
 	Common::Array<SpellEntry> _spells;
 
+	/**
+	 * Constructor
+	 */
 	SpellsDialog(XeenEngine *vm) : ButtonContainer(vm) {}
 
+	/**
+	 * Executes the dialog
+	 */
 	Character *execute(ButtonContainer *priorDialog, Character *c, int isCasting);
 
+	/**
+	 * Loads buttons for the dialog
+	 */
 	void loadButtons();
 
+	/**
+	 * Sets the spell text
+	 */
 	const char *setSpellText(Character *c, int isCasting);
 public:
+	/**
+	 * Show the spells list dialog
+	 */
 	static Character *show(XeenEngine *vm, ButtonContainer *priorDialog,
 		Character *c, int isCasting);
 };

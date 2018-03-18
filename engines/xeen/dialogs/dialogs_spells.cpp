@@ -46,6 +46,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	Windows &windows = *_vm->_windows;
+	Window &w = windows[25];
 	int ccNum = _vm->_files->_ccNum;
 	loadButtons();
 
@@ -54,7 +55,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	int selection = -1;
 	int topIndex = 0;
 	int newSelection;
-	windows[25].open();
+	w.open();
 
 	do {
 		if (!isCasting) {
@@ -69,13 +70,12 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			Common::String msg = Common::String::format(Res.GUILD_OPTIONS,
 				title.c_str(), XeenEngine::printMil(party._gold).c_str());
 			windows[10].writeString(msg);
-
-			warning("TODO: Sprite draw using previously used button sprites");
+			priorDialog->drawButtons(&windows[10]);
 		}
 
 		_spells.clear();
 		const char *errorMsg = setSpellText(c, castingCopy);
-		windows[25].writeString(Common::String::format(Res.SPELLS_FOR,
+		w.writeString(Common::String::format(Res.SPELLS_FOR,
 			errorMsg == nullptr ? Res.SPELL_LINES_0_TO_9 : "",
 			c->_name.c_str()));
 
@@ -111,9 +111,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		_scrollSprites.draw(0, 0, Common::Point(187, 26));
 		_scrollSprites.draw(0, 2, Common::Point(187, 111));
 		if (isCasting)
-			_scrollSprites.draw(windows[25], 5, Common::Point(132, 123));
+			_scrollSprites.draw(w, 5, Common::Point(132, 123));
 
-		windows[25].update();
+		w.update();
 
 		do {
 			events.pollEventsAndWait();
@@ -273,7 +273,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		}
 	} while (!_vm->shouldExit() && _buttonValue != Common::KEYCODE_ESCAPE);
 
-	windows[25].close();
+	w.close();
 
 	if (_vm->shouldExit())
 		selection = -1;
@@ -379,9 +379,10 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 				for (int spellId = 0; spellId < 20; ++spellId) {
 					int idx = 0;
 					while (Res.CLOUDS_SPELL_OFFSETS[party._mazeId - 29][spellId] !=
-						(int)Res.SPELLS_ALLOWED[category][idx] && idx < 40) ;
+						(int)Res.SPELLS_ALLOWED[category][idx] && idx <= MAX_SPELLS_PER_CLASS)
+						++idx;
 
-					if (idx < 40) {
+					if (idx <= MAX_SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (isCasting & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
