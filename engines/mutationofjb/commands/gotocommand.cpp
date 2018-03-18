@@ -34,11 +34,11 @@
 namespace MutationOfJB {
 
 bool GotoCommandParser::parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) {
-	if (line.firstChar() != '_') {
+	if (line.size() < 6 || !line.hasPrefix("GOTO")) {
 		return false;
 	}
 
-	Common::String label = line.c_str() + 1;
+	Common::String label = line.c_str() + 6;
 	GotoCommand *gotoCmd = new GotoCommand();
 
 	if (parseCtx._labels.contains(label)) {
