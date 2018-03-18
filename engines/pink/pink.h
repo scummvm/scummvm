@@ -23,7 +23,6 @@
 #ifndef PINK_PINK_H
 #define PINK_PINK_H
 
-#include <engines/pink/objects/named_object.h>
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/EventRecorder.h"

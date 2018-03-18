@@ -8,8 +8,14 @@ MODULE_OBJS = \
 	sound.o \
 	file.o \
 	archive.o \
-    objects/object.o \
-    objects/module.o \
+    object.o \
+    module.o \
+    page.o \
+    inventory.o \
+    resource_mgr.o \
+    actions/action.o \
+    actors/actor.o \
+    actors/lead_actor.o \
 
 
 # This module can be built as a plugin

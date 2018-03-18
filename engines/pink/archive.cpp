@@ -22,8 +22,14 @@
 
 #include <common/debug.h>
 #include <common/file.h>
-#include "objects/module.h"
-#include "objects/page.h"
+#include <engines/pink/actors/actor.h>
+#include <engines/pink/walk/walk_location.h>
+#include <engines/pink/actions/action_hide.h>
+#include <engines/pink/actions/action_play.h>
+#include <engines/pink/actions/action_sound.h>
+#include "module.h"
+#include "page.h"
+#include "actors/lead_actor.h"
 
 namespace Pink {
 
@@ -140,12 +146,26 @@ static const struct RuntimeClass {
 
 static Object* createObject(int objectId){
     switch (objectId){
+        case kActionHide:
+            return new ActionHide;
+        case kActionPlay:
+            return new ActionPlay;
+        case kActionSound:
+            return new ActionSound;
+        case kActionStill:
+            return new ActionStill;
+        case kActor:
+            return new Actor;
         case kGamePage:
             return new GamePage;
         case kInventoryItem:
             return new InventoryItem;
+        case kLeadActor:
+            return new LeadActor;
         case kModuleProxy:
             return new ModuleProxy;
+        case kWalkLocation:
+            return new WalkLocation;
         default:
             return nullptr;
     }
@@ -165,7 +185,7 @@ Archive::~Archive()
 }
 
 void Archive::mapObject(Object *obj) {
-    _objectMap.push_back(obj); // Basically a hack, but behavior is all correct
+    _objectMap.push_back(obj);
     _objectIdMap.push_back(0);
 }
 
@@ -207,11 +227,13 @@ Object *Archive::parseObject(bool &isCopyReturned) {
         objectId = findObjectId(className + 1);
 
         res = createObject(objectId);
+        if (!res) error("Class %s is not implemented", className);
+
         _objectMap.push_back(res);
         _objectIdMap.push_back(objectId);
 
-        //_objectMap.push_back(res); // Basically a hack, but behavior is all correct
-        //_objectIdMap.push_back(objectId);
+        _objectMap.push_back(res); // Basically a hack, but behavior is all correct
+        _objectIdMap.push_back(objectId);
 
         isCopyReturned = false;
     } else if ((obTag & 0x8000) == 0) {
@@ -252,6 +274,10 @@ Common::String Archive::readString() {
     byte len = _file.readByte();
     _file.read(buffer, len);
     return Common::String(buffer, len);
+}
+
+uint32 Archive::readDWORD() {
+    return _file.readUint32LE();
 }
 
 } // End of namespace Pink

@@ -20,30 +20,66 @@
  *
  */
 
+#ifndef PINK_PAGE_H
+#define PINK_PAGE_H
+
+#include "engines/pink/object.h"
+#include "engines/pink/module.h"
 #include "resource_mgr.h"
-#include "file.h"
-#include "pink.h"
-#include "page.h"
 
 namespace Pink {
 
-ResourceMgr::ResourceMgr()
-        : _orb(nullptr), _bro(nullptr),
-          _resDescTable(nullptr), _resCount(0)
-{}
+class Archive;
+class Actor;
+class LeadActor;
 
-ResourceMgr::~ResourceMgr() {
-    delete[] _resDescTable;
-}
 
-void ResourceMgr::init(PinkEngine *game, GamePage *page) {
-    _orb = game->getOrb();
-    _bro = game->getBro();
+class Page : public NamedObject {
+public:
 
-    ObjectDescription *objDesc = _orb->getObjDesc(page->getName().c_str());
-    _resCount = objDesc->resourcesCount;
-    _orb->loadObject(page, objDesc);
-    _resDescTable = _orb->getResDescTable(objDesc);
-}
+    void load(Archive &archive);
+
+protected:
+    ResourceMgr _resMgr;
+    LeadActor *_leadActor;
+    Common::Array<Actor*> _actors;
+
+    /*
+        int unk_1;
+        CString _str;
+     */
+};
+
+
+class CursorMgr;
+class WalkMgr;
+class Sequencer;
+
+class GamePage : public Page  {
+public:
+    virtual void deserialize(Archive &archive);
+    virtual void load(Archive &archive);
+    void loadFields();;
+
+    void init(bool isLoadingSave);
+
+
+private:
+    int perhapsIsLoaded;
+    Module *_module;
+    CursorMgr *_cursorMgr;
+    WalkMgr *_walkMgr;
+    Sequencer *_sequencer;
+    /*
+    int perhaps_notLoaded;
+    int cunk_1;
+    int memfile;
+    CMapStringToString map;
+    CObArray handlers;
+    int unk;
+    */
+};
 
 } // End of namespace Pink
+
+#endif

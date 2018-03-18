@@ -20,30 +20,25 @@
  *
  */
 
-#include "resource_mgr.h"
-#include "file.h"
-#include "pink.h"
-#include "page.h"
+#ifndef PINK_CURSOR_MGR_H
+#define PINK_CURSOR_MGR_H
+
+#include "engines/pink/object.h"
 
 namespace Pink {
 
-ResourceMgr::ResourceMgr()
-        : _orb(nullptr), _bro(nullptr),
-          _resDescTable(nullptr), _resCount(0)
-{}
+class Actor;
+class GamePage;
 
-ResourceMgr::~ResourceMgr() {
-    delete[] _resDescTable;
-}
+class CursorMgr : public Object {
+public:
+    CursorMgr(GamePage *page);
 
-void ResourceMgr::init(PinkEngine *game, GamePage *page) {
-    _orb = game->getOrb();
-    _bro = game->getBro();
-
-    ObjectDescription *objDesc = _orb->getObjDesc(page->getName().c_str());
-    _resCount = objDesc->resourcesCount;
-    _orb->loadObject(page, objDesc);
-    _resDescTable = _orb->getResDescTable(objDesc);
-}
+private:
+    Actor *actor;
+    GamePage *page;
+};
 
 } // End of namespace Pink
+
+#endif

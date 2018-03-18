@@ -20,27 +20,28 @@
  *
  */
 
+#ifndef PINK_ACTION_SOUND_H
+#define PINK_ACTION_SOUND_H
 
-#include "inventory.h"
+#include "action.h"
 
 namespace Pink {
 
-void Pink::InventoryItem::deserialize(Archive &archive) {
-    NamedObject::deserialize(archive);
-    _initialOwner = archive.readString();
-    _currentOwner = _initialOwner;
-}
+class Sound;
 
-InventoryMgr::~InventoryMgr() {
-    for (int i = 0; i < _invItems.size(); ++i) {
-        delete _invItems[i];
-    }
-}
+class ActionSound : public Action {
+public:
+    virtual void deserialize(Archive &archive);
 
-void InventoryMgr::deserialize(Archive &archive) {
-    archive >> _invItems;
-}
+private:
+    Sound *_sound;
+    Common::String _fileName;
+    uint32 _volume;
+    bool _isLoop;
+    bool _isBackground;
+    bool _isStopped;
+};
 
 } // End of namespace Pink
 
-
+#endif

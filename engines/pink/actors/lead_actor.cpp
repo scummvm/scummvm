@@ -20,30 +20,19 @@
  *
  */
 
-#include "resource_mgr.h"
-#include "file.h"
-#include "pink.h"
-#include "page.h"
+#include "lead_actor.h"
+#include "../walk/walk_mgr.h"
+#include "../cursor_mgr.h"
+#include "../sequencer.h"
+#include "../archive.h"
 
 namespace Pink {
 
-ResourceMgr::ResourceMgr()
-        : _orb(nullptr), _bro(nullptr),
-          _resDescTable(nullptr), _resCount(0)
-{}
-
-ResourceMgr::~ResourceMgr() {
-    delete[] _resDescTable;
-}
-
-void ResourceMgr::init(PinkEngine *game, GamePage *page) {
-    _orb = game->getOrb();
-    _bro = game->getBro();
-
-    ObjectDescription *objDesc = _orb->getObjDesc(page->getName().c_str());
-    _resCount = objDesc->resourcesCount;
-    _orb->loadObject(page, objDesc);
-    _resDescTable = _orb->getResDescTable(objDesc);
+void LeadActor::deserialize(Archive &archive) {
+    Actor::deserialize(archive);
+    _cursorMgr = static_cast<CursorMgr*>(archive.readObject());
+    _walkMgr = static_cast<WalkMgr*>(archive.readObject());
+    _sequencer = static_cast<Sequencer*>(archive.readObject());
 }
 
 } // End of namespace Pink
