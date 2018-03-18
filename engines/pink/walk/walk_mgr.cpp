@@ -7,6 +7,6 @@
 
 
 void Pink::WalkMgr::deserialize(Pink::Archive &archive) {
-    // setLeadActorRef;
+    _leadActor = static_cast<LeadActor*>(archive.readObject());
     archive >> _locations;
 }

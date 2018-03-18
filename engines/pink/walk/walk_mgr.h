@@ -29,12 +29,14 @@
 namespace Pink {
 
 class WalkLocation;
+class LeadActor;
 
 class WalkMgr : public Object {
 public:
     virtual void deserialize(Archive &archive);
 
 private:
+    LeadActor *_leadActor;
     Common::Array<WalkLocation*> _locations;
 };
 
