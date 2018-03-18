@@ -40,7 +40,7 @@ Subtitles::~Subtitles() {
 void Subtitles::loadSubtitles() {
 	File f("special.bin");
 
-	if (!g_vm->_files->_isDarkCc) {
+	if (!g_vm->_files->_ccNum) {
 		// The first subtitle line contains all the text for the Clouds intro. Since ScummVM allows
 		// both voice and subtitles at the same time, unlike the original, we need to split up the
 		// first subtitle into separate lines to allow them to better interleave with the voice

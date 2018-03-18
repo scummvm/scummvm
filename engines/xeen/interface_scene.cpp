@@ -408,7 +408,7 @@ void InterfaceScene::drawScene() {
 		} else {
 			++mazeObject._frame;
 			if ((int)idx == objNum && scripts._animCounter > 0 && (
-				objObject._spriteId == (_vm->_files->_isDarkCc ? 15 : 16) ||
+				objObject._spriteId == (_vm->_files->_ccNum ? 15 : 16) ||
 				objObject._spriteId == 58 || objObject._spriteId == 73)) {
 				if (mazeObject._frame > 4 || mazeObject._spriteId == 58)
 					mazeObject._frame = 1;
@@ -2660,7 +2660,7 @@ void InterfaceScene::setIndoorsObjects() {
 
 		// Determine which half of the X/Y lists to use
 		int listOffset;
-		if (_vm->_files->_isDarkCc) {
+		if (_vm->_files->_ccNum) {
 			listOffset = mazeObject._spriteId == 47 ? 1 : 0;
 		} else {
 			listOffset = mazeObject._spriteId == 113 ? 1 : 0;
@@ -3365,7 +3365,7 @@ void InterfaceScene::setOutdoorsObjects() {
 	for (uint idx = 0; idx < map._mobData._objects.size(); ++idx) {
 		MazeObject &obj = map._mobData._objects[idx];
 
-		if (_vm->_files->_isDarkCc) {
+		if (_vm->_files->_ccNum) {
 			posIndex = obj._spriteId == 47 ? 1 : 0;
 		} else {
 			posIndex = obj._spriteId == 113 ? 1 : 0;

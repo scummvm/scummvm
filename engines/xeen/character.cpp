@@ -800,7 +800,7 @@ bool Character::guildMember() const {
 	FileManager &files = *g_vm->_files;
 	Party &party = *g_vm->_party;
 
-	if (party._mazeId == 49 && !files._isDarkCc) {
+	if (party._mazeId == 49 && !files._ccNum) {
 		return hasAward(SHANGRILA_GUILD_MEMBER);
 	}
 

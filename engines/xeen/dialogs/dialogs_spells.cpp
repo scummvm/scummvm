@@ -46,7 +46,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	Windows &windows = *_vm->_windows;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = _vm->_files->_ccNum;
 	loadButtons();
 
 	int castingCopy = isCasting;
@@ -61,7 +61,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			if (!c->guildMember()) {
 				sound.stopSound();
 				intf._overallFrame = 5;
-				sound.playSound(isDarkCc ? "skull1.voc" : "guild11.voc", 1);
+				sound.playSound(ccNum ? "skull1.voc" : "guild11.voc", 1);
 				break;
 			}
 
@@ -240,7 +240,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 							c->_spells[spellIndex] = true;
 							sound.stopSound();
 							intf._overallFrame = 0;
-							sound.playSound(isDarkCc ? "guild12.voc" : "parrot2.voc", 1);
+							sound.playSound(ccNum ? "guild12.voc" : "parrot2.voc", 1);
 						} else {
 							sound.playFX(21);
 						}
@@ -308,7 +308,7 @@ void SpellsDialog::loadButtons() {
 const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 	Party &party = *_vm->_party;
 	Spells &spells = *_vm->_spells;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = _vm->_files->_ccNum;
 	int expenseFactor = 0;
 	int currLevel = c->getCurrentLevel();
 	int category;
@@ -358,7 +358,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 						}
 					}
 				}
-			} else if (isDarkCc) {
+			} else if (ccNum) {
 				int groupIndex = (party._mazeId - 29) / 2;
 				for (int spellId = Res.DARK_SPELL_RANGES[groupIndex][0];
 						spellId < Res.DARK_SPELL_RANGES[groupIndex][1]; ++spellId) {
@@ -797,14 +797,14 @@ bool LloydsBeacon::execute() {
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[10];
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = _vm->_files->_ccNum;
 	Character &c = *combat._oldCharacter;
 
 	loadButtons();
 
 	if (!c._lloydMap) {
 		// No destination previously set, so have a default ready
-		if (isDarkCc) {
+		if (ccNum) {
 			c._lloydSide = 1;
 			c._lloydPosition = Common::Point(25, 21);
 			c._lloydMap = 29;
@@ -846,12 +846,12 @@ bool LloydsBeacon::execute() {
 
 		switch (_buttonValue) {
 		case Common::KEYCODE_r:
-			if (!isDarkCc && c._lloydMap >= 75 && c._lloydMap <= 78 && !party._cloudsEnd) {
+			if (!ccNum && c._lloydMap >= 75 && c._lloydMap <= 78 && !party._cloudsEnd) {
 				result = false;
 			} else {
 				sound.playFX(51);
-				map._loadDarkSide = isDarkCc;
-				if (c._lloydMap != party._mazeId || c._lloydSide != (isDarkCc ? 1 : 0)) {
+				map._loadDarkSide = ccNum;
+				if (c._lloydMap != party._mazeId || c._lloydSide != ccNum) {
 					map.load(c._lloydMap);
 				}
 
@@ -866,7 +866,7 @@ bool LloydsBeacon::execute() {
 			sound.playFX(20);
 			c._lloydMap = party._mazeId;
 			c._lloydPosition = party._mazePosition;
-			c._lloydSide = isDarkCc ? 1 : 0;
+			c._lloydSide = ccNum;
 
 			_buttonValue = Common::KEYCODE_ESCAPE;
 			break;

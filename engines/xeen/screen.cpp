@@ -169,7 +169,7 @@ bool Screen::doScroll(bool rollUp, bool fadeInFlag) {
 	const int SCROLL_L[8] = { 29, 23, 15, -5, -11, -23, -49, -71 };
 	const int SCROLL_R[8] = { 165, 171, 198, 218, 228, 245, 264, 281 };
 
-	if (_vm->_files->_isDarkCc) {
+	if (_vm->_files->_ccNum) {
 		if (fadeInFlag)
 			screen.fadeIn(2);
 		return _vm->shouldExit();

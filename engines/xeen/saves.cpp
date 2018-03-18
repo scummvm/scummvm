@@ -195,7 +195,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 
 	// Load the new map
 	map.clearMaze();
-	map._loadDarkSide = files._isDarkCc;
+	map._loadDarkSide = files._ccNum;
 	map.load(party._mazeId);
 
 	delete saveFile;

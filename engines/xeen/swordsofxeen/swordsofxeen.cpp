@@ -49,10 +49,10 @@ void SwordsOfXeenEngine::death() {
 	_sound->playSound("laff1.voc");
 
 	bool breakFlag = false;
-	for (int idx = 0, idx2 = 0; idx < (_files->_isDarkCc ? 10 : 23); ++idx) {
+	for (int idx = 0, idx2 = 0; idx < (_files->_ccNum ? 10 : 23); ++idx) {
 		_events->updateGameCounter();
 
-		if (_files->_isDarkCc) {
+		if (_files->_ccNum) {
 			breakFlag = _events->wait(2);
 		} else {
 			if (idx == 1 || idx == 11)
@@ -63,8 +63,8 @@ void SwordsOfXeenEngine::death() {
 				_sound->playFX(34);
 		}
 
-		if ((_files->_isDarkCc ? 9 : 10) == idx) {
-			if ((_files->_isDarkCc ? 2 : 1) > idx2) {
+		if ((_files->_ccNum ? 9 : 10) == idx) {
+			if ((_files->_ccNum ? 2 : 1) > idx2) {
 				// Restart loop
 				idx = -1;
 				++idx2;

@@ -153,7 +153,7 @@ void ButtonContainer::drawButtons(XSurface *surface) {
 }
 
 bool ButtonContainer::doScroll(bool rollUp, bool fadeIn) {
-	if (_vm->_files->_isDarkCc) {
+	if (_vm->_files->_ccNum) {
 		return Cutscenes::doScroll(rollUp, fadeIn);
 	} else {
 		saveButtons();

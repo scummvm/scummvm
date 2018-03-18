@@ -661,7 +661,7 @@ void Interface::doStepCode() {
 		break;
 	}
 
-	if (_vm->_files->_isDarkCc && party._gameFlags[1][118]) {
+	if (_vm->_files->_ccNum && party._gameFlags[1][118]) {
 		_falling = FALL_NONE;
 	} else {
 		if (_falling != FALL_NONE)
@@ -692,9 +692,9 @@ void Interface::startFalling(bool flag) {
 	Combat &combat = *_vm->_combat;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = _vm->_files->_ccNum;
 
-	if (isDarkCc && party._gameFlags[1][118]) {
+	if (ccNum && party._gameFlags[1][118]) {
 		_falling = FALL_NONE;
 		return;
 	}
@@ -704,10 +704,10 @@ void Interface::startFalling(bool flag) {
 	_falling = FALL_START;
 	draw3d(false);
 
-	if (flag && (!isDarkCc || party._fallMaze != 0)) {
+	if (flag && (!ccNum || party._fallMaze != 0)) {
 		party._mazeId = party._fallMaze;
 		party._mazePosition = party._fallPosition;
-	} else if (!isDarkCc) {
+	} else if (!ccNum) {
 		switch (party._mazeId - 25) {
 		case 0:
 		case 26:
@@ -927,7 +927,7 @@ bool Interface::checkMoveDirection(int key) {
 
 		switch (map._currentWall) {
 		case 5:
-			if (_vm->_files->_isDarkCc)
+			if (_vm->_files->_ccNum)
 				goto check;
 
 			// fall through

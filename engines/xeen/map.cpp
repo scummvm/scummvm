@@ -717,7 +717,7 @@ void Map::load(int mapId) {
 
 	// Iterate through loading the given maze as well as the two successive
 	// mazes in each of the four cardinal directions
-	bool isDarkCc = files._isDarkCc;
+	int ccNum = files._ccNum;
 	MazeData *mazeDataP = &_mazeData[0];
 	bool textLoaded = false;
 
@@ -735,9 +735,9 @@ void Map::load(int mapId) {
 			mazeDataP->synchronize(datSer);
 			datFile.close();
 
-			if (isDarkCc && mapId == 50)
+			if (ccNum && mapId == 50)
 				mazeDataP->setAllTilesStepped();
-			if (!isDarkCc && party._gameFlags[0][25] &&
+			if (!ccNum && party._gameFlags[0][25] &&
 					(mapId == 42 || mapId == 43 || mapId == 4)) {
 				mazeDataP->clearCellSurfaces();
 			}
@@ -752,7 +752,7 @@ void Map::load(int mapId) {
 					_mazeName = Res._cloudsMapNames[mapId];
 				} else {
 					Common::String txtName = Common::String::format("%s%c%03d.txt",
-						isDarkCc ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
+						ccNum ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
 					File fText(txtName, 1);
 					char mazeName[33];
 					fText.read(mazeName, 33);
@@ -776,7 +776,7 @@ void Map::load(int mapId) {
 				_headData.synchronize(headFile);
 				headFile.close();
 
-				if (!isDarkCc && mapId == 15) {
+				if (!ccNum && mapId == 15) {
 					if ((_mobData._monsters[0]._position.x > 31 || _mobData._monsters[0]._position.y > 31) &&
 						(_mobData._monsters[1]._position.x > 31 || _mobData._monsters[1]._position.y > 31) &&
 						(_mobData._monsters[2]._position.x > 31 || _mobData._monsters[2]._position.y > 31)) {
@@ -809,12 +809,12 @@ void Map::load(int mapId) {
 		files.setGameCc(_sideObjects);
 
 		if (party._cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
-				mapId == 27 && isDarkCc) {
+				mapId == 27 && ccNum) {
 			_mobData._objects[29]._spriteId = 0;
 			_mobData._objects[29]._id = 8;
 			_mobData._objectSprites[i]._sprites.clear();
 		} else if (mapId == 12 && party._gameFlags[0][43] &&
-			_mobData._objectSprites[i]._spriteId == 118 && !isDarkCc) {
+			_mobData._objectSprites[i]._spriteId == 118 && !ccNum) {
 			filename = "085.obj";
 			_mobData._objectSprites[0]._spriteId = 85;
 		} else {
@@ -847,15 +847,15 @@ void Map::load(int mapId) {
 		_mobData._wallItemSprites[i]._sprites.load(filename, _sidePictures);
 	}
 
-	files.setGameCc(isDarkCc);
+	files.setGameCc(ccNum);
 
 	// Handle loading miscellaneous sprites for the map
 	if (_isOutdoors) {
 		// Start playing relevant music
-		sound._musicSide = isDarkCc;
+		sound._musicSide = ccNum;
 		Common::String musName;
 
-		if (_vm->_files->_isDarkCc) {
+		if (_vm->_files->_ccNum) {
 			int randIndex = _vm->getRandomNumber(6);
 			musName = Res.MUSIC_FILES2[_mazeData->_wallKind][randIndex];
 		} else {
@@ -884,16 +884,16 @@ void Map::load(int mapId) {
 				_surfaceSprites[i].load(Res.SURFACE_NAMES[_mazeData[0]._surfaceTypes[i]]);
 		}
 	} else {
-		if (files._isDarkCc && (mapId == 125 || mapId == 126 || mapId == 127))
+		if (files._ccNum && (mapId == 125 || mapId == 126 || mapId == 127))
 			files.setGameCc(0);
-		sound._musicSide = files._isDarkCc;
+		sound._musicSide = files._ccNum;
 
 		// Start playing relevant music
 		const int MUS_INDEXES[] = { 1, 2, 3, 4, 3, 5 };
 		Common::String musName;
 
-		_sideMusic = isDarkCc;
-		if (isDarkCc) {
+		_sideMusic = ccNum;
+		if (ccNum) {
 			int randIndex = _vm->getRandomNumber(6);
 			musName = Res.MUSIC_FILES2[MUS_INDEXES[_mazeData->_wallKind]][randIndex];
 		} else {
@@ -987,7 +987,7 @@ void Map::load(int mapId) {
 		indoorList._ground._sprites = &_groundSprites;
 
 		// Don't show horizon for certain maps
-		if (_vm->_files->_isDarkCc) {
+		if (_vm->_files->_ccNum) {
 			if ((mapId >= 89 && mapId <= 112) || mapId == 128 || mapId == 129)
 				indoorList._horizon._sprites = nullptr;
 		} else {
@@ -998,7 +998,7 @@ void Map::load(int mapId) {
 
 	loadSky();
 
-	files.setGameCc(isDarkCc);
+	files.setGameCc(ccNum);
 }
 
 void Map::findMap(int mapId) {
@@ -1114,7 +1114,7 @@ void Map::saveMap() {
 	FileManager &files = *g_vm->_files;
 	Party &party = *g_vm->_party;
 	int mapId = _mazeData[0]._mazeId;
-	if (!files._isDarkCc && mapId == 85)
+	if (!files._ccNum && mapId == 85)
 		return;
 
 	// Save the primary maze
@@ -1124,7 +1124,7 @@ void Map::saveMap() {
 	_mazeData[0].synchronize(datSer);
 	datFile.finalize();
 
-	if (!files._isDarkCc && mapId == 15) {
+	if (!files._ccNum && mapId == 15) {
 		for (uint idx = 0; idx < MIN(_mobData._monsters.size(), (uint)3); ++idx) {
 			MazeMonster &mon = _mobData._monsters[idx];
 			if (mon._position.x > 31 || mon._position.y > 31) {
@@ -1162,7 +1162,7 @@ void Map::saveMonsters() {
 
 void Map::saveMaze() {
 	int mazeNum = _mazeData[0]._mazeNumber;
-	if (!mazeNum || (mazeNum == 85 && !_vm->_files->_isDarkCc))
+	if (!mazeNum || (mazeNum == 85 && !_vm->_files->_ccNum))
 		return;
 
 	saveEvents();
@@ -1244,7 +1244,7 @@ int Map::getCell(int idx) {
 	);
 
 	if (pt.x > 31 || pt.y > 31) {
-		if (_vm->_files->_isDarkCc) {
+		if (_vm->_files->_ccNum) {
 			if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
 					mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
 				_currentSurfaceId = SURFTYPE_DESERT;
@@ -1275,7 +1275,7 @@ int Map::getCell(int idx) {
 				_currentWall = 0;
 				return 0;
 			} else {
-				if (_vm->_files->_isDarkCc) {
+				if (_vm->_files->_ccNum) {
 					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
 						mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
 						_currentSurfaceId = 6;
@@ -1309,7 +1309,7 @@ int Map::getCell(int idx) {
 				_currentWall = 0;
 				return 0;
 			} else {
-				if (_vm->_files->_isDarkCc) {
+				if (_vm->_files->_ccNum) {
 					if ((mapId >= 53 && mapId <= 88 && mapId != 73) || (mapId >= 74 && mapId <= 120) ||
 						mapId == 125 || mapId == 126 || mapId == 128 || mapId == 129) {
 						_currentSurfaceId = 6;

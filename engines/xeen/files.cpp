@@ -218,7 +218,7 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
 /*------------------------------------------------------------------------*/
 
 FileManager::FileManager(XeenEngine *vm) {
-	_isDarkCc = vm->getGameID() == GType_DarkSide;
+	_ccNum = vm->getGameID() == GType_DarkSide;
 	File::_xeenCc = File::_darkCc = File::_introCc = nullptr;
 	File::_xeenSave = File::_darkSave = nullptr;
 	File::_currentSave = nullptr;
@@ -277,7 +277,7 @@ void FileManager::setGameCc(int ccMode) {
 	}
 
 	File::setCurrentArchive(ccMode);
-	_isDarkCc = ccMode != 0;
+	_ccNum = ccMode != 0;
 }
 
 void FileManager::load(Common::SeekableReadStream &stream) {
@@ -285,7 +285,7 @@ void FileManager::load(Common::SeekableReadStream &stream) {
 }
 
 void FileManager::save(Common::WriteStream &s) {
-	s.writeByte(_isDarkCc ? 1 : 0);
+	s.writeByte(_ccNum ? 1 : 0);
 }
 
 /*------------------------------------------------------------------------*/
@@ -330,7 +330,7 @@ bool File::open(const Common::String &filename, Common::Archive &archive) {
 
 bool File::open(const Common::String &filename, int ccMode) {
 	FileManager &files = *g_vm->_files;
-	int oldMode = files._isDarkCc ? 1 : 0;
+	int oldNum = files._ccNum;
 
 	files.setGameCc(ccMode);
 	if (File::exists(filename, *_currentArchive))
@@ -338,7 +338,7 @@ bool File::open(const Common::String &filename, int ccMode) {
 	else
 		File::open(filename);
 
-	files.setGameCc(oldMode);
+	files.setGameCc(oldNum);
 
 	return true;
 }
@@ -390,11 +390,11 @@ bool File::exists(const Common::String &filename) {
 
 bool File::exists(const Common::String &filename, int ccMode) {
 	FileManager &files = *g_vm->_files;
-	int oldMode = files._isDarkCc ? 1 : 0;
+	int oldNum = files._ccNum;
 
 	files.setGameCc(ccMode);
 	bool result = exists(filename);
-	files.setGameCc(oldMode);
+	files.setGameCc(oldNum);
 
 	return result;
 }

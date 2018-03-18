@@ -74,7 +74,7 @@ const int LEFT_CLAW_IDLE_Y[32] = {
 bool DarkSideCutscenes::showDarkSideTitle(bool seenIntro) {
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
-	g_vm->_files->_isDarkCc = true;
+	g_vm->_files->_ccNum = true;
 
 	screen.loadPalette("dark.pal");
 	SpriteResource nwc[4] = {
@@ -168,7 +168,7 @@ bool DarkSideCutscenes::showDarkSideIntro(bool seenIntro) {
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 
-	files._isDarkCc = true;
+	files._ccNum = true;
 	files.setGameCc(1);
 
 	if (showDarkSideTitle(seenIntro)) {

@@ -77,7 +77,7 @@ struct CCEntry {
  */
 class FileManager {
 public:
-	bool _isDarkCc;
+	int _ccNum;
 public:
 	/**
 	 * Constructor

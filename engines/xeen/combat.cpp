@@ -707,7 +707,7 @@ bool Combat::monsterCanMove(const Common::Point &pt, int wallShift,
 			} else if (surfaceType == SURFTYPE_SPACE) {
 				return monsterData._flying;
 			} else {
-				return _vm->_files->_isDarkCc || monster._spriteId != 59;
+				return _vm->_files->_ccNum || monster._spriteId != 59;
 			}
 		default:
 			return v <= map.mazeData()._difficulties._wallNoPass;
@@ -1389,19 +1389,19 @@ void Combat::attack2(int damage, RangeType rangeType) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = _vm->_files->_ccNum;
 	MazeMonster &monster = map._mobData._monsters[_monster2Attack];
 	MonsterStruct &monsterData = *monster._monsterData;
 	bool monsterDied = false;
 
-	if (!isDarkCc && damage && rangeType != RT_SINGLE && monster._spriteId == 89)
+	if (!ccNum && damage && rangeType != RT_SINGLE && monster._spriteId == 89)
 		damage = 0;
 
 	if (!damage) {
 		sound.playSound(_missVoc, 1);
 		sound.playFX(6);
 	} else {
-		if (!isDarkCc && monster._spriteId == 89)
+		if (!ccNum && monster._spriteId == 89)
 			damage += 100;
 		if (monster._damageType == DT_SLEEP || monster._damageType == DT_DRAGONSLEEP)
 			monster._damageType = DT_PHYSICAL;
@@ -1486,7 +1486,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 	intf.draw3d(true);
 
 	if (monsterDied) {
-		if (!isDarkCc) {
+		if (!ccNum) {
 			if (_monster2Attack == 20 && party._mazeId == 41)
 				party._gameFlags[0][11] = true;
 			if (_monster2Attack == 8 && party._mazeId == 78) {
@@ -1507,7 +1507,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			party._treasure._gold = monsterData._gold;
 			party._treasure._gems = monsterData._gems;
 
-			if (!isDarkCc && monster._spriteId == 89) {
+			if (!ccNum && monster._spriteId == 89) {
 				// Xeen's Scepter of Temporal Distortion
 				party._treasure._weapons[0]._id = 90;
 				party._treasure._weapons[0]._bonusFlags = 0;

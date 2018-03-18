@@ -168,14 +168,14 @@ int StringInput::execute(bool type, const Common::String &expected,
 			MirrorEntry me;
 			scripts._mirror.clear();
 
-			File f(Common::String::format("%smirr.txt", files._isDarkCc ? "dark" : "xeen"), 1);
+			File f(Common::String::format("%smirr.txt", files._ccNum ? "dark" : "xeen"), 1);
 			while (me.synchronize(f))
 				scripts._mirror.push_back(me);
 			f.close();
 
 			// Load in any extended mirror entries
 			Common::File f2;
-			if (f2.open(Common::String::format("%smirr.ext", files._isDarkCc ? "dark" : "xeen"))) {
+			if (f2.open(Common::String::format("%smirr.ext", files._ccNum ? "dark" : "xeen"))) {
 				while (me.synchronize(f2))
 					scripts._mirror.push_back(me);
 				f2.close();
@@ -184,7 +184,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 			for (uint idx = 0; idx < scripts._mirror.size(); ++idx) {
 				if (!line.compareToIgnoreCase(scripts._mirror[idx]._name)) {
 					result = idx + 1;
-					sound.playFX(_vm->_files->_isDarkCc ? 35 : 61);
+					sound.playFX(_vm->_files->_ccNum ? 35 : 61);
 					break;
 				}
 			}

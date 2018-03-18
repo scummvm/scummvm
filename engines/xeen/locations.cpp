@@ -35,12 +35,12 @@ namespace Xeen {
 namespace Locations {
 
 BaseLocation::BaseLocation(LocationAction action) : ButtonContainer(g_vm),
-		_locationActionId(action), _isDarkCc(g_vm->_files->_isDarkCc),
+		_locationActionId(action), _ccNum(g_vm->_files->_ccNum),
 		_vocName("hello1.voc"), _exitToUi(false) {
-	_townMaxId = (action >= SPHINX) ? 0 : Res.TOWN_MAXES[_isDarkCc][action];
+	_townMaxId = (action >= SPHINX) ? 0 : Res.TOWN_MAXES[_ccNum][action];
 	if (action < NO_ACTION) {
-		_songName = Res.TOWN_ACTION_MUSIC[_isDarkCc][action];
-		_townSprites.resize(Res.TOWN_ACTION_FILES[_isDarkCc][action]);
+		_songName = Res.TOWN_ACTION_MUSIC[_ccNum][action];
+		_townSprites.resize(Res.TOWN_ACTION_FILES[_ccNum][action]);
 	}
 
 	_animFrame = 0;
@@ -149,7 +149,7 @@ void BaseLocation::drawAnim(bool flag) {
 	// TODO: Figure out a clean way to split method into individual location classes
 	if (_locationActionId == BLACKSMITH) {
 		if (sound.isSoundPlaying()) {
-			if (_isDarkCc) {
+			if (_ccNum) {
 				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
 					Common::Point(34, 33));
@@ -158,20 +158,20 @@ void BaseLocation::drawAnim(bool flag) {
 			}
 		} else {
 			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
-			if (_isDarkCc) {
+			if (_ccNum) {
 				_townSprites[2].draw(0, _vm->getRandomNumber(11) == 1 ? 9 : 10,
 					Common::Point(34, 33));
 			}
 		}
-	} else if (!_isDarkCc || _locationActionId != TRAINING) {
+	} else if (!_ccNum || _locationActionId != TRAINING) {
 		if (!_townSprites[_drawFrameIndex / 8].empty())
 			_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 	}
 
 	switch (_locationActionId) {
 	case BANK:
-		if (sound.isSoundPlaying() || (_isDarkCc && _animFrame)) {
-			if (_isDarkCc) {
+		if (sound.isSoundPlaying() || (_ccNum && _animFrame)) {
+			if (_ccNum) {
 				if (sound.isSoundPlaying() || _animFrame == 1) {
 					_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
 						Common::Point(8, 30));
@@ -189,7 +189,7 @@ void BaseLocation::drawAnim(bool flag) {
 
 	case GUILD:
 		if (!sound.isSoundPlaying()) {
-			if (_isDarkCc) {
+			if (_ccNum) {
 				if (_animFrame) {
 					_animFrame ^= 1;
 					_townSprites[6].draw(0, _animFrame, Common::Point(8, 106));
@@ -201,7 +201,7 @@ void BaseLocation::drawAnim(bool flag) {
 		break;
 
 	case TAVERN:
-		if (sound.isSoundPlaying() && _isDarkCc) {
+		if (sound.isSoundPlaying() && _ccNum) {
 			_townSprites[4].draw(0, _vm->getRandomNumber(7), Common::Point(153, 49));
 		}
 		break;
@@ -215,11 +215,11 @@ void BaseLocation::drawAnim(bool flag) {
 
 	case TRAINING:
 		if (sound.isSoundPlaying()) {
-			if (_isDarkCc) {
+			if (_ccNum) {
 				_townSprites[_drawFrameIndex / 8].draw(0, _drawFrameIndex % 8, _animPos);
 			}
 		} else {
-			if (_isDarkCc) {
+			if (_ccNum) {
 				_townSprites[0].draw(0, ++_animFrame % 8, Common::Point(8, 8));
 				_townSprites[5].draw(0, _vm->getRandomNumber(5), Common::Point(61, 74));
 			} else {
@@ -257,7 +257,7 @@ void BaseLocation::drawAnim(bool flag) {
 		_drawFrameIndex = (_drawFrameIndex + 1) % _townMaxId;
 	}
 
-	if (_isDarkCc) {
+	if (_ccNum) {
 		if (_locationActionId == BLACKSMITH && (_drawFrameIndex == 4 || _drawFrameIndex == 13))
 			sound.playFX(45);
 
@@ -307,7 +307,7 @@ BankLocation::BankLocation() : BaseLocation(BANK) {
 	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_icons1);
 	_animFrame = 1;
 
-	_vocName = _isDarkCc ? "bank1.voc" : "banker.voc";
+	_vocName = _ccNum ? "bank1.voc" : "banker.voc";
 }
 
 Common::String BankLocation::createLocationText(Character &ch) {
@@ -320,7 +320,7 @@ Common::String BankLocation::createLocationText(Character &ch) {
 }
 
 void BankLocation::drawBackground() {
-	if (_isDarkCc) {
+	if (_ccNum) {
 		_townSprites[4].draw(0, _vm->getRandomNumber(13, 18),
 			Common::Point(8, 30));
 	}
@@ -448,7 +448,7 @@ BlacksmithLocation::BlacksmithLocation() : BaseLocation(BLACKSMITH) {
 	addButton(Common::Rect(234, 74, 308, 82), 0);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
 
-	_vocName = _isDarkCc ? "see2.voc" : "whaddayo.voc";
+	_vocName = _ccNum ? "see2.voc" : "whaddayo.voc";
 }
 
 Common::String BlacksmithLocation::createLocationText(Character &ch) {
@@ -479,7 +479,7 @@ Character *BlacksmithLocation::doOptions(Character *c) {
 void BlacksmithLocation::farewell() {
 	Sound &sound = *g_vm->_sound;
 
-	if (_isDarkCc) {
+	if (_ccNum) {
 		sound.stopSound();
 		sound.playVoice("come1.voc", 1);
 	}
@@ -497,7 +497,7 @@ GuildLocation::GuildLocation() : BaseLocation(GUILD) {
 	addButton(Common::Rect(234, 84, 308, 92), 0);
 	g_vm->_mode = MODE_17;
 
-	_vocName = _isDarkCc ? "parrot1.voc" : "guild10.voc";
+	_vocName = _ccNum ? "parrot1.voc" : "guild10.voc";
 }
 
 Common::String GuildLocation::createLocationText(Character &ch) {
@@ -524,7 +524,7 @@ Character *GuildLocation::doOptions(Character *c) {
 			if (!c->guildMember()) {
 				sound.stopSound();
 				_animFrame = 5;
-				sound.playSound(_isDarkCc ? "skull1.voc" : "guild11.voc", 1);
+				sound.playSound(_ccNum ? "skull1.voc" : "guild11.voc", 1);
 			}
 		}
 	} else if (_buttonValue == Common::KEYCODE_s) {
@@ -560,7 +560,7 @@ TavernLocation::TavernLocation() : BaseLocation(TAVERN) {
 	addButton(Common::Rect(234, 84, 308, 92), Common::KEYCODE_r);
 	g_vm->_mode = MODE_17;
 
-	_vocName = _isDarkCc ? "hello1.voc" : "hello.voc";
+	_vocName = _ccNum ? "hello1.voc" : "hello.voc";
 }
 
 Common::String TavernLocation::createLocationText(Character &ch) {
@@ -620,19 +620,19 @@ Character *TavernLocation::doOptions(Character *c) {
 
 	case Common::KEYCODE_f: {
 		// Food
-		if (party._mazeId == (_isDarkCc ? 29 : 28)) {
+		if (party._mazeId == (_ccNum ? 29 : 28)) {
 			_v22 = party._activeParty.size() * 15;
 			_v23 = 10;
 			idx = 0;
-		} else if (_isDarkCc && party._mazeId == 31) {
+		} else if (_ccNum && party._mazeId == 31) {
 			_v22 = party._activeParty.size() * 60;
 			_v23 = 100;
 			idx = 1;
-		} else if (!_isDarkCc && party._mazeId == 30) {
+		} else if (!_ccNum && party._mazeId == 30) {
 			_v22 = party._activeParty.size() * 50;
 			_v23 = 50;
 			idx = 1;
-		} else if (_isDarkCc) {
+		} else if (_ccNum) {
 			_v22 = party._activeParty.size() * 120;
 			_v23 = 250;
 			idx = 2;
@@ -646,7 +646,7 @@ Character *TavernLocation::doOptions(Character *c) {
 			idx = 0;
 		}
 
-		Common::String msg = _textStrings[(_isDarkCc ? 60 : 75) + idx];
+		Common::String msg = _textStrings[(_ccNum ? 60 : 75) + idx];
 		windows[10].close();
 		windows[12].open();
 		windows[12].writeString(msg);
@@ -658,7 +658,7 @@ Character *TavernLocation::doOptions(Character *c) {
 			} else if (party.subtract(CONS_GOLD, _v23, WHERE_PARTY, WT_LOC_WAIT)) {
 				party._food = _v22;
 				sound.stopSound();
-				sound.playSound(_isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
+				sound.playSound(_ccNum ? "thanks2.voc" : "thankyou.voc", 1);
 			}
 		}
 
@@ -670,11 +670,11 @@ Character *TavernLocation::doOptions(Character *c) {
 
 	case Common::KEYCODE_r: {
 		// Rumors
-		if (party._mazeId == (_isDarkCc ? 29 : 28)) {
+		if (party._mazeId == (_ccNum ? 29 : 28)) {
 			idx = 0;
-		} else if (party._mazeId == (_isDarkCc ? 31 : 30)) {
+		} else if (party._mazeId == (_ccNum ? 31 : 30)) {
 			idx = 10;
-		} else if (_isDarkCc || party._mazeId == 49) {
+		} else if (_ccNum || party._mazeId == 49) {
 			idx = 20;
 		}
 
@@ -693,12 +693,12 @@ Character *TavernLocation::doOptions(Character *c) {
 	case Common::KEYCODE_s: {
 		// Sign In
 		// Set location and position for afterwards
-		idx = _isDarkCc ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
+		idx = _ccNum ? (party._mazeId - 29) >> 1 : party._mazeId - 28;
 		assert(idx >= 0);
-		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_locationActionId][idx][0];
-		party._mazePosition.y = Res.TAVERN_EXIT_LIST[_isDarkCc ? 1 : 0][_locationActionId][idx][1];
+		party._mazePosition.x = Res.TAVERN_EXIT_LIST[_ccNum][_locationActionId][idx][0];
+		party._mazePosition.y = Res.TAVERN_EXIT_LIST[_ccNum][_locationActionId][idx][1];
 
-		if (!_isDarkCc || party._mazeId == 29)
+		if (!_ccNum || party._mazeId == 29)
 			party._mazeDirection = DIR_WEST;
 		else if (party._mazeId == 31)
 			party._mazeDirection = DIR_EAST;
@@ -744,23 +744,23 @@ Character *TavernLocation::doOptions(Character *c) {
 					wait();
 				} else if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_LOC_WAIT)) {
 					sound.stopSound();
-					sound.playSound(_isDarkCc ? "thanks2.voc" : "thankyou.voc", 1);
+					sound.playSound(_ccNum ? "thanks2.voc" : "thankyou.voc", 1);
 
-					if (party._mazeId == (_isDarkCc ? 29 : 28)) {
+					if (party._mazeId == (_ccNum ? 29 : 28)) {
 						_v24 = 30;
-					} else if (_isDarkCc && party._mazeId == 31) {
+					} else if (_ccNum && party._mazeId == 31) {
 						_v24 = 40;
-					} else if (!_isDarkCc && party._mazeId == 45) {
+					} else if (!_ccNum && party._mazeId == 45) {
 						_v24 = 45;
-					} else if (!_isDarkCc && party._mazeId == 49) {
+					} else if (!_ccNum && party._mazeId == 49) {
 						_v24 = 60;
-					} else if (_isDarkCc) {
+					} else if (_ccNum) {
 						_v24 = 50;
 					}
 
 					Common::String msg = _textStrings[map.mazeData()._tavernTips + _v24];
 					map.mazeData()._tavernTips = (map.mazeData()._tavernTips + 1) /
-						(_isDarkCc ? 10 : 15);
+						(_ccNum ? 10 : 15);
 
 					Window &w = windows[12];
 					w.open();
@@ -786,7 +786,7 @@ void TavernLocation::farewell() {
 	Sound &sound = *g_vm->_sound;
 
 	sound.stopSound();
-	sound.playVoice(_isDarkCc ? "gdluck1.voc" : "goodbye.voc", 1);
+	sound.playVoice(_ccNum ? "gdluck1.voc" : "goodbye.voc", 1);
 
 	map.mazeData()._mazeNumber = party._mazeId;
 }
@@ -812,28 +812,28 @@ TempleLocation::TempleLocation() : BaseLocation(TEMPLE) {
 	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_u);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
 
-	_vocName = _isDarkCc ? "help2.voc" : "maywe2.voc";
+	_vocName = _ccNum ? "help2.voc" : "maywe2.voc";
 }
 
 Common::String TempleLocation::createLocationText(Character &ch) {
 	Party &party = *g_vm->_party;
 
-	if (party._mazeId == (_isDarkCc ? 29 : 28)) {
+	if (party._mazeId == (_ccNum ? 29 : 28)) {
 		_v10 = _v11 = _v12 = _v13 = 0;
 		_v14 = 10;
-	} else if (party._mazeId == (_isDarkCc ? 31 : 30)) {
+	} else if (party._mazeId == (_ccNum ? 31 : 30)) {
 		_v13 = 10;
 		_v12 = 50;
 		_v11 = 500;
 		_v10 = 100;
 		_v14 = 25;
-	} else if (party._mazeId == (_isDarkCc ? 37 : 73)) {
+	} else if (party._mazeId == (_ccNum ? 37 : 73)) {
 		_v13 = 20;
 		_v12 = 100;
 		_v11 = 1000;
 		_v10 = 200;
 		_v14 = 50;
-	} else if (_isDarkCc || party._mazeId == 49) {
+	} else if (_ccNum || party._mazeId == 49) {
 		_v13 = 100;
 		_v12 = 500;
 		_v11 = 5000;
@@ -988,12 +988,12 @@ TrainingLocation::TrainingLocation() : BaseLocation(TRAINING) {
 	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
 	addButton(Common::Rect(242, 108, 266, 128), Common::KEYCODE_t, &_icons1);
 
-	_vocName = _isDarkCc ? "youtrn1.voc" : "training.voc";
+	_vocName = _ccNum ? "youtrn1.voc" : "training.voc";
 }
 
 Common::String TrainingLocation::createLocationText(Character &ch) {
 	Party &party = *g_vm->_party;
-	if (_isDarkCc) {
+	if (_ccNum) {
 		switch (party._mazeId) {
 		case 29:
 			// Castleview
@@ -1079,9 +1079,9 @@ Character *TrainingLocation::doOptions(Character *c) {
 
 			Common::String name;
 			if (c->_level._permanent >= _maxLevel) {
-				name = _isDarkCc ? "gtlost.voc" : "trainin1.voc";
+				name = _ccNum ? "gtlost.voc" : "trainin1.voc";
 			} else {
-				name = _isDarkCc ? "gtlost.voc" : "trainin0.voc";
+				name = _ccNum ? "gtlost.voc" : "trainin0.voc";
 			}
 
 			sound.playSound(name);
@@ -1090,7 +1090,7 @@ Character *TrainingLocation::doOptions(Character *c) {
 			if (party.subtract(CONS_GOLD, (c->_level._permanent * c->_level._permanent) * 10, WHERE_PARTY, WT_LOC_WAIT)) {
 				_drawFrameIndex = 0;
 				sound.stopSound();
-				sound.playSound(_isDarkCc ? "prtygd.voc" : "trainin2.voc", 1);
+				sound.playSound(_ccNum ? "prtygd.voc" : "trainin2.voc", 1);
 
 				c->_experience -=  c->nextExperienceLevel() -
 					(c->getCurrentExperience() - c->_experience);
@@ -1279,16 +1279,16 @@ int ReaperCutscene::show() {
 	Sound &sound = *g_vm->_sound;
 	Windows &windows = *g_vm->_windows;
 
-	SpriteResource sprites1(_isDarkCc ? "tower1.zom" : "tower.vga", _isDarkCc);
-	SpriteResource sprites2(_isDarkCc ? "tower2.zom" : "freap.vga", _isDarkCc);
+	SpriteResource sprites1(_ccNum ? "tower1.zom" : "tower.vga", _ccNum);
+	SpriteResource sprites2(_ccNum ? "tower2.zom" : "freap.vga", _ccNum);
 
 	Graphics::ManagedSurface savedBg;
 	savedBg.copyFrom(screen);
 
 	for (int idx = 13; idx >= 0; --idx) {
 		events.updateGameCounter();
-		sprites1.draw(0, 0, Common::Point(REAPER_X1[_isDarkCc][idx], REAPER_Y1[_isDarkCc][idx]), 0, idx);
-		if (_isDarkCc) {
+		sprites1.draw(0, 0, Common::Point(REAPER_X1[_ccNum][idx], REAPER_Y1[_ccNum][idx]), 0, idx);
+		if (_ccNum) {
 			sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]), 0, idx);
 			sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]), 0, idx);
 		}
@@ -1296,7 +1296,7 @@ int ReaperCutscene::show() {
 		WAIT(1);
 	}
 
-	if (_isDarkCc) {
+	if (_ccNum) {
 		for (int idx = -200; idx < 0; idx += 16) {
 			events.updateGameCounter();
 			sprites1.draw(0, 0, Common::Point(0, 0));
@@ -1319,7 +1319,7 @@ int ReaperCutscene::show() {
 
 	sound.setMusicPercent(38);
 	sprites1.draw(0, 0, Common::Point(0, 0));
-	if (_isDarkCc) {
+	if (_ccNum) {
 		sprites1.draw(0, 1, Common::Point(160, 0));
 		sprites1.draw(0, party._isNight ? 3 : 2);
 	}
@@ -1330,7 +1330,7 @@ int ReaperCutscene::show() {
 	do {
 		events.updateGameCounter();
 		int frame = g_vm->getRandomNumber(4);
-		if (_isDarkCc) {
+		if (_ccNum) {
 			sprites2.draw(0, frame);
 			sprites2.draw(0, frame + 5, Common::Point(160, 0));
 		} else {
@@ -1344,21 +1344,21 @@ int ReaperCutscene::show() {
 	} while (sound.isSoundPlaying());
 
 	sprites2.draw(0, 0, Common::Point(0, 0));
-	if (_isDarkCc)
+	if (_ccNum)
 		sprites2.draw(0, 5, Common::Point(160, 0));
 	windows[0].update();
 	WAIT(7);
 
 	sound.playVoice(_mazeFlag ? "reaper12.voc" : "reaper14.voc");
 	if (_mazeFlag)
-		sound.playVoice(_isDarkCc ? "goin1.voc" : "reaper13.voc");
+		sound.playVoice(_ccNum ? "goin1.voc" : "reaper13.voc");
 	else
-		sound.playVoice(_isDarkCc ? "needkey1.voc" : "reaper15.voc");
+		sound.playVoice(_ccNum ? "needkey1.voc" : "reaper15.voc");
 
 	do {
 		events.updateGameCounter();
 		int frame = g_vm->getRandomNumber(4);
-		if (_isDarkCc) {
+		if (_ccNum) {
 			sprites2.draw(0, frame, Common::Point(0, 0));
 			sprites2.draw(0, frame + 5, Common::Point(160, 0));
 		} else {
@@ -1370,7 +1370,7 @@ int ReaperCutscene::show() {
 	} while (_subtitles.lineActive());
 
 	sprites2.draw(0, 0, Common::Point(0, 0));
-	if (_isDarkCc)
+	if (_ccNum)
 		sprites2.draw(0, 5, Common::Point(160, 0));
 	windows[0].update();
 	WAIT(1);
@@ -1379,9 +1379,9 @@ int ReaperCutscene::show() {
 		for (int idx = 0; idx < 14; ++idx) {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
-			sprites1.draw(0, 0, Common::Point(REAPER_X1[_isDarkCc][idx], REAPER_Y1[_isDarkCc][idx]), 0, idx);
+			sprites1.draw(0, 0, Common::Point(REAPER_X1[_ccNum][idx], REAPER_Y1[_ccNum][idx]), 0, idx);
 			
-			if (_isDarkCc) {
+			if (_ccNum) {
 				sprites1.draw(0, 1, Common::Point(REAPER_X2[idx], REAPER_Y1[1][idx]), 0, idx);
 				sprites1.draw(0, party._isNight ? 3 : 2, Common::Point(REAPER_X3[idx], REAPER_Y1[1][idx]), 0, idx);
 			}
@@ -1415,7 +1415,7 @@ void ReaperCutscene::getNewLocation() {
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
 
-	if (_isDarkCc) {
+	if (_ccNum) {
 		switch (party._mazeId) {
 		case 3:
 			if (party._questItems[40]) {
@@ -1545,28 +1545,28 @@ int GolemCutscene::show() {
 	Sound &sound = *g_vm->_sound;
 	Windows &windows = *g_vm->_windows;
 	SpriteResource sprites1, sprites2[2];
-	sprites1.load(_isDarkCc ? "dung1.zom" : "golmback.vga");
-	sprites2[0].load(_isDarkCc ? "dung2.zom" : "golem.vga");
-	if (_isDarkCc)
+	sprites1.load(_ccNum ? "dung1.zom" : "golmback.vga");
+	sprites2[0].load(_ccNum ? "dung2.zom" : "golem.vga");
+	if (_ccNum)
 		sprites2[1].load("dung3.zom");
 
 	// Save the screen
 	Graphics::ManagedSurface savedBg;
 	savedBg.copyFrom(screen);
 
-	for (int idx = (_isDarkCc ? 8 : 11); idx >= 0; --idx) {
+	for (int idx = (_ccNum ? 8 : 11); idx >= 0; --idx) {
 		events.updateGameCounter();
 		screen.blitFrom(savedBg);
 		sprites1.draw(0, 0,
-			Common::Point(GOLEM_X1[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]), 0, idx);
+			Common::Point(GOLEM_X1[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
 		sprites1.draw(0, 1,
-			Common::Point(GOLEM_X2[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]), 0, idx);
+			Common::Point(GOLEM_X2[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
 
 		windows[0].update();
 		WAIT(1);
 	}
 
-	if (_isDarkCc)
+	if (_ccNum)
 		sound.playSound("ogre.voc");
 
 	for (int idx = -200; idx < 0; idx += 16) {
@@ -1574,13 +1574,13 @@ int GolemCutscene::show() {
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));
 		sprites2[0].draw(0, 0, Common::Point(idx, 0), SPRFLAG_800);
-		sprites2[_isDarkCc].draw(0, 1, Common::Point(idx + 160, 0), SPRFLAG_800);
+		sprites2[_ccNum].draw(0, 1, Common::Point(idx + 160, 0), SPRFLAG_800);
 
-		if (!_isDarkCc)
+		if (!_ccNum)
 			sprites2[0].draw(0, 2, Common::Point(idx + g_vm->getRandomNumber(9) - 5,
 				g_vm->getRandomNumber(9) - 5), SPRFLAG_800);
 		
-		if (!_isDarkCc && !sound.isSoundPlaying())
+		if (!_ccNum && !sound.isSoundPlaying())
 			sound.playSound("ogre.voc");
 
 		WAIT(1);
@@ -1589,8 +1589,8 @@ int GolemCutscene::show() {
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
 	sprites2[0].draw(0, 0, Common::Point(0, 0));
-	sprites2[_isDarkCc].draw(0, _isDarkCc ? 0 : 1, Common::Point(160, 0));
-	if (!_isDarkCc)
+	sprites2[_ccNum].draw(0, 1 - _ccNum, Common::Point(160, 0));
+	if (!_ccNum)
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
@@ -1607,7 +1607,7 @@ int GolemCutscene::show() {
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));
 
-		if (_isDarkCc) {
+		if (_ccNum) {
 			int frame = g_vm->getRandomNumber(6);
 			sprites2[0].draw(0, frame, Common::Point(0, 0));
 			sprites2[1].draw(1, frame, Common::Point(160, 0));
@@ -1624,15 +1624,15 @@ int GolemCutscene::show() {
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
 	sprites2[0].draw(0, 0, Common::Point(0, 0));
-	sprites2[_isDarkCc].draw(0, _isDarkCc ? 0 : 1, Common::Point(160, 0));
-	if (!_isDarkCc)
+	sprites2[_ccNum].draw(0, 1 - _ccNum, Common::Point(160, 0));
+	if (!_ccNum)
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
 	events.updateGameCounter();
-	events.wait(_isDarkCc ? 10 : 1);
+	events.wait(_ccNum ? 10 : 1);
 
-	if (!_isDarkCc) {
+	if (!_ccNum) {
 		sound.playVoice("ogre.voc");
 		while (sound.isSoundPlaying())
 			events.pollEventsAndWait();
@@ -1647,7 +1647,7 @@ int GolemCutscene::show() {
 		sprites1.draw(0, 0, Common::Point(0, 0));
 		sprites1.draw(0, 1, Common::Point(160, 0));
 
-		if (_isDarkCc) {
+		if (_ccNum) {
 			int frame = g_vm->getRandomNumber(6);
 			sprites2[0].draw(0, frame, Common::Point(0, 0));
 			sprites2[1].draw(1, frame, Common::Point(160, 0));
@@ -1665,8 +1665,8 @@ int GolemCutscene::show() {
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
 	sprites2[0].draw(0, 0, Common::Point(0, 0));
-	sprites2[_isDarkCc].draw(0, _isDarkCc ? 0 : 1, Common::Point(160, 0));
-	if (!_isDarkCc)
+	sprites2[_ccNum].draw(0, 1 - _ccNum, Common::Point(160, 0));
+	if (!_ccNum)
 		sprites2[0].draw(0, 2);
 
 	windows[0].update();
@@ -1677,13 +1677,13 @@ int GolemCutscene::show() {
 	sound.setMusicPercent(75);
 
 	if (!_mazeFlag) {
-		for (int idx = 0; !g_vm->shouldExit() && idx < (_isDarkCc ? 9 : 12); ++idx) {
+		for (int idx = 0; !g_vm->shouldExit() && idx < (_ccNum ? 9 : 12); ++idx) {
 			events.updateGameCounter();
 			screen.blitFrom(savedBg);
 			sprites1.draw(0, 0,
-				Common::Point(GOLEM_X1[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]), 0, idx);
+				Common::Point(GOLEM_X1[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
 			sprites1.draw(0, 1,
-				Common::Point(GOLEM_X2[_isDarkCc][idx], GOLEM_Y1[_isDarkCc][idx]), 0, idx);
+				Common::Point(GOLEM_X2[_ccNum][idx], GOLEM_Y1[_ccNum][idx]), 0, idx);
 
 			windows[0].update();
 			WAIT(1);
@@ -1712,7 +1712,7 @@ void GolemCutscene::getNewLocation() {
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
 
-	if (_isDarkCc) {
+	if (_ccNum) {
 		switch (party._mazeId) {
 		case 12:
 			if (party._questItems[47]) {
@@ -1833,9 +1833,9 @@ int DwarfCutscene::show() {
 	Sound &sound = *g_vm->_sound;
 	Windows &windows = *g_vm->_windows;
 
-	SpriteResource sprites1(_isDarkCc ? "town1.zom" : "dwarf1.vga");
-	SpriteResource sprites2(_isDarkCc ? "town2.zom" : "dwarf3.vga");
-	SpriteResource sprites3(_isDarkCc ? "town3.zom" : "dwarf2.vga");
+	SpriteResource sprites1(_ccNum ? "town1.zom" : "dwarf1.vga");
+	SpriteResource sprites2(_ccNum ? "town2.zom" : "dwarf3.vga");
+	SpriteResource sprites3(_ccNum ? "town3.zom" : "dwarf2.vga");
 	getNewLocation();
 
 	// Save the screen contents
@@ -1843,17 +1843,17 @@ int DwarfCutscene::show() {
 	savedBg.copyFrom(screen);
 
 	// Zoom in on the mine entrance
-	for (int idx = (_isDarkCc ? 10 : 12); idx >= 0; --idx) {
+	for (int idx = (_ccNum ? 10 : 12); idx >= 0; --idx) {
 		events.updateGameCounter();
 
 		screen.blitFrom(savedBg);
 		sprites1.draw(0, 0,
-			Common::Point(DWARF_X0[_isDarkCc][idx], DWARF_Y[_isDarkCc][idx]), 0, idx);
+			Common::Point(DWARF_X0[_ccNum][idx], DWARF_Y[_ccNum][idx]), 0, idx);
 		sprites1.draw(0, 1,
-			Common::Point(DWARF_X1[_isDarkCc][idx], DWARF_Y[_isDarkCc][idx]), 0, idx);
-		if (_isDarkCc)
+			Common::Point(DWARF_X1[_ccNum][idx], DWARF_Y[_ccNum][idx]), 0, idx);
+		if (_ccNum)
 			sprites1.draw(0, 2,
-				Common::Point(DWARF_X2[idx], DWARF_Y[_isDarkCc][idx]), 0, idx);
+				Common::Point(DWARF_X2[idx], DWARF_Y[_ccNum][idx]), 0, idx);
 
 		windows[0].update();
 		WAIT(1);
@@ -1867,7 +1867,7 @@ int DwarfCutscene::show() {
 		events.updateGameCounter();
 
 		screen.blitFrom(savedBg);
-		sprites2.draw(0, 0, Common::Point(DWARF2_X[_isDarkCc][idx], DWARF2_Y[_isDarkCc][idx]), 0, idx);
+		sprites2.draw(0, 0, Common::Point(DWARF2_X[_ccNum][idx], DWARF2_Y[_ccNum][idx]), 0, idx);
 		windows[0].update();
 		WAIT(1);
 	}
@@ -1876,16 +1876,16 @@ int DwarfCutscene::show() {
 	screen.blitFrom(savedBg);
 	sprites2.draw(0, 0);
 	windows[0].update();
-	_subtitles.setLine(_isDarkCc ? 0 : 4);
+	_subtitles.setLine(_ccNum ? 0 : 4);
 
-	for (int idx = 0; idx < (_isDarkCc ? 2 : 3); ++idx) {
+	for (int idx = 0; idx < (_ccNum ? 2 : 3); ++idx) {
 		switch (idx) {
 		case 0:
-			sound.playSound(_isDarkCc ? "pass2.voc" : "dwarf10.voc");
+			sound.playSound(_ccNum ? "pass2.voc" : "dwarf10.voc");
 			break;
 
 		case 1:
-			if (_isDarkCc) {
+			if (_ccNum) {
 				sprites2.draw(0, 0);
 				sprites3.draw(0, 0);
 				_subtitles.show();
@@ -1909,7 +1909,7 @@ int DwarfCutscene::show() {
 		events.updateGameCounter();
 		do {
 			sprites2.draw(0, 0);
-			sprites3.draw(0, g_vm->getRandomNumber(_isDarkCc ? 8 : 9));
+			sprites3.draw(0, g_vm->getRandomNumber(_ccNum ? 8 : 9));
 			_subtitles.show();
 
 			events.timeMark5();
@@ -1923,7 +1923,7 @@ int DwarfCutscene::show() {
 
 exit:
 	sprites2.draw(0, 0);
-	if (!_isDarkCc)
+	if (!_ccNum)
 		sprites3.draw(0, 1);
 	windows[0].update();
 
@@ -1944,7 +1944,7 @@ exit:
 void DwarfCutscene::getNewLocation() {
 	Party &party = *g_vm->_party;
 
-	if (_isDarkCc) {
+	if (_ccNum) {
 		switch (party._mazeId) {
 		case 4:
 			if (party._questItems[35]) {
@@ -2172,7 +2172,7 @@ int PyramidLocation::show() {
 	Common::Point pt;
 
 	if (g_vm->getGameID() == GType_WorldOfXeen) {
-		if (_isDarkCc) {
+		if (_ccNum) {
 			if (party._mazeId == 52) {
 				mapId = 49;
 				pt = Common::Point(7, 14);
@@ -2192,7 +2192,7 @@ int PyramidLocation::show() {
 		}
 
 		// Load the destination map and set position and direction
-		map._loadDarkSide = !_isDarkCc;
+		map._loadDarkSide = !_ccNum;
 		map.load(mapId);
 		party._mazePosition = pt;
 		party._mazeDirection = dir;
@@ -2200,7 +2200,7 @@ int PyramidLocation::show() {
 		// Playing Clouds or Dark Side on it's own, so can't switch sides
 		Window &win = windows[12];
 		Common::String msg = Common::String::format(Res.MOONS_NOT_ALIGNED,
-			_isDarkCc ? "Clouds" : "Darkside");
+			_ccNum ? "Clouds" : "Darkside");
 		win.open();
 		win.writeString(msg);
 		win.update();

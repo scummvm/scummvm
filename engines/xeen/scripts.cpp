@@ -138,7 +138,7 @@ int Scripts::checkEvents() {
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
-	bool isDarkCc = files._isDarkCc;
+	int ccNum = files._ccNum;
 
 	_refreshIcons = false;
 	_itemType = 0;
@@ -212,12 +212,12 @@ int Scripts::checkEvents() {
 	if (_animCounter > 0 && intf._objNumber) {
 		MazeObject &selectedObj = map._mobData._objects[intf._objNumber - 1];
 
-		if (selectedObj._spriteId == (isDarkCc ? 15 : 16)) {
+		if (selectedObj._spriteId == (ccNum ? 15 : 16)) {
 			for (uint idx = 0; idx < 16; ++idx) {
 				MazeObject &obj = map._mobData._objects[idx];
-				if (obj._spriteId == (isDarkCc ? 62 : 57)) {
+				if (obj._spriteId == (ccNum ? 62 : 57)) {
 					selectedObj._id = idx;
-					selectedObj._spriteId = isDarkCc ? 62 : 57;
+					selectedObj._spriteId = ccNum ? 62 : 57;
 					break;
 				}
 			}
@@ -276,9 +276,9 @@ void Scripts::openGrate(int wallVal, int action) {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
-	bool isDarkCc = files._isDarkCc;
+	int ccNum = files._ccNum;
 
-	if ((wallVal != 13 || map._currentGrateUnlocked) && (!isDarkCc || wallVal != 9 ||
+	if ((wallVal != 13 || map._currentGrateUnlocked) && (!ccNum || wallVal != 9 ||
 			map.mazeData()._wallKind != 2)) {
 		if (wallVal != 9 && !map._currentGrateUnlocked) {
 			int charIndex = WhoWill::show(_vm, 13, action, false) - 1;
@@ -943,21 +943,21 @@ bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 
 	_mirrorId = StringInput::show(_vm, inputType, msg1, msg2, _event->_opcode);
 	if (_mirrorId) {
-		if (_mirrorId == 33 && files._isDarkCc) {
+		if (_mirrorId == 33 && files._ccNum) {
 			doDarkSideEnding();
-		} else if (_mirrorId == 34 && files._isDarkCc) {
+		} else if (_mirrorId == 34 && files._ccNum) {
 			doWorldEnding();
-		} else if (_mirrorId == 35 && files._isDarkCc &&
+		} else if (_mirrorId == 35 && files._ccNum &&
 				_vm->getGameID() == GType_WorldOfXeen) {
 			doCloudsEnding();
-		} else if (_mirrorId == 40 && !files._isDarkCc) {
+		} else if (_mirrorId == 40 && !files._ccNum) {
 			doCloudsEnding();
-		} else if (_mirrorId == 60 && !files._isDarkCc) {
+		} else if (_mirrorId == 60 && !files._ccNum) {
 			doDarkSideEnding();
-		} else if (_mirrorId == 61 && !files._isDarkCc) {
+		} else if (_mirrorId == 61 && !files._ccNum) {
 			doWorldEnding();
 		} else {
-			if (_mirrorId == 59 && !files._isDarkCc) {
+			if (_mirrorId == 59 && !files._ccNum) {
 				for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 					XeenItem &item = party._treasure._weapons[idx];
 					if (!item._id) {
@@ -1583,7 +1583,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	}
 	case 20:
-		if (files._isDarkCc)
+		if (files._ccNum)
 			val += 256;
 		assert(val < 512);
 		v = party._gameFlags[val / 256][val % 256] ? val : 0xffffffff;
@@ -1826,7 +1826,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 104:
 		// Get value of quest flag
-		v = party._questFlags[files._isDarkCc][val] ? val : 0xffffffff;
+		v = party._questFlags[files._ccNum][val] ? val : 0xffffffff;
 		break;
 	case 105:
 		// Test number of Megacredits in party. Only used by King's Engineer in Castle Burlock

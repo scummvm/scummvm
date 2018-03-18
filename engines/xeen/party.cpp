@@ -135,21 +135,21 @@ void BlacksmithWares::regenerate() {
 }
 
 void BlacksmithWares::blackData2CharData(Character &c) {
-	bool isDarkCc = g_vm->_files->_isDarkCc;
+	int ccNum = g_vm->_files->_ccNum;
 	int slotIndex = getSlotIndex();
 
 	for (ItemCategory cat = CATEGORY_WEAPON; cat <= CATEGORY_MISC; cat = (ItemCategory)((int)cat + 1))
 		for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx)
-			c._items[cat][idx] = (*this)[cat][isDarkCc][slotIndex][idx];
+			c._items[cat][idx] = (*this)[cat][ccNum][slotIndex][idx];
 }
 
 void BlacksmithWares::charData2BlackData(Character &c) {
-	bool isDarkCc = g_vm->_files->_isDarkCc;
+	int ccNum = g_vm->_files->_ccNum;
 	int slotIndex = getSlotIndex();
 
 	for (ItemCategory cat = CATEGORY_WEAPON; cat <= CATEGORY_MISC; cat = (ItemCategory)((int)cat + 1))
 		for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx)
-			(*this)[cat][isDarkCc][slotIndex][idx] = c._items[cat][idx];
+			(*this)[cat][ccNum][slotIndex][idx] = c._items[cat][idx];
 }
 
 BlacksmithItems &BlacksmithWares::operator[](ItemCategory category) {
@@ -163,10 +163,10 @@ BlacksmithItems &BlacksmithWares::operator[](ItemCategory category) {
 
 uint BlacksmithWares::getSlotIndex() const {
 	Party &party = *g_vm->_party;
-	bool isDarkCc = g_vm->_files->_isDarkCc;
+	int ccNum = g_vm->_files->_ccNum;
 
 	int slotIndex = 0;
-	while (slotIndex < 4 && party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[isDarkCc][slotIndex])
+	while (slotIndex < 4 && party._mazeId != (int)Res.BLACKSMITH_MAP_IDS[ccNum][slotIndex])
 		++slotIndex;
 	if (slotIndex == 4)
 		slotIndex = 0;
@@ -925,7 +925,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	}
 	case 20:
-		_gameFlags[files._isDarkCc][takeVal] = false;
+		_gameFlags[files._ccNum][takeVal] = false;
 		break;
 	case 21: {
 		bool found = false;
@@ -1102,7 +1102,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_worldFlags[takeVal] = false;
 		break;
 	case 104:
-		_questFlags[files._isDarkCc][takeVal] = false;
+		_questFlags[files._ccNum][takeVal] = false;
 		break;
 	case 107:
 		_characterFlags[ps._rosterId][takeVal] = false;
@@ -1195,7 +1195,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	}
 	case 20:
-		_gameFlags[files._isDarkCc][giveVal] = true;
+		_gameFlags[files._ccNum][giveVal] = true;
 		break;
 	case 21: {
 		int idx;
@@ -1443,7 +1443,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		break;
 	case 104:
 		assert(giveVal < 30);
-		_questFlags[files._isDarkCc][giveVal] = true;
+		_questFlags[files._ccNum][giveVal] = true;
 		break;
 	case 107:
 		assert(takeVal < 24);
@@ -1469,7 +1469,7 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 		MazeObject &obj = map._mobData._objects[intf._objNumber - 1];
 		switch (obj._spriteId) {
 		case 15:
-			if (!files._isDarkCc)
+			if (!files._ccNum)
 				break;
 			// Intentional fall-through
 

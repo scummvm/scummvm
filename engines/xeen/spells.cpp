@@ -433,10 +433,10 @@ void Spells::detectMonster() {
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[19];
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = _vm->_files->_ccNum;
 	int grid[7][7];
 
-	SpriteResource sprites(isDarkCc ? "detectmn.icn" : "detctmon.icn");
+	SpriteResource sprites(ccNum ? "detectmn.icn" : "detctmon.icn");
 	Common::fill(&grid[0][0], &grid[6][6], 0);
 
 	w.open();
@@ -1247,10 +1247,10 @@ void Spells::townPortal() {
 
 	sound.playFX(51);
 	map._loadDarkSide = map._sideTownPortal;
-	_vm->_files->_isDarkCc = map._sideTownPortal > 0;
+	_vm->_files->_ccNum = map._sideTownPortal > 0;
 	map.load(Res.TOWN_MAP_NUMBERS[map._sideTownPortal][townNumber - 1]);
 
-	if (!_vm->_files->_isDarkCc) {
+	if (!_vm->_files->_ccNum) {
 		party.moveToRunLocation();
 	} else {
 		switch (townNumber) {

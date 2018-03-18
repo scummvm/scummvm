@@ -742,7 +742,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 	Sound &sound = *_vm->_sound;
 	Spells &spells = *_vm->_spells;
 	Windows &windows = *_vm->_windows;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = _vm->_files->_ccNum;
 
 	InventoryItems &items = c._items[category];
 	if (items[0].empty())
@@ -834,7 +834,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 				if (Confirm::show(_vm, Common::String::format(Res.BUY_X_FOR_Y_GOLD,
 						desc.c_str(), cost))) {
 					if (party.subtract(CONS_GOLD, cost, WHERE_PARTY, WT_FREEZE_WAIT)) {
-						if (isDarkCc) {
+						if (ccNum) {
 							sound.stopSound();
 							sound.playSound("choice2.voc");
 						}

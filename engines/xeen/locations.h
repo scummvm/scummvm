@@ -47,7 +47,7 @@ protected:
 	Common::Array<SpriteResource> _townSprites;
 	SpriteResource _icons1, _icons2;
 	int _townMaxId;
-	const bool &_isDarkCc;
+	const bool &_ccNum;
 	int _animFrame;
 	Common::String _vocName, _songName;
 	Common::Point _animPos;

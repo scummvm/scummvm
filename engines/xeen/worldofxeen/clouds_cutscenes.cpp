@@ -40,7 +40,7 @@ bool CloudsCutscenes::showCloudsIntro() {
 	Screen &screen = *g_vm->_screen;
 	Sound &sound = *g_vm->_sound;
 
-	bool darkCc = files._isDarkCc;
+	bool darkCc = files._ccNum;
 	files.setGameCc(0);
 
 	bool seenIntro = showCloudsTitle() && showCloudsIntroInner();
@@ -379,7 +379,7 @@ void CloudsCutscenes::showCloudsEnding(uint finalScore) {
 	FileManager &files = *g_vm->_files;
 	Sound &sound = *g_vm->_sound;
 
-	bool darkCc = files._isDarkCc;
+	bool darkCc = files._ccNum;
 	files.setGameCc(0);
 
 	_mirror.load("mirror.end");
@@ -406,7 +406,7 @@ bool CloudsCutscenes::showCloudsEnding1() {
 	Screen &screen = *_vm->_screen;
 	Sound &sound = *_vm->_sound;
 
-	files._isDarkCc = false;
+	files._ccNum = false;
 	files.setGameCc(0);
 
 	// Show the castle with swirling clouds and lightning

@@ -579,7 +579,7 @@ bool CreateCharacterDialog::saveCharacter(Character &c, int classId, Race race, 
 	Window &w = windows[6];
 	Common::String name;
 	int result;
-	bool isDarkCc = _vm->_files->_isDarkCc;
+	int ccNum = _vm->_files->_ccNum;
 
 	// Prompt for a character name
 	w.open();
@@ -601,7 +601,7 @@ bool CreateCharacterDialog::saveCharacter(Character &c, int classId, Race race, 
 	c._sex = sex;
 	c._race = race;
 	c._class = (CharacterClass)classId;
-	c._level._permanent = isDarkCc ? 5 : 1;
+	c._level._permanent = ccNum ? 5 : 1;
 
 	c._might._permanent = _attribs[MIGHT];
 	c._intellect._permanent = _attribs[INTELLECT];

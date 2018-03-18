@@ -79,10 +79,10 @@ void WorldOfXeenEngine::death() {
 	w.update();
 	savedBg.blitFrom(*_screen);
 
-	_sound->playSound(_files->_isDarkCc ? "laff1.voc" : "xeenlaff.voc");
+	_sound->playSound(_files->_ccNum ? "laff1.voc" : "xeenlaff.voc");
 
 	// Animation of Xeen or Alamar laughing
-	for (int idx = 0, idx2 = 0; idx < (_files->_isDarkCc ? 10 : 23); ++idx) {
+	for (int idx = 0, idx2 = 0; idx < (_files->_ccNum ? 10 : 23); ++idx) {
 		_events->updateGameCounter();
 		_screen->blitFrom(savedBg);
 
@@ -90,7 +90,7 @@ void WorldOfXeenEngine::death() {
 			death1Sprites.draw(0, idx - 1);
 		w.update();
 
-		if (_files->_isDarkCc) {
+		if (_files->_ccNum) {
 			_events->wait(2, false);
 		} else {
 			if (idx == 1 || idx == 11)
@@ -100,8 +100,8 @@ void WorldOfXeenEngine::death() {
 				_sound->playFX(34);
 		}
 
-		if (idx == (_files->_isDarkCc ? 9 : 10)) {
-			if (idx2 < (_files->_isDarkCc ? 2 : 1)) {
+		if (idx == (_files->_ccNum ? 9 : 10)) {
+			if (idx2 < (_files->_ccNum ? 2 : 1)) {
 				idx = -1;
 				++idx2;
 			}
