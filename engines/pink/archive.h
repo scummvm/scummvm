@@ -24,7 +24,7 @@
 #define PINK_ARCHIVE_H
 
 #include <common/array.h>
-#include <engines/pink/objects/object.h>
+#include <engines/pink/object.h>
 
 namespace Common {
 
@@ -40,9 +40,12 @@ public:
     ~Archive();
 
     void mapObject(Object *obj);
+
     int readCount();
+    uint32 readDWORD();
     Object *readObject();
     Common::String readString();
+
 
 private:
     uint findObjectId(const char *name);
@@ -74,6 +77,12 @@ inline Archive &operator>>(Archive &archive, Common::String &string){
     string = archive.readString();
     return archive;
 }
+
+inline Archive &operator>>(Archive &archive, uint32 &num){
+    num = archive.readDWORD();
+    return archive;
+}
+
 
 } // End of namespace Pink
 

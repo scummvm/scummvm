@@ -20,48 +20,12 @@
  *
  */
 
-#ifndef PINK_MODULE_H
-#define PINK_MODULE_H
-
+#include "walk_location.h"
 #include "../archive.h"
-#include <common/str.h>
-#include "object.h"
-#include "named_object.h"
-#include <common/debug.h>
-#include <engines/pink/utils.h>
-#include <common/hash-str.h>
-#include "inventory.h"
 
-namespace Pink {
-
-class ModuleProxy : public NamedObject {
-public:
-    ModuleProxy();
-    ModuleProxy(const Common::String &name);
-};
-
-class PinkEngine;
-
-class Module : public NamedObject {
-public:
-    Module(PinkEngine *game, const Common::String &name);
-
-    void load(Archive &archive);
-    void init(bool isLoadingSave, const Common::String *pageName);
-
-    void OnLeftButtonDown();
-    void OnMouseMove();
-    void OnKeyboardButtonClick();
-
-private:
-    PinkEngine *_game;
-    GamePage *_page;
-    PagesArray _pages;
-    InventoryMgr _invMgr;
-    Common::StringMap _map; // used for saves and maybe for smth else
-};
-
-
-} // End of namespace Pink
-
-#endif
+void Pink::WalkLocation::deserialize(Pink::Archive &archive) {
+    NamedObject::deserialize(archive);
+    // serialize string array
+    //intro has zero, so skip
+    assert(archive.readCount() == 0);
+}

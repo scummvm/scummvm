@@ -20,55 +20,22 @@
  *
  */
 
-#ifndef PINK_PAGE_H
-#define PINK_PAGE_H
+#ifndef PINK_WALK_MGR_H
+#define PINK_WALK_MGR_H
 
-#include "object.h"
-#include "module.h"
+#include <common/array.h>
+#include "engines/pink/object.h"
 
 namespace Pink {
 
-class Archive;
+class WalkLocation;
 
-class Page : public NamedObject {
+class WalkMgr : public Object {
 public:
-
-    void load(Archive &archive);
+    virtual void deserialize(Archive &archive);
 
 private:
-    /*
-     *
-     *  CLeadActor *_leadActor;
-        int unk_1;
-        CObArray actors;
-        CString _str;
-        PageResources *_ResourseMgr;
-     */
-};
-
-class GamePage : public Page  {
-public:
-    void deserialize(Archive &archive);
-
-    void load(Archive &archive);
-
-
-    void init(bool isLoadingSave);
-private:
-    int perhapsIsLoaded;
-    Module *_module;
-    /*
-    int perhaps_notLoaded;
-    int cunk_1;
-    int memfile;
-    CModule *_module;
-    CCursorMgr *cursor_mgr;
-    CWalkMgr *walkMgr;
-    CSequencer *sequencer;
-    CMapStringToString map;
-    CObArray handlers;
-    int unk;
-    */
+    Common::Array<WalkLocation*> _locations;
 };
 
 } // End of namespace Pink

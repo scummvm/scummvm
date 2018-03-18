@@ -20,39 +20,21 @@
  *
  */
 
-#include "page.h"
+#ifndef PINK_ACTION_PLAY_H
+#define PINK_ACTION_PLAY_H
+
+#include "action.h"
+#include "action_still.h"
 
 namespace Pink {
 
-void Page::load(Archive &archive) {
-    archive.mapObject(this);
-    NamedObject::deserialize(archive);
-    archive.readString(); //skip directory
-    // deserialize actors
-}
+class ActionPlay : public ActionStill {
+    virtual void deserialize(Archive &archive);
 
-void GamePage::deserialize(Archive &archive) {
-    Page::deserialize(archive);
-    _module = static_cast<Module*>(archive.readObject());
-    assert(dynamic_cast<Module*>(_module) != 0);
-}
-
-void GamePage::load(Archive &archive) {
-    //archive.mapObject(_cursorMgr);
-    //archive.mapObject(_walkMgr);
-    //archive.mapObject(_sequencer);
-    //_leadActor = archive.readObject()
-    //serialize ccursormgr NullSub
-    //serialize walkmgr
-    //serialize sequencer
-    //serialize handlers
-}
-
-void GamePage::init(bool isLoadingSave) {
-    if (isLoadingSave){
-        assert(perhapsIsLoaded == 0);
-        // loadSerialize
-    }
-}
+private:
+    uint32 _stopFrame;
+};
 
 } // End of namespace Pink
+
+#endif

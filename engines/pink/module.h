@@ -20,8 +20,51 @@
  *
  */
 
+#ifndef PINK_MODULE_H
+#define PINK_MODULE_H
+
+#include "archive.h"
+#include <common/str.h>
+#include "engines/pink/object.h"
+#include <common/debug.h>
+#include <engines/pink/utils.h>
+#include <common/hash-str.h>
+#include "inventory.h"
+
 namespace Pink {
 
+class ModuleProxy : public NamedObject {
+public:
+    ModuleProxy();
+    ModuleProxy(const Common::String &name);
+};
+
+class PinkEngine;
+
+class Module : public NamedObject {
+public:
+    Module(PinkEngine *game, const Common::String &name);
+
+    void load(Archive &archive);
+    void init(bool isLoadingSave, const Common::String *pageName);
+
+    void OnLeftButtonDown();
+    void OnMouseMove();
+    void OnKeyboardButtonClick();
+
+private:
+    PinkEngine *_game;
+public:
+    PinkEngine *getGame() const;
+
+private:
+    GamePage *_page;
+    PagesArray _pages;
+    InventoryMgr _invMgr;
+    Common::StringMap _map; // used for saves and maybe for smth else
+};
 
 
 } // End of namespace Pink
+
+#endif

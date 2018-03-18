@@ -21,7 +21,7 @@
  */
 
 #include <common/str.h>
-#include "objects/page.h"
+#include "page.h"
 #include "pink.h"
 
 namespace Pink {

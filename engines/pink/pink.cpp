@@ -24,7 +24,7 @@
 #include "console.h"
 #include <engines/util.h>
 #include <common/debug-channels.h>
-#include "objects/module.h"
+#include "module.h"
 
 namespace Pink {
 

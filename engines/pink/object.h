@@ -20,30 +20,38 @@
  *
  */
 
-#include "resource_mgr.h"
-#include "file.h"
-#include "pink.h"
-#include "page.h"
+#ifndef PINK_OBJECT_H
+#define PINK_OBJECT_H
+
+#include <common/str.h>
 
 namespace Pink {
 
-ResourceMgr::ResourceMgr()
-        : _orb(nullptr), _bro(nullptr),
-          _resDescTable(nullptr), _resCount(0)
-{}
+class Archive;
 
-ResourceMgr::~ResourceMgr() {
-    delete[] _resDescTable;
-}
+class Object {
+public:
+    virtual ~Object() {};
+    virtual void load(Archive &){};
+    virtual void store(Archive &){};
+    virtual void deserialize(Archive &){};
+    virtual void init() {}
+};
 
-void ResourceMgr::init(PinkEngine *game, GamePage *page) {
-    _orb = game->getOrb();
-    _bro = game->getBro();
+class NamedObject : public Object {
+public:
+    NamedObject(){};
+    NamedObject(const Common::String &name);
 
-    ObjectDescription *objDesc = _orb->getObjDesc(page->getName().c_str());
-    _resCount = objDesc->resourcesCount;
-    _orb->loadObject(page, objDesc);
-    _resDescTable = _orb->getResDescTable(objDesc);
-}
+    void deserialize(Archive &archive);
+    void store(Archive &archive);
+
+    const Common::String &getName() const;
+
+private:
+    Common::String _name;
+};
 
 } // End of namespace Pink
+
+#endif

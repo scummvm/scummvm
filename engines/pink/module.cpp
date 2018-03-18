@@ -91,6 +91,10 @@ void Module::init(bool isLoadingSave, const Common::String *pageName) {
     assert(0);
 }
 
+PinkEngine *Module::getGame() const {
+    return _game;
+}
+
 } // End of namespace Pink
 
 

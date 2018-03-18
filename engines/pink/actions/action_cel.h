@@ -20,30 +20,22 @@
  *
  */
 
-#include "resource_mgr.h"
-#include "file.h"
-#include "pink.h"
-#include "page.h"
+#ifndef PINK_ACTION_CEL_H
+#define PINK_ACTION_CEL_H
+
+#include "action.h"
 
 namespace Pink {
 
-ResourceMgr::ResourceMgr()
-        : _orb(nullptr), _bro(nullptr),
-          _resDescTable(nullptr), _resCount(0)
-{}
+class ActionCEL : public Action {
+public:
+    virtual void deserialize(Archive &archive);
 
-ResourceMgr::~ResourceMgr() {
-    delete[] _resDescTable;
-}
-
-void ResourceMgr::init(PinkEngine *game, GamePage *page) {
-    _orb = game->getOrb();
-    _bro = game->getBro();
-
-    ObjectDescription *objDesc = _orb->getObjDesc(page->getName().c_str());
-    _resCount = objDesc->resourcesCount;
-    _orb->loadObject(page, objDesc);
-    _resDescTable = _orb->getResDescTable(objDesc);
-}
+private:
+    Common::String _fileName;
+    uint32 _z; // Z coordinate for sprite
+};
 
 } // End of namespace Pink
+
+#endif

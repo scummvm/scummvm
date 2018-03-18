@@ -20,30 +20,28 @@
  *
  */
 
-#include "resource_mgr.h"
-#include "file.h"
-#include "pink.h"
-#include "page.h"
+
+#include "inventory.h"
+#include "archive.h"
 
 namespace Pink {
 
-ResourceMgr::ResourceMgr()
-        : _orb(nullptr), _bro(nullptr),
-          _resDescTable(nullptr), _resCount(0)
-{}
-
-ResourceMgr::~ResourceMgr() {
-    delete[] _resDescTable;
+void Pink::InventoryItem::deserialize(Archive &archive) {
+    NamedObject::deserialize(archive);
+    _initialOwner = archive.readString();
+    _currentOwner = _initialOwner;
 }
 
-void ResourceMgr::init(PinkEngine *game, GamePage *page) {
-    _orb = game->getOrb();
-    _bro = game->getBro();
+InventoryMgr::~InventoryMgr() {
+    for (uint i = 0; i < _invItems.size(); ++i) {
+        delete _invItems[i];
+    }
+}
 
-    ObjectDescription *objDesc = _orb->getObjDesc(page->getName().c_str());
-    _resCount = objDesc->resourcesCount;
-    _orb->loadObject(page, objDesc);
-    _resDescTable = _orb->getResDescTable(objDesc);
+void InventoryMgr::deserialize(Archive &archive) {
+    archive >> _invItems;
 }
 
 } // End of namespace Pink
+
+

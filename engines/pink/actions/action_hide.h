@@ -20,22 +20,17 @@
  *
  */
 
-#ifndef PINK_OBJECT_H
-#define PINK_OBJECT_H
+#ifndef PINK_ACTION_HIDE_H
+#define PINK_ACTION_HIDE_H
+
+#include "action.h"
 
 namespace Pink {
 
-class Archive;
+class ActionHide : public Action {
 
-class Object {
-public:
-    virtual ~Object() {};
-    virtual void load(Archive &){};
-    virtual void store(Archive &){};
-    virtual void deserialize(Archive &){};
-    virtual void init() {}
 };
 
-} // End of namespace Pink
+} //End of namespace Pink
 
 #endif

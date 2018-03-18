@@ -19,33 +19,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef PINK_WALK_LOCATION_H
+#define PINK_WALK_LOCATION_H
 
-#ifndef PINK_INVENTORY_H
-#define PINK_INVENTORY_H
-
-#include "named_object.h"
+#include <engines/pink/object.h>
+#include <common/array.h>
 
 namespace Pink {
 
-
-class InventoryItem : public NamedObject {
+class WalkLocation : public NamedObject {
 public:
     virtual void deserialize(Archive &archive);
 
 private:
-    Common::String _initialOwner;
-    Common::String _currentOwner;
-};
 
-class InventoryMgr : public Object {
-public:
-    virtual ~InventoryMgr();
 
-    virtual void deserialize(Archive &archive);
-
-private:
-    Common::Array<InventoryItem*> _invItems;
-    // other fields. haven't RE them yet
 };
 
 } // End of namespace Pink
