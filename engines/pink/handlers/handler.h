@@ -20,16 +20,20 @@
  *
  */
 
-#include "sequence.h"
-#include "sequencer.h"
-#include "../archive.h"
+#ifndef PINK_HANDLER_H
+#define PINK_HANDLER_H
+
+#include <engines/pink/object.h>
 
 namespace Pink {
 
-void Sequence::deserialize(Archive &archive) {
-    NamedObject::deserialize(archive);
-    _sequencer = static_cast<Sequencer*>(archive.readObject());
-    archive >> _items;
-}
+class Handler : public Object {
+public:
+    virtual void deserialize(Archive &archive);
+    //_conditions
+    //_sideEffects
+};
 
 } // End of namespace Pink
+
+#endif

@@ -20,16 +20,6 @@
  *
  */
 
-#include "sequence.h"
-#include "sequencer.h"
-#include "../archive.h"
-
 namespace Pink {
-
-void Sequence::deserialize(Archive &archive) {
-    NamedObject::deserialize(archive);
-    _sequencer = static_cast<Sequencer*>(archive.readObject());
-    archive >> _items;
-}
 
 } // End of namespace Pink
