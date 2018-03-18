@@ -816,18 +816,17 @@ bool LloydsBeacon::execute() {
 	}
 
 	// Open up the text file for the destination map and read in it's name
-	File textFile(Common::String::format("%s%c%03d.txt",
-		c._lloydSide == 0 ? "xeen" : "dark",
-		c._lloydMap >= 100 ? 'x' : '0',
-		c._lloydMap));
+	Common::String txtName = Common::String::format("%s%c%03d.txt",
+		c._lloydSide ? "dark" : "xeen", c._lloydMap >= 100 ? 'x' : '0', c._lloydMap);
+	File textFile(txtName, 1);
 	Common::String mapName = textFile.readString();
 	textFile.close();
 
 	// Display the dialog
 	w.open();
-	w.writeString(Common::String::format(Res.LLOYDS_BEACON,
-		mapName.c_str(), c._lloydPosition.x, c._lloydPosition.y));
-	drawButtons(&windows[0]);
+	w.writeString(Common::String::format(Res.LLOYDS_BEACON, mapName.c_str(),
+		c._lloydPosition.x, c._lloydPosition.y));
+	drawButtons(&w);
 	w.update();
 
 	bool result = true;
