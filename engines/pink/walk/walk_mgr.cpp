@@ -3,6 +3,7 @@
 //
 
 #include "walk_mgr.h"
+#include "../actors/lead_actor.h"
 #include "../archive.h"
 
 
