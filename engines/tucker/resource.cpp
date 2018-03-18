@@ -708,25 +708,15 @@ void TuckerEngine::loadData4() {
 }
 
 void TuckerEngine::loadActionFile() {
-	char filename[40];
-	if ((_gameFlags & kGameFlagDemo) != 0) {
-		strcpy(filename, "action.c");
+	assert(_part != kPartInit);
+
+	Common::String filename;
+	if (_gameFlags & kGameFlagDemo) {
+		filename = "action.c";
 	} else {
-		switch (_part) {
-			case kPartOne:
-				strcpy(filename, "action1.c");
-				break;
-			case kPartTwo:
-				strcpy(filename, "action2.c");
-				break;
-			case kPartThree:
-				strcpy(filename, "action3.c");
-				break;
-			default:
-				break;
-		}
+		filename = Common::String::format("action%d.c", _part);
 	}
-	loadFile(filename, _loadTempBuf);
+	loadFile(filename.c_str(), _loadTempBuf);
 
 	DataTokenizer t(_loadTempBuf, _fileLoadSize);
 	_actionsCount = 0;

@@ -185,7 +185,9 @@ void TuckerEngine::handleCongratulationsSequence() {
 }
 
 void TuckerEngine::handleNewPartSequence() {
-	char filename[40];
+	assert(_part != kPartInit);
+
+	Common::String filename;
 
 	showCursor(false);
 	stopSounds();
@@ -204,20 +206,9 @@ void TuckerEngine::handleNewPartSequence() {
 		_redrawPanelItemsCounter = 0;
 	}
 	_scrollOffset = 0;
-	switch (_part) {
-		case kPartOne:
-			strcpy(filename, "pt1bak.pcx");
-			break;
-		case kPartTwo:
-			strcpy(filename, "pt2bak.pcx");
-			break;
-		case kPartThree:
-			strcpy(filename, "pt3bak.pcx");
-			break;
-		default:
-			break;
-	}
-	loadImage(filename, _quadBackgroundGfxBuf, 1);
+
+	filename = Common::String::format("pt%dbak.pcx", _part);
+	loadImage(filename.c_str(), _quadBackgroundGfxBuf, 1);
 	_spritesCount = 1;
 	clearSprites();
 	int currentLocation = _locationNum;
@@ -226,18 +217,18 @@ void TuckerEngine::handleNewPartSequence() {
 	unloadSprC02_01();
 	switch (_part) {
 		case kPartOne:
-			strcpy(filename, "sprites/partone.spr");
+			filename = "sprites/partone.spr";
 			break;
 		case kPartTwo:
-			strcpy(filename, "sprites/parttwo.spr");
+			filename = "sprites/parttwo.spr";
 			break;
 		case kPartThree:
-			strcpy(filename, "sprites/partthr.spr");
+			filename = "sprites/partthr.spr";
 			break;
 		default:
 			break;
 	}
-	_sprC02Table[1] = loadFile(filename, 0);
+	_sprC02Table[1] = loadFile(filename.c_str(), 0);
 	startSpeechSound(9000, 60);
 	_fadePaletteCounter = 0;
 	do {
@@ -274,26 +265,16 @@ void TuckerEngine::handleNewPartSequence() {
 }
 
 void TuckerEngine::handleMeanwhileSequence() {
-	char filename[40];
+	assert(_part != kPartInit);
+
+	Common::String filename;
 	uint8 backupPalette[256 * 3];
 	memcpy(backupPalette, _currentPalette, 256 * 3);
-	switch (_part) {
-		case kPartOne:
-			strcpy(filename, "meanw01.pcx");
-			break;
-		case kPartTwo:
-			strcpy(filename, "meanw02.pcx");
-			break;
-		case kPartThree:
-			strcpy(filename, "meanw03.pcx");
-			break;
-		default:
-			break;
-	}
+	filename = Common::String::format("meanw%02d.pcx", _part);
 	if (_flagsTable[215] == 0 && _flagsTable[231] == 1) {
-		strcpy(filename, "loc80.pcx");
+		filename = "loc80.pcx";
 	}
-	loadImage(filename, _quadBackgroundGfxBuf + 89600, 1);
+	loadImage(filename.c_str(), _quadBackgroundGfxBuf + 89600, 1);
 	showCursor(false);
 	_fadePaletteCounter = 0;
 	for (int i = 0; i < 60 && !_quitGame; ++i) {
@@ -442,21 +423,21 @@ void TuckerEngine::copyMapRect(int x, int y, int w, int h) {
 }
 
 bool TuckerEngine::handleSpecialObjectSelectionSequence() {
-	char filename[40];
+	Common::String filename;
 	if (_part == kPartOne && _selectedObjectNum == 6) {
-		strcpy(filename, "news1.pcx");
+		filename = "news1.pcx";
 		_flagsTable[7] = 4;
 	} else if (_part == kPartThree && _selectedObjectNum == 45) {
-		strcpy(filename, "profnote.pcx");
+		filename = "profnote.pcx";
 	} else if (_part == kPartOne && _selectedObjectNum == 26) {
-		strcpy(filename, "photo.pcx");
+		filename = "photo.pcx";
 	} else if (_part == kPartThree && _selectedObjectNum == 39) {
-		strcpy(filename, "news2.pcx");
+		filename = "news2.pcx";
 		_flagsTable[135] = 1;
 	} else if (_currentInfoString1SourceType == 0 && _currentActionObj1Num == 259) {
-		strcpy(filename, "postit.pcx");
+		filename = "postit.pcx";
 	} else if (_currentInfoString1SourceType == 1 && _currentActionObj1Num == 91) {
-		strcpy(filename, "memo.pcx");
+		filename = "memo.pcx";
 	} else {
 		return false;
 	}
@@ -466,7 +447,7 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 		--_fadePaletteCounter;
 	}
 	_mouseClick = 1;
-	loadImage(filename, _quadBackgroundGfxBuf, 1);
+	loadImage(filename.c_str(), _quadBackgroundGfxBuf, 1);
 	_fadePaletteCounter = 0;
 	while (!_quitGame) {
 		waitForTimer(2);
