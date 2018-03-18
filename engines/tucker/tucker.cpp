@@ -3391,7 +3391,7 @@ int TuckerEngine::executeTableInstruction() {
 		_nextLocationNum = readTableInstructionParam(2);
 		return 1;
 	case kCode_mof:
-		// TODO: Unknown opcode in Spanish version. Identify if this has any function.
+		setCursorState(kCursorStateDisabledHidden);
 		return 0;
 	case kCode_opt:
 		_conversationOptionsCount = readTableInstructionParam(2);
