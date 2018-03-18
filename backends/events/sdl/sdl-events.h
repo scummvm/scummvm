@@ -135,6 +135,7 @@ protected:
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+	virtual void updateKbdMouse();
 	virtual bool handleKbdMouse(Common::Event &event);
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
