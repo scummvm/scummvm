@@ -45,4 +45,19 @@ bool ResVmSdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &even
 	return true;
 }
 
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+bool ResVmSdlEventSource::handleControllerButton(const SDL_Event &ev, Common::Event &event, bool buttonUp) {
+	event.type = buttonUp ? Common::EVENT_JOYBUTTON_UP : Common::EVENT_JOYBUTTON_DOWN;
+	event.joystick.button = ev.cbutton.button;
+	return true;
+}
+
+bool ResVmSdlEventSource::handleControllerAxisMotion(const SDL_Event &ev, Common::Event &event) {
+	event.type = Common::EVENT_JOYAXIS_MOTION;
+	event.joystick.axis = ev.caxis.axis;
+	event.joystick.position = ev.caxis.value;
+	return true;
+}
+#endif
+
 #endif
