@@ -28,7 +28,10 @@
 namespace Pink {
 
 class ActionHide : public Action {
+public:
+    virtual void deserialize(Archive &archive);
 
+public:
 };
 
 } //End of namespace Pink

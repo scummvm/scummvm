@@ -20,6 +20,7 @@
  *
  */
 
+#include <common/debug.h>
 #include "sequence_item.h"
 #include "../archive.h"
 

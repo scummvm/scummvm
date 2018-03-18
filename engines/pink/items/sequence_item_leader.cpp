@@ -20,7 +20,17 @@
  *
  */
 
+#include <engines/pink/archive.h>
+#include <common/debug.h>
+#include "sequence_item_leader.h"
+
 namespace Pink {
 
+
+void Pink::SequenceItemLeader::deserialize(Archive &archive) {
+    SequenceItem::deserialize(archive);
+    debug("\t\tSequenceItemLeader: _actor = %s, _action = %s",
+          _actor.c_str(), _action.c_str());
+}
 
 } //End of namespace Pink

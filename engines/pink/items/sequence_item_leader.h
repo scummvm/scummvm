@@ -29,6 +29,7 @@ namespace Pink {
 
 class SequenceItemLeader : public SequenceItem {
 public:
+    virtual void deserialize(Archive &archive);
 
 private:
 };
