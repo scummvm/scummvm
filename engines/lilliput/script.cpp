@@ -3158,9 +3158,7 @@ void LilliputScript::OC_displayNumericCharacterVariable() {
 	int posY = _currScript->readSint16LE();
 
 	if (!_vm->_displayMap) {
-		_vm->restoreSurfaceUnderMousePointer();
 		displayNumber(displayVal, Common::Point(posX, posY));
-		_vm->displayMousePointer();
 	}
 }
 
