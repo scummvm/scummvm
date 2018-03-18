@@ -24,6 +24,7 @@
 
 #include <engines/pink/object.h>
 #include <common/array.h>
+#include <engines/pink/utils.h>
 
 namespace Pink {
 
@@ -32,8 +33,7 @@ public:
     virtual void deserialize(Archive &archive);
 
 private:
-
-
+    StringArray _neighbors;
 };
 
 } // End of namespace Pink

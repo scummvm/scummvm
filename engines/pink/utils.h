@@ -33,6 +33,7 @@ namespace Pink {
     using ObArray = Common::Array<Object*>;
     using ModulesArray = Common::Array<NamedObject*>;
     using PagesArray = Common::Array<GamePage*>;
+    using StringArray = Common::Array<Common::String>;
 }
 
 #endif

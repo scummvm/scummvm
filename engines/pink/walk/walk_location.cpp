@@ -25,7 +25,5 @@
 
 void Pink::WalkLocation::deserialize(Pink::Archive &archive) {
     NamedObject::deserialize(archive);
-    // serialize string array
-    //intro has zero, so skip
-    assert(archive.readCount() == 0);
+    archive >> _neighbors;
 }
