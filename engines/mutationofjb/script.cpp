@@ -36,6 +36,8 @@
 #include "mutationofjb/commands/additemcommand.h"
 #include "mutationofjb/commands/removeitemcommand.h"
 #include "mutationofjb/commands/removeallitemscommand.h"
+#include "mutationofjb/commands/labelcommand.h"
+#include "mutationofjb/commands/gotocommand.h"
 
 namespace MutationOfJB {
 
@@ -53,6 +55,8 @@ static CommandParser **getParsers() {
 		new AddItemCommandParser,
 		new RemoveItemCommandParser,
 		new RemoveAllItemsCommandParser,
+		new GotoCommandParser,
+		new LabelCommandParser,
 		nullptr
 	};
 

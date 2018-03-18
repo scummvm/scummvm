@@ -6,9 +6,11 @@ MODULE_OBJS := \
 	commands/command.o \
 	commands/conditionalcommand.o \
 	commands/endblockcommand.o \
+	commands/gotocommand.o \
 	commands/ifcommand.o \
 	commands/ifitemcommand.o \
 	commands/ifpiggycommand.o \
+	commands/labelcommand.o \
 	commands/removeallitemscommand.o \
 	commands/removeitemcommand.o \
 	commands/saycommand.o \
