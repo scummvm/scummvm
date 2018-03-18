@@ -23,7 +23,7 @@
 #ifndef PINK_ARCHIVE_H
 #define PINK_ARCHIVE_H
 
-#include <common/array.h>
+#include "utils.h"
 #include <engines/pink/object.h>
 
 namespace Common {
@@ -83,6 +83,14 @@ inline Archive &operator>>(Archive &archive, uint32 &num){
     return archive;
 }
 
+inline Archive &operator>>(Archive &archive, StringArray &array){
+    uint32 size = archive.readCount();
+    array.resize(size);
+    for (uint i = 0; i < size; ++i) {
+        array[i] = archive.readString();
+    }
+    return archive;
+}
 
 } // End of namespace Pink
 
