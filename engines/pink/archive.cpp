@@ -27,6 +27,8 @@
 #include <engines/pink/actions/action_hide.h>
 #include <engines/pink/actions/action_play.h>
 #include <engines/pink/actions/action_sound.h>
+#include <engines/pink/sequences/sequence.h>
+#include "items/sequence_item.h"
 #include "module.h"
 #include "page.h"
 #include "actors/lead_actor.h"
@@ -164,6 +166,10 @@ static Object* createObject(int objectId){
             return new LeadActor;
         case kModuleProxy:
             return new ModuleProxy;
+        case kSequence:
+            return new Sequence;
+        case kSequenceItem:
+            return new SequenceItem;
         case kWalkLocation:
             return new WalkLocation;
         default:
