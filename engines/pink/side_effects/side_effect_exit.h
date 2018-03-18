@@ -20,66 +20,20 @@
  *
  */
 
-#ifndef PINK_PAGE_H
-#define PINK_PAGE_H
+#ifndef PINK_SIDE_EFFECT_EXIT_H
+#define PINK_SIDE_EFFECT_EXIT_H
 
-#include "engines/pink/object.h"
-#include "engines/pink/module.h"
-#include "resource_mgr.h"
+#include "side_effect.h"
 
 namespace Pink {
 
-class Archive;
-class Actor;
-class LeadActor;
-
-
-class Page : public NamedObject {
-public:
-
-    void load(Archive &archive);
-
-protected:
-    ResourceMgr _resMgr;
-    LeadActor *_leadActor;
-    Common::Array<Actor*> _actors;
-
-    /*
-        int unk_1;
-        CString _str;
-     */
-};
-
-
-class CursorMgr;
-class WalkMgr;
-class Sequencer;
-class Handler;
-
-class GamePage : public Page  {
+class SideEffectExit : public SideEffect {
 public:
     virtual void deserialize(Archive &archive);
-    virtual void load(Archive &archive);
-    void loadFields();;
-
-    void init(bool isLoadingSave);
-
 
 private:
-    int perhapsIsLoaded;
-    Module *_module;
-    CursorMgr *_cursorMgr;
-    WalkMgr *_walkMgr;
-    Sequencer *_sequencer;
-    Common::Array<Handler*> _handlers;
-
-    /*
-    int perhaps_notLoaded;
-    int cunk_1;
-    int memfile;
-    CMapStringToString map;
-    int unk;
-    */
+    Common::String _nextModule;
+    Common::String _nextPage;
 };
 
 } // End of namespace Pink

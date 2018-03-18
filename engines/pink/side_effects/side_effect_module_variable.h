@@ -19,26 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef PINK_SIDE_EFFECT_MODULE_VARIABLE_H
+#define PINK_SIDE_EFFECT_MODULE_VARIABLE_H
 
-#ifndef PINK_HANDLER_H
-#define PINK_HANDLER_H
-
-#include <engines/pink/object.h>
-#include <common/array.h>
+#include "side_effect_variable.h"
 
 namespace Pink {
 
-class SideEffect;
+class SideEffectModuleVariable : public SideEffectVariable {
 
-class Handler : public Object {
-public:
-    virtual void deserialize(Archive &archive);
-
-private:
-    //_conditions
-    Common::Array<SideEffect*> _sideEffects;
 };
 
-} // End of namespace Pink
+}
 
 #endif

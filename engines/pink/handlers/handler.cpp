@@ -21,11 +21,13 @@
  */
 
 #include "handler.h"
+#include "../archive.h"
 
 namespace Pink {
 
 void Handler::deserialize(Archive &archive) {
-
+    assert(archive.readCount() == 0); // intro has zero conditions, so skip;
+    archive >> _sideEffects;
 }
 
 } // End of namespace Pink

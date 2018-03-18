@@ -30,6 +30,9 @@
 #include <engines/pink/sequences/sequence.h>
 #include <engines/pink/items/sequence_item_default_action.h>
 #include <engines/pink/items/sequence_item_leader.h>
+#include <engines/pink/handlers/handler_start_page.h>
+#include <engines/pink/side_effects/side_effect_exit.h>
+#include <engines/pink/side_effects/side_effect_module_variable.h>
 #include "module.h"
 #include "page.h"
 #include "actors/lead_actor.h"
@@ -161,6 +164,8 @@ static Object* createObject(int objectId){
             return new Actor;
         case kGamePage:
             return new GamePage;
+        case kHandlerStartPage:
+            return new HandlerStartPage;
         case kInventoryItem:
             return new InventoryItem;
         case kLeadActor:
@@ -175,6 +180,10 @@ static Object* createObject(int objectId){
             return new SequenceItemDefaultAction;
         case kSequenceItemLeader:
             return new SequenceItemLeader;
+        case kSideEffectExit:
+            return new SideEffectExit;
+        case kSideEffectModuleVariable:
+            return new SideEffectModuleVariable;
         case kWalkLocation:
             return new WalkLocation;
         default:

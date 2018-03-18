@@ -24,10 +24,11 @@
 #define PINK_HANDLER_START_PAGE_H
 
 #include "handler.h"
+#include "handler_sequences.h"
 
 namespace Pink {
 
-class HandlerStartPage : public Handler {
+class HandlerStartPage : public HandlerSequences {
 
 };
 

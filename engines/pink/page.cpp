@@ -53,7 +53,7 @@ void GamePage::load(Archive &archive) {
     _walkMgr->deserialize(archive);
 
     _sequencer->deserialize(archive);
-    //serialize handlers
+    archive >> _handlers;
 }
 
 void GamePage::init(bool isLoadingSave) {

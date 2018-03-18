@@ -19,67 +19,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef PINK_HANDLER_SEQUENCES_H
+#define PINK_HANDLER_SEQUENCES_H
 
-#ifndef PINK_PAGE_H
-#define PINK_PAGE_H
-
-#include "engines/pink/object.h"
-#include "engines/pink/module.h"
-#include "resource_mgr.h"
+#include <engines/pink/utils.h>
+#include "handler.h"
 
 namespace Pink {
 
-class Archive;
-class Actor;
-class LeadActor;
-
-
-class Page : public NamedObject {
-public:
-
-    void load(Archive &archive);
-
-protected:
-    ResourceMgr _resMgr;
-    LeadActor *_leadActor;
-    Common::Array<Actor*> _actors;
-
-    /*
-        int unk_1;
-        CString _str;
-     */
-};
-
-
-class CursorMgr;
-class WalkMgr;
-class Sequencer;
-class Handler;
-
-class GamePage : public Page  {
+class HandlerSequences : public Handler {
 public:
     virtual void deserialize(Archive &archive);
-    virtual void load(Archive &archive);
-    void loadFields();;
-
-    void init(bool isLoadingSave);
-
 
 private:
-    int perhapsIsLoaded;
-    Module *_module;
-    CursorMgr *_cursorMgr;
-    WalkMgr *_walkMgr;
-    Sequencer *_sequencer;
-    Common::Array<Handler*> _handlers;
-
-    /*
-    int perhaps_notLoaded;
-    int cunk_1;
-    int memfile;
-    CMapStringToString map;
-    int unk;
-    */
+    StringArray _sequences;
 };
 
 } // End of namespace Pink

@@ -20,25 +20,13 @@
  *
  */
 
-#ifndef PINK_HANDLER_H
-#define PINK_HANDLER_H
-
-#include <engines/pink/object.h>
-#include <common/array.h>
+#include "side_effect_variable.h"
+#include "../archive.h"
 
 namespace Pink {
 
-class SideEffect;
+void SideEffectVariable::deserialize(Pink::Archive &archive) {
+    archive >> _name >> _value;
+}
 
-class Handler : public Object {
-public:
-    virtual void deserialize(Archive &archive);
-
-private:
-    //_conditions
-    Common::Array<SideEffect*> _sideEffects;
-};
-
-} // End of namespace Pink
-
-#endif
+}
