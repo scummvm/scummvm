@@ -177,100 +177,103 @@ bool SdlEventSource::processMouseEvent(Common::Event &event, int x, int y, int r
 	return true;
 }
 
-bool SdlEventSource::handleKbdMouse(Common::Event &event) {
-	// returns true if an event is generated
-	// Skip recording of these events
+void SdlEventSource::updateKbdMouse() {
 	uint32 curTime = g_system->getMillis(true);
+	if (curTime < _km.last_time + _km.delay_time) {
+		return;
+	}
 
-	if (curTime >= _km.last_time + _km.delay_time) {
+	_km.last_time = curTime;
+	if (_km.x_down_count == 1) {
+		_km.x_down_time = curTime;
+		_km.x_down_count = 2;
+	}
+	if (_km.y_down_count == 1) {
+		_km.y_down_time = curTime;
+		_km.y_down_count = 2;
+	}
 
-		int16 oldKmX = _km.x;
-		int16 oldKmY = _km.y;
-
-		_km.last_time = curTime;
-		if (_km.x_down_count == 1) {
-			_km.x_down_time = curTime;
-			_km.x_down_count = 2;
+	if (_km.x_vel || _km.y_vel) {
+		if (_km.x_down_count) {
+			if (curTime > _km.x_down_time + 300) {
+				if (_km.x_vel > 0)
+					_km.x_vel += MULTIPLIER;
+				else
+					_km.x_vel -= MULTIPLIER;
+			} else if (curTime > _km.x_down_time + 200) {
+				if (_km.x_vel > 0)
+					_km.x_vel = 5 * MULTIPLIER;
+				else
+					_km.x_vel = -5 * MULTIPLIER;
+			}
 		}
-		if (_km.y_down_count == 1) {
-			_km.y_down_time = curTime;
-			_km.y_down_count = 2;
+		if (_km.y_down_count) {
+			if (curTime > _km.y_down_time + 300) {
+				if (_km.y_vel > 0)
+					_km.y_vel += MULTIPLIER;
+				else
+					_km.y_vel -= MULTIPLIER;
+			} else if (curTime > _km.y_down_time + 200) {
+				if (_km.y_vel > 0)
+					_km.y_vel = 5 * MULTIPLIER;
+				else
+					_km.y_vel = -5 * MULTIPLIER;
+			}
 		}
 
-		if (_km.x_vel || _km.y_vel) {
-			if (_km.x_down_count) {
-				if (curTime > _km.x_down_time + 300) {
-					if (_km.x_vel > 0)
-						_km.x_vel += MULTIPLIER;
-					else
-						_km.x_vel -= MULTIPLIER;
-				} else if (curTime > _km.x_down_time + 200) {
-					if (_km.x_vel > 0)
-						_km.x_vel = 5 * MULTIPLIER;
-					else
-						_km.x_vel = -5 * MULTIPLIER;
-				}
-			}
-			if (_km.y_down_count) {
-				if (curTime > _km.y_down_time + 300) {
-					if (_km.y_vel > 0)
-						_km.y_vel += MULTIPLIER;
-					else
-						_km.y_vel -= MULTIPLIER;
-				} else if (curTime > _km.y_down_time + 200) {
-					if (_km.y_vel > 0)
-						_km.y_vel = 5 * MULTIPLIER;
-					else
-						_km.y_vel = -5 * MULTIPLIER;
-				}
-			}
+		int16 speedFactor = computeJoystickMouseSpeedFactor();
 
-			int16 speedFactor = computeJoystickMouseSpeedFactor();
+		// - The modifier key makes the mouse movement slower
+		// - The extra factor "delay/speedFactor" ensures velocities
+		// are independent of the kbdMouse update rate
+		// - all velocities were originally chosen
+		// at a delay of 25, so that is the reference used here
+		// - note: operator order is important to avoid overflow
+		if (_km.modifier) {
+			_km.x += ((_km.x_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
+			_km.y += ((_km.y_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
+		} else {
+			_km.x += (_km.x_vel * ((int16)_km.delay_time)) / speedFactor;
+			_km.y += (_km.y_vel * ((int16)_km.delay_time)) / speedFactor;
+		}
 
-			// - The modifier key makes the mouse movement slower
-			// - The extra factor "delay/speedFactor" ensures velocities 
-			// are independent of the kbdMouse update rate
-			// - all velocities were originally chosen
-			// at a delay of 25, so that is the reference used here
-			// - note: operator order is important to avoid overflow
-			if (_km.modifier) {
-				_km.x += ((_km.x_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
-				_km.y += ((_km.y_vel / 10) * ((int16)_km.delay_time)) / speedFactor;
-			} else {
-				_km.x += (_km.x_vel * ((int16)_km.delay_time)) / speedFactor;
-				_km.y += (_km.y_vel * ((int16)_km.delay_time)) / speedFactor;
-			}
+		if (_km.x < 0) {
+			_km.x = 0;
+			_km.x_vel = -1 * MULTIPLIER;
+			_km.x_down_count = 1;
+		} else if (_km.x > _km.x_max * MULTIPLIER) {
+			_km.x = _km.x_max * MULTIPLIER;
+			_km.x_vel = 1 * MULTIPLIER;
+			_km.x_down_count = 1;
+		}
 
-			if (_km.x < 0) {
-				_km.x = 0;
-				_km.x_vel = -1 * MULTIPLIER;
-				_km.x_down_count = 1;
-			} else if (_km.x > _km.x_max * MULTIPLIER) {
-				_km.x = _km.x_max * MULTIPLIER;
-				_km.x_vel = 1 * MULTIPLIER;
-				_km.x_down_count = 1;
-			}
-
-			if (_km.y < 0) {
-				_km.y = 0;
-				_km.y_vel = -1 * MULTIPLIER;
-				_km.y_down_count = 1;
-			} else if (_km.y > _km.y_max * MULTIPLIER) {
-				_km.y = _km.y_max * MULTIPLIER;
-				_km.y_vel = 1 * MULTIPLIER;
-				_km.y_down_count = 1;
-			}
-
-			if (_graphicsManager) {
-				_graphicsManager->getWindow()->warpMouseInWindow((Uint16)(_km.x / MULTIPLIER), (Uint16)(_km.y / MULTIPLIER));
-			}
-
-			if (_km.x != oldKmX || _km.y != oldKmY) {
-				event.type = Common::EVENT_MOUSEMOVE;
-				return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
-			}
+		if (_km.y < 0) {
+			_km.y = 0;
+			_km.y_vel = -1 * MULTIPLIER;
+			_km.y_down_count = 1;
+		} else if (_km.y > _km.y_max * MULTIPLIER) {
+			_km.y = _km.y_max * MULTIPLIER;
+			_km.y_vel = 1 * MULTIPLIER;
+			_km.y_down_count = 1;
 		}
 	}
+}
+
+bool SdlEventSource::handleKbdMouse(Common::Event &event) {
+	int16 oldKmX = _km.x;
+	int16 oldKmY = _km.y;
+
+	updateKbdMouse();
+
+	if (_km.x != oldKmX || _km.y != oldKmY) {
+		if (_graphicsManager) {
+			_graphicsManager->getWindow()->warpMouseInWindow((Uint16)(_km.x / MULTIPLIER), (Uint16)(_km.y / MULTIPLIER));
+		}
+
+		event.type = Common::EVENT_MOUSEMOVE;
+		return processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
+	}
+
 	return false;
 }
 
