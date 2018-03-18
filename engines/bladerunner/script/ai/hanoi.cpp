@@ -85,7 +85,7 @@ bool AIScriptHanoi::Update() {
 }
 
 void AIScriptHanoi::TimerExpired(int timer) {
-	if (!timer) {
+	if (timer == 0) {
 		if (Actor_Query_Goal_Number(kActorHanoi) == 215) {
 			Actor_Set_Goal_Number(kActorHanoi, 210);
 			return; //true;
@@ -604,7 +604,7 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if ((unsigned int)(_animationState - 2) > 1) {
 			_animationState = 0;
 		} else {
@@ -613,12 +613,12 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		break;
 
-	case 1:
+	case kAnimationModeWalk:
 		_animationState = 7;
 		_animationFrame = 0;
 		break;
 
-	case 3:
+	case kAnimationModeTalk:
 		if (_animationState == 3) {
 			_animationState = 4;
 			_animationFrame = 0;
@@ -629,12 +629,12 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 4:
+	case kAnimationModeCombatIdle:
 		_animationState = 8;
 		_animationFrame = 0;
 		break;
 
-	case 6:
+	case kAnimationModeCombatAttack:
 		_animationState = 10;
 		_animationFrame = 0;
 		break;
@@ -675,15 +675,15 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 		_animationState = 1;
 		break;
 
-	case 21:
-	case 22:
+	case kAnimationModeHit:
+	case kAnimationModeCombatHit:
 		_animationState = 12;
 		_animationFrame = 0;
 		break;
 
 	case 23:
 		if (_animationState != 3 && _animationState != 4) {
-			Actor_Set_Invisible(kActorMcCoy, 1);
+			Actor_Set_Invisible(kActorMcCoy, true);
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -692,7 +692,7 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 		}
 		break;
 
-	case 48:
+	case kAnimationModeDie:
 		_animationState = 13;
 		_animationFrame = 0;
 		break;
@@ -726,8 +726,9 @@ void AIScriptHanoi::SetAnimationState(int animationState, int animationFrame, in
 }
 
 bool AIScriptHanoi::ReachedMovementTrackWaypoint(int waypointId) {
-	if (waypointId == 365)
-		Actor_Face_Actor(kActorHanoi, kActorHysteriaPatron1, 1);
+	if (waypointId == 365) {
+		Actor_Face_Actor(kActorHanoi, kActorHysteriaPatron1, true);
+	}
 
 	return true;
 }

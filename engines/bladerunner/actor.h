@@ -164,7 +164,7 @@ public:
 	int getWalkbox() const { return _walkboxId; }
 
 	bool isRetired() const { return _isRetired; }
-	bool isTarget() const { return true;/*return _isTarget; */}
+	bool isTarget() const { return _isTarget; }
 	void setTarget(bool targetable);
 	bool isImmuneToObstacles() const { return _isImmuneToObstacles; }
 	bool inCombat() const { return _inCombat; }
