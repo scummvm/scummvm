@@ -28,7 +28,8 @@
 #include <engines/pink/actions/action_play.h>
 #include <engines/pink/actions/action_sound.h>
 #include <engines/pink/sequences/sequence.h>
-#include "items/sequence_item.h"
+#include <engines/pink/items/sequence_item_default_action.h>
+#include <engines/pink/items/sequence_item_leader.h>
 #include "module.h"
 #include "page.h"
 #include "actors/lead_actor.h"
@@ -170,6 +171,10 @@ static Object* createObject(int objectId){
             return new Sequence;
         case kSequenceItem:
             return new SequenceItem;
+        case kSequenceItemDefaultAction:
+            return new SequenceItemDefaultAction;
+        case kSequenceItemLeader:
+            return new SequenceItemLeader;
         case kWalkLocation:
             return new WalkLocation;
         default:
