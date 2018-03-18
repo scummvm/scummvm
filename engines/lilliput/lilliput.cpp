@@ -257,6 +257,7 @@ void LilliputEngine::update() {
 			CursorMan.popCursor();
 		}
 
+		_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 		_system->updateScreen();
 	}
 }
