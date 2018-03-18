@@ -23,6 +23,7 @@
 
 #include <common/debug.h>
 #include "sequencer.h"
+#include "sequence.h"
 #include "engines/pink/archive.h"
 
 namespace Pink {
@@ -37,6 +38,13 @@ void Sequencer::deserialize(Archive &archive) {
     archive.readCount();// intro have 0 timers;
     //serialize timers;
 
+}
+
+Sequence *Sequencer::findSequence(const Common::String &name) {
+    return *Common::find_if(_sequences.begin(), _sequences.end(), [&name]
+            (Sequence* sequence) {
+        return name == sequence->getName();
+    });
 }
 
 } // End of namespace Pink
