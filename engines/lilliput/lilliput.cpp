@@ -247,6 +247,7 @@ void LilliputEngine::update() {
 		_lastTime += ((currentTime - _lastTime) / 20) * 20;
 		newInt8();
 		pollEvent();
+		displayMousePointer();
 	}
 }
 
@@ -432,8 +433,6 @@ void LilliputEngine::saveSurfaceGameArea() {
 			_savedSurfaceGameArea3[(i * 256) + j] = ((byte *)_mainSurface->getPixels())[index + j];
 		index += 320;
 	}
-
-	displayMousePointer();
 }
 
 void LilliputEngine::saveSurfaceSpeech() {
@@ -447,8 +446,6 @@ void LilliputEngine::saveSurfaceSpeech() {
 			_savedSurfaceSpeech[(i * 252) + j] = ((byte *)_mainSurface->getPixels())[index + j];
 		index += 320;
 	}
-
-	displayMousePointer();
 }
 
 void LilliputEngine::restoreSurfaceSpeech() {
@@ -462,8 +459,6 @@ void LilliputEngine::restoreSurfaceSpeech() {
 			((byte *)_mainSurface->getPixels())[index + j] = _savedSurfaceSpeech[(i * 252) + j];
 		index += 320;
 	}
-
-	displayMousePointer();
 }
 
 
@@ -480,8 +475,6 @@ void LilliputEngine::displayInterfaceHotspots() {
 		tmpVal = _scriptHandler->_interfaceHotspotStatus[index] * 20;
 		display16x16IndexedBuf(_bufferIdeogram, tmpVal + index, Common::Point(_interfaceHotspotsX[index], _interfaceHotspotsY[index]));
 	}
-
-	displayMousePointer();
 }
 
 void LilliputEngine::displayLandscape() {
@@ -521,8 +514,6 @@ void LilliputEngine::displaySpeechBubble() {
 		}
 		index += 320;
 	}
-
-	displayMousePointer();
 }
 
 void LilliputEngine::displaySpeechLine(int vgaIndex, byte *srcBuf, int &bufIndex) {
@@ -585,8 +576,6 @@ void LilliputEngine::displaySpeech(byte *buf) {
 		vgaIndex += (8 * 320);
 		displaySpeechLine(vgaIndex, buf, bufIndex);
 	}
-
-	displayMousePointer();
 }
 
 void LilliputEngine::initGameAreaDisplay() {
@@ -608,8 +597,6 @@ void LilliputEngine::initGameAreaDisplay() {
 	prepareGameArea();
 	displayGameArea();
 
-	// display mouse pointer on top of the rest
-	displayMousePointer();
 	free(tmpBuf);
 }
 
@@ -650,8 +637,6 @@ void LilliputEngine::displayGameArea() {
 
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
-
-	displayMousePointer();
 }
 
 void LilliputEngine::restoreMapPoints() {
@@ -663,8 +648,6 @@ void LilliputEngine::restoreMapPoints() {
 	for (byte index = 0; index < _numCharacters; index++) {
 		buf[_mapSavedPixelIndex[index]] = _mapSavedPixel[index];
 	}
-
-	displayMousePointer();
 }
 
 void LilliputEngine::displayCharactersOnMap() {
@@ -684,7 +667,6 @@ void LilliputEngine::displayCharactersOnMap() {
 			buf[pixIndex] = _scriptHandler->_characterMapPixelColor[index];
 		}
 	}
-	displayMousePointer();
 }
 
 void LilliputEngine::moveCharacters() {
@@ -867,8 +849,6 @@ void LilliputEngine::displaySmallAnims() {
 		subIndex = 0;
 
 	_smallAnimsFrameIndex = subIndex;
-
-	displayMousePointer();
 }
 
 void LilliputEngine::paletteFadeOut() {
@@ -1155,8 +1135,6 @@ void LilliputEngine::displayCharacterStatBar(int8 type, int16 averagePosX, int8 
 		}
 		vgaIndex += 320;
 	}
-
-	displayMousePointer();
 }
 
 void LilliputEngine::displayString(byte *buf, Common::Point pos) {
@@ -2410,8 +2388,6 @@ void LilliputEngine::displayHeroismIndicator() {
 			index -= 320;
 		}
 	}
-
-	displayMousePointer();
 }
 
 void LilliputEngine::pollEvent() {
@@ -2443,7 +2419,6 @@ void LilliputEngine::pollEvent() {
 				if (_skipDisplayFlag1 != 0) {
 					restoreSurfaceUnderMousePointer();
 					_mouseDisplayPos = newMousePos;
-					displayMousePointer();
 				} else {
 					_mouseDisplayPos = newMousePos;
 				}
@@ -2752,9 +2727,6 @@ void LilliputEngine::displayVGAFile(Common::String fileName) {
 	memcpy(_mainSurface->getPixels(), buffer, 320*200);
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
 	_system->updateScreen();
-	
-	displayMousePointer();
-
 }
 
 void LilliputEngine::fixPaletteEntries(uint8 *palette, int num) {
