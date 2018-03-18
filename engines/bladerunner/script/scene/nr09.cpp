@@ -107,7 +107,7 @@ void SceneScriptNR09::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 
 void SceneScriptNR09::PlayerWalkedIn() {
 	if (Game_Flag_Query(614)) {
-		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -704.07001f, 0.35f, 623.04f, 0, 0, false, 0);
+		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -704.07f, 0.35f, 623.04f, 0, 0, false, 0);
 		Game_Flag_Reset(614);
 	}
 	//return false;

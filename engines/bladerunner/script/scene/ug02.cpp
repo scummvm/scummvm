@@ -153,9 +153,9 @@ bool SceneScriptUG02::ClickedOnExit(int exitId) {
 				Loop_Actor_Travel_Stairs(kActorMcCoy, 4, 0, 0);
 				Footstep_Sound_Override_Off();
 				int v3 = Player_Query_Combat_Mode();
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -96.57f, 74.870003f, -271.28f, 0, 0, v3, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -96.57f, 74.87f, -271.28f, 0, 0, v3, 0);
 				int v4 = Player_Query_Combat_Mode();
-				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -95.0f, 74.870003f, -503.0f, 0, 0, v4, 0);
+				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -95.0f, 74.87f, -503.0f, 0, 0, v4, 0);
 				Game_Flag_Set(315);
 				Set_Enter(74, kSceneUG01);
 			}

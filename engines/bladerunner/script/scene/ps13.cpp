@@ -99,7 +99,7 @@ void SceneScriptPS13::SceneLoaded() {
 		Item_Add_To_World(51, 443, 14, -24.0f, 102.0f, 1625.0f, 823, 72, 36, true, false, false, true);
 		Item_Add_To_World(52, 449, 14, 180.0f, -72.7f, 1605.0f, 305, 72, 36, true, false, false, true);
 		Item_Add_To_World(53, 443, 14, 127.79f, 14.56f, 1703.03f, 356, 72, 36, true, false, false, true);
-		Item_Add_To_World(54, 443, 14, 136.37f, -6.84f, 1425.4301f, 512, 72, 36, true, false, false, true);
+		Item_Add_To_World(54, 443, 14, 136.37f, -6.84f, 1425.43f, 512, 72, 36, true, false, false, true);
 		Item_Add_To_World(55, 441, 14, 77.83f, -79.8f, 1520.5f, 327, 72, 36, true, false, false, true);
 		Item_Add_To_World(56, 441, 14, 77.83f, -7.8f, 1520.5f, 327, 72, 36, true, false, false, true);
 		Item_Add_To_World(57, 443, 14, -88.0f, -8.8f, 1520.5f, 327, 72, 36, true, false, false, true);
@@ -115,7 +115,7 @@ void SceneScriptPS13::SceneLoaded() {
 	Police_Maze_Target_Track_Add(51, -24.0f, 102.0f, 1625.0f, -24.0f, 138.0f, 1625.0f, 10, track_data_51, false);
 	Police_Maze_Target_Track_Add(52, 180.0f, -72.7f, 1605.0f, 180.0f, -0.7f, 1605.0f, 10, track_data_52, false);
 	Police_Maze_Target_Track_Add(53, 127.79f, 14.56f, 1703.03f, -56.07f, 1.89f, 1589.04f, 6, track_data_53, false);
-	Police_Maze_Target_Track_Add(54, 136.37f, -6.84f, 1425.4301f, 117.55f, -6.84f, 1442.09f, 4, track_data_54, false);
+	Police_Maze_Target_Track_Add(54, 136.37f, -6.84f, 1425.43f, 117.55f, -6.84f, 1442.09f, 4, track_data_54, false);
 	Police_Maze_Target_Track_Add(55, 77.83f, -79.8f, 1520.5f, 77.83f, -7.8f, 1520.5f, 15, track_data_55, false);
 	Police_Maze_Target_Track_Add(56, 77.83f, -7.8f, 1520.5f, -88.0f, -8.8f, 1520.5f, 15, track_data_56, false);
 	Police_Maze_Target_Track_Add(57, -88.0f, -8.8f, 1520.5f, -88.0f, -80.8f, 1520.5f, 15, track_data_57, false);

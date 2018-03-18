@@ -1209,12 +1209,12 @@ void VKScript::askDektora(int questionId) {
 			VK_Play_Speech_Line(kActorDektora, 1520, 0.5f);
 			VK_Play_Speech_Line(kActorMcCoy, 7840, 0.5f);
 			VK_Subject_Reacts(20, -1, 9, 10);
-			VK_Play_Speech_Line(kActorDektora, 1540, 0.80000001f);
+			VK_Play_Speech_Line(kActorDektora, 1540, 0.8f);
 			VK_Play_Speech_Line(kActorDektora, 1550, 0.5f);
 		} else {
 			VK_Play_Speech_Line(kActorDektora, 1560, 0.5f);
 			VK_Subject_Reacts(25, 13, -3, 0);
-			VK_Play_Speech_Line(kActorDektora, 1570, 0.80000001f);
+			VK_Play_Speech_Line(kActorDektora, 1570, 0.8f);
 			VK_Play_Speech_Line(kActorDektora, 1580, 0.5f);
 		}
 		break;
@@ -1234,7 +1234,7 @@ void VKScript::askDektora(int questionId) {
 			VK_Subject_Reacts(25, -1, 9, 0);
 		} else {
 			VK_Subject_Reacts(25, 14, -2, 0);
-			VK_Play_Speech_Line(kActorDektora, 1630, 0.89999998f);
+			VK_Play_Speech_Line(kActorDektora, 1630, 0.9f);
 			VK_Play_Speech_Line(kActorDektora, 1640, 0.5f);
 		}
 		break;
@@ -1274,7 +1274,7 @@ void VKScript::askDektora(int questionId) {
 		VK_Play_Speech_Line(kActorDektora, 1740, 0.5f);
 		VK_Play_Speech_Line(kActorMcCoy, 7805, 0.5f);
 		VK_Eye_Animates(2);
-		VK_Play_Speech_Line(kActorDektora, 1750, 0.89999998f);
+		VK_Play_Speech_Line(kActorDektora, 1750, 0.9f);
 		VK_Play_Speech_Line(kActorDektora, 1760, 0.5f);
 		break;
 	case 7455:

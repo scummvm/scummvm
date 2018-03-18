@@ -54,7 +54,7 @@ void SceneScriptCT11::SceneLoaded() {
 	Unobstacle_Object("BOX SOUTH 1", true);
 	if (Global_Variable_Query(kVariableChapter) < 4) {
 		if (!Game_Flag_Query(645)) {
-			Item_Add_To_World(115, 951, 33, 640.21002f, 30.0f, 470.0f, 512, 12, 12, false, true, false, true);
+			Item_Add_To_World(115, 951, 33, 640.21f, 30.0f, 470.0f, 512, 12, 12, false, true, false, true);
 			Scene_2D_Region_Add(0, 505, 316, 513, 321);
 			Game_Flag_Set(725);
 		}
@@ -99,15 +99,15 @@ bool SceneScriptCT11::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptCT11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 121.0f, 9.6800003f, -42.0f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 121.0f, 9.68f, -42.0f, 0, 1, false, 0)) {
 			Game_Flag_Set(304);
 			Set_Enter(31, kSceneCT09);
 		}
 		return true;
 	}
 	if (exitId == 1) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -300.0f, 9.6800003f, 66.0f, 0, 1, false, 0)) {
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, 9.6800003f, -70.0f, 0, 1, false, 0);
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -300.0f, 9.68f, 66.0f, 0, 1, false, 0)) {
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, 9.68f, -70.0f, 0, 1, false, 0);
 			Game_Flag_Set(86);
 			Set_Enter(4, kSceneCT12);
 		}

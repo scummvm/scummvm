@@ -26,9 +26,9 @@ namespace BladeRunner {
 
 void SceneScriptDR06::InitializeScene() {
 	if (Game_Flag_Query(230)) {
-		Setup_Scene_Information(-733.57001f, 136.60001f, -968.64001f, 0);
+		Setup_Scene_Information(-733.57f, 136.6f, -968.64f, 0);
 	} else {
-		Setup_Scene_Information(-707.57001f, 136.60001f, -1132.64f, 472);
+		Setup_Scene_Information(-707.57f, 136.6f, -1132.64f, 472);
 	}
 	Scene_Exit_Add_2D_Exit(0, 601, 11, 639, 479, 1);
 	if (Global_Variable_Query(kVariableChapter) > 3 && Game_Flag_Query(715)) {

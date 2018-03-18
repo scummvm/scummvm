@@ -32,7 +32,7 @@ void SceneScriptDR02::InitializeScene() {
 	} else if (Game_Flag_Query(264)) {
 		Setup_Scene_Information(-1258.0f, 7.18f, -314.0f, 400);
 	} else {
-		Setup_Scene_Information(168.78f, 0.16f, -775.71997f, 193);
+		Setup_Scene_Information(168.78f, 0.16f, -775.72f, 193);
 	}
 	Scene_Exit_Add_2D_Exit(0, 605, 0, 639, 479, 1);
 	Scene_Exit_Add_2D_Exit(1, 222, 176, 279, 314, 0);

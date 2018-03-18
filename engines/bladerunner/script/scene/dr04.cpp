@@ -247,7 +247,7 @@ void SceneScriptDR04::PlayerWalkedIn() {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -851.0f, 71.64f, 647.0f, 0, 0, false, 0);
 			Actor_Face_Heading(kActorMcCoy, 0, false);
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 7, 0, 0);
-			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -774.85f, 7.18f, 386.67001f, 0, 0, false, 0);
+			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -774.85f, 7.18f, 386.67f, 0, 0, false, 0);
 			Actor_Set_Immunity_To_Obstacles(kActorMcCoy, false);
 			Footstep_Sound_Override_Off();
 		}

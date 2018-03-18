@@ -110,7 +110,7 @@ bool SceneScriptUG18::ClickedOnItem(int itemId, bool a2) {
 
 bool SceneScriptUG18::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -684.712f, 0.0f, 171.59f, 0, 1, false, 0)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -684.71f, 0.0f, 171.59f, 0, 1, false, 0)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(1);
 			Ambient_Sounds_Remove_All_Looping_Sounds(1);
 			Game_Flag_Set(435);

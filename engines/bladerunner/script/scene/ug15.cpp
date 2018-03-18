@@ -26,9 +26,9 @@ namespace BladeRunner {
 
 void SceneScriptUG15::InitializeScene() {
 	if (Game_Flag_Query(353)) {
-		Setup_Scene_Information(-25.0f, 26.309999f, -434.0f, 520);
+		Setup_Scene_Information(-25.0f, 26.31f, -434.0f, 520);
 	} else if (Game_Flag_Query(153)) {
-		Setup_Scene_Information(-17.0f, 26.309999f, -346.0f, 711);
+		Setup_Scene_Information(-17.0f, 26.31f, -346.0f, 711);
 	} else if (Game_Flag_Query(355)) {
 		Setup_Scene_Information(-18.0f, 48.07f, 62.0f, 650);
 	} else {

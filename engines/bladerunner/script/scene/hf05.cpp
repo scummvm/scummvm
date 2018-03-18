@@ -114,7 +114,7 @@ bool SceneScriptHF05::ClickedOn3DObject(const char *objectName, bool a2) {
 					ADQ_Add(kActorVoiceOver, 940, -1);
 					Ambient_Sounds_Play_Sound(147, 50, 99, 0, 0);
 					Delay(1500);
-					Loop_Actor_Walk_To_XYZ(kActorMcCoy, 181.53999f, 40.630001f, 388.09f, 0, 0, true, 0);
+					Loop_Actor_Walk_To_XYZ(kActorMcCoy, 181.54f, 40.63f, 388.09f, 0, 0, true, 0);
 					Actor_Face_Heading(kActorMcCoy, 0, false);
 					Actor_Change_Animation_Mode(kActorMcCoy, 23);
 					Actor_Clue_Lose(kActorMcCoy, kClueBomb);
@@ -163,7 +163,7 @@ bool SceneScriptHF05::ClickedOnExit(int exitId) {
 		return true;
 	}
 	if (exitId == 2) {
-		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.631f, 410.0f, 0, 1, false, 0) && !Game_Flag_Query(684)) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 277.0f, 40.63f, 410.0f, 0, 1, false, 0) && !Game_Flag_Query(684)) {
 			Game_Flag_Set(529);
 			Set_Enter(42, kSceneHF06);
 		}

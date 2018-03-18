@@ -119,7 +119,7 @@ bool SceneScriptUG07::ClickedOnExit(int exitId) {
 				Actor_Set_At_XYZ(kActorClovis, 118.02f, -12.21f, -154.0f, 768);
 				Player_Set_Combat_Mode(true);
 				Actor_Face_Actor(kActorMcCoy, kActorClovis, true);
-				Loop_Actor_Walk_To_XYZ(kActorClovis, 98.019997f, -12.21f, -154.0f, 0, 0, false, 0);
+				Loop_Actor_Walk_To_XYZ(kActorClovis, 98.02f, -12.21f, -154.0f, 0, 0, false, 0);
 				Actor_Face_Actor(kActorClovis, kActorMcCoy, true);
 				Actor_Set_Goal_Number(kActorMcCoy, 301);
 				Actor_Face_Heading(kActorMcCoy, 0, true);
