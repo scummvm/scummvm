@@ -31,7 +31,7 @@ class ActionStill : public ActionCEL {
 public:
     virtual void deserialize(Archive &archive);
 
-private:
+protected:
     uint32 _startFrame;
 };
 

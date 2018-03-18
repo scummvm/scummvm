@@ -20,6 +20,7 @@
  *
  */
 
+#include <common/debug.h>
 #include "object.h"
 #include "archive.h"
 

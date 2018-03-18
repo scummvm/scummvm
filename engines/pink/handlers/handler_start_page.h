@@ -29,7 +29,8 @@
 namespace Pink {
 
 class HandlerStartPage : public HandlerSequences {
-
+public:
+    virtual void deserialize(Archive &archive);
 };
 
 } // End of namespace Pink

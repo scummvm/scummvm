@@ -20,6 +20,7 @@
  *
  */
 
+#include <common/debug.h>
 #include "action_sound.h"
 #include "../archive.h"
 
@@ -31,6 +32,8 @@ void ActionSound::deserialize(Archive &archive) {
     _volume = archive.readDWORD();
     _isLoop = (bool) archive.readDWORD();
     _isBackground = (bool) archive.readDWORD();
+    debug("\tActionSound: _name = %s, _fileName = %s, _volume = %u, _isLoop = %u,"
+                  " _isBackground = %u", _name.c_str(), _fileName.c_str(), _volume, _isLoop, _isBackground);
 }
 
 } // End of namespace Pink

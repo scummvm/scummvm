@@ -20,6 +20,7 @@
  *
  */
 
+#include <common/debug.h>
 #include "side_effect_exit.h"
 #include "../archive.h"
 
@@ -27,6 +28,8 @@ namespace Pink {
 
 void SideEffectExit::deserialize(Archive &archive) {
     archive >> _nextModule >> _nextPage;
+    debug("\tSideEffectExit: _nextModule = %s, _nextPage = %s",
+          _nextModule.c_str(), _nextPage.c_str());
 }
 
 } // End of namespace Pink

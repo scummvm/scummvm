@@ -31,7 +31,7 @@ class HandlerSequences : public Handler {
 public:
     virtual void deserialize(Archive &archive);
 
-private:
+protected:
     StringArray _sequences;
 };
 

@@ -22,12 +22,16 @@
 
 #include "actor.h"
 #include "../page.h"
+#include "lead_actor.h"
 
 namespace Pink {
 
 void Actor::deserialize(Archive &archive) {
     NamedObject::deserialize(archive);
     _page = static_cast<GamePage*>(archive.readObject());
+    if (dynamic_cast<LeadActor*>(this))
+        debug("LeadActor: _name = %s", _name.c_str());
+    else debug("Actor: _name = %s", _name.c_str());
     archive >> _actions;
 }
 

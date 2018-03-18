@@ -20,6 +20,19 @@
  *
  */
 
+#include "handler_start_page.h"
+#include <common/debug.h>
+#include "../archive.h"
+
 namespace Pink {
+
+void HandlerStartPage::deserialize(Archive &archive) {
+    debug("HandlerStartPage: ");
+    HandlerSequences::deserialize(archive);
+
+    for (uint i = 0; i < _sequences.size(); ++i) {
+        debug("\t%s", _sequences[i].c_str());
+    }
+}
 
 } // End of namespace Pink

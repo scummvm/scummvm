@@ -31,7 +31,7 @@ class ActionCEL : public Action {
 public:
     virtual void deserialize(Archive &archive);
 
-private:
+protected:
     Common::String _fileName;
     uint32 _z; // Z coordinate for sprite
 };

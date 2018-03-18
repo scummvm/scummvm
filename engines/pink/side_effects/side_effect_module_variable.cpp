@@ -1,3 +1,7 @@
+#include <engines/pink/archive.h>
+#include <common/debug.h>
+#include "side_effect_variable.h"
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,3 +24,14 @@
  *
  */
 
+#include "side_effect_module_variable.h"
+
+namespace Pink {
+
+void SideEffectModuleVariable::deserialize(Archive &archive) {
+    SideEffectVariable::deserialize(archive);
+    debug("\tSideEffectModuleVariable: _name = %s _value = %s",
+          _name.c_str(), _value.c_str());
+}
+
+}
