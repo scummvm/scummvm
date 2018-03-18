@@ -134,6 +134,8 @@ public:
 	byte *_bufferMen2;
 	byte *_bufferIsoChars;
 	byte *_bufferIdeogram;
+	byte *_normalCursor;
+	byte *_greenCursor;
 	byte _curPalette[768];
 	byte _displayStringBuf[160];
 
@@ -150,6 +152,7 @@ public:
 	uint16 _word1817B;
 	Common::Point _savedSurfaceUnderMousePos;
 	bool _displayGreenHand;
+	bool _isCursorGreenHand;
 	int _currentDisplayCharacter;
 	int _displayStringIndex;
 	int _word1289D;
@@ -232,10 +235,7 @@ public:
 
 	void display16x16IndexedBuf(byte *buf, int index, Common::Point pos, bool transparent = true, bool updateScreen = true);
 	void display16x16Buf(byte *buf, Common::Point pos, bool transparent = true, bool updateScreen = true);
-	void SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos);
 	void fill16x16Rect(byte col, Common::Point pos);
-	void displayMousePointer();
-	void restoreSurfaceUnderMousePointer();
 	void saveSurfaceGameArea();
 	void saveSurfaceSpeech();
 	void displayInterfaceHotspots();
