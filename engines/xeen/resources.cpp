@@ -192,8 +192,8 @@ void Resources::loadData() {
 	file.syncString(SPELLS_DIALOG_SPELLS);
 	file.syncString(SPELL_PTS);
 	file.syncString(GOLD);
-	file.syncString(SPELLS_PRESS_A_KEY);
-	file.syncString(SPELLS_PURCHASE);
+	file.syncString(SPELL_INFO);
+	file.syncString(SPELL_PURCHASE);
 	file.syncString(MAP_TEXT);
 	file.syncString(LIGHT_COUNT_TEXT);
 	file.syncString(FIRE_RESISTENCE_TEXT);

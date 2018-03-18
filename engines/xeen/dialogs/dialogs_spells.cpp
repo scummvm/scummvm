@@ -31,15 +31,15 @@
 namespace Xeen {
 
 Character *SpellsDialog::show(XeenEngine *vm, ButtonContainer *priorDialog,
-		Character *c, int isCasting) {
+		Character *c, SpellDialogMode mode) {
 	SpellsDialog *dlg = new SpellsDialog(vm);
-	Character *result = dlg->execute(priorDialog, c, isCasting);
+	Character *result = dlg->execute(priorDialog, c, mode);
 	delete dlg;
 
 	return result;
 }
 
-Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int isCasting) {
+Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int mode) {
 	EventsManager &events = *_vm->_events;
 	Interface &intf = *_vm->_interface;
 	Party &party = *_vm->_party;
@@ -48,17 +48,19 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[25];
 	int ccNum = _vm->_files->_ccNum;
-	loadButtons();
 
-	int castingCopy = isCasting;
-	isCasting &= 0x7f;
+	loadButtons();
+	loadStrings("spldesc.bin");
+
+	int modeCopy = mode;
+	mode &= 0x7f;
 	int selection = -1;
 	int topIndex = 0;
 	int newSelection;
 	w.open();
 
 	do {
-		if (!isCasting) {
+		if (!mode) {
 			if (!c->guildMember()) {
 				sound.stopSound();
 				intf._overallFrame = 5;
@@ -74,7 +76,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		}
 
 		_spells.clear();
-		const char *errorMsg = setSpellText(c, castingCopy);
+		const char *errorMsg = setSpellText(c, modeCopy);
 		w.writeString(Common::String::format(Res.SPELLS_FOR,
 			errorMsg == nullptr ? Res.SPELL_LINES_0_TO_9 : "",
 			c->_name.c_str()));
@@ -103,18 +105,19 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			colors[3], names[3], colors[4], names[4], colors[5], names[5],
 			colors[6], names[6], colors[7], names[7], colors[8], names[8],
 			colors[9], names[9],
-			isCasting ? Res.SPELL_PTS : Res.GOLD,
-			isCasting ? c->_currentSp : party._gold
+			mode ? Res.SPELL_PTS : Res.GOLD,
+			mode ? c->_currentSp : party._gold
 		));
 
 		_scrollSprites.draw(0, 4, Common::Point(39, 26));
 		_scrollSprites.draw(0, 0, Common::Point(187, 26));
 		_scrollSprites.draw(0, 2, Common::Point(187, 111));
-		if (isCasting)
+		if (mode)
 			_scrollSprites.draw(w, 5, Common::Point(132, 123));
 
 		w.update();
 
+		_buttonValue = 0;
 		do {
 			events.pollEventsAndWait();
 			checkEvents(_vm);
@@ -227,15 +230,19 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 				int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
 				int spellCost = spells.calcSpellCost(spellId, expenseFactor);
 
-				if (isCasting) {
+				if (mode) {
+					// Casting
 					selection = newSelection;
 				} else {
-					Common::String spellName = _spells[newSelection]._name;
-					Common::String msg = (castingCopy & 0x80) ?
-						Common::String::format(Res.SPELLS_PRESS_A_KEY, spellName.c_str()) :
-						Common::String::format(Res.SPELLS_PURCHASE, spellName.c_str(), spellCost);
+					// Guild spells dialog: Spells Info or Buy
+					const Common::String &spellName = spells._spellNames[spellId];
+					const Common::String &spellDesc = _textStrings[spellId];
 
-					if (Confirm::show(_vm, msg, castingCopy + 1)) {
+					Common::String msg = (modeCopy & 0x80) ?
+						Common::String::format(Res.SPELL_INFO, spellName.c_str(), spellDesc.c_str()) :
+						Common::String::format(Res.SPELL_PURCHASE, spellName.c_str(), spellCost);
+
+					if (Confirm::show(_vm, msg, modeCopy + 1)) {
 						if (party.subtract(CONS_GOLD, spellCost, WHERE_PARTY, WT_FREEZE_WAIT)) {
 							c->_spells[spellIndex] = true;
 							sound.stopSound();
@@ -277,7 +284,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 	if (_vm->shouldExit())
 		selection = -1;
-	if (isCasting && selection != -1)
+	if (mode && selection != -1)
 		c->_currentSpell = _spells[selection]._spellIndex;
 
 	return c;
@@ -305,7 +312,7 @@ void SpellsDialog::loadButtons() {
 	addPartyButtons(_vm);
 }
 
-const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
+const char *SpellsDialog::setSpellText(Character *c, int mode) {
 	Party &party = *_vm->_party;
 	Spells &spells = *_vm->_spells;
 	int ccNum = _vm->_files->_ccNum;
@@ -313,7 +320,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 	int currLevel = c->getCurrentLevel();
 	int category;
 
-	if ((isCasting & 0x7f) == 0) {
+	if ((mode & 0x7f) == 0) {
 		switch (c->_class) {
 		case CLASS_PALADIN:
 			expenseFactor = 1;
@@ -350,7 +357,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 
 					// Handling if the spell is appropriate for the character's class
 					if (idx < MAX_SPELLS_PER_CLASS) {
-						if (!c->_spells[idx] || (isCasting & 0x80)) {
+						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
 								spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
@@ -367,7 +374,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 						Res.DARK_SPELL_OFFSETS[category][spellId]);
 
 					if (idx < 40) {
-						if (!c->_spells[idx] || (isCasting & 0x80)) {
+						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
 								spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
@@ -383,7 +390,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 						++idx;
 
 					if (idx <= MAX_SPELLS_PER_CLASS) {
-						if (!c->_spells[idx] || (isCasting & 0x80)) {
+						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
 								spells._spellNames[Res.SPELLS_ALLOWED[category][idx]].c_str(), cost),
@@ -397,7 +404,7 @@ const char *SpellsDialog::setSpellText(Character *c, int isCasting) {
 		if (c->getMaxSP() == 0)
 			return Res.NOT_A_SPELL_CASTER;
 
-	} else if ((isCasting & 0x7f) == 1) {
+	} else if ((mode & 0x7f) == 1) {
 		switch (c->_class) {
 		case CLASS_ARCHER:
 		case CLASS_SORCERER:
@@ -573,7 +580,7 @@ int CastSpell::execute(Character *&c) {
 		case Common::KEYCODE_n:
 			// Select new spell
 			_vm->_mode = (Mode)_oldMode;
-			c = SpellsDialog::show(_vm, this, c, 1);
+			c = SpellsDialog::show(_vm, this, c, SPELLS_DIALOG_SELECT);
 			redrawFlag = true;
 			break;
 

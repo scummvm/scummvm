@@ -247,8 +247,8 @@ public:
 	const char *SPELLS_DIALOG_SPELLS;
 	const char *SPELL_PTS;
 	const char *GOLD;
-	const char *SPELLS_PRESS_A_KEY;
-	const char *SPELLS_PURCHASE;
+	const char *SPELL_INFO;
+	const char *SPELL_PURCHASE;
 	const char *MAP_TEXT;
 	const char *LIGHT_COUNT_TEXT;
 	const char *FIRE_RESISTENCE_TEXT;

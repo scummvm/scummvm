@@ -68,8 +68,11 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 	bool result = false;
 
 	while (!_vm->shouldExit()) {
-		events.pollEvents();
-		checkEvents(_vm);
+		_buttonValue = 0;
+		while (!_vm->shouldExit() && !_buttonValue) {
+			events.pollEvents();
+			checkEvents(_vm);
+		}
 
 		if ((mode & 0x80) || _buttonValue == Common::KEYCODE_ESCAPE
 				|| _buttonValue == Common::KEYCODE_n)
@@ -81,6 +84,7 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 		}
 	}
 
+	events.clearEvents();
 	w.close();
 	return result;
 }

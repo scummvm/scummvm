@@ -29,6 +29,10 @@
 
 namespace Xeen {
 
+enum SpellDialogMode {
+	SPELLS_DIALOG_BUY = 0, SPELLS_DIALOG_SELECT = 1, SPELLS_DIALOG_INFO = 0x80
+};
+
 struct SpellEntry {
 	Common::String _name;
 	int _spellIndex;
@@ -57,7 +61,7 @@ private:
 	/**
 	 * Executes the dialog
 	 */
-	Character *execute(ButtonContainer *priorDialog, Character *c, int isCasting);
+	Character *execute(ButtonContainer *priorDialog, Character *c, int mode);
 
 	/**
 	 * Loads buttons for the dialog
@@ -73,7 +77,7 @@ public:
 	 * Show the spells list dialog
 	 */
 	static Character *show(XeenEngine *vm, ButtonContainer *priorDialog,
-		Character *c, int isCasting);
+		Character *c, SpellDialogMode mode);
 };
 
 class CastSpell : public ButtonContainer {

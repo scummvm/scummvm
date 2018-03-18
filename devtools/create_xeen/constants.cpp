@@ -1103,14 +1103,14 @@ const char *const SPELL_PTS = "Spell Pts";
 
 const char *const GOLD = "Gold";
 
-const char *const SPELLS_PRESS_A_KEY =
-	"\x3""c\xC""09%s\xC""d\x3l\n"
+const char *const SPELL_INFO =
+	"\x3""c\f09%s\fd\x3l\n"
 	"\n"
-	"%s\x3""c\x9""000\xB""100Press a Key!";
+	"%s\x3""c\t000\v100Press a Key!";
 
-const char *const SPELLS_PURCHASE =
-	"\x3l\xB""000\x9""000\xC""d%s  Do you wish to purchase "
-	"\xC""09%s\xC""d for %u?";
+const char *const SPELL_PURCHASE =
+	"\x3l\v000\t000\fd%s  Do you wish to purchase "
+	"\f09%s\fd for %u?";
 
 const char *const MAP_TEXT =
 	"\x3""c\xB""000\x9""000%s\x3l\xB""139"
@@ -2012,8 +2012,8 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(SPELLS_DIALOG_SPELLS);
 	file.syncString(SPELL_PTS);
 	file.syncString(GOLD);
-	file.syncString(SPELLS_PRESS_A_KEY);
-	file.syncString(SPELLS_PURCHASE);
+	file.syncString(SPELL_INFO);
+	file.syncString(SPELL_PURCHASE);
 	file.syncString(MAP_TEXT);
 	file.syncString(LIGHT_COUNT_TEXT);
 	file.syncString(FIRE_RESISTENCE_TEXT);
