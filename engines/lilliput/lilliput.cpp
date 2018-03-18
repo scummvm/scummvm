@@ -29,6 +29,7 @@
 #include "common/memstream.h"
 #include "common/events.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 
 #include "lilliput/lilliput.h"
 #include "engines/util.h"
@@ -158,6 +159,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_word1817B = 0;
 	_savedSurfaceUnderMousePos = Common::Point(0, 0);
 	_displayGreenHand = false;
+	_isCursorGreenHand = false;
 	_displayStringIndex = 0;
 	_word1289D = 0;
 	_numCharacters = 0;
@@ -247,7 +249,15 @@ void LilliputEngine::update() {
 		_lastTime += ((currentTime - _lastTime) / 20) * 20;
 		newInt8();
 		pollEvent();
-		displayMousePointer();
+		if (_displayGreenHand == true && _isCursorGreenHand == false) {
+			_isCursorGreenHand = true;
+			CursorMan.pushCursor(_greenCursor, 16, 16, 0, 0, 0);
+		} else if (_displayGreenHand == false && _isCursorGreenHand == true) {
+			_isCursorGreenHand = false;
+			CursorMan.popCursor();
+		}
+
+		_system->updateScreen();
 	}
 }
 
@@ -371,19 +381,6 @@ void LilliputEngine::display16x16Buf(byte *buf, Common::Point pos, bool transpar
 	display16x16IndexedBuf(buf, 0, pos, transparent, updateScreen);
 }
 
-void LilliputEngine::SaveSurfaceUnderMouseCursor(byte *buf, Common::Point pos) {
-	debugC(2, kDebugEngine, "SaveSurfaceUnderMouseCursor(buf, %d, %d)", pos.x, pos.y);
-
-	int index2 = pos.x + (pos.y * 320);
-
-	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			buf[(i * 16) + j] = ((byte *)_mainSurface->getPixels())[index2 + j];
-		}
-		index2 += 320;
-	}
-}
-
 void LilliputEngine::fill16x16Rect(byte col, Common::Point pos) {
 	debugC(2, kDebugEngineTBC, "fill16x16Rect(%d, %d - %d)", col, pos.x, pos.y);
 
@@ -396,36 +393,8 @@ void LilliputEngine::fill16x16Rect(byte col, Common::Point pos) {
 	}
 }
 
-void LilliputEngine::displayMousePointer() {
-	debugC(2, kDebugEngine, "displayMousePointer()");
-
-	if ((_skipDisplayFlag1 != 1) && (_skipDisplayFlag2 != 1)) {
-		_skipDisplayFlag2 = 1;
-
-		_savedSurfaceUnderMousePos = _mouseDisplayPos;
-		SaveSurfaceUnderMouseCursor(_savedSurfaceUnderMouse, _mouseDisplayPos);
-		display16x16IndexedBuf(_bufferIdeogram, _displayGreenHand ? 81 : 80, _mouseDisplayPos);
-
-		_skipDisplayFlag1 = 1;
-		_skipDisplayFlag2 = 0;
-	}
-}
-
-void LilliputEngine::restoreSurfaceUnderMousePointer() {
-	debugC(2, kDebugEngine, "restoreSurfaceUnderMousePointer()");
-
-	if ((_skipDisplayFlag1 != 0) && (_skipDisplayFlag2 != 1)) {
-		_skipDisplayFlag2 = 1;
-		display16x16Buf(_savedSurfaceUnderMouse, _savedSurfaceUnderMousePos, false, false);
-		_skipDisplayFlag1 = 0;
-		_skipDisplayFlag2 = 0;
-	}
-}
-
 void LilliputEngine::saveSurfaceGameArea() {
 	debugC(2, kDebugEngine, "saveSurfaceGameArea()");
-
-	restoreSurfaceUnderMousePointer();
 
 	int index = (16 * 320) + 64; // 5184
 	for (int i = 0; i < 176; i++) {
@@ -438,8 +407,6 @@ void LilliputEngine::saveSurfaceGameArea() {
 void LilliputEngine::saveSurfaceSpeech() {
 	debugC(2, kDebugEngine, "saveSurfaceSpeech()");
 
-	restoreSurfaceUnderMousePointer();
-
 	int index = 66;
 	for (int i = 0; i < 16; i++) {
 		for (int j = 0; j < 252; j++)
@@ -450,8 +417,6 @@ void LilliputEngine::saveSurfaceSpeech() {
 
 void LilliputEngine::restoreSurfaceSpeech() {
 	debugC(2, kDebugEngine, "restoreSurfaceSpeech()");
-
-	restoreSurfaceUnderMousePointer();
 
 	int index = 66;
 	for (int i = 0; i < 16; i++) {
@@ -467,8 +432,6 @@ void LilliputEngine::displayInterfaceHotspots() {
 
 	if (_displayMap)
 		return;
-
-	restoreSurfaceUnderMousePointer();
 
 	int tmpVal;
 	for (int index = 0; index < _interfaceHotspotNumb; index++) {
@@ -498,8 +461,6 @@ void LilliputEngine::displayLandscape() {
 void LilliputEngine::displaySpeechBubble() {
 	debugC(2, kDebugEngine, "displaySpeechBubble()");
 	static const byte _array15976[16] = {244, 248, 250, 250, 252, 252, 252, 252, 252, 252, 252, 252, 250, 250, 248, 244};
-
-	restoreSurfaceUnderMousePointer();
 
 	int index = 192;
 	int tmpIndex;
@@ -550,8 +511,6 @@ void LilliputEngine::displaySpeechLine(int vgaIndex, byte *srcBuf, int &bufIndex
 void LilliputEngine::displaySpeech(byte *buf) {
 	debugC(2, kDebugEngine, "displaySpeech(%s)", buf);
 
-	restoreSurfaceUnderMousePointer();
-
 	int vgaIndex = 70;
 	int bufIndex = 0;
 
@@ -580,8 +539,6 @@ void LilliputEngine::displaySpeech(byte *buf) {
 
 void LilliputEngine::initGameAreaDisplay() {
 	debugC(1, kDebugEngine, "initGameAreaDisplay()");
-
-	restoreSurfaceUnderMousePointer();
 
 	// display background
 	byte *tmpBuf = loadVGA("SCREEN.GFX", 320 * 200, true);
@@ -625,9 +582,6 @@ void LilliputEngine::displayGameArea() {
 	if (_displayMap)
 		return;
 
-	if (_mouseDisplayPos.x > 48)
-		restoreSurfaceUnderMousePointer();
-
 	int index = (16 * 320) + 64; // 5184
 	for (int i = 0; i < 176; i++) {
 		for (int j = 0; j < 256; j++)
@@ -642,8 +596,6 @@ void LilliputEngine::displayGameArea() {
 void LilliputEngine::restoreMapPoints() {
 	debugC(2, kDebugEngine, "restoreMapPoints()");
 
-	restoreSurfaceUnderMousePointer();
-
 	byte *buf = (byte *)_mainSurface->getPixels();
 	for (byte index = 0; index < _numCharacters; index++) {
 		buf[_mapSavedPixelIndex[index]] = _mapSavedPixel[index];
@@ -654,7 +606,6 @@ void LilliputEngine::displayCharactersOnMap() {
 	debugC(2, kDebugEngineTBC, "displayCharactersOnMap()");
 
 	moveCharacters();
-	restoreSurfaceUnderMousePointer();
 
 	byte *buf = (byte *)_mainSurface->getPixels();
 	for (int index = _numCharacters - 1; index >= 0; index--) {
@@ -832,8 +783,6 @@ void LilliputEngine::displaySmallAnims() {
 
 	if (_animationTick == _lastAnimationTick)
 		return;
-
-	restoreSurfaceUnderMousePointer();
 
 	_lastAnimationTick = _animationTick;
 
@@ -1106,8 +1055,6 @@ void LilliputEngine::sub16CA0() {
 
 void LilliputEngine::displayCharacterStatBar(int8 type, int16 averagePosX, int8 score, int16 posY) {
 	debugC(2, kDebugEngine, "displayCharacterStatBar(%d, %d, %d, %d)", type, averagePosX, score, posY);
-
-	restoreSurfaceUnderMousePointer();
 
 	int16 posX = averagePosX;
 
@@ -2354,7 +2301,6 @@ void LilliputEngine::displayHeroismIndicator() {
 	if (var1 == _scriptHandler->_heroismLevel)
 		return;
 
-	restoreSurfaceUnderMousePointer();
 	int var2 = 1;
 	if (var1 > _scriptHandler->_heroismLevel)
 		var1 = 150;
@@ -2416,12 +2362,7 @@ void LilliputEngine::pollEvent() {
 
 			if (newMousePos != _oldMousePos) {
 				_oldMousePos = newMousePos;
-				if (_skipDisplayFlag1 != 0) {
-					restoreSurfaceUnderMousePointer();
-					_mouseDisplayPos = newMousePos;
-				} else {
-					_mouseDisplayPos = newMousePos;
-				}
+				_mouseDisplayPos = newMousePos;
 			}
 			_lastEventType = event.type;
 			}
@@ -2721,8 +2662,6 @@ void LilliputEngine::loadRules() {
 void LilliputEngine::displayVGAFile(Common::String fileName) {
 	debugC(1, kDebugEngine, "displayVGAFile(%s)", fileName.c_str());
 
-	restoreSurfaceUnderMousePointer();
-
 	byte *buffer = loadVGA(fileName, 64000, true);
 	memcpy(_mainSurface->getPixels(), buffer, 320*200);
 	_system->copyRectToScreen((byte *)_mainSurface->getPixels(), 320, 0, 0, 320, 200);
@@ -2882,6 +2821,11 @@ Common::Error LilliputEngine::run() {
 	_bufferMen2 = loadVGA("MEN2.VGA", 61440, false);
 	_bufferIsoChars = loadVGA("ISOCHARS.VGA", 4096, false);
 	_bufferIsoMap = loadRaw("ISOMAP.DTA", 16384);
+	_normalCursor = &_bufferIdeogram[80 * 16 * 16];
+	_greenCursor = &_bufferIdeogram[81 * 16 * 16];
+
+	CursorMan.replaceCursor(_normalCursor, 16, 16, 0, 0, 0);
+	CursorMan.showMouse(true);
 
 	loadRules();
 	_int8installed = true;
