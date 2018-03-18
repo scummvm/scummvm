@@ -54,6 +54,14 @@ Roster::Roster() {
 }
 
 void Roster::synchronize(Common::Serializer &s) {
+	Party &party = *g_vm->_party;
+
+	if (s.isSaving()) {
+		// Copy out the party's characters back to the roster
+		for (uint idx = 0; idx < party._activeParty.size(); ++idx)
+			(*this)[party._activeParty[idx]._rosterId] = party._activeParty[idx];
+	}
+
 	for (uint i = 0; i < TOTAL_CHARACTERS; ++i)
 		(*this)[i].synchronize(s);
 }
