@@ -24,15 +24,19 @@
 #define MUTATIONOFJB_SCRIPT_H 
 
 #include "common/array.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
 
 namespace Common {
-	class SeekableReadStream;
-	class String;
+class SeekableReadStream;
+class String;
 }
 
 namespace MutationOfJB {
 
 class Command;
+class LabelCommand;
+class GotoCommand;
 class ConditionalCommand;
 typedef Common::Array<Command *> Commands;
 
@@ -53,6 +57,7 @@ struct ActionInfo {
 };
 
 typedef Common::Array<ActionInfo> ActionInfos;
+typedef Common::Array<GotoCommand *> GotoCommands;
 
 class ScriptParseContext
 {
@@ -71,8 +76,13 @@ public:
 		char _tag;
 	};
 	typedef Common::Array<ConditionalCommandInfo> ConditionalCommandInfos;
-
 	ConditionalCommandInfos _pendingCondCommands;
+
+	typedef Common::HashMap<Common::String, LabelCommand *> LabelMap;
+	LabelMap _labels;
+
+	typedef Common::HashMap<Common::String, GotoCommands> PendingGotoMap;
+	PendingGotoMap _pendingGotos;
 
 	ActionInfos _actionInfos;
 
