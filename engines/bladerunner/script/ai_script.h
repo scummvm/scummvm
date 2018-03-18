@@ -459,6 +459,17 @@ END_SCRIPT
 DECLARE_SCRIPT(MaleAnnouncer)
 END_SCRIPT
 
+DECLARE_SCRIPT(FreeSlotA)
+	int _var1;
+	int _var2;
+	float _var3;
+	float _var4;
+	float _var5;
+
+	void calcHit();
+	void processGoal306();
+END_SCRIPT
+
 DECLARE_SCRIPT(Maggie)
 	int var_45F3F8;
 	int var_45F3FC;
