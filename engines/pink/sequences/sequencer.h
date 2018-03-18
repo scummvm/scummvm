@@ -37,6 +37,7 @@ public:
     Sequencer(GamePage *page);
 
     virtual void deserialize(Archive &archive);
+    Sequence* findSequence(const Common::String &name);
 
 private:
     //context
