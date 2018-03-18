@@ -20,7 +20,16 @@
  *
  */
 
+#include "action_hide.h"
+#include <engines/pink/archive.h>
+#include <common/debug.h>
+
+
 namespace Pink {
 
+void Pink::ActionHide::deserialize(Archive &archive) {
+    Action::deserialize(archive);
+    debug("\tActionHide: _name = %s", _name.c_str());
+}
 
 } //End of namespace Pink

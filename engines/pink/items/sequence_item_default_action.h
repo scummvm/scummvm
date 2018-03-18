@@ -28,7 +28,8 @@
 namespace Pink {
 
 class SequenceItemDefaultAction : public SequenceItem {
-
+public:
+    virtual void deserialize(Archive &archive);
 };
 
 } // End of namespace Pink

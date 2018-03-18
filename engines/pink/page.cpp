@@ -61,6 +61,13 @@ void GamePage::init(bool isLoadingSave) {
         //assert(perhapsIsLoaded == 0);
         loadFields();
     }
+
+    //init actor which inits actions
+
+    if (!isLoadingSave) {
+
+    }
+
 }
 
 void GamePage::loadFields() {

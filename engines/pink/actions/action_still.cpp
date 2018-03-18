@@ -20,14 +20,20 @@
  *
  */
 
+#include <common/debug.h>
 #include "action_still.h"
 #include "../archive.h"
+#include "action_play.h"
 
 namespace Pink {
 
 void ActionStill::deserialize(Archive &archive) {
     ActionCEL::deserialize(archive);
     archive >> _startFrame;
+    if (!dynamic_cast<ActionPlay*>(this)){
+        debug("\tActionStill: _name = %s, _fileName = %s, _startFrame = %u",
+              _name.c_str(), _fileName.c_str(), _startFrame);
+    }
 }
 
 } // End of namespace Pink

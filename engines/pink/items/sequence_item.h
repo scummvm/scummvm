@@ -31,7 +31,7 @@ class SequenceItem : public Object {
 public:
     virtual void deserialize(Archive &archive);
 
-private:
+protected:
     Common::String _actor;
     Common::String _action;
 };

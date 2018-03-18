@@ -21,6 +21,7 @@
  */
 
 
+#include <common/debug.h>
 #include "sequencer.h"
 #include "engines/pink/archive.h"
 
@@ -31,6 +32,7 @@ Sequencer::Sequencer(GamePage *page)
 {}
 
 void Sequencer::deserialize(Archive &archive) {
+    debug("Sequencer:");
     archive >> _sequences;
     archive.readCount();// intro have 0 timers;
     //serialize timers;

@@ -110,6 +110,7 @@ Common::Error Pink::PinkEngine::run() {
             }
         }
         //update();
+
         g_system->updateScreen();
         g_system->delayMillis(10);
     }
