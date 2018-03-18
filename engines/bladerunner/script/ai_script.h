@@ -470,6 +470,13 @@ DECLARE_SCRIPT(FreeSlotA)
 	void processGoal306();
 END_SCRIPT
 
+DECLARE_SCRIPT(FreeSlotB)
+	int _var1;
+	int _var2;
+
+	void processGoal301();
+END_SCRIPT
+
 DECLARE_SCRIPT(Maggie)
 	int var_45F3F8;
 	int var_45F3FC;

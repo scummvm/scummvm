@@ -65,6 +65,7 @@ MODULE_OBJS = \
 	script/ai/early_q_bartender.o \
 	script/ai/fish_dealer.o \
 	script/ai/free_slot_a.o \
+	script/ai/free_slot_b.o \
 	script/ai/gaff.o \
 	script/ai/general_doll.o \
 	script/ai/generic_walker_a.o \
