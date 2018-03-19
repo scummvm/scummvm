@@ -3460,6 +3460,27 @@ int TuckerEngine::executeTableInstruction() {
 		return 1;
 	case kCode_wsm:
 		_stopActionOnPanelLock = true;
+
+		// WORKAROUND
+		// Some versions have a script bug which allows you to freely click around
+		// during the sequence of Bud freeing the professor in part two which even
+		// allows Bud to leave the room while talking to the professor resulting in
+		// general glitchiness. The Spanish and Polish versions (and possibly others)
+		// fixed this by introducing the 'mof' opcode to disable the mouse during the
+		// sequence.
+		//
+		// The difference is as follows:
+		//   Buggy: 61dw buw,148,125,wsm,buw,148,132,wsm,wat,050[...]
+		//   Fixed: 61dw buw,148,125,wsm,buw,148,132,wsm,mof,pan,01,wat,050[...]
+		//                                               ^^^^^^^^^^
+		// To work around the issue in the problematic versions we inject these two
+		// instructions after the first occurence of the 'wsm' instruction (which
+		// proves good enough).
+		if (_locationNum == 24 && _nextAction == 61) {
+			setCursorState(kCursorStateDisabledHidden);
+			_panelType = kPanelTypeEmpty;
+		}
+
 		return 1;
 	case kCode_wat:
 		_stopActionCounter = readTableInstructionParam(3);
