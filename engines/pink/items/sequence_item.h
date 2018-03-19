@@ -31,6 +31,9 @@ class SequenceItem : public Object {
 public:
     virtual void deserialize(Archive &archive);
 
+    const Common::String &getActor() const;
+    const Common::String &getAction() const;
+
 protected:
     Common::String _actor;
     Common::String _action;

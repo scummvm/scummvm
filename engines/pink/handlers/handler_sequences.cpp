@@ -34,9 +34,10 @@ void HandlerSequences::deserialize(Archive &archive) {
 
 void HandlerSequences::initSequence(LeadActor *actor) {
     initSideEffects(actor);
+
     Sequencer *sequencer = actor->getSequencer();
     Sequence *sequence = sequencer->findSequence(_sequences[0]); //actually we must pick random sequence
-    //sequencer->authorSequence(sequence, 0);
+    sequencer->authorSequence(sequence, 0);
 }
 
 } // End of namespace Pink

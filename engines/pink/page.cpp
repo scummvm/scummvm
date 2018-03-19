@@ -68,7 +68,7 @@ void GamePage::init(bool isLoadingSave) {
     //init actor which inits actions
 
     if (!isLoadingSave) {
-        for (int i = 0; i < _handlers.size(); ++i) {
+        for (uint i = 0; i < _handlers.size(); ++i) {
             if (_handlers[i]->initConditions(_leadActor)){
                 HandlerSequences *handlerSequences = dynamic_cast<HandlerSequences*>(_handlers[i]);
                 assert(handlerSequences);
