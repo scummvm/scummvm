@@ -342,7 +342,7 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 		if (c->getMaxSP() == 0) {
 			return Res.NOT_A_SPELL_CASTER;
 		} else {
-			for (int spellIndex = 0; spellIndex < SPELLS_PER_CLASS; ++spellIndex) {
+			for (int spellIndex = 0; spellIndex < CHAR_MAX_SPELLS; ++spellIndex) {
 				if (c->_spells[spellIndex]) {
 					int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
 					int gemCost = Res.SPELL_GEM_COST[spellId];
