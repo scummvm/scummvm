@@ -33,6 +33,17 @@ class Sequencer;
 
 class LeadActor : public Actor {
 public:
+    enum State {
+        Ready = 0,
+        Moving,
+        inDialog1, //???
+        Inventory,
+        PDA,
+        inDialog2,//???
+        PlayingVideo, // ???
+        unk_Loading // ????
+    };
+
     virtual void deserialize(Archive &archive);
     void setNextExecutors (Common::String &nextModule, Common::String &nextPage);
 
