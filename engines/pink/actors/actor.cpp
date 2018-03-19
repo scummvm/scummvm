@@ -23,6 +23,7 @@
 #include "actor.h"
 #include "../page.h"
 #include "lead_actor.h"
+#include "../actions/action.h"
 
 namespace Pink {
 
@@ -37,6 +38,13 @@ void Actor::deserialize(Archive &archive) {
 
 Sequencer *Actor::getSequencer() {
     return _page->getSequencer();
+}
+
+Action *Actor::findAction(Common::String &name) {
+    return *Common::find_if(_actions.begin(), _actions.end(), [&name]
+            (Action* action) {
+        return name == action->getName();
+    });;
 }
 
 } // End of namespace Pink
