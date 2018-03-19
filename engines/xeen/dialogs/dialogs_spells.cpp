@@ -958,7 +958,7 @@ void IdentifyMonster::execute() {
 
 	do {
 		events.updateGameCounter();
-		intf.draw3d(false);
+		intf.draw3d(false, false);
 		w.frame();
 		windows[3].update();
 
