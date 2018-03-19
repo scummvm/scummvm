@@ -23,11 +23,15 @@
 #include <common/debug.h>
 #include "sequence_item.h"
 #include "../archive.h"
+#include "sequence_item_leader.h"
+#include "sequence_item_default_action.h"
 
 namespace Pink {
 
 void SequenceItem::deserialize(Archive &archive) {
     archive >> _actor >> _action;
+    if (!dynamic_cast<SequenceItemLeader*>(this) && !dynamic_cast<SequenceItemDefaultAction*>(this))
+        debug("\t\tSequenceItem: _actor = %s, _action = %s", _actor.c_str(), _action.c_str());
 }
 
 const Common::String &SequenceItem::getActor() const {
