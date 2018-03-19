@@ -38,6 +38,8 @@ class Page : public NamedObject {
 public:
 
     void load(Archive &archive);
+    Actor *findActor(Common::String &name);
+
 protected:
     ResourceMgr _resMgr;
     LeadActor *_leadActor;
