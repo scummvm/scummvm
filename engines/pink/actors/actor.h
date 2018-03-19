@@ -40,6 +40,7 @@ public:
     Action *findAction(Common::String &name);
 
     Sequencer *getSequencer();
+    GamePage *getPage() const;
 
 protected:
     GamePage *_page;

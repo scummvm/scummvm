@@ -25,6 +25,8 @@
  */
 
 #include "side_effect_module_variable.h"
+#include "../actors/lead_actor.h"
+#include "../page.h"
 
 namespace Pink {
 
@@ -32,6 +34,11 @@ void SideEffectModuleVariable::deserialize(Archive &archive) {
     SideEffectVariable::deserialize(archive);
     debug("\tSideEffectModuleVariable: _name = %s _value = %s",
           _name.c_str(), _value.c_str());
+}
+
+void SideEffectModuleVariable::init(LeadActor *actor) {
+    Common::StringMap &moduleMap = actor->getPage()->getModule()->getMap();
+    moduleMap[_name] = _value;
 }
 
 }

@@ -34,7 +34,8 @@ class Sequencer;
 class LeadActor : public Actor {
 public:
     virtual void deserialize(Archive &archive);
-    void setNextExecutors(Common::String &nextModule, Common::String &nextPage);
+    void setNextExecutors (Common::String &nextModule, Common::String &nextPage);
+
 private:
     CursorMgr *_cursorMgr;
     WalkMgr *_walkMgr;

@@ -108,4 +108,8 @@ Sequencer *GamePage::getSequencer() {
     return _sequencer;
 }
 
+Module *GamePage::getModule() const {
+    return _module;
+}
+
 } // End of namespace Pink

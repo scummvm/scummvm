@@ -30,6 +30,7 @@ class SideEffectModuleVariable : public SideEffectVariable {
 public:
     virtual void deserialize(Archive &archive);
 
+    virtual void init(LeadActor *actor);
 };
 
 } // End of namespace Pink
