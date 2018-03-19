@@ -134,7 +134,7 @@ void Character::synchronize(Common::Serializer &s) {
 	}
 
 	// Synchronize spell list
-	for (int i = 0; i < CHAR_MAX_SPELLS; ++i)
+	for (int i = 0; i < SPELLS_PER_CLASS; ++i)
 		s.syncAsByte(_spells[i]);
 	s.syncAsByte(_lloydMap);
 	s.syncAsByte(_lloydPosition.x);

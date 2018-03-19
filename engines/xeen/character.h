@@ -34,8 +34,7 @@
 namespace Xeen {
 
 #define INV_ITEMS_TOTAL 9
-#define CHAR_MAX_SPELLS 39
-#define SPELLS_PER_CLASS 40
+#define SPELLS_PER_CLASS 39
 #define AWARDS_TOTAL 88
 #define WARZONE_AWARD 9
 
@@ -125,7 +124,7 @@ public:
 	int _tempAge;
 	int _skills[18];
 	int _awards[128];
-	bool _spells[CHAR_MAX_SPELLS];
+	bool _spells[SPELLS_PER_CLASS];
 	int _lloydMap;
 	Common::Point _lloydPosition;
 	bool _hasSpells;

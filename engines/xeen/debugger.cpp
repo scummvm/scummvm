@@ -95,7 +95,7 @@ bool Debugger::cmdSpells(int argc, const char **argv) {
 
 	for (uint charIdx = 0; charIdx < party._activeParty.size(); ++charIdx) {
 		Character &c = party._activeParty[charIdx];
-		Common::fill(c._spells, c._spells + CHAR_MAX_SPELLS, true);
+		Common::fill(c._spells, c._spells + SPELLS_PER_CLASS, true);
 		c._currentSp = 9999;
 	}
 

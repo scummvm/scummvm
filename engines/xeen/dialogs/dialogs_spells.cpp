@@ -142,7 +142,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 							XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()));
 					} else {
 						SpellsCategory category = c->getSpellsCategory();
-						int spellIndex = (c->_currentSpell == -1) ? SPELLS_PER_CLASS - 1 : c->_currentSpell;
+						int spellIndex = (c->_currentSpell == -1) ? SPELLS_PER_CLASS : c->_currentSpell;
 						int spellId = (category == SPELLCAT_INVALID) ? NO_SPELL : Res.SPELLS_ALLOWED[category][spellIndex];
 
 						windows[10].writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
@@ -286,11 +286,11 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 			if (party._mazeId == 49 || party._mazeId == 37) {
 				for (uint spellId = 0; spellId < TOTAL_SPELLS; ++spellId) {
 					int idx = 0;
-					while (idx < CHAR_MAX_SPELLS && Res.SPELLS_ALLOWED[category][idx] != (int)spellId)
+					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != (int)spellId)
 						++idx;
 
 					// Handling if the spell is appropriate for the character's class
-					if (idx < CHAR_MAX_SPELLS) {
+					if (idx < SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
@@ -304,10 +304,10 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 				for (int spellId = Res.DARK_SPELL_RANGES[groupIndex][0];
 						spellId < Res.DARK_SPELL_RANGES[groupIndex][1]; ++spellId) {
 					int idx = 0;
-					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] ==
+					while (idx <= SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] ==
 						Res.DARK_SPELL_OFFSETS[category][spellId]);
 
-					if (idx < SPELLS_PER_CLASS) {
+					if (idx <= SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
@@ -320,10 +320,10 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 				for (int spellId = 0; spellId < 20; ++spellId) {
 					int idx = 0;
 					while (Res.CLOUDS_GUILD_SPELLS[party._mazeId - 28][spellId] !=
-						(int)Res.SPELLS_ALLOWED[category][idx] && idx < SPELLS_PER_CLASS)
+						(int)Res.SPELLS_ALLOWED[category][idx] && idx <= SPELLS_PER_CLASS)
 						++idx;
 
-					if (idx < SPELLS_PER_CLASS) {
+					if (idx <= SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
@@ -342,7 +342,7 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 		if (c->getMaxSP() == 0) {
 			return Res.NOT_A_SPELL_CASTER;
 		} else {
-			for (int spellIndex = 0; spellIndex < CHAR_MAX_SPELLS; ++spellIndex) {
+			for (int spellIndex = 0; spellIndex < SPELLS_PER_CLASS; ++spellIndex) {
 				if (c->_spells[spellIndex]) {
 					int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
 					int gemCost = Res.SPELL_GEM_COST[spellId];
