@@ -38,6 +38,7 @@ public:
 
     virtual void deserialize(Archive &archive);
     Sequence* findSequence(const Common::String &name);
+    void authorSequence(Sequence *sequence, bool isFromSave);
 
 private:
     //context

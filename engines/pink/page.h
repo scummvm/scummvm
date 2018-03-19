@@ -59,11 +59,12 @@ class GamePage : public Page  {
 public:
     virtual void deserialize(Archive &archive);
     virtual void load(Archive &archive);
-    void loadFields();;
+    void loadManagers();
 
     void init(bool isLoadingSave);
 
     PinkEngine *getGame();
+    Sequencer *getSequencer();
 
 private:
     int perhapsIsLoaded;

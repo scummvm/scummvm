@@ -35,4 +35,8 @@ void Actor::deserialize(Archive &archive) {
     archive >> _actions;
 }
 
+Sequencer *Actor::getSequencer() {
+    return _page->getSequencer();
+}
+
 } // End of namespace Pink

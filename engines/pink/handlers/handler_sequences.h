@@ -30,6 +30,7 @@ namespace Pink {
 class HandlerSequences : public Handler {
 public:
     virtual void deserialize(Archive &archive);
+    void initSequence(LeadActor *actor);
 
 protected:
     StringArray _sequences;
