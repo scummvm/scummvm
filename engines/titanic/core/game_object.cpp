@@ -697,6 +697,7 @@ void CGameObject::playClip(uint startFrame, uint endFrame) {
 	CRoomItem *room = gameManager->getRoom();
 
 	gameManager->playClip(clip, room, room);
+	delete clip;
 }
 
 void CGameObject::playRandomClip(const char *const *names, uint flags) {
