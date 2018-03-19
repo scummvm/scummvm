@@ -30,6 +30,7 @@
 namespace Pink {
 
 class Sequence;
+class SequenceContext;
 class GamePage;
 
 class Sequencer : public Object {
@@ -38,10 +39,10 @@ public:
 
     virtual void deserialize(Archive &archive);
     Sequence* findSequence(const Common::String &name);
-    void authorSequence(Sequence *sequence, bool isFromSave);
+    void authorSequence(Sequence *sequence, bool unk);
 
 private:
-    //context
+    SequenceContext *_context;
     // unknown objects array
     Common::Array<Sequence*> _sequences;
     //timers

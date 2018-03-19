@@ -29,7 +29,7 @@
 namespace Pink {
 
 Sequencer::Sequencer(GamePage *page)
-    : _page(page)
+    : _context(nullptr), _page(page)
 {}
 
 void Sequencer::deserialize(Archive &archive) {
@@ -45,6 +45,16 @@ Sequence *Sequencer::findSequence(const Common::String &name) {
             (Sequence* sequence) {
         return name == sequence->getName();
     });
+}
+
+void Sequencer::authorSequence(Sequence *sequence, bool unk) {
+    if (_context){
+
+    }
+
+    if (sequence){
+        _context = new SequenceContext(sequence, this);
+    }
 }
 
 } // End of namespace Pink

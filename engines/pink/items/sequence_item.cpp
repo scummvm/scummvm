@@ -30,4 +30,12 @@ void SequenceItem::deserialize(Archive &archive) {
     archive >> _actor >> _action;
 }
 
+const Common::String &SequenceItem::getActor() const {
+    return _actor;
+}
+
+const Common::String &SequenceItem::getAction() const {
+    return _action;
+}
+
 } // End of namespace Pink

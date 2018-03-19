@@ -30,15 +30,39 @@ namespace Pink {
 
 class Sequencer;
 class SequenceItem;
+class SequenceContext;
 
 class Sequence : public NamedObject {
 public:
     virtual void deserialize(Archive &archive);
+    Common::Array<SequenceItem*> &getItems();
 
 private:
     Sequencer *_sequencer;
     Common::Array<SequenceItem*> _items;
     //context
+};
+
+class SequenceActorState {
+public:
+    SequenceActorState(const Common::String &name);
+
+    const Common::String &getActor() const;
+
+private:
+    Common::String _actor;
+    Common::String _unk; // ?state
+};
+
+
+class SequenceContext {
+public:
+    SequenceContext(Sequence *sequence, Sequencer* sequencer);
+    ~SequenceContext();
+private:
+    Sequence *_sequence;
+    Sequencer *_sequencer;
+    Common::Array<SequenceActorState> _states;
 };
 
 } // End of namespace Pink

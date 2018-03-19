@@ -24,6 +24,7 @@
 #include "sequence.h"
 #include "sequencer.h"
 #include "../archive.h"
+#include "../items/sequence_item.h"
 
 namespace Pink {
 
@@ -32,6 +33,37 @@ void Sequence::deserialize(Archive &archive) {
     debug("\tSequence %s", _name.c_str());
     _sequencer = static_cast<Sequencer*>(archive.readObject());
     archive >> _items;
+}
+
+Common::Array<SequenceItem*> &Sequence::getItems() {
+    return _items;
+}
+
+SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
+    : _sequence(sequence), _sequencer(sequencer)
+{
+    Common::Array<SequenceItem*> &items = sequence->getItems();
+    for (uint i = 0; i < items.size(); ++i) {
+        for (uint j = 0; j < _states.size(); ++j) {
+            if (items[i]->getActor() != _states[j].getActor()){
+                break;
+            }
+            else assert(0); //  can it be ?
+        }
+        _states.push_back({items[i]->getActor()});
+    }
+}
+
+SequenceContext::~SequenceContext() {
+
+}
+
+SequenceActorState::SequenceActorState(const Common::String &name)
+    :_actor(name)
+{}
+
+const Common::String &SequenceActorState::getActor() const {
+    return _actor;
 }
 
 } // End of namespace Pink
