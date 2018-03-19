@@ -22,12 +22,23 @@
 
 #include "handler.h"
 #include "../archive.h"
+#include "../side_effects/side_effect.h"
 
 namespace Pink {
 
 void Handler::deserialize(Archive &archive) {
     assert(archive.readCount() == 0); // intro has zero conditions, so skip;
     archive >> _sideEffects;
+}
+
+bool Handler::initConditions(LeadActor *actor) {
+    return true;
+}
+
+void Handler::initSideEffects(LeadActor *actor) {
+    for (int i = 0; i < _sideEffects.size(); ++i) {
+        _sideEffects[i]->init(actor);
+    }
 }
 
 } // End of namespace Pink

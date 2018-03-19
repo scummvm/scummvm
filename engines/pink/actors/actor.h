@@ -30,11 +30,13 @@ namespace Pink {
 
 class GamePage;
 class Action;
+class Sequencer;
 
 class Actor : public NamedObject {
 public:
     Actor() {};
     virtual void deserialize(Archive &archive);
+    Sequencer *getSequencer();
 
 protected:
     GamePage *_page;

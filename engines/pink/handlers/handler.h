@@ -29,10 +29,13 @@
 namespace Pink {
 
 class SideEffect;
+class LeadActor;
 
 class Handler : public Object {
 public:
     virtual void deserialize(Archive &archive);
+    bool initConditions(LeadActor *actor);
+    void initSideEffects(LeadActor *actor);
 
 protected:
     //_conditions

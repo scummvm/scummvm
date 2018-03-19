@@ -21,13 +21,22 @@
  */
 
 #include "handler_sequences.h"
+#include <engines/pink/sequences/sequencer.h>
 #include "../archive.h"
+#include "../actors/lead_actor.h"
 
 namespace Pink {
 
 void HandlerSequences::deserialize(Archive &archive) {
     Handler::deserialize(archive);
     archive >> _sequences;
+}
+
+void HandlerSequences::initSequence(LeadActor *actor) {
+    initSideEffects(actor);
+    Sequencer *sequencer = actor->getSequencer();
+    Sequence *sequence = sequencer->findSequence(_sequences[0]); //actually we must pick random sequence
+    //sequencer->authorSequence(sequence, 0);
 }
 
 } // End of namespace Pink

@@ -21,6 +21,8 @@
  */
 
 #include <engines/pink/walk/walk_mgr.h>
+#include <engines/pink/handlers/handler.h>
+#include <engines/pink/handlers/handler_sequences.h>
 #include "page.h"
 #include "cursor_mgr.h"
 #include "actors/lead_actor.h"
@@ -60,18 +62,26 @@ void GamePage::load(Archive &archive) {
 void GamePage::init(bool isLoadingSave) {
     if (!isLoadingSave){
         //assert(perhapsIsLoaded == 0);
-        loadFields();
+        loadManagers();
     }
 
     //init actor which inits actions
 
     if (!isLoadingSave) {
+        for (int i = 0; i < _handlers.size(); ++i) {
+            if (_handlers[i]->initConditions(_leadActor)){
+                HandlerSequences *handlerSequences = dynamic_cast<HandlerSequences*>(_handlers[i]);
+                assert(handlerSequences);
+                handlerSequences->initSequence(_leadActor);
+                break;
+            }
+        }
 
     }
 
 }
 
-void GamePage::loadFields() {
+void GamePage::loadManagers() {
     perhapsIsLoaded = true;
     _cursorMgr = new CursorMgr(this);
     _walkMgr = new WalkMgr;
@@ -87,5 +97,8 @@ PinkEngine *GamePage::getGame() {
     return _module->getGame();
 }
 
+Sequencer *GamePage::getSequencer() {
+    return _sequencer;
+}
 
 } // End of namespace Pink

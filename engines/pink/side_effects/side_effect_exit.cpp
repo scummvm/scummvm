@@ -33,8 +33,8 @@ void SideEffectExit::deserialize(Archive &archive) {
           _nextModule.c_str(), _nextPage.c_str());
 }
 
-void SideEffectExit::init(LeadActor &_actor) {
-    _actor.setNextExecutors(_nextPage, _nextModule);
+void SideEffectExit::init(LeadActor *_actor) {
+    _actor->setNextExecutors(_nextPage, _nextModule);
 }
 
 } // End of namespace Pink
