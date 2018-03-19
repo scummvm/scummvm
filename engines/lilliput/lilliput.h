@@ -41,9 +41,10 @@ class RandomSource;
 }
 
 /**
- * This is the namespace of the Robin engine.
+ * This is the namespace of the Lilliput engine.
  *
- * Status of this engine: ???
+ * Status of this engine:
+ * - Adventures of Robin Hood is mostly working without sound
  *
  * Games using this engine:
  * - Adventures of Robin Hood
