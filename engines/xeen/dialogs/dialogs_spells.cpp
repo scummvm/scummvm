@@ -143,7 +143,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					} else {
 						SpellsCategory category = c->getSpellsCategory();
 						int spellIndex = (c->_currentSpell == -1) ? SPELLS_PER_CLASS - 1 : c->_currentSpell;
-						int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
+						int spellId = (category == SPELLCAT_INVALID) ? NO_SPELL : Res.SPELLS_ALLOWED[category][spellIndex];
 
 						windows[10].writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
 							c->_name.c_str(), spells._spellNames[spellId].c_str(),
@@ -441,9 +441,9 @@ int CastSpell::execute(Character *&c) {
 	do {
 		if (redrawFlag) {
 			SpellsCategory category = c->getSpellsCategory();
-			assert(category != SPELLCAT_INVALID);
+
 			int spellIndex = c->_currentSpell != -1 ? c->_currentSpell : 39;
-			spellId = Res.SPELLS_ALLOWED[category][spellIndex];
+			spellId = (category == SPELLCAT_INVALID) ? NO_SPELL : Res.SPELLS_ALLOWED[category][spellIndex];
 			int gemCost = Res.SPELL_GEM_COST[spellId];
 			int spCost = spells.calcSpellPoints(spellId, c->getCurrentLevel());
 
