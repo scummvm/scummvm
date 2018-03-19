@@ -284,7 +284,7 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 	if ((mode & 0x7f) == 0) {
 		if (category != SPELLCAT_INVALID) {
 			if (party._mazeId == 49 || party._mazeId == 37) {
-				for (uint spellId = 0; spellId < 76; ++spellId) {
+				for (uint spellId = 0; spellId < TOTAL_SPELLS; ++spellId) {
 					int idx = 0;
 					while (idx < CHAR_MAX_SPELLS && Res.SPELLS_ALLOWED[category][idx] != (int)spellId)
 						++idx;
@@ -319,7 +319,7 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 			} else {
 				for (int spellId = 0; spellId < 20; ++spellId) {
 					int idx = 0;
-					while (Res.CLOUDS_SPELL_OFFSETS[party._mazeId - 29][spellId] !=
+					while (Res.CLOUDS_GUILD_SPELLS[party._mazeId - 28][spellId] !=
 						(int)Res.SPELLS_ALLOWED[category][idx] && idx < SPELLS_PER_CLASS)
 						++idx;
 

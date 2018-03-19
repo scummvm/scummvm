@@ -182,7 +182,7 @@ void Resources::loadData() {
 	file.syncString(GUILD_OPTIONS);
 	file.syncNumbers((int *)MISC_SPELL_INDEX, 74);
 	file.syncNumbers((int *)SPELL_COSTS, 77);
-	file.syncNumbers2D((int *)CLOUDS_SPELL_OFFSETS, 5, 20);
+	file.syncNumbers2D((int *)CLOUDS_GUILD_SPELLS, 5, 20);
 	file.syncNumbers2D((int *)DARK_SPELL_OFFSETS, 3, 39);
 	file.syncNumbers2D((int *)DARK_SPELL_RANGES, 12, 2);
 	file.syncNumbers((int *)SPELL_GEM_COST, 77);

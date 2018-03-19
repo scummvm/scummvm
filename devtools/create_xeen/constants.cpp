@@ -1037,7 +1037,7 @@ const int DARK_SPELL_RANGES[12][2] = {
 	{ 0, 20 }, { 16, 35 }, { 27, 37 }, { 29, 39 }
 };
 
-const int CLOUDS_SPELL_OFFSETS[5][20] = {
+const int CLOUDS_GUILD_SPELLS[5][20] = {
 	{
 		1, 10, 20, 26, 27, 38, 40, 42, 45, 50,
 		55, 59, 60, 61, 62, 68, 72, 75, 77, 77
@@ -2002,7 +2002,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(GUILD_OPTIONS);
 	file.syncNumbers((const int *)MISC_SPELL_INDEX, 74);
 	file.syncNumbers((const int *)SPELL_COSTS, 77);
-	file.syncNumbers2D((const int *)CLOUDS_SPELL_OFFSETS, 5, 20);
+	file.syncNumbers2D((const int *)CLOUDS_GUILD_SPELLS, 5, 20);
 	file.syncNumbers2D((const int *)DARK_SPELL_OFFSETS, 3, 39);
 	file.syncNumbers2D((const int *)DARK_SPELL_RANGES, 12, 2);
 	file.syncNumbers((const int *)SPELL_GEM_COST, 77);
