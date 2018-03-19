@@ -44,13 +44,17 @@ SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
 {
     Common::Array<SequenceItem*> &items = sequence->getItems();
     for (uint i = 0; i < items.size(); ++i) {
+        bool found = 0;
         for (uint j = 0; j < _states.size(); ++j) {
-            if (items[i]->getActor() != _states[j].getActor()){
+            if (items[i]->getActor() == _states[j].getActor()){
+                found = 1;
                 break;
             }
-            else assert(0); //  can it be ?
         }
-        _states.push_back({items[i]->getActor()});
+        if (!found) {
+            debug(items[i]->getActor().c_str());
+            _states.push_back({items[i]->getActor()});
+        }
     }
 }
 

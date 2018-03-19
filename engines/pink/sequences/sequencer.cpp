@@ -54,7 +54,11 @@ void Sequencer::authorSequence(Sequence *sequence, bool unk) {
 
     if (sequence){
         _context = new SequenceContext(sequence, this);
+        //unload array of unknown objects
+        _currentSequenceName = sequence->getName();
+
     }
+    else _currentSequenceName.clear();
 }
 
 } // End of namespace Pink

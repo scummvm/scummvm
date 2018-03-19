@@ -45,6 +45,7 @@ private:
     SequenceContext *_context;
     // unknown objects array
     Common::Array<Sequence*> _sequences;
+    Common::String _currentSequenceName;
     //timers
     GamePage *_page;
 };
