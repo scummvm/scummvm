@@ -36,6 +36,9 @@ class Actor : public NamedObject {
 public:
     Actor() {};
     virtual void deserialize(Archive &archive);
+
+    Action *findAction(Common::String &name);
+
     Sequencer *getSequencer();
 
 protected:
