@@ -289,7 +289,7 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 		if (Random_Query(1, 2) == 1) {
 			Actor_Says(kActorMcCoy, 5075, 14);
 		} else {
-			Actor_Says(kActorMcCoy, 5075, 14);
+			Actor_Says(kActorMcCoy, 5075, 14); // bug in the original? Matches the above statement
 		}
 		Actor_Set_Goal_Number(kActorOfficerGrayford, 3);
 		break;
