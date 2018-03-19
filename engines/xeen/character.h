@@ -34,7 +34,8 @@
 namespace Xeen {
 
 #define INV_ITEMS_TOTAL 9
-#define MAX_SPELLS_PER_CLASS 39
+#define CHAR_MAX_SPELLS 39
+#define SPELLS_PER_CLASS 40
 #define AWARDS_TOTAL 88
 #define WARZONE_AWARD 9
 
@@ -83,6 +84,11 @@ enum QuickAction {
 	QUICK_ATTACK = 0, QUICK_SPELL = 1, QUICK_BLOCK = 2, QUICK_RUN = 3
 };
 
+enum SpellsCategory {
+	SPELLCAT_INVALID = -1, SPELLCAT_CLERICAL = 0, SPELLCAT_WIZARDRY = 1, SPELLCAT_DRUIDIC = 2
+};
+
+
 class XeenEngine;
 
 class AttributePair {
@@ -119,7 +125,7 @@ public:
 	int _tempAge;
 	int _skills[18];
 	int _awards[128];
-	bool _spells[MAX_SPELLS_PER_CLASS];
+	bool _spells[CHAR_MAX_SPELLS];
 	int _lloydMap;
 	Common::Point _lloydPosition;
 	bool _hasSpells;
@@ -311,9 +317,16 @@ public:
 	bool hasMissileWeapon() const;
 
 	/**
-	 * Returns a category index for a character, used such for indexing into spell data
+	 * Returns the spells category for the character's class
 	 */
-	int getClassCategory() const;
+	SpellsCategory getSpellsCategory() const;
+
+	/**
+	 * Returns an expense factor for purchasing spells by certain character classes
+	 */
+	int getSpellsExpenseFactor() const {
+		return (_class == CLASS_PALADIN || _class == CLASS_ARCHER || _class == CLASS_RANGER) ? 1 : 0;
+	}
 
 	/**
 	 * Clears the character of any currently set conditions

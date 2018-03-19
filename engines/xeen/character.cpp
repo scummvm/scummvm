@@ -134,7 +134,7 @@ void Character::synchronize(Common::Serializer &s) {
 	}
 
 	// Synchronize spell list
-	for (int i = 0; i < MAX_SPELLS_PER_CLASS; ++i)
+	for (int i = 0; i < CHAR_MAX_SPELLS; ++i)
 		s.syncAsByte(_spells[i]);
 	s.syncAsByte(_lloydMap);
 	s.syncAsByte(_lloydPosition.x);
@@ -1194,18 +1194,22 @@ bool Character::hasMissileWeapon() const {
 	return false;
 }
 
-int Character::getClassCategory() const {
+SpellsCategory Character::getSpellsCategory() const {
 	switch (_class) {
+	case CLASS_PALADIN:
+	case CLASS_CLERIC:
+		return SPELLCAT_CLERICAL;
+
 	case CLASS_ARCHER:
 	case CLASS_SORCERER:
-		return 1;
+		return SPELLCAT_WIZARDRY;
 
 	case CLASS_DRUID:
 	case CLASS_RANGER:
-		return 2;
+		return SPELLCAT_DRUIDIC;
 
 	default:
-		return 0;
+		return SPELLCAT_INVALID;
 	}
 }
 

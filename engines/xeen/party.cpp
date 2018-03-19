@@ -906,26 +906,11 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		ps._conditions[takeVal] = 0;
 		break;
 	case 19: {
-		int idx2 = 0;
-		switch (ps._class) {
-		case CLASS_PALADIN:
-		case CLASS_CLERIC:
-			idx2 = 0;
-			break;
-		case CLASS_ARCHER:
-		case CLASS_SORCERER:
-			idx2 = 1;
-			break;
-		case CLASS_DRUID:
-		case CLASS_RANGER:
-			idx2 = 2;
-			break;
-		default:
-			break;
-		}
+		SpellsCategory category = ps.getSpellsCategory();
+		assert(category != SPELLCAT_INVALID);
 
-		for (int idx = 0; idx < 39; ++idx) {
-			if (Res.SPELLS_ALLOWED[idx2][idx] == (int)takeVal) {
+		for (int idx = 0; idx < SPELLS_PER_CLASS; ++idx) {
+			if (Res.SPELLS_ALLOWED[category][idx] == (int)takeVal) {
 				ps._spells[idx] = false;
 				break;
 			}
@@ -1175,26 +1160,11 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 			ps._currentHp = 0;
 		break;
 	case 19: {
-		int idx2 = 0;
-		switch (ps._class) {
-		case CLASS_PALADIN:
-		case CLASS_CLERIC:
-			idx2 = 0;
-			break;
-		case CLASS_ARCHER:
-		case CLASS_SORCERER:
-			idx2 = 1;
-			break;
-		case CLASS_DRUID:
-		case CLASS_RANGER:
-			idx2 = 2;
-			break;
-		default:
-			break;
-		}
+		SpellsCategory category = ps.getSpellsCategory();
+		assert(category != SPELLCAT_INVALID);
 
-		for (int idx = 0; idx < 39; ++idx) {
-			if (Res.SPELLS_ALLOWED[idx2][idx] == (int)giveVal) {
+		for (int idx = 0; idx < SPELLS_PER_CLASS; ++idx) {
+			if (Res.SPELLS_ALLOWED[category][idx] == (int)giveVal) {
 				ps._spells[idx] = true;
 				intf.spellFX(&ps);
 				break;

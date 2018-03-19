@@ -1590,7 +1590,7 @@ void Combat::quickFight() {
 		break;
 	case QUICK_SPELL:
 		if (c->_currentSpell != -1) {
-			spells.castSpell(c, (MagicSpell)Res.SPELLS_ALLOWED[c->getClassCategory()][c->_currentSpell]);
+			spells.castSpell(c, (MagicSpell)Res.SPELLS_ALLOWED[c->getSpellsCategory()][c->_currentSpell]);
 		}
 		break;
 	case QUICK_BLOCK:

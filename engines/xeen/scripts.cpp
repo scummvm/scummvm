@@ -1550,29 +1550,11 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 19: {
 		// Can player cast a given spell
-
-		// Get the type of character
-		int category;
-		switch (ps._class) {
-		case CLASS_KNIGHT:
-		case CLASS_ARCHER:
-			category = 0;
-			break;
-		case CLASS_PALADIN:
-		case CLASS_CLERIC:
-			category = 1;
-			break;
-		case CLASS_BARBARIAN:
-		case CLASS_DRUID:
-			category = 2;
-			break;
-		default:
-			category = 0;
-			break;
-		}
+		SpellsCategory category = ps.getSpellsCategory();
+		assert(category != SPELLCAT_INVALID);
 
 		// Check if the character class can cast the particular spell
-		for (int idx = 0; idx < 39; ++idx) {
+		for (int idx = 0; idx < SPELLS_PER_CLASS; ++idx) {
 			if (Res.SPELLS_ALLOWED[category][idx] == (int)val) {
 				// Can cast it. Check if the player has it in their spellbook
 				if (ps._spells[idx])

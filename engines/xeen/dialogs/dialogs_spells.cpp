@@ -141,23 +141,10 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 						windows[10].writeString(Common::String::format(Res.GUILD_OPTIONS,
 							XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()));
 					} else {
-						int category;
-						switch (c->_class) {
-						case CLASS_ARCHER:
-						case CLASS_SORCERER:
-							category = 1;
-							break;
-						case CLASS_DRUID:
-						case CLASS_RANGER:
-							category = 2;
-							break;
-						default:
-							category = 0;
-							break;
-						}
-
-						int spellIndex = (c->_currentSpell == -1) ? 39 : c->_currentSpell;
+						SpellsCategory category = c->getSpellsCategory();
+						int spellIndex = (c->_currentSpell == -1) ? SPELLS_PER_CLASS - 1 : c->_currentSpell;
 						int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
+
 						windows[10].writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
 							c->_name.c_str(), spells._spellNames[spellId].c_str(),
 							spells.calcSpellPoints(spellId, c->getCurrentLevel()),
@@ -197,34 +184,8 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 				(_buttonValue - Common::KEYCODE_1));
 
 			if (newSelection < (int)_spells.size()) {
-				int expenseFactor = 0;
-				int category = 0;
-
-				switch (c->_class) {
-				case CLASS_PALADIN:
-					expenseFactor = 1;
-					category = 0;
-					break;
-				case CLASS_ARCHER:
-					expenseFactor = 1;
-					category = 1;
-					break;
-				case CLASS_CLERIC:
-					category = 0;
-					break;
-				case CLASS_SORCERER:
-					category = 1;
-					break;
-				case CLASS_DRUID:
-					category = 2;
-					break;
-				case CLASS_RANGER:
-					expenseFactor = 1;
-					category = 2;
-					break;
-				default:
-					break;
-				}
+				SpellsCategory category = c->getSpellsCategory();
+				int expenseFactor = c->getSpellsExpenseFactor();
 
 				int spellIndex = _spells[newSelection]._spellIndex;
 				int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
@@ -316,47 +277,20 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 	Party &party = *_vm->_party;
 	Spells &spells = *_vm->_spells;
 	int ccNum = _vm->_files->_ccNum;
-	int expenseFactor = 0;
 	int currLevel = c->getCurrentLevel();
-	int category;
+	SpellsCategory category = c->getSpellsCategory();
+	int expenseFactor = c->getSpellsExpenseFactor();
 
 	if ((mode & 0x7f) == 0) {
-		switch (c->_class) {
-		case CLASS_PALADIN:
-			expenseFactor = 1;
-			category = 0;
-			break;
-		case CLASS_ARCHER:
-			expenseFactor = 1;
-			category = 1;
-			break;
-		case CLASS_CLERIC:
-			category = 0;
-			break;
-		case CLASS_SORCERER:
-			category = 1;
-			break;
-		case CLASS_DRUID:
-			category = 2;
-			break;
-		case CLASS_RANGER:
-			expenseFactor = 1;
-			category = 2;
-			break;
-		default:
-			category = -1;
-			break;
-		}
-
-		if (category != -1) {
+		if (category != SPELLCAT_INVALID) {
 			if (party._mazeId == 49 || party._mazeId == 37) {
 				for (uint spellId = 0; spellId < 76; ++spellId) {
 					int idx = 0;
-					while (idx < MAX_SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] != (int)spellId)
+					while (idx < CHAR_MAX_SPELLS && Res.SPELLS_ALLOWED[category][idx] != (int)spellId)
 						++idx;
 
 					// Handling if the spell is appropriate for the character's class
-					if (idx < MAX_SPELLS_PER_CLASS) {
+					if (idx < CHAR_MAX_SPELLS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
@@ -370,10 +304,10 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 				for (int spellId = Res.DARK_SPELL_RANGES[groupIndex][0];
 						spellId < Res.DARK_SPELL_RANGES[groupIndex][1]; ++spellId) {
 					int idx = 0;
-					while (idx < 40 && Res.SPELLS_ALLOWED[category][idx] ==
+					while (idx < SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] ==
 						Res.DARK_SPELL_OFFSETS[category][spellId]);
 
-					if (idx < 40) {
+					if (idx < SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
@@ -386,10 +320,10 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 				for (int spellId = 0; spellId < 20; ++spellId) {
 					int idx = 0;
 					while (Res.CLOUDS_SPELL_OFFSETS[party._mazeId - 29][spellId] !=
-						(int)Res.SPELLS_ALLOWED[category][idx] && idx <= MAX_SPELLS_PER_CLASS)
+						(int)Res.SPELLS_ALLOWED[category][idx] && idx < SPELLS_PER_CLASS)
 						++idx;
 
-					if (idx <= MAX_SPELLS_PER_CLASS) {
+					if (idx < SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
@@ -405,26 +339,10 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 			return Res.NOT_A_SPELL_CASTER;
 
 	} else if ((mode & 0x7f) == 1) {
-		switch (c->_class) {
-		case CLASS_ARCHER:
-		case CLASS_SORCERER:
-			category = 1;
-			break;
-		case CLASS_DRUID:
-		case CLASS_RANGER:
-			category = 2;
-			break;
-		case CLASS_PALADIN:
-		case CLASS_CLERIC:
-		default:
-			category = 0;
-			break;
-		}
-
 		if (c->getMaxSP() == 0) {
 			return Res.NOT_A_SPELL_CASTER;
 		} else {
-			for (int spellIndex = 0; spellIndex < MAX_SPELLS_PER_CLASS; ++spellIndex) {
+			for (int spellIndex = 0; spellIndex < SPELLS_PER_CLASS; ++spellIndex) {
 				if (c->_spells[spellIndex]) {
 					int spellId = Res.SPELLS_ALLOWED[category][spellIndex];
 					int gemCost = Res.SPELL_GEM_COST[spellId];
@@ -522,7 +440,8 @@ int CastSpell::execute(Character *&c) {
 	bool redrawFlag = true;
 	do {
 		if (redrawFlag) {
-			int category = c->getClassCategory();
+			SpellsCategory category = c->getSpellsCategory();
+			assert(category != SPELLCAT_INVALID);
 			int spellIndex = c->_currentSpell != -1 ? c->_currentSpell : 39;
 			spellId = Res.SPELLS_ALLOWED[category][spellIndex];
 			int gemCost = Res.SPELL_GEM_COST[spellId];
