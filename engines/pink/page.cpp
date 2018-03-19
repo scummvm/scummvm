@@ -35,6 +35,7 @@ void Page::load(Archive &archive) {
     archive >> _actors;
 }
 
+
 void GamePage::deserialize(Archive &archive) {
     Page::deserialize(archive);
     _module = static_cast<Module*>(archive.readObject());
@@ -81,5 +82,10 @@ void GamePage::loadFields() {
     // memfile manipulations if from save or page changing
 
 }
+
+PinkEngine *GamePage::getGame() {
+    return _module->getGame();
+}
+
 
 } // End of namespace Pink

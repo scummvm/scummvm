@@ -27,9 +27,12 @@
 
 namespace Pink {
 
+class LeadActor;
+
 class SideEffect : public Object {
 public:
-
+    virtual ~SideEffect() {};
+    virtual void init(LeadActor &_actor) {};
 
 };
 
