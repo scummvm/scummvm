@@ -51,4 +51,23 @@ GamePage *Actor::getPage() const {
     return _page;
 }
 
+void Actor::setIdleAction(bool unk) {
+    assert(_action == nullptr);
+
+    uint i;
+    for (i = 0; i < _actions.size(); ++i) {
+        if (_action[i].getName() == "Idle") {
+            _action = _actions[i];
+            break;
+        }
+    }
+    if (!_action) {
+        _isActionEnd = 1;
+    }
+    else {
+        _isActionEnd = 0;
+        //call action virt method
+    }
+}
+
 } // End of namespace Pink

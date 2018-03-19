@@ -34,7 +34,10 @@ class Sequencer;
 
 class Actor : public NamedObject {
 public:
-    Actor() {};
+    Actor()
+     : _page(nullptr), _action(nullptr),
+        _isActionEnd(1)
+    {};
     virtual void deserialize(Archive &archive);
 
     Action *findAction(Common::String &name);
@@ -42,11 +45,13 @@ public:
     Sequencer *getSequencer();
     GamePage *getPage() const;
 
+    void setIdleAction(bool unk);
+
 protected:
     GamePage *_page;
-    //int possibly_isActionNotExist;
     Action *_action;
     Common::Array<Action*> _actions;
+    bool _isActionEnd;
 };
 
 } // End of namespace Pink
