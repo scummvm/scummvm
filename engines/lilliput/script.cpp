@@ -2822,8 +2822,8 @@ void LilliputScript::OC_scrollViewPort() {
 	int x = _viewportPos.x + scrollValX[direction];
 	int y = _viewportPos.y + scrollValY[direction];
 
-	CLIP(x, 0, 56);
-	CLIP(y, 0, 56);
+	x = CLIP(x, 0, 56);
+	y = CLIP(y, 0, 56);
 
 	_vm->_refreshScreenFlag = true;
 	_vm->viewportScrollTo(Common::Point(x, y));
