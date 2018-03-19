@@ -37,6 +37,13 @@ void Page::load(Archive &archive) {
     archive >> _actors;
 }
 
+Actor *Page::findActor(Common::String &name) {
+    return *Common::find_if(_actors.begin(), _actors.end(), [&name]
+            (Actor *actor) {
+        return name == actor->getName();
+    });;
+}
+
 
 void GamePage::deserialize(Archive &archive) {
     Page::deserialize(archive);
