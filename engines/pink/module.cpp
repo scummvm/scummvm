@@ -95,6 +95,10 @@ PinkEngine *Module::getGame() const {
     return _game;
 }
 
+Common::StringMap &Module::getMap() {
+    return _map;
+}
+
 } // End of namespace Pink
 
 

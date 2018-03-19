@@ -47,4 +47,8 @@ Action *Actor::findAction(Common::String &name) {
     });;
 }
 
+GamePage *Actor::getPage() const {
+    return _page;
+}
+
 } // End of namespace Pink

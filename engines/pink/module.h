@@ -52,12 +52,13 @@ public:
     void OnMouseMove();
     void OnKeyboardButtonClick();
 
-private:
-    PinkEngine *_game;
-public:
+    Common::StringMap &getMap();
+
     PinkEngine *getGame() const;
 
+
 private:
+    PinkEngine *_game;
     GamePage *_page;
     PagesArray _pages;
     InventoryMgr _invMgr;
