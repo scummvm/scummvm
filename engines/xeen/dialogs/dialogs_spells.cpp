@@ -889,9 +889,9 @@ int TownPortal::execute() {
 
 	// Build up a lsit of the names of the towns on the current side of Xeen
 	for (int idx = 0; idx < 5; ++idx) {
-		File f(Common::String::format("%s%04d.txt",
-			map._sideTownPortal ? "dark" : "xeen",
-			Res.TOWN_MAP_NUMBERS[map._sideTownPortal][idx]));
+		Common::String txtName = Common::String::format("%s%04d.txt", map._sideTownPortal ? "dark" : "xeen",
+			Res.TOWN_MAP_NUMBERS[map._sideTownPortal][idx]);
+		File f(txtName, 1);
 		townNames[idx] = f.readString();
 		f.close();
 	}
