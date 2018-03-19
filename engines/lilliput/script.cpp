@@ -773,6 +773,7 @@ Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& 
 		int index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
 		str = Common::String::format("_vm->_rulesBuffer12Pos3[%d]", index);
+		break;
 	}
 	case 0xF7: {
 		str = Common::String::format("(_characterPositionTileX[_currentCharacterVariables[6]], _characterPositionTileY[_currentCharacterVariables[6]])");
