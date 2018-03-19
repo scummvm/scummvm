@@ -2893,7 +2893,19 @@ void TuckerEngine::updateSprite_locationNum66_4(int i) {
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum66() {
-	// FIXME: shouldn't be executed after using the map
+	// WORKAROUND
+	// If you don't have the appointment card yet and use the map to go to
+	// Seedy Street Bud ends up being teleported back to the mall.
+	// Because of the destination coordinates which warp Bud past x==583 the
+	// below 'if' triggers and automatically makes Violet refuse Bud entrance
+	// to the dentist. On top of that the graphics end up all garbled which
+	// indicates that even worse things happen under the hood.
+	// To work around this we only trigger Violet if Bud actually _walked_ past
+	// the trigger coordinates (as opposed to using the map).
+	// Fixes Trac#10452.
+	if (_nextLocationNum != 0)
+		return;
+
 	_flagsTable[137] = 0;
 	if (_xPosCurrent > 583 && _flagsTable[191] == 0 && _nextAction == 0 && _locationMaskType == 0) {
 		_panelLockedFlag = false;
