@@ -36,7 +36,7 @@ public:
     Actor() {};
     virtual void deserialize(Archive &archive);
 
-private:
+protected:
     GamePage *_page;
     //int possibly_isActionNotExist;
     Action *_action;

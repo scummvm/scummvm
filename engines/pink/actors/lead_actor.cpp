@@ -25,6 +25,8 @@
 #include "../cursor_mgr.h"
 #include "engines/pink/sequences/sequencer.h"
 #include "../archive.h"
+#include "../page.h"
+#include "../pink.h"
 
 namespace Pink {
 
@@ -33,6 +35,11 @@ void LeadActor::deserialize(Archive &archive) {
     _cursorMgr = static_cast<CursorMgr*>(archive.readObject());
     _walkMgr = static_cast<WalkMgr*>(archive.readObject());
     _sequencer = static_cast<Sequencer*>(archive.readObject());
+}
+
+void LeadActor::setNextExecutors(Common::String &nextModule, Common::String &nextPage) {
+    //TODO check for lead actor state
+    _page->getGame()->setNextExecutors(nextModule, nextPage);
 }
 
 } // End of namespace Pink

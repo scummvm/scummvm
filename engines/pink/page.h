@@ -38,7 +38,6 @@ class Page : public NamedObject {
 public:
 
     void load(Archive &archive);
-
 protected:
     ResourceMgr _resMgr;
     LeadActor *_leadActor;
@@ -64,6 +63,7 @@ public:
 
     void init(bool isLoadingSave);
 
+    PinkEngine *getGame();
 
 private:
     int perhapsIsLoaded;

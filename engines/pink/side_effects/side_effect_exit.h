@@ -31,6 +31,8 @@ class SideEffectExit : public SideEffect {
 public:
     virtual void deserialize(Archive &archive);
 
+    virtual void init(LeadActor &_actor);
+
 private:
     Common::String _nextModule;
     Common::String _nextPage;
