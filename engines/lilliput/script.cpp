@@ -1148,7 +1148,7 @@ void LilliputScript::sub189B8() {
 void LilliputScript::decodePackedText(char *buf) {
 	debugC(2, kDebugScript, "decodePackedText(buf)");
 
-	// All the languages use the English dictionnary
+	// All the languages use the English dictionary
 	static const char *nounsArrayPtr = "I am |You are |you are |hou art |in the |is the |is a |in a |To the |to the |by |going |here |The|the|and |some |build|not |way|I |a |an |from |of |him|her|by |his |ing |tion|have |you|I've |can't |up |to |he |she |down |what|What|with|are |and|ent|ian|ome|ed |me|my|ai|it|is|of|oo|ea|er|es|th|we|ou|ow|or|gh|go|er|st|ee|th|sh|ch|ct|on|ly|ng|nd|nt|ty|ll|le|de|as|ie|in|ss|'s |'t |re|gg|tt|pp|nn|ay|ar|wh|";
 
 	_vm->_displayStringIndex = 0;
