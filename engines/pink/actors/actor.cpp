@@ -70,4 +70,8 @@ void Actor::setIdleAction(bool unk) {
     }
 }
 
+void Actor::endAction() {
+    _isActionEnd = 1;
+}
+
 } // End of namespace Pink

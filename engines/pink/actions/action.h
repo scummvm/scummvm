@@ -32,6 +32,8 @@ class Actor;
 class Action : public NamedObject {
 public:
     virtual void deserialize(Archive &archive);
+    virtual void play(bool unk_startNow) {}; //?? not sure about parameter
+    virtual void end() {};
 
 protected:
     Actor *_actor;

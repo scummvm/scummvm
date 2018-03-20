@@ -21,6 +21,7 @@
  */
 
 #include "action_hide.h"
+#include "../actors/actor.h"
 #include <engines/pink/archive.h>
 #include <common/debug.h>
 
@@ -30,6 +31,15 @@ namespace Pink {
 void Pink::ActionHide::deserialize(Archive &archive) {
     Action::deserialize(archive);
     debug("\tActionHide: _name = %s", _name.c_str());
+}
+
+void ActionHide::play(bool unk_startNow) {
+    debug("ActionHide %s is now in playing state", _name.c_str());
+    _actor->endAction();
+}
+
+void ActionHide::end() {
+    debug("ActionHide %s is ended", _name.c_str());
 }
 
 } //End of namespace Pink
