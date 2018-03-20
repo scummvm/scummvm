@@ -40,7 +40,7 @@ Sequencer *Actor::getSequencer() {
     return _page->getSequencer();
 }
 
-Action *Actor::findAction(Common::String &name) {
+Action *Actor::findAction(const Common::String &name) {
     return *Common::find_if(_actions.begin(), _actions.end(), [&name]
             (Action* action) {
         return name == action->getName();
@@ -51,27 +51,39 @@ GamePage *Actor::getPage() const {
     return _page;
 }
 
-void Actor::setIdleAction(bool unk) {
-    assert(_action == nullptr);
-
-    uint i;
-    for (i = 0; i < _actions.size(); ++i) {
-        if (_action[i].getName() == "Idle") {
-            _action = _actions[i];
-            break;
-        }
+void Actor::init(bool unk) {
+    if (!_action) {
+        _action = findAction({"Idle"});
     }
+
     if (!_action) {
         _isActionEnd = 1;
     }
     else {
         _isActionEnd = 0;
-        //call action virt method
+        _action->play(unk);
     }
+}
+
+void Actor::hide() {
+    setAction({"Hide"});
 }
 
 void Actor::endAction() {
     _isActionEnd = 1;
+}
+
+void Actor::setAction(const Common::String &name) {
+    Action *newAction = findAction(name);
+    if (_action) {
+        _isActionEnd = 1;
+        _action->end();
+    }
+    if (newAction) {
+        _isActionEnd = 0;
+        _action = newAction;
+        _action->play(0);
+    }
 }
 
 } // End of namespace Pink

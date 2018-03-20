@@ -40,14 +40,15 @@ public:
     {};
     virtual void deserialize(Archive &archive);
 
-    Action *findAction(Common::String &name);
-
     Sequencer *getSequencer();
     GamePage *getPage() const;
 
-    void setIdleAction(bool unk);
+    void init(bool unk);
+    void hide();
     void endAction();
 
+    Action *findAction(const Common::String &name);
+    void setAction(const Common::String &name);
 
 protected:
     GamePage *_page;
