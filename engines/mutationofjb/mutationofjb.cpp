@@ -32,11 +32,8 @@
 #include "engines/util.h"
 
 #include "mutationofjb/mutationofjb.h"
-#include "mutationofjb/room.h"
 #include "mutationofjb/game.h"
-#include "mutationofjb/encryptedfile.h"
-#include "mutationofjb/util.h"
-#include "mutationofjb/script.h"
+#include "mutationofjb/gamedata.h"
 #include "mutationofjb/debug.h"
 
 namespace MutationOfJB {
@@ -44,10 +41,7 @@ namespace MutationOfJB {
 MutationOfJBEngine::MutationOfJBEngine(OSystem *syst)
 : Engine(syst),
  _console(nullptr),
- _room(nullptr),
- _screen(nullptr),
- _globalScript(nullptr),
- _localScript(nullptr) {
+ _screen(nullptr) {
 	debug("MutationOfJBEngine::MutationOfJBEngine");
 }
 
@@ -55,21 +49,6 @@ MutationOfJBEngine::~MutationOfJBEngine() {
 	debug("MutationOfJBEngine::~MutationOfJBEngine");
 }
 
-bool MutationOfJBEngine::loadGameData(bool partB) {
-	EncryptedFile file;
-	const char *fileName = !partB ? "startup.dat" : "startupb.dat";
-	file.open(fileName);
-	if (!file.isOpen()) {
-		reportFileMissingError(fileName);
-		return false;
-	}
-
-	_gameData->loadFromStream(file);
-
-	file.close();
-
-	return true;
-}
 
 void MutationOfJBEngine::setupCursor() {
 	const uint8 white[] = {0xFF, 0xFF, 0xFF};
@@ -82,27 +61,24 @@ void MutationOfJBEngine::setupCursor() {
 	CursorMan.showMouse(true);
 }
 
+Graphics::Screen *MutationOfJBEngine::getScreen() const {
+	return _screen;
+}
+
+Game &MutationOfJBEngine::getGame() {
+	return *_game;
+}
+
 Common::Error MutationOfJBEngine::run() {
 	debug("MutationOfJBEngine::run");
 
 	initGraphics(320, 200);
 
 	_console = new Console(this);
-	_screen = new Graphics::Screen;
+	_screen = new Graphics::Screen();
+	_game = new Game(this);
+
 	setupCursor();
-
-	_gameData = new GameData;
-	_gameData->_currentScene = 13;
-	loadGameData(false);
-
-	_room = new Room(_screen);
-	_room->load(_gameData->_currentScene, false);
-
-	EncryptedFile globalScriptFile;
-	globalScriptFile.open("global.atn");
-	_globalScript = new Script;
-	_globalScript->loadFromStream(globalScriptFile);
-	globalScriptFile.close();
 
 	while(!shouldQuit()) {
 		Common::Event event;
@@ -118,13 +94,12 @@ Common::Error MutationOfJBEngine::run() {
 			}
 			case Common::EVENT_LBUTTONDOWN:
 			{
-				const Scene *const scene = _gameData->getScene(_gameData->_currentScene);
+				const Scene *const scene = _game->getGameData().getScene(_game->getGameData()._currentScene);
 				if (scene) {
 					for (int i = 0; i < MIN(ARRAYSIZE(scene->_doors), (int) scene->_noDoors); ++i) {
 						const Door &door = scene->_doors[i];
 						if ((event.mouse.x >= door._x) && (event.mouse.x < door._x + door._width) && (event.mouse.y >= door._y) && (event.mouse.y < door._y + door._height)) {
-							_gameData->_currentScene = door._destSceneId;
-							_room->load(_gameData->_currentScene, false);
+							_game->changeScene(door._destSceneId, false);
 						}
 					}
 				}
@@ -141,14 +116,6 @@ Common::Error MutationOfJBEngine::run() {
 	}
 
 	return Common::kNoError;
-}
-
-Script *MutationOfJBEngine::getGlobalScript() {
-	return _globalScript;
-}
-
-Script *MutationOfJBEngine::getLocalScript() {
-	return _localScript;
 }
 
 }

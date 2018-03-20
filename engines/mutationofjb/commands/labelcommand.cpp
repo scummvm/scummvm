@@ -22,7 +22,6 @@
 
 #include "mutationofjb/commands/labelcommand.h"
 #include "mutationofjb/commands/gotocommand.h"
-#include "mutationofjb/game.h"
 #include "mutationofjb/script.h"
 
 /*

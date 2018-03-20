@@ -21,7 +21,7 @@
  */
 
 #include "mutationofjb/commands/ifcommand.h"
-#include "mutationofjb/game.h"
+#include "mutationofjb/gamedata.h"
 #include "mutationofjb/script.h"
 #include "common/str.h"
 #include "common/translation.h"

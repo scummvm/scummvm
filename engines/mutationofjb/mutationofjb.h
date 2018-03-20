@@ -32,9 +32,7 @@ namespace Graphics {
 namespace MutationOfJB {
 
 class Console;
-class Room;
-struct GameData;
-class Script;
+class Game;
 
 class MutationOfJBEngine : public Engine {
 public:
@@ -42,19 +40,16 @@ public:
 	~MutationOfJBEngine();
 
 	virtual Common::Error run();
-	Script *getGlobalScript();
-	Script *getLocalScript();
+	Graphics::Screen *getScreen() const;
+	Game &getGame();
 
 private:
 	bool loadGameData(bool partB);
 	void setupCursor();
 
 	Console *_console;
-	Room *_room;
-	GameData *_gameData;
 	Graphics::Screen *_screen;
-	Script *_globalScript;
-	Script *_localScript;
+	Game *_game;
 };
 
 

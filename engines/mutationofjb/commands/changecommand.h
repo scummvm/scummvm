@@ -21,7 +21,7 @@
  */
 
 #include "mutationofjb/commands/seqcommand.h"
-#include "mutationofjb/game.h"
+#include "mutationofjb/gamedata.h"
 
 namespace MutationOfJB {
 

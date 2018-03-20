@@ -21,6 +21,7 @@
  */
 
 #include "mutationofjb/debug.h"
+#include "mutationofjb/game.h"
 #include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/commands/command.h"
@@ -61,9 +62,9 @@ bool Console::cmd_listsections(int argc, const char **argv) {
 	if (argc == 3) {
 		Script *script = nullptr;
 		if (strcmp(argv[1], "G") == 0) {
-			script = _vm->getGlobalScript();
+			script = _vm->getGame().getGlobalScript();
 		} else if (strcmp(argv[1], "L") == 0) {
-			script = _vm->getLocalScript();
+			script = _vm->getGame().getLocalScript();
 		}
 		if (!script) {
 			debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
@@ -135,9 +136,9 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 	if (argc >= 4) {
 		Script *script = nullptr;
 		if (strcmp(argv[1], "G") == 0) {
-			script = _vm->getGlobalScript();
+			script = _vm->getGame().getGlobalScript();
 		} else if (strcmp(argv[1], "L") == 0) {
-			script = _vm->getLocalScript();
+			script = _vm->getGame().getLocalScript();
 		}
 		if (!script) {
 			debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
