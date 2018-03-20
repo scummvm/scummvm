@@ -264,7 +264,7 @@ void PSP2SdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrects, 
 	float sx, sy;
 	float ratio = (float)screenW / (float)screenH;
 
-	if (aspectRatioCorrection) {
+	if (aspectRatioCorrection && (screenH == 200 || screenH == 400)) {
 		ratio = 4.0 / 3.0;
 	}
 
@@ -281,7 +281,7 @@ void PSP2SdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrects, 
 			h = screenH;
 			w = screenW;
 		}
-		if (aspectRatioCorrection) {
+		if (aspectRatioCorrection && (screenH == 200 || screenH == 400)) {
 			// stretch the height only if it fits, otherwise make the width smaller
 			if (((float)w * (1.0 / ratio)) <= (float)dispH) {
 				h = w * (1.0 / ratio);

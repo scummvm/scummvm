@@ -349,6 +349,9 @@ void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *ga
 	int screenH = _km.y_max;
 	int screenW = _km.x_max;
 
+	int windowH = g_system->getHeight();
+	int windowW = g_system->getWidth();
+
 	bool fullscreen = ConfMan.getBool("fullscreen");
 	bool aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 
@@ -359,13 +362,13 @@ void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *ga
 	float sx, sy;
 	float ratio = (float)screenW / (float)screenH;
 
-	if (aspectRatioCorrection) {
+	if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
 		ratio = 4.0 / 3.0;
 	}
 
 	if (fullscreen || screenH >= dispH) {
 		h = dispH;
-		if (aspectRatioCorrection) {
+		if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
 			ratio = ratio * 1.1;
 		}
 		w = h * ratio;
@@ -379,7 +382,7 @@ void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *ga
 			h = screenH;
 			w = screenW;
 		}
-		if (aspectRatioCorrection) {
+		if (aspectRatioCorrection && (windowH == 200 || windowH == 400)) {
 			// stretch the height only if it fits, otherwise make the width smaller
 			if (((float)w * (1.0 / ratio)) <= (float)dispH) {
 				h = w * (1.0 / ratio);
