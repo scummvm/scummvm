@@ -47,7 +47,10 @@ public:
     virtual void deserialize(Archive &archive);
     void setNextExecutors (Common::String &nextModule, Common::String &nextPage);
 
+    virtual void init(bool unk);
+
 private:
+    State _state;
     CursorMgr *_cursorMgr;
     WalkMgr *_walkMgr;
     Sequencer *_sequencer;
