@@ -171,14 +171,14 @@ public:
 	int16 _characterPositionY[40];
 	int8 _characterPositionAltitude[40];
 	int16 _characterFrameArray[40];
-	int8 _rulesBuffer2_5[40];
+	int8 _characterCarried[40];
 	int8 _rulesBuffer2_6[40];
 	byte _rulesBuffer2_7[40];
 	byte _spriteSizeArray[40];
 	byte _characterDirectionArray[40];
 	byte _rulesBuffer2_10[40];
 	byte _rulesBuffer2_11[40];
-	byte _rulesBuffer2_12[40];
+	byte _characterBehaviour[40];
 	byte _rulesBuffer2_13_posX[40];
 	byte _rulesBuffer2_14_posY[40];
 	byte _characterVariables[1400 + 3120];
@@ -356,7 +356,7 @@ public:
 	bool _delayedReactivationAction;
 	int8 _selectedCharacterId;
 	byte _numCharactersToDisplay;
-	int16 _word10804;
+	int16 _host;
 	bool _shouldQuit;
 
 	void pollEvent();

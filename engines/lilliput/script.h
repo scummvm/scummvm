@@ -75,7 +75,7 @@ public:
 	byte _interfaceButtonActivationDelay[20];
 	byte _array122C1[40];
 	byte _array10A39[40];
-	int16 _array10B51[40 * 40];
+	int16 _interactions[40 * 40];
 
 	byte *_savedBuffer215Ptr;
 
@@ -159,17 +159,17 @@ private:
 	byte OC_compCurrentSpeechId();
 	byte OC_checkSaveFlag();
 	byte OC_compScriptForVal();
-	byte OC_sub174D8();
+	byte OC_isCarrying();
 	byte OC_CompareCharacterVariables();
 	byte OC_compareCoords_1();
 	byte OC_compareCoords_2();
 	byte OC_CompareDistanceFromCharacterToPositionWith();
 	byte OC_compareRandomCharacterId();
 	byte OC_IsCurrentCharacterIndex();
-	byte OC_sub175C8();
-	byte OC_sub17640();
-	byte OC_sub176C4();
-	byte OC_compWord10804();
+	byte OC_hasVisibilityLevel();
+	byte OC_hasGainedVisibilityLevel();
+	byte OC_hasReducedVisibilityLevel();
+	byte OC_isHost();
 	byte OC_sub17766();
 	byte OC_sub17782();
 	byte OC_CompareMapValueWith();
