@@ -715,7 +715,7 @@ static const OpCode opCodes2[] = {
 /* 0x65 */	{ "OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone }
 };
 
-Common::String LilliputScript::getArgumentString(KValueType type, ScriptStream& script) {
+Common::String LilliputScript::getArgumentString(kValueType type, ScriptStream& script) {
 
 	Common::String str;
 	if (type == kImmediateValue) {
@@ -826,7 +826,7 @@ void LilliputScript::disasmScript(ScriptStream script) {
 			// op code type 1
 			assert(val < sizeof(opCodes1)/sizeof(OpCode));
 			const OpCode *opCode = &opCodes1[val];
-			const KValueType *opArgType = &opCode->_arg1;
+			const kValueType *opArgType = &opCode->_arg1;
 
 			Common::String str;
 
@@ -867,7 +867,7 @@ void LilliputScript::disasmScript(ScriptStream script) {
 			// op code type 2
 			assert(val < sizeof(opCodes2) / sizeof(OpCode));
 			const OpCode *opCode = &opCodes2[val];
-			const KValueType *opArgType = &opCode->_arg1;
+			const kValueType *opArgType = &opCode->_arg1;
 
 			Common::String str;
 			str = "    ";
