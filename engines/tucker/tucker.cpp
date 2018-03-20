@@ -1842,11 +1842,6 @@ void TuckerEngine::drawBackgroundSprites() {
 }
 
 void TuckerEngine::drawCurrentSprite() {
-	// Workaround original game glitch: skip first bud frame drawing when entering location (tracker item #2597763)
-	if ((_locationNum == 17 || _locationNum == 18) && _currentSpriteAnimationFrame == 16) {
-		return;
-	}
-
 	// WORKAROUND: original game glitch
 	// Locations 48 and 61 contain reserved colors from [0xE0-0xF8] in a walkable area which
 	// results in a number of pixels being falsely drawn in the foreground (on top of Bud).
