@@ -31,7 +31,8 @@ class ActionHide : public Action {
 public:
     virtual void deserialize(Archive &archive);
 
-public:
+    virtual void play(bool unk_startNow);
+    virtual void end();
 };
 
 } //End of namespace Pink

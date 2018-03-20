@@ -46,6 +46,8 @@ public:
     GamePage *getPage() const;
 
     void setIdleAction(bool unk);
+    void endAction();
+
 
 protected:
     GamePage *_page;
