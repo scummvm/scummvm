@@ -32,7 +32,6 @@ ScriptStream::~ScriptStream() {
 }
 
 void ScriptStream::writeUint16LE(int value, int relativePos) {
-	
 	int writePos = pos() + relativePos;
 	assert((writePos >= 0) && (writePos + 2 < size()));
 
