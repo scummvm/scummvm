@@ -172,7 +172,6 @@ SaveStateList LilliputMetaEngine::listSaves(const char *target) const {
 	pattern += "-##.SAV";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	char slot[3];
@@ -210,6 +209,7 @@ SaveStateList LilliputMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
