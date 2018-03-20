@@ -79,6 +79,28 @@ bool Game::loadGameData(bool partB) {
 void Game::changeScene(uint8 sceneId, bool partB) {
 	_gameData->_currentScene = sceneId;
 	_room->load(_gameData->_currentScene, partB);
+
+	if (_localScript) {
+		delete _localScript;
+		_localScript = nullptr;
+	}
+
+	EncryptedFile scriptFile;
+	Common::String fileName = Common::String::format("scrn%d%s.atn", sceneId, partB ? "b" : "");
+	scriptFile.open(fileName);
+	if (!scriptFile.isOpen()) {
+		reportFileMissingError(fileName.c_str());
+		return;
+	}
+
+	// TODO Actually parse this.
+	Common::String dummy;
+	dummy = scriptFile.readLine(); // Skip first line.
+	scriptFile.seek(126, SEEK_CUR); // Skip 126 bytes.
+
+	_localScript = new Script;
+	_localScript->loadFromStream(scriptFile);
+	scriptFile.close();
 }
 
 }

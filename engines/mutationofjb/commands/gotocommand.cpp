@@ -26,7 +26,7 @@
 #include "mutationofjb/script.h"
 
 /*
-	GOTO <label>
+	"GOTO " <label>
 
 	Jumps to a label.
 */
@@ -38,7 +38,7 @@ bool GotoCommandParser::parse(const Common::String &line, ScriptParseContext &pa
 		return false;
 	}
 
-	Common::String label = line.c_str() + 6;
+	Common::String label = line.c_str() + 5;
 	GotoCommand *gotoCmd = new GotoCommand();
 
 	if (parseCtx._labels.contains(label)) {
