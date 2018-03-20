@@ -563,8 +563,9 @@ public:
 
 	/**
 	 * Handles opening grates
+	 * @returns		If true, no further event checking should be done
 	 */
-	void openGrate(int wallVal, int action);
+	bool openGrate(int wallVal, int action);
 };
 
 } // End of namespace Xeen

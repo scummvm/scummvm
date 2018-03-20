@@ -285,28 +285,24 @@ void Interface::perform() {
 		switch (lookupId) {
 		case 1:
 			if (!map._isOutdoors) {
-				scripts.openGrate(13, 1);
-				eventsFlag = _buttonValue != 0;
+				eventsFlag = !scripts.openGrate(13, 1);
 			}
 			break;
 		case 6:
 			// Open grate being closed
 			if (!map._isOutdoors) {
-				scripts.openGrate(9, 0);
-				eventsFlag = _buttonValue != 0;
+				eventsFlag = !scripts.openGrate(9, 0);
 			}
 			break;
 		case 9:
 			// Closed grate being opened
 			if (!map._isOutdoors) {
-				scripts.openGrate(6, 0);
-				eventsFlag = _buttonValue != 0;
+				eventsFlag = !scripts.openGrate(6, 0);
 			}
 			break;
 		case 13:
 			if (!map._isOutdoors) {
-				scripts.openGrate(1, 1);
-				eventsFlag = _buttonValue != 0;
+				eventsFlag = !scripts.openGrate(1, 1);
 			}
 			break;
 		default:

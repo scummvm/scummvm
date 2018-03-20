@@ -269,7 +269,7 @@ int Scripts::checkEvents() {
 	return _scriptResult;
 }
 
-void Scripts::openGrate(int wallVal, int action) {
+bool Scripts::openGrate(int wallVal, int action) {
 	Combat &combat = *_vm->_combat;
 	FileManager &files = *_vm->_files;
 	Interface &intf = *_vm->_interface;
@@ -278,60 +278,62 @@ void Scripts::openGrate(int wallVal, int action) {
 	Sound &sound = *_vm->_sound;
 	int ccNum = files._ccNum;
 
-	if ((wallVal != 13 || map._currentGrateUnlocked) && (!ccNum || wallVal != 9 ||
-			map.mazeData()._wallKind != 2)) {
-		if (wallVal != 9 && !map._currentGrateUnlocked) {
-			int charIndex = WhoWill::show(_vm, 13, action, false) - 1;
-			if (charIndex < 0) {
-				intf.draw3d(true);
-				return;
-			}
+	if (!((wallVal != 13 || map._currentGrateUnlocked) && (!ccNum || wallVal != 9 ||
+			map.mazeData()._wallKind != 2)))
+		return false;
 
-			// There is a 1 in 4 chance the character will receive damage
-			if (_vm->getRandomNumber(1, 4) == 1) {
-				combat.giveCharDamage(map.mazeData()._trapDamage,
-					(DamageType)_vm->getRandomNumber(0, 6), charIndex);
-			}
-
-			// Check whether character can unlock the door
-			Character &c = party._activeParty[charIndex];
-			if ((c.getThievery() + _vm->getRandomNumber(1, 20)) <
-					map.mazeData()._difficulties._unlockDoor)
-				return;
-
-			c._experience += map.mazeData()._difficulties._unlockDoor * c.getCurrentLevel();
+	if (wallVal != 9 && !map._currentGrateUnlocked) {
+		int charIndex = WhoWill::show(_vm, 13, action, false) - 1;
+		if (charIndex < 0) {
+			intf.draw3d(true);
+			return true;
 		}
 
-		// Flag the grate as unlocked, and the wall the grate is on
-		map.setCellSurfaceFlags(party._mazePosition, 0x80);
-		map.setWall(party._mazePosition, party._mazeDirection, wallVal);
-
-		// Set the grate as opened and the wall on the other side of the grate
-		Common::Point pt = party._mazePosition;
-		Direction dir = (Direction)((int)party._mazeDirection ^ 2);
-		switch (party._mazeDirection) {
-		case DIR_NORTH:
-			pt.y++;
-			break;
-		case DIR_EAST:
-			pt.x++;
-			break;
-		case DIR_SOUTH:
-			pt.y--;
-			break;
-		case DIR_WEST:
-			pt.x--;
-			break;
-		default:
-			break;
+		// There is a 1 in 4 chance the character will receive damage
+		if (_vm->getRandomNumber(1, 4) == 1) {
+			combat.giveCharDamage(map.mazeData()._trapDamage,
+				(DamageType)_vm->getRandomNumber(0, 6), charIndex);
 		}
 
-		map.setCellSurfaceFlags(pt, 0x80);
-		map.setWall(pt, dir, wallVal);
+		// Check whether character can unlock the door
+		Character &c = party._activeParty[charIndex];
+		if ((c.getThievery() + _vm->getRandomNumber(1, 20)) <
+				map.mazeData()._difficulties._unlockDoor)
+			return true;
 
-		sound.playFX(10);
-		intf.draw3d(true);
+		c._experience += map.mazeData()._difficulties._unlockDoor * c.getCurrentLevel();
 	}
+
+	// Flag the grate as unlocked, and the wall the grate is on
+	map.setCellSurfaceFlags(party._mazePosition, 0x80);
+	map.setWall(party._mazePosition, party._mazeDirection, wallVal);
+
+	// Set the grate as opened and the wall on the other side of the grate
+	Common::Point pt = party._mazePosition;
+	Direction dir = (Direction)((int)party._mazeDirection ^ 2);
+	switch (party._mazeDirection) {
+	case DIR_NORTH:
+		pt.y++;
+		break;
+	case DIR_EAST:
+		pt.x++;
+		break;
+	case DIR_SOUTH:
+		pt.y--;
+		break;
+	case DIR_WEST:
+		pt.x--;
+		break;
+	default:
+		break;
+	}
+
+	map.setCellSurfaceFlags(pt, 0x80);
+	map.setWall(pt, dir, wallVal);
+
+	sound.playFX(10);
+	intf.draw3d(true);
+	return true;
 }
 
 bool Scripts::doOpcode(MazeEvent &event) {
