@@ -21,7 +21,7 @@
  */
 
 #include "mutationofjb/commands/additemcommand.h"
-#include "mutationofjb/game.h"
+#include "mutationofjb/gamedata.h"
 
 /*
 	"ADDITEM" " " <item>

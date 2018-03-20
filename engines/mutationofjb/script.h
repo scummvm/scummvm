@@ -59,13 +59,12 @@ struct ActionInfo {
 typedef Common::Array<ActionInfo> ActionInfos;
 typedef Common::Array<GotoCommand *> GotoCommands;
 
-class ScriptParseContext
-{
+class ScriptParseContext {
 public:
 	ScriptParseContext(Common::SeekableReadStream &stream);
 	bool readLine(Common::String &line);
 	void addConditionalCommand(ConditionalCommand *command, char tag);
-	void addLookSection(const Common::String & item, bool walkTo);
+	void addLookSection(const Common::String &item, bool walkTo);
 
 	Common::SeekableReadStream &_stream;
 	Command *_currentCommand;

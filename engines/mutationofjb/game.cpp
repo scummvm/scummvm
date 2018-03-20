@@ -21,171 +21,64 @@
  */
 
 #include "mutationofjb/game.h"
-#include "common/stream.h"
+#include "mutationofjb/gamedata.h"
+#include "mutationofjb/encryptedfile.h"
+#include "mutationofjb/mutationofjb.h"
+#include "mutationofjb/room.h"
+#include "mutationofjb/script.h"
+#include "mutationofjb/util.h"
 #include "common/util.h"
-#include "common/translation.h"
 
 namespace MutationOfJB {
 
-static bool readString(Common::ReadStream &stream, char *str) {
-	char buf[MAX_STR_LENGTH];
-	memset(str, 0, MAX_STR_LENGTH + 1);
+Game::Game(MutationOfJBEngine* vm) : _vm(vm) {
+	_gameData = new GameData;
+	loadGameData(false);
 
-	uint8 len = stream.readByte();
-	stream.read(buf, MAX_STR_LENGTH);
+	EncryptedFile globalScriptFile;
+	globalScriptFile.open("global.atn");
+	_globalScript = new Script;
+	_globalScript->loadFromStream(globalScriptFile);
+	globalScriptFile.close();
 
-	len = MIN(len, MAX_STR_LENGTH);
-	memcpy(str, buf, len);
+	_localScript = nullptr;
+	_room = new Room(_vm->getScreen());
+
+	changeScene(13, false); // Initial scene.
+}
+
+GameData &Game::getGameData() {
+	return *_gameData;
+}
+
+Script *Game::getGlobalScript() const {
+	return _globalScript;
+}
+
+Script *Game::getLocalScript() const {
+	return _localScript;
+}
+
+bool Game::loadGameData(bool partB) {
+	EncryptedFile file;
+	const char *fileName = !partB ? "startup.dat" : "startupb.dat";
+	file.open(fileName);
+	if (!file.isOpen()) {
+		reportFileMissingError(fileName);
+		return false;
+	}
+
+	_gameData->loadFromStream(file);
+
+	file.close();
 
 	return true;
 }
 
-bool Door::loadFromStream(Common::ReadStream &stream) {
-	readString(stream, _name);
 
-	_destSceneId = stream.readByte();
-	_destX = stream.readUint16LE();
-	_destY = stream.readUint16LE();
-	_x = stream.readUint16LE();
-	_y = stream.readByte();
-	_width = stream.readUint16LE();
-	_height = stream.readByte();
-	_walkToX = stream.readUint16LE();
-	_walkToY = stream.readByte();
-	_SP = stream.readByte();
-
-	return true;
-}
-
-bool Object::loadFromStream(Common::ReadStream &stream) {
-	_AC = stream.readByte();
-	_FA = stream.readByte();
-	_FR = stream.readByte();
-	_NA = stream.readByte();
-	_FS = stream.readByte();
-	_unknown = stream.readByte();
-	_CA = stream.readByte();
-	_x = stream.readUint16LE();
-	_y = stream.readByte();
-	_XL = stream.readUint16LE();
-	_YL = stream.readByte();
-	_WX = stream.readUint16LE();
-	_WY = stream.readByte();
-	_SP = stream.readByte();
-
-	return true;
-}
-
-bool Static::loadFromStream(Common::ReadStream &stream) {
-	_active = stream.readByte();
-	readString(stream, _name);
-	_x = stream.readUint16LE();
-	_y = stream.readByte();
-	_width = stream.readUint16LE();
-	_height = stream.readByte();
-	_walkToX = stream.readUint16LE();
-	_walkToY = stream.readByte();
-	_SP = stream.readByte();
-
-	return true;
-}
-
-bool Bitmap::loadFromStream(Common::ReadStream &stream) {
-	_frame = stream.readByte();
-	_isVisible = stream.readByte();
-	_x1 = stream.readUint16LE();
-	_y1 = stream.readByte();
-	_x2 = stream.readUint16LE();
-	_y2 = stream.readByte();
-
-	return true;
-}
-
-bool Scene::loadFromStream(Common::ReadStream &stream) {
-	int i;
-
-	_startup = stream.readByte();
-	_unknown001 = stream.readByte();
-	_unknown002 = stream.readByte();
-	_unknown003 = stream.readByte();
-	_DL = stream.readByte();
-
-	_noDoors = stream.readByte();
-	_noDoors = MIN(_noDoors, (uint8) ARRAYSIZE(_doors));
-	for (i = 0; i < ARRAYSIZE(_doors); ++i) {
-		_doors[i].loadFromStream(stream);
-	}
-
-	_noObjects = stream.readByte();
-	_noObjects = MIN(_noObjects, (uint8) ARRAYSIZE(_objects));
-	for (i = 0; i < ARRAYSIZE(_objects); ++i) {
-		_objects[i].loadFromStream(stream);
-	}
-
-	_noStatics = stream.readByte();
-	_noStatics = MIN(_noStatics, (uint8) ARRAYSIZE(_statics));
-	for (i = 0; i < ARRAYSIZE(_statics); ++i) {
-		_statics[i].loadFromStream(stream);
-	}
-
-	for (i = 0; i < ARRAYSIZE(_bitmaps); ++i) {
-		_bitmaps[i].loadFromStream(stream);
-	}
-
-	_obstacleY1 = stream.readUint16LE();
-	_palRotStart = stream.readByte();
-	_palRotEnd = stream.readByte();
-	_palRotPeriod = stream.readByte();
-	stream.read(_unknown38A, 80);
-
-	return true;
-}
-
-Door *Scene::getDoor(uint8 doorId) {
-	if (doorId == 0 || doorId > _noDoors) {
-		warning(_("Door %d does not exist"), doorId);
-		return nullptr;
-	}
-
-	return &_doors[doorId - 1];
-}
-
-Object *Scene::getObject(uint8 objectId) {
-	if (objectId == 0 || objectId > _noObjects) {
-		warning(_("Object %d does not exist"), objectId);
-		return nullptr;
-	}
-
-	return &_objects[objectId - 1];
-}
-
-Static *Scene::getStatic(uint8 staticId) {
-	if (staticId == 0 || staticId > _noStatics) {
-		warning(_("Static %d does not exist"), staticId);
-		return nullptr;
-	}
-
-	return &_statics[staticId - 1];
-}
-
-
-GameData::GameData() : _currentScene(0) {}
-
-Scene *GameData::getScene(uint8 sceneId) {
-	if (sceneId == 0 || sceneId > ARRAYSIZE(_scenes)) {
-		warning(_("Scene %d does not exist"), sceneId);
-		return nullptr;
-	}
-
-	return &_scenes[sceneId - 1];
-}
-
-bool GameData::loadFromStream(Common::ReadStream &stream) {
-	for (int i = 0; i < ARRAYSIZE(_scenes); ++i) {
-		_scenes[i].loadFromStream(stream);
-	}
-
-	return true;
+void Game::changeScene(uint8 sceneId, bool partB) {
+	_gameData->_currentScene = sceneId;
+	_room->load(_gameData->_currentScene, partB);
 }
 
 }

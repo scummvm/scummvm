@@ -21,7 +21,7 @@
  */
 
 #include "mutationofjb/commands/removeitemcommand.h"
-#include "mutationofjb/game.h"
+#include "mutationofjb/gamedata.h"
 
 /*
 	"DELITEM" " " <item>
