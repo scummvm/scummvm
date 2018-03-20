@@ -209,7 +209,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			case ITEMMODE_CHAR_INFO:
 			case ITEMMODE_8:
 				windows[30].writeString(Common::String::format(Res.X_FOR_THE_Y,
-					category == CATEGORY_MISC ? "\x3l" : "\x3c",
+					category == CATEGORY_MISC ? "\x3l" : "\x3""c",
 					Res.CATEGORY_NAMES[category], c->_name.c_str(), Res.CLASS_NAMES[c->_class],
 					category == CATEGORY_MISC ? Res.FMT_CHARGES : " ",
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
