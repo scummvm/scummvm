@@ -2084,7 +2084,7 @@ void TuckerEngine::updateSprite_locationNum42(int i) {
 	} else if (_flagsTable[223] == 3) {
 		state = 5;
 		_spritesTable[i]._updateDelay = 5;
-		_spritesTable[i]._state = _spritesTable[i]._firstFrame - 1; // FIXME: bug, fxNum ?
+		_spritesTable[i]._state = _spritesTable[i]._firstFrame - 1;
 		_updateSpriteFlag1 = true;
 	} else {
 		state = 2;
