@@ -30,24 +30,18 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"bladerunner",
 		0,
-		{
-			{"STARTUP.MIX", 0, "5643b53306ca7764cf1ec7b79c9630a3", 2312374},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("STARTUP.MIX", "5643b53306ca7764cf1ec7b79c9630a3", 2312374),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
-	
+
 	// BladeRunner (German)
 	{
 		"bladerunner",
 		0,
-		{
-			{"STARTUP.MIX", 0, "57d674ed860148a530b7f4957cbe65ec", 2314301},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("STARTUP.MIX", "57d674ed860148a530b7f4957cbe65ec", 2314301),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -58,10 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"bladerunner",
 		0,
-		{
-			{"STARTUP.MIX", 0, "39d1901df50935d58aee252707134952", 2314526},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("STARTUP.MIX", "39d1901df50935d58aee252707134952", 2314526),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -72,10 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"bladerunner",
 		0,
-		{
-			{"STARTUP.MIX", 0, "c7ceb9c691223d25e78516aa519ff504", 2314461},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("STARTUP.MIX", "c7ceb9c691223d25e78516aa519ff504", 2314461),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -86,10 +74,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"bladerunner",
 		0,
-		{
-			{"STARTUP.MIX", 0, "c198b54a5366b88b1734bbca21d3b192", 2678672},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("STARTUP.MIX", "c198b54a5366b88b1734bbca21d3b192", 2678672),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -100,10 +85,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"bladerunner",
 		0,
-		{
-			{"STARTUP.MIX", 0, "54cad53da9e4ae03a85648834ac6765d", 2312976},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("STARTUP.MIX", "54cad53da9e4ae03a85648834ac6765d", 2312976),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
