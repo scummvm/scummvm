@@ -125,6 +125,8 @@ Common::Error TuckerEngine::loadGameState(int slot) {
 	setBlackPalette();
 	loadBudSpr();
 	_forceRedrawPanelItems = true;
+	_panelType = kPanelTypeNormal;
+	setCursorState(kCursorStateNormal);
 
 	delete file;
 	return Common::kNoError;
