@@ -193,13 +193,16 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);
 
 
-	project << ")\n";
+	project << ")\n\n";
 	if (name != setup.projectName) {
 		project << "endif()\n";
 	}
 
-	project << "# Libraries\n";
 	if (name == setup.projectName) {
+		project << "# Engines libraries handling\n";
+		writeEnginesLibrariesHandling(setup, project);
+
+		project << "# Libraries\n";
 		const Library *sdlLibrary = getLibraryFromFeature("sdl", setup.useSDL2);
 		project << "target_link_libraries(" << name << " ${" << sdlLibrary->librariesVar << "})\n";
 
@@ -220,9 +223,6 @@ void CMakeProvider::createProjectFile(const std::string &name, const std::string
 		project << "    target_link_libraries(" << name << " winmm)\n";
 		project << "endif()\n";
 		project << "\n";
-
-		project << "# Engines libraries handling\n";
-		writeEnginesLibrariesHandling(setup, project);
 
 		project << "set_property(TARGET " << name << " PROPERTY CXX_STANDARD 11)\n";
 		project << "set_property(TARGET " << name << " PROPERTY CXX_STANDARD_REQUIRED ON)\n";
