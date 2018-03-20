@@ -43,6 +43,9 @@ public:
 
 	/* Old command - created by this parser. */
 	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
+
+	/* Called after parsing. */
+	virtual void finish(ScriptParseContext &parseCtx);
 };
 
 class Command {

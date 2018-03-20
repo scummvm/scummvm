@@ -121,6 +121,16 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, 
 	}
 }
 
+void EndBlockCommandParser::finish(ScriptParseContext &) {
+	_elseFound = false;
+	_ifTag = 0;
+
+	if (!_pendingActionInfos.empty()) {
+		debug("Problem: Pending action infos from end block parser is not empty!");
+	}
+	_pendingActionInfos.clear();
+}
+
 Command::ExecuteResult EndBlockCommand::execute(GameData &) {
 	return Finished;
 }

@@ -26,6 +26,7 @@
 namespace MutationOfJB {
 
 void CommandParser::transition(ScriptParseContext &, Command *, Command *, CommandParser *) {}
+void CommandParser::finish(ScriptParseContext &parseCtx) {}
 CommandParser::~CommandParser() {}
 
 Command::~Command() {}

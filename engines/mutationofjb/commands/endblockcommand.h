@@ -35,9 +35,9 @@ class EndBlockCommandParser : public CommandParser {
 public:
 	EndBlockCommandParser() : _elseFound(false), _ifTag(0) {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
-
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
+	virtual void finish(ScriptParseContext &parseCtx) override;
 private:
 	bool _elseFound;
 	char _ifTag;

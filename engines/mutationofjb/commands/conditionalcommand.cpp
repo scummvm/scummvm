@@ -38,6 +38,10 @@ void ConditionalCommandParser::transition(ScriptParseContext &parseContext, Comm
 	condCommand->setTrueCommand(newCommand);
 }
 
+void ConditionalCommandParser::finish(ScriptParseContext &) {
+	_lastTag = 0;
+}
+
 
 ConditionalCommand::ConditionalCommand() :
 	_trueCommand(nullptr),

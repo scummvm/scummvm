@@ -130,6 +130,10 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 		lastParser = currentParser;
 	}
 
+	for (CommandParser **parser = parsers; *parser; ++parser) {
+		(*parser)->finish(parseCtx);
+	}
+
 	for (ActionInfos::iterator it = parseCtx._actionInfos.begin(); it != parseCtx._actionInfos.end(); ++it) {
 		if (it->_action == ActionInfo::Look) {
 			_lookActionInfos.push_back(*it);
