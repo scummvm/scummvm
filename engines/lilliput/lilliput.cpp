@@ -232,7 +232,6 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 }
 
 LilliputEngine::~LilliputEngine() {
-
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 	delete _rnd;
@@ -263,7 +262,6 @@ void LilliputEngine::update() {
 }
 
 void LilliputEngine::newInt8() {
-
 	if (_byte12A06 == 0) {
 		_byte12A06 = 2;
 		_byte12A07 ^= 1;
@@ -967,14 +965,13 @@ void LilliputEngine::sub16CA0() {
 		// Hack: Skip if disabled (c2 negative)
 		if (c2 == -1)
 			continue;
-		//
 
 		for (int index2 = _numCharacters - 1; index2 >= 0; index2--) {
 			byte byte16C9F = 0;
 			if ((index != index2) &&
-			        (_characterCarried[index] != index2) &&
-			        (_characterCarried[index2] != index) &&
-			        (_rulesBuffer2_11[index2] & 2) == 0) {
+				(_characterCarried[index] != index2) &&
+				(_characterCarried[index2] != index) &&
+				(_rulesBuffer2_11[index2] & 2) == 0) {
 				int d1 = _scriptHandler->_characterTilePosX[index2];
 				int d2 = _scriptHandler->_characterTilePosY[index2];
 
@@ -1646,7 +1643,7 @@ void LilliputEngine::sub16626() {
 			uint16 index2 = _scriptHandler->_array12811[index] + (index * 16);
 			Common::Point var1 = _scriptHandler->_array12311[index2];
 
-			// /8, then /2 as the function array is a word array 
+			// /8, then /2 as the function array is a word array
 			int16 var2 = var1.x / 16;
 
 			switch (var2) {
@@ -2474,9 +2471,9 @@ void LilliputEngine::loadRules() {
 	static const Common::KeyCode keybMappingArray[26] = {
 		Common::KEYCODE_a, Common::KEYCODE_b, Common::KEYCODE_c, Common::KEYCODE_d, Common::KEYCODE_e,
 		Common::KEYCODE_f, Common::KEYCODE_g, Common::KEYCODE_h, Common::KEYCODE_i, Common::KEYCODE_j,
-		Common::KEYCODE_k, Common::KEYCODE_l, Common::KEYCODE_m, Common::KEYCODE_n, Common::KEYCODE_o, 
+		Common::KEYCODE_k, Common::KEYCODE_l, Common::KEYCODE_m, Common::KEYCODE_n, Common::KEYCODE_o,
 		Common::KEYCODE_p, Common::KEYCODE_q, Common::KEYCODE_r, Common::KEYCODE_s, Common::KEYCODE_t,
-		Common::KEYCODE_u, Common::KEYCODE_v, Common::KEYCODE_w, Common::KEYCODE_x, Common::KEYCODE_y, 
+		Common::KEYCODE_u, Common::KEYCODE_v, Common::KEYCODE_w, Common::KEYCODE_x, Common::KEYCODE_y,
 		Common::KEYCODE_z};
 	Common::File f;
 	uint16 curWord;
@@ -2754,10 +2751,8 @@ void LilliputEngine::handleGameScripts() {
 
 	_nextCharacterIndex = (index + 1) % _numCharacters;
 
-
 	_scriptHandler->_characterScriptEnabled[index] = 0;
 	setCurrentCharacter(index);
-
 
 	_word16EFEh = _array11D49[index] >> 8;
 	_word16EFEl_characterId = _array11D49[index] & 0xFF;
@@ -2770,7 +2765,7 @@ void LilliputEngine::handleGameScripts() {
 
 	/* Decompiler follows
 
-	    //_scriptHandler->listAllTexts();
+		//_scriptHandler->listAllTexts();
 
 		debugC(1, kDebugEngineTBC, "================= Menu Script ==================");
 		ScriptStream script = ScriptStream(_menuScript, _menuScriptSize);
