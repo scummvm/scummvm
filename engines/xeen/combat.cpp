@@ -1114,7 +1114,9 @@ void Combat::setSpeedTable() {
 	}
 
 	if (hasSpeed) {
-		if (_whosSpeed >= (int)_speedTable.size() || _speedTable[_whosSpeed] != oldSpeed) {
+		if (_speedTable.empty()) {
+			_whosSpeed = 0;
+		} else if (_whosSpeed >= (int)_speedTable.size() || _speedTable[_whosSpeed] != oldSpeed) {
 			for (_whosSpeed = 0; _whosSpeed < (int)charSpeeds.size(); ++_whosSpeed) {
 				if (oldSpeed == _speedTable[_whosSpeed])
 					break;
