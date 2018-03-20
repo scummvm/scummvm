@@ -41,7 +41,7 @@ enum kActionType {
 	kCodeEntered = 6
 };
 
-enum KValueType {
+enum kValueType {
 	kNone,
 	kImmediateValue,
 	kCompareOperation,
@@ -54,11 +54,11 @@ enum KValueType {
 struct OpCode {
 	const char* _opName;
 	int _numArgs;
-	KValueType _arg1;
-	KValueType _arg2;
-	KValueType _arg3;
-	KValueType _arg4;
-	KValueType _arg5;
+	kValueType _arg1;
+	kValueType _arg2;
+	kValueType _arg3;
+	kValueType _arg4;
+	kValueType _arg5;
 };
 
 class LilliputScript {
@@ -95,7 +95,7 @@ public:
 
 	void disasmScript(ScriptStream script);
 	void listAllTexts();
-	static Common::String getArgumentString(KValueType type, ScriptStream& script);
+	static Common::String getArgumentString(kValueType type, ScriptStream& script);
 	void runScript(ScriptStream script);
 	void runMenuScript(ScriptStream script);
 private:
@@ -123,7 +123,7 @@ private:
 	int handleOpcode(ScriptStream *script);
 	byte handleOpcodeType1(int curWord);
 	void handleOpcodeType2(int curWord);
-	
+
 	void enableCharacterScript(byte index, byte var1, byte *curBufPtr);
 	void sub17B6C(int var1);
 	void sub16C86(int index, byte *buf);
