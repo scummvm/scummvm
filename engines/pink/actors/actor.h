@@ -43,7 +43,7 @@ public:
     Sequencer *getSequencer();
     GamePage *getPage() const;
 
-    void init(bool unk);
+    virtual void init(bool unk);
     void hide();
     void endAction();
 

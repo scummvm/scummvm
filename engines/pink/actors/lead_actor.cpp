@@ -38,8 +38,18 @@ void LeadActor::deserialize(Archive &archive) {
 }
 
 void LeadActor::setNextExecutors(Common::String &nextModule, Common::String &nextPage) {
-    //TODO check for lead actor state
-    _page->getGame()->setNextExecutors(nextModule, nextPage);
+    if (_state == Ready || _state == Moving || _state == inDialog1 || _state == Inventory || _state == PDA) {
+        _state = PlayingVideo;
+        _page->getGame()->setNextExecutors(nextModule, nextPage);
+    }
+}
+
+void LeadActor::init(bool unk) {
+    if (_state == unk_Loading){
+        _state = Ready;
+    }
+    //TODO set actor ref to inv mgr
+    Actor::init(unk);
 }
 
 } // End of namespace Pink
