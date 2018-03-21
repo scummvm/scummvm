@@ -911,7 +911,7 @@ void LilliputEngine::sub15F75() {
 		return;
 
 	_savedMousePosDivided = Common::Point(newX, newY);
-	_actionType = 5;
+	_actionType = kCubeSelected;
 }
 
 void LilliputEngine::unselectInterfaceHotspots() {
@@ -1954,7 +1954,7 @@ void LilliputEngine::checkClickOnGameArea(Common::Point pos) {
 		arrowX += _scriptHandler->_viewportPos.x;
 		arrowY += _scriptHandler->_viewportPos.y;
 		_savedMousePosDivided = Common::Point(arrowX, arrowY);
-		_actionType = 5;
+		_actionType = kCubeSelected;
 	}
 }
 
@@ -2011,7 +2011,7 @@ void LilliputEngine::handleInterfaceHotspot(byte index, byte button) {
 	if (button == 2) {
 		if (!_delayedReactivationAction) {
 			_scriptHandler->_interfaceHotspotStatus[index] = kHotspotEnabled;
-			_actionType = 2;
+			_actionType = kButtonReleased;
 			displayInterfaceHotspots();
 		}
 		return;
@@ -2028,7 +2028,7 @@ void LilliputEngine::handleInterfaceHotspot(byte index, byte button) {
 		_delayedReactivationAction = true;
 		_displayGreenHand = true;
 	} else {
-		_actionType = 1;
+		_actionType = kButtonPressed;
 	}
 
 	displayInterfaceHotspots();

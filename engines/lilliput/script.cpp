@@ -1840,7 +1840,7 @@ byte LilliputScript::OC_checkLastInterfaceHotspotIndexMenu13() {
 
 	byte tmpVal = (_currScript->readUint16LE() & 0xFF);
 
-	if ((_vm->_actionType != 1) && (_vm->_actionType != kActionTalk))
+	if ((_vm->_actionType != kButtonPressed) && (_vm->_actionType != kActionTalk))
 		return 0;
 
 	if (tmpVal == _vm->_lastInterfaceHotspotIndex)
@@ -1854,7 +1854,7 @@ byte LilliputScript::OC_checkLastInterfaceHotspotIndexMenu2() {
 
 	int8 hotspotIndex = (_currScript->readUint16LE() & 0xFF);
 
-	if ((_vm->_actionType == 2) && (hotspotIndex == _vm->_lastInterfaceHotspotIndex))
+	if ((_vm->_actionType == kButtonReleased) && (hotspotIndex == _vm->_lastInterfaceHotspotIndex))
 		return 1;
 
 	return 0;
