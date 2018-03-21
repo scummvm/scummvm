@@ -110,10 +110,10 @@ enum VerbPreposition {
 };
 
 enum Part {
-  kPartInit  = 0,
-  kPartOne   = 1,
-  kPartTwo   = 2,
-  kPartThree = 3
+	kPartInit  = 0,
+	kPartOne   = 1,
+	kPartTwo   = 2,
+	kPartThree = 3
 };
 
 enum Location {
