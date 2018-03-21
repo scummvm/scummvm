@@ -24,6 +24,8 @@
 #ifndef _OSYSTEM_DS_H_
 #define _OSYSTEM_DS_H_
 
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include "backends/base-backend.h"
 #include "common/events.h"
 #include "nds.h"
