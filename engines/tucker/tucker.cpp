@@ -1390,7 +1390,7 @@ void TuckerEngine::saveOrLoad() {
 		drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, 21, 102);
 	}
 	if (_mousePosY > 140) {
-		if (_mouseWheelUp && _currentSaveLoadGameState < 99) {
+		if (_mouseWheelUp && _currentSaveLoadGameState < kLastSaveSlot) {
 			++_currentSaveLoadGameState;
 			_forceRedrawPanelItems = true;
 			return;
@@ -1403,7 +1403,7 @@ void TuckerEngine::saveOrLoad() {
 	if (_leftMouseButtonPressed && _mouseClick == 0) {
 		_mouseClick = 1;
 		if (_mousePosX > 228 && _mousePosX < 240 && _mousePosY > 154 && _mousePosY < 170) {
-			if (_currentSaveLoadGameState < 99) {
+			if (_currentSaveLoadGameState < kLastSaveSlot) {
 				++_currentSaveLoadGameState;
 				_forceRedrawPanelItems = true;
 			}
