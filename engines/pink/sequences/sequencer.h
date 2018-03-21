@@ -41,13 +41,14 @@ public:
     Sequence* findSequence(const Common::String &name);
     void authorSequence(Sequence *sequence, bool unk);
 
-private:
+public:
     SequenceContext *_context;
     // unknown objects array
     Common::Array<Sequence*> _sequences;
     Common::String _currentSequenceName;
     //timers
     GamePage *_page;
+    int unk;
 };
 
 } // End of namespace Pink

@@ -27,6 +27,8 @@
 
 namespace Pink {
 
+class Sequence;
+
 class SequenceItem : public Object {
 public:
     virtual void deserialize(Archive &archive);
@@ -34,9 +36,11 @@ public:
     const Common::String &getActor() const;
     const Common::String &getAction() const;
 
+    virtual bool execute(int unk, Sequence *sequence, bool unk2);
+
 protected:
-    Common::String _actor;
-    Common::String _action;
+    Common::String _actorName;
+    Common::String _actionName;
 };
 
 }

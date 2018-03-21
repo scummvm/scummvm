@@ -75,6 +75,10 @@ void Actor::endAction() {
 
 void Actor::setAction(const Common::String &name) {
     Action *newAction = findAction(name);
+    setAction(newAction);
+}
+
+void Actor::setAction(Action *newAction) {
     if (_action) {
         _isActionEnd = 1;
         _action->end();
@@ -84,6 +88,15 @@ void Actor::setAction(const Common::String &name) {
         _action = newAction;
         _action->play(0);
     }
+}
+
+void Actor::setAction(Action *newAction, bool unk) {
+    if (unk){
+        assert(0); // want to see this
+        _isActionEnd = 1;
+        _action = newAction;
+    }
+    else setAction(newAction);
 }
 
 } // End of namespace Pink

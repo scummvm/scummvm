@@ -30,7 +30,7 @@ namespace Pink {
 void Pink::SequenceItemLeader::deserialize(Archive &archive) {
     SequenceItem::deserialize(archive);
     debug("\t\tSequenceItemLeader: _actor = %s, _action = %s",
-          _actor.c_str(), _action.c_str());
+          _actorName.c_str(), _actionName.c_str());
 }
 
 } //End of namespace Pink

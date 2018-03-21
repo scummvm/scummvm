@@ -49,6 +49,8 @@ public:
 
     Action *findAction(const Common::String &name);
     void setAction(const Common::String &name);
+    void setAction(Action *newAction);
+    void setAction(Action *newAction, bool unk);
 
 protected:
     GamePage *_page;

@@ -21,25 +21,52 @@
  */
 
 #include <common/debug.h>
+#include <engines/pink/sequences/sequence.h>
+#include <engines/pink/sequences/sequencer.h>
+#include <engines/pink/actions/action.h>
 #include "sequence_item.h"
 #include "../archive.h"
 #include "sequence_item_leader.h"
 #include "sequence_item_default_action.h"
+#include "../page.h"
+#include "../actors/actor.h"
 
 namespace Pink {
 
 void SequenceItem::deserialize(Archive &archive) {
-    archive >> _actor >> _action;
+    archive >> _actorName >> _actionName;
     if (!dynamic_cast<SequenceItemLeader*>(this) && !dynamic_cast<SequenceItemDefaultAction*>(this))
-        debug("\t\tSequenceItem: _actor = %s, _action = %s", _actor.c_str(), _action.c_str());
+        debug("\t\tSequenceItem: _actor = %s, _action = %s", _actorName.c_str(), _actionName.c_str());
 }
 
 const Common::String &SequenceItem::getActor() const {
-    return _actor;
+    return _actorName;
 }
 
 const Common::String &SequenceItem::getAction() const {
-    return _action;
+    return _actionName;
+}
+
+bool SequenceItem::execute(int unk, Sequence *sequence, bool unk2) {
+    Actor *actor;
+    Action *action;
+    if (!(actor = sequence->_sequencer->_page->findActor(_actorName)) ||
+        !(action = actor->findAction(_actionName))) {
+        return false;
+    }
+
+    actor->setAction(action, unk2);
+    Common::Array<SequenceActorState> &states = sequence->_context->_states;
+    for (int i = 0; i < sequence->_context->_states.size(); ++i) {
+        if (states[i]._actorName == _actorName){
+            states[i]._unk = unk;
+            sequence->_context->_actor = dynamic_cast<SequenceItemLeader*>(this) ?
+                                         actor : sequence->_context->_actor;
+            // TODO change to virt call
+        }
+    }
+
+    return true;
 }
 
 } // End of namespace Pink
