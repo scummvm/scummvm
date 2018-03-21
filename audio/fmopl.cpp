@@ -25,6 +25,7 @@
 #include "audio/mixer.h"
 #include "audio/softsynth/opl/dosbox.h"
 #include "audio/softsynth/opl/mame.h"
+#include "audio/softsynth/opl/nuked.h"
 
 #include "common/config-manager.h"
 #include "common/system.h"
@@ -48,7 +49,8 @@ enum OplEmulator {
 	kAuto = 0,
 	kMame = 1,
 	kDOSBox = 2,
-	kALSA = 3
+	kALSA = 3,
+	kNuked = 4
 };
 
 OPL::OPL() {
@@ -62,6 +64,9 @@ const Config::EmulatorDescription Config::_drivers[] = {
 	{ "mame", _s("MAME OPL emulator"), kMame, kFlagOpl2 },
 #ifndef DISABLE_DOSBOX_OPL
 	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+#endif
+#ifndef DISABLE_NUKED_OPL
+	{ "nuked", _s("Nuked OPL emulator"), kNuked, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
 #ifdef USE_ALSA
 	{ "alsa", _s("ALSA Direct FM"), kALSA, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
@@ -176,6 +181,11 @@ OPL *Config::create(DriverId driver, OplType type) {
 #ifndef DISABLE_DOSBOX_OPL
 	case kDOSBox:
 		return new DOSBox::OPL(type);
+#endif
+
+#ifndef DISABLE_NUKED_OPL
+	case kNuked:
+		return new NUKED::OPL(type);
 #endif
 
 #ifdef USE_ALSA
