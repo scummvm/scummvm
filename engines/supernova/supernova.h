@@ -129,6 +129,7 @@ public:
 	int textWidth(const char *text);
 	int textWidth(const uint16 key);
 	Common::Error loadGameStrings();
+	void init();
 	void initData();
 	void initPalette();
 	void paletteFadeIn();

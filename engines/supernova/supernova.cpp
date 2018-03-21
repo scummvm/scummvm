@@ -137,6 +137,25 @@ SupernovaEngine::~SupernovaEngine() {
 }
 
 Common::Error SupernovaEngine::run() {
+	init();
+
+	while (!shouldQuit()) {
+		uint32 start = _system->getMillis();
+		_gm->updateEvents();
+		_gm->executeRoom();
+		_console->onFrame();
+		_system->updateScreen();
+		int end = _delay - (_system->getMillis() - start);
+		if (end > 0)
+			_system->delayMillis(end);
+	}
+
+	_mixer->stopAll();
+
+	return Common::kNoError;
+}
+
+void SupernovaEngine::init() {
 	Graphics::ModeList modes;
 	modes.push_back(Graphics::Mode(320, 200));
 	modes.push_back(Graphics::Mode(640, 480));
@@ -145,7 +164,7 @@ Common::Error SupernovaEngine::run() {
 
 	Common::Error status = loadGameStrings();
 	if (status.getCode() != Common::kNoError)
-		return status;
+		error("Failed reading game strings");
 
 	initData();
 	initPalette();
@@ -165,23 +184,7 @@ Common::Error SupernovaEngine::run() {
 		if (loadGameState(saveSlot).getCode() != Common::kNoError)
 			error("Failed to load save game from slot %i", saveSlot);
 	}
-
-	while (!shouldQuit()) {
-		uint32 start = _system->getMillis();
-		_gm->updateEvents();
-		_gm->executeRoom();
-		_console->onFrame();
-		_system->updateScreen();
-		int end = _delay - (_system->getMillis() - start);
-		if (end > 0)
-			_system->delayMillis(end);
-	}
-
-	_mixer->stopAll();
-
-	return Common::kNoError;
 }
-
 
 bool SupernovaEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
