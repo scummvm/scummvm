@@ -122,7 +122,8 @@ ObjectDescription *OrbFile::getObjDesc(const char *name){
 }
 
 ResourceDescription *OrbFile::getResDescTable(ObjectDescription *objDesc){
-    const uint32 size = objDesc->objectsCount;
+    const uint32 size = objDesc->resourcesCount;
+    seek(objDesc->resourcesOffset);
     ResourceDescription *table = new ResourceDescription[size];
 
     for (uint i = 0; i < size; ++i) {

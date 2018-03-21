@@ -72,7 +72,9 @@ void GamePage::init(bool isLoadingSave) {
         loadManagers();
     }
 
-    //init actor which inits actions
+    for (int i = 0; i < _actors.size(); ++i) {
+        _actors[i]->init(0);
+    }
 
     if (!isLoadingSave) {
         for (uint i = 0; i < _handlers.size(); ++i) {
@@ -111,5 +113,6 @@ Sequencer *GamePage::getSequencer() {
 Module *GamePage::getModule() const {
     return _module;
 }
+
 
 } // End of namespace Pink

@@ -20,6 +20,7 @@
  *
  */
 
+#include <video/flic_decoder.h>
 #include "resource_mgr.h"
 #include "file.h"
 #include "pink.h"
@@ -28,7 +29,7 @@
 namespace Pink {
 
 ResourceMgr::ResourceMgr()
-        : _orb(nullptr), _bro(nullptr),
+        : _game(nullptr), _orb(nullptr), _bro(nullptr),
           _resDescTable(nullptr), _resCount(0)
 {}
 
@@ -39,6 +40,7 @@ ResourceMgr::~ResourceMgr() {
 void ResourceMgr::init(PinkEngine *game, GamePage *page) {
     _orb = game->getOrb();
     _bro = game->getBro();
+    _game = game;
 
     ObjectDescription *objDesc = _orb->getObjDesc(page->getName().c_str());
     _resCount = objDesc->resourcesCount;
