@@ -137,7 +137,6 @@ public:
 	void paletteBrightness();
 	void playSound(AudioIndex sample);
 	void playSound(MusicIndex index);
-	void stopAudio();
 	void renderImageSection(int section);
 	void renderImage(int section);
 	bool setCurrentImage(int filenumber);

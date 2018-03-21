@@ -318,10 +318,6 @@ void SupernovaEngine::playSound(AudioIndex sample) {
 	_sound->play(sample);
 }
 
-void SupernovaEngine::stopAudio() {
-	_sound->stop();
-}
-
 void SupernovaEngine::playSound(MusicIndex index) {
 	_sound->play(index);
 }
