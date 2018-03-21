@@ -189,7 +189,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_array12299[i] = -1;
 		_array109E9PosX[i] = -1;
 		_array10A11PosY[i] = -1;
-		_array16E94[i] = 0;
+		_stingArray[i] = 0;
 
 		_array11D49[i] = -1;
 		_characterPositionX[i] = -1;
@@ -222,7 +222,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterVariables[i] = 0;
 	}
 
-	_currentCharacterVariables = NULL;
+	_currentCharacterAttributes = NULL;
 	_bufferIdeogram = NULL;
 	_bufferMen = NULL;
 	_bufferMen2 = NULL;
@@ -1778,10 +1778,10 @@ void LilliputEngine::sub16EBC() {
 		assert((mapIndex >= 0) && (mapIndex < 16384));
 		byte var1 = _bufferIsoMap[mapIndex] & 0x40;
 
-		if (var1 == _array16E94[index1])
+		if (var1 == _stingArray[index1])
 			continue;
 
-		_array16E94[index1] = var1;
+		_stingArray[index1] = var1;
 		if (var1 != 0)
 			_scriptHandler->_characterScriptEnabled[index1] = 1;
 	}
@@ -1794,7 +1794,7 @@ void LilliputEngine::sub12F37() {
 	int index2 = 0;
 
 	for (byte i = 0; i < _numCharacters; i++) {
-		byte *varPtr = getCharacterVariablesPtr(index1);
+		byte *varPtr = getCharacterAttributesPtr(index1);
 		if (varPtr[0] != 0) {
 			if (varPtr[0] == 1) {
 				varPtr[0] = 0;
@@ -2700,7 +2700,7 @@ void LilliputEngine::setCurrentCharacter(int index) {
 	int posY = _characterPositionY[index];
 
 	_currentScriptCharacterPos = Common::Point(posX >> 3, posY >> 3);
-	_currentCharacterVariables = getCharacterVariablesPtr(_currentScriptCharacter * 32);
+	_currentCharacterAttributes = getCharacterAttributesPtr(_currentScriptCharacter * 32);
 }
 
 void LilliputEngine::unselectInterfaceButton() {
@@ -2855,7 +2855,7 @@ void LilliputEngine::initialize() {
 	}
 }
 
-byte *LilliputEngine::getCharacterVariablesPtr(int16 index) {
+byte *LilliputEngine::getCharacterAttributesPtr(int16 index) {
 	debugC(1, kDebugEngine, "getCharacterVariablesPtr(%d)", index);
 
 	assert((index > -3120) && (index < 1400));

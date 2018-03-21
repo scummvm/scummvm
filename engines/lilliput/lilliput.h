@@ -182,7 +182,7 @@ public:
 	byte _rulesBuffer2_13_posX[40];
 	byte _rulesBuffer2_14_posY[40];
 	byte _characterVariables[1400 + 3120];
-	byte *_currentCharacterVariables;
+	byte *_currentCharacterAttributes;
 	byte _rulesBuffer2_16[40 * 32];
 	int *_packedStringIndex;
 	int _packedStringNumb;
@@ -219,7 +219,7 @@ public:
 	int8 _array12299[40];
 	int16 _array109E9PosX[40];
 	int16 _array10A11PosY[40];
-	byte _array16E94[40];
+	byte _stingArray[40];
 	byte _array16C54[4];
 	byte _array16C58[4];
 	byte _savedSurfaceGameArea1[176 * 256]; // 45056
@@ -367,7 +367,7 @@ public:
 	void handleGameScripts();
 
 	// Added by Strangerke
-	byte *getCharacterVariablesPtr(int16 index);
+	byte *getCharacterAttributesPtr(int16 index);
 
 	// Temporary stubs
 	Common::Event _keyboard_getch();

@@ -147,7 +147,7 @@ private:
 	int16 getValue1();
 	Common::Point getPosFromScript();
 
-	byte *getCharacterVariablePtr();
+	byte *getCharacterAttributesPtr();
 	byte compareValues(int16 var1, uint16 oper, int16 var2);
 	void computeOperation(byte *bufPtr, uint16 oper, int16 var2);
 
@@ -186,14 +186,14 @@ private:
 	byte OC_IsPositionInViewport();
 	byte OC_CompareGameVariables();
 	byte OC_skipNextOpcode();
-	byte OC_CurrentCharacterVar2Equals1();
-	byte OC_sub178D2();
-	byte OC_CharacterVariableAnd();
-	byte OC_IsCurrentCharacterVar0LessEqualThan();
-	byte OC_sub1790F();
-	byte OC_CurrentCharacterVar1Equals();
-	byte OC_isCurrentCharacterActive();
-	byte OC_CurrentCharacterVar3Equals1();
+	byte OC_CheckCurrentCharacterAttr2();
+	byte OC_CheckCurrentCharacterType();
+	byte OC_CheckCurrentCharacterAttr0And();
+	byte OC_IsCurrentCharacterAttr0LessEqualThan();
+	byte OC_isCarried();
+	byte OC_CheckCurrentCharacterAttr1();
+	byte OC_isCurrentCharacterStung();
+	byte OC_CurrentCharacterAttr3Equals1();
 	byte OC_checkCharacterDirection();
 	byte OC_checkLastInterfaceHotspotIndex();
 	byte OC_checkSelectedCharacter();

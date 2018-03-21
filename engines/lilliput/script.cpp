@@ -188,28 +188,28 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_skipNextOpcode();
 		break;
 	case 0x22:
-		return OC_CurrentCharacterVar2Equals1();
+		return OC_CheckCurrentCharacterAttr2();
 		break;
 	case 0x23:
-		return OC_sub178D2();
+		return OC_CheckCurrentCharacterType();
 		break;
 	case 0x24:
-		return OC_CharacterVariableAnd();
+		return OC_CheckCurrentCharacterAttr0And();
 		break;
 	case 0x25:
-		return OC_IsCurrentCharacterVar0LessEqualThan();
+		return OC_IsCurrentCharacterAttr0LessEqualThan();
 		break;
 	case 0x26:
-		return OC_sub1790F();
+		return OC_isCarried();
 		break;
 	case 0x27:
-		return OC_CurrentCharacterVar1Equals();
+		return OC_CheckCurrentCharacterAttr1();
 		break;
 	case 0x28:
-		return OC_isCurrentCharacterActive();
+		return OC_isCurrentCharacterStung();
 		break;
 	case 0x29:
-		return OC_CurrentCharacterVar3Equals1();
+		return OC_CurrentCharacterAttr3Equals1();
 		break;
 	case 0x2A:
 		return OC_checkCharacterDirection();
@@ -591,14 +591,14 @@ static const OpCode opCodes1[] = {
 	{ "OC_isPositionInViewport", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 	{ "OC_compareGameVariables", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
 	{ "OC_skipNextOpcode", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_currentCharacterVar2Equals1", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_sub178D2", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_characterVariableAnd", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
-	{ "OC_isCurrentCharacterVar0LessEqualThan", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_sub1790F", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_currentCharacterVar1Equals", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_isCurrentCharacterActive", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_currentCharacterVar3Equals1", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_CheckCurrentCharacterAttr2", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_CheckCurrentCharacterType", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_CheckCurrentCharacterAttr0And", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
+	{ "OC_IsCurrentCharacterAttr0LessEqualThan", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_isCarried", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_CheckCurrentCharacterAttr1", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_isCurrentCharacterStung", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_CurrentCharacterAttr3Equals1", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub1796E", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_checkLastInterfaceHotspotIndex", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_checkSelectedCharacter", 0, kNone, kNone, kNone, kNone, kNone },
@@ -1289,7 +1289,7 @@ int16 LilliputScript::getValue1() {
 	case 1002:
 		return _word16F00_characterId;
 	case 1003:
-		return (int16)_vm->_currentCharacterVariables[6];
+		return (int16)_vm->_currentCharacterAttributes[6];
 	case 1004:
 		return _vm->_host;
 	default:
@@ -1333,14 +1333,14 @@ Common::Point LilliputScript::getPosFromScript() {
 	case 0xFA:
 		return Common::Point(_vm->_array10999PosX[_vm->_currentScriptCharacter], _vm->_array109C1PosY[_vm->_currentScriptCharacter]);
 	case 0xF9:
-		return Common::Point(_vm->_currentCharacterVariables[4], _vm->_currentCharacterVariables[5]);
+		return Common::Point(_vm->_currentCharacterAttributes[4], _vm->_currentCharacterAttributes[5]);
 	case 0xF8: {
 		int8 index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
 		return _vm->_rulesBuffer12Pos3[index];
 		}
 	case 0xF7: {
-		int8 index = _vm->_currentCharacterVariables[6];
+		int8 index = _vm->_currentCharacterAttributes[6];
 		assert((index >= 0) && (index < 40));
 		int16 x = _vm->_characterPositionX[index] >> 3;
 		int16 y = _vm->_characterPositionY[index] >> 3;
@@ -1356,14 +1356,14 @@ Common::Point LilliputScript::getPosFromScript() {
 	}
 }
 
-byte *LilliputScript::getCharacterVariablePtr() {
+byte *LilliputScript::getCharacterAttributesPtr() {
 	debugC(2, kDebugScript, "getCharacterVariablePtr()");
 
 	int8 tmpVal = (int8) (getValue1() & 0xFF);
 	int index = tmpVal * 32;
 	index += _currScript->readUint16LE();
 
-	return _vm->getCharacterVariablesPtr(index);
+	return _vm->getCharacterAttributesPtr(index);
 }
 
 byte LilliputScript::OC_checkCharacterGoalPos() {
@@ -1415,7 +1415,7 @@ byte LilliputScript::OC_checkIsoMap3() {
 byte LilliputScript::OC_compareCharacterVariable() {
 	debugC(1, kDebugScript, "OC_compareCharacterVariable()");
 
-	byte *tmpArr = getCharacterVariablePtr();
+	byte *tmpArr = getCharacterAttributesPtr();
 	byte var1 = tmpArr[0];
 	uint16 oper = _currScript->readUint16LE();
 	int16 var2 = _currScript->readUint16LE();
@@ -1517,12 +1517,12 @@ byte LilliputScript::OC_isCarrying() {
 byte LilliputScript::OC_CompareCharacterVariables() {
 	debugC(1, kDebugScript, "OC_CompareCharacterVariables()");
 
-	byte* buf1 = getCharacterVariablePtr();
+	byte* buf1 = getCharacterAttributesPtr();
 	int var1 = *buf1;
 
 	int operation = _currScript->readUint16LE();
 
-	byte* buf2 = getCharacterVariablePtr();
+	byte* buf2 = getCharacterAttributesPtr();
 	int var2 = *buf2;
 
 	return compareValues(var1, operation, var2);
@@ -1585,7 +1585,7 @@ byte LilliputScript::OC_CompareDistanceFromCharacterToPositionWith() {
 byte LilliputScript::OC_compareRandomCharacterId() {
 	debugC(1, kDebugScriptTBC, "OC_compareRandomCharacterId()");
 
-	byte *tmpArr = getCharacterVariablePtr();
+	byte *tmpArr = getCharacterAttributesPtr();
 	_lastRandomValue = _vm->_rnd->getRandomNumber(tmpArr[0] + 1);
 	uint16 oper = _currScript->readUint16LE();
 	int16 var2 = _currScript->readSint16LE();
@@ -1817,9 +1817,9 @@ byte LilliputScript::OC_CurrentCharacterVar0AndVar1Equals() {
 	byte var1 = _currScript->readUint16LE() & 0xFF;
 	byte var2 = _currScript->readUint16LE() & 0xFF;
 
-	assert(_vm->_currentCharacterVariables != NULL);
+	assert(_vm->_currentCharacterAttributes != NULL);
 
-	if ((var1 == _vm->_currentCharacterVariables[0]) && (var2 == _vm->_currentCharacterVariables[1]))
+	if ((var1 == _vm->_currentCharacterAttributes[0]) && (var2 == _vm->_currentCharacterAttributes[1]))
 		return 1;
 
 	return 0;
@@ -1829,8 +1829,8 @@ byte LilliputScript::OC_CurrentCharacterVar0Equals() {
 	debugC(1, kDebugScript, "OC_CurrentCharacterVar0Equals()");
 
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
-	assert(_vm->_currentCharacterVariables != NULL);
-	if (_vm->_currentCharacterVariables[0] == curByte)
+	assert(_vm->_currentCharacterAttributes != NULL);
+	if (_vm->_currentCharacterAttributes[0] == curByte)
 		return 1;
 	return 0;
 }
@@ -1867,7 +1867,7 @@ byte LilliputScript::OC_CompareNumberOfCharacterWithVar0Equals() {
 	int16 count = 0;
 
 	for (int i = 0; i < _vm->_numCharacters; i++) {
-		if (curByte == *_vm->getCharacterVariablesPtr(32 * i))
+		if (curByte == *_vm->getCharacterAttributesPtr(32 * i))
 			++count;
 	}
 
@@ -1907,17 +1907,17 @@ byte LilliputScript::OC_skipNextOpcode() {
 	return 1;
 }
 
-byte LilliputScript::OC_CurrentCharacterVar2Equals1() {
-	debugC(1, kDebugScript, "OC_CurrentCharacterVar2Equals1()");
+byte LilliputScript::OC_CheckCurrentCharacterAttr2() {
+	debugC(1, kDebugScript, "OC_CheckCurrentCharacterAttr2()");
 
-	assert(_vm->_currentCharacterVariables != NULL);
-	if (_vm->_currentCharacterVariables[2] == 1)
+	assert(_vm->_currentCharacterAttributes != NULL);
+	if (_vm->_currentCharacterAttributes[2] == 1)
 		return 1;
 	return 0;
 }
 
-byte LilliputScript::OC_sub178D2() {
-	debugC(1, kDebugScript, "OC_sub178D2()");
+byte LilliputScript::OC_CheckCurrentCharacterType() {
+	debugC(1, kDebugScript, "OC_CheckCurrentCharacterType()");
 
 	int index = getValue1();
 	assert (index < 40);
@@ -1929,10 +1929,10 @@ byte LilliputScript::OC_sub178D2() {
 	return 0;
 }
 
-byte LilliputScript::OC_CharacterVariableAnd() {
-	debugC(1, kDebugScript, "OC_CharacterVariableAnd()");
+byte LilliputScript::OC_CheckCurrentCharacterAttr0And() {
+	debugC(1, kDebugScript, "OC_CheckCurrentCharacterAttr0And()");
 
-	byte *bufPtr = getCharacterVariablePtr();
+	byte *bufPtr = getCharacterAttributesPtr();
 	byte var1 = bufPtr[0];
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
 
@@ -1942,19 +1942,19 @@ byte LilliputScript::OC_CharacterVariableAnd() {
 	return 0;
 }
 
-byte LilliputScript::OC_IsCurrentCharacterVar0LessEqualThan() {
-	debugC(1, kDebugScript, "OC_IsCurrentCharacterVar0LessEqualThan()");
+byte LilliputScript::OC_IsCurrentCharacterAttr0LessEqualThan() {
+	debugC(1, kDebugScript, "OC_IsCurrentCharacterAttr0LessEqualThan()");
 
-	assert(_vm->_currentCharacterVariables != NULL);
+	assert(_vm->_currentCharacterAttributes != NULL);
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
 
-	if (curByte <= _vm->_currentCharacterVariables[0])
+	if (curByte <= _vm->_currentCharacterAttributes[0])
 		return 1;
 	return 0;
 }
 
-byte LilliputScript::OC_sub1790F() {
-	debugC(1, kDebugScript, "OC_sub1790F()");
+byte LilliputScript::OC_isCarried() {
+	debugC(1, kDebugScript, "OC_isCarried()");
 
 	int16 index = getValue1();
 	assert((index >= 0) && (index < 40));
@@ -1966,35 +1966,35 @@ byte LilliputScript::OC_sub1790F() {
 	return 1;
 }
 
-byte LilliputScript::OC_CurrentCharacterVar1Equals() {
-	debugC(1, kDebugScript, "OC_CurrentCharacterVar1Equals()");
+byte LilliputScript::OC_CheckCurrentCharacterAttr1() {
+	debugC(1, kDebugScript, "OC_CheckCurrentCharacterAttr1()");
 
-	assert(_vm->_currentCharacterVariables != NULL);
+	assert(_vm->_currentCharacterAttributes != NULL);
 	byte curByte = (_currScript->readUint16LE() & 0xFF);
 
-	if (_vm->_currentCharacterVariables[1] == curByte)
+	if (_vm->_currentCharacterAttributes[1] == curByte)
 		return 1;
 
 	return 0;
 }
 
-byte LilliputScript::OC_isCurrentCharacterActive() {
-	debugC(1, kDebugScript, "OC_isCurrentCharacterActive()");
+byte LilliputScript::OC_isCurrentCharacterStung() {
+	debugC(1, kDebugScript, "OC_isCurrentCharacterStung()");
 
 	if (_vm->_currentScriptCharacterPos == Common::Point(-1, -1))
 		return 0;
 
-	if (_vm->_array16E94[_vm->_currentScriptCharacter] == 0)
+	if (_vm->_stingArray[_vm->_currentScriptCharacter] == 0)
 		return 0;
 
 	return 1;
 }
 
-byte LilliputScript::OC_CurrentCharacterVar3Equals1() {
-	debugC(1, kDebugScript, "OC_CurrentCharacterVar3Equals1()");
+byte LilliputScript::OC_CurrentCharacterAttr3Equals1() {
+	debugC(1, kDebugScript, "OC_CurrentCharacterAttr3Equals1()");
 
-	assert(_vm->_currentCharacterVariables != NULL);
-	if (_vm->_currentCharacterVariables[3] == 1)
+	assert(_vm->_currentCharacterAttributes != NULL);
+	if (_vm->_currentCharacterAttributes[3] == 1)
 		return 1;
 
 	return 0;
@@ -2181,7 +2181,7 @@ void LilliputScript::getSpeechVariant(int speechIndex, int speechVariant) {
 void LilliputScript::OC_getComputedVariantSpeech() {
 	debugC(1, kDebugScriptTBC, "OC_getComputedVariantSpeech()");
 
-	int tmpVal1 = getCharacterVariablePtr()[0];
+	int tmpVal1 = getCharacterAttributesPtr()[0];
 	int tmpVal2 = (_currScript->readUint16LE() & 0xFF);
 	int speechVariant = tmpVal1 / tmpVal2;
 
@@ -2258,7 +2258,7 @@ void LilliputScript::OC_startSpeechIfSilent() {
 void LilliputScript::OC_ComputeCharacterVariable() {
 	debugC(1, kDebugScript, "OC_ComputeCharacterVariable()");
 
-	byte *bufPtr = getCharacterVariablePtr();
+	byte *bufPtr = getCharacterAttributesPtr();
 	uint16 oper = _currScript->readUint16LE();
 	int16 var3 = _currScript->readSint16LE();
 
@@ -2268,7 +2268,7 @@ void LilliputScript::OC_ComputeCharacterVariable() {
 void LilliputScript::OC_getRandom_type2() {
 	debugC(1, kDebugScript, "OC_getRandom_type2()");
 
-	byte *bufPtr = getCharacterVariablePtr();
+	byte *bufPtr = getCharacterAttributesPtr();
 	int maxVal = _currScript->readUint16LE();
 	int randomVal = _vm->_rnd->getRandomNumber(maxVal);
 	*bufPtr = randomVal;
@@ -2345,16 +2345,16 @@ void LilliputScript::OC_incScriptForVal() {
 void LilliputScript::OC_sub17BA5() {
 	debugC(1, kDebugScript, "OC_sub17BA5()");
 
-	byte *tmpArr = getCharacterVariablePtr();
+	byte *tmpArr = getCharacterAttributesPtr();
 	uint16 oper = _currScript->readUint16LE();
-	int16 var3 = getCharacterVariablePtr()[0];
+	int16 var3 = getCharacterAttributesPtr()[0];
 	computeOperation(tmpArr, oper, var3);
 }
 
 void LilliputScript::OC_setByte18823() {
 	debugC(1, kDebugScriptTBC, "OC_setByte18823()");
 
-	byte *tmpArr = getCharacterVariablePtr();
+	byte *tmpArr = getCharacterAttributesPtr();
 	_byte18823 = *tmpArr;
 }
 
@@ -2432,13 +2432,13 @@ void LilliputScript::OC_setWord10804() {
 void LilliputScript::OC_sub17C0E() {
 	debugC(1, kDebugScript, "OC_sub17C0E()");
 
-	assert(_vm->_currentCharacterVariables != NULL);
-	Common::Point var1 = Common::Point(_vm->_currentCharacterVariables[4], _vm->_currentCharacterVariables[5]);
-	byte var2 = _vm->_currentCharacterVariables[6];
+	assert(_vm->_currentCharacterAttributes != NULL);
+	Common::Point var1 = Common::Point(_vm->_currentCharacterAttributes[4], _vm->_currentCharacterAttributes[5]);
+	byte var2 = _vm->_currentCharacterAttributes[6];
 
 	byte *mapPtr = getMapPtr(var1);
-	mapPtr[var2] = _vm->_currentCharacterVariables[7];
-	mapPtr[3] = _vm->_currentCharacterVariables[8];
+	mapPtr[var2] = _vm->_currentCharacterAttributes[7];
+	mapPtr[3] = _vm->_currentCharacterAttributes[8];
 
 	if (var2 == 0) {
 		_vm->_refreshScreenFlag = true;
@@ -2546,15 +2546,15 @@ void LilliputScript::OC_enableCurrentCharacterScript() {
 	debugC(1, kDebugScript, "OC_enableCurrentCharacterScript()");
 
 	uint8 var1 = (_currScript->readUint16LE() & 0xFF);
-	enableCharacterScript(_vm->_currentScriptCharacter , var1, _vm->_currentCharacterVariables);
+	enableCharacterScript(_vm->_currentScriptCharacter , var1, _vm->_currentCharacterAttributes);
 	sub17B6C(0);
 }
 
 void LilliputScript::OC_IncCurrentCharacterVar1() {
 	debugC(1, kDebugScript, "OC_IncCurrentCharacterVar1()");
 
-	assert(_vm->_currentCharacterVariables != NULL);
-	++_vm->_currentCharacterVariables[1];
+	assert(_vm->_currentCharacterAttributes != NULL);
+	++_vm->_currentCharacterAttributes[1];
 }
 
 void LilliputScript::OC_sub17D23() {
@@ -2562,7 +2562,7 @@ void LilliputScript::OC_sub17D23() {
 
 	uint16 oper = _currScript->readUint16LE();
 	Common::Point var1 = getPosFromScript();
-	byte* buf = _vm->_currentCharacterVariables + 4;
+	byte* buf = _vm->_currentCharacterAttributes + 4;
 	computeOperation(buf, oper, var1.x);
 	computeOperation(buf + 1, oper, var1.y);
 }
@@ -2588,7 +2588,7 @@ byte *LilliputScript::getCurrentCharacterVarFromScript() {
 	debugC(2, kDebugScript, "getCurrentCharacterVarFromScript()");
 
 	int index = _currScript->readUint16LE();
-	return &_vm->_currentCharacterVariables[index];
+	return &_vm->_currentCharacterAttributes[index];
 }
 
 void LilliputScript::OC_sub17E99() {
@@ -2717,7 +2717,7 @@ void LilliputScript::OC_setCurrentCharacterVar6() {
 
 	uint16 var1 = (uint16)getValue1();
 	warning("debug - OC_setCurrentCharacterVar6 %d", var1);
-	_vm->_currentCharacterVariables[6] = var1 & 0xFF;
+	_vm->_currentCharacterAttributes[6] = var1 & 0xFF;
 }
 
 void LilliputScript::OC_sub17FDD() {
@@ -2742,15 +2742,15 @@ void LilliputScript::OC_setCurrentCharacterVar2() {
 	debugC(1, kDebugScript, "OC_setCurrentCharacterVar2()");
 
 	int curWord = _currScript->readUint16LE();
-	assert(_vm->_currentCharacterVariables != NULL);
-	_vm->_currentCharacterVariables[2] = curWord & 0xFF;
+	assert(_vm->_currentCharacterAttributes != NULL);
+	_vm->_currentCharacterAttributes[2] = curWord & 0xFF;
 }
 
 void LilliputScript::OC_SetCurrentCharacterVar2ToZero() {
 	debugC(1, kDebugScript, "OC_SetCurrentCharacterVar2ToZero()");
 
-	assert(_vm->_currentCharacterVariables != NULL);
-	_vm->_currentCharacterVariables[2] = 0;
+	assert(_vm->_currentCharacterAttributes != NULL);
+	_vm->_currentCharacterAttributes[2] = 0;
 }
 
 void LilliputScript::OC_setCharacterProperties() {
@@ -2877,7 +2877,7 @@ void LilliputScript::OC_sub181BB() {
 	int8 x = (int8)(_currScript->readUint16LE() & 0xFF);
 	byte oper = _currScript->readUint16LE() & 0xFF;
 	uint16 index = _currScript->readUint16LE();
-	int16 c = _vm->_currentCharacterVariables[index];
+	int16 c = _vm->_currentCharacterAttributes[index];
 
 	switch (oper) {
 	case '-':
@@ -2923,7 +2923,7 @@ void LilliputScript::OC_sub18213() {
 			maxItem = _array1813BPos[i].x;
 		}
 	}
-	enableCharacterScript(_vm->_currentScriptCharacter, maxItem, _vm->_currentCharacterVariables);
+	enableCharacterScript(_vm->_currentScriptCharacter, maxItem, _vm->_currentCharacterAttributes);
 }
 
 void LilliputScript::OC_sub18252() {
@@ -2971,7 +2971,7 @@ void LilliputScript::OC_sub18260() {
 void LilliputScript::OC_CharacterVariableAddOrRemoveFlag() {
 	debugC(1, kDebugScript, "OC_CharacterVariableAddOrRemoveFlag()");
 
-	byte *tmpArr = getCharacterVariablePtr();
+	byte *tmpArr = getCharacterAttributesPtr();
 
 	byte var1 = (_currScript->readUint16LE() & 0xFF);
 	byte var2 = (_currScript->readUint16LE() & 0xFF);
@@ -3015,9 +3015,9 @@ void LilliputScript::OC_setCurrentCharacterVar3() {
 	debugC(1, kDebugScript, "OC_setCurrentCharacterVar3()");
 
 	byte var1 = _currScript->readUint16LE() & 0xFF;
-	assert(_vm->_currentCharacterVariables != NULL);
+	assert(_vm->_currentCharacterAttributes != NULL);
 
-	_vm->_currentCharacterVariables[3] = var1;
+	_vm->_currentCharacterAttributes[3] = var1;
 }
 
 void LilliputScript::OC_setArray122C1() {
@@ -3031,10 +3031,10 @@ void LilliputScript::OC_sub18367() {
 	debugC(1, kDebugScriptTBC, "OC_sub18367()");
 
 	_characterScriptEnabled[_vm->_currentScriptCharacter] = 1;
-	_vm->_currentCharacterVariables[0] = _array122C1[_vm->_currentScriptCharacter];
-	_vm->_currentCharacterVariables[1] = 0;
-	_vm->_currentCharacterVariables[2] = 0;
-	_vm->_currentCharacterVariables[3] = 0;
+	_vm->_currentCharacterAttributes[0] = _array122C1[_vm->_currentScriptCharacter];
+	_vm->_currentCharacterAttributes[1] = 0;
+	_vm->_currentCharacterAttributes[2] = 0;
+	_vm->_currentCharacterAttributes[3] = 0;
 }
 
 void LilliputScript::OC_enableCharacterScript() {
@@ -3043,7 +3043,7 @@ void LilliputScript::OC_enableCharacterScript() {
 	int16 index = getValue1();
 	byte var2 = _currScript->readUint16LE() & 0xFF;
 
-	enableCharacterScript(index, var2, _vm->getCharacterVariablesPtr(index * 32));
+	enableCharacterScript(index, var2, _vm->getCharacterAttributesPtr(index * 32));
 }
 
 void LilliputScript::OC_setRulesBuffer2Element() {
@@ -3146,7 +3146,7 @@ void LilliputScript::OC_sub1844A() {
 void LilliputScript::OC_displayNumericCharacterVariable() {
 	debugC(1, kDebugScript, "OC_displayNumericCharacterVariable()");
 
-	byte *buf215Ptr = getCharacterVariablePtr();
+	byte *buf215Ptr = getCharacterAttributesPtr();
 	byte tmpVal = buf215Ptr[0];
 	int curWord = _currScript->readUint16LE();
 	assert(curWord != 0);
@@ -3246,7 +3246,7 @@ void LilliputScript::OC_initGameAreaDisplay() {
 void LilliputScript::OC_displayCharacterStatBar() {
 	debugC(1, kDebugScript, "OC_displayCharacterStatBar()");
 
-	byte *tmpArr = getCharacterVariablePtr();
+	byte *tmpArr = getCharacterAttributesPtr();
 	int8 type = (_currScript->readUint16LE() & 0xFF);
 	int8 score = (((70 * tmpArr[0]) / (_currScript->readUint16LE() & 0xFF)) & 0xFF);
 	int16 posX = _currScript->readSint16LE();
@@ -3271,7 +3271,7 @@ void LilliputScript::OC_initSmallAnim() {
 void LilliputScript::OC_setCharacterHeroismBar() {
 	debugC(1, kDebugScript, "OC_setCharacterHeroismBar()");
 
-	_savedBuffer215Ptr = getCharacterVariablePtr();
+	_savedBuffer215Ptr = getCharacterAttributesPtr();
 	_heroismBarX = _currScript->readUint16LE();
 	_heroismBarBottomY = _currScript->readUint16LE();
 }
