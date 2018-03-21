@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	graphics.o \
 	supernova.o \
 	rooms.o \
+	sound.o \
 	state.o
 
 MODULE_DIRS += \

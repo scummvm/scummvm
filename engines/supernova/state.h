@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/keyboard.h"
 #include "supernova/rooms.h"
+#include "supernova/sound.h"
 
 namespace Supernova {
 
@@ -121,7 +122,7 @@ private:
 
 class GameManager {
 public:
-	GameManager(SupernovaEngine *vm);
+	GameManager(SupernovaEngine *vm, Sound *sound);
 	~GameManager();
 
 	void updateEvents();
@@ -134,6 +135,7 @@ public:
 	static StringID guiCommands[];
 	static StringID guiStatusCommands[];
 	SupernovaEngine *_vm;
+	Sound *_sound;
 	Common::KeyState _key;
 	Common::EventType _mouseClickType;
 	bool _mouseClicked;

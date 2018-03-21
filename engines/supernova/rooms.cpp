@@ -256,7 +256,7 @@ void Intro::titleScreen() {
 	_vm->paletteFadeIn();
 	_gm->wait(1);
 	_vm->playSound(kAudioVoiceSupernova);
-	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+	while (_vm->_sound->isPlaying())
 		_gm->wait(1);
 	titleFadeIn();
 	_vm->renderText(kStringTitleVersion, 295, 190, kColorWhite44);
@@ -268,7 +268,7 @@ void Intro::titleScreen() {
 	_vm->renderText(title3, 78 - _vm->textWidth(title3) / 2, 142, kColorWhite99);
 	_gm->wait(1);
 	CursorMan.showMouse(true);
-	_vm->playSoundMod(kMusicIntro);
+	_vm->playSound(kMusicIntro);
 
 	Marquee marquee(_vm, Marquee::kMarqueeIntro, _introText.c_str());
 	while (!_vm->shouldQuit()) {
@@ -280,7 +280,7 @@ void Intro::titleScreen() {
 		g_system->delayMillis(_vm->_delay);
 	}
 	_vm->playSound(kAudioVoiceYeah);
-	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+	while (_vm->_sound->isPlaying())
 		_gm->wait(1);
 	_vm->paletteFadeOut();
 }
@@ -527,7 +527,7 @@ void Intro::cutscene() {
 		return;
 	_vm->paletteFadeOut();
 
-	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+	while (_vm->_sound->isPlaying())
 		exitOnEscape(1);
 
 	_vm->_system->fillScreen(kColorBlack);
@@ -562,15 +562,15 @@ void Intro::cutscene() {
 	_vm->paletteBrightness();
 	exitOnEscape(10);
 	_vm->playSound(kAudioSnoring);
-	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+	while (_vm->_sound->isPlaying())
 		_gm->wait(1);
 	exitOnEscape(10);
 	_vm->playSound(kAudioSnoring);
-	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+	while (_vm->_sound->isPlaying())
 		_gm->wait(1);
 	exitOnEscape(10);
 	_vm->playSound(kAudioSnoring);
-	while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+	while (_vm->_sound->isPlaying())
 		_gm->wait(1);
 	exitOnEscape(30);
 	CursorMan.showMouse(true);
@@ -1004,7 +1004,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 			setSectionVisible(15, false);
 			for (int i = 3; i; i--) {
 				_vm->playSound(kAudioTurntable);
-				while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle)) {
+				while (_vm->_sound->isPlaying()) {
 					if (isSectionVisible(13)) {
 						_vm->renderImage(14);
 						setSectionVisible(13, false);
@@ -2362,7 +2362,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(4);
 		_vm->playSound(kAudioGunShot);
 
-		while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		while (_vm->_sound->isPlaying())
 			_gm->wait(1);
 
 		_vm->renderImage(5);
@@ -2370,7 +2370,7 @@ bool ArsanoMeetup3::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->renderImage(4);
 		_vm->playSound(kAudioGunShot);
 
-		while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		while (_vm->_sound->isPlaying())
 			_gm->wait(1);
 
 		_vm->renderImage(5);
@@ -2604,7 +2604,7 @@ bool AxacussCell::interact(Action verb, Object &obj1, Object &obj2) {
 			return false;
 		_vm->playSound(kAudioGunShot);
 
-		while (_vm->_mixer->isSoundHandleActive(_vm->_soundHandle))
+		while (_vm->_sound->isPlaying())
 			_gm->wait(1);
 
 		_vm->playSound(kAudioGunShot);
@@ -3295,7 +3295,7 @@ void Outro::onEntrance() {
 		_vm->renderImage(_gm->invertSection(i));
 	}
 
-	_vm->playSoundMod(kMusicOutro);
+	_vm->playSound(kMusicOutro);
 	Marquee marquee(_vm, Marquee::kMarqueeOutro, _outroText.c_str());
 	while (!_vm->shouldQuit()) {
 		_gm->updateEvents();

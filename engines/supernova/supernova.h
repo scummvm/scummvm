@@ -38,6 +38,7 @@
 #include "supernova/graphics.h"
 #include "supernova/msn_def.h"
 #include "supernova/rooms.h"
+#include "supernova/sound.h"
 
 
 namespace Supernova {
@@ -101,7 +102,7 @@ public:
 	Common::RandomSource _rnd;
 	GameManager *_gm;
 	Console *_console;
-	Audio::SoundHandle _soundHandle;
+	Sound *_sound;
 	ScreenBufferStack _screenBuffer;
 	byte _mouseNormal[256];
 	byte _mouseWait[256];
@@ -134,8 +135,8 @@ public:
 	void paletteFadeOut();
 	void paletteBrightness();
 	void playSound(AudioIndex sample);
-	void playSoundMod(int filenumber);
-	void stopSound();
+	void playSound(MusicIndex index);
+	void stopAudio();
 	void renderImageSection(int section);
 	void renderImage(int section);
 	bool setCurrentImage(int filenumber);

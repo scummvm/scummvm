@@ -42,6 +42,7 @@
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
 
+#include "supernova/sound.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
 
@@ -130,6 +131,7 @@ SupernovaEngine::~SupernovaEngine() {
 	delete _currentImage;
 	delete _console;
 	delete _gm;
+	delete _sound;
 	delete _soundMusicIntro;
 	delete _soundMusicOutro;
 }
@@ -145,11 +147,12 @@ Common::Error SupernovaEngine::run() {
 	if (status.getCode() != Common::kNoError)
 		return status;
 
-	_gm = new GameManager(this);
-	_console = new Console(this, _gm);
-
 	initData();
 	initPalette();
+
+	_sound = new Sound(this, _mixer);
+	_gm = new GameManager(this, _sound);
+	_console = new Console(this, _gm);
 
 	CursorMan.replaceCursor(_mouseNormal, 16, 16, 0, 0, kColorCursorTransparent);
 	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
@@ -174,7 +177,7 @@ Common::Error SupernovaEngine::run() {
 			_system->delayMillis(end);
 	}
 
-	stopSound();
+	_mixer->stopAll();
 
 	return Common::kNoError;
 }
@@ -283,8 +286,8 @@ void SupernovaEngine::initData() {
 		file.close();
 	}
 
-	_soundMusicIntro = convertToMod("msn_data.049");
-	_soundMusicOutro = convertToMod("msn_data.052");
+	_soundMusicIntro = convertToMod("msn_data.052");
+	_soundMusicOutro = convertToMod("msn_data.049");
 
 	// Cursor
 	const uint16 *bufferNormal = reinterpret_cast<const uint16 *>(mouseNormal);
@@ -309,34 +312,15 @@ void SupernovaEngine::initPalette() {
 }
 
 void SupernovaEngine::playSound(AudioIndex sample) {
-	if (sample > kAudioNumSamples - 1)
-		return;
-
-	Audio::SeekableAudioStream *audioStream = Audio::makeRawStream(
-				_soundSamples[sample]._buffer, _soundSamples[sample]._length,
-				11931, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN, DisposeAfterUse::NO);
-	stopSound();
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, audioStream);
+	_sound->play(sample);
 }
 
-void SupernovaEngine::stopSound() {
-	if (_mixer->isSoundHandleActive(_soundHandle))
-		_mixer->stopHandle(_soundHandle);
+void SupernovaEngine::stopAudio() {
+	_sound->stop();
 }
 
-void SupernovaEngine::playSoundMod(int filenumber)
-{
-	Audio::AudioStream *audioStream;
-	if (filenumber == 49)
-		audioStream = Audio::makeProtrackerStream(_soundMusicIntro);
-	else if (filenumber == 52)
-		audioStream = Audio::makeProtrackerStream(_soundMusicOutro);
-	else
-		return;
-
-	stopSound();
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audioStream,
-					   -1, Audio::Mixer::kMaxChannelVolume, 0);
+void SupernovaEngine::playSound(MusicIndex index) {
+	_sound->play(index);
 }
 
 void SupernovaEngine::renderImageSection(int section) {
