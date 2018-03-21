@@ -249,7 +249,7 @@ void XeenEngine::play() {
 void XeenEngine::gameLoop() {
 	// Main game loop
 	while (!shouldExit()) {
-		if (_loadSaveSlot >= 0) {
+		if (isLoadPending()) {
 			// Load any pending savegame
 			int saveSlot = _loadSaveSlot;
 			_loadSaveSlot = -1;

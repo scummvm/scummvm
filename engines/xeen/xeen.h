@@ -211,6 +211,11 @@ public:
 	bool shouldExit() const { return _gameMode != GMODE_NONE || shouldQuit(); }
 
 	/**
+	 * Returns true if a savegame load is pending
+	 */
+	bool isLoadPending() const { return _loadSaveSlot != -1; }
+
+	/**
 	 * Load a savegame
 	 */
 	virtual Common::Error loadGameState(int slot);
