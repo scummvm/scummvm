@@ -36,8 +36,11 @@ class LilliputEngine;
 
 enum kActionType {
 	kActionNone = 0,
+	kButtonPressed = 1,
+	kButtonReleased = 2,
 	kActionTalk = 3,
 	kActionGoto = 4,
+	kCubeSelected = 5,
 	kCodeEntered = 6
 };
 
