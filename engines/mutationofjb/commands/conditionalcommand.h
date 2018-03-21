@@ -30,11 +30,13 @@ namespace MutationOfJB {
 
 class ConditionalCommandParser : public CommandParser {
 public:
-	ConditionalCommandParser() : _lastTag(0) {}
+	ConditionalCommandParser(bool firstHash = false) : _lastTag(0), _firstHash(firstHash) {}
 	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser);
 	virtual void finish(ScriptParseContext &parseCtx) override;
 protected:
 	char _lastTag;
+private:
+	bool _firstHash;
 };
 
 class ConditionalCommand : public Command {

@@ -87,18 +87,22 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 		}
 	}
 
+	if (firstChar == '#') {
+		_hashFound = true;
+	}
+
 	command = new EndBlockCommand();
 
 	return true;
 }
 
 void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, Command *newCommand, CommandParser *newCommandParser) {
-	if (_elseFound) {
+	if (_elseFound || _hashFound) {
 		if (newCommand) {
 			ScriptParseContext::ConditionalCommandInfos::iterator it = parseCtx._pendingCondCommands.begin();
 
 			while (it != parseCtx._pendingCondCommands.end()) {
-				if (it->_tag == _ifTag) {
+				if ((it->_firstHash && _hashFound) || (!it->_firstHash && it->_tag == _ifTag)) {
 					it->_command->setFalseCommand(newCommand);
 					it = parseCtx._pendingCondCommands.erase(it);
 				} else {
@@ -108,6 +112,7 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, 
 		}
 
 		_elseFound = false;
+		_hashFound = false;
 		_ifTag = 0;
 	}
 
@@ -123,6 +128,7 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, 
 
 void EndBlockCommandParser::finish(ScriptParseContext &) {
 	_elseFound = false;
+	_hashFound = false;
 	_ifTag = 0;
 
 	if (!_pendingActionInfos.empty()) {

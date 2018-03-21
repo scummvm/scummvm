@@ -34,7 +34,7 @@ void ConditionalCommandParser::transition(ScriptParseContext &parseContext, Comm
 	}
 
 	ConditionalCommand *const condCommand = static_cast<ConditionalCommand *>(oldCommand);
-	parseContext.addConditionalCommand(condCommand, _lastTag);
+	parseContext.addConditionalCommand(condCommand, _lastTag, _firstHash);
 	condCommand->setTrueCommand(newCommand);
 }
 

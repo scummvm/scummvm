@@ -63,7 +63,7 @@ class ScriptParseContext {
 public:
 	ScriptParseContext(Common::SeekableReadStream &stream);
 	bool readLine(Common::String &line);
-	void addConditionalCommand(ConditionalCommand *command, char tag);
+	void addConditionalCommand(ConditionalCommand *command, char tag, bool firstHash);
 	void addLookSection(const Common::String &item, bool walkTo);
 
 	Common::SeekableReadStream &_stream;
@@ -73,6 +73,7 @@ public:
 	struct ConditionalCommandInfo {
 		ConditionalCommand *_command;
 		char _tag;
+		bool _firstHash;
 	};
 	typedef Common::Array<ConditionalCommandInfo> ConditionalCommandInfos;
 	ConditionalCommandInfos _pendingCondCommands;

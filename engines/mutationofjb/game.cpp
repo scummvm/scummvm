@@ -77,6 +77,7 @@ bool Game::loadGameData(bool partB) {
 
 
 void Game::changeScene(uint8 sceneId, bool partB) {
+	_gameData->_lastScene = _gameData->_currentScene;
 	_gameData->_currentScene = sceneId;
 	_room->load(_gameData->_currentScene, partB);
 

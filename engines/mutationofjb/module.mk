@@ -2,6 +2,7 @@ MODULE := engines/mutationofjb
 
 MODULE_OBJS := \
 	commands/additemcommand.o \
+	commands/camefromcommand.o \
 	commands/changecommand.o \
 	commands/command.o \
 	commands/conditionalcommand.o \
