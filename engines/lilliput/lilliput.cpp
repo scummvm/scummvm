@@ -154,8 +154,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_currentScriptCharacterPos = Common::Point(0, 0);
 	_host = 0;
 	_nextCharacterIndex = 0;
-	_word16EFEh = -1;
-	_word16EFEl_characterId = -1;
+	_waitingSignal = -1;
+	_waitingSignalCharacterId = -1;
 	_word1817B = 0;
 	_savedSurfaceUnderMousePos = Common::Point(0, 0);
 	_displayGreenHand = false;
@@ -1358,7 +1358,7 @@ byte LilliputEngine::sub16799(int index, Common::Point param1) {
 	if (var3.x != -1) {
 		if ((var3.x != _scriptHandler->_characterTilePosX[index]) || (var3.y != _scriptHandler->_characterTilePosY[index])) {
 			sub1693A_chooseDirections(index);
-			_scriptHandler->_array12811[index] -= (param1.x & 0x0F);
+			_scriptHandler->_characterNextSequence[index] -= (param1.x & 0x0F);
 			return 3;
 		}
 
@@ -1374,7 +1374,7 @@ byte LilliputEngine::sub16799(int index, Common::Point param1) {
 	_characterDirectionArray[index] = getDirection(pos1, pos2);
 
 	sub1693A_chooseDirections(index);
-	_scriptHandler->_array12811[index] -= (param1.x & 0x0F);
+	_scriptHandler->_characterNextSequence[index] -= (param1.x & 0x0F);
 	return 3;
 
 }
@@ -1637,10 +1637,10 @@ void LilliputEngine::sub16626() {
 	while (index >= 0) {
 		result = 2;
 		while (result & 2) {
-			if (_scriptHandler->_array12811[index] == 16)
+			if (_scriptHandler->_characterNextSequence[index] == 16)
 				break;
 
-			uint16 index2 = _scriptHandler->_array12811[index] + (index * 16);
+			uint16 index2 = _scriptHandler->_characterNextSequence[index] + (index * 16);
 			Common::Point var1 = _scriptHandler->_array12311[index2];
 
 			// /8, then /2 as the function array is a word array
@@ -1687,8 +1687,8 @@ void LilliputEngine::sub16626() {
 			}
 
 			if ((result & 1) == 0) {
-				++_scriptHandler->_array12811[index];
-				if (_scriptHandler->_array12811[index] == 16)
+				++_scriptHandler->_characterNextSequence[index];
+				if (_scriptHandler->_characterNextSequence[index] == 16)
 					_scriptHandler->_characterScriptEnabled[index] = 1;
 			}
 		}
@@ -1699,7 +1699,7 @@ void LilliputEngine::sub16626() {
 byte LilliputEngine::sub166EA(int index) {
 	debugC(2, kDebugEngine, "sub166EA(%d)", index);
 
-	_scriptHandler->_array12811[index] = 16;
+	_scriptHandler->_characterNextSequence[index] = 16;
 	_scriptHandler->_characterScriptEnabled[index] = 1;
 	return 1;
 }
@@ -1719,7 +1719,7 @@ byte LilliputEngine::sub166F7(int index, Common::Point var1, int tmpVal) {
 			return 2;
 	}
 
-	_scriptHandler->_array12811[index] -= (var1.x & 0x0F);
+	_scriptHandler->_characterNextSequence[index] -= (var1.x & 0x0F);
 	return 3;
 }
 
@@ -2754,8 +2754,8 @@ void LilliputEngine::handleGameScripts() {
 	_scriptHandler->_characterScriptEnabled[index] = 0;
 	setCurrentCharacter(index);
 
-	_word16EFEh = _array11D49[index] >> 8;
-	_word16EFEl_characterId = _array11D49[index] & 0xFF;
+	_waitingSignal = _array11D49[index] >> 8;
+	_waitingSignalCharacterId = _array11D49[index] & 0xFF;
 	_array11D49[index] = -1;
 	_word1817B = 0;
 

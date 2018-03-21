@@ -148,8 +148,8 @@ public:
 	byte _numCharacters;
 	Common::Point _currentScriptCharacterPos;
 	int _nextCharacterIndex;
-	int8 _word16EFEh;
-	int8 _word16EFEl_characterId;
+	int8 _waitingSignal;
+	int8 _waitingSignalCharacterId;
 	uint16 _word1817B;
 	Common::Point _savedSurfaceUnderMousePos;
 	bool _displayGreenHand;

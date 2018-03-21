@@ -64,8 +64,8 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_characterScriptEnabled[i] = 1;
 		_characterMapPixelColor[i] = 15;
 		_array10AB1[i] = 0;
-		_array12811[i] = 16;
-		_array12839[i] = -1;
+		_characterNextSequence[i] = 16;
+		_characterLastSequence[i] = -1;
 		_characterTilePosX[i] = 0;
 		_characterTilePosY[i] = 0;
 		_array122C1[i] = 0;
@@ -149,10 +149,10 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_isHost();
 		break;
 	case 0x15:
-		return OC_sub17766();
+		return OC_isSequenceActive();
 		break;
 	case 0x16:
-		return OC_sub17782();
+		return OC_isSequenceFinished();
 		break;
 	case 0x17:
 		return OC_CompareMapValueWith();
@@ -161,10 +161,10 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_IsCharacterValid();
 		break;
 	case 0x19:
-		return OC_compWord16EFE();
+		return OC_CheckWaitingSignal();
 		break;
 	case 0x1A:
-		return OC_AreCurrentCharacterVar0AndVar1EqualsTo();
+		return OC_CurrentCharacterVar0AndVar1Equals();
 		break;
 	case 0x1B:
 		return OC_CurrentCharacterVar0Equals();
@@ -573,32 +573,32 @@ static const OpCode opCodes1[] = {
 	{ "OC_compareCoords_2", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_CompareDistanceFromCharacterToPositionWith", 3, kgetPosFromScript, kCompareOperation, kImmediateValue, kNone, kNone },
 	{ "OC_compareRandomCharacterId", 3, kGetValue1, kCompareOperation, kImmediateValue, kNone, kNone },
-	{ "OC_IsCurrentCharacterIndex", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_isCurrentCharacterIndex", 1, kGetValue1, kNone, kNone, kNone, kNone },
 	{ "OC_hasVisibilityLevel", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
 	{ "OC_hasGainedVisibilityLevel", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
 	{ "OC_hasReducedVisibilityLevel", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },
 	{ "OC_isHost", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_sub17766", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_sub17782", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_CompareMapValueWith", 4, kgetPosFromScript, kImmediateValue, kImmediateValue, kCompareOperation, kNone },
-	{ "OC_IsCharacterValid", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_compWord16EFE", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_AreCurrentCharacterVar0AndVar1EqualsTo", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_CurrentCharacterVar0Equals", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_isSequenceActive", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_isSequenceFinished", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_compareMapValueWith", 4, kgetPosFromScript, kImmediateValue, kImmediateValue, kCompareOperation, kNone },
+	{ "OC_isCharacterValid", 1, kGetValue1, kNone, kNone, kNone, kNone },
+	{ "OC_checkWaitingSignal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_currentCharacterVar0AndVar1Equals", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+	{ "OC_currentCharacterVar0Equals", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_checkLastInterfaceHotspotIndexMenu13", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_checkLastInterfaceHotspotIndexMenu2", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_CompareNumberOfCharacterWithVar0Equals", 3, kImmediateValue, kCompareOperation, kImmediateValue, kNone, kNone },
-	{ "OC_IsPositionInViewport", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-	{ "OC_CompareGameVariables", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
+	{ "OC_compareNumberOfCharacterWithVar0Equals", 3, kImmediateValue, kCompareOperation, kImmediateValue, kNone, kNone },
+	{ "OC_isPositionInViewport", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
+	{ "OC_compareGameVariables", 2, kGetValue1, kGetValue1, kNone, kNone, kNone },
 	{ "OC_skipNextOpcode", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-	{ "OC_CurrentCharacterVar2Equals1", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_currentCharacterVar2Equals1", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub178D2", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-	{ "OC_CharacterVariableAnd", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
-	{ "OC_IsCurrentCharacterVar0LessEqualThan", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_characterVariableAnd", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
+	{ "OC_isCurrentCharacterVar0LessEqualThan", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_sub1790F", 1, kGetValue1, kNone, kNone, kNone, kNone },
-	{ "OC_CurrentCharacterVar1Equals", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+	{ "OC_currentCharacterVar1Equals", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_isCurrentCharacterActive", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_CurrentCharacterVar3Equals1", 0, kNone, kNone, kNone, kNone, kNone },
+	{ "OC_currentCharacterVar3Equals1", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_sub1796E", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_checkLastInterfaceHotspotIndex", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_checkSelectedCharacter", 0, kNone, kNone, kNone, kNone, kNone },
@@ -612,17 +612,17 @@ static const OpCode opCodes1[] = {
 
 static const OpCode opCodes2[] = {
 /* 0x00 */	{ "OC_setWord18821", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x01 */	{ "OC_ChangeIsoMap", 3, kgetPosFromScript, kImmediateValue, kImmediateValue, kNone, kNone },
+/* 0x01 */	{ "OC_changeIsoMap", 3, kgetPosFromScript, kImmediateValue, kImmediateValue, kNone, kNone },
 /* 0x02 */	{ "OC_startSpeech", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x03 */	{ "OC_getComputedVariantSpeech", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
 /* 0x04 */	{ "OC_getRotatingVariantSpeech", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone }, // todo
 /* 0x05 */	{ "OC_startSpeechIfMute", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x06 */	{ "OC_getComputedVariantSpeechIfMute", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone }, // pb
 /* 0x07 */	{ "OC_startSpeechIfSilent", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x08 */	{ "OC_ComputeCharacterVariable", 4, kGetValue1, kImmediateValue, kComputeOperation, kImmediateValue, kNone },
+/* 0x08 */	{ "OC_computeCharacterVariable", 4, kGetValue1, kImmediateValue, kComputeOperation, kImmediateValue, kNone },
 /* 0x09 */	{ "OC_getRandom_type2", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },
 /* 0x0a */	{ "OC_setCharacterPosition", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },
-/* 0x0b */	{ "OC_DisableCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x0b */	{ "OC_disableCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x0c */	{ "OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x0d */	{ "OC_sub17B93", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
 /* 0x0e */	{ "OC_startSpeech5", 0, kNone, kNone, kNone, kNone, kNone },  // todo
@@ -648,7 +648,7 @@ static const OpCode opCodes2[] = {
 /* 0x22 */	{ "OC_sub17CD1", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 /* 0x23 */	{ "OC_resetWord16EFE", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x24 */	{ "OC_enableCurrentCharacterScript", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // stop script
-/* 0x25 */	{ "OC_IncCurrentCharacterVar1", 0, kNone, kNone, kNone, kNone, kNone },
+/* 0x25 */	{ "OC_incCurrentCharacterVar1", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x26 */	{ "OC_sub17D23", 2, kImmediateValue, kgetPosFromScript, kNone, kNone, kNone },
 /* 0x27 */	{ "OC_sub17E6D", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x28 */	{ "OC_changeCurrentCharacterSprite", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
@@ -663,7 +663,7 @@ static const OpCode opCodes2[] = {
 /* 0x31 */	{ "OC_sub17FDD", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x32 */	{ "OC_setCharacterScriptEnabled", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x33 */	{ "OC_setCurrentCharacterVar2", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x34 */	{ "OC_SetCurrentCharacterVar2ToZero", 0, kNone, kNone, kNone, kNone, kNone },
+/* 0x34 */	{ "OC_setCurrentCharacterVar2ToZero", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x35 */	{ "OC_setCharacterProperties", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue },
 /* 0x36 */	{ "OC_sub1805D", 5, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue },
 /* 0x37 */	{ "OC_sub18074", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
@@ -677,9 +677,9 @@ static const OpCode opCodes2[] = {
 /* 0x3f */	{ "OC_sub18213", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x40 */	{ "OC_sub18252", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x41 */	{ "OC_sub18260", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone }, // TODO
-/* 0x42 */	{ "OC_CharacterVariableAddOrRemoveFlag", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x43 */	{ "OC_PaletteFadeOut", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x44 */	{ "OC_PaletteFadeIn", 0, kNone, kNone, kNone, kNone, kNone },
+/* 0x42 */	{ "OC_characterVariableAddOrRemoveFlag", 4, kGetValue1, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
+/* 0x43 */	{ "OC_paletteFadeOut", 0, kNone, kNone, kNone, kNone, kNone },
+/* 0x44 */	{ "OC_paletteFadeIn", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x45 */	{ "OC_loadAndDisplayCUBESx_GFX", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x46 */	{ "OC_setCurrentCharacterVar3", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x47 */	{ "OC_setArray122C1", 1, kImmediateValue, kNone, kNone, kNone, kNone },
@@ -729,13 +729,13 @@ Common::String LilliputScript::getArgumentString(kValueType type, ScriptStream& 
 		} else if (val == 1000) {
 			str = Common::String("_selectedCharacterId");
 		} else if (val == 1001) {
-			str = Common::String("characterIndex");
+			str = Common::String("_characterIndex");
 		} else if (val == 1002) {
 			str = Common::String("_word16F00_characterId");
 		} else if (val == 1003) {
 			str = Common::String("_currentCharacterVariables[6]");
 		} else if (val == 1004) {
-			str = Common::String("_word10804");
+			str = Common::String("_host");
 		}
 	} else if (type == kgetPosFromScript) {
 		int curWord = script.readUint16LE();
@@ -1051,7 +1051,7 @@ void LilliputScript::sub17B6C(int var1) {
 void LilliputScript::sub16C86(int index, byte *buf) {
 	debugC(1, kDebugScript, "sub16C86()");
 
-	_array12811[index] = 0;
+	_characterNextSequence[index] = 0;
 
 	for (int i = 0; i < 16; i++) {
 		_array12311[(index * 16) + i] = Common::Point(buf[(2 * i) + 1], buf[2 * i]);
@@ -1062,7 +1062,7 @@ void LilliputScript::sub16C5C(int index, int8 var3) {
 	debugC(1, kDebugScript, "sub16C5C(%d, %d)", index, var3);
 
 	assert(index < 40);
-	_array12839[index] = var3;
+	_characterLastSequence[index] = var3;
 
 	byte *buf = _vm->_rulesChunk1;
 	if (var3 != 0) {
@@ -1744,21 +1744,21 @@ byte LilliputScript::OC_isHost() {
 	return 0;
 }
 
-byte LilliputScript::OC_sub17766() {
-	debugC(1, kDebugScript, "OC_sub17766()");
+byte LilliputScript::OC_isSequenceActive() {
+	debugC(1, kDebugScript, "OC_isSequenceActive()");
 
 	int8 var1 = (_currScript->readUint16LE() & 0xFF);
-	if ((var1 == _array12839[_vm->_currentScriptCharacter]) && (_array12811[_vm->_currentScriptCharacter] != 16))
+	if ((var1 == _characterLastSequence[_vm->_currentScriptCharacter]) && (_characterNextSequence[_vm->_currentScriptCharacter] != 16))
 		return 1;
 
 	return 0;
 }
 
-byte LilliputScript::OC_sub17782() {
-	debugC(1, kDebugScript, "OC_sub17782()");
+byte LilliputScript::OC_isSequenceFinished() {
+	debugC(1, kDebugScript, "OC_isSequenceFinished()");
 
 	int8 var1 = (_currScript->readUint16LE() & 0xFF);
-	if ((var1 == _array12839[_vm->_currentScriptCharacter]) && (_array12811[_vm->_currentScriptCharacter] == 16))
+	if ((var1 == _characterLastSequence[_vm->_currentScriptCharacter]) && (_characterNextSequence[_vm->_currentScriptCharacter] == 16))
 		return 1;
 
 	return 0;
@@ -1798,21 +1798,21 @@ byte LilliputScript::OC_IsCharacterValid() {
 	return 1;
 }
 
-byte LilliputScript::OC_compWord16EFE() {
-	debugC(1, kDebugScript, "OC_compWord16EFE()");
+byte LilliputScript::OC_CheckWaitingSignal() {
+	debugC(1, kDebugScript, "OC_CheckWaitingSignal()");
 
 	byte curByte = _currScript->readUint16LE() & 0xFF;
-	byte tmpVal = _vm->_word16EFEh;
+	byte tmpVal = _vm->_waitingSignal;
 
 	if (curByte != tmpVal)
 		return 0;
 
-	_word16F00_characterId = _vm->_word16EFEl_characterId;
+	_word16F00_characterId = _vm->_waitingSignalCharacterId;
 	return 1;
 }
 
-byte LilliputScript::OC_AreCurrentCharacterVar0AndVar1EqualsTo() {
-	debugC(1, kDebugScript, "OC_AreCurrentCharacterVar0AndVar1EqualsTo()");
+byte LilliputScript::OC_CurrentCharacterVar0AndVar1Equals() {
+	debugC(1, kDebugScript, "OC_CurrentCharacterVar0AndVar1Equals()");
 
 	byte var1 = _currScript->readUint16LE() & 0xFF;
 	byte var2 = _currScript->readUint16LE() & 0xFF;
@@ -2538,8 +2538,8 @@ void LilliputScript::OC_sub17CD1() {
 void LilliputScript::OC_resetWord16EFE() {
 	debugC(1, kDebugScript, "OC_resetWord16EFE()");
 
-	_vm->_word16EFEh = -1;
-	_vm->_word16EFEl_characterId = -1;
+	_vm->_waitingSignal = -1;
+	_vm->_waitingSignalCharacterId = -1;
 }
 
 void LilliputScript::OC_enableCurrentCharacterScript() {
@@ -2728,7 +2728,7 @@ void LilliputScript::OC_sub17FDD() {
 	int tmpVal = (_vm->_currentScriptCharacter * 32) + index;
 	assert (tmpVal < 40 * 32);
 	_array10AB1[_vm->_currentScriptCharacter] = _vm->_rulesBuffer2_16[tmpVal];
-	_array12811[_vm->_currentScriptCharacter] = 16;
+	_characterNextSequence[_vm->_currentScriptCharacter] = 16;
 }
 
 void LilliputScript::OC_setCharacterScriptEnabled() {
