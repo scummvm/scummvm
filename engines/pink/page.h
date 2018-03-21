@@ -69,11 +69,10 @@ public:
     Sequencer *getSequencer();
     Module *getModule() const;
 
+
 private:
     int perhapsIsLoaded;
     Module *_module;
-
-private:
     CursorMgr *_cursorMgr;
     WalkMgr *_walkMgr;
     Sequencer *_sequencer;

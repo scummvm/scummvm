@@ -25,12 +25,17 @@
 #ifndef PINK_RESOURCE_MGR_H
 #define PINK_RESOURCE_MGR_H
 
+namespace Common {
+    class String;
+}
+
 namespace Pink {
 
 class GamePage;
 class PinkEngine;
 class OrbFile;
 class BroFile;
+class Sound;
 
 struct ResourceDescription;
 
@@ -40,12 +45,14 @@ public:
     ~ResourceMgr();
 
     void init(PinkEngine *game, GamePage *page);
+    //move methods to page
     //compiler must do RVO
     //Common::String loadText(Common::String &name);
-    //Sound loadSound(Common::String &name);
+    Sound loadSound(Common::String &name);
     // loadCEL();
 
 private:
+    PinkEngine *_game;
     OrbFile *_orb;
     BroFile *_bro;
     ResourceDescription *_resDescTable;
