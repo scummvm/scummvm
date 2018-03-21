@@ -70,7 +70,7 @@ public:
 	int8 _interfaceHotspotStatus[20];
 	int8 _characterTilePosX[40];
 	int8 _characterTilePosY[40];
-	int8 _array12811[40];
+	int8 _characterNextSequence[40];
 	int8 _array10AB1[40];
 	byte _interfaceButtonActivationDelay[20];
 	byte _array122C1[40];
@@ -87,7 +87,7 @@ public:
 
 	Common::Point _array12311[640];
 	byte _characterMapPixelColor[40];
-	int8 _array12839[40];
+	int8 _characterLastSequence[40];
 	Common::Point _array1813BPos[32];
 
 	LilliputScript(LilliputEngine *vm);
@@ -170,12 +170,12 @@ private:
 	byte OC_hasGainedVisibilityLevel();
 	byte OC_hasReducedVisibilityLevel();
 	byte OC_isHost();
-	byte OC_sub17766();
-	byte OC_sub17782();
+	byte OC_isSequenceActive();
+	byte OC_isSequenceFinished();
 	byte OC_CompareMapValueWith();
 	byte OC_IsCharacterValid();
-	byte OC_compWord16EFE();
-	byte OC_AreCurrentCharacterVar0AndVar1EqualsTo();
+	byte OC_CheckWaitingSignal();
+	byte OC_CurrentCharacterVar0AndVar1Equals();
 	byte OC_CurrentCharacterVar0Equals();
 	byte OC_checkLastInterfaceHotspotIndexMenu13();
 	byte OC_checkLastInterfaceHotspotIndexMenu2();
