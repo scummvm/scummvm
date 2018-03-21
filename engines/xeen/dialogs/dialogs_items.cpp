@@ -64,6 +64,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	enum { REDRAW_NONE, REDRAW_TEXT, REDRAW_FULL } redrawFlag = REDRAW_FULL;
 	for (;;) {
 		if (redrawFlag == REDRAW_FULL) {
+			itemIndex = -1;
+
 			if ((mode != ITEMMODE_CHAR_INFO || category != CATEGORY_MISC) && mode != ITEMMODE_ENCHANT
 					&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
 				_buttons[4]._bounds.moveTo(148, _buttons[4]._bounds.top);
@@ -336,7 +338,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				if (_buttonValue < (int)(_vm->_mode == MODE_COMBAT ?
 						combat._combatParty.size() : party._activeParty.size())) {
 					// Character number is valid
-					redrawFlag = REDRAW_TEXT;
+					redrawFlag = REDRAW_FULL;
 					Character *newChar = _vm->_mode == MODE_COMBAT ?
 						combat._combatParty[_buttonValue] : &party._activeParty[_buttonValue];
 
@@ -349,23 +351,25 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						startingChar = newChar;
 						c = newChar;
 					} else if (itemIndex != -1) {
+						// Switching item to another character
 						InventoryItems &destItems = newChar->_items[category];
-						XeenItem &destItem = destItems[INV_ITEMS_TOTAL - 1];
 						InventoryItems &srcItems = c->_items[category];
 						XeenItem &srcItem = srcItems[itemIndex];
 
 						if (srcItem._bonusFlags & ITEMFLAG_CURSED)
 							ErrorScroll::show(_vm, Res.CANNOT_REMOVE_CURSED_ITEM);
-						else if (destItems[INV_ITEMS_TOTAL - 1]._id)
+						else if (destItems.isFull())
 							ErrorScroll::show(_vm, Common::String::format(
 								Res.CATEGORY_BACKPACK_IS_FULL[category], c->_name.c_str()));
 						else {
+							XeenItem &destItem = destItems[INV_ITEMS_TOTAL - 1];
 							destItem = srcItem;
 							srcItem.clear();
 							destItem._frame = 0;
 
 							srcItems.sort();
 							destItems.sort();
+							continue;
 						}
 					} else {
 						c = newChar;
