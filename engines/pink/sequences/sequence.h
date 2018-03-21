@@ -35,12 +35,19 @@ class SequenceContext;
 class Sequence : public NamedObject {
 public:
     virtual void deserialize(Archive &archive);
+
     Common::Array<SequenceItem*> &getItems();
 
-private:
+    void setContext(SequenceContext *context);
+    void init(int unk);
+    void start(int unk);
+
+public:
+    SequenceContext *_context;
     Sequencer *_sequencer;
     Common::Array<SequenceItem*> _items;
-    //context
+    int _unk;
+
 };
 
 class SequenceActorState {
@@ -49,20 +56,26 @@ public:
 
     const Common::String &getActor() const;
 
-private:
-    Common::String _actor;
-    Common::String _unk; // ?state
+public:
+    Common::String _actorName;
+    Common::String _actionName; // ?state
+    int _unk;
 };
 
+class Actor;
 
 class SequenceContext {
 public:
     SequenceContext(Sequence *sequence, Sequencer* sequencer);
     ~SequenceContext();
-private:
+
+public:
     Sequence *_sequence;
     Sequencer *_sequencer;
+    int _nextItemIndex;
+    Actor *_actor;
     Common::Array<SequenceActorState> _states;
+    int _unk;
 };
 
 } // End of namespace Pink
