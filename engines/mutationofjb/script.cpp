@@ -38,6 +38,7 @@
 #include "mutationofjb/commands/removeallitemscommand.h"
 #include "mutationofjb/commands/labelcommand.h"
 #include "mutationofjb/commands/gotocommand.h"
+#include "mutationofjb/commands/camefromcommand.h"
 
 namespace MutationOfJB {
 
@@ -46,6 +47,7 @@ static CommandParser **getParsers() {
 		new IfPiggyCommandParser,
 		new IfItemCommandParser,
 		new IfCommandParser,
+		new CameFromCommandParser,
 		new EndBlockCommandParser,
 		new ChangeDoorCommandParser,
 		new ChangeObjectCommandParser,
@@ -88,8 +90,8 @@ bool ScriptParseContext::readLine(Common::String &line) {
 	return false;
 }
 
-void ScriptParseContext::addConditionalCommand(ConditionalCommand *command, char tag) {
-	ConditionalCommandInfo cmi = {command, tag};
+void ScriptParseContext::addConditionalCommand(ConditionalCommand *command, char tag, bool firstHash) {
+	ConditionalCommandInfo cmi = {command, tag, firstHash};
 	_pendingCondCommands.push_back(cmi);
 }
 

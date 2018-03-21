@@ -171,6 +171,7 @@ Static *Scene::getStatic(uint8 staticId) {
 
 GameData::GameData()
 	: _currentScene(0),
+	_lastScene(0),
 	_partB(false) {}
 
 Scene *GameData::getScene(uint8 sceneId) {

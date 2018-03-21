@@ -20,41 +20,30 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ENDBLOCKCOMMAND_H
-#define MUTATIONOFJB_ENDBLOCKCOMMAND_H
+#ifndef MUTATIONOFJB_CAMEFROMCOMMAND_H
+#define MUTATIONOFJB_CAMEFROMCOMMAND_H
 
-#include "mutationofjb/commands/command.h"
+#include "mutationofjb/commands/conditionalcommand.h"
 #include "common/scummsys.h"
-#include "common/array.h"
 
 namespace MutationOfJB {
 
-class ActionInfo;
-
-class EndBlockCommandParser : public CommandParser {
+class CameFromCommandParser : public ConditionalCommandParser {
 public:
-	EndBlockCommandParser() : _elseFound(false), _hashFound(false), _ifTag(0) {}
-
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
-	virtual void finish(ScriptParseContext &parseCtx) override;
-private:
-	bool _elseFound;
-	bool _hashFound;
-	char _ifTag;
-
-	Common::Array<uint> _pendingActionInfos;
+	CameFromCommandParser() : ConditionalCommandParser(true) {}
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
 };
 
-class EndBlockCommand : public Command {
+class CameFromCommand : public ConditionalCommand {
 public:
-	static bool ParseFunc(const Common::String &line, ScriptParseContext &parseContext, Command *&command);
-
+	CameFromCommand(uint8 sceneId) : _sceneId(sceneId) {}
 	virtual ExecuteResult execute(GameData &gameData) override;
-	virtual Command *next() const override;
 	virtual Common::String debugString() const;
+private:
+	uint8 _sceneId;
 };
 
 }
 
 #endif
+

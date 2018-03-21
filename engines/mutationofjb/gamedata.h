@@ -152,6 +152,7 @@ public:
 	bool loadFromStream(Common::ReadStream &stream);
 
 	uint8 _currentScene;
+	uint8 _lastScene;
 	bool _partB;
 	Inventory _inventory;
 	Common::String _currentAPK;

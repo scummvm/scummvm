@@ -41,8 +41,8 @@ bool LabelCommandParser::parse(const Common::String &line, ScriptParseContext &p
 	label.deleteLastChar();
 
 	LabelCommand *labelCmd = new LabelCommand(label);
-	if (!parseCtx._labels.contains(line)) {
-		parseCtx._labels[line] = labelCmd;
+	if (!parseCtx._labels.contains(label)) {
+		parseCtx._labels[label] = labelCmd;
 	} else {
 		warning("Label '%s' already exists", label.c_str());
 	}

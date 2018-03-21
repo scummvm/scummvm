@@ -20,19 +20,38 @@
  *
  */
 
-#include "mutationofjb/commands/command.h"
-#include "common/scummsys.h"
+#include "mutationofjb/commands/camefromcommand.h"
+#include "mutationofjb/gamedata.h"
+#include "common/str.h"
+
+/*
+	"CAMEFROM" <sceneId>
+
+	This command tests whether last scene (the scene player came from) is sceneId.
+	If true, the execution continues after this command.
+	Otherwise the execution continues after first '#' found.
+*/
 
 namespace MutationOfJB {
 
-void CommandParser::transition(ScriptParseContext &, Command *, Command *, CommandParser *) {}
-void CommandParser::finish(ScriptParseContext &) {}
-CommandParser::~CommandParser() {}
+bool CameFromCommandParser::parse(const Common::String &line, ScriptParseContext &, Command *&command) {
+	if (line.size() < 10 || !line.hasPrefix("CAMEFROM")) {
+		return false;
+	}
 
-Command::~Command() {}
+	const uint8 sceneId = atoi(line.c_str() + 9);
+	command = new CameFromCommand(sceneId);
+	return true;
+}
 
-SeqCommand *Command::asSeqCommand() {
-	return nullptr;
+Command::ExecuteResult CameFromCommand::execute(GameData &gameData) {
+	_cachedResult = (gameData._lastScene == _sceneId);
+
+	return Finished;
+}
+
+Common::String CameFromCommand::debugString() const {
+	return Common::String::format("CAMEFROM %d", _sceneId);
 }
 
 }
