@@ -52,7 +52,6 @@ void GamePage::load(Archive &archive) {
 }
 
 void GamePage::init(bool isLoadingSave) {
-
     if (!isLoadingSave){
         //assert(perhapsIsLoaded == 0);
         loadManagers();
@@ -60,17 +59,15 @@ void GamePage::init(bool isLoadingSave) {
 
     toConsole();
 
-    for (int i = 0; i < _actors.size(); ++i) {
-        _actors[i]->init(0);
-    }
+    Page::init();
 
     if (!isLoadingSave)
-        prepareHandler();
+        initHandler();
 
 
 }
 
-void GamePage::prepareHandler() {
+void GamePage::initHandler() {
     for (uint i = 0; i < _handlers.size(); ++i) {
         if (_handlers[i]->isSuitable(_leadActor)){
             _handlers[i]->init(_leadActor);

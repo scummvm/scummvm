@@ -39,15 +39,15 @@ void LeadActor::deserialize(Archive &archive) {
 }
 
 void LeadActor::setNextExecutors(Common::String &nextModule, Common::String &nextPage) {
-    if (_state == Ready || _state == Moving || _state == inDialog1 || _state == Inventory || _state == PDA) {
-        _state = PlayingVideo;
+    if (_state == kReady || _state == kMoving || _state == kInDialog1 || _state == kInventory || _state == kPDA) {
+        _state = kPlayingVideo;
         _page->getGame()->setNextExecutors(nextModule, nextPage);
     }
 }
 
 void LeadActor::init(bool unk) {
-    if (_state == unk_Loading){
-        _state = Ready;
+    if (_state == kUnk_Loading){
+        _state = kReady;
     }
     _page->getModule()->getInventoryMgr()->setLeadActor(this);
     Actor::init(unk);
@@ -58,6 +58,10 @@ void LeadActor::toConsole() {
     for (int i = 0; i < _actions.size(); ++i) {
         _actions[i]->toConsole();
     }
+}
+
+LeadActor::State LeadActor::getState() const {
+    return _state;
 }
 
 } // End of namespace Pink

@@ -50,4 +50,13 @@ void Page::toConsole() {
     }
 }
 
+void Page::init() {
+    LeadActor::State state = _leadActor->getState();
+    bool unk = (state == LeadActor::kInventory || state == LeadActor::kPDA);
+
+    for (int i = 0; i < _actors.size(); ++i) {
+        _actors[i]->init(unk);
+    }
+}
+
 } // End of namespace Pink

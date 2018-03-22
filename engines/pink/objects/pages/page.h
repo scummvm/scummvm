@@ -43,6 +43,7 @@ public:
     virtual void toConsole();
 
 protected:
+    void init();
     Common::Array<Actor*> _actors;
     ResourceMgr _resMgr;
     LeadActor *_leadActor;
