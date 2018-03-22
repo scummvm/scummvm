@@ -21,31 +21,56 @@
  */
 
 #include <video/flic_decoder.h>
+#include <common/substream.h>
+#include <graphics/surface.h>
 #include "resource_mgr.h"
 #include "file.h"
 #include "pink.h"
-#include "page.h"
+#include "sound.h"
+#include "engines/pink/objects/pages/game_page.h"
 
 namespace Pink {
 
 ResourceMgr::ResourceMgr()
-        : _game(nullptr), _orb(nullptr), _bro(nullptr),
-          _resDescTable(nullptr), _resCount(0)
-{}
+        : _game(nullptr), _resDescTable(nullptr),
+          _resCount(0) {}
 
 ResourceMgr::~ResourceMgr() {
     delete[] _resDescTable;
 }
 
 void ResourceMgr::init(PinkEngine *game, GamePage *page) {
-    _orb = game->getOrb();
-    _bro = game->getBro();
+    OrbFile *orb = game->getOrb();
     _game = game;
 
-    ObjectDescription *objDesc = _orb->getObjDesc(page->getName().c_str());
+    ObjectDescription *objDesc = orb->getObjDesc(page->getName().c_str());
     _resCount = objDesc->resourcesCount;
-    _orb->loadObject(page, objDesc);
-    _resDescTable = _orb->getResDescTable(objDesc);
+    orb->loadObject(page, objDesc);
+    _resDescTable = orb->getResDescTable(objDesc);
+}
+
+Sound *ResourceMgr::loadSound(Common::String &name) {
+    return new Sound(_game->_mixer, getResourceStream(name));
+}
+
+Common::SeekableReadStream *ResourceMgr::getResourceStream(Common::String &name) {
+    Common::SeekableReadStream *stream;
+    uint i;
+    for (i = 0; i < _resCount; ++i) {
+        if (name.compareToIgnoreCase(_resDescTable[i].name) == 0){
+            break;
+        }
+    }
+    assert(i < _resDescTable[i].size);
+
+    if (_resDescTable[i].inBro)
+        stream = _game->getBro();
+    else stream = _game->getOrb();
+
+    stream->seek(_resDescTable[i].offset);
+
+    return new Common::SeekableSubReadStream(stream, _resDescTable[i].offset,
+                                             _resDescTable[i].offset + _resDescTable[i].size);
 }
 
 } // End of namespace Pink

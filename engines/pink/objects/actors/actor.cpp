@@ -1,0 +1,110 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "actor.h"
+#include "engines/pink/objects/pages/game_page.h"
+#include "lead_actor.h"
+#include "engines/pink/objects/actions/action.h"
+
+namespace Pink {
+
+void Actor::deserialize(Archive &archive) {
+    NamedObject::deserialize(archive);
+    _page = static_cast<GamePage*>(archive.readObject());
+    archive >> _actions;
+}
+
+void Actor::toConsole() {
+    debug("Actor: _name = %s", _name.c_str());
+    for (int i = 0; i < _actions.size(); ++i) {
+        _actions[i]->toConsole();
+    }
+}
+
+Sequencer *Actor::getSequencer() const {
+    return _page->getSequencer();
+}
+
+Action *Actor::findAction(const Common::String &name) {
+    return *Common::find_if(_actions.begin(), _actions.end(), [&name]
+            (Action* action) {
+        return name == action->getName();
+    });;
+}
+
+GamePage *Actor::getPage() const {
+    return _page;
+}
+
+void Actor::init(bool unk) {
+    if (!_action) {
+        _action = findAction({"Idle"});
+    }
+
+    if (!_action) {
+        _isActionEnd = 1;
+    }
+    else {
+        _isActionEnd = 0;
+        _action->start(unk);
+    }
+}
+
+void Actor::hide() {
+    setAction({"Hide"});
+}
+
+void Actor::endAction() {
+    _isActionEnd = 1;
+}
+
+void Actor::setAction(const Common::String &name) {
+    Action *newAction = findAction(name);
+    setAction(newAction);
+}
+
+void Actor::setAction(Action *newAction) {
+    if (_action) {
+        _isActionEnd = 1;
+        _action->end();
+    }
+    if (newAction) {
+        _isActionEnd = 0;
+        _action = newAction;
+        _action->start(0);
+    }
+}
+
+void Actor::setAction(Action *newAction, bool unk) {
+    if (unk){
+        assert(0); // want to see this
+        _isActionEnd = 1;
+        _action = newAction;
+    }
+    else setAction(newAction);
+}
+
+Action *Actor::getAction() const {
+    return _action;
+}
+
+} // End of namespace Pink

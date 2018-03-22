@@ -1,0 +1,89 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "handler.h"
+#include "engines/pink/archive.h"
+#include "engines/pink/objects/side_effect.h"
+#include <engines/pink/objects/condition.h>
+#include <engines/pink/objects/sequences/sequencer.h>
+#include <engines/pink/objects/sequences/sequence.h>
+#include <engines/pink/objects/actors/lead_actor.h>
+#include <common/debug.h>
+
+namespace Pink {
+
+void Handler::deserialize(Archive &archive) {
+    archive >> _conditions;
+    archive >> _sideEffects;
+}
+
+bool Handler::isSuitable(LeadActor *actor) {
+    for (int i = 0; i < _conditions.size(); ++i) {
+        if (_conditions[i]->evaluate(actor)){
+            return false;
+        }
+    }
+    return true;
+}
+
+void Handler::prepareForNextHandler(LeadActor *actor) {
+    for (int i = 0; i < _sideEffects.size(); ++i) {
+        _sideEffects[i]->execute(actor);
+    }
+}
+
+void HandlerSequences::deserialize(Archive &archive) {
+    Handler::deserialize(archive);
+    archive >> _sequences;
+}
+
+void HandlerSequences::init(LeadActor *actor) {
+    prepareForNextHandler(actor);
+    Sequencer *sequencer = actor->getSequencer();
+    Sequence *sequence = sequencer->findSequence(_sequences[0]); //actually we must pick random sequence
+    sequencer->authorSequence(sequence, 0);
+}
+
+void HandlerStartPage::handle(Sequence *sequence) {
+    sequence->_unk = 1;
+}
+
+void HandlerStartPage::toConsole() {
+    debug("HandlerStartPage:");
+
+    debug("\tSideEffects:");
+    for (int i = 0; i < _sideEffects.size(); ++i) {
+        _sideEffects[i]->toConsole();
+    }
+
+    debug("\tConditions:");
+    for (int i = 0; i < _conditions.size(); ++i) {
+        _conditions[i]->toConsole();
+    }
+
+    debug("\tSequences:");
+    for (int i = 0; i < _sequences.size(); ++i) {
+        debug("\t\t%s", _sequences[i].c_str());
+    }
+}
+
+} // End of namespace Pink

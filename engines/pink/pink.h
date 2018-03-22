@@ -28,7 +28,6 @@
 #include "gui/EventRecorder.h"
 #include "gui/debugger.h"
 #include "file.h"
-#include "utils.h"
 
 
 /*
@@ -47,6 +46,7 @@ namespace Pink {
 
 class Console;
 class Archive;
+class NamedObject;
 class Module;
 
 enum {
@@ -62,7 +62,6 @@ enum {
     LoadingNotSave = 0
 };
 
-
 class PinkEngine : public Engine {
 public:
     PinkEngine(OSystem *system, const ADGameDescription *desc);
@@ -77,9 +76,12 @@ public:
     OrbFile *getOrb()  { return &_orb; }
     BroFile *getBro()  { return _bro; }
 
+    bool checkValueOfVariable(Common::String &variable, Common::String &value);
+    void setVariable(Common::String &variable, Common::String &value);
+
 private:
     Common::Error init();
-    void changeProxyToModule(int index);
+    void loadModule(int index);
 
     Console *_console;
     Common::RandomSource _rnd;
@@ -91,7 +93,9 @@ private:
     BroFile *_bro;
 
     Module *_module;
-    ModulesArray _modules;
+    Common::Array<NamedObject*> _modules;
+
+    Common::StringMap _variables;
 
     const ADGameDescription _desc;
 };

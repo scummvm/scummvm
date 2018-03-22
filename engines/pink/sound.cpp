@@ -27,10 +27,10 @@
 
 namespace Pink {
 
-Sound::Sound(Audio::Mixer *mixer, AudioFormat format, Common::SeekableReadStream *stream)
+Sound::Sound(Audio::Mixer *mixer, Common::SeekableReadStream *stream)
     : _mixer(mixer)
 {
-    load(format, stream);
+    load(stream);
 }
 
 Sound::~Sound() {
@@ -67,24 +67,11 @@ void Sound::play(Audio::Mixer::SoundType type, int volume, bool isLoop) {
     _mixer->playStream(type, &_handle ,_stream);
 }
 
-bool Sound::load(AudioFormat format, Common::SeekableReadStream *stream) {
-    //may be mem leak
-
-    // checked vox files in hex editor and they have WAVEfmt .
-    // It seems strange for me
-    // linux file says wav and vox are
+bool Sound::load(Common::SeekableReadStream *stream) {
+    // Vox files in pink have wave format.
     // RIFF (little-endian) data, WAVE audio, Microsoft PCM, 8 bit, mono 22050 Hz
 
-    switch (format){
-        case AudioFormat::kWAV:
-            _stream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
-            break;
-        case AudioFormat::kVOX:
-            //TODO
-            // check for last arg; nBlockAlign(1, 4 or other)
-            _stream = Audio::makeADPCMStream(stream, DisposeAfterUse::NO, 0, Audio::kADPCMOki, 22050, 1, 0);
-            break;
-    }
+    _stream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
 
     return isLoaded();
 }

@@ -22,20 +22,19 @@
 
 #include <common/debug.h>
 #include <common/file.h>
-#include <engines/pink/actors/actor.h>
-#include <engines/pink/walk/walk_location.h>
-#include <engines/pink/actions/action_hide.h>
-#include <engines/pink/actions/action_play.h>
-#include <engines/pink/actions/action_sound.h>
-#include <engines/pink/sequences/sequence.h>
-#include <engines/pink/items/sequence_item_default_action.h>
-#include <engines/pink/items/sequence_item_leader.h>
-#include <engines/pink/handlers/handler_start_page.h>
-#include <engines/pink/side_effects/side_effect_exit.h>
-#include <engines/pink/side_effects/side_effect_module_variable.h>
-#include "module.h"
-#include "page.h"
-#include "actors/lead_actor.h"
+#include <engines/pink/objects/object.h>
+#include <engines/pink/objects/module.h>
+#include <engines/pink/objects/pages/game_page.h>
+#include <engines/pink/objects/actors/lead_actor.h>
+#include <engines/pink/objects/condition.h>
+#include <engines/pink/objects/side_effect.h>
+#include <engines/pink/objects/sequences/sequence_item.h>
+#include <engines/pink/objects/sequences/sequence.h>
+#include <engines/pink/objects/handlers/handler.h>
+#include <engines/pink/objects/actions/action_play.h>
+#include <engines/pink/objects/actions/action_sound.h>
+#include <engines/pink/objects/actions/action_hide.h>
+#include <engines/pink/objects/walk/walk_location.h>
 
 namespace Pink {
 
@@ -194,15 +193,12 @@ static Object* createObject(int objectId){
 Archive::Archive(Common::File &file)
     : _file(file)
 {
-    debug("Archive created");
     _objectMap.push_back(0);
     _objectIdMap.push_back(kNullObject);
 }
 
 Archive::~Archive()
-{
-    debug("Archive destroyed");
-}
+{}
 
 void Archive::mapObject(Object *obj) {
     _objectMap.push_back(obj);
@@ -222,8 +218,9 @@ Object *Archive::readObject() {
     bool isCopyReturned;
     Object *res = parseObject(isCopyReturned);
 
-    if (res && !isCopyReturned)
+    if (res && !isCopyReturned) {
         res->deserialize(*this);
+    }
 
     return res;
 }
@@ -284,7 +281,7 @@ uint Archive::findObjectId(const char *name) {
     }));
 
     if (!found)
-        error("Class %s is not implemented", name);
+        error("Class %s is not in class Map", name);
 
     return found->id;
 }

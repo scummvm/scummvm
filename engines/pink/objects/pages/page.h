@@ -20,44 +20,37 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#ifndef PINK_PAGE_H
+#define PINK_PAGE_H
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
-
-namespace Common {
-    class String;
-}
+#include "engines/pink/objects/object.h"
+#include "engines/pink/objects/module.h"
+#include "engines/pink/resource_mgr.h"
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
+class Archive;
+class Actor;
+class LeadActor;
 
-struct ResourceDescription;
-
-class ResourceMgr {
+class Page : public NamedObject {
 public:
-    ResourceMgr();
-    ~ResourceMgr();
 
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+    void load(Archive &archive);
+    Actor *findActor(Common::String &name);
+    Sound* loadSound(Common::String &fileName);
 
-private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
+    virtual void toConsole();
 
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+protected:
+    Common::Array<Actor*> _actors;
+    ResourceMgr _resMgr;
+    LeadActor *_leadActor;
+
+    /*
+        int unk_1;
+        CString _str;
+     */
 };
 
 } // End of namespace Pink

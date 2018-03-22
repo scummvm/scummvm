@@ -21,7 +21,7 @@
  */
 
 #include <common/str.h>
-#include "page.h"
+#include "engines/pink/objects/pages/game_page.h"
 #include "pink.h"
 
 namespace Pink {
@@ -167,7 +167,7 @@ void ResourceDescription::load(Common::File &file) {
 
     uint16 temp;
     file.read(&temp, sizeof(temp));
-    InBro = temp ? true : false;
+    inBro = temp ? true : false;
 }
 
 } // End of namespace Pink

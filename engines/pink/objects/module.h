@@ -20,45 +20,52 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#ifndef PINK_MODULE_H
+#define PINK_MODULE_H
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
-
-namespace Common {
-    class String;
-}
+#include "engines/pink/archive.h"
+#include "engines/pink/objects/object.h"
+#include <common/debug.h>
+#include <common/hash-str.h>
+#include "engines/pink/objects/inventory.h"
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
-
-struct ResourceDescription;
-
-class ResourceMgr {
+class ModuleProxy : public NamedObject {
 public:
-    ResourceMgr();
-    ~ResourceMgr();
+    ModuleProxy();
+    ModuleProxy(const Common::String &name);
+};
 
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+class PinkEngine;
+class GamePage;
+
+class Module : public NamedObject {
+public:
+    Module(PinkEngine *game, const Common::String &name);
+
+    void load(Archive &archive);
+    void init(bool isLoadingSave, const Common::String *pageName);
+
+    void OnLeftButtonDown();
+    void OnMouseMove();
+    void OnKeyboardButtonClick();
+
+
+    PinkEngine *getGame() const;
+    InventoryMgr *getInventoryMgr();
+
+    bool checkValueOfVariable(Common::String &variable, Common::String &value);
+    void setVariable(Common::String &variable, Common::String &value);
 
 private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
-
     PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+    GamePage *_page;
+    Common::Array<GamePage*> _pages;
+    InventoryMgr _invMgr;
+    Common::StringMap _variables;
 };
+
 
 } // End of namespace Pink
 

@@ -19,45 +19,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#ifndef PINK_WALK_LOCATION_H
+#define PINK_WALK_LOCATION_H
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#include <engines/pink/objects/object.h>
+#include <common/array.h>
+#include <common/str-array.h>
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
-
-namespace Common {
-    class String;
-}
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
-
-struct ResourceDescription;
-
-class ResourceMgr {
+class WalkLocation : public NamedObject {
 public:
-    ResourceMgr();
-    ~ResourceMgr();
-
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+    virtual void deserialize(Archive &archive);
 
 private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
-
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+    Common::StringArray _neighbors;
 };
 
 } // End of namespace Pink

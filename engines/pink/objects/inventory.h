@@ -20,44 +20,45 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#ifndef PINK_INVENTORY_H
+#define PINK_INVENTORY_H
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
 
-namespace Common {
-    class String;
-}
+#include <common/array.h>
+#include "engines/pink/objects/object.h"
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
 
-struct ResourceDescription;
-
-class ResourceMgr {
+class InventoryItem : public NamedObject {
 public:
-    ResourceMgr();
-    ~ResourceMgr();
+    virtual void deserialize(Archive &archive);
 
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+    virtual void toConsole();
+
+    Common::String &getCurrentOwner();
 
 private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
+    Common::String _initialOwner;
+    Common::String _currentOwner;
+};
 
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+class LeadActor;
+
+class InventoryMgr : public Object {
+public:
+    virtual ~InventoryMgr();
+    virtual void deserialize(Archive &archive);
+
+    virtual void toConsole();
+
+    void setLeadActor(LeadActor *lead);
+    InventoryItem* findInventoryItem(Common::String &name);
+
+private:
+    LeadActor *_lead;
+    Common::Array<InventoryItem*> _items;
+    // other fields. haven't RE them yet
 };
 
 } // End of namespace Pink

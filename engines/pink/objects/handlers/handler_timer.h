@@ -20,46 +20,38 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#ifndef PINK_HANDLER_TIMER_H
+#define PINK_HANDLER_TIMER_H
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
-
-namespace Common {
-    class String;
-}
+#include <common/str-array.h>
+#include "handler.h"
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
+class LeadActor;
 
-struct ResourceDescription;
+// This class has difference in games
+class HandlerTimer : public Handler {
+    virtual void handle(LeadActor *actor) = 0;
+};
 
-class ResourceMgr {
-public:
-    ResourceMgr();
-    ~ResourceMgr();
-
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+class HandlerTimerActions : public HandlerTimer {
+    virtual void deserialize(Archive &archive);
+    virtual void handle(LeadActor *actor);
 
 private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
+    Common::StringArray _actions;
+};
 
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+class HandlerTimerSequences : public HandlerTimer {
+    virtual void deserialize(Archive &archive);
+    virtual void handle(LeadActor *actor);
+
+private:
+    Common::StringArray _sequences;
 };
 
 } // End of namespace Pink
+
 
 #endif
