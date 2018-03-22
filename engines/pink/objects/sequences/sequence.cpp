@@ -114,6 +114,7 @@ SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
     sequence->setContext(this);
     Common::Array<SequenceItem*> &items = sequence->getItems();
     debug("SequenceContext for %s", _sequence->getName().c_str());
+
     for (uint i = 0; i < items.size(); ++i) {
         bool found = 0;
         for (uint j = 0; j < _states.size(); ++j) {

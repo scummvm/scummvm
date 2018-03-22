@@ -49,14 +49,13 @@ protected:
 class SequenceItemLeader : public SequenceItem {
 public:
     virtual void toConsole();
-
     virtual bool isLeader();
 };
 
+// behaviour is identical to SequenceItemLeader
 class SequenceItemLeaderAudio : public SequenceItemLeader {
-    virtual void deserialize(Archive &archive);
-
 public:
+    virtual void deserialize(Archive &archive);
     virtual void toConsole();
 
 private:
