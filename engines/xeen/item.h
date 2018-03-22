@@ -259,10 +259,9 @@ public:
 
 class InventoryItemsGroup {
 private:
-	InventoryItems *_itemSets[4];
+	Character *_owner;
 public:
-	InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
-		InventoryItems &accessories, InventoryItems &misc);
+	InventoryItemsGroup(Character *owner) : _owner(owner) {}
 
 	/**
 	 * Returns the inventory items for a given category

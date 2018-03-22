@@ -629,30 +629,31 @@ Common::String MiscItems::getAttributes(XeenItem &item, const Common::String &cl
 }
 /*------------------------------------------------------------------------*/
 
-InventoryItemsGroup::InventoryItemsGroup(InventoryItems &weapons, InventoryItems &armor,
-		InventoryItems &accessories, InventoryItems &misc) {
-	_itemSets[0] = &weapons;
-	_itemSets[1] = &armor;
-	_itemSets[2] = &accessories;
-	_itemSets[3] = &misc;
-}
-
 InventoryItems &InventoryItemsGroup::operator[](ItemCategory category) {
-	return *_itemSets[category];
+	switch (category) {
+	case CATEGORY_WEAPON:
+		return _owner->_weapons;
+	case CATEGORY_ARMOR:
+		return _owner->_armor;
+	case CATEGORY_ACCESSORY:
+		return _owner->_accessories;
+	default:
+		return _owner->_misc;
+	}
 }
 
 void InventoryItemsGroup::breakAllItems() {
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-		if ((*_itemSets[0])[idx]._id != 34) {
-			(*_itemSets[0])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
-			(*_itemSets[0])[idx]._frame = 0;
+		if (_owner->_weapons[idx]._id != 34) {
+			_owner->_weapons[idx]._bonusFlags |= ITEMFLAG_BROKEN;
+			_owner->_weapons[idx]._frame = 0;
 		}
 
-		(*_itemSets[1])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
-		(*_itemSets[2])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
-		(*_itemSets[3])[idx]._bonusFlags |= ITEMFLAG_BROKEN;
-		(*_itemSets[1])[idx]._frame = 0;
-		(*_itemSets[2])[idx]._frame = 0;
+		_owner->_armor[idx]._bonusFlags |= ITEMFLAG_BROKEN;
+		_owner->_accessories[idx]._bonusFlags |= ITEMFLAG_BROKEN;
+		_owner->_misc[idx]._bonusFlags |= ITEMFLAG_BROKEN;
+		_owner->_armor[idx]._frame = 0;
+		_owner->_accessories[idx]._frame = 0;
 	}
 }
 

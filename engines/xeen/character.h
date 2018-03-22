@@ -130,11 +130,11 @@ public:
 	bool _hasSpells;
 	int8 _currentSpell;
 	QuickAction _quickOption;
-	InventoryItemsGroup _items;
 	WeaponItems _weapons;
 	ArmorItems _armor;
 	AccessoryItems _accessories;
 	MiscItems _misc;
+	InventoryItemsGroup _items;
 	int _lloydSide;
 	AttributePair _fireResistence;
 	AttributePair _coldResistence;

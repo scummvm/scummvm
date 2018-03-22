@@ -38,8 +38,7 @@ void AttributePair::synchronize(Common::Serializer &s) {
 /*------------------------------------------------------------------------*/
 
 Character::Character():
-		_weapons(this), _armor(this), _accessories(this), _misc(this),
-		_items(_weapons, _armor, _accessories, _misc) {
+		_weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
 	clear();
 	_faceSprites = nullptr;
 	_rosterId = -1;
