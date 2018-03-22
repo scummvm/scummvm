@@ -20,41 +20,27 @@
  *
  */
 
-
-#ifndef PINK_SEQUENCER_H
-#define PINK_SEQUENCER_H
-
-#include <common/array.h>
-#include "engines/pink/objects/object.h"
+#include "seq_timer.h"
+#include <engines/pink/archive.h>
+#include "./sequencer.h"
+#include <common/debug.h>
 
 namespace Pink {
 
-class Sequence;
-class SequenceContext;
-class GamePage;
-class SeqTimer;
+SeqTimer::SeqTimer()
+        : _unk(0) {
 
-class Sequencer : public Object {
-public:
-    Sequencer(GamePage *page);
-    ~Sequencer();
+}
 
-    virtual void toConsole();
+void SeqTimer::deserialize(Archive &archive) {
+    archive >> _actor;
+    _period = archive.readDWORD();
+    _range = archive.readDWORD();
+    _sequencer = static_cast<Sequencer*>(archive.readObject());
+}
 
-    virtual void deserialize(Archive &archive);
-    Sequence* findSequence(const Common::String &name);
-    void authorSequence(Sequence *sequence, bool unk);
-
-public:
-    SequenceContext *_context;
-    // unknown objects array
-    Common::Array<Sequence*> _sequences;
-    Common::String _currentSequenceName;
-    Common::Array<SeqTimer*> _timers;
-    GamePage *_page;
-    int unk;
-};
+void SeqTimer::toConsole() {
+    debug("\tSeqTimer: _actor=%s _period=%u _range=%u", _actor.c_str(), _period, _range);
+}
 
 } // End of namespace Pink
-
-#endif

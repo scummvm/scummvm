@@ -62,7 +62,7 @@ public:
 
 public:
     Common::String _actorName;
-    Common::String _actionName; // ?state
+    Common::String _actionName;
     int _unk;
 };
 
