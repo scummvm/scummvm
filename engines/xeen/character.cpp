@@ -37,11 +37,67 @@ void AttributePair::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
-Character::Character():
-		_weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
+Character::Character(): _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
 	clear();
 	_faceSprites = nullptr;
 	_rosterId = -1;
+}
+
+Character::Character(const Character &src) : _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
+	clear();
+
+	_faceSprites = src._faceSprites;
+	_rosterId = src._rosterId;
+	_name = src._name;
+	_sex = src._sex;
+	_race = src._race;
+	_xeenSide = src._xeenSide;
+	_class = src._class;
+	_might = src._might;
+	_intellect = src._intellect;
+	_personality = src._personality;
+	_endurance = src._endurance;
+	_speed = src._speed;
+	_accuracy = src._accuracy;
+	_luck = src._luck;
+	_ACTemp = src._ACTemp;
+	_level = src._level;
+	_birthDay = src._birthDay;
+	_tempAge = src._tempAge;
+	Common::copy(&src._skills[0], &src._skills[18], &_skills[0]);
+	Common::copy(&src._awards[0], &src._awards[128], &_awards[0]);
+	Common::copy(&src._spells[0], &src._spells[SPELLS_PER_CLASS], &_spells[0]);
+	_lloydMap = src._lloydMap;
+	_lloydPosition = src._lloydPosition;
+	_hasSpells = src._hasSpells;
+	_currentSpell = src._currentSpell;
+	_quickOption = src._quickOption;
+	_weapons = src._weapons;
+	_armor = src._armor;
+	_accessories = src._accessories;
+	_misc = src._misc;
+	_lloydSide = src._lloydSide;
+	_fireResistence = src._fireResistence;
+	_coldResistence = src._coldResistence;
+	_electricityResistence = src._electricityResistence;
+	_poisonResistence = src._poisonResistence;
+	_energyResistence = src._energyResistence;
+	_magicResistence = src._magicResistence;
+	Common::copy(&src._conditions[0], &src._conditions[16], &_conditions[0]);
+	_townUnknown = src._townUnknown;
+	_savedMazeId = src._savedMazeId;
+	_currentHp = src._currentHp;
+	_currentSp = src._currentSp;
+	_birthYear = src._birthYear;
+	_experience = src._experience;
+	_currentAdventuringSpell = src._currentAdventuringSpell;
+	_currentCombatSpell = src._currentCombatSpell;
+
+	for (ItemCategory category = CATEGORY_WEAPON; category <= CATEGORY_MISC; category = (ItemCategory)((int)category + 1)) {
+		const InventoryItems &srcItems = src._items[category];
+		InventoryItems &destItems = _items[category];
+		destItems = srcItems;
+	}
 }
 
 void Character::clear() {

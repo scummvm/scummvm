@@ -116,6 +116,11 @@ public:
 	void clear();
 
 	/**
+	 * Handles copying items from one character to another
+	 */
+	InventoryItems &operator=(const InventoryItems &src);
+
+	/**
 	 * Return whether a given item passes class-based usage restrictions
 	 * @param itemId		Item Index
 	 * @param suppressError	If true, no dialog is shown if the item doesn't pass restrictions
@@ -267,6 +272,11 @@ public:
 	 * Returns the inventory items for a given category
 	 */
 	InventoryItems &operator[](ItemCategory category);
+
+	/**
+	 * Returns the inventory items for a given category
+	 */
+	const InventoryItems &operator[](ItemCategory category) const;
 
 	/**
 	 * Breaks all the items in a given character's inventory

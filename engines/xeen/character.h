@@ -155,7 +155,15 @@ public:
 	SpriteResource *_faceSprites;
 	int _rosterId;
 public:
+	/**
+	 * Constructor
+	 */
 	Character();
+
+	/**
+	 * Constructor
+	 */
+	Character(const Character &src);
 
 	/**
 	 * Clears the data for a character

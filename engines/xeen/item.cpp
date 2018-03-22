@@ -93,6 +93,14 @@ void InventoryItems::clear() {
 		operator[](idx).clear();
 }
 
+InventoryItems &InventoryItems::operator=(const InventoryItems &src) {
+	Common::Array<XeenItem>::clear();
+	assert(src.size() == INV_ITEMS_TOTAL);
+	for (uint idx = 0; idx < INV_ITEMS_TOTAL; ++idx)
+		push_back(src[idx]);
+	return *this;
+}
+
 bool InventoryItems::passRestrictions(int itemId, bool suppressError) const {
 	CharacterClass charClass = _character->_class;
 
@@ -630,6 +638,19 @@ Common::String MiscItems::getAttributes(XeenItem &item, const Common::String &cl
 /*------------------------------------------------------------------------*/
 
 InventoryItems &InventoryItemsGroup::operator[](ItemCategory category) {
+	switch (category) {
+	case CATEGORY_WEAPON:
+		return _owner->_weapons;
+	case CATEGORY_ARMOR:
+		return _owner->_armor;
+	case CATEGORY_ACCESSORY:
+		return _owner->_accessories;
+	default:
+		return _owner->_misc;
+	}
+}
+
+const InventoryItems &InventoryItemsGroup::operator[](ItemCategory category) const {
 	switch (category) {
 	case CATEGORY_WEAPON:
 		return _owner->_weapons;
