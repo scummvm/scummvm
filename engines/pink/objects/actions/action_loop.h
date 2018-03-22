@@ -20,24 +20,27 @@
  *
  */
 
-#ifndef PINK_ACTION_PLAY_H
-#define PINK_ACTION_PLAY_H
+#ifndef PINK_ACTION_LOOP_H
+#define PINK_ACTION_LOOP_H
 
-#include "action.h"
-#include "action_still.h"
+#include "action_play.h"
 
 namespace Pink {
 
-class ActionPlay : public ActionStill {
+class ActionLoop : public ActionPlay {
 public:
     virtual void deserialize(Archive &archive);
+
     virtual void toConsole();
 
-    virtual void start(bool unk);
-    virtual void end();
-
-protected:
-    uint32 _stopFrame;
+private:
+    enum Style {
+        kPingPong = 0,
+        kRandom = 1,
+        kForward = 2
+    };
+    uint _intro;
+    Style _style;
 };
 
 } // End of namespace Pink

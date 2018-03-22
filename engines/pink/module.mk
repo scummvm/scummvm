@@ -18,6 +18,7 @@ MODULE_OBJS = \
     objects/actions/action.o \
     objects/actions/action_cel.o \
     objects/actions/action_hide.o \
+    objects/actions/action_loop.o \
     objects/actions/action_play.o \
     objects/actions/action_sound.o \
     objects/actions/action_still.o \

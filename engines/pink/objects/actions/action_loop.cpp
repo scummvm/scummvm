@@ -20,26 +20,25 @@
  *
  */
 
-#ifndef PINK_ACTION_PLAY_H
-#define PINK_ACTION_PLAY_H
 
-#include "action.h"
-#include "action_still.h"
+#include "action_loop.h"
+#include <common/debug.h>
+#include <pink/archive.h>
 
 namespace Pink {
 
-class ActionPlay : public ActionStill {
-public:
-    virtual void deserialize(Archive &archive);
-    virtual void toConsole();
+void ActionLoop::deserialize(Archive &archive) {
+    ActionPlay::deserialize(archive);
+    uint32 style;
+    archive >> _intro >> style;
+    assert(style <= 2);
+    _style = static_cast<Style>(style);
+}
 
-    virtual void start(bool unk);
-    virtual void end();
-
-protected:
-    uint32 _stopFrame;
-};
+void ActionLoop::toConsole() {
+    debug("\tActionLoop: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
+                  " _endFrame = %u, _intro = %u, style = %u",
+          _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style);
+}
 
 } // End of namespace Pink
-
-#endif
