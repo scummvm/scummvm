@@ -805,12 +805,6 @@ void LilliputScript::disasmScript(ScriptStream script) {
 		if (val == 0xFFF6) // end of script
 			return;
 
-		bool hasIf = false;
-
-		if (val != 0xFFF8) {
-			hasIf = true;
-		}
-
 		bool firstIf = true;
 
 		// check the conditions.
@@ -824,7 +818,7 @@ void LilliputScript::disasmScript(ScriptStream script) {
 			}
 
 			// op code type 1
-			assert(val < sizeof(opCodes1)/sizeof(OpCode));
+			assert(val < sizeof(opCodes1) / sizeof(OpCode));
 			const OpCode *opCode = &opCodes1[val];
 			const kValueType *opArgType = &opCode->_arg1;
 
@@ -1038,9 +1032,8 @@ void LilliputScript::sub17B6C(int var1) {
 
 	++var1;
 	int curVal = 0;
-	int tmpVal;
 	while (curVal < var1) {
-		tmpVal = _currScript->readUint16LE();
+		int tmpVal = _currScript->readUint16LE();
 		if (tmpVal == 0xFFF7)
 			++curVal;
 	}
@@ -1093,10 +1086,9 @@ void LilliputScript::formatSpeechString() {
 
 	int index = 0;
 	int var2 = 0x100;
-	int var1;
 
 	for (;;) {
-		var1 = _vm->_displayStringBuf[index++];
+		int var1 = _vm->_displayStringBuf[index++];
 		if (var1 == 0)
 			break;
 

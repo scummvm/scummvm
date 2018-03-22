@@ -432,9 +432,8 @@ void LilliputEngine::displayInterfaceHotspots() {
 	if (_displayMap)
 		return;
 
-	int tmpVal;
 	for (int index = 0; index < _interfaceHotspotNumb; index++) {
-		tmpVal = _scriptHandler->_interfaceHotspotStatus[index] * 20;
+		int tmpVal = _scriptHandler->_interfaceHotspotStatus[index] * 20;
 		display16x16IndexedBuf(_bufferIdeogram, tmpVal + index, Common::Point(_interfaceHotspotsX[index], _interfaceHotspotsY[index]));
 	}
 }
@@ -462,12 +461,10 @@ void LilliputEngine::displaySpeechBubble() {
 	static const byte _array15976[16] = {244, 248, 250, 250, 252, 252, 252, 252, 252, 252, 252, 252, 250, 250, 248, 244};
 
 	int index = 192;
-	int tmpIndex;
-	int var3;
 
 	for (int i = 0; i < 16; i++) {
-		var3 = _array15976[i];
-		tmpIndex = index - (var3 / 2);
+		int var3 = _array15976[i];
+		int tmpIndex = index - (var3 / 2);
 		var3 &= 0xFE;
 		for (int j = 0; j < var3; j++) {
 			((byte *)_mainSurface->getPixels())[tmpIndex + j] = 17;
@@ -1477,10 +1474,9 @@ void LilliputEngine::sub1693A_chooseDirections(int index) {
 	byte byte16939 = 0;
 
 	int mapIndex = ((_word16937Pos.y * 64) + _word16937Pos.x) * 4;
-	int mapIndexDiff = 0;
 	int retVal = 0;
 	for (int i = 3; i >= 0; i--) {
-		mapIndexDiff = mapArrayMove[i];
+		int mapIndexDiff = mapArrayMove[i];
 		assert(mapIndex + mapIndexDiff + 3 < 16384);
 		if (((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & _array16C54[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _array16C58[i]) != 0)) {
 			if ((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & 0x80) != 0 && (sub16A76(i, index) != 0)) {
@@ -1606,11 +1602,10 @@ void LilliputEngine::numberToString(int param1) {
 
 	static const int _array18AE3[6] = {10000, 1000, 100, 10, 1};
 
-	int count;
 	int var1 = param1;
 	bool hideZeros = true;
 	for (int i = 0; i < 5; i++) {
-		count = 0;
+		int count = 0;
 		while (var1 >= 0) {
 			++count;
 			var1 -= _array18AE3[i];
@@ -2784,7 +2779,7 @@ void LilliputEngine::handleGameScripts() {
 		while (1);
 	*/
 
-	i = index;
+	//i = index;
 	//debugC(1, kDebugEngineTBC, "before char %d, pos %d %d, var0 %d, var1 %d, var2 %d var16 %d, script enabled %d", i, _characterPositionX[i], _characterPositionY[i], *getCharacterVariablesPtr(i * 32 + 0), *getCharacterVariablesPtr(i * 32 + 1), *getCharacterVariablesPtr(i * 32 + 2),  *getCharacterVariablesPtr(i * 32 + 22), _scriptHandler->_characterScriptEnabled[i]);
 
 	assert(tmpVal < _gameScriptIndexSize);
