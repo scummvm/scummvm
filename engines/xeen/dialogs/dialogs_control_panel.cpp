@@ -169,9 +169,11 @@ int ControlPanel::execute() {
 	intf.drawParty(true);
 
 	if (result == 3) {
-		saves.loadGame();
+		if (g_vm->canLoadGameStateCurrently())
+			saves.loadGame();
 	} else if (result == 4) {
-		saves.saveGame();
+		if (g_vm->canSaveGameStateCurrently())
+			saves.saveGame();
 	}
 
 	return result;

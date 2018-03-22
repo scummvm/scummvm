@@ -183,11 +183,11 @@ Common::Error XeenEngine::loadGameState(int slot) {
 }
 
 bool XeenEngine::canLoadGameStateCurrently() {
-	return _mode != MODE_COMBAT;
+	return _mode != MODE_COMBAT && _mode != MODE_STARTUP;
 }
 
 bool XeenEngine::canSaveGameStateCurrently() {
-	return _mode != MODE_COMBAT;
+	return _mode != MODE_COMBAT && _mode != MODE_STARTUP;
 }
 
 void XeenEngine::playGame() {

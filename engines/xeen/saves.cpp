@@ -245,9 +245,6 @@ void SavesManager::newGame() {
 }
 
 bool SavesManager::loadGame() {
-	if (!g_vm->canLoadGameStateCurrently())
-		return false;
-
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
 	int slotNum = dialog->runModalWithCurrentTarget();
 	delete dialog;
