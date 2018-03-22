@@ -23,8 +23,8 @@
 #ifndef PINK_ARCHIVE_H
 #define PINK_ARCHIVE_H
 
-#include "utils.h"
-#include <engines/pink/object.h>
+#include <engines/pink/objects/object.h>
+#include <common/str-array.h>
 
 namespace Common {
 
@@ -46,7 +46,6 @@ public:
     Object *readObject();
     Common::String readString();
 
-
 private:
     uint findObjectId(const char *name);
 
@@ -62,7 +61,7 @@ inline Archive &operator>>(Archive &archive, Common::Array<T> &arr){
     uint size = archive.readCount();
     arr.resize(size);
     for (uint i = 0; i < size; ++i) {
-        arr[i] = reinterpret_cast<T> (archive.readObject()); // hack; doesn't know better approach
+        arr[i] = reinterpret_cast<T> (archive.readObject());
     }
     return archive;
 }
@@ -83,7 +82,7 @@ inline Archive &operator>>(Archive &archive, uint32 &num){
     return archive;
 }
 
-inline Archive &operator>>(Archive &archive, StringArray &array){
+inline Archive &operator>>(Archive &archive, Common::StringArray &array){
     uint32 size = archive.readCount();
     array.resize(size);
     for (uint i = 0; i < size; ++i) {

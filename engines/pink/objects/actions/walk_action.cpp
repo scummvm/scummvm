@@ -20,46 +20,21 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
-
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
-
-namespace Common {
-    class String;
-}
+#include "walk_action.h"
+#include <engines/pink/archive.h>
+#include <common/debug.h>
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
+void WalkAction::deserialize(Archive &archive) {
+    ActionCEL::deserialize(archive);
+    uint32 calcFramePositions = archive.readDWORD();
+    _toCalcFramePositions = calcFramePositions ? true : false;
+}
 
-struct ResourceDescription;
-
-class ResourceMgr {
-public:
-    ResourceMgr();
-    ~ResourceMgr();
-
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
-
-private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
-
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
-};
+void WalkAction::toConsole() {
+    debug("\tWalkAction: _name = %s, _fileName = %s, _calcFramePositions = %u",
+          _name.c_str(), _fileName.c_str(), _toCalcFramePositions);
+}
 
 } // End of namespace Pink
-
-#endif

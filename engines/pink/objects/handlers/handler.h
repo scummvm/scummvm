@@ -20,44 +20,51 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#ifndef PINK_HANDLER_H
+#define PINK_HANDLER_H
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
+#include <common/array.h>
+#include <common/str-array.h>
+#include <engines/pink/objects/object.h>
 
-namespace Common {
-    class String;
-}
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
+class Condition;
+class SideEffect;
+class LeadActor;
 
-struct ResourceDescription;
-
-class ResourceMgr {
+class Handler : public Object {
 public:
-    ResourceMgr();
-    ~ResourceMgr();
+    virtual void deserialize(Archive &archive);
+    bool isSuitable(LeadActor *actor);
 
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+protected:
+    void prepareForNextHandler(LeadActor *actor);
 
-private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
+    Common::Array<Condition*> _conditions;
+    Common::Array<SideEffect*> _sideEffects;
+};
 
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+class Sequence;
+
+class HandlerSequences : public Handler {
+public:
+    virtual void deserialize(Archive &archive);
+    void init(LeadActor *actor);
+    virtual void handle(Sequence *sequence) = 0;
+
+protected:
+    Common::StringArray _sequences;
+};
+
+class HandlerStartPage : public HandlerSequences {
+public:
+    ~HandlerStartPage() {};
+
+    virtual void toConsole();
+
+    virtual void handle(Sequence *sequence);
 };
 
 } // End of namespace Pink

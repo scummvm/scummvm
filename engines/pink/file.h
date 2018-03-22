@@ -24,7 +24,6 @@
 #define PINK_FILE_H
 
 #include <common/file.h>
-#include "sound.h"
 
 namespace Pink {
 
@@ -44,7 +43,7 @@ struct ResourceDescription {
     char name[16];
     uint32 offset;
     uint32 size;
-    bool InBro; // in original it is short.
+    bool inBro; // in original it is short.
                  // Don't know what's better to use.(Perhaps no diffrence because of padding)
 };
 

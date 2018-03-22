@@ -23,7 +23,7 @@
 #ifndef PINK_CURSOR_MGR_H
 #define PINK_CURSOR_MGR_H
 
-#include "engines/pink/object.h"
+#include "engines/pink/objects/object.h"
 
 namespace Pink {
 
@@ -35,8 +35,8 @@ public:
     CursorMgr(GamePage *page);
 
 private:
-    Actor *actor;
-    GamePage *page;
+    Actor *_actor;
+    GamePage *_page;
 };
 
 } // End of namespace Pink

@@ -24,6 +24,6 @@
 
 namespace Pink {
 
-CursorMgr::CursorMgr(GamePage *page) : page(page) {}
+CursorMgr::CursorMgr(GamePage *page) : _page(page) {}
 
 } // End of namespace Pink

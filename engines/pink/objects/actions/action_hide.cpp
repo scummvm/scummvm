@@ -20,46 +20,29 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#include "action_hide.h"
+#include "engines/pink/objects/actors/actor.h"
+#include <engines/pink/archive.h>
+#include <common/debug.h>
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
-
-namespace Common {
-    class String;
-}
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
+void Pink::ActionHide::deserialize(Archive &archive) {
+    Action::deserialize(archive);
+}
 
-struct ResourceDescription;
+void ActionHide::play(bool unk_startNow) {
+    debug("ActionHide %s is now in playing state", _name.c_str());
+    _actor->endAction();
+}
 
-class ResourceMgr {
-public:
-    ResourceMgr();
-    ~ResourceMgr();
+void ActionHide::end() {
+    debug("ActionHide %s is ended", _name.c_str());
+}
 
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+void ActionHide::toConsole() {
+    debug("\tActionHide: _name = %s", _name.c_str());
+}
 
-private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
-
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
-};
-
-} // End of namespace Pink
-
-#endif
+} //End of namespace Pink

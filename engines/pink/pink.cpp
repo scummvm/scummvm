@@ -24,7 +24,9 @@
 #include "console.h"
 #include <engines/util.h>
 #include <common/debug-channels.h>
-#include "module.h"
+#include <video/flic_decoder.h>
+#include "engines/pink/objects/module.h"
+#include <graphics/surface.h>
 
 namespace Pink {
 
@@ -85,6 +87,13 @@ Common::Error Pink::PinkEngine::run() {
         return error;
     }
 
+    Video::FlicDecoder flicDecoder;
+    Common::File anim;
+    anim.open("WANDRBOY.CEL");
+    flicDecoder.loadStream(&anim);
+    flicDecoder.start();
+    _system->updateScreen();
+    const Graphics::Surface *surface = flicDecoder.decodeNextFrame();
     while(!shouldQuit()){
         Common::Event event;
         while(_eventMan->pollEvent(event)){
@@ -110,17 +119,20 @@ Common::Error Pink::PinkEngine::run() {
             }
         }
         //update();
-
-        g_system->updateScreen();
-        g_system->delayMillis(10);
+        surface = flicDecoder.needsUpdate() ? flicDecoder.decodeNextFrame() : surface;
+        if (surface) {
+            _system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
+            _system->updateScreen();
+        }
+        _system->delayMillis(10);
     }
 
     return Common::kNoError;
 }
 
 void PinkEngine::load(Archive &archive) {
-    debug(archive.readString().c_str());
-    debug(archive.readString().c_str());
+    archive.readString();
+    archive.readString();
     archive >> _modules;
 }
 
@@ -151,7 +163,7 @@ void PinkEngine::initModule() {
     for (i = 0; i < _modules.size(); ++i) {
         assert(dynamic_cast<Module*>(_modules[i]) == 0);
         if (_modules[i]->getName() == _nextModule) {
-            changeProxyToModule(i);
+            loadModule(i);
             break;
         }
     }
@@ -167,7 +179,7 @@ void PinkEngine::setNextExecutors(const Common::String &nextModule, const Common
     _nextPage = nextPage;
 }
 
-void PinkEngine::changeProxyToModule(int index) {
+void PinkEngine::loadModule(int index) {
     assert(dynamic_cast<Module*>(_modules[index]) == 0);
 
     Module *module = new Module(this, _modules[index]->getName());
@@ -176,6 +188,15 @@ void PinkEngine::changeProxyToModule(int index) {
 
     delete _modules[index];
     _modules[index] = module;
+}
+
+bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &value) {
+    assert(_variables.contains(variable));
+    return _variables[variable] == value;
+}
+
+void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
+    _variables[variable] = value;
 }
 
 }

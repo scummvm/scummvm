@@ -20,46 +20,54 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#ifndef PINK_GAME_PAGE_H
+#define PINK_GAME_PAGE_H
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
-
-namespace Common {
-    class String;
-}
+#include "page.h"
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
+class CursorMgr;
+class WalkMgr;
+class Sequencer;
+class Handler;
 
-struct ResourceDescription;
-
-class ResourceMgr {
+class GamePage : public Page {
 public:
-    ResourceMgr();
-    ~ResourceMgr();
+    virtual void deserialize(Archive &archive);
 
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+    virtual void load(Archive &archive);
+
+    void loadManagers();
+
+    void init(bool isLoadingSave);
+
+    PinkEngine *getGame();
+    Sequencer *getSequencer();
+    WalkMgr *getWalkMgr();
+
+    Module *getModule() const;
+    bool checkValueOfVariable(Common::String &variable, Common::String &value);
+    void setVariable(Common::String &variable, Common::String &value);
+
+    virtual void toConsole();
 
 private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
+    int perhapsIsLoaded;
+    Module *_module;
+    CursorMgr *_cursorMgr;
+    WalkMgr *_walkMgr;
+    Sequencer *_sequencer;
+    Common::Array<Handler *> _handlers;
+    Common::StringMap _variables;
 
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+    /*
+    int cunk_1;
+    int memfile;
+    int unk;
+    */
 };
 
-} // End of namespace Pink
+}
 
-#endif
+#endif //SCUMMVM_GAME_PAGE_H

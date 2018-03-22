@@ -20,44 +20,25 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#ifndef PINK_WALK_MGR_H
+#define PINK_WALK_MGR_H
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
-
-namespace Common {
-    class String;
-}
+#include <common/array.h>
+#include "engines/pink/objects/object.h"
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
+class WalkLocation;
+class LeadActor;
 
-struct ResourceDescription;
-
-class ResourceMgr {
+class WalkMgr : public Object {
 public:
-    ResourceMgr();
-    ~ResourceMgr();
-
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+    virtual void deserialize(Archive &archive);
+    WalkLocation *findLocation(Common::String &name);
 
 private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
-
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+    LeadActor *_leadActor;
+    Common::Array<WalkLocation*> _locations;
 };
 
 } // End of namespace Pink

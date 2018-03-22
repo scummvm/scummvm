@@ -28,8 +28,6 @@
 
 namespace Pink {
 
-enum class AudioFormat{kWAV, kVOX};
-
 /*TODO
   from disasm foreground 100 %, background 80 %
   dont know how to properly do it
@@ -38,10 +36,10 @@ enum class AudioFormat{kWAV, kVOX};
 
 class Sound {
 public:
-    Sound(Audio::Mixer *mixer, AudioFormat format, Common::SeekableReadStream *stream);
+    Sound(Audio::Mixer *mixer, Common::SeekableReadStream *stream);
     ~Sound();
 
-    bool load(AudioFormat format, Common::SeekableReadStream *stream);
+    bool load(Common::SeekableReadStream *stream);
     void play(Audio::Mixer::SoundType type, int volume, bool isLoop);
 
     bool isLoaded();

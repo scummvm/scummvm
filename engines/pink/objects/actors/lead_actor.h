@@ -20,44 +20,42 @@
  *
  */
 
-#include <common/scummsys.h>
-#include <common/stream.h>
+#ifndef PINK_LEAD_ACTOR_H
+#define PINK_LEAD_ACTOR_H
 
-#ifndef PINK_RESOURCE_MGR_H
-#define PINK_RESOURCE_MGR_H
-
-namespace Common {
-    class String;
-}
+#include "actor.h"
 
 namespace Pink {
 
-class GamePage;
-class PinkEngine;
-class OrbFile;
-class BroFile;
-class Sound;
+class CursorMgr;
+class WalkMgr;
+class Sequencer;
 
-struct ResourceDescription;
-
-class ResourceMgr {
+class LeadActor : public Actor {
 public:
-    ResourceMgr();
-    ~ResourceMgr();
+    enum State {
+        Ready = 0,
+        Moving,
+        inDialog1, //???
+        Inventory,
+        PDA,
+        inDialog2,//???
+        PlayingVideo, // ???
+        unk_Loading // ????
+    };
 
-    void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
-    //Common::String loadText(Common::String &name);
-    Sound *loadSound(Common::String &name);
-    // loadCEL();
+    virtual void deserialize(Archive &archive);
+
+    virtual void toConsole();
+
+    void setNextExecutors (Common::String &nextModule, Common::String &nextPage);
+    virtual void init(bool unk);
 
 private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
-
-    PinkEngine *_game;
-    ResourceDescription *_resDescTable;
-    uint32 _resCount;
+    State _state;
+    CursorMgr *_cursorMgr;
+    WalkMgr *_walkMgr;
+    Sequencer *_sequencer;
 };
 
 } // End of namespace Pink
