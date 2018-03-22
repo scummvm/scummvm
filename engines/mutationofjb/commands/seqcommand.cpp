@@ -43,8 +43,4 @@ Command *SeqCommand::next() const {
 	return _nextCommand;
 }
 
-SeqCommand *SeqCommand::asSeqCommand() {
-	return this;
-}
-
 }

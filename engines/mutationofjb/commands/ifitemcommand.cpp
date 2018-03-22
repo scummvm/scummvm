@@ -73,8 +73,8 @@ IfItemCommand::IfItemCommand(const Common::String &item, bool negative) :
 	_negative(negative)
 {}
 
-Command::ExecuteResult IfItemCommand::execute(GameData &gameData) {
-	_cachedResult = gameData._inventory.hasItem(_item);
+Command::ExecuteResult IfItemCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	_cachedResult = scriptExecCtx.getGameData()._inventory.hasItem(_item);
 	if (_negative) {
 		_cachedResult = !_cachedResult;
 	}

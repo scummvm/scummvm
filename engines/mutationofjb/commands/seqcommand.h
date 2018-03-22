@@ -37,7 +37,6 @@ class SeqCommand : public Command {
 public:
 	void setNextCommand(Command *nextCommand);
 	virtual Command *next() const override;
-	virtual SeqCommand *asSeqCommand();
 
 private:
 	Command *_nextCommand;

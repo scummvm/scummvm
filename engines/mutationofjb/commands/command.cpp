@@ -31,8 +31,4 @@ CommandParser::~CommandParser() {}
 
 Command::~Command() {}
 
-SeqCommand *Command::asSeqCommand() {
-	return nullptr;
-}
-
 }

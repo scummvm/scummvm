@@ -42,7 +42,7 @@ public:
 		_voiceFile(voiceFile),
 		_waitForPrevious(waitForPrevious),
 		_talkingAnimation(talkingAnimation) {}
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
 private:
 	Common::String _lineToSay;

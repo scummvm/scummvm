@@ -64,7 +64,7 @@ const Common::String &LabelCommand::getName() const
 	return _name;
 }
 
-Command::ExecuteResult LabelCommand::execute(GameData &) {
+Command::ExecuteResult LabelCommand::execute(ScriptExecutionContext &) {
 	// Intentionally empty.
 
 	return Finished;

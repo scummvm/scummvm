@@ -21,6 +21,8 @@
  */
 
 #include "mutationofjb/commands/changecommand.h"
+#include "mutationofjb/script.h"
+#include "mutationofjb/gamedata.h"
 #include "common/translation.h"
 
 namespace MutationOfJB {
@@ -295,8 +297,8 @@ const char *ChangeCommand::getOperationAsString() const {
 	}
 }
 
-Command::ExecuteResult ChangeDoorCommand::execute(GameData &gameData) {
-	Scene *const scene = gameData.getScene(_sceneId);
+Command::ExecuteResult ChangeDoorCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	Scene *const scene = scriptExecCtx.getGameData().getScene(_sceneId);
 	if (!scene) {
 		return Finished;
 	}
@@ -352,8 +354,8 @@ Common::String ChangeDoorCommand::debugString() const {
 	return Common::String::format("scene%d.door%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 
-Command::ExecuteResult ChangeObjectCommand::execute(GameData &gameData) {
-	Scene *const scene = gameData.getScene(_sceneId);
+Command::ExecuteResult ChangeObjectCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	Scene *const scene = scriptExecCtx.getGameData().getScene(_sceneId);
 	if (!scene) {
 		return Finished;
 	}
@@ -415,8 +417,8 @@ Common::String ChangeObjectCommand::debugString() const {
 	return Common::String::format("scene%d.object%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 
-Command::ExecuteResult ChangeStaticCommand::execute(GameData &gameData) {
-	Scene *const scene = gameData.getScene(_sceneId);
+Command::ExecuteResult ChangeStaticCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	Scene *const scene = scriptExecCtx.getGameData().getScene(_sceneId);
 	if (!scene) {
 		return Finished;
 	}
@@ -466,8 +468,8 @@ Common::String ChangeStaticCommand::debugString() const {
 	return Common::String::format("scene%d.static%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 
-Command::ExecuteResult ChangeSceneCommand::execute(GameData &gameData) {
-	Scene *const scene = gameData.getScene(_sceneId);
+Command::ExecuteResult ChangeSceneCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	Scene *const scene = scriptExecCtx.getGameData().getScene(_sceneId);
 	if (!scene) {
 		return Finished;
 	}

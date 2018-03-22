@@ -57,8 +57,8 @@ bool IfPiggyCommandParser::parse(const Common::String &line, ScriptParseContext 
 }
 
 
-Command::ExecuteResult IfPiggyCommand::execute(GameData &gameData) {
-	_cachedResult = gameData._currentAPK == "piggy.apk";
+Command::ExecuteResult IfPiggyCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	_cachedResult = scriptExecCtx.getGameData()._currentAPK == "piggy.apk";
 
 	return Finished;
 }

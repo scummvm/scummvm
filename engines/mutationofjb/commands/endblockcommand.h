@@ -49,11 +49,14 @@ private:
 
 class EndBlockCommand : public Command {
 public:
+	EndBlockCommand() : _nextCmd(nullptr) {}
 	static bool ParseFunc(const Common::String &line, ScriptParseContext &parseContext, Command *&command);
 
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Command *next() const override;
 	virtual Common::String debugString() const;
+private:
+	Command *_nextCmd;
 };
 
 }

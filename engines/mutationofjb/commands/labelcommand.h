@@ -40,7 +40,7 @@ public:
 	LabelCommand(const Common::String &name) : _name(name) {}
 	const Common::String &getName() const;
 
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
 private:
 	Common::String _name;

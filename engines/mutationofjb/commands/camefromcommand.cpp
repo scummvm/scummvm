@@ -22,6 +22,7 @@
 
 #include "mutationofjb/commands/camefromcommand.h"
 #include "mutationofjb/gamedata.h"
+#include "mutationofjb/script.h"
 #include "common/str.h"
 
 /*
@@ -44,8 +45,8 @@ bool CameFromCommandParser::parse(const Common::String &line, ScriptParseContext
 	return true;
 }
 
-Command::ExecuteResult CameFromCommand::execute(GameData &gameData) {
-	_cachedResult = (gameData._lastScene == _sceneId);
+Command::ExecuteResult CameFromCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	_cachedResult = (scriptExecCtx.getGameData()._lastScene == _sceneId);
 
 	return Finished;
 }

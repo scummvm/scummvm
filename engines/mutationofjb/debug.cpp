@@ -56,6 +56,9 @@ static Common::String convertToASCII(const Common::String &str) {
 Console::Console(MutationOfJBEngine *vm) : _vm(vm) {
 	registerCmd("listsections", WRAP_METHOD(Console, cmd_listsections));
 	registerCmd("showsection", WRAP_METHOD(Console, cmd_showsection));
+	registerCmd("listmacros", WRAP_METHOD(Console, cmd_listmacros));
+	registerCmd("showmacro", WRAP_METHOD(Console, cmd_showmacro));
+	registerCmd("changescene", WRAP_METHOD(Console, cmd_changescene));
 }
 
 bool Console::cmd_listsections(int argc, const char **argv) {
@@ -250,6 +253,19 @@ bool Console::cmd_showmacro(int argc, const char **argv) {
 		}
 	} else {
 		debugPrintf(_("showmacro <G|L> <macroname>\n"));
+	}
+
+	return true;
+}
+
+bool Console::cmd_changescene(int argc, const char **argv) {
+	if (argc == 2) {
+		const uint8 sceneId = atoi(argv[1]);
+		const bool partB = argv[1][strlen(argv[1]) - 1] == 'B';
+
+		_vm->getGame().changeScene(sceneId, partB);
+	} else {
+		debugPrintf(_("changescene <scenename>\n"));
 	}
 
 	return true;

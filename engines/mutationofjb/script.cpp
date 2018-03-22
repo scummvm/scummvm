@@ -20,7 +20,7 @@
  *
  */
 
-#include "script.h"
+#include "mutationofjb/script.h"
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -39,6 +39,7 @@
 #include "mutationofjb/commands/labelcommand.h"
 #include "mutationofjb/commands/gotocommand.h"
 #include "mutationofjb/commands/camefromcommand.h"
+#include "mutationofjb/game.h"
 
 namespace MutationOfJB {
 
@@ -94,6 +95,24 @@ void ScriptParseContext::addConditionalCommand(ConditionalCommand *command, char
 	ConditionalCommandInfo cmi = {command, tag, firstHash};
 	_pendingCondCommands.push_back(cmi);
 }
+
+
+void ScriptExecutionContext::pushReturnCommand(Command *cmd) {
+	_stack.push(cmd);
+}
+
+Command *ScriptExecutionContext::popReturnCommand() {
+	if (_stack.empty()) {
+		return nullptr;
+	}
+
+	return _stack.pop();
+}
+
+GameData &ScriptExecutionContext::getGameData() {
+	return _game.getGameData();
+}
+
 
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	destroy();

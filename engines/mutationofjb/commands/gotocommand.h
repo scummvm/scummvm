@@ -43,7 +43,7 @@ public:
 
 	void setLabelCommand(LabelCommand *labelCmd);
 
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Command *next() const override;
 	virtual Common::String debugString() const override;
 private:
