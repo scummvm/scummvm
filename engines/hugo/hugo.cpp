@@ -638,7 +638,6 @@ void HugoEngine::initialize() {
 	calcMaxScore();                                 // Initialize maxscore
 
 	_rnd = new Common::RandomSource("hugo");
-	_rnd->setSeed(42);                              // Kick random number generator
 
 	switch (_gameVariant) {
 	case kGameVariantH1Dos:
