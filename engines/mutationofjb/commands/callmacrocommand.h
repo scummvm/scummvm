@@ -20,44 +20,37 @@
  *
  */
 
-#ifndef MUTATIONOFJB_GAME_H
-#define MUTATIONOFJB_GAME_H
+#ifndef MUTATIONOFJB_CALLMACROCOMMAND_H
+#define MUTATIONOFJB_CALLMACROCOMMAND_H
 
+#include "mutationofjb/commands/command.h"
 #include "common/scummsys.h"
-
-namespace Common {
-class String;
-}
+#include "common/str.h"
 
 namespace MutationOfJB {
 
-class Command;
-class MutationOfJBEngine;
-class GameData;
-class Script;
-class Room;
-
-class Game {
+class CallMacroCommandParser : public CommandParser {
 public:
-	Game(MutationOfJBEngine *vm);
-	GameData &getGameData();
+	CallMacroCommandParser() {}
 
-	Script *getGlobalScript() const;
-	Script *getLocalScript() const;
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
+};
 
-	void changeScene(uint8 sceneId, bool partB);
+class CallMacroCommand : public Command {
+public:
+	CallMacroCommand(const Common::String &macroName) : _macroName(macroName), _returnCommand(nullptr), _callCommand(nullptr) {}
+	void setReturnCommand(Command *);
 
-	Command *getMacro(const Common::String &name) const;
+	Command *getReturnCommand() const;
 
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	Command *next() const override;
+	virtual Common::String debugString() const override;
 private:
-	bool loadGameData(bool partB);
-
-	MutationOfJBEngine *_vm;
-
-	GameData *_gameData;
-	Script *_globalScript;
-	Script *_localScript;
-	Room *_room;
+	Common::String _macroName;
+	Command *_returnCommand;
+	Command *_callCommand;
 };
 
 }

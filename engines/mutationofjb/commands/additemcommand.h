@@ -32,7 +32,7 @@ class AddItemCommandParser : public SeqCommandParser {
 public:
 	AddItemCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class AddItemCommand : public SeqCommand {

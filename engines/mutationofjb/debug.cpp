@@ -27,6 +27,7 @@
 #include "mutationofjb/commands/command.h"
 #include "mutationofjb/commands/seqcommand.h"
 #include "mutationofjb/commands/conditionalcommand.h"
+#include "mutationofjb/commands/callmacrocommand.h"
 #include "common/debug-channels.h"
 #include "common/translation.h"
 #include "common/scummsys.h"
@@ -129,6 +130,8 @@ void Console::showCommands(Command *command, int indentLevel) {
 			debugPrintf("ELSE\n");
 			showCommands(condCmd->getFalseCommand(), indentLevel + 1);
 			command = nullptr;
+		} else if (CallMacroCommand* const callMacroCmd = dynamic_cast<CallMacroCommand *>(command)) {
+			command = callMacroCmd->getReturnCommand();
 		} else {
 			command = nullptr;
 		}
