@@ -39,9 +39,7 @@ public:
 class SideEffectExit : public SideEffect {
 public:
     virtual void deserialize(Archive &archive);
-
     virtual void toConsole();
-
     virtual void execute(LeadActor *actor);
 
 private:
@@ -50,10 +48,9 @@ private:
 };
 
 class SideEffectLocation : public SideEffect {
+public:
     virtual void deserialize(Archive &archive);
     virtual void execute(LeadActor *actor);
-
-public:
     virtual void toConsole();
 
 private:
@@ -61,10 +58,9 @@ private:
 };
 
 class SideEffectInventoryItemOwner : public SideEffect {
+public:
     virtual void deserialize(Archive &archive);
     virtual void execute(LeadActor *actor);
-
-public:
     virtual void toConsole();
 
 private:
@@ -97,21 +93,17 @@ public:
 class SideEffectPageVariable : public SideEffectVariable {
 public:
     virtual void toConsole();
-
     virtual void execute(LeadActor *actor);
 };
 
 class SideEffectRandomPageVariable : public SideEffect
 {
-    virtual void deserialize(Archive &archive);
-
 public:
+    virtual void deserialize(Archive &archive);
     virtual void toConsole();
 
 private:
     virtual void execute(LeadActor *actor);
-
-private:
     Common::String _name;
     Common::StringArray _values;
 };

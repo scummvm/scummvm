@@ -20,30 +20,26 @@
  *
  */
 
-#ifndef PINK_HANDLER_MGR_H
-#define PINK_HANDLER_MGR_H
+#ifndef PINK_SUPPORTING_ACTOR_H
+#define PINK_SUPPORTING_ACTOR_H
 
-#include <engines/pink/objects/object.h>
-#include <common/array.h>
+#include <engines/pink/objects/handlers/handler_mgr.h>
+#include "actor.h"
 
 namespace Pink {
 
-class HandlerLeftClick;
-class HandlerUseClick;
-class HandlerTimer;
-
-class HandlerMgr : public Object {
+class SupportingActor : public Actor {
 public:
     virtual void deserialize(Archive &archive);
-
     virtual void toConsole();
 
 private:
-    Common::Array<HandlerLeftClick*> _leftClickHandlers;
-    Common::Array<HandlerUseClick*> _useClickHandlers;
-    Common::Array<HandlerTimer*> _timerHandlers;
+    HandlerMgr _handlerMgr;
+    Common::String _location;
+    Common::String _pdaLink;
+    Common::String _cursor;
 };
 
-}
+} // End of namespace Pink
 
 #endif
