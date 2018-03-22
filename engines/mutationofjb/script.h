@@ -58,6 +58,7 @@ struct ActionInfo {
 
 typedef Common::Array<ActionInfo> ActionInfos;
 typedef Common::Array<GotoCommand *> GotoCommands;
+typedef Common::HashMap<Common::String, Command *> Macros;
 
 class ScriptParseContext {
 public:
@@ -85,6 +86,7 @@ public:
 	PendingGotoMap _pendingGotos;
 
 	ActionInfos _actionInfos;
+	Macros _macros;
 
 private:
 };
@@ -98,6 +100,7 @@ public:
 	const ActionInfos &getWalkActionInfos() const;
 	const ActionInfos &getTalkActionInfos() const;
 	const ActionInfos &getUseActionInfos() const;
+	const Macros &getMacros() const;
 
 private:
 	void destroy();
@@ -106,6 +109,7 @@ private:
 	ActionInfos _walkActionInfos;
 	ActionInfos _talkActionInfos;
 	ActionInfos _useActionInfos;
+	Macros _macros;
 };
 
 }

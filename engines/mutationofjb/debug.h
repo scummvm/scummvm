@@ -37,6 +37,8 @@ public:
 private:
 	bool cmd_listsections(int argc, const char **argv);
 	bool cmd_showsection(int argc, const char **argv);
+	bool cmd_listmacros(int argc, const char **argv);
+	bool cmd_showmacro(int argc, const char **argv);
 
 	void showIndent(int indentLevel);
 	void showCommands(Command *command, int indentLevel = 0);
