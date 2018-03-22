@@ -35,9 +35,9 @@ public:
 
 private:
     enum Style {
-        kPingPong = 0,
-        kRandom = 1,
-        kForward = 2
+        kPingPong = 2,
+        kRandom = 3,
+        kForward // unknown
     };
     uint _intro;
     Style _style;

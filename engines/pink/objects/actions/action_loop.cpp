@@ -31,8 +31,17 @@ void ActionLoop::deserialize(Archive &archive) {
     ActionPlay::deserialize(archive);
     uint32 style;
     archive >> _intro >> style;
-    assert(style <= 2);
-    _style = static_cast<Style>(style);
+    switch (style) {
+        case kPingPong:
+            _style = kPingPong;
+            break;
+        case kRandom:
+            _style = kRandom;
+            break;
+        default:
+            _style = kForward;
+    }
+    //_style = static_cast<Style>(style);
 }
 
 void ActionLoop::toConsole() {
