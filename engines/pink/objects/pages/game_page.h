@@ -53,12 +53,15 @@ public:
     virtual void toConsole();
 
 private:
+    void prepareHandler();
+
+
     int perhapsIsLoaded;
     Module *_module;
     CursorMgr *_cursorMgr;
     WalkMgr *_walkMgr;
     Sequencer *_sequencer;
-    Common::Array<Handler *> _handlers;
+    Common::Array<HandlerStartPage*> _handlers;
     Common::StringMap _variables;
 
     /*

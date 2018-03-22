@@ -20,12 +20,9 @@
  *
  */
 
-#include <engines/pink/objects/walk/walk_mgr.h>
-#include <engines/pink/objects/handlers/handler.h>
-#include "game_page.h"
-#include "engines/pink/cursor_mgr.h"
+#include "page.h"
 #include "engines/pink/objects/actors/lead_actor.h"
-#include "engines/pink/objects/sequences/sequencer.h"
+
 
 namespace Pink {
 
@@ -50,101 +47,6 @@ Sound *Page::loadSound(Common::String &fileName) {
 void Page::toConsole() {
     for (int i = 0; i < _actors.size(); ++i) {
         _actors[i]->toConsole();
-    }
-}
-
-
-void GamePage::deserialize(Archive &archive) {
-    Page::deserialize(archive);
-    _module = static_cast<Module*>(archive.readObject());
-    assert(dynamic_cast<Module*>(_module) != 0);
-}
-
-void GamePage::load(Archive &archive) {
-    archive.mapObject(_cursorMgr);
-    archive.mapObject(_walkMgr);
-    archive.mapObject(_sequencer);
-
-    Page::load(archive);
-
-    _leadActor = static_cast<LeadActor*>(archive.readObject());
-
-    _walkMgr->deserialize(archive);
-
-    _sequencer->deserialize(archive);
-    archive >> _handlers;
-}
-
-void GamePage::init(bool isLoadingSave) {
-
-    if (!isLoadingSave){
-        //assert(perhapsIsLoaded == 0);
-        loadManagers();
-    }
-
-    toConsole();
-
-    for (int i = 0; i < _actors.size(); ++i) {
-        _actors[i]->init(0);
-    }
-
-    if (!isLoadingSave) {
-        for (uint i = 0; i < _handlers.size(); ++i) {
-            if (_handlers[i]->isSuitable(_leadActor)){
-                HandlerSequences *handlerSequences = dynamic_cast<HandlerSequences*>(_handlers[i]);
-                assert(handlerSequences);
-                handlerSequences->init(_leadActor);
-                break;
-            }
-        }
-
-    }
-
-}
-
-void GamePage::loadManagers() {
-    perhapsIsLoaded = true;
-    _cursorMgr = new CursorMgr(this);
-    _walkMgr = new WalkMgr;
-    _sequencer = new Sequencer(this);
-
-    _resMgr.init(_module->getGame(), this);
-
-    // memfile manipulations if from save or page changing
-
-}
-
-PinkEngine *GamePage::getGame() {
-    return _module->getGame();
-}
-
-Sequencer *GamePage::getSequencer() {
-    return _sequencer;
-}
-
-Module *GamePage::getModule() const {
-    return _module;
-}
-
-bool GamePage::checkValueOfVariable(Common::String &variable, Common::String &value) {
-    assert(_variables.contains(variable));
-    return _variables[variable] == value;
-}
-
-void GamePage::setVariable(Common::String &variable, Common::String &value) {
-    _variables[variable] = value;
-}
-
-WalkMgr *GamePage::getWalkMgr() {
-    return _walkMgr;
-}
-
-void GamePage::toConsole() {
-    Page::toConsole();
-    _walkMgr->toConsole();
-    _sequencer->toConsole();
-    for (int i = 0; i < _handlers.size(); ++i) {
-        _handlers[i]->toConsole();
     }
 }
 

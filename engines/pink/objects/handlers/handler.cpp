@@ -45,7 +45,7 @@ bool Handler::isSuitable(LeadActor *actor) {
     return true;
 }
 
-void Handler::prepareForNextHandler(LeadActor *actor) {
+void Handler::executeSideEffects(LeadActor *actor) {
     for (int i = 0; i < _sideEffects.size(); ++i) {
         _sideEffects[i]->execute(actor);
     }
@@ -57,10 +57,14 @@ void HandlerSequences::deserialize(Archive &archive) {
 }
 
 void HandlerSequences::init(LeadActor *actor) {
-    prepareForNextHandler(actor);
+    executeSideEffects(actor);
     Sequencer *sequencer = actor->getSequencer();
+
     Sequence *sequence = sequencer->findSequence(_sequences[0]); //actually we must pick random sequence
+    assert(sequence);
+
     sequencer->authorSequence(sequence, 0);
+    handle(sequence);
 }
 
 void HandlerStartPage::handle(Sequence *sequence) {
