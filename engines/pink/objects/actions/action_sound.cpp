@@ -56,9 +56,12 @@ void ActionSound::start(bool unk) {
     _sound->play(soundType, _volume, _isLoop);
     if (_isLoop)
         _actor->endAction();
+
+    debug("Actor %s has now ActionSound %s", _actor->getName().c_str(), _name.c_str());
 }
 
 void ActionSound::end() {
+    debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
     _sound->stop();
     delete _sound;
     _sound = nullptr;

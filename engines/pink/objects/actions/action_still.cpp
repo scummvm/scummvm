@@ -23,6 +23,7 @@
 #include <common/debug.h>
 #include "action_still.h"
 #include "engines/pink/archive.h"
+#include <engines/pink/objects/actors/actor.h>
 
 namespace Pink {
 
@@ -34,6 +35,14 @@ void ActionStill::deserialize(Archive &archive) {
 void ActionStill::toConsole() {
     debug("\tActionStill: _name = %s, _fileName = %s, _startFrame = %u",
           _name.c_str(), _fileName.c_str(), _startFrame);
+}
+
+void ActionStill::start(bool unk) {
+    debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
+}
+
+void ActionStill::end() {
+    debug("ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 } // End of namespace Pink
