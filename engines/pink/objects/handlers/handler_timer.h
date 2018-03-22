@@ -30,25 +30,30 @@ namespace Pink {
 
 class LeadActor;
 
-// This class has difference in games
+//TODO in Peril create HandlerTimerActions when it is request for HandlerTimer
+
+// This class has differences in games
 class HandlerTimer : public Handler {
-    virtual void handle(LeadActor *actor) = 0;
+
 };
 
+//in Peril this is HandlerTimer
 class HandlerTimerActions : public HandlerTimer {
+public:
+    virtual void toConsole();
     virtual void deserialize(Archive &archive);
-    virtual void handle(LeadActor *actor);
+    virtual void onMessage(LeadActor *actor);
 
 private:
     Common::StringArray _actions;
 };
 
-class HandlerTimerSequences : public HandlerTimer {
-    virtual void deserialize(Archive &archive);
-    virtual void handle(LeadActor *actor);
-
+//appear in HokusPokus
+class HandlerTimerSequences : public HandlerSequences { //originally it was inherited from HandlerTimer
+public:
+    virtual void toConsole();
 private:
-    Common::StringArray _sequences;
+    virtual void handle(LeadActor *actor); // very big and hard function
 };
 
 } // End of namespace Pink
