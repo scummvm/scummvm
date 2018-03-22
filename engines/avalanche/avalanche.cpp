@@ -39,9 +39,6 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_console = new AvalancheConsole(this);
 
 	_rnd = new Common::RandomSource("avalanche");
-	TimeDate time;
-	_system->getTimeAndDate(time);
-	_rnd->setSeed(time.tm_sec + time.tm_min + time.tm_hour);
 	_showDebugLines = false;
 
 	_clock = nullptr;
