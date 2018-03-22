@@ -224,7 +224,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_checkDelayedReactivation();
 		break;
 	case 0x2E:
-		return OC_sub179C2();
+		return OC_checkTargetReached();
 		break;
 	case 0x2F:
 		return OC_checkFunctionKeyPressed();
@@ -284,7 +284,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_saveAndQuit();
 		break;
 	case 0xD:
-		OC_sub17B93();
+		OC_nSkipOpcodes();
 		break;
 	case 0xE:
 		OC_startSpeech5();
@@ -603,7 +603,7 @@ static const OpCode opCodes1[] = {
 	{ "OC_checkLastInterfaceHotspotIndex", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 	{ "OC_checkSelectedCharacter", 0, kNone, kNone, kNone, kNone, kNone },
 	{ "OC_checkDelayedReactivation", 0, kNone, kNone, kNone, kNone, kNone },
-	{ "OC_sub179C2", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
+	{ "OC_checkTargetReached", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 	{ "OC_checkFunctionKeyPressed", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 	{ "OC_checkCodeEntered", 3, kImmediateValue, kImmediateValue, kImmediateValue, kNone, kNone },
 	{ "OC_checkViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
@@ -624,7 +624,7 @@ static const OpCode opCodes2[] = {
 /* 0x0a */	{ "OC_setCharacterPosition", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },
 /* 0x0b */	{ "OC_disableCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x0c */	{ "OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x0d */	{ "OC_sub17B93", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
+/* 0x0d */	{ "OC_nSkipOpcodes", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
 /* 0x0e */	{ "OC_startSpeech5", 0, kNone, kNone, kNone, kNone, kNone },  // todo
 /* 0x0f */	{ "OC_resetByte1714E", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x10 */	{ "OC_deleteSavegameAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
@@ -764,7 +764,7 @@ Common::String LilliputScript::getArgumentString(kValueType type, ScriptStream& 
 		break;
 			   }
 	case 0xFA:
-		str = Common::String::format("(_array10999PosX[currentCharacter], _array109C1PosY[currentCharacter])");
+		str = Common::String::format("(_characterTargetPosX[currentCharacter], _characterTargetPosY[currentCharacter])");
 		break;
 	case 0xF9:
 		str = Common::String::format("(_currentCharacterVariables[4], _currentCharacterVariables[5])");
@@ -1018,8 +1018,8 @@ void LilliputScript::enableCharacterScript(byte index, byte var1, byte *curBufPt
 	curBufPtr[3] = 0;
 }
 
-void LilliputScript::sub17B6C(int var1) {
-	debugC(1, kDebugScript, "sub17B6C(%d)", var1);
+void LilliputScript::skipOpcodes(int var1) {
+	debugC(1, kDebugScript, "skipOpcodes(%d)", var1);
 
 	if (var1 == 0) {
 		int curWord = 0;
@@ -1323,7 +1323,7 @@ Common::Point LilliputScript::getPosFromScript() {
 		return Common::Point(x, y);
 		}
 	case 0xFA:
-		return Common::Point(_vm->_array10999PosX[_vm->_currentScriptCharacter], _vm->_array109C1PosY[_vm->_currentScriptCharacter]);
+		return Common::Point(_vm->_characterTargetPosX[_vm->_currentScriptCharacter], _vm->_characterTargetPosY[_vm->_currentScriptCharacter]);
 	case 0xF9:
 		return Common::Point(_vm->_currentCharacterAttributes[4], _vm->_currentCharacterAttributes[5]);
 	case 0xF8: {
@@ -2035,16 +2035,17 @@ byte LilliputScript::OC_checkDelayedReactivation() {
 	return 1;
 }
 
-byte LilliputScript::OC_sub179C2() {
-	debugC(1, kDebugScriptTBC, "OC_sub179C2()");
+byte LilliputScript::OC_checkTargetReached() {
+	debugC(1, kDebugScriptTBC, "OC_checkTargetReached()");
 	Common::Point var1 = getPosFromScript();
 
-	if ((_vm->_array10999PosX[_vm->_currentScriptCharacter] == var1.x)
-		 && (_vm->_array109C1PosY[_vm->_currentScriptCharacter] == var1.y))
+	if ((_vm->_characterTargetPosX[_vm->_currentScriptCharacter] == var1.x)
+		 && (_vm->_characterTargetPosY[_vm->_currentScriptCharacter] == var1.y))
 		return 1;
 
 	return 0;
 }
+
 byte LilliputScript::OC_checkFunctionKeyPressed() {
 	debugC(1, kDebugScript, "OC_checkFunctionKeyPressed()");
 
@@ -2294,15 +2295,17 @@ void LilliputScript::OC_DisableCharacter() {
 }
 
 void LilliputScript::OC_saveAndQuit() {
-	warning("OC_saveAndQuit");
+	warning("TODO: OC_saveAndQuit");
+	_vm->_soundHandler.contentFct6(); // Kill music
+	// TODO: Save game
 	_vm->_shouldQuit = true;
 }
 
-void LilliputScript::OC_sub17B93() {
-	debugC(1, kDebugScript, "OC_sub17B93()");
+void LilliputScript::OC_nSkipOpcodes() {
+	debugC(1, kDebugScript, "OC_nSkipOpcodes()");
 
 	int var1 = _currScript->readUint16LE();
-	sub17B6C(var1);
+	skipOpcodes(var1);
 }
 
 void LilliputScript::OC_startSpeech5() {
@@ -2383,15 +2386,15 @@ void LilliputScript::OC_callScriptAndReturn() {
 	debugC(1, kDebugScript, "OC_callScriptAndReturn()");
 
 	OC_callScript();
-	sub17B6C(0);
+	skipOpcodes(0);
 }
 
 void LilliputScript::OC_setCurrentScriptCharacterPos() {
 	debugC(1, kDebugScript, "OC_setCurrentScriptCharacterPos()");
 
 	Common::Point pos = getPosFromScript();
-	_vm->_array10999PosX[_vm->_currentScriptCharacter] = pos.x;
-	_vm->_array109C1PosY[_vm->_currentScriptCharacter] = pos.y;
+	_vm->_characterTargetPosX[_vm->_currentScriptCharacter] = pos.x;
+	_vm->_characterTargetPosY[_vm->_currentScriptCharacter] = pos.y;
 	_vm->_array109E9PosX[_vm->_currentScriptCharacter] = -1;
 }
 
@@ -2539,7 +2542,7 @@ void LilliputScript::OC_enableCurrentCharacterScript() {
 
 	uint8 var1 = (_currScript->readUint16LE() & 0xFF);
 	enableCharacterScript(_vm->_currentScriptCharacter , var1, _vm->_currentCharacterAttributes);
-	sub17B6C(0);
+	skipOpcodes(0);
 }
 
 void LilliputScript::OC_IncCurrentCharacterVar1() {

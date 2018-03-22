@@ -128,7 +128,7 @@ private:
 	void handleOpcodeType2(int curWord);
 
 	void enableCharacterScript(byte index, byte var1, byte *curBufPtr);
-	void sub17B6C(int var1);
+	void skipOpcodes(int var1);
 	void sub16C86(int index, byte *buf);
 	void sub16C5C(int index, int8 var3);
 	void checkSpeechAllowed(bool &forceReturnFl);
@@ -198,7 +198,7 @@ private:
 	byte OC_checkLastInterfaceHotspotIndex();
 	byte OC_checkSelectedCharacter();
 	byte OC_checkDelayedReactivation();
-	byte OC_sub179C2();
+	byte OC_checkTargetReached();
 	byte OC_checkFunctionKeyPressed();
 	byte OC_checkCodeEntered();
 	byte OC_checkViewPortCharacterTarget();
@@ -217,7 +217,7 @@ private:
 	void OC_setCharacterPosition();
 	void OC_DisableCharacter();
 	void OC_saveAndQuit();
-	void OC_sub17B93();
+	void OC_nSkipOpcodes();
 	void OC_startSpeech5();
 	void OC_resetByte1714E();
 	void OC_deleteSavegameAndQuit();

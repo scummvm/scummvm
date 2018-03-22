@@ -179,8 +179,8 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_array1692B[i] = 0;
 
 	for (int i = 0; i < 40; i++) {
-		_array10999PosX[i] = 0;
-		_array109C1PosY[i] = 0;
+		_characterTargetPosX[i] = 0;
+		_characterTargetPosY[i] = 0;
 		_charactersToDisplay[i] = 0;
 		_characterRelativePositionX[i] = -1;
 		_characterRelativePositionY[i] = -1;
@@ -1359,7 +1359,7 @@ byte LilliputEngine::sub16799(int index, Common::Point param1) {
 			return 3;
 		}
 
-		if ((var3.x == _array10999PosX[index]) && (var3.y == _array109C1PosY[index]))
+		if ((var3.x == _characterTargetPosX[index]) && (var3.y == _characterTargetPosY[index]))
 			return 2;
 	}
 
@@ -1380,26 +1380,26 @@ void LilliputEngine::sub167EF(int index) {
 	debugC(2, kDebugEngine, "sub167EF(%d)", index);
 
 	int16 word167EB = findHotspot(Common::Point(_scriptHandler->_characterTilePosX[index], _scriptHandler->_characterTilePosY[index]));
-	int16 word167ED = findHotspot(Common::Point(_array10999PosX[index], _array109C1PosY[index]));
+	int16 word167ED = findHotspot(Common::Point(_characterTargetPosX[index], _characterTargetPosY[index]));
 
 	if (word167EB == word167ED) {
-		_array109E9PosX[index] = _array10999PosX[index];
-		_array10A11PosY[index] = _array109C1PosY[index];
+		_array109E9PosX[index] = _characterTargetPosX[index];
+		_array10A11PosY[index] = _characterTargetPosY[index];
 		return;
 	}
 
 	if (word167EB == -1) {
-		int tmpVal = reverseFindHotspot(Common::Point(_array10999PosX[index], _array109C1PosY[index]));
+		int tmpVal = reverseFindHotspot(Common::Point(_characterTargetPosX[index], _characterTargetPosY[index]));
 		_array109E9PosX[index] = _rulesBuffer12Pos4[tmpVal].x;
 		_array10A11PosY[index] = _rulesBuffer12Pos4[tmpVal].y;
 		return;
 	}
 
 	if ((word167ED != -1) &&
-		(_array10999PosX[index] >= _rectXMinMax[word167EB].min) &&
-		(_array10999PosX[index] <= _rectXMinMax[word167EB].max) &&
-		(_array109C1PosY[index] >= _rectYMinMax[word167EB].min) &&
-		(_array109C1PosY[index] <= _rectYMinMax[word167EB].max)) {
+		(_characterTargetPosX[index] >= _rectXMinMax[word167EB].min) &&
+		(_characterTargetPosX[index] <= _rectXMinMax[word167EB].max) &&
+		(_characterTargetPosY[index] >= _rectYMinMax[word167EB].min) &&
+		(_characterTargetPosY[index] <= _rectYMinMax[word167EB].max)) {
 		_array109E9PosX[index] = _rulesBuffer12Pos4[word167ED].x;
 		_array10A11PosY[index] = _rulesBuffer12Pos4[word167ED].y;
 		return;
@@ -1749,13 +1749,13 @@ byte LilliputEngine::sub1675D(int index, Common::Point var1) {
 	int charIndex = _scriptHandler->_array10A39[index];
 	Common::Point charPos = Common::Point(_scriptHandler->_characterTilePosX[charIndex], _scriptHandler->_characterTilePosY[charIndex]);
 
-	if ((_array109E9PosX[index] != -1) && (_array109E9PosX[index] == _array10999PosX[index]) && (_array10A11PosY[index] == _array109C1PosY[index])) {
+	if ((_array109E9PosX[index] != -1) && (_array109E9PosX[index] == _characterTargetPosX[index]) && (_array10A11PosY[index] == _characterTargetPosY[index])) {
 		_array109E9PosX[index] = charPos.x;
 		_array10A11PosY[index] = charPos.y;
 	}
 
-	_array10999PosX[index] = charPos.x;
-	_array109C1PosY[index] = charPos.y;
+	_characterTargetPosX[index] = charPos.x;
+	_characterTargetPosY[index] = charPos.y;
 
 	return sub16799(index, var1);
 }
