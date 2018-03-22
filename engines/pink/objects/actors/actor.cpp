@@ -107,4 +107,8 @@ Action *Actor::getAction() const {
     return _action;
 }
 
+bool Actor::isPlaying() {
+    return _isActionEnd;
+}
+
 } // End of namespace Pink

@@ -20,25 +20,74 @@
  *
  */
 
+
 #include "handler_timer.h"
+#include <common/debug.h>
+#include <engines/pink/archive.h>
+#include <engines/pink/objects/condition.h>
+#include <engines/pink/objects/sequences/sequence.h>
+#include <engines/pink/objects/side_effect.h>
+#include <engines/pink/objects/actors/lead_actor.h>
 
 namespace Pink {
 
 
 void HandlerTimerActions::deserialize(Archive &archive) {
     Handler::deserialize(archive);
+    archive >> _actions;
 }
 
-void HandlerTimerActions::handle(LeadActor *actor) {
+void HandlerTimerActions::toConsole() {
+    debug("HandlerTimerActions:");
 
+    debug("\tSideEffects:");
+    for (int i = 0; i < _sideEffects.size(); ++i) {
+        _sideEffects[i]->toConsole();
+    }
+
+    debug("\tConditions:");
+    for (int i = 0; i < _conditions.size(); ++i) {
+        _conditions[i]->toConsole();
+    }
+
+    debug("\tActions:");
+    for (int i = 0; i < _actions.size(); ++i) {
+        debug("\t\t%s", _actions[i].c_str());
+    }
 }
 
-void HandlerTimerSequences::deserialize(Archive &archive) {
-    Handler::deserialize(archive);
+void HandlerTimerActions::onMessage(LeadActor *actor) {
+    Handler::onMessage(actor);
+    assert(_actions.size() > 0);
+    if (!actor->isPlaying()){
+        Action *action = actor->findAction(_actions[0]);// we must pick random
+        assert(action);
+        actor->setAction(action, 0);
+    }
 }
+
 
 void HandlerTimerSequences::handle(LeadActor *actor) {
+    debug("HandlerTimerSequences function is not implemented");
+}
 
+void HandlerTimerSequences::toConsole() {
+    debug("HandlerTimerSequences:");
+
+    debug("\tSideEffects:");
+    for (int i = 0; i < _sideEffects.size(); ++i) {
+        _sideEffects[i]->toConsole();
+    }
+
+    debug("\tConditions:");
+    for (int i = 0; i < _conditions.size(); ++i) {
+        _conditions[i]->toConsole();
+    }
+
+    debug("\tSequences:");
+    for (int i = 0; i < _sequences.size(); ++i) {
+        debug("\t\t%s", _sequences[i].c_str());
+    }
 }
 
 } // End of namespace Pink

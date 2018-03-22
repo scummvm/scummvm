@@ -51,19 +51,23 @@ void Handler::executeSideEffects(LeadActor *actor) {
     }
 }
 
+void Handler::onMessage(LeadActor *actor) {
+    executeSideEffects(actor);
+}
+
 void HandlerSequences::deserialize(Archive &archive) {
     Handler::deserialize(archive);
     archive >> _sequences;
 }
 
-void HandlerSequences::init(LeadActor *actor) {
-    executeSideEffects(actor);
+void HandlerSequences::onMessage(LeadActor *actor) {
+    Handler::onMessage(actor);
     Sequencer *sequencer = actor->getSequencer();
 
     Sequence *sequence = sequencer->findSequence(_sequences[0]); //actually we must pick random sequence
     assert(sequence);
-
     sequencer->authorSequence(sequence, 0);
+
     handle(sequence);
 }
 
@@ -88,6 +92,51 @@ void HandlerStartPage::toConsole() {
     for (int i = 0; i < _sequences.size(); ++i) {
         debug("\t\t%s", _sequences[i].c_str());
     }
+}
+
+void HandlerLeftClick::toConsole() {
+    debug("HandlerLeftClick:");
+
+    debug("\tSideEffects:");
+    for (int i = 0; i < _sideEffects.size(); ++i) {
+        _sideEffects[i]->toConsole();
+    }
+
+    debug("\tConditions:");
+    for (int i = 0; i < _conditions.size(); ++i) {
+        _conditions[i]->toConsole();
+    }
+
+    debug("\tSequences:");
+    for (int i = 0; i < _sequences.size(); ++i) {
+        debug("\t\t%s", _sequences[i].c_str());
+    }
+}
+
+void HandlerUseClick::deserialize(Archive &archive) {
+    HandlerSequences::deserialize(archive);
+}
+
+void HandlerUseClick::toConsole() {
+    debug("HandlerUseClick: _inventoryItem=%s, _recepient=%s", _inventoryItem.c_str(), _recepient.c_str());
+    debug("\tSideEffects:");
+    for (int i = 0; i < _sideEffects.size(); ++i) {
+        _sideEffects[i]->toConsole();
+    }
+
+    debug("\tConditions:");
+    for (int i = 0; i < _conditions.size(); ++i) {
+        _conditions[i]->toConsole();
+    }
+
+    debug("\tSequences:");
+    for (int i = 0; i < _sequences.size(); ++i) {
+        debug("\t\t%s", _sequences[i].c_str());
+    }
+}
+
+void HandlerUseClick::handle(Sequence *sequence) {
+
 }
 
 } // End of namespace Pink

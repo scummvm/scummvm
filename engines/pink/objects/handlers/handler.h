@@ -37,6 +37,7 @@ class LeadActor;
 class Handler : public Object {
 public:
     virtual void deserialize(Archive &archive);
+    virtual void onMessage(LeadActor *actor);
     bool isSuitable(LeadActor *actor);
 
 protected:
@@ -51,20 +52,40 @@ class Sequence;
 class HandlerSequences : public Handler {
 public:
     virtual void deserialize(Archive &archive);
-    void init(LeadActor *actor);
-    virtual void handle(Sequence *sequence) = 0;
+    virtual void onMessage(LeadActor *actor);
 
 protected:
+    virtual void handle(Sequence *sequence) = 0;
+
     Common::StringArray _sequences;
 };
 
 class HandlerStartPage : public HandlerSequences {
 public:
-    ~HandlerStartPage() {};
-
     virtual void toConsole();
 
+private:
     virtual void handle(Sequence *sequence);
+};
+
+class HandlerLeftClick : public HandlerSequences {
+public:
+    virtual void toConsole();
+
+private:
+    virtual void handle(Sequence *sequence) {}
+};
+
+class HandlerUseClick : public HandlerSequences {
+public:
+    virtual void deserialize(Archive &archive);
+    virtual void toConsole();
+
+private:
+    virtual void handle(Sequence *sequence);
+
+    Common::String _inventoryItem;
+    Common::String _recepient;
 };
 
 } // End of namespace Pink

@@ -47,6 +47,7 @@ public:
     Action *getAction() const;
 
 
+    bool isPlaying();
     virtual void init(bool unk);
     void hide();
     void endAction();
