@@ -51,6 +51,7 @@ public:
     //Common::String loadText(Common::String &name);
     Sound *loadSound(Common::String &name);
     // loadCEL();
+    PinkEngine *getGame() const;
 
 private:
     Common::SeekableReadStream *getResourceStream(Common::String &name);

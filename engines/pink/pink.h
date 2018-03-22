@@ -75,6 +75,7 @@ public:
 
     OrbFile *getOrb()  { return &_orb; }
     BroFile *getBro()  { return _bro; }
+    Common::RandomSource &getRnd();
 
     bool checkValueOfVariable(Common::String &variable, Common::String &value);
     void setVariable(Common::String &variable, Common::String &value);

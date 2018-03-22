@@ -29,6 +29,7 @@
 #include <engines/pink/objects/walk/walk_location.h>
 #include <engines/pink/objects/walk/walk_mgr.h>
 
+
 namespace Pink {
 
 void SideEffectExit::deserialize(Archive &archive) {
@@ -109,8 +110,12 @@ void SideEffectRandomPageVariable::deserialize(Archive &archive) {
 }
 
 void SideEffectRandomPageVariable::execute(LeadActor *actor) {
-    // TODO think how to get rand gen here
-    actor->getPage()->setVariable(_name, _values[0]); // temporary solution
+    assert(_values.size());
+
+    Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
+    uint index = rnd.getRandomNumber(_values.size() - 1);
+
+    actor->getPage()->setVariable(_name, _values[index]);
 }
 
 void SideEffectRandomPageVariable::toConsole() {
