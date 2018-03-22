@@ -42,7 +42,6 @@ void Sequencer::deserialize(Archive &archive) {
     archive >> _sequences;
     archive.readCount();// intro have 0 timers;
     //serialize timers;
-
 }
 
 Sequence *Sequencer::findSequence(const Common::String &name) {

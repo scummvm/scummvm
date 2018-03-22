@@ -40,7 +40,7 @@ public:
     bool isSuitable(LeadActor *actor);
 
 protected:
-    void prepareForNextHandler(LeadActor *actor);
+    void executeSideEffects(LeadActor *actor);
 
     Common::Array<Condition*> _conditions;
     Common::Array<SideEffect*> _sideEffects;
