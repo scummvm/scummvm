@@ -39,6 +39,7 @@
 #include "mutationofjb/commands/labelcommand.h"
 #include "mutationofjb/commands/gotocommand.h"
 #include "mutationofjb/commands/camefromcommand.h"
+#include "mutationofjb/commands/callmacrocommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
@@ -49,6 +50,7 @@ static CommandParser **getParsers() {
 		new IfItemCommandParser,
 		new IfCommandParser,
 		new CameFromCommandParser,
+		new CallMacroCommandParser,
 		new EndBlockCommandParser,
 		new ChangeDoorCommandParser,
 		new ChangeObjectCommandParser,
@@ -107,6 +109,10 @@ Command *ScriptExecutionContext::popReturnCommand() {
 	}
 
 	return _stack.pop();
+}
+
+Game &ScriptExecutionContext::getGame() {
+	return _game;
 }
 
 GameData &ScriptExecutionContext::getGameData() {
@@ -204,6 +210,15 @@ const ActionInfos &Script::getUseActionInfos() const {
 
 const Macros &Script::getMacros() const {
 	return _macros;
+}
+
+Command *Script::getMacro(const Common::String &name) const {
+	Macros::const_iterator it = _macros.find(name);
+	if (it == _macros.end()) {
+		return nullptr;
+	}
+
+	return it->_value;
 }
 
 }

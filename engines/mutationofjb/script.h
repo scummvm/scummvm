@@ -99,6 +99,7 @@ public:
 	ScriptExecutionContext(Game &game) : _game(game) {}
 	void pushReturnCommand(Command *);
 	Command *popReturnCommand();
+	Game &getGame();
 	GameData &getGameData();
 
 private:
@@ -116,6 +117,7 @@ public:
 	const ActionInfos &getTalkActionInfos() const;
 	const ActionInfos &getUseActionInfos() const;
 	const Macros &getMacros() const;
+	Command *getMacro(const Common::String &name) const;
 
 private:
 	void destroy();
