@@ -26,6 +26,26 @@
 #include "common/str.h"
 #include "common/debug.h"
 
+/*
+	("#L " | "-L ") <object>
+	("#W " | "-W ") <object>
+	("#T " | "-T ") <object>
+	("#U " | "-U ") <object1> [<object2>]
+	("#ELSE" | "-ELSE") [<tag>]
+	"#MACRO " <name>
+
+	If a line starts with '#', '=', '-', it is treated as the end of a section.
+	However, at the same time it can also start a new section depending on what follows.
+
+	#L (look), #W (walk), #T (talk), #U (use) sections are executed
+	when the user starts corresponding action on the object or in case of "use" up to two objects.
+	The difference between '#' and '-' version is whether the player walks towards the object ('#') or not ('-').
+
+	#ELSE is used by conditional commands (see comments for IfCommand and others).
+
+	#MACRO starts a new macro. Global script can call macros from local script and vice versa.
+*/
+
 namespace MutationOfJB {
 
 bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) {
@@ -85,6 +105,8 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 		if (line.size() >= 6) {
 			_ifTag = line[5];
 		}
+	} else if (line.size() >= 8 && line.hasPrefix("#MACRO")) {
+		_foundMacro = line.c_str() + 7;
 	}
 
 	if (firstChar == '#') {
@@ -116,6 +138,13 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, 
 		_ifTag = 0;
 	}
 
+	if (!_foundMacro.empty() && newCommand) {
+		if (!parseCtx._macros.contains(_foundMacro)) {
+			parseCtx._macros[_foundMacro] = newCommand;
+		}
+		_foundMacro = "";
+	}
+
 	if (newCommandParser != this) {
 		if (!_pendingActionInfos.empty()) {
 			for (Common::Array<uint>::iterator it = _pendingActionInfos.begin(); it != _pendingActionInfos.end(); ++it) {
@@ -135,6 +164,7 @@ void EndBlockCommandParser::finish(ScriptParseContext &) {
 		debug("Problem: Pending action infos from end block parser is not empty!");
 	}
 	_pendingActionInfos.clear();
+	_foundMacro = "";
 }
 
 Command::ExecuteResult EndBlockCommand::execute(GameData &) {

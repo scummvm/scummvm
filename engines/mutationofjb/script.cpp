@@ -151,8 +151,7 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	Common::HashMap<Common::String, Command *> macros;
-	Common::HashMap<Common::String, Command *> labels;
+	_macros = parseCtx._macros;
 
 	return true;
 }
@@ -182,6 +181,10 @@ const ActionInfos &Script::getTalkActionInfos() const {
 
 const ActionInfos &Script::getUseActionInfos() const {
 	return _useActionInfos;
+}
+
+const Macros &Script::getMacros() const {
+	return _macros;
 }
 
 }

@@ -204,4 +204,55 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmd_listmacros(int argc, const char **argv) {
+	if (argc == 2) {
+		Script *script = nullptr;
+		if (strcmp(argv[1], "G") == 0) {
+			script = _vm->getGame().getGlobalScript();
+		} else if (strcmp(argv[1], "L") == 0) {
+			script = _vm->getGame().getLocalScript();
+		}
+		if (!script) {
+			debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
+		} else {
+			const Macros &macros = script->getMacros();
+			for (Macros::const_iterator it = macros.begin(); it != macros.end(); ++it) {
+				debugPrintf("%s\n", it->_key.c_str());
+			}
+		}
+	} else {
+		debugPrintf(_("listmacros <G|L>\n"));
+	}
+
+	return true;
+}
+
+bool Console::cmd_showmacro(int argc, const char **argv) {
+	if (argc == 3) {
+		Script *script = nullptr;
+		if (strcmp(argv[1], "G") == 0) {
+			script = _vm->getGame().getGlobalScript();
+		} else if (strcmp(argv[1], "L") == 0) {
+			script = _vm->getGame().getLocalScript();
+		}
+		if (!script) {
+			debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
+		} else {
+			const Macros &macros = script->getMacros();
+			Macros::const_iterator itMacro = macros.find(argv[2]);
+			if (itMacro != macros.end()) {
+				if (itMacro->_value) {
+					showCommands(itMacro->_value);
+				}
+			} else {
+				debugPrintf("Macro not found.\n");
+			}
+		}
+	} else {
+		debugPrintf(_("showmacro <G|L> <macroname>\n"));
+	}
+
+	return true;
+}
+
 }

@@ -44,6 +44,7 @@ private:
 	char _ifTag;
 
 	Common::Array<uint> _pendingActionInfos;
+	Common::String _foundMacro;
 };
 
 class EndBlockCommand : public Command {

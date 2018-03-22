@@ -24,7 +24,7 @@
 #define MUTATIONOFJB_COMMAND_H
 
 namespace Common {
-	class String;
+class String;
 }
 
 namespace MutationOfJB {
