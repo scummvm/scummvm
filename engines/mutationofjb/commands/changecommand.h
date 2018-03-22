@@ -113,7 +113,7 @@ public:
 	ChangeDoorCommand(uint8 sceneId, uint8 doorId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
 		: ChangeCommand(sceneId, doorId, reg, op, val)
 	{}
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 };
 
@@ -122,7 +122,7 @@ public:
 	ChangeObjectCommand(uint8 sceneId, uint8 objectId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
 		: ChangeCommand(sceneId, objectId, reg, op, val)
 	{}
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 };
 
@@ -131,7 +131,7 @@ public:
 	ChangeStaticCommand(uint8 sceneId, uint8 staticId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
 		: ChangeCommand(sceneId, staticId, reg, op, val)
 	{}
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 };
 
@@ -140,7 +140,7 @@ public:
 	ChangeSceneCommand(uint8 sceneId, uint8 staticId, ChangeRegister reg, ChangeOperation op, const ChangeCommandValue &val)
 		: ChangeCommand(sceneId, staticId, reg, op, val)
 	{}
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 };
 

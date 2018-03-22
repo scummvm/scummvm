@@ -59,7 +59,7 @@ void GotoCommand::setLabelCommand(LabelCommand *labelCmd) {
 	_labelCommand = labelCmd;
 }
 
-Command::ExecuteResult GotoCommand::execute(GameData &) {
+Command::ExecuteResult GotoCommand::execute(ScriptExecutionContext &) {
 	// Intentionally empty.
 
 	return Finished;

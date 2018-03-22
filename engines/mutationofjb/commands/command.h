@@ -29,12 +29,9 @@ class String;
 
 namespace MutationOfJB {
 
-class GameData;
-class SeqCommand;
-class IfCommand;
-class CallMacroCommand;
-class ScriptParseContext;
 class Command;
+class ScriptExecutionContext;
+class ScriptParseContext;
 
 class CommandParser {
 public:
@@ -58,10 +55,9 @@ public:
 
 	virtual ~Command();
 
-	virtual ExecuteResult execute(GameData &gameData) = 0;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) = 0;
 	virtual Command *next() const = 0;
 
-	virtual SeqCommand *asSeqCommand();
 	virtual Common::String debugString() const = 0;
 };
 }

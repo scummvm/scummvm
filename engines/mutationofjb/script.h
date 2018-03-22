@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+#include "common/stack.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -36,6 +37,8 @@ namespace MutationOfJB {
 
 class Command;
 class LabelCommand;
+class Game;
+class GameData;
 class GotoCommand;
 class ConditionalCommand;
 typedef Common::Array<Command *> Commands;
@@ -89,6 +92,18 @@ public:
 	Macros _macros;
 
 private:
+};
+
+class ScriptExecutionContext {
+public:
+	ScriptExecutionContext(Game &game) : _game(game) {}
+	void pushReturnCommand(Command *);
+	Command *popReturnCommand();
+	GameData &getGameData();
+
+private:
+	Game &_game;
+	Common::Stack<Command *> _stack;
 };
 
 class Script {

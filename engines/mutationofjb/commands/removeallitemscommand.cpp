@@ -21,6 +21,7 @@
  */
 
 #include "mutationofjb/commands/removeallitemscommand.h"
+#include "mutationofjb/script.h"
 #include "mutationofjb/gamedata.h"
 
 /*
@@ -40,8 +41,8 @@ bool RemoveAllItemsCommandParser::parse(const Common::String &line, ScriptParseC
 	return true;
 }
 
-Command::ExecuteResult RemoveAllItemsCommand::execute(GameData &gameData) {
-	gameData._inventory.removeAllItems();
+Command::ExecuteResult RemoveAllItemsCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	scriptExecCtx.getGameData()._inventory.removeAllItems();
 	return Finished;
 }
 

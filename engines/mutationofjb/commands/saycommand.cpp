@@ -140,7 +140,7 @@ bool SayCommandParser::parse(const Common::String &line, ScriptParseContext &par
 }
 
 
-Command::ExecuteResult SayCommand::execute(GameData &) {
+Command::ExecuteResult SayCommand::execute(ScriptExecutionContext &) {
 	// TODO: Actual implementation.
 	debug("%s [%s]", _lineToSay.c_str(), _voiceFile.c_str());
 	return Finished;

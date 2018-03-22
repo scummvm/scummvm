@@ -22,6 +22,7 @@
 
 #include "mutationofjb/commands/additemcommand.h"
 #include "mutationofjb/gamedata.h"
+#include "mutationofjb/script.h"
 
 /*
 	"ADDITEM" " " <item>
@@ -40,8 +41,8 @@ bool AddItemCommandParser::parse(const Common::String &line, ScriptParseContext 
 	return true;
 }
 
-Command::ExecuteResult AddItemCommand::execute(GameData &gameData) {
-	gameData._inventory.addItem(_item);
+Command::ExecuteResult AddItemCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	scriptExecCtx.getGameData()._inventory.addItem(_item);
 	return Finished;
 }
 

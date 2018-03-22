@@ -38,7 +38,7 @@ class RemoveAllItemsCommand : public SeqCommand {
 public:
 	RemoveAllItemsCommand() {}
 
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
 private:
 };

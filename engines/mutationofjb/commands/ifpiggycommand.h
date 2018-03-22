@@ -38,7 +38,7 @@ public:
 
 class IfPiggyCommand : public ConditionalCommand {
 public:
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 
 private:

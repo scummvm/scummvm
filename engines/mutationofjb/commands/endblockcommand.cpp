@@ -167,12 +167,13 @@ void EndBlockCommandParser::finish(ScriptParseContext &) {
 	_foundMacro = "";
 }
 
-Command::ExecuteResult EndBlockCommand::execute(GameData &) {
+Command::ExecuteResult EndBlockCommand::execute(ScriptExecutionContext &scriptExecCtx) {
+	_nextCmd = scriptExecCtx.popReturnCommand();
 	return Finished;
 }
 
 Command *EndBlockCommand::next() const {
-	return nullptr;
+	return _nextCmd;
 }
 
 Common::String EndBlockCommand::debugString() const {

@@ -39,7 +39,7 @@ class RemoveItemCommand : public SeqCommand {
 public:
 	RemoveItemCommand(const Common::String &item) : _item(item) {}
 
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
 private:
 	Common::String _item;

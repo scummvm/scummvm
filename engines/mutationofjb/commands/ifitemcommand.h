@@ -40,7 +40,7 @@ class IfItemCommand : public ConditionalCommand {
 public:
 	IfItemCommand(const Common::String &item, bool negative);
 	
-	virtual ExecuteResult execute(GameData &gameData) override;
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const;
 
 private:
