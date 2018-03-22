@@ -30,7 +30,7 @@ namespace Pink {
 class CursorMgr;
 class WalkMgr;
 class Sequencer;
-class Handler;
+class HandlerStartPage;
 
 class GamePage : public Page {
 public:
@@ -53,7 +53,7 @@ public:
     virtual void toConsole();
 
 private:
-    void prepareHandler();
+    void initHandler();
 
 
     int perhapsIsLoaded;
