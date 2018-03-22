@@ -28,6 +28,9 @@
 #include <engines/pink/objects/sequences/sequence.h>
 #include <engines/pink/objects/side_effect.h>
 #include <engines/pink/objects/actors/lead_actor.h>
+#include <engines/pink/objects/pages/game_page.h>
+#include <engines/pink/pink.h>
+
 
 namespace Pink {
 
@@ -58,9 +61,11 @@ void HandlerTimerActions::toConsole() {
 
 void HandlerTimerActions::onMessage(LeadActor *actor) {
     Handler::onMessage(actor);
-    assert(_actions.size() > 0);
+    assert(_actions.size());
     if (!actor->isPlaying()){
-        Action *action = actor->findAction(_actions[0]);// we must pick random
+        Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
+        uint index = rnd.getRandomNumber(_actions.size() - 1);
+        Action *action = actor->findAction(_actions[index]);
         assert(action);
         actor->setAction(action, 0);
     }

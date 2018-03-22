@@ -199,4 +199,8 @@ void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
     _variables[variable] = value;
 }
 
+Common::RandomSource &PinkEngine::getRnd() {
+    return _rnd;
+}
+
 }

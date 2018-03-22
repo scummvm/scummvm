@@ -73,4 +73,8 @@ Common::SeekableReadStream *ResourceMgr::getResourceStream(Common::String &name)
                                              _resDescTable[i].offset + _resDescTable[i].size);
 }
 
+PinkEngine *ResourceMgr::getGame() const {
+    return _game;
+}
+
 } // End of namespace Pink

@@ -27,6 +27,8 @@
 #include <engines/pink/objects/sequences/sequencer.h>
 #include <engines/pink/objects/sequences/sequence.h>
 #include <engines/pink/objects/actors/lead_actor.h>
+#include <engines/pink/objects/pages/game_page.h>
+#include <engines/pink/pink.h>
 #include <common/debug.h>
 
 namespace Pink {
@@ -64,7 +66,13 @@ void HandlerSequences::onMessage(LeadActor *actor) {
     Handler::onMessage(actor);
     Sequencer *sequencer = actor->getSequencer();
 
-    Sequence *sequence = sequencer->findSequence(_sequences[0]); //actually we must pick random sequence
+    assert(_sequences.size());
+
+    Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
+    uint index = rnd.getRandomNumber(_sequences.size() - 1);
+
+    Sequence *sequence = sequencer->findSequence(_sequences[index]);
+
     assert(sequence);
     sequencer->authorSequence(sequence, 0);
 

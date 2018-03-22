@@ -89,7 +89,7 @@ void GamePage::loadManagers() {
 }
 
 PinkEngine *GamePage::getGame() {
-    return _module->getGame();
+    return _resMgr.getGame();
 }
 
 Sequencer *GamePage::getSequencer() {

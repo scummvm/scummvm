@@ -30,7 +30,7 @@ namespace Pink {
 
 class LeadActor;
 
-//TODO in Peril create HandlerTimerActions when it is request for HandlerTimer
+//TODO: in Peril create HandlerTimerActions when it is request for HandlerTimer
 
 // This class has differences in games
 class HandlerTimer : public Handler {

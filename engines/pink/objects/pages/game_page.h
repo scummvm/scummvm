@@ -45,8 +45,8 @@ public:
     PinkEngine *getGame();
     Sequencer *getSequencer();
     WalkMgr *getWalkMgr();
-
     Module *getModule() const;
+
     bool checkValueOfVariable(Common::String &variable, Common::String &value);
     void setVariable(Common::String &variable, Common::String &value);
 
