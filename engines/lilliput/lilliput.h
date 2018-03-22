@@ -208,8 +208,8 @@ public:
 	int16 _interfaceHotspotsX[20];
 	int16 _interfaceHotspotsY[20];
 	Common::KeyCode _keyboardMapping[20];
-	int16 _array10999PosX[40];
-	int16 _array109C1PosY[40];
+	int16 _characterTargetPosX[40];
+	int16 _characterTargetPosY[40];
 	byte _savedSurfaceUnderMouse[16 * 16];
 	byte _charactersToDisplay[40];
 	int16 _characterRelativePositionX[40];
