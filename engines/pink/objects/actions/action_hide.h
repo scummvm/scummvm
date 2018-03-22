@@ -33,7 +33,7 @@ public:
 
     virtual void toConsole();
 
-    virtual void play(bool unk_startNow);
+    virtual void start(bool unk_startNow);
     virtual void end();
 };
 

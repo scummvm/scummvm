@@ -32,6 +32,10 @@ public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
 
+    virtual void start(bool unk);
+
+    virtual void end();
+
 protected:
     uint32 _startFrame;
 };

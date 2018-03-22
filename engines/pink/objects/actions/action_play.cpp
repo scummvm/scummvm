@@ -22,6 +22,7 @@
 
 #include <common/debug.h>
 #include "action_play.h"
+#include "../actors/actor.h"
 #include "engines/pink/archive.h"
 
 namespace Pink {
@@ -34,6 +35,14 @@ void ActionPlay::deserialize(Archive &archive) {
 void ActionPlay::toConsole() {
     debug("\tActionPlay: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
                   " _endFrame = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
+}
+
+void ActionPlay::start(bool unk) {
+    debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
+}
+
+void ActionPlay::end() {
+    debug("ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
 } // End of namespace Pink
