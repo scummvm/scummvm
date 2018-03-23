@@ -24,6 +24,7 @@ MODULE_OBJS = \
     objects/actions/action_sound.o \
     objects/actions/action_still.o \
     objects/actions/action_talk.o \
+    objects/actions/action_text.o \
     objects/actions/walk_action.o \
     objects/actors/actor.o \
     objects/actors/lead_actor.o \
