@@ -30,10 +30,9 @@ namespace Pink {
 class ActionLoop : public ActionPlay {
 public:
     virtual void deserialize(Archive &archive);
-
     virtual void toConsole();
 
-private:
+protected:
     enum Style {
         kPingPong = 2,
         kRandom = 3,

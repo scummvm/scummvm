@@ -20,34 +20,21 @@
  *
  */
 
-
-#include "action_loop.h"
-#include <common/debug.h>
+#include "action_talk.h"
 #include <pink/archive.h>
+#include <common/debug.h>
 
 namespace Pink {
 
-void ActionLoop::deserialize(Archive &archive) {
-    ActionPlay::deserialize(archive);
-    uint16 style;
-    archive >> _intro >> style;
-    switch (style) {
-        case kPingPong:
-            _style = kPingPong;
-            break;
-        case kRandom:
-            _style = kRandom;
-            break;
-        default:
-            _style = kForward;
-    }
-    //_style = static_cast<Style>(style);
+void ActionTalk::deserialize(Archive &archive) {
+    ActionLoop::deserialize(archive);
+    archive >> _vox;
 }
 
-void ActionLoop::toConsole() {
-    debug("\tActionLoop: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
-                  " _endFrame = %u, _intro = %u, _style = %u",
-          _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style);
+void ActionTalk::toConsole() {
+    debug("\tActionTalk: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
+                  " _endFrame = %u, _intro = %u, _style = %u, _vox = %s",
+          _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style, _vox.c_str());
 }
 
 } // End of namespace Pink
