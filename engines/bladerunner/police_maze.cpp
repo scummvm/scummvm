@@ -21,8 +21,10 @@
  */
 
 #include "bladerunner/bladerunner.h"
-
+#include "bladerunner/game_constants.h"
 #include "bladerunner/police_maze.h"
+#include "bladerunner/scene.h"
+#include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
 
@@ -45,7 +47,7 @@ PoliceMaze::~PoliceMaze() {
 }
 
 void PoliceMaze::reset() {
-	_isActive = false;
+	_isPaused = false;
 	_needAnnouncement = false;
 	_announcementRead = false;
 
@@ -67,6 +69,39 @@ void PoliceMaze::setPauseState(bool state) {
 }
 
 void PoliceMaze::tick() {
+	if (_isPaused)
+		return;
+
+	if (_vm->_scene->getSetId() != kSetPS10_PS11_PS12_PS13)
+		return;
+
+	if (_announcementRead) {
+		_needAnnouncement = false;
+
+		return;
+	}
+
+	for (int i = 0; i < kNumMazeTracks; i++)
+		_tracks[i]->tick();
+
+	bool notFound = true;
+	for (int i = 0; i < kNumMazeTracks; i++) {
+		if (!_tracks[i]->isVisible()) {
+			notFound = false;
+			break;
+		}
+	}
+
+	if (notFound && _needAnnouncement && !_announcementRead) {
+		_needAnnouncement = false;
+		_announcementRead = true;
+
+		if (_vm->_scene->getSceneId() == kScenePS13) {
+			_vm->_sceneScript->actorVoiceOver(320, kActorAnsweringMachine);
+		} else {
+			_vm->_sceneScript->actorVoiceOver(310, kActorAnsweringMachine);
+		}
+	}
 }
 
 PoliceMazeTargetTrack::PoliceMazeTargetTrack() {
@@ -99,5 +134,7 @@ void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float s
 	warning("PoliceMazeTargetTrack::add(%d, %f, %f, %f, %f, %f, %f, %d, %p, %d)", trackId,  startX,  startY,  startZ,  endX,  endY,  endZ,  count,  (void *)list, a11);
 }
 
+void PoliceMazeTargetTrack::tick() {
+}
 
 } // End of namespace BladeRunner

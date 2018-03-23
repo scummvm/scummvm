@@ -59,12 +59,15 @@ public:
 
 	void reset();
 	void add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int count, void *list, bool a11);
+
+	void tick();
+	bool isVisible() { return _visible; }
 };
 
 class PoliceMaze {
 	BladeRunnerEngine *_vm;
 
-	bool _isActive;
+	bool _isPaused;
 	bool _needAnnouncement;
 	bool _announcementRead;
 	int _pm_var1;

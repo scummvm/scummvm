@@ -33,6 +33,8 @@ namespace BladeRunner {
 class BladeRunnerEngine;
 
 class ScriptBase {
+friend class SceneScript;
+
 protected:
 	BladeRunnerEngine *_vm;
 
