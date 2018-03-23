@@ -24,6 +24,7 @@
 #include "action_still.h"
 #include "engines/pink/archive.h"
 #include <engines/pink/objects/actors/actor.h>
+#include "pink/cel_decoder.h"
 
 namespace Pink {
 
@@ -44,7 +45,7 @@ void ActionStill::end() {
 
 void ActionStill::onStart() {
     debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
-    _flicDecoder->seekToFrame(_startFrame);
+    _decoder->seekToFrame(_startFrame);
 }
 
 } // End of namespace Pink

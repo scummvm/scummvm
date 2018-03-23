@@ -20,6 +20,107 @@
  *
  */
 
+#include <common/stream.h>
+#include "cel_decoder.h"
+
 namespace Pink {
 
+bool CelDecoder::loadStream(Common::SeekableReadStream *stream) {
+    close();
+
+    /* uint32 frameSize = */ stream->readUint32LE();
+    uint16 frameType = stream->readUint16LE();
+
+    // Check FLC magic number
+    if (frameType != 0xAF12) {
+        warning("FlicDecoder::loadStream(): attempted to load non-FLC data (type = 0x%04X)", frameType);
+        return false;
+    }
+
+    uint16 frameCount = stream->readUint16LE();
+    uint16 width = stream->readUint16LE();
+    uint16 height = stream->readUint16LE();
+    uint16 colorDepth = stream->readUint16LE();
+    if (colorDepth != 8) {
+        warning("FlicDecoder::loadStream(): attempted to load an FLC with a palette of color depth %d. Only 8-bit color palettes are supported", colorDepth);
+        return false;
+    }
+
+    addTrack(new CelVideoTrack(stream, frameCount, width, height));
+    return true;
 }
+
+uint32 CelDecoder::getX(){
+    CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+    if (!track)
+        return -1;
+    return track->getX();
+}
+
+uint32 CelDecoder::getY() {
+    CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+    if (!track)
+        return -1;
+    return track->getY();
+}
+
+CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
+        : FlicVideoTrack(stream, frameCount, width, height, 1) {
+    readHeader();
+}
+
+#define PREFIX_TYPE 0xF100
+#define CEL_DATA 3
+
+void CelDecoder::CelVideoTrack::readPrefixChunk() {
+    _fileStream->seek(0x80);
+    uint32 chunkSize = _fileStream->readUint32LE();
+    uint16 chunkType = _fileStream->readUint16LE();
+    if (chunkType != PREFIX_TYPE)
+        return;
+    uint32 offset = 6;
+    while (offset < chunkSize) {
+        uint32 subchunkSize = _fileStream->readUint32LE();
+        uint16 subchunkType = _fileStream->readUint16LE();
+        switch (subchunkType) {
+            case CEL_DATA:
+                _fileStream->skip(2); // Unknown field
+                _center.x = _fileStream->readUint16LE();
+                _center.y = _fileStream->readUint16LE();
+                _fileStream->skip(subchunkSize - 6 - 6);
+                break;
+                default:
+                _fileStream->skip(subchunkSize - 6);
+                break;
+        }
+        offset += subchunkSize;
+    }
+}
+
+void CelDecoder::CelVideoTrack::readHeader() {
+    _fileStream->readUint16LE();	// flags
+    // Note: The normal delay is a 32-bit integer (dword), whereas the overridden delay is a 16-bit integer (word)
+    // the frame delay is the FLIC "speed", in milliseconds.
+    _frameDelay = _startFrameDelay = _fileStream->readUint32LE();
+
+    _fileStream->seek(80);
+    _offsetFrame1 = _fileStream->readUint32LE();
+    _offsetFrame2 = _fileStream->readUint32LE();
+
+    if (_offsetFrame1 > 0x80) {
+        readPrefixChunk();
+    }
+
+    // Seek to the first frame
+    _fileStream->seek(_offsetFrame1);
+}
+
+uint32 CelDecoder::CelVideoTrack::getX() const {
+    return _center.x - getWidth() / 2;
+}
+
+uint32 CelDecoder::CelVideoTrack::getY() const {
+    return _center.y - getHeight() / 2;
+}
+
+} // End of namepsace Pink

@@ -26,11 +26,12 @@
 #include "engines/pink/archive.h"
 #include "engines/pink/objects/pages/game_page.h"
 #include "pink/pink.h"
+#include "pink/cel_decoder.h"
 
 namespace Pink {
 
 ActionCEL::ActionCEL()
-    : _flicDecoder(nullptr) {
+    : _decoder(nullptr) {
 
 }
 
@@ -40,30 +41,30 @@ void ActionCEL::deserialize(Archive &archive) {
 }
 
 void ActionCEL::start(bool unk) {
-    if (!_flicDecoder)
-        _flicDecoder = _actor->getPage()->loadCel(_fileName);
+    if (!_decoder)
+        _decoder = _actor->getPage()->loadCel(_fileName);
     _actor->getPage()->getGame()->getDirector()->addSprite(this);
     this->onStart();
 }
 
 void ActionCEL::end() {
     _actor->getPage()->getGame()->getDirector()->removeSprite(this);
-    delete _flicDecoder;
-    _flicDecoder = nullptr;
+    delete _decoder;
+    _decoder = nullptr;
 }
 
 uint32 ActionCEL::getZ() {
     return _z;
 }
 
-Video::FlicDecoder *ActionCEL::getDecoder() {
-    return _flicDecoder;
+CelDecoder *ActionCEL::getDecoder() {
+    return _decoder;
 }
 
 bool ActionCEL::initPallete(Director *director) {
-    _flicDecoder = _actor->getPage()->loadCel(_fileName);
-    _flicDecoder->decodeNextFrame();
-    director->setPallette(_flicDecoder->getPalette());
+    _decoder = _actor->getPage()->loadCel(_fileName);
+    _decoder->decodeNextFrame();
+    director->setPallette(_decoder->getPalette());
     return 1;
 }
 

@@ -24,6 +24,7 @@
 #include "action_play.h"
 #include "../actors/actor.h"
 #include "engines/pink/archive.h"
+#include "pink/cel_decoder.h"
 
 namespace Pink {
 
@@ -44,10 +45,10 @@ void ActionPlay::end() {
 
 void ActionPlay::onStart() {
     debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
-    _flicDecoder->seekToFrame(_startFrame);
+    _decoder->seekToFrame(_startFrame);
     if (_stopFrame != -1)
-        _flicDecoder->setEndFrame(_stopFrame);
-    _flicDecoder->start();
+        _decoder->setEndFrame(_stopFrame);
+    _decoder->start();
 }
 
 } // End of namespace Pink

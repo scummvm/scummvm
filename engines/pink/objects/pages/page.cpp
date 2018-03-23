@@ -45,7 +45,7 @@ Sound *Page::loadSound(Common::String &fileName) {
 }
 
 
-Video::FlicDecoder *Page::loadCel(Common::String &fileName) {
+CelDecoder *Page::loadCel(Common::String &fileName) {
     return _resMgr.loadCEL(fileName);
 }
 

@@ -2,6 +2,7 @@ MODULE := engines/pink
 
 MODULE_OBJS = \
     archive.o \
+    cel_decoder.o \
     console.o \
     cursor_mgr.o \
 	detection.o \
