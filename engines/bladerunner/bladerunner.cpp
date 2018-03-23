@@ -45,6 +45,7 @@
 #include "bladerunner/outtake.h"
 #include "bladerunner/obstacles.h"
 #include "bladerunner/overlays.h"
+#include "bladerunner/police_maze.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
@@ -238,7 +239,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	// TODO: outtake player - but this is done bit differently
 
-	// TODO: police maze
+	_policeMaze = new PoliceMaze(this);
 
 	_obstacles = new Obstacles(this);
 
@@ -647,6 +648,9 @@ void BladeRunnerEngine::shutdown() {
 	delete _itemPickup;
 	_itemPickup = nullptr;
 
+	delete _policeMaze;
+	_policeMaze = nullptr;
+
 	delete _obstacles;
 	_obstacles = nullptr;
 
@@ -759,6 +763,8 @@ void BladeRunnerEngine::gameTick() {
 				_actors[i]->tickCombat();
 			}
 		}
+
+		_policeMaze->tick();
 
 		// TODO: Gun range announcements
 		_zbuffer->clean();

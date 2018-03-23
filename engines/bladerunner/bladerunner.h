@@ -75,6 +75,7 @@ class Mouse;
 class Music;
 class Obstacles;
 class Overlays;
+class PoliceMaze;
 class Scene;
 class SceneObjects;
 class SceneScript;
@@ -132,6 +133,7 @@ public:
 	Music              *_music;
 	Obstacles          *_obstacles;
 	Overlays           *_overlays;
+	PoliceMaze         *_policeMaze;
 	Scene              *_scene;
 	SceneObjects       *_sceneObjects;
 	SceneScript        *_sceneScript;

@@ -40,6 +40,7 @@ MODULE_OBJS = \
 	obstacles.o \
 	outtake.o \
 	overlays.o \
+	police_maze.o \
 	regions.o \
 	scene.o \
 	scene_objects.o \
