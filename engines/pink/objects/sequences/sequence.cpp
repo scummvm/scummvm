@@ -27,6 +27,7 @@
 #include "engines/pink/archive.h"
 #include "engines/pink/objects/pages/game_page.h"
 #include "engines/pink/objects/actors/actor.h"
+#include "sequence_context.h"
 
 namespace Pink {
 
@@ -77,7 +78,7 @@ void Sequence::start(int unk) {
         return;
     }
 
-    if (!_items[_context->_nextItemIndex]->execute(_context->_unk, this, unk)){
+    if (!_items[_context->_nextItemIndex]->execute(_context->_index, this, unk)){
         //destroy context;
     }
 
@@ -85,26 +86,16 @@ void Sequence::start(int unk) {
     for (i = _context->_nextItemIndex + 1; i <_items.size(); ++i){
         if (_items[i]->isLeader())
             break;
-        _items[i]->execute(_context->_unk, this, unk);
+        _items[i]->execute(_context->_index, this, unk);
     }
     _context->_nextItemIndex = i;
 
 
     Common::Array<SequenceActorState> &states = _context->_states;
     for (uint j = 0; j < states.size(); ++j) {
-        if (states[j]._unk != _context->_unk &&
-            !states[j]._actionName.empty()) {
-            Actor *actor;
-            Action *action;
-            actor = _sequencer->_page->findActor(states[j]._actorName);
-            assert(actor);
-            action = actor->findAction(states[j]._actionName);
-            assert(action);
-            if (actor->getAction() != action)
-                actor->setAction(action, unk);
-        }
+        states[j].check(_context->_index, this, unk);
     }
-    _context->_unk++;
+    _context->_index++;
 }
 
 void SequenceAudio::deserialize(Archive &archive) {
@@ -118,43 +109,6 @@ void SequenceAudio::toConsole() {
     for (int i = 0; i < _items.size(); ++i) {
         _items[i]->toConsole();
     }
-}
-
-
-
-SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
-    : _sequence(sequence), _sequencer(sequencer),
-      _nextItemIndex(0), _unk(1), _actor(nullptr)
-{
-    sequence->setContext(this);
-    Common::Array<SequenceItem*> &items = sequence->getItems();
-    debug("SequenceContext for %s", _sequence->getName().c_str());
-
-    for (uint i = 0; i < items.size(); ++i) {
-        bool found = 0;
-        for (uint j = 0; j < _states.size(); ++j) {
-            if (items[i]->getActor() == _states[j].getActor()){
-                found = 1;
-                break;
-            }
-        }
-        if (!found) {
-            debug(items[i]->getActor().c_str());
-            _states.push_back({items[i]->getActor()});
-        }
-    }
-}
-
-SequenceContext::~SequenceContext() {
-
-}
-
-SequenceActorState::SequenceActorState(const Common::String &name)
-    :_actorName(name), _unk(0)
-{}
-
-const Common::String &SequenceActorState::getActor() const {
-    return _actorName;
 }
 
 } // End of namespace Pink

@@ -36,6 +36,7 @@ MODULE_OBJS = \
     objects/pages/game_page.o \
     objects/sequences/seq_timer.o \
     objects/sequences/sequence.o \
+    objects/sequences/sequence_context.o \
     objects/sequences/sequence_item.o \
     objects/sequences/sequencer.o \
     objects/walk/walk_mgr.o \

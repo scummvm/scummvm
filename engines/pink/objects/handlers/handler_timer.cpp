@@ -72,7 +72,7 @@ void HandlerTimerActions::onMessage(LeadActor *actor) {
 }
 
 
-void HandlerTimerSequences::handle(LeadActor *actor) {
+void HandlerTimerSequences::handle(Sequence *sequence) {
     debug("HandlerTimerSequences function is not implemented");
 }
 

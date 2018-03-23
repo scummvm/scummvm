@@ -44,6 +44,12 @@ Sound *Page::loadSound(Common::String &fileName) {
     return _resMgr.loadSound(fileName);
 }
 
+
+Video::FlicDecoder *Page::loadCel(Common::String &fileName) {
+    return _resMgr.loadCEL(fileName);
+}
+
+
 void Page::toConsole() {
     for (int i = 0; i < _actors.size(); ++i) {
         _actors[i]->toConsole();

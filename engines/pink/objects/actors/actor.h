@@ -31,12 +31,13 @@ namespace Pink {
 class GamePage;
 class Action;
 class Sequencer;
+class Director;
 
 class Actor : public NamedObject {
 public:
     Actor()
      : _page(nullptr), _action(nullptr),
-        _isActionEnd(1)
+        _isActionEnded(1)
     {};
     virtual void deserialize(Archive &archive);
 
@@ -45,7 +46,6 @@ public:
     Sequencer *getSequencer() const;
     GamePage *getPage() const;
     Action *getAction() const;
-
 
     bool isPlaying();
     virtual void init(bool unk);
@@ -57,11 +57,13 @@ public:
     void setAction(Action *newAction);
     void setAction(Action *newAction, bool unk);
 
+    bool initPallete(Director *director);
+
 protected:
     GamePage *_page;
     Action *_action;
     Common::Array<Action*> _actions;
-    bool _isActionEnd;
+    bool _isActionEnded;
 };
 
 } // End of namespace Pink

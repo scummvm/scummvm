@@ -38,7 +38,7 @@ public:
     const Common::String &getActor() const;
     const Common::String &getAction() const;
 
-    virtual bool execute(int unk, Sequence *sequence, bool unk2);
+    virtual bool execute(int index, Sequence *sequence, bool unk2);
     virtual bool isLeader();
 
 protected:
@@ -64,7 +64,7 @@ private:
 
 class SequenceItemDefaultAction : public SequenceItem {
 public:
-    virtual bool execute(int unk, Sequence *sequence, bool unk2);
+    virtual bool execute(int index, Sequence *sequence, bool unk2);
 
     virtual void toConsole();
 };

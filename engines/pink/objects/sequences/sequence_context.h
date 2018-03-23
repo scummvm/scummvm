@@ -20,34 +20,45 @@
  *
  */
 
-#ifndef PINK_DIRECTOR_H
-#define PINK_DIRECTOR_H
+#ifndef PINK_SEQUENCE_CONTEXT_H
+#define PINK_SEQUENCE_CONTEXT_H
 
 #include <common/array.h>
-#include <common/system.h>
 
 namespace Pink {
 
-class ActionCEL;
+class Sequence;
+class Sequencer;
 
-class Director {
+class SequenceActorState {
 public:
-    Director(OSystem *system);
-    //void addSoundObject();
-    //void removeSound();
-    //void updateSoundAction
-    //CActor *getActorByCoords()
+    SequenceActorState(const Common::String &name);
 
-    void draw();
-    void addSprite(ActionCEL *sprite);
-    void removeSprite(ActionCEL *sprite);
-    void setPallette(const byte *pallete);
-private:
-    OSystem *_system;
-    Common::Array<ActionCEL*> _sprites;
+    const Common::String &getActor() const;
+    void check(int index, Sequence *sequence, bool unk);
+
+public:
+    Common::String _actorName;
+    Common::String _actionName;
+    int _index;
 };
 
-} // End of namespace Pink
+class Actor;
 
+class SequenceContext {
+public:
+    SequenceContext(Sequence *sequence, Sequencer* sequencer);
+
+
+public:
+    Sequence *_sequence;
+    Sequencer *_sequencer;
+    int _nextItemIndex;
+    Actor *_actor;
+    Common::Array<SequenceActorState> _states;
+    int _index;
+};
+
+}
 
 #endif

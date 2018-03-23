@@ -23,15 +23,26 @@
 #ifndef PINK_ACTION_CEL_H
 #define PINK_ACTION_CEL_H
 
+#include <video/flic_decoder.h>
 #include "action.h"
 
 namespace Pink {
 
 class ActionCEL : public Action {
 public:
+    ActionCEL();
     virtual void deserialize(Archive &archive);
+    virtual void start(bool unk);
+    virtual void end();
+
+    uint32 getZ();
+    Video::FlicDecoder *getDecoder();
+
+    virtual bool initPallete(Director *director);
 
 protected:
+    virtual void onStart() {} ;
+    Video::FlicDecoder *_flicDecoder;
     Common::String _fileName;
     uint32 _z;
 };

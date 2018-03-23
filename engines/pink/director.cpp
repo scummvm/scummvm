@@ -20,7 +20,44 @@
  *
  */
 
-namespace Pink {
+#include "director.h"
+#include <engines/pink/objects/actions/action_cel.h>
+#include "graphics/surface.h"
+#include "graphics/palette.h"
 
+namespace Pink {
+Director::Director(OSystem *system)
+    : _system(system) {}
+
+void Director::draw() {
+    bool needUpdate = 0;
+    for (int i = 0; i < _sprites.size(); ++i) {
+        Video::FlicDecoder *decoder = _sprites[i]->getDecoder();
+        if (decoder->needsUpdate()) {
+            const Graphics::Surface *surface = decoder->decodeNextFrame();
+            _system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
+            needUpdate = 1;
+        }
+    }
+    if (needUpdate)
+        _system->updateScreen();
+}
+
+void Director::addSprite(ActionCEL *sprite) {
+    _sprites.push_back(sprite); //TODO impl sorting
+}
+
+void Director::removeSprite(ActionCEL *sprite) {
+    for (int i = 0; i < _sprites.size(); ++i) {
+        if (sprite == _sprites[i]) {
+            _sprites.remove_at(i);
+            break;
+        }
+    }
+}
+
+void Director::setPallette(const byte *pallete) {
+    _system->getPaletteManager()->setPalette(pallete, 0, 256);
+}
 
 }

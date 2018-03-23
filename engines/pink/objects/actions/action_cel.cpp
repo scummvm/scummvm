@@ -22,13 +22,49 @@
 
 #include <common/debug.h>
 #include "action_cel.h"
+#include <pink/objects/actors/actor.h>
 #include "engines/pink/archive.h"
+#include "engines/pink/objects/pages/game_page.h"
+#include "pink/pink.h"
 
 namespace Pink {
+
+ActionCEL::ActionCEL()
+    : _flicDecoder(nullptr) {
+
+}
 
 void ActionCEL::deserialize(Archive &archive) {
     Action::deserialize(archive);
     archive >> _fileName >> _z;
+}
+
+void ActionCEL::start(bool unk) {
+    if (!_flicDecoder)
+        _flicDecoder = _actor->getPage()->loadCel(_fileName);
+    _actor->getPage()->getGame()->getDirector()->addSprite(this);
+    this->onStart();
+}
+
+void ActionCEL::end() {
+    _actor->getPage()->getGame()->getDirector()->removeSprite(this);
+    delete _flicDecoder;
+    _flicDecoder = nullptr;
+}
+
+uint32 ActionCEL::getZ() {
+    return _z;
+}
+
+Video::FlicDecoder *ActionCEL::getDecoder() {
+    return _flicDecoder;
+}
+
+bool ActionCEL::initPallete(Director *director) {
+    _flicDecoder = _actor->getPage()->loadCel(_fileName);
+    _flicDecoder->decodeNextFrame();
+    director->setPallette(_flicDecoder->getPalette());
+    return 1;
 }
 
 } // End of namespace Pink

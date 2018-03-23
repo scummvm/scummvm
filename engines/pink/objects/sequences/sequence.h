@@ -46,6 +46,7 @@ public:
     void init(int unk);
     void start(int unk);
 
+
 public:
     SequenceContext *_context;
     Sequencer *_sequencer;
@@ -63,34 +64,6 @@ private:
     Common::String _sound;
     int _unk1;
     int _unk2;
-};
-
-class SequenceActorState {
-public:
-    SequenceActorState(const Common::String &name);
-
-    const Common::String &getActor() const;
-
-public:
-    Common::String _actorName;
-    Common::String _actionName;
-    int _unk;
-};
-
-class Actor;
-
-class SequenceContext {
-public:
-    SequenceContext(Sequence *sequence, Sequencer* sequencer);
-    ~SequenceContext();
-
-public:
-    Sequence *_sequence;
-    Sequencer *_sequencer;
-    int _nextItemIndex;
-    Actor *_actor;
-    Common::Array<SequenceActorState> _states;
-    int _unk;
 };
 
 } // End of namespace Pink

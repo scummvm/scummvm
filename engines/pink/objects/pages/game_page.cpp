@@ -26,7 +26,7 @@
 #include "engines/pink/cursor_mgr.h"
 #include "engines/pink/objects/actors/lead_actor.h"
 #include "engines/pink/objects/sequences/sequencer.h"
-
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -59,7 +59,18 @@ void GamePage::init(bool isLoadingSave) {
 
     toConsole();
 
-    Page::init();
+    for (int j = 0; j < _actors.size(); ++j) {
+        if (_actors[j]->initPallete(_module->getGame()->getDirector()))
+            break;
+    }
+
+
+    LeadActor::State state = _leadActor->getState();
+    bool unk = (state == LeadActor::kInventory || state == LeadActor::kPDA);
+
+    for (int i = 0; i < _actors.size(); ++i) {
+        _actors[i]->init(unk);
+    }
 
     if (!isLoadingSave)
         initHandler();

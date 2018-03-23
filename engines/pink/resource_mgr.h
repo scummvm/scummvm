@@ -21,7 +21,7 @@
  */
 
 #include <common/scummsys.h>
-#include <common/stream.h>
+#include <common/substream.h>
 
 #ifndef PINK_RESOURCE_MGR_H
 #define PINK_RESOURCE_MGR_H
@@ -46,15 +46,14 @@ public:
     ~ResourceMgr();
 
     void init(PinkEngine *game, GamePage *page);
-    //move methods to page
-    //compiler must do RVO
+
     //Common::String loadText(Common::String &name);
     Sound *loadSound(Common::String &name);
-    // loadCEL();
+    Video::FlicDecoder *loadCEL(Common::String &name);
     PinkEngine *getGame() const;
 
 private:
-    Common::SeekableReadStream *getResourceStream(Common::String &name);
+    Common::SafeSeekableSubReadStream *getResourceStream(Common::String &name);
 
     PinkEngine *_game;
     ResourceDescription *_resDescTable;

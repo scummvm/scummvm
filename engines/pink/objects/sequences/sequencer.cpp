@@ -24,6 +24,7 @@
 #include <common/debug.h>
 #include "sequencer.h"
 #include "sequence.h"
+#include "sequence_context.h"
 #include "engines/pink/archive.h"
 
 namespace Pink {

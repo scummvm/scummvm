@@ -28,6 +28,7 @@
 #include "engines/pink/archive.h"
 #include "engines/pink/objects/pages/game_page.h"
 #include "engines/pink/objects/actors/actor.h"
+#include "sequence_context.h"
 
 namespace Pink {
 
@@ -47,7 +48,7 @@ const Common::String &SequenceItem::getAction() const {
     return _action;
 }
 
-bool SequenceItem::execute(int unk, Sequence *sequence, bool unk2) {
+bool SequenceItem::execute(int index, Sequence *sequence, bool unk2) {
     Actor *actor;
     Action *action;
     if (!(actor = sequence->_sequencer->_page->findActor(_actor)) ||
@@ -60,7 +61,7 @@ bool SequenceItem::execute(int unk, Sequence *sequence, bool unk2) {
     Common::Array<SequenceActorState> &states = sequence->_context->_states;
     for (int i = 0; i < sequence->_context->_states.size(); ++i) {
         if (states[i]._actorName == _actor){
-            states[i]._unk = unk;
+            states[i]._index = index;
             sequence->_context->_actor = isLeader() ? actor : sequence->_context->_actor;
             break;
         }
@@ -91,7 +92,7 @@ void SequenceItemLeaderAudio::toConsole() {
     debug("\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
-bool SequenceItemDefaultAction::execute(int unk, Sequence *sequence, bool unk2) {
+bool SequenceItemDefaultAction::execute(int index, Sequence *sequence, bool unk2) {
     Common::Array<SequenceActorState> &actorStates = sequence->_context->_states;
     for (int i = 0; i < actorStates.size(); ++i) {
         if (actorStates[i]._actorName == _actor){

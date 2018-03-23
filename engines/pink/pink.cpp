@@ -32,7 +32,7 @@ namespace Pink {
 
 Pink::PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
         : Engine(system), _console(nullptr), _rnd("pink"),
-          _desc(*desc), _bro(nullptr), _module(nullptr)
+          _desc(*desc), _bro(nullptr), _module(nullptr), _director(_system)
 {
     debug("PinkEngine constructed");
 
@@ -87,13 +87,8 @@ Common::Error Pink::PinkEngine::run() {
         return error;
     }
 
-    Video::FlicDecoder flicDecoder;
-    Common::File anim;
-    anim.open("WANDRBOY.CEL");
-    flicDecoder.loadStream(&anim);
-    flicDecoder.start();
-    _system->updateScreen();
-    const Graphics::Surface *surface = flicDecoder.decodeNextFrame();
+
+    int i = 0;
     while(!shouldQuit()){
         Common::Event event;
         while(_eventMan->pollEvent(event)){
@@ -118,12 +113,8 @@ Common::Error Pink::PinkEngine::run() {
                     break;
             }
         }
-        //update();
-        surface = flicDecoder.needsUpdate() ? flicDecoder.decodeNextFrame() : surface;
-        if (surface) {
-            _system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
-            _system->updateScreen();
-        }
+
+        _director.draw();
         _system->delayMillis(10);
     }
 

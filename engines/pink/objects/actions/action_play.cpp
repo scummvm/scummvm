@@ -37,12 +37,17 @@ void ActionPlay::toConsole() {
                   " _endFrame = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
 }
 
-void ActionPlay::start(bool unk) {
-    debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
+void ActionPlay::end() {
+    ActionCEL::end();
+    debug("ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
-void ActionPlay::end() {
-    debug("ActionPlay %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+void ActionPlay::onStart() {
+    debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
+    _flicDecoder->seekToFrame(_startFrame);
+    if (_stopFrame != -1)
+        _flicDecoder->setEndFrame(_stopFrame);
+    _flicDecoder->start();
 }
 
 } // End of namespace Pink

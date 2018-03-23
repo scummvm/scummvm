@@ -53,6 +53,8 @@ public:
 
     State getState() const;
 
+    void start(bool isHandler);
+
 private:
     State _state;
     CursorMgr *_cursorMgr;
