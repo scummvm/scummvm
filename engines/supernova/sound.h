@@ -63,7 +63,7 @@ class Sound {
 public:
 
 public:
-	Sound(SupernovaEngine *vm, Audio::Mixer *mixer);
+	Sound(Audio::Mixer *mixer, ResourceManager *resMan);
 
 	void play(AudioIndex index);
 	void play(MusicIndex index);
@@ -71,7 +71,7 @@ public:
 	bool isPlaying();
 private:
 	Audio::Mixer *_mixer;
-	SupernovaEngine *_vm;
+	ResourceManager *_resMan;
 	Audio::SoundHandle _soundHandle;
 	int _rate;
 };

@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	detection.o \
 	graphics.o \
 	supernova.o \
+	resman.o \
 	rooms.o \
 	sound.o \
 	state.o

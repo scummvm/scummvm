@@ -50,12 +50,6 @@ enum MessagePosition {
 	kMessageTop
 };
 
-struct AudioInfo {
-	int _filenumber;
-	int _offsetStart;
-	int _offsetEnd;
-};
-
 const int kColorBlack       =  0;
 const int kColorWhite25     =  1;
 const int kColorWhite35     =  2;
