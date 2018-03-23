@@ -107,6 +107,8 @@ void PSP2EventSource::preprocessFingerDown(SDL_Event *event) {
 		if (_finger[port][i].id == -1) {
 			_finger[port][i].id = id;
 			_finger[port][i].timeLastDown = event->tfinger.timestamp;
+			_finger[port][i].lastDownX = event->tfinger.x;
+			_finger[port][i].lastDownY = event->tfinger.y;
 			_finger[port][i].lastX = x;
 			_finger[port][i].lastY = y;
 			break;
@@ -137,28 +139,34 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 			if (!_multiFingerDragging[port]) {
 				if ((event->tfinger.timestamp - _finger[port][i].timeLastDown) <= MAX_TAP_TIME) {
 					// short (<MAX_TAP_TIME ms) tap is interpreted as right/left mouse click depending on # fingers already down
-					if (numFingersDown == 2 || numFingersDown == 1) {
-						Uint8 simulatedButton = 0;
-						if (numFingersDown == 2) {
-							simulatedButton = SDL_BUTTON_RIGHT;
-						} else if (numFingersDown == 1) {
-							simulatedButton = SDL_BUTTON_LEFT;
-							if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
-								convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+					// but only if the finger hasn't moved since it was pressed down by more than MAX_TAP_MOTION_DISTANCE pixels
+					float xrel = ((event->tfinger.x * 960.0) - (_finger[port][i].lastDownX * 960.0));
+					float yrel = ((event->tfinger.y * 544.0) - (_finger[port][i].lastDownY * 544.0));
+					float maxRSquared = (float) (MAX_TAP_MOTION_DISTANCE * MAX_TAP_MOTION_DISTANCE);
+					if ((xrel * xrel + yrel * yrel) < maxRSquared) {
+						if (numFingersDown == 2 || numFingersDown == 1) {
+							Uint8 simulatedButton = 0;
+							if (numFingersDown == 2) {
+								simulatedButton = SDL_BUTTON_RIGHT;
+							} else if (numFingersDown == 1) {
+								simulatedButton = SDL_BUTTON_LEFT;
+								if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
+									convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
+								}
 							}
+
+							event->type = SDL_MOUSEBUTTONDOWN;
+							event->button.button = simulatedButton;
+							event->button.x = x;
+							event->button.y = y;
+
+							SDL_Event ev;
+							ev.type = SDL_MOUSEBUTTONUP;
+							ev.button.button = simulatedButton;
+							ev.button.x = x;
+							ev.button.y = y;
+							SDL_PushEvent(&ev);
 						}
-
-						event->type = SDL_MOUSEBUTTONDOWN;
-						event->button.button = simulatedButton;
-						event->button.x = x;
-						event->button.y = y;
-
-						SDL_Event ev;
-						ev.type = SDL_MOUSEBUTTONUP;
-						ev.button.button = simulatedButton;
-						ev.button.x = x;
-						ev.button.y = y;
-						SDL_PushEvent(&ev);
 					}
 				}
 			} else if (numFingersDown == 1) {
