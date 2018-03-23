@@ -73,6 +73,10 @@ bool Item::isTarget() const {
 	return _isTarget;
 }
 
+bool Item::isPoliceMazeEnemy() const {
+	return _isPoliceMazeEnemy;
+}
+
 bool Item::tick(Common::Rect *screenRect, bool special) {
 	if (!_isVisible) {
 		*screenRect = Common::Rect();
@@ -150,6 +154,15 @@ void Item::setup(int itemId, int setId, int animationId, Vector3 position, int f
 	_screenRectangle.right = -1;
 	_screenRectangle.top = -1;
 	_screenRectangle.left = -1;
+}
+
+void Item::spinInWorld() {
+	_isSpinning = true;
+	if (_vm->_rnd.getRandomNumberRng(1, 2) == 1) {
+		_facingChange = -340;
+	} else {
+		_facingChange = 340;
+	}
 }
 
 bool Item::isUnderMouse(int mouseX, int mouseY) const {

@@ -681,7 +681,12 @@ void ScriptBase::Item_Remove_From_World(int itemId) {
 }
 
 void ScriptBase::Item_Spin_In_World(int itemId) {
-	warning("Item_Spin_In_World(%d)", itemId);
+	_vm->_items->spinInWorld(itemId);
+	if (_vm->_items->isPoliceMazeEnemy(itemId)) {
+		Police_Maze_Increment_Score(1);
+	} else {
+		Police_Maze_Decrement_Score(1);
+	}
 }
 
 void ScriptBase::Item_Flag_As_Target(int itemId) {

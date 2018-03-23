@@ -126,6 +126,22 @@ bool Items::isTarget(int itemId) const {
 	return _items[itemIndex]->isTarget();
 }
 
+bool Items::isPoliceMazeEnemy(int itemId) const {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return false;
+	}
+	return _items[itemIndex]->isTarget();
+}
+
+void Items::spinInWorld(int itemId) {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return;
+	}
+	_items[itemIndex]->spinInWorld();
+}
+
 int Items::findTargetUnderMouse(int mouseX, int mouseY) const {
 	int setId = _vm->_scene->getSetId();
 	for (int i = 0 ; i < (int)_items.size(); ++i) {

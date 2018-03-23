@@ -66,6 +66,8 @@ public:
 	void getWidthHeight(int *width, int *height) const;
 
 	bool isTarget() const;
+	bool isPoliceMazeEnemy() const;
+	void spinInWorld();
 	bool tick(Common::Rect *screenRect, bool special);
 
 	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisible, bool isPoliceMazeEnemy);

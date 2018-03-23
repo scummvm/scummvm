@@ -48,7 +48,10 @@ public:
 	bool remove(int itemId);
 
 	bool isTarget(int itemId) const;
+	bool isPoliceMazeEnemy(int itemId) const;
 	int findTargetUnderMouse(int mouseX, int mouseY) const;
+
+	void spinInWorld(int itemId);
 
 private:
 	int findItem(int itemId) const;
