@@ -88,7 +88,7 @@ public:
 	int _heroismBarX;
 	int _heroismBarBottomY;
 
-	Common::Point _array12311[640];
+	Common::Point _sequenceArr[640];
 	byte _characterMapPixelColor[40];
 	int8 _characterLastSequence[40];
 	Common::Point _array1813BPos[32];
@@ -129,8 +129,8 @@ private:
 
 	void enableCharacterScript(byte index, byte var1, byte *curBufPtr);
 	void skipOpcodes(int var1);
-	void sub16C86(int index, byte *buf);
-	void sub16C5C(int index, int8 var3);
+	void copySequence(int index, byte *buf);
+	void setSequence(int charIdx, int8 seqIdx);
 	void checkSpeechAllowed(bool &forceReturnFl);
 	void decodePackedText(char *buf);
 	void startSpeech(int var);
@@ -219,21 +219,21 @@ private:
 	void OC_saveAndQuit();
 	void OC_nSkipOpcodes();
 	void OC_startSpeech5();
-	void OC_resetByte1714E();
+	void OC_resetHandleOpcodeFlag();
 	void OC_deleteSavegameAndQuit();
 	void OC_incScriptForVal();
-	void OC_sub17BA5();
+	void OC_computeChararacterAttr();
 	void OC_setByte18823();
 	void OC_callScript();
 	void OC_callScriptAndReturn();
 	void OC_setCurrentScriptCharacterPos();
 	void OC_initScriptFor();
-	void OC_sub17AE1();
-	void OC_sub17AEE();
-	void OC_setWord10804();
-	void OC_sub17C0E();
-	void OC_sub17C55();
-	void OC_sub17C76();
+	void OC_setCurrentCharacterSequence();
+	void OC_setNextCharacterSequence();
+	void OC_setHost();
+	void OC_changeMapCube();
+	void OC_setCharacterCarry();
+	void OC_dropCarried();
 	void OC_setCurrentCharacter();
 	void OC_sub17C8B();
 	void OC_sub17CA2();

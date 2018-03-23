@@ -72,7 +72,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	}
 
 	for (int i = 0; i < 640; i++) {
-		_array12311[i] = Common::Point(-1, -1);
+		_sequenceArr[i] = Common::Point(-1, -1);
 	}
 
 	for (int i = 0; i < 1600; i++)
@@ -290,7 +290,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_startSpeech5();
 		break;
 	case 0xF:
-		OC_resetByte1714E();
+		OC_resetHandleOpcodeFlag();
 		break;
 	case 0x10:
 		OC_deleteSavegameAndQuit();
@@ -299,7 +299,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_incScriptForVal();
 		break;
 	case 0x12:
-		OC_sub17BA5();
+		OC_computeChararacterAttr();
 		break;
 	case 0x13:
 		OC_setByte18823();
@@ -317,22 +317,22 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_initScriptFor();
 		break;
 	case 0x18:
-		OC_sub17AE1();
+		OC_setCurrentCharacterSequence();
 		break;
 	case 0x19:
-		OC_sub17AEE();
+		OC_setNextCharacterSequence();
 		break;
 	case 0x1A:
-		OC_setWord10804();
+		OC_setHost();
 		break;
 	case 0x1B:
-		OC_sub17C0E();
+		OC_changeMapCube();
 		break;
 	case 0x1C:
-		OC_sub17C55();
+		OC_setCharacterCarry();
 		break;
 	case 0x1D:
-		OC_sub17C76();
+		OC_dropCarried();
 		break;
 	case 0x1E:
 		OC_setCurrentCharacter();
@@ -626,21 +626,21 @@ static const OpCode opCodes2[] = {
 /* 0x0c */	{ "OC_saveAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x0d */	{ "OC_nSkipOpcodes", 1, kImmediateValue, kNone, kNone, kNone, kNone }, // todo : jump to other opcode
 /* 0x0e */	{ "OC_startSpeech5", 0, kNone, kNone, kNone, kNone, kNone },  // todo
-/* 0x0f */	{ "OC_resetByte1714E", 0, kNone, kNone, kNone, kNone, kNone },
+/* 0x0f */	{ "OC_resetHandleOpcodeFlag", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x10 */	{ "OC_deleteSavegameAndQuit", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x11 */	{ "OC_incScriptForVal", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x12 */	{ "OC_sub17BA5", 5, kGetValue1, kImmediateValue,kComputeOperation, kGetValue1, kImmediateValue },
+/* 0x12 */	{ "OC_ComputeChararacterAttr", 5, kGetValue1, kImmediateValue,kComputeOperation, kGetValue1, kImmediateValue },
 /* 0x13 */	{ "OC_setByte18823", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
 /* 0x14 */	{ "OC_callScript", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },  // run script
 /* 0x15 */	{ "OC_callScriptAndReturn", 2, kImmediateValue, kGetValue1, kNone, kNone, kNone },  // run script then stop
 /* 0x16 */	{ "OC_setCurrentScriptCharacterPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 /* 0x17 */	{ "OC_initScriptFor", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x18 */	{ "OC_sub17AE1", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x19 */	{ "OC_sub17AEE", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x1a */	{ "OC_setWord10804", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x1b */	{ "OC_sub17C0E", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x1c */ 	{ "OC_sub17C55", 4, kGetValue1, kGetValue1, kImmediateValue, kImmediateValue, kNone },
-/* 0x1d */	{ "OC_sub17C76", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x18 */	{ "OC_setCurrentCharacterSequence", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x19 */	{ "OC_setNextCharacterSequence", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x1a */	{ "OC_setHost", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x1b */	{ "OC_changeMapCube", 0, kNone, kNone, kNone, kNone, kNone },
+/* 0x1c */ 	{ "OC_setCharacterCarry", 4, kGetValue1, kGetValue1, kImmediateValue, kImmediateValue, kNone },
+/* 0x1d */	{ "OC_dropCarried", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x1e */	{ "OC_setCurrentCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x1f */	{ "OC_sub17C8B", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 /* 0x20 */	{ "OC_sub17CA2", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
@@ -1041,33 +1041,33 @@ void LilliputScript::skipOpcodes(int var1) {
 	_currScript->seek(_currScript->pos() - 2);
 }
 
-void LilliputScript::sub16C86(int index, byte *buf) {
-	debugC(1, kDebugScript, "sub16C86()");
+void LilliputScript::copySequence(int index, byte *buf) {
+	debugC(1, kDebugScript, "copySequence()");
 
 	_characterNextSequence[index] = 0;
 
 	for (int i = 0; i < 16; i++) {
-		_array12311[(index * 16) + i] = Common::Point(buf[(2 * i) + 1], buf[2 * i]);
+		_sequenceArr[(index * 16) + i] = Common::Point(buf[(2 * i) + 1], buf[2 * i]);
 	}
 }
 
-void LilliputScript::sub16C5C(int index, int8 var3) {
-	debugC(1, kDebugScript, "sub16C5C(%d, %d)", index, var3);
+void LilliputScript::setSequence(int charIdx, int8 seqIdx) {
+	debugC(1, kDebugScript, "setSequence(%d, %d)", charIdx, seqIdx);
 
-	assert(index < 40);
-	_characterLastSequence[index] = var3;
+	assert(charIdx < 40);
+	_characterLastSequence[charIdx] = seqIdx;
 
 	byte *buf = _vm->_rulesChunk1;
-	if (var3 != 0) {
+	if (seqIdx != 0) {
 		int count = 0;
-		while (count < var3) {
+		while (count < seqIdx) {
 			if ((buf[0] == 0xFF) && (buf[1] == 0xFF))
 				++count;
 			buf += 2;
 		}
 	}
 
-	sub16C86(index, buf);
+	copySequence(charIdx, buf);
 }
 
 void LilliputScript::checkSpeechAllowed(bool &forceReturnFl) {
@@ -2296,7 +2296,7 @@ void LilliputScript::OC_DisableCharacter() {
 
 void LilliputScript::OC_saveAndQuit() {
 	warning("TODO: OC_saveAndQuit");
-	_vm->_soundHandler.contentFct6(); // Kill music
+	_vm->_soundHandler->contentFct6(); // Kill music
 	// TODO: Save game
 	_vm->_shouldQuit = true;
 }
@@ -2320,8 +2320,8 @@ void LilliputScript::OC_startSpeech5() {
 	startSpeech(5);
 }
 
-void LilliputScript::OC_resetByte1714E() {
-	debugC(1, kDebugScriptTBC, "OC_resetByte1714E()");
+void LilliputScript::OC_resetHandleOpcodeFlag() {
+	debugC(1, kDebugScriptTBC, "OC_resetHandleOpcodeFlag()");
 
 	_vm->_handleOpcodeReturnCode = 0;
 }
@@ -2337,8 +2337,8 @@ void LilliputScript::OC_incScriptForVal() {
 	++_scriptForVal;
 }
 
-void LilliputScript::OC_sub17BA5() {
-	debugC(1, kDebugScript, "OC_sub17BA5()");
+void LilliputScript::OC_computeChararacterAttr() {
+	debugC(1, kDebugScript, "OC_ComputeChararacterAttr()");
 
 	byte *tmpArr = getCharacterAttributesPtr();
 	uint16 oper = _currScript->readUint16LE();
@@ -2395,7 +2395,7 @@ void LilliputScript::OC_setCurrentScriptCharacterPos() {
 	Common::Point pos = getPosFromScript();
 	_vm->_characterTargetPosX[_vm->_currentScriptCharacter] = pos.x;
 	_vm->_characterTargetPosY[_vm->_currentScriptCharacter] = pos.y;
-	_vm->_array109E9PosX[_vm->_currentScriptCharacter] = -1;
+	_vm->_characterSubTargetPosX[_vm->_currentScriptCharacter] = -1;
 }
 
 void LilliputScript::OC_initScriptFor() {
@@ -2404,28 +2404,28 @@ void LilliputScript::OC_initScriptFor() {
 	_scriptForVal = 0;
 }
 
-void LilliputScript::OC_sub17AE1() {
-	debugC(1, kDebugScript, "OC_sub17AE1()");
+void LilliputScript::OC_setCurrentCharacterSequence() {
+	debugC(1, kDebugScript, "OC_setCurrentCharacterSequence()");
 
-	int8 var3 = (_currScript->readUint16LE() & 0xFF);
-	sub16C5C(_vm->_currentScriptCharacter, var3);
+	int8 seqIdx = (_currScript->readUint16LE() & 0xFF);
+	setSequence(_vm->_currentScriptCharacter, seqIdx);
 }
 
-void LilliputScript::OC_sub17AEE() {
-	debugC(1, kDebugScript, "OC_sub17AEE()");
+void LilliputScript::OC_setNextCharacterSequence() {
+	debugC(1, kDebugScript, "OC_setNextCharacterSequence()");
 
-	int8 var3 = (_currScript->readUint16LE() & 0xFF);
-	sub16C5C(_vm->_currentScriptCharacter + 1, var3);
+	int8 seqIdx = (_currScript->readUint16LE() & 0xFF);
+	setSequence(_vm->_currentScriptCharacter + 1, seqIdx);
 }
 
-void LilliputScript::OC_setWord10804() {
-	debugC(1, kDebugScript, "OC_setWord10804()");
+void LilliputScript::OC_setHost() {
+	debugC(1, kDebugScript, "OC_setHost()");
 
 	_vm->_host = getValue1();
 }
 
-void LilliputScript::OC_sub17C0E() {
-	debugC(1, kDebugScript, "OC_sub17C0E()");
+void LilliputScript::OC_changeMapCube() {
+	debugC(1, kDebugScript, "OC_changeMapCube()");
 
 	assert(_vm->_currentCharacterAttributes != NULL);
 	Common::Point var1 = Common::Point(_vm->_currentCharacterAttributes[4], _vm->_currentCharacterAttributes[5]);
@@ -2442,31 +2442,30 @@ void LilliputScript::OC_sub17C0E() {
 	}
 }
 
-void LilliputScript::OC_sub17C55() {
-	debugC(1, kDebugScript, "OC_sub17C55()");
+void LilliputScript::OC_setCharacterCarry() {
+	debugC(1, kDebugScript, "OC_setCharacterCarry()");
 
-	int8 var1 = (getValue1() & 0xFF);
+	int8 carriedIdx = (getValue1() & 0xFF);
 	int16 index = getValue1();
 
-	int8 var3 = (_currScript->readSint16LE() & 0xFF);
-	byte var4 = (_currScript->readUint16LE() & 0xFF);
+	int8 distBehind = (_currScript->readSint16LE() & 0xFF);
+	byte distAbove = (_currScript->readUint16LE() & 0xFF);
 
 	assert((index >= 0) && (index < 40));
-	_vm->_characterCarried[index] = var1;
-	_vm->_rulesBuffer2_6[index] = var3;
-	_vm->_rulesBuffer2_7[index] = var4;
+	_vm->_characterCarried[index] = carriedIdx;
+	_vm->_characterBehindDist[index] = distBehind;
+	_vm->_characterAboveDist[index] = distAbove;
 
-	warning("debug - OC_sub17C55 index %d, var1 0x%x var3 0x%x var4 0x%x", index, var1, var3, var4);
+	warning("debug - OC_setCharacterCarry index %d, var1 0x%x var3 0x%x var4 0x%x", index, carriedIdx, distBehind, distAbove);
 }
 
-void LilliputScript::OC_sub17C76() {
-	debugC(1, kDebugScript, "OC_sub17C76()");
+void LilliputScript::OC_dropCarried() {
+	debugC(1, kDebugScript, "OC_dropCarried()");
 
 	int index = getValue1();
 	_vm->_characterCarried[index] = -1;
-	_vm->_characterPositionAltitude[index] = 0;
+	_vm->_characterPosAltitude[index] = 0;
 	_characterScriptEnabled[index] = 1;
-
 }
 
 void LilliputScript::OC_setCurrentCharacter() {
@@ -2663,7 +2662,7 @@ void LilliputScript::OC_sub17F4F() {
 	int16 var = getValue1();
 	_array10A39[_vm->_currentScriptCharacter] = (byte)(var & 0xFF);
 	warning("debug - OC_sub17F4F: _array10A39[%d] = %d", _vm->_currentScriptCharacter, var);
-	_vm->_array109E9PosX[_vm->_currentScriptCharacter] = -1;
+	_vm->_characterSubTargetPosX[_vm->_currentScriptCharacter] = -1;
 }
 
 void LilliputScript::OC_scrollAwayFromCharacter() {
@@ -2761,7 +2760,7 @@ void LilliputScript::OC_setCharacterProperties() {
 	y += _currScript->readSint16LE();
 	_vm->_characterPositionY[index] = y;
 
-	_vm->_characterPositionAltitude[index]  = (int8)(_currScript->readUint16LE() & 0xFF);
+	_vm->_characterPosAltitude[index]  = (int8)(_currScript->readUint16LE() & 0xFF);
 	_vm->_characterDirectionArray[index] = _currScript->readUint16LE() & 0xFF;
 }
 
@@ -2835,7 +2834,7 @@ void LilliputScript::OC_setViewPortPos() {
 void LilliputScript::OC_setCurrentCharacterAltitude() {
 	debugC(1, kDebugScript, "OC_setCurrentCharacterAltitude()");
 
-	_vm->_characterPositionAltitude[_vm->_currentScriptCharacter] = (_currScript->readUint16LE() & 0xFF);
+	_vm->_characterPosAltitude[_vm->_currentScriptCharacter] = (_currScript->readUint16LE() & 0xFF);
 }
 
 void LilliputScript::OC_sub1817F() {
