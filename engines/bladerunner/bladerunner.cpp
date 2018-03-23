@@ -60,6 +60,7 @@
 #include "bladerunner/slice_renderer.h"
 #include "bladerunner/suspects_database.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/time.h"
 #include "bladerunner/ui/elevator.h"
 #include "bladerunner/ui/esper.h"
 #include "bladerunner/ui/kia.h"
@@ -253,11 +254,11 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	_surfaceBack.create(640, 480, createRGB555());
 	_surface4.create(640, 480, createRGB555());
 
+	_gameTime = new Time(this);
+
 	r = openArchive("STARTUP.MIX");
 	if (!r)
 		return false;
-
-	// TODO: Timer
 
 	_gameInfo = new GameInfo(this);
 	if (!_gameInfo)
@@ -632,8 +633,8 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete MIXArchives here
 
-	// TODO: Delete Timer
-
+	delete _gameTime;
+	_gameTime = nullptr;
 
 	// These are static objects in original game
 

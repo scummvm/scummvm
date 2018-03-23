@@ -244,6 +244,7 @@ MODULE_OBJS = \
 	slice_renderer.o \
 	suspects_database.o \
 	text_resource.o \
+	time.o \
 	ui/elevator.o \
 	ui/esper.o \
 	ui/kia.o \

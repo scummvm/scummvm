@@ -85,6 +85,7 @@ class SliceRenderer;
 class Spinner;
 class SuspectsDatabase;
 class TextResource;
+class Time;
 class KIAShapes;
 class Vector3;
 class View;
@@ -139,6 +140,7 @@ public:
 	SliceRenderer      *_sliceRenderer;
 	Spinner            *_spinner;
 	SuspectsDatabase   *_suspectsDatabase;
+	Time               *_gameTime;
 	View               *_view;
 	VK                 *_vk;
 	Waypoints          *_waypoints;
