@@ -218,7 +218,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 			} else if (c == 10) {
 				// Newline
 				if (newLine(bounds))
-					break;
+					return _displayString;
 			} else if (c == 11) {
 				// Set y position
 				int yp = fontAtoi();
