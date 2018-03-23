@@ -454,12 +454,12 @@ bool Character::noActions() {
 	Condition condition = worstCondition();
 
 	switch (condition) {
-	case CURSED:
-	case POISONED:
-	case DISEASED:
-	case INSANE:
-	case IN_LOVE:
-	case DRUNK: {
+	case ASLEEP:
+	case PARALYZED:
+	case UNCONSCIOUS:
+	case DEAD:
+	case STONED:
+	case ERADICATED: {
 		Common::String msg = Common::String::format(Res.IN_NO_CONDITION, _name.c_str());
 		ErrorScroll::show(Party::_vm, msg,
 			Party::_vm->_mode == 17 ? WT_LOC_WAIT : WT_NONFREEZED_WAIT);
