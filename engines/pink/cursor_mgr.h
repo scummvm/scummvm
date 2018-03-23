@@ -34,6 +34,7 @@ class CursorMgr : public Object {
 public:
     CursorMgr(GamePage *page);
 
+
 private:
     Actor *_actor;
     GamePage *_page;

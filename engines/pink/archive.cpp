@@ -35,6 +35,15 @@
 #include <engines/pink/objects/actions/action_sound.h>
 #include <engines/pink/objects/actions/action_hide.h>
 #include <engines/pink/objects/walk/walk_location.h>
+#include <engines/pink/objects/actions/walk_action.h>
+#include <engines/pink/objects/actors/supporting_actor.h>
+#include <engines/pink/objects/sequences/seq_timer.h>
+#include <engines/pink/objects/actions/action_loop.h>
+#include <engines/pink/objects/actions/action_play_with_sfx.h>
+#include <engines/pink/objects/actions/action_talk.h>
+#include <engines/pink/objects/actions/action_text.h>
+#include <engines/pink/objects/actors/cursor_actor.h>
+#include <engines/pink/objects/handlers/handler_timer.h>
 
 namespace Pink {
 
@@ -68,6 +77,8 @@ enum {
     kHandlerLeftClick,
     kHandlerStartPage,
     kHandlerTimer,
+    kHandlerTimerActions,
+    kHandlerTimerSequences,
     kHandlerUseClick,
     kInventoryActor,
     kInventoryItem,
@@ -122,6 +133,8 @@ static const struct RuntimeClass {
         {"HandlerLeftClick", kHandlerLeftClick},
         {"HandlerStartPage", kHandlerStartPage},
         {"HandlerTimer", kHandlerTimer},
+        {"HandlerTimerActions", kHandlerTimerActions},
+        {"HandlerTimerSequences", kHandlerTimerSequences},
         {"HandlerUseClick", kHandlerUseClick},
         {"InventoryActor", kInventoryActor},
         {"InventoryItem", kInventoryItem},
@@ -153,36 +166,102 @@ static Object* createObject(int objectId){
     switch (objectId){
         case kActionHide:
             return new ActionHide;
+        case kActionLoop:
+            return new ActionLoop;
         case kActionPlay:
             return new ActionPlay;
+        case kActionPlayWithSfx:
+            return new ActionPlayWithSfx;
+        case kActionSfx:
+            return new ActionSfx;
         case kActionSound:
             return new ActionSound;
         case kActionStill:
             return new ActionStill;
+        case kActionTalk:
+            return new ActionTalk;
+        case kActionText:
+            return new ActionText;
         case kActor:
             return new Actor;
+        //case kAudioInfoPDAButton:
+        //    return new AudioInfoPDAButton;
+        case kConditionGameVariable:
+            return new ConditionGameVariable;
+        case kConditionInventoryItemOwner:
+            return new ConditionInventoryItemOwner;
+        case kConditionModuleVariable:
+            return new ConditionModuleVariable;
+        case kConditionNotInventoryItemOwner:
+            return new ConditionNotInventoryItemOwner;
+        case kConditionNotModuleVariable:
+            return new ConditionNotModuleVariable;
+        case kConditionNotPageVariable:
+            return new ConditionNotPageVariable;
+        case kConditionPageVariable:
+            return new ConditionPageVariable;
+        case kCursorActor:
+            return new CursorActor;
         case kGamePage:
             return new GamePage;
+        case kHandlerLeftClick:
+            return new HandlerLeftClick;
         case kHandlerStartPage:
             return new HandlerStartPage;
+        case kHandlerTimer:
+            return new HandlerTimer;
+        case kHandlerTimerActions:
+            return new HandlerTimerActions;
+        case kHandlerTimerSequences:
+            return new HandlerTimerSequences;
+        case kHandlerUseClick:
+            return new HandlerUseClick;
+        //case kInventoryActor:
+        //    return new InventoryActor;
         case kInventoryItem:
             return new InventoryItem;
         case kLeadActor:
             return new LeadActor;
         case kModuleProxy:
             return new ModuleProxy;
+        //case kPDAButtonActor:
+          //  return new PDAButtonActor;
+        //case kParlSqPink:
+         //   return new ParlSqPink;
+        //case kPubPink:
+         //   return new PubPink;
+        case kSeqTimer:
+            return new SeqTimer;
         case kSequence:
             return new Sequence;
+        //case kSequenceAudio:
+          //  return new SequenceAudio;
         case kSequenceItem:
             return new SequenceItem;
         case kSequenceItemDefaultAction:
             return new SequenceItemDefaultAction;
         case kSequenceItemLeader:
             return new SequenceItemLeader;
+        case kSequenceItemLeaderAudio:
+            return new SequenceItemLeaderAudio;
         case kSideEffectExit:
             return new SideEffectExit;
+        case kSideEffectGameVariable:
+            return new SideEffectGameVariable;
+        case kSideEffectInventoryItemOwner:
+            return new SideEffectInventoryItemOwner;
+        case kSideEffectLocation:
+            return new SideEffectLocation;
         case kSideEffectModuleVariable:
             return new SideEffectModuleVariable;
+        case kSideEffectPageVariable:
+            return new SideEffectPageVariable;
+        case kSideEffectRandomPageVariable:
+            return new SideEffectRandomPageVariable;
+        case kSupportingActor:
+            return new SupportingActor;
+        case kWalkAction:
+            return new WalkAction;
         case kWalkLocation:
             return new WalkLocation;
         default:
