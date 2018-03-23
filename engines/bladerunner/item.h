@@ -65,6 +65,8 @@ public:
 	void setXYZ(Vector3 position);
 	void getWidthHeight(int *width, int *height) const;
 
+	void setIsTarget(bool isTarget) { _isTarget = isTarget; }
+
 	bool isTarget() const;
 	bool isPoliceMazeEnemy() const;
 	void spinInWorld();

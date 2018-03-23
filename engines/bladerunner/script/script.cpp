@@ -690,11 +690,11 @@ void ScriptBase::Item_Spin_In_World(int itemId) {
 }
 
 void ScriptBase::Item_Flag_As_Target(int itemId) {
-	warning("Item_Flag_As_Target(%d)", itemId);
+	_vm->_items->setIsTarget(itemId, true);
 }
 
 void ScriptBase::Item_Flag_As_Non_Target(int itemId) {
-	warning("Item_Flag_As_Non_Target(%d)", itemId);
+	_vm->_items->setIsTarget(itemId, false);
 }
 
 void ScriptBase::Item_Pickup_Spin_Effect(int animationId, int x, int y) {

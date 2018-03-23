@@ -47,6 +47,7 @@ public:
 	bool addToSet(int itemId);
 	bool remove(int itemId);
 
+	void setIsTarget(int itemId, bool isTarget);
 	bool isTarget(int itemId) const;
 	bool isPoliceMazeEnemy(int itemId) const;
 	int findTargetUnderMouse(int mouseX, int mouseY) const;

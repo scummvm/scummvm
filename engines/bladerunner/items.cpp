@@ -118,6 +118,15 @@ bool Items::remove(int itemId) {
 	return true;
 }
 
+void Items::setIsTarget(int itemId, bool isTarget) {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return;
+	}
+	_items[itemIndex]->setIsTarget(isTarget);
+	_vm->_sceneObjects->setIsTarget(itemId + kSceneObjectOffsetItems, isTarget);
+}
+
 bool Items::isTarget(int itemId) const {
 	int itemIndex = findItem(itemId);
 	if (itemIndex == -1) {
