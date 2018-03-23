@@ -64,4 +64,18 @@ LeadActor::State LeadActor::getState() const {
     return _state;
 }
 
+void ParlSqPink::toConsole() {
+    debug("ParlSqPink: _name = %s", _name.c_str());
+    for (int i = 0; i < _actions.size(); ++i) {
+        _actions[i]->toConsole();
+    }
+}
+
+void PubPink::toConsole() {
+    debug("PubPink: _name = %s", _name.c_str());
+    for (int i = 0; i < _actions.size(); ++i) {
+        _actions[i]->toConsole();
+    }
+}
+
 } // End of namespace Pink
