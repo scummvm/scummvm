@@ -226,10 +226,10 @@ static Object* createObject(int objectId){
             return new ModuleProxy;
         //case kPDAButtonActor:
           //  return new PDAButtonActor;
-        //case kParlSqPink:
-         //   return new ParlSqPink;
-        //case kPubPink:
-         //   return new PubPink;
+        case kParlSqPink:
+            return new ParlSqPink;
+        case kPubPink:
+            return new PubPink;
         case kSeqTimer:
             return new SeqTimer;
         case kSequence:

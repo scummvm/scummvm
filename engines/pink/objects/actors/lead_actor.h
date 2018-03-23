@@ -60,6 +60,18 @@ private:
     Sequencer *_sequencer;
 };
 
+
+class ParlSqPink : public LeadActor {
+public:
+    void toConsole();
+};
+
+class PubPink : public LeadActor {
+public:
+    void toConsole();
+};
+
+
 } // End of namespace Pink
 
 #endif
