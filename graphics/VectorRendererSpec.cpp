@@ -448,16 +448,16 @@ void colorFill(PixelType *first, PixelType *last, PixelType color) {
 		return;
 	int n = (count + 7) >> 3;
 	switch (count % 8) {
-	case 0: do {
-				*first++ = color;	// fall through
-	case 7:		*first++ = color;	// fall through
-	case 6:		*first++ = color;	// fall through
-	case 5:		*first++ = color;	// fall through
-	case 4:		*first++ = color;	// fall through
-	case 3:		*first++ = color;	// fall through
-	case 2:		*first++ = color;	// fall through
+	case 0:	do {
+	       		*first++ = color; // fall through
+	case 7:		*first++ = color; // fall through
+	case 6:		*first++ = color; // fall through
+	case 5:		*first++ = color; // fall through
+	case 4:		*first++ = color; // fall through
+	case 3:		*first++ = color; // fall through
+	case 2:		*first++ = color; // fall through
 	case 1:		*first++ = color;
-			} while (--n > 0);
+	       	} while (--n > 0);
 	}
 }
 
@@ -487,16 +487,16 @@ void colorFillClip(PixelType *first, PixelType *last, PixelType color, int realX
 
 	int n = (count + 7) >> 3;
 	switch (count % 8) {
-	case 0: do {
-		*first++ = color;	// fall through
-	case 7:		*first++ = color;	// fall through
-	case 6:		*first++ = color;	// fall through
-	case 5:		*first++ = color;	// fall through
-	case 4:		*first++ = color;	// fall through
-	case 3:		*first++ = color;	// fall through
-	case 2:		*first++ = color;	// fall through
+	case 0:	do {
+	       		*first++ = color; // fall through
+	case 7:		*first++ = color; // fall through
+	case 6:		*first++ = color; // fall through
+	case 5:		*first++ = color; // fall through
+	case 4:		*first++ = color; // fall through
+	case 3:		*first++ = color; // fall through
+	case 2:		*first++ = color; // fall through
 	case 1:		*first++ = color;
-	} while (--n > 0);
+	       	} while (--n > 0);
 	}
 }
 
