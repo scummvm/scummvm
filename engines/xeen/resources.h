@@ -126,6 +126,7 @@ public:
 	const char *WHO_WILL;
 	const char *HOW_MUCH;
 	const char *WHATS_THE_PASSWORD;
+	const char *PASSWORD_INCORRECT;
 	const char *IN_NO_CONDITION;
 	const char *NOTHING_HERE;
 	const char *TERRAIN_TYPES[6];

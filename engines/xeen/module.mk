@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	dialogs/dialogs_awards.o \
 	dialogs/dialogs_char_info.o \
 	dialogs/dialogs_control_panel.o \
+	dialogs/dialogs_copy_protection.o \
 	dialogs/dialogs_create_char.o \
 	dialogs/dialogs_difficulty.o \
 	dialogs/dialogs_dismiss.o \

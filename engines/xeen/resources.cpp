@@ -72,6 +72,7 @@ void Resources::loadData() {
 	file.syncString(WHO_WILL);
 	file.syncString(HOW_MUCH);
 	file.syncString(WHATS_THE_PASSWORD);
+	file.syncString(PASSWORD_INCORRECT);
 	file.syncString(IN_NO_CONDITION);
 	file.syncString(NOTHING_HERE);
 	file.syncStrings(TERRAIN_TYPES, 6);

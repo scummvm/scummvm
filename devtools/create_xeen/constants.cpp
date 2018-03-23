@@ -176,7 +176,15 @@ const char *const WHO_WILL = "\x03""c\x0B""000\x09""000%s\x0A\x0A"
 
 const char *const HOW_MUCH = "\x3""cHow Much\n\n";
 
-const char *const WHATS_THE_PASSWORD = "What's the Password?";
+const char *const WHATS_THE_PASSWORD = "\x3""cWhat's the Password?\n"
+	"\n"
+	"Please turn to page %u, go to\n"
+	"line %u, and type in word %u.\v067\t000Spaces are not counted as words or lines.  "
+	"Hyphenated words are treated as one word.  Any line that has any text is considered a line."
+	"\x3""c\v040\t000\n";
+
+const char *const PASSWORD_INCORRECT = "\x3""c\v040\n"
+	"\f32Incorrect!\fd";
 
 const char *const IN_NO_CONDITION = "\x0B""007%s is not in any condition to perform actions!";
 
@@ -1892,6 +1900,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(WHO_WILL);
 	file.syncString(HOW_MUCH);
 	file.syncString(WHATS_THE_PASSWORD);
+	file.syncString(PASSWORD_INCORRECT);
 	file.syncString(IN_NO_CONDITION);
 	file.syncString(NOTHING_HERE);
 	file.syncStrings(TERRAIN_TYPES, 6);

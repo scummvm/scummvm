@@ -22,6 +22,7 @@
 
 #include "common/config-manager.h"
 #include "xeen/scripts.h"
+#include "xeen/dialogs/dialogs_copy_protection.h"
 #include "xeen/dialogs/dialogs_input.h"
 #include "xeen/dialogs/dialogs_whowill.h"
 #include "xeen/dialogs/dialogs_query.h"
@@ -1841,8 +1842,8 @@ bool Scripts::copyProtectionCheck() {
 	if (!ConfMan.getBool("copy_protection"))
 		return true;
 
-	// Currently not implemented
-	return true;
+	// Show the copy protection dialog
+	return CopyProtection::show(_vm);
 }
 
 void Scripts::display(bool justifyFlag, int var46) {
