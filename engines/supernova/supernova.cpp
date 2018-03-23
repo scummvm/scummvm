@@ -312,7 +312,7 @@ bool SupernovaEngine::setCurrentImage(int filenumber) {
 		return true;
 
 	delete _currentImage;
-	_currentImage = new MSNImageDecoder();
+	_currentImage = new MSNImage();
 	if (!_currentImage->init(filenumber)) {
 		delete _currentImage;
 		_currentImage = NULL;
