@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptPS12::InitializeScene() {
-	Police_Maze_Set_Pause_State(1);
+	Police_Maze_Set_Pause_State(true);
 	if (Game_Flag_Query(16)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
@@ -270,7 +270,7 @@ void SceneScriptPS12::PlayerWalkedIn() {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -546.0f, -9.06f, 570.0f, 0, 1, false, 0);
 		Game_Flag_Reset(16);
 	}
-	Police_Maze_Set_Pause_State(0);
+	Police_Maze_Set_Pause_State(false);
 }
 
 void SceneScriptPS12::PlayerWalkedOut() {

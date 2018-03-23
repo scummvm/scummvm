@@ -39,6 +39,7 @@
 #include "bladerunner/movement_track.h"
 #include "bladerunner/music.h"
 #include "bladerunner/overlays.h"
+#include "bladerunner/police_maze.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/set.h"
 #include "bladerunner/settings.h"
@@ -1100,20 +1101,32 @@ void ScriptBase::Combat_Flee_Waypoint_Set_Data(int fleeWaypointId, int type, int
 }
 
 void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10) {
-	//TODO
-	warning("Police_Maze_Target_Track_Add(%d, %f, %f, %f, %f, %f, %f, %d, %p, %d)", itemId,  startX,  startY,  startZ,  endX,  endY,  endZ,  steps,  (void *)data,  a10);
-
+	_vm->_policeMaze->_tracks[itemId]->add(itemId, startX, startY, startZ, endX, endY, endZ, steps, data, a10);
+	_vm->_policeMaze->activate();
 }
 
-// ScriptBase::Police_Maze_Query_Score
-// ScriptBase::Police_Maze_Zero_Score
-// ScriptBase::Police_Maze_Increment_Score
-// ScriptBase::Police_Maze_Decrement_Score
-// ScriptBase::Police_Maze_Set_Score
+int ScriptBase::Police_Maze_Query_Score() {
+	return Global_Variable_Query(kVariablePoliceMazeScore);
+}
 
-void ScriptBase::Police_Maze_Set_Pause_State(int a1) {
-	//TODO
-	warning("Police_Maze_Set_Pause_State(%d)", a1);
+void ScriptBase::Police_Maze_Zero_Score() {
+	Global_Variable_Reset(kVariablePoliceMazeScore);
+}
+
+void ScriptBase::Police_Maze_Increment_Score(int delta) {
+	Global_Variable_Set(kVariablePoliceMazeScore, Global_Variable_Query(kVariablePoliceMazeScore) + delta);
+}
+
+void ScriptBase::Police_Maze_Decrement_Score(int delta) {
+	Global_Variable_Set(kVariablePoliceMazeScore, Global_Variable_Query(kVariablePoliceMazeScore) - delta);
+}
+
+void ScriptBase::Police_Maze_Set_Score(int value) {
+	Global_Variable_Set(kVariablePoliceMazeScore, value);
+}
+
+void ScriptBase::Police_Maze_Set_Pause_State(bool state) {
+	_vm->_policeMaze->setPauseState(state);
 }
 
 void ScriptBase::CDB_Set_Crime(int clueId, int crimeId) {

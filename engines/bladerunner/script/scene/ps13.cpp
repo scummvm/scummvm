@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptPS13::InitializeScene() {
-	Police_Maze_Set_Pause_State(1);
+	Police_Maze_Set_Pause_State(true);
 	if (Game_Flag_Query(18)) {
 		Scene_Loop_Start_Special(0, 0, 0);
 		Scene_Loop_Set_Default(1);
@@ -255,7 +255,7 @@ void SceneScriptPS13::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS13::PlayerWalkedIn() {
-	Police_Maze_Set_Pause_State(0);
+	Police_Maze_Set_Pause_State(false);
 }
 
 void SceneScriptPS13::PlayerWalkedOut() {

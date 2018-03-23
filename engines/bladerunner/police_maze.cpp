@@ -57,6 +57,15 @@ void PoliceMaze::reset() {
 	_pm_var2 = 0;
 }
 
+void PoliceMaze::activate() {
+	_needAnnouncement = true;
+	_announcementRead = false;
+}
+
+void PoliceMaze::setPauseState(bool state) {
+	warning("PoliceMaze::setPauseState(%d)", state);
+}
+
 void PoliceMaze::tick() {
 }
 
@@ -85,5 +94,10 @@ void PoliceMazeTargetTrack::reset() {
 	_angleChange = 0;
 	_visible = true;
 }
+
+void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int count, void *list, bool a11) {
+	warning("PoliceMazeTargetTrack::add(%d, %f, %f, %f, %f, %f, %f, %d, %p, %d)", trackId,  startX,  startY,  startZ,  endX,  endY,  endZ,  count,  (void *)list, a11);
+}
+
 
 } // End of namespace BladeRunner

@@ -535,6 +535,7 @@ enum Flags {
 enum Variables {
 	kVariableChapter = 1,
 	kVariableChinyen = 2,
+	kVariablePoliceMazeScore = 9,
 	kVariableGenericWalkerAModel = 32,
 	kVariableGenericWalkerBModel = 33,
 	kVariableGenericWalkerCModel = 34,

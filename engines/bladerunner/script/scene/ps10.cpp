@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 void SceneScriptPS10::InitializeScene() {
-	Police_Maze_Set_Pause_State(1);
+	Police_Maze_Set_Pause_State(true);
 	if (Game_Flag_Query(15)) {
 		float x = World_Waypoint_Query_X(4);
 		float y = World_Waypoint_Query_Y(4);
@@ -211,7 +211,7 @@ void SceneScriptPS10::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptPS10::PlayerWalkedIn() {
 	if (Game_Flag_Query(15)) {
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -352.09f, -9.23f, 267.95f, 0, 0, true, 0);
-		Police_Maze_Set_Pause_State(0);
+		Police_Maze_Set_Pause_State(false);
 		Game_Flag_Reset(15);
 		//return true;
 		return;
@@ -221,7 +221,7 @@ void SceneScriptPS10::PlayerWalkedIn() {
 		Actor_Says(kActorAnsweringMachine, 280, 3);
 		Actor_Says(kActorAnsweringMachine, 290, 3);
 		Actor_Says(kActorAnsweringMachine, 300, 3);
-		Police_Maze_Set_Pause_State(0);
+		Police_Maze_Set_Pause_State(false);
 		//return true;
 		return;
 	}

@@ -254,7 +254,7 @@ void SceneScriptPS11::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptPS11::PlayerWalkedIn() {
-	Police_Maze_Set_Pause_State(0);
+	Police_Maze_Set_Pause_State(false);
 }
 
 void SceneScriptPS11::PlayerWalkedOut() {

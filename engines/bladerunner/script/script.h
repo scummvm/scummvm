@@ -208,12 +208,12 @@ protected:
 	void Combat_Cover_Waypoint_Set_Data(int coverWaypointId, int a2, int setId, int a4, float x, float y, float z);
 	void Combat_Flee_Waypoint_Set_Data(int fleeWaypointId, int a2, int setId, int a4, float x, float y, float z, int a8);
 	void Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10);
-	// Police_Maze_Query_Score
-	// Police_Maze_Zero_Score
-	// Police_Maze_Increment_Score
-	// Police_Maze_Decrement_Score
-	// Police_Maze_Set_Score
-	void Police_Maze_Set_Pause_State(int a1);
+	int Police_Maze_Query_Score();
+	void Police_Maze_Zero_Score();
+	void Police_Maze_Increment_Score(int delta);
+	void Police_Maze_Decrement_Score(int delta);
+	void Police_Maze_Set_Score(int value);
+	void Police_Maze_Set_Pause_State(bool state);
 	void CDB_Set_Crime(int clueId, int crimeId);
 	void CDB_Set_Clue_Asset_Type(int clueId, int assetType);
 	void SDB_Set_Actor(int suspectId, int actorId);

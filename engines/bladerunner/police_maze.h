@@ -58,12 +58,12 @@ public:
 	~PoliceMazeTargetTrack();
 
 	void reset();
+	void add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int count, void *list, bool a11);
 };
 
 class PoliceMaze {
 	BladeRunnerEngine *_vm;
 
-	PoliceMazeTargetTrack *_tracks[kNumMazeTracks];
 	bool _isActive;
 	bool _needAnnouncement;
 	bool _announcementRead;
@@ -71,11 +71,16 @@ class PoliceMaze {
 	int _pm_var2;
 
 public:
+	PoliceMazeTargetTrack *_tracks[kNumMazeTracks];
+
+public:
 	PoliceMaze(BladeRunnerEngine *vm);
 	~PoliceMaze();
 
 	void tick();
 	void reset();
+	void setPauseState(bool state);
+	void activate();
 };
 
 } // End of namespace BladeRunner
