@@ -379,7 +379,7 @@ void ArmorItems::equipItem(int itemIndex) {
 		if (passRestrictions(item._id)) {
 			for (uint idx = 0; idx < size(); ++idx) {
 				XeenItem &i = operator[](idx);
-				if (i._frame == 9) {
+				if (i._frame == 3) {
 					equipError(itemIndex, CATEGORY_ARMOR, idx, CATEGORY_ARMOR);
 					return;
 				}
