@@ -241,11 +241,11 @@ bool MSNImage::loadSections() {
 void MSNImage::destroy() {
 	if (_palette) {
 		delete[] _palette;
-		_palette = NULL;
+		_palette = nullptr;
 	}
 	if (_encodedImage) {
 		delete[] _encodedImage;
-		_encodedImage = NULL;
+		_encodedImage = nullptr;
 	}
 	for (Common::Array<Graphics::Surface *>::iterator it = _sectionSurfaces.begin();
 		 it != _sectionSurfaces.end(); ++it) {

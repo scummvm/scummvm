@@ -77,9 +77,9 @@ ObjectType &operator^=(ObjectType &a, ObjectType b) {
 
 SupernovaEngine::SupernovaEngine(OSystem *syst)
 	: Engine(syst)
-	, _console(NULL)
-	, _gm(NULL)
-	, _currentImage(NULL)
+	, _console(nullptr)
+	, _gm(nullptr)
+	, _currentImage(nullptr)
 	, _rnd("supernova")
 	, _brightness(255)
 	, _menuBrightness(255)
@@ -315,7 +315,7 @@ bool SupernovaEngine::setCurrentImage(int filenumber) {
 	_currentImage = new MSNImage();
 	if (!_currentImage->init(filenumber)) {
 		delete _currentImage;
-		_currentImage = NULL;
+		_currentImage = nullptr;
 		return false;
 	}
 

@@ -32,7 +32,7 @@
 static const PlainGameDescriptor supernovaGames[] = {
 	{"msn1", "Mission Supernova 1"},
 	{"msn2", "Mission Supernova 2"},
-	{NULL, NULL}
+	{nullptr, nullptr}
 };
 
 namespace Supernova {
@@ -40,7 +40,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Mission Supernova 1
 	{
 		"msn1",
-		NULL,
+		nullptr,
 		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
@@ -49,7 +49,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"msn1",
-		NULL,
+		nullptr,
 		AD_ENTRY1s("msn_data.000", "f64f16782a86211efa919fbae41e7568", 24163),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
@@ -60,7 +60,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Mission Supernova 2
 	{
 		"msn2",
-		NULL,
+		nullptr,
 		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
@@ -69,7 +69,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"msn2",
-		NULL,
+		nullptr,
 		AD_ENTRY1s("ms2_data.000", "e595610cba4a6d24a763e428d05cc83f", 24805),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
@@ -131,7 +131,7 @@ bool SupernovaMetaEngine::createInstance(OSystem *syst, Engine **engine, const A
 		*engine = new Supernova::SupernovaEngine(syst);
 	}
 
-	return desc != NULL;
+	return desc != nullptr;
 }
 
 SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {

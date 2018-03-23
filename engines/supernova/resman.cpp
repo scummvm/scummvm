@@ -193,7 +193,7 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 	msnFile.open(filename);
 	if (!msnFile.isOpen()) {
 		warning("Data file '%s' not found", msnFile.getName());
-		return NULL;
+		return nullptr;
 	}
 
 	for (int i = 0 ; i < nbInstr2 ; ++i) {
