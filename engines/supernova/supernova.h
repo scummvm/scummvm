@@ -94,7 +94,7 @@ public:
 	Sound *_sound;
 	ResourceManager *_resMan;
 	ScreenBufferStack _screenBuffer;
-	MSNImageDecoder *_currentImage;
+	MSNImage *_currentImage;
 	int _screenWidth;
 	int _screenHeight;
 	bool _allowLoadGame;
