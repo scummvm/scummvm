@@ -297,6 +297,10 @@ uint32 Archive::readDWORD() {
     return _file.readUint32LE();
 }
 
+uint16 Archive::readWORD() {
+    return _file.readUint16LE();
+}
+
 } // End of namespace Pink
 
 

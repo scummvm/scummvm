@@ -43,6 +43,8 @@ public:
 
     int readCount();
     uint32 readDWORD();
+    uint16 readWORD();
+
     Object *readObject();
     Common::String readString();
 
@@ -79,6 +81,11 @@ inline Archive &operator>>(Archive &archive, Common::String &string){
 
 inline Archive &operator>>(Archive &archive, uint32 &num){
     num = archive.readDWORD();
+    return archive;
+}
+
+inline Archive &operator>>(Archive &archive, uint16 &num){
+    num = archive.readWORD();
     return archive;
 }
 
