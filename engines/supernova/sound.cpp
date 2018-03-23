@@ -26,23 +26,19 @@
 #include "audio/mods/protracker.h"
 #include "common/system.h"
 
+#include "supernova/resman.h"
 #include "supernova/sound.h"
 #include "supernova/supernova.h"
 
 namespace Supernova {
 
-Sound::Sound(SupernovaEngine *vm, Audio::Mixer *mixer)
+Sound::Sound(Audio::Mixer *mixer, ResourceManager *resMan)
 	: _mixer(mixer)
-	, _vm(vm)
-	, _rate(11931) {
+	, _resMan(resMan) {
 }
 
 void Sound::play(AudioIndex index) {
-	Audio::AudioStream *stream;
-	byte flags = Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_UNSIGNED;
-	stream = Audio::makeRawStream(_vm->_soundSamples[index]._buffer,
-								  _vm->_soundSamples[index]._length,
-								  _rate, flags);
+	Audio::AudioStream *stream = _resMan->getSoundStream(index);
 
 	stop();
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, stream,
@@ -50,17 +46,7 @@ void Sound::play(AudioIndex index) {
 }
 
 void Sound::play(MusicIndex index) {
-	Audio::AudioStream *stream;
-	switch (index) {
-	case kMusicIntro:
-		stream = Audio::makeProtrackerStream(_vm->_soundMusicIntro);
-		break;
-	case kMusicOutro:
-		stream = Audio::makeProtrackerStream(_vm->_soundMusicOutro);
-		break;
-	default:
-		error("Reuqested music file does not exist");
-	}
+	Audio::AudioStream *stream = _resMan->getSoundStream(index);
 
 	stop();
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, stream,

@@ -23,9 +23,6 @@
 #ifndef SUPERNOVA_SUPERNOVA_H
 #define SUPERNOVA_SUPERNOVA_H
 
-#include "audio/audiostream.h"
-#include "audio/mixer.h"
-#include "audio/decoders/raw.h"
 #include "common/array.h"
 #include "common/events.h"
 #include "common/random.h"
@@ -77,21 +74,13 @@ private:
 	ScreenBuffer *_last;
 };
 
-struct SoundSample {
-	SoundSample()
-		: _buffer(NULL)
-		, _length(0)
-	{}
-
-	~SoundSample() {
-		delete[] _buffer;
-	}
-
-	byte *_buffer;
-	int _length;
-};
 
 class GuiElement;
+class ResourceManager;
+class Sound;
+class console;
+class GameManager;
+
 class SupernovaEngine : public Engine {
 public:
 	explicit SupernovaEngine(OSystem *syst);
@@ -103,13 +92,9 @@ public:
 	GameManager *_gm;
 	Console *_console;
 	Sound *_sound;
+	ResourceManager *_resMan;
 	ScreenBufferStack _screenBuffer;
-	byte _mouseNormal[256];
-	byte _mouseWait[256];
 	MSNImageDecoder *_currentImage;
-	SoundSample _soundSamples[kAudioNumSamples];
-	Common::MemoryReadStream *_soundMusicIntro;
-	Common::MemoryReadStream *_soundMusicOutro;
 	int _screenWidth;
 	int _screenHeight;
 	bool _allowLoadGame;
@@ -130,8 +115,6 @@ public:
 	int textWidth(const uint16 key);
 	Common::Error loadGameStrings();
 	void init();
-	void initData();
-	void initPalette();
 	void paletteFadeIn();
 	void paletteFadeOut();
 	void paletteBrightness();
@@ -207,8 +190,6 @@ public:
 		if (!text.empty())
 			renderText(text.c_str());
 	}
-
-	Common::MemoryReadStream *convertToMod(const char *filename, int version = 1);
 
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
