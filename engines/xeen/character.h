@@ -171,6 +171,11 @@ public:
 	void clear();
 
 	/**
+	 * Assignment operator
+	 */
+	Character &operator=(const Character &src);
+
+	/**
 	 * Synchronizes data for the character
 	 */
 	void synchronize(Common::Serializer &s);

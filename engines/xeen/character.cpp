@@ -44,6 +44,55 @@ Character::Character(): _weapons(this), _armor(this), _accessories(this), _misc(
 }
 
 Character::Character(const Character &src) : _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
+	operator=(src);
+}
+
+void Character::clear() {
+	_sex = MALE;
+	_race = HUMAN;
+	_xeenSide = 0;
+	_class = CLASS_KNIGHT;
+	_ACTemp = 0;
+	_birthDay = 0;
+	_tempAge = 0;
+	Common::fill(&_skills[0], &_skills[18], 0);
+	Common::fill(&_awards[0], &_awards[128], 0);
+	Common::fill(&_spells[0], &_spells[39], false);
+	_lloydMap = 0;
+	_hasSpells = false;
+	_currentSpell = 0;
+	_quickOption = QUICK_ATTACK;
+	_lloydSide = 0;
+	Common::fill(&_conditions[0], &_conditions[16], 0);
+	_townUnknown = 0;
+	_savedMazeId = 0;
+	_currentHp = 0;
+	_currentSp = 0;
+	_birthYear = 0;
+	_experience = 0;
+	_currentAdventuringSpell = 0;
+	_currentCombatSpell = 0;
+
+	_might._permanent = _might._temporary = 0;
+	_intellect._permanent = _intellect._temporary = 0;
+	_personality._permanent = _personality._temporary = 0;
+	_endurance._permanent = _endurance._temporary = 0;
+	_speed._permanent = _speed._temporary = 0;
+	_accuracy._permanent = _accuracy._temporary = 0;
+	_luck._permanent = _luck._temporary = 0;
+	_fireResistence._permanent = _fireResistence._temporary = 0;
+	_coldResistence._permanent = _coldResistence._temporary = 0;
+	_electricityResistence._permanent = _electricityResistence._temporary = 0;
+	_poisonResistence._permanent = _poisonResistence._temporary = 0;
+	_energyResistence._permanent = _energyResistence._temporary = 0;
+	_magicResistence._permanent = _magicResistence._temporary = 0;
+	_weapons.clear();
+	_armor.clear();
+	_accessories.clear();
+	_misc.clear();
+}
+
+Character &Character::operator=(const Character &src) {
 	clear();
 
 	_faceSprites = src._faceSprites;
@@ -98,51 +147,8 @@ Character::Character(const Character &src) : _weapons(this), _armor(this), _acce
 		InventoryItems &destItems = _items[category];
 		destItems = srcItems;
 	}
-}
 
-void Character::clear() {
-	_sex = MALE;
-	_race = HUMAN;
-	_xeenSide = 0;
-	_class = CLASS_KNIGHT;
-	_ACTemp = 0;
-	_birthDay = 0;
-	_tempAge = 0;
-	Common::fill(&_skills[0], &_skills[18], 0);
-	Common::fill(&_awards[0], &_awards[128], 0);
-	Common::fill(&_spells[0], &_spells[39], false);
-	_lloydMap = 0;
-	_hasSpells = false;
-	_currentSpell = 0;
-	_quickOption = QUICK_ATTACK;
-	_lloydSide = 0;
-	Common::fill(&_conditions[0], &_conditions[16], 0);
-	_townUnknown = 0;
-	_savedMazeId = 0;
-	_currentHp = 0;
-	_currentSp = 0;
-	_birthYear = 0;
-	_experience = 0;
-	_currentAdventuringSpell = 0;
-	_currentCombatSpell = 0;
-
-	_might._permanent = _might._temporary = 0;
-	_intellect._permanent = _intellect._temporary = 0;
-	_personality._permanent = _personality._temporary = 0;
-	_endurance._permanent = _endurance._temporary = 0;
-	_speed._permanent = _speed._temporary = 0;
-	_accuracy._permanent = _accuracy._temporary = 0;
-	_luck._permanent = _luck._temporary = 0;
-	_fireResistence._permanent = _fireResistence._temporary = 0;
-	_coldResistence._permanent = _coldResistence._temporary = 0;
-	_electricityResistence._permanent = _electricityResistence._temporary = 0;
-	_poisonResistence._permanent = _poisonResistence._temporary = 0;
-	_energyResistence._permanent = _energyResistence._temporary = 0;
-	_magicResistence._permanent = _magicResistence._temporary = 0;
-	_weapons.clear();
-	_armor.clear();
-	_accessories.clear();
-	_misc.clear();
+	return *this;
 }
 
 void Character::synchronize(Common::Serializer &s) {
