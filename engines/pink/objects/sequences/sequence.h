@@ -54,6 +54,17 @@ public:
 
 };
 
+class SequenceAudio : public Sequence {
+public:
+    virtual void deserialize(Archive &archive);
+    virtual void toConsole();
+
+private:
+    Common::String _sound;
+    int _unk1;
+    int _unk2;
+};
+
 class SequenceActorState {
 public:
     SequenceActorState(const Common::String &name);

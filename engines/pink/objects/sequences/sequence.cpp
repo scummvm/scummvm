@@ -107,6 +107,21 @@ void Sequence::start(int unk) {
     _context->_unk++;
 }
 
+void SequenceAudio::deserialize(Archive &archive) {
+    Sequence::deserialize(archive);
+    archive >> _sound;
+}
+
+void SequenceAudio::toConsole() {
+    debug("\t\tSequenceAudio %s : _sound = %s", _name.c_str(), _sound.c_str());
+    debug("\t\t\tItems:");
+    for (int i = 0; i < _items.size(); ++i) {
+        _items[i]->toConsole();
+    }
+}
+
+
+
 SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
     : _sequence(sequence), _sequencer(sequencer),
       _nextItemIndex(0), _unk(1), _actor(nullptr)

@@ -44,6 +44,7 @@
 #include <engines/pink/objects/actions/action_text.h>
 #include <engines/pink/objects/actors/cursor_actor.h>
 #include <engines/pink/objects/handlers/handler_timer.h>
+#include <engines/pink/objects/actors/inventory_actor.h>
 
 namespace Pink {
 
@@ -184,8 +185,8 @@ static Object* createObject(int objectId){
             return new ActionText;
         case kActor:
             return new Actor;
-        //case kAudioInfoPDAButton:
-        //    return new AudioInfoPDAButton;
+        case kAudioInfoPDAButton:
+        //  return new AudioInfoPDAButton;
         case kConditionGameVariable:
             return new ConditionGameVariable;
         case kConditionInventoryItemOwner:
@@ -216,16 +217,16 @@ static Object* createObject(int objectId){
             return new HandlerTimerSequences;
         case kHandlerUseClick:
             return new HandlerUseClick;
-        //case kInventoryActor:
-        //    return new InventoryActor;
+        case kInventoryActor:
+            return new InventoryActor;
         case kInventoryItem:
             return new InventoryItem;
         case kLeadActor:
             return new LeadActor;
         case kModuleProxy:
             return new ModuleProxy;
-        //case kPDAButtonActor:
-          //  return new PDAButtonActor;
+        case kPDAButtonActor:
+          //return new PDAButtonActor;
         case kParlSqPink:
             return new ParlSqPink;
         case kPubPink:
@@ -234,8 +235,8 @@ static Object* createObject(int objectId){
             return new SeqTimer;
         case kSequence:
             return new Sequence;
-        //case kSequenceAudio:
-          //  return new SequenceAudio;
+        case kSequenceAudio:
+            return new SequenceAudio;
         case kSequenceItem:
             return new SequenceItem;
         case kSequenceItemDefaultAction:

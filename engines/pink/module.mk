@@ -34,6 +34,7 @@ MODULE_OBJS = \
     objects/handlers/handler_timer.o \
     objects/pages/page.o \
     objects/pages/game_page.o \
+    objects/sequences/seq_timer.o \
     objects/sequences/sequence.o \
     objects/sequences/sequence_item.o \
     objects/sequences/sequencer.o \
@@ -41,7 +42,7 @@ MODULE_OBJS = \
     objects/walk/walk_location.o \
 
 # This module can be built as a plugin
-ifeq ($(ENABLE_PLUMBERS), DYNAMIC_PLUGIN)
+ifeq ($(ENABLE_PINK), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 
