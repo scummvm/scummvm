@@ -89,6 +89,7 @@ bool AIScriptFreeSlotA::Update() {
 					Game_Flag_Reset(677);
 					Actor_Set_Goal_Number(kActorFreeSlotA, 0);
 				}
+				break;
 
 			default:
 				if (!Game_Flag_Query(631)) {
