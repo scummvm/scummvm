@@ -1490,56 +1490,56 @@ void Scripts::doEnding(const Common::String &endStr) {
 bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 	FileManager &files = *_vm->_files;
 	Party &party = *_vm->_party;
-	Character &ps = party._activeParty[charIndex];
+	Character *ps = (charIndex == -1) ? nullptr : &party._activeParty[charIndex];
 	uint v = 0;
 
 	switch (action) {
 	case 3:
 		// Player sex
-		v = (uint)ps._sex;
+		v = (uint)ps->_sex;
 		break;
 	case 4:
 		// Player race
-		v = (uint)ps._race;
+		v = (uint)ps->_race;
 		break;
 	case 5:
 		// Player class
-		v = (uint)ps._class;
+		v = (uint)ps->_class;
 		break;
 	case 8:
 		// Current health points
-		v = (uint)ps._currentHp;
+		v = (uint)ps->_currentHp;
 		break;
 	case 9:
 		// Current spell points
-		v = (uint)ps._currentSp;
+		v = (uint)ps->_currentSp;
 		break;
 	case 10:
 		// Get armor class
-		v = (uint)ps.getArmorClass(false);
+		v = (uint)ps->getArmorClass(false);
 		break;
 	case 11:
 		// Level bonus (extra beyond base)
-		v = ps._level._temporary;
+		v = ps->_level._temporary;
 		break;
 	case 12:
 		// Current age, including unnatural aging
-		v = ps.getAge(false);
+		v = ps->getAge(false);
 		break;
 	case 13:
 		assert(val < 18);
-		if (ps._skills[val])
+		if (ps->_skills[val])
 			v = val;
 		break;
 	case 15:
 		// Award
 		assert(val < AWARDS_TOTAL);
-		if (ps.hasAward(val))
+		if (ps->hasAward(val))
 			v = val;
 		break;
 	case 16:
 		// Experience
-		v = ps._experience;
+		v = ps->_experience;
 		break;
 	case 17:
 		// Party poison resistence
@@ -1548,19 +1548,19 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 	case 18:
 		// Condition
 		assert(val < 16);
-		if (!ps._conditions[val] && !(val & 0x10))
+		if (!ps->_conditions[val] && !(val & 0x10))
 			v = val;
 		break;
 	case 19: {
 		// Can player cast a given spell
-		SpellsCategory category = ps.getSpellsCategory();
+		SpellsCategory category = ps->getSpellsCategory();
 		assert(category != SPELLCAT_INVALID);
 
 		// Check if the character class can cast the particular spell
 		for (int idx = 0; idx < SPELLS_PER_CLASS; ++idx) {
 			if (Res.SPELLS_ALLOWED[category][idx] == (int)val) {
 				// Can cast it. Check if the player has it in their spellbook
-				if (ps._spells[idx])
+				if (ps->_spells[idx])
 					v = val;
 				break;
 			}
@@ -1579,22 +1579,22 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		if (val < 82) {
 			for (int idx = 0; idx < 9; ++idx) {
 				if (val == 35) {
-					if (ps._weapons[idx]._id == val) {
+					if (ps->_weapons[idx]._id == val) {
 						v = val;
 						break;
 					}
 				} else if (val < 49) {
-					if (ps._armor[idx]._id == (val - 35)) {
+					if (ps->_armor[idx]._id == (val - 35)) {
 						v = val;
 						break;
 					}
 				} else if (val < 60) {
-					if (ps._accessories[idx]._id == (val - 49)) {
+					if (ps->_accessories[idx]._id == (val - 49)) {
 						v = val;
 						break;
 					}
 				} else {
-					if (ps._misc[idx]._id == (val - 60)) {
+					if (ps->_misc[idx]._id == (val - 60)) {
 						v = val;
 						break;
 					}
@@ -1618,31 +1618,31 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 37:
 		// Might bonus (extra beond base)
-		v = ps._might._temporary;
+		v = ps->_might._temporary;
 		break;
 	case 38:
 		// Intellect bonus (extra beyond base)
-		v = ps._intellect._temporary;
+		v = ps->_intellect._temporary;
 		break;
 	case 39:
 		// Personality bonus (extra beyond base)
-		v = ps._personality._temporary;
+		v = ps->_personality._temporary;
 		break;
 	case 40:
 		// Endurance bonus (extra beyond base)
-		v = ps._endurance._temporary;
+		v = ps->_endurance._temporary;
 		break;
 	case 41:
 		// Speed bonus (extra beyond base)
-		v = ps._speed._temporary;
+		v = ps->_speed._temporary;
 		break;
 	case 42:
 		// Accuracy bonus (extra beyond base)
-		v = ps._accuracy._temporary;
+		v = ps->_accuracy._temporary;
 		break;
 	case 43:
 		// Luck bonus (extra beyond base)
-		v = ps._luck._temporary;
+		v = ps->_luck._temporary;
 		break;
 	case 44:
 		v = YesNo::show(_vm, val);
@@ -1650,83 +1650,83 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 45:
 		// Might base (before bonus)
-		v = ps._might._permanent;
+		v = ps->_might._permanent;
 		break;
 	case 46:
 		// Intellect base (before bonus)
-		v = ps._intellect._permanent;
+		v = ps->_intellect._permanent;
 		break;
 	case 47:
 		// Personality base (before bonus)
-		v = ps._personality._permanent;
+		v = ps->_personality._permanent;
 		break;
 	case 48:
 		// Endurance base (before bonus)
-		v = ps._endurance._permanent;
+		v = ps->_endurance._permanent;
 		break;
 	case 49:
 		// Speed base (before bonus)
-		v = ps._speed._permanent;
+		v = ps->_speed._permanent;
 		break;
 	case 50:
 		// Accuracy base (before bonus)
-		v = ps._accuracy._permanent;
+		v = ps->_accuracy._permanent;
 		break;
 	case 51:
 		// Luck base (before bonus)
-		v = ps._luck._permanent;
+		v = ps->_luck._permanent;
 		break;
 	case 52:
 		// Fire resistence (before bonus)
-		v = ps._fireResistence._permanent;
+		v = ps->_fireResistence._permanent;
 		break;
 	case 53:
 		// Elecricity resistence (before bonus)
-		v = ps._electricityResistence._permanent;
+		v = ps->_electricityResistence._permanent;
 		break;
 	case 54:
 		// Cold resistence (before bonus)
-		v = ps._coldResistence._permanent;
+		v = ps->_coldResistence._permanent;
 		break;
 	case 55:
 		// Poison resistence (before bonus)
-		v = ps._poisonResistence._permanent;
+		v = ps->_poisonResistence._permanent;
 		break;
 	case 56:
 		// Energy reistence (before bonus)
-		v = ps._energyResistence._permanent;
+		v = ps->_energyResistence._permanent;
 		break;
 	case 57:
 		// Energy resistence (before bonus)
-		v = ps._magicResistence._permanent;
+		v = ps->_magicResistence._permanent;
 		break;
 	case 58:
 		// Fire resistence (extra beyond base)
-		v = ps._fireResistence._temporary;
+		v = ps->_fireResistence._temporary;
 		break;
 	case 59:
 		// Electricity resistence (extra beyond base)
-		v = ps._electricityResistence._temporary;
+		v = ps->_electricityResistence._temporary;
 		break;
 	case 60:
 		// Cold resistence (extra beyond base)
-		v = ps._coldResistence._temporary;
+		v = ps->_coldResistence._temporary;
 		break;
 	case 61:
 		// Poison resistence (extra beyod base)
-		v = ps._poisonResistence._temporary;
+		v = ps->_poisonResistence._temporary;
 		break;
 	case 62:
 		// Energy resistence (extra beyond base)
-		v = ps._energyResistence._temporary;
+		v = ps->_energyResistence._temporary;
 		break;
 	case 63:
 		// Magic resistence (extra beyond base)
-		v = ps._magicResistence._temporary;
+		v = ps->_magicResistence._temporary;
 		break;
 	case 64:
 		// Level (before bonus)
-		v = ps._level._permanent;
+		v = ps->_level._permanent;
 		break;
 	case 65:
 		// Total party food
@@ -1757,11 +1757,11 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 77:
 		// Armor class (extra beyond base)
-		v = ps._ACTemp;
+		v = ps->_ACTemp;
 		break;
 	case 78:
 		// Test whether current Hp is equal to or exceeds the max HP
-		v = ps._currentHp >= ps.getMaxHP() ? 1 : 0;
+		v = ps->_currentHp >= ps->getMaxHP() ? 1 : 0;
 		break;
 	case 79:
 		// Test for Wizard Eye being active
@@ -1769,7 +1769,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 81:
 		// Test whether current Sp is equal to or exceeds the max SP
-		v = ps._currentSp >= ps.getMaxSP() ? 1 : 0;
+		v = ps->_currentSp >= ps->getMaxSP() ? 1 : 0;
 		break;
 	case 84:
 		// Current facing direction
@@ -1787,7 +1787,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 	case 91:
 	case 92:
 		// Get a player stat
-		v = ps.getStat((Attribute)(action - 86), 0);
+		v = ps->getStat((Attribute)(action - 86), 0);
 		break;
 	case 93:
 		// Current day of the week (10 days per week)
@@ -1803,7 +1803,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 102:
 		// Thievery skill
-		v = ps.getThievery();
+		v = ps->getThievery();
 		break;
 	case 103:
 		// Get value of world flag
