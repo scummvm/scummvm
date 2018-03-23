@@ -35,6 +35,8 @@ enum {
 class BladeRunnerEngine;
 
 class PoliceMazeTargetTrack {
+	BladeRunnerEngine *_vm;
+
 	uint32 _time;
 	bool _isPresent;
 	int _itemId;
@@ -54,7 +56,7 @@ class PoliceMazeTargetTrack {
 	bool _visible;
 
 public:
-	PoliceMazeTargetTrack();
+	PoliceMazeTargetTrack(BladeRunnerEngine *vm);
 	~PoliceMazeTargetTrack();
 
 	void reset();
@@ -67,6 +69,8 @@ public:
 	void resetVisible() { _visible = false; }
 	bool isVisible() { return _visible; }
 	void setTime(uint32 t) { _time = t; }
+
+	void readdObject(int itemId);
 };
 
 class PoliceMaze {

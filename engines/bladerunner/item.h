@@ -65,9 +65,13 @@ public:
 	void setXYZ(Vector3 position);
 	void getWidthHeight(int *width, int *height) const;
 
+	BoundingBox *getBoundingBox() { return &_boundingBox; }
+	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
+
 	void setIsTarget(bool isTarget) { _isTarget = isTarget; }
 
 	bool isTarget() const;
+	bool isVisible() const { return _isVisible; }
 	bool isPoliceMazeEnemy() const;
 	void spinInWorld();
 	bool tick(Common::Rect *screenRect, bool special);

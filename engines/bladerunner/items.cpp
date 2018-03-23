@@ -135,12 +135,36 @@ bool Items::isTarget(int itemId) const {
 	return _items[itemIndex]->isTarget();
 }
 
+bool Items::isVisible(int itemId) const {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return false;
+	}
+	return _items[itemIndex]->isVisible();
+}
+
 bool Items::isPoliceMazeEnemy(int itemId) const {
 	int itemIndex = findItem(itemId);
 	if (itemIndex == -1) {
 		return false;
 	}
 	return _items[itemIndex]->isTarget();
+}
+
+BoundingBox *Items::getBoundingBox(int itemId) {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return nullptr;
+	}
+	return _items[itemIndex]->getBoundingBox();
+}
+
+Common::Rect *Items::getScreenRectangle(int itemId) {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return nullptr;
+	}
+	return _items[itemIndex]->getScreenRectangle();
 }
 
 void Items::spinInWorld(int itemId) {

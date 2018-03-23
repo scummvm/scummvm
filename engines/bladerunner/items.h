@@ -50,7 +50,11 @@ public:
 	void setIsTarget(int itemId, bool isTarget);
 	bool isTarget(int itemId) const;
 	bool isPoliceMazeEnemy(int itemId) const;
+	bool isVisible(int itemId) const;
 	int findTargetUnderMouse(int mouseX, int mouseY) const;
+
+	BoundingBox *getBoundingBox(int itemId);
+	Common::Rect *getScreenRectangle(int itemId);
 
 	void spinInWorld(int itemId);
 

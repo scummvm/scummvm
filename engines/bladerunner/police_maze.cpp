@@ -22,8 +22,10 @@
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_constants.h"
+#include "bladerunner/items.h"
 #include "bladerunner/police_maze.h"
 #include "bladerunner/scene.h"
+#include "bladerunner/scene_objects.h"
 #include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {
@@ -34,7 +36,7 @@ PoliceMaze::PoliceMaze(BladeRunnerEngine *vm) {
 	reset();
 
 	for (int i = 0; i < kNumMazeTracks; i++) {
-		_tracks[i] = new PoliceMazeTargetTrack;
+		_tracks[i] = new PoliceMazeTargetTrack(vm);
 	}
 }
 
@@ -116,7 +118,9 @@ void PoliceMaze::tick() {
 	}
 }
 
-PoliceMazeTargetTrack::PoliceMazeTargetTrack() {
+PoliceMazeTargetTrack::PoliceMazeTargetTrack(BladeRunnerEngine *vm) {
+	_vm = vm;
+
 	reset();
 }
 
@@ -153,5 +157,17 @@ void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float s
 
 void PoliceMazeTargetTrack::tick() {
 }
+
+void PoliceMazeTargetTrack::readdObject(int itemId) {
+	if (_vm->_sceneObjects->remove(itemId + kSceneObjectOffsetItems)) {
+		BoundingBox *boundingBox = _vm->_items->getBoundingBox(itemId);
+		Common::Rect *screenRect = _vm->_items->getScreenRectangle(itemId);
+		bool targetable = _vm->_items->isTarget(itemId);
+		bool obstacle = _vm->_items->isVisible(itemId);
+
+		_vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, boundingBox, screenRect, targetable, obstacle);
+	}
+}
+
 
 } // End of namespace BladeRunner
