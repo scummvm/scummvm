@@ -2707,6 +2707,7 @@ bool AxacussCorridor5::handleMoneyDialog() {
 				stopInteract(_gm->_state._money);
 				return true;
 			}
+			// fall through
 		case 2:
 			if (_gm->_state._money > 1100) {
 				stopInteract(_gm->_state._money - 200);
