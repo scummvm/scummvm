@@ -20,6 +20,7 @@ MODULE_OBJS = \
     objects/actions/action_hide.o \
     objects/actions/action_loop.o \
     objects/actions/action_play.o \
+    objects/actions/action_play_with_sfx.o \
     objects/actions/action_sound.o \
     objects/actions/action_still.o \
     objects/actions/action_talk.o \
