@@ -187,18 +187,18 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterDisplayX[i] = 0;
 		_characterDisplayY[i] = 0;
 		_array12299[i] = -1;
-		_array109E9PosX[i] = -1;
-		_array10A11PosY[i] = -1;
+		_characterSubTargetPosX[i] = -1;
+		_characterSubTargetPosY[i] = -1;
 		_stingArray[i] = 0;
 
 		_array11D49[i] = -1;
 		_characterPositionX[i] = -1;
 		_characterPositionY[i] = -1;
-		_characterPositionAltitude[i] = 0;
+		_characterPosAltitude[i] = 0;
 		_characterFrameArray[i] = 0;
 		_characterCarried[i] = -1;
-		_rulesBuffer2_6[i] = 4;
-		_rulesBuffer2_7[i] = 0;
+		_characterBehindDist[i] = 4;
+		_characterAboveDist[i] = 0;
 		_spriteSizeArray[i] = 20;
 		_characterDirectionArray[i] = 0;
 		_rulesBuffer2_10[i] = 0;
@@ -626,8 +626,8 @@ void LilliputEngine::moveCharacters() {
 	for (int i = index; i >= 0; i--) {
 		if (_characterCarried[i] != -1) {
 			int index2 = _characterCarried[i];
-			_characterPositionAltitude[i] = _characterPositionAltitude[index2] + _rulesBuffer2_7[i];
-			int8 tmpVal = _rulesBuffer2_6[i];
+			_characterPosAltitude[i] = _characterPosAltitude[index2] + _characterAboveDist[i];
+			int8 tmpVal = _characterBehindDist[i];
 			_characterDirectionArray[i] = _characterDirectionArray[index2];
 			int var3 = _characterPositionX[index2];
 			int var4 = _characterPositionY[index2];
@@ -665,7 +665,7 @@ void LilliputEngine::moveCharacters() {
 			_characterRelativePositionY[i] = tmpVal3;
 			tmpVal2 = _characterPositionX[i] - pos16213.x;
 			tmpVal3 = _characterPositionY[i] - pos16213.y;
-			int tmpVal4 = _characterPositionAltitude[i];
+			int tmpVal4 = _characterPosAltitude[i];
 			_characterDisplayX[i] = ((60 + tmpVal2 - tmpVal3) * 2) & 0xFF;
 			_characterDisplayY[i] = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
 			_charactersToDisplay[_numCharactersToDisplay] = i;
@@ -1128,10 +1128,10 @@ void LilliputEngine::sortCharacters() {
 					continue;
 
 				if (_characterRelativePositionX[index1] == _characterRelativePositionX[index2]) {
-					if (_characterPositionAltitude[index1] < _characterPositionAltitude[index2])
+					if (_characterPosAltitude[index1] < _characterPosAltitude[index2])
 						continue;
 
-					if (_characterPositionAltitude[index1] == _characterPositionAltitude[index2]) {
+					if (_characterPosAltitude[index1] == _characterPosAltitude[index2]) {
 						if (_characterDisplayY[index1] < _characterDisplayY[index2])
 							continue;
 					}
@@ -1350,7 +1350,7 @@ byte LilliputEngine::getDirection(Common::Point param1, Common::Point param2) {
 byte LilliputEngine::sub16799(int index, Common::Point param1) {
 	debugC(2, kDebugEngine, "sub16799(%d, %d - %d)", index, param1.x, param1.y);
 
-	Common::Point var3 = Common::Point(_array109E9PosX[index], _array10A11PosY[index]);
+	Common::Point var3 = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
 
 	if (var3.x != -1) {
 		if ((var3.x != _scriptHandler->_characterTilePosX[index]) || (var3.y != _scriptHandler->_characterTilePosY[index])) {
@@ -1366,7 +1366,7 @@ byte LilliputEngine::sub16799(int index, Common::Point param1) {
 	sub167EF(index);
 
 	Common::Point pos1 = Common::Point(_scriptHandler->_characterTilePosX[index], _scriptHandler->_characterTilePosY[index]);
-	Common::Point pos2 = Common::Point(_array109E9PosX[index], _array10A11PosY[index]);
+	Common::Point pos2 = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
 
 	_characterDirectionArray[index] = getDirection(pos1, pos2);
 
@@ -1383,15 +1383,15 @@ void LilliputEngine::sub167EF(int index) {
 	int16 word167ED = findHotspot(Common::Point(_characterTargetPosX[index], _characterTargetPosY[index]));
 
 	if (word167EB == word167ED) {
-		_array109E9PosX[index] = _characterTargetPosX[index];
-		_array10A11PosY[index] = _characterTargetPosY[index];
+		_characterSubTargetPosX[index] = _characterTargetPosX[index];
+		_characterSubTargetPosY[index] = _characterTargetPosY[index];
 		return;
 	}
 
 	if (word167EB == -1) {
 		int tmpVal = reverseFindHotspot(Common::Point(_characterTargetPosX[index], _characterTargetPosY[index]));
-		_array109E9PosX[index] = _rulesBuffer12Pos4[tmpVal].x;
-		_array10A11PosY[index] = _rulesBuffer12Pos4[tmpVal].y;
+		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[tmpVal].x;
+		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[tmpVal].y;
 		return;
 	}
 
@@ -1400,26 +1400,26 @@ void LilliputEngine::sub167EF(int index) {
 		(_characterTargetPosX[index] <= _rectXMinMax[word167EB].max) &&
 		(_characterTargetPosY[index] >= _rectYMinMax[word167EB].min) &&
 		(_characterTargetPosY[index] <= _rectYMinMax[word167EB].max)) {
-		_array109E9PosX[index] = _rulesBuffer12Pos4[word167ED].x;
-		_array10A11PosY[index] = _rulesBuffer12Pos4[word167ED].y;
+		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167ED].x;
+		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167ED].y;
 		return;
 	}
 
-	_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
-	_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
+	_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
+	_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
 	int var4h = _rectXMinMax[word167EB].min;
 	int var4l = _rectXMinMax[word167EB].max;
 
 	if (var4h != var4l) {
 		if (_rulesBuffer12Pos4[word167EB].x == var4h) {
-			_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x - 1;
-			_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
+			_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x - 1;
+			_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
 			return;
 		}
 
 		if (_rulesBuffer12Pos4[word167EB].x == var4l) {
-			_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x + 1;
-			_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
+			_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x + 1;
+			_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
 			return;
 		}
 
@@ -1428,11 +1428,11 @@ void LilliputEngine::sub167EF(int index) {
 
 		if (var4h != var4l) {
 			if (_rulesBuffer12Pos4[word167EB].y == var4h) {
-				_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
-				_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y - 1;
+				_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
+				_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y - 1;
 			} else {
-				_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
-				_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y + 1;
+				_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
+				_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y + 1;
 			}
 			return;
 		}
@@ -1444,17 +1444,17 @@ void LilliputEngine::sub167EF(int index) {
 
 	int tmpVal = _bufferIsoMap[mapIndex + 3];
 	if ((tmpVal & 8) != 0) {
-		_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x + 1;
-		_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
+		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x + 1;
+		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
 	} else if ((tmpVal & 4) != 0) {
-		_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
-		_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y - 1;
+		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
+		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y - 1;
 	} else if ((tmpVal & 2) != 0) {
-		_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x;
-		_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y + 1;
+		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
+		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y + 1;
 	} else {
-		_array109E9PosX[index] = _rulesBuffer12Pos4[word167EB].x - 1;
-		_array10A11PosY[index] = _rulesBuffer12Pos4[word167EB].y;
+		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x - 1;
+		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
 	}
 	return;
 }
@@ -1528,8 +1528,8 @@ byte LilliputEngine::sub16A76(int indexb, int indexs) {
 	if ((var1h >= _rectXMinMax[var2].min) && (var1h <= _rectXMinMax[var2].max) && (var1l >= _rectYMinMax[var2].min) && (var1l <= _rectYMinMax[var2].max))
 		return 0;
 
-	var1h = _array109E9PosX[indexs];
-	var1l = _array10A11PosY[indexs];
+	var1h = _characterSubTargetPosX[indexs];
+	var1l = _characterSubTargetPosY[indexs];
 
 	if ((var1h >= _rectXMinMax[var2].min) && (var1h <= _rectXMinMax[var2].max) && (var1l >= _rectYMinMax[var2].min) && (var1l <= _rectYMinMax[var2].max))
 		return 0;
@@ -1567,8 +1567,8 @@ void LilliputEngine::sub16A08(int index) {
 	int16 arrayDistance[4];
 
 	for (int i = 3; i >= 0; i--) {
-		int16 var1h = _word16937Pos.x + arrayMoveX[i] - _array109E9PosX[index];
-		int16 var1l = _word16937Pos.y + arrayMoveY[i] - _array10A11PosY[index];
+		int16 var1h = _word16937Pos.x + arrayMoveX[i] - _characterSubTargetPosX[index];
+		int16 var1l = _word16937Pos.y + arrayMoveY[i] - _characterSubTargetPosY[index];
 		arrayDistance[i] = (var1l * var1l) + (var1h * var1h);
 	}
 
@@ -1636,7 +1636,7 @@ void LilliputEngine::sub16626() {
 				break;
 
 			uint16 index2 = _scriptHandler->_characterNextSequence[index] + (index * 16);
-			Common::Point var1 = _scriptHandler->_array12311[index2];
+			Common::Point var1 = _scriptHandler->_sequenceArr[index2];
 
 			// /8, then /2 as the function array is a word array
 			int16 var2 = var1.x / 16;
@@ -1708,7 +1708,7 @@ byte LilliputEngine::sub166F7(int index, Common::Point var1, int tmpVal) {
 			a2 |= (a2 << 4);
 
 		a2 -= 16;
-		_scriptHandler->_array12311[tmpVal] = Common::Point(var1.x, a2);
+		_scriptHandler->_sequenceArr[tmpVal] = Common::Point(var1.x, a2);
 
 		if ((a2 & 0xF0) == 0)
 			return 2;
@@ -1749,9 +1749,9 @@ byte LilliputEngine::sub1675D(int index, Common::Point var1) {
 	int charIndex = _scriptHandler->_array10A39[index];
 	Common::Point charPos = Common::Point(_scriptHandler->_characterTilePosX[charIndex], _scriptHandler->_characterTilePosY[charIndex]);
 
-	if ((_array109E9PosX[index] != -1) && (_array109E9PosX[index] == _characterTargetPosX[index]) && (_array10A11PosY[index] == _characterTargetPosY[index])) {
-		_array109E9PosX[index] = charPos.x;
-		_array10A11PosY[index] = charPos.y;
+	if ((_characterSubTargetPosX[index] != -1) && (_characterSubTargetPosX[index] == _characterTargetPosX[index]) && (_characterSubTargetPosY[index] == _characterTargetPosY[index])) {
+		_characterSubTargetPosX[index] = charPos.x;
+		_characterSubTargetPosY[index] = charPos.y;
 	}
 
 	_characterTargetPosX[index] = charPos.x;
@@ -2099,25 +2099,25 @@ void LilliputEngine::turnCharacter2(int index) {
 void LilliputEngine::moveCharacterUp1(int index) {
 	debugC(2, kDebugEngine, "moveCharacterUp1(%d)", index);
 
-	_characterPositionAltitude[index] += 1;
+	_characterPosAltitude[index] += 1;
 }
 
 void LilliputEngine::moveCharacterUp2(int index) {
 	debugC(2, kDebugEngine, "moveCharacterUp2(%d)", index);
 
-	_characterPositionAltitude[index] += 2;
+	_characterPosAltitude[index] += 2;
 }
 
 void LilliputEngine::moveCharacterDown1(int index) {
 	debugC(2, kDebugEngine, "moveCharacterDown1(%d)", index);
 
-	_characterPositionAltitude[index] -= 1;
+	_characterPosAltitude[index] -= 1;
 }
 
 void LilliputEngine::moveCharacterDown2(int index) {
 	debugC(2, kDebugEngine, "moveCharacterDown2(%d)", index);
 
-	_characterPositionAltitude[index] -= 2;
+	_characterPosAltitude[index] -= 2;
 }
 
 void LilliputEngine::moveCharacterSpeed2(int index) {
@@ -2518,11 +2518,11 @@ void LilliputEngine::loadRules() {
 			curWord = (curWord << 3) + 4;
 		_characterPositionY[j] = curWord;
 
-		_characterPositionAltitude[j] = (f.readUint16LE() & 0xFF);
+		_characterPosAltitude[j] = (f.readUint16LE() & 0xFF);
 		_characterFrameArray[j] = f.readUint16LE();
 		_characterCarried[j] = (int8)f.readByte();
-		_rulesBuffer2_6[j] = (int8)f.readByte();
-		_rulesBuffer2_7[j] = f.readByte();
+		_characterBehindDist[j] = (int8)f.readByte();
+		_characterAboveDist[j] = f.readByte();
 		_spriteSizeArray[j] = f.readByte();
 		_characterDirectionArray[j] = f.readByte();
 		_rulesBuffer2_10[j] = f.readByte();

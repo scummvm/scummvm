@@ -169,11 +169,11 @@ public:
 	int16 _currentScriptCharacter;
 	int16 _characterPositionX[40];
 	int16 _characterPositionY[40];
-	int8 _characterPositionAltitude[40];
+	int8 _characterPosAltitude[40];
 	int16 _characterFrameArray[40];
 	int8 _characterCarried[40];
-	int8 _rulesBuffer2_6[40];
-	byte _rulesBuffer2_7[40];
+	int8 _characterBehindDist[40];
+	byte _characterAboveDist[40];
 	byte _spriteSizeArray[40];
 	byte _characterDirectionArray[40];
 	byte _rulesBuffer2_10[40];
@@ -217,8 +217,8 @@ public:
 	int16 _characterDisplayX[40];
 	int16 _characterDisplayY[40];
 	int8 _array12299[40];
-	int16 _array109E9PosX[40];
-	int16 _array10A11PosY[40];
+	int16 _characterSubTargetPosX[40];
+	int16 _characterSubTargetPosY[40];
 	byte _stingArray[40];
 	byte _array16C54[4];
 	byte _array16C58[4];
