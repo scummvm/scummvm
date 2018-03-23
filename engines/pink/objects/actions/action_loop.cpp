@@ -29,7 +29,7 @@ namespace Pink {
 
 void ActionLoop::deserialize(Archive &archive) {
     ActionPlay::deserialize(archive);
-    uint32 style;
+    uint16 style;
     archive >> _intro >> style;
     switch (style) {
         case kPingPong:
