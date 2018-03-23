@@ -40,7 +40,7 @@ public:
     void load(Archive &archive);
     Actor *findActor(Common::String &name);
     Sound* loadSound(Common::String &fileName);
-    Video::FlicDecoder *loadCel(Common::String &fileName);
+    CelDecoder *loadCel(Common::String &fileName);
 
     virtual void toConsole();
 

@@ -37,6 +37,7 @@ class PinkEngine;
 class OrbFile;
 class BroFile;
 class Sound;
+class CelDecoder;
 
 struct ResourceDescription;
 
@@ -49,7 +50,7 @@ public:
 
     //Common::String loadText(Common::String &name);
     Sound *loadSound(Common::String &name);
-    Video::FlicDecoder *loadCEL(Common::String &name);
+    CelDecoder *loadCEL(Common::String &name);
     PinkEngine *getGame() const;
 
 private:

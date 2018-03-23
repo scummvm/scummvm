@@ -28,6 +28,8 @@
 
 namespace Pink {
 
+class CelDecoder;
+
 class ActionCEL : public Action {
 public:
     ActionCEL();
@@ -36,13 +38,13 @@ public:
     virtual void end();
 
     uint32 getZ();
-    Video::FlicDecoder *getDecoder();
+    CelDecoder *getDecoder();
 
     virtual bool initPallete(Director *director);
 
 protected:
     virtual void onStart() {} ;
-    Video::FlicDecoder *_flicDecoder;
+    CelDecoder *_decoder;
     Common::String _fileName;
     uint32 _z;
 };

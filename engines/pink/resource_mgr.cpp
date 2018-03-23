@@ -28,6 +28,7 @@
 #include "pink.h"
 #include "sound.h"
 #include "engines/pink/objects/pages/game_page.h"
+#include "cel_decoder.h"
 
 namespace Pink {
 
@@ -77,8 +78,8 @@ PinkEngine *ResourceMgr::getGame() const {
     return _game;
 }
 
-Video::FlicDecoder *ResourceMgr::loadCEL(Common::String &name) {
-    Video::FlicDecoder *decoder = new Video::FlicDecoder();
+CelDecoder *ResourceMgr::loadCEL(Common::String &name) {
+    CelDecoder *decoder = new CelDecoder();
     decoder->loadStream(getResourceStream(name));
     return decoder;
 }

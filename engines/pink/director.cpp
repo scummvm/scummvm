@@ -24,6 +24,7 @@
 #include <engines/pink/objects/actions/action_cel.h>
 #include "graphics/surface.h"
 #include "graphics/palette.h"
+#include "cel_decoder.h"
 
 namespace Pink {
 Director::Director(OSystem *system)
@@ -32,10 +33,12 @@ Director::Director(OSystem *system)
 void Director::draw() {
     bool needUpdate = 0;
     for (int i = 0; i < _sprites.size(); ++i) {
-        Video::FlicDecoder *decoder = _sprites[i]->getDecoder();
+        CelDecoder *decoder = _sprites[i]->getDecoder();
         if (decoder->needsUpdate()) {
             const Graphics::Surface *surface = decoder->decodeNextFrame();
-            _system->copyRectToScreen(surface->getPixels(), surface->pitch, 0, 0, surface->w, surface->h);
+            _system->copyRectToScreen(surface->getPixels(), surface->pitch,
+                                      decoder->getX(), decoder->getY(),
+                                      surface->w, surface->h);
             needUpdate = 1;
         }
     }
