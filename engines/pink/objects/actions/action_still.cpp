@@ -37,12 +37,14 @@ void ActionStill::toConsole() {
           _name.c_str(), _fileName.c_str(), _startFrame);
 }
 
-void ActionStill::start(bool unk) {
-    debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
+void ActionStill::end() {
+    ActionCEL::end();
+    debug("ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 }
 
-void ActionStill::end() {
-    debug("ActionStill %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+void ActionStill::onStart() {
+    debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
+    _flicDecoder->seekToFrame(_startFrame);
 }
 
 } // End of namespace Pink

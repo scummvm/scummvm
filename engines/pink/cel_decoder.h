@@ -20,34 +20,19 @@
  *
  */
 
-#ifndef PINK_DIRECTOR_H
-#define PINK_DIRECTOR_H
+#ifndef PINK_CEL_DECODER_H
+#define PINK_CEL_DECODER_H
 
-#include <common/array.h>
-#include <common/system.h>
+
+#include <video/flic_decoder.h>
 
 namespace Pink {
 
-class ActionCEL;
+class CelDecoder : public Video::FlicDecoder {
 
-class Director {
-public:
-    Director(OSystem *system);
-    //void addSoundObject();
-    //void removeSound();
-    //void updateSoundAction
-    //CActor *getActorByCoords()
 
-    void draw();
-    void addSprite(ActionCEL *sprite);
-    void removeSprite(ActionCEL *sprite);
-    void setPallette(const byte *pallete);
-private:
-    OSystem *_system;
-    Common::Array<ActionCEL*> _sprites;
 };
 
-} // End of namespace Pink
-
+}
 
 #endif

@@ -30,7 +30,7 @@ namespace Pink {
 
 class ActionSfx;
 
-class ActionPlayWithSfx : ActionPlay {
+class ActionPlayWithSfx : public ActionPlay {
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
 
@@ -39,7 +39,7 @@ private:
     Common::Array<ActionSfx*> _sfxArray;
 };
 
-class ActionSfx : Object {
+class ActionSfx : public Object {
 public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();

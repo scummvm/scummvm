@@ -23,6 +23,7 @@
 #ifndef PINK_PAGE_H
 #define PINK_PAGE_H
 
+#include <video/flic_decoder.h>
 #include "engines/pink/objects/object.h"
 #include "engines/pink/objects/module.h"
 #include "engines/pink/resource_mgr.h"
@@ -39,6 +40,7 @@ public:
     void load(Archive &archive);
     Actor *findActor(Common::String &name);
     Sound* loadSound(Common::String &fileName);
+    Video::FlicDecoder *loadCel(Common::String &fileName);
 
     virtual void toConsole();
 

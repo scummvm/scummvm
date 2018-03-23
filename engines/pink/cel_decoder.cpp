@@ -20,34 +20,6 @@
  *
  */
 
-#ifndef PINK_DIRECTOR_H
-#define PINK_DIRECTOR_H
-
-#include <common/array.h>
-#include <common/system.h>
-
 namespace Pink {
 
-class ActionCEL;
-
-class Director {
-public:
-    Director(OSystem *system);
-    //void addSoundObject();
-    //void removeSound();
-    //void updateSoundAction
-    //CActor *getActorByCoords()
-
-    void draw();
-    void addSprite(ActionCEL *sprite);
-    void removeSprite(ActionCEL *sprite);
-    void setPallette(const byte *pallete);
-private:
-    OSystem *_system;
-    Common::Array<ActionCEL*> _sprites;
-};
-
-} // End of namespace Pink
-
-
-#endif
+}

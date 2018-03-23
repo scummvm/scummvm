@@ -61,10 +61,10 @@ void Actor::init(bool unk) {
     }
 
     if (!_action) {
-        _isActionEnd = 1;
+        _isActionEnded = 1;
     }
     else {
-        _isActionEnd = 0;
+        _isActionEnded = 0;
         _action->start(unk);
     }
 }
@@ -74,7 +74,7 @@ void Actor::hide() {
 }
 
 void Actor::endAction() {
-    _isActionEnd = 1;
+    _isActionEnded = 1;
 }
 
 void Actor::setAction(const Common::String &name) {
@@ -84,11 +84,11 @@ void Actor::setAction(const Common::String &name) {
 
 void Actor::setAction(Action *newAction) {
     if (_action) {
-        _isActionEnd = 1;
+        _isActionEnded = 1;
         _action->end();
     }
     if (newAction) {
-        _isActionEnd = 0;
+        _isActionEnded = 0;
         _action = newAction;
         _action->start(0);
     }
@@ -97,7 +97,7 @@ void Actor::setAction(Action *newAction) {
 void Actor::setAction(Action *newAction, bool unk) {
     if (unk){
         assert(0); // want to see this
-        _isActionEnd = 1;
+        _isActionEnded = 1;
         _action = newAction;
     }
     else setAction(newAction);
@@ -108,7 +108,14 @@ Action *Actor::getAction() const {
 }
 
 bool Actor::isPlaying() {
-    return _isActionEnd;
+    return _isActionEnded;
+}
+
+bool Actor::initPallete(Director *director) {
+    for (int i = 0; i < _actions.size(); ++i) {
+        if (_actions[i]->initPallete(director))
+            break;
+    }
 }
 
 } // End of namespace Pink

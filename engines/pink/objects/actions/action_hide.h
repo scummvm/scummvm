@@ -30,10 +30,9 @@ namespace Pink {
 class ActionHide : public Action {
 public:
     virtual void deserialize(Archive &archive);
-
     virtual void toConsole();
 
-    virtual void start(bool unk_startNow);
+    virtual void start(bool unk);
     virtual void end();
 };
 

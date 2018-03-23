@@ -52,8 +52,8 @@ private:
 class HandlerTimerSequences : public HandlerSequences { //originally it was inherited from HandlerTimer
 public:
     virtual void toConsole();
-private:
-    virtual void handle(LeadActor *actor); // very big and hard function
+protected:
+    virtual void handle(Sequence *sequence); // very big and hard function
 };
 
 } // End of namespace Pink

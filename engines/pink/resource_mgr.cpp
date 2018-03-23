@@ -53,7 +53,7 @@ Sound *ResourceMgr::loadSound(Common::String &name) {
     return new Sound(_game->_mixer, getResourceStream(name));
 }
 
-Common::SeekableReadStream *ResourceMgr::getResourceStream(Common::String &name) {
+Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(Common::String &name) {
     Common::SeekableReadStream *stream;
     uint i;
     for (i = 0; i < _resCount; ++i) {
@@ -69,12 +69,18 @@ Common::SeekableReadStream *ResourceMgr::getResourceStream(Common::String &name)
 
     stream->seek(_resDescTable[i].offset);
 
-    return new Common::SeekableSubReadStream(stream, _resDescTable[i].offset,
+    return new Common::SafeSeekableSubReadStream(stream, _resDescTable[i].offset,
                                              _resDescTable[i].offset + _resDescTable[i].size);
 }
 
 PinkEngine *ResourceMgr::getGame() const {
     return _game;
+}
+
+Video::FlicDecoder *ResourceMgr::loadCEL(Common::String &name) {
+    Video::FlicDecoder *decoder = new Video::FlicDecoder();
+    decoder->loadStream(getResourceStream(name));
+    return decoder;
 }
 
 } // End of namespace Pink

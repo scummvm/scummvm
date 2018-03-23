@@ -28,6 +28,7 @@
 #include "gui/EventRecorder.h"
 #include "gui/debugger.h"
 #include "file.h"
+#include "director.h"
 
 
 /*
@@ -76,6 +77,7 @@ public:
     OrbFile *getOrb()  { return &_orb; }
     BroFile *getBro()  { return _bro; }
     Common::RandomSource &getRnd();
+    Director *getDirector() { return &_director;}
 
     bool checkValueOfVariable(Common::String &variable, Common::String &value);
     void setVariable(Common::String &variable, Common::String &value);
@@ -92,6 +94,8 @@ private:
 
     OrbFile  _orb;
     BroFile *_bro;
+
+    Director _director;
 
     Module *_module;
     Common::Array<NamedObject*> _modules;

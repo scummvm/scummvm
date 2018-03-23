@@ -28,6 +28,7 @@
 namespace Pink {
 
 class Actor;
+class Director;
 
 class Action : public NamedObject {
 public:
@@ -36,6 +37,8 @@ public:
     virtual void end() {};
     virtual void update() {};
     virtual void toConsole() {};
+
+    virtual bool initPallete(Director *director) { return 0;}
 
 protected:
     Actor *_actor;
