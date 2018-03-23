@@ -59,13 +59,25 @@ void PoliceMaze::reset() {
 	_pm_var2 = 0;
 }
 
+void PoliceMaze::clear(bool isLoadingGame) {
+	for (int i = 0; i < kNumMazeTracks; i++) {
+		if (_tracks[i]->isPresent())
+			_tracks[i]->clear(isLoadingGame);
+	}
+}
+
 void PoliceMaze::activate() {
 	_needAnnouncement = true;
 	_announcementRead = false;
 }
 
 void PoliceMaze::setPauseState(bool state) {
-	warning("PoliceMaze::setPauseState(%d)", state);
+	_isPaused = state;
+
+	uint32 t = _vm->getTotalPlayTime();
+
+	for (int i = 0; i < kNumMazeTracks; i++)
+		_tracks[i]->setTime(t);
 }
 
 void PoliceMaze::tick() {
@@ -109,6 +121,7 @@ PoliceMazeTargetTrack::PoliceMazeTargetTrack() {
 }
 
 PoliceMazeTargetTrack::~PoliceMazeTargetTrack() {
+	reset();
 }
 
 void PoliceMazeTargetTrack::reset() {
@@ -128,6 +141,10 @@ void PoliceMazeTargetTrack::reset() {
 	_maxAngle = 0;
 	_angleChange = 0;
 	_visible = true;
+}
+
+void PoliceMazeTargetTrack::clear(bool isLoadingGame) {
+	reset();
 }
 
 void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int count, void *list, bool a11) {

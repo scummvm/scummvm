@@ -29,6 +29,7 @@
 #include "bladerunner/game_info.h"
 #include "bladerunner/items.h"
 #include "bladerunner/overlays.h"
+#include "bladerunner/police_maze.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/screen_effects.h"
@@ -187,7 +188,8 @@ bool Scene::close(bool isLoadingGame) {
 		return true;
 	}
 
-	//_vm->_policeMaze->clear(!isLoadingGame);
+	_vm->_policeMaze->clear(!isLoadingGame);
+
 	if (isLoadingGame) {
 		_vm->_sceneScript->playerWalkedOut();
 	}

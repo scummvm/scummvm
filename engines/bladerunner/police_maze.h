@@ -35,7 +35,7 @@ enum {
 class BladeRunnerEngine;
 
 class PoliceMazeTargetTrack {
-	int _time;
+	uint32 _time;
 	bool _isPresent;
 	int _itemId;
 	int _count;
@@ -58,10 +58,15 @@ public:
 	~PoliceMazeTargetTrack();
 
 	void reset();
+	void clear(bool isLoadingGame);
 	void add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int count, void *list, bool a11);
 
 	void tick();
+	bool isPresent() { return _isPresent; }
+	void setVisible() { _visible = true; }
+	void resetVisible() { _visible = false; }
 	bool isVisible() { return _visible; }
+	void setTime(uint32 t) { _time = t; }
 };
 
 class PoliceMaze {
@@ -82,6 +87,7 @@ public:
 
 	void tick();
 	void reset();
+	void clear(bool isLoadingGame);
 	void setPauseState(bool state);
 	void activate();
 };
