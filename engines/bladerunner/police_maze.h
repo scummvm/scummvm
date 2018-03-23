@@ -23,18 +23,59 @@
 #ifndef BLADERUNNER_POLICE_MAZE_H
 #define BLADERUNNER_POLICE_MAZE_H
 
+#include "bladerunner/vector.h"
+
 namespace BladeRunner {
+
+enum {
+	kNumMazeTracks = 64,
+	kNumTrackPoints = 100
+};
 
 class BladeRunnerEngine;
 
+class PoliceMazeTargetTrack {
+	int _time;
+	bool _isPresent;
+	int _itemId;
+	int _count;
+	Vector3 _points[kNumTrackPoints];
+	int *_data;
+	int _dataIndex;
+	int _pmt_var1;
+	int _pmt_var2;
+	int _pmt_var3;
+	int _pmt_var4;
+	int _pointIndex;
+	int _pmt_var5;
+	int _rotating;
+	int _maxAngle;
+	int _angleChange;
+	bool _visible;
+
+public:
+	PoliceMazeTargetTrack();
+	~PoliceMazeTargetTrack();
+
+	void reset();
+};
+
 class PoliceMaze {
 	BladeRunnerEngine *_vm;
+
+	PoliceMazeTargetTrack *_tracks[kNumMazeTracks];
+	bool _isActive;
+	bool _needAnnouncement;
+	bool _announcementRead;
+	int _pm_var1;
+	int _pm_var2;
 
 public:
 	PoliceMaze(BladeRunnerEngine *vm);
 	~PoliceMaze();
 
 	void tick();
+	void reset();
 };
 
 } // End of namespace BladeRunner

@@ -28,13 +28,62 @@ namespace BladeRunner {
 
 PoliceMaze::PoliceMaze(BladeRunnerEngine *vm) {
 	_vm = vm;
+
+	reset();
+
+	for (int i = 0; i < kNumMazeTracks; i++) {
+		_tracks[i] = new PoliceMazeTargetTrack;
+	}
 }
 
 PoliceMaze::~PoliceMaze() {
+	for (int i = 0; i < kNumMazeTracks; i++) {
+		delete _tracks[i];
+	}
+
+	reset();
+}
+
+void PoliceMaze::reset() {
+	_isActive = false;
+	_needAnnouncement = false;
+	_announcementRead = false;
+
+	for (int i = 0; i < kNumMazeTracks; i++) {
+		_tracks[i] = 0;
+	}
+
+	_pm_var1 = 0;
+	_pm_var2 = 0;
 }
 
 void PoliceMaze::tick() {
 }
 
+PoliceMazeTargetTrack::PoliceMazeTargetTrack() {
+	reset();
+}
+
+PoliceMazeTargetTrack::~PoliceMazeTargetTrack() {
+}
+
+void PoliceMazeTargetTrack::reset() {
+	_isPresent = 0;
+	_itemId = -1;
+	_count = 0;
+	_data = 0;
+	_dataIndex = 0;
+	_pmt_var1 = 0;
+	_pmt_var2 = 0;
+	_time = 0;
+	_pmt_var3 = 0;
+	_pmt_var4 = 0;
+	_pointIndex = 0;
+	_pmt_var5 = 0;
+	_rotating = 0;
+	_maxAngle = 0;
+	_angleChange = 0;
+	_visible = true;
+}
 
 } // End of namespace BladeRunner
