@@ -152,7 +152,32 @@ void PoliceMazeTargetTrack::clear(bool isLoadingGame) {
 }
 
 void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int count, void *list, bool a11) {
-	warning("PoliceMazeTargetTrack::add(%d, %f, %f, %f, %f, %f, %f, %d, %p, %d)", trackId,  startX,  startY,  startZ,  endX,  endY,  endZ,  count,  (void *)list, a11);
+	_data = (int *)list;
+
+	if (true /* !GameIsLoading */) { // FIXME
+		_itemId = trackId;
+		_count = count;
+		_dataIndex = 0;
+
+		double coef = 1.0f / (long double)count;
+
+		double coefX = (endX - startX) * coef;
+		double coefY = (endY - startY) * coef;
+		double coefZ = (endZ - startZ) * coef;
+
+		for (int i = 0; i < count; i++) {
+			_points[i].x = i * coefX + startX;
+			_points[i].y = i * coefY + startY;
+			_points[i].z = i * coefZ + startZ;
+		}
+
+		_points[count].x = endX;
+		_points[count].y = endY;
+		_points[count].z = endZ;
+
+		_visible = !a11;
+	}
+	_isPresent = true;
 }
 
 void PoliceMazeTargetTrack::tick() {
