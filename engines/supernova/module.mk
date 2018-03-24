@@ -4,11 +4,12 @@ MODULE_OBJS := \
 	console.o \
 	detection.o \
 	graphics.o \
-	supernova.o \
 	resman.o \
 	rooms.o \
+	screen.o \
 	sound.o \
-	state.o
+	state.o \
+	supernova.o
 
 MODULE_DIRS += \
 	engines/supernova
