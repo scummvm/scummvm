@@ -51,6 +51,11 @@ Mouse::Mouse(BladeRunnerEngine *vm) {
 	_disabledCounter = 0;
 	_lastFrameTime = 0;
 	_animCounter = 0;
+
+	_randomCountdownX = 0;
+	_randomCountdownY = 0;
+	_randomX = 0;
+	_randomY = 0;
 }
 
 Mouse::~Mouse() {
@@ -159,6 +164,28 @@ void Mouse::setCursor(int cursor) {
 void Mouse::getXY(int *x, int *y) const {
 	*x = _x;
 	*y = _y;
+}
+
+void Mouse::setRandomY() {
+	switch (_vm->_settings->getDifficulty()) {
+	case 0:
+		_randomCountdownY = 2;
+		_randomX = _vm->_rnd.getRandomNumberRng(-3, 3);
+		_randomY = _vm->_rnd.getRandomNumberRng(10, 20);
+		break;
+
+	case 1:
+		_randomCountdownY = 3;
+		_randomX = _vm->_rnd.getRandomNumberRng(-4, 4);
+		_randomY = _vm->_rnd.getRandomNumberRng(15, 25);
+		break;
+
+	case 2:
+		_randomCountdownY = 4;
+		_randomX = _vm->_rnd.getRandomNumberRng(-5, 5);
+		_randomY = _vm->_rnd.getRandomNumberRng(20, 30);
+		break;
+	}
 }
 
 void Mouse::disable() {

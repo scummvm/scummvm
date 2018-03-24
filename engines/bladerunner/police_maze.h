@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_POLICE_MAZE_H
 #define BLADERUNNER_POLICE_MAZE_H
 
+#include "bladerunner/script/script.h"
 #include "bladerunner/vector.h"
 
 namespace BladeRunner {
@@ -34,7 +35,7 @@ enum {
 
 class BladeRunnerEngine;
 
-class PoliceMazeTargetTrack {
+class PoliceMazeTargetTrack : ScriptBase {
 	BladeRunnerEngine *_vm;
 
 	uint32 _time;
@@ -44,13 +45,13 @@ class PoliceMazeTargetTrack {
 	Vector3 _points[kNumTrackPoints];
 	int *_data;
 	int _dataIndex;
-	int _pmt_var1;
-	int _pmt_var2;
-	int _pmt_var3;
+	int32 _updateDelay;
+	int32 _waitTime;
+	bool _haveToWait;
 	int _pmt_var4;
 	int _pointIndex;
 	int _pmt_var5;
-	int _rotating;
+	bool _rotating;
 	int _maxAngle;
 	int _angleChange;
 	bool _visible;
@@ -63,7 +64,7 @@ public:
 	void clear(bool isLoadingGame);
 	void add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int count, void *list, bool a11);
 
-	void tick();
+	bool tick();
 	bool isPresent() { return _isPresent; }
 	void setVisible() { _visible = true; }
 	void resetVisible() { _visible = false; }
@@ -73,7 +74,7 @@ public:
 	void readdObject(int itemId);
 };
 
-class PoliceMaze {
+class PoliceMaze : ScriptBase {
 	BladeRunnerEngine *_vm;
 
 	bool _isPaused;

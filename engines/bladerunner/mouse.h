@@ -46,6 +46,11 @@ class Mouse {
 	int _lastFrameTime;
 	int _animCounter;
 
+	int _randomCountdownX;
+	int _randomCountdownY;
+	int _randomX;
+	int _randomY;
+
 public:
 	Mouse(BladeRunnerEngine *vm);
 	~Mouse();
@@ -53,6 +58,7 @@ public:
 	void setCursor(int cursor);
 
 	void getXY(int *x, int *y) const;
+	void setRandomY();
 
 	void disable();
 	void enable();

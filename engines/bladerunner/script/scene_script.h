@@ -546,8 +546,6 @@ public:
 	void playerWalkedOut();
 	void dialogueQueueFlushed(int a1);
 	bool isInsideScript() const { return _inScriptCounter > 0; }
-
-	void actorVoiceOver(int sentenceId, int actorId) { _currentScript->Actor_Voice_Over(sentenceId, actorId); }
 };
 
 } // End of namespace BladeRunner
