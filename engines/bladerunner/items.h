@@ -51,7 +51,7 @@ public:
 	bool addToSet(int itemId);
 	bool remove(int itemId);
 
-	void setIsTarget(int itemId, bool isTarget);
+	void setIsTarget(int itemId, bool val);
 	bool isTarget(int itemId) const;
 	bool isSpinning(int itemId) const;
 	bool isPoliceMazeEnemy(int itemId) const;

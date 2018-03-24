@@ -126,13 +126,13 @@ bool Items::remove(int itemId) {
 	return true;
 }
 
-void Items::setIsTarget(int itemId, bool isTarget) {
+void Items::setIsTarget(int itemId, bool val) {
 	int itemIndex = findItem(itemId);
 	if (itemIndex == -1) {
 		return;
 	}
-	_items[itemIndex]->setIsTarget(isTarget);
-	_vm->_sceneObjects->setIsTarget(itemId + kSceneObjectOffsetItems, isTarget);
+	_items[itemIndex]->setIsTarget(val);
+	_vm->_sceneObjects->setIsTarget(itemId + kSceneObjectOffsetItems, val);
 }
 
 bool Items::isTarget(int itemId) const {
