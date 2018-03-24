@@ -67,12 +67,16 @@ public:
 
 	BoundingBox *getBoundingBox() { return &_boundingBox; }
 	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
+	int getFacing() const { return _facing; }
+	void setFacing(int facing) { _facing = facing; }
 
 	void setIsTarget(bool isTarget) { _isTarget = isTarget; }
 
 	bool isTarget() const;
 	bool isVisible() const { return _isVisible; }
+	void setVisible(bool val) { _isVisible = val; }
 	bool isPoliceMazeEnemy() const;
+	void setPoliceMazeEnemy(bool val) { _isPoliceMazeEnemy = val; }
 	void spinInWorld();
 	bool tick(Common::Rect *screenRect, bool special);
 

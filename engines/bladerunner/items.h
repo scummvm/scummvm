@@ -40,6 +40,7 @@ public:
 	~Items();
 
 	void getXYZ(int itemId, float *x, float *y, float *z) const;
+	void setXYZ(int itemId, Vector3 position);
 	void getWidthHeight(int itemId, int *width, int *height) const;
 
 	void tick();
@@ -50,11 +51,15 @@ public:
 	void setIsTarget(int itemId, bool isTarget);
 	bool isTarget(int itemId) const;
 	bool isPoliceMazeEnemy(int itemId) const;
+	void setPoliceMazeEnemy(int itemId, bool val);
+	void setIsObstacle(int itemId, bool val);
 	bool isVisible(int itemId) const;
 	int findTargetUnderMouse(int mouseX, int mouseY) const;
 
 	BoundingBox *getBoundingBox(int itemId);
 	Common::Rect *getScreenRectangle(int itemId);
+	int getFacing(int itemId) const;
+	void setFacing(int itemId, int facing);
 
 	void spinInWorld(int itemId);
 

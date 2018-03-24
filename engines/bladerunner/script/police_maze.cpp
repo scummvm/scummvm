@@ -182,8 +182,6 @@ bool PoliceMazeTargetTrack::tick() {
 		return false;
 	}
 
-#if 0
-
 	uint32 oldTime = _time;
 	_time = _vm->getTotalPlayTime();
 	int32 timeDiff = _time - oldTime;
@@ -248,7 +246,7 @@ bool PoliceMazeTargetTrack::tick() {
 	}
 
 	if (advancePoint) {
-		_vm->_items->setXYZ(_itemId, _points[_pointIndex].x, _points[_pointIndex].y, _points[_pointIndex].z);
+		_vm->_items->setXYZ(_itemId, _points[_pointIndex]);
 		readdObject(_itemId);
 
 		return true;
@@ -284,7 +282,7 @@ bool PoliceMazeTargetTrack::tick() {
 			_dataIndex++;
 
 			if (_vm->_items->isTarget(_itemId)) {
-				Sound_Play(var1, 90, 0, 0, 50, 0);
+				Sound_Play(var1, 90, 0, 0, 50);
 				Police_Maze_Decrement_Score(1);
 				Actor_Force_Stop_Walking(0);
 
@@ -406,7 +404,7 @@ bool PoliceMazeTargetTrack::tick() {
 		case 16:
 			var1 = _data[_dataIndex++];
 			var2 = _data[_dataIndex++];
-			Sound_Play(var1, var2, 0, 0, 50, 0);
+			Sound_Play(var1, var2, 0, 0, 50);
 			break;
 
 		case 17:
@@ -464,7 +462,7 @@ bool PoliceMazeTargetTrack::tick() {
 		case 25:
 			_pointIndex = _data[_dataIndex++];
 			_pmt_var4 = 0;
-			_vm->_items->setXYZ(_itemId, _points[_pointIndex].x, _points[_pointIndex].y, _points[_pointIndex].z);
+			_vm->_items->setXYZ(_itemId, _points[_pointIndex]);
 			readdObject(_itemId);
 			break;
 
@@ -476,7 +474,6 @@ bool PoliceMazeTargetTrack::tick() {
 			cont = false;
 		}
 	}
-#endif
 
 	return true;
 }

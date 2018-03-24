@@ -46,6 +46,13 @@ void Items::getXYZ(int itemId, float *x, float *y, float *z) const {
 	_items[itemIndex]->getXYZ(x, y, z);
 }
 
+void Items::setXYZ(int itemId, Vector3 position) {
+	int itemIndex = findItem(itemId);
+	assert(itemIndex != -1);
+
+	_items[itemIndex]->setXYZ(position);
+}
+
 void Items::getWidthHeight(int itemId, int *width, int *height) const {
 	int itemIndex = findItem(itemId);
 	assert(itemIndex != -1);
@@ -151,6 +158,23 @@ bool Items::isPoliceMazeEnemy(int itemId) const {
 	return _items[itemIndex]->isTarget();
 }
 
+void Items::setPoliceMazeEnemy(int itemId, bool val) {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return;
+	}
+	_items[itemIndex]->setPoliceMazeEnemy(val);
+}
+
+void Items::setIsObstacle(int itemId, bool val) {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return;
+	}
+	_items[itemIndex]->setVisible(val);
+	_vm->_sceneObjects->setIsClickable(itemId + kSceneObjectOffsetItems, val);
+}
+
 BoundingBox *Items::getBoundingBox(int itemId) {
 	int itemIndex = findItem(itemId);
 	if (itemIndex == -1) {
@@ -165,6 +189,22 @@ Common::Rect *Items::getScreenRectangle(int itemId) {
 		return nullptr;
 	}
 	return _items[itemIndex]->getScreenRectangle();
+}
+
+int Items::getFacing(int itemId) const {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return 0;
+	}
+	return _items[itemIndex]->getFacing();
+}
+
+void Items::setFacing(int itemId, int facing) {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return;
+	}
+	_items[itemIndex]->setFacing(facing);
 }
 
 void Items::spinInWorld(int itemId) {
