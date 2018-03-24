@@ -338,16 +338,16 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_setCurrentCharacter();
 		break;
 	case 0x1F:
-		OC_sub17C8B();
+		OC_sendSeeSignal();
 		break;
 	case 0x20:
-		OC_sub17CA2();
+		OC_sendHearSignal();
 		break;
 	case 0x21:
-		OC_sub17CB9();
+		OC_sendVarSignal();
 		break;
 	case 0x22:
-		OC_sub17CD1();
+		OC_sendBroadcastSignal();
 		break;
 	case 0x23:
 		OC_resetWord16EFE();
@@ -642,10 +642,10 @@ static const OpCode opCodes2[] = {
 /* 0x1c */ 	{ "OC_setCharacterCarry", 4, kGetValue1, kGetValue1, kImmediateValue, kImmediateValue, kNone },
 /* 0x1d */	{ "OC_dropCarried", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x1e */	{ "OC_setCurrentCharacter", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x1f */	{ "OC_sub17C8B", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x20 */	{ "OC_sub17CA2", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x21 */	{ "OC_sub17CB9", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone },
-/* 0x22 */	{ "OC_sub17CD1", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+/* 0x1f */	{ "OC_sendSeeSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+/* 0x20 */	{ "OC_sendHearSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
+/* 0x21 */	{ "OC_sendVarSignal", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone },
+/* 0x22 */	{ "OC_sendBroadcastSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 /* 0x23 */	{ "OC_resetWord16EFE", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x24 */	{ "OC_enableCurrentCharacterScript", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // stop script
 /* 0x25 */	{ "OC_incCurrentCharacterVar1", 0, kNone, kNone, kNone, kNone, kNone },
@@ -2474,59 +2474,59 @@ void LilliputScript::OC_setCurrentCharacter() {
 	_vm->setCurrentCharacter(index);
 }
 
-void LilliputScript::sub171AF(int16 var1, byte var2h, byte characterId, int16 var4) {
-	debugC(2, kDebugScript, "sub171AF(%d, %d, %d, %d)", var1, var2h, characterId, var4);
+void LilliputScript::sendSignal(int16 var1, byte var2h, byte characterId, int16 var4) {
+	debugC(2, kDebugScript, "sendSignal(%d, %d, %d, %d)", var1, var2h, characterId, var4);
 
 	int index = 0;
 	for (int i = 0; i < 10; i++) {
-		if (_vm->_array12861[index + 1] == -1) {
-			_vm->_array12861[index + 1] = var1;
-			_vm->_array12861[index + 2] = (var2h << 8) + characterId;
-			_vm->_array12861[index + 0] = _vm->_word1289D + var4;
+		if (_vm->_signalArray[index + 1] == -1) {
+			_vm->_signalArray[index + 1] = var1;
+			_vm->_signalArray[index + 2] = (var2h << 8) + characterId; 
+			_vm->_signalArray[index + 0] = _vm->_word1289D + var4;
 			return;
 		}
 		index += 3;
 	}
 }
 
-void LilliputScript::OC_sub17C8B() {
-	debugC(1, kDebugScript, "OC_sub17C8B()");
+void LilliputScript::OC_sendSeeSignal() {
+	debugC(1, kDebugScript, "OC_sendSeeSignal()");
 
-	int16 type = 2 << 8;
+	int16 type = 2 << 8; // SEE
 	int16 var4 = _currScript->readSint16LE();
 	byte var2h = (_currScript->readUint16LE() & 0xFF);
 
-	sub171AF(type, var2h, _vm->_currentScriptCharacter, var4);
+	sendSignal(type, var2h, _vm->_currentScriptCharacter, var4);
 }
 
-void LilliputScript::OC_sub17CA2() {
-	debugC(1, kDebugScript, "OC_sub17CA2()");
+void LilliputScript::OC_sendHearSignal() {
+	debugC(1, kDebugScript, "OC_sendHearSignal()");
 
-	int16 type = 1 << 8;
+	int16 type = 1 << 8; // HEAR
 	int16 var4 = _currScript->readSint16LE();
 	byte var2h = (_currScript->readUint16LE() & 0xFF);
 
-	sub171AF(type, var2h, _vm->_currentScriptCharacter, var4);
+	sendSignal(type, var2h, _vm->_currentScriptCharacter, var4);
 }
 
-void LilliputScript::OC_sub17CB9() {
-	debugC(1, kDebugScriptTBC, "OC_sub17CB9()");
+void LilliputScript::OC_sendVarSignal() {
+	debugC(1, kDebugScriptTBC, "OC_sendVarSignal()");
 
 	int16 var4 = _currScript->readSint16LE();
-	int16 type = getValue1();
+	int16 type = getValue1(); // CHECKME- dubious
 	byte var2h = (_currScript->readUint16LE() & 0xFF);
 
-	sub171AF(type, var2h, _vm->_currentScriptCharacter, var4);
+	sendSignal(type, var2h, _vm->_currentScriptCharacter, var4);
 }
 
-void LilliputScript::OC_sub17CD1() {
-	debugC(1, kDebugScript, "OC_sub17CD1()");
+void LilliputScript::OC_sendBroadcastSignal() {
+	debugC(1, kDebugScript, "OC_sendBroadcastSignal()");
 
 	int16 type = 3 << 8;
 	int16 var4 = _currScript->readSint16LE();
 	byte var2h = (_currScript->readUint16LE() & 0xFF);
 
-	sub171AF(type, var2h, _vm->_currentScriptCharacter, var4);
+	sendSignal(type, var2h, _vm->_currentScriptCharacter, var4);
 }
 
 void LilliputScript::OC_resetWord16EFE() {

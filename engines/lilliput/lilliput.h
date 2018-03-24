@@ -163,7 +163,7 @@ public:
 	byte _mapSavedPixel[40];
 	int16 _array11D49[40];
 	int16 _array1289F[40];
-	int16 _array12861[30];
+	int16 _signalArray[30];
 
 	byte *_rulesChunk1;
 	int16 _currentScriptCharacter;
