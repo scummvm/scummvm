@@ -102,6 +102,11 @@ public:
 	 * Draws the buttons onto the passed surface
 	 */
 	void drawButtons(XSurface *surface);
+
+	/**
+	 * Clears any currently set button value
+	 */
+	void clearEvents() { _buttonValue = 0; }
 };
 
 class SettingsBaseDialog : public ButtonContainer {
