@@ -1136,6 +1136,7 @@ bool MenuMan::isActionPerformed(uint16 champIndex, int16 actionIndex) {
 			_vm->_sound->requestPlay(kDMSoundIndexWoodenThudAttackTrolinAntmanStoneGolem, dungeon._partyMapX, dungeon._partyMapY, kDMSoundModePlayOneTickLater);
 			break;
 		}
+		// fall through
 	case kDMActionDisrupt:
 	case kDMActionJab:
 	case kDMActionParry:

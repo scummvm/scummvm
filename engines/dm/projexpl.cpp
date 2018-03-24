@@ -503,10 +503,10 @@ void ProjExpl::processEvent25(TimelineEvent *event) {
 	case 0xFF82:
 		if (!(attack >>= 1))
 			break;
+		// fall through
 	case 0xFF80:
 		if (curSquareType == kDMElementTypeDoor)
 			_vm->_groupMan->groupIsDoorDestoryedByAttack(mapX, mapY, attack, true, 0);
-
 		break;
 	case 0xFF83:
 		if ((groupThing != _vm->_thingEndOfList) && getFlag(creatureInfo->_attributes, kDMCreatureMaskNonMaterial)) {

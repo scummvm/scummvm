@@ -1518,6 +1518,7 @@ bool GroupMan::isCreatureAttacking(Group *group, int16 mapX, int16 mapY, uint16 
 				projectileThing = _vm->_thingExplPoisonCloud;
 				break;
 			}
+			// fall through
 		case kDMCreatureTypeDemon:
 		case kDMCreatureTypeRedDragon:
 			projectileThing = _vm->_thingExplFireBall;
