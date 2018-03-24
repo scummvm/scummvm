@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	commands/ifitemcommand.o \
 	commands/ifpiggycommand.o \
 	commands/labelcommand.o \
+	commands/newroomcommand.o \
 	commands/removeallitemscommand.o \
 	commands/removeitemcommand.o \
 	commands/saycommand.o \

@@ -41,6 +41,7 @@
 #include "mutationofjb/commands/gotocommand.h"
 #include "mutationofjb/commands/camefromcommand.h"
 #include "mutationofjb/commands/callmacrocommand.h"
+#include "mutationofjb/commands/newroomcommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
@@ -61,6 +62,7 @@ static CommandParser **getParsers() {
 		new AddItemCommandParser,
 		new RemoveItemCommandParser,
 		new RemoveAllItemsCommandParser,
+		new NewRoomCommandParser,
 		new GotoCommandParser,
 		new LabelCommandParser,
 		nullptr
@@ -145,6 +147,19 @@ Command::ExecuteResult ScriptExecutionContext::startCommand(Command *cmd) {
 	clear();
 	_activeCommand = cmd;
 	return runActiveCommand();
+}
+
+Command::ExecuteResult ScriptExecutionContext::startStartupSection() {
+	Script *localScript = _localScriptOverride ? _localScriptOverride : _game.getLocalScript();
+
+	if (localScript) {
+		Command *const startupCmd = localScript->getStartup(_game.getGameData().getCurrentScene()->_startup);
+		if (startupCmd) {
+			return startCommand(startupCmd);
+		}
+	}
+
+	return Command::Finished;
 }
 
 Command *ScriptExecutionContext::getMacro(const Common::String &name) const {

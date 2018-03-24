@@ -20,52 +20,35 @@
  *
  */
 
-#ifndef MUTATIONOFJB_GAME_H
-#define MUTATIONOFJB_GAME_H
+#ifndef MUTATIONOFJB_NEWROOMCOMMAND_H
+#define MUTATIONOFJB_NEWROOMCOMMAND_H
 
-#include "common/scummsys.h"
-#include "mutationofjb/script.h"
-
-namespace Common {
-class String;
-}
+#include "mutationofjb/commands/seqcommand.h"
 
 namespace MutationOfJB {
 
-class Command;
-class MutationOfJBEngine;
-class GameData;
-class Script;
-class Room;
+class ScriptExecutionContext;
 
-class Game {
+class NewRoomCommandParser : public SeqCommandParser {
 public:
-	Game(MutationOfJBEngine *vm);
-	GameData &getGameData();
+	NewRoomCommandParser() {}
 
-	Script *getGlobalScript() const;
-	Script *getLocalScript() const;
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
+};
 
-	void changeScene(uint8 sceneId, bool partB);
-	Script *changeSceneDelayScript(uint8 sceneId, bool partB);
+class NewRoomCommand : public SeqCommand {
+public:
+	NewRoomCommand(uint8 sceneId, uint16 x, uint16 y, uint8 frame);
 
-	void update();
-
+	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	virtual Common::String debugString() const override;
 private:
-	bool loadGameData(bool partB);
-	void runActiveCommand();
-	void startCommand(Command *cmd);
-	Script *changeSceneLoadScript(uint8 sceneId, bool partB);
+	uint8 _sceneId;
+	uint16 _x;
+	uint16 _y;
+	uint8 _frame;
 
-	MutationOfJBEngine *_vm;
-
-	GameData *_gameData;
-	Script *_globalScript;
-	Script *_localScript;
-	Script *_delayedLocalScript;
-	Room *_room;
-
-	ScriptExecutionContext _scriptExecCtx;
+	ScriptExecutionContext *_innerExecCtx;
 };
 
 }

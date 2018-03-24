@@ -183,6 +183,10 @@ Scene *GameData::getScene(uint8 sceneId) {
 	return &_scenes[sceneId - 1];
 }
 
+Scene *GameData::getCurrentScene() {
+	return getScene(_currentScene);
+}
+
 bool GameData::loadFromStream(Common::ReadStream &stream) {
 	for (int i = 0; i < ARRAYSIZE(_scenes); ++i) {
 		_scenes[i].loadFromStream(stream);

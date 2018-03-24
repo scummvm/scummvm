@@ -105,6 +105,7 @@ public:
 
 	Command::ExecuteResult runActiveCommand();
 	Command::ExecuteResult startCommand(Command *cmd);
+	Command::ExecuteResult startStartupSection();
 
 	void pushReturnCommand(Command *);
 	Command *popReturnCommand();
