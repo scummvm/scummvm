@@ -335,6 +335,7 @@ void Party::synchronize(Common::Serializer &s) {
 
 	if (s.isLoading())
 		_newDay = _minutes < 300;
+	_dead = false;
 }
 
 void Party::loadActiveParty() {
