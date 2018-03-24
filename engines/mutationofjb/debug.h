@@ -29,20 +29,25 @@ namespace MutationOfJB {
 
 class MutationOfJBEngine;
 class Command;
+class Script;
 
 class Console : public GUI::Debugger {
 public:
 	Console(MutationOfJBEngine *vm);
 	virtual ~Console(void) {}
 private:
+	bool cmd_showallcommands(int argc, const char **argv);
 	bool cmd_listsections(int argc, const char **argv);
 	bool cmd_showsection(int argc, const char **argv);
 	bool cmd_listmacros(int argc, const char **argv);
 	bool cmd_showmacro(int argc, const char **argv);
+	bool cmd_liststartups(int argc, const char **argv);
+	bool cmd_showstartup(int argc, const char **argv);
 	bool cmd_changescene(int argc, const char **argv);
 
 	void showIndent(int indentLevel);
 	void showCommands(Command *command, int indentLevel = 0);
+	Script *getScriptFromArg(const char *arg);
 
 	MutationOfJBEngine *_vm;
 };

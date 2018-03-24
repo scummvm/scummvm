@@ -25,6 +25,7 @@
 #include "mutationofjb/commands/conditionalcommand.h"
 #include "common/str.h"
 #include "common/debug.h"
+#include "common/translation.h"
 
 /*
 	("#L " | "-L ") <object>
@@ -107,6 +108,8 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 		}
 	} else if (line.size() >= 8 && line.hasPrefix("#MACRO")) {
 		_foundMacro = line.c_str() + 7;
+	} else if (line.size() >= 10 && line.hasPrefix("#STARTUP")) {
+		_foundStartup = line.c_str() + 9;
 	}
 
 	if (firstChar == '#') {
@@ -138,11 +141,26 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, 
 		_ifTag = 0;
 	}
 
-	if (!_foundMacro.empty() && newCommand) {
-		if (!parseCtx._macros.contains(_foundMacro)) {
-			parseCtx._macros[_foundMacro] = newCommand;
+	if (!_foundMacro.empty()) {
+		if (newCommand) {
+			if (!parseCtx._macros.contains(_foundMacro)) {
+				parseCtx._macros[_foundMacro] = newCommand;
+			} else {
+				warning(_("Macro '%s' already exists."), _foundMacro.c_str());
+			}
 		}
-		_foundMacro = "";
+		_foundMacro.clear();
+	}
+	if (!_foundStartup.empty()) {
+		if (newCommand) {
+			const uint8 startupId = atoi(_foundStartup.c_str());
+			if (!parseCtx._startups.contains(startupId)) {
+				parseCtx._startups[startupId] = newCommand;
+			} else {
+				warning(_("Startup %u already exists."), (unsigned int) startupId);
+			}
+		}
+		_foundStartup.clear();
 	}
 
 	if (newCommandParser != this) {

@@ -221,6 +221,7 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	}
 
 	_macros = parseCtx._macros;
+	_startups = parseCtx._startups;
 
 	return true;
 }
@@ -252,6 +253,10 @@ const ActionInfos &Script::getUseActionInfos() const {
 	return _useActionInfos;
 }
 
+const Commands &Script::getAllCommands() const {
+	return _allCommands;
+}
+
 const Macros &Script::getMacros() const {
 	return _macros;
 }
@@ -259,6 +264,19 @@ const Macros &Script::getMacros() const {
 Command *Script::getMacro(const Common::String &name) const {
 	Macros::const_iterator it = _macros.find(name);
 	if (it == _macros.end()) {
+		return nullptr;
+	}
+
+	return it->_value;
+}
+
+const Startups &Script::getStartups() const {
+	return _startups;
+}
+
+Command *Script::getStartup(uint8 startupId) const {
+	Startups::const_iterator it = _startups.find(startupId);
+	if (it == _startups.end()) {
 		return nullptr;
 	}
 

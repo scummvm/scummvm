@@ -45,6 +45,7 @@ private:
 
 	Common::Array<uint> _pendingActionInfos;
 	Common::String _foundMacro;
+	Common::String _foundStartup;
 };
 
 class EndBlockCommand : public Command {
