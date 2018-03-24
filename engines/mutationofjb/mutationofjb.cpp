@@ -111,6 +111,7 @@ Common::Error MutationOfJBEngine::run() {
 		}
 
 		_console->onFrame();
+		_game->update();
 		_system->delayMillis(40);
 		_screen->update();
 	}

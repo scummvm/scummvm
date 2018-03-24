@@ -24,6 +24,7 @@
 #define MUTATIONOFJB_GAME_H
 
 #include "common/scummsys.h"
+#include "mutationofjb/script.h"
 
 namespace Common {
 class String;
@@ -47,10 +48,12 @@ public:
 
 	void changeScene(uint8 sceneId, bool partB);
 
-	Command *getMacro(const Common::String &name) const;
+	void update();
 
 private:
 	bool loadGameData(bool partB);
+	void runActiveCommand();
+	void startCommand(Command *cmd);
 
 	MutationOfJBEngine *_vm;
 
@@ -58,6 +61,8 @@ private:
 	Script *_globalScript;
 	Script *_localScript;
 	Room *_room;
+
+	ScriptExecutionContext _scriptExecCtx;
 };
 
 }
