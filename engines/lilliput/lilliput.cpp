@@ -210,7 +210,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	}
 
 	for (int i = 0; i < 30; i++)
-		_array12861[i] = -1;
+		_signalArray[i] = -1;
 
 	for (int i = 0; i < 256; i++)
 		_savedSurfaceUnderMouse[i] = 0;
@@ -2249,10 +2249,10 @@ void LilliputEngine::sub171CF() {
 	++_word1289D;
 
 	for (int i = 0; i < 10; i++) {
-		if ((_array12861[(3 * i) + 1] != -1) && (_array12861[3 * i] == _word1289D)) {
-			int16 var1 = _array12861[(3 * i) + 1];
-			int var4 = _array12861[(3 * i) + 2];
-			_array12861[(3 * i) + 1] = -1;
+		if ((_signalArray[(3 * i) + 1] != -1) && (_signalArray[3 * i] == _word1289D)) {
+			int16 var1 = _signalArray[(3 * i) + 1];
+			int var4 = _signalArray[(3 * i) + 2];
+			_signalArray[(3 * i) + 1] = -1;
 
 			byte type = var1 >> 8;
 			byte index = var1 & 0xFF;

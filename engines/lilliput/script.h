@@ -137,7 +137,7 @@ private:
 	void displayNumber(byte var1, Common::Point pos);
 	byte *getMapPtr(Common::Point val);
 	byte *getCurrentCharacterVarFromScript();
-	void sub171AF(int16 var1, byte var2h, byte characterId, int16 var4);
+	void sendSignal(int16 var1, byte var2h, byte characterId, int16 var4);
 	void getSpeechVariant(int speechIndex, int speechVariant);
 	void sub189B8();
 	void formatSpeechString();
@@ -235,9 +235,9 @@ private:
 	void OC_setCharacterCarry();
 	void OC_dropCarried();
 	void OC_setCurrentCharacter();
-	void OC_sub17C8B();
-	void OC_sub17CA2();
-	void OC_sub17CB9();
+	void OC_sendSeeSignal();
+	void OC_sendHearSignal();
+	void OC_setVarSignal();
 	void OC_sub17CD1();
 	void OC_resetWord16EFE();
 	void OC_enableCurrentCharacterScript();
