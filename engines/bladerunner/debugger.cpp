@@ -386,9 +386,9 @@ void Debugger::drawSceneObjects() {
 		for (int i = 0; i < count; i++) {
 			SceneObjects::SceneObject *sceneObject = &_vm->_sceneObjects->_sceneObjects[_vm->_sceneObjects->_sceneObjectsSortedByDistance[i]];
 
-			const BoundingBox *bbox = sceneObject->boundingBox;
+			const BoundingBox &bbox = sceneObject->boundingBox;
 			Vector3 a, b;
-			bbox->getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
+			bbox.getXYZ(&a.x, &a.y, &a.z, &b.x, &b.y, &b.z);
 			Vector3 pos = _vm->_view->calculateScreenPosition(0.5 * (a + b));
 			int color;
 
@@ -398,7 +398,7 @@ void Debugger::drawSceneObjects() {
 			case kSceneObjectTypeActor:
 				color = 0x7C00; // 11111 00000 00000;
 				drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
-				_vm->_surfaceFront.frameRect(*sceneObject->screenRectangle, color);
+				_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
 				_vm->_mainFont->drawColor(_vm->_textActorNames->getText(sceneObject->id - kSceneObjectOffsetActors), _vm->_surfaceFront, pos.x, pos.y, color);
 				break;
 			case kSceneObjectTypeItem:
@@ -406,7 +406,7 @@ void Debugger::drawSceneObjects() {
 				char itemText[40];
 				drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
 				sprintf(itemText, "item %i", sceneObject->id - kSceneObjectOffsetItems);
-				_vm->_surfaceFront.frameRect(*sceneObject->screenRectangle, color);
+				_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
 				_vm->_mainFont->drawColor(itemText, _vm->_surfaceFront, pos.x, pos.y, color);
 				break;
 			case kSceneObjectTypeObject:
@@ -417,7 +417,7 @@ void Debugger::drawSceneObjects() {
 					color = 0x03E0; // 00000 11111 00000;
 				}
 				drawBBox(a, b, _vm->_view, &_vm->_surfaceFront, color);
-				_vm->_surfaceFront.frameRect(*sceneObject->screenRectangle, color);
+				_vm->_surfaceFront.frameRect(sceneObject->screenRectangle, color);
 				_vm->_mainFont->drawColor(_vm->_scene->objectGetName(sceneObject->id - kSceneObjectOffsetObjects), _vm->_surfaceFront, pos.x, pos.y, color);
 				break;
 			}

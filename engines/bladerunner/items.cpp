@@ -89,7 +89,7 @@ bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position,
 	item->setup(itemId, setId, animationId, position, facing, height, width, isTargetFlag, isVisible, isPoliceMazeEnemy);
 
 	if (addToSetFlag && setId == _vm->_scene->getSetId()) {
-		return _vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, isTargetFlag, isVisible);
+		return _vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, item->_boundingBox, item->_screenRectangle, isTargetFlag, isVisible);
 	}
 	return true;
 }
@@ -102,7 +102,7 @@ bool Items::addToSet(int setId) {
 	for (int i = 0; i < itemCount; i++) {
 		Item *item = _items[i];
 		if (item->_setId == setId) {
-			_vm->_sceneObjects->addItem(item->_itemId + kSceneObjectOffsetItems, &item->_boundingBox, &item->_screenRectangle, item->isTarget(), item->_isVisible);
+			_vm->_sceneObjects->addItem(item->_itemId + kSceneObjectOffsetItems, item->_boundingBox, item->_screenRectangle, item->isTarget(), item->_isVisible);
 		}
 	}
 	return true;
@@ -184,19 +184,19 @@ void Items::setIsObstacle(int itemId, bool val) {
 	_vm->_sceneObjects->setIsClickable(itemId + kSceneObjectOffsetItems, val);
 }
 
-BoundingBox *Items::getBoundingBox(int itemId) {
+const BoundingBox &Items::getBoundingBox(int itemId) {
 	int itemIndex = findItem(itemId);
-	if (itemIndex == -1) {
-		return nullptr;
-	}
+	// if (itemIndex == -1) {
+	// 	return nullptr;
+	// }
 	return _items[itemIndex]->getBoundingBox();
 }
 
-Common::Rect *Items::getScreenRectangle(int itemId) {
+const Common::Rect &Items::getScreenRectangle(int itemId) {
 	int itemIndex = findItem(itemId);
-	if (itemIndex == -1) {
-		return nullptr;
-	}
+	// if (itemIndex == -1) {
+	// 	return nullptr;
+	// }
 	return _items[itemIndex]->getScreenRectangle();
 }
 
@@ -243,10 +243,10 @@ int Items::findItem(int itemId) const {
 	return -1;
 }
 
-void Items::save(SaveFile &f) {
+void Items::save(SaveFileWriteStream &f) {
 	int size = (int)_items.size();
 
-	f.write(size);
+	f.writeInt(size);
 	int i;
 	for (i = 0; i != size; ++i) {
 		_items[i]->save(f);
@@ -255,6 +255,26 @@ void Items::save(SaveFile &f) {
 	// Always write out 100 items
 	for (; i != 100; ++i) {
 		f.padBytes(0x174); // bbox + rect + 18 float fields
+	}
+}
+
+void Items::load(SaveFileReadStream &f) {
+	for (int i = _items.size() - 1; i >= 0; i--) {
+		delete _items.remove_at(i);
+	}
+	_items.resize(f.readInt());
+
+	int size = (int)_items.size();
+
+	int i;
+	for (i = 0; i != size; ++i) {
+		_items[i] = new Item(_vm);
+		_items[i]->load(f);
+	}
+
+	// Always read out 100 items
+	for (; i != 100; ++i) {
+		f.skip(0x174); // bbox + rect + 18 float fields
 	}
 }
 

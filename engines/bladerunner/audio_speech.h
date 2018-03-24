@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_AUDIO_SPEECH_H
 #define BLADERUNNER_AUDIO_SPEECH_H
 
+#include "common/str.h"
 #include "common/types.h"
 
 namespace BladeRunner {
@@ -44,7 +45,7 @@ public:
 	AudioSpeech(BladeRunnerEngine *vm);
 	~AudioSpeech();
 
-	bool playSpeech(const char *name, int balance = 0);
+	bool playSpeech(const Common::String &name, int balance = 0);
 	void stopSpeech();
 	bool isPlaying() const;
 

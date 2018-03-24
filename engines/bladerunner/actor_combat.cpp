@@ -50,31 +50,6 @@ void ActorCombat::setup() {
 	reset();
 }
 
-void ActorCombat::save(SaveFile &f) {
-	// TODO
-	f.write(0); // _actorId
-	f.write(0); // _combatOn
-	f.write(0); // _field2
-	f.write(0); // _field3
-	f.write(0); // _otherActorId
-	f.write(0); // _field5
-	f.write(0); // _field6
-	f.write(0); // _field7
-	f.write(0); // _field8
-	f.write(0); // _field9
-	f.write(0); // _field10
-	f.write(0); // _field11
-	f.write(0); // _field12
-	f.write(0); // _actorHp
-	f.write(0); // _field14
-	f.write(0); // _field15
-	f.write(0); // _actorPosition
-	f.write(0); // _otherActorPosition
-	f.write(0); // _availableCoversCount
-	f.write(0); // _availableFleeWaypointsCount
-	f.write(0); // _field24
-}
-
 void ActorCombat::combatOn(int actorId, int initialState, bool rangedAttackFlag, int enemyId, int waypointType, int fleeRatio, int coverRatio, int actionRatio, int damage, int range, bool unstoppable) {
 	_actorId = actorId;
 	_state = initialState;
@@ -316,11 +291,59 @@ void ActorCombat::hitAttempt() {
 	}
 }
 
+void ActorCombat::save(SaveFileWriteStream &f) {
+	f.writeInt(_actorId);
+	f.writeBool(_active);
+	f.writeInt(_state);
+	f.writeBool(_rangedAttack);
+	f.writeInt(_enemyId);
+	f.writeInt(_waypointType);
+	f.writeInt(_damage);
+	f.writeInt(_fleeRatio);
+	f.writeInt(_coverRatio);
+	f.writeInt(_actionRatio);
+	f.writeInt(_fleeRatioConst);
+	f.writeInt(_coverRatioConst);
+	f.writeInt(_actionRatioConst);
+	f.writeInt(_range);
+	f.writeInt(_unstoppable);
+	f.writeInt(_actorHp);
+	f.writeInt(_fleeingTowards);
+	f.writeVector3(_actorPosition);
+	f.writeVector3(_enemyPosition);
+	f.writeInt(_coversWaypointCount);
+	f.writeInt(_fleeWaypointsCount);
+}
+
+void ActorCombat::load(SaveFileReadStream &f) {
+	_actorId = f.readInt();
+	_active = f.readBool();
+	_state = f.readInt();
+	_rangedAttack = f.readBool();
+	_enemyId = f.readInt();
+	_waypointType = f.readInt();
+	_damage = f.readInt();
+	_fleeRatio = f.readInt();
+	_coverRatio = f.readInt();
+	_actionRatio = f.readInt();
+	_fleeRatioConst = f.readInt();
+	_coverRatioConst = f.readInt();
+	_actionRatioConst = f.readInt();
+	_range = f.readInt();
+	_unstoppable = f.readInt();
+	_actorHp = f.readInt();
+	_fleeingTowards = f.readInt();
+	_actorPosition = f.readVector3();
+	_enemyPosition = f.readVector3();
+	_coversWaypointCount = f.readInt();
+	_fleeWaypointsCount = f.readInt();
+}
+
 void ActorCombat::reset() {
 	_active              = false;
 	_actorId             = -1;
 	_state               = -1;
-	_rangedAttack        = -1;
+	_rangedAttack        = false;
 	_enemyId             = -1;
 	_waypointType        = -1;
 	_damage              = 0;

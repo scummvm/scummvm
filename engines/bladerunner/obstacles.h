@@ -28,7 +28,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class Obstacles {
 	static const int kVertexCount        = 150;
@@ -64,7 +65,9 @@ public:
 	bool find(const Vector3 &from, const Vector3 &to, Vector3 *next) const;
 	void backup();
 	void restore();
-	void save(SaveFile &f);
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 } // End of namespace BladeRunner

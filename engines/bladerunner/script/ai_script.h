@@ -61,7 +61,7 @@ public:
 	virtual bool GoalChanged(int currentGoalNumber, int newGoalNumber) = 0;
 	virtual bool UpdateAnimation(int *animation, int *frame) = 0;
 	virtual bool ChangeAnimationMode(int mode) = 0;
-	virtual void QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *nextAnimation) = 0;
+	virtual void QueryAnimationState(int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) = 0;
 	virtual void SetAnimationState(int animationState, int animationFrame, int animationStateNext, int animationNext) = 0;
 	virtual bool ReachedMovementTrackWaypoint(int waypointId) = 0;
 	virtual void FledCombat() = 0;
@@ -566,7 +566,7 @@ public:
 	bool reachedMovementTrackWaypoint(int actor, int waypointId);
 	void updateAnimation(int actor, int *animation, int *frame);
 	void changeAnimationMode(int actor, int mode);
-	void queryAnimationState(int actor, int *animationState, int *animationFrame, int *animationStateNext, int *nextAnimation);
+	void queryAnimationState(int actor, int *animationState, int *animationFrame, int *animationStateNext, int *animationNext);
 	void setAnimationState(int actor, int animationState, int animationFrame, int animationStateNext, int animationNext);
 	void fledCombat(int actor);
 

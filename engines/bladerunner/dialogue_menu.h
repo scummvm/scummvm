@@ -33,7 +33,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class TextResource;
 
 class DialogueMenu {
@@ -97,16 +98,14 @@ public:
 	void mouseUp();
 	bool waitingForInput() const;
 
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
+
 private:
 	bool showAt(int x, int y);
 	int  getAnswerIndex(int answer) const;
 	const char *getText(int id) const;
 	void calculatePosition(int unusedX = 0, int unusedY = 0);
-
-public:
-	void save(SaveFile &f);
-
-private:
 	void clear();
 	void reset();
 

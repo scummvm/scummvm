@@ -65,16 +65,16 @@ void SceneObjects::clear() {
 	_count = 0;
 }
 
-bool SceneObjects::addActor(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isClickable, bool isMoving, bool isTarget, bool isRetired) {
+bool SceneObjects::addActor(int sceneObjectId, const BoundingBox &boundingBox, const Common::Rect &screenRectangle, bool isClickable, bool isMoving, bool isTarget, bool isRetired) {
 	return addSceneObject(sceneObjectId, kSceneObjectTypeActor, boundingBox, screenRectangle, isClickable, false, 0, isTarget, isMoving, isRetired);
 }
 
-bool SceneObjects::addObject(int sceneObjectId, BoundingBox *boundingBox, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget) {
+bool SceneObjects::addObject(int sceneObjectId, const BoundingBox &boundingBox, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget) {
 	Common::Rect rect(-1, -1, -1, -1);
-	return addSceneObject(sceneObjectId, kSceneObjectTypeObject, boundingBox, &rect, isClickable, isObstacle, unknown1, isTarget, false, false);
+	return addSceneObject(sceneObjectId, kSceneObjectTypeObject, boundingBox, rect, isClickable, isObstacle, unknown1, isTarget, false, false);
 }
 
-bool SceneObjects::addItem(int sceneObjectId, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isTarget, bool isObstacle) {
+bool SceneObjects::addItem(int sceneObjectId, const BoundingBox &boundingBox, const Common::Rect &screenRectangle, bool isTarget, bool isObstacle) {
 	return addSceneObject(sceneObjectId, kSceneObjectTypeItem, boundingBox, screenRectangle, isObstacle, 0, 0, isTarget, 0, 0);
 }
 
@@ -111,7 +111,7 @@ int SceneObjects::findByXYZ(bool *isClickable, bool *isObstacle, bool *isTarget,
 		if ((findClickables && sceneObject->isClickable) ||
 			(findObstacles  && sceneObject->isObstacle) ||
 			(findTargets    && sceneObject->isTarget)) {
-			BoundingBox boundingBox = *sceneObject->boundingBox;
+			BoundingBox boundingBox = sceneObject->boundingBox;
 
 			if (sceneObject->type == kSceneObjectTypeActor) {
 				boundingBox.expand(-4.0, 0.0, -4.0, 4.0, 0.0, 4.0);
@@ -156,7 +156,7 @@ bool SceneObjects::existsOnXZ(int exceptSceneObjectId, float x, float z, bool mo
 
 			if (isObstacle && sceneObject->id != exceptSceneObjectId) {
 				float x1, y1, z1, x2, y2, z2;
-				sceneObject->boundingBox->getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
+				sceneObject->boundingBox.getXYZ(&x1, &y1, &z1, &x2, &y2, &z2);
 				if (z1 <= zMax && z2 >= zMin && x1 <= xMax && x2 >= xMin) {
 					return true;
 				}
@@ -177,7 +177,7 @@ int SceneObjects::findById(int sceneObjectId) const {
 	return -1;
 }
 
-bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, BoundingBox *boundingBox, Common::Rect *screenRectangle, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget, bool isMoving, bool isRetired) {
+bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObjectType, const BoundingBox &boundingBox, const Common::Rect &screenRectangle, bool isClickable, bool isObstacle, uint8 unknown1, bool isTarget, bool isMoving, bool isRetired) {
 	int index = findEmpty();
 	if (index == -1) {
 		return false;
@@ -195,7 +195,7 @@ bool SceneObjects::addSceneObject(int sceneObjectId, SceneObjectType sceneObject
 	_sceneObjects[index].isMoving        = isMoving;
 	_sceneObjects[index].isRetired       = isRetired;
 
-	float centerZ = (_sceneObjects[index].boundingBox->getZ0() + _sceneObjects[index].boundingBox->getZ1()) / 2.0f;
+	float centerZ = (_sceneObjects[index].boundingBox.getZ0() + _sceneObjects[index].boundingBox.getZ1()) / 2.0f;
 
 	float distanceToCamera = fabs(-centerZ - _view->_cameraPosition.y); // y<->z is intentional, not a bug
 	_sceneObjects[index].distanceToCamera = distanceToCamera;
@@ -247,7 +247,7 @@ bool SceneObjects::isBetween(float sourceX, float sourceZ, float targetX, float 
 	}
 
 	float objectX1, objectY1, objectZ1, objectX2, objectY2, objectZ2;
-	_sceneObjects[i].boundingBox->getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
+	_sceneObjects[i].boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
 
 	Vector2 intersection;
 	return lineIntersection(Vector2(sourceX, sourceZ), Vector2(targetX, targetZ), Vector2(objectX1, objectZ1), Vector2(objectX2, objectZ1), &intersection)
@@ -265,7 +265,7 @@ bool SceneObjects::isObstacleBetween(const Vector3 &source, const Vector3 &targe
 		}
 
 		float objectX1, objectY1, objectZ1, objectX2, objectY2, objectZ2;
-		sceneObject->boundingBox->getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
+		sceneObject->boundingBox.getXYZ(&objectX1, &objectY1, &objectZ1, &objectX2, &objectY2, &objectZ2);
 
 		if (84.0f <= objectY1 - source.y || 72.0f >= objectY2 - source.y) {
 			continue;
@@ -321,31 +321,52 @@ void SceneObjects::updateObstacles() {
 		const SceneObject *sceneObject = &_sceneObjects[index];
 		if (sceneObject->isObstacle) {
 			float x0, y0, z0, x1, y1, z1;
-			sceneObject->boundingBox->getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
+			sceneObject->boundingBox.getXYZ(&x0, &y0, &z0, &x1, &y1, &z1);
 			_vm->_obstacles->add(x0, z0, x1, z1);
 		}
 	}
 	_vm->_obstacles->backup();
 }
 
-void SceneObjects::save(SaveFile &f) {
-	f.write(_count);
+void SceneObjects::save(SaveFileWriteStream &f) {
+	f.writeInt(_count);
 	for (int i = 0; i < kSceneObjectCount; ++i) {
-		f.write(_sceneObjects[i].id);
-		f.write(_sceneObjects[i].type);
-		f.write(_sceneObjects[i].boundingBox);
-		f.write(_sceneObjects[i].screenRectangle);
-		f.write(_sceneObjects[i].distanceToCamera);
-		f.write(_sceneObjects[i].isPresent);
-		f.write(_sceneObjects[i].isClickable);
-		f.write(_sceneObjects[i].isObstacle);
-		f.write(_sceneObjects[i].unknown1);
-		f.write(_sceneObjects[i].isTarget);
-		f.write(_sceneObjects[i].isMoving);
-		f.write(_sceneObjects[i].isRetired);
+		f.writeInt(_sceneObjects[i].id);
+		f.writeInt(_sceneObjects[i].type);
+		f.writeBoundingBox(_sceneObjects[i].boundingBox);
+		f.writeRect(_sceneObjects[i].screenRectangle);
+		f.writeFloat(_sceneObjects[i].distanceToCamera);
+		f.writeBool(_sceneObjects[i].isPresent);
+		f.writeBool(_sceneObjects[i].isClickable);
+		f.writeBool(_sceneObjects[i].isObstacle);
+		f.writeInt(_sceneObjects[i].unknown1);
+		f.writeBool(_sceneObjects[i].isTarget);
+		f.writeBool(_sceneObjects[i].isMoving);
+		f.writeBool(_sceneObjects[i].isRetired);
 	}
 	for (int i = 0; i < kSceneObjectCount; ++i) {
-		f.write(_sceneObjectsSortedByDistance[i]);
+		f.writeInt(_sceneObjectsSortedByDistance[i]);
+	}
+}
+
+void SceneObjects::load(SaveFileReadStream &f) {
+	_count = f.readInt();
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		_sceneObjects[i].id = f.readInt();
+		_sceneObjects[i].type = (SceneObjectType)f.readInt();
+		_sceneObjects[i].boundingBox = f.readBoundingBox();
+		_sceneObjects[i].screenRectangle = f.readRect();
+		_sceneObjects[i].distanceToCamera = f.readFloat();
+		_sceneObjects[i].isPresent = f.readBool();
+		_sceneObjects[i].isClickable = f.readBool();
+		_sceneObjects[i].isObstacle = f.readBool();
+		_sceneObjects[i].unknown1 = f.readInt();
+		_sceneObjects[i].isTarget = f.readBool();
+		_sceneObjects[i].isMoving = f.readBool();
+		_sceneObjects[i].isRetired = f.readBool();
+	}
+	for (int i = 0; i < kSceneObjectCount; ++i) {
+		_sceneObjectsSortedByDistance[i] = f.readInt();
 	}
 }
 

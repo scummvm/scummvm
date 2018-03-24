@@ -26,6 +26,7 @@
 #include "bladerunner/aud_stream.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
+#include "bladerunner/savefile.h"
 
 #include "common/timer.h"
 
@@ -164,6 +165,68 @@ int Music::getVolume() {
 void Music::playSample() {
 	if (!isPlaying()) {
 		play(_vm->_gameInfo->getSfxTrack(512), 100, 0, 2, -1, 0, 3);
+	}
+}
+
+void Music::save(SaveFileWriteStream &f) {
+	f.writeBool(_isNextPresent);
+	f.writeBool(_isPlaying);
+	f.writeBool(_isPaused);
+	f.writeStringSz(_current.name, 13);
+	f.writeInt(_current.volume);
+	f.writeInt(_current.pan);
+	f.writeInt(_current.timeFadeIn);
+	f.writeInt(_current.timePlay);
+	f.writeInt(_current.loop);
+	f.writeInt(_current.timeFadeOut);
+	f.writeStringSz(_next.name, 13);
+	f.writeInt(_next.volume);
+	f.writeInt(_next.pan);
+	f.writeInt(_next.timeFadeIn);
+	f.writeInt(_next.timePlay);
+	f.writeInt(_next.loop);
+	f.writeInt(_next.timeFadeOut);
+}
+
+void Music::load(SaveFileReadStream &f) {
+	_isNextPresent = f.readBool();
+	_isPlaying = f.readBool();
+	_isPaused = f.readBool();
+	_current.name = f.readStringSz(13);
+	_current.volume = f.readInt();
+	_current.pan = f.readInt();
+	_current.timeFadeIn = f.readInt();
+	_current.timePlay = f.readInt();
+	_current.loop = f.readInt();
+	_current.timeFadeOut = f.readInt();
+	_next.name = f.readStringSz(13);
+	_next.volume = f.readInt();
+	_next.pan = f.readInt();
+	_next.timeFadeIn = f.readInt();
+	_next.timePlay = f.readInt();
+	_next.loop = f.readInt();
+	_next.timeFadeOut = f.readInt();
+
+	stop(2);
+	if (_isPlaying) {
+		if (_channel == -1) {
+			play(_current.name,
+				_current.volume,
+				_current.pan,
+				_current.timeFadeIn,
+				_current.timePlay,
+				_current.loop,
+				_current.timeFadeOut);
+		} else {
+			_isNextPresent = true;
+			_next.name = _current.name;
+			_next.volume = _current.volume;
+			_next.pan = _current.pan;
+			_next.timeFadeIn = _current.timeFadeIn;
+			_next.timePlay = _current.timePlay;
+			_next.loop = _current.loop;
+			_next.timeFadeOut = _current.timeFadeOut;
+		}
 	}
 }
 

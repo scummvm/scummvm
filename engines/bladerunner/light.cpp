@@ -69,7 +69,9 @@ void Light::read(Common::ReadStream *stream, int frameCount, int frame, int anim
 	int size = stream->readUint32LE();
 	size = size - 32;
 
-	stream->read(_name, 20);
+	char buf[20];
+	stream->read(buf, sizeof(buf));
+	_name = buf;
 
 	_animatedParameters = stream->readUint32LE();
 

@@ -27,9 +27,9 @@
 #include "common/types.h"
 
 namespace Common {
-	class OutSaveFile;
-	class String;
-	struct Rect;
+class OutSaveFile;
+class String;
+struct Rect;
 }
 
 namespace BladeRunner {
@@ -38,28 +38,36 @@ class Vector2;
 class Vector3;
 class BoundingBox;
 
-class SaveFile {
-	Common::OutSaveFile              *_saveFile;
-	Common::MemoryWriteStreamDynamic  _stream;
+class SaveFileWriteStream : public Common::MemoryWriteStreamDynamic {
 public:
-	SaveFile(Common::OutSaveFile *saveFile);
+	SaveFileWriteStream();
 
-	// bool err();
-	void finalize();
+	void debug(char *p);
 
 	void padBytes(int count);
-	void write(bool v);
-	void write(int v);
-	void write(uint32 v);
-	void write(byte  v);
-	void write(float v);
-	void debug(char *p);
-	void write(char *p, int sz);
-	void write(Common::String &s, int sz);
-	void write(const Vector2 &v);
-	void write(const Vector3 &v);
-	void write(const Common::Rect &v);
-	void write(const BoundingBox &v);
+
+	void writeInt(int v);
+	void writeFloat(int v);
+	void writeBool(bool v);
+	void writeStringSz(const Common::String &s, int sz);
+	void writeVector2(const Vector2 &v);
+	void writeVector3(const Vector3 &v);
+	void writeRect(const Common::Rect &v);
+	void writeBoundingBox(const BoundingBox &v);
+};
+
+class SaveFileReadStream : public Common::MemoryReadStream {
+public:
+	SaveFileReadStream(const byte *dataPtr, uint32 dataSize);
+
+	int readInt();
+	float readFloat();
+	bool readBool();
+	Common::String readStringSz(int sz);
+	Vector2 readVector2();
+	Vector3 readVector3();
+	Common::Rect readRect();
+	BoundingBox readBoundingBox();
 };
 
 } // End of namespace BladeRunner

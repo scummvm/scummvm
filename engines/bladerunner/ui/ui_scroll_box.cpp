@@ -481,7 +481,7 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 			}
 
 			if (_center) {
-				x = (_rect.width() - _vm->_mainFont->getTextWidth(_lines[i]->text)) / 2;
+				x = _rect.left + (_rect.width() - _vm->_mainFont->getTextWidth(_lines[i]->text)) / 2;
 			}
 
 			_vm->_mainFont->drawColor(_lines[i]->text, surface, x, y, color);

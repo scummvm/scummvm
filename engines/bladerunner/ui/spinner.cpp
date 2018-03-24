@@ -263,11 +263,17 @@ void Spinner::resume() {
 	_vqaPlayer->setLoop(1, -1, kLoopSetModeJustStart, nullptr, nullptr);
 }
 
-void Spinner::save(SaveFile &f) {
+void Spinner::save(SaveFileWriteStream &f) {
 	assert(!_isOpen);
 
 	for (int i = 0; i != kSpinnerDestinations; ++i) {
-		f.write(_isDestinationSelectable[i]);
+		f.writeBool(_isDestinationSelectable[i]);
+	}
+}
+
+void Spinner::load(SaveFileReadStream &f) {
+	for (int i = 0; i != kSpinnerDestinations; ++i) {
+		_isDestinationSelectable[i] = f.readBool();
 	}
 }
 

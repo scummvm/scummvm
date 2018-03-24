@@ -30,6 +30,8 @@ namespace BladeRunner {
 
 class AudStream;
 class BladeRunnerEngine;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class Music {
 	struct Track {
@@ -47,9 +49,9 @@ class Music {
 	Common::Mutex _mutex;
 	int           _musicVolume;
 	int           _channel;
-	int           _isNextPresent;
-	int           _isPlaying;
-	int           _isPaused;
+	bool          _isNextPresent;
+	bool          _isPlaying;
+	bool          _isPaused;
 	Track         _current;
 	Track         _next;
 	byte         *_data;
@@ -67,6 +69,9 @@ public:
 	void setVolume(int volume);
 	int getVolume();
 	void playSample();
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
 	void adjustVolume(int volume, int delay);

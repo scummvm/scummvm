@@ -217,21 +217,41 @@ void ActorClues::remove(int index) {
 	_clues[index].field8 = 0;
 }
 
-void ActorClues::save(SaveFile &f) {
-	f.write(_count);
-	f.write(_maxCount);
+void ActorClues::save(SaveFileWriteStream &f) {
+	f.writeInt(_count);
+	f.writeInt(_maxCount);
 	for (int i = 0; i < _count; ++i) {
 		Clue &c = _clues[i];
-		f.write(c.clueId);
-		f.write(c.weight);
-		f.write(c.fromActorId);
-		f.write(c.field3);
-		f.write(c.field4);
-		f.write(c.field5);
-		f.write(c.field6);
-		f.write(c.field7);
-		f.write(c.field8);
-		f.write(c.flags);
+		f.writeInt(c.clueId);
+		f.writeInt(c.weight);
+		f.writeInt(c.fromActorId);
+		f.writeInt(c.field3);
+		f.writeInt(c.field4);
+		f.writeInt(c.field5);
+		f.writeInt(c.field6);
+		f.writeInt(c.field7);
+		f.writeInt(c.field8);
+		f.writeByte(c.flags);
+	}
+}
+
+void ActorClues::load(SaveFileReadStream &f) {
+	_count = f.readInt();
+	_maxCount = f.readInt();
+	_clues.clear();
+	_clues.resize(_maxCount);
+	for (int i = 0; i < _count; ++i) {
+		Clue &c = _clues[i];
+		c.clueId = f.readInt();
+		c.weight = f.readInt();
+		c.fromActorId = f.readInt();
+		c.field3 = f.readInt();
+		c.field4 = f.readInt();
+		c.field5 = f.readInt();
+		c.field6 = f.readInt();
+		c.field7 = f.readInt();
+		c.field8 = f.readInt();
+		c.flags = f.readByte();
 	}
 }
 

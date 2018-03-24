@@ -33,7 +33,7 @@ class KIALog {
 	struct Entry {
 		int type;
 		int dataSize;
-		const char *data;
+		const unsigned char *data;
 	};
 
 	BladeRunnerEngine *_vm;

@@ -34,6 +34,8 @@ public:
 	MIXArchive();
 	~MIXArchive();
 
+	static int32 getHash(const Common::String &name);
+
 	bool open(const Common::String &filename);
 	void close();
 	bool isOpen() const;
@@ -50,17 +52,16 @@ private:
 	uint32 _size;
 
 	struct ArchiveEntry {
-		int32  id;
+		int32  hash;
 		uint32 offset;
 		uint32 length;
 	};
 
 	Common::Array<ArchiveEntry> _entries;
 
-	uint32 indexForId(int32 id) const;
+	uint32 indexForHash(int32 hash) const;
 };
 
-int32 mix_id(const Common::String &name);
 
 } // End of namespace BladeRunner
 

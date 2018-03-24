@@ -25,12 +25,15 @@
 
 #include "bladerunner/vector.h"
 
+#include "common/str.h"
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
 class BoundingBox;
 class Regions;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class Set;
 class VQAPlayer;
 
@@ -81,16 +84,17 @@ public:
 
 	bool didPlayerWalkIn() { bool r = _playerWalkedIn; _playerWalkedIn = false; return r; }
 
-	int findObject(const char *objectName);
+	int findObject(const Common::String &objectName);
 	bool objectSetHotMouse(int objectId);
 	bool objectGetBoundingBox(int objectId, BoundingBox *boundingBox);
 	void objectSetIsClickable(int objectId, bool isClickable, bool sceneLoaded);
 	void objectSetIsObstacle(int objectId, bool isObstacle, bool sceneLoaded, bool updateWalkpath);
 	void objectSetIsObstacleAll(bool isObstacle, bool sceneLoaded);
 	void objectSetIsTarget(int objectId, bool isTarget, bool sceneLoaded);
-	const char *objectGetName(int objectId);
+	const Common::String &objectGetName(int objectId);
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
 	void loopEnded(int frame, int loopId);

@@ -58,12 +58,12 @@ AudioSpeech::~AudioSpeech() {
 	delete[] _data;
 }
 
-bool AudioSpeech::playSpeech(const char *name, int pan) {
+bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
 	// debug("AudioSpeech::playSpeech(\"%s\")", name);
 	Common::ScopedPtr<Common::SeekableReadStream> r(_vm->getResourceStream(name));
 
 	if (!r) {
-		warning("AudioSpeech::playSpeech: AUD resource \"%s\" not found", name);
+		warning("AudioSpeech::playSpeech: AUD resource \"%s\" not found", name.c_str());
 		return false;
 	}
 
@@ -78,7 +78,7 @@ bool AudioSpeech::playSpeech(const char *name, int pan) {
 
 	r->read(_data, r->size());
 	if (r->err()) {
-		warning("AudioSpeech::playSpeech: Error reading resource \"%s\"", name);
+		warning("AudioSpeech::playSpeech: Error reading resource \"%s\"", name.c_str());
 		return false;
 	}
 
@@ -117,7 +117,7 @@ bool AudioSpeech::isPlaying() const {
 
 bool AudioSpeech::playSpeechLine(int actorId, int sentenceId, int volume, int a4, int priority) {
 	int balance = _vm->_actors[actorId]->soundBalance();
-	Common::String name = Common::String::format("%02d-%04d%s.AUD", actorId, sentenceId,  _vm->_languageCode);
+	Common::String name = Common::String::format("%02d-%04d%s.AUD", actorId, sentenceId, _vm->_languageCode.c_str());
 	return _vm->_audioPlayer->playAud(name, _speechVolume * volume / 100, balance, balance, priority, kAudioPlayerOverrideVolume);
 }
 

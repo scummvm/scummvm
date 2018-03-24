@@ -29,7 +29,7 @@
 
 namespace BladeRunner {
 
-CrimesDatabase::CrimesDatabase(BladeRunnerEngine *vm, const char *cluesResource, int crimeCount) {
+CrimesDatabase::CrimesDatabase(BladeRunnerEngine *vm, const Common::String &cluesResource, int crimeCount) {
 	_crimeCount = crimeCount;
 
 	_crimes.resize(_crimeCount);
@@ -71,10 +71,16 @@ const char *CrimesDatabase::getClueText(int clueId) const {
 	return _cluesText->getText(clueId);
 }
 
-void CrimesDatabase::save(SaveFile &f) {
+void CrimesDatabase::save(SaveFileWriteStream &f) {
 	for (int i = 0; i < _crimeCount; ++i) {
 		uint8 c = _crimes[i];
-		f.write(c);
+		f.writeByte(c);
+	}
+}
+
+void CrimesDatabase::load(SaveFileReadStream &f) {
+	for (int i = 0; i < _crimeCount; ++i) {
+		_crimes[i] = f.readByte();
 	}
 }
 

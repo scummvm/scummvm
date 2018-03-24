@@ -28,9 +28,12 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class ActorDialogueQueue {
+	static const int kMaxEntries = 25;
+
 	struct Entry {
 		bool isNotPause;
 		bool isPause;
@@ -63,7 +66,8 @@ public:
 	void flush(int a1, bool callScript);
 	void tick();
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
 	void clear();

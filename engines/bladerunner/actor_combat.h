@@ -28,7 +28,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class ActorCombat {
 	BladeRunnerEngine *_vm;
@@ -36,7 +37,7 @@ class ActorCombat {
 	int _actorId;
 	bool _active;
 	int _state;
-	int _rangedAttack;
+	bool _rangedAttack;
 	int _enemyId;
 	int _waypointType;
 	int _damage;
@@ -66,9 +67,10 @@ public:
 
 	void tick();
 	
-	void save(SaveFile &f);
-
 	void hitAttempt();
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
 	void reset();

@@ -53,13 +53,13 @@ public:
 
 	void setFadeColor(float r, float g, float b);
 	void setFadeDensity(float density);
-	void setFogColor(const char *fogName, float r, float g, float b);
-	void setFogDensity(const char *fogName, float density);
+	void setFogColor(const Common::String &fogName, float r, float g, float b);
+	void setFogDensity(const Common::String &fogName, float density);
 
 	void calculateColor(Vector3 viewPosition, Vector3 position, float *outCoeficient, Color *outColor) const;
 
 private:
-	Fog *findFog(const char *fogName) const;
+	Fog *findFog(const Common::String &fogName) const;
 };
 
 } // End of namespace BladeRunner

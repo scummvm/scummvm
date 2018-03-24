@@ -104,10 +104,10 @@ public:
 	static const int kActorCount = 100;
 	static const int kActorVoiceOver = kActorCount - 1;
 
-	bool       _gameIsRunning;
-	bool       _windowIsActive;
-	int        _playerLosesControlCounter;
-	const char *_languageCode;
+	bool           _gameIsRunning;
+	bool           _windowIsActive;
+	int            _playerLosesControlCounter;
+	Common::String _languageCode;
 
 	ActorDialogueQueue *_actorDialogueQueue;
 	ScreenEffects      *_screenEffects;
@@ -261,11 +261,11 @@ public:
 	void playerGainsControl();
 
 	bool saveGame(const Common::String &filename, byte *thumbnail);
-	void loadGame();
+	void loadGame(const Common::String &filename, byte *thumbnail);
 	void newGame();
 	void autoSaveGame();
 
-	void ISez(const char *str);
+	void ISez(const Common::String &str);
 
 	void blitToScreen(const Graphics::Surface &src);
 

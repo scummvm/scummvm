@@ -31,10 +31,6 @@ namespace BladeRunner {
 
 GameInfo::GameInfo(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_sceneNames         = nullptr;
-	_sfxTracks          = nullptr;
-	_musicTracks        = nullptr;
-	_outtakes           = nullptr;
 	_actorCount         = 0;
 	_playerId           = 0;
 	_flagCount          = 0;
@@ -53,18 +49,12 @@ GameInfo::GameInfo(BladeRunnerEngine *vm) {
 	_fleeWaypointCount  = 0;
 }
 
-GameInfo::~GameInfo() {
-	delete[] _sceneNames;
-	delete[] _sfxTracks;
-	delete[] _musicTracks;
-	delete[] _outtakes;
-}
-
 bool GameInfo::open(const Common::String &name) {
 	Common::SeekableReadStream *s = _vm->getResourceStream(name);
 
-	if (!s)
+	if (!s) {
 		return false;
+	}
 
 	uint32 unk;
 	_actorCount           = s->readUint32LE();   /* 00 */
@@ -88,25 +78,33 @@ bool GameInfo::open(const Common::String &name) {
 
 	(void)unk;
 
-	_sceneNames = new char[_sceneNamesCount][5];
-	for (uint32 i = 0; i != _sceneNamesCount; ++i)
-		s->read(_sceneNames[i], 5);
+	char buf[9];
 
-	_sfxTracks = new char[_sfxTrackCount][13];
+	_sceneNames.resize(_sceneNamesCount);
+	for (uint32 i = 0; i != _sceneNamesCount; ++i) {
+		s->read(buf, 5);
+		_sceneNames[i] = buf;
+	}
+
+	_sfxTracks.resize(_sfxTrackCount);
 	for (uint32 i = 0; i != _sfxTrackCount; ++i) {
-		s->read(_sfxTracks[i], 9);
-		strcat(_sfxTracks[i], ".AUD");
+		s->read(buf, 9);
+		_sfxTracks[i] = buf;
+		_sfxTracks[i] += ".AUD";
 	}
 
-	_musicTracks = new char[_musicTrackCount][13];
+	_musicTracks.resize(_musicTrackCount);
 	for (uint32 i = 0; i != _musicTrackCount; ++i) {
-		s->read(_musicTracks[i], 9);
-		strcat(_musicTracks[i], ".AUD");
+		s->read(buf, 9);
+		_musicTracks[i] = buf;
+		_musicTracks[i] += ".AUD";
 	}
 
-	_outtakes = new char[_outtakeCount][13];
-	for (uint32 i = 0; i != _outtakeCount; ++i)
-		s->read(_outtakes[i], 9);
+	_outtakes.resize(_outtakeCount);
+	for (uint32 i = 0; i != _outtakeCount; ++i) {
+		s->read(buf, 9);
+		_outtakes[i] = buf;
+	}
 
 #if BLADERUNNER_DEBUG_CONSOLE
 	debug("\nScene names\n----------------");
@@ -135,34 +133,38 @@ bool GameInfo::open(const Common::String &name) {
 	return !err;
 }
 
-const char *GameInfo::getSceneName(int i) const {
+const Common::String &GameInfo::getSceneName(int i) const {
 	if (i < 0 || i >= (int)_sceneNamesCount) {
 		warning("GameInfo::getSceneName: unknown id \"%i\"", i);
-		return nullptr;
+		static Common::String str("UNKNOWN_SCENE");
+		return str;
 	}
 	return _sceneNames[i];
 }
 
-const char *GameInfo::getSfxTrack(int i) const {
+const Common::String &GameInfo::getSfxTrack(int i) const {
 	if (i < 0 || i >= (int)_sfxTrackCount) {
 		warning("GameInfo::getSfxTrack: unknown id \"%i\"", i);
-		return nullptr;
+		static Common::String str("UNKNOWN_SFX_TRACK");
+		return str;
 	}
 	return _sfxTracks[i];
 }
 
-const char *GameInfo::getMusicTrack(int i) const {
+const Common::String &GameInfo::getMusicTrack(int i) const {
 	if (i < 0 || i >= (int)_musicTrackCount) {
 		warning("GameInfo::getMusicTrack: unknown id \"%i\"", i);
-		return nullptr;
+		static Common::String str("UNKNOWN_MUSIC_TRACK");
+		return str;
 	}
 	return _musicTracks[i];
 }
 
-const char *GameInfo::getOuttake(int i) const {
+const Common::String &GameInfo::getOuttake(int i) const {
 	if (i < 0 || i >= (int)_outtakeCount) {
 		warning("GameInfo::getOuttake: unknown id \"%i\"", i);
-		return nullptr;
+		static Common::String str("UNKNOWN_OUTTAKE");
+		return str;
 	}
 	return _outtakes[i];
 }

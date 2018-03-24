@@ -54,7 +54,7 @@ void ActorDialogueQueue::add(int actorId, int sentenceId, int animationMode) {
 	if (actorId == 0 || actorId == BladeRunnerEngine::kActorVoiceOver) {
 		animationMode = -1;
 	}
-	if (_entries.size() < 25) {
+	if (_entries.size() < kMaxEntries) {
 		Entry entry;
 		entry.isNotPause = true;
 		entry.isPause = false;
@@ -68,7 +68,7 @@ void ActorDialogueQueue::add(int actorId, int sentenceId, int animationMode) {
 }
 
 void ActorDialogueQueue::addPause(int delay) {
-	if (_entries.size() < 25) {
+	if (_entries.size() < kMaxEntries) {
 		Entry entry;
 		entry.isNotPause = false;
 		entry.isPause = true;
@@ -160,28 +160,56 @@ void ActorDialogueQueue::tick() {
 	}
 }
 
-void ActorDialogueQueue::save(SaveFile &f) {
+void ActorDialogueQueue::save(SaveFileWriteStream &f) {
 	int count = (int)_entries.size();
-	f.write(count);
+	f.writeInt(count);
 	for (int i = 0; i < count; ++i) {
 		Entry &e = _entries[i];
-		f.write(e.isNotPause);
-		f.write(e.isPause);
-		f.write(e.actorId);
-		f.write(e.sentenceId);
-		f.write(e.animationMode);
-		f.write(e.delay);
+		f.writeBool(e.isNotPause);
+		f.writeBool(e.isPause);
+		f.writeInt(e.actorId);
+		f.writeInt(e.sentenceId);
+		f.writeInt(e.animationMode);
+		f.writeInt(e.delay);
 	}
-	f.padBytes((25 - count) * 24);
+	f.padBytes((kMaxEntries - count) * 24);
 
-	f.write(_isNotPause);
-	f.write(_actorId);
-	f.write(_sentenceId);
-	f.write(_animationMode);
-	f.write(_animationModePrevious);
-	f.write(_isPause);
-	f.write(_delay);
+	f.writeBool(_isNotPause);
+	f.writeInt(_actorId);
+	f.writeInt(_sentenceId);
+	f.writeInt(_animationMode);
+	f.writeInt(_animationModePrevious);
+	f.writeBool(_isPause);
+	f.writeInt(_delay);
 	// f.write(_timeLast);
+}
+
+void ActorDialogueQueue::load(SaveFileReadStream &f) {
+	_entries.clear();
+	int count = f.readInt();
+	assert(count <= kMaxEntries);
+	_entries.resize(count);
+	for (int i = 0; i < count; ++i) {
+		Entry &e = _entries[i];
+		e.isNotPause = f.readBool();
+		e.isPause = f.readBool();
+		e.actorId = f.readInt();
+		e.sentenceId = f.readInt();
+		e.animationMode = f.readInt();
+		e.delay = f.readInt();
+	}
+
+	f.skip((kMaxEntries - count) * 24);
+
+	_isNotPause = f.readBool();
+	_actorId = f.readInt();
+	_sentenceId = f.readInt();
+	_animationMode = f.readInt();
+	_animationModePrevious = f.readInt();
+	_isPause = f.readBool();
+	_delay = f.readInt();
+
+	_timeLast = 0;
 }
 
 void ActorDialogueQueue::clear() {

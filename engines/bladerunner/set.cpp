@@ -68,8 +68,10 @@ bool Set::open(const Common::String &name) {
 	_objectCount = s->readUint32LE();
 	assert(_objectCount <= 85);
 
+	char buf[20];
 	for (int i = 0; i < _objectCount; ++i) {
-		s->read(_objects[i].name, 20);
+		s->read(buf, sizeof(buf));
+		_objects[i].name = buf;
 
 		float x0, y0, z0, x1, y1, z1;
 		x0 = s->readFloatLE();
@@ -96,7 +98,9 @@ bool Set::open(const Common::String &name) {
 	for (int i = 0; i < _walkboxCount; ++i) {
 		float x, z;
 
-		s->read(_walkboxes[i].name, 20);
+		s->read(buf, sizeof(buf));
+		_walkboxes[i].name = buf;
+
 		_walkboxes[i].altitude = s->readFloatLE();
 		_walkboxes[i].vertexCount = s->readUint32LE();
 
@@ -131,7 +135,7 @@ bool Set::open(const Common::String &name) {
 
 void Set::addObjectsToScene(SceneObjects *sceneObjects) const {
 	for (int i = 0; i < _objectCount; i++) {
-		sceneObjects->addObject(i + kSceneObjectOffsetObjects, &_objects[i].bbox, _objects[i].isClickable, _objects[i].isObstacle, _objects[i].unknown1, _objects[i].isTarget);
+		sceneObjects->addObject(i + kSceneObjectOffsetObjects, _objects[i].bbox, _objects[i].isClickable, _objects[i].isObstacle, _objects[i].unknown1, _objects[i].isTarget);
 	}
 }
 
@@ -209,15 +213,14 @@ int Set::findWalkbox(float x, float z) const {
 	return result;
 }
 
-int Set::findObject(const char *objectName) const {
-	int i;
-	for (i = 0; i < (int)_objectCount; i++) {
-		if (scumm_stricmp(objectName, _objects[i].name) == 0) {
+int Set::findObject(const Common::String &objectName) const {
+	for (int i = 0; i < _objectCount; ++i) {
+		if (objectName.compareToIgnoreCase(_objects[i].name) == 0) {
 			return i;
 		}
 	}
 
-	debug("Set::findObject didn't find \"%s\"", objectName);
+	debug("Set::findObject didn't find \"%s\"", objectName.c_str());
 
 	return -1;
 }
@@ -258,7 +261,7 @@ void Set::objectSetIsTarget(int objectId, bool isTarget) {
 	_objects[objectId].isTarget = isTarget;
 }
 
-const char *Set::objectGetName(int objectId) const {
+const Common::String &Set::objectGetName(int objectId) const {
 	return _objects[objectId].name;
 }
 
@@ -330,39 +333,73 @@ int Set::getWalkboxSoundRunRight(int walkboxId) const {
 	return getWalkboxSoundWalkRight(walkboxId);
 }
 
-void Set::save(SaveFile &f) {
-	f.write(_loaded);
-	f.write(_objectCount);
-	f.write(_walkboxCount);
+void Set::save(SaveFileWriteStream &f) {
+	f.writeBool(_loaded);
+	f.writeInt(_objectCount);
+	f.writeInt(_walkboxCount);
 
 	for (int i = 0; i != _objectCount; ++i) {
-		f.write(_objects[i].name, 20);
-		f.write(_objects[i].bbox);
-		f.write(_objects[i].isObstacle);
-		f.write(_objects[i].isClickable);
-		f.write(_objects[i].isHotMouse);
-		f.write(_objects[i].unknown1);
-		f.write(_objects[i].isTarget);
+		f.writeStringSz(_objects[i].name, 20);
+		f.writeBoundingBox(_objects[i].bbox);
+		f.writeBool(_objects[i].isObstacle);
+		f.writeBool(_objects[i].isClickable);
+		f.writeBool(_objects[i].isHotMouse);
+		f.writeInt(_objects[i].unknown1);
+		f.writeBool(_objects[i].isTarget);
 	}
 
 	for (int i = 0; i != _walkboxCount; ++i) {
-		f.write(_walkboxes[i].name, 20);
-		f.write(_walkboxes[i].altitude);
-		f.write(_walkboxes[i].vertexCount);
+		f.writeStringSz(_walkboxes[i].name, 20);
+		f.writeFloat(_walkboxes[i].altitude);
+		f.writeInt(_walkboxes[i].vertexCount);
 		for (int j = 0; j != 8; ++j) {
-			f.write(_walkboxes[i].vertices[j]);
+			f.writeVector3(_walkboxes[i].vertices[j]);
 
 			// In BLADE.EXE vertices are a vec5
-			f.write(0);
-			f.write(0);
+			f.writeInt(0);
+			f.writeInt(0);
 		}
 	}
 
 	for (int i = 0; i != 85; ++i) {
-		f.write(_walkboxStepSound[i]);
+		f.writeInt(_walkboxStepSound[i]);
 	}
 
-	f.write(_footstepSoundOverride);
+	f.writeInt(_footstepSoundOverride);
+}
+
+void Set::load(SaveFileReadStream &f) {
+	_loaded = f.readBool();
+	_objectCount = f.readInt();
+	_walkboxCount = f.readInt();
+
+	for (int i = 0; i != _objectCount; ++i) {
+		_objects[i].name = f.readStringSz(20);
+		_objects[i].bbox = f.readBoundingBox();
+		_objects[i].isObstacle = f.readBool();
+		_objects[i].isClickable = f.readBool();
+		_objects[i].isHotMouse = f.readBool();
+		_objects[i].unknown1 = f.readInt();
+		_objects[i].isTarget = f.readBool();
+	}
+
+	for (int i = 0; i != _walkboxCount; ++i) {
+		_walkboxes[i].name = f.readStringSz(20);
+		_walkboxes[i].altitude = f.readFloat();
+		_walkboxes[i].vertexCount = f.readInt();
+		for (int j = 0; j != 8; ++j) {
+			_walkboxes[i].vertices[j] = f.readVector3();
+
+			// In BLADE.EXE vertices are a vec5
+			f.skip(8);
+		}
+	}
+
+	for (int i = 0; i != 85; ++i) {
+		_walkboxStepSound[i] = f.readInt();
+	}
+
+	_footstepSoundOverride = f.readInt();
 }
 
 } // End of namespace BladeRunner

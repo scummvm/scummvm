@@ -34,25 +34,27 @@ enum {
 };
 
 class BladeRunnerEngine;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class PoliceMazeTargetTrack : ScriptBase {
-	uint32  _time;
-	bool    _isPresent;
-	int     _itemId;
-	int     _pointCount;
-	Vector3 _points[kNumTrackPoints];
+	uint32     _time;
+	bool       _isPresent;
+	int        _itemId;
+	int        _pointCount;
+	Vector3    _points[kNumTrackPoints];
 	const int *_data;
-	int     _dataIndex;
-	int32   _timeLeftUpdate;
-	int32   _timeLeftWait;
-	bool    _isWaiting;
-	int     _isMoving;
-	int     _pointIndex;
-	int     _pointTarget;
-	bool    _isRotating;
-	int     _angleTarget;
-	int     _angleDelta;
-	bool    _isPaused;
+	int        _dataIndex;
+	int32      _timeLeftUpdate;
+	int32      _timeLeftWait;
+	bool       _isWaiting;
+	int        _isMoving;
+	int        _pointIndex;
+	int        _pointTarget;
+	bool       _isRotating;
+	int        _angleTarget;
+	int        _angleDelta;
+	bool       _isPaused;
 
 public:
 	PoliceMazeTargetTrack(BladeRunnerEngine *vm);
@@ -70,6 +72,9 @@ public:
 	void setTime(uint32 t) { _time = t; }
 
 	void readdObject(int itemId);
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 class PoliceMaze : ScriptBase {
@@ -91,6 +96,9 @@ public:
 	void clear(bool isLoadingGame);
 	void setPauseState(bool state);
 	void activate();
+
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 } // End of namespace BladeRunner

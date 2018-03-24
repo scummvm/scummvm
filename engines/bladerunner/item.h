@@ -32,7 +32,8 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 class Items;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class Item {
 	friend class Items;
@@ -66,8 +67,8 @@ public:
 	void setXYZ(Vector3 position);
 	void getWidthHeight(int *width, int *height) const;
 
-	BoundingBox *getBoundingBox() { return &_boundingBox; }
-	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
+	const BoundingBox &getBoundingBox() { return _boundingBox; }
+	const Common::Rect &getScreenRectangle() { return _screenRectangle; }
 	int getFacing() const { return _facing; }
 	void setFacing(int facing) { _facing = facing; }
 
@@ -86,7 +87,8 @@ public:
 
 	bool isUnderMouse(int mouseX, int mouseY) const;
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 }

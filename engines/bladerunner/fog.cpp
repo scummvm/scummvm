@@ -27,7 +27,6 @@
 namespace BladeRunner {
 
 Fog::Fog() {
-	_name[0]            = 0;
 	_frameCount         = 0;
 	_animatedParameters = 0;
 	_fogDensity         = 0.0f;
@@ -55,7 +54,9 @@ Fog::~Fog() {
 
 int Fog::readCommon(Common::ReadStream *stream) {
 	int offset = stream->readUint32LE();
-	stream->read(_name, 20);
+	char buf[20];
+	stream->read(buf, sizeof(buf));
+	_name = buf;
 	_fogColor.r = stream->readFloatLE();
 	_fogColor.g = stream->readFloatLE();
 	_fogColor.b = stream->readFloatLE();

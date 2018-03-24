@@ -331,7 +331,7 @@ void Scene::loopStartSpecial(int specialLoopMode, int loopId, bool immediately) 
 	}
 }
 
-int Scene::findObject(const char *objectName) {
+int Scene::findObject(const Common::String &objectName) {
 	return _set->findObject(objectName);
 }
 
@@ -377,7 +377,7 @@ void Scene::objectSetIsTarget(int objectId, bool isTarget, bool sceneLoaded) {
 	}
 }
 
-const char *Scene::objectGetName(int objectId) {
+const Common::String &Scene::objectGetName(int objectId) {
 	return _set->objectGetName(objectId);
 }
 
@@ -414,20 +414,36 @@ void Scene::loopEndedStatic(void *data, int frame, int loopId) {
 	((Scene *)data)->loopEnded(frame, loopId);
 }
 
-void Scene::save(SaveFile &f) {
-	f.write(_setId);
-	f.write(_sceneId);
-	f.write(_defaultLoop);
-	f.write(_defaultLoopSet);
-	f.write(_defaultLoopPreloadedSet);
-	f.write(_specialLoopMode);
-	f.write(_specialLoop);
-	f.write(_nextSetId);
-	f.write(_nextSceneId);
-	f.write(_frame);
-	f.write(_actorStartPosition);
-	f.write(_actorStartFacing);
-	f.write(_playerWalkedIn);
+void Scene::save(SaveFileWriteStream &f) {
+	f.writeInt(_setId);
+	f.writeInt(_sceneId);
+	f.writeInt(_defaultLoop);
+	f.writeBool(_defaultLoopSet);
+	f.writeBool(_defaultLoopPreloadedSet);
+	f.writeInt(_specialLoopMode);
+	f.writeInt(_specialLoop);
+	f.writeInt(_nextSetId);
+	f.writeInt(_nextSceneId);
+	f.writeInt(_frame);
+	f.writeVector3(_actorStartPosition);
+	f.writeInt(_actorStartFacing);
+	f.writeBool(_playerWalkedIn);
+}
+
+void Scene::load(SaveFileReadStream &f) {
+	_setId = f.readInt();
+	_sceneId = f.readInt();
+	_defaultLoop = f.readInt();
+	_defaultLoopSet = f.readBool();
+	_defaultLoopPreloadedSet = f.readBool();
+	_specialLoopMode = f.readInt();
+	_specialLoop = f.readInt();
+	_nextSetId = f.readInt();
+	_nextSceneId = f.readInt();
+	_frame = f.readInt();
+	_actorStartPosition = f.readVector3();
+	_actorStartFacing = f.readInt();
+	_playerWalkedIn = f.readBool();
 }
 
 } // End of namespace BladeRunner

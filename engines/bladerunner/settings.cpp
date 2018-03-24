@@ -22,9 +22,12 @@
 
 #include "bladerunner/settings.h"
 
+#include "bladerunner/actor.h"
 #include "bladerunner/ambient_sounds.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/chapters.h"
+#include "bladerunner/game_constants.h"
+#include "bladerunner/game_info.h"
 #include "bladerunner/music.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
@@ -118,7 +121,19 @@ bool Settings::openNewScene() {
 	_scene = newScene;
 
 	if (!_loadingGame && currentSet != newSet) {
-		// TODO: Reset actors for new set
+		for (int i = 0; i < (int)_vm->_gameInfo->getActorCount(); ++i) {
+			Actor *actor = _vm->_actors[i];
+			if (i != kActorMcCoy && actor->getSetId() == currentSet) {
+				if (!actor->isRetired()) {
+					actor->stopWalking(false);
+					actor->movementTrackWaypointReached();
+				}
+				if (actor->inCombat()) {
+					actor->setSetId(kSetFreeSlotG);
+					actor->combatModeOff();
+				}
+			}
+		}
 	}
 
 	_loadingGame = false;
@@ -185,16 +200,29 @@ void Settings::setLearyMode(bool learyMode) {
 	_learyMode = learyMode;
 }
 
-void Settings::save(SaveFile &f) {
-	f.write(_scene);
-	f.write(_set);
-	f.write(_chapter);
-	f.write(_playerAgenda);
-	f.write(_unk0);
-	f.write(_difficulty);
-	f.write(_ammoType);
+void Settings::save(SaveFileWriteStream &f) {
+	f.writeInt(_scene);
+	f.writeInt(_set);
+	f.writeInt(_chapter);
+	f.writeInt(_playerAgenda);
+	f.writeInt(_unk0);
+	f.writeInt(_difficulty);
+	f.writeInt(_ammoType);
 	for (int i = 0; i != 3; ++i) {
-		f.write(_ammoAmounts[i]);
+		f.writeInt(_ammoAmounts[i]);
+	}
+}
+
+void Settings::load(SaveFileReadStream &f) {
+	_scene = f.readInt();
+	_set = f.readInt();
+	_chapter = f.readInt();
+	_playerAgenda = f.readInt();
+	_unk0 = f.readInt();
+	_difficulty = f.readInt();
+	_ammoType = f.readInt();
+	for (int i = 0; i != 3; ++i) {
+		_ammoAmounts[i] = f.readInt();
 	}
 }
 

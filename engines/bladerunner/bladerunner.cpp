@@ -45,7 +45,6 @@
 #include "bladerunner/outtake.h"
 #include "bladerunner/obstacles.h"
 #include "bladerunner/overlays.h"
-#include "bladerunner/police_maze.h"
 #include "bladerunner/regions.h"
 #include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
@@ -356,8 +355,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	// TODO: Set actor ids (redundant?)
 
 	_policeMaze = new PoliceMaze(this);
-	if (!_policeMaze->init())
-		return false;
 
 	_textActorNames = new TextResource(this);
 	if (!_textActorNames->open("ACTORS"))
@@ -827,8 +824,7 @@ void BladeRunnerEngine::gameTick() {
 			// TODO: Process AUD
 
 			if (_walkSoundId >= 0) {
-				const char *name = _gameInfo->getSfxTrack(_walkSoundId);
-				_audioPlayer->playAud(name, _walkSoundVolume, _walkSoundBalance, _walkSoundBalance, 50, 0);
+				_audioPlayer->playAud(_gameInfo->getSfxTrack(_walkSoundId), _walkSoundVolume, _walkSoundBalance, _walkSoundBalance, 50, 0);
 				_walkSoundId = -1;
 			}
 
@@ -1196,8 +1192,8 @@ void BladeRunnerEngine::handleMouseClickRegion(int regionId, int x, int y, bool 
 }
 
 void BladeRunnerEngine::handleMouseClick3DObject(int objectId, bool buttonDown, bool isClickable, bool isTarget) {
-	const char *objectName = _scene->objectGetName(objectId);
-	debug("Clicked on object %s", objectName);
+	const Common::String &objectName = _scene->objectGetName(objectId);
+	debug("Clicked on object %s", objectName.c_str());
 
 	if (_isWalkingInterruptible && objectId != _walkingToObjectId) {
 		_isWalkingInterruptible = false;
@@ -1230,7 +1226,7 @@ void BladeRunnerEngine::handleMouseClick3DObject(int objectId, bool buttonDown, 
 			_walkingToActorId  = -1;
 
 			_isInsideScriptObject = true;
-			_sceneScript->clickedOn3DObject(objectName, false);
+			_sceneScript->clickedOn3DObject(objectName.c_str(), false);
 			_isInsideScriptObject = false;
 		}
 	} else {
@@ -1246,7 +1242,7 @@ void BladeRunnerEngine::handleMouseClick3DObject(int objectId, bool buttonDown, 
 		//TODO mouse::randomize(Mouse);
 
 		_isInsideScriptObject = true;
-		_sceneScript->clickedOn3DObject(objectName, true);
+		_sceneScript->clickedOn3DObject(objectName.c_str(), true);
 		_isInsideScriptObject = false;
 	}
 }
@@ -1597,53 +1593,29 @@ bool BladeRunnerEngine::saveGame(const Common::String &filename, byte *thumbnail
 		return false;
 	}
 
-	SaveFile s(commonSaveFile);
+	SaveFileWriteStream s;
 
 	s.padBytes(9600); // TODO: thumbnail
-	s.write(-1.0f);
-
+	s.writeFloat(-1.0f);
 	_settings->save(s);
-	// s.debug(" - SCENE - ");
 	_scene->save(s);
-	// s.debug(" - EXIST - ");
 	_scene->_exits->save(s);
-	// s.debug(" - REGIONS - ");
 	_scene->_regions->save(s);
-	// s.debug(" - SET - ");
 	_scene->_set->save(s);
-
-	// s.debug(" - GAMEVARS - ");
 	for (uint i = 0; i != _gameInfo->getGlobalVarCount(); ++i) {
-		s.write(_gameVars[i]);
+		s.writeInt(_gameVars[i]);
 	}
-
-	// TODO
-	// _music->save(s);
-	// s.debug(" - MUSIC - ");
-	s.padBytes(0x56);
-
+	_music->save(s);
 	// _audioPlayer->save(s) // zero func
 	// _audioSpeech->save(s) // zero func
-
-	// s.debug(" - COMBAT - ");
 	_combat->save(s);
-	// s.debug(" - GAMEFLAGS - ");
 	_gameFlags->save(s);
-	// s.debug(" - ITEMS - ");
 	_items->save(s);
-	// s.debug(" - SCENEOBJECTS - ");
 	_sceneObjects->save(s);
-	// s.debug(" - AMBIENTSOUNDS - ");
 	_ambientSounds->save(s);
-	// s.debug(" - OVERLAYS - ");
 	_overlays->save(s);
-	// s.debug(" - SPINNER - ");
 	_spinner->save(s);
-
-	// TODO
-	// _scores->save(s);
-	s.padBytes(0x28);
-
+	s.padBytes(0x28); // TODO: _scores->save(s);
 	_dialogueMenu->save(s);
 	_obstacles->save(s);
 	_actorDialogueQueue->save(s);
@@ -1652,12 +1624,12 @@ bool BladeRunnerEngine::saveGame(const Common::String &filename, byte *thumbnail
 	for (uint i = 0; i != _gameInfo->getActorCount(); ++i) {
 		_actors[i]->save(s);
 
-		int animationState, animationFrame, a3, a4;
-		_aiScripts->queryAnimationState(i, &animationState, &animationFrame, &a3, &a4);
-		s.write(animationState);
-		s.write(animationFrame);
-		s.write(a3);
-		s.write(a4);
+		int animationState, animationFrame, animationStateNext, nextAnimation;
+		_aiScripts->queryAnimationState(i, &animationState, &animationFrame, &animationStateNext, &nextAnimation);
+		s.writeInt(animationState);
+		s.writeInt(animationFrame);
+		s.writeInt(animationStateNext);
+		s.writeInt(nextAnimation);
 	}
 	_actors[kActorVoiceOver]->save(s);
 
@@ -1667,11 +1639,86 @@ bool BladeRunnerEngine::saveGame(const Common::String &filename, byte *thumbnail
 	s.finalize();
 	assert(0 && "ok");
 
+	commonSaveFile->writeUint32LE(s.size() + 4);
+	commonSaveFile->write(s.getData(), s.size());
+
 	return !commonSaveFile->err();
 }
 
-void BladeRunnerEngine::ISez(const char *str) {
-	debug("\t%s", str);
+void BladeRunnerEngine::loadGame(const Common::String &filename, byte *thumbnail) {
+	warning("BladeRunnerEngine::loadGame not finished");
+
+	if (!playerHasControl() || _sceneScript->isInsideScript() || _aiScripts->isInsideScript()) {
+		return;
+	}
+
+	Common::InSaveFile *commonSaveFile = getSaveFileManager()->openForLoading(filename);
+	if (commonSaveFile->err()) {
+		return;
+	}
+
+	void *buf = malloc(commonSaveFile->size());
+	int dataSize = commonSaveFile->read(buf, commonSaveFile->size());
+
+	SaveFileReadStream s((const byte*)buf, dataSize);
+
+	_ambientSounds->removeAllNonLoopingSounds(true);
+	_ambientSounds->removeAllLoopingSounds(1);
+	_music->stop(2);
+	_audioSpeech->stopSpeech();
+	_actorDialogueQueue->flush(true, false);
+
+	int size = s.readInt();
+
+	if (size != dataSize) {
+		return;
+	}
+
+	s.skip(9600); // thumbnail
+	_settings->load(s);
+	_scene->load(s);
+	_scene->_exits->load(s);
+	_scene->_regions->load(s);
+	_scene->_set->load(s);
+	for (uint i = 0; i != _gameInfo->getGlobalVarCount(); ++i) {
+		_gameVars[i] = s.readInt();
+	}
+	_music->load(s);
+	// _audioPlayer->load(s) // zero func
+	// _audioSpeech->load(s) // zero func
+	_combat->load(s);
+	_gameFlags->load(s);
+	_items->load(s);
+	_sceneObjects->load(s);
+	_ambientSounds->load(s);
+	_overlays->load(s);
+	_spinner->load(s);
+	s.skip(0x28); // TODO: _scores->load(s);
+	_dialogueMenu->load(s);
+	_obstacles->load(s);
+	_actorDialogueQueue->load(s);
+	_waypoints->load(s);
+
+	for (uint i = 0; i != _gameInfo->getActorCount(); ++i) {
+		_actors[i]->load(s);
+
+		int animationState = s.readInt();
+		int animationFrame = s.readInt();
+		int animationStateNext = s.readInt();
+		int nextAnimation = s.readInt();
+		_aiScripts->setAnimationState(i, animationState, animationFrame, animationStateNext, nextAnimation);
+	}
+	_actors[kActorVoiceOver]->load(s);
+
+	_policeMaze->load(s);
+	_crimesDatabase->load(s);
+
+	_settings->setNewSetAndScene(_settings->getSet(), _settings->getScene());
+	_settings->setChapter(_settings->getChapter());
+}
+
+void BladeRunnerEngine::ISez(const Common::String &str) {
+	debug("\t%s", str.c_str());
 }
 
 void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) {

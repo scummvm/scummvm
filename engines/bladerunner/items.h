@@ -30,7 +30,8 @@
 
 namespace BladeRunner {
 
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class Items {
 	BladeRunnerEngine *_vm;
@@ -59,14 +60,16 @@ public:
 	bool isVisible(int itemId) const;
 	int findTargetUnderMouse(int mouseX, int mouseY) const;
 
-	BoundingBox *getBoundingBox(int itemId);
-	Common::Rect *getScreenRectangle(int itemId);
+	const BoundingBox &getBoundingBox(int itemId);
+	const Common::Rect &getScreenRectangle(int itemId);
 	int getFacing(int itemId) const;
 	void setFacing(int itemId, int facing);
 
 	void spinInWorld(int itemId);
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
+
 private:
 	int findItem(int itemId) const;
 };

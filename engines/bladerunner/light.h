@@ -42,7 +42,8 @@ class Light {
 	friend class SliceRenderer;
 
 protected:
-	char      _name[20];
+	Common::String _name;
+
 	int       _frameCount;
 	int       _animated;
 	int       _animatedParameters;

@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_GAME_INFO_H
 #define BLADERUNNER_GAME_INFO_H
 
+#include "common/array.h"
 #include "common/str.h"
 
 namespace BladeRunner {
@@ -49,14 +50,13 @@ class GameInfo {
 	uint32 _coverWaypointCount;
 	uint32 _fleeWaypointCount;
 
-	char (*_sceneNames)[5];
-	char (*_sfxTracks)[13];
-	char (*_musicTracks)[13];
-	char (*_outtakes)[13];
+	Common::Array<Common::String> _sceneNames;
+	Common::Array<Common::String> _sfxTracks;
+	Common::Array<Common::String> _musicTracks;
+	Common::Array<Common::String> _outtakes;
 
 public:
 	GameInfo(BladeRunnerEngine *vm);
-	~GameInfo();
 
 	bool open(const Common::String &name);
 
@@ -77,10 +77,10 @@ public:
 	uint32 getCoverWaypointCount() const   { return _coverWaypointCount; }
 	uint32 getFleeWaypointCount() const    { return _fleeWaypointCount; }
 
-	const char *getSceneName(int i) const;
-	const char *getSfxTrack(int i) const;
-	const char *getMusicTrack(int i) const;
-	const char *getOuttake(int i) const;
+	const Common::String &getSceneName(int i) const;
+	const Common::String &getSfxTrack(int i) const;
+	const Common::String &getMusicTrack(int i) const;
+	const Common::String &getOuttake(int i) const;
 };
 
 } // End of namespace BladeRunner

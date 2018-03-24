@@ -127,8 +127,8 @@ void Combat::shoot(int actorId, Vector3 &to, int screenX) {
 	distanceFromCenter = 100 *  -------------------------------
 	                                 abs(right - left) / 2
 	*/
-	Common::Rect *rect = actor->getScreenRectangle();
-	int distanceFromCenter = CLIP(100 * (screenX - abs((rect->right + rect->left) / 2)) / abs((rect->right - rect->left) / 2), 0, 100);
+	const Common::Rect &rect = actor->getScreenRectangle();
+	int distanceFromCenter = CLIP(100 * (screenX - abs((rect.right + rect.left) / 2)) / abs((rect.right - rect.left) / 2), 0, 100);
 
 	int damage = (100 - distanceFromCenter) * _ammoDamage[_vm->_settings->getAmmoType()] / 100;
 
@@ -205,14 +205,25 @@ int Combat::findCoverWaypoint(int waypointType, int actorId, int enemyId) const 
 	return result;
 }
 
-void Combat::save(SaveFile &f) {
-	f.write(_active);
-	f.write(_enabled);
-	for (int i = 0; i != 9; ++i) {
-		f.write(_hitSoundId[i]);
+void Combat::save(SaveFileWriteStream &f) {
+	f.writeBool(_active);
+	f.writeBool(_enabled);
+	for (int i = 0; i != kSoundCount; ++i) {
+		f.writeInt(_hitSoundId[i]);
 	}
-	for (int i = 0; i != 9; ++i) {
-		f.write(_missSoundId[i]);
+	for (int i = 0; i != kSoundCount; ++i) {
+		f.writeInt(_missSoundId[i]);
+	}
+}
+
+void Combat::load(SaveFileReadStream &f) {
+	_active = f.readBool();
+	_enabled = f.readBool();
+	for (int i = 0; i != kSoundCount; ++i) {
+		_hitSoundId[i] = f.readInt();
+	}
+	for (int i = 0; i != kSoundCount; ++i) {
+		_missSoundId[i] = f.readInt();
 	}
 }
 

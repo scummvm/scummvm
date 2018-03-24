@@ -27,7 +27,7 @@
 
 namespace BladeRunner {
 
-class SaveFile;
+class SaveFileWriteStream;
 
 class BoundingBox {
 	Vector3 _vertices[2];
@@ -45,8 +45,6 @@ public:
 
 	float getZ0() const;
 	float getZ1() const;
-
-	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner

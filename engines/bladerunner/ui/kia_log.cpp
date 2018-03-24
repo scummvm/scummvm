@@ -55,7 +55,7 @@ void KIALog::add(int type, int dataSize, const void *data) {
 	_entries[_currentIndex].dataSize = dataSize;
 
 	if (dataSize > 0) {
-		char *dataCopy = new char[dataSize];
+		unsigned char *dataCopy = new unsigned char[dataSize];
 		memcpy(dataCopy, data, dataSize);
 		_entries[_currentIndex].data = dataCopy;
 	} else {

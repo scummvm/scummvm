@@ -832,8 +832,7 @@ int ScriptBase::Random_Query(int min, int max) {
 }
 
 void ScriptBase::Sound_Play(int id, int volume, int panFrom, int panTo, int priority) {
-	const char *name = _vm->_gameInfo->getSfxTrack(id);
-	_vm->_audioPlayer->playAud(name, volume, panFrom, panTo, priority);
+	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(id), volume, panFrom, panTo, priority);
 }
 
 void ScriptBase::Sound_Play_Speech_Line(int actorId, int sentenceId, int volume, int a4, int priority) {
@@ -899,8 +898,7 @@ void ScriptBase::Footstep_Sound_Override_Off() {
 }
 
 bool ScriptBase::Music_Play(int musicId, int volume, int pan, int timeFadeIn, int timePlay, int loop, int timeFadeOut) {
-	const char *musicName = _vm->_gameInfo->getMusicTrack(musicId);
-	return _vm->_music->play(musicName, volume, pan, timeFadeIn, timePlay, loop, timeFadeOut);
+	return _vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), volume, pan, timeFadeIn, timePlay, loop, timeFadeOut);
 }
 
 void ScriptBase::Music_Adjust(int volume, int pan, int delay) {

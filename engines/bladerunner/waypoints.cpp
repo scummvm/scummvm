@@ -91,13 +91,23 @@ float Waypoints::getZ(int waypointId) const {
 	return _waypoints[waypointId].position.z;
 }
 
-void Waypoints::save(SaveFile &f) {
-	f.write(_count);
+void Waypoints::save(SaveFileWriteStream &f) {
+	f.writeInt(_count);
 	for (int i = 0; i < _count; ++i) {
 		Waypoint &w = _waypoints[i];
-		f.write(w.setId);
-		f.write(w.position);
-		f.write(w.present);
+		f.writeInt(w.setId);
+		f.writeVector3(w.position);
+		f.writeInt(w.present);
+	}
+}
+
+void Waypoints::load(SaveFileReadStream &f) {
+	_count = f.readInt();
+	for (int i = 0; i < _count; ++i) {
+		Waypoint &w = _waypoints[i];
+		w.setId = f.readInt();
+		w.position = f.readVector3();
+		w.present = f.readInt();
 	}
 }
 

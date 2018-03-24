@@ -28,7 +28,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class ActorClues {
 	struct Clue {
@@ -41,7 +42,7 @@ class ActorClues {
 		int field6;
 		int field7;
 		int field8;
-		unsigned char flags;
+		byte flags;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -75,8 +76,8 @@ public:
 
 	void removeAll();
 
-	void save(SaveFile &f);
-	//loadgame
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
 	bool exists(int clueId) const;

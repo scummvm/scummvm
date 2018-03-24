@@ -174,26 +174,48 @@ bool Item::isUnderMouse(int mouseX, int mouseY) const {
 	    && mouseY <= _screenRectangle.bottom + 10;
 }
 
-void Item::save(SaveFile &f) {
-	f.write(_setId);
-	f.write(_itemId);
-	_boundingBox.save(f);
-	f.write(_screenRectangle);
-	f.write(_animationId);
-	f.write(_position);
-	f.write(_facing);
-	f.write(_angle);
-	f.write(_width);
-	f.write(_height);
-	f.write(_screenX);
-	f.write(_screenY);
-	f.write(_depth);
-	f.write(_isTarget);
-	f.write(_isSpinning);
-	f.write(_facingChange);
-	f.write(0.0f); // _viewAngle
-	f.write(_isVisible);
-	f.write(_isPoliceMazeEnemy);
+void Item::save(SaveFileWriteStream &f) {
+	f.writeInt(_setId);
+	f.writeInt(_itemId);
+	f.writeBoundingBox(_boundingBox);
+	f.writeRect(_screenRectangle);
+	f.writeInt(_animationId);
+	f.writeVector3(_position);
+	f.writeInt(_facing);
+	f.writeFloat(_angle);
+	f.writeInt(_width);
+	f.writeInt(_height);
+	f.writeInt(_screenX);
+	f.writeInt(_screenY);
+	f.writeFloat(_depth);
+	f.writeBool(_isTarget);
+	f.writeBool(_isSpinning);
+	f.writeInt(_facingChange);
+	f.writeFloat(0.0f); // _viewAngle
+	f.writeBool(_isVisible);
+	f.writeBool(_isPoliceMazeEnemy);
+}
+
+void Item::load(SaveFileReadStream &f) {
+	_setId = f.readInt();
+	_itemId = f.readInt();
+	_boundingBox = f.readBoundingBox();
+	_screenRectangle = f.readRect();
+	_animationId = f.readInt();
+	_position = f.readVector3();
+	_facing  = f.readInt();
+	_angle = f.readFloat();
+	_width = f.readInt();
+	_height = f.readInt();
+	_screenX = f.readInt();
+	_screenY = f.readInt();
+	_depth = f.readFloat();
+	_isTarget = f.readBool();
+	_isSpinning = f.readBool();
+	_facingChange = f.readInt();
+	f.skip(4);
+	_isVisible = f.readBool();
+	_isPoliceMazeEnemy = f.readBool();
 }
 
 } // End of namespace BladeRunner

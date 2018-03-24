@@ -38,7 +38,8 @@ class Fog {
 	friend class SetEffects;
 
 protected:
-	char       _name[20];
+	Common::String _name;
+
 	int        _frameCount;
 	int        _animatedParameters;
 	Matrix4x3  _matrix;

@@ -29,7 +29,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class Shape;
 class UIImagePicker;
 class VQAPlayer;
@@ -71,7 +72,8 @@ public:
 	void reset();
 	void resume();
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
 	static void mouseUpCallback(int, void *);

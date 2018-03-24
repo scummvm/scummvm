@@ -29,7 +29,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class ActorWalk {
 	BladeRunnerEngine *_vm;
@@ -61,7 +62,9 @@ public:
 	void stop(int actorId, bool immediately, int combatAnimationMode, int animationMode);
 	void run(int actorId);
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
+
 private:
 	int nextOnPath(int actorId, const Vector3 &from, const Vector3 &to, Vector3 &next) const;
 

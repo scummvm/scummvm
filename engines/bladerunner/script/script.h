@@ -23,10 +23,10 @@
 #ifndef BLADERUNNER_SCRIPT_H
 #define BLADERUNNER_SCRIPT_H
 
-#include "common/str.h"
-
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_constants.h"
+
+#include "common/str.h"
 
 namespace BladeRunner {
 

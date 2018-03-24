@@ -59,8 +59,8 @@ Overlays::~Overlays() {
 int Overlays::play(const Common::String &name, int loopId, bool loopForever, bool startNow, int a6) {
 	assert(name.size() <= 12);
 
-	int id = mix_id(name);
-	int index = findById(id);
+	int32 hash = MIXArchive::getHash(name);
+	int index = findByHash(hash);
 	if (index < 0) {
 		index = findEmpty();
 		if (index < 0) {
@@ -68,7 +68,7 @@ int Overlays::play(const Common::String &name, int loopId, bool loopForever, boo
 		}
 		_videos[index].loaded = true;
 		_videos[index].name = name;
-		_videos[index].id = id;
+		_videos[index].hash = hash;
 		_videos[index].vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceFront);
 
 		// repeat forever
@@ -87,8 +87,7 @@ int Overlays::play(const Common::String &name, int loopId, bool loopForever, boo
 }
 
 void Overlays::remove(const Common::String &name) {
-	int id = mix_id(name);
-	int index = findById(id);
+	int index = findByHash(MIXArchive::getHash(name));
 	if (index >= 0) {
 		resetSingle(index);
 	}
@@ -113,9 +112,9 @@ void Overlays::tick() {
 	}
 }
 
-int Overlays::findById(int32 id) const {
+int Overlays::findByHash(int32 hash) const {
 	for (int i = 0; i < kOverlayVideos; ++i) {
-		if (_videos[i].loaded && _videos[i].id == id) {
+		if (_videos[i].loaded && _videos[i].hash == hash) {
 			return i;
 		}
 	}
@@ -138,7 +137,7 @@ void Overlays::resetSingle(int i) {
 		_videos[i].vqaPlayer = nullptr;
 	}
 	_videos[i].loaded = false;
-	_videos[i].id = 0;
+	_videos[i].hash = 0;
 	_videos[i].field2 = -1;
 	_videos[i].name.clear();
 }
@@ -147,18 +146,34 @@ void Overlays::reset() {
 	_videos.clear();
 }
 
-void Overlays::save(SaveFile &f) {
+void Overlays::save(SaveFileWriteStream &f) {
 	for (int i = 0; i < kOverlayVideos; ++i) {
 		// 37 bytes per overlay
 		Video &ov = _videos[i];
 
-		f.write(ov.loaded);
-		f.write(nullptr);
-		f.write(ov.name, 13);
-		f.write(ov.id);
-		f.write(ov.field0);
-		f.write(ov.field1);
-		f.write(ov.field2);
+		f.writeBool(ov.loaded);
+		f.writeInt(0); // vqaPlayer pointer
+		f.writeStringSz(ov.name, 13);
+		f.writeSint32LE(ov.hash);
+		f.writeInt(ov.field0);
+		f.writeInt(ov.field1);
+		f.writeInt(ov.field2);
+	}
+}
+
+void Overlays::load(SaveFileReadStream &f) {
+	for (int i = 0; i < kOverlayVideos; ++i) {
+		// 37 bytes per overlay
+		Video &ov = _videos[i];
+
+		ov.loaded = f.readBool();
+		f.skip(4); // vqaPlayer pointer
+		ov.vqaPlayer = nullptr;
+		ov.name = f.readStringSz(13);
+		ov.hash = f.readSint32LE();
+		ov.field0 = f.readInt();
+		ov.field1 = f.readInt();
+		ov.field2 = f.readInt();
 	}
 }
 

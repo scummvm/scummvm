@@ -30,7 +30,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class Vector3;
 
 class Combat {
@@ -90,7 +91,8 @@ public:
 	int findFleeWaypoint(int setId, int enemyId, const Vector3& position) const;
 	int findCoverWaypoint(int waypointType, int actorId, int enemyId) const;
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 } // End of namespace BladeRunner

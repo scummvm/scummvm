@@ -27,7 +27,8 @@
 
 namespace BladeRunner {
 
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class GameFlags {
 	uint32 *_flags;
@@ -43,7 +44,8 @@ public:
 	void reset(int flag);
 	bool query(int flag) const;
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 } // End of namespace BladeRunner

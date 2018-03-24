@@ -253,7 +253,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panFrom, in
 	}
 
 	/* Load audio resource and store in cache. Playback will happen directly from there. */
-	int32 hash = mix_id(name);
+	int32 hash = MIXArchive::getHash(name);
 	if (!_cache->findByHash(hash)) {
 		Common::SeekableReadStream *r = _vm->getResourceStream(name);
 		if (!r) {

@@ -29,7 +29,8 @@ namespace BladeRunner {
 
 class BladeRunnerEngine;
 class BoundingBox;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class MovementTrack {
 	static const int kSize = 100;
@@ -60,7 +61,9 @@ public:
 	bool hasNext() const;
 	bool next(int *waypointId, int *delay, int *angle, bool *run);
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
+
 private:
 	void reset();
 };

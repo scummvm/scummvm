@@ -73,9 +73,15 @@ bool GameFlags::query(int flag) const {
 	return !!(_flags[flag / 32] & (1 << (flag % 32)));
 }
 
-void GameFlags::save(SaveFile &f) {
+void GameFlags::save(SaveFileWriteStream &f) {
 	for (int i = 0; i != _flagCount / 32 + 1; ++i) {
-		f.write(_flags[i]);
+		f.writeUint32LE(_flags[i]);
+	}
+}
+
+void GameFlags::load(SaveFileReadStream &f) {
+	for (int i = 0; i != _flagCount / 32 + 1; ++i) {
+		_flags[i] = f.readUint32LE();
 	}
 }
 

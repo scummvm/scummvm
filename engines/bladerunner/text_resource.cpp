@@ -46,11 +46,11 @@ TextResource::~TextResource() {
 bool TextResource::open(const Common::String &name) {
 	assert(name.size() <= 8);
 
-	char resName[13];
-	sprintf(resName, "%s.TR%s", name.c_str(), _vm->_languageCode);
+	Common::String resName = Common::String::format("%s.TR%s", name.c_str(), _vm->_languageCode.c_str());
 	Common::ScopedPtr<Common::SeekableReadStream> s(_vm->getResourceStream(resName));
-	if (!s)
+	if (!s) {
 		return false;
+	}
 
 	_count = s->readUint32LE();
 

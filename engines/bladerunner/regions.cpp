@@ -101,12 +101,21 @@ void Regions::enable() {
 	_enabled = true;
 }
 
-void Regions::save(SaveFile &f) {
-	f.write(_enabled);
+void Regions::save(SaveFileWriteStream &f) {
+	f.writeBool(_enabled);
 	for (int i = 0; i != 10; ++i) {
-		f.write(_regions[i].rectangle);
-		f.write(_regions[i].type);
-		f.write(_regions[i].present);
+		f.writeRect(_regions[i].rectangle);
+		f.writeInt(_regions[i].type);
+		f.writeInt(_regions[i].present);
+	}
+}
+
+void Regions::load(SaveFileReadStream &f) {
+	_enabled = f.readBool();
+	for (int i = 0; i != 10; ++i) {
+		_regions[i].rectangle = f.readRect();
+		_regions[i].type = f.readInt();
+		_regions[i].present = f.readInt();
 	}
 }
 

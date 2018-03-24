@@ -52,7 +52,6 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 	_walkInfo      = new ActorWalk(vm);
 	_movementTrack = new MovementTrack();
 	_clues         = new ActorClues(vm, (actorId && actorId != 99) ? 2 : 4);
-	_bbox          = new BoundingBox();
 	_combatInfo    = new ActorCombat(vm);
 
 	_friendlinessToOther.resize(_vm->_gameInfo->getActorCount());
@@ -65,7 +64,6 @@ Actor::Actor(BladeRunnerEngine *vm, int actorId) {
 
 Actor::~Actor() {
 	delete _combatInfo;
-	delete _bbox;
 	delete _clues;
 	delete _movementTrack;
 	delete _walkInfo;
@@ -355,7 +353,7 @@ void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool 
 	_vm->_sceneObjects->remove(_id + kSceneObjectOffsetActors);
 
 	if (_vm->_scene->getSetId() == _setId) {
-		_vm->_sceneObjects->addActor(_id + kSceneObjectOffsetActors, _bbox, &_screenRectangle, true, moving, _isTarget, retired);
+		_vm->_sceneObjects->addActor(_id + kSceneObjectOffsetActors, _bbox, _screenRectangle, true, moving, _isTarget, retired);
 	}
 }
 
@@ -469,7 +467,7 @@ bool Actor::loopWalkToItem(int itemId, int destinationOffset, int interruptible,
 	return loopWalk(itemPosition, destinationOffset, interruptible, runFlag, _position, width, 24.0f, a5, isRunningFlag, false);
 }
 
-bool Actor::loopWalkToSceneObject(const char *objectName, int destinationOffset, bool interruptible, bool runFlag, bool a5, bool *isRunningFlag) {
+bool Actor::loopWalkToSceneObject(const Common::String &objectName, int destinationOffset, bool interruptible, bool runFlag, bool a5, bool *isRunningFlag) {
 	int sceneObject = _vm->_scene->_set->findObject(objectName);
 	if (sceneObject < 0) {
 		return true;
@@ -760,21 +758,21 @@ void Actor::setFacing(int facing, bool halfOrSet) {
 
 void Actor::setBoundingBox(const Vector3 &position, bool retired) {
 	if (retired) {
-		_bbox->setXYZ(position.x - (_retiredWidth / 2.0f),
-		              position.y,
-		              position.z - (_retiredWidth / 2.0f),
+		_bbox.setXYZ(position.x - (_retiredWidth / 2.0f),
+		             position.y,
+		             position.z - (_retiredWidth / 2.0f),
 
-		              position.x + (_retiredWidth / 2.0f),
-		              position.y + _retiredHeight,
-		              position.z + (_retiredWidth / 2.0f));
+		             position.x + (_retiredWidth / 2.0f),
+		             position.y + _retiredHeight,
+		             position.z + (_retiredWidth / 2.0f));
 	} else {
-		_bbox->setXYZ(position.x - 12.0f,
-		              position.y + 6.0f,
-		              position.z - 12.0f,
+		_bbox.setXYZ(position.x - 12.0f,
+		             position.y + 6.0f,
+		             position.z - 12.0f,
 
-		              position.x + 12.0f,
-		              position.y + 72.0f,
-		              position.z + 12.0f);
+		             position.x + 12.0f,
+		             position.y + 72.0f,
+		             position.z + 12.0f);
 	}
 }
 
@@ -820,7 +818,7 @@ void Actor::faceActor(int otherActorId, bool animate) {
 	faceXYZ(otherActor->_position, animate);
 }
 
-void Actor::faceObject(const char *objectName, bool animate) {
+void Actor::faceObject(const Common::String &objectName, bool animate) {
 	int objectId = _vm->_scene->findObject(objectName);
 	if (objectId == -1) {
 		return;
@@ -1066,13 +1064,10 @@ int Actor::getGoal() const {
 }
 
 void Actor::speechPlay(int sentenceId, bool voiceOver) {
-	char name[13];
-	sprintf(name, "%02d-%04d%s.AUD", _id, sentenceId, _vm->_languageCode);
-	int balance;
+	Common::String name = Common::String::format( "%02d-%04d%s.AUD", _id, sentenceId, _vm->_languageCode.c_str());
 
-	if (voiceOver || _id == BladeRunnerEngine::kActorVoiceOver) {
-		balance = 0;
-	} else {
+	int balance = 0;
+	if (!voiceOver && _id != BladeRunnerEngine::kActorVoiceOver) {
 		// Vector3 pos = _vm->_view->_frameViewMatrix * _position;
 		int screenX = 320; //, screenY = 0;
 		//TODO: transform to screen space using fov;
@@ -1226,66 +1221,66 @@ bool Actor::walkToNearestPoint(const Vector3 &destination, float distance) {
 	return false;
 }
 
-void Actor::save(SaveFile &f) {
-	f.write(_id);
-	f.write(_setId);
-	f.write(_position);
-	f.write(_facing);
-	f.write(_targetFacing);
-	f.write(0); // TODO: _timer4RemainDefault
+void Actor::save(SaveFileWriteStream &f) {
+	f.writeInt(_id);
+	f.writeInt(_setId);
+	f.writeVector3(_position);
+	f.writeInt(_facing);
+	f.writeInt(_targetFacing);
+	f.writeInt(0); // TODO: _timer4RemainDefault
 
-	f.write(_honesty);
-	f.write(_intelligence);
-	f.write(_stability);
-	f.write(_combatAggressiveness);
-	f.write(_goalNumber);
+	f.writeInt(_honesty);
+	f.writeInt(_intelligence);
+	f.writeInt(_stability);
+	f.writeInt(_combatAggressiveness);
+	f.writeInt(_goalNumber);
 
-	f.write(_currentHP);
-	f.write(_maxHP);
+	f.writeInt(_currentHP);
+	f.writeInt(_maxHP);
 
-	f.write(_movementTrackPaused);
-	f.write(_movementTrackNextWaypointId);
-	f.write(_movementTrackNextDelay);
-	f.write(_movementTrackNextAngle);
-	f.write(_movementTrackNextRunning);
+	f.writeBool(_movementTrackPaused);
+	f.writeInt(_movementTrackNextWaypointId);
+	f.writeInt(_movementTrackNextDelay);
+	f.writeInt(_movementTrackNextAngle);
+	f.writeBool(_movementTrackNextRunning);
 
-	f.write(0); // TODO: _clueType
-	f.write(_isMoving);
-	f.write(_isTarget);
-	f.write(_inCombat);
-	f.write(_isInvisible);
-	f.write(_isRetired);
-	f.write(_isImmuneToObstacles);
+	f.writeInt(0); // TODO: _clueType
+	f.writeBool(_isMoving);
+	f.writeBool(_isTarget);
+	f.writeBool(_inCombat);
+	f.writeBool(_isInvisible);
+	f.writeBool(_isRetired);
+	f.writeBool(_isImmuneToObstacles);
 
-	f.write(_animationMode);
-	f.write(_fps);
-	f.write(_frameMs);
-	f.write(_animationId);
-	f.write(_animationFrame);
+	f.writeInt(_animationMode);
+	f.writeInt(_fps);
+	f.writeInt(_frameMs);
+	f.writeInt(_animationId);
+	f.writeInt(_animationFrame);
 
-	f.write(_movementTrackWalkingToWaypointId);
-	f.write(_movementTrackDelayOnNextWaypoint);
+	f.writeInt(_movementTrackWalkingToWaypointId);
+	f.writeInt(_movementTrackDelayOnNextWaypoint);
 
-	f.write(_screenRectangle);
-	f.write(_retiredWidth);
-	f.write(_retiredHeight);
-	f.write(_damageAnimIfMoving);
-	f.write(0); // TODO: _actorFieldU6
-	f.write(0); // TODO: _actorFieldU7
-	f.write(_scale);
+	f.writeRect(_screenRectangle);
+	f.writeInt(_retiredWidth);
+	f.writeInt(_retiredHeight);
+	f.writeInt(_damageAnimIfMoving);
+	f.writeInt(0); // TODO: _actorFieldU6
+	f.writeInt(0); // TODO: _actorFieldU7
+	f.writeFloat(_scale);
 
 	for (int i = 0; i < 7; ++i) {
-		f.write(_timersLeft[i]);
+		f.writeInt(_timersLeft[i]);
 	}
 
 	uint32 now = _vm->getTotalPlayTime(); // TODO: should be last lock time
 	for (int i = 0; i < 7; ++i) {
-		f.write(_timersLast[i] - now);
+		f.writeInt(_timersLast[i] - now);
 	}
 
 	int actorCount = _vm->_gameInfo->getActorCount();
 	for (int i = 0; i != actorCount; ++i) {
-		f.write(_friendlinessToOther[i]);
+		f.writeInt(_friendlinessToOther[i]);
 	}
 
 	_clues->save(f);
@@ -1294,12 +1289,89 @@ void Actor::save(SaveFile &f) {
 
 	_walkInfo->save(f);
 
-	_bbox->save(f);
+	f.writeBoundingBox(_bbox);
 
 	_combatInfo->save(f);
-	f.write(_animationModeCombatIdle);
-	f.write(_animationModeCombatWalk);
-	f.write(_animationModeCombatRun);
+	f.writeInt(_animationModeCombatIdle);
+	f.writeInt(_animationModeCombatWalk);
+	f.writeInt(_animationModeCombatRun);
+}
+
+void Actor::load(SaveFileReadStream &f) {
+	_id = f.readInt();
+	_setId = f.readInt();
+	_position = f.readVector3();
+	_facing = f.readInt();
+	_targetFacing = f.readInt();
+	f.skip(4); // TODO: _timer4RemainDefault
+
+	_honesty = f.readInt();
+	_intelligence = f.readInt();
+	_stability = f.readInt();
+	_combatAggressiveness = f.readInt();
+	_goalNumber = f.readInt();
+
+	_currentHP = f.readInt();
+	_maxHP = f.readInt();
+
+	_movementTrackPaused = f.readBool();
+	_movementTrackNextWaypointId = f.readInt();
+	_movementTrackNextDelay = f.readInt();
+	_movementTrackNextAngle = f.readInt();
+	_movementTrackNextRunning = f.readBool();
+
+	f.skip(4); // TODO: _clueType
+	_isMoving = f.readBool();
+	_isTarget = f.readBool();
+	_inCombat = f.readBool();
+	_isInvisible = f.readBool();
+	_isRetired = f.readBool();
+	_isImmuneToObstacles = f.readBool();
+
+	_animationMode = f.readInt();
+	_fps = f.readInt();
+	_frameMs = f.readInt();
+	_animationId = f.readInt();
+	_animationFrame = f.readInt();
+
+	_movementTrackWalkingToWaypointId = f.readInt();
+	_movementTrackDelayOnNextWaypoint = f.readInt();
+
+	_screenRectangle = f.readRect();
+	_retiredWidth = f.readInt();
+	_retiredHeight = f.readInt();
+	_damageAnimIfMoving = f.readInt();
+	f.skip(4); // TODO: _actorFieldU6
+	f.skip(4); // TODO: _actorFieldU7
+	_scale = f.readFloat();
+
+	for (int i = 0; i < 7; ++i) {
+		_timersLeft[i] = f.readInt();
+	}
+
+	uint32 now = _vm->getTotalPlayTime(); // TODO: should be last lock time
+	for (int i = 0; i < 7; ++i) {
+		_timersLast[i] = f.readInt() + now;
+	}
+
+	int actorCount = _vm->_gameInfo->getActorCount();
+	for (int i = 0; i != actorCount; ++i) {
+		_friendlinessToOther[i] = f.readInt();
+	}
+
+	_clues->load(f);
+
+	_movementTrack->load(f);
+
+	_walkInfo->load(f);
+
+	_bbox = f.readBoundingBox();
+
+	_combatInfo->load(f);
+
+	_animationModeCombatIdle = f.readInt();
+	_animationModeCombatWalk = f.readInt();
+	_animationModeCombatRun = f.readInt();
 }
 
 } // End of namespace BladeRunner

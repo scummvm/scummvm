@@ -33,7 +33,8 @@ struct Surface;
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class VQAPlayer;
 
 class Overlays {
@@ -43,7 +44,7 @@ class Overlays {
 		bool            loaded;
 		VQAPlayer      *vqaPlayer;
 		Common::String  name;
-		int32           id;
+		int32           hash;
 		int             field0;
 		int             field1;
 		int             field2;
@@ -62,10 +63,11 @@ public:
 	void removeAll();
 	void tick();
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
-	int findById(int32 id) const;
+	int findByHash(int32 hash) const;
 	int findEmpty() const;
 
 	void resetSingle(int i);

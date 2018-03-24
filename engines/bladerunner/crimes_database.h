@@ -28,7 +28,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class TextResource;
 
 class CrimesDatabase {
@@ -38,7 +39,7 @@ class CrimesDatabase {
 	TextResource       *_cluesText;
 
 public:
-	CrimesDatabase(BladeRunnerEngine *vm, const char *cluesResource, int crimeCount);
+	CrimesDatabase(BladeRunnerEngine *vm, const Common::String &cluesResource, int crimeCount);
 	~CrimesDatabase();
 
 	void setCrime(int clueId, int crimeId);
@@ -49,7 +50,8 @@ public:
 
 	const char *getClueText(int clueId) const;
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 } // End of namespace BladeRunner

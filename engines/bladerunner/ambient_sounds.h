@@ -25,40 +25,43 @@
 
 #include "audio/audiostream.h"
 
+#include "common/str.h"
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 class AmbientSounds {
 	static const int kNonLoopingSounds = 25;
 	static const int kLoopingSounds = 3;
 
 	struct NonLoopingSound {
-		bool   isActive;
-		char   name[13];
-		int32  hash;
-		int32  audioPlayerTrack;
-		int32  timeMin;
-		int32  timeMax;
-		uint32 nextPlayTime;
-		int32  volumeMin;
-		int32  volumeMax;
-		int32  volume;
-		int32  panStartMin;
-		int32  panStartMax;
-		int32  panEndMin;
-		int32  panEndMax;
-		int32  priority;
+		bool           isActive;
+		Common::String name;
+		int32          hash;
+		int            audioPlayerTrack;
+		int            timeMin;
+		int            timeMax;
+		uint32         nextPlayTime;
+		int            volumeMin;
+		int            volumeMax;
+		int            volume;
+		int            panStartMin;
+		int            panStartMax;
+		int            panEndMin;
+		int            panEndMax;
+		int            priority;
 	};
 
 	struct LoopingSound {
-		bool  isActive;
-		char  name[13];
-		int32 hash;
-		int   audioPlayerTrack;
-		int32 volume;
-		int   pan;
+		bool           isActive;
+		Common::String name;
+		int32          hash;
+		int            audioPlayerTrack;
+		int            volume;
+		int            pan;
 	};
 
 	BladeRunnerEngine *_vm;
@@ -104,7 +107,8 @@ public:
 	int getVolume() const;
 	void playSample();
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 
 private:
 	int findAvailableNonLoopingTrack() const;
@@ -122,7 +126,7 @@ private:
 	// playVolumeAdjustSound
 
 	void addSoundByName(
-		const char *name,
+		const Common::String &name,
 		int timeMin, int timeMax,
 		int volumeMin, int volumeMax,
 		int panStartMin, int panStartMax,

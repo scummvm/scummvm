@@ -51,7 +51,7 @@ bool MIXArchive::open(const Common::String &filename) {
 
 	_entries.resize(_entryCount);
 	for (uint16 i = 0; i != _entryCount; ++i) {
-		_entries[i].id     = _fd.readSint32LE();
+		_entries[i].hash   = _fd.readUint32LE();
 		_entries[i].offset = _fd.readUint32LE();
 		_entries[i].length = _fd.readUint32LE();
 
@@ -61,7 +61,7 @@ bool MIXArchive::open(const Common::String &filename) {
 
 		// Verify that the entries are sorted by id. Note that id is signed.
 		if (i > 0) {
-			assert(_entries[i].id > _entries[i - 1].id);
+			assert(_entries[i].hash > _entries[i - 1].hash);
 		}
 	}
 
@@ -86,7 +86,7 @@ bool MIXArchive::isOpen() const {
 
 #define ROL(n) ((n << 1) | ((n >> 31) & 1))
 
-int32 mix_id(const Common::String &name) {
+int32 MIXArchive::getHash(const Common::String &name) {
 	char buffer[12] = { 0 };
 
 	for (uint i = 0; i != name.size() && i < 12u; ++i) {
@@ -103,11 +103,10 @@ int32 mix_id(const Common::String &name) {
 		id = ROL(id) + t;
 	}
 
-	return reinterpret_cast<int32&>(id);
+	return id;
 }
 
-static
-int32 tlk_id(const Common::String &name) {
+static uint32 tlk_id(const Common::String &name) {
 	char buffer[12] = { 0 };
 
 	for (uint i = 0; i != name.size() && i < 12u; ++i)
@@ -124,15 +123,15 @@ int32 tlk_id(const Common::String &name) {
 	return 10000 * actor_id + speech_id;
 }
 
-uint32 MIXArchive::indexForId(int32 id) const {
+uint32 MIXArchive::indexForHash(int32 hash) const {
 	uint32 lo = 0, hi = _entryCount;
 
 	while (lo < hi) {
 		uint32 mid = lo + (hi - lo) / 2;
 
-		if (id > _entries[mid].id) {
+		if (hash > _entries[mid].hash) {
 			lo = mid + 1;
-		} else if (id < _entries[mid].id) {
+		} else if (hash < _entries[mid].hash) {
 			hi = mid;
 		} else {
 			return mid;
@@ -142,14 +141,15 @@ uint32 MIXArchive::indexForId(int32 id) const {
 }
 
 Common::SeekableReadStream *MIXArchive::createReadStreamForMember(const Common::String &name) {
-	int32 id;
+	int32 hash;
 
-	if (_isTLK)
-		id = tlk_id(name);
-	else
-		id = mix_id(name);
+	if (_isTLK) {
+		hash = tlk_id(name);
+	} else {
+		hash = MIXArchive::getHash(name);
+	}
 
-	uint32 i = indexForId(id);
+	uint32 i = indexForHash(hash);
 
 	if (i == _entryCount) {
 		return nullptr;

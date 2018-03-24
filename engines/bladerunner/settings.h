@@ -26,7 +26,8 @@
 namespace BladeRunner {
 
 class BladeRunnerEngine;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 
 enum PlayerAgenda {
 	kPlayerAgendaPolite = 0,
@@ -53,7 +54,7 @@ class Settings {
 	bool  _startingGame;
 	bool  _loadingGame;
 
-	int   _unk1;
+	// int   _unk1;
 
 	int   _fullHDFrames;
 	int   _mst3k;
@@ -91,6 +92,18 @@ public:
 		return _newSet;
 	}
 
+	int getScene() const {
+		return _scene;
+	}
+
+	int getSet() const {
+		return _set;
+	}
+
+	int getChapter() const {
+		return _chapter;
+	}
+
 	void setChapter(int newChapter) {
 		_chapterChanged = true;
 		_newChapter = newChapter;
@@ -124,7 +137,8 @@ public:
 	bool getLearyMode() const;
 	void setLearyMode(bool learyMode);
 
-	void save(SaveFile &f);
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
 };
 
 } // End of namespace BladeRunner

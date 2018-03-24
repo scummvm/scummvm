@@ -109,17 +109,31 @@ bool MovementTrack::next(int *waypointId, int *delay, int *angle, bool *run) {
 	}
 }
 
-void MovementTrack::save(SaveFile &f) {
-	f.write(_currentIndex);
-	f.write(_lastIndex);
-	f.write(_hasNext);
-	f.write(_paused);
-	for (int i = 0; i < 100; ++i) {
+void MovementTrack::save(SaveFileWriteStream &f) {
+	f.writeInt(_currentIndex);
+	f.writeInt(_lastIndex);
+	f.writeBool(_hasNext);
+	f.writeBool(_paused);
+	for (int i = 0; i < kSize; ++i) {
 		Entry &e = _entries[i];
-		f.write(e.waypointId);
-		f.write(e.delay);
-		f.write(e.angle);
-		f.write(e.run);
+		f.writeInt(e.waypointId);
+		f.writeInt(e.delay);
+		f.writeInt(e.angle);
+		f.writeBool(e.run);
+	}
+}
+
+void MovementTrack::load(SaveFileReadStream &f) {
+	_currentIndex = f.readInt();
+	_lastIndex = f.readInt();
+	_hasNext = f.readBool();
+	_paused = f.readBool();
+	for (int i = 0; i < kSize; ++i) {
+		Entry &e = _entries[i];
+		e.waypointId = f.readInt();
+		e.delay = f.readInt();
+		e.angle = f.readInt();
+		e.run = f.readBool();
 	}
 }
 

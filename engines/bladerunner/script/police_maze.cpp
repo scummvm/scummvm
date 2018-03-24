@@ -24,6 +24,7 @@
 #include "bladerunner/game_constants.h"
 #include "bladerunner/items.h"
 #include "bladerunner/mouse.h"
+#include "bladerunner/savefile.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
 #include "bladerunner/script/police_maze.h"
@@ -122,6 +123,24 @@ void PoliceMaze::tick() {
 	}
 }
 
+void PoliceMaze::save(SaveFileWriteStream &f) {
+	f.writeBool(_isPaused);
+	f.writeBool(_isActive);
+	f.writeBool(_isEnding);
+	for (int i = 0; i < kNumMazeTracks; ++i) {
+		_tracks[i]->save(f);
+	}
+}
+
+void PoliceMaze::load(SaveFileReadStream &f) {
+	_isPaused = f.readBool();
+	_isActive = f.readBool();
+	_isEnding = f.readBool();
+	for (int i = 0; i < kNumMazeTracks; ++i) {
+		_tracks[i]->load(f);
+	}
+}
+
 PoliceMazeTargetTrack::PoliceMazeTargetTrack(BladeRunnerEngine *vm) : ScriptBase(vm) {
 	reset();
 }
@@ -139,7 +158,7 @@ void PoliceMazeTargetTrack::reset() {
 	_timeLeftUpdate = 0;
 	_timeLeftWait   = 0;
 	_time           = 0;
-	_isWaiting     = false;
+	_isWaiting      = false;
 	_isMoving       = false;
 	_pointIndex     = 0;
 	_pointTarget    = 0;
@@ -528,8 +547,8 @@ bool PoliceMazeTargetTrack::tick() {
 
 void PoliceMazeTargetTrack::readdObject(int itemId) {
 	if (_vm->_sceneObjects->remove(itemId + kSceneObjectOffsetItems)) {
-		BoundingBox *boundingBox = _vm->_items->getBoundingBox(itemId);
-		Common::Rect *screenRect = _vm->_items->getScreenRectangle(itemId);
+		const BoundingBox &boundingBox = _vm->_items->getBoundingBox(itemId);
+		const Common::Rect &screenRect = _vm->_items->getScreenRectangle(itemId);
 		bool targetable = _vm->_items->isTarget(itemId);
 		bool obstacle = _vm->_items->isVisible(itemId);
 
@@ -537,5 +556,48 @@ void PoliceMazeTargetTrack::readdObject(int itemId) {
 	}
 }
 
+void PoliceMazeTargetTrack::save(SaveFileWriteStream &f) {
+	f.writeBool(_isPresent);
+	f.writeInt(_itemId);
+	f.writeInt(_pointCount);
+	f.writeInt(_dataIndex);
+	f.writeBool(_isWaiting);
+	f.writeBool(_isMoving);
+	f.writeInt(_pointIndex);
+	f.writeInt(_pointTarget);
+	f.writeBool(_isRotating);
+	f.writeInt(_angleTarget);
+	f.writeInt(_angleDelta);
+	f.writeBool(_isPaused);
+
+	for (int i = 0; i < kNumTrackPoints; ++i) {
+		f.writeVector3(_points[i]);
+	}
+
+	f.writeInt(_timeLeftUpdate);
+	f.writeInt(_timeLeftWait);
+}
+
+void PoliceMazeTargetTrack::load(SaveFileReadStream &f) {
+	_isPresent = f.readBool();
+	_itemId = f.readInt();
+	_pointCount = f.readInt();
+	_dataIndex = f.readInt();
+	_isWaiting = f.readBool();
+	_isMoving = f.readBool();
+	_pointIndex = f.readInt();
+	_pointTarget = f.readInt();
+	_isRotating = f.readBool();
+	_angleTarget = f.readInt();
+	_angleDelta = f.readInt();
+	_isPaused = f.readBool();
+
+	for (int i = 0; i < kNumTrackPoints; ++i) {
+		_points[i] = f.readVector3();
+	}
+
+	_timeLeftUpdate = f.readInt();
+	_timeLeftWait = f.readInt();
+}
 
 } // End of namespace BladeRunner

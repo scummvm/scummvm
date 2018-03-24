@@ -22,9 +22,8 @@
 
 #include "bladerunner/script/ai_script.h"
 
-#include "bladerunner/bladerunner.h"
-
 #include "bladerunner/actor.h"
+#include "bladerunner/bladerunner.h"
 
 namespace BladeRunner {
 
@@ -358,7 +357,7 @@ void AIScripts::setAnimationState(int actor, int animationState, int animationFr
 }
 
 
-void AIScripts::queryAnimationState(int actor, int *animationState, int *animationFrame, int *animationStateNext, int *nextAnimation) {
+void AIScripts::queryAnimationState(int actor, int *animationState, int *animationFrame, int *animationStateNext, int *animationNext) {
 		if (actor >= _actorCount) {
 		return;
 	}
@@ -366,7 +365,7 @@ void AIScripts::queryAnimationState(int actor, int *animationState, int *animati
 	_inScriptCounter++;
 	if (_AIScripts[actor]) {
 		_AIScripts[actor]->FledCombat();
-		_AIScripts[actor]->QueryAnimationState(animationState, animationFrame, animationStateNext, nextAnimation);
+		_AIScripts[actor]->QueryAnimationState(animationState, animationFrame, animationStateNext, animationNext);
 	}
 	_inScriptCounter--;
 }

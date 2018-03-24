@@ -68,28 +68,64 @@ void Obstacles::backup() {
 
 void Obstacles::restore() {}
 
-void Obstacles::save(SaveFile &f) {
-	f.write(_backup);
-	f.write(_count);
+void Obstacles::save(SaveFileWriteStream &f) {
+	f.writeBool(_backup);
+	f.writeInt(_count);
 	for (int i = 0; i < _count; ++i) {
 		Polygon &p = _polygonsBackup[i];
-		f.write(p.isPresent);
-		f.write(p.verticeCount);
-		f.write(p.left);
-		f.write(p.bottom);
-		f.write(p.right);
-		f.write(p.top);
+		f.writeBool(p.isPresent);
+		f.writeInt(p.verticeCount);
+		f.writeFloat(p.left);
+		f.writeFloat(p.bottom);
+		f.writeFloat(p.right);
+		f.writeFloat(p.top);
 		for (int j = 0; j < kPolygonVertexCount; ++j) {
-			f.write(p.vertices[j]);
+			f.writeVector2(p.vertices[j]);
 		}
 		for (int j = 0; j < kPolygonVertexCount; ++j) {
-			f.write(p.vertexType[j]);
+			f.writeInt(p.vertexType[j]);
 		}
 	}
 	for (int i = 0; i < kVertexCount; ++i) {
-		f.write(_vertices[i]);
+		f.writeVector2(_vertices[i]);
 	}
-	f.write(_verticeCount);
+	f.writeInt(_verticeCount);
+}
+
+void Obstacles::load(SaveFileReadStream &f) {
+	for (int i = 0; i < kPolygonCount; ++i) {
+		_polygons[i].isPresent = false;
+		_polygons[i].verticeCount = 0;
+		_polygonsBackup[i].isPresent = false;
+		_polygonsBackup[i].verticeCount = 0;
+	}
+
+	_backup = f.readBool();
+	_count = f.readInt();
+	for (int i = 0; i < _count; ++i) {
+		Polygon &p = _polygonsBackup[i];
+		p.isPresent = f.readBool();
+		p.verticeCount = f.readInt();
+		p.left = f.readFloat();
+		p.bottom = f.readFloat();
+		p.right = f.readFloat();
+		p.top = f.readFloat();
+		for (int j = 0; j < kPolygonVertexCount; ++j) {
+			p.vertices[j] = f.readVector2();
+		}
+		for (int j = 0; j < kPolygonVertexCount; ++j) {
+			p.vertexType[j] = f.readInt();
+		}
+	}
+
+	for (int i = 0; i < kPolygonCount; ++i) {
+		_polygons[i] = _polygonsBackup[i];
+	}
+
+	for (int i = 0; i < kVertexCount; ++i) {
+		_vertices[i] = f.readVector2();
+	}
+	_verticeCount = f.readInt();
 }
 
 

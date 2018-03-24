@@ -239,25 +239,51 @@ void ActorWalk::run(int actorId) {
 	_vm->_actors[actorId]->changeAnimationMode(animationMode, false);
 }
 
-void ActorWalk::save(SaveFile &f) {
-	f.write(_walking);
-	f.write(_running);
-	f.write(_destination);
+void ActorWalk::save(SaveFileWriteStream &f) {
+	f.writeInt(_walking);
+	f.writeInt(_running);
+	f.writeVector3(_destination);
 	// _originalDestination is not saved
-	f.write(_current);
-	f.write(_next);
-	f.write(_facing);
+	f.writeVector3(_current);
+	f.writeVector3(_next);
+	f.writeInt(_facing);
 
 	assert(_nearActors.size() <= 20);
 	for (Common::HashMap<int, bool>::const_iterator it = _nearActors.begin(); it != _nearActors.end(); ++it) {
-		f.write(it->_key);
-		f.write(it->_value);
+		f.writeInt(it->_key);
+		f.writeBool(it->_value);
 	}
 	f.padBytes(8 * (20 - _nearActors.size()));
-	f.write((int)_nearActors.size());
+	f.writeInt(_nearActors.size());
 
-	f.write(0); // _notUsed
-	f.write(_status);
+	f.writeInt(0); // _notUsed
+	f.writeInt(_status);
+}
+
+void ActorWalk::load(SaveFileReadStream &f) {
+	_walking = f.readInt();
+	_running = f.readInt();
+	_destination = f.readVector3();
+	// _originalDestination is not saved
+	_current = f.readVector3();
+	_next = f.readVector3();
+	_facing = f.readInt();
+
+	int actorId[20];
+	bool isNear[20];
+
+	for (int i = 0; i < 20; ++i) {
+		actorId[i] = f.readInt();
+		isNear[i] = f.readBool();
+	}
+
+	int count = f.readInt();
+	for (int i = 0; i < count; ++i) {
+		_nearActors.setVal(actorId[i], isNear[i]);
+	}
+
+	f.skip(4); // _notUsed
+	_status = f.readInt();
 }
 
 bool ActorWalk::isXYZEmpty(float x, float y, float z, int actorId) const {

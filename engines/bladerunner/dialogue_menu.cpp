@@ -365,27 +365,51 @@ bool DialogueMenu::waitingForInput() const {
 	return _waitingForInput;
 }
 
-void DialogueMenu::save(SaveFile &f) {
-	f.write(_isVisible);
-	f.write(_waitingForInput);
-	f.write(_selectedItemIndex);
-	f.write(_listSize);
+void DialogueMenu::save(SaveFileWriteStream &f) {
+	f.writeBool(_isVisible);
+	f.writeBool(_waitingForInput);
+	f.writeInt(_selectedItemIndex);
+	f.writeInt(_listSize);
 
-	f.write(_neverRepeatListSize);
+	f.writeInt(_neverRepeatListSize);
 	for (int i = 0; i < 100; ++i) {
-		f.write(_neverRepeatValues[i]);
+		f.writeInt(_neverRepeatValues[i]);
 	}
 	for (int i = 0; i < 100; ++i) {
-		f.write(_neverRepeatWasSelected[i]);
+		f.writeBool(_neverRepeatWasSelected[i]);
 	}
 	for (int i = 0; i < 10; ++i) {
-		f.write(_items[i].text, 50);
-		f.write(_items[i].answerValue);
-		f.write(_items[i].colorIntensity);
-		f.write(_items[i].priorityPolite);
-		f.write(_items[i].priorityNormal);
-		f.write(_items[i].prioritySurly);
-		f.write(_items[i].isDone);
+		f.writeStringSz(_items[i].text, 50);
+		f.writeInt(_items[i].answerValue);
+		f.writeInt(_items[i].colorIntensity);
+		f.writeInt(_items[i].priorityPolite);
+		f.writeInt(_items[i].priorityNormal);
+		f.writeInt(_items[i].prioritySurly);
+		f.writeInt(_items[i].isDone);
+	}
+}
+
+void DialogueMenu::load(SaveFileReadStream &f) {
+	_isVisible = f.readBool();
+	_waitingForInput = f.readBool();
+	_selectedItemIndex = f.readInt();
+	_listSize = f.readInt();
+
+	_neverRepeatListSize = f.readInt();
+	for (int i = 0; i < 100; ++i) {
+		_neverRepeatValues[i] = f.readInt();
+	}
+	for (int i = 0; i < 100; ++i) {
+		_neverRepeatWasSelected[i] = f.readBool();
+	}
+	for (int i = 0; i < 10; ++i) {
+		_items[i].text = f.readStringSz(50);
+		_items[i].answerValue = f.readInt();
+		_items[i].colorIntensity = f.readInt();
+		_items[i].priorityPolite = f.readInt();
+		_items[i].priorityNormal = f.readInt();
+		_items[i].prioritySurly = f.readInt();
+		_items[i].isDone = f.readInt();
 	}
 }
 

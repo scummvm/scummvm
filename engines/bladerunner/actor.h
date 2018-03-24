@@ -23,6 +23,7 @@
 #ifndef BLADERUNNER_ACTOR_H
 #define BLADERUNNER_ACTOR_H
 
+#include "bladerunner/boundingbox.h"
 #include "bladerunner/vector.h"
 
 #include "common/array.h"
@@ -36,14 +37,15 @@ class ActorWalk;
 class BladeRunnerEngine;
 class BoundingBox;
 class MovementTrack;
-class SaveFile;
+class SaveFileReadStream;
+class SaveFileWriteStream;
 class View;
 
 class Actor {
 	BladeRunnerEngine *_vm;
 
 public:
-	BoundingBox   *_bbox;
+	BoundingBox    _bbox;
 	Common::Rect   _screenRectangle;
 	MovementTrack *_movementTrack;
 	ActorWalk     *_walkInfo;
@@ -147,7 +149,7 @@ public:
 	bool walkTo(bool runFlag, const Vector3 &destination, bool a3);
 	bool loopWalkToActor(int otherActorId, int destinationOffset, int interruptible, bool runFlag, bool a5, bool *isRunningFlag);
 	bool loopWalkToItem(int itemId, int destinationOffset, int interruptible, bool runFlag, bool a5, bool *isRunningFlag);
-	bool loopWalkToSceneObject(const char *objectName, int destinationOffset, bool interruptible, bool runFlag, bool a5, bool *isRunningFlag);
+	bool loopWalkToSceneObject(const Common::String &objectName, int destinationOffset, bool interruptible, bool runFlag, bool a5, bool *isRunningFlag);
 	bool loopWalkToWaypoint(int waypointId, int destinationOffset, int interruptible, bool runFlag, bool a5, bool *isRunningFlag);
 	bool loopWalkToXYZ(const Vector3 &destination, int destinationOffset, bool interruptible, bool runFlag, bool a5, bool *isRunningFlag);
 	bool asyncWalkToWaypoint(int waypointId, int destinationOffset, bool runFlag, bool a5);
@@ -160,8 +162,8 @@ public:
 
 	int getSetId()  const;
 	void setSetId(int setId);
-	BoundingBox *getBoundingBox() const { return _bbox; }
-	Common::Rect *getScreenRectangle() { return &_screenRectangle; }
+	const BoundingBox &getBoundingBox() const { return _bbox; }
+	const Common::Rect &getScreenRectangle() { return _screenRectangle; }
 	int getWalkbox() const { return _walkboxId; }
 
 	bool isRetired() const { return _isRetired; }
@@ -179,7 +181,7 @@ public:
 	void stopWalking(bool value);
 
 	void faceActor(int otherActorId, bool animate);
-	void faceObject(const char *objectName, bool animate);
+	void faceObject(const Common::String &objectName, bool animate);
 	void faceItem(int itemId, bool animate);
 	void faceWaypoint(int waypointId, bool animate);
 	void faceXYZ(float x, float y, float z, bool animate);
@@ -247,6 +249,9 @@ public:
 
 	bool isObstacleBetween(const Vector3 &target);
 
+	void save(SaveFileWriteStream &f);
+	void load(SaveFileReadStream &f);
+
 	static int findTargetUnderMouse(BladeRunnerEngine *vm, int mouseX, int mouseY);
 
 private:
@@ -257,9 +262,6 @@ private:
 	bool walkFindU2(Vector3 *newDestination, float targetWidth, int destinationOffset, float targetSize, const Vector3 &startPosition, const Vector3 &targetPosition);
 	bool walkToNearestPoint(const Vector3 &destination, float distance);
 	//bool walkFindU3(int actorId, Vector3 from, int distance, Vector3 *out);
-
-public:
-	void save(SaveFile &f);
 };
 
 } // End of namespace BladeRunner
