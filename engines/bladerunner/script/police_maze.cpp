@@ -24,9 +24,9 @@
 #include "bladerunner/game_constants.h"
 #include "bladerunner/items.h"
 #include "bladerunner/mouse.h"
-#include "bladerunner/police_maze.h"
 #include "bladerunner/scene.h"
 #include "bladerunner/scene_objects.h"
+#include "bladerunner/script/police_maze.h"
 #include "bladerunner/script/scene_script.h"
 
 namespace BladeRunner {

@@ -40,7 +40,6 @@ MODULE_OBJS = \
 	obstacles.o \
 	outtake.o \
 	overlays.o \
-	police_maze.o \
 	regions.o \
 	scene.o \
 	scene_objects.o \
@@ -50,6 +49,7 @@ MODULE_OBJS = \
 	script/kia_script.o \
 	script/vk_script.o \
 	script/esper_script.o \
+	script/police_maze.o \
 	script/ai_script.o \
 	script/ai/answering_machine.o \
 	script/ai/baker.o \

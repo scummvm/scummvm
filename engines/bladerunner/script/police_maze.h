@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef BLADERUNNER_POLICE_MAZE_H
-#define BLADERUNNER_POLICE_MAZE_H
+#ifndef BLADERUNNER_SCRIPT_POLICE_MAZE_H
+#define BLADERUNNER_SCRIPT_POLICE_MAZE_H
 
 #include "bladerunner/script/script.h"
 #include "bladerunner/vector.h"
