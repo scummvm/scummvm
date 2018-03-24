@@ -35,7 +35,7 @@
 namespace MutationOfJB {
 
 Game::Game(MutationOfJBEngine *vm)
-: _vm(vm), _scriptExecCtx(*this) {
+: _vm(vm), _delayedLocalScript(nullptr), _scriptExecCtx(*this) {
 	_gameData = new GameData;
 	loadGameData(false);
 
@@ -79,23 +79,18 @@ bool Game::loadGameData(bool partB) {
 	return true;
 }
 
-
-void Game::changeScene(uint8 sceneId, bool partB) {
+Script *Game::changeSceneLoadScript(uint8 sceneId, bool partB) {
 	_gameData->_lastScene = _gameData->_currentScene;
 	_gameData->_currentScene = sceneId;
+	_gameData->_partB = partB;
 	_room->load(_gameData->_currentScene, partB);
-
-	if (_localScript) {
-		delete _localScript;
-		_localScript = nullptr;
-	}
 
 	EncryptedFile scriptFile;
 	Common::String fileName = Common::String::format("scrn%d%s.atn", sceneId, partB ? "b" : "");
 	scriptFile.open(fileName);
 	if (!scriptFile.isOpen()) {
 		reportFileMissingError(fileName.c_str());
-		return;
+		return nullptr;
 	}
 
 	// TODO Actually parse this.
@@ -103,14 +98,37 @@ void Game::changeScene(uint8 sceneId, bool partB) {
 	dummy = scriptFile.readLine(); // Skip first line.
 	scriptFile.seek(126, SEEK_CUR); // Skip 126 bytes.
 
-	_localScript = new Script;
-	_localScript->loadFromStream(scriptFile);
+	Script *localScript = new Script;
+	localScript->loadFromStream(scriptFile);
 	scriptFile.close();
+
+	return localScript;
 }
 
+void Game::changeScene(uint8 sceneId, bool partB) {
+	if (_localScript) {
+		delete _localScript;
+		_localScript = nullptr;
+	}
+
+	_localScript = changeSceneLoadScript(sceneId, partB);
+	if (_localScript) {
+		_scriptExecCtx.startStartupSection();
+	}
+}
+
+Script *Game::changeSceneDelayScript(uint8 sceneId, bool partB) {
+	_delayedLocalScript = changeSceneLoadScript(sceneId, partB);
+	return _delayedLocalScript;
+}
 
 void Game::update() {
-	_scriptExecCtx.runActiveCommand();
+	Command::ExecuteResult res = _scriptExecCtx.runActiveCommand();
+	if (res == Command::Finished && _delayedLocalScript) {
+		delete _localScript;
+		_localScript = _delayedLocalScript;
+		_delayedLocalScript = nullptr;
+	}
 }
 
 }
