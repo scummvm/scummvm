@@ -185,7 +185,7 @@ void fillDummyHeader(Fullpipe::FullpipeSavegameHeader &header) {
 	// This is wrong header, perhaps it is original savegame. Thus fill out dummy values
 	header.date = (20 << 24) | (9 << 16) | 2016;
 	header.time = (9 << 8) | 56;
-	header.playtime = 1000;
+	header.playtime = 0;
 }
 
 bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
