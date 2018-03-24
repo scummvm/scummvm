@@ -23,6 +23,8 @@
 #ifndef SUPERNOVA_SCREEN_H
 #define SUPERNOVA_SCREEN_H
 
+#include "common/array.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 #include "supernova/imageid.h"
@@ -31,11 +33,67 @@
 namespace Supernova {
 
 class SupernovaEngine;
+class GameManager;
 class ResourceManager;
 class GuiElement;
 class Room;
+class MSNImage;
+class Screen;
+
+class ScreenBuffer {
+	friend class ScreenBufferStack;
+
+public:
+	ScreenBuffer();
+
+private:
+	byte *_pixels;
+	int _x;
+	int _y;
+	int _width;
+	int _height;
+};
+
+class ScreenBufferStack {
+public:
+	ScreenBufferStack();
+
+	void push(int x, int y, int width, int height);
+	void restore();
+
+private:
+	ScreenBuffer _buffer[8];
+	ScreenBuffer *_last;
+};
+
+class Marquee {
+public:
+	enum MarqueeId {
+		kMarqueeIntro,
+		kMarqueeOutro
+	};
+
+	Marquee(Screen *screen, MarqueeId id, const char *text);
+
+	void renderCharacter();
+
+private:
+	void clearText();
+
+	Screen *_screen;
+	const char *const _textBegin;
+	const char *_text;
+	bool _loop;
+	int _delay;
+	int _color;
+	int _x;
+	int _y;
+	int _textWidth;
+};
 
 class Screen {
+	friend class Marquee;
+
 public:
 	struct ImageInfo {
 		int filenumber;
@@ -43,11 +101,23 @@ public:
 	};
 
 public:
-	Screen(SupernovaEngine *vm, ResourceManager *resMan);
+	static int textWidth(const uint16 key);
+	static int textWidth(const char *text);
+	static int textWidth(const Common::String &text);
 
+public:
+	Screen(SupernovaEngine *vm, GameManager *gm, ResourceManager *resMan);
+
+	int getViewportBrightness() const;
+	void setViewportBrightness(int brightness);
+	int getGuiBrightness() const;
+	void setGuiBrightness(int brightness);
+	const MSNImage *getCurrentImage() const;
+	bool isMessageShown() const;
 	void paletteFadeIn();
 	void paletteFadeOut();
 	void paletteBrightness();
+	void renderImage(ImageID id);
 	void renderImage(int section);
 	void renderImageSection(int section);
 	bool setCurrentImage(int filenumber);
@@ -56,19 +126,42 @@ public:
 	void restoreScreen();
 	void renderRoom(Room &room);
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
+	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
+	void renderMessage(StringID stringId, MessagePosition position = kMessageNormal,
+					   Common::String var1 = "", Common::String var2 = "");
 	void removeMessage();
-	void renderText(const char *text, int x, int y, byte color);
-	void renderText(const uint16 character, int x, int y, byte color);
-	void renderText(const char *text);
 	void renderText(const uint16 character);
+	void renderText(const char *text);
+	void renderText(const Common::String &text);
+	void renderText(StringID stringId);
+	void renderText(const uint16 character, int x, int y, byte color);
+	void renderText(const char *text, int x, int y, byte color);
+	void renderText(const Common::String &text, int x, int y, byte color);
+	void renderText(StringID stringId, int x, int y, byte color);
 	void renderText(const GuiElement &guiElement);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void renderBox(const GuiElement &guiElement);
 	void setColor63(byte value);
+	Common::Point getTextCursorPos();
+	void setTextCursorPos(int x, int y);
+	byte getTextCursorColor();
+	void setTextCursorColor(byte color);
 	void update();
 
 private:
-
+	SupernovaEngine *_vm;
+	GameManager *_gm;
+	ResourceManager *_resMan;
+	const MSNImage *_currentImage;
+	ScreenBufferStack _screenBuffer;
+	int _screenWidth;
+	int _screenHeight;
+	int  _textCursorX;
+	int  _textCursorY;
+	int  _textColor;
+	byte _viewportBrightness;
+	byte _guiBrightness;
+	bool _messageShown;
 };
 
 }

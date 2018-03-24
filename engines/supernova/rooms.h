@@ -27,6 +27,11 @@
 
 #include "msn_def.h"
 
+namespace Common {
+class ReadStream;
+class WriteStream;
+}
+
 namespace Supernova {
 
 class GameManager;

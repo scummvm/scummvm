@@ -42,12 +42,12 @@
 #include "gui/saveload.h"
 
 #include "supernova/resman.h"
+#include "supernova/screen.h"
 #include "supernova/sound.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
 
 namespace Supernova {
-
 
 const Object Object::nullObject;
 
@@ -79,25 +79,17 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 	: Engine(syst)
 	, _console(nullptr)
 	, _gm(nullptr)
-	, _currentImage(nullptr)
+	, _sound(nullptr)
+	, _resMan(nullptr)
+	, _screen(nullptr)
 	, _rnd("supernova")
-	, _brightness(255)
-	, _menuBrightness(255)
 	, _delay(33)
 	, _textSpeed(kTextSpeed[2])
-	, _screenWidth(320)
-	, _screenHeight(200)
-	, _messageDisplayed(false)
 	, _allowLoadGame(true)
-	, _allowSaveGame(true)
-{
-//	const Common::FSNode gameDataDir(ConfMan.get("path"));
-//	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
-
+	, _allowSaveGame(true) {
 	if (ConfMan.hasKey("textspeed"))
 		_textSpeed = ConfMan.getInt("textspeed");
 
-	// setup engine specific debug channels
 	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
 }
 
@@ -108,6 +100,7 @@ SupernovaEngine::~SupernovaEngine() {
 	delete _gm;
 	delete _sound;
 	delete _resMan;
+	delete _screen;
 }
 
 Common::Error SupernovaEngine::run() {
@@ -134,7 +127,7 @@ void SupernovaEngine::init() {
 	modes.push_back(Graphics::Mode(320, 200));
 	modes.push_back(Graphics::Mode(640, 480));
 	initGraphicsModes(modes);
-	initGraphics(_screenWidth, _screenHeight);
+	initGraphics(320, 200);
 
 	Common::Error status = loadGameStrings();
 	if (status.getCode() != Common::kNoError)
@@ -143,6 +136,7 @@ void SupernovaEngine::init() {
 	_resMan = new ResourceManager(this);
 	_sound = new Sound(_mixer, _resMan);
 	_gm = new GameManager(this, _sound);
+	_screen = new Screen(this, _gm, _resMan);
 	_console = new Console(this, _gm);
 
 	setTotalPlayTime(0);
@@ -231,6 +225,20 @@ Common::Error SupernovaEngine::loadGameStrings() {
 	return Common::kReadingFailed;
 }
 
+const Common::String &SupernovaEngine::getGameString(int idx) const {
+	if (idx < 0 || idx >= (int)_gameStrings.size())
+		return _nullString;
+	return _gameStrings[idx];
+}
+
+void SupernovaEngine::setGameString(int idx, const Common::String &string) {
+	if (idx < 0)
+		return;
+	while ((int)_gameStrings.size() <= idx)
+		_gameStrings.push_back(Common::String());
+	_gameStrings[idx] = string;
+}
+
 void SupernovaEngine::playSound(AudioIndex sample) {
 	_sound->play(sample);
 }
@@ -240,348 +248,114 @@ void SupernovaEngine::playSound(MusicIndex index) {
 }
 
 void SupernovaEngine::renderImageSection(int section) {
-	// Note: inverting means we are removing the section. So we should get the rect for that
-	// section but draw the background (section 0) instead.
-	bool invert = false;
-	if (section > 128) {
-		section -= 128;
-		invert = true;
-	}
-	if (!_currentImage || section > _currentImage->_numSections - 1)
-		return;
-
-	Common::Rect sectionRect(_currentImage->_section[section].x1,
-							 _currentImage->_section[section].y1,
-							 _currentImage->_section[section].x2 + 1,
-							 _currentImage->_section[section].y2 + 1) ;
-	if (_currentImage->_filenumber == 1 || _currentImage->_filenumber == 2) {
-		sectionRect.setWidth(640);
-		sectionRect.setHeight(480);
-		if (_screenWidth != 640) {
-			_screenWidth = 640;
-			_screenHeight = 480;
-			initGraphics(_screenWidth, _screenHeight);
-		}
-	} else {
-		if (_screenWidth != 320) {
-			_screenWidth = 320;
-			_screenHeight = 200;
-			initGraphics(_screenWidth, _screenHeight);
-		}
-	}
-
-	uint offset = 0;
-	int pitch = sectionRect.width();
-	if (invert) {
-		pitch = _currentImage->_pitch;
-		offset = _currentImage->_section[section].y1 * pitch + _currentImage->_section[section].x1;
-		section = 0;
-	}
-
-	_system->copyRectToScreen(static_cast<const byte *>(_currentImage->_sectionSurfaces[section]->getPixels()) + offset,
-							  pitch,
-							  sectionRect.left, sectionRect.top,
-							  sectionRect.width(), sectionRect.height());
+	_screen->renderImageSection(section);
 }
 
 void SupernovaEngine::renderImage(int section) {
-	if (!_currentImage)
-		return;
-
-	bool sectionVisible = true;
-
-	if (section > 128) {
-		sectionVisible = false;
-		section -= 128;
-	}
-
-	_gm->_currentRoom->setSectionVisible(section, sectionVisible);
-
-	do {
-		if (sectionVisible)
-			renderImageSection(section);
-		else
-			renderImageSection(section + 128);
-		section = _currentImage->_section[section].next;
-	} while (section != 0);
+	_screen->renderImage(section);
 }
 
 bool SupernovaEngine::setCurrentImage(int filenumber) {
-	_currentImage = _resMan->getImage(filenumber);
-	_system->getPaletteManager()->setPalette(_currentImage->getPalette(), 16, 239);
-	paletteBrightness();
-
-	return true;
+	_screen->setCurrentImage(filenumber);
 }
 
 void SupernovaEngine::saveScreen(int x, int y, int width, int height) {
-	_screenBuffer.push(x, y, width, height);
+	_screen->saveScreen(x, y, width, height);
 }
 void SupernovaEngine::saveScreen(const GuiElement &guiElement) {
-	saveScreen(guiElement.left, guiElement.top, guiElement.width(), guiElement.height());
+	_screen->saveScreen(guiElement);
 }
 
 void SupernovaEngine::restoreScreen() {
-	_screenBuffer.restore();
+	_screen->restoreScreen();
 }
 
 void SupernovaEngine::renderRoom(Room &room) {
-	if (room.getId() == INTRO)
-		return;
-
-	if (setCurrentImage(room.getFileNumber())) {
-		for (int i = 0; i < _currentImage->_numSections; ++i) {
-			int section = i;
-			if (room.isSectionVisible(section)) {
-				do {
-					renderImageSection(section);
-					section = _currentImage->_section[section].next;
-				} while (section != 0);
-			}
-		}
-	}
-}
-
-int SupernovaEngine::textWidth(const uint16 key) {
-	char text[2];
-	text[0] = key & 0xFF;
-	text[1] = 0;
-	return textWidth(text);
-}
-
-int SupernovaEngine::textWidth(const char *text) {
-	int charWidth = 0;
-	while (*text != '\0') {
-		byte c = *text++;
-		if (c < 32) {
-			continue;
-		} else if (c == 225) {
-			c = 35;
-		}
-
-		for (uint i = 0; i < 5; ++i) {
-			if (font[c - 32][i] == 0xff) {
-				break;
-			}
-			++charWidth;
-		}
-		++charWidth;
-	}
-
-	return charWidth;
+	_screen->renderRoom(room);
 }
 
 void SupernovaEngine::renderMessage(const char *text, MessagePosition position) {
-	Common::String t(text);
-	char *row[20];
-	Common::String::iterator p = t.begin();
-	uint numRows = 0;
-	int rowWidthMax = 0;
-	int x = 0;
-	int y = 0;
-	byte textColor = 0;
+	_screen->renderMessage(text, position);
+}
 
-	while (*p != '\0') {
-		row[numRows] = p;
-		++numRows;
-		while ((*p != '\0') && (*p != '|')) {
-			++p;
-		}
-		if (*p == '|') {
-			*p = '\0';
-			++p;
-		}
-	}
-	for (uint i = 0; i < numRows; ++i) {
-		int rowWidth = textWidth(row[i]);
-		if (rowWidth > rowWidthMax)
-			rowWidthMax = rowWidth;
-	}
+void SupernovaEngine::renderMessage(const Common::String &text, MessagePosition position) {
+	_screen->renderMessage(text, position);
+}
 
-	switch (position) {
-	case kMessageNormal:
-		x = 160 - rowWidthMax / 2;
-		textColor = kColorWhite99;
-		break;
-	case kMessageTop:
-		x = 160 - rowWidthMax / 2;
-		textColor = kColorLightYellow;
-		break;
-	case kMessageCenter:
-		x = 160 - rowWidthMax / 2;
-		textColor = kColorLightRed;
-		break;
-	case kMessageLeft:
-		x = 3;
-		textColor = kColorLightYellow;
-		break;
-	case kMessageRight:
-		x = 317 - rowWidthMax;
-		textColor = kColorLightGreen;
-		break;
-	}
-
-	if (position == kMessageNormal) {
-		y = 70 - ((numRows * 9) / 2);
-	} else if (position == kMessageTop) {
-		y = 5;
-	} else {
-		y = 142;
-	}
-
-	int message_columns = x - 3;
-	int message_rows = y - 3;
-	int message_width = rowWidthMax + 6;
-	int message_height = numRows * 9 + 5;
-	saveScreen(message_columns, message_rows, message_width, message_height);
-	renderBox(message_columns, message_rows, message_width, message_height, kColorWhite35);
-	for (uint i = 0; i < numRows; ++i) {
-		renderText(row[i], x, y, textColor);
-		y += 9;
-	}
-
-	_messageDisplayed = true;
-	_gm->_messageDuration = (Common::strnlen(text, 512) + 20) * _textSpeed / 10;
+void SupernovaEngine::renderMessage(StringID stringId, MessagePosition position, Common::String var1, Common::String var2) {
+	_screen->renderMessage(stringId, position, var1, var2);
 }
 
 void SupernovaEngine::removeMessage() {
-	if (_messageDisplayed) {
-		restoreScreen();
-		_messageDisplayed = false;
-	}
-}
-
-void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
-	Graphics::Surface *screen = _system->lockScreen();
-	byte *cursor = static_cast<byte *>(screen->getBasePtr(x, y));
-	const byte *basePtr = cursor;
-
-	byte c;
-	while ((c = *text++) != '\0') {
-		if (c < 32) {
-			continue;
-		} else if (c == 225) {
-			c = 128;
-		}
-
-		for (uint i = 0; i < 5; ++i) {
-			if (font[c - 32][i] == 0xff) {
-				break;
-			}
-
-			byte *ascentLine = cursor;
-			for (byte j = font[c - 32][i]; j != 0; j >>= 1) {
-				if (j & 1) {
-					*cursor = color;
-				}
-				cursor += kScreenWidth;
-			}
-			cursor = ++ascentLine;
-		}
-		++cursor;
-	}
-	_system->unlockScreen();
-
-	uint numChars = cursor - basePtr;
-	uint absPosition = y * kScreenWidth + x + numChars;
-	_textCursorX = absPosition % kScreenWidth;
-	_textCursorY = absPosition / kScreenWidth;
-	_textColor = color;
-}
-
-void SupernovaEngine::renderText(const uint16 character, int x, int y, byte color) {
-	char text[2];
-	text[0] = character & 0xFF;
-	text[1] = 0;
-	renderText(text, x, y, color);
-}
-
-void SupernovaEngine::renderText(const char *text) {
-	renderText(text, _textCursorX, _textCursorY, _textColor);
+	_screen->removeMessage();
 }
 
 void SupernovaEngine::renderText(const uint16 character) {
-	char text[2];
-	text[0] = character & 0xFF;
-	text[1] = 0;
-	renderText(text, _textCursorX, _textCursorY, _textColor);
+	_screen->renderText(character);
 }
+
+void SupernovaEngine::renderText(const char *text) {
+	_screen->renderText(text);
+}
+
+void SupernovaEngine::renderText(const Common::String &text) {
+	_screen->renderText(text);
+}
+
+void SupernovaEngine::renderText(StringID stringId) {
+	_screen->renderText(stringId);
+}
+
 void SupernovaEngine::renderText(const GuiElement &guiElement) {
-	renderText(guiElement.getText(), guiElement.getTextPos().x,
-			   guiElement.getTextPos().y, guiElement.getTextColor());
+	_screen->renderText(guiElement);
+}
+
+void SupernovaEngine::renderText(const uint16 character, int x, int y, byte color) {
+	_screen->renderText(character, x, y, color);
+}
+
+void SupernovaEngine::renderText(const char *text, int x, int y, byte color) {
+	_screen->renderText(text, x, y, color);
+}
+
+void SupernovaEngine::renderText(const Common::String &text, int x, int y, byte color) {
+	_screen->renderText(text, x, y, color);
+}
+
+void SupernovaEngine::renderText(StringID stringId, int x, int y, byte color) {
+	_screen->renderText(stringId, x, y, color);
 }
 
 void SupernovaEngine::renderBox(int x, int y, int width, int height, byte color) {
-	Graphics::Surface *screen = _system->lockScreen();
-	screen->fillRect(Common::Rect(x, y, x + width, y + height), color);
-	_system->unlockScreen();
+	_screen->renderBox(x, y, width, height, color);
 }
 
 void SupernovaEngine::renderBox(const GuiElement &guiElement) {
-	renderBox(guiElement.left, guiElement.top, guiElement.width(),
-			  guiElement.height(), guiElement.getBackgroundColor());
+	_screen->renderBox(guiElement);
 }
 void SupernovaEngine::paletteBrightness() {
-	byte palette[768];
-
-	_system->getPaletteManager()->grabPalette(palette, 0, 255);
-	for (uint i = 0; i < 48; ++i) {
-		palette[i] = (initVGAPalette[i] * _menuBrightness) >> 8;
-	}
-	for (uint i = 0; i < 717; ++i) {
-		const byte *imagePalette;
-		if (_currentImage && _currentImage->getPalette()) {
-			imagePalette = _currentImage->getPalette();
-		} else {
-			imagePalette = palette + 48;
-		}
-		palette[i + 48] = (imagePalette[i] * _brightness) >> 8;
-	}
-	_system->getPaletteManager()->setPalette(palette, 0, 255);
+	_screen->paletteBrightness();
 }
 
 void SupernovaEngine::paletteFadeOut() {
-	while (_menuBrightness > 10) {
-		_menuBrightness -= 10;
-		if (_brightness > _menuBrightness)
-			_brightness = _menuBrightness;
-		paletteBrightness();
-		_system->updateScreen();
-		_system->delayMillis(_delay);
-	}
-	_menuBrightness = 0;
-	_brightness = 0;
-	paletteBrightness();
-	_system->updateScreen();
+	_screen->paletteFadeOut();
 }
 
 void SupernovaEngine::paletteFadeIn() {
-	while (_menuBrightness < 245) {
-		if (_brightness < _gm->_roomBrightness)
-			_brightness += 10;
-		_menuBrightness += 10;
-		paletteBrightness();
-		_system->updateScreen();
-		_system->delayMillis(_delay);
-	}
-	_menuBrightness = 255;
-	_brightness = _gm->_roomBrightness;
-	paletteBrightness();
-	_system->updateScreen();
+	_screen->paletteFadeIn();
 }
 
 void SupernovaEngine::setColor63(byte value) {
-	byte color[3] = {value, value, value};
-	_system->getPaletteManager()->setPalette(color, 63, 1);
+	_screen->setColor63(value);
 }
 
 void SupernovaEngine::setTextSpeed() {
-	const Common::String& textSpeedString = getGameString(kStringTextSpeed);
-	int stringWidth = textWidth(textSpeedString);
-	int textX = (320 - stringWidth) / 2;
+	const Common::String &textSpeedString = getGameString(kStringTextSpeed);
+	int stringWidth = Screen::textWidth(textSpeedString);
+	int textX = (kScreenWidth - stringWidth) / 2;
 	int textY = 100;
 	stringWidth += 4;
-	int boxX = stringWidth > 110 ? (320 - stringWidth) / 2 : 105;
+	int boxX = stringWidth > 110 ? (kScreenWidth - stringWidth) / 2 : 105;
 	int boxY = 97;
 	int boxWidth = stringWidth > 110 ? stringWidth : 110;
 	int boxHeight = 27;
@@ -743,10 +517,11 @@ bool SupernovaEngine::loadGame(int slot) {
 	_gm->deserialize(savefile, saveVersion);
 
 	if (saveVersion >= 5) {
-		_menuBrightness = savefile->readByte();
-		_brightness = savefile->readByte();
+		_screen->setGuiBrightness(savefile->readByte());
+		_screen->setViewportBrightness(savefile->readByte());
 	} else {
-		_menuBrightness = _brightness = 255;
+		_screen->setGuiBrightness(255);
+		_screen->setViewportBrightness(255);
 	}
 
 	delete savefile;
@@ -779,8 +554,8 @@ bool SupernovaEngine::saveGame(int slot, const Common::String &description) {
 	Graphics::saveThumbnail(*savefile);
 	_gm->serialize(savefile);
 
-	savefile->writeByte(_menuBrightness);
-	savefile->writeByte(_brightness);
+	savefile->writeByte(_screen->getGuiBrightness());
+	savefile->writeByte(_screen->getViewportBrightness());
 
 	savefile->finalize();
 	delete savefile;
@@ -795,59 +570,5 @@ void SupernovaEngine::errorTempSave(bool saving) {
 	error("Unrecoverable error");
 }
 
-ScreenBufferStack::ScreenBufferStack()
-	: _last(_buffer) {
-}
-
-void ScreenBufferStack::push(int x, int y, int width, int height) {
-	if (_last == ARRAYEND(_buffer))
-		return;
-
-	Graphics::Surface* screenSurface = g_system->lockScreen();
-
-	if (x < 0) {
-		width += x;
-		x = 0;
-	}
-	if (x + width > screenSurface->w)
-		width = screenSurface->w - x;
-
-	if (y < 0) {
-		height += y;
-		y = 0;
-	}
-	if (y + height > screenSurface->h)
-		height = screenSurface->h - y;
-
-	_last->_pixels = new byte[width * height];
-	byte *pixels = _last->_pixels;
-	const byte *screen = static_cast<const byte *>(screenSurface->getBasePtr(x, y));
-	for (int i = 0; i < height; ++i) {
-		Common::copy(screen, screen + width, pixels);
-		screen += screenSurface->pitch;
-		pixels += width;
-	}
-	g_system->unlockScreen();
-
-	_last->_x = x;
-	_last->_y = y;
-	_last->_width = width;
-	_last->_height = height;
-
-	++_last;
-}
-
-void ScreenBufferStack::restore() {
-	if (_last == _buffer)
-		return;
-
-	--_last;
-	g_system->lockScreen()->copyRectToSurface(
-				_last->_pixels, _last->_width, _last->_x, _last->_y,
-				_last->_width, _last->_height);
-	g_system->unlockScreen();
-
-	delete[] _last->_pixels;
-}
 
 }

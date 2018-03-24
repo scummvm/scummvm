@@ -46,40 +46,12 @@ namespace Supernova {
 #define SUPERNOVA_DAT "supernova.dat"
 #define SUPERNOVA_DAT_VERSION 1
 
-
-struct ScreenBuffer {
-	ScreenBuffer()
-		: _x(0)
-		, _y(0)
-		, _width(0)
-		, _height(0)
-		, _pixels(nullptr)
-	{}
-
-	byte *_pixels;
-	int _x;
-	int _y;
-	int _width;
-	int _height;
-};
-class ScreenBufferStack {
-public:
-	ScreenBufferStack();
-
-	void push(int x, int y, int width, int height);
-	void restore();
-
-private:
-	ScreenBuffer _buffer[8];
-	ScreenBuffer *_last;
-};
-
-
 class GuiElement;
 class ResourceManager;
 class Sound;
 class console;
 class GameManager;
+class Screen;
 
 class SupernovaEngine : public Engine {
 public:
@@ -87,116 +59,67 @@ public:
 	~SupernovaEngine();
 
 	virtual Common::Error run();
-
-	Common::RandomSource _rnd;
-	GameManager *_gm;
-	Console *_console;
-	Sound *_sound;
-	ResourceManager *_resMan;
-	ScreenBufferStack _screenBuffer;
-	MSNImage *_currentImage;
-	int _screenWidth;
-	int _screenHeight;
-	bool _allowLoadGame;
-	bool _allowSaveGame;
-	Common::StringArray _gameStrings;
-	Common::String _nullString;
-
-	byte _menuBrightness;
-	byte _brightness;
-	uint _delay;
-	bool _messageDisplayed;
-	int  _textSpeed;
-	int  _textCursorX;
-	int  _textCursorY;
-	int  _textColor;
-
-	int textWidth(const char *text);
-	int textWidth(const uint16 key);
-	Common::Error loadGameStrings();
-	void init();
-	void paletteFadeIn();
-	void paletteFadeOut();
-	void paletteBrightness();
-	void playSound(AudioIndex sample);
-	void playSound(MusicIndex index);
-	void renderImageSection(int section);
-	void renderImage(int section);
-	bool setCurrentImage(int filenumber);
-	void saveScreen(int x, int y, int width, int height);
-	void saveScreen(const GuiElement &guiElement);
-	void restoreScreen();
-	void renderRoom(Room &room);
-	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
-	void removeMessage();
-	void renderText(const char *text, int x, int y, byte color);
-	void renderText(const uint16 character, int x, int y, byte color);
-	void renderText(const char *text);
-	void renderText(const uint16 character);
-	void renderText(const GuiElement &guiElement);
-	void renderBox(int x, int y, int width, int height, byte color);
-	void renderBox(const GuiElement &guiElement);
-	void setColor63(byte value);
-	bool loadGame(int slot);
-	bool saveGame(int slot, const Common::String &description);
-	bool quitGameDialog();
-	void errorTempSave(bool saving);
-	void setTextSpeed();
-
-	const Common::String &getGameString(int idx) const {
-		if (idx < 0 || idx >= (int)_gameStrings.size())
-			return _nullString;
-		return _gameStrings[idx];
-	}
-
-	void setGameString(int idx, const Common::String &string) {
-		if (idx < 0)
-			return;
-		while ((int)_gameStrings.size() <= idx)
-			_gameStrings.push_back(Common::String());
-		_gameStrings[idx] = string;
-	}
-
-	int textWidth(const Common::String &text) {
-		if (text.empty())
-			return 0;
-		return textWidth(text.c_str());
-	}
-	void renderMessage(StringID stringId, MessagePosition position = kMessageNormal, Common::String var1 = "", Common::String var2 = "") {
-		Common::String text = getGameString(stringId);
-		if (!var1.empty()) {
-			if (!var2.empty())
-				text = Common::String::format(text.c_str(), var1.c_str(), var2.c_str());
-			else
-				text = Common::String::format(text.c_str(), var1.c_str());
-		}
-		renderMessage(text, position);
-	}
-	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal) {
-		if (!text.empty())
-			renderMessage(text.c_str(), position);
-	}
-	void renderText(StringID stringId, int x, int y, byte color) {
-		renderText(getGameString(stringId), x, y, color);
-	}
-	void renderText(const Common::String &text, int x, int y, byte color) {
-		if (!text.empty())
-			renderText(text.c_str(), x, y, color);
-	}
-	void renderText(StringID stringId) {
-		renderText(getGameString(stringId));
-	}
-	void renderText(const Common::String &text) {
-		if (!text.empty())
-			renderText(text.c_str());
-	}
-
 	virtual Common::Error loadGameState(int slot);
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual bool canSaveGameStateCurrently();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
+
+	Common::RandomSource _rnd;
+	GameManager *_gm;
+	Console *_console;
+	Sound *_sound;
+	ResourceManager *_resMan;
+	Screen *_screen;
+	bool _allowLoadGame;
+	bool _allowSaveGame;
+	Common::StringArray _gameStrings;
+	Common::String _nullString;
+
+	uint _delay;
+	int  _textSpeed;
+
+	Common::Error loadGameStrings();
+	void init();
+	bool loadGame(int slot);
+	bool saveGame(int slot, const Common::String &description);
+	bool quitGameDialog();
+	void errorTempSave(bool saving);
+	void setTextSpeed();
+	const Common::String &getGameString(int idx) const;
+	void setGameString(int idx, const Common::String &string);
+
+	// forwarding calls
+	void playSound(AudioIndex sample);
+	void playSound(MusicIndex index);
+	void paletteFadeIn();
+	void paletteFadeOut();
+	void paletteBrightness();
+	void renderImage(int section);
+	void renderImageSection(int section);
+	bool setCurrentImage(int filenumber);
+	void saveScreen(int x, int y, int width, int height);
+	void saveScreen(const GuiElement &guiElement);
+	void restoreScreen();
+	void renderRoom(Room &room);
+	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
+	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
+	void renderMessage(StringID stringId, MessagePosition position = kMessageNormal,
+					   Common::String var1 = "", Common::String var2 = "");
+	void removeMessage();
+	void renderText(const uint16 character);
+	void renderText(const char *text);
+	void renderText(const Common::String &text);
+	void renderText(StringID stringId);
+	void renderText(const uint16 character, int x, int y, byte color);
+	void renderText(const char *text, int x, int y, byte color);
+	void renderText(const Common::String &text, int x, int y, byte color);
+	void renderText(StringID stringId, int x, int y, byte color);
+	void renderText(const GuiElement &guiElement);
+	void renderBox(int x, int y, int width, int height, byte color);
+	void renderBox(const GuiElement &guiElement);
+	void setColor63(byte value);
 };
 
 }
