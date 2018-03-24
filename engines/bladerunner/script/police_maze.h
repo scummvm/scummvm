@@ -36,8 +36,6 @@ enum {
 class BladeRunnerEngine;
 
 class PoliceMazeTargetTrack : ScriptBase {
-	BladeRunnerEngine *_vm;
-
 	uint32 _time;
 	bool _isPresent;
 	int _itemId;
@@ -75,8 +73,6 @@ public:
 };
 
 class PoliceMaze : ScriptBase {
-	BladeRunnerEngine *_vm;
-
 	bool _isPaused;
 	bool _needAnnouncement;
 	bool _announcementRead;
