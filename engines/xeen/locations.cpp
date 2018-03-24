@@ -786,7 +786,7 @@ void TavernLocation::farewell() {
 	Sound &sound = *g_vm->_sound;
 
 	sound.stopSound();
-	sound.playVoice(_ccNum ? "gdluck1.voc" : "goodbye.voc", 1);
+	sound.playVoice(_ccNum ? "gdluck1.voc" : "goodbye.voc");
 
 	map.mazeData()._mazeNumber = party._mazeId;
 }
