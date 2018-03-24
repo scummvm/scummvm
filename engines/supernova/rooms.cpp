@@ -1037,7 +1037,7 @@ bool ShipCabinL3::interact(Action verb, Object &obj1, Object &obj2) {
 		setSectionVisible(10, false);
 		getObject(10)->_click = 20;
 	} else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE2))
-		_vm->renderMessage(kStringShipCabinL3_4);
+		_vm->renderMessage(kStringShipCabinL3_4); // cutting near plug
 	else if ((verb == ACTION_USE) && Object::combine(obj1, obj2, KNIFE, WIRE)) {
 		r = _gm->_rooms[AIRLOCK];
 		if (!isSectionVisible(10) && !r->getObject(5)->hasProperty(WORN)) {
