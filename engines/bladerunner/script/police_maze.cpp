@@ -73,6 +73,7 @@ void PoliceMaze::activate() {
 }
 
 void PoliceMaze::setPauseState(bool state) {
+	warning("PAUSE: %d", state);
 	_isPaused = state;
 
 	uint32 t = _vm->getTotalPlayTime();
@@ -205,7 +206,7 @@ bool PoliceMazeTargetTrack::tick() {
 		_waitTime = 0;
 	}
 
-	if (_vm->_items->isTarget(_itemId))
+	if (_vm->_items->isSpinning(_itemId))
 		return true;
 
 	if (_rotating) {

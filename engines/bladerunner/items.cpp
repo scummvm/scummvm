@@ -142,6 +142,14 @@ bool Items::isTarget(int itemId) const {
 	return _items[itemIndex]->isTarget();
 }
 
+bool Items::isSpinning(int itemId) const {
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return false;
+	}
+	return _items[itemIndex]->isSpinning();
+}
+
 bool Items::isVisible(int itemId) const {
 	int itemIndex = findItem(itemId);
 	if (itemIndex == -1) {

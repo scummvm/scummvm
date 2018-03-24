@@ -50,6 +50,7 @@ public:
 
 	void setIsTarget(int itemId, bool isTarget);
 	bool isTarget(int itemId) const;
+	bool isSpinning(int itemId) const;
 	bool isPoliceMazeEnemy(int itemId) const;
 	void setPoliceMazeEnemy(int itemId, bool val);
 	void setIsObstacle(int itemId, bool val);

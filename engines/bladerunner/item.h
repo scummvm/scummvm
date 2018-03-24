@@ -73,6 +73,7 @@ public:
 	void setIsTarget(bool isTarget) { _isTarget = isTarget; }
 
 	bool isTarget() const;
+	bool isSpinning() const { return _isSpinning; }
 	bool isVisible() const { return _isVisible; }
 	void setVisible(bool val) { _isVisible = val; }
 	bool isPoliceMazeEnemy() const;
