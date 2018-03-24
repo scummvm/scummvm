@@ -29,6 +29,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
+#include "supernova/graphics.h"
 #include "supernova/resman.h"
 #include "supernova/supernova.h"
 
@@ -77,24 +78,8 @@ ResourceManager::~ResourceManager() {
 	delete _musicOutro;
 	for (int i = 0; i < kAudioNumSamples; ++i)
 		delete _soundSamples[i];
-}
-
-Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioIndex index) {
-	Audio::SeekableAudioStream *stream = _soundSamples[index];
-	stream->rewind();
-
-	return stream;
-}
-
-Audio::AudioStream *ResourceManager::getSoundStream(MusicIndex index) {
-	switch (index) {
-	case kMusicIntro:
-		return _musicIntro;
-	case kMusicOutro:
-		return _musicOutro;
-	default:
-		error("Invalid music constant in playAudio()");
-	}
+	for (int i = 0; i < kNumImageFiles; ++i)
+		delete _images[i];
 }
 
 void ResourceManager::initSoundFiles() {
@@ -143,6 +128,7 @@ void ResourceManager::initSoundFiles() {
 void ResourceManager::initGraphics() {
 	_vm->_system->getPaletteManager()->setPalette(initVGAPalette, 0, 256);
 	initCursorGraphics();
+	initImages();
 }
 
 void ResourceManager::initCursorGraphics() {
@@ -169,6 +155,39 @@ void ResourceManager::initCursorGraphics() {
 	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
 	CursorMan.showMouse(true);
 }
+
+void ResourceManager::initImages() {
+	for (int i = 0; i < kNumImageFiles; ++i) {
+		_images[i] = new MSNImage();
+		if (!_images[i]->init(i))
+			error("Failed reading image file msn_data.%03d", i);
+	}
+}
+
+Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioIndex index) {
+	Audio::SeekableAudioStream *stream = _soundSamples[index];
+	stream->rewind();
+
+	return stream;
+}
+
+Audio::AudioStream *ResourceManager::getSoundStream(MusicIndex index) const {
+	switch (index) {
+	case kMusicIntro:
+		return _musicIntro;
+	case kMusicOutro:
+		return _musicOutro;
+	default:
+		error("Invalid music constant in playAudio()");
+	}
+}
+
+MSNImage *ResourceManager::getImage(int filenumber) const {
+	assert(filenumber < kNumImageFiles);
+
+	return _images[filenumber];
+}
+
 
 static Common::MemoryReadStream *convertToMod(const char *filename, int version) {
 	// MSN format

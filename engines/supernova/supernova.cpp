@@ -104,7 +104,6 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 SupernovaEngine::~SupernovaEngine() {
 	DebugMan.clearAllDebugChannels();
 
-	delete _currentImage;
 	delete _console;
 	delete _gm;
 	delete _sound;
@@ -308,19 +307,10 @@ void SupernovaEngine::renderImage(int section) {
 }
 
 bool SupernovaEngine::setCurrentImage(int filenumber) {
-	if (_currentImage && _currentImage->_filenumber == filenumber)
-		return true;
-
-	delete _currentImage;
-	_currentImage = new MSNImage();
-	if (!_currentImage->init(filenumber)) {
-		delete _currentImage;
-		_currentImage = nullptr;
-		return false;
-	}
-
+	_currentImage = _resMan->getImage(filenumber);
 	_system->getPaletteManager()->setPalette(_currentImage->getPalette(), 16, 239);
 	paletteBrightness();
+
 	return true;
 }
 
