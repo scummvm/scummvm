@@ -64,6 +64,7 @@ struct ActionInfo {
 typedef Common::Array<ActionInfo> ActionInfos;
 typedef Common::Array<GotoCommand *> GotoCommands;
 typedef Common::HashMap<Common::String, Command *> Macros;
+typedef Common::HashMap<uint8, Command *> Startups;
 
 class ScriptParseContext {
 public:
@@ -92,6 +93,7 @@ public:
 
 	ActionInfos _actionInfos;
 	Macros _macros;
+	Startups _startups;
 
 private:
 };
@@ -126,8 +128,11 @@ public:
 	const ActionInfos &getWalkActionInfos() const;
 	const ActionInfos &getTalkActionInfos() const;
 	const ActionInfos &getUseActionInfos() const;
+	const Commands &getAllCommands() const;
 	const Macros &getMacros() const;
+	const Startups &getStartups() const;
 	Command *getMacro(const Common::String &name) const;
+	Command *getStartup(uint8 startupId) const;
 
 private:
 	void destroy();
@@ -137,6 +142,7 @@ private:
 	ActionInfos _talkActionInfos;
 	ActionInfos _useActionInfos;
 	Macros _macros;
+	Startups _startups;
 };
 
 }

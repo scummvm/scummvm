@@ -37,16 +37,30 @@ namespace MutationOfJB {
 // <ii>  2B  Entity ID.
 // <val> VL  Value.
 
-bool ChangeCommandParser::parseValueString(const Common::String &valueString, uint8 &sceneId, uint8 &entityId, ChangeCommand::ChangeRegister &reg, ChangeCommand::ChangeOperation &op, ChangeCommandValue &ccv) {
-	if (valueString.size() < 8) {
-		return false;
+bool ChangeCommandParser::parseValueString(const Common::String &valueString, bool changeEntity, uint8 &sceneId, uint8 &entityId, ChangeCommand::ChangeRegister &reg, ChangeCommand::ChangeOperation &op, ChangeCommandValue &ccv) {
+	if (changeEntity) {
+		if (valueString.size() < 8) {
+			return false;
+		}
+	} else {
+		if (valueString.size() < 7) {
+			return false;
+		}
 	}
 
 	sceneId = atoi(valueString.c_str() + 3);
-	entityId = atoi(valueString.c_str() + 6);
+	if (changeEntity) {
+		entityId = atoi(valueString.c_str() + 6);
+	}
 	const char *val = nullptr;
-	if (valueString.size() >= 9) {
-		val = valueString.c_str() + 9;
+	if (changeEntity) {
+		if (valueString.size() >= 9) {
+			val = valueString.c_str() + 9;
+		}
+	} else {
+		if (valueString.size() >= 6) {
+			val = valueString.c_str() + 6;
+		}
 	}
 
 	if (valueString.hasPrefix("NM")) {
@@ -137,7 +151,7 @@ bool ChangeDoorCommandParser::parse(const Common::String &line, ScriptParseConte
 	ChangeCommand::ChangeRegister reg;
 	ChangeCommand::ChangeOperation op;
 	ChangeCommandValue val;
-	if (!parseValueString(line.c_str() + 8, sceneId, objectId, reg, op, val)) {
+	if (!parseValueString(line.c_str() + 8, true, sceneId, objectId, reg, op, val)) {
 		return false;
 	}
 
@@ -154,7 +168,7 @@ bool ChangeObjectCommandParser::parse(const Common::String &line, ScriptParseCon
 	ChangeCommand::ChangeRegister reg;
 	ChangeCommand::ChangeOperation op;
 	ChangeCommandValue val;
-	if (!parseValueString(line.c_str() + 8, sceneId, objectId, reg, op, val)) {
+	if (!parseValueString(line.c_str() + 8, true, sceneId, objectId, reg, op, val)) {
 		return false;
 	}
 
@@ -171,7 +185,7 @@ bool ChangeStaticCommandParser::parse(const Common::String &line, ScriptParseCon
 	ChangeCommand::ChangeRegister reg;
 	ChangeCommand::ChangeOperation op;
 	ChangeCommandValue val;
-	if (!parseValueString(line.c_str() + 8, sceneId, objectId, reg, op, val)) {
+	if (!parseValueString(line.c_str() + 8, true, sceneId, objectId, reg, op, val)) {
 		return false;
 	}
 
@@ -188,7 +202,7 @@ bool ChangeSceneCommandParser::parse(const Common::String &line, ScriptParseCont
 	ChangeCommand::ChangeRegister reg;
 	ChangeCommand::ChangeOperation op;
 	ChangeCommandValue val;
-	if (!parseValueString(line.c_str() + 8, sceneId, objectId, reg, op, val)) {
+	if (!parseValueString(line.c_str() + 7, false, sceneId, objectId, reg, op, val)) {
 		return false;
 	}
 
@@ -351,7 +365,7 @@ Command::ExecuteResult ChangeDoorCommand::execute(ScriptExecutionContext &script
 }
 
 Common::String ChangeDoorCommand::debugString() const {
-	return Common::String::format("scene%d.door%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
+	return Common::String::format("SCENE%d.DOOR%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 
 Command::ExecuteResult ChangeObjectCommand::execute(ScriptExecutionContext &scriptExecCtx) {
@@ -414,7 +428,7 @@ Command::ExecuteResult ChangeObjectCommand::execute(ScriptExecutionContext &scri
 }
 
 Common::String ChangeObjectCommand::debugString() const {
-	return Common::String::format("scene%d.object%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
+	return Common::String::format("SCENE%d.OBJECT%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 
 Command::ExecuteResult ChangeStaticCommand::execute(ScriptExecutionContext &scriptExecCtx) {
@@ -465,7 +479,7 @@ Command::ExecuteResult ChangeStaticCommand::execute(ScriptExecutionContext &scri
 }
 
 Common::String ChangeStaticCommand::debugString() const {
-	return Common::String::format("scene%d.static%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
+	return Common::String::format("SCENE%d.STATIC%d.%s %s %s", _sceneId, _entityId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 
 Command::ExecuteResult ChangeSceneCommand::execute(ScriptExecutionContext &scriptExecCtx) {
@@ -508,6 +522,6 @@ Command::ExecuteResult ChangeSceneCommand::execute(ScriptExecutionContext &scrip
 }
 
 Common::String ChangeSceneCommand::debugString() const {
-	return Common::String::format("scene%d.%s %s %s", _sceneId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
+	return Common::String::format("SCENE%d.%s %s %s", _sceneId, getRegisterAsString(), getOperationAsString(), getValueAsString().c_str());
 }
 }

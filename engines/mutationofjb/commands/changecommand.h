@@ -84,7 +84,7 @@ protected:
 
 class ChangeCommandParser : public SeqCommandParser {
 protected:
-	bool parseValueString(const Common::String &valueString, uint8 &sceneId, uint8 &entityId, ChangeCommand::ChangeRegister &reg, ChangeCommand::ChangeOperation &op, ChangeCommandValue &ccv);
+	bool parseValueString(const Common::String &valueString, bool changeEntity, uint8 &sceneId, uint8 &entityId, ChangeCommand::ChangeRegister &reg, ChangeCommand::ChangeOperation &op, ChangeCommandValue &ccv);
 	int parseInteger(const char *val, ChangeCommand::ChangeOperation &op);
 };
 

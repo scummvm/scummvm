@@ -55,24 +55,37 @@ static Common::String convertToASCII(const Common::String &str) {
 }
 
 Console::Console(MutationOfJBEngine *vm) : _vm(vm) {
+	registerCmd("showallcommands", WRAP_METHOD(Console, cmd_showallcommands));
 	registerCmd("listsections", WRAP_METHOD(Console, cmd_listsections));
 	registerCmd("showsection", WRAP_METHOD(Console, cmd_showsection));
 	registerCmd("listmacros", WRAP_METHOD(Console, cmd_listmacros));
 	registerCmd("showmacro", WRAP_METHOD(Console, cmd_showmacro));
+	registerCmd("liststartups", WRAP_METHOD(Console, cmd_liststartups));
+	registerCmd("showstartup", WRAP_METHOD(Console, cmd_showstartup));
 	registerCmd("changescene", WRAP_METHOD(Console, cmd_changescene));
+}
+
+bool Console::cmd_showallcommands(int argc, const char **argv) {
+	if (argc == 2) {
+		Script *const script = getScriptFromArg(argv[1]);
+		if (script) {
+			const Commands &commands = script->getAllCommands();
+
+			for (Commands::const_iterator it = commands.begin(); it != commands.end(); ++it) {
+				debugPrintf("%s\n", convertToASCII((*it)->debugString()).c_str());
+			}
+		}
+	} else {
+		debugPrintf(_("showallcommands <G|L>\n"));
+	}
+
+	return true;
 }
 
 bool Console::cmd_listsections(int argc, const char **argv) {
 	if (argc == 3) {
-		Script *script = nullptr;
-		if (strcmp(argv[1], "G") == 0) {
-			script = _vm->getGame().getGlobalScript();
-		} else if (strcmp(argv[1], "L") == 0) {
-			script = _vm->getGame().getLocalScript();
-		}
-		if (!script) {
-			debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
-		} else {
+		Script *const script = getScriptFromArg(argv[1]);
+		if (script) {
 			if (strcmp(argv[2], "L") == 0) {
 				const ActionInfos &actionInfos = script->getLookActionInfos();
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
@@ -140,15 +153,8 @@ void Console::showCommands(Command *command, int indentLevel) {
 
 bool Console::cmd_showsection(int argc, const char **argv) {
 	if (argc >= 4) {
-		Script *script = nullptr;
-		if (strcmp(argv[1], "G") == 0) {
-			script = _vm->getGame().getGlobalScript();
-		} else if (strcmp(argv[1], "L") == 0) {
-			script = _vm->getGame().getLocalScript();
-		}
-		if (!script) {
-			debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
-		} else {
+		Script *const script = getScriptFromArg(argv[1]);
+		if (script) {
 			Command *command = nullptr;
 			bool found = false;
 			if (strcmp(argv[2], "L") == 0) {
@@ -212,15 +218,8 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 
 bool Console::cmd_listmacros(int argc, const char **argv) {
 	if (argc == 2) {
-		Script *script = nullptr;
-		if (strcmp(argv[1], "G") == 0) {
-			script = _vm->getGame().getGlobalScript();
-		} else if (strcmp(argv[1], "L") == 0) {
-			script = _vm->getGame().getLocalScript();
-		}
-		if (!script) {
-			debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
-		} else {
+		Script *const script = getScriptFromArg(argv[1]);
+		if (script) {
 			const Macros &macros = script->getMacros();
 			for (Macros::const_iterator it = macros.begin(); it != macros.end(); ++it) {
 				debugPrintf("%s\n", it->_key.c_str());
@@ -261,6 +260,43 @@ bool Console::cmd_showmacro(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmd_liststartups(int argc, const char **argv) {
+	if (argc == 2) {
+		Script *const script = getScriptFromArg(argv[1]);
+		if (script) {
+			const Startups &startups = script->getStartups();
+			for (Startups::const_iterator it = startups.begin(); it != startups.end(); ++it) {
+				debugPrintf("%u\n", (unsigned int) it->_key);
+			}
+		}
+	} else {
+		debugPrintf(_("liststartups <G|L>\n"));
+	}
+
+	return true;
+}
+
+bool Console::cmd_showstartup(int argc, const char **argv) {
+	if (argc == 3) {
+		Script *const script = getScriptFromArg(argv[1]);
+		if (script) {
+			const Startups &startups = script->getStartups();
+			Startups::const_iterator itMacro = startups.find((uint8) atoi(argv[2]));
+			if (itMacro != startups.end()) {
+				if (itMacro->_value) {
+					showCommands(itMacro->_value);
+				}
+			} else {
+				debugPrintf("Startup not found.\n");
+			}
+		}
+	} else {
+		debugPrintf(_("showstartup <G|L> <startupid>\n"));
+	}
+
+	return true;
+}
+
 bool Console::cmd_changescene(int argc, const char **argv) {
 	if (argc == 2) {
 		const uint8 sceneId = atoi(argv[1]);
@@ -272,6 +308,20 @@ bool Console::cmd_changescene(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+Script *Console::getScriptFromArg(const char *arg) {
+	Script *script = nullptr;
+	if (strcmp(arg, "G") == 0) {
+		script = _vm->getGame().getGlobalScript();
+	} else if (strcmp(arg, "L") == 0) {
+		script = _vm->getGame().getLocalScript();
+	}
+	if (!script) {
+		debugPrintf(_("Choose 'G' (global) or 'L' (local) script.\n"));
+	}
+
+	return script;
 }
 
 }
