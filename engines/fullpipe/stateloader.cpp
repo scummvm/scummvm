@@ -69,6 +69,11 @@ bool GameLoader::readSavegame(const char *fname) {
 	Common::Array<byte> map(800);
 	saveFile->read(map.data(), 800);
 
+	FullpipeSavegameHeader header2;
+	if (Fullpipe::readSavegameHeader(saveFile.get(), header2)) {
+		g_fp->setTotalPlayTime(header2.playtime * 1000);
+	}
+
 	{
 		Common::MemoryReadStream tempStream(map.data(), 800, DisposeAfterUse::NO);
 		MfcArchive temp(&tempStream);
