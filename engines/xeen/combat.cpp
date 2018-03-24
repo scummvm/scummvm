@@ -459,7 +459,9 @@ void Combat::moveMonsters() {
 
 	for (uint idx = 0; idx < map._mobData._monsters.size(); ++idx) {
 		MazeMonster &monster = map._mobData._monsters[idx];
-		if ((uint)monster._position.y < 32) {
+
+		// WORKAROUND: Original only checked on y, but some monsters have an invalid X instead
+		if ((uint)monster._position.x < 32 && (uint)monster._position.y < 32) {
 			assert((uint)monster._position.x < 32);
 			_monsterMap[monster._position.y][monster._position.x]++;
 		}
@@ -720,6 +722,7 @@ void Combat::moveMonster(int monsterId, const Common::Point &moveDelta) {
 	MazeMonster &monster = map._mobData._monsters[monsterId];
 	Common::Point newPos = monster._position + moveDelta;
 
+	assert((uint)newPos.x < 32 && (uint)newPos.y < 32);
 	if (_monsterMap[newPos.y][newPos.x] < 3 && monster._damageType == DT_PHYSICAL && _moveMonsters) {
 		// Adjust monster's position
 		++_monsterMap[newPos.y][newPos.x];
