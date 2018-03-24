@@ -536,6 +536,7 @@ enum Variables {
 	kVariableChapter = 1,
 	kVariableChinyen = 2,
 	kVariablePoliceMazeScore = 9,
+	kVariablePoliceMazePS10TargetCounter = 10,
 	kVariableGenericWalkerAModel = 32,
 	kVariableGenericWalkerBModel = 33,
 	kVariableGenericWalkerCModel = 34,
@@ -846,6 +847,15 @@ enum Sets {
 };
 
 enum GameItems {
+	kItemPoliceMazeTarget1 = 0,
+	kItemPoliceMazeTarget2 = 1,
+	kItemPoliceMazeTarget3 = 2,
+	kItemPoliceMazeTarget4 = 3,
+	kItemPoliceMazeTarget5 = 4,
+	kItemPoliceMazeTarget6 = 5,
+	kItemPoliceMazeTarget7 = 6,
+	kItemPoliceMazeTarget8 = 7,
+	kItemPoliceMazeTarget9 = 8,
 	kItemChromeDebris = 66,
 	kItemCandy = 79,
 	kItemChopstickWrapper = 82,
@@ -885,6 +895,36 @@ enum ActorCombatStates {
 	kActorCombatStateCloseAttack = 6,
 	kActorCombatStateFlee = 7,
 	kActorCombatStateApproachRangedAttack = 8
+};
+
+enum PoliceMazeTrackInstruction {
+	kPMTIActivate = -26,
+	kPMTILeave = -25,
+	kPMTIShoot = -24,
+	kPMTIEnemyReset = -23,
+	kPMTIEnemySet = -22,
+	kPMTIFlagReset = -21,
+	kPMTIFlagSet = -20,
+	kPMTIVariableDec = -19,
+	kPMTIVariableInc = -18,
+	kPMTIVariableReset = -17,
+	kPMTIVariableSet = -16,
+	kPMTITargetSet = -15,
+	kPMTI12 = -14,
+	kPMTI13 = -13,
+	kPMTIPausedSet = -12,
+	kPMTIPausedReset = -11,
+	kPMTIPlaySound = -10,
+	kPMTIObstacleReset = -9,
+	kPMTIObstacleSet = -8,
+	kPMTIWaitRandom = -7,
+	kPMTIRotate = -6,
+	kPMTIFacing = -5,
+	kPMTIRestart = -4,
+	kPMTIWait = -3,
+	kPMTIMove = -2,
+	kPMTIPosition = -1,
+	kPMTI26 = 0
 };
 
 } // End of namespace BladeRunner

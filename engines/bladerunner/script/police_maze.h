@@ -36,23 +36,23 @@ enum {
 class BladeRunnerEngine;
 
 class PoliceMazeTargetTrack : ScriptBase {
-	uint32 _time;
-	bool _isPresent;
-	int _itemId;
-	int _count;
+	uint32  _time;
+	bool    _isPresent;
+	int     _itemId;
+	int     _pointCount;
 	Vector3 _points[kNumTrackPoints];
-	int *_data;
-	int _dataIndex;
-	int32 _updateDelay;
-	int32 _waitTime;
-	bool _haveToWait;
-	int _pmt_var4;
-	int _pointIndex;
-	int _pmt_var5;
-	bool _rotating;
-	int _maxAngle;
-	int _angleChange;
-	bool _visible;
+	const int *_data;
+	int     _dataIndex;
+	int32   _timeLeftUpdate;
+	int32   _timeLeftWait;
+	bool    _isWaiting;
+	int     _isMoving;
+	int     _pointIndex;
+	int     _pointTarget;
+	bool    _isRotating;
+	int     _angleTarget;
+	int     _angleDelta;
+	bool    _isPaused;
 
 public:
 	PoliceMazeTargetTrack(BladeRunnerEngine *vm);
@@ -60,13 +60,13 @@ public:
 
 	void reset();
 	void clear(bool isLoadingGame);
-	void add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int count, void *list, bool a11);
+	void add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, const int *instructions, bool isActive);
 
 	bool tick();
-	bool isPresent() { return _isPresent; }
-	void setVisible() { _visible = true; }
-	void resetVisible() { _visible = false; }
-	bool isVisible() { return _visible; }
+	bool isPresent() const { return _isPresent; }
+	void setPaused() { _isPaused = true; }
+	void resetPaused() { _isPaused = false; }
+	bool isPaused() const { return _isPaused; }
 	void setTime(uint32 t) { _time = t; }
 
 	void readdObject(int itemId);
@@ -74,10 +74,10 @@ public:
 
 class PoliceMaze : ScriptBase {
 	bool _isPaused;
-	bool _needAnnouncement;
-	bool _announcementRead;
-	int _pm_var1;
-	int _pm_var2;
+	bool _isActive;
+	bool _isEnding;
+	int  _pm_var1;
+	int  _pm_var2;
 
 public:
 	PoliceMazeTargetTrack *_tracks[kNumMazeTracks];

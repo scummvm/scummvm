@@ -1503,7 +1503,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			}
 		}
 		break;
-	case 21:
+	case kAnimationModeHit:
 		switch (_animationState) {
 		case 14:
 		case 15:
@@ -1520,7 +1520,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			}
 			_animationFrame = 0;
 			break;
-		case 16:
+		default:
 			if (Random_Query(0, 1) == 1) {
 				_animationState = 26;
 			} else {
@@ -1530,7 +1530,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
-	case 22:
+	case kAnimationModeCombatHit:
 		if (Random_Query(0, 1) == 1) {
 			_animationState = 23;
 		} else {
@@ -1587,7 +1587,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		_animationState = 41;
 		_animationFrame = 0;
 		break;
-	case 48:
+	case kAnimationModeDie:
 		switch (_animationState) {
 		case 14:
 		case 15:
@@ -1610,7 +1610,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
-	case 49:
+	case kAnimationModeCombatDie:
 		_animationState = 28;
 		_animationFrame = 0;
 		break;
@@ -1622,7 +1622,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 		_animationState = 55;
 		_animationFrame = 0;
 		break;
-	case 53:
+	case kAnimationModeSit:
 		if (_animationState != 60 && (Player_Query_Current_Set() == kSetNR03 || Player_Query_Current_Set() == kSetNR05_NR08)) {
 			_animationState = 60;
 			_animationFrame = 0;

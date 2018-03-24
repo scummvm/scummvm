@@ -49,8 +49,8 @@ PoliceMaze::~PoliceMaze() {
 
 void PoliceMaze::reset() {
 	_isPaused = false;
-	_needAnnouncement = false;
-	_announcementRead = false;
+	_isActive = false;
+	_isEnding = false;
 
 	for (int i = 0; i < kNumMazeTracks; i++) {
 		_tracks[i] = 0;
@@ -62,14 +62,15 @@ void PoliceMaze::reset() {
 
 void PoliceMaze::clear(bool isLoadingGame) {
 	for (int i = 0; i < kNumMazeTracks; i++) {
-		if (_tracks[i]->isPresent())
+		if (_tracks[i]->isPresent()) {
 			_tracks[i]->clear(isLoadingGame);
+		}
 	}
 }
 
 void PoliceMaze::activate() {
-	_needAnnouncement = true;
-	_announcementRead = false;
+	_isActive = true;
+	_isEnding = false;
 }
 
 void PoliceMaze::setPauseState(bool state) {
@@ -78,37 +79,40 @@ void PoliceMaze::setPauseState(bool state) {
 
 	uint32 t = _vm->getTotalPlayTime();
 
-	for (int i = 0; i < kNumMazeTracks; i++)
+	for (int i = 0; i < kNumMazeTracks; i++) {
 		_tracks[i]->setTime(t);
+	}
 }
 
 void PoliceMaze::tick() {
-	if (_isPaused)
-		return;
-
-	if (_vm->_scene->getSetId() != kSetPS10_PS11_PS12_PS13)
-		return;
-
-	if (_announcementRead) {
-		_needAnnouncement = false;
-
+	if (_isPaused) {
 		return;
 	}
 
-	for (int i = 0; i < kNumMazeTracks; i++)
+	if (_vm->_scene->getSetId() != kSetPS10_PS11_PS12_PS13) {
+		return;
+	}
+
+	if (_isEnding) {
+		_isActive = false;
+		return;
+	}
+
+	for (int i = 0; i < kNumMazeTracks; i++) {
 		_tracks[i]->tick();
+	}
 
 	bool notFound = true;
 	for (int i = 0; i < kNumMazeTracks; i++) {
-		if (!_tracks[i]->isVisible()) {
+		if (!_tracks[i]->isPaused()) {
 			notFound = false;
 			break;
 		}
 	}
 
-	if (notFound && _needAnnouncement && !_announcementRead) {
-		_needAnnouncement = false;
-		_announcementRead = true;
+	if (notFound && _isActive && !_isEnding) {
+		_isActive = false;
+		_isEnding = true;
 
 		if (_vm->_scene->getSceneId() == kScenePS13) {
 			Actor_Voice_Over(320, kActorAnsweringMachine);
@@ -127,53 +131,53 @@ PoliceMazeTargetTrack::~PoliceMazeTargetTrack() {
 }
 
 void PoliceMazeTargetTrack::reset() {
-	_isPresent = 0;
-	_itemId = -1;
-	_count = 0;
-	_data = 0;
-	_dataIndex = 0;
-	_updateDelay = 0;
-	_waitTime = 0;
-	_time = 0;
-	_haveToWait = false;
-	_pmt_var4 = 0;
-	_pointIndex = 0;
-	_pmt_var5 = 0;
-	_rotating = false;
-	_maxAngle = 0;
-	_angleChange = 0;
-	_visible = true;
+	_isPresent      = false;
+	_itemId         = -1;
+	_pointCount     = 0;
+	_data           = nullptr;
+	_dataIndex      = 0;
+	_timeLeftUpdate = 0;
+	_timeLeftWait   = 0;
+	_time           = 0;
+	_isWaiting     = false;
+	_isMoving       = false;
+	_pointIndex     = 0;
+	_pointTarget    = 0;
+	_isRotating     = false;
+	_angleTarget    = 0;
+	_angleDelta     = 0;
+	_isPaused       = true;
 }
 
 void PoliceMazeTargetTrack::clear(bool isLoadingGame) {
 	reset();
 }
 
-void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int count, void *list, bool a11) {
-	_data = (int *)list;
+void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, const int *instructions, bool isActive) {
+	_data = (const int *)instructions;
 
-	if (true /* !GameIsLoading */) { // FIXME
+	if (true /* !GameIsLoading */) { // TODO: FIXME
 		_itemId = trackId;
-		_count = count;
+		_pointCount = steps;
 		_dataIndex = 0;
 
-		double coef = 1.0f / (long double)count;
+		double coef = 1.0f / (long double)steps;
 
 		double coefX = (endX - startX) * coef;
 		double coefY = (endY - startY) * coef;
 		double coefZ = (endZ - startZ) * coef;
 
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < steps; i++) {
 			_points[i].x = i * coefX + startX;
 			_points[i].y = i * coefY + startY;
 			_points[i].z = i * coefZ + startZ;
 		}
 
-		_points[count].x = endX;
-		_points[count].y = endY;
-		_points[count].z = endZ;
+		_points[steps].x = endX;
+		_points[steps].y = endY;
+		_points[steps].z = endZ;
 
-		_visible = !a11;
+		_isPaused = !isActive;
 	}
 	_isPresent = true;
 }
@@ -186,63 +190,67 @@ bool PoliceMazeTargetTrack::tick() {
 	uint32 oldTime = _time;
 	_time = _vm->getTotalPlayTime();
 	int32 timeDiff = _time - oldTime;
-	_updateDelay -= timeDiff;
+	_timeLeftUpdate -= timeDiff;
 
-	if (_updateDelay > 0)
+	if (_timeLeftUpdate > 0) {
 		return false;
-
-	_updateDelay = 66;
-
-	if (_visible)
-		return false;
-
-	if (_haveToWait) {
-		_waitTime -= timeDiff;
-
-		if (_waitTime > 0)
-			return true;
-
-		_haveToWait = false;
-		_waitTime = 0;
 	}
 
-	if (_vm->_items->isSpinning(_itemId))
+	_timeLeftUpdate = 66;
+
+	if (_isPaused) {
+		return false;
+	}
+
+	if (_isWaiting) {
+		_timeLeftWait -= timeDiff;
+
+		if (_timeLeftWait > 0) {
+			return true;
+		}
+
+		_isWaiting = false;
+		_timeLeftWait = 0;
+	}
+
+	if (_vm->_items->isSpinning(_itemId)) {
 		return true;
+	}
 
-	if (_rotating) {
-		float angle = _vm->_items->getFacing(_itemId) + _angleChange;
+	if (_isRotating) {
+		float angle = _vm->_items->getFacing(_itemId) + _angleDelta;
 
-		if (_angleChange > 0) {
-			if (angle >= _maxAngle) {
-				angle = _maxAngle;
-				_rotating = false;
+		if (_angleDelta > 0) {
+			if (angle >= _angleTarget) {
+				angle = _angleTarget;
+				_isRotating = false;
 			}
-		} else if (_angleChange < 0) {
-			if (angle <= _maxAngle) {
-				angle = _maxAngle;
-				_rotating = false;
+		} else if (_angleDelta < 0) {
+			if (angle <= _angleTarget) {
+				angle = _angleTarget;
+				_isRotating = false;
 			}
 		} else {
-			_rotating = false;
+			_isRotating = false;
 		}
 
 		_vm->_items->setFacing(_itemId, angle);
 
-		if (_rotating)
+		if (_isRotating)
 			return false;
 	}
 
 	bool advancePoint = false;
 
-	if (_pmt_var4) {
-		if (_pointIndex < _pmt_var5) {
+	if (_isMoving) {
+		if (_pointIndex < _pointTarget) {
 			_pointIndex++;
 			advancePoint = true;
-		} else if (_pointIndex > _pmt_var5) {
+		} else if (_pointIndex > _pointTarget) {
 			_pointIndex--;
 			advancePoint = true;
 		} else {
-			_pmt_var4 = 0;
+			_isMoving = 0;
 		}
 	}
 
@@ -254,215 +262,254 @@ bool PoliceMazeTargetTrack::tick() {
 	}
 
 	bool cont = true;
-	int var1 = 0, var2 = 0, var3 = 0, varRes = 0;
 
 	while (cont) {
 		_dataIndex++;
 
-		switch (_data[_dataIndex - 1] + 26) {
-		case 0:
-			var1 = _data[_dataIndex++];
-			var2 = _data[_dataIndex++];
+		debug ("ItemId %3i, pos %3i, instruction %3i", _itemId, _dataIndex - 1,  _data[_dataIndex - 1]);
 
-			if (Global_Variable_Query(var1) >= Global_Variable_Query(var2)) {
-				setVisible();
-				cont = false;
-			} else {
-				cont = true;
+		switch (_data[_dataIndex - 1]) {
+		case kPMTIActivate:
+			{
+				int variableId = _data[_dataIndex++];
+				int maxValue = _data[_dataIndex++];
+
+				if (Global_Variable_Query(variableId) >= maxValue) {
+					setPaused();
+					cont = false;
+				} else {
+					cont = true;
+				}
+				break;
 			}
-			break;
 
-		case 1:
+		case kPMTILeave:
 			if (!_vm->_items->isPoliceMazeEnemy(_itemId) && _vm->_items->isTarget(_itemId)) {
 				Police_Maze_Increment_Score(1);
 			}
 			break;
 
-		case 2:
-			var1 = _data[_dataIndex++];
-			_dataIndex++;
+		case kPMTIShoot:
+			{
+				int soundId = _data[_dataIndex++];
+				_dataIndex++; // second argument is not used
 
-			if (_vm->_items->isTarget(_itemId)) {
-				Sound_Play(var1, 90, 0, 0, 50);
-				Police_Maze_Decrement_Score(1);
-				Actor_Force_Stop_Walking(0);
+				if (_vm->_items->isTarget(_itemId)) {
+					Sound_Play(soundId, 90, 0, 0, 50);
+					Police_Maze_Decrement_Score(1);
+					Actor_Force_Stop_Walking(kActorMcCoy);
 
-				if (Player_Query_Combat_Mode() == 1) {
-					Actor_Change_Animation_Mode(0, 22);
-				} else {
-					Actor_Change_Animation_Mode(0, 21);
+					if (Player_Query_Combat_Mode()) {
+						Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatHit);
+					} else {
+						Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeHit);
+					}
+
+					int snd;
+
+					if (Random_Query(1, 2) == 1) {
+						snd = 9900;
+					} else {
+						snd = 9905;
+					}
+					Sound_Play_Speech_Line(kActorMcCoy, snd, 75, 0, 99);
+
+					_vm->_mouse->setRandomY();
 				}
 
-				int snd;
+				cont = false;
+				break;
+			}
+
+		case kPMTIEnemyReset:
+			{
+				int itemId = _data[_dataIndex++];
+				_vm->_items->setPoliceMazeEnemy(itemId, false);
+				break;
+			}
+
+		case kPMTIEnemySet:
+			{
+				int itemId = _data[_dataIndex++];
+				_vm->_items->setPoliceMazeEnemy(itemId, true);
+				break;
+			}
+
+		case kPMTIFlagReset:
+			{
+				int gameFlagId = _data[_dataIndex++];
+				Game_Flag_Reset(gameFlagId);
+				break;
+			}
+
+		case kPMTIFlagSet:
+			{
+				int gameFlagId = _data[_dataIndex++];
+				Game_Flag_Set(gameFlagId);
+				break;
+			}
+
+		case kPMTIVariableDec:
+			{
+				int variableId = _data[_dataIndex++];
+				Global_Variable_Decrement(variableId, 1);
+				break;
+			}
+
+		case kPMTIVariableInc:
+			{
+				int variableId = _data[_dataIndex++];
+				int maxValue = _data[_dataIndex++];
+				if (Global_Variable_Query(variableId) < maxValue) {
+					Global_Variable_Increment(variableId, 1);
+				}
+				break;
+			}
+
+		case kPMTIVariableReset:
+			{
+				int variableId = _data[_dataIndex++];
+				Global_Variable_Reset(variableId);
+				break;
+			}
+
+		case kPMTIVariableSet:
+			{
+				int variableId = _data[_dataIndex++];
+				int value = _data[_dataIndex++];
+				Global_Variable_Set(variableId, value);
+				break;
+			}
+
+		case kPMTITargetSet:
+			{
+				int itemId = _data[_dataIndex++];
+				int value = _data[_dataIndex++];
+				_vm->_items->setIsTarget(itemId, value);
+				break;
+			}
+
+		case kPMTI12:
+			{
+				int trackId1 = _data[_dataIndex++];
+				int trackId2 = _data[_dataIndex++];
+				int trackId3 = _data[_dataIndex++];
+
+				switch (Random_Query(1, 3)) {
+				case 1:
+					_vm->_policeMaze->_tracks[trackId1]->resetPaused();
+					break;
+
+				case 2:
+					_vm->_policeMaze->_tracks[trackId2]->resetPaused();
+					break;
+
+				case 3:
+					_vm->_policeMaze->_tracks[trackId3]->resetPaused();
+					break;
+				}
+
+				break;
+			}
+
+		case kPMTI13:
+			{
+				int trackId1 = _data[_dataIndex++];
+				int trackId2 = _data[_dataIndex++];
 
 				if (Random_Query(1, 2) == 1) {
-					snd = 9900;
+					_vm->_policeMaze->_tracks[trackId1]->resetPaused();
 				} else {
-					snd = 9905;
+					_vm->_policeMaze->_tracks[trackId2]->resetPaused();
 				}
-				Sound_Play_Speech_Line(0, snd, 75, 0, 99);
-
-				_vm->_mouse->setRandomY();
+				break;
 			}
+
+		case kPMTIPausedSet:
+			{
+				int trackId = _data[_dataIndex++];
+				_vm->_policeMaze->_tracks[trackId]->setPaused();
+				break;
+			}
+
+		case kPMTIPausedReset:
+			{
+				int trackId = _data[_dataIndex++];
+				_vm->_policeMaze->_tracks[trackId]->resetPaused();
+				break;
+			}
+
+		case kPMTIPlaySound:
+			{
+				int soundId = _data[_dataIndex++];
+				int volume = _data[_dataIndex++];
+				Sound_Play(soundId, volume, 0, 0, 50);
+				break;
+			}
+
+		case kPMTIObstacleReset:
+			{
+				int itemId = _data[_dataIndex++];
+				_vm->_items->setIsObstacle(itemId, 0);
+				break;
+			}
+
+		case kPMTIObstacleSet:
+			{
+				int itemId = _data[_dataIndex++];
+				_vm->_items->setIsObstacle(itemId, 1);
+				break;
+			}
+
+		case kPMTIWaitRandom:
+			{
+				int randomMin = _data[_dataIndex++];
+				int randomMax = _data[_dataIndex++];
+				_timeLeftWait = Random_Query(randomMin, randomMax);
+				_isWaiting = true;
+
+				cont = false;
+				break;
+			}
+
+		case kPMTIRotate:
+			_angleTarget = _data[_dataIndex++];
+			_angleDelta = _data[_dataIndex++];
+			_isRotating = true;
 
 			cont = false;
 			break;
 
-		case 3:
-			var1 = _data[_dataIndex++];
-			_vm->_items->setPoliceMazeEnemy(var1, 0);
-			break;
-
-		case 4:
-			var1 = _data[_dataIndex++];
-			_vm->_items->setPoliceMazeEnemy(var1, 1);
-			break;
-
-		case 5:
-			var1 = _data[_dataIndex++];
-			Game_Flag_Reset(var1);
-			break;
-
-		case 6:
-			var1 = _data[_dataIndex++];
-			Game_Flag_Set(var1);
-			break;
-
-		case 7:
-			var1 = _data[_dataIndex++];
-			Global_Variable_Decrement(var1, 1);
-			break;
-
-		case 8:
-			var1 = _data[_dataIndex++];
-			var2 = _data[_dataIndex++];
-			if (Global_Variable_Query(var1) < var2) {
-				Global_Variable_Increment(var1, 1);
-			}
-			break;
-
-		case 9:
-			var1 = _data[_dataIndex++];
-			Global_Variable_Reset(var1);
-			break;
-
-		case 10:
-			var1 = _data[_dataIndex++];
-			var2 = _data[_dataIndex++];
-			Global_Variable_Set(var1, var2);
-			break;
-
-		case 11:
-			var1 = _data[_dataIndex++];
-			var2 = _data[_dataIndex++];
-			_vm->_items->setIsTarget(var1, var2);
-			break;
-
-		case 12:
-			var1 = _data[_dataIndex++];
-			var2 = _data[_dataIndex++];
-			var3 = _data[_dataIndex++];
-
-			switch (Random_Query(1, 3)) {
-			case 1:
-				varRes = var1;
-				break;
-
-			case 2:
-				varRes = var2;
-				break;
-
-			case 3:
-				varRes = var3;
+		case kPMTIFacing:
+			{
+				int angle = _data[_dataIndex++];
+				_vm->_items->setFacing(_itemId, angle);
 				break;
 			}
 
-			_vm->_policeMaze->_tracks[varRes]->resetVisible();
-			break;
-
-		case 13:
-			var1 = _data[_dataIndex++];
-			var2 = _data[_dataIndex++];
-
-			if (Random_Query(1, 2) == 1) {
-				varRes = var1;
-			} else {
-				varRes = var2;
-			}
-			_vm->_policeMaze->_tracks[varRes]->resetVisible();
-			break;
-
-		case 14:
-			var1 = _data[_dataIndex++];
-			_vm->_policeMaze->_tracks[var1]->setVisible();
-			break;
-
-		case 15:
-			var1 = _data[_dataIndex++];
-			_vm->_policeMaze->_tracks[var1]->resetVisible();
-			break;
-
-		case 16:
-			var1 = _data[_dataIndex++];
-			var2 = _data[_dataIndex++];
-			Sound_Play(var1, var2, 0, 0, 50);
-			break;
-
-		case 17:
-			var1 = _data[_dataIndex++];
-			_vm->_items->setIsObstacle(var1, 0);
-			break;
-
-		case 18:
-			var1 = _data[_dataIndex++];
-			_vm->_items->setIsObstacle(var1, 1);
-			break;
-
-		case 19:
-			var1 = _data[_dataIndex++];
-			var2 = _data[_dataIndex++];
-			_waitTime = Random_Query(var1, var2);
-			_haveToWait = true;
-
-			cont = false;
-			break;
-
-		case 20:
-			_maxAngle = _data[_dataIndex++];
-			_angleChange = _data[_dataIndex++];
-			_rotating = true;
-
-			cont = false;
-			break;
-
-		case 21:
-			var1 = _data[_dataIndex++];
-			_vm->_items->setFacing(_itemId, var1);
-			break;
-
-		case 22:
+		case kPMTIRestart:
 			_dataIndex = 0;
 
 			cont = false;
 			break;
 
-		case 23:
-			_waitTime = _data[_dataIndex++];
-			_haveToWait = true;
+		case kPMTIWait:
+			_timeLeftWait = _data[_dataIndex++];
+			_isWaiting = true;
 
 			cont = false;
 			break;
 
-		case 24:
-			_pmt_var5 = _data[_dataIndex++];
-			_pmt_var4 = 1;
+		case kPMTIMove:
+			_pointTarget = _data[_dataIndex++];
+			_isMoving = true;
 
 			cont = false;
 			break;
 
-		case 25:
+		case kPMTIPosition:
 			_pointIndex = _data[_dataIndex++];
-			_pmt_var4 = 0;
+			_isMoving = false;
 			_vm->_items->setXYZ(_itemId, _points[_pointIndex]);
 			readdObject(_itemId);
 			break;
@@ -471,7 +518,7 @@ bool PoliceMazeTargetTrack::tick() {
 			return false;
 		}
 
-		if (_visible || _haveToWait) {
+		if (_isPaused || _isWaiting) {
 			cont = false;
 		}
 	}

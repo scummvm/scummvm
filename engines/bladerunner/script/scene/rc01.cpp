@@ -74,6 +74,8 @@ void SceneScriptRC01::InitializeScene() {
 	// Global_Variable_Set(kVariableChapter, 2);
 	// Chapter_Enter(2, kSetRC03, kSceneRC03);
 
+	Set_Enter(14, 73);
+
 #endif
 
 	if (!Game_Flag_Query(kFlagIntroPlayed)) {

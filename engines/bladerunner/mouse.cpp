@@ -170,19 +170,19 @@ void Mouse::setRandomY() {
 	switch (_vm->_settings->getDifficulty()) {
 	case 0:
 		_randomCountdownY = 2;
-		_randomX = _vm->_rnd.getRandomNumberRng(-3, 3);
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
 		_randomY = _vm->_rnd.getRandomNumberRng(10, 20);
 		break;
 
 	case 1:
 		_randomCountdownY = 3;
-		_randomX = _vm->_rnd.getRandomNumberRng(-4, 4);
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 8) - 4;
 		_randomY = _vm->_rnd.getRandomNumberRng(15, 25);
 		break;
 
 	case 2:
 		_randomCountdownY = 4;
-		_randomX = _vm->_rnd.getRandomNumberRng(-5, 5);
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 10) - 5;
 		_randomY = _vm->_rnd.getRandomNumberRng(20, 30);
 		break;
 	}

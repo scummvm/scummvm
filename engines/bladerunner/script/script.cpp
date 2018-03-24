@@ -1105,8 +1105,8 @@ void ScriptBase::Combat_Flee_Waypoint_Set_Data(int fleeWaypointId, int type, int
 	_vm->_combat->_fleeWaypoints[fleeWaypointId].field7 = a8;
 }
 
-void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, signed int data[], bool a10) {
-	_vm->_policeMaze->_tracks[itemId]->add(itemId, startX, startY, startZ, endX, endY, endZ, steps, data, a10);
+void ScriptBase::Police_Maze_Target_Track_Add(int itemId, float startX, float startY, float startZ, float endX, float endY, float endZ, int steps, const int* instructions, bool isActive) {
+	_vm->_policeMaze->_tracks[itemId]->add(itemId, startX, startY, startZ, endX, endY, endZ, steps, instructions, isActive);
 	_vm->_policeMaze->activate();
 }
 
