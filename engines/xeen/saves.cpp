@@ -249,8 +249,10 @@ bool SavesManager::loadGame() {
 	int slotNum = dialog->runModalWithCurrentTarget();
 	delete dialog;
 
-	if (slotNum != -1)
+	if (slotNum != -1) {
 		loadGameState(slotNum);
+		g_vm->_interface->drawParty(true);
+	}
 
 	return slotNum != -1;
 }

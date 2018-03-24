@@ -254,6 +254,7 @@ void XeenEngine::gameLoop() {
 			int saveSlot = _loadSaveSlot;
 			_loadSaveSlot = -1;
 			_saves->loadGameState(saveSlot);
+			_interface->drawParty(true);
 		}
 
 		_map->cellFlagLookup(_party->_mazePosition);
