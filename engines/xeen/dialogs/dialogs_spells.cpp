@@ -201,14 +201,14 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 
 					Common::String msg = (modeCopy & 0x80) ?
 						Common::String::format(Res.SPELL_INFO, spellName.c_str(), spellDesc.c_str()) :
-						Common::String::format(Res.SPELL_PURCHASE, spellName.c_str(), spellCost);
+						Common::String::format(Res.SPELL_PURCHASE, spellDesc.c_str(), spellName.c_str(), spellCost);
 
 					if (Confirm::show(_vm, msg, modeCopy + 1)) {
 						if (party.subtract(CONS_GOLD, spellCost, WHERE_PARTY, WT_FREEZE_WAIT)) {
 							c->_spells[spellIndex] = true;
 							sound.stopSound();
 							intf._overallFrame = 0;
-							sound.playSound(ccNum ? "guild12.voc" : "parrot2.voc", 1);
+							sound.playSound(ccNum ? "parrot2.voc" : "guild12.voc", 1);
 						} else {
 							sound.playFX(21);
 						}
