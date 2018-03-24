@@ -62,8 +62,7 @@ Command *CallMacroCommand::getReturnCommand() const {
 }
 
 Command::ExecuteResult CallMacroCommand::execute(ScriptExecutionContext &scriptExecCtx) {
-	Game &game = scriptExecCtx.getGame();
-	_callCommand = game.getMacro(_macroName);
+	_callCommand = scriptExecCtx.getMacro(_macroName);
 	if (_callCommand) {
 		scriptExecCtx.pushReturnCommand(_returnCommand);
 	} else {

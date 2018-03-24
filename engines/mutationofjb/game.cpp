@@ -27,12 +27,15 @@
 #include "mutationofjb/room.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/util.h"
+#include "mutationofjb/commands/command.h"
 #include "common/util.h"
 #include "common/str.h"
+#include "common/translation.h"
 
 namespace MutationOfJB {
 
-Game::Game(MutationOfJBEngine *vm) : _vm(vm) {
+Game::Game(MutationOfJBEngine *vm)
+: _vm(vm), _scriptExecCtx(*this) {
 	_gameData = new GameData;
 	loadGameData(false);
 
@@ -105,18 +108,9 @@ void Game::changeScene(uint8 sceneId, bool partB) {
 	scriptFile.close();
 }
 
-Command *Game::getMacro(const Common::String &name) const {
-	Command *cmd = nullptr;
 
-	if (_localScript) {
-		cmd = _localScript->getMacro(name);
-	}
-
-	if (!cmd && _globalScript) {
-		cmd = _globalScript->getMacro(name);
-	}
-
-	return cmd;
+void Game::update() {
+	_scriptExecCtx.runActiveCommand();
 }
 
 }

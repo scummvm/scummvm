@@ -26,6 +26,7 @@
 #include "common/hash-str.h"
 #include "common/stream.h"
 #include "common/debug.h"
+#include "common/translation.h"
 #include "mutationofjb/commands/command.h"
 #include "mutationofjb/commands/ifcommand.h"
 #include "mutationofjb/commands/ifitemcommand.h"
@@ -100,15 +101,15 @@ void ScriptParseContext::addConditionalCommand(ConditionalCommand *command, char
 
 
 void ScriptExecutionContext::pushReturnCommand(Command *cmd) {
-	_stack.push(cmd);
+	_callStack.push(cmd);
 }
 
 Command *ScriptExecutionContext::popReturnCommand() {
-	if (_stack.empty()) {
+	if (_callStack.empty()) {
 		return nullptr;
 	}
 
-	return _stack.pop();
+	return _callStack.pop();
 }
 
 Game &ScriptExecutionContext::getGame() {
@@ -119,6 +120,49 @@ GameData &ScriptExecutionContext::getGameData() {
 	return _game.getGameData();
 }
 
+void ScriptExecutionContext::clear() {
+	_callStack.clear();
+}
+
+Command::ExecuteResult ScriptExecutionContext::runActiveCommand() {
+	while (_activeCommand) {
+		const Command::ExecuteResult result = _activeCommand->execute(*this);
+		if (result == Command::Finished) {
+			_activeCommand = _activeCommand->next();
+		} else {
+			return result;
+		}
+	}
+
+	return Command::Finished;
+}
+
+Command::ExecuteResult ScriptExecutionContext::startCommand(Command *cmd) {
+	if (_activeCommand) {
+		warning(_("Trying to start command while another one is running."));
+		return Command::Finished;
+	}
+	clear();
+	_activeCommand = cmd;
+	return runActiveCommand();
+}
+
+Command *ScriptExecutionContext::getMacro(const Common::String &name) const {
+	Command *cmd = nullptr;
+
+	Script *const localScript = _localScriptOverride ? _localScriptOverride : _game.getLocalScript();
+	Script *const globalScript = _game.getGlobalScript();
+
+	if (localScript) {
+		cmd = localScript->getMacro(name);
+	}
+
+	if (!cmd && globalScript) {
+		cmd = globalScript->getMacro(name);
+	}
+
+	return cmd;
+}
 
 bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	destroy();

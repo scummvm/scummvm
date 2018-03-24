@@ -23,6 +23,7 @@
 #ifndef MUTATIONOFJB_SCRIPT_H
 #define MUTATIONOFJB_SCRIPT_H 
 
+#include "mutationofjb/commands/command.h"
 #include "common/array.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
@@ -41,6 +42,7 @@ class Game;
 class GameData;
 class GotoCommand;
 class ConditionalCommand;
+class Script;
 typedef Common::Array<Command *> Commands;
 
 
@@ -96,15 +98,23 @@ private:
 
 class ScriptExecutionContext {
 public:
-	ScriptExecutionContext(Game &game) : _game(game) {}
+	ScriptExecutionContext(Game &game, Script *localScriptOverride = nullptr) : _game(game), _activeCommand(nullptr), _localScriptOverride(localScriptOverride) {}
+	void clear();
+
+	Command::ExecuteResult runActiveCommand();
+	Command::ExecuteResult startCommand(Command *cmd);
+
 	void pushReturnCommand(Command *);
 	Command *popReturnCommand();
 	Game &getGame();
 	GameData &getGameData();
+	Command *getMacro(const Common::String &name) const;
 
 private:
 	Game &_game;
-	Common::Stack<Command *> _stack;
+	Command *_activeCommand;
+	Common::Stack<Command *> _callStack;
+	Script *_localScriptOverride;
 };
 
 class Script {
