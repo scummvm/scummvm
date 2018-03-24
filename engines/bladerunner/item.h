@@ -72,7 +72,7 @@ public:
 	int getFacing() const { return _facing; }
 	void setFacing(int facing) { _facing = facing; }
 
-	void setIsTarget(bool isTarget) { _isTarget = isTarget; }
+	void setIsTarget(bool val) { _isTarget = val; }
 
 	bool isTarget() const;
 	bool isSpinning() const { return _isSpinning; }
