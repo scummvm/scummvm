@@ -24,6 +24,7 @@
 #include "graphics/palette.h"
 #include "graphics/cursorman.h"
 
+#include "supernova/screen.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
 
@@ -147,102 +148,11 @@ void Intro::onEntrance() {
 	leaveCutscene();
 }
 
-class Marquee {
-public:
-	enum MarqueeIndex {
-		kMarqueeIntro,
-		kMarqueeOutro
-	};
-
-	Marquee(SupernovaEngine *vm, MarqueeIndex id, const char *text)
-		: _text(text)
-		, _textBegin(text)
-		, _delay(0)
-		, _color(kColorLightBlue)
-		, _loop(false)
-		, _vm(vm)
-	{
-		if (id == kMarqueeIntro) {
-			_y = 191;
-			_loop = true;
-		} else if (id == kMarqueeOutro) {
-			_y = 1;
-		}
-		_textWidth = _vm->textWidth(_text);
-		_x = kScreenWidth / 2 - _textWidth / 2;
-		_vm->_textCursorX = _x;
-		_vm->_textCursorY = _y;
-		_vm->_textColor = _color;
-	}
-
-	void renderCharacter();
-
-private:
-	void clearText();
-
-	SupernovaEngine *_vm;
-	MarqueeIndex _id;
-	const char *const _textBegin;
-	const char *_text;
-	bool _loop;
-	int _delay;
-	int _color;
-	int _x;
-	int _y;
-	int _textWidth;
-};
-
-void Marquee::clearText() {
-	_vm->renderBox(_x, _y - 1, _textWidth + 1, 9, kColorBlack);
-}
-
-void Marquee::renderCharacter() {
-	if (_delay != 0) {
-		_delay--;
-		return;
-	}
-
-	switch (*_text) {
-	case '\233':
-		if (_loop) {
-			_loop = false;
-			_text = _textBegin;
-			clearText();
-			_textWidth = _vm->textWidth(_text);
-			_x = kScreenWidth / 2 - _textWidth / 2;
-			_vm->_textCursorX = _x;
-		}
-		break;
-	case '\0':
-		clearText();
-		_text++;
-		_textWidth = _vm->textWidth(_text);
-		_x = kScreenWidth / 2 - _textWidth / 2;
-		_vm->_textCursorX = _x;
-		_color = kColorLightBlue;
-		_vm->_textColor = _color;
-		break;
-	case '^':
-		_color = kColorLightYellow;
-		_vm->_textColor = _color;
-		_text++;
-		break;
-	case '#':
-		_delay = 50;
-		_text++;
-		break;
-	default:
-		_vm->renderText((uint16)*_text++);
-		_delay = 1;
-		break;
-	}
-}
-
 void Intro::titleScreen() {
 	// Newspaper
 	CursorMan.showMouse(false);
-	_vm->_brightness = 0;
-	_vm->_menuBrightness = 0;
+	_vm->_screen->setViewportBrightness(0);
+	_vm->_screen->setGuiBrightness(0);
 	_vm->paletteBrightness();
 	_vm->setCurrentImage(1);
 	_vm->renderImage(0);
@@ -263,14 +173,14 @@ void Intro::titleScreen() {
 	const Common::String& title1 = _vm->getGameString(kStringTitle1);
 	const Common::String& title2 = _vm->getGameString(kStringTitle2);
 	const Common::String& title3 = _vm->getGameString(kStringTitle3);
-	_vm->renderText(title1, 78 - _vm->textWidth(title1) / 2, 120, kColorLightBlue);
-	_vm->renderText(title2, 78 - _vm->textWidth(title2) / 2, 132, kColorWhite99);
-	_vm->renderText(title3, 78 - _vm->textWidth(title3) / 2, 142, kColorWhite99);
+	_vm->_screen->renderText(title1, 78 - Screen::textWidth(title1) / 2, 120, kColorLightBlue);
+	_vm->_screen->renderText(title2, 78 - Screen::textWidth(title2) / 2, 132, kColorWhite99);
+	_vm->_screen->renderText(title3, 78 - Screen::textWidth(title3) / 2, 142, kColorWhite99);
 	_gm->wait(1);
 	CursorMan.showMouse(true);
 	_vm->playSound(kMusicIntro);
 
-	Marquee marquee(_vm, Marquee::kMarqueeIntro, _introText.c_str());
+	Marquee marquee(_vm->_screen, Marquee::kMarqueeIntro, _introText.c_str());
 	while (!_vm->shouldQuit()) {
 		_gm->updateEvents();
 		marquee.renderCharacter();
@@ -381,11 +291,11 @@ void Intro::cutscene() {
 
 	_vm->_system->fillScreen(kColorBlack);
 	_vm->setCurrentImage(31);
-	_vm->_menuBrightness = 255;
+	_vm->_screen->setGuiBrightness(255);
 	_vm->paletteBrightness();
 	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene1))
 		return;
-	_vm->_menuBrightness = 0;
+	_vm->_screen->setGuiBrightness(0);
 	_vm->paletteBrightness();
 	exitOnEscape(1);
 
@@ -531,11 +441,11 @@ void Intro::cutscene() {
 		exitOnEscape(1);
 
 	_vm->_system->fillScreen(kColorBlack);
-	_vm->_menuBrightness = 255;
+	_vm->_screen->setGuiBrightness(255);
 	_vm->paletteBrightness();
 	if (!animate(0, 0, 0, kMessageNormal, kStringIntroCutscene25))
 		return;
-	_vm->_menuBrightness = 5;
+	_vm->_screen->setGuiBrightness(5);
 	_vm->paletteBrightness();
 
 	_vm->setCurrentImage(31);
@@ -558,7 +468,7 @@ void Intro::cutscene() {
 		return;
 
 	CursorMan.showMouse(false);
-	_vm->_brightness = 0;
+	_vm->_screen->setViewportBrightness(0);
 	_vm->paletteBrightness();
 	exitOnEscape(10);
 	_vm->playSound(kAudioSnoring);
@@ -605,7 +515,7 @@ void Intro::cutscene() {
 }
 
 void Intro::leaveCutscene() {
-	_vm->_brightness = 255;
+	_vm->_screen->setViewportBrightness(255);
 	_vm->removeMessage();
 	_gm->changeRoom(CABIN_R3);
 	_gm->_guiEnabled = true;
@@ -1616,7 +1526,7 @@ bool ArsanoMeetup::interact(Action verb, Object &obj1, Object &obj2) {
 }
 
 void ArsanoEntrance::animation() {
-	if (!_vm->_messageDisplayed && isSectionVisible(kMaxSection - 5)) {
+	if (!_vm->_screen->isMessageShown() && isSectionVisible(kMaxSection - 5)) {
 		_gm->animationOff(); // to avoid recursive call
 		_vm->playSound(kAudioSlideDoor);
 		_vm->renderImage(8);
@@ -2097,12 +2007,12 @@ bool ArsanoRoger::interact(Action verb, Object &obj1, Object &obj2) {
 		_vm->paletteFadeOut();
 		_gm->_inventory.remove(*_gm->_rooms[CABIN_R3]->getObject(0)); // Chess board
 		g_system->fillScreen(kColorBlack);
-		_vm->_menuBrightness = 255;
+		_vm->_screen->setGuiBrightness(255);
 		_vm->paletteBrightness();
 		_vm->renderMessage(kStringArsanoRoger39);
 		_gm->waitOnInput(_gm->_messageDuration);
 		_vm->removeMessage();
-		_vm->_menuBrightness = 0;
+		_vm->_screen->setGuiBrightness(0);
 		_vm->paletteBrightness();
 		_gm->_state._time += ticksToMsec(125000); // 2 hours
 		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_state._time);
@@ -3207,12 +3117,12 @@ bool AxacussElevator::interact(Action verb, Object &obj1, Object &obj2) {
 	} else if ((verb == ACTION_WALK) && (obj1._id == JUNGLE)) {
 		_vm->paletteFadeOut();
 		g_system->fillScreen(kColorBlack);
-		_vm->_menuBrightness = 255;
+		_vm->_screen->setGuiBrightness(255);
 		_vm->paletteBrightness();
 		_vm->renderMessage(kStringAxacussElevator_3);
 		_gm->waitOnInput(_gm->_messageDuration);
 		_vm->removeMessage();
-		_vm->_menuBrightness = 0;
+		_vm->_screen->setGuiBrightness(0);
 		_vm->paletteBrightness();
 		_gm->_state._time += ticksToMsec(125000); // 2 hours
 		_gm->_state._alarmOn = (_gm->_state._timeAlarm > _gm->_state._time);
@@ -3296,7 +3206,7 @@ void Outro::onEntrance() {
 	}
 
 	_vm->playSound(kMusicOutro);
-	Marquee marquee(_vm, Marquee::kMarqueeOutro, _outroText.c_str());
+	Marquee marquee(_vm->_screen, Marquee::kMarqueeOutro, _outroText.c_str());
 	while (!_vm->shouldQuit()) {
 		_gm->updateEvents();
 		marquee.renderCharacter();
@@ -3311,7 +3221,7 @@ void Outro::onEntrance() {
 	_vm->paletteFadeIn();
 	_gm->getInput();
 	_vm->paletteFadeOut();
-	_vm->_brightness = 1;
+	_vm->_screen->setViewportBrightness(1);
 
 	Common::Event event;
 	event.type = Common::EVENT_RTL;

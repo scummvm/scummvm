@@ -21,11 +21,13 @@
  */
 
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "gui/message.h"
+
+#include "supernova/screen.h"
 #include "supernova/supernova.h"
 #include "supernova/state.h"
-#include "graphics/cursorman.h"
 
 namespace Supernova {
 
@@ -467,7 +469,7 @@ void GameManager::initGui() {
 	int cmdAvailableSpace = 320 - (cmdCount - 1) * 2;
 	for (int i = 0; i < cmdCount; ++i) {
 		const Common::String &text = _vm->getGameString(guiCommands[i]);
-		cmdAvailableSpace -= _vm->textWidth(text);
+		cmdAvailableSpace -= Screen::textWidth(text);
 	}
 
 	int commandButtonX = 0;
@@ -477,7 +479,7 @@ void GameManager::initGui() {
 		if (i < cmdCount - 1) {
 			int space = cmdAvailableSpace / (cmdCount - i);
 			cmdAvailableSpace -= space;
-			width = _vm->textWidth(text) + space;
+			width = Screen::textWidth(text) + space;
 		} else
 			width = 320 - commandButtonX;
 
@@ -506,7 +508,7 @@ void GameManager::initGui() {
 
 void GameManager::updateEvents() {
 	handleTime();
-	if (_animationEnabled && !_vm->_messageDisplayed && _animationTimer == 0)
+	if (_animationEnabled && !_vm->_screen->isMessageShown() && _animationTimer == 0)
 		_currentRoom->animation();
 
 	if (_state._eventCallback != kNoFn && _state._time >= _state._eventTime) {
@@ -645,7 +647,7 @@ void GameManager::processInput() {
 		mouseLocation = onNone;
 
 	if (_mouseClickType == Common::EVENT_LBUTTONUP) {
-		if (_vm->_messageDisplayed) {
+		if (_vm->_screen->isMessageShown()) {
 			// Hide the message and consume the event
 			_vm->removeMessage();
 			if (mouseLocation != onCmdButton)
@@ -688,7 +690,7 @@ void GameManager::processInput() {
 		}
 
 	} else if (_mouseClickType == Common::EVENT_RBUTTONUP) {
-		if (_vm->_messageDisplayed) {
+		if (_vm->_screen->isMessageShown()) {
 			// Hide the message and consume the event
 			_vm->removeMessage();
 			return;
@@ -740,8 +742,9 @@ void GameManager::processInput() {
 			for (int i = 0; (_currentRoom->getObject(i)->_id != INVALIDOBJECT) &&
 							(field == -1) && i < kMaxObject; i++) {
 				click = _currentRoom->getObject(i)->_click;
-				if (click != 255 && _vm->_currentImage) {
-					MSNImage::ClickField *clickField = _vm->_currentImage->_clickField;
+				const MSNImage *image = _vm->_screen->getCurrentImage();
+				if (click != 255 && image) {
+					const MSNImage::ClickField *clickField = image->_clickField;
 					do {
 						if ((_mouseX >= clickField[click].x1) && (_mouseX <= clickField[click].x2) &&
 							(_mouseY >= clickField[click].y1) && (_mouseY <= clickField[click].y2))
@@ -1120,14 +1123,14 @@ void GameManager::supernovaEvent() {
 	novaScroll();
 	_vm->paletteFadeOut();
 	_vm->renderBox(0, 0, 320, 200, kColorBlack);
-	_vm->_menuBrightness = 255;
+	_vm->_screen->setGuiBrightness(255);
 	_vm->paletteBrightness();
 
 	if (_currentRoom->getId() == GLIDER) {
 		_vm->renderMessage(kStringSupernova3);
 		waitOnInput(_messageDuration);
 		_vm->removeMessage();
-		_vm->_menuBrightness = 0;
+		_vm->_screen->setGuiBrightness(0);
 		_vm->paletteBrightness();
 		_vm->renderRoom(*_currentRoom);
 		_vm->paletteFadeIn();
@@ -1153,7 +1156,7 @@ void GameManager::supernovaEvent() {
 		_vm->renderMessage(kStringSupernova8);
 		waitOnInput(_messageDuration);
 		_vm->removeMessage();
-		_vm->_menuBrightness = 0;
+		_vm->_screen->setGuiBrightness(0);
 		_vm->paletteBrightness();
 		changeRoom(MEETUP2);
 		if (_rooms[ROGER]->getObject(3)->hasProperty(CARRIED) && !_rooms[GLIDER]->isSectionVisible(5)) {
@@ -1204,7 +1207,7 @@ void GameManager::guardWalkEvent() {
 				   _rooms[BCORRIDOR]->getObject(_state._origin + 4)->hasProperty(OPENED));
 	_rooms[BCORRIDOR]->getObject(_state._origin + 4)->disableProperty(OCCUPIED);
 	if (_currentRoom == _rooms[BCORRIDOR]) {
-		if (_vm->_messageDisplayed)
+		if (_vm->_screen->isMessageShown())
 			_vm->removeMessage();
 
 		if (!behind) {
@@ -1522,7 +1525,7 @@ void GameManager::turnOn() {
 		return;
 
 	_state._powerOff = false;
-	_vm->_brightness = 255;
+	_vm->_screen->setViewportBrightness(255);
 	_rooms[SLEEP]->setSectionVisible(1, false);
 	_rooms[SLEEP]->setSectionVisible(2, false);
 	_rooms[COCKPIT]->setSectionVisible(22, false);
@@ -1541,7 +1544,7 @@ void GameManager::takeObject(Object &obj) {
 void GameManager::drawCommandBox() {
 	for (int i = 0; i < ARRAYSIZE(_guiCommandButton); ++i) {
 		_vm->renderBox(_guiCommandButton[i]);
-		int space = (_guiCommandButton[i].width() - _vm->textWidth(_guiCommandButton[i].getText())) / 2;
+		int space = (_guiCommandButton[i].width() - Screen::textWidth(_guiCommandButton[i].getText())) / 2;
 		_vm->renderText(_guiCommandButton[i].getText(),
 						_guiCommandButton[i].getTextPos().x + space,
 						_guiCommandButton[i].getTextPos().y,
@@ -1628,8 +1631,8 @@ void GameManager::roomBrightness() {
 	else if ((_currentRoom->getId() == GUARD3) && _state._powerOff)
 		_roomBrightness = 0;
 
-	if (_vm->_brightness != 0)
-		_vm->_brightness = _roomBrightness;
+	if (_vm->_screen->getViewportBrightness() != 0)
+		_vm->_screen->setViewportBrightness(_roomBrightness);
 
 	_vm->paletteBrightness();
 }
@@ -1774,24 +1777,24 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
 
 	while (isEditing) {
-		_vm->_textCursorX = x;
-		_vm->_textCursorY = y;
-		_vm->_textColor = kColorWhite99;
+		_vm->_screen->setTextCursorPos(x, y);
+		_vm->_screen->setTextCursorColor(kColorWhite99);
 		_vm->renderBox(x, y - 1, overdrawWidth, 9, kColorDarkBlue);
 		for (uint i = 0; i < input.size(); ++i) {
 			// Draw char highlight depending on cursor position
 			if (i == cursorIndex) {
-				_vm->renderBox(_vm->_textCursorX, y - 1, _vm->textWidth(input[i]), 9, kColorWhite99);
-				_vm->_textColor = kColorDarkBlue;
+				_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1,
+							   Screen::textWidth(input[i]), 9, kColorWhite99);
+				_vm->_screen->setTextCursorColor(kColorDarkBlue);
 				_vm->renderText(input[i]);
-				_vm->_textColor = kColorWhite99;
+				_vm->_screen->setTextCursorColor(kColorWhite99);
 			} else
 				_vm->renderText(input[i]);
 		}
 
 		if (cursorIndex == input.size()) {
-			_vm->renderBox(_vm->_textCursorX + 1, y - 1, 6, 9, kColorDarkBlue);
-			_vm->renderBox(_vm->_textCursorX    , y - 1, 1, 9, kColorWhite99);
+			_vm->renderBox(_vm->_screen->getTextCursorPos().x + 1, y - 1, 6, 9, kColorDarkBlue);
+			_vm->renderBox(_vm->_screen->getTextCursorPos().x, y - 1, 1, 9, kColorWhite99);
 		}
 
 		getKeyInput(true);
@@ -2299,7 +2302,7 @@ void GameManager::handleInput() {
 }
 
 void GameManager::executeRoom() {
-	if (_processInput && !_vm->_messageDisplayed && _guiEnabled) {
+	if (_processInput && !_vm->_screen->isMessageShown() && _guiEnabled) {
 		handleInput();
 		if (_mouseClicked) {
 			Common::Event event;
@@ -2315,7 +2318,7 @@ void GameManager::executeRoom() {
 	}
 
 	if (_guiEnabled) {
-		if (!_vm->_messageDisplayed) {
+		if (!_vm->_screen->isMessageShown()) {
 			g_system->fillScreen(kColorBlack);
 			_vm->renderRoom(*_currentRoom);
 		}
@@ -2326,7 +2329,7 @@ void GameManager::executeRoom() {
 	}
 
 	roomBrightness();
-	if (_vm->_brightness == 0)
+	if (_vm->_screen->getViewportBrightness() == 0)
 		_vm->paletteFadeIn();
 
 	if (!_currentRoom->hasSeen() && _newRoom) {
