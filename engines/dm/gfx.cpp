@@ -2162,22 +2162,20 @@ void DisplayMan::drawSquareD0L(Direction dir, int16 posX, int16 posY) {
 	uint16 squareAspect[5];
 	_vm->_dungeonMan->setSquareAspect(squareAspect, dir, posX, posY);
 	switch (squareAspect[kDMSquareAspectElement]) {
-	case kDMElementTypeWall:
-		drawWallSetBitmap(bitmapWallSetWallD0L, _frameWalls163[kDMViewSquareD0L]);
-		break;
-	case kDMElementTypeCorridor:
-	case kDMElementTypeTeleporter:
-	case kDMElementTypeDoorSide:
-		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD0L, kDMCellOrderBackRight);
-		break;
+	case kDMElementTypeStairsSide:
+		drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexSideD0L, frameStairsSideD0L);
+		return;
 	case kDMElementTypePit:
 		drawFloorPitOrStairsBitmap(squareAspect[kDMSquareAspectPitInvisible] ? kDMGraphicIdxFloorPitInvisibleD0L : kDMGraphicIdxFloorPitD0L, frameFloorPitD0L);
-	case kDMElementTypeStairsSide:
-		if (squareAspect[kDMSquareAspectStairsUp])
-			drawFloorPitOrStairsBitmap(_stairsNativeBitmapIndexSideD0L, frameStairsSideD0L);
+		// fall through
+	case kDMElementTypeCorridor:
+	case kDMElementTypeDoorSide:
+	case kDMElementTypeTeleporter:
+		drawObjectsCreaturesProjectilesExplosions(Thing(squareAspect[kDMSquareAspectFirstGroupOrObject]), dir, posX, posY, kDMViewSquareD0L, kDMCellOrderBackRight);
 		break;
-	default:
-		break;
+	case kDMElementTypeWall:
+		drawWallSetBitmap(bitmapWallSetWallD0L, _frameWalls163[kDMViewSquareD0L]);
+		return;
 	}
 
 	drawCeilingPit(kDMGraphicIdxCeilingPitD0L, &frameCeilingPitD0L, posX, posY, false);
