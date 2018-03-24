@@ -267,7 +267,7 @@ void Interface::perform() {
 		_buttonValue = 0;
 		do {
 			events.pollEventsAndWait();
-			if (g_vm->shouldExit() || g_vm->isLoadPending() || party._partyDead)
+			if (g_vm->shouldExit() || g_vm->isLoadPending() || party._dead)
 				return;
 
 			if (events._leftButton && WAIT_BOUNDS.contains(events._mousePos))
@@ -585,7 +585,7 @@ void Interface::perform() {
 }
 
 void Interface::chargeStep() {
-	if (!_vm->_party->_partyDead) {
+	if (!_vm->_party->_dead) {
 		_vm->_party->changeTime(_vm->_map->_isOutdoors ? 10 : 1);
 		if (_tillMove) {
 			_vm->_combat->moveMonsters();
@@ -628,7 +628,7 @@ void Interface::doStepCode() {
 	switch (surfaceId) {
 	case SURFTYPE_SPACE:
 		// Wheeze.. can't breathe in space! Explosive decompression, here we come
-		party._partyDead = true;
+		party._dead = true;
 		break;
 	case SURFTYPE_LAVA:
 		// It burns, it burns!
@@ -678,7 +678,7 @@ void Interface::doStepCode() {
 
 			combat._combatTarget = oldTarget;
 			_flipGround = !_flipGround;
-		} else if (party._partyDead) {
+		} else if (party._dead) {
 			draw3d(true);
 		}
 	}

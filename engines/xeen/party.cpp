@@ -241,7 +241,6 @@ Party::Party(XeenEngine *vm) {
 	for (int i = 0; i < TOTAL_CHARACTERS; ++i)
 		Common::fill(&_characterFlags[i][0], &_characterFlags[i][24], false);
 
-	_partyDead = false;
 	_newDay = false;
 	_isNight = false;
 	_stepped = false;

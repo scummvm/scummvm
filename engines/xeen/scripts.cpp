@@ -376,7 +376,7 @@ bool Scripts::doOpcode(MazeEvent &event) {
 	bool result = (this->*COMMAND_LIST[event._opcode])(params);
 	if (result)
 		// Move to next line
-		_lineNum = _vm->_party->_partyDead ? -1 : _lineNum + 1;
+		_lineNum = _vm->_party->_dead ? SCRIPT_ABORT : _lineNum + 1;
 
 	return result;
 }

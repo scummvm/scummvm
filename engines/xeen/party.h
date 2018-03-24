@@ -216,7 +216,6 @@ public:
 	// Other party related runtime data
 	Roster _roster;
 	Common::Array<Character> _activeParty;
-	bool _partyDead;
 	bool _newDay;
 	bool _isNight;
 	bool _stepped;
