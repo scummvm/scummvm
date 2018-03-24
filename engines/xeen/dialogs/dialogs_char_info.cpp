@@ -142,7 +142,7 @@ void CharacterInfo::execute(int charIndex) {
 		case Common::KEYCODE_RETURN:
 		case Common::KEYCODE_KP_ENTER:
 			_buttonValue = _cursorCell + Common::KEYCODE_a;
-			// Deliberate fall-through
+			// fall through
 
 		case 1001:
 		case 1002:
