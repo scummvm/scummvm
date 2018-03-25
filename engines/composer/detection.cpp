@@ -514,7 +514,6 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 	Common::String pattern = Common::String::format("%s.??", target);
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -531,6 +530,7 @@ SaveStateList ComposerMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
