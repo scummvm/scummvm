@@ -62,7 +62,7 @@ enum MagicSpell {
 
 const char *const CLOUDS_CREDITS = 
 	"\v012\t000\x3""c\f35Designed and Directed By:\n"
-	"\f17Jon Van Caneghem\x3""l\n"
+	"\f17Jon Van Caneghem\x3l\n"
 	"\n"
 	"\t025\f35Programming:\n"
 	"\t035\f17Mark Caldwell\n"
@@ -97,7 +97,7 @@ const char *const CLOUDS_CREDITS =
 
 const char *const DARK_SIDE_CREDITS =
 	"\v012\t000\x3""c\f35Designed and Directed By:\n"
-	"\f17Jon Van Caneghem\x3""l\n"
+	"\f17Jon Van Caneghem\x3l\n"
 	"\n"
 	"\t025\f35Programming:\n"
 	"\t035\f17Mark Caldwell\n"
@@ -169,10 +169,10 @@ const char *const OPTIONS_MENU =
 	"All Rights Reserved\x1";
 const char *const GAME_NAMES[3] = { "Clouds", "Darkside", "World" };
 
-const char *const THE_PARTY_NEEDS_REST = "\x0B""012The Party needs rest!";
+const char *const THE_PARTY_NEEDS_REST = "\v012The Party needs rest!";
 
-const char *const WHO_WILL = "\x03""c\x0B""000\x09""000%s\x0A\x0A"
-	"Who will\x0A%s?\x0A\x0B""055F1 - F%d";
+const char *const WHO_WILL = "\x3""c\v000\t000%s\n\n"
+	"Who will\n%s?\n\v055F1 - F%d";
 
 const char *const HOW_MUCH = "\x3""cHow Much\n\n";
 
@@ -186,9 +186,9 @@ const char *const WHATS_THE_PASSWORD = "\x3""cWhat's the Password?\n"
 const char *const PASSWORD_INCORRECT = "\x3""c\v040\n"
 	"\f32Incorrect!\fd";
 
-const char *const IN_NO_CONDITION = "\x0B""007%s is not in any condition to perform actions!";
+const char *const IN_NO_CONDITION = "\v007%s is not in any condition to perform actions!";
 
-const char *const NOTHING_HERE = "\x03""c\x0B""010Nothing here.";
+const char *const NOTHING_HERE = "\x3""c\v010Nothing here.";
 
 const char *const TERRAIN_TYPES[6] = {
 	"town", "cave", "towr", "cstl", "dung", "scfi"
@@ -873,9 +873,9 @@ const int TOWN_ACTION_FILES[2][7] = {
 	{ 3, 2, 4, 2, 4, 2, 1 }, { 5, 3, 7, 5, 4, 6, 1 }
 };
 
-const char *const BANK_TEXT = "\xD\x2\x3""c\xB""122\t013"
-	"\xC""37D\xC""dep\t040\xC""37W\xC""dith\t067ESC"
-	"\x1\t000\xB""000Bank of Xeen\xB""015\n"
+const char *const BANK_TEXT = "\r\x2\x3""c\v122\t013"
+	"\f37D\fdep\t040\f37W\fdith\t067ESC"
+	"\x1\t000\v000Bank of Xeen\v015\n"
 	"Bank\x3l\n"
 	"Gold\x3r\t000%s\x3l\n"
 	"Gems\x3r\t000%s\x3""c\n"
@@ -884,31 +884,31 @@ const char *const BANK_TEXT = "\xD\x2\x3""c\xB""122\t013"
 	"Gold\x3r\t000%s\x3l\n"
 	"Gems\x3r\t000%s";
 
-const char *const BLACKSMITH_TEXT = "\x01\x0D\x03""c\x0B""000\x09""000"
-	"Store Options for\x09""039\x0B""027%s\x03""l\x0B""046\n"
-	"\x09""011\x0C""37B\x0C""drowse\n"
-	"\x09""000\x0B""090Gold\x03r\x09""000%s"
-	"\x02\x03""c\x0B""122\x09""040ESC\x01";
+const char *const BLACKSMITH_TEXT = "\x1\r\x3""c\v000\t000"
+	"Store Options for\t039\v027%s\x3l\v046\n"
+	"\t011\f37B\fdrowse\n"
+	"\t000\v090Gold\x3r\t000%s"
+	"\x2\x3""c\v122\t040ESC\x1";
 
 const char *const GUILD_NOT_MEMBER_TEXT =
 	"\n\nYou have to be a member to shop here.";
 
-const char *const GUILD_TEXT = "\x03""c\x0B""027\x09""039%s"
-	"\x03l\x0B""046\n"
-	"\x09""012\x0C""37B\x0C""duy Spells\n"
-	"\x09""012\x0C""37S\x0C""dpell Info";
+const char *const GUILD_TEXT = "\x3""c\v027\t039%s"
+	"\x3l\v046\n"
+	"\t012\f37B\fduy Spells\n"
+	"\t012\f37S\fdpell Info";
 
 const char *const TAVERN_TEXT =
-	"\x0D\x03""c\x0B""000\x09""000Tavern Options for\x09""039"
-	"\x0B""027%s%s\x03l\x09""000"
-	"\x0B""090Gold\x03r\x09""000%s\x02\x03""c\x0B""122"
-	"\x09""021\x0C""37S\x0C""dign in\x09""060ESC\x01";
+	"\r\x3""c\v000\t000Tavern Options for\t039"
+	"\v027%s%s\x3l\t000"
+	"\v090Gold\x3r\t000%s\x2\x3""c\v122"
+	"\t021\f37S\fdign in\t060ESC\x1";
 
 const char *const FOOD_AND_DRINK =
-	"\x03l\x09""017\x0B""046\x0C""37D\x0C""drink\n"
-	"\x09""017\x0C""37F\x0C""dood\n"
-	"\x09""017\x0C""37T\x0C""dip\n"
-	"\x09""017\x0C""37R\x0C""dumors";
+	"\x3l\t017\v046\f37D\fdrink\n"
+	"\t017\f37F\fdood\n"
+	"\t017\f37T\fdip\n"
+	"\t017\f37R\fdumors";
 
 const char *const GOOD_STUFF = "\n"
 	"\n"
@@ -939,13 +939,13 @@ const int TAVERN_EXIT_LIST[2][6][5][2] = {
 };
 
 const char *const TEMPLE_TEXT =
-	"\x0D\x03""c\x0B""000\x09""000Temple Options for"
-	"\x09""039\x0B""027%s\x03l\x09""000\x0B""046"
-	"\x0C""37H\x0C""deal\x03r\x09""000%lu\x03l\n"
-	"\x0C""37D\x0C""donation\x03r\x09""000%lu\x03l\n"
-	"\x0C""37U\x0C""dnCurse\x03r\x09""000%s"
-	"\x03l\x09""000\x0B""090Gold\x03r\x09""000%s"
-	"\x02\x03""c\x0B""122\x09""040ESC\x01";
+	"\r\x3""c\v000\t000Temple Options for"
+	"\t039\v027%s\x3l\t000\v046"
+	"\f37H\fdeal\x3r\t000%lu\x3l\n"
+	"\f37D\fdonation\x3r\t000%lu\x3l\n"
+	"\f37U\fdnCurse\x3r\t000%s"
+	"\x3l\t000\v090Gold\x3r\t000%s"
+	"\x2\x3""c\v122\t040ESC\x1";
 
 const char *const EXPERIENCE_FOR_LEVEL =
 	"%s needs %lu experience for level %u.";
@@ -956,33 +956,32 @@ const char *const ELIGIBLE_FOR_LEVEL = "%s is eligible for level %u.\x3l\n"
 	"\v081Cost\x3r\t000%u";
 
 const char *const TRAINING_TEXT =
-	"\x0D\x03""cTraining Options\n"
+	"\r\x3""cTraining Options\n"
 	"\n"
-	"%s\x03l\x0B""090\x09""000Gold\x03r\x09"
-	"000%s\x02\x03""c\x0B""122\x09""021"
-	"\x0C""37T\x0C""drain\x09""060ESC\x01";
+	"%s\x3l\v090\t000Gold\x3r\t000%s\x2\x3""c\v122\t021"
+	"\f37T\fdrain\t060ESC\x1";
 
 const char *const GOLD_GEMS =
-	"\x03""c\x0B""000\x09""000%s\x03l\n"
+	"\x3""c\v000\t000%s\x3l\n"
 	"\n"
-	"Gold\x03r\x09""000%s\x03l\n"
-	"Gems\x03r\x09""000%s\x02\x03""c\x0B""096\x09""013G"
-	"\x0C""37o\x0C""dld\x09""040G\x0C\x03""7e"
-	"\x0C""dms\x09""067ESC\x01";
+	"Gold\x3r\t000%s\x3l\n"
+	"Gems\x3r\t000%s\x2\x3""c\v096\t013G"
+	"\f37o\fdld\t040G\f\x3""7e"
+	"\fdms\t067ESC\x1";
 
 const char *const GOLD_GEMS_2 =
-	"\x09""000\x0B""000\x03""c%s\x03l\n"
+	"\t000\v000\x3""c%s\x3l\n"
 	"\n"
-	"\x04""077Gold\x03r\x09""000%s\x03l\n"
-	"\x04""077Gems\x03r\x09""000%s\x03l\x09""000\x0B""051\x04""077\n"
-	"\x04""077";
+	"\x4""077Gold\x3r\t000%s\x3l\n"
+	"\x4""077Gems\x3r\t000%s\x3l\t000\v051\x4""077\n"
+	"\x4""077";
 
 const char *const DEPOSIT_WITHDRAWL[2] = { "Deposit", "Withdrawl" };
 
 const char *const NOT_ENOUGH_X_IN_THE_Y =
-	"\x03""c\x0B""012Not enough %s in the %s!\x03l";
+	"\x3""c\v012Not enough %s in the %s!\x3l";
 
-const char *const NO_X_IN_THE_Y = "\x03""c\x0B""012No %s in the %s!\x03l";
+const char *const NO_X_IN_THE_Y = "\x3""c\v012No %s in the %s!\x3l";
 
 const char *const STAT_NAMES[16] = {
 	"Might", "Intellect", "Personality", "Endurance", "Speed",
@@ -994,19 +993,19 @@ const char *const CONSUMABLE_NAMES[4] = { "Gold", "Gems", "Food", "Condition" };
 
 const char *const WHERE_NAMES[2] = { "Party", "Bank" };
 
-const char *const AMOUNT = "\x03""c\x09""000\x0B""051Amount\x03l\n";
+const char *const AMOUNT = "\x3""c\t000\v051Amount\x3l\n";
 
 const char *const FOOD_PACKS_FULL = "\v007Your food packs are already full!";
 
 const char *const BUY_SPELLS =
-	"\x03""c\x0B""027\x09""039%s\x03l\x0B""046\n"
-	"\x09""012\x0C""37B\x0C""duy Spells\n"
-	"\x09""012\x0C""37S\x0C""dpell Info";
+	"\x3""c\v027\t039%s\x3l\v046\n"
+	"\t012\f37B\fduy Spells\n"
+	"\t012\f37S\fdpell Info";
 
 const char *const GUILD_OPTIONS =
-	"\x0D\x0C""00\x03""c\x0B""000\x09""000Guild Options for%s"
-	"\x03l\x09""000\x0B""090Gold"
-	"\x03r\x09""000%s\x02\x03""c\x0B""122\x09""040ESC\x01";
+	"\r\f00\x3""c\v000\t000Guild Options for%s"
+	"\x3l\t000\v090Gold"
+	"\x3r\t000%s\x2\x3""c\v122\t040ESC\x1";
 
 const int MISC_SPELL_INDEX[74] = {
 	NO_SPELL, MS_Light, MS_Awaken, MS_MagicArrow,
@@ -1090,23 +1089,23 @@ const int SPELL_GEM_COST[77] = {
 
 const char *const NOT_A_SPELL_CASTER = "Not a spell caster...";
 
-const char *const SPELLS_FOR = "\xD\xC""d%s\x2\x3""c\x9""000\xB""002Spells for %s";
+const char *const SPELLS_FOR = "\r\fd%s\x2\x3""c\t000\v002Spells for %s";
 
 const char *const SPELL_LINES_0_TO_9 =
-	"\x2\x3l\xB""015\x9""0011\n2\n3\n4\n5\n6\n7\n8\n9\n0";
+	"\x2\x3l\v015\t0011\n2\n3\n4\n5\n6\n7\n8\n9\n0";
 
-const char *const SPELLS_DIALOG_SPELLS = "\x3l\xB""015"
-	"\x9""010\xC""%2u%s\xC""d\x3l\n"
-	"\x9""010\xC""%2u%s\xC""d\x3l\n"
-	"\x9""010\xC""%2u%s\xC""d\x3l\n"
-	"\x9""010\xC""%2u%s\xC""d\x3l\n"
-	"\x9""010\xC""%2u%s\xC""d\x3l\n"
-	"\x9""010\xC""%2u%s\xC""d\x3l\n"
-	"\x9""010\xC""%2u%s\xC""d\x3l\n"
-	"\x9""010\xC""%2u%s\xC""d\x3l\n"
-	"\x9""010\xC""%2u%s\xC""d\x3l\n"
-	"\x9""010\xC""%2u%s\xC""d\x3l"
-	"\x9""004\xB""110%s - %lu\x1";
+const char *const SPELLS_DIALOG_SPELLS = "\x3l\v015"
+	"\t010\f%2u%s\fd\x3l\n"
+	"\t010\f%2u%s\fd\x3l\n"
+	"\t010\f%2u%s\fd\x3l\n"
+	"\t010\f%2u%s\fd\x3l\n"
+	"\t010\f%2u%s\fd\x3l\n"
+	"\t010\f%2u%s\fd\x3l\n"
+	"\t010\f%2u%s\fd\x3l\n"
+	"\t010\f%2u%s\fd\x3l\n"
+	"\t010\f%2u%s\fd\x3l\n"
+	"\t010\f%2u%s\fd\x3l"
+	"\t004\v110%s - %lu\x1";
 
 const char *const SPELL_PTS = "Spell Pts";
 
@@ -1122,8 +1121,8 @@ const char *const SPELL_PURCHASE =
 	"\f09%s\fd for %u?";
 
 const char *const MAP_TEXT =
-	"\x3""c\xB""000\x9""000%s\x3l\xB""139"
-	"\x9""000X = %d\x3r\x9""000Y = %d\x3""c\x9""000%s";
+	"\x3""c\v000\t000%s\x3l\v139"
+	"\t000X = %d\x3r\t000Y = %d\x3""c\t000%s";
 
 const char *const LIGHT_COUNT_TEXT = "\x3l\n\n\t024Light\x3r\t124%d";
 
@@ -1142,13 +1141,13 @@ const char *const LEVITATE_TEXT = "%c%sLevitate%s";
 const char *const WALK_ON_WATER_TEXT = "%c%sWalk on Water";
 
 const char *const GAME_INFORMATION =
-	"\xD\x3""c\x9""000\xB""001\xC""37%s of Xeen\xC""d\n"
+	"\r\x3""c\t000\v001\f37%s of Xeen\fd\n"
 	"Game Information\n"
 	"\n"
-	"Today is \xC""37%ssday\xC""d\n"
+	"Today is \f37%ssday\fd\n"
 	"\n"
-	"\x9""032Time\x9""072Day\x9""112Year\n"
-	"\x9""032\xC""37%d:%02d%c\x9""072%u\x9""112%u\xC""d%s";
+	"\t032Time\t072Day\t112Year\n"
+	"\t032\f37%d:%02d%c\t072%u\t112%u\fd%s";
 
 const char *const WORLD_GAME_TEXT = "World";
 const char *const DARKSIDE_GAME_TEXT = "Darkside";
@@ -1160,41 +1159,41 @@ const char *const WEEK_DAY_STRINGS[10] = {
 };
 
 const char *const CHARACTER_DETAILS =
-	"\x3l\xB""041\x9""196%s\x9""000\xB""002%s : %s %s %s"
-	"\x3r\x9""053\xB""028\xC%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
-	"\x3l\x9""131\xC""%02u%d\xC""d\x9""196\xC""15%lu\xC""d\x3r"
-	"\x9""053\xB""051\xC""%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
-	"\x3l\x9""131\xC""%02u%u\xC""d\x9""196\xC""15%lu\xC""d"
-	"\x3r\x9""053\xB""074\xC""%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
-	"\x3l\x9""131\xC""15%u\xC""d\x9""196\xC""15%lu\xC""d"
-	"\x3r\x9""053\xB""097\xC""%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
-	"\x3l\x9""131\xC""15%u\xC""d\x9""196\xC""15%u day%c\xC""d"
-	"\x3r\x9""053\xB""120\xC""%02u%u\xC""d\x9""103\xC""%02u%u\xC""d"
-	"\x3l\x9""131\xC""15%u\xC""d\x9""196\xC""%02u%s\xC""d"
-	"\x9""230%s%s%s%s\xC""d";
+	"\x3l\v041\t196%s\t000\v002%s : %s %s %s"
+	"\x3r\t053\v028\f%02u%u\fd\t103\f%02u%u\fd"
+	"\x3l\t131\f%02u%d\fd\t196\f15%lu\fd\x3r"
+	"\t053\v051\f%02u%u\fd\t103\f%02u%u\fd"
+	"\x3l\t131\f%02u%u\fd\t196\f15%lu\fd"
+	"\x3r\t053\v074\f%02u%u\fd\t103\f%02u%u\fd"
+	"\x3l\t131\f15%u\fd\t196\f15%lu\fd"
+	"\x3r\t053\v097\f%02u%u\fd\t103\f%02u%u\fd"
+	"\x3l\t131\f15%u\fd\t196\f15%u day%c\fd"
+	"\x3r\t053\v120\f%02u%u\fd\t103\f%02u%u\fd"
+	"\x3l\t131\f15%u\fd\t196\f%02u%s\fd"
+	"\t230%s%s%s%s\fd";
 
 const char *const PARTY_GOLD = "Party Gold";
 
 const char *const PLUS_14 = "14+";
 
 const char *const CHARACTER_TEMPLATE =
-	"\x1\xC""00\xD\x3l\x9""029\xB""018Mgt\x9""080Acy\x9""131H.P.\x9""196Experience"
-	"\x9""029\xB""041Int\x9""080Lck\x9""131S.P.\x9""029\xB""064Per\x9""080Age"
-	"\x9""131Resis\x9""196Party Gems\x9""029\xB""087End\x9""080Lvl\x9""131Skills"
-	"\x9""196Party Food\x9""029\xB""110Spd\x9""080AC\x9""131Awrds\x9""196Condition\x3""c"
-	"\x9""290\xB""025\xC""37I\xC""dtem\x9""290\xB""057\xC""37Q"
-	"\xC""duick\x9""290\xB""089\xC""37E\xC""dxch\x9""290\xB""121Exit\x3l%s";
+	"\x1\f00\r\x3l\t029\v018Mgt\t080Acy\t131H.P.\t196Experience"
+	"\t029\v041Int\t080Lck\t131S.P.\t029\v064Per\t080Age"
+	"\t131Resis\t196Party Gems\t029\v087End\t080Lvl\t131Skills"
+	"\t196Party Food\t029\v110Spd\t080AC\t131Awrds\t196Condition\x3""c"
+	"\t290\v025\f37I\fdtem\t290\v057\f37Q"
+	"\fduick\t290\v089\f37E\fdxch\t290\v121Exit\x3l%s";
 
-const char *const EXCHANGING_IN_COMBAT = "\x3""c\xB""007\x9""000Exchanging in combat is not allowed!";
+const char *const EXCHANGING_IN_COMBAT = "\x3""c\v007\t000Exchanging in combat is not allowed!";
 
 const char *const CURRENT_MAXIMUM_RATING_TEXT = "\x2\x3""c%s\n"
 	"Current / Maximum\n"
-	"\x3r\x9""054%lu\x3l\x9""058/ %lu\n"
+	"\x3r\t054%lu\x3l\t058/ %lu\n"
 	"\x3""cRating: %s";
 
 const char *const CURRENT_MAXIMUM_TEXT = "\x2\x3""c%s\n"
 	"Current / Maximum\n"
-	"\x3r\x9""054%u\x3l\x9""058/ %u";
+	"\x3r\t054%u\x3l\t058/ %u";
 
 const char *const RATING_TEXT[24] = {
 	"Nonexistant", "Very Poor", "Poor", "Very Low", "Low", "Averarage", "Good",
@@ -1205,31 +1204,31 @@ const char *const RATING_TEXT[24] = {
 
 const char *const AGE_TEXT = "\x2\x3""c%s\n"
 	"Current / Natural\n"
-	"\x3r\x9""057%u\x3l\x9""061/ %u\n"
+	"\x3r\t057%u\x3l\t061/ %u\n"
 	"\x3""cBorn: %u / %u\x1";
 
 const char *const LEVEL_TEXT =
 	"\x2\x3""c%s\n"
 	"Current / Maximum\n"
-	"\x3r\x9""054%u\x3l\x9""058/ %u\n"
+	"\x3r\t054%u\x3l\t058/ %u\n"
 	"\x3""c%u Attack%s/Round\x1";
 
 const char *const RESISTENCES_TEXT =
 	"\x2\x3""c%s\x3l\n"
-	"\x9""020Fire\x9""100%u\n"
-	"\x9""020Cold\x9""100%u\n"
-	"\x9""020Electricity\x9""100%u\n"
-	"\x9""020Poison\x9""100%u\n"
-	"\x9""020Energy\x9""100%u\n"
-	"\x9""020Magic\x9""100%u";
+	"\t020Fire\t100%u\n"
+	"\t020Cold\t100%u\n"
+	"\t020Electricity\t100%u\n"
+	"\t020Poison\t100%u\n"
+	"\t020Energy\t100%u\n"
+	"\t020Magic\t100%u";
 
-const char *const NONE = "\n\x9""020";
+const char *const NONE = "\n\t020";
 
 const char *const EXPERIENCE_TEXT = "\x2\x3""c%s\x3l\n"
-	"\x9""010Current:\x9""070%lu\n"
-	"\x9""010Next Level:\x9""070%s\x1";
+	"\t010Current:\t070%lu\n"
+	"\t010Next Level:\t070%s\x1";
 
-const char *const ELIGIBLE = "\xC""12Eligible\xC""d";
+const char *const ELIGIBLE = "\f12Eligible\fd";
 
 const char *const IN_PARTY_IN_BANK =
 	"\x2\x3""cParty %s\n"
@@ -1244,17 +1243,17 @@ const char *const FOOD_TEXT =
 const char *const EXCHANGE_WITH_WHOM = "\t010\v005Exchange with whom?";
 
 const char *const QUICK_REF_LINE =
-	"\xB%3d\x9""007%u)\x9""027%s\x9""110%c%c%c\x3r\x9""160\xC%02u%u\xC""d"
-	"\x3l\x9""170\xC%02u%d\xC""d\x9""208\xC%02u%u\xC""d\x9""247\xC"
-	"%02u%u\xC""d\x9""270\xC%02u%c%c%c%c\xC""d";
+	"\v%3d\t007%u)\t027%s\t110%c%c%c\x3r\t160\f%02u%u\fd"
+	"\x3l\t170\f%02u%d\fd\t208\f%02u%u\fd\t247\f"
+	"%02u%u\fd\t270\f%02u%c%c%c%c\fd";
 
 const char *const QUICK_REFERENCE =
-	"\xD\x3""cQuick Reference Chart\xB""012\x3l"
-	"\x9""007#\x9""027Name\x9""110Cls\x9""140Lvl\x9""176H.P."
-	"\x9""212S.P.\x9""241A.C.\x9""270Cond"
+	"\r\x3""cQuick Reference Chart\v012\x3l"
+	"\t007#\t027Name\t110Cls\t140Lvl\t176H.P."
+	"\t212S.P.\t241A.C.\t270Cond"
 	"%s%s%s%s%s%s%s%s"
-	"\xB""110\x9""064\x3""cGold\x9""144Gems\x9""224Food\xB""119"
-	"\x9""064\xC""15%lu\x9""144%lu\x9""224%u day%s\xC""d";
+	"\v110\t064\x3""cGold\t144Gems\t224Food\v119"
+	"\t064\f15%lu\t144%lu\t224%u day%s\fd";
 
 const int BLACKSMITH_MAP_IDS[2][4] = { { 28, 30, 73, 49 }, { 29, 31, 37, 43 } };
 
@@ -1468,7 +1467,7 @@ const char *const X_FOR_THE_Y =
 	"\x1\fd\r%s\v000\t000%s for %s the %s%s\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
 const char *const X_FOR_Y =
-	"\x1\xC""d\r\x3l\v000\t000%s for %s\x3r\t000%s\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\xC""d";
+	"\x1\fd\r\x3l\v000\t000%s for %s\x3r\t000%s\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
 const char *const X_FOR_Y_GOLD =
 	"\x1\fd\r\x3l\v000\t000%s for %s\t150Gold - %lu%s\x3l\v011"
@@ -1478,7 +1477,7 @@ const char *const FMT_CHARGES = "\x3rr\t000Charges\x3l";
 
 const char *const AVAILABLE_GOLD_COST =
 	"\x1\fd\r\x3l\v000\t000Available %s\t150Gold - %lu\x3r\t000Cost"
-	"\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\xC""d";
+	"\x3l\v011\x2%s%s%s%s%s%s%s%s%s\x1\fd";
 
 const char *const CHARGES = "Charges";
 
@@ -1500,7 +1499,7 @@ const char *const NO_SPECIAL_ABILITIES = "\v005\x3""c%s\fdhas no special abiliti
 const char *const CANT_CAST_WHILE_ENGAGED = "\x3""c\v007Can't cast %s while engaged!";
 
 const char *const EQUIPPED_ALL_YOU_CAN = "\x3""c\v007You have equipped all the %ss you can!";
-const char *const REMOVE_X_TO_EQUIP_Y = "\x3""c\v007You must remove %sto equip %s\x8!";
+const char *const REMOVE_X_TO_EQUIP_Y = "\x3""c\v007You must remove %sto equip %s\b!";
 const char *const RING = "ring";
 const char *const MEDAL = "medal";
 
@@ -1508,7 +1507,7 @@ const char *const CANNOT_REMOVE_CURSED_ITEM = "\x3""You cannot remove a cursed i
 
 const char *const CANNOT_DISCARD_CURSED_ITEM = "\3x""cYou cannot discard a cursed item!";
 
-const char *const PERMANENTLY_DISCARD = "\v000\t000\x03lPermanently discard %s\fd?";
+const char *const PERMANENTLY_DISCARD = "\v000\t000\x3lPermanently discard %s\fd?";
 
 const char *const BACKPACK_IS_FULL = "\v005\x3""c\fd%s's backpack is full.";
 
@@ -1702,7 +1701,7 @@ const char *const BACKPACKS_FULL_PRESS_KEY =
 	"\v007\f12Warning!  BackPacks Full!\fd\n"
 	"Press a Key";
 
-const char *const HIT_A_KEY = "\x3l\v120\t000\x4""077\x3""c\f37Hit a key\xC""d";
+const char *const HIT_A_KEY = "\x3l\v120\t000\x4""077\x3""c\f37Hit a key\fd";
 
 const char *const GIVE_TREASURE_FORMATTING =
 	"\x3l\v060\t000\x4""077\n"
@@ -1770,14 +1769,14 @@ const char *const EVENT_SAMPLES[6] = {
 };
 
 const char *const MOONS_NOT_ALIGNED =
-"\x3""c\xB""012\t000The moons are not aligned. Passage to the %s is unavailable";
+"\x3""c\v012\t000The moons are not aligned. Passage to the %s is unavailable";
 
 const char *const AWARDS_FOR =
-	"\r\x1\fd\x3""c\v000\t000Awards for %s the %s\x3""l\x2\n"
+	"\r\x1\fd\x3""c\v000\t000Awards for %s the %s\x3l\x2\n"
 	"%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\x1";
 
 const char *const AWARDS_TEXT =
-	"\r\x2\x3""c\xB""021\t221\xC""37U\xC""dp\t255\xC""37D\xC""down\t289Exit";
+	"\r\x2\x3""c\v021\t221\f37U\fdp\t255\f37D\fdown\t289Exit";
 
 const char *const NO_AWARDS = "\x3""cNo Awards";
 
@@ -1789,22 +1788,22 @@ const char *const WARZONE_LEVEL = "What level of monsters? (1-10)\n";
 
 const char *const WARZONE_HOW_MANY = "How many monsters? (1-20)\n";
 
-const char *const PICKS_THE_LOCK = "\x3""c\xB""010%s picks the lock!\nPress any key.";
+const char *const PICKS_THE_LOCK = "\x3""c\v010%s picks the lock!\nPress any key.";
 
 const char *const UNABLE_TO_PICK_LOCK = "\x3""c\v010%s was unable to pick the lock!\nPress any key.";
 
 const char *const CONTROL_PANEL_TEXT =
-	"\x1\xC""00\x3""c\xB""000\t000Control Panel\x3r"
-	"\xB""022\t045\xC""06L\xC""doad:\t124\xC""06E\xC""dfx:"
-	"\xB""041\t045\xC""06S\xC""dave:\t124\xC""06M\xC""dusic:"
-	"\xB""060\t045\xC""06Q\xC""duit:"
-	"\xB""080\t084Mr \xC""06W\xC""dizard:%s\t000\x1";
+	"\x1\f00\x3""c\v000\t000Control Panel\x3r"
+	"\v022\t045\f06L\fdoad:\t124\f06E\fdfx:"
+	"\v041\t045\f06S\fdave:\t124\f06M\fdusic:"
+	"\v060\t045\f06Q\fduit:"
+	"\v080\t084Mr \f06W\fdizard:%s\t000\x1";
 const char *const CONTROL_PANEL_BUTTONS =
 	"\x3""c\f11"
-	"\xB""022\t062load\t141%s"
-	"\xB""041\t062save\t141%s"
-	"\xB""060\t062exit"
-	"\xB""079\t102Help\xC""d";
+	"\v022\t062load\t141%s"
+	"\v041\t062save\t141%s"
+	"\v060\t062exit"
+	"\v079\t102Help\fd";
 const char *const ON = "\f15on\f11";
 const char *const OFF = "\f32off\f11";
 const char *const CONFIRM_QUIT = "Are you sure you want to quit?";
@@ -1827,11 +1826,11 @@ const char *const WORLD_END_TEXT[9] = {
 	"And so the call went out to the people throughout the lands of Xeen"
 	" that the prophecy was nearing completion.",
 	"They came in great numbers to witness the momentous occasion.",
-	"\xB""026The Dragon Pharoah presided over the ceremony.",
-	"\xB""026Queen Kalindra presented the Cube of Power.",
-	"\xB""026Prince Roland presented the Xeen Sceptre.",
-	"\xB""026Together, they placed the Cube of Power...",
-	"\xB""026and the Sceptre, onto the Altar of Joining.",
+	"\v026The Dragon Pharoah presided over the ceremony.",
+	"\v026Queen Kalindra presented the Cube of Power.",
+	"\v026Prince Roland presented the Xeen Sceptre.",
+	"\v026Together, they placed the Cube of Power...",
+	"\v026and the Sceptre, onto the Altar of Joining.",
 	"With the prophecy complete, the two sides of Xeen were united as one",
 };
 
@@ -1854,17 +1853,17 @@ const char *const WORLD_CONGRATULATIONS2 =
 	"\"%s\"\n"
 	"with your final score and receive a special bonus.";
 const char *const CLOUDS_CONGRATULATIONS1 =
-	"\xC""23\x3l"
-	"\xB""000\t000Please send this score to the Ancient's Headquarters "
-	"where you'll be added to the Hall of Legends!\xC""33\x3""c"
-	"\xB""070\t000Press a Key";
+	"\f23\x3l"
+	"\v000\t000Please send this score to the Ancient's Headquarters "
+	"where you'll be added to the Hall of Legends!\f33\x3""c"
+	"\v070\t000Press a Key";
 const char *const CLOUDS_CONGRATULATIONS2 =
-	"\xC""23\x3l"
-	"\xB""000\t000Ancient's Headquarters\n"
+	"\f23\x3l"
+	"\v000\t000Ancient's Headquarters\n"
 	"New World Computing, Inc.\n"
 	"P.O. Box 4302\n"
-	"Hollywood, CA 90078-4302\xC""33\x3""c"
-	"\xB""070\t000Press a Key";
+	"Hollywood, CA 90078-4302\f33\x3""c"
+	"\v070\t000Press a Key";
 const char *const GOOBER[3] = {
 	"", "I am a Goober!", "I am a Super Goober!"
 };
