@@ -327,7 +327,7 @@ void Screen::renderText(StringId stringId, int x, int y, byte color) {
 	renderText(_vm->getGameString(stringId), x, y, color);
 }
 
-void Screen::renderImageSection(int section) {
+void Screen::renderImageSection(const MSNImage *image, int section) {
 	// Note: inverting means we are removing the section. So we should get the rect for that
 	// section but draw the background (section 0) instead.
 	bool invert = false;
@@ -335,14 +335,14 @@ void Screen::renderImageSection(int section) {
 		section -= 128;
 		invert = true;
 	}
-	if (!_currentImage || section > _currentImage->_numSections - 1)
+	if (section > image->_numSections - 1)
 		return;
 
-	Common::Rect sectionRect(_currentImage->_section[section].x1,
-							 _currentImage->_section[section].y1,
-							 _currentImage->_section[section].x2 + 1,
-							 _currentImage->_section[section].y2 + 1) ;
-	if (_currentImage->_filenumber == 1 || _currentImage->_filenumber == 2) {
+	Common::Rect sectionRect(image->_section[section].x1,
+							 image->_section[section].y1,
+							 image->_section[section].x2 + 1,
+							 image->_section[section].y2 + 1) ;
+	if (image->_filenumber == 1 || image->_filenumber == 2) {
 		sectionRect.setWidth(640);
 		sectionRect.setHeight(480);
 		if (_screenWidth != 640) {
@@ -361,20 +361,35 @@ void Screen::renderImageSection(int section) {
 	uint offset = 0;
 	int pitch = sectionRect.width();
 	if (invert) {
-		pitch = _currentImage->_pitch;
-		offset = _currentImage->_section[section].y1 * pitch +
-				 _currentImage->_section[section].x1;
+		pitch = image->_pitch;
+		offset = image->_section[section].y1 * pitch +
+				 image->_section[section].x1;
 		section = 0;
 	}
 
-	void *pixels = _currentImage->_sectionSurfaces[section]->getPixels();
+	void *pixels = image->_sectionSurfaces[section]->getPixels();
 	_vm->_system->copyRectToScreen(static_cast<const byte *>(pixels) + offset,
 								   pitch, sectionRect.left, sectionRect.top,
 								   sectionRect.width(), sectionRect.height());
 }
 
-void Screen::renderImage(ImageId id) {
-	// TODO: include staticscreen.cpp and render section of filenumber
+void Screen::renderImage(ImageId id, bool removeImage) {
+	ImageInfo info = imageInfo[id];
+	const MSNImage *image = _resMan->getImage(info.filenumber);
+
+	if (_currentImage != image) {
+		_currentImage = image;
+		_vm->_system->getPaletteManager()->setPalette(image->getPalette(), 16, 239);
+	}
+
+	do {
+		if (removeImage)
+			renderImageSection(image, info.section + 128);
+		else
+			renderImageSection(image, info.section);
+
+		info.section = image->_section[info.section].next;
+	} while (info.section != 0);
 }
 
 void Screen::renderImage(int section) {
@@ -392,9 +407,9 @@ void Screen::renderImage(int section) {
 
 	do {
 		if (sectionVisible)
-			renderImageSection(section);
+			renderImageSection(_currentImage, section);
 		else
-			renderImageSection(section + 128);
+			renderImageSection(_currentImage, section + 128);
 		section = _currentImage->_section[section].next;
 	} while (section != 0);
 }
@@ -428,7 +443,7 @@ void Screen::renderRoom(Room &room) {
 			int section = i;
 			if (room.isSectionVisible(section)) {
 				do {
-					renderImageSection(section);
+					renderImageSection(_currentImage, section);
 					section = _currentImage->_section[section].next;
 				} while (section != 0);
 			}
