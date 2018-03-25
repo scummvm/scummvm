@@ -118,7 +118,7 @@ public:
 	void paletteFadeIn();
 	void paletteFadeOut();
 	void paletteBrightness();
-	void renderImage(ImageID id);
+	void renderImage(ImageId id);
 	void renderImage(int section);
 	void renderImageSection(int section);
 	bool setCurrentImage(int filenumber);
@@ -128,17 +128,17 @@ public:
 	void renderRoom(Room &room);
 	void renderMessage(const char *text, MessagePosition position = kMessageNormal);
 	void renderMessage(const Common::String &text, MessagePosition position = kMessageNormal);
-	void renderMessage(StringID stringId, MessagePosition position = kMessageNormal,
+	void renderMessage(StringId stringId, MessagePosition position = kMessageNormal,
 					   Common::String var1 = "", Common::String var2 = "");
 	void removeMessage();
 	void renderText(const uint16 character);
 	void renderText(const char *text);
 	void renderText(const Common::String &text);
-	void renderText(StringID stringId);
+	void renderText(StringId stringId);
 	void renderText(const uint16 character, int x, int y, byte color);
 	void renderText(const char *text, int x, int y, byte color);
 	void renderText(const Common::String &text, int x, int y, byte color);
-	void renderText(StringID stringId, int x, int y, byte color);
+	void renderText(StringId stringId, int x, int y, byte color);
 	void renderText(const GuiElement &guiElement);
 	void renderBox(int x, int y, int width, int height, byte color);
 	void renderBox(const GuiElement &guiElement);

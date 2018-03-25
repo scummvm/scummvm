@@ -80,15 +80,15 @@ bool Room::deserialize(Common::ReadStream *in, int version) {
 
 	int numObjects = in->readSint32LE();
 	for (int i = 0; i < numObjects; ++i) {
-		_objectState[i]._name = static_cast<StringID>(in->readSint32LE());
-		_objectState[i]._description = static_cast<StringID>(in->readSint32LE());
+		_objectState[i]._name = static_cast<StringId>(in->readSint32LE());
+		_objectState[i]._description = static_cast<StringId>(in->readSint32LE());
 		_objectState[i]._roomId = in->readByte();
-		_objectState[i]._id = static_cast<ObjectID>(in->readSint32LE());
+		_objectState[i]._id = static_cast<ObjectId>(in->readSint32LE());
 		_objectState[i]._type = static_cast<ObjectType>(in->readSint32LE());
 		_objectState[i]._click = in->readByte();
 		_objectState[i]._click2 = in->readByte();
 		_objectState[i]._section = in->readByte();
-		_objectState[i]._exitRoom = static_cast<RoomID>(in->readSint32LE());
+		_objectState[i]._exitRoom = static_cast<RoomId>(in->readSint32LE());
 		_objectState[i]._direction = in->readByte();
 	}
 
@@ -229,7 +229,7 @@ bool Intro::animate(int section1, int section2, int duration) {
 }
 
 bool Intro::animate(int section1, int section2, int duration,
-					MessagePosition position, StringID textId) {
+					MessagePosition position, StringId textId) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
 	const Common::String& text = _vm->getGameString(textId);
 	_vm->renderMessage(text, position);
@@ -254,7 +254,7 @@ bool Intro::animate(int section1, int section2, int duration,
 }
 
 bool Intro::animate(int section1, int section2, int section3, int section4,
-					int duration, MessagePosition position, StringID textId) {
+					int duration, MessagePosition position, StringId textId) {
 	Common::KeyCode key = Common::KEYCODE_INVALID;
 	const Common::String& text = _vm->getGameString(textId);
 	_vm->renderMessage(text, position);
@@ -333,7 +333,7 @@ void Intro::cutscene() {
 	exitOnEscape(28);
 	_vm->removeMessage();
 
-	StringID textCounting[4] =
+	StringId textCounting[4] =
 	{kStringIntroCutscene7, kStringIntroCutscene8, kStringIntroCutscene9, kStringIntroCutscene10};
 	_vm->setCurrentImage(31);
 	_vm->renderImage(0);

@@ -27,6 +27,7 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
+#include "supernova/imageid.h"
 #include "supernova/resman.h"
 #include "supernova/state.h"
 #include "supernova/screen.h"
@@ -228,7 +229,7 @@ void Screen::setTextCursorColor(byte color) {
 	_textColor = color;
 }
 
-void Screen::renderMessage(StringID stringId, MessagePosition position,
+void Screen::renderMessage(StringId stringId, MessagePosition position,
 						   Common::String var1, Common::String var2) {
 	Common::String text = _vm->getGameString(stringId);
 
@@ -258,7 +259,7 @@ void Screen::renderText(const char *text) {
 	renderText(text, _textCursorX, _textCursorY, _textColor);
 }
 
-void Screen::renderText(StringID stringId) {
+void Screen::renderText(StringId stringId) {
 	renderText(_vm->getGameString(stringId));
 }
 
@@ -322,7 +323,7 @@ void Screen::renderText(const Common::String &text, int x, int y, byte color) {
 		renderText(text.c_str(), x, y, color);
 }
 
-void Screen::renderText(StringID stringId, int x, int y, byte color) {
+void Screen::renderText(StringId stringId, int x, int y, byte color) {
 	renderText(_vm->getGameString(stringId), x, y, color);
 }
 
@@ -372,7 +373,7 @@ void Screen::renderImageSection(int section) {
 								   sectionRect.width(), sectionRect.height());
 }
 
-void Screen::renderImage(ImageID id) {
+void Screen::renderImage(ImageId id) {
 	// TODO: include staticscreen.cpp and render section of filenumber
 }
 

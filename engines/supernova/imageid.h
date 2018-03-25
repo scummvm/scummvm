@@ -25,7 +25,7 @@
 
 namespace Supernova {
 
-enum ImageID {
+enum ImageId {
 	// file 0
 	kAxacussanShipBackground,
 	kAxacussanShipCenterMouthOpen,
