@@ -36,9 +36,7 @@ SceneObjects::SceneObjects(BladeRunnerEngine *vm, View *view) {
 
 	_count = 0;
 
-	for (int i = 0; i < kSceneObjectCount; ++i) {
-		_sceneObjectsSortedByDistance[i] = -1;
-	}
+	clear();
 }
 
 SceneObjects::~SceneObjects() {
