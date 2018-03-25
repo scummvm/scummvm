@@ -424,7 +424,6 @@ const Graphics::Surface *CinepakDecoder::decodeFrame(Common::SeekableReadStream 
 		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat);
 	}
 
-	// Reset the y variable.
 	_y = 0;
 
 	for (uint16 i = 0; i < _curFrame.stripCount; i++) {
