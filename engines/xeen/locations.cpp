@@ -342,6 +342,7 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 	Party &party = *g_vm->_party;
 	Sound &sound = *g_vm->_sound;
 	Windows &windows = *g_vm->_windows;
+	Window &w = windows[35];
 	int gold, gems;
 
 	if (whereId == WHERE_BANK) {
@@ -363,26 +364,24 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 		XeenEngine::printMil(gold).c_str(),
 		XeenEngine::printMil(gems).c_str());
 
-	windows[35].open();
-	windows[35].writeString(msg);
-	drawButtons(&windows[35]);
-	windows[35].update();
+	w.open();
+	w.writeString(msg);
+	drawButtons(&w);
+	w.update();
 
 	sound.stopSound();
 	File voc("coina.voc");
 	ConsumableType consType = CONS_GOLD;
 
 	do {
-		switch (wait()) {
-		case Common::KEYCODE_o:
+		wait();
+		if (_buttonValue == Common::KEYCODE_o) {
 			consType = CONS_GOLD;
-			break;
-		case Common::KEYCODE_e:
+		} else if (_buttonValue == Common::KEYCODE_e) {
 			consType = CONS_GEMS;
+		} else if (_buttonValue == Common::KEYCODE_ESCAPE) {
 			break;
-		case Common::KEYCODE_ESCAPE:
-			break;
-		default:
+		} else {
 			continue;
 		}
 
@@ -392,7 +391,7 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 			(whereId == WHERE_PARTY && !party._gold && consType == CONS_GOLD)) {
 			party.notEnough(consType, whereId, WHERE_BANK, WT_LOC_WAIT);
 		} else {
-			windows[35].writeString(Res.AMOUNT);
+			w.writeString(Res.AMOUNT);
 			int amount = NumericInput::show(_vm, 35, 10, 77);
 
 			if (amount) {
@@ -426,16 +425,19 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 			sound.playSound(voc);
 			msg = Common::String::format(Res.GOLD_GEMS_2, Res.DEPOSIT_WITHDRAWL[whereId],
 				XeenEngine::printMil(gold).c_str(), XeenEngine::printMil(gems).c_str());
-			windows[35].writeString(msg);
-			windows[35].update();
+			w.writeString(msg);
+			w.update();
 		}
-	} while (!g_vm->shouldExit() && _buttonValue != Common::KEYCODE_ESCAPE);
+	} while (!g_vm->shouldExit());
 
 	for (uint idx = 0; idx < _buttons.size(); ++idx)
 		_buttons[idx]._sprites = &_icons1;
 	_buttons[0]._value = Common::KEYCODE_d;
 	_buttons[1]._value = Common::KEYCODE_w;
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
+
+	w.close();
+	clearEvents();
 }
 
 /*------------------------------------------------------------------------*/
