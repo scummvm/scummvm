@@ -36,8 +36,28 @@ Scores::Scores(BladeRunnerEngine *vm) {
 Scores::~Scores() {
 }
 
+void Scores::open() {
+}
+
 bool Scores::isOpen() const {
 	return _isOpen;
+}
+
+void Scores::set(int index, int value) {
+	if (value > _scores[index]) {
+		_scores[index] = value;
+	}
+
+	_lastScoreId = index;
+	_lastScoreValue = value;
+}
+
+int Scores::handleMouseUp(int x, int y) {
+	return false;
+}
+
+int Scores::handleMouseDown(int x, int y) {
+	return false;
 }
 
 void Scores::tick() {

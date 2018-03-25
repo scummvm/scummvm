@@ -49,7 +49,15 @@ public:
 	Scores(BladeRunnerEngine *vm);
 	~Scores();
 
+	void open();
 	bool isOpen() const;
+
+	int query(int index) { return _scores[index]; }
+	void set(int index, int value);
+
+	int handleMouseUp(int x, int y);
+	int handleMouseDown(int x, int y);
+
 	void tick();
 	void reset();
 	void save(SaveFileWriteStream &f);

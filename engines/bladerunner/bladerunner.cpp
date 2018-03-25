@@ -1095,6 +1095,15 @@ void BladeRunnerEngine::handleMouseAction(int x, int y, bool mainButton, bool bu
 		return;
 	}
 
+	if (_scores->isOpen()) {
+		if (buttonDown) {
+			_scores->handleMouseDown(x, y);
+		} else {
+			_scores->handleMouseUp(x, y);
+		}
+		return;
+	}
+
 	if (_dialogueMenu->waitingForInput()) {
 		if (mainButton && !buttonDown) {
 			_dialogueMenu->mouseUp();

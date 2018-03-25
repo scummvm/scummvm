@@ -53,6 +53,7 @@
 #include "bladerunner/ui/elevator.h"
 #include "bladerunner/ui/esper.h"
 #include "bladerunner/ui/kia.h"
+#include "bladerunner/ui/scores.h"
 #include "bladerunner/ui/spinner.h"
 #include "bladerunner/ui/vk.h"
 #include "bladerunner/vector.h"
@@ -1211,18 +1212,15 @@ int ScriptBase::Elevator_Activate(int elevatorId) {
 }
 
 void ScriptBase::View_Score_Board() {
-	//TODO
-	warning("View_Score_Board()");
+	_vm->_scores->open();
 }
 
-int ScriptBase::Query_Score(int a0) {
-	warning("Query_Score(%d)", a0);
-
-	return 0;
+int ScriptBase::Query_Score(int index) {
+	return _vm->_scores->query(index);
 }
 
-void ScriptBase::Set_Score(int a0, int a1) {
-	warning("Set_Score(%d, %d)", a0, a1);
+void ScriptBase::Set_Score(int index, int value) {
+	_vm->_scores->set(index, value);
 }
 
 void ScriptBase::Give_McCoy_Ammo(int ammoType, int ammo) {
