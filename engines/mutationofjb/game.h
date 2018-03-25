@@ -37,6 +37,8 @@ class MutationOfJBEngine;
 class GameData;
 class Script;
 class Room;
+class Door;
+class Static;
 
 class Game {
 public:
@@ -48,6 +50,10 @@ public:
 
 	void changeScene(uint8 sceneId, bool partB);
 	Script *changeSceneDelayScript(uint8 sceneId, bool partB);
+
+	Door *findDoor(int16 x, int16 y);
+	Static *findStatic(int16 x, int16 y);
+	bool startActionSection(ActionInfo::Action action, const Common::String &entity1Name, const Common::String &entity2Name = Common::String());
 
 	void update();
 

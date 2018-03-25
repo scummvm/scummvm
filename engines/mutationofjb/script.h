@@ -48,15 +48,16 @@ typedef Common::Array<Command *> Commands;
 
 struct ActionInfo {
 	enum Action {
+		Look,
 		Walk,
 		Talk,
-		Look,
-		Use
+		Use,
+		PickUp
 	};
 
 	Action _action;
-	Common::String _object1Name;
-	Common::String _object2Name;
+	Common::String _entity1Name;
+	Common::String _entity2Name;
 	bool _walkTo;
 	Command *_command;
 };
@@ -125,10 +126,7 @@ public:
 	bool loadFromStream(Common::SeekableReadStream &stream);
 	~Script();
 
-	const ActionInfos &getLookActionInfos() const;
-	const ActionInfos &getWalkActionInfos() const;
-	const ActionInfos &getTalkActionInfos() const;
-	const ActionInfos &getUseActionInfos() const;
+	const ActionInfos &getActionInfos(ActionInfo::Action action);
 	const Commands &getAllCommands() const;
 	const Macros &getMacros() const;
 	const Startups &getStartups() const;
@@ -138,10 +136,7 @@ public:
 private:
 	void destroy();
 	Commands _allCommands;
-	ActionInfos _lookActionInfos;
-	ActionInfos _walkActionInfos;
-	ActionInfos _talkActionInfos;
-	ActionInfos _useActionInfos;
+	ActionInfos _actionInfos[5];
 	Macros _macros;
 	Startups _startups;
 };

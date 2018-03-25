@@ -22,6 +22,7 @@
 
 #include "mutationofjb/debug.h"
 #include "mutationofjb/game.h"
+#include "mutationofjb/gamedata.h"
 #include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/commands/command.h"
@@ -63,6 +64,9 @@ Console::Console(MutationOfJBEngine *vm) : _vm(vm) {
 	registerCmd("liststartups", WRAP_METHOD(Console, cmd_liststartups));
 	registerCmd("showstartup", WRAP_METHOD(Console, cmd_showstartup));
 	registerCmd("changescene", WRAP_METHOD(Console, cmd_changescene));
+	registerCmd("dumpsceneinfo", WRAP_METHOD(Console, cmd_dumpsceneinfo));
+	registerCmd("dumpobjectinfo", WRAP_METHOD(Console, cmd_dumpobjectinfo));
+	registerCmd("dumpstaticinfo", WRAP_METHOD(Console, cmd_dumpstaticinfo));
 }
 
 bool Console::cmd_showallcommands(int argc, const char **argv) {
@@ -86,40 +90,40 @@ bool Console::cmd_listsections(int argc, const char **argv) {
 	if (argc == 3) {
 		Script *const script = getScriptFromArg(argv[1]);
 		if (script) {
+			ActionInfo::Action action;
+			const char *word = nullptr;
 			if (strcmp(argv[2], "L") == 0) {
-				const ActionInfos &actionInfos = script->getLookActionInfos();
-				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
-					const ActionInfo &actionInfo = *it;
-					debugPrintf(_("Look %s\n"), convertToASCII(actionInfo._object1Name).c_str());
-				}
+				action = ActionInfo::Look;
+				word = _("Look");
 			} else if (strcmp(argv[2], "W") == 0) {
-				const ActionInfos &actionInfos = script->getWalkActionInfos();
-				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
-					const ActionInfo &actionInfo = *it;
-					debugPrintf(_("Walk %s\n"), convertToASCII(actionInfo._object1Name).c_str());
-				}
+				action = ActionInfo::Walk;
+				word = _("Walk");
 			} else if (strcmp(argv[2], "T") == 0) {
-				const ActionInfos &actionInfos = script->getTalkActionInfos();
-				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
-					const ActionInfo &actionInfo = *it;
-					debugPrintf(_("Talk %s\n"), convertToASCII(actionInfo._object1Name).c_str());
-				}
+				action = ActionInfo::Talk;
+				word = _("Talk");
 			} else if (strcmp(argv[2], "U") == 0) {
-				const ActionInfos &actionInfos = script->getUseActionInfos();
+				action = ActionInfo::Use;
+				word = _("Use");
+			} else if (strcmp(argv[2], "P") == 0) {
+				action = ActionInfo::PickUp;
+				word = _("Pick up");
+			} else {
+				debugPrintf(_("Choose 'L' (look), 'W' (walk), 'T' (talk), 'U' (use) or 'P' (pick up).\n"));
+			}
+			if (word) {
+				const ActionInfos &actionInfos = script->getActionInfos(action);
 				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
 					const ActionInfo &actionInfo = *it;
-					if (actionInfo._object2Name.empty()) {
-						debugPrintf(_("Use %s\n"), convertToASCII(actionInfo._object1Name).c_str());
+					if (action != ActionInfo::Use || actionInfo._entity2Name.empty()) {
+						debugPrintf("%s %s\n", word, convertToASCII(actionInfo._entity1Name).c_str());
 					} else {
-						debugPrintf(_("Use %s %s\n"), convertToASCII(actionInfo._object1Name).c_str(), convertToASCII(actionInfo._object2Name).c_str());
+						debugPrintf("%s %s %s\n", word, convertToASCII(actionInfo._entity1Name).c_str(), convertToASCII(actionInfo._entity2Name).c_str());
 					}
 				}
-			} else {
-				debugPrintf(_("Choose 'L' (look), 'W' (walk), 'T' (talk) or 'U' (use).\n"));
 			}
 		}
 	} else {
-		debugPrintf(_("listsections <G|L> <L|W|T|U>\n"));
+		debugPrintf(_("listsections <G|L> <L|W|T|U|P>\n"));
 	}
 	return true;
 }
@@ -156,61 +160,47 @@ bool Console::cmd_showsection(int argc, const char **argv) {
 		Script *const script = getScriptFromArg(argv[1]);
 		if (script) {
 			Command *command = nullptr;
+			ActionInfo::Action action;
+			bool correctAction = true;
 			bool found = false;
+
 			if (strcmp(argv[2], "L") == 0) {
-				const ActionInfos &actionInfos = script->getLookActionInfos();
-				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
-					const ActionInfo &actionInfo = *it;
-					if (convertToASCII(actionInfo._object1Name) == argv[3]) {
-						found = true;
-						command = actionInfo._command;
-						break;
-					}
-				}
+				action = ActionInfo::Look;
 			} else if (strcmp(argv[2], "W") == 0) {
-				const ActionInfos &actionInfos = script->getWalkActionInfos();
-				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
-					const ActionInfo &actionInfo = *it;
-					if (convertToASCII(actionInfo._object1Name) == argv[3]) {
-						found = true;
-						command = actionInfo._command;
-						break;
-					}
-				}
+				action = ActionInfo::Walk;
 			} else if (strcmp(argv[2], "T") == 0) {
-				const ActionInfos &actionInfos = script->getTalkActionInfos();
-				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
-					const ActionInfo &actionInfo = *it;
-					if (convertToASCII(actionInfo._object1Name) == argv[3]) {
-						found = true;
-						command = actionInfo._command;
-						break;
-					}
-				}
+				action = ActionInfo::Talk;
 			} else if (strcmp(argv[2], "U") == 0) {
-				const ActionInfos &actionInfos = script->getUseActionInfos();
-				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
-					const ActionInfo &actionInfo = *it;
-					if (convertToASCII(actionInfo._object1Name) == argv[3] && ((argc == 4 && actionInfo._object2Name.empty()) || (argc > 4 && convertToASCII(actionInfo._object2Name) == argv[4]))) {
-						found = true;
-						command = actionInfo._command;
-						break;
-					}
-				}
+				action = ActionInfo::Use;
+			} else if (strcmp(argv[2], "P") == 0) {
+				action = ActionInfo::PickUp;
 			} else {
-				debugPrintf(_("Choose 'L' (look), 'W' (walk), 'T' (talk) or 'U' (use).\n"));
+				debugPrintf(_("Choose 'L' (look), 'W' (walk), 'T' (talk), 'U' (use) or 'P' (pick up).\n"));
+				correctAction = false;
 			}
 
-			if (found) {
-				if (command) {
-					showCommands(command);
+			if (correctAction) {
+				const ActionInfos &actionInfos = script->getActionInfos(action);
+				for (ActionInfos::const_iterator it = actionInfos.begin(); it != actionInfos.end(); ++it) {
+					const ActionInfo &actionInfo = *it;
+					if (convertToASCII(actionInfo._entity1Name) == argv[3] && (action != ActionInfo::Use || ((argc == 4 && actionInfo._entity2Name.empty()) || (argc > 4 && convertToASCII(actionInfo._entity2Name) == argv[4])))) {
+						found = true;
+						command = actionInfo._command;
+						break;
+					}
 				}
-			} else {
-				debugPrintf("Section not found.\n");
+
+				if (found) {
+					if (command) {
+						showCommands(command);
+					}
+				} else {
+					debugPrintf("Section not found.\n");
+				}
 			}
 		}
 	} else {
-		debugPrintf(_("showsection <G|L> <L|W|T|U> <sectionname>\n"));
+		debugPrintf(_("showsection <G|L> <L|W|T|U|P> <sectionname>\n"));
 	}
 
 	return true;
@@ -305,6 +295,97 @@ bool Console::cmd_changescene(int argc, const char **argv) {
 		_vm->getGame().changeScene(sceneId, partB);
 	} else {
 		debugPrintf(_("changescene <scenename>\n"));
+	}
+
+	return true;
+}
+
+bool Console::cmd_dumpsceneinfo(int argc, const char **argv) {
+	if (argc == 2) {
+		const uint8 sceneId = atoi(argv[1]);
+		Scene *scene = _vm->getGame().getGameData().getScene(sceneId);
+		if (scene) {
+			debugPrintf("Startup: %u\n", (unsigned int) scene->_startup);
+			debugPrintf("Delay: %u\n", (unsigned int) scene->_DL);
+			debugPrintf("Doors: %u\n", (unsigned int) scene->_noDoors);
+			debugPrintf("Objects: %u\n", (unsigned int) scene->_noObjects);
+			debugPrintf("Statics: %u\n", (unsigned int) scene->_noStatics);
+			debugPrintf("ObstacleY1: %u\n", (unsigned int) scene->_obstacleY1);
+			debugPrintf("PalRotStart: %u\n", (unsigned int) scene->_palRotStart);
+			debugPrintf("PalRotEnd: %u\n", (unsigned int) scene->_palRotEnd);
+			debugPrintf("PalRotPeriod: %u\n", (unsigned int) scene->_palRotPeriod);
+		} else {
+			debugPrintf(_("Scene %u not found.\n"), (unsigned int) sceneId);
+		}
+	} else {
+		debugPrintf(_("dumpsceneinfo <sceneid>\n"));
+	}
+
+	return true;
+}
+
+bool Console::cmd_dumpobjectinfo(int argc, const char **argv) {
+	if (argc == 3) {
+		const uint8 sceneId = atoi(argv[1]);
+		const uint8 objectId = atoi(argv[2]);
+
+		Scene *const scene = _vm->getGame().getGameData().getScene(sceneId);
+		if (scene) {
+			Object *const object = scene->getObject(objectId);
+			if (object) {
+				debugPrintf("AC: %u\n", (unsigned int) object->_AC);
+				debugPrintf("FA: %u\n", (unsigned int) object->_FA);
+				debugPrintf("FR: %u\n", (unsigned int) object->_FR);
+				debugPrintf("NA: %u\n", (unsigned int) object->_NA);
+				debugPrintf("FS: %u\n", (unsigned int) object->_FS);
+				debugPrintf("Unknown: %u\n", (unsigned int) object->_unknown);
+				debugPrintf("CA: %u\n", (unsigned int) object->_CA);
+				debugPrintf("X: %u\n", (unsigned int) object->_x);
+				debugPrintf("Y: %u\n", (unsigned int) object->_y);
+				debugPrintf("XL: %u\n", (unsigned int) object->_XL);
+				debugPrintf("YL: %u\n", (unsigned int) object->_YL);
+				debugPrintf("WX: %u\n", (unsigned int) object->_WX);
+				debugPrintf("WY: %u\n", (unsigned int) object->_WY);
+				debugPrintf("SP: %u\n", (unsigned int) object->_SP);
+			} else {
+				debugPrintf(_("Object %u not found.\n"), (unsigned int) objectId);
+			}
+		} else {
+			debugPrintf(_("Scene %u not found.\n"), (unsigned int) sceneId);
+		}
+	} else {
+		debugPrintf(_("dumpobjectinfo <sceneid> <objectid>\n"));
+	}
+
+	return true;
+}
+
+bool Console::cmd_dumpstaticinfo(int argc, const char **argv) {
+	if (argc == 3) {
+		const uint8 sceneId = atoi(argv[1]);
+		const uint8 staticId = atoi(argv[2]);
+
+		Scene *const scene = _vm->getGame().getGameData().getScene(sceneId);
+		if (scene) {
+			Static *const stat = scene->getStatic(staticId, true);
+			if (stat) {
+				debugPrintf("Active: %u\n", (unsigned int) stat->_active);
+				debugPrintf("Name: '%s'\n", convertToASCII(stat->_name).c_str());
+				debugPrintf("X: %u\n", (unsigned int) stat->_x);
+				debugPrintf("Y: %u\n", (unsigned int) stat->_y);
+				debugPrintf("Width: %u\n", (unsigned int) stat->_width);
+				debugPrintf("Height: %u\n", (unsigned int) stat->_height);
+				debugPrintf("WalkToX: %u\n", (unsigned int) stat->_walkToY);
+				debugPrintf("WalkToY: %u\n", (unsigned int) stat->_walkToX);
+				debugPrintf("WalkToFrame: %u\n", (unsigned int) stat->_SP);
+			} else {
+				debugPrintf(_("Static %u not found.\n"), (unsigned int) staticId);
+			}
+		} else {
+			debugPrintf(_("Scene %u not found.\n"), (unsigned int) sceneId);
+		}
+	} else {
+		debugPrintf(_("dumpstaticinfo <sceneid> <staticid>\n"));
 	}
 
 	return true;

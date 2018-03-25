@@ -44,6 +44,9 @@ private:
 	bool cmd_liststartups(int argc, const char **argv);
 	bool cmd_showstartup(int argc, const char **argv);
 	bool cmd_changescene(int argc, const char **argv);
+	bool cmd_dumpsceneinfo(int argc, const char **argv);
+	bool cmd_dumpobjectinfo(int argc, const char **argv);
+	bool cmd_dumpstaticinfo(int argc, const char **argv);
 
 	void showIndent(int indentLevel);
 	void showCommands(Command *command, int indentLevel = 0);
