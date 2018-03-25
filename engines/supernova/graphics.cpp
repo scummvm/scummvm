@@ -28,9 +28,9 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
-#include "graphics.h"
-#include "msn_def.h"
-#include "supernova.h"
+#include "supernova/graphics.h"
+#include "supernova/msn_def.h"
+#include "supernova/supernova.h"
 
 namespace Supernova {
 
