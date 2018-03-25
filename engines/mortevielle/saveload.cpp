@@ -240,7 +240,6 @@ SaveStateList SavegameManager::listSaves(const Common::String &target) {
 	pattern += ".###";
 
 	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
-	sort(files.begin(), files.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = files.begin(); file != files.end(); ++file) {
@@ -282,6 +281,7 @@ SaveStateList SavegameManager::listSaves(const Common::String &target) {
 		}
 	}
 
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
