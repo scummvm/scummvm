@@ -20,10 +20,10 @@
 *
 */
 
+#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
 #include "audio/mods/protracker.h"
-#include "audio/audiostream.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
@@ -98,13 +98,6 @@ ResourceManager::ResourceManager()
 	initGraphics();
 }
 
-ResourceManager::~ResourceManager() {
-	for (int i = 0; i < kAudioNumSamples; ++i)
-		delete _soundSamples[i];
-	for (int i = 0; i < kNumImageFiles; ++i)
-		delete _images[i];
-}
-
 void ResourceManager::initSoundFiles() {
 	// Sound
 	// Note:
@@ -134,8 +127,8 @@ void ResourceManager::initSoundFiles() {
 		file.close();
 
 		byte streamFlag = Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN;
-		_soundSamples[i] = Audio::makeRawStream(buffer, length, _audioRate,
-												streamFlag, DisposeAfterUse::YES);
+		_soundSamples[i].reset(Audio::makeRawStream(buffer, length, _audioRate,
+													streamFlag, DisposeAfterUse::YES));
 	}
 
 	_musicIntroBuffer.reset(convertToMod("msn_data.052"));
@@ -171,14 +164,13 @@ void ResourceManager::initCursorGraphics() {
 
 void ResourceManager::initImages() {
 	for (int i = 0; i < kNumImageFiles; ++i) {
-		_images[i] = new MSNImage();
-		if (!_images[i]->init(i))
+		if (!_images[i].init(i))
 			error("Failed reading image file msn_data.%03d", i);
 	}
 }
 
 Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
-	Audio::SeekableAudioStream *stream = _soundSamples[index];
+	Audio::SeekableAudioStream *stream = _soundSamples[index].get();
 	stream->rewind();
 
 	return stream;
@@ -197,10 +189,10 @@ Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	}
 }
 
-MSNImage *ResourceManager::getImage(int filenumber) const {
+const MSNImage *ResourceManager::getImage(int filenumber) const {
 	assert(filenumber < kNumImageFiles);
 
-	return _images[filenumber];
+	return &_images[filenumber];
 }
 
 const byte *ResourceManager::getImage(CursorId id) const {
