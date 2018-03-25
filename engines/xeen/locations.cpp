@@ -1043,8 +1043,9 @@ Common::String TrainingLocation::createLocationText(Character &ch) {
 		msg = Common::String::format(Res.LEARNED_ALL, ch._name.c_str());
 	} else {
 		// Eligble for level increase
+		uint cost = ch._level._permanent * ch._level._permanent * 10;
 		msg = Common::String::format(Res.ELIGIBLE_FOR_LEVEL,
-			ch._name.c_str(), ch._level._permanent + 1);
+			ch._name.c_str(), ch._level._permanent + 1, cost);
 	}
 
 	return Common::String::format(Res.TRAINING_TEXT, msg.c_str(),

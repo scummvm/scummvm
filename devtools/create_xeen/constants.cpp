@@ -952,7 +952,8 @@ const char *const EXPERIENCE_FOR_LEVEL =
 
 const char *const LEARNED_ALL = "%s has learned all we can teach!";
 
-const char *const ELIGIBLE_FOR_LEVEL = "%s is eligible for level %d.";
+const char *const ELIGIBLE_FOR_LEVEL = "%s is eligible for level %u.\x3l\n"
+	"\v081Cost\x3r\t000%u";
 
 const char *const TRAINING_TEXT =
 	"\x0D\x03""cTraining Options\n"
