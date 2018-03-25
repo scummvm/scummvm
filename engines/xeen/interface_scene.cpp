@@ -570,7 +570,7 @@ void InterfaceScene::drawIndoorsScene() {
 		_indoorList[idx]._frame = -1;
 
 	if (combat._monstersAttacking) {
-		for (int idx = 0; idx < 96; ++idx) {
+		for (int idx = 0; idx < 8; ++idx) {
 			if (_indoorList[79 + idx]._sprites != nullptr) {
 				_indoorList[79 + idx]._frame = 0;
 			} else if (_indoorList[111 + idx]._sprites != nullptr) {
