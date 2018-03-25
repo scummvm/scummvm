@@ -350,7 +350,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_sendBroadcastSignal();
 		break;
 	case 0x23:
-		OC_resetWord16EFE();
+		OC_resetWaitingSignal();
 		break;
 	case 0x24:
 		OC_enableCurrentCharacterScript();
@@ -359,10 +359,10 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_IncCurrentCharacterVar1();
 		break;
 	case 0x26:
-		OC_sub17D23();
+		OC_setCurrentCharacterPos();
 		break;
 	case 0x27:
-		OC_sub17E6D();
+		OC_setCurrentCharacterBehavior();
 		break;
 	case 0x28:
 		OC_changeCurrentCharacterSprite();
@@ -646,11 +646,11 @@ static const OpCode opCodes2[] = {
 /* 0x20 */	{ "OC_sendHearSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 /* 0x21 */	{ "OC_sendVarSignal", 3, kImmediateValue, kGetValue1, kImmediateValue, kNone, kNone },
 /* 0x22 */	{ "OC_sendBroadcastSignal", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x23 */	{ "OC_resetWord16EFE", 0, kNone, kNone, kNone, kNone, kNone },
+/* 0x23 */	{ "OC_resetWaitingSignal", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x24 */	{ "OC_enableCurrentCharacterScript", 1, kImmediateValue, kNone, kNone, kNone, kNone },   // stop script
 /* 0x25 */	{ "OC_incCurrentCharacterVar1", 0, kNone, kNone, kNone, kNone, kNone },
-/* 0x26 */	{ "OC_sub17D23", 2, kImmediateValue, kgetPosFromScript, kNone, kNone, kNone },
-/* 0x27 */	{ "OC_sub17E6D", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x26 */	{ "OC_setCurrentCharacterPos", 2, kImmediateValue, kgetPosFromScript, kNone, kNone, kNone },
+/* 0x27 */	{ "OC_setCurrentCharacterBehavior", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x28 */	{ "OC_changeCurrentCharacterSprite", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
 /* 0x29 */	{ "OC_sub17E99", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
 /* 0x2a */	{ "OC_sub17EC5", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
@@ -2529,8 +2529,8 @@ void LilliputScript::OC_sendBroadcastSignal() {
 	sendSignal(type, var2h, _vm->_currentScriptCharacter, var4);
 }
 
-void LilliputScript::OC_resetWord16EFE() {
-	debugC(1, kDebugScript, "OC_resetWord16EFE()");
+void LilliputScript::OC_resetWaitingSignal() {
+	debugC(1, kDebugScript, "OC_resetWaitingSignal()");
 
 	_vm->_waitingSignal = -1;
 	_vm->_waitingSignalCharacterId = -1;
@@ -2551,8 +2551,8 @@ void LilliputScript::OC_IncCurrentCharacterVar1() {
 	++_vm->_currentCharacterAttributes[1];
 }
 
-void LilliputScript::OC_sub17D23() {
-	debugC(1, kDebugScript, "OC_sub17D23()");
+void LilliputScript::OC_setCurrentCharacterPos() {
+	debugC(1, kDebugScript, "OC_setCurrentCharacterPos()");
 
 	uint16 oper = _currScript->readUint16LE();
 	Common::Point var1 = getPosFromScript();
@@ -2561,8 +2561,8 @@ void LilliputScript::OC_sub17D23() {
 	computeOperation(buf + 1, oper, var1.y);
 }
 
-void LilliputScript::OC_sub17E6D() {
-	debugC(1, kDebugScriptTBC, "OC_sub17E6D()");
+void LilliputScript::OC_setCurrentCharacterBehavior() {
+	debugC(1, kDebugScriptTBC, "OC_setCurrentCharacterBehavior()");
 
 	uint16 var1 = _currScript->readUint16LE();
 	_vm->_characterBehaviour[_vm->_currentScriptCharacter] = (var1 - 2000) & 0xFF;
