@@ -45,6 +45,7 @@ public:
     virtual void toConsole();
 
 private:
+    ActionPlayWithSfx *_action;
     Common::String _sfx;
     uint32 _volume;
     uint32 _frame;
