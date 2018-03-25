@@ -282,7 +282,7 @@ void SupernovaEngine::renderMessage(const Common::String &text, MessagePosition 
 	_screen->renderMessage(text, position);
 }
 
-void SupernovaEngine::renderMessage(StringID stringId, MessagePosition position, Common::String var1, Common::String var2) {
+void SupernovaEngine::renderMessage(StringId stringId, MessagePosition position, Common::String var1, Common::String var2) {
 	_screen->renderMessage(stringId, position, var1, var2);
 }
 
@@ -302,7 +302,7 @@ void SupernovaEngine::renderText(const Common::String &text) {
 	_screen->renderText(text);
 }
 
-void SupernovaEngine::renderText(StringID stringId) {
+void SupernovaEngine::renderText(StringId stringId) {
 	_screen->renderText(stringId);
 }
 
@@ -322,7 +322,7 @@ void SupernovaEngine::renderText(const Common::String &text, int x, int y, byte 
 	_screen->renderText(text, x, y, color);
 }
 
-void SupernovaEngine::renderText(StringID stringId, int x, int y, byte color) {
+void SupernovaEngine::renderText(StringId stringId, int x, int y, byte color) {
 	_screen->renderText(stringId, x, y, color);
 }
 

@@ -100,7 +100,7 @@ enum Action {
 	ACTION_GIVE
 };
 
-enum RoomID {
+enum RoomId {
 	INTRO,CORRIDOR,HALL,SLEEP,COCKPIT,AIRLOCK,
 	HOLD,LANDINGMODULE,GENERATOR,OUTSIDE,
 	CABIN_R1,CABIN_R2,CABIN_R3,CABIN_L1,CABIN_L2,CABIN_L3,BATHROOM,
@@ -112,7 +112,7 @@ enum RoomID {
 	ELEVATOR,STATION,SIGN,OUTRO,NUMROOMS,NULLROOM
 };
 
-enum ObjectID {
+enum ObjectId {
 	INVALIDOBJECT = -1,
 	NULLOBJECT = 0,
 	KEYCARD,KNIFE,WATCH,
@@ -156,7 +156,7 @@ enum ObjectID {
 	JUNGLE,STATION_SLOT,STATION_SIGN
 };
 
-enum StringID {
+enum StringId {
 	kNoString = -1,
 	// 0
 	kStringCommandGo = 0, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
@@ -341,8 +341,8 @@ struct Object {
 		, _exitRoom(NULLROOM)
 		, _direction(0)
 	{}
-	Object(byte roomId, StringID name, StringID description, ObjectID id, ObjectType type,
-		   byte click, byte click2, byte section = 0, RoomID exitRoom = NULLROOM, byte direction = 0)
+	Object(byte roomId, StringId name, StringId description, ObjectId id, ObjectType type,
+		   byte click, byte click2, byte section = 0, RoomId exitRoom = NULLROOM, byte direction = 0)
 		: _name(name)
 		, _description(description)
 		, _id(id)
@@ -377,7 +377,7 @@ struct Object {
 		return _type & type;
 	}
 
-	static bool combine(Object &obj1, Object &obj2, ObjectID id1, ObjectID id2) {
+	static bool combine(Object &obj1, Object &obj2, ObjectId id1, ObjectId id2) {
 		if (obj1.hasProperty(COMBINABLE))
 			return (((obj1._id == id1) && (obj2._id == id2)) ||
 					((obj1._id == id2) && (obj2._id == id1)));
@@ -386,14 +386,14 @@ struct Object {
 	}
 
 	byte _roomId;
-	StringID _name;
-	StringID _description;
-	ObjectID _id;
+	StringId _name;
+	StringId _description;
+	ObjectId _id;
 	ObjectTypes _type;
 	byte _click;
 	byte _click2;
 	byte _section;
-	RoomID _exitRoom;
+	RoomId _exitRoom;
 	byte _direction;
 };
 

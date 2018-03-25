@@ -74,7 +74,7 @@ public:
 	void remove(Object &obj);
 	void clear();
 	Object *get(int index) const;
-	Object *get(ObjectID id) const;
+	Object *get(ObjectId id) const;
 	int getSize() const { return _numObjects; }
 
 private:
@@ -133,8 +133,8 @@ public:
 	bool serialize(Common::WriteStream *out);
 	bool deserialize(Common::ReadStream *in, int version);
 
-	static StringID guiCommands[];
-	static StringID guiStatusCommands[];
+	static StringId guiCommands[];
+	static StringId guiStatusCommands[];
 	SupernovaEngine *_vm;
 	Sound *_sound;
 	Common::KeyState _key;
@@ -170,7 +170,7 @@ public:
 	// Dialog
 	int _currentSentence;
 	int _sentenceNumber[6];
-	StringID _texts[6];
+	StringId _texts[6];
 	byte _rows[6];
 	byte _rowsStart[6];
 
@@ -206,7 +206,7 @@ public:
 	void drawStatus();
 	void drawCommandBox();
 	void drawInventory();
-	void changeRoom(RoomID id);
+	void changeRoom(RoomId id);
 	void resetInputState();
 	void handleInput();
 	void handleTime();
@@ -214,12 +214,12 @@ public:
 	void loadTime();
 	void saveTime();
 	void setAnimationTimer(int ticks);
-	void dead(StringID messageId);
-	int  dialog(int num, byte rowLength[6], StringID text[6], int number);
+	void dead(StringId messageId);
+	int  dialog(int num, byte rowLength[6], StringId text[6], int number);
 	void sentence(int number, bool brightness);
-	void say(StringID textId);
+	void say(StringId textId);
 	void say(const char *text);
-	void reply(StringID textId, int aus1, int aus2);
+	void reply(StringId textId, int aus1, int aus2);
 	void reply(const char *text, int aus1, int aus2);
 	void mousePosDialog(int x, int y);
 	void shot(int a, int b);

@@ -57,7 +57,7 @@ public:
 	int getFileNumber() const {
 		return _fileNumber;
 	}
-	RoomID getId() const {
+	RoomId getId() const {
 		return _id;
 	}
 
@@ -117,7 +117,7 @@ protected:
 	bool _shown[kMaxSection];
 	byte _sentenceRemoved[kMaxDialog];
 	Object _objectState[kMaxObject];
-	RoomID _id;
+	RoomId _id;
 	SupernovaEngine *_vm;
 	GameManager *_gm;
 
@@ -134,9 +134,9 @@ public:
 private:
 	bool animate(int section1, int section2, int duration);
 	bool animate(int section1, int section2, int duration, MessagePosition position,
-				 StringID text);
+				 StringId text);
 	bool animate(int section1, int section2, int section3, int section4, int duration,
-				 MessagePosition position, StringID text);
+				 MessagePosition position, StringId text);
 
 	void titleScreen();
 	void titleFadeIn();
@@ -686,9 +686,9 @@ public:
 	virtual void animation();
 
 private:
-	StringID _dialog1[5];
-	StringID _dialog2[5];
-	StringID _dialog3[5];
+	StringId _dialog1[5];
+	StringId _dialog2[5];
+	StringId _dialog3[5];
 	byte _eyewitness;
 };
 class ArsanoRemaining : public Room {
@@ -747,7 +747,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	StringID _dialog1[4];
+	StringId _dialog1[4];
 	byte _eyewitness;
 	byte _hands;
 };
@@ -814,10 +814,10 @@ public:
 
 private:
 	// TODO: change to 6, fix initialization
-	StringID _dialog1[2];
-	StringID _dialog2[2];
-	StringID _dialog3[4];
-	StringID _dialog4[3];
+	StringId _dialog1[2];
+	StringId _dialog2[2];
+	StringId _dialog3[4];
+	StringId _dialog4[3];
 
 	bool _found;
 	bool _flug;
@@ -851,11 +851,11 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	StringID _dialog2[4];
-	StringID _dialog3[2];
+	StringId _dialog2[4];
+	StringId _dialog3[2];
 
 	// TODO: Hack, to be move away and renamed when the other uses are found
-	StringID _dialogsX[6];
+	StringId _dialogsX[6];
 	//
 };
 
@@ -1030,9 +1030,9 @@ private:
 	bool handleMoneyDialog();
 
 	// TODO: Change to 6, or change struct, and fix initialization
-	StringID _dialog1[2];
-	StringID _dialog2[2];
-	StringID _dialog3[4];
+	StringId _dialog1[2];
+	StringId _dialog2[2];
+	StringId _dialog3[4];
 
 	byte _rows[6];
 };
@@ -1181,7 +1181,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	StringID _dialogsX[6];
+	StringId _dialogsX[6];
 };
 
 class AxacussExit : public Room {
@@ -1210,7 +1210,7 @@ public:
 	virtual bool interact(Action verb, Object &obj1, Object &obj2);
 
 private:
-	StringID _dialogsX[6];
+	StringId _dialogsX[6];
 };
 class AxacussOffice1 : public Room {
 public:

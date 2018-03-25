@@ -138,13 +138,13 @@ bool GameManager::deserialize(Common::ReadStream *in, int version) {
 	_inventoryScroll = in->readSint32LE();
 	_inventory.clear();
 	for (int i = 0; i < inventorySize; ++i) {
-		RoomID objectRoom = static_cast<RoomID>(in->readSint32LE());
+		RoomId objectRoom = static_cast<RoomId>(in->readSint32LE());
 		int objectIndex = in->readSint32LE();
 		_inventory.add(*_rooms[objectRoom]->getObject(objectIndex));
 	}
 
 	// Rooms
-	RoomID curRoomId = static_cast<RoomID>(in->readByte());
+	RoomId curRoomId = static_cast<RoomId>(in->readByte());
 	for (int i = 0; i < NUMROOMS; ++i) {
 		_rooms[i]->deserialize(in, version);
 	}
@@ -199,7 +199,7 @@ Object *Inventory::get(int index) const {
 	return const_cast<Object *>(&Object::nullObject);
 }
 
-Object *Inventory::get(ObjectID id) const {
+Object *Inventory::get(ObjectId id) const {
 	for (int i = 0; i < _numObjects; ++i) {
 		if (_inventory[i]->_id == id)
 			return _inventory[i];
@@ -277,12 +277,12 @@ static Common::String timeToString(int msec) {
 	return Common::String(s);
 }
 
-StringID GameManager::guiCommands[] = {
+StringId GameManager::guiCommands[] = {
 	kStringCommandGo, kStringCommandLook, kStringCommandTake, kStringCommandOpen, kStringCommandClose,
 	kStringCommandPress, kStringCommandPull, kStringCommandUse, kStringCommandTalk, kStringCommandGive
 };
 
-StringID GameManager::guiStatusCommands[] = {
+StringId GameManager::guiStatusCommands[] = {
 	kStringStatusCommandGo, kStringStatusCommandLook, kStringStatusCommandTake, kStringStatusCommandOpen, kStringStatusCommandClose,
 	kStringStatusCommandPress, kStringStatusCommandPull, kStringStatusCommandUse, kStringStatusCommandTalk, kStringStatusCommandGive
 };
@@ -838,7 +838,7 @@ void GameManager::telomat(int nr) {
 		"Alga Hurz Li"
 	};
 
-	StringID dial1[4];
+	StringId dial1[4];
 	dial1[0] = kStringTelomat1;
 	dial1[1] = kNoString;
 	dial1[2] = kStringTelomat3;
@@ -846,7 +846,7 @@ void GameManager::telomat(int nr) {
 
 	static byte rows1[3] = {1, 2, 1};
 
-	StringID dial2[4];
+	StringId dial2[4];
 	dial2[0] = kStringTelomat4;
 	dial2[1] = kStringTelomat5;
 	dial2[2] = kStringTelomat6;
@@ -1398,7 +1398,7 @@ void GameManager::sentence(int number, bool brightness) {
 	}
 }
 
-void GameManager::say(StringID textId) {
+void GameManager::say(StringId textId) {
 	Common::String str = _vm->getGameString(textId);
 	if (!str.empty())
 		say(str.c_str());
@@ -1428,7 +1428,7 @@ void GameManager::say(const char *text) {
 	_vm->renderBox(0, 138, 320, 62, kColorBlack);
 }
 
-void GameManager::reply(StringID textId, int aus1, int aus2) {
+void GameManager::reply(StringId textId, int aus1, int aus2) {
 	Common::String str = _vm->getGameString(textId);
 	if (!str.empty())
 		reply(str.c_str(), aus1, aus2);
@@ -1452,7 +1452,7 @@ void GameManager::reply(const char *text, int aus1, int aus2) {
 		_vm->removeMessage();
 }
 
-int GameManager::dialog(int num, byte rowLength[6], StringID text[6], int number) {
+int GameManager::dialog(int num, byte rowLength[6], StringId text[6], int number) {
 	_vm->_allowLoadGame = false;
 	_guiEnabled = false;
 
@@ -1637,7 +1637,7 @@ void GameManager::roomBrightness() {
 	_vm->paletteBrightness();
 }
 
-void GameManager::changeRoom(RoomID id) {
+void GameManager::changeRoom(RoomId id) {
 	_currentRoom = _rooms[id];
 	_newRoom = true;
 }
@@ -1905,7 +1905,7 @@ void GameManager::closeLocker(const Room *room, Object *obj, Object *lock, int s
 	}
 }
 
-void GameManager::dead(StringID messageId) {
+void GameManager::dead(StringId messageId) {
 	_vm->paletteFadeOut();
 	_guiEnabled = false;
 	_vm->setCurrentImage(11);
