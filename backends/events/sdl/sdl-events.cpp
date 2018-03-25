@@ -29,6 +29,7 @@
 #include "backends/graphics/graphics.h"
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/fs.h"
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
@@ -43,8 +44,14 @@
 #define JOY_BUT_PERIOD 1
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
+#ifdef ENABLE_VKEYBD
+#define JOY_BUT_VKEYBOARD 7
+#endif
+
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
+#define GAMECONTROLLERDB_FILE "gamecontrollerdb.txt"
+
 static uint32 convUTF8ToUTF32(const char *src) {
 	uint32 utf32 = 0;
 
@@ -62,6 +69,31 @@ static uint32 convUTF8ToUTF32(const char *src) {
 	}
 
 	return utf32;
+}
+
+void SdlEventSource::loadGameControllerMappingFile() {
+	bool loaded = false;
+	if (ConfMan.hasKey("gcdbfile")) {
+		Common::FSNode file = Common::FSNode(ConfMan.get("gcdbfile"));
+		if (file.exists()) {
+			if (SDL_GameControllerAddMappingsFromFile(file.getPath().c_str()) < 0)
+				error("File %s not valid: %s", file.getPath().c_str(), SDL_GetError());	
+			else {
+				loaded = true;
+				debug("Game controller DB file loaded: %s", file.getPath().c_str());
+			}
+		}
+	}
+	if (!loaded && ConfMan.hasKey("extrapath")) {
+		Common::FSNode dir = Common::FSNode(ConfMan.get("extrapath"));
+		Common::FSNode file = dir.getChild(GAMECONTROLLERDB_FILE);
+		if (file.exists()) {
+			if (SDL_GameControllerAddMappingsFromFile(file.getPath().c_str()) < 0)
+				error("File %s not valid: %s", file.getPath().c_str(), SDL_GetError());	
+			else
+				debug("Game controller DB file loaded: %s", file.getPath().c_str());
+		}
+	}
 }
 #endif
 
@@ -85,6 +117,8 @@ SdlEventSource::SdlEventSource()
 		if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) == -1) {
 			error("Could not initialize SDL: %s", SDL_GetError());
 		}
+		else
+			loadGameControllerMappingFile();
 #endif
 
 		openJoystick(joystick_num);
@@ -876,6 +910,11 @@ bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 			event.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
+#ifdef ENABLE_VKEYBD
+		case JOY_BUT_VKEYBOARD: // Toggles virtual keyboard
+			event.type = Common::EVENT_VIRTUAL_KEYBOARD;
+			break;
+#endif
 		}
 		return true;
 	}
@@ -907,6 +946,11 @@ bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.kbd.keycode = Common::KEYCODE_F5;
 			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
+#ifdef ENABLE_VKEYBD
+		case JOY_BUT_VKEYBOARD: // Toggles virtual keyboard
+			// Handled in key down
+			break;
+#endif
 		}
 		return true;
 	}
