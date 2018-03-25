@@ -47,8 +47,8 @@ public:
 	ResourceManager();
 	~ResourceManager();
 
-	Audio::SeekableAudioStream *getSoundStream(AudioIndex index);
-	Audio::AudioStream *getSoundStream(MusicIndex index) const;
+	Audio::SeekableAudioStream *getSoundStream(AudioId index);
+	Audio::AudioStream *getSoundStream(MusicId index) const;
 	MSNImage *getImage(int filenumber) const;
 	const byte *getImage(CursorId id) const;
 

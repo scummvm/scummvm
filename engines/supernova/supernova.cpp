@@ -239,11 +239,11 @@ void SupernovaEngine::setGameString(int idx, const Common::String &string) {
 	_gameStrings[idx] = string;
 }
 
-void SupernovaEngine::playSound(AudioIndex sample) {
+void SupernovaEngine::playSound(AudioId sample) {
 	_sound->play(sample);
 }
 
-void SupernovaEngine::playSound(MusicIndex index) {
+void SupernovaEngine::playSound(MusicId index) {
 	_sound->play(index);
 }
 

@@ -37,7 +37,7 @@ Sound::Sound(Audio::Mixer *mixer, ResourceManager *resMan)
 	, _resMan(resMan) {
 }
 
-void Sound::play(AudioIndex index) {
+void Sound::play(AudioId index) {
 	Audio::AudioStream *stream = _resMan->getSoundStream(index);
 
 	stop();
@@ -45,7 +45,7 @@ void Sound::play(AudioIndex index) {
 					   -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
-void Sound::play(MusicIndex index) {
+void Sound::play(MusicId index) {
 	Audio::AudioStream *stream = _resMan->getSoundStream(index);
 
 	stop();

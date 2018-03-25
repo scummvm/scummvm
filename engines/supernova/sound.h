@@ -30,7 +30,7 @@ namespace Supernova {
 class SupernovaEngine;
 class ResourceManager;
 
-enum AudioIndex {
+enum AudioId {
 	kAudioFoundLocation,        // 44|0
 	kAudioCrash,                // 45|0
 	kAudioVoiceHalt,            // 46|0
@@ -54,7 +54,7 @@ enum AudioIndex {
 	kAudioNumSamples
 };
 
-enum MusicIndex {
+enum MusicId {
 	kMusicIntro = 49,
 	kMusicOutro = 52
 };
@@ -65,8 +65,8 @@ public:
 public:
 	Sound(Audio::Mixer *mixer, ResourceManager *resMan);
 
-	void play(AudioIndex index);
-	void play(MusicIndex index);
+	void play(AudioId index);
+	void play(MusicId index);
 	void stop();
 	bool isPlaying();
 private:
