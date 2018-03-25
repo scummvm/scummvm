@@ -831,7 +831,7 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), itemName));
 	w.update();
 	c._items[category].sort();
-	events.ipause(5);
+	events.ipause(8);
 }
 
 bool Party::canShoot() const {
