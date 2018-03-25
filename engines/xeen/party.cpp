@@ -1133,6 +1133,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 	case 13:
 		assert(giveVal < 18);
 		ps._skills[giveVal]++;
+		intf.spellFX(&ps);
 		break;
 	case 15:
 		ps.setAward(giveVal, true);
