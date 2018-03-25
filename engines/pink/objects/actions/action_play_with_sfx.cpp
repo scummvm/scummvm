@@ -22,7 +22,6 @@
 
 #include "action_play_with_sfx.h"
 #include <pink/archive.h>
-#include <common/debug.h>
 
 namespace Pink {
 
@@ -40,11 +39,13 @@ void Pink::ActionPlayWithSfx::toConsole() {
 }
 
 void Pink::ActionSfx::deserialize(Pink::Archive &archive) {
-    archive >> _sfx >> _volume >> _frame;
+    archive >> _frame >> _volume >> _sfx;
+    _action = (ActionPlayWithSfx*) archive.readObject();
+
 }
 
 void Pink::ActionSfx::toConsole() {
-    debug("\t\tActionSfx: _name = %s, _volume = %u, _frame = %u");
+    debug("\t\tActionSfx: _sfx = %s, _volume = %u, _frame = %u", _sfx.c_str(), _volume, _frame);
 }
 
 } // End of namespace Pink
