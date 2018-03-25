@@ -99,8 +99,6 @@ ResourceManager::ResourceManager()
 }
 
 ResourceManager::~ResourceManager() {
-	delete _musicIntro;
-	delete _musicOutro;
 	for (int i = 0; i < kAudioNumSamples; ++i)
 		delete _soundSamples[i];
 	for (int i = 0; i < kNumImageFiles; ++i)
@@ -140,14 +138,8 @@ void ResourceManager::initSoundFiles() {
 												streamFlag, DisposeAfterUse::YES);
 	}
 
-	Common::MemoryReadStream *music;
-	music = convertToMod("msn_data.052");
-	_musicIntro = Audio::makeProtrackerStream(music);
-	delete music;
-
-	music = convertToMod("msn_data.049");
-	_musicOutro = Audio::makeProtrackerStream(music);
-	delete music;
+	_musicIntroBuffer.reset(convertToMod("msn_data.052"));
+	_musicOutroBuffer.reset(convertToMod("msn_data.049"));
 }
 
 void ResourceManager::initGraphics() {
@@ -192,12 +184,14 @@ Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
 	return stream;
 }
 
-Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) const {
+Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) {
 	switch (index) {
 	case kMusicIntro:
-		return _musicIntro;
+		_musicIntro.reset(Audio::makeProtrackerStream(_musicIntroBuffer.get()));
+		return _musicIntro.get();
 	case kMusicOutro:
-		return _musicOutro;
+		_musicOutro.reset(Audio::makeProtrackerStream(_musicOutroBuffer.get()));
+		return _musicOutro.get();
 	default:
 		error("Invalid music constant in playAudio()");
 	}

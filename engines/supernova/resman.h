@@ -23,10 +23,16 @@
 #ifndef SUPERNOVA_RESOURCES_H
 #define SUPERNOVA_RESOURCES_H
 
+#include "common/ptr.h"
+
 #include "supernova/sound.h"
 
 namespace Audio {
 class SeekableAudioStream;
+}
+
+namespace Common {
+class MemoryReadStream;
 }
 
 namespace Supernova {
@@ -48,7 +54,7 @@ public:
 	~ResourceManager();
 
 	Audio::SeekableAudioStream *getSoundStream(AudioId index);
-	Audio::AudioStream *getSoundStream(MusicId index) const;
+	Audio::AudioStream *getSoundStream(MusicId index);
 	MSNImage *getImage(int filenumber) const;
 	const byte *getImage(CursorId id) const;
 
@@ -60,8 +66,10 @@ private:
 
 private:
 	Audio::SeekableAudioStream *_soundSamples[kAudioNumSamples];
-	Audio::AudioStream *_musicIntro;
-	Audio::AudioStream *_musicOutro;
+	Common::ScopedPtr<Common::MemoryReadStream> _musicIntroBuffer;
+	Common::ScopedPtr<Common::MemoryReadStream> _musicOutroBuffer;
+	Common::ScopedPtr<Audio::AudioStream> _musicIntro;
+	Common::ScopedPtr<Audio::AudioStream> _musicOutro;
 	int _audioRate;
 	MSNImage *_images[kNumImageFiles];
 	byte _cursorNormal[256];
