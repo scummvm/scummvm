@@ -252,7 +252,7 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYRIGHT NEWS README)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYRIGHT NEWS README)
 
 DIST_FILES_DOCS_languages=cz da de es fr it no-nb se
 DIST_FILES_DOCS_cz:=$(addprefix $(srcdir)/doc/cz/,PrectiMe)

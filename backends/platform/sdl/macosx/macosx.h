@@ -28,6 +28,7 @@
 class OSystem_MacOSX : public OSystem_POSIX {
 public:
 	OSystem_MacOSX();
+	~OSystem_MacOSX();
 
 	virtual bool hasFeature(Feature f);
 

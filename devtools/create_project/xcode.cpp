@@ -767,6 +767,10 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("dists/engine-data/xeen.ccs");
 		files.push_back("dists/pred.dic");
 		files.push_back("icons/scummvm.icns");
+		files.push_back("AUTHORS");
+		files.push_back("COPYING");
+		files.push_back("NEWS");
+		files.push_back("README");
 	}
 	return files;
 }

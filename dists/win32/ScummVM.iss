@@ -180,9 +180,6 @@ Name: {group}\ScummVM (ohne Konsolenfenster); Filename: {app}\scummvm.exe; Param
 Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: not de
 Name: {group}\Mitwirkende; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists; Languages: de
 Name: {group}\Copying; Filename: {app}\COPYING.txt; WorkingDir: {app}; Comment: COPYING; Flags: createonlyiffileexists
-Name: {group}\Copying.BSD; Filename: {app}\COPYING.BSD.txt; WorkingDir: {app}; Comment: COPYING.BSD; Flags: createonlyiffileexists
-Name: {group}\Copying.FREEFONT; Filename: {app}\COPYING.FREEFONT.txt; WorkingDir: {app}; Comment: COPYING.FREEFONT; Flags: createonlyiffileexists
-Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app}; Comment: COPYING.LGPL; Flags: createonlyiffileexists
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
 ;NEWS
 Name: {group}\News; Filename: {app}\NEWS.txt; WorkingDir: {app}; Comment: NEWS; Flags: createonlyiffileexists; Languages: not de
@@ -222,9 +219,6 @@ Name: "{userappdata}\ScummVM\Saved Games"; MinVersion: 0, 1
 [Files]
 Source: AUTHORS.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.txt; DestDir: {app}; Flags: ignoreversion
-Source: COPYING.BSD.txt; DestDir: {app}; Flags: ignoreversion
-Source: COPYING.FREEFONT.txt; DestDir: {app}; Flags: ignoreversion
-Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
 ;NEWS
 Source: NEWS.txt; DestDir: {app}; Flags: ignoreversion; Languages: not de

@@ -63,7 +63,7 @@ install: build
 	install -m0644 dists/engine-data/wintermute.zip debian/scummvm/opt/scummvm/share
 
 	install -m0644 -d debian/scummvm/usr/share/doc/scummvm
-	install -m0644 AUTHORS COPYING COPYING.BSD COPYING.FREEFONT COPYING.LGPL COPYRIGHT NEWS README debian/scummvm/usr/share/doc/scummvm
+	install -m0644 AUTHORS COPYING COPYRIGHT NEWS README debian/scummvm/usr/share/doc/scummvm
 binary: binary-arch
 
 binary-arch: build install
