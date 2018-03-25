@@ -25,6 +25,7 @@
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/font.h"
 #include "bladerunner/savefile.h"
+#include "bladerunner/scene.h"
 #include "bladerunner/text_resource.h"
 #include "bladerunner/vqa_player.h"
 
@@ -35,15 +36,13 @@ namespace BladeRunner {
 Scores::Scores(BladeRunnerEngine *vm) {
 	_vm = vm;
 
-	_txtScorers = new TextResource(_vm);
-	_font = new Font(_vm);
+	_font = nullptr;
+	_txtScorers = nullptr;
 
 	reset();
 }
 
 Scores::~Scores() {
-	delete _font;
-	delete _txtScorers;
 }
 
 void Scores::open() {
@@ -61,7 +60,10 @@ void Scores::open() {
 
 	// TODO: Freeze game time
 
+	_txtScorers = new TextResource(_vm);
 	_txtScorers->open("SCORERS");
+
+	_font = new Font(_vm);
 	_font->open("TAHOMA24.FON", 640, 480, -1, 0, 0);
 	_font->setSpacing(1, 0);
 
@@ -76,6 +78,24 @@ bool Scores::isOpen() const {
 }
 
 void Scores::close() {
+	_isOpen = false;
+
+	delete _font;
+	_font = nullptr;
+
+	delete _txtScorers;
+	_txtScorers = nullptr;
+
+	if (_vqaPlayer) {
+		_vqaPlayer->close();
+		delete _vqaPlayer;
+		_vqaPlayer = nullptr;
+	}
+
+	_vm->closeArchive("MODE.MIX");
+
+	// TODO: Unfreeze game time
+	_vm->_scene->resume();
 }
 
 void Scores::set(int index, int value) {
