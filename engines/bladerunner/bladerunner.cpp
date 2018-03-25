@@ -66,6 +66,7 @@
 #include "bladerunner/ui/elevator.h"
 #include "bladerunner/ui/esper.h"
 #include "bladerunner/ui/kia.h"
+#include "bladerunner/ui/scores.h"
 #include "bladerunner/ui/spinner.h"
 #include "bladerunner/ui/vk.h"
 #include "bladerunner/vqa_decoder.h"
@@ -396,7 +397,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_elevator = new Elevator(this);
 
-	// TODO: Scores
+	_scores = new Scores(this);
 
 	_mainFont = new Font(this);
 	_mainFont->open("KIA6PT.FON", 640, 480, -1, 0, 0x252D);
@@ -596,7 +597,8 @@ void BladeRunnerEngine::shutdown() {
 
 	// TODO: Delete Flee waypoints
 
-	// TODO: Delete Scores
+	delete _scores;
+	_scores = nullptr;
 
 	delete _elevator;
 	_elevator = nullptr;
@@ -753,7 +755,11 @@ void BladeRunnerEngine::gameTick() {
 			return;
 		}
 
-		// TODO: Scores
+		if (_scores->isOpen()) {
+			_scores->tick();
+			_ambientSounds->tick();
+			return;
+		}
 
 		_actorDialogueQueue->tick();
 		if (_scene->didPlayerWalkIn()) {
@@ -947,7 +953,10 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 		return;
 	}
 
-	//TODO: scores
+	if (_scores->isOpen()) {
+		return;
+	}
+
 	switch (event.kbd.keycode) {
 		case Common::KEYCODE_TAB:
 			_kia->openLastOpened();
@@ -995,7 +1004,9 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 		return;
 	}
 
-	//TODO: scores
+	if (_scores->isOpen()) {
+		return;
+	}
 
 	switch (event.kbd.keycode) {
 		case Common::KEYCODE_F1:
@@ -1616,7 +1627,7 @@ bool BladeRunnerEngine::saveGame(const Common::String &filename, byte *thumbnail
 	_ambientSounds->save(s);
 	_overlays->save(s);
 	_spinner->save(s);
-	s.padBytes(0x28); // TODO: _scores->save(s);
+	_scores->save(s);
 	_dialogueMenu->save(s);
 	_obstacles->save(s);
 	_actorDialogueQueue->save(s);
@@ -1694,7 +1705,7 @@ void BladeRunnerEngine::loadGame(const Common::String &filename, byte *thumbnail
 	_ambientSounds->load(s);
 	_overlays->load(s);
 	_spinner->load(s);
-	s.skip(0x28); // TODO: _scores->load(s);
+	_scores->load(s);
 	_dialogueMenu->load(s);
 	_obstacles->load(s);
 	_actorDialogueQueue->load(s);

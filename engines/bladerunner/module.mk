@@ -260,6 +260,7 @@ MODULE_OBJS = \
 	ui/kia_section_settings.o \
 	ui/kia_section_suspects.o \
 	ui/kia_shapes.o \
+	ui/scores.o \
 	ui/spinner.o \
 	ui/ui_check_box.o \
 	ui/ui_container.o \

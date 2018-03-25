@@ -79,6 +79,7 @@ class PoliceMaze;
 class Scene;
 class SceneObjects;
 class SceneScript;
+class Scores;
 class Settings;
 class Shape;
 class SliceAnimations;
@@ -137,6 +138,7 @@ public:
 	Scene              *_scene;
 	SceneObjects       *_sceneObjects;
 	SceneScript        *_sceneScript;
+	Scores             *_scores;
 	Settings           *_settings;
 	SliceAnimations    *_sliceAnimations;
 	SliceRenderer      *_sliceRenderer;
