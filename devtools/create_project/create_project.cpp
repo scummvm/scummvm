@@ -1452,9 +1452,6 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 		// Various text files
 		in.push_back(setup.srcDir + "/AUTHORS");
 		in.push_back(setup.srcDir + "/COPYING");
-		in.push_back(setup.srcDir + "/COPYING.LGPL");
-		in.push_back(setup.srcDir + "/COPYING.BSD");
-		in.push_back(setup.srcDir + "/COPYING.FREEFONT");
 		in.push_back(setup.srcDir + "/COPYRIGHT");
 		in.push_back(setup.srcDir + "/NEWS");
 		in.push_back(setup.srcDir + "/README");

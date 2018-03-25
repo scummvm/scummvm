@@ -111,7 +111,7 @@ ifdef USE_SPARKLE
 	cp -R $(SPARKLEPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
 endif
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
-	cp $(DIST_FILES_DOCS) $(bundle_name)/
+	cp $(DIST_FILES_DOCS) $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
 ifdef DIST_FILES_NETWORKING
 	cp $(DIST_FILES_NETWORKING) $(bundle_name)/Contents/Resources/
@@ -119,7 +119,8 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
 endif
-	$(srcdir)/devtools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
+	$(srcdir)/devtools/credits.pl --rtf > $(bundle_name)/Contents/Resources/AUTHORS.rtf
+	rm $(bundle_name)/Contents/Resources/AUTHORS
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp scummvm $(bundle_name)/Contents/MacOS/scummvm
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
@@ -293,9 +294,6 @@ win32dist: all
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
-	cp $(srcdir)/COPYING.BSD $(WIN32PATH)/COPYING.BSD.txt
-	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
-	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt

@@ -47,6 +47,10 @@ OSystem_MacOSX::OSystem_MacOSX()
 	OSystem_POSIX("Library/Preferences/ScummVM Preferences") {
 }
 
+OSystem_MacOSX::~OSystem_MacOSX() {
+	releaseMenu();
+}
+
 void OSystem_MacOSX::init() {
 	// Use an iconless window on OS X, as we use a nicer external icon there.
 	_window = new SdlIconlessWindow();

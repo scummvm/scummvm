@@ -28,6 +28,7 @@
 
 #include "backends/platform/sdl/macosx/macosx-compat.h"
 #include <Cocoa/Cocoa.h>
+#include <AppKit/NSWorkspace.h>
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
 #define NSEventModifierFlagCommand NSCommandKeyMask
@@ -50,26 +51,103 @@
 // In SnowLeopard, this workaround is unnecessary and should not be used. Under SnowLeopard, the first menu
 // is always identified as the application menu.
 
+static void openFromBundle(NSString *file) {
+	NSString *path = [[NSBundle mainBundle] pathForResource:file ofType:@"rtf"];
+	if (!path) {
+		path = [[NSBundle mainBundle] pathForResource:file ofType:@""];
+	}
+
+	if (path) {
+		[[NSWorkspace sharedWorkspace] openFile:path];
+	}
+}
+
+@interface ScummVMMenuHandler : NSObject {
+}
+- (void) openReadme;
+- (void) openLicense;
+- (void) openNews;
+- (void) openUserManual;
+- (void) openCredits;
+@end
+
+@implementation ScummVMMenuHandler : NSObject
+- (void)openReadme {
+	openFromBundle(@"README");
+}
+
+- (void)openLicense {
+	openFromBundle(@"COPYING");
+}
+
+- (void)openNews {
+	openFromBundle(@"NEWS");
+}
+
+- (void)openUserManual {
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://www.scummvm.org/manual"]];
+}
+
+- (void)openCredits {
+	openFromBundle(@"AUTHORS");
+}
+@end
 
 NSString *constructNSStringFromCString(const char *rawCString, CFStringEncoding stringEncoding) {
 	return (NSString *)CFStringCreateWithCString(NULL, rawCString, stringEncoding);
 }
 
-void replaceApplicationMenuItems() {
+static NSMenu *addMenu(const char *title, CFStringEncoding encoding, NSString *key, SEL setAs) {
+	NSString *str = constructNSStringFromCString(title, encoding);
+	NSMenu *menu = [[NSMenu alloc] initWithTitle:str];
 
-	// Code mainly copied and adapted from SDLmain.m
-	NSMenu *appleMenu;
-	NSMenu *windowMenu;
-	NSMenuItem *menuItem;
+	NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:str action:nil keyEquivalent:key];
+	[menuItem setSubmenu:menu];
+	[[NSApp mainMenu] addItem:menuItem];
+
+	if (setAs) {
+		[NSApp performSelector:setAs withObject:menu];
+	}
+
+	[str release];
+	[menuItem release];
+
+	return menu;
+}
+
+static void addMenuItem(const char *title, CFStringEncoding encoding, id target, SEL selector, NSString *key, NSMenu *parent, NSEventModifierFlags flags = 0) {
+	NSString *nsString = constructNSStringFromCString(title, encoding);
+	NSMenuItem *menuItem = [[NSMenuItem alloc]
+							initWithTitle:nsString
+							action:selector
+							keyEquivalent:key];
+	if (target) {
+		[menuItem setTarget:target];
+	}
+	if (flags) {
+		[menuItem setKeyEquivalentModifierMask:flags];
+	}
+	[parent addItem:menuItem];
+	[nsString release];
+}
+
+static ScummVMMenuHandler *delegate = nullptr;
+
+void releaseMenu() {
+	[delegate release];
+	delegate = nullptr;
+}
+
+void replaceApplicationMenuItems() {
+	if (!delegate) {
+		delegate = [[ScummVMMenuHandler alloc] init];
+	}
 
 	// We cannot use [[NSApp mainMenu] removeAllItems] as removeAllItems was added in OS X 10.6
 	// So remove the SDL generated menus one by one instead.
 	while ([[NSApp mainMenu] numberOfItems] > 0) {
 		[[NSApp mainMenu] removeItemAtIndex:0];
 	}
-
-	// Create new application menu
-	appleMenu = [[NSMenu alloc] initWithTitle:@"ScummVM"];
 
 	NSString *nsString = NULL;
 
@@ -82,69 +160,28 @@ void replaceApplicationMenuItems() {
 	CFStringEncoding stringEncoding = kCFStringEncodingASCII;
 #endif
 
-	// Add "About ScummVM" menu item
-	nsString = constructNSStringFromCString(_("About ScummVM"), stringEncoding);
-	[appleMenu addItemWithTitle:nsString action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
-	[nsString release];
-
-	// Add separator
+	NSMenu *appleMenu = addMenu("ScummVM", kCFStringEncodingASCII, @"", @selector(setAppleMenu:));
+	addMenuItem(_("About ScummVM"), stringEncoding, nil, @selector(orderFrontStandardAboutPanel:), @"", appleMenu);
 	[appleMenu addItem:[NSMenuItem separatorItem]];
-
-	// Add "Hide ScummVM" menu item
-	nsString = constructNSStringFromCString(_("Hide ScummVM"), stringEncoding);
-	[appleMenu addItemWithTitle:nsString action:@selector(hide:) keyEquivalent:@"h"];
-	[nsString release];
-
-	// Add "Hide Others" menu item
-	nsString = constructNSStringFromCString(_("Hide Others"), stringEncoding);
-	menuItem = (NSMenuItem *)[appleMenu addItemWithTitle:nsString action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
-	[menuItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption|NSEventModifierFlagCommand)];
-
-	// Add "Show All" menu item
-	nsString = constructNSStringFromCString(_("Show All"), stringEncoding);
-	[appleMenu addItemWithTitle:nsString action:@selector(unhideAllApplications:) keyEquivalent:@""];
-	[nsString release];
-
-	// Add separator
+	addMenuItem(_("Hide ScummVM"), stringEncoding, nil, @selector(hide:), @"h", appleMenu);
+	addMenuItem(_("Hide Others"), stringEncoding, nil, @selector(hideOtherApplications:), @"h", appleMenu, (NSEventModifierFlagOption|NSEventModifierFlagCommand));
+	addMenuItem(_("Show All"), stringEncoding, nil, @selector(unhideAllApplications:), @"", appleMenu);
 	[appleMenu addItem:[NSMenuItem separatorItem]];
+	addMenuItem(_("Quit ScummVM"), stringEncoding, nil, @selector(terminate:), @"q", appleMenu);
 
-	// Add "Quit ScummVM" menu item
-	nsString = constructNSStringFromCString(_("Quit ScummVM"), stringEncoding);
-	[appleMenu addItemWithTitle:nsString action:@selector(terminate:) keyEquivalent:@"q"];
-	[nsString release];
+	NSMenu *windowMenu = addMenu(_("Window"), stringEncoding, @"", @selector(setWindowsMenu:));
+	addMenuItem(_("Minimize"), stringEncoding, nil, @selector(performMiniaturize:), @"m", windowMenu);
 
-	// Put application menu into the menubar
-	menuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
-	[menuItem setSubmenu:appleMenu];
-	[[NSApp mainMenu] addItem:menuItem];
+	NSMenu *helpMenu = addMenu(_("Help"), stringEncoding, @"", @selector(setHelpMenu:));
+	addMenuItem(_("User Manual"), stringEncoding, delegate, @selector(openUserManual), @"", helpMenu);
+	[helpMenu addItem:[NSMenuItem separatorItem]];
+	addMenuItem(_("General Information"), stringEncoding, delegate, @selector(openReadme), @"", helpMenu);
+	addMenuItem(_("What's New in ScummVM"), stringEncoding, delegate, @selector(openNews), @"", helpMenu);
+	[helpMenu addItem:[NSMenuItem separatorItem]];
+	addMenuItem(_("Credits"), stringEncoding, delegate, @selector(openCredits), @"", helpMenu);
+	addMenuItem(_("Licensing Information"), stringEncoding, delegate, @selector(openLicense), @"", helpMenu);
 
-	// Tell the application object that this is now the application menu
-	[NSApp setAppleMenu:appleMenu];
-
-
-	// Create new "Window" menu
-	nsString = constructNSStringFromCString(_("Window"), stringEncoding);
-	windowMenu = [[NSMenu alloc] initWithTitle:nsString];
-	[nsString release];
-
-	// Add "Minimize" menu item
-	nsString = constructNSStringFromCString(_("Minimize"), stringEncoding);
-	menuItem = [[NSMenuItem alloc] initWithTitle:nsString action:@selector(performMiniaturize:) keyEquivalent:@"m"];
-	[windowMenu addItem:menuItem];
-	[nsString release];
-
-	// Put menu into the menubar
-	nsString = constructNSStringFromCString(_("Window"), stringEncoding);
-	menuItem = [[NSMenuItem alloc] initWithTitle:nsString action:nil keyEquivalent:@""];
-	[menuItem setSubmenu:windowMenu];
-	[[NSApp mainMenu] addItem:menuItem];
-	[nsString release];
-
-	// Tell the application object that this is now the window menu.
-	[NSApp setWindowsMenu:windowMenu];
-
-	// Finally give up our references to the objects
 	[appleMenu release];
 	[windowMenu release];
-	[menuItem release];
+	[helpMenu release];
 }
