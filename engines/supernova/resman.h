@@ -35,15 +35,22 @@ class MSNImage;
 
 class ResourceManager {
 public:
+	enum CursorId {
+		kCursorNormal,
+		kCursorWait
+	};
+
+public:
 	static const int kNumImageFiles = 44;
 
 public:
-	ResourceManager(SupernovaEngine *vm);
+	ResourceManager();
 	~ResourceManager();
 
 	Audio::SeekableAudioStream *getSoundStream(AudioIndex index);
 	Audio::AudioStream *getSoundStream(MusicIndex index) const;
 	MSNImage *getImage(int filenumber) const;
+	const byte *getImage(CursorId id) const;
 
 private:
 	void initSoundFiles();
@@ -52,7 +59,6 @@ private:
 	void initImages();
 
 private:
-	SupernovaEngine *_vm;
 	Audio::SeekableAudioStream *_soundSamples[kAudioNumSamples];
 	Audio::AudioStream *_musicIntro;
 	Audio::AudioStream *_musicOutro;

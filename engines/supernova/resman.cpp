@@ -31,6 +31,7 @@
 
 #include "supernova/graphics.h"
 #include "supernova/resman.h"
+#include "supernova/screen.h"
 #include "supernova/supernova.h"
 
 namespace Supernova {
@@ -66,9 +67,8 @@ static const AudioInfo audioInfo[kAudioNumSamples] = {
 	{54, 31040,    -1}
 };
 
-ResourceManager::ResourceManager(SupernovaEngine *vm)
-	: _audioRate(11931)
-	, _vm(vm) {
+ResourceManager::ResourceManager()
+	: _audioRate(11931) {
 	initSoundFiles();
 	initGraphics();
 }
@@ -126,7 +126,7 @@ void ResourceManager::initSoundFiles() {
 }
 
 void ResourceManager::initGraphics() {
-	_vm->_system->getPaletteManager()->setPalette(initVGAPalette, 0, 256);
+	Screen::initPalette();
 	initCursorGraphics();
 	initImages();
 }
@@ -150,10 +150,6 @@ void ResourceManager::initCursorGraphics() {
 				_cursorWait[bitIndex] = kColorLightRed;
 		}
 	}
-
-	CursorMan.replaceCursor(_cursorNormal, 16, 16, 0, 0, kColorCursorTransparent);
-	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
-	CursorMan.showMouse(true);
 }
 
 void ResourceManager::initImages() {
@@ -188,6 +184,16 @@ MSNImage *ResourceManager::getImage(int filenumber) const {
 	return _images[filenumber];
 }
 
+const byte *ResourceManager::getImage(CursorId id) const {
+	switch (id) {
+	case kCursorNormal:
+		return _cursorNormal;
+	case kCursorWait:
+		return _cursorWait;
+	default:
+		return nullptr;
+	}
+}
 
 static Common::MemoryReadStream *convertToMod(const char *filename, int version) {
 	// MSN format

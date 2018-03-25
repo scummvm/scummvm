@@ -23,6 +23,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
@@ -179,6 +180,11 @@ Screen::Screen(SupernovaEngine *vm, GameManager *gm, ResourceManager *resMan)
 	, _textCursorX(0)
 	, _textCursorY(0)
 	, _messageShown(false) {
+
+	CursorMan.replaceCursor(_resMan->getImage(ResourceManager::kCursorNormal),
+							16, 16, 0, 0, kColorCursorTransparent);
+	CursorMan.replaceCursorPalette(initVGAPalette, 0, 16);
+	CursorMan.showMouse(true);
 }
 
 int Screen::getGuiBrightness() const {
@@ -552,6 +558,11 @@ void Screen::renderBox(const GuiElement &guiElement) {
 	renderBox(guiElement.left, guiElement.top, guiElement.width(),
 			  guiElement.height(), guiElement.getBackgroundColor());
 }
+
+void Screen::initPalette() {
+	g_system->getPaletteManager()->setPalette(initVGAPalette, 0, 256);
+}
+
 void Screen::paletteBrightness() {
 	byte palette[768];
 

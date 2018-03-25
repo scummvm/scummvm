@@ -133,7 +133,7 @@ void SupernovaEngine::init() {
 	if (status.getCode() != Common::kNoError)
 		error("Failed reading game strings");
 
-	_resMan = new ResourceManager(this);
+	_resMan = new ResourceManager();
 	_sound = new Sound(_mixer, _resMan);
 	_gm = new GameManager(this, _sound);
 	_screen = new Screen(this, _gm, _resMan);
