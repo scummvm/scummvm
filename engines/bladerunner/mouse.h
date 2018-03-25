@@ -58,7 +58,8 @@ public:
 	void setCursor(int cursor);
 
 	void getXY(int *x, int *y) const;
-	void setRandomY();
+	void setMouseJitterUp();
+	void setMouseJitterDown();
 
 	void disable();
 	void enable();

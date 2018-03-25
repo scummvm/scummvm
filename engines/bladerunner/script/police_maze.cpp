@@ -333,7 +333,7 @@ bool PoliceMazeTargetTrack::tick() {
 					}
 					Sound_Play_Speech_Line(kActorMcCoy, snd, 75, 0, 99);
 
-					_vm->_mouse->setRandomY();
+					_vm->_mouse->setMouseJitterDown();
 				}
 
 				cont = false;

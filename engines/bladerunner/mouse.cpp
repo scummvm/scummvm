@@ -166,7 +166,29 @@ void Mouse::getXY(int *x, int *y) const {
 	*y = _y;
 }
 
-void Mouse::setRandomY() {
+void Mouse::setMouseJitterUp() {
+	switch (_vm->_settings->getDifficulty()) {
+	case 0:
+		_randomCountdownX = 2;
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 6) - 3;
+		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 20;
+		break;
+
+	case 1:
+		_randomCountdownX = 3;
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 8) - 4;
+		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 25;
+		break;
+
+	case 2:
+		_randomCountdownX = 4;
+		_randomX = _vm->_rnd.getRandomNumberRng(0, 10) - 5;
+		_randomY = _vm->_rnd.getRandomNumberRng(0, 10) - 30;
+		break;
+	}
+}
+
+void Mouse::setMouseJitterDown() {
 	switch (_vm->_settings->getDifficulty()) {
 	case 0:
 		_randomCountdownY = 2;
@@ -190,6 +212,9 @@ void Mouse::setRandomY() {
 
 void Mouse::disable() {
 	++_disabledCounter;
+
+	_randomCountdownX = 0;
+	_randomCountdownY = 0;
 }
 
 void Mouse::enable() {
@@ -204,7 +229,22 @@ bool Mouse::isDisabled() const {
 
 void Mouse::draw(Graphics::Surface &surface, int x, int y) {
 	if (_disabledCounter) {
+		_randomCountdownX = 0;
+		_randomCountdownY = 0;
 		return;
+	}
+
+	if (_randomCountdownX > 0) {
+		_randomCountdownX--;
+		x += _randomX;
+		y += _randomY;
+
+		if (!_randomCountdownX)
+			setMouseJitterDown();
+	} else if (_randomCountdownY > 0){
+		_randomCountdownY--;
+		x += _randomX;
+		y += _randomY;
 	}
 
 	_x = CLIP(x, 0, surface.w - 1);

@@ -1239,7 +1239,7 @@ void BladeRunnerEngine::handleMouseClick3DObject(int objectId, bool buttonDown, 
 		_settings->decreaseAmmo();
 		_audioPlayer->playAud(_gameInfo->getSfxTrack(_combat->getHitSound()), 100, 0, 0, 90, 0);
 
-		//TODO mouse::randomize(Mouse);
+		_mouse->setMouseJitterUp();
 
 		_isInsideScriptObject = true;
 		_sceneScript->clickedOn3DObject(objectName.c_str(), true);
@@ -1280,7 +1280,7 @@ void BladeRunnerEngine::handleMouseClickEmpty(int x, int y, Vector3 &scenePositi
 		_settings->decreaseAmmo();
 		_audioPlayer->playAud(_gameInfo->getSfxTrack(_combat->getMissSound()), 100, 0, 0, 90, 0);
 
-		//TODO mouse::randomize(Mouse);
+		_mouse->setMouseJitterUp();
 
 		if (actorId > 0) {
 			_aiScripts->shotAtAndMissed(actorId);
@@ -1375,7 +1375,8 @@ void BladeRunnerEngine::handleMouseClickItem(int itemId, bool buttonDown) {
 		_settings->decreaseAmmo();
 		_audioPlayer->playAud(_gameInfo->getSfxTrack(_combat->getHitSound()), 100, 0, 0, 90, 0);
 
-		//TODO mouse::randomize(Mouse);
+		_mouse->setMouseJitterUp();
+
 		_isInsideScriptItem = true;
 		_sceneScript->clickedOnItem(itemId, true);
 		_isInsideScriptItem = false;
@@ -1445,7 +1446,7 @@ void BladeRunnerEngine::handleMouseClickActor(int actorId, bool mainButton, bool
 
 		_audioPlayer->playAud(_gameInfo->getSfxTrack(missed ? _combat->getMissSound() : _combat->getHitSound()), 100, 0, 0, 90, 0);
 
-		//TODO mouse::randomize(Mouse);
+		_mouse->setMouseJitterUp();
 
 		if (missed) {
 			_aiScripts->shotAtAndMissed(actorId);
