@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-03-12 11:46+0100\n"
-"PO-Revision-Date: 2018-03-17 20:20+0000\n"
-"Last-Translator: Lothar Serra Mari <rootfather@scummvm.org>\n"
+"PO-Revision-Date: 2018-03-25 11:16+0000\n"
+"Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
@@ -1169,7 +1169,7 @@ msgstr "Andere"
 
 #: gui/options.cpp:1537
 msgid "Theme:"
-msgstr "Thema:"
+msgstr "Design:"
 
 #: gui/options.cpp:1541
 msgid "GUI Renderer:"
@@ -1551,12 +1551,11 @@ msgstr "Rufen Sie folgende URL auf:"
 
 #: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
-msgstr "Geben Sie den Code, den Sie von Ihrem Cloud-Speicher bekommen haben,"
+msgstr "Geben Sie den Code Ihres Cloud-Speichers"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr ""
-"geben Sie Ihn in das folgende Feld ein und klicken Sie auf 'Verbinden':"
+msgstr "in das folgende Feld ein und klicken Sie auf 'Verbinden':"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
@@ -1616,7 +1615,7 @@ msgstr ""
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
-msgstr "Thema auswählen"
+msgstr "Design auswählen"
 
 #: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
