@@ -40,6 +40,31 @@ class Room;
 class MSNImage;
 class Screen;
 
+const int kScreenWidth  = 320;
+const int kScreenHeight = 200;
+const int kFontWidth = 5;
+const int kFontHeight = 8;
+
+enum Color {
+	kColorBlack       =  0,
+	kColorWhite25     =  1,
+	kColorWhite35     =  2,
+	kColorWhite44     =  3,
+	kColorWhite99     =  4,
+	kColorDarkGreen   =  5,
+	kColorGreen       =  6,
+	kColorDarkRed     =  7,
+	kColorRed         =  8,
+	kColorDarkBlue    =  9,
+	kColorBlue        = 10,
+	kColorWhite63     = 11,
+	kColorLightBlue   = 12,
+	kColorLightGreen  = 13,
+	kColorLightYellow = 14,
+	kColorLightRed    = 15,
+	kColorCursorTransparent = kColorWhite25
+};
+
 class ScreenBuffer {
 	friend class ScreenBufferStack;
 

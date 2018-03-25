@@ -30,6 +30,7 @@
 
 #include "supernova/graphics.h"
 #include "supernova/msn_def.h"
+#include "supernova/screen.h"
 #include "supernova/supernova.h"
 
 namespace Supernova {

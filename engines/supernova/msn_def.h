@@ -25,10 +25,6 @@
 
 namespace Supernova {
 
-const int kScreenWidth  = 320;
-const int kScreenHeight = 200;
-const int kFontWidth = 5;
-const int kFontHeight = 8;
 const int kTextSpeed[] = {19, 14, 10, 7, 4};
 const int kMsecPerTick = 55;
 
@@ -49,25 +45,6 @@ enum MessagePosition {
 	kMessageCenter,
 	kMessageTop
 };
-
-const int kColorBlack       =  0;
-const int kColorWhite25     =  1;
-const int kColorWhite35     =  2;
-const int kColorWhite44     =  3;
-const int kColorWhite99     =  4;
-const int kColorDarkGreen   =  5;
-const int kColorGreen       =  6;
-const int kColorDarkRed     =  7;
-const int kColorRed         =  8;
-const int kColorDarkBlue    =  9;
-const int kColorBlue        = 10;
-const int kColorWhite63     = 11;
-const int kColorLightBlue   = 12;
-const int kColorLightGreen  = 13;
-const int kColorLightYellow = 14;
-const int kColorLightRed    = 15;
-const int kColorCursorTransparent = kColorWhite25;
-
 
 enum ObjectType {
 	NULLTYPE    =      0,
