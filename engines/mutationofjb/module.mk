@@ -18,6 +18,7 @@ MODULE_OBJS := \
 	commands/removeitemcommand.o \
 	commands/saycommand.o \
 	commands/seqcommand.o \
+	animationdecoder.o \
 	debug.o \
 	detection.o \
 	encryptedfile.o \

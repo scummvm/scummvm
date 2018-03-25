@@ -21,6 +21,7 @@
  */
 
 #include "mutationofjb/room.h"
+#include "mutationofjb/animationdecoder.h"
 #include "mutationofjb/encryptedfile.h"
 #include "mutationofjb/util.h"
 #include "common/str.h"
@@ -29,114 +30,34 @@
 
 namespace MutationOfJB {
 
+class RoomAnimationDecoderCallback : public AnimationDecoderCallback {
+public:
+	RoomAnimationDecoderCallback(Room &room) : _room(room) {}
+	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
+	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+private:
+	Room &_room;
+};
+
+void RoomAnimationDecoderCallback::onPaletteUpdated(byte palette[PALETTE_SIZE]) {
+	_room._screen->setPalette(palette, 0x00, 0xC0); // Load only 0xC0 colors.
+}
+
+void RoomAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surface) {
+	if (frameNo != 0) {
+		return;
+	}
+
+	_room._screen->blitFrom(surface);
+}
+
 Room::Room(Graphics::Screen *screen) : _screen(screen) {}
 
 bool Room::load(uint8 roomNumber, bool roomB) {
-	EncryptedFile file;
-	Common::String fileName = Common::String::format("room%d%s.dat", roomNumber, roomB ? "b" : "");
-
-	file.open(fileName);
-
-	if (!file.isOpen()) {
-		reportFileMissingError(fileName.c_str());
-
-		return false;
-	}
-
-	file.seek(0x80);
-
-	while (!file.eos()) {
-		// Record.
-		const uint32 length = file.readUint32LE();
-		uint8 info[4] = {0};
-		file.read(info, 4);
-
-		// TODO Find out what these are.
-		uint32 unknown;
-		unknown = file.readUint32LE();
-		unknown = file.readUint32LE();
-
-		// Subrecords.
-		if (info[0] == 0xFA && info[1] == 0xF1) {
-			for (int i = 0; i < info[2]; ++i) {
-				const uint32 subLength = file.readUint32LE();
-				const uint16 type = file.readUint16LE();
-
-				if (type == 0x0B) {
-					loadPalette(file);
-				} else if (type == 0x0F) {
-					loadBackground(file, subLength - 6);
-				} else {
-					debug(_("Unsupported record type %02X."), type);
-					file.seek(subLength - 6, SEEK_CUR);
-				}
-			}
-		}
-	}
-
-	file.close();
-
-	return true;
-}
-
-void Room::loadPalette(EncryptedFile &file) {
-	uint32 unknown;
-
-	// TODO Find out what this is.
-	unknown = file.readUint32LE();
-
-	uint8 palette[PALETTE_SIZE];
-	file.read(palette, PALETTE_SIZE);
-
-	for (int j = 0; j < PALETTE_SIZE; ++j) {
-		palette[j] <<= 2; // Uses 6-bit colors.
-	}
-
-	_screen->setPalette(palette, 0x00, 0xC0); // Load only 0xC0 colors.
-}
-
-void Room::loadBackground(EncryptedFile &file, uint32 size) {
-	_screen->clear();
-
-	uint8 *const pixels = static_cast<uint8 *>(_screen->getPixels());
-	uint8 *ptr = pixels;
-	uint32 readBytes = 0;
-	uint32 lines = 0;
-
-	while (readBytes != size) {
-		if (lines == 200) {
-			// Some background files have an unknown byte at the end,
-			// so break when we encounter all 200 lines.
-			break;
-		}
-
-		uint8 no = file.readByte();
-		readBytes++;
-		while (no--) {
-			uint8 n = file.readByte();
-			readBytes++;
-			if (n < 0x80) {
-				// RLE - Copy color n times.
-				uint8 color = file.readByte();
-				readBytes++;
-				while(n--) {
-					*ptr++ = color;
-				}
-			} else {
-				// Take next 0x100 - n bytes as they are.
-				const uint32 rawlen = 0x100 - n;
-				file.read(ptr, rawlen);
-				readBytes += rawlen;
-				ptr += rawlen;
-			}
-		}
-		lines++;
-	}
-	if (readBytes < size) {
-		file.seek(size - readBytes, SEEK_CUR);
-	}
-
-	_screen->update();
+	const Common::String fileName = Common::String::format("room%d%s.dat", roomNumber, roomB ? "b" : "");
+	AnimationDecoder decoder(fileName);
+	RoomAnimationDecoderCallback callback(*this);
+	return decoder.decode(&callback);
 }
 
 }
