@@ -20,27 +20,48 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
+#ifndef MUTATIONOFJB_ANIMATIONDECODER_H
+#define MUTATIONOFJB_ANIMATIONDECODER_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
+#include "graphics/surface.h"
+#include "mutationofjb/encryptedfile.h"
 
-namespace Graphics {
-	class Screen;
+namespace Common {
+class SeekableReadStream;
 }
 
 namespace MutationOfJB {
 
-class EncryptedFile;
+enum {
+	PALETTE_COLORS = 256,
+	PALETTE_SIZE = PALETTE_COLORS * 3,
+	IMAGE_WIDTH = 320,
+	IMAGE_HEIGHT = 200
+};
 
-class Room {
+class AnimationDecoderCallback {
 public:
-	friend class RoomAnimationDecoderCallback;
+	virtual void onFrame(int frameNo, Graphics::Surface &surface) = 0;
+	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) = 0;
+	virtual ~AnimationDecoderCallback() {}
+};
 
-	Room(Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
+class AnimationDecoder {
+public:
+	AnimationDecoder(const Common::String &fileName);
+	~AnimationDecoder();
+	bool decode(AnimationDecoderCallback *callback);
+
 private:
-	Graphics::Screen *_screen;
+	void loadPalette(Common::SeekableReadStream &stream);
+	void loadFullFrame(EncryptedFile &file, uint32 size);
+	void loadDiffFrame(EncryptedFile &file, uint32 size);
+
+	Common::String _fileName;
+	Graphics::Surface _surface;
+	byte _palette[PALETTE_SIZE];
 };
 
 }
