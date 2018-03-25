@@ -1498,7 +1498,7 @@ void Interface::doCombat() {
 			// Write out the description of the monsters being battled
 			w.writeString(combat.getMonsterDescriptions());
 			_combatIcons.draw(0, 32, Common::Point(233, combat._attackDurationCtr * 10 + 27),
-				SPRFLAG_800, 1);
+				SPRFLAG_800, 0);
 			w.update();
 
 			// Wait for keypress
