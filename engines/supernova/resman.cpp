@@ -186,14 +186,14 @@ void ResourceManager::initImages() {
 	}
 }
 
-Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioIndex index) {
+Audio::SeekableAudioStream *ResourceManager::getSoundStream(AudioId index) {
 	Audio::SeekableAudioStream *stream = _soundSamples[index];
 	stream->rewind();
 
 	return stream;
 }
 
-Audio::AudioStream *ResourceManager::getSoundStream(MusicIndex index) const {
+Audio::AudioStream *ResourceManager::getSoundStream(MusicId index) const {
 	switch (index) {
 	case kMusicIntro:
 		return _musicIntro;

@@ -91,8 +91,8 @@ public:
 	void setGameString(int idx, const Common::String &string);
 
 	// forwarding calls
-	void playSound(AudioIndex sample);
-	void playSound(MusicIndex index);
+	void playSound(AudioId sample);
+	void playSound(MusicId index);
 	void paletteFadeIn();
 	void paletteFadeOut();
 	void paletteBrightness();
