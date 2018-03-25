@@ -34,6 +34,14 @@ namespace MutationOfJB {
 
 static const uint8 MAX_STR_LENGTH = 0x14;
 
+/*
+	There are 4 types of entities present in the game data:
+	- Door
+	- Object
+	- Static
+	- Bitmap
+*/
+
 struct Door {
 	/*
 		Door name.
@@ -115,8 +123,8 @@ struct Bitmap {
 struct Scene {
 
 	Door *getDoor(uint8 objectId);
-	Object *getObject(uint8 objectId);
-	Static *getStatic(uint8 staticId);
+	Object *getObject(uint8 objectId, bool ignoreNo = false);
+	Static *getStatic(uint8 staticId, bool ignoreNo = false);
 
 	uint8 _startup;
 	uint8 _unknown001;

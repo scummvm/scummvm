@@ -77,6 +77,7 @@ Common::Error MutationOfJBEngine::run() {
 	_console = new Console(this);
 	_screen = new Graphics::Screen();
 	_game = new Game(this);
+	ActionInfo::Action currentAction = ActionInfo::Walk;
 
 	setupCursor();
 
@@ -94,16 +95,34 @@ Common::Error MutationOfJBEngine::run() {
 			}
 			case Common::EVENT_LBUTTONDOWN:
 			{
-				const Scene *const scene = _game->getGameData().getScene(_game->getGameData()._currentScene);
-				if (scene) {
-					for (int i = 0; i < MIN(ARRAYSIZE(scene->_doors), (int) scene->_noDoors); ++i) {
-						const Door &door = scene->_doors[i];
-						if ((event.mouse.x >= door._x) && (event.mouse.x < door._x + door._width) && (event.mouse.y >= door._y) && (event.mouse.y < door._y + door._height)) {
-							_game->changeScene(door._destSceneId, false);
-						}
+				if (Door *const door = _game->findDoor(event.mouse.x, event.mouse.y)) {
+					if (!_game->startActionSection(currentAction, door->_name) && currentAction == ActionInfo::Walk && door->_destSceneId != 0) {
+						_game->changeScene(door->_destSceneId, _game->getGameData()._partB);
 					}
+				} else if (Static *const stat = _game->findStatic(event.mouse.x, event.mouse.y)) {
+					_game->startActionSection(currentAction, stat->_name);
 				}
 				break;
+			}
+			case Common::EVENT_KEYUP:
+			{
+				switch (event.kbd.ascii) {
+				case 'g':
+					currentAction = ActionInfo::Walk;
+					break;
+				case 'r':
+					currentAction = ActionInfo::Talk;
+					break;
+				case 's':
+					currentAction = ActionInfo::Look;
+					break;
+				case 'b':
+					currentAction = ActionInfo::Use;
+					break;
+				case 'n':
+					currentAction = ActionInfo::PickUp;
+					break;
+				}
 			}
 			default:
 				break;

@@ -150,8 +150,8 @@ Door *Scene::getDoor(uint8 doorId) {
 	return &_doors[doorId - 1];
 }
 
-Object *Scene::getObject(uint8 objectId) {
-	if (objectId == 0 || objectId > _noObjects) {
+Object *Scene::getObject(uint8 objectId, bool ignoreNo) {
+	if (objectId == 0 || objectId > (!ignoreNo ? MIN(_noObjects, (uint8) ARRAYSIZE(_objects)) : ARRAYSIZE(_objects))) {
 		warning(_("Object %d does not exist"), objectId);
 		return nullptr;
 	}
@@ -159,8 +159,8 @@ Object *Scene::getObject(uint8 objectId) {
 	return &_objects[objectId - 1];
 }
 
-Static *Scene::getStatic(uint8 staticId) {
-	if (staticId == 0 || staticId > _noStatics) {
+Static *Scene::getStatic(uint8 staticId, bool ignoreNo) {
+	if (staticId == 0 || staticId > (!ignoreNo ? MIN(_noStatics, (uint8) ARRAYSIZE(_statics)) : ARRAYSIZE(_statics))) {
 		warning(_("Static %d does not exist"), staticId);
 		return nullptr;
 	}

@@ -122,6 +122,64 @@ Script *Game::changeSceneDelayScript(uint8 sceneId, bool partB) {
 	return _delayedLocalScript;
 }
 
+Door *Game::findDoor(int16 x, int16 y) {
+	Scene *scene = _gameData->getCurrentScene();
+	if (!scene)
+		return nullptr;
+
+	for (int i = 0; i < MIN(ARRAYSIZE(scene->_doors), (int) scene->_noDoors); ++i) {
+		Door &door = scene->_doors[i];
+		if ((x >= door._x) && (x < door._x + door._width) && (y >= door._y) && (y < door._y + door._height)) {
+			return &door;
+		}
+	}
+
+	return nullptr;
+}
+
+Static *Game::findStatic(int16 x, int16 y) {
+	Scene *scene = _gameData->getCurrentScene();
+	if (!scene)
+		return nullptr;
+
+	for (int i = 0; i < MIN(ARRAYSIZE(scene->_statics), (int) scene->_noStatics); ++i) {
+		Static &stat = scene->_statics[i];
+		if ((x >= stat._x) && (x < stat._x + stat._width) && (y >= stat._y) && (y < stat._y + stat._height)) {
+			return &stat;
+		}
+	}
+
+	return nullptr;
+}
+
+static Command *findActionInfoCommand(const ActionInfos &infos, const Common::String &entity1Name, const Common::String &entity2Name = Common::String()) {
+	for (ActionInfos::const_iterator it = infos.begin(); it != infos.end(); ++it) {
+		if (it->_entity1Name == entity1Name && it->_entity2Name == entity2Name) {
+			return it->_command;
+		}
+	}
+	return nullptr;
+}
+
+bool Game::startActionSection(ActionInfo::Action action, const Common::String &entity1Name, const Common::String &entity2Name) {
+	Script *const localScript = getLocalScript();
+	Script *const globalScript = getGlobalScript();
+
+	Command *command = nullptr;
+	if (localScript) {
+		command = findActionInfoCommand(localScript->getActionInfos(action), entity1Name, entity2Name);
+	}
+	if (!command && globalScript) {
+		command = findActionInfoCommand(globalScript->getActionInfos(action), entity1Name, entity2Name);
+	}
+	if (command) {
+		_scriptExecCtx.startCommand(command);
+		return true;
+	}
+
+	return false;
+}
+
 void Game::update() {
 	Command::ExecuteResult res = _scriptExecCtx.runActiveCommand();
 	if (res == Command::Finished && _delayedLocalScript) {

@@ -221,18 +221,7 @@ bool Script::loadFromStream(Common::SeekableReadStream &stream) {
 	}
 
 	for (ActionInfos::iterator it = parseCtx._actionInfos.begin(); it != parseCtx._actionInfos.end(); ++it) {
-		if (it->_action == ActionInfo::Look) {
-			_lookActionInfos.push_back(*it);
-		}
-		if (it->_action == ActionInfo::Walk) {
-			_walkActionInfos.push_back(*it);
-		}
-		if (it->_action == ActionInfo::Talk) {
-			_talkActionInfos.push_back(*it);
-		}
-		if (it->_action == ActionInfo::Use) {
-			_useActionInfos.push_back(*it);
-		}
+		_actionInfos[it->_action].push_back(*it);
 	}
 
 	_macros = parseCtx._macros;
@@ -252,20 +241,8 @@ Script::~Script() {
 	destroy();
 }
 
-const ActionInfos &Script::getLookActionInfos() const {
-	return _lookActionInfos;
-}
-
-const ActionInfos &Script::getWalkActionInfos() const {
-	return _walkActionInfos;
-}
-
-const ActionInfos &Script::getTalkActionInfos() const {
-	return _talkActionInfos;
-}
-
-const ActionInfos &Script::getUseActionInfos() const {
-	return _useActionInfos;
+const ActionInfos &Script::getActionInfos(ActionInfo::Action action) {
+	return _actionInfos[action];
 }
 
 const Commands &Script::getAllCommands() const {
