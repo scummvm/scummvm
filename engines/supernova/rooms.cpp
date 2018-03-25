@@ -2612,18 +2612,20 @@ bool AxacussCorridor5::handleMoneyDialog() {
 			_gm->wait(2);
 			_gm->shot(3, _gm->invertSection(3));
 			break;
-		case 3:
-			if (_gm->_state._money >= 900) {
-				stopInteract(_gm->_state._money);
-				return true;
-			}
-			// fall through
 		case 2:
 			if (_gm->_state._money > 1100) {
 				stopInteract(_gm->_state._money - 200);
 				return true;
 			}
 			_gm->reply(kStringAxacussCorridor5_6, 1, 1 + 128);
+			break;
+		case 3:
+			if (_gm->_state._money >= 900) {
+				stopInteract(_gm->_state._money);
+				return true;
+			}
+			_gm->reply(kStringAxacussCorridor5_6, 1, 1 + 128);
+			break;
 		}
 	}
 	return false;
