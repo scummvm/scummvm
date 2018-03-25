@@ -64,27 +64,29 @@ void GamePage::init(bool isLoadingSave) {
             break;
     }
 
-
     LeadActor::State state = _leadActor->getState();
-    bool unk = (state == LeadActor::kInventory || state == LeadActor::kPDA);
+    bool startNow = !(state == LeadActor::kInventory || state == LeadActor::kPDA);
 
     for (int i = 0; i < _actors.size(); ++i) {
-        _actors[i]->init(unk);
+        _actors[i]->init(startNow);
     }
 
-    if (!isLoadingSave)
-        initHandler();
+    bool isHandler = 0;
+    if (!isLoadingSave) {
+        isHandler = initHandler();
+    }
 
-
+    //_leadActor->start(isHandler);
 }
 
-void GamePage::initHandler() {
+bool GamePage::initHandler() {
     for (uint i = 0; i < _handlers.size(); ++i) {
         if (_handlers[i]->isSuitable(_leadActor)){
             _handlers[i]->onMessage(_leadActor);
-            break;
+            return true;
         }
     }
+    return false;
 }
 
 void GamePage::loadManagers() {

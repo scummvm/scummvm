@@ -59,6 +59,8 @@ public:
 
     bool initPallete(Director *director);
 
+    void update() {};
+
 protected:
     GamePage *_page;
     Action *_action;

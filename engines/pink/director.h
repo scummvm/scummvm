@@ -29,22 +29,27 @@
 namespace Pink {
 
 class ActionCEL;
+class ActionSound;
 
 class Director {
 public:
     Director(OSystem *system);
-    //void addSoundObject();
-    //void removeSound();
-    //void updateSoundAction
     //CActor *getActorByCoords()
 
     void draw();
+    void update();
+
     void addSprite(ActionCEL *sprite);
     void removeSprite(ActionCEL *sprite);
     void setPallette(const byte *pallete);
+
+    void addSound(ActionSound* sound);
+    void removeSound(ActionSound* sound);
+
 private:
     OSystem *_system;
     Common::Array<ActionCEL*> _sprites;
+    Common::Array<ActionSound*> _sounds;
 };
 
 } // End of namespace Pink

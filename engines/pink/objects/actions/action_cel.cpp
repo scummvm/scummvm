@@ -64,8 +64,17 @@ CelDecoder *ActionCEL::getDecoder() {
 bool ActionCEL::initPallete(Director *director) {
     _decoder = _actor->getPage()->loadCel(_fileName);
     _decoder->decodeNextFrame();
+    _decoder->rewind();
     director->setPallette(_decoder->getPalette());
+
     return 1;
+}
+
+void ActionCEL::update() {
+    if (_decoder->endOfVideo()){
+        _decoder->stop();
+        _actor->endAction();
+    }
 }
 
 } // End of namespace Pink

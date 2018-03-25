@@ -45,12 +45,12 @@ public:
     Module(PinkEngine *game, const Common::String &name);
 
     void load(Archive &archive);
-    void init(bool isLoadingSave, const Common::String *pageName);
+    void init(bool isLoadingSave, const Common::String &pageName);
+    void changePage(const Common::String &pageName);
 
     void OnLeftButtonDown();
     void OnMouseMove();
     void OnKeyboardButtonClick();
-
 
     PinkEngine *getGame() const;
     InventoryMgr *getInventoryMgr();
@@ -59,6 +59,8 @@ public:
     void setVariable(Common::String &variable, Common::String &value);
 
 private:
+    GamePage *findPage(const Common::String &pageName) const;
+
     PinkEngine *_game;
     GamePage *_page;
     Common::Array<GamePage*> _pages;

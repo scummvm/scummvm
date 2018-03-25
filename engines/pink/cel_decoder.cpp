@@ -64,6 +64,13 @@ uint32 CelDecoder::getY() {
     return track->getY();
 }
 
+Graphics::Surface *CelDecoder::getCurrentFrame() {
+    CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+    if (!track)
+        return nullptr;
+    return nullptr;
+}
+
 CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
         : FlicVideoTrack(stream, frameCount, width, height, 1) {
     readHeader();

@@ -50,6 +50,7 @@ void LeadActor::init(bool unk) {
         _state = kReady;
     }
     _page->getModule()->getInventoryMgr()->setLeadActor(this);
+    _page->getGame()->setLeadActor(this);
     Actor::init(unk);
 }
 
@@ -62,6 +63,19 @@ void LeadActor::toConsole() {
 
 LeadActor::State LeadActor::getState() const {
     return _state;
+}
+
+void LeadActor::update() {
+    switch (_state) {
+        case kPlayingVideo:
+            _sequencer->update();
+            if (!_sequencer->_context){
+                _state = kUnk_Loading;
+                _page->getGame()->changeScene(_page);
+            }
+        default:
+            break;
+    }
 }
 
 void ParlSqPink::toConsole() {

@@ -53,7 +53,7 @@ public:
     virtual void toConsole();
 
 private:
-    void initHandler();
+    bool initHandler();
 
 
     int perhapsIsLoaded;

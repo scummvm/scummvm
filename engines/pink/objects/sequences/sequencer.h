@@ -45,9 +45,14 @@ public:
     Sequence* findSequence(const Common::String &name);
     void authorSequence(Sequence *sequence, bool unk);
 
+    void removeContext(SequenceContext *context);
+
+    void update();
+
+
 public:
     SequenceContext *_context;
-    // unknown objects array
+    // context array
     Common::Array<Sequence*> _sequences;
     Common::String _currentSequenceName;
     Common::Array<SeqTimer*> _timers;

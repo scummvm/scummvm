@@ -34,8 +34,8 @@ void ActionStill::deserialize(Archive &archive) {
 }
 
 void ActionStill::toConsole() {
-    debug("\tActionStill: _name = %s, _fileName = %s, _startFrame = %u",
-          _name.c_str(), _fileName.c_str(), _startFrame);
+    debug("\tActionStill: _name = %s, _fileName = %s, _z =%u _startFrame = %u",
+          _name.c_str(), _fileName.c_str(), _z, _startFrame);
 }
 
 void ActionStill::end() {

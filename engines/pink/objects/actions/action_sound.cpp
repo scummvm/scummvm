@@ -26,6 +26,7 @@
 #include <engines/pink/objects/actors/actor.h>
 #include <engines/pink/objects/pages/game_page.h>
 #include <engines/pink/sound.h>
+#include "engines/pink/pink.h"
 
 
 namespace Pink {
@@ -53,6 +54,10 @@ void ActionSound::start(bool unk) {
 
     Audio::Mixer::SoundType soundType =  _isBackground ? Audio::Mixer::SoundType::kMusicSoundType
                                                        : Audio::Mixer::SoundType::kSpeechSoundType;
+
+    Director *director = _actor->getPage()->getGame()->getDirector();
+    director->addSound(this);
+
     _sound->play(soundType, _volume, _isLoop);
     if (_isLoop)
         _actor->endAction();
@@ -62,6 +67,10 @@ void ActionSound::start(bool unk) {
 
 void ActionSound::end() {
     debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+
+    Director *director = _actor->getPage()->getGame()->getDirector();
+    director->removeSound(this);
+
     _sound->stop();
     delete _sound;
     _sound = nullptr;
