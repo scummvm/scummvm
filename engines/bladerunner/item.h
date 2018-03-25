@@ -83,7 +83,7 @@ public:
 	void spinInWorld();
 	bool tick(Common::Rect *screenRect, bool special);
 
-	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisible, bool isPoliceMazeEnemy);
+	void setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag);
 
 	bool isUnderMouse(int mouseX, int mouseY) const;
 

@@ -84,7 +84,7 @@ bool Item::tick(Common::Rect *screenRect, bool special) {
 		return false;
 	}
 
-	bool isVisible = false;
+	bool isVisibleFlag = false;
 
 	Vector3 position(_position.x, -_position.z, _position.y);
 	int animationId = _animationId + (special ? 1 : 0);
@@ -93,7 +93,7 @@ bool Item::tick(Common::Rect *screenRect, bool special) {
 
 	if (!_screenRectangle.isEmpty()) {
 		*screenRect = _screenRectangle;
-		isVisible = true;
+		isVisibleFlag = true;
 	} else {
 		*screenRect = Common::Rect();
 	}
@@ -125,7 +125,7 @@ bool Item::tick(Common::Rect *screenRect, bool special) {
 		}
 	}
 
-	return isVisible;
+	return isVisibleFlag;
 }
 
 void Item::setXYZ(Vector3 position) {
@@ -139,7 +139,7 @@ void Item::setXYZ(Vector3 position) {
 	_depth = screenPosition.z * 25.5f;
 }
 
-void Item::setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisible, bool isPoliceMazeEnemy) {
+void Item::setup(int itemId, int setId, int animationId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag) {
 	_itemId = itemId;
 	_setId = setId;
 	_animationId = animationId;
@@ -148,8 +148,8 @@ void Item::setup(int itemId, int setId, int animationId, Vector3 position, int f
 	_width = width;
 	_height = height;
 	_isTarget = isTargetFlag;
-	_isVisible = isVisible;
-	_isPoliceMazeEnemy = isPoliceMazeEnemy;
+	_isVisible = isVisibleFlag;
+	_isPoliceMazeEnemy = isPoliceMazeEnemyFlag;
 	setXYZ(position);
 	_screenRectangle.bottom = -1;
 	_screenRectangle.right = -1;

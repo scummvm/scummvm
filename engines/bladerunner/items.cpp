@@ -75,7 +75,7 @@ void Items::tick() {
 	}
 }
 
-bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisible, bool isPoliceMazeEnemy, bool addToSetFlag) {
+bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag, bool addToSetFlag) {
 	if (_items.size() >= 100) {
 		return false;
 	}
@@ -86,10 +86,10 @@ bool Items::addToWorld(int itemId, int animationId, int setId, Vector3 position,
 	}
 
 	Item *item = _items[itemIndex];
-	item->setup(itemId, setId, animationId, position, facing, height, width, isTargetFlag, isVisible, isPoliceMazeEnemy);
+	item->setup(itemId, setId, animationId, position, facing, height, width, isTargetFlag, isVisibleFlag, isPoliceMazeEnemyFlag);
 
 	if (addToSetFlag && setId == _vm->_scene->getSetId()) {
-		return _vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, item->_boundingBox, item->_screenRectangle, isTargetFlag, isVisible);
+		return _vm->_sceneObjects->addItem(itemId + kSceneObjectOffsetItems, item->_boundingBox, item->_screenRectangle, isTargetFlag, isVisibleFlag);
 	}
 	return true;
 }
