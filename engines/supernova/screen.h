@@ -143,9 +143,8 @@ public:
 	void paletteFadeIn();
 	void paletteFadeOut();
 	void paletteBrightness();
-	void renderImage(ImageId id);
+	void renderImage(ImageId id, bool removeImage = false);
 	void renderImage(int section);
-	void renderImageSection(int section);
 	bool setCurrentImage(int filenumber);
 	void saveScreen(int x, int y, int width, int height);
 	void saveScreen(const GuiElement &guiElement);
@@ -173,6 +172,9 @@ public:
 	byte getTextCursorColor();
 	void setTextCursorColor(byte color);
 	void update();
+
+private:
+	void renderImageSection(const MSNImage *image, int section);
 
 private:
 	SupernovaEngine *_vm;
