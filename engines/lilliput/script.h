@@ -237,13 +237,13 @@ private:
 	void OC_setCurrentCharacter();
 	void OC_sendSeeSignal();
 	void OC_sendHearSignal();
-	void OC_setVarSignal();
-	void OC_sub17CD1();
-	void OC_resetWord16EFE();
+	void OC_sendVarSignal();
+	void OC_sendBroadcastSignal();
+	void OC_resetWaitingSignal();
 	void OC_enableCurrentCharacterScript();
 	void OC_IncCurrentCharacterVar1();
-	void OC_sub17D23();
-	void OC_sub17E6D();
+	void OC_setCurrentCharacterPos();
+	void OC_setCurrentCharacterBehavior();
 	void OC_changeCurrentCharacterSprite();
 	void OC_sub17E99();
 	void OC_sub17EC5();
