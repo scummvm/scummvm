@@ -66,7 +66,6 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
 
-	Common::RandomSource _rnd;
 	GameManager *_gm;
 	Console *_console;
 	Sound *_sound;
