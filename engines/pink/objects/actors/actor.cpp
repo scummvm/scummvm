@@ -108,14 +108,15 @@ Action *Actor::getAction() const {
 }
 
 bool Actor::isPlaying() {
-    return _isActionEnded;
+    return !_isActionEnded;
 }
 
 bool Actor::initPallete(Director *director) {
     for (int i = 0; i < _actions.size(); ++i) {
         if (_actions[i]->initPallete(director))
-            break;
+            return true;
     }
+    return false;
 }
 
 } // End of namespace Pink

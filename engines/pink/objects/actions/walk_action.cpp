@@ -22,14 +22,13 @@
 
 #include "walk_action.h"
 #include <engines/pink/archive.h>
-#include <common/debug.h>
 
 namespace Pink {
 
 void WalkAction::deserialize(Archive &archive) {
     ActionCEL::deserialize(archive);
     uint32 calcFramePositions = archive.readDWORD();
-    _toCalcFramePositions = calcFramePositions ? true : false;
+    _toCalcFramePositions = calcFramePositions;
 }
 
 void WalkAction::toConsole() {

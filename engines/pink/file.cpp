@@ -167,7 +167,7 @@ void ResourceDescription::load(Common::File &file) {
 
     uint16 temp;
     file.read(&temp, sizeof(temp));
-    inBro = temp ? true : false;
+    inBro = temp;
 }
 
 } // End of namespace Pink

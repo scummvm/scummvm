@@ -22,6 +22,7 @@
 
 #include "module.h"
 #include "engines/pink/objects/pages/game_page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
@@ -45,51 +46,35 @@ void Module::load(Archive &archive){
     archive >> _pages;
 }
 
-void Module::init(bool isLoadingSave, const Common::String *pageName) {
-    // debugging original
+void Module::init(bool isLoadingSave, const Common::String &pageName) {
     // 0 0  - new game
     // 0 1 - module changed
     // 1 0 - from save
-
-    // 1 1 - haven't seen those values
-
-    //this func will be rewrited after testing
-
-    if (_page) {
-        debug("loading from save");
-    }
-    if (pageName){
-        debug("module changed");
-    }
-    assert(_pages.size() != 0);
-
-    if (pageName) {
-        uint i;
-        for (i = 0; i < _pages.size(); ++i) {
-            if(*pageName == _pages[i]->getName()) {
-                _page = _pages[i];
-            }
-        }
-        assert(i < _pages.size());
+    if (!pageName.empty()) {
+        _page = findPage(pageName);
     }
 
-    if (_page) {
-        _page->init(isLoadingSave); // module changed or from save
-        return;
-    }
-
-    if (_page != _pages[0]) {
-        if (_page) {
-            assert(0); // in original code there is call to page func but I've never seen it
-            return;
-        }
+    if (!_page)
         _page = _pages[0];
-        _page->init(isLoadingSave); // new game
-        return;
-    }
 
-    assert(0);
+    _page->init(isLoadingSave);
 }
+
+void Module::changePage(const Common::String &pageName) {
+    GamePage *page = nullptr;
+    page = findPage(pageName);
+    assert(_page != page);
+    //_page->clear
+    page->init(kLoadingNewGame);
+}
+
+GamePage *Module::findPage(const Common::String &pageName) const {
+    return *Common::find_if(_pages.begin(), _pages.end(), [&pageName]
+            (GamePage* page) {
+        return pageName == page->getName();
+    });
+}
+
 
 PinkEngine *Module::getGame() const {
     return _game;

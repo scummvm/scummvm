@@ -54,6 +54,7 @@ public:
     State getState() const;
 
     void start(bool isHandler);
+    void update();
 
 private:
     State _state;

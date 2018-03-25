@@ -69,17 +69,15 @@ void Sequence::init(int unk) {
     start(unk);
 }
 
-class Action;
-
 void Sequence::start(int unk) {
-    if (_context->_nextItemIndex > _items.size()){
-        debug("Sequence %s ended", _name);
-        //TODO destroy context
+    if (_context->_nextItemIndex >= _items.size()){
+        debug("Sequence %s ended", _name.c_str());
+        end();
         return;
     }
 
     if (!_items[_context->_nextItemIndex]->execute(_context->_index, this, unk)){
-        //destroy context;
+        assert(0);
     }
 
     uint i;
@@ -96,6 +94,19 @@ void Sequence::start(int unk) {
         states[j].check(_context->_index, this, unk);
     }
     _context->_index++;
+}
+
+void Sequence::update() {
+    if (!_context->_actor->isPlaying()){
+        debug("Sequence step ended");
+        start(0);
+    }
+}
+
+void Sequence::end() {
+    _context->_actor = 0;
+    _unk = 1;
+    _sequencer->removeContext(_context);
 }
 
 void SequenceAudio::deserialize(Archive &archive) {

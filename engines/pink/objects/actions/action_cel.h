@@ -36,6 +36,7 @@ public:
     virtual void deserialize(Archive &archive);
     virtual void start(bool unk);
     virtual void end();
+    virtual void update();
 
     uint32 getZ();
     CelDecoder *getDecoder();

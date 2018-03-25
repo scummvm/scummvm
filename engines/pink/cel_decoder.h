@@ -33,6 +33,8 @@ public:
     uint32 getX();
     uint32 getY();
 
+    Graphics::Surface *getCurrentFrame();
+
     virtual bool loadStream(Common::SeekableReadStream *stream);
 
 protected:

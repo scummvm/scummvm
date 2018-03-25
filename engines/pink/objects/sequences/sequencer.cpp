@@ -25,6 +25,7 @@
 #include "sequencer.h"
 #include "sequence.h"
 #include "sequence_context.h"
+#include "pink/objects/actors/actor.h"
 #include "engines/pink/archive.h"
 
 namespace Pink {
@@ -69,6 +70,15 @@ void Sequencer::toConsole() {
     for (int i = 0; i < _sequences.size(); ++i) {
         _sequences[i]->toConsole();
     }
+}
+
+void Sequencer::update() {
+    _context->_sequence->update();
+}
+
+void Sequencer::removeContext(SequenceContext *context) {
+    delete _context;
+    _context = 0;
 }
 
 } // End of namespace Pink

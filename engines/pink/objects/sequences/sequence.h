@@ -45,7 +45,9 @@ public:
     void setContext(SequenceContext *context);
     void init(int unk);
     void start(int unk);
+    void end();
 
+    void update();
 
 public:
     SequenceContext *_context;

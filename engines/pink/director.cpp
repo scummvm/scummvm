@@ -21,6 +21,7 @@
  */
 
 #include "director.h"
+#include <engines/pink/objects/actions/action_sound.h>
 #include <engines/pink/objects/actions/action_cel.h>
 #include "graphics/surface.h"
 #include "graphics/palette.h"
@@ -47,7 +48,14 @@ void Director::draw() {
 }
 
 void Director::addSprite(ActionCEL *sprite) {
-    _sprites.push_back(sprite); //TODO impl sorting
+    _sprites.push_back(sprite);
+    int i;
+    for (i = _sprites.size() - 1; i > 0 ; --i) {
+        if (sprite->getZ() < _sprites[i - 1]->getZ()){
+            _sprites[i] = _sprites[i - 1];
+        } else break;
+    }
+    _sprites[i] = sprite;
 }
 
 void Director::removeSprite(ActionCEL *sprite) {
@@ -61,6 +69,26 @@ void Director::removeSprite(ActionCEL *sprite) {
 
 void Director::setPallette(const byte *pallete) {
     _system->getPaletteManager()->setPalette(pallete, 0, 256);
+}
+
+void Director::update() {
+    for (int i = 0; i < _sounds.size(); ++i) {
+        _sounds[i]->update();
+    }
+    for (int i = 0; i < _sprites.size(); ++i) {
+        _sprites[i]->update();
+    }
+}
+
+void Director::addSound(ActionSound *sound) {
+    _sounds.push_back(sound);
+}
+
+void Director::removeSound(ActionSound *sound) {
+    for (int i = 0; i < _sounds.size(); ++i) {
+        if (_sounds[i] == sound)
+            _sounds.remove_at(i);
+    }
 }
 
 }

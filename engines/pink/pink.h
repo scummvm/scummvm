@@ -49,6 +49,8 @@ class Console;
 class Archive;
 class NamedObject;
 class Module;
+class GamePage;
+class LeadActor;
 
 enum {
     kPinkDebugGeneral = 1 << 0,
@@ -59,8 +61,8 @@ enum {
 };
 
 enum {
-    LoadingSave = 1,
-    LoadingNotSave = 0
+    kLoadingSave = 1,
+    kLoadingNewGame = 0
 };
 
 class PinkEngine : public Engine {
@@ -69,18 +71,21 @@ public:
     ~PinkEngine();
 
     virtual Common::Error run();
-    void load(Archive &archive);
 
-    void initModule();
-    void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
+    void load(Archive &archive);
+    void initModule(const Common::String &moduleName, bool isLoadingFromSave, const Common::String &pageName);
+    void changeScene(GamePage *page);
 
     OrbFile *getOrb()  { return &_orb; }
     BroFile *getBro()  { return _bro; }
-    Common::RandomSource &getRnd();
-    Director *getDirector() { return &_director;}
+    Common::RandomSource &getRnd() { return _rnd; };
+    Director *getDirector() { return &_director; }
 
-    bool checkValueOfVariable(Common::String &variable, Common::String &value);
+    void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
+    void setLeadActor(LeadActor *actor) { _actor = actor; };
+
     void setVariable(Common::String &variable, Common::String &value);
+    bool checkValueOfVariable(Common::String &variable, Common::String &value);
 
 private:
     Common::Error init();
@@ -96,6 +101,7 @@ private:
     BroFile *_bro;
 
     Director _director;
+    LeadActor *_actor;
 
     Module *_module;
     Common::Array<NamedObject*> _modules;

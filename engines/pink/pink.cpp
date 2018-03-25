@@ -26,6 +26,7 @@
 #include <common/debug-channels.h>
 #include <video/flic_decoder.h>
 #include "engines/pink/objects/module.h"
+#include "engines/pink/objects/actors/lead_actor.h"
 #include <graphics/surface.h>
 
 namespace Pink {
@@ -75,8 +76,8 @@ Common::Error PinkEngine::init() {
     // TODO load cursor
 
     _orb.loadGame(this);
-    _nextModule = _modules[0]->getName();
-    initModule();
+    const Common::String empty;
+    initModule(_modules[0]->getName(), kLoadingNewGame, empty);
 
     return Common::kNoError;
 }
@@ -88,7 +89,6 @@ Common::Error Pink::PinkEngine::run() {
     }
 
 
-    int i = 0;
     while(!shouldQuit()){
         Common::Event event;
         while(_eventMan->pollEvent(event)){
@@ -104,18 +104,21 @@ Common::Error Pink::PinkEngine::run() {
 
                     break;
 
-                    // don't know why it is used in orginal
-                case Common::EVENT_LBUTTONUP:
-                case Common::EVENT_RBUTTONDOWN:
                 case Common::EVENT_KEYDOWN:
                     break;
+
+                    // don't know why it is used in original
+                case Common::EVENT_LBUTTONUP:
+                case Common::EVENT_RBUTTONDOWN:
                 default:
                     break;
             }
         }
 
+        _actor->update();   
+        _director.update();
         _director.draw();
-        _system->delayMillis(10);
+        _system->delayMillis(50);
     }
 
     return Common::kNoError;
@@ -127,20 +130,17 @@ void PinkEngine::load(Archive &archive) {
     archive >> _modules;
 }
 
-void PinkEngine::initModule() {
+void PinkEngine::initModule(const Common::String &moduleName, bool isLoadingFromSave, const Common::String &pageName) {
     if (_module) {
-        assert(_module->getName() != _nextModule);
 
         //call module function (smth with unloading)
 
-        //check additional field of game(unk_1)
         uint i;
         for (i = 0; i < _modules.size(); ++i) {
             if (_module == _modules[i]){
                 break;
             }
         }
-        assert(i != _modules.size());
 
         _modules[i] = new ModuleProxy(_module->getName());
 
@@ -148,20 +148,26 @@ void PinkEngine::initModule() {
         _module = nullptr;
     }
 
-    assert(_modules.size() != 0);
-
     uint i;
     for (i = 0; i < _modules.size(); ++i) {
-        assert(dynamic_cast<Module*>(_modules[i]) == 0);
-        if (_modules[i]->getName() == _nextModule) {
+        if (_modules[i]->getName() == moduleName) {
             loadModule(i);
             break;
         }
     }
-    assert(i < _modules.size());
 
     _module = static_cast<Module*>(_modules[i]);
-    _module->init(LoadingNotSave, 0);
+    _module->init(isLoadingFromSave, pageName);
+}
+
+void PinkEngine::changeScene(GamePage *page) {
+    if (!_nextModule.empty() && _nextModule.compareTo(_module->getName())) {
+        initModule(_nextModule, kLoadingNewGame, _nextPage);
+    }
+    else {
+        assert(!_nextPage.empty());
+        _module->changePage(_nextPage);
+    }
 
 }
 
@@ -171,8 +177,6 @@ void PinkEngine::setNextExecutors(const Common::String &nextModule, const Common
 }
 
 void PinkEngine::loadModule(int index) {
-    assert(dynamic_cast<Module*>(_modules[index]) == 0);
-
     Module *module = new Module(this, _modules[index]->getName());
 
     _orb.loadObject(module, module->getName());
@@ -188,10 +192,6 @@ bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &
 
 void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
     _variables[variable] = value;
-}
-
-Common::RandomSource &PinkEngine::getRnd() {
-    return _rnd;
 }
 
 }
