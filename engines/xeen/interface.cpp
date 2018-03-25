@@ -312,6 +312,8 @@ void Interface::perform() {
 			scripts.checkEvents();
 			if (_vm->shouldExit())
 				return;
+		} else {
+			clearEvents();
 		}
 	}
 
