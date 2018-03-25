@@ -256,7 +256,7 @@ void SupernovaEngine::renderImage(int section) {
 }
 
 bool SupernovaEngine::setCurrentImage(int filenumber) {
-	_screen->setCurrentImage(filenumber);
+	return _screen->setCurrentImage(filenumber);
 }
 
 void SupernovaEngine::saveScreen(int x, int y, int width, int height) {
