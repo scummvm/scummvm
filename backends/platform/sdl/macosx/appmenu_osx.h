@@ -26,6 +26,7 @@
 #if defined(MACOSX)
 
 void replaceApplicationMenuItems();
+void releaseMenu();
 
 #endif // MACOSX
 

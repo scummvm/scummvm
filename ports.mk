@@ -111,7 +111,7 @@ ifdef USE_SPARKLE
 	cp -R $(SPARKLEPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
 endif
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
-	cp $(DIST_FILES_DOCS) $(bundle_name)/
+	cp $(DIST_FILES_DOCS) $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
 ifdef DIST_FILES_NETWORKING
 	cp $(DIST_FILES_NETWORKING) $(bundle_name)/Contents/Resources/
@@ -119,7 +119,8 @@ endif
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
 endif
-	$(srcdir)/devtools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
+	$(srcdir)/devtools/credits.pl --rtf > $(bundle_name)/Contents/Resources/AUTHORS.rtf
+	rm $(bundle_name)/Contents/Resources/AUTHORS
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
