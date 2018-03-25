@@ -19,49 +19,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef AUDIO_SOFTSYNTH_OPL_MAME_H
-#define AUDIO_SOFTSYNTH_OPL_MAME_H
+#ifndef AUDIO_SOFTSYNTH_OPL_MAME_FAKE_DEVICE_H
+#define AUDIO_SOFTSYNTH_OPL_MAME_FAKE_DEVICE_H
 
-#include "common/scummsys.h"
+#include "common/textconsole.h"
+#include "common/str.h"
 
-#include "audio/fmopl.h"
-#include "audio/softsynth/opl/mame/fake-device.h"
+struct device_t {
+	void *state;
+	device_t() : state(nullptr) {}
+	void logerror(const char *s, ...) {
+		Common::String output;
+		va_list va;
 
-namespace OPL {
-namespace MAME {
+		va_start(va, s);
+		output = Common::String::vformat(s, va);
+		va_end(va);
 
-template <Config::OplType TYPE>
-class OPL : public ::OPL::EmulatedOPL {
-public:
-	OPL() : _opl(nullptr), _opl2(nullptr) {}
-	~OPL();
-
-	bool init();
-	void reset();
-
-	void write(int port, int value);
-	byte read(int port);
-
-	void writeReg(int reg, int value);
-
-	bool isStereo() const { return TYPE != Config::kOpl2; }
-
-protected:
-	void generateSamples(int16 *buffer, int length);
-
-private:
-	void *_opl, *_opl2;
-	device_t _device, _device2;
-	int _lastReg, _lastReg2;
-
-	void shutdown();
-
-	bool isAddressPort(const int port) const {
-		return (port & 1) == 0;
+		warning("%s", output.c_str());
 	}
 };
 
-} // End of namespace MAME
-} // End of namespace OPL
-
-#endif
+#endif // AUDIO_SOFTSYNTH_OPL_MAME_FAKE_DEVICE_H

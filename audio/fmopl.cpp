@@ -59,7 +59,7 @@ OPL::OPL() {
 
 const Config::EmulatorDescription Config::_drivers[] = {
 	{ "auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
-	{ "mame", _s("MAME OPL emulator"), kMame, kFlagOpl2 },
+	{ "mame", _s("MAME OPL emulator"), kMame, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #ifndef DISABLE_DOSBOX_OPL
 	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
@@ -167,11 +167,14 @@ OPL *Config::create(DriverId driver, OplType type) {
 
 	switch (driver) {
 	case kMame:
-		if (type == kOpl2)
-			return new MAME::OPL();
-		else
-			warning("MAME OPL emulator only supports OPL2 emulation");
-		return 0;
+		switch (type) {
+		case kOpl2:
+			return new MAME::OPL<kOpl2>();
+		case kDualOpl2:
+			return new MAME::OPL<kDualOpl2>();
+		case kOpl3:
+			return new MAME::OPL<kOpl3>();
+		}
 
 #ifndef DISABLE_DOSBOX_OPL
 	case kDOSBox:
