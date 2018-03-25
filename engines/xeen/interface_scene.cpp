@@ -3930,7 +3930,9 @@ void InterfaceScene::drawIndoors() {
 		_indoorList._fwl_4F1R._frame = 13;
 	}
 
-	if (_wo[27] || _wo[22] || _wo[15] || _wo[96]) {
+	if (_wo[27] || _wo[22] || _wo[15]) {
+	} else if (_wo[96]) {
+		_indoorList._fwl_4F._frame = 7;
 	} else if (_wo[50]) {
 		_indoorList._fwl_4F._frame = 16;
 	} else if (_wo[156]) {
