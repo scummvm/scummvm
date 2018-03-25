@@ -23,24 +23,59 @@
 #include "bladerunner/ui/scores.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/font.h"
 #include "bladerunner/savefile.h"
+#include "bladerunner/text_resource.h"
 #include "bladerunner/vqa_player.h"
+
+#include "common/keyboard.h"
 
 namespace BladeRunner {
 
 Scores::Scores(BladeRunnerEngine *vm) {
 	_vm = vm;
+
+	_txtScorers = new TextResource(_vm);
+	_font = new Font(_vm);
+
 	reset();
 }
 
 Scores::~Scores() {
+	delete _font;
+	delete _txtScorers;
 }
 
 void Scores::open() {
+	if (!_vm->openArchive("MODE.MIX")) {
+		return;
+	}
+
+	_vqaPlayer = new VQAPlayer(_vm, &_vm->_surfaceBack);
+
+	if (!_vqaPlayer->open("SCORE.VQA")) {
+		return;
+	}
+
+	_vqaPlayer->setLoop(1, -1, 0, nullptr, nullptr);
+
+	// TODO: Freeze game time
+
+	_txtScorers->open("SCORERS");
+	_font->open("TAHOMA24.FON", 640, 480, -1, 0, 0);
+	_font->setSpacing(1, 0);
+
+	fill();
+
+	_isOpen = true;
+	_isLoaded = false;
 }
 
 bool Scores::isOpen() const {
 	return _isOpen;
+}
+
+void Scores::close() {
 }
 
 void Scores::set(int index, int value) {
@@ -52,15 +87,30 @@ void Scores::set(int index, int value) {
 	_lastScoreValue = value;
 }
 
+void Scores::handleKeyDown(const Common::KeyState &kbd) {
+	close();
+}
+
 int Scores::handleMouseUp(int x, int y) {
+	if (_isLoaded) {
+		close();
+	}
+
+	_isLoaded = false;
+
 	return false;
 }
 
 int Scores::handleMouseDown(int x, int y) {
+	_isLoaded = true;
+
 	return false;
 }
 
 void Scores::tick() {
+}
+
+void Scores::fill() {
 }
 
 void Scores::reset() {

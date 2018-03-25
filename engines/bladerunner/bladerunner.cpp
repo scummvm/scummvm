@@ -1005,6 +1005,7 @@ void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
 	}
 
 	if (_scores->isOpen()) {
+		_scores->handleKeyDown(event.kbd);
 		return;
 	}
 

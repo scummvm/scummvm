@@ -25,12 +25,18 @@
 
 #include "common/array.h"
 
+namespace Common {
+struct KeyState;
+}
+
 namespace BladeRunner {
 
 class BladeRunnerEngine;
+class Font;
 class Shape;
 class SaveFileReadStream;
 class SaveFileWriteStream;
+class TextResource;
 class VQAPlayer;
 class UIImagePicker;
 
@@ -45,20 +51,27 @@ class Scores {
 	int                _lastScoreId;
 	int                _lastScoreValue;
 
+	Font              *_font;
+	TextResource      *_txtScorers;
+
 public:
 	Scores(BladeRunnerEngine *vm);
 	~Scores();
 
 	void open();
 	bool isOpen() const;
+	void close();
 
 	int query(int index) { return _scores[index]; }
 	void set(int index, int value);
 
+	void handleKeyDown(const Common::KeyState &kbd);
 	int handleMouseUp(int x, int y);
 	int handleMouseDown(int x, int y);
 
 	void tick();
+	void fill();
+
 	void reset();
 	void save(SaveFileWriteStream &f);
 	void load(SaveFileReadStream &f);
