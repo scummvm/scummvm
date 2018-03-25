@@ -35,6 +35,12 @@ class MSNImage;
 
 class ResourceManager {
 public:
+	enum CursorId {
+		kCursorNormal,
+		kCursorWait
+	};
+
+public:
 	static const int kNumImageFiles = 44;
 
 public:
@@ -44,6 +50,7 @@ public:
 	Audio::SeekableAudioStream *getSoundStream(AudioIndex index);
 	Audio::AudioStream *getSoundStream(MusicIndex index) const;
 	MSNImage *getImage(int filenumber) const;
+	const byte *getImage(CursorId id) const;
 
 private:
 	void initSoundFiles();

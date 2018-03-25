@@ -102,6 +102,7 @@ public:
 	};
 
 public:
+	static void initPalette();
 	static int textWidth(const uint16 key);
 	static int textWidth(const char *text);
 	static int textWidth(const Common::String &text);
