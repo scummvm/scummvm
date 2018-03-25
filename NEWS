@@ -7,6 +7,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed incorrect cursor movement when it's controlled using the keyboard.
    - Updated the Roland MT-32 emulation code to Munt 2.3.0.
 
+ Full Pipe:
+   - Fixed playtime not being restored when loading a savegame.
+
  MOHAWK:
    - Fixed video playback if videos are skipped in Riven.
    - Added support for keyboard shortcuts for loading and saving as documented in the game manual.
@@ -24,12 +27,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed multiple graphic issues in Bud Tucker in Double Trouble.
    - Fixed multiple issues with font and subtitle rendering.
    - Fixed dentist music in mall being played incorrectly.
+   - Fixed wrong sound effects being played.
    - Fixed a bug that made the bubbles in the Plugs Shop not always visible.
    - Fixed a missing animation when Ego and Billie are on the boat.
    - Fixed a bug that caused a dead end in the second museum scene.
    - Bud is no longer able to walk outside the walkable area when visiting the club.
+   - Bud is also no longer able to walk through closed doors.
    - Added mouse wheel support for inventory scrolling.
    - Allow skipping of speech.
+   - Improved savegame handling and add support for autosaves.
 
  ZVISION:
    - Fixed graphical glitch in Zork: Grand Inquisitor.
