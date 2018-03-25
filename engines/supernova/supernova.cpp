@@ -246,10 +246,6 @@ void SupernovaEngine::playSound(MusicId index) {
 	_sound->play(index);
 }
 
-void SupernovaEngine::renderImageSection(int section) {
-	_screen->renderImageSection(section);
-}
-
 void SupernovaEngine::renderImage(int section) {
 	_screen->renderImage(section);
 }

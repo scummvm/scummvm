@@ -96,7 +96,6 @@ public:
 	void paletteFadeOut();
 	void paletteBrightness();
 	void renderImage(int section);
-	void renderImageSection(int section);
 	bool setCurrentImage(int filenumber);
 	void saveScreen(int x, int y, int width, int height);
 	void saveScreen(const GuiElement &guiElement);
