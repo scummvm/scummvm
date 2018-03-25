@@ -176,6 +176,7 @@ public:
 	int _monsterDamage;
 	int _weaponDamage;
 	int _weaponDie, _weaponDice;
+	int _weaponElemMaterial;
 	XeenItem *_attackWeapon;
 	int _attackWeaponId;
 	File _missVoc;

@@ -87,6 +87,11 @@ public:
 	ElementalCategory getElementalCategory() const;
 
 	/**
+	 * Gets the elemental category for a given material
+	 */
+	static ElementalCategory getElementalCategory(int material);
+
+	/**
 	 * Gets the attribute category for the item
 	 */
 	AttributeCategory getAttributeCategory() const;

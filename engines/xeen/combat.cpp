@@ -114,6 +114,7 @@ Combat::Combat(XeenEngine *vm): _vm(vm), _missVoc("miss.voc") {
 	_monsterDamage = 0;
 	_weaponDamage = 0;
 	_weaponDie = _weaponDice = 0;
+	_weaponElemMaterial = 0;
 	_attackWeapon = nullptr;
 	_attackWeaponId = 0;
 	_hitChanceBonus = 0;
@@ -1433,7 +1434,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		int monsterResist = getMonsterResistence(rangeType);
 		damage += monsterResist;
 		if (monsterResist > 0) {
-			_pow[_attackDurationCtr]._elemFrame = _attackWeapon->getElementalCategory();
+			_pow[_attackDurationCtr]._elemFrame = XeenItem::getElementalCategory(_weaponElemMaterial);
 			_pow[_attackDurationCtr]._elemScale = getDamageScale(monsterResist);
 		} else if (rangeType != RT_HIT) {
 			_pow[_attackDurationCtr]._elemFrame = 0;
@@ -1679,6 +1680,7 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 	_weaponDie = _weaponDice = 0;
 	_weaponDamage = 0;
 	_hitChanceBonus = 0;
+	_weaponElemMaterial = 0;
 
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		XeenItem &weapon = c._weapons[idx];
@@ -1693,7 +1695,9 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 			if (!(weapon._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED))) {
 				_attackWeapon = &weapon;
 
-				if (weapon._material >= 37 && weapon._material < 59) {
+				if (weapon._material < 37) {
+					_weaponElemMaterial = weapon._material;
+				} else if (weapon._material < 59) {
 					_hitChanceBonus = Res.METAL_DAMAGE_PERCENT[weapon._material - 37];
 					_weaponDamage = Res.METAL_DAMAGE[weapon._material - 37];
 				}
@@ -1764,7 +1768,7 @@ int Combat::getMonsterResistence(RangeType rangeType) {
 			break;
 		}
 	} else {
-		int material = !_attackWeapon ? 0 : _attackWeapon->_material;
+		int material = _weaponElemMaterial;
 		damage = Res.ELEMENTAL_DAMAGE[material];
 
 		if (material != 0) {
