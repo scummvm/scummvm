@@ -89,7 +89,7 @@ static const byte cursorPalette[] = {
 
 Common::Error PlumbersGame::run() {
 	initGraphics(640, 480);
-	_console = new Console(this);
+	_console = new Console();
 
 	CursorMan.replaceCursor(MOUSECURSOR_SCI, 11, 16, 0, 0, 0);
 	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
