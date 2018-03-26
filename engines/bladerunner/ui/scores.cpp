@@ -128,6 +128,35 @@ int Scores::handleMouseDown(int x, int y) {
 }
 
 void Scores::tick() {
+	if (!_vm->_gameIsRunning) {
+		return;
+	}
+
+	int frame = _vqaPlayer->update();
+	assert(frame >= -1);
+
+	// vqaPlayer renders to _surfaceBack
+	blit(_vm->_surfaceBack, _vm->_surfaceFront);
+
+	_vm->_surfaceFront.hLine(200, 139, 400, 0x3e0);
+	_vm->_surfaceFront.hLine(200, 347, 400, 0x1f);
+
+	_font->draw(_txtScorers->getText(7), _vm->_surfaceFront, 200, 114);
+
+	int y = 140;
+
+	for (int i = 0; i < 7; i++) {
+		_font->draw(_txtScorers->getText(_scorers[i]), _vm->_surfaceFront, 220, y);
+		_font->drawNumber(_scores[i], _vm->_surfaceFront, 360, y);
+
+		y += 26;
+	}
+
+	_font->draw(_txtScorers->getText(8), _vm->_surfaceFront, 200, 322);
+	_font->draw(_txtScorers->getText(_lastScoreId), _vm->_surfaceFront, 220, 348);
+	_font->drawNumber(_lastScoreValue, _vm->_surfaceFront, 360, 348);
+
+	_vm->blitToScreen(_vm->_surfaceFront);
 }
 
 void Scores::fill() {

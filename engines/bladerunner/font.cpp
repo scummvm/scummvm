@@ -120,6 +120,14 @@ void Font::drawColor(const Common::String &text, Graphics::Surface &surface, int
 	draw(text, surface, x, y);
 }
 
+void Font::drawNumber(int num, Graphics::Surface &surface, int x, int y) const {
+	char buffer[20];
+
+	snprintf(buffer, 20, "%d", num);
+
+	draw(buffer, surface, x, y);
+}
+
 int Font::getTextWidth(const Common::String &text) const {
 	const uint8 *character = (const uint8 *)text.c_str();
 

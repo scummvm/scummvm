@@ -69,6 +69,7 @@ public:
 
 	void draw(const Common::String &text, Graphics::Surface &surface, int x, int y) const;
 	void drawColor(const Common::String &text, Graphics::Surface &surface, int x, int y, uint16 color);
+	void drawNumber(int num, Graphics::Surface &surface, int x, int y) const;
 
 	int getTextWidth(const Common::String &text) const;
 	int getTextHeight(const Common::String &text) const;
