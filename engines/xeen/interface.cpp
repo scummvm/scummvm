@@ -1361,7 +1361,7 @@ void Interface::assembleBorder() {
 	if (_face2State == 0)
 		_face2UIFrame += 252;
 	else if (_face2State == 2)
-		_face2UIFrame = 0;
+		_face2UIFrame = 8;
 
 	if (!_vm->_party->_clairvoyanceActive) {
 		_face1UIFrame = 0;
