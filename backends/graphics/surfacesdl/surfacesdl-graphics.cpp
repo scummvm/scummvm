@@ -31,7 +31,6 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "common/util.h"
-#include "common/frac.h"
 #ifdef USE_RGB_COLOR
 #include "common/list.h"
 #endif
@@ -94,7 +93,7 @@ static const int s_gfxModeSwitchTable[][4] = {
 	};
 
 #ifdef USE_SCALERS
-static int cursorCorrectAspectRatio(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, frac_t pixelAspectRatio);
+static int cursorCorrectAspectRatio(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, const Common::Rational &pixelAspectRatio);
 #endif
 
 AspectRatio::AspectRatio(int w, int h) {
@@ -794,8 +793,8 @@ void SurfaceSdlGraphicsManager::initSize(const Graphics::VideoMode &mode, const 
 	// For now, force pixelAspectRatio to be either 1 or 5/6.
 	// To support other aspect ratio correction factors we will need to rewrite the strecth code
 	// in graphics/scaler/aspect.cpp, or maybe let SDL do the scaling.
-	if (_videoMode.pixelAspectRatio != intToFrac(5) / 6)
-		_videoMode.pixelAspectRatio = intToFrac(1);
+	if (_videoMode.pixelAspectRatio != Common::Rational(5, 6))
+		_videoMode.pixelAspectRatio = Common::Rational(1, 1);
 
 	_transactionDetails.sizeChanged = true;
 }
@@ -866,7 +865,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
-	if (_videoMode.pixelAspectRatio == intToFrac(1))
+	if (_videoMode.pixelAspectRatio == Common::Rational(1, 1))
 		_videoMode.aspectRatioCorrection = false;
 
 	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
@@ -874,8 +873,8 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 
 	if (_videoMode.aspectRatioCorrection) {
 		// Assume square pixel display for the aspect ratio correction
-		_videoMode.overlayHeight = intToFrac(_videoMode.overlayHeight) / _videoMode.pixelAspectRatio;
-		_videoMode.hardwareHeight = intToFrac(_videoMode.hardwareHeight) / _videoMode.pixelAspectRatio;
+		_videoMode.overlayHeight = (_videoMode.overlayHeight / _videoMode.pixelAspectRatio).toInt();
+		_videoMode.hardwareHeight = (_videoMode.hardwareHeight / _videoMode.pixelAspectRatio).toInt();
 	}
 
 // On GPH devices ALL the _videoMode.hardware... are setup in GPHGraphicsManager::loadGFXMode()
@@ -1154,7 +1153,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_newShakePos * _videoMode.scaleFactor)};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-			blackrect.h = intToFrac(blackrect.h - 1) / _videoMode.pixelAspectRatio + 1;
+			blackrect.h = ((blackrect.h - 1) / _videoMode.pixelAspectRatio).toInt() + 1;
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
 
@@ -1253,7 +1252,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				dst_y = dst_y * scale1;
 
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-					dst_y = intToFrac(dst_y) / _videoMode.pixelAspectRatio;
+					dst_y = (dst_y / _videoMode.pixelAspectRatio).toInt();
 
 				assert(scalerProc != NULL);
 				scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
@@ -1304,7 +1303,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				y *= scale1;
 
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-					y = intToFrac(y) / _videoMode.pixelAspectRatio;
+					y = (y / _videoMode.pixelAspectRatio).toInt();
 
 				if (h > 0 && w > 0) {
 					SDL_LockSurface(_hwScreen);
@@ -1985,8 +1984,8 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 #endif
 
 	if (!_cursorDontScale && _videoMode.aspectRatioCorrection) {
-		rH = intToFrac(rH - 1) / _videoMode.pixelAspectRatio + 1;
-		_mouseCurState.rHotY = intToFrac(_mouseCurState.rHotY) / _videoMode.pixelAspectRatio;
+		rH = ((rH - 1) / _videoMode.pixelAspectRatio).toInt() + 1;
+		_mouseCurState.rHotY = (_mouseCurState.rHotY / _videoMode.pixelAspectRatio).toInt();
 	}
 
 	bool sizeChanged = false;
@@ -2149,14 +2148,14 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 #ifdef USE_SCALERS
 // Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from
 // common/scale/aspect.cpp
-static int cursorCorrectAspectRatio(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, frac_t pixelAspectRatio) {
-	int maxDstY = intToFrac(origSrcY + height - 1) / pixelAspectRatio;
+	static int cursorCorrectAspectRatio(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, const Common::Rational &pixelAspectRatio) {
+	int maxDstY = ((origSrcY + height - 1) / pixelAspectRatio).toInt();
 	int y;
 	const uint8 *startSrcPtr = buf + srcX * 2 + (srcY - origSrcY) * pitch;
 	uint8 *dstPtr = buf + srcX * 2 + maxDstY * pitch;
 
 	for (y = maxDstY; y >= srcY; y--) {
-		const uint8 *srcPtr = startSrcPtr + fracToInt(y * pixelAspectRatio) * pitch;
+		const uint8 *srcPtr = startSrcPtr + (y * pixelAspectRatio).toInt() * pitch;
 
 		if (srcPtr == dstPtr)
 			break;
@@ -2224,7 +2223,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	dst.y += _currentShakePos;
 
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-		dst.y = intToFrac(dst.y) / _videoMode.pixelAspectRatio;
+		dst.y = (dst.y / _videoMode.pixelAspectRatio).toInt();
 
 	dst.x = scale * dst.x - _mouseCurState.rHotX;
 	dst.y = scale * dst.y - _mouseCurState.rHotY;

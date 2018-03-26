@@ -218,9 +218,9 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 #endif
 
 	do {
-		const uint desiredAspect = getDesiredGameAspectRatio();
+		const Common::Rational desiredAspect = getDesiredGameAspectRatio();
 		const uint requestedWidth  = _currentState.gameWidth;
-		const uint requestedHeight = intToFrac(requestedWidth) / desiredAspect;
+		const uint requestedHeight = (requestedWidth / desiredAspect).toInt();
 
 		if (!loadVideoMode(requestedWidth, requestedHeight,
 #ifdef USE_RGB_COLOR
@@ -1095,7 +1095,7 @@ bool OpenGLGraphicsManager::gameNeedsAspectRatioCorrection() const {
 	return _currentState.aspectRatioCorrection;
 }
 
-frac_t OpenGLGraphicsManager::gamePixelAspectRatio() const {
+Common::Rational OpenGLGraphicsManager::gamePixelAspectRatio() const {
 	return _currentState.gamePixelAspectRatio;
 }
 

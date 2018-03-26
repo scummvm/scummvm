@@ -27,7 +27,7 @@
 #include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/windowed.h"
 
-#include "common/frac.h"
+#include "common/rational.h"
 #include "common/mutex.h"
 
 #include "graphics/surface.h"
@@ -167,7 +167,7 @@ protected:
 	// Transaction support
 	//
 	struct VideoState {
-		VideoState() : valid(false), gameWidth(0), gameHeight(0), gamePixelAspectRatio(intToFrac(1)),
+		VideoState() : valid(false), gameWidth(0), gameHeight(0), gamePixelAspectRatio(1, 1),
 #ifdef USE_RGB_COLOR
 		    gameFormat(),
 #endif
@@ -177,7 +177,7 @@ protected:
 		bool valid;
 
 		uint gameWidth, gameHeight;
-		frac_t gamePixelAspectRatio;
+		Common::Rational gamePixelAspectRatio;
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat gameFormat;
 #endif
@@ -302,7 +302,7 @@ protected:
 	bool getGLPixelFormat(const Graphics::PixelFormat &pixelFormat, GLenum &glIntFormat, GLenum &glFormat, GLenum &glType) const;
 
 	virtual bool gameNeedsAspectRatioCorrection() const override;
-	virtual frac_t gamePixelAspectRatio() const override;
+	virtual Common::Rational gamePixelAspectRatio() const override;
 	virtual void recalculateDisplayAreas() override;
 	virtual void handleResizeImpl(const int width, const int height) override;
 

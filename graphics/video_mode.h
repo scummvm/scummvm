@@ -24,7 +24,7 @@
 #define GRAPHICS_VIDEO_MODE_H
 
 #include "common/array.h"
-#include "common/frac.h"
+#include "common/rational.h"
 
 namespace Graphics {
 
@@ -34,7 +34,7 @@ namespace Graphics {
 struct VideoMode {
 	int16 width;  ///< The width in pixels
 	int16 height; ///< The height in pixels
-	frac_t par;   ///< The pixel aspect ratio (pixel width / pixel height)
+	Common::Rational par; ///< The pixel aspect ratio (pixel width / pixel height)
 
 	/// Obsolete constructor that guesses the pixel aspect ratio from the dimension.
 	/// It is present to help the transition to the PAR aware Graphics::VideoMode, but
@@ -43,26 +43,26 @@ struct VideoMode {
 		width(w),
 		height(h) {
 			if ((w == 320 && h == 200) || (w == 640 && h == 400))
-				par = intToFrac(5) / 6;
+				par = Common::Rational(5, 6);
 			else
-				par = intToFrac(1);
+				par = Common::Rational(1, 1);
 		}
 
 	/// Construct a Garphics::Mode with the given dimension and pixel aspect ratio.
 	/// The pixel aspect ratio is given as pixel width / pixel height.
-	VideoMode(const int16 w, const int16 h, const frac_t ar) :
+	VideoMode(const int16 w, const int16 h, const Common::Rational &ar) :
 		width(w),
 		height(h),
 		par(ar) {}
 
 	int16 correctedHeight() const {
-		return fracToInt(height * par);
+		return (height / par).toInt();
 	}
 
 	/// Return a Mode with height scaled by the pixel aspect ratio correction (and the par set to 1).
 	/// This can for example be used to compare two corrected modes.
 	VideoMode corrected() const {
-		return VideoMode(width, correctedHeight(), intToFrac(1));
+		return VideoMode(width, correctedHeight(), Common::Rational());
 	}
 };
 

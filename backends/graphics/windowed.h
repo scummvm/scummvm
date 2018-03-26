@@ -24,7 +24,7 @@
 #define BACKENDS_GRAPHICS_WINDOWED_H
 
 #include "backends/graphics/graphics.h"
-#include "common/frac.h"
+#include "common/rational.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "graphics/scaler/aspect.h"
@@ -74,7 +74,7 @@ protected:
 	/**
 	 * @return the game pixel aspect ratio.
 	 */
-	virtual frac_t gamePixelAspectRatio() const = 0;
+	virtual Common::Rational gamePixelAspectRatio() const = 0;
 
 	/**
 	 * Backend-specific implementation for updating internal surfaces that need
@@ -132,15 +132,15 @@ protected:
 	/**
 	 * @returns the desired aspect ratio of the game surface.
 	 */
-	frac_t getDesiredGameAspectRatio() const {
+	Common::Rational getDesiredGameAspectRatio() const {
 		if (getHeight() == 0) {
-			return intToFrac(4) / 3;
+			return Common::Rational(4, 3);
 		} else if (gameNeedsAspectRatioCorrection()) {
 			// Assume that the display pixels are square
-			return intToFrac(getWidth()) / (intToFrac(getHeight()) / gamePixelAspectRatio());
+			return Common::Rational(getWidth(), getHeight()) * gamePixelAspectRatio();
 		}
 
-		return intToFrac(getWidth()) / getHeight();
+		return Common::Rational(getWidth(), getHeight());
 	}
 
 	/**
@@ -164,12 +164,12 @@ protected:
 			return;
 		}
 
-		const frac_t outputAspect = intToFrac(_windowWidth) / _windowHeight;
+		const Common::Rational outputAspect(_windowWidth, _windowHeight);
 
 		populateDisplayAreaDrawRect(getDesiredGameAspectRatio(), outputAspect, _gameDrawRect);
 
 		if (getOverlayHeight()) {
-			const frac_t overlayAspect = intToFrac(getOverlayWidth()) / getOverlayHeight();
+			const Common::Rational overlayAspect(getOverlayWidth(), getOverlayHeight());
 			populateDisplayAreaDrawRect(overlayAspect, outputAspect, _overlayDrawRect);
 		}
 
@@ -324,15 +324,15 @@ protected:
 	int _cursorX, _cursorY;
 
 private:
-	void populateDisplayAreaDrawRect(const frac_t inputAspect, const frac_t outputAspect, Common::Rect &drawRect) const {
+	void populateDisplayAreaDrawRect(const Common::Rational &inputAspect, const Common::Rational &outputAspect, Common::Rect &drawRect) const {
 		int width = _windowWidth;
 		int height = _windowHeight;
 
 		// Maintain aspect ratios
 		if (outputAspect < inputAspect) {
-			height = intToFrac(width) / inputAspect;
+			height = (width / inputAspect).toInt();
 		} else if (outputAspect > inputAspect) {
-			width = fracToInt(height * inputAspect);
+			width = (height * inputAspect).toInt();
 		}
 
 		drawRect.left = (_windowWidth - width) / 2;

@@ -97,7 +97,7 @@ public:
 	 */
 	struct State {
 		int screenWidth, screenHeight;
-		frac_t pixelAspectRatio;
+		Common::Rational pixelAspectRatio;
 		bool aspectRatio;
 		bool fullscreen;
 		bool cursorPalette;

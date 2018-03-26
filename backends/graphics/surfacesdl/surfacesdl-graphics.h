@@ -175,7 +175,7 @@ protected:
 		return _videoMode.aspectRatioCorrection;
 	}
 
-	virtual frac_t gamePixelAspectRatio() const override {
+	virtual Common::Rational gamePixelAspectRatio() const override {
 		return _videoMode.pixelAspectRatio;
 	}
 
@@ -253,7 +253,7 @@ protected:
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
 		int hardwareWidth, hardwareHeight;
-		frac_t pixelAspectRatio;
+		Common::Rational pixelAspectRatio;
 #ifdef USE_RGB_COLOR
 		Graphics::PixelFormat format;
 #endif
