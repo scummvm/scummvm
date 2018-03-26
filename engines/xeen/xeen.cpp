@@ -114,10 +114,18 @@ bool XeenEngine::initialize() {
 	syncSoundSettings();
 
 	// Load settings
+	loadSettings();
+
+	return true;
+}
+
+void XeenEngine::loadSettings() {
 	_gameWon[0] = ConfMan.hasKey("game_won") && ConfMan.getBool("game_won");
 	_gameWon[1] = ConfMan.hasKey("game_won2") && ConfMan.getBool("game_won2");
 	_gameWon[2] = ConfMan.hasKey("game_won3") && ConfMan.getBool("game_won3");
 	_finalScore = ConfMan.hasKey("final_score") ? ConfMan.getInt("final_score") : 0;
+
+	_extOptions._showItemCosts = ConfMan.hasKey("ShowItemCosts") && ConfMan.getBool("ShowItemCosts");
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {
@@ -125,8 +133,6 @@ bool XeenEngine::initialize() {
 		if (saveSlot >= 0 && saveSlot <= 999)
 			_loadSaveSlot = saveSlot;
 	}
-
-	return true;
 }
 
 Common::Error XeenEngine::run() {

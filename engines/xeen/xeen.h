@@ -106,6 +106,14 @@ struct XeenGameDescription;
 #define XEEN_SAVEGAME_VERSION 1
 
 class XeenEngine : public Engine {
+	/**
+	 * Container to a set of options newly introduced under ScummVM
+	 */
+	struct ExtendedOptions {
+		bool _showItemCosts;
+
+		ExtendedOptions() : _showItemCosts(false) {}
+	};
 private:
 	const XeenGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -114,6 +122,11 @@ private:
 	 * Initializes all the engine sub-objects
 	 */
 	bool initialize();
+
+	/**
+	 * Load settings
+	 */
+	void loadSettings();
 
 	// Engine APIs
 	virtual Common::Error run();
@@ -185,6 +198,7 @@ public:
 	uint _endingScore;
 	bool _gameWon[3];
 	uint _finalScore;
+	ExtendedOptions _extOptions;
 public:
 	XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc);
 	virtual ~XeenEngine();

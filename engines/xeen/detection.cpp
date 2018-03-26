@@ -28,6 +28,7 @@
 #include "common/savefile.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #define MAX_SAVES 99
 
@@ -71,11 +72,29 @@ static const PlainGameDescriptor XeenGames[] = {
 	{0, 0}
 };
 
+#define GAMEOPTION_SHOW_ITEM_COSTS	GUIO_GAMEOPTIONS1
+
 #include "xeen/detection_tables.h"
+
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_SHOW_ITEM_COSTS,
+		{
+			_s("Show item costs in standard inventory mode"),
+			_s("Shows item costs in standard inventory mode, allowing the value of items to be compared"),
+			"ShowItemCosts",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class XeenMetaEngine : public AdvancedMetaEngine {
 public:
-	XeenMetaEngine() : AdvancedMetaEngine(Xeen::gameDescriptions, sizeof(Xeen::XeenGameDescription), XeenGames) {
+	XeenMetaEngine() : AdvancedMetaEngine(Xeen::gameDescriptions, sizeof(Xeen::XeenGameDescription),
+			XeenGames, optionsList) {
 		_maxScanDepth = 3;
 	}
 

@@ -149,8 +149,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				case CATEGORY_ARMOR:
 				case CATEGORY_ACCESSORY:
 					if (i._id) {
-						if (mode == ITEMMODE_CHAR_INFO || mode == ITEMMODE_8
-								|| mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
+						if ((mode == ITEMMODE_CHAR_INFO && !g_vm->_extOptions._showItemCosts)
+								|| mode == ITEMMODE_8 || mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE) {
 							lines.push_back(Common::String::format(Res.ITEMS_DIALOG_LINE1,
 								arr[idx], idx + 1,
 								c->_items[category].getFullDescription(idx, arr[idx]).c_str()));
@@ -158,7 +158,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 							lines.push_back(Common::String::format(Res.ITEMS_DIALOG_LINE2,
 								arr[idx], idx + 1,
 								c->_items[category].getFullDescription(idx, arr[idx]).c_str(),
-								calcItemCost(c, idx, mode,
+								calcItemCost(c, idx,
+									(mode == ITEMMODE_CHAR_INFO) ? ITEMMODE_BLACKSMITH : mode,
 									mode == ITEMMODE_TO_GOLD ? 1 : startingChar->_skills[MERCHANT],
 									category)
 							));
