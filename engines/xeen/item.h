@@ -111,6 +111,11 @@ protected:
 	 * Returns a text string listing all the stats/attributes of a given item
 	 */
 	virtual Common::String getAttributes(XeenItem &item, const Common::String &classes) = 0;
+
+	/**
+	 * Capitalizes a passed description string that includes embedded formatting for the Items dialog
+	 */
+	void capitalizeItem(Common::String &name);
 public:
 	InventoryItems(Character *character, ItemCategory category);
 	virtual ~InventoryItems() {}

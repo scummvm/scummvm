@@ -246,6 +246,13 @@ bool InventoryItems::isFull() const {
 	return operator[](size() - 1)._id != 0;
 }
 
+void InventoryItems::capitalizeItem(Common::String &name) {
+	if (name[3] == '\f')
+		name.setChar(toupper(name[6]), 6);
+	else
+		name.setChar(toupper(name[3]), 3);
+}
+
 /*------------------------------------------------------------------------*/
 
 void WeaponItems::equipItem(int itemIndex) {
@@ -302,7 +309,7 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 	Resources &res = *getVm()->_resources;
 
-	return Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
+	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
 		!i._bonusFlags ? res._maeNames[i._material].c_str() : "",
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
@@ -312,6 +319,8 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
+	capitalizeItem(desc);
+	return desc;
 }
 
 void WeaponItems::enchantItem(int itemIndex, int amount) {
@@ -459,7 +468,7 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 	Resources &res = *getVm()->_resources;
 
-	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
@@ -468,6 +477,8 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
+	capitalizeItem(desc);
+	return desc;
 }
 
 void ArmorItems::enchantItem(int itemIndex, int amount) {
@@ -571,7 +582,7 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 	XeenItem &i = operator[](itemIndex);
 	Resources &res = *getVm()->_resources;
 
-	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
@@ -580,6 +591,8 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
+	capitalizeItem(desc);
+	return desc;
 }
 
 /*
@@ -617,7 +630,7 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
 	Resources &res = *getVm()->_resources;
 
-	return Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
+	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
 		!i._bonusFlags ? "" : res._maeNames[i._material].c_str(),
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
@@ -626,6 +639,8 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._id ? "\b " : ""
 	);
+	capitalizeItem(desc);
+	return desc;
 }
 
 Common::String MiscItems::getAttributes(XeenItem &item, const Common::String &classes) {
