@@ -22,3 +22,4 @@ endif
 	mkdir -p !ScummVM/docs
 	cp ${srcdir}/dists/riscos/!Help,feb !ScummVM/!Help,feb
 	cp $(DIST_FILES_DOCS) !ScummVM/docs
+	cp -r ${srcdir}/doc/* !ScummVM/docs
