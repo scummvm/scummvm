@@ -74,10 +74,10 @@ public:
 	int8 _characterTilePosX[40];
 	int8 _characterTilePosY[40];
 	int8 _characterNextSequence[40];
-	int8 _array10AB1[40];
+	int8 _characterPose[40];
 	byte _interfaceButtonActivationDelay[20];
 	byte _array122C1[40];
-	byte _array10A39[40];
+	byte _characterSeek[40];
 	int16 _interactions[40 * 40];
 
 	byte *_savedBuffer215Ptr;
@@ -249,11 +249,11 @@ private:
 	void OC_sub17EC5();
 	void OC_setCharacterDirectionTowardsPos();
 	void OC_turnCharacterTowardsAnother();
-	void OC_sub17F4F();
+	void OC_setSeek();
 	void OC_scrollAwayFromCharacter();
 	void OC_skipNextVal();
-	void OC_setCurrentCharacterVar6();
-	void OC_sub17FDD();
+	void OC_setCurrentCharacterAttr6();
+	void OC_setCurrentCharacterPose();
 	void OC_setCharacterScriptEnabled();
 	void OC_setCurrentCharacterVar2();
 	void OC_SetCurrentCharacterVar2ToZero();

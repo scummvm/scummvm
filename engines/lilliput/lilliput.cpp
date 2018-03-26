@@ -1252,7 +1252,7 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 		int16 frame = _characterFrameArray[index];
 
 		if (frame != -1) {
-			frame += _scriptHandler->_array10AB1[index];
+			frame += _scriptHandler->_characterPose[index];
 			if ((flag & 1) == 1)
 				frame += _spriteSizeArray[index];
 
@@ -1746,7 +1746,7 @@ byte LilliputEngine::sub16729(int index, Common::Point var1) {
 byte LilliputEngine::sub1675D(int index, Common::Point var1) {
 	debugC(2, kDebugEngine, "sub1675D(%d, %d - %d)", index, var1.x, var1.y);
 
-	int charIndex = _scriptHandler->_array10A39[index];
+	int charIndex = _scriptHandler->_characterSeek[index];
 	Common::Point charPos = Common::Point(_scriptHandler->_characterTilePosX[charIndex], _scriptHandler->_characterTilePosY[charIndex]);
 
 	if ((_characterSubTargetPosX[index] != -1) && (_characterSubTargetPosX[index] == _characterTargetPosX[index]) && (_characterSubTargetPosY[index] == _characterTargetPosY[index])) {
@@ -2033,7 +2033,7 @@ void LilliputEngine::sub16685(int idx, Common::Point var1) {
 	debugC(2, kDebugEngine, "sub16685(%d, %d - %d)", idx, var1.x, var1.y);
 
 	int index = (idx * 32) + var1.y;
-	_scriptHandler->_array10AB1[idx] = _rulesBuffer2_16[index];
+	_scriptHandler->_characterPose[idx] = _poseArray[index];
 }
 
 byte LilliputEngine::sub16675_moveCharacter(int idx, Common::Point var1) {
@@ -2535,7 +2535,7 @@ void LilliputEngine::loadRules() {
 			_characterVariables[(j * 32) + k] = f.readByte();
 
 		for (int k = 0; k < 32; k++)
-			_rulesBuffer2_16[(j * 32) + k] = f.readByte();
+			_poseArray[(j * 32) + k] = f.readByte();
 	}
 
 	// Chunk 3 & 4 : Packed strings & associated indexes

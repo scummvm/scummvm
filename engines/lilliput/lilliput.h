@@ -183,7 +183,7 @@ public:
 	byte _rulesBuffer2_14_posY[40];
 	byte _characterVariables[1400 + 3120];
 	byte *_currentCharacterAttributes;
-	byte _rulesBuffer2_16[40 * 32];
+	byte _poseArray[40 * 32];
 	int *_packedStringIndex;
 	int _packedStringNumb;
 	char *_packedStrings;
