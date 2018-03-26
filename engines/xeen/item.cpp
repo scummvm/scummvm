@@ -587,7 +587,7 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
 		displayNum,
-		Res.ARMOR_NAMES[i._id],
+		Res.ACCESSORY_NAMES[i._id],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._bonusFlags ? "\b " : ""
 	);
@@ -635,7 +635,7 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 		(i._bonusFlags & ITEMFLAG_BROKEN) ? Res.ITEM_BROKEN : "",
 		(i._bonusFlags & ITEMFLAG_CURSED) ? Res.ITEM_CURSED : "",
 		displayNum,
-		Res.ARMOR_NAMES[i._id],
+		Res.MISC_NAMES[i._id],
 		(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED)) ||
 			!i._id ? "\b " : ""
 	);
