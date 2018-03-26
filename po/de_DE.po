@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-03-12 11:46+0100\n"
-"PO-Revision-Date: 2018-03-26 06:53+0000\n"
+"PO-Revision-Date: 2018-03-26 09:37+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
@@ -1555,7 +1555,7 @@ msgstr "Geben Sie den Code Ihres Cloud-Speichers in das"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr "in das folgende Feld ein und klicken Sie auf 'Verbinden':"
+msgstr "folgende Feld ein und klicken Sie auf 'Verbinden':"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
