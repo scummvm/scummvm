@@ -58,13 +58,6 @@ struct Mode {
 	Mode corrected() const {
 		return Mode(width, correctedHeight(), intToFrac(1));
 	}
-
-	/// Compare two modes. Return true if both the width and the height of this mode are smaller than
-	/// the width and height of the other mode. The pixel aspect ratio is not applied to do this
-	/// comparison. See corrected() if you want to compare corrected modes.
-	bool operator<(const Mode &other) const {
-		return width < other.width && height < other.height;
-	}
 };
 
 typedef Common::Array<Mode> ModeList;
