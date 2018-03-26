@@ -198,6 +198,7 @@ void CharacterInfo::execute(int charIndex) {
 			}
 
 			_vm->_mode = MODE_CHARACTER_INFO;
+			redrawFlag = true;
 			break;
 
 		case Common::KEYCODE_q:
