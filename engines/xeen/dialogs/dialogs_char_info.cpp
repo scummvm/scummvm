@@ -522,14 +522,22 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 			++total;
 		}
 
-		if (party._blessed)
+		if (party._blessed) {
 			lines[16] = Common::String::format(Res.BLESSED, party._blessed);
-		if (party._powerShield)
+			++total;
+		}
+		if (party._powerShield) {
 			lines[17] = Common::String::format(Res.POWER_SHIELD, party._powerShield);
-		if (party._holyBonus)
+			++total;
+		}
+		if (party._holyBonus) {
 			lines[18] = Common::String::format(Res.HOLY_BONUS, party._holyBonus);
-		if (party._heroism)
+			++total;
+		}
+		if (party._heroism) {
 			lines[19] = Common::String::format(Res.HEROISM, party._heroism);
+			++total;
+		}
 
 		msg = Common::String::format("\x2\x3""c%s\x3l%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\x1",
 			Res.CONSUMABLE_NAMES[3], lines[0].c_str(), lines[1].c_str(),

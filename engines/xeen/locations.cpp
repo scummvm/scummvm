@@ -907,9 +907,9 @@ Character *TempleLocation::doOptions(Character *c) {
 		if (_donation && party.subtract(CONS_GOLD, _donation, WHERE_PARTY, WT_LOC_WAIT)) {
 			sound.stopSound();
 			sound.playSound("coina.voc", 1);
-			_dayOfWeek = (_dayOfWeek + 1) / 10;
+			_dayOfWeek = (_dayOfWeek + 1) % 10;
 
-			if (_dayOfWeek == (party._day / 10)) {
+			if (_dayOfWeek == (party._day % 10)) {
 				party._clairvoyanceActive = true;
 				party._lightCount = 1;
 
