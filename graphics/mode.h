@@ -36,6 +36,9 @@ struct Mode {
 	int16 height; ///< The height in pixels
 	frac_t par;   ///< The pixel aspect ratio (pixel width / pixel height)
 
+	/// Obsolete constructor that guesses the pixel aspect ratio from the dimension.
+	/// It is present to help the transition to the PAR aware Graphics::Mode, but
+	/// the other constructor should be preferred.
 	Mode(const int16 w, const int16 h) :
 		width(w),
 		height(h) {
@@ -44,6 +47,9 @@ struct Mode {
 			else
 				par = intToFrac(1);
 		}
+
+	/// Construct a Garphics::Mode with the given dimension and pixel aspect ratio.
+	/// The pixel aspect ratio is given as pixel width / pixel height.
 	Mode(const int16 w, const int16 h, const frac_t ar) :
 		width(w),
 		height(h),
