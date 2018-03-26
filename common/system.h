@@ -27,7 +27,7 @@
 #include "common/noncopyable.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()
 #include "graphics/pixelformat.h"
-#include "graphics/mode.h"
+#include "graphics/video_mode.h"
 
 namespace Audio {
 class Mixer;
@@ -631,10 +631,10 @@ public:
 	 * @param mode		the new virtual screen size
 	 * @param format	the new virtual screen pixel format
 	 */
-	virtual void initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void initSize(const Graphics::VideoMode &mode, const Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
-	 * Send a list of graphics modes to the backend so it can make a decision
+	 * Send a list of graphics video modes to the backend so it can make a decision
 	 * about the best way to set up the display hardware.
 	 *
 	 * Engines that switch between different virtual screen sizes during a game
@@ -643,7 +643,7 @@ public:
 	 *
 	 * @param modes the list of graphics modes the engine will probably use.
 	 */
-	virtual void initSizeHint(const Graphics::ModeList &modes) {}
+	virtual void initSizeHint(const Graphics::VideoModeList &modes) {}
 
 	/**
 	 * Return an int value which is changed whenever any screen

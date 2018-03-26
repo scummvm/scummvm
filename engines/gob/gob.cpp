@@ -709,10 +709,10 @@ Common::Error GobEngine::initGraphics() {
 		_mode   = 0x14;
 	}
 
-	Graphics::ModeList modes;
-	modes.push_back(Graphics::Mode(_width, _height));
+	Graphics::VideoModeList modes;
+	modes.push_back(Graphics::VideoMode(_width, _height));
 	if (getGameType() == kGameTypeLostInTime) {
-		modes.push_back(Graphics::Mode(640, 400));
+		modes.push_back(Graphics::VideoMode(640, 400));
 	}
 	initGraphicsModes(modes);
 

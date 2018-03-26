@@ -80,7 +80,7 @@ public:
 
 	virtual int getScreenChangeID() const override;
 
-	virtual void initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format) override;
+	virtual void initSize(const Graphics::VideoMode &mode, const Graphics::PixelFormat *format) override;
 
 	virtual int16 getWidth() const override;
 	virtual int16 getHeight() const override;

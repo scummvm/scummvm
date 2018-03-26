@@ -330,7 +330,7 @@ int OpenGLGraphicsManager::getScreenChangeID() const {
 	return _screenChangeID;
 }
 
-void OpenGLGraphicsManager::initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format) {
+void OpenGLGraphicsManager::initSize(const Graphics::VideoMode &mode, const Graphics::PixelFormat *format) {
 	Graphics::PixelFormat requestedFormat;
 #ifdef USE_RGB_COLOR
 	if (!format) {

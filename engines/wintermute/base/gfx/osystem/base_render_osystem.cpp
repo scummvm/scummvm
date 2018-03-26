@@ -125,7 +125,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	g_system->beginGFXTransaction();
-	g_system->initSize(Graphics::Mode(_width, _height), &format);
+	g_system->initSize(Graphics::VideoMode(_width, _height), &format);
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 	if (gfxError != OSystem::kTransactionSuccess) {

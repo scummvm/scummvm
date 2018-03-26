@@ -62,9 +62,9 @@ SdlGraphicsManager::State SdlGraphicsManager::getState() const {
 bool SdlGraphicsManager::setState(const State &state) {
 	beginGFXTransaction();
 #ifdef USE_RGB_COLOR
-		initSize(Graphics::Mode(state.screenWidth, state.screenHeight, state.pixelAspectRatio), &state.pixelFormat);
+		initSize(Graphics::VideoMode(state.screenWidth, state.screenHeight, state.pixelAspectRatio), &state.pixelFormat);
 #else
-		initSize(Graphics::Mode(state.screenWidth, state.screenHeight, state.pixelAspectRatio), nullptr);
+		initSize(Graphics::VideoMode(state.screenWidth, state.screenHeight, state.pixelAspectRatio), nullptr);
 #endif
 		setFeatureState(OSystem::kFeatureAspectRatioCorrection, state.aspectRatio);
 		setFeatureState(OSystem::kFeatureFullscreenMode, state.fullscreen);
@@ -112,7 +112,7 @@ int SdlGraphicsManager::getGraphicsModeIdByName(const Common::String &name) cons
 	return -1;
 }
 
-void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
+void SdlGraphicsManager::initSizeHint(const Graphics::VideoModeList &modes) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const bool useDefault = defaultGraphicsModeConfig();
 
@@ -123,8 +123,8 @@ void SdlGraphicsManager::initSizeHint(const Graphics::ModeList &modes) {
 	}
 
 	int16 bestWidth = 0, bestHeight = 0;
-	const Graphics::ModeList::const_iterator end = modes.end();
-	for (Graphics::ModeList::const_iterator it = modes.begin(); it != end; ++it) {
+	const Graphics::VideoModeList::const_iterator end = modes.end();
+	for (Graphics::VideoModeList::const_iterator it = modes.begin(); it != end; ++it) {
 		int16 width = it->width, height = it->height;
 
 		if (ConfMan.getBool("aspect_ratio")) {

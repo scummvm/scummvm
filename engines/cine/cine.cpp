@@ -94,10 +94,10 @@ void CineEngine::syncSoundSettings() {
 }
 
 Common::Error CineEngine::run() {
-	Graphics::ModeList modes;
-	modes.push_back(Graphics::Mode(320, 200));
+	Graphics::VideoModeList modes;
+	modes.push_back(Graphics::VideoMode(320, 200));
 	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
-		modes.push_back(Graphics::Mode(640, 480));
+		modes.push_back(Graphics::VideoMode(640, 480));
 		initGraphicsModes(modes);
 		showSplashScreen();
 	} else {

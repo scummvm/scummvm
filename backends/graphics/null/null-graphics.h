@@ -48,7 +48,7 @@ public:
 		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 		return list;
 	}
-	void initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format = NULL) override {}
+	void initSize(const Graphics::VideoMode &mode, const Graphics::PixelFormat *format = NULL) override {}
 	virtual int getScreenChangeID() const override { return 0; }
 
 	void beginGFXTransaction() override {}

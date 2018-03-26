@@ -43,7 +43,7 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 	virtual bool getFeatureState(OSystem::Feature f) const override;
 
-	virtual void initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format) override;
+	virtual void initSize(const Graphics::VideoMode &mode, const Graphics::PixelFormat *format) override;
 
 #ifdef USE_RGB_COLOR
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override;

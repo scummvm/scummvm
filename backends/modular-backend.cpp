@@ -109,11 +109,11 @@ Common::List<Graphics::PixelFormat> ModularBackend::getSupportedFormats() const 
 
 #endif
 
-void ModularBackend::initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format ) {
+void ModularBackend::initSize(const Graphics::VideoMode &mode, const Graphics::PixelFormat *format ) {
 	_graphicsManager->initSize(mode, format);
 }
 
-void ModularBackend::initSizeHint(const Graphics::ModeList &modes) {
+void ModularBackend::initSizeHint(const Graphics::VideoModeList &modes) {
 	_graphicsManager->initSizeHint(modes);
 }
 

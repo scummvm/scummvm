@@ -747,7 +747,7 @@ bool SurfaceSdlGraphicsManager::setShader(int id) {
 	return true;
 }
 
-void SurfaceSdlGraphicsManager::initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format) {
+void SurfaceSdlGraphicsManager::initSize(const Graphics::VideoMode &mode, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
 	_newShakePos = 0;

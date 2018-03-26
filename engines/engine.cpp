@@ -272,11 +272,11 @@ void splashScreen() {
 	splash = true;
 }
 
-void initGraphicsModes(const Graphics::ModeList &modes) {
+void initGraphicsModes(const Graphics::VideoModeList &modes) {
 	g_system->initSizeHint(modes);
 }
 
-void initGraphics(const Graphics::Mode &mode, const Graphics::PixelFormat *format) {
+void initGraphics(const Graphics::VideoMode &mode, const Graphics::PixelFormat *format) {
 	g_system->beginGFXTransaction();
 
 		initCommonGFX();
@@ -365,23 +365,23 @@ inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::P
 
 
 void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList) {
-	initGraphics(Graphics::Mode(width, height), formatList);
+	initGraphics(Graphics::VideoMode(width, height), formatList);
 }
 
 void initGraphics(int width, int height) {
-	initGraphics(Graphics::Mode(width, height));
+	initGraphics(Graphics::VideoMode(width, height));
 }
 
 void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
-	initGraphics(Graphics::Mode(width, height), format);
+	initGraphics(Graphics::VideoMode(width, height), format);
 }
 
-void initGraphics(const Graphics::Mode &mode, const Common::List<Graphics::PixelFormat> &formatList) {
+void initGraphics(const Graphics::VideoMode &mode, const Common::List<Graphics::PixelFormat> &formatList) {
 	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
 	initGraphics(mode, &format);
 }
 
-void initGraphics(const Graphics::Mode &mode) {
+void initGraphics(const Graphics::VideoMode &mode) {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(mode, &format);
 }
@@ -390,7 +390,7 @@ void GUIErrorMessage(const Common::String &msg) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
 		initCommonGFX();
-	g_system->initSize(Graphics::Mode(320, 200));
+	g_system->initSize(Graphics::VideoMode(320, 200));
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		GUI::MessageDialog dialog(msg);
 		dialog.runModal();

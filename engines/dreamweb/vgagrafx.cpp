@@ -151,7 +151,7 @@ void DreamWebEngine::doShake() {
 
 void DreamWebEngine::setMode() {
 	waitForVSync();
-	initGraphics(Graphics::Mode(kScreenwidth, kScreenheight, intToFrac(1)));
+	initGraphics(Graphics::VideoMode(kScreenwidth, kScreenheight, intToFrac(1)));
 }
 
 void DreamWebEngine::showPCX(const Common::String &suffix) {

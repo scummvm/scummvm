@@ -98,7 +98,7 @@ public:
 	virtual const OSystem::GraphicsMode *getSupportedShaders() const override;
 	virtual int getShader() const override;
 	virtual bool setShader(int id) override;
-	virtual void initSize(const Graphics::Mode &mode, const Graphics::PixelFormat *format = NULL) override;
+	virtual void initSize(const Graphics::VideoMode &mode, const Graphics::PixelFormat *format = NULL) override;
 	virtual int getScreenChangeID() const override { return _screenChangeCount; }
 
 	virtual void beginGFXTransaction() override;

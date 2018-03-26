@@ -122,7 +122,7 @@ public:
 	 */
 	SdlWindow *getWindow() const { return _window; }
 
-	virtual void initSizeHint(const Graphics::ModeList &modes) override;
+	virtual void initSizeHint(const Graphics::VideoModeList &modes) override;
 
 protected:
 	virtual int getGraphicsModeScale(int mode) const = 0;
