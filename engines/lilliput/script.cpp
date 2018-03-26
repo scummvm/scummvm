@@ -63,7 +63,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	for (int i = 0; i < 40; i++) {
 		_characterScriptEnabled[i] = 1;
 		_characterMapPixelColor[i] = 15;
-		_array10AB1[i] = 0;
+		_characterPose[i] = 0;
 		_characterNextSequence[i] = 16;
 		_characterLastSequence[i] = -1;
 		_characterTilePosX[i] = 0;
@@ -380,7 +380,7 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_turnCharacterTowardsAnother();
 		break;
 	case 0x2D:
-		OC_sub17F4F();
+		OC_setSeek();
 		break;
 	case 0x2E:
 		OC_scrollAwayFromCharacter();
@@ -389,10 +389,10 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_skipNextVal();
 		break;
 	case 0x30:
-		OC_setCurrentCharacterVar6();
+		OC_setCurrentCharacterAttr6();
 		break;
 	case 0x31:
-		OC_sub17FDD();
+		OC_setCurrentCharacterPose();
 		break;
 	case 0x32:
 		OC_setCharacterScriptEnabled();
@@ -656,11 +656,11 @@ static const OpCode opCodes2[] = {
 /* 0x2a */	{ "OC_sub17EC5", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
 /* 0x2b */	{ "OC_setCharacterDirectionTowardsPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 /* 0x2c */	{ "OC_turnCharacterTowardsAnother", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x2d */	{ "OC_sub17F4F", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x2d */	{ "OC_setSeek", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x2e */	{ "OC_scrollAwayFromCharacter", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x2f */	{ "OC_skipNextVal", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x30 */	{ "OC_setCurrentCharacterVar6", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x31 */	{ "OC_sub17FDD", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x30 */	{ "OC_setCurrentCharacterAttr6", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x31 */	{ "OC_setCurrentCharacterPose", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x32 */	{ "OC_setCharacterScriptEnabled", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x33 */	{ "OC_setCurrentCharacterVar2", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x34 */	{ "OC_setCurrentCharacterVar2ToZero", 0, kNone, kNone, kNone, kNone, kNone },
@@ -2656,12 +2656,12 @@ void LilliputScript::OC_turnCharacterTowardsAnother() {
 	_vm->_characterDirectionArray[_vm->_currentScriptCharacter] = _directionsArray[flag];
 }
 
-void LilliputScript::OC_sub17F4F() {
-	debugC(1, kDebugScript, "OC_sub17F4F()");
+void LilliputScript::OC_setSeek() {
+	debugC(1, kDebugScript, "OC_setSeek()");
 
 	int16 var = getValue1();
-	_array10A39[_vm->_currentScriptCharacter] = (byte)(var & 0xFF);
-	warning("debug - OC_sub17F4F: _array10A39[%d] = %d", _vm->_currentScriptCharacter, var);
+	_characterSeek[_vm->_currentScriptCharacter] = (byte)(var & 0xFF);
+	warning("debug - OC_setSeek: _characterSeek[%d] = %d", _vm->_currentScriptCharacter, var);
 	_vm->_characterSubTargetPosX[_vm->_currentScriptCharacter] = -1;
 }
 
@@ -2682,17 +2682,8 @@ void LilliputScript::OC_scrollAwayFromCharacter() {
 	int newPosX = pos.x + cx;
 	int newPosY = pos.y + cy;
 
-	if (newPosX < 0)
-		newPosX = 0;
-
-	if (newPosX > 56)
-		newPosX = 56;
-
-	if (newPosY < 0)
-		newPosY = 0;
-
-	if (newPosY > 56)
-		newPosY = 56;
+	newPosX = CLIP(newPosX, 0, 56);
+	newPosY = CLIP(newPosY, 0, 56);
 
 	_vm->_refreshScreenFlag = true;
 	_vm->viewportScrollTo(Common::Point(newPosX, newPosY));
@@ -2706,22 +2697,21 @@ void LilliputScript::OC_skipNextVal() {
 	 _currScript->readUint16LE();
 }
 
-void LilliputScript::OC_setCurrentCharacterVar6() {
-	debugC(1, kDebugScript, "OC_setCurrentCharacterVar6()");
+void LilliputScript::OC_setCurrentCharacterAttr6() {
+	debugC(1, kDebugScript, "OC_setCurrentCharacterAttr6()");
 
 	uint16 var1 = (uint16)getValue1();
-	warning("debug - OC_setCurrentCharacterVar6 %d", var1);
 	_vm->_currentCharacterAttributes[6] = var1 & 0xFF;
 }
 
-void LilliputScript::OC_sub17FDD() {
-	debugC(1, kDebugScript, "OC_sub17FDD()");
+void LilliputScript::OC_setCurrentCharacterPose() {
+	debugC(1, kDebugScript, "OC_setCurrentCharacterPose()");
 
 	int index = _currScript->readUint16LE();
 
 	int tmpVal = (_vm->_currentScriptCharacter * 32) + index;
 	assert (tmpVal < 40 * 32);
-	_array10AB1[_vm->_currentScriptCharacter] = _vm->_rulesBuffer2_16[tmpVal];
+	_characterPose[_vm->_currentScriptCharacter] = _vm->_poseArray[tmpVal];
 	_characterNextSequence[_vm->_currentScriptCharacter] = 16;
 }
 
@@ -2778,7 +2768,7 @@ void LilliputScript::OC_sub18074() {
 	int var2 = _currScript->readUint16LE();
 	byte var1 = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_rulesBuffer2_16[(_vm->_currentScriptCharacter * 32) + var2] = var1;
+	_vm->_poseArray[(_vm->_currentScriptCharacter * 32) + var2] = var1;
 }
 
 void LilliputScript::OC_setCurrentCharacterDirection() {
