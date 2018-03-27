@@ -324,7 +324,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 	intf._charPowSprites.draw(0, frame, Common::Point(Res.CHAR_FACES_X[charNum], 150));
 	windows[33].update();
 
-	damage -= party._powerShield;
+	damage = MAX(damage - party._powerShield, 0);
 	if (damage > 0 && monsterData._specialAttack && !c.charSavingThrow(DT_PHYSICAL)) {
 		switch (monsterData._specialAttack) {
 		case SA_POISON:
@@ -427,14 +427,14 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 		default:
 			break;
 		}
-
-		if (debugger._invincible)
-			// Invincibility mode is on, so reset conditions that were set
-			c.clearConditions();
-		else
-			// Standard gameplay, deal out the damage
-			c.subtractHitPoints(damage);
 	}
+
+	if (debugger._invincible)
+		// Invincibility mode is on, so reset conditions that were set
+		c.clearConditions();
+	else
+		// Standard gameplay, deal out the damage
+		c.subtractHitPoints(damage);
 
 	events.ipause(2);
 	intf.drawParty(true);
