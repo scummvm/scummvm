@@ -94,6 +94,9 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_windowIsActive = true;
 	_gameIsRunning  = true;
 
+	_vqaIsPlaying = false;
+	_vqaStopIsRequested = false;
+
 	_playerLosesControlCounter = 0;
 
 	_playerActorIdle = false;
@@ -933,6 +936,13 @@ void BladeRunnerEngine::handleEvents() {
 void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 	if (event.kbd.keycode == Common::KEYCODE_RETURN) {
 		_speechSkipped = true;
+	}
+
+	if (_vqaIsPlaying) {
+		_vqaStopIsRequested = true;
+		_vqaIsPlaying = false;
+
+		return;
 	}
 
 	// TODO:

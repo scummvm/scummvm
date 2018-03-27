@@ -184,6 +184,8 @@ public:
 	int  _gameAutoSave;
 	bool _gameIsLoading;
 	bool _sceneIsLoading;
+	bool _vqaIsPlaying;
+	bool _vqaStopIsRequested;
 
 	int _walkSoundId;
 	int _walkSoundVolume;
