@@ -133,7 +133,12 @@ int AudStream::getLength() const {
 	if (_flags & 2) { // stereo
 		bytesPerSecond *= 2;
 	}
-	return (1000 * _sizeDecompressed) / bytesPerSecond;
+
+	// since everything is 44100, we easily get overflows with ints
+	// thus we must use doubles
+	double res = (double)_sizeDecompressed * 1000.0 / (double)bytesPerSecond;
+
+	return (int32)res;
 }
 
 } // End of namespace BladeRunner
