@@ -49,6 +49,7 @@ public:
 
     void update();
 
+    void skipSequence();
 
 public:
     SequenceContext *_context;

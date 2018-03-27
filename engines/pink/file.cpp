@@ -30,13 +30,7 @@ OrbFile::OrbFile()
     : File(), _timestamp(0),
       _tableOffset(0),
       _tableSize(0),
-      _table(nullptr)
-{
-    debug("Object Description size: %u", sizeof(ObjectDescription));
-    debug("Resource Description size: %u", sizeof(ResourceDescription));
-    debug("OrbFile size: %lu", sizeof(OrbFile));
-    debug("BroFile size: %lu", sizeof(BroFile));
-}
+      _table(nullptr) {}
 
 OrbFile::~OrbFile() {
     delete[] _table;
@@ -69,13 +63,10 @@ bool OrbFile::open(const Common::String &name) {
     _tableSize = readUint32LE();
     _table = new ObjectDescription[_tableSize];
 
-    debug("Orb has %u object descriptions", _tableSize);
-
     seek(_tableOffset);
 
     for (size_t i = 0; i < _tableSize; ++i) {
         _table[i].load(*this);
-        debug("Object description %s loaded", _table[i].name);
     }
 
     return true;
@@ -83,10 +74,8 @@ bool OrbFile::open(const Common::String &name) {
 
 void OrbFile::loadGame(PinkEngine *game) {
     seekToObject("PinkGame");
-
     Archive archive(*this);
     archive.mapObject((Object *) game); // hack
-
     game->load(archive);
 }
 
@@ -126,7 +115,7 @@ ResourceDescription *OrbFile::getResDescTable(ObjectDescription *objDesc){
     seek(objDesc->resourcesOffset);
     ResourceDescription *table = new ResourceDescription[size];
 
-    for (uint i = 0; i < size; ++i) {
+    for (size_t i = 0; i < size; ++i) {
         table[i].load(*this);
     }
 
@@ -143,7 +132,7 @@ bool BroFile::open(Common::String &name, uint32 orbTimestamp) {
 
     debug("Bro v%hu.%hu loaded", major, minor);
 
-    if (minor || major != 1){
+    if (major != 1 || minor != 0){
         return false;
     }
 
@@ -167,7 +156,7 @@ void ResourceDescription::load(Common::File &file) {
 
     uint16 temp;
     file.read(&temp, sizeof(temp));
-    inBro = temp;
+    inBro = (bool) temp;
 }
 
 } // End of namespace Pink

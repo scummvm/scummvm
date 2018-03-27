@@ -44,17 +44,17 @@ struct ResourceDescription {
     uint32 offset;
     uint32 size;
     bool inBro; // in original it is short.
-                 // Don't know what's better to use.(Perhaps no diffrence because of padding)
+    // Don't know what's better to use.(Perhaps no difference because of padding)
 };
 
 class PinkEngine;
+
 class Object;
 
 class OrbFile : public Common::File {
 public:
     OrbFile();
     virtual ~OrbFile();
-
     virtual bool open(const Common::String &name);
 
     void loadGame(PinkEngine *game);
@@ -67,7 +67,7 @@ public:
     uint32 getTimestamp();
 
 private:
-    void seekToObject(const char * name);
+    void seekToObject(const char *name);
 
     uint32 _timestamp;
     uint32 _tableOffset;
@@ -77,9 +77,6 @@ private:
 
 class BroFile : public Common::File {
 public:
-    BroFile() = default;
-    virtual ~BroFile() = default;
-
     virtual bool open(Common::String &name, uint32 orbTimestamp);
 };
 

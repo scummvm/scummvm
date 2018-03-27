@@ -35,6 +35,10 @@ ActionSound::ActionSound()
     : _sound(nullptr), _isStopped(1)
 {}
 
+ActionSound::~ActionSound(){
+    end();
+}
+
 void ActionSound::deserialize(Archive &archive) {
     Action::deserialize(archive);
     archive >> _fileName;
@@ -66,14 +70,17 @@ void ActionSound::start(bool unk) {
 }
 
 void ActionSound::end() {
-    debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
+    if (_sound) {
+        debug("ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());
 
-    Director *director = _actor->getPage()->getGame()->getDirector();
-    director->removeSound(this);
+        Director *director = _actor->getPage()->getGame()->getDirector();
+        director->removeSound(this);
 
-    _sound->stop();
-    delete _sound;
-    _sound = nullptr;
+        _sound->stop();
+
+        delete _sound;
+        _sound = nullptr;
+    }
 }
 
 void ActionSound::update() {

@@ -81,4 +81,9 @@ void Sequencer::removeContext(SequenceContext *context) {
     _context = 0;
 }
 
+void Sequencer::skipSequence() {
+    if (_context && _context->getNextItemIndex() < _context->getSequence()->getItems().size())
+        _context->getSequence()->start(0);
+}
+
 } // End of namespace Pink

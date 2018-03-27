@@ -59,7 +59,7 @@ public:
 
     bool initPallete(Director *director);
 
-    void update() {};
+    virtual void update() {};
 
 protected:
     GamePage *_page;

@@ -32,6 +32,7 @@
 namespace Pink {
 
 void LeadActor::deserialize(Archive &archive) {
+    _state = kReady;
     Actor::deserialize(archive);
     _state = kReady;
     _cursorMgr = static_cast<CursorMgr*>(archive.readObject());
@@ -77,6 +78,16 @@ void LeadActor::update() {
         default:
             break;
     }
+}
+
+void LeadActor::OnKeyboardButtonClick(Common::KeyCode code) {
+    switch (code) {
+        case Common::KEYCODE_SPACE:
+        case Common::KEYCODE_RIGHT:
+            _sequencer->skipSequence();
+
+    }
+
 }
 
 void ParlSqPink::toConsole() {

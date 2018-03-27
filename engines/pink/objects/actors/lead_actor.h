@@ -23,6 +23,7 @@
 #ifndef PINK_LEAD_ACTOR_H
 #define PINK_LEAD_ACTOR_H
 
+#include <common/keyboard.h>
 #include "actor.h"
 
 namespace Pink {
@@ -44,6 +45,7 @@ public:
         kUnk_Loading // ????
     };
 
+
     virtual void deserialize(Archive &archive);
 
     virtual void toConsole();
@@ -56,6 +58,7 @@ public:
     void start(bool isHandler);
     void update();
 
+    void OnKeyboardButtonClick(Common::KeyCode code);
 private:
     State _state;
     CursorMgr *_cursorMgr;

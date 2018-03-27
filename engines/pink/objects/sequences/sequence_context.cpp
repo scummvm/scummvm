@@ -71,4 +71,12 @@ SequenceContext::SequenceContext(Sequence *sequence, Sequencer *sequencer)
     }
 }
 
+int SequenceContext::getNextItemIndex() const {
+    return _nextItemIndex;
+}
+
+Sequence *SequenceContext::getSequence() const {
+    return _sequence;
+}
+
 } // End of namespace Pink

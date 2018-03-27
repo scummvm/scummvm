@@ -308,7 +308,7 @@ Object *Archive::readObject() {
 Object *Archive::parseObject(bool &isCopyReturned) {
     char className[kMaxClassLength];
     int objectId = 0;
-    Object *res = 0;
+    Object *res = nullptr;
 
     uint obTag = _file.readUint16LE();
 
@@ -355,7 +355,7 @@ Object *Archive::parseObject(bool &isCopyReturned) {
 }
 
 uint Archive::findObjectId(const char *name) {
-    RuntimeClass * found = static_cast<RuntimeClass*>
+    RuntimeClass *found = static_cast<RuntimeClass*>
     (bsearch(name, classMap, sizeof(classMap) / sizeof(RuntimeClass) , sizeof(RuntimeClass), [] (const void *a, const void *b) {
                 return strcmp((const char *) a, *(const char **) b);
     }));
