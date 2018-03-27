@@ -1172,7 +1172,7 @@ const char *const CHARACTER_DETAILS =
 
 const char *const PARTY_GOLD = "Party Gold";
 
-const char *const PLUS_14 = "14+";
+const char *const PLUS_14 = "\f14+";
 
 const char *const CHARACTER_TEMPLATE =
 	"\x1\f00\r\x3l\t029\v018Mgt\t080Acy\t131H.P.\t196Experience"
