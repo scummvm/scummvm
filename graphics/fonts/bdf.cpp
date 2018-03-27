@@ -411,8 +411,8 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 				boxes[encoding] = box;
 			}
 		} else if (line.hasPrefix("FAMILY_NAME \"")) {
-			familyName = new char[line.size()]; // We will definitely fit here
-			Common::strlcpy(familyName, &line.c_str()[13], line.size());
+			familyName = new char[line.size()];
+			Common::strlcpy(familyName, line.c_str() + 13, line.size() - 13);
 			char *p = &familyName[strlen(familyName)];
 			while (p != familyName && *p != '"')
 				p--;
@@ -428,8 +428,8 @@ BdfFont *BdfFont::loadFont(Common::SeekableReadStream &stream) {
 			}
 			*p = '\0'; // Remove last quote
 		} else if (line.hasPrefix("SLANT \"")) {
-			slant = new char[line.size()]; // We will definitely fit here
-			Common::strlcpy(slant, &line.c_str()[7], line.size());
+			slant = new char[line.size()];
+			Common::strlcpy(slant, line.c_str() + 7, line.size() - 7);
 			char *p = &slant[strlen(slant)];
 			while (p != slant && *p != '"')
 				p--;
@@ -700,6 +700,15 @@ BdfFont *BdfFont::loadFromCache(Common::SeekableReadStream &stream) {
 	return new BdfFont(data, DisposeAfterUse::YES);
 }
 
+static char *new_strdup(const char *in) {
+	const size_t len = strlen(in) + 1;
+	char *out = new char[len];
+	if (out) {
+		strcpy(out, in);
+	}
+	return out;
+}
+
 BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 	if (!src) {
 		warning("Empty font reference in scale font");
@@ -725,8 +734,8 @@ BdfFont *BdfFont::scaleFont(BdfFont *src, int newSize) {
 	data.firstCharacter = src->_data.firstCharacter;
 	data.defaultCharacter = src->_data.defaultCharacter;
 	data.numCharacters = src->_data.numCharacters;
-	data.familyName = strdup(src->_data.familyName);
-	data.slant = strdup(src->_data.slant);
+	data.familyName = new_strdup(src->_data.familyName);
+	data.slant = new_strdup(src->_data.slant);
 
 	BdfBoundingBox *boxes = new BdfBoundingBox[data.numCharacters];
 	for (int i = 0; i < data.numCharacters; ++i) {

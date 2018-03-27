@@ -3,8 +3,8 @@
 [Setup]
 AppCopyright=2018
 AppName={#AppName}
-AppVersion=2.1.0git
-AppVerName={#AppName} 2.1.0git
+AppVersion=@VERSION@
+AppVerName={#AppName} @VERSION@
 AppPublisher=The ScummVM Team
 AppPublisherURL=http://www.scummvm.org/
 AppSupportURL=http://www.scummvm.org/

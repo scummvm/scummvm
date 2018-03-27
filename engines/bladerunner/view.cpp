@@ -51,7 +51,7 @@ void View::setFovX(float fovX) {
 
 	_viewportPosition.x = 320.0f;
 	_viewportPosition.y = 240.0f;
-	_viewportPosition.z = 320.0f / tanf(_fovX / 2.0f);
+	_viewportPosition.z = 320.0f / tan(_fovX / 2.0f);
 }
 
 void View::calculateSliceViewMatrix() {

@@ -195,7 +195,7 @@ void LocationParser_ns::warning_unexpected() {
 DECLARE_ANIM_PARSER(script)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(script) ");
 
-	ctxt.a->_scriptName = strdup(_tokens[1]);
+	ctxt.a->_scriptName = _tokens[1];
 }
 
 
@@ -643,7 +643,7 @@ DECLARE_COMMAND_PARSER(location)  {
 
 	createCommand(_parser->_lookup);
 
-	ctxt.cmd->_string = strdup(_tokens[ctxt.nextToken]);
+	ctxt.cmd->_string = _tokens[ctxt.nextToken];
 	ctxt.nextToken++;
 
 	parseCommandFlags();

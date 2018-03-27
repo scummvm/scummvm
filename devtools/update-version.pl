@@ -38,7 +38,6 @@ my @subs_files = qw(
 	dists/slackware/scummvm.SlackBuild
 	dists/macosx/Info.plist
 	dists/macosx/dockplugin/Info.plist
-	dists/iphone/Info.plist
 	dists/ios7/Info.plist
 	dists/irix/scummvm.spec
 	dists/wii/meta.xml
@@ -50,6 +49,7 @@ my @subs_files = qw(
 	dists/gph/README-GPH
 	dists/gph/scummvm.ini
 	dists/riscos/!Boot,feb
+	dists/win32/ScummVM.iss
 	backends/platform/psp/README.PSP
 	snapcraft.yaml
 	);

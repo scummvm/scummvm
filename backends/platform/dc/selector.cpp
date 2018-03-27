@@ -203,7 +203,7 @@ static bool uniqueGame(const char *base, const char *dir,
 	  this is a workaround for the detector bug in toon... */
 	sameOrSubdir(dir, games->dir) &&
 	/*!strcmp(dir, games->dir) &&*/
-	!stricmp(base, games->filename_base) &&
+	!strcasecmp(base, games->filename_base) &&
 	lang == games->language &&
 	plf == games->platform)
       return false;

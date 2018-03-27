@@ -658,7 +658,7 @@ int AIScriptMaggie::sub_44B260() {
 float AIScriptMaggie::sub_44B200(int actorId, float x, float y, float z) {
 	float actorX, actorY, actorZ;
 	Actor_Query_XYZ(actorId, &actorX, &actorY, &actorZ);
-	return sqrtf((z - actorZ) * (z - actorZ) + (y - actorY) * (y - actorY) + (x - actorX) * (x - actorX));
+	return sqrt(static_cast<float>((z - actorZ) * (z - actorZ) + (y - actorY) * (y - actorY) + (x - actorX) * (x - actorX)));
 }
 
 } // End of namespace BladeRunner

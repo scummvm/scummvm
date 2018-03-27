@@ -57,6 +57,8 @@ public:
 
 	virtual bool hasFeature(Feature f);
 
+	virtual GraphicsManager *getGraphicsManager();
+
 	// Override functions from ModularBackend and OSystem
 	virtual void initBackend();
 	virtual void engineInit();

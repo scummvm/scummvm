@@ -22,10 +22,8 @@
 
 #if defined(POSIX)
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_exit		//Needed for IRIX's unistd.h
+// Re-enable forbidden symbols to avoid clashes with stat.h and unistd.h.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/fs/chroot/chroot-fs-factory.h"
 #include "backends/fs/chroot/chroot-fs.h"

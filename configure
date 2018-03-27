@@ -29,13 +29,20 @@ export LANGUAGE
 
 # Save the current environment variables for next runs
 SAVED_CONFIGFLAGS=$@
-SAVED_LDFLAGS=$LDFLAGS
+SAVED_AR=$AR
+SAVED_AS=$AS
+SAVED_ASFLAGS=$ASFLAGS
+SAVED_CPPFLAGS=$CPPFLAGS
 SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
-SAVED_CPPFLAGS=$CPPFLAGS
-SAVED_ASFLAGS=$ASFLAGS
-SAVED_WINDRESFLAGS=$WINDRESFLAGS
+SAVED_DWP=$DWP
+SAVED_LD=$LD
+SAVED_LDFLAGS=$LDFLAGS
+SAVED_RANLIB=$RANLIB
 SAVED_SDL_CONFIG=$SDL_CONFIG
+SAVED_STRIP=$STRIP
+SAVED_WINDRES=$WINDRES
+SAVED_WINDRESFLAGS=$WINDRESFLAGS
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -157,7 +164,7 @@ _libunity=auto
 _debug_build=auto
 _release_build=auto
 _optimizations=auto
-_use_cxx11=no
+_cxx_std=c++14
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -186,12 +193,12 @@ _plugin_prefix=
 _plugin_suffix=
 _nasm=auto
 _optimization_level=
-_default_optimization_level=-O2
 # Default commands
 _ranlib=ranlib
 _strip=strip
 _ar="ar cru"
 _as="as"
+_dwp=dwp
 _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
@@ -282,7 +289,7 @@ cc_check_no_clean() {
 }
 
 cc_check_clean() {
-	rm -rf $TMPC $TMPO $TMPO.o $TMPO.dSYM $TMPO$HOSTEXEEXT "$@"
+	rm -rf $TMPC $TMPO $TMPO.o $TMPO.dwo $TMPO.dSYM $TMPO$HOSTEXEEXT "$@"
 }
 
 cc_check() {
@@ -957,16 +964,19 @@ Game engines:
     The values of <engine name> for these options are as follows:
 $engines_help
 Optional Features:
-  --enable-static          build a static binary instead of using shared objects
-  --enable-c++11           build as C++11 if the compiler allows that
+  --force-c++98            force building as C++98 even if the compiler supports a
+                           newer standard
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
   --enable-release         enable building in release mode (this activates
                            optimizations)
   --enable-release-mode    enable building in release mode (without optimizations)
   --enable-optimizations   enable optimizations
+  --enable-optimizations=FLAG enable a specific optimization level (e.g. -O2)
   --enable-profiling       enable profiling
   --enable-plugins         enable the support for dynamic plugins
+  --enable-static-libs     use static linking information from system library
+                           configuration scripts
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-16bit          don't enable 16bit color support
@@ -1071,13 +1081,21 @@ Optional Libraries:
   --disable-libcurl        disable libcurl networking library [autodetect]
 
 Some influential environment variables:
-  LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
-                 nonstandard directory <lib dir>
-  CXX            C++ compiler command
-  CXXFLAGS       C++ compiler flags
+  AR             archiver command
+  AS             assembler command
+  ASFLAGS        assembler flags
   CPPFLAGS       C++ preprocessor flags, e.g. -I<include dir> if you have
                  headers in a nonstandard directory <include dir>
-  ASFLAGS        assembler flags
+  CXX            C++ compiler command
+  CXXFLAGS       C++ compiler flags
+  DWP            DWARF packing utility command
+  LD             linker command
+  LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
+                 nonstandard directory <lib dir>
+  RANLIB         archive indexer command
+  SDL_CONFIG     SDL configurer script name (not path)
+  STRIP          symbol stripper command
+  WINDRES        Windows resource compiler command
   WINDRESFLAGS   Windows resource compiler flags
 
 EOF
@@ -1095,13 +1113,14 @@ cat >> $TMPLOG <<EOF
 Invocation command line was:
 $0 $@
 Saved environment variables:
-LDFLAGS="$SAVED_LDFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" ASFLAGS="$SAVED_ASFLAGS" WINDRESFLAGS="$SAVED_WINDRESFLAGS" SDL_CONFIG="$SAVED_SDL_CONFIG"
+AR="$SAVED_AR" AS="$SAVED_AS" ASFLAGS="$SAVED_ASFLAGS" CPPFLAGS="$SAVED_CPPFLAGS" CXX="$SAVED_CXX" CXXFLAGS="$SAVED_CXXFLAGS" DWP="$SAVED_DWP" LD="$SAVED_LD" LDFLAGS="$SAVED_LDFLAGS" RANLIB="$SAVED_RANLIB" SDL_CONFIG="$SAVED_SDL_CONFIG" STRIP="$SAVED_STRIP" WINDRES="$SAVED_WINDRES" WINDRESFLAGS="$SAVED_WINDRESFLAGS"
 EOF
 
 
 for ac_option in $@; do
 	case "$ac_option" in
-	--enable-static)         _static_build=yes    ;;
+	--enable-static-libs)     _static_libs=yes ;;
+	--disable-static-libs)    _static_libs=no ;;
 	--disable-16bit)          _16bit=no       ;;
 	--enable-highres)         _highres=yes    ;;
 	--disable-highres)        _highres=no     ;;
@@ -1274,10 +1293,9 @@ for ac_option in $@; do
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--enable-c++11)
-		_use_cxx11=yes
 		;;
-	--disable-c++11)
-		_use_cxx11=no
+	--disable-c++11|--force-c++98)
+		_cxx_std=no
 		;;
 	--enable-debug)
 		_debug_build=yes
@@ -1297,6 +1315,7 @@ for ac_option in $@; do
 	--enable-release)
 		_release_build=yes
 		_optimizations=yes
+		_updates=yes
 		;;
 	--disable-release)
 		_release_build=no
@@ -1307,6 +1326,11 @@ for ac_option in $@; do
 		;;
 	--disable-optimizations)
 		_optimizations=no
+		;;
+	--enable-optimizations=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		_optimizations=yes
+		_optimization_level=$arg
 		;;
 	--enable-profiling)
 		_enable_prof=yes
@@ -1328,6 +1352,7 @@ for ac_option in $@; do
 		_nasmpath="$arg:$arg/bin"
 		;;
 	--with-staticlib-prefix=*)
+		_static_libs=yes
 		_staticlibpath=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--with-xcodetools-path=*)
@@ -1445,6 +1470,7 @@ androidsdl-x86_64)
 arm-*riscos)
 	_host_os=riscos
 	_host_cpu=arm
+	_host_alias=$_host
 	datarootdir='/\<ScummVM\$$Dir\>'
 	datadir='${datarootdir}/data'
 	docdir='${datarootdir}/docs'
@@ -1550,6 +1576,7 @@ openpandora)
 ppc-amigaos)
 	_host_os=amigaos
 	_host_cpu=powerpc
+	_host_alias=$_host
 	;;
 ps2)
 	_host_os=ps2
@@ -1649,46 +1676,9 @@ else
 	_strip=$_host_alias-strip
 	_ar="$_host_alias-ar cru"
 	_as="$_host_alias-as"
+	_dwp=$_host_alias-dwp
 	_windres=$_host_alias-windres
 fi
-
-#
-# Determine extra build flags for debug and/or release builds
-#
-
-case $_host in
-caanoo | gp2x | gp2xwiz | openpandora | ps2 | psp2)
-	if test "$_debug_build" = auto; then
-		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
-		_debug_build=no
-	fi
-
-	if test "$_optimizations" = auto; then
-		# Enable optimizations by default.
-		_optimizations=yes
-	fi
-	;;
-esac
-
-if test "$_debug_build" != no; then
-	# debug mode not explicitly disabled -> compile with debug information
-	case $_host_os in
-	amigaos*)
-		# AmigaOS debugger uses plain stabs, with no gdb extensions.
-		append_var CXXFLAGS "-gstabs"
-	;;
-	*)
-		# Use the system default format for debug info.
-		append_var CXXFLAGS "-g"
-	esac
-fi
-
-if test "$_release_build" = yes; then
-	# Add a define, which indicates we are doing
-	# an build for a release version.
-	append_var DEFINES "-DRELEASE_BUILD"
-fi
-
 
 #
 # Determine extension used for executables
@@ -1726,6 +1716,12 @@ android)
 3ds | ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
+		exit 1
+	fi
+	;;
+dreamcast)
+	if test -z "$RONINDIR"; then
+		echo "Please set RONINDIR in your environment. export RONINDIR=<path to libronin>"
 		exit 1
 	fi
 	;;
@@ -1769,6 +1765,15 @@ psp)
 		echo "Please set PSPSDK in your environment. export PSPSDK=<path to psp sdk>"
 		exit 1
 	fi
+
+	# These have to be set early because the compiler will not link successfully
+	# during testing otherwise
+	if test -d "$PSPDEV/psp/lib"; then
+		append_var LDFLAGS "-L$PSPDEV/psp/lib"
+	fi
+	append_var LDFLAGS "-L$PSPSDK/lib"
+	append_var LDFLAGS "-specs=$_srcdir/backends/platform/psp/psp.spec"
+
 	;;
 riscos)
 	if test -z "$GCCSDK_INSTALL_ENV"; then
@@ -1850,7 +1855,30 @@ if test -z "$CXX"; then
 	exit 1
 fi
 
-# By default, use the C++ compiler as linker
+if test -n "$RANLIB"; then
+	_ranlib=$RANLIB
+fi
+
+if test -n "$STRIP"; then
+	_strip=$STRIP
+fi
+
+if test -n "$AR"; then
+	_ar="$AR cru"
+fi
+
+if test -n "$AS"; then
+	_as=$AS
+fi
+
+if test -n "$DWP"; then
+	_dwp=$DWP
+fi
+
+if test -n "$WINDRES"; then
+	_windres=$WINDRES
+fi
+
 LD=$CXX
 
 #
@@ -1968,15 +1996,21 @@ if test "$cxx_verc_fail" = yes ; then
 fi
 
 #
-# Check whether the compiler supports C++11
+# Check C++ version support
 #
-have_cxx11=no
-cat > $TMPC << EOF
-int main(int argc, char *argv[]) { if (argv == nullptr) return -1; else return 0; }
-EOF
-cc_check -std=c++11 && have_cxx11=yes
-if test "$_use_cxx11" = "yes" ; then
-	_use_cxx11=$have_cxx11
+if test "$_cxx_std" = "no"; then
+	_cxx_std=
+elif echo "int main() { return 0'000; }" > $TMPC && cc_check -std=c++14 ; then
+	_cxx_std=c++14
+elif echo "int main(int argc, char *argv[]) { if (argv == nullptr) return -1; else return 0; }" > $TMPC && cc_check -std=c++11 ; then
+	_cxx_std=c++11
+elif echo "int main() { return 0; }" > $TMPC && cc_check -std=c++03 ; then
+	_cxx_std=c++03
+elif echo "int main() { return 0; }" > $TMPC && cc_check ; then
+	_cxx_std=
+else
+	echo "ERROR: compiler is broken!"
+	exit 1
 fi
 
 #
@@ -1986,17 +2020,51 @@ fi
 #
 if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
-		# Try to use ANSI mode when C++11 is disabled.
-		if test "$_use_cxx11" = "no" ; then
+		if test "$_cxx_std" = "" ; then
 			case $_host_os in
 			# newlib-based system include files suppress non-C89 function
 			# declarations under __STRICT_ANSI__
-			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
+			3ds | amigaos* | android | androidsdl | dreamcast | ds | gamecube | mingw* | mint* | n64 | psp | ps2 | ps3 | psp2 | tizen | wii | wince )
 				;;
 			*)
 				append_var CXXFLAGS "-ansi"
 				;;
 			esac
+		else
+			need_gnu=no
+			gnu_std=`echo $_cxx_std | sed 's/c++/gnu++/'`
+
+			# This is only a problem until we can use variadic templates (i.e.
+			# C++11 is the minimum baseline), at which point vsnprintf goes
+			# away, or until the AmigaOS standard library is fixed:
+			# https://github.com/sba1/adtools/issues/19
+			echocheck "whether vsnprintf needs -std=gnu"
+			cat > $TMPC << EOF
+#include <stdarg.h>
+#include <stdio.h>
+int foo(const char *fmt, ...) {
+	va_list list;
+	va_start(list, fmt);
+	char buf[1];
+	vsnprintf(buf, 1, fmt, list);
+	va_end(list);
+}
+int main(void) { foo(""); return 0; }
+EOF
+			if ! cc_check_no_clean -std=$_cxx_std ; then
+				if ! cc_check_no_clean -std=$gnu_std ; then
+					echo "vsprintf is broken"
+					exit 1
+				else
+					need_gnu=yes
+				fi
+			fi
+			cc_check_clean
+			echo $need_gnu
+
+			if test "$need_gnu" = "yes"; then
+				_cxx_std=$gnu_std
+			fi
 		fi
 		append_var CXXFLAGS "-W -Wno-unused-parameter"
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
@@ -2014,13 +2082,53 @@ elif test "$have_icc" = yes ; then
 fi;
 
 #
-# Update status about C++11 mode
+# Update status about C++ language standard
 #
-echo_n "Building as C++11... "
-if test "$_use_cxx11" = "yes" ; then
-	append_var CXXFLAGS "-std=c++11"
+echocheck "best C++ language standard"
+if test "$_cxx_std" != "" ; then
+	append_var CXXFLAGS "-std=$_cxx_std"
+	echo $_cxx_std
+else
+	echo "ancient"
 fi
-echo $_use_cxx11
+
+#
+# Determine extra build flags for debug and/or release builds
+#
+if test "$_debug_build" != no; then
+	# debug mode not explicitly disabled -> compile with debug information
+	echo_n "Checking best debug mode... "
+
+	debug_mode=-g
+	test "$_host_os" = amigaos && debug_mode=-gstabs
+	append_var CXXFLAGS "$debug_mode"
+	echo_n -- "$debug_mode"
+
+	echo "int main() { return 0; }" > $TMPC
+	if `which $_dwp >/dev/null 2>&1` && cc_check_no_clean $debug_mode -gsplit-dwarf && `$_dwp -e $TMPO -o /dev/null >/dev/null 2>&1`; then
+		append_var CXXFLAGS "-gsplit-dwarf"
+		add_line_to_config_mk "SPLIT_DWARF = 1"
+		echo_n -- " + split DWARF"
+		if cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
+			append_var LDFLAGS "-fuse-ld=gold"
+			append_var LDFLAGS "-Wl,--gdb-index"
+			echo_n -- " + Gold"
+		fi
+	fi
+
+	if cc_check_no_clean $debug_mode -fvar-tracking-assignments; then
+		append_var CXXFLAGS "-fvar-tracking-assignments"
+		echo_n -- " + var tracking"
+	fi
+	cc_check_clean
+	echo ""
+fi
+
+if test "$_release_build" = yes; then
+	# Add a define, which indicates we are doing
+	# an build for a release version.
+	append_var DEFINES "-DRELEASE_BUILD"
+fi
 
 # By default, we add -pedantic to the CXXFLAGS to catch some potentially
 # non-portable constructs, like use of GNU extensions.
@@ -2041,9 +2149,7 @@ esac
 # If possible, we want to use -Wglobal-constructors
 # However, not all compilers support that, so check whether the active one does.
 echocheck "whether -Wglobal-constructors work"
-cat > $TMPC << EOF
-int main() { return 0; }
-EOF
+echo "int main() { return 0; }" > $TMPC
 cc_check -Wglobal-constructors -Werror && _global_constructors=yes
 
 if test "$_global_constructors" = yes; then
@@ -2058,9 +2164,7 @@ echo $_global_constructors
 # Note: we check the -Wundefined-var-template as gcc does not error out on unknown
 # -Wno-xxx flags.
 echocheck "whether -Wno-undefined-var-template work"
-cat > $TMPC << EOF
-int main() { return 0; }
-EOF
+echo "int main() { return 0; }" > $TMPC
 cc_check -Wundefined-var-template -Werror && _no_undefined_var_template=yes
 
 if test "$_no_undefined_var_template" = yes; then
@@ -2068,13 +2172,17 @@ if test "$_no_undefined_var_template" = yes; then
 fi
 echo $_no_undefined_var_template
 
-echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
-if `which $_host_alias-strings >/dev/null 2>&1`; then
-_strings=$_host_alias-strings
-echo yes >> "$TMPLOG"
+if test -n "$STRINGS"; then
+	_strings=$STRINGS
 else
-_strings=strings
-echo no >> "$TMPLOG"
+	echo_n "Checking for $_host_alias-strings... " >> "$TMPLOG"
+	if `which $_host_alias-strings >/dev/null 2>&1`; then
+		_strings=$_host_alias-strings
+		echo yes >> "$TMPLOG"
+	else
+		_strings=strings
+		echo no >> "$TMPLOG"
+	fi
 fi
 
 #
@@ -2296,7 +2404,6 @@ echo_n "Checking hosttype... "
 echo $_host_os
 case $_host_os in
 	3ds)
-		_optimization_level=-O2
 		append_var DEFINES "-D__3DS__"
 		append_var DEFINES "-DARM"
 		append_var DEFINES "-DARM11"
@@ -2332,7 +2439,8 @@ case $_host_os in
 			android | android-arm)
 				append_var CXXFLAGS "-march=armv5te"
 				append_var CXXFLAGS "-mtune=xscale"
-				append_var CXXFLAGS "-msoft-float"
+				append_var CXXFLAGS "-mfloat-abi=softfp"
+				append_var LDFLAGS "-mthumb"
 				ABI="armeabi"
 				ANDROID_PLATFORM=9
 				ANDROID_PLATFORM_ARCH="arm"
@@ -2373,10 +2481,6 @@ case $_host_os in
 				;;
 		esac
 
-		# Setup platform version and arch
-		append_var CXXFLAGS "--sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
-		append_var LDFLAGS "--sysroot=$ANDROID_NDK/platforms/android-$ANDROID_PLATFORM/arch-$ANDROID_PLATFORM_ARCH"
-
 		append_var CXXFLAGS "-fpic"
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-funwind-tables"
@@ -2387,36 +2491,8 @@ case $_host_os in
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var CXXFLAGS "-fstrict-aliasing"
 		fi
-		append_var CXXFLAGS "-finline-limit=300"
-		_optimization_level=-Os
 
-		if test "$_host" = android -o "$_host" = android-arm; then
-			append_var CXXFLAGS "-mthumb-interwork"
-			# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
-			append_var CXXFLAGS "-D__ARM_ARCH_5__"
-			append_var CXXFLAGS "-D__ARM_ARCH_5T__"
-			append_var CXXFLAGS "-D__ARM_ARCH_5E__"
-			append_var CXXFLAGS "-D__ARM_ARCH_5TE__"
-		fi
-
-		# surpress 'mangling of 'va_list' has changed in GCC 4.4' warning
-		append_var CXXFLAGS "-Wno-psabi"
-
-		if test "$_host" = android -o "$_host" = android-arm; then
-			append_var LDFLAGS "-mthumb-interwork"
-		fi
-
-		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/include/"
-		append_var INCLUDES "-isystem $ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/include/"
-		append_var LDFLAGS "-L$ANDROID_NDK/sources/cxx-stl/gnu-libstdc++/`$CXX -dumpversion`/libs/$ABI/"
-		append_var LIBS "-lsupc++"
 		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
-		if test -d "$ANDROID_SDK"/build-tools; then
-			_build_tools_version=`cd "$ANDROID_SDK"/build-tools && ls -1 | sort -rn | head -1`
-			add_line_to_config_mk "ANDROID_BTOOLS = build-tools/$_build_tools_version"
-		else
-			add_line_to_config_mk "ANDROID_BTOOLS = platform-tools"
-		fi
 		_seq_midi=no
 		;;
 	beos*)
@@ -2445,9 +2521,7 @@ case $_host_os in
 		esac
 
 		append_var DEFINES "-DMACOSX"
-		append_var LIBS "-framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
-		# SDL2 doesn't seem to add Cocoa for us.
-		append_var LIBS "-framework Cocoa"
+		append_var LIBS "-framework AudioUnit -framework AudioToolbox -framework Cocoa -framework CoreMIDI"
 		add_line_to_config_mk 'MACOSX = 1'
 
 		# Now we may have MacPorts or Fink installed
@@ -2583,7 +2657,6 @@ case $_host_os in
 		append_var CXXFLAGS "-I/usr/local/include"
 		;;
 	gamecube)
-		_optimization_level=-Os
 		append_var CXXFLAGS "-mogc"
 		append_var CXXFLAGS "-mcpu=750"
 		append_var CXXFLAGS "-meabi"
@@ -2635,6 +2708,8 @@ case $_host_os in
 		;;
 	mint*)
 		append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		append_var DEFINES "-D_GNU_SOURCE"
+		append_var DEFINES "-D_ISOC11_SOURCE"
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
@@ -2690,14 +2765,7 @@ case $_host_os in
 		append_var CXXFLAGS "-fno-optimize-sibling-calls"
 		#the next line fixes "branch out of range" error in gob engine when -Os is used
 		append_var CXXFLAGS "-mlong-calls"
-		if test "$_debug_build" = no; then
-		#optimize for smallest file size. This is necessary to prevent a crash on startup
-		#due to the large executable file size when many engines are enabled
-		#for example when --enable-all-engines is used to enable all the unstable engines
-			_optimization_level=-Os
-		fi
 		if test "$_debug_build" = yes; then
-			_optimization_level=-O0
 			append_var DEFINES "-D__PSP2_DEBUG__"
 			append_var LIBS "-lpsp2shell"
 		fi
@@ -2705,12 +2773,6 @@ case $_host_os in
 		add_line_to_config_h "#define PREFIX \"${prefix}\""
 		;;
 	psp)
-		if test -d "$PSPDEV/psp/lib"; then
-			append_var LDFLAGS "-L$PSPDEV/psp/lib"
-		fi
-		append_var LDFLAGS "-L$PSPSDK/lib"
-		append_var LDFLAGS "-specs=$_srcdir/backends/platform/psp/psp.spec"
-		_optimization_level=-O3
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
@@ -2727,7 +2789,6 @@ case $_host_os in
 		append_var CXXFLAGS "-march=armv3m"
 		append_var CXXFLAGS "-mtune=xscale"
 		append_var LDFLAGS "-static"
-		_optimization_level=-O2
 		append_var CXXFLAGS "-ffunction-sections"
 		append_var CXXFLAGS "-fdata-sections"
 		append_var LDFLAGS "-Wl,--gc-sections"
@@ -2762,7 +2823,6 @@ case $_host_os in
 		_seq_midi=no
 		;;
 	wii)
-		_optimization_level=-Os
 		append_var CXXFLAGS "-mrvl"
 		append_var CXXFLAGS "-mcpu=750"
 		append_var CXXFLAGS "-meabi"
@@ -2783,7 +2843,6 @@ case $_host_os in
 		fi
 		;;
 	wince)
-		_optimization_level=-O3
 		append_var CXXFLAGS "-fno-inline-functions"
 		append_var CXXFLAGS "-march=armv4"
 		append_var CXXFLAGS "-mtune=xscale"
@@ -2827,7 +2886,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/android/android.mk"
 			_build_scalers=no
 			_seq_midi=no
-			_mt32emu=no
 			_timidity=no
 			;;
 		androidsdl | androidsdl-armeabi | androidsdl-armeabi-v7a | androidsdl-mips | androidsdl-x86 | androidsdl-arm64-v8a | androidsdl-x86_64)
@@ -2843,20 +2901,11 @@ if test -n "$_host"; then
 		arm-*riscos)
 			_opengl_mode=none
 			_build_hq_scalers=no
-			# toolchain binaries prefixed by host
-			_ranlib=$_host-ranlib
-			_strip=$_host-strip
-			_ar="$_host-ar cru"
-			_as="$_host-as"
 			;;
 		bfin*)
 			;;
 		caanoo)
 			append_var DEFINES "-DCAANOO"
-			if test "$_debug_build" = no; then
-				# Use -O3 on the Caanoo for non-debug builds.
-				_optimization_level=-O3
-			fi
 			append_var CXXFLAGS "-mcpu=arm926ej-s"
 			append_var CXXFLAGS "-mtune=arm926ej-s"
 			_backend="gph"
@@ -2880,7 +2929,6 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
 			_mt32emu=no
-			_optimization_level=-O3
 			# Disable alsa midi to get the port build on OpenDingux toolchain
 			_alsa=no
 			# Disable cloud and SDL_Net due to outdated toolchain
@@ -2897,28 +2945,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/dingux/dingux.mk"
 			;;
 		raspberrypi)
-			# This is needed because the official cross compiler doesn't have multiarch enabled
-			# but Raspbian does.
-			# Be careful as it's the linker (LDFLAGS) which must know about sysroot.
-			# These are needed to build against Raspbian's libSDL.
-			append_var LDFLAGS "--sysroot=$RPI_ROOT"
-			append_var LDFLAGS "-B$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
-			append_var LDFLAGS "-Xlinker --rpath-link=$RPI_ROOT/usr/lib/arm-linux-gnueabihf"
-			append_var LDFLAGS "-Xlinker --rpath-link=$RPI_ROOT/lib/arm-linux-gnueabihf"
-			append_var LDFLAGS "-Xlinker --rpath-link=$RPI_ROOT/opt/vc/lib"
-			append_var LDFLAGS "-L$RPI_ROOT/opt/vc/lib"
-			# This is so optional OpenGL ES includes are found.
-			append_var CXXFLAGS "-I$RPI_ROOT/opt/vc/include"
-			_savegame_timestamp=no
-			_eventrec=no
-			_build_scalers=no
-			_build_hq_scalers=no
-			# We prefer SDL2 on the Raspberry Pi: acceleration now depends on it
-			# since SDL2 manages dispmanx/GLES2 very well internally.
-			# SDL1 is bit-rotten on this platform.
-			_sdlconfig=sdl2-config
-			# OpenGL ES support is mature enough as to be the best option on
-			# the Raspberry Pi, so it's enabled by default.
 			# The Raspberry Pi always supports OpenGL ES 2.0 contexts, thus we
 			# take advantage of those.
 			_opengl_mode=gles2
@@ -2931,20 +2957,8 @@ if test -n "$_host"; then
 			if test "$_release_build" = yes -o "$_debug_build" != yes; then
 				append_var DEFINES "-DNOSERIAL"
 			fi
-			_optimization_level=-O3
-			append_var CXXFLAGS "-funroll-loops"
-			append_var CXXFLAGS "-fschedule-insns2"
-			append_var CXXFLAGS "-fomit-frame-pointer"
-			append_var CXXFLAGS "-fdelete-null-pointer-checks"
 			_backend="dc"
 			_build_scalers=no
-			_mad=yes
-			_zlib=yes
-			if test -z "$RONINDIR"; then
-				add_line_to_config_mk "ronindir := /usr/local/ronin"
-			else
-				add_line_to_config_mk "ronindir := $RONINDIR"
-			fi
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
@@ -2989,7 +3003,6 @@ if test -n "$_host"; then
 			_seq_midi=no
 			_timidity=no
 			_build_scalers=yes
-			_optimization_level=-O3
 			_vkeybd=yes
 			_keymapper=yes
 			_vorbis=no
@@ -3041,13 +3054,10 @@ if test -n "$_host"; then
 			_timidity=no
 			;;
 		m68k-atari-mint)
-			append_var DEFINES "-DSYSTEM_NOT_SUPPORTING_D_TYPE"
-			_ranlib=m68k-atari-mint-ranlib
-			_ar="m68k-atari-mint-ar cru"
 			_seq_midi=no
+			_timidity=no
 			;;
 		maemo)
-			_optimization_level=-Os
 			append_var CXXFLAGS "-mcpu=arm926ej-s"
 			append_var CXXFLAGS "-fomit-frame-pointer"
 			append_var INCLUDES "-I/usr/X11R6/include"
@@ -3138,11 +3148,6 @@ if test -n "$_host"; then
 				append_var DEFINES "-DOP_DEBUG"
 			fi
 
-			# Use -O3 on the OpenPandora for optimized builds.
-			if test "$_optimizations" = yes; then
-				_optimization_level=-O3
-			fi
-
 			append_var CXXFLAGS "-march=armv7-a"
 			append_var CXXFLAGS "-mtune=cortex-a8"
 			append_var CXXFLAGS "-mfloat-abi=softfp"
@@ -3163,13 +3168,6 @@ if test -n "$_host"; then
 			# Only static builds link successfully on buildbot
 			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
 			append_var LDFLAGS "-static"
-
-			# toolchain binaries prefixed by host
-			_ranlib=$_host-ranlib
-			_strip=$_host-strip
-			_ar="$_host-ar cru"
-			_as="$_host-as"
-			_windres=$_host-windres
 
 			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
@@ -3313,11 +3311,9 @@ case $_backend in
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'
-		append_var INCLUDES '-isystem $(ronindir)/include'
 		append_var LDFLAGS "-Wl,-Ttext,0x8c010000"
 		append_var LDFLAGS "-nostartfiles"
-		append_var LDFLAGS '$(ronindir)/lib/crt0.o'
-		append_var LDFLAGS '-L$(ronindir)/lib'
+		append_var LIBS "$RONINDIR/lib/crt0.o"
 		# Enable serial debugging output only when --enable-debug is passed
 		if test "$_release_build" = yes -o "$_debug_build" != yes; then
 			append_var LIBS "-lronin-noserial -lm"
@@ -3483,7 +3479,7 @@ case $_backend in
 	androidsdl | dingux | gph | linuxmoto | maemo | openpandora | samsungtv | sdl)
 		find_sdlconfig
 		append_var INCLUDES "`$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		if test "$_static_build" = yes ; then
+		if test "$_static_libs" = yes; then
 			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --static-libs`"
 		else
 			append_var LIBS "`$_sdlconfig --prefix="$_sdlpath" --libs`"
@@ -3647,28 +3643,41 @@ echo_n "Checking whether to have a verbose build... "
 echo "$_verbose_build"
 add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
 
-
-#
-# If a specific optimization level was requested, enable optimizations
-#
-if test -n "$_optimization_level" ; then
-	# Ports will specify an optimization level and expect that to be enabled
-	if test "$_optimizations" != no ; then
-		_optimizations=yes
-	fi
-else
-	_optimization_level=$_default_optimization_level
-fi
-
 #
 # Check whether to enable optimizations
 #
+echo_n "Checking best optimization level... "
+echo "int main() { return 0; }" > $TMPC
 if test "$_optimizations" = yes ; then
-	# Enable optimizations. This also
-	# makes it possible to use -Wuninitialized, so let's do that.
+	if test -z "$_optimization_level" ; then
+		# For pretty much all systems, -Os is the best level if it is supported
+		# by the compiler, since old devices are memory-constrained and (as a
+		# default optimization strategy) new devices are generally fastest when
+		# cache misses are minimized by keeping the code small as well.
+		cc_check_no_clean -Os && _optimization_level=-Os || _optimization_level=-O2
+		echo_n -- "$_optimization_level"
+
+		if cc_check_no_clean $_optimization_level -ftree-vectorize; then
+			echo_n " with auto-vectorization"
+			append_var CXXFLAGS "-ftree-vectorize"
+		fi
+	else
+		echo_n -- "$_optimization_level (forced)"
+	fi
+	echo ""
 	append_var CXXFLAGS "$_optimization_level"
+
+	# Enabling optimizations also makes it possible to use -Wuninitialized, so
+	# let's do that.
 	append_var CXXFLAGS "-Wuninitialized"
+elif test "$_optimizations" != no && cc_check_no_clean -Og; then
+	echo "-Og"
+	append_var CXXFLAGS "-Og"
+	append_var CXXFLAGS "-Wuninitialized"
+else
+	echo "none"
 fi
+cc_check_clean
 
 #
 # Check whether plugin support is requested and possible
@@ -4279,9 +4288,6 @@ echo "$_mpeg2"
 #
 # Check for Sparkle if updates support is enabled
 #
-#
-# Check is NSDockTilePlugIn protocol is supported
-#
 case $_host_os in
 	darwin*)
 		echocheck "Sparkle"
@@ -4350,7 +4356,11 @@ if test "$_libcurl" != "no"; then
 	if test -z "$_libcurlconfig"; then
 		_libcurl=no
 	else
-		LIBCURL_LIBS=`$_libcurlconfig --libs`
+		if test "$_static_libs" = yes; then
+			LIBCURL_LIBS=`$_libcurlconfig --static-libs`
+		else
+			LIBCURL_LIBS=`$_libcurlconfig --libs`
+		fi
 		LIBCURL_CFLAGS=`$_libcurlconfig --cflags`
 
 		case $_host_os in
@@ -4627,7 +4637,11 @@ if test "$_freetype2" != "no"; then
 			fi
 		fi
 
-		FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
+		if test "$_static_libs" = yes; then
+			FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --static --libs`
+		else
+			FREETYPE2_LIBS=`$_freetypeconfig --prefix="$freetypeprefix" --libs`
+		fi
 		FREETYPE2_CFLAGS=`$_freetypeconfig --prefix="$freetypeprefix" --cflags`
 
 		if test "$_freetype2" = "auto"; then
@@ -5085,6 +5099,23 @@ case $_backend in
 		;;
 esac
 
+# The Apple linker intentionally refuses to know about -Bstatic or -static, so
+# instead it is necessary to give full paths to the static libraries to generate
+# a static build in this environment
+case $_host_os in darwin*)
+	if test "$_static_libs" = yes; then
+		newlibs=
+		for lib in $LIBS; do
+			newlib=`echo $lib | sed "s@-l\(.*\)@$_staticlibpath/lib/lib\\1.a@"`
+			if test -f "$newlib"; then
+				newlibs="$newlibs $newlib"
+			else
+				newlibs="$newlibs $lib"
+			fi
+		done
+		LIBS=$newlibs
+	fi
+esac
 
 #
 # Engine selection
@@ -5267,6 +5298,7 @@ STRIP := $_strip
 AR := $_ar
 AS := $_as
 ASFLAGS := $ASFLAGS
+DWP := $_dwp
 WINDRES := $_windres
 WINDRESFLAGS := $WINDRESFLAGS
 STAGINGPATH=$_stagingpath
@@ -5310,13 +5342,20 @@ $_mak_plugins
 port_mk = $_port_mk
 
 SAVED_CONFIGFLAGS  := $SAVED_CONFIGFLAGS
-SAVED_LDFLAGS      := $SAVED_LDFLAGS
+SAVED_AR           := $SAVED_AR
+SAVED_AS           := $SAVED_AS
+SAVED_ASFLAGS      := $SAVED_ASFLAGS
+SAVED_CPPFLAGS     := $SAVED_CPPFLAGS
 SAVED_CXX          := $SAVED_CXX
 SAVED_CXXFLAGS     := $SAVED_CXXFLAGS
-SAVED_CPPFLAGS     := $SAVED_CPPFLAGS
-SAVED_ASFLAGS      := $SAVED_ASFLAGS
-SAVED_WINDRESFLAGS := $SAVED_WINDRESFLAGS
+SAVED_DWP          := $SAVED_DWP
+SAVED_LD           := $SAVED_LD
+SAVED_LDFLAGS      := $SAVED_LDFLAGS
+SAVED_RANLIB       := $SAVED_RANLIB
 SAVED_SDL_CONFIG   := $SAVED_SDL_CONFIG
+SAVED_STRIP        := $SAVED_STRIP
+SAVED_WINDRES      := $SAVED_WINDRES
+SAVED_WINDRESFLAGS := $SAVED_WINDRESFLAGS
 EOF
 
 #

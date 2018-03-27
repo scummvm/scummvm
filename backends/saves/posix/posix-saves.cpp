@@ -21,16 +21,12 @@
  */
 
 
-// Re-enable some forbidden symbols to avoid clashes with stat.h and unistd.h.
-// Also with clock() in sys/time.h in some Mac OS X SDKs.
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_mkdir
-#define FORBIDDEN_SYMBOL_EXCEPTION_getenv
+#if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
+
+// Re-enable forbidden symbols to avoid clashes with stat.h and unistd.h.
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "common/scummsys.h"
-
-#if defined(POSIX) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
 #include "backends/saves/posix/posix-saves.h"
 #include "backends/fs/posix/posix-fs.h"
