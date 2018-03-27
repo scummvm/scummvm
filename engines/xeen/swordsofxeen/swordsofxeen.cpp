@@ -82,12 +82,44 @@ void SwordsOfXeenEngine::death() {
 	_sound->stopAllAudio();
 }
 
+bool SwordsOfXeenEngine::showEnding() {
+	Windows &windows = *_windows;
+	SpriteResource win("win.int");
+
+	_screen->loadBackground("blank.raw");
+	windows[28].setBounds(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	_screen->fadeIn(0x81);
+	_screen->loadPalette("scr.pal");
+	_screen->fadeIn(0x81);
+
+	win.draw(0, 0, Common::Point(0, 0));
+	win.draw(0, 1, Common::Point(160, 0));
+	_sound->playSound("ch1.voc");
+	_events->waitForPress();
+
+	_screen->fadeOut();
+	_screen->loadBackground("blank.raw");
+	return true;
+}
+
 void SwordsOfXeenEngine::dream() {
 	// Swords of Xeen doesn't have any dreams
 }
 
 void SwordsOfXeenEngine::showCutscene(const Common::String &name, int status, uint score) {
+	_sound->stopAllAudio();
+	_events->clearEvents();
+
+	if (name != "ENDGAME")
+		error("Unknown cutscene specified");
+
+	showEnding();
+
+	_screen->freePages();
+	_sound->stopAllAudio();
+	_events->clearEvents();
 	_gameMode = GMODE_MENU;
+
 }
 
 } // End of namespace SwordsOfXeen

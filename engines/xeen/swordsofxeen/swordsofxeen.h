@@ -34,6 +34,11 @@ namespace SwordsOfXeen {
  * Swords of Xeen specific game code
  */
 class SwordsOfXeenEngine: public XeenEngine {
+private:
+	/**
+	 * Show the ending "You won" screen
+	 */
+	bool showEnding();
 protected:
 	/**
 	 * Show the starting sequence/intro
