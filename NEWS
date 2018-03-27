@@ -9,6 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Full Pipe:
    - Fixed playtime not being restored when loading a savegame.
+   - Fixed a bug that might freezing the game in scene 22.
 
  MOHAWK:
    - Fixed video playback if videos are skipped in Riven.
