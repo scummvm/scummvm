@@ -45,7 +45,9 @@ void ActionStill::end() {
 
 void ActionStill::onStart() {
     debug("Actor %s has now ActionStill %s", _actor->getName().c_str(), _name.c_str());
-    _decoder->seekToFrame(_startFrame);
+    for (int i = 0; i < _startFrame; ++i) {
+        _decoder->decodeNextFrame();
+    }
 }
 
 } // End of namespace Pink

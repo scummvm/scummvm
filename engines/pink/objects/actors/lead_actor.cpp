@@ -33,6 +33,7 @@ namespace Pink {
 
 void LeadActor::deserialize(Archive &archive) {
     Actor::deserialize(archive);
+    _state = kReady;
     _cursorMgr = static_cast<CursorMgr*>(archive.readObject());
     _walkMgr = static_cast<WalkMgr*>(archive.readObject());
     _sequencer = static_cast<Sequencer*>(archive.readObject());

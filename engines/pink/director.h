@@ -30,6 +30,7 @@ namespace Pink {
 
 class ActionCEL;
 class ActionSound;
+class CelDecoder;
 
 class Director {
 public:
@@ -46,7 +47,11 @@ public:
     void addSound(ActionSound* sound);
     void removeSound(ActionSound* sound);
 
+    void clear();
 private:
+    void drawSprite(CelDecoder *decoder);
+
+
     OSystem *_system;
     Common::Array<ActionCEL*> _sprites;
     Common::Array<ActionSound*> _sounds;

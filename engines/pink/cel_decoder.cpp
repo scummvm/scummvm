@@ -64,15 +64,23 @@ uint32 CelDecoder::getY() {
     return track->getY();
 }
 
-Graphics::Surface *CelDecoder::getCurrentFrame() {
+
+uint16 CelDecoder::getTransparentColourIndex() {
     CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
     if (!track)
-        return nullptr;
-    return nullptr;
+        return 0;
+    return track->getTransparentColourIndex();
+}
+
+const Graphics::Surface *CelDecoder::getCurrentFrame() {
+    CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+    if (!track)
+        return 0;
+    return track->getCurrentFrame();
 }
 
 CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
-        : FlicVideoTrack(stream, frameCount, width, height, 1) {
+        : FlicVideoTrack(stream, frameCount, width, height, 1), _center(0,0), _transparentColourIndex(0){
     readHeader();
 }
 
@@ -86,22 +94,33 @@ void CelDecoder::CelVideoTrack::readPrefixChunk() {
     if (chunkType != PREFIX_TYPE)
         return;
     uint32 offset = 6;
-    while (offset < chunkSize) {
-        uint32 subchunkSize = _fileStream->readUint32LE();
-        uint16 subchunkType = _fileStream->readUint16LE();
-        switch (subchunkType) {
-            case CEL_DATA:
-                _fileStream->skip(2); // Unknown field
-                _center.x = _fileStream->readUint16LE();
-                _center.y = _fileStream->readUint16LE();
-                _fileStream->skip(subchunkSize - 6 - 6);
-                break;
-                default:
-                _fileStream->skip(subchunkSize - 6);
-                break;
-        }
-        offset += subchunkSize;
+
+    uint32 subchunkSize = _fileStream->readUint32LE();
+    uint16 subchunkType = _fileStream->readUint16LE();
+
+    switch (subchunkType) {
+        case CEL_DATA:
+            debug("%u", _fileStream->readUint16LE());
+            _center.x = _fileStream->readUint16LE();
+            _center.y = _fileStream->readUint16LE();
+            debug("stretch x: %u", _fileStream->readUint16LE());
+            debug("stretch y: %u", _fileStream->readUint16LE());
+            debug("rotation x: %u", _fileStream->readUint16LE());
+            debug("rotation y: %u", _fileStream->readUint16LE());
+            debug("rotation z: %u", _fileStream->readUint16LE());
+            debug("current Frame: %u", _fileStream->readUint16LE());
+            debug("next frame offset: %u",_fileStream->readUint32LE());
+            debug("tcolor: %u", _transparentColourIndex = _fileStream->readUint16LE());
+            for (int j = 0; j < 18; ++j) {
+                debug("%u", _fileStream->readUint16LE());
+            }
+            break;
+        default:
+            error("Unknown subchunk type");
+            _fileStream->skip(subchunkSize - 6);
+            break;
     }
+
 }
 
 void CelDecoder::CelVideoTrack::readHeader() {
@@ -128,6 +147,14 @@ uint32 CelDecoder::CelVideoTrack::getX() const {
 
 uint32 CelDecoder::CelVideoTrack::getY() const {
     return _center.y - getHeight() / 2;
+}
+
+uint16 CelDecoder::CelVideoTrack::getTransparentColourIndex() {
+    return _transparentColourIndex;
+}
+
+const Graphics::Surface *CelDecoder::CelVideoTrack::getCurrentFrame() {
+    return _surface;
 }
 
 } // End of namepsace Pink
