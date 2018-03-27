@@ -173,6 +173,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_kia                     = nullptr;
 	_endCredits              = nullptr;
 	_spinner                 = nullptr;
+	_scores                  = nullptr;
 	_elevator                = nullptr;
 	_mainFont                = nullptr;
 	_esper                   = nullptr;
