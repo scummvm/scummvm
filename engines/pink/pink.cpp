@@ -29,6 +29,7 @@
 #include "engines/pink/objects/actors/lead_actor.h"
 #include <graphics/surface.h>
 
+
 namespace Pink {
 
 Pink::PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
@@ -105,6 +106,7 @@ Common::Error Pink::PinkEngine::run() {
                     break;
 
                 case Common::EVENT_KEYDOWN:
+                    _actor->OnKeyboardButtonClick(event.kbd.keycode);
                     break;
 
                     // don't know why it is used in original

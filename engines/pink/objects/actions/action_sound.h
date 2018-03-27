@@ -32,6 +32,8 @@ class Sound;
 class ActionSound : public Action {
 public:
     ActionSound();
+    ~ActionSound();
+
     virtual void deserialize(Archive &archive);
 
     virtual void toConsole();

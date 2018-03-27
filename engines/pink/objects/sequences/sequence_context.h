@@ -49,6 +49,8 @@ class SequenceContext {
 public:
     SequenceContext(Sequence *sequence, Sequencer* sequencer);
 
+    int getNextItemIndex() const;
+    Sequence *getSequence() const;
 
 public:
     Sequence *_sequence;
