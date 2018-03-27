@@ -63,6 +63,7 @@ class Combat;
 class Debugger;
 class DialogueMenu;
 class Elevator;
+class EndCredits;
 class ESPER;
 class Font;
 class GameFlags;
@@ -122,6 +123,7 @@ public:
 	Combat             *_combat;
 	DialogueMenu       *_dialogueMenu;
 	Elevator           *_elevator;
+	EndCredits         *_endCredits;
 	ESPER              *_esper;
 	GameFlags          *_gameFlags;
 	GameInfo           *_gameInfo;

@@ -64,6 +64,7 @@
 #include "bladerunner/text_resource.h"
 #include "bladerunner/time.h"
 #include "bladerunner/ui/elevator.h"
+#include "bladerunner/ui/end_credits.h"
 #include "bladerunner/ui/esper.h"
 #include "bladerunner/ui/kia.h"
 #include "bladerunner/ui/scores.h"
@@ -170,6 +171,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_dialogueMenu            = nullptr;
 	_suspectsDatabase        = nullptr;
 	_kia                     = nullptr;
+	_endCredits              = nullptr;
 	_spinner                 = nullptr;
 	_elevator                = nullptr;
 	_mainFont                = nullptr;
@@ -217,6 +219,13 @@ Common::Error BladeRunnerEngine::run() {
 
 		/* TODO: Check for save games and enter KIA */
 		gameLoop();
+
+		_mouse->disable();
+
+		if (_gameOver) {
+			// autoSaveGame(4, 1); // TODO
+			_endCredits->show();
+		}
 	}
 
 	shutdown();
@@ -229,8 +238,7 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_screenEffects = new ScreenEffects(this, 0x8000);
 
-
-	// TODO: end credits
+	_endCredits = new EndCredits(this);
 
 	_actorDialogueQueue = new ActorDialogueQueue(this);
 
@@ -599,6 +607,9 @@ void BladeRunnerEngine::shutdown() {
 
 	delete _scores;
 	_scores = nullptr;
+
+	delete _endCredits;
+	_endCredits = nullptr;
 
 	delete _elevator;
 	_elevator = nullptr;

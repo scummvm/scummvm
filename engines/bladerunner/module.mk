@@ -248,6 +248,7 @@ MODULE_OBJS = \
 	text_resource.o \
 	time.o \
 	ui/elevator.o \
+	ui/end_credits.o \
 	ui/esper.o \
 	ui/kia.o \
 	ui/kia_log.o \
