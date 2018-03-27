@@ -53,7 +53,7 @@ void Director::drawSprite(CelDecoder *decoder) {
         for (int y = 0; y < decoder->getHeight(); ++y) {
             for (int x = 0; x < decoder->getWidth(); ++x) {
                 byte spritePixelColourIndex = *(byte*)surface->getBasePtr(x, y);
-                if (spritePixelColourIndex != colourIndex || spritePixelColourIndex == 1) {
+                if (spritePixelColourIndex != colourIndex && spritePixelColourIndex != 229) { // hack because sprite have wrong colour index
                     *(byte *) screen->getBasePtr(decoder->getX() + x, decoder->getY() + y) = spritePixelColourIndex;
                 }
             }
