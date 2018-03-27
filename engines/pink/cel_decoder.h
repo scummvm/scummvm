@@ -32,8 +32,8 @@ class CelDecoder : public Video::FlicDecoder {
 public:
     uint32 getX();
     uint32 getY();
-
-    Graphics::Surface *getCurrentFrame();
+    uint16 getTransparentColourIndex();
+    const Graphics::Surface *getCurrentFrame();
 
     virtual bool loadStream(Common::SeekableReadStream *stream);
 
@@ -46,8 +46,12 @@ protected:
         uint32 getX() const;
         uint32 getY() const;
 
+        uint16 getTransparentColourIndex();
+        const Graphics::Surface *getCurrentFrame();
+
     private:
         void readPrefixChunk();
+        uint16 _transparentColourIndex;
         Common::Point _center;
     };
 };

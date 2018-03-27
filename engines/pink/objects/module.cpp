@@ -81,7 +81,9 @@ PinkEngine *Module::getGame() const {
 }
 
 bool Module::checkValueOfVariable(Common::String &variable, Common::String &value) {
-    assert(_variables.contains(variable));
+    //assert(_variables.contains(variable));
+    if (!_variables.contains(variable))
+        return value == "UNDEFINED";
     return _variables[variable] == value;
 }
 

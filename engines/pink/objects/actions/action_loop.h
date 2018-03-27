@@ -36,7 +36,7 @@ protected:
     enum Style {
         kPingPong = 2,
         kRandom = 3,
-        kForward // unknown
+        kForward = 4
     };
     uint _intro;
     Style _style;

@@ -56,6 +56,7 @@ void GamePage::init(bool isLoadingSave) {
         //assert(perhapsIsLoaded == 0);
         loadManagers();
     }
+    getGame()->getDirector()->clear();
 
     toConsole();
 

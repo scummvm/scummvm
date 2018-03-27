@@ -23,7 +23,7 @@
 #include "director.h"
 #include <engines/pink/objects/actions/action_sound.h>
 #include <engines/pink/objects/actions/action_cel.h>
-#include "graphics/surface.h"
+#include <graphics/managed_surface.h>
 #include "graphics/palette.h"
 #include "cel_decoder.h"
 
@@ -32,20 +32,40 @@ Director::Director(OSystem *system)
     : _system(system) {}
 
 void Director::draw() {
-    bool needUpdate = 0;
     for (int i = 0; i < _sprites.size(); ++i) {
         CelDecoder *decoder = _sprites[i]->getDecoder();
-        if (decoder->needsUpdate()) {
-            const Graphics::Surface *surface = decoder->decodeNextFrame();
-            _system->copyRectToScreen(surface->getPixels(), surface->pitch,
-                                      decoder->getX(), decoder->getY(),
-                                      surface->w, surface->h);
-            needUpdate = 1;
-        }
+        drawSprite(decoder);
     }
-    if (needUpdate)
-        _system->updateScreen();
+    _system->updateScreen();
 }
+
+void Director::drawSprite(CelDecoder *decoder) {
+    const Graphics::Surface *surface;
+    if (decoder->needsUpdate())
+        surface = decoder->decodeNextFrame();
+    else surface = decoder->getCurrentFrame();
+
+
+
+    uint16 colourIndex = decoder->getTransparentColourIndex();
+    if (colourIndex != 0) {
+        Graphics::Surface *screen = _system->lockScreen();
+        for (int y = 0; y < decoder->getHeight(); ++y) {
+            for (int x = 0; x < decoder->getWidth(); ++x) {
+                byte spritePixelColourIndex = *(byte*)surface->getBasePtr(x, y);
+                if (spritePixelColourIndex != colourIndex || spritePixelColourIndex == 1) {
+                    *(byte *) screen->getBasePtr(decoder->getX() + x, decoder->getY() + y) = spritePixelColourIndex;
+                }
+            }
+        }
+        _system->unlockScreen();
+    }
+    else _system->copyRectToScreen(surface->getPixels(), surface->pitch,
+                                   decoder->getX(), decoder->getY(),
+                                   surface->w, surface->h);
+
+}
+
 
 void Director::addSprite(ActionCEL *sprite) {
     _sprites.push_back(sprite);
@@ -89,6 +109,10 @@ void Director::removeSound(ActionSound *sound) {
         if (_sounds[i] == sound)
             _sounds.remove_at(i);
     }
+}
+
+void Director::clear() {
+    _sprites.clear();
 }
 
 }
