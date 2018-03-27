@@ -29,7 +29,6 @@
 #include <engines/pink/objects/actors/lead_actor.h>
 #include <engines/pink/objects/pages/game_page.h>
 #include <engines/pink/pink.h>
-#include <common/debug.h>
 
 namespace Pink {
 
@@ -123,6 +122,7 @@ void HandlerLeftClick::toConsole() {
 
 void HandlerUseClick::deserialize(Archive &archive) {
     HandlerSequences::deserialize(archive);
+    archive >> _inventoryItem >> _recepient;
 }
 
 void HandlerUseClick::toConsole() {
