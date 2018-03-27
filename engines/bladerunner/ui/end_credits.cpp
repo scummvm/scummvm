@@ -97,7 +97,7 @@ void EndCredits::show() {
 	double position = 0.0;
 	uint32 timeLast = _vm->getTotalPlayTime();
 
-	while (!_vm->_vqaStopIsRequested) {
+	while (!_vm->_vqaStopIsRequested && !_vm->shouldQuit()) {
 		if (position >= textPositions[textCount - 1]) {
 			break;
 		}
