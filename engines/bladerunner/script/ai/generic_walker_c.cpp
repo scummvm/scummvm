@@ -438,7 +438,7 @@ bool AIScriptGenericWalkerC::preparePath() {
 		int waypointEnd = 0;
 		do {
 			waypointStart = Random_Query(167, 171);
-		} while (waypointEnd == 168 || waypointEnd == 169);
+		} while (waypointStart == 168 || waypointStart == 169);
 		do {
 			waypointEnd = Random_Query(167, 171);
 		} while (waypointEnd == waypointStart || waypointEnd == 168 || waypointEnd == 169);
