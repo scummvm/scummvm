@@ -108,7 +108,7 @@ private:
 	Common::Stack<ScriptStream *> _scriptStack;
 
 	byte _byte16F05_ScriptHandler;
-	byte _byte10806;
+	byte _cubeSet;
 	byte _lastRandomValue;
 	byte _scriptForVal;
 	byte _byte1881A;
@@ -255,11 +255,11 @@ private:
 	void OC_setCurrentCharacterAttr6();
 	void OC_setCurrentCharacterPose();
 	void OC_setCharacterScriptEnabled();
-	void OC_setCurrentCharacterVar2();
-	void OC_SetCurrentCharacterVar2ToZero();
+	void OC_setCurrentCharacterAttr2();
+	void OC_clearCurrentCharacterAttr2();
 	void OC_setCharacterProperties();
 	void OC_sub1805D();
-	void OC_sub18074();
+	void OC_setNewPose();
 	void OC_setCurrentCharacterDirection();
 	void OC_setInterfaceHotspot();
 	void OC_scrollViewPort();
@@ -269,13 +269,13 @@ private:
 	void sub1818B(Common::Point point);
 	void OC_sub181BB();
 	void OC_sub18213();
-	void OC_sub18252();
+	void OC_magicPuffEntrance();
 	void OC_sub18260();
 	void OC_CharacterVariableAddOrRemoveFlag();
 	void OC_PaletteFadeOut();
 	void OC_PaletteFadeIn();
-	void OC_loadAndDisplayCUBESx_GFX();
-	void OC_setCurrentCharacterVar3();
+	void OC_loadAndDisplayCubesGfx();
+	void OC_setCurrentCharacterAttr3();
 	void OC_setArray122C1();
 	void OC_sub18367();
 	void OC_enableCharacterScript();
@@ -295,12 +295,12 @@ private:
 	void OC_displayCharacterStatBar();
 	void OC_initSmallAnim();
 	void OC_setCharacterHeroismBar();
-	void OC_sub18690();
+	void OC_setCharacterHome();
 	void OC_setViewPortCharacterTarget();
-	void OC_sub186A1();
+	void OC_showObject();
 	void OC_sub186E5_snd();
 	void OC_sub1870A_snd();
-	void OC_sub18725_snd();
+	void OC_stopSound();
 	void OC_sub18733_snd();
 	void OC_sub1873F_snd();
 	void OC_sub18746_snd();
