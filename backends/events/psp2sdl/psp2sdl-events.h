@@ -32,6 +32,7 @@
 class PSP2EventSource : public SdlEventSource {
 public:
 	PSP2EventSource();
+	bool pollEvent(Common::Event &event) override;
 protected:
 	void preprocessEvents(SDL_Event *event) override;
 private:
@@ -40,6 +41,7 @@ private:
 		MAX_NUM_FINGERS = 3, // number of fingers to track per panel
 		MAX_TAP_TIME = 250, // taps longer than this will not result in mouse click events
 		MAX_TAP_MOTION_DISTANCE = 10, // max distance finger motion in Vita screen pixels to be considered a tap
+		SIMULATED_CLICK_DURATION = 50, // time in ms how long simulated mouse clicks should be
 	}; // track three fingers per panel
 
 	typedef struct {
@@ -61,10 +63,13 @@ private:
 
 	DraggingType _multiFingerDragging[SCE_TOUCH_PORT_MAX_NUM]; // keep track whether we are currently drag-and-dropping
 
+	unsigned int _simulatedClickStartTime[SCE_TOUCH_PORT_MAX_NUM][2]; // initiation time of last simulated left or right click (zero if no click)
+
 	void preprocessFingerDown(SDL_Event *event);
 	void preprocessFingerUp(SDL_Event *event);
 	void preprocessFingerMotion(SDL_Event *event);
 	void convertTouchXYToGameXY(float touchX, float touchY, int *gameX, int *gameY);
+	void finishSimulatedMouseClicks(void);
 };
 
 #endif /* BACKEND_EVENTS_PSP2_H */

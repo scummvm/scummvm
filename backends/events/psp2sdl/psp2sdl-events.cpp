@@ -44,6 +44,17 @@ PSP2EventSource::PSP2EventSource() {
 		}
 		_multiFingerDragging[port] = DRAG_NONE;
 	}
+
+	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
+		for (int i = 0; i < 2; i++) {
+			_simulatedClickStartTime[port][i] = 0;
+		}
+	}
+}
+
+bool PSP2EventSource::pollEvent(Common::Event &event) {
+	finishSimulatedMouseClicks();
+	return SdlEventSource::pollEvent(event);
 }
 
 void PSP2EventSource::preprocessEvents(SDL_Event *event) {
@@ -148,8 +159,12 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 							Uint8 simulatedButton = 0;
 							if (numFingersDown == 2) {
 								simulatedButton = SDL_BUTTON_RIGHT;
+								// need to raise the button later
+								_simulatedClickStartTime[port][1] = event->tfinger.timestamp;
 							} else if (numFingersDown == 1) {
 								simulatedButton = SDL_BUTTON_LEFT;
+								// need to raise the button later
+								_simulatedClickStartTime[port][0] = event->tfinger.timestamp;
 								if (port == 0 && !ConfMan.getBool("frontpanel_touchpad_mode")) {
 									convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 								}
@@ -159,13 +174,6 @@ void PSP2EventSource::preprocessFingerUp(SDL_Event *event) {
 							event->button.button = simulatedButton;
 							event->button.x = x;
 							event->button.y = y;
-
-							SDL_Event ev;
-							ev.type = SDL_MOUSEBUTTONUP;
-							ev.button.button = simulatedButton;
-							ev.button.x = x;
-							ev.button.y = y;
-							SDL_PushEvent(&ev);
 						}
 					}
 				}
@@ -422,6 +430,32 @@ void PSP2EventSource::convertTouchXYToGameXY(float touchX, float touchY, int *ga
 		*gameY = 0;
 	} else if (*gameY > _km.y_max) {
 		*gameY = _km.y_max;
+	}
+}
+
+void PSP2EventSource::finishSimulatedMouseClicks() {
+	for (int port = 0; port < SCE_TOUCH_PORT_MAX_NUM; port++) {
+		for (int i = 0; i < 2; i++) {
+			if (_simulatedClickStartTime[port][i] != 0) {
+				Uint32 currentTime = SDL_GetTicks();
+				if (currentTime - _simulatedClickStartTime[port][i] >= SIMULATED_CLICK_DURATION) {
+					int simulatedButton;
+					if (i == 0) {
+						simulatedButton = SDL_BUTTON_LEFT;
+					} else {
+						simulatedButton = SDL_BUTTON_RIGHT;
+					}
+					SDL_Event ev;
+					ev.type = SDL_MOUSEBUTTONUP;
+					ev.button.button = simulatedButton;
+					ev.button.x = _km.x / MULTIPLIER;
+					ev.button.y = _km.y / MULTIPLIER;
+					SDL_PushEvent(&ev);
+
+					_simulatedClickStartTime[port][i] = 0;
+				}
+			}
+		}
 	}
 }
 #endif
