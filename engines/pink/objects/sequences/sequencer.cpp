@@ -78,7 +78,7 @@ void Sequencer::update() {
 
 void Sequencer::removeContext(SequenceContext *context) {
     delete _context;
-    _context = 0;
+    _context = nullptr;
 }
 
 void Sequencer::skipSubSequence() {
@@ -91,7 +91,7 @@ void Sequencer::restartSequence() {
 }
 
 void Sequencer::skipToLastSubSequence() {
-
+    _context->getSequence()->skipToLastSubSequence();
 }
 
 } // End of namespace Pink

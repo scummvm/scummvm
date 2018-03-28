@@ -40,6 +40,7 @@ public:
 
     virtual bool execute(int index, Sequence *sequence, bool unk2);
     virtual bool isLeader();
+    virtual void skip(Sequence *sequence) {};
 
 protected:
     Common::String _actor;
@@ -65,6 +66,7 @@ private:
 class SequenceItemDefaultAction : public SequenceItem {
 public:
     virtual bool execute(int index, Sequence *sequence, bool unk2);
+    virtual void skip(Sequence *sequence);
 
     virtual void toConsole();
 };
