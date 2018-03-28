@@ -96,7 +96,6 @@ Common::Error Pink::PinkEngine::run() {
             switch (event.type){
                 case Common::EVENT_QUIT:
                 case Common::EVENT_RTL:
-                    debug("Quit Event");
                     return Common::kNoError;
                 case Common::EVENT_MOUSEMOVE:
 
@@ -105,7 +104,9 @@ Common::Error Pink::PinkEngine::run() {
 
                     break;
                 case Common::EVENT_KEYDOWN:
-                    _actor->OnKeyboardButtonClick(event.kbd.keycode);
+                    if (event.kbd.keycode == Common::KEYCODE_d)
+                        _director.showBounds = !_director.showBounds;
+                    else _actor->OnKeyboardButtonClick(event.kbd.keycode);
                     break;
 
                     // don't know why it is used in original

@@ -101,10 +101,10 @@ void LeadActor::OnKeyboardButtonClick(Common::KeyCode code) {
                     _sequencer->skipSubSequence();
                     break;
                 case Common::KEYCODE_ESCAPE:
-                    //End sequence
+                    _sequencer->skipToLastSubSequence();
                     break;
                 case Common::KEYCODE_LEFT:
-                    //return to start of sequence
+                    _sequencer->startSequenceAgain();
                     break;
                 default:
                     break;
@@ -113,7 +113,6 @@ void LeadActor::OnKeyboardButtonClick(Common::KeyCode code) {
         default:
             break;
     }
-
 }
 
 void ParlSqPink::toConsole() {

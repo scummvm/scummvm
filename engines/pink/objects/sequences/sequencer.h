@@ -50,6 +50,8 @@ public:
     void update();
 
     void skipSubSequence();
+    void startSequenceAgain();
+    void skipToLastSubSequence();
 
 public:
     SequenceContext *_context;

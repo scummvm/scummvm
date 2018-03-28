@@ -86,4 +86,12 @@ void Sequencer::skipSubSequence() {
         _context->getSequence()->start(0);
 }
 
+void Sequencer::startSequenceAgain() {
+
+}
+
+void Sequencer::skipToLastSubSequence() {
+
+}
+
 } // End of namespace Pink

@@ -48,10 +48,11 @@ public:
     void removeSound(ActionSound* sound);
 
     void clear();
+
+    bool showBounds;
+
 private:
     void drawSprite(CelDecoder *decoder);
-
-
     OSystem *_system;
     Common::Array<ActionCEL*> _sprites;
     Common::Array<ActionSound*> _sounds;
