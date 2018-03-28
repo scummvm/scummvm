@@ -52,6 +52,10 @@ public:
     int getNextItemIndex() const;
     Sequence *getSequence() const;
 
+    void setNextItemIndex(int index);
+
+    void clearActionsFromActorStates();
+
 public:
     Sequence *_sequence;
     Sequencer *_sequencer;

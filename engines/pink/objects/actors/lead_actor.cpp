@@ -22,6 +22,7 @@
 
 #include "lead_actor.h"
 #include <engines/pink/objects/actions/action.h>
+#include <engines/pink/objects/sequences/sequence_context.h>
 #include "engines/pink/objects/walk/walk_mgr.h"
 #include "engines/pink/cursor_mgr.h"
 #include "engines/pink/objects/sequences/sequencer.h"
@@ -104,7 +105,7 @@ void LeadActor::OnKeyboardButtonClick(Common::KeyCode code) {
                     _sequencer->skipToLastSubSequence();
                     break;
                 case Common::KEYCODE_LEFT:
-                    _sequencer->startSequenceAgain();
+                    _sequencer->restartSequence();
                     break;
                 default:
                     break;

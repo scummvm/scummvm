@@ -50,7 +50,7 @@ public:
     void update();
 
     void skipSubSequence();
-    void startSequenceAgain();
+    void restartSequence();
     void skipToLastSubSequence();
 
 public:

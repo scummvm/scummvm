@@ -109,6 +109,12 @@ void Sequence::end() {
     _sequencer->removeContext(_context);
 }
 
+void Sequence::restart() {
+    _context->setNextItemIndex(0);
+    _context->clearActionsFromActorStates();
+    start(0);
+}
+
 void SequenceAudio::deserialize(Archive &archive) {
     Sequence::deserialize(archive);
     archive >> _sound;
