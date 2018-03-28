@@ -186,7 +186,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterRelativePositionY[i] = -1;
 		_characterDisplayX[i] = 0;
 		_characterDisplayY[i] = 0;
-		_array12299[i] = -1;
+		_characterMagicPuffFrame[i] = -1;
 		_characterSubTargetPosX[i] = -1;
 		_characterSubTargetPosY[i] = -1;
 		_stingArray[i] = 0;
@@ -202,10 +202,10 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_spriteSizeArray[i] = 20;
 		_characterDirectionArray[i] = 0;
 		_rulesBuffer2_10[i] = 0;
-		_rulesBuffer2_11[i] = 0;
+		_characterTypes[i] = 0;
 		_characterBehaviour[i] = 0;
-		_rulesBuffer2_13_posX[i] = 0;
-		_rulesBuffer2_14_posY[i] = 0;
+		_characterHomePosX[i] = 0;
+		_characterHomePosY[i] = 0;
 		_array1289F[i] = -1;
 	}
 
@@ -281,8 +281,8 @@ void LilliputEngine::newInt8() {
 			--_byte12A05;
 		else {
 			_byte12A05 = 10;
-			if (_sound_byte16F06 != 0)
-				--_sound_byte16F06;
+			if (_int8Timer != 0)
+				--_int8Timer;
 
 			_animationTick ^= 1;
 			if (!_refreshScreenFlag)
@@ -605,7 +605,7 @@ void LilliputEngine::displayCharactersOnMap() {
 
 	byte *buf = (byte *)_mainSurface->getPixels();
 	for (int index = _numCharacters - 1; index >= 0; index--) {
-		if (((_rulesBuffer2_11[index] & 2) == 0) && (_scriptHandler->_characterTilePosY[index] != -1)) {
+		if (((_characterTypes[index] & 2) == 0) && (_scriptHandler->_characterTilePosY[index] != -1)) {
 			// FIXME: This is still wrong, but less. The values in both arrays should be verified now!
 			int pixIndex = 320 + ((15 * _scriptHandler->_characterTilePosY[index]) / 4) + (_scriptHandler->_characterTilePosX[index] * 4) + 1;
 
@@ -953,7 +953,7 @@ void LilliputEngine::sub16CA0() {
 	debugC(2, kDebugEngine, "sub16CA0()");
 
 	for (int index = _numCharacters - 1; index >= 0; index--) {
-		if (_rulesBuffer2_11[index] & 1)
+		if (_characterTypes[index] & 1)
 			continue;
 
 		int c1 = _scriptHandler->_characterTilePosX[index];
@@ -968,7 +968,7 @@ void LilliputEngine::sub16CA0() {
 			if ((index != index2) &&
 				(_characterCarried[index] != index2) &&
 				(_characterCarried[index2] != index) &&
-				(_rulesBuffer2_11[index2] & 2) == 0) {
+				(_characterTypes[index2] & 2) == 0) {
 				int d1 = _scriptHandler->_characterTilePosX[index2];
 				int d2 = _scriptHandler->_characterTilePosY[index2];
 
@@ -981,7 +981,7 @@ void LilliputEngine::sub16CA0() {
 
 							if ((c1 == d1) && (c2 == d2)) {
 								byte16C9F = 4;
-							} else if ((_rulesBuffer2_11[index] & 4) != 0) {
+							} else if ((_characterTypes[index] & 4) != 0) {
 								byte16C9F = 0;
 							} else {
 								switch (_characterDirectionArray[index]) {
@@ -1256,9 +1256,9 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 			if ((flag & 1) == 1)
 				frame += _spriteSizeArray[index];
 
-			if (_array12299[index] != -1) {
-				frame = _array12299[index] + 82;
-				--_array12299[index];
+			if (_characterMagicPuffFrame[index] != -1) {
+				frame = _characterMagicPuffFrame[index] + 82;
+				--_characterMagicPuffFrame[index];
 				frame = -frame;
 			}
 
@@ -2526,10 +2526,10 @@ void LilliputEngine::loadRules() {
 		_spriteSizeArray[j] = f.readByte();
 		_characterDirectionArray[j] = f.readByte();
 		_rulesBuffer2_10[j] = f.readByte();
-		_rulesBuffer2_11[j] = f.readByte();
+		_characterTypes[j] = f.readByte();
 		_characterBehaviour[j] = f.readByte();
-		_rulesBuffer2_13_posX[j] = f.readByte();
-		_rulesBuffer2_14_posY[j] = f.readByte();
+		_characterHomePosX[j] = f.readByte();
+		_characterHomePosY[j] = f.readByte();
 
 		for (int k = 0; k < 32; k++)
 			_characterVariables[(j * 32) + k] = f.readByte();

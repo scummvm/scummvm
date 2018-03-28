@@ -106,11 +106,11 @@ public:
 	int _smallAnimsFrameIndex;
 
 	byte _handleOpcodeReturnCode;
-	byte _byte184F4;
+	byte _keyDelay;
 	byte _lastAnimationTick;
 	byte _animationTick;
 	Common::Point _nextDisplayCharacterPos;
-	byte _sound_byte16F06;
+	byte _int8Timer;
 	Common::Event _lastKeyPressed;
 	Common::EventType _lastEventType;
 	byte _keyboard_nextIndex;
@@ -177,10 +177,10 @@ public:
 	byte _spriteSizeArray[40];
 	byte _characterDirectionArray[40];
 	byte _rulesBuffer2_10[40];
-	byte _rulesBuffer2_11[40];
+	byte _characterTypes[40];
 	byte _characterBehaviour[40];
-	byte _rulesBuffer2_13_posX[40];
-	byte _rulesBuffer2_14_posY[40];
+	byte _characterHomePosX[40];
+	byte _characterHomePosY[40];
 	byte _characterVariables[1400 + 3120];
 	byte *_currentCharacterAttributes;
 	byte _poseArray[40 * 32];
@@ -216,7 +216,7 @@ public:
 	int16 _characterRelativePositionY[40];
 	int16 _characterDisplayX[40];
 	int16 _characterDisplayY[40];
-	int8 _array12299[40];
+	int8 _characterMagicPuffFrame[40];
 	int16 _characterSubTargetPosX[40];
 	int16 _characterSubTargetPosY[40];
 	byte _stingArray[40];
