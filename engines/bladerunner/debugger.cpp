@@ -257,7 +257,6 @@ bool Debugger::cmdPosition(int argc, const char **argv) {
 		debugPrintf("actorY(%i) = %f\n", actorId, actor->getY());
 		debugPrintf("actorZ(%i) = %f\n", actorId, actor->getZ());
 		debugPrintf("actorFacing(%i) = %i\n", actorId, actor->getFacing());
-		return true;
 	}
 
 	if (argc == 3) {
@@ -275,7 +274,6 @@ bool Debugger::cmdPosition(int argc, const char **argv) {
 		Vector3 position = otherActor->getXYZ();
 		actor->setSetId(otherActor->getSetId());
 		actor->setAtXYZ(position, otherActor->getFacing());
-		return true;
 	}
 
 	if (argc == 7) {
@@ -285,7 +283,6 @@ bool Debugger::cmdPosition(int argc, const char **argv) {
 
 		actor->setSetId(setId);
 		actor->setAtXYZ(position, facing);
-		return true;
 	}
 	return true;
 }
