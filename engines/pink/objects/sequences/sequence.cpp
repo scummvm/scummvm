@@ -115,6 +115,24 @@ void Sequence::restart() {
     start(0);
 }
 
+void Sequence::skipToLastSubSequence() {
+    if (_unk && _context->getNextItemIndex() < _items.size()){
+        int i = _items.size() - 1;
+        while(i >= 0 && !_items[i--]->isLeader());
+        assert(i >= 0);
+        _context->setNextItemIndex(i);
+        _context->clearActionsFromActorStates();
+        skipItemsTo(i);
+        start(0);
+    }
+}
+
+void Sequence::skipItemsTo(int index) {
+    for(int i = 0; i < index; ++i){
+        _items[i]->skip(this);
+    }
+}
+
 void SequenceAudio::deserialize(Archive &archive) {
     Sequence::deserialize(archive);
     archive >> _sound;

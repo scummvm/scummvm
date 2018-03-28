@@ -107,4 +107,8 @@ void SequenceItemDefaultAction::toConsole() {
     debug("\t\t\t\tSequenceItemDefaultAction: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
 }
 
+void SequenceItemDefaultAction::skip(Sequence *sequence) {
+    execute(0, sequence, 1);
+}
+
 } // End of namespace Pink

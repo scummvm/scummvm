@@ -49,6 +49,9 @@ public:
 
     void update();
     void restart();
+    void skipToLastSubSequence();
+    void skipItemsTo(int index);
+
 public:
     SequenceContext *_context;
     Sequencer *_sequencer;
