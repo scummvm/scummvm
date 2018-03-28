@@ -550,7 +550,7 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory catego
 	}
 
 	if (mode == ITEMMODE_CHAR_INFO && category == CATEGORY_MISC) {
-		_buttons[4].setFrame(8);
+		_buttons[4].setFrame(18);
 		_buttons[4]._value = Common::KEYCODE_u;
 	}
 	if (mode != ITEMMODE_ENCHANT && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
