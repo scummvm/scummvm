@@ -143,25 +143,25 @@ public:
 	MidiPlayer_Midi(SciVersion version);
 	virtual ~MidiPlayer_Midi();
 
-	int open(ResourceManager *resMan);
-	void close();
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
-	bool hasRhythmChannel() const { return true; }
-	byte getPlayId() const;
-	int getPolyphony() const {
+	int open(ResourceManager *resMan) override;
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
+	bool hasRhythmChannel() const override { return true; }
+	byte getPlayId() const override;
+	int getPolyphony() const override {
 		if (g_sci && g_sci->_features->useAltWinGMSound())
 			return 16;
 		else
 			return kVoices;
 	}
-	int getFirstChannel() const;
-	int getLastChannel() const;
-	void setVolume(byte volume);
+	int getFirstChannel() const override;
+	int getLastChannel() const override;
+	void setVolume(byte volume) override;
 	virtual void onNewSound() override;
-	int getVolume();
-	void setReverb(int8 reverb);
-	void playSwitch(bool play);
+	int getVolume() override;
+	void setReverb(int8 reverb) override;
+	void playSwitch(bool play) override;
 
 private:
 	bool isMt32GmPatch(const SciSpan<const byte> &data);
