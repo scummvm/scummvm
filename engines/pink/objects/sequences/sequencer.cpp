@@ -86,8 +86,8 @@ void Sequencer::skipSubSequence() {
         _context->getSequence()->start(0);
 }
 
-void Sequencer::startSequenceAgain() {
-
+void Sequencer::restartSequence() {
+    _context->getSequence()->restart();
 }
 
 void Sequencer::skipToLastSubSequence() {

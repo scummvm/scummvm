@@ -48,7 +48,7 @@ public:
     void end();
 
     void update();
-
+    void restart();
 public:
     SequenceContext *_context;
     Sequencer *_sequencer;

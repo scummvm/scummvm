@@ -79,4 +79,14 @@ Sequence *SequenceContext::getSequence() const {
     return _sequence;
 }
 
+void SequenceContext::clearActionsFromActorStates() {
+    for (int i = 0; i < _states.size(); ++i) {
+        _states[i]._actionName.clear();
+    }
+}
+
+void SequenceContext::setNextItemIndex(int index) {
+    _nextItemIndex = index;
+}
+
 } // End of namespace Pink
