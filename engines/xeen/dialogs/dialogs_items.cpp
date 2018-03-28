@@ -43,45 +43,33 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	Party &party = *_vm->_party;
 	Windows &windows = *_vm->_windows;
 
+	ItemsMode priorMode = ITEMMODE_INVALID;
 	Character *startingChar = c;
 	ItemCategory category = mode == ITEMMODE_RECHARGE || mode == ITEMMODE_COMBAT ?
 		CATEGORY_MISC : CATEGORY_WEAPON;
 	int varA = mode == ITEMMODE_COMBAT ? 1 : 0;
 	if (varA != 0)
 		mode = ITEMMODE_CHAR_INFO;
-	bool updateStock = mode == ITEMMODE_BLACKSMITH;
+	bool updateStock = mode == ITEMMODE_BUY;
 	int itemIndex = -1;
 	Common::StringArray lines;
 	uint arr[40];
 	int actionIndex = -1;
 
-	events.setCursor(0);
-	loadButtons(mode, c);
+	if (mode == ITEMMODE_BUY) {
+		_oldCharacter = c;
+		c = &_itemsCharacter;
+		party._blacksmithWares.blackData2CharData(_itemsCharacter);
+		setEquipmentIcons();
+	}
 
+	events.setCursor(0);
 	windows[29].open();
 	windows[30].open();
 
 	enum { REDRAW_NONE, REDRAW_TEXT, REDRAW_FULL } redrawFlag = REDRAW_FULL;
 	for (;;) {
 		if (redrawFlag == REDRAW_FULL) {
-			itemIndex = -1;
-
-			if ((mode != ITEMMODE_CHAR_INFO || category != CATEGORY_MISC) && mode != ITEMMODE_ENCHANT
-					&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
-				_buttons[4]._bounds.moveTo(148, _buttons[4]._bounds.top);
-				_buttons[9]._draw = false;
-			} else if (mode == ITEMMODE_RECHARGE) {
-				_buttons[4]._value = Common::KEYCODE_r;
-			} else if (mode == ITEMMODE_ENCHANT) {
-				_buttons[4]._value = Common::KEYCODE_e;
-			} else if (mode == ITEMMODE_TO_GOLD) {
-				_buttons[4]._value = Common::KEYCODE_g;
-			} else {
-				_buttons[4]._bounds.moveTo(0, _buttons[4]._bounds.top);
-				_buttons[9]._draw = true;
-				_buttons[9]._value = Common::KEYCODE_u;
-			}
-
 			// Write text for the dialog
 			Common::String msg;
 			if (mode != ITEMMODE_CHAR_INFO && mode != ITEMMODE_8 && mode != ITEMMODE_ENCHANT
@@ -101,40 +89,21 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			}
 
 			windows[29].writeString(msg);
-			drawButtons(&windows[0]);
 
 			Common::fill(&arr[0], &arr[40], 0);
 			itemIndex = -1;
+			priorMode = ITEMMODE_INVALID;
+		}
+
+		if (mode != priorMode) {
+			// Set up the buttons for the dialog
+			loadButtons(mode, c, category);
+			priorMode = mode;
+			drawButtons(&windows[0]);
 		}
 
 		if (redrawFlag == REDRAW_TEXT || redrawFlag == REDRAW_FULL) {
 			lines.clear();
-
-			if (mode == ITEMMODE_CHAR_INFO || category != 3) {
-				_iconSprites.draw(0, 8, Common::Point(148, 109));
-			}
-			if (mode != ITEMMODE_ENCHANT && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
-				_iconSprites.draw(0, 10, Common::Point(182, 109));
-				_iconSprites.draw(0, 12, Common::Point(216, 109));
-				_iconSprites.draw(0, 14, Common::Point(250, 109));
-			}
-
-			switch (mode) {
-			case ITEMMODE_CHAR_INFO:
-				_iconSprites.draw(0, 9, Common::Point(148, 109));
-				break;
-			case ITEMMODE_BLACKSMITH:
-				_iconSprites.draw(0, 11, Common::Point(182, 109));
-				break;
-			case ITEMMODE_REPAIR:
-				_iconSprites.draw(0, 15, Common::Point(250, 109));
-				break;
-			case ITEMMODE_IDENTIFY:
-				_iconSprites.draw(0, 13, Common::Point(216, 109));
-				break;
-			default:
-				break;
-			}
 
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				DrawStruct &ds = _itemsDrawList[idx];
@@ -159,7 +128,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 								arr[idx], idx + 1,
 								c->_items[category].getFullDescription(idx, arr[idx]).c_str(),
 								calcItemCost(c, idx,
-									(mode == ITEMMODE_CHAR_INFO) ? ITEMMODE_BLACKSMITH : mode,
+									(mode == ITEMMODE_CHAR_INFO) ? ITEMMODE_BUY : mode,
 									mode == ITEMMODE_TO_GOLD ? 1 : startingChar->_skills[MERCHANT],
 									category)
 							));
@@ -221,7 +190,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				));
 				break;
 
-			case ITEMMODE_BLACKSMITH:
+			case ITEMMODE_BUY:
 				windows[30].writeString(Common::String::format(Res.AVAILABLE_GOLD_COST,
 					Res.CATEGORY_NAMES[category], party._gold,
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
@@ -230,7 +199,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				));
 				break;
 
-			case ITEMMODE_2:
+			case ITEMMODE_SELL:
 			case ITEMMODE_RECHARGE:
 			case ITEMMODE_ENCHANT:
 			case ITEMMODE_REPAIR:
@@ -268,10 +237,10 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 		if (itemIndex != -1) {
 			switch (mode) {
-			case ITEMMODE_BLACKSMITH:
+			case ITEMMODE_BUY:
 				actionIndex = 0;
 				break;
-			case ITEMMODE_2:
+			case ITEMMODE_SELL:
 				actionIndex = 1;
 				break;
 			case ITEMMODE_REPAIR:
@@ -343,11 +312,11 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					Character *newChar = _vm->_mode == MODE_COMBAT ?
 						combat._combatParty[_buttonValue] : &party._activeParty[_buttonValue];
 
-					if (mode == ITEMMODE_BLACKSMITH) {
+					if (mode == ITEMMODE_BUY) {
 						_oldCharacter = newChar;
 						startingChar = newChar;
 						c = &_itemsCharacter;
-					} else if (mode == ITEMMODE_2 || mode == ITEMMODE_REPAIR || mode == ITEMMODE_IDENTIFY) {
+					} else if (mode == ITEMMODE_SELL || mode == ITEMMODE_REPAIR || mode == ITEMMODE_IDENTIFY) {
 						_oldCharacter = newChar;
 						startingChar = newChar;
 						c = newChar;
@@ -419,7 +388,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			// Buy
 			if (mode != ITEMMODE_CHAR_INFO && mode != ITEMMODE_RECHARGE &&
 					mode != ITEMMODE_ENCHANT && mode != ITEMMODE_TO_GOLD) {
-				mode = ITEMMODE_BLACKSMITH;
+				mode = ITEMMODE_BUY;
 				c = &_itemsCharacter;
 				redrawFlag = REDRAW_FULL;
 			}
@@ -471,7 +440,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		case Common::KEYCODE_m:
 			// Misc
 			category = CATEGORY_MISC;
-			redrawFlag = REDRAW_TEXT;
+			redrawFlag = REDRAW_FULL;
 			break;
 
 		case Common::KEYCODE_q:
@@ -492,7 +461,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		case Common::KEYCODE_s:
 			if (mode != ITEMMODE_CHAR_INFO && mode != ITEMMODE_RECHARGE &&
 					mode != ITEMMODE_ENCHANT && mode != ITEMMODE_TO_GOLD) {
-				mode = ITEMMODE_2;
+				mode = ITEMMODE_SELL;
 				c = startingChar;
 				redrawFlag = REDRAW_TEXT;
 			}
@@ -506,7 +475,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		case Common::KEYCODE_w:
 			// Weapons category
 			category = CATEGORY_WEAPON;
-			redrawFlag = REDRAW_TEXT;
+			redrawFlag = REDRAW_FULL;
 			break;
 		}
 	}
@@ -521,12 +490,13 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	return c;
 }
 
-void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
-	Party &party = *g_vm->_party;
-	_iconSprites.load(Common::String::format("%s.icn",
-		(mode == ITEMMODE_CHAR_INFO) ? "items" : "buy"));
-	_equipSprites.load("equip.icn");
+void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory category) {
+	if (_iconSprites.empty())
+		_iconSprites.load(Common::String::format("%s.icn", (mode == ITEMMODE_CHAR_INFO) ? "items" : "buy"));
+	if (_equipSprites.empty())
+		_equipSprites.load("equip.icn");
 
+	clearButtons();
 	if (mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE || mode == ITEMMODE_TO_GOLD) {
 		// Enchant button list
 		addButton(Common::Rect(12, 109, 36, 129), Common::KEYCODE_w, &_iconSprites);
@@ -567,22 +537,56 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c) {
 		addPartyButtons(_vm);
 	}
 
-	if (mode == ITEMMODE_BLACKSMITH) {
-		_oldCharacter = c;
-		c = &_itemsCharacter;
-		party._blacksmithWares.blackData2CharData(_itemsCharacter);
-
+	if (mode == ITEMMODE_BUY) {
 		_buttons[4]._value = Common::KEYCODE_b;
 		_buttons[5]._value = Common::KEYCODE_s;
 		_buttons[6]._value = Common::KEYCODE_i;
 		_buttons[7]._value = Common::KEYCODE_f;
-
-		setEquipmentIcons();
 	} else {
 		_buttons[4]._value = Common::KEYCODE_e;
 		_buttons[5]._value = Common::KEYCODE_r;
 		_buttons[6]._value = Common::KEYCODE_d;
 		_buttons[7]._value = Common::KEYCODE_q;
+	}
+
+	if (mode == ITEMMODE_CHAR_INFO && category == CATEGORY_MISC) {
+		_buttons[4].setFrame(8);
+		_buttons[4]._value = Common::KEYCODE_u;
+	}
+	if (mode != ITEMMODE_ENCHANT && mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
+		_buttons[5].setFrame(10);
+		_buttons[6].setFrame(12);
+		_buttons[7].setFrame(14);
+	}
+
+	// Set button as depressed depending on which mode the dialog is currently in
+	switch (mode) {
+	case ITEMMODE_BUY:
+		_buttons[4].setFrame(9);
+		break;
+	case ITEMMODE_SELL:
+		_buttons[5].setFrame(11);
+		break;
+	case ITEMMODE_IDENTIFY:
+		_buttons[6].setFrame(13);
+		break;
+	case ITEMMODE_REPAIR:
+		_buttons[7].setFrame(15);
+		break;
+	default:
+		break;
+	}
+
+	if ((mode != ITEMMODE_CHAR_INFO || category != CATEGORY_MISC) && mode != ITEMMODE_ENCHANT
+			&& mode != ITEMMODE_RECHARGE && mode != ITEMMODE_TO_GOLD) {
+		_buttons[4]._bounds.moveTo(148, _buttons[4]._bounds.top);
+		_buttons[9]._draw = false;
+	} else if (mode == ITEMMODE_RECHARGE) {
+		_buttons[4]._value = Common::KEYCODE_r;
+	} else if (mode == ITEMMODE_ENCHANT) {
+		_buttons[4]._value = Common::KEYCODE_e;
+	} else if (mode == ITEMMODE_TO_GOLD) {
+		_buttons[4]._value = Common::KEYCODE_g;
 	}
 }
 
@@ -648,10 +652,10 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 	};
 
 	switch (mode) {
-	case ITEMMODE_BLACKSMITH:
+	case ITEMMODE_BUY:
 		level = 0;
 		break;
-	case ITEMMODE_2:
+	case ITEMMODE_SELL:
 	case ITEMMODE_TO_GOLD:
 		level = level == 0 ? 1 : 0;
 		break;
@@ -697,8 +701,8 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 			amount3 = Res.ELEMENTAL_DAMAGE[i._material - 59 + 7] * 100;
 
 		switch (mode) {
-		case ITEMMODE_BLACKSMITH:
-		case ITEMMODE_2:
+		case ITEMMODE_BUY:
+		case ITEMMODE_SELL:
 		case ITEMMODE_REPAIR:
 		case ITEMMODE_IDENTIFY:
 		case ITEMMODE_TO_GOLD:
@@ -717,8 +721,8 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		amount4 = Res.MISC_BASE_COSTS[i._id];
 
 		switch (mode) {
-		case ITEMMODE_BLACKSMITH:
-		case ITEMMODE_2:
+		case ITEMMODE_BUY:
+		case ITEMMODE_SELL:
 		case ITEMMODE_REPAIR:
 		case ITEMMODE_IDENTIFY:
 		case ITEMMODE_TO_GOLD:
@@ -827,7 +831,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			}
 			break;
 
-		case ITEMMODE_BLACKSMITH: {
+		case ITEMMODE_BUY: {
 			InventoryItems &invItems = _oldCharacter->_items[category];
 			if (invItems.isFull()) {
 				// Character's inventory for that category is already full
@@ -859,7 +863,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			break;
 		}
 
-		case ITEMMODE_2: {
+		case ITEMMODE_SELL: {
 			bool noNeed;
 			switch (category) {
 			case CATEGORY_WEAPON:

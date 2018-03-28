@@ -471,7 +471,7 @@ Character *BlacksmithLocation::doOptions(Character *c) {
 			intf.highlightChar(_buttonValue);
 		}
 	} else if (_buttonValue == Common::KEYCODE_b) {
-		c = ItemsDialog::show(_vm, c, ITEMMODE_BLACKSMITH);
+		c = ItemsDialog::show(_vm, c, ITEMMODE_BUY);
 		_buttonValue = 0;
 	}
 

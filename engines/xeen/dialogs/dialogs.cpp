@@ -118,8 +118,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 			if (btn._draw && btn._value == _buttonValue) {
 				// Found the correct button
 				// Draw button depressed
-				btn._sprites->draw(0, btn._frameNum + 1,
-					Common::Point(btn._bounds.left, btn._bounds.top));
+				btn._sprites->draw(0, btn._selectedFrame, Common::Point(btn._bounds.left, btn._bounds.top));
 				win.setBounds(btn._bounds);
 				win.update();
 
@@ -128,8 +127,7 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 				events.wait(2);
 
 				// Redraw button in it's original non-depressed form
-				btn._sprites->draw(0, btn._frameNum,
-					Common::Point(btn._bounds.left, btn._bounds.top));
+				btn._sprites->draw(0, btn._frameNum, Common::Point(btn._bounds.left, btn._bounds.top));
 				win.setBounds(btn._bounds);
 				win.update();
 				break;
@@ -146,6 +144,7 @@ void ButtonContainer::drawButtons(XSurface *surface) {
 	for (uint btnIndex = 0; btnIndex < _buttons.size(); ++btnIndex) {
 		UIButton &btn = _buttons[btnIndex];
 		if (btn._draw) {
+			assert(btn._sprites);
 			btn._sprites->draw(*surface, btn._frameNum,
 				Common::Point(btn._bounds.left, btn._bounds.top));
 		}

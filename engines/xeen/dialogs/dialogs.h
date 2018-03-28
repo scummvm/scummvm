@@ -39,14 +39,36 @@ public:
 	Common::Rect _bounds;
 	SpriteResource *_sprites;
 	int _value;
-	uint _frameNum;
+	uint _frameNum, _selectedFrame;
 	bool _draw;
 
+	/**
+	 * Constructor
+	 */
 	UIButton(const Common::Rect &bounds, int value, uint frameNum, SpriteResource *sprites, bool draw) :
-		_bounds(bounds), _value(value), _frameNum(frameNum),
+		_bounds(bounds), _value(value), _frameNum(frameNum), _selectedFrame(frameNum | 1),
 		_sprites(sprites), _draw(draw) {}
 
-	UIButton() : _value(0), _frameNum(0), _sprites(nullptr), _draw(false) {}
+	/**
+	 * Constructor
+	 */
+	UIButton() : _value(0), _frameNum(0), _selectedFrame(0), _sprites(nullptr), _draw(false) {}
+
+	/**
+	 * Set the frame
+	 */
+	void setFrame(uint frameNum) {
+		_frameNum = frameNum;
+		_selectedFrame = frameNum | 1;
+	}
+
+	/**
+	 * Set the frame
+	 */
+	void setFrame(uint frameNum, uint selectedFrame) {
+		_frameNum = frameNum;
+		_selectedFrame = selectedFrame;
+	}
 };
 
 class ButtonContainer : public Cutscenes {

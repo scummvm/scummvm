@@ -30,9 +30,10 @@
 namespace Xeen {
 
 enum ItemsMode {
-	ITEMMODE_CHAR_INFO = 0, ITEMMODE_BLACKSMITH = 1, ITEMMODE_2 = 2, ITEMMODE_3 = 3,
+	ITEMMODE_CHAR_INFO = 0, ITEMMODE_BUY = 1, ITEMMODE_SELL = 2, ITEMMODE_3 = 3,
 	ITEMMODE_RECHARGE = 4, ITEMMODE_5 = 5, ITEMMODE_ENCHANT = 6, ITEMMODE_COMBAT = 7, ITEMMODE_8 = 8,
-	ITEMMODE_REPAIR = 9, ITEMMODE_IDENTIFY = 10, ITEMMODE_TO_GOLD = 11
+	ITEMMODE_REPAIR = 9, ITEMMODE_IDENTIFY = 10, ITEMMODE_TO_GOLD = 11,
+	ITEMMODE_INVALID = -1
 };
 
 class ItemsDialog : public ButtonContainer {
@@ -50,7 +51,7 @@ private:
 	/**
 	 * Load the buttons for the dialog
 	 */
-	void loadButtons(ItemsMode mode, Character *&c);
+	void loadButtons(ItemsMode mode, Character *&c, ItemCategory category);
 
 	/**
 	 * Sets the equipment icon to use for each item for display
