@@ -1131,7 +1131,7 @@ const char *const FIRE_RESISTENCE_TEXT = "%c%sFire%s%u";
 
 const char *const ELECRICITY_RESISTENCE_TEXT = "%c%sElectricity%s%u";
 
-const char *const COLD_RESISTENCE_TEXT = "c%sCold%s%u";
+const char *const COLD_RESISTENCE_TEXT = "%c%sCold%s%u";
 
 const char *const POISON_RESISTENCE_TEXT = "%c%sPoison/Acid%s%u";
 
@@ -1223,7 +1223,7 @@ const char *const RESISTENCES_TEXT =
 	"\t020Energy\t100%u\n"
 	"\t020Magic\t100%u";
 
-const char *const NONE = "\n\t020";
+const char *const NONE = "\n\t020None";
 
 const char *const EXPERIENCE_TEXT = "\x2\x3""c%s\x3l\n"
 	"\t010Current:\t070%lu\n"
@@ -1310,9 +1310,8 @@ const char *const ACCESSORY_NAMES[11] = {
 
 const char *const MISC_NAMES[22] = {
 	nullptr, "rod ", "jewel ", "gem ", "box ", "orb ", "horn ", "coin ",
-	"wand ", "whistle ", "potion ", "scroll ", "RogueVM",
-	"bogusg", "bogus", "bogus", "bogus", "bogus",
-	"bogus", "bogus", "bogus", "bogus"
+	"wand ", "whistle ", "potion ", "scroll ", "bogus", "bogus", "bogus",
+	"bogus", "bogus", "bogus", "bogus", "bogus", "bogus", "bogus"
 };
 
 const char *const ELEMENTAL_NAMES[6] = {
