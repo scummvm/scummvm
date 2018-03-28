@@ -104,7 +104,6 @@ Common::Error Pink::PinkEngine::run() {
                 case Common::EVENT_LBUTTONDOWN:
 
                     break;
-
                 case Common::EVENT_KEYDOWN:
                     _actor->OnKeyboardButtonClick(event.kbd.keycode);
                     break;

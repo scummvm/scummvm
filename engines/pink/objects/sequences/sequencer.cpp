@@ -81,7 +81,7 @@ void Sequencer::removeContext(SequenceContext *context) {
     _context = 0;
 }
 
-void Sequencer::skipSequence() {
+void Sequencer::skipSubSequence() {
     if (_context && _context->getNextItemIndex() < _context->getSequence()->getItems().size())
         _context->getSequence()->start(0);
 }

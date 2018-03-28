@@ -49,7 +49,7 @@ public:
 
     void update();
 
-    void skipSequence();
+    void skipSubSequence();
 
 public:
     SequenceContext *_context;
