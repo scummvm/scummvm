@@ -1510,11 +1510,11 @@ void LilliputEngine::sub1693A_chooseDirections(int index) {
 byte LilliputEngine::sub16A76(int indexb, int indexs) {
 	debugC(2, kDebugEngine, "sub16A76(%d, %d)", indexb, indexs);
 
-	static const char _array16A6C[4] = {1, 0, 0, -1};
-	static const char _array16A70[4] = {0, -1, 1, 0};
+	static const int8 _array16A6C[4] = {1, 0, 0, -1};
+	static const int8 _array16A70[4] = {0, -1, 1, 0};
 
-	char var1h = _word16937Pos.x + _array16A6C[indexb];
-	char var1l = _word16937Pos.y + _array16A70[indexb];
+	int8 var1h = _word16937Pos.x + _array16A6C[indexb];
+	int8 var1l = _word16937Pos.y + _array16A70[indexb];
 
 	int16 var2 = findHotspot(Common::Point(var1h, var1l));
 	if (var2 == -1)

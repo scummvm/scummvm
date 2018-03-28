@@ -2671,8 +2671,8 @@ void LilliputScript::OC_scrollAwayFromCharacter() {
 	if (_vm->_currentScriptCharacter != _viewportCharacterTarget)
 		return;
 
-	static const char speedX[] = {-1, -3, -3, -6};
-	static const char speedY[] = {-3, -6, -1, -3};
+	static const int8 speedX[] = {-1, -3, -3, -6};
+	static const int8 speedY[] = {-3, -6, -1, -3};
 
 	int cx = speedX[_vm->_characterDirectionArray[_vm->_currentScriptCharacter]];
 	int cy = speedY[_vm->_characterDirectionArray[_vm->_currentScriptCharacter]];
@@ -2797,8 +2797,8 @@ void LilliputScript::OC_scrollViewPort() {
 
 	int direction = _currScript->readUint16LE();
 
-	static const char scrollValX[] = { 6, 0, 0, -6 };
-	static const char scrollValY[] = { 0, -6, 6, 0 };
+	static const int8 scrollValX[] = { 6, 0, 0, -6 };
+	static const int8 scrollValY[] = { 0, -6, 6, 0 };
 
 	int x = _viewportPos.x + scrollValX[direction];
 	int y = _viewportPos.y + scrollValY[direction];
