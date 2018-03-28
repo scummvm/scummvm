@@ -148,6 +148,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_lights                  = nullptr;
 	_obstacles               = nullptr;
 	_sceneScript             = nullptr;
+	_gameTime                = nullptr;
 	_gameInfo                = nullptr;
 	_waypoints               = nullptr;
 	_gameVars                = nullptr;
@@ -181,6 +182,7 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	_mainFont                = nullptr;
 	_esper                   = nullptr;
 	_vk                      = nullptr;
+	_policeMaze              = nullptr;
 	_mouse                   = nullptr;
 	_sliceAnimations         = nullptr;
 	_sliceRenderer           = nullptr;
