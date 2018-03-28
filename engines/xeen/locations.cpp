@@ -1042,7 +1042,7 @@ Common::String TrainingLocation::createLocationText(Character &ch) {
 	} else if (ch._level._permanent >= _maxLevel) {
 		// At maximum level
 		_experienceToNextLevel = 1;
-		msg = Common::String::format(Res.LEARNED_ALL, ch._name.c_str());
+		msg = Common::String::format(Res.TRAINING_LEARNED_ALL, ch._name.c_str());
 	} else {
 		// Eligble for level increase
 		uint cost = ch._level._permanent * ch._level._permanent * 10;

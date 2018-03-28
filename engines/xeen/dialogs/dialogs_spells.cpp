@@ -356,7 +356,7 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 		}
 	}
 
-	return nullptr;
+	return _spells.empty() ? Res.SPELLS_LEARNED_ALL : nullptr;
 }
 
 /*------------------------------------------------------------------------*/

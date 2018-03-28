@@ -220,7 +220,7 @@ public:
 	const char *FOOD_AND_DRINK;
 	const char *TEMPLE_TEXT;
 	const char *EXPERIENCE_FOR_LEVEL;
-	const char *LEARNED_ALL;
+	const char *TRAINING_LEARNED_ALL;
 	const char *ELIGIBLE_FOR_LEVEL;
 	const char *TRAINING_TEXT;
 	const char *GOLD_GEMS;
@@ -243,6 +243,7 @@ public:
 	int SPELL_LEVEL_OFFSETS[3][39];
 	int SPELL_GEM_COST[77];
 	const char *NOT_A_SPELL_CASTER;
+	const char *SPELLS_LEARNED_ALL;
 	const char *SPELLS_FOR;
 	const char *SPELL_LINES_0_TO_9;
 	const char *SPELLS_DIALOG_SPELLS;

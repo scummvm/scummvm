@@ -1197,6 +1197,7 @@ void Character::addHitPoints(int amount) {
 		intf.drawParty(true);
 	}
 
+	assert(_currentHp < 65000);
 	Common::fill(&intf._charFX[0], &intf._charFX[MAX_ACTIVE_PARTY], 0);
 }
 
@@ -1211,6 +1212,7 @@ void Character::subtractHitPoints(int amount) {
 	// Subtract the given HP amount
 	_currentHp -= amount;
 	bool flag = _currentHp <= 10;
+	assert(_currentHp < 65000);
 
 	if (_currentHp < 1) {
 		int v = getMaxHP() + _currentHp;

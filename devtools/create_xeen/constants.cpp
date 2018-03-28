@@ -950,7 +950,7 @@ const char *const TEMPLE_TEXT =
 const char *const EXPERIENCE_FOR_LEVEL =
 	"%s needs %lu experience for level %u.";
 
-const char *const LEARNED_ALL = "%s has learned all we can teach!";
+const char *const TRAINING_LEARNED_ALL = "%s has learned all we can teach!";
 
 const char *const ELIGIBLE_FOR_LEVEL = "%s is eligible for level %u.\x3l\n"
 	"\v081Cost\x3r\t000%u";
@@ -1086,6 +1086,9 @@ const int SPELL_GEM_COST[77] = {
 };
 
 const char *const NOT_A_SPELL_CASTER = "Not a spell caster...";
+
+const char *const SPELLS_LEARNED_ALL = "You have learned all we\n"
+	"\t010can teach you.";
 
 const char *const SPELLS_FOR = "\r\fd%s\x2\x3""c\t000\v002Spells for %s";
 
@@ -1992,7 +1995,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(FOOD_AND_DRINK);
 	file.syncString(TEMPLE_TEXT);
 	file.syncString(EXPERIENCE_FOR_LEVEL);
-	file.syncString(LEARNED_ALL);
+	file.syncString(TRAINING_LEARNED_ALL);
 	file.syncString(ELIGIBLE_FOR_LEVEL);
 	file.syncString(TRAINING_TEXT);
 	file.syncString(GOLD_GEMS);
@@ -2014,6 +2017,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncNumbers2D((const int *)DARK_SPELL_RANGES, 12, 2);
 	file.syncNumbers((const int *)SPELL_GEM_COST, 77);
 	file.syncString(NOT_A_SPELL_CASTER);
+	file.syncString(SPELLS_LEARNED_ALL);
 	file.syncString(SPELLS_FOR);
 	file.syncString(SPELL_LINES_0_TO_9);
 	file.syncString(SPELLS_DIALOG_SPELLS);
