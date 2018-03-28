@@ -216,17 +216,17 @@ void TuckerEngine::handleNewPartSequence() {
 	unloadSprA02_01();
 	unloadSprC02_01();
 	switch (_part) {
-		case kPartOne:
-			filename = "sprites/partone.spr";
-			break;
-		case kPartTwo:
-			filename = "sprites/parttwo.spr";
-			break;
-		case kPartThree:
-			filename = "sprites/partthr.spr";
-			break;
-		default:
-			break;
+	case kPartOne:
+		filename = "sprites/partone.spr";
+		break;
+	case kPartTwo:
+		filename = "sprites/parttwo.spr";
+		break;
+	case kPartThree:
+		filename = "sprites/partthr.spr";
+		break;
+	default:
+		break;
 	}
 	_sprC02Table[1] = loadFile(filename.c_str(), 0);
 	startSpeechSound(9000, 60);

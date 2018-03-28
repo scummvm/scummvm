@@ -109,18 +109,18 @@ Common::Error TuckerEngine::loadGameState(int slot) {
 
 	if (savegameError) {
 		switch (savegameError) {
-			case kSavegameInvalidTypeError:
-				warning("Invalid savegame '%s' (does not look like a ScummVM Tucker-engine savegame)", fileName.c_str());
-				break;
+		case kSavegameInvalidTypeError:
+			warning("Invalid savegame '%s' (does not look like a ScummVM Tucker-engine savegame)", fileName.c_str());
+			break;
 
-			case kSavegameInvalidVersionError:
-				warning("Invalid savegame '%s' (expected savegame version v%i-v%i, got v%i)",
-					fileName.c_str(), kSavegameVersionMinimum, kSavegameVersionCurrent, header.version);
-				break;
+		case kSavegameInvalidVersionError:
+			warning("Invalid savegame '%s' (expected savegame version v%i-v%i, got v%i)",
+				fileName.c_str(), kSavegameVersionMinimum, kSavegameVersionCurrent, header.version);
+			break;
 
-			default:
-				warning("Failed to load savegame '%s'", fileName.c_str());
-				break;
+		default:
+			warning("Failed to load savegame '%s'", fileName.c_str());
+			break;
 		}
 
 		delete file;

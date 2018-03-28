@@ -1470,23 +1470,23 @@ void TuckerEngine::handleMouseOnPanel() {
 
 void TuckerEngine::togglePanelStyle() {
 	switch (_panelState) {
-		case kPanelStateShrinking:
-			if (++_switchPanelCounter == 25) {
-				_panelStyle = (_panelStyle == kPanelStyleVerbs) ? kPanelStyleIcons : kPanelStyleVerbs;
-				loadPanel();
-				_forceRedrawPanelItems = true;
-				_panelState = kPanelStateExpanding;
-			}
-			break;
+	case kPanelStateShrinking:
+		if (++_switchPanelCounter == 25) {
+			_panelStyle = (_panelStyle == kPanelStyleVerbs) ? kPanelStyleIcons : kPanelStyleVerbs;
+			loadPanel();
+			_forceRedrawPanelItems = true;
+			_panelState = kPanelStateExpanding;
+		}
+		break;
 
-		case kPanelStateExpanding:
-			if (--_switchPanelCounter == 0) {
-				_panelState = kPanelStateNormal;
-			}
-			break;
+	case kPanelStateExpanding:
+		if (--_switchPanelCounter == 0) {
+			_panelState = kPanelStateNormal;
+		}
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 }
 
@@ -1862,17 +1862,17 @@ void TuckerEngine::drawCurrentSprite() {
 	static const int whitelistReservedColorsLocation48[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 };
 	static const int whitelistReservedColorsLocation61[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1 };
 	switch (_location) {
-		case kLocationCorridor:
-			whitelistReservedColors = (const int *)&whitelistReservedColorsLocation48;
-			break;
+	case kLocationCorridor:
+		whitelistReservedColors = (const int *)&whitelistReservedColorsLocation48;
+		break;
 
-		case kLocationParkPartThree:
-			if (_xPosCurrent <= 565)
-				whitelistReservedColors = (const int *)&whitelistReservedColorsLocation61;
-			break;
+	case kLocationParkPartThree:
+		if (_xPosCurrent <= 565)
+			whitelistReservedColors = (const int *)&whitelistReservedColorsLocation61;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
@@ -1968,32 +1968,32 @@ void TuckerEngine::redrawPanelItems() {
 		int sz = 0;
 
 		switch (_panelType) {
-			case kPanelTypeNormal:
-				src = _panelGfxBuf;
-				dst = _itemsGfxBuf + 3200;
-				sz = 16000;
-				break;
-			case kPanelTypeEmpty:
-				src = _panelGfxBuf + 16320;
-				dst = _itemsGfxBuf;
-				sz = 19200;
-				break;
-			case kPanelTypeLoadSavePlayQuit:
-				src = _panelGfxBuf + 16320;
-				dst = _itemsGfxBuf;
-				sz = 19200;
-				memcpy(dst, src, sz);
-				src = _panelGfxBuf + 55040;
-				dst = _itemsGfxBuf + 6400;
-				sz = 5120;
-				break;
-			case kPanelTypeLoadSaveSavegame:
-				src = _panelGfxBuf + 35200;
-				dst = _itemsGfxBuf;
-				sz = 19200;
-				break;
-			default:
-				break;
+		case kPanelTypeNormal:
+			src = _panelGfxBuf;
+			dst = _itemsGfxBuf + 3200;
+			sz = 16000;
+			break;
+		case kPanelTypeEmpty:
+			src = _panelGfxBuf + 16320;
+			dst = _itemsGfxBuf;
+			sz = 19200;
+			break;
+		case kPanelTypeLoadSavePlayQuit:
+			src = _panelGfxBuf + 16320;
+			dst = _itemsGfxBuf;
+			sz = 19200;
+			memcpy(dst, src, sz);
+			src = _panelGfxBuf + 55040;
+			dst = _itemsGfxBuf + 6400;
+			sz = 5120;
+			break;
+		case kPanelTypeLoadSaveSavegame:
+			src = _panelGfxBuf + 35200;
+			dst = _itemsGfxBuf;
+			sz = 19200;
+			break;
+		default:
+			break;
 		}
 		memcpy(dst, src, sz);
 		if (_panelType == kPanelTypeNormal) {
