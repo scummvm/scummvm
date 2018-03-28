@@ -398,6 +398,18 @@
 	#endif
 #endif
 
+#ifndef WARN_UNUSED_RESULT
+	#if __cplusplus >= 201703L
+		#define WARN_UNUSED_RESULT [[nodiscard]]
+	#elif GCC_ATLEAST(3, 4)
+		#define WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
+	#elif defined(_Check_return_)
+		#define WARN_UNUSED_RESULT _Check_return_
+	#else
+		#define WARN_UNUSED_RESULT
+	#endif
+#endif
+
 #ifndef STRINGBUFLEN
 	#if defined(__N64__) || defined(__DS__) || defined(__3DS__)
 		#define STRINGBUFLEN 256
