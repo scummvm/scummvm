@@ -65,7 +65,7 @@ void PartyDialog::execute() {
 		_charList.clear();
 		for (int i = 0; i < XEEN_TOTAL_CHARACTERS; ++i) {
 			Character &player = party._roster[i];
-			if (player._name.empty() || player._xeenSide != (map._loadDarkSide ? 1 : 0))
+			if (player._name.empty() || player._xeenSide != map._loadCcNum)
 				continue;
 
 			_charList.push_back(i);

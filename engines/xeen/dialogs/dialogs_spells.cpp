@@ -777,7 +777,7 @@ bool LloydsBeacon::execute() {
 				result = false;
 			} else {
 				sound.playFX(51);
-				map._loadDarkSide = ccNum;
+				map._loadCcNum = ccNum;
 				if (c._lloydMap != party._mazeId || c._lloydSide != ccNum) {
 					map.load(c._lloydMap);
 				}

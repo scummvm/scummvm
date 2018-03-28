@@ -209,8 +209,8 @@ void XeenEngine::play() {
 	_screen->loadBackground("back.raw");
 	_screen->loadPalette("mm4.pal");
 
-	if (getGameID() == GType_DarkSide && !_map->_loadDarkSide) {
-		_map->_loadDarkSide = true;
+	if (getGameID() == GType_DarkSide && !_map->_loadCcNum) {
+		_map->_loadCcNum = 1;
 		_party->_mazeId = 29;
 		_party->_mazeDirection = DIR_NORTH;
 		_party->_mazePosition.x = 25;

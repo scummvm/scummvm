@@ -454,7 +454,7 @@ public:
 	int _currentTile;
 	int _currentSurfaceId;
 	bool _currentSteppedOn;
-	bool _loadDarkSide;
+	int _loadCcNum;
 	int _sideTownPortal;
 public:
 	Map(XeenEngine *vm);

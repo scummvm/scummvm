@@ -1446,7 +1446,7 @@ bool Scripts::cmdCutsceneEndWorld(ParamsIterator &params) {
 }
 
 bool Scripts::cmdFlipWorld(ParamsIterator &params) {
-	_vm->_map->_loadDarkSide = params.readByte() != 0;
+	_vm->_map->_loadCcNum = params.readByte();
 	return true;
 }
 

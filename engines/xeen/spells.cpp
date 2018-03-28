@@ -1246,7 +1246,7 @@ void Spells::townPortal() {
 		return;
 
 	sound.playFX(51);
-	map._loadDarkSide = map._sideTownPortal;
+	map._loadCcNum = map._sideTownPortal;
 	_vm->_files->_ccNum = map._sideTownPortal > 0;
 	map.load(Res.TOWN_MAP_NUMBERS[map._sideTownPortal][townNumber - 1]);
 

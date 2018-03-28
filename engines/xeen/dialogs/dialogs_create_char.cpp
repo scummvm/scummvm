@@ -597,7 +597,7 @@ bool CreateCharacterDialog::saveCharacter(Character &c, int classId, Race race, 
 	c.clear();
 	c._name = name;
 	c._savedMazeId = party._priorMazeId;
-	c._xeenSide = map._loadDarkSide;
+	c._xeenSide = map._loadCcNum;
 	c._sex = sex;
 	c._race = race;
 	c._class = (CharacterClass)classId;

@@ -604,7 +604,7 @@ void AnimationInfo::load(const Common::String &name) {
 /*------------------------------------------------------------------------*/
 
 Map::Map(XeenEngine *vm) : _vm(vm), _mobData(vm) {
-	_loadDarkSide = false;
+	_loadCcNum = 0;
 	_sideTownPortal = 0;
 	_sideObjects = 0;
 	_sideMonsters = 0;
@@ -648,7 +648,7 @@ void Map::load(int mapId) {
 	if (mapId >= 113 && mapId <= 127) {
 		_sideTownPortal = 0;
 	} else {
-		_sideTownPortal = _loadDarkSide ? 1 : 0;
+		_sideTownPortal = _loadCcNum;
 	}
 
 	if (_vm->getGameID() == GType_Swords || _vm->getGameID() == GType_DarkSide) {
@@ -662,7 +662,7 @@ void Map::load(int mapId) {
 	} else if (_vm->getGameID() == GType_WorldOfXeen) {
 		files.setGameCc(1);
 
-		if (!_loadDarkSide) {
+		if (!_loadCcNum) {
 			_animationInfo.load("clouds.dat");
 			_monsterData.load("xeen.mon");
 			_wallPicSprites.load("xeenpic.dat");
@@ -709,7 +709,7 @@ void Map::load(int mapId) {
 			}
 		}
 
-		files.setGameCc(_loadDarkSide);
+		files.setGameCc(_loadCcNum);
 	}
 
 	// Load any events for the new map

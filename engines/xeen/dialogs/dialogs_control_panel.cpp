@@ -97,11 +97,11 @@ int ControlPanel::execute() {
 					sound.playFX(51);
 
 					if (g_vm->getGameID() == GType_WorldOfXeen) {
-						map._loadDarkSide = false;
+						map._loadCcNum = 0;
 						map.load(28);
 						party._mazeDirection = DIR_EAST;
 					} else {
-						map._loadDarkSide = true;
+						map._loadCcNum = 1;
 						map.load(29);
 						party._mazeDirection = DIR_SOUTH;
 					}

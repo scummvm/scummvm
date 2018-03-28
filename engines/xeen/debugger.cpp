@@ -169,11 +169,11 @@ bool Debugger::cmdMap(int argc, const char **argv) {
 		return true;
 	} else {
 		int mapId = strToInt(argv[1]);
-		bool side = argc < 3 ? files._ccNum : strToInt(argv[2]) != 0;
+		int side = argc < 3 ? files._ccNum : strToInt(argv[2]);
 		int x = argc < 4 ? 8 : strToInt(argv[3]);
 		int y = argc < 5 ? 8 : strToInt(argv[4]);
 
-		map._loadDarkSide = side;
+		map._loadCcNum = side;
 		map.load(mapId);
 		party._mazePosition.x = x;
 		party._mazePosition.y = y;

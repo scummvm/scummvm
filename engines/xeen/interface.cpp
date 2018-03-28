@@ -850,7 +850,7 @@ void Interface::startFalling(bool flag) {
 				break;
 			case 103:
 			case 104:
-				map._loadDarkSide = false;
+				map._loadCcNum = 0;
 				party._mazeId = 8;
 				party._mazePosition = Common::Point(11, 15);
 				party._mazeDirection = DIR_NORTH;
@@ -1729,7 +1729,7 @@ void Interface::doCombat() {
 
 	if (reloadMap) {
 		sound.playFX(51);
-		map._loadDarkSide = _vm->getGameID() != GType_WorldOfXeen;
+		map._loadCcNum = _vm->getGameID() != GType_WorldOfXeen ? 1 : 0;
 		map.load(_vm->getGameID() == GType_WorldOfXeen ? 28 : 29);
 		party._mazeDirection = _vm->getGameID() == GType_WorldOfXeen ?
 			DIR_EAST : DIR_SOUTH;

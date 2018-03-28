@@ -710,7 +710,7 @@ Character *TavernLocation::doOptions(Character *c) {
 		party._priorMazeId = party._mazeId;
 		for (idx = 0; idx < (int)party._activeParty.size(); ++idx) {
 			party._activeParty[idx]._savedMazeId = party._mazeId;
-			party._activeParty[idx]._xeenSide = map._loadDarkSide;
+			party._activeParty[idx]._xeenSide = map._loadCcNum;
 		}
 
 		g_vm->_mode = MODE_17;
@@ -1472,7 +1472,7 @@ void ReaperCutscene::getNewLocation() {
 		switch (party._mazeId) {
 		case 7:
 			if (party._questItems[30]) {
-				map._loadDarkSide = true;
+				map._loadCcNum = 1;
 				_mazeId = 113;
 				_mazePos = Common::Point(7, 4);
 				_mazeDir = DIR_NORTH;
@@ -1491,7 +1491,7 @@ void ReaperCutscene::getNewLocation() {
 
 		case 13:
 			if (party._questItems[29]) {
-				map._loadDarkSide = true;
+				map._loadCcNum = 1;
 				_mazeId = 117;
 				_mazePos = Common::Point(7, 4);
 				_mazeDir = DIR_NORTH;
@@ -1778,7 +1778,7 @@ void GolemCutscene::getNewLocation() {
 
 		case 19:
 			if (party._questItems[50]) {
-				map._loadDarkSide = true;
+				map._loadCcNum = 1;
 				_mazeId = 121;
 				_mazePos = Common::Point(18, 0);
 				_mazeDir = DIR_NORTH;
@@ -2138,7 +2138,7 @@ void SphinxCutscene::getNewLocation() {
 	switch (party._mazeId) {
 	case 2:
 		if (party._questItems[51]) {
-			map._loadDarkSide = true;
+			map._loadCcNum = 1;
 			_mazeId = 125;
 			_mazePos = Common::Point(7, 6);
 			_mazeDir = DIR_NORTH;
@@ -2195,7 +2195,7 @@ int PyramidLocation::show() {
 		}
 
 		// Load the destination map and set position and direction
-		map._loadDarkSide = !_ccNum;
+		map._loadCcNum = _ccNum ? 0 : 1;
 		map.load(mapId);
 		party._mazePosition = pt;
 		party._mazeDirection = dir;
