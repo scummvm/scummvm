@@ -29,7 +29,7 @@
 
 namespace Pink {
 Director::Director(OSystem *system)
-    : _system(system) {}
+    : _system(system), showBounds(0) {}
 
 void Director::draw() {
     for (int i = 0; i < _sprites.size(); ++i) {
@@ -48,7 +48,7 @@ void Director::drawSprite(CelDecoder *decoder) {
 
 
     uint16 colourIndex = decoder->getTransparentColourIndex();
-    if (colourIndex != 0) {
+    if (!showBounds && colourIndex != 0) {
         Graphics::Surface *screen = _system->lockScreen();
         for (int y = 0; y < decoder->getHeight(); ++y) {
             for (int x = 0; x < decoder->getWidth(); ++x) {
