@@ -81,11 +81,37 @@ void LeadActor::update() {
 }
 
 void LeadActor::OnKeyboardButtonClick(Common::KeyCode code) {
-    switch (code) {
-        case Common::KEYCODE_SPACE:
-        case Common::KEYCODE_RIGHT:
-            _sequencer->skipSequence();
-
+    switch(_state) {
+        case kMoving:
+            switch (code){
+                case Common::KEYCODE_ESCAPE:
+                    // set unk variables
+                    // Fall Through intended
+                case Common::KEYCODE_SPACE:
+                    //skip walking animation
+                default:
+                    break;
+            }
+        case kInDialog1:
+        case kInDialog2:
+        case kPlayingVideo:
+            switch (code) {
+                case Common::KEYCODE_SPACE:
+                case Common::KEYCODE_RIGHT:
+                    _sequencer->skipSubSequence();
+                    break;
+                case Common::KEYCODE_ESCAPE:
+                    //End sequence
+                    break;
+                case Common::KEYCODE_LEFT:
+                    //return to start of sequence
+                    break;
+                default:
+                    break;
+            }
+            break;
+        default:
+            break;
     }
 
 }

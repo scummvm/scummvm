@@ -36,13 +36,13 @@ class LeadActor : public Actor {
 public:
     enum State {
         kReady = 0,
-        kMoving,
-        kInDialog1, //???
-        kInventory,
-        kPDA,
-        kInDialog2,//???
-        kPlayingVideo, // ???
-        kUnk_Loading // ????
+        kMoving = 1,
+        kInDialog1 = 2, //???
+        kInventory = 3,
+        kPDA = 4,
+        kInDialog2 = 5,//???
+        kPlayingVideo = 6, // ???
+        kUnk_Loading = 7// ????
     };
 
 
