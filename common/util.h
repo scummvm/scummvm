@@ -123,7 +123,7 @@ bool isAlnum(int c);
  * false is returned.
  *
  * @param c		the character to test
- * @return		true if the character is TODO, false otherwise.
+ * @return		true if the character is alphabetic, false otherwise.
  */
 bool isAlpha(int c);
 
