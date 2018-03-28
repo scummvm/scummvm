@@ -56,6 +56,7 @@ public:
 	void setFont(FontProvider::FontType type, int32 customFontIndex = -1);
 
 	void render(const Common::Point &position);
+	void resetTexture();
 
 private:
 	void createTexture();

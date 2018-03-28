@@ -92,6 +92,9 @@ public:
 	 */
 	void setTextColor(uint32 textColor);
 
+	/** For widget with no text visual, this function does nothing */
+	void resetTextTexture();
+
 	/** Draw the widget */
 	void render();
 

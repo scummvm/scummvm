@@ -139,4 +139,9 @@ void VisualText::render(const Common::Point &position) {
 	_surfaceRenderer->render(_texture, position);
 }
 
+void VisualText::resetTexture() {
+	freeTexture();
+	createTexture();
+}
+
 } // End of namespace Stark

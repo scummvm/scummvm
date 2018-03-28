@@ -245,6 +245,7 @@ const Graphics::Surface *UserInterface::getGameWindowThumbnail() const {
 
 void UserInterface::onScreenChanged() {
 	_gameScreen->onScreenChanged();
+	_diaryIndexScreen->onScreenChanged();
 }
 
 void UserInterface::notifyInventoryItemEnabled(uint16 itemIndex) {

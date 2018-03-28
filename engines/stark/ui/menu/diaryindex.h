@@ -38,6 +38,9 @@ public:
 	// StaticLocationScreen API
 	void open() override;
 
+	// Called when the screen resolution changes to reset the text textures
+	void onScreenChanged();
+
 private:
 	void widgetTextColorHandler(StaticLocationWidget &widget, const Common::Point &mousePos);
 	void backHandler();
