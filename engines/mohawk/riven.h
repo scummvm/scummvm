@@ -79,7 +79,7 @@ typedef Common::HashMap<Common::String, uint32, Common::IgnoreCase_Hash, Common:
 
 class MohawkEngine_Riven : public MohawkEngine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc);
@@ -95,13 +95,13 @@ public:
 	// Display debug rectangles around the hotspots
 	bool _showHotspots;
 
-	GUI::Debugger *getDebugger();
+	GUI::Debugger *getDebugger() override;
 
-	bool canLoadGameStateCurrently();
-	bool canSaveGameStateCurrently();
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const Common::String &desc);
-	bool hasFeature(EngineFeature f) const;
+	bool canLoadGameStateCurrently() override;
+	bool canSaveGameStateCurrently() override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc) override;
+	bool hasFeature(EngineFeature f) const override;
 
 	void doFrame();
 

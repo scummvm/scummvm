@@ -116,7 +116,7 @@ public:
 	virtual ~MystOptionsDialog();
 
 	virtual void open() override;
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 private:
 	MohawkEngine_Myst *_vm;
