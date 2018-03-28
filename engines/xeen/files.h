@@ -83,7 +83,7 @@ public:
 	 * Constructor
 	 */
 	FileManager(XeenEngine *vm);
-	
+
 	/**
 	 * Destructor
 	 */
@@ -373,7 +373,7 @@ public:
 	/**
 	 * Finishes any pending writes, pushing out the written data
 	 */
-	void finalize();
+	void finalize() override;
 
 	/**
 	 * Writes data
