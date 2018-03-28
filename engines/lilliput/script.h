@@ -298,13 +298,13 @@ private:
 	void OC_setCharacterHome();
 	void OC_setViewPortCharacterTarget();
 	void OC_showObject();
-	void OC_sub186E5_snd();
-	void OC_sub1870A_snd();
-	void OC_stopSound();
-	void OC_sub18733_snd();
-	void OC_sub1873F_snd();
-	void OC_sub18746_snd();
-	void OC_sub1875D_snd();
+	void OC_playObjectSound();
+	void OC_startLocationSound();
+	void OC_stopObjectSound();
+	void OC_stopLocationSound();
+	void OC_toggleSound();
+	void OC_playMusic();
+	void OC_stopMusic();
 	void OC_setCharacterMapColor();
 };
 

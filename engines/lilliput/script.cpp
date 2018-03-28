@@ -524,25 +524,25 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_showObject();
 		break;
 	case 0x5D:
-		OC_sub186E5_snd();
+		OC_playObjectSound();
 		break;
 	case 0x5E:
-		OC_sub1870A_snd();
+		OC_startLocationSound();
 		break;
 	case 0x5F:
-		OC_stopSound();
+		OC_stopObjectSound();
 		break;
 	case 0x60:
-		OC_sub18733_snd();
+		OC_stopLocationSound();
 		break;
 	case 0x61:
-		OC_sub1873F_snd();
+		OC_toggleSound();
 		break;
 	case 0x62:
-		OC_sub18746_snd();
+		OC_playMusic();
 		break;
 	case 0x63:
-		OC_sub1875D_snd();
+		OC_stopMusic();
 		break;
 	case 0x64:
 		OC_setCharacterMapColor();
@@ -704,13 +704,13 @@ static const OpCode opCodes2[] = {
 /* 0x5a */	{ "OC_setCharacterHome", 2, kGetValue1, kgetPosFromScript, kNone, kNone, kNone },  //TODO
 /* 0x5b */	{ "OC_setViewPortCharacterTarget", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x5c */	{ "OC_showObject", 3, kGetValue1, kImmediateValue, kImmediateValue, kNone, kNone },  //TODO
-/* 0x5d */	{ "OC_sub186E5_snd", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
-/* 0x5e */	{ "OC_sub1870A_snd", 2, kgetPosFromScript, kImmediateValue, kNone, kNone, kNone },
-/* 0x5f */	{ "OC_stopSound", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x60 */	{ "OC_sub18733_snd", 1, kGetValue1, kNone, kNone, kNone, kNone },
-/* 0x61 */	{ "OC_sub1873F_snd", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
-/* 0x62 */	{ "OC_sub18746_snd", 1, kImmediateValue, kNone, kNone, kNone, kNone },
-/* 0x63 */	{ "OC_sub1875D_snd", 0, kNone, kNone, kNone, kNone, kNone },
+/* 0x5d */	{ "OC_playObjectSound", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
+/* 0x5e */	{ "OC_startLocationSound", 2, kgetPosFromScript, kImmediateValue, kNone, kNone, kNone },
+/* 0x5f */	{ "OC_stopObjectSound", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x60 */	{ "OC_stopLocationSound", 1, kGetValue1, kNone, kNone, kNone, kNone },
+/* 0x61 */	{ "OC_toggleSound", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
+/* 0x62 */	{ "OC_playMusic", 1, kImmediateValue, kNone, kNone, kNone, kNone },
+/* 0x63 */	{ "OC_stopMusic", 0, kNone, kNone, kNone, kNone, kNone },
 /* 0x64 */	{ "OC_setCharacterMapColor", 2, kGetValue1, kImmediateValue, kNone, kNone, kNone },
 /* 0x65 */	{ "OC_initGameAreaDisplay", 0, kNone, kNone, kNone, kNone, kNone }
 };
@@ -3295,8 +3295,8 @@ void LilliputScript::OC_showObject() {
 	_vm->display16x16IndexedBuf(buf, frame, pos);
 }
 
-void LilliputScript::OC_sub186E5_snd() {
-	debugC(1, kDebugScript, "OC_sub186E5_snd()");
+void LilliputScript::OC_playObjectSound() {
+	debugC(1, kDebugScript, "OC_playObjectSound()");
 	int index = getValue1();
 	assert(index < 40);
 
@@ -3306,8 +3306,8 @@ void LilliputScript::OC_sub186E5_snd() {
 	_vm->_soundHandler->contentFct2(soundId, _viewportPos, Common::Point(_characterTilePosX[index], _characterTilePosY[index]), var4);
 }
 
-void LilliputScript::OC_sub1870A_snd() {
-	debugC(1, kDebugScript, "OC_sub1870A_snd()");
+void LilliputScript::OC_startLocationSound() {
+	debugC(1, kDebugScript, "OC_startLocationSound()");
 
 	Common::Point var3 = getPosFromScript();
 	Common::Point var4 = var3;
@@ -3317,42 +3317,42 @@ void LilliputScript::OC_sub1870A_snd() {
 	_vm->_soundHandler->contentFct2(var1, var2, var3, var4);
 }
 
-void LilliputScript::OC_stopSound() {
-	debugC(1, kDebugScript, "OC_stopSound()");
+void LilliputScript::OC_stopObjectSound() {
+	debugC(1, kDebugScript, "OC_stopObjectSound()");
 
-	Common::Point var4 = Common::Point(-1, getValue1() & 0xFF); // should be split in 2 parameters
+	Common::Point var4 = Common::Point(-1, getValue1() & 0xFF);
 
 	_vm->_soundHandler->contentFct3(var4); // Stop Sound
 }
 
-void LilliputScript::OC_sub18733_snd() {
-	debugC(1, kDebugScript, "OC_sub18733_snd()");
+void LilliputScript::OC_stopLocationSound() {
+	debugC(1, kDebugScript, "OC_stopLocationSound()");
 
 	Common::Point var4 = getPosFromScript();
 
 	_vm->_soundHandler->contentFct3(var4);
 }
 
-void LilliputScript::OC_sub1873F_snd() {
-	debugC(1, kDebugScriptTBC, "OC_sub1873F_snd()");
+void LilliputScript::OC_toggleSound() {
+	debugC(1, kDebugScriptTBC, "OC_toggleSound()");
 
 	_vm->_soundHandler->contentFct4();
 }
 
-void LilliputScript::OC_sub18746_snd() {
-	debugC(1, kDebugScript, "OC_sub18746_snd()");
+void LilliputScript::OC_playMusic() {
+	debugC(1, kDebugScript, "OC_playMusic()");
 
 	Common::Point var4 = Common::Point(-1, -1);
 	Common::Point var2 = _viewportPos;
 	int var1 = _currScript->readSint16LE() & 0xFF;
-	warning("OC_sub18746_snd: unknown value for var3");
+	warning("OC_playMusic: unknown value for var3");
 	Common::Point var3 = Common::Point(-1, -1);
 
 	_vm->_soundHandler->contentFct2(var1, var2, var3, var4);
 }
 
-void LilliputScript::OC_sub1875D_snd() {
-	debugC(1, kDebugScript, "OC_sub1875D_snd()");
+void LilliputScript::OC_stopMusic() {
+	debugC(1, kDebugScript, "OC_stopMusic()");
 
 	_vm->_soundHandler->contentFct6();
 }
