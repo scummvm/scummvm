@@ -186,15 +186,15 @@ void PoliceMazeTargetTrack::add(int trackId, float startX, float startY, float s
 		double coefY = (endY - startY) * coef;
 		double coefZ = (endZ - startZ) * coef;
 
-		for (int i = 0; i < steps; i++) {
+		for (int i = 0; i < steps - 1; i++) {
 			_points[i].x = i * coefX + startX;
 			_points[i].y = i * coefY + startY;
 			_points[i].z = i * coefZ + startZ;
 		}
 
-		_points[steps].x = endX;
-		_points[steps].y = endY;
-		_points[steps].z = endZ;
+		_points[steps - 1].x = endX;
+		_points[steps - 1].y = endY;
+		_points[steps - 1].z = endZ;
 
 		_isPaused = !isActive;
 	}
