@@ -50,10 +50,10 @@ public:
 
 	void drawDialog(DrawLayer layerToDraw) override;
 
-	void handleMouseUp(int x, int y, int button, int clickCount);
-	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
-	void handleMouseMoved(int x, int y, int button);	// Redraw selections depending on mouse position
-	void handleKeyDown(Common::KeyState state);	// Scroll through entries with arrow keys etc.
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;	// Scroll through entries with scroll wheel
+	void handleMouseMoved(int x, int y, int button) override;	// Redraw selections depending on mouse position
+	void handleKeyDown(Common::KeyState state) override;	// Scroll through entries with arrow keys etc.
 
 protected:
 	void drawMenuEntry(int entry, bool hilite);

@@ -130,15 +130,15 @@ protected:
 public:
 	ConsoleDialog(float widthPercent, float heightPercent);
 
-	void open();
-	void close();
+	void open() override;
+	void close() override;
 	void drawDialog(DrawLayer layerToDraw) override;
 
-	void handleTickle();
-	void reflowLayout();
-	void handleMouseWheel(int x, int y, int direction);
-	void handleKeyDown(Common::KeyState state);
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	void handleTickle() override;
+	void reflowLayout() override;
+	void handleMouseWheel(int x, int y, int direction) override;
+	void handleKeyDown(Common::KeyState state) override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	int printFormat(int dummy, const char *format, ...) GCC_PRINTF(3, 4);
 	int vprintFormat(int dummy, const char *format, va_list argptr);
