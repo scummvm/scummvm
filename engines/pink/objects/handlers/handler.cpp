@@ -39,7 +39,7 @@ void Handler::deserialize(Archive &archive) {
 
 bool Handler::isSuitable(LeadActor *actor) {
     for (int i = 0; i < _conditions.size(); ++i) {
-        if (_conditions[i]->evaluate(actor)){
+        if (!_conditions[i]->evaluate(actor)){
             return false;
         }
     }

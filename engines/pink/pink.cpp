@@ -76,6 +76,7 @@ Common::Error PinkEngine::init() {
 
     // TODO load cursor
 
+
     _orb.loadGame(this);
     const Common::String empty;
     initModule(_modules[0]->getName(), kLoadingNewGame, empty);
