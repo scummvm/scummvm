@@ -60,7 +60,7 @@ void Sequencer::authorSequence(Sequence *sequence, bool unk) {
         _context = new SequenceContext(sequence, this);
         //unload array of unknown objects
         _currentSequenceName = sequence->getName();
-        sequence->start(unk);
+        sequence->init(unk);
     }
     else _currentSequenceName.clear();
 }
