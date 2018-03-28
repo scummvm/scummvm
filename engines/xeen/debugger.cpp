@@ -165,15 +165,15 @@ bool Debugger::cmdMap(int argc, const char **argv) {
 	Party &party = *g_vm->_party;
 
 	if (argc < 2) {
-		debugPrintf("map mapId [ sideNum [ xp, yp ]]\n");
+		debugPrintf("map mapId [ xp, yp ] [ sideNum ]\n");
 		return true;
 	} else {
 		int mapId = strToInt(argv[1]);
-		int side = argc < 3 ? files._ccNum : strToInt(argv[2]);
-		int x = argc < 4 ? 8 : strToInt(argv[3]);
-		int y = argc < 5 ? 8 : strToInt(argv[4]);
-
-		map._loadCcNum = side;
+		int x = argc < 3 ? 8 : strToInt(argv[2]);
+		int y = argc < 4 ? 8 : strToInt(argv[3]);
+		
+		if (argc == 5)
+			map._loadCcNum = strToInt(argv[4]);
 		map.load(mapId);
 		party._mazePosition.x = x;
 		party._mazePosition.y = y;
