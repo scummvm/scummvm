@@ -650,6 +650,12 @@ void TuckerEngine::parseEvents() {
 	while (_eventMan->pollEvent(ev)) {
 		switch (ev.type) {
 		case Common::EVENT_KEYDOWN:
+			switch (ev.kbd.ascii) {
+			// do not use KEYCODE_PERIOD here so that it works with most keyboard layouts
+			case '.':
+				_inputKeys[kInputKeySkipSpeech] = true;
+				break;
+			}
 			switch (ev.kbd.keycode) {
 			case Common::KEYCODE_f:
 				if (ev.kbd.hasFlags(Common::KBD_CTRL)) {
@@ -670,9 +676,6 @@ void TuckerEngine::parseEvents() {
 				break;
 			case Common::KEYCODE_ESCAPE:
 				_inputKeys[kInputKeyEscape] = true;
-				_inputKeys[kInputKeySkipSpeech] = true;
-				break;
-			case Common::KEYCODE_PERIOD:
 				_inputKeys[kInputKeySkipSpeech] = true;
 				break;
 			case Common::KEYCODE_d:
