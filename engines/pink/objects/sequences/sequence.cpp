@@ -165,4 +165,9 @@ void SequenceAudio::init(int unk) {
     Sequence::init(unk);
 }
 
+void SequenceAudio::restart() {
+    _sound->play(Audio::Mixer::SoundType::kMusicSoundType, 100, 0);
+    Sequence::restart();
+}
+
 } // End of namespace Pink
