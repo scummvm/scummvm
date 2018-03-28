@@ -28,6 +28,7 @@
 #include "engines/pink/objects/pages/game_page.h"
 #include "engines/pink/objects/actors/actor.h"
 #include "sequence_context.h"
+#include "pink/sound.h"
 
 namespace Pink {
 
@@ -135,15 +136,33 @@ void Sequence::skipItemsTo(int index) {
 
 void SequenceAudio::deserialize(Archive &archive) {
     Sequence::deserialize(archive);
-    archive >> _sound;
+    archive >> _soundName;
 }
 
 void SequenceAudio::toConsole() {
-    debug("\t\tSequenceAudio %s : _sound = %s", _name.c_str(), _sound.c_str());
+    debug("\t\tSequenceAudio %s : _sound = %s", _name.c_str(), _soundName.c_str());
     debug("\t\t\tItems:");
     for (int i = 0; i < _items.size(); ++i) {
         _items[i]->toConsole();
     }
+}
+
+void SequenceAudio::end() {
+    delete _sound;
+    _sound = nullptr;
+    Sequence::end();
+}
+
+void SequenceAudio::update() {
+    // Not Working. In original there is check for current buffer size of wav file
+    Sequence::update();
+}
+
+void SequenceAudio::init(int unk) {
+    _unk2 = 0;
+    _sound = _sequencer->_page->loadSound(_soundName);
+    _sound->play(Audio::Mixer::SoundType::kMusicSoundType, 100, 0);
+    Sequence::init(unk);
 }
 
 } // End of namespace Pink

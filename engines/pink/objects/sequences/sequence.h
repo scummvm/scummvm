@@ -43,11 +43,11 @@ public:
     Common::Array<SequenceItem*> &getItems();
 
     void setContext(SequenceContext *context);
-    void init(int unk);
+    virtual void init(int unk);
     void start(int unk);
-    void end();
+    virtual void end();
 
-    void update();
+    virtual void update();
     void restart();
     void skipToLastSubSequence();
     void skipItemsTo(int index);
@@ -57,17 +57,22 @@ public:
     Sequencer *_sequencer;
     Common::Array<SequenceItem*> _items;
     int _unk;
-
 };
+
+class Sound;
 
 class SequenceAudio : public Sequence {
 public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
 
+    virtual void init(int unk);
+    virtual void end();
+    virtual void update();
+
 private:
-    Common::String _sound;
-    int _unk1;
+    Common::String _soundName;
+    Sound *_sound;
     int _unk2;
 };
 
