@@ -45,10 +45,13 @@ Sequencer *Actor::getSequencer() const {
 }
 
 Action *Actor::findAction(const Common::String &name) {
-    return *Common::find_if(_actions.begin(), _actions.end(), [&name]
+    Action ** action = Common::find_if(_actions.begin(), _actions.end(), [&name]
             (Action* action) {
         return name == action->getName();
     });;
+    if (!action)
+        return nullptr;
+    return *action;
 }
 
 GamePage *Actor::getPage() const {

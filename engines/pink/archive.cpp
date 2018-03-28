@@ -210,9 +210,8 @@ static Object* createObject(int objectId){
         case kHandlerStartPage:
             return new HandlerStartPage;
         case kHandlerTimer:
-            return new HandlerTimer;
         case kHandlerTimerActions:
-            return new HandlerTimerActions;
+            return new HandlerTimerActions; // hack for Peril, but behavior is correct
         case kHandlerTimerSequences:
             return new HandlerTimerSequences;
         case kHandlerUseClick:
