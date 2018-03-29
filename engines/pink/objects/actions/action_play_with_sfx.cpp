@@ -21,7 +21,10 @@
  */
 
 #include "action_play_with_sfx.h"
-#include <pink/archive.h>
+#include <pink/objects/pages/game_page.h>
+#include <pink/sound.h>
+#include <pink/objects/actors/actor.h>
+#include <pink/cel_decoder.h>
 
 namespace Pink {
 
@@ -38,14 +41,58 @@ void Pink::ActionPlayWithSfx::toConsole() {
     }
 }
 
-void Pink::ActionSfx::deserialize(Pink::Archive &archive) {
-    archive >> _frame >> _volume >> _sfx;
-    _action = (ActionPlayWithSfx*) archive.readObject();
+void ActionPlayWithSfx::update() {
+    if (_decoder->endOfVideo() && _isLoop) {
+        _decoder->rewind();
+    } else if (_decoder->endOfVideo()) {
+        _decoder->stop();
+        _actor->endAction();
+    }
+    updateSound();
+}
 
+void ActionPlayWithSfx::onStart() {
+    ActionPlay::onStart();
+    if (_isLoop) {
+        _actor->endAction();
+    }
+    updateSound();
+}
+
+void ActionPlayWithSfx::updateSound() {
+    for (int i = 0; i < _sfxArray.size(); ++i) {
+        if (_sfxArray[i]->getFrame() == _decoder->getCurFrame()) {
+            _sfxArray[i]->play(_actor->getPage());
+        }
+    }
+}
+
+ActionPlayWithSfx::~ActionPlayWithSfx() {
+    for (int i = 0; i < _sfxArray.size(); ++i) {
+        delete _sfxArray[i];
+    }
+}
+
+void Pink::ActionSfx::deserialize(Pink::Archive &archive) {
+    archive >> _frame >> _volume >> _sfxName;
+    archive.readObject();
 }
 
 void Pink::ActionSfx::toConsole() {
-    debug("\t\tActionSfx: _sfx = %s, _volume = %u, _frame = %u", _sfx.c_str(), _volume, _frame);
+    debug("\t\tActionSfx: _sfx = %s, _volume = %u, _frame = %u", _sfxName.c_str(), _volume, _frame);
+}
+
+void ActionSfx::play(GamePage *page) {
+    _sound = page->loadSound(_sfxName);
+    _sound->play(Audio::Mixer::SoundType::kSFXSoundType, _volume, 0);
+}
+
+ActionSfx::~ActionSfx() {
+    delete _sound;
+}
+
+uint32 ActionSfx::getFrame() {
+    return _frame;
 }
 
 } // End of namespace Pink

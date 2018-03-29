@@ -37,6 +37,6 @@ private:
     bool _toCalcFramePositions;
 };
 
-}
+} // End of namespace Pink
 
 #endif

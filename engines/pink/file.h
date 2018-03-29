@@ -48,7 +48,6 @@ struct ResourceDescription {
 };
 
 class PinkEngine;
-
 class Object;
 
 class OrbFile : public Common::File {
