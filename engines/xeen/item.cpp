@@ -69,18 +69,19 @@ const char *XeenItem::getItemName(ItemCategory category, uint id) {
 	if (id < 82)
 		return Res.ITEM_NAMES[category][id];
 
+	const char **questItems = (g_vm->getGameID() == GType_Swords) ? Res.QUEST_ITEM_NAMES_SWORDS : Res.QUEST_ITEM_NAMES;
 	switch (category) {
 	case CATEGORY_WEAPON:
-		return Res.QUEST_ITEM_NAMES[id - 82];
+		return questItems[id - 82];
 
 	case CATEGORY_ARMOR:
-		return Res.QUEST_ITEM_NAMES[id - 82 + 35];
+		return questItems[id - 82 + 35];
 
 	case CATEGORY_ACCESSORY:
-		return Res.QUEST_ITEM_NAMES[id - 82 + 35 + 14];
+		return questItems[id - 82 + 35 + 14];
 
 	default:
-		return Res.QUEST_ITEM_NAMES[id - 82 + 35 + 14 + 11];
+		return questItems[id - 82 + 35 + 14 + 11];
 	}
 }
 

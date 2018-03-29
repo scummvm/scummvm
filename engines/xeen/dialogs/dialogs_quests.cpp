@@ -44,6 +44,7 @@ void Quests::execute() {
 	int count = 0;
 	bool headerShown = false;
 	int topRow = 0;
+	const char **questItems = (g_vm->getGameID() == GType_Swords) ? Res.QUEST_ITEM_NAMES_SWORDS : Res.QUEST_ITEM_NAMES;
 
 	addButtons();
 	loadQuestNotes();
@@ -91,11 +92,11 @@ void Quests::execute() {
 					case 83:
 					case 84:
 						lines[count++] = Common::String::format("%d %s%c",
-							party._questItems[idx], Res.QUEST_ITEM_NAMES[idx],
+							party._questItems[idx], questItems[idx],
 							party._questItems[idx] == 1 ? ' ' : 's');
 						break;
 					default:
-						lines[count++] = Res.QUEST_ITEM_NAMES[idx];
+						lines[count++] = questItems[idx];
 						break;
 					}
 				}
