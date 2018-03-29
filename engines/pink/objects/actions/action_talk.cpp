@@ -22,7 +22,9 @@
 
 #include "action_talk.h"
 #include <pink/archive.h>
-#include <common/debug.h>
+#include <pink/objects/actors/actor.h>
+#include <pink/objects/pages/game_page.h>
+#include <pink/sound.h>
 
 namespace Pink {
 
@@ -35,6 +37,23 @@ void ActionTalk::toConsole() {
     debug("\tActionTalk: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
                   " _endFrame = %u, _intro = %u, _style = %u, _vox = %s",
           _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style, _vox.c_str());
+}
+
+void ActionTalk::onStart() {
+    ActionPlay::onStart();
+    _sound = _actor->getPage()->loadSound(_vox);
+    _sound->play(Audio::Mixer::SoundType::kSpeechSoundType, 100, 0);
+}
+
+void ActionTalk::update() {
+    ActionLoop::update();
+    if (!_sound->isPlaying())
+        _actor->endAction();
+}
+
+void ActionTalk::end() {
+    ActionPlay::end();
+    delete _sound;
 }
 
 } // End of namespace Pink

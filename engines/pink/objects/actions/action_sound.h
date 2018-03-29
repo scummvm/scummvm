@@ -48,7 +48,6 @@ private:
     uint32 _volume;
     bool _isLoop;
     bool _isBackground;
-    bool _isStopped;
 };
 
 } // End of namespace Pink

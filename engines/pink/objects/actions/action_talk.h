@@ -27,12 +27,21 @@
 
 namespace Pink {
 
+class Sound;
+
 class ActionTalk : public ActionLoop {
 public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
+    virtual void update();
+
+    virtual void end();
+
+protected:
+    virtual void onStart();
 
 private:
+    Sound *_sound;
     Common::String _vox;
 };
 
