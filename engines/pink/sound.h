@@ -49,6 +49,7 @@ public:
     void resume();
     void stop();
 
+    uint32 getCurrentSample();
     void setBalance(int8 balance);
 
 private:

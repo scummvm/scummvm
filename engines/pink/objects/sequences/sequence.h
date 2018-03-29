@@ -44,7 +44,7 @@ public:
 
     void setContext(SequenceContext *context);
     virtual void init(int unk);
-    void start(int unk);
+    virtual void start(int unk);
     virtual void end();
 
     virtual void update();
@@ -67,6 +67,7 @@ public:
     virtual void toConsole();
 
     virtual void init(int unk);
+    virtual void start(int unk);
     virtual void end();
     virtual void update();
     virtual void restart();
@@ -74,7 +75,7 @@ public:
 private:
     Common::String _soundName;
     Sound *_sound;
-    int _unk2;
+    int _sample;
 };
 
 } // End of namespace Pink

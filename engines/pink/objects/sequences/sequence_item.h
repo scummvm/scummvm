@@ -53,14 +53,14 @@ public:
     virtual bool isLeader();
 };
 
-// behaviour is identical to SequenceItemLeader
 class SequenceItemLeaderAudio : public SequenceItemLeader {
 public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
+    uint32 getSample();
 
 private:
-    //uint32 _sample; // zero in data files and not used;
+    uint32 _sample;
 };
 
 class SequenceItemDefaultAction : public SequenceItem {
