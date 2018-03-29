@@ -41,7 +41,7 @@ public:
     uint32 getZ();
     CelDecoder *getDecoder();
 
-    virtual bool initPallete(Director *director);
+    virtual bool initPalette(Director *director);
 
 protected:
     virtual void onStart() {} ;
