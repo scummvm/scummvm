@@ -60,6 +60,8 @@ public:
 	void lose(int clueId);
 	bool isAcquired(int clueId) const;
 
+	void acquireCluesByRelations(int actorId, int otherActorId);
+
 	int getFromActorId(int clueId) const;
 
 	bool isFlag2(int clueId) const;

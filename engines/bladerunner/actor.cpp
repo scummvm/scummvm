@@ -96,6 +96,8 @@ void Actor::setup(int actorId) {
 	_retiredHeight = 0;
 	_scale         = 1.0f;
 
+	_timer4RemainDefault = 60000;
+
 	_movementTrackWalkingToWaypointId = -1;
 	_movementTrackDelayOnNextWaypoint = -1;
 
@@ -118,9 +120,6 @@ void Actor::setup(int actorId) {
 	_movementTrackNextDelay      = -1;
 	_movementTrackNextAngle      = -1;
 	_movementTrackNextRunning    = false;
-
-	// Timer for exchanging clues
-	_timersLeft[4]   = 60000;
 
 	_animationMode   = -1;
 	_screenRectangle = Common::Rect(-1, -1, -1, -1);
@@ -225,6 +224,8 @@ void Actor::timerUpdate(int timerId) {
 			break;
 		case 4:
 			// Exchange clues between actors
+			acquireCluesByRelations();
+			_timersLeft[4] = _timer4RemainDefault;
 			break;
 		case 5:
 			// Actor animation frame timer
@@ -885,6 +886,21 @@ void Actor::setFriendlinessToOther(int otherActorId, int friendliness) {
 	_friendlinessToOther[otherActorId] = friendliness;
 }
 
+bool Actor::checkFriendlinessAndHonesty(int otherActorId) {
+	int honestyDiff = 2 * _friendlinessToOther[otherActorId] - _honesty;
+	int friendlinessRange;
+
+	if (honestyDiff > 30) {
+		friendlinessRange = 100;
+	} else if (honestyDiff >= 0 && honestyDiff <= 30) {
+		friendlinessRange = 50;
+	} else {
+		friendlinessRange = 0;
+	}
+
+	return _vm->_rnd.getRandomNumberRng(1, 100) <= friendlinessRange;
+}
+
 void Actor::setHonesty(int honesty) {
 	_honesty = honesty;
 }
@@ -1119,6 +1135,18 @@ void Actor::copyClues(int actorId) {
 	}
 }
 
+void Actor::acquireCluesByRelations() {
+	if (_setId >= 0 && _setId != kSetFreeSlotG && _setId != _vm->_actors[0]->_setId) {
+		for (int i = 0; i < _vm->_gameInfo->getActorCount(); i++) {
+			if (i != _id && _vm->_actors[i]->_setId == _setId && i && _id
+					&& checkFriendlinessAndHonesty(i)
+					&& _vm->_actors[0]->checkFriendlinessAndHonesty(_id)) {
+				_clues->acquireCluesByRelations(_id, i);
+			}
+		}
+	}
+}
+
 int Actor::soundVolume() const {
 	float dist = distanceFromView(_vm->_view);
 	return 35.0f * CLIP(1.0f - (dist / 1200.0f), 0.0f, 1.0f);
@@ -1227,7 +1255,7 @@ void Actor::save(SaveFileWriteStream &f) {
 	f.writeVector3(_position);
 	f.writeInt(_facing);
 	f.writeInt(_targetFacing);
-	f.writeInt(0); // TODO: _timer4RemainDefault
+	f.writeInt(_timer4RemainDefault);
 
 	f.writeInt(_honesty);
 	f.writeInt(_intelligence);
@@ -1303,7 +1331,7 @@ void Actor::load(SaveFileReadStream &f) {
 	_position = f.readVector3();
 	_facing = f.readInt();
 	_targetFacing = f.readInt();
-	f.skip(4); // TODO: _timer4RemainDefault
+	_timer4RemainDefault = f.readInt();
 
 	_honesty = f.readInt();
 	_intelligence = f.readInt();

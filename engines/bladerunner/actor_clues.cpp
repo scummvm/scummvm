@@ -88,6 +88,10 @@ bool ActorClues::isAcquired(int clueId) const {
 #endif
 }
 
+void ActorClues::acquireCluesByRelations(int actorId, int otherActorId) {
+	warning("TODO: acquireCluesByRelations");
+}
+
 int ActorClues::getFromActorId(int clueId) const {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {

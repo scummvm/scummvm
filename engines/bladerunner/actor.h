@@ -70,6 +70,8 @@ private:
 	int     _targetFacing;
 	int     _walkboxId;
 
+	int     _timer4RemainDefault;
+
 	// Flags
 	bool _isTarget;
 	bool _isInvisible;
@@ -200,6 +202,7 @@ public:
 	int getFriendlinessToOther(int otherActorId) const { return _friendlinessToOther[otherActorId]; }
 	void setFriendlinessToOther(int otherActorId, int friendliness);
 	void modifyFriendlinessToOther(int otherActorId, signed int change);
+	bool checkFriendlinessAndHonesty(int otherActorId);
 
 	int getHonesty() const { return _honesty; }
 	void setHonesty(int honesty);
@@ -243,6 +246,7 @@ public:
 	void loseClue(int clueId);
 	bool hasClue(int clueId)  const;
 	void copyClues(int actorId);
+	void acquireCluesByRelations();
 
 	int soundVolume() const;
 	int soundBalance() const;
