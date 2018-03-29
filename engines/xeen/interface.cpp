@@ -974,11 +974,8 @@ bool Interface::checkMoveDirection(int key) {
 		} else {
 			party._mazeDirection = dir;
 
-			if (startSurfaceId == SURFTYPE_SWAMP || party.checkSkill(SWIMMING) ||
+			if (startSurfaceId != SURFTYPE_SWAMP || party.checkSkill(SWIMMING) ||
 					party._walkOnWaterActive) {
-				sound.playFX(46);
-				return false;
-			} else {
 				if (_buttonValue == Common::KEYCODE_UP && _wo[107]) {
 					_openDoor = true;
 					sound.playFX(47);
@@ -986,6 +983,9 @@ bool Interface::checkMoveDirection(int key) {
 					_openDoor = false;
 				}
 				return true;
+			} else {
+				sound.playFX(46);
+				return false;
 			}
 		}
 	}
