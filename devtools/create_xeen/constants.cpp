@@ -1288,13 +1288,15 @@ const char *const BONUS_NAMES[7] = {
 	"Bug Zapper", "Monster Masher", "Beast Bopper"
 };
 
-const char *const WEAPON_NAMES[35] = {
+const char *const WEAPON_NAMES[41] = {
 	nullptr, "long sword ", "short sword ", "broad sword ", "scimitar ",
 	"cutlass ", "sabre ", "club ", "hand axe ", "katana ", "nunchakas ",
 	"wakazashi ", "dagger ", "mace ", "flail ", "cudgel ", "maul ", "spear ",
 	"bardiche ", "glaive ", "halberd ", "pike ", "flamberge ", "trident ",
 	"staff ", "hammer ", "naginata ", "battle axe ", "grand axe ", "great axe ",
-	"short bow ", "long bow ", "crossbow ", "sling ", "Xeen Slayer Sword"
+	"short bow ", "long bow ", "crossbow ", "sling ", "Xeen Slayer Sword",
+	"Elder LongSword", "Elder Dagger ", "Elder Mace ", "Elder Spear ",
+	"Elder Staff ", "Elder LongBow "
 };
 
 const char *const ARMOR_NAMES[14] = {
@@ -1413,6 +1415,21 @@ const char *const QUEST_ITEM_NAMES[85] = {
 	"Diamond Rock",
 	"Monga Melon",
 	"Energy Disk"
+};
+
+const char *QUEST_ITEM_NAMES_SWORDS[51] = {
+	"Pass to Hart", "Pass to Impery", "Pass to town3", "Pass to town4", "Pass to town5",
+	"Key to Hart Sewers", "Key to Rettig's Pyramid", "Key to the Old Temple",
+	"Key to Canegtut's Pyramid", "Key to Ascihep's Pyramid", "Key to Dragon Tower",
+	"Key to Darkstone Tower", "Key to Temple of Bark", "Key to Dungeon of Lost Souls",
+	"Key to Ancient Pyramid", "Key to Dungeon of Death", "Red Magic Hammer",
+	"Green Magic Hammer", "Golden Magic Wand", "Silver Magic Hammer", "Magic Coin",
+	"Ruby", "Diamond Mineral", "Emerald", "Sapphire", "Treasure Map (Goto E1 x1, y11)",
+	"NOTUSED", "Melon", "Princess Crown", "Emerald Wand", "Druid Carving", "High Sign",
+	"Holy Wheel", "Double Cross", "Sky Hook", "Sacred Cow", "Staff of the Mountain",
+	"Hard Rock", "Soft Rock", "Rock Candy", "Ivy Plant", "Spirit Gem", "Temple of Sun holy lamp oil",
+	"Noams Hammer", "Positive Orb", "Negative Orb", "FireBane Staff", "Diamond Edged Pick",
+	"Monga Melon", "Energy Disk", "Old XEEN Quest Item" 
 };
 
 const int WEAPON_BASE_COSTS[35] = {
@@ -1616,6 +1633,8 @@ const char *const TOO_DANGEROUS_TO_REST = "Too dangerous to rest here!";
 const char *const SOME_CHARS_MAY_DIE = "Some Chars may die. Rest anyway?";
 
 const char *const CANT_DISMISS_LAST_CHAR = "You cannot dismiss your last character!";
+
+const char *const DELETE_CHAR_WITH_ELDER_WEAPON = "\v000\t000This character has an Elder Weapon and cannot be deleted!";
 
 const char *const REMOVE_DELETE[2] = { "Remove", "Delete" };
 
@@ -2078,7 +2097,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(ITEM_BROKEN);
 	file.syncString(ITEM_CURSED);
 	file.syncStrings(BONUS_NAMES, 7);
-	file.syncStrings(WEAPON_NAMES, 35);
+	file.syncStrings(WEAPON_NAMES, 41);
 	file.syncStrings(ARMOR_NAMES, 14);
 	file.syncStrings(ACCESSORY_NAMES, 11);
 	file.syncStrings(MISC_NAMES, 22);
@@ -2086,6 +2105,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncStrings(ATTRIBUTE_NAMES, 10);
 	file.syncStrings(EFFECTIVENESS_NAMES, 7);
 	file.syncStrings(QUEST_ITEM_NAMES, 85);
+	file.syncStrings(QUEST_ITEM_NAMES_SWORDS, 51);
 	file.syncNumbers((const int *)WEAPON_BASE_COSTS, 35);
 	file.syncNumbers((const int *)ARMOR_BASE_COSTS, 14);
 	file.syncNumbers((const int *)ACCESSORY_BASE_COSTS, 11);
@@ -2152,6 +2172,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(TOO_DANGEROUS_TO_REST);
 	file.syncString(SOME_CHARS_MAY_DIE);
 	file.syncString(CANT_DISMISS_LAST_CHAR);
+	file.syncString(DELETE_CHAR_WITH_ELDER_WEAPON);
 	file.syncStrings(REMOVE_DELETE, 2);
 	file.syncString(REMOVE_OR_DELETE_WHICH);
 	file.syncString(YOUR_PARTY_IS_FULL);

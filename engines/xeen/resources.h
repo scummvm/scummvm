@@ -313,6 +313,7 @@ public:
 	const char *ATTRIBUTE_NAMES[10];
 	const char *EFFECTIVENESS_NAMES[7];
 	const char *QUEST_ITEM_NAMES[85];
+	const char *QUEST_ITEM_NAMES_SWORDS[51];
 	int WEAPON_BASE_COSTS[35];
 	int ARMOR_BASE_COSTS[14];
 	int ACCESSORY_BASE_COSTS[11];
@@ -379,6 +380,7 @@ public:
 	const char *TOO_DANGEROUS_TO_REST;
 	const char *SOME_CHARS_MAY_DIE;
 	const char *CANT_DISMISS_LAST_CHAR;
+	const char *DELETE_CHAR_WITH_ELDER_WEAPON;
 	const char *REMOVE_DELETE[2];
 	const char *REMOVE_OR_DELETE_WHICH;
 	const char *YOUR_PARTY_IS_FULL;

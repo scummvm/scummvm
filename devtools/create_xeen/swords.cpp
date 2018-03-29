@@ -29,52 +29,25 @@
 #undef main
 #endif // main
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "cc.h"
 #include "file.h"
-#include "clouds.h"
 #include "swords.h"
-#include "constants.h"
-#include "map.h"
 
-#define VERSION_NUMBER 1
+#define MONSTERS_COUNT 150
 
-Common::File outputFile;
+void writeSwordsData(CCArchive &cc, const char *swordsDatName) {
+	Common::File f;
+	Common::MemFile monsters;
+	byte buffer[MONSTERS_COUNT * 60];
 
-void NORETURN_PRE error(const char *s, ...) {
-	printf("%s\n", s);
-	exit(1);
-}
+	if (!f.open(swordsDatName, Common::kFileReadMode))
+		error("Could not open Swords xeen.dat");
 
-void writeVersion(CCArchive &cc) {
-	Common::MemFile f;
-	f.writeLong(VERSION_NUMBER);
-	cc.add("VERSION", f);	
-}
+	f.seek(0x44200);
+	f.read(buffer, MONSTERS_COUNT * 60);
 
-int main(int argc, char *argv[]) {
-	if (argc != 3) {
-		printf("Format: %s dark.cc \"swords xeen.dat\"\n", argv[0]);
-		exit(0);
-	}
+	if (strcmp((const char *)buffer + 0x33, "Slime"))
+		error("Invalid Swords xeen.dat");
 
-	if (!outputFile.open("xeen.ccs", Common::kFileWriteMode)) {
-		error("Could not open input file");
-	}
-
-	CCArchive cc(outputFile, kWrite);
-	writeVersion(cc);
-	writeConstants(cc);
-	writeMap(cc);
-
-	const char *darkName = argv[1];
-	writeCloudsData(cc, darkName);
-
-	const char *swordsDatName = argv[2];
-	writeSwordsData(cc, swordsDatName);
-
-	cc.close();
-	return 0;
+	monsters.write(buffer, MONSTERS_COUNT * 60);
+	cc.add("monsters.swd", monsters);
 }

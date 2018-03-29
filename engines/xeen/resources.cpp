@@ -250,7 +250,7 @@ void Resources::loadData() {
 	file.syncString(ITEM_BROKEN);
 	file.syncString(ITEM_CURSED);
 	file.syncStrings(BONUS_NAMES, 7);
-	file.syncStrings(WEAPON_NAMES, 35);
+	file.syncStrings(WEAPON_NAMES, 41);
 	file.syncStrings(ARMOR_NAMES, 14);
 	file.syncStrings(ACCESSORY_NAMES, 11);
 	file.syncStrings(MISC_NAMES, 22);
@@ -258,6 +258,7 @@ void Resources::loadData() {
 	file.syncStrings(ATTRIBUTE_NAMES, 10);
 	file.syncStrings(EFFECTIVENESS_NAMES, 7);
 	file.syncStrings(QUEST_ITEM_NAMES, 85);
+	file.syncStrings(QUEST_ITEM_NAMES_SWORDS, 51);
 	file.syncNumbers((int *)WEAPON_BASE_COSTS, 35);
 	file.syncNumbers((int *)ARMOR_BASE_COSTS, 14);
 	file.syncNumbers((int *)ACCESSORY_BASE_COSTS, 11);
@@ -324,6 +325,7 @@ void Resources::loadData() {
 	file.syncString(TOO_DANGEROUS_TO_REST);
 	file.syncString(SOME_CHARS_MAY_DIE);
 	file.syncString(CANT_DISMISS_LAST_CHAR);
+	file.syncString(DELETE_CHAR_WITH_ELDER_WEAPON);
 	file.syncStrings(REMOVE_DELETE, 2);
 	file.syncString(REMOVE_OR_DELETE_WHICH);
 	file.syncString(YOUR_PARTY_IS_FULL);

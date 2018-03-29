@@ -160,7 +160,6 @@ bool Debugger::cmdGems(int argc, const char **argv) {
 }
 
 bool Debugger::cmdMap(int argc, const char **argv) {
-	FileManager &files = *g_vm->_files;
 	Map &map = *g_vm->_map;
 	Party &party = *g_vm->_party;
 

@@ -81,6 +81,10 @@ public:
 			loadIndex();
 	}
 
+	~CCArchive() {
+		_file.close();
+	}
+
 	/**
 	 * In write mode, finishes the CC file, writing out the resulting content
 	 */

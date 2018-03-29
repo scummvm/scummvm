@@ -653,7 +653,7 @@ void Map::load(int mapId) {
 
 	if (_vm->getGameID() == GType_Swords || _vm->getGameID() == GType_DarkSide) {
 		_animationInfo.load("dark.dat");
-		_monsterData.load("dark.mon");
+		_monsterData.load((_vm->getGameID() == GType_Swords) ? "monsters.swd" : "dark.mon");
 		_wallPicSprites.load("darkpic.dat");
 	} else if (_vm->getGameID() == GType_Clouds) {
 		_animationInfo.load("animinfo.cld");

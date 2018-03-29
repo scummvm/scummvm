@@ -8,7 +8,8 @@ MODULE_OBJS := \
 	hashmap.o \
 	map.o \
 	memorypool.o \
-	str.o
+	str.o \
+	swords.o
 
 # Set the name of the executable
 TOOL_EXECUTABLE := create_xeen
