@@ -117,7 +117,6 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 
 	_console = new LilliputConsole(this);
 	_rnd = 0;
-	_int8installed = false;
 	_mousePos = Common::Point(0, 0);
 	_oldMousePos = Common::Point(0, 0);
 	_mouseDisplayPos = Common::Point(0, 0);
@@ -141,9 +140,6 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_nextDisplayCharacterPos = Common::Point(0, 0);
 	_animationTick = 0;
 	_byte12A05 = 10; // Used to trigger sound and animations in int8, 1 time out of 10
-	_byte12A06 = 2;  // Used to switch _byte12A07 between true and false, 1 time our of 3
-	_byte12A07 = 0;  // Set but never used
-	_byte12A08 = 0;  // Used to avoid two executions of int8 at the same time. Useless in ScummVM
 	_refreshScreenFlag = false;
 	_byte16552 = 0;
 	_lastInterfaceHotspotIndex = -1;
@@ -262,33 +258,18 @@ void LilliputEngine::update() {
 }
 
 void LilliputEngine::newInt8() {
-	if (_byte12A06 == 0) {
-		_byte12A06 = 2;
-		_byte12A07 ^= 1;
-	}
-	--_byte12A06;
-	// TODO: check 'out 20h, 20h'
-
-	if (!_int8installed)
-	  return;
-
-	// if (_soundEnabled)
 	_soundHandler->contentFct1();
 
-	if (_byte12A08 != 1) {
-		_byte12A08 = 1;
-		if (_byte12A05 != 0)
-			--_byte12A05;
-		else {
-			_byte12A05 = 10;
-			if (_int8Timer != 0)
-				--_int8Timer;
+	if (_byte12A05 != 0)
+		--_byte12A05;
+	else {
+		_byte12A05 = 10;
+		if (_int8Timer != 0)
+			--_int8Timer;
 
-			_animationTick ^= 1;
-			if (!_refreshScreenFlag)
-				displayRefreshScreen();
-		}
-		_byte12A08 = 0;
+		_animationTick ^= 1;
+		if (!_refreshScreenFlag)
+			displayRefreshScreen();
 	}
 }
 
@@ -2819,10 +2800,8 @@ Common::Error LilliputEngine::run() {
 	CursorMan.showMouse(true);
 
 	loadRules();
-	_int8installed = true;
 
 	_lastTime = _system->getMillis();
-
 	_scriptHandler->runScript(ScriptStream(_initScript, _initScriptSize));
 
 	while (!_shouldQuit) {

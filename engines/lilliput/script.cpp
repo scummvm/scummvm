@@ -1378,7 +1378,6 @@ byte LilliputScript::OC_comparePos() {
 	if (var1 == Common::Point(d1, d2))
 		return 1;
 
-	warning("OC_comparePos - debug: %d-%d %d-%d", var1.x, var1.y, d1, d2);
 	return 0;
 }
 
@@ -2661,7 +2660,6 @@ void LilliputScript::OC_setSeek() {
 
 	int16 var = getValue1();
 	_characterSeek[_vm->_currentScriptCharacter] = (byte)(var & 0xFF);
-	warning("debug - OC_setSeek: _characterSeek[%d] = %d", _vm->_currentScriptCharacter, var);
 	_vm->_characterSubTargetPosX[_vm->_currentScriptCharacter] = -1;
 }
 

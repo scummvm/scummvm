@@ -141,7 +141,6 @@ public:
 	byte _displayStringBuf[160];
 
 	bool _saveFlag;
-	bool _int8installed;
 	bool _displayMap;
 
 	int _word10800_ERULES;
