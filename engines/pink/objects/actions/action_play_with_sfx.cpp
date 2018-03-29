@@ -68,6 +68,11 @@ void ActionPlayWithSfx::updateSound() {
 }
 
 ActionPlayWithSfx::~ActionPlayWithSfx() {
+    end();
+}
+
+void ActionPlayWithSfx::end() {
+    ActionPlay::end();
     for (int i = 0; i < _sfxArray.size(); ++i) {
         delete _sfxArray[i];
     }

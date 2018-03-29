@@ -32,7 +32,7 @@
 namespace Pink {
 
 ActionSound::ActionSound()
-    : _sound(nullptr), _isStopped(1)
+    : _sound(nullptr)
 {}
 
 ActionSound::~ActionSound(){

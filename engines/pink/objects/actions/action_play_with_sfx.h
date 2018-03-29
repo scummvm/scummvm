@@ -36,6 +36,9 @@ class ActionPlayWithSfx : public ActionPlay {
     virtual void toConsole();
     virtual void update();
 
+public:
+    virtual void end();
+
 protected:
     virtual void onStart();
 
