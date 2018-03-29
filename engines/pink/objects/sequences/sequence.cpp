@@ -147,6 +147,15 @@ void SequenceAudio::toConsole() {
     }
 }
 
+void SequenceAudio::start(int unk) {
+    Sequence::start(unk);
+    int index = _context->getNextItemIndex();
+    if (index < _items.size()) {
+        auto leaderAudio = (SequenceItemLeaderAudio*) _items[index];
+        _sample = leaderAudio->getSample();
+    }
+}
+
 void SequenceAudio::end() {
     delete _sound;
     _sound = nullptr;
@@ -154,12 +163,15 @@ void SequenceAudio::end() {
 }
 
 void SequenceAudio::update() {
-    // Not Working. In original there is check for current buffer size of wav file
-    Sequence::update();
+    if (!_sound->isPlaying())
+        end();
+    else if (_sample <= _sound->getCurrentSample()){
+        start(0);
+    }
 }
 
 void SequenceAudio::init(int unk) {
-    _unk2 = 0;
+    _sample = 0;
     _sound = _sequencer->_page->loadSound(_soundName);
     _sound->play(Audio::Mixer::SoundType::kMusicSoundType, 100, 0);
     Sequence::init(unk);

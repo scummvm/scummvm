@@ -85,11 +85,15 @@ void SequenceItemLeader::toConsole() {
 
 void SequenceItemLeaderAudio::deserialize(Archive &archive) {
     SequenceItem::deserialize(archive);
-    archive.readDWORD();
+    _sample = archive.readDWORD();
 }
 
 void SequenceItemLeaderAudio::toConsole() {
-    debug("\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s", _actor.c_str(), _action.c_str());
+    debug("\t\t\t\tSequenceItemLeaderAudio: _actor=%s, _action=%s _sample=%d", _actor.c_str(), _action.c_str(), _sample);
+}
+
+uint32 SequenceItemLeaderAudio::getSample() {
+    return _sample;
 }
 
 bool SequenceItemDefaultAction::execute(int index, Sequence *sequence, bool unk2) {

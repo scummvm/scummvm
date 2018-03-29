@@ -84,4 +84,8 @@ void Sound::setBalance(int8 balance) {
     _mixer->setChannelBalance(_handle, balance);
 }
 
+uint32 Sound::getCurrentSample() {
+    return _mixer->getSoundElapsedTime(_handle) * 22050 / 1000;
+}
+
 } // End of namespace Pink
