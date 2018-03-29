@@ -101,9 +101,9 @@ class SideEffectRandomPageVariable : public SideEffect
 public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
+    virtual void execute(LeadActor *actor);
 
 private:
-    virtual void execute(LeadActor *actor);
     Common::String _name;
     Common::StringArray _values;
 };

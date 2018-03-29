@@ -101,7 +101,6 @@ void OrbFile::seekToObject(const char *name) {
     seek(desc->objectsOffset);
 }
 
-
 ObjectDescription *OrbFile::getObjDesc(const char *name){
     ObjectDescription *desc = static_cast<ObjectDescription*>(bsearch(name, _table, _tableSize, sizeof(ObjectDescription),
                                                                       [] (const void *a, const void *b) {

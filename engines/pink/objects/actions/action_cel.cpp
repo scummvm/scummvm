@@ -43,8 +43,6 @@ void ActionCEL::deserialize(Archive &archive) {
 void ActionCEL::start(bool unk) {
     if (!_decoder)
         _decoder = _actor->getPage()->loadCel(_fileName);
-    //if (_fileName =="IT01PP01.CEL")
-     //   initPallete(_actor->getPage()->getGame()->getDirector());
     _actor->getPage()->getGame()->getDirector()->addSprite(this);
     this->onStart();
 }

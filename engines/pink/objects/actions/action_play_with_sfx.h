@@ -31,26 +31,39 @@ namespace Pink {
 class ActionSfx;
 
 class ActionPlayWithSfx : public ActionPlay {
+    virtual ~ActionPlayWithSfx();
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
+    virtual void update();
+
+protected:
+    virtual void onStart();
 
 private:
+    void updateSound();
     uint32 _isLoop;
     Common::Array<ActionSfx*> _sfxArray;
 };
 
+class Sound;
+class GamePage;
+
 class ActionSfx : public Object {
 public:
+    virtual ~ActionSfx();
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
 
+    void play(GamePage *page);
+    uint32 getFrame();
+
 private:
-    ActionPlayWithSfx *_action;
-    Common::String _sfx;
+    Sound *_sound;
+    Common::String _sfxName;
     uint32 _volume;
     uint32 _frame;
 };
 
-}
+} // End of namespace Pink
 
 #endif

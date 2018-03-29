@@ -40,6 +40,4 @@ void ActionText::toConsole() {
           _name.c_str(), _text.c_str(), _bounds[0], _bounds[1], _bounds[2], _bounds[3], _centered, _scrollBar, _textColor, _backgroundColor);
 }
 
-
-
-}
+} // End of namespace Pink

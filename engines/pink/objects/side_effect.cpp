@@ -44,7 +44,6 @@ void SideEffectExit::toConsole() {
     debug("\t\tSideEffectExit: _nextModule=%s, _nextPage=%s", _nextModule.c_str(), _nextPage.c_str());
 }
 
-
 void SideEffectLocation::deserialize(Archive &archive) {
     archive >> _location;
 }
@@ -59,7 +58,6 @@ void SideEffectLocation::toConsole() {
     debug("\t\tSideEffectLocation: _location=%s", _location.c_str());
 }
 
-
 void SideEffectInventoryItemOwner::deserialize(Archive &archive) {
     archive >> _item >> _owner;
 }
@@ -72,11 +70,9 @@ void SideEffectInventoryItemOwner::toConsole() {
     debug("\t\tSideEffectInventoryItemOwner: _item=%s, _owner=%s", _item.c_str(), _owner.c_str());
 }
 
-
 void SideEffectVariable::deserialize(Pink::Archive &archive) {
     archive >> _name >> _value;
 }
-
 
 void SideEffectGameVariable::execute(LeadActor *actor) {
     actor->getPage()->getGame()->setVariable(_name, _value);
@@ -86,7 +82,6 @@ void SideEffectGameVariable::toConsole() {
     debug("\t\tSideEffectGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-
 void SideEffectModuleVariable::execute(LeadActor *actor) {
    actor->getPage()->getModule()->setVariable(_name, _value);
 }
@@ -94,7 +89,6 @@ void SideEffectModuleVariable::execute(LeadActor *actor) {
 void SideEffectModuleVariable::toConsole() {
     debug("\t\tSideEffectModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
-
 
 void SideEffectPageVariable::execute(LeadActor *actor) {
     actor->getPage()->setVariable(_name, _value);
@@ -104,13 +98,12 @@ void SideEffectPageVariable::toConsole() {
     debug("\t\tSideEffectPageVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-
 void SideEffectRandomPageVariable::deserialize(Archive &archive) {
     archive >> _name >> _values;
 }
 
 void SideEffectRandomPageVariable::execute(LeadActor *actor) {
-    assert(_values.size());
+    assert(!_values.empty());
 
     Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
     uint index = rnd.getRandomNumber(_values.size() - 1);
