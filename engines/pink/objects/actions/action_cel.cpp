@@ -63,7 +63,7 @@ CelDecoder *ActionCEL::getDecoder() {
     return _decoder;
 }
 
-bool ActionCEL::initPallete(Director *director) {
+bool ActionCEL::initPalette(Director *director) {
     _decoder = _actor->getPage()->loadCel(_fileName);
     _decoder->decodeNextFrame();
     _decoder->rewind();

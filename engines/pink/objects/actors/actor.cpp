@@ -116,7 +116,7 @@ bool Actor::isPlaying() {
 
 bool Actor::initPallete(Director *director) {
     for (int i = 0; i < _actions.size(); ++i) {
-        if (_actions[i]->initPallete(director))
+        if (_actions[i]->initPalette(director))
             return true;
     }
     return false;

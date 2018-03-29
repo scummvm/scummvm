@@ -38,7 +38,7 @@ public:
     virtual void update() {};
     virtual void toConsole() {};
 
-    virtual bool initPallete(Director *director) { return 0;}
+    virtual bool initPalette(Director *director) { return 0;}
 
 protected:
     Actor *_actor;

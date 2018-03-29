@@ -22,8 +22,9 @@
 
 
 #include "action_loop.h"
-#include <common/debug.h>
 #include <pink/archive.h>
+#include <pink/objects/actors/actor.h>
+#include <pink/cel_decoder.h>
 
 namespace Pink {
 
@@ -40,14 +41,29 @@ void ActionLoop::deserialize(Archive &archive) {
             break;
         default:
             _style = kForward;
+            break;
     }
-    //_style = static_cast<Style>(style);
 }
 
 void ActionLoop::toConsole() {
     debug("\tActionLoop: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
                   " _endFrame = %u, _intro = %u, _style = %u",
           _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame, _intro, _style);
+}
+
+void ActionLoop::update() {
+    // for now it supports only forward loop animation
+    if (_style == kForward) {
+        if (_decoder->endOfVideo()){
+            debug("ACTION LOOP : NEXT ITERATION");
+            _decoder->rewind();
+        }
+    }
+}
+
+void ActionLoop::onStart() {
+    ActionPlay::onStart();
+    _actor->endAction();
 }
 
 } // End of namespace Pink
