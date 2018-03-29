@@ -385,6 +385,17 @@ Common::String WeaponItems::getAttributes(XeenItem &item, const Common::String &
 	);
 }
 
+bool WeaponItems::hasElderWeapon() const {
+	if (g_vm->getGameID() == GType_Swords) {
+		for (uint idx = 0; idx < size(); ++idx) {
+			if ((*this)[idx]._id >= 34)
+				return true;
+		}
+	}
+
+	return false;
+}
+
 /*------------------------------------------------------------------------*/
 
 void ArmorItems::equipItem(int itemIndex) {

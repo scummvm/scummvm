@@ -205,6 +205,11 @@ public:
 	 * Enchants a weapon
 	 */
 	virtual void enchantItem(int itemIndex, int amount);
+
+	/**
+	 * Returns true if the character has an Elder weapon in Swords of Xeen
+	 */
+	bool hasElderWeapon() const;
 };
 
 class ArmorItems : public InventoryItems {

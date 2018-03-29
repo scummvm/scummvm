@@ -70,6 +70,10 @@ void Dismiss::execute() {
 					w.close();
 					ErrorScroll::show(_vm, Res.CANT_DISMISS_LAST_CHAR, WT_NONFREEZED_WAIT);
 					w.open();
+				} else if (party._activeParty[_buttonValue]._weapons.hasElderWeapon()) {
+					w.close();
+					ErrorScroll::show(_vm, Res.DELETE_CHAR_WITH_ELDER_WEAPON, WT_NONFREEZED_WAIT);
+					w.open();
 				} else {
 					// Remove the character from the party
 					party._activeParty.remove_at(_buttonValue);
