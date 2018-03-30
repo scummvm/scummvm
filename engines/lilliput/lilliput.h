@@ -265,7 +265,7 @@ public:
 	void scrollToViewportCharacterTarget();
 	void viewportScrollTo(Common::Point goalPos);
 	void checkSpeechClosing();
-	void sub16626();
+	void updateCharPosSequence();
 	void sub16A08(int index);
 	byte sub16A76(int indexb, int indexs);
 	void sub17224(byte type, byte index, int var4);
@@ -285,8 +285,8 @@ public:
 	void addCharToBuf(byte character);
 	void numberToString(int param1);
 	void sub12F37();
-	byte sub16675_moveCharacter(int idx, Common::Point var1);
-	void sub16685(int idx, Common::Point var1);
+	void sequenceMoveCharacter(int idx, Common::Point var1);
+	void setCharacterPose(int idx, Common::Point var1);
 	void sub16EBC();
 	void sub16CA0();
 	byte sub166DD(int index, Common::Point var1);

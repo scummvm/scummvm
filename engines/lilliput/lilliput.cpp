@@ -714,7 +714,7 @@ void LilliputEngine::displayRefreshScreen() {
 			return;
 
 		restoreMapPoints();
-		sub16626();
+		updateCharPosSequence();
 		sub12F37();
 		sub16CA0();
 		sub16EBC();
@@ -725,7 +725,7 @@ void LilliputEngine::displayRefreshScreen() {
 		checkSpeechClosing();
 		prepareGameArea();
 		displayGameArea();
-		sub16626();
+		updateCharPosSequence();
 		sub12F37();
 		sub16CA0();
 		sub16EBC();
@@ -1605,8 +1605,8 @@ void LilliputEngine::numberToString(int param1) {
 	}
 }
 
-void LilliputEngine::sub16626() {
-	debugC(2, kDebugEngine, "sub16626()");
+void LilliputEngine::updateCharPosSequence() {
+	debugC(2, kDebugEngine, "updateCharPosSequence()");
 
 	int index = _numCharacters - 1;
 	byte result;
@@ -1623,10 +1623,11 @@ void LilliputEngine::sub16626() {
 			int16 var2 = var1.x / 16;
 
 			switch (var2) {
-			case 0:
-				result = sub16675_moveCharacter(index, var1);
+			case 0: // Move
+				sequenceMoveCharacter(index, var1);
+				result = 0;
 				break;
-			case 1:
+			case 1: // Face
 				result = sub166DD(index, var1);
 				break;
 			case 2:
@@ -1639,26 +1640,26 @@ void LilliputEngine::sub16626() {
 			case 9:
 				result = 0;
 				break;
-			case 10:
+			case 10: // Seek
 				result = sub1675D(index, var1);
 				break;
-			case 11:
+			case 11: // Sound
 				result = sub16729(index, var1);
 				break;
-			case 12:
+			case 12: // Home
 				result = sub16799(index, var1);
 				break;
-			case 13:
+			case 13: // Character
 				result = sub16722(index, var1);
 				break;
-			case 14:
+			case 14: // ??
 				result = sub166F7(index, var1, index2);
 				break;
-			case 15:
+			case 15: // End
 				result = sub166EA(index);
 				break;
 			default:
-				error("sub16626 - unexpected value %d", var2);
+				error("updateCharPosSequence - unexpected value %d", var2);
 				break;
 			}
 
@@ -1704,7 +1705,7 @@ byte LilliputEngine::sub166DD(int index, Common::Point var1) {
 
 	char var1h = var1.x & 3;
 	_characterDirectionArray[index] = var1h;
-	sub16685(index, Common::Point(var1h, var1.y));
+	setCharacterPose(index, Common::Point(var1h, var1.y));
 	return 0;
 }
 
@@ -2010,21 +2011,22 @@ void LilliputEngine::handleInterfaceHotspot(byte index, byte button) {
 	displayInterfaceHotspots();
 }
 
-void LilliputEngine::sub16685(int idx, Common::Point var1) {
-	debugC(2, kDebugEngine, "sub16685(%d, %d - %d)", idx, var1.x, var1.y);
+void LilliputEngine::setCharacterPose(int charIdx, Common::Point var1) {
+	debugC(2, kDebugEngine, "setCharacterPose(%d, poseIdx %d)", charIdx, var1.y);
 
-	int index = (idx * 32) + var1.y;
-	_scriptHandler->_characterPose[idx] = _poseArray[index];
+	int index = (charIdx * 32) + var1.y;
+	_scriptHandler->_characterPose[charIdx] = _poseArray[index];
 }
 
-byte LilliputEngine::sub16675_moveCharacter(int idx, Common::Point var1) {
-	debugC(2, kDebugEngine, "sub16675_moveCharacter(%d, %d - %d)", idx, var1.x, var1.y);
+void LilliputEngine::sequenceMoveCharacter(int idx, Common::Point var1) {
+	debugC(2, kDebugEngine, "sequenceMoveCharacter(%d, %d - %d)", idx, var1.x, var1.y);
 
-	sub16685(idx, var1);
+	setCharacterPose(idx, var1);
 
 	int index = idx;
 	switch (var1.x) {
 	case 0:
+		// No movement
 		break;
 	case 1:
 		moveCharacterSpeed2(index);
@@ -2057,10 +2059,9 @@ byte LilliputEngine::sub16675_moveCharacter(int idx, Common::Point var1) {
 		moveCharacterSpeed3(index);
 		break;
 	default:
-		warning("sub16675_moveCharacter - Unexpected value %d", var1.x);
+		// CHECKME: It's so bad it could be an error()
+		warning("sequenceMoveCharacter - Unexpected value %d", var1.x);
 	}
-
-	return 0;
 }
 
 void LilliputEngine::turnCharacter1(int index) {
