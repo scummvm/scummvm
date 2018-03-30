@@ -586,9 +586,9 @@ void LilliputEngine::displayCharactersOnMap() {
 
 	byte *buf = (byte *)_mainSurface->getPixels();
 	for (int index = _numCharacters - 1; index >= 0; index--) {
-		if (((_characterTypes[index] & 2) == 0) && (_scriptHandler->_characterTilePosY[index] != -1)) {
+		if (((_characterTypes[index] & 2) == 0) && (_scriptHandler->_characterTilePos[index].y != -1)) {
 			// FIXME: This is still wrong, but less. The values in both arrays should be verified now!
-			int pixIndex = 320 + ((15 * _scriptHandler->_characterTilePosY[index]) / 4) + (_scriptHandler->_characterTilePosX[index] * 4) + 1;
+			int pixIndex = 320 + ((15 * _scriptHandler->_characterTilePos[index].y) / 4) + (_scriptHandler->_characterTilePos[index].x * 4) + 1;
 
 			_mapSavedPixelIndex[index] = pixIndex;
 			_mapSavedPixel[index] = buf[pixIndex];
@@ -632,8 +632,7 @@ void LilliputEngine::moveCharacters() {
 			_characterPositionY[i] = var4;
 		}
 
-		_scriptHandler->_characterTilePosX[i] = (_characterPositionX[i] >> 3);
-		_scriptHandler->_characterTilePosY[i] = (_characterPositionY[i] >> 3);
+		_scriptHandler->_characterTilePos[i] = Common::Point(_characterPositionX[i] >> 3, _characterPositionY[i] >> 3);
 		_characterRelativePositionX[i] = -1;
 		_characterRelativePositionY[i] = -1;
 		_characterDisplayX[i] = -1;
@@ -937,8 +936,8 @@ void LilliputEngine::sub16CA0() {
 		if (_characterTypes[index] & 1)
 			continue;
 
-		int c1 = _scriptHandler->_characterTilePosX[index];
-		int c2 = _scriptHandler->_characterTilePosY[index];
+		int c1 = _scriptHandler->_characterTilePos[index].x;
+		int c2 = _scriptHandler->_characterTilePos[index].y;
 
 		// Hack: Skip if disabled (c2 negative)
 		if (c2 == -1)
@@ -950,8 +949,8 @@ void LilliputEngine::sub16CA0() {
 				(_characterCarried[index] != index2) &&
 				(_characterCarried[index2] != index) &&
 				(_characterTypes[index2] & 2) == 0) {
-				int d1 = _scriptHandler->_characterTilePosX[index2];
-				int d2 = _scriptHandler->_characterTilePosY[index2];
+				int d1 = _scriptHandler->_characterTilePos[index2].x;
+				int d2 = _scriptHandler->_characterTilePos[index2].y;
 
 				if (d1 != -1) {
 					int x = c1 - d1;
@@ -1334,7 +1333,7 @@ byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
 	Common::Point var3 = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
 
 	if (var3.x != -1) {
-		if ((var3.x != _scriptHandler->_characterTilePosX[index]) || (var3.y != _scriptHandler->_characterTilePosY[index])) {
+		if (var3 != _scriptHandler->_characterTilePos[index]) {
 			sub1693A_chooseDirections(index);
 			_scriptHandler->_characterNextSequence[index] -= (param1.x & 0x0F);
 			return 3;
@@ -1346,7 +1345,7 @@ byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
 
 	sub167EF(index);
 
-	Common::Point pos1 = Common::Point(_scriptHandler->_characterTilePosX[index], _scriptHandler->_characterTilePosY[index]);
+	Common::Point pos1 = _scriptHandler->_characterTilePos[index];
 	Common::Point pos2 = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
 
 	_characterDirectionArray[index] = getDirection(pos1, pos2);
@@ -1360,7 +1359,7 @@ byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
 void LilliputEngine::sub167EF(int index) {
 	debugC(2, kDebugEngine, "sub167EF(%d)", index);
 
-	int16 word167EB = findHotspot(Common::Point(_scriptHandler->_characterTilePosX[index], _scriptHandler->_characterTilePosY[index]));
+	int16 word167EB = findHotspot(_scriptHandler->_characterTilePos[index]);
 	int16 word167ED = findHotspot(Common::Point(_characterTargetPosX[index], _characterTargetPosY[index]));
 
 	if (word167EB == word167ED) {
@@ -1445,7 +1444,7 @@ void LilliputEngine::sub1693A_chooseDirections(int index) {
 
 	static const int16 mapArrayMove[4] = {4, -256, 256, -4};
 
-	_word16937Pos = Common::Point(_scriptHandler->_characterTilePosX[index], _scriptHandler->_characterTilePosY[index]);
+	_word16937Pos = _scriptHandler->_characterTilePos[index];
 
 	sub16A08(index);
 
@@ -1723,8 +1722,7 @@ byte LilliputEngine::sequenceSound(int index, Common::Point var1) {
 	int param4x = ((index | 0xFF00) >> 8);
 	int param1 = var1.y;
 	_soundHandler->contentFct2(param1, _scriptHandler->_viewportPos, 
-		Common::Point(_scriptHandler->_characterTilePosX[index], _scriptHandler->_characterTilePosY[index]),
-		Common::Point(param4x, 0));
+		_scriptHandler->_characterTilePos[index], Common::Point(param4x, 0));
 	return 2;
 }
 
@@ -1732,9 +1730,11 @@ byte LilliputEngine::sequenceSeekMovingCharacter(int index, Common::Point var1) 
 	debugC(2, kDebugEngine, "sequenceSeekMovingCharacter(%d, %d - %d)", index, var1.x, var1.y);
 
 	int charIndex = _scriptHandler->_characterSeek[index];
-	Common::Point charPos = Common::Point(_scriptHandler->_characterTilePosX[charIndex], _scriptHandler->_characterTilePosY[charIndex]);
+	Common::Point charPos = _scriptHandler->_characterTilePos[charIndex];
 
-	if ((_characterSubTargetPosX[index] != -1) && (_characterSubTargetPosX[index] == _characterTargetPosX[index]) && (_characterSubTargetPosY[index] == _characterTargetPosY[index])) {
+	if ((_characterSubTargetPosX[index] != -1)
+		&& (_characterSubTargetPosX[index] == _characterTargetPosX[index])
+		&& (_characterSubTargetPosY[index] == _characterTargetPosY[index])) {
 		_characterSubTargetPosX[index] = charPos.x;
 		_characterSubTargetPosY[index] = charPos.y;
 	}
@@ -1750,11 +1750,11 @@ void LilliputEngine::sub16EBC() {
 
 	for (int index1 = _numCharacters - 1; index1 >= 0; index1--) {
 		// Hack: The original doesn't check if it's disabled, which looks wrong
-		if ((_scriptHandler->_characterTilePosX[index1] == -1) || (_scriptHandler->_characterTilePosY[index1] == -1))
+		if ((_scriptHandler->_characterTilePos[index1].x == -1) || (_scriptHandler->_characterTilePos[index1].y == -1))
 			continue;
 		//
 
-		int mapIndex = 3 + (_scriptHandler->_characterTilePosY[index1] * 64 + _scriptHandler->_characterTilePosX[index1]) * 4;
+		int mapIndex = 3 + (_scriptHandler->_characterTilePos[index1].y * 64 + _scriptHandler->_characterTilePos[index1].x) * 4;
 		assert((mapIndex >= 0) && (mapIndex < 16384));
 		byte var1 = _bufferIsoMap[mapIndex] & 0x40;
 
@@ -2158,7 +2158,7 @@ void LilliputEngine::sub16B8F_moveCharacter(int index, Common::Point pos, int di
 	debugC(2, kDebugEngine, "sub16B8F_moveCharacter(%d, %d - %d, %d)", index, pos.x, pos.y, direction);
 
 	int16 diffX = pos.x >> 3;
-	if (((diffX & 0xFF) == _scriptHandler->_characterTilePosX[index]) && ((pos.y >> 3) == _scriptHandler->_characterTilePosY[index])) {
+	if (((diffX & 0xFF) == _scriptHandler->_characterTilePos[index].x) && ((pos.y >> 3) == _scriptHandler->_characterTilePos[index].y)) {
 		_characterPositionX[index] = pos.x;
 		_characterPositionY[index] = pos.y;
 		return;
@@ -2167,7 +2167,7 @@ void LilliputEngine::sub16B8F_moveCharacter(int index, Common::Point pos, int di
 	if ((pos.x < 0) || (pos.x >= 512) || (pos.y < 0) || (pos.y >= 512))
 		return;
 
-	int mapIndex = (_scriptHandler->_characterTilePosY[index] * 64 + _scriptHandler->_characterTilePosX[index]) * 4;
+	int mapIndex = (_scriptHandler->_characterTilePos[index].y * 64 + _scriptHandler->_characterTilePos[index].x) * 4;
 	assert(mapIndex < 16384);
 
 	if ((_bufferIsoMap[mapIndex + 3] & _array16C58[direction]) == 0)

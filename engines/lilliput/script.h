@@ -71,8 +71,7 @@ public:
 
 	byte _characterScriptEnabled[40];
 	int8 _interfaceHotspotStatus[20];
-	int8 _characterTilePosX[40];
-	int8 _characterTilePosY[40];
+	Common::Point _characterTilePos[40];
 	int8 _characterNextSequence[40];
 	int8 _characterPose[40];
 	byte _interfaceButtonActivationDelay[20];

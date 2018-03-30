@@ -66,8 +66,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 		_characterPose[i] = 0;
 		_characterNextSequence[i] = 16;
 		_characterLastSequence[i] = -1;
-		_characterTilePosX[i] = 0;
-		_characterTilePosY[i] = 0;
+		_characterTilePos[i] = Common::Point(0, 0);
 		_array122C1[i] = 0;
 	}
 
@@ -1371,11 +1370,9 @@ byte LilliputScript::OC_comparePos() {
 	debugC(2, kDebugScript, "OC_comparePos()");
 
 	int index = getValue1();
-	int8 d1 = _characterTilePosX[index];
-	int8 d2 = _characterTilePosY[index];
 	Common::Point var1 = getPosFromScript();
 
-	if (var1 == Common::Point(d1, d2))
+	if (var1 == _characterTilePos[index])
 		return 1;
 
 	return 0;
@@ -1541,7 +1538,7 @@ byte LilliputScript::OC_compareCoords_2() {
 	debugC(1, kDebugScript, "OC_compareCoords_2()");
 
 	int16 index = getValue1();
-	Common::Point var1 = Common::Point(_characterTilePosX[index], _characterTilePosY[index]);
+	Common::Point var1 = _characterTilePos[index];
 	index = _currScript->readUint16LE();
 	MinMax xMinMax = _vm->_rectXMinMax[index];
 	MinMax yMinMax = _vm->_rectYMinMax[index];
@@ -3301,7 +3298,7 @@ void LilliputScript::OC_playObjectSound() {
 	Common::Point var4 = Common::Point(0xFF, index & 0xFF);
 	int soundId = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_soundHandler->contentFct2(soundId, _viewportPos, Common::Point(_characterTilePosX[index], _characterTilePosY[index]), var4);
+	_vm->_soundHandler->contentFct2(soundId, _viewportPos, _characterTilePos[index], var4);
 }
 
 void LilliputScript::OC_startLocationSound() {
