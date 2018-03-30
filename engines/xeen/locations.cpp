@@ -804,7 +804,7 @@ TempleLocation::TempleLocation() : BaseLocation(TEMPLE) {
 	_v10 = _v11 = 0;
 	_v12 = _v13 = 0;
 	_v14 = 0;
-	_flag1 = false;
+	_blessed = false;
 	_v5 = _v6 = 0;
 
 	_icons1.load("esc.icn");
@@ -819,6 +819,10 @@ TempleLocation::TempleLocation() : BaseLocation(TEMPLE) {
 
 Common::String TempleLocation::createLocationText(Character &ch) {
 	Party &party = *g_vm->_party;
+	_donation = 0;
+	_uncurseCost = 0;
+	_healCost = 0;
+	_v5 = _v6 = 0;
 
 	if (party._mazeId == (_ccNum ? 29 : 28)) {
 		_v10 = _v11 = _v12 = _v13 = 0;
@@ -864,17 +868,18 @@ Common::String TempleLocation::createLocationText(Character &ch) {
 		_v5 = (_currentCharLevel * 1000) + (ch._conditions[ERADICATED] * 500) + _v11;
 	}
 
-	for (int idx = 0; idx < 9; ++idx) {
-		_uncurseCost |= ch._weapons[idx]._bonusFlags & 0x40;
-		_uncurseCost |= ch._armor[idx]._bonusFlags & 0x40;
-		_uncurseCost |= ch._accessories[idx]._bonusFlags & 0x40;
-		_uncurseCost |= ch._misc[idx]._bonusFlags & 0x40;
+	bool isCursed = false;
+	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
+		isCursed |= (ch._weapons[idx]._bonusFlags & ITEMFLAG_CURSED) != 0;
+		isCursed |= (ch._armor[idx]._bonusFlags & ITEMFLAG_CURSED) != 0;
+		isCursed |= (ch._accessories[idx]._bonusFlags & ITEMFLAG_CURSED) != 0;
+		isCursed |= (ch._misc[idx]._bonusFlags & ITEMFLAG_CURSED) != 0;
 	}
 
-	if (_uncurseCost || ch._conditions[CURSED])
-		_v5 = (_currentCharLevel * 20) + _v10;
+	if (isCursed || ch._conditions[CURSED])
+		_uncurseCost = (_currentCharLevel * 20) + _v10;
 
-	_donation = _flag1 ? 0 : _v14;
+	_donation = _blessed ? 0 : _v14;
 	_healCost += _v6 + _v5;
 
 	return Common::String::format(Res.TEMPLE_TEXT, ch._name.c_str(),
@@ -922,7 +927,7 @@ Character *TempleLocation::doOptions(Character *c) {
 				intf.drawParty(true);
 				sound.stopSound();
 				sound.playSound("ahh.voc");
-				_flag1 = true;
+				_blessed = true;
 				_donation = 0;
 			}
 		}
@@ -964,6 +969,7 @@ Character *TempleLocation::doOptions(Character *c) {
 				c->_misc[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
 			}
 
+			c->_conditions[CURSED] = 0;
 			_farewellTime = 1440;
 			intf.drawParty(true);
 			sound.stopSound();

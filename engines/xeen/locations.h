@@ -198,7 +198,7 @@ private:
 	int _dayOfWeek;
 	int _v10, _v11, _v12;
 	int _v13, _v14;
-	bool _flag1;
+	bool _blessed;
 	int _v5, _v6;
 protected:
 	/**
