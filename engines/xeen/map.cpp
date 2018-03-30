@@ -747,20 +747,7 @@ void Map::load(int mapId) {
 			// Handle loading text data
 			if (!textLoaded) {
 				textLoaded = true;
-
-				if (g_vm->getGameID() == GType_Clouds) {
-					_mazeName = Res._cloudsMapNames[mapId];
-				} else {
-					Common::String txtName = Common::String::format("%s%c%03d.txt",
-						ccNum ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
-					File fText(txtName, 1);
-					char mazeName[33];
-					fText.read(mazeName, 33);
-					mazeName[32] = '\0';
-
-					_mazeName = Common::String(mazeName);
-					fText.close();
-				}
+				_mazeName = getMazeName(mapId, ccNum);
 
 				// Load the monster/object data
 				Common::String mobName = Common::String::format("maze%c%03d.mob",
@@ -1402,6 +1389,26 @@ void Map::getNewMaze() {
 	party._mazePosition = pt;
 	if (mapId)
 		load(mapId);
+}
+
+Common::String Map::getMazeName(int mapId, int ccNum) {
+	if (ccNum == -1)
+		ccNum = g_vm->_files->_ccNum;
+
+	if (g_vm->getGameID() == GType_Clouds) {
+		return Res._cloudsMapNames[mapId];
+	} else {
+		Common::String txtName = Common::String::format("%s%c%03d.txt",
+			ccNum ? "dark" : "xeen", mapId >= 100 ? 'x' : '0', mapId);
+		File fText(txtName, 1);
+		char mazeName[33];
+		fText.read(mazeName, 33);
+		mazeName[32] = '\0';
+
+		Common::String name = Common::String(mazeName);
+		fText.close();
+		return name;
+	}
 }
 
 } // End of namespace Xeen

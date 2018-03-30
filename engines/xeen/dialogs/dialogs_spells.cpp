@@ -742,12 +742,8 @@ bool LloydsBeacon::execute() {
 		}
 	}
 
-	// Open up the text file for the destination map and read in it's name
-	Common::String txtName = Common::String::format("%s%c%03d.txt",
-		c._lloydSide ? "dark" : "xeen", c._lloydMap >= 100 ? 'x' : '0', c._lloydMap);
-	File textFile(txtName, 1);
-	Common::String mapName = textFile.readString();
-	textFile.close();
+	// Get the destination map name
+	Common::String mapName = Map::getMazeName(c._lloydMap, c._lloydSide);
 
 	// Display the dialog
 	w.open();

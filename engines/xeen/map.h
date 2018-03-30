@@ -516,6 +516,13 @@ public:
 	 * position to the relative position on the new map
 	 */
 	void getNewMaze();
+
+	/**
+	 * Return the name of a specified maze
+	 * @param mapId		Map Id
+	 * @param ccNum		Cc file number. If -1, uses the current C
+	 */
+	static Common::String getMazeName(int mapId, int ccNum = -1);
 };
 
 } // End of namespace Xeen
