@@ -22,6 +22,7 @@
 
 #include "bladerunner/actor_clues.h"
 #include "bladerunner/actor.h"
+#include "bladerunner/script/ai_script.h"
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
@@ -98,9 +99,32 @@ int ActorClues::getWeight(int clueId) const {
 }
 
 int ActorClues::getModifier(int actorId, int otherActorId, int clueId) {
-	warning("STUB: getModifier(%d, %d, %d)", actorId, otherActorId, clueId);
+	Actor *actor = _vm->_actors[actorId];
+	int modifier1, modifier2, modifier3, modifier4;
 
-	return 0;
+	int friendliness = actor->getFriendlinessToOther(otherActorId);
+	int clueWeight = actor->_clues->getWeight(clueId);
+
+	if (actor->_clues->isFlag2(clueId)) {
+		modifier1 = 100 - actor->getHonesty() - friendliness;
+	} else {
+		modifier1 = 0;
+	}
+	modifier2 = 0;
+	modifier3 = _vm->_aiScripts->callGetFriendlinessModifierIfGetsClue(otherActorId, actorId, clueId);
+
+	for (int i = 0; i < _vm->_gameInfo->getActorCount(); i++) {
+		if (i != actorId && i != otherActorId) {
+			modifier2 += (friendliness - 50) * _vm->_aiScripts->callGetFriendlinessModifierIfGetsClue(i, otherActorId, clueId) / 100;
+		}
+	}
+	modifier4 = _vm->_rnd.getRandomNumberRng(0, (100 - actor->getIntelligence()) / 10);
+
+	if (_vm->_rnd.getRandomNumberRng(0, 1) == 1) {
+		modifier4 = -modifier4;
+	}
+
+	return modifier1 + modifier2 + modifier3 + modifier4 + clueWeight;
 }
 
 static int cluesCompare(const void *p1, const void *p2) {

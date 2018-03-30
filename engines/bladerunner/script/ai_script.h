@@ -573,6 +573,9 @@ public:
 	bool isInsideScript() const { return _inScriptCounter > 0; }
 
 	void callChangeAnimationMode(int actor, int mode) { _AIScripts[actor]->ChangeAnimationMode(mode); }
+	int callGetFriendlinessModifierIfGetsClue(int actor, int otherActorId, int clueId) {
+		return _AIScripts[actor]->GetFriendlinessModifierIfGetsClue(otherActorId, clueId);
+	}
 };
 
 } // End of namespace BladeRunner
