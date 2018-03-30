@@ -1140,7 +1140,7 @@ void Actor::acquireCluesByRelations() {
 		for (int i = 0; i < _vm->_gameInfo->getActorCount(); i++) {
 			if (i != _id && _vm->_actors[i]->_setId == _setId && i && _id
 					&& checkFriendlinessAndHonesty(i)
-					&& _vm->_actors[0]->checkFriendlinessAndHonesty(_id)) {
+					&& _vm->_actors[i]->checkFriendlinessAndHonesty(_id)) {
 				_clues->acquireCluesByRelations(_id, i);
 			}
 		}
