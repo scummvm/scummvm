@@ -69,7 +69,6 @@ int Input::getString(Common::String &line, uint maxLen, int maxWidth, bool isNum
 		}
 	}
 
-	_vm->_interface->clearEvents();
 	_vm->_noDirectionSense = false;
 	return line.size();
 }

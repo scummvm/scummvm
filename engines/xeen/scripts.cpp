@@ -238,6 +238,8 @@ int Scripts::checkEvents() {
 	_vm->_mode = oldMode;
 	windows.closeAll();
 
+	if (_scriptExecuted)
+		intf.clearEvents();
 	if (_scriptExecuted || !intf._objNumber || _dirFlag) {
 		if (_dirFlag && !_scriptExecuted && intf._objNumber && !map._currentIsEvent) {
 			sound.playFX(21);
@@ -522,7 +524,7 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 
 	if (restartFlag) {
 		// Draw the new location and start any script at that location
-		intf.draw3d(true);
+		events.ipause(2);
 		_lineNum = SCRIPT_RESET;
 		return false;
 	} else {
