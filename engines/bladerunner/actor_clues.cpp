@@ -21,6 +21,7 @@
  */
 
 #include "bladerunner/actor_clues.h"
+#include "bladerunner/actor.h"
 
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/game_info.h"
@@ -88,8 +89,38 @@ bool ActorClues::isAcquired(int clueId) const {
 #endif
 }
 
+int ActorClues::getWeight(int clueId) const {
+	int clueIndex = findClueIndex(clueId);
+	if (clueIndex == -1) {
+		return 0;
+	}
+	return _clues[clueIndex].weight;
+}
+
 void ActorClues::acquireCluesByRelations(int actorId, int otherActorId) {
 	warning("TODO: acquireCluesByRelations");
+}
+
+int ActorClues::findAcquirableCluesFromActor(int actorId, int targetActorId, CluesUS *list, int size) {
+	Actor *actor = _vm->_actors[actorId];
+	Actor *otherActor = _vm->_actors[targetActorId];
+	int count = 0;
+	int cluesCount = actor->_clues->getCount();
+
+	for (int i = 0; i < cluesCount; i++) 	{
+		int clueId = actor->_clues->getClueIdByIndex(i);
+
+		if (actor->_clues->isAcquired(clueId)
+				&& otherActor->_clues->getWeight(clueId) > 0
+				&& !otherActor->_clues->isAcquired(clueId)) {
+			list[count].clueId = clueId;
+			list[count].modifier = 0;
+
+			count++;
+		}
+	}
+
+	return count;
 }
 
 int ActorClues::getFromActorId(int clueId) const {
@@ -169,6 +200,10 @@ int ActorClues::getField1(int clueId) const {
 
 int ActorClues::getCount() const {
 	return _count;
+}
+
+int ActorClues::getClueIdByIndex(int index) const {
+	return _clues[index].clueId;
 }
 
 void ActorClues::removeAll() {
