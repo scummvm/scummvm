@@ -330,6 +330,7 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 	int y = _writePos.y;
 	if (c == 'g' || c == 'p' || c == 'q' || c == 'y')
 		++y;
+	int yStart = y;
 
 	// Get pointers into font data and surface to write pixels to
 	int charIndex = (int)c + (_fontReduced ? 0x80 : 0);
@@ -354,8 +355,8 @@ void FontSurface::writeChar(char c, const Common::Rect &clipRect) {
 		}
 	}
 
-	addDirtyRect(Common::Rect(_writePos.x, _writePos.y, _writePos.x + FONT_WIDTH,
-		_writePos.y + FONT_HEIGHT));
+	addDirtyRect(Common::Rect(_writePos.x, yStart, _writePos.x + FONT_WIDTH,
+		yStart + FONT_HEIGHT));
 	_writePos.x += _fontData[0x1000 + charIndex];
 }
 
