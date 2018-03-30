@@ -64,14 +64,14 @@ void Sound::play(Audio::Mixer::SoundType type, int volume, bool isLoop) {
         _stream = Audio::makeLoopingAudioStream(seekableStream, 0, 0, 0);
     }
 
-    _mixer->playStream(type, &_handle ,_stream);
+    _mixer->playStream(type, &_handle ,_stream, -1 , Audio::Mixer::kMaxChannelVolume, 0,DisposeAfterUse::NO);
 }
 
 bool Sound::load(Common::SeekableReadStream *stream) {
     // Vox files in pink have wave format.
     // RIFF (little-endian) data, WAVE audio, Microsoft PCM, 8 bit, mono 22050 Hz
 
-    _stream = Audio::makeWAVStream(stream, DisposeAfterUse::NO);
+    _stream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
     return isLoaded();
 }
