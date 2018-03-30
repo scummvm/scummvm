@@ -74,8 +74,14 @@ private:
 	 * Flags whether to make the party invincible
 	 */
 	bool cmdInvincible(int argc, const char **argv);
+
+	/**
+	 * Flags whether to make the party invincible
+	 */
+	bool cmdIntangible(int argc, const char **argv);
 public:
 	bool _invincible;
+	bool _intangible;
 public:
 	Debugger(XeenEngine *vm);
 

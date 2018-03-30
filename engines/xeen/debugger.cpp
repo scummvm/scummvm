@@ -45,7 +45,7 @@ static int strToInt(const char *s) {
 /*------------------------------------------------------------------------*/
 
 Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm),
-		_invincible(false) {
+		_spellId(-1), _invincible(false), _intangible(false) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
 	registerCmd("spells", WRAP_METHOD(Debugger, cmdSpells));
@@ -55,8 +55,7 @@ Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm),
 	registerCmd("map", WRAP_METHOD(Debugger, cmdMap));
 	registerCmd("pos", WRAP_METHOD(Debugger, cmdPos));
 	registerCmd("invincible", WRAP_METHOD(Debugger, cmdInvincible));
-
-	_spellId = -1;
+	registerCmd("intangible", WRAP_METHOD(Debugger, cmdIntangible));
 }
 
 void Debugger::update() {
@@ -198,6 +197,12 @@ bool Debugger::cmdPos(int argc, const char **argv) {
 bool Debugger::cmdInvincible(int argc, const char **argv) {
 	_invincible = (argc < 2) || strcmp(argv[1], "off");
 	debugPrintf("Invincibility is %s\n", _invincible ? "on" : "off");
+	return true;
+}
+
+bool Debugger::cmdIntangible(int argc, const char **argv) {
+	_intangible = (argc < 2) || strcmp(argv[1], "off");
+	debugPrintf("Intangibility is %s\n", _intangible ? "on" : "off");
 	return true;
 }
 

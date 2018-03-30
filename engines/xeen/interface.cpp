@@ -895,6 +895,7 @@ void Interface::startFalling(bool flag) {
 }
 
 bool Interface::checkMoveDirection(int key) {
+	Debugger &debugger = *g_vm->_debugger;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
@@ -919,6 +920,9 @@ bool Interface::checkMoveDirection(int key) {
 	map.getCell(7);
 	int startSurfaceId = map._currentSurfaceId;
 	int surfaceId;
+
+	if (debugger._intangible)
+		return true;
 
 	if (map._isOutdoors) {
 		party._mazeDirection = dir;
