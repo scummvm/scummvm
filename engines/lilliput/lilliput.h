@@ -285,8 +285,8 @@ public:
 	void addCharToBuf(byte character);
 	void numberToString(int param1);
 	void sub12F37();
-	void sequenceMoveCharacter(int idx, Common::Point var1);
-	void setCharacterPose(int idx, Common::Point var1);
+	void sequenceMoveCharacter(int idx, int moveType, int poseType);
+	void setCharacterPose(int idx, int poseIdx);
 	void sub16EBC();
 	void sub16CA0();
 	byte sub166DD(int index, Common::Point var1);

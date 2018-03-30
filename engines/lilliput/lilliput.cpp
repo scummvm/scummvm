@@ -1620,11 +1620,12 @@ void LilliputEngine::updateCharPosSequence() {
 			Common::Point var1 = _scriptHandler->_sequenceArr[index2];
 
 			// /8, then /2 as the function array is a word array
-			int16 var2 = var1.x / 16;
+			int16 posSeqType = var1.x / 16;
 
-			switch (var2) {
+			switch (posSeqType) {
 			case 0: // Move
-				sequenceMoveCharacter(index, var1);
+				// x stands for moveType, y for poseType
+				sequenceMoveCharacter(index, var1.x, var1.y);
 				result = 0;
 				break;
 			case 1: // Face
@@ -1659,7 +1660,7 @@ void LilliputEngine::updateCharPosSequence() {
 				result = sub166EA(index);
 				break;
 			default:
-				error("updateCharPosSequence - unexpected value %d", var2);
+				error("updateCharPosSequence - unexpected value %d", posSeqType);
 				break;
 			}
 
@@ -1705,7 +1706,7 @@ byte LilliputEngine::sub166DD(int index, Common::Point var1) {
 
 	char var1h = var1.x & 3;
 	_characterDirectionArray[index] = var1h;
-	setCharacterPose(index, Common::Point(var1h, var1.y));
+	setCharacterPose(index, var1.y);
 	return 0;
 }
 
@@ -2011,20 +2012,21 @@ void LilliputEngine::handleInterfaceHotspot(byte index, byte button) {
 	displayInterfaceHotspots();
 }
 
-void LilliputEngine::setCharacterPose(int charIdx, Common::Point var1) {
-	debugC(2, kDebugEngine, "setCharacterPose(%d, poseIdx %d)", charIdx, var1.y);
+void LilliputEngine::setCharacterPose(int charIdx, int poseIdx) {
+	debugC(2, kDebugEngine, "setCharacterPose(%d, %d)", charIdx, poseIdx);
 
-	int index = (charIdx * 32) + var1.y;
+	// CHECKME: Add an assert on poseIdx to check if it's between 0 and 31?
+	int index = (charIdx * 32) + poseIdx;
 	_scriptHandler->_characterPose[charIdx] = _poseArray[index];
 }
 
-void LilliputEngine::sequenceMoveCharacter(int idx, Common::Point var1) {
-	debugC(2, kDebugEngine, "sequenceMoveCharacter(%d, %d - %d)", idx, var1.x, var1.y);
+void LilliputEngine::sequenceMoveCharacter(int idx, int moveType, int poseType) {
+	debugC(2, kDebugEngine, "sequenceMoveCharacter(%d, %d - %d)", idx, moveType, poseType);
 
-	setCharacterPose(idx, var1);
+	setCharacterPose(idx, poseType);
 
 	int index = idx;
-	switch (var1.x) {
+	switch (moveType) {
 	case 0:
 		// No movement
 		break;
@@ -2060,7 +2062,7 @@ void LilliputEngine::sequenceMoveCharacter(int idx, Common::Point var1) {
 		break;
 	default:
 		// CHECKME: It's so bad it could be an error()
-		warning("sequenceMoveCharacter - Unexpected value %d", var1.x);
+		warning("sequenceMoveCharacter - Unexpected value %d", moveType);
 	}
 }
 
