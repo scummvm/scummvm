@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-03-12 11:46+0100\n"
+"POT-Creation-Date: 2018-03-30 09:53+0200\n"
 "PO-Revision-Date: 2017-11-23 12:42+0000\n"
 "Last-Translator: Santiago G. Sanz <santiagogarciasanz@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -4623,6 +4623,16 @@ msgstr "Filtraxe bilineal de sprites (LENTA)"
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Aplica a flitraxe bilineal a cada sprite."
+
+#: engines/xeen/detection.cpp:84
+msgid "Show item costs in standard inventory mode"
+msgstr ""
+
+#: engines/xeen/detection.cpp:85
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr ""
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"

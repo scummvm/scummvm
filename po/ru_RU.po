@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-03-12 11:46+0100\n"
+"POT-Creation-Date: 2018-03-30 09:53+0200\n"
 "PO-Revision-Date: 2017-11-28 17:59+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4618,6 +4618,16 @@ msgstr "Билинейная фильтрация спрайтов (медленно)"
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Применить билинейную фильтрацию для индивидуальных спрайтов"
+
+#: engines/xeen/detection.cpp:84
+msgid "Show item costs in standard inventory mode"
+msgstr ""
+
+#: engines/xeen/detection.cpp:85
+msgid ""
+"Shows item costs in standard inventory mode, allowing the value of items to "
+"be compared"
+msgstr ""
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
