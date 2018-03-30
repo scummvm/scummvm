@@ -28,12 +28,12 @@
 
 namespace Pink {
 
-void Pink::ActionPlayWithSfx::deserialize(Pink::Archive &archive) {
+void ActionPlayWithSfx::deserialize(Pink::Archive &archive) {
     ActionPlay::deserialize(archive);
     archive >> _isLoop >> _sfxArray;
 }
 
-void Pink::ActionPlayWithSfx::toConsole() {
+void ActionPlayWithSfx::toConsole() {
     debug("\tActionPlayWithSfx: _name = %s, _fileName = %s, z = %u, _startFrame = %u,"
                   " _endFrame = %u, _isLoop = %u", _name.c_str(), _fileName.c_str(), _z, _startFrame, _stopFrame);
     for (int i = 0; i < _sfxArray.size(); ++i) {
@@ -68,36 +68,49 @@ void ActionPlayWithSfx::updateSound() {
 }
 
 ActionPlayWithSfx::~ActionPlayWithSfx() {
-    end();
-}
-
-void ActionPlayWithSfx::end() {
-    ActionPlay::end();
     for (int i = 0; i < _sfxArray.size(); ++i) {
         delete _sfxArray[i];
     }
 }
 
-void Pink::ActionSfx::deserialize(Pink::Archive &archive) {
+void ActionPlayWithSfx::end() {
+    ActionPlay::end();
+    for (int i = 0; i < _sfxArray.size(); ++i) {
+        _sfxArray[i]->end();
+    }
+}
+
+void ActionSfx::deserialize(Pink::Archive &archive) {
     archive >> _frame >> _volume >> _sfxName;
     archive.readObject();
 }
 
-void Pink::ActionSfx::toConsole() {
+void ActionSfx::toConsole() {
     debug("\t\tActionSfx: _sfx = %s, _volume = %u, _frame = %u", _sfxName.c_str(), _volume, _frame);
 }
 
 void ActionSfx::play(GamePage *page) {
-    _sound = page->loadSound(_sfxName);
+    if (!_sound)
+        _sound = page->loadSound(_sfxName);
+
     _sound->play(Audio::Mixer::SoundType::kSFXSoundType, _volume, 0);
 }
 
 ActionSfx::~ActionSfx() {
-    delete _sound;
+    end();
 }
 
 uint32 ActionSfx::getFrame() {
     return _frame;
+}
+
+ActionSfx::ActionSfx()
+    : _sound(nullptr)
+{}
+
+void ActionSfx::end() {
+    delete _sound;
+    _sound = nullptr;
 }
 
 } // End of namespace Pink
