@@ -280,16 +280,16 @@ public:
 
 	void checkNumericCode();
 	void keyboard_handleInterfaceShortcuts(bool &forceReturnFl);
-	byte sub16799(int index, Common::Point param1);
+	byte sequenceCharacterHomeIn(int index, Common::Point param1);
 	byte getDirection(Common::Point param1, Common::Point param2);
 	void addCharToBuf(byte character);
 	void numberToString(int param1);
 	void sub12F37();
-	void sequenceMoveCharacter(int idx, int moveType, int poseType);
+	byte sequenceMoveCharacter(int idx, int moveType, int poseType);
 	void setCharacterPose(int idx, int poseIdx);
 	void sub16EBC();
 	void sub16CA0();
-	byte sub166DD(int index, Common::Point var1);
+	byte sequenceSetCharacterDirection(int index, int direction, int poseType);
 	void sub171CF();
 	void checkInterfaceActivationDelay();
 	int16 sub16DD5(int x1, int y1, int x2, int y2);
@@ -318,8 +318,8 @@ public:
 	void moveCharacterSpeed3(int index);
 	void sub16B31_moveCharacter(int index, int16 speed);
 	void sub16B8F_moveCharacter(int index, Common::Point pos, int direction);
-	byte sub1675D(int index, Common::Point var1);
-	byte sub16729(int index, Common::Point var1);
+	byte sequenceSeekMovingCharacter(int index, Common::Point var1);
+	byte sequenceSound(int index, Common::Point var1);
 	byte sub166F7(int index, Common::Point var1, int tmpVal);
 	void sub1693A_chooseDirections(int index);
 

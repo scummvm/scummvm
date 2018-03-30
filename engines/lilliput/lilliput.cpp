@@ -1328,8 +1328,8 @@ byte LilliputEngine::getDirection(Common::Point param1, Common::Point param2) {
 	return _directionsArray[var2l];
 }
 
-byte LilliputEngine::sub16799(int index, Common::Point param1) {
-	debugC(2, kDebugEngine, "sub16799(%d, %d - %d)", index, param1.x, param1.y);
+byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
+	debugC(2, kDebugEngine, "sequenceCharacterHomeIn(%d, %d - %d)", index, param1.x, param1.y);
 
 	Common::Point var3 = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
 
@@ -1625,11 +1625,11 @@ void LilliputEngine::updateCharPosSequence() {
 			switch (posSeqType) {
 			case 0: // Move
 				// x stands for moveType, y for poseType
-				sequenceMoveCharacter(index, var1.x, var1.y);
-				result = 0;
+				result = sequenceMoveCharacter(index, var1.x, var1.y);
 				break;
-			case 1: // Face
-				result = sub166DD(index, var1);
+			case 1: // Face direction
+				// x stands for the next direction, y for the poseType
+				result = sequenceSetCharacterDirection(index, var1.x, var1.y);
 				break;
 			case 2:
 			case 3:
@@ -1641,14 +1641,14 @@ void LilliputEngine::updateCharPosSequence() {
 			case 9:
 				result = 0;
 				break;
-			case 10: // Seek
-				result = sub1675D(index, var1);
+			case 10: // Seek move target
+				result = sequenceSeekMovingCharacter(index, var1);
 				break;
 			case 11: // Sound
-				result = sub16729(index, var1);
+				result = sequenceSound(index, var1);
 				break;
-			case 12: // Home
-				result = sub16799(index, var1);
+			case 12: // Home in target
+				result = sequenceCharacterHomeIn(index, var1);
 				break;
 			case 13: // Character
 				result = sub16722(index, var1);
@@ -1701,12 +1701,12 @@ byte LilliputEngine::sub166F7(int index, Common::Point var1, int tmpVal) {
 	return 3;
 }
 
-byte LilliputEngine::sub166DD(int index, Common::Point var1) {
-	debugC(2, kDebugEngine, "sub166DD(%d, %d - %d)", index, var1.x, var1.y);
+byte LilliputEngine::sequenceSetCharacterDirection(int index, int direction, int poseType) {
+	debugC(2, kDebugEngine, "sequenceSetCharacterDirection(%d, %d - %d)", index, direction, poseType);
 
-	char var1h = var1.x & 3;
-	_characterDirectionArray[index] = var1h;
-	setCharacterPose(index, var1.y);
+	char newDir = direction & 3;
+	_characterDirectionArray[index] = newDir;
+	setCharacterPose(index, poseType);
 	return 0;
 }
 
@@ -1717,17 +1717,19 @@ byte LilliputEngine::sub16722(int index, Common::Point var1) {
 	return 2;
 }
 
-byte LilliputEngine::sub16729(int index, Common::Point var1) {
-	debugC(2, kDebugEngine, "sub16729(%d, %d - %d)", index, var1.x, var1.y);
+byte LilliputEngine::sequenceSound(int index, Common::Point var1) {
+	debugC(2, kDebugEngine, "sequenceSound(%d, %d - %d)", index, var1.x, var1.y);
 
 	int param4x = ((index | 0xFF00) >> 8);
 	int param1 = var1.y;
-	_soundHandler->contentFct2(param1, _scriptHandler->_viewportPos, Common::Point(_scriptHandler->_characterTilePosX[index], _scriptHandler->_characterTilePosY[index]), Common::Point(param4x, 0));
+	_soundHandler->contentFct2(param1, _scriptHandler->_viewportPos, 
+		Common::Point(_scriptHandler->_characterTilePosX[index], _scriptHandler->_characterTilePosY[index]),
+		Common::Point(param4x, 0));
 	return 2;
 }
 
-byte LilliputEngine::sub1675D(int index, Common::Point var1) {
-	debugC(2, kDebugEngine, "sub1675D(%d, %d - %d)", index, var1.x, var1.y);
+byte LilliputEngine::sequenceSeekMovingCharacter(int index, Common::Point var1) {
+	debugC(2, kDebugEngine, "sequenceSeekMovingCharacter(%d, %d - %d)", index, var1.x, var1.y);
 
 	int charIndex = _scriptHandler->_characterSeek[index];
 	Common::Point charPos = Common::Point(_scriptHandler->_characterTilePosX[charIndex], _scriptHandler->_characterTilePosY[charIndex]);
@@ -1740,7 +1742,7 @@ byte LilliputEngine::sub1675D(int index, Common::Point var1) {
 	_characterTargetPosX[index] = charPos.x;
 	_characterTargetPosY[index] = charPos.y;
 
-	return sub16799(index, var1);
+	return sequenceCharacterHomeIn(index, var1);
 }
 
 void LilliputEngine::sub16EBC() {
@@ -2020,7 +2022,7 @@ void LilliputEngine::setCharacterPose(int charIdx, int poseIdx) {
 	_scriptHandler->_characterPose[charIdx] = _poseArray[index];
 }
 
-void LilliputEngine::sequenceMoveCharacter(int idx, int moveType, int poseType) {
+byte LilliputEngine::sequenceMoveCharacter(int idx, int moveType, int poseType) {
 	debugC(2, kDebugEngine, "sequenceMoveCharacter(%d, %d - %d)", idx, moveType, poseType);
 
 	setCharacterPose(idx, poseType);
@@ -2064,6 +2066,8 @@ void LilliputEngine::sequenceMoveCharacter(int idx, int moveType, int poseType) 
 		// CHECKME: It's so bad it could be an error()
 		warning("sequenceMoveCharacter - Unexpected value %d", moveType);
 	}
+
+	return 0;
 }
 
 void LilliputEngine::turnCharacter1(int index) {
