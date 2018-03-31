@@ -261,7 +261,6 @@ void Interface::perform() {
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
-	Spells &spells = *_vm->_spells;
 	const Common::Rect WAIT_BOUNDS(8, 8, 224, 140);
 
 	do {
@@ -522,10 +521,6 @@ void Interface::perform() {
 			combat.moveMonsters();
 			draw3d(true);
 		}
-
-		Character *c = &party._activeParty[(spells._lastCaster < 0 ||
-			spells._lastCaster >= (int)party._activeParty.size()) ?
-			(int)party._activeParty.size() - 1 : spells._lastCaster];
 
 		int result = CastSpell::show(_vm);
 
