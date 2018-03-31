@@ -93,47 +93,49 @@ void Spells::spellFailed() {
 }
 
 void Spells::castItemSpell(int itemSpellId) {
+	assert(itemSpellId != 0);
+
 	switch (itemSpellId) {
-	case 15:
+	case 16:
 		if (_vm->_mode == MODE_COMBAT) {
 			NotWhileEngaged::show(_vm, MS_Jump);
 			return;
 		}
 		break;
-	case 20:
+	case 21:
 		if (_vm->_mode == MODE_COMBAT) {
 			NotWhileEngaged::show(_vm, MS_WizardEye);
 			return;
 		}
 		break;
-	case 27:
+	case 28:
 		if (_vm->_mode == MODE_COMBAT) {
 			NotWhileEngaged::show(_vm, MS_LloydsBeacon);
 			return;
 		}
 		break;
-	case 32:
+	case 33:
 		frostbite2();
 		break;
-	case 41:
+	case 42:
 		if (_vm->_mode == MODE_COMBAT) {
 			NotWhileEngaged::show(_vm, MS_Teleport);
 			return;
 		}
 		break;
-	case 47:
+	case 48:
 		if (_vm->_mode == MODE_COMBAT) {
 			NotWhileEngaged::show(_vm, MS_SuperShelter);
 			return;
 		}
 		break;
-	case 54:
+	case 55:
 		if (_vm->_mode == MODE_COMBAT) {
 			NotWhileEngaged::show(_vm, MS_TownPortal);
 			return;
 		}
 		break;
-	case 57:
+	case 58:
 		if (_vm->_mode == MODE_COMBAT) {
 			NotWhileEngaged::show(_vm, MS_Etheralize);
 			return;
@@ -143,8 +145,8 @@ void Spells::castItemSpell(int itemSpellId) {
 		break;
 	}
 
-	static const MagicSpell spells[73] = {
-		MS_Light, MS_Awaken, MS_MagicArrow, MS_FirstAid, MS_FlyingFist,
+	static const MagicSpell spells[74] = {
+		NO_SPELL, MS_Light, MS_Awaken, MS_MagicArrow, MS_FirstAid, MS_FlyingFist,
 		MS_EnergyBlast, MS_Sleep, MS_Revitalize, MS_CureWounds, MS_Sparks,
 		MS_Shrapmetal, MS_InsectSpray, MS_ToxicCloud, MS_ProtFromElements, MS_Pain,
 		MS_Jump, MS_BeastMaster, MS_Clairvoyance, MS_TurnUndead, MS_Levitate,
