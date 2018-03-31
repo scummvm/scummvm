@@ -743,13 +743,14 @@ void InventoryItemsGroup::curseUncurse(bool curse) {
 }
 
 bool InventoryItemsGroup::hasCursedItems() const {
-	bool isCursed = false;
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		for (ItemCategory cat = CATEGORY_WEAPON; cat <= CATEGORY_MISC; cat = (ItemCategory)((int)cat + 1)) {
 			if ((*this)[cat][idx]._state._cursed)
 				return true;
 		}
 	}
+
+	return false;
 }
 
 } // End of namespace Xeen
