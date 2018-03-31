@@ -50,11 +50,9 @@ void Module::init(bool isLoadingSave, const Common::String &pageName) {
     // 0 0  - new game
     // 0 1 - module changed
     // 1 0 - from save
-    if (!pageName.empty()) {
+    if (!pageName.empty())
         _page = findPage(pageName);
-    }
-
-    if (!_page)
+    else if (!_page)
         _page = _pages[0];
 
     _page->init(isLoadingSave);
@@ -67,7 +65,6 @@ void Module::changePage(const Common::String &pageName) {
 
     //_page->clear
 
-
     page->init(kLoadingNewGame);
 }
 
@@ -77,7 +74,6 @@ GamePage *Module::findPage(const Common::String &pageName) const {
         return pageName == page->getName();
     });
 }
-
 
 PinkEngine *Module::getGame() const {
     return _game;

@@ -75,7 +75,7 @@ bool OrbFile::open(const Common::String &name) {
 void OrbFile::loadGame(PinkEngine *game) {
     seekToObject("PinkGame");
     Archive archive(*this);
-    archive.mapObject((Object *) game); // hack
+    archive.mapObject(reinterpret_cast<Object*>(game)); // hack
     game->load(archive);
 }
 
