@@ -90,7 +90,9 @@ void VisualExplodingImage::render(const Common::Point &position) {
 
 VisualExplodingImage::ExplosionUnit::ExplosionUnit() :
 		_stillImageTimeRemaining(33 * 33),
-		_explosionFastAccelerationTimeRemaining(25 * 33) {
+		_explosionFastAccelerationTimeRemaining(25 * 33),
+		_mainColor(0),
+		_darkColor(0) {
 
 }
 
