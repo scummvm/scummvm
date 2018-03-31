@@ -800,7 +800,7 @@ bool Scripts::cmdRemove(ParamsIterator &params) {
 
 	if (intf._objNumber) {
 		// Give the active object a completely way out of bounds position
-		MazeObject &obj = map._mobData._objects[intf._objNumber - 1];
+		MazeObject &obj = map._mobData._objects[intf._objNumber];
 		obj._position = Common::Point(128, 128);
 	}
 
