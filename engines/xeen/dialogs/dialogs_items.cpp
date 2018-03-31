@@ -730,6 +730,15 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 			if (!result)
 				result = 1;
 			break;
+
+		case ITEMMODE_3:
+		case ITEMMODE_RECHARGE:
+		case ITEMMODE_5:
+		case ITEMMODE_ENCHANT:
+			// Show number of charges
+			result = i._bonusFlags & ITEMFLAG_CHARGES_MASK;
+			break;
+
 		default:
 			break;
 		}

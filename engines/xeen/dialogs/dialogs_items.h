@@ -59,7 +59,7 @@ private:
 	void setEquipmentIcons();
 
 	/**
-	 * Calculate the cost of an item
+	 * Calculate the cost of an item, or charges renaming for Misc items as appropriate
 	 */
 	int calcItemCost(Character *c, int itemIndex, ItemsMode mode, int skillLevel,
 		ItemCategory category);
