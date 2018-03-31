@@ -480,6 +480,7 @@ Common::SeekableReadStream *SaveArchive::createReadStreamForMember(uint16 id) co
 }
 
 void SaveArchive::load(Common::SeekableReadStream &stream) {
+	_newData.clear();
 	loadIndex(stream);
 
 	delete[] _data;
