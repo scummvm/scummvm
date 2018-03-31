@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-03-30 09:53+0200\n"
-"PO-Revision-Date: 2018-01-24 16:16+0000\n"
+"PO-Revision-Date: 2018-03-31 12:53+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
-"Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fi/>\n"
+"Language-Team: Finnish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fi/>\n"
 "Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -4608,13 +4608,15 @@ msgstr "K‰yt‰ bilineaarista suodatusta yksitt‰isiin spriteihin"
 
 #: engines/xeen/detection.cpp:84
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "N‰yt‰ esineiden hinnat normaalissa inventoriossa"
 
 #: engines/xeen/detection.cpp:85
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
+"N‰ytt‰‰ esineiden hinnat normaalissa inventoriossa, mahdollistaen arvojen "
+"vertailun"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
