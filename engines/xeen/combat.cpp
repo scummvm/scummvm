@@ -348,13 +348,7 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 			sound.playFX(36);
 			break;
 		case SA_CURSEITEM:
-			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-				if (c._weapons[idx]._id != 34)
-					c._weapons[idx]._bonusFlags |= ITEMFLAG_CURSED;
-				c._armor[idx]._bonusFlags |= ITEMFLAG_CURSED;
-				c._accessories[idx]._bonusFlags |= ITEMFLAG_CURSED;
-				c._misc[idx]._bonusFlags |= ITEMFLAG_CURSED;
-			}
+			c._items.curseUncurse(true);
 			sound.playFX(37);
 			break;
 		case SA_DRAINSP:
@@ -384,8 +378,8 @@ void Combat::doCharDamage(Character &c, int charNum, int monsterDataIndex) {
 		case SA_BREAKWEAPON:
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				XeenItem &weapon = c._weapons[idx];
-				if (weapon._id != 34 && weapon._id != 0 && weapon._frame != 0) {
-					weapon._bonusFlags |= ITEMFLAG_BROKEN;
+				if (weapon._id < XEEN_SLAYER_SWORD && weapon._id != 0 && weapon._frame != 0) {
+					weapon._state._broken = true;
 					weapon._frame = 0;
 				}
 			}
@@ -1354,31 +1348,33 @@ void Combat::attack(Character &c, RangeType rangeType) {
 
 		for (int itemIndex = 0; itemIndex < INV_ITEMS_TOTAL; ++itemIndex) {
 			XeenItem &weapon = c._weapons[itemIndex];
-			if (weapon._frame != 0) {
-				switch (weapon._bonusFlags & ITEMFLAG_BONUS_MASK) {
-				case 1:
+			if (weapon.isEquipped()) {
+				switch (weapon._state._counter) {
+				case EFFECTIVE_DRAGON:
 					if (monsterData._monsterType == MONSTER_DRAGON)
 						damage *= 3;
 					break;
-				case 2:
+				case EFFECTIVE_UNDEAD	:
 					if (monsterData._monsterType == MONSTER_UNDEAD)
 						damage *= 3;
 					break;
-				case 3:
+				case EFFECTIVE_GOLEM:
 					if (monsterData._monsterType == MONSTER_GOLEM)
 						damage *= 3;
 					break;
-				case 4:
+				case EFFECTIVE_INSECT:
 					if (monsterData._monsterType == MONSTER_INSECT)
 						damage *= 3;
 					break;
-				case 5:
-					if (monsterData._monsterType == MONSTER_0)
+				case EFFEctIVE_MONSTERS:
+					if (monsterData._monsterType == MONSTER_MONSTERS)
 						damage *= 3;
 					break;
-				case 6:
+				case EFFECTIVE_ANIMAL:
 					if (monsterData._monsterType == MONSTER_ANIMAL)
 						damage *= 3;
+					break;
+				default:
 					break;
 				}
 			}
@@ -1516,8 +1512,8 @@ void Combat::attack2(int damage, RangeType rangeType) {
 			if (!ccNum && monster._spriteId == 89) {
 				// Xeen's Scepter of Temporal Distortion
 				party._treasure._weapons[0]._id = 90;
-				party._treasure._weapons[0]._bonusFlags = 0;
 				party._treasure._weapons[0]._material = 0;
+				party._treasure._weapons[0]._state.clear();
 				party._treasure._hasItems = true;
 				party._questItems[8]++;
 			}
@@ -1692,7 +1688,7 @@ void Combat::getWeaponDamage(Character &c, RangeType rangeType) {
 		}
 
 		if (flag) {
-			if (!(weapon._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED))) {
+			if (!weapon.isBad()) {
 				_attackWeapon = &weapon;
 
 				if (weapon._material < 37) {

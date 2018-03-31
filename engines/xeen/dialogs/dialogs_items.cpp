@@ -326,7 +326,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 						InventoryItems &srcItems = c->_items[category];
 						XeenItem &srcItem = srcItems[itemIndex];
 
-						if (srcItem._bonusFlags & ITEMFLAG_CURSED)
+						if (srcItem._state._cursed)
 							ErrorScroll::show(_vm, Res.CANNOT_REMOVE_CURSED_ITEM);
 						else if (destItems.isFull())
 							ErrorScroll::show(_vm, Common::String::format(
@@ -736,7 +736,7 @@ int ItemsDialog::calcItemCost(Character *c, int itemIndex, ItemsMode mode,
 		case ITEMMODE_5:
 		case ITEMMODE_ENCHANT:
 			// Show number of charges
-			result = i._bonusFlags & ITEMFLAG_CHARGES_MASK;
+			result = i._state._counter;
 			break;
 
 		default:
@@ -802,10 +802,8 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 					default:
 						if (combat._itemFlag) {
 							ErrorScroll::show(_vm, Res.USE_ITEM_IN_COMBAT);
-						} else if (i._id && (i._bonusFlags & ITEMFLAG_BONUS_MASK)
-								&& !(i._bonusFlags & (ITEMFLAG_BROKEN | ITEMFLAG_CURSED))) {
-							int charges = (i._bonusFlags & ITEMFLAG_BONUS_MASK) - 1;
-							i._bonusFlags = charges;
+						} else if (i._id && !i.isBad() && i._state._counter > 0) {
+							--i._state._counter;
 							_oldCharacter = &c;
 
 							windows[30].close();
@@ -813,7 +811,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 							windows[24].close();
 							spells.castItemSpell(i._id);
 
-							if (!charges) {
+							if (!i._state._counter) {
 								// Ran out of charges, so make item disappear
 								c._items[category][itemIndex].clear();
 								c._items[category].sort();
@@ -876,10 +874,10 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 			bool noNeed;
 			switch (category) {
 			case CATEGORY_WEAPON:
-				noNeed = (item._bonusFlags & ITEMFLAG_CURSED) || item._id == 34;
+				noNeed = (item._state._cursed) || item._id >= XEEN_SLAYER_SWORD;
 				break;
 			default:
-				noNeed = item._bonusFlags & ITEMFLAG_CURSED;
+				noNeed = item._state._cursed;
 				break;
 			}
 
@@ -904,17 +902,12 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 		}
 
 		case ITEMMODE_RECHARGE:
-			if (category != CATEGORY_MISC || c._misc[itemIndex]._material > 9
-					|| c._misc[itemIndex]._id == 53 || c._misc[itemIndex]._id == 0) {
+			if (category != CATEGORY_MISC || item._material > 9 || item._id == 53 || item._id == 0) {
 				sound.playFX(21);
 				ErrorScroll::show(_vm, Common::String::format(Res.NOT_RECHARGABLE, Res.SPELL_FAILED));
 			} else {
-				int charges = MIN(63, _vm->getRandomNumber(1, 6) +
-					(c._misc[itemIndex]._bonusFlags & ITEMFLAG_BONUS_MASK));
+				item._state._counter = MIN(63, _vm->getRandomNumber(1, 6) + item._state._counter);
 				sound.playFX(20);
-
-				c._misc[itemIndex]._bonusFlags = (c._misc[itemIndex]._bonusFlags
-					& ~ITEMFLAG_BONUS_MASK) | charges;
 			}
 			return 2;
 
@@ -926,7 +919,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 		}
 
 		case ITEMMODE_REPAIR:
-			if (!(item._bonusFlags & ITEMFLAG_BROKEN)) {
+			if (!item._state._broken) {
 				ErrorScroll::show(_vm, Res.ITEM_NOT_BROKEN);
 			} else {
 				int cost = calcItemCost(&c, itemIndex, mode, actionIndex, category);
@@ -936,7 +929,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 					cost);
 
 				if (Confirm::show(_vm, msg) && party.subtract(CONS_GOLD, cost, WHERE_PARTY)) {
-					item._bonusFlags &= ~ITEMFLAG_BROKEN;
+					item._state._broken = false;
 				}
 			}
 			break;
@@ -991,11 +984,11 @@ void ItemsDialog::itemToGold(Character &c, int itemIndex, ItemCategory category,
 	Party &party = *_vm->_party;
 	Sound &sound = *_vm->_sound;
 
-	if (category == CATEGORY_WEAPON && item._id == 34) {
+	if (category == CATEGORY_WEAPON && item._id >= XEEN_SLAYER_SWORD) {
 		sound.playFX(21);
 		ErrorScroll::show(_vm, Common::String::format("\v012\t000\x03""c%s",
 			Res.SPELL_FAILED));
-	} else if (item._id != 0) {
+	} else if (!item.empty()) {
 		// There is a valid item present
 		// Calculate cost of item and add it to the party's total
 		int cost = calcItemCost(&c, itemIndex, mode, 1, category);

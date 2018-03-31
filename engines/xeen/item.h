@@ -52,11 +52,54 @@ enum ElementalCategory {
 	ELEM_ENERGY = 4, ELEM_MAGIC = 5
 };
 
+enum ItemId {
+	XEEN_SLAYER_SWORD = 34
+};
+
+enum Effectiveness {
+	EFFECTIVE_NONE = 0, EFFECTIVE_DRAGON = 1, EFFECTIVE_UNDEAD = 2, EFFECTIVE_GOLEM = 3,
+	EFFECTIVE_INSECT = 4, EFFEctIVE_MONSTERS = 5, EFFECTIVE_ANIMAL = 6
+};
+
+struct ItemState {
+	byte _counter : 6;		// Stores charges for Misc items, and the effective against for weapons
+	bool _cursed : 1;
+	bool _broken : 1;
+
+	/**
+	 * Constructor
+	 */
+	ItemState() : _counter(0), _cursed(false), _broken(false) {}
+
+	/**
+	 * Clear the state
+	 */
+	void clear() {
+		_counter = 0;
+		_cursed = _broken = false;
+	}
+
+	/**
+	 * Returns true if the state is empty
+	 */
+	bool empty() const { return !_counter && !_cursed && !_broken; }
+
+	/**
+	 * Synchronizes the item's state
+	 */
+	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Set the entire state value
+	 */
+	void operator=(byte val);
+};
+
 class XeenItem {
 public:
 	int _material;
 	uint _id;
-	int _bonusFlags;
+	ItemState _state;
 	int _frame;
 public:
 	/**
@@ -70,11 +113,6 @@ public:
 	XeenItem();
 
 	/**
-	 * Constructor
-	 */
-	XeenItem(uint id, int material, int bonusFlags) : _id(id), _material(material), _bonusFlags(bonusFlags) {}
-
-	/**
 	 * Clear the data for the item
 	 */
 	void clear();
@@ -83,6 +121,16 @@ public:
 	 * Returns true if no item is set
 	 */
 	bool empty() const { return _id == 0; }
+
+	/**
+	 * Returns true if the item is cursed or broken
+	 */
+	bool isBad() const { return _state._cursed || _state._broken; }
+
+	/**
+	 * Returns true for weapons if it's equipped
+	 */
+	bool isEquipped() const { return _frame != 0; }
 
 	/**
 	 * Synchronizes the data for the item
@@ -305,6 +353,16 @@ public:
 	 * Breaks all the items in a given character's inventory
 	 */
 	void breakAllItems();
+
+	/**
+	 * Curses or curses all the items
+	 */
+	void curseUncurse(bool curse);
+
+	/**
+	 * Returns true if the character has any cursed items
+	 */
+	bool hasCursedItems() const;
 };
 
 } // End of namespace Xeen

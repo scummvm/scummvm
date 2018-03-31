@@ -52,7 +52,7 @@ MonsterStruct::MonsterStruct() {
 	_specialAttack = SA_NONE;
 	_hitChance = 0;
 	_rangeAttack = 0;
-	_monsterType = MONSTER_0;
+	_monsterType = MONSTER_MONSTERS;
 	_fireResistence = 0;
 	_electricityResistence = 0;
 	_coldResistence = 0;

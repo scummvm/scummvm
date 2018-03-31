@@ -554,7 +554,7 @@ int Character::itemScan(int itemId) const {
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		const XeenItem &item = _weapons[idx];
 
-		if (item._frame && !(item._bonusFlags & 0xC0) && itemId < 11
+		if (item._frame && !item.isBad() && itemId < 11
 				&& itemId != 3 && item._material >= 59 && item._material <= 130) {
 			int mIndex = (int)item.getAttributeCategory();
 			if (mIndex > PERSONALITY)
@@ -569,7 +569,7 @@ int Character::itemScan(int itemId) const {
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		const XeenItem &item = _armor[idx];
 
-		if (item._frame && !(item._bonusFlags & 0xC0)) {
+		if (item._frame && !item.isBad()) {
 			if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
 				int mIndex = (int)item.getAttributeCategory();
 				if (mIndex > PERSONALITY)
@@ -600,7 +600,7 @@ int Character::itemScan(int itemId) const {
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 		const XeenItem &item = _accessories[idx];
 
-		if (item._frame && !(item._bonusFlags & 0xC0)) {
+		if (item._frame && !item.isBad()) {
 			if (itemId < 11 && itemId != 3 && item._material >= 59 && item._material <= 130) {
 				int mIndex = (int)item.getAttributeCategory();
 				if (mIndex > PERSONALITY)
@@ -963,7 +963,7 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 	int v4 = vm->getRandomNumber(100);
 	int v6 = vm->getRandomNumber(p1 < 6 ? 100 : 80);
 	ItemCategory category;
-	int v16 = 0, v14 = 0, miscBonus = 0, miscId = 0, v8 = 0, v12 = 0;
+	int v16 = 0, v14 = 0, miscCharges = 0, miscId = 0, v8 = 0, v12 = 0;
 
 	// Randomly pick a category and item Id
 	if (p3 == 12) {
@@ -1155,7 +1155,7 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 			break;
 
 		case 4:
-			miscBonus = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
+			miscCharges = vm->getRandomNumber(Res.MAKE_ITEM_ARR5[p1][0], Res.MAKE_ITEM_ARR5[p1][1]);
 			break;
 
 		default:
@@ -1168,7 +1168,7 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 		if (p1 != 1) {
 			newItem._material = (v14 ? v14 + 58 : 0) + (v16 ? v16 + 36 : 0) + v12;
 			if (vm->getRandomNumber(20) == 10)
-				newItem._bonusFlags = vm->getRandomNumber(1, 6);
+				newItem._state._counter = vm->getRandomNumber(1, 6);
 		}
 		break;
 
@@ -1181,7 +1181,7 @@ ItemCategory Character::makeItem(int p1, int itemIndex, int p3) {
 
 	case CATEGORY_MISC:
 		newItem._id = miscId;
-		newItem._bonusFlags = miscBonus;
+		newItem._state._counter = miscCharges;
 		break;
 
 	default:
@@ -1242,7 +1242,7 @@ void Character::subtractHitPoints(int amount) {
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				XeenItem &item = _armor[idx];
 				if (item._id && item._frame)
-					item._bonusFlags |= ITEMFLAG_BROKEN;
+					item._state._broken = true;
 			}
 		}
 	}
@@ -1250,7 +1250,7 @@ void Character::subtractHitPoints(int amount) {
 
 bool Character::hasSlayerSword() const {
 	for (uint idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-		if (_weapons[idx]._id == 34)
+		if (_weapons[idx]._id == XEEN_SLAYER_SWORD)
 			// Character has Xeen Slayer sword
 			return true;
 	}

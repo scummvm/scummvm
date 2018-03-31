@@ -114,7 +114,7 @@ void BlacksmithWares::regenerate() {
 					XeenItem &item = (*this)[itemCat][0][slotNum][catCount[itemCat]];
 					item._id = tempChar._weapons[0]._id;
 					item._material = tempChar._weapons[0]._material;
-					item._bonusFlags = tempChar._weapons[0]._bonusFlags;
+					item._state = tempChar._weapons[0]._state;
 
 					++catCount[itemCat];
 				}
@@ -133,7 +133,7 @@ void BlacksmithWares::regenerate() {
 					XeenItem &item = (*this)[itemCat][1][slotNum][catCount[itemCat]];
 					item._id = tempChar._misc[0]._id;
 					item._material = tempChar._misc[0]._material;
-					item._bonusFlags = tempChar._misc[0]._bonusFlags;
+					item._state = tempChar._misc[0]._state;
 
 					++catCount[itemCat];
 				}
@@ -713,8 +713,8 @@ void Party::giveTreasure() {
 	for (int categoryNum = 0; categoryNum < NUM_ITEM_CATEGORIES; ++categoryNum) {
 		for (int itemNum = 0; itemNum < MAX_TREASURE_ITEMS; ++itemNum) {
 			if (arePacksFull()) {
-				if (_treasure._weapons[itemNum]._id == 34) {
-					// Important item, so clear a slot for it
+				if (_treasure._weapons[itemNum]._id >= XEEN_SLAYER_SWORD) {
+					// Xeen Slayer Sword, so clear a slot for it
 					_activeParty[0]._weapons[INV_ITEMS_TOTAL - 1].clear();
 				} else {
 					// Otherwise, clear all the remaining treasure items,
@@ -1356,7 +1356,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		// Found a free slot, so copy the created item into it
 		trItems[idx]._material = srcItem._material;
 		trItems[idx]._id = srcItem._id;
-		trItems[idx]._bonusFlags = srcItem._bonusFlags;
+		trItems[idx]._state = srcItem._state;
 		_treasure._hasItems = true;
 		break;
 	}

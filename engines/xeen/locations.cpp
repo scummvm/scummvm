@@ -868,14 +868,7 @@ Common::String TempleLocation::createLocationText(Character &ch) {
 		_v5 = (_currentCharLevel * 1000) + (ch._conditions[ERADICATED] * 500) + _v11;
 	}
 
-	bool isCursed = false;
-	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-		isCursed |= (ch._weapons[idx]._bonusFlags & ITEMFLAG_CURSED) != 0;
-		isCursed |= (ch._armor[idx]._bonusFlags & ITEMFLAG_CURSED) != 0;
-		isCursed |= (ch._accessories[idx]._bonusFlags & ITEMFLAG_CURSED) != 0;
-		isCursed |= (ch._misc[idx]._bonusFlags & ITEMFLAG_CURSED) != 0;
-	}
-
+	bool isCursed = ch._items.hasCursedItems();
 	if (isCursed || ch._conditions[CURSED])
 		_uncurseCost = (_currentCharLevel * 20) + _v10;
 
@@ -962,13 +955,7 @@ Character *TempleLocation::doOptions(Character *c) {
 
 	case Common::KEYCODE_u:
 		if (_uncurseCost && party.subtract(CONS_GOLD, _uncurseCost, WHERE_PARTY, WT_LOC_WAIT)) {
-			for (int idx = 0; idx < 9; ++idx) {
-				c->_weapons[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
-				c->_armor[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
-				c->_accessories[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
-				c->_misc[idx]._bonusFlags &= ~ITEMFLAG_CURSED;
-			}
-
+			c->_items.curseUncurse(false);
 			c->_conditions[CURSED] = 0;
 			_farewellTime = 1440;
 			intf.drawParty(true);

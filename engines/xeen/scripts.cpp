@@ -966,9 +966,9 @@ bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 				for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
 					XeenItem &item = party._treasure._weapons[idx];
 					if (!item._id) {
-						item._id = 34;
+						item._id = XEEN_SLAYER_SWORD;
 						item._material = 0;
-						item._bonusFlags = 0;
+						item._state.clear();
 						party._treasure._hasItems = true;
 
 						return cmdExit(params);
@@ -1259,12 +1259,12 @@ bool Scripts::cmdGiveEnchanted(ParamsIterator &params) {
 			// Handling of misc items. Note that for them, id actually specifies the material field
 			item->_material = id;
 			item->_id = params.readByte();
-			item->_bonusFlags = (item->_material == 10 || item->_material == 11) ? 1 : _vm->getRandomNumber(3, 10);
+			item->_state._counter = (item->_material == 10 || item->_material == 11) ? 1 : _vm->getRandomNumber(3, 10);
 		} else {
 			// Weapons, armor, and accessories
 			item->_id = id;
 			item->_material = params.readByte();
-			item->_bonusFlags = params.readByte();
+			item->_state = params.readByte();
 		}
 	}
 
