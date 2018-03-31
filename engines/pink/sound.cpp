@@ -34,8 +34,8 @@ Sound::Sound(Audio::Mixer *mixer, Common::SeekableReadStream *stream)
 }
 
 Sound::~Sound() {
-    //look for mem leak
     stop();
+    delete _stream;
 }
 
 bool Sound::isPlaying() {
@@ -64,7 +64,7 @@ void Sound::play(Audio::Mixer::SoundType type, int volume, bool isLoop) {
         _stream = Audio::makeLoopingAudioStream(seekableStream, 0, 0, 0);
     }
 
-    _mixer->playStream(type, &_handle ,_stream, -1 , Audio::Mixer::kMaxChannelVolume, 0,DisposeAfterUse::NO);
+    _mixer->playStream(type, &_handle ,_stream, -1 , Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 }
 
 bool Sound::load(Common::SeekableReadStream *stream) {

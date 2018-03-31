@@ -65,7 +65,7 @@ void HandlerSequences::onMessage(LeadActor *actor) {
     Handler::onMessage(actor);
     Sequencer *sequencer = actor->getSequencer();
 
-    assert(_sequences.size());
+    assert(!_sequences.empty());
 
     Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
     uint index = rnd.getRandomNumber(_sequences.size() - 1);
