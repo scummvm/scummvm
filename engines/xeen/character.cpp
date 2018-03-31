@@ -1222,7 +1222,7 @@ void Character::subtractHitPoints(int amount) {
 
 	// Subtract the given HP amount
 	_currentHp -= amount;
-	bool flag = _currentHp <= 10;
+	bool breakFlag = _currentHp <= -10;
 	assert(_currentHp < 65000);
 
 	if (_currentHp < 1) {
@@ -1232,13 +1232,13 @@ void Character::subtractHitPoints(int amount) {
 			sound.playFX(38);
 		} else {
 			_conditions[DEAD] = 1;
-			flag = true;
+			breakFlag = true;
 			if (_currentHp > 0)
 				_currentHp = 0;
 		}
 
-		if (flag) {
-			// Check for breaking equipped armor
+		if (breakFlag) {
+			// Break any equipped armor the character has
 			for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
 				XeenItem &item = _armor[idx];
 				if (item._id && item._frame)
