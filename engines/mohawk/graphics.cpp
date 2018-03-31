@@ -30,7 +30,7 @@
 
 namespace Mohawk {
 
-MohawkSurface::MohawkSurface() : _surface(0), _palette(0) {
+MohawkSurface::MohawkSurface() : _surface(nullptr), _palette(nullptr) {
 	_offsetX = 0;
 	_offsetY = 0;
 }
@@ -64,7 +64,7 @@ void MohawkSurface::convertToTrueColor() {
 	_surface->free();
 	delete _surface;
 	free(_palette);
-	_palette = 0;
+	_palette = nullptr;
 	_surface = surface;
 }
 

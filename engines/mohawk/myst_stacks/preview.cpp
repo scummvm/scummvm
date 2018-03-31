@@ -34,9 +34,18 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Preview::Preview(MohawkEngine_Myst *vm) : Myst(vm) {
+Preview::Preview(MohawkEngine_Myst *vm) :
+		Myst(vm) {
 	setupOpcodes();
 	_vm->_cursor->hideCursor();
+
+	_libraryState = 0;
+	_library = nullptr;
+
+	_speechRunning = false;
+	_speechStep = 0;
+	_currentCue = 0;
+	_speechNextTime = 0;
 }
 
 Preview::~Preview() {

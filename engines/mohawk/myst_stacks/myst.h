@@ -37,11 +37,11 @@ namespace MystStacks {
 
 class Myst : public MystScriptParser {
 public:
-	Myst(MohawkEngine_Myst *vm);
-	~Myst();
+	explicit Myst(MohawkEngine_Myst *vm);
+	~Myst() override;
 
-	virtual void disablePersistentScripts() override;
-	virtual void runPersistentScripts() override;
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 protected:
 	void setupOpcodes();
@@ -49,7 +49,7 @@ protected:
 	void toggleVar(uint16 var) override;
 	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() override { return 9934; }
+	uint16 getMap() override { return 9934; }
 
 	void towerRotationMap_run();
 	virtual void libraryBookcaseTransform_run();

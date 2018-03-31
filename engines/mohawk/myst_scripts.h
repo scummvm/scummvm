@@ -60,7 +60,7 @@ typedef Common::SharedPtr<Common::Array<MystScriptEntry> > MystScript;
 
 class MystScriptParser {
 public:
-	MystScriptParser(MohawkEngine_Myst *vm);
+	explicit MystScriptParser(MohawkEngine_Myst *vm);
 	virtual ~MystScriptParser();
 
 	void runScript(MystScript script, MystArea *invokingResource = nullptr);

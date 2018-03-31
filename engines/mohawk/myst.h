@@ -176,7 +176,7 @@ protected:
 
 public:
 	MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc);
-	virtual ~MohawkEngine_Myst();
+	~MohawkEngine_Myst() override;
 
 	Common::SeekableReadStream *getResource(uint32 tag, uint16 id) override;
 	Common::Array<uint16> getResourceIDList(uint32 type) const;
@@ -263,8 +263,6 @@ private:
 	void unloadCard();
 	void runInitScript();
 	void runExitScript();
-
-	void loadHelp(uint16 id);
 
 	void loadResources();
 	void drawResourceRects();

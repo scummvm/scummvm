@@ -36,23 +36,53 @@ namespace Mohawk {
 namespace MystStacks {
 
 Mechanical::Mechanical(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm), _state(vm->_gameState->_mechanical) {
+		MystScriptParser(vm),
+		_state(vm->_gameState->_mechanical) {
 	setupOpcodes();
 
 	_elevatorGoingMiddle = false;
 	_elevatorPosition = 0;
+	_elevatorGoingDown = 0;
+	_elevatorRotationSpeed = 0;
+	_elevatorRotationGearPosition = 0;
+	_elevatorRotationSoundId = 0;
+	_elevatorRotationLeverMoving = false;
+	_elevatorTooLate = false;
+	_elevatorInCabin = false;
+	_elevatorTopCounter = 0;
+	_elevatorNextTime = 0;
 
 	_crystalLit = 0;
 
 	_mystStaircaseState = false;
 	_fortressPosition = 0;
-	_fortressRotationSpeed = 0;
-	_fortressSimulationSpeed = 0;
 	_gearsWereRunning = false;
 
 	_fortressRotationShortMovieWorkaround = false;
 	_fortressRotationShortMovieCount = 0;
 	_fortressRotationShortMovieLast = 0;
+
+	_fortressRotationRunning = false;
+	_fortressRotationSpeed = 0;
+	_fortressRotationBrake = 0;
+	_fortressRotationGears = nullptr;
+
+	_fortressSimulationRunning = false;
+	_fortressSimulationInit = false;
+	_fortressSimulationSpeed = 0;
+	_fortressSimulationBrake = 0;
+	_fortressSimulationStartSound1 = 0;
+	_fortressSimulationStartSound2 = 0;
+	_fortressSimulationHolo = nullptr;
+	_fortressSimulationStartup = nullptr;
+	_fortressSimulationHoloRate = 0;
+
+	_birdSinging = false;
+	_birdCrankStartTime = 0;
+	_birdSingEndTime = 0;
+	_bird = nullptr;
+
+	_snakeBox = nullptr;
 }
 
 Mechanical::~Mechanical() {

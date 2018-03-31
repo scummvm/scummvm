@@ -39,8 +39,8 @@ namespace MystStacks {
 
 class Preview : public Myst {
 public:
-	Preview(MohawkEngine_Myst *vm);
-	~Preview();
+	explicit Preview(MohawkEngine_Myst *vm);
+	~Preview() override;
 
 	void disablePersistentScripts() override;
 	void runPersistentScripts() override;

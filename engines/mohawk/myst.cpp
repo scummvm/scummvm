@@ -54,7 +54,8 @@
 
 namespace Mohawk {
 
-MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
+MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) :
+		MohawkEngine(syst, gamedesc) {
 	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 	DebugMan.addDebugChannel(kDebugView, "View", "Track Card File (VIEW) Parsing");
@@ -69,6 +70,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_currentCursor = 0;
 	_mainCursor = kDefaultMystCursor;
 	_showResourceRects = false;
+	_curStack = 0;
 	_curCard = 0;
 
 	_hoverResource = nullptr;
@@ -82,6 +84,7 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_scriptParser = nullptr;
 	_gameState = nullptr;
 	_optionsDialog = nullptr;
+	_rnd = nullptr;
 
 	_prevStack = nullptr;
 
@@ -89,6 +92,12 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 	_mouseMoved = false;
 	_escapePressed = false;
 	_interactive = true;
+	_runExitScript = true;
+
+	_needsPageDrop = false;
+	_needsShowCredits = false;
+	_needsShowDemoMenu = false;
+	_needsShowMap = false;
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
@@ -339,9 +348,6 @@ Common::Error MohawkEngine_Myst::run() {
 			error("Could not load help.dat");
 		_mhk.push_back(mhk);
 	}
-
-	// Test Load Function...
-	loadHelp(10000);
 
 	while (!shouldQuit()) {
 		doFrame();
@@ -724,7 +730,7 @@ void MohawkEngine_Myst::checkCurrentResource() {
 	}
 
 	for (uint16 i = 0; i < _resources.size(); i++) {
-		if (_resources[i]->contains(mouse) && _resources[i]->type == kMystAreaHover
+		if (_resources[i]->contains(mouse) && _resources[i]->hasType(kMystAreaHover)
 			&& _hoverResource != _resources[i]) {
 			_hoverResource = static_cast<MystAreaHover *>(_resources[i]);
 			_hoverResource->handleMouseEnter();
@@ -955,50 +961,6 @@ void MohawkEngine_Myst::runExitScript() {
 	_scriptParser->runScript(script);
 }
 
-void MohawkEngine_Myst::loadHelp(uint16 id) {
-	// The original version did not have the help system
-	if (!(getFeatures() & GF_ME))
-		return;
-
-	// TODO: Help File contains 5 cards i.e. VIEW, RLST, etc.
-	//       in addition to HELP resources.
-	//       These are Ids 9930 to 9934
-	//       Need to deal with loading and displaying these..
-	//       Current engine structure only supports display of
-	//       card from primary stack MHK
-
-	debugC(kDebugHelp, "Loading Help System Data");
-
-	Common::SeekableReadStream *helpStream = getResource(ID_HELP, id);
-
-	uint16 count = helpStream->readUint16LE();
-	uint16 *u0 = new uint16[count];
-	Common::String helpText;
-
-	debugC(kDebugHelp, "\tcount: %d", count);
-
-	for (uint16 i = 0; i < count; i++) {
-		u0[i] = helpStream->readUint16LE();
-		debugC(kDebugHelp, "\tu0[%d]: %d", i, u0[i]);
-	}
-
-	// TODO: Previous values i.e. u0[0] to u0[count - 2]
-	// appear to be resource ids in the help.dat file..
-	if (u0[count - 1] != count)
-		warning("loadHelp(): last u0 value is not equal to count");
-
-	do {
-		helpText += helpStream->readByte();
-	} while (helpText.lastChar() != 0);
-	helpText.deleteLastChar();
-
-	debugC(kDebugHelp, "\thelpText: \"%s\"", helpText.c_str());
-
-	delete[] u0;
-
-	delete helpStream;
-}
-
 void MohawkEngine_Myst::loadCursorHints() {
 	_cursorHints.clear();
 
@@ -1059,7 +1021,7 @@ void MohawkEngine_Myst::checkCursorHints() {
 
 	// Check all the cursor hints to see if we're in a hotspot that contains a hint.
 	for (uint16 i = 0; i < _cursorHints.size(); i++)
-		if (_resources[_cursorHints[i].id] == _activeResource && _activeResource->isEnabled()) {
+		if (_activeResource && _resources[_cursorHints[i].id] == _activeResource && _activeResource->isEnabled()) {
 			if (_cursorHints[i].cursor == -1) {
 				uint16 var_value = _scriptParser->getVar(_cursorHints[i].variableHint.var);
 
@@ -1107,7 +1069,7 @@ void MohawkEngine_Myst::redrawResource(MystAreaImageSwitch *resource, bool updat
 
 void MohawkEngine_Myst::redrawArea(uint16 var, bool update) {
 	for (uint16 i = 0; i < _resources.size(); i++)
-		if (_resources[i]->type == kMystAreaImageSwitch && _resources[i]->getImageSwitchVar() == var)
+		if (_resources[i]->hasType(kMystAreaImageSwitch) && _resources[i]->getImageSwitchVar() == var)
 			redrawResource(static_cast<MystAreaImageSwitch *>(_resources[i]), update);
 }
 
@@ -1120,35 +1082,33 @@ MystArea *MohawkEngine_Myst::loadResource(Common::SeekableReadStream *rlstStream
 
 	switch (type) {
 	case kMystAreaAction:
-		resource =  new MystAreaAction(this, rlstStream, parent);
+		resource =  new MystAreaAction(this, type, rlstStream, parent);
 		break;
 	case kMystAreaVideo:
-		resource =  new MystAreaVideo(this, rlstStream, parent);
+		resource =  new MystAreaVideo(this, type, rlstStream, parent);
 		break;
 	case kMystAreaActionSwitch:
-		resource =  new MystAreaActionSwitch(this, rlstStream, parent);
+		resource =  new MystAreaActionSwitch(this, type, rlstStream, parent);
 		break;
 	case kMystAreaImageSwitch:
-		resource =  new MystAreaImageSwitch(this, rlstStream, parent);
+		resource =  new MystAreaImageSwitch(this, type, rlstStream, parent);
 		break;
 	case kMystAreaSlider:
-		resource =  new MystAreaSlider(this, rlstStream, parent);
+		resource =  new MystAreaSlider(this, type, rlstStream, parent);
 		break;
 	case kMystAreaDrag:
-		resource =  new MystAreaDrag(this, rlstStream, parent);
+		resource =  new MystAreaDrag(this, type, rlstStream, parent);
 		break;
 	case kMystVideoInfo:
-		resource =  new MystVideoInfo(this, rlstStream, parent);
+		resource =  new MystVideoInfo(this, type, rlstStream, parent);
 		break;
 	case kMystAreaHover:
-		resource =  new MystAreaHover(this, rlstStream, parent);
+		resource =  new MystAreaHover(this, type, rlstStream, parent);
 		break;
 	default:
-		resource = new MystArea(this, rlstStream, parent);
+		resource = new MystArea(this, type, rlstStream, parent);
 		break;
 	}
-
-	resource->type = type;
 
 	return resource;
 }
@@ -1277,9 +1237,9 @@ MystSoundBlock MohawkEngine_Myst::readSoundBlock(Common::ReadStream *stream) con
 		debugC(kDebugView, "\tSound: %d", soundBlock.sound);
 		soundBlock.soundVolume = stream->readUint16LE();
 		debugC(kDebugView, "\tVolume: %d", soundBlock.soundVolume);
-	} else if (soundBlock.sound == kMystSoundActionContinue)
+	} else if (soundBlock.sound == kMystSoundActionContinue) {
 		debugC(kDebugView, "Continue current sound");
-	else if (soundBlock.sound == kMystSoundActionChangeVolume) {
+	} else if (soundBlock.sound == kMystSoundActionChangeVolume) {
 		debugC(kDebugView, "Continue current sound, change volume");
 		soundBlock.soundVolume = stream->readUint16LE();
 		debugC(kDebugView, "\tVolume: %d", soundBlock.soundVolume);
@@ -1305,8 +1265,7 @@ MystSoundBlock MohawkEngine_Myst::readSoundBlock(Common::ReadStream *stream) con
 			soundBlock.soundList.push_back(sound);
 		}
 	} else {
-		debugC(kDebugView, "Unknown");
-		warning("Unknown sound control value '%d' in card '%d'", soundBlock.sound, _curCard);
+		error("Unknown sound control value '%d' in card '%d'", soundBlock.sound, _curCard);
 	}
 
 	return soundBlock;

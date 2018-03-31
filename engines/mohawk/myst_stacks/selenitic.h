@@ -38,8 +38,8 @@ namespace MystStacks {
 
 class Selenitic : public MystScriptParser {
 public:
-	Selenitic(MohawkEngine_Myst *vm);
-	~Selenitic();
+	explicit Selenitic(MohawkEngine_Myst *vm);
+	~Selenitic() override;
 
 	void disablePersistentScripts() override;
 	void runPersistentScripts() override;
@@ -50,7 +50,7 @@ private:
 	void toggleVar(uint16 var) override;
 	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() override { return 9930; }
+	uint16 getMap() override { return 9930; }
 
 	DECLARE_OPCODE(o_mazeRunnerMove);
 	DECLARE_OPCODE(o_mazeRunnerSoundRepeat);

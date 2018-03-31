@@ -36,15 +36,48 @@ namespace Mohawk {
 namespace MystStacks {
 
 Selenitic::Selenitic(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm), _state(vm->_gameState->_selenitic) {
+		MystScriptParser(vm),
+		_state(vm->_gameState->_selenitic) {
 	setupOpcodes();
+
 	_mazeRunnerPosition = 288;
 	_mazeRunnerDirection = 8;
 	_mazeRunnerDoorOpened = false;
+	_mazeRunnerWindow = nullptr;
+	_mazeRunnerCompass = nullptr;
+	_mazeRunnerLight = nullptr;
+	_mazeRunnerRightButton = nullptr;
+	_mazeRunnerLeftButton = nullptr;
 
+	_soundReceiverRunning = false;
 	_soundReceiverDirection = 0;
 	_soundReceiverStartTime = 0;
 	_soundReceiverNearBlinkCounter = 0;
+	_soundReceiverSigmaPressed = false;
+
+	for (uint i = 0; i < ARRAYSIZE(_soundReceiverSources); i++) {
+		_soundReceiverSources[i] = nullptr;
+	}
+
+	_soundReceiverCurrentSource = nullptr;
+	_soundReceiverPosition = nullptr;
+	_soundReceiverSpeed = 0;
+	_soundReceiverViewer = nullptr;
+	_soundReceiverRightButton = nullptr;
+	_soundReceiverLeftButton = nullptr;
+	_soundReceiverAngle1 = nullptr;
+	_soundReceiverAngle2 = nullptr;
+	_soundReceiverAngle3 = nullptr;
+	_soundReceiverAngle4 = nullptr;
+	_soundReceiverSigmaButton = nullptr;
+
+	_soundLockSoundId = 0;
+	_soundLockSlider1 = nullptr;
+	_soundLockSlider2 = nullptr;
+	_soundLockSlider3 = nullptr;
+	_soundLockSlider4 = nullptr;
+	_soundLockSlider5 = nullptr;
+	_soundLockButton = nullptr;
 }
 
 Selenitic::~Selenitic() {
@@ -1072,7 +1105,7 @@ void Selenitic::o_soundReceiver_init(uint16 var, const ArgumentsArray &args) {
 
 void Selenitic::o_soundLock_init(uint16 var, const ArgumentsArray &args) {
 	for (uint i = 0; i < _vm->_resources.size(); i++) {
-		if (_vm->_resources[i]->type == kMystAreaSlider) {
+		if (_vm->_resources[i]->hasType(kMystAreaSlider)) {
 			switch (_vm->_resources[i]->getImageSwitchVar()) {
 			case 20:
 				_soundLockSlider1 = _vm->getViewResource<MystAreaSlider>(i);
@@ -1095,7 +1128,7 @@ void Selenitic::o_soundLock_init(uint16 var, const ArgumentsArray &args) {
 				_soundLockSlider5->setStep(_state.soundLockSliderPositions[4]);
 				break;
 			}
-		} else if (_vm->_resources[i]->type == kMystAreaImageSwitch && _vm->_resources[i]->getImageSwitchVar() == 28) {
+		} else if (_vm->_resources[i]->hasType(kMystAreaImageSwitch) && _vm->_resources[i]->getImageSwitchVar() == 28) {
 			_soundLockButton = _vm->getViewResource<MystAreaImageSwitch>(i);
 		}
 	}

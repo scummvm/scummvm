@@ -170,25 +170,25 @@ protected:
 class MohawkArchive : public Archive {
 public:
 	MohawkArchive() : Archive() {}
-	~MohawkArchive() {}
+	~MohawkArchive() override {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 class LivingBooksArchive_v1 : public Archive {
 public:
 	LivingBooksArchive_v1() : Archive() {}
-	~LivingBooksArchive_v1() {}
+	~LivingBooksArchive_v1() override {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 class DOSArchive_v2 : public Archive {
 public:
 	DOSArchive_v2() : Archive() {}
-	~DOSArchive_v2() {}
+	~DOSArchive_v2() override {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 } // End of namespace Mohawk

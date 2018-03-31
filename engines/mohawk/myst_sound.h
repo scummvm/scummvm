@@ -39,7 +39,7 @@ class MohawkEngine_Myst;
 
 class MystSound {
 public:
-	MystSound(MohawkEngine_Myst *vm);
+	explicit MystSound(MohawkEngine_Myst *vm);
 	~MystSound();
 
 	// Effect channel

@@ -33,9 +33,15 @@
 namespace Mohawk {
 namespace MystStacks {
 
-Slides::Slides(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+Slides::Slides(MohawkEngine_Myst *vm) :
+		MystScriptParser(vm) {
 	setupOpcodes();
+
 	_vm->_cursor->hideCursor();
+
+	_cardSwapEnabled = false;
+	_nextCardID = 0;
+	_nextCardTime = 0;
 }
 
 Slides::~Slides() {

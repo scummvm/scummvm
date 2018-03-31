@@ -37,7 +37,8 @@ namespace Mohawk {
 namespace MystStacks {
 
 Myst::Myst(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm), _state(_vm->_gameState->_myst) {
+		MystScriptParser(vm),
+		_state(_vm->_gameState->_myst) {
 	setupOpcodes();
 
 	// Card ID preinitialized by the engine for use by opcode 18
@@ -45,22 +46,56 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_savedCardId = 4329;
 
 	_towerRotationBlinkLabel = false;
+	_towerRotationSpeed = 0;
+	_towerRotationMapClicked = false;
+	_towerRotationOverSpot = false;
+
 	_libraryBookcaseChanged = false;
 	_dockVaultState = 0;
+
 	_cabinDoorOpened = 0;
 	_cabinHandleDown = 0;
 	_cabinMatchState = 2;
 	_cabinGaugeMovieEnabled = false;
+
+	_boilerPressureIncreasing = false;
+	_boilerPressureDecreasing = false;
+	_basementPressureIncreasing = false;
+	_basementPressureDecreasing = false;
+
 	_matchBurning = false;
+	_matchGoOutCnt = 0;
+	_matchGoOutTime = 0;
+
 	_tree = nullptr;
 	_treeAlcove = nullptr;
 	_treeStopped = false;
 	_treeMinPosition = 0;
+	_treeMinAccessiblePosition = 0;
+	_treeMaxAccessiblePosition = 0;
+
 	_imagerValidationStep = 0;
-	_observatoryCurrentSlider = nullptr;
 	_butterfliesMoviePlayed = false;
 	_state.treeLastMoveTime = _vm->_system->getMillis();
 	_rocketPianoSound = 0;
+
+	_observatoryRunning = false;
+	_observatoryMonthChanging = false;
+	_observatoryDayChanging = false;
+	_observatoryYearChanging = false;
+	_observatoryTimeChanging = false;
+	_observatoryVisualizer = nullptr;
+	_observatoryGoButton = nullptr;
+	_observatoryCurrentSlider = nullptr;
+	_observatoryDaySlider = nullptr;
+	_observatoryMonthSlider = nullptr;
+	_observatoryYearSlider = nullptr;
+	_observatoryTimeSlider = nullptr;
+	_observatoryLastTime = 0;
+	_observatoryNotInitialized = true;
+	_observatoryIncrement = 0;
+
+	_greenBookRunning = false;
 }
 
 Myst::~Myst() {
@@ -2260,7 +2295,7 @@ void Myst::o_rocketPianoMove(uint16 var, const ArgumentsArray &args) {
 
 	if (piano.contains(mouse)) {
 		MystArea *resource = _vm->forceUpdateClickedResource();
-		if (resource && resource->type == kMystAreaDrag) {
+		if (resource && resource->hasType(kMystAreaDrag)) {
 			// Press new key
 			key = static_cast<MystAreaDrag *>(resource);
 			src = key->getSubImage(1).rect;

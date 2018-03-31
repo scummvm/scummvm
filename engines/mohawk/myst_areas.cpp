@@ -32,9 +32,10 @@
 
 namespace Mohawk {
 
-MystArea::MystArea(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) {
-	_vm = vm;
-	_parent = parent;
+MystArea::MystArea(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		_vm(vm),
+		_parent(parent),
+		_type(type) {
 
 	if (parent == nullptr) {
 		_flags = rlstStream->readUint16LE();
@@ -77,7 +78,7 @@ void MystArea::handleMouseUp() {
 
 	uint16 opcode;
 
-	switch (type) {
+	switch (_type) {
 	case kMystAreaForward:
 		opcode = 6;
 		break;
@@ -118,7 +119,7 @@ void MystArea::setEnabled(bool enabled) {
 
 const Common::String MystArea::describe() {
 	Common::String desc = Common::String::format("type: %2d rect: (%3d %3d %3d %3d)",
-			type, _rect.left, _rect.top, _rect.width(), _rect.height());
+			_type, _rect.left, _rect.top, _rect.width(), _rect.height());
 
 	if (_dest != 0)
 		desc += Common::String::format(" dest: %4d", _dest);
@@ -137,8 +138,8 @@ void MystArea::drawBoundingRect() {
 	}
 }
 
-MystAreaAction::MystAreaAction(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystArea(vm, rlstStream, parent) {
+MystAreaAction::MystAreaAction(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystArea(vm, type, rlstStream, parent) {
 	debugC(kDebugResource, "\tResource Type 5 Script:");
 
 	_script = vm->_scriptParser->readScript(rlstStream, kMystScriptNormal);
@@ -175,8 +176,8 @@ Common::String MystAreaVideo::convertMystVideoName(const Common::String &name) {
 	return temp + ".mov";
 }
 
-MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaAction(vm, rlstStream, parent) {
+MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaAction(vm, type, rlstStream, parent) {
 	char c = 0;
 
 	do {
@@ -281,8 +282,8 @@ void MystAreaVideo::pauseMovie(bool pause) {
 		handle->pause(pause);
 }
 
-MystAreaActionSwitch::MystAreaActionSwitch(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystArea(vm, rlstStream, parent) {
+MystAreaActionSwitch::MystAreaActionSwitch(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystArea(vm, type, rlstStream, parent) {
 	_actionSwitchVar = rlstStream->readUint16LE();
 	uint16 numSubResources = rlstStream->readUint16LE();
 	debugC(kDebugResource, "\tactionSwitchVar: %d", _actionSwitchVar);
@@ -335,8 +336,8 @@ void MystAreaActionSwitch::handleMouseDown() {
 	doSwitch(&MystArea::handleMouseDown);
 }
 
-MystAreaImageSwitch::MystAreaImageSwitch(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaActionSwitch(vm, rlstStream, parent) {
+MystAreaImageSwitch::MystAreaImageSwitch(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaActionSwitch(vm, type, rlstStream, parent) {
 	_imageSwitchVar = rlstStream->readUint16LE();
 	uint16 numSubImages = rlstStream->readUint16LE();
 	debugC(kDebugResource, "\tvar8: %d", _imageSwitchVar);
@@ -477,8 +478,8 @@ const Common::String MystAreaImageSwitch::describe() {
 
 // No MystResourceType9!
 
-MystAreaSlider::MystAreaSlider(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaDrag(vm, rlstStream, parent) {
+MystAreaSlider::MystAreaSlider(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaDrag(vm, type, rlstStream, parent) {
 	_dragSound = rlstStream->readUint16LE();
 
 	debugC(kDebugResource, "\tdrag sound : %d", _dragSound);
@@ -643,8 +644,8 @@ void MystAreaSlider::updatePosition(const Common::Point &mouse) {
 		_vm->_sound->playEffect(_dragSound);
 }
 
-MystAreaDrag::MystAreaDrag(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaImageSwitch(vm, rlstStream, parent) {
+MystAreaDrag::MystAreaDrag(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaImageSwitch(vm, type, rlstStream, parent) {
 	_flagHV = rlstStream->readUint16LE();
 	_minH = rlstStream->readUint16LE();
 	_maxH = rlstStream->readUint16LE();
@@ -748,8 +749,8 @@ uint16 MystAreaDrag::getList3(uint16 index) {
 	return (index < _lists[2].size()) ?  _lists[2][index] : 0;
 }
 
-MystVideoInfo::MystVideoInfo(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystAreaDrag(vm, rlstStream, parent) {
+MystVideoInfo::MystVideoInfo(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaDrag(vm, type, rlstStream, parent) {
 	_numFrames = rlstStream->readUint16LE();
 	_firstFrame = rlstStream->readUint16LE();
 	uint16 frameWidth = rlstStream->readUint16LE();
@@ -774,8 +775,8 @@ MystVideoInfo::~MystVideoInfo() {
 }
 
 void MystVideoInfo::drawFrame(uint16 frame) {
-	_currentFrame = _firstFrame + frame;
-	_vm->_gfx->copyImageToScreen(_currentFrame, _frameRect);
+	uint16 currentFrame = _firstFrame + frame;
+	_vm->_gfx->copyImageToScreen(currentFrame, _frameRect);
 }
 
 bool MystVideoInfo::pullLeverV() {
@@ -810,8 +811,8 @@ void MystVideoInfo::releaseLeverV() {
 	}
 }
 
-MystAreaHover::MystAreaHover(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystArea *parent) :
-		MystArea(vm, rlstStream, parent) {
+MystAreaHover::MystAreaHover(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystArea(vm, type, rlstStream, parent) {
 	_enterOpcode = rlstStream->readUint16LE();
 	_leaveOpcode = rlstStream->readUint16LE();
 

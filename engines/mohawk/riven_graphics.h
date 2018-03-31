@@ -54,8 +54,8 @@ enum RivenTransitionMode {
 
 class RivenGraphics : public GraphicsManager {
 public:
-	RivenGraphics(MohawkEngine_Riven *vm);
-	~RivenGraphics();
+	explicit RivenGraphics(MohawkEngine_Riven *vm);
+	~RivenGraphics() override;
 
 	// Screen updates
 	void beginScreenUpdate();
@@ -94,11 +94,11 @@ public:
 	// Credits
 	void beginCredits();
 	void updateCredits();
-	uint getCurCreditsImage() { return _creditsImage; }
+	uint getCurCreditsImage() const { return _creditsImage; }
 
 protected:
-	MohawkSurface *decodeImage(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
+	MohawkSurface *decodeImage(uint16 id) override;
+	MohawkEngine *getVM() override { return (MohawkEngine *)_vm; }
 
 private:
 	MohawkEngine_Riven *_vm;
