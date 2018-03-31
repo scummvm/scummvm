@@ -81,6 +81,11 @@ public:
 	 * Returns a particular category's array
 	 */
 	XeenItem *operator[](int category) { return _categories[category]; }
+
+	/**
+	 * Clears the treasure list
+	 */
+	void clear();
 };
 
 /**

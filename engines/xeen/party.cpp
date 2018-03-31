@@ -78,6 +78,15 @@ Treasure::Treasure() {
 	_categories[3] = &_misc[0];
 }
 
+void Treasure::clear() {
+	for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
+		_weapons[idx].clear();
+		_armor[idx].clear();
+		_accessories[idx].clear();
+		_misc[idx].clear();
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
 const int BLACKSMITH_DATA1[4][4] = {
@@ -719,12 +728,7 @@ void Party::giveTreasure() {
 				} else {
 					// Otherwise, clear all the remaining treasure items,
 					// since all the party's packs are full
-					for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-						_treasure._weapons[idx].clear();
-						_treasure._armor[idx].clear();
-						_treasure._accessories[idx].clear();
-						_treasure._armor[idx].clear();
-					}
+					_treasure.clear();
 				}
 			}
 
@@ -787,13 +791,7 @@ void Party::giveTreasure() {
 	_treasure._gems = 0;
 
 	_treasure._hasItems = false;
-	for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-		_treasure._weapons[idx].clear();
-		_treasure._armor[idx].clear();
-		_treasure._accessories[idx].clear();
-		_treasure._armor[idx].clear();
-	}
-
+	_treasure.clear();
 	combat._combatTarget = 1;
 }
 
