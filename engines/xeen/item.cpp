@@ -66,22 +66,30 @@ AttributeCategory XeenItem::getAttributeCategory() const {
 }
 
 const char *XeenItem::getItemName(ItemCategory category, uint id) {
-	if (id < 82)
-		return Res.ITEM_NAMES[category][id];
+	if (id < 82) {
+		switch (category) {
+		case CATEGORY_WEAPON:
+			return Res.WEAPON_NAMES[id];
+		case CATEGORY_ARMOR:
+			return Res.ARMOR_NAMES[id - 35];
+		case CATEGORY_ACCESSORY:
+			return Res.ACCESSORY_NAMES[id - 49];
+		default:
+			return Res.MISC_NAMES[id];
+		}
+	} else {
+		const char **questItems = (g_vm->getGameID() == GType_Swords) ? Res.QUEST_ITEM_NAMES_SWORDS : Res.QUEST_ITEM_NAMES;
 
-	const char **questItems = (g_vm->getGameID() == GType_Swords) ? Res.QUEST_ITEM_NAMES_SWORDS : Res.QUEST_ITEM_NAMES;
-	switch (category) {
-	case CATEGORY_WEAPON:
-		return questItems[id - 82];
-
-	case CATEGORY_ARMOR:
-		return questItems[id - 82 + 35];
-
-	case CATEGORY_ACCESSORY:
-		return questItems[id - 82 + 35 + 14];
-
-	default:
-		return questItems[id - 82 + 35 + 14 + 11];
+		switch (category) {
+		case CATEGORY_WEAPON:
+			return questItems[id - 82];
+		case CATEGORY_ARMOR:
+			return questItems[id - 82 + 35];
+		case CATEGORY_ACCESSORY:
+			return questItems[id - 82 + 35 + 14];
+		default:
+			return questItems[id - 82 + 35 + 14 + 11];
+		}
 	}
 }
 

@@ -64,7 +64,15 @@ public:
 	 */
 	static const char *getItemName(ItemCategory category, uint id);
 public:
+	/**
+	 * Constructor
+	 */
 	XeenItem();
+
+	/**
+	 * Constructor
+	 */
+	XeenItem(uint id, int material, int bonusFlags) : _id(id), _material(material), _bonusFlags(bonusFlags) {}
 
 	/**
 	 * Clear the data for the item

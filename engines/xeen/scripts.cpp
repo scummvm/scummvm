@@ -1225,64 +1225,46 @@ bool Scripts::cmdSelectRandomChar(ParamsIterator &params) {
 
 bool Scripts::cmdGiveEnchanted(ParamsIterator &params) {
 	Party &party = *_vm->_party;
-
+	XeenItem *item;
+	int invIndex;
 	int id = params.readByte();
-	int material = params.readByte();
-	int flags = params.readByte();
 
-	if (id >= 35) {
-		if (id < 49) {
-			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-				XeenItem &item = party._treasure._armor[idx];
-				if (!item.empty()) {
-					item._id = id - 35;
-					item._material = material;
-					item._bonusFlags = flags;
-					party._treasure._hasItems = true;
-					break;
-				}
-			}
-
-			return true;
-		} else if (id < 60) {
-			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-				XeenItem &item = party._treasure._accessories[idx];
-				if (!item.empty()) {
-					item._id = id - 49;
-					item._material = material;
-					item._bonusFlags = flags;
-					party._treasure._hasItems = true;
-					break;
-				}
-			}
-
-			return true;
-		} else if (id < 82) {
-			for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-				XeenItem &item = party._treasure._misc[idx];
-				if (!item.empty()) {
-					item._id = id;
-					item._material = material;
-					item._bonusFlags = flags;
-					party._treasure._hasItems = true;
-					break;
-				}
-			}
-
-			return true;
-		} else {
-			party._questItems[id - 82]++;
-		}
+	// Get category of item to add
+	ItemCategory cat = CATEGORY_WEAPON;
+	if (id < 35) {
+	} else if (id < 49) {
+		cat = CATEGORY_ARMOR;
+		id -= 35;
+	} else if (id < 60) {
+		cat = CATEGORY_ACCESSORY;
+		id -= 49;
+	} else if (id < 82) {
+		cat = CATEGORY_MISC;
+		id -= 60;
+	} else {
+		party._questItems[id - 82]++;
 	}
 
-	for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-		XeenItem &item = party._treasure._weapons[idx];
-		if (!item.empty()) {
-			item._id = id;
-			item._material = material;
-			item._bonusFlags = flags;
-			party._treasure._hasItems = true;
-			break;
+	// Check for an empty slot
+	for (invIndex = 0, item = party._treasure[cat]; invIndex < MAX_TREASURE_ITEMS && !item->empty(); ++invIndex, ++item)
+		;
+
+	if (invIndex == MAX_TREASURE_ITEMS) {
+		// Treasure category entirely full. Should never happen
+		warning("Treasure category was completely filled up");
+	} else {
+		party._treasure._hasItems = true;
+
+		if (cat == CATEGORY_MISC) {
+			// Handling of misc items. Note that for them, id actually specifies the material field
+			item->_material = id;
+			item->_id = params.readByte();
+			item->_bonusFlags = (item->_material == 10 || item->_material == 11) ? 1 : _vm->getRandomNumber(3, 10);
+		} else {
+			// Weapons, armor, and accessories
+			item->_id = id;
+			item->_material = params.readByte();
+			item->_bonusFlags = params.readByte();
 		}
 	}
 
