@@ -904,7 +904,7 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 		}
 
 		case ITEMMODE_RECHARGE:
-			if (category != CATEGORY_MISC || item._material > 9 || item._id == 53 || item._id == 0) {
+			if (category != CATEGORY_MISC || item.empty() || item._material > 9 || item._id == 53) {
 				sound.playFX(21);
 				ErrorScroll::show(_vm, Common::String::format(Res.NOT_RECHARGABLE, Res.SPELL_FAILED));
 			} else {

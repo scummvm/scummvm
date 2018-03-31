@@ -799,10 +799,10 @@ bool Party::arePacksFull() const {
 	uint total = 0;
 	for (uint idx = 0; idx < _activeParty.size(); ++idx) {
 		const Character &c = _activeParty[idx];
-		total += (c._weapons[INV_ITEMS_TOTAL - 1]._id != 0 ? 1 : 0)
-			+ (c._armor[INV_ITEMS_TOTAL - 1]._id != 0 ? 1 : 0)
-			+ (c._accessories[INV_ITEMS_TOTAL - 1]._id != 0 ? 1 : 0)
-			+ (c._misc[INV_ITEMS_TOTAL - 1]._id != 0 ? 1 : 0);
+		total += (c._weapons[INV_ITEMS_TOTAL - 1].empty() ? 0 : 1)
+			+ (c._armor[INV_ITEMS_TOTAL - 1].empty() ? 0 : 1)
+			+ (c._accessories[INV_ITEMS_TOTAL - 1].empty() ? 0 : 1)
+			+ (c._misc[INV_ITEMS_TOTAL - 1].empty() ? 0 : 1);
 	}
 
 	return total == (_activeParty.size() * NUM_ITEM_CATEGORIES);

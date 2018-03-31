@@ -217,7 +217,7 @@ bool InventoryItems::discardItem(int itemIndex) {
 
 void InventoryItems::sort() {
 	for (uint idx = 0; idx < size(); ++idx) {
-		if (operator[](idx)._id == 0) {
+		if (operator[](idx).empty()) {
 			// Found empty slot
 			operator[](idx).clear();
 
@@ -272,7 +272,7 @@ void InventoryItems::enchantItem(int itemIndex, int amount) {
 
 bool InventoryItems::isFull() const {
 	assert(size() == INV_ITEMS_TOTAL);
-	return operator[](size() - 1)._id != 0;
+	return !operator[](size() - 1).empty();
 }
 
 void InventoryItems::capitalizeItem(Common::String &name) {

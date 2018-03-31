@@ -1527,7 +1527,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 					switch (category) {
 					case CATEGORY_WEAPON:
 						for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-							if (party._treasure._weapons[idx]._id == 0) {
+							if (party._treasure._weapons[idx].empty()) {
 								party._treasure._weapons[idx] = tempChar._weapons[0];
 								party._treasure._hasItems = true;
 								break;
@@ -1536,7 +1536,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 						break;
 					case CATEGORY_ARMOR:
 						for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-							if (party._treasure._armor[idx]._id == 0) {
+							if (party._treasure._armor[idx].empty()) {
 								party._treasure._armor[idx] = tempChar._armor[0];
 								party._treasure._hasItems = true;
 								break;
@@ -1545,7 +1545,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 						break;
 					case CATEGORY_ACCESSORY:
 						for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-							if (party._treasure._accessories[idx]._id == 0) {
+							if (party._treasure._accessories[idx].empty()) {
 								party._treasure._accessories[idx] = tempChar._accessories[0];
 								party._treasure._hasItems = true;
 								break;
@@ -1554,7 +1554,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 						break;
 					case CATEGORY_MISC:
 						for (int idx = 0; idx < MAX_TREASURE_ITEMS; ++idx) {
-							if (party._treasure._accessories[idx]._id == 0) {
+							if (party._treasure._accessories[idx].empty()) {
 								party._treasure._accessories[idx] = tempChar._accessories[0];
 								party._treasure._hasItems = true;
 								break;
