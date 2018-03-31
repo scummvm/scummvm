@@ -383,8 +383,10 @@ CastSpell::~CastSpell() {
 
 int CastSpell::show(XeenEngine *vm) {
 	Combat &combat = *vm->_combat;
+	Interface &intf = *vm->_interface;
 	Party &party = *vm->_party;
 	Spells &spells = *vm->_spells;
+	int result = 0, spellId = 0;
 	int charNum;
 
 	// Get which character is doing the casting
@@ -401,20 +403,11 @@ int CastSpell::show(XeenEngine *vm) {
 		}
 	}
 
-	Character *c = &party._activeParty[charNum];
-	return show(vm, c);
-}
-
-int CastSpell::show(XeenEngine *vm, Character *&c) {
-	Interface &intf = *vm->_interface;
-	Spells &spells = *vm->_spells;
-	CastSpell *dlg = new CastSpell(vm);
-	int spellId;
-	int result = -1;
-
 	// Highlight the character
+	Character *c = &party._activeParty[charNum];
 	intf.highlightChar(c);
 
+	CastSpell *dlg = new CastSpell(vm);
 	do {
 		spellId = dlg->execute(c);
 
@@ -481,6 +474,7 @@ int CastSpell::execute(Character *&c) {
 				if (_buttonValue < (int)party._activeParty.size()) {
 					c = &party._activeParty[_buttonValue];
 					intf.highlightChar(_buttonValue);
+					spells._lastCaster = _buttonValue;
 					redrawFlag = true;
 					break;
 				}

@@ -527,7 +527,7 @@ void Interface::perform() {
 			spells._lastCaster >= (int)party._activeParty.size()) ?
 			(int)party._activeParty.size() - 1 : spells._lastCaster];
 
-		int result = CastSpell::show(_vm, c);
+		int result = CastSpell::show(_vm);
 
 		if (result == 1) {
 			chargeStep();

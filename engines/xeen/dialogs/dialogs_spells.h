@@ -93,7 +93,6 @@ private:
 	void loadButtons();
 public:
 	static int show(XeenEngine *vm);
-	static int show(XeenEngine *vm, Character *&c);
 };
 
 class SpellOnWho : public ButtonContainer {
