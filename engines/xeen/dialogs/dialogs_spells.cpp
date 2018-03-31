@@ -412,7 +412,8 @@ int CastSpell::show(XeenEngine *vm) {
 		spellId = dlg->execute(c);
 
 		if (g_vm->shouldExit() || spellId == -1) {
-			result = 0;
+			result = -1;
+			break;
 		} else {
 			result = spells.castSpell(c, (MagicSpell)spellId);
 		}
