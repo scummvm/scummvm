@@ -61,6 +61,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		c = &_itemsCharacter;
 		party._blacksmithWares.blackData2CharData(_itemsCharacter);
 		setEquipmentIcons();
+	} else if (mode == ITEMMODE_ENCHANT) {
+		_oldCharacter = c;
 	}
 
 	events.setCursor(0);

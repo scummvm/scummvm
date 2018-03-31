@@ -52,7 +52,7 @@ enum ElementalCategory {
 	ELEM_ENERGY = 4, ELEM_MAGIC = 5
 };
 
-enum ItemId {
+enum WeaponId {
 	XEEN_SLAYER_SWORD = 34
 };
 

@@ -1408,7 +1408,7 @@ void Combat::attack2(int damage, RangeType rangeType) {
 		if (monster._damageType == DT_SLEEP || monster._damageType == DT_DRAGONSLEEP)
 			monster._damageType = DT_PHYSICAL;
 
-		if ((rangeType == RT_SINGLE || _damageType == DT_PHYSICAL) && _attackWeaponId != 34) {
+		if ((rangeType == RT_SINGLE || _damageType == DT_PHYSICAL) && _attackWeaponId < XEEN_SLAYER_SWORD) {
 			if (monsterData._phsyicalResistence != 0) {
 				if (monsterData._phsyicalResistence == 100) {
 					// Completely immune to the damage

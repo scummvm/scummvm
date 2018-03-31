@@ -339,7 +339,7 @@ Common::String WeaponItems::getFullDescription(int itemIndex, int displayNum) {
 	Resources &res = *getVm()->_resources;
 
 	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s%s", displayNum,
-		!i._state._cursed && !i._state._broken ? "" : res._maeNames[i._material].c_str(),
+		i._state._cursed || i._state._broken ? "" : res._maeNames[i._material].c_str(),
 		i._state._broken ? Res.ITEM_BROKEN : "",
 		i._state._cursed ? Res.ITEM_CURSED : "",
 		displayNum,
@@ -356,7 +356,7 @@ void WeaponItems::enchantItem(int itemIndex, int amount) {
 	XeenItem &item = operator[](itemIndex);
 	Character tempCharacter;
 
-	if (item._material == 0 && item._state.empty() && item._id != 34) {
+	if (item._material == 0 && item._state.empty() && item._id < XEEN_SLAYER_SWORD) {
 		tempCharacter.makeItem(amount, 0, 1);
 		XeenItem &tempItem = tempCharacter._weapons[0];
 
@@ -507,7 +507,7 @@ Common::String ArmorItems::getFullDescription(int itemIndex, int displayNum) {
 	Resources &res = *getVm()->_resources;
 
 	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._state._cursed && !i._state._broken ? "" : res._maeNames[i._material].c_str(),
+		i._state._cursed || i._state._broken ? "" : res._maeNames[i._material].c_str(),
 		i._state._broken ? Res.ITEM_BROKEN : "",
 		i._state._cursed ? Res.ITEM_CURSED : "",
 		displayNum,
@@ -620,7 +620,7 @@ Common::String AccessoryItems::getFullDescription(int itemIndex, int displayNum)
 	Resources &res = *getVm()->_resources;
 
 	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._state._cursed && !i._state._broken ? "" : res._maeNames[i._material].c_str(),
+		i._state._cursed || i._state._broken ? "" : res._maeNames[i._material].c_str(),
 		i._state._broken ? Res.ITEM_BROKEN : "",
 		i._state._cursed ? Res.ITEM_CURSED : "",
 		displayNum,
@@ -667,7 +667,7 @@ Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 	Resources &res = *getVm()->_resources;
 
 	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		!i._state._cursed && !i._state._broken ? "" : res._maeNames[i._material].c_str(),
+		i._state._cursed || i._state._broken ? "" : res._maeNames[i._material].c_str(),
 		i._state._broken ? Res.ITEM_BROKEN : "",
 		i._state._cursed ? Res.ITEM_CURSED : "",
 		displayNum,
@@ -720,7 +720,7 @@ const InventoryItems &InventoryItemsGroup::operator[](ItemCategory category) con
 
 void InventoryItemsGroup::breakAllItems() {
 	for (int idx = 0; idx < INV_ITEMS_TOTAL; ++idx) {
-		if (_owner->_weapons[idx]._id != 34) {
+		if (_owner->_weapons[idx]._id < XEEN_SLAYER_SWORD) {
 			_owner->_weapons[idx]._state._broken = true;
 			_owner->_weapons[idx]._frame = 0;
 		}
