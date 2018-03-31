@@ -71,7 +71,17 @@ public:
 
 	void drawParty(bool updateFlag);
 
+	/**
+	 * Highlights the specified character in the party display at the bottom of the screen
+	 * @param charId		Character number
+	 */
 	void highlightChar(int charId);
+
+	/**
+	 * Highlights the specified character in the party display at the bottom of the screen
+	 * @param c		Character to highlight
+	 */
+	void highlightChar(const Character *c);
 
 	void unhighlightChar();
 

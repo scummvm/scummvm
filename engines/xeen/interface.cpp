@@ -118,6 +118,12 @@ void PartyDrawer::highlightChar(int charId) {
 	}
 }
 
+void PartyDrawer::highlightChar(const Character *c) {
+	int charNum = _vm->_party->_activeParty.indexOf(*c);
+	if (charNum != -1)
+		highlightChar(charNum);
+}
+
 void PartyDrawer::unhighlightChar() {
 	Resources &res = *_vm->_resources;
 	Windows &windows = *_vm->_windows;

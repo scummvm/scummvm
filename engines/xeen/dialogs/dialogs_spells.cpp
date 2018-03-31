@@ -383,7 +383,6 @@ CastSpell::~CastSpell() {
 
 int CastSpell::show(XeenEngine *vm) {
 	Combat &combat = *vm->_combat;
-	Interface &intf = *vm->_interface;
 	Party &party = *vm->_party;
 	Spells &spells = *vm->_spells;
 	int charNum;
@@ -403,16 +402,18 @@ int CastSpell::show(XeenEngine *vm) {
 	}
 
 	Character *c = &party._activeParty[charNum];
-	intf.highlightChar(charNum);
-
 	return show(vm, c);
 }
 
 int CastSpell::show(XeenEngine *vm, Character *&c) {
+	Interface &intf = *vm->_interface;
 	Spells &spells = *vm->_spells;
 	CastSpell *dlg = new CastSpell(vm);
 	int spellId;
 	int result = -1;
+
+	// Highlight the character
+	intf.highlightChar(c);
 
 	do {
 		spellId = dlg->execute(c);

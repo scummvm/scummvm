@@ -37,6 +37,17 @@ void AttributePair::synchronize(Common::Serializer &s) {
 
 /*------------------------------------------------------------------------*/
 
+int CharacterArray::indexOf(const Character &c) {
+	for (uint idx = 0; idx < size(); ++idx) {
+		if ((*this)[idx] == c)
+			return idx;
+	}
+
+	return -1;
+}
+
+/*------------------------------------------------------------------------*/
+
 Character::Character(): _weapons(this), _armor(this), _accessories(this), _misc(this), _items(this) {
 	clear();
 	_faceSprites = nullptr;

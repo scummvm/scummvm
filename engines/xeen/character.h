@@ -166,6 +166,16 @@ public:
 	Character(const Character &src);
 
 	/**
+	 * Equality operator
+	 */
+	bool operator==(const Character &src) const { return src._rosterId == _rosterId; }
+
+	/**
+	 * Inequality operator
+	 */
+	bool operator!=(const Character &src) const { return src._rosterId != _rosterId; }
+
+	/**
 	 * Clears the data for a character
 	 */
 	void clear();
@@ -344,6 +354,14 @@ public:
 	 * Clears the character of any currently set conditions
 	 */
 	void clearConditions();
+};
+
+class CharacterArray : public Common::Array<Character> {
+public:
+	/**
+	 * Returns the index of a given character in the array
+	 */
+	int indexOf(const Character &c);
 };
 
 } // End of namespace Xeen
