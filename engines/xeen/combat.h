@@ -151,7 +151,7 @@ private:
 public:
 	Common::Array<Character *> _combatParty;
 	bool _charsBlocked[PARTY_AND_MONSTERS];
-	Common::Array<int> _charsGone;
+	int _charsGone[PARTY_AND_MONSTERS];
 	SpriteResource _powSprites;
 	int _attackMonsters[ATTACK_MONSTERS_COUNT];
 	int _monster2Attack;

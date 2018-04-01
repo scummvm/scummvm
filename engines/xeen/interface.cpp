@@ -1462,7 +1462,6 @@ void Interface::doCombat() {
 	mainIconsPrint();
 
 	combat._combatParty.clear();
-	combat._charsGone.clear();
 	combat.clearBlocked();
 	combat._pow[0]._duration = 0;
 	combat._pow[1]._duration = 0;
@@ -1475,9 +1474,8 @@ void Interface::doCombat() {
 	combat.setSpeedTable();
 
 	// Initialize arrays for character/monster states
-	combat._charsGone.resize(combat._speedTable.size());
-	Common::fill(&combat._charsGone[0], &combat._charsGone[0] + combat._speedTable.size(), 0);
-	Common::fill(&combat._charsBlocked[0], &combat._charsBlocked[0] + combat._speedTable.size(), false);
+	Common::fill(&combat._charsGone[0], &combat._charsGone[PARTY_AND_MONSTERS], 0);
+	Common::fill(&combat._charsBlocked[0], &combat._charsBlocked[PARTY_AND_MONSTERS], false);
 
 	combat._whosSpeed = -1;
 	combat._whosTurn = -1;
@@ -1657,7 +1655,7 @@ void Interface::doCombat() {
 
 			// Handling for if the combat turn is complete
 			if (combat.allHaveGone()) {
-				Common::fill(&combat._charsGone[0], &combat._charsGone[0] + combat._charsGone.size(), false);
+				Common::fill(&combat._charsGone[0], &combat._charsGone[PARTY_AND_MONSTERS], false);
 				combat.clearBlocked();
 				combat.setSpeedTable();
 				combat._whosTurn = -1;
@@ -1796,7 +1794,7 @@ void Interface::nextChar() {
 			combat.setSpeedTable();
 			combat._whosTurn = -1;
 			combat._whosSpeed = -1;
-			Common::fill(&combat._charsGone[0], &combat._charsGone[0] + combat._charsGone.size(), 0);
+			Common::fill(&combat._charsGone[0], &combat._charsGone[PARTY_AND_MONSTERS], false);
 			continue;
 		}
 
