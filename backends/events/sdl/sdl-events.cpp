@@ -73,8 +73,8 @@ static uint32 convUTF8ToUTF32(const char *src) {
 
 void SdlEventSource::loadGameControllerMappingFile() {
 	bool loaded = false;
-	if (ConfMan.hasKey("gcdbfile")) {
-		Common::FSNode file = Common::FSNode(ConfMan.get("gcdbfile"));
+	if (ConfMan.hasKey("controller_map_db")) {
+		Common::FSNode file = Common::FSNode(ConfMan.get("controller_map_db"));
 		if (file.exists()) {
 			if (SDL_GameControllerAddMappingsFromFile(file.getPath().c_str()) < 0)
 				error("File %s not valid: %s", file.getPath().c_str(), SDL_GetError());	
@@ -82,7 +82,8 @@ void SdlEventSource::loadGameControllerMappingFile() {
 				loaded = true;
 				debug("Game controller DB file loaded: %s", file.getPath().c_str());
 			}
-		}
+		} else
+			warning("Game controller DB file not found: %s", file.getPath().c_str());
 	}
 	if (!loaded && ConfMan.hasKey("extrapath")) {
 		Common::FSNode dir = Common::FSNode(ConfMan.get("extrapath"));
@@ -117,8 +118,7 @@ SdlEventSource::SdlEventSource()
 		if (SDL_InitSubSystem(SDL_INIT_GAMECONTROLLER) == -1) {
 			error("Could not initialize SDL: %s", SDL_GetError());
 		}
-		else
-			loadGameControllerMappingFile();
+		loadGameControllerMappingFile();
 #endif
 
 		openJoystick(joystick_num);
