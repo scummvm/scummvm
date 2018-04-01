@@ -121,9 +121,7 @@ void BlacksmithWares::regenerate() {
 				ItemCategory itemCat = tempChar.makeItem(idx2 + 1, 0, 0);
 				if (catCount[itemCat] < 8) {
 					XeenItem &item = (*this)[itemCat][0][slotNum][catCount[itemCat]];
-					item._id = tempChar._weapons[0]._id;
-					item._material = tempChar._weapons[0]._material;
-					item._state = tempChar._weapons[0]._state;
+					item = tempChar._items[itemCat][0];
 
 					++catCount[itemCat];
 				}
@@ -140,9 +138,7 @@ void BlacksmithWares::regenerate() {
 				ItemCategory itemCat = tempChar.makeItem(idx2 + (slotNum >= 2 ? 3 : 1), 0, 0);
 				if (catCount[itemCat] < 8) {
 					XeenItem &item = (*this)[itemCat][1][slotNum][catCount[itemCat]];
-					item._id = tempChar._misc[0]._id;
-					item._material = tempChar._misc[0]._material;
-					item._state = tempChar._misc[0]._state;
+					item = tempChar._items[itemCat][0];
 
 					++catCount[itemCat];
 				}
