@@ -237,8 +237,8 @@ void Character::synchronize(Common::Serializer &s) {
 
 	s.syncAsUint16LE(_townUnknown);
 	s.syncAsByte(_savedMazeId);
-	s.syncAsUint16LE(_currentHp);
-	s.syncAsUint16LE(_currentSp);
+	s.syncAsSint16LE(_currentHp);
+	s.syncAsSint16LE(_currentSp);
 	s.syncAsUint16LE(_birthYear);
 	s.syncAsUint32LE(_experience);
 	s.syncAsByte(_currentAdventuringSpell);
