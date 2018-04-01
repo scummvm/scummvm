@@ -92,13 +92,6 @@ Common::Rect Driver::gameViewport() const {
 	return game;
 }
 
-Common::Point Driver::getScreenPosBounded(const Common::Point &point) const {
-	Common::Point boundedPos = point;
-	boundedPos.x = CLIP<int16>(boundedPos.x, _screenViewport.left, _screenViewport.right);
-
-	return boundedPos;
-}
-
 Common::Point Driver::convertCoordinateCurrentToOriginal(const Common::Point &point) const {
 	// Most of the engine expects 640x480 coordinates
 	Common::Point scaledPosition = point;
@@ -137,6 +130,10 @@ void Driver::flipVertical(Graphics::Surface *s) {
 		for (int x = 0; x < s->pitch; ++x)
 			SWAP(line1P[x], line2P[x]);
 	}
+}
+
+bool Driver::isPosInScreenBounds(const Common::Point &point) const {
+    return _screenViewport.contains(point);
 }
 
 } // End of namespace Gfx
