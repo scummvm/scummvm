@@ -103,8 +103,6 @@ bool SliceAnimations::openFrames(int fileNumber) {
 		}
 	}
 
-	warning("opening: %d", fileNumber);
-
 	if (_framesPageFile._fileNumber == 0) // HDFRAMES.DAT
 		return true;
 
