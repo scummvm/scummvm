@@ -72,6 +72,7 @@ class SliceAnimations {
 		PageFile(SliceAnimations *sliceAnimations) : _sliceAnimations(sliceAnimations), _fileNumber(-1) {}
 
 		bool  open(const Common::String &name);
+		void  close();
 		void *loadPage(uint32 page);
 	};
 

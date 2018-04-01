@@ -103,13 +103,15 @@ bool SliceAnimations::openFrames(int fileNumber) {
 		}
 	}
 
+	warning("opening: %d", fileNumber);
+
 	if (_framesPageFile._fileNumber == 0) // HDFRAMES.DAT
 		return true;
 
 	if (_framesPageFile._fileNumber == fileNumber)
 		return true;
 
-	_framesPageFile._fileNumber = fileNumber;
+	_framesPageFile.close();
 
 	if (fileNumber == 1 && _framesPageFile.open("CDFRAMES.DAT")) // For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
 		return true;
@@ -139,9 +141,15 @@ bool SliceAnimations::PageFile::open(const Common::String &name) {
 		_pageOffsets[pageNumber] = dataOffset + i * _sliceAnimations->_pageSize;
 	}
 
-	debug("PageFile::Open: page file \"%s\" opened with %d pages", name.c_str(), pageCount);
+	debug(5, "PageFile::Open: page file \"%s\" opened with %d pages", name.c_str(), pageCount);
 
 	return true;
+}
+
+void SliceAnimations::PageFile::close() {
+	if (_file.isOpen()) {
+		_file.close();
+	}
 }
 
 void *SliceAnimations::PageFile::loadPage(uint32 pageNumber) {
