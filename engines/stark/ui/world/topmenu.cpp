@@ -71,7 +71,8 @@ void TopMenu::onRender() {
 
 		if (_forceVisibleTimeRemaining <= 0) {
 			_inventoryButton->stopImageExplosion();
-			_inventoryButton->goToAnimStatement(12);
+			_inventoryButton->goToAnimStatement(12); // TODO: Closing animation is rendered only when mouse is hovering topmenu
+			_optionsButton->stopImageFlashing();
 		}
 	}
 
@@ -139,8 +140,18 @@ void TopMenu::notifyInventoryItemEnabled(uint16 itemIndex) {
 
 	Visual *inventoryItemImage = StarkGlobal->getInventory()->getInventoryItemVisual(itemIndex);
 	_inventoryButton->startImageExplosion(inventoryItemImage->get<VisualImageXMG>());
+
+	assert(_inventoryNewItemSound);
 	_inventoryNewItemSound->stop();
 	_inventoryNewItemSound->play();
+}
+
+void TopMenu::notifyDiaryEntryEnabled() {
+	_forceVisibleTimeRemaining = 150 * 33; // 150 frames at 30 fps
+	_optionsButton->setUIElement(StaticProvider::kDiaryTabbed);
+
+	VisualImageXMG *diaryImage = StarkStaticProvider->getUIElement(StaticProvider::kDiaryTabbed);
+	_optionsButton->startImageFlashing(diaryImage);
 }
 
 } // End of namespace Stark

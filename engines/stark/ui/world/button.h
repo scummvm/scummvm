@@ -32,6 +32,7 @@
 namespace Stark {
 
 class VisualExplodingImage;
+class VisualFlashingImage;
 class VisualImageXMG;
 class VisualText;
 
@@ -47,6 +48,8 @@ public:
 	~Button();
 
 	void setPosition(const Common::Point &pos) { _position = pos; }
+	void setUIElement(const StaticProvider::UIElement &stockElement) { _stockElement = stockElement; }
+
 	/** Set hint to render for one frame */
 	void showButtonHint();
 	void render();
@@ -64,6 +67,12 @@ public:
 	/** Remove the currently playing exploding image animation, if any */
 	void stopImageExplosion();
 
+	/** Start a flash animation of an image button */
+	void startImageFlashing(VisualImageXMG *image);
+
+	/** Remove the currently playing flash image animation, if any */
+	void stopImageFlashing();
+
 private:
 	StaticProvider::UIElement _stockElement;
 	Common::Point _position;
@@ -71,6 +80,7 @@ private:
 	Common::String _text;
 	VisualText *_mouseText;
 	VisualExplodingImage *_explodingImageAnimation;
+	VisualFlashingImage *_flashingImageAnimation;
 	const HintAlign _align;
 	bool _renderHint;
 };

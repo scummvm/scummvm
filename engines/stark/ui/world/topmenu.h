@@ -53,6 +53,9 @@ public:
 	/** A new item has been added to the player's inventory. Play relevant animation */
 	void notifyInventoryItemEnabled(uint16 itemIndex);
 
+	/** A new entry has been added to the player's diary. Play relevant animation */
+	void notifyDiaryEntryEnabled();
+
 private:
 	Button *getButtonAtPosition(const Common::Point &point) const;
 

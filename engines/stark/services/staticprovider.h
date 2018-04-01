@@ -61,7 +61,8 @@ public:
 		kDiaryNormal = 15,
 		kInventory = 16,
 		kTextBackgroundActive = 20,
-		kTextBackgroundPassive = 21
+		kTextBackgroundPassive = 21,
+		kDiaryTabbed = 22
 	};
 
 	enum UIImage {

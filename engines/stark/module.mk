@@ -102,6 +102,7 @@ MODULE_OBJS := \
 	visual/effects/effect.o \
 	visual/effects/fireflies.o \
 	visual/explodingimage.o \
+	visual/flashingimage.o \
 	visual/image.o \
 	visual/prop.o \
 	visual/smacker.o \

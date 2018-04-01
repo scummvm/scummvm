@@ -98,6 +98,9 @@ public:
 	/** A new item has been added to the player's inventory */
 	void notifyInventoryItemEnabled(uint16 itemIndex);
 
+	/** A new entry has been added to the player's diary */
+	void notifyDiaryEntryEnabled();
+
 	/** Access the selected inventory item */
 	int16 getSelectedInventoryItem() const;
 	void selectInventoryItem(int16 itemIndex);

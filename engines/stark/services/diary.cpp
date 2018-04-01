@@ -25,6 +25,7 @@
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/stateprovider.h"
+#include "engines/stark/services/userinterface.h"
 
 namespace Stark {
 
@@ -44,6 +45,7 @@ void Diary::clear() {
 void Diary::addDiaryEntry(const Common::String &name) {
 	_diaryEntries.push_back(name);
 	_hasUnreadEntries = true;
+	StarkUserInterface->notifyDiaryEntryEnabled();
 }
 
 void Diary::addFMVEntry(const Common::String &filename, const Common::String &title, int gameDisc) {

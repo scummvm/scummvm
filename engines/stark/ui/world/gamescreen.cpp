@@ -124,4 +124,8 @@ void GameScreen::notifyInventoryItemEnabled(uint16 itemIndex) {
 	_topMenu->notifyInventoryItemEnabled(itemIndex);
 }
 
+void GameScreen::notifyDiaryEntryEnabled() {
+	_topMenu->notifyDiaryEntryEnabled();
+}
+
 } // End of namespace Stark
