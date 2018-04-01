@@ -23,11 +23,14 @@
 #include "bladerunner/chapters.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/slice_animations.h"
 
 namespace BladeRunner {
 
 bool Chapters::enterChapter(int chapter) {
 	int id = _resourceIds[chapter];
+
+	_vm->_sliceAnimations->openFrames(id);
 
 	if (!_vm->openArchive("A.TLK"))
 		return false;

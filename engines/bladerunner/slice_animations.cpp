@@ -93,8 +93,28 @@ bool SliceAnimations::openCoreAnim() {
 	return _coreAnimPageFile.open("COREANIM.DAT");
 }
 
-bool SliceAnimations::openHDFrames() {
-	return _framesPageFile.open("HDFRAMES.DAT");
+bool SliceAnimations::openFrames(int fileNumber) {
+	if (_framesPageFile._fileNumber == -1) { // Running for the first time, need to probe
+		// First, try HDFRAMES.DAT
+		if (_framesPageFile.open("HDFRAMES.DAT")) {
+			_framesPageFile._fileNumber = 0;
+
+			return true;
+		}
+	}
+
+	if (_framesPageFile._fileNumber == 0) // HDFRAMES.DAT
+		return true;
+
+	if (_framesPageFile._fileNumber == fileNumber)
+		return true;
+
+	_framesPageFile._fileNumber = fileNumber;
+
+	if (fileNumber == 1 && _framesPageFile.open("CDFRAMES.DAT")) // For Chapter1 we try both CDFRAMES.DAT and CDFRAMES1.DAT
+		return true;
+
+	return _framesPageFile.open(Common::String::format("CDFRAMES%d.DAT", fileNumber));
 }
 
 bool SliceAnimations::PageFile::open(const Common::String &name) {
@@ -119,7 +139,7 @@ bool SliceAnimations::PageFile::open(const Common::String &name) {
 		_pageOffsets[pageNumber] = dataOffset + i * _sliceAnimations->_pageSize;
 	}
 
-	// debug("PageFile::Open: page file \"%s\" opened with %d pages", name.c_str(), pageCount);
+	debug("PageFile::Open: page file \"%s\" opened with %d pages", name.c_str(), pageCount);
 
 	return true;
 }

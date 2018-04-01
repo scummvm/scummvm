@@ -436,13 +436,6 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 	if (!r)
 		return false;
 
-	// TODO: Support cdframes
-
-	r = _sliceAnimations->openHDFrames();
-	if (!r) {
-		return false;
-	}
-
 	r = _sliceAnimations->openCoreAnim();
 	if (!r) {
 		return false;
