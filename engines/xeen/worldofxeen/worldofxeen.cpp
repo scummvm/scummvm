@@ -134,11 +134,11 @@ void WorldOfXeenEngine::dream() {
 	while (!shouldExit() && _events->timeElapsed() < 7)
 		_events->pollEventsAndWait();
 
-	_sound->playSound("dreams2.voc", 1);
+	_sound->playSound("dreams2.voc", 1, 0);
 	while (!shouldExit() && _sound->isSoundPlaying())
 		_events->pollEventsAndWait();
 
-	_sound->playSound("laff1.voc", 1);
+	_sound->playSound("laff1.voc", 1, 0);
 	while (!shouldExit() && _sound->isSoundPlaying())
 		_events->pollEventsAndWait();
 
