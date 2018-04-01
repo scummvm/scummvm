@@ -249,11 +249,13 @@ void Resources::loadData() {
 	file.syncString(BTN_GOLD);
 	file.syncString(ITEM_BROKEN);
 	file.syncString(ITEM_CURSED);
+	file.syncString(ITEM_OF);
 	file.syncStrings(BONUS_NAMES, 7);
 	file.syncStrings(WEAPON_NAMES, 41);
 	file.syncStrings(ARMOR_NAMES, 14);
 	file.syncStrings(ACCESSORY_NAMES, 11);
 	file.syncStrings(MISC_NAMES, 22);
+	file.syncStrings(SPECIAL_NAMES, 74);
 	file.syncStrings(ELEMENTAL_NAMES, 6);
 	file.syncStrings(ATTRIBUTE_NAMES, 10);
 	file.syncStrings(EFFECTIVENESS_NAMES, 7);

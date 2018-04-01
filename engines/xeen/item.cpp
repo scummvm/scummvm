@@ -664,14 +664,14 @@ Common::String AccessoryItems::getAttributes(XeenItem &item, const Common::Strin
 
 Common::String MiscItems::getFullDescription(int itemIndex, int displayNum) {
 	XeenItem &i = operator[](itemIndex);
-	Resources &res = *getVm()->_resources;
 
-	Common::String desc = Common::String::format("\f%02u%s%s%s\f%02u%s%s", displayNum,
-		i._state._cursed || i._state._broken ? "" : res._maeNames[i._material].c_str(),
+	Common::String desc = Common::String::format("\f%02u%s%s\f%02u%s%s%s%s", displayNum,
 		i._state._broken ? Res.ITEM_BROKEN : "",
 		i._state._cursed ? Res.ITEM_CURSED : "",
 		displayNum,
-		Res.MISC_NAMES[i._id],
+		Res.MISC_NAMES[i._material],
+		(i._state._cursed || i._state._broken) || !i._id ? "" : Res.ITEM_OF,
+		(i._state._cursed || i._state._broken) ? "" : Res.SPECIAL_NAMES[i._id],
 		(i._state._cursed || i._state._broken) || !i._id ? "\b " : ""
 	);
 	capitalizeItem(desc);

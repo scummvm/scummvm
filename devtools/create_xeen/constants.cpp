@@ -1283,6 +1283,8 @@ const char *const BTN_GOLD = "G\fdold";
 
 const char *const ITEM_BROKEN = "\f32broken ";
 const char *const ITEM_CURSED = "\f09cursed ";
+const char *const ITEM_OF = "of ";
+
 const char *const BONUS_NAMES[7] = {
 	"", "Dragon Slayer", "Undead Eater", "Golem Smasher",
 	"Bug Zapper", "Monster Masher", "Beast Bopper"
@@ -1314,6 +1316,20 @@ const char *const MISC_NAMES[22] = {
 	nullptr, "rod ", "jewel ", "gem ", "box ", "orb ", "horn ", "coin ",
 	"wand ", "whistle ", "potion ", "scroll ", "bogus", "bogus", "bogus",
 	"bogus", "bogus", "bogus", "bogus", "bogus", "bogus", "bogus"
+};
+
+const char *const SPECIAL_NAMES[74] = {
+	nullptr, "light", "awakening", "magic arrows", "first aid", "fists", "energy blasts", "sleeping",
+	"revitalization", "curing", "sparking", "shrapmetal", "insect repellent", "toxic clouds", "elemental protection",
+	"pain", "jumping", "beast control", "clairvoyance", "undead turning", "levitation", "wizard eyes", "blessing",
+	"monster identification",  "lightning", "holy bonuses", "power curing", "nature's cures", "beacons",
+	"shielding", "heroism", "hypnotism", "water walking", "frost biting", "monster finding", "fireballs",
+	"cold rays", "antidotes", "acid spraying", "time distortion", "dragon sleep", "vaccination", "teleportation",
+	"death", "free movement", "golem stopping", "poison volleys", "deadly swarms", "shelter", "daily protection",
+	"daily sorcerery", "feasting", "fiery flails", "recharging", "freezing", "town portals", "stone to flesh",
+	"raising the dead", "etherealization", "dancing swords", "moon rays", "mass distortion", "prismatic light",
+	"enchant item", "incinerating", "holy words", "resurrection", "storms", "megavoltage", "infernos",
+	"sun rays", "implosions", "star bursts", "the GODS!"
 };
 
 const char *const ELEMENTAL_NAMES[6] = {
@@ -2096,11 +2112,13 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(BTN_GOLD);
 	file.syncString(ITEM_BROKEN);
 	file.syncString(ITEM_CURSED);
+	file.syncString(ITEM_OF);
 	file.syncStrings(BONUS_NAMES, 7);
 	file.syncStrings(WEAPON_NAMES, 41);
 	file.syncStrings(ARMOR_NAMES, 14);
 	file.syncStrings(ACCESSORY_NAMES, 11);
 	file.syncStrings(MISC_NAMES, 22);
+	file.syncStrings(SPECIAL_NAMES, 74);
 	file.syncStrings(ELEMENTAL_NAMES, 6);
 	file.syncStrings(ATTRIBUTE_NAMES, 10);
 	file.syncStrings(EFFECTIVENESS_NAMES, 7);

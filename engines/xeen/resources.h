@@ -304,11 +304,13 @@ public:
 	const char *BTN_GOLD;
 	const char *ITEM_BROKEN;
 	const char *ITEM_CURSED;
+	const char *ITEM_OF;
 	const char *BONUS_NAMES[7];
 	const char *WEAPON_NAMES[35];
 	const char *ARMOR_NAMES[14];
 	const char *ACCESSORY_NAMES[11];
 	const char *MISC_NAMES[22];
+	const char *SPECIAL_NAMES[74];
 	const char *ELEMENTAL_NAMES[6];
 	const char *ATTRIBUTE_NAMES[10];
 	const char *EFFECTIVENESS_NAMES[7];
