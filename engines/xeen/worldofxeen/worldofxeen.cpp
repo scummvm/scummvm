@@ -79,7 +79,7 @@ void WorldOfXeenEngine::death() {
 	w.update();
 	savedBg.blitFrom(*_screen);
 
-	_sound->playSound(_files->_ccNum ? "laff1.voc" : "xeenlaff.voc");
+	_sound->playSound(_files->_ccNum ? "laff1.voc" : "xeenlaff.voc", _files->_ccNum, 0);
 
 	// Animation of Xeen or Alamar laughing
 	for (int idx = 0, idx2 = 0; idx < (_files->_ccNum ? 10 : 23); ++idx) {
