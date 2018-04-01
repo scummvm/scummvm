@@ -1872,7 +1872,7 @@ void Combat::rangedAttack(PowType powNum) {
 
 	_attackDurationCtr = -1;
 	if (_monster2Attack != -1) {
-		_attackDurationCtr--;
+		_attackDurationCtr = attackDurationCtr - 1;
 		if (attackMonsters.empty())
 			attackMonsters.resize(1);
 		attackMonsters[0] = monster2Attack;
