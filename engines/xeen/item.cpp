@@ -91,9 +91,9 @@ const char *XeenItem::getItemName(ItemCategory category, uint id) {
 		case CATEGORY_WEAPON:
 			return Res.WEAPON_NAMES[id];
 		case CATEGORY_ARMOR:
-			return Res.ARMOR_NAMES[id - 35];
+			return Res.ARMOR_NAMES[id];
 		case CATEGORY_ACCESSORY:
-			return Res.ACCESSORY_NAMES[id - 49];
+			return Res.ACCESSORY_NAMES[id];
 		default:
 			return Res.MISC_NAMES[id];
 		}
