@@ -74,7 +74,7 @@ void SpeechManager::kill() {
 }
 
 void SpeechManager::setObjFontColour(ObjectType *t) {
-	setFontColour(_speech->talkCol, t->r, t->g, t->b);
+	_speech->talkCol.setColor(t->r, t->g, t->b);
 }
 
 void SpeechManager::addSpeechLine(const Common::String &theLine, int x, int &offset) {
@@ -264,8 +264,7 @@ bool SpeechManager::load(Common::SeekableReadStream *stream) {
 	byte r = stream->readByte();
 	byte g = stream->readByte();
 	byte b = stream->readByte();
-	setFontColour(_speech->talkCol, r, g, b);
-
+	_speech->talkCol.setColor(r, g, b);
 	_speechSpeed = stream->readFloatLE();
 
 	// Read y co-ordinate

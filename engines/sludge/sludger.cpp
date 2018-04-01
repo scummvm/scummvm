@@ -196,7 +196,6 @@ void killSludge() {
 	g_sludge->_cursorMan->kill();
 
 	// global variables
-	pastePalette.reset();
 	numBIFNames = numUserFunc = 0;
 	delete []allUserFunc;
 	delete []allBIFNames;

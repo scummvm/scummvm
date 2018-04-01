@@ -55,7 +55,6 @@
 namespace Sludge {
 
 int speechMode = 0;
-SpritePalette pastePalette;
 
 Variable *launchResult = NULL;
 
@@ -775,7 +774,7 @@ builtIn(setPasteColour) {
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
 
-	setFontColour(pastePalette, (byte)red, (byte)green, (byte)blue);
+	g_sludge->_txtMan->setPasterColor((byte)red, (byte)green, (byte)blue);
 	return BR_CONTINUE;
 }
 
@@ -846,7 +845,7 @@ builtIn(pasteString) {
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
 		x = g_sludge->_gfxMan->getCenterX(g_sludge->_txtMan->stringWidth(newText));
-	g_sludge->_txtMan->pasteStringToBackdrop(newText, x, y, pastePalette);
+	g_sludge->_txtMan->pasteStringToBackdrop(newText, x, y);
 	return BR_CONTINUE;
 }
 
@@ -2160,7 +2159,7 @@ builtIn(burnString) {
 	trimStack(fun->stack);
 	if (x == IN_THE_CENTRE)
 		x = g_sludge->_gfxMan->getCenterX(g_sludge->_txtMan->stringWidth(newText));
-	g_sludge->_txtMan->burnStringToBackdrop(newText, x, y, pastePalette);
+	g_sludge->_txtMan->burnStringToBackdrop(newText, x, y);
 	return BR_CONTINUE;
 }
 
