@@ -103,6 +103,7 @@ void PartyDrawer::drawParty(bool updateFlag) {
 void PartyDrawer::highlightChar(int charId) {
 	Resources &res = *_vm->_resources;
 	Windows &windows = *_vm->_windows;
+	assert(charId < MAX_ACTIVE_PARTY);
 
 	if (charId != _hiliteChar && _hiliteChar != HILIGHT_CHAR_DISABLED) {
 		// Handle deselecting any previusly selected char
@@ -1567,7 +1568,7 @@ void Interface::doCombat() {
 					spells.castSpell(c, (MagicSpell)spellId);
 					nextChar();
 				} else {
-					highlightChar(combat._combatParty[combat._whosTurn]->_rosterId);
+					highlightChar(combat._whosTurn);
 				}
 				break;
 			}
