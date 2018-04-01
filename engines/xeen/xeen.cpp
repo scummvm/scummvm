@@ -202,6 +202,7 @@ void XeenEngine::playGame() {
 	SpriteResource::setClippedBottom(140);
 
 	play();
+	_sound->stopAllAudio();
 }
 
 void XeenEngine::play() {
