@@ -45,7 +45,7 @@ Windows::Windows() {
 		Window(Common::Rect(0, 0, 230, 149), 0, 0, 9, 8, 216, 140),
 		Window(Common::Rect(235, 148, 309, 189), 2, 8, 0, 0, 0, 0),
 		Window(Common::Rect(70, 20, 250, 183), 3, 8, 80, 38, 240, 166),
-		Window(Common::Rect(52, 149, 268, 197), 4, 8, 0, 0, 0, 0),
+		Window(Common::Rect(52, 149, 268, 198), 4, 8, 0, 0, 0, 0),
 		Window(Common::Rect(108, 0, 200, 200), 5, 0, 0, 0, 0, 0),
 		Window(Common::Rect(232, 9, 312, 74), 0, 0, 0, 0, 0, 0),
 		Window(Common::Rect(103, 156, 217, 186), 6, 8, 0, 0, 0, 0),
