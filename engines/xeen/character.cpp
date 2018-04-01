@@ -410,7 +410,7 @@ int Character::statColor(int amount, int threshold) {
 		return 2;
 	else if (amount == threshold)
 		return 15;
-	else if (amount <= (threshold / 4))
+	else if (amount >= (threshold / 4))
 		return 9;
 	else
 		return 32;
