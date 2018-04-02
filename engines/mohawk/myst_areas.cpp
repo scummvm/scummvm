@@ -196,11 +196,20 @@ MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, ResourceType type, Common::S
 	// Position values require modulus 10000 to keep in sane range.
 	_left = rlstStream->readSint16LE() % 10000;
 	_top = rlstStream->readSint16LE() % 10000;
-	_playOnCardChange = rlstStream->readUint16LE();
+	_playOnCardChange = rlstStream->readUint16LE() != 0;
 	_direction = rlstStream->readSint16LE();
 	_playBlocking = rlstStream->readUint16LE();
 	_loop = rlstStream->readUint16LE();
 	_playRate = rlstStream->readUint16LE();
+
+	// WORKAROUND: Myst v1.0 has playOnCardChange set to true
+	// for the Myst flyby video shown during the intro.
+	// This causes the flyby to play over the closed Myst book picture.
+	// Later releases of the game have that flag set to false.
+	// Here we apply a resource patch to match the newer releases.
+	if (_videoFile == "qtw/intro/intro2.mov") {
+		_playOnCardChange = false;
+	}
 
 	debugC(kDebugResource, "\tvideoFile: \"%s\"", _videoFile.c_str());
 	debugC(kDebugResource, "\tleft: %d", _left);

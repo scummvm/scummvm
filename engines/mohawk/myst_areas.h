@@ -126,7 +126,7 @@ protected:
 	uint16 _loop;
 	int16 _direction; // 1 => forward, -1 => backwards
 	uint16 _playBlocking;
-	uint16 _playOnCardChange;
+	bool _playOnCardChange;
 	uint16 _playRate; // percents
 };
 
