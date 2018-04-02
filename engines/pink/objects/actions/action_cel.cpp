@@ -23,6 +23,7 @@
 #include <common/debug.h>
 #include "action_cel.h"
 #include <pink/objects/actors/actor.h>
+#include <graphics/surface.h>
 #include "engines/pink/archive.h"
 #include "engines/pink/objects/pages/game_page.h"
 #include "pink/pink.h"
@@ -44,6 +45,7 @@ void ActionCEL::start(bool unk) {
     if (!_decoder)
         _decoder = _actor->getPage()->loadCel(_fileName);
     _actor->getPage()->getGame()->getDirector()->addSprite(this);
+
     this->onStart();
 }
 

@@ -33,6 +33,7 @@ static const ADGameDescription gameDescriptions[] = {
                 0,{
                         {"PPTP.ORB", NULL, NULL, -1},
                         {"PPTP.BRO", NULL, NULL, -1},
+                        {"PPTP.EXE", NULL, NULL, -1},
                         AD_LISTEND},
                 Common::EN_ANY,
                 Common::kPlatformWindows,
@@ -41,8 +42,10 @@ static const ADGameDescription gameDescriptions[] = {
         },
         {
                 "pokus",
-                0,
-                AD_ENTRY1s("hpp.ORB", NULL, -1),
+                0, {
+                        {"HPP.orb", NULL, NULL, -1},
+                        {"hpp.exe", NULL, NULL, -1},
+                        AD_LISTEND},
                 Common::EN_ANY,
                 Common::kPlatformWindows,
                 ADGF_UNSTABLE,

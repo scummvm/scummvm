@@ -23,21 +23,35 @@
 #ifndef PINK_CURSOR_MGR_H
 #define PINK_CURSOR_MGR_H
 
-#include "engines/pink/objects/object.h"
+#include <graphics/wincursor.h>
+#include <engines/pink/objects/object.h>
+#include <common/rect.h>
 
 namespace Pink {
 
+
 class Actor;
 class GamePage;
+class PinkEngine;
 
 class CursorMgr : public Object {
 public:
-    CursorMgr(GamePage *page);
+    CursorMgr(PinkEngine *game, GamePage *page);
+    ~CursorMgr();
 
+    void update();
+    void setCursor(uint index, Common::Point point);
+    void setCursor(Common::String &cursorName, Common::Point point);
 
 private:
     Actor *_actor;
     GamePage *_page;
+    PinkEngine *_game;
+
+    uint _time;
+    uint _firstFrameIndex;
+    bool _isPlayingAnimation;
+    bool _isSecondFrame;
 };
 
 } // End of namespace Pink

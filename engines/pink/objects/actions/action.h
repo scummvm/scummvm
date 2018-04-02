@@ -40,6 +40,8 @@ public:
 
     virtual bool initPalette(Director *director) { return 0;}
 
+    Actor *getActor() { return _actor;}
+
 protected:
     Actor *_actor;
 };

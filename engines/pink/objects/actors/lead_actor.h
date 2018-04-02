@@ -24,6 +24,7 @@
 #define PINK_LEAD_ACTOR_H
 
 #include <common/keyboard.h>
+#include <common/rect.h>
 #include "actor.h"
 
 namespace Pink {
@@ -58,8 +59,14 @@ public:
     void start(bool isHandler);
     void update();
 
-    void OnKeyboardButtonClick(Common::KeyCode code);
+    void onKeyboardButtonClick(Common::KeyCode code);
+    void onLeftButtonClick(Common::Point point);
+    void onMouseMove(Common::Point point);
+
 private:
+    void updateCursor(Common::Point point);
+
+
     State _state;
     CursorMgr *_cursorMgr;
     WalkMgr *_walkMgr;

@@ -23,7 +23,8 @@
 #include "supporting_actor.h"
 #include <engines/pink/archive.h>
 #include <engines/pink/objects/actions/action.h>
-#include <common/debug.h>
+#include <engines/pink/constants.h>
+#include "pink/cursor_mgr.h"
 
 namespace Pink {
 
@@ -40,6 +41,20 @@ void SupportingActor::toConsole() {
         _actions[i]->toConsole();
     }
     _handlerMgr.toConsole();
+}
+
+void SupportingActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
+    if (isLeftClickHandlers()){
+        if (!_cursor.empty()){
+            mgr->setCursor(_cursor, point);
+        }
+        else mgr->setCursor(kClickableFirstFrameCursor, point);
+    }
+    else Actor::onMouseOver(point, mgr);
+}
+
+bool SupportingActor::isLeftClickHandlers() {
+    return _handlerMgr.isLeftClickHandler(this);
 }
 
 } // End of namespace Pink

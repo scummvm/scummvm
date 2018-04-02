@@ -36,13 +36,11 @@ namespace Pink {
 
 class Sound {
 public:
-    Sound(Audio::Mixer *mixer, Common::SeekableReadStream *stream);
+    Sound(Audio::Mixer *mixer, Common::SafeSeekableSubReadStream *stream);
     ~Sound();
 
-    bool load(Common::SeekableReadStream *stream);
     void play(Audio::Mixer::SoundType type, int volume, bool isLoop);
 
-    bool isLoaded();
     bool isPlaying();
 
     void pause();
@@ -54,8 +52,8 @@ public:
 
 private:
     Audio::Mixer *_mixer;
-    Audio::AudioStream *_stream;
     Audio::SoundHandle _handle;
+    Common::SafeSeekableSubReadStream *_fileStream;
 };
 
 } // End of namespace Pink

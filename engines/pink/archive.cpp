@@ -45,67 +45,9 @@
 #include <engines/pink/objects/actors/cursor_actor.h>
 #include <engines/pink/objects/handlers/handler_timer.h>
 #include <engines/pink/objects/actors/inventory_actor.h>
+#include "constants.h"
 
 namespace Pink {
-
-enum {
-    kMaxClassLength = 32,
-    kMaxStringLength = 64, // adjust
-    kNullObject = 0
-};
-
-enum {
-    kActionHide,
-    kActionLoop,
-    kActionPlay,
-    kActionPlayWithSfx,
-    kActionSfx,
-    kActionSound,
-    kActionStill,
-    kActionTalk,
-    kActionText,
-    kActor,
-    kAudioInfoPDAButton,
-    kConditionGameVariable,
-    kConditionInventoryItemOwner,
-    kConditionModuleVariable,
-    kConditionNotInventoryItemOwner,
-    kConditionNotModuleVariable,
-    kConditionNotPageVariable,
-    kConditionPageVariable,
-    kCursorActor,
-    kGamePage,
-    kHandlerLeftClick,
-    kHandlerStartPage,
-    kHandlerTimer,
-    kHandlerTimerActions,
-    kHandlerTimerSequences,
-    kHandlerUseClick,
-    kInventoryActor,
-    kInventoryItem,
-    kLeadActor,
-    kModuleProxy,
-    kPDAButtonActor,
-    kParlSqPink,
-    kPubPink,
-    kSeqTimer,
-    kSequence,
-    kSequenceAudio,
-    kSequenceItem,
-    kSequenceItemDefaultAction,
-    kSequenceItemLeader,
-    kSequenceItemLeaderAudio,
-    kSideEffectExit,
-    kSideEffectGameVariable,
-    kSideEffectInventoryItemOwner,
-    kSideEffectLocation,
-    kSideEffectModuleVariable,
-    kSideEffectPageVariable,
-    kSideEffectRandomPageVariable,
-    kSupportingActor,
-    kWalkAction,
-    kWalkLocation
-};
 
 static const struct RuntimeClass {
     const char *name;

@@ -65,4 +65,10 @@ void Page::init() {
     }
 }
 
+Page::~Page() {
+    for (int i = 0; i < _actors.size(); ++i) {
+        delete _actors[i];
+    }
+}
+
 } // End of namespace Pink

@@ -29,13 +29,13 @@
 #include "engines/pink/archive.h"
 #include "engines/pink/objects/pages/game_page.h"
 #include "engines/pink/pink.h"
+#include "supporting_actor.h"
 
 namespace Pink {
 
 void LeadActor::deserialize(Archive &archive) {
     _state = kReady;
     Actor::deserialize(archive);
-    _state = kReady;
     _cursorMgr = static_cast<CursorMgr*>(archive.readObject());
     _walkMgr = static_cast<WalkMgr*>(archive.readObject());
     _sequencer = static_cast<Sequencer*>(archive.readObject());
@@ -70,18 +70,36 @@ LeadActor::State LeadActor::getState() const {
 
 void LeadActor::update() {
     switch (_state) {
+        case kReady:
+
+            _sequencer->update();
+            //fall-through intended
+        case kMoving:
+
+            _cursorMgr->update();
+            break;
+        case kInDialog1:
+        case kInDialog2:
+            _sequencer->update();
+            break;
+
+        case kInventory:
+        case kPDA:
+            break;
+
         case kPlayingVideo:
             _sequencer->update();
             if (!_sequencer->_context){
                 _state = kUnk_Loading;
                 _page->getGame()->changeScene(_page);
             }
-        default:
+            break;
+        case kUnk_Loading:
             break;
     }
 }
 
-void LeadActor::OnKeyboardButtonClick(Common::KeyCode code) {
+void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
     switch(_state) {
         case kMoving:
             switch (code){
@@ -110,6 +128,73 @@ void LeadActor::OnKeyboardButtonClick(Common::KeyCode code) {
                 default:
                     break;
             }
+            break;
+        default:
+            break;
+    }
+}
+
+void LeadActor::start(bool isHandler) {
+    if (isHandler && _state != kPlayingVideo){
+        _state = kReady;
+    }
+    updateCursor({0,0});
+}
+
+void LeadActor::onMouseMove(Common::Point point) {
+    if (_state != kPDA)
+        updateCursor(point);
+    else error("pda is not supported");
+}
+
+void LeadActor::updateCursor(Common::Point point) {
+    switch (_state) {
+        case kReady:
+        case kMoving: {
+            Director *director = _page->getGame()->getDirector();
+            Actor *actor = director->getActorByPoint(point);
+            if (actor)
+                actor->onMouseOver(point, _cursorMgr);
+            else _cursorMgr->setCursor(kDefaultCursor, point);
+            break;
+        }
+        case kInDialog1:
+        case kInDialog2:
+        case kPlayingVideo:
+            _cursorMgr->setCursor(kNotClickableCursor, point);
+            break;
+        case kPDA:
+        case kInventory:
+            _cursorMgr->setCursor(kDefaultCursor, point);
+            break;
+        default:
+            break;
+    }
+}
+
+void LeadActor::onLeftButtonClick(Common::Point point) {
+    switch (_state) {
+        case kReady:
+        case kMoving: {
+        Actor *actor = _page->getGame()->getDirector()->getActorByPoint(point);
+        if (this == actor){
+          // inventory is not implemented
+            return;
+        }
+
+        if (actor->isClickable() &&
+            ((SupportingActor*) actor)->isLeftClickHandlers())
+
+
+
+
+            break;
+        }
+        case kPDA:
+
+            break;
+        case kInventory:
+
             break;
         default:
             break;

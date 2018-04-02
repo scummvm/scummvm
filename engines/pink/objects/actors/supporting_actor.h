@@ -33,6 +33,11 @@ public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
 
+    virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
+
+    virtual bool isClickable() { return 1; }
+    bool isLeftClickHandlers();
+
 private:
     HandlerMgr _handlerMgr;
     Common::String _location;

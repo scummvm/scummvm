@@ -21,6 +21,7 @@
  */
 
 #include <common/stream.h>
+#include <graphics/surface.h>
 #include "cel_decoder.h"
 
 namespace Pink {
@@ -79,6 +80,18 @@ const Graphics::Surface *CelDecoder::getCurrentFrame() {
     return track->getCurrentFrame();
 }
 
+Common::Point CelDecoder::getCenter() {
+    CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+    if (!track)
+        return {0,0};
+    return track->getCenter();
+}
+
+Common::Rect &CelDecoder::getRectangle() {
+    CelVideoTrack *track = (CelVideoTrack*) getTrack(0);
+    return track->getRect();
+}
+
 CelDecoder::CelVideoTrack::CelVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader)
         : FlicVideoTrack(stream, frameCount, width, height, 1), _center(0,0), _transparentColourIndex(0){
     readHeader();
@@ -100,33 +113,21 @@ void CelDecoder::CelVideoTrack::readPrefixChunk() {
 
     switch (subchunkType) {
         case CEL_DATA:
-            debug("%u", _fileStream->readUint16LE());
+            _fileStream->readUint16LE();
             _center.x = _fileStream->readUint16LE();
             _center.y = _fileStream->readUint16LE();
-            debug("stretch x: %u", _fileStream->readUint16LE());
-            debug("stretch y: %u", _fileStream->readUint16LE());
-            debug("rotation x: %u", _fileStream->readUint16LE());
-            debug("rotation y: %u", _fileStream->readUint16LE());
-            debug("rotation z: %u", _fileStream->readUint16LE());
-            debug("current Frame: %u", _fileStream->readUint16LE());
-            debug("next frame offset: %u",_fileStream->readUint32LE());
-            debug("tcolor: %u", _transparentColourIndex = _fileStream->readUint16LE());
-            for (int j = 0; j < 18; ++j) {
-                debug("%u", _fileStream->readUint16LE());
-            }
             break;
         default:
             error("Unknown subchunk type");
             _fileStream->skip(subchunkSize - 6);
             break;
     }
-
+    _rect = Common::Rect::center(_center.x, _center.y, _surface->w, _surface->h);
 }
 
 void CelDecoder::CelVideoTrack::readHeader() {
-    _fileStream->readUint16LE();	// flags
-    // Note: The normal delay is a 32-bit integer (dword), whereas the overridden delay is a 16-bit integer (word)
-    // the frame delay is the FLIC "speed", in milliseconds.
+    _fileStream->readUint16LE();
+
     _frameDelay = _startFrameDelay = _fileStream->readUint32LE();
 
     _fileStream->seek(80);
@@ -137,7 +138,6 @@ void CelDecoder::CelVideoTrack::readHeader() {
         readPrefixChunk();
     }
 
-    // Seek to the first frame
     _fileStream->seek(_offsetFrame1);
 }
 
@@ -154,6 +154,44 @@ uint16 CelDecoder::CelVideoTrack::getTransparentColourIndex() {
 }
 
 const Graphics::Surface *CelDecoder::CelVideoTrack::getCurrentFrame() {
+    return _surface;
+}
+
+Common::Point CelDecoder::CelVideoTrack::getCenter() {
+    return _center;
+}
+
+Common::Rect &CelDecoder::CelVideoTrack::getRect() {
+    return _rect;
+}
+
+#define FRAME_TYPE 0xF1FA
+
+const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
+    // Read chunk
+    /*uint32 frameSize = */ _fileStream->readUint32LE();
+    uint16 frameType = _fileStream->readUint16LE();
+
+    switch (frameType) {
+        case FRAME_TYPE:
+            handleFrame();
+            break;
+        default:
+            error("FlicDecoder::decodeFrame(): unknown main chunk type (type = 0x%02X)", frameType);
+            break;
+    }
+
+    _curFrame++;
+    _nextFrameStartTime += _frameDelay;
+
+    if (_atRingFrame) {
+        // If we decoded the ring frame, seek to the second frame
+        _atRingFrame = false;
+        _fileStream->seek(_offsetFrame2);
+    }
+
+    if (_curFrame == 0)
+        _transparentColourIndex = *(byte*)_surface->getBasePtr(0,0);
     return _surface;
 }
 

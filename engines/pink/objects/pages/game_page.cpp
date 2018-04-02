@@ -77,7 +77,7 @@ void GamePage::init(bool isLoadingSave) {
         isHandler = initHandler();
     }
 
-    //_leadActor->start(isHandler);
+    _leadActor->start(isHandler);
 }
 
 bool GamePage::initHandler() {
@@ -92,7 +92,7 @@ bool GamePage::initHandler() {
 
 void GamePage::loadManagers() {
     perhapsIsLoaded = true;
-    _cursorMgr = new CursorMgr(this);
+    _cursorMgr = new CursorMgr(_module->getGame(), this);
     _walkMgr = new WalkMgr;
     _sequencer = new Sequencer(this);
 
@@ -135,6 +135,21 @@ void GamePage::toConsole() {
     for (int i = 0; i < _handlers.size(); ++i) {
         _handlers[i]->toConsole();
     }
+}
+
+GamePage::~GamePage() {
+    delete _cursorMgr;
+    delete _walkMgr;
+    delete _sequencer;
+    for (int i = 0; i < _handlers.size(); ++i) {
+        delete _handlers[i];
+    }
+}
+
+GamePage::GamePage()
+    : _cursorMgr(nullptr), _walkMgr(nullptr), _sequencer(nullptr)
+{
+
 }
 
 } // End of namespace Pink

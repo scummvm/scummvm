@@ -49,8 +49,10 @@ public:
 
     virtual void update();
     virtual void restart();
-    void skipToLastSubSequence();
+    virtual void skipSubSequence();
+    virtual void skipToLastSubSequence();
     void skipItemsTo(int index);
+
 
 public:
     SequenceContext *_context;
@@ -69,8 +71,12 @@ public:
     virtual void init(int unk);
     virtual void start(int unk);
     virtual void end();
+
     virtual void update();
     virtual void restart();
+
+    virtual void skipSubSequence() {};
+    virtual void skipToLastSubSequence();
 
 private:
     Common::String _soundName;

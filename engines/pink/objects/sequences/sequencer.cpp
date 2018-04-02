@@ -73,7 +73,8 @@ void Sequencer::toConsole() {
 }
 
 void Sequencer::update() {
-    _context->_sequence->update();
+    if (_context)
+        _context->_sequence->update();
 }
 
 void Sequencer::removeContext(SequenceContext *context) {
@@ -82,8 +83,8 @@ void Sequencer::removeContext(SequenceContext *context) {
 }
 
 void Sequencer::skipSubSequence() {
-    if (_context && _context->getNextItemIndex() < _context->getSequence()->getItems().size())
-        _context->getSequence()->start(0);
+    if (_context)
+        _context->getSequence()->skipSubSequence();
 }
 
 void Sequencer::restartSequence() {

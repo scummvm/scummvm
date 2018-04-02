@@ -33,12 +33,14 @@ namespace Pink {
 class Condition;
 class SideEffect;
 class LeadActor;
+class Actor;
 
 class Handler : public Object {
 public:
+    ~Handler();
     virtual void deserialize(Archive &archive);
     virtual void onMessage(LeadActor *actor);
-    bool isSuitable(LeadActor *actor);
+    bool isSuitable(Actor *actor);
 
 protected:
     void executeSideEffects(LeadActor *actor);

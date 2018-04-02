@@ -32,6 +32,9 @@ class CelDecoder : public Video::FlicDecoder {
 public:
     uint32 getX();
     uint32 getY();
+    Common::Point getCenter();
+    Common::Rect &getRectangle();
+
     uint16 getTransparentColourIndex();
     const Graphics::Surface *getCurrentFrame();
 
@@ -45,14 +48,19 @@ protected:
 
         uint32 getX() const;
         uint32 getY() const;
+        Common::Point getCenter();
+        Common::Rect &getRect();
 
         uint16 getTransparentColourIndex();
         const Graphics::Surface *getCurrentFrame();
 
     private:
+        const Graphics::Surface *decodeNextFrame();
         void readPrefixChunk();
-        uint16 _transparentColourIndex;
+
         Common::Point _center;
+        Common::Rect _rect;
+        byte _transparentColourIndex;
     };
 };
 
