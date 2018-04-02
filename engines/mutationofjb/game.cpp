@@ -46,13 +46,17 @@ Game::Game(MutationOfJBEngine *vm)
 	globalScriptFile.close();
 
 	_localScript = nullptr;
-	_room = new Room(_vm->getScreen());
+	_room = new Room(this, _vm->getScreen());
 
 	changeScene(13, false); // Initial scene.
 }
 
 GameData &Game::getGameData() {
 	return *_gameData;
+}
+
+Room &Game::getRoom() {
+	return *_room;
 }
 
 Script *Game::getGlobalScript() const {
@@ -122,36 +126,6 @@ Script *Game::changeSceneDelayScript(uint8 sceneId, bool partB) {
 	return _delayedLocalScript;
 }
 
-Door *Game::findDoor(int16 x, int16 y) {
-	Scene *scene = _gameData->getCurrentScene();
-	if (!scene)
-		return nullptr;
-
-	for (int i = 0; i < MIN(ARRAYSIZE(scene->_doors), (int) scene->_noDoors); ++i) {
-		Door &door = scene->_doors[i];
-		if ((x >= door._x) && (x < door._x + door._width) && (y >= door._y) && (y < door._y + door._height)) {
-			return &door;
-		}
-	}
-
-	return nullptr;
-}
-
-Static *Game::findStatic(int16 x, int16 y) {
-	Scene *scene = _gameData->getCurrentScene();
-	if (!scene)
-		return nullptr;
-
-	for (int i = 0; i < MIN(ARRAYSIZE(scene->_statics), (int) scene->_noStatics); ++i) {
-		Static &stat = scene->_statics[i];
-		if ((x >= stat._x) && (x < stat._x + stat._width) && (y >= stat._y) && (y < stat._y + stat._height)) {
-			return &stat;
-		}
-	}
-
-	return nullptr;
-}
-
 static Command *findActionInfoCommand(const ActionInfos &infos, const Common::String &entity1Name, const Common::String &entity2Name = Common::String()) {
 	for (ActionInfos::const_iterator it = infos.begin(); it != infos.end(); ++it) {
 		if (it->_entity1Name == entity1Name && it->_entity2Name == entity2Name) {
@@ -178,6 +152,10 @@ bool Game::startActionSection(ActionInfo::Action action, const Common::String &e
 	}
 
 	return false;
+}
+
+bool Game::isCurrentSceneMap() const {
+	return _gameData->_currentScene == 12;
 }
 
 void Game::update() {

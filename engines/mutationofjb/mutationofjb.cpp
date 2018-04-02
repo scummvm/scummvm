@@ -35,13 +35,16 @@
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/debug.h"
+#include "mutationofjb/room.h"
 
 namespace MutationOfJB {
 
 MutationOfJBEngine::MutationOfJBEngine(OSystem *syst)
 : Engine(syst),
  _console(nullptr),
- _screen(nullptr) {
+ _screen(nullptr),
+ _currentAction(ActionInfo::Walk),
+ _mapObjectId(0) {
 	debug("MutationOfJBEngine::MutationOfJBEngine");
 }
 
@@ -69,6 +72,94 @@ Game &MutationOfJBEngine::getGame() {
 	return *_game;
 }
 
+void MutationOfJBEngine::handleNormalScene(const Common::Event &event) {
+	Scene *const scene = _game->getGameData().getCurrentScene();
+
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+	{
+		const int16 x = event.mouse.x;
+		const int16 y = event.mouse.y;
+
+		if (Door *const door = scene->findDoor(x, y)) {
+			if (!_game->startActionSection(_currentAction, door->_name) && _currentAction == ActionInfo::Walk && door->_destSceneId != 0) {
+				_game->changeScene(door->_destSceneId, _game->getGameData()._partB);
+			}
+		} else if (Static *const stat = scene->findStatic(x, y)) {
+			if (stat->_active == 1) {
+				_game->startActionSection(_currentAction, stat->_name);
+			}
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+/*
+	Special handling for map scenes.
+
+	Bitmaps define mouse clickable areas.
+	Statics are used to start actions.
+	Objects are used for showing labels.
+
+*/
+void MutationOfJBEngine::handleMapScene(const Common::Event &event) {
+	Scene *const scene = _game->getGameData().getCurrentScene();
+
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+	{
+		const int16 x = event.mouse.x;
+		const int16 y = event.mouse.y;
+
+		int index = 0;
+		if (Bitmap *const bitmap = scene->findBitmap(x, y, &index))	{
+			Static *const stat = scene->getStatic(index);
+			if (stat && stat->_active == 1) {
+				_game->startActionSection(ActionInfo::Walk, stat->_name);
+			}
+		}
+		break;
+	}
+	case Common::EVENT_MOUSEMOVE:
+	{
+		const int16 x = event.mouse.x;
+		const int16 y = event.mouse.y;
+
+		int index = 0;
+		bool found = false;
+		if (Bitmap *const bitmap = scene->findBitmap(x, y, &index))	{
+			Static *const stat = scene->getStatic(index);
+			if (stat && stat->_active == 1) {
+				Object *const object = scene->getObject(index);
+				if (object) {
+					found = true;
+					if (index != _mapObjectId) {
+						if (_mapObjectId) {
+							_game->getRoom().drawObjectAnimation(_mapObjectId, 1);
+							_mapObjectId = 0;
+						}
+
+						_mapObjectId = index;
+						_game->getRoom().drawObjectAnimation(_mapObjectId, 0);
+					}
+				}
+			}
+		}
+
+		if (!found && _mapObjectId != 0) {
+			_game->getRoom().drawObjectAnimation(_mapObjectId, 1);
+			_mapObjectId = 0;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 Common::Error MutationOfJBEngine::run() {
 	debug("MutationOfJBEngine::run");
 
@@ -77,11 +168,10 @@ Common::Error MutationOfJBEngine::run() {
 	_console = new Console(this);
 	_screen = new Graphics::Screen();
 	_game = new Game(this);
-	ActionInfo::Action currentAction = ActionInfo::Walk;
 
 	setupCursor();
 
-	while(!shouldQuit()) {
+	while (!shouldQuit()) {
 		Common::Event event;
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
@@ -93,45 +183,40 @@ Common::Error MutationOfJBEngine::run() {
 				}
 				break;
 			}
-			case Common::EVENT_LBUTTONDOWN:
-			{
-				if (Door *const door = _game->findDoor(event.mouse.x, event.mouse.y)) {
-					if (!_game->startActionSection(currentAction, door->_name) && currentAction == ActionInfo::Walk && door->_destSceneId != 0) {
-						_game->changeScene(door->_destSceneId, _game->getGameData()._partB);
-					}
-				} else if (Static *const stat = _game->findStatic(event.mouse.x, event.mouse.y)) {
-					_game->startActionSection(currentAction, stat->_name);
-				}
-				break;
-			}
 			case Common::EVENT_KEYUP:
 			{
 				switch (event.kbd.ascii) {
 				case 'g':
-					currentAction = ActionInfo::Walk;
+					_currentAction = ActionInfo::Walk;
 					break;
 				case 'r':
-					currentAction = ActionInfo::Talk;
+					_currentAction = ActionInfo::Talk;
 					break;
 				case 's':
-					currentAction = ActionInfo::Look;
+					_currentAction = ActionInfo::Look;
 					break;
 				case 'b':
-					currentAction = ActionInfo::Use;
+					_currentAction = ActionInfo::Use;
 					break;
 				case 'n':
-					currentAction = ActionInfo::PickUp;
+					_currentAction = ActionInfo::PickUp;
 					break;
 				}
 			}
 			default:
 				break;
 			}
+
+			if (!_game->isCurrentSceneMap()) {
+				handleNormalScene(event);
+			} else {
+				handleMapScene(event);
+			}
 		}
 
 		_console->onFrame();
 		_game->update();
-		_system->delayMillis(40);
+		_system->delayMillis(10);
 		_screen->update();
 	}
 

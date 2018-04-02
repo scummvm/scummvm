@@ -121,10 +121,17 @@ struct Bitmap {
 
 
 struct Scene {
-
 	Door *getDoor(uint8 objectId);
 	Object *getObject(uint8 objectId, bool ignoreNo = false);
 	Static *getStatic(uint8 staticId, bool ignoreNo = false);
+
+	uint8 getNoDoors(bool ignoreNo = false) const;
+	uint8 getNoObjects(bool ignoreNo = false) const;
+	uint8 getNoStatics(bool ignoreNo = false) const;
+
+	Door *findDoor(int16 x, int16 y, int *index = nullptr);
+	Static *findStatic(int16 x, int16 y, int *index = nullptr);
+	Bitmap *findBitmap(int16 x, int16 y, int *index = nullptr);
 
 	uint8 _startup;
 	uint8 _unknown001;

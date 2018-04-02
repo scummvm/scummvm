@@ -159,7 +159,7 @@ void AnimationDecoder::loadDiffFrame(EncryptedFile &file, uint32) {
 	const uint16 numLines = file.readUint16LE();
 
 	for (uint16 line = firstLine; line < firstLine + numLines; ++line) {
-		uint8 *imageData = reinterpret_cast<uint8 *>(_surface.getBasePtr(0, firstLine));
+		uint8 *imageData = reinterpret_cast<uint8 *>(_surface.getBasePtr(0, line));
 
 		uint8 runs = file.readByte();
 		while (runs--) {

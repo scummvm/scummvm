@@ -24,23 +24,30 @@
 #define MUTATIONOFJB_ROOM_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
+#include "graphics/surface.h"
 
 namespace Graphics {
-	class Screen;
+class Screen;
 }
 
 namespace MutationOfJB {
 
 class EncryptedFile;
+class Game;
 
 class Room {
 public:
 	friend class RoomAnimationDecoderCallback;
 
-	Room(Graphics::Screen *screen);
+	Room(Game *game, Graphics::Screen *screen);
 	bool load(uint8 roomNumber, bool roomB);
+	void drawObjectAnimation(uint8 objectId, int animOffset);
 private:
+	Game *_game;
 	Graphics::Screen *_screen;
+	Common::Array<Graphics::Surface> _surfaces;
+	Common::Array<int> _objectsStart;
 };
 
 }

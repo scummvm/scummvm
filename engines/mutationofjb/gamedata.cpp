@@ -151,7 +151,7 @@ Door *Scene::getDoor(uint8 doorId) {
 }
 
 Object *Scene::getObject(uint8 objectId, bool ignoreNo) {
-	if (objectId == 0 || objectId > (!ignoreNo ? MIN(_noObjects, (uint8) ARRAYSIZE(_objects)) : ARRAYSIZE(_objects))) {
+	if (objectId == 0 || objectId > getNoObjects(ignoreNo))  {
 		warning(_("Object %d does not exist"), objectId);
 		return nullptr;
 	}
@@ -166,6 +166,60 @@ Static *Scene::getStatic(uint8 staticId, bool ignoreNo) {
 	}
 
 	return &_statics[staticId - 1];
+}
+
+uint8 Scene::getNoDoors(bool ignoreNo) const {
+	return (!ignoreNo ? MIN(_noDoors, (uint8) ARRAYSIZE(_doors)) : ARRAYSIZE(_doors));
+}
+
+uint8 Scene::getNoObjects(bool ignoreNo) const {
+	return (!ignoreNo ? MIN(_noObjects, (uint8) ARRAYSIZE(_objects)) : ARRAYSIZE(_objects));
+}
+
+uint8 Scene::getNoStatics(bool ignoreNo) const {
+	return (!ignoreNo ? MIN(_noStatics, (uint8) ARRAYSIZE(_statics)) : ARRAYSIZE(_statics));
+}
+
+Door *Scene::findDoor(int16 x, int16 y, int *index) {
+	for (int i = 0; i < getNoDoors(); ++i) {
+		Door &door = _doors[i];
+		if ((x >= door._x) && (x < door._x + door._width) && (y >= door._y) && (y < door._y + door._height)) {
+			if (index) {
+				*index = i + 1;
+			}
+			return &door;
+		}
+	}
+
+	return nullptr;
+}
+
+Static *Scene::findStatic(int16 x, int16 y, int *index) {
+	for (int i = 0; i < getNoStatics(); ++i) {
+		Static &stat = _statics[i];
+		if ((x >= stat._x) && (x < stat._x + stat._width) && (y >= stat._y) && (y < stat._y + stat._height)) {
+			if (index) {
+				*index = i + 1;
+			}
+			return &stat;
+		}
+	}
+
+	return nullptr;
+}
+
+Bitmap *Scene::findBitmap(int16 x, int16 y, int *index) {
+	for (int i = 0; i < ARRAYSIZE(_bitmaps); ++i) {
+		Bitmap &bitmap = _bitmaps[i];
+		if ((x >= bitmap._x1) && (x <= bitmap._x2) && (y >= bitmap._y1) && (y <= bitmap._y2)) {
+			if (index) {
+				*index = i + 1;
+			}
+			return &bitmap;
+		}
+	}
+
+	return nullptr;
 }
 
 
