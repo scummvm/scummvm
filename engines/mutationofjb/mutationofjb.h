@@ -24,9 +24,14 @@
 #define MUTATIONOFJB_MUTATIONOFJB_H
 
 #include "engines/engine.h"
+#include "mutationofjb/script.h"
+
+namespace Common {
+class Event;
+}
 
 namespace Graphics {
-	class Screen;
+class Screen;
 }
 
 namespace MutationOfJB {
@@ -46,10 +51,14 @@ public:
 private:
 	bool loadGameData(bool partB);
 	void setupCursor();
+	void handleNormalScene(const Common::Event &event);
+	void handleMapScene(const Common::Event &event);
 
 	Console *_console;
 	Graphics::Screen *_screen;
 	Game *_game;
+	ActionInfo::Action _currentAction;
+	uint8 _mapObjectId;
 };
 
 

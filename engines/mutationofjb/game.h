@@ -39,21 +39,22 @@ class Script;
 class Room;
 class Door;
 class Static;
+class Bitmap;
 
 class Game {
 public:
 	Game(MutationOfJBEngine *vm);
 	GameData &getGameData();
-
+	Room &getRoom();
 	Script *getGlobalScript() const;
 	Script *getLocalScript() const;
 
 	void changeScene(uint8 sceneId, bool partB);
 	Script *changeSceneDelayScript(uint8 sceneId, bool partB);
 
-	Door *findDoor(int16 x, int16 y);
-	Static *findStatic(int16 x, int16 y);
 	bool startActionSection(ActionInfo::Action action, const Common::String &entity1Name, const Common::String &entity2Name = Common::String());
+
+	bool isCurrentSceneMap() const;
 
 	void update();
 

@@ -45,6 +45,7 @@ private:
 	bool cmd_showstartup(int argc, const char **argv);
 	bool cmd_changescene(int argc, const char **argv);
 	bool cmd_dumpsceneinfo(int argc, const char **argv);
+	bool cmd_dumpdoorinfo(int argc, const char **argv);
 	bool cmd_dumpobjectinfo(int argc, const char **argv);
 	bool cmd_dumpstaticinfo(int argc, const char **argv);
 

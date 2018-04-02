@@ -23,6 +23,8 @@
 #include "mutationofjb/room.h"
 #include "mutationofjb/animationdecoder.h"
 #include "mutationofjb/encryptedfile.h"
+#include "mutationofjb/game.h"
+#include "mutationofjb/gamedata.h"
 #include "mutationofjb/util.h"
 #include "common/str.h"
 #include "common/translation.h"
@@ -44,20 +46,75 @@ void RoomAnimationDecoderCallback::onPaletteUpdated(byte palette[PALETTE_SIZE]) 
 }
 
 void RoomAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surface) {
-	if (frameNo != 0) {
-		return;
+	if (frameNo == 0) {
+		_room._screen->blitFrom(surface);
 	}
 
-	_room._screen->blitFrom(surface);
+	const int frameNo1 = frameNo + 1;
+
+	Scene *scene = _room._game->getGameData().getCurrentScene();
+	if (scene) {
+		const uint8 noObjects = scene->getNoObjects();
+		for (int i = 0; i < noObjects; ++i) {
+			Object &object = scene->_objects[i];
+			const uint16 startFrame = (object._WY << 8) + object._FS;
+			if (frameNo1 >= startFrame && frameNo1 < startFrame + object._NA) {
+				const int x = object._x;
+				const int y = object._y;
+				const int w = object._XL / 4 * 4;
+				const int h = object._YL / 4 * 4;
+				Common::Rect rect(x, y, x + w, y + h);
+
+				const Graphics::Surface sharedSurface = surface.getSubArea(rect);
+				Graphics::Surface outSurface;
+				outSurface.copyFrom(sharedSurface);
+				_room._surfaces[_room._objectsStart[i] + frameNo1 - startFrame] = outSurface;
+			}
+		}
+	}
 }
 
-Room::Room(Graphics::Screen *screen) : _screen(screen) {}
+Room::Room(Game *game, Graphics::Screen *screen) : _game(game), _screen(screen) {}
 
 bool Room::load(uint8 roomNumber, bool roomB) {
+	_objectsStart.clear();
+
+	Scene *const scene = _game->getGameData().getCurrentScene();
+	if (scene) {
+		const uint8 noObjects = scene->getNoObjects();
+		for (int i = 0; i < noObjects; ++i) {
+			uint8 firstIndex = 0;
+			if (i != 0) {
+				firstIndex = _objectsStart[i - 1] + scene->_objects[i - 1]._NA;
+			}
+			_objectsStart.push_back(firstIndex);
+
+			uint8 numAnims = scene->_objects[i]._NA;
+			while (numAnims--) {
+				_surfaces.push_back(Graphics::Surface());
+			}
+		}
+	}
+
 	const Common::String fileName = Common::String::format("room%d%s.dat", roomNumber, roomB ? "b" : "");
 	AnimationDecoder decoder(fileName);
 	RoomAnimationDecoderCallback callback(*this);
 	return decoder.decode(&callback);
+}
+
+void Room::drawObjectAnimation(uint8 objectId, int animOffset) {
+	Scene *const scene = _game->getGameData().getCurrentScene();
+	if (!scene) {
+		return;
+	}
+	Object *const object = scene->getObject(objectId);
+	if (!object) {
+		return;
+	}
+
+	const int startFrame = _objectsStart[objectId - 1];
+	const int animFrame = startFrame + animOffset;
+	_screen->blitFrom(_surfaces[animFrame], Common::Point(object->_x, object->_y));
 }
 
 }

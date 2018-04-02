@@ -65,6 +65,7 @@ Console::Console(MutationOfJBEngine *vm) : _vm(vm) {
 	registerCmd("showstartup", WRAP_METHOD(Console, cmd_showstartup));
 	registerCmd("changescene", WRAP_METHOD(Console, cmd_changescene));
 	registerCmd("dumpsceneinfo", WRAP_METHOD(Console, cmd_dumpsceneinfo));
+	registerCmd("dumpdoorinfo", WRAP_METHOD(Console, cmd_dumpdoorinfo));
 	registerCmd("dumpobjectinfo", WRAP_METHOD(Console, cmd_dumpobjectinfo));
 	registerCmd("dumpstaticinfo", WRAP_METHOD(Console, cmd_dumpstaticinfo));
 }
@@ -324,6 +325,38 @@ bool Console::cmd_dumpsceneinfo(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmd_dumpdoorinfo(int argc, const char **argv) {
+	if (argc == 3) {
+		const uint8 sceneId = atoi(argv[1]);
+		const uint8 doorId = atoi(argv[2]);
+
+		Scene *const scene = _vm->getGame().getGameData().getScene(sceneId);
+		if (scene) {
+			Door *const door = scene->getDoor(doorId);
+			if (door) {
+				debugPrintf("Name: '%s'\n", convertToASCII(door->_name).c_str());
+				debugPrintf("DestSceneId: %u\n", (unsigned int) door->_destSceneId);
+				debugPrintf("DestX: %u\n", (unsigned int) door->_destX);
+				debugPrintf("DestY: %u\n", (unsigned int) door->_destY);
+				debugPrintf("X: %u\n", (unsigned int) door->_x);
+				debugPrintf("Y: %u\n", (unsigned int) door->_y);
+				debugPrintf("Width: %u\n", (unsigned int) door->_width);
+				debugPrintf("Height: %u\n", (unsigned int) door->_height);
+				debugPrintf("WalkToX: %u\n", (unsigned int) door->_walkToX);
+				debugPrintf("WalkToY: %u\n", (unsigned int) door->_walkToY);
+				debugPrintf("SP: %u\n", (unsigned int) door->_SP);
+			} else {
+				debugPrintf(_("Door %u not found.\n"), (unsigned int) doorId);
+			}
+		} else {
+			debugPrintf(_("Scene %u not found.\n"), (unsigned int) sceneId);
+		}
+	} else {
+		debugPrintf(_("dumpdoorinfo <sceneid> <doorid>\n"));
+	}
+
+	return true;
+}
 bool Console::cmd_dumpobjectinfo(int argc, const char **argv) {
 	if (argc == 3) {
 		const uint8 sceneId = atoi(argv[1]);
