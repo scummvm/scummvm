@@ -1037,7 +1037,7 @@ bool Scripts::cmdCallEvent(ParamsIterator &params) {
 }
 
 bool Scripts::cmdReturn(ParamsIterator &params) {
-	StackEntry &se = _stack.top();
+	StackEntry se = _stack.pop();
 	_currentPos = se;
 	_lineNum = se.line;
 
