@@ -1550,6 +1550,7 @@ int GolemCutscene::show() {
 	// Save the screen
 	Graphics::ManagedSurface savedBg;
 	savedBg.copyFrom(screen);
+	getNewLocation();
 
 	for (int idx = (_ccNum ? 8 : 11); idx >= 0; --idx) {
 		events.updateGameCounter();
