@@ -1439,8 +1439,8 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 	Sound &sound = *g_vm->_sound;
 	Character &c = _itemsCharacter;
 
-	if (intf._objNumber && !scripts._animCounter) {
-		MazeObject &obj = map._mobData._objects[intf._objNumber - 1];
+	if (intf._objNumber != -1 && !scripts._animCounter) {
+		MazeObject &obj = map._mobData._objects[intf._objNumber];
 		switch (obj._spriteId) {
 		case 15:
 			if (!files._ccNum)

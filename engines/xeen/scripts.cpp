@@ -210,8 +210,8 @@ int Scripts::checkEvents() {
 	if (party._treasure._hasItems || party._treasure._gold || party._treasure._gems)
 		party.giveTreasure();
 
-	if (_animCounter > 0 && intf._objNumber) {
-		MazeObject &selectedObj = map._mobData._objects[intf._objNumber - 1];
+	if (_animCounter > 0 && intf._objNumber != -1) {
+		MazeObject &selectedObj = map._mobData._objects[intf._objNumber];
 
 		if (selectedObj._spriteId == (ccNum ? 15 : 16)) {
 			for (uint idx = 0; idx < 16; ++idx) {
@@ -240,8 +240,8 @@ int Scripts::checkEvents() {
 
 	if (_scriptExecuted)
 		intf.clearEvents();
-	if (_scriptExecuted || !intf._objNumber || _dirFlag) {
-		if (_dirFlag && !_scriptExecuted && intf._objNumber && !map._currentIsEvent) {
+	if (_scriptExecuted || intf._objNumber == -1 || _dirFlag) {
+		if (_dirFlag && !_scriptExecuted && intf._objNumber != -1 && !map._currentIsEvent) {
 			sound.playFX(21);
 		}
 	} else {
@@ -496,8 +496,7 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 
 	party._stepped = true;
 	if (mapId != party._mazeId) {
-		int spriteId = (intf._objNumber == 0) ? -1 :
-			map._mobData._objects[intf._objNumber - 1]._spriteId;
+		int spriteId = (intf._objNumber == -1) ? -1 : map._mobData._objects[intf._objNumber - 1]._spriteId;
 
 		switch (spriteId) {
 		case 47:
@@ -798,7 +797,7 @@ bool Scripts::cmdRemove(ParamsIterator &params) {
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 
-	if (intf._objNumber) {
+	if (intf._objNumber != -1) {
 		// Give the active object a completely way out of bounds position
 		MazeObject &obj = map._mobData._objects[intf._objNumber];
 		obj._position = Common::Point(128, 128);

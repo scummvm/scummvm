@@ -636,7 +636,7 @@ void Map::load(int mapId) {
 	PleaseWait waitMsg(intf._falling);
 	waitMsg.show();
 
-	intf._objNumber = 0;
+	intf._objNumber = -1;
 	party._stepped = true;
 	party._mazeId = mapId;
 	saveMaze();

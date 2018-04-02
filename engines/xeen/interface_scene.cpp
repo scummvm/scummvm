@@ -380,7 +380,7 @@ InterfaceScene::InterfaceScene(XeenEngine *vm): _vm(vm) {
 	_flipDefaultGround = false;
 	_isAttacking = false;
 	_charsShooting = false;
-	_objNumber = 0;
+	_objNumber = -1;
 	_combatFloatCounter = 0;
 	_thinWall = false;
 	_isAnimReset = false;
@@ -392,9 +392,8 @@ void InterfaceScene::drawScene() {
 	Map &map = *_vm->_map;
 	Scripts &scripts = *_vm->_scripts;
 
-	MazeObject &objObject = map._mobData._objects[_objNumber];
+	MazeObject *obj = (_objNumber == -1) ? nullptr : &map._mobData._objects[_objNumber];
 	Direction partyDirection = _vm->_party->_mazeDirection;
-	int objNum = _objNumber - 1;
 
 	// Loop to update the frame numbers for each maze object, applying the animation frame
 	// limits as specified by the map's _animationInfo listing
@@ -407,9 +406,9 @@ void InterfaceScene::drawScene() {
 			mazeObject._frame = animEntry._frame1._frames[directionIndex];
 		} else {
 			++mazeObject._frame;
-			if ((int)idx == objNum && scripts._animCounter > 0 && (
-				objObject._spriteId == (_vm->_files->_ccNum ? 15 : 16) ||
-				objObject._spriteId == 58 || objObject._spriteId == 73)) {
+			if ((int)idx == _objNumber && scripts._animCounter > 0 && (
+				obj->_spriteId == (_vm->_files->_ccNum ? 15 : 16) ||
+				obj->_spriteId == 58 || obj->_spriteId == 73)) {
 				if (mazeObject._frame > 4 || mazeObject._spriteId == 58)
 					mazeObject._frame = 1;
 			} else if (mazeObject._frame >= animEntry._frame2._frames[directionIndex]) {
@@ -599,7 +598,7 @@ void InterfaceScene::drawIndoorsScene() {
 	_isAnimReset = false;
 
 	// Code in the original that's not being used
-	//MazeObject &objObject = map._mobData._objects[_objNumber - 1];
+	//MazeObject &objObject = map._mobData._objects[_objNumber];
 
 	// Only the front rank of pow points result in a Pow splatter effect
 	for (int idx = 0; idx < 3; ++idx) {
@@ -2652,7 +2651,7 @@ void InterfaceScene::setIndoorsObjects() {
 	Common::Point mazePos = _vm->_party->_mazePosition;
 	Direction dir = _vm->_party->_mazeDirection;
 	Common::Point pt;
-	_objNumber = 0;
+	_objNumber = -1;
 
 	Common::Array<MazeObject> &objects = _vm->_map->_mobData._objects;
 	for (uint idx = 0; idx < objects.size(); ++idx) {
@@ -3361,6 +3360,7 @@ void InterfaceScene::setOutdoorsObjects() {
 	const Common::Point &pt = party._mazePosition;
 	Direction dir = party._mazeDirection;
 	int posIndex;
+	_objNumber = -1;
 
 	for (uint idx = 0; idx < map._mobData._objects.size(); ++idx) {
 		MazeObject &obj = map._mobData._objects[idx];
