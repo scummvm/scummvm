@@ -63,6 +63,8 @@ public:
     void onLeftButtonClick(Common::Point point);
     void onMouseMove(Common::Point point);
 
+    virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
+
 private:
     void updateCursor(Common::Point point);
 

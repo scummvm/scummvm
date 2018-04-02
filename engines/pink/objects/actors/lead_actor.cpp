@@ -201,6 +201,12 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
     }
 }
 
+void LeadActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
+    if (_page->getModule()->getInventoryMgr()->isPinkOwnsAnyItems())
+        _cursorMgr->setCursor(kClickableFirstFrameCursor, {0, 0});
+    else Actor::onMouseOver(point, mgr);
+}
+
 void ParlSqPink::toConsole() {
     debug("ParlSqPink: _name = %s", _name.c_str());
     for (int i = 0; i < _actions.size(); ++i) {

@@ -38,6 +38,7 @@ public:
 
     Common::String &getCurrentOwner();
 
+    friend class InventoryMgr;
 private:
     Common::String _initialOwner;
     Common::String _currentOwner;
@@ -47,6 +48,7 @@ class LeadActor;
 
 class InventoryMgr : public Object {
 public:
+    InventoryMgr();
     virtual ~InventoryMgr();
     virtual void deserialize(Archive &archive);
 
@@ -55,8 +57,12 @@ public:
     void setLeadActor(LeadActor *lead);
     InventoryItem* findInventoryItem(Common::String &name);
 
+    bool isPinkOwnsAnyItems();
+    void setItemOwner(const Common::String &owner, InventoryItem *item);
+
 private:
     LeadActor *_lead;
+    InventoryItem *_item;
     Common::Array<InventoryItem*> _items;
     // other fields. haven't RE them yet
 };
