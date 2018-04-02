@@ -1280,6 +1280,7 @@ int ReaperCutscene::show() {
 
 	Graphics::ManagedSurface savedBg;
 	savedBg.copyFrom(screen);
+	getNewLocation();
 
 	for (int idx = 13; idx >= 0; --idx) {
 		events.updateGameCounter();
@@ -2260,6 +2261,7 @@ int LocationManager::doAction(LocationAction actionId) {
 	}
 
 	// Show the location
+	g_vm->_events->clearEvents();
 	int result = _location->show();
 	delete _location;
 	_location = nullptr;
