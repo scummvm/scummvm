@@ -55,6 +55,7 @@ protected:
 	virtual void libraryBookcaseTransform_run();
 	void generatorControlRoom_run();
 	void libraryCombinationBook_run();
+	void libraryBook_run();
 	void clockWheel_run();
 	void matchBurn_run();
 	void boilerPressureIncrease_run();
@@ -137,6 +138,8 @@ protected:
 	DECLARE_OPCODE(o_observatoryYearSliderEndMove);
 	DECLARE_OPCODE(o_observatoryTimeSliderStartMove);
 	DECLARE_OPCODE(o_observatoryTimeSliderEndMove);
+	DECLARE_OPCODE(o_libraryBookPageTurnStartLeft);
+	DECLARE_OPCODE(o_libraryBookPageTurnStartRight);
 	DECLARE_OPCODE(o_libraryCombinationBookStop);
 	DECLARE_OPCODE(o_cabinMatchLight);
 	DECLARE_OPCODE(o_courtyardBoxEnter);
@@ -207,6 +210,7 @@ protected:
 	uint16 _rocketLeverPosition; // 296
 	VideoEntryPtr _rocketLinkBook; // 268
 
+	bool _libraryBookPagesTurning;
 	bool _libraryCombinationBookPagesTurning;
 	int16 _libraryBookPage; // 86
 	uint16 _libraryBookNumPages; // 88
@@ -309,6 +313,8 @@ protected:
 	uint16 rocketSliderGetSound(uint16 pos);
 	void rocketCheckSolution();
 
+	void libraryBookPageTurnLeft();
+	void libraryBookPageTurnRight();
 	void libraryCombinationBookTurnRight();
 	void libraryCombinationBookTurnLeft();
 

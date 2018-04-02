@@ -51,6 +51,8 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_towerRotationOverSpot = false;
 
 	_libraryBookcaseChanged = false;
+	_libraryBookPagesTurning = false;
+	_libraryCombinationBookPagesTurning = false;
 	_dockVaultState = 0;
 
 	_cabinDoorOpened = 0;
@@ -184,6 +186,8 @@ void Myst::setupOpcodes() {
 	REGISTER_OPCODE(175, Myst, o_observatoryYearSliderEndMove);
 	REGISTER_OPCODE(176, Myst, o_observatoryTimeSliderStartMove);
 	REGISTER_OPCODE(177, Myst, o_observatoryTimeSliderEndMove);
+	REGISTER_OPCODE(178, Myst, o_libraryBookPageTurnStartLeft);
+	REGISTER_OPCODE(179, Myst, o_libraryBookPageTurnStartRight);
 	REGISTER_OPCODE(180, Myst, o_libraryCombinationBookStop);
 	REGISTER_OPCODE(181, Myst, NOP);
 	REGISTER_OPCODE(182, Myst, o_cabinMatchLight);
@@ -246,6 +250,7 @@ void Myst::setupOpcodes() {
 void Myst::disablePersistentScripts() {
 	_libraryBookcaseMoving = false;
 	_generatorControlRoomRunning = false;
+	_libraryBookPagesTurning = false;
 	_libraryCombinationBookPagesTurning = false;
 	_clockTurningWheel = 0;
 	_towerRotationMapRunning = false;
@@ -276,6 +281,9 @@ void Myst::runPersistentScripts() {
 
 	if (_libraryCombinationBookPagesTurning)
 		libraryCombinationBook_run();
+
+	if (_libraryBookPagesTurning)
+		libraryBook_run();
 
 	if (_libraryBookcaseMoving)
 		libraryBookcaseTransform_run();
@@ -847,6 +855,10 @@ uint16 Myst::bookCountPages(uint16 var) {
 }
 
 void Myst::o_libraryBookPageTurnLeft(uint16 var, const ArgumentsArray &args) {
+	libraryBookPageTurnLeft();
+}
+
+void Myst::libraryBookPageTurnLeft() {
 	if (_libraryBookPage - 1 >= 0) {
 		_libraryBookPage--;
 
@@ -861,6 +873,10 @@ void Myst::o_libraryBookPageTurnLeft(uint16 var, const ArgumentsArray &args) {
 }
 
 void Myst::o_libraryBookPageTurnRight(uint16 var, const ArgumentsArray &args) {
+	libraryBookPageTurnRight();
+}
+
+void Myst::libraryBookPageTurnRight() {
 	if (_libraryBookPage + 1 < _libraryBookNumPages) {
 		_libraryBookPage++;
 
@@ -2540,7 +2556,35 @@ void Myst::observatoryUpdateTime() {
 	}
 }
 
+void Myst::o_libraryBookPageTurnStartLeft(uint16 var, const ArgumentsArray &args) {
+	_tempVar = -1;
+	libraryBookPageTurnLeft();
+	_startTime = _vm->_system->getMillis();
+	_libraryBookPagesTurning = true;
+}
+
+void Myst::o_libraryBookPageTurnStartRight(uint16 var, const ArgumentsArray &args) {
+	_tempVar = 1;
+	libraryBookPageTurnRight();
+	_startTime = _vm->_system->getMillis();
+	_libraryBookPagesTurning = true;
+}
+
+void Myst::libraryBook_run() {
+	uint32 time = _vm->_system->getMillis();
+	if (time >= _startTime + 500) {
+		if (_tempVar > 0) {
+			libraryBookPageTurnRight();
+			_startTime = time;
+		} else if (_tempVar < 0) {
+			libraryBookPageTurnLeft();
+			_startTime = time;
+		}
+	}
+}
+
 void Myst::o_libraryCombinationBookStop(uint16 var, const ArgumentsArray &args) {
+	_libraryBookPagesTurning = false;
 	_libraryCombinationBookPagesTurning = false;
 }
 
