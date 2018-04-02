@@ -46,13 +46,32 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_savedCardId = 4329;
 
 	_towerRotationBlinkLabel = false;
+	_towerRotationBlinkLabelCount = 0;
 	_towerRotationSpeed = 0;
+	_towerRotationMapInitialized = 0;
+	_towerRotationMapRunning = false;
 	_towerRotationMapClicked = false;
+	_towerRotationMapTower = nullptr;
+	_towerRotationMapLabel = nullptr;
 	_towerRotationOverSpot = false;
 
 	_libraryBookcaseChanged = false;
+	_libraryBookcaseMoving = false;
+	_libraryBookcaseMovie = nullptr;
+	_libraryBookcaseSoundId = 0;
+
 	_libraryBookPagesTurning = false;
+	_libraryBookNumPages = 0;
+	_libraryBookBaseImage = 0;
+	_libraryBookSound1 = 0;
+	_libraryBookSound2 = 0;
+
 	_libraryCombinationBookPagesTurning = false;
+
+	for (uint i = 0; i < ARRAYSIZE(_fireplaceLines); i++) {
+		_fireplaceLines[i] = 0;
+	}
+
 	_dockVaultState = 0;
 
 	_cabinDoorOpened = 0;
@@ -76,10 +95,30 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_treeMinAccessiblePosition = 0;
 	_treeMaxAccessiblePosition = 0;
 
+	_imagerRunning = false;
+	_imagerRedButton = nullptr;
+	_imagerMovie = nullptr;
+	_imagerValidationRunning = false;
+	_imagerValidationCard = 0;
 	_imagerValidationStep = 0;
+	for (uint i = 0; i < ARRAYSIZE(_imagerSound); i++) {
+		_imagerSound[i] = 0;
+	}
+
 	_butterfliesMoviePlayed = false;
 	_state.treeLastMoveTime = _vm->_system->getMillis();
+
 	_rocketPianoSound = 0;
+	_rocketSlider1 = nullptr;
+	_rocketSlider2 = nullptr;
+	_rocketSlider3 = nullptr;
+	_rocketSlider4 = nullptr;
+	_rocketSlider5 = nullptr;
+	_rocketSliderSound = 0;
+	_rocketLeverPosition = 0;
+
+	_generatorControlRoomRunning = false;
+	_generatorVoltage = _state.generatorVoltage;
 
 	_observatoryRunning = false;
 	_observatoryMonthChanging = false;
@@ -98,6 +137,21 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_observatoryIncrement = 0;
 
 	_greenBookRunning = false;
+
+	_gullsFlying1 = false;
+	_gullsFlying2 = false;
+	_gullsFlying3 = false;
+	_gullsNextTime = 0;
+
+	_courtyardBoxSound = 0;
+
+	_clockTurningWheel = 0;
+	_clockWeightPosition = 0;
+	_clockMiddleGearMovedAlone = false;
+	_clockLeverPulled = false;
+	for (uint i = 0; i < ARRAYSIZE(_clockGearsPositions); i++) {
+		_clockGearsPositions[i] = 0;
+	}
 }
 
 Myst::~Myst() {
