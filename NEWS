@@ -12,6 +12,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a bug that leads to enormous memory consumption in scene 22.
 
  MOHAWK:
+   - Fixed clicking through the books in the library in Myst 1.0.
    - Fixed video playback if videos are skipped in Riven.
    - Added support for keyboard shortcuts for loading and saving as documented in the game manual.
 
