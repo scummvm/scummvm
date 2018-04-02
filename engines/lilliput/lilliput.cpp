@@ -157,7 +157,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_displayGreenHand = false;
 	_isCursorGreenHand = false;
 	_displayStringIndex = 0;
-	_word1289D = 0;
+	_signalTimer = 0;
 	_numCharacters = 0;
 
 	_saveFlag = true;
@@ -185,9 +185,9 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterMagicPuffFrame[i] = -1;
 		_characterSubTargetPosX[i] = -1;
 		_characterSubTargetPosY[i] = -1;
-		_stingArray[i] = 0;
+		_specialCubes[i] = 0;
 
-		_array11D49[i] = -1;
+		_characterSignals[i] = -1;
 		_characterPositionX[i] = -1;
 		_characterPositionY[i] = -1;
 		_characterPosAltitude[i] = 0;
@@ -202,7 +202,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterBehaviour[i] = 0;
 		_characterHomePosX[i] = 0;
 		_characterHomePosY[i] = 0;
-		_array1289F[i] = -1;
+		_signalArr[i] = -1;
 	}
 
 	for (int i = 0; i < 30; i++)
@@ -715,9 +715,9 @@ void LilliputEngine::displayRefreshScreen() {
 		restoreMapPoints();
 		updateCharPosSequence();
 		handleCharacterTimers();
-		sub16CA0();
-		sub16EBC();
-		sub171CF();
+		checkInteractions();
+		checkSpecialCubes();
+		handleSignals();
 		displayCharactersOnMap();
 	} else {
 		scrollToViewportCharacterTarget();
@@ -726,9 +726,9 @@ void LilliputEngine::displayRefreshScreen() {
 		displayGameArea();
 		updateCharPosSequence();
 		handleCharacterTimers();
-		sub16CA0();
-		sub16EBC();
-		sub171CF();
+		checkInteractions();
+		checkSpecialCubes();
+		handleSignals();
 		handleGameMouseClick();
 		checkInterfaceActivationDelay();
 		displayHeroismIndicator();
@@ -807,8 +807,8 @@ void LilliputEngine::paletteFadeIn() {
 	}
 }
 
-int16 LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
-	debugC(2, kDebugEngine, "sub16DD5(%d, %d, %d, %d)", x1, y1, x2, y2);
+int16 LilliputEngine::checkObstacle(int x1, int y1, int x2, int y2) {
+	debugC(2, kDebugEngine, "checkObstacle(%d, %d, %d, %d)", x1, y1, x2, y2);
 
 	int index = ((y1 * 64) + x1) * 4;
 	assert((index > 0) && (index <= 16380));
@@ -822,8 +822,8 @@ int16 LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 	int16 mapMoveY = 0;
 	int16 mapMoveX = 0;
 
-	int16 byte16DD4 = 0;
-	int16 byte16DD3 = 0;
+	int16 nonDiagdelta = 0;
+	int16 diagDelta = 0;
 
 	if (dx < 0) {
 		dx = -dx;
@@ -850,9 +850,9 @@ int16 LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 		mapMoveY = tmpMapMoveY;
 	}
 
-	byte16DD4 = dy * 2;
-	int16 var1 = byte16DD4 - dx;
-	byte16DD3 = byte16DD4 - (dx * 2);
+	nonDiagdelta = dy * 2;
+	int16 var1 = nonDiagdelta - dx;
+	diagDelta = nonDiagdelta - (dx * 2);
 
 	mapMoveX += mapMoveY;
 	tmpMapMoveX += tmpMapMoveY;
@@ -862,10 +862,10 @@ int16 LilliputEngine::sub16DD5(int x1, int y1, int x2, int y2) {
 	while (*isoMap == 0xFF) {
 		if (var1 >= 0) {
 			isoMap += tmpMapMoveX;
-			var1 += byte16DD3;
+			var1 += diagDelta;
 		} else {
 			isoMap += mapMoveX;
-			var1 += byte16DD4;
+			var1 += nonDiagdelta;
 		}
 
 		count++;
@@ -929,8 +929,8 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 	forceReturnFl = true;
 }
 
-void LilliputEngine::sub16CA0() {
-	debugC(2, kDebugEngine, "sub16CA0()");
+void LilliputEngine::checkInteractions() {
+	debugC(2, kDebugEngine, "checkInteractions()");
 
 	for (int index = _numCharacters - 1; index >= 0; index--) {
 		if (_characterTypes[index] & 1)
@@ -944,7 +944,7 @@ void LilliputEngine::sub16CA0() {
 			continue;
 
 		for (int index2 = _numCharacters - 1; index2 >= 0; index2--) {
-			byte byte16C9F = 0;
+			byte _newStatus = 0;
 			if ((index != index2) &&
 				(_characterCarried[index] != index2) &&
 				(_characterCarried[index2] != index) &&
@@ -957,56 +957,56 @@ void LilliputEngine::sub16CA0() {
 					if ((x > -6) && (x < 6)) {
 						int y = c2 - d2;
 						if ((y > -6) && (y < 6)) {
-							byte16C9F = 1;
+							_newStatus = 1;
 
 							if ((c1 == d1) && (c2 == d2)) {
-								byte16C9F = 4;
+								_newStatus = 4;
 							} else if ((_characterTypes[index] & 4) != 0) {
-								byte16C9F = 0;
+								_newStatus = 0;
 							} else {
 								switch (_characterDirectionArray[index]) {
 								case 0:
 									if (d1 > c1) {
-										byte16C9F = 2;
+										_newStatus = 2;
 
 										if (d2 == c2)
-											byte16C9F = 3;
+											_newStatus = 3;
 
-										if (sub16DD5(c1, c2, d1, d2) != 0)
-											byte16C9F = 1;
+										if (checkObstacle(c1, c2, d1, d2) != 0)
+											_newStatus = 1;
 									}
 									break;
 								case 1:
 									if (d2 < c2) {
-										byte16C9F = 2;
+										_newStatus = 2;
 
 										if (d1 == c1)
-											byte16C9F = 3;
+											_newStatus = 3;
 
-										if (sub16DD5(c1, c2, d1, d2) != 0)
-											byte16C9F = 1;
+										if (checkObstacle(c1, c2, d1, d2) != 0)
+											_newStatus = 1;
 									}
 									break;
 								case 2:
 									if (d2 > c2) {
-										byte16C9F = 2;
+										_newStatus = 2;
 
 										if (d1 == c1)
-											byte16C9F = 3;
+											_newStatus = 3;
 
-										if (sub16DD5(c1, c2, d1, d2) != 0)
-											byte16C9F = 1;
+										if (checkObstacle(c1, c2, d1, d2) != 0)
+											_newStatus = 1;
 									}
 									break;
 								default:
 									if (d1 < c1) {
-										byte16C9F = 2;
+										_newStatus = 2;
 
 										if (d2 == c2)
-											byte16C9F = 3;
+											_newStatus = 3;
 
-										if (sub16DD5(c1, c2, d1, d2) != 0)
-											byte16C9F = 1;
+										if (checkObstacle(c1, c2, d1, d2) != 0)
+											_newStatus = 1;
 									}
 									break;
 								}
@@ -1019,9 +1019,9 @@ void LilliputEngine::sub16CA0() {
 			int8 v2 = _scriptHandler->_interactions[index2 + (index * 40)] & 0xFF;
 			int8 v1 = v2;
 
-			if (v2 != byte16C9F) {
+			if (v2 != _newStatus) {
 				_scriptHandler->_characterScriptEnabled[index] = 1;
-				v2 =  byte16C9F;
+				v2 =  _newStatus;
 			}
 			_scriptHandler->_interactions[index2 + (index * 40)] = (v1 << 8) + v2;
 		}
@@ -1745,8 +1745,8 @@ byte LilliputEngine::sequenceSeekMovingCharacter(int index, Common::Point var1) 
 	return sequenceCharacterHomeIn(index, var1);
 }
 
-void LilliputEngine::sub16EBC() {
-	debugC(2, kDebugEngine, "sub16EBC()");
+void LilliputEngine::checkSpecialCubes() {
+	debugC(2, kDebugEngine, "checkSpecialCubes()");
 
 	for (int index1 = _numCharacters - 1; index1 >= 0; index1--) {
 		// Hack: The original doesn't check if it's disabled, which looks wrong
@@ -1758,10 +1758,10 @@ void LilliputEngine::sub16EBC() {
 		assert((mapIndex >= 0) && (mapIndex < 16384));
 		byte var1 = _bufferIsoMap[mapIndex] & 0x40;
 
-		if (var1 == _stingArray[index1])
+		if (var1 == _specialCubes[index1])
 			continue;
 
-		_stingArray[index1] = var1;
+		_specialCubes[index1] = var1;
 		if (var1 != 0)
 			_scriptHandler->_characterScriptEnabled[index1] = 1;
 	}
@@ -2188,54 +2188,54 @@ void LilliputEngine::sub16B8F_moveCharacter(int index, Common::Point pos, int di
 	_characterPositionY[index] = pos.y;
 }
 
-void LilliputEngine::sub17224(byte type, byte index, int var4) {
-	debugC(2, kDebugEngine, "sub17224(%d, %d, %d)", type, index, var4);
+void LilliputEngine::signalDispatcher(byte type, byte index, int var4) {
+	debugC(2, kDebugEngine, "signalDispatcher(%d, %d, %d)", type, index, var4);
 
-	if (type == 0) {
-		sub17264(index, var4);
+	if (type == 0) { // Message sent to one target character
+		sendMessageToCharacter(index, var4);
 		return;
 	}
 
-	if (type == 3) {
+	if (type == 3) { // Broadcast - Sent to all characters
 		for (int i = _numCharacters - 1; i >= 0; i--)
-			sub17264(i, var4);
+			sendMessageToCharacter(i, var4);
 		return;
 	}
 
 	int index2 = var4 & 0xFF;
 	for (byte i = 0; i < _numCharacters; i++) {
 		if ((_scriptHandler->_interactions[index2] & 0xFF) >= type)
-			sub17264(i, var4);
+			sendMessageToCharacter(i, var4);
 		index2 += 40;
 	}
 }
 
-void LilliputEngine::sub17264(byte index, int var4) {
+void LilliputEngine::sendMessageToCharacter(byte index, int var4) {
 	debugC(2, kDebugEngine, "sub17264(%d, %d)", index, var4);
 
-	if (_array11D49[index] != -1) {
-		_array1289F[index] = var4;
+	if (_characterSignals[index] != -1) {
+		_signalArr[index] = var4;
 	} else {
 		_scriptHandler->_characterScriptEnabled[index] = 1;
-		_array11D49[index] = var4;
+		_characterSignals[index] = var4;
 	}
 }
 
-void LilliputEngine::sub171CF() {
-	debugC(2, kDebugEngine, "sub171CF()");
+void LilliputEngine::handleSignals() {
+	debugC(2, kDebugEngine, "handleSignals()");
 
 	for (byte i = 0; i < _numCharacters; i++) {
-		if (_array1289F[i] != -1) {
-			_array11D49[i] = _array1289F[i];
-			_array1289F[i] = -1;
+		if (_signalArr[i] != -1) {
+			_characterSignals[i] = _signalArr[i];
+			_signalArr[i] = -1;
 			_scriptHandler->_characterScriptEnabled[i] = 1;
 		}
 	}
 
-	++_word1289D;
+	++_signalTimer;
 
 	for (int i = 0; i < 10; i++) {
-		if ((_signalArray[(3 * i) + 1] != -1) && (_signalArray[3 * i] == _word1289D)) {
+		if ((_signalArray[(3 * i) + 1] != -1) && (_signalArray[3 * i] == _signalTimer)) {
 			int16 var1 = _signalArray[(3 * i) + 1];
 			int var4 = _signalArray[(3 * i) + 2];
 			_signalArray[(3 * i) + 1] = -1;
@@ -2243,7 +2243,7 @@ void LilliputEngine::sub171CF() {
 			byte type = var1 >> 8;
 			byte index = var1 & 0xFF;
 
-			sub17224(type, index, var4);
+			signalDispatcher(type, index, var4);
 		}
 	}
 }
@@ -2735,9 +2735,9 @@ void LilliputEngine::handleGameScripts() {
 	_scriptHandler->_characterScriptEnabled[index] = 0;
 	setCurrentCharacter(index);
 
-	_waitingSignal = _array11D49[index] >> 8;
-	_waitingSignalCharacterId = _array11D49[index] & 0xFF;
-	_array11D49[index] = -1;
+	_waitingSignal = _characterSignals[index] >> 8;
+	_waitingSignalCharacterId = _characterSignals[index] & 0xFF;
+	_characterSignals[index] = -1;
 	_word1817B = 0;
 
 	int tmpVal = _characterBehaviour[index];

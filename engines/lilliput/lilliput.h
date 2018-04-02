@@ -155,13 +155,13 @@ public:
 	bool _isCursorGreenHand;
 	int _currentDisplayCharacter;
 	int _displayStringIndex;
-	int _word1289D;
+	int _signalTimer;
 	Common::Point _word16937Pos;
 
 	int16 _mapSavedPixelIndex[40];
 	byte _mapSavedPixel[40];
-	int16 _array11D49[40];
-	int16 _array1289F[40];
+	int16 _characterSignals[40];
+	int16 _signalArr[40];
 	int16 _signalArray[30];
 
 	byte *_rulesChunk1;
@@ -218,7 +218,7 @@ public:
 	int8 _characterMagicPuffFrame[40];
 	int16 _characterSubTargetPosX[40];
 	int16 _characterSubTargetPosY[40];
-	byte _stingArray[40];
+	byte _specialCubes[40];
 	byte _array16C54[4];
 	byte _array16C58[4];
 	byte _savedSurfaceGameArea1[176 * 256]; // 45056
@@ -268,8 +268,8 @@ public:
 	void updateCharPosSequence();
 	void sub16A08(int index);
 	byte sub16A76(int indexb, int indexs);
-	void sub17224(byte type, byte index, int var4);
-	void sub17264(byte index, int var4);
+	void signalDispatcher(byte type, byte index, int var4);
+	void sendMessageToCharacter(byte index, int var4);
 	int16 findHotspot(Common::Point pos);
 	int16 reverseFindHotspot(Common::Point pos);
 	byte sequenceSetMobility(int index, Common::Point var1);
@@ -287,12 +287,12 @@ public:
 	void handleCharacterTimers();
 	byte sequenceMoveCharacter(int idx, int moveType, int poseType);
 	void setCharacterPose(int idx, int poseIdx);
-	void sub16EBC();
-	void sub16CA0();
+	void checkSpecialCubes();
+	void checkInteractions();
 	byte sequenceSetCharacterDirection(int index, int direction, int poseType);
-	void sub171CF();
+	void handleSignals();
 	void checkInterfaceActivationDelay();
-	int16 sub16DD5(int x1, int y1, int x2, int y2);
+	int16 checkObstacle(int x1, int y1, int x2, int y2);
 	void displayCharactersOnMap();
 	void restoreMapPoints();
 	void displayHeroismIndicator();

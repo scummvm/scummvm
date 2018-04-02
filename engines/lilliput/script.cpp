@@ -205,7 +205,7 @@ byte LilliputScript::handleOpcodeType1(int curWord) {
 		return OC_CheckCurrentCharacterAttr1();
 		break;
 	case 0x28:
-		return OC_isCurrentCharacterStung();
+		return OC_isCurrentCharacterSpecial();
 		break;
 	case 0x29:
 		return OC_CurrentCharacterAttr3Equals1();
@@ -1966,13 +1966,13 @@ byte LilliputScript::OC_CheckCurrentCharacterAttr1() {
 	return 0;
 }
 
-byte LilliputScript::OC_isCurrentCharacterStung() {
-	debugC(1, kDebugScript, "OC_isCurrentCharacterStung()");
+byte LilliputScript::OC_isCurrentCharacterSpecial() {
+	debugC(1, kDebugScript, "OC_isCurrentCharacterSpecial()");
 
 	if (_vm->_currentScriptCharacterPos == Common::Point(-1, -1))
 		return 0;
 
-	if (_vm->_stingArray[_vm->_currentScriptCharacter] == 0)
+	if (_vm->_specialCubes[_vm->_currentScriptCharacter] == 0)
 		return 0;
 
 	return 1;
@@ -2478,7 +2478,7 @@ void LilliputScript::sendSignal(int16 var1, byte var2h, byte characterId, int16 
 		if (_vm->_signalArray[index + 1] == -1) {
 			_vm->_signalArray[index + 1] = var1;
 			_vm->_signalArray[index + 2] = (var2h << 8) + characterId; 
-			_vm->_signalArray[index + 0] = _vm->_word1289D + var4;
+			_vm->_signalArray[index + 0] = _vm->_signalTimer + var4;
 			return;
 		}
 		index += 3;

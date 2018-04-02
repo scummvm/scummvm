@@ -191,7 +191,7 @@ private:
 	byte OC_IsCurrentCharacterAttr0LessEqualThan();
 	byte OC_isCarried();
 	byte OC_CheckCurrentCharacterAttr1();
-	byte OC_isCurrentCharacterStung();
+	byte OC_isCurrentCharacterSpecial();
 	byte OC_CurrentCharacterAttr3Equals1();
 	byte OC_checkCharacterDirection();
 	byte OC_checkLastInterfaceHotspotIndex();
