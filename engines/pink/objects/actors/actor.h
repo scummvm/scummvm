@@ -24,6 +24,7 @@
 #define PINK_ACTOR_H
 
 #include <common/array.h>
+#include <common/rect.h>
 #include "engines/pink/objects/object.h"
 
 namespace Pink {
@@ -32,6 +33,7 @@ class GamePage;
 class Action;
 class Sequencer;
 class Director;
+class CursorMgr;
 
 class Actor : public NamedObject {
 public:
@@ -39,6 +41,7 @@ public:
      : _page(nullptr), _action(nullptr),
         _isActionEnded(1)
     {};
+    ~Actor();
     virtual void deserialize(Archive &archive);
 
     virtual void toConsole();
@@ -61,6 +64,9 @@ public:
 
     virtual void update() {};
 
+    virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
+
+    virtual bool isClickable() { return 0;}
 protected:
     GamePage *_page;
     Action *_action;

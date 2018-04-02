@@ -36,7 +36,7 @@ class LeadActor;
 
 class Page : public NamedObject {
 public:
-
+    ~Page();
     void load(Archive &archive);
     Actor *findActor(Common::String &name);
     Sound* loadSound(Common::String &fileName);

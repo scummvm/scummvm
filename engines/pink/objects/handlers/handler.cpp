@@ -37,7 +37,7 @@ void Handler::deserialize(Archive &archive) {
     archive >> _sideEffects;
 }
 
-bool Handler::isSuitable(LeadActor *actor) {
+bool Handler::isSuitable(Actor *actor) {
     for (int i = 0; i < _conditions.size(); ++i) {
         if (!_conditions[i]->evaluate(actor)){
             return false;
@@ -54,6 +54,15 @@ void Handler::executeSideEffects(LeadActor *actor) {
 
 void Handler::onMessage(LeadActor *actor) {
     executeSideEffects(actor);
+}
+
+Handler::~Handler() {
+    for (int i = 0; i < _sideEffects.size(); ++i) {
+        delete _sideEffects[i];
+    }
+    for (int i = 0; i < _conditions.size(); ++i) {
+        delete _conditions[i];
+    }
 }
 
 void HandlerSequences::deserialize(Archive &archive) {

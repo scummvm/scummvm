@@ -25,9 +25,11 @@
 
 #include <common/array.h>
 #include <common/system.h>
+#include <common/rect.h>
 
 namespace Pink {
 
+class Actor;
 class ActionCEL;
 class ActionSound;
 class CelDecoder;
@@ -49,10 +51,11 @@ public:
 
     void clear();
 
+    Actor *getActorByPoint(Common::Point point);
     bool showBounds;
 
 private:
-    void drawSprite(CelDecoder *decoder);
+    void drawSprite(ActionCEL *sprite);
     OSystem *_system;
     Common::Array<ActionCEL*> _sprites;
     Common::Array<ActionSound*> _sounds;

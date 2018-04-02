@@ -93,7 +93,8 @@ void ActionSfx::play(GamePage *page) {
     if (!_sound)
         _sound = page->loadSound(_sfxName);
 
-    _sound->play(Audio::Mixer::SoundType::kSFXSoundType, _volume, 0);
+    if (!_sound->isPlaying())
+        _sound->play(Audio::Mixer::SoundType::kSFXSoundType, _volume, 0);
 }
 
 ActionSfx::~ActionSfx() {

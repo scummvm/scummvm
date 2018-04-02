@@ -20,10 +20,12 @@
  *
  */
 
+#include <engines/pink/constants.h>
 #include "actor.h"
 #include "engines/pink/objects/pages/game_page.h"
 #include "lead_actor.h"
 #include "engines/pink/objects/actions/action.h"
+#include "pink/cursor_mgr.h"
 
 namespace Pink {
 
@@ -120,6 +122,16 @@ bool Actor::initPallete(Director *director) {
             return true;
     }
     return false;
+}
+
+void Actor::onMouseOver(Common::Point point, CursorMgr *mgr) {
+    mgr->setCursor(kDefaultCursor, point);
+}
+
+Actor::~Actor() {
+    for (int i = 0; i < _actions.size(); ++i) {
+        delete _actions[i];
+    }
 }
 
 } // End of namespace Pink

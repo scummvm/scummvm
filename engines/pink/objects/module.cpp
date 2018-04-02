@@ -93,6 +93,12 @@ InventoryMgr *Module::getInventoryMgr() {
     return &_invMgr;
 }
 
+Module::~Module() {
+    for (int i = 0; i < _pages.size(); ++i) {
+        delete _pages[i];
+    }
+}
+
 } // End of namespace Pink
 
 

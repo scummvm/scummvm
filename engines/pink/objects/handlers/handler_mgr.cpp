@@ -27,4 +27,13 @@ void HandlerMgr::toConsole() {
     }
 }
 
+bool HandlerMgr::isLeftClickHandler(Actor *actor) {
+    for (int i = 0; i < _leftClickHandlers.size(); ++i) {
+        if (_leftClickHandlers[i]->isSuitable(actor))
+            return true;
+    }
+
+    return false;
+}
+
 }

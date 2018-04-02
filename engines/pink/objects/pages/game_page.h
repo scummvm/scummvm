@@ -34,6 +34,8 @@ class HandlerStartPage;
 
 class GamePage : public Page {
 public:
+    GamePage();
+    ~GamePage();
     virtual void deserialize(Archive &archive);
 
     virtual void load(Archive &archive);

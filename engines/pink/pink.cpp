@@ -28,6 +28,8 @@
 #include "engines/pink/objects/module.h"
 #include "engines/pink/objects/actors/lead_actor.h"
 #include <graphics/surface.h>
+#include <graphics/cursorman.h>
+#include <common/winexe_pe.h>
 
 
 namespace Pink {
@@ -51,6 +53,9 @@ Pink::PinkEngine::~PinkEngine() {
     for (uint i = 0; i < _modules.size(); ++i) {
         delete _modules[i];
     }
+    for (int j = 0; j < _cursors.size(); ++j) {
+        delete _cursors[j];
+    }
 
     DebugMan.clearAllDebugChannels();
 }
@@ -65,7 +70,7 @@ Common::Error PinkEngine::init() {
     Common::String orbName{_desc.filesDescriptions[0].fileName};
     Common::String broName{_desc.filesDescriptions[1].fileName};
 
-    if (!broName.empty()){
+    if (strcmp(_desc.gameId, "peril") == 0){
         _bro = new BroFile();
     }
     else debug("This game doesn't need to use bro");
@@ -74,8 +79,11 @@ Common::Error PinkEngine::init() {
         return Common::kNoGameDataFoundError;
     }
 
-    // TODO load cursor
+    if (!loadCursors())
+        return Common::kNoGameDataFoundError;
 
+    setCursor(kLoadingCursor);
+    _system->showMouse(1);
 
     _orb.loadGame(this);
     const Common::String empty;
@@ -86,10 +94,8 @@ Common::Error PinkEngine::init() {
 
 Common::Error Pink::PinkEngine::run() {
     Common::Error error = init();
-    if (error.getCode() != Common::kNoError){
+    if (error.getCode() != Common::kNoError)
         return error;
-    }
-
 
     while(!shouldQuit()){
         Common::Event event;
@@ -99,15 +105,15 @@ Common::Error Pink::PinkEngine::run() {
                 case Common::EVENT_RTL:
                     return Common::kNoError;
                 case Common::EVENT_MOUSEMOVE:
-
+                    _actor->onMouseMove(event.mouse);
                     break;
                 case Common::EVENT_LBUTTONDOWN:
-
+                    _actor->onLeftButtonClick(event.mouse);
                     break;
                 case Common::EVENT_KEYDOWN:
                     if (event.kbd.keycode == Common::KEYCODE_d)
                         _director.showBounds = !_director.showBounds;
-                    else _actor->OnKeyboardButtonClick(event.kbd.keycode);
+                    else _actor->onKeyboardButtonClick(event.kbd.keycode);
                     break;
 
                     // don't know why it is used in original
@@ -118,10 +124,11 @@ Common::Error Pink::PinkEngine::run() {
             }
         }
 
+
         _actor->update();   
         _director.update();
         _director.draw();
-        _system->delayMillis(50);
+        _system->delayMillis(5);
     }
 
     return Common::kNoError;
@@ -135,35 +142,30 @@ void PinkEngine::load(Archive &archive) {
 
 void PinkEngine::initModule(const Common::String &moduleName, bool isLoadingFromSave, const Common::String &pageName) {
     if (_module) {
-
-        //call module function (smth with unloading)
-
-        uint i;
-        for (i = 0; i < _modules.size(); ++i) {
+        for (uint i = 0; i < _modules.size(); ++i) {
             if (_module == _modules[i]){
+                _modules[i] = new ModuleProxy(_module->getName());
+
+                delete _module;
+                _module = nullptr;
+
                 break;
             }
         }
-
-        _modules[i] = new ModuleProxy(_module->getName());
-
-        delete _module;
-        _module = nullptr;
     }
 
-    uint i;
-    for (i = 0; i < _modules.size(); ++i) {
+    for (uint i = 0; i < _modules.size(); ++i) {
         if (_modules[i]->getName() == moduleName) {
             loadModule(i);
+            _module = static_cast<Module*>(_modules[i]);
+            _module->init(isLoadingFromSave, pageName);
             break;
         }
     }
-
-    _module = static_cast<Module*>(_modules[i]);
-    _module->init(isLoadingFromSave, pageName);
 }
 
 void PinkEngine::changeScene(GamePage *page) {
+    setCursor(kLoadingCursor);
     if (!_nextModule.empty() && _nextModule.compareTo(_module->getName())) {
         initModule(_nextModule, kLoadingNewGame, _nextPage);
     }
@@ -196,6 +198,49 @@ bool PinkEngine::checkValueOfVariable(Common::String &variable, Common::String &
 
 void PinkEngine::setVariable(Common::String &variable, Common::String &value) {
     _variables[variable] = value;
+}
+
+bool PinkEngine::loadCursors() {
+    Common::PEResources exeResources;
+    bool isPokus = !strcmp(_desc.gameId, "pokus");
+    Common::String fileName = isPokus ? _desc.filesDescriptions[1].fileName : _desc.filesDescriptions[2].fileName;
+    if (!exeResources.loadFromEXE(fileName))
+        return false;
+
+    _cursors.reserve(kCursorsCount);
+
+    _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusLoadingCursorID));
+    _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitForwardCursorID));
+    _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitLeftCursorID));
+    _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusExitRightCursorID));
+    _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableFirstCursorID));
+    _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableSecondCursorID));
+
+    if (isPokus) {
+        _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusClickableThirdCursorID));
+        _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusNotClickableCursorID));
+    }
+    else {
+        _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilClickableThirdCursorID));
+        _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilNotClickableCursorID));
+    }
+
+    _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusHoldingItemCursorID));
+    _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDAFirstCursorID));
+
+    if (isPokus)
+        _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPokusPDASecondCursorID));
+    else
+        _cursors.push_back(Graphics::WinCursorGroup::createCursorGroup(exeResources, kPerilPDASecondCursorID));
+
+    return true;
+}
+
+void PinkEngine::setCursor(uint cursorIndex) {
+    Graphics::Cursor *cursor = _cursors[cursorIndex]->cursors[0].cursor;
+    _system->setCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
+    _system->setMouseCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
+                            cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 }
 
 }

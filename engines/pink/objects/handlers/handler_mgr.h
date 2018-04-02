@@ -31,12 +31,15 @@ namespace Pink {
 class HandlerLeftClick;
 class HandlerUseClick;
 class HandlerTimer;
+class Actor;
 
 class HandlerMgr : public Object {
 public:
     virtual void deserialize(Archive &archive);
 
     virtual void toConsole();
+
+    bool isLeftClickHandler(Actor *actor);
 
 private:
     Common::Array<HandlerLeftClick*> _leftClickHandlers;

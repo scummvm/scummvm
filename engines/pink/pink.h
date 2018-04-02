@@ -23,13 +23,14 @@
 #ifndef PINK_PINK_H
 #define PINK_PINK_H
 
+#include <graphics/wincursor.h>
 #include "common/random.h"
 #include "engines/engine.h"
 #include "gui/EventRecorder.h"
 #include "gui/debugger.h"
 #include "file.h"
 #include "director.h"
-
+#include "constants.h"
 
 /*
  *  This is the namespace of the Pink engine.
@@ -60,11 +61,6 @@ enum {
     kPinkDebugSound = 1 << 4
 };
 
-enum {
-    kLoadingSave = 1,
-    kLoadingNewGame = 0
-};
-
 class PinkEngine : public Engine {
 public:
     PinkEngine(OSystem *system, const ADGameDescription *desc);
@@ -87,14 +83,16 @@ public:
     void setVariable(Common::String &variable, Common::String &value);
     bool checkValueOfVariable(Common::String &variable, Common::String &value);
 
+    inline void setCursor(uint cursorIndex);
 private:
     Common::Error init();
+    bool loadCursors();
+
     void loadModule(int index);
-
-
 
     Console *_console;
     Common::RandomSource _rnd;
+    Common::Array<Graphics::WinCursorGroup*> _cursors;
 
     Common::String _nextModule;
     Common::String _nextPage;

@@ -134,6 +134,11 @@ void Sequence::skipItemsTo(int index) {
     }
 }
 
+void Sequence::skipSubSequence() {
+    if (_context->getNextItemIndex() < _context->getSequence()->getItems().size())
+        _context->getSequence()->start(0);
+}
+
 void SequenceAudio::deserialize(Archive &archive) {
     Sequence::deserialize(archive);
     archive >> _soundName;
@@ -180,6 +185,10 @@ void SequenceAudio::init(int unk) {
 void SequenceAudio::restart() {
     _sound->play(Audio::Mixer::SoundType::kMusicSoundType, 100, 0);
     Sequence::restart();
+}
+
+void SequenceAudio::skipToLastSubSequence() {
+    end();
 }
 
 } // End of namespace Pink

@@ -32,28 +32,28 @@ Director::Director(OSystem *system)
     : _system(system), showBounds(0) {}
 
 void Director::draw() {
+    _system->fillScreen(0);
     for (int i = 0; i < _sprites.size(); ++i) {
-        CelDecoder *decoder = _sprites[i]->getDecoder();
-        drawSprite(decoder);
+        drawSprite(_sprites[i]);
     }
     _system->updateScreen();
 }
 
-void Director::drawSprite(CelDecoder *decoder) {
+void Director::drawSprite(ActionCEL *sprite) {
+    CelDecoder *decoder = sprite->getDecoder();
     const Graphics::Surface *surface;
     if (decoder->needsUpdate())
         surface = decoder->decodeNextFrame();
     else surface = decoder->getCurrentFrame();
 
 
-
-    uint16 colourIndex = decoder->getTransparentColourIndex();
-    if (!showBounds && colourIndex != 0) {
+    if (!showBounds) {
         Graphics::Surface *screen = _system->lockScreen();
+
         for (int y = 0; y < decoder->getHeight(); ++y) {
             for (int x = 0; x < decoder->getWidth(); ++x) {
-                byte spritePixelColourIndex = *(byte*)surface->getBasePtr(x, y);
-                if (spritePixelColourIndex != colourIndex && spritePixelColourIndex != 229) { // hack because sprite have wrong colour index
+                uint16 spritePixelColourIndex = *(byte*)surface->getBasePtr(x, y);
+                if (spritePixelColourIndex != decoder->getTransparentColourIndex()) {
                     *(byte *) screen->getBasePtr(decoder->getX() + x, decoder->getY() + y) = spritePixelColourIndex;
                 }
             }
@@ -113,6 +113,18 @@ void Director::removeSound(ActionSound *sound) {
 
 void Director::clear() {
     _sprites.clear();
+}
+
+Actor *Director::getActorByPoint(Common::Point point) {
+    for (int i = _sprites.size() - 1; i > 0; --i) {
+        CelDecoder *decoder = _sprites[i]->getDecoder();
+        if (decoder->getRectangle().contains(point) &&
+            *(byte*)decoder->getCurrentFrame()->getBasePtr(640 - point.x, 480 - point.y)
+            != decoder->getTransparentColourIndex())
+            return _sprites[i]->getActor();
+    }
+
+    return nullptr;
 }
 
 }

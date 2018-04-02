@@ -31,12 +31,11 @@ namespace Pink {
 class ActionSfx;
 
 class ActionPlayWithSfx : public ActionPlay {
+public:
     virtual ~ActionPlayWithSfx();
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
     virtual void update();
-
-public:
     virtual void end();
 
 protected:

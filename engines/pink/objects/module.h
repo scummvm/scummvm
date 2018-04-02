@@ -43,6 +43,7 @@ class GamePage;
 class Module : public NamedObject {
 public:
     Module(PinkEngine *game, const Common::String &name);
+    ~Module();
 
     void load(Archive &archive);
     void init(bool isLoadingSave, const Common::String &pageName);

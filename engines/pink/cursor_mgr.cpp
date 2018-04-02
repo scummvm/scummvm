@@ -21,9 +21,57 @@
  */
 
 #include "cursor_mgr.h"
+#include "pink.h"
 
 namespace Pink {
 
-CursorMgr::CursorMgr(GamePage *page) : _page(page) {}
+CursorMgr::CursorMgr(PinkEngine *game, GamePage *page)
+        : _actor(nullptr), _page(page), _game(game),
+          _isPlayingAnimation(0), _firstFrameIndex(0)
+{}
+
+CursorMgr::~CursorMgr() {}
+
+void CursorMgr::setCursor(uint index, Common::Point point) {
+    if (index == kClickableFirstFrameCursor) {
+        if (!_isPlayingAnimation) {
+            _isPlayingAnimation = 1;
+            _time = _game->getTotalPlayTime();
+            _firstFrameIndex = index;
+            _isSecondFrame = 0;
+            _game->setCursor(index);
+        }
+    }
+    else {
+        _isPlayingAnimation = 0;
+        _game->setCursor(index);
+    }
+}
+
+void CursorMgr::update() {
+    if (!_isPlayingAnimation)
+        return;
+
+    uint newTime = _game->getTotalPlayTime();
+    if (newTime - _time > 0xC8){
+        _time = newTime;
+        _isSecondFrame = !_isSecondFrame;
+        _game->setCursor(_firstFrameIndex + _isSecondFrame);
+    }
+}
+
+void CursorMgr::setCursor(Common::String &cursorName, Common::Point point) {
+    uint index;
+    if (cursorName == "ExitLeft") {
+        index = kExitLeftCursor;
+    }
+    else if (cursorName == "ExitRight"){
+        index = kExitRightCursor;
+    }
+    else if (cursorName == "ExitForward")
+        index = kExitForwardCursor;
+    else assert(0);
+    setCursor(index, point);
+}
 
 } // End of namespace Pink

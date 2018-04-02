@@ -23,24 +23,24 @@
 #include <audio/audiostream.h>
 #include <audio/decoders/wave.h>
 #include <audio/decoders/adpcm.h>
+#include <common/substream.h>
 #include "sound.h"
 
 namespace Pink {
 
-Sound::Sound(Audio::Mixer *mixer, Common::SeekableReadStream *stream)
-    : _mixer(mixer)
+Sound::Sound(Audio::Mixer *mixer, Common::SafeSeekableSubReadStream *stream)
+    : _mixer(mixer), _fileStream(stream)
 {
-    load(stream);
+
 }
 
 Sound::~Sound() {
     stop();
-    delete _stream;
+    delete _fileStream;
 }
 
 bool Sound::isPlaying() {
     return _mixer->isSoundHandleActive(_handle);
-
 }
 
 void Sound::pause() {
@@ -56,28 +56,19 @@ void Sound::stop() {
 }
 
 void Sound::play(Audio::Mixer::SoundType type, int volume, bool isLoop) {
-    _mixer->stopHandle(_handle);
-
-    if (isLoop) {
-        //bad impl?
-        Audio::SeekableAudioStream *seekableStream = dynamic_cast<Audio::SeekableAudioStream*>(_stream);
-        _stream = Audio::makeLoopingAudioStream(seekableStream, 0, 0, 0);
-    }
-
-    _mixer->playStream(type, &_handle ,_stream, -1 , Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
-}
-
-bool Sound::load(Common::SeekableReadStream *stream) {
     // Vox files in pink have wave format.
     // RIFF (little-endian) data, WAVE audio, Microsoft PCM, 8 bit, mono 22050 Hz
+    _mixer->stopHandle(_handle);
 
-    _stream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+    _fileStream->seek(0);
+    Audio::AudioStream *audioStream ;
+    Audio::SeekableAudioStream *wavStream = Audio::makeWAVStream(_fileStream, DisposeAfterUse::NO);
+    if (isLoop) {
+        audioStream = Audio::makeLoopingAudioStream(wavStream, 0, 0, 0);
+    }
+    else audioStream = wavStream;
 
-    return isLoaded();
-}
-
-bool Sound::isLoaded() {
-    return _stream != nullptr;
+    _mixer->playStream(type, &_handle , audioStream, -1 , Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 }
 
 void Sound::setBalance(int8 balance) {
