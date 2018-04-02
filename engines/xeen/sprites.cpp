@@ -290,12 +290,19 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 						drawBounds.left = MIN(drawBounds.left, xp);
 						drawBounds.right = MAX((int)drawBounds.right, xp + 1);
 						*destP = (byte)*lineP;
-						if (enlarge)
+						if (enlarge) {
 							*(destP + SCREEN_WIDTH) = (byte)*lineP;
+							*(destP + 1) = (byte)*lineP;
+							*(destP + 1 + SCREEN_WIDTH) = (byte)*lineP;
+						}
 					}
 
-					++destP;
 					++xp;
+					++destP;
+					if (enlarge) {
+						++destP;
+						++xp;
+					}
 				}
 			}
 
