@@ -118,8 +118,10 @@ void Director::clear() {
 Actor *Director::getActorByPoint(Common::Point point) {
     for (int i = _sprites.size() - 1; i > 0; --i) {
         CelDecoder *decoder = _sprites[i]->getDecoder();
-        if (decoder->getRectangle().contains(point) &&
-            *(byte*)decoder->getCurrentFrame()->getBasePtr(640 - point.x, 480 - point.y)
+        const Graphics::Surface *frame = decoder->getCurrentFrame();
+        Common::Rect &rect = decoder->getRectangle();
+        if (rect.contains(point) &&
+            *(byte*)frame->getBasePtr(point.x - rect.left, point.y - rect.top)
             != decoder->getTransparentColourIndex())
             return _sprites[i]->getActor();
     }
