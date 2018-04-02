@@ -175,7 +175,7 @@ public:
 	byte _characterAboveDist[40];
 	byte _spriteSizeArray[40];
 	byte _characterDirectionArray[40];
-	byte _rulesBuffer2_10[40];
+	byte _characterMobility[40];
 	byte _characterTypes[40];
 	byte _characterBehaviour[40];
 	byte _characterHomePosX[40];
@@ -272,8 +272,8 @@ public:
 	void sub17264(byte index, int var4);
 	int16 findHotspot(Common::Point pos);
 	int16 reverseFindHotspot(Common::Point pos);
-	byte sub16722(int index, Common::Point var1);
-	byte sub166EA(int index);
+	byte sequenceSetMobility(int index, Common::Point var1);
+	byte sequenceEnd(int index);
 	void sub167EF(int index);
 
 	void renderCharacters(byte *buf, Common::Point pos);
@@ -284,7 +284,7 @@ public:
 	byte getDirection(Common::Point param1, Common::Point param2);
 	void addCharToBuf(byte character);
 	void numberToString(int param1);
-	void sub12F37();
+	void handleCharacterTimers();
 	byte sequenceMoveCharacter(int idx, int moveType, int poseType);
 	void setCharacterPose(int idx, int poseIdx);
 	void sub16EBC();
@@ -320,7 +320,7 @@ public:
 	void sub16B8F_moveCharacter(int index, Common::Point pos, int direction);
 	byte sequenceSeekMovingCharacter(int index, Common::Point var1);
 	byte sequenceSound(int index, Common::Point var1);
-	byte sub166F7(int index, Common::Point var1, int tmpVal);
+	byte sequenceRepeat(int index, Common::Point var1, int tmpVal);
 	void sub1693A_chooseDirections(int index);
 
 	void initGame(const LilliputGameDescription *gd);

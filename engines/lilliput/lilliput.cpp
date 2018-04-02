@@ -197,7 +197,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterAboveDist[i] = 0;
 		_spriteSizeArray[i] = 20;
 		_characterDirectionArray[i] = 0;
-		_rulesBuffer2_10[i] = 0;
+		_characterMobility[i] = 0;
 		_characterTypes[i] = 0;
 		_characterBehaviour[i] = 0;
 		_characterHomePosX[i] = 0;
@@ -714,7 +714,7 @@ void LilliputEngine::displayRefreshScreen() {
 
 		restoreMapPoints();
 		updateCharPosSequence();
-		sub12F37();
+		handleCharacterTimers();
 		sub16CA0();
 		sub16EBC();
 		sub171CF();
@@ -725,7 +725,7 @@ void LilliputEngine::displayRefreshScreen() {
 		prepareGameArea();
 		displayGameArea();
 		updateCharPosSequence();
-		sub12F37();
+		handleCharacterTimers();
 		sub16CA0();
 		sub16EBC();
 		sub171CF();
@@ -1463,7 +1463,7 @@ void LilliputEngine::sub1693A_chooseDirections(int index) {
 				_array1692B[i] -= 20;
 			}
 
-			int tmpVal = ((_rulesBuffer2_10[index] & 7) ^ 7);
+			int tmpVal = ((_characterMobility[index] & 7) ^ 7);
 			retVal = _rulesChunk9[_bufferIsoMap[mapIndex + mapIndexDiff]];
 			tmpVal &= retVal;
 			if (tmpVal == 0)
@@ -1649,14 +1649,14 @@ void LilliputEngine::updateCharPosSequence() {
 			case 12: // Home in target
 				result = sequenceCharacterHomeIn(index, var1);
 				break;
-			case 13: // Character
-				result = sub16722(index, var1);
+			case 13: // Character mobility
+				result = sequenceSetMobility(index, var1);
 				break;
-			case 14: // ??
-				result = sub166F7(index, var1, index2);
+			case 14: // Repeat sequence
+				result = sequenceRepeat(index, var1, index2);
 				break;
 			case 15: // End
-				result = sub166EA(index);
+				result = sequenceEnd(index);
 				break;
 			default:
 				error("updateCharPosSequence - unexpected value %d", posSeqType);
@@ -1673,16 +1673,16 @@ void LilliputEngine::updateCharPosSequence() {
 	}
 }
 
-byte LilliputEngine::sub166EA(int index) {
-	debugC(2, kDebugEngine, "sub166EA(%d)", index);
+byte LilliputEngine::sequenceEnd(int index) {
+	debugC(2, kDebugEngine, "sequenceEnd(%d)", index);
 
 	_scriptHandler->_characterNextSequence[index] = 16;
 	_scriptHandler->_characterScriptEnabled[index] = 1;
 	return 1;
 }
 
-byte LilliputEngine::sub166F7(int index, Common::Point var1, int tmpVal) {
-	debugC(2, kDebugEngine, "sub166F7(%d, %d - %d, %d)", index, var1.x, var1.y, tmpVal);
+byte LilliputEngine::sequenceRepeat(int index, Common::Point var1, int tmpVal) {
+	debugC(2, kDebugEngine, "sequenceRepeat(%d, %d - %d, %d)", index, var1.x, var1.y, tmpVal);
 
 	byte a2 = var1.y;
 	if (a2 != 0) {
@@ -1709,10 +1709,10 @@ byte LilliputEngine::sequenceSetCharacterDirection(int index, int direction, int
 	return 0;
 }
 
-byte LilliputEngine::sub16722(int index, Common::Point var1) {
-	debugC(2, kDebugEngineTBC, "sub16722(%d, %d - %d)", index, var1.x, var1.y);
+byte LilliputEngine::sequenceSetMobility(int index, Common::Point var1) {
+	debugC(2, kDebugEngine, "sequenceSetMobility(%d, %d)", index, var1.x, var1.y);
 
-	_rulesBuffer2_10[index] = var1.y;
+	_characterMobility[index] = var1.y;
 	return 2;
 }
 
@@ -1767,11 +1767,10 @@ void LilliputEngine::sub16EBC() {
 	}
 }
 
-void LilliputEngine::sub12F37() {
-	debugC(2, kDebugEngine, "sub12F37()");
+void LilliputEngine::handleCharacterTimers() {
+	debugC(2, kDebugEngine, "handleCharacterTimers()");
 
 	int index1 = _animationTick + 2;
-	int index2 = 0;
 
 	for (byte i = 0; i < _numCharacters; i++) {
 		byte *varPtr = getCharacterAttributesPtr(index1);
@@ -1781,12 +1780,11 @@ void LilliputEngine::sub12F37() {
 			} else {
 				--varPtr[0];
 				if (varPtr[0] == 1)
-					_scriptHandler->_characterScriptEnabled[index2] = 1;
+					_scriptHandler->_characterScriptEnabled[i] = 1;
 			}
 		}
 
 		index1 += 32;
-		++index2;
 	}
 }
 
@@ -2179,7 +2177,7 @@ void LilliputEngine::sub16B8F_moveCharacter(int index, Common::Point pos, int di
 	if ((_bufferIsoMap[mapIndex + 3] & _array16C54[direction]) == 0)
 		return;
 
-	byte var1 = _rulesBuffer2_10[index];
+	byte var1 = _characterMobility[index];
 	var1 &= 7;
 	var1 ^= 7;
 
@@ -2513,7 +2511,7 @@ void LilliputEngine::loadRules() {
 		_characterAboveDist[j] = f.readByte();
 		_spriteSizeArray[j] = f.readByte();
 		_characterDirectionArray[j] = f.readByte();
-		_rulesBuffer2_10[j] = f.readByte();
+		_characterMobility[j] = f.readByte();
 		_characterTypes[j] = f.readByte();
 		_characterBehaviour[j] = f.readByte();
 		_characterHomePosX[j] = f.readByte();

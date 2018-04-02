@@ -3032,7 +3032,7 @@ void LilliputScript::OC_setRulesBuffer2Element() {
 	byte var1 = _currScript->readUint16LE() & 0xFF;
 
 	assert((index >= 0) && (index < 40));
-	_vm->_rulesBuffer2_10[index] = var1;
+	_vm->_characterMobility[index] = var1;
 }
 
 void LilliputScript::OC_setDebugFlag() {
