@@ -24,8 +24,14 @@
 #include <common/debug.h>
 #include "inventory.h"
 #include "engines/pink/archive.h"
+#include "pink/objects/actors/lead_actor.h"
 
 namespace Pink {
+
+InventoryMgr::InventoryMgr()
+    : _lead(nullptr), _item(nullptr)
+{
+}
 
 void Pink::InventoryItem::deserialize(Archive &archive) {
     NamedObject::deserialize(archive);
@@ -67,6 +73,25 @@ void InventoryMgr::toConsole() {
     for (int i = 0; i < _items.size(); ++i) {
         _items[i]->toConsole();
     }
+}
+
+bool InventoryMgr::isPinkOwnsAnyItems() {
+    if (_item)
+        return true;
+
+    for (int i = 0; i < _items.size(); ++i) {
+        if (_items[i]->getCurrentOwner() == _lead->getName()){
+            _item = _items[i];
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item) {
+    item->_currentOwner = owner;
+    _item = item;
 }
 
 } // End of namespace Pink
