@@ -306,7 +306,7 @@ public:
 	const char *ITEM_CURSED;
 	const char *ITEM_OF;
 	const char *BONUS_NAMES[7];
-	const char *WEAPON_NAMES[35];
+	const char *WEAPON_NAMES[41];
 	const char *ARMOR_NAMES[14];
 	const char *ACCESSORY_NAMES[11];
 	const char *MISC_NAMES[22];

@@ -89,12 +89,16 @@ const char *XeenItem::getItemName(ItemCategory category, uint id) {
 	if (id < 82) {
 		switch (category) {
 		case CATEGORY_WEAPON:
+			assert(id < 41);
 			return Res.WEAPON_NAMES[id];
 		case CATEGORY_ARMOR:
+			assert(id < 14);
 			return Res.ARMOR_NAMES[id];
 		case CATEGORY_ACCESSORY:
+			assert(id < 11);
 			return Res.ACCESSORY_NAMES[id];
 		default:
+			assert(id < 22);
 			return Res.MISC_NAMES[id];
 		}
 	} else {
@@ -108,6 +112,7 @@ const char *XeenItem::getItemName(ItemCategory category, uint id) {
 		case CATEGORY_ACCESSORY:
 			return questItems[id - 82 + 35 + 14];
 		default:
+			assert(g_vm->getGameID() != GType_Swords);
 			return questItems[id - 82 + 35 + 14 + 11];
 		}
 	}

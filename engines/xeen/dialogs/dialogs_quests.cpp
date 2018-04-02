@@ -45,6 +45,7 @@ void Quests::execute() {
 	bool headerShown = false;
 	int topRow = 0;
 	const char **questItems = (g_vm->getGameID() == GType_Swords) ? Res.QUEST_ITEM_NAMES_SWORDS : Res.QUEST_ITEM_NAMES;
+	int itemsCount = (g_vm->getGameID() == GType_Swords) ? TOTAL_QUEST_ITEMS_SWORDS : TOTAL_QUEST_ITEMS;
 
 	addButtons();
 	loadQuestNotes();
@@ -67,12 +68,12 @@ void Quests::execute() {
 
 		switch (mode) {
 		case QUEST_ITEMS:
-			for (int idx = 0; idx < TOTAL_QUEST_ITEMS; ++idx)
+			for (int idx = 0; idx < itemsCount; ++idx)
 				lines[idx] = "\b \b*";
 
 			count = 0;
 			headerShown = false;
-			for (int idx = 0; idx < TOTAL_QUEST_ITEMS; ++idx) {
+			for (int idx = 0; idx < itemsCount; ++idx) {
 				if (party._questItems[idx]) {
 					if (!count && !headerShown && idx < 35) {
 						lines[count++] = Res.CLOUDS_OF_XEEN_LINE;
@@ -116,7 +117,7 @@ void Quests::execute() {
 			break;
 
 		case CURRENT_QUESTS:
-			for (int idx = 0; idx < TOTAL_QUEST_ITEMS; ++idx)
+			for (int idx = 0; idx < itemsCount; ++idx)
 				lines[idx] = "";
 
 			count = 0;
