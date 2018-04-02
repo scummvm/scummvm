@@ -183,8 +183,8 @@ int Scripts::checkEvents() {
 			for (eventIndex = 0; eventIndex < map._events.size() && !_vm->shouldExit(); ++eventIndex) {
 				MazeEvent &event = map._events[eventIndex];
 
-				if (event._position == _currentPos && party._mazeDirection !=
-						(_currentPos.x | _currentPos.y) && event._line == _lineNum) {
+				if (event._position == _currentPos && event._line == _lineNum &&
+						(party._mazeDirection | _currentPos.x | _currentPos.y)) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
 						_vm->_mode = MODE_RECORD_EVENTS;
 						_scriptExecuted = true;
