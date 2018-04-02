@@ -61,8 +61,8 @@ void RoomAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surfa
 			if (frameNo1 >= startFrame && frameNo1 < startFrame + object._NA) {
 				const int x = object._x;
 				const int y = object._y;
-				const int w = object._XL / 4 * 4;
-				const int h = object._YL / 4 * 4;
+				const int w = (object._XL + 3) / 4 * 4; // Original code uses this to round up width to a multiple of 4.
+				const int h = object._YL;
 				Common::Rect rect(x, y, x + w, y + h);
 
 				const Graphics::Surface sharedSurface = surface.getSubArea(rect);
