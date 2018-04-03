@@ -496,7 +496,7 @@ bool Scripts::cmdTeleport(ParamsIterator &params) {
 
 	party._stepped = true;
 	if (mapId != party._mazeId) {
-		int spriteId = (intf._objNumber == -1) ? -1 : map._mobData._objects[intf._objNumber - 1]._spriteId;
+		int spriteId = (intf._objNumber == -1) ? -1 : map._mobData._objects[intf._objNumber]._spriteId;
 
 		switch (spriteId) {
 		case 47:
