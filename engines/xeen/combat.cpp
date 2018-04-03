@@ -821,7 +821,7 @@ void Combat::doMonsterTurn(int monsterId) {
 		bool isHated = false;
 
 		if (monsterData._hatesClass != -1) {
-			if (monsterData._hatesClass == 15)
+			if (monsterData._hatesClass == HATES_ALL_CLASSES)
 				// Monster hates all classes
 				goto loop;
 
@@ -845,7 +845,7 @@ void Combat::doMonsterTurn(int monsterId) {
 				case CLASS_RANGER:
 					isHated = c._class == monsterData._hatesClass;
 					break;
-				case 12:
+				case HATES_DWARF:
 					isHated = c._race == DWARF;
 					break;
 				default:
