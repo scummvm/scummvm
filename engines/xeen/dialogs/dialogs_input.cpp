@@ -144,7 +144,6 @@ int StringInput::show(XeenEngine *vm, bool type, const Common::String &msg1,
 int StringInput::execute(bool type, const Common::String &expected,
 		const Common::String &title, int opcode) {
 	FileManager &files = *_vm->_files;
-	Interface &intf = *_vm->_interface;
 	Scripts &scripts = *_vm->_scripts;
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[6];
@@ -158,7 +157,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 	Common::String line;
 	if (getString(line, 30, 200, false)) {
 		if (type) {
-			if (line == intf._interfaceText) {
+			if (!line.compareToIgnoreCase(scripts._message)) {
 				result = true;
 			} else if (line == expected) {
 				result = (opcode == 55) ? -1 : 1;

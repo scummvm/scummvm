@@ -2354,21 +2354,18 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 
 		do {
 			events.clearEvents();
-			events.updateGameCounter();
-			if (msgEnd)
-				clearButtons();
+			clearEvents();
 
 			do {
-				events.pollEventsAndWait();
-				checkEvents(_vm);
-
-				if (_vm->shouldExit())
-					return false;
-
-				while (events.timeElapsed() >= 3) {
-					drawAnim(false);
-					events.updateGameCounter();
+				events.updateGameCounter();
+				while (!_buttonValue && events.timeElapsed() < 3) {
+					events.pollEventsAndWait();
+					checkEvents(_vm);
+					if (g_vm->shouldExit())
+						return false;
 				}
+
+				drawAnim(false);
 			} while (!_buttonValue);
 
 			if (msgEnd)

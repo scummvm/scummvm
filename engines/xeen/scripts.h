@@ -220,7 +220,6 @@ private:
 	MazeEvent *_event;
 	Common::Point _currentPos;
 	Common::Stack<StackEntry> _stack;
-	Common::String _message;
 	Common::String _displayMessage;
 
 	typedef EventParameters::Iterator ParamsIterator;
@@ -552,6 +551,7 @@ public:
 	DamageType _nEdamageType;
 	int _itemType;
 	Common::Array<MirrorEntry> _mirror;
+	Common::String _message;
 public:
 	Scripts(XeenEngine *vm);
 
