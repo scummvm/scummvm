@@ -915,45 +915,46 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 	case 20:
 		_gameFlags[files._ccNum][takeVal] = false;
 		break;
-	case 21: {
-		bool found = false;
-		for (int idx = 0; idx < 9; ++idx) {
-			if (takeVal < 35) {
-				if (ps._weapons[idx]._id == takeVal) {
-					ps._weapons[idx].clear();
-					ps._weapons.sort();
-					found = true;
-					break;
+	case 21:
+		if (takeVal >= 82) {
+			_questItems[takeVal - 82]--;
+		} else {
+			bool found = false;
+			for (int idx = 0; idx < 9; ++idx) {
+				if (takeVal < 35) {
+					if (ps._weapons[idx]._id == takeVal) {
+						ps._weapons[idx].clear();
+						ps._weapons.sort();
+						found = true;
+						break;
+					}
+				} else if (takeVal < 49) {
+					if (ps._armor[idx]._id == (takeVal - 35)) {
+						ps._armor[idx].clear();
+						ps._armor.sort();
+						found = true;
+						break;
+					}
+				} else if (takeVal < 60) {
+					if (ps._accessories[idx]._id == (takeVal - 49)) {
+						ps._accessories[idx].clear();
+						ps._accessories.sort();
+						found = true;
+						break;
+					}
+				} else {
+					if (ps._misc[idx]._material == ((int)takeVal - 60)) {
+						ps._misc[idx].clear();
+						ps._misc.sort();
+						found = true;
+						break;
+					}
 				}
-			} else if (takeVal < 49) {
-				if (ps._armor[idx]._id == (takeVal - 35)) {
-					ps._armor[idx].clear();
-					ps._armor.sort();
-					found = true;
-					break;
-				}
-			} else if (takeVal < 60) {
-				if (ps._accessories[idx]._id == (takeVal - 49)) {
-					ps._accessories[idx].clear();
-					ps._accessories.sort();
-					found = true;
-					break;
-				}
-			} else if (takeVal < 82) {
-				if (ps._misc[idx]._material == ((int)takeVal - 60)) {
-					ps._misc[idx].clear();
-					ps._misc.sort();
-					found = true;
-					break;
-				}
-			} else {
-				_questItems[takeVal - 82]--;
 			}
+			if (!found)
+				return true;
 		}
-		if (!found)
-			return true;
 		break;
-	}
 	case 25:
 		changeTime(takeVal);
 		break;
