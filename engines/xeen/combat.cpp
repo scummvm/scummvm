@@ -861,23 +861,9 @@ void Combat::doMonsterTurn(int monsterId) {
 
 		if (!isHated) {
 			// No particularly hated foe, so decide which character to start with
-			switch (_combatParty.size()) {
-			case 1:
-				charNum = 0;
-				break;
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-				charNum = _vm->getRandomNumber(0, _combatParty.size() - 1);
-				break;
-			case 6:
-				if (_vm->getRandomNumber(1, 6) == 6)
-					charNum = 5;
-				else
-					charNum = _vm->getRandomNumber(0, 4);
-				break;
-			}
+			// Note: Original had a whole switch statement depending on party size, that boiled down to
+			// picking a random character in all cases anyway
+			charNum = _vm->getRandomNumber(0, _combatParty.size() - 1);
 		}
 
 		// Attacking loop
