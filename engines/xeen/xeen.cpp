@@ -218,6 +218,7 @@ void XeenEngine::play() {
 		_party->_mazePosition.y = 21;
 	}
 
+	_map->clearMaze();
 	if (_loadSaveSlot >= 0) {
 		_saves->newGame();
 		_saves->loadGameState(_loadSaveSlot);

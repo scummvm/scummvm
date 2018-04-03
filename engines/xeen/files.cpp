@@ -504,6 +504,7 @@ void SaveArchive::load(Common::SeekableReadStream &stream) {
 void SaveArchive::reset(CCArchive *src) {
 	Common::MemoryWriteStreamDynamic saveFile(DisposeAfterUse::YES);
 	File fIn;
+	_newData.clear();
 
 	g_vm->_files->setGameCc(g_vm->getGameID() == GType_DarkSide ? 1 : 0);
 	const int RESOURCES[6] = { 0x2A0C, 0x2A1C, 0x2A2C, 0x2A3C, 0x284C, 0x2A5C };
