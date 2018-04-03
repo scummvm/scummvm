@@ -75,6 +75,7 @@
 #include "bladerunner/zbuffer.h"
 
 #include "common/array.h"
+#include "common/config-manager.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/savefile.h"
@@ -475,8 +476,20 @@ void BladeRunnerEngine::initChapterAndScene() {
 		_actors[i]->movementTrackNext(true);
 	}
 
-	_settings->setChapter(1);
-	_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
+	if (ConfMan.hasKey("boot_param")) {
+		int param = ConfMan.getInt("boot_param"); // CTTTSSS
+		int chapter = param / 1000000;
+		param -= chapter * 1000000;
+		int set = param / 1000;
+		param -= set * 1000;
+		int scene = param;
+
+		_settings->setChapter(chapter);
+		_settings->setNewSetAndScene(set, scene);
+	} else {
+		_settings->setChapter(1);
+		_settings->setNewSetAndScene(_gameInfo->getInitialSetId(), _gameInfo->getInitialSceneId());
+	}
 }
 
 void BladeRunnerEngine::shutdown() {
