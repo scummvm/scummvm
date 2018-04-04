@@ -172,8 +172,7 @@ int ControlPanel::execute() {
 		if (g_vm->canLoadGameStateCurrently())
 			saves.loadGame();
 	} else if (result == 4) {
-		if (g_vm->canSaveGameStateCurrently())
-			saves.saveGame();
+		saves.saveGame();
 	}
 
 	return result;

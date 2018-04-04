@@ -453,6 +453,7 @@ public:
 	const char *MUSIC_FILES1[5];
 	const char *MUSIC_FILES2[6][7];
 	const char *DIFFICULTY_TEXT;
+	const char *SAVE_OFF_LIMITS;
 public:
 	/**
 	 * Constructor

@@ -193,7 +193,7 @@ bool XeenEngine::canLoadGameStateCurrently() {
 }
 
 bool XeenEngine::canSaveGameStateCurrently() {
-	return _mode != MODE_COMBAT && _mode != MODE_STARTUP;
+	return _mode != MODE_COMBAT && _mode != MODE_STARTUP && (_map->mazeData()._mazeFlags & RESTRICTION_SAVE) == 0;
 }
 
 void XeenEngine::playGame() {

@@ -1922,6 +1922,8 @@ const char *const MUSIC_FILES2[6][7] = {
 };
 
 const char *const DIFFICULTY_TEXT = "\v000\t000\x3""cSelect Game Preference";
+const char *const SAVE_OFF_LIMITS = "\x3""c\v002\t000The Gods of Game Restoration deem this area off limits!\n"
+	"Sorry, no saving in this maze.";
 
 void writeConstants(CCArchive &cc) {
 	Common::MemFile file;
@@ -2261,6 +2263,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncStrings(MUSIC_FILES1, 5);
 	file.syncStrings2D((const char *const *)MUSIC_FILES2, 6, 7);
 	file.syncString(DIFFICULTY_TEXT);
+	file.syncString(SAVE_OFF_LIMITS);
 
 	cc.add("CONSTANTS", file);
 }

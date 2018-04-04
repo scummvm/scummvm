@@ -258,18 +258,25 @@ bool SavesManager::loadGame() {
 }
 
 bool SavesManager::saveGame() {
-	if (!g_vm->canSaveGameStateCurrently())
+	Map &map = *g_vm->_map;
+	Windows &windows = *g_vm->_windows;
+	
+	if (map.mazeData()._mazeFlags & RESTRICTION_SAVE) {
+		ErrorScroll::show(g_vm, Res.SAVE_OFF_LIMITS, WT_NONFREEZED_WAIT);
 		return false;
+	} else if (!g_vm->canSaveGameStateCurrently()) {
+		return false;
+	} else {
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		int slotNum = dialog->runModalWithCurrentTarget();
+		Common::String saveName = dialog->getResultString();
+		delete dialog;
 
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
-	int slotNum = dialog->runModalWithCurrentTarget();
-	Common::String saveName = dialog->getResultString();
-	delete dialog;
+		if (slotNum != -1)
+			saveGameState(slotNum, saveName);
 
-	if (slotNum != -1)
-		saveGameState(slotNum, saveName);
-
-	return slotNum != -1;
+		return slotNum != -1;
+	}
 }
 
 } // End of namespace Xeen
