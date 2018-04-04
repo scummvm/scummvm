@@ -1143,9 +1143,9 @@ int ArenaLocation::show() {
 		}
 
 		Common::String format = map._events._text[3];
-		Common::String count = Common::String::format("%05u", party._activeParty[0]._awards[WARZONE_AWARD]);
-		int numIdx = count[3] == '1' ? 0 : count[4] - '0';
-		Common::String msg = Common::String::format(format.c_str(), count.c_str(), SUFFIXES[numIdx]);
+		int count = party._activeParty[0]._awards[WARZONE_AWARD];
+		int suffixNum = (count < 10) ? count : 0;
+		Common::String msg = Common::String::format(format.c_str(), count, SUFFIXES[suffixNum]);
 	
 		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, msg, 1);
 
@@ -1161,8 +1161,7 @@ int ArenaLocation::show() {
 		}
 	}
 
-	check = LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
-		map._events._text[0].c_str(), 300);
+	check = LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, map._events._text[0].c_str(), 0);
 	if (!check) {
 		LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER,
 			map._events._text[1].c_str(), 300);
@@ -1187,7 +1186,7 @@ int ArenaLocation::show() {
 	if (howMany == 0)
 		goto exit;
 
-	LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, map._events._text[2], 300);
+	LocationMessage::show(27, Res.WARZONE_BATTLE_MASTER, map._events._text[2], 1);
 
 	// Clear monsters array
 	party._mazeDirection = DIR_EAST;

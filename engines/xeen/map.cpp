@@ -525,7 +525,8 @@ void MonsterObjectData::clearMonsterSprites() {
 
 void MonsterObjectData::addMonsterSprites(MazeMonster &monster) {
 	Map &map = *g_vm->_map;
-	int imgNumber = map._monsterData[monster._spriteId]._imageNumber;
+	monster._monsterData = &map._monsterData[monster._spriteId];
+	int imgNumber = monster._monsterData->_imageNumber;
 	uint idx;
 
 	// Find the sprites for the monster, loading them in if necessary
