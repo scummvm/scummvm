@@ -1207,14 +1207,25 @@ bool Scripts::cmdDisplayBottom(ParamsIterator &params) {
 
 bool Scripts::cmdIfMapFlag(ParamsIterator &params) {
 	Map &map = *_vm->_map;
-	MazeMonster &monster = map._mobData._monsters[params.readByte()];
+	int monsterNum = params.readByte();
+	int lineNum = params.readByte();
 
-	if (monster._position.x >= 32 || monster._position.y >= 32) {
-		_lineNum = params.readByte();
-		return false;
+	if (monsterNum == 0xff) {
+		for (monsterNum = 0; monsterNum < (int)map._mobData._monsters.size(); ++monsterNum) {
+			MazeMonster &monster = map._mobData._monsters[monsterNum];
+
+			if ((uint)monster._position.x < 32 && (uint)monster._position.y < 32)
+				return true;
+		}
+	} else {
+		MazeMonster &monster = map._mobData._monsters[monsterNum];
+
+		if ((uint)monster._position.x < 32 && (uint)monster._position.y > 32)
+			return true;
 	}
 
-	return true;
+	_lineNum = lineNum;
+	return false;
 }
 
 bool Scripts::cmdSelectRandomChar(ParamsIterator &params) {
