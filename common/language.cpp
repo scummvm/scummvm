@@ -46,7 +46,7 @@ const LanguageDescription g_languages[] = {
 	{    "jp", "ja_JP", "Japanese", JA_JPN },
 	{    "kr", "ko_KR", "Korean", KO_KOR },
 	{    "lv", "lv_LV", "Latvian", LV_LAT },
-	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR }, // TODO Someone should verify the unix locale
+	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR },
 	{    "pl", "pl_PL", "Polish", PL_POL },
 	{    "br", "pt_BR", "Portuguese", PT_BRA },
 	{    "ru", "ru_RU", "Russian", RU_RUS },
