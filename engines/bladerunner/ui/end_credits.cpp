@@ -160,6 +160,9 @@ void EndCredits::show() {
 	free(textPositions);
 	delete textResource;
 
+	delete fontSmall;
+	delete fontBig;
+
 	_vm->_music->stop(0);
 	_vm->_mouse->enable();
 }

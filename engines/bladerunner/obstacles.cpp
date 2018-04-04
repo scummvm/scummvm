@@ -38,6 +38,8 @@ Obstacles::Obstacles(BladeRunnerEngine *vm) {
 
 Obstacles::~Obstacles() {
 	delete[] _vertices;
+	delete[] _polygonsBackup;
+	delete[] _polygons;
 }
 
 void Obstacles::clear() {
