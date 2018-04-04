@@ -2630,6 +2630,10 @@ The following keywords are recognized:
     cdrom              number   Number of CD-ROM unit to use for audio. If
                                 negative, don't even try to access the CD-ROM.
     joystick_num       number   Number of joystick device to use for input
+    controller_map_db  string   A custom controller mapping file to load to 
+                                complete default database (SDL backend only).
+                                Otherwise, file gamecontrollerdb.txt will be
+                                loaded from extrapath.
     music_driver       string   The music engine to use.
     opl_driver         string   The AdLib (OPL) emulator to use.
     output_rate        number   The output sample rate to use, in Hz. Sensible
