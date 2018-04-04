@@ -164,6 +164,7 @@ public:
 	GameData();
 	Scene *getScene(uint8 sceneId);
 	Scene *getCurrentScene();
+	Inventory &getInventory();
 
 	bool loadFromStream(Common::ReadStream &stream);
 
@@ -174,7 +175,6 @@ public:
 	Common::String _currentAPK;
 private:
 	Scene _scenes[45];
-
 };
 
 }

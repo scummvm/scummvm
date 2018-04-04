@@ -20,30 +20,48 @@
  *
  */
 
-#ifndef MUTATIONOFJB_SEQCOMMAND_H
-#define MUTATIONOFJB_SEQCOMMAND_H 
+#ifndef MUTATIONOFJB_GUI_H
+#define MUTATIONOFJB_GUI_H
 
-#include "mutationofjb/commands/command.h"
-#include "common/scummsys.h"
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+#include "graphics/surface.h"
+#include "mutationofjb/inventory.h"
+
+namespace Graphics {
+class Screen;
+}
 
 namespace MutationOfJB {
 
-class SeqCommandParser : public CommandParser {
-public:
-	virtual void transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) override;
-};
+class Game;
 
-class SeqCommand : public Command {
+class Gui : public InventoryObserver {
 public:
-	SeqCommand() : _nextCommand(nullptr) {}
-	void setNextCommand(Command *nextCommand);
-	virtual Command *next() const override;
+	friend class InventoryAnimationDecoderCallback;
+	Gui(Game &game, Graphics::Screen *screen);
+	bool init();
+	void update();
+
+	void markInventoryDirty();
+
+	virtual void onInventoryChanged() override;
 
 private:
-	Command *_nextCommand;
+	bool loadInventoryGfx();
+	bool loadInventoryList();
+	void drawInventoryItem(const Common::String &item, int pos);
+	void drawInventory();
+
+	typedef Common::HashMap<Common::String, int> InventoryMap;
+
+	Game &_game;
+	Graphics::Screen *_screen;
+	InventoryMap _inventoryItems;
+	Common::Array<Graphics::Surface> _inventorySurfaces;
+	bool _inventoryDirty;
 };
 
 }
 
 #endif
-
