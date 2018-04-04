@@ -23,6 +23,7 @@
 #include "mutationofjb/debug.h"
 #include "mutationofjb/game.h"
 #include "mutationofjb/gamedata.h"
+#include "mutationofjb/inventory.h"
 #include "mutationofjb/mutationofjb.h"
 #include "mutationofjb/script.h"
 #include "mutationofjb/commands/command.h"
@@ -68,6 +69,7 @@ Console::Console(MutationOfJBEngine *vm) : _vm(vm) {
 	registerCmd("dumpdoorinfo", WRAP_METHOD(Console, cmd_dumpdoorinfo));
 	registerCmd("dumpobjectinfo", WRAP_METHOD(Console, cmd_dumpobjectinfo));
 	registerCmd("dumpstaticinfo", WRAP_METHOD(Console, cmd_dumpstaticinfo));
+	registerCmd("listinventory", WRAP_METHOD(Console, cmd_listinventory));
 }
 
 bool Console::cmd_showallcommands(int argc, const char **argv) {
@@ -436,6 +438,15 @@ Script *Console::getScriptFromArg(const char *arg) {
 	}
 
 	return script;
+}
+
+bool Console::cmd_listinventory(int, const char **) {
+	Inventory &inventory =_vm->getGame().getGameData().getInventory();
+	const Inventory::Items &items = inventory.getItems();
+	for (Inventory::Items::const_iterator it = items.begin(); it != items.end(); ++it) {
+		debugPrintf("%s\n", convertToASCII(*it).c_str());
+	}
+	return true;
 }
 
 }

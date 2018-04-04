@@ -21,12 +21,12 @@
  */
 
 #include "mutationofjb/inventory.h"
+#include "mutationofjb/game.h"
+#include "mutationofjb/gui.h"
 #include "common/algorithm.h"
 #include "common/debug.h"
 
 namespace MutationOfJB {
-
-static const uint VISIBLE_ITEMS = 6;
 
 const Inventory::Items &Inventory::getItems() const {
 	return _items;
@@ -43,6 +43,9 @@ void Inventory::addItem(const Common::String &item) {
 	if (_items.size() > VISIBLE_ITEMS) {
 		rotateItemsRight(VISIBLE_ITEMS);
 	}
+	if (_observer) {
+		_observer->onInventoryChanged();
+	}
 }
 
 void Inventory::removeItem(const Common::String &item) {
@@ -53,10 +56,16 @@ void Inventory::removeItem(const Common::String &item) {
 	}
 
 	_items.remove_at(it - _items.begin());
+	if (_observer) {
+		_observer->onInventoryChanged();
+	}
 }
 
 void Inventory::removeAllItems() {
 	_items.clear();
+	if (_observer) {
+		_observer->onInventoryChanged();
+	}
 }
 
 void Inventory::rotateItemsRight(uint n) {
@@ -68,6 +77,9 @@ void Inventory::rotateItemsRight(uint n) {
 	reverseItems(0, _items.size() - 1);
 	reverseItems(0, n - 1);
 	reverseItems(n, _items.size() - 1);
+	if (_observer) {
+		_observer->onInventoryChanged();
+	}
 }
 
 void Inventory::rotateItemsLeft(uint n) {
@@ -79,6 +91,13 @@ void Inventory::rotateItemsLeft(uint n) {
 	reverseItems(0, _items.size() - 1);
 	reverseItems(_items.size() - n, _items.size() - 1);
 	reverseItems(0, _items.size() - n - 1);
+	if (_observer) {
+		_observer->onInventoryChanged();
+	}
+}
+
+void Inventory::setObserver(InventoryObserver *observer) {
+	_observer = observer;
 }
 
 void Inventory::reverseItems(uint from, uint to) {

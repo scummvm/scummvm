@@ -35,7 +35,7 @@
 namespace MutationOfJB {
 
 Game::Game(MutationOfJBEngine *vm)
-: _vm(vm), _delayedLocalScript(nullptr), _scriptExecCtx(*this) {
+: _vm(vm), _delayedLocalScript(nullptr), _gui(*this, _vm->getScreen()), _scriptExecCtx(*this) {
 	_gameData = new GameData;
 	loadGameData(false);
 
@@ -47,6 +47,8 @@ Game::Game(MutationOfJBEngine *vm)
 
 	_localScript = nullptr;
 	_room = new Room(this, _vm->getScreen());
+
+	_gui.init();
 
 	changeScene(13, false); // Initial scene.
 }
@@ -84,6 +86,10 @@ bool Game::loadGameData(bool partB) {
 }
 
 Script *Game::changeSceneLoadScript(uint8 sceneId, bool partB) {
+	if (isCurrentSceneMap()) {
+		_gui.markInventoryDirty();
+	}
+
 	_gameData->_lastScene = _gameData->_currentScene;
 	_gameData->_currentScene = sceneId;
 	_gameData->_partB = partB;
@@ -165,6 +171,12 @@ void Game::update() {
 		_localScript = _delayedLocalScript;
 		_delayedLocalScript = nullptr;
 	}
+
+	_gui.update();
+}
+
+Gui &Game::getGui() {
+	return _gui;
 }
 
 }

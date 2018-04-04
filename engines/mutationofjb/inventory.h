@@ -29,8 +29,20 @@
 
 namespace MutationOfJB {
 
+class Game;
+
+class InventoryObserver {
+public:
+	virtual void onInventoryChanged() = 0;
+	virtual ~InventoryObserver() {}
+};
+
 class Inventory {
 public:
+	enum {
+		VISIBLE_ITEMS = 6
+	};
+
 	typedef Common::Array<Common::String> Items;
 
 	const Items &getItems() const;
@@ -42,10 +54,13 @@ public:
 	void rotateItemsRight(uint n);
 	void rotateItemsLeft(uint n);
 
+	void setObserver(InventoryObserver *observer);
+
 private:
 	void reverseItems(uint from, uint to);
 
 	Items _items;
+	InventoryObserver *_observer;
 };
 
 }

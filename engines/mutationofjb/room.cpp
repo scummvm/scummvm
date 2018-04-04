@@ -47,7 +47,11 @@ void RoomAnimationDecoderCallback::onPaletteUpdated(byte palette[PALETTE_SIZE]) 
 
 void RoomAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surface) {
 	if (frameNo == 0) {
-		_room._screen->blitFrom(surface);
+		Common::Rect rect(0, 0, 320, 139);
+		if (_room._game->isCurrentSceneMap()) {
+			rect = Common::Rect(0, 0, 320, 200);
+		}
+		_room._screen->blitFrom(surface, rect, Common::Point(0, 0));
 	}
 
 	const int frameNo1 = frameNo + 1;

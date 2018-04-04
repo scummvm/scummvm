@@ -24,6 +24,7 @@ MODULE_OBJS := \
 	encryptedfile.o \
 	game.o \
 	gamedata.o \
+	gui.o \
 	inventory.o \
 	mutationofjb.o \
 	room.o \

@@ -226,7 +226,9 @@ Bitmap *Scene::findBitmap(int16 x, int16 y, int *index) {
 GameData::GameData()
 	: _currentScene(0),
 	_lastScene(0),
-	_partB(false) {}
+	_partB(false),
+	_inventory()
+	{}
 
 Scene *GameData::getScene(uint8 sceneId) {
 	if (sceneId == 0 || sceneId > ARRAYSIZE(_scenes)) {
@@ -239,6 +241,10 @@ Scene *GameData::getScene(uint8 sceneId) {
 
 Scene *GameData::getCurrentScene() {
 	return getScene(_currentScene);
+}
+
+Inventory &GameData::getInventory() {
+	return _inventory;
 }
 
 bool GameData::loadFromStream(Common::ReadStream &stream) {

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "mutationofjb/script.h"
+#include "mutationofjb/gui.h"
 
 namespace Common {
 class String;
@@ -58,6 +59,8 @@ public:
 
 	void update();
 
+	Gui &getGui();
+
 private:
 	bool loadGameData(bool partB);
 	void runActiveCommand();
@@ -71,6 +74,7 @@ private:
 	Script *_localScript;
 	Script *_delayedLocalScript;
 	Room *_room;
+	Gui _gui;
 
 	ScriptExecutionContext _scriptExecCtx;
 };
