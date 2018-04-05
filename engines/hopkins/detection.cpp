@@ -168,9 +168,6 @@ SaveStateList HopkinsMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				if (Hopkins::SaveLoadManager::readSavegameHeader(in, header)) {
 					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
-
-					header._thumbnail->free();
-					delete header._thumbnail;
 				}
 
 				delete in;
@@ -198,7 +195,11 @@ SaveStateDescriptor HopkinsMetaEngine::querySaveMetaInfos(const char *target, in
 
 	if (f) {
 		Hopkins::hopkinsSavegameHeader header;
-		Hopkins::SaveLoadManager::readSavegameHeader(f, header);
+		if (!Hopkins::SaveLoadManager::readSavegameHeader(f, header, false)) {
+			delete f;
+			return SaveStateDescriptor();
+		}
+
 		delete f;
 
 		// Create the return descriptor

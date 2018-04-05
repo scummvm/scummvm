@@ -132,10 +132,6 @@ SaveStateList DraciMetaEngine::listSaves(const char *target) const {
 				Draci::DraciSavegameHeader header;
 				if (Draci::readSavegameHeader(in, header)) {
 					saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-					if (header.thumbnail) {
-						header.thumbnail->free();
-						delete header.thumbnail;
-					}
 				}
 				delete in;
 			}
@@ -157,7 +153,11 @@ SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int 
 
 	if (f) {
 		Draci::DraciSavegameHeader header;
-		Draci::readSavegameHeader(f, header);
+		if (!Draci::readSavegameHeader(f, header, false)) {
+			delete f;
+			return SaveStateDescriptor();
+		}
+
 		delete f;
 
 		// Create the return descriptor

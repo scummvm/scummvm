@@ -170,12 +170,9 @@ SaveStateList XeenMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 
 			if (in) {
-				Xeen::SavesManager::readSavegameHeader(in, header);
-				saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+				if (Xeen::SavesManager::readSavegameHeader(in, header))
+					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
-				if (header._thumbnail)
-					header._thumbnail->free();
-				delete header._thumbnail;
 				delete in;
 			}
 		}
@@ -200,7 +197,11 @@ SaveStateDescriptor XeenMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	if (f) {
 		Xeen::XeenSavegameHeader header;
-		Xeen::SavesManager::readSavegameHeader(f, header);
+		if (!Xeen::SavesManager::readSavegameHeader(f, header, false)) {
+			delete f;
+			return SaveStateDescriptor();
+		}
+
 		delete f;
 
 		// Create the return descriptor

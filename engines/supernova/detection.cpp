@@ -200,7 +200,11 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 		desc.setPlayTime(playTime * 1000);
 
 		if (Graphics::checkThumbnailHeader(*savefile)) {
-			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*savefile);
+			Graphics::Surface *thumbnail;
+			if (!Graphics::loadThumbnail(*savefile, thumbnail)) {
+				delete savefile;
+				return SaveStateDescriptor();
+			}
 			desc.setThumbnail(thumbnail);
 		}
 

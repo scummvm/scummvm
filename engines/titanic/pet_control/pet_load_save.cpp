@@ -135,11 +135,6 @@ void CPetLoadSave::resetSlots() {
 				_slotNames[idx].setText(header._saveName);
 			}
 
-			if (header._thumbnail) {
-				header._thumbnail->free();
-				delete header._thumbnail;
-			}
-
 			file.close();
 		}
 	}

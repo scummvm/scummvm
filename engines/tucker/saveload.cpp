@@ -141,7 +141,7 @@ Common::Error TuckerEngine::loadGameState(int slot) {
 }
 
 
-TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(const char *target, int slot, SavegameHeader &header) {
+WARN_UNUSED_RESULT TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(const char *target, int slot, SavegameHeader &header) {
 	Common::String fileName = generateGameStateFileName(target, slot);
 	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -155,7 +155,7 @@ TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(const char *target,
 	return savegameError;
 }
 
-TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool loadThumbnail) {
+WARN_UNUSED_RESULT TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail) {
 	header.version   = -1;
 	header.flags     = 0;
 	header.description.clear();
@@ -196,10 +196,8 @@ TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(Common::InSaveFile 
 		header.saveTime = file->readUint32LE();
 		header.playTime = file->readUint32LE();
 
-		if (loadThumbnail) {
-			header.thumbnail = Graphics::loadThumbnail(*file);
-		} else {
-			Graphics::skipThumbnail(*file);
+		if (!Graphics::loadThumbnail(*file, header.thumbnail, skipThumbnail)) {
+			return kSavegameIoError;
 		}
 	}
 

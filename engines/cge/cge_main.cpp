@@ -242,10 +242,6 @@ bool CGEEngine::loadGame(int slotNumber, SavegameHeader *header, bool tiny) {
 			delete readStream;
 			return true;
 		}
-
-		// Delete the thumbnail
-		saveHeader.thumbnail->free();
-		delete saveHeader.thumbnail;
 	}
 
 	// Get in the savegame
@@ -424,9 +420,7 @@ void CGEEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteSt
 	}
 }
 
-bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
-	header.thumbnail = nullptr;
-
+WARN_UNUSED_RESULT bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
 	// Get the savegame version
 	header.version = in->readByte();
 	if (header.version > kSavegameVersion)
@@ -439,9 +433,9 @@ bool CGEEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &heade
 		header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
 	header.saveYear = in->readSint16LE();

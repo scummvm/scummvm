@@ -65,7 +65,7 @@ public:
 	/**
 	 * Read in a savegame header
 	 */
-	static bool readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header, bool skipThumbnail = true);
 
 	/**
 	 * Write out a savegame header

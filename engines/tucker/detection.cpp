@@ -175,7 +175,7 @@ public:
 			if (ext && (slot = atoi(ext + 1)) >= 0 && slot <= Tucker::kLastSaveSlot) {
 				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 				if (in) {
-					if (Tucker::TuckerEngine::readSavegameHeader(in, header, false) == Tucker::TuckerEngine::kSavegameNoError) {
+					if (Tucker::TuckerEngine::readSavegameHeader(in, header) == Tucker::TuckerEngine::kSavegameNoError) {
 						saveList.push_back(SaveStateDescriptor(slot, header.description));
 					}
 
@@ -207,7 +207,7 @@ public:
 		}
 
 		Tucker::TuckerEngine::SavegameHeader header;
-		Tucker::TuckerEngine::SavegameError savegameError = Tucker::TuckerEngine::readSavegameHeader(file, header, true);
+		Tucker::TuckerEngine::SavegameError savegameError = Tucker::TuckerEngine::readSavegameHeader(file, header, false);
 		if (savegameError) {
 			delete file;
 			return SaveStateDescriptor();

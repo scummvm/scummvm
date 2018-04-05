@@ -189,7 +189,7 @@ Common::Error SaveManager::loadGame(int slot) {
 	return Common::kNoError;
 }
 
-bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header) {
+bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &header, bool skipThumbnail) {
 	uint32 tag = in->readUint32BE();
 	// Check if it's original savegame than fill header structure
 	if (tag == MKTAG('Z', 'N', 'S', 'G')) {
@@ -232,9 +232,9 @@ bool SaveManager::readSaveGameHeader(Common::InSaveFile *in, SaveGameHeader &hea
 		header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
 	header.saveYear = in->readSint16LE();

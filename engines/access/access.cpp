@@ -488,11 +488,6 @@ Common::Error AccessEngine::loadGameState(int slot) {
 	if (!readSavegameHeader(saveFile, header))
 		error("Invalid savegame");
 
-	if (header._thumbnail) {
-		header._thumbnail->free();
-		delete header._thumbnail;
-	}
-
 	// Load most of the savegame data
 	synchronize(s);
 	delete saveFile;
@@ -537,9 +532,8 @@ void AccessEngine::synchronize(Common::Serializer &s) {
 const char *const SAVEGAME_STR = "ACCESS";
 #define SAVEGAME_STR_SIZE 6
 
-bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header) {
+WARN_UNUSED_RESULT bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
-	header._thumbnail = nullptr;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
@@ -557,9 +551,9 @@ bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHead
 		header._saveName += ch;
 
 	// Get the thumbnail
-	header._thumbnail = Graphics::loadThumbnail(*in);
-	if (!header._thumbnail)
+	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
 	header._year = in->readSint16LE();

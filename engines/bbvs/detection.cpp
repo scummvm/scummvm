@@ -124,7 +124,7 @@ SaveStateList BbvsMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Bbvs::BbvsEngine::readSaveHeader(in, false, header) == Bbvs::BbvsEngine::kRSHENoError) {
+				if (Bbvs::BbvsEngine::readSaveHeader(in, header) == Bbvs::BbvsEngine::kRSHENoError) {
 					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
 				}
 				delete in;
@@ -142,7 +142,7 @@ SaveStateDescriptor BbvsMetaEngine::querySaveMetaInfos(const char *target, int s
 	if (in) {
 		Bbvs::BbvsEngine::SaveHeader header;
 		Bbvs::BbvsEngine::kReadSaveHeaderError error;
-		error = Bbvs::BbvsEngine::readSaveHeader(in, true, header);
+		error = Bbvs::BbvsEngine::readSaveHeader(in, header, false);
 		delete in;
 		if (error == Bbvs::BbvsEngine::kRSHENoError) {
 			SaveStateDescriptor desc(slot, header.description);

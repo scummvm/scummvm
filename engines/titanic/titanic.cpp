@@ -49,7 +49,6 @@
 #include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
 #include "graphics/screen.h"
 #include "gui/saveload.h"
 
@@ -256,11 +255,6 @@ CString TitanicEngine::getSavegameName(int slot) {
 
 		TitanicSavegameHeader header;
 		bool isValid = CProjectItem::readSavegameHeader(&file, header);
-		if (header._thumbnail) {
-			header._thumbnail->free();
-			delete header._thumbnail;
-		}
-
 		file.close();
 
 		if (isValid)

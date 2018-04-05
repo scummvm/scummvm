@@ -128,11 +128,6 @@ SaveStateList TitanicMetaEngine::listSaves(const char *target) const {
 				if (Titanic::CProjectItem::readSavegameHeader(&cf, header))
 					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
 
-				if (header._thumbnail) {
-					header._thumbnail->free();
-					delete header._thumbnail;
-				}
-
 				cf.close();
 			}
 		}
@@ -161,7 +156,10 @@ SaveStateDescriptor TitanicMetaEngine::querySaveMetaInfos(const char *target, in
 		file.open(f);
 
 		Titanic::TitanicSavegameHeader header;
-		Titanic::CProjectItem::readSavegameHeader(&file, header);
+		if (!Titanic::CProjectItem::readSavegameHeader(&file, header, false)) {
+			file.close();
+			return SaveStateDescriptor();
+		}
 
 		file.close();
 

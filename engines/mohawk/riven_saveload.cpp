@@ -148,7 +148,11 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 		return descriptor;
 	}
 
-	descriptor.setThumbnail(Graphics::loadThumbnail(*thmbStream));
+	Graphics::Surface *thumbnail;
+	if (!Graphics::loadThumbnail(*thmbStream, thumbnail)) {
+		return descriptor;
+	}
+	descriptor.setThumbnail(thumbnail);
 
 	delete thmbStream;
 

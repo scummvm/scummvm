@@ -94,7 +94,7 @@ public:
 	Common::Error loadGame(int slot);
 
 	Common::SeekableReadStream *getSlotFile(uint slot);
-	bool readSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &header);
+	bool readSaveGameHeader(Common::SeekableReadStream *in, SaveGameHeader &header, bool skipThumbnail = true);
 
 	void prepareSaveBuffer();
 	void flushSaveBuffer();

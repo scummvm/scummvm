@@ -221,10 +221,6 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 					// Valid savegame
 					if (CGE::CGEEngine::readSavegameHeader(file, header)) {
 						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-						if (header.thumbnail) {
-							header.thumbnail->free();
-							delete header.thumbnail;
-						}
 					}
 				} else {
 					// Must be an original format savegame
@@ -253,7 +249,7 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 		f->read(buffer, kSavegameStrSize + 1);
 
 		bool hasHeader = !strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1) &&
-			CGE::CGEEngine::readSavegameHeader(f, header);
+			CGE::CGEEngine::readSavegameHeader(f, header, false);
 		delete f;
 
 		if (!hasHeader) {

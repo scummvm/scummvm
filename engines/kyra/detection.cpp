@@ -256,7 +256,7 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
-				if (Kyra::KyraEngine_v1::readSaveHeader(in, false, header) == Kyra::KyraEngine_v1::kRSHENoError) {
+				if (Kyra::KyraEngine_v1::readSaveHeader(in, header) == Kyra::KyraEngine_v1::kRSHENoError) {
 					// WORKAROUND: Old savegames are using 'German' as description for kyra3 restart game save (slot 0),
 					// since that looks odd we replace it by "New Game".
 					if (slotNum == 0 && header.gameID == Kyra::GI_KYRA3)
@@ -298,7 +298,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 		Kyra::KyraEngine_v1::SaveHeader header;
 		Kyra::KyraEngine_v1::ReadSaveHeaderError error;
 
-		error = Kyra::KyraEngine_v1::readSaveHeader(in, true, header);
+		error = Kyra::KyraEngine_v1::readSaveHeader(in, header, false);
 		delete in;
 
 		if (error == Kyra::KyraEngine_v1::kRSHENoError) {

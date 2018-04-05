@@ -271,7 +271,7 @@ SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Neverhood::NeverhoodEngine::readSaveHeader(in, false, header) == Neverhood::NeverhoodEngine::kRSHENoError) {
+				if (Neverhood::NeverhoodEngine::readSaveHeader(in, header) == Neverhood::NeverhoodEngine::kRSHENoError) {
 					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
 				}
 				delete in;
@@ -302,7 +302,7 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 		Neverhood::NeverhoodEngine::SaveHeader header;
 		Neverhood::NeverhoodEngine::kReadSaveHeaderError error;
 
-		error = Neverhood::NeverhoodEngine::readSaveHeader(in, true, header);
+		error = Neverhood::NeverhoodEngine::readSaveHeader(in, header, false);
 		delete in;
 
 		if (error == Neverhood::NeverhoodEngine::kRSHENoError) {

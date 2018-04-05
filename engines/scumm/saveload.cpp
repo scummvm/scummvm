@@ -706,7 +706,9 @@ bool ScummEngine::querySaveMetaInfos(const char *target, int slot, int heversion
 
 	if (hdr.ver > VER(52)) {
 		if (Graphics::checkThumbnailHeader(*in)) {
-			thumbnail = Graphics::loadThumbnail(*in);
+			if (!Graphics::loadThumbnail(*in, thumbnail)) {
+				return false;
+			}
 		}
 
 		if (hdr.ver > VER(57)) {
