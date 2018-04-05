@@ -1178,29 +1178,29 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 			_questItems[giveVal - 82]++;
 		}
 		if (giveVal < 35 || giveVal >= 82) {
-			for (idx = 0; idx < 10 && _treasure._weapons[idx]._id; ++idx);
-			if (idx < 10) {
+			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._weapons[idx].empty(); ++idx);
+			if (idx < MAX_TREASURE_ITEMS) {
 				_treasure._weapons[idx]._id = giveVal;
 				_treasure._hasItems = true;
 				return false;
 			}
 		} else if (giveVal < 49) {
-			for (idx = 0; idx < 10 && _treasure._armor[idx]._id; ++idx);
-			if (idx < 10) {
+			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._armor[idx].empty(); ++idx);
+			if (idx < MAX_TREASURE_ITEMS) {
 				_treasure._armor[idx]._id = giveVal - 35;
 				_treasure._hasItems = true;
 				return false;
 			}
 		} else if (giveVal < 60) {
-			for (idx = 0; idx < 10 && _treasure._accessories[idx]._id; ++idx);
-			if (idx < 10) {
+			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._accessories[idx].empty(); ++idx);
+			if (idx < MAX_TREASURE_ITEMS) {
 				_treasure._accessories[idx]._id = giveVal - 49;
 				_treasure._hasItems = true;
 				return false;
 			}
 		} else {
-			for (idx = 0; idx < 10 && _treasure._misc[idx]._material; ++idx);
-			if (idx < 10) {
+			for (idx = 0; idx < MAX_TREASURE_ITEMS && _treasure._misc[idx]._material; ++idx);
+			if (idx < MAX_TREASURE_ITEMS) {
 				_treasure._accessories[idx]._material = giveVal - 60;
 				_treasure._hasItems = true;
 				return false;

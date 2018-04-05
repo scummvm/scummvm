@@ -711,7 +711,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 		if (_charIndex == 0 || _charIndex == 8) {
 			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
 				if (_charIndex == 0 || (_charIndex == 8 && (int)idx != combat._combatTarget)) {
-					party.giveTake(mode1, val1, mode2, val2, idx);
+					bool flag = party.giveTake(mode1, val1, mode2, val2, idx);
 
 					switch (mode1) {
 					case 8:
@@ -719,7 +719,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 						// fall through
 					case 21:
 					case 66:
-						if (param2) {
+						if (flag) {
 							switch (mode2) {
 							case 82:
 								mode1 = 0;
@@ -732,7 +732,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 							case 100:
 							case 101:
 							case 106:
-								if (param2)
+								if (flag)
 									continue;
 
 								// Break out of character loop
@@ -748,7 +748,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 					case 100:
 					case 101:
 					case 106:
-						if (param2) {
+						if (flag) {
 							_lineNum = -1;
 							return false;
 						}
@@ -770,7 +770,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 						case 100:
 						case 101:
 						case 106:
-							if (param2)
+							if (flag)
 								continue;
 
 							// Break out of character loop
