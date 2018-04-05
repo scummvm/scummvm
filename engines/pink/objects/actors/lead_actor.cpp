@@ -184,16 +184,16 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
         Actor *actor = _page->getGame()->getDirector()->getActorByPoint(point);
 
         if (this == actor){
-          // inventory is not implemented
+            // inventory is not implemented
             return;
         }
 
         _recipient = (SupportingActor*) actor;
         if (actor->isClickable() &&
             _recipient->isLeftClickHandlers()){
-             _state = kMoving;
-             _nextState = kInDialog1;
-              _walkMgr->start(_walkMgr->findLocation(_recipient->getLocation()));
+            _state = kMoving;
+            _nextState = kInDialog1;
+            _walkMgr->start(_walkMgr->findLocation(_recipient->getLocation()));
         }
             break;
         }
@@ -229,10 +229,24 @@ bool LeadActor::sendUseClickMessage(SupportingActor *actor) {
 }
 
 bool LeadActor::sendLeftClickMessage(SupportingActor *actor) {
-    actor->onLeftClickMessage();
     _nextState = _state != kPlayingVideo ? kReady : kPlayingVideo;
     _state = kInDialog1;
-    return false;
+    return actor->onLeftClickMessage();
+}
+
+void LeadActor::onClick() {
+    if (_isHaveItem) {
+        _isHaveItem = false;
+        _nextState = _state != kMoving ?
+                     kUnk_Loading : kReady;
+    }
+    else {
+        if (_state == kMoving) {
+            this->_recipient = nullptr;
+            this->_nextState = nullptr;
+        }
+
+    }
 }
 
 void ParlSqPink::toConsole() {

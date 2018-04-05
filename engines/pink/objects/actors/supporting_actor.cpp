@@ -65,8 +65,8 @@ bool SupportingActor::onLeftClickMessage() {
     return _handlerMgr.onLeftClickMessage(this);
 }
 
-bool SupportingActor::onUseClickMessage() {
-    return _handlerMgr.onUseClickMessage(this);
+bool SupportingActor::onUseClickMessage(InventoryItem *item, InventoryMgr *mgr) {
+    return _handlerMgr.onUseClickMessage(this, item, mgr);
 }
 
 const Common::String &SupportingActor::getLocation() const {

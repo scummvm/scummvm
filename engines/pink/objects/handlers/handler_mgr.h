@@ -28,10 +28,14 @@
 
 namespace Pink {
 
+class InventoryItem;
+class InventoryMgr;
+
 class Handler;
 class HandlerLeftClick;
 class HandlerUseClick;
 class HandlerTimer;
+
 class Actor;
 
 class HandlerMgr : public Object {
@@ -44,7 +48,7 @@ public:
 
     void onTimerMessage(Actor *actor);
     bool onLeftClickMessage(Actor *actor);
-    bool onUseClickMessage(Actor *actor);
+    bool onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr);
 
 private:
     Handler *findSuitableHandlerTimer(Actor *actor);

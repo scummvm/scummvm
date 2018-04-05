@@ -66,6 +66,7 @@ public:
     void onLeftButtonClick(Common::Point point);
     void onMouseMove(Common::Point point);
     void onWalkEnd();
+    void onClick();
 
     virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
 
@@ -75,9 +76,10 @@ private:
     bool sendUseClickMessage(SupportingActor *actor);
     bool sendLeftClickMessage(SupportingActor *actor);
 
-
     State _state;
     State _nextState;
+
+    bool _isHaveItem;
 
     SupportingActor *_recipient;
 

@@ -83,8 +83,11 @@ public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
 
+    const Common::String &getInventoryItem() const { return _inventoryItem; }
+    const Common::String &getRecepient() const { return _recepient; }
+
 private:
-    virtual void execute(Sequence *sequence);
+    virtual void execute(Sequence *sequence) {};
 
     Common::String _inventoryItem;
     Common::String _recepient;

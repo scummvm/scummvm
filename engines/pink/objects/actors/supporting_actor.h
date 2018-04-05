@@ -28,6 +28,9 @@
 
 namespace Pink {
 
+class InventoryItem;
+class InventoryMgr;
+
 class SupportingActor : public Actor {
 public:
     virtual void deserialize(Archive &archive);
@@ -40,7 +43,7 @@ public:
 
     void onTimerMessage();
     bool onLeftClickMessage();
-    bool onUseClickMessage();
+    bool onUseClickMessage(InventoryItem *item, InventoryMgr *mgr);
 
     const Common::String &getLocation() const;
 
