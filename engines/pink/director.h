@@ -37,7 +37,7 @@ class CelDecoder;
 class Director {
 public:
     Director(OSystem *system);
-    //CActor *getActorByCoords()
+    Actor *getActorByPoint(Common::Point point);
 
     void draw();
     void update();
@@ -51,7 +51,6 @@ public:
 
     void clear();
 
-    Actor *getActorByPoint(Common::Point point);
     bool showBounds;
 
 private:

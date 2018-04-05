@@ -7,6 +7,7 @@
 #include "handler_timer.h"
 #include <pink/archive.h>
 #include <common/debug.h>
+#include <pink/objects/inventory.h>
 
 namespace Pink {
 
@@ -46,18 +47,20 @@ bool HandlerMgr::onLeftClickMessage(Actor *actor) {
     Handler *handler = findSuitableHandlerLeftClick(actor);
     if (handler) {
         handler->handle(actor);
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
-bool HandlerMgr::onUseClickMessage(Actor *actor) {
-    Handler *handler = findSuitableHandlerUseClick(actor);
+bool HandlerMgr::onUseClickMessage(Actor *actor, InventoryItem *item, InventoryMgr *mgr) {
+    HandlerUseClick *handler = (HandlerUseClick*) findSuitableHandlerUseClick(actor);
     if (handler) {
         handler->handle(actor);
-        return 1;
+        mgr->setItemOwner(handler->getRecepient(), item);
+        handler->handle(actor);
+        return true;
     }
-    return 0;
+    return false;
 }
 
 Handler *HandlerMgr::findSuitableHandlerTimer(Actor *actor) {

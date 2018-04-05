@@ -152,8 +152,4 @@ void HandlerUseClick::toConsole() {
     }
 }
 
-void HandlerUseClick::execute(Sequence *sequence) {
-
-}
-
 } // End of namespace Pink

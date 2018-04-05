@@ -90,8 +90,15 @@ bool InventoryMgr::isPinkOwnsAnyItems() {
 }
 
 void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item) {
+    if (owner == item->getCurrentOwner())
+       return;
+
+    if (item == _item && _lead->getName() != owner)
+        _item = nullptr;
+    else if (_lead->getName() == owner)
+        _item = item;
+
     item->_currentOwner = owner;
-    _item = item;
 }
 
 } // End of namespace Pink
