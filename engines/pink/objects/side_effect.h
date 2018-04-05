@@ -28,19 +28,19 @@
 
 namespace Pink {
 
-class LeadActor;
+class Actor;
 
 class SideEffect : public Object {
 public:
     virtual void deserialize(Archive &archive) = 0;
-    virtual void execute(LeadActor *actor) = 0;
+    virtual void execute(Actor *actor) = 0;
 };
 
 class SideEffectExit : public SideEffect {
 public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
-    virtual void execute(LeadActor *actor);
+    virtual void execute(Actor *actor);
 
 private:
     Common::String _nextModule;
@@ -50,7 +50,7 @@ private:
 class SideEffectLocation : public SideEffect {
 public:
     virtual void deserialize(Archive &archive);
-    virtual void execute(LeadActor *actor);
+    virtual void execute(Actor *actor);
     virtual void toConsole();
 
 private:
@@ -60,7 +60,7 @@ private:
 class SideEffectInventoryItemOwner : public SideEffect {
 public:
     virtual void deserialize(Archive &archive);
-    virtual void execute(LeadActor *actor);
+    virtual void execute(Actor *actor);
     virtual void toConsole();
 
 private:
@@ -71,7 +71,7 @@ private:
 class SideEffectVariable : public SideEffect {
 public:
     virtual void deserialize(Archive &archive);
-    virtual void execute(LeadActor *actor) = 0;
+    virtual void execute(Actor *actor) = 0;
 
 protected:
     Common::String _name;
@@ -81,19 +81,19 @@ protected:
 class SideEffectGameVariable : public SideEffectVariable {
 public:
     virtual void toConsole();
-    virtual void execute(LeadActor *actor);
+    virtual void execute(Actor *actor);
 };
 
 class SideEffectModuleVariable : public SideEffectVariable {
 public:
     virtual void toConsole();
-    virtual void execute(LeadActor *actor);
+    virtual void execute(Actor *actor);
 };
 
 class SideEffectPageVariable : public SideEffectVariable {
 public:
     virtual void toConsole();
-    virtual void execute(LeadActor *actor);
+    virtual void execute(Actor *actor);
 };
 
 class SideEffectRandomPageVariable : public SideEffect
@@ -101,7 +101,7 @@ class SideEffectRandomPageVariable : public SideEffect
 public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
-    virtual void execute(LeadActor *actor);
+    virtual void execute(Actor *actor);
 
 private:
     Common::String _name;

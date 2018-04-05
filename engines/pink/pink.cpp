@@ -30,6 +30,7 @@
 #include <graphics/surface.h>
 #include <graphics/cursorman.h>
 #include <common/winexe_pe.h>
+#include <common/config-manager.h>
 
 
 namespace Pink {

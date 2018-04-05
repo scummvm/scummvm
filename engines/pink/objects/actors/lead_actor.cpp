@@ -71,16 +71,20 @@ LeadActor::State LeadActor::getState() const {
 void LeadActor::update() {
     switch (_state) {
         case kReady:
-
             _sequencer->update();
-            //fall-through intended
+            _cursorMgr->update();
+            break;
         case kMoving:
-
+            _walkMgr->update();
             _cursorMgr->update();
             break;
         case kInDialog1:
         case kInDialog2:
             _sequencer->update();
+            if (!_sequencer->_context){
+                _state = _nextState;
+                _nextState = kUnk_Loading;
+            }
             break;
 
         case kInventory:
@@ -136,7 +140,8 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
 
 void LeadActor::start(bool isHandler) {
     if (isHandler && _state != kPlayingVideo){
-        _state = kReady;
+        _state = kInDialog1;
+        _nextState = kReady;
     }
     updateCursor({0,0});
 }
@@ -177,17 +182,19 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
         case kReady:
         case kMoving: {
         Actor *actor = _page->getGame()->getDirector()->getActorByPoint(point);
+
         if (this == actor){
           // inventory is not implemented
             return;
         }
 
+        _recipient = (SupportingActor*) actor;
         if (actor->isClickable() &&
-            ((SupportingActor*) actor)->isLeftClickHandlers())
-
-
-
-
+            _recipient->isLeftClickHandlers()){
+             _state = kMoving;
+             _nextState = kInDialog1;
+              _walkMgr->start(_walkMgr->findLocation(_recipient->getLocation()));
+        }
             break;
         }
         case kPDA:
@@ -205,6 +212,27 @@ void LeadActor::onMouseOver(Common::Point point, CursorMgr *mgr) {
     if (_page->getModule()->getInventoryMgr()->isPinkOwnsAnyItems())
         _cursorMgr->setCursor(kClickableFirstFrameCursor, {0, 0});
     else Actor::onMouseOver(point, mgr);
+}
+
+void LeadActor::onWalkEnd() {
+    State oldNextState = _nextState;
+    _state = kReady;
+    _nextState = kUnk_Loading;
+    if (_recipient && oldNextState == kInDialog1){
+        // if use click not impl
+        sendLeftClickMessage(_recipient);
+    }
+}
+
+bool LeadActor::sendUseClickMessage(SupportingActor *actor) {
+    return false;
+}
+
+bool LeadActor::sendLeftClickMessage(SupportingActor *actor) {
+    actor->onLeftClickMessage();
+    _nextState = _state != kPlayingVideo ? kReady : kPlayingVideo;
+    _state = kInDialog1;
+    return false;
 }
 
 void ParlSqPink::toConsole() {

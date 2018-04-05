@@ -27,11 +27,14 @@
 #include <common/rect.h>
 #include "actor.h"
 
+
 namespace Pink {
 
 class CursorMgr;
 class WalkMgr;
 class Sequencer;
+
+class SupportingActor;
 
 class LeadActor : public Actor {
 public:
@@ -62,14 +65,22 @@ public:
     void onKeyboardButtonClick(Common::KeyCode code);
     void onLeftButtonClick(Common::Point point);
     void onMouseMove(Common::Point point);
+    void onWalkEnd();
 
     virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
 
 private:
     void updateCursor(Common::Point point);
 
+    bool sendUseClickMessage(SupportingActor *actor);
+    bool sendLeftClickMessage(SupportingActor *actor);
+
 
     State _state;
+    State _nextState;
+
+    SupportingActor *_recipient;
+
     CursorMgr *_cursorMgr;
     WalkMgr *_walkMgr;
     Sequencer *_sequencer;

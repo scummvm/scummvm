@@ -71,4 +71,8 @@ Page::~Page() {
     }
 }
 
+LeadActor *Page::getLeadActor() {
+    return _leadActor;
+}
+
 } // End of namespace Pink

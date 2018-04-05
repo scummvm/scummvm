@@ -39,10 +39,12 @@ public:
     ~Page();
     void load(Archive &archive);
     Actor *findActor(Common::String &name);
-    Sound* loadSound(Common::String &fileName);
+    Sound *loadSound(Common::String &fileName);
     CelDecoder *loadCel(Common::String &fileName);
 
     virtual void toConsole();
+
+    LeadActor *getLeadActor();
 
 protected:
     void init();

@@ -42,7 +42,7 @@ class HandlerTimerActions : public HandlerTimer {
 public:
     virtual void toConsole();
     virtual void deserialize(Archive &archive);
-    virtual void onMessage(LeadActor *actor);
+    virtual void handle(Actor *actor);
 
 private:
     Common::StringArray _actions;
@@ -53,7 +53,7 @@ class HandlerTimerSequences : public HandlerSequences { //originally it was inhe
 public:
     virtual void toConsole();
 protected:
-    virtual void handle(Sequence *sequence); // very big and hard function
+    virtual void execute(Sequence *sequence); // very big and hard function
 };
 
 } // End of namespace Pink

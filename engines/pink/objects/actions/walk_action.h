@@ -33,6 +33,9 @@ public:
 
     virtual void toConsole();
 
+protected:
+    void onStart() override;
+
 private:
     bool _toCalcFramePositions;
 };

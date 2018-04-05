@@ -35,12 +35,16 @@ public:
     virtual void deserialize(Archive &archive);
     virtual void toConsole();
 
+    virtual void update();
+
+
 private:
+    void calculateUpdatesCount();
     Common::String _actor;
+    Sequencer *_sequencer;
     int _period;
     int _range;
-    int _unk;
-    Sequencer *_sequencer;
+    int _updatesToMessage;
 };
 
 } // End of namespace Pink

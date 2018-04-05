@@ -33,6 +33,7 @@ class Sequence;
 class SequenceContext;
 class GamePage;
 class SeqTimer;
+class SequenceActorState;
 
 class Sequencer : public Object {
 public:
@@ -43,6 +44,8 @@ public:
 
     virtual void deserialize(Archive &archive);
     Sequence* findSequence(const Common::String &name);
+    SequenceActorState *findSequenceActorState(const Common::String &name);
+
     void authorSequence(Sequence *sequence, bool unk);
 
     void removeContext(SequenceContext *context);
@@ -54,13 +57,15 @@ public:
     void skipToLastSubSequence();
 
 public:
+    void updateTimers();
+
     SequenceContext *_context;
     // context array
     Common::Array<Sequence*> _sequences;
     Common::String _currentSequenceName;
     Common::Array<SeqTimer*> _timers;
     GamePage *_page;
-    int unk;
+    uint _time;
 };
 
 } // End of namespace Pink

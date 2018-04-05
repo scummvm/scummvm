@@ -119,7 +119,7 @@ void Sequence::restart() {
 void Sequence::skipToLastSubSequence() {
     if (_unk && _context->getNextItemIndex() < _items.size()){
         int i = _items.size() - 1;
-        while(i >= 0 && !_items[i--]->isLeader());
+        while(i >= 0 && !_items[--i]->isLeader());
         assert(i >= 0);
         _context->setNextItemIndex(i);
         _context->clearActionsFromActorStates();

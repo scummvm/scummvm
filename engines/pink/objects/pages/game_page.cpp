@@ -83,7 +83,7 @@ void GamePage::init(bool isLoadingSave) {
 bool GamePage::initHandler() {
     for (uint i = 0; i < _handlers.size(); ++i) {
         if (_handlers[i]->isSuitable(_leadActor)){
-            _handlers[i]->onMessage(_leadActor);
+            _handlers[i]->handle(_leadActor);
             return true;
         }
     }

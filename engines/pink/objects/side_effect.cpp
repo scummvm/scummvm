@@ -36,8 +36,8 @@ void SideEffectExit::deserialize(Archive &archive) {
     archive >> _nextModule >> _nextPage;
 }
 
-void SideEffectExit::execute(LeadActor *actor) {
-    actor->setNextExecutors(_nextModule, _nextPage);
+void SideEffectExit::execute(Actor *actor) {
+    actor->getPage()->getLeadActor()->setNextExecutors(_nextModule, _nextPage);
 }
 
 void SideEffectExit::toConsole() {
@@ -48,10 +48,11 @@ void SideEffectLocation::deserialize(Archive &archive) {
     archive >> _location;
 }
 
-void SideEffectLocation::execute(LeadActor *actor) {
+void SideEffectLocation::execute(Actor *actor) {
     WalkMgr *mgr = actor->getPage()->getWalkMgr();
     WalkLocation *location = mgr->findLocation(_location);
-    //TODO end this method
+    assert(location);
+    mgr->setCurrentWayPoint(location);
 }
 
 void SideEffectLocation::toConsole() {
@@ -62,8 +63,10 @@ void SideEffectInventoryItemOwner::deserialize(Archive &archive) {
     archive >> _item >> _owner;
 }
 
-void SideEffectInventoryItemOwner::execute(LeadActor *actor) {
-    //TODO
+void SideEffectInventoryItemOwner::execute(Actor *actor) {
+    InventoryMgr *mgr = actor->getPage()->getModule()->getInventoryMgr();
+    InventoryItem *item = mgr->findInventoryItem(_item);
+    mgr->setItemOwner(_item, item);
 }
 
 void SideEffectInventoryItemOwner::toConsole() {
@@ -74,7 +77,7 @@ void SideEffectVariable::deserialize(Pink::Archive &archive) {
     archive >> _name >> _value;
 }
 
-void SideEffectGameVariable::execute(LeadActor *actor) {
+void SideEffectGameVariable::execute(Actor *actor) {
     actor->getPage()->getGame()->setVariable(_name, _value);
 }
 
@@ -82,7 +85,7 @@ void SideEffectGameVariable::toConsole() {
     debug("\t\tSideEffectGameVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-void SideEffectModuleVariable::execute(LeadActor *actor) {
+void SideEffectModuleVariable::execute(Actor *actor) {
    actor->getPage()->getModule()->setVariable(_name, _value);
 }
 
@@ -90,7 +93,7 @@ void SideEffectModuleVariable::toConsole() {
     debug("\t\tSideEffectModuleVariable: _name=%s, _value=%s", _name.c_str(), _value.c_str());
 }
 
-void SideEffectPageVariable::execute(LeadActor *actor) {
+void SideEffectPageVariable::execute(Actor *actor) {
     actor->getPage()->setVariable(_name, _value);
 }
 
@@ -102,7 +105,7 @@ void SideEffectRandomPageVariable::deserialize(Archive &archive) {
     archive >> _name >> _values;
 }
 
-void SideEffectRandomPageVariable::execute(LeadActor *actor) {
+void SideEffectRandomPageVariable::execute(Actor *actor) {
     assert(!_values.empty());
 
     Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();

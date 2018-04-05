@@ -42,10 +42,11 @@ void Director::draw() {
 void Director::drawSprite(ActionCEL *sprite) {
     CelDecoder *decoder = sprite->getDecoder();
     const Graphics::Surface *surface;
-    if (decoder->needsUpdate())
-        surface = decoder->decodeNextFrame();
-    else surface = decoder->getCurrentFrame();
+    if (decoder->needsUpdate()) {
 
+        surface = decoder->decodeNextFrame();
+    }
+    else surface = decoder->getCurrentFrame();
 
     if (!showBounds) {
         Graphics::Surface *screen = _system->lockScreen();
@@ -116,7 +117,7 @@ void Director::clear() {
 }
 
 Actor *Director::getActorByPoint(Common::Point point) {
-    for (int i = _sprites.size() - 1; i > 0; --i) {
+    for (int i = _sprites.size() - 1; i >= 0; --i) {
         CelDecoder *decoder = _sprites[i]->getDecoder();
         const Graphics::Surface *frame = decoder->getCurrentFrame();
         Common::Rect &rect = decoder->getRectangle();

@@ -27,11 +27,14 @@
 #include "sequence_context.h"
 #include "pink/objects/actors/actor.h"
 #include "engines/pink/archive.h"
+#include "pink/objects/pages/game_page.h"
+#include "pink/pink.h"
+#include "pink/objects/sequences/seq_timer.h"
 
 namespace Pink {
 
 Sequencer::Sequencer(GamePage *page)
-    : _context(nullptr), _page(page)
+    : _context(nullptr), _page(page), _time(0)
 {}
 
 Sequencer::~Sequencer() {
@@ -70,11 +73,15 @@ void Sequencer::toConsole() {
     for (int i = 0; i < _sequences.size(); ++i) {
         _sequences[i]->toConsole();
     }
+    for (int i = 0; i < _timers.size(); ++i) {
+        _timers[i]->toConsole();
+    }
 }
 
 void Sequencer::update() {
     if (_context)
         _context->_sequence->update();
+    updateTimers();
 }
 
 void Sequencer::removeContext(SequenceContext *context) {
@@ -93,6 +100,30 @@ void Sequencer::restartSequence() {
 
 void Sequencer::skipToLastSubSequence() {
     _context->getSequence()->skipToLastSubSequence();
+}
+
+void Sequencer::updateTimers() {
+    uint time = _page->getGame()->getTotalPlayTime();
+    if (time - _time <= 0x64) {
+        return;
+    }
+
+    _time = time;
+    for (int i = 0; i < _timers.size(); ++i) {
+        _timers[i]->update();
+    }
+}
+
+SequenceActorState *Sequencer::findSequenceActorState(const Common::String &name) {
+    if (!_context)
+        return nullptr;
+
+    for (int i = 0; i < _context->_states.size(); ++i) {
+       if (_context->_states[i].getActor() == name)
+           return &_context->_states[i];
+    }
+
+    return nullptr;
 }
 
 } // End of namespace Pink

@@ -46,13 +46,13 @@ bool Handler::isSuitable(Actor *actor) {
     return true;
 }
 
-void Handler::executeSideEffects(LeadActor *actor) {
+void Handler::executeSideEffects(Actor *actor) {
     for (int i = 0; i < _sideEffects.size(); ++i) {
         _sideEffects[i]->execute(actor);
     }
 }
 
-void Handler::onMessage(LeadActor *actor) {
+void Handler::handle(Actor *actor) {
     executeSideEffects(actor);
 }
 
@@ -70,8 +70,8 @@ void HandlerSequences::deserialize(Archive &archive) {
     archive >> _sequences;
 }
 
-void HandlerSequences::onMessage(LeadActor *actor) {
-    Handler::onMessage(actor);
+void HandlerSequences::handle(Actor *actor) {
+    Handler::handle(actor);
     Sequencer *sequencer = actor->getSequencer();
 
     assert(!_sequences.empty());
@@ -84,10 +84,10 @@ void HandlerSequences::onMessage(LeadActor *actor) {
     assert(sequence);
     sequencer->authorSequence(sequence, 0);
 
-    handle(sequence);
+    execute(sequence);
 }
 
-void HandlerStartPage::handle(Sequence *sequence) {
+void HandlerStartPage::execute(Sequence *sequence) {
     sequence->_unk = 1;
 }
 
@@ -152,7 +152,7 @@ void HandlerUseClick::toConsole() {
     }
 }
 
-void HandlerUseClick::handle(Sequence *sequence) {
+void HandlerUseClick::execute(Sequence *sequence) {
 
 }
 

@@ -20,10 +20,23 @@
  *
  */
 
+#include <common/debug.h>
 #include "walk_location.h"
 #include "engines/pink/archive.h"
 
-void Pink::WalkLocation::deserialize(Pink::Archive &archive) {
+namespace Pink {
+
+void WalkLocation::deserialize(Pink::Archive &archive) {
     NamedObject::deserialize(archive);
     archive >> _neighbors;
 }
+
+void WalkLocation::toConsole() {
+    debug("\tWalkLocation: _name =%s", _name.c_str());
+    debug("\tNeighbors:");
+    for (int i = 0; i < _neighbors.size(); ++i) {
+        debug("\t\t%s", _neighbors[i].c_str());
+    }
+}
+
+} // End of namespace Pink;

@@ -48,6 +48,8 @@ void ActionStill::onStart() {
     for (int i = 0; i < _startFrame; ++i) {
         _decoder->decodeNextFrame();
     }
+    _decoder->stop();
+    _actor->endAction();
 }
 
 } // End of namespace Pink

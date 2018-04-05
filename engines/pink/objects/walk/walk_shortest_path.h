@@ -20,42 +20,42 @@
  *
  */
 
-#ifndef PINK_HANDLER_MGR_H
-#define PINK_HANDLER_MGR_H
+#ifndef PINK_WALK_SHORTEST_PATH_H
+#define PINK_WALK_SHORTEST_PATH_H
 
-#include <engines/pink/objects/object.h>
 #include <common/array.h>
 
 namespace Pink {
 
-class Handler;
-class HandlerLeftClick;
-class HandlerUseClick;
-class HandlerTimer;
-class Actor;
+class WalkLocation;
+class WalkMgr;
 
-class HandlerMgr : public Object {
+class WalkShortestPath {
 public:
-    virtual void deserialize(Archive &archive);
-
-    virtual void toConsole();
-
-    bool isLeftClickHandler(Actor *actor);
-
-    void onTimerMessage(Actor *actor);
-    bool onLeftClickMessage(Actor *actor);
-    bool onUseClickMessage(Actor *actor);
+    WalkShortestPath(WalkMgr *manager);
+    WalkLocation *next(WalkLocation *start, WalkLocation *destination);
 
 private:
-    Handler *findSuitableHandlerTimer(Actor *actor);
-    Handler *findSuitableHandlerLeftClick(Actor *actor);
-    Handler *findSuitableHandlerUseClick(Actor *actor);
+    void add(WalkLocation *wl, double val, WalkLocation *nearest);
+    void remove(WalkLocation *location);
+    WalkLocation *build();
+    WalkLocation *getNearestNeighbor(WalkLocation *location);
+    WalkLocation *findNearestNeighbor(WalkLocation *location);
+    double getLengthToNearestNeigbor(WalkLocation *location);
+    double getWeight(WalkLocation *location);
+    void addLocationsToVisit();
+    bool isLocationVisited(WalkLocation *location);
 
-    Common::Array<HandlerLeftClick*> _leftClickHandlers;
-    Common::Array<HandlerUseClick*> _useClickHandlers;
-    Common::Array<HandlerTimer*> _timerHandlers;
+
+    WalkMgr *_manager;
+    Common::Array<WalkLocation*> _locations;
+    Common::Array<WalkLocation*> _toVisit;
+    Common::Array<double> _weight;
+    Common::Array<WalkLocation*> _visited;
+    Common::Array<WalkLocation*> _nearestNeigbor;
 };
 
-}
+} // End of namespace Pink
+
 
 #endif
