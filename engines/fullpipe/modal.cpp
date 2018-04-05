@@ -2142,7 +2142,8 @@ bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 		return false;
 
 	Fullpipe::FullpipeSavegameHeader header;
-	Fullpipe::readSavegameHeader(f.get(), header);
+	if (!Fullpipe::readSavegameHeader(f.get(), header))
+		return false;
 
 	// Create the return descriptor
 	SaveStateDescriptor desc(slot, header.saveName);

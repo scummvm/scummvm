@@ -208,10 +208,6 @@ SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
 					// Valid savegame
 					if (Prince::PrinceEngine::readSavegameHeader(file, header)) {
 						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-						if (header.thumbnail) {
-							header.thumbnail->free();
-							delete header.thumbnail;
-						}
 					}
 				} else {
 					// Must be an original format savegame
@@ -239,7 +235,7 @@ SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int
 		f->read(buffer, kSavegameStrSize + 1);
 
 		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) &&
-			Prince::PrinceEngine::readSavegameHeader(f, header);
+			Prince::PrinceEngine::readSavegameHeader(f, header, false);
 		delete f;
 
 		if (!hasHeader) {

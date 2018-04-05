@@ -54,7 +54,7 @@ static const PlainGameDescriptor macventureGames[] = {
 
 namespace MacVenture {
 
-SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot);
+SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool skipThumbnail = true);
 
 class MacVentureMetaEngine : public AdvancedMetaEngine {
 public:
@@ -164,7 +164,7 @@ SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target,
 
 	Common::InSaveFile *in = saveFileMan->openForLoading(saveFileName);
 	if (in) {
-		desc = loadMetaData(in, slot);
+		desc = loadMetaData(in, slot, false);
 		delete in;
 		return desc;
 	}

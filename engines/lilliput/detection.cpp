@@ -233,7 +233,11 @@ SaveStateDescriptor LilliputMetaEngine::querySaveMetaInfos(const char *target, i
 
 		SaveStateDescriptor desc(slot, saveName);
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
+		Graphics::Surface *thumbnail;
+		if (!Graphics::loadThumbnail(*file, thumbnail)) {
+			delete file;
+			return SaveStateDescriptor();
+		}
 		desc.setThumbnail(thumbnail);
 
 		desc.setDeletableFlag(true);

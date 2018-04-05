@@ -178,7 +178,7 @@ SaveStateDescriptor ZVisionMetaEngine::querySaveMetaInfos(const char *target, in
 
 		// We only use readSaveGameHeader() here, which doesn't need an engine callback
 		ZVision::SaveManager *zvisionSaveMan = new ZVision::SaveManager(NULL);
-		bool successfulRead = zvisionSaveMan->readSaveGameHeader(in, header);
+		bool successfulRead = zvisionSaveMan->readSaveGameHeader(in, header, false);
 		delete zvisionSaveMan;
 		delete in;
 

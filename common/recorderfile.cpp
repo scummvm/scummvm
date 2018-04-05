@@ -608,7 +608,8 @@ Graphics::Surface *PlaybackFile::getScreenShot(int number) {
 		if (screenCount == number) {
 			screenCount++;
 			_readStream->seek(-4, SEEK_CUR);
-			return Graphics::loadThumbnail(*_readStream);
+			Graphics::Surface *thumbnail;
+			return Graphics::loadThumbnail(*_readStream, thumbnail) ? thumbnail : NULL;
 		} else {
 			uint32 size = _readStream->readUint32BE();
 			_readStream->skip(size-8);

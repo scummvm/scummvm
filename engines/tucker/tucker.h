@@ -452,8 +452,8 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 	GUI::Debugger *getDebugger() { return _console; }
 
-	static SavegameError readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool loadThumbnail = false);
-	static SavegameError readSavegameHeader(const char *target, int slot, SavegameHeader &header);
+	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail = true);
+	WARN_UNUSED_RESULT static SavegameError readSavegameHeader(const char *target, int slot, SavegameHeader &header);
 	bool isAutosaveAllowed();
 	static bool isAutosaveAllowed(const char *target);
 protected:

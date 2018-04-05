@@ -401,7 +401,11 @@ SaveStateDescriptor AdlMetaEngine::querySaveMetaInfos(const char *target, int sl
 		return SaveStateDescriptor();
 	}
 
-	Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*inFile);
+	Graphics::Surface *thumbnail;
+	if (!Graphics::loadThumbnail(*inFile, thumbnail)) {
+		delete inFile;
+		return SaveStateDescriptor();
+	}
 	sd.setThumbnail(thumbnail);
 
 	delete inFile;

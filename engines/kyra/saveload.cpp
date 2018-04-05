@@ -37,12 +37,11 @@
 
 namespace Kyra {
 
-KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
+WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail) {
 	uint32 type = in->readUint32BE();
 	header.originalSave = false;
 	header.oldHeader = false;
 	header.flags = 0;
-	header.thumbnail = 0;
 
 	if (type == MKTAG('K', 'Y', 'R', 'A') || type == MKTAG('A', 'R', 'Y', 'K')) { // old Kyra1 header ID
 		header.gameID = GI_KYRA1;
@@ -125,10 +124,8 @@ KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekabl
 		header.flags = in->readUint32BE();
 
 	if (header.version >= 14) {
-		if (loadThumbnail) {
-			header.thumbnail = Graphics::loadThumbnail(*in);
-		} else {
-			Graphics::skipThumbnail(*in);
+		if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
+			return kRSHEIoError;
 		}
 	}
 
@@ -140,7 +137,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return 0;
 
-	ReadSaveHeaderError errorCode = KyraEngine_v1::readSaveHeader(in, false, header);
+	ReadSaveHeaderError errorCode = KyraEngine_v1::readSaveHeader(in, header);
 	if (errorCode != kRSHENoError) {
 		if (errorCode == kRSHEInvalidType)
 			warning("No ScummVM Kyra engine savefile header");

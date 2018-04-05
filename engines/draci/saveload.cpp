@@ -35,9 +35,8 @@ namespace Draci {
 
 static const char *const draciIdentString = "DRACI";
 
-bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header) {
+WARN_UNUSED_RESULT bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[6];
-	header.thumbnail = NULL;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, 6);
@@ -59,9 +58,9 @@ bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header) {
 	header.playtime = in->readUint32LE();
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	return true;
 }
@@ -129,10 +128,6 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 	DraciSavegameHeader header;
 	if (!readSavegameHeader(f, header)) {
 		return Common::kNoGameDataFoundError;
-	}
-	if (header.thumbnail) {
-		header.thumbnail->free();
-		delete header.thumbnail;
 	}
 
 	// Pre-processing

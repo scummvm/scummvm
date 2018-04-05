@@ -193,7 +193,12 @@ SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, 
 
 		SaveStateDescriptor desc(slot, description);
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*f);
+		Graphics::Surface *thumbnail;
+		if (!Graphics::loadThumbnail(*f, thumbnail)) {
+			warning("Cannot read thumbnail data, possibly broken savegame");
+			delete f;
+			return SaveStateDescriptor();
+		}
 		desc.setThumbnail(thumbnail);
 
 		delete f;

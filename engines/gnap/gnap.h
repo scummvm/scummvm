@@ -319,7 +319,7 @@ public:
 	Common::String generateSaveName(int slot);
 	void synchronize(Common::Serializer &s);
 	void writeSavegameHeader(Common::OutSaveFile *out, GnapSavegameHeader &header);
-	static bool readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, GnapSavegameHeader &header, bool skipThumbnail = true);
 
 	void delayTicks(int val, int idx, bool updateCursor);
 	void delayTicksA(int val, int idx);

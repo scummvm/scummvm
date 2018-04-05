@@ -272,7 +272,12 @@ SaveStateDescriptor MystGameState::querySaveMetaInfos(int slot) {
 	desc.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	desc.setSaveTime(metadata.saveHour, metadata.saveMinute);
 	desc.setPlayTime(metadata.totalPlayTime);
-	desc.setThumbnail(Graphics::loadThumbnail(*metadataFile));
+	Graphics::Surface *thumbnail;
+	if (!Graphics::loadThumbnail(*metadataFile, thumbnail)) {
+		delete metadataFile;
+		return SaveStateDescriptor();
+	}
+	desc.setThumbnail(thumbnail);
 
 	delete metadataFile;
 

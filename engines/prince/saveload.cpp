@@ -44,9 +44,7 @@ namespace Prince {
 class InterpreterFlags;
 class Interpreter;
 
-bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
-	header.thumbnail = nullptr;
-
+WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
 	// Get the savegame version
 	header.version = in->readByte();
 	if (header.version > kSavegameVersion)
@@ -59,9 +57,9 @@ bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &he
 		header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
 	header.saveYear = in->readSint16LE();
@@ -416,10 +414,6 @@ bool PrinceEngine::loadGame(int slotNumber) {
 			delete readStream;
 			return false;
 		}
-
-		// Delete the thumbnail
-		saveHeader.thumbnail->free();
-		delete saveHeader.thumbnail;
 	}
 
 	// Get in the savegame

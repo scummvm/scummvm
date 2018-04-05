@@ -416,7 +416,7 @@ protected:
 		kRSHEIoError = 3
 	};
 
-	static ReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, bool loadThumbnail, SaveHeader &header);
+	WARN_UNUSED_RESULT static ReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *file, SaveHeader &header, bool skipThumbnail = true);
 
 	void loadGameStateCheck(int slot);
 	virtual Common::Error loadGameState(int slot) = 0;

@@ -233,7 +233,10 @@ SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, i
 
 	if (f) {
 		Sherlock::SherlockSavegameHeader header;
-		Sherlock::SaveManager::readSavegameHeader(f, header);
+		if (!Sherlock::SaveManager::readSavegameHeader(f, header, false)) {
+			delete f;
+			return SaveStateDescriptor();
+		}
 		delete f;
 
 		// Create the return descriptor

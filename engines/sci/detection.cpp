@@ -871,7 +871,14 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		descriptor.setDescription(meta.name);
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
+		Graphics::Surface *thumbnail;
+		if (!Graphics::loadThumbnail(*in, thumbnail)) {
+			// invalid
+			delete in;
+
+			descriptor.setDescription("*Invalid*");
+			return descriptor;
+		}
 		descriptor.setThumbnail(thumbnail);
 
 		int day = (meta.saveDate >> 24) & 0xFF;

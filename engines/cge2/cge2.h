@@ -161,7 +161,7 @@ public:
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error run();
 
-	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 
 	GUI::Debugger *getDebugger() {
 		return _console;

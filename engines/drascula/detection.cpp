@@ -430,7 +430,11 @@ SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, i
 			return SaveStateDescriptor();
 		}
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
+		Graphics::Surface *thumbnail;
+		if (!Graphics::loadThumbnail(*in, thumbnail)) {
+			delete in;
+			return SaveStateDescriptor();
+		}
 		desc.setThumbnail(thumbnail);
 
 		delete in;

@@ -256,7 +256,11 @@ SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int s
 		}
 
 		if (version >= 6) {
-			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
+			Graphics::Surface *thumbnail;
+			if (!Graphics::loadThumbnail(*in, thumbnail)) {
+				delete in;
+				return SaveStateDescriptor();
+			}
 			desc.setThumbnail(thumbnail);
 
 			uint32 saveDate = in->readUint32BE();

@@ -241,9 +241,8 @@ SaveStateList CruiseMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				Cruise::CruiseSavegameHeader header;
-				Cruise::readSavegameHeader(in, header);
-				saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-				delete header.thumbnail;
+				if (Cruise::readSavegameHeader(in, header))
+					saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
 				delete in;
 			}
 		}
@@ -264,7 +263,11 @@ SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int
 
 	if (f) {
 		Cruise::CruiseSavegameHeader header;
-		Cruise::readSavegameHeader(f, header);
+		if (!Cruise::readSavegameHeader(f, header, false)) {
+			delete f;
+			return SaveStateDescriptor();
+		}
+
 		delete f;
 
 		// Create the return descriptor

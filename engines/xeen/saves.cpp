@@ -48,9 +48,8 @@ SavesManager::~SavesManager() {
 const char *const SAVEGAME_STR = "XEEN";
 #define SAVEGAME_STR_SIZE 6
 
-bool SavesManager::readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header) {
+WARN_UNUSED_RESULT bool SavesManager::readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
-	header._thumbnail = nullptr;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
@@ -68,9 +67,9 @@ bool SavesManager::readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader
 		header._saveName += ch;
 
 	// Get the thumbnail
-	header._thumbnail = Graphics::loadThumbnail(*in);
-	if (!header._thumbnail)
+	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
 	header._year = in->readSint16LE();
@@ -167,11 +166,6 @@ Common::Error SavesManager::loadGameState(int slot) {
 	XeenSavegameHeader header;
 	if (!readSavegameHeader(saveFile, header))
 		error("Invalid savegame");
-
-	if (header._thumbnail) {
-		header._thumbnail->free();
-		delete header._thumbnail;
-	}
 
 	// Set the total play time
 	events.setPlayTime(header._totalFrames);
