@@ -1054,7 +1054,8 @@ int Map::mazeLookup(const Common::Point &pt, int layerShift, int wallMask) {
 			_currentSurfaceId = _mazeData[_mazeDataIndex]._cells[pos.y][pos.x]._surfaceId;
 		}
 
-		if (_currentSurfaceId == SURFTYPE_SPACE || _currentSurfaceId == SURFTYPE_SKY) {
+		if (mazeData()._surfaceTypes[_currentSurfaceId] == SURFTYPE_SPACE ||
+				mazeData()._surfaceTypes[_currentSurfaceId] == SURFTYPE_SKY) {
 			_currentSteppedOn = true;
 		} else {
 			_currentSteppedOn = _mazeData[_mazeDataIndex]._steppedOnTiles[pos.y][pos.x];
