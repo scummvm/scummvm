@@ -97,7 +97,7 @@ public:
 	~CoroContextHolder() {
 		if (_ctx && _ctx->_sleep == 0) {
 			delete _ctx;
-			_ctx = 0;
+			_ctx = nullptr;
 		}
 	}
 };
@@ -409,14 +409,14 @@ public:
 	 * If the specified process has already run on this tick, make it run
 	 * again on the current tick.
 	 */
-	void reschedule(PPROCESS pReSchedProc = NULL);
+	void reschedule(PPROCESS pReSchedProc = nullptr);
 
 	/**
 	 * Moves the specified process to the end of the dispatch queue
 	 * allowing it to run again within the current game cycle.
 	 * @param pGiveProc     Which process
 	 */
-	void giveWay(PPROCESS pReSchedProc = NULL);
+	void giveWay(PPROCESS pReSchedProc = nullptr);
 
 	/**
 	 * Continously makes a given process wait for another process to finish or event to signal.
@@ -425,7 +425,7 @@ public:
 	 * @param duration      Duration in milliseconds
 	 * @param expired       If specified, set to true if delay period expired
 	 */
-	void waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *expired = NULL);
+	void waitForSingleObject(CORO_PARAM, int pid, uint32 duration, bool *expired = nullptr);
 
 	/**
 	 * Continously makes a given process wait for given prcesses to finished or events to be set
@@ -437,7 +437,7 @@ public:
 	 * @param expired       Set to true if delay period expired
 	 */
 	void waitForMultipleObjects(CORO_PARAM, int nCount, uint32 *pidList, bool bWaitAll,
-	                            uint32 duration, bool *expired = NULL);
+	                            uint32 duration, bool *expired = nullptr);
 
 	/**
 	 * Make the active process sleep for the given duration in milliseconds

@@ -178,16 +178,16 @@ private:
 		IteratorImpl(size_type idx, hashmap_t *hashmap) : _idx(idx), _hashmap(hashmap) {}
 
 		NodeType *deref() const {
-			assert(_hashmap != 0);
+			assert(_hashmap != nullptr);
 			assert(_idx <= _hashmap->_mask);
 			Node *node = _hashmap->_storage[_idx];
-			assert(node != 0);
+			assert(node != nullptr);
 			assert(node != HASHMAP_DUMMY_NODE);
 			return node;
 		}
 
 	public:
-		IteratorImpl() : _idx(0), _hashmap(0) {}
+		IteratorImpl() : _idx(0), _hashmap(nullptr) {}
 		template<class T>
 		IteratorImpl(const IteratorImpl<T> &c) : _idx(c._idx), _hashmap(c._hashmap) {}
 
@@ -201,7 +201,7 @@ private:
 			assert(_hashmap);
 			do {
 				_idx++;
-			} while (_idx <= _hashmap->_mask && (_hashmap->_storage[_idx] == 0 || _hashmap->_storage[_idx] == HASHMAP_DUMMY_NODE));
+			} while (_idx <= _hashmap->_mask && (_hashmap->_storage[_idx] == nullptr || _hashmap->_storage[_idx] == HASHMAP_DUMMY_NODE));
 			if (_idx > _hashmap->_mask)
 				_idx = (size_type)-1;
 
@@ -315,7 +315,7 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
 #endif
 	_mask = HASHMAP_MIN_CAPACITY - 1;
 	_storage = new Node *[HASHMAP_MIN_CAPACITY];
-	assert(_storage != NULL);
+	assert(_storage != nullptr);
 	memset(_storage, 0, HASHMAP_MIN_CAPACITY * sizeof(Node *));
 
 	_size = 0;
@@ -370,7 +370,7 @@ template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t &map) {
 	_mask = map._mask;
 	_storage = new Node *[_mask + 1];
-	assert(_storage != NULL);
+	assert(_storage != nullptr);
 	memset(_storage, 0, (_mask + 1) * sizeof(Node *));
 
 	// Simply clone the map given to us, one by one.
@@ -380,7 +380,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t &map) {
 		if (map._storage[ctr] == HASHMAP_DUMMY_NODE) {
 			_storage[ctr] = HASHMAP_DUMMY_NODE;
 			_deleted++;
-		} else if (map._storage[ctr] != NULL) {
+		} else if (map._storage[ctr] != nullptr) {
 			_storage[ctr] = allocNode(map._storage[ctr]->_key);
 			_storage[ctr]->_value = map._storage[ctr]->_value;
 			_size++;
@@ -396,7 +396,7 @@ template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 	for (size_type ctr = 0; ctr <= _mask; ++ctr) {
 		freeNode(_storage[ctr]);
-		_storage[ctr] = NULL;
+		_storage[ctr] = nullptr;
 	}
 
 #ifdef USE_HASHMAP_MEMORY_POOL
@@ -408,7 +408,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 
 		_mask = HASHMAP_MIN_CAPACITY;
 		_storage = new Node *[HASHMAP_MIN_CAPACITY];
-		assert(_storage != NULL);
+		assert(_storage != nullptr);
 		memset(_storage, 0, HASHMAP_MIN_CAPACITY * sizeof(Node *));
 	}
 
@@ -431,12 +431,12 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expandStorage(size_type newCapacity
 	_deleted = 0;
 	_mask = newCapacity - 1;
 	_storage = new Node *[newCapacity];
-	assert(_storage != NULL);
+	assert(_storage != nullptr);
 	memset(_storage, 0, newCapacity * sizeof(Node *));
 
 	// rehash all the old elements
 	for (size_type ctr = 0; ctr <= old_mask; ++ctr) {
-		if (old_storage[ctr] == NULL || old_storage[ctr] == HASHMAP_DUMMY_NODE)
+		if (old_storage[ctr] == nullptr || old_storage[ctr] == HASHMAP_DUMMY_NODE)
 			continue;
 
 		// Insert the element from the old table into the new table.
@@ -445,7 +445,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expandStorage(size_type newCapacity
 		// don't have to call _equal().
 		const size_type hash = _hash(old_storage[ctr]->_key);
 		size_type idx = hash & _mask;
-		for (size_type perturb = hash; _storage[idx] != NULL && _storage[idx] != HASHMAP_DUMMY_NODE; perturb >>= HASHMAP_PERTURB_SHIFT) {
+		for (size_type perturb = hash; _storage[idx] != nullptr && _storage[idx] != HASHMAP_DUMMY_NODE; perturb >>= HASHMAP_PERTURB_SHIFT) {
 			idx = (5 * idx + perturb + 1) & _mask;
 		}
 
@@ -467,7 +467,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 	const size_type hash = _hash(key);
 	size_type ctr = hash & _mask;
 	for (size_type perturb = hash; ; perturb >>= HASHMAP_PERTURB_SHIFT) {
-		if (_storage[ctr] == NULL)
+		if (_storage[ctr] == nullptr)
 			break;
 		if (_storage[ctr] == HASHMAP_DUMMY_NODE) {
 #ifdef DEBUG_HASH_COLLISIONS
@@ -501,7 +501,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 	size_type first_free = NONE_FOUND;
 	bool found = false;
 	for (size_type perturb = hash; ; perturb >>= HASHMAP_PERTURB_SHIFT) {
-		if (_storage[ctr] == NULL)
+		if (_storage[ctr] == nullptr)
 			break;
 		if (_storage[ctr] == HASHMAP_DUMMY_NODE) {
 #ifdef DEBUG_HASH_COLLISIONS
@@ -535,7 +535,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 		if (_storage[ctr])
 			_deleted--;
 		_storage[ctr] = allocNode(key);
-		assert(_storage[ctr] != NULL);
+		assert(_storage[ctr] != nullptr);
 		_size++;
 
 		// Keep the load factor below a certain threshold.
@@ -546,7 +546,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 			capacity = capacity < 500 ? (capacity * 4) : (capacity * 2);
 			expandStorage(capacity);
 			ctr = lookup(key);
-			assert(_storage[ctr] != NULL);
+			assert(_storage[ctr] != nullptr);
 		}
 	}
 
@@ -557,7 +557,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 template<class Key, class Val, class HashFunc, class EqualFunc>
 bool HashMap<Key, Val, HashFunc, EqualFunc>::contains(const Key &key) const {
 	size_type ctr = lookup(key);
-	return (_storage[ctr] != NULL);
+	return (_storage[ctr] != nullptr);
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
@@ -573,7 +573,7 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::operator[](const Key &key) co
 template<class Key, class Val, class HashFunc, class EqualFunc>
 Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) {
 	size_type ctr = lookupAndCreateIfMissing(key);
-	assert(_storage[ctr] != NULL);
+	assert(_storage[ctr] != nullptr);
 	return _storage[ctr]->_value;
 }
 
@@ -585,7 +585,7 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key) const 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key, const Val &defaultVal) const {
 	size_type ctr = lookup(key);
-	if (_storage[ctr] != NULL)
+	if (_storage[ctr] != nullptr)
 		return _storage[ctr]->_value;
 	else
 		return defaultVal;
@@ -594,7 +594,7 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key, const 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::setVal(const Key &key, const Val &val) {
 	size_type ctr = lookupAndCreateIfMissing(key);
-	assert(_storage[ctr] != NULL);
+	assert(_storage[ctr] != nullptr);
 	_storage[ctr]->_value = val;
 }
 
@@ -619,7 +619,7 @@ template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 
 	size_type ctr = lookup(key);
-	if (_storage[ctr] == NULL)
+	if (_storage[ctr] == nullptr)
 		return;
 
 	// If we remove a key, we replace it with a dummy node.

@@ -587,7 +587,7 @@ public:
 	 * @return a list of supported shaders
 	 */
 	virtual const GraphicsMode *getSupportedShaders() const {
-		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {0, 0, 0}};
+		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {nullptr, nullptr, 0}};
 		return no_shader;
 	}
 
@@ -632,7 +632,7 @@ public:
 	 * @param height	the new virtual screen height
 	 * @param format	the new virtual screen pixel format
 	 */
-	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = nullptr) = 0;
 
 	/**
 	 * Send a list of graphics modes to the backend so it can make a decision
@@ -964,7 +964,7 @@ public:
 	 *                          would be too small to notice otherwise, these are allowed to scale the cursor anyway.
 	 * @param format			pointer to the pixel format which cursor graphic uses (0 means CLUT8)
 	 */
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = nullptr) = 0;
 
 	/**
 	 * Replace the specified range of cursor the palette with new colors.
@@ -1028,7 +1028,7 @@ public:
 	 *
 	 * See keymapper documentation for further reference.
 	 */
-	virtual Common::HardwareInputSet *getHardwareInputSet() { return 0; }
+	virtual Common::HardwareInputSet *getHardwareInputSet() { return nullptr; }
 
 	/**
 	 * Return a platform-specific global keymap
@@ -1041,7 +1041,7 @@ public:
 	 *
 	 * See keymapper documentation for further reference.
 	 */
-	virtual Common::Keymap *getGlobalKeymap() { return 0; }
+	virtual Common::Keymap *getGlobalKeymap() { return nullptr; }
 
 	/**
 	 * Return platform-specific default keybindings
@@ -1052,7 +1052,7 @@ public:
 	 *
 	 * See keymapper documentation for further reference.
 	 */
-	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return 0; }
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() { return nullptr; }
 #endif
 	//@}
 

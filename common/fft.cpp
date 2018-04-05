@@ -51,7 +51,7 @@ FFT::FFT(int bits, int inverse) : _bits(bits), _inverse(inverse) {
 		if (i+4 <= _bits)
 			_cosTables[i] = new Common::CosineTable(i+4);
 		else
-			_cosTables[i] = 0;
+			_cosTables[i] = nullptr;
 	}
 }
 

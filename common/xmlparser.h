@@ -92,7 +92,7 @@ public:
 	/**
 	 * Parser constructor.
 	 */
-	XMLParser() : _XMLkeys(0), _stream(0) {}
+	XMLParser() : _XMLkeys(nullptr), _stream(nullptr) {}
 
 	virtual ~XMLParser();
 
@@ -195,7 +195,7 @@ public:
 		if (!_activeKey.empty())
 			return _activeKey.top();
 
-		return 0;
+		return nullptr;
 	}
 
 	/**

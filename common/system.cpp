@@ -35,47 +35,47 @@
 #include "backends/fs/fs-factory.h"
 #include "backends/timer/default/default-timer.h"
 
-OSystem *g_system = 0;
+OSystem *g_system = nullptr;
 
 OSystem::OSystem() {
-	_audiocdManager = 0;
-	_eventManager = 0;
-	_timerManager = 0;
-	_savefileManager = 0;
+	_audiocdManager = nullptr;
+	_eventManager = nullptr;
+	_timerManager = nullptr;
+	_savefileManager = nullptr;
 #if defined(USE_TASKBAR)
-	_taskbarManager = 0;
+	_taskbarManager = nullptr;
 #endif
 #if defined(USE_UPDATES)
-	_updateManager = 0;
+	_updateManager = nullptr;
 #endif
-	_fsFactory = 0;
+	_fsFactory = nullptr;
 }
 
 OSystem::~OSystem() {
 	delete _audiocdManager;
-	_audiocdManager = 0;
+	_audiocdManager = nullptr;
 
 	delete _eventManager;
-	_eventManager = 0;
+	_eventManager = nullptr;
 
 	delete _timerManager;
-	_timerManager = 0;
+	_timerManager = nullptr;
 
 #if defined(USE_TASKBAR)
 	delete _taskbarManager;
-	_taskbarManager = 0;
+	_taskbarManager = nullptr;
 #endif
 
 #if defined(USE_UPDATES)
 	delete _updateManager;
-	_updateManager = 0;
+	_updateManager = nullptr;
 #endif
 
 	delete _savefileManager;
-	_savefileManager = 0;
+	_savefileManager = nullptr;
 
 	delete _fsFactory;
-	_fsFactory = 0;
+	_fsFactory = nullptr;
 }
 
 void OSystem::initBackend() {
@@ -138,7 +138,7 @@ Common::SeekableReadStream *OSystem::createConfigReadStream() {
 
 Common::WriteStream *OSystem::createConfigWriteStream() {
 #ifdef __DC__
-	return 0;
+	return nullptr;
 #else
 	Common::FSNode file(getDefaultConfigFileName());
 	return file.createWriteStream();

@@ -44,7 +44,7 @@ struct TLanguage {
 	const char *name;
 	int id;
 
-	TLanguage() : name(0), id(0) {}
+	TLanguage() : name(nullptr), id(0) {}
 	TLanguage(const char *n, int i) : name(n), id(i) {}
 };
 

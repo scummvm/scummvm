@@ -31,7 +31,7 @@
 namespace Common {
 
 PEResources::PEResources() {
-	_exe = 0;
+	_exe = nullptr;
 }
 
 PEResources::~PEResources() {
@@ -41,7 +41,7 @@ PEResources::~PEResources() {
 void PEResources::clear() {
 	_sections.clear();
 	_resources.clear();
-	delete _exe; _exe = 0;
+	delete _exe; _exe = nullptr;
 }
 
 bool PEResources::loadFromEXE(const String &fileName) {
@@ -224,7 +224,7 @@ SeekableReadStream *PEResources::getResource(const WinResourceID &type, const Wi
 	Array<WinResourceID> langList = getLangList(type, name);
 
 	if (langList.empty())
-		return 0;
+		return nullptr;
 
 	const Resource &resource = _resources[type][name][langList[0]];
 	_exe->seek(resource.offset);
@@ -233,17 +233,17 @@ SeekableReadStream *PEResources::getResource(const WinResourceID &type, const Wi
 
 SeekableReadStream *PEResources::getResource(const WinResourceID &type, const WinResourceID &name, const WinResourceID &lang) {
 	if (!_exe || !_resources.contains(type))
-		return 0;
+		return nullptr;
 
 	const NameMap &nameMap = _resources[type];
 
 	if (!nameMap.contains(name))
-		return 0;
+		return nullptr;
 
 	const LangMap &langMap = nameMap[name];
 
 	if (!langMap.contains(lang))
-		return 0;
+		return nullptr;
 
 	const Resource &resource = langMap[lang];
 	_exe->seek(resource.offset);

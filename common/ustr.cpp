@@ -34,7 +34,7 @@ static uint32 computeCapacity(uint32 len) {
 }
 
 U32String::U32String(const value_type *str) : _size(0), _str(_storage) {
-	if (str == 0) {
+	if (str == nullptr) {
 		_storage[0] = 0;
 		_size = 0;
 	} else {
@@ -69,7 +69,7 @@ U32String::U32String(const U32String &str)
 		_extern._capacity = str._extern._capacity;
 		_str = str._str;
 	}
-	assert(_str != 0);
+	assert(_str != nullptr);
 }
 
 U32String::~U32String() {
@@ -265,15 +265,15 @@ void U32String::ensureCapacity(uint32 new_size, bool keep_old) {
 		// Set the ref count & capacity if we use an external storage.
 		// It is important to do this *after* copying any old content,
 		// else we would override data that has not yet been copied!
-		_extern._refCount = 0;
+		_extern._refCount = nullptr;
 		_extern._capacity = newCapacity;
 	}
 }
 
 void U32String::incRefCount() const {
 	assert(!isStorageIntern());
-	if (_extern._refCount == 0) {
-		if (g_refCountPool == 0) {
+	if (_extern._refCount == nullptr) {
+		if (g_refCountPool == nullptr) {
 			g_refCountPool = new MemoryPool(sizeof(int));
 			assert(g_refCountPool);
 		}
@@ -317,9 +317,9 @@ void U32String::initWithCStr(const value_type *str, uint32 len) {
 	if (len >= _builtinCapacity) {
 		// Not enough internal storage, so allocate more
 		_extern._capacity = computeCapacity(len + 1);
-		_extern._refCount = 0;
+		_extern._refCount = nullptr;
 		_str = new value_type[_extern._capacity];
-		assert(_str != 0);
+		assert(_str != nullptr);
 	}
 
 	// Copy the string into the storage area

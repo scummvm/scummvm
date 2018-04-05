@@ -109,7 +109,7 @@ public:
 	typedef T *PointerType;
 	typedef T &ReferenceType;
 
-	SharedPtr() : _refCount(0), _deletion(0), _pointer(0) {}
+	SharedPtr() : _refCount(nullptr), _deletion(nullptr), _pointer(nullptr) {}
 
 	template<class T2>
 	explicit SharedPtr(T2 *p) : _refCount(new RefValue(1)), _deletion(new SharedPtrDeletionImpl<T2>(p)), _pointer(p) {}
@@ -206,9 +206,9 @@ private:
 			if (!*_refCount) {
 				delete _refCount;
 				delete _deletion;
-				_deletion = 0;
-				_refCount = 0;
-				_pointer = 0;
+				_deletion = nullptr;
+				_refCount = nullptr;
+				_pointer = nullptr;
 			}
 		}
 	}
