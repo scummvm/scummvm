@@ -1225,7 +1225,8 @@ void Map::setWall(const Common::Point &pt, Direction dir, int v) {
 }
 
 int Map::getCell(int idx) {
-	int mapId = _vm->_party->_mazeId;
+	Party &party = *g_vm->_party;
+	int mapId = party._mazeId;
 	Direction dir = _vm->_party->_mazeDirection;
 	Common::Point pt(
 		_vm->_party->_mazePosition.x + Res.SCREEN_POSITIONING_X[_vm->_party->_mazeDirection][idx],
@@ -1259,6 +1260,8 @@ int Map::getCell(int idx) {
 		}
 
 		if (!mapId) {
+			mapId = party._mazeId;
+
 			if (_isOutdoors) {
 				_currentSurfaceId = SURFTYPE_SPACE;
 				_currentWall = 0;
@@ -1293,6 +1296,8 @@ int Map::getCell(int idx) {
 		}
 
 		if (!mapId) {
+			mapId = party._mazeId;
+
 			if (_isOutdoors) {
 				_currentSurfaceId = SURFTYPE_SPACE;
 				_currentWall = 0;
