@@ -934,18 +934,24 @@ bool Scripts::cmdConfirmWord(ParamsIterator &params) {
 	int param2 = params.readByte();
 	int param3 = params.readByte();
 
-	Common::String msg1 = param2 ? map._events._text[param2] : _message;
-	Common::String msg2;
+	Common::String expected2;
+	Common::String title;
 
 	if (_event->_opcode == OP_ConfirmWord_2) {
-		msg2 = "";
+		title = "";
 	} else if (param3) {
-		msg2 = map._events._text[param3];
+		title = map._events._text[param3];
 	} else {
-		msg2 = Res.WHATS_THE_PASSWORD;
+		title = Res.WHATS_THE_PASSWORD;
 	}
 
-	_mirrorId = StringInput::show(_vm, inputType, msg1, msg2, _event->_opcode);
+	if (!param2) {
+		expected2 = _message;
+	} else if (param2 < (int)map._events._text.size()) {
+		expected2 = map._events._text[param2];
+	}
+
+	_mirrorId = StringInput::show(_vm, inputType, expected2, title, _event->_opcode);
 	if (_mirrorId) {
 		if (_mirrorId == 33 && files._ccNum) {
 			doDarkSideEnding();

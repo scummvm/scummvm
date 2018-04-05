@@ -159,7 +159,7 @@ int StringInput::execute(bool type, const Common::String &expected,
 		if (type) {
 			if (!line.compareToIgnoreCase(scripts._message)) {
 				result = true;
-			} else if (line == expected) {
+			} else if (!line.compareToIgnoreCase(expected)) {
 				result = (opcode == 55) ? -1 : 1;
 			}
 		} else {
