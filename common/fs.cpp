@@ -37,7 +37,7 @@ FSNode::FSNode(AbstractFSNode *realNode)
 FSNode::FSNode(const String &p) {
 	assert(g_system);
 	FilesystemFactory *factory = g_system->getFilesystemFactory();
-	AbstractFSNode *tmp = 0;
+	AbstractFSNode *tmp = nullptr;
 
 	if (p.empty() || p == ".")
 		tmp = factory->makeCurrentDirectoryFileNode();
@@ -62,7 +62,7 @@ bool FSNode::exists() const {
 
 FSNode FSNode::getChild(const String &n) const {
 	// If this node is invalid or not a directory, return an invalid node
-	if (_realNode == 0 || !_realNode->isDirectory())
+	if (_realNode == nullptr || !_realNode->isDirectory())
 		return FSNode();
 
 	AbstractFSNode *node = _realNode->getChild(n);
@@ -97,11 +97,11 @@ String FSNode::getName() const {
 }
 
 FSNode FSNode::getParent() const {
-	if (_realNode == 0)
+	if (_realNode == nullptr)
 		return *this;
 
 	AbstractFSNode *node = _realNode->getParent();
-	if (node == 0) {
+	if (node == nullptr) {
 		return *this;
 	} else {
 		return FSNode(node);
@@ -126,27 +126,27 @@ bool FSNode::isWritable() const {
 }
 
 SeekableReadStream *FSNode::createReadStream() const {
-	if (_realNode == 0)
-		return 0;
+	if (_realNode == nullptr)
+		return nullptr;
 
 	if (!_realNode->exists()) {
 		warning("FSNode::createReadStream: '%s' does not exist", getName().c_str());
-		return 0;
+		return nullptr;
 	} else if (_realNode->isDirectory()) {
 		warning("FSNode::createReadStream: '%s' is a directory", getName().c_str());
-		return 0;
+		return nullptr;
 	}
 
 	return _realNode->createReadStream();
 }
 
 WriteStream *FSNode::createWriteStream() const {
-	if (_realNode == 0)
-		return 0;
+	if (_realNode == nullptr)
+		return nullptr;
 
 	if (_realNode->isDirectory()) {
 		warning("FSNode::createWriteStream: '%s' is a directory", getName().c_str());
-		return 0;
+		return nullptr;
 	}
 
 	return _realNode->createWriteStream();
@@ -195,7 +195,7 @@ FSNode *FSDirectory::lookupCache(NodeCache &cache, const String &name) const {
 			return &cache[name];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 bool FSDirectory::hasFile(const String &name) const {
@@ -225,11 +225,11 @@ const ArchiveMemberPtr FSDirectory::getMember(const String &name) const {
 
 SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) const {
 	if (name.empty() || !_node.isDirectory())
-		return 0;
+		return nullptr;
 
 	FSNode *node = lookupCache(_fileCache, name);
 	if (!node)
-		return 0;
+		return nullptr;
 	SeekableReadStream *stream = node->createReadStream();
 	if (!stream)
 		warning("FSDirectory::createReadStreamForMember: Can't create stream for file '%s'", name.c_str());
@@ -243,11 +243,11 @@ FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth, bool fl
 
 FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth, bool flat) {
 	if (name.empty() || !_node.isDirectory())
-		return 0;
+		return nullptr;
 
 	FSNode *node = lookupCache(_subDirCache, name);
 	if (!node)
-		return 0;
+		return nullptr;
 
 	return new FSDirectory(prefix, *node, depth, flat);
 }

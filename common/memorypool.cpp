@@ -43,7 +43,7 @@ static size_t adjustChunkSize(size_t chunkSize) {
 MemoryPool::MemoryPool(size_t chunkSize)
 	: _chunkSize(adjustChunkSize(chunkSize)) {
 
-	_next = NULL;
+	_next = nullptr;
 
 	_chunksPerPage = INITIAL_CHUNKS_PER_PAGE;
 }
@@ -154,7 +154,7 @@ void MemoryPool::freeUnusedPages() {
 
 			::free(_pages[i].start);
 			++freedPagesCount;
-			_pages[i].start = NULL;
+			_pages[i].start = nullptr;
 		}
 	}
 
@@ -163,7 +163,7 @@ void MemoryPool::freeUnusedPages() {
 	// Remove all now unused pages
 	size_t newSize = 0;
 	for (size_t i = 0; i < _pages.size(); ++i) {
-		if (_pages[i].start != NULL) {
+		if (_pages[i].start != nullptr) {
 			if (newSize != i)
 				_pages[newSize] = _pages[i];
 			++newSize;
