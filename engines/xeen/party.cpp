@@ -1438,7 +1438,6 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 	Map &map = *g_vm->_map;
 	Scripts &scripts = *g_vm->_scripts;
 	Sound &sound = *g_vm->_sound;
-	Character &c = _itemsCharacter;
 
 	if (intf._objNumber != -1 && !scripts._animCounter) {
 		MazeObject &obj = map._mobData._objects[intf._objNumber];
@@ -1450,7 +1449,8 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 
 		case 16:
 		case 58:
-		case 73:
+		case 73: {
+			Character &c = _activeParty[charId];
 			obj._frame = 1;
 
 			if (obj._position.x != 20) {
@@ -1481,6 +1481,11 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 					return true;
 				}
 			}
+			break;
+		}
+
+		default:
+			break;
 		}
 	}
 
@@ -1498,7 +1503,7 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 			break;
 
 		case 66:
-			c.clear();
+			_itemsCharacter.clear();
 
 			if (giveTake(0, 0, mode, val, charId))
 				return true;
