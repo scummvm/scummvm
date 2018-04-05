@@ -68,7 +68,7 @@ void CursorMgr::setCursor(Common::String &cursorName, Common::Point point) {
     else if (cursorName == "ExitRight"){
         index = kExitRightCursor;
     }
-    else if (cursorName == "ExitForward")
+    else if (cursorName == "ExitForward" || cursorName == "ExitUp")
         index = kExitForwardCursor;
     else assert(0);
     setCursor(index, point);

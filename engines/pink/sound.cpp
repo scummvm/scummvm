@@ -68,7 +68,7 @@ void Sound::play(Audio::Mixer::SoundType type, int volume, bool isLoop) {
     }
     else audioStream = wavStream;
 
-    _mixer->playStream(type, &_handle , audioStream, -1 , Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
+    _mixer->playStream(type, &_handle , audioStream, -1 , 50, 0, DisposeAfterUse::YES);
 }
 
 void Sound::setBalance(int8 balance) {

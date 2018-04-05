@@ -38,6 +38,13 @@ public:
     virtual bool isClickable() { return 1; }
     bool isLeftClickHandlers();
 
+    void onTimerMessage();
+    bool onLeftClickMessage();
+    bool onUseClickMessage();
+
+    const Common::String &getLocation() const;
+
+
 private:
     HandlerMgr _handlerMgr;
     Common::String _location;

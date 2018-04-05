@@ -33,6 +33,8 @@ class WalkLocation : public NamedObject {
 public:
     virtual void deserialize(Archive &archive);
 
+    void toConsole() override;
+    Common::StringArray &getNeigbors() { return _neighbors;}
 private:
     Common::StringArray _neighbors;
 };

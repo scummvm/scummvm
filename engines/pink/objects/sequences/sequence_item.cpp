@@ -58,14 +58,10 @@ bool SequenceItem::execute(int index, Sequence *sequence, bool unk2) {
     }
 
     actor->setAction(action, unk2);
-    Common::Array<SequenceActorState> &states = sequence->_context->_states;
-    for (int i = 0; i < sequence->_context->_states.size(); ++i) {
-        if (states[i]._actorName == _actor){
-            states[i]._index = index;
-            sequence->_context->_actor = isLeader() ? actor : sequence->_context->_actor;
-            break;
-        }
-    }
+
+    SequenceActorState *state = sequence->_sequencer->findSequenceActorState(_actor);
+    state->_index = index;
+    sequence->_context->_actor = isLeader() ? actor : sequence->_context->_actor;
 
     return true;
 }
@@ -97,13 +93,8 @@ uint32 SequenceItemLeaderAudio::getSample() {
 }
 
 bool SequenceItemDefaultAction::execute(int index, Sequence *sequence, bool unk2) {
-    Common::Array<SequenceActorState> &actorStates = sequence->_context->_states;
-    for (int i = 0; i < actorStates.size(); ++i) {
-        if (actorStates[i]._actorName == _actor){
-            actorStates[i]._actionName = _action;
-            break;
-        }
-    }
+    SequenceActorState *state = sequence->_sequencer->findSequenceActorState(_actor);
+    state->_actionName = _action;
     return true;
 }
 

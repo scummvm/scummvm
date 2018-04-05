@@ -42,6 +42,7 @@ MODULE_OBJS = \
     objects/sequences/sequencer.o \
     objects/walk/walk_mgr.o \
     objects/walk/walk_location.o \
+    objects/walk/walk_shortest_path.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PINK), DYNAMIC_PLUGIN)

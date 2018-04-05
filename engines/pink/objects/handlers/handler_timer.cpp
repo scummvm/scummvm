@@ -59,8 +59,8 @@ void HandlerTimerActions::toConsole() {
     }
 }
 
-void HandlerTimerActions::onMessage(LeadActor *actor) {
-    Handler::onMessage(actor);
+void HandlerTimerActions::handle(Actor *actor) {
+    Handler::handle(actor);
     assert(_actions.size());
     if (!actor->isPlaying()){
         Common::RandomSource &rnd = actor->getPage()->getGame()->getRnd();
@@ -72,7 +72,7 @@ void HandlerTimerActions::onMessage(LeadActor *actor) {
 }
 
 
-void HandlerTimerSequences::handle(Sequence *sequence) {
+void HandlerTimerSequences::execute(Sequence *sequence) {
     debug("HandlerTimerSequences function is not implemented");
 }
 

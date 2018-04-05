@@ -57,4 +57,20 @@ bool SupportingActor::isLeftClickHandlers() {
     return _handlerMgr.isLeftClickHandler(this);
 }
 
+void SupportingActor::onTimerMessage() {
+    _handlerMgr.onTimerMessage(this);
+}
+
+bool SupportingActor::onLeftClickMessage() {
+    return _handlerMgr.onLeftClickMessage(this);
+}
+
+bool SupportingActor::onUseClickMessage() {
+    return _handlerMgr.onUseClickMessage(this);
+}
+
+const Common::String &SupportingActor::getLocation() const {
+    return _location;
+}
+
 } // End of namespace Pink

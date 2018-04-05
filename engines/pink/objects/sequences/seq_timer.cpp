@@ -24,11 +24,14 @@
 #include <engines/pink/archive.h>
 #include "./sequencer.h"
 #include <common/debug.h>
+#include <engines/pink/objects/actors/supporting_actor.h>
+#include "pink/objects/pages/game_page.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 SeqTimer::SeqTimer()
-        : _unk(0) {
+        : _updatesToMessage(0) {
 
 }
 
@@ -41,6 +44,23 @@ void SeqTimer::deserialize(Archive &archive) {
 
 void SeqTimer::toConsole() {
     debug("\tSeqTimer: _actor=%s _period=%u _range=%u", _actor.c_str(), _period, _range);
+}
+
+void SeqTimer::update() {
+    Common::RandomSource &random =_sequencer->_page->getGame()->getRnd();
+    if (_updatesToMessage--)
+        return;
+
+    calculateUpdatesCount();
+    SupportingActor *actor = static_cast<SupportingActor*>(_sequencer->_page->findActor(_actor));
+    if (!_sequencer->findSequenceActorState(actor->getName())){
+        actor->onTimerMessage();
+    }
+}
+
+void SeqTimer::calculateUpdatesCount() {
+    Common::RandomSource &random =_sequencer->_page->getGame()->getRnd();
+    _updatesToMessage = _range ? _period + random.getRandomNumber(_range) : _period;
 }
 
 } // End of namespace Pink

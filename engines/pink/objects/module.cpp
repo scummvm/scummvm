@@ -65,7 +65,9 @@ void Module::changePage(const Common::String &pageName) {
 
     //_page->clear
 
-    page->init(kLoadingNewGame);
+
+    _page = page;
+    _page->init(kLoadingNewGame);
 }
 
 GamePage *Module::findPage(const Common::String &pageName) const {

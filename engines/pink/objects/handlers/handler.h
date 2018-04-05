@@ -39,11 +39,11 @@ class Handler : public Object {
 public:
     ~Handler();
     virtual void deserialize(Archive &archive);
-    virtual void onMessage(LeadActor *actor);
+    virtual void handle(Actor *actor);
     bool isSuitable(Actor *actor);
 
 protected:
-    void executeSideEffects(LeadActor *actor);
+    void executeSideEffects(Actor *actor);
 
     Common::Array<Condition*> _conditions;
     Common::Array<SideEffect*> _sideEffects;
@@ -54,10 +54,10 @@ class Sequence;
 class HandlerSequences : public Handler {
 public:
     virtual void deserialize(Archive &archive);
-    virtual void onMessage(LeadActor *actor);
+    virtual void handle(Actor *actor);
 
 protected:
-    virtual void handle(Sequence *sequence) = 0;
+    virtual void execute(Sequence *sequence) = 0;
 
     Common::StringArray _sequences;
 };
@@ -67,7 +67,7 @@ public:
     virtual void toConsole();
 
 private:
-    virtual void handle(Sequence *sequence);
+    virtual void execute(Sequence *sequence);
 };
 
 class HandlerLeftClick : public HandlerSequences {
@@ -75,7 +75,7 @@ public:
     virtual void toConsole();
 
 private:
-    virtual void handle(Sequence *sequence) {}
+    virtual void execute(Sequence *sequence) {}
 };
 
 class HandlerUseClick : public HandlerSequences {
@@ -84,7 +84,7 @@ public:
     virtual void toConsole();
 
 private:
-    virtual void handle(Sequence *sequence);
+    virtual void execute(Sequence *sequence);
 
     Common::String _inventoryItem;
     Common::String _recepient;

@@ -22,6 +22,7 @@
 
 #include "walk_action.h"
 #include <engines/pink/archive.h>
+#include "pink/cel_decoder.h"
 
 namespace Pink {
 
@@ -34,6 +35,10 @@ void WalkAction::deserialize(Archive &archive) {
 void WalkAction::toConsole() {
     debug("\tWalkAction: _name = %s, _fileName = %s, _calcFramePositions = %u",
           _name.c_str(), _fileName.c_str(), _toCalcFramePositions);
+}
+
+void WalkAction::onStart() {
+    _decoder->start();
 }
 
 } // End of namespace Pink
