@@ -147,7 +147,7 @@ void SpriteResource::drawOffset(XSurface &dest, uint16 offset, const Common::Poi
 		bounds = Common::Rect(0, 0, dest.w, dest.h);
 	}
 	if (flags & SPRFLAG_SCENE_CLIPPED) {
-		bounds.clip(Common::Rect(8, 8, 230, 149));
+		bounds.clip(Common::Rect(8, 8, 223, 141));
 	}
 
 	uint16 scaleMaskXCopy = scaleMaskX;
