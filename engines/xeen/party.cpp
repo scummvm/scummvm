@@ -1154,14 +1154,16 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 			ps._currentHp = 0;
 		break;
 	case 19: {
+		// Give spell to character
 		SpellsCategory category = ps.getSpellsCategory();
-		assert(category != SPELLCAT_INVALID);
 
-		for (int idx = 0; idx < SPELLS_PER_CLASS; ++idx) {
-			if (Res.SPELLS_ALLOWED[category][idx] == (int)giveVal) {
-				ps._spells[idx] = true;
-				intf.spellFX(&ps);
-				break;
+		if (category != SPELLCAT_INVALID) {
+			for (int idx = 0; idx < SPELLS_PER_CLASS; ++idx) {
+				if (Res.SPELLS_ALLOWED[category][idx] == (int)giveVal) {
+					ps._spells[idx] = true;
+					intf.spellFX(&ps);
+					break;
+				}
 			}
 		}
 		break;
