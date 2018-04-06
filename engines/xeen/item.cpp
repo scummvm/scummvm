@@ -595,6 +595,8 @@ void AccessoryItems::equipItem(int itemIndex) {
 				return;
 			}
 		}
+
+		item._frame = 12;
 	} else if (item._id <= 7) {
 		int count = 0;
 		for (uint idx = 0; idx < size(); ++idx) {
