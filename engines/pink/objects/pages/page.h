@@ -37,25 +37,23 @@ class LeadActor;
 class Page : public NamedObject {
 public:
     ~Page();
+    virtual void toConsole();
+
     void load(Archive &archive);
     Actor *findActor(Common::String &name);
+    LeadActor *getLeadActor();
+
     Sound *loadSound(Common::String &fileName);
     CelDecoder *loadCel(Common::String &fileName);
 
-    virtual void toConsole();
-
-    LeadActor *getLeadActor();
+    virtual void clear();
 
 protected:
     void init();
+
     Common::Array<Actor*> _actors;
     ResourceMgr _resMgr;
     LeadActor *_leadActor;
-
-    /*
-        int unk_1;
-        CString _str;
-     */
 };
 
 } // End of namespace Pink

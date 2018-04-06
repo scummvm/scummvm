@@ -45,10 +45,13 @@ void ActionPlay::end() {
 
 void ActionPlay::onStart() {
     debug("Actor %s has now ActionPlay %s", _actor->getName().c_str(), _name.c_str());
-    _decoder->seekToFrame(_startFrame);
+    _decoder->start();
+    for (int i = 0; i <= _startFrame; ++i) {
+        _decoder->decodeNextFrame();
+    }
+
     if (_stopFrame != -1)
         _decoder->setEndFrame(_stopFrame);
-    _decoder->start();
 }
 
 } // End of namespace Pink

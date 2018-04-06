@@ -23,6 +23,7 @@
 #ifndef PINK_GAME_PAGE_H
 #define PINK_GAME_PAGE_H
 
+#include <common/memstream.h>
 #include "page.h"
 
 namespace Pink {
@@ -36,12 +37,12 @@ class GamePage : public Page {
 public:
     GamePage();
     ~GamePage();
+    virtual void toConsole();
     virtual void deserialize(Archive &archive);
 
     virtual void load(Archive &archive);
-
+    void unload();
     void loadManagers();
-
     void init(bool isLoadingSave);
 
     PinkEngine *getGame();
@@ -52,25 +53,21 @@ public:
     bool checkValueOfVariable(Common::String &variable, Common::String &value);
     void setVariable(Common::String &variable, Common::String &value);
 
-    virtual void toConsole();
+    virtual void clear();
 
 private:
     bool initHandler();
+    void loadState();
+    void saveState();
 
-
-    int perhapsIsLoaded;
+    bool _perhapsIsLoaded;
+    Common::MemoryReadWriteStream *_memFile;
     Module *_module;
     CursorMgr *_cursorMgr;
     WalkMgr *_walkMgr;
     Sequencer *_sequencer;
     Common::Array<HandlerStartPage*> _handlers;
     Common::StringMap _variables;
-
-    /*
-    int cunk_1;
-    int memfile;
-    int unk;
-    */
 };
 
 }

@@ -79,4 +79,8 @@ void ActionCEL::update() {
     }
 }
 
+ActionCEL::~ActionCEL() {
+    delete _decoder;
+}
+
 } // End of namespace Pink

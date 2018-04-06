@@ -79,11 +79,11 @@ public:
 
     void setNextExecutors(const Common::String &nextModule, const Common::String &nextPage);
     void setLeadActor(LeadActor *actor) { _actor = actor; };
+    void setCursor(uint cursorIndex);
 
     void setVariable(Common::String &variable, Common::String &value);
     bool checkValueOfVariable(Common::String &variable, Common::String &value);
 
-    inline void setCursor(uint cursorIndex);
 private:
     Common::Error init();
     bool loadCursors();

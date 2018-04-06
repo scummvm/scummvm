@@ -60,6 +60,9 @@ public:
     void setAction(Action *newAction);
     void setAction(Action *newAction, bool unk);
 
+    void loadState(Archive &archive);
+    void saveState(Archive &archive);
+
     bool initPallete(Director *director);
 
     virtual void update() {};

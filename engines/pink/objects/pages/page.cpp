@@ -22,9 +22,14 @@
 
 #include "page.h"
 #include "engines/pink/objects/actors/lead_actor.h"
+#include "engines/pink/director.h"
 
 
 namespace Pink {
+
+Page::~Page() {
+    clear();
+}
 
 void Page::load(Archive &archive) {
     archive.mapObject(this);
@@ -65,14 +70,18 @@ void Page::init() {
     }
 }
 
-Page::~Page() {
-    for (int i = 0; i < _actors.size(); ++i) {
-        delete _actors[i];
-    }
-}
-
 LeadActor *Page::getLeadActor() {
     return _leadActor;
 }
+
+void Page::clear() {
+    for (int i = 0; i < _actors.size(); ++i) {
+        delete _actors[i];
+    }
+    _actors.clear();
+    _resMgr.clear();
+}
+
+
 
 } // End of namespace Pink

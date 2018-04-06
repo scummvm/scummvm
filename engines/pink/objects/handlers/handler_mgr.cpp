@@ -90,4 +90,16 @@ Handler *HandlerMgr::findSuitableHandlerUseClick(Actor *actor) {
     return nullptr;
 }
 
+HandlerMgr::~HandlerMgr() {
+    for (int i = 0; i < _leftClickHandlers.size(); ++i) {
+        delete _leftClickHandlers[i];
+    }
+    for (int j = 0; j < _useClickHandlers.size(); ++j) {
+        delete _useClickHandlers[j];
+    }
+    for (int k = 0; k < _timerHandlers.size(); ++k) {
+        delete _timerHandlers[k];
+    }
+}
+
 }

@@ -32,7 +32,7 @@ Director::Director(OSystem *system)
     : _system(system), showBounds(0) {}
 
 void Director::draw() {
-    _system->fillScreen(0);
+    //dd_system->fillScreen(0);
     for (int i = 0; i < _sprites.size(); ++i) {
         drawSprite(_sprites[i]);
     }
