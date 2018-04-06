@@ -165,16 +165,16 @@ enum SurfaceType {
 
 union MazeWallLayers {
 	struct MazeWallIndoors {
-		int _wallNorth : 4;
-		int _wallEast : 4;
-		int _wallSouth : 4;
-		int _wallWest : 4;
+		uint _wallNorth : 4;
+		uint _wallEast : 4;
+		uint _wallSouth : 4;
+		uint _wallWest : 4;
 	} _indoors;
 	struct MazeWallOutdoors {
-		SurfaceType _surfaceId : 4;
-		int _iMiddle : 4;
-		int _iTop : 4;
-		int _iOverlay : 4;
+		uint _surfaceId : 4;		// SurfaceType, but needs to be unsigned
+		uint _iMiddle : 4;
+		uint _iTop : 4;
+		uint _iOverlay : 4;
 	} _outdoors;
 	uint16 _data;
 };
