@@ -259,7 +259,6 @@ bool SavesManager::loadGame() {
 
 bool SavesManager::saveGame() {
 	Map &map = *g_vm->_map;
-	Windows &windows = *g_vm->_windows;
 	
 	if (map.mazeData()._mazeFlags & RESTRICTION_SAVE) {
 		ErrorScroll::show(g_vm, Res.SAVE_OFF_LIMITS, WT_NONFREEZED_WAIT);

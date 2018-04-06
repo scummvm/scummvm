@@ -491,12 +491,12 @@ void Combat::moveMonsters() {
 							switch (party._mazeDirection) {
 							case DIR_NORTH:
 							case DIR_SOUTH:
-								if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
+								if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
 										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
 									// Move the monster
 									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 								} else {
-									if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
+									if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
 										arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
 										arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
 										idx)) {
@@ -511,7 +511,7 @@ void Combat::moveMonsters() {
 
 							case DIR_EAST:
 							case DIR_WEST:
-								if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
+								if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX2[arrIndex]],
 									arrIndex >= 21 && arrIndex <= 27 ? MONSTER_GRID3[arrIndex] : 0,
 									arrIndex >= 21 && arrIndex <= 27 ? 0 : MONSTER_GRID3[arrIndex],
 									idx)) {
@@ -520,7 +520,7 @@ void Combat::moveMonsters() {
 									} else {
 										moveMonster(idx, Common::Point(0, MONSTER_GRID3[arrIndex]));
 									}
-								} else if (monsterCanMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
+								} else if (canMonsterMove(pt, Res.MONSTER_GRID_BITMASK[MONSTER_GRID_BITINDEX1[arrIndex]],
 										MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex], idx)) {
 									moveMonster(idx, Common::Point(MONSTER_GRID_X[arrIndex], MONSTER_GRID_Y[arrIndex]));
 								}
@@ -670,8 +670,7 @@ void Combat::setupMonsterAttack(int monsterDataIndex, const Common::Point &pt) {
 	}
 }
 
-bool Combat::monsterCanMove(const Common::Point &pt, int wallShift,
-		int xDiff, int yDiff, int monsterId) {
+bool Combat::canMonsterMove(const Common::Point &pt, int wallShift, int xDiff, int yDiff, int monsterId) {
 	Map &map = *_vm->_map;
 	MazeMonster &monster = map._mobData._monsters[monsterId];
 	MonsterStruct &monsterData = *monster._monsterData;

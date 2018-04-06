@@ -273,9 +273,13 @@ public:
 
 	/**
 	 * Determines whether a given monster can move
+	 * @param pt			Monster position
+	 * @param wallShift		Shift mask for determining direction being moved
+	 * @param xDiff			X Delta for move
+	 * @param yDiff			Y Delta for move
+	 * @param monsterId		Monster number being tested
 	 */
-	bool monsterCanMove(const Common::Point &pt, int wallShift,
-		int v1, int v2, int monsterId);
+	bool canMonsterMove(const Common::Point &pt, int wallShift, int xDiff, int yDiff, int monsterId);
 
 	/**
 	 * Moves a monster by a given delta amount if it's a valid move
