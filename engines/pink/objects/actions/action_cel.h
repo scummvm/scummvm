@@ -32,6 +32,8 @@ class CelDecoder;
 
 class ActionCEL : public Action {
 public:
+    ~ActionCEL() override;
+
     ActionCEL();
     virtual void deserialize(Archive &archive);
     virtual void start(bool unk);

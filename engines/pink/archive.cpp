@@ -211,8 +211,15 @@ static Object* createObject(int objectId){
     }
 }
 
-Archive::Archive(Common::File &file)
-    : _file(file)
+Archive::Archive(Common::SeekableReadStream  *stream)
+    : _readStream(stream), _writeStream(nullptr)
+{
+    _objectMap.push_back(0);
+    _objectIdMap.push_back(kNullObject);
+}
+
+Archive::Archive(Common::WriteStream *stream)
+    : _writeStream(stream), _readStream(nullptr)
 {
     _objectMap.push_back(0);
     _objectIdMap.push_back(kNullObject);
@@ -227,10 +234,10 @@ void Archive::mapObject(Object *obj) {
 }
 
 int Archive::readCount() {
-    int count = _file.readUint16LE();
+    int count = _readStream->readUint16LE();
 
     if (count == 0xffff)
-        count = _file.readUint32LE();
+        count = _readStream->readUint32LE();
 
     return count;
 }
@@ -251,15 +258,15 @@ Object *Archive::parseObject(bool &isCopyReturned) {
     int objectId = 0;
     Object *res = nullptr;
 
-    uint obTag = _file.readUint16LE();
+    uint obTag = _readStream->readUint16LE();
 
     if (obTag == 0x0000) {
         return nullptr;
     } else if (obTag == 0xffff) {
-        int schema = _file.readUint16LE();
+        int schema = _readStream->readUint16LE();
 
-        int size = _file.readUint16LE();
-        _file.read(className, size);
+        int size = _readStream->readUint16LE();
+        _readStream->read(className, size);
         className[size] = '\0';
 
         objectId = findObjectId(className + 1);
@@ -308,18 +315,32 @@ uint Archive::findObjectId(const char *name) {
 }
 
 Common::String Archive::readString() {
-    char buffer[kMaxStringLength]; // test and lower then
-    byte len = _file.readByte();
-    _file.read(buffer, len);
+    char buffer[kMaxStringLength];
+    byte len = _readStream->readByte();
+    assert(len <= 64);
+    _readStream->read(buffer, len);
     return Common::String(buffer, len);
 }
 
 uint32 Archive::readDWORD() {
-    return _file.readUint32LE();
+    return _readStream->readUint32LE();
 }
 
 uint16 Archive::readWORD() {
-    return _file.readUint16LE();
+    return _readStream->readUint16LE();
+}
+
+void Archive::writeDWORD(uint32 val) {
+    _writeStream->writeUint32LE(val);
+}
+
+void Archive::writeWORD(uint16 val) {
+    _writeStream->writeUint16LE(val);
+}
+
+void Archive::writeString(const Common::String &string) {
+    _writeStream->writeByte(string.size());
+    _writeStream->write(string.c_str(), string.size());
 }
 
 } // End of namespace Pink

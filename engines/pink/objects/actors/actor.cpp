@@ -130,8 +130,21 @@ void Actor::onMouseOver(Common::Point point, CursorMgr *mgr) {
 
 Actor::~Actor() {
     for (int i = 0; i < _actions.size(); ++i) {
+        _actions[i]->toConsole();
         delete _actions[i];
+        _actions[i] = nullptr;
     }
+}
+
+void Actor::loadState(Archive &archive) {
+    Common::String actionName;
+    archive >> actionName;
+    _action = findAction(actionName);
+}
+
+void Actor::saveState(Archive &archive) {
+    assert(_action);
+    archive.writeString(_action->getName());
 }
 
 } // End of namespace Pink

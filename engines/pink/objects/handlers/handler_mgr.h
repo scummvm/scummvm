@@ -40,6 +40,7 @@ class Actor;
 
 class HandlerMgr : public Object {
 public:
+    virtual ~HandlerMgr();
     virtual void deserialize(Archive &archive);
 
     virtual void toConsole();

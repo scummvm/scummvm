@@ -115,6 +115,7 @@ void LeadActor::onKeyboardButtonClick(Common::KeyCode code) {
                 default:
                     break;
             }
+            break;
         case kInDialog1:
         case kInDialog2:
         case kPlayingVideo:
@@ -242,8 +243,8 @@ void LeadActor::onClick() {
     }
     else {
         if (_state == kMoving) {
-            this->_recipient = nullptr;
-            this->_nextState = nullptr;
+            _recipient = nullptr;
+            _nextState = kReady;
         }
 
     }

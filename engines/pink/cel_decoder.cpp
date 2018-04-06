@@ -192,6 +192,7 @@ const Graphics::Surface *CelDecoder::CelVideoTrack::decodeNextFrame() {
 
     if (_curFrame == 0)
         _transparentColourIndex = *(byte*)_surface->getBasePtr(0,0);
+
     return _surface;
 }
 

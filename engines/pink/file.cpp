@@ -74,20 +74,20 @@ bool OrbFile::open(const Common::String &name) {
 
 void OrbFile::loadGame(PinkEngine *game) {
     seekToObject("PinkGame");
-    Archive archive(*this);
+    Archive archive(this);
     archive.mapObject(reinterpret_cast<Object*>(game)); // hack
     game->load(archive);
 }
 
 void OrbFile::loadObject(Object *obj, const Common::String &name) {
     seekToObject(name.c_str());
-    Archive archive(*this);
+    Archive archive(this);
     obj->load(archive);
 }
 
 void OrbFile::loadObject(Object *obj, ObjectDescription *objDesc) {
     seek(objDesc->objectsOffset);
-    Archive archive(*this);
+    Archive archive(this);
     obj->load(archive);
 }
 

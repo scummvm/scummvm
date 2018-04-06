@@ -30,15 +30,15 @@ namespace Pink {
 
 class CelDecoder : public Video::FlicDecoder {
 public:
+    virtual bool loadStream(Common::SeekableReadStream *stream);
+
     uint32 getX();
     uint32 getY();
+    uint16 getTransparentColourIndex();
+
     Common::Point getCenter();
     Common::Rect &getRectangle();
-
-    uint16 getTransparentColourIndex();
     const Graphics::Surface *getCurrentFrame();
-
-    virtual bool loadStream(Common::SeekableReadStream *stream);
 
 protected:
     class CelVideoTrack : public FlicVideoTrack {
@@ -48,10 +48,10 @@ protected:
 
         uint32 getX() const;
         uint32 getY() const;
+        uint16 getTransparentColourIndex();
+
         Common::Point getCenter();
         Common::Rect &getRect();
-
-        uint16 getTransparentColourIndex();
         const Graphics::Surface *getCurrentFrame();
 
     private:

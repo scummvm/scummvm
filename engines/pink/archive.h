@@ -25,6 +25,8 @@
 
 #include <engines/pink/objects/object.h>
 #include <common/str-array.h>
+#include "common/stream.h"
+#include "common/hash-str.h"
 
 namespace Common {
 
@@ -36,7 +38,8 @@ namespace Pink {
 
 class Archive {
 public:
-    Archive(Common::File &file);
+    Archive(Common::SeekableReadStream *stream);
+    Archive(Common::WriteStream *stream);
     ~Archive();
 
     void mapObject(Object *obj);
@@ -45,8 +48,12 @@ public:
     uint32 readDWORD();
     uint16 readWORD();
 
+    void writeDWORD(uint32 val);
+    void writeWORD(uint16 val);
+
     Object *readObject();
     Common::String readString();
+    void writeString(const Common::String &string);
 
 private:
     uint findObjectId(const char *name);
@@ -55,7 +62,8 @@ private:
 
     Common::Array<Object *> _objectMap;
     Common::Array<uint> _objectIdMap;
-    Common::File &_file;
+    Common::SeekableReadStream *_readStream;
+    Common::WriteStream *_writeStream;
 };
 
 template <typename T>
@@ -63,7 +71,8 @@ inline Archive &operator>>(Archive &archive, Common::Array<T> &arr){
     uint size = archive.readCount();
     arr.resize(size);
     for (uint i = 0; i < size; ++i) {
-        arr[i] = reinterpret_cast<T> (archive.readObject());
+        arr[i] =  dynamic_cast<T>(archive.readObject());
+        assert(arr[i]);
     }
     return archive;
 }
@@ -95,6 +104,45 @@ inline Archive &operator>>(Archive &archive, Common::StringArray &array){
     for (uint i = 0; i < size; ++i) {
         array[i] = archive.readString();
     }
+    return archive;
+}
+
+inline Archive &operator>>(Archive &archive, Common::StringMap &map){
+    archive.readCount();
+    map.setVal(archive.readString(), archive.readString());
+    return archive;
+}
+
+inline Archive &operator<<(Archive &archive, Common::String &string){
+    archive.writeString(string);
+    return archive;
+}
+
+inline Archive &operator<<(Archive &archive, uint32 &num){
+    archive.writeDWORD(num);
+    return archive;
+}
+
+inline Archive &operator<<(Archive &archive, uint16 &num){
+    archive.writeWORD(num);
+    return archive;
+}
+
+inline Archive &operator<<(Archive &archive, Common::StringArray &array){
+    archive.writeWORD(array.size());
+    for (uint i = 0; i < array.size(); ++i) {
+        archive.writeString(array[i]);
+    }
+    return archive;
+}
+
+inline Archive &operator<<(Archive &archive, Common::StringMap &map){
+    archive.writeWORD(map.size());
+    for (auto &pair : map) {
+        archive.writeString(pair._key);
+        archive.writeString(pair._value);
+    }
+    map.setVal(archive.readString(), archive.readString());
     return archive;
 }
 

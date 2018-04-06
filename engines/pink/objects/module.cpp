@@ -36,6 +36,12 @@ Module::Module(PinkEngine *game, const Common::String &name)
         : NamedObject(name), _game(game), _page(nullptr)
 {}
 
+Module::~Module() {
+    for (int i = 0; i < _pages.size(); ++i) {
+        delete _pages[i];
+    }
+}
+
 void Module::load(Archive &archive){
     archive.mapObject(this);
     NamedObject::deserialize(archive);
@@ -63,7 +69,7 @@ void Module::changePage(const Common::String &pageName) {
     page = findPage(pageName);
     assert(_page != page);
 
-    //_page->clear
+    _page->clear();
 
 
     _page = page;
@@ -93,12 +99,6 @@ void Module::setVariable(Common::String &variable, Common::String &value) {
 
 InventoryMgr *Module::getInventoryMgr() {
     return &_invMgr;
-}
-
-Module::~Module() {
-    for (int i = 0; i < _pages.size(); ++i) {
-        delete _pages[i];
-    }
 }
 
 } // End of namespace Pink

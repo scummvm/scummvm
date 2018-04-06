@@ -73,4 +73,8 @@ const Common::String &SupportingActor::getLocation() const {
     return _location;
 }
 
+SupportingActor::~SupportingActor() {
+
+}
+
 } // End of namespace Pink

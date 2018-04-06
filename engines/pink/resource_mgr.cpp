@@ -37,7 +37,7 @@ ResourceMgr::ResourceMgr()
           _resCount(0) {}
 
 ResourceMgr::~ResourceMgr() {
-    delete[] _resDescTable;
+    clear();
 }
 
 void ResourceMgr::init(PinkEngine *game, GamePage *page) {
@@ -82,6 +82,11 @@ CelDecoder *ResourceMgr::loadCEL(Common::String &name) {
     CelDecoder *decoder = new CelDecoder();
     decoder->loadStream(getResourceStream(name));
     return decoder;
+}
+
+void ResourceMgr::clear() {
+    delete[] _resDescTable;
+    _resDescTable = nullptr;
 }
 
 } // End of namespace Pink

@@ -23,7 +23,6 @@
 #include "action_hide.h"
 #include "engines/pink/objects/actors/actor.h"
 #include <engines/pink/archive.h>
-#include <common/debug.h>
 
 
 namespace Pink {
@@ -44,5 +43,7 @@ void ActionHide::end() {
 void ActionHide::toConsole() {
     debug("\tActionHide: _name = %s", _name.c_str());
 }
+
+ActionHide::~ActionHide() {}
 
 } //End of namespace Pink

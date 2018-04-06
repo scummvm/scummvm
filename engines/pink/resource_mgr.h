@@ -47,6 +47,7 @@ public:
     ~ResourceMgr();
 
     void init(PinkEngine *game, GamePage *page);
+    void clear();
 
     //Common::String loadText(Common::String &name);
     Sound *loadSound(Common::String &name);

@@ -30,6 +30,24 @@
 
 namespace Pink {
 
+GamePage::GamePage()
+        : _cursorMgr(nullptr), _walkMgr(nullptr), _sequencer(nullptr),
+          _perhapsIsLoaded(false), _memFile(nullptr)
+{}
+
+GamePage::~GamePage() {
+    clear();
+}
+
+void GamePage::toConsole() {
+    Page::toConsole();
+    _walkMgr->toConsole();
+    _sequencer->toConsole();
+    for (int i = 0; i < _handlers.size(); ++i) {
+        _handlers[i]->toConsole();
+    }
+}
+
 void GamePage::deserialize(Archive &archive) {
     Page::deserialize(archive);
     _module = static_cast<Module*>(archive.readObject());
@@ -52,10 +70,9 @@ void GamePage::load(Archive &archive) {
 }
 
 void GamePage::init(bool isLoadingSave) {
-    if (!isLoadingSave){
-        //assert(perhapsIsLoaded == 0);
+    if (!_perhapsIsLoaded)
         loadManagers();
-    }
+
     getGame()->getDirector()->clear();
 
     toConsole();
@@ -91,15 +108,18 @@ bool GamePage::initHandler() {
 }
 
 void GamePage::loadManagers() {
-    perhapsIsLoaded = true;
+    _perhapsIsLoaded = true;
     _cursorMgr = new CursorMgr(_module->getGame(), this);
     _walkMgr = new WalkMgr;
     _sequencer = new Sequencer(this);
 
     _resMgr.init(_module->getGame(), this);
 
-    // memfile manipulations if from save or page changing
-
+    if (_memFile != nullptr) {
+        loadState();
+        delete _memFile;
+        _memFile = nullptr;
+    }
 }
 
 PinkEngine *GamePage::getGame() {
@@ -128,28 +148,49 @@ WalkMgr *GamePage::getWalkMgr() {
     return _walkMgr;
 }
 
-void GamePage::toConsole() {
-    Page::toConsole();
-    _walkMgr->toConsole();
-    _sequencer->toConsole();
-    for (int i = 0; i < _handlers.size(); ++i) {
-        _handlers[i]->toConsole();
+void GamePage::loadState() {
+    Archive archive(static_cast<Common::SeekableReadStream*>(_memFile));
+    archive >> _variables;
+
+    uint16 actorCount;
+    archive >> actorCount;
+
+    Common::String actorName;
+    for (int i = 0; i < actorCount; ++i) {
+        actorName = archive.readString();
+        findActor(actorName)->loadState(archive);
     }
 }
 
-GamePage::~GamePage() {
-    delete _cursorMgr;
-    delete _walkMgr;
-    delete _sequencer;
+void GamePage::saveState() {
+    _memFile = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
+    Archive archive(static_cast<Common::WriteStream*>(_memFile));
+    archive << _variables;
+
+    archive.writeWORD(_actors.size());
+    for (int i = 0; i < _actors.size(); ++i) {
+        archive.writeString(_actors[i]->getName());
+        _actors[i]->saveState(archive);
+    }
+}
+
+void GamePage::unload() {
+    _leadActor->setAction(_leadActor->findAction("Idle"));
+    saveState();
+    clear();
+}
+
+void GamePage::clear() {
+    Page::clear();
+    _variables.clear(1);
     for (int i = 0; i < _handlers.size(); ++i) {
         delete _handlers[i];
     }
+    _handlers.clear();
+    delete _cursorMgr;
+    delete _sequencer;
+    delete _walkMgr;
 }
 
-GamePage::GamePage()
-    : _cursorMgr(nullptr), _walkMgr(nullptr), _sequencer(nullptr)
-{
-
-}
 
 } // End of namespace Pink
