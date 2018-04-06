@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-03-30 09:53+0200\n"
-"PO-Revision-Date: 2018-03-08 09:03+0000\n"
+"PO-Revision-Date: 2018-04-06 10:28+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
-"Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/nl/>\n"
+"Language-Team: Dutch "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -4637,13 +4637,15 @@ msgstr "Pas bilineair filteren toe op individuele sprites"
 
 #: engines/xeen/detection.cpp:84
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "Toon voorwerp kosten in standaard inventaris mode"
 
 #: engines/xeen/detection.cpp:85
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
+"Toont kosten van voorwerpen in standaard inventaris mode, om de waarden van "
+"voorwerpen te kunnen vergelijken"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
