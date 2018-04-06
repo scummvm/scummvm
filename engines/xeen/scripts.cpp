@@ -1617,7 +1617,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		v = party._gems;
 		break;
 	case 37:
-		// Might bonus (extra beond base)
+		// Might bonus (extra beyond base)
 		v = ps->_might._temporary;
 		break;
 	case 38:

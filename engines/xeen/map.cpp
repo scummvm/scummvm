@@ -463,8 +463,6 @@ void MonsterObjectData::synchronize(XeenSerializer &s, MonsterData &monsterData)
 			if (obj._id < (int)_objectSprites.size()) {
 				obj._spriteId = _objectSprites[obj._id]._spriteId;
 				obj._sprites = &_objectSprites[obj._id]._sprites;
-			} else {
-				assert(!obj._id);
 			}
 
 			_objects.push_back(obj);
