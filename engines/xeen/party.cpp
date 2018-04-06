@@ -689,10 +689,7 @@ void Party::giveTreasure() {
 	if (!_treasure._hasItems && !_treasure._gold && !_treasure._gems)
 		return;
 
-	bool monstersPresent = false;
-	for (int idx = 0; idx < 26 && !monstersPresent; ++idx)
-		monstersPresent = combat._attackMonsters[idx] != -1;
-
+	bool monstersPresent = combat.areMonstersPresent();
 	if (_vm->_mode != MODE_RECORD_EVENTS && monstersPresent)
 		return;
 

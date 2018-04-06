@@ -305,6 +305,11 @@ public:
 	 * Fires off a ranged attack at all oncoming monsters
 	 */
 	void shootRangedWeapon();
+
+	/**
+	 * Returns true if there are any monsters in the vacinity
+	 */
+	bool areMonstersPresent() const;
 };
 
 } // End of namespace Xeen

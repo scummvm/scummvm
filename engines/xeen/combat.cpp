@@ -2087,4 +2087,13 @@ void Combat::shootRangedWeapon() {
 	rangedAttack(POW_ARROW);
 }
 
+bool Combat::areMonstersPresent() const {
+	for (int idx = 0; idx < 26; ++idx) {
+		if (_attackMonsters[idx] != -1)
+			return true;
+	}
+
+	return false;
+}
+
 } // End of namespace Xeen
