@@ -1768,7 +1768,7 @@ const char *const LLOYDS_BEACON =
 	"%s\x3l\n"
 	"x = %d\x3r\t000y = %d\x3""c\x2\v122\t021\f15S\fdet\t060\f15R\fdeturn\x1";
 
-const char *const HOW_MANY_SQUARES = "\x3""cTeleport\nHow many squares %s (1-9)";
+const char *const HOW_MANY_SQUARES = "\x3""cTeleport\nHow many squares %s (1-9)\n";
 
 const char *const TOWN_PORTAL =
 	"\x3""cTown Portal\x3l\n"

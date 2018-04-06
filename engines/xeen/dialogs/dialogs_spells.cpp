@@ -850,10 +850,9 @@ int Teleport::execute() {
 		break;
 	}
 
-	v = map.mazeLookup(pt, map._isOutdoors ? 0xF : 0xFFFF, 0);
+	v = map.mazeLookup(pt, 0, map._isOutdoors ? 0xF : 0xFFFF);
 
-	if ((v != (map._isOutdoors ? 0 : INVALID_CELL)) &&
-		(!map._isOutdoors || v == SURFTYPE_DWATER)) {
+	if ((v != (map._isOutdoors ? 0 : INVALID_CELL)) && (!map._isOutdoors || v != SURFTYPE_DWATER)) {
 		party._mazePosition = pt;
 		return 1;
 	} else {
