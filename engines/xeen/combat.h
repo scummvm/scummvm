@@ -205,6 +205,11 @@ public:
 	void clearShooting();
 
 	/**
+	 * Resets all combat related data
+	 */
+	void reset();
+
+	/**
 	 * Gives damage to character or characters in the party
 	 */
 	void giveCharDamage(int damage, DamageType attackType, int charIndex);

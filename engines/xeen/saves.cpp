@@ -152,6 +152,7 @@ Common::Error SavesManager::saveGameState(int slot, const Common::String &desc) 
 }
 
 Common::Error SavesManager::loadGameState(int slot) {
+	Combat &combat = *g_vm->_combat;
 	EventsManager &events = *g_vm->_events;
 	FileManager &files = *g_vm->_files;
 	Map &map = *g_vm->_map;
@@ -187,6 +188,9 @@ Common::Error SavesManager::loadGameState(int slot) {
 	// Read in miscellaneous
 	files.load(*saveFile);
 
+	// Reset any combat information from the previous game
+	combat.reset();
+
 	// Load the new map
 	map.clearMaze();
 	map._loadCcNum = files._ccNum;
@@ -206,6 +210,10 @@ void SavesManager::newGame() {
 	File::_xeenSave = nullptr;
 	File::_darkSave = nullptr;
 
+	// Reset any combat information from the previous game
+	g_vm->_combat->reset();
+
+	// Reset the game states
 	if (g_vm->getGameID() != GType_Clouds) {
 		File::_darkSave = new SaveArchive(g_vm->_party);
 		File::_darkSave->reset(File::_darkCc);

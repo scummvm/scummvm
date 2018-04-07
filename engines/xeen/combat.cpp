@@ -2095,4 +2095,11 @@ bool Combat::areMonstersPresent() const {
 	return false;
 }
 
+void Combat::reset() {
+	clearShooting();
+	setupCombatParty();
+
+	_combatMode = COMBATMODE_STARTUP;
+}
+
 } // End of namespace Xeen
