@@ -212,9 +212,9 @@ Party::Party(XeenEngine *vm) {
 	_holyBonus = 0;
 	_heroism = 0;
 	_difficulty = ADVENTURER;
-	_cloudsEnd = false;
-	_darkSideEnd = false;
-	_worldEnd = false;
+	_cloudsCompleted = false;
+	_darkSideCompleted = false;
+	_worldCompleted = false;
 	_ctr24 = 0;
 	_day = 0;
 	_year = 0;
@@ -299,9 +299,9 @@ void Party::synchronize(Common::Serializer &s) {
 
 	_blacksmithWares.synchronize(s, 0);
 
-	s.syncAsUint16LE(_cloudsEnd);
-	s.syncAsUint16LE(_darkSideEnd);
-	s.syncAsUint16LE(_worldEnd);
+	s.syncAsUint16LE(_cloudsCompleted);
+	s.syncAsUint16LE(_darkSideCompleted);
+	s.syncAsUint16LE(_worldCompleted);
 	s.syncAsUint16LE(_ctr24);
 	s.syncAsUint16LE(_day);
 	s.syncAsUint16LE(_year);

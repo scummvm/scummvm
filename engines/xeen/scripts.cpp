@@ -1418,7 +1418,7 @@ bool Scripts::cmdCutsceneEndDarkside(ParamsIterator &params) {
 	Party &party = *_vm->_party;
 	_vm->_saves->_wonDarkSide = true;
 	party._questItems[53] = 1;
-	party._darkSideEnd = true;
+	party._darkSideCompleted = true;
 	party._mazeId = 29;
 	party._mazeDirection = DIR_NORTH;
 	party._mazePosition = Common::Point(25, 21);
@@ -1439,7 +1439,7 @@ bool Scripts::cmdCutsceneEndWorld(ParamsIterator &params) {
 	g_vm->saveSettings();
 
 	_vm->_saves->_wonWorld = true;
-	_vm->_party->_worldEnd = true;
+	_vm->_party->_worldCompleted = true;
 
 	doWorldEnding();
 	return false;
@@ -1453,10 +1453,12 @@ bool Scripts::cmdFlipWorld(ParamsIterator &params) {
 bool Scripts::cmdPlayCD(ParamsIterator &params) { error("TODO"); }
 
 void Scripts::doCloudsEnding() {
+	g_vm->_party->_cloudsCompleted = true;
 	doEnding("ENDGAME");
 }
 
 void Scripts::doDarkSideEnding() {
+	g_vm->_party->_darkSideCompleted = true;
 	doEnding("ENDGAME2");
 }
 

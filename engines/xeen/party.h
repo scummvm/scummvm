@@ -190,9 +190,9 @@ public:
 	int _heroism;
 	Difficulty _difficulty;
 	BlacksmithWares _blacksmithWares;
-	bool _cloudsEnd;
-	bool _darkSideEnd;
-	bool _worldEnd;
+	bool _cloudsCompleted;
+	bool _darkSideCompleted;
+	bool _worldCompleted;
 	int _ctr24;		// Unused counter
 	int _day;
 	uint _year;

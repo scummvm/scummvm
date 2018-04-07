@@ -794,7 +794,7 @@ void Map::load(int mapId) {
 	for (uint i = 0; i < _mobData._objectSprites.size(); ++i) {
 		files.setGameCc(_sideObjects);
 
-		if (party._cloudsEnd && _mobData._objectSprites[i]._spriteId == 85 &&
+		if (party._cloudsCompleted && _mobData._objectSprites[i]._spriteId == 85 &&
 				mapId == 27 && ccNum) {
 			_mobData._objects[29]._spriteId = 0;
 			_mobData._objects[29]._id = 8;

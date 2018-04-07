@@ -47,6 +47,10 @@ enum MonsterType {
 	MONSTER_DRAGON = 6
 };
 
+enum MapId {
+	XEEN_CASTLE1 = 75, XEEN_CASTLE4 = 78
+};
+
 class MonsterStruct {
 public:
 	Common::String _name;

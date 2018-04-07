@@ -765,7 +765,7 @@ bool LloydsBeacon::execute() {
 
 		switch (_buttonValue) {
 		case Common::KEYCODE_r:
-			if (!ccNum && c._lloydMap >= 75 && c._lloydMap <= 78 && !party._cloudsEnd) {
+			if (!ccNum && c._lloydMap >= XEEN_CASTLE1 && c._lloydMap <= XEEN_CASTLE4 && !party._cloudsCompleted) {
 				result = false;
 			} else {
 				sound.playFX(51);
