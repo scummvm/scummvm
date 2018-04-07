@@ -141,7 +141,7 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	}
 
 	// Draw the specific surface type for each cell
-	for (int yp = MINIMAP_YSTART + (TILE_HEIGHT / 2), mazeY = pt.y + MINIMAP_DIFF;
+	for (int yp = MINIMAP_YSTART + (TILE_HEIGHT / 2) + 1, mazeY = pt.y + MINIMAP_DIFF;
 			mazeY >= (pt.y - MINIMAP_DIFF); yp += TILE_HEIGHT, --mazeY) {
 		for (int xp = MINIMAP_XSTART + (TILE_WIDTH / 2), mazeX = pt.x - MINIMAP_DIFF;
 				mazeX <= (pt.x + MINIMAP_DIFF); xp += TILE_WIDTH, ++mazeX) {
@@ -166,8 +166,8 @@ void InterfaceMinimap::drawIndoorsMinimap() {
 	}
 
 	// Handle drawing surface sprites partially clipped at the left edge
-	for (int yp = MINIMAP_YSTART, mazeY = pt.y + MINIMAP_DIFF; mazeY >= (pt.y - MINIMAP_DIFF);
-			yp += TILE_HEIGHT, --mazeY) {
+	for (int yp = MINIMAP_YSTART + (TILE_HEIGHT / 2) + 1, mazeY = pt.y + MINIMAP_DIFF;
+			mazeY >= (pt.y - MINIMAP_DIFF); yp += TILE_HEIGHT, --mazeY) {
 		v = map.mazeLookup(Common::Point(pt.x - MINIMAP_DIFF - 1, mazeY), 0, 0xffff);
 
 		if (v != INVALID_CELL && map._currentSurfaceId &&
