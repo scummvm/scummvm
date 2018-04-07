@@ -93,6 +93,7 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_RBUTTONDOWN:
 			_mousePressed = true;
 			addEvent(false, true);
+			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			_mousePressed = false;
