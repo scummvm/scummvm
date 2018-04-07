@@ -45,6 +45,12 @@ public:
 	Diary();
 	virtual ~Diary();
 
+	/** Does the player have the diary in their inventory? */
+	bool isEnabled() const;
+
+	/** Does the diary contain entries that have not been read yet? */
+	bool hasUnreadEntries() const;
+
 	/** Add an entry to the list of available diary pages */
 	void addDiaryEntry(const Common::String &name);
 

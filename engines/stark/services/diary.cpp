@@ -152,6 +152,14 @@ void Diary::logSpeech(const Common::String &line, int32 characterId) {
 	}
 }
 
+bool Diary::isEnabled() const {
+	return StarkGlobal->hasInventoryItem("Diary");
+}
+
+bool Diary::hasUnreadEntries() const {
+	return _hasUnreadEntries;
+}
+
 Diary::ConversationLog::ConversationLog() :
 		dialogActive(false),
         chapter(0),

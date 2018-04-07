@@ -30,6 +30,7 @@
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/sound.h"
 
+#include "engines/stark/services/diary.h"
 #include "engines/stark/services/global.h"
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/userinterface.h"
@@ -40,8 +41,10 @@ namespace Stark {
 
 TopMenu::TopMenu(Gfx::Driver *gfx, Cursor *cursor) :
 		Window(gfx, cursor),
-	_widgetsVisible(false),
-	_forceVisibleTimeRemaining(0) {
+		_widgetsVisible(false),
+		_newInventoryItemExplosionAnimTimeRemaining(0),
+		_newDiaryEntryAnimTimeRemaining(0),
+		_newInventoryItemChestClosingAnimTimeRemaining(0) {
 
 	_position = Common::Rect(Gfx::Driver::kOriginalWidth, Gfx::Driver::kTopBorderHeight);
 	_visible = true;
@@ -60,25 +63,53 @@ TopMenu::~TopMenu() {
 }
 
 void TopMenu::onRender() {
-	_widgetsVisible = (isMouseInside() && StarkUserInterface->isInteractive()) || _forceVisibleTimeRemaining > 0;
+	_widgetsVisible = (isMouseInside() && StarkUserInterface->isInteractive()) || isAnimationPlaying();
 
 	if (!_widgetsVisible) {
 		return;
 	}
 
-	if (_forceVisibleTimeRemaining > 0) {
-		_forceVisibleTimeRemaining -= StarkGlobal->getMillisecondsPerGameloop();
-
-		if (_forceVisibleTimeRemaining <= 0) {
-			_inventoryButton->stopImageExplosion();
-			_inventoryButton->goToAnimStatement(12); // TODO: Closing animation is rendered only when mouse is hovering topmenu
-			_optionsButton->stopImageFlashing();
-		}
+	if (StarkDiary->hasUnreadEntries()) {
+		_optionsButton->setUIElement(StaticProvider::kDiaryTabbed);
+	} else {
+		_optionsButton->setUIElement(StaticProvider::kDiaryNormal);
 	}
+
+	updateAnimations();
 
 	_inventoryButton->render();
 	_optionsButton->render();
 	_exitButton->render();
+}
+
+bool TopMenu::isAnimationPlaying() const {
+	return _newInventoryItemExplosionAnimTimeRemaining > 0
+	       || _newDiaryEntryAnimTimeRemaining > 0
+	       || _newInventoryItemChestClosingAnimTimeRemaining > 0;
+}
+
+void TopMenu::updateAnimations() {
+	if (_newInventoryItemExplosionAnimTimeRemaining > 0) {
+		_newInventoryItemExplosionAnimTimeRemaining -= StarkGlobal->getMillisecondsPerGameloop();
+
+		if (_newInventoryItemExplosionAnimTimeRemaining <= 0) {
+			_inventoryButton->stopImageExplosion();
+
+			_newInventoryItemChestClosingAnimTimeRemaining = 20 * 33; // 20 frames at 30 fps
+			_inventoryButton->goToAnimStatement(12);
+		}
+	}
+
+	if (_newInventoryItemChestClosingAnimTimeRemaining > 0) {
+		_newInventoryItemChestClosingAnimTimeRemaining -= StarkGlobal->getMillisecondsPerGameloop();
+	}
+
+	if (_newDiaryEntryAnimTimeRemaining > 0) {
+		_newDiaryEntryAnimTimeRemaining -= StarkGlobal->getMillisecondsPerGameloop();
+		if (_newDiaryEntryAnimTimeRemaining <= 0) {
+			_optionsButton->stopImageFlashing();
+		}
+	}
 }
 
 void TopMenu::onMouseMove(const Common::Point &pos) {
@@ -103,7 +134,7 @@ void TopMenu::onClick(const Common::Point &pos) {
 	}
 
 	if (_exitButton->containsPoint(pos)) {
-		// TODO: Ask
+		// TODO: Confirmation dialog
 		StarkUserInterface->notifyShouldExit();
 	}
 
@@ -135,7 +166,7 @@ void TopMenu::onScreenChanged() {
 }
 
 void TopMenu::notifyInventoryItemEnabled(uint16 itemIndex) {
-	_forceVisibleTimeRemaining = 128 * 33; // 128 frames at 30 fps
+	_newInventoryItemExplosionAnimTimeRemaining = 128 * 33; // 128 frames at 30 fps
 	_inventoryButton->goToAnimStatement(2);
 
 	Visual *inventoryItemImage = StarkGlobal->getInventory()->getInventoryItemVisual(itemIndex);
@@ -147,11 +178,11 @@ void TopMenu::notifyInventoryItemEnabled(uint16 itemIndex) {
 }
 
 void TopMenu::notifyDiaryEntryEnabled() {
-	_forceVisibleTimeRemaining = 150 * 33; // 150 frames at 30 fps
-	_optionsButton->setUIElement(StaticProvider::kDiaryTabbed);
-
-	VisualImageXMG *diaryImage = StarkStaticProvider->getUIElement(StaticProvider::kDiaryTabbed);
-	_optionsButton->startImageFlashing(diaryImage);
+	if (StarkDiary->isEnabled()) {
+		_newDiaryEntryAnimTimeRemaining = 5000;
+		VisualImageXMG *diaryImage = StarkStaticProvider->getUIElement(StaticProvider::kDiaryTabbed);
+		_optionsButton->startImageFlashing(diaryImage);
+	}
 }
 
 } // End of namespace Stark
