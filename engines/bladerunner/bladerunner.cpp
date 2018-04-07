@@ -1561,7 +1561,6 @@ bool BladeRunnerEngine::openArchive(const Common::String &name) {
 		 * archive when it runs out of slots. */
 
 		error("openArchive: No more archive slots");
-		return false;
 	}
 
 	_archives[i].open(name);
