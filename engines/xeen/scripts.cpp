@@ -214,7 +214,7 @@ int Scripts::checkEvents() {
 		MazeObject &selectedObj = map._mobData._objects[intf._objNumber];
 
 		if (selectedObj._spriteId == (ccNum ? 15 : 16)) {
-			for (uint idx = 0; idx < 16; ++idx) {
+			for (uint idx = 0; idx < MIN((int)map._mobData._objects.size(), 16); ++idx) {
 				MazeObject &obj = map._mobData._objects[idx];
 				if (obj._spriteId == (ccNum ? 62 : 57)) {
 					selectedObj._id = idx;
@@ -223,7 +223,7 @@ int Scripts::checkEvents() {
 				}
 			}
 		} else if (selectedObj._spriteId == 73) {
-			for (uint idx = 0; idx < 16; ++idx) {
+			for (uint idx = 0; idx < MIN((int)map._mobData._objects.size(), 16); ++idx) {
 				MazeObject &obj = map._mobData._objects[idx];
 				if (obj._spriteId == 119) {
 					selectedObj._id = idx;
