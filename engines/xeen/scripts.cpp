@@ -596,7 +596,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 	Combat &combat = *_vm->_combat;
 	Party &party = *_vm->_party;
 	Windows &windows = *_vm->_windows;
-	int mode1, mode2, mode3, param2;
+	int mode1, mode2, mode3;
 	uint32 val1, val2, val3;
 
 	_refreshIcons = true;
@@ -618,7 +618,7 @@ bool Scripts::cmdTakeOrGive(ParamsIterator &params) {
 		break;
 	}
 
-	param2 = mode2 = params.readByte();
+	mode2 = params.readByte();
 	switch (mode2) {
 	case 16:
 	case 34:
