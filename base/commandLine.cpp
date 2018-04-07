@@ -131,7 +131,11 @@ static const char HELP_STRING[] =
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
 	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
-	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame, nuked)\n"
+	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
+#ifndef DISABLE_NUKED_OPL
+                                                                     ", nuked"
+#endif
+                                                                              ")\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
 	"  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,\n"
 	"                           cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,\n"
