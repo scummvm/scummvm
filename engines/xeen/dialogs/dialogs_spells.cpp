@@ -765,7 +765,8 @@ bool LloydsBeacon::execute() {
 
 		switch (_buttonValue) {
 		case Common::KEYCODE_r:
-			if (!ccNum && c._lloydMap >= XEEN_CASTLE1 && c._lloydMap <= XEEN_CASTLE4 && !party._cloudsCompleted) {
+			if (!ccNum && c._lloydMap >= XEEN_CASTLE1 && c._lloydMap <= XEEN_CASTLE4 && party._cloudsCompleted) {
+				// Xeen's Castle has already been destroyed
 				result = false;
 			} else {
 				sound.playFX(51);
