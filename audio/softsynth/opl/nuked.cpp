@@ -1485,4 +1485,4 @@ void OPL::generateSamples(int16*buffer, int length) {
 }
 }
 
-#endif // !DISABLE_NUKED_OPL 
+#endif // !DISABLE_NUKED_OPL

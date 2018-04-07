@@ -368,20 +368,22 @@ define_in_config_h_if_yes() {
 	fi
 }
 
-define_in_config_h_if_no() {
-	if test "$1" = no ; then
-		add_line_to_config_h "#define $2"
-	else
-		add_line_to_config_h "#undef $2"
-	fi
-}
-
 # Conditionally add definitions to config.h and config.mk. Takes two parameters:
 # The first one can be set to 'yes' or 'no'. If 'yes' is used, then
 # the line "#define $2" is added to config.h and "$2 = 1" to config.mk.
 # Otherwise "#undef $2" is added to config.h and "# $2 = 1" to config.mk
 define_in_config_if_yes() {
 	if test "$1" = yes ; then
+		add_line_to_config_h "#define $2"
+		add_line_to_config_mk "$2 = 1"
+	else
+		add_line_to_config_h "#undef $2"
+		add_line_to_config_mk "# $2 = 1"
+	fi
+}
+
+define_in_config_if_no() {
+	if test "$1" = no ; then
 		add_line_to_config_h "#define $2"
 		add_line_to_config_mk "$2 = 1"
 	else
@@ -2338,6 +2340,7 @@ case $_host_os in
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
+		_nuked_opl=no
 		;;
 	android)
 		case $_host in
@@ -3901,7 +3904,7 @@ define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
 #
 # Check whether Nuked OPL emulator support is disabled
 #
-define_in_config_h_if_no "$_nuked_opl" 'DISABLE_NUKED_OPL'
+define_in_config_if_no "$_nuked_opl" 'DISABLE_NUKED_OPL'
 
 #
 # Check whether 16bit color support is requested
