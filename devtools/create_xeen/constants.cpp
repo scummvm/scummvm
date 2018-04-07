@@ -968,7 +968,7 @@ const char *const GOLD_GEMS =
 	"Gems\x3r\t000%s\x2\x3""c\v096\t013G\f37o\fdld\t040G\f37e\fdms\t067ESC\x1";
 
 const char *const GOLD_GEMS_2 =
-	"\t000\v000\x3""c%s\x3l\n"
+	"\x3""c\v000\t000%s\x3l\n"
 	"\n"
 	"\x4""077Gold\x3r\t000%s\x3l\n"
 	"\x4""077Gems\x3r\t000%s\x3l\t000\v051\x4""077\n"
