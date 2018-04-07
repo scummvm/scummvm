@@ -621,7 +621,7 @@ int SelectElement::execute(int spellId) {
 	while (result == 999) {
 		do {
 			events.updateGameCounter();
-			intf.draw3d(true);
+			intf.draw3d(true, false);
 			w.frame();
 			w.writeString(Res.WHICH_ELEMENT2);
 			drawButtons(&windows[0]);

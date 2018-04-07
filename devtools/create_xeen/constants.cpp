@@ -1755,7 +1755,7 @@ const char *const WHICH_ELEMENT1 =
 	"\f15E\fdlec\t074\f15C\fdold\t104\f15A\fdcid\x1";
 
 const char *const WHICH_ELEMENT2 =
-	"\r\x3""cWhich Element?', 2, 0Bh, '034\t014\f15F\fdire\t044"
+	"\r\x3""cWhich Element?\x2\v034\t014\f15F\fdire\t044"
 	"\f15E\fdlec\t074\f15C\fdold\t104\f15A\fdcid\x1";
 
 const char *const DETECT_MONSTERS = "\x3""cDetect Monsters";
