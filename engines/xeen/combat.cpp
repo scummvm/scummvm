@@ -1372,6 +1372,7 @@ void Combat::attack(Character &c, RangeType rangeType) {
 }
 
 void Combat::attack2(int damage, RangeType rangeType) {
+	Debugger &debugger = *_vm->_debugger;
 	Interface &intf = *_vm->_interface;
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
@@ -1383,6 +1384,8 @@ void Combat::attack2(int damage, RangeType rangeType) {
 
 	if (!ccNum && damage && rangeType != RT_SINGLE && monster._spriteId == 89)
 		damage = 0;
+	if (debugger._superStrength)
+		damage = 10000;
 
 	if (!damage) {
 		sound.playSound(_missVoc, 1);

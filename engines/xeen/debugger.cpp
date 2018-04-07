@@ -45,7 +45,7 @@ static int strToInt(const char *s) {
 /*------------------------------------------------------------------------*/
 
 Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm),
-		_spellId(-1), _invincible(false), _intangible(false) {
+		_spellId(-1), _invincible(false), _intangible(false), _superStrength(false) {
 	registerCmd("continue", WRAP_METHOD(Debugger, cmdExit));
 	registerCmd("spell", WRAP_METHOD(Debugger, cmdSpell));
 	registerCmd("spells", WRAP_METHOD(Debugger, cmdSpells));
@@ -55,6 +55,7 @@ Debugger::Debugger(XeenEngine *vm) : GUI::Debugger(), _vm(vm),
 	registerCmd("map", WRAP_METHOD(Debugger, cmdMap));
 	registerCmd("pos", WRAP_METHOD(Debugger, cmdPos));
 	registerCmd("invincible", WRAP_METHOD(Debugger, cmdInvincible));
+	registerCmd("strength", WRAP_METHOD(Debugger, cmdSuperStrength));
 	registerCmd("intangible", WRAP_METHOD(Debugger, cmdIntangible));
 }
 
@@ -197,6 +198,12 @@ bool Debugger::cmdPos(int argc, const char **argv) {
 bool Debugger::cmdInvincible(int argc, const char **argv) {
 	_invincible = (argc < 2) || strcmp(argv[1], "off");
 	debugPrintf("Invincibility is %s\n", _invincible ? "on" : "off");
+	return true;
+}
+
+bool Debugger::cmdSuperStrength(int argc, const char **argv) {
+	_superStrength = (argc < 2) || strcmp(argv[1], "off");
+	debugPrintf("Super-powered attacks are %s\n", _superStrength ? "on" : "off");
 	return true;
 }
 
