@@ -25,11 +25,15 @@
 #include "inventory.h"
 #include "engines/pink/archive.h"
 #include "pink/objects/actors/lead_actor.h"
+#include "pink/objects/actions/action.h"
+#include "pink/objects/pages/game_page.h"
+#include "pink/director.h"
+#include "pink/pink.h"
 
 namespace Pink {
 
 InventoryMgr::InventoryMgr()
-    : _lead(nullptr), _item(nullptr)
+    : _lead(nullptr), _item(nullptr), _isClickedOnItem(false)
 {
 }
 
@@ -57,11 +61,12 @@ void InventoryMgr::deserialize(Archive &archive) {
     archive >> _items;
 }
 
-InventoryItem *InventoryMgr::findInventoryItem(Common::String &name) {
-    return *Common::find_if(_items.begin(), _items.end(), [&name]
+InventoryItem *InventoryMgr::findInventoryItem(const Common::String &name) {
+    auto it = Common::find_if(_items.begin(), _items.end(), [&name]
             (InventoryItem *item) {
         return name == item->getName();
     });;
+    return it != _items.end() ? *it : nullptr;
 }
 
 void InventoryMgr::setLeadActor(LeadActor *lead) {
@@ -99,6 +104,86 @@ void InventoryMgr::setItemOwner(const Common::String &owner, InventoryItem *item
         _item = item;
 
     item->_currentOwner = owner;
+}
+
+bool InventoryMgr::start(bool playOpening) {
+    if (!_item) {
+        _item = findInventoryItem(_lead->getName());
+        if (!_item)
+            return false;
+    }
+
+    _window = _lead->getPage()->findActor("InventoryWindow");
+    _itemActor = _lead->getPage()->findActor("InventoryItem");
+    _rightArrow = _lead->getPage()->findActor("InventoryRightArrow");
+    _leftArrow = _lead->getPage()->findActor("InventoryLeftArrow");
+
+    if (playOpening){
+        _window->setAction("Open");
+        _state = kOpening;
+    }
+
+    return true;
+}
+
+void InventoryMgr::update() {
+    if (_state == kOpening && !_window->isPlaying()){
+        _state = kReady;
+        _itemActor->setAction(_item->getName());
+        _window->setAction("Show");
+        _leftArrow->setAction("Show");
+        _rightArrow->setAction("Show");
+    }
+    else if (_state == kClosing && !_window->isPlaying()){
+        _window->setAction("Idle");
+
+        _lead->onInventoryClosed(_isClickedOnItem);
+
+        _state = kIdle;
+        _window = nullptr;
+        _itemActor = nullptr;
+        _isClickedOnItem = false;
+    }
+}
+
+void InventoryMgr::onClick(Common::Point point) {
+    Actor *actor = _lead->getPage()->getGame()->getDirector()->getActorByPoint(point);
+    if (actor == _itemActor || actor == _window) {
+        _isClickedOnItem = true;
+        close();
+    }
+    else if (actor == _leftArrow) {
+        showNextItem(kLeft);
+    }
+    else if (actor == _rightArrow) {
+        showNextItem(kRight);
+    }
+    else close();
+}
+
+void InventoryMgr::close() {
+    _state = kClosing;
+
+    _window->setAction("Close");
+    _itemActor->setAction("Idle");
+    _leftArrow->setAction("Idle");
+    _rightArrow->setAction("Idle");
+}
+
+void InventoryMgr::showNextItem(bool direction) {
+    int index = 0;
+    for (int i = 0; i < _items.size(); ++i) {
+        if (_item == _items[i]) {
+            index = i + _items.size();
+            break;
+        }
+    }
+    index = (direction == kLeft) ? --index : ++index;
+    index %= _items.size();
+
+    //add check for item owner
+    _itemActor->setAction(_items[index]->getName());
+    _item = _items[index];
 }
 
 } // End of namespace Pink

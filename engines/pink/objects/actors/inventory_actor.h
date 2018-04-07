@@ -37,6 +37,8 @@ public:
             _actions[i]->toConsole();
         }
     }
+
+    void pause() {}
 };
 
 } // End of namespace Pink

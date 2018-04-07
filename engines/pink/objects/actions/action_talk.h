@@ -37,6 +37,9 @@ public:
 
     virtual void end();
 
+    void pause() override;
+    void unpause() override;
+
 protected:
     virtual void onStart();
 

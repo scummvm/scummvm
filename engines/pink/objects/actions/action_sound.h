@@ -42,6 +42,9 @@ public:
     virtual void end();
     virtual void update();
 
+    void pause() override;
+    void unpause() override;
+
 private:
     Sound *_sound;
     Common::String _fileName;

@@ -70,6 +70,10 @@ public:
     virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
 
     virtual bool isClickable() { return 0;}
+
+    virtual void pause();
+    virtual void unpause();
+
 protected:
     GamePage *_page;
     Action *_action;

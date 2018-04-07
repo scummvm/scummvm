@@ -48,6 +48,7 @@ void ActionPlayWithSfx::update() {
         _decoder->stop();
         _actor->endAction();
     }
+
     updateSound();
 }
 
@@ -60,6 +61,9 @@ void ActionPlayWithSfx::onStart() {
 }
 
 void ActionPlayWithSfx::updateSound() {
+    if (!_actor->isPlaying() && !_isLoop)
+        return;
+
     for (int i = 0; i < _sfxArray.size(); ++i) {
         if (_sfxArray[i]->getFrame() == _decoder->getCurFrame()) {
             _sfxArray[i]->play(_actor->getPage());
@@ -68,6 +72,7 @@ void ActionPlayWithSfx::updateSound() {
 }
 
 ActionPlayWithSfx::~ActionPlayWithSfx() {
+    ActionPlay::end();
     for (int i = 0; i < _sfxArray.size(); ++i) {
         delete _sfxArray[i];
     }

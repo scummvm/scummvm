@@ -88,6 +88,8 @@ void LeadActor::update() {
             break;
 
         case kInventory:
+            getPage()->getModule()->getInventoryMgr()->update();
+            break;
         case kPDA:
             break;
 
@@ -184,25 +186,34 @@ void LeadActor::onLeftButtonClick(Common::Point point) {
         case kMoving: {
         Actor *actor = _page->getGame()->getDirector()->getActorByPoint(point);
 
-        if (this == actor){
-            // inventory is not implemented
+        if (this == actor) {
+            onClick();
             return;
         }
 
         _recipient = (SupportingActor*) actor;
         if (actor->isClickable() &&
-            _recipient->isLeftClickHandlers()){
-            _state = kMoving;
-            _nextState = kInDialog1;
-            _walkMgr->start(_walkMgr->findLocation(_recipient->getLocation()));
+            _recipient->isLeftClickHandlers()) {
+            WalkLocation *location = _walkMgr->findLocation(_recipient->getLocation());
+            if (location) {
+                _state = kMoving;
+                _nextState = kInDialog1;
+                _walkMgr->start(location);
+            }
+            else if (_state == kReady){
+                if (_isHaveItem)
+                    sendUseClickMessage(_recipient);
+                else sendLeftClickMessage(_recipient);
+            }
         }
-            break;
+
+        break;
         }
         case kPDA:
 
             break;
         case kInventory:
-
+            _page->getModule()->getInventoryMgr()->onClick(point);
             break;
         default:
             break;
@@ -220,8 +231,9 @@ void LeadActor::onWalkEnd() {
     _state = kReady;
     _nextState = kUnk_Loading;
     if (_recipient && oldNextState == kInDialog1){
-        // if use click not impl
-        sendLeftClickMessage(_recipient);
+        if (_isHaveItem)
+            sendUseClickMessage(_recipient);
+        else sendLeftClickMessage(_recipient);
     }
 }
 
@@ -238,7 +250,7 @@ bool LeadActor::sendLeftClickMessage(SupportingActor *actor) {
 void LeadActor::onClick() {
     if (_isHaveItem) {
         _isHaveItem = false;
-        _nextState = _state != kMoving ?
+        _nextState = (_state != kMoving) ?
                      kUnk_Loading : kReady;
     }
     else {
@@ -246,8 +258,26 @@ void LeadActor::onClick() {
             _recipient = nullptr;
             _nextState = kReady;
         }
-
+        if (_page->getModule()->getInventoryMgr()->start(1)){
+            _stateCopy = _state;
+            _state = kInventory;
+            _page->pause();
+        }
     }
+}
+
+LeadActor::LeadActor()
+    : _state(kReady), _nextState(kReady),
+      _isHaveItem(false), _recipient(nullptr),
+      _cursorMgr(nullptr), _walkMgr(nullptr),
+      _sequencer(nullptr)
+{}
+
+void LeadActor::onInventoryClosed(bool isItemClicked) {
+    _isHaveItem = isItemClicked;
+    _state = _stateCopy;
+    _stateCopy = kUnk_Loading;
+    _page->unpause();
 }
 
 void ParlSqPink::toConsole() {

@@ -45,6 +45,10 @@ public:
 
     virtual bool initPalette(Director *director);
 
+    void pause() override;
+
+    void unpause() override;
+
 protected:
     virtual void onStart() {} ;
     CelDecoder *_decoder;
