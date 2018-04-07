@@ -522,8 +522,8 @@ void Spells::elementalStorm() {
 	combat._monsterDamage = 150;
 	combat._damageType = (DamageType)_vm->getRandomNumber(DT_FIRE, DT_POISON);
 	combat._rangeType = RT_ALL;
-	sound.playFX(STORM_FX_LIST[combat._damageType]);
-	combat.rangedAttack(STORM_MA_LIST[combat._damageType]);
+	sound.playFX(STORM_FX_LIST[combat._damageType - DT_FIRE]);
+	combat.rangedAttack(STORM_MA_LIST[combat._damageType - DT_FIRE]);
 }
 
 void Spells::enchantItem() {
