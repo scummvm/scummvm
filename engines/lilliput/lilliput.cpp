@@ -152,7 +152,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_nextCharacterIndex = 0;
 	_waitingSignal = -1;
 	_waitingSignalCharacterId = -1;
-	_word1817B = 0;
+	_newModesEvaluatedNumber = 0;
 	_savedSurfaceUnderMousePos = Common::Point(0, 0);
 	_displayGreenHand = false;
 	_isCursorGreenHand = false;
@@ -2738,7 +2738,7 @@ void LilliputEngine::handleGameScripts() {
 	_waitingSignal = _characterSignals[index] >> 8;
 	_waitingSignalCharacterId = _characterSignals[index] & 0xFF;
 	_characterSignals[index] = -1;
-	_word1817B = 0;
+	_newModesEvaluatedNumber = 0;
 
 	int tmpVal = _characterBehaviour[index];
 	if (tmpVal == 0xFF)

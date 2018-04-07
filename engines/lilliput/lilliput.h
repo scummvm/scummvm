@@ -149,7 +149,7 @@ public:
 	int _nextCharacterIndex;
 	int8 _waitingSignal;
 	int8 _waitingSignalCharacterId;
-	uint16 _word1817B;
+	uint16 _newModesEvaluatedNumber;
 	Common::Point _savedSurfaceUnderMousePos;
 	bool _displayGreenHand;
 	bool _isCursorGreenHand;

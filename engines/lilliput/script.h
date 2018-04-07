@@ -53,7 +53,6 @@ enum kValueType {
 	kgetPosFromScript
 };
 
-
 struct OpCode {
 	const char* _opName;
 	int _numArgs;
@@ -62,6 +61,11 @@ struct OpCode {
 	kValueType _arg3;
 	kValueType _arg4;
 	kValueType _arg5;
+};
+
+struct EvaluatedMode {
+	int _mode;
+	int _priority;
 };
 
 class LilliputScript {
@@ -90,7 +94,7 @@ public:
 	Common::Point _sequenceArr[640];
 	byte _characterMapPixelColor[40];
 	int8 _characterLastSequence[40];
-	Common::Point _array1813BPos[32];
+	EvaluatedMode _newEvaluatedModes[32];
 
 	LilliputScript(LilliputEngine *vm);
 	~LilliputScript();
@@ -110,17 +114,16 @@ private:
 	byte _cubeSet;
 	byte _lastRandomValue;
 	byte _scriptForVal;
-	byte _byte1881A;
-	byte _byte18823;
+	byte _textVarNumber;
 	byte _speechDisplaySpeed;
 
 	int16 _word16F00_characterId;
 	int _currentSpeechId;
 	int _word18821;
-	int _word129A3;
+	int _monitoredCharacter;
 	Common::Point _word1825E;
 
-	char _array129A5[4];
+	char _monitoredAttr[4];
 
 	int handleOpcode(ScriptStream *script);
 	byte handleOpcodeType1(int curWord);
@@ -138,7 +141,7 @@ private:
 	byte *getCurrentCharacterVarFromScript();
 	void sendSignal(int16 var1, byte var2h, byte characterId, int16 var4);
 	void getSpeechVariant(int speechIndex, int speechVariant);
-	void sub189B8();
+	void showSpeech();
 	void formatSpeechString();
 	Common::Point getCharacterTilePos(int index);
 	int getPackedStringStartRelativeIndex(int index);
@@ -212,7 +215,7 @@ private:
 	void OC_getComputedVariantSpeechIfMute();
 	void OC_startSpeechIfSilent();
 	void OC_ComputeCharacterVariable();
-	void OC_getRandom_type2();
+	void OC_setAttributeToRandom();
 	void OC_setCharacterPosition();
 	void OC_DisableCharacter();
 	void OC_saveAndQuit();
@@ -222,7 +225,7 @@ private:
 	void OC_deleteSavegameAndQuit();
 	void OC_incScriptForVal();
 	void OC_computeChararacterAttr();
-	void OC_setByte18823();
+	void OC_setTextVarNumber();
 	void OC_callScript();
 	void OC_callScriptAndReturn();
 	void OC_setCurrentScriptCharacterPos();
@@ -257,15 +260,15 @@ private:
 	void OC_setCurrentCharacterAttr2();
 	void OC_clearCurrentCharacterAttr2();
 	void OC_setCharacterProperties();
-	void OC_sub1805D();
+	void OC_setMonitoredCharacter();
 	void OC_setNewPose();
 	void OC_setCurrentCharacterDirection();
 	void OC_setInterfaceHotspot();
 	void OC_scrollViewPort();
 	void OC_setViewPortPos();
 	void OC_setCurrentCharacterAltitude();
-	void OC_sub1817F();
-	void sub1818B(Common::Point point);
+	void OC_setModePriority();
+	void setMode(EvaluatedMode newMode);
 	void OC_sub181BB();
 	void OC_sub18213();
 	void OC_magicPuffEntrance();
