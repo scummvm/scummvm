@@ -1455,6 +1455,12 @@ bool Scripts::cmdPlayCD(ParamsIterator &params) { error("TODO"); }
 void Scripts::doCloudsEnding() {
 	g_vm->_party->_cloudsCompleted = true;
 	doEnding("ENDGAME");
+
+	g_vm->_mode = MODE_1;
+	g_vm->_saves->saveGame();
+
+	g_vm->_gameMode = GMODE_MENU;
+	g_vm->_mode = MODE_STARTUP;
 }
 
 void Scripts::doDarkSideEnding() {
