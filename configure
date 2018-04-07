@@ -187,6 +187,7 @@ _plugin_suffix=
 _nasm=auto
 _optimization_level=
 _default_optimization_level=-O2
+_nuked_opl=yes
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -361,6 +362,14 @@ add_to_config_mk_if_yes() {
 # the line "#define $2" is added to config.h, otherwise "#undef $2".
 define_in_config_h_if_yes() {
 	if test "$1" = yes ; then
+		add_line_to_config_h "#define $2"
+	else
+		add_line_to_config_h "#undef $2"
+	fi
+}
+
+define_in_config_h_if_no() {
+	if test "$1" = no ; then
 		add_line_to_config_h "#define $2"
 	else
 		add_line_to_config_h "#undef $2"
@@ -969,6 +978,7 @@ Optional Features:
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
+  --disable-nuked-opl      don't build Nuked OPL driver
   --disable-16bit          don't enable 16bit color support
   --disable-highres        don't enable support for high resolution engines >320x240
   --disable-savegame-timestamp don't use timestamps for blank savegame descriptions
@@ -1171,6 +1181,8 @@ for ac_option in $@; do
 	--default-dynamic)        _plugins_default=dynamic ;;
 	--enable-mt32emu)         _mt32emu=yes    ;;
 	--disable-mt32emu)        _mt32emu=no     ;;
+	--enable-nuked-opl)       _nuked_opl=yes    ;;
+	--disable-nuked-opl)      _nuked_opl=no     ;;
 	--enable-translation)     _translation=yes ;;
 	--disable-translation)    _translation=no ;;
 	--enable-vkeybd)          _vkeybd=yes     ;;
@@ -2655,6 +2667,7 @@ case $_host_os in
 		append_var DEFINES "-DDISABLE_SID"
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		add_line_to_config_mk 'N64 = 1'
+		_nuked_opl=no
 		;;
 	ps2)
 		append_var CXXFLAGS "-G2"
@@ -2883,6 +2896,7 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-mips32"
 			_backend="dingux"
 			_mt32emu=no
+			_nuked_opl=no
 			_optimization_level=-O3
 			# Disable alsa midi to get the port build on OpenDingux toolchain
 			_alsa=no
@@ -2964,6 +2978,7 @@ if test -n "$_host"; then
 			_backend="ds"
 			_build_scalers=no
 			_mt32emu=no
+			_nuked_opl=no
 			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
@@ -3187,6 +3202,7 @@ if test -n "$_host"; then
 			_backend="ps2"
 			_build_scalers=no
 			_mt32emu=no
+			_nuked_opl=no
 			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
 			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
 			# libtremor, while our code later on expects it to be called libvorbisidec.
@@ -3404,6 +3420,7 @@ case $_backend in
 		append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 		append_var LIBS "-lpng"
 		append_var LIBS "-Wl,-Map,mapfile.txt"
+		_nuked_opl=no
 		;;
 	psp2)
 		append_var LIBS "-lvitashaders -lSDL2 -lvita2d_fbo -lSceCommonDialog_stub"
@@ -3880,6 +3897,11 @@ fi
 # Check whether integrated MT-32 emulator support is requested
 #
 define_in_config_if_yes "$_mt32emu" 'USE_MT32EMU'
+
+#
+# Check whether Nuked OPL emulator support is disabled
+#
+define_in_config_h_if_no "$_nuked_opl" 'DISABLE_NUKED_OPL'
 
 #
 # Check whether 16bit color support is requested
@@ -5018,6 +5040,10 @@ fi
 
 if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emulator"
+fi
+
+if test "$_nuked_opl" = yes ; then
+	echo_n ", Nuked OPL emulator"
 fi
 
 if test "$_text_console" = yes ; then
