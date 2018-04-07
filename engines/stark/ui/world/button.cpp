@@ -47,6 +47,7 @@ Button::Button(const Common::String &text, StaticProvider::UIElement stockElemen
 
 Button::~Button() {
 	delete _explodingImageAnimation;
+	delete _flashingImageAnimation;
 	delete _mouseText;
 }
 
