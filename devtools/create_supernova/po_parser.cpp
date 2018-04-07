@@ -69,7 +69,7 @@ void PoMessageList::insert(const char *translation, const char *msg, const char 
 
 const char *PoMessageList::findTranslation(const char *msg, const char *context) {
 	if (msg == NULL || *msg == '\0')
-		NULL;
+		return NULL;
 
 	// binary-search for the message
 	int leftIndex = 0;
