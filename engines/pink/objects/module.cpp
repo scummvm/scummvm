@@ -69,8 +69,7 @@ void Module::changePage(const Common::String &pageName) {
     page = findPage(pageName);
     assert(_page != page);
 
-    _page->clear();
-
+    _page->unload();
 
     _page = page;
     _page->init(kLoadingNewGame);

@@ -108,8 +108,12 @@ inline Archive &operator>>(Archive &archive, Common::StringArray &array){
 }
 
 inline Archive &operator>>(Archive &archive, Common::StringMap &map){
-    archive.readCount();
-    map.setVal(archive.readString(), archive.readString());
+    uint size = archive.readCount();
+    for (int i = 0; i < size; ++i) {
+        Common::String key = archive.readString();
+        Common::String val = archive.readString();
+        map.setVal(key, val);
+    }
     return archive;
 }
 
@@ -142,7 +146,6 @@ inline Archive &operator<<(Archive &archive, Common::StringMap &map){
         archive.writeString(pair._key);
         archive.writeString(pair._value);
     }
-    map.setVal(archive.readString(), archive.readString());
     return archive;
 }
 

@@ -32,7 +32,7 @@ namespace Pink {
 
 GamePage::GamePage()
         : _cursorMgr(nullptr), _walkMgr(nullptr), _sequencer(nullptr),
-          _perhapsIsLoaded(false), _memFile(nullptr)
+          _isLoaded(false), _memFile(nullptr)
 {}
 
 GamePage::~GamePage() {
@@ -64,16 +64,13 @@ void GamePage::load(Archive &archive) {
     _leadActor = static_cast<LeadActor*>(archive.readObject());
 
     _walkMgr->deserialize(archive);
-
     _sequencer->deserialize(archive);
     archive >> _handlers;
 }
 
 void GamePage::init(bool isLoadingSave) {
-    if (!_perhapsIsLoaded)
+    if (!_isLoaded)
         loadManagers();
-
-    getGame()->getDirector()->clear();
 
     toConsole();
 
@@ -108,7 +105,7 @@ bool GamePage::initHandler() {
 }
 
 void GamePage::loadManagers() {
-    _perhapsIsLoaded = true;
+    _isLoaded = true;
     _cursorMgr = new CursorMgr(_module->getGame(), this);
     _walkMgr = new WalkMgr;
     _sequencer = new Sequencer(this);
@@ -150,6 +147,7 @@ WalkMgr *GamePage::getWalkMgr() {
 
 void GamePage::loadState() {
     Archive archive(static_cast<Common::SeekableReadStream*>(_memFile));
+    _variables.clear(0);
     archive >> _variables;
 
     uint16 actorCount;
@@ -165,6 +163,7 @@ void GamePage::loadState() {
 void GamePage::saveState() {
     _memFile = new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
     Archive archive(static_cast<Common::WriteStream*>(_memFile));
+
     archive << _variables;
 
     archive.writeWORD(_actors.size());
@@ -172,12 +171,14 @@ void GamePage::saveState() {
         archive.writeString(_actors[i]->getName());
         _actors[i]->saveState(archive);
     }
+
 }
 
 void GamePage::unload() {
     _leadActor->setAction(_leadActor->findAction("Idle"));
     saveState();
     clear();
+    _isLoaded = false;
 }
 
 void GamePage::clear() {
@@ -187,9 +188,9 @@ void GamePage::clear() {
         delete _handlers[i];
     }
     _handlers.clear();
-    delete _cursorMgr;
-    delete _sequencer;
-    delete _walkMgr;
+    delete _cursorMgr; _cursorMgr = nullptr;
+    delete _sequencer; _sequencer = nullptr;
+    delete _walkMgr; _walkMgr = nullptr;
 }
 
 

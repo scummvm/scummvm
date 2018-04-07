@@ -25,6 +25,7 @@
 
 
 #include <common/array.h>
+#include <common/rect.h>
 #include "engines/pink/objects/object.h"
 
 namespace Pink {
@@ -45,26 +46,51 @@ private:
 };
 
 class LeadActor;
+class Actor;
 
 class InventoryMgr : public Object {
 public:
     InventoryMgr();
     virtual ~InventoryMgr();
     virtual void deserialize(Archive &archive);
-
     virtual void toConsole();
 
+    void update();
+    void onClick(Common::Point point);
+
+    bool start(bool playOpening);
+
     void setLeadActor(LeadActor *lead);
-    InventoryItem* findInventoryItem(Common::String &name);
+    InventoryItem* findInventoryItem(const Common::String &name);
 
     bool isPinkOwnsAnyItems();
     void setItemOwner(const Common::String &owner, InventoryItem *item);
 
 private:
-    LeadActor *_lead;
+    void close();
+    enum Direction {
+        kLeft = 0,
+        kRight = 1,
+    };
+    void showNextItem(bool direction);
+
+
     InventoryItem *_item;
     Common::Array<InventoryItem*> _items;
-    // other fields. haven't RE them yet
+
+    LeadActor *_lead;
+    Actor *_window;
+    Actor *_itemActor;
+    Actor *_rightArrow;
+    Actor *_leftArrow;
+
+    enum State {
+        kIdle = 0,
+        kOpening = 1,
+        kReady = 2,
+        kClosing = 3,
+    } _state;
+    bool _isClickedOnItem;
 };
 
 } // End of namespace Pink

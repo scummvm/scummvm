@@ -35,9 +35,11 @@ class WalkMgr;
 class Sequencer;
 
 class SupportingActor;
+class InventoryItem;
 
 class LeadActor : public Actor {
 public:
+    LeadActor();
     enum State {
         kReady = 0,
         kMoving = 1,
@@ -67,6 +69,7 @@ public:
     void onMouseMove(Common::Point point);
     void onWalkEnd();
     void onClick();
+    void onInventoryClosed(bool isItemClicked);
 
     virtual void onMouseOver(Common::Point point, CursorMgr *mgr);
 
@@ -78,6 +81,7 @@ private:
 
     State _state;
     State _nextState;
+    State _stateCopy;
 
     bool _isHaveItem;
 

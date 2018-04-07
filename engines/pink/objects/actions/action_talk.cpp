@@ -54,6 +54,19 @@ void ActionTalk::update() {
 void ActionTalk::end() {
     ActionPlay::end();
     delete _sound;
+    _sound = nullptr;
+}
+
+void ActionTalk::pause() {
+    ActionCEL::pause();
+    if (_sound)
+        _sound->pause();
+}
+
+void ActionTalk::unpause() {
+    ActionCEL::unpause();
+    if (_sound)
+        _sound->resume();
 }
 
 } // End of namespace Pink

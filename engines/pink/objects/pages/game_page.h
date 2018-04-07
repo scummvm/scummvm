@@ -60,7 +60,7 @@ private:
     void loadState();
     void saveState();
 
-    bool _perhapsIsLoaded;
+    bool _isLoaded;
     Common::MemoryReadWriteStream *_memFile;
     Module *_module;
     CursorMgr *_cursorMgr;

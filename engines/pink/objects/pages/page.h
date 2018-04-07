@@ -40,13 +40,15 @@ public:
     virtual void toConsole();
 
     void load(Archive &archive);
-    Actor *findActor(Common::String &name);
+    Actor *findActor(const Common::String &name);
     LeadActor *getLeadActor();
 
     Sound *loadSound(Common::String &fileName);
     CelDecoder *loadCel(Common::String &fileName);
 
     virtual void clear();
+    void pause();
+    void unpause();
 
 protected:
     void init();

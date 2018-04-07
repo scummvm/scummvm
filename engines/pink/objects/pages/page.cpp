@@ -38,7 +38,7 @@ void Page::load(Archive &archive) {
     archive >> _actors;
 }
 
-Actor *Page::findActor(Common::String &name) {
+Actor *Page::findActor(const Common::String &name) {
     return *Common::find_if(_actors.begin(), _actors.end(), [&name]
             (Actor *actor) {
         return name == actor->getName();
@@ -82,6 +82,17 @@ void Page::clear() {
     _resMgr.clear();
 }
 
+void Page::pause() {
+    for (int i = 0; i < _actors.size(); ++i) {
+        _actors[i]->pause();
+    }
+}
+
+void Page::unpause() {
+    for (int i = 0; i < _actors.size(); ++i) {
+        _actors[i]->unpause();
+    }
+}
 
 
 } // End of namespace Pink

@@ -66,7 +66,7 @@ void SideEffectInventoryItemOwner::deserialize(Archive &archive) {
 void SideEffectInventoryItemOwner::execute(Actor *actor) {
     InventoryMgr *mgr = actor->getPage()->getModule()->getInventoryMgr();
     InventoryItem *item = mgr->findInventoryItem(_item);
-    mgr->setItemOwner(_item, item);
+    mgr->setItemOwner(_owner, item);
 }
 
 void SideEffectInventoryItemOwner::toConsole() {
