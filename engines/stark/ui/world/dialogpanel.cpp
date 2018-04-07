@@ -65,7 +65,19 @@ DialogPanel::DialogPanel(Gfx::Driver *gfx, Cursor *cursor) :
 
 DialogPanel::~DialogPanel() {
 	clearOptions();
+	clearSubtitleVisual();
+}
+
+void DialogPanel::abortCurrentSpeech() {
+	if (_currentSpeech) {
+		_currentSpeech->stop();
+		_currentSpeech = nullptr;
+	}
+}
+
+void DialogPanel::clearSubtitleVisual() {
 	delete _subtitleVisual;
+	_subtitleVisual = nullptr;
 }
 
 void DialogPanel::clearOptions() {
@@ -111,8 +123,7 @@ void DialogPanel::onRender() {
 	if (!_currentSpeech || !_currentSpeech->isPlaying()) {
 		_currentSpeech = nullptr;
 
-		delete _subtitleVisual;
-		_subtitleVisual = nullptr;
+		clearSubtitleVisual();
 	}
 
 	// Update the dialog engine
@@ -145,7 +156,7 @@ void DialogPanel::onRender() {
 }
 
 void DialogPanel::updateSubtitleVisual() {
-	delete _subtitleVisual;
+	clearSubtitleVisual();
 
 	uint32 color = _otherColor;
 	if (_currentSpeech->characterIsApril())
@@ -210,15 +221,16 @@ void DialogPanel::onClick(const Common::Point &pos) {
 	}
 }
 
-void DialogPanel::reset() {
-	if (_currentSpeech) {
-		_currentSpeech->stop();
-		_currentSpeech = nullptr;
+void DialogPanel::onRightClick(const Common::Point &pos) {
+	if (_currentSpeech && _currentSpeech->isPlaying()) {
+		abortCurrentSpeech();
+		clearSubtitleVisual();
 	}
+}
 
-	delete _subtitleVisual;
-	_subtitleVisual = nullptr;
-
+void DialogPanel::reset() {
+	abortCurrentSpeech();
+	clearSubtitleVisual();
 	clearOptions();
 
 	StarkDialogPlayer->reset();

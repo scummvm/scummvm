@@ -55,10 +55,12 @@ public:
 protected:
 	void onMouseMove(const Common::Point &pos) override;
 	void onClick(const Common::Point &pos) override;
+	void onRightClick(const Common::Point &pos) override;
 	void onRender() override;
 
 private:
 	void updateSubtitleVisual();
+	void clearSubtitleVisual();
 	void updateDialogOptions();
 	void clearOptions();
 	int getHoveredOption(const Common::Point &pos);
@@ -79,6 +81,7 @@ private:
 	Common::Rect _scrollDownArrowRect;
 
 	Resources::Speech *_currentSpeech;
+	void abortCurrentSpeech();
 
 	uint32 _firstVisibleOption;
 	Common::Array<ClickText*> _options;
