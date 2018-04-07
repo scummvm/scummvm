@@ -189,11 +189,6 @@ public:
 	void waitForPress();
 };
 
-class GameEvent {
-public:
-	GameEvent();
-};
-
 } // End of namespace Xeen
 
 #endif /* XEEN_EVENTS_H */

@@ -191,7 +191,6 @@ public:
 	Spells *_spells;
 	Windows *_windows;
 	Mode _mode;
-	GameEvent _gameEvent;
 	GameMode _gameMode;
 	bool _noDirectionSense;
 	bool _startupWindowActive;
