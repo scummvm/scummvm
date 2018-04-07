@@ -156,7 +156,7 @@ WARN_UNUSED_RESULT TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(
 }
 
 WARN_UNUSED_RESULT TuckerEngine::SavegameError TuckerEngine::readSavegameHeader(Common::InSaveFile *file, SavegameHeader &header, bool skipThumbnail) {
-	header.version   = -1;
+	header.version   = 0;
 	header.flags     = 0;
 	header.description.clear();
 	header.saveDate  = 0;
