@@ -512,21 +512,18 @@ void Interface::perform() {
 		}
 		break;
 
-	case Common::KEYCODE_c: {
+	case Common::KEYCODE_c:
 		// Cast spell
 		if (_tillMove) {
 			combat.moveMonsters();
 			draw3d(true);
 		}
 
-		int result = CastSpell::show(_vm);
-
-		if (result == 1) {
+		if (CastSpell::show(_vm) != -1) {
 			chargeStep();
 			doStepCode();
 		}
 		break;
-	}
 
 	case Common::KEYCODE_i:
 		// Show Info dialog
@@ -1442,7 +1439,6 @@ void Interface::doCombat() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
-	Spells &spells = *_vm->_spells;
 	Sound &sound = *_vm->_sound;
 	Windows &windows = *_vm->_windows;
 	bool upDoorText = _upDoorText;
@@ -1556,10 +1552,7 @@ void Interface::doCombat() {
 
 			case Common::KEYCODE_c: {
 				// Cast spell
-				int spellId = CastSpell::show(_vm);
-				if (spellId != -1) {
-					Character *c = combat._combatParty[combat._whosTurn];
-					spells.castSpell(c, (MagicSpell)spellId);
+				if (CastSpell::show(_vm) != -1) {
 					nextChar();
 				} else {
 					highlightChar(combat._whosTurn);
