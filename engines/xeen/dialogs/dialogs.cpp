@@ -99,15 +99,18 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 		Common::KeyState keyState;
 		events.getKey(keyState);
 
-		_buttonValue = keyState.keycode;
-		if (_buttonValue == Common::KEYCODE_KP8)
+		if (keyState.keycode == Common::KEYCODE_KP8)
 			_buttonValue = Common::KEYCODE_UP;
-		else if (_buttonValue == Common::KEYCODE_KP2)
+		else if (keyState.keycode == Common::KEYCODE_KP2)
 			_buttonValue = Common::KEYCODE_DOWN;
-		else if (_buttonValue == Common::KEYCODE_KP_ENTER)
+		else if (keyState.keycode == Common::KEYCODE_KP_ENTER)
 			_buttonValue = Common::KEYCODE_RETURN;
+		else if (keyState.keycode != Common::KEYCODE_LCTRL && keyState.keycode != Common::KEYCODE_RCTRL
+				&& keyState.keycode != Common::KEYCODE_LALT && keyState.keycode != Common::KEYCODE_RALT)
+			_buttonValue = keyState.keycode;
 
-		_buttonValue |= (keyState.flags & ~Common::KBD_STICKY) << 16;
+		if (_buttonValue)
+			_buttonValue |= (keyState.flags & ~Common::KBD_STICKY) << 16;
 	}
 
 	if (_buttonValue) {
