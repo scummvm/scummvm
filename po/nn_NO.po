@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-07 09:26+0200\n"
+"POT-Creation-Date: 2018-04-07 09:34+0200\n"
 "PO-Revision-Date: 2016-12-18 18:23+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -1971,15 +1971,20 @@ msgstr "Start allikevel"
 msgid "AdLib Emulator"
 msgstr "AdLib Emulator"
 
-#: audio/fmopl.cpp:62
+#: audio/fmopl.cpp:64
 msgid "MAME OPL emulator"
 msgstr "MAME OPL emulator"
 
-#: audio/fmopl.cpp:64
+#: audio/fmopl.cpp:66
 msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL emulator"
 
-#: audio/fmopl.cpp:67
+#: audio/fmopl.cpp:69
+#, fuzzy
+msgid "Nuked OPL emulator"
+msgstr "MAME OPL emulator"
+
+#: audio/fmopl.cpp:72
 msgid "ALSA Direct FM"
 msgstr "ALSA Direct FM"
 
