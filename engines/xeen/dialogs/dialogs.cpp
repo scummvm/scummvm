@@ -66,51 +66,55 @@ bool ButtonContainer::checkEvents(XeenEngine *vm) {
 	EventsManager &events = *vm->_events;
 	Party &party = *vm->_party;
 	Windows &windows = *_vm->_windows;
+	PendingEvent event;
+	const Common::Rect WAIT_BOUNDS(8, 8, 224, 140);
 	_buttonValue = 0;
 
-	if (events._leftButton) {
-		Common::Point pt = events._mousePos;
+	if (events.getEvent(event)) {
+		if (event._leftButton) {
+			Common::Point pt = events._mousePos;
 
-		// Check for party member glyphs being clicked
-		Common::Rect r(0, 0, 32, 32);
-		for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
-			r.moveTo(Res.CHAR_FACES_X[idx], 150);
-			if (r.contains(pt)) {
-				_buttonValue = Common::KEYCODE_F1 + idx;
-				break;
+			// Check for party member glyphs being clicked
+			Common::Rect r(0, 0, 32, 32);
+			for (uint idx = 0; idx < party._activeParty.size(); ++idx) {
+				r.moveTo(Res.CHAR_FACES_X[idx], 150);
+				if (r.contains(pt)) {
+					_buttonValue = Common::KEYCODE_F1 + idx;
+					break;
+				}
 			}
-		}
 
-		// Check whether any button is selected
-		for (uint i = 0; i < _buttons.size(); ++i) {
-			if (_buttons[i]._bounds.contains(pt)) {
-				events.debounceMouse();
+			// Check whether any button is selected
+			for (uint i = 0; i < _buttons.size(); ++i) {
+				if (_buttons[i]._bounds.contains(pt)) {
+					events.debounceMouse();
 
-				_buttonValue = _buttons[i]._value;
-				break;
+					_buttonValue = _buttons[i]._value;
+					break;
+				}
 			}
+
+			if (!_buttonValue && WAIT_BOUNDS.contains(pt)) {
+				_buttonValue = Common::KEYCODE_SPACE;
+				return true;
+			}
+
+		} else if (event.isKeyboard()) {
+			const Common::KeyCode &keycode = event._keyState.keycode;
+
+			if (keycode == Common::KEYCODE_KP8)
+				_buttonValue = Common::KEYCODE_UP;
+			else if (keycode == Common::KEYCODE_KP2)
+				_buttonValue = Common::KEYCODE_DOWN;
+			else if (keycode == Common::KEYCODE_KP_ENTER)
+				_buttonValue = Common::KEYCODE_RETURN;
+			else if (keycode != Common::KEYCODE_LCTRL && keycode != Common::KEYCODE_RCTRL
+					&& keycode != Common::KEYCODE_LALT && keycode != Common::KEYCODE_RALT)
+				_buttonValue = keycode;
+
+			if (_buttonValue)
+				_buttonValue |= (event._keyState.flags & ~Common::KBD_STICKY) << 16;
 		}
-
-		if (!_buttonValue && Common::Rect(8, 8, 224, 135).contains(pt)) {
-			_buttonValue = 1;
-			return true;
-		}
-	} else if (events.isKeyPending()) {
-		Common::KeyState keyState;
-		events.getKey(keyState);
-
-		if (keyState.keycode == Common::KEYCODE_KP8)
-			_buttonValue = Common::KEYCODE_UP;
-		else if (keyState.keycode == Common::KEYCODE_KP2)
-			_buttonValue = Common::KEYCODE_DOWN;
-		else if (keyState.keycode == Common::KEYCODE_KP_ENTER)
-			_buttonValue = Common::KEYCODE_RETURN;
-		else if (keyState.keycode != Common::KEYCODE_LCTRL && keyState.keycode != Common::KEYCODE_RCTRL
-				&& keyState.keycode != Common::KEYCODE_LALT && keyState.keycode != Common::KEYCODE_RALT)
-			_buttonValue = keyState.keycode;
-
-		if (_buttonValue)
-			_buttonValue |= (keyState.flags & ~Common::KBD_STICKY) << 16;
 	}
 
 	if (_buttonValue) {

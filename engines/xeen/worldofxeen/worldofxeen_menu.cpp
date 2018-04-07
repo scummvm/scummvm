@@ -110,11 +110,9 @@ void MainMenuContainer::execute() {
 			} else {
 				// No active dialog. If Escape pressed, exit game entirely. Otherwise,
 				// open up the main menu dialog
-				if (events.isKeyPending()) {
-					Common::KeyState key;
-					if (events.getKey(key) && key.keycode == Common::KEYCODE_ESCAPE)
-						g_vm->_gameMode = GMODE_QUIT;
-				}
+				PendingEvent pe;
+				if (events.getEvent(pe) && pe._keyState.keycode == Common::KEYCODE_ESCAPE)
+					g_vm->_gameMode = GMODE_QUIT;
 
 				events.clearEvents();
 				showMenuDialog();

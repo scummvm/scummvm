@@ -262,7 +262,6 @@ void Interface::perform() {
 	Party &party = *_vm->_party;
 	Scripts &scripts = *_vm->_scripts;
 	Sound &sound = *_vm->_sound;
-	const Common::Rect WAIT_BOUNDS(8, 8, 224, 140);
 
 	do {
 		// Draw the next frame
@@ -276,10 +275,7 @@ void Interface::perform() {
 			if (g_vm->shouldExit() || g_vm->isLoadPending() || party._dead)
 				return;
 
-			if (events._leftButton && WAIT_BOUNDS.contains(events._mousePos))
-				_buttonValue = Common::KEYCODE_SPACE;
-			else
-				checkEvents(g_vm);
+			checkEvents(g_vm);
 		} while (!_buttonValue && events.timeElapsed() < 1);
 	} while (!_buttonValue);
 

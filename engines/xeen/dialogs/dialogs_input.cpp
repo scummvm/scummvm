@@ -86,7 +86,7 @@ Common::KeyState Input::waitForKey(const Common::String &msg) {
 	bool flag = !_vm->_startupWindowActive && !windows[25]._enabled
 		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_17;
 
-	Common::KeyState ks;
+	PendingEvent pe;
 	while (!_vm->shouldExit()) {
 		events.updateGameCounter();
 
@@ -100,11 +100,8 @@ Common::KeyState Input::waitForKey(const Common::String &msg) {
 			windows[3].update();
 
 		events.wait(1);
-
-		if (events.isKeyPending()) {
-			events.getKey(ks);
+		if (events.getEvent(pe) && pe.isKeyboard())
 			break;
-		}
 	}
 
 	_window->writeString("");
@@ -113,7 +110,7 @@ Common::KeyState Input::waitForKey(const Common::String &msg) {
 	intf._tillMove = oldTillMove;
 	intf._upDoorText = oldUpDoorText;
 
-	return ks;
+	return pe._keyState;
 }
 
 void Input::animateCursor() {

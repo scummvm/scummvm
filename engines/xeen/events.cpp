@@ -33,7 +33,7 @@ namespace Xeen {
 
 EventsManager::EventsManager(XeenEngine *vm) : _vm(vm), _playTime(0),
 		_frameCounter(0), _priorFrameCounterTime(0), _gameCounter(0),
-		_leftButton(false), _rightButton(false), _sprites("mouse.icn") {
+		_mousePressed(false), _sprites("mouse.icn") {
 	Common::fill(&_gameCounters[0], &_gameCounters[6], 0);
 }
 
@@ -80,24 +80,23 @@ void EventsManager::pollEvents() {
 				_vm->_debugger->attach();
 				_vm->_debugger->onFrame();
 			} else {
-				_keys.push(event.kbd);
+				addEvent(event.kbd);
 			}
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			_leftButton = true;
-			return;
-		case Common::EVENT_LBUTTONUP:
-			_leftButton = false;
+			_mousePressed = true;
+			addEvent(true, false);
 			return;
 		case Common::EVENT_RBUTTONDOWN:
-			_rightButton = true;
-			return;
+			_mousePressed = true;
+			addEvent(false, true);
+		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			_rightButton = false;
-			break;
+			_mousePressed = false;
+			return;
 		default:
  			break;
 		}
@@ -110,31 +109,38 @@ void EventsManager::pollEventsAndWait() {
 }
 
 void EventsManager::clearEvents() {
-	_keys.clear();
-	_leftButton = _rightButton = false;
-
+	_pendingEvents.clear();
+	_mousePressed = false;
 }
 
 void EventsManager::debounceMouse() {
-	while (_leftButton && !_vm->shouldExit()) {
+	while (_mousePressed && !_vm->shouldExit()) {
 		pollEventsAndWait();
 	}
 }
-bool EventsManager::getKey(Common::KeyState &key) {
-	if (_keys.empty()) {
+
+void EventsManager::addEvent(const Common::KeyState &keyState) {
+	if (_pendingEvents.size() < MAX_PENDING_EVENTS)
+		_pendingEvents.push(PendingEvent(keyState));
+}
+
+void EventsManager::addEvent(bool leftButton, bool rightButton) {
+	if (_pendingEvents.size() < MAX_PENDING_EVENTS)
+		_pendingEvents.push(PendingEvent(leftButton, rightButton));
+}
+
+
+bool EventsManager::getEvent(PendingEvent &pe) {
+	if (_pendingEvents.empty()) {
 		return false;
 	} else {
-		key = _keys.pop();
+		pe = _pendingEvents.pop();
 		return true;
 	}
 }
 
-bool EventsManager::isKeyPending() const {
-	return !_keys.empty();
-}
-
 bool EventsManager::isKeyMousePressed() {
-	bool result = _leftButton || _rightButton || isKeyPending();
+	bool result = isEventPending();
 	debounceMouse();
 	clearEvents();
 
@@ -144,7 +150,7 @@ bool EventsManager::isKeyMousePressed() {
 bool EventsManager::wait(uint numFrames, bool interruptable) {
 	while (!_vm->shouldExit() && timeElapsed() < numFrames) {
 		pollEventsAndWait();
-		if (interruptable && (_leftButton || _rightButton || isKeyPending()))
+		if (interruptable && isEventPending())
 			return true;
 	}
 

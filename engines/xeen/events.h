@@ -32,8 +32,29 @@ namespace Xeen {
 
 #define GAME_FRAME_RATE (1000 / 50)
 #define GAME_FRAME_TIME 50
+#define MAX_PENDING_EVENTS 5
 
 class XeenEngine;
+
+struct PendingEvent {
+	Common::KeyState _keyState;
+	bool _leftButton;
+	bool _rightButton;
+
+	PendingEvent() : _leftButton(false), _rightButton(false) {}
+	PendingEvent(const Common::KeyState &keyState) : _keyState(keyState), _leftButton(false), _rightButton(false) {}
+	PendingEvent(bool leftButton, bool rightButton) : _leftButton(leftButton), _rightButton(rightButton) {}
+
+	/**
+	 * Returns true if a keyboard event is pending
+	 */
+	bool isKeyboard() const { return _keyState.keycode != Common::KEYCODE_INVALID; }
+
+	/**
+	 * Returns ture if a mouse button event is pending
+	 */
+	bool isMouse() const { return _leftButton || _rightButton; }
+};
 
 class EventsManager {
 private:
@@ -43,19 +64,18 @@ private:
 	uint32 _gameCounter;
 	uint32 _gameCounters[6];
 	uint32 _playTime;
-	Common::Queue<Common::KeyState> _keys;
+	Common::Queue<PendingEvent> _pendingEvents;
 	SpriteResource _sprites;
+	bool _mousePressed;
 
 	/**
 	 * Handles moving to the next game frame
 	 */
 	void nextFrame();
 public:
-	bool _leftButton, _rightButton;
 	Common::Point _mousePos;
 public:
 	EventsManager(XeenEngine *vm);
-
 	~EventsManager();
 
 	/*
@@ -78,17 +98,45 @@ public:
 	 */
 	bool isCursorVisible();
 
+	/**
+	 * Polls the ScummVM backend for any pending events
+	 */
 	void pollEvents();
 
+	/**
+	 * Polls for events, and wait a slight delay. This ensures the game doesn't use up 100% of the CPU
+	 */
 	void pollEventsAndWait();
 
+	/**
+	 * Clears all pending events
+	 */
 	void clearEvents();
 
+	/**
+	 * Waits for a mouse press to be released
+	 */
 	void debounceMouse();
 
-	bool getKey(Common::KeyState &key);
+	/**
+	 * Adds a keyboard event to the queue
+	 */
+	void addEvent(const Common::KeyState &keyState);
 
-	bool isKeyPending() const;
+	/**
+	 * Adds a mouse button event to the queue
+	 */
+	void addEvent(bool leftButton, bool rightButton);
+
+	/**
+	 * Returns the next pending key/mouse press, if any
+	 */
+	bool getEvent(PendingEvent &pe);
+
+	/**
+	 * Returns true if a key or mouse event is pending
+	 */
+	bool isEventPending() const { return !_pendingEvents.empty(); }
 
 	/**
 	 * Returns true if a key or mouse press is pending
