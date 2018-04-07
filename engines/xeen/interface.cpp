@@ -1519,7 +1519,7 @@ void Interface::doCombat() {
 				} while (!_vm->shouldExit() && events.timeElapsed() < 1 && !_buttonValue);
 			} while (!_vm->shouldExit() && !_buttonValue);
 			if (_vm->shouldExit())
-				return;
+				goto exit;
 
 			switch (_buttonValue) {
 			case Common::KEYCODE_TAB:
@@ -1701,7 +1701,7 @@ void Interface::doCombat() {
 				}
 			}
 		}
-
+exit:
 		w.close();
 		events.clearEvents();
 
@@ -1721,18 +1721,20 @@ void Interface::doCombat() {
 	mainIconsPrint();
 	combat._monster2Attack = -1;
 
-	if (upDoorText) {
-		map.cellFlagLookup(party._mazePosition);
-		if (map._currentIsEvent)
-			scripts.checkEvents();
-	}
+	if (!g_vm->isLoadPending()) {
+		if (upDoorText) {
+			map.cellFlagLookup(party._mazePosition);
+			if (map._currentIsEvent)
+				scripts.checkEvents();
+		}
 
-	if (reloadMap) {
-		sound.playFX(51);
-		map._loadCcNum = _vm->getGameID() != GType_WorldOfXeen ? 1 : 0;
-		map.load(_vm->getGameID() == GType_WorldOfXeen ? 28 : 29);
-		party._mazeDirection = _vm->getGameID() == GType_WorldOfXeen ?
-			DIR_EAST : DIR_SOUTH;
+		if (reloadMap) {
+			sound.playFX(51);
+			map._loadCcNum = _vm->getGameID() != GType_WorldOfXeen ? 1 : 0;
+			map.load(_vm->getGameID() == GType_WorldOfXeen ? 28 : 29);
+			party._mazeDirection = _vm->getGameID() == GType_WorldOfXeen ?
+				DIR_EAST : DIR_SOUTH;
+		}
 	}
 
 	combat._combatMode = COMBATMODE_1;

@@ -189,7 +189,7 @@ Common::Error XeenEngine::loadGameState(int slot) {
 }
 
 bool XeenEngine::canLoadGameStateCurrently() {
-	return _mode != MODE_COMBAT && _mode != MODE_STARTUP;
+	return _mode != MODE_STARTUP;
 }
 
 bool XeenEngine::canSaveGameStateCurrently() {
@@ -256,7 +256,7 @@ void XeenEngine::play() {
 
 void XeenEngine::gameLoop() {
 	// Main game loop
-	while (!shouldExit()) {
+	while (isLoadPending() || !shouldExit()) {
 		if (isLoadPending()) {
 			// Load any pending savegame
 			int saveSlot = _loadSaveSlot;
@@ -268,7 +268,7 @@ void XeenEngine::gameLoop() {
 		_map->cellFlagLookup(_party->_mazePosition);
 		if (_map->_currentIsEvent) {
 			_gameMode = (GameMode)_scripts->checkEvents();
-			if (shouldExit() || _gameMode)
+			if (shouldExit())
 				return;
 		}
 		_party->giveTreasure();

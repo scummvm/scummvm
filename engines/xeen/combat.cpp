@@ -2099,7 +2099,8 @@ void Combat::reset() {
 	clearShooting();
 	setupCombatParty();
 
-	_combatMode = COMBATMODE_STARTUP;
+	_combatMode = COMBATMODE_1;
+	_monster2Attack = -1;
 }
 
 } // End of namespace Xeen
