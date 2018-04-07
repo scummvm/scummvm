@@ -1593,9 +1593,11 @@ Common::SeekableReadStream *BladeRunnerEngine::getResourceStream(const Common::S
 		if (!_archives[i].isOpen()) {
 			continue;
 		}
+
 		if (false) {
 			debug("getResource: Searching archive %s for %s.", _archives[i].getName().c_str(), name.c_str());
 		}
+
 		Common::SeekableReadStream *stream = _archives[i].createReadStreamForMember(name);
 		if (stream) {
 			return stream;
