@@ -4052,7 +4052,7 @@ fi
 define_in_config_if_yes "$_flac" 'USE_FLAC'
 echo "$_flac"
 
-# Add the link to ogg only after verbs tremor and flac as it might be used by those.
+# Add the link to ogg only after vorbis, tremor and flac as it might be used by those.
 if test "$_ogg" = yes ; then
 	append_var LIBS "$OGG_LIBS -logg"
 	append_var INCLUDES "$OGG_CFLAGS"
