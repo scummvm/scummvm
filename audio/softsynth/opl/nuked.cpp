@@ -1154,7 +1154,7 @@ void OPL3_Generate(opl3_chip *chip, Bit16s *buf)
 
     if (chip->eg_timerrem || chip->eg_state)
     {
-        if (chip->eg_timer == 0xfffffffffUL)
+        if (chip->eg_timer == 0xfffffffffULL)
         {
             chip->eg_timer = 0;
             chip->eg_timerrem = 1;
