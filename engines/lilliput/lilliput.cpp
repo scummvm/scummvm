@@ -1710,7 +1710,7 @@ byte LilliputEngine::sequenceSetCharacterDirection(int index, int direction, int
 }
 
 byte LilliputEngine::sequenceSetMobility(int index, Common::Point var1) {
-	debugC(2, kDebugEngine, "sequenceSetMobility(%d, %d)", index, var1.x, var1.y);
+	debugC(2, kDebugEngine, "sequenceSetMobility(%d, %d - %d)", index, var1.x, var1.y);
 
 	_characterMobility[index] = var1.y;
 	return 2;
