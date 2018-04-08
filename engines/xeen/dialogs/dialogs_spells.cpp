@@ -305,9 +305,10 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 						spellId < Res.DARK_SPELL_RANGES[groupIndex][1]; ++spellId) {
 					int idx = 0;
 					while (idx <= SPELLS_PER_CLASS && Res.SPELLS_ALLOWED[category][idx] ==
-						Res.DARK_SPELL_OFFSETS[category][spellId]);
+							Res.DARK_SPELL_OFFSETS[category][spellId])
+						++idx;
 
-					if (idx <= SPELLS_PER_CLASS) {
+					if (idx < SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
@@ -319,11 +320,11 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 			} else {
 				for (int spellId = 0; spellId < 20; ++spellId) {
 					int idx = 0;
-					while (Res.CLOUDS_GUILD_SPELLS[party._mazeId - 28][spellId] !=
-						(int)Res.SPELLS_ALLOWED[category][idx] && idx <= SPELLS_PER_CLASS)
+					while (idx < SPELLS_PER_CLASS && Res.CLOUDS_GUILD_SPELLS[party._mazeId - 28][spellId] !=
+							(int)Res.SPELLS_ALLOWED[category][idx])
 						++idx;
 
-					if (idx <= SPELLS_PER_CLASS) {
+					if (idx < SPELLS_PER_CLASS) {
 						if (!c->_spells[idx] || (mode & 0x80)) {
 							int cost = spells.calcSpellCost(Res.SPELLS_ALLOWED[category][idx], expenseFactor);
 							_spells.push_back(SpellEntry(Common::String::format("\x3l%s\x3r\x9""000%u",
