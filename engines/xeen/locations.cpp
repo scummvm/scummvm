@@ -1320,8 +1320,13 @@ int ReaperCutscene::show() {
 		sprites1.draw(0, party._isNight ? 3 : 2);
 	}
 
-	_subtitles.setLine(_keyFound ? 5 : 6);
-	sound.playVoice(_keyFound ? "reaper12.voc" : "reaper14.voc");
+	if (!_ccNum) {
+		_subtitles.setLine(_keyFound ? 5 : 6);
+		sound.playVoice(_keyFound ? "reaper12.voc" : "reaper14.voc");
+	} else if (_keyFound) {
+		_subtitles.setLine(2);
+		sound.playVoice("howdid1.voc");
+	}
 
 	do {
 		events.updateGameCounter();
@@ -1345,11 +1350,13 @@ int ReaperCutscene::show() {
 	windows[0].update();
 	WAIT(7);
 
-	sound.playVoice(_keyFound ? "reaper12.voc" : "reaper14.voc");
-	if (_keyFound)
+	if (_keyFound) {
 		sound.playVoice(_ccNum ? "goin1.voc" : "reaper13.voc");
-	else
+	} else {
+		if (_ccNum)
+			_subtitles.setLine(3);
 		sound.playVoice(_ccNum ? "needkey1.voc" : "reaper15.voc");
+	}
 
 	do {
 		events.updateGameCounter();
