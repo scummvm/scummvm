@@ -105,7 +105,7 @@ void Cursor::render() {
 		setCursorType(Cursor::kPassive);
 	}
 
-	if (_mouseText) {
+	if (_mouseText && _gfx->gameViewport().contains(_mousePos)) {
 		_gfx->setScreenViewport(false);
 
 		// TODO: Should probably query the image for the width of the cursor
