@@ -252,6 +252,8 @@ int Choose123::execute(int numOptions) {
 			}
 
 			events.wait(delay);
+			checkEvents(_vm);
+
 			if (_vm->shouldExit())
 				return 0;
 		} while (!_buttonValue);

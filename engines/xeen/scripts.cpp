@@ -1318,7 +1318,7 @@ bool Scripts::cmdCheckProtection(ParamsIterator &params) {
 bool Scripts::cmdChooseNumeric(ParamsIterator &params) {
 	int choice = Choose123::show(_vm, params.readByte());
 	if (choice) {
-		_lineNum = _event->_parameters[choice];
+		_lineNum = _event->_parameters[choice - 1];
 		return false;
 	}
 
@@ -1394,6 +1394,8 @@ bool Scripts::cmdFallToMap(ParamsIterator &params) {
 }
 
 bool Scripts::cmdDisplayMain(ParamsIterator &params) {
+	_windowIndex = 11;
+
 	display(false, 0);
 	return true;
 }
