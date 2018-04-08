@@ -216,6 +216,8 @@ void XeenEngine::play() {
 		_party->_mazeDirection = DIR_NORTH;
 		_party->_mazePosition.x = 25;
 		_party->_mazePosition.y = 21;
+	} else {
+		_map->_loadCcNum = g_vm->_files->_ccNum;
 	}
 
 	_map->clearMaze();
