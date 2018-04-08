@@ -1412,16 +1412,16 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_gold += _vm->getRandomNumber(1, giveVal);
 		break;
 	case 103:
-		assert(takeVal < 128);
-		_worldFlags[takeVal] = true;
+		assert(giveVal < 128);
+		_worldFlags[giveVal] = true;
 		break;
 	case 104:
 		assert(giveVal < 30);
 		_questFlags[files._ccNum][giveVal] = true;
 		break;
 	case 107:
-		assert(takeVal < 24);
-		_characterFlags[ps._rosterId][takeVal] = true;
+		assert(giveVal < 24);
+		_characterFlags[ps._rosterId][giveVal] = true;
 		break;
 	default:
 		break;

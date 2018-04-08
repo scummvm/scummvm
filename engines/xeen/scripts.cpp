@@ -1829,7 +1829,7 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		break;
 	case 107:
 		// Get value of character flag
-		error("Unused");
+		v = party._characterFlags[ps->_rosterId][val] ? val : 0xffffffff;
 		break;
 	default:
 		break;
