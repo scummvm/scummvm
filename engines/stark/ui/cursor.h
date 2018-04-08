@@ -55,7 +55,7 @@ public:
 	Common::Point getMousePosition(bool unscaled = false) const;
 
 	enum CursorType {
-		kNone = -1,
+		kImage = -1,
 		kDefault = 0,
 		kActive = 3,
 		kPassive = 9,

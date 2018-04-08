@@ -37,7 +37,7 @@ VisualEffect::VisualEffect(VisualType type, const Common::Point &size, Gfx::Driv
 		_timeBetweenTwoUpdates(3 * 33), // ms (frames @ 30 fps)
 		_timeRemainingUntilNextUpdate(0) {
 	_surface = new Graphics::Surface();
-	_surface->create(size.x, size.y, _gfx->getRGBAPixelFormat());
+	_surface->create(size.x, size.y, Gfx::Driver::getRGBAPixelFormat());
 
 	_texture = _gfx->createTexture(_surface);
 

@@ -113,7 +113,7 @@ void VisualText::createTexture() {
 
 	// Create a surface to render to
 	Graphics::Surface surface;
-	surface.create(scaledRect.width(), scaledRect.height(), _gfx->getRGBAPixelFormat());
+	surface.create(scaledRect.width(), scaledRect.height(), Gfx::Driver::getRGBAPixelFormat());
 	surface.fillRect(scaledRect, _backgroundColor);
 
 	// Render the lines to the surface

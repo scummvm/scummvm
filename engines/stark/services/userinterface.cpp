@@ -171,7 +171,9 @@ void UserInterface::render() {
 	_currentScreen->render();
 
 	// The cursor depends on the UI being done.
-	_cursor->render();
+	if (_currentScreen->getName() != Screen::kScreenFMV) {
+		_cursor->render();
+	}
 }
 
 bool UserInterface::isInteractive() const {

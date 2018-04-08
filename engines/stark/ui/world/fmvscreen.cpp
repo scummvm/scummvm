@@ -40,7 +40,7 @@ FMVScreen::FMVScreen(Gfx::Driver *gfx, Cursor *cursor) :
 	_visible = true;
 
 	_decoder = new Video::BinkDecoder();
-	_decoder->setDefaultHighColorFormat(_gfx->getRGBAPixelFormat());
+	_decoder->setDefaultHighColorFormat(Gfx::Driver::getRGBAPixelFormat());
 	_decoder->setSoundType(Audio::Mixer::kSFXSoundType);
 
 	_texture = _gfx->createTexture();

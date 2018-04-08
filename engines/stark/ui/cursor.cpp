@@ -43,7 +43,7 @@ Cursor::Cursor(Gfx::Driver *gfx) :
 		_gfx(gfx),
 		_cursorImage(nullptr),
 		_mouseText(nullptr),
-		_currentCursorType(kNone),
+		_currentCursorType(kImage),
 		_fading(false),
 		_fadeLevelIncreasing(true),
 		_fadeLevel(0) {
@@ -55,23 +55,18 @@ Cursor::~Cursor() {
 }
 
 void Cursor::setCursorType(CursorType type) {
+	assert(type != kImage);
 	if (type == _currentCursorType) {
 		return;
 	}
 	_currentCursorType = type;
-	if (type == kNone) {
-		_cursorImage = nullptr;
-		return;
-	}
-
 	_cursorImage = StarkStaticProvider->getCursorImage(_currentCursorType);
 }
 
 void Cursor::setCursorImage(VisualImageXMG *image) {
-	_currentCursorType = kNone;
+	_currentCursorType = kImage;
 	_cursorImage = image;
 }
-
 
 void Cursor::setMousePosition(const Common::Point &pos) {
 	_mousePos = pos;
@@ -99,7 +94,6 @@ void Cursor::updateFadeLevel() {
 
 void Cursor::render() {
 	updateFadeLevel();
-
 
 	if (!_gfx->isPosInScreenBounds(_mousePos)) {
 		setCursorType(Cursor::kPassive);

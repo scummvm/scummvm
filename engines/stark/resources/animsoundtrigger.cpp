@@ -70,8 +70,9 @@ void AnimSoundTrigger::onGameLoop() {
 		if (_subType == kAnimTriggerSound) {
 			Location *location = StarkGlobal->getCurrent()->getLocation();
 			Sound *sound = location->findStockSound(_soundStockType);
-			if (sound) {
+			if (sound && !StarkGlobal->isFastForward()) {
 				// TODO: If the location has a 3D layer set the source position of the sound to the item position
+				sound->stop();
 				sound->play();
 			}
 		} else {
