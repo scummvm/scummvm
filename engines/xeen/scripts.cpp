@@ -1318,7 +1318,7 @@ bool Scripts::cmdCheckProtection(ParamsIterator &params) {
 bool Scripts::cmdChooseNumeric(ParamsIterator &params) {
 	int choice = Choose123::show(_vm, params.readByte());
 	if (choice) {
-		_lineNum = _event->_parameters[choice - 1];
+		_lineNum = _event->_parameters[choice];
 		return false;
 	}
 

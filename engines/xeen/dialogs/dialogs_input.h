@@ -82,11 +82,11 @@ private:
 
 	Choose123(XeenEngine *vm) : ButtonContainer(vm) {}
 
-	int execute(int numOptions);
+	int execute(uint numOptions);
 
-	void loadButtons(int numOptions);
+	void loadButtons(uint numOptions);
 public:
-	static int show(XeenEngine *vm, int numOptions);
+	static int show(XeenEngine *vm, uint numOptions);
 };
 
 class HowMuch : public ButtonContainer {
