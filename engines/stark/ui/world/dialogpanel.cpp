@@ -21,7 +21,6 @@
  */
 
 #include "engines/stark/ui/world/dialogpanel.h"
-#include "engines/stark/ui/world/clicktext.h"
 
 #include "engines/stark/gfx/driver.h"
 
@@ -30,6 +29,9 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/staticprovider.h"
 #include "engines/stark/services/dialogplayer.h"
+
+#include "engines/stark/ui/cursor.h"
+#include "engines/stark/ui/world/clicktext.h"
 
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/text.h"
@@ -168,10 +170,25 @@ void DialogPanel::updateDialogOptions() {
 }
 
 void DialogPanel::onMouseMove(const Common::Point &pos) {
-	if (!_options.empty() && _options.size() > 0) {
+	if (_subtitleVisual) {
+		_cursor->setCursorType(Cursor::kDefault);
+	} else if (!_options.empty()) {
 		for (uint i = _firstVisibleOption; i < _options.size(); i++) {
 			_options[i]->handleMouseMove(pos);
 		}
+
+		int hoveredOption = getHoveredOption(pos);
+		if (hoveredOption >= 0) {
+			_cursor->setCursorType(Cursor::kActive);
+		} else if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {
+			_cursor->setCursorType(Cursor::kActive);
+		} else if (_scrollDownArrowVisible && _scrollDownArrowRect.contains(pos)) {
+			_cursor->setCursorType(Cursor::kActive);
+		} else {
+			_cursor->setCursorType(Cursor::kDefault);
+		}
+	} else {
+		_cursor->setCursorType(Cursor::kDefault);
 	}
 }
 

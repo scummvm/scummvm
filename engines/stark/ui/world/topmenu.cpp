@@ -120,11 +120,9 @@ void TopMenu::onMouseMove(const Common::Point &pos) {
 			hoveredButton->showButtonHint();
 		} else {
 			_cursor->setCursorType(Cursor::kDefault);
-			_cursor->setMouseHint("");
 		}
 	} else {
 		_cursor->setCursorType(Cursor::kPassive);
-		_cursor->setMouseHint("");
 	}
 }
 
