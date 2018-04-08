@@ -396,14 +396,18 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 		bounds.setHeight(42);
 		break;
 
-	case 10:
+	case 10: {
 		// Hit Points
-		stat1 = c._currentHp;
-		stat2 = c.getMaxHP();
-		msg = Common::String::format(Res.CURRENT_MAXIMUM_TEXT, Res.STAT_NAMES[attrib],
-			stat1, stat2);
+		Common::String fmt(Res.CURRENT_MAXIMUM_TEXT);
+		const char *p;
+		while ((p = strstr(fmt.c_str(), "%u")) != nullptr)
+			fmt.setChar('d', p - fmt.c_str() + 1);
+
+		msg = Common::String::format(fmt.c_str(), Res.STAT_NAMES[attrib],
+			c._currentHp, c.getMaxHP());
 		bounds.setHeight(42);
 		break;
+	}
 
 	case 11:
 		// Spell Points
