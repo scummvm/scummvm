@@ -125,7 +125,7 @@ public:
 	int8 _lastInterfaceHotspotIndex;
 	byte _lastInterfaceHotspotButton; // Unused: set by 2 functions, but never used elsewhere
 	byte _debugFlag; // Mostly useless, as the associated functions are empty
-	byte _byte14837; // Unused byte, set by an opcode
+	byte _debugFlag2; // Unused byte, set by an opcode
 
 	byte _codeEntered[3];
 	char _array1692B[4];
@@ -219,8 +219,8 @@ public:
 	int16 _characterSubTargetPosX[40];
 	int16 _characterSubTargetPosY[40];
 	byte _specialCubes[40];
-	byte _array16C54[4];
-	byte _array16C58[4];
+	byte _doorEntranceMask[4];
+	byte _doorExitMask[4];
 	byte _savedSurfaceGameArea1[176 * 256]; // 45056
 	byte _savedSurfaceGameArea2[176 * 256]; // 45056
 	byte _savedSurfaceGameArea3[176 * 256]; // 45056
@@ -256,7 +256,7 @@ public:
 	void displaySmallIndexedAnim(byte index, byte subIndex);
 
 	void unselectInterfaceHotspots();
-	void sub15F75();
+	void startNavigateFromMap();
 	void resetSmallAnims();
 	void paletteFadeOut();
 	void paletteFadeIn();
@@ -316,8 +316,8 @@ public:
 	void moveCharacterSpeed4(int index);
 	void moveCharacterBack2(int index);
 	void moveCharacterSpeed3(int index);
-	void sub16B31_moveCharacter(int index, int16 speed);
-	void sub16B8F_moveCharacter(int index, Common::Point pos, int direction);
+	void moveCharacterForward(int index, int16 speed);
+	void checkCollision(int index, Common::Point pos, int direction);
 	byte sequenceSeekMovingCharacter(int index, Common::Point var1);
 	byte sequenceSound(int index, Common::Point var1);
 	byte sequenceRepeat(int index, Common::Point var1, int tmpVal);

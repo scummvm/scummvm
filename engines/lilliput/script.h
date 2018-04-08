@@ -269,10 +269,10 @@ private:
 	void OC_setCurrentCharacterAltitude();
 	void OC_setModePriority();
 	void setMode(EvaluatedMode newMode);
-	void OC_sub181BB();
-	void OC_sub18213();
+	void OC_setComputedModePriority();
+	void OC_selectBestMode();
 	void OC_magicPuffEntrance();
-	void OC_sub18260();
+	void OC_spawnCharacterAtPos();
 	void OC_CharacterVariableAddOrRemoveFlag();
 	void OC_PaletteFadeOut();
 	void OC_PaletteFadeIn();
@@ -283,7 +283,7 @@ private:
 	void OC_enableCharacterScript();
 	void OC_setRulesBuffer2Element();
 	void OC_setDebugFlag();
-	void OC_setByte14837();
+	void OC_setDebugFlag2();
 	void OC_waitForEvent();
 	void OC_disableInterfaceHotspot();
 	void OC_loadFileAerial();

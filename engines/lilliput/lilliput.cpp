@@ -128,7 +128,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_skipDisplayFlag2 = 0;
 	_displayMap = false;
 	_debugFlag = 0;
-	_byte14837 = 0;
+	_debugFlag2 = 0;
 
 	_scriptHandler = new LilliputScript(this);
 	_soundHandler = new LilliputSound(this);
@@ -163,10 +163,10 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_saveFlag = true;
 	_actionType = kActionNone;
 
-	_array16C54[0] = _array16C58[3] = 1;
-	_array16C54[1] = _array16C58[2] = 2;
-	_array16C54[2] = _array16C58[1] = 4;
-	_array16C54[3] = _array16C58[0] = 8;
+	_doorEntranceMask[0] = _doorExitMask[3] = 1;
+	_doorEntranceMask[1] = _doorExitMask[2] = 2;
+	_doorEntranceMask[2] = _doorExitMask[1] = 4;
+	_doorEntranceMask[3] = _doorExitMask[0] = 8;
 
 	for (int i = 0; i < 3; i++)
 		_codeEntered[i] = 0;
@@ -876,8 +876,8 @@ int16 LilliputEngine::checkObstacle(int x1, int y1, int x2, int y2) {
 	return tmpMapMoveY;
 }
 
-void LilliputEngine::sub15F75() {
-	debugC(2, kDebugEngineTBC, "sub15F75()");
+void LilliputEngine::startNavigateFromMap() {
+	debugC(2, kDebugEngine, "startNavigateFromMap()");
 
 	_selectedCharacterId = -1;
 	_savedMousePosDivided = Common::Point(-1, -1);
@@ -915,7 +915,7 @@ void LilliputEngine::checkMapClosing(bool &forceReturnFl) {
 			return;
 
 		_mouseButton = 0;
-		sub15F75();
+		startNavigateFromMap();
 	}
 
 	_displayMap = false;
@@ -1458,7 +1458,7 @@ void LilliputEngine::sub1693A_chooseDirections(int index) {
 	for (int i = 3; i >= 0; i--) {
 		int mapIndexDiff = mapArrayMove[i];
 		assert(mapIndex + mapIndexDiff + 3 < 16384);
-		if (((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & _array16C54[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _array16C58[i]) != 0)) {
+		if (((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & _doorEntranceMask[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _doorExitMask[i]) != 0)) {
 			if ((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & 0x80) != 0 && (sub16A76(i, index) != 0)) {
 				_array1692B[i] -= 20;
 			}
@@ -2109,29 +2109,29 @@ void LilliputEngine::moveCharacterDown2(int index) {
 void LilliputEngine::moveCharacterSpeed2(int index) {
 	debugC(2, kDebugEngine, "moveCharacterSpeed2(%d)", index);
 
-	sub16B31_moveCharacter(index, 2);
+	moveCharacterForward(index, 2);
 }
 
 void LilliputEngine::moveCharacterSpeed4(int index) {
 	debugC(2, kDebugEngine, "moveCharacterSpeed4(%d)", index);
 
-	sub16B31_moveCharacter(index, 4);
+	moveCharacterForward(index, 4);
 }
 
 void LilliputEngine::moveCharacterBack2(int index) {
 	debugC(2, kDebugEngine, "moveCharacterBack2(%d)", index);
 
-	sub16B31_moveCharacter(index, -2);
+	moveCharacterForward(index, -2);
 }
 
 void LilliputEngine::moveCharacterSpeed3(int index) {
 	debugC(2, kDebugEngine, "moveCharacterSpeed3(%d)", index);
 
-	sub16B31_moveCharacter(index, 3);
+	moveCharacterForward(index, 3);
 }
 
-void LilliputEngine::sub16B31_moveCharacter(int index, int16 speed) {
-	debugC(2, kDebugEngine, "sub16B31_moveCharacter(%d, %d)", index, speed);
+void LilliputEngine::moveCharacterForward(int index, int16 speed) {
+	debugC(2, kDebugEngine, "moveCharacterForward(%d, %d)", index, speed);
 
 	int16 newX = _characterPositionX[index];
 	int16 newY = _characterPositionY[index];
@@ -2149,11 +2149,11 @@ void LilliputEngine::sub16B31_moveCharacter(int index, int16 speed) {
 		newX -= speed;
 		break;
 	}
-	sub16B8F_moveCharacter(index, Common::Point(newX, newY), _characterDirectionArray[index]);
+	checkCollision(index, Common::Point(newX, newY), _characterDirectionArray[index]);
 }
 
-void LilliputEngine::sub16B8F_moveCharacter(int index, Common::Point pos, int direction) {
-	debugC(2, kDebugEngine, "sub16B8F_moveCharacter(%d, %d - %d, %d)", index, pos.x, pos.y, direction);
+void LilliputEngine::checkCollision(int index, Common::Point pos, int direction) {
+	debugC(2, kDebugEngine, "checkCollision(%d, %d - %d, %d)", index, pos.x, pos.y, direction);
 
 	int16 diffX = pos.x >> 3;
 	if (((diffX & 0xFF) == _scriptHandler->_characterTilePos[index].x) && ((pos.y >> 3) == _scriptHandler->_characterTilePos[index].y)) {
@@ -2168,13 +2168,13 @@ void LilliputEngine::sub16B8F_moveCharacter(int index, Common::Point pos, int di
 	int mapIndex = (_scriptHandler->_characterTilePos[index].y * 64 + _scriptHandler->_characterTilePos[index].x) * 4;
 	assert(mapIndex < 16384);
 
-	if ((_bufferIsoMap[mapIndex + 3] & _array16C58[direction]) == 0)
+	if ((_bufferIsoMap[mapIndex + 3] & _doorExitMask[direction]) == 0)
 		return;
 
 	mapIndex = ((pos.y & 0xFFF8) << 3) + diffX;
 	mapIndex <<= 2;
 
-	if ((_bufferIsoMap[mapIndex + 3] & _array16C54[direction]) == 0)
+	if ((_bufferIsoMap[mapIndex + 3] & _doorEntranceMask[direction]) == 0)
 		return;
 
 	byte var1 = _characterMobility[index];
