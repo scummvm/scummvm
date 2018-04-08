@@ -39,7 +39,6 @@ public:
 		kEffectFish     = 8,
 		kEffectBubbles  = 9,
 		kEffectFirefly  = 10,
-		kEffectSmoke    = 11,
 		kExplodingImage = 100,
 		kFlashingImage = 101
 	};

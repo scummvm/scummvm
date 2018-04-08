@@ -28,6 +28,7 @@
 #include "engines/stark/visual/actor.h"
 #include "engines/stark/visual/effects/bubbles.h"
 #include "engines/stark/visual/effects/fireflies.h"
+#include "engines/stark/visual/effects/fish.h"
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/prop.h"
 #include "engines/stark/visual/smacker.h"
@@ -85,6 +86,11 @@ void RenderEntry::render(const LightEntryArray &lights) {
 	VisualEffectFireFlies *fireflies = _visual->get<VisualEffectFireFlies>();
 	if (fireflies) {
 		fireflies->render(_position);
+	}
+
+	VisualEffectFish *fish = _visual->get<VisualEffectFish>();
+	if (fish) {
+		fish->render(_position);
 	}
 }
 

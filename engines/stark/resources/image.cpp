@@ -29,6 +29,7 @@
 #include "engines/stark/services/services.h"
 #include "engines/stark/visual/effects/bubbles.h"
 #include "engines/stark/visual/effects/fireflies.h"
+#include "engines/stark/visual/effects/fish.h"
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/text.h"
 
@@ -227,9 +228,12 @@ void ImageText::initVisual() {
 		VisualEffectFireFlies *fireFlies = new VisualEffectFireFlies(StarkGfx, _size);
 		fireFlies->setParams(_text);
 		_visual = fireFlies;
+	} else if (_text.hasPrefix("GFX_Fish")) {
+		VisualEffectFish *fish = new VisualEffectFish(StarkGfx, _size);
+		fish->setParams(_text);
+		_visual = fish;
 	} else if (_text.hasPrefix("GFX_")) {
-		warning("TODO: Implement '%s'", _text.c_str());
-		_visual = nullptr;
+		error("Unknown effect '%s'", _text.c_str());
 	} else {
 		VisualText *text = new VisualText(StarkGfx);
 		text->setText(_text);
