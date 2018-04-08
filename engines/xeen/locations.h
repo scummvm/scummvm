@@ -253,7 +253,7 @@ protected:
 	int _mazeId;
 	Direction _mazeDir;
 	Common::Point _mazePos;
-	bool _mazeFlag;
+	bool _keyFound;
 protected:
 	/**
 	 * Sets the new location
