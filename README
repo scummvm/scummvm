@@ -1520,7 +1520,7 @@ arguments -- see the next section.
   --native-mt32            True Roland MT-32 (disable GM emulation)
   --enable-gs              Enable Roland GS mode for MIDI playback
   --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)
-  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)
+  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame, nuked)
   --aspect-ratio           Enable aspect ratio correction
   --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,
                            cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,
