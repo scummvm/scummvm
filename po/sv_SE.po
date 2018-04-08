@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-08 09:17+0200\n"
-"PO-Revision-Date: 2017-12-01 10:54+0000\n"
-"Last-Translator: hampusf <hampus.flink@gmail.com>\n"
-"Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/sv/>\n"
+"PO-Revision-Date: 2018-04-08 21:56+0000\n"
+"Last-Translator: Adrian Frühwirth <bonki+github@bonki.net>\n"
+"Language-Team: Swedish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
 "Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1992,9 +1992,8 @@ msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL-emulator"
 
 #: audio/fmopl.cpp:76
-#, fuzzy
 msgid "Nuked OPL emulator"
-msgstr "MAME OPL-emulator"
+msgstr "Nuked OPL-emulator"
 
 #: audio/fmopl.cpp:79
 msgid "ALSA Direct FM"
@@ -2002,7 +2001,7 @@ msgstr "ALSA Direct FM"
 
 #: audio/fmopl.cpp:82
 msgid "OPL2LPT"
-msgstr ""
+msgstr "OPL2LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -4476,12 +4475,11 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Använd diskettversionens intro (endast CD-version)"
 
 #: engines/supernova/supernova.cpp:308
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
-"Felaktig version av datafilen '%s' hittades. Version %d.%d krävs, hittade %d."
-"%d."
+"Felaktig version av datafilen '%s' hittades. Version %d krävs, hittade %d."
 
 #: engines/supernova/supernova.cpp:335
 #, fuzzy, c-format
