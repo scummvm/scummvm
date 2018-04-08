@@ -1226,7 +1226,7 @@ bool Scripts::cmdIfMapFlag(ParamsIterator &params) {
 	} else {
 		MazeMonster &monster = map._mobData._monsters[monsterNum];
 
-		if ((uint)monster._position.x < 32 && (uint)monster._position.y > 32)
+		if ((uint)monster._position.x < 32 && (uint)monster._position.y < 32)
 			return true;
 	}
 
