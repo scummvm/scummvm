@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-08 09:17+0200\n"
-"PO-Revision-Date: 2018-03-09 21:04+0000\n"
+"PO-Revision-Date: 2018-04-08 14:32+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
-"Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/fr/>\n"
+"Language-Team: French "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/fr/>\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -2009,9 +2009,8 @@ msgid "DOSBox OPL emulator"
 msgstr "Émulateur DOSBox OPL"
 
 #: audio/fmopl.cpp:76
-#, fuzzy
 msgid "Nuked OPL emulator"
-msgstr "Émulateur MAME OPL"
+msgstr "Émulateur OPL Nuked"
 
 #: audio/fmopl.cpp:79
 msgid "ALSA Direct FM"
@@ -2019,7 +2018,7 @@ msgstr "ALSA Direct FM"
 
 #: audio/fmopl.cpp:82
 msgid "OPL2LPT"
-msgstr ""
+msgstr "OPL2LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -4676,13 +4675,15 @@ msgstr "Applique un filtrage bilinéaire à chaque image-objet"
 
 #: engines/xeen/detection.cpp:84
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "Afficher le prix des objets dans l'inventaire en mode standard"
 
 #: engines/xeen/detection.cpp:85
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
+"Affiche le prix des objets dans l'inventaire en mode standard, ce qui permet "
+"de comparer la valeur des objets"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
