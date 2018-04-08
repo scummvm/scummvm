@@ -1589,7 +1589,7 @@ gestartet werden -- siehe nächster Abschnitt.
                            (GM-Emulation deaktiviert)
   --enable-gs              Aktiviert Roland-GS-Modus für MIDI-Wiedergabe.
   --output-rate=FREQUENZ   Wählt Ausgabefrequenz in Hz (z. B. 22050).
-  --opl-driver=TREIBER     Wählt AdLib-(OPL-)Emulator (db, mame).
+  --opl-driver=TREIBER     Wählt AdLib-(OPL-)Emulator (db, mame, nuked).
   --aspect-ratio           Aktiviert Seitenverhältniskorrektur.
   --render-mode=MODUS      Aktiviert zusätzlichen Render-Modus (hercGreen,
                            hercAmber, cga, ega, vga, amiga, fmtowns, pc9821,
