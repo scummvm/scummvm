@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-07 09:34+0200\n"
+"POT-Creation-Date: 2018-04-08 09:17+0200\n"
 "PO-Revision-Date: 2018-04-08 07:00+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
+"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -2008,21 +2008,25 @@ msgstr "Trotzdem starten"
 msgid "AdLib Emulator"
 msgstr "AdLib-Emulator"
 
-#: audio/fmopl.cpp:64
+#: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
 msgstr "MAME-OPL-Emulator"
 
-#: audio/fmopl.cpp:66
+#: audio/fmopl.cpp:73
 msgid "DOSBox OPL emulator"
 msgstr "DOSBox-OPL-Emulator"
 
-#: audio/fmopl.cpp:69
+#: audio/fmopl.cpp:76
 msgid "Nuked OPL emulator"
 msgstr "Nuked-OPL-Emulator"
 
-#: audio/fmopl.cpp:72
+#: audio/fmopl.cpp:79
 msgid "ALSA Direct FM"
 msgstr "ALSA Direct FM"
+
+#: audio/fmopl.cpp:82
+msgid "OPL2LPT"
+msgstr ""
 
 #: audio/mididrv.cpp:209
 #, c-format
