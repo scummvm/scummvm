@@ -224,8 +224,9 @@ void DialogPanel::scrollOptions(int increment) {
 void DialogPanel::onScreenChanged() {
 	if (_currentSpeech) {
 		updateSubtitleVisual();
+	} else {
+		updateDialogOptions();
 	}
-	updateDialogOptions();
 }
 
 } // End of namespace Stark
