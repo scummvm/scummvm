@@ -375,9 +375,12 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					Common::fill(&arr[0], &arr[40], 0);
 					arr[itemIndex] = 15;
 				}
-
-				redrawFlag = REDRAW_TEXT;
+			} else {
+				Common::fill(&arr[0], &arr[40], 0);
+				itemIndex = -1;
 			}
+
+			redrawFlag = REDRAW_TEXT;
 			break;
 
 		case Common::KEYCODE_a:
