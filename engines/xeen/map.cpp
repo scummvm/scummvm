@@ -628,6 +628,7 @@ void Map::load(int mapId) {
 	FileManager &files = *g_vm->_files;
 	Interface &intf = *g_vm->_interface;
 	Party &party = *g_vm->_party;
+	Patcher &patcher = *g_vm->_patcher;
 	Sound &sound = *g_vm->_sound;
 	IndoorDrawList &indoorList = intf._indoorList;
 	OutdoorDrawList &outdoorList = intf._outdoorList;
@@ -982,6 +983,7 @@ void Map::load(int mapId) {
 		}
 	}
 
+	patcher.patch();
 	loadSky();
 
 	files.setGameCc(ccNum);

@@ -1130,11 +1130,11 @@ bool Scripts::cmdRndDamage(ParamsIterator &params) {
 
 bool Scripts::cmdMoveWallObj(ParamsIterator &params) {
 	Map &map = *_vm->_map;
-	int itemNum = params.readByte();
+	int index = params.readByte();
 	int x = params.readShort();
 	int y = params.readShort();
 
-	map._mobData._wallItems[itemNum]._position = Common::Point(x, y);
+	map._mobData._wallItems[index]._position = Common::Point(x, y);
 	return true;
 }
 

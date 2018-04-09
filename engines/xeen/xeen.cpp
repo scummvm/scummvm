@@ -49,6 +49,7 @@ XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 	_locations = nullptr;
 	_map = nullptr;
 	_party = nullptr;
+	_patcher = nullptr;
 	_resources = nullptr;
 	_saves = nullptr;
 	_screen = nullptr;
@@ -75,6 +76,7 @@ XeenEngine::~XeenEngine() {
 	delete _locations;
 	delete _map;
 	delete _party;
+	delete _patcher;
 	delete _saves;
 	delete _screen;
 	delete _scripts;
@@ -100,6 +102,7 @@ bool XeenEngine::initialize() {
 	_locations = new LocationManager();
 	_map = new Map(this);
 	_party = new Party(this);
+	_patcher = new Patcher();
 	_saves = new SavesManager(_targetName);
 	_screen = new Screen(this);
 	_scripts = new Scripts(this);

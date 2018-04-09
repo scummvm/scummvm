@@ -47,6 +47,7 @@ MODULE_OBJS := \
 	locations.o \
 	map.o \
 	party.o \
+	patcher.o \
 	resources.o \
 	saves.o \
 	screen.o \

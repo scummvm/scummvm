@@ -39,6 +39,7 @@
 #include "xeen/locations.h"
 #include "xeen/map.h"
 #include "xeen/party.h"
+#include "xeen/patcher.h"
 #include "xeen/resources.h"
 #include "xeen/saves.h"
 #include "xeen/screen.h"
@@ -183,6 +184,7 @@ public:
 	LocationManager *_locations;
 	Map *_map;
 	Party *_party;
+	Patcher *_patcher;
 	Resources *_resources;
 	SavesManager *_saves;
 	Screen *_screen;
