@@ -1570,7 +1570,7 @@ int GolemCutscene::show() {
 		WAIT(1);
 	}
 
-	if (_ccNum)
+	if (!_ccNum)
 		sound.playSound("ogre.voc");
 
 	for (int idx = -200; idx < 0; idx += 16) {
@@ -1599,12 +1599,18 @@ int GolemCutscene::show() {
 
 	windows[0].update();
 	while (sound.isSoundPlaying()) {
+		_subtitles.show();
 		WAIT(1);
 	}
 
 	sound.setMusicPercent(38);
-	_subtitles.setLine(_keyFound ? 8 : 7);
-	sound.playVoice(_keyFound ? "golem15.voc" : "golem13.voc");
+	if (_ccNum) {
+		_subtitles.setLine(_keyFound ? 5 : 4);
+		sound.playVoice("what2.voc");
+	} else {
+		_subtitles.setLine(_keyFound ? 8 : 7);
+		sound.playVoice(_keyFound ? "golem15.voc" : "golem13.voc");
+	}
 
 	do {
 		events.updateGameCounter();
@@ -1614,7 +1620,7 @@ int GolemCutscene::show() {
 		if (_ccNum) {
 			int frame = g_vm->getRandomNumber(6);
 			sprites2[0].draw(0, frame, Common::Point(0, 0));
-			sprites2[1].draw(1, frame, Common::Point(160, 0));
+			sprites2[1].draw(0, frame, Common::Point(160, 0));
 		} else {
 			sprites2[0].draw(0, 0, Common::Point(0, 0));
 			sprites2[0].draw(0, 1, Common::Point(160, 0));
@@ -1622,6 +1628,7 @@ int GolemCutscene::show() {
 				g_vm->getRandomNumber(9) - 3));
 		}
 
+		_subtitles.show();
 		WAIT(1);
 	} while (sound.isSoundPlaying());
 
@@ -1634,16 +1641,17 @@ int GolemCutscene::show() {
 
 	windows[0].update();
 	events.updateGameCounter();
-	events.wait(_ccNum ? 10 : 1);
+	if (_subtitles.wait(_ccNum ? 10 : 1))
+		goto exit;
 
-	if (!_ccNum) {
+	if (_ccNum) {
+		sound.playVoice(_keyFound ? "go2.voc" : "key2.voc");
+	} else {
 		sound.playVoice("ogre.voc");
 		while (sound.isSoundPlaying())
 			events.pollEventsAndWait();
 
 		sound.playVoice(_keyFound ? "golem16.voc" : "golem14.voc");
-	} else {
-		sound.playVoice(_keyFound ? "go2.voc" : "key2.voc");
 	}
 
 	do {
@@ -1654,7 +1662,7 @@ int GolemCutscene::show() {
 		if (_ccNum) {
 			int frame = g_vm->getRandomNumber(6);
 			sprites2[0].draw(0, frame, Common::Point(0, 0));
-			sprites2[1].draw(1, frame, Common::Point(160, 0));
+			sprites2[1].draw(0, frame, Common::Point(160, 0));
 		} else {
 			sprites2[0].draw(0, 0, Common::Point(0, 0));
 			sprites2[0].draw(0, 1, Common::Point(160, 0));
@@ -1663,8 +1671,9 @@ int GolemCutscene::show() {
 		}
 
 		windows[0].update();
+		_subtitles.show();
 		WAIT(1);
-	} while (sound.isSoundPlaying());
+	} while (_subtitles.lineActive());
 
 	sprites1.draw(0, 0, Common::Point(0, 0));
 	sprites1.draw(0, 1, Common::Point(160, 0));
@@ -1672,11 +1681,7 @@ int GolemCutscene::show() {
 	sprites2[_ccNum].draw(0, 1 - _ccNum, Common::Point(160, 0));
 	if (!_ccNum)
 		sprites2[0].draw(0, 2);
-
 	windows[0].update();
-	while (_subtitles.lineActive()) {
-		WAIT(1);
-	}
 
 	sound.setMusicPercent(75);
 
