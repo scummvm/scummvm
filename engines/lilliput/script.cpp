@@ -1074,7 +1074,7 @@ void LilliputScript::checkSpeechAllowed(bool &forceReturnFl) {
 	debugC(1, kDebugScript, "checkSpeechAllowed()");
 
 	forceReturnFl = false;
-	if ((!_vm->_displayMap) && (_vm->_characterRelativePositionX[_vm->_currentScriptCharacter] != -1))
+	if ((!_vm->_displayMap) && (_vm->_characterRelativePos[_vm->_currentScriptCharacter].x != -1))
 		return;
 
 	forceReturnFl = true;
@@ -1322,7 +1322,7 @@ Common::Point LilliputScript::getPosFromScript() {
 		return Common::Point(x, y);
 		}
 	case 0xFA:
-		return Common::Point(_vm->_characterTargetPosX[_vm->_currentScriptCharacter], _vm->_characterTargetPosY[_vm->_currentScriptCharacter]);
+		return _vm->_characterTargetPos[_vm->_currentScriptCharacter];
 	case 0xF9:
 		return Common::Point(_vm->_currentCharacterAttributes[4], _vm->_currentCharacterAttributes[5]);
 	case 0xF8: {
@@ -2033,10 +2033,9 @@ byte LilliputScript::OC_checkDelayedReactivation() {
 
 byte LilliputScript::OC_checkTargetReached() {
 	debugC(1, kDebugScript, "OC_checkTargetReached()");
-	Common::Point var1 = getPosFromScript();
+	Common::Point pos = getPosFromScript();
 
-	if ((_vm->_characterTargetPosX[_vm->_currentScriptCharacter] == var1.x)
-		 && (_vm->_characterTargetPosY[_vm->_currentScriptCharacter] == var1.y))
+	if (_vm->_characterTargetPos[_vm->_currentScriptCharacter] == pos)
 		return 1;
 
 	return 0;
@@ -2388,9 +2387,8 @@ void LilliputScript::OC_setCurrentScriptCharacterPos() {
 	debugC(1, kDebugScript, "OC_setCurrentScriptCharacterPos()");
 
 	Common::Point pos = getPosFromScript();
-	_vm->_characterTargetPosX[_vm->_currentScriptCharacter] = pos.x;
-	_vm->_characterTargetPosY[_vm->_currentScriptCharacter] = pos.y;
-	_vm->_characterSubTargetPosX[_vm->_currentScriptCharacter] = -1;
+	_vm->_characterTargetPos[_vm->_currentScriptCharacter] = pos;
+	_vm->_characterSubTargetPos[_vm->_currentScriptCharacter].x = -1;
 }
 
 void LilliputScript::OC_initScriptFor() {
@@ -2654,7 +2652,7 @@ void LilliputScript::OC_setSeek() {
 
 	int16 var = getValue1();
 	_characterSeek[_vm->_currentScriptCharacter] = (byte)(var & 0xFF);
-	_vm->_characterSubTargetPosX[_vm->_currentScriptCharacter] = -1;
+	_vm->_characterSubTargetPos[_vm->_currentScriptCharacter].x = -1;
 }
 
 void LilliputScript::OC_scrollAwayFromCharacter() {

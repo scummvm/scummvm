@@ -175,16 +175,12 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_array1692B[i] = 0;
 
 	for (int i = 0; i < 40; i++) {
-		_characterTargetPosX[i] = 0;
-		_characterTargetPosY[i] = 0;
+		_characterTargetPos[i] = Common::Point(0, 0);
 		_charactersToDisplay[i] = 0;
-		_characterRelativePositionX[i] = -1;
-		_characterRelativePositionY[i] = -1;
-		_characterDisplayX[i] = 0;
-		_characterDisplayY[i] = 0;
+		_characterRelativePos[i] = Common::Point(-1, -1);
+		_characterDisplay[i] = Common::Point(0, 0);
 		_characterMagicPuffFrame[i] = -1;
-		_characterSubTargetPosX[i] = -1;
-		_characterSubTargetPosY[i] = -1;
+		_characterSubTargetPos[i] = Common::Point(-1, -1);
 		_specialCubes[i] = 0;
 
 		_characterSignals[i] = -1;
@@ -633,21 +629,18 @@ void LilliputEngine::moveCharacters() {
 		}
 
 		_scriptHandler->_characterTilePos[i] = Common::Point(_characterPositionX[i] >> 3, _characterPositionY[i] >> 3);
-		_characterRelativePositionX[i] = -1;
-		_characterRelativePositionY[i] = -1;
-		_characterDisplayX[i] = -1;
-		_characterDisplayY[i] = -1;
+		_characterRelativePos[i] = Common::Point(-1, -1);
+		_characterDisplay[i] = Common::Point(-1, -1);
 
 		int tmpVal2 = (_characterPositionX[i] >> 3) - _scriptHandler->_viewportPos.x;
 		int tmpVal3 = (_characterPositionY[i] >> 3) - _scriptHandler->_viewportPos.y;
 		if ((tmpVal2 >= 0) && (tmpVal2 <= 7) && (tmpVal3 >= 0) && (tmpVal3 <= 7)) {
-			_characterRelativePositionX[i] = tmpVal2;
-			_characterRelativePositionY[i] = tmpVal3;
+			_characterRelativePos[i] = Common::Point(tmpVal2, tmpVal3);
 			tmpVal2 = _characterPositionX[i] - pos16213.x;
 			tmpVal3 = _characterPositionY[i] - pos16213.y;
 			int tmpVal4 = _characterPosAltitude[i];
-			_characterDisplayX[i] = ((60 + tmpVal2 - tmpVal3) * 2) & 0xFF;
-			_characterDisplayY[i] = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
+			_characterDisplay[i].x = ((60 + tmpVal2 - tmpVal3) * 2) & 0xFF;
+			_characterDisplay[i].y = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
 			_charactersToDisplay[_numCharactersToDisplay] = i;
 			++_numCharactersToDisplay;
 		}
@@ -662,10 +655,9 @@ void LilliputEngine::setNextDisplayCharacter(int var1) {
 	byte charNum = var1 & 0xFF;
 	if (charNum < _numCharactersToDisplay) {
 		int index = _charactersToDisplay[charNum];
-		_nextDisplayCharacterPos = Common::Point(_characterRelativePositionX[index], _characterRelativePositionY[index]);
-	} else {
+		_nextDisplayCharacterPos = _characterRelativePos[index];
+	} else
 		_nextDisplayCharacterPos = Common::Point(-1, -1);
-	}
 }
 
 void LilliputEngine::prepareGameArea() {
@@ -1100,19 +1092,19 @@ void LilliputEngine::sortCharacters() {
 			int index1 = _charactersToDisplay[var2];
 			int index2 = _charactersToDisplay[var2 + 1];
 
-			if (_characterRelativePositionY[index1] < _characterRelativePositionY[index2])
+			if (_characterRelativePos[index1].y < _characterRelativePos[index2].y)
 				continue;
 
-			if (_characterRelativePositionY[index1] == _characterRelativePositionY[index2]) {
-				if (_characterRelativePositionX[index1] < _characterRelativePositionX[index2])
+			if (_characterRelativePos[index1].y == _characterRelativePos[index2].y) {
+				if (_characterRelativePos[index1].x < _characterRelativePos[index2].x)
 					continue;
 
-				if (_characterRelativePositionX[index1] == _characterRelativePositionX[index2]) {
+				if (_characterRelativePos[index1].x == _characterRelativePos[index2].x) {
 					if (_characterPosAltitude[index1] < _characterPosAltitude[index2])
 						continue;
 
 					if (_characterPosAltitude[index1] == _characterPosAltitude[index2]) {
-						if (_characterDisplayY[index1] < _characterDisplayY[index2])
+						if (_characterDisplay[index1].y < _characterDisplay[index2].y)
 							continue;
 					}
 				}
@@ -1222,7 +1214,7 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 	}
 
 	int index = _charactersToDisplay[_currentDisplayCharacter];
-	Common::Point characterPos = Common::Point(_characterDisplayX[index], _characterDisplayY[index]);
+	Common::Point characterPos = _characterDisplay[index];
 
 	if (index == _scriptHandler->_talkingCharacter)
 		displaySpeechBubbleTail(characterPos);
@@ -1330,7 +1322,7 @@ byte LilliputEngine::getDirection(Common::Point param1, Common::Point param2) {
 byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
 	debugC(2, kDebugEngine, "sequenceCharacterHomeIn(%d, %d - %d)", index, param1.x, param1.y);
 
-	Common::Point target = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
+	Common::Point target = _characterSubTargetPos[index];
 
 	if (target.x != -1) {
 		if (target != _scriptHandler->_characterTilePos[index]) {
@@ -1339,14 +1331,14 @@ byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
 			return 3;
 		}
 
-		if ((target.x == _characterTargetPosX[index]) && (target.y == _characterTargetPosY[index]))
+		if (target == _characterTargetPos[index])
 			return 2;
 	}
 
 	homeInPathFinding(index);
 
 	Common::Point pos1 = _scriptHandler->_characterTilePos[index];
-	Common::Point pos2 = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
+	Common::Point pos2 = _characterSubTargetPos[index];
 
 	_characterDirectionArray[index] = getDirection(pos1, pos2);
 
@@ -1360,60 +1352,52 @@ void LilliputEngine::homeInPathFinding(int index) {
 	debugC(2, kDebugEngine, "homeInPathFinding(%d)", index);
 
 	int16 word167EB = findHotspot(_scriptHandler->_characterTilePos[index]);
-	int16 word167ED = findHotspot(Common::Point(_characterTargetPosX[index], _characterTargetPosY[index]));
+	int16 word167ED = findHotspot(_characterTargetPos[index]);
 
 	if (word167EB == word167ED) {
-		_characterSubTargetPosX[index] = _characterTargetPosX[index];
-		_characterSubTargetPosY[index] = _characterTargetPosY[index];
+		_characterSubTargetPos[index] = _characterTargetPos[index];
 		return;
 	}
 
 	if (word167EB == -1) {
-		int tmpVal = reverseFindHotspot(Common::Point(_characterTargetPosX[index], _characterTargetPosY[index]));
-		_characterSubTargetPosX[index] = _portalPos[tmpVal].x;
-		_characterSubTargetPosY[index] = _portalPos[tmpVal].y;
+		int tmpVal = reverseFindHotspot(_characterTargetPos[index]);
+		_characterSubTargetPos[index] = _portalPos[tmpVal];
 		return;
 	}
 
 	if ((word167ED != -1) &&
-		(_characterTargetPosX[index] >= _rectXMinMax[word167EB].min) &&
-		(_characterTargetPosX[index] <= _rectXMinMax[word167EB].max) &&
-		(_characterTargetPosY[index] >= _rectYMinMax[word167EB].min) &&
-		(_characterTargetPosY[index] <= _rectYMinMax[word167EB].max)) {
-		_characterSubTargetPosX[index] = _portalPos[word167ED].x;
-		_characterSubTargetPosY[index] = _portalPos[word167ED].y;
+		(_characterTargetPos[index].x >= _rectXMinMax[word167EB].min) &&
+		(_characterTargetPos[index].x <= _rectXMinMax[word167EB].max) &&
+		(_characterTargetPos[index].y >= _rectYMinMax[word167EB].min) &&
+		(_characterTargetPos[index].y <= _rectYMinMax[word167EB].max)) {
+		_characterSubTargetPos[index] = _portalPos[word167ED];
 		return;
 	}
 
-	_characterSubTargetPosX[index] = _portalPos[word167EB].x;
-	_characterSubTargetPosY[index] = _portalPos[word167EB].y;
+	_characterSubTargetPos[index] = _portalPos[word167EB];
 	int var4h = _rectXMinMax[word167EB].min;
 	int var4l = _rectXMinMax[word167EB].max;
 
 	if (var4h != var4l) {
 		if (_portalPos[word167EB].x == var4h) {
-			_characterSubTargetPosX[index] = _portalPos[word167EB].x - 1;
-			_characterSubTargetPosY[index] = _portalPos[word167EB].y;
+			_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x - 1, _portalPos[word167EB].y);
 			return;
 		}
 
 		if (_portalPos[word167EB].x == var4l) {
-			_characterSubTargetPosX[index] = _portalPos[word167EB].x + 1;
-			_characterSubTargetPosY[index] = _portalPos[word167EB].y;
+			_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x + 1, _portalPos[word167EB].y);
 			return;
 		}
 
-		var4h = (_rectYMinMax[word167EB].min);
-		var4l = (_rectYMinMax[word167EB].max);
+		var4h = _rectYMinMax[word167EB].min;
+		var4l = _rectYMinMax[word167EB].max;
 
 		if (var4h != var4l) {
-			if (_portalPos[word167EB].y == var4h) {
-				_characterSubTargetPosX[index] = _portalPos[word167EB].x;
-				_characterSubTargetPosY[index] = _portalPos[word167EB].y - 1;
-			} else {
-				_characterSubTargetPosX[index] = _portalPos[word167EB].x;
-				_characterSubTargetPosY[index] = _portalPos[word167EB].y + 1;
-			}
+			if (_portalPos[word167EB].y == var4h)
+				_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x, _portalPos[word167EB].y - 1);
+			else
+				_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x, _portalPos[word167EB].y + 1);
+
 			return;
 		}
 	}
@@ -1423,19 +1407,15 @@ void LilliputEngine::homeInPathFinding(int index) {
 	assert(mapIndex < 16384);
 
 	int tmpVal = _bufferIsoMap[mapIndex + 3];
-	if ((tmpVal & 8) != 0) {
-		_characterSubTargetPosX[index] = _portalPos[word167EB].x + 1;
-		_characterSubTargetPosY[index] = _portalPos[word167EB].y;
-	} else if ((tmpVal & 4) != 0) {
-		_characterSubTargetPosX[index] = _portalPos[word167EB].x;
-		_characterSubTargetPosY[index] = _portalPos[word167EB].y - 1;
-	} else if ((tmpVal & 2) != 0) {
-		_characterSubTargetPosX[index] = _portalPos[word167EB].x;
-		_characterSubTargetPosY[index] = _portalPos[word167EB].y + 1;
-	} else {
-		_characterSubTargetPosX[index] = _portalPos[word167EB].x - 1;
-		_characterSubTargetPosY[index] = _portalPos[word167EB].y;
-	}
+	if ((tmpVal & 8) != 0)
+		_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x + 1, _portalPos[word167EB].y);
+	else if ((tmpVal & 4) != 0)
+		_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x, _portalPos[word167EB].y - 1);
+	else if ((tmpVal & 2) != 0)
+		_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x, _portalPos[word167EB].y + 1);
+	else
+		_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x - 1, _portalPos[word167EB].y);
+
 	return;
 }
 
@@ -1508,8 +1488,8 @@ byte LilliputEngine::sub16A76(int indexb, int indexs) {
 	if ((var1h >= _rectXMinMax[var2].min) && (var1h <= _rectXMinMax[var2].max) && (var1l >= _rectYMinMax[var2].min) && (var1l <= _rectYMinMax[var2].max))
 		return 0;
 
-	var1h = _characterSubTargetPosX[indexs];
-	var1l = _characterSubTargetPosY[indexs];
+	var1h = _characterSubTargetPos[indexs].x;
+	var1l = _characterSubTargetPos[indexs].y;
 
 	if ((var1h >= _rectXMinMax[var2].min) && (var1h <= _rectXMinMax[var2].max) && (var1l >= _rectYMinMax[var2].min) && (var1l <= _rectYMinMax[var2].max))
 		return 0;
@@ -1547,8 +1527,8 @@ void LilliputEngine::sub16A08(int index) {
 	int16 arrayDistance[4];
 
 	for (int i = 3; i >= 0; i--) {
-		int16 var1h = _word16937Pos.x + arrayMoveX[i] - _characterSubTargetPosX[index];
-		int16 var1l = _word16937Pos.y + arrayMoveY[i] - _characterSubTargetPosY[index];
+		int16 var1h = _word16937Pos.x + arrayMoveX[i] - _characterSubTargetPos[index].x;
+		int16 var1l = _word16937Pos.y + arrayMoveY[i] - _characterSubTargetPos[index].y;
 		arrayDistance[i] = (var1l * var1l) + (var1h * var1h);
 	}
 
@@ -1732,15 +1712,10 @@ byte LilliputEngine::sequenceSeekMovingCharacter(int index, Common::Point var1) 
 	int charIndex = _scriptHandler->_characterSeek[index];
 	Common::Point charPos = _scriptHandler->_characterTilePos[charIndex];
 
-	if ((_characterSubTargetPosX[index] != -1)
-		&& (_characterSubTargetPosX[index] == _characterTargetPosX[index])
-		&& (_characterSubTargetPosY[index] == _characterTargetPosY[index])) {
-		_characterSubTargetPosX[index] = charPos.x;
-		_characterSubTargetPosY[index] = charPos.y;
-	}
+	if ((_characterSubTargetPos[index].x != -1) && (_characterSubTargetPos[index] == _characterTargetPos[index]))
+		_characterSubTargetPos[index] = charPos;
 
-	_characterTargetPosX[index] = charPos.x;
-	_characterTargetPosY[index] = charPos.y;
+	_characterTargetPos[index] = charPos;
 
 	return sequenceCharacterHomeIn(index, var1);
 }
@@ -1943,7 +1918,7 @@ void LilliputEngine::checkClickOnCharacter(Common::Point pos, bool &forceReturnF
 
 	for (int8 i = 0; i < _numCharacters; i++) {
 		// check if position is over a character
-		if ((pos.x >= _characterDisplayX[i]) && (pos.x <= _characterDisplayX[i] + 17) && (pos.y >= _characterDisplayY[i]) && (pos.y <= _characterDisplayY[i] + 17) && (i != _host)) {
+		if ((pos.x >= _characterDisplay[i].x) && (pos.x <= _characterDisplay[i].x + 17) && (pos.y >= _characterDisplay[i].y) && (pos.y <= _characterDisplay[i].y + 17) && (i != _host)) {
 			_selectedCharacterId = i;
 			_actionType = kActionGoto;
 			if (_delayedReactivationAction)
