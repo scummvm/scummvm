@@ -40,13 +40,19 @@ Common::String getTextFromClipboardMacOSX() {
 	// Note: on OS X 10.6 and above it is recommanded to use NSPasteboardTypeString rather than NSStringPboardType.
 	// But since we still target older version use NSStringPboardType.
 	NSPasteboard *pb = [NSPasteboard generalPasteboard];
-	NSString* str = [pb  stringForType:NSStringPboardType];
+	NSString *str = [pb  stringForType:NSStringPboardType];
 	if (str == nil)
 		return Common::String();
 	// If the string cannot be represented using the requested encoding we get a null pointer below.
 	// This is fine as ScummVM would not know what to do with non-ASCII characters (although maybe
 	// we should use NSISOLatin1StringEncoding?).
 	return Common::String([str cStringUsingEncoding:NSASCIIStringEncoding]);
+}
+
+bool setTextInClipboardMacOSX(const Common::String &text) {
+	NSPasteboard *pb = [NSPasteboard generalPasteboard];
+	[pb declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+	return [pb setString:[NSString stringWithCString:text.c_str() encoding:NSASCIIStringEncoding] forType:NSStringPboardType];
 }
 
 Common::String getDesktopPathMacOSX() {

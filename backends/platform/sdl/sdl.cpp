@@ -513,6 +513,15 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 #endif
 }
 
+bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// FIXME: The string we get from SDL is in UTF-8 and should probably be converted.
+	return SDL_SetClipboardText(text.c_str()) == 0;
+#else
+	return false;
+#endif
+}
+
 uint32 OSystem_SDL::getMillis(bool skipRecord) {
 	uint32 millis = SDL_GetTicks();
 

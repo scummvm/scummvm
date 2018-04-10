@@ -35,6 +35,7 @@ public:
 
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::String &text);
 
 	virtual bool openUrl(const Common::String &url);
 

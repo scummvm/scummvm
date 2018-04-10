@@ -72,6 +72,7 @@ public:
 	// Clipboard
 	virtual bool hasTextInClipboard();
 	virtual Common::String getTextFromClipboard();
+	virtual bool setTextInClipboard(const Common::String &text);
 
 	virtual void setWindowCaption(const char *caption);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
