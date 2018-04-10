@@ -1880,7 +1880,10 @@ int DwarfCutscene::show() {
 	screen.blitFrom(savedBg);
 	sprites2.draw(0, 0);
 	windows[0].update();
-	_subtitles.setLine(_ccNum ? 0 : 4);
+	if (_ccNum)
+		_subtitles.setLine(_keyFound ? 7 : 8);
+	else
+		_subtitles.setLine(4);
 
 	for (int idx = 0; idx < (_ccNum ? 2 : 3); ++idx) {
 		switch (idx) {
