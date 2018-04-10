@@ -765,8 +765,8 @@ void Interface::startFalling(bool flag) {
 			break;
 		}
 	} else {
-		if (party._mazeId > 89 && party._mazeId < 113) {
-			party._mazeId += 168;
+		if (party._mazeId > 88 && party._mazeId < 114) {
+			party._mazeId -= 88;
 		} else {
 			switch (party._mazeId - 25) {
 			case 0:
