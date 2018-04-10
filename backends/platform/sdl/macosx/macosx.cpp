@@ -124,6 +124,10 @@ Common::String OSystem_MacOSX::getTextFromClipboard() {
 	return getTextFromClipboardMacOSX();
 }
 
+bool OSystem_MacOSX::setTextInClipboard(const Common::String& text) {
+	return setTextInClipboardMacOSX(text);
+}
+
 bool OSystem_MacOSX::openUrl(const Common::String &url) {
 	CFURLRef urlRef = CFURLCreateWithBytes (NULL, (UInt8*)url.c_str(), url.size(), kCFStringEncodingASCII, NULL);
 	OSStatus err = LSOpenCFURLRef(urlRef, NULL);

@@ -49,6 +49,12 @@ Common::String getTextFromClipboardMacOSX() {
 	return Common::String([str cStringUsingEncoding:NSASCIIStringEncoding]);
 }
 
+bool setTextInClipboardMacOSX(const Common::String& text) {
+	NSPasteboard *pb = [NSPasteboard generalPasteboard];
+	[pb declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+	return [pb setString:[NSString stringWithCString:text.c_str() encoding:NSASCIIStringEncoding] forType:NSStringPboardType];
+}
+
 Common::String getDesktopPathMacOSX() {
 	// The recommanded method is to use NSFileManager.
 	// NSUrl *url = [[[NSFileManager defaultManager] URLsForDirectory:NSDesktopDirectory inDomains:NSUserDomainMask] firstObject];

@@ -27,6 +27,7 @@
 
 bool hasTextInClipboardMacOSX();
 Common::String getTextFromClipboardMacOSX();
+bool setTextInClipboardMacOSX(const Common::String&);
 Common::String getDesktopPathMacOSX();
 
 #endif
