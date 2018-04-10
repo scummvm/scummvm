@@ -201,7 +201,7 @@ public:
 	MinMax _rectXMinMax[40];
 	MinMax _rectYMinMax[40];
 	Common::Point _rulesBuffer12Pos3[40];
-	Common::Point _rulesBuffer12Pos4[40];
+	Common::Point _portalPos[40];
 	int _interfaceHotspotNumb;
 	byte _interfaceTwoStepAction[20];
 	int16 _interfaceHotspotsX[20];
@@ -274,7 +274,7 @@ public:
 	int16 reverseFindHotspot(Common::Point pos);
 	byte sequenceSetMobility(int index, Common::Point var1);
 	byte sequenceEnd(int index);
-	void sub167EF(int index);
+	void homeInPathFinding(int index);
 
 	void renderCharacters(byte *buf, Common::Point pos);
 
@@ -321,7 +321,7 @@ public:
 	byte sequenceSeekMovingCharacter(int index, Common::Point var1);
 	byte sequenceSound(int index, Common::Point var1);
 	byte sequenceRepeat(int index, Common::Point var1, int tmpVal);
-	void sub1693A_chooseDirections(int index);
+	void homeInChooseDirection(int index);
 
 	void initGame(const LilliputGameDescription *gd);
 	byte *loadVGA(Common::String filename, int fileSize, bool loadPal);

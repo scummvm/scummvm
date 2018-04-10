@@ -1330,34 +1330,34 @@ byte LilliputEngine::getDirection(Common::Point param1, Common::Point param2) {
 byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
 	debugC(2, kDebugEngine, "sequenceCharacterHomeIn(%d, %d - %d)", index, param1.x, param1.y);
 
-	Common::Point var3 = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
+	Common::Point target = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
 
-	if (var3.x != -1) {
-		if (var3 != _scriptHandler->_characterTilePos[index]) {
-			sub1693A_chooseDirections(index);
+	if (target.x != -1) {
+		if (target != _scriptHandler->_characterTilePos[index]) {
+			homeInChooseDirection(index);
 			_scriptHandler->_characterNextSequence[index] -= (param1.x & 0x0F);
 			return 3;
 		}
 
-		if ((var3.x == _characterTargetPosX[index]) && (var3.y == _characterTargetPosY[index]))
+		if ((target.x == _characterTargetPosX[index]) && (target.y == _characterTargetPosY[index]))
 			return 2;
 	}
 
-	sub167EF(index);
+	homeInPathFinding(index);
 
 	Common::Point pos1 = _scriptHandler->_characterTilePos[index];
 	Common::Point pos2 = Common::Point(_characterSubTargetPosX[index], _characterSubTargetPosY[index]);
 
 	_characterDirectionArray[index] = getDirection(pos1, pos2);
 
-	sub1693A_chooseDirections(index);
+	homeInChooseDirection(index);
 	_scriptHandler->_characterNextSequence[index] -= (param1.x & 0x0F);
 	return 3;
 
 }
 
-void LilliputEngine::sub167EF(int index) {
-	debugC(2, kDebugEngine, "sub167EF(%d)", index);
+void LilliputEngine::homeInPathFinding(int index) {
+	debugC(2, kDebugEngine, "homeInPathFinding(%d)", index);
 
 	int16 word167EB = findHotspot(_scriptHandler->_characterTilePos[index]);
 	int16 word167ED = findHotspot(Common::Point(_characterTargetPosX[index], _characterTargetPosY[index]));
@@ -1370,8 +1370,8 @@ void LilliputEngine::sub167EF(int index) {
 
 	if (word167EB == -1) {
 		int tmpVal = reverseFindHotspot(Common::Point(_characterTargetPosX[index], _characterTargetPosY[index]));
-		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[tmpVal].x;
-		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[tmpVal].y;
+		_characterSubTargetPosX[index] = _portalPos[tmpVal].x;
+		_characterSubTargetPosY[index] = _portalPos[tmpVal].y;
 		return;
 	}
 
@@ -1380,26 +1380,26 @@ void LilliputEngine::sub167EF(int index) {
 		(_characterTargetPosX[index] <= _rectXMinMax[word167EB].max) &&
 		(_characterTargetPosY[index] >= _rectYMinMax[word167EB].min) &&
 		(_characterTargetPosY[index] <= _rectYMinMax[word167EB].max)) {
-		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167ED].x;
-		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167ED].y;
+		_characterSubTargetPosX[index] = _portalPos[word167ED].x;
+		_characterSubTargetPosY[index] = _portalPos[word167ED].y;
 		return;
 	}
 
-	_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
-	_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
+	_characterSubTargetPosX[index] = _portalPos[word167EB].x;
+	_characterSubTargetPosY[index] = _portalPos[word167EB].y;
 	int var4h = _rectXMinMax[word167EB].min;
 	int var4l = _rectXMinMax[word167EB].max;
 
 	if (var4h != var4l) {
-		if (_rulesBuffer12Pos4[word167EB].x == var4h) {
-			_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x - 1;
-			_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
+		if (_portalPos[word167EB].x == var4h) {
+			_characterSubTargetPosX[index] = _portalPos[word167EB].x - 1;
+			_characterSubTargetPosY[index] = _portalPos[word167EB].y;
 			return;
 		}
 
-		if (_rulesBuffer12Pos4[word167EB].x == var4l) {
-			_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x + 1;
-			_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
+		if (_portalPos[word167EB].x == var4l) {
+			_characterSubTargetPosX[index] = _portalPos[word167EB].x + 1;
+			_characterSubTargetPosY[index] = _portalPos[word167EB].y;
 			return;
 		}
 
@@ -1407,40 +1407,40 @@ void LilliputEngine::sub167EF(int index) {
 		var4l = (_rectYMinMax[word167EB].max);
 
 		if (var4h != var4l) {
-			if (_rulesBuffer12Pos4[word167EB].y == var4h) {
-				_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
-				_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y - 1;
+			if (_portalPos[word167EB].y == var4h) {
+				_characterSubTargetPosX[index] = _portalPos[word167EB].x;
+				_characterSubTargetPosY[index] = _portalPos[word167EB].y - 1;
 			} else {
-				_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
-				_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y + 1;
+				_characterSubTargetPosX[index] = _portalPos[word167EB].x;
+				_characterSubTargetPosY[index] = _portalPos[word167EB].y + 1;
 			}
 			return;
 		}
 	}
 
 	// var4h == var4l
-	int mapIndex = (_rulesBuffer12Pos4[word167EB].y * 64 + _rulesBuffer12Pos4[word167EB].x) * 4;
+	int mapIndex = (_portalPos[word167EB].y * 64 + _portalPos[word167EB].x) * 4;
 	assert(mapIndex < 16384);
 
 	int tmpVal = _bufferIsoMap[mapIndex + 3];
 	if ((tmpVal & 8) != 0) {
-		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x + 1;
-		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
+		_characterSubTargetPosX[index] = _portalPos[word167EB].x + 1;
+		_characterSubTargetPosY[index] = _portalPos[word167EB].y;
 	} else if ((tmpVal & 4) != 0) {
-		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
-		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y - 1;
+		_characterSubTargetPosX[index] = _portalPos[word167EB].x;
+		_characterSubTargetPosY[index] = _portalPos[word167EB].y - 1;
 	} else if ((tmpVal & 2) != 0) {
-		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x;
-		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y + 1;
+		_characterSubTargetPosX[index] = _portalPos[word167EB].x;
+		_characterSubTargetPosY[index] = _portalPos[word167EB].y + 1;
 	} else {
-		_characterSubTargetPosX[index] = _rulesBuffer12Pos4[word167EB].x - 1;
-		_characterSubTargetPosY[index] = _rulesBuffer12Pos4[word167EB].y;
+		_characterSubTargetPosX[index] = _portalPos[word167EB].x - 1;
+		_characterSubTargetPosY[index] = _portalPos[word167EB].y;
 	}
 	return;
 }
 
-void LilliputEngine::sub1693A_chooseDirections(int index) {
-	debugC(2, kDebugEngine, "sub1693A_chooseDirections(%d)", index);
+void LilliputEngine::homeInChooseDirection(int index) {
+	debugC(2, kDebugEngine, "homeInChooseDirection(%d)", index);
 
 	static const int16 mapArrayMove[4] = {4, -256, 256, -4};
 
@@ -2601,7 +2601,7 @@ void LilliputEngine::loadRules() {
 		tmpValY = (int16)f.readByte();
 		tmpValX = (int16)f.readByte();
 		// _rulesBuffer12Pos4 is used by the into
-		_rulesBuffer12Pos4[i] = Common::Point(tmpValX, tmpValY);
+		_portalPos[i] = Common::Point(tmpValX, tmpValY);
 	}
 
 	// Chunk 13
