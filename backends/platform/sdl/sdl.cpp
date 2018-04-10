@@ -33,6 +33,7 @@
 #include "gui/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "backends/saves/default/default-saves.h"
 
@@ -502,11 +503,20 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	char *text = SDL_GetClipboardText();
+	// The string returned by SDL is in UTF-8. Convert to the
+	// current TranslationManager encoding or ISO-8859-1.
+#ifdef USE_TRANSLATION
+	char *conv_text = SDL_iconv_string(TransMan.getCurrentCharset().c_str(), "UTF-8", text, SDL_strlen(text) + 1);
+#else
+	char *conv_text = SDL_iconv_string("ISO-8859-1", "UTF-8", text, SDL_strlen(text) + 1);
+#endif
+	if (conv_text) {
+		SDL_free(text);
+		text = conv_text;
+	}
 	Common::String strText = text;
 	SDL_free(text);
 
-	// FIXME: The string returned by SDL is in UTF-8, it is not clear
-	// what encoding should be used for the returned string.
 	return strText;
 #else
 	return "";
@@ -515,7 +525,18 @@ Common::String OSystem_SDL::getTextFromClipboard() {
 
 bool OSystem_SDL::setTextInClipboard(const Common::String &text) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	// FIXME: The string we get from SDL is in UTF-8 and should probably be converted.
+	// The encoding we need to use is UTF-8. Assume we currently have the
+	// current TranslationManager encoding or ISO-8859-1.
+#ifdef USE_TRANSLATION
+	char *utf8_text = SDL_iconv_string("UTF-8", TransMan.getCurrentCharset().c_str(), text.c_str(), text.size() + 1);
+#else
+	char *utf8_text = SDL_iconv_string("UTF-8", "ISO-8859-1", text.c_str(), text.size() + 1);
+#endif
+	if (utf8_text) {
+		int status = SDL_SetClipboardText(utf8_text);
+		SDL_free(utf8_text);
+		return status == 0;
+	}
 	return SDL_SetClipboardText(text.c_str()) == 0;
 #else
 	return false;
