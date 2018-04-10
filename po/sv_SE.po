@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-08 09:17+0200\n"
-"PO-Revision-Date: 2018-04-10 09:03+0000\n"
+"PO-Revision-Date: 2018-04-10 21:26+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
@@ -186,7 +186,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:252
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr "Laddar ner %s %s / %s %s"
+msgstr "Laddade ner %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:259
 #, c-format
@@ -239,7 +239,7 @@ msgid ""
 "English"
 msgstr ""
 "Spelets språk. Den här inställningen omvandlar inte din spanska spelversion "
-"till en engelsk"
+"till en svensk"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:166 gui/options.cpp:995
 #: gui/options.cpp:1008 gui/options.cpp:1573 audio/null.cpp:41
@@ -464,7 +464,7 @@ msgstr "Rum:"
 
 #: gui/fluidsynth-dialog.cpp:80
 msgid "Damp:"
-msgstr "Dämpa:"
+msgstr "Dämpning:"
 
 #: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
@@ -915,7 +915,7 @@ msgstr "Korrektion av bildförhållande"
 
 #: gui/options.cpp:1024
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Korrigera bildförhållandet för 320 x 200-spel"
+msgstr "Korrigera bildförhållandet för 320x200-spel"
 
 #: gui/options.cpp:1032
 msgid "Preferred Device:"
@@ -1557,7 +1557,7 @@ msgstr "Du kommer att föras till ScummVM:s sida"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr "där du borde kunna komma åt ditt lager."
+msgstr "där du borde tillåta åtkomst till ditt lager."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
@@ -2109,7 +2109,9 @@ msgstr ""
 msgid ""
 "Download complete.\n"
 "Failed to download %u files."
-msgstr "Nedladdningen är färdig. Kunde inte ladda ner %u filer."
+msgstr ""
+"Nedladdningen är färdig.\n"
+"Kunde inte ladda ner %u filer."
 
 #: backends/cloud/storage.cpp:330
 msgid "Download complete."
@@ -2252,7 +2254,7 @@ msgstr "Filtrering aktiverat"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:749
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
 msgid "Filtering disabled"
-msgstr "Filtrering är inaktiverat"
+msgstr "Filtrering inaktiverat"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
