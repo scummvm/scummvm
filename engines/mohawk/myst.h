@@ -229,7 +229,7 @@ public:
 	VideoEntryPtr playMovie(const Common::String &name, MystStack stack);
 	VideoEntryPtr findVideo(const Common::String &name, MystStack stack);
 	void playMovieBlocking(const Common::String &name, MystStack stack, uint16 x, uint16 y);
-	void playFlybyMovie(const Common::String &name);
+	void playFlybyMovie(uint16 stack, uint16 card);
 	void waitUntilMovieEnds(const VideoEntryPtr &video);
 
 	void playSoundBlocking(uint16 id);

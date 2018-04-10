@@ -262,8 +262,38 @@ void MohawkEngine_Myst::playMovieBlocking(const Common::String &name, MystStack 
 	waitUntilMovieEnds(video);
 }
 
-void MohawkEngine_Myst::playFlybyMovie(const Common::String &name) {
-	Common::String filename = wrapMovieFilename(name, kMasterpieceOnly);
+void MohawkEngine_Myst::playFlybyMovie(uint16 stack, uint16 card) {
+	// Play Flyby Entry Movie on Masterpiece Edition.
+	const char *flyby = nullptr;
+
+	switch (stack) {
+		case kSeleniticStack:
+			flyby = "selenitic flyby";
+			break;
+		case kStoneshipStack:
+			flyby = "stoneship flyby";
+			break;
+			// Myst Flyby Movie not used in Original Masterpiece Edition Engine
+			// We play it when first arriving on Myst, and if the user has chosen so.
+		case kMystStack:
+			if (ConfMan.getBool("playmystflyby"))
+				flyby = "myst flyby";
+			break;
+		case kMechanicalStack:
+			flyby = "mech age flyby";
+			break;
+		case kChannelwoodStack:
+			flyby = "channelwood flyby";
+			break;
+		default:
+			break;
+	}
+
+	if (!flyby) {
+		return;
+	}
+
+	Common::String filename = wrapMovieFilename(flyby, kMasterpieceOnly);
 	VideoEntryPtr video = _video->playMovie(filename, Audio::Mixer::kSFXSoundType);
 	if (!video) {
 		error("Failed to open the '%s' movie", filename.c_str());
@@ -486,20 +516,27 @@ void MohawkEngine_Myst::pauseEngineIntern(bool pause) {
 void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcSound, uint16 linkDstSound) {
 	debug(2, "changeToStack(%d)", stack);
 
-	_curStack = stack;
-
 	// Fill screen with black and empty cursor
 	_cursor->setCursor(0);
 	_currentCursor = 0;
+
+	_sound->stopEffect();
+	_video->stopVideos();
+
+	// In Myst ME, play a fullscreen flyby movie, except when loading saves.
+	// Also play a flyby when first linking to Myst.
+	if (getFeatures() & GF_ME
+			&& (_curStack != kIntroStack || (stack == kMystStack && card == 4134))) {
+		playFlybyMovie(stack, card);
+	}
+
+	_sound->stopBackground();
 
 	if (getFeatures() & GF_ME)
 		_system->fillScreen(_system->getScreenFormat().RGBToColor(0, 0, 0));
 	else
 		_gfx->clearScreenPalette();
 
-	_sound->stopEffect();
-	_sound->stopBackground();
-	_video->stopVideos();
 	if (linkSrcSound)
 		playSoundBlocking(linkSrcSound);
 
@@ -508,6 +545,8 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	// take up much memory.
 	delete _prevStack;
 	_prevStack = _scriptParser;
+
+	_curStack = stack;
 
 	switch (_curStack) {
 	case kChannelwoodStack:
@@ -575,38 +614,6 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 	// Clear the resource cache and the image cache
 	_cache.clear();
 	_gfx->clearCache();
-
-	if (getFeatures() & GF_ME) {
-		// Play Flyby Entry Movie on Masterpiece Edition.
-		const char *flyby = nullptr;
-
-		switch (_curStack) {
-		case kSeleniticStack:
-			flyby = "selenitic flyby";
-			break;
-		case kStoneshipStack:
-			flyby = "stoneship flyby";
-			break;
-		// Myst Flyby Movie not used in Original Masterpiece Edition Engine
-		// We play it when first arriving on Myst, and if the user has chosen so.
-		case kMystStack:
-			if (ConfMan.getBool("playmystflyby") && card == 4134)
-				flyby = "myst flyby";
-			break;
-		case kMechanicalStack:
-			flyby = "mech age flyby";
-			break;
-		case kChannelwoodStack:
-			flyby = "channelwood flyby";
-			break;
-		default:
-			break;
-		}
-
-		if (flyby) {
-			playFlybyMovie(flyby);
-		}
-	}
 
 	changeToCard(card, kTransitionCopy);
 
