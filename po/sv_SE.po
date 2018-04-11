@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-08 09:17+0200\n"
-"PO-Revision-Date: 2018-04-11 09:36+0000\n"
+"PO-Revision-Date: 2018-04-11 19:27+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
@@ -2374,7 +2374,7 @@ msgstr "Hög ljudkvalitet (långsammare) (omstart)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:122
 msgid "Disable power off"
-msgstr "Inaktivera strömsparning"
+msgstr "Inaktivera strömsparläge"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:309
 #: backends/platform/ios7/ios7_osys_events.cpp:519
@@ -2569,7 +2569,7 @@ msgstr "Lodrät underskanning:"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
-msgstr "Ingång"
+msgstr "Inmatning"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
@@ -2609,7 +2609,7 @@ msgstr "Server:"
 
 #: backends/platform/wii/options.cpp:110
 msgid "Share:"
-msgstr "Delad:"
+msgstr "Utdelning:"
 
 #: backends/platform/wii/options.cpp:118
 msgid "Password:"
@@ -2864,7 +2864,7 @@ msgid ""
 "behavior"
 msgstr ""
 "Använd en alternativ färgkarta typisk för alla Amiga-spel. Det här är det "
-"mala beteendet"
+"gamla beteendet"
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
@@ -3048,7 +3048,7 @@ msgstr "Skipp-stöd"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr "Tillåter skippning av text och filmscener"
+msgstr "Tillåt skippning av text och filmscener"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
@@ -3063,7 +3063,7 @@ msgstr "Aktivera heliumläge"
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr "Mjuk rullning"
+msgstr "Mjuk skärmrullning"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
@@ -3536,7 +3536,7 @@ msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Använd ett IMB Music Feature-kort eller en Yamaha FB-01 FM synthmodul för "
+"Använd ett IBM Music Feature-kort eller en Yamaha FB-01 FM synthmodul för "
 "MIDI-uppspelning"
 
 #: engines/sci/detection.cpp:473
@@ -3763,7 +3763,7 @@ msgstr "Du måste ange ett namn"
 
 #: engines/scumm/dialogs.cpp:192
 msgid "The game was NOT saved (disk full?)"
-msgstr "Spelet sprades EJ (skivan full?)"
+msgstr "Spelet sparades EJ (skivan full?)"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "The game was NOT loaded"
@@ -3938,7 +3938,7 @@ msgstr "Musrestriktion av/på"
 
 #: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
-msgstr "Växla grafikfilter"
+msgstr "Växla mellan grafikfilter"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
@@ -4200,7 +4200,7 @@ msgstr "Comm"
 
 #: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
-msgstr "Spara / Ladda / Inst"
+msgstr "Spara / Ladda / Inställningar"
 
 #: engines/scumm/help.cpp:256
 msgid "Other game controls:"
