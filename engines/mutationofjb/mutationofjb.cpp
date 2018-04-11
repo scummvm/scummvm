@@ -43,7 +43,6 @@ MutationOfJBEngine::MutationOfJBEngine(OSystem *syst)
 : Engine(syst),
  _console(nullptr),
  _screen(nullptr),
- _currentAction(ActionInfo::Walk),
  _mapObjectId(0) {
 	debug("MutationOfJBEngine::MutationOfJBEngine");
 }
@@ -82,12 +81,12 @@ void MutationOfJBEngine::handleNormalScene(const Common::Event &event) {
 		const int16 y = event.mouse.y;
 
 		if (Door *const door = scene->findDoor(x, y)) {
-			if (!_game->startActionSection(_currentAction, door->_name) && _currentAction == ActionInfo::Walk && door->_destSceneId != 0) {
+			if (!_game->startActionSection(_game->getCurrentAction(), door->_name) && _game->getCurrentAction() == ActionInfo::Walk && door->_destSceneId != 0) {
 				_game->changeScene(door->_destSceneId, _game->getGameData()._partB);
 			}
 		} else if (Static *const stat = scene->findStatic(x, y)) {
 			if (stat->_active == 1) {
-				_game->startActionSection(_currentAction, stat->_name);
+				_game->startActionSection(_game->getCurrentAction(), stat->_name);
 			}
 		}
 		break;
@@ -95,6 +94,7 @@ void MutationOfJBEngine::handleNormalScene(const Common::Event &event) {
 	default:
 		break;
 	}
+	_game->getGui().handleEvent(event);
 }
 
 /*
@@ -187,19 +187,19 @@ Common::Error MutationOfJBEngine::run() {
 			{
 				switch (event.kbd.ascii) {
 				case 'g':
-					_currentAction = ActionInfo::Walk;
+					_game->setCurrentAction(ActionInfo::Walk);
 					break;
 				case 'r':
-					_currentAction = ActionInfo::Talk;
+					_game->setCurrentAction(ActionInfo::Talk);
 					break;
 				case 's':
-					_currentAction = ActionInfo::Look;
+					_game->setCurrentAction(ActionInfo::Look);
 					break;
 				case 'b':
-					_currentAction = ActionInfo::Use;
+					_game->setCurrentAction(ActionInfo::Use);
 					break;
 				case 'n':
-					_currentAction = ActionInfo::PickUp;
+					_game->setCurrentAction(ActionInfo::PickUp);
 					break;
 				}
 			}

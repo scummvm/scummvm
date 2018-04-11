@@ -35,7 +35,12 @@
 namespace MutationOfJB {
 
 Game::Game(MutationOfJBEngine *vm)
-: _vm(vm), _delayedLocalScript(nullptr), _gui(*this, _vm->getScreen()), _scriptExecCtx(*this) {
+	: _vm(vm),
+	_delayedLocalScript(nullptr),
+	_gui(*this, _vm->getScreen()),
+	_scriptExecCtx(*this),
+	_currentAction(ActionInfo::Walk) {
+
 	_gameData = new GameData;
 	loadGameData(false);
 
@@ -87,7 +92,7 @@ bool Game::loadGameData(bool partB) {
 
 Script *Game::changeSceneLoadScript(uint8 sceneId, bool partB) {
 	if (isCurrentSceneMap()) {
-		_gui.markInventoryDirty();
+		_gui.markDirty();
 	}
 
 	_gameData->_lastScene = _gameData->_currentScene;
@@ -177,6 +182,14 @@ void Game::update() {
 
 Gui &Game::getGui() {
 	return _gui;
+}
+
+ActionInfo::Action Game::getCurrentAction() const {
+	return _currentAction;
+}
+
+void Game::setCurrentAction(ActionInfo::Action action) {
+	_currentAction = action;
 }
 
 }

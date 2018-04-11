@@ -23,10 +23,16 @@
 #ifndef MUTATIONOFJB_GUI_H
 #define MUTATIONOFJB_GUI_H
 
+#include "common/array.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "graphics/surface.h"
 #include "mutationofjb/inventory.h"
+#include "mutationofjb/widgets/buttonwidget.h"
+
+namespace Common {
+class Event;
+}
 
 namespace Graphics {
 class Screen;
@@ -35,31 +41,44 @@ class Screen;
 namespace MutationOfJB {
 
 class Game;
+class Widget;
+class InventoryWidget;
 
-class Gui : public InventoryObserver {
+class Gui : public InventoryObserver, public ButtonWidgetCallback {
 public:
+	typedef Common::HashMap<Common::String, int> InventoryMap;
+
 	friend class InventoryAnimationDecoderCallback;
+	friend class HudAnimationDecoderCallback;
+
 	Gui(Game &game, Graphics::Screen *screen);
+	~Gui();
+	Game &getGame();
+
 	bool init();
 	void update();
 
-	void markInventoryDirty();
+	void markDirty();
+	void handleEvent(const Common::Event &event);
 
 	virtual void onInventoryChanged() override;
+	virtual void onButtonClicked(ButtonWidget *) override;
 
 private:
 	bool loadInventoryGfx();
+	bool loadHudGfx();
 	bool loadInventoryList();
 	void drawInventoryItem(const Common::String &item, int pos);
 	void drawInventory();
-
-	typedef Common::HashMap<Common::String, int> InventoryMap;
 
 	Game &_game;
 	Graphics::Screen *_screen;
 	InventoryMap _inventoryItems;
 	Common::Array<Graphics::Surface> _inventorySurfaces;
-	bool _inventoryDirty;
+	Common::Array<Graphics::Surface> _hudSurfaces;
+
+	InventoryWidget *_inventoryWidget;
+	Common::Array<Widget *> _widgets;
 };
 
 }

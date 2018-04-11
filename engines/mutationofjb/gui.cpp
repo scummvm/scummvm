@@ -27,20 +27,23 @@
 #include "mutationofjb/gamedata.h"
 #include "mutationofjb/inventory.h"
 #include "mutationofjb/util.h"
+#include "mutationofjb/widgets/widget.h"
+#include "mutationofjb/widgets/inventorywidget.h"
 #include "common/rect.h"
 #include "graphics/screen.h"
 
 namespace MutationOfJB {
 
 enum ButtonType {
-	BUTTON_WALK,
+	BUTTON_WALK = 0,
 	BUTTON_TALK,
 	BUTTON_LOOK,
 	BUTTON_USE,
 	BUTTON_PICKUP,
 	BUTTON_SCROLL_LEFT,
 	BUTTON_SCROLL_RIGHT,
-	BUTTON_SETTINGS
+	BUTTON_SETTINGS,
+	NUM_BUTTONS
 };
 
 enum {
@@ -52,40 +55,78 @@ enum {
 	INVENTORY_ITEMS_LINES = 5
 };
 
-static Common::Rect ButtonRects[] = {
-	Common::Rect(0, 148, 67, 158), // Walk
-	Common::Rect(0, 158, 67, 168), // Talk
-	Common::Rect(0, 168, 67, 178), // Look
-	Common::Rect(0, 178, 67, 188), // Use
-	Common::Rect(0, 188, 67, 198), // PickUp
-	Common::Rect(67, 149, 88, 174), // ScrollLeft
-	Common::Rect(67, 174, 88, 199), // ScrollRight
-	Common::Rect(301, 148, 320, 200) // Settings
-};
 
 Gui::Gui(Game &game, Graphics::Screen *screen)
 	: _game(game),
-	_screen(screen),
-	_inventoryDirty(false) {
+	_screen(screen) {}
+
+Gui::~Gui() {
+	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
+		delete *it;
+	}
+}
+
+Game &Gui::getGame() {
+	return _game;
 }
 
 bool Gui::init() {
-	const bool result1 = loadInventoryList();
-	const bool result2 = loadInventoryGfx();
+	if (!loadInventoryList()) {
+		return false;
+	}
+
+	if (!loadInventoryGfx()) {
+		return false;
+	}
+
+	if (!loadHudGfx()) {
+		return false;
+	}
 
 	_game.getGameData().getInventory().setObserver(this);
 
-	return result1 && result2;
+	// Init widgets.
+	_inventoryWidget = new InventoryWidget(*this, _inventoryItems, _inventorySurfaces);
+	_widgets.push_back(_inventoryWidget);
+
+	const Common::Rect ButtonRects[] = {
+		Common::Rect(0, 148, 67, 158), // Walk
+		Common::Rect(0, 158, 67, 168), // Talk
+		Common::Rect(0, 168, 67, 178), // Look
+		Common::Rect(0, 178, 67, 188), // Use
+		Common::Rect(0, 188, 67, 198), // PickUp
+		Common::Rect(67, 149, 88, 174), // ScrollLeft
+		Common::Rect(67, 174, 88, 199), // ScrollRight
+		Common::Rect(301, 148, 320, 200) // Settings
+	};
+
+	for (int i = 0; i < NUM_BUTTONS; ++i) {
+		const Graphics::Surface normalSurface = _hudSurfaces[0].getSubArea(ButtonRects[i]);
+		const Graphics::Surface pressedSurface = _hudSurfaces[1].getSubArea(ButtonRects[i]);
+		ButtonWidget *button = new ButtonWidget(*this, ButtonRects[i], normalSurface, pressedSurface);
+		button->setId(i);
+		button->setCallback(this);
+		_widgets.push_back(button);
+	}
+
+	return true;
 }
 
-void Gui::markInventoryDirty() {
-	_inventoryDirty = true;
+void Gui::markDirty() {
+	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
+		(*it)->markDirty();
+	}
+}
+
+void Gui::handleEvent(const Common::Event &event) {
+	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
+		(*it)->handleEvent(event);
+	}
 }
 
 void Gui::update() {
-	if (_inventoryDirty) {
-		drawInventory();
-		_inventoryDirty = false;
+	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
+		(*it)->update(*_screen);
 	}
 }
 
@@ -113,6 +154,32 @@ void InventoryAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &
 bool Gui::loadInventoryGfx() {
 	AnimationDecoder decoder("icons.dat");
 	InventoryAnimationDecoderCallback callback(*this);
+	return decoder.decode(&callback);
+}
+
+class HudAnimationDecoderCallback : public AnimationDecoderCallback {
+public:
+	HudAnimationDecoderCallback(Gui &gui) : _gui(gui) {}
+	virtual void onFrame(int frameNo, Graphics::Surface &surface) override;
+	virtual void onPaletteUpdated(byte palette[PALETTE_SIZE]) override;
+private:
+	Gui &_gui;
+};
+
+void HudAnimationDecoderCallback::onPaletteUpdated(byte [PALETTE_SIZE]) {
+}
+
+void HudAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surface) {
+	if (frameNo == 0 || frameNo == 1 || frameNo == 3) {
+		Graphics::Surface outSurface;
+		outSurface.copyFrom(surface);
+		_gui._hudSurfaces.push_back(outSurface);
+	}
+}
+
+bool Gui::loadHudGfx() {
+	AnimationDecoder decoder("room0.dat");
+	HudAnimationDecoderCallback callback(*this);
 	return decoder.decode(&callback);
 }
 
@@ -147,35 +214,16 @@ bool Gui::loadInventoryList() {
 	return true;
 }
 
-void Gui::drawInventoryItem(const Common::String &item, int pos) {
-	InventoryMap::iterator it = _inventoryItems.find(item);
-	if (it == _inventoryItems.end()) {
-		return;
-	}
-
-	const int index = it->_value;
-	const int surfaceNo = index / (INVENTORY_ITEMS_LINES * INVENTORY_ITEMS_PER_LINE);
-	const int indexInSurface = index % (INVENTORY_ITEMS_LINES * INVENTORY_ITEMS_PER_LINE);
-	const int itemX = indexInSurface % INVENTORY_ITEMS_PER_LINE;
-	const int itemY = indexInSurface / INVENTORY_ITEMS_PER_LINE;
-
-	Common::Point destStartPos(INVENTORY_START_X + pos * INVENTORY_ITEM_WIDTH, INVENTORY_START_Y);
-	Common::Rect sourceRect(itemX * INVENTORY_ITEM_WIDTH, itemY * INVENTORY_ITEM_HEIGHT, (itemX + 1) * INVENTORY_ITEM_WIDTH, (itemY + 1) * INVENTORY_ITEM_HEIGHT);
-	_screen->blitFrom(_inventorySurfaces[surfaceNo], sourceRect, destStartPos);
-}
-
-void Gui::drawInventory() {
-	Inventory &inventory = _game.getGameData().getInventory();
-	const Inventory::Items &items = inventory.getItems();
-	Common::Rect fullRect(INVENTORY_START_X, INVENTORY_START_Y, INVENTORY_START_X + Inventory::VISIBLE_ITEMS * INVENTORY_ITEM_WIDTH, INVENTORY_START_Y + INVENTORY_ITEM_HEIGHT);
-	_screen->fillRect(fullRect, 0x00);
-	for (int i = 0; i < MIN((int) items.size(), (int) Inventory::VISIBLE_ITEMS); ++i) {
-		drawInventoryItem(items[i], i);
-	}
-}
-
 void Gui::onInventoryChanged() {
-	markInventoryDirty();
+	_inventoryWidget->markDirty();
+}
+
+void Gui::onButtonClicked(ButtonWidget *button) {
+	const int buttonId = button->getId();
+	if (buttonId <= BUTTON_PICKUP) {
+		const ActionInfo::Action actions[] = {ActionInfo::Walk, ActionInfo::Talk, ActionInfo::Look, ActionInfo::Use, ActionInfo::PickUp};
+		_game.setCurrentAction(actions[buttonId]);
+	}
 }
 
 }

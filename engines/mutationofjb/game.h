@@ -61,6 +61,9 @@ public:
 
 	Gui &getGui();
 
+	ActionInfo::Action getCurrentAction() const;
+	void setCurrentAction(ActionInfo::Action);
+
 private:
 	bool loadGameData(bool partB);
 	void runActiveCommand();
@@ -75,6 +78,7 @@ private:
 	Script *_delayedLocalScript;
 	Room *_room;
 	Gui _gui;
+	ActionInfo::Action _currentAction;
 
 	ScriptExecutionContext _scriptExecCtx;
 };

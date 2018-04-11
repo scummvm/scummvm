@@ -18,6 +18,9 @@ MODULE_OBJS := \
 	commands/removeitemcommand.o \
 	commands/saycommand.o \
 	commands/seqcommand.o \
+	widgets/buttonwidget.o \
+	widgets/inventorywidget.o \
+	widgets/widget.o \
 	animationdecoder.o \
 	debug.o \
 	detection.o \
