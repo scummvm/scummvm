@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-08 09:17+0200\n"
-"PO-Revision-Date: 2018-04-10 05:04+0000\n"
+"PO-Revision-Date: 2018-04-11 19:01+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: German "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
@@ -2922,8 +2922,8 @@ msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
-"Zeige eine Fenster mit einer Kommandozeile und pausiere das Spiel (wie in "
-"SCI) anstelle einer Eingabe in Echtzeit."
+"Zeige ein Fenster mit einer Kommandozeile und pausiere das Spiel (wie in SCI)"
+" anstelle einer Eingabe in Echtzeit."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -3815,7 +3815,7 @@ msgstr "Sie müssen eine Bezeichnung eingeben"
 
 #: engines/scumm/dialogs.cpp:192
 msgid "The game was NOT saved (disk full?)"
-msgstr "Spiel wurde NICHT gespeichert. (Datenträger voll?)"
+msgstr "Spiel wurde NICHT gespeichert (Datenträger voll?)"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "The game was NOT loaded"
