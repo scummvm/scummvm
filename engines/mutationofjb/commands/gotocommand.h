@@ -34,7 +34,7 @@ class GotoCommandParser : public CommandParser {
 public:
 	GotoCommandParser() {}
 
-	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command);
+	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
 class GotoCommand : public Command {

@@ -32,7 +32,9 @@ class ReadStream;
 
 namespace MutationOfJB {
 
-static const uint8 MAX_STR_LENGTH = 0x14;
+enum {
+	MAX_ENTITY_NAME_LENGTH = 0x14
+};
 
 /*
 	There are 4 types of entities present in the game data:
@@ -47,7 +49,7 @@ struct Door {
 		Door name.
 		Can be empty - deactivates door completely.
 	*/
-	char _name[MAX_STR_LENGTH + 1];
+	char _name[MAX_ENTITY_NAME_LENGTH + 1];
 	/*
 		Scene ID where the door leads.
 		Can be 0 - you can hover your mouse over it, but clicking it doesn't do anything (unless scripted).
@@ -96,7 +98,7 @@ struct Object {
 
 struct Static {
 	uint8  _active;
-	char _name[MAX_STR_LENGTH + 1];
+	char _name[MAX_ENTITY_NAME_LENGTH + 1];
 	uint16 _x;
 	uint8  _y;
 	uint16 _width;

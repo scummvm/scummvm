@@ -66,7 +66,7 @@ bool ChangeCommandParser::parseValueString(const Common::String &valueString, bo
 	if (valueString.hasPrefix("NM")) {
 		reg = ChangeCommand::NM;
 		op = ChangeCommand::SetValue;
-		strncpy(ccv._strVal, val, MAX_STR_LENGTH);
+		strncpy(ccv._strVal, val, MAX_ENTITY_NAME_LENGTH);
 	} else if (valueString.hasPrefix("LT")) {
 		reg = ChangeCommand::LT;
 		ccv._byteVal = parseInteger(val, op);
@@ -324,7 +324,7 @@ Command::ExecuteResult ChangeDoorCommand::execute(ScriptExecutionContext &script
 
 	switch (_register) {
 	case NM:
-		strncpy(door->_name, _value._strVal, MAX_STR_LENGTH);
+		strncpy(door->_name, _value._strVal, MAX_ENTITY_NAME_LENGTH);
 		break;
 	case LT:
 		door->_destSceneId = _value._byteVal;
@@ -447,7 +447,7 @@ Command::ExecuteResult ChangeStaticCommand::execute(ScriptExecutionContext &scri
 		stat->_active = _value._byteVal;
 		break;
 	case NM:
-		strncpy(stat->_name, _value._strVal, MAX_STR_LENGTH);
+		strncpy(stat->_name, _value._strVal, MAX_ENTITY_NAME_LENGTH);
 		break;
 	case XX:
 		stat->_x = _value._wordVal;

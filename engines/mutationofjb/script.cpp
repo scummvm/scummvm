@@ -42,6 +42,7 @@
 #include "mutationofjb/commands/camefromcommand.h"
 #include "mutationofjb/commands/callmacrocommand.h"
 #include "mutationofjb/commands/newroomcommand.h"
+#include "mutationofjb/commands/renamecommand.h"
 #include "mutationofjb/game.h"
 
 namespace MutationOfJB {
@@ -62,6 +63,7 @@ static CommandParser **getParsers() {
 		new AddItemCommandParser,
 		new RemoveItemCommandParser,
 		new RemoveAllItemsCommandParser,
+		new RenameCommandParser,
 		new NewRoomCommandParser,
 		new GotoCommandParser,
 		new LabelCommandParser,
