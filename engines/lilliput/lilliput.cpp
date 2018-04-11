@@ -172,7 +172,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_codeEntered[i] = 0;
 
 	for (int i = 0; i < 4; i++)
-		_array1692B[i] = 0;
+		_homeInDirLikelyhood[i] = 0;
 
 	for (int i = 0; i < 40; i++) {
 		_characterTargetPos[i] = Common::Point(0, 0);
@@ -1409,23 +1409,23 @@ void LilliputEngine::homeInChooseDirection(int index) {
 
 	static const int16 mapArrayMove[4] = {4, -256, 256, -4};
 
-	_word16937Pos = _scriptHandler->_characterTilePos[index];
+	_curCharacterTilePos = _scriptHandler->_characterTilePos[index];
 
-	sub16A08(index);
+	evaluateDirections(index);
 
 	int var2 = (_characterDirectionArray[index] ^ 3);
-	// initialized by sub16A08, values: [0, 3[
-	_array1692B[var2] -= 8;
+	// initialized by evaluateDirections, values: [0, 3[
+	_homeInDirLikelyhood[var2] -= 8;
 	byte byte16939 = 0;
 
-	int mapIndex = ((_word16937Pos.y * 64) + _word16937Pos.x) * 4;
+	int mapIndex = ((_curCharacterTilePos.y * 64) + _curCharacterTilePos.x) * 4;
 	int retVal = 0;
 	for (int i = 3; i >= 0; i--) {
 		int mapIndexDiff = mapArrayMove[i];
 		assert(mapIndex + mapIndexDiff + 3 < 16384);
 		if (((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & _doorEntranceMask[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _doorExitMask[i]) != 0)) {
 			if ((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & 0x80) != 0 && (sub16A76(i, index) != 0)) {
-				_array1692B[i] -= 20;
+				_homeInDirLikelyhood[i] -= 20;
 			}
 
 			int tmpVal = ((_characterMobility[index] & 7) ^ 7);
@@ -1434,18 +1434,18 @@ void LilliputEngine::homeInChooseDirection(int index) {
 			if (tmpVal == 0)
 				continue;
 		}
-		_array1692B[i] = -98;
+		_homeInDirLikelyhood[i] = -98;
 		++byte16939;
 	}
 
 	if (byte16939 != 0)
-		_array1692B[_characterDirectionArray[index]] += 3;
+		_homeInDirLikelyhood[_characterDirectionArray[index]] += 3;
 
 	int tmpVal = -99;
 	for (int i = 3; i >= 0; i--) {
-		if (tmpVal < _array1692B[i]) {
+		if (tmpVal < _homeInDirLikelyhood[i]) {
 			retVal = i;
-			tmpVal = _array1692B[i];
+			tmpVal = _homeInDirLikelyhood[i];
 		}
 	}
 
@@ -1458,8 +1458,8 @@ byte LilliputEngine::sub16A76(int indexb, int indexs) {
 	static const int8 _array16A6C[4] = {1, 0, 0, -1};
 	static const int8 _array16A70[4] = {0, -1, 1, 0};
 
-	int8 var1h = _word16937Pos.x + _array16A6C[indexb];
-	int8 var1l = _word16937Pos.y + _array16A70[indexb];
+	int8 var1h = _curCharacterTilePos.x + _array16A6C[indexb];
+	int8 var1l = _curCharacterTilePos.y + _array16A70[indexb];
 
 	int16 var2 = findHotspot(Common::Point(var1h, var1l));
 	if (var2 == -1)
@@ -1467,8 +1467,8 @@ byte LilliputEngine::sub16A76(int indexb, int indexs) {
 
 //	int _word16A74 = var2; // useless?
 
-	var1h = _word16937Pos.x;
-	var1l = _word16937Pos.y;
+	var1h = _curCharacterTilePos.x;
+	var1l = _curCharacterTilePos.y;
 
 	if ((var1h >= _rectXMinMax[var2].min) && (var1h <= _rectXMinMax[var2].max) && (var1l >= _rectYMinMax[var2].min) && (var1l <= _rectYMinMax[var2].max))
 		return 0;
@@ -1502,9 +1502,8 @@ int16 LilliputEngine::reverseFindHotspot(Common::Point pos) {
 	return -1;
 }
 
-
-void LilliputEngine::sub16A08(int index) {
-	debugC(2, kDebugEngine, "sub16A08(%d)", index);
+void LilliputEngine::evaluateDirections(int index) {
+	debugC(2, kDebugEngine, "evaluateDirections(%d)", index);
 
 	static const int8 arrayMoveX[4] = {1, 0, 0, -1};
 	static const int8 arrayMoveY[4] = {0, -1, 1, 0};
@@ -1512,13 +1511,13 @@ void LilliputEngine::sub16A08(int index) {
 	int16 arrayDistance[4];
 
 	for (int i = 3; i >= 0; i--) {
-		int16 var1h = _word16937Pos.x + arrayMoveX[i] - _characterSubTargetPos[index].x;
-		int16 var1l = _word16937Pos.y + arrayMoveY[i] - _characterSubTargetPos[index].y;
+		int16 var1h = _curCharacterTilePos.x + arrayMoveX[i] - _characterSubTargetPos[index].x;
+		int16 var1l = _curCharacterTilePos.y + arrayMoveY[i] - _characterSubTargetPos[index].y;
 		arrayDistance[i] = (var1l * var1l) + (var1h * var1h);
 	}
 
 	for (int i = 0; i < 4; i++)
-		_array1692B[i] = 0;
+		_homeInDirLikelyhood[i] = 0;
 
 	int8 tmpIndex = 0;
 	for (int i = 3; i > 0; i--) {
@@ -1530,7 +1529,7 @@ void LilliputEngine::sub16A08(int index) {
 			}
 		}
 		arrayDistance[tmpIndex] = 0x7FFF;
-		_array1692B[tmpIndex] = i;
+		_homeInDirLikelyhood[tmpIndex] = i;
 	}
 }
 

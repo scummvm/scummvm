@@ -128,7 +128,7 @@ public:
 	byte _debugFlag2; // Unused byte, set by an opcode
 
 	byte _codeEntered[3];
-	char _array1692B[4];
+	char _homeInDirLikelyhood[4];
 	byte *_bufferIsoMap;
 	byte *_bufferCubegfx;
 	byte *_bufferMen;
@@ -156,7 +156,7 @@ public:
 	int _currentDisplayCharacter;
 	int _displayStringIndex;
 	int _signalTimer;
-	Common::Point _word16937Pos;
+	Common::Point _curCharacterTilePos;
 
 	int16 _mapSavedPixelIndex[40];
 	byte _mapSavedPixel[40];
@@ -259,7 +259,7 @@ public:
 	void viewportScrollTo(Common::Point goalPos);
 	void checkSpeechClosing();
 	void updateCharPosSequence();
-	void sub16A08(int index);
+	void evaluateDirections(int index);
 	byte sub16A76(int indexb, int indexs);
 	void signalDispatcher(byte type, byte index, int var4);
 	void sendMessageToCharacter(byte index, int var4);
