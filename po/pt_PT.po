@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-08 09:17+0200\n"
+"POT-Creation-Date: 2018-04-11 22:14+0200\n"
 "PO-Revision-Date: 2017-01-30 14:50+0000\n"
 "Last-Translator: Vitor Santos <vitorhgsantos90@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -2799,6 +2799,7 @@ msgstr ""
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 
@@ -4440,10 +4441,6 @@ msgstr ""
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
-msgstr ""
-
-#: engines/zvision/detection_tables.h:52
-msgid "Use the original save/load screens instead of the ScummVM interface"
 msgstr ""
 
 #: engines/zvision/detection_tables.h:61

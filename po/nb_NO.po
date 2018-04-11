@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-08 09:17+0200\n"
+"POT-Creation-Date: 2018-04-11 22:14+0200\n"
 "PO-Revision-Date: 2016-12-26 17:36+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -2845,6 +2845,7 @@ msgstr "Bruk originale lagre/laste-skjermer"
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#: engines/zvision/detection_tables.h:52
 #, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Bruk de originale lagre/laste-skjermene, istedenfor ScummVM-variantene"
@@ -4590,11 +4591,6 @@ msgid ""
 "be compared"
 msgstr ""
 
-#: engines/zvision/detection_tables.h:52
-msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr ""
-"Bruk de originale lagre/laste-skjermene istedenfor ScummVM-grensesnittet"
-
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
 msgstr "Dobbel FPS"
@@ -4635,6 +4631,10 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#~ msgid "Use the original save/load screens instead of the ScummVM interface"
+#~ msgstr ""
+#~ "Bruk de originale lagre/laste-skjermene istedenfor ScummVM-grensesnittet"
 
 #~ msgid "(You can always enable it in the options dialog on the Misc tab)"
 #~ msgstr "(Du kan alltids aktivere dette i valgdialogen i Diverse-fanen)"

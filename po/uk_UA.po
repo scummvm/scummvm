@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-08 09:17+0200\n"
+"POT-Creation-Date: 2018-04-11 22:14+0200\n"
 "PO-Revision-Date: 2017-06-14 14:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2851,6 +2851,7 @@ msgstr "Використовувати ориг. екрани збереження/завантаження"
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Використовувати оригінальні екрани збереження/завантаження замість ScummVM"
@@ -4613,12 +4614,6 @@ msgid ""
 "be compared"
 msgstr ""
 
-#: engines/zvision/detection_tables.h:52
-msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr ""
-"Використовувати оригінальні екрани збереження/завантаження замість екранів "
-"зі ScummVM"
-
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
 msgstr "Подвійна FPS"
@@ -4662,6 +4657,11 @@ msgstr ""
 "Цей файл зі збереженою грою використовує версію %u, але движок підтримує "
 "версію до %d. Вам потрібна поновлена версія ScummVM для завантаження цього "
 "файлу."
+
+#~ msgid "Use the original save/load screens instead of the ScummVM interface"
+#~ msgstr ""
+#~ "Використовувати оригінальні екрани збереження/завантаження замість "
+#~ "екранів зі ScummVM"
 
 #~ msgid "(You can always enable it in the options dialog on the Misc tab)"
 #~ msgstr "(Ви завжди можете включити її у Налаштуваннях на закладці Інше)"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-08 09:17+0200\n"
+"POT-Creation-Date: 2018-04-11 22:14+0200\n"
 "PO-Revision-Date: 2017-04-28 11:12+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2883,6 +2883,7 @@ msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτωσης"
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Χρήση των αρχικών οθονών αποθήκευσης/φόρτωσης αντί για αυτές του ScummVM"
@@ -4663,11 +4664,6 @@ msgid ""
 "be compared"
 msgstr ""
 
-#: engines/zvision/detection_tables.h:52
-msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr ""
-"Χρησιμοποιήστε τις αρχικές οθόνες αποθήκευσης/φόρτωσης αντί αυτών του ScummVM"
-
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
 msgstr "Διπλάσια FPS"
@@ -4710,6 +4706,11 @@ msgstr ""
 "Αυτό το αποθηκευμένο παιχνίδι χρησιμοποιεί έκδοση%u, αλλά η μηχανή αυτή "
 "υποστηρίζει μόνο μέχρι την έκδοση%d. Θα χρειαστείτε μια ενημερωμένη έκδοση "
 "της μηχανής για να χρησιμοποιήσετε αυτό το αποθηκευμένο παιχνίδι."
+
+#~ msgid "Use the original save/load screens instead of the ScummVM interface"
+#~ msgstr ""
+#~ "Χρησιμοποιήστε τις αρχικές οθόνες αποθήκευσης/φόρτωσης αντί αυτών του "
+#~ "ScummVM"
 
 #~ msgid "(You can always enable it in the options dialog on the Misc tab)"
 #~ msgstr ""

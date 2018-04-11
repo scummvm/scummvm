@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-08 09:17+0200\n"
+"POT-Creation-Date: 2018-04-11 22:14+0200\n"
 "PO-Revision-Date: 2017-12-01 22:51+0000\n"
 "Last-Translator: TomasM <truido@gmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -2861,6 +2861,7 @@ msgstr "Usar pantallas de guardar/cargar originales"
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Usar los menús originales de guardar/cargar en vez de los de ScummVM"
 
@@ -4655,11 +4656,6 @@ msgid ""
 "be compared"
 msgstr ""
 
-#: engines/zvision/detection_tables.h:52
-msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr ""
-"Usar los menús originales para guardar/cargar, en vez de los de ScummVM"
-
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
 msgstr "Duplicar FPS"
@@ -4702,6 +4698,10 @@ msgstr ""
 "Esta partida guardada usa la versión %u, pero este motor soporta hasta la "
 "versión %d. Será necesaria una versión atualizada del motor para poder "
 "usarla."
+
+#~ msgid "Use the original save/load screens instead of the ScummVM interface"
+#~ msgstr ""
+#~ "Usar los menús originales para guardar/cargar, en vez de los de ScummVM"
 
 #~ msgid "(You can always enable it in the options dialog on the Misc tab)"
 #~ msgstr ""

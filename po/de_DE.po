@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-08 09:17+0200\n"
+"POT-Creation-Date: 2018-04-11 22:14+0200\n"
 "PO-Revision-Date: 2018-04-11 19:17+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
-"Language-Team: German "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
+"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -2876,6 +2876,7 @@ msgstr "Originale Spielstand-Menüs"
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Verwende die originalen Speicher- und Lade-Menüs statt der Menüs von ScummVM"
@@ -2922,8 +2923,8 @@ msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
-"Zeige ein Fenster mit einer Kommandozeile und pausiere das Spiel (wie in SCI)"
-" anstelle einer Eingabe in Echtzeit."
+"Zeige ein Fenster mit einer Kommandozeile und pausiere das Spiel (wie in "
+"SCI) anstelle einer Eingabe in Echtzeit."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -4693,11 +4694,6 @@ msgstr ""
 "Zeigt die Gegenstandskosten im Standard-Inventarmodus an, um einen Vergleich "
 "der Gegenstände zu ermöglichen"
 
-#: engines/zvision/detection_tables.h:52
-msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr ""
-"Verwendet die originalen Menüs zum Speichern und Laden statt der von ScummVM"
-
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
 msgstr "FPS verdoppeln"
@@ -4741,6 +4737,11 @@ msgstr ""
 "Dieser Spielstand verwendet Version %u, diese Engine unterstützt jedoch nur "
 "Spielstände bis zu Version %d. Sie benötigen eine aktualisierte Version der "
 "Engine, um diesen Spielstand zu verwenden."
+
+#~ msgid "Use the original save/load screens instead of the ScummVM interface"
+#~ msgstr ""
+#~ "Verwendet die originalen Menüs zum Speichern und Laden statt der von "
+#~ "ScummVM"
 
 #~ msgid "(You can always enable it in the options dialog on the Misc tab)"
 #~ msgstr ""

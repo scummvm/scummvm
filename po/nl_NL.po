@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-08 09:17+0200\n"
+"POT-Creation-Date: 2018-04-11 22:14+0200\n"
 "PO-Revision-Date: 2018-04-06 10:28+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2856,6 +2856,7 @@ msgstr "Gebruik originele opslaan/laad schermen"
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
 "Gebruik de originele opslaan/laden schermen in plaats van die van ScummVM"
@@ -4656,12 +4657,6 @@ msgstr ""
 "Toont kosten van voorwerpen in standaard inventaris mode, om de waarden van "
 "voorwerpen te kunnen vergelijken"
 
-#: engines/zvision/detection_tables.h:52
-msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr ""
-"Gebruik de originele opslaan/laden schermen, in plaats van die van de "
-"ScummVM interface"
-
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
 msgstr "Dubbele FPS"
@@ -4704,6 +4699,11 @@ msgstr ""
 "Dit opgeslagen spel gebruikt versie %u, maar deze engine ondersteund alleen "
 "tot versie %d. U heeft een nieuwere versie van deze engine nodig om dit "
 "opgeslagen te gebruiken."
+
+#~ msgid "Use the original save/load screens instead of the ScummVM interface"
+#~ msgstr ""
+#~ "Gebruik de originele opslaan/laden schermen, in plaats van die van de "
+#~ "ScummVM interface"
 
 #~ msgid "(You can always enable it in the options dialog on the Misc tab)"
 #~ msgstr ""

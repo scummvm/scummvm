@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-08 09:17+0200\n"
+"POT-Creation-Date: 2018-04-11 22:14+0200\n"
 "PO-Revision-Date: 2016-12-26 19:38+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -2839,6 +2839,7 @@ msgstr "Shiyong Yuanshi Baocun/Zairu Pingmu"
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
 #: engines/neverhood/detection.cpp:178 engines/sci/detection.cpp:453
 #: engines/sherlock/detection.cpp:72 engines/toltecs/detection.cpp:201
+#: engines/zvision/detection_tables.h:52
 #, fuzzy
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr "Shiyong Yuanshi Baocun/Zairu Pingmu, Bu Shiyong ScummVM de"
@@ -4579,10 +4580,6 @@ msgid ""
 "be compared"
 msgstr ""
 
-#: engines/zvision/detection_tables.h:52
-msgid "Use the original save/load screens instead of the ScummVM interface"
-msgstr "Shiyong Yuanshi baocun/zairu Pingmu Erfei ScummVM jiemian"
-
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
 msgstr "Shuangbei FPS"
@@ -4622,6 +4619,9 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+
+#~ msgid "Use the original save/load screens instead of the ScummVM interface"
+#~ msgstr "Shiyong Yuanshi baocun/zairu Pingmu Erfei ScummVM jiemian"
 
 #, fuzzy
 #~ msgid "Check for updates automatically"
