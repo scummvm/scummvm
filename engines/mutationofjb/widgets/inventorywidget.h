@@ -20,35 +20,27 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
+#ifndef MUTATIONOFJB_INVENTORYWIDGET_H
+#define MUTATIONOFJB_INVENTORYWIDGET_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "graphics/surface.h"
+#include "mutationofjb/widgets/widget.h"
+#include "mutationofjb/gui.h"
 
-namespace Graphics {
-class Screen;
+namespace Common {
+class String;
 }
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
-
-class Room {
+class InventoryWidget : public Widget {
 public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
+	InventoryWidget(Gui &gui, Gui::InventoryMap &inventoryMap, const Common::Array<Graphics::Surface>& inventorySurfaces);
+	virtual void _draw(Graphics::ManagedSurface &) override;
 
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
 private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
+	void drawInventoryItem(Graphics::ManagedSurface &surface, const Common::String &item, int pos);
+	Gui::InventoryMap &_inventoryMap;
+	const Common::Array<Graphics::Surface>& _surfaces;
 };
 
 }

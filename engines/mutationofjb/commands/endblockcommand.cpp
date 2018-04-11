@@ -31,6 +31,7 @@
 	("#L " | "-L ") <object>
 	("#W " | "-W ") <object>
 	("#T " | "-T ") <object>
+	("#P " | "-P ") <object1>
 	("#U " | "-U ") <object1> [<object2>]
 	("#ELSE" | "-ELSE") [<tag>]
 	"#MACRO " <name>
@@ -71,6 +72,10 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if (line.size() >= 4 && (line.hasPrefix("#T ") || line.hasPrefix("-T "))) {
 		ActionInfo ai = {ActionInfo::Talk, line.c_str() + 3, "", firstChar == '#', nullptr};
+		parseCtx._actionInfos.push_back(ai);
+		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
+	} else if (line.size() >= 4 && (line.hasPrefix("#P ") || line.hasPrefix("-P "))) {
+		ActionInfo ai = {ActionInfo::PickUp, line.c_str() + 3, "", firstChar == '#', nullptr};
 		parseCtx._actionInfos.push_back(ai);
 		_pendingActionInfos.push_back(parseCtx._actionInfos.size() - 1);
 	} else if (line.size() >= 4 && (line.hasPrefix("#U ") || line.hasPrefix("-U "))) {

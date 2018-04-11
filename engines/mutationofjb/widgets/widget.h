@@ -20,37 +20,47 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
+#ifndef MUTATIONOFJB_WIDGET_H
+#define MUTATIONOFJB_WIDGET_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "graphics/surface.h"
+#include <common/scummsys.h>
+#include <common/rect.h>
+
+namespace Common {
+class Event;
+}
 
 namespace Graphics {
-class Screen;
+class ManagedSurface;
 }
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
+class Gui;
 
-class Room {
+class Widget {
 public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
+	Widget(Gui &gui, const Common::Rect &area) : _gui(gui), _area(area), _id(0), _dirty(true) {}
+	virtual ~Widget() {}
 
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
-private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
+	int getId() const;
+	void setId(int id);
+
+	bool isDirty() const;
+	void markDirty();
+	void update(Graphics::ManagedSurface &);
+
+	virtual void handleEvent(const Common::Event &) {}
+protected:
+	virtual void _draw(Graphics::ManagedSurface &) = 0;
+
+	Gui &_gui;
+	Common::Rect _area;
+	int _id;
+	bool _dirty;
 };
 
 }
 
 #endif
+

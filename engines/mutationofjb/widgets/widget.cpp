@@ -20,37 +20,31 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
-
-#include "common/scummsys.h"
-#include "common/array.h"
-#include "graphics/surface.h"
-
-namespace Graphics {
-class Screen;
-}
+#include "mutationofjb/widgets/widget.h"
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
-
-class Room {
-public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
-
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
-private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
-};
-
+int Widget::getId() const {
+	return _id;
 }
 
-#endif
+void Widget::setId(int id) {
+	_id = id;
+}
+
+void Widget::markDirty() {
+	_dirty = true;
+}
+
+bool Widget::isDirty() const {
+	return _dirty;
+}
+
+void Widget::update(Graphics::ManagedSurface &surface) {
+	if (_dirty) {
+		_draw(surface);
+		_dirty = false;
+	}
+}
+
+}

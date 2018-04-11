@@ -20,35 +20,37 @@
  *
  */
 
-#ifndef MUTATIONOFJB_ROOM_H
-#define MUTATIONOFJB_ROOM_H
+#ifndef MUTATIONOFJB_BUTTONWIDGET_H
+#define MUTATIONOFJB_BUTTONWIDGET_H
 
-#include "common/scummsys.h"
-#include "common/array.h"
+#include "mutationofjb/widgets/widget.h"
 #include "graphics/surface.h"
-
-namespace Graphics {
-class Screen;
-}
 
 namespace MutationOfJB {
 
-class EncryptedFile;
-class Game;
+class ButtonWidget;
 
-class Room {
+class ButtonWidgetCallback {
 public:
-	friend class RoomAnimationDecoderCallback;
-	friend class GuiAnimationDecoderCallback;
+	virtual ~ButtonWidgetCallback() {}
+	virtual void onButtonClicked(ButtonWidget *) = 0;
+};
 
-	Room(Game *game, Graphics::Screen *screen);
-	bool load(uint8 roomNumber, bool roomB);
-	void drawObjectAnimation(uint8 objectId, int animOffset);
+class ButtonWidget : public Widget {
+public:
+	ButtonWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &normalSurface, const Graphics::Surface &pressedSurface);
+	void setCallback(ButtonWidgetCallback *callback);
+
+	virtual void handleEvent(const Common::Event &event) override;
+
+protected:
+	virtual void _draw(Graphics::ManagedSurface &) override;
+
 private:
-	Game *_game;
-	Graphics::Screen *_screen;
-	Common::Array<Graphics::Surface> _surfaces;
-	Common::Array<int> _objectsStart;
+	Graphics::Surface _normalSurface;
+	Graphics::Surface _pressedSurface;
+	ButtonWidgetCallback *_callback;
+	bool _pressed;
 };
 
 }
