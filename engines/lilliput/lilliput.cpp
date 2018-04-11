@@ -184,8 +184,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_specialCubes[i] = 0;
 
 		_characterSignals[i] = -1;
-		_characterPositionX[i] = -1;
-		_characterPositionY[i] = -1;
+		_characterPos[i] = Common::Point(-1, -1);
 		_characterPosAltitude[i] = 0;
 		_characterFrameArray[i] = 0;
 		_characterCarried[i] = -1;
@@ -196,8 +195,7 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 		_characterMobility[i] = 0;
 		_characterTypes[i] = 0;
 		_characterBehaviour[i] = 0;
-		_characterHomePosX[i] = 0;
-		_characterHomePosY[i] = 0;
+		_characterHomePos[i] = Common::Point(0, 0);
 		_signalArr[i] = -1;
 	}
 
@@ -411,7 +409,7 @@ void LilliputEngine::displayInterfaceHotspots() {
 
 	for (int index = 0; index < _interfaceHotspotNumb; index++) {
 		int tmpVal = _scriptHandler->_interfaceHotspotStatus[index] * 20;
-		display16x16IndexedBuf(_bufferIdeogram, tmpVal + index, Common::Point(_interfaceHotspotsX[index], _interfaceHotspotsY[index]));
+		display16x16IndexedBuf(_bufferIdeogram, tmpVal + index, _interfaceHotspots[index]);
 	}
 }
 
@@ -604,43 +602,41 @@ void LilliputEngine::moveCharacters() {
 		if (_characterCarried[i] != -1) {
 			int index2 = _characterCarried[i];
 			_characterPosAltitude[i] = _characterPosAltitude[index2] + _characterAboveDist[i];
-			int8 tmpVal = _characterBehindDist[i];
+			int8 behindDist = _characterBehindDist[i];
 			_characterDirectionArray[i] = _characterDirectionArray[index2];
-			int var3 = _characterPositionX[index2];
-			int var4 = _characterPositionY[index2];
+			int nextPosX = _characterPos[index2].x;
+			int nextPosY = _characterPos[index2].y;
 
 			switch (_characterDirectionArray[i]) {
 			case 0:
-				var3 -= tmpVal;
+				nextPosX -= behindDist;
 				break;
 			case 1:
-				var4 += tmpVal;
+				nextPosY += behindDist;
 				break;
 			case 2:
-				var4 -= tmpVal;
+				nextPosY -= behindDist;
 				break;
 			default:
-				var3 += tmpVal;
+				nextPosX += behindDist;
 				break;
 			}
 
-			_characterPositionX[i] = var3;
-			_characterPositionY[i] = var4;
+			_characterPos[i] = Common::Point(nextPosX, nextPosY);
 		}
 
-		_scriptHandler->_characterTilePos[i] = Common::Point(_characterPositionX[i] >> 3, _characterPositionY[i] >> 3);
+		_scriptHandler->_characterTilePos[i] = Common::Point(_characterPos[i].x >> 3, _characterPos[i].y >> 3);
 		_characterRelativePos[i] = Common::Point(-1, -1);
 		_characterDisplay[i] = Common::Point(-1, -1);
 
-		int tmpVal2 = (_characterPositionX[i] >> 3) - _scriptHandler->_viewportPos.x;
-		int tmpVal3 = (_characterPositionY[i] >> 3) - _scriptHandler->_viewportPos.y;
-		if ((tmpVal2 >= 0) && (tmpVal2 <= 7) && (tmpVal3 >= 0) && (tmpVal3 <= 7)) {
-			_characterRelativePos[i] = Common::Point(tmpVal2, tmpVal3);
-			tmpVal2 = _characterPositionX[i] - pos16213.x;
-			tmpVal3 = _characterPositionY[i] - pos16213.y;
-			int tmpVal4 = _characterPosAltitude[i];
-			_characterDisplay[i].x = ((60 + tmpVal2 - tmpVal3) * 2) & 0xFF;
-			_characterDisplay[i].y = (20 + tmpVal2 + tmpVal3 - tmpVal4) & 0xFF;
+		int tileX = (_characterPos[i].x >> 3) - _scriptHandler->_viewportPos.x;
+		int tileY = (_characterPos[i].y >> 3) - _scriptHandler->_viewportPos.y;
+		if ((tileX >= 0) && (tileX <= 7) && (tileY >= 0) && (tileY <= 7)) {
+			_characterRelativePos[i] = Common::Point(tileX, tileY);
+			int tempX = _characterPos[i].x - pos16213.x;
+			int tempY = _characterPos[i].y - pos16213.y;
+			_characterDisplay[i].x = ((60 + tempX - tempY) * 2) & 0xFF;
+			_characterDisplay[i].y = (20 + tempX + tempY - _characterPosAltitude[i]) & 0xFF;
 			_charactersToDisplay[_numCharactersToDisplay] = i;
 			++_numCharactersToDisplay;
 		}
@@ -1127,34 +1123,23 @@ void LilliputEngine::scrollToViewportCharacterTarget() {
 	if (_scriptHandler->_viewportCharacterTarget == -1)
 		return;
 
-	int var2 = (_characterPositionX[_scriptHandler->_viewportCharacterTarget] >> 3) - _scriptHandler->_viewportPos.x;
-	int var4 = (_characterPositionY[_scriptHandler->_viewportCharacterTarget] >> 3) - _scriptHandler->_viewportPos.y;
+	int tileX = (_characterPos[_scriptHandler->_viewportCharacterTarget].x >> 3) - _scriptHandler->_viewportPos.x;
+	int tileY = (_characterPos[_scriptHandler->_viewportCharacterTarget].y >> 3) - _scriptHandler->_viewportPos.y;
 	Common::Point newPos = _scriptHandler->_viewportPos;
 
-	if (var2 >= 1) {
-		if (var2 > 6) {
-			newPos.x += 4;
-			if (newPos.x > 56)
-				newPos.x = 56;
-		}
-	} else {
-		newPos.x -= 4;
-		if (newPos.x < 0)
-			newPos.x = 0;
-	}
+	if (tileX >= 1) {
+		if (tileX > 6)
+			newPos.x = CLIP(newPos.x + 4, 0, 56);
+	} else
+		newPos.x = CLIP(newPos.x - 4, 0, 56);
 
-	if ((var4 < 1) && (newPos.y < 4))
+	if ((tileY < 1) && (newPos.y < 4))
 		newPos.y = 0;
-	else {
-		if (var4 < 1)
-			newPos.y -= 4;
-
-		if (var4 > 6) {
-			newPos.y += 4;
-			if (newPos.y >= 56)
-				newPos.y = 56;
-		}
-	}
+	else if (tileY >= 1)
+		newPos.y = CLIP(newPos.y + 4, 0, 56);
+	else
+		// CHECKME: not clipped?
+		newPos.y -= 4;
 
 	viewportScrollTo(newPos);
 }
@@ -1935,7 +1920,7 @@ void LilliputEngine::checkInterfaceHotspots(bool &forceReturnFl) {
 
 	forceReturnFl = false;
 	for (int index = _interfaceHotspotNumb - 1; index >= 0; index--) {
-		if (isMouseOverHotspot(_mousePos, Common::Point(_interfaceHotspotsX[index], _interfaceHotspotsY[index]))) {
+		if (isMouseOverHotspot(_mousePos, _interfaceHotspots[index])) {
 			handleInterfaceHotspot(index, 1);
 			forceReturnFl = true;
 			return;
@@ -2108,8 +2093,8 @@ void LilliputEngine::moveCharacterSpeed3(int index) {
 void LilliputEngine::moveCharacterForward(int index, int16 speed) {
 	debugC(2, kDebugEngine, "moveCharacterForward(%d, %d)", index, speed);
 
-	int16 newX = _characterPositionX[index];
-	int16 newY = _characterPositionY[index];
+	int16 newX = _characterPos[index].x;
+	int16 newY = _characterPos[index].y;
 	switch (_characterDirectionArray[index]) {
 	case 0:
 		newX += speed;
@@ -2132,8 +2117,7 @@ void LilliputEngine::checkCollision(int index, Common::Point pos, int direction)
 
 	int16 diffX = pos.x >> 3;
 	if (((diffX & 0xFF) == _scriptHandler->_characterTilePos[index].x) && ((pos.y >> 3) == _scriptHandler->_characterTilePos[index].y)) {
-		_characterPositionX[index] = pos.x;
-		_characterPositionY[index] = pos.y;
+		_characterPos[index] = pos;
 		return;
 	}
 
@@ -2159,8 +2143,7 @@ void LilliputEngine::checkCollision(int index, Common::Point pos, int direction)
 	if ((var1 & _rulesChunk9[_bufferIsoMap[mapIndex]]) != 0)
 		return;
 
-	_characterPositionX[index] = pos.x;
-	_characterPositionY[index] = pos.y;
+	_characterPos[index] = pos;
 }
 
 void LilliputEngine::signalDispatcher(byte type, byte index, int var4) {
@@ -2472,12 +2455,12 @@ void LilliputEngine::loadRules() {
 		curWord = f.readUint16LE();
 		if (curWord != 0xFFFF)
 			curWord = (curWord << 3) + 4;
-		_characterPositionX[j] = curWord;
+		_characterPos[j].x = curWord;
 
 		curWord = f.readUint16LE();
 		if (curWord != 0xFFFF)
 			curWord = (curWord << 3) + 4;
-		_characterPositionY[j] = curWord;
+		_characterPos[j].y = curWord;
 
 		_characterPosAltitude[j] = (f.readUint16LE() & 0xFF);
 		_characterFrameArray[j] = f.readUint16LE();
@@ -2489,8 +2472,8 @@ void LilliputEngine::loadRules() {
 		_characterMobility[j] = f.readByte();
 		_characterTypes[j] = f.readByte();
 		_characterBehaviour[j] = f.readByte();
-		_characterHomePosX[j] = f.readByte();
-		_characterHomePosY[j] = f.readByte();
+		_characterHomePos[j].x = f.readByte();
+		_characterHomePos[j].y = f.readByte();
 
 		for (int k = 0; k < 32; k++)
 			_characterVariables[(j * 32) + k] = f.readByte();
@@ -2570,12 +2553,13 @@ void LilliputEngine::loadRules() {
 		_rectXMinMax[i].min = (int16)f.readByte();
 		_rectYMinMax[i].max = (int16)f.readByte();
 		_rectYMinMax[i].min = (int16)f.readByte();
+
 		int16 tmpValY = (int16)f.readByte();
 		int16 tmpValX = (int16)f.readByte();
 		_rulesBuffer12Pos3[i] = Common::Point(tmpValX, tmpValY);
+
 		tmpValY = (int16)f.readByte();
 		tmpValX = (int16)f.readByte();
-		// _rulesBuffer12Pos4 is used by the into
 		_portalPos[i] = Common::Point(tmpValX, tmpValY);
 	}
 
@@ -2585,10 +2569,10 @@ void LilliputEngine::loadRules() {
 		_interfaceTwoStepAction[i] = f.readByte();
 
 	for (int i = 0 ; i < 20; i++)
-		_interfaceHotspotsX[i] = f.readSint16LE();
+		_interfaceHotspots[i].x = f.readSint16LE();
 
 	for (int i = 0 ; i < 20; i++)
-		_interfaceHotspotsY[i] = f.readSint16LE();
+		_interfaceHotspots[i].y = f.readSint16LE();
 
 	for (int i = 0; i < 20; i++) {
 		byte curByte = f.readByte();
@@ -2609,8 +2593,6 @@ void LilliputEngine::loadRules() {
 		}
 	}
 	f.close();
-
-	// Skipped: Load Savegame
 }
 
 void LilliputEngine::displayVGAFile(Common::String fileName) {
@@ -2649,13 +2631,9 @@ void LilliputEngine::initPalette() {
 void LilliputEngine::setCurrentCharacter(int index) {
 	debugC(1, kDebugEngine, "setCurrentCharacter(%d)", index);
 
-	_currentScriptCharacter = index;
-
 	assert(index < 40);
-	int posX = _characterPositionX[index];
-	int posY = _characterPositionY[index];
-
-	_currentScriptCharacterPos = Common::Point(posX >> 3, posY >> 3);
+	_currentScriptCharacter = index;
+	_currentScriptCharacterPos = Common::Point(_characterPos[index].x >> 3, _characterPos[index].y >> 3);
 	_currentCharacterAttributes = getCharacterAttributesPtr(_currentScriptCharacter * 32);
 }
 

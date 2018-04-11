@@ -166,8 +166,7 @@ public:
 
 	byte *_rulesChunk1;
 	int16 _currentScriptCharacter;
-	int16 _characterPositionX[40];
-	int16 _characterPositionY[40];
+	Common::Point _characterPos[40];
 	int8 _characterPosAltitude[40];
 	int16 _characterFrameArray[40];
 	int8 _characterCarried[40];
@@ -178,8 +177,7 @@ public:
 	byte _characterMobility[40];
 	byte _characterTypes[40];
 	byte _characterBehaviour[40];
-	byte _characterHomePosX[40];
-	byte _characterHomePosY[40];
+	Common::Point _characterHomePos[40];
 	byte _characterVariables[1400 + 3120];
 	byte *_currentCharacterAttributes;
 	byte _poseArray[40 * 32];
@@ -204,8 +202,7 @@ public:
 	Common::Point _portalPos[40];
 	int _interfaceHotspotNumb;
 	byte _interfaceTwoStepAction[20];
-	int16 _interfaceHotspotsX[20];
-	int16 _interfaceHotspotsY[20];
+	Common::Point _interfaceHotspots[20];
 	Common::KeyCode _keyboardMapping[20];
 	Common::Point _characterTargetPos[40];
 	byte _savedSurfaceUnderMouse[16 * 16];

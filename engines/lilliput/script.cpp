@@ -1297,27 +1297,27 @@ Common::Point LilliputScript::getPosFromScript() {
 	switch(tmpVal) {
 	case 0xFF:
 		assert((_vm->_currentScriptCharacter >= 0) && (_vm->_currentScriptCharacter < 40));
-		return Common::Point(_vm->_characterHomePosX[_vm->_currentScriptCharacter], _vm->_characterHomePosY[_vm->_currentScriptCharacter]);
+		return _vm->_characterHomePos[_vm->_currentScriptCharacter];
 	case 0xFE: {
 		int8 index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
-		return Common::Point(_vm->_characterHomePosX[index], _vm->_characterHomePosY[index]);
+		return _vm->_characterHomePos[index];
 		}
 	case 0xFD:
 		return _vm->_currentScriptCharacterPos;
 	case 0xFC: {
 		int8 index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
-		int16 x = _vm->_characterPositionX[index] >> 3;
-		int16 y = _vm->_characterPositionY[index] >> 3;
+		int16 x = _vm->_characterPos[index].x >> 3;
+		int16 y = _vm->_characterPos[index].y >> 3;
 
 		return Common::Point(x, y);
 		}
 	case 0xFB: {
 		int index = _word16F00_characterId;
 		assert((index >= 0) && (index < 40));
-		int16 x = _vm->_characterPositionX[index] >> 3;
-		int16 y = _vm->_characterPositionY[index] >> 3;
+		int16 x = _vm->_characterPos[index].x >> 3;
+		int16 y = _vm->_characterPos[index].y >> 3;
 
 		return Common::Point(x, y);
 		}
@@ -1333,10 +1333,7 @@ Common::Point LilliputScript::getPosFromScript() {
 	case 0xF7: {
 		int8 index = _vm->_currentCharacterAttributes[6];
 		assert((index >= 0) && (index < 40));
-		int16 x = _vm->_characterPositionX[index] >> 3;
-		int16 y = _vm->_characterPositionY[index] >> 3;
-
-		return Common::Point(x, y);
+		return Common::Point(_vm->_characterPos[index].x >> 3, _vm->_characterPos[index].y >> 3);
 		}
 	case 0xF6:
 		return _vm->_savedMousePosDivided;
@@ -1780,7 +1777,7 @@ byte LilliputScript::OC_IsCharacterValid() {
 	debugC(1, kDebugScript, "OC_IsCharacterValid()");
 
 	int index = getValue1();
-	if (_vm->_characterPositionX[index] == -1)
+	if (_vm->_characterPos[index].x == -1)
 		return 0;
 
 	return 1;
@@ -2266,14 +2263,13 @@ void LilliputScript::OC_setCharacterPosition() {
 	debugC(1, kDebugScript, "OC_setCharacterPosition()");
 
 	int index = getValue1();
+	assert((index >= 0) && (index < 40));
 	Common::Point tmpVal = getPosFromScript();
 
-	int var2 = (tmpVal.x << 3) + 4;
-	int var4 = (tmpVal.y << 3) + 4;
+	int charPosX = (tmpVal.x << 3) + 4;
+	int charPosY = (tmpVal.y << 3) + 4;
 
-	assert((index >= 0) && (index < 40));
-	_vm->_characterPositionX[index] = var2;
-	_vm->_characterPositionY[index] = var4;
+	_vm->_characterPos[index] = Common::Point(charPosX, charPosY);
 }
 
 void LilliputScript::OC_DisableCharacter() {
@@ -2285,8 +2281,7 @@ void LilliputScript::OC_DisableCharacter() {
 	if (characterIndex == _vm->_host)
 		_viewportCharacterTarget = -1;
 
-	_vm->_characterPositionX[characterIndex] = -1;
-	_vm->_characterPositionY[characterIndex] = -1;
+	_vm->_characterPos[characterIndex] = Common::Point(-1, -1);
 }
 
 void LilliputScript::OC_saveAndQuit() {
@@ -2609,7 +2604,7 @@ void LilliputScript::OC_sub17EC5() {
 Common::Point LilliputScript::getCharacterTilePos(int index) {
 	debugC(2, kDebugScript, "getCharacterTilePos(%d)", index);
 
-	return Common::Point(_vm->_characterPositionX[index] / 8, _vm->_characterPositionY[index] / 8);
+	return Common::Point(_vm->_characterPos[index].x >> 3, _vm->_characterPos[index].y >> 3);
 }
 
 void LilliputScript::OC_setCharacterDirectionTowardsPos() {
@@ -2628,8 +2623,8 @@ void LilliputScript::OC_turnCharacterTowardsAnother() {
 
 	static const byte _directionsArray[] = { 0, 2, 0, 1, 3, 2, 3, 1 };
 
-	int dx = _vm->_characterPositionX[index] - _vm->_characterPositionX[_vm->_currentScriptCharacter];
-	int dy = _vm->_characterPositionY[index] - _vm->_characterPositionY[_vm->_currentScriptCharacter];
+	int dx = _vm->_characterPos[index].x - _vm->_characterPos[_vm->_currentScriptCharacter].x;
+	int dy = _vm->_characterPos[index].y - _vm->_characterPos[_vm->_currentScriptCharacter].y;
 
 	int flag = 0;
 	if (dx < 0) {
@@ -2732,13 +2727,13 @@ void LilliputScript::OC_setCharacterProperties() {
 
 	int16 index = getValue1();
 
-	int16 x = _vm->_characterPositionX[index] & 0xFFF8;
+	int16 x = _vm->_characterPos[index].x & 0xFFF8;
 	x += _currScript->readSint16LE();
-	_vm->_characterPositionX[index] = x;
+	_vm->_characterPos[index].x = x;
 
-	int16 y = _vm->_characterPositionY[index] & 0xFFF8;
+	int16 y = _vm->_characterPos[index].y & 0xFFF8;
 	y += _currScript->readSint16LE();
-	_vm->_characterPositionY[index] = y;
+	_vm->_characterPos[index].y = y;
 
 	_vm->_characterPosAltitude[index]  = (int8)(_currScript->readUint16LE() & 0xFF);
 	_vm->_characterDirectionArray[index] = _currScript->readUint16LE() & 0xFF;
@@ -2943,8 +2938,8 @@ void LilliputScript::OC_spawnCharacterAtPos() {
 		var4 = _word1825E;
 	}
 
-	_vm->_characterPositionX[index] = (var4.x + _viewportPos.x) * 8;
-	_vm->_characterPositionY[index] = (var4.y + _viewportPos.y) * 8;
+	_vm->_characterPos[index].x = (var4.x + _viewportPos.x) * 8;
+	_vm->_characterPos[index].y = (var4.y + _viewportPos.y) * 8;
 }
 
 void LilliputScript::OC_CharacterVariableAddOrRemoveFlag() {
@@ -3258,9 +3253,7 @@ void LilliputScript::OC_setCharacterHome() {
 	debugC(1, kDebugScript, "OC_setCharacterHome()");
 
 	int index = getValue1();
-	Common::Point pos = getPosFromScript();
-	_vm->_characterHomePosX[index] = pos.x;
-	_vm->_characterHomePosY[index] = pos.y;
+	_vm->_characterHomePos[index] = getPosFromScript();
 }
 
 void LilliputScript::OC_setViewPortCharacterTarget() {
