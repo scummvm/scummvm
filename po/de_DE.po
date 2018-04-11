@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-08 09:17+0200\n"
-"PO-Revision-Date: 2018-04-11 19:01+0000\n"
+"PO-Revision-Date: 2018-04-11 19:17+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: German "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
@@ -4157,7 +4157,7 @@ msgstr "spiele A auf Stab"
 
 #: engines/scumm/help.cpp:186
 msgid "play B on distaff"
-msgstr "spiele B auf Stab"
+msgstr "spiele H auf Stab"
 
 #: engines/scumm/help.cpp:187
 msgid "play C major on distaff"
