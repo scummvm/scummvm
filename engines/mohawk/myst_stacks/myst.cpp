@@ -2441,7 +2441,7 @@ void Myst::o_rocketLeverMove(uint16 var, const ArgumentsArray &args) {
 		uint16 soundId = lever->getList2(0);
 
 		if (soundId)
-			_vm->_sound->playEffect(soundId);
+			_vm->playSoundBlocking(soundId);
 
 		// If rocket correctly powered
 		if (_state.generatorVoltage == 59 && !_state.generatorBreakers)
