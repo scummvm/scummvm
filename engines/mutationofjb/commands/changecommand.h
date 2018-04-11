@@ -28,7 +28,7 @@ namespace MutationOfJB {
 union ChangeCommandValue {
 	uint8 _byteVal;
 	uint16 _wordVal;
-	char _strVal[MAX_STR_LENGTH + 1];
+	char _strVal[MAX_ENTITY_NAME_LENGTH + 1];
 };
 
 class ChangeCommand : public SeqCommand {

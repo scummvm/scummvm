@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	commands/newroomcommand.o \
 	commands/removeallitemscommand.o \
 	commands/removeitemcommand.o \
+	commands/renamecommand.o \
 	commands/saycommand.o \
 	commands/seqcommand.o \
 	widgets/buttonwidget.o \

@@ -50,6 +50,7 @@ public:
 	void addItem(const Common::String &item);
 	void removeItem(const Common::String &item);
 	void removeAllItems();
+	void renameItem(const Common::String &oldName, const Common::String &newName);
 
 	void rotateItemsRight(uint n);
 	void rotateItemsLeft(uint n);

@@ -20,35 +20,29 @@
  *
  */
 
-#ifndef MUTATIONOFJB_SAYCOMMAND_H
-#define MUTATIONOFJB_SAYCOMMAND_H
+#ifndef MUTATIONOFJB_RENAMECOMMAND_H
+#define MUTATIONOFJB_RENAMECOMMAND_H
 
 #include "mutationofjb/commands/seqcommand.h"
 #include "common/str.h"
 
 namespace MutationOfJB {
 
-class SayCommandParser : public SeqCommandParser {
+class RenameCommandParser : public SeqCommandParser {
 public:
-	SayCommandParser() {}
-
 	virtual bool parse(const Common::String &line, ScriptParseContext &parseCtx, Command *&command) override;
 };
 
-class SayCommand : public SeqCommand {
+class RenameCommand : public SeqCommand {
 public:
-	SayCommand(const Common::String &lineToSay, const Common::String &voiceFile, bool waitForPrevious, bool talkingAnimation) :
-		_lineToSay(lineToSay),
-		_voiceFile(voiceFile),
-		_waitForPrevious(waitForPrevious),
-		_talkingAnimation(talkingAnimation) {}
-	virtual ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
+	RenameCommand(const Common::String &oldName, const Common::String &newName) : _oldName(oldName), _newName(newName) {}
+
+	virtual Command::ExecuteResult execute(ScriptExecutionContext &scriptExecCtx) override;
 	virtual Common::String debugString() const override;
+
 private:
-	Common::String _lineToSay;
-	Common::String _voiceFile;
-	bool _waitForPrevious;
-	bool _talkingAnimation;
+	Common::String _oldName;
+	Common::String _newName;
 };
 
 }

@@ -28,13 +28,13 @@
 namespace MutationOfJB {
 
 static bool readString(Common::ReadStream &stream, char *str) {
-	char buf[MAX_STR_LENGTH];
-	memset(str, 0, MAX_STR_LENGTH + 1);
+	char buf[MAX_ENTITY_NAME_LENGTH];
+	memset(str, 0, MAX_ENTITY_NAME_LENGTH + 1);
 
 	uint8 len = stream.readByte();
-	stream.read(buf, MAX_STR_LENGTH);
+	stream.read(buf, MAX_ENTITY_NAME_LENGTH);
 
-	len = MIN(len, MAX_STR_LENGTH);
+	len = MIN(len, (uint8) MAX_ENTITY_NAME_LENGTH);
 	memcpy(str, buf, len);
 
 	return true;

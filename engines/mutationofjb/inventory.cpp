@@ -33,7 +33,7 @@ const Inventory::Items &Inventory::getItems() const {
 }
 
 bool Inventory::hasItem(const Common::String &item) const {
-	Items::const_iterator it = find(_items.begin(), _items.end(), item);
+	Items::const_iterator it = Common::find(_items.begin(), _items.end(), item);
 	return (it != _items.end());
 }
 
@@ -49,7 +49,7 @@ void Inventory::addItem(const Common::String &item) {
 }
 
 void Inventory::removeItem(const Common::String &item) {
-	Items::iterator it = find(_items.begin(), _items.end(), item);
+	Items::iterator it = Common::find(_items.begin(), _items.end(), item);
 	if (it == _items.end()) {
 		debug("Item '%s' not in inventory.", item.c_str());
 		return;
@@ -64,6 +64,19 @@ void Inventory::removeItem(const Common::String &item) {
 void Inventory::removeAllItems() {
 	_items.clear();
 	if (_observer) {
+		_observer->onInventoryChanged();
+	}
+}
+
+void Inventory::renameItem(const Common::String &oldName, const Common::String &newName) {
+	bool renamed = false;
+	for (Items::iterator it = _items.begin(); it != _items.end(); ++it) {
+		if (*it == oldName) {
+			*it = newName;
+			renamed = true;
+		}
+	}
+	if (renamed && _observer) {
 		_observer->onInventoryChanged();
 	}
 }
