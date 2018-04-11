@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-08 09:17+0200\n"
-"PO-Revision-Date: 2018-04-10 21:26+0000\n"
+"PO-Revision-Date: 2018-04-11 09:36+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Swedish "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
@@ -2249,12 +2249,12 @@ msgstr "Korrektion av bildförhållande av"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:747
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
 msgid "Filtering enabled"
-msgstr "Filtrering aktiverat"
+msgstr "Filtrering aktiverad"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:749
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
 msgid "Filtering disabled"
-msgstr "Filtrering inaktiverat"
+msgstr "Filtrering inaktiverad"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
@@ -4620,13 +4620,15 @@ msgstr "Tillämpa bilinjär filtrering på enskilda rörliga figurer"
 
 #: engines/xeen/detection.cpp:84
 msgid "Show item costs in standard inventory mode"
-msgstr ""
+msgstr "Visa kostnader för föremål i standardläge för inventariet"
 
 #: engines/xeen/detection.cpp:85
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
 msgstr ""
+"Visar kostnader för föremål i standardläge för inventariet i syfte att "
+"möjliggöra jämförbarhet mellan olika föremål"
 
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM interface"
