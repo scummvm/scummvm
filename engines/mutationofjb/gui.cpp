@@ -29,6 +29,7 @@
 #include "mutationofjb/util.h"
 #include "mutationofjb/widgets/widget.h"
 #include "mutationofjb/widgets/inventorywidget.h"
+#include "mutationofjb/widgets/imagewidget.h"
 #include "common/rect.h"
 #include "graphics/screen.h"
 
@@ -52,7 +53,11 @@ enum {
 	INVENTORY_ITEM_WIDTH = 34,
 	INVENTORY_ITEM_HEIGHT = 33,
 	INVENTORY_ITEMS_PER_LINE = 8,
-	INVENTORY_ITEMS_LINES = 5
+	INVENTORY_ITEMS_LINES = 5,
+	CONVERSATION_X = 0,
+	CONVERSATION_Y = 139,
+	CONVERSATION_WIDTH = 320,
+	CONVERSATION_HEIGHT = 61
 };
 
 
@@ -86,6 +91,12 @@ bool Gui::init() {
 	_game.getGameData().getInventory().setObserver(this);
 
 	// Init widgets.
+
+	const Common::Rect backgroundRect(CONVERSATION_X, CONVERSATION_Y, CONVERSATION_X + CONVERSATION_WIDTH, CONVERSATION_Y + CONVERSATION_HEIGHT);
+	const Graphics::Surface backgroundSurface = _hudSurfaces[0].getSubArea(backgroundRect);
+	ImageWidget *image = new ImageWidget(*this, backgroundRect, backgroundSurface);
+	_widgets.push_back(image);
+
 	_inventoryWidget = new InventoryWidget(*this, _inventoryItems, _inventorySurfaces);
 	_widgets.push_back(_inventoryWidget);
 
@@ -170,7 +181,7 @@ void HudAnimationDecoderCallback::onPaletteUpdated(byte [PALETTE_SIZE]) {
 }
 
 void HudAnimationDecoderCallback::onFrame(int frameNo, Graphics::Surface &surface) {
-	if (frameNo == 0 || frameNo == 1 || frameNo == 3) {
+	if (frameNo == 0 || frameNo == 1 || frameNo == 4) {
 		Graphics::Surface outSurface;
 		outSurface.copyFrom(surface);
 		_gui._hudSurfaces.push_back(outSurface);

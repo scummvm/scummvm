@@ -20,46 +20,24 @@
  *
  */
 
-#ifndef MUTATIONOFJB_MUTATIONOFJB_H
-#define MUTATIONOFJB_MUTATIONOFJB_H
+#ifndef MUTATIONOFJB_IMAGEWIDGET_H
+#define MUTATIONOFJB_IMAGEWIDGET_H
 
-#include "engines/engine.h"
-#include "mutationofjb/script.h"
-
-namespace Common {
-class Event;
-}
-
-namespace Graphics {
-class Screen;
-}
+#include "mutationofjb/widgets/widget.h"
+#include "graphics/surface.h"
 
 namespace MutationOfJB {
 
-class Console;
-class Game;
-
-class MutationOfJBEngine : public Engine {
+class ImageWidget : public Widget {
 public:
-	MutationOfJBEngine(OSystem *syst);
-	~MutationOfJBEngine();
+	ImageWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &image);
 
-	virtual Common::Error run();
-	Graphics::Screen *getScreen() const;
-	Game &getGame();
+protected:
+	virtual void _draw(Graphics::ManagedSurface &surface) override;
 
 private:
-	bool loadGameData(bool partB);
-	void setupCursor();
-	void handleNormalScene(const Common::Event &event);
-	void handleMapScene(const Common::Event &event);
-
-	Console *_console;
-	Graphics::Screen *_screen;
-	Game *_game;
-	uint8 _mapObjectId;
+	Graphics::Surface _image;
 };
-
 
 }
 
