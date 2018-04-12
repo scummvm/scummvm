@@ -1023,7 +1023,7 @@ ScummVM může také hru spustit přímo pomocí argumentů příkazové řádky
   --native-mt32            Pravý Roland MT-32 (zakáže emulaci GM)
   --enable-gs              Povolí režim Roland GS pro přehrávání MIDI
   --output-rate=FREKVENCE  Výstupní vzorkovací kmitočet v Hz (např. 22050)
-  --opl-driver=OVLADAČ     Vybere emulátor AdLib (OPL) (db, mame)
+  --opl-driver=OVLADAČ     Vybere emulátor AdLib (OPL) (db, mame, nuked)
   --aspect-ratio           Povolí korekci poměru stran
   --render-mode=REŽIM      Povolí dodatečné režimy vykreslení (hercGreen, hercAmber,
                            cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,

@@ -712,7 +712,7 @@ Ordning: scummvm [INSTÄLLNINGAR]... [SPEL]
   --native-mt32            True Roland MT-32 (deaktivera GM-emulation)
   --enable-gs              Aktivera Roland GS-läge för MIDI-uppspelning
   --output-rate=RATE       Välj ljudfrekvens i Hz (t.ex. 22050)
-  --opl-driver=DRIVER      Välj AdLib (OPL)-emulator (db, mame)
+  --opl-driver=DRIVER      Välj AdLib (OPL)-emulator (db, mame, nuked)
   --aspect-ratio           Aktivera korrektion av bildförhållande
   --render-mode=MODE       Aktivera ytterligare renderingslägen (cga, ega,                      
                            hercGreen, hercAmber, amiga)
