@@ -814,15 +814,20 @@ void Combat::doMonsterTurn(int monsterId) {
 	}
 
 	MonsterStruct &monsterData = map._monsterData[monsterId];
-	bool flag = false;
 	for (int attackNum = 0; attackNum < monsterData._numberOfAttacks; ++attackNum) {
 		int charNum = -1;
 		bool isHated = false;
 
-		if (monsterData._hatesClass != -1) {
-			if (monsterData._hatesClass == HATES_ALL_CLASSES)
-				// Monster hates all classes
-				goto loop;
+		if (monsterData._hatesClass != CLASS_PALADIN) {
+			if (monsterData._hatesClass == HATES_PARTY) {
+				// Monster hates entire party, even the disabled/dead
+				for (uint idx = 0; idx < _combatParty.size(); ++idx) {
+					doMonsterTurn(monsterId, idx);
+				}
+
+				// Move onto monster's next attack (if any)
+				continue;
+			}
 
 			for (uint charIndex = 0; charIndex < _combatParty.size(); ++charIndex) {
 				Character &c = *_combatParty[charIndex];
@@ -830,10 +835,8 @@ void Combat::doMonsterTurn(int monsterId) {
 				if (cond >= PARALYZED && cond <= ERADICATED)
 					continue;
 
-				isHated = false;
 				switch (monsterData._hatesClass) {
 				case CLASS_KNIGHT:
-				case CLASS_PALADIN:
 				case CLASS_ARCHER:
 				case CLASS_CLERIC:
 				case CLASS_SORCERER:
@@ -859,86 +862,76 @@ void Combat::doMonsterTurn(int monsterId) {
 		}
 
 		if (!isHated) {
-			// No particularly hated foe, so decide which character to start with
+			// No particularly hated foe, so pick a random character to start with
 			// Note: Original had a whole switch statement depending on party size, that boiled down to
 			// picking a random character in all cases anyway
 			charNum = _vm->getRandomNumber(0, _combatParty.size() - 1);
 		}
 
-		// Attacking loop
-		do {
-			if (!flag) {
-				Condition cond = _combatParty[charNum]->worstCondition();
+		// If the chosen character is already disabled, we need to pick a still able body character
+		// from the remainder of the combat party
+		Condition cond = _combatParty[charNum]->worstCondition();
+		if (cond >= PARALYZED && cond <= ERADICATED) {
+			Common::Array<int> ableChars;
 
-				if (cond >= PARALYZED && cond <= ERADICATED) {
-					Common::Array<int> ableChars;
-					bool skip = false;
-
-					for (uint idx = 0; idx < _combatParty.size() && !skip; ++idx) {
-						switch (_combatParty[idx]->worstCondition()) {
-						case PARALYZED:
-						case UNCONSCIOUS:
-							//if (flag)
-							//	skip = true;
-							break;
-						case DEAD:
-						case STONED:
-						case ERADICATED:
-							break;
-						default:
-							ableChars.push_back(idx);
-							break;
-						}
-					}
-
-					if (!skip) {
-						if (ableChars.size() == 0) {
-							party._dead = true;
-							_vm->_mode = MODE_1;
-							return;
-						}
-
-						charNum = ableChars[_vm->getRandomNumber(0, ableChars.size() - 1)];
-					}
-				}
-			}
-
-			// Unconditional if to get around goto initialization errors
-			if (true) {
-				Character &c = *_combatParty[charNum];
-				if (monsterData._attackType != DT_PHYSICAL || c._conditions[ASLEEP]) {
-					doCharDamage(c, charNum, monsterId);
-				} else {
-					int v = _vm->getRandomNumber(1, 20);
-					if (v == 1) {
-						// Critical Save
-						sound.playFX(6);
-					} else {
-						if (v == 20)
-							// Critical failure
-							doCharDamage(c, charNum, monsterId);
-						v += monsterData._hitChance / 4 + _vm->getRandomNumber(1,
-							monsterData._hitChance);
-
-						int ac = c.getArmorClass() + (!_charsBlocked[charNum] ? 10 :
-							c.getCurrentLevel() / 2 + 15);
-						if (ac > v) {
-							sound.playFX(6);
-						} else {
-							doCharDamage(c, charNum, monsterId);
-						}
-					}
-				}
-
-				if (flag)
+			for (uint idx = 0; idx < _combatParty.size(); ++idx) {
+				switch (_combatParty[idx]->worstCondition()) {
+				case PARALYZED:
+				case UNCONSCIOUS:
+				case DEAD:
+				case STONED:
+				case ERADICATED:
 					break;
+				default:
+					ableChars.push_back(idx);
+					break;
+				}
 			}
-loop:
-			flag = true;
-		} while (++charNum < (int)_combatParty.size());
+
+			if (ableChars.size() == 0) {
+				party._dead = true;
+				_vm->_mode = MODE_1;
+				return;
+			}
+
+			charNum = ableChars[_vm->getRandomNumber(0, ableChars.size() - 1)];
+		}
+
+		doMonsterTurn(monsterId, charNum);
 	}
 
 	intf.drawParty(true);
+}
+
+void Combat::doMonsterTurn(int monsterId, int charNum) {
+	Map &map = *_vm->_map;
+	Sound &sound = *_vm->_sound;
+	MonsterStruct &monsterData = map._monsterData[monsterId];
+	Character &c = *_combatParty[charNum];
+
+	if (monsterData._attackType != DT_PHYSICAL || c._conditions[ASLEEP]) {
+		doCharDamage(c, charNum, monsterId);
+	} else {
+		int v = _vm->getRandomNumber(1, 20);
+		if (v == 1) {
+			// Critical Save
+			sound.playFX(6);
+		} else {
+			if (v == 20)
+				// Critical failure
+				doCharDamage(c, charNum, monsterId);
+			v += monsterData._hitChance / 4 + _vm->getRandomNumber(1,
+				monsterData._hitChance);
+
+			int ac = c.getArmorClass() + (!_charsBlocked[charNum] ? 10 :
+				c.getCurrentLevel() / 2 + 15);
+			if (ac > v) {
+				sound.playFX(6);
+			} else {
+				doCharDamage(c, charNum, monsterId);
+			}
+		}
+	}
 }
 
 int Combat::stopAttack(const Common::Point &diffPt) {

@@ -55,7 +55,7 @@ enum CharacterClass {
 };
 
 enum HatesClass {
-	HATES_DWARF = 12, HATES_ALL_CLASSES = 15, HATES_NO_CLASSES = 16
+	HATES_DWARF = 12, HATES_PARTY = 15, HATES_NOBODY = 16
 };
 
 enum Attribute {

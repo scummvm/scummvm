@@ -77,6 +77,7 @@ enum RangeType {
 class XeenEngine;
 class Character;
 class XeenItem;
+class MonsterStruct;
 
 struct PowSlot {
 	bool _active;
@@ -291,7 +292,15 @@ public:
 	 */
 	void moveMonster(int monsterId, const Common::Point &moveDelta);
 
+	/**
+	 * Handle a monster's turn at attacking combat party members
+	 */
 	void doMonsterTurn(int monsterId);
+
+	/**
+	 * Handles a monster's turn at attacking a specific member of the combat party
+	 */
+	void doMonsterTurn(int monsterId, int charNum);
 
 	/**
 	 * Called when combat has ended
