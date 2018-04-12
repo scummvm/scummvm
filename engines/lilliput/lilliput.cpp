@@ -107,6 +107,7 @@ static const byte _basisPalette[768] = {
 	63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63
 };
 
+
 LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	_system = syst;
 	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
@@ -1313,11 +1314,11 @@ byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
 		if (target != _scriptHandler->_characterTilePos[index]) {
 			homeInChooseDirection(index);
 			_scriptHandler->_characterNextSequence[index] -= (param1.x & 0x0F);
-			return 3;
+			return kSeqNoInc | kSeqRepeat;
 		}
 
 		if (target == _characterTargetPos[index])
-			return 2;
+			return kSeqRepeat;
 	}
 
 	homeInPathFinding(index);
@@ -1329,8 +1330,7 @@ byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
 
 	homeInChooseDirection(index);
 	_scriptHandler->_characterNextSequence[index] -= (param1.x & 0x0F);
-	return 3;
-
+	return kSeqNoInc | kSeqRepeat;
 }
 
 void LilliputEngine::homeInPathFinding(int index) {
@@ -1544,7 +1544,7 @@ void LilliputEngine::addCharToBuf(byte character) {
 void LilliputEngine::numberToString(int param1) {
 	debugC(2, kDebugEngine, "numberToString(%d)", param1);
 
-	static const int _array18AE3[6] = {10000, 1000, 100, 10, 1};
+	static const int exp10[6] = {10000, 1000, 100, 10, 1};
 
 	int var1 = param1;
 	bool hideZeros = true;
@@ -1552,9 +1552,9 @@ void LilliputEngine::numberToString(int param1) {
 		int count = 0;
 		while (var1 >= 0) {
 			++count;
-			var1 -= _array18AE3[i];
+			var1 -= exp10[i];
 		}
-		var1 += _array18AE3[i];
+		var1 += exp10[i];
 		--count;
 
 		byte tmpVal = count + 0x30;
@@ -1574,8 +1574,8 @@ void LilliputEngine::updateCharPosSequence() {
 	int index = _numCharacters - 1;
 	byte result;
 	while (index >= 0) {
-		result = 2;
-		while (result & 2) {
+		result = kSeqRepeat;
+		while (result & kSeqRepeat) {
 			if (_scriptHandler->_characterNextSequence[index] == 16)
 				break;
 
@@ -1593,16 +1593,6 @@ void LilliputEngine::updateCharPosSequence() {
 			case 1: // Face direction
 				// x stands for the next direction, y for the poseType
 				result = sequenceSetCharacterDirection(index, var1.x, var1.y);
-				break;
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-			case 8:
-			case 9:
-				result = 0;
 				break;
 			case 10: // Seek move target
 				result = sequenceSeekMovingCharacter(index, var1);
@@ -1623,11 +1613,11 @@ void LilliputEngine::updateCharPosSequence() {
 				result = sequenceEnd(index);
 				break;
 			default:
-				error("updateCharPosSequence - unexpected value %d", posSeqType);
+				result = kSeqNone;
 				break;
 			}
 
-			if ((result & 1) == 0) {
+			if ((result & kSeqNoInc) == 0) {
 				++_scriptHandler->_characterNextSequence[index];
 				if (_scriptHandler->_characterNextSequence[index] == 16)
 					_scriptHandler->_characterScriptEnabled[index] = 1;
@@ -1642,26 +1632,27 @@ byte LilliputEngine::sequenceEnd(int index) {
 
 	_scriptHandler->_characterNextSequence[index] = 16;
 	_scriptHandler->_characterScriptEnabled[index] = 1;
-	return 1;
+
+	return kSeqNoInc;
 }
 
 byte LilliputEngine::sequenceRepeat(int index, Common::Point var1, int tmpVal) {
 	debugC(2, kDebugEngine, "sequenceRepeat(%d, %d - %d, %d)", index, var1.x, var1.y, tmpVal);
 
-	byte a2 = var1.y;
-	if (a2 != 0) {
-		if ((a2 & 0xF0) == 0)
-			a2 |= (a2 << 4);
+	byte counter = var1.y;
+	if (counter != 0) {
+		if ((counter & 0xF0) == 0)
+			counter |= (counter << 4);
 
-		a2 -= 16;
-		_scriptHandler->_sequenceArr[tmpVal] = Common::Point(var1.x, a2);
+		counter -= 16;
+		_scriptHandler->_sequenceArr[tmpVal] = Common::Point(var1.x, counter);
 
-		if ((a2 & 0xF0) == 0)
-			return 2;
+		if ((counter & 0xF0) == 0)
+			return kSeqRepeat;
 	}
 
 	_scriptHandler->_characterNextSequence[index] -= (var1.x & 0x0F);
-	return 3;
+	return kSeqNoInc | kSeqRepeat;
 }
 
 byte LilliputEngine::sequenceSetCharacterDirection(int index, int direction, int poseType) {
@@ -1670,14 +1661,15 @@ byte LilliputEngine::sequenceSetCharacterDirection(int index, int direction, int
 	char newDir = direction & 3;
 	_characterDirectionArray[index] = newDir;
 	setCharacterPose(index, poseType);
-	return 0;
+
+	return kSeqNone;
 }
 
 byte LilliputEngine::sequenceSetMobility(int index, Common::Point var1) {
 	debugC(2, kDebugEngine, "sequenceSetMobility(%d, %d - %d)", index, var1.x, var1.y);
 
 	_characterMobility[index] = var1.y;
-	return 2;
+	return kSeqRepeat;
 }
 
 byte LilliputEngine::sequenceSound(int index, Common::Point var1) {
@@ -1687,7 +1679,7 @@ byte LilliputEngine::sequenceSound(int index, Common::Point var1) {
 	int param1 = var1.y;
 	_soundHandler->contentFct2(param1, _scriptHandler->_viewportPos, 
 		_scriptHandler->_characterTilePos[index], Common::Point(param4x, 0));
-	return 2;
+	return kSeqRepeat;
 }
 
 byte LilliputEngine::sequenceSeekMovingCharacter(int index, Common::Point var1) {
@@ -2024,7 +2016,7 @@ byte LilliputEngine::sequenceMoveCharacter(int idx, int moveType, int poseType) 
 		warning("sequenceMoveCharacter - Unexpected value %d", moveType);
 	}
 
-	return 0;
+	return kSeqNone;
 }
 
 void LilliputEngine::turnCharacter1(int index) {

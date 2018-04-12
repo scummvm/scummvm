@@ -75,6 +75,10 @@ enum InterfaceHotspotStatus {
 	kHotspotSelected = 3
 };
 
+#define kSeqNone	0
+#define kSeqNoInc	1 << 0
+#define kSeqRepeat	1 << 1
+
 struct LilliputGameDescription;
 
 struct SmallAnim {
