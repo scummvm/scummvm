@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	commands/saycommand.o \
 	commands/seqcommand.o \
 	widgets/buttonwidget.o \
+	widgets/imagewidget.o \
 	widgets/inventorywidget.o \
 	widgets/widget.o \
 	animationdecoder.o \
