@@ -126,10 +126,7 @@ bool SoundDriver::musSkipWord(const byte *&srcP, byte param) {
 
 bool SoundDriver::cmdFreezeFrequency(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "cmdFreezeFrequency %d", param);
-	if (param >= _channels.size())
-		warning("Invalid channel %d in cmdFreezeFrequency call", param);
-	else
-		_channels[param]._changeFrequency = false;
+	_channels[param]._changeFrequency = false;
 	return false;
 }
 

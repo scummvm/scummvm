@@ -121,29 +121,29 @@ void Sound::updateSoundSettings() {
 void Sound::loadEffectsData() {
 	// Stop any prior FX
 	stopFX();
-	delete[] _effectsData;
 
-	// Load in an entire driver so we have quick access to the effects data
-	// that's hardcoded within it
-	File file("blastmus");
-	byte *effectsData = new byte[file.size()];
-	file.seek(0);
-	file.read(effectsData, file.size());
-	file.close();
-	_effectsData = effectsData;
+	if (!_effectsData) {
+		// Load in an entire driver so we have quick access to the effects data that's hardcoded within it
+		File file("blastmus");
+		byte *effectsData = new byte[file.size()];
+		file.seek(0);
+		file.read(effectsData, file.size());
+		file.close();
+		_effectsData = effectsData;
 
-	// Locate the playFX routine
-	const byte *fx = effectsData + READ_LE_UINT16(effectsData + 10) + 12;
-	assert(READ_BE_UINT16(fx + 28) == 0x81FB);
-	uint numEffects = READ_LE_UINT16(fx + 30);
+		// Locate the playFX routine
+		const byte *fx = effectsData + READ_LE_UINT16(effectsData + 10) + 12;
+		assert(READ_BE_UINT16(fx + 28) == 0x81FB);
+		uint numEffects = READ_LE_UINT16(fx + 30);
 
-	assert(READ_BE_UINT16(fx + 36) == 0x8B87);
-	const byte *table = effectsData + READ_LE_UINT16(fx + 38);
+		assert(READ_BE_UINT16(fx + 36) == 0x8B87);
+		const byte *table = effectsData + READ_LE_UINT16(fx + 38);
 
-	// Extract the effects offsets
-	_effectsOffsets.resize(numEffects);
-	for (uint idx = 0; idx < numEffects; ++idx)
-		_effectsOffsets[idx] = READ_LE_UINT16(&table[idx * 2]);
+		// Extract the effects offsets
+		_effectsOffsets.resize(numEffects);
+		for (uint idx = 0; idx < numEffects; ++idx)
+			_effectsOffsets[idx] = READ_LE_UINT16(&table[idx * 2]);
+	}
 }
 
 void Sound::playFX(uint effectId) {
