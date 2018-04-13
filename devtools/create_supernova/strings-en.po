@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Mission Supernova 1.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2017-07-22 19:53+0100\n"
-"PO-Revision-Date: 2018-01-07 18:01+0000\n"
-"Last-Translator: Joseph-Eugene Winzer <Joe.Winzer@gmx.de>\n"
+"PO-Revision-Date: 2018-04-13 21:29+0000\n"
+"Last-Translator: Adrian FrÅhwirth <bonki@scummvm.org>\n"
 "Language-Team: none\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -1629,7 +1629,7 @@ msgstr "Pssst, not so loud, otherwise everyone|will want an autograph from me."
 #: ../../msn/msn_r2.c:730
 msgid ""
 "Ich habe extra eine Maske auf, damit|ich nicht von jedem angelabert werde."
-msgstr "I have an extra mask on so I don't|get yakked on by everyone."
+msgstr "I'm deliberately wearing a mask so I don't|get yakked on by everyone."
 
 #: ../../msn/msn_r2.c:731
 msgid "éh ... ach so."
@@ -1698,7 +1698,7 @@ msgstr "What? Ridiculous!"
 
 #: ../../msn/msn_r2.c:745
 msgid "Wie erklÑren Sie sich dann,|da· ich ihnen gegenÅbersitze?"
-msgstr "How do you explain then that|I am seated opposite you?"
+msgstr "Then how do you explain the fact that|I am seated opposite you?"
 
 #: ../../msn/msn_r2.c:746
 msgid "Ja, das ist in der Tat seltsam."
@@ -1721,7 +1721,8 @@ msgid ""
 "Na gut, ich glaube Ihnen. Lassen wir jetzt|dieses Thema, langsam wird es mir "
 "zu bunt!"
 msgstr ""
-"OK. I believe you. Let's move away from|this topic before it goes too far!"
+"Fair enough, I believe you. Let's move away from|this topic before it goes "
+"too far!"
 
 #: ../../msn/msn_r2.c:761
 msgid "Eine Partie Schach! Das ist eine gute Idee."
