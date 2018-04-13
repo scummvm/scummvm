@@ -155,7 +155,7 @@ static const char HELP_STRING[] =
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
 	"                           Steel Sky and Flight of the Amazon Queen\n"
 #endif
-	"  --copy-protection        Enable copy protection in SCUMM games, when\n"
+	"  --copy-protection        Enable copy protection in games, when\n"
 	"                           ScummVM disables it by default.\n"
 	"  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
