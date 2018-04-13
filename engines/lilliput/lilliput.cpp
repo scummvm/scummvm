@@ -1336,70 +1336,64 @@ byte LilliputEngine::sequenceCharacterHomeIn(int index, Common::Point param1) {
 void LilliputEngine::homeInPathFinding(int index) {
 	debugC(2, kDebugEngine, "homeInPathFinding(%d)", index);
 
-	int16 word167EB = findHotspot(_scriptHandler->_characterTilePos[index]);
-	int16 word167ED = findHotspot(_characterTargetPos[index]);
+	int16 enclosureSrc = checkEnclosure(_scriptHandler->_characterTilePos[index]);
+	int16 enclosureDst = checkEnclosure(_characterTargetPos[index]);
 
-	if (word167EB == word167ED) {
+	if (enclosureSrc == enclosureDst) {
 		_characterSubTargetPos[index] = _characterTargetPos[index];
 		return;
 	}
 
-	if (word167EB == -1) {
-		int tmpVal = reverseFindHotspot(_characterTargetPos[index]);
+	if (enclosureSrc == -1) {
+		int tmpVal = checkOuterEnclosure(_characterTargetPos[index]);
 		_characterSubTargetPos[index] = _portalPos[tmpVal];
 		return;
 	}
 
-	if ((word167ED != -1) &&
-		(_characterTargetPos[index].x >= _rectXMinMax[word167EB].min) &&
-		(_characterTargetPos[index].x <= _rectXMinMax[word167EB].max) &&
-		(_characterTargetPos[index].y >= _rectYMinMax[word167EB].min) &&
-		(_characterTargetPos[index].y <= _rectYMinMax[word167EB].max)) {
-		_characterSubTargetPos[index] = _portalPos[word167ED];
+	if ((enclosureDst != -1) &&
+		(_characterTargetPos[index].x >= _rectXMinMax[enclosureSrc].min) &&
+		(_characterTargetPos[index].x <= _rectXMinMax[enclosureSrc].max) &&
+		(_characterTargetPos[index].y >= _rectYMinMax[enclosureSrc].min) &&
+		(_characterTargetPos[index].y <= _rectYMinMax[enclosureSrc].max)) {
+		_characterSubTargetPos[index] = _portalPos[enclosureDst];
 		return;
 	}
 
-	_characterSubTargetPos[index] = _portalPos[word167EB];
-	int var4h = _rectXMinMax[word167EB].min;
-	int var4l = _rectXMinMax[word167EB].max;
+	_characterSubTargetPos[index] = _portalPos[enclosureSrc];
 
-	if (var4h != var4l) {
-		if (_portalPos[word167EB].x == var4h) {
-			_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x - 1, _portalPos[word167EB].y);
+	if (_rectXMinMax[enclosureSrc].min != _rectXMinMax[enclosureSrc].max) {
+		if (_portalPos[enclosureSrc].x == _rectXMinMax[enclosureSrc].min) {
+			_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x - 1, _portalPos[enclosureSrc].y);
 			return;
 		}
 
-		if (_portalPos[word167EB].x == var4l) {
-			_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x + 1, _portalPos[word167EB].y);
+		if (_portalPos[enclosureSrc].x == _rectXMinMax[enclosureSrc].max) {
+			_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x + 1, _portalPos[enclosureSrc].y);
 			return;
 		}
 
-		var4h = _rectYMinMax[word167EB].min;
-		var4l = _rectYMinMax[word167EB].max;
-
-		if (var4h != var4l) {
-			if (_portalPos[word167EB].y == var4h)
-				_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x, _portalPos[word167EB].y - 1);
-			else
-				_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x, _portalPos[word167EB].y + 1);
+		if (_rectYMinMax[enclosureSrc].min != _rectYMinMax[enclosureSrc].max) {
+			if (_portalPos[enclosureSrc].y == _rectYMinMax[enclosureSrc].min)
+				_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y - 1);
+			else // CHECKME: Should be a check on y == max
+				_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y + 1);
 
 			return;
 		}
 	}
 
-	// var4h == var4l
-	int mapIndex = (_portalPos[word167EB].y * 64 + _portalPos[word167EB].x) * 4;
+	int mapIndex = (_portalPos[enclosureSrc].y * 64 + _portalPos[enclosureSrc].x) * 4;
 	assert(mapIndex < 16384);
 
 	int tmpVal = _bufferIsoMap[mapIndex + 3];
 	if ((tmpVal & 8) != 0)
-		_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x + 1, _portalPos[word167EB].y);
+		_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x + 1, _portalPos[enclosureSrc].y);
 	else if ((tmpVal & 4) != 0)
-		_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x, _portalPos[word167EB].y - 1);
+		_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y - 1);
 	else if ((tmpVal & 2) != 0)
-		_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x, _portalPos[word167EB].y + 1);
+		_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x, _portalPos[enclosureSrc].y + 1);
 	else
-		_characterSubTargetPos[index] = Common::Point(_portalPos[word167EB].x - 1, _portalPos[word167EB].y);
+		_characterSubTargetPos[index] = Common::Point(_portalPos[enclosureSrc].x - 1, _portalPos[enclosureSrc].y);
 
 	return;
 }
@@ -1412,11 +1406,10 @@ void LilliputEngine::homeInChooseDirection(int index) {
 	_curCharacterTilePos = _scriptHandler->_characterTilePos[index];
 
 	evaluateDirections(index);
+	int direction = (_characterDirectionArray[index] ^ 3);
 
-	int var2 = (_characterDirectionArray[index] ^ 3);
-	// initialized by evaluateDirections, values: [0, 3[
-	_homeInDirLikelyhood[var2] -= 8;
-	byte byte16939 = 0;
+	_homeInDirLikelyhood[direction] -= 8;
+	byte closeWallFl = 0;
 
 	int mapIndex = ((_curCharacterTilePos.y * 64) + _curCharacterTilePos.x) * 4;
 	int retVal = 0;
@@ -1424,7 +1417,7 @@ void LilliputEngine::homeInChooseDirection(int index) {
 		int mapIndexDiff = mapArrayMove[i];
 		assert(mapIndex + mapIndexDiff + 3 < 16384);
 		if (((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & _doorEntranceMask[i]) != 0) && ((_bufferIsoMap[mapIndex + 3] & _doorExitMask[i]) != 0)) {
-			if ((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & 0x80) != 0 && (sub16A76(i, index) != 0)) {
+			if ((_bufferIsoMap[mapIndex + mapIndexDiff + 3] & 0x80) != 0 && (homeInAvoidDeadEnds(i, index) != 0)) {
 				_homeInDirLikelyhood[i] -= 20;
 			}
 
@@ -1435,10 +1428,10 @@ void LilliputEngine::homeInChooseDirection(int index) {
 				continue;
 		}
 		_homeInDirLikelyhood[i] = -98;
-		++byte16939;
+		++closeWallFl;
 	}
 
-	if (byte16939 != 0)
+	if (closeWallFl != 0)
 		_homeInDirLikelyhood[_characterDirectionArray[index]] += 3;
 
 	int tmpVal = -99;
@@ -1452,38 +1445,33 @@ void LilliputEngine::homeInChooseDirection(int index) {
 	_characterDirectionArray[index] = retVal;
 }
 
-byte LilliputEngine::sub16A76(int indexb, int indexs) {
-	debugC(2, kDebugEngine, "sub16A76(%d, %d)", indexb, indexs);
+byte LilliputEngine::homeInAvoidDeadEnds(int indexb, int indexs) {
+	debugC(2, kDebugEngine, "homeInAvoidDeadEnds(%d, %d)", indexb, indexs);
 
-	static const int8 _array16A6C[4] = {1, 0, 0, -1};
-	static const int8 _array16A70[4] = {0, -1, 1, 0};
+	static const int8 constDirX[4] = {1, 0, 0, -1};
+	static const int8 constDirY[4] = {0, -1, 1, 0};
 
-	int8 var1h = _curCharacterTilePos.x + _array16A6C[indexb];
-	int8 var1l = _curCharacterTilePos.y + _array16A70[indexb];
+	Common::Point tmpPos = Common::Point(_curCharacterTilePos.x + constDirX[indexb], _curCharacterTilePos.y + constDirY[indexb]);
 
-	int16 var2 = findHotspot(Common::Point(var1h, var1l));
+	int16 var2 = checkEnclosure(tmpPos);
 	if (var2 == -1)
 		return 1;
 
-//	int _word16A74 = var2; // useless?
+	tmpPos = _curCharacterTilePos;
 
-	var1h = _curCharacterTilePos.x;
-	var1l = _curCharacterTilePos.y;
-
-	if ((var1h >= _rectXMinMax[var2].min) && (var1h <= _rectXMinMax[var2].max) && (var1l >= _rectYMinMax[var2].min) && (var1l <= _rectYMinMax[var2].max))
+	if ((tmpPos.x >= _rectXMinMax[var2].min) && (tmpPos.x <= _rectXMinMax[var2].max) && (tmpPos.y >= _rectYMinMax[var2].min) && (tmpPos.y <= _rectYMinMax[var2].max))
 		return 0;
 
-	var1h = _characterSubTargetPos[indexs].x;
-	var1l = _characterSubTargetPos[indexs].y;
+	tmpPos = _characterSubTargetPos[indexs];
 
-	if ((var1h >= _rectXMinMax[var2].min) && (var1h <= _rectXMinMax[var2].max) && (var1l >= _rectYMinMax[var2].min) && (var1l <= _rectYMinMax[var2].max))
+	if ((tmpPos.x >= _rectXMinMax[var2].min) && (tmpPos.x <= _rectXMinMax[var2].max) && (tmpPos.y >= _rectYMinMax[var2].min) && (tmpPos.y <= _rectYMinMax[var2].max))
 		return 0;
 
 	return 1;
 }
 
-int16 LilliputEngine::findHotspot(Common::Point pos) {
-	debugC(2, kDebugEngine, "findHotspot(%d, %d)", pos.x, pos.y);
+int16 LilliputEngine::checkEnclosure(Common::Point pos) {
+	debugC(2, kDebugEngine, "checkEnclosure(%d, %d)", pos.x, pos.y);
 
 	for (int i = 0; i < _rectNumb; i++) {
 		if ((pos.x >= _rectXMinMax[i].min) && (pos.x <= _rectXMinMax[i].max) && (pos.y >= _rectYMinMax[i].min) && (pos.y <= _rectYMinMax[i].max))
@@ -1492,8 +1480,8 @@ int16 LilliputEngine::findHotspot(Common::Point pos) {
 	return -1;
 }
 
-int16 LilliputEngine::reverseFindHotspot(Common::Point pos) {
-	debugC(2, kDebugEngine, "reverseFindHotspot(%d, %d)", pos.x, pos.y);
+int16 LilliputEngine::checkOuterEnclosure(Common::Point pos) {
+	debugC(2, kDebugEngine, "checkOuterEnclosure(%d, %d)", pos.x, pos.y);
 
 	for (int i = _rectNumb - 1; i >= 0 ; i--) {
 		if ((pos.x >= _rectXMinMax[i].min) && (pos.x <= _rectXMinMax[i].max) && (pos.y >= _rectYMinMax[i].min) && (pos.y <= _rectYMinMax[i].max))
@@ -1676,8 +1664,7 @@ byte LilliputEngine::sequenceSound(int index, Common::Point var1) {
 	debugC(2, kDebugEngine, "sequenceSound(%d, %d - %d)", index, var1.x, var1.y);
 
 	int param4x = ((index | 0xFF00) >> 8);
-	int param1 = var1.y;
-	_soundHandler->contentFct2(param1, _scriptHandler->_viewportPos, 
+	_soundHandler->contentFct2(var1.y, _scriptHandler->_viewportPos, 
 		_scriptHandler->_characterTilePos[index], Common::Point(param4x, 0));
 	return kSeqRepeat;
 }

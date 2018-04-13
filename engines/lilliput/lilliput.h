@@ -264,11 +264,11 @@ public:
 	void checkSpeechClosing();
 	void updateCharPosSequence();
 	void evaluateDirections(int index);
-	byte sub16A76(int indexb, int indexs);
+	byte homeInAvoidDeadEnds(int indexb, int indexs);
 	void signalDispatcher(byte type, byte index, int var4);
 	void sendMessageToCharacter(byte index, int var4);
-	int16 findHotspot(Common::Point pos);
-	int16 reverseFindHotspot(Common::Point pos);
+	int16 checkEnclosure(Common::Point pos);
+	int16 checkOuterEnclosure(Common::Point pos);
 	byte sequenceSetMobility(int index, Common::Point var1);
 	byte sequenceEnd(int index);
 	void homeInPathFinding(int index);
