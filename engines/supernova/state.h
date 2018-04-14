@@ -65,8 +65,9 @@ struct GameState {
 
 class Inventory {
 public:
-	Inventory(int &inventoryScroll)
+	Inventory(Object *nullObject, int &inventoryScroll)
 		: _numObjects(0)
+		, _nullObject(nullObject)
 		, _inventoryScroll(inventoryScroll)
 	{}
 
@@ -79,6 +80,7 @@ public:
 
 private:
 	Object *_inventory[kMaxCarry];
+	Object *_nullObject;
 	int &_inventoryScroll;
 	int _numObjects;
 };
@@ -154,6 +156,7 @@ public:
 	bool _animationEnabled;
 	byte _roomBrightness;
 	Action _inputVerb;
+	Object _nullObject;
 	Object *_currentInputObject;
 	Object *_inputObject[2];
 	bool _waitEvent;
@@ -175,6 +178,8 @@ public:
 	byte _rowsStart[6];
 
 	void takeObject(Object &obj);
+	void setObjectNull(Object *&obj);
+	bool isNullObject(Object *obj);
 
 	void initState();
 	void initRooms();

@@ -49,8 +49,6 @@
 
 namespace Supernova {
 
-const Object Object::nullObject;
-
 ObjectType operator|(ObjectType a, ObjectType b) {
 	return static_cast<ObjectType>(+a | +b);
 }

@@ -304,8 +304,6 @@ ObjectType &operator&=(ObjectType &a, ObjectType b);
 ObjectType &operator^=(ObjectType &a, ObjectType b);
 
 struct Object {
-	static const Object nullObject;
-
 	Object()
 		: _name(kNoString)
 		, _description(kStringDefaultDescription)
@@ -332,12 +330,6 @@ struct Object {
 		, _direction(direction)
 	{}
 
-	static void setObjectNull(Object *&obj) {
-		obj = const_cast<Object *>(&nullObject);
-	}
-	static bool isNullObject(Object *obj) {
-		return obj == &nullObject;
-	}
 	void resetProperty(ObjectType type = NULLTYPE) {
 		_type = type;
 	}
