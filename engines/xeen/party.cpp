@@ -889,7 +889,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		ps._tempAge -= takeVal;
 		break;
 	case 13:
-		ps._skills[THIEVERY] = 0;
+		ps._skills[takeVal] = 0;
 		break;
 	case 15:
 		ps.setAward(takeVal, false);
