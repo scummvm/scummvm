@@ -1447,6 +1447,15 @@ void ReaperCutscene::getNewLocation() {
 			}
 			break;
 
+		case 16:
+			if (party._questItems[41]) {
+				_mazeId = 61;
+				_mazePos = Common::Point(7, 12);
+				_mazeDir = DIR_SOUTH;
+				_keyFound = true;
+			}
+			break;
+
 		case 23:
 			if (party._questItems[42]) {
 				_mazeId = 65;
