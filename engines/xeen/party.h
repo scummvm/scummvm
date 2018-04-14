@@ -87,6 +87,11 @@ public:
 	 * Clears the treasure list
 	 */
 	void clear();
+
+	/**
+	 * Completely reset the treasure data
+	 */
+	void reset();
 };
 
 /**

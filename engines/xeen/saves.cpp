@@ -190,6 +190,7 @@ Common::Error SavesManager::loadGameState(int slot) {
 
 	// Reset any combat information from the previous game
 	combat.reset();
+	party._treasure.reset();
 
 	// Load the new map
 	map.clearMaze();

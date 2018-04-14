@@ -87,6 +87,12 @@ void Treasure::clear() {
 	}
 }
 
+void Treasure::reset() {
+	clear();
+	_hasItems = false;
+	_gold = _gems = 0;
+}
+
 /*------------------------------------------------------------------------*/
 
 const int BLACKSMITH_DATA1[4][4] = {
