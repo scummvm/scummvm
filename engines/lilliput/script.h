@@ -83,7 +83,7 @@ public:
 	byte _characterSeek[40];
 	int16 _interactions[40 * 40];
 
-	byte *_savedBuffer215Ptr;
+	byte *_barAttrPtr;
 
 	Common::Point _viewportPos;
 	int16 _viewportCharacterTarget;
@@ -247,8 +247,8 @@ private:
 	void OC_setCurrentCharacterPos();
 	void OC_setCurrentCharacterBehavior();
 	void OC_changeCurrentCharacterSprite();
-	void OC_sub17E99();
-	void OC_sub17EC5();
+	void OC_getList();
+	void OC_setList();
 	void OC_setCharacterDirectionTowardsPos();
 	void OC_turnCharacterTowardsAnother();
 	void OC_setSeek();

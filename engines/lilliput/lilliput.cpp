@@ -674,7 +674,7 @@ void LilliputEngine::prepareGameArea() {
 		for (int posX = 0; posX < 8; posX++) {
 			if (map[1] != 0xFF) {
 				int var1 = map[1];
-				if ((_rulesChunk9[var1] & 128) != 0)
+				if ((_cubeFlags[var1] & 128) != 0)
 					var1 += _animationTick;
 				displayIsometricBlock(_savedSurfaceGameArea1, var1, posX, posY, 1 << 8);
 			}
@@ -682,7 +682,7 @@ void LilliputEngine::prepareGameArea() {
 
 			if (map[2] != 0xFF) {
 				int var1 = map[2];
-				if ((_rulesChunk9[var1] & 128) != 0)
+				if ((_cubeFlags[var1] & 128) != 0)
 					var1 += _animationTick;
 				displayIsometricBlock(_savedSurfaceGameArea1, var1, posX, posY, 2 << 8);
 			}
@@ -1195,7 +1195,7 @@ void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
 
 	if (buf[1] != 0xFF) {
 		int tmpIndex = buf[1];
-		if ((_rulesChunk9[tmpIndex] & 16) == 0)
+		if ((_cubeFlags[tmpIndex] & 16) == 0)
 			++_byte16552;
 	}
 
@@ -1422,7 +1422,7 @@ void LilliputEngine::homeInChooseDirection(int index) {
 			}
 
 			int tmpVal = ((_characterMobility[index] & 7) ^ 7);
-			retVal = _rulesChunk9[_bufferIsoMap[mapIndex + mapIndexDiff]];
+			retVal = _cubeFlags[_bufferIsoMap[mapIndex + mapIndexDiff]];
 			tmpVal &= retVal;
 			if (tmpVal == 0)
 				continue;
@@ -2118,7 +2118,7 @@ void LilliputEngine::checkCollision(int index, Common::Point pos, int direction)
 	var1 &= 7;
 	var1 ^= 7;
 
-	if ((var1 & _rulesChunk9[_bufferIsoMap[mapIndex]]) != 0)
+	if ((var1 & _cubeFlags[_bufferIsoMap[mapIndex]]) != 0)
 		return;
 
 	_characterPos[index] = pos;
@@ -2147,7 +2147,7 @@ void LilliputEngine::signalDispatcher(byte type, byte index, int var4) {
 }
 
 void LilliputEngine::sendMessageToCharacter(byte index, int var4) {
-	debugC(2, kDebugEngine, "sub17264(%d, %d)", index, var4);
+	debugC(2, kDebugEngine, "sendMessageToCharacter(%d, %d)", index, var4);
 
 	if (_characterSignals[index] != -1) {
 		_signalArr[index] = var4;
@@ -2208,10 +2208,10 @@ void LilliputEngine::checkInterfaceActivationDelay() {
 void LilliputEngine::displayHeroismIndicator() {
 	debugC(2, kDebugEngine, "displayHeroismIndicator()");
 
-	if (_scriptHandler->_savedBuffer215Ptr == NULL)
+	if (_scriptHandler->_barAttrPtr == NULL)
 		return;
 
-	int var1 = (_scriptHandler->_savedBuffer215Ptr[0] * 25) >> 8;
+	int var1 = (_scriptHandler->_barAttrPtr[0] * 25) >> 8;
 
 	if (var1 == _scriptHandler->_heroismLevel)
 		return;
@@ -2230,7 +2230,6 @@ void LilliputEngine::displayHeroismIndicator() {
 
 	var2 = _scriptHandler->_heroismLevel & 0xFF;
 	if (var2 != 0) {
-//		sub16064(var1, _scriptHandler->_byte15FFA);
 		for (int i = 0; i < (var2 << 2); i++) {
 			((byte *)_mainSurface->getPixels())[index] = var1;
 			((byte *)_mainSurface->getPixels())[index + 1] = var1;
@@ -2240,7 +2239,6 @@ void LilliputEngine::displayHeroismIndicator() {
 	}
 
 	if (25 - _scriptHandler->_heroismLevel != 0) {
-//		sub16064(23, 25 - _scriptHandler->_byte15FFA);
 		var2 = (25 - _scriptHandler->_heroismLevel) << 2;
 		for (int i = 0; i < var2; i++) {
 			((byte *)_mainSurface->getPixels())[index] = 23;
@@ -2419,13 +2417,13 @@ void LilliputEngine::loadRules() {
 
 	_word10800_ERULES = f.readUint16LE();
 
-	// Chunk 1
+	// Chunk 1 : Sequences
 	int size = f.readUint16LE();
-	_rulesChunk1 = (byte *)malloc(sizeof(byte) * size);
+	_sequencesArr = (byte *)malloc(sizeof(byte) * size);
 	for (int i = 0; i < size; ++i)
-		_rulesChunk1[i] = f.readByte();
+		_sequencesArr[i] = f.readByte();
 
-	// Chunk 2
+	// Chunk 2 : Characters
 	_numCharacters = (f.readUint16LE() & 0xFF);
 	assert(_numCharacters <= 40);
 
@@ -2500,25 +2498,25 @@ void LilliputEngine::loadRules() {
 	for (int i = 0; i < curWord; ++i)
 		_arrayGameScripts[i] = f.readByte();
 
-	// Chunk 9
+	// Chunk 9 : Cube flags
 	for (int i = 0; i < 60; i++)
-		_rulesChunk9[i] = f.readByte();
+		_cubeFlags[i] = f.readByte();
 
-	// Chunk 10 & 11
-	_rulesChunk10_size = f.readByte();
-	assert(_rulesChunk10_size <= 20);
+	// Chunk 10 & 11 : Lists
+	_listNumb = f.readByte();
+	assert(_listNumb <= 20);
 
-	if (_rulesChunk10_size != 0) {
-		_rulesChunk10 = (int16 *)malloc(sizeof(int16) * _rulesChunk10_size);
+	if (_listNumb != 0) {
+		_listIndex = (int16 *)malloc(sizeof(int16) * _listNumb);
 		int totalSize = 0;
-		for (int i = 0; i < _rulesChunk10_size; ++i) {
-			_rulesChunk10[i] = totalSize;
+		for (int i = 0; i < _listNumb; ++i) {
+			_listIndex[i] = totalSize;
 			totalSize += f.readByte();
 		}
 		if (totalSize != 0) {
-			_rulesChunk11 = (byte *)malloc(sizeof(byte) * totalSize);
+			_listArr = (byte *)malloc(sizeof(byte) * totalSize);
 			for (int i = 0; i < totalSize; i++)
-				_rulesChunk11[i] = f.readByte();
+				_listArr[i] = f.readByte();
 		}
 	}
 
@@ -2534,7 +2532,7 @@ void LilliputEngine::loadRules() {
 
 		int16 tmpValY = (int16)f.readByte();
 		int16 tmpValX = (int16)f.readByte();
-		_rulesBuffer12Pos3[i] = Common::Point(tmpValX, tmpValY);
+		_keyPos[i] = Common::Point(tmpValX, tmpValY);
 
 		tmpValY = (int16)f.readByte();
 		tmpValX = (int16)f.readByte();
@@ -2586,13 +2584,13 @@ void LilliputEngine::fixPaletteEntries(uint8 *palette, int num) {
 	debugC(1, kDebugEngine, "fixPaletteEntries(palette, %d)", num);
 	// Color values are coded on 6bits (for old 6bits DAC)
 	for (int32 i = 0; i < num * 3; i++) {
-		int32 a = palette[i];
-		assert(a < 64);
+		int32 col = palette[i];
+		assert(col < 64);
 
-		a = (a << 2) | (a >> 4);
-		if (a > 255)
-			a = 255;
-		palette[i] = a;
+		col = (col << 2) | (col >> 4);
+		if (col > 255)
+			col = 255;
+		palette[i] = col;
 	}
 }
 

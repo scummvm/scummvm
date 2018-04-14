@@ -48,7 +48,7 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 	_monitoredAttr[1] = 1;
 	_monitoredAttr[2] = 2;
 	_monitoredAttr[3] = 3;
-	_savedBuffer215Ptr = NULL;
+	_barAttrPtr = NULL;
 	_word1825E = Common::Point(0, 0);
 
 	for (int i = 0; i < 20; i++) {
@@ -368,10 +368,10 @@ void LilliputScript::handleOpcodeType2(int curWord) {
 		OC_changeCurrentCharacterSprite();
 		break;
 	case 0x29:
-		OC_sub17E99();
+		OC_getList();
 		break;
 	case 0x2A:
-		OC_sub17EC5();
+		OC_setList();
 		break;
 	case 0x2B:
 		OC_setCharacterDirectionTowardsPos();
@@ -652,8 +652,8 @@ static const OpCode opCodes2[] = {
 /* 0x26 */	{ "OC_setCurrentCharacterPos", 2, kImmediateValue, kgetPosFromScript, kNone, kNone, kNone },
 /* 0x27 */	{ "OC_setCurrentCharacterBehavior", 1, kImmediateValue, kNone, kNone, kNone, kNone },
 /* 0x28 */	{ "OC_changeCurrentCharacterSprite", 2, kImmediateValue, kImmediateValue, kNone, kNone, kNone },
-/* 0x29 */	{ "OC_sub17E99", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
-/* 0x2a */	{ "OC_sub17EC5", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
+/* 0x29 */	{ "OC_getList", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
+/* 0x2a */	{ "OC_setList", 4, kImmediateValue, kImmediateValue, kImmediateValue, kImmediateValue, kNone },
 /* 0x2b */	{ "OC_setCharacterDirectionTowardsPos", 1, kgetPosFromScript, kNone, kNone, kNone, kNone },
 /* 0x2c */	{ "OC_turnCharacterTowardsAnother", 1, kGetValue1, kNone, kNone, kNone, kNone },
 /* 0x2d */	{ "OC_setSeek", 1, kGetValue1, kNone, kNone, kNone, kNone },
@@ -1057,7 +1057,7 @@ void LilliputScript::setSequence(int charIdx, int8 seqIdx) {
 	assert(charIdx < 40);
 	_characterLastSequence[charIdx] = seqIdx;
 
-	byte *buf = _vm->_rulesChunk1;
+	byte *buf = _vm->_sequencesArr;
 	if (seqIdx != 0) {
 		int count = 0;
 		while (count < seqIdx) {
@@ -1328,7 +1328,7 @@ Common::Point LilliputScript::getPosFromScript() {
 	case 0xF8: {
 		int8 index = curWord & 0xFF;
 		assert((index >= 0) && (index < 40));
-		return _vm->_rulesBuffer12Pos3[index];
+		return _vm->_keyPos[index];
 		}
 	case 0xF7: {
 		int8 index = _vm->_currentCharacterAttributes[6];
@@ -2571,8 +2571,8 @@ byte *LilliputScript::getCurrentCharacterVarFromScript() {
 	return &_vm->_currentCharacterAttributes[index];
 }
 
-void LilliputScript::OC_sub17E99() {
-	debugC(1, kDebugScript, "OC_sub17E99()");
+void LilliputScript::OC_getList() {
+	debugC(1, kDebugScript, "OC_getList()");
 
 	byte *compBuf = getCurrentCharacterVarFromScript();
 	uint16 oper = _currScript->readUint16LE();
@@ -2580,25 +2580,25 @@ void LilliputScript::OC_sub17E99() {
 
 	byte *buf = getCurrentCharacterVarFromScript();
 	byte var1 = buf[0];
-	byte var3 = _vm->_rulesChunk11[var1 + _vm->_rulesChunk10[index]];
+	byte var3 = _vm->_listArr[var1 + _vm->_listIndex[index]];
 
 	computeOperation(compBuf, oper, var3);
 }
 
-void LilliputScript::OC_sub17EC5() {
-	debugC(1, kDebugScriptTBC, "OC_sub17EC5()");
+void LilliputScript::OC_setList() {
+	debugC(1, kDebugScript, "OC_setList()");
 
 	int indexChunk10 = _currScript->readUint16LE();
 
 	byte *compBuf = getCurrentCharacterVarFromScript();
-	int indexChunk11 = _vm->_rulesChunk10[indexChunk10] + compBuf[0];
+	int indexChunk11 = _vm->_listIndex[indexChunk10] + compBuf[0];
 
 	uint16 oper = _currScript->readUint16LE();
 
 	byte *tmpBuf = getCurrentCharacterVarFromScript();
 	int16 var3 = tmpBuf[0];
 
-	computeOperation(&_vm->_rulesChunk11[indexChunk11], oper, var3);
+	computeOperation(&_vm->_listArr[indexChunk11], oper, var3);
 }
 
 Common::Point LilliputScript::getCharacterTilePos(int index) {
@@ -3244,7 +3244,7 @@ void LilliputScript::OC_initSmallAnim() {
 void LilliputScript::OC_setCharacterHeroismBar() {
 	debugC(1, kDebugScript, "OC_setCharacterHeroismBar()");
 
-	_savedBuffer215Ptr = getCharacterAttributesPtr();
+	_barAttrPtr = getCharacterAttributesPtr();
 	_heroismBarX = _currScript->readUint16LE();
 	_heroismBarBottomY = _currScript->readUint16LE();
 }

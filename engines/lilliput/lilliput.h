@@ -168,7 +168,7 @@ public:
 	int16 _signalArr[40];
 	int16 _signalArray[30];
 
-	byte *_rulesChunk1;
+	byte *_sequencesArr;
 	int16 _currentScriptCharacter;
 	Common::Point _characterPos[40];
 	int8 _characterPosAltitude[40];
@@ -195,14 +195,14 @@ public:
 	int *_arrayGameScriptIndex;
 	int _gameScriptIndexSize;
 	byte *_arrayGameScripts;
-	byte _rulesChunk9[60];
-	byte _rulesChunk10_size;
-	int16 *_rulesChunk10;
-	byte *_rulesChunk11;
+	byte _cubeFlags[60];
+	byte _listNumb;
+	int16 *_listIndex;
+	byte *_listArr;
 	int16 _rectNumb;
 	MinMax _rectXMinMax[40];
 	MinMax _rectYMinMax[40];
-	Common::Point _rulesBuffer12Pos3[40];
+	Common::Point _keyPos[40];
 	Common::Point _portalPos[40];
 	int _interfaceHotspotNumb;
 	byte _interfaceTwoStepAction[20];
