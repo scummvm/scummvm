@@ -20,44 +20,31 @@
  *
  */
 
+#ifndef MUTATIONOFJB_CONVERSATIONWIDGET_H
+#define MUTATIONOFJB_CONVERSATIONWIDGET_H
+
 #include "mutationofjb/widgets/widget.h"
+#include "graphics/surface.h"
 
 namespace MutationOfJB {
 
-int Widget::getId() const {
-	return _id;
-}
+class ConversationWidget : public Widget {
+public:
+	enum { CONVERSATION_LINES = 4 };
 
-void Widget::setId(int id) {
-	_id = id;
-}
+	ConversationWidget(Gui &gui, const Common::Rect &area, const Graphics::Surface &surface);
 
-bool Widget::isVisible() const {
-	return _visible;
-}
+	void setLine(int lineNo, const Common::String &str);
 
-void Widget::setVisible(bool visible) {
-	if (!_visible && visible) {
-		markDirty();
-	}
-	_visible = visible;
-}
+protected:
+	void _draw(Graphics::ManagedSurface &surface);
 
-void Widget::markDirty() {
-	_dirty = true;
-}
+private:
 
-bool Widget::isDirty() const {
-	return _dirty;
-}
-
-void Widget::update(Graphics::ManagedSurface &surface) {
-	if (_dirty) {
-		if (_visible) {
-			_draw(surface);
-		}
-		_dirty = false;
-	}
-}
+	Graphics::Surface _surface;
+	Common::String _lines[CONVERSATION_LINES];
+};
 
 }
+
+#endif

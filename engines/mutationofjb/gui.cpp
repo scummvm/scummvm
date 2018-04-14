@@ -30,6 +30,7 @@
 #include "mutationofjb/widgets/widget.h"
 #include "mutationofjb/widgets/inventorywidget.h"
 #include "mutationofjb/widgets/imagewidget.h"
+#include "mutationofjb/widgets/conversationwidget.h"
 #include "common/rect.h"
 #include "graphics/screen.h"
 
@@ -120,6 +121,12 @@ bool Gui::init() {
 		_widgets.push_back(button);
 	}
 
+	const Common::Rect conversationRect(CONVERSATION_X, CONVERSATION_Y, CONVERSATION_X + CONVERSATION_WIDTH, CONVERSATION_Y + CONVERSATION_HEIGHT);
+	const Graphics::Surface conversationSurface =_hudSurfaces[2].getSubArea(conversationRect);
+	_conversationWidget = new ConversationWidget(*this, conversationRect, conversationSurface);
+	_conversationWidget->setVisible(false);
+	_widgets.push_back(_conversationWidget);
+
 	return true;
 }
 
@@ -139,6 +146,10 @@ void Gui::update() {
 	for (Common::Array<Widget *>::iterator it = _widgets.begin(); it != _widgets.end(); ++it) {
 		(*it)->update(*_screen);
 	}
+}
+
+ConversationWidget& Gui::getConversationWidget() {
+	return *_conversationWidget;
 }
 
 class InventoryAnimationDecoderCallback : public AnimationDecoderCallback {
