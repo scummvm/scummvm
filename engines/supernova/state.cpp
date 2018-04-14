@@ -196,7 +196,7 @@ Object *Inventory::get(int index) const {
 	if (index < _numObjects)
 		return _inventory[index];
 
-	return const_cast<Object *>(&Object::nullObject);
+	return _nullObject;
 }
 
 Object *Inventory::get(ObjectId id) const {
@@ -205,7 +205,7 @@ Object *Inventory::get(ObjectId id) const {
 			return _inventory[i];
 	}
 
-	return const_cast<Object *>(&Object::nullObject);
+	return _nullObject;
 }
 
 
@@ -288,7 +288,7 @@ StringId GameManager::guiStatusCommands[] = {
 };
 
 GameManager::GameManager(SupernovaEngine *vm, Sound *sound)
-	: _inventory(_inventoryScroll)
+	: _inventory(&_nullObject, _inventoryScroll)
 	, _vm(vm)
 	, _sound(sound) {
 	initRooms();
@@ -354,11 +354,10 @@ void GameManager::destroyRooms() {
 	delete _rooms[OUTRO];
 }
 
-
 void GameManager::initState() {
-	Object::setObjectNull(_currentInputObject);
-	Object::setObjectNull(_inputObject[0]);
-	Object::setObjectNull(_inputObject[1]);
+	_currentInputObject = &_nullObject;
+	_inputObject[0] = &_nullObject;
+	_inputObject[1] = &_nullObject;
 	_inputVerb = ACTION_WALK;
 	_processInput = false;
 	_guiEnabled = true;
@@ -611,8 +610,8 @@ void GameManager::processInput(Common::KeyState &state) {
 }
 
 void GameManager::resetInputState() {
-	Object::setObjectNull(_inputObject[0]);
-	Object::setObjectNull(_inputObject[1]);
+	setObjectNull(_inputObject[0]);
+	setObjectNull(_inputObject[1]);
 	_inputVerb = ACTION_WALK;
 	_processInput = false;
 	_mouseClicked = false;
@@ -659,7 +658,7 @@ void GameManager::processInput() {
 		case onInventory:
 			// Fallthrough
 			if (_inputVerb == ACTION_GIVE || _inputVerb == ACTION_USE) {
-				if (Object::isNullObject(_inputObject[0])) {
+				if (isNullObject(_inputObject[0])) {
 					_inputObject[0] = _currentInputObject;
 					if (!_inputObject[0]->hasProperty(COMBINABLE))
 						_processInput = true;
@@ -669,7 +668,7 @@ void GameManager::processInput() {
 				}
 			} else {
 				_inputObject[0] = _currentInputObject;
-				if (!Object::isNullObject(_currentInputObject))
+				if (!isNullObject(_currentInputObject))
 					_processInput = true;
 			}
 			break;
@@ -696,7 +695,7 @@ void GameManager::processInput() {
 			return;
 		}
 
-		if (Object::isNullObject(_currentInputObject))
+		if (isNullObject(_currentInputObject))
 			return;
 
 		if (mouseLocation == onObject || mouseLocation == onInventory) {
@@ -775,7 +774,7 @@ void GameManager::processInput() {
 				break;
 			}
 
-			Object::setObjectNull(_currentInputObject);
+			setObjectNull(_currentInputObject);
 
 			_mouseField = field;
 			if (_mouseField >= 0 && _mouseField < 256)
@@ -812,6 +811,14 @@ void GameManager::processInput() {
 			}
 		}
 	}
+}
+
+void GameManager::setObjectNull(Object *&obj) {
+	obj = &_nullObject;
+}
+
+bool GameManager::isNullObject(Object *obj) {
+	return obj == &_nullObject;
 }
 
 void GameManager::corridorOnEntrance() {
@@ -1874,7 +1881,7 @@ void GameManager::drawStatus() {
 	_vm->renderBox(0, 140, 320, 9, kColorWhite25);
 	_vm->renderText(_vm->getGameString(guiStatusCommands[index]), 1, 141, kColorDarkGreen);
 
-	if (Object::isNullObject(_inputObject[0]))
+	if (isNullObject(_inputObject[0]))
 		_vm->renderText(_currentInputObject->_name);
 	else {
 		_vm->renderText(_inputObject[0]->_name);
