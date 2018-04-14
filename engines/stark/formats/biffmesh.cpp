@@ -349,6 +349,7 @@ public:
 		material.r = _diffuse.x();
 		material.g = _diffuse.y();
 		material.b = _diffuse.z();
+		material.doubleSided = _doubleSided;
 
 		return material;
 	}

@@ -5,9 +5,14 @@ in vec3 texcoord;
 out vec2 Texcoord;
 
 uniform mat4 mvp;
+uniform bool doubleSided;
 
 void main() {
-	Texcoord = vec2(texcoord.x, 1.0 - texcoord.y);
+	if (doubleSided) {
+		Texcoord = vec2(texcoord.x, 1.0 - texcoord.y);
+	} else {
+		Texcoord = vec2(1.0 - texcoord.x, 1.0 - texcoord.y);
+	}
 
 	gl_Position = mvp * vec4(position.xyz, 1.0);
 }

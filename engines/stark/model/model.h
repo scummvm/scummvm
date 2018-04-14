@@ -57,8 +57,9 @@ struct Material {
 	Common::String name;
 	Common::String texture;
 	float r, g, b;
+	bool doubleSided;
 
-	Material() : r(0), g(0), b(0) {};
+	Material() : r(0), g(0), b(0), doubleSided(false) {};
 };
 
 class BoneNode {

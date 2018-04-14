@@ -85,6 +85,7 @@ void OpenGLSPropRenderer::render(const Math::Vector3d position, float direction)
 
 		_shader->setUniform("textured", tex != nullptr);
 		_shader->setUniform("color", Math::Vector3d(material.r, material.g, material.b));
+		_shader->setUniform("doubleSided", material.doubleSided ? 1 : 0);
 
 		GLuint ebo = _faceEBO[face];
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
