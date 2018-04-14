@@ -119,12 +119,8 @@ float MatrixType<dim, 1>::dotProduct(const Vector(dim) &v) const {
 
 template<int dim>
 void MatrixType<dim, 1>::readFromStream(Common::ReadStream *stream) {
-	const int size = dim * sizeof(float);
-	char buf[size];
-	stream->read(buf, size);
-
 	for (int i = 0; i < dim; ++i) {
-		setValue(i, READ_LE_FLOAT(buf + i * sizeof(float)));
+		setValue(i, stream->readFloatLE());
 	}
 }
 

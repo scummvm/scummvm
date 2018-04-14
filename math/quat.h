@@ -77,15 +77,6 @@ public:
 	Quaternion(const Vector4d &vec) : Vector4d(vec.x(), vec.y(), vec.z(), vec.w()) {}
 
 	/**
-	 * Build the saved Quaternion from the array of floats
-	 * @param data          The array holding the four floats that comprise the Quaternion
-	 * @return              The new Quaternion
-	 */
-	inline static Quaternion getQuaternion(const char *data) {
-		return Quaternion(READ_LE_FLOAT(data), READ_LE_FLOAT(data + 4), READ_LE_FLOAT(data + 8), READ_LE_FLOAT(data + 12));
-	}
-
-	/**
 	 * Constructor from a rotation matrix
 	 * @param m		The rotation matrix
 	 * @return		The new Quaternion

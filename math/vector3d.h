@@ -85,15 +85,6 @@ public:
 		return Angle::arcCosine(dotProduct(v1, v2) / (v1.getMagnitude() * v2.getMagnitude()));
 	}
 
-	/**
-	 * Retrieve a Vector3d from the saved data
-	 * @param data	The data stream
-	 * @return	The retrieved Vector3d
-	 */
-	inline static Vector3d getVector3d(const char *data) {
-		return Vector3d(READ_LE_FLOAT(data), READ_LE_FLOAT(data + 4), READ_LE_FLOAT(data + 8));
-	}
-
 };
 
 } // end of namespace Math

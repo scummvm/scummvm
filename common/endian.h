@@ -616,39 +616,4 @@ inline void WRITE_BE_INT32(void *ptr, int32 value) {
 	WRITE_BE_UINT32(ptr, static_cast<uint32>(value));
 }
 
-// ResidualVM specific:
-#if defined(SCUMM_NEED_ALIGNMENT)
-	inline float READ_FLOAT(const char *data) {
-		float result;
-		char *fdata = (char *) &result;
-		fdata[0] = data[0];
-		fdata[1] = data[1];
-		fdata[2] = data[2];
-		fdata[3] = data[3];
-		return result;
-	}
-#else
-	inline float READ_FLOAT(const char *data) {
-		return *(reinterpret_cast<const float *>(data));
-	}
-#endif
-
-inline float READ_SWAP_FLOAT(const char *data) {
-	float result;
-	char *fdata = (char *) &result;
-	fdata[0] = data[3];
-	fdata[1] = data[2];
-	fdata[2] = data[1];
-	fdata[3] = data[0];
-	return result;
-}
-
-#if defined(SCUMM_BIG_ENDIAN)
-	#define READ_LE_FLOAT(a) READ_SWAP_FLOAT(a)
-	#define READ_BE_FLOAT(a) READ_FLOAT(a)
-#else
-	#define READ_LE_FLOAT(a) READ_FLOAT(a)
-	#define READ_BE_FLOAT(a) READ_SWAP_FLOAT(a)
-#endif
-
 #endif
