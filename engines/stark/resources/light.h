@@ -49,7 +49,7 @@ public:
 	static const Type::ResourceType TYPE = Type::kLight;
 
 	Light(Object *parent, byte subType, uint16 index, const Common::String &name);
-	virtual ~Light();
+	~Light() override;
 
 	// Resource API
 	void readData(Formats::XRCReadStream *stream) override;
@@ -75,6 +75,7 @@ protected:
 	float _outerConeAngle;
 	float _falloffNear;
 	float _falloffFar;
+	float _multiplier;
 
 	Gfx::LightEntry *_lightEntry;
 };
