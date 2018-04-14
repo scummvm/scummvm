@@ -129,6 +129,7 @@ void XeenEngine::loadSettings() {
 	_finalScore = ConfMan.hasKey("final_score") ? ConfMan.getInt("final_score") : 0;
 
 	_extOptions._showItemCosts = ConfMan.hasKey("ShowItemCosts") && ConfMan.getBool("ShowItemCosts");
+	_extOptions._durableArmor = ConfMan.hasKey("DurableArmor") && ConfMan.getBool("DurableArmor");
 
 	// If requested, load a savegame instead of showing the intro
 	if (ConfMan.hasKey("save_slot")) {

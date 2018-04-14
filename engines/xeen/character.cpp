@@ -1222,7 +1222,7 @@ void Character::subtractHitPoints(int amount) {
 
 	// Subtract the given HP amount
 	_currentHp -= amount;
-	bool breakFlag = _currentHp <= -10;
+	bool breakFlag = _currentHp <= (g_vm->_extOptions._durableArmor ? -80 : -10);
 	assert(_currentHp < 65000);
 
 	if (_currentHp < 1) {

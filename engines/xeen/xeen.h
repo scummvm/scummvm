@@ -112,8 +112,9 @@ class XeenEngine : public Engine {
 	 */
 	struct ExtendedOptions {
 		bool _showItemCosts;
+		bool _durableArmor;
 
-		ExtendedOptions() : _showItemCosts(false) {}
+		ExtendedOptions() : _showItemCosts(false), _durableArmor(false) {}
 	};
 private:
 	const XeenGameDescription *_gameDescription;

@@ -73,6 +73,7 @@ static const PlainGameDescriptor XeenGames[] = {
 };
 
 #define GAMEOPTION_SHOW_ITEM_COSTS	GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DURABLE_ARMOR	GUIO_GAMEOPTIONS2
 
 #include "xeen/detection_tables.h"
 
@@ -84,6 +85,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Show item costs in standard inventory mode"),
 			_s("Shows item costs in standard inventory mode, allowing the value of items to be compared"),
 			"ShowItemCosts",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_DURABLE_ARMOR,
+		{
+			_s("More durable armor"),
+			_s("Armor won't break until character is at -80HP, rather than merely -10HP"),
+			"DurableArmor",
 			false
 		}
 	},
