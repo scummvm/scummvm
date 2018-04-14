@@ -39,7 +39,7 @@ public:
 	~RegionManager();
 
 	// Kill
-	void killAll();
+	void kill();
 
 	// Add & remove region
 	bool addScreenRegion(int x1, int y1, int x2, int y2, int, int, int, int objectNum);

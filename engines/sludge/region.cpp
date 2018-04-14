@@ -41,9 +41,8 @@ RegionManager::RegionManager(SludgeEngine *vm)
 	_overRegion = nullptr;
 }
 
-RegionManager::~RegionManager()
-{
-
+RegionManager::~RegionManager() {
+	kill();
 }
 
 void RegionManager::showBoxes() {
@@ -123,7 +122,7 @@ void RegionManager::loadRegions(Common::SeekableReadStream *stream) {
 	*pointy = NULL;
 }
 
-void RegionManager::killAll() {
+void RegionManager::kill() {
 	ScreenRegion *killRegion;
 	while (_allScreenRegions) {
 		killRegion = _allScreenRegions;

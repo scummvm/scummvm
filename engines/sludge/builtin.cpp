@@ -1428,7 +1428,7 @@ builtIn(showBoxes) {
 
 builtIn(removeAllScreenRegions) {
 	UNUSEDALL
-	g_sludge->_regionMan->killAll();
+	g_sludge->_regionMan->kill();
 	return BR_CONTINUE;
 }
 

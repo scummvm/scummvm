@@ -504,7 +504,7 @@ bool loadGame(const Common::String &fname) {
 	g_sludge->_txtMan->loadFont(ssgVersion, fp);
 
 	killAllPeople();
-	g_sludge->_regionMan->killAll();
+	g_sludge->_regionMan->kill();
 
 	int camerX = fp->readUint16BE();
 	int camerY = fp->readUint16BE();

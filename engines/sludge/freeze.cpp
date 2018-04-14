@@ -136,7 +136,7 @@ void GraphicsManager::unfreeze(bool killImage) {
 	killAllPeople();
 	allPeople = _frozenStuff->allPeople;
 
-	g_sludge->_regionMan->killAll();
+	g_sludge->_regionMan->kill();
 	g_sludge->_regionMan->resotre(_frozenStuff);
 
 	killLightMap();
