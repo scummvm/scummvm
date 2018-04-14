@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-11 22:14+0200\n"
+"POT-Creation-Date: 2018-04-14 04:57+0200\n"
 "PO-Revision-Date: 2018-04-12 08:06+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
-"Language-Team: Spanish "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/es/>\n"
+"Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/es/>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -4646,14 +4646,22 @@ msgstr "Filtrado bilineal de sprites (LENTO)"
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Aplicar filtrado bilineal a sprites individuales"
 
-#: engines/xeen/detection.cpp:84
+#: engines/xeen/detection.cpp:85
 msgid "Show item costs in standard inventory mode"
 msgstr ""
 
-#: engines/xeen/detection.cpp:85
+#: engines/xeen/detection.cpp:86
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
+msgstr ""
+
+#: engines/xeen/detection.cpp:95
+msgid "More durable armor"
+msgstr ""
+
+#: engines/xeen/detection.cpp:96
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 
 #: engines/zvision/detection_tables.h:61

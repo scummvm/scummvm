@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-11 22:14+0200\n"
+"POT-Creation-Date: 2018-04-14 04:57+0200\n"
 "PO-Revision-Date: 2017-11-29 07:42+0000\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -4613,14 +4613,22 @@ msgstr "Bilineární filtrování spritù (POMALÉ)"
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "U ka¾dého spritu pou¾ít bilineární filtrování"
 
-#: engines/xeen/detection.cpp:84
+#: engines/xeen/detection.cpp:85
 msgid "Show item costs in standard inventory mode"
 msgstr ""
 
-#: engines/xeen/detection.cpp:85
+#: engines/xeen/detection.cpp:86
 msgid ""
 "Shows item costs in standard inventory mode, allowing the value of items to "
 "be compared"
+msgstr ""
+
+#: engines/xeen/detection.cpp:95
+msgid "More durable armor"
+msgstr ""
+
+#: engines/xeen/detection.cpp:96
+msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
 msgstr ""
 
 #: engines/zvision/detection_tables.h:61
