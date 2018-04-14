@@ -74,11 +74,9 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 	if (_flags1 & ~(BlendAdditive)) {
 		Debug::debug(Debug::Sprites, "Sprite %s has unknown flags (%08x) in first flag field", name, _flags1);
 	}
-	char data[20];
-	stream->read(data, sizeof(data));
-	_width = READ_LE_FLOAT(data);
-	_height = READ_LE_FLOAT(data + 4);
-	_pos = Math::Vector3d::getVector3d(data + 8);
+	_width = stream->readFloatLE();
+	_height = stream->readFloatLE();
+	_pos.readFromStream(stream);
 	for (int i = 0; i < 4; ++i) {
 		_alpha[i] = stream->readSint32LE();
 		_red[i] = stream->readSint32LE();
@@ -86,11 +84,8 @@ void Sprite::loadBinary(Common::SeekableReadStream *stream, EMICostume *costume)
 		_blue[i] = stream->readSint32LE();
 	}
 	for (int i = 0; i < 4; ++i) {
-		char f[4];
-		stream->read(f, 4);
-		_texCoordX[i] = READ_LE_FLOAT(f);
-		stream->read(f, 4);
-		_texCoordY[i] = READ_LE_FLOAT(f);
+		_texCoordX[i] = stream->readFloatLE();
+		_texCoordY[i] = stream->readFloatLE();
 	}
 	_flags2 = stream->readUint32LE();
 	if (_flags2 & ~(DepthTest | AlphaTest)) {

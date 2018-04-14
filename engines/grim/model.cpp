@@ -102,7 +102,6 @@ Model::~Model() {
 }
 
 void Model::loadBinary(Common::SeekableReadStream *data) {
-	char v3[4 * 3], f[4];
 	_numMaterials = data->readUint32LE();
 	_materials = new Material*[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
@@ -125,11 +124,9 @@ void Model::loadBinary(Common::SeekableReadStream *data) {
 	for (int i = 0; i < _numHierNodes; i++) {
 		_rootHierNode[i].loadBinary(data, _rootHierNode, &_geosets[0]);
 	}
-	data->read(f, 4);
-	_radius = READ_LE_FLOAT(f);
+	_radius = data->readFloatLE();
 	data->seek(36, SEEK_CUR);
-	data->read(v3, 3 * 4);
-	_insertOffset = Math::Vector3d::getVector3d(v3);
+	_insertOffset.readFromStream(data);
 }
 
 void Model::loadText(TextSplitter *ts) {
@@ -317,7 +314,6 @@ void MeshFace::stealData(MeshFace &other) {
 }
 
 int MeshFace::loadBinary(Common::SeekableReadStream *data, Material *materials[]) {
-	char v3[4 * 3], f[4];
 	data->seek(4, SEEK_CUR);
 	_type = data->readUint32LE();
 	_geo = data->readUint32LE();
@@ -328,11 +324,9 @@ int MeshFace::loadBinary(Common::SeekableReadStream *data, Material *materials[]
 	int texPtr = data->readUint32LE();
 	int materialPtr = data->readUint32LE();
 	data->seek(12, SEEK_CUR);
-	data->read(f, 4);
-	_extraLight = READ_LE_FLOAT(f);
+	_extraLight = data->readFloatLE();
 	data->seek(12, SEEK_CUR);
-	data->read(v3, 4 * 3);
-	_normal = Math::Vector3d::getVector3d(v3);
+	_normal.readFromStream(data);
 
 	_vertices = new int[_numVertices];
 	for (int i = 0; i < _numVertices; i++) {
@@ -418,7 +412,6 @@ Mesh::~Mesh() {
 }
 
 void Mesh::loadBinary(Common::SeekableReadStream *data, Material *materials[]) {
-	char f[4];
 	data->read(_name, 32);
 	data->seek(4, SEEK_CUR);
 	_geometryMode = data->readUint32LE();
@@ -434,28 +427,23 @@ void Mesh::loadBinary(Common::SeekableReadStream *data, Material *materials[]) {
 	_faces = new MeshFace[_numFaces];
 	_materialid = new int[_numFaces];
 	for (int i = 0; i < 3 * _numVertices; i++) {
-		data->read(f, 4);
-		_vertices[i] = READ_LE_FLOAT(f);
+		_vertices[i] = data->readFloatLE();
 	}
 	for (int i = 0; i < 2 * _numTextureVerts; i++) {
-		data->read(f, 4);
-		_textureVerts[i] = READ_LE_FLOAT(f);
+		_textureVerts[i] = data->readFloatLE();
 	}
 	for (int i = 0; i < _numVertices; i++) {
-		data->read(f, 4);
-		_verticesI[i] = READ_LE_FLOAT(f);
+		_verticesI[i] = data->readFloatLE();
 	}
 	data->seek(_numVertices * 4, SEEK_CUR);
 	for (int i = 0; i < _numFaces; i++)
 		_materialid[i] = _faces[i].loadBinary(data, materials);
 	for (int i = 0; i < 3 * _numVertices; i++) {
-		data->read(f, 4);
-		_vertNormals[i] = READ_LE_FLOAT(f);
+		_vertNormals[i] = data->readFloatLE();
 	}
 	_shadow = data->readUint32LE();
 	data->seek(4, SEEK_CUR);
-	data->read(f, 4);
-	_radius = READ_LE_FLOAT(f);
+	_radius = data->readFloatLE();
 	data->seek(24, SEEK_CUR);
 	sortFaces();
 }
@@ -606,7 +594,6 @@ ModelNode::~ModelNode() {
 }
 
 void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNodes, const Model::Geoset *g) {
-	char v3[4 * 3], f[4];
 	data->read(_name, 64);
 	_flags = data->readUint32LE();
 	data->seek(4, SEEK_CUR);
@@ -621,16 +608,11 @@ void ModelNode::loadBinary(Common::SeekableReadStream *data, ModelNode *hierNode
 	_numChildren = data->readUint32LE();
 	int childPtr = data->readUint32LE();
 	int siblingPtr = data->readUint32LE();
-	data->read(v3, 4 * 3);
-	_pivot = Math::Vector3d::getVector3d(v3);
-	data->read(v3, 4 * 3);
-	_pos = Math::Vector3d::getVector3d(v3);
-	data->read(f, 4);
-	float pitch = READ_LE_FLOAT(f);
-	data->read(f, 4);
-	float yaw = READ_LE_FLOAT(f);
-	data->read(f, 4);
-	float roll = READ_LE_FLOAT(f);
+	_pivot.readFromStream(data);
+	_pos.readFromStream(data);
+	float pitch = data->readFloatLE();
+	float yaw = data->readFloatLE();
+	float roll = data->readFloatLE();
 	_rot = Math::Quaternion::fromEuler(yaw, pitch, roll, Math::EO_ZXY);
 	_animRot = _rot;
 	_animPos = _pos;

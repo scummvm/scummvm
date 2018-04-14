@@ -103,15 +103,13 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	Common::String nameString = readLAString(data);
 
-	char f[4];
-	data->read(f, 4);
 	for (uint l = 0; l < nameString.size(); ++l) {
 		if (nameString[l] == '\\') {
 			nameString.setChar('/', l);
 		}
 	}
 	_meshName = nameString;
-	_radius = READ_LE_FLOAT(f);
+	_radius = data->readFloatLE();
 	_center->readFromStream(data);
 
 	_boxData->readFromStream(data);
@@ -207,8 +205,7 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 		for (int i = 0; i < _numBoneInfos; i++) {
 			_boneInfos[i]._incFac = data->readUint32LE();
 			_boneInfos[i]._joint = data->readUint32LE();
-			data->read(f, 4);
-			_boneInfos[i]._weight = READ_LE_FLOAT(f);
+			_boneInfos[i]._weight = data->readFloatLE();
 		}
 	} else {
 		_numBones = 0;

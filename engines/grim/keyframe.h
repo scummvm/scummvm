@@ -71,7 +71,7 @@ private:
 	Marker *_markers;
 
 	struct KeyframeEntry {
-		void loadBinary(const char *data);
+		void loadBinary(Common::SeekableReadStream *data);
 
 		float _frame;
 		int _flags;

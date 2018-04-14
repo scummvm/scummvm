@@ -412,18 +412,15 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	_bkgndZBm = nullptr;
 	_bkgndBm = loadBackground(fileName);
 
-	char v[sizeof(float) * 4];
-	data->read(v, sizeof(float) * 3);
-	_pos = Math::Vector3d::getVector3d(v);
+	_pos.readFromStream(data);
 
-	data->read(v, sizeof(float) * 4);
-	Math::Quaternion q(READ_LE_FLOAT(v), READ_LE_FLOAT(v + 4), READ_LE_FLOAT(v + 8), READ_LE_FLOAT(v + 12));
+	Math::Quaternion q;
+	q.readFromStream(data);
 	q.toMatrix(_rot);
 
-	data->read(v, sizeof(float) * 3);
-	_fov   = READ_LE_FLOAT(v);
-	_nclip = READ_LE_FLOAT(v + 4);
-	_fclip = READ_LE_FLOAT(v + 8);
+	_fov   = data->readFloatLE();
+	_nclip = data->readFloatLE();
+	_fclip = data->readFloatLE();
 
 	delete[] fileName;
 }
@@ -609,13 +606,10 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	data->read(name, 32);
 	_name = name;
 
-	char v[sizeof(float)*4];
-	data->read(v, sizeof(float) * 3);
-	_pos = Math::Vector3d::getVector3d(v);
+	_pos.readFromStream(data);
 
 	Math::Quaternion quat;
-	data->read(v, sizeof(float) * 4);
-	quat = Math::Quaternion::getQuaternion(v);
+	quat.readFromStream(data);
 
 	_dir.set(0, 0, -1);
 	Math::Matrix4 rot = quat.toMatrix();
@@ -624,8 +618,7 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	// This relies on the order of the LightType enum.
 	_type = (LightType)data->readSint32LE();
 
-	data->read(v, sizeof(float));
-	setIntensity(READ_LE_FLOAT(v));
+	setIntensity(data->readFloatLE());
 
 	int j = data->readSint32LE();
 	// This always seems to be 0
@@ -637,11 +630,10 @@ void Light::loadBinary(Common::SeekableReadStream *data) {
 	_color.getGreen() = data->readSint32LE();
 	_color.getBlue() = data->readSint32LE();
 
-	data->read(v, sizeof(float) * 4);
-	_falloffNear = READ_LE_FLOAT(v);
-	_falloffFar = READ_LE_FLOAT(v + 4);
-	setUmbra(READ_LE_FLOAT(v + 8));
-	setPenumbra(READ_LE_FLOAT(v + 12));
+	_falloffNear = data->readFloatLE();
+	_falloffFar = data->readFloatLE();
+	setUmbra(data->readFloatLE());
+	setPenumbra(data->readFloatLE());
 
 	_enabled = true;
 }
@@ -726,9 +718,7 @@ void SetShadow::loadBinary(Common::SeekableReadStream *data, Set *set) {
 	char *lightName = new char[lightNameLen];
 	data->read(lightName, lightNameLen);
 
-	char v[sizeof(float) * 3];
-	data->read(v, sizeof(float) * 3);
-	_shadowPoint = Math::Vector3d::getVector3d(v);
+	_shadowPoint.readFromStream(data);
 
 	if (lightNameLen > 0) {
 		for (Common::List<Light *>::const_iterator it = set->getLights(false).begin(); it != set->getLights(false).end(); ++it) {

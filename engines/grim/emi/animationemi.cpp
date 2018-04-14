@@ -43,9 +43,7 @@ void AnimationEmi::loadAnimation(Common::SeekableReadStream *data) {
 	_name = inString;
 	delete[] inString;
 
-	char temp[4];
-	data->read(temp, 4);
-	_duration = 1000 * READ_LE_FLOAT(temp);
+	_duration = 1000 * data->readFloatLE();
 	_numBones = data->readUint32LE();
 
 	_bones = new Bone[_numBones];
@@ -70,20 +68,17 @@ void Bone::loadBinary(Common::SeekableReadStream *data) {
 	_c = data->readUint32LE();
 	_count = data->readUint32LE();
 
-	char temp[4];
 	if (_operation == 3) { // Translation
 		_translations = new AnimTranslation[_count];
 		for (int j = 0; j < _count; j++) {
 			_translations[j]._vec.readFromStream(data);
-			data->read(temp, 4);
-			_translations[j]._time = 1000 * READ_LE_FLOAT(temp);
+			_translations[j]._time = 1000 * data->readFloatLE();
 		}
 	} else if (_operation == 4) { // Rotation
 		_rotations = new AnimRotation[_count];
 		for (int j = 0; j < _count; j++) {
 			_rotations[j]._quat.readFromStream(data);
-			data->read(temp, 4);
-			_rotations[j]._time = 1000 * READ_LE_FLOAT(temp);
+			_rotations[j]._time = 1000 * data->readFloatLE();
 		}
 	} else {
 		error("Unknown animation-operation %d", _operation);

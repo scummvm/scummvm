@@ -57,7 +57,7 @@ void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
 	// Next four bytes are the frames per second
 	// The fps value seems to be ignored and causes the animation the first time manny
 	// enters the kitchen of the Blue Casket to go out of sync. So we force it to 15.
-//  _fps = READ_LE_FLOAT(data + 52);
+//  _fps = data->readFloatLE();
 	_fps = 15.;
 	// Next four bytes are the number of frames
 	data->seek(56, SEEK_SET);
@@ -71,9 +71,7 @@ void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
 	_markers = new Marker[_numMarkers];
 	data->seek(72, SEEK_SET);
 	for (int i = 0; i < _numMarkers; i++) {
-		char f[4];
-		data->read(f, 4);
-		_markers[i].frame = READ_LE_FLOAT(f);
+		_markers[i].frame = data->readFloatLE();
 	}
 
 	data->seek(104, SEEK_SET);
@@ -210,17 +208,17 @@ int KeyframeAnim::getMarker(float startTime, float stopTime) const {
 	return 0;
 }
 
-void KeyframeAnim::KeyframeEntry::loadBinary(const char *data) {
-	_frame = READ_LE_FLOAT(data);
-	_flags = READ_LE_UINT32(data + 4);
-	_pos = Math::Vector3d::getVector3d(data + 8);
-	_pitch = READ_LE_FLOAT(data + 20);
-	_yaw = READ_LE_FLOAT(data + 24);
-	_roll = READ_LE_FLOAT(data + 28);
-	_dpos = Math::Vector3d::getVector3d(data + 32);
-	_dpitch = READ_LE_FLOAT(data + 44);
-	_dyaw = READ_LE_FLOAT(data + 48);
-	_droll = READ_LE_FLOAT(data + 52);
+void KeyframeAnim::KeyframeEntry::loadBinary(Common::SeekableReadStream *data) {
+	_frame = data->readFloatLE();
+	_flags = data->readUint32LE();
+	_pos.readFromStream(data);
+	_pitch = data->readFloatLE();
+	_yaw = data->readFloatLE();
+	_roll = data->readFloatLE();
+	_dpos.readFromStream(data);
+	_dpitch = data->readFloatLE();
+	_dyaw = data->readFloatLE();
+	_droll = data->readFloatLE();
 }
 
 void KeyframeAnim::KeyframeNode::loadBinary(Common::SeekableReadStream *data, char *meshName) {
@@ -229,10 +227,8 @@ void KeyframeAnim::KeyframeNode::loadBinary(Common::SeekableReadStream *data, ch
 	_numEntries = data->readUint32LE();
 	data->seek(4, SEEK_CUR);
 	_entries = new KeyframeEntry[_numEntries];
-	char kfEntry[56];
 	for (int i = 0; i < _numEntries; i++) {
-		data->read(kfEntry, 56);
-		_entries[i].loadBinary(kfEntry);
+		_entries[i].loadBinary(data);
 	}
 }
 

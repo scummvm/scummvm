@@ -178,9 +178,7 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 	_numVertices = data->readUint32LE();
 	_vertices = new Math::Vector3d[_numVertices + 1];
 	for (int i = 0; i < _numVertices; i++) {
-		char v3[4 * 3];
-		data->read(v3, 4 * 3);
-		_vertices[i] = Math::Vector3d::getVector3d(v3);
+		_vertices[i].readFromStream(data);
 	}
 
 	// Repeat the last vertex for convenience
@@ -210,9 +208,7 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 		_sortplanes[i] = data->readUint32LE();
 	}
 
-	char f[4];
-	data->read(f, 4);
-	_height = READ_LE_FLOAT(f);
+	_height = data->readFloatLE();
 }
 
 void Sector::setVisible(bool vis) {
