@@ -192,4 +192,12 @@ void Game::setCurrentAction(ActionInfo::Action action) {
 	_currentAction = action;
 }
 
+Font& Game::getSystemFont() {
+	return _systemFont;
+}
+
+Font& Game::getSpeechFont() {
+	return _speechFont;
+}
+
 }

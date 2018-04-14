@@ -20,51 +20,51 @@
  *
  */
 
-#ifndef MUTATIONOFJB_WIDGET_H
-#define MUTATIONOFJB_WIDGET_H
+#ifndef MUTATIONOFJB_FONT_H
+#define MUTATIONOFJB_FONT_H
 
-#include <common/scummsys.h>
-#include <common/rect.h>
+#include "common/scummsys.h"
+#include "common/hashmap.h"
+#include "graphics/managed_surface.h"
 
 namespace Common {
-class Event;
-}
-
-namespace Graphics {
-class ManagedSurface;
+class String;
 }
 
 namespace MutationOfJB {
 
-class Gui;
-
-class Widget {
+class Font {
 public:
-	Widget(Gui &gui, const Common::Rect &area) : _gui(gui), _area(area), _id(0), _visible(true), _dirty(true) {}
-	virtual ~Widget() {}
+	Font(const Common::String &fileName, int horizSpacing, int vertSpacing);
+	virtual ~Font() {}
+	void drawString(const Common::String &str, uint8 baseColor, int16 x, int16 y, Graphics::ManagedSurface &surf);
 
-	int getId() const;
-	void setId(int id);
-
-	bool isVisible() const;
-	void setVisible(bool visible);
-
-	bool isDirty() const;
-	void markDirty();
-	void update(Graphics::ManagedSurface &);
-
-	virtual void handleEvent(const Common::Event &) {}
 protected:
-	virtual void _draw(Graphics::ManagedSurface &) = 0;
+	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor);
 
-	Gui &_gui;
-	Common::Rect _area;
-	int _id;
-	bool _visible;
-	bool _dirty;
+private:
+	void drawGlyph(uint8 glyph, uint8 baseColor, int16 &x, int16 &y, Graphics::ManagedSurface &surf);
+	bool load(const Common::String &fileName);
+
+	int _horizSpacing;
+	int _vertSpacing;
+	typedef Common::HashMap<uint8, Graphics::ManagedSurface> GlyphMap;
+	GlyphMap _glyphs;
+};
+
+class SystemFont : public Font {
+public:
+	SystemFont();
+};
+
+class SpeechFont : public Font {
+public:
+	SpeechFont();
+
+protected:
+	virtual uint8 transformColor(uint8 baseColor, uint8 glyphColor) override;
 };
 
 }
 
 #endif
-

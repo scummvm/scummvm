@@ -43,9 +43,21 @@ namespace MutationOfJB {
 class Game;
 class Widget;
 class InventoryWidget;
+class ConversationWidget;
 
 class Gui : public InventoryObserver, public ButtonWidgetCallback {
 public:
+	enum Colors {
+		WHITE = 0xC6,
+		DARKGRAY = 0xC2,
+		LIGHTGRAY = 0xC4,
+		GREEN = 0xC8,
+		ORANGE = 0xCA,
+		DARKBLUE = 0xD6,
+		LIGHTBLUE = 0xDA,
+		BROWN = 0xDC
+	};
+
 	typedef Common::HashMap<Common::String, int> InventoryMap;
 
 	friend class InventoryAnimationDecoderCallback;
@@ -64,6 +76,8 @@ public:
 	virtual void onInventoryChanged() override;
 	virtual void onButtonClicked(ButtonWidget *) override;
 
+	ConversationWidget& getConversationWidget();
+
 private:
 	bool loadInventoryGfx();
 	bool loadHudGfx();
@@ -78,6 +92,7 @@ private:
 	Common::Array<Graphics::Surface> _hudSurfaces;
 
 	InventoryWidget *_inventoryWidget;
+	ConversationWidget *_conversationWidget;
 	Common::Array<Widget *> _widgets;
 };
 

@@ -20,6 +20,7 @@ MODULE_OBJS := \
 	commands/saycommand.o \
 	commands/seqcommand.o \
 	widgets/buttonwidget.o \
+	widgets/conversationwidget.o \
 	widgets/imagewidget.o \
 	widgets/inventorywidget.o \
 	widgets/widget.o \
@@ -27,6 +28,7 @@ MODULE_OBJS := \
 	debug.o \
 	detection.o \
 	encryptedfile.o \
+	font.o \
 	game.o \
 	gamedata.o \
 	gui.o \

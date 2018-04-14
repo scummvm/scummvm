@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "mutationofjb/script.h"
+#include "mutationofjb/font.h"
 #include "mutationofjb/gui.h"
 
 namespace Common {
@@ -64,6 +65,9 @@ public:
 	ActionInfo::Action getCurrentAction() const;
 	void setCurrentAction(ActionInfo::Action);
 
+	Font& getSystemFont();
+	Font& getSpeechFont();
+
 private:
 	bool loadGameData(bool partB);
 	void runActiveCommand();
@@ -81,6 +85,9 @@ private:
 	ActionInfo::Action _currentAction;
 
 	ScriptExecutionContext _scriptExecCtx;
+
+	SystemFont _systemFont;
+	SpeechFont _speechFont;
 };
 
 }
