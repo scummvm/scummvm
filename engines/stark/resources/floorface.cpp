@@ -183,13 +183,13 @@ void FloorFace::readData(Formats::XRCReadStream *stream) {
 		_indices[i] = stream->readSint16LE();
 	}
 
-	_distanceFromCamera = stream->readFloat();
+	_distanceFromCamera = stream->readFloatLE();
 
 	for (uint i = 0; i < ARRAYSIZE(_indices); i++) {
 		stream->readSint16LE(); // Skipped in the original
 	}
 
-	_unk2 = stream->readFloat();
+	_unk2 = stream->readFloatLE();
 }
 
 void FloorFace::onAllLoaded() {

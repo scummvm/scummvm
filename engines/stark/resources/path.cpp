@@ -105,7 +105,7 @@ void Path2D::readData(Formats::XRCReadStream *stream) {
 	uint32 vertexCount = stream->readUint32LE();
 	for (uint i = 0; i < vertexCount; i++) {
 		Vertex vertex;
-		vertex.weight = stream->readFloat();
+		vertex.weight = stream->readFloatLE();
 		vertex.position = stream->readPoint();
 
 		_vertices.push_back(vertex);
@@ -150,13 +150,13 @@ void Path3D::readData(Formats::XRCReadStream *stream) {
 	uint32 vertexCount = stream->readUint32LE();
 	for (uint i = 0; i < vertexCount; i++) {
 		Vertex vertex;
-		vertex.weight = stream->readFloat();
+		vertex.weight = stream->readFloatLE();
 		vertex.position = stream->readVector3();
 
 		_vertices.push_back(vertex);
 	}
 
-	_sortKey = stream->readFloat();
+	_sortKey = stream->readFloatLE();
 }
 
 void Path3D::printData() {

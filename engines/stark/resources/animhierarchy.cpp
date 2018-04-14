@@ -57,7 +57,7 @@ void AnimHierarchy::readData(Formats::XRCReadStream *stream) {
 	}
 
 	_animHierarchyReference = stream->readResourceReference();
-	_field_5C = stream->readFloat();
+	_field_5C = stream->readFloatLE();
 }
 
 void AnimHierarchy::onAllLoaded() {

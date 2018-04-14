@@ -57,7 +57,7 @@ Layer::Layer(Object *parent, byte subType, uint16 index, const Common::String &n
 }
 
 void Layer::readData(Formats::XRCReadStream *stream) {
-	_scrollScale = stream->readFloat();
+	_scrollScale = stream->readFloatLE();
 	if (_scrollScale > 10.0 || _scrollScale < -1.0)
 		_scrollScale = 0;
 }
@@ -194,8 +194,8 @@ void Layer3D::readData(Formats::XRCReadStream *stream) {
 	Layer::readData(stream);
 
 	_field_54 = stream->readUint32LE();
-	_nearClipPlane = stream->readFloat();
-	_farClipPlane = stream->readFloat();
+	_nearClipPlane = stream->readFloatLE();
+	_farClipPlane = stream->readFloatLE();
 	if (stream->isDataLeft()) {
 		_maxShadowLength = stream->readUint32LE();
 	}

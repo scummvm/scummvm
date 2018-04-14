@@ -57,7 +57,6 @@ public:
 	Math::Vector3d readVector3();
 	Common::Rect readRect();
 	Common::Point readPoint();
-	float readFloat();
 	bool readBool();
 	bool isDataLeft();
 

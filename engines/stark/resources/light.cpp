@@ -48,12 +48,12 @@ void Light::readData(Formats::XRCReadStream *stream) {
 	_color = stream->readVector3();
 	_position = stream->readVector3();
 	_direction = stream->readVector3();
-	_outerConeAngle = stream->readFloat();
-	_innerConeAngle = stream->readFloat();
+	_outerConeAngle = stream->readFloatLE();
+	_innerConeAngle = stream->readFloatLE();
 
 	if (stream->isDataLeft()) {
-		_falloffNear = stream->readFloat();
-		_falloffFar = stream->readFloat();
+		_falloffNear = stream->readFloatLE();
+		_falloffFar = stream->readFloatLE();
 	}
 }
 

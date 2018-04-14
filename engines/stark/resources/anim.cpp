@@ -152,7 +152,7 @@ AnimImages::AnimImages(Object *parent, byte subType, uint16 index, const Common:
 void AnimImages::readData(Formats::XRCReadStream *stream) {
 	Anim::readData(stream);
 
-	_field_3C = stream->readFloat();
+	_field_3C = stream->readFloatLE();
 }
 
 void AnimImages::onAllLoaded() {

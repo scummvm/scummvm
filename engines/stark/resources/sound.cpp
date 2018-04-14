@@ -155,8 +155,8 @@ void Sound::readData(Formats::XRCReadStream *stream) {
 	_soundName = stream->readString();
 	_field_6C = stream->readUint32LE();
 	_soundType = stream->readUint32LE();
-	_pan = stream->readFloat();
-	_volume = stream->readFloat();
+	_pan = stream->readFloatLE();
+	_volume = stream->readFloatLE();
 	_archiveName = stream->getArchiveName();
 }
 

@@ -118,13 +118,6 @@ Common::Point XRCReadStream::readPoint() {
 	return Common::Point(x, y);
 }
 
-float XRCReadStream::readFloat() {
-	char buf[sizeof(float)];
-	read(buf, sizeof(float));
-
-	return READ_LE_FLOAT(buf);
-}
-
 bool XRCReadStream::readBool() {
 	uint32 b = readUint32LE();
 	return b != 0;

@@ -242,8 +242,11 @@ ResourceSerializer::ResourceSerializer(Common::SeekableReadStream *in, Common::W
 }
 
 void ResourceSerializer::syncAsFloat(float &value) {
-	// TODO: Change this to something more portable
-	syncBytes((byte *) &value, sizeof(float));
+	if (isLoading()) {
+		value = _loadStream->readFloatLE();
+	} else {
+		_saveStream->writeFloatLE(value);
+	}
 }
 
 void ResourceSerializer::syncAsVector3d(Math::Vector3d &value) {
