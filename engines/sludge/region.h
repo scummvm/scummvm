@@ -30,8 +30,8 @@ namespace Sludge {
 struct ScreenRegion {
 	int x1, y1, x2, y2, sX, sY, di;
 	ObjectType *thisType;
-	ScreenRegion *next;
 };
+typedef Common::List<ScreenRegion *> ScreenRegionList;
 
 class RegionManager {
 public:
@@ -69,7 +69,7 @@ public:
 private:
 	SludgeEngine *_vm;
 
-	ScreenRegion *_allScreenRegions;
+	ScreenRegionList *_allScreenRegions;
 	ScreenRegion *_overRegion;
 	ScreenRegion *_lastRegion;
 };

@@ -32,12 +32,15 @@ struct ScreenRegion;
 struct SpeechStruct;
 struct StatusStuff ;
 struct EventHandlers;
+struct ScreenRegion;
+
+typedef Common::List<ScreenRegion *> ScreenRegionList;
 
 class Parallax;
 
 struct FrozenStuffStruct {
 	OnScreenPerson *allPeople;
-	ScreenRegion *allScreenRegions;
+	ScreenRegionList *allScreenRegions;
 	Graphics::Surface backdropSurface;
 	Graphics::Surface lightMapSurface;
 	Graphics::Surface *zBufferSprites;
