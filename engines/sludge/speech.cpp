@@ -193,7 +193,7 @@ int SpeechManager::wrapSpeech(const Common::String &theText, int objT, int sampl
 		setObjFontColour(thisPerson->thisType);
 		i = wrapSpeechPerson(theText, *thisPerson, sampleFile, animPerson);
 	} else {
-		ScreenRegion *thisRegion = getRegionForObject(objT);
+		ScreenRegion *thisRegion = g_sludge->_regionMan->getRegionForObject(objT);
 		if (thisRegion) {
 			setObjFontColour(thisRegion->thisType);
 			i = wrapSpeechXY(theText,

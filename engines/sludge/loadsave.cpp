@@ -375,7 +375,7 @@ bool saveGame(const Common::String &fname) {
 	g_sludge->_evtMan->saveHandlers(fp);
 
 	// Save regions
-	saveRegions(fp);
+	g_sludge->_regionMan->saveRegions(fp);
 
 	g_sludge->_cursorMan->saveCursor(fp);
 
@@ -504,7 +504,7 @@ bool loadGame(const Common::String &fname) {
 	g_sludge->_txtMan->loadFont(ssgVersion, fp);
 
 	killAllPeople();
-	killAllRegions();
+	g_sludge->_regionMan->killAll();
 
 	int camerX = fp->readUint16BE();
 	int camerY = fp->readUint16BE();
@@ -519,7 +519,7 @@ bool loadGame(const Common::String &fname) {
 
 	g_sludge->_gfxMan->loadHSI(fp, 0, 0, true);
 	g_sludge->_evtMan->loadHandlers(fp);
-	loadRegions(fp);
+	g_sludge->_regionMan->loadRegions(fp);
 
 	if (!g_sludge->_cursorMan->loadCursor(fp)) {
 		return false;

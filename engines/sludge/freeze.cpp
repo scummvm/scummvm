@@ -95,10 +95,7 @@ bool GraphicsManager::freeze() {
 		return false;
 	newFreezer->frozenStatus = copyStatusBarStuff(newStatusStuff);
 
-	newFreezer->allScreenRegions = allScreenRegions;
-	allScreenRegions = NULL;
-	overRegion = NULL;
-
+	_vm->_regionMan->freeze(newFreezer);
 	_vm->_cursorMan->freeze(newFreezer);
 	_vm->_speechMan->freeze(newFreezer);
 	_vm->_evtMan->freeze(newFreezer);
@@ -139,8 +136,8 @@ void GraphicsManager::unfreeze(bool killImage) {
 	killAllPeople();
 	allPeople = _frozenStuff->allPeople;
 
-	killAllRegions();
-	allScreenRegions = _frozenStuff->allScreenRegions;
+	g_sludge->_regionMan->killAll();
+	g_sludge->_regionMan->resotre(_frozenStuff);
 
 	killLightMap();
 
@@ -171,7 +168,6 @@ void GraphicsManager::unfreeze(bool killImage) {
 	_vm->_speechMan->restore(_frozenStuff);
 
 	_frozenStuff = _frozenStuff->next;
-	overRegion = NULL;
 
 	// free current frozen screen struct
 	if (killMe->backdropSurface.getPixels())

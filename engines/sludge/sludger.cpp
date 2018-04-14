@@ -183,7 +183,7 @@ void initSludge() {
 void killSludge() {
 	killAllFunctions();
 	killAllPeople();
-	killAllRegions();
+	g_sludge->_regionMan->killAll();
 	setFloorNull();
 	g_sludge->_speechMan->kill();
 	g_sludge->_languageMan->kill();

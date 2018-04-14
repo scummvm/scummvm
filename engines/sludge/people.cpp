@@ -51,13 +51,11 @@ extern VariableStack *noStack;
 extern int ssgVersion;
 
 ScreenRegion personRegion;
-extern ScreenRegion *lastRegion;
 extern Floor *currentFloor;
 
 OnScreenPerson *allPeople = NULL;
 int16 scaleHorizon = 75;
 int16 scaleDivide = 150;
-extern ScreenRegion *allScreenRegions;
 
 void setFrames(OnScreenPerson &m, int a) {
 	m.myAnim = m.myPersona->animation[(a * m.myPersona->numDirections) + m.direction];
@@ -161,8 +159,6 @@ bool initPeople() {
 	personRegion.sX = 0;
 	personRegion.sY = 0;
 	personRegion.di = -1;
-	allScreenRegions = NULL;
-
 	return true;
 }
 
@@ -410,8 +406,6 @@ void setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix) {
 	moveMe->colourmix = colourmix;
 }
 
-extern ScreenRegion *overRegion;
-
 void shufflePeople() {
 	OnScreenPerson **thisReference = &allPeople;
 	OnScreenPerson *A, *B;
@@ -445,7 +439,7 @@ void drawPeople() {
 
 	OnScreenPerson *thisPerson = allPeople;
 	PersonaAnimation  *myAnim = NULL;
-	overRegion = NULL;
+	g_sludge->_regionMan->resetOverRegion();
 
 	while (thisPerson) {
 		if (thisPerson->show) {
@@ -480,9 +474,9 @@ void drawPeople() {
 				if (r) {
 					if (!thisPerson->thisType->screenName.empty()) {
 						if (personRegion.thisType != thisPerson->thisType)
-							lastRegion = NULL;
+							g_sludge->_regionMan->resetLastRegion();
 						personRegion.thisType = thisPerson->thisType;
-						overRegion = &personRegion;
+						g_sludge->_regionMan->setOverRegion(&personRegion);
 					}
 				}
 			}
@@ -943,8 +937,9 @@ void removeOneCharacter(int i) {
 	OnScreenPerson *p = findPerson(i);
 
 	if (p) {
+		ScreenRegion *overRegion = g_sludge->_regionMan->getOverRegion();
 		if (overRegion == &personRegion && overRegion->thisType == p->thisType) {
-			overRegion = NULL;
+			overRegion = nullptr;
 		}
 
 		if (p->continueAfterWalking)

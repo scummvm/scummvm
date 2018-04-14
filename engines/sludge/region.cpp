@@ -33,12 +33,21 @@
 
 namespace Sludge {
 
-ScreenRegion *allScreenRegions = nullptr;
-ScreenRegion *overRegion = nullptr;
-ScreenRegion *lastRegion = nullptr;
+RegionManager::RegionManager(SludgeEngine *vm)
+{
+	_vm = vm;
+	_allScreenRegions = nullptr;
+	_lastRegion = nullptr;
+	_overRegion = nullptr;
+}
 
-void showBoxes() {
-	ScreenRegion*huntRegion = allScreenRegions;
+RegionManager::~RegionManager()
+{
+
+}
+
+void RegionManager::showBoxes() {
+	ScreenRegion*huntRegion = _allScreenRegions;
 
 	while (huntRegion) {
 		g_sludge->_gfxMan->drawVerticalLine(huntRegion->x1, huntRegion->y1, huntRegion->y2);
@@ -49,8 +58,8 @@ void showBoxes() {
 	}
 }
 
-void removeScreenRegion(int objectNum) {
-	ScreenRegion **huntRegion = &allScreenRegions;
+void RegionManager::removeScreenRegion(int objectNum) {
+	ScreenRegion **huntRegion = &_allScreenRegions;
 	ScreenRegion *killMe;
 
 	while (*huntRegion) {
@@ -58,8 +67,8 @@ void removeScreenRegion(int objectNum) {
 			killMe = *huntRegion;
 			*huntRegion = killMe->next;
 			g_sludge->_objMan->removeObjectType(killMe->thisType);
-			if (killMe == overRegion)
-				overRegion = NULL;
+			if (killMe == _overRegion)
+				_overRegion = NULL;
 			delete killMe;
 			killMe = NULL;
 		} else {
@@ -68,15 +77,15 @@ void removeScreenRegion(int objectNum) {
 	}
 }
 
-void saveRegions(Common::WriteStream *stream) {
+void RegionManager::saveRegions(Common::WriteStream *stream) {
 	int numRegions = 0;
-	ScreenRegion *thisRegion = allScreenRegions;
+	ScreenRegion *thisRegion = _allScreenRegions;
 	while (thisRegion) {
 		thisRegion = thisRegion->next;
 		numRegions++;
 	}
 	stream->writeUint16BE(numRegions);
-	thisRegion = allScreenRegions;
+	thisRegion = _allScreenRegions;
 	while (thisRegion) {
 		stream->writeUint16BE(thisRegion->x1);
 		stream->writeUint16BE(thisRegion->y1);
@@ -91,11 +100,11 @@ void saveRegions(Common::WriteStream *stream) {
 	}
 }
 
-void loadRegions(Common::SeekableReadStream *stream) {
+void RegionManager::loadRegions(Common::SeekableReadStream *stream) {
 	int numRegions = stream->readUint16BE();
 
 	ScreenRegion *newRegion;
-	ScreenRegion **pointy = &allScreenRegions;
+	ScreenRegion **pointy = &_allScreenRegions;
 
 	while (numRegions--) {
 		newRegion = new ScreenRegion;
@@ -114,19 +123,19 @@ void loadRegions(Common::SeekableReadStream *stream) {
 	*pointy = NULL;
 }
 
-void killAllRegions() {
+void RegionManager::killAll() {
 	ScreenRegion *killRegion;
-	while (allScreenRegions) {
-		killRegion = allScreenRegions;
-		allScreenRegions = allScreenRegions->next;
+	while (_allScreenRegions) {
+		killRegion = _allScreenRegions;
+		_allScreenRegions = _allScreenRegions->next;
 		g_sludge->_objMan->removeObjectType(killRegion->thisType);
 		delete killRegion;
 	}
-	overRegion = nullptr;
-	lastRegion = nullptr;
+	_overRegion = nullptr;
+	_lastRegion = nullptr;
 }
 
-bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,
+bool RegionManager::addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,
 		int objectNum) {
 	ScreenRegion *newRegion = new ScreenRegion;
 	if (!checkNew(newRegion))
@@ -139,31 +148,31 @@ bool addScreenRegion(int x1, int y1, int x2, int y2, int sX, int sY, int di,
 	newRegion->sX = sX;
 	newRegion->sY = sY;
 	newRegion->thisType = g_sludge->_objMan->loadObjectType(objectNum);
-	newRegion->next = allScreenRegions;
-	allScreenRegions = newRegion;
+	newRegion->next = _allScreenRegions;
+	_allScreenRegions = newRegion;
 	return (bool) (newRegion->thisType != NULL);
 }
 
-void getOverRegion() {
+void RegionManager::updateOverRegion() {
 	int cameraX = g_sludge->_gfxMan->getCamX();
 	int cameraY = g_sludge->_gfxMan->getCamY();
-	ScreenRegion *thisRegion = allScreenRegions;
+	ScreenRegion *thisRegion = _allScreenRegions;
 	while (thisRegion) {
 		if ((g_sludge->_evtMan->mouseX() >= thisRegion->x1 - cameraX)
 				&& (g_sludge->_evtMan->mouseY() >= thisRegion->y1 - cameraY)
 				&& (g_sludge->_evtMan->mouseX() <= thisRegion->x2 - cameraX)
 				&& (g_sludge->_evtMan->mouseY() <= thisRegion->y2 - cameraY)) {
-			overRegion = thisRegion;
+			_overRegion = thisRegion;
 			return;
 		}
 		thisRegion = thisRegion->next;
 	}
-	overRegion = NULL;
+	_overRegion = NULL;
 	return;
 }
 
-ScreenRegion *getRegionForObject(int obj) {
-	ScreenRegion *thisRegion = allScreenRegions;
+ScreenRegion *RegionManager::getRegionForObject(int obj) {
+	ScreenRegion *thisRegion = _allScreenRegions;
 
 	while (thisRegion) {
 		if (obj == thisRegion->thisType->objectNum) {
@@ -173,6 +182,17 @@ ScreenRegion *getRegionForObject(int obj) {
 	}
 
 	return NULL;
+}
+
+void RegionManager::freeze(FrozenStuffStruct *frozenStuff) {
+	frozenStuff->allScreenRegions = _allScreenRegions;
+	_allScreenRegions = nullptr;
+	_overRegion = nullptr;
+}
+
+void RegionManager::resotre(FrozenStuffStruct *frozenStuff) {
+	_allScreenRegions = frozenStuff->allScreenRegions;
+	_overRegion = nullptr;
 }
 
 } // End of namespace Sludge

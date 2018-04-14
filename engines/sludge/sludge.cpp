@@ -29,6 +29,7 @@
 #include "sludge/event.h"
 #include "sludge/fonttext.h"
 #include "sludge/graphics.h"
+#include "sludge/region.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
@@ -82,6 +83,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	_txtMan = new TextManager();
 	_cursorMan = new CursorManager(this);
 	_speechMan = new SpeechManager(this);
+	_regionMan = new RegionManager(this);
 }
 
 SludgeEngine::~SludgeEngine() {
@@ -122,6 +124,8 @@ SludgeEngine::~SludgeEngine() {
 	_resMan = nullptr;
 	delete _speechMan;
 	_speechMan = nullptr;
+	delete _regionMan;
+	_regionMan = nullptr;
 }
 
 Common::Error SludgeEngine::run() {

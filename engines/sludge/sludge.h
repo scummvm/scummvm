@@ -41,6 +41,7 @@ extern SludgeEngine *g_sludge;
 class CursorManager;
 class EventManager;
 class GraphicsManager;
+class RegionManager;
 class SoundManager;
 class SpeechManager;
 class TextManager;
@@ -88,6 +89,7 @@ public:
 	TextManager *_txtMan;
 	CursorManager *_cursorMan;
 	SpeechManager *_speechMan;
+	RegionManager *_regionMan;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	virtual ~SludgeEngine();

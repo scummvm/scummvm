@@ -1312,9 +1312,9 @@ builtIn(skipSpeech) {
 
 builtIn(getOverObject) {
 	UNUSEDALL
-	if (overRegion)
+	if (g_sludge->_regionMan->getOverRegion())
 		// Return value
-		setVariable(fun->reg, SVT_OBJTYPE, overRegion->thisType->objectNum);
+		setVariable(fun->reg, SVT_OBJTYPE, g_sludge->_regionMan->getOverRegion()->thisType->objectNum);
 	else
 		// Return value
 		setVariable(fun->reg, SVT_INT, 0);
@@ -1346,7 +1346,7 @@ builtIn(getObjectX) {
 	if (pers) {
 		setVariable(fun->reg, SVT_INT, pers->x);
 	} else {
-		ScreenRegion *la = getRegionForObject(objectNumber);
+		ScreenRegion *la = g_sludge->_regionMan->getRegionForObject(objectNumber);
 		if (la) {
 			setVariable(fun->reg, SVT_INT, la->sX);
 		} else {
@@ -1367,7 +1367,7 @@ builtIn(getObjectY) {
 	if (pers) {
 		setVariable(fun->reg, SVT_INT, pers->y);
 	} else {
-		ScreenRegion *la = getRegionForObject(objectNumber);
+		ScreenRegion *la = g_sludge->_regionMan->getRegionForObject(objectNumber);
 		if (la) {
 			setVariable(fun->reg, SVT_INT, la->sY);
 		} else {
@@ -1404,7 +1404,7 @@ builtIn(addScreenRegion) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (addScreenRegion(x1, y1, x2, y2, sX, sY, di, objectNumber))
+	if (g_sludge->_regionMan->addScreenRegion(x1, y1, x2, y2, sX, sY, di, objectNumber))
 		return BR_CONTINUE;
 	return BR_ERROR;
 
@@ -1416,19 +1416,19 @@ builtIn(removeScreenRegion) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	removeScreenRegion(objectNumber);
+	g_sludge->_regionMan->removeScreenRegion(objectNumber);
 	return BR_CONTINUE;
 }
 
 builtIn(showBoxes) {
 	UNUSEDALL
-	showBoxes();
+	g_sludge->_regionMan->showBoxes();
 	return BR_CONTINUE;
 }
 
 builtIn(removeAllScreenRegions) {
 	UNUSEDALL
-	killAllRegions();
+	g_sludge->_regionMan->killAll();
 	return BR_CONTINUE;
 }
 
@@ -1708,7 +1708,7 @@ static BuiltReturn moveChr(int numParams, LoadedFunction *fun, bool force, bool 
 			if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 				return BR_ERROR;
 			trimStack(fun->stack);
-			reggie = getRegionForObject(toObj);
+			reggie = g_sludge->_regionMan->getRegionForObject(toObj);
 			if (reggie == NULL)
 				return BR_CONTINUE;
 
@@ -1945,7 +1945,7 @@ builtIn(isScreenRegion) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, getRegionForObject(objectNumber) != NULL);
+	setVariable(fun->reg, SVT_INT, g_sludge->_regionMan->getRegionForObject(objectNumber) != NULL);
 	return BR_CONTINUE;
 }
 
