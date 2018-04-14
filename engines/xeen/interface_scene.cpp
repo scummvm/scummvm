@@ -167,6 +167,9 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[129] = DrawStruct(0, 47, 36, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[130] = DrawStruct(0, 118, 42);
 	_data[131] = DrawStruct(0, 26, 42, 0, SPRFLAG_HORIZ_FLIPPED);
+
+	for (int idx = 0; idx < 132; ++idx)
+		_data[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
 }
 
 /*------------------------------------------------------------------------*/
@@ -366,6 +369,9 @@ IndoorDrawList::IndoorDrawList() :
 	_data[167] = DrawStruct(0, 47, 36, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[168] = DrawStruct(0, 118, 42);
 	_data[169] = DrawStruct(0, 26, 42, 0, SPRFLAG_HORIZ_FLIPPED);
+
+	for (int idx = 0; idx < 170; ++idx)
+		_data[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
 }
 
 /*------------------------------------------------------------------------*/
@@ -4378,10 +4384,6 @@ void InterfaceScene::drawIndoors() {
 	_indoorList._ground._flags = _flipDefaultGround ? SPRFLAG_HORIZ_FLIPPED : 0;
 	_indoorList._horizon._frame = 7;
 
-	// FIXME: I seem to be missing the scene area clipping flag on some list entries
-	for (int idx = 0; idx < _indoorList.size(); ++idx)
-		_indoorList[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
-
 	// Finally draw the darn indoor scene
 	windows[3].drawList(&_indoorList[0], _indoorList.size());
 
@@ -4462,11 +4464,6 @@ void InterfaceScene::drawOutdoors() {
 	_outdoorList[110]._sprites = _outdoorList[108]._sprites;
 	_outdoorList._sky1._flags = _outdoorList._sky2._flags = _flipSky ? SPRFLAG_HORIZ_FLIPPED : 0;
 	_outdoorList._groundSprite._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
-
-	// FIXME: I seem to be missing the scene area clipping flag on some list entries.
-	// Just re-flagging them all in a loop is simpler than hunting down the missing entries
-	for (int idx = 0; idx < _outdoorList.size(); ++idx)
-		_outdoorList[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
 
 	// Finally render the outdoor scene
 	windows[3].drawList(&_outdoorList[0], _outdoorList.size());
