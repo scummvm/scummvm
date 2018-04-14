@@ -633,11 +633,11 @@ void Combat::monstersAttack() {
 
 	_monstersAttacking = false;
 
-	if (_vm->_mode != MODE_SLEEPING) {
+	if (_vm->_mode == MODE_SLEEPING) {
 		for (uint charNum = 0; charNum < party._activeParty.size(); ++charNum) {
 			Condition condition = party._activeParty[charNum].worstCondition();
 
-			if (condition != ASLEEP && (condition < PARALYZED || condition == NO_CONDITION)) {
+			if (condition == DEPRESSED || condition == CONFUSED || condition == NO_CONDITION) {
 				_vm->_mode = MODE_1;
 				break;
 			}

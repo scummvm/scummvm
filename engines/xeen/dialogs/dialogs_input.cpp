@@ -262,7 +262,7 @@ int Choose123::execute(uint numOptions) {
 			result = 0;
 		} else if (_buttonValue >= Common::KEYCODE_1 && _buttonValue < (Common::KEYCODE_1 + (int)numOptions)) {
 			_buttonValue -= Common::KEYCODE_0;
-			result = (_buttonValue == numOptions) ? 0 : _buttonValue;
+			result = (_buttonValue == (int)numOptions) ? 0 : _buttonValue;
 		}
 	}
 
