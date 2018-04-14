@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-14 04:57+0200\n"
-"PO-Revision-Date: 2018-04-11 19:27+0000\n"
+"PO-Revision-Date: 2018-04-14 20:40+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
-"Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/sv/>\n"
+"Language-Team: Swedish "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/sv/>\n"
 "Language: sv_SE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -4641,7 +4641,7 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr "Dubbel FPS"
+msgstr "Dubbla FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
