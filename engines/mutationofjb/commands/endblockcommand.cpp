@@ -61,6 +61,7 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 	}
 
 	// This is the start or end of section/block.
+	command = new EndBlockCommand();
 
 	if (line.size() >= 4 && (line.hasPrefix("#L ") || line.hasPrefix("-L "))) {
 		ActionInfo ai = {ActionInfo::Look, line.c_str() + 3, "", firstChar == '#', nullptr};
@@ -112,21 +113,23 @@ bool EndBlockCommandParser::parse(const Common::String &line, ScriptParseContext
 			_ifTag = line[5];
 		}
 	} else if (line.size() >= 8 && line.hasPrefix("#MACRO")) {
-		_foundMacro = line.c_str() + 7;
+		NameAndCommand nc = {line.c_str() + 7, command};
+		_foundMacros.push_back(nc);
 	} else if (line.size() >= 10 && line.hasPrefix("#STARTUP")) {
-		_foundStartup = line.c_str() + 9;
+		const uint8 startupId = atoi(line.c_str() + 9);
+		IdAndCommand ic = {startupId, command};
+		_foundStartups.push_back(ic);
 	}
 
 	if (firstChar == '#') {
 		_hashFound = true;
 	}
 
-	command = new EndBlockCommand();
 
 	return true;
 }
 
-void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, Command *newCommand, CommandParser *newCommandParser) {
+void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *oldCommand, Command *newCommand, CommandParser *newCommandParser) {
 	if (_elseFound || _hashFound) {
 		if (newCommand) {
 			ScriptParseContext::ConditionalCommandInfos::iterator it = parseCtx._pendingCondCommands.begin();
@@ -146,26 +149,39 @@ void EndBlockCommandParser::transition(ScriptParseContext &parseCtx, Command *, 
 		_ifTag = 0;
 	}
 
-	if (!_foundMacro.empty()) {
+	if (!_foundMacros.empty()) {
 		if (newCommand) {
-			if (!parseCtx._macros.contains(_foundMacro)) {
-				parseCtx._macros[_foundMacro] = newCommand;
-			} else {
-				warning(_("Macro '%s' already exists."), _foundMacro.c_str());
+			for (NameAndCommandArray::iterator it = _foundMacros.begin(); it != _foundMacros.end();) {
+				if (it->_command != oldCommand) {
+					it++;
+					continue;
+				}
+
+				if (!parseCtx._macros.contains(it->_name)) {
+					parseCtx._macros[it->_name] = newCommand;
+				} else {
+					warning(_("Macro '%s' already exists"), it->_name.c_str());
+				}
+				it = _foundMacros.erase(it);
 			}
 		}
-		_foundMacro.clear();
 	}
-	if (!_foundStartup.empty()) {
+	if (!_foundStartups.empty()) {
 		if (newCommand) {
-			const uint8 startupId = atoi(_foundStartup.c_str());
-			if (!parseCtx._startups.contains(startupId)) {
-				parseCtx._startups[startupId] = newCommand;
-			} else {
-				warning(_("Startup %u already exists."), (unsigned int) startupId);
+			for (IdAndCommandArray::iterator it = _foundStartups.begin(); it != _foundStartups.end();) {
+				if (it->_command != oldCommand) {
+					it++;
+					continue;
+				}
+
+				if (!parseCtx._startups.contains(it->_id)) {
+					parseCtx._startups[it->_id] = newCommand;
+				} else {
+					warning(_("Startup %u already exists"), (unsigned int) it->_id);
+				}
+				it = _foundStartups.erase(it);
 			}
 		}
-		_foundStartup.clear();
 	}
 
 	if (newCommandParser != this) {
@@ -186,8 +202,15 @@ void EndBlockCommandParser::finish(ScriptParseContext &) {
 	if (!_pendingActionInfos.empty()) {
 		debug("Problem: Pending action infos from end block parser is not empty!");
 	}
+	if (!_foundMacros.empty()) {
+		debug("Problem: Found macros from end block parser is not empty!");
+	}
+	if (!_foundStartups.empty()) {
+		debug("Problem: Found startups from end block parser is not empty!");
+	}
 	_pendingActionInfos.clear();
-	_foundMacro = "";
+	_foundMacros.clear();
+	_foundStartups.clear();
 }
 
 Command::ExecuteResult EndBlockCommand::execute(ScriptExecutionContext &scriptExecCtx) {
