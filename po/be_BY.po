@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-14 04:57+0200\n"
+"POT-Creation-Date: 2018-04-15 19:57+0200\n"
 "PO-Revision-Date: 2017-11-28 19:36+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -2794,7 +2794,7 @@ msgstr "Правяраю абнаўленні..."
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:966
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
-#: engines/supernova/supernova.cpp:290 engines/teenagent/resources.cpp:97
+#: engines/supernova/supernova.cpp:175 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -2802,7 +2802,7 @@ msgstr "Не атрымалася знайсці файл рухавічка %s."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:980
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
-#: engines/mortevielle/mortevielle.cpp:315 engines/supernova/supernova.cpp:300
+#: engines/mortevielle/mortevielle.cpp:315 engines/supernova/supernova.cpp:185
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -4479,14 +4479,14 @@ msgstr "Уступ з дыскет"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Выкарыстоўваць уступ з гнуткіх дыскаў (толькі для CD-версіі гульні)"
 
-#: engines/supernova/supernova.cpp:308
+#: engines/supernova/supernova.cpp:193
 #, fuzzy, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
 "Няправільная версія файла рухавічка %s. Чакалася %d.%d, але знойдзена %d.%d."
 
-#: engines/supernova/supernova.cpp:335
+#: engines/supernova/supernova.cpp:220
 #, fuzzy, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
 msgstr "Не атрымалася знайсці файл рухавічка %s."

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-14 04:57+0200\n"
+"POT-Creation-Date: 2018-04-15 19:57+0200\n"
 "PO-Revision-Date: 2017-04-28 11:12+0000\n"
 "Last-Translator: Arius <alidop@pathfinder.gr>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2829,7 +2829,7 @@ msgstr "Έλεγχος Ενημερώσεων..."
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:966
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
-#: engines/supernova/supernova.cpp:290 engines/teenagent/resources.cpp:97
+#: engines/supernova/supernova.cpp:175 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -2837,7 +2837,7 @@ msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:980
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
-#: engines/mortevielle/mortevielle.cpp:315 engines/supernova/supernova.cpp:300
+#: engines/mortevielle/mortevielle.cpp:315 engines/supernova/supernova.cpp:185
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -4501,7 +4501,7 @@ msgstr "Εισαγωγή έκδοσης δισκέτας"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Χρήση της εισαγωγής από την έκδοση δισκέτας (έκδοση CD μόνο)"
 
-#: engines/supernova/supernova.cpp:308
+#: engines/supernova/supernova.cpp:193
 #, fuzzy, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
@@ -4509,7 +4509,7 @@ msgstr ""
 "Βρέθηκε λανθασμένη έκδοση του '%s' αρχείου παιχνιδιού. Αναμενόμενη %d.%d "
 "αλλά βρέθηκε η %d.%d."
 
-#: engines/supernova/supernova.cpp:335
+#: engines/supernova/supernova.cpp:220
 #, fuzzy, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
 msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."

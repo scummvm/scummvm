@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-14 04:57+0200\n"
+"POT-Creation-Date: 2018-04-15 19:57+0200\n"
 "PO-Revision-Date: 2017-11-23 12:42+0000\n"
 "Last-Translator: Santiago G. Sanz <santiagogarciasanz@gmail.com>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -2799,7 +2799,7 @@ msgstr "Buscar actualizacións..."
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:966
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:306 engines/sky/compact.cpp:131
-#: engines/supernova/supernova.cpp:290 engines/teenagent/resources.cpp:97
+#: engines/supernova/supernova.cpp:175 engines/teenagent/resources.cpp:97
 #: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -2807,7 +2807,7 @@ msgstr "Non se puido localizar o ficheiro de datos do motor %s."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:980
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
-#: engines/mortevielle/mortevielle.cpp:315 engines/supernova/supernova.cpp:300
+#: engines/mortevielle/mortevielle.cpp:315 engines/supernova/supernova.cpp:185
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -4485,7 +4485,7 @@ msgstr "Intro de disquete"
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Emprega a introdución da versión en disquete (só versión en CD)."
 
-#: engines/supernova/supernova.cpp:308
+#: engines/supernova/supernova.cpp:193
 #, fuzzy, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
@@ -4493,7 +4493,7 @@ msgstr ""
 "Atopouse unha versión incorrecta do ficheiro de datos do motor %s. Ficheiro "
 "esperado: %d.%d. Ficheiro atopado: %d.%d."
 
-#: engines/supernova/supernova.cpp:335
+#: engines/supernova/supernova.cpp:220
 #, fuzzy, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
 msgstr "Non se puido localizar o ficheiro de datos do motor %s."
