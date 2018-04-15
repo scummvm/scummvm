@@ -1444,7 +1444,9 @@ bool Party::giveExt(int mode1, uint val1, int mode2, uint val2, int mode3, uint 
 	Scripts &scripts = *g_vm->_scripts;
 	Sound &sound = *g_vm->_sound;
 
-	if (intf._objNumber != -1 && !scripts._animCounter) {
+	// WORKAROUND: Ali Baba's chest in Dark Side requires the character in the first slot to have Lockpicking.
+	// This is obviously a mistake, since the chest is meant to be opened via a password
+	if (intf._objNumber != -1 && !scripts._animCounter && !(files._ccNum && _mazeId == 63 && intf._objNumber == 15)) {
 		MazeObject &obj = map._mobData._objects[intf._objNumber];
 		switch (obj._spriteId) {
 		case 15:
