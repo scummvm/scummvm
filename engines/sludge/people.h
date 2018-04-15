@@ -65,6 +65,10 @@ struct PersonaAnimation {
 struct Persona {
 	PersonaAnimation **animation;
 	int numDirections;
+
+	// Save & load
+	bool save(Common::WriteStream *stream);
+	bool load(Common::SeekableReadStream *stream);
 };
 
 struct OnScreenPerson {
@@ -135,8 +139,6 @@ public:
 	// Loading and saving
 	bool savePeople(Common::WriteStream *stream);
 	bool loadPeople(Common::SeekableReadStream *stream);
-	bool saveCostume(Persona *cossy, Common::WriteStream *stream);
-	bool loadCostume(Persona *cossy, Common::SeekableReadStream *stream);
 
 	// Freeze
 	void freeze(FrozenStuffStruct *frozenStuff);

@@ -214,7 +214,7 @@ bool saveVariable(Variable *from, Common::WriteStream *stream) {
 			return saveStackRef(from->varData.theStack, stream);
 
 		case SVT_COSTUME:
-			g_sludge->_peopleMan->saveCostume(from->varData.costumeHandler, stream);
+			from->varData.costumeHandler->save(stream);
 			return false;
 
 		case SVT_ANIM:
@@ -253,7 +253,7 @@ bool loadVariable(Variable *to, Common::SeekableReadStream *stream) {
 			to->varData.costumeHandler = new Persona;
 			if (!checkNew(to->varData.costumeHandler))
 				return false;
-			g_sludge->_peopleMan->loadCostume(to->varData.costumeHandler, stream);
+			to->varData.costumeHandler->load(stream);
 			return true;
 
 		case SVT_ANIM:

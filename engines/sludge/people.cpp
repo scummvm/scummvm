@@ -158,6 +158,33 @@ bool PersonaAnimation::load(Common::SeekableReadStream *stream) {
 	return true;
 }
 
+bool Persona::save(Common::WriteStream *stream) {
+	int a;
+	stream->writeUint16BE(numDirections);
+	for (a = 0; a < numDirections * 3; a++) {
+		if (!animation[a]->save(stream))
+			return false;
+	}
+	return true;
+}
+
+bool Persona::load(Common::SeekableReadStream *stream) {
+	int a;
+	numDirections = stream->readUint16BE();
+	animation = new PersonaAnimation *[numDirections * 3];
+	if (!checkNew(animation))
+		return false;
+	for (a = 0; a < numDirections * 3; a++) {
+		animation[a] = new PersonaAnimation ;
+		if (!checkNew(animation[a]))
+			return false;
+
+		if (!animation[a]->load(stream))
+			return false;
+	}
+	return true;
+}
+
 PeopleManager::PeopleManager(SludgeEngine *vm) {
 	_vm = vm;
 	_allPeople = nullptr;
@@ -971,33 +998,6 @@ void PeopleManager::removeOneCharacter(int i) {
 	}
 }
 
-bool PeopleManager::saveCostume(Persona *cossy, Common::WriteStream *stream) {
-	int a;
-	stream->writeUint16BE(cossy->numDirections);
-	for (a = 0; a < cossy->numDirections * 3; a++) {
-		if (!cossy->animation[a]->save(stream))
-			return false;
-	}
-	return true;
-}
-
-bool PeopleManager::loadCostume(Persona *cossy, Common::SeekableReadStream *stream) {
-	int a;
-	cossy->numDirections = stream->readUint16BE();
-	cossy->animation = new PersonaAnimation *[cossy->numDirections * 3];
-	if (!checkNew(cossy->animation))
-		return false;
-	for (a = 0; a < cossy->numDirections * 3; a++) {
-		cossy->animation[a] = new PersonaAnimation ;
-		if (!checkNew(cossy->animation[a]))
-			return false;
-
-		if (!cossy->animation[a]->load(stream))
-			return false;
-	}
-	return true;
-}
-
 bool PeopleManager::savePeople(Common::WriteStream *stream) {
 	OnScreenPerson *me = _allPeople;
 	int countPeople = 0, a;
@@ -1018,7 +1018,7 @@ bool PeopleManager::savePeople(Common::WriteStream *stream) {
 		stream->writeFloatLE(me->x);
 		stream->writeFloatLE(me->y);
 
-		saveCostume(me->myPersona, stream);
+		me->myPersona->save(stream);
 		me->myAnim->save(stream);
 		stream->writeByte(me->myAnim == me->lastUsedAnim);
 
@@ -1094,7 +1094,7 @@ bool PeopleManager::loadPeople(Common::SeekableReadStream *stream) {
 		me->x = stream->readFloatLE();
 		me->y = stream->readFloatLE();
 
-		loadCostume(me->myPersona, stream);
+		me->myPersona->load(stream);
 		me->myAnim->load(stream);
 
 		me->lastUsedAnim = stream->readByte() ? me->myAnim : NULL;
