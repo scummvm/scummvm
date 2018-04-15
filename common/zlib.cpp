@@ -281,7 +281,7 @@ public:
 			_wrapped->seek(0, SEEK_SET);
 			_zlibErr = inflateReset(&_stream);
 			if (_zlibErr != Z_OK)
-				return false;	// FIXME: STREAM REWRITE
+				return false; // FIXME: STREAM REWRITE
 			_stream.next_in = _buf;
 			_stream.avail_in = 0;
 		}
@@ -297,7 +297,7 @@ public:
 		}
 
 		_eos = false;
-		return true;	// FIXME: STREAM REWRITE
+		return true; // FIXME: STREAM REWRITE
 	}
 };
 

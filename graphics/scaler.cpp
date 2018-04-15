@@ -107,12 +107,12 @@ void InitLUT(Graphics::PixelFormat format) {
 	hqx_low2bits = (3 << format.rShift) | (3 << format.gShift) | (3 << format.bShift),
 	hqx_low3bits = (7 << format.rShift) | (7 << format.gShift) | (7 << format.bShift),
 
-	hqx_highbits = format.RGBToColor(255,255,255) ^ hqx_lowbits;
+	hqx_highbits = format.RGBToColor(255, 255, 255) ^ hqx_lowbits;
 
 	// FIXME: The following code only does the right thing
 	// if the color order is RGB or BGR, i.e., green is in the middle.
-	hqx_greenMask = format.RGBToColor(0,255,0);
-	hqx_redBlueMask = format.RGBToColor(255,0,255);
+	hqx_greenMask   = format.RGBToColor(  0, 255,   0);
+	hqx_redBlueMask = format.RGBToColor(255,   0, 255);
 
 	hqx_green_redBlue_Mask = (hqx_greenMask << 16) | hqx_redBlueMask;
 #endif
@@ -145,10 +145,10 @@ void InitScalers(uint32 BitFormat) {
 #endif
 
 	// Build dotmatrix lookup table for the DotMatrix scaler.
-	g_dotmatrix[0] = g_dotmatrix[10] = format.RGBToColor(0, 63, 0);
-	g_dotmatrix[1] = g_dotmatrix[11] = format.RGBToColor(0, 0, 63);
-	g_dotmatrix[2] = g_dotmatrix[8] = format.RGBToColor(63, 0, 0);
-	g_dotmatrix[4] = g_dotmatrix[6] =
+	g_dotmatrix[0] = g_dotmatrix[10] = format.RGBToColor( 0, 63,  0);
+	g_dotmatrix[1] = g_dotmatrix[11] = format.RGBToColor( 0,  0, 63);
+	g_dotmatrix[2] = g_dotmatrix[ 8] = format.RGBToColor(63,  0,  0);
+	g_dotmatrix[4] = g_dotmatrix[ 6] =
 		g_dotmatrix[12] = g_dotmatrix[14] = format.RGBToColor(63, 63, 63);
 }
 

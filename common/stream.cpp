@@ -99,7 +99,7 @@ bool MemoryReadStream::seek(int32 offs, int whence) {
 
 	// Reset end-of-stream flag on a successful seek
 	_eos = false;
-	return true;	// FIXME: STREAM REWRITE
+	return true; // FIXME: STREAM REWRITE
 }
 
 bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
@@ -124,7 +124,7 @@ bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
 	// Post-Condition
 	assert(_pos <= _size);
 
-	return true;	// FIXME: STREAM REWRITE
+	return true; // FIXME: STREAM REWRITE
 }
 
 #pragma mark -
@@ -413,7 +413,7 @@ BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *paren
 bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	// If it is a "local" seek, we may get away with "seeking" around
 	// in the buffer only.
-	_eos = false;	// seeking always cancels EOS
+	_eos = false; // seeking always cancels EOS
 
 	int relOffset = 0;
 	switch (whence) {

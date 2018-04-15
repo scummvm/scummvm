@@ -239,7 +239,7 @@ void U32String::ensureCapacity(uint32 new_size, bool keep_old) {
 		if (new_size < curCapacity)
 			newCapacity = curCapacity;
 		else
-			newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
+			newCapacity = MAX(curCapacity * 2, computeCapacity(new_size + 1));
 
 		// Allocate new storage
 		newStorage = new value_type[newCapacity];
@@ -316,7 +316,7 @@ void U32String::initWithCStr(const value_type *str, uint32 len) {
 
 	if (len >= _builtinCapacity) {
 		// Not enough internal storage, so allocate more
-		_extern._capacity = computeCapacity(len+1);
+		_extern._capacity = computeCapacity(len + 1);
 		_extern._refCount = 0;
 		_str = new value_type[_extern._capacity];
 		assert(_str != 0);

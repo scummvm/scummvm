@@ -355,7 +355,7 @@ HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
 	delete[] _storage;
 #ifdef DEBUG_HASH_COLLISIONS
 	extern void updateHashCollisionStats(int, int, int, int, int);
-	updateHashCollisionStats(_collisions, _dummyHits, _lookups, _mask+1, _size);
+	updateHashCollisionStats(_collisions, _dummyHits, _lookups, _mask + 1, _size);
 #endif
 }
 
@@ -369,9 +369,9 @@ HashMap<Key, Val, HashFunc, EqualFunc>::~HashMap() {
 template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t &map) {
 	_mask = map._mask;
-	_storage = new Node *[_mask+1];
+	_storage = new Node *[_mask + 1];
 	assert(_storage != NULL);
-	memset(_storage, 0, (_mask+1) * sizeof(Node *));
+	memset(_storage, 0, (_mask + 1) * sizeof(Node *));
 
 	// Simply clone the map given to us, one by one.
 	_size = 0;
@@ -418,7 +418,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::clear(bool shrinkArray) {
 
 template<class Key, class Val, class HashFunc, class EqualFunc>
 void HashMap<Key, Val, HashFunc, EqualFunc>::expandStorage(size_type newCapacity) {
-	assert(newCapacity > _mask+1);
+	assert(newCapacity > _mask + 1);
 
 #ifndef NDEBUG
 	const size_type old_size = _size;
@@ -487,7 +487,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 	_lookups++;
 	debug("collisions %d, dummies hit %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d",
 		_collisions, _dummyHits, _lookups, ((double) _collisions / (double)_lookups),
-		(const void *)this, _mask+1, _size);
+		(const void *)this, _mask + 1, _size);
 #endif
 
 	return ctr;
@@ -525,7 +525,7 @@ typename HashMap<Key, Val, HashFunc, EqualFunc>::size_type HashMap<Key, Val, Has
 	_lookups++;
 	debug("collisions %d, dummies hit %d, lookups %d, ratio %f in HashMap %p; size %d num elements %d",
 		_collisions, _dummyHits, _lookups, ((double) _collisions / (double)_lookups),
-		(const void *)this, _mask+1, _size);
+		(const void *)this, _mask + 1, _size);
 #endif
 
 	if (!found && first_free != _mask + 1)

@@ -289,8 +289,8 @@ public:
 		return dataSize;
 	}
 
-	int32 pos() const { return _pos - _length; } //'read' position in the stream
-	int32 size() const { return _size; } //that's also 'write' position in the stream, as it's append-only
+	int32 pos() const { return _pos - _length; } // 'read' position in the stream
+	int32 size() const { return _size; } // that's also 'write' position in the stream, as it's append-only
 	bool seek(int32, int) { return false; }
 	bool eos() const { return _eos; }
 	void clearErr() { _eos = false; }

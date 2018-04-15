@@ -63,7 +63,7 @@ void String::initWithCStr(const char *str, uint32 len) {
 
 	if (len >= _builtinCapacity) {
 		// Not enough internal storage, so allocate more
-		_extern._capacity = computeCapacity(len+1);
+		_extern._capacity = computeCapacity(len + 1);
 		_extern._refCount = 0;
 		_str = new char[_extern._capacity];
 		assert(_str != 0);
@@ -593,7 +593,7 @@ String String::vformat(const char *fmt, va_list args) {
 		// vsnprintf didn't have enough space, so grow buffer
 		output.ensureCapacity(len, false);
 		scumm_va_copy(va, args);
-		int len2 = vsnprintf(output._str, len+1, fmt, va);
+		int len2 = vsnprintf(output._str, len + 1, fmt, va);
 		va_end(va);
 		assert(len == len2);
 		output._size = len2;
@@ -741,7 +741,7 @@ String lastPathComponent(const String &path, const char sep) {
 	const char *last = str + path.size();
 
 	// Skip over trailing slashes
-	while (last > str && *(last-1) == sep)
+	while (last > str && *(last - 1) == sep)
 		--last;
 
 	// Path consisted of only slashes -> return empty string
@@ -1010,7 +1010,7 @@ int scumm_strnicmp(const char *s1, const char *s2, uint n) {
 	byte l1, l2;
 	do {
 		if (n-- == 0)
-			return 0;	// no difference found so far -> signal equality
+			return 0; // no difference found so far -> signal equality
 
 		// Don't use ++ inside tolower, in case the macro uses its
 		// arguments more than once.

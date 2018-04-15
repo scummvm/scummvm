@@ -85,7 +85,7 @@ void ConfigManager::loadDefaultConfigFile() {
 	// Open the default config file
 	assert(g_system);
 	SeekableReadStream *stream = g_system->createConfigReadStream();
-	_filename.clear();  // clear the filename to indicate that we are using the default config file
+	_filename.clear(); // clear the filename to indicate that we are using the default config file
 
 	// ... load it, if available ...
 	if (stream) {
@@ -321,7 +321,7 @@ void ConfigManager::flushToDisk() {
 
 void ConfigManager::writeDomain(WriteStream &stream, const String &name, const Domain &domain) {
 	if (domain.empty())
-		return;     // Don't bother writing empty domains.
+		return; // Don't bother writing empty domains.
 
 	// WORKAROUND: Fix for bug #1972625 "ALL: On-the-fly targets are
 	// written to the config file": Do not save domains that came from

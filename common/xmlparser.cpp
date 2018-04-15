@@ -373,7 +373,7 @@ bool XMLParser::parse() {
 					break;
 				}
 			} else {
-				ParserNode *node = allocNode(); //new ParserNode;
+				ParserNode *node = allocNode(); // new ParserNode;
 				node->name = _token;
 				node->ignore = false;
 				node->header = activeHeader;

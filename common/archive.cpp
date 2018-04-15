@@ -267,7 +267,7 @@ SeekableReadStream *SearchSet::createReadStreamForMember(const String &name) con
 
 
 SearchManager::SearchManager() {
-	clear();    // Force a reset
+	clear(); // Force a reset
 }
 
 void SearchManager::clear() {

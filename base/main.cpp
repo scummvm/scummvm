@@ -213,7 +213,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		caption = EngineMan.findGame(ConfMan.get("gameid")).description();
 	}
 	if (caption.empty())
-		caption = ConfMan.getActiveDomainName();	// Use the domain (=target) name
+		caption = ConfMan.getActiveDomainName(); // Use the domain (=target) name
 	if (!caption.empty())	{
 		system.setWindowCaption(caption.c_str());
 	}
@@ -394,7 +394,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (settings.contains("debuglevel")) {
 		gDebugLevel = (int)strtol(settings["debuglevel"].c_str(), 0, 10);
 		printf("Debuglevel (from command line): %d\n", gDebugLevel);
-		settings.erase("debuglevel");	// This option should not be passed to ConfMan.
+		settings.erase("debuglevel"); // This option should not be passed to ConfMan.
 	} else if (ConfMan.hasKey("debuglevel"))
 		gDebugLevel = ConfMan.getInt("debuglevel");
 
@@ -535,12 +535,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			g_eventRec.deinit();
 #endif
 
-		#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
+#if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES)
 			// do our best to prevent fragmentation by unloading as soon as we can
 			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);
 			// reallocate the config manager to get rid of any fragmentation
 			ConfMan.defragment();
-		#endif
+#endif
 
 			// Did an error occur ?
 			if (result.getCode() != Common::kNoError && result.getCode() != Common::kUserCanceled) {
@@ -549,20 +549,20 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
-			#ifndef FORCE_RTL
+#ifndef FORCE_RTL
 			if (result.getCode() == Common::kNoError && !g_system->getEventManager()->shouldRTL())
 				break;
-			#endif
+#endif
 			// Reset RTL flag in case we want to load another engine
 			g_system->getEventManager()->resetRTL();
-			#ifdef FORCE_RTL
+#ifdef FORCE_RTL
 			g_system->getEventManager()->resetQuit();
-			#endif
-			#ifdef ENABLE_EVENTRECORDER
+#endif
+#ifdef ENABLE_EVENTRECORDER
 			if (g_eventRec.checkForContinueGame()) {
 				continue;
 			}
-			#endif
+#endif
 
 			// At this point, we usually return to the launcher. However, the
 			// game may have requested that one or more other games be "chained"

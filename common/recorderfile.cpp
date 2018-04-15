@@ -335,7 +335,7 @@ RecorderEvent PlaybackFile::getNextEvent() {
 			case kScreenShotTag:
 				_readStream->seek(-4, SEEK_CUR);
 				header.len = _readStream->readUint32BE();
-				_readStream->skip(header.len-8);
+				_readStream->skip(header.len - 8);
 				break;
 			case kMD5Tag:
 				checkRecordedMD5();
@@ -575,7 +575,7 @@ int PlaybackFile::getScreensCount() {
 	int result = 0;
 	while (skipToNextScreenshot()) {
 		uint32 size = _readStream->readUint32BE();
-		_readStream->skip(size-8);
+		_readStream->skip(size - 8);
 		++result;
 	}
 	return result;
@@ -612,7 +612,7 @@ Graphics::Surface *PlaybackFile::getScreenShot(int number) {
 			return Graphics::loadThumbnail(*_readStream, thumbnail) ? thumbnail : NULL;
 		} else {
 			uint32 size = _readStream->readUint32BE();
-			_readStream->skip(size-8);
+			_readStream->skip(size - 8);
 			screenCount++;
 		}
 	}

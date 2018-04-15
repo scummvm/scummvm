@@ -285,7 +285,7 @@ public:
 	 * except that it stores the result in (variably sized) String
 	 * instead of a fixed size buffer.
 	 */
-	static String format(const char *fmt, ...) GCC_PRINTF(1,2);
+	static String format(const char *fmt, ...) GCC_PRINTF(1, 2);
 
 	/**
 	 * Print formatted data into a String object. Similar to vsprintf,

@@ -241,7 +241,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("boot_param", 0);
 	ConfMan.registerDefault("dump_scripts", false);
 	ConfMan.registerDefault("save_slot", -1);
-	ConfMan.registerDefault("autosave_period", 5 * 60);	// By default, trigger autosave every 5 minutes
+	ConfMan.registerDefault("autosave_period", 5 * 60); // By default, trigger autosave every 5 minutes
 
 #if defined(ENABLE_SCUMM) || defined(ENABLE_SWORD2)
 	ConfMan.registerDefault("object_labels", true);
@@ -308,7 +308,7 @@ void registerDefaults() {
 
 // Use this for options which have an *optional* value
 #define DO_OPTION_OPT(shortCmd, longCmd, defaultVal) \
-	if (isLongCmd ? (!strcmp(s+2, longCmd) || !memcmp(s+2, longCmd"=", sizeof(longCmd"=") - 1)) : (tolower(s[1]) == shortCmd)) { \
+	if (isLongCmd ? (!strcmp(s + 2, longCmd) || !memcmp(s + 2, longCmd"=", sizeof(longCmd"=") - 1)) : (tolower(s[1]) == shortCmd)) { \
 		s += 2; \
 		if (isLongCmd) { \
 			s += sizeof(longCmd) - 1; \
@@ -337,7 +337,7 @@ void registerDefaults() {
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
-	if (isLongCmd ? (!strcmp(s+2, longCmd) || !strcmp(s+2, "no-" longCmd)) : (tolower(s[1]) == shortCmd)) { \
+	if (isLongCmd ? (!strcmp(s + 2, longCmd) || !strcmp(s + 2, "no-" longCmd)) : (tolower(s[1]) == shortCmd)) { \
 		bool boolValue = (Common::isLower(s[1]) != 0); \
 		s += 2; \
 		if (isLongCmd) { \
@@ -350,7 +350,7 @@ void registerDefaults() {
 
 // Use this for options which never have a value, i.e. for 'commands', like "--help".
 #define DO_COMMAND(shortCmd, longCmd) \
-	if (isLongCmd ? (!strcmp(s+2, longCmd)) : (tolower(s[1]) == shortCmd)) { \
+	if (isLongCmd ? (!strcmp(s + 2, longCmd)) : (tolower(s[1]) == shortCmd)) { \
 		s += 2; \
 		if (isLongCmd) \
 			s += sizeof(longCmd) - 1; \
@@ -383,7 +383,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 	// argv[0] contains the name of the executable.
 	if (argv[0]) {
 		s = strrchr(argv[0], '/');
-		s_appName = s ? (s+1) : argv[0];
+		s_appName = s ? (s + 1) : argv[0];
 	}
 
 	// We store all command line settings into a string map.
@@ -746,7 +746,7 @@ static Common::Error listSaves(const char *target) {
 		gameid = domain->getVal("gameid");
 	if (gameid.empty())
 		gameid = target;
-	gameid.toLowercase();	// Normalize it to lower case
+	gameid.toLowercase(); // Normalize it to lower case
 
 	// Find the plugin that will handle the specified gameid
 	const Plugin *plugin = nullptr;
@@ -754,7 +754,7 @@ static Common::Error listSaves(const char *target) {
 
 	if (!plugin) {
 		return Common::Error(Common::kEnginePluginNotFound,
-						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
+		                     Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	}
 
 	const MetaEngine &metaEngine = plugin->get<MetaEngine>();
@@ -762,7 +762,7 @@ static Common::Error listSaves(const char *target) {
 	if (!metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
 		// TODO: Include more info about the target (desc, engine name, ...) ???
 		return Common::Error(Common::kEnginePluginNotSupportSaves,
-						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
+		                     Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	} else {
 		// Query the plugin for a list of saved games
 		SaveStateList saveList = metaEngine.listSaves(target);
@@ -821,7 +821,7 @@ static void listAudioDevices() {
 static GameList getGameList(const Common::FSNode &dir) {
 	Common::FSList files;
 
-	//Collect all files from directory
+	// Collect all files from directory
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
 		printf("Path %s does not exist or is not a directory.\n", dir.getPath().c_str());
 		return GameList();
@@ -1043,7 +1043,7 @@ void upgradeTargets() {
 		if (gameid.empty()) {
 			gameid = name;
 		}
-		gameid.toLowercase();	// TODO: Is this paranoia? Maybe we should just assume all lowercase, always?
+		gameid.toLowercase(); // TODO: Is this paranoia? Maybe we should just assume all lowercase, always?
 
 		Common::FSNode dir(path);
 		Common::FSList files;

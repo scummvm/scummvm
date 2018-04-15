@@ -257,7 +257,7 @@ void PluginManagerUncached::init() {
 	unloadAllPlugins();
 	_allEnginePlugins.clear();
 
-	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);	// empty the engine plugins
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false); // empty the engine plugins
 
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
@@ -362,7 +362,7 @@ bool PluginManagerUncached::loadNextPlugin() {
 			return true;
 		}
 	}
-	return false;	// no more in list
+	return false; // no more in list
 }
 
 /**
