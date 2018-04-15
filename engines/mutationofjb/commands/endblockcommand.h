@@ -44,8 +44,18 @@ private:
 	char _ifTag;
 
 	Common::Array<uint> _pendingActionInfos;
-	Common::String _foundMacro;
-	Common::String _foundStartup;
+	struct NameAndCommand {
+		Common::String _name;
+		Command *_command;
+	};
+	struct IdAndCommand {
+		uint8 _id;
+		Command *_command;
+	};
+	typedef Common::Array<NameAndCommand> NameAndCommandArray;
+	typedef Common::Array<IdAndCommand> IdAndCommandArray;
+	NameAndCommandArray _foundMacros;
+	IdAndCommandArray _foundStartups;
 };
 
 class EndBlockCommand : public Command {
