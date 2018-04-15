@@ -642,8 +642,7 @@ uint16 Myst::getVar(uint16 var) {
 				return 10;
 			else
 				return 1;
-		}
-		else {
+		} else {
 			// 24 Hour Format
 			observatoryLeftMinutes = _state.observatoryTimeSetting;
 			if (observatoryLeftMinutes < (10 * 60))
@@ -659,12 +658,11 @@ uint16 Myst::getVar(uint16 var) {
 			// 12 Hour Format
 			observatoryRightMinutes = _state.observatoryTimeSetting % (12 * 60);
 			observatoryRightHour = observatoryRightMinutes / 60;
-			if ( observatoryRightHour % 12 == 0)
+			if (observatoryRightHour % 12 == 0)
 				return 2;
 			else
 				return observatoryRightHour % 10;
-		}
-		else {
+		} else {
 			// 24 Hour Format
 			observatoryRightMinutes = _state.observatoryTimeSetting;
 			observatoryRightHour = observatoryRightMinutes / 60;
