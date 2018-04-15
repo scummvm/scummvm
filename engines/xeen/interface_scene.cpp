@@ -63,11 +63,11 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[25] = DrawStruct(0, 8, 109);
 	_data[26] = DrawStruct(0, 201, 109);
 	_data[27] = DrawStruct(0, 8, 109);
-	_data[28] = DrawStruct(1, -64, 61, 14, SPRFLAG_SCENE_CLIPPED);
+	_data[28] = DrawStruct(1, -64, 61, 14);
 	_data[29] = DrawStruct(1, -40, 61, 14, 0);
 	_data[30] = DrawStruct(1, -16, 61, 14, 0);
 	_data[31] = DrawStruct(1, 8, 61, 14, 0);
-	_data[32] = DrawStruct(1, 128, 61, 14, SPRFLAG_HORIZ_FLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[32] = DrawStruct(1, 128, 61, 14, SPRFLAG_HORIZ_FLIPPED);
 	_data[33] = DrawStruct(1, 104, 61, 14, SPRFLAG_HORIZ_FLIPPED);
 	_data[34] = DrawStruct(1, 80, 61, 14, SPRFLAG_HORIZ_FLIPPED);
 	_data[35] = DrawStruct(1, 56, 61, 14, SPRFLAG_HORIZ_FLIPPED);
@@ -123,10 +123,10 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[85] = DrawStruct(2, 146, 40, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[86] = DrawStruct(1, 32, 40, 6, 0);
 	_data[87] = DrawStruct(0, -7, 30, 7, 0);
-	_data[88] = DrawStruct(0, -112, 30, 7, SPRFLAG_SCENE_CLIPPED);
-	_data[89] = DrawStruct(0, 98, 30, 7, SPRFLAG_SCENE_CLIPPED);
-	_data[90] = DrawStruct(0, -112, 30, 8, SPRFLAG_SCENE_CLIPPED);
-	_data[91] = DrawStruct(0, 98, 30, 8, SPRFLAG_SCENE_CLIPPED);
+	_data[88] = DrawStruct(0, -112, 30, 7);
+	_data[89] = DrawStruct(0, 98, 30, 7);
+	_data[90] = DrawStruct(0, -112, 30, 8);
+	_data[91] = DrawStruct(0, 98, 30, 8);
 	_data[92] = DrawStruct(0, -38, 30, 8, 0);
 	_data[93] = DrawStruct(0, 25, 30, 8, 0);
 	_data[94] = DrawStruct(0, -7, 30, 8, 0);
@@ -141,22 +141,22 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 	_data[103] = DrawStruct(0, 8, 24);
 	_data[104] = DrawStruct(0, 169, 24, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[105] = DrawStruct(1, 32, 24);
-	_data[106] = DrawStruct(0, -23, 40, 0, SPRFLAG_SCENE_CLIPPED);
-	_data[107] = DrawStruct(0, 200, 40, 0, SPRFLAG_HORIZ_FLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[106] = DrawStruct(0, -23, 40, 0);
+	_data[107] = DrawStruct(0, 200, 40, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[108] = DrawStruct(0, 8, 47);
 	_data[109] = DrawStruct(0, 169, 47, 0, SPRFLAG_HORIZ_FLIPPED);
-	_data[110] = DrawStruct(1, -56, -4, SCALE_ENLARGE, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
-	_data[111] = DrawStruct(0, -5, 2, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
-	_data[112] = DrawStruct(0, -67, 2, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[110] = DrawStruct(1, -56, -4, SCALE_ENLARGE, SPRFLAG_BOTTOM_CLIPPED);
+	_data[111] = DrawStruct(0, -5, 2, 0, SPRFLAG_BOTTOM_CLIPPED);
+	_data[112] = DrawStruct(0, -67, 2, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[113] = DrawStruct(0, 44, 73);
 	_data[114] = DrawStruct(0, 44, 73);
-	_data[115] = DrawStruct(0, 58, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[115] = DrawStruct(0, 58, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[116] = DrawStruct(0, 169, 73);
 	_data[117] = DrawStruct(0, 169, 73);
-	_data[118] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[118] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[119] = DrawStruct(0, 110, 73);
 	_data[120] = DrawStruct(0, 110, 73);
-	_data[121] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[121] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[122] = DrawStruct(0, 110, 73);
 	_data[123] = DrawStruct(0, 110, 73);
 	_data[124] = DrawStruct(0, 72, 43);
@@ -170,6 +170,15 @@ OutdoorDrawList::OutdoorDrawList() : _sky1(_data[0]), _sky2(_data[1]),
 
 	for (int idx = 0; idx < 132; ++idx)
 		_data[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
+}
+
+void OutdoorDrawList::draw() {
+	// Mark all items to be drawn as being clipped to the scene area
+	for (int idx = 0; idx < size(); ++idx)
+		_data[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
+
+	// Draw the list
+	(*g_vm->_windows)[3].drawList(_data, size());
 }
 
 /*------------------------------------------------------------------------*/
@@ -286,16 +295,16 @@ IndoorDrawList::IndoorDrawList() :
 	_data[84] = DrawStruct(0, 71, 53, 12, SPRFLAG_HORIZ_FLIPPED);
 	_data[85] = DrawStruct(0, 80, 57, 12, 0);
 	_data[86] = DrawStruct(0, 64, 57, 12, SPRFLAG_HORIZ_FLIPPED);
-	_data[87] = DrawStruct(7, -24, 52, 0, SPRFLAG_SCENE_CLIPPED);
+	_data[87] = DrawStruct(7, -24, 52, 0);
 	_data[88] = DrawStruct(7, 32, 52);
 	_data[89] = DrawStruct(7, 88, 52);
 	_data[90] = DrawStruct(0, 144, 52);
-	_data[91] = DrawStruct(0, 200, 52, 0, SPRFLAG_SCENE_CLIPPED);
-	_data[92] = DrawStruct(0, -79, 52, 11, SPRFLAG_SCENE_CLIPPED);
+	_data[91] = DrawStruct(0, 200, 52, 0);
+	_data[92] = DrawStruct(0, -79, 52, 11);
 	_data[93] = DrawStruct(0, -27, 52, 11, 0);
 	_data[94] = DrawStruct(0, 32, 52, 11, 0);
 	_data[95] = DrawStruct(0, 89, 52, 11, 0);
-	_data[96] = DrawStruct(0, 145, 52, 11, SPRFLAG_SCENE_CLIPPED);
+	_data[96] = DrawStruct(0, 145, 52, 11);
 	_data[97] = DrawStruct(0, -8, 50, 12, 0);
 	_data[98] = DrawStruct(0, -65, 50, 12, 0);
 	_data[99] = DrawStruct(0, 49, 50, 12, 0);
@@ -318,17 +327,17 @@ IndoorDrawList::IndoorDrawList() :
 	_data[116] = DrawStruct(0, 63, 47, 8, SPRFLAG_HORIZ_FLIPPED);
 	_data[117] = DrawStruct(0, 94, 52, 8, 0);
 	_data[118] = DrawStruct(0, 50, 52, 8, SPRFLAG_HORIZ_FLIPPED);
-	_data[119] = DrawStruct(6, -40, 40, 0, SPRFLAG_SCENE_CLIPPED);
+	_data[119] = DrawStruct(6, -40, 40, 0);
 	_data[120] = DrawStruct(6, 64, 40);
-	_data[121] = DrawStruct(0, 168, 40, 0, SPRFLAG_SCENE_CLIPPED);
-	_data[122] = DrawStruct(0, -72, 40, 6, SPRFLAG_SCENE_CLIPPED);
+	_data[121] = DrawStruct(0, 168, 40, 0);
+	_data[122] = DrawStruct(0, -72, 40, 6);
 	_data[123] = DrawStruct(0, 32, 40, 6, 0);
-	_data[124] = DrawStruct(0, 137, 40, 6, SPRFLAG_SCENE_CLIPPED);
+	_data[124] = DrawStruct(0, 137, 40, 6);
 	_data[125] = DrawStruct(0, -7, 25, 7, 0);
-	_data[126] = DrawStruct(0, -112, 25, 7, SPRFLAG_SCENE_CLIPPED);
-	_data[127] = DrawStruct(0, 98, 25, 7, SPRFLAG_SCENE_CLIPPED);
-	_data[128] = DrawStruct(0, -112, 29, 8, SPRFLAG_SCENE_CLIPPED);
-	_data[129] = DrawStruct(0, 98, 29, 8, SPRFLAG_SCENE_CLIPPED);
+	_data[126] = DrawStruct(0, -112, 25, 7);
+	_data[127] = DrawStruct(0, 98, 25, 7);
+	_data[128] = DrawStruct(0, -112, 29, 8);
+	_data[129] = DrawStruct(0, 98, 29, 8);
 	_data[130] = DrawStruct(0, -38, 29, 8, 0);
 	_data[131] = DrawStruct(0, 25, 29, 8, 0);
 	_data[132] = DrawStruct(0, -7, 29, 8, 0);
@@ -342,23 +351,23 @@ IndoorDrawList::IndoorDrawList() :
 	_data[140] = DrawStruct(0, 55, 41, 4, SPRFLAG_HORIZ_FLIPPED);
 	_data[141] = DrawStruct(0, 106, 47, 4, 0);
 	_data[142] = DrawStruct(0, 38, 47, 4, SPRFLAG_HORIZ_FLIPPED);
-	_data[143] = DrawStruct(0, -136, 24, 0, SPRFLAG_SCENE_CLIPPED);
+	_data[143] = DrawStruct(0, -136, 24, 0);
 	_data[144] = DrawStruct(0, 8, 12);
 	_data[145] = DrawStruct(0, 32, 24);
 	_data[146] = DrawStruct(0, 200, 12, 0, SPRFLAG_HORIZ_FLIPPED);
-	_data[147] = DrawStruct(0, 200, 24, 0, SPRFLAG_SCENE_CLIPPED);
+	_data[147] = DrawStruct(0, 200, 24, 0);
 	_data[148] = DrawStruct(0, 32, 24);
-	_data[149] = DrawStruct(0, -5, 2, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
-	_data[150] = DrawStruct(0, -67, 10, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[149] = DrawStruct(0, -5, 2, 0, SPRFLAG_BOTTOM_CLIPPED);
+	_data[150] = DrawStruct(0, -67, 10, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[151] = DrawStruct(0, 44, 73);
 	_data[152] = DrawStruct(0, 44, 73);
-	_data[153] = DrawStruct(0, 58, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[153] = DrawStruct(0, 58, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[154] = DrawStruct(0, 169, 73);
 	_data[155] = DrawStruct(0, 169, 73);
-	_data[156] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[156] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[157] = DrawStruct(0, 110, 73);
 	_data[158] = DrawStruct(0, 110, 73);
-	_data[159] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED | SPRFLAG_SCENE_CLIPPED);
+	_data[159] = DrawStruct(0, -5, 14, 0, SPRFLAG_BOTTOM_CLIPPED);
 	_data[160] = DrawStruct(0, 110, 73);
 	_data[161] = DrawStruct(0, 110, 73);
 	_data[162] = DrawStruct(0, 72, 43);
@@ -369,9 +378,15 @@ IndoorDrawList::IndoorDrawList() :
 	_data[167] = DrawStruct(0, 47, 36, 0, SPRFLAG_HORIZ_FLIPPED);
 	_data[168] = DrawStruct(0, 118, 42);
 	_data[169] = DrawStruct(0, 26, 42, 0, SPRFLAG_HORIZ_FLIPPED);
+}
 
-	for (int idx = 0; idx < 170; ++idx)
+void IndoorDrawList::draw() {
+	// Mark all items to be drawn as being clipped to the scene area
+	for (int idx = 0; idx < size(); ++idx)
 		_data[idx]._flags |= SPRFLAG_SCENE_CLIPPED;
+
+	// Draw the list
+	(*g_vm->_windows)[3].drawList(_data, size());
 }
 
 /*------------------------------------------------------------------------*/
@@ -3550,7 +3565,6 @@ void InterfaceScene::setOutdoorsObjects() {
 
 void InterfaceScene::drawIndoors() {
 	Map &map = *_vm->_map;
-	Windows &windows = *_vm->_windows;
 	int surfaceId;
 
 	// Draw any surface tiles on top of the default ground
@@ -4385,7 +4399,7 @@ void InterfaceScene::drawIndoors() {
 	_indoorList._horizon._frame = 7;
 
 	// Finally draw the darn indoor scene
-	windows[3].drawList(&_indoorList[0], _indoorList.size());
+	_indoorList.draw();
 
 	// Check for any character shooting
 	_isAttacking = false;
@@ -4400,7 +4414,6 @@ void InterfaceScene::drawIndoors() {
 void InterfaceScene::drawOutdoors() {
 	Map &map = *_vm->_map;
 	Party &party = *_vm->_party;
-	Windows &windows = *_vm->_windows;
 	int surfaceId;
 
 	// Draw any surface tiles on top of the default ground
@@ -4466,7 +4479,7 @@ void InterfaceScene::drawOutdoors() {
 	_outdoorList._groundSprite._flags = _flipWater ? SPRFLAG_HORIZ_FLIPPED : 0;
 
 	// Finally render the outdoor scene
-	windows[3].drawList(&_outdoorList[0], _outdoorList.size());
+	_outdoorList.draw();
 
 	// Check for any character shooting
 	_isAttacking = false;
