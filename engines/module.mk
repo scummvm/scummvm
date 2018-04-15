@@ -1,6 +1,7 @@
 MODULE := engines
 
 MODULE_OBJS := \
+	unknown-game-dialog.o \
 	advancedDetector.o \
 	dialogs.o \
 	engine.o \

@@ -30,6 +30,8 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "gui/EventRecorder.h"
+#include "gui/gui-manager.h"
+#include "engines/unknown-game-dialog.h"
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
@@ -326,36 +328,54 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 }
 
 void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps, const ADGameIdList &matchedGameIds) const {
-	Common::String report = Common::String::format(
-			_("The game in '%s' seems to be an unknown %s engine game "
-			  "variant.\n\nPlease report the following data to the ScummVM "
-			  "team at %s along with the name of the game you tried to add and "
-			  "its version, language, etc.:"),
-			path.getPath().c_str(), getName(), "https://bugs.scummvm.org/");
+	const char *reportCommon = "The game in '%s' seems to be an unknown %s engine game " \
+							   "variant.\n\nPlease report the following data to the ScummVM " \
+							   "team at %s along with the name of the game you tried to add and " \
+							   "its version, language, etc.:";
+	Common::String report			= Common::String::format(reportCommon, path.getPath().c_str(), getName(), "https://bugs.scummvm.org/");
+	Common::String reportTranslated = Common::String::format(_(reportCommon), path.getPath().c_str(), getName(), "https://bugs.scummvm.org/");
+	Common::String bugtrackerAffectedEngine = getName();
 
 	if (matchedGameIds.size()) {
 		report += "\n\n";
-		report += _("Matched game IDs:");
+		reportTranslated += "\n\n";
+		report += "Matched game IDs:";
+		reportTranslated += _("Matched game IDs:");
 		report += " ";
+		reportTranslated += " ";
 
 		for (ADGameIdList::const_iterator gameId = matchedGameIds.begin(); gameId != matchedGameIds.end(); ++gameId) {
 			if (gameId != matchedGameIds.begin()) {
 				report += ", ";
+				reportTranslated += ", ";
 			}
 			report += *gameId;
+			reportTranslated += *gameId;
 		}
 	}
 
 	report += "\n\n";
+	reportTranslated += "\n\n";
 
-	report.wordWrap(80);
+	reportTranslated.wordWrap(65);
 
-	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file)
+	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file) {
 		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
-
+		reportTranslated += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
+	}
 	report += "\n";
+	reportTranslated += "\n";
 
-	g_system->logMessage(LogMessageType::kInfo, report.c_str());
+	// Write the original message about the unknown game to the log file
+	Common::String reportLog = report;
+	reportLog.wordWrap(80);
+	g_system->logMessage(LogMessageType::kInfo, reportLog.c_str());
+
+	// Check if the GUI is running, show the UnknownGameDialog and print the translated unknown game information
+	if (GUI::GuiManager::hasInstance() && g_gui.isActive()) {
+		GUI::UnknownGameDialog dialog(report, reportTranslated, bugtrackerAffectedEngine);
+		dialog.runModal();
+	}
 }
 
 void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName) const {
