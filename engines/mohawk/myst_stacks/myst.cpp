@@ -1626,6 +1626,7 @@ void Myst::observatoryIncrementMonth(int16 increment) {
 	}
 
 	_vm->_sound->playEffect(8500);
+	_vm->wait(20);
 }
 
 void Myst::observatoryMonthChange_run() {
@@ -1692,6 +1693,7 @@ void Myst::observatoryIncrementDay(int16 increment) {
 	}
 
 	_vm->_sound->playEffect(8500);
+	_vm->wait(20);
 }
 
 void Myst::observatoryDayChange_run() {
@@ -1752,6 +1754,7 @@ void Myst::observatoryIncrementYear(int16 increment) {
 	}
 
 	_vm->_sound->playEffect(8500);
+	_vm->wait(20);
 }
 
 void Myst::observatoryYearChange_run() {
@@ -1817,6 +1820,7 @@ void Myst::observatoryIncrementTime(int16 increment) {
 	}
 
 	_vm->_sound->playEffect(8500);
+	_vm->wait(20);
 }
 
 void Myst::observatoryTimeChange_run() {
@@ -2512,6 +2516,7 @@ void Myst::observatoryUpdateMonth() {
 		_state.observatoryMonthSetting = month;
 		_state.observatoryMonthSlider = _observatoryMonthSlider->_pos.y;
 		_vm->_sound->playEffect(8500);
+		_vm->wait(20);
 
 		// Redraw digits
 		_vm->redrawArea(73);
@@ -2539,6 +2544,7 @@ void Myst::observatoryUpdateDay() {
 		_state.observatoryDaySetting = day;
 		_state.observatoryDaySlider = _observatoryDaySlider->_pos.y;
 		_vm->_sound->playEffect(8500);
+		_vm->wait(20);
 
 		// Redraw digits
 		_vm->redrawArea(75);
@@ -2567,6 +2573,7 @@ void Myst::observatoryUpdateYear() {
 		_state.observatoryYearSetting = year;
 		_state.observatoryYearSlider = _observatoryYearSlider->_pos.y;
 		_vm->_sound->playEffect(8500);
+		_vm->wait(20);
 
 		// Redraw digits
 		_vm->redrawArea(79);
@@ -2597,6 +2604,7 @@ void Myst::observatoryUpdateTime() {
 		_state.observatoryTimeSetting = time;
 		_state.observatoryTimeSlider = _observatoryTimeSlider->_pos.y;
 		_vm->_sound->playEffect(8500);
+		_vm->wait(20);
 
 		// Redraw digits
 		_vm->redrawArea(80);
