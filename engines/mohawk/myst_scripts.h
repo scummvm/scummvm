@@ -87,6 +87,7 @@ public:
 	void showMap();
 
 	void animatedUpdate(const ArgumentsArray &args, uint16 delay);
+	void soundWaitStop() const;
 
 	// Common opcodes
 	DECLARE_OPCODE(o_toggleVar);

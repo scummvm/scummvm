@@ -625,6 +625,8 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 var, const ArgumentsArray 
 }
 
 void MystScriptParser::o_changeBackgroundSound(uint16 var, const ArgumentsArray &args) {
+	soundWaitStop();
+
 	// Used on Stoneship Card 2080
 	// Used on Channelwood Card 3225 with argc = 8 i.e. Conditional Sound List
 	Common::MemoryWriteStreamDynamic writeStream = Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
@@ -787,12 +789,16 @@ void MystScriptParser::o_soundWaitStop(uint16 var, const ArgumentsArray &args) {
 	// Used on Selenitic Card 1191 (Maze Runner)
 	// Used on Mechanical Card 6267 (Code Lock)
 	// Used when Button is pushed...
-	while (_vm->_sound->isEffectPlaying())
+	soundWaitStop();
+}
+
+void MystScriptParser::soundWaitStop() const {
+	while (_vm->_sound->isEffectPlaying() && !Engine::shouldQuit())
 		_vm->doFrame();
 }
 
 void MystScriptParser::o_quit(uint16 var, const ArgumentsArray &args) {
-	_vm->quitGame();
+	Engine::quitGame();
 }
 
 void MystScriptParser::showMap() {
