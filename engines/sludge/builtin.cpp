@@ -62,7 +62,6 @@ extern int lastFramesPerSecond, thumbWidth, thumbHeight;
 extern bool allowAnyFilename;
 extern VariableStack *noStack;
 extern StatusStuff  *nowStatus;
-extern ScreenRegion *overRegion;
 extern int numBIFNames, numUserFunc;
 
 extern Common::String *allUserFunc;
@@ -856,7 +855,7 @@ builtIn(anim) {
 	}
 
 	// First store the frame numbers and take 'em off the stack
-	PersonaAnimation  *ba = createPersonaAnim(numParams - 1, fun->stack);
+	PersonaAnimation  *ba = g_sludge->_peopleMan->createPersonaAnim(numParams - 1, fun->stack);
 
 	// Only remaining paramter is the file number
 	int fileNumber;
@@ -868,7 +867,7 @@ builtIn(anim) {
 	LoadedSpriteBank *sprBanky = g_sludge->_gfxMan->loadBankForAnim(fileNumber);
 	if (!sprBanky)
 		return BR_ERROR;    // File not found, fatal done already
-	setBankFile(ba, sprBanky);
+	g_sludge->_peopleMan->setBankFile(ba, sprBanky);
 
 	// Return value
 	newAnimationVariable(fun->reg, ba);
@@ -1341,7 +1340,7 @@ builtIn(getObjectX) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	OnScreenPerson *pers = findPerson(objectNumber);
+	OnScreenPerson *pers = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (pers) {
 		setVariable(fun->reg, SVT_INT, pers->x);
 	} else {
@@ -1362,7 +1361,7 @@ builtIn(getObjectY) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	OnScreenPerson *pers = findPerson(objectNumber);
+	OnScreenPerson *pers = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (pers) {
 		setVariable(fun->reg, SVT_INT, pers->y);
 	} else {
@@ -1450,7 +1449,7 @@ builtIn(addCharacter) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	if (addPerson(x, y, objectNumber, p))
+	if (g_sludge->_peopleMan->addPerson(x, y, objectNumber, p))
 		return BR_CONTINUE;
 	return BR_ERROR;
 }
@@ -1461,7 +1460,7 @@ builtIn(hideCharacter) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setShown(false, objectNumber);
+	g_sludge->_peopleMan->setShown(false, objectNumber);
 	return BR_CONTINUE;
 }
 
@@ -1471,14 +1470,14 @@ builtIn(showCharacter) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setShown(true, objectNumber);
+	g_sludge->_peopleMan->setShown(true, objectNumber);
 	return BR_CONTINUE;
 }
 
 builtIn(removeAllCharacters) {
 	UNUSEDALL
 	killSpeechTimers();
-	killMostPeople();
+	g_sludge->_peopleMan->killMostPeople();
 	return BR_CONTINUE;
 }
 
@@ -1491,7 +1490,7 @@ builtIn(setCharacterDrawMode) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setDrawMode(di, obj);
+	g_sludge->_peopleMan->setDrawMode(di, obj);
 	return BR_CONTINUE;
 }
 builtIn(setCharacterTransparency) {
@@ -1503,7 +1502,7 @@ builtIn(setCharacterTransparency) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setPersonTransparency(obj, x);
+	g_sludge->_peopleMan->setPersonTransparency(obj, x);
 	return BR_CONTINUE;
 }
 builtIn(setCharacterColourise) {
@@ -1524,7 +1523,7 @@ builtIn(setCharacterColourise) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setPersonColourise(obj, r, g, b, mix);
+	g_sludge->_peopleMan->setPersonColourise(obj, r, g, b, mix);
 	return BR_CONTINUE;
 }
 
@@ -1537,7 +1536,7 @@ builtIn(setScale) {
 	if (!getValueType(val1, SVT_INT, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setScale((int16)val1, (int16)val2);
+	g_sludge->_peopleMan->setScale((int16)val1, (int16)val2);
 	return BR_CONTINUE;
 }
 
@@ -1549,7 +1548,7 @@ builtIn(stopCharacter) {
 	trimStack(fun->stack);
 
 	// Return value
-	setVariable(fun->reg, SVT_INT, stopPerson(obj));
+	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->stopPerson(obj));
 	return BR_CONTINUE;
 }
 
@@ -1560,7 +1559,7 @@ builtIn(pasteCharacter) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	OnScreenPerson *thisPerson = findPerson(obj);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(obj);
 	if (thisPerson) {
 		PersonaAnimation  *myAnim;
 		myAnim = thisPerson->myAnim;
@@ -1589,8 +1588,8 @@ builtIn(animate) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	animatePerson(obj, pp);
-	setVariable(fun->reg, SVT_INT, timeForAnim(pp));
+	g_sludge->_peopleMan->animatePerson(obj, pp);
+	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->timeForAnim(pp));
 	return BR_CONTINUE;
 }
 
@@ -1604,7 +1603,7 @@ builtIn(setCostume) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	animatePerson(obj, pp);
+	g_sludge->_peopleMan->animatePerson(obj, pp);
 	return BR_CONTINUE;
 }
 
@@ -1617,7 +1616,7 @@ builtIn(floatCharacter) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, floatCharacter(di, obj));
+	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->floatCharacter(di, obj));
 	return BR_CONTINUE;
 }
 
@@ -1630,7 +1629,7 @@ builtIn(setCharacterWalkSpeed) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, setCharacterWalkSpeed(di, obj));
+	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->setCharacterWalkSpeed(di, obj));
 	return BR_CONTINUE;
 }
 
@@ -1643,7 +1642,7 @@ builtIn(turnCharacter) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, turnPersonToFace(obj, di));
+	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->turnPersonToFace(obj, di));
 	return BR_CONTINUE;
 }
 
@@ -1656,7 +1655,7 @@ builtIn(setCharacterExtra) {
 	if (!getValueType(obj, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, setPersonExtra(obj, di));
+	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->setPersonExtra(obj, di));
 	return BR_CONTINUE;
 }
 
@@ -1666,7 +1665,7 @@ builtIn(removeCharacter) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	removeOneCharacter(objectNumber);
+	g_sludge->_peopleMan->removeOneCharacter(objectNumber);
 	return BR_CONTINUE;
 }
 
@@ -1686,12 +1685,12 @@ static BuiltReturn moveChr(int numParams, LoadedFunction *fun, bool force, bool 
 			trimStack(fun->stack);
 
 			if (force) {
-				if (forceWalkingPerson(x, y, objectNumber, fun, -1))
+				if (g_sludge->_peopleMan->forceWalkingPerson(x, y, objectNumber, fun, -1))
 					return BR_PAUSE;
 			} else if (immediate) {
-				jumpPerson(x, y, objectNumber);
+				g_sludge->_peopleMan->jumpPerson(x, y, objectNumber);
 			} else {
-				if (makeWalkingPerson(x, y, objectNumber, fun, -1))
+				if (g_sludge->_peopleMan->makeWalkingPerson(x, y, objectNumber, fun, -1))
 					return BR_PAUSE;
 			}
 			return BR_CONTINUE;
@@ -1712,12 +1711,12 @@ static BuiltReturn moveChr(int numParams, LoadedFunction *fun, bool force, bool 
 				return BR_CONTINUE;
 
 			if (force) {
-				if (forceWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
+				if (g_sludge->_peopleMan->forceWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
 					return BR_PAUSE;
 			} else if (immediate) {
-				jumpPerson(reggie->sX, reggie->sY, objectNumber);
+				g_sludge->_peopleMan->jumpPerson(reggie->sX, reggie->sY, objectNumber);
 			} else {
-				if (makeWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
+				if (g_sludge->_peopleMan->makeWalkingPerson(reggie->sX, reggie->sY, objectNumber, fun, reggie->di))
 					return BR_PAUSE;
 			}
 			return BR_CONTINUE;
@@ -2007,7 +2006,7 @@ builtIn(spinCharacter) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	OnScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (thisPerson) {
 		thisPerson->wantAngle = number;
 		thisPerson->spinning = true;
@@ -2026,7 +2025,7 @@ builtIn(getCharacterDirection) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	OnScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (thisPerson) {
 		setVariable(fun->reg, SVT_INT, thisPerson->direction);
 	} else {
@@ -2041,7 +2040,7 @@ builtIn(isCharacter) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	OnScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
 	setVariable(fun->reg, SVT_INT, thisPerson != NULL);
 	return BR_CONTINUE;
 }
@@ -2052,7 +2051,7 @@ builtIn(normalCharacter) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	OnScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (thisPerson) {
 		thisPerson->myAnim = thisPerson->myPersona->animation[thisPerson->direction];
 		setVariable(fun->reg, SVT_INT, 1);
@@ -2068,7 +2067,7 @@ builtIn(isMoving) {
 	if (!getValueType(objectNumber, SVT_OBJTYPE, fun->stack->thisVar))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	OnScreenPerson *thisPerson = findPerson(objectNumber);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (thisPerson) {
 		setVariable(fun->reg, SVT_INT, thisPerson->walking);
 	} else {
@@ -2173,7 +2172,7 @@ builtIn(setCharacterSpinSpeed) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	OnScreenPerson *thisPerson = findPerson(who);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(who);
 
 	if (thisPerson) {
 		thisPerson->spinSpeed = speed;
@@ -2194,7 +2193,7 @@ builtIn(setCharacterAngleOffset) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	OnScreenPerson *thisPerson = findPerson(who);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(who);
 
 	if (thisPerson) {
 		thisPerson->angleOffset = angle;
@@ -2390,7 +2389,7 @@ builtIn(getCharacterScale) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 
-	OnScreenPerson *pers = findPerson(objectNumber);
+	OnScreenPerson *pers = g_sludge->_peopleMan->findPerson(objectNumber);
 	if (pers) {
 		setVariable(fun->reg, SVT_INT, pers->scale * 100);
 	} else {

@@ -147,7 +147,7 @@ void initSludge() {
 	g_sludge->_languageMan->init();
 	g_sludge->_gfxMan->init();
 	g_sludge->_resMan->init();
-	initPeople();
+	g_sludge->_peopleMan->init();
 	initFloor();
 	g_sludge->_objMan->init();
 	g_sludge->_speechMan->init();
@@ -179,7 +179,7 @@ void initSludge() {
 
 void killSludge() {
 	killAllFunctions();
-	killAllPeople();
+	g_sludge->_peopleMan->kill();
 	g_sludge->_regionMan->kill();
 	setFloorNull();
 	g_sludge->_speechMan->kill();
@@ -330,7 +330,7 @@ void displayBase() {
 	g_sludge->_gfxMan->clear(); // Clear screen
 	g_sludge->_gfxMan->drawBackDrop();// Draw Backdrop
 	g_sludge->_gfxMan->drawZBuffer(g_sludge->_gfxMan->getCamX(), g_sludge->_gfxMan->getCamY(), false);
-	drawPeople();// Then add any moving characters...
+	g_sludge->_peopleMan->drawPeople();// Then add any moving characters...
 	g_sludge->_gfxMan->displaySpriteLayers();
 }
 

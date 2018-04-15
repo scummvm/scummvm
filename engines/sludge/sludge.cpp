@@ -29,6 +29,7 @@
 #include "sludge/event.h"
 #include "sludge/fonttext.h"
 #include "sludge/graphics.h"
+#include "sludge/people.h"
 #include "sludge/region.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
@@ -74,6 +75,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	fatalInfo = "Initialisation error! Something went wrong before we even got started!";
 
 	// Init managers
+	_peopleMan = new PeopleManager(this);
 	_resMan = new ResourceManager();
 	_languageMan = new LanguageManager();
 	_objMan = new ObjectManager(this);
@@ -126,6 +128,8 @@ SludgeEngine::~SludgeEngine() {
 	_speechMan = nullptr;
 	delete _regionMan;
 	_regionMan = nullptr;
+	delete _peopleMan;
+	_peopleMan = nullptr;
 }
 
 Common::Error SludgeEngine::run() {

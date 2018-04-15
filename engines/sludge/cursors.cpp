@@ -44,18 +44,18 @@ CursorManager::~CursorManager() {
 }
 
 void CursorManager::init() {
-	_mouseCursorAnim = makeNullAnim();
+	_mouseCursorAnim = _vm->_peopleMan->makeNullAnim();
 	_mouseCursorFrameNum = 0;
 	_mouseCursorCountUp = 0;
 }
 
 void CursorManager::kill() {
-	deleteAnim(_mouseCursorAnim);
+	_vm->_peopleMan->deleteAnim(_mouseCursorAnim);
 	_mouseCursorAnim = nullptr;
 }
 
 void CursorManager::pickAnimCursor(PersonaAnimation  *pp) {
-	deleteAnim(_mouseCursorAnim);
+	_vm->_peopleMan->deleteAnim(_mouseCursorAnim);
 	_mouseCursorAnim = pp;
 	_mouseCursorFrameNum = 0;
 	_mouseCursorCountUp = 0;
@@ -107,18 +107,18 @@ void CursorManager::pasteCursor(int x, int y, PersonaAnimation  *c) {
 void CursorManager::freeze(FrozenStuffStruct *frozenStuff) {
 	frozenStuff->mouseCursorAnim = _mouseCursorAnim;
 	frozenStuff->mouseCursorFrameNum = _mouseCursorFrameNum;
-	_mouseCursorAnim = makeNullAnim();
+	_mouseCursorAnim = _vm->_peopleMan->makeNullAnim();
 	_mouseCursorFrameNum = 0;
 }
 
 void CursorManager::resotre(FrozenStuffStruct *frozenStuff) {
-	deleteAnim(_mouseCursorAnim);
+	_vm->_peopleMan->deleteAnim(_mouseCursorAnim);
 	_mouseCursorAnim = frozenStuff->mouseCursorAnim;
 	_mouseCursorFrameNum = frozenStuff->mouseCursorFrameNum;
 }
 
 void CursorManager::saveCursor(Common::WriteStream *stream) {
-	saveAnim(_mouseCursorAnim, stream);
+	_vm->_peopleMan->saveAnim(_mouseCursorAnim, stream);
 	stream->writeUint16BE(_mouseCursorFrameNum);
 }
 
@@ -126,7 +126,7 @@ bool CursorManager::loadCursor(Common::SeekableReadStream *stream) {
 	_mouseCursorAnim = new PersonaAnimation;
 	if (!checkNew(_mouseCursorAnim))
 		return false;
-	if (!loadAnim(_mouseCursorAnim, stream))
+	if (!_vm->_peopleMan->loadAnim(_mouseCursorAnim, stream))
 		return false;
 	_mouseCursorFrameNum = stream->readUint16BE();
 	return true;

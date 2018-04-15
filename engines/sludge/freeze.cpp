@@ -41,10 +41,6 @@
 
 namespace Sludge {
 
-extern OnScreenPerson *allPeople;
-extern ScreenRegion *allScreenRegions;
-extern ScreenRegion *overRegion;
-
 void GraphicsManager::freezeGraphics() {
 
 	int w = _winWidth;
@@ -87,8 +83,7 @@ bool GraphicsManager::freeze() {
 	_backdropSurface.copyFrom(_freezeSurface);
 	_backdropExists = true;
 
-	newFreezer->allPeople = allPeople;
-	allPeople = NULL;
+	_vm->_peopleMan->freeze(newFreezer);
 
 	StatusStuff  *newStatusStuff = new StatusStuff ;
 	if (!checkNew(newStatusStuff))
@@ -133,9 +128,7 @@ void GraphicsManager::unfreeze(bool killImage) {
 	_vm->_evtMan->mouseX() = (int)(_vm->_evtMan->mouseX() / _cameraZoom);
 	_vm->_evtMan->mouseY() = (int)(_vm->_evtMan->mouseY() / _cameraZoom);
 
-	killAllPeople();
-	allPeople = _frozenStuff->allPeople;
-
+	g_sludge->_peopleMan->resotre(_frozenStuff);
 	g_sludge->_regionMan->resotre(_frozenStuff);
 
 	killLightMap();

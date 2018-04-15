@@ -47,22 +47,30 @@
 namespace Sludge {
 
 extern VariableStack *noStack;
-
 extern int ssgVersion;
-
-ScreenRegion personRegion;
 extern Floor *currentFloor;
 
-OnScreenPerson *allPeople = NULL;
-int16 scaleHorizon = 75;
-int16 scaleDivide = 150;
+PeopleManager::PeopleManager(SludgeEngine *vm) {
+	_vm = vm;
+	_allPeople = nullptr;
+	_scaleHorizon = 75;
+	_scaleDivide = 150;
+	_personRegion = new ScreenRegion;
+}
 
-void setFrames(OnScreenPerson &m, int a) {
+PeopleManager::~PeopleManager() {
+	kill();
+
+	delete _personRegion;
+	_personRegion = nullptr;
+}
+
+void PeopleManager::setFrames(OnScreenPerson &m, int a) {
 	m.myAnim = m.myPersona->animation[(a * m.myPersona->numDirections) + m.direction];
 }
 
-PersonaAnimation  *createPersonaAnim(int num, VariableStack *&stacky) {
-	PersonaAnimation  *newP = new PersonaAnimation ;
+PersonaAnimation *PeopleManager::createPersonaAnim(int num, VariableStack *&stacky) {
+	PersonaAnimation *newP = new PersonaAnimation ;
 	checkNew(newP);
 
 	newP->numFrames = num;
@@ -93,8 +101,8 @@ PersonaAnimation  *createPersonaAnim(int num, VariableStack *&stacky) {
 	return newP;
 }
 
-PersonaAnimation  *makeNullAnim() {
-	PersonaAnimation  *newAnim = new PersonaAnimation ;
+PersonaAnimation *PeopleManager::makeNullAnim() {
+	PersonaAnimation *newAnim = new PersonaAnimation ;
 	if (!checkNew(newAnim))
 		return NULL;
 
@@ -104,10 +112,10 @@ PersonaAnimation  *makeNullAnim() {
 	return newAnim;
 }
 
-PersonaAnimation  *copyAnim(PersonaAnimation  *orig) {
+PersonaAnimation *PeopleManager::copyAnim(PersonaAnimation *orig) {
 	int num = orig->numFrames;
 
-	PersonaAnimation  *newAnim = new PersonaAnimation ;
+	PersonaAnimation *newAnim = new PersonaAnimation ;
 	if (!checkNew(newAnim))
 		return NULL;
 
@@ -135,7 +143,7 @@ PersonaAnimation  *copyAnim(PersonaAnimation  *orig) {
 	return newAnim;
 }
 
-void deleteAnim(PersonaAnimation  *orig) {
+void PeopleManager::deleteAnim(PersonaAnimation *orig) {
 
 	if (orig) {
 		if (orig->numFrames) {
@@ -146,7 +154,7 @@ void deleteAnim(PersonaAnimation  *orig) {
 	}
 }
 
-void turnMeAngle(OnScreenPerson *thisPerson, int direc) {
+void PeopleManager::turnMeAngle(OnScreenPerson *thisPerson, int direc) {
 	int d = thisPerson->myPersona->numDirections;
 	thisPerson->angle = direc;
 	direc += (180 / d) + 180 + thisPerson->angleOffset;
@@ -155,14 +163,14 @@ void turnMeAngle(OnScreenPerson *thisPerson, int direc) {
 	thisPerson->direction = (direc * d) / 360;
 }
 
-bool initPeople() {
-	personRegion.sX = 0;
-	personRegion.sY = 0;
-	personRegion.di = -1;
+bool PeopleManager::init() {
+	_personRegion->sX = 0;
+	_personRegion->sY = 0;
+	_personRegion->di = -1;
 	return true;
 }
 
-void spinStep(OnScreenPerson *thisPerson) {
+void PeopleManager::spinStep(OnScreenPerson *thisPerson) {
 	int diff = (thisPerson->angle + 360) - thisPerson->wantAngle;
 	int eachSlice = thisPerson->spinSpeed ? thisPerson->spinSpeed : (360 / thisPerson->myPersona->numDirections);
 	while (diff > 180) {
@@ -179,7 +187,7 @@ void spinStep(OnScreenPerson *thisPerson) {
 	}
 }
 
-void rethinkAngle(OnScreenPerson *thisPerson) {
+void PeopleManager::rethinkAngle(OnScreenPerson *thisPerson) {
 	int d = thisPerson->myPersona->numDirections;
 	int direc = thisPerson->angle + (180 / d) + 180 + thisPerson->angleOffset;
 	while (direc >= 360)
@@ -187,7 +195,7 @@ void rethinkAngle(OnScreenPerson *thisPerson) {
 	thisPerson->direction = (direc * d) / 360;
 }
 
-bool turnPersonToFace(int thisNum, int direc) {
+bool PeopleManager::turnPersonToFace(int thisNum, int direc) {
 	OnScreenPerson *thisPerson = findPerson(thisNum);
 	if (thisPerson) {
 		if (thisPerson->continueAfterWalking)
@@ -202,7 +210,7 @@ bool turnPersonToFace(int thisNum, int direc) {
 	return false;
 }
 
-bool setPersonExtra(int thisNum, int extra) {
+bool PeopleManager::setPersonExtra(int thisNum, int extra) {
 	OnScreenPerson *thisPerson = findPerson(thisNum);
 	if (thisPerson) {
 		thisPerson->extra = extra;
@@ -213,20 +221,20 @@ bool setPersonExtra(int thisNum, int extra) {
 	return false;
 }
 
-void setScale(int16 h, int16 d) {
-	scaleHorizon = h;
-	scaleDivide = d;
+void PeopleManager::setScale(int16 h, int16 d) {
+	_scaleHorizon = h;
+	_scaleDivide = d;
 }
 
-void moveAndScale(OnScreenPerson &me, float x, float y) {
+void PeopleManager::moveAndScale(OnScreenPerson &me, float x, float y) {
 	me.x = x;
 	me.y = y;
-	if (!(me.extra & EXTRA_NOSCALE) && scaleDivide)
-		me.scale = (me.y - scaleHorizon) / scaleDivide;
+	if (!(me.extra & EXTRA_NOSCALE) && _scaleDivide)
+		me.scale = (me.y - _scaleHorizon) / _scaleDivide;
 }
 
-OnScreenPerson *findPerson(int v) {
-	OnScreenPerson *thisPerson = allPeople;
+OnScreenPerson *PeopleManager::findPerson(int v) {
+	OnScreenPerson *thisPerson = _allPeople;
 	while (thisPerson) {
 		if (v == thisPerson->thisType->objectNum)
 			break;
@@ -235,13 +243,13 @@ OnScreenPerson *findPerson(int v) {
 	return thisPerson;
 }
 
-void movePerson(int x, int y, int objNum) {
+void PeopleManager::movePerson(int x, int y, int objNum) {
 	OnScreenPerson *moveMe = findPerson(objNum);
 	if (moveMe)
 		moveAndScale(*moveMe, x, y);
 }
 
-void setShown(bool h, int ob) {
+void PeopleManager::setShown(bool h, int ob) {
 	OnScreenPerson *moveMe = findPerson(ob);
 	if (moveMe)
 		moveMe->show = h;
@@ -271,7 +279,7 @@ enum drawModes {
 	numDrawModes
 };
 
-void setMyDrawMode(OnScreenPerson *moveMe, int h) {
+void PeopleManager::setMyDrawMode(OnScreenPerson *moveMe, int h) {
 	switch (h) {
 		case drawModeTransparent3:
 			moveMe->r = moveMe->g = moveMe->b = 0;
@@ -377,7 +385,7 @@ void setMyDrawMode(OnScreenPerson *moveMe, int h) {
 
 }
 
-void setDrawMode(int h, int ob) {
+void PeopleManager::setDrawMode(int h, int ob) {
 	OnScreenPerson *moveMe = findPerson(ob);
 	if (!moveMe)
 		return;
@@ -385,7 +393,7 @@ void setDrawMode(int h, int ob) {
 	setMyDrawMode(moveMe, h);
 }
 
-void setPersonTransparency(int ob, byte x) {
+void PeopleManager::setPersonTransparency(int ob, byte x) {
 	OnScreenPerson *moveMe = findPerson(ob);
 	if (!moveMe)
 		return;
@@ -395,7 +403,7 @@ void setPersonTransparency(int ob, byte x) {
 	moveMe->transparency = x;
 }
 
-void setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix) {
+void PeopleManager::setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix) {
 	OnScreenPerson *moveMe = findPerson(ob);
 	if (!moveMe)
 		return;
@@ -406,11 +414,11 @@ void setPersonColourise(int ob, byte r, byte g, byte b, byte colourmix) {
 	moveMe->colourmix = colourmix;
 }
 
-void shufflePeople() {
-	OnScreenPerson **thisReference = &allPeople;
+void PeopleManager::shufflePeople() {
+	OnScreenPerson **thisReference = &_allPeople;
 	OnScreenPerson *A, *B;
 
-	if (!allPeople)
+	if (!_allPeople)
 		return;
 
 	while ((*thisReference)->next) {
@@ -434,11 +442,11 @@ void shufflePeople() {
 	}
 }
 
-void drawPeople() {
+void PeopleManager::drawPeople() {
 	shufflePeople();
 
-	OnScreenPerson *thisPerson = allPeople;
-	PersonaAnimation  *myAnim = NULL;
+	OnScreenPerson *thisPerson = _allPeople;
+	PersonaAnimation *myAnim = NULL;
 	g_sludge->_regionMan->resetOverRegion();
 
 	while (thisPerson) {
@@ -473,10 +481,10 @@ void drawPeople() {
 				r = g_sludge->_gfxMan->scaleSprite(myAnim->theSprites->bank.sprites[fNum], myAnim->theSprites->bank.myPalette, thisPerson, m);
 				if (r) {
 					if (!thisPerson->thisType->screenName.empty()) {
-						if (personRegion.thisType != thisPerson->thisType)
+						if (_personRegion->thisType != thisPerson->thisType)
 							g_sludge->_regionMan->resetLastRegion();
-						personRegion.thisType = thisPerson->thisType;
-						g_sludge->_regionMan->setOverRegion(&personRegion);
+						_personRegion->thisType = thisPerson->thisType;
+						g_sludge->_regionMan->setOverRegion(_personRegion);
 					}
 				}
 			}
@@ -504,38 +512,30 @@ void drawPeople() {
 	}
 }
 
-void makeTalker(OnScreenPerson &me) {
+void PeopleManager::makeTalker(OnScreenPerson &me) {
 	setFrames(me, ANI_TALK);
 }
 
-void makeSilent(OnScreenPerson &me) {
+void PeopleManager::makeSilent(OnScreenPerson &me) {
 	setFrames(me, ANI_STAND);
 }
 
-bool handleClosestPoint(int &setX, int &setY, int &setPoly) {
+bool PeopleManager::handleClosestPoint(int &setX, int &setY, int &setPoly) {
 	int gotX = 320, gotY = 200, gotPoly = -1, i, j, xTest1, yTest1, xTest2, yTest2, closestX, closestY, oldJ, currentDistance = 0xFFFFF, thisDistance;
-
-//	FILE * dbug = fopen ("debug_closest.txt", "at");
-//	fprintf (dbug, "\nGetting closest point to %i, %i\n", setX, setY);
 
 	for (i = 0; i < currentFloor->numPolygons; i++) {
 		oldJ = currentFloor->polygon[i].numVertices - 1;
 		for (j = 0; j < currentFloor->polygon[i].numVertices; j++) {
-//			fprintf (dbug, "Polygon %i, line %i... ", i, j);
 			xTest1 = currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].x;
 			yTest1 = currentFloor->vertex[currentFloor->polygon[i].vertexID[j]].y;
 			xTest2 = currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].x;
 			yTest2 = currentFloor->vertex[currentFloor->polygon[i].vertexID[oldJ]].y;
 			closestPointOnLine(closestX, closestY, xTest1, yTest1, xTest2, yTest2, setX, setY);
-//			fprintf (dbug, "closest point is %i, %i... ", closestX, closestY);
 			xTest1 = setX - closestX;
 			yTest1 = setY - closestY;
 			thisDistance = xTest1 * xTest1 + yTest1 * yTest1;
-//			fprintf (dbug, "Distance squared %i\n", thisDistance);
 
 			if (thisDistance < currentDistance) {
-//				fprintf (dbug, "** We have a new winner!**\n");
-
 				currentDistance = thisDistance;
 				gotX = closestX;
 				gotY = closestY;
@@ -544,7 +544,6 @@ bool handleClosestPoint(int &setX, int &setY, int &setPoly) {
 			oldJ = j;
 		}
 	}
-//	fclose (dbug);
 
 	if (gotPoly == -1)
 		return false;
@@ -555,7 +554,7 @@ bool handleClosestPoint(int &setX, int &setY, int &setPoly) {
 	return true;
 }
 
-bool doBorderStuff(OnScreenPerson *moveMe) {
+bool PeopleManager::doBorderStuff(OnScreenPerson *moveMe) {
 	if (moveMe->inPoly == moveMe->walkToPoly) {
 		moveMe->inPoly = -1;
 		moveMe->thisStepX = moveMe->walkToX;
@@ -625,7 +624,7 @@ bool doBorderStuff(OnScreenPerson *moveMe) {
 	return true;
 }
 
-bool walkMe(OnScreenPerson *thisPerson, bool move = true) {
+bool PeopleManager::walkMe(OnScreenPerson *thisPerson, bool move) {
 	float xDiff, yDiff, maxDiff, s;
 
 	for (;;) {
@@ -666,7 +665,7 @@ bool walkMe(OnScreenPerson *thisPerson, bool move = true) {
 	return false;
 }
 
-bool makeWalkingPerson(int x, int y, int objNum, LoadedFunction *func, int di) {
+bool PeopleManager::makeWalkingPerson(int x, int y, int objNum, LoadedFunction *func, int di) {
 	if (x == 0 && y == 0)
 		return false;
 	if (currentFloor->numPolygons == 0)
@@ -705,7 +704,7 @@ bool makeWalkingPerson(int x, int y, int objNum, LoadedFunction *func, int di) {
 	}
 }
 
-bool stopPerson(int o) {
+bool PeopleManager::stopPerson(int o) {
 	OnScreenPerson *moveMe = findPerson(o);
 	if (moveMe)
 		if (moveMe->continueAfterWalking) {
@@ -719,7 +718,7 @@ bool stopPerson(int o) {
 	return false;
 }
 
-bool forceWalkingPerson(int x, int y, int objNum, LoadedFunction *func, int di) {
+bool PeopleManager::forceWalkingPerson(int x, int y, int objNum, LoadedFunction *func, int di) {
 	if (x == 0 && y == 0)
 		return false;
 	OnScreenPerson *moveMe = findPerson(objNum);
@@ -749,7 +748,7 @@ bool forceWalkingPerson(int x, int y, int objNum, LoadedFunction *func, int di) 
 	}
 }
 
-void jumpPerson(int x, int y, int objNum) {
+void PeopleManager::jumpPerson(int x, int y, int objNum) {
 	if (x == 0 && y == 0)
 		return;
 	OnScreenPerson *moveMe = findPerson(objNum);
@@ -763,7 +762,7 @@ void jumpPerson(int x, int y, int objNum) {
 	moveAndScale(*moveMe, x, y);
 }
 
-bool floatCharacter(int f, int objNum) {
+bool PeopleManager::floatCharacter(int f, int objNum) {
 	OnScreenPerson *moveMe = findPerson(objNum);
 	if (!moveMe)
 		return false;
@@ -771,7 +770,7 @@ bool floatCharacter(int f, int objNum) {
 	return true;
 }
 
-bool setCharacterWalkSpeed(int f, int objNum) {
+bool PeopleManager::setCharacterWalkSpeed(int f, int objNum) {
 	if (f <= 0)
 		return false;
 	OnScreenPerson *moveMe = findPerson(objNum);
@@ -781,8 +780,8 @@ bool setCharacterWalkSpeed(int f, int objNum) {
 	return true;
 }
 
-void walkAllPeople() {
-	OnScreenPerson *thisPerson = allPeople;
+void PeopleManager::walkAllPeople() {
+	OnScreenPerson *thisPerson = _allPeople;
 
 	while (thisPerson) {
 		if (thisPerson->walking) {
@@ -799,7 +798,7 @@ void walkAllPeople() {
 	}
 }
 
-bool addPerson(int x, int y, int objNum, Persona *p) {
+bool PeopleManager::addPerson(int x, int y, int objNum, Persona *p) {
 	OnScreenPerson *newPerson = new OnScreenPerson;
 	if (!checkNew(newPerson))
 		return false;
@@ -849,7 +848,7 @@ bool addPerson(int x, int y, int objNum, Persona *p) {
 	}
 
 	// NOW ADD IT IN THE RIGHT PLACE
-	OnScreenPerson **changethat = &allPeople;
+	OnScreenPerson **changethat = &_allPeople;
 
 	while (((*changethat) != NULL) && ((*changethat)->y < y))
 		changethat = &((*changethat)->next);
@@ -860,7 +859,7 @@ bool addPerson(int x, int y, int objNum, Persona *p) {
 	return (bool)(newPerson->thisType != NULL);
 }
 
-int timeForAnim(PersonaAnimation  *fram) {
+int PeopleManager::timeForAnim(PersonaAnimation *fram) {
 	int total = 0;
 	for (int a = 0; a < fram->numFrames; a++) {
 		total += fram->frames[a].howMany;
@@ -868,7 +867,7 @@ int timeForAnim(PersonaAnimation  *fram) {
 	return total;
 }
 
-void animatePerson(int obj, PersonaAnimation  *fram) { // Set a new SINGLE animation
+void PeopleManager::animatePerson(int obj, PersonaAnimation *fram) { // Set a new SINGLE animation
 	OnScreenPerson *moveMe = findPerson(obj);
 	if (moveMe) {
 		if (moveMe->continueAfterWalking)
@@ -880,7 +879,7 @@ void animatePerson(int obj, PersonaAnimation  *fram) { // Set a new SINGLE anima
 	}
 }
 
-void animatePerson(int obj, Persona *per) {             // Set a new costume
+void PeopleManager::animatePerson(int obj, Persona *per) {             // Set a new costume
 	OnScreenPerson *moveMe = findPerson(obj);
 	if (moveMe) {
 		//  if (moveMe->continueAfterWalking) abortFunction (moveMe->continueAfterWalking);
@@ -897,22 +896,22 @@ void animatePerson(int obj, Persona *per) {             // Set a new costume
 	}
 }
 
-void killAllPeople() {
+void PeopleManager::kill() {
 	OnScreenPerson *killPeople;
-	while (allPeople) {
-		if (allPeople->continueAfterWalking)
-			abortFunction(allPeople->continueAfterWalking);
-		allPeople->continueAfterWalking = NULL;
-		killPeople = allPeople;
-		allPeople = allPeople->next;
+	while (_allPeople) {
+		if (_allPeople->continueAfterWalking)
+			abortFunction(_allPeople->continueAfterWalking);
+		_allPeople->continueAfterWalking = NULL;
+		killPeople = _allPeople;
+		_allPeople = _allPeople->next;
 		g_sludge->_objMan->removeObjectType(killPeople->thisType);
 		delete killPeople;
 	}
 }
 
-void killMostPeople() {
+void PeopleManager::killMostPeople() {
 	OnScreenPerson *killPeople;
-	OnScreenPerson **lookyHere = &allPeople;
+	OnScreenPerson **lookyHere = &_allPeople;
 
 	while (*lookyHere) {
 		if ((*lookyHere)->extra & EXTRA_NOREMOVE) {
@@ -933,12 +932,12 @@ void killMostPeople() {
 	}
 }
 
-void removeOneCharacter(int i) {
+void PeopleManager::removeOneCharacter(int i) {
 	OnScreenPerson *p = findPerson(i);
 
 	if (p) {
 		ScreenRegion *overRegion = g_sludge->_regionMan->getOverRegion();
-		if (overRegion == &personRegion && overRegion->thisType == p->thisType) {
+		if (overRegion == _personRegion && overRegion->thisType == p->thisType) {
 			overRegion = nullptr;
 		}
 
@@ -947,7 +946,7 @@ void removeOneCharacter(int i) {
 		p->continueAfterWalking = NULL;
 		OnScreenPerson **killPeople;
 
-		for (killPeople = &allPeople; *killPeople != p; killPeople = &((*killPeople)->next)) {
+		for (killPeople = &_allPeople; *killPeople != p; killPeople = &((*killPeople)->next)) {
 			;
 		}
 
@@ -957,7 +956,7 @@ void removeOneCharacter(int i) {
 	}
 }
 
-bool saveAnim(PersonaAnimation  *p, Common::WriteStream *stream) {
+bool PeopleManager::saveAnim(PersonaAnimation *p, Common::WriteStream *stream) {
 	stream->writeUint16BE(p->numFrames);
 	if (p->numFrames) {
 		stream->writeUint32LE(p->theSprites->ID);
@@ -971,7 +970,7 @@ bool saveAnim(PersonaAnimation  *p, Common::WriteStream *stream) {
 	return true;
 }
 
-bool loadAnim(PersonaAnimation  *p, Common::SeekableReadStream *stream) {
+bool PeopleManager::loadAnim(PersonaAnimation *p, Common::SeekableReadStream *stream) {
 	p->numFrames = stream->readUint16BE();
 
 	if (p->numFrames) {
@@ -997,21 +996,20 @@ bool loadAnim(PersonaAnimation  *p, Common::SeekableReadStream *stream) {
 	return true;
 }
 
-bool saveCostume(Persona *cossy, Common::WriteStream *stream) {
+bool PeopleManager::saveCostume(Persona *cossy, Common::WriteStream *stream) {
 	int a;
 	stream->writeUint16BE(cossy->numDirections);
 	for (a = 0; a < cossy->numDirections * 3; a++) {
 		if (!saveAnim(cossy->animation[a], stream))
 			return false;
 	}
-//	debugCostume ("Saved", cossy);
 	return true;
 }
 
-bool loadCostume(Persona *cossy, Common::SeekableReadStream *stream) {
+bool PeopleManager::loadCostume(Persona *cossy, Common::SeekableReadStream *stream) {
 	int a;
 	cossy->numDirections = stream->readUint16BE();
-	cossy->animation = new PersonaAnimation  *[cossy->numDirections * 3];
+	cossy->animation = new PersonaAnimation *[cossy->numDirections * 3];
 	if (!checkNew(cossy->animation))
 		return false;
 	for (a = 0; a < cossy->numDirections * 3; a++) {
@@ -1022,16 +1020,15 @@ bool loadCostume(Persona *cossy, Common::SeekableReadStream *stream) {
 		if (!loadAnim(cossy->animation[a], stream))
 			return false;
 	}
-//	debugCostume ("Loaded", cossy);
 	return true;
 }
 
-bool savePeople(Common::WriteStream *stream) {
-	OnScreenPerson *me = allPeople;
+bool PeopleManager::savePeople(Common::WriteStream *stream) {
+	OnScreenPerson *me = _allPeople;
 	int countPeople = 0, a;
 
-	stream->writeSint16LE(scaleHorizon);
-	stream->writeSint16LE(scaleDivide);
+	stream->writeSint16LE(_scaleHorizon);
+	stream->writeSint16LE(_scaleDivide);
 
 	while (me) {
 		countPeople++;
@@ -1040,7 +1037,7 @@ bool savePeople(Common::WriteStream *stream) {
 
 	stream->writeUint16BE(countPeople);
 
-	me = allPeople;
+	me = _allPeople;
 	for (a = 0; a < countPeople; a++) {
 
 		stream->writeFloatLE(me->x);
@@ -1093,17 +1090,19 @@ bool savePeople(Common::WriteStream *stream) {
 	return true;
 }
 
-bool loadPeople(Common::SeekableReadStream *stream) {
-	OnScreenPerson **pointy = &allPeople;
+bool PeopleManager::loadPeople(Common::SeekableReadStream *stream) {
+	kill();
+
+	OnScreenPerson **pointy = &_allPeople;
 	OnScreenPerson *me;
 
-	scaleHorizon = stream->readSint16LE();
-	scaleDivide = stream->readSint16LE();
+	_scaleHorizon = stream->readSint16LE();
+	_scaleDivide = stream->readSint16LE();
 
 	int countPeople = stream->readUint16BE();
 	int a;
 
-	allPeople = NULL;
+	_allPeople = NULL;
 	for (a = 0; a < countPeople; a++) {
 		me = new OnScreenPerson;
 		if (!checkNew(me))
@@ -1184,8 +1183,17 @@ bool loadPeople(Common::SeekableReadStream *stream) {
 		*pointy = me;
 		pointy = &(me->next);
 	}
-//	db ("End of loadPeople");
 	return true;
+}
+
+void PeopleManager::freeze(FrozenStuffStruct *frozenStuff) {
+	frozenStuff->allPeople = _allPeople;
+	_allPeople = nullptr;
+}
+
+void PeopleManager::resotre(FrozenStuffStruct *frozenStuff) {
+	kill();
+	_allPeople = frozenStuff->allPeople;
 }
 
 } // End of namespace Sludge

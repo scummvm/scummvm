@@ -214,11 +214,11 @@ bool saveVariable(Variable *from, Common::WriteStream *stream) {
 			return saveStackRef(from->varData.theStack, stream);
 
 		case SVT_COSTUME:
-			saveCostume(from->varData.costumeHandler, stream);
+			g_sludge->_peopleMan->saveCostume(from->varData.costumeHandler, stream);
 			return false;
 
 		case SVT_ANIM:
-			saveAnim(from->varData.animHandler, stream);
+			g_sludge->_peopleMan->saveAnim(from->varData.animHandler, stream);
 			return false;
 
 		case SVT_NULL:
@@ -253,14 +253,14 @@ bool loadVariable(Variable *to, Common::SeekableReadStream *stream) {
 			to->varData.costumeHandler = new Persona;
 			if (!checkNew(to->varData.costumeHandler))
 				return false;
-			loadCostume(to->varData.costumeHandler, stream);
+			g_sludge->_peopleMan->loadCostume(to->varData.costumeHandler, stream);
 			return true;
 
 		case SVT_ANIM:
 			to->varData.animHandler = new PersonaAnimation ;
 			if (!checkNew(to->varData.animHandler))
 				return false;
-			loadAnim(to->varData.animHandler, stream);
+			g_sludge->_peopleMan->loadAnim(to->varData.animHandler, stream);
 			return true;
 
 		default:
@@ -397,7 +397,7 @@ bool saveGame(const Common::String &fname) {
 		saveVariable(&globalVars[a], fp);
 	}
 
-	savePeople(fp);
+	g_sludge->_peopleMan->savePeople(fp);
 
 	if (currentFloor->numPolygons) {
 		fp->writeByte(1);
@@ -502,7 +502,6 @@ bool loadGame(const Common::String &fname) {
 
 	g_sludge->_txtMan->loadFont(ssgVersion, fp);
 
-	killAllPeople();
 	g_sludge->_regionMan->kill();
 
 	int camerX = fp->readUint16BE();
@@ -540,7 +539,7 @@ bool loadGame(const Common::String &fname) {
 		loadVariable(&globalVars[a], fp);
 	}
 
-	loadPeople(fp);
+	g_sludge->_peopleMan->loadPeople(fp);
 
 	if (fp->readByte()) {
 		if (!setFloor(fp->readUint16BE()))

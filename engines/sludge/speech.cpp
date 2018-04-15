@@ -61,7 +61,7 @@ void SpeechManager::kill() {
 	}
 
 	if (_speech->currentTalker) {
-		makeSilent(*(_speech->currentTalker));
+		g_sludge->_peopleMan->makeSilent(*(_speech->currentTalker));
 		_speech->currentTalker = NULL;
 	}
 
@@ -176,7 +176,7 @@ int SpeechManager::wrapSpeechPerson(const Common::String &theText, OnScreenPerso
 					- thePerson.thisType->speechGap,
 			thePerson.thisType->wrapSpeech, sampleFile);
 	if (animPerson) {
-		makeTalker(thePerson);
+		g_sludge->_peopleMan->makeTalker(thePerson);
 		_speech->currentTalker = &thePerson;
 	}
 	return i;
@@ -188,7 +188,7 @@ int SpeechManager::wrapSpeech(const Common::String &theText, int objT, int sampl
 	int cameraY = g_sludge->_gfxMan->getCamY();
 
 	_speech->lookWhosTalking = objT;
-	OnScreenPerson *thisPerson = findPerson(objT);
+	OnScreenPerson *thisPerson = g_sludge->_peopleMan->findPerson(objT);
 	if (thisPerson) {
 		setObjFontColour(thisPerson->thisType);
 		i = wrapSpeechPerson(theText, *thisPerson, sampleFile, animPerson);
@@ -274,7 +274,7 @@ bool SpeechManager::load(Common::SeekableReadStream *stream) {
 	_speech->lookWhosTalking = stream->readUint16BE();
 
 	if (stream->readByte()) {
-		_speech->currentTalker = findPerson(stream->readUint16BE());
+		_speech->currentTalker = g_sludge->_peopleMan->findPerson(stream->readUint16BE());
 	} else {
 		_speech->currentTalker = NULL;
 	}

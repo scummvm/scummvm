@@ -65,7 +65,7 @@ void unlinkVar(Variable &thisVar) {
 			break;
 
 		case SVT_ANIM:
-			deleteAnim(thisVar.varData.animHandler);
+			g_sludge->_peopleMan->deleteAnim(thisVar.varData.animHandler);
 			break;
 
 		default:
@@ -87,10 +87,10 @@ void newAnimationVariable(Variable &thisVar, PersonaAnimation  *i) {
 
 PersonaAnimation  *getAnimationFromVar(Variable &thisVar) {
 	if (thisVar.varType == SVT_ANIM)
-		return copyAnim(thisVar.varData.animHandler);
+		return g_sludge->_peopleMan->copyAnim(thisVar.varData.animHandler);
 
 	if (thisVar.varType == SVT_INT && thisVar.varData.intValue == 0)
-		return makeNullAnim();
+		return g_sludge->_peopleMan->makeNullAnim();
 
 	fatal("Expecting an animation variable; found Variable of type", typeName[thisVar.varType]);
 	return NULL;
@@ -116,7 +116,7 @@ Persona *getCostumeFromVar(Variable &thisVar) {
 				return NULL;
 
 			for (int iii = 0; iii < 3; iii++)
-				p->animation[iii] = copyAnim(thisVar.varData.animHandler);
+				p->animation[iii] = g_sludge->_peopleMan->copyAnim(thisVar.varData.animHandler);
 
 			break;
 
@@ -370,7 +370,7 @@ bool copyMain(const Variable &from, Variable &to) {
 			return true;
 
 		case SVT_ANIM:
-			to.varData.animHandler = copyAnim(from.varData.animHandler);
+			to.varData.animHandler = g_sludge->_peopleMan->copyAnim(from.varData.animHandler);
 			return true;
 
 		case SVT_NULL:

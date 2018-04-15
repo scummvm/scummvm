@@ -63,7 +63,7 @@ int main_loop(Common::String filename) {
 
 	while (!g_sludge->_evtMan->quit()) {
 		g_sludge->_evtMan->checkInput();
-		walkAllPeople();
+		g_sludge->_peopleMan->walkAllPeople();
 		if (g_sludge->_evtMan->handleInput()) {
 			runSludge();
 		}
