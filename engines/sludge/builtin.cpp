@@ -60,7 +60,6 @@ Variable *launchResult = NULL;
 
 extern int lastFramesPerSecond, thumbWidth, thumbHeight;
 extern bool allowAnyFilename;
-extern bool captureAllKeys;
 extern VariableStack *noStack;
 extern StatusStuff  *nowStatus;
 extern ScreenRegion *overRegion;
@@ -1991,9 +1990,10 @@ builtIn(transitionLevel) {
 
 builtIn(captureAllKeys) {
 	UNUSEDALL
-	captureAllKeys = getBoolean(fun->stack->thisVar);
+	// This built-in function doesn't have any effect any more, we capture all keys by default
+	bool captureAllKeysDeprecated = getBoolean(fun->stack->thisVar);
 	trimStack(fun->stack);
-	setVariable(fun->reg, SVT_INT, captureAllKeys);
+	setVariable(fun->reg, SVT_INT, captureAllKeysDeprecated);
 	return BR_CONTINUE;
 }
 

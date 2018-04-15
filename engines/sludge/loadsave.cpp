@@ -62,7 +62,6 @@ extern Floor *currentFloor;                          // In floor.cpp
 extern FILETIME fileTime;                           // In sludger.cpp
 extern byte brightnessLevel;               // "    "   "
 extern byte fadeMode;                      // In transition.cpp
-extern bool captureAllKeys;
 extern bool allowAnyFilename;
 extern uint16 saveEncoding;                 // in savedata.cpp
 
@@ -359,7 +358,7 @@ bool saveGame(const Common::String &fname) {
 	// DON'T ADD ANYTHING NEW BEFORE THIS POINT!
 
 	fp->writeByte(allowAnyFilename);
-	fp->writeByte(captureAllKeys);
+	fp->writeByte(false); // deprecated captureAllKeys
 	fp->writeByte(true);
 	g_sludge->_txtMan->saveFont(fp);
 
@@ -498,8 +497,8 @@ bool loadGame(const Common::String &fname) {
 	if (ssgVersion >= VERSION(1, 4)) {
 		allowAnyFilename = fp->readByte();
 	}
-	captureAllKeys = fp->readByte();
-	fp->readByte();  // updateDisplay (part of movie playing)
+	fp->readByte(); // deprecated captureAllKeys
+	fp->readByte(); // updateDisplay (part of movie playing)
 
 	g_sludge->_txtMan->loadFont(ssgVersion, fp);
 

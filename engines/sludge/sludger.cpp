@@ -67,7 +67,6 @@ int selectedLanguage = 0;
 
 int gameVersion;
 FILETIME fileTime;
-bool captureAllKeys = false;
 
 byte brightnessLevel = 255;
 
@@ -79,7 +78,6 @@ Variable *globalVars;
 
 int numGlobals = 0;
 
-extern SpritePalette pastePalette;
 extern Variable *launchResult;
 extern int lastFramesPerSecond, thumbWidth, thumbHeight;
 
@@ -171,7 +169,6 @@ void initSludge() {
 	lastFramesPerSecond = -1;
 	thumbWidth = thumbHeight = 0;
 	allowAnyFilename = true;
-	captureAllKeys = false;
 	noStack = nullptr;
 	numBIFNames = numUserFunc = 0;
 	allUserFunc = allBIFNames = nullptr;
