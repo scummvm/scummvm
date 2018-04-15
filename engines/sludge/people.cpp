@@ -185,6 +185,18 @@ bool Persona::load(Common::SeekableReadStream *stream) {
 	return true;
 }
 
+void OnScreenPerson::setFrames(int a) {
+	myAnim = myPersona->animation[(a * myPersona->numDirections) + direction];
+}
+
+void OnScreenPerson::makeTalker() {
+	setFrames(ANI_TALK);
+}
+
+void OnScreenPerson::makeSilent() {
+	setFrames(ANI_STAND);
+}
+
 PeopleManager::PeopleManager(SludgeEngine *vm) {
 	_vm = vm;
 	_allPeople = nullptr;
@@ -198,10 +210,6 @@ PeopleManager::~PeopleManager() {
 
 	delete _personRegion;
 	_personRegion = nullptr;
-}
-
-void PeopleManager::setFrames(OnScreenPerson &m, int a) {
-	m.myAnim = m.myPersona->animation[(a * m.myPersona->numDirections) + m.direction];
 }
 
 void PeopleManager::turnMeAngle(OnScreenPerson *thisPerson, int direc) {
@@ -254,7 +262,8 @@ bool PeopleManager::turnPersonToFace(int thisNum, int direc) {
 		thisPerson->walking = false;
 		thisPerson->spinning = false;
 		turnMeAngle(thisPerson, direc);
-		setFrames(*thisPerson, g_sludge->_speechMan->isCurrentTalker(thisPerson) ? ANI_TALK : ANI_STAND);
+		_vm->_speechMan->isCurrentTalker(thisPerson) ?
+				thisPerson->makeTalker() : thisPerson->makeSilent();
 		return true;
 	}
 	return false;
@@ -497,7 +506,7 @@ void PeopleManager::drawPeople() {
 
 	OnScreenPerson *thisPerson = _allPeople;
 	PersonaAnimation *myAnim = NULL;
-	g_sludge->_regionMan->resetOverRegion();
+	_vm->_regionMan->resetOverRegion();
 
 	while (thisPerson) {
 		if (thisPerson->show) {
@@ -507,7 +516,7 @@ void PeopleManager::drawPeople() {
 				thisPerson->frameNum = 0;
 				thisPerson->frameTick = myAnim->frames[0].howMany;
 				if (myAnim->frames[thisPerson->frameNum].noise > 0) {
-					g_sludge->_soundMan->startSound(myAnim->frames[thisPerson->frameNum].noise, false);
+					_vm->_soundMan->startSound(myAnim->frames[thisPerson->frameNum].noise, false);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
 					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
@@ -528,13 +537,13 @@ void PeopleManager::drawPeople() {
 			}
 			if (m != 2) {
 				bool r = false;
-				r = g_sludge->_gfxMan->scaleSprite(myAnim->theSprites->bank.sprites[fNum], myAnim->theSprites->bank.myPalette, thisPerson, m);
+				r = _vm->_gfxMan->scaleSprite(myAnim->theSprites->bank.sprites[fNum], myAnim->theSprites->bank.myPalette, thisPerson, m);
 				if (r) {
 					if (!thisPerson->thisType->screenName.empty()) {
 						if (_personRegion->thisType != thisPerson->thisType)
-							g_sludge->_regionMan->resetLastRegion();
+							_vm->_regionMan->resetLastRegion();
 						_personRegion->thisType = thisPerson->thisType;
-						g_sludge->_regionMan->setOverRegion(_personRegion);
+						_vm->_regionMan->setOverRegion(_personRegion);
 					}
 				}
 			}
@@ -545,7 +554,7 @@ void PeopleManager::drawPeople() {
 			thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
 			if (thisPerson->show && myAnim && myAnim->frames) {
 				if (myAnim->frames[thisPerson->frameNum].noise > 0) {
-					g_sludge->_soundMan->startSound(myAnim->frames[thisPerson->frameNum].noise, false);
+					_vm->_soundMan->startSound(myAnim->frames[thisPerson->frameNum].noise, false);
 					thisPerson->frameNum++;
 					thisPerson->frameNum %= thisPerson->myAnim->numFrames;
 					thisPerson->frameTick = thisPerson->myAnim->frames[thisPerson->frameNum].howMany;
@@ -560,14 +569,6 @@ void PeopleManager::drawPeople() {
 		}
 		thisPerson = thisPerson->next;
 	}
-}
-
-void PeopleManager::makeTalker(OnScreenPerson &me) {
-	setFrames(me, ANI_TALK);
-}
-
-void PeopleManager::makeSilent(OnScreenPerson &me) {
-	setFrames(me, ANI_STAND);
 }
 
 bool PeopleManager::handleClosestPoint(int &setX, int &setY, int &setPoly) {
@@ -670,7 +671,7 @@ bool PeopleManager::doBorderStuff(OnScreenPerson *moveMe) {
 		moveMe->spinning = true;
 	}
 
-	setFrames(*moveMe, ANI_WALK);
+	moveMe->setFrames(ANI_WALK);
 	return true;
 }
 
@@ -689,7 +690,7 @@ bool PeopleManager::walkMe(OnScreenPerson *thisPerson, bool move) {
 		if (ABS(maxDiff) > s) {
 			if (thisPerson->spinning) {
 				spinStep(thisPerson);
-				setFrames(*thisPerson, ANI_WALK);
+				thisPerson->setFrames(ANI_WALK);
 			}
 			s = maxDiff / s;
 			if (move)
@@ -710,7 +711,7 @@ bool PeopleManager::walkMe(OnScreenPerson *thisPerson, bool move) {
 	}
 
 	thisPerson->walking = false;
-	setFrames(*thisPerson, ANI_STAND);
+	thisPerson->setFrames(ANI_STAND);
 	moveAndScale(*thisPerson, thisPerson->walkToX, thisPerson->walkToY);
 	return false;
 }
@@ -762,7 +763,7 @@ bool PeopleManager::stopPerson(int o) {
 			moveMe->continueAfterWalking = NULL;
 			moveMe->walking = false;
 			moveMe->spinning = false;
-			setFrames(*moveMe, ANI_STAND);
+			moveMe->setFrames(ANI_STAND);
 			return true;
 		}
 	return false;
@@ -838,7 +839,7 @@ void PeopleManager::walkAllPeople() {
 			walkMe(thisPerson);
 		} else if (thisPerson->spinning) {
 			spinStep(thisPerson);
-			setFrames(*thisPerson, ANI_STAND);
+			thisPerson->setFrames(ANI_STAND);
 		}
 		if ((!thisPerson->walking) && (!thisPerson->spinning) && thisPerson->continueAfterWalking) {
 			restartFunction(thisPerson->continueAfterWalking);
@@ -854,7 +855,7 @@ bool PeopleManager::addPerson(int x, int y, int objNum, Persona *p) {
 		return false;
 
 	// EASY STUFF
-	newPerson->thisType = g_sludge->_objMan->loadObjectType(objNum);
+	newPerson->thisType = _vm->_objMan->loadObjectType(objNum);
 	newPerson->scale = 1;
 	newPerson->extra = 0;
 	newPerson->continueAfterWalking = NULL;
@@ -882,7 +883,7 @@ bool PeopleManager::addPerson(int x, int y, int objNum, Persona *p) {
 	newPerson->lastUsedAnim = 0;
 	newPerson->frameTick = 0;
 
-	setFrames(*newPerson, ANI_STAND);
+	newPerson->setFrames(ANI_STAND);
 
 	// HEIGHT (BASED ON 1st FRAME OF 1st ANIMATION... INC. SPECIAL CASES)
 	int fNumSigned = p->animation[0]->frames[0].frameNum;
@@ -931,9 +932,9 @@ void PeopleManager::animatePerson(int obj, Persona *per) {             // Set a 
 		moveMe->myPersona = per;
 		rethinkAngle(moveMe);
 		if (moveMe->walking) {
-			setFrames(*moveMe, ANI_WALK);
+			moveMe->setFrames(ANI_WALK);
 		} else {
-			setFrames(*moveMe, ANI_STAND);
+			moveMe->setFrames(ANI_STAND);
 		}
 	}
 }
@@ -946,7 +947,7 @@ void PeopleManager::kill() {
 		_allPeople->continueAfterWalking = NULL;
 		killPeople = _allPeople;
 		_allPeople = _allPeople->next;
-		g_sludge->_objMan->removeObjectType(killPeople->thisType);
+		_vm->_objMan->removeObjectType(killPeople->thisType);
 		delete killPeople;
 	}
 }
@@ -968,7 +969,7 @@ void PeopleManager::killMostPeople() {
 			if (killPeople->continueAfterWalking)
 				abortFunction(killPeople->continueAfterWalking);
 			killPeople->continueAfterWalking = NULL;
-			g_sludge->_objMan->removeObjectType(killPeople->thisType);
+			_vm->_objMan->removeObjectType(killPeople->thisType);
 			delete killPeople;
 		}
 	}
@@ -978,7 +979,7 @@ void PeopleManager::removeOneCharacter(int i) {
 	OnScreenPerson *p = findPerson(i);
 
 	if (p) {
-		ScreenRegion *overRegion = g_sludge->_regionMan->getOverRegion();
+		ScreenRegion *overRegion = _vm->_regionMan->getOverRegion();
 		if (overRegion == _personRegion && overRegion->thisType == p->thisType) {
 			overRegion = nullptr;
 		}
@@ -993,7 +994,7 @@ void PeopleManager::removeOneCharacter(int i) {
 		}
 
 		*killPeople = p->next;
-		g_sludge->_objMan->removeObjectType(p->thisType);
+		_vm->_objMan->removeObjectType(p->thisType);
 		delete p;
 	}
 }
@@ -1058,7 +1059,7 @@ bool PeopleManager::savePeople(Common::WriteStream *stream) {
 		stream->writeByte(me->colourmix);
 		stream->writeByte(me->transparency);
 
-		g_sludge->_objMan->saveObjectRef(me->thisType, stream);
+		_vm->_objMan->saveObjectRef(me->thisType, stream);
 
 		me = me->next;
 	}
@@ -1142,7 +1143,7 @@ bool PeopleManager::loadPeople(Common::SeekableReadStream *stream) {
 		} else {
 			setMyDrawMode(me, stream->readUint16BE());
 		}
-		me->thisType = g_sludge->_objMan->loadObjectRef(stream);
+		me->thisType = _vm->_objMan->loadObjectRef(stream);
 
 		// Anti-aliasing settings
 		if (ssgVersion >= VERSION(1, 6)) {

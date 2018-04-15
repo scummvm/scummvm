@@ -88,6 +88,10 @@ struct OnScreenPerson {
 	struct ObjectType *thisType;
 	int extra, spinSpeed;
 	byte r, g, b, colourmix, transparency;
+
+	void makeTalker();
+	void makeSilent();
+	void setFrames(int a);
 };
 
 class PeopleManager {
@@ -113,8 +117,6 @@ public:
 	void setScale(int16 h, int16 d);
 
 	// Things which affect one character
-	void makeTalker(OnScreenPerson &me);
-	void makeSilent(OnScreenPerson &me);
 	void setShown(bool h, int ob);
 	void setDrawMode(int h, int ob);
 	void setPersonTransparency(int ob, byte x);
@@ -152,14 +154,15 @@ private:
 
 	SludgeEngine *_vm;
 
-	void setFrames(OnScreenPerson &m, int a);
+	void shufflePeople();
+	bool handleClosestPoint(int &setX, int &setY, int &setPoly);
+
+	// OnScreenPerson manipulation
 	void turnMeAngle(OnScreenPerson *thisPerson, int direc);
 	void spinStep(OnScreenPerson *thisPerson);
 	void rethinkAngle(OnScreenPerson *thisPerson);
 	void moveAndScale(OnScreenPerson &me, float x, float y);
 	void setMyDrawMode(OnScreenPerson *moveMe, int h);
-	void shufflePeople();
-	bool handleClosestPoint(int &setX, int &setY, int &setPoly);
 	bool doBorderStuff(OnScreenPerson *moveMe);
 	bool walkMe(OnScreenPerson *thisPerson, bool move = true);
 };

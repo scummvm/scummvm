@@ -61,8 +61,8 @@ void SpeechManager::kill() {
 	}
 
 	if (_speech->currentTalker) {
-		g_sludge->_peopleMan->makeSilent(*(_speech->currentTalker));
-		_speech->currentTalker = NULL;
+		_speech->currentTalker->makeSilent();
+		_speech->currentTalker = nullptr;
 	}
 
 	SpeechLine *killMe;
@@ -176,7 +176,7 @@ int SpeechManager::wrapSpeechPerson(const Common::String &theText, OnScreenPerso
 					- thePerson.thisType->speechGap,
 			thePerson.thisType->wrapSpeech, sampleFile);
 	if (animPerson) {
-		g_sludge->_peopleMan->makeTalker(thePerson);
+		thePerson.makeTalker();
 		_speech->currentTalker = &thePerson;
 	}
 	return i;
