@@ -28,13 +28,14 @@
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
-#include "graphics.h"
-#include "msn_def.h"
-#include "supernova.h"
+#include "supernova/graphics.h"
+#include "supernova/msn_def.h"
+#include "supernova/screen.h"
+#include "supernova/supernova.h"
 
 namespace Supernova {
 
-MSNImageDecoder::MSNImageDecoder() {
+MSNImage::MSNImage() {
 	_palette = nullptr;
 	_encodedImage = nullptr;
 	_filenumber = -1;
@@ -43,11 +44,11 @@ MSNImageDecoder::MSNImageDecoder() {
 	_numClickFields = 0;
 }
 
-MSNImageDecoder::~MSNImageDecoder() {
+MSNImage::~MSNImage() {
 	destroy();
 }
 
-bool MSNImageDecoder::init(int filenumber) {
+bool MSNImage::init(int filenumber) {
 	Common::File file;
 	if (!file.open(Common::String::format("msn_data.%03d", filenumber))) {
 		warning("Image data file msn_data.%03d could not be read!", filenumber);
@@ -60,7 +61,7 @@ bool MSNImageDecoder::init(int filenumber) {
 	return true;
 }
 
-bool MSNImageDecoder::loadFromEngineDataFile() {
+bool MSNImage::loadFromEngineDataFile() {
 	Common::String name;
 	if (_filenumber == 1)
 		name = "IMG1";
@@ -102,7 +103,7 @@ bool MSNImageDecoder::loadFromEngineDataFile() {
 	return false;
 }
 
-bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
+bool MSNImage::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
 
 	uint size = 0;
@@ -199,7 +200,7 @@ bool MSNImageDecoder::loadStream(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-bool MSNImageDecoder::loadSections() {
+bool MSNImage::loadSections() {
 	bool isNewspaper = _filenumber == 1 || _filenumber == 2;
 	int imageWidth = isNewspaper ? 640 : 320;
 	int imageHeight = isNewspaper ? 480 : 200;
@@ -238,14 +239,14 @@ bool MSNImageDecoder::loadSections() {
 	return true;
 }
 
-void MSNImageDecoder::destroy() {
+void MSNImage::destroy() {
 	if (_palette) {
 		delete[] _palette;
-		_palette = NULL;
+		_palette = nullptr;
 	}
 	if (_encodedImage) {
 		delete[] _encodedImage;
-		_encodedImage = NULL;
+		_encodedImage = nullptr;
 	}
 	for (Common::Array<Graphics::Surface *>::iterator it = _sectionSurfaces.begin();
 		 it != _sectionSurfaces.end(); ++it) {
