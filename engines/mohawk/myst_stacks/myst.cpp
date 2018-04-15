@@ -633,25 +633,43 @@ uint16 Myst::getVar(uint16 var) {
 			return 10;
 	case 79: // Stellar Observatory Date - Year #4 (Right)
 		return (_state.observatoryYearSetting / 1) % 10;
-	case 80: // Stellar Observatory Hour #1 - Left ( Number 1 (0) or Blank (10))
+	case 80: // Stellar Observatory Hour #1 - Left ( Hour digits can be 10 (Blank), or 0-2)
+		uint32 observatoryLeftMinutes;
 		if (!observatoryIsDDMMYYYY2400()) {
-			if (_state.observatoryTimeSetting % (12 * 60) < (10 * 60))
+			// 12 Hour Format
+			observatoryLeftMinutes = _state.observatoryTimeSetting % (12 * 60);
+			if (observatoryLeftMinutes > 59 && observatoryLeftMinutes < (10 * 60))
 				return 10;
 			else
 				return 1;
-		} else {
-			if (_state.observatoryTimeSetting < (10 * 60))
-				return 10;
-			else if (_state.observatoryTimeSetting < (20 * 60))
+		}
+		else {
+			// 24 Hour Format
+			observatoryLeftMinutes = _state.observatoryTimeSetting;
+			if (observatoryLeftMinutes < (10 * 60))
+				return 0;
+			else if (observatoryLeftMinutes < (20 * 60))
 				return 1;
 			else
 				return 2;
 		}
 	case 81: // Stellar Observatory Hour #2 - Right
-		if (!observatoryIsDDMMYYYY2400())
-			return ((_state.observatoryTimeSetting % (12 * 60)) / 60) % 10;
-		else
-			return (_state.observatoryTimeSetting / 60) % 10;
+		uint32 observatoryRightMinutes,observatoryRightHour;
+		if (!observatoryIsDDMMYYYY2400()) {
+			// 12 Hour Format
+			observatoryRightMinutes = _state.observatoryTimeSetting % (12 * 60);
+			observatoryRightHour = observatoryRightMinutes / 60;
+			if ( observatoryRightHour % 12 == 0)
+				return 2;
+			else
+				return observatoryRightHour % 10;
+		}
+		else {
+			// 24 Hour Format
+			observatoryRightMinutes = _state.observatoryTimeSetting;
+			observatoryRightHour = observatoryRightMinutes / 60;
+			return observatoryRightHour % 10;
+		}
 	case 82: // Stellar Observatory Minutes #1 - Left
 		return (_state.observatoryTimeSetting % 60) / 10;
 	case 83: // Stellar Observatory Minutes #2 - Right
