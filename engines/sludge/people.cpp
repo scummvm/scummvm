@@ -50,6 +50,114 @@ extern VariableStack *noStack;
 extern int ssgVersion;
 extern Floor *currentFloor;
 
+PersonaAnimation::PersonaAnimation() {
+	theSprites = nullptr;
+	numFrames = 0;
+	frames = nullptr;
+}
+
+PersonaAnimation::~PersonaAnimation() {
+	if (numFrames) {
+		delete[] frames;
+		frames = nullptr;
+	}
+}
+
+PersonaAnimation::PersonaAnimation(int num, VariableStack *&stacky) {
+	theSprites = nullptr;
+	numFrames = num;
+	frames = new AnimFrame[num];
+	int a = num, frameNum, howMany;
+
+	while (a) {
+		a--;
+		frames[a].noise = 0;
+		if (stacky->thisVar.varType == SVT_FILE) {
+			frames[a].noise = stacky->thisVar.varData.intValue;
+		} else if (stacky->thisVar.varType == SVT_FUNC) {
+			frames[a].noise = -stacky->thisVar.varData.intValue;
+		} else if (stacky->thisVar.varType == SVT_STACK) {
+			getValueType(frameNum, SVT_INT, stacky->thisVar.varData.theStack->first->thisVar);
+			getValueType(howMany, SVT_INT, stacky->thisVar.varData.theStack->first->next->thisVar);
+		} else {
+			getValueType(frameNum, SVT_INT, stacky->thisVar);
+			howMany = 1;
+		}
+		trimStack(stacky);
+		frames[a].frameNum = frameNum;
+		frames[a].howMany = howMany;
+	}
+}
+
+PersonaAnimation::PersonaAnimation(PersonaAnimation *orig) {
+	int num = orig->numFrames;
+
+	// Copy the easy bits...
+	theSprites = orig->theSprites;
+	numFrames = num;
+
+	if (num) {
+		// Argh! Frames! We need a whole NEW array of AnimFrame  structures...
+		frames = new AnimFrame[num];
+
+		for (int a = 0; a < num; a++) {
+			frames[a].frameNum = orig->frames[a].frameNum;
+			frames[a].howMany = orig->frames[a].howMany;
+			frames[a].noise = orig->frames[a].noise;
+		}
+	} else {
+		frames = nullptr;
+	}
+}
+
+int PersonaAnimation::getTotalTime() {
+	int total = 0;
+	for (int a = 0; a < numFrames; a++) {
+		total += frames[a].howMany;
+	}
+	return total;
+}
+
+bool PersonaAnimation::save(Common::WriteStream *stream) {
+	stream->writeUint16BE(numFrames);
+	if (numFrames) {
+		stream->writeUint32LE(theSprites->ID);
+
+		for (int a = 0; a < numFrames; a++) {
+			stream->writeUint32LE(frames[a].frameNum);
+			stream->writeUint32LE(frames[a].howMany);
+			stream->writeUint32LE(frames[a].noise);
+		}
+	}
+	return true;
+}
+
+bool PersonaAnimation::load(Common::SeekableReadStream *stream) {
+	numFrames = stream->readUint16BE();
+
+	if (numFrames) {
+		int a = stream->readUint32LE();
+		frames = new AnimFrame [numFrames];
+		if (!checkNew(frames))
+			return false;
+		theSprites = g_sludge->_gfxMan->loadBankForAnim(a);
+
+		for (a = 0; a < numFrames; a++) {
+			frames[a].frameNum = stream->readUint32LE();
+			frames[a].howMany = stream->readUint32LE();
+			if (ssgVersion >= VERSION(2, 0)) {
+				frames[a].noise = stream->readUint32LE();
+			} else {
+				frames[a].noise = 0;
+			}
+		}
+	} else {
+		theSprites = NULL;
+		frames = NULL;
+	}
+	return true;
+}
+
 PeopleManager::PeopleManager(SludgeEngine *vm) {
 	_vm = vm;
 	_allPeople = nullptr;
@@ -67,91 +175,6 @@ PeopleManager::~PeopleManager() {
 
 void PeopleManager::setFrames(OnScreenPerson &m, int a) {
 	m.myAnim = m.myPersona->animation[(a * m.myPersona->numDirections) + m.direction];
-}
-
-PersonaAnimation *PeopleManager::createPersonaAnim(int num, VariableStack *&stacky) {
-	PersonaAnimation *newP = new PersonaAnimation ;
-	checkNew(newP);
-
-	newP->numFrames = num;
-	newP->frames = new AnimFrame [num];
-	checkNew(newP->frames);
-
-	int a = num, frameNum, howMany;
-
-	while (a) {
-		a--;
-		newP->frames[a].noise = 0;
-		if (stacky->thisVar.varType == SVT_FILE) {
-			newP->frames[a].noise = stacky->thisVar.varData.intValue;
-		} else if (stacky->thisVar.varType == SVT_FUNC) {
-			newP->frames[a].noise = -stacky->thisVar.varData.intValue;
-		} else if (stacky->thisVar.varType == SVT_STACK) {
-			getValueType(frameNum, SVT_INT, stacky->thisVar.varData.theStack->first->thisVar);
-			getValueType(howMany, SVT_INT, stacky->thisVar.varData.theStack->first->next->thisVar);
-		} else {
-			getValueType(frameNum, SVT_INT, stacky->thisVar);
-			howMany = 1;
-		}
-		trimStack(stacky);
-		newP->frames[a].frameNum = frameNum;
-		newP->frames[a].howMany = howMany;
-	}
-
-	return newP;
-}
-
-PersonaAnimation *PeopleManager::makeNullAnim() {
-	PersonaAnimation *newAnim = new PersonaAnimation ;
-	if (!checkNew(newAnim))
-		return NULL;
-
-	newAnim->theSprites = NULL;
-	newAnim->numFrames = 0;
-	newAnim->frames = NULL;
-	return newAnim;
-}
-
-PersonaAnimation *PeopleManager::copyAnim(PersonaAnimation *orig) {
-	int num = orig->numFrames;
-
-	PersonaAnimation *newAnim = new PersonaAnimation ;
-	if (!checkNew(newAnim))
-		return NULL;
-
-	// Copy the easy bits...
-	newAnim->theSprites = orig->theSprites;
-	newAnim->numFrames = num;
-
-	if (num) {
-
-		// Argh!Frames!We need a whole NEW array of AnimFrame  structures...
-
-		newAnim->frames = new AnimFrame [num];
-		if (!checkNew(newAnim->frames))
-			return NULL;
-
-		for (int a = 0; a < num; a++) {
-			newAnim->frames[a].frameNum = orig->frames[a].frameNum;
-			newAnim->frames[a].howMany = orig->frames[a].howMany;
-			newAnim->frames[a].noise = orig->frames[a].noise;
-		}
-	} else {
-		newAnim->frames = NULL;
-	}
-
-	return newAnim;
-}
-
-void PeopleManager::deleteAnim(PersonaAnimation *orig) {
-
-	if (orig) {
-		if (orig->numFrames) {
-			delete[] orig->frames;
-		}
-		delete orig;
-		orig = NULL;
-	}
 }
 
 void PeopleManager::turnMeAngle(OnScreenPerson *thisPerson, int direc) {
@@ -859,14 +882,6 @@ bool PeopleManager::addPerson(int x, int y, int objNum, Persona *p) {
 	return (bool)(newPerson->thisType != NULL);
 }
 
-int PeopleManager::timeForAnim(PersonaAnimation *fram) {
-	int total = 0;
-	for (int a = 0; a < fram->numFrames; a++) {
-		total += fram->frames[a].howMany;
-	}
-	return total;
-}
-
 void PeopleManager::animatePerson(int obj, PersonaAnimation *fram) { // Set a new SINGLE animation
 	OnScreenPerson *moveMe = findPerson(obj);
 	if (moveMe) {
@@ -956,51 +971,11 @@ void PeopleManager::removeOneCharacter(int i) {
 	}
 }
 
-bool PeopleManager::saveAnim(PersonaAnimation *p, Common::WriteStream *stream) {
-	stream->writeUint16BE(p->numFrames);
-	if (p->numFrames) {
-		stream->writeUint32LE(p->theSprites->ID);
-
-		for (int a = 0; a < p->numFrames; a++) {
-			stream->writeUint32LE(p->frames[a].frameNum);
-			stream->writeUint32LE(p->frames[a].howMany);
-			stream->writeUint32LE(p->frames[a].noise);
-		}
-	}
-	return true;
-}
-
-bool PeopleManager::loadAnim(PersonaAnimation *p, Common::SeekableReadStream *stream) {
-	p->numFrames = stream->readUint16BE();
-
-	if (p->numFrames) {
-		int a = stream->readUint32LE();
-		p->frames = new AnimFrame [p->numFrames];
-		if (!checkNew(p->frames))
-			return false;
-		p->theSprites = g_sludge->_gfxMan->loadBankForAnim(a);
-
-		for (a = 0; a < p->numFrames; a++) {
-			p->frames[a].frameNum = stream->readUint32LE();
-			p->frames[a].howMany = stream->readUint32LE();
-			if (ssgVersion >= VERSION(2, 0)) {
-				p->frames[a].noise = stream->readUint32LE();
-			} else {
-				p->frames[a].noise = 0;
-			}
-		}
-	} else {
-		p->theSprites = NULL;
-		p->frames = NULL;
-	}
-	return true;
-}
-
 bool PeopleManager::saveCostume(Persona *cossy, Common::WriteStream *stream) {
 	int a;
 	stream->writeUint16BE(cossy->numDirections);
 	for (a = 0; a < cossy->numDirections * 3; a++) {
-		if (!saveAnim(cossy->animation[a], stream))
+		if (!cossy->animation[a]->save(stream))
 			return false;
 	}
 	return true;
@@ -1017,7 +992,7 @@ bool PeopleManager::loadCostume(Persona *cossy, Common::SeekableReadStream *stre
 		if (!checkNew(cossy->animation[a]))
 			return false;
 
-		if (!loadAnim(cossy->animation[a], stream))
+		if (!cossy->animation[a]->load(stream))
 			return false;
 	}
 	return true;
@@ -1044,7 +1019,7 @@ bool PeopleManager::savePeople(Common::WriteStream *stream) {
 		stream->writeFloatLE(me->y);
 
 		saveCostume(me->myPersona, stream);
-		saveAnim(me->myAnim, stream);
+		me->myAnim->save(stream);
 		stream->writeByte(me->myAnim == me->lastUsedAnim);
 
 		stream->writeFloatLE(me->scale);
@@ -1120,7 +1095,7 @@ bool PeopleManager::loadPeople(Common::SeekableReadStream *stream) {
 		me->y = stream->readFloatLE();
 
 		loadCostume(me->myPersona, stream);
-		loadAnim(me->myAnim, stream);
+		me->myAnim->load(stream);
 
 		me->lastUsedAnim = stream->readByte() ? me->myAnim : NULL;
 

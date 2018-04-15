@@ -27,6 +27,7 @@
 namespace Sludge {
 
 struct FrozenStuffStruct;
+struct LoadedSpriteBank;
 struct ScreenRegion;
 
 struct AnimFrame {
@@ -44,9 +45,21 @@ struct AnimFrame {
 #define EXTRA_RECTANGULAR   64
 
 struct PersonaAnimation {
-	struct LoadedSpriteBank *theSprites;
+	LoadedSpriteBank *theSprites;
 	AnimFrame *frames;
 	int numFrames;
+
+	PersonaAnimation();
+	PersonaAnimation(int num, struct VariableStack *&stacky);
+	PersonaAnimation(PersonaAnimation *orig);
+	~PersonaAnimation();
+
+	// Setter & getter
+	int getTotalTime();
+
+	// Save & load
+	bool save(Common::WriteStream *stream);
+	bool load(Common::SeekableReadStream *stream);
 };
 
 struct Persona {
@@ -117,19 +130,9 @@ public:
 	// Animating 'em
 	void animatePerson(int obj, PersonaAnimation *);
 	void animatePerson(int obj, Persona *per);
-	PersonaAnimation *createPersonaAnim(int num, struct VariableStack *&stacky);
-	inline void setBankFile(PersonaAnimation *newP, LoadedSpriteBank *sB) {
-		newP->theSprites = sB;
-	}
 	bool setPersonExtra(int f, int newSetting);
-	int timeForAnim(PersonaAnimation *fram);
-	PersonaAnimation *copyAnim(PersonaAnimation *orig);
-	PersonaAnimation *makeNullAnim();
-	void deleteAnim(PersonaAnimation *orig);
 
 	// Loading and saving
-	bool saveAnim(PersonaAnimation *p, Common::WriteStream *stream);
-	bool loadAnim(PersonaAnimation *p, Common::SeekableReadStream *stream);
 	bool savePeople(Common::WriteStream *stream);
 	bool loadPeople(Common::SeekableReadStream *stream);
 	bool saveCostume(Persona *cossy, Common::WriteStream *stream);

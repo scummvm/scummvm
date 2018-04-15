@@ -218,7 +218,7 @@ bool saveVariable(Variable *from, Common::WriteStream *stream) {
 			return false;
 
 		case SVT_ANIM:
-			g_sludge->_peopleMan->saveAnim(from->varData.animHandler, stream);
+			from->varData.animHandler->save(stream);
 			return false;
 
 		case SVT_NULL:
@@ -260,7 +260,7 @@ bool loadVariable(Variable *to, Common::SeekableReadStream *stream) {
 			to->varData.animHandler = new PersonaAnimation ;
 			if (!checkNew(to->varData.animHandler))
 				return false;
-			g_sludge->_peopleMan->loadAnim(to->varData.animHandler, stream);
+			to->varData.animHandler->load(stream);
 			return true;
 
 		default:

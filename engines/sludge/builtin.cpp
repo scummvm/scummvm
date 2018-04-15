@@ -855,7 +855,7 @@ builtIn(anim) {
 	}
 
 	// First store the frame numbers and take 'em off the stack
-	PersonaAnimation  *ba = g_sludge->_peopleMan->createPersonaAnim(numParams - 1, fun->stack);
+	PersonaAnimation *ba = new PersonaAnimation(numParams - 1, fun->stack);
 
 	// Only remaining paramter is the file number
 	int fileNumber;
@@ -867,7 +867,7 @@ builtIn(anim) {
 	LoadedSpriteBank *sprBanky = g_sludge->_gfxMan->loadBankForAnim(fileNumber);
 	if (!sprBanky)
 		return BR_ERROR;    // File not found, fatal done already
-	g_sludge->_peopleMan->setBankFile(ba, sprBanky);
+	ba->theSprites = sprBanky;
 
 	// Return value
 	newAnimationVariable(fun->reg, ba);
@@ -1589,7 +1589,7 @@ builtIn(animate) {
 		return BR_ERROR;
 	trimStack(fun->stack);
 	g_sludge->_peopleMan->animatePerson(obj, pp);
-	setVariable(fun->reg, SVT_INT, g_sludge->_peopleMan->timeForAnim(pp));
+	setVariable(fun->reg, SVT_INT, pp->getTotalTime());
 	return BR_CONTINUE;
 }
 

@@ -24,6 +24,8 @@
 
 namespace Sludge {
 
+struct Persona;
+struct PersonaAnimation;
 struct Variable;
 struct VariableStack;
 
@@ -58,8 +60,8 @@ union VariableData {
 	signed int intValue;
 	const char *theString;
 	StackHandler *theStack;
-	struct PersonaAnimation  *animHandler;
-	struct Persona *costumeHandler;
+	PersonaAnimation *animHandler;
+	Persona *costumeHandler;
 	FastArrayHandler *fastArray;
 };
 
