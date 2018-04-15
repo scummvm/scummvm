@@ -49,6 +49,12 @@ void UltimaGame::setPalette() {
 	case CGA: {
 		static const byte PALETTE[4][3] = { { 0, 0, 0 }, { 0xAA, 0xAA, 0 }, {0xAA, 0, 0xAA }, {0xAA, 0xAA, 0xAA } };
 		g_vm->_screen->setPalette(&PALETTE[0][0], 0, 4);
+
+		_foregroundColor = 3;
+		_backgroundColor = 3;
+		_highlightColor = 1;
+		_textColor = 3;
+		_color1 = 6;
 		break;
 	}
 
@@ -61,12 +67,20 @@ void UltimaGame::setPalette() {
 			{ 0xFF, 0x40, 0x40 }, { 0xFF, 0x00, 0xFF }, { 0xFF, 0xFF, 0x00 }, {0xFF, 0xFF, 0xFF }
 		};
 		g_vm->_screen->setPalette(&PALETTE[0][0], 0, 16);
+
+		_foregroundColor = 15;
+		_backgroundColor = 1;
+		_highlightColor = 12;
+		_textColor = 11;
+		_color1 = 7;
 		break;
 	}
 
 	default:
+		error("TODO: Palette setup for other video mode");
 		break;
 	}
+
 }
 
 } // End of namespace Shared

@@ -44,6 +44,12 @@ private:
 	 */
 	void setPalette();
 public:
+	byte _foregroundColor;
+	byte _backgroundColor;
+	byte _highlightColor;
+	byte _textColor;
+	byte _color1;
+public:
 	CLASSDEF;
 
 	/**
