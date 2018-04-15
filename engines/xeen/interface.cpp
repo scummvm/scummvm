@@ -559,7 +559,7 @@ void Interface::perform() {
 
 			if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
 					|| combat._attackMonsters[2] != -1) {
-				if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING)
+				if ((_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_SLEEPING)
 						&& !combat._monstersAttacking && !_charsShooting) {
 					doCombat();
 				}
@@ -999,7 +999,7 @@ void Interface::rest() {
 	map.cellFlagLookup(party._mazePosition);
 
 	if ((map._currentCantRest || (map.mazeData()._mazeFlags & RESTRICTION_REST))
-			&& _vm->_mode != MODE_12) {
+			&& _vm->_mode != MODE_INTERACTIVE2) {
 		ErrorScroll::show(_vm, Res.TOO_DANGEROUS_TO_REST, WT_NONFREEZED_WAIT);
 	} else {
 		// Check whether any character is in danger of dying
@@ -1025,14 +1025,14 @@ void Interface::rest() {
 		Mode oldMode = _vm->_mode;
 		_vm->_mode = MODE_SLEEPING;
 
-		if (oldMode == MODE_12) {
+		if (oldMode == MODE_INTERACTIVE2) {
 			party.changeTime(8 * 60);
 		} else {
 			for (int idx = 0; idx < 10; ++idx) {
 				chargeStep();
 				draw3d(true);
 
-				if (_vm->_mode == MODE_1) {
+				if (_vm->_mode == MODE_INTERACTIVE) {
 					_vm->_mode = oldMode;
 					return;
 				}
@@ -1190,7 +1190,7 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 	_flipUIFrame = (_flipUIFrame + 1) % 4;
 	if (_flipUIFrame == 0)
 		_flipWater = !_flipWater;
-	if (_tillMove && (_vm->_mode == MODE_1 || _vm->_mode == MODE_COMBAT) &&
+	if (_tillMove && (_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_COMBAT) &&
 		!combat._monstersAttacking && combat._moveMonsters) {
 		if (--_tillMove == 0)
 			combat.moveMonsters();
@@ -1226,7 +1226,7 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 
 	if (combat._attackMonsters[0] != -1 || combat._attackMonsters[1] != -1
 			|| combat._attackMonsters[2] != -1) {
-		if ((_vm->_mode == MODE_1 || _vm->_mode == MODE_SLEEPING) &&
+		if ((_vm->_mode == MODE_INTERACTIVE || _vm->_mode == MODE_SLEEPING) &&
 				!combat._monstersAttacking && !_charsShooting && combat._moveMonsters) {
 			doCombat();
 			if (scripts._eventSkipped)
@@ -1589,7 +1589,7 @@ void Interface::doCombat() {
 				combat.run();
 				nextChar();
 
-				if (_vm->_mode == MODE_1) {
+				if (_vm->_mode == MODE_INTERACTIVE) {
 					party._treasure._gems = 0;
 					party._treasure._gold = 0;
 					party._treasure._hasItems = false;
@@ -1680,7 +1680,7 @@ void Interface::doCombat() {
 				break;
 		}
 
-		_vm->_mode = MODE_1;
+		_vm->_mode = MODE_INTERACTIVE;
 		if (combat._partyRan && (combat._attackMonsters[0] != -1 ||
 				combat._attackMonsters[1] != -1 || combat._attackMonsters[2] != -1)) {
 			party.checkPartyDead();
@@ -1701,7 +1701,7 @@ exit:
 		_vm->_mode = MODE_COMBAT;
 		draw3d(true);
 		party.giveTreasure();
-		_vm->_mode = MODE_1;
+		_vm->_mode = MODE_INTERACTIVE;
 		party._stepped = true;
 		unhighlightChar();
 
@@ -1730,7 +1730,7 @@ exit:
 		}
 	}
 
-	combat._combatMode = COMBATMODE_1;
+	combat._combatMode = COMBATMODE_INTERACTIVE;
 }
 
 void Interface::nextChar() {
@@ -1741,7 +1741,7 @@ void Interface::nextChar() {
 		return;
 	if ((combat._attackMonsters[0] == -1 && combat._attackMonsters[1] == -1 &&
 		combat._attackMonsters[2] == -1) || combat._combatParty.size() == 0) {
-		_vm->_mode = MODE_1;
+		_vm->_mode = MODE_INTERACTIVE;
 		return;
 	}
 
@@ -1751,7 +1751,7 @@ void Interface::nextChar() {
 		// Check if party is dead
 		party.checkPartyDead();
 		if (party._dead) {
-			_vm->_mode = MODE_1;
+			_vm->_mode = MODE_INTERACTIVE;
 			break;
 		}
 

@@ -524,7 +524,7 @@ void Party::addTime(int numMinutes) {
 		_newDay = true;
 
 	if (_newDay && _minutes >= 300) {
-		if (_vm->_mode != MODE_RECORD_EVENTS && _vm->_mode != MODE_17) {
+		if (_vm->_mode != MODE_SCRIPT_IN_PROGRESS && _vm->_mode != MODE_INTERACTIVE7) {
 			resetTemps();
 			if (_rested || _vm->_mode == MODE_SLEEPING) {
 				_rested = false;
@@ -696,7 +696,7 @@ void Party::giveTreasure() {
 		return;
 
 	bool monstersPresent = combat.areMonstersPresent();
-	if (_vm->_mode != MODE_RECORD_EVENTS && monstersPresent)
+	if (_vm->_mode != MODE_SCRIPT_IN_PROGRESS && monstersPresent)
 		return;
 
 	combat.clearShooting();
@@ -781,7 +781,7 @@ void Party::giveTreasure() {
 	events.clearEvents();
 
 	if (_vm->_mode != MODE_COMBAT)
-		_vm->_mode = MODE_1;
+		_vm->_mode = MODE_INTERACTIVE;
 
 	w.close();
 	_gold += _treasure._gold;

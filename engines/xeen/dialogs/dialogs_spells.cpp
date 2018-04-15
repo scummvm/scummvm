@@ -137,7 +137,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					spells._lastCaster = _buttonValue;
 					intf.highlightChar(_buttonValue);
 
-					if (_vm->_mode == MODE_17) {
+					if (_vm->_mode == MODE_INTERACTIVE7) {
 						windows[10].writeString(Common::String::format(Res.GUILD_OPTIONS,
 							XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()));
 					} else {

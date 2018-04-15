@@ -186,7 +186,7 @@ int Scripts::checkEvents() {
 				if (event._position == _currentPos && event._line == _lineNum &&
 						(party._mazeDirection | _currentPos.x | _currentPos.y)) {
 					if (event._direction == party._mazeDirection || event._direction == DIR_ALL) {
-						_vm->_mode = MODE_RECORD_EVENTS;
+						_vm->_mode = MODE_SCRIPT_IN_PROGRESS;
 						_scriptExecuted = true;
 						doOpcode(event);
 						break;
@@ -1463,7 +1463,7 @@ void Scripts::doCloudsEnding() {
 	g_vm->_party->_cloudsCompleted = true;
 	doEnding("ENDGAME");
 
-	g_vm->_mode = MODE_1;
+	g_vm->_mode = MODE_INTERACTIVE;
 	g_vm->_saves->saveGame();
 
 	g_vm->_gameMode = GMODE_MENU;

@@ -58,7 +58,7 @@ enum ShootType {
 };
 
 enum CombatMode {
-	COMBATMODE_STARTUP = 0, COMBATMODE_1 = 1, COMBATMODE_2 = 2
+	COMBATMODE_STARTUP = 0, COMBATMODE_INTERACTIVE = 1, COMBATMODE_2 = 2
 };
 
 enum PowType {

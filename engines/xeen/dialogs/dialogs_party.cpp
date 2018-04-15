@@ -58,7 +58,7 @@ void PartyDialog::execute() {
 	setupBackground();
 
 	while (!_vm->shouldExit()) {
-		_vm->_mode = MODE_1;
+		_vm->_mode = MODE_INTERACTIVE;
 
 		// Build up a list of available characters in the Roster that are on the
 		// same side of Xeen as the player is currently on

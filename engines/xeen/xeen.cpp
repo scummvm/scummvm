@@ -197,7 +197,8 @@ bool XeenEngine::canLoadGameStateCurrently() {
 }
 
 bool XeenEngine::canSaveGameStateCurrently() {
-	return _mode != MODE_COMBAT && _mode != MODE_STARTUP && (_map->mazeData()._mazeFlags & RESTRICTION_SAVE) == 0;
+	return _mode != MODE_COMBAT && _mode != MODE_STARTUP && _mode != MODE_SCRIPT_IN_PROGRESS
+		&& (_map->mazeData()._mazeFlags & RESTRICTION_SAVE) == 0;
 }
 
 void XeenEngine::playGame() {
@@ -243,7 +244,7 @@ void XeenEngine::play() {
 
 	_combat->_moveMonsters = true;
 	if (_mode == MODE_STARTUP) {
-		_mode = MODE_1;
+		_mode = MODE_INTERACTIVE;
 		_screen->fadeIn();
 	}
 
@@ -272,6 +273,8 @@ void XeenEngine::gameLoop() {
 		_map->cellFlagLookup(_party->_mazePosition);
 		if (_map->_currentIsEvent) {
 			_gameMode = (GameMode)_scripts->checkEvents();
+			if (isLoadPending())
+				continue;
 			if (shouldExit())
 				return;
 		}

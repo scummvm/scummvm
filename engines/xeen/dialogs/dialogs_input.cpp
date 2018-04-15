@@ -84,7 +84,7 @@ Common::KeyState Input::waitForKey(const Common::String &msg) {
 	intf._tillMove = 0;
 
 	bool flag = !_vm->_startupWindowActive && !windows[25]._enabled
-		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_17;
+		&& _vm->_mode != MODE_FF && _vm->_mode != MODE_INTERACTIVE7;
 
 	PendingEvent pe;
 	while (!_vm->shouldExit()) {

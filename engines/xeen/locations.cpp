@@ -497,7 +497,7 @@ GuildLocation::GuildLocation() : BaseLocation(GUILD) {
 	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_b);
 	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_s);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
-	g_vm->_mode = MODE_17;
+	g_vm->_mode = MODE_INTERACTIVE7;
 
 	_vocName = _ccNum ? "parrot1.voc" : "guild10.voc";
 }
@@ -560,7 +560,7 @@ TavernLocation::TavernLocation() : BaseLocation(TAVERN) {
 	addButton(Common::Rect(234, 64, 308, 72), Common::KEYCODE_f);
 	addButton(Common::Rect(234, 74, 308, 82), Common::KEYCODE_t);
 	addButton(Common::Rect(234, 84, 308, 92), Common::KEYCODE_r);
-	g_vm->_mode = MODE_17;
+	g_vm->_mode = MODE_INTERACTIVE7;
 
 	_vocName = _ccNum ? "hello1.voc" : "hello.voc";
 }
@@ -713,7 +713,7 @@ Character *TavernLocation::doOptions(Character *c) {
 			party._activeParty[idx]._xeenSide = map._loadCcNum;
 		}
 
-		g_vm->_mode = MODE_17;
+		g_vm->_mode = MODE_INTERACTIVE7;
 		party.addTime(1440);
 		party._mazeId = 0;
 

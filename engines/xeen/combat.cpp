@@ -638,7 +638,7 @@ void Combat::monstersAttack() {
 			Condition condition = party._activeParty[charNum].worstCondition();
 
 			if (condition == DEPRESSED || condition == CONFUSED || condition == NO_CONDITION) {
-				_vm->_mode = MODE_1;
+				_vm->_mode = MODE_INTERACTIVE;
 				break;
 			}
 		}
@@ -890,7 +890,7 @@ void Combat::doMonsterTurn(int monsterId) {
 
 			if (ableChars.size() == 0) {
 				party._dead = true;
-				_vm->_mode = MODE_1;
+				_vm->_mode = MODE_INTERACTIVE;
 				return;
 			}
 
@@ -2095,7 +2095,7 @@ void Combat::reset() {
 	clearShooting();
 	setupCombatParty();
 
-	_combatMode = COMBATMODE_1;
+	_combatMode = COMBATMODE_INTERACTIVE;
 	_monster2Attack = -1;
 }
 

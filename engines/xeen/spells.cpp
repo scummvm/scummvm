@@ -1150,7 +1150,7 @@ void Spells::superShelter() {
 		spellFailed();
 	} else {
 		Mode oldMode = _vm->_mode;
-		_vm->_mode = MODE_12;
+		_vm->_mode = MODE_INTERACTIVE2;
 		sound.playFX(30);
 		intf.rest();
 		_vm->_mode = oldMode;
