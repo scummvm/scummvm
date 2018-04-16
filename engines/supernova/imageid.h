@@ -238,6 +238,7 @@ enum ImageId {
 	kImageAxacussCorridorStuff17,
 	kImageAxacussCorridorStuff18,
 	kImageAxacussCorridorStuff19,
+	kImageAxacussCorridorStuff20,
 	kImageAxacussCorridorStuff21,
 	kImageAxacussCorridorStuff22,
 	kImageAxacussCorridorStuff23,
