@@ -1048,11 +1048,16 @@ bool Scripts::cmdCallEvent(ParamsIterator &params) {
 }
 
 bool Scripts::cmdReturn(ParamsIterator &params) {
-	StackEntry se = _stack.pop();
-	_currentPos = se;
-	_lineNum = se.line;
+	if (_stack.empty()) {
+		// WORKAROUND: Some scripts in Swords of Xeen use cmdReturn as a substitute for cmdExit
+		return cmdExit(params);
+	} else {
+		StackEntry se = _stack.pop();
+		_currentPos = se;
+		_lineNum = se.line;
 
-	return true;
+		return true;
+	}
 }
 
 bool Scripts::cmdSetVar(ParamsIterator &params) {
