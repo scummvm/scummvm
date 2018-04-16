@@ -287,7 +287,7 @@ void ScriptOpcodes_Duckman::opChangeScene(ScriptThread *scriptThread, OpCall &op
 	debug(1, "changeScene(%08X, %08X)", sceneId, threadId);
 	
 	//DEBUG
-#if 1
+#if 0
 	if (dsceneId) {
 		sceneId = dsceneId;
 		threadId = dthreadId;
