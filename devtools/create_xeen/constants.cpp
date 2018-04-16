@@ -1598,6 +1598,7 @@ const char *const QUESTS_DIALOG_TEXT =
 	"\t289Exit";
 const char *const CLOUDS_OF_XEEN_LINE = "\b \b*-- \f04Clouds of Xeen\fd --";
 const char *const DARKSIDE_OF_XEEN_LINE = "\b \b*-- \f04Darkside of Xeen\fd --";
+const char *const SWORDS_OF_XEEN_LINE = "\b \b*-- \f04Swords of Xeen\fd --";
 
 const char *const NO_QUEST_ITEMS =
 	"\r\x3""c\v000	000Quest Items\x3l\x2\n"
@@ -1782,8 +1783,18 @@ const char *const TOWN_PORTAL =
 	"To which Town (1-5)\n"
 	"\n";
 
-const int TOWN_MAP_NUMBERS[2][5] = {
-	{ 28, 29, 30, 31, 32 }, { 29, 31, 33, 35, 37 }
+const char *const TOWN_PORTAL_SWORDS =
+	"\x3""cTown Portal\x3l\n"
+	"\n"
+	"\t0101. %s\n"
+	"\t0102. %s\n"
+	"\t0103. %s\x3""c\n"
+	"\n"
+	"To which Town (1-3)\n"
+	"\n";
+
+const int TOWN_MAP_NUMBERS[3][5] = {
+	{ 28, 29, 30, 31, 32 }, { 29, 31, 33, 35, 37 }, { 53, 92, 63, 0, 0 }
 };
 
 const char *const MONSTER_DETAILS =
@@ -2180,6 +2191,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(QUESTS_DIALOG_TEXT);
 	file.syncString(CLOUDS_OF_XEEN_LINE);
 	file.syncString(DARKSIDE_OF_XEEN_LINE);
+	file.syncString(SWORDS_OF_XEEN_LINE);
 	file.syncString(NO_QUEST_ITEMS);
 	file.syncString(NO_CURRENT_QUESTS);
 	file.syncString(NO_AUTO_NOTES);
@@ -2229,7 +2241,8 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(LLOYDS_BEACON);
 	file.syncString(HOW_MANY_SQUARES);
 	file.syncString(TOWN_PORTAL);
-	file.syncNumbers2D((const int *)TOWN_MAP_NUMBERS, 2, 5);
+	file.syncString(TOWN_PORTAL_SWORDS);
+	file.syncNumbers2D((const int *)TOWN_MAP_NUMBERS, 3, 5);
 	file.syncString(MONSTER_DETAILS);
 	file.syncStrings(MONSTER_SPECIAL_ATTACKS, 23);
 	file.syncString(IDENTIFY_MONSTERS);

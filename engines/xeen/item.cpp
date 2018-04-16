@@ -86,7 +86,10 @@ AttributeCategory XeenItem::getAttributeCategory() const {
 }
 
 const char *XeenItem::getItemName(ItemCategory category, uint id) {
-	if (id < 82) {
+	const char **questItems = (g_vm->getGameID() == GType_Swords) ? Res.QUEST_ITEM_NAMES_SWORDS : Res.QUEST_ITEM_NAMES;
+	const uint QUEST_OFFSET = g_vm->getGameID() == GType_Swords ? 88 : 82;
+
+	if (id < QUEST_OFFSET) {
 		switch (category) {
 		case CATEGORY_WEAPON:
 			assert(id < 41);
@@ -102,18 +105,16 @@ const char *XeenItem::getItemName(ItemCategory category, uint id) {
 			return Res.MISC_NAMES[id];
 		}
 	} else {
-		const char **questItems = (g_vm->getGameID() == GType_Swords) ? Res.QUEST_ITEM_NAMES_SWORDS : Res.QUEST_ITEM_NAMES;
-
 		switch (category) {
 		case CATEGORY_WEAPON:
-			return questItems[id - 82];
+			return questItems[id - QUEST_OFFSET];
 		case CATEGORY_ARMOR:
-			return questItems[id - 82 + 35];
+			return questItems[id - QUEST_OFFSET + 35];
 		case CATEGORY_ACCESSORY:
-			return questItems[id - 82 + 35 + 14];
+			return questItems[id - QUEST_OFFSET + 35 + 14];
 		default:
 			assert(g_vm->getGameID() != GType_Swords);
-			return questItems[id - 82 + 35 + 14 + 11];
+			return questItems[id - QUEST_OFFSET + 35 + 14 + 11];
 		}
 	}
 }

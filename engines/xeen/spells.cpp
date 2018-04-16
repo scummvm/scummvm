@@ -1250,9 +1250,14 @@ void Spells::townPortal() {
 	sound.playFX(51);
 	map._loadCcNum = map._sideTownPortal;
 	_vm->_files->_ccNum = map._sideTownPortal > 0;
-	map.load(Res.TOWN_MAP_NUMBERS[map._sideTownPortal][townNumber - 1]);
 
-	if (!_vm->_files->_ccNum) {
+	int arrIndex = _vm->getGameID() == GType_Swords ? 2 : map._sideTownPortal;
+	map.load(Res.TOWN_MAP_NUMBERS[arrIndex][townNumber - 1]);
+
+	if (_vm->getGameID() == GType_Swords) {
+		party._mazePosition = Common::Point(8, 3);
+		party._mazeDirection = DIR_NORTH;
+	} else if (!_vm->_files->_ccNum) {
 		party.moveToRunLocation();
 	} else {
 		switch (townNumber) {

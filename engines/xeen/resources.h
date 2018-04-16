@@ -370,6 +370,7 @@ public:
 	const char *QUESTS_DIALOG_TEXT;
 	const char *CLOUDS_OF_XEEN_LINE;
 	const char *DARKSIDE_OF_XEEN_LINE;
+	const char *SWORDS_OF_XEEN_LINE;
 	const char *NO_QUEST_ITEMS;
 	const char *NO_CURRENT_QUESTS;
 	const char *NO_AUTO_NOTES;
@@ -419,7 +420,8 @@ public:
 	const char *LLOYDS_BEACON;
 	const char *HOW_MANY_SQUARES;
 	const char *TOWN_PORTAL;
-	int TOWN_MAP_NUMBERS[2][5];
+	const char *TOWN_PORTAL_SWORDS;
+	int TOWN_MAP_NUMBERS[3][5];
 	const char *MONSTER_DETAILS;
 	const char *MONSTER_SPECIAL_ATTACKS[23];
 	const char *IDENTIFY_MONSTERS;

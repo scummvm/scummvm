@@ -315,6 +315,7 @@ void Resources::loadData() {
 	file.syncString(QUESTS_DIALOG_TEXT);
 	file.syncString(CLOUDS_OF_XEEN_LINE);
 	file.syncString(DARKSIDE_OF_XEEN_LINE);
+	file.syncString(SWORDS_OF_XEEN_LINE);
 	file.syncString(NO_QUEST_ITEMS);
 	file.syncString(NO_CURRENT_QUESTS);
 	file.syncString(NO_AUTO_NOTES);
@@ -364,7 +365,8 @@ void Resources::loadData() {
 	file.syncString(LLOYDS_BEACON);
 	file.syncString(HOW_MANY_SQUARES);
 	file.syncString(TOWN_PORTAL);
-	file.syncNumbers2D((int *)TOWN_MAP_NUMBERS, 2, 5);
+	file.syncString(TOWN_PORTAL_SWORDS);
+	file.syncNumbers2D((int *)TOWN_MAP_NUMBERS, 3, 5);
 	file.syncString(MONSTER_DETAILS);
 	file.syncStrings(MONSTER_SPECIAL_ATTACKS, 23);
 	file.syncString(IDENTIFY_MONSTERS);

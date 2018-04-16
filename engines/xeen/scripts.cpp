@@ -1246,24 +1246,25 @@ bool Scripts::cmdSelectRandomChar(ParamsIterator &params) {
 
 bool Scripts::cmdGiveEnchanted(ParamsIterator &params) {
 	Party &party = *_vm->_party;
+	int itemOffset = _vm->getGameID() == GType_Swords ? 6 : 0;
 	XeenItem *item;
 	int invIndex;
 	int id = params.readByte();
 
 	// Get category of item to add
 	ItemCategory cat = CATEGORY_WEAPON;
-	if (id < 35) {
-	} else if (id < 49) {
+	if (id < (35 + itemOffset)) {
+	} else if (id < (49 + itemOffset)) {
 		cat = CATEGORY_ARMOR;
-		id -= 35;
-	} else if (id < 60) {
+		id -= 35 + itemOffset;
+	} else if (id < (60 + itemOffset)) {
 		cat = CATEGORY_ACCESSORY;
-		id -= 49;
-	} else if (id < 82) {
+		id -= 49 + itemOffset;
+	} else if (id < (82 + itemOffset)) {
 		cat = CATEGORY_MISC;
-		id -= 60;
+		id -= 60 + itemOffset;
 	} else {
-		party._questItems[id - 82]++;
+		party._questItems[id - (82 + itemOffset)]++;
 	}
 
 	// Check for an empty slot
@@ -1588,37 +1589,39 @@ bool Scripts::ifProc(int action, uint32 val, int mode, int charIndex) {
 		assert(val < 512);
 		v = party._gameFlags[val / 256][val % 256] ? val : 0xffffffff;
 		break;
-	case 21:
+	case 21: {
 		// Scans inventories for given item number
+		uint itemOffset = _vm->getGameID() == GType_Swords ? 6 : 0;
 		v = 0xFFFFFFFF;
-		if (val < 82) {
+		if (val < (82 + itemOffset)) {
 			for (int idx = 0; idx < 9; ++idx) {
-				if (val == 35) {
+				if (val == (35 + itemOffset)) {
 					if (ps->_weapons[idx]._id == val) {
 						v = val;
 						break;
 					}
-				} else if (val < 49) {
+				} else if (val < (49 + itemOffset)) {
 					if (ps->_armor[idx]._id == (val - 35)) {
 						v = val;
 						break;
 					}
-				} else if (val < 60) {
-					if (ps->_accessories[idx]._id == (val - 49)) {
+				} else if (val < (60 + itemOffset)) {
+					if (ps->_accessories[idx]._id == (val - (49 + itemOffset))) {
 						v = val;
 						break;
 					}
 				} else {
-					if (ps->_misc[idx]._id == (val - 60)) {
+					if (ps->_misc[idx]._id == (val - (60 + itemOffset))) {
 						v = val;
 						break;
 					}
 				}
 			}
-		} else if (party._questItems[val - 82]) {
+		} else if (party._questItems[val - (82 + itemOffset)]) {
 			v = val;
 		}
 		break;
+	}
 	case 25:
 		// Returns number of minutes elapsed in the day (0-1440)
 		v = party._minutes;

@@ -880,20 +880,35 @@ int TownPortal::execute() {
 	Mode oldMode = _vm->_mode;
 	_vm->_mode = MODE_FF;
 
-	// Build up a lsit of the names of the towns on the current side of Xeen
-	for (int idx = 0; idx < 5; ++idx) {
-		Common::String txtName = Common::String::format("%s%04d.txt", map._sideTownPortal ? "dark" : "xeen",
-			Res.TOWN_MAP_NUMBERS[map._sideTownPortal][idx]);
-		File f(txtName, 1);
-		townNames[idx] = f.readString();
-		f.close();
+	w.open();
+
+	if (_vm->getGameID() == GType_Swords) {
+		// Build up a lsit of the names of the towns on the current side of Xeen
+		for (int idx = 0; idx < 3; ++idx) {
+			Common::String txtName = Common::String::format("%s%04d.txt", "dark", Res.TOWN_MAP_NUMBERS[2][idx]);
+			File f(txtName, 1);
+			townNames[idx] = f.readString();
+			f.close();
+		}
+
+		w.writeString(Common::String::format(Res.TOWN_PORTAL_SWORDS, townNames[0].c_str(), townNames[1].c_str(),
+			townNames[2].c_str()));
+	} else {
+		// Build up a lsit of the names of the towns on the current side of Xeen
+		for (int idx = 0; idx < 5; ++idx) {
+			Common::String txtName = Common::String::format("%s%04d.txt", map._sideTownPortal ? "dark" : "xeen",
+				Res.TOWN_MAP_NUMBERS[map._sideTownPortal][idx]);
+			File f(txtName, 1);
+			townNames[idx] = f.readString();
+			f.close();
+		}
+
+		w.writeString(Common::String::format(Res.TOWN_PORTAL,
+			townNames[0].c_str(), townNames[1].c_str(), townNames[2].c_str(),
+			townNames[3].c_str(), townNames[4].c_str()
+		));
 	}
 
-	w.open();
-	w.writeString(Common::String::format(Res.TOWN_PORTAL,
-		townNames[0].c_str(), townNames[1].c_str(), townNames[2].c_str(),
-		townNames[3].c_str(), townNames[4].c_str()
-	));
 	w.update();
 
 	// Get the town number
@@ -902,7 +917,7 @@ int TownPortal::execute() {
 	do {
 		int result = Input::show(_vm, &w, num, 1, 160, true);
 		townNumber = !result ? 0 : atoi(num.c_str());
-	} while (townNumber > 5);
+	} while (townNumber > (_vm->getGameID() == GType_Swords ? 3 : 5));
 
 	w.close();
 	_vm->_mode = oldMode;

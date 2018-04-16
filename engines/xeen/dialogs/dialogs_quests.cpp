@@ -44,8 +44,9 @@ void Quests::execute() {
 	int count = 0;
 	bool headerShown = false;
 	int topRow = 0;
-	const char **questItems = (g_vm->getGameID() == GType_Swords) ? Res.QUEST_ITEM_NAMES_SWORDS : Res.QUEST_ITEM_NAMES;
+	const char **questItemNames = (g_vm->getGameID() == GType_Swords) ? Res.QUEST_ITEM_NAMES_SWORDS : Res.QUEST_ITEM_NAMES;
 	int itemsCount = (g_vm->getGameID() == GType_Swords) ? TOTAL_QUEST_ITEMS_SWORDS : TOTAL_QUEST_ITEMS;
+	const char *title1 = (g_vm->getGameID() == GType_Swords) ? Res.SWORDS_OF_XEEN_LINE : Res.CLOUDS_OF_XEEN_LINE;
 
 	addButtons();
 	loadQuestNotes();
@@ -75,30 +76,43 @@ void Quests::execute() {
 			headerShown = false;
 			for (int idx = 0; idx < itemsCount; ++idx) {
 				if (party._questItems[idx]) {
-					if (!count && !headerShown && idx < 35) {
-						lines[count++] = Res.CLOUDS_OF_XEEN_LINE;
+					if (!count && !headerShown) {
+						if (_vm->getGameID() == GType_Swords)
+							lines[count++] = Res.SWORDS_OF_XEEN_LINE;
+						else if (idx < 35)
+							lines[count++] = title1;
 					}
 					if (idx >= 35 && !headerShown) {
 						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;
 						headerShown = true;
 					}
 
-					switch (idx) {
-					case 17:
-					case 26:
-					case 79:
-					case 80:
-					case 81:
-					case 82:
-					case 83:
-					case 84:
+					bool multiFlag = false;
+					if (_vm->getGameID() == GType_Swords) {
+						multiFlag = (idx == 20) || (idx == 27) || (idx == 41);
+					} else {
+						switch (idx) {
+						case 17:
+						case 26:
+						case 79:
+						case 80:
+						case 81:
+						case 82:
+						case 83:
+						case 84:
+							multiFlag = true;
+							break;
+						default:
+							break;
+						}
+					}
+
+					if (multiFlag) {
 						lines[count++] = Common::String::format("%d %s%c",
-							party._questItems[idx], questItems[idx],
+							party._questItems[idx], questItemNames[idx],
 							party._questItems[idx] == 1 ? ' ' : 's');
-						break;
-					default:
-						lines[count++] = questItems[idx];
-						break;
+					} else {
+						lines[count++] = questItemNames[idx];
 					}
 				}
 			}
@@ -125,7 +139,7 @@ void Quests::execute() {
 			for (int idx = 0; idx < TOTAL_QUEST_FLAGS; ++idx) {
 				if (party._questFlags[(idx + 1) / 30][(idx + 1) % 30]) {
 					if (!count && !headerShown && idx < 29) {
-						lines[count++] = Res.CLOUDS_OF_XEEN_LINE;
+						lines[count++] = title1;
 					}
 					if (idx > 28 && !headerShown) {
 						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;
@@ -152,7 +166,7 @@ void Quests::execute() {
 			for (int idx = 0; idx < MAX_DIALOG_LINES; ++idx) {
 				if (party._worldFlags[idx]) {
 					if (!count && !headerShown && idx < 72) {
-						lines[count++] = Res.CLOUDS_OF_XEEN_LINE;
+						lines[count++] = title1;
 					}
 					if (idx >= 72 && !headerShown) {
 						lines[count++] = Res.DARKSIDE_OF_XEEN_LINE;

@@ -824,9 +824,17 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	w.update();
 	events.ipause(5);
 
-	const char *itemName = XeenItem::getItemName(category, (category == CATEGORY_MISC) ?
-		treasureItem._material : treasureItem._id);
-	w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), itemName));
+	int index = (category == CATEGORY_MISC) ? treasureItem._material : treasureItem._id;
+	const char *itemName = XeenItem::getItemName(category, index);
+
+	if (index >= (_vm->getGameID() == GType_Swords ? 88 : 82)) {
+		// Quest item, give an extra '*' prefix
+		Common::String format = Common::String::format("\f04 * \fd%s", itemName);
+		w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), format.c_str()));
+	} else {
+		w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), itemName));
+	}
+
 	w.update();
 	c._items[category].sort();
 	events.ipause(8);
@@ -1178,35 +1186,40 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 		_gameFlags[files._ccNum][giveVal] = true;
 		break;
 	case 21: {
+		const uint WEAPONS_END = _vm->getGameID() != GType_Swords ? 35 : 41;
+		const uint ARMOR_END = _vm->getGameID() != GType_Swords ? 49 : 55;
+		const uint ACCESSORIES_END = _vm->getGameID() != GType_Swords ? 60 : 66;
+		const uint MISC_END = _vm->getGameID() != GType_Swords ? 82 : 88;
+
 		int idx;
-		if (giveVal >= 82) {
-			_questItems[giveVal - 82]++;
+		if (giveVal >= MISC_END) {
+			_questItems[giveVal - MISC_END]++;
 		}
-		if (giveVal < 35 || giveVal >= 82) {
+		if (giveVal < WEAPONS_END || giveVal >= MISC_END) {
 			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._weapons[idx].empty(); ++idx);
 			if (idx < MAX_TREASURE_ITEMS) {
 				_treasure._weapons[idx]._id = giveVal;
 				_treasure._hasItems = true;
 				return false;
 			}
-		} else if (giveVal < 49) {
+		} else if (giveVal < ARMOR_END) {
 			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._armor[idx].empty(); ++idx);
 			if (idx < MAX_TREASURE_ITEMS) {
-				_treasure._armor[idx]._id = giveVal - 35;
+				_treasure._armor[idx]._id = giveVal - WEAPONS_END;
 				_treasure._hasItems = true;
 				return false;
 			}
-		} else if (giveVal < 60) {
+		} else if (giveVal < ACCESSORIES_END) {
 			for (idx = 0; idx < MAX_TREASURE_ITEMS && !_treasure._accessories[idx].empty(); ++idx);
 			if (idx < MAX_TREASURE_ITEMS) {
-				_treasure._accessories[idx]._id = giveVal - 49;
+				_treasure._accessories[idx]._id = giveVal - ARMOR_END;
 				_treasure._hasItems = true;
 				return false;
 			}
 		} else {
 			for (idx = 0; idx < MAX_TREASURE_ITEMS && _treasure._misc[idx]._material; ++idx);
 			if (idx < MAX_TREASURE_ITEMS) {
-				_treasure._accessories[idx]._material = giveVal - 60;
+				_treasure._accessories[idx]._material = giveVal - ACCESSORIES_END;
 				_treasure._hasItems = true;
 				return false;
 			}
