@@ -43,7 +43,7 @@ IllusionsEngine::kReadSaveHeaderError IllusionsEngine::readSaveHeader(Common::Se
 		header.description += (char)in->readByte();
 
 	if (loadThumbnail) {
-		header.thumbnail = Graphics::loadThumbnail(*in);
+		Graphics::loadThumbnail(*in, header.thumbnail);
 	} else {
 		Graphics::skipThumbnail(*in);
 	}

@@ -603,7 +603,7 @@ MenuActionLoadGame::MenuActionLoadGame(BaseMenuSystem *menuSystem, uint choiceIn
 }
 
 void MenuActionLoadGame::execute() {
-	const EnginePlugin *plugin = NULL;
+	const Plugin *plugin = NULL;
 	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	Common::String desc;
