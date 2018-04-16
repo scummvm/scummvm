@@ -35,6 +35,7 @@
 #include "supernova/msn_def.h"
 #include "supernova/rooms.h"
 #include "supernova/sound.h"
+#include "supernova/imageid.h"
 
 namespace Common {
 	class MemoryReadWriteStream;
@@ -102,6 +103,7 @@ public:
 	void paletteFadeOut();
 	void paletteBrightness();
 	void renderImage(int section);
+	void renderImage(ImageId id, bool removeImage = false);
 	bool setCurrentImage(int filenumber);
 	void saveScreen(int x, int y, int width, int height);
 	void saveScreen(const GuiElement &guiElement);

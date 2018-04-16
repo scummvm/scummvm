@@ -247,6 +247,10 @@ void SupernovaEngine::renderImage(int section) {
 	_screen->renderImage(section);
 }
 
+void SupernovaEngine::renderImage(ImageId id, bool removeImage) {
+	_screen->renderImage(id, removeImage);
+}
+
 bool SupernovaEngine::setCurrentImage(int filenumber) {
 	return _screen->setCurrentImage(filenumber);
 }
