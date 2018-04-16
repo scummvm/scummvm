@@ -159,7 +159,6 @@ public:
 	Object _nullObject;
 	Object *_currentInputObject;
 	Object *_inputObject[2];
-	bool _waitEvent;
 	int32 _oldTime;
 	uint _timePaused;
 	bool _timerPaused;
