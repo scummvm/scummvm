@@ -2286,7 +2286,7 @@ void LilliputScript::OC_DisableCharacter() {
 
 void LilliputScript::OC_saveAndQuit() {
 	warning("TODO: OC_saveAndQuit");
-	_vm->_soundHandler->contentFct6(); // Kill music
+	_vm->_soundHandler->remove(); // Kill music
 	// TODO: Save game
 	_vm->_shouldQuit = true;
 }
@@ -3213,7 +3213,7 @@ void LilliputScript::OC_initGameAreaDisplay() {
 	OC_PaletteFadeIn();
 	_vm->_refreshScreenFlag = false;
 
-	_vm->_soundHandler->contentFct5();
+	_vm->_soundHandler->update();
 }
 
 void LilliputScript::OC_displayCharacterStatBar() {
@@ -3291,7 +3291,7 @@ void LilliputScript::OC_playObjectSound() {
 	Common::Point var4 = Common::Point(0xFF, index & 0xFF);
 	int soundId = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_soundHandler->contentFct2(soundId, _viewportPos, _characterTilePos[index], var4);
+	_vm->_soundHandler->play(soundId, _viewportPos, _characterTilePos[index], var4);
 }
 
 void LilliputScript::OC_startLocationSound() {
@@ -3302,7 +3302,7 @@ void LilliputScript::OC_startLocationSound() {
 	Common::Point var2 = _viewportPos;
 	int var1 = (_currScript->readUint16LE() & 0xFF);
 
-	_vm->_soundHandler->contentFct2(var1, var2, var3, var4);
+	_vm->_soundHandler->play(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_stopObjectSound() {
@@ -3310,7 +3310,7 @@ void LilliputScript::OC_stopObjectSound() {
 
 	Common::Point var4 = Common::Point(-1, getValue1() & 0xFF);
 
-	_vm->_soundHandler->contentFct3(var4); // Stop Sound
+	_vm->_soundHandler->stop(var4); // Stop Sound
 }
 
 void LilliputScript::OC_stopLocationSound() {
@@ -3318,13 +3318,13 @@ void LilliputScript::OC_stopLocationSound() {
 
 	Common::Point var4 = getPosFromScript();
 
-	_vm->_soundHandler->contentFct3(var4);
+	_vm->_soundHandler->stop(var4);
 }
 
 void LilliputScript::OC_toggleSound() {
 	debugC(1, kDebugScript, "OC_toggleSound()");
 
-	_vm->_soundHandler->contentFct4();
+	_vm->_soundHandler->toggleOnOff();
 }
 
 void LilliputScript::OC_playMusic() {
@@ -3336,13 +3336,13 @@ void LilliputScript::OC_playMusic() {
 	warning("OC_playMusic: unknown value for var3");
 	Common::Point var3 = Common::Point(-1, -1);
 
-	_vm->_soundHandler->contentFct2(var1, var2, var3, var4);
+	_vm->_soundHandler->play(var1, var2, var3, var4);
 }
 
 void LilliputScript::OC_stopMusic() {
 	debugC(1, kDebugScript, "OC_stopMusic()");
 
-	_vm->_soundHandler->contentFct6();
+	_vm->_soundHandler->remove();
 }
 
 void LilliputScript::OC_setCharacterMapColor() {

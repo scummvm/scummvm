@@ -253,7 +253,7 @@ void LilliputEngine::update() {
 }
 
 void LilliputEngine::newInt8() {
-	_soundHandler->contentFct1();
+	_soundHandler->refresh();
 
 	if (_byte12A05 != 0)
 		--_byte12A05;
@@ -1129,19 +1129,29 @@ void LilliputEngine::scrollToViewportCharacterTarget() {
 	Common::Point newPos = _scriptHandler->_viewportPos;
 
 	if (tileX >= 1) {
-		if (tileX > 6)
-			newPos.x = CLIP(newPos.x + 4, 0, 56);
-	} else
-		newPos.x = CLIP(newPos.x - 4, 0, 56);
+		if (tileX > 6){
+			newPos.x += 4;
+			if (newPos.x > 56)
+				newPos.x = 56;
+		}
+	} else {
+		newPos.x -= 4;
+		if (newPos.x < 0)
+			newPos.x = 0;
+	}
 
 	if ((tileY < 1) && (newPos.y < 4))
 		newPos.y = 0;
-	else if (tileY >= 1)
-		newPos.y = CLIP(newPos.y + 4, 0, 56);
-	else
-		// CHECKME: not clipped?
-		newPos.y -= 4;
+	else {
+		if (tileY < 1)
+			newPos.y -= 4;
 
+		if (tileY > 6) {
+			newPos.y += 4;
+			if (newPos.y >= 56)
+				newPos.y = 56;
+		}
+	}
 	viewportScrollTo(newPos);
 }
 
@@ -1182,7 +1192,7 @@ void LilliputEngine::viewportScrollTo(Common::Point goalPos) {
 			dy = 0;
 	} while ((dx != 0) || (dy != 0));
 
-	_soundHandler->contentFct5();
+	_soundHandler->update();
 }
 
 void LilliputEngine::renderCharacters(byte *buf, Common::Point pos) {
@@ -1664,7 +1674,7 @@ byte LilliputEngine::sequenceSound(int index, Common::Point var1) {
 	debugC(2, kDebugEngine, "sequenceSound(%d, %d - %d)", index, var1.x, var1.y);
 
 	int param4x = ((index | 0xFF00) >> 8);
-	_soundHandler->contentFct2(var1.y, _scriptHandler->_viewportPos, 
+	_soundHandler->play(var1.y, _scriptHandler->_viewportPos, 
 		_scriptHandler->_characterTilePos[index], Common::Point(param4x, 0));
 	return kSeqRepeat;
 }

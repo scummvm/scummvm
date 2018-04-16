@@ -32,16 +32,20 @@ public:
 	LilliputSound(LilliputEngine *vm);
 	~LilliputSound();
 
-	void contentFct0();
-	void contentFct1();
-	void contentFct2(int var1, Common::Point var2, Common::Point var3, Common::Point var4);
-	void contentFct3(Common::Point pos);
-	void contentFct4();
-	void contentFct5();
-	void contentFct6();
+	void init();
+	void refresh();
+	void play(int var1, Common::Point var2, Common::Point var3, Common::Point var4);
+	void stop(Common::Point pos);
+	void toggleOnOff();
+	void update();
+	void remove();
 
 private:
 	LilliputEngine *_vm;
+
+	byte *_musicBuff;
+
+	void loadMusic(Common::String filename);
 };
 
 } // End of namespace Lilliput

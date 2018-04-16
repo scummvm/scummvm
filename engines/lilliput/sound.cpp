@@ -31,35 +31,59 @@ LilliputSound::LilliputSound(LilliputEngine *vm) : _vm(vm) {
 }
 
 LilliputSound::~LilliputSound() {
+	free(_musicBuff);
 }
 
-// Used during initialisation
-void LilliputSound::contentFct0() {
-	debugC(1, kDebugSound, "contentFct0()");
+void LilliputSound::loadMusic(Common::String filename) {
+	debugC(1, kDebugSound, "loadMusic(%s)", filename.c_str());
+
+	Common::File f;
+
+	if (!f.open(filename))
+		error("Missing music file %s", filename.c_str());
+
+	byte *res = (byte *)malloc(sizeof(byte) * 50000);
+	for (int i = 0; i < 50000; ++i)
+		res[i] = f.readByte();
+
+//	f.close();
+	f.seek(0);
+	int filenumb = f.readUint16LE();
+
+
+
+	free(res);
 }
 
-void LilliputSound::contentFct1() {
-	debugC(1, kDebugSound, "contentFct1()");
+// Used during initialization
+void LilliputSound::init() {
+	debugC(1, kDebugSound, "LilliputSound::init()");
+
+	loadMusic("ROBIN.MUS");
 }
 
-void LilliputSound::contentFct2(int var1, Common::Point var2, Common::Point var3, Common::Point var4) {
-	debugC(1, kDebugSound, "contentFct2(%d, %d - %d, %d - %d, %d - %d)", var1, var2.x, var2.y, var3.x, var3.y, var4.x, var4.y);
+void LilliputSound::refresh() {
+	debugC(1, kDebugSound, "LilliputSound::refresh()");
 }
 
-void LilliputSound::contentFct3(Common::Point pos) {
-	debugC(1, kDebugSound, "contentFct3(%d - %d)", pos.x, pos.y);
+void LilliputSound::play(int var1, Common::Point var2, Common::Point var3, Common::Point var4) {
+	debugC(1, kDebugSound, "LilliputSound::play(%d, %d - %d, %d - %d, %d - %d)", var1, var2.x, var2.y, var3.x, var3.y, var4.x, var4.y);
 }
 
-void LilliputSound::contentFct4() {
-	debugC(1, kDebugSound, "contentFct4()");
+void LilliputSound::stop(Common::Point pos) {
+	debugC(1, kDebugSound, "LilliputSound::stop(%d - %d)", pos.x, pos.y);
 }
 
-void LilliputSound::contentFct5() {
-	debugC(1, kDebugSound, "contentFct5()");
+void LilliputSound::toggleOnOff() {
+	debugC(1, kDebugSound, "LilliputSound::toggleOnOff()");
 }
 
-void LilliputSound::contentFct6() {
-	debugC(1, kDebugSound, "contentFct6()");
+void LilliputSound::update() {
+	debugC(1, kDebugSound, "LilliputSound::update()");
+}
+
+void LilliputSound::remove() {
+	debugC(1, kDebugSound, "Lilliput::remove()");
 }
 
 } // End of namespace
