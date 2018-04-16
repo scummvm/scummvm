@@ -45,8 +45,8 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-LinuxmotoSdlGraphicsManager::LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource)
- : SurfaceSdlGraphicsManager(sdlEventSource) {
+LinuxmotoSdlGraphicsManager::LinuxmotoSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+ : SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
 const OSystem::GraphicsMode *LinuxmotoSdlGraphicsManager::getSupportedGraphicsModes() const {
@@ -79,7 +79,6 @@ bool LinuxmotoSdlGraphicsManager::setGraphicsMode(int mode) {
 		return false;
 	}
 
-	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
 	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
 		_transactionDetails.needHotswap = true;
 
@@ -134,7 +133,7 @@ void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h) {
 	if	(w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		_eventSource->toggleMouseGrab();
+		_window->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;
@@ -290,26 +289,6 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 		_forceFull = true;
 	}
 
-#ifdef USE_OSD
-	// OSD visible (i.e. non-transparent)?
-	if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
-		// Updated alpha value
-		const int diff = SDL_GetTicks() - _osdFadeStartTime;
-		if (diff > 0) {
-			if (diff >= kOSDFadeOutDuration) {
-				// Back to full transparency
-				_osdAlpha = SDL_ALPHA_TRANSPARENT;
-			} else {
-				// Do a linear fade out...
-				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
-				_osdAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
-			}
-			SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
-			_forceFull = true;
-		}
-	}
-#endif
-
 	if (!_overlayVisible) {
 		origSurf = _screen;
 		srcSurf = _tmpscreen;
@@ -330,6 +309,10 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	// we have to redraw the mouse.
 	if (_mouseNeedsRedraw)
 		undrawMouse();
+
+#ifdef USE_OSD
+	updateOSD();
+#endif
 
 	// Force a full redraw if requested
 	if (_forceFull) {
@@ -363,13 +346,13 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 		dstPitch = _hwscreen->pitch;
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
-			register int dst_y = r->y + _currentShakePos;
-			register int dst_h = 0;
-			register int dst_w = r->w;
-			register int orig_dst_y = 0;
-			register int dst_x = r->x;
-			register int src_y;
-			register int src_x;
+			int dst_y = r->y + _currentShakePos;
+			int dst_h = 0;
+			int dst_w = r->w;
+			int orig_dst_y = 0;
+			int dst_x = r->x;
+			int src_y;
+			int src_x;
 
 			if (dst_y < height) {
 				dst_h = r->h;
@@ -439,10 +422,9 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 		drawMouse();
 
 #ifdef USE_OSD
-		if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
-			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
-		}
+		drawOSD();
 #endif
+
 		// Finally, blit all our changes to the screen
 		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
 	}

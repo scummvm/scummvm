@@ -29,11 +29,11 @@
 
 class SamsungTVSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
-	bool hasFeature(OSystem::Feature f);
-	void setFeatureState(OSystem::Feature f, bool enable);
-	bool getFeatureState(OSystem::Feature f);
+	bool hasFeature(OSystem::Feature f) const override;
+	void setFeatureState(OSystem::Feature f, bool enable) override;
+	bool getFeatureState(OSystem::Feature f) const override;
 };
 
 #endif

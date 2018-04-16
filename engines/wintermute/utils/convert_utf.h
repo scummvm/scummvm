@@ -96,7 +96,6 @@ namespace Wintermute {
 typedef uint32  UTF32;  /* at least 32 bits */
 typedef uint16  UTF16;  /* at least 16 bits */
 typedef uint8   UTF8;   /* typically 8 bits */
-typedef uint8   Boolean; /* 0 or 1 */
 
 /* Some fundamental constants */
 #define UNI_REPLACEMENT_CHAR (UTF32)0x0000FFFD
@@ -141,7 +140,7 @@ ConversionResult ConvertUTF32toUTF16(
 	const UTF32 **sourceStart, const UTF32 *sourceEnd,
 	UTF16 **targetStart, UTF16 *targetEnd, ConversionFlags flags);
 
-Boolean isLegalUTF8Sequence(const UTF8 *source, const UTF8 *sourceEnd);
+bool isLegalUTF8Sequence(const UTF8 *source, const UTF8 *sourceEnd);
 
 } // End of namespace Wintermute
 

@@ -1449,6 +1449,74 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
+	{ // Spanish floppy version 1.23, bug #9699 "Lands of Lore - Spanish version 1.23 MD5"
+		{
+			"lol",
+			"Extracted",
+			{
+				{"GENERAL.PAK", 0, "ca1208aa60c5f3e3a7e06a0420a11526", -1 },
+				{"CHAPTER7.PAK", 0, "1f11dc4ba0473eec9d6d93bbf2ee9c8a", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
+	{ // Chinese floppy version bug #7893
+		{
+			"lol",
+			"Extracted",
+			{
+				{"GENERAL.PAK", 0, "f2c305bfb10c08371e947ab4d0a2f5f5", -1 },
+				{"CHAPTER7.PAK", 0, "f3cbab6d945ceda35149a5c9a324a8fe", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::ZH_CNA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
+	{ // German version - Bug 9557
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "8e144826df680397876e0fd7ce30c701", -1 },
+				{ "CHAPTER7.PAK", 0, "1240fb870aba719f5887ca7270227699", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
+	{ // Japanese PC9821 version - Bug 9828
+		{
+			"lol",
+			"Extracted",
+			{
+				{ "GENERAL.PAK", 0, "8902b233405461025e25093b9c4c8d2c", -1 },
+				{ "CHAPTER7.PAK", 0, "32a46c338a3d6249c273cc3b3881bb8a", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::JA_JPN,
+			Common::kPlatformPC98,
+			ADGF_NO_FLAGS,
+			GUIO5(GUIO_NOSPEECH, GUIO_MIDIPC98, GUIO_RENDERPC9801, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_PC9801_FLAGS
+	},
+
 	// Russian fan translation
 	{
 		{
@@ -1546,7 +1614,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS)
 		},
 		EOB_FLAGS
@@ -1562,7 +1630,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS)
 		},
 		EOB_FLAGS
@@ -1576,10 +1644,10 @@ const KYRAGameDescription adGameDescs[] = {
 				{ "EOBDATA3.PAK", 0, "3ed915ab5b94d60dbfe1b55379889c51", -1 },
 				{ 0, 0, 0, 0 }
 			},
-				Common::IT_ITA,
-				Common::kPlatformDOS,
-				ADGF_TESTING,
-				GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS)
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GUIO_RENDERCGA, GAMEOPTION_EOB_HPGRAPHS)
 		},
 		EOB_FLAGS
 	},
@@ -1594,7 +1662,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS)
 		},
 		EOB2_FLAGS
@@ -1610,7 +1678,7 @@ const KYRAGameDescription adGameDescs[] = {
 			},
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_TESTING,
+			ADGF_NO_FLAGS,
 			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS)
 		},
 		EOB2_FLAGS

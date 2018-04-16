@@ -40,8 +40,8 @@ enum RectState {
 
 class MystGraphics : public GraphicsManager {
 public:
-	MystGraphics(MohawkEngine_Myst*);
-	~MystGraphics();
+	explicit MystGraphics(MohawkEngine_Myst *vm);
+	~MystGraphics() override;
 
 	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageSectionToBackBuffer(uint16 image, Common::Rect src, Common::Rect dest);
@@ -51,22 +51,17 @@ public:
 	void runTransition(TransitionType type, Common::Rect rect, uint16 steps, uint16 delay);
 	void drawRect(Common::Rect rect, RectState state);
 	void drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color);
-	void enableDrawingTimeSimulation(bool enable);
 	void fadeToBlack();
 	void fadeFromBlack();
 
+	void clearScreenPalette();
+	void setPaletteToScreen();
+	const byte *getPalette() const { return _palette; }
+
 protected:
-	MohawkSurface *decodeImage(uint16 id);
-	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
-	void simulatePreviousDrawDelay(const Common::Rect &dest);
-	void copyBackBufferToScreenWithSaturation(int16 saturation);
-	void transitionDissolve(Common::Rect rect, uint step);
-	void transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16 delay);
-	void transitionSlideToRight(Common::Rect rect, uint16 steps, uint16 delay);
-	void transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 delay);
-	void transitionSlideToBottom(Common::Rect rect, uint16 steps, uint16 delay);
-	void transitionPartialToRight(Common::Rect rect, uint32 width, uint32 steps);
-	void transitionPartialToLeft(Common::Rect rect, uint32 width, uint32 steps);
+	MohawkSurface *decodeImage(uint16 id) override;
+	MohawkEngine *getVM() override { return (MohawkEngine *)_vm; }
+
 private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
@@ -74,11 +69,20 @@ private:
 	Graphics::Surface *_backBuffer;
 	Graphics::PixelFormat _pixelFormat;
 	Common::Rect _viewport;
+	byte _palette[256 * 3];
 
-	int _enableDrawingTimeSimulation;
-	uint32 _nextAllowedDrawTime;
-	static const uint _constantDrawDelay = 10; // ms
-	static const uint _proportionalDrawDelay = 500; // pixels per ms
+	void transitionDissolve(Common::Rect rect, uint step);
+	void transitionSlideToLeft(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionSlideToRight(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionSlideToTop(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionSlideToBottom(Common::Rect rect, uint16 steps, uint16 delay);
+	void transitionPartialToRight(Common::Rect rect, uint32 width, uint32 steps);
+	void transitionPartialToLeft(Common::Rect rect, uint32 width, uint32 steps);
+
+	void remapSurfaceToSystemPalette(MohawkSurface *mhkSurface);
+	byte getColorIndex(const byte *palette, byte red, byte green, byte blue);
+
+	void applyImagePatches(uint16 id, const MohawkSurface *mhkSurface) const;
 };
 
 } // End of namespace Mohawk

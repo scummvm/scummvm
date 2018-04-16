@@ -29,7 +29,7 @@ int AgiEngine::checkStep(int delta, int step) {
 	return (-step >= delta) ? 0 : (step <= delta) ? 2 : 1;
 }
 
-int AgiEngine::checkBlock(int x, int y) {
+bool AgiEngine::checkBlock(int16 x, int16 y) {
 	if (x <= _game.block.x1 || x >= _game.block.x2)
 		return false;
 
@@ -39,87 +39,144 @@ int AgiEngine::checkBlock(int x, int y) {
 	return true;
 }
 
-void AgiEngine::changePos(VtEntry *v) {
-	int b, x, y;
+void AgiEngine::changePos(ScreenObjEntry *screenObj) {
+	bool insideBlock;
+	int16 x, y;
 	int dx[9] = { 0, 0, 1, 1, 1, 0, -1, -1, -1 };
 	int dy[9] = { 0, -1, -1, 0, 1, 1, 1, 0, -1 };
 
-	x = v->xPos;
-	y = v->yPos;
-	b = checkBlock(x, y);
+	x = screenObj->xPos;
+	y = screenObj->yPos;
+	insideBlock = checkBlock(x, y);
 
-	x += v->stepSize * dx[v->direction];
-	y += v->stepSize * dy[v->direction];
+	x += screenObj->stepSize * dx[screenObj->direction];
+	y += screenObj->stepSize * dy[screenObj->direction];
 
-	if (checkBlock(x, y) == b) {
-		v->flags &= ~fMotion;
+	if (checkBlock(x, y) == insideBlock) {
+		screenObj->flags &= ~fMotion;
 	} else {
-		v->flags |= fMotion;
-		v->direction = 0;
-		if (isEgoView(v))
-			_game.vars[vEgoDir] = 0;
+		screenObj->flags |= fMotion;
+		screenObj->direction = 0;
+		if (isEgoView(screenObj))
+			setVar(VM_VAR_EGO_DIRECTION, 0);
 	}
 }
 
-void AgiEngine::motionWander(VtEntry *v) {
-	if (v->parm1--) {
-		if (~v->flags & fDidntMove)
-			return;
-	}
+// WORKAROUND:
+// A motion was just activated, check if "end.of.loop"/"reverse.loop" is currently active for the same screen object
+// If this is the case, it would result in some random flag getting overwritten in original AGI after the loop was
+// completed, because in original AGI loop_flag + wander_count/follow_stepSize/move_X shared the same memory location.
+// This is basically an implementation error in the original interpreter.
+// Happens in at least:
+// - BC: right at the end when the witches disappear at least on Apple IIgs (room 12, screen object 13, view 84)
+// - KQ1: when grabbing the eagle (room 22).
+// - KQ2: happened somewhere in the game, LordHoto couldn't remember exactly where
+void AgiEngine::motionActivated(ScreenObjEntry *screenObj) {
+	if (screenObj->flags & fCycling) {
+		// Cycling active too
+		switch (screenObj->cycle) {
+		case kCycleEndOfLoop: // "end.of.loop"
+		case kCycleRevLoop: // "reverse.loop"
+			// Disable it
+			screenObj->flags &= ~fCycling;
+			screenObj->cycle = kCycleNormal;
 
-	v->direction = _rnd->getRandomNumber(8);
-
-	if (isEgoView(v)) {
-		_game.vars[vEgoDir] = v->direction;
-		while (v->parm1 < 6) {
-			v->parm1 = _rnd->getRandomNumber(50);	// huh?
+			warning("Motion activated for screen object %d, but cycler also active", screenObj->objectNr);
+			warning("This would have resulted in flag corruption in original AGI. Cycler disabled.");
+			break;
+		default:
+			break;
 		}
 	}
 }
 
-void AgiEngine::motionFollowEgo(VtEntry *v) {
+// WORKAROUND:
+// See comment for motionActivated()
+// This way no flag would have been overwritten, but certain other variables of the motions.
+void AgiEngine::cyclerActivated(ScreenObjEntry *screenObj) {
+	switch (screenObj->motionType) {
+	case kMotionWander:
+		// this would have resulted in wander_count to get corrupted
+		// We don't stop it.
+		break;
+	case kMotionFollowEgo:
+		// this would have resulted in follow_stepSize to get corrupted
+		// do not stop motion atm - screenObj->direction = 0;
+		// do not stop motion atm - screenObj->motionType = kMotionNormal;
+		break;
+	case kMotionMoveObj:
+		// this would have resulted in move_x to get corrupted
+		// do not stop motion atm - motionMoveObjStop(screenObj);
+		break;
+	default:
+		return;
+		break;
+	}
+	warning("Cycler activated for screen object %d, but motion also active", screenObj->objectNr);
+	warning("This would have resulted in corruption in original AGI. Motion disabled.");
+}
+
+void AgiEngine::motionWander(ScreenObjEntry *screenObj) {
+	uint8 originalWanderCount = screenObj->wander_count;
+
+	screenObj->wander_count--;
+	if ((originalWanderCount == 0) || (screenObj->flags & fDidntMove)) {
+		screenObj->direction = _rnd->getRandomNumber(8);
+
+		if (isEgoView(screenObj)) {
+			setVar(VM_VAR_EGO_DIRECTION, screenObj->direction);
+		}
+
+		while (screenObj->wander_count < 6) {
+			screenObj->wander_count = _rnd->getRandomNumber(50);    // huh?
+		}
+	}
+}
+
+void AgiEngine::motionFollowEgo(ScreenObjEntry *screenObj) {
+	ScreenObjEntry *screenObjEgo = &_game.screenObjTable[SCREENOBJECTS_EGO_ENTRY];
 	int egoX, egoY;
 	int objX, objY;
 	int dir;
 
-	egoX = _game.viewTable[0].xPos + _game.viewTable[0].xSize / 2;
-	egoY = _game.viewTable[0].yPos;
+	egoX = screenObjEgo->xPos + screenObjEgo->xSize / 2;
+	egoY = screenObjEgo->yPos;
 
-	objX = v->xPos + v->xSize / 2;
-	objY = v->yPos;
+	objX = screenObj->xPos + screenObj->xSize / 2;
+	objY = screenObj->yPos;
 
 	// Get direction to reach ego
-	dir = getDirection(objX, objY, egoX, egoY, v->parm1);
+	dir = getDirection(objX, objY, egoX, egoY, screenObj->follow_stepSize);
 
 	// Already at ego coordinates
 	if (dir == 0) {
-		v->direction = 0;
-		v->motion = kMotionNormal;
-		setflag(v->parm2, true);
+		screenObj->direction = 0;
+		screenObj->motionType = kMotionNormal;
+		setFlag(screenObj->follow_flag, true);
 		return;
 	}
 
-	if (v->parm3 == 0xff) {
-		v->parm3 = 0;
-	} else if (v->flags & fDidntMove) {
+	if (screenObj->follow_count == 0xff) {
+		screenObj->follow_count = 0;
+	} else if (screenObj->flags & fDidntMove) {
 		int d;
 
-		while ((v->direction = _rnd->getRandomNumber(8)) == 0) {
+		while ((screenObj->direction = _rnd->getRandomNumber(8)) == 0) {
 		}
 
 		d = (ABS(egoY - objY) + ABS(egoX - objX)) / 2;
 
-		if (d < v->stepSize) {
-			v->parm3 = v->stepSize;
+		if (d < screenObj->stepSize) {
+			screenObj->follow_count = screenObj->stepSize;
 			return;
 		}
 
-		while ((v->parm3 = _rnd->getRandomNumber(d)) < v->stepSize) {
+		while ((screenObj->follow_count = _rnd->getRandomNumber(d)) < screenObj->stepSize) {
 		}
 		return;
 	}
 
-	if (v->parm3 != 0) {
+	if (screenObj->follow_count != 0) {
 		int k;
 
 		// DF: this is ugly and I dont know why this works, but
@@ -128,45 +185,46 @@ void AgiEngine::motionFollowEgo(VtEntry *v) {
 		// if (((int8)v->parm3 -= v->step_size) < 0)
 		//      v->parm3 = 0;
 
-		k = v->parm3;
-		k -= v->stepSize;
-		v->parm3 = k;
+		k = screenObj->follow_count;
+		k -= screenObj->stepSize;
+		screenObj->follow_count = k;
 
-		if ((int8) v->parm3 < 0)
-			v->parm3 = 0;
+		if ((int8) screenObj->follow_count < 0)
+			screenObj->follow_count = 0;
 	} else {
-		v->direction = dir;
+		screenObj->direction = dir;
 	}
 }
 
-void AgiEngine::motionMoveObj(VtEntry *v) {
-	v->direction = getDirection(v->xPos, v->yPos, v->parm1, v->parm2, v->stepSize);
+void AgiEngine::motionMoveObj(ScreenObjEntry *screenObj) {
+	screenObj->direction = getDirection(screenObj->xPos, screenObj->yPos, screenObj->move_x, screenObj->move_y, screenObj->stepSize);
 
 	// Update V6 if ego
-	if (isEgoView(v))
-		_game.vars[vEgoDir] = v->direction;
+	if (isEgoView(screenObj))
+		setVar(VM_VAR_EGO_DIRECTION, screenObj->direction);
 
-	if (v->direction == 0)
-		inDestination(v);
+	if (screenObj->direction == 0)
+		motionMoveObjStop(screenObj);
 }
 
-void AgiEngine::checkMotion(VtEntry *v) {
-	switch (v->motion) {
+void AgiEngine::checkMotion(ScreenObjEntry *screenObj) {
+	switch (screenObj->motionType) {
 	case kMotionNormal:
 		break;
 	case kMotionWander:
-		motionWander(v);
+		motionWander(screenObj);
 		break;
 	case kMotionFollowEgo:
-		motionFollowEgo(v);
+		motionFollowEgo(screenObj);
 		break;
+	case kMotionEgo:
 	case kMotionMoveObj:
-		motionMoveObj(v);
+		motionMoveObj(screenObj);
 		break;
 	}
 
-	if ((_game.block.active && (~v->flags & fIgnoreBlocks)) && v->direction)
-		changePos(v);
+	if ((_game.block.active && (~screenObj->flags & fIgnoreBlocks)) && screenObj->direction)
+		changePos(screenObj);
 }
 
 /*
@@ -177,12 +235,12 @@ void AgiEngine::checkMotion(VtEntry *v) {
  *
  */
 void AgiEngine::checkAllMotions() {
-	VtEntry *v;
+	ScreenObjEntry *screenObj;
 
-	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
-		if ((v->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fUpdate | fDrawn)
-				&& v->stepTimeCount == 1) {
-			checkMotion(v);
+	for (screenObj = _game.screenObjTable; screenObj < &_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
+		if ((screenObj->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fUpdate | fDrawn)
+		        && screenObj->stepTimeCount == 1) {
+			checkMotion(screenObj);
 		}
 	}
 }
@@ -193,14 +251,30 @@ void AgiEngine::checkAllMotions() {
  * type motion that * has reached its final destination coordinates.
  * @param  v  Pointer to view table entry
  */
-void AgiEngine::inDestination(VtEntry *v) {
-	if (v->motion == kMotionMoveObj) {
-		v->stepSize = v->parm3;
-		setflag(v->parm4, true);
+void AgiEngine::inDestination(ScreenObjEntry *screenObj) {
+	if (screenObj->motionType == kMotionMoveObj) {
+		screenObj->stepSize = screenObj->move_stepSize;
+		setFlag(screenObj->move_flag, true);
 	}
-	v->motion = kMotionNormal;
-	if (isEgoView(v))
+	screenObj->motionType = kMotionNormal;
+	if (isEgoView(screenObj))
 		_game.playerControl = true;
+}
+
+void AgiEngine::motionMoveObjStop(ScreenObjEntry *screenObj) {
+	screenObj->stepSize = screenObj->move_stepSize;
+
+	// This check for motionType was only done in AGI3.
+	// But we use this motion type for mouse movement, so we need to check in any case, otherwise it will cause glitches.
+	if (screenObj->motionType != kMotionEgo) {
+		setFlag(screenObj->move_flag, true);
+	}
+
+	screenObj->motionType = kMotionNormal;
+	if (isEgoView(screenObj)) {
+		_game.playerControl = true;
+		setVar(VM_VAR_EGO_DIRECTION, 0);
+	}
 }
 
 /**
@@ -209,8 +283,8 @@ void AgiEngine::inDestination(VtEntry *v) {
  * after setting the motion mode to kMotionMoveObj.
  * @param  v  Pointer to view table entry
  */
-void AgiEngine::moveObj(VtEntry *v) {
-	motionMoveObj(v);
+void AgiEngine::moveObj(ScreenObjEntry *screenObj) {
+	motionMoveObj(screenObj);
 }
 
 /**
@@ -223,9 +297,9 @@ void AgiEngine::moveObj(VtEntry *v) {
  * @param  y   y coordinate of the object
  * @param  s   step size
  */
-int AgiEngine::getDirection(int x0, int y0, int x, int y, int s) {
+int AgiEngine::getDirection(int16 objX, int16 objY, int16 destX, int16 destY, int16 stepSize) {
 	int dirTable[9] = { 8, 1, 2, 7, 0, 3, 6, 5, 4 };
-	return dirTable[checkStep(x - x0, s) + 3 * checkStep(y - y0, s)];
+	return dirTable[checkStep(destX - objX, stepSize) + 3 * checkStep(destY - objY, stepSize)];
 }
 
 } // End of namespace Agi

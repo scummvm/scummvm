@@ -86,7 +86,7 @@ void sceneHandler28_makeFaces(ExCommand *cmd) {
 		for (int i = 0; i < 5; i++) {
 			int pos;
 
-			while (frames[pos = g_fp->_rnd->getRandomNumber(4)] == 0)
+			while (frames[pos = g_fp->_rnd.getRandomNumber(4)] == 0)
 				;
 
 			mq->getExCommandByIndex(i)->_messageNum = frames[pos];
@@ -105,16 +105,16 @@ void sceneHandler28_trySecondaryPers() {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
 
 			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.left - 20;
-			mq->getExCommandByIndex(0)->_keyCode = 1;
-			mq->replaceKeyCode(-1, 1);
+			mq->getExCommandByIndex(0)->_param = 1;
+			mq->setParamInt(-1, 1);
 			mq->chain(0);
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
 
 			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.left - 40;
 			mq->getExCommandByIndex(0)->_y += 20;
-			mq->getExCommandByIndex(0)->_keyCode = 2;
-			mq->replaceKeyCode(-1, 2);
+			mq->getExCommandByIndex(0)->_param = 2;
+			mq->setParamInt(-1, 2);
 			mq->chain(0);
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOR), 0, 1);
@@ -124,16 +124,16 @@ void sceneHandler28_trySecondaryPers() {
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
 
 			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.right + 20;
-			mq->getExCommandByIndex(0)->_keyCode = 1;
-			mq->replaceKeyCode(-1, 1);
+			mq->getExCommandByIndex(0)->_param = 1;
+			mq->setParamInt(-1, 1);
 			mq->chain(0);
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
 
 			mq->getExCommandByIndex(0)->_x = g_fp->_sceneRect.right + 40;
 			mq->getExCommandByIndex(0)->_y += 20;
-			mq->getExCommandByIndex(0)->_keyCode = 2;
-			mq->replaceKeyCode(-1, 2);
+			mq->getExCommandByIndex(0)->_param = 2;
+			mq->setParamInt(-1, 2);
 			mq->chain(0);
 
 			mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_BRD28_GOL), 0, 1);
@@ -143,8 +143,8 @@ void sceneHandler28_trySecondaryPers() {
 
 		mq->getExCommandByIndex(0)->_x = x;
 		mq->getExCommandByIndex(0)->_y += 40;
-		mq->getExCommandByIndex(0)->_keyCode = 3;
-		mq->replaceKeyCode(-1, 3);
+		mq->getExCommandByIndex(0)->_param = 3;
+		mq->setParamInt(-1, 3);
 		mq->chain( 0);
 
 		g_vars->scene28_beardedDirection = !g_vars->scene28_beardedDirection;
@@ -172,19 +172,21 @@ void sceneHandler28_turnOn2() {
 	if (g_vars->scene28_fliesArePresent) {
 		g_fp->_floaters->genFlies(g_fp->_currentScene, 1013, 329, 60, 4);
 
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val15 = 30;
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd->getRandomNumber(12) + 12;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val13 = 30;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].countdown = g_fp->_rnd.getRandomNumber(12) + 12;
 
 		g_fp->_floaters->genFlies(g_fp->_currentScene, 1074, 311, 60, 4);
 
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val15 = 30;
-		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = g_fp->_rnd->getRandomNumber(12) + 12;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val13 = 30;
+		g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].countdown = g_fp->_rnd.getRandomNumber(12) + 12;
 	}
 
 	g_vars->scene28_fliesArePresent = false;
 }
 
 void sceneHandler28_startWork1() {
+	debugC(2, kDebugSceneLogic, "scene28: startWork");
+
 	g_fp->_aniMan->hide();
 
 	StaticANIObject *man = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN_28, -1);
@@ -202,7 +204,7 @@ void sceneHandler28_lift0Start() {
 }
 
 void sceneHandler28_lift1Start() {
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
 
@@ -218,7 +220,7 @@ void sceneHandler28_lift3Start() {
 }
 
 void sceneHandler28_lift4Start() {
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
 
@@ -230,7 +232,7 @@ void sceneHandler28_lift5Start() {
 }
 
 void sceneHandler28_lift6Start() {
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
 
@@ -242,10 +244,12 @@ void sceneHandler28_lift6Start() {
 		chainQueue(QU_SC28_LIFT6_START, 1);
 }
 
-void sceneHandler28_clickLift(int keycode) {
+void sceneHandler28_clickLift(int numLift) {
 	int x = 0;
 
-	switch (keycode) {
+	debugC(2, kDebugSceneLogic, "scene28: clickLift(%d)", numLift);
+
+	switch (numLift) {
 	case 0: x = 600; break;
 	case 1: x = 824; break;
 	case 2: x = 1055; break;
@@ -258,17 +262,20 @@ void sceneHandler28_clickLift(int keycode) {
 	if (abs(x - g_fp->_aniMan->_ox) > 1 || abs(472 - g_fp->_aniMan->_oy) > 1
 		|| g_fp->_aniMan->_movement
 		|| g_fp->_aniMan->_statics->_staticsId != ST_MAN_UP) {
-		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, x, 472, 1, ST_MAN_UP);
+		debugC(2, kDebugSceneLogic, "scene28: clickLift: overwrite");
+
+		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, x, 472, 1, ST_MAN_UP);
 		if (mq) {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC28_CLICKLIFT, 0, 0, 0, 1, 0, 0, 0);
 			ex->_excFlags |= 3;
+			ex->_param = numLift;
 
 			mq->addExCommandToEnd(ex);
 
 			postExCommand(g_fp->_aniMan->_id, 2, x, 472, 0, -1);
 		}
 	} else {
-		switch (keycode) {
+		switch (numLift) {
 		case 0:
 			sceneHandler28_lift0Start();
 			break;
@@ -381,7 +388,7 @@ int sceneHandler28(ExCommand *cmd) {
 		break;
 
 	case MSG_SC28_CLICKLIFT:
-		sceneHandler28_clickLift(cmd->_keyCode);
+		sceneHandler28_clickLift(cmd->_param);
 		break;
 
 	case MSG_SC28_ENDLIFT1:
@@ -405,17 +412,17 @@ int sceneHandler28(ExCommand *cmd) {
 
 			if (ani)
 				if (ani->_id == ANI_LIFT || ani->_id == ANI_LIFT_28 ) {
-					sceneHandler28_clickLift(ani->_okeyCode);
+					sceneHandler28_clickLift(ani->_odelay);
 
 					cmd->_messageKind = 0;
 					break;
 				}
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
 						g_fp->processArcade(cmd);
@@ -433,6 +440,8 @@ int sceneHandler28(ExCommand *cmd) {
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
 		}
 
 		if (g_vars->scene28_darkeningObject) {
@@ -458,8 +467,8 @@ int sceneHandler28(ExCommand *cmd) {
 		g_fp->_floaters->update();
 
 		for (uint i = 0; i < g_fp->_floaters->_array2.size(); i++)
-			if (g_fp->_floaters->_array2[i]->val13 == 1)
-				g_fp->_floaters->_array2[i]->ani->_priority = 15;
+			if (g_fp->_floaters->_array2[i].val13 == 1)
+				g_fp->_floaters->_array2[i].ani->_priority = 15;
 
 		g_fp->_behaviorManager->updateBehaviors();
 

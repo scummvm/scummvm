@@ -253,10 +253,8 @@ void Screen::setResolution() {
 	_system->getPaletteManager()->grabPalette(palette, 0, 256);
 
 	int width = 320, height = 200;
-	bool defaultTo1xScaler = false;
 
 	if (_vm->gameFlags().useHiRes) {
-		defaultTo1xScaler = true;
 		height = 400;
 
 		if (_debugEnabled)
@@ -270,7 +268,7 @@ void Screen::setResolution() {
 			width = 320;
 	}
 
-	initGraphics(width, height, defaultTo1xScaler);
+	initGraphics(width, height);
 
 	_system->getPaletteManager()->setPalette(palette, 0, 256);
 }

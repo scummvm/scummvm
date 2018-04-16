@@ -21,7 +21,6 @@
  */
 
 #include "tsage/blue_force/blueforce_scenes8.h"
-#include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
@@ -964,9 +963,10 @@ Scene810::Scene810(): SceneExt() {
 }
 
 void Scene810::synchronize(Serializer &s) {
+	int dummy = 0;
 	SceneExt::synchronize(s);
 	s.syncAsSint16LE(_fieldA70);
-	s.syncAsSint16LE(_fieldA72);
+	s.syncAsSint16LE(dummy);
 	s.syncAsSint16LE(_fieldA74);
 }
 
@@ -2220,6 +2220,7 @@ Scene840::Scene840(): PalettedScene() {
 	_field1AC2 = 0;
 	_field1AC4 = 0;
 	_field1AC6 = (BF_GLOBALS._dayNumber > 3) ? 1 : 0;
+	_field1ABA = 0;
 }
 
 void Scene840::synchronize(Serializer &s) {
@@ -2623,7 +2624,7 @@ void Scene860::Action1::signal() {
 			BF_GLOBALS._player.setStrip(2);
 		}
 		signal();
-		// Deliberate fall-through
+		// fall through
 	case 2:
 		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		ADD_MOVER_NULL(BF_GLOBALS._player, scene->_destPos.x, scene->_destPos.y);

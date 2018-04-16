@@ -61,10 +61,11 @@ BaseEngine::~BaseEngine() {
 	delete _classReg;
 }
 
-void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang) {
+void BaseEngine::createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable) {
 	instance()._targetName = targetName;
 	instance()._gameId = gameId;
 	instance()._language = lang;
+	instance()._targetExecutable = targetExecutable;
 	instance().init();
 }
 
@@ -83,7 +84,7 @@ void BaseEngine::LOG(bool res, const char *fmt, ...) {
 	va_end(va);
 
 	if (instance()._gameRef) {
-		instance()._gameRef->LOG("%s", buff);
+		instance()._gameRef->LOG(res, "%s", buff);
 	} else {
 		debugCN(kWintermuteDebugLog, "%02d:%02d:%02d: %s\n", hours, mins, secs, buff);
 	}

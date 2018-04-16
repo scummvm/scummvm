@@ -21,12 +21,11 @@
  */
 
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
-
-#include "gui/message.h"
 
 #include "sci/sci.h"
 #include "sci/event.h"
@@ -39,20 +38,25 @@
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
 #include "sci/graphics/controls16.h"
-#include "sci/graphics/coordadjuster.h"
-#include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/remap.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
+#include "sci/graphics/cursor32.h"
+#include "sci/graphics/celobj32.h"
 #include "sci/graphics/controls32.h"
 #include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
-#include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/paint32.h"
+#include "sci/graphics/palette32.h"
+#include "sci/graphics/remap32.h"
+#include "sci/graphics/text32.h"
+#include "sci/graphics/transitions32.h"
 #endif
 
 namespace Sci {
@@ -60,64 +64,165 @@ namespace Sci {
 
 extern void showScummVMDialog(const Common::String &message);
 
-reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
-	// Returns 0 if the screen width or height is less than 640 or 400,
-	// respectively.
-	if (g_system->getWidth() < 640 || g_system->getHeight() < 400)
-		return make_reg(0, 0);
+reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
+	reg_t object = argv[0];
 
-	return make_reg(0, 1);
+	const GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
+	const int16 loopNo = readSelectorValue(s->_segMan, object, SELECTOR(loop));
+	const int16 celNo = readSelectorValue(s->_segMan, object, SELECTOR(cel));
+	const int16 x = readSelectorValue(s->_segMan, object, SELECTOR(x));
+	const int16 y = readSelectorValue(s->_segMan, object, SELECTOR(y));
+
+	CelObjView celObj(viewId, loopNo, celNo);
+
+	Ratio scaleX;
+	if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+		const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+		scaleX = Ratio(scriptWidth, celObj._xResolution);
+	}
+
+	int16 brLeft;
+
+	if (celObj._mirrorX) {
+		brLeft = x - ((celObj._width - celObj._origin.x) * scaleX).toInt();
+	} else {
+		brLeft = x - (celObj._origin.x * scaleX).toInt();
+	}
+
+	const int16 brRight = brLeft + (celObj._width * scaleX).toInt() - 1;
+
+	writeSelectorValue(s->_segMan, object, SELECTOR(brLeft), brLeft);
+	writeSelectorValue(s->_segMan, object, SELECTOR(brRight), brRight);
+	writeSelectorValue(s->_segMan, object, SELECTOR(brBottom), y + 1);
+	writeSelectorValue(s->_segMan, object, SELECTOR(brTop), y + 1 - readSelectorValue(s->_segMan, object, SELECTOR(yStep)));
+
+	return s->r_acc;
 }
 
-// SCI32 variant, can't work like sci16 variants
-reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
-	// TODO
-//	reg_t curObject = argv[0];
-//	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
+reg_t kSetNowSeen32(EngineState *s, int argc, reg_t *argv) {
+	const bool found = g_sci->_gfxFrameout->kernelSetNowSeen(argv[0]);
 
-	return NULL_REG;
+	// MGDX is assumed to use the older kSetNowSeen since it was released before
+	// SQ6, but this has not been verified since it cannot be disassembled at
+	// the moment (Phar Lap Windows-only release)
+	// (See also getNowSeenRect)
+	if (getSciVersion() <= SCI_VERSION_2_1_EARLY ||
+		g_sci->getGameId() == GID_SQ6 ||
+		g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+
+		return s->r_acc;
+	}
+
+	return make_reg(0, found);
+}
+
+reg_t kSetCursor32(EngineState *s, int argc, reg_t *argv) {
+	switch (argc) {
+	case 1: {
+		if (argv[0].toSint16() == -2) {
+			g_sci->_gfxCursor32->clearRestrictedArea();
+		} else {
+			if (argv[0].isNull()) {
+				g_sci->_gfxCursor32->hide();
+			} else {
+				g_sci->_gfxCursor32->show();
+			}
+		}
+		break;
+	}
+	case 2: {
+		const Common::Point position(argv[0].toSint16(), argv[1].toSint16());
+		g_sci->_gfxCursor32->setPosition(position);
+		break;
+	}
+	case 3: {
+		g_sci->_gfxCursor32->setView(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+		break;
+	}
+	case 4: {
+		const Common::Rect restrictRect(argv[0].toSint16(),
+										argv[1].toSint16(),
+										argv[2].toSint16() + 1,
+										argv[3].toSint16() + 1);
+		g_sci->_gfxCursor32->setRestrictedArea(restrictRect);
+		break;
+	}
+	default:
+		error("kSetCursor: Invalid number of arguments (%d)", argc);
+	}
+
+	return s->r_acc;
+}
+
+reg_t kShakeScreen32(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxFrameout->shakeScreen(argv[0].toSint16(), (ShakeDirection)argv[1].toSint16());
+	return s->r_acc;
+}
+
+reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
+	const GfxFrameout *gfxFrameout = g_sci->_gfxFrameout;
+	if (gfxFrameout->getScreenWidth() < 640 || gfxFrameout->getScreenHeight() < 400) {
+		return NULL_REG;
+	}
+
+	return TRUE_REG;
 }
 
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
-	if (g_sci->_gfxFrameout->findScreenItem(argv[0]) == NULL)
-		g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
-	else
-		g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
+	debugC(6, kDebugLevelGraphics, "kAddScreenItem %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
+	g_sci->_gfxFrameout->kernelAddScreenItem(argv[0]);
 	return s->r_acc;
 }
 
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
+	debugC(7, kDebugLevelGraphics, "kUpdateScreenItem %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelUpdateScreenItem(argv[0]);
 	return s->r_acc;
 }
 
 reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
+	debugC(6, kDebugLevelGraphics, "kDeleteScreenItem %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelDeleteScreenItem(argv[0]);
 	return s->r_acc;
 }
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
+	debugC(6, kDebugLevelGraphics, "kAddPlane %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelAddPlane(argv[0]);
 	return s->r_acc;
 }
 
+reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
+	debugC(7, kDebugLevelGraphics, "kUpdatePlane %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
+	g_sci->_gfxFrameout->kernelUpdatePlane(argv[0]);
+	return s->r_acc;
+}
+
 reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
+	debugC(6, kDebugLevelGraphics, "kDeletePlane %x:%x (%s)", PRINT_REG(argv[0]), s->_segMan->getObjectName(argv[0]));
 	g_sci->_gfxFrameout->kernelDeletePlane(argv[0]);
 	return s->r_acc;
 }
 
-reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxFrameout->kernelUpdatePlane(argv[0]);
+reg_t kMovePlaneItems(EngineState *s, int argc, reg_t *argv) {
+	const reg_t plane = argv[0];
+	const int16 deltaX = argv[1].toSint16();
+	const int16 deltaY = argv[2].toSint16();
+	const bool scrollPics = argc > 3 ? argv[3].toUint16() : false;
+
+	g_sci->_gfxFrameout->kernelMovePlaneItems(plane, deltaX, deltaY, scrollPics);
 	return s->r_acc;
 }
 
 reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 	GuiResourceId pictureId = argv[1].toUint16();
-	int16 pictureX = argv[2].toSint16();
-	int16 pictureY = argv[3].toSint16();
+	int16 x = argv[2].toSint16();
+	int16 y = argv[3].toSint16();
+	bool mirrorX = argc > 4 ? argv[4].toSint16() : false;
+	bool deleteDuplicate = argc > 5 ? argv[5].toSint16() : true;
 
-	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, pictureId, pictureX, pictureY);
+	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, pictureId, x, y, mirrorX, deleteDuplicate);
 	return s->r_acc;
 }
 
@@ -126,89 +231,113 @@ reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxFrameout->kernelFrameout();
-	return NULL_REG;
+	bool showBits = argc > 0 ? argv[0].toUint16() : true;
+	g_sci->_gfxFrameout->kernelFrameOut(showBits);
+	s->_eventCounter = 0;
+	return s->r_acc;
+}
+
+reg_t kSetPalStyleRange(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxTransitions32->kernelSetPalStyleRange(argv[0].toUint16(), argv[1].toUint16());
+	return s->r_acc;
 }
 
 reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv) {
-	Common::Rect objRect1 = g_sci->_gfxCompare->getNSRect(argv[0]);
-	Common::Rect objRect2 = g_sci->_gfxCompare->getNSRect(argv[1]);
-	return make_reg(0, objRect1.intersects(objRect2));
+	int16 area = g_sci->_gfxFrameout->kernelObjectIntersect(argv[0], argv[1]);
+	return make_reg(0, area);
 }
 
-// Tests if the coordinate is on the passed object
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
-	uint16 x = argv[0].toUint16();
-	uint16 y = argv[1].toUint16();
-	reg_t targetObject = argv[2];
-	uint16 illegalBits = argv[3].getOffset();
-	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(targetObject);
+	int16 x = argv[0].toSint16();
+	int16 y = argv[1].toSint16();
+	reg_t object = argv[2];
+	bool checkPixel = argv[3].toSint16();
 
-	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
-	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
-	// If top and left are negative, we need to adjust coordinates by the item's x and y
-	if (nsRect.left < 0)
-		nsRect.translate(itemX, 0);
-	if (nsRect.top < 0)
-		nsRect.translate(0, itemY);
-
-	// we assume that x, y are local coordinates
-
-	bool contained = nsRect.contains(x, y);
-	if (contained && illegalBits) {
-		// If illegalbits are set, we check the color of the pixel that got clicked on
-		//  for now, we return false if the pixel is transparent
-		//  although illegalBits may get differently set, don't know yet how this really works out
-		uint16 viewId = readSelectorValue(s->_segMan, targetObject, SELECTOR(view));
-		int16 loopNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(loop));
-		int16 celNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(cel));
-		if (g_sci->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, Common::Point(x - nsRect.left, y - nsRect.top)))
-			contained = false;
-	}
-	return make_reg(0, contained);
+	return g_sci->_gfxFrameout->kernelIsOnMe(object, Common::Point(x, y), checkPixel);
 }
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
-	switch (argv[0].toUint16()) {
-	case 0: {
-		if (argc != 4) {
-			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
-			return NULL_REG;
-		}
-		reg_t object = argv[3];
-		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
-		debugC(kDebugLevelStrings, "kCreateTextBitmap case 0 (%04x:%04x, %04x:%04x, %04x:%04x)",
-				PRINT_REG(argv[1]), PRINT_REG(argv[2]), PRINT_REG(argv[3]));
-		debugC(kDebugLevelStrings, "%s", text.c_str());
-		int16 maxWidth = argv[1].toUint16();
-		int16 maxHeight = argv[2].toUint16();
-		g_sci->_gfxCoordAdjuster->fromScriptToDisplay(maxHeight, maxWidth);
-		// These values can be larger than the screen in the SQ6 demo, room 100
-		// TODO: Find out why. For now, don't show any text in that room.
-		if (g_sci->getGameId() == GID_SQ6 && g_sci->isDemo() && s->currentRoomNumber() == 100)
-			return NULL_REG;
-		return g_sci->_gfxText32->createTextBitmap(object, maxWidth, maxHeight);
-	}
-	case 1: {
-		if (argc != 2) {
-			warning("kCreateTextBitmap(1): expected 2 arguments, got %i", argc);
-			return NULL_REG;
-		}
-		reg_t object = argv[1];
-		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
-		debugC(kDebugLevelStrings, "kCreateTextBitmap case 1 (%04x:%04x)", PRINT_REG(argv[1]));
-		debugC(kDebugLevelStrings, "%s", text.c_str());
-		return g_sci->_gfxText32->createTextBitmap(object);
-	}
-	default:
-		warning("CreateTextBitmap(%d)", argv[0].toUint16());
+	SegManager *segMan = s->_segMan;
+
+	int16 subop = argv[0].toUint16();
+
+	int16 width = 0;
+	int16 height = 0;
+	reg_t object;
+
+	if (subop == 0) {
+		width = argv[1].toUint16();
+		height = argv[2].toUint16();
+		object = argv[3];
+	} else if (subop == 1) {
+		object = argv[1];
+	} else {
+		warning("Invalid kCreateTextBitmap subop %d", subop);
 		return NULL_REG;
+	}
+
+	Common::String text = segMan->getString(readSelector(segMan, object, SELECTOR(text)));
+	int16 foreColor = readSelectorValue(segMan, object, SELECTOR(fore));
+	int16 backColor = readSelectorValue(segMan, object, SELECTOR(back));
+	int16 skipColor = readSelectorValue(segMan, object, SELECTOR(skip));
+	GuiResourceId fontId = (GuiResourceId)readSelectorValue(segMan, object, SELECTOR(font));
+	int16 borderColor = readSelectorValue(segMan, object, SELECTOR(borderColor));
+	int16 dimmed = readSelectorValue(segMan, object, SELECTOR(dimmed));
+
+	Common::Rect rect(
+		readSelectorValue(segMan, object, SELECTOR(textLeft)),
+		readSelectorValue(segMan, object, SELECTOR(textTop)),
+		readSelectorValue(segMan, object, SELECTOR(textRight)) + 1,
+		readSelectorValue(segMan, object, SELECTOR(textBottom)) + 1
+	);
+
+	if (subop == 0) {
+		TextAlign alignment = (TextAlign)readSelectorValue(segMan, object, SELECTOR(mode));
+		return g_sci->_gfxText32->createFontBitmap(width, height, rect, text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, true, true);
+	} else {
+		CelInfo32 celInfo;
+		celInfo.type = kCelTypeView;
+		celInfo.resourceId = readSelectorValue(segMan, object, SELECTOR(view));
+		celInfo.loopNo = readSelectorValue(segMan, object, SELECTOR(loop));
+		celInfo.celNo = readSelectorValue(segMan, object, SELECTOR(cel));
+		return g_sci->_gfxText32->createFontBitmap(celInfo, rect, text, foreColor, backColor, fontId, skipColor, borderColor, dimmed, true);
 	}
 }
 
-reg_t kDisposeTextBitmap(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxText32->disposeTextBitmap(argv[0]);
+reg_t kText(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kTextSize32(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText32->setFont(argv[2].toUint16());
+
+	SciArray *rect = s->_segMan->lookupArray(argv[0]);
+	if (rect == nullptr) {
+		error("kTextSize: %04x:%04x cannot be dereferenced", PRINT_REG(argv[0]));
+	}
+
+	Common::String text = s->_segMan->getString(argv[1]);
+	int16 maxWidth = argc > 3 ? argv[3].toSint16() : 0;
+	bool doScaling = argc > 4 ? argv[4].toSint16() : true;
+
+	Common::Rect textRect = g_sci->_gfxText32->getTextSize(text, maxWidth, doScaling);
+
+	reg_t value[4] = {
+		make_reg(0, textRect.left),
+		make_reg(0, textRect.top),
+		make_reg(0, textRect.right - 1),
+		make_reg(0, textRect.bottom - 1) };
+
+	rect->setElements(0, 4, value);
 	return s->r_acc;
+}
+
+reg_t kTextWidth(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText32->setFont(argv[1].toUint16());
+	Common::String text = s->_segMan->getString(argv[0]);
+	return make_reg(0, g_sci->_gfxText32->getStringWidth(text));
 }
 
 reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
@@ -216,7 +345,7 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	case 1:
 		// Load a help file
 		// Maybe in the future we can implement this, but for now this message should suffice
-		showScummVMDialog("Please use an external viewer to open the game's help file: " + s->_segMan->getString(argv[1]));
+		showScummVMDialog(Common::String::format(_("Please use an external viewer to open the game's help file: %s"), s->_segMan->getString(argv[1]).c_str()));
 		break;
 	case 2:
 		// Looks like some init function
@@ -228,621 +357,749 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kMessageBox(EngineState *s, int argc, reg_t *argv) {
+	return g_sci->_gfxControls32->kernelMessageBox(s->_segMan->getString(argv[0]), s->_segMan->getString(argv[1]), argv[2].toUint16());
+}
+
 /**
- * Used for scene transitions, replacing (but reusing parts of) the old
- * transition code.
+ * Causes an immediate plane transition with an optional transition
+ * effect
  */
 reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
-	// Can be called with 7 or 8 parameters
-	// The style defines which transition to perform. Related to the transition
-	// tables inside graphics/transitions.cpp
-	uint16 showStyle = argv[0].toUint16();	// 0 - 15
-	reg_t planeObj = argv[1];	// the affected plane
-	Common::String planeObjName = s->_segMan->getObjectName(planeObj);
-	uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
-	uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
-	int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
-	uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
-	uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
+	const uint16 type = argv[0].toUint16();
+	reg_t planeObj = argv[1];
+	int16 seconds = argv[2].toSint16();
+	// This value indicates whether the transition is an "exit" transition (0)
+	// or an "enter" transition (-1) for fade transitions. For other types of
+	// transitions, it indicates a palette index value to use when filling the
+	// screen.
+	int16 back = argv[3].toSint16();
+	int16 priority = argv[4].toSint16();
+	int16 animate = argv[5].toSint16();
+	// TODO: Rename to frameOutNow?
+	int16 refFrame = argv[6].toSint16();
+	int16 blackScreen;
+	reg_t pFadeArray;
 	int16 divisions;
 
-	// If the game has the pFadeArray selector, another parameter is used here,
-	// before the optional last parameter
-	bool hasFadeArray = g_sci->getKernel()->findSelector("pFadeArray") > 0;
-	if (hasFadeArray) {
-		// argv[7]
-		divisions = (argc >= 9) ? argv[8].toSint16() : -1;	// divisions (transition steps?)
-	} else {
-		divisions = (argc >= 8) ? argv[7].toSint16() : -1;	// divisions (transition steps?)
+	// SCI 2–2.1early
+	if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
+		blackScreen = 0;
+		pFadeArray = NULL_REG;
+		divisions = argc > 7 ? argv[7].toSint16() : -1;
+	}
+	// SCI 2.1mid
+	else if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+		blackScreen = 0;
+		pFadeArray = argc > 7 ? argv[7] : NULL_REG;
+		divisions = argc > 8 ? argv[8].toSint16() : -1;
+	}
+	// SCI 2.1late-3
+	else {
+		blackScreen = argv[7].toSint16();
+		pFadeArray = argc > 8 ? argv[8] : NULL_REG;
+		divisions = argc > 9 ? argv[9].toSint16() : -1;
 	}
 
-	if (showStyle > 15) {
-		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
-		return s->r_acc;
+	if ((getSciVersion() < SCI_VERSION_2_1_MIDDLE && g_sci->getGameId() != GID_KQ7 && type == 15) || type > 15) {
+		error("Illegal show style %d for plane %04x:%04x", type, PRINT_REG(planeObj));
 	}
 
-	// GK1 calls fadeout (13) / fadein (14) with the following parameters:
-	// seconds: 1
-	// backColor: 0 / -1
-	// fade: 200
-	// animate: 0
-	// refFrame: 0
-	// divisions: 0 / 20
+	// The order of planeObj and showStyle are reversed because this is how
+	// SSCI3 called the corresponding method on the KernelMgr
+	g_sci->_gfxTransitions32->kernelSetShowStyle(argc, planeObj, (ShowStyleType)type, seconds, back, priority, animate, refFrame, pFadeArray, divisions, blackScreen);
 
-	// TODO: Check if the plane is in the list of planes to draw
-
-	Common::String effectName = "unknown";
-
-	switch (showStyle) {
-	case 0:		// no transition / show
-		effectName = "show";
-		break;
-	case 13:	// fade out
-		effectName = "fade out";
-		// TODO
-		break;
-	case 14:	// fade in
-		effectName = "fade in";
-		// TODO
-		break;
-	default:
-		// TODO
-		break;
-	}
-
-	warning("kSetShowStyle: effect %d (%s) - plane: %04x:%04x (%s), sec: %d, "
-			"back: %d, prio: %d, animate: %d, ref frame: %d, divisions: %d",
-			showStyle, effectName.c_str(), PRINT_REG(planeObj), planeObjName.c_str(),
-			seconds, backColor, priority, animate, refFrame, divisions);
 	return s->r_acc;
 }
 
-reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
-	// Used by Shivers 1, room 23601 to determine what blocks on the red door puzzle board
-	// are occupied by pieces already
-
-	switch (argv[0].toUint16()) {	// subops 0 - 4
-		// 0 - return the view
-		// 1 - return the loop
-		// 2, 3 - nop
-		case 4: {
-			GuiResourceId viewId = argv[1].toSint16();
-			int16 loopNo = argv[2].toSint16();
-			int16 celNo = argv[3].toSint16();
-			int16 x = argv[4].toUint16();
-			int16 y = argv[5].toUint16();
-			byte color = g_sci->_gfxCache->kernelViewGetColorAtCoordinate(viewId, loopNo, celNo, x, y);
-			return make_reg(0, color);
-		}
-		default: {
-			kStub(s, argc, argv);
-			return s->r_acc;
-		}
+reg_t kCelHigh32(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId resourceId = argv[0].toUint16();
+	const int16 loopNo = argv[1].toSint16();
+	const int16 celNo = argv[2].toSint16();
+	const CelObjView celObj(resourceId, loopNo, celNo);
+	int16 height = celObj._height;
+	if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+		height = mulru(height, Ratio(g_sci->_gfxFrameout->getScriptHeight(), celObj._yResolution));
 	}
+	return make_reg(0, height);
+}
+
+reg_t kCelWide32(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId resourceId = argv[0].toUint16();
+	const int16 loopNo = argv[1].toSint16();
+	const int16 celNo = argv[2].toSint16();
+	const CelObjView celObj(resourceId, loopNo, celNo);
+	int16 width = celObj._width;
+	if (getSciVersion() < SCI_VERSION_2_1_LATE) {
+		width = mulru(width, Ratio(g_sci->_gfxFrameout->getScriptWidth(), celObj._xResolution));
+	}
+	return make_reg(0, width);
+}
+
+// Used by Shivers 1, room 23601 to determine what blocks on the red door
+// puzzle board are occupied by pieces already, and by Phantasmagoria 2 when
+// saving the game from the in-game UI
+reg_t kCelInfo(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kCelInfoGetOriginX(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view._origin.x);
+}
+
+reg_t kCelInfoGetOriginY(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view._origin.y);
+}
+
+reg_t kCelInfoGetPixel(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view.readPixel(argv[3].toSint16(), argv[4].toSint16(), view._mirrorX));
+}
+
+// Used by Lighthouse, room 800, script 16, when in the weapon-building puzzle
+reg_t kCelLink(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kCelLinkGetX(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view.getLinkPosition(argv[3].toSint16()).x);
+}
+
+reg_t kCelLinkGetY(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	return make_reg(0, view.getLinkPosition(argv[3].toSint16()).y);
 }
 
 reg_t kScrollWindow(EngineState *s, int argc, reg_t *argv) {
-	// Used by SQ6 and LSL6 hires for the text area in the bottom of the
-	// screen. The relevant scripts also exist in Phantasmagoria 1, but they're
-	// unused. This is always called by scripts 64906 (ScrollerWindow) and
-	// 64907 (ScrollableWindow).
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	reg_t kWindow = argv[1];
-	uint16 op = argv[0].toUint16();
-	switch (op) {
-	case 0:	// Init
-		// TODO: Init reads the nsLeft, nsTop, nsRight, nsBottom,
-		//       borderColor, fore, back, mode, font, plane selectors
-		//       from the window in argv[1].
-		g_sci->_gfxFrameout->initScrollText(argv[2].toUint16());	// maxItems
-		g_sci->_gfxFrameout->clearScrollTexts();
-		return argv[1];	// kWindow
-	case 1: // Show message, called by ScrollableWindow::addString
-	case 14: // Modify message, called by ScrollableWindow::modifyString
-		// TODO: The parameters in Modify are shifted by one: the first
-		//       argument is the handle of the text to modify. The others
-		//       are as Add.
-		{
-		Common::String text = s->_segMan->getString(argv[2]);
-		uint16 x = 0;
-		uint16 y = 0;
-		// TODO: argv[3] is font
-		// TODO: argv[4] is color
-		// TODO: argv[5] is alignment (0 = left, 1 = center, 2 = right)
-		//       font,color,alignment may also be -1. (Maybe same as previous?)
-		// TODO: argv[6] is an optional bool, defaulting to true if not present.
-		//       If true, the old contents are scrolled out of view.
-		// TODO: Return a handle of the inserted text. (Used for modify/insert)
-		//       This handle looks like it should also be usable by kString.
-		g_sci->_gfxFrameout->addScrollTextEntry(text, kWindow, x, y, (op == 14));
-		}
-		break;
-	case 2: // Clear, called by ScrollableWindow::erase
-		g_sci->_gfxFrameout->clearScrollTexts();
-		break;
-	case 3: // Page up, called by ScrollableWindow::scrollTo
-		// TODO
-		kStub(s, argc, argv);
-		break;
-	case 4: // Page down, called by ScrollableWindow::scrollTo
-		// TODO
-		kStub(s, argc, argv);
-		break;
-	case 5: // Up arrow, called by ScrollableWindow::scrollTo
-		g_sci->_gfxFrameout->prevScrollText();
-		break;
-	case 6: // Down arrow, called by ScrollableWindow::scrollTo
-		g_sci->_gfxFrameout->nextScrollText();
-		break;
-	case 7: // Home, called by ScrollableWindow::scrollTo
-		g_sci->_gfxFrameout->firstScrollText();
-		break;
-	case 8: // End, called by ScrollableWindow::scrollTo
-		g_sci->_gfxFrameout->lastScrollText();
-		break;
-	case 9: // Resize, called by ScrollableWindow::resize and ScrollerWindow::resize
-		// TODO: This reads the nsLeft, nsTop, nsRight, nsBottom
-		//       selectors from the SCI object passed in argv[2].
-		kStub(s, argc, argv);
-		break;
-	case 10: // Where, called by ScrollableWindow::where
-		// TODO:
-		// Gives the current relative scroll location as a fraction
-		// with argv[2] as the denominator. (Return value is the numerator.)
-		// Silenced the warnings because of the high amount of console spam
-		//kStub(s, argc, argv);
-		break;
-	case 11: // Go, called by ScrollableWindow::scrollTo
-		// TODO:
-		// Two arguments provide a fraction: argv[2] is num., argv[3] is denom.
-		// Scrolls to the relative location given by the fraction.
-		kStub(s, argc, argv);
-		break;
-	case 12: // Insert, called by ScrollableWindow::insertString
-		// 5 extra parameters here:
-		// handle of insert location (new string takes that position).
-		// text, font, color, alignment
-		// TODO
-		kStub(s, argc, argv);
-		break;
-	// case 13 (Delete) is handled below
-	// case 14 (Modify) is handled above
-	case 15: // Hide, called by ScrollableWindow::hide
-		g_sci->_gfxFrameout->toggleScrollText(false);
-		break;
-	case 16: // Show, called by ScrollableWindow::show
-		g_sci->_gfxFrameout->toggleScrollText(true);
-		break;
-	case 17: // Destroy, called by ScrollableWindow::dispose
-		g_sci->_gfxFrameout->clearScrollTexts();
-		break;
-	case 13: // Delete, unused
-	case 18: // Text, unused
-	case 19: // Reconstruct, unused
-		error("kScrollWindow: Unused subop %d invoked", op);
-		break;
-	default:
-		error("kScrollWindow: unknown subop %d", op);
-		break;
+reg_t kScrollWindowCreate(EngineState *s, int argc, reg_t *argv) {
+	const reg_t object = argv[0];
+	const uint16 maxNumEntries = argv[1].toUint16();
+
+	SegManager *segMan = s->_segMan;
+	const int16 borderColor = readSelectorValue(segMan, object, SELECTOR(borderColor));
+	const TextAlign alignment = (TextAlign)readSelectorValue(segMan, object, SELECTOR(mode));
+	const GuiResourceId fontId = (GuiResourceId)readSelectorValue(segMan, object, SELECTOR(font));
+	const int16 backColor = readSelectorValue(segMan, object, SELECTOR(back));
+	const int16 foreColor = readSelectorValue(segMan, object, SELECTOR(fore));
+	const reg_t plane = readSelector(segMan, object, SELECTOR(plane));
+
+	Common::Rect rect;
+
+	if (g_sci->_features->usesAlternateSelectors()) {
+		rect.left = readSelectorValue(segMan, object, SELECTOR(left));
+		rect.top = readSelectorValue(segMan, object, SELECTOR(top));
+		rect.right = readSelectorValue(segMan, object, SELECTOR(right)) + 1;
+		rect.bottom = readSelectorValue(segMan, object, SELECTOR(bottom)) + 1;
+	} else {
+		rect.left = readSelectorValue(segMan, object, SELECTOR(nsLeft));
+		rect.top = readSelectorValue(segMan, object, SELECTOR(nsTop));
+		rect.right = readSelectorValue(segMan, object, SELECTOR(nsRight)) + 1;
+		rect.bottom = readSelectorValue(segMan, object, SELECTOR(nsBottom)) + 1;
 	}
+	const Common::Point position(rect.left, rect.top);
+
+	return g_sci->_gfxControls32->makeScrollWindow(rect, position, plane, foreColor, backColor, fontId, alignment, borderColor, maxNumEntries);
+}
+
+reg_t kScrollWindowAdd(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	const Common::String text = s->_segMan->getString(argv[1]);
+	const GuiResourceId fontId = argv[2].toSint16();
+	const int16 color = argv[3].toSint16();
+	const TextAlign alignment = (TextAlign)argv[4].toSint16();
+	const bool scrollTo = argc > 5 ? (bool)argv[5].toUint16() : true;
+
+	return scrollWindow->add(text, fontId, color, alignment, scrollTo);
+}
+
+reg_t kScrollWindowWhere(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	const uint16 where = (argv[1].toUint16() * scrollWindow->where()).toInt();
+
+	return make_reg(0, where);
+}
+
+reg_t kScrollWindowGo(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	const Ratio scrollTop(argv[1].toSint16(), argv[2].toSint16());
+	scrollWindow->go(scrollTop);
 
 	return s->r_acc;
 }
 
-reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
-	// TODO: This defines the resolution that the fonts are supposed to be displayed
-	// in. Currently, this is only used for showing high-res fonts in GK1 Mac, but
-	// should be extended to handle other font resolutions such as those
+reg_t kScrollWindowModify(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
 
-	int xResolution = argv[0].toUint16();
-	//int yResolution = argv[1].toUint16();
+	const reg_t entryId = argv[1];
+	const Common::String newText = s->_segMan->getString(argv[2]);
+	const GuiResourceId fontId = argv[3].toSint16();
+	const int16 color = argv[4].toSint16();
+	const TextAlign alignment = (TextAlign)argv[5].toSint16();
+	const bool scrollTo = argc > 6 ? (bool)argv[6].toUint16() : true;
 
-	g_sci->_gfxScreen->setFontIsUpscaled(xResolution == 640 &&
-			g_sci->_gfxScreen->getUpscaledHires() != GFX_SCREEN_UPSCALED_DISABLED);
+	return scrollWindow->modify(entryId, newText, fontId, color, alignment, scrollTo);
+}
+
+reg_t kScrollWindowHide(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->hide();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowShow(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->show();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowPageUp(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->pageUp();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowPageDown(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->pageDown();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowUpArrow(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->upArrow();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowDownArrow(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->downArrow();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowHome(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->home();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowEnd(EngineState *s, int argc, reg_t *argv) {
+	ScrollWindow *scrollWindow = g_sci->_gfxControls32->getScrollWindow(argv[0]);
+
+	scrollWindow->end();
+
+	return s->r_acc;
+}
+
+reg_t kScrollWindowDestroy(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxControls32->destroyScrollWindow(argv[0]);
 
 	return s->r_acc;
 }
 
 reg_t kFont(EngineState *s, int argc, reg_t *argv) {
-	// Handle font settings for SCI2.1
-
-	switch (argv[0].toUint16()) {
-	case 1:
-		// Set font resolution
-		return kSetFontRes(s, argc - 1, argv + 1);
-	default:
-		warning("kFont: unknown subop %d", argv[0].toUint16());
-	}
-
-	return s->r_acc;
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
 }
 
-// TODO: Eventually, all of the kBitmap operations should be put
-// in a separate class
+reg_t kPointSize(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText32->setFont(argv[0].toUint16());
+	return make_reg(0, g_sci->_gfxText32->getScaledFontHeight());
+}
 
-#define BITMAP_HEADER_SIZE 46
+reg_t kSetFontRes(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText32->_xResolution = argv[0].toUint16();
+	g_sci->_gfxText32->_yResolution = argv[1].toUint16();
+	return s->r_acc;
+}
 
 reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
-	// Used for bitmap operations in SCI2.1 and SCI3.
-	// This is the SCI2.1 version, the functionality seems to have changed in SCI3.
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (argv[0].toUint16()) {
-	case 0:	// init bitmap surface
-		{
-		// 6 params, called e.g. from TextView::init() in Torin's Passage,
-		// script 64890 and TransView::init() in script 64884
-		uint16 width = argv[1].toUint16();
-		uint16 height = argv[2].toUint16();
-		//uint16 skip = argv[3].toUint16();
-		uint16 back = argv[4].toUint16();	// usually equals skip
-		//uint16 width2 = (argc >= 6) ? argv[5].toUint16() : 0;
-		//uint16 height2 = (argc >= 7) ? argv[6].toUint16() : 0;
-		//uint16 transparentFlag = (argc >= 8) ? argv[7].toUint16() : 0;
+reg_t kBitmapCreate(EngineState *s, int argc, reg_t *argv) {
+	int16 width = argv[0].toSint16();
+	int16 height = argv[1].toSint16();
+	int16 skipColor = argv[2].toSint16();
+	int16 backColor = argv[3].toSint16();
+	int16 xResolution = argc > 4 ? argv[4].toSint16() : g_sci->_gfxText32->_xResolution;
+	int16 yResolution = argc > 5 ? argv[5].toSint16() : g_sci->_gfxText32->_yResolution;
+	bool useRemap = argc > 6 ? argv[6].toSint16() : false;
 
-		// TODO: skip, width2, height2, transparentFlag
-		// (used for transparent bitmaps)
-		int entrySize = width * height + BITMAP_HEADER_SIZE;
-		reg_t memoryId = s->_segMan->allocateHunkEntry("Bitmap()", entrySize);
-		byte *memoryPtr = s->_segMan->getHunkPointer(memoryId);
-		memset(memoryPtr, 0, BITMAP_HEADER_SIZE);	// zero out the bitmap header
-		memset(memoryPtr + BITMAP_HEADER_SIZE, back, width * height);
-		// Save totalWidth, totalHeight
-		// TODO: Save the whole bitmap header, like SSCI does
-		WRITE_LE_UINT16(memoryPtr, width);
-		WRITE_LE_UINT16(memoryPtr + 2, height);
-		return memoryId;
-		}
-		break;
-	case 1:	// dispose text bitmap surface
-		return kDisposeTextBitmap(s, argc - 1, argv + 1);
-	case 2:	// dispose bitmap surface, with extra param
-		// 2 params, called e.g. from MenuItem::dispose in Torin's Passage,
-		// script 64893
-		warning("kBitmap(2), unk1 %d, bitmap ptr %04x:%04x", argv[1].toUint16(), PRINT_REG(argv[2]));
-		break;
-	case 3:	// tiled surface
-		{
-		// 6 params, called e.g. from TiledBitmap::resize() in Torin's Passage,
-		// script 64869
-		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
-		// The tiled view seems to always have 2 loops.
-		// These loops need to have 1 cel in loop 0 and 8 cels in loop 1.
-		uint16 viewNum = argv[2].toUint16();	// vTiles selector
-		uint16 loop = argv[3].toUint16();
-		uint16 cel = argv[4].toUint16();
-		uint16 x = argv[5].toUint16();
-		uint16 y = argv[6].toUint16();
+	reg_t bitmapId;
+	SciBitmap &bitmap = *s->_segMan->allocateBitmap(&bitmapId, width, height, skipColor, 0, 0, xResolution, yResolution, 0, useRemap, true);
+	memset(bitmap.getPixels(), backColor, width * height);
+	return bitmapId;
+}
 
-		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
-		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
-		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
-
-		GfxView *view = g_sci->_gfxCache->getView(viewNum);
-		uint16 tileWidth = view->getWidth(loop, cel);
-		uint16 tileHeight = view->getHeight(loop, cel);
-		const byte *tileBitmap = view->getBitmap(loop, cel);
-		uint16 width = MIN<uint16>(totalWidth - x, tileWidth);
-		uint16 height = MIN<uint16>(totalHeight - y, tileHeight);
-
-		for (uint16 curY = 0; curY < height; curY++) {
-			for (uint16 curX = 0; curX < width; curX++) {
-				bitmap[(curY + y) * totalWidth + (curX + x)] = tileBitmap[curY * tileWidth + curX];
-			}
-		}
-
-		}
-		break;
-	case 4:	// add text to bitmap
-		{
-		// 13 params, called e.g. from TextButton::createBitmap() in Torin's Passage,
-		// script 64894
-		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
-		Common::String text = s->_segMan->getString(argv[2]);
-		uint16 textX = argv[3].toUint16();
-		uint16 textY = argv[4].toUint16();
-		//reg_t unk5 = argv[5];
-		//reg_t unk6 = argv[6];
-		//reg_t unk7 = argv[7];	// skip?
-		//reg_t unk8 = argv[8];	// back?
-		//reg_t unk9 = argv[9];
-		uint16 fontId = argv[10].toUint16();
-		//uint16 mode = argv[11].toUint16();
-		uint16 dimmed = argv[12].toUint16();
-		//warning("kBitmap(4): bitmap ptr %04x:%04x, font %d, mode %d, dimmed %d - text: \"%s\"",
-		//		PRINT_REG(bitmapPtr), font, mode, dimmed, text.c_str());
-		uint16 foreColor = 255;	// TODO
-
-		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
-		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
-		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
-
-		GfxFont *font = g_sci->_gfxCache->getFont(fontId);
-
-		int16 charCount = 0;
-		uint16 curX = textX, curY = textY;
-		const char *txt = text.c_str();
-
-		while (*txt) {
-			charCount = g_sci->_gfxText32->GetLongest(txt, totalWidth, font);
-			if (charCount == 0)
-				break;
-
-			for (int i = 0; i < charCount; i++) {
-				unsigned char curChar = txt[i];
-				font->drawToBuffer(curChar, curY, curX, foreColor, dimmed, bitmap, totalWidth, totalHeight);
-				curX += font->getCharWidth(curChar);
-			}
-
-			curX = textX;
-			curY += font->getHeight();
-			txt += charCount;
-			while (*txt == ' ')
-				txt++; // skip over breaking spaces
-		}
-
-		}
-		break;
-	case 5:	// fill with color
-		{
-		// 6 params, called e.g. from TextView::init() and TextView::draw()
-		// in Torin's Passage, script 64890
-		reg_t hunkId = argv[1];	// obtained from kBitmap(0)
-		uint16 x = argv[2].toUint16();
-		uint16 y = argv[3].toUint16();
-		uint16 fillWidth = argv[4].toUint16();	// width - 1
-		uint16 fillHeight = argv[5].toUint16();	// height - 1
-		uint16 back = argv[6].toUint16();
-
-		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
-		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
-		uint16 width = MIN<uint16>(totalWidth - x, fillWidth);
-		uint16 height = MIN<uint16>(totalHeight - y, fillHeight);
-		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
-
-		for (uint16 curY = 0; curY < height; curY++) {
-			for (uint16 curX = 0; curX < width; curX++) {
-				bitmap[(curY + y) * totalWidth + (curX + x)] = back;
-			}
-		}
-
-		}
-		break;
-	default:
-		kStub(s, argc, argv);
-		break;
+reg_t kBitmapDestroy(EngineState *s, int argc, reg_t *argv) {
+	if (s->_segMan->isValidAddr(argv[0], SEG_TYPE_BITMAP)) {
+		s->_segMan->freeBitmap(argv[0]);
 	}
+	return s->r_acc;
+}
+
+reg_t kBitmapDrawView(EngineState *s, int argc, reg_t *argv) {
+	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
+	CelObjView view(argv[1].toUint16(), argv[2].toSint16(), argv[3].toSint16());
+
+	const int16 x = argc > 4 ? argv[4].toSint16() : 0;
+	const int16 y = argc > 5 ? argv[5].toSint16() : 0;
+	const int16 alignX = argc > 7 ? argv[7].toSint16() : -1;
+	const int16 alignY = argc > 8 ? argv[8].toSint16() : -1;
+
+	Common::Point position(
+		x == -1 ? bitmap.getOrigin().x : x,
+		y == -1 ? bitmap.getOrigin().y : y
+	);
+
+	position.x -= alignX == -1 ? view._origin.x : alignX;
+	position.y -= alignY == -1 ? view._origin.y : alignY;
+
+	Common::Rect drawRect(
+		position.x,
+		position.y,
+		position.x + view._width,
+		position.y + view._height
+	);
+	drawRect.clip(Common::Rect(bitmap.getWidth(), bitmap.getHeight()));
+	view.draw(bitmap.getBuffer(), drawRect, position, view._mirrorX);
+	return s->r_acc;
+}
+
+reg_t kBitmapDrawText(EngineState *s, int argc, reg_t *argv) {
+	// called e.g. from TextButton::createBitmap() in Torin's Passage, script 64894
+
+	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
+	Common::String text = s->_segMan->getString(argv[1]);
+	Common::Rect textRect(
+		argv[2].toSint16(),
+		argv[3].toSint16(),
+		argv[4].toSint16() + 1,
+		argv[5].toSint16() + 1
+	);
+	int16 foreColor = argv[6].toSint16();
+	int16 backColor = argv[7].toSint16();
+	int16 skipColor = argv[8].toSint16();
+	GuiResourceId fontId = (GuiResourceId)argv[9].toUint16();
+	TextAlign alignment = (TextAlign)argv[10].toSint16();
+	int16 borderColor = argv[11].toSint16();
+	bool dimmed = argv[12].toUint16();
+
+	textRect.clip(Common::Rect(bitmap.getWidth(), bitmap.getHeight()));
+
+	reg_t textBitmapObject = g_sci->_gfxText32->createFontBitmap(textRect.width(), textRect.height(), Common::Rect(textRect.width(), textRect.height()), text, foreColor, backColor, skipColor, fontId, alignment, borderColor, dimmed, false, false);
+	CelObjMem textCel(textBitmapObject);
+	textCel.draw(bitmap.getBuffer(), textRect, Common::Point(textRect.left, textRect.top), false);
+	s->_segMan->freeBitmap(textBitmapObject);
 
 	return s->r_acc;
 }
 
-// Used for edit boxes in save/load dialogs. It's a rewritten version of kEditControl,
-// but it handles events on its own, using an internal loop, instead of using SCI
-// scripts for event management like kEditControl does. Called by script 64914,
-// DEdit::hilite().
-reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
-	reg_t controlObject = argv[0];
+reg_t kBitmapDrawColor(EngineState *s, int argc, reg_t *argv) {
+	// called e.g. from TextView::init() and TextView::draw() in Torin's Passage, script 64890
 
-	if (!controlObject.isNull()) {
-		g_sci->_gfxControls32->kernelTexteditChange(controlObject);
+	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
+	Common::Rect fillRect(
+		argv[1].toSint16(),
+		argv[2].toSint16(),
+		argv[3].toSint16() + 1,
+		argv[4].toSint16() + 1
+	);
+
+	bitmap.getBuffer().fillRect(fillRect, argv[5].toSint16());
+	return s->r_acc;
+}
+
+reg_t kBitmapSetOrigin(EngineState *s, int argc, reg_t *argv) {
+	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
+	bitmap.setOrigin(Common::Point(argv[1].toSint16(), argv[2].toSint16()));
+	return s->r_acc;
+}
+
+reg_t kBitmapCreateFromView(EngineState *s, int argc, reg_t *argv) {
+	CelObjView view(argv[0].toUint16(), argv[1].toSint16(), argv[2].toSint16());
+	const uint8 skipColor = argc > 3 && argv[3].toSint16() != -1 ? argv[3].toSint16() : view._skipColor;
+	const uint8 backColor = argc > 4 && argv[4].toSint16() != -1 ? argv[4].toSint16() : view._skipColor;
+	const bool useRemap = argc > 5 ? (bool)argv[5].toSint16() : false;
+
+	reg_t bitmapId;
+	SciBitmap &bitmap = *s->_segMan->allocateBitmap(&bitmapId, view._width, view._height, skipColor, 0, 0, view._xResolution, view._yResolution, 0, useRemap, true);
+	Buffer &buffer = bitmap.getBuffer();
+
+	const Common::Rect viewRect(view._width, view._height);
+	buffer.fillRect(viewRect, backColor);
+	view.draw(buffer, viewRect, Common::Point(0, 0), view._mirrorX);
+
+	if (argc > 6 && !argv[6].isNull()) {
+		reg_t clutHandle = argv[6];
+		if (s->_segMan->isObject(clutHandle)) {
+			clutHandle = readSelector(s->_segMan, clutHandle, SELECTOR(data));
+		}
+
+		SciArray &clut = *s->_segMan->lookupArray(clutHandle);
+		bitmap.applyRemap(clut);
 	}
 
-	return s->r_acc;
+	return bitmapId;
+}
+
+reg_t kBitmapGetInfo(EngineState *s, int argc, reg_t *argv) {
+	SciBitmap &bitmap = *s->_segMan->lookupBitmap(argv[0]);
+
+	if (argc == 1) {
+		return make_reg(0, bitmap.getWidth());
+	}
+
+	int32 offset;
+	if (argc == 2) {
+		offset = argv[1].toUint16();
+	} else {
+		const int16 x = argv[1].toSint16();
+		const int16 y = argv[2].toSint16();
+		offset = y * bitmap.getWidth() + x;
+	}
+
+	assert(offset >= 0 && offset < bitmap.getWidth() * bitmap.getHeight());
+	const uint8 color = bitmap.getPixels()[offset];
+	return make_reg(0, color);
+}
+
+reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
+	return g_sci->_gfxControls32->kernelEditText(argv[0]);
 }
 
 reg_t kAddLine(EngineState *s, int argc, reg_t *argv) {
-	reg_t plane = argv[0];
-	Common::Point startPoint(argv[1].toUint16(), argv[2].toUint16());
-	Common::Point endPoint(argv[3].toUint16(), argv[4].toUint16());
-	// argv[5] is unknown (a number, usually 200)
-	byte color = (byte)argv[6].toUint16();
-	byte priority = (byte)argv[7].toUint16();
-	byte control = (byte)argv[8].toUint16();
-	// argv[9] is unknown (usually a small number, 1 or 2). Thickness, perhaps?
-	return g_sci->_gfxFrameout->addPlaneLine(plane, startPoint, endPoint, color, priority, control);
+	const reg_t plane = argv[0];
+	const Common::Point startPoint(argv[1].toSint16(), argv[2].toSint16());
+	const Common::Point endPoint(argv[3].toSint16(), argv[4].toSint16());
+
+	int16 priority;
+	uint8 color;
+	LineStyle style;
+	uint16 pattern;
+	uint8 thickness;
+
+	if (argc == 10) {
+		priority = argv[5].toSint16();
+		color = (uint8)argv[6].toUint16();
+		style = (LineStyle)argv[7].toSint16();
+		pattern = argv[8].toUint16();
+		thickness = (uint8)argv[9].toUint16();
+	} else {
+		priority = 1000;
+		color = 255;
+		style = kLineStyleSolid;
+		pattern = 0;
+		thickness = 1;
+	}
+
+	return g_sci->_gfxPaint32->kernelAddLine(plane, startPoint, endPoint, priority, color, style, pattern, thickness);
 }
 
 reg_t kUpdateLine(EngineState *s, int argc, reg_t *argv) {
-	reg_t hunkId = argv[0];
-	reg_t plane = argv[1];
-	Common::Point startPoint(argv[2].toUint16(), argv[3].toUint16());
-	Common::Point endPoint(argv[4].toUint16(), argv[5].toUint16());
-	// argv[6] is unknown (a number, usually 200)
-	byte color = (byte)argv[7].toUint16();
-	byte priority = (byte)argv[8].toUint16();
-	byte control = (byte)argv[9].toUint16();
-	// argv[10] is unknown (usually a small number, 1 or 2). Thickness, perhaps?
-	g_sci->_gfxFrameout->updatePlaneLine(plane, hunkId, startPoint, endPoint, color, priority, control);
+	const reg_t screenItemObject = argv[0];
+	const reg_t planeObject = argv[1];
+	const Common::Point startPoint(argv[2].toSint16(), argv[3].toSint16());
+	const Common::Point endPoint(argv[4].toSint16(), argv[5].toSint16());
+
+	int16 priority;
+	uint8 color;
+	LineStyle style;
+	uint16 pattern;
+	uint8 thickness;
+
+	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObject);
+	if (plane == nullptr) {
+		error("kUpdateLine: Plane %04x:%04x not found", PRINT_REG(planeObject));
+	}
+
+	ScreenItem *screenItem = plane->_screenItemList.findByObject(screenItemObject);
+	if (screenItem == nullptr) {
+		error("kUpdateLine: Screen item %04x:%04x not found", PRINT_REG(screenItemObject));
+	}
+
+	if (argc == 11) {
+		priority = argv[6].toSint16();
+		color = (uint8)argv[7].toUint16();
+		style = (LineStyle)argv[8].toSint16();
+		pattern = argv[9].toUint16();
+		thickness = (uint8)argv[10].toUint16();
+	} else {
+		priority = screenItem->_priority;
+		color = screenItem->_celInfo.color;
+		style = kLineStyleSolid;
+		pattern = 0;
+		thickness = 1;
+	}
+
+	g_sci->_gfxPaint32->kernelUpdateLine(screenItem, plane, startPoint, endPoint, priority, color, style, pattern, thickness);
+
 	return s->r_acc;
 }
+
 reg_t kDeleteLine(EngineState *s, int argc, reg_t *argv) {
-	reg_t hunkId = argv[0];
-	reg_t plane = argv[1];
-	g_sci->_gfxFrameout->deletePlaneLine(plane, hunkId);
+	g_sci->_gfxPaint32->kernelDeleteLine(argv[0], argv[1]);
 	return s->r_acc;
 }
 
+// Used by LSL6hires intro (room 110)
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv) {
-	// Called in the intro of LSL6 hires (room 110)
-	// The end effect of this is the same as the old screen scroll transition
+	const reg_t plane = argv[0];
+	const int16 deltaX = argv[1].toSint16();
+	const int16 deltaY = argv[2].toSint16();
+	const GuiResourceId pictureId = argv[3].toUint16();
+	const bool animate = argv[4].toUint16();
+	// argv[5] was some speed argument, but it was not actually used by SSCI, so
+	// we ignore it here
+	const bool mirrorX = argc > 6 ? (bool)argv[6].toUint16() : false;
 
-	// 7 parameters
-	reg_t planeObject = argv[0];
-	//int16 x = argv[1].toSint16();
-	//int16 y = argv[2].toSint16();
-	uint16 pictureId = argv[3].toUint16();
-	// param 4: int (0 in LSL6, probably scroll direction? The picture in LSL6 scrolls down)
-	// param 5: int (first call is 1, then the subsequent one is 0 in LSL6)
-	// param 6: optional int (0 in LSL6)
-
-	// Set the new picture directly for now
-	//writeSelectorValue(s->_segMan, planeObject, SELECTOR(left), x);
-	//writeSelectorValue(s->_segMan, planeObject, SELECTOR(top), y);
-	writeSelectorValue(s->_segMan, planeObject, SELECTOR(picture), pictureId);
-	// and update our draw list
-	g_sci->_gfxFrameout->kernelUpdatePlane(planeObject);
-
-	// TODO
-	return kStub(s, argc, argv);
+	g_sci->_gfxTransitions32->kernelSetScroll(plane, deltaX, deltaY, pictureId, animate, mirrorX);
+	return s->r_acc;
 }
 
-reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
-	// TODO: Unknown (seems to be SCI32 exclusive)
-	return kStub(s, argc, argv);
+// Used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
+reg_t kMorphOn(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxFrameout->_palMorphIsOn = true;
+	return s->r_acc;
 }
 
-reg_t kPalVaryUnknown2(EngineState *s, int argc, reg_t *argv) {
-	// TODO: Unknown (seems to be SCI32 exclusive)
-	// It seems to be related to the day/night palette effects in QFG4, and
-	// accepts a palette resource ID. It is triggered right when the night
-	// effect is initially applied (when exiting the caves).
-	// In QFG4, there are two scene palettes: 790 for night, and 791 for day.
-	// Initially, the game starts at night time, but this is called with the
-	// ID of the day time palette (i.e. 791).
-	return kStub(s, argc, argv);
+reg_t kPaletteSetFromResource32(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId paletteId = argv[0].toUint16();
+	g_sci->_gfxPalette32->loadPalette(paletteId);
+	return s->r_acc;
+}
+
+reg_t kPaletteFindColor32(EngineState *s, int argc, reg_t *argv) {
+	const uint8 r = argv[0].toUint16();
+	const uint8 g = argv[1].toUint16();
+	const uint8 b = argv[2].toUint16();
+	return make_reg(0, g_sci->_gfxPalette32->matchColor(r, g, b));
+}
+
+reg_t kPaletteSetGamma(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxPalette32->setGamma(argv[0].toSint16());
+	return s->r_acc;
+}
+
+reg_t kPaletteSetFade(EngineState *s, int argc, reg_t *argv) {
+	const uint16 fromColor = argv[0].toUint16();
+	const uint16 toColor = argv[1].toUint16();
+	const uint16 percent = argv[2].toUint16();
+	g_sci->_gfxPalette32->setFade(percent, fromColor, toColor);
+	return s->r_acc;
+}
+
+reg_t kPalVarySetVary(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId paletteId = argv[0].toUint16();
+	const int32 time = argc > 1 ? argv[1].toSint16() * 60 : 0;
+	const int16 percent = argc > 2 ? argv[2].toSint16() : 100;
+	int16 fromColor;
+	int16 toColor;
+
+	if (g_sci->_features->hasMidPaletteCode() && argc > 4) {
+		fromColor = argv[3].toSint16();
+		toColor = argv[4].toSint16();
+	} else {
+		fromColor = toColor = -1;
+	}
+
+	g_sci->_gfxPalette32->kernelPalVarySet(paletteId, percent, time, fromColor, toColor);
+	return s->r_acc;
+}
+
+reg_t kPalVarySetPercent(EngineState *s, int argc, reg_t *argv) {
+	const int32 time = argc > 0 ? argv[0].toSint16() * 60 : 0;
+	const int16 percent = argc > 1 ? argv[1].toSint16() : 0;
+	g_sci->_gfxPalette32->setVaryPercent(percent, time);
+	return s->r_acc;
+}
+
+reg_t kPalVaryGetPercent(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
+}
+
+reg_t kPalVaryOff(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxPalette32->varyOff();
+	return s->r_acc;
+}
+
+reg_t kPalVaryMergeTarget(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId paletteId = argv[0].toUint16();
+	g_sci->_gfxPalette32->kernelPalVaryMergeTarget(paletteId);
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
+}
+
+reg_t kPalVarySetTime(EngineState *s, int argc, reg_t *argv) {
+	const int32 time = argv[0].toSint16() * 60;
+	g_sci->_gfxPalette32->setVaryTime(time);
+	return s->r_acc;
+}
+
+reg_t kPalVarySetTarget(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId paletteId = argv[0].toUint16();
+	g_sci->_gfxPalette32->kernelPalVarySetTarget(paletteId);
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
+}
+
+reg_t kPalVarySetStart(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId paletteId = argv[0].toUint16();
+	g_sci->_gfxPalette32->kernelPalVarySetStart(paletteId);
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
+}
+
+reg_t kPalVaryMergeStart(EngineState *s, int argc, reg_t *argv) {
+	const GuiResourceId paletteId = argv[0].toUint16();
+	g_sci->_gfxPalette32->kernelPalVaryMergeStart(paletteId);
+	return make_reg(0, g_sci->_gfxPalette32->getVaryPercent());
 }
 
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv) {
-	// Examples: GK1 room 480 (Bayou ritual), LSL6 room 100 (title screen)
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (argv[0].toUint16()) {
-	case 0: {	// Palette animation initialization
-		// 3 or 4 extra params
-		// Case 1 sends fromColor and speed again, so we don't need them here.
-		// Only toColor is stored
-		//uint16 fromColor = argv[1].toUint16();
-		s->_palCycleToColor = argv[2].toUint16();
-		//uint16 speed = argv[3].toUint16();
+reg_t kPalCycleSetCycle(EngineState *s, int argc, reg_t *argv) {
+	const uint16 fromColor = argv[0].toUint16();
+	const uint16 toColor = argv[1].toUint16();
+	const int16 direction = argv[2].toSint16();
+	const uint16 delay = argc > 3 ? argv[3].toUint16() : 0;
+	g_sci->_gfxPalette32->setCycle(fromColor, toColor, direction, delay);
+	return s->r_acc;
+}
 
-		// Invalidate the picture, so that the palette steps calls (case 1
-		// below) can update its palette without it being overwritten by the
-		// view/picture palettes.
-		g_sci->_gfxScreen->_picNotValid = 1;
+reg_t kPalCycleDoCycle(EngineState *s, int argc, reg_t *argv) {
+	const uint16 fromColor = argv[0].toUint16();
+	const int16 speed = argc > 1 ? argv[1].toSint16() : 1;
+	g_sci->_gfxPalette32->doCycle(fromColor, speed);
+	return s->r_acc;
+}
 
-		// TODO: The fourth optional parameter is an unknown integer, and is 0 by default
-		if (argc == 5) {
-			// When this variant is used, picNotValid doesn't seem to be set
-			// (e.g. GK1 room 480). In this case, the animation step calls are
-			// not made, so perhaps this signifies the palette cycling steps
-			// to make.
-			// GK1 sets this to 6 (6 palette steps?)
-			g_sci->_gfxScreen->_picNotValid = 0;
-		}
-		kStub(s, argc, argv);
-		}
-		break;
-	case 1:	{ // Palette animation step
-		// This is the same as the old kPaletteAnimate call, with 1 set of colors.
-		// The end color is set up during initialization in case 0 above.
-
-		// 1 or 2 extra params
-		uint16 fromColor = argv[1].toUint16();
-		uint16 speed = (argc == 2) ? 1 : argv[2].toUint16();
-		// TODO: For some reason, this doesn't set the color correctly
-		// (e.g. LSL6 intro, room 100, Sierra logo)
-		if (g_sci->_gfxPalette->kernelAnimate(fromColor, s->_palCycleToColor, speed))
-			g_sci->_gfxPalette->kernelAnimateSet();
-		}
-		// No kStub() call here, as this gets called loads of times, like kPaletteAnimate
-		break;
-	// case 2 hasn't been encountered
-	// case 3 hasn't been encountered
-	case 4:	// reset any palette cycling and make the picture valid again
-		// Gets called when changing rooms and after palette cycling animations finish
-		// 0 or 1 extra params
-		if (argc == 1) {
-			g_sci->_gfxScreen->_picNotValid = 0;
-			// TODO: This also seems to perform more steps
-		} else {
-			// The variant with the 1 extra param resets remapping to base
-			// TODO
-		}
-		kStub(s, argc, argv);
-		break;
-	default:
-		// TODO
-		kStub(s, argc, argv);
-		break;
+reg_t kPalCyclePause(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 0) {
+		g_sci->_gfxPalette32->cycleAllPause();
+	} else {
+		const uint16 fromColor = argv[0].toUint16();
+		g_sci->_gfxPalette32->cyclePause(fromColor);
 	}
+	return s->r_acc;
+}
 
+reg_t kPalCycleOn(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 0) {
+		g_sci->_gfxPalette32->cycleAllOn();
+	} else {
+		const uint16 fromColor = argv[0].toUint16();
+		g_sci->_gfxPalette32->cycleOn(fromColor);
+	}
+	return s->r_acc;
+}
+
+reg_t kPalCycleOff(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 0) {
+		g_sci->_gfxPalette32->cycleAllOff();
+	} else {
+		const uint16 fromColor = argv[0].toUint16();
+		g_sci->_gfxPalette32->cycleOff(fromColor);
+	}
 	return s->r_acc;
 }
 
 reg_t kRemapColors32(EngineState *s, int argc, reg_t *argv) {
-	uint16 operation = argv[0].toUint16();
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (operation) {
-	case 0:	{ // turn remapping off
-		// WORKAROUND: Game scripts in QFG4 erroneously turn remapping off in room
-		// 140 (the character point allocation screen) and never turn it back on,
-		// even if it's clearly used in that screen.
-		if (g_sci->getGameId() == GID_QFG4 && s->currentRoomNumber() == 140)
-			return s->r_acc;
-
-		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
-		if (base > 0)
-			warning("kRemapColors(0) called with base %d", base);
-		g_sci->_gfxPalette->resetRemapping();
-		}
-		break;
-	case 1:	{ // remap by range
-		uint16 color = argv[1].toUint16();
-		uint16 from = argv[2].toUint16();
-		uint16 to = argv[3].toUint16();
-		uint16 base = argv[4].toUint16();
-		uint16 unk5 = (argc >= 6) ? argv[5].toUint16() : 0;
-		if (unk5 > 0)
-			warning("kRemapColors(1) called with 6 parameters, unknown parameter is %d", unk5);
-		g_sci->_gfxPalette->setRemappingRange(color, from, to, base);
-		}
-		break;
-	case 2:	{ // remap by percent
-		uint16 color = argv[1].toUint16();
-		uint16 percent = argv[2].toUint16(); // 0 - 100
-		if (argc >= 4)
-			warning("RemapByPercent called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		g_sci->_gfxPalette->setRemappingPercent(color, percent);
-		}
-		break;
-	case 3:	{ // remap to gray
-		// Example call: QFG4 room 490 (Baba Yaga's hut) - params are color 253, 75% and 0.
-		// In this room, it's used for the cloud before Baba Yaga appears.
-		int16 color = argv[1].toSint16();
-		int16 percent = argv[2].toSint16(); // 0 - 100
-		if (argc >= 4)
-			warning("RemapToGray called with 4 parameters, unknown parameter is %d", argv[3].toUint16());
-		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
-		}
-		break;
-	case 4:	{ // remap to percent gray
-		// Example call: QFG4 rooms 530/535 (swamp) - params are 253, 100%, 200
-		int16 color = argv[1].toSint16();
-		int16 percent = argv[2].toSint16(); // 0 - 100
-		// argv[3] is unknown (a number, e.g. 200) - start color, perhaps?
-		if (argc >= 5)
-			warning("RemapToGrayPercent called with 5 parameters, unknown parameter is %d", argv[4].toUint16());
-		g_sci->_gfxPalette->setRemappingPercentGray(color, percent);
-		}
-		break;
-	case 5:	{ // don't map to range
-		//int16 mapping = argv[1].toSint16();
-		uint16 intensity = argv[2].toUint16();
-		// HACK for PQ4
-		if (g_sci->getGameId() == GID_PQ4)
-			g_sci->_gfxPalette->kernelSetIntensity(0, 255, intensity, true);
-
-		kStub(s, argc, argv);
-		}
-		break;
-	default:
-		break;
+reg_t kRemapColorsOff(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 0) {
+		g_sci->_gfxRemap32->remapAllOff();
+	} else {
+		const uint8 color = argv[0].toUint16();
+		g_sci->_gfxRemap32->remapOff(color);
 	}
+	return s->r_acc;
+}
 
+reg_t kRemapColorsByRange(EngineState *s, int argc, reg_t *argv) {
+	const uint8 color = argv[0].toUint16();
+	const int16 from = argv[1].toSint16();
+	const int16 to = argv[2].toSint16();
+	const int16 base = argv[3].toSint16();
+	// There is an optional last parameter after `base` which was only used by
+	// the priority map debugger which does not exist in release versions of
+	// SSCI
+	g_sci->_gfxRemap32->remapByRange(color, from, to, base);
+	return s->r_acc;
+}
+
+reg_t kRemapColorsByPercent(EngineState *s, int argc, reg_t *argv) {
+	const uint8 color = argv[0].toUint16();
+	const int16 percent = argv[1].toSint16();
+	// There is an optional last parameter after `percent` which was only used
+	// by the priority map debugger, which does not exist in release versions of
+	// SSCI
+	g_sci->_gfxRemap32->remapByPercent(color, percent);
+	return s->r_acc;
+}
+
+reg_t kRemapColorsToGray(EngineState *s, int argc, reg_t *argv) {
+	const uint8 color = argv[0].toUint16();
+	const int16 gray = argv[1].toSint16();
+	// There is an optional last parameter after `gray` which was only used by
+	// the priority map debugger, which does not exist in release versions of
+	// SSCI
+	g_sci->_gfxRemap32->remapToGray(color, gray);
+	return s->r_acc;
+}
+
+reg_t kRemapColorsToPercentGray(EngineState *s, int argc, reg_t *argv) {
+	const uint8 color = argv[0].toUint16();
+	const int16 gray = argv[1].toSint16();
+	const int16 percent = argv[2].toSint16();
+	// There is an optional last parameter after `percent` which was only used
+	// by the priority map debugger, which does not exist in release versions of
+	// SSCI
+	g_sci->_gfxRemap32->remapToPercentGray(color, gray, percent);
+	return s->r_acc;
+}
+
+reg_t kRemapColorsBlockRange(EngineState *s, int argc, reg_t *argv) {
+	const uint8 from = argv[0].toUint16();
+	const uint8 count = argv[1].toUint16();
+	g_sci->_gfxRemap32->blockRange(from, count);
 	return s->r_acc;
 }
 

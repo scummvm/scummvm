@@ -27,23 +27,23 @@
 SaveStateDescriptor::SaveStateDescriptor()
 	// FIXME: default to 0 (first slot) or to -1 (invalid slot) ?
 	: _slot(-1), _description(), _isDeletable(true), _isWriteProtected(false),
-	  _saveDate(), _saveTime(), _playTime(), _thumbnail() {
+	  _isLocked(false), _saveDate(), _saveTime(), _playTime(), _thumbnail() {
 }
 
 SaveStateDescriptor::SaveStateDescriptor(int s, const Common::String &d)
 	: _slot(s), _description(d), _isDeletable(true), _isWriteProtected(false),
-	  _saveDate(), _saveTime(), _playTime(), _thumbnail() {
+	  _isLocked(false), _saveDate(), _saveTime(), _playTime(), _thumbnail() {
 }
 
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 	if (_thumbnail.get() == t)
 		return;
 
-	_thumbnail = Common::SharedPtr<Graphics::Surface>(t, Graphics::SharedPtrSurfaceDeleter());
+	_thumbnail = Common::SharedPtr<Graphics::Surface>(t, Graphics::SurfaceDeleter());
 }
 
 void SaveStateDescriptor::setSaveDate(int year, int month, int day) {
-	_saveDate = Common::String::format("%.2d.%.2d.%.4d", day, month, year);
+	_saveDate = Common::String::format("%.4d-%.2d-%.2d", year, month, day);
 }
 
 void SaveStateDescriptor::setSaveTime(int hour, int min) {

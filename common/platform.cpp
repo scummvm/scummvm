@@ -27,9 +27,11 @@ namespace Common {
 
 const PlatformDescription g_platforms[] = {
 	{ "2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
+	{ "apple2", "apple2", "apple2", "Apple II", kPlatformApple2 },
 	{ "3do", "3do", "3do", "3DO", kPlatform3DO },
 	{ "acorn", "acorn", "acorn", "Acorn", kPlatformAcorn },
 	{ "amiga", "ami", "amiga", "Amiga", kPlatformAmiga },
+	{ "atari8", "atari8", "atari8", "Atari 8-bit", kPlatformAtari8Bit },
 	{ "atari", "atari-st", "st", "Atari ST", kPlatformAtariST },
 	{ "c64", "c64", "c64", "Commodore 64", kPlatformC64 },
 	{ "pc", "dos", "ibm", "DOS", kPlatformDOS },

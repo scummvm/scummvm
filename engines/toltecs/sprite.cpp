@@ -84,6 +84,7 @@ public:
 		_yerror = _sprite->yerror;
 		_origHeight = _sprite->origHeight;
 		_scalerStatus = 0;
+		_xerror = 0;
 	}
 	SpriteReaderStatus readPacket(PixelPacket &packet) {
 		SpriteReaderStatus status = kSrsPixelsLeft;
@@ -135,6 +136,8 @@ public:
 		_yerror = _sprite->yerror;
 		_origHeight = _sprite->origHeight;
 		_scalerStatus = 0;
+		_sourcep = 0;
+		_xerror = 0;
 	}
 	SpriteReaderStatus readPacket(PixelPacket &packet) {
 		SpriteReaderStatus status;

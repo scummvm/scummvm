@@ -921,6 +921,12 @@ RMDialogChoice::RMDialogChoice() {
 
 	_curAdded = 0;
 	_bShow = false;
+
+	_curSelection = 0;
+	_numChoices = 0;
+
+	_drawedStrings = NULL;
+	_ptDrawStrings = NULL;
 }
 
 RMDialogChoice::~RMDialogChoice() {

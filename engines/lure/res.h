@@ -100,7 +100,6 @@ public:
 	static Resources &getReference();
 	void reset();
 
-	byte *getResource(uint16 resId);
 	RoomDataList &roomData() { return _roomData; }
 	RoomData *getRoom(uint16 roomNumber);
 	bool checkHotspotExtent(HotspotData *hotspot);

@@ -24,7 +24,7 @@
 #define ZVISION_CONTROL_H
 
 #include "common/keyboard.h"
-
+#include "common/str.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -36,16 +36,39 @@ namespace ZVision {
 
 class ZVision;
 
+/**
+ * The base class for all Controls.
+ *
+ * Controls are the things that the user interacts with. Ex: A lever on the door
+ */
 class Control {
 public:
-	Control() : _engine(0), _key(0), _enabled(false) {}
-	Control(ZVision *engine, uint32 key) : _engine(engine), _key(key), _enabled(false) {}
+
+	enum ControlType {
+		CONTROL_UNKNOW,
+		CONTROL_INPUT,
+		CONTROL_PUSHTGL,
+		CONTROL_SLOT,
+		CONTROL_LEVER,
+		CONTROL_SAVE,
+		CONTROL_SAFE,
+		CONTROL_FIST,
+		CONTROL_TITLER,
+		CONTROL_HOTMOV,
+		CONTROL_PAINT
+	};
+
+	Control(ZVision *engine, uint32 key, ControlType type) : _engine(engine), _key(key), _type(type), _venusId(-1) {}
 	virtual ~Control() {}
 
-	uint32 getKey() { return _key; }
+	uint32 getKey() {
+		return _key;
+	}
 
-	virtual void enable();
-	virtual void disable();
+	ControlType getType() {
+		return _type;
+	}
+
 	virtual void focus() {}
 	virtual void unfocus() {}
 	/**
@@ -54,14 +77,18 @@ public:
 	 * @param screenSpacePos             The position of the mouse in screen space
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 */
-	virtual void onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {}
+	virtual bool onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+		return false;
+	}
 	/**
 	 * Called when LeftMouse is lifted. Default is NOP.
 	 *
 	 * @param screenSpacePos             The position of the mouse in screen space
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 */
-	virtual void onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {}
+	virtual bool onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+		return false;
+	}
 	/**
 	 * Called on every MouseMove. Default is NOP.
 	 *
@@ -69,77 +96,51 @@ public:
 	 * @param backgroundImageSpacePos    The position of the mouse in background image space
 	 * @return                           Was the cursor changed?
 	 */
-	virtual bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) { return false; }
+	virtual bool onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+		return false;
+	}
 	/**
 	 * Called when a key is pressed. Default is NOP.
 	 *
 	 * @param keycode    The key that was pressed
 	 */
-	virtual void onKeyDown(Common::KeyState keyState) {}
+	virtual bool onKeyDown(Common::KeyState keyState) {
+		return false;
+	}
 	/**
 	 * Called when a key is released. Default is NOP.
 	 *
 	 * @param keycode    The key that was pressed
 	 */
-	virtual void onKeyUp(Common::KeyState keyState) {}
+	virtual bool onKeyUp(Common::KeyState keyState) {
+		return false;
+	}
 	/**
 	 * Processes the node given the deltaTime since last frame. Default is NOP.
 	 *
 	 * @param deltaTimeInMillis    The number of milliseconds that have passed since last frame
 	 * @return                     If true, the node can be deleted after process() finishes
 	 */
-	virtual bool process(uint32 deltaTimeInMillis) { return false; }
-	/**
-	 * Serialize a Control for save game use. This should only be used if a Control needs
-	 * to save values that would be different from initialization. AKA a TimerNode needs to
-	 * store the amount of time left on the timer. Any Controls overriding this *MUST* write
-	 * their key as the first data outputted. The default implementation is NOP.
-	 *
-	 * NOTE: If this method is overridden, you MUST also override deserialize()
-	 * and needsSerialization()
-	 *
-	 * @param stream    Stream to write any needed data to
-	 */
-	virtual void serialize(Common::WriteStream *stream) {}
-	/**
-	 * De-serialize data from a save game stream. This should only be implemented if the
-	 * Control also implements serialize(). The calling method assumes the size of the
-	 * data read from the stream exactly equals that written in serialize(). The default
-	 * implementation is NOP.
-	 *
-	 * NOTE: If this method is overridden, you MUST also override serialize()
-	 * and needsSerialization()
-	 *
-	 * @param stream    Save game file stream
-	 */
-	virtual void deserialize(Common::SeekableReadStream *stream) {}
-	/**
-	 * If a Control overrides serialize() and deserialize(), this should return true
-	 *
-	 * @return    Does the Control need save game serialization?
-	 */
-	virtual inline bool needsSerialization() { return false; }
+	virtual bool process(uint32 deltaTimeInMillis) {
+		return false;
+	}
+
+	void setVenus();
 
 protected:
-	ZVision * _engine;
+	ZVision *_engine;
 	uint32 _key;
-	bool _enabled;
+	int32 _venusId;
 
+	void getParams(const Common::String &inputStr, Common::String &parameter, Common::String &values);
 // Static member functions
 public:
 	static void parseFlatControl(ZVision *engine);
 	static void parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &stream);
 	static void parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream);
+private:
+	ControlType _type;
 };
-
-// TODO: Implement InputControl
-// TODO: Implement SaveControl
-// TODO: Implement SlotControl
-// TODO: Implement SafeControl
-// TODO: Implement FistControl
-// TODO: Implement HotMovieControl
-// TODO: Implement PaintControl
-// TODO: Implement TilterControl
 
 } // End of namespace ZVision
 

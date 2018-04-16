@@ -1380,6 +1380,12 @@ int FWScript::o1_loadBg() {
 
 	debugC(5, kCineDebugScript, "Line: %d: loadBg(\"%s\")", _line, param);
 
+	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
+		char buffer[20];
+		removeExtention(buffer, param);
+		g_sound->setBgMusic(atoi(buffer + 1));
+	}
+
 	loadBg(param);
 	g_cine->_bgIncrustList.clear();
 	bgVar0 = 0;
@@ -1852,7 +1858,9 @@ int FWScript::o1_playSample() {
 		if (g_cine->getGameType() == Cine::GType_OS && size == 0) {
 			return 0;
 		}
-		g_sound->stopMusic();
+		// The DOS CD version of Future Wars uses CD audio for music
+		if (!(g_cine->getGameType() == Cine::GType_FW && (g_cine->getFeatures() & GF_CD)))
+			g_sound->stopMusic();
 		if (size == 0xFFFF) {
 			g_sound->playSound(channel, 0, data, 0, 0, 0, volume, 0);
 		} else {

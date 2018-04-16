@@ -124,6 +124,10 @@ void GfxTransitions::setup(int16 number, bool blackoutFlag) {
 	}
 }
 
+// Checks, if current time is lower than expected time of the current frame
+// If current time is higher, then we have to assume that the current system isn't capable
+// of either rendering frames that fast or has 60hz V'Sync enabled, which is why we drop frames
+// in those cases, so that transitions work as fast as expected.
 bool GfxTransitions::doCreateFrame(uint32 shouldBeAtMsec) {
 	uint32 msecPos = g_system->getMillis() - _transitionStartTime;
 
@@ -132,12 +136,16 @@ bool GfxTransitions::doCreateFrame(uint32 shouldBeAtMsec) {
 	return false;
 }
 
-void GfxTransitions::updateScreenAndWait(uint32 shouldBeAtMsec) {
+void GfxTransitions::updateScreen() {
 	Common::Event ev;
 
 	while (g_system->getEventManager()->pollEvent(ev)) {}	// discard all events
 
 	g_system->updateScreen();
+}
+
+void GfxTransitions::updateScreenAndWait(uint32 shouldBeAtMsec) {
+	updateScreen();
 	// if we have still some time left, delay accordingly
 	uint32 msecPos = g_system->getMillis() - _transitionStartTime;
 	if (shouldBeAtMsec > msecPos)
@@ -257,6 +265,9 @@ void GfxTransitions::doTransition(int16 number, bool blackoutFlag) {
 		warning("Transitions: ID %d not implemented", number);
 		setNewScreen(blackoutFlag);
 	}
+	// Just to make sure that the current frame is shown in case we skipped the last update-call b/c of timing
+	updateScreen();
+	debugC(kDebugLevelGraphics, "Transition took %d milliseconds", g_system->getMillis() - _transitionStartTime);
 }
 
 void GfxTransitions::setNewPalette(bool blackoutFlag) {
@@ -339,16 +350,18 @@ void GfxTransitions::pixelation(bool blackoutFlag) {
 
 	do {
 		mask = (mask & 1) ? (mask >> 1) ^ 0xB400 : mask >> 1;
-		if (mask >= _screen->getWidth() * _screen->getHeight())
+		if (mask >= _screen->getScriptWidth() * _screen->getScriptHeight())
 			continue;
-		pixelRect.left = mask % _screen->getWidth(); pixelRect.right = pixelRect.left + 1;
-		pixelRect.top = mask / _screen->getWidth();	pixelRect.bottom = pixelRect.top + 1;
+		pixelRect.left = mask % _screen->getScriptWidth(); pixelRect.right = pixelRect.left + 1;
+		pixelRect.top = mask / _screen->getScriptWidth();	pixelRect.bottom = pixelRect.top + 1;
 		pixelRect.clip(_picRect);
 		if (!pixelRect.isEmpty())
 			copyRectToScreen(pixelRect, blackoutFlag);
 		if ((stepNr & 0x3FF) == 0) {
 			msecCount += 9;
-			updateScreenAndWait(msecCount);
+			if (doCreateFrame(msecCount)) {
+				updateScreenAndWait(msecCount);
+			}
 		}
 		stepNr++;
 	} while (mask != 0x40);
@@ -372,7 +385,9 @@ void GfxTransitions::blocks(bool blackoutFlag) {
 			copyRectToScreen(blockRect, blackoutFlag);
 		if ((stepNr & 7) == 0) {
 			msecCount += 5;
-			updateScreenAndWait(msecCount);
+			if (doCreateFrame(msecCount)) {
+				updateScreenAndWait(msecCount);
+			}
 		}
 		stepNr++;
 	} while (mask != 0x40);
@@ -392,7 +407,9 @@ void GfxTransitions::straight(int16 number, bool blackoutFlag) {
 			copyRectToScreen(newScreenRect, blackoutFlag);
 			if ((stepNr & 1) == 0) {
 				msecCount += 2;
-				updateScreenAndWait(msecCount);
+				if (doCreateFrame(msecCount)) {
+					updateScreenAndWait(msecCount);
+				}
 			}
 			stepNr++;
 			newScreenRect.translate(-1, 0);
@@ -405,7 +422,9 @@ void GfxTransitions::straight(int16 number, bool blackoutFlag) {
 			copyRectToScreen(newScreenRect, blackoutFlag);
 			if ((stepNr & 1) == 0) {
 				msecCount += 2;
-				updateScreenAndWait(msecCount);
+				if (doCreateFrame(msecCount)) {
+					updateScreenAndWait(msecCount);
+				}
 			}
 			stepNr++;
 			newScreenRect.translate(1, 0);
@@ -417,7 +436,9 @@ void GfxTransitions::straight(int16 number, bool blackoutFlag) {
 		while (newScreenRect.top >= _picRect.top) {
 			copyRectToScreen(newScreenRect, blackoutFlag);
 			msecCount += 4;
-			updateScreenAndWait(msecCount);
+			if (doCreateFrame(msecCount)) {
+				updateScreenAndWait(msecCount);
+			}
 			stepNr++;
 			newScreenRect.translate(0, -1);
 		}
@@ -428,7 +449,9 @@ void GfxTransitions::straight(int16 number, bool blackoutFlag) {
 		while (newScreenRect.bottom <= _picRect.bottom) {
 			copyRectToScreen(newScreenRect, blackoutFlag);
 			msecCount += 4;
-			updateScreenAndWait(msecCount);
+			if (doCreateFrame(msecCount)) {
+				updateScreenAndWait(msecCount);
+			}
 			stepNr++;
 			newScreenRect.translate(0, 1);
 		}
@@ -534,7 +557,6 @@ void GfxTransitions::scroll(int16 number) {
 
 	// Copy over final position just in case
 	_screen->copyRectToScreen(newScreenRect);
-	g_system->updateScreen();
 }
 
 // Vertically displays new screen starting from center - works on _picRect area
@@ -552,7 +574,9 @@ void GfxTransitions::verticalRollFromCenter(bool blackoutFlag) {
 		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(-1, 0);
 		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(1, 0);
 		msecCount += 3;
-		updateScreenAndWait(msecCount);
+		if (doCreateFrame(msecCount)) {
+			updateScreenAndWait(msecCount);
+		}
 	}
 }
 
@@ -567,7 +591,9 @@ void GfxTransitions::verticalRollToCenter(bool blackoutFlag) {
 		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(1, 0);
 		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(-1, 0);
 		msecCount += 3;
-		updateScreenAndWait(msecCount);
+		if (doCreateFrame(msecCount)) {
+			updateScreenAndWait(msecCount);
+		}
 	}
 }
 
@@ -586,7 +612,9 @@ void GfxTransitions::horizontalRollFromCenter(bool blackoutFlag) {
 		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, -1);
 		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, 1);
 		msecCount += 4;
-		updateScreenAndWait(msecCount);
+		if (doCreateFrame(msecCount)) {
+			updateScreenAndWait(msecCount);
+		}
 	}
 }
 
@@ -601,7 +629,9 @@ void GfxTransitions::horizontalRollToCenter(bool blackoutFlag) {
 		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, 1);
 		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, -1);
 		msecCount += 4;
-		updateScreenAndWait(msecCount);
+		if (doCreateFrame(msecCount)) {
+			updateScreenAndWait(msecCount);
+		}
 	}
 }
 
@@ -633,7 +663,9 @@ void GfxTransitions::diagonalRollFromCenter(bool blackoutFlag) {
 		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(-1, 0);	leftRect.top--; leftRect.bottom++;
 		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(1, 0); rightRect.top--; rightRect.bottom++;
 		msecCount += 4;
-		updateScreenAndWait(msecCount);
+		if (doCreateFrame(msecCount)) {
+			updateScreenAndWait(msecCount);
+		}
 	}
 }
 
@@ -652,7 +684,9 @@ void GfxTransitions::diagonalRollToCenter(bool blackoutFlag) {
 		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(1, 0);
 		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(-1, 0);
 		msecCount += 4;
-		updateScreenAndWait(msecCount);
+		if (doCreateFrame(msecCount)) {
+			updateScreenAndWait(msecCount);
+		}
 	}
 }
 

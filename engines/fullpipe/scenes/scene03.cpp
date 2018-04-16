@@ -48,6 +48,18 @@ void FullpipeEngine::setSwallowedEggsState() {
 }
 
 void scene03_initScene(Scene *sc) {
+	debugC(1, kDebugSceneLogic, "scene03_initScene()");
+
+#if 0
+	Inventory2 *inv = getGameLoaderInventory();
+	inv->addItem(ANI_INV_EGGAPL, 1);
+	inv->addItem(ANI_INV_EGGDOM, 1);
+	inv->addItem(ANI_INV_EGGCOIN, 1);
+	inv->addItem(ANI_INV_EGGBOOT, 1);
+	inv->addItem(ANI_INV_EGGGLS, 1);
+	inv->rebuildItemRects();
+#endif
+
 	g_vars->scene03_eggeater = sc->getStaticANIObject1ById(ANI_EGGEATER, -1);
 	g_vars->scene03_domino = sc->getStaticANIObject1ById(ANI_DOMINO_3, -1);
 
@@ -60,6 +72,9 @@ void scene03_initScene(Scene *sc) {
 	g_fp->lift_setButton(sO_Level2, ST_LBN_2N);
 
 	g_fp->lift_init(sc, QU_SC3_ENTERLIFT, QU_SC3_EXITLIFT);
+
+	debugC(2, kDebugSceneLogic, "scene03: egg1: %d egg2: %d egg3: %d", g_vars->swallowedEgg1->_value.intValue,
+		g_vars->swallowedEgg2->_value.intValue, g_vars->swallowedEgg3->_value.intValue);
 }
 
 void scene03_setEaterState() {
@@ -82,18 +97,25 @@ int scene03_updateCursor() {
 }
 
 void sceneHandler03_eaterFat() {
+	debugC(2, kDebugSceneLogic, "scene03: eaterFat");
+
 	g_vars->scene03_eggeater->_flags &= 0xFF7F;
 
 	g_vars->scene03_eggeater->startAnim(MV_EGTR_FATASK, 0, -1);
 }
 
 void sceneHandler03_swallowEgg(int item) {
+	debugC(2, kDebugSceneLogic, "scene03: swallowEgg");
+
 	if (!g_vars->swallowedEgg1->_value.intValue) {
 		g_vars->swallowedEgg1->_value.intValue = item;
+		debugC(2, kDebugSceneLogic, "scene03: setting egg1: %d", g_vars->swallowedEgg1->_value.intValue);
 	} else if (!g_vars->swallowedEgg2->_value.intValue) {
 		g_vars->swallowedEgg2->_value.intValue = item;
+		debugC(2, kDebugSceneLogic, "scene03: setting egg2: %d", g_vars->swallowedEgg2->_value.intValue);
 	} else if (!g_vars->swallowedEgg3->_value.intValue) {
 		g_vars->swallowedEgg3->_value.intValue = item;
+		debugC(2, kDebugSceneLogic, "scene03: setting egg3: %d", g_vars->swallowedEgg3->_value.intValue);
 
 		g_fp->setObjectState(sO_EggGulperGaveCoin, g_fp->getObjectEnumState(sO_EggGulperGaveCoin, sO_Yes));
 
@@ -102,6 +124,8 @@ void sceneHandler03_swallowEgg(int item) {
 }
 
 void sceneHandler03_giveItem(ExCommand *ex) {
+	debugC(2, kDebugSceneLogic, "scene03: giveItem");
+
 	if (ex->_parentId == ANI_INV_EGGAPL || ex->_parentId == ANI_INV_EGGDOM ||
 		ex->_parentId == ANI_INV_EGGCOIN || ex->_parentId == ANI_INV_EGGBOOT ||
 		ex->_parentId == ANI_INV_EGGGLS)
@@ -113,6 +137,8 @@ int sceneHandler03_swallowedEgg1State() {
 }
 
 void sceneHandler03_giveCoin(ExCommand *ex) {
+	debugC(2, kDebugSceneLogic, "scene03: giveCoin");
+
 	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex->_parId);
 
 	if (mq && mq->getCount() > 0) {
@@ -141,6 +167,8 @@ void sceneHandler03_goLadder() {
 }
 
 void sceneHandler03_pushEggStack() {
+	debugC(2, kDebugSceneLogic, "scene03: pushEggStack");
+
 	g_vars->swallowedEgg1->_value.intValue = g_vars->swallowedEgg2->_value.intValue;
 	g_vars->swallowedEgg2->_value.intValue = g_vars->swallowedEgg3->_value.intValue;
 	g_vars->swallowedEgg3->_value.intValue = 0;
@@ -153,12 +181,16 @@ void sceneHandler03_pushEggStack() {
 }
 
 void sceneHandler03_releaseEgg() {
+	debugC(2, kDebugSceneLogic, "scene03: releaseEgg");
+
 	g_vars->scene03_eggeater->_flags &= 0xFF7F;
 
 	g_vars->scene03_eggeater->show1(-1, -1, -1, 0);
 }
 
 void sceneHandler03_takeEgg(ExCommand *ex) {
+	debugC(2, kDebugSceneLogic, "scene03: taking egg");
+
 	MessageQueue *mq = g_fp->_globalMessageQueueList->getMessageQueueById(ex->_parId);
 
 	if (mq && mq->getCount() > 0) {
@@ -178,7 +210,7 @@ void sceneHandler03_takeEgg(ExCommand *ex) {
 			 && ex1) {
 
 			if (ex1->_objtype == kObjTypeObjstateCommand) {
-				ObjstateCommand *com = (ObjstateCommand *)ex1;
+				ObjstateCommand *com = static_cast<ObjstateCommand *>(ex1);
 
 				com->_value = g_fp->getObjectEnumState(sO_EggGulper, sO_WantsNothing);
 			}
@@ -187,6 +219,9 @@ void sceneHandler03_takeEgg(ExCommand *ex) {
 }
 
 int sceneHandler03(ExCommand *ex) {
+	if (ex->_messageKind != 17 && ex->_messageNum != 33)
+		debugC(3, kDebugSceneLogic, "scene03: got message: kind %d, num: %d", ex->_messageKind, ex->_messageNum);
+
 	if (ex->_messageKind != 17) {
 		if (ex->_messageKind == 57)
 			sceneHandler03_giveItem(ex);
@@ -257,7 +292,7 @@ int sceneHandler03(ExCommand *ex) {
 					if (g_vars->scene03_domino->_flags & 4)
 						if (g_fp->_aniMan->isIdle())
 							if (!(g_fp->_aniMan->_flags & 0x100) && g_fp->_msgObjectId2 != g_vars->scene03_domino->_id) {
-								handleObjectInteraction(g_fp->_aniMan, g_vars->scene03_domino, ex->_keyCode);
+								handleObjectInteraction(g_fp->_aniMan, g_vars->scene03_domino, ex->_param);
 								ex->_messageKind = 0;
 
 								return 0;

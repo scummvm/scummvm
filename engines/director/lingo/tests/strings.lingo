@@ -1,0 +1,13 @@
+set z = "foo bar baz"
+set z1 = z & " meow"
+set z1 = z1 && "woof"
+put z
+put z1
+put chars("Macromedia", 6, 6)
+put chars("Macromedia", 6, 10)
+put chars("Macromedia", -1, 15)
+if z1 contains "MeÍW" then
+	put "Contains"
+else
+	put "Doesn't contain"
+end if

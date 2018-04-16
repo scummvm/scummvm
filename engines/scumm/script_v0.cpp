@@ -172,7 +172,7 @@ void ScummEngine_v0::setupOpcodes() {
 	/* 6C */
 	OPCODE(0x6c, o_stopCurrentScript);
 	OPCODE(0x6d, o2_putActorInRoom);
-	OPCODE(0x6e, o2_dummy);
+	OPCODE(0x6e, o_screenPrepare);
 	OPCODE(0x6f, o2_ifState08);
 	/* 70 */
 	OPCODE(0x70, o_lights);
@@ -589,9 +589,9 @@ void ScummEngine_v0::o_loadRoomWithEgo() {
 		return;
 	}
 
-	// The original interpreter seems to set the actors new room X/Y to the last rooms X/Y
-	// This fixes a problem with MM: script 158 in room 12, the 'Oompf!' script
-	// This scripts runs before the actor position is set to the correct location
+	// The original interpreter sets the actors new room X/Y to the last rooms X/Y
+	// This fixes a problem with MM: script 158 in room 12, the 'Oomph!' script
+	// This scripts runs before the actor position is set to the correct room entry location
 	a->putActor(a->getPos().x, a->getPos().y, room);
 	_egoPositioned = false;
 
@@ -633,12 +633,21 @@ void ScummEngine_v0::setMode(byte mode) {
 
 	switch (_currentMode) {
 	case kModeCutscene:
+		if (_game.features & GF_DEMO) {
+			if (VAR(11) != 0)
+				_drawDemo = true;
+		}
 		_redrawSentenceLine = false;
 		// Note: do not change freeze state here
 		state = USERSTATE_SET_IFACE |
 			USERSTATE_SET_CURSOR;
+
 		break;
 	case kModeKeypad:
+		if (_game.features & GF_DEMO) {
+			if (VAR(11) != 0)
+				_drawDemo = true;
+		}
 		_redrawSentenceLine = false;
 		state = USERSTATE_SET_IFACE |
 			USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
@@ -646,6 +655,12 @@ void ScummEngine_v0::setMode(byte mode) {
 		break;
 	case kModeNormal:
 	case kModeNoNewKid:
+		if (_game.features & GF_DEMO) {
+			resetVerbs();
+			_activeVerb = kVerbWalkTo;
+			_redrawSentenceLine = true;
+			_drawDemo = false;
+		}
 		state = USERSTATE_SET_IFACE | USERSTATE_IFACE_ALL |
 			USERSTATE_SET_CURSOR | USERSTATE_CURSOR_ON |
 			USERSTATE_SET_FREEZE;
@@ -707,17 +722,14 @@ void ScummEngine_v0::o_animateActor() {
 	}
 
 	a->animateActor(anim);
-	a->animateCostume();
 }
 
 void ScummEngine_v0::o_getActorMoving() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 	Actor *a = derefActor(act, "o_getActorMoving");
-	if (a->_moving)
-		setResult(1);
-	else
-		setResult(2);
+
+	setResult(a->_moving);
 }
 
 void ScummEngine_v0::o_putActorAtObject() {
@@ -968,6 +980,10 @@ void ScummEngine_v0::o_setOwnerOf() {
 		obj = _cmdObject;
 
 	setOwnerOf(obj, owner);
+}
+
+void ScummEngine_v0::o_screenPrepare() {
+
 }
 
 void ScummEngine_v0::resetSentence() {

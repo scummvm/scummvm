@@ -184,7 +184,7 @@ public:
 	 * This only works when one video track is present, and that track
 	 * supports getFrameTime(). This calls seek() internally.
 	 */
-	bool seekToFrame(uint frame);
+	virtual bool seekToFrame(uint frame);
 
 	/**
 	 * Pause or resume the video. This should stop/resume any audio playback
@@ -377,6 +377,25 @@ public:
 	 */
 	bool setReverse(bool reverse);
 
+	/**
+	 * Tell the video to dither to a palette.
+	 *
+	 * By default, VideoDecoder will return surfaces in native, or in the case
+	 * of YUV-based videos, the format set by setDefaultHighColorFormat().
+	 * For video formats or codecs that support it, this will start outputting
+	 * its surfaces in 8bpp with this palette.
+	 *
+	 * This should be called after loadStream(), but before a decodeNextFrame()
+	 * call. This is enforced.
+	 *
+	 * The palette will be copied, so you do not need to worry about the pointer
+	 * going out-of-scope.
+	 *
+	 * @param palette The palette to use for dithering
+	 * @return true on success, false otherwise
+	 */
+	bool setDitheringPalette(const byte *palette);
+
 	/////////////////////////////////////////
 	// Audio Control
 	/////////////////////////////////////////
@@ -410,6 +429,18 @@ public:
 	 * @param balance The balance at which to play the audio in the video
 	 */
 	void setBalance(int8 balance);
+
+	/**
+	 * Get the mixer sound type audio is being played with.
+	 */
+	Audio::Mixer::SoundType getSoundType() const;
+
+	/**
+	 * Set the mixer sound type used to play the audio tracks.
+	 *
+	 * This must be set before calling loadStream().
+	 */
+	void setSoundType(Audio::Mixer::SoundType soundType);
 
 	/**
 	 * Add an audio track from a stream file.
@@ -604,6 +635,16 @@ protected:
 		 * Is the video track set to play in reverse?
 		 */
 		virtual bool isReversed() const { return false; }
+
+		/**
+		 * Can the video track dither?
+		 */
+		virtual bool canDither() const { return false; }
+
+		/**
+		 * Activate dithering mode with a palette
+		 */
+		virtual void setDither(const byte *palette) {}
 	};
 
 	/**
@@ -638,7 +679,7 @@ protected:
 	 */
 	class AudioTrack : public Track {
 	public:
-		AudioTrack();
+		AudioTrack(Audio::Mixer::SoundType soundType);
 		virtual ~AudioTrack() {}
 
 		TrackType getTrackType() const { return kTrackTypeAudio; }
@@ -684,11 +725,6 @@ protected:
 		uint32 getRunningTime() const;
 
 		/**
-		 * Get the sound type to be used when playing this audio track
-		 */
-		virtual Audio::Mixer::SoundType getSoundType() const { return Audio::Mixer::kPlainSoundType; }
-
-		/**
 		 * Mute the track
 		 */
 		void setMute(bool mute);
@@ -703,6 +739,7 @@ protected:
 
 	private:
 		Audio::SoundHandle _handle;
+		Audio::Mixer::SoundType _soundType;
 		byte _volume;
 		int8 _balance;
 		bool _muted;
@@ -714,7 +751,7 @@ protected:
 	 */
 	class RewindableAudioTrack : public AudioTrack {
 	public:
-		RewindableAudioTrack() {}
+		RewindableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
 		virtual ~RewindableAudioTrack() {}
 
 		bool isRewindable() const { return true; }
@@ -736,7 +773,7 @@ protected:
 	 */
 	class SeekableAudioTrack : public AudioTrack {
 	public:
-		SeekableAudioTrack() {}
+		SeekableAudioTrack(Audio::Mixer::SoundType soundType) : AudioTrack(soundType) {}
 		virtual ~SeekableAudioTrack() {}
 
 		bool isSeekable() const { return true; }
@@ -760,7 +797,7 @@ protected:
 	 */
 	class StreamFileAudioTrack : public SeekableAudioTrack {
 	public:
-		StreamFileAudioTrack();
+		StreamFileAudioTrack(Audio::Mixer::SoundType soundType);
 		~StreamFileAudioTrack();
 
 		/**
@@ -857,6 +894,11 @@ protected:
 	TrackListIterator getTrackListEnd() { return _internalTracks.end(); }
 
 	/**
+	 * Removes a specified track
+	 */
+	void eraseTrack(Track *track);
+
+	/**
 	 * The internal seek function that does the actual seeking.
 	 *
 	 * @see seek()
@@ -901,6 +943,9 @@ private:
 	mutable bool _dirtyPalette;
 	const byte *_palette;
 
+	// Enforcement of not being able to set dither
+	bool _canSetDither;
+
 	// Default PixelFormat settings
 	Graphics::PixelFormat _defaultHighColorFormat;
 
@@ -916,6 +961,7 @@ private:
 	uint32 _pauseStartTime;
 	byte _audioVolume;
 	int8 _audioBalance;
+	Audio::Mixer::SoundType _soundType;
 
 	AudioTrack *_mainAudioTrack;
 };

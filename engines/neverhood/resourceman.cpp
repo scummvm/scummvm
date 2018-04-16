@@ -96,28 +96,32 @@ struct EntrySizeFix {
 static const EntrySizeFix entrySizeFixes[] = {
 	//  fileHash    offset   diskSize  size  fixedSize
 	// Fixes for the Russian "Dyadyushka Risech" version
-	{ 0x041137051,   667019,  23391,  41398,  41401 },	// "Options" menu header text
+	{ 0x041137051,   667019,  23391,  41398,  29191 },	// "Options" menu header text
 	{ 0x00f960021,   402268,   1704,   4378,   1870 },	// "Save" menu
 	{ 0x01301a7ea,  1220008,   2373,   4146,   2877 },	// "Load" menu
 	{ 0x084181e81,   201409,   1622,   5058,   1833 },	// "Delete" menu
+	{ 0x0C10B2015,   690410,   5850,  11162,   7870 },	// Menu text
 	{ 0x008C0AC24,  1031009,   3030,   6498,   3646 },	// Overwrite dialog
-	{ 0x0c6604282, 12813649,  19623,  35894,  35895 },	// One of the fonts when reading Willie's notes
+	{ 0x0c6604282, 12813649,  19623,  35894,  30370 },	// One of the fonts when reading Willie's notes
 	{ 0x080283101, 13104841,   1961,   3712,   3511 },	// First message from Willie
+	{ 0x058208810, 46010519,  24852, 131874, 114762 },  // Entry to hut with musical lock
 	{ 0x000918480, 17676417,    581,    916,    706 },	// First wall in the museum
-	{ 0x00800090C, 16064875,  19555,  38518,  38526 },	// First wall in the museum
-	{ 0x058208810, 46010519,  24852, 131874, 131776 },  // Entry to hut with musical lock
+	{ 0x00800090C, 16064875,  19555,  38518,  30263 },	// First wall in the museum
 	{ 0x00008E486, 39600019,    240,    454,    271 },  // Second wall in the museum
 	{ 0x003086004, 39621755,    482,    614,    600 },  // Second wall in the museum
-	{ 0x02008048E, 39611075,   3798,  21089,  21087 },  // Next couple of walls in the museum
-	{ 0x008586283, 39587864,  12155,  29731,  29730 },  // Next couple of walls in the museum
-	{ 0x030A84C80, 39606142,   4933,  16305,  16275 },  // Next couple of walls in the museum
-	{ 0x000C9A480, 39614873,   6882,  23915,  23913 },  // Next couple of walls in the museum
-	{ 0x000098880, 39603114,   3028,  10860,  10859 },  // Next couple of walls in the museum
-	{ 0x040080183, 39600259,   2855,  13400,  13395 },  // Last buggy wall in the museum
+	{ 0x02008048E, 39611075,   3798,  21089,   6374 },  // Next walls in the museum
+	{ 0x008586283, 39587864,  12155,  29731,  20582 },  // Next walls in the museum
+	{ 0x030A84C80, 39606142,   4933,  16305,   8770 },  // Next walls in the museum
+	{ 0x000C9A480, 39614873,   6882,  23915,  11571 },  // Next walls in the museum
+	{ 0x000098880, 39603114,   3028,  10860,   4762 },  // Next walls in the museum
+	{ 0x040080183, 39600259,   2855,  13400,   4305 },  // Next walls in the museum
+	{ 0x004290188, 39580567,   7297,  27131,  12322 },  // Next walls in the museum
+	{ 0x0283CE401, 12795150,  18499,  36658,  29166 },  // Late-game notes
 
 	// Fixes for the Russian "Fargus" version
 	{ 0x041137051,   758264,  29037,  49590,  49591 },	// "Options" menu header text
 	{ 0x0c10b2015,   787304,   4414,  15848,  15853 },	// Text on option buttons
+	{ 0x006802920,  1076824,   1010,   5642,   1546 },	// Crash in front of the Aqua House
 	//
 	{          0,        0,         0,     0,         0 }
 };

@@ -35,6 +35,7 @@ namespace Mohawk {
 class CSTimeCase;
 class CSTimeInterface;
 class CSTimeView;
+class VideoManager;
 
 enum {
 	kCSTimeEventNothing = 0xffff,
@@ -111,7 +112,7 @@ enum {
 };
 
 struct CSTimeEvent {
-	CSTimeEvent() { }
+	CSTimeEvent() : type(0), param1(0), param2(0) { }
 	CSTimeEvent(uint16 t, uint16 p1, uint16 p2) : type(t), param1(p1), param2(p2) { }
 
 	uint16 type;
@@ -128,7 +129,7 @@ enum CSTimeState {
 
 class MohawkEngine_CSTime : public MohawkEngine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	MohawkEngine_CSTime(OSystem *syst, const MohawkGameDescription *gamedesc);
@@ -136,10 +137,12 @@ public:
 
 	Common::RandomSource *_rnd;
 
+	VideoManager *_video;
+	Sound *_sound;
 	CSTimeGraphics *_gfx;
 	bool _needsUpdate;
 
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 	CSTimeView *getView() { return _view; }
 	CSTimeCase *getCase() { return _case; }
 	CSTimeInterface *getInterface() { return _interface; }
@@ -180,6 +183,8 @@ private:
 
 	Common::List<CSTimeEvent> _events;
 	void triggerEvent(CSTimeEvent &event);
+
+	void pauseEngineIntern(bool) override;
 };
 
 } // End of namespace Mohawk

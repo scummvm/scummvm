@@ -34,14 +34,10 @@
 #include "common/timer.h"
 #include "common/util.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
-#include "audio/decoders/flac.h"
-#include "audio/mididrv.h"
 #include "audio/mixer.h"
-#include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
-#include "audio/decoders/voc.h"
-#include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
 
 namespace Scumm {
@@ -55,37 +51,37 @@ SoundHE::SoundHE(ScummEngine *parent, Audio::Mixer *mixer)
 	_heMusicTracks(0) {
 
 	memset(_heChannel, 0, sizeof(_heChannel));
+	_heSoundChannels = new Audio::SoundHandle[8]();
 }
 
 SoundHE::~SoundHE() {
 	free(_heMusic);
+	delete[] _heSoundChannels;
 }
 
-void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
+void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 
-	if ((_vm->_game.heversion <= 99 && (heFlags & 16)) || (_vm->_game.heversion >= 100 && (heFlags & 8))) {
-		playHESound(sound, heOffset, heChannel, heFlags);
-		return;
+	if (heFlags & 8) {
+		playHESound(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 	} else {
-
-		Sound::addSoundToQueue(sound, heOffset, heChannel, heFlags);
+		Sound::addSoundToQueue(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 	}
 }
 
-void SoundHE::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags) {
+void SoundHE::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	int i = _soundQue2Pos;
 	while (i--) {
 		if (_soundQue2[i].sound == sound && !(heFlags & 2))
 			return;
 	}
 
-	Sound::addSoundToQueue2(sound, heOffset, heChannel, heFlags);
+	Sound::addSoundToQueue2(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 }
 
 void SoundHE::processSoundQueues() {
-	int snd, heOffset, heChannel, heFlags;
+	int snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol;
 
 	if (_vm->_game.heversion >= 72) {
 		for (int i = 0; i <_soundQue2Pos; i++) {
@@ -93,8 +89,11 @@ void SoundHE::processSoundQueues() {
 			heOffset = _soundQue2[i].offset;
 			heChannel = _soundQue2[i].channel;
 			heFlags = _soundQue2[i].flags;
+			heFreq = _soundQue2[_soundQue2Pos].freq;
+			hePan = _soundQue2[_soundQue2Pos].pan;
+			heVol = _soundQue2[_soundQue2Pos].vol;
 			if (snd)
-				playHESound(snd, heOffset, heChannel, heFlags);
+				playHESound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 		}
 		_soundQue2Pos = 0;
 	} else {
@@ -104,8 +103,11 @@ void SoundHE::processSoundQueues() {
 			heOffset = _soundQue2[_soundQue2Pos].offset;
 			heChannel = _soundQue2[_soundQue2Pos].channel;
 			heFlags = _soundQue2[_soundQue2Pos].flags;
+			heFreq = _soundQue2[_soundQue2Pos].freq;
+			hePan = _soundQue2[_soundQue2Pos].pan;
+			heVol = _soundQue2[_soundQue2Pos].vol;
 			if (snd)
-				playHESound(snd, heOffset, heChannel, heFlags);
+				playHESound(snd, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 		}
 	}
 
@@ -474,6 +476,10 @@ void SoundHE::processSoundOpcodes(int sound, byte *codePtr, int *soundVars) {
 			if (arg == 2) {
 				val = getSoundVar(sound, val);
 			}
+			if (!val) {
+				val = 1; // Safeguard for division by zero
+				warning("Incorrect value 0 for processSoundOpcodes() kludge DIV");
+			}
 			val = getSoundVar(sound, var) / val;
 			setSoundVar(sound, var, val);
 			break;
@@ -525,7 +531,7 @@ byte *findSoundTag(uint32 tag, byte *ptr) {
 	return NULL;
 }
 
-void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags) {
+void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	Audio::RewindableAudioStream *stream = 0;
 	byte *ptr, *spoolPtr;
 	int size = -1;
@@ -636,7 +642,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		if (heFlags & 1) {
 			_heChannel[heChannel].timer = 0;
 		} else {
-			_heChannel[heChannel].timer = size * 1000 / rate;
+			_heChannel[heChannel].timer = size * 1000 / (rate * blockAlign);
 		}
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
@@ -658,7 +664,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 			_heChannel[heChannel].rate = rate;
 			if (_heChannel[heChannel].timer)
-				_heChannel[heChannel].timer = size * 1000 / rate;
+				_heChannel[heChannel].timer = size * 1000 / (rate * blockAlign);
 
 			// makeADPCMStream returns a stream in native endianness, but RawMemoryStream
 			// defaults to big endian. If we're on a little endian system, set the LE flag.
@@ -759,6 +765,10 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			_vm->_imuse->stopSound(_currentMusic);
 			_currentMusic = soundID;
 			_vm->_imuse->startSoundWithNoteOffset(soundID, heOffset);
+		} else if (_vm->_musicEngine) {
+			_vm->_musicEngine->stopSound(_currentMusic);
+			_currentMusic = soundID;
+			_vm->_musicEngine->startSoundWithTrackID(soundID, heOffset);
 		}
 	}
 }

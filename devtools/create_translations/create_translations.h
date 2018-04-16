@@ -26,10 +26,10 @@
 typedef unsigned char   uint8;
 typedef unsigned short uint16;
 typedef unsigned int   uint32;
-typedef signed short int16;
+typedef signed short    int16;
 
-#ifndef __has_feature         // Optional of course.
-  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#ifndef __has_feature       // Optional of course.
+#define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
 #endif /* CREATE_TRANSLATIONS_H */

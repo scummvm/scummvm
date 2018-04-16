@@ -532,4 +532,7 @@ bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 	return createRegion() ? STATUS_OK : STATUS_FAILED;
 }
 
+Common::String BaseRegion::debuggerToString() const {
+	return Common::String::format("%p: Region \"%s\": Rect (top, right, bottom, left): (%d, %d, %d, %d), active: %d ", (const void *)this, getName(), _rect.top, _rect.right, _rect.bottom, _rect.left, _active);
+}
 } // End of namespace Wintermute

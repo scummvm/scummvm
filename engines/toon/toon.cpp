@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/memstream.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -34,7 +35,6 @@
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
 #include "gui/saveload.h"
-#include "gui/about.h"
 #include "gui/message.h"
 #include "toon/resource.h"
 #include "toon/toon.h"
@@ -210,17 +210,20 @@ void ToonEngine::parseInput() {
 			if (event.kbd.keycode == Common::KEYCODE_s && !hasModifier) {
 				_audioManager->muteSfx(!_audioManager->isSfxMuted());
 			}
+			if (event.kbd.keycode == Common::KEYCODE_F1 && !hasModifier && !_gameState->_inMenu) {
+				showOptions();
+			}
 
 			if (event.kbd.flags & Common::KBD_ALT) {
 				int slotNum = event.kbd.keycode - (event.kbd.keycode >= Common::KEYCODE_KP0 ? Common::KEYCODE_KP0 : Common::KEYCODE_0);
 				if (slotNum >= 0 && slotNum <= 9 && canSaveGameStateCurrently()) {
 					if (saveGame(slotNum, "")) {
 						// ok
-						Common::String buf = Common::String::format("Saved game in slot #%d ", slotNum);
+						Common::String buf = Common::String::format(_("Saved game in slot #%d "), slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					} else {
-						Common::String buf = Common::String::format("Could not quick save into slot #%d", slotNum);
+						Common::String buf = Common::String::format(_("Could not quick save into slot #%d"), slotNum);
 						GUI::MessageDialog dialog(buf, "OK", 0);
 						dialog.runModal();
 
@@ -233,11 +236,11 @@ void ToonEngine::parseInput() {
 				if (slotNum >= 0 && slotNum <= 9 && canLoadGameStateCurrently()) {
 					if (loadGame(slotNum)) {
 						// ok
-						Common::String buf = Common::String::format("Savegame #%d quick loaded", slotNum);
+						Common::String buf = Common::String::format(_("Saved game #%d quick loaded"), slotNum);
 						GUI::TimedMessageDialog dialog(buf, 1000);
 						dialog.runModal();
 					} else {
-						Common::String buf = Common::String::format("Could not quick load the savegame #%d", slotNum);
+						Common::String buf = Common::String::format(_("Could not quick load the saved game #%d"), slotNum);
 						GUI::MessageDialog dialog(buf, "OK", 0);
 						warning("%s", buf.c_str());
 						dialog.runModal();
@@ -255,7 +258,7 @@ void ToonEngine::parseInput() {
 		}
 	}
 
-	if (!_gameState->_inConversation && !_gameState->_mouseHidden && !_gameState->_inInventory) {
+	if (!_gameState->_inConversation && !_gameState->_mouseHidden && !_gameState->_inInventory && !_gameState->_inMenu) {
 		selectHotspot();
 		clickEvent();
 	}
@@ -576,7 +579,29 @@ enum MainMenuMasks {
 	MAINMENUMASK_EVERYWHERE = 3
 };
 
-struct MainMenuFile {
+enum OptionMenuSelections {
+	OPTIONMENUHOTSPOT_NONE					= 0,
+	OPTIONMENUHOTSPOT_PLAY					= 1,
+	OPTIONMENUHOTSPOT_QUIT					= 2,
+	OPTIONMENUHOTSPOT_TEXT					= 3,
+	OPTIONMENUHOTSPOT_TEXTSPEED				= 4,
+	OPTIONMENUHOTSPOT_VOLUMESFX				= 5,
+	OPTIONMENUHOTSPOT_VOLUMESFXSLIDER		= 6,
+	OPTIONMENUHOTSPOT_VOLUMEMUSIC			= 7,
+	OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER		= 8,
+	OPTIONMENUHOTSPOT_VOLUMEVOICE			= 9,
+	OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER		= 10,
+	OPTIONMENUHOTSPOT_SPEAKERBUTTON			= 11,
+	OPTIONMENUHOTSPOT_SPEAKERLEVER			= 12,
+	OPTIONMENUHOTSPOT_VIDEO_MODE			= 13
+};
+
+enum OptionMenuMasks {
+	OPTIONMENUMASK_EVERYWHERE = 1
+};
+
+
+struct MenuFile {
 	int menuMask;
 	int id;
 	const char *animationFile;
@@ -584,7 +609,7 @@ struct MainMenuFile {
 };
 
 #define MAINMENU_ENTRYCOUNT 12
-static const MainMenuFile mainMenuFiles[] = {
+static const MenuFile mainMenuFiles[] = {
 	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_START,        "STARTBUT.CAF", 0 }, // "Start" button
 	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_INTRO,        "INTROBUT.CAF", 0 }, // "Intro" button
 	{ MAINMENUMASK_BASE,       MAINMENUHOTSPOT_LOADGAME,     "LOADBUT.CAF",  0 }, // "Load Game" button
@@ -600,7 +625,38 @@ static const MainMenuFile mainMenuFiles[] = {
 	{ MAINMENUMASK_HOTKEYS,    MAINMENUHOTSPOT_HOTKEYSCLOSE, "HOTKEYS.CAF",  0 }  // Hotkeys display - clicking on it will close hotkeys
 };
 
-struct MainMenuEntry {
+#define OPTIONMENU_ENTRYCOUNT 27
+static const MenuFile optionMenuFiles[] = {
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_PLAY,        "PLAYBUTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_QUIT,        "QUITBUTN.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VIDEO_MODE,        "VIDMODE.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_TEXTSPEED,        "TXTSPEED.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_TEXT,        "TEXTDIAL.CAF", 0}, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMESFX,        "SFXBUTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMESFXSLIDER,        "SFXSLDR.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEVOICE,        "VOICEBTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER,        "VOICESLD.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEMUSIC,        "MUSICBTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER,        "MUSICSLD.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_SPEAKERBUTTON,        "XTRABUTN.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_SPEAKERLEVER,        "XTRALEVR.CAF", 0}, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "ANTENNAL.CAF", 6 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "ANTENNAR.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "BIGREDL.CAF", 6 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "BIGREDR.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "GRIDLTEL.CAF", 6 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "GRIDLTER.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "LSPEAKR.CAF", 0 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "RSPEAKR.CAF", 0 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "STARLITL.CAF", 6 }, // "Start" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "STARLITR.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE1.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE2.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE3.CAF", 6 }, // "Intro" button
+	{ OPTIONMENUMASK_EVERYWHERE,       OPTIONMENUHOTSPOT_NONE,        "CHASE4.CAF", 6 } // "Intro" button
+};
+
+struct MenuEntry {
 	int menuMask;
 	int id;
 	Animation *animation;
@@ -608,7 +664,285 @@ struct MainMenuEntry {
 	int animateOnFrame;
 	int animateCurFrame;
 	int activeFrame;
+	bool playOnce;
 };
+
+bool ToonEngine::showOptions() {
+
+	storePalette();
+	fadeOut(5);
+	Picture* optionPicture = new Picture(this);
+	optionPicture->loadPicture("OPTIONS.CPS");
+	optionPicture->setupPalette();
+	flushPalette(true);
+
+	int16 oldScrollValue = _gameState->_currentScrollValue;
+	_gameState->_currentScrollValue = 0;
+
+	bool oldMouseHidden = _gameState->_mouseHidden;
+	_gameState->_mouseHidden = false;
+
+	MenuEntry entries[OPTIONMENU_ENTRYCOUNT];
+
+	for (int entryNr = 0; entryNr < OPTIONMENU_ENTRYCOUNT; entryNr++) {
+		entries[entryNr].menuMask = optionMenuFiles[entryNr].menuMask;
+		entries[entryNr].id = optionMenuFiles[entryNr].id;
+		entries[entryNr].animation = new Animation(this);
+		entries[entryNr].animation->loadAnimation(optionMenuFiles[entryNr].animationFile);
+		if (entries[entryNr].id != OPTIONMENUHOTSPOT_NONE)
+			entries[entryNr].rect = entries[entryNr].animation->getRect();
+		entries[entryNr].animateOnFrame = optionMenuFiles[entryNr].animateOnFrame;
+		entries[entryNr].animateCurFrame = 0;
+		entries[entryNr].activeFrame = 0;
+		entries[entryNr].playOnce = false;
+	}
+
+	entries[10].activeFrame = _audioManager->_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) * (entries[10].animation->_numFrames - 1) / 256;
+	entries[8].activeFrame = _audioManager->_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) * (entries[8].animation->_numFrames - 1) / 256;
+	entries[6].activeFrame = _audioManager->_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) * (entries[6].animation->_numFrames - 1) / 256;
+
+	entries[9].activeFrame = _audioManager->isMusicMuted() ? 0 : 3;
+	entries[7].activeFrame = _audioManager->isVoiceMuted() ? 0 : 3;
+	entries[5].activeFrame = _audioManager->isSfxMuted() ? 0 : 3;
+
+	entries[2].activeFrame = entries[2].animation->_numFrames - 1;
+
+	if (!_showConversationText) {
+		entries[4].activeFrame = 4;
+	} else if (_useAlternativeFont) {
+		entries[4].activeFrame = 8;
+	} else {
+		entries[4].activeFrame = 0;
+	}
+
+	setCursor(0);
+
+	int menuMask = OPTIONMENUMASK_EVERYWHERE;
+	int ratioX = 0;
+	bool doExit = false;
+	bool exitGame = false;
+	_gameState->_inMenu = true;
+	dirtyAllScreen();
+	_firstFrame = true;
+
+	while (!doExit) {
+
+		int clickingOn = OPTIONMENUHOTSPOT_NONE;
+		int clickingOnSprite = 0;
+		int clickRelease = false;
+
+		while (!clickRelease) {
+
+			if (_dirtyAll) {
+				optionPicture->draw(*_mainSurface, 0, 0, 0, 0);
+				addDirtyRect(0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
+			} else {
+				optionPicture->drawWithRectList(*_mainSurface, 0, 0, 0, 0, _dirtyRects);
+			}
+			clearDirtyRects();
+
+			for (int entryNr = 0; entryNr < OPTIONMENU_ENTRYCOUNT; entryNr++) {
+				if (entries[entryNr].menuMask & menuMask) {
+					if (entries[entryNr].animateOnFrame) {
+						entries[entryNr].animateCurFrame++;
+						if (entries[entryNr].animateOnFrame <= entries[entryNr].animateCurFrame) {
+							entries[entryNr].activeFrame++;
+							if (entries[entryNr].activeFrame >= entries[entryNr].animation->_numFrames) {
+								entries[entryNr].activeFrame = 0;
+								if (entries[entryNr].playOnce) {
+									entries[entryNr].animateOnFrame = 0;
+									entries[entryNr].playOnce = false;
+								}
+								if (entryNr == 20 && entries[entryNr].animateOnFrame > 0) {
+									playSFX(-3, 128);
+								}
+							}
+							entries[entryNr].animateCurFrame = 0;
+						}
+					}
+					int32 frameNr = entries[entryNr].activeFrame;
+					entries[entryNr].animation->drawFrame(*_mainSurface, frameNr, 0, 0);
+				}
+			}
+
+			parseInput();
+
+			copyToVirtualScreen(true);
+			if (_firstFrame) {
+				_firstFrame = false;
+				fadeIn(5);
+			}
+			_system->delayMillis(17);
+
+			if (_mouseButton & 1) {
+				// left mouse button pushed down
+				clickingOn = OPTIONMENUHOTSPOT_NONE;
+				for (int entryNr = 0; entryNr < OPTIONMENU_ENTRYCOUNT; entryNr++) {
+					if (entries[entryNr].menuMask & menuMask) {
+						if (entries[entryNr].id != OPTIONMENUHOTSPOT_NONE) {
+							if (entries[entryNr].rect.contains(_mouseX, _mouseY)) {
+								clickingOn = entries[entryNr].id;
+								clickingOnSprite = entryNr;
+								ratioX = (_mouseX - entries[entryNr].rect.left) * 256 / entries[entryNr].rect.width();
+							}
+						}
+					}
+				}
+			} else {
+				// left mouse button released/not pushed down
+				if (clickingOn != OPTIONMENUHOTSPOT_NONE)
+					clickRelease = true;
+			}
+
+			// handle sliders
+			if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEMUSICSLIDER) {
+				entries[clickingOnSprite].activeFrame = ratioX * (entries[clickingOnSprite].animation->_numFrames) / 256;
+				int vol = entries[clickingOnSprite].activeFrame * 256 / entries[clickingOnSprite].animation->_numFrames;
+				_audioManager->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
+			}
+
+			if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICESLIDER) {
+				entries[clickingOnSprite].activeFrame = ratioX * (entries[clickingOnSprite].animation->_numFrames) / 256;
+				int vol = entries[clickingOnSprite].activeFrame * 256 / entries[clickingOnSprite].animation->_numFrames;
+				_audioManager->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, vol);
+			}
+
+			if (clickingOn == OPTIONMENUHOTSPOT_VOLUMESFXSLIDER) {
+				entries[clickingOnSprite].activeFrame = ratioX * (entries[clickingOnSprite].animation->_numFrames) / 256;
+				int vol = entries[clickingOnSprite].activeFrame * 256 / entries[clickingOnSprite].animation->_numFrames;
+				_audioManager->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
+			}
+
+			if (clickingOn == OPTIONMENUHOTSPOT_TEXTSPEED) {
+				entries[clickingOnSprite].activeFrame = ratioX * (entries[clickingOnSprite].animation->_numFrames) / 256;
+			}
+
+			if (clickingOn == OPTIONMENUHOTSPOT_PLAY) {
+				entries[0].activeFrame = entries[0].animation->_numFrames - 1;
+			} else {
+				entries[0].activeFrame = 0;
+			}
+
+			if (clickingOn == OPTIONMENUHOTSPOT_QUIT) {
+				entries[1].activeFrame = entries[1].animation->_numFrames - 1;
+			} else {
+				entries[1].activeFrame = 0;
+			}
+
+			if (_shouldQuit) {
+				clickingOn = OPTIONMENUHOTSPOT_NONE;
+				clickRelease = true;
+				doExit = true;
+			}
+		}
+
+		if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEMUSIC) {
+			if (entries[9].activeFrame == 0) {
+				entries[9].activeFrame = 3;
+				_audioManager->muteMusic(false);
+			} else {
+				entries[9].activeFrame = 0;
+				_audioManager->muteMusic(true);
+			}
+			playSFX(-7, 128);
+		}
+
+		if (clickingOn == OPTIONMENUHOTSPOT_VOLUMEVOICE) {
+			if (entries[7].activeFrame == 0) {
+				entries[7].activeFrame = 3;
+				_audioManager->muteVoice(false);
+			} else {
+				entries[7].activeFrame = 0;
+				_audioManager->muteVoice(true);
+			}
+			playSFX(-7, 128);
+		}
+
+		if (clickingOn == OPTIONMENUHOTSPOT_VOLUMESFX) {
+			if (entries[5].activeFrame == 0) {
+				entries[5].activeFrame = 3;
+				_audioManager->muteSfx(false);
+			} else {
+				entries[5].activeFrame = 0;
+				_audioManager->muteSfx(true);
+			}
+			playSFX(-7, 128);
+		}
+
+		if (clickingOn == OPTIONMENUHOTSPOT_SPEAKERBUTTON) {
+			entries[11].animateOnFrame = 4;
+			entries[11].playOnce = true;
+
+			entries[19].animateOnFrame = 4;
+			entries[19].playOnce = true;
+
+			playSFX(-10, 128);
+			_audioManager->playVoice(316, true);
+		}
+
+		if (clickingOn == OPTIONMENUHOTSPOT_SPEAKERLEVER) {
+
+			entries[12].activeFrame = 1 - entries[12].activeFrame;
+			if(entries[12].activeFrame == 1) {
+				entries[20].animateOnFrame = 4;
+				entries[20].playOnce = false;
+				playSFX(-3, 128);
+			} else {
+				entries[20].playOnce = true;
+			}
+			playSFX(-9, 128);
+		}
+
+		if (clickingOn == OPTIONMENUHOTSPOT_TEXT) {
+
+			if (entries[4].activeFrame == 0) {
+				_showConversationText = false;
+				entries[4].activeFrame = 4;
+			} else if (entries[4].activeFrame == 4) {
+				_showConversationText = true;
+				setFont(true);
+				entries[4].activeFrame = 8;
+			} else if(entries[4].activeFrame == 8) {
+				_showConversationText = true;
+				setFont(false);
+				entries[4].activeFrame = 0;
+			}
+
+			playSFX(-9, 128);
+		}
+
+		// don't allow change to video mode
+		if (clickingOn == OPTIONMENUHOTSPOT_VIDEO_MODE) {
+			playSoundWrong();
+		}
+
+		if (clickingOn == OPTIONMENUHOTSPOT_PLAY) {
+			doExit = true;
+			exitGame = false;
+			_audioManager->playSFX(10, 128, true);
+		}
+
+		if (clickingOn == OPTIONMENUHOTSPOT_QUIT) {
+			doExit = true;
+			exitGame = true;
+			_shouldQuit = true;
+			_audioManager->playSFX(10, 128, true);
+		}
+	}
+
+	fadeOut(5);
+	_gameState->_mouseHidden = oldMouseHidden;
+	_gameState->_inMenu = false;
+	_firstFrame = true;
+	_gameState->_currentScrollValue = oldScrollValue;
+
+	restorePalette();
+	dirtyAllScreen();
+
+	delete optionPicture;
+
+	return exitGame;
+}
 
 bool ToonEngine::showMainmenu(bool &loadedGame) {
 	Picture *mainmenuPicture = new Picture(this);
@@ -616,7 +950,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 	mainmenuPicture->setupPalette();
 	flushPalette(false);
 
-	MainMenuEntry entries[MAINMENU_ENTRYCOUNT];
+	MenuEntry entries[MAINMENU_ENTRYCOUNT];
 
 	for (int entryNr = 0; entryNr < MAINMENU_ENTRYCOUNT; entryNr++) {
 		entries[entryNr].menuMask = mainMenuFiles[entryNr].menuMask;
@@ -630,7 +964,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 		entries[entryNr].activeFrame = 0;
 	}
 
-	setCursor(1);
+	setCursor(0);
 
 	bool doExit = false;
 	bool exitGame = false;
@@ -782,7 +1116,7 @@ Common::Error ToonEngine::run() {
 	if (!loadToonDat())
 		return Common::kUnknownError;
 
-	initGraphics(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT, true);
+	initGraphics(TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 	init();
 
 	// do we need to load directly a game?
@@ -822,6 +1156,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_inventoryPicture = NULL;
 	_currentMask = NULL;
 	_showConversationText = true;
+	_useAlternativeFont = false;
 	_isDemo = _gameDescription->flags & ADGF_DEMO;
 
 	DebugMan.addDebugChannel(kDebugAnim, "Anim", "Animation debug level");
@@ -963,6 +1298,7 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 		_scriptState[i].running = false;
 	}
 	_currentScriptRegion = 0;
+	_currentFont = nullptr;
 }
 
 ToonEngine::~ToonEngine() {
@@ -1452,7 +1788,7 @@ int32 ToonEngine::runEventScript(int32 x, int32 y, int32 mode, int32 id, int32 s
 	_currentScriptRegion++;
 
 	_script->start(status, 1);
-	while (_script->run(status))
+	while (_script->run(status) && !_shouldQuit)
 		waitForScriptStep();
 
 	_currentScriptRegion--;
@@ -1853,6 +2189,17 @@ void ToonEngine::initFonts() {
 
 	_fontEZ = new Animation(this);
 	_fontEZ->loadAnimation("EZFONT.CAF");
+
+	setFont(false);
+}
+
+void ToonEngine::setFont(bool alternative) {
+	if (alternative) {
+		_currentFont = _fontEZ;
+	} else {
+		_currentFont = _fontToon;
+	}
+	_useAlternativeFont = alternative;
 }
 
 void ToonEngine::drawInfoLine() {
@@ -1870,7 +2217,7 @@ void ToonEngine::drawInfoLine() {
 		}
 		if (infoTool) {
 			_fontRenderer->setFontColor(0xc8, 0xdd, 0xe3);
-			_fontRenderer->setFont(_fontToon);
+			_fontRenderer->setFont(_currentFont);
 			_fontRenderer->renderText(320 + _gameState->_currentScrollValue, 398, infoTool, 5);
 		}
 	}
@@ -1998,6 +2345,8 @@ int32 ToonEngine::simpleCharacterTalk(int32 dialogid) {
 		_audioManager->playVoice(myId, false);
 	} else {
 		myId = _genericTexts->getId(dialogid - 1000);
+		if (myId == -1)
+			return 0;
 		_audioManager->playVoice(myId, true);
 	}
 
@@ -2936,7 +3285,7 @@ Character *ToonEngine::getCharacterById(int32 charId) {
 void ToonEngine::drawConversationLine() {
 	if (_currentTextLine && _showConversationText) {
 		_fontRenderer->setFontColorByCharacter(_currentTextLineCharacterId);
-		_fontRenderer->setFont(_fontToon);
+		_fontRenderer->setFont(_currentFont);
 		_fontRenderer->renderMultiLineText(_currentTextLineX, _currentTextLineY, _currentTextLine, 0);
 	}
 }
@@ -2988,7 +3337,7 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 	Common::String savegameDescription;
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		savegameId = dialog->runModalWithCurrentTarget();
 		savegameDescription = dialog->getResultString();
 		delete dialog;
@@ -3013,7 +3362,7 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 	saveFile->writeSint32BE(TOON_SAVEGAME_VERSION);
 
 	if (savegameDescription == "") {
-		savegameDescription = "Untitled savegame";
+		savegameDescription = "Untitled saved game";
 	}
 
 	saveFile->writeSint16BE(savegameDescription.size() + 1);
@@ -3080,7 +3429,7 @@ bool ToonEngine::loadGame(int32 slot) {
 	int16 savegameId;
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 	} else {
@@ -4560,12 +4909,13 @@ void ToonEngine::createShadowLUT() {
 bool ToonEngine::loadToonDat() {
 	Common::File in;
 	Common::String msg;
+	Common::String filename = "toon.dat";
 	int majVer, minVer;
 
-	in.open("toon.dat");
+	in.open(filename.c_str());
 
 	if (!in.isOpen()) {
-		msg = "You're missing the 'toon.dat' file. Get it from the ScummVM website";
+		msg = Common::String::format(_("Unable to locate the '%s' engine data file."), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;
@@ -4577,7 +4927,7 @@ bool ToonEngine::loadToonDat() {
 	buf[4] = '\0';
 
 	if (strcmp(buf, "TOON")) {
-		msg = "File 'toon.dat' is corrupt. Get it from the ScummVM website";
+		msg = Common::String::format(_("The '%s' engine data file is corrupt."), filename.c_str());
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 		return false;
@@ -4587,7 +4937,9 @@ bool ToonEngine::loadToonDat() {
 	minVer = in.readByte();
 
 	if ((majVer != TOON_DAT_VER_MAJ) || (minVer != TOON_DAT_VER_MIN)) {
-		msg = Common::String::format("File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it from the ScummVM website", TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
+		msg = Common::String::format(
+			_("Incorrect version of the '%s' engine data file found. Expected %d.%d but got %d.%d."),
+			filename.c_str(), TOON_DAT_VER_MAJ, TOON_DAT_VER_MIN, majVer, minVer);
 		GUIErrorMessage(msg);
 		warning("%s", msg.c_str());
 

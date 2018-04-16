@@ -163,11 +163,9 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		mapHeight = _screenHeight / _tilesHeight;
 		mapWidth = _screenWidth / _tilesWidth;
 
-		for (int i = 0; i < mapHeight; i++) {
+		for (int i = 0; i < mapHeight; i++)
 			for (int j = 0; j < mapWidth; j++)
 				setPass(j, i, mapData.readSByte());
-			_vm->_inter->_variables->getAddressOff8(var + i * _passWidth);
-		}
 	}
 	mapData.seek(tmpPos);
 

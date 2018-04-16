@@ -33,23 +33,23 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Channelwood : public MystScriptParser {
 public:
-	Channelwood(MohawkEngine_Myst *vm);
-	~Channelwood();
+	explicit Channelwood(MohawkEngine_Myst *vm);
+	~Channelwood() override;
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
-	uint16 getVar(uint16 var);
-	void toggleVar(uint16 var);
-	bool setVarValue(uint16 var, uint16 value);
+	uint16 getVar(uint16 var) override;
+	void toggleVar(uint16 var) override;
+	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() { return 9932; }
+	uint16 getMap() override { return 9932; }
 
 	DECLARE_OPCODE(o_bridgeToggle);
 	DECLARE_OPCODE(o_pipeExtend);
@@ -94,7 +94,7 @@ private:
 	uint16 _doorOpened; // 68
 
 	bool _leverPulled;
-	MystResourceType5 *_leverAction; // 72
+	MystArea *_leverAction; // 72
 
 	bool pipeChangeValve(bool open, uint16 mask);
 };

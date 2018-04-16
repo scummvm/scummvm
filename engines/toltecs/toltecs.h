@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TOLTECS_H
-#define TOLTECS_H
+#ifndef TOLTECS_TOLTECS_H
+#define TOLTECS_TOLTECS_H
 
 #include "common/scummsys.h"
 #include "common/endian.h"
@@ -225,10 +225,10 @@ public:
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
 
-	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
+	WARN_UNUSED_RESULT static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 
 };
 
 } // End of namespace Toltecs
 
-#endif /* TOLTECS_H */
+#endif /* TOLTECS_TOLTECS_H */

@@ -7,14 +7,26 @@ MODULE_OBJS := \
 	fontman.o \
 	fonts/bdf.o \
 	fonts/consolefont.o \
+	fonts/macfont.o \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
 	fonts/ttf.o \
 	fonts/winfont.o \
 	maccursor.o \
+	macgui/macfontmanager.o \
+	macgui/macmenu.o \
+	macgui/mactext.o \
+	macgui/mactextwindow.o \
+	macgui/macwindow.o \
+	macgui/macwindowborder.o \
+	macgui/macwindowmanager.o \
+	managed_surface.o \
+	nine_patch.o \
+	pixelformat.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail_intern.o \
+	screen.o \
 	sjis.o \
 	surface.o \
 	transform_struct.o \

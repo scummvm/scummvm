@@ -560,5 +560,47 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
+{ // Supplied by Dark-Star on #scummvm
+	{
+		"gob3",
+		"Interactive Demo 4",
+		AD_ENTRY1s("intro.stk", "9c7c9002506fc976128ffe8f308d428c", 395562),
+		EN_GRB,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob3,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+{ // Supplied by Dark-Star on #scummvm
+	{
+		"gob3",
+		"Interactive Demo 4",
+		AD_ENTRY1s("intro.stk", "9c7c9002506fc976128ffe8f308d428c", 395562),
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob3,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+{ // Supplied by Dark-Star on #scummvm
+	{
+		"gob3",
+		"Interactive Demo 4",
+		AD_ENTRY1s("intro.stk", "9c7c9002506fc976128ffe8f308d428c", 395562),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_DEMO,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob3,
+	kFeaturesAdLib,
+	0, 0, 0
+},
 
 #endif // GOB_DETECTION_TABLES_GOB3_H

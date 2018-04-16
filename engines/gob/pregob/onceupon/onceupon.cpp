@@ -30,8 +30,6 @@
 #include "gob/anifile.h"
 #include "gob/aniobject.h"
 
-#include "gob/sound/sound.h"
-
 #include "gob/pregob/txtfile.h"
 #include "gob/pregob/gctfile.h"
 
@@ -986,7 +984,7 @@ OnceUpon::MenuAction OnceUpon::doIngameMenu() {
 		// User pressed the return to game button
 		action = kMenuActionPlay;
 
-	} else if (kMenuActionMainMenu) {
+	} else if (action == kMenuActionMainMenu) {
 
 		// User pressed the return to main menu button
 		action = handleMainMenu();

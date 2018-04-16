@@ -177,11 +177,11 @@ static PanelButton ITE_OptionPanelButtons[] = {
 	{kPanelButtonOption,	241,98, 57,17,	kTextSave,'s',0,	0,0,0},	//save
 	{kPanelButtonOptionSaveFiles,	166,20, 112,74,	0,'-',0,	0,0,0},	//savefiles
 
-	{kPanelButtonOptionText,106,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
-	{kPanelButtonOptionText,11,22, 0,0,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
-	{kPanelButtonOptionText,28,22, 0,0,	kTextShowDialog,'-',0, 0,0,0},	// text: read speed
-	{kPanelButtonOptionText,73,41, 0,0,	kTextMusic,'-',0, 0,0,0},	// text: music
-	{kPanelButtonOptionText,69,60, 0,0,	kTextSound,'-',0, 0,0,0},	// text: noise
+	{kPanelButtonOptionText,-1,4, 0,0,	kTextGameOptions,'-',0,	0,0,0},	// text: game options
+	{kPanelButtonOptionText,5,18, 109,17,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
+	{kPanelButtonOptionText,5,18, 109,17,	kTextShowDialog,'-',0, 0,0,0},	// text: read speed
+	{kPanelButtonOptionText,5,37, 109,17,	kTextMusic,'-',0, 0,0,0},	// text: music
+	{kPanelButtonOptionText,5,56, 109,17,	kTextSound,'-',0, 0,0,0},	// text: noise
 };
 
 static PanelButton ITE_QuitPanelButtons[] = {
@@ -326,10 +326,10 @@ static PanelButton IHNM_ConversePanelButtons[] = {
 
 static PanelButton IHNM_OptionPanelButtons[] = {
 	{kPanelButtonOptionSlider,	421,16, 16,138,	0,'-',0,	0,0,0},				//slider-scroller
-	{kPanelButtonOptionText,28,36,	0,0,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
-	{kPanelButtonOptionText,60,61,	0,0,	kTextMusic,'-',0, 0,0,0},			// text: music
-	{kPanelButtonOptionText,60,86,	0,0,	kTextSound,'-',0, 0,0,0},			// text: noise
-	{kPanelButtonOptionText,56,111,	0,0,	kTextVoices,'-',0, 0,0,0},			// text: voices
+	{kPanelButtonOptionText,11,30,	139,21,	kTextReadingSpeed,'-',0, 0,0,0},	// text: read speed
+	{kPanelButtonOptionText,11,55,	139,21,	kTextMusic,'-',0, 0,0,0},			// text: music
+	{kPanelButtonOptionText,11,80,	139,21,	kTextSound,'-',0, 0,0,0},			// text: noise
+	{kPanelButtonOptionText,11,105,	139,21,	kTextVoices,'-',0, 0,0,0},			// text: voices
 	{kPanelButtonOption,	154,30, 79,23,	kTextReadingSpeed,'r',0,	0,0,0},	//read speed
 	{kPanelButtonOption,	154,55, 79,23,	kTextMusic,'m',0,	0,0,0},			//music
 	{kPanelButtonOption,	154,80, 79,23,	kTextSound,'n',0,	0,0,0},			//sound-noise

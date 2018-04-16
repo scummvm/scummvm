@@ -30,17 +30,15 @@ namespace Common {
 
 class DecompressorDCL {
 public:
-	bool unpack(ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	bool unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize);
 
 protected:
 	/**
 	 * Initialize decompressor.
-	 * @param src		source stream to read from
-	 * @param dest		destination stream to write to
-	 * @param nPacked	size of packed data
-	 * @param nUnpacked	size of unpacked data
+	 * @param sourceStream	source stream to read from
+	 * @param targetStream	target memory stream to write to
 	 */
-	void init(ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	void init(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize);
 
 	/**
 	 * Get a number of bits from _src stream, starting with the least
@@ -66,39 +64,41 @@ protected:
 
 	int huffman_lookup(const int *tree);
 
-	uint32 _dwBits;		///< bits buffer
-	byte _nBits;		///< number of unread bits in _dwBits
-	uint32 _szPacked;	///< size of the compressed data
-	uint32 _szUnpacked;	///< size of the decompressed data
-	uint32 _dwRead;		///< number of bytes read from _src
-	uint32 _dwWrote;	///< number of bytes written to _dest
-	ReadStream *_src;
-	byte *_dest;
+	uint32 _dwBits;			///< bits buffer
+	byte _nBits;			///< number of unread bits in _dwBits
+	uint32 _sourceSize;		///< size of the source stream
+	uint32 _targetSize;		///< size of the target stream (if fixed)
+	bool _targetFixedSize;  ///< if target stream is fixed size or dynamic size
+	uint32 _bytesRead;		///< number of bytes read from _sourceStream
+	uint32 _bytesWritten;	///< number of bytes written to _targetStream
+	SeekableReadStream *_sourceStream;
+	WriteStream *_targetStream;
 };
 
-void DecompressorDCL::init(ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
-	_src = src;
-	_dest = dest;
-	_szPacked = nPacked;
-	_szUnpacked = nUnpacked;
+void DecompressorDCL::init(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize) {
+	_sourceStream = sourceStream;
+	_targetStream = targetStream;
+	_sourceSize = sourceStream->size();
+	_targetSize = targetSize;
+	_targetFixedSize = targetFixedSize;
 	_nBits = 0;
-	_dwRead = _dwWrote = 0;
+	_bytesRead = _bytesWritten = 0;
 	_dwBits = 0;
 }
 
 void DecompressorDCL::fetchBitsLSB() {
 	while (_nBits <= 24) {
-		_dwBits |= ((uint32)_src->readByte()) << _nBits;
+		_dwBits |= ((uint32)_sourceStream->readByte()) << _nBits;
 		_nBits += 8;
-		_dwRead++;
+		_bytesRead++;
 	}
 }
 
 uint32 DecompressorDCL::getBitsLSB(int n) {
-	// fetching more data to buffer if needed
+	// Fetching more data to buffer if needed
 	if (_nBits < n)
 		fetchBitsLSB();
-	uint32 ret = (_dwBits & ~((~0) << n));
+	uint32 ret = (_dwBits & ~(~0UL << n));
 	_dwBits >>= n;
 	_nBits -= n;
 	return ret;
@@ -109,7 +109,8 @@ byte DecompressorDCL::getByteLSB() {
 }
 
 void DecompressorDCL::putByte(byte b) {
-	_dest[_dwWrote++] = b;
+	_targetStream->writeByte(b);
+	_bytesWritten++;
 }
 
 #define HUFFMAN_LEAF 0x40000000
@@ -331,97 +332,191 @@ int DecompressorDCL::huffman_lookup(const int *tree) {
 #define DCL_BINARY_MODE 0
 #define DCL_ASCII_MODE 1
 
-bool DecompressorDCL::unpack(ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
-	init(src, dest, nPacked, nUnpacked);
+#define MIDI_SETUP_BUNDLE_FILE_MAXIMUM_DICTIONARY_SIZE 4096
 
+bool DecompressorDCL::unpack(SeekableReadStream *sourceStream, WriteStream *targetStream, uint32 targetSize, bool targetFixedSize) {
+	byte   dictionary[MIDI_SETUP_BUNDLE_FILE_MAXIMUM_DICTIONARY_SIZE];
+	uint16 dictionaryPos = 0;
+	uint16 dictionarySize = 0;
+	uint16 dictionaryMask = 0;
 	int value;
-	uint32 val_distance, val_length;
+	uint16 tokenOffset = 0;
+	uint16 tokenLength = 0;
 
-	int mode = getByteLSB();
-	int length_param = getByteLSB();
+	init(sourceStream, targetStream, targetSize, targetFixedSize);
+
+	byte mode = getByteLSB();
+	byte dictionaryType = getByteLSB();
 
 	if (mode != DCL_BINARY_MODE && mode != DCL_ASCII_MODE) {
 		warning("DCL-INFLATE: Error: Encountered mode %02x, expected 00 or 01", mode);
 		return false;
 	}
 
-	if (length_param < 3 || length_param > 6)
-		warning("Unexpected length_param value %d (expected in [3,6])", length_param);
+	// TODO: original code supported 3 as well???
+	// Was this an accident or on purpose? And the original code did just give out a warning
+	// and didn't error out at all
+	switch (dictionaryType) {
+	case 4:
+		dictionarySize = 1024;
+		break;
+	case 5:
+		dictionarySize = 2048;
+		break;
+	case 6:
+		dictionarySize = 4096;
+		break;
+	default:
+		warning("DCL-INFLATE: Error: unsupported dictionary type %02x", dictionaryType);
+		return false;
+	}
+	dictionaryMask = dictionarySize - 1;
 
-	while (_dwWrote < _szUnpacked) {
+	while ((!targetFixedSize) || (_bytesWritten < _targetSize)) {
 		if (getBitsLSB(1)) { // (length,distance) pair
 			value = huffman_lookup(length_tree);
 
 			if (value < 8)
-				val_length = value + 2;
+				tokenLength = value + 2;
 			else
-				val_length = 8 + (1 << (value - 7)) + getBitsLSB(value - 7);
+				tokenLength = 8 + (1 << (value - 7)) + getBitsLSB(value - 7);
+
+			if (tokenLength == 519)
+				break; // End of stream signal
 
 			debug(8, " | ");
 
 			value = huffman_lookup(distance_tree);
 
-			if (val_length == 2)
-				val_distance = (value << 2) | getBitsLSB(2);
+			if (tokenLength == 2)
+				tokenOffset = (value << 2) | getBitsLSB(2);
 			else
-				val_distance = (value << length_param) | getBitsLSB(length_param);
-			val_distance ++;
+				tokenOffset = (value << dictionaryType) | getBitsLSB(dictionaryType);
+			tokenOffset++;
 
-			debug(8, "\nCOPY(%d from %d)\n", val_length, val_distance);
+			debug(8, "\nCOPY(%d from %d)\n", tokenLength, tokenOffset);
 
-			if (val_length + _dwWrote > _szUnpacked) {
-				warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes (declared unpacked size is %d bytes, current is %d + %d bytes)",
-						val_length, _szUnpacked, _dwWrote, val_length);
-				return false;
+			if (_targetFixedSize) {
+				if (tokenLength + _bytesWritten > _targetSize) {
+					warning("DCL-INFLATE Error: Write out of bounds while copying %d bytes (declared unpacked size is %d bytes, current is %d + %d bytes)",
+							tokenLength, _targetSize, _bytesWritten, tokenLength);
+					return false;
+				}
 			}
 
-			if (_dwWrote < val_distance) {
+			if (_bytesWritten < tokenOffset) {
 				warning("DCL-INFLATE Error: Attempt to copy from before beginning of input stream (declared unpacked size is %d bytes, current is %d bytes)",
-						_szUnpacked, _dwWrote);
+						_targetSize, _bytesWritten);
 				return false;
 			}
 
-			while (val_length) {
-				uint32 copy_length = (val_length > val_distance) ? val_distance : val_length;
-				assert(val_distance >= copy_length);
-				uint32 pos = _dwWrote - val_distance;
-				for (uint32 i = 0; i < copy_length; i++)
-					putByte(dest[pos + i]);
+			uint16 dictionaryBaseIndex = (dictionaryPos - tokenOffset) & dictionaryMask;
+			uint16 dictionaryIndex = dictionaryBaseIndex;
+			uint16 dictionaryNextIndex = dictionaryPos;
 
-				for (uint32 i = 0; i < copy_length; i++)
-					debug(9, "\33[32;31m%02x\33[37;37m ", dest[pos + i]);
-				debug(9, "\n");
+			while (tokenLength) {
+				// Write byte from dictionary
+				putByte(dictionary[dictionaryIndex]);
+				debug(9, "\33[32;31m%02x\33[37;37m ", dictionary[dictionaryIndex]);
 
-				val_length -= copy_length;
-				val_distance += copy_length;
+				dictionary[dictionaryNextIndex] = dictionary[dictionaryIndex];
+
+				dictionaryNextIndex = (dictionaryNextIndex + 1) & dictionaryMask;
+				dictionaryIndex = (dictionaryIndex + 1) & dictionaryMask;
+
+				if (dictionaryIndex == dictionaryPos)
+					dictionaryIndex = dictionaryBaseIndex;
+				if (dictionaryNextIndex == dictionarySize)
+					dictionaryNextIndex = 0;
+
+				tokenLength--;
 			}
+			dictionaryPos = dictionaryNextIndex;
+			debug(9, "\n");
 
 		} else { // Copy byte verbatim
 			value = (mode == DCL_ASCII_MODE) ? huffman_lookup(ascii_tree) : getByteLSB();
 			putByte(value);
+
+			// Also remember it inside dictionary
+			dictionary[dictionaryPos] = value;
+			dictionaryPos++;
+			if (dictionaryPos >= dictionarySize)
+				dictionaryPos = 0;
+
 			debug(9, "\33[32;31m%02x \33[37;37m", value);
 		}
 	}
 
-	return _dwWrote == _szUnpacked;
+	if (_targetFixedSize) {
+		if (_bytesWritten != _targetSize)
+			warning("DCL-INFLATE Error: Inconsistent bytes written (%d) and target buffer size (%d)", _bytesWritten, _targetSize);
+		return _bytesWritten == _targetSize;
+	}
+	return true; // For targets featuring dynamic size we always succeed
 }
 
 bool decompressDCL(ReadStream *src, byte *dest, uint32 packedSize, uint32 unpackedSize) {
+	bool success = false;
+	DecompressorDCL dcl;
+
 	if (!src || !dest)
 		return false;
 
-	DecompressorDCL dcl;
-	return dcl.unpack(src, dest, packedSize, unpackedSize);
+	byte *sourceBufferPtr = (byte *)malloc(packedSize);
+	if (!sourceBufferPtr)
+		return false;
+
+	// Read source into memory
+	src->read(sourceBufferPtr, packedSize);
+
+	Common::MemoryReadStream  *sourceStream = new MemoryReadStream(sourceBufferPtr, packedSize, DisposeAfterUse::YES);
+	Common::MemoryWriteStream *targetStream = new MemoryWriteStream(dest, unpackedSize);
+
+	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true);
+	delete sourceStream;
+	delete targetStream;
+	return success;
 }
 
-SeekableReadStream *decompressDCL(ReadStream *src, uint32 packedSize, uint32 unpackedSize) {
-	byte *data = (byte *)malloc(unpackedSize);
+SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream, uint32 packedSize, uint32 unpackedSize) {
+	bool success = false;
+	byte *targetPtr = nullptr;
+	Common::MemoryWriteStream *targetStream;
+	DecompressorDCL dcl;
 
-	if (decompressDCL(src, data, packedSize, unpackedSize))
-		return new MemoryReadStream(data, unpackedSize, DisposeAfterUse::YES);
+	targetPtr = (byte *)malloc(unpackedSize);
+	if (!targetPtr)
+		return nullptr;
 
-	free(data);
-	return 0;
+	targetStream = new MemoryWriteStream(targetPtr, unpackedSize);
+
+	success = dcl.unpack(sourceStream, targetStream, unpackedSize, true);
+	delete targetStream;
+
+	if (!success) {
+		free(targetPtr);
+		return nullptr;
+	}
+	return new MemoryReadStream(targetPtr, unpackedSize, DisposeAfterUse::YES);
+}
+
+// This one figures out the unpacked size by itself
+// Needed for at least Simon 2, because the unpacked size is not stored anywhere
+SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream) {
+	Common::MemoryWriteStreamDynamic *targetStream;
+	DecompressorDCL dcl;
+
+	targetStream = new MemoryWriteStreamDynamic(DisposeAfterUse::NO);
+
+	if (dcl.unpack(sourceStream, targetStream, 0, false)) {
+		byte *targetPtr = targetStream->getData();
+		uint32 unpackedSize = targetStream->size();
+		delete targetStream;
+		return new MemoryReadStream(targetPtr, unpackedSize, DisposeAfterUse::YES);
+	}
+	delete targetStream;
+	return nullptr;
 }
 
 } // End of namespace Common

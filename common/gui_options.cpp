@@ -29,6 +29,8 @@ namespace Common {
 
 const struct GameOpt {
 	const char *option;
+	// Each description must be a unique identifier not containing a substring
+	// of any other description
 	const char *desc;
 } g_gameOptions[] = {
 	{ GUIO_NOSUBTITLES,  "sndNoSubs" },
@@ -36,6 +38,9 @@ const struct GameOpt {
 	{ GUIO_NOSPEECH,     "sndNoSpeech" },
 	{ GUIO_NOSFX,        "sndNoSFX" },
 	{ GUIO_NOMIDI,       "sndNoMIDI" },
+	{ GUIO_LINKSPEECHTOSFX, "sndLinkSpeechToSfx" },
+	{ GUIO_LINKMUSICTOSFX,  "sndLinkMusicToSfx" },
+	{ GUIO_NOSPEECHVOLUME,  "sndNoSpchVolume" },
 
 	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
 
@@ -53,15 +58,18 @@ const struct GameOpt {
 
 	{ GUIO_NOASPECT,     "noAspect" },
 
-	{ GUIO_RENDERHERCGREEN,	"hercGreen" },
-	{ GUIO_RENDERHERCAMBER,	"hercAmber" },
-	{ GUIO_RENDERCGA,		"cga" },
-	{ GUIO_RENDEREGA,		"ega" },
-	{ GUIO_RENDERVGA,		"vga" },
-	{ GUIO_RENDERAMIGA,		"amiga" },
-	{ GUIO_RENDERFMTOWNS,	"fmtowns" },
-	{ GUIO_RENDERPC9821,	"pc9821" },
-	{ GUIO_RENDERPC9801,	"pc9801" },
+	{ GUIO_RENDERHERCGREEN, "hercGreen" },
+	{ GUIO_RENDERHERCAMBER, "hercAmber" },
+	{ GUIO_RENDERCGA,       "cga" },
+	{ GUIO_RENDEREGA,       "ega" },
+	{ GUIO_RENDERVGA,       "vga" },
+	{ GUIO_RENDERAMIGA,     "amiga" },
+	{ GUIO_RENDERFMTOWNS,   "fmtowns" },
+	{ GUIO_RENDERPC9821,    "pc9821" },
+	{ GUIO_RENDERPC9801,    "pc9801" },
+	{ GUIO_RENDERAPPLE2GS,  "2gs" },
+	{ GUIO_RENDERATARIST,   "atari" },
+	{ GUIO_RENDERMACINTOSH, "macintosh" },
 
 	{ GUIO_GAMEOPTIONS1, "gameOption1" },
 	{ GUIO_GAMEOPTIONS2, "gameOption2" },
@@ -70,6 +78,12 @@ const struct GameOpt {
 	{ GUIO_GAMEOPTIONS5, "gameOption5" },
 	{ GUIO_GAMEOPTIONS6, "gameOption6" },
 	{ GUIO_GAMEOPTIONS7, "gameOption7" },
+	{ GUIO_GAMEOPTIONS8, "gameOption8" },
+	{ GUIO_GAMEOPTIONS9, "gameOption9" },
+	// Option strings must not contain substrings of any other options, so
+	// "gameOption10" would be invalid here because it contains "gameOption1"
+	{ GUIO_GAMEOPTIONS10, "gameOptionA" },
+	{ GUIO_GAMEOPTIONS11, "gameOptionB" },
 
 	{ GUIO_NONE, 0 }
 };

@@ -22,13 +22,15 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/voc.h"
+#include "common/file.h"
 #include "common/memstream.h"
 #include "voyeur/sound.h"
 #include "voyeur/staticres.h"
 
 namespace Voyeur {
 
-	SoundManager::SoundManager(Audio::Mixer *mixer) {
+SoundManager::SoundManager(Audio::Mixer *mixer) {
 	_mixer = mixer;
 	_vocOffset = 0;
 }
@@ -54,6 +56,7 @@ void SoundManager::setVOCOffset(int offset) {
 }
 
 Common::String SoundManager::getVOCFileName(int idx) {
+	assert(idx >= 0);
 	return Common::String::format("%s.voc", SZ_FILENAMES[idx]);
 }
 

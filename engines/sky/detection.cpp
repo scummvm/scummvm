@@ -136,7 +136,7 @@ const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &ta
 }
 
 GameDescriptor SkyMetaEngine::findGame(const char *gameid) const {
-	if (0 == scumm_stricmp(gameid, skySetting.gameid))
+	if (0 == scumm_stricmp(gameid, skySetting.gameId))
 		return skySetting;
 	return GameDescriptor();
 }
@@ -151,9 +151,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 	// Iterate over all files in the given directory
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (!file->isDirectory()) {
-			const char *fileName = file->getName().c_str();
-
-			if (0 == scumm_stricmp("sky.dsk", fileName)) {
+			if (0 == scumm_stricmp("sky.dsk", file->getName().c_str())) {
 				Common::File dataDisk;
 				if (dataDisk.open(*file)) {
 					hasSkyDsk = true;
@@ -161,7 +159,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 				}
 			}
 
-			if (0 == scumm_stricmp("sky.dnr", fileName)) {
+			if (0 == scumm_stricmp("sky.dnr", file->getName().c_str())) {
 				Common::File dinner;
 				if (dinner.open(*file)) {
 					hasSkyDnr = true;
@@ -175,7 +173,7 @@ GameList SkyMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// Match found, add to list of candidates, then abort inner loop.
 		// The game detector uses US English by default. We want British
 		// English to match the recorded voices better.
-		GameDescriptor dg(skySetting.gameid, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown);
+		GameDescriptor dg(skySetting.gameId, skySetting.description, Common::UNK_LANG, Common::kPlatformUnknown);
 		const SkyVersion *sv = skyVersions;
 		while (sv->dinnerTableEntries) {
 			if (dinnerTableEntries == sv->dinnerTableEntries &&
@@ -222,8 +220,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 
 	// Find all saves
 	Common::StringArray filenames;
-	filenames = saveFileMan->listSavefiles("SKY-VM.???");
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+	filenames = saveFileMan->listSavefiles("SKY-VM.###");
 
 	// Slot 0 is the autosave, if it exists.
 	// TODO: Check for the existence of the autosave -- but this require us
@@ -235,16 +232,16 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		// Extract the extension
 		Common::String ext = file->c_str() + file->size() - 3;
 		ext.toUppercase();
-		if (Common::isDigit(ext[0]) && Common::isDigit(ext[1]) && Common::isDigit(ext[2])) {
-			int slotNum = atoi(ext.c_str());
-			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
-			if (in) {
-				saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum]));
-				delete in;
-			}
+		int slotNum = atoi(ext.c_str());
+		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+		if (in) {
+			saveList.push_back(SaveStateDescriptor(slotNum+1, savenames[slotNum]));
+			delete in;
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

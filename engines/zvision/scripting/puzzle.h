@@ -28,11 +28,10 @@
 #include "common/list.h"
 #include "common/ptr.h"
 
-
 namespace ZVision {
 
 struct Puzzle {
-	Puzzle() : key(0) {}
+	Puzzle() : key(0), addedBySetState(false) {}
 
 	~Puzzle() {
 		for (Common::List<ResultAction *>::iterator iter = resultActions.begin(); iter != resultActions.end(); ++iter) {
@@ -63,10 +62,17 @@ struct Puzzle {
 		bool argumentIsAKey;
 	};
 
+	enum StateFlags {
+		ONCE_PER_INST = 0x01,
+		DISABLED = 0x02,
+		DO_ME_NOW = 0x04
+	};
+
 	uint32 key;
 	Common::List<Common::List <CriteriaEntry> > criteriaList;
 	// This has to be list of pointers because ResultAction is abstract
 	Common::List<ResultAction *> resultActions;
+	bool addedBySetState;
 };
 
 } // End of namespace ZVision

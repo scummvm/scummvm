@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "common/algorithm.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -45,7 +46,7 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		GAMEOPTION_ORIGINAL_SAVELOAD,
 		{
 			_s("Use original save/load screens"),
-			_s("Use the original save/load screens, instead of the ScummVM ones"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
 			false
 		}
@@ -70,8 +71,8 @@ public:
 	AdvancedMetaEngine(DreamWeb::gameDescriptions,
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames,
 	gameGuiOptions) {
-		_singleid = "dreamweb";
-		_guioptions = GUIO1(GUIO_NOMIDI);
+		_singleId = "dreamweb";
+		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {
@@ -127,8 +128,7 @@ bool DreamWebMetaEngine::createInstance(OSystem *syst, Engine **engine, const AD
 
 SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray files = saveFileMan->listSavefiles("DREAMWEB.D??");
-	Common::sort(files.begin(), files.end());
+	Common::StringArray files = saveFileMan->listSavefiles("DREAMWEB.D##");
 
 	SaveStateList saveList;
 	for (uint i = 0; i < files.size(); ++i) {
@@ -146,6 +146,8 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 		saveList.push_back(sd);
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -196,7 +198,12 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 			uint32 saveDate = in->readUint32LE();
 			uint32 saveTime = in->readUint32LE();
 			uint32 playTime = in->readUint32LE();
-			Graphics::Surface *thumbnail = Graphics::loadThumbnail(*in);
+			Graphics::Surface *thumbnail;
+			if (!Graphics::loadThumbnail(*in, thumbnail)) {
+				warning("Missing or broken thumbnail - skipping");
+				delete in;
+				return desc;
+			}
 
 			int day = (saveDate >> 24) & 0xFF;
 			int month = (saveDate >> 16) & 0xFF;

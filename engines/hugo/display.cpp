@@ -37,6 +37,7 @@
 
 #include "hugo/hugo.h"
 #include "hugo/display.h"
+#include "hugo/file.h"
 #include "hugo/inventory.h"
 #include "hugo/util.h"
 #include "hugo/object.h"
@@ -331,7 +332,7 @@ int16 Screen::mergeLists(Rect *list, Rect *blist, const int16 len, int16 blen) {
  * Process the display list
  * Trailing args are int16 x,y,dx,dy for the D_ADD operation
  */
-void Screen::displayList(Dupdate update, ...) {
+void Screen::displayList(int update, ...) {
 	debugC(6, kDebugDisplay, "displayList()");
 
 	int16         blitLength = 0;                   // Length of blit list

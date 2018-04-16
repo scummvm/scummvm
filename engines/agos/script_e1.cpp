@@ -22,6 +22,7 @@
 
 
 #include "agos/agos.h"
+#include "agos/intern.h"
 #include "agos/vga.h"
 
 namespace AGOS {

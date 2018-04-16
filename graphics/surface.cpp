@@ -498,4 +498,109 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 	return surface;
 }
 
+FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillColor, bool maskMode) {
+	_surface = surface;
+	_oldColor = oldColor;
+	_fillColor = fillColor;
+	_w = surface->w;
+	_h = surface->h;
+
+	_mask = nullptr;
+	_maskMode = maskMode;
+
+	if (_maskMode) {
+		_mask = new Graphics::Surface();
+		_mask->create(_w, _h, Graphics::PixelFormat::createFormatCLUT8()); // Uses calloc()
+	}
+
+	_visited = (byte *)calloc(_w * _h, 1);
+}
+
+FloodFill::~FloodFill() {
+	while(!_queue.empty()) {
+		Common::Point *p = _queue.front();
+
+		delete p;
+		_queue.pop_front();
+	}
+
+	free(_visited);
+
+	if (_mask)
+		delete _mask;
+}
+
+void FloodFill::addSeed(int x, int y) {
+	if (x >= 0 && x < _w && y >= 0 && y < _h) {
+		if (!_visited[y * _w + x]) {
+			_visited[y * _w + x] = 1;
+			void *src = _surface->getBasePtr(x, y);
+			void *dst;
+			bool changed = false;
+
+			if (_maskMode)
+				dst = _mask->getBasePtr(x, y);
+			else
+				dst = src;
+
+			if (_surface->format.bytesPerPixel == 1) {
+				if (*((byte *)src) == _oldColor) {
+					*((byte *)dst) = _maskMode ? 255 : _fillColor;
+					changed = true;
+				}
+			} else if (_surface->format.bytesPerPixel == 2) {
+				if (READ_UINT16(src) == _oldColor) {
+					if (!_maskMode)
+						WRITE_UINT16(src, _fillColor);
+					else
+						*((byte *)dst) = 255;
+
+					changed = true;
+				}
+			} else if (_surface->format.bytesPerPixel == 4) {
+				if (READ_UINT32(src) == _oldColor) {
+					if (!_maskMode)
+						WRITE_UINT32(src, _fillColor);
+					else
+						*((byte *)dst) = 255;
+
+					changed = true;
+				}
+			} else {
+				error("Unsupported bpp in FloodFill");
+			}
+
+			if (changed) {
+				Common::Point *pt = new Common::Point(x, y);
+
+				_queue.push_back(pt);
+			}
+		}
+	}
+}
+
+void FloodFill::fill() {
+	while (!_queue.empty()) {
+		Common::Point *p = _queue.front();
+		_queue.pop_front();
+		addSeed(p->x    , p->y - 1);
+		addSeed(p->x - 1, p->y    );
+		addSeed(p->x    , p->y + 1);
+		addSeed(p->x + 1, p->y    );
+
+		delete p;
+	}
+}
+
+void FloodFill::fillMask() {
+	_maskMode = true;
+
+	if (!_mask) {
+		_mask = new Graphics::Surface();
+		_mask->create(_w, _h, Graphics::PixelFormat::createFormatCLUT8()); // Uses calloc()
+	}
+
+	fill();
+}
+
 } // End of namespace Graphics

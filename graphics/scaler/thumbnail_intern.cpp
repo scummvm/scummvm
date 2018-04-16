@@ -171,7 +171,8 @@ static bool grabScreen565(Graphics::Surface *surf) {
 	if (!screen)
 		return false;
 
-	assert(screen->format.bytesPerPixel == 1 || screen->format.bytesPerPixel == 2);
+	assert(screen->format.bytesPerPixel == 1 || screen->format.bytesPerPixel == 2
+	       || screen->format.bytesPerPixel == 4);
 	assert(screen->getPixels() != 0);
 
 	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
@@ -196,6 +197,9 @@ static bool grabScreen565(Graphics::Surface *surf) {
 				b = palette[pixel * 3 + 2];
 			} else if (screenFormat.bytesPerPixel == 2) {
 				uint16 col = READ_UINT16(screen->getBasePtr(x, y));
+				screenFormat.colorToRGB(col, r, g, b);
+			} else if (screenFormat.bytesPerPixel == 4) {
+				uint32 col = READ_UINT32(screen->getBasePtr(x, y));
 				screenFormat.colorToRGB(col, r, g, b);
 			}
 

@@ -81,6 +81,7 @@ typedef Common::HashMap<Common::String, ADFileProperties, Common::IgnoreCase_Has
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
+	ADGF_AUTOGENTARGET = (1 << 20),  // automatically generate gameid from extra
 	ADGF_UNSTABLE = (1 << 21),    	// flag to designate not yet officially-supported games that are not fit for public testing
 	ADGF_TESTING = (1 << 22),    	// flag to designate not yet officially-supported games that are fit for public testing
 	ADGF_PIRATED = (1 << 23), ///< flag to designate well known pirated versions with cracks
@@ -94,7 +95,7 @@ enum ADGameFlags {
 };
 
 struct ADGameDescription {
-	const char *gameid;
+	const char *gameId;
 	const char *extra;
 	ADGameFileDescription filesDescriptions[14];
 	Common::Language language;
@@ -107,13 +108,18 @@ struct ADGameDescription {
 	 */
 	uint32 flags;
 
-	const char *guioptions;
+	const char *guiOptions;
 };
 
 /**
  * A list of pointers to ADGameDescription structs (or subclasses thereof).
  */
 typedef Common::Array<const ADGameDescription *> ADGameDescList;
+
+/**
+ * A list of raw game ID strings.
+ */
+typedef Common::Array<const char *> ADGameIdList;
 
 /**
  * End marker for a table of ADGameDescription structs. Use this to
@@ -191,7 +197,7 @@ protected:
 	 * A list of all gameids (and their corresponding descriptions) supported
 	 * by this engine.
 	 */
-	const PlainGameDescriptor *_gameids;
+	const PlainGameDescriptor *_gameIds;
 
 	/**
 	 * A map containing all the extra game GUI options the engine supports.
@@ -219,7 +225,7 @@ protected:
 	 * address a more generic problem. We should find a better way to
 	 * disambiguate gameids.
 	 */
-	const char *_singleid;
+	const char *_singleId;
 
 	/**
 	 * A bitmask of flags which can be used to configure the behavior
@@ -233,7 +239,7 @@ protected:
 	 * entry in addition to per-game options. Refer to GameGUIOption
 	 * enum for the list.
 	 */
-	Common::String _guioptions;
+	Common::String _guiOptions;
 
 	/**
 	 * Maximum depth of directories to look up.
@@ -250,8 +256,19 @@ protected:
 	 */
 	const char * const *_directoryGlobs;
 
+	/**
+	 * If true, filenames will be matched against the entire path, relative to
+	 * the root detection directory (e.g. "foo/bar.000" for a file at
+	 * "<root>/foo/bar.000"). Otherwise, filenames only match the basename
+	 * (e.g. "bar.000" for the same file).
+	 *
+	 * @note _maxScanDepth and _directoryGlobs must still be configured to allow
+	 * the detector to find files inside subdirectories.
+	 */
+	bool _matchFullPaths;
+
 public:
-	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
+	AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
 
 	/**
 	 * Returns list of targets supported by the engine.
@@ -259,7 +276,7 @@ public:
 	 */
 	virtual GameList getSupportedGames() const;
 
-	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameDescriptor findGame(const char *gameId) const;
 
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 
@@ -296,7 +313,7 @@ protected:
 	 * @param extra		restrict results to specified extra string (only if kADFlagUseExtraAsHint is set)
 	 * @return	list of ADGameDescription pointers corresponding to matched games
 	 */
-	ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
+	virtual ADGameDescList detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
 
 	/**
 	 * Iterates over all ADFileBasedFallback records inside fileBasedFallback.
@@ -316,7 +333,7 @@ protected:
 	 * Log and print a report that we found an unknown game variant, together with the file
 	 * names, sizes and MD5 sums.
 	 */
-	void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const;
+	void reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps, const ADGameIdList &matchedGameIds = ADGameIdList()) const;
 
 	// TODO
 	void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const;
@@ -325,7 +342,7 @@ protected:
 	 * Compose a hashmap of all files in fslist.
 	 * Includes nifty stuff like removing trailing dots and ignoring case.
 	 */
-	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth) const;
+	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName = Common::String()) const;
 
 	/** Get the properties (size and MD5) of this file. */
 	bool getFileProperties(const Common::FSNode &parent, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, ADFileProperties &fileProps) const;

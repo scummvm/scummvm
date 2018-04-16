@@ -2,6 +2,8 @@
 
 #include "audio/timestamp.h"
 
+#include <limits.h>
+
 class TimestampTestSuite : public CxxTest::TestSuite
 {
 	public:
@@ -237,5 +239,16 @@ class TimestampTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(c.msecs(), 1500);
 		TS_ASSERT_EQUALS(c.numberOfFrames(), 11025);
 		TS_ASSERT_EQUALS(c.totalNumberOfFrames(), 33075);
+	}
+
+	void test_no_overflow() {
+		// The constructor should not overflow and give incoherent values
+		const Audio::Timestamp a = Audio::Timestamp(0, UINT_MAX, 1000);
+
+		int secs = UINT_MAX / 1000;
+		int frames = UINT_MAX % 1000;
+
+		TS_ASSERT_EQUALS(a.secs(), secs);
+		TS_ASSERT_EQUALS(a.numberOfFrames(), frames);
 	}
 };

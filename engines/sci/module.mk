@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	engine/features.o \
 	engine/file.o \
 	engine/gc.o \
+	engine/guest_additions.o \
 	engine/kernel.o \
 	engine/kevent.o \
 	engine/kfile.o \
@@ -51,12 +52,12 @@ MODULE_OBJS := \
 	graphics/fontsjis.o \
 	graphics/maciconbar.o \
 	graphics/menu.o \
-	graphics/paint.o \
 	graphics/paint16.o \
 	graphics/palette.o \
 	graphics/picture.o \
 	graphics/portrait.o \
 	graphics/ports.o \
+	graphics/remap.o \
 	graphics/screen.o \
 	graphics/text16.o \
 	graphics/transitions.o \
@@ -68,6 +69,7 @@ MODULE_OBJS := \
 	sound/midiparser_sci.o \
 	sound/music.o \
 	sound/soundcmd.o \
+	sound/sync.o \
 	sound/drivers/adlib.o \
 	sound/drivers/amigamac.o \
 	sound/drivers/cms.o \
@@ -81,10 +83,20 @@ MODULE_OBJS := \
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
 	engine/kgraphics32.o \
+	graphics/celobj32.o \
 	graphics/controls32.o \
 	graphics/frameout.o \
 	graphics/paint32.o \
+	graphics/plane32.o \
+	graphics/palette32.o \
+	graphics/remap32.o \
+	graphics/screen_item32.o \
 	graphics/text32.o \
+	graphics/transitions32.o \
+	graphics/video32.o \
+	graphics/cursor32.o \
+	sound/audio32.o \
+	sound/decoders/sol.o \
 	video/robot_decoder.o
 endif
 

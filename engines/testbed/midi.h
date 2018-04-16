@@ -23,11 +23,15 @@
 #ifndef TESTBED_MIDI_H
 #define TESTBED_MIDI_H
 
-#include "common/stream.h"
-#include "audio/midiparser.h"
 #include "testbed/testsuite.h"
 
 // This file can be used as template for header files of other newer testsuites.
+
+class MidiParser;
+
+namespace Common {
+class WriteStream;
+}
 
 namespace Testbed {
 

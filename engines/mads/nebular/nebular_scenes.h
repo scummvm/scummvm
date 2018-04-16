@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -106,6 +106,7 @@ enum Verb {
 	VERB_WALK_UP        = 0x227,
 	VERB_WALK_INTO      = 0x242,
 	VERB_EXIT           = 0x298,
+	VERB_WALK_BEHIND    = 0x2A2,
 	VERB_WALK_ONTO      = 0x2B5,
 	VERB_RETURN_TO      = 0x2D5,
 	VERB_CLIMB_INTO     = 0x2F7,
@@ -216,9 +217,9 @@ enum Noun {
 	NOUN_CLEARING_TO_EAST = 0x4B,
 	NOUN_CLEARING_TO_SOUTH = 0x4C,
 	NOUN_CLIFF_FACE = 0x4D,
-	NOUN_CLIMB_DOWN = 0x4E,
-	NOUN_CLIMB_THROUGH = 0x4F,
-	NOUN_CLIMB_UP = 0x50,
+	//NOUN_CLIMB_DOWN = 0x4E,
+	//NOUN_CLIMB_THROUGH = 0x4F,
+	//NOUN_CLIMB_UP = 0x50,
 	NOUN_CLOCK = 0x51,
 	NOUN_CLOSET = 0x52,
 	NOUN_CLOTHESLINE = 0x53,
@@ -397,7 +398,7 @@ enum Noun {
 	NOUN_PALM_TREE = 0x100,
 	NOUN_PASSAGE_WAY_TO_SOUTH = 0x101,
 	NOUN_PASSION_PUSS = 0x102,
-	NOUN_PEER_THROUGH = 0x103,
+	//NOUN_PEER_THROUGH = 0x103,
 	NOUN_PENCIL = 0x104,
 	NOUN_PENDULOUS_CRAG = 0x105,
 	NOUN_PENLIGHT = 0x106,
@@ -812,7 +813,7 @@ enum Noun {
 	NOUN_COUNTER = 0x29F,
 	NOUN_SENSOR = 0x2A0,
 	NOUN_SOFTWARE_INFORMATION = 0x2A1,
-	NOUN_WALK_BEHIND = 0x2A2,
+	//NOUN_WALK_BEHIND = 0x2A2,
 	NOUN_BARGAINS = 0x2A3,
 	NOUN_SCAN_LIGHT = 0x2A4,
 	NOUN_OLD_SOFTWARE_STAND = 0x2A5,
@@ -831,7 +832,7 @@ enum Noun {
 	//NOUN_GAWK_AT = 0x2B2,
 	NOUN_CORRIDOR_TO_SOUTH = 0x2B3,
 	NOUN_CORRIDOR_TO_NORTH = 0x2B4,
-	NOUN_WALK_ONTO = 0x2B5,
+	//NOUN_WALK_ONTO = 0x2B5,
 	NOUN_ROCK_WALL = 0x2B6,
 	NOUN_WOMAN = 0x2B7,
 	NOUN_WOMEN = 0x2B8,
@@ -897,7 +898,7 @@ enum Noun {
 	NOUN_YOUR_STUFF = 0x2F4,
 	NOUN_OTHER_STUFF = 0x2F5,
 	NOUN_LAMP = 0x2F6,
-	NOUN_CLIMB_INTO = 0x2F7,
+	//NOUN_CLIMB_INTO = 0x2F7,
 	NOUN_LIGHT_BULB = 0x2F8,
 	//NOUN_STEP_INTO = 0x2F9,
 	NOUN_ROOM = 0x2FA,
@@ -924,7 +925,6 @@ enum Noun {
 	NOUN_WHISKEY = 0x30F,
 	NOUN_ALCOHOL = 0x310,
 	NOUN_RIM = 0x311,
-	//NOUN_WALK_ALONG = 0x312,
 	NOUN_SUBMERGED_CITY = 0x313,
 	NOUN_GOVERNORS_HOUSE = 0x314,
 	NOUN_RIM_TOWARDS_EAST = 0x315,
@@ -1057,7 +1057,7 @@ enum Noun {
 	NOUN_PAD_TO_EAST = 0x394,
 	NOUN_PAD_TO_WEST = 0x395,
 	NOUN_TOWER = 0x396,
-	NOUN_LOOK_OUT = 0x397,
+	//NOUN_LOOK_OUT = 0x397,
 	NOUN_SERVICE_PANEL = 0x398,
 	NOUN_CRACK = 0x399,
 	NOUN_THROTTLE = 0x39A,
@@ -1373,9 +1373,9 @@ public:
 class SceneInfoNebular : public SceneInfo {
 	friend class SceneInfo;
 protected:
-	virtual void loadCodes(MSurface &depthSurface, int variant);
+	virtual void loadCodes(BaseSurface &depthSurface, int variant);
 
-	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream);
+	virtual void loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream);
 
 	/**
 	* Constructor

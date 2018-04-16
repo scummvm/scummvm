@@ -24,8 +24,10 @@
 
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
+
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "cine/cine.h"
 #include "cine/various.h"
@@ -61,15 +63,29 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 
 #include "cine/detection_tables.h"
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class CineMetaEngine : public AdvancedMetaEngine {
 public:
-	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
-		_singleid = "cine";
-		_guioptions = GUIO1(GUIO_NOSPEECH);
+	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
+		_singleId = "cine";
+		_guiOptions = GUIO2(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 
-	virtual GameDescriptor findGame(const char *gameid) const {
-		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	virtual GameDescriptor findGame(const char *gameId) const {
+		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const {
@@ -119,9 +135,8 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 
 	Common::String pattern = target;
-	pattern += ".?";
+	pattern += ".#";
 	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());
 	Common::StringArray::const_iterator file;
 
 	Common::String filename = target;
@@ -140,10 +155,6 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 		CommandeType saveDesc;
 
 		for (file = filenames.begin(); file != filenames.end(); ++file) {
-			// Jump over savegame files that don't end with a digit (e.g. "fw.3" is ok, "fw.a" is not).
-			if (!Common::isDigit(file->lastChar()))
-				continue;
-
 			// Obtain the last digit of the filename, since they correspond to the save slot
 			int slotNum = atoi(file->c_str() + file->size() - 1);
 
@@ -157,6 +168,8 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 	delete in;
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

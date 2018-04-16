@@ -37,18 +37,19 @@ public:
 	virtual void setProgressValue(int completed, int total);
 	virtual void setProgressState(TaskbarProgressState state);
 	virtual void setCount(int count);
+	virtual void addRecent(const Common::String &name, const Common::String &description);
 	virtual void notifyError();
 	virtual void clearError();
-	
+
 private:
 	Common::String getIconPath(const Common::String&);
 
 	void initApplicationIconView();
 	void clearApplicationIconView();
-	
+
 	void initOverlayIconView();
 	void clearOverlayIconView();
-	
+
 	double _progress;
 };
 

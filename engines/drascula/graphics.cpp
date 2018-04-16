@@ -76,7 +76,7 @@ void DrasculaEngine::moveCursor() {
 	moveCharacters();
 	updateRefresh();
 
-	if (!strcmp(textName, "hacker") && _hasName) {
+	if (!strcmp(textName, _textmisc[3]) && _hasName) {
 		if (_color != kColorRed && !_menuScreen)
 			color_abc(kColorRed);
 	} else if (!_menuScreen && _color != kColorLightGreen)
@@ -154,7 +154,7 @@ void DrasculaEngine::showFrame(Common::SeekableReadStream *stream, bool firstFra
 }
 
 void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *src, byte *dest) {
-	debug(1, "DrasculaEngine::copyBackground(xorg:%d, yorg:%d, xdes:%d, ydes:%d width:%d height:%d, src, dest)", xorg, yorg, xdes, ydes, width,height);
+	debug(5, "DrasculaEngine::copyBackground(xorg:%d, yorg:%d, xdes:%d, ydes:%d width:%d height:%d, src, dest)", xorg, yorg, xdes, ydes, width,height);
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 	/* Unoptimized code
@@ -196,6 +196,11 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 
+	assert(xorg >= 0);
+	assert(yorg >= 0);
+	assert(xorg + width <= 320);
+	assert(yorg + height <= 200);
+
 	int ptr = 0;
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
@@ -217,6 +222,10 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	int letterY = 0, letterX = 0, i;
 	uint len = strlen(said);
 	byte c;
+
+	byte *srcSurface = tableSurface;
+	if (_lang == kSpanish && currentChapter == 6)
+		srcSurface = extraSurface;
 
 	for (uint h = 0; h < len; h++) {
 		c = toupper(said[h]);
@@ -241,7 +250,7 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 		}	// for
 
 		copyRect(letterX, letterY, screenX, screenY,
-				 CHAR_WIDTH, CHAR_HEIGHT, tableSurface, screenSurface);
+				 CHAR_WIDTH, CHAR_HEIGHT, srcSurface, screenSurface);
 
 		screenX = screenX + CHAR_WIDTH;
 		if (screenX > 317) {
@@ -319,28 +328,51 @@ int DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 }
 
 bool DrasculaEngine::textFitsCentered(char *text, int x) {
-	int len = strlen(text);
-	int tmp = CLIP<int>(x - len * CHAR_WIDTH / 2, 60, 255);
-	return (tmp + len * CHAR_WIDTH) <= 320;
+	int textLen = strlen(text);
+	int halfLen = (textLen / 2) * CHAR_WIDTH;
+
+	//if (x > 160)
+	//	x = 315 - x;
+	//return (halfLen <= x);
+
+	// The commented out code above is what the original engine is doing. Instead of testing the
+	// upper bound if x is greater than 160 it takes the complement to 315 and test only the lower
+	// bounds.
+	// Also note that since it does an integer division to compute the half length of the string,
+	// in the case where the string has an odd number of characters there is one more character to
+	// the right than to the left. If the string center is beyond 160, this is taken care of by
+	// taking the complement to 315 instead of 320. But if the string center is close to the screen
+	// center, but not greater than 160, this can lead to the string being accepted despite having
+	// one character beyond the right edge of the screen.
+	// In ScummVM we therefore also test the right edge, which leads to differences
+	// with the original engine, but for the better.
+	if (x > 160)
+		return (315 - x - halfLen >= 0);
+	return (x - halfLen >= 0 && x + halfLen + (textLen % 2) * CHAR_WIDTH <= 320);
 }
 
 void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	char msg[200];
-	char messageLine[200];
-	char tmpMessageLine[200];
-	*messageLine = 0;
-	*tmpMessageLine = 0;
-	char *curWord;
-	int curLine = 0;
-	int x = 0;
-	// original starts printing 4 lines above textY
-	int y = CLIP<int>(textY - (4 * CHAR_HEIGHT), 0, 320);
-
 	Common::strlcpy(msg, message, 200);
+
+	// We make sure to have a width of at least 120 pixels by clipping the center.
+	// In theory since the screen width is 320 I would expect something like this:
+	// x = CLIP<int>(x, 60, 260);
+	// return (x - halfLen >= 0 && x + halfLen <= 319);
+
+	// The engines does things differently though. It tries to clips text at 315 instead of 319.
+	// See also the comment in textFitsCentered().
+
+	textX = CLIP<int>(textX, 60, 255);
 
 	// If the message fits on screen as-is, just print it here
 	if (textFitsCentered(msg, textX)) {
-		x = CLIP<int>(textX - strlen(msg) * CHAR_WIDTH / 2, 60, 255);
+		int x = textX - (strlen(msg) / 2) * CHAR_WIDTH - 1;
+		// The original starts to draw (nbLines + 2) lines above textY, except if there is a single line
+		// in which case it starts drawing at (nbLines + 3) above textY.
+		// Also clip to the screen height although the original does not do it.
+		int y = textY - 4 * CHAR_HEIGHT;
+		y = CLIP<int>(y, 0, 200 - CHAR_HEIGHT);
 		print_abc(msg, x, y);
 		return;
 	}
@@ -351,41 +383,60 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	// with the German translation.
 	if (!strchr(msg, ' ')) {
 		int len = strlen(msg);
-		x = CLIP<int>(textX - len * CHAR_WIDTH / 2, 0, 319 - len * CHAR_WIDTH);
+		int x = CLIP<int>(textX - (len / 2) * CHAR_WIDTH - 1, 0, 319 - len * CHAR_WIDTH);
+		int y = textY - 4 * CHAR_HEIGHT;
+		y = CLIP<int>(y, 0, 200 - CHAR_HEIGHT);
 		print_abc(msg, x, y);
 		return;
 	}
 
 	// Message doesn't fit on screen, split it
-
+	char messageLines[15][41]; // screenWidth/charWidth = 320/8 = 40. Thus lines can have up to 41 characters with the null terminator (despite the original allocating only 40 characters here).
+	int curLine = 0;
+	char messageCurLine[50];
+	char tmpMessageCurLine[50];
+	*messageCurLine = 0;
+	*tmpMessageCurLine = 0;
 	// Get a word from the message
-	curWord = strtok(msg, " ");
+	char* curWord = strtok(msg, " ");
 	while (curWord != NULL) {
 		// Check if the word and the current line fit on screen
-		if (tmpMessageLine[0] != '\0')
-			Common::strlcat(tmpMessageLine, " ", 200);
-		Common::strlcat(tmpMessageLine, curWord, 200);
-		if (textFitsCentered(tmpMessageLine, textX)) {
+		if (tmpMessageCurLine[0] != '\0')
+			Common::strlcat(tmpMessageCurLine, " ", 50);
+		Common::strlcat(tmpMessageCurLine, curWord, 50);
+		if (textFitsCentered(tmpMessageCurLine, textX)) {
 			// Line fits, so add the word to the current message line
-			strcpy(messageLine, tmpMessageLine);
+			strcpy(messageCurLine, tmpMessageCurLine);
 		} else {
-			// Line doesn't fit, so show the current line on screen and
-			// create a new one
-			// If it goes off screen, print_abc will adjust it
-			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
-			print_abc(messageLine, x, y + curLine * CHAR_HEIGHT);
-			Common::strlcpy(messageLine, curWord, 200);
-			Common::strlcpy(tmpMessageLine, curWord, 200);
-			curLine++;
+			// Line does't fit. Store the current line and start a new line.
+			Common::strlcpy(messageLines[curLine++], messageCurLine, 41);
+			Common::strlcpy(messageCurLine, curWord, 50);
+			Common::strlcpy(tmpMessageCurLine, curWord, 50);
 		}
 
 		// Get next word
 		curWord = strtok(NULL, " ");
-
 		if (curWord == NULL) {
-			x = CLIP<int>(textX - strlen(messageLine) * CHAR_WIDTH / 2, 60, 255);
-			print_abc(messageLine, x, y + curLine * CHAR_HEIGHT);
+			// The original has an interesting bug that if we split the text on several lines
+			// a space is added at the end (which impacts the alignment, and may even cause the line
+			// to become too long).
+			Common::strlcat(messageCurLine, " ", 50);
+			if (!textFitsCentered(messageCurLine, textX)) {
+				messageCurLine[strlen(messageCurLine) - 1] = '\0';
+				Common::strlcpy(messageLines[curLine++], messageCurLine, 41);
+				strcpy(messageLines[curLine++], " ");
+			} else
+				Common::strlcpy(messageLines[curLine++], messageCurLine, 41);
 		}
+	}
+
+	// The original starts to draw (nbLines + 2) lines above textY.
+	// Also clip to the screen height although the original does not do it.
+	int y = textY - (curLine + 2) * CHAR_HEIGHT;
+	y = CLIP<int>(y, 0, 200 - curLine * (CHAR_HEIGHT + 2) + 2);
+	for (int line = 0 ; line < curLine ; ++line, y += CHAR_HEIGHT + 2) {
+		int textHalfLen = (strlen(messageLines[line]) / 2) * CHAR_WIDTH;
+		print_abc(messageLines[line], textX - textHalfLen - 1, y);
 	}
 }
 

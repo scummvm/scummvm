@@ -34,29 +34,31 @@ namespace Mohawk {
 namespace MystStacks {
 
 Dni::Dni(MohawkEngine_Myst *vm) :
-		MystScriptParser(vm) {
+		MystScriptParser(vm),
+		_notSeenAtrus(true),
+		_atrusRunning(false),
+		_waitForLoop(false),
+		_atrusLeft(false),
+		_atrusLeftTime(0),
+		_loopStart(0),
+		_loopEnd(0) {
 	setupOpcodes();
-	_notSeenAtrus = true;
 }
 
 Dni::~Dni() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Dni::x, #x))
-
 void Dni::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, NOP);
-	OPCODE(101, o_handPage);
+	REGISTER_OPCODE(100, Dni, NOP);
+	REGISTER_OPCODE(101, Dni, o_handPage);
 
 	// "Init" Opcodes
-	OPCODE(200, o_atrus_init);
+	REGISTER_OPCODE(200, Dni, o_atrus_init);
 
 	// "Exit" Opcodes
-	OPCODE(300, NOP);
+	REGISTER_OPCODE(300, Dni, NOP);
 }
-
-#undef OPCODE
 
 void Dni::disablePersistentScripts() {
 	_atrusRunning = false;
@@ -95,22 +97,21 @@ uint16 Dni::getVar(uint16 var) {
 	}
 }
 
-void Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Hand page to Atrus", op);
+void Dni::o_handPage(uint16 var, const ArgumentsArray &args) {
 	// Used in Card 5014 (Atrus)
 
 	// Find Atrus movie
-	VideoHandle atrus = _vm->_video->findVideoHandle(_video);
+	VideoEntryPtr atrus = _vm->findVideo(_video, kDniStack);
 
 	// Good ending and Atrus asked to give page
-	if (_globals.ending == 1 && _vm->_video->getTime(atrus) > (uint)Audio::Timestamp(0, 6801, 600).msecs()) {
+	if (_globals.ending == 1 && atrus && atrus->getTime() > (uint)Audio::Timestamp(0, 6801, 600).msecs()) {
 		_globals.ending = 2;
 		_globals.heldPage = 0;
 		_vm->setMainCursor(kDefaultMystCursor);
 
 		// Play movie end (atrus leaving)
-		_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, 14813, 600), _vm->_video->getDuration(atrus));
-		_vm->_video->setVideoLooping(atrus, false);
+		atrus->setBounds(Audio::Timestamp(0, 14813, 600), atrus->getDuration());
+		atrus->setLooping(false);
 
 		_atrusLeft = true;
 		_waitForLoop = false;
@@ -120,9 +121,11 @@ void Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 void Dni::atrusLeft_run() {
 	if (_vm->_system->getMillis() > _atrusLeftTime + 63333) {
-		_video = _vm->wrapMovieFilename("atrus2", kDniStack);
-		VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
-		_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 98000, 600));
+		_video = "atrus2";
+		_videoPos = Common::Point(215, 77);
+		VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
+		atrus->moveTo(_videoPos.x, _videoPos.y);
+		atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 98000, 600));
 
 		_waitForLoop = true;
 		_loopStart = 73095;
@@ -139,9 +142,10 @@ void Dni::atrusLeft_run() {
 
 void Dni::loopVideo_run() {
 	if (!_vm->_video->isVideoPlaying()) {
-		VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
-		_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, _loopStart, 600), Audio::Timestamp(0, _loopEnd, 600));
-		_vm->_video->setVideoLooping(atrus, true);
+		VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
+		atrus->moveTo(_videoPos.x, _videoPos.y);
+		atrus->setBounds(Audio::Timestamp(0, _loopStart, 600), Audio::Timestamp(0, _loopEnd, 600));
+		atrus->setLooping(true);
 
 		_waitForLoop = false;
 	}
@@ -154,15 +158,20 @@ void Dni::atrus_run() {
 	} else if (_globals.ending == 1) {
 		// Atrus asking for page
 		if (!_vm->_video->isVideoPlaying()) {
-			_video = _vm->wrapMovieFilename("atr1page", kDniStack);
-			VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77, true);
-			_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, 7388, 600), Audio::Timestamp(0, 14700, 600));
+			_video = "atr1page";
+			_videoPos = Common::Point(215, 76);
+			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
+			atrus->moveTo(_videoPos.x, _videoPos.y);
+			atrus->setLooping(true);
+			atrus->setBounds(Audio::Timestamp(0, 7388, 600), Audio::Timestamp(0, 14700, 600));
 		}
 	} else if (_globals.ending != 3 && _globals.ending != 4) {
 		if (_globals.heldPage == 13) {
-			_video = _vm->wrapMovieFilename("atr1page", kDniStack);
-			VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
-			_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 14700, 600));
+			_video = "atr1page";
+			_videoPos = Common::Point(215, 76);
+			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
+			atrus->moveTo(_videoPos.x, _videoPos.y);
+			atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 14700, 600));
 
 			_waitForLoop = true;
 			_loopStart = 7388;
@@ -172,9 +181,11 @@ void Dni::atrus_run() {
 			_globals.ending = 1;
 
 		} else {
-			_video = _vm->wrapMovieFilename("atr1nopg", kDniStack);
-			VideoHandle atrus = _vm->_video->playMovie(_video, 215, 77);
-			_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 46175, 600));
+			_video = "atr1nopg";
+			_videoPos = Common::Point(215, 77);
+			VideoEntryPtr atrus = _vm->playMovie(_video, kDniStack);
+			atrus->moveTo(_videoPos.x, _videoPos.y);
+			atrus->setBounds(Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 46175, 600));
 
 			_waitForLoop = true;
 			_loopStart = 30656;
@@ -184,13 +195,13 @@ void Dni::atrus_run() {
 			_globals.ending = 3;
 		}
 	} else if (!_vm->_video->isVideoPlaying()) {
-		_vm->_video->playMovie(_vm->wrapMovieFilename("atrwrite", kDniStack), 215, 77, true);
+		VideoEntryPtr atrus = _vm->playMovie("atrwrite", kDniStack);
+		atrus->moveTo(215, 77);
+		atrus->setLooping(true);
 	}
 }
 
-void Dni::o_atrus_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	debugC(kDebugScript, "Opcode %d: Atrus init", op);
-
+void Dni::o_atrus_init(uint16 var, const ArgumentsArray &args) {
 	_atrusRunning = true;
 }
 

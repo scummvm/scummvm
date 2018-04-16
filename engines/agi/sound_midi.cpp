@@ -46,7 +46,6 @@
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/stream.h"
-#include "common/textconsole.h"
 
 #include "agi/agi.h"
 
@@ -153,9 +152,15 @@ unsigned char instr[] = {50, 51, 19};
 static void writeDelta(Common::MemoryWriteStreamDynamic *st, int32 delta) {
 	int32 i;
 
-	i = delta >> 21; if (i > 0) st->writeByte((i & 127) | 128);
-	i = delta >> 14; if (i > 0) st->writeByte((i & 127) | 128);
-	i = delta >> 7;  if (i > 0) st->writeByte((i & 127) | 128);
+	i = delta >> 21;
+	if (i > 0)
+		st->writeByte((i & 127) | 128);
+	i = delta >> 14;
+	if (i > 0)
+		st->writeByte((i & 127) | 128);
+	i = delta >> 7;
+	if (i > 0)
+		st->writeByte((i & 127) | 128);
 	st->writeByte(delta & 127);
 }
 
@@ -164,7 +169,7 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 	int n;
 	double ll;
 
-	Common::MemoryWriteStreamDynamic st;
+	Common::MemoryWriteStreamDynamic st(DisposeAfterUse::NO);
 
 	ll = log10(pow(2.0, 1.0 / 12.0));
 
@@ -190,7 +195,7 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 		for (pos = start; pos < end; pos += 5) {
 			uint16 freq,  dur;
 			dur = (snddata[pos + 0] | (snddata[pos + 1] << 8)) * SPEED_FACTOR;
-			freq = ((snddata[pos + 2] & 0x3F)  <<  4)  +  (snddata[pos + 3] & 0x0F);
+			freq = ((snddata[pos + 2] & 0x3F)  <<  4)  + (snddata[pos + 3] & 0x0F);
 			if (snddata[pos + 2] > 0) {
 				double fr;
 				int note;

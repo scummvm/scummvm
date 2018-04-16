@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -132,7 +132,7 @@ void Scene501::handleSlotActions() {
 			frameIndex = 2;
 		}
 
-		_mainSequenceId = _scene->_sequences.startReverseCycle(_mainSpriteId, false, numTicks, 1, 0, 0);
+		_mainSequenceId = _scene->_sequences.startPingPongCycle(_mainSpriteId, false, numTicks, 1, 0, 0);
 		_scene->_sequences.setAnimRange(_mainSequenceId, 1, frameIndex);
 		_scene->_sequences.setMsgLayout(_mainSequenceId);
 		_vm->_sound->command(10);
@@ -199,7 +199,7 @@ void Scene501::enter() {
 		_game._player._playerPos = Common::Point(317, 102);
 		_game._player._facing = FACING_SOUTHWEST;
 		_scene->_sequences.addTimer(15, 80);
-	} else if (_scene->_priorSceneId != -2)
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_game._player._playerPos = Common::Point(299, 131);
 
 	if (_scene->_roomChanged) {
@@ -238,7 +238,7 @@ void Scene501::step() {
 			break;
 
 		case 82:
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_vm->_sound->command(12);
 			_doorHotspotid = _scene->_dynamicHotspots.add(NOUN_DOOR, VERB_WALK_THROUGH, _globals._sequenceIndexes[3], Common::Rect(0, 0, 0, 0));
@@ -273,7 +273,7 @@ void Scene501::step() {
 
 		case 72:
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
+			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 4);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 73);
 			break;
@@ -415,7 +415,7 @@ void Scene501::actions() {
 		case 7: {
 			_vm->_sound->command(12);
 			int syncIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 9, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 7);
 			_scene->_sequences.updateTimeout(_globals._sequenceIndexes[3], syncIdx);
 			_vm->_sound->command(12);
@@ -563,7 +563,7 @@ void Scene503::enter() {
 		_scene->_dynamicHotspots.setPosition(_detonatorHotspotId, Common::Point(254, 135), FACING_SOUTH);
 	}
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(191, 152);
 		_game._player._facing = FACING_NORTHWEST;
 	}
@@ -581,13 +581,13 @@ void Scene503::actions() {
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
 				if (_globals[kSexOfRex] == REX_MALE) {
-					_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
+					_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 3);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 3, 1);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 				} else {
-					_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], true, 8, 1, 0, 0);
+					_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], true, 8, 1, 0, 0);
 					_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 4);
 					_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[3]);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_SPRITE, 4, 1);
@@ -709,7 +709,7 @@ void Scene504::enter() {
 		_globals._spriteIndexes[3] = _scene->_sprites.addSprites(formAnimName('a', 3));
 		_carAnimationMode = 1;
 		_scene->loadAnimation(formAnimName('A', -1));
-		if ((_scene->_priorSceneId != -2) && (_scene->_priorSceneId != 505))
+		if ((_scene->_priorSceneId != RETURNING_FROM_DIALOG) && (_scene->_priorSceneId != 505))
 			_globals[kHoverCarLocation] = _scene->_priorSceneId;
 
 		_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, 1);
@@ -722,9 +722,9 @@ void Scene504::enter() {
 }
 
 void Scene504::step() {
-	if ((_carAnimationMode == 1) && (_scene->_activeAnimation != nullptr)) {
-		if (_scene->_activeAnimation->getCurrentFrame() != _carFrame) {
-			_carFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_carAnimationMode == 1) && (_scene->_animation[0] != nullptr)) {
+		if (_scene->_animation[0]->getCurrentFrame() != _carFrame) {
+			_carFrame = _scene->_animation[0]->getCurrentFrame();
 			int nextFrame;
 
 			if (_carFrame == 1)
@@ -732,8 +732,8 @@ void Scene504::step() {
 			else
 				nextFrame = -1;
 
-			if ((nextFrame >= 0) && (nextFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(nextFrame);
+			if ((nextFrame >= 0) && (nextFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(nextFrame);
 				_carFrame = nextFrame;
 			}
 		}
@@ -800,7 +800,7 @@ void Scene504::actions() {
 
 		case 1: {
 			int syncIdx = _globals._sequenceIndexes[3];
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 13);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[3], 1, 6);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -912,8 +912,8 @@ void Scene505::enter() {
 	_globals._spriteIndexes[11] = _scene->_sprites.addSprites(formAnimName('t', -1));
 	_globals._spriteIndexes[12] = _scene->_sprites.addSprites(formAnimName('e', -1));
 
-	if (_scene->_priorSceneId != -2)
-		_globals._sequenceIndexes[12] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[12], false, 6, 1, 0, 0);
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
+		_globals._sequenceIndexes[12] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[12], false, 6, 1, 0, 0);
 
 	_globals._sequenceIndexes[13] = _scene->_sequences.addSpriteCycle(_globals._spriteIndexes[13], false, 6, 1, 120, 0);
 	_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 60);
@@ -934,7 +934,7 @@ void Scene505::enter() {
 	for (int i = 0; i < 9; i++) {
 		if (_globals[kHoverCarLocation] == _carLocations[i]) {
 			_homeSelectedId = i;
-			if (_scene->_priorSceneId != -2)
+			if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 				_selectedId = i;
 		}
 	}
@@ -943,15 +943,15 @@ void Scene505::enter() {
 	_game._player._stepEnabled = false;
 	_frame = -1;
 	_scene->loadAnimation(formAnimName('a', -1));
-	_scene->_activeAnimation->setCurrentFrame(86);
+	_scene->_animation[0]->setCurrentFrame(86);
 
 	sceneEntrySound();
 	_vm->_sound->command(16);
 }
 
 void Scene505::step() {
-	if (_frame != _scene->_activeAnimation->getCurrentFrame()) {
-		_frame = _scene->_activeAnimation->getCurrentFrame();
+	if (_frame != _scene->_animation[0]->getCurrentFrame()) {
+		_frame = _scene->_animation[0]->getCurrentFrame();
 		int resetFrame = -1;
 
 		switch (_frame) {
@@ -996,7 +996,7 @@ void Scene505::step() {
 					_scene->_sequences.remove(_globals._sequenceIndexes[1]);
 					_scene->_sequences.remove(_globals._sequenceIndexes[0]);
 					_scene->_sequences.remove(_globals._sequenceIndexes[13]);
-					_globals._sequenceIndexes[13] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[13], false, 6, 1, 0, 0);
+					_globals._sequenceIndexes[13] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[13], false, 6, 1, 0, 0);
 					_scene->_sequences.addSubEntry(_globals._sequenceIndexes[13], SEQUENCE_TRIGGER_EXPIRE, 0, 63);
 					_vm->_sound->command(18);
 				}
@@ -1088,8 +1088,8 @@ void Scene505::step() {
 			break;
 		}
 
-		if ((resetFrame >= 0) && (resetFrame != _scene->_activeAnimation->getCurrentFrame())) {
-			_scene->_activeAnimation->setCurrentFrame(resetFrame);
+		if ((resetFrame >= 0) && (resetFrame != _scene->_animation[0]->getCurrentFrame())) {
+			_scene->_animation[0]->setCurrentFrame(resetFrame);
 			_frame = resetFrame;
 		}
 	}
@@ -1222,7 +1222,7 @@ void Scene506::enter() {
 		_game._player._facing = FACING_SOUTHEAST;
 		_scene->_sequences.addTimer(60, 80);
 		_game._player._stepEnabled = false;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(138, 116);
 		_game._player._facing = FACING_NORTHEAST;
 		_game._player._visible = false;
@@ -1254,13 +1254,13 @@ void Scene506::step() {
 		switch (_game._trigger) {
 		case 70:
 			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 			_scene->_sequences.addTimer(6, 71);
 			break;
 
 		case 71:
 			_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-			_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
+			_globals._sequenceIndexes[3] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[3], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 5);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 72);
 			break;
@@ -1317,7 +1317,7 @@ void Scene506::handleDoorSequences() {
 
 	case 82:
 		_scene->_sequences.remove(_doorSequenceIdx);
-		_doorSequenceIdx = _scene->_sequences.startReverseCycle(_doorSpriteIdx, false, 7, 1, 0, 0);
+		_doorSequenceIdx = _scene->_sequences.addReverseSpriteCycle(_doorSpriteIdx, false, 7, 1, 0, 0);
 		_scene->_sequences.setDepth(_doorSequenceIdx, _doorDepth);
 		if (_actionFl)
 			_scene->_sequences.addSubEntry(_doorSequenceIdx, SEQUENCE_TRIGGER_EXPIRE, 0, 84);
@@ -1471,7 +1471,7 @@ void Scene507::enter() {
 		_scene->_dynamicHotspots.setPosition(_penlightHotspotId, Common::Point(233, 152), FACING_SOUTHEAST);
 	}
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(121, 147);
 		_game._player._facing = FACING_NORTH;
 	}
@@ -1487,7 +1487,7 @@ void Scene507::actions() {
 			case 0:
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
-				_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
+				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 6, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 5);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
@@ -1547,7 +1547,9 @@ void Scene507::actions() {
 		_vm->_dialogs->show(50724);
 	else if (_action.isAction(VERB_LOOK, NOUN_WINDOW))
 		_vm->_dialogs->show(50725);
-	else if (_action.isAction(VERB_LOOK, NOUN_COUNTER)) {
+	else if (_action.isAction(VERB_WALK_BEHIND, NOUN_COUNTER)) {
+		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
+	} else if (_action.isAction(VERB_LOOK, NOUN_COUNTER)) {
 		if (_game._objects.isInRoom(OBJ_PENLIGHT))
 			_vm->_dialogs->show(50728);
 		else
@@ -1601,7 +1603,7 @@ void Scene508::enter() {
 		_globals._sequenceIndexes[3] = _scene->_sequences.startCycle(_globals._spriteIndexes[3], false, -2);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 8);
 		_globals._sequenceIndexes[5] = _scene->_sequences.startCycle(_globals._spriteIndexes[5], false, -2);
-		int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
+		int idx = _scene->_dynamicHotspots.add(NOUN_SPINACH_PATCH_DOLL, VERB_WALKTO, _globals._sequenceIndexes[5], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
 		_scene->_hotspots.activate(NOUN_HOLE, false);
 		_scene->_hotspots.activate(NOUN_LASER_BEAM, false);
@@ -1613,7 +1615,7 @@ void Scene508::enter() {
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 11);
 		int idx = _scene->_dynamicHotspots.add(NOUN_LASER_BEAM, VERB_WALKTO, _globals._sequenceIndexes[4], Common::Rect(0, 0, 0, 0));
 		_scene->_dynamicHotspots.setPosition(idx, Common::Point(57, 116), FACING_NORTHEAST);
-		_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
+		_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
 		_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 6, 8);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 6);
 		if (_globals[kLaserHoleIsThere]) {
@@ -1628,7 +1630,7 @@ void Scene508::enter() {
 	if (_scene->_priorSceneId == 515) {
 		_game._player._playerPos = Common::Point(57, 116);
 		_game._player._facing = FACING_NORTHEAST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(289, 139);
 		_game._player._facing = FACING_WEST;
 	}
@@ -1659,7 +1661,7 @@ void Scene508::handlePedestral() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
-			_globals._sequenceIndexes[6] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[6], false, 9, 1, 0, 0);
+			_globals._sequenceIndexes[6] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[6], false, 9, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[6], 1, 4);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[6]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[6], SEQUENCE_TRIGGER_SPRITE, 4, 1);
@@ -1732,7 +1734,7 @@ void Scene508::actions() {
 				break;
 
 			case 4:
-				_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
+				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 15, 0, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 6, 8);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 6);
 				break;
@@ -1866,7 +1868,7 @@ void Scene511::enter() {
 	_globals._spriteIndexes[1] = _scene->_sprites.addSprites(formAnimName('c', 0));
 	_globals._spriteIndexes[4] = _scene->_sprites.addSprites("*RXCD_6");
 
-	if (_scene->_priorSceneId != -2)
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG)
 		_handingLine = false;
 
 	if (_globals[kBoatRaised]) {
@@ -1921,7 +1923,7 @@ void Scene511::enter() {
 	if (_scene->_priorSceneId == 512) {
 		_game._player._playerPos = Common::Point(60, 112);
 		_game._player._facing = FACING_SOUTHEAST;
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(55, 152);
 		_game._player._facing = FACING_NORTHWEST;
 		_game._player._visible = false;
@@ -1941,9 +1943,9 @@ void Scene511::enter() {
 }
 
 void Scene511::step() {
-	if ((_lineAnimationMode == 1) && _scene->_activeAnimation) {
-		if (_lineFrame != _scene->_activeAnimation->getCurrentFrame()) {
-			_lineFrame = _scene->_activeAnimation->getCurrentFrame();
+	if ((_lineAnimationMode == 1) && _scene->_animation[0]) {
+		if (_lineFrame != _scene->_animation[0]->getCurrentFrame()) {
+			_lineFrame = _scene->_animation[0]->getCurrentFrame();
 			int resetFrame = -1;
 
 			if ((_lineAnimationPosition == 2) && (_lineFrame == 14))
@@ -1959,8 +1961,8 @@ void Scene511::step() {
 					resetFrame = 2;
 			}
 
-			if ((resetFrame >= 0) && (resetFrame != _scene->_activeAnimation->getCurrentFrame())) {
-				_scene->_activeAnimation->setCurrentFrame(resetFrame);
+			if ((resetFrame >= 0) && (resetFrame != _scene->_animation[0]->getCurrentFrame())) {
+				_scene->_animation[0]->setCurrentFrame(resetFrame);
 				_lineFrame = resetFrame;
 			}
 		}
@@ -1969,7 +1971,7 @@ void Scene511::step() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 
@@ -2007,7 +2009,7 @@ void Scene511::preActions() {
 			_scene->loadAnimation(formAnimName('R',2), 1);
 		} else if (_game._trigger == 1) {
 			_game._player._visible = true;
-			_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+			_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 			_game._objects.setRoom(OBJ_FISHING_LINE, 1);
 			_handingLine = false;
 			_game._player._stepEnabled = true;
@@ -2024,7 +2026,7 @@ void Scene511::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
+			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
@@ -2064,6 +2066,7 @@ void Scene511::actions() {
 					if (_game._trigger == 0) {
 						_game._player._stepEnabled = false;
 						_game._player._visible = false;
+						_game._player.update();
 						_lineAnimationMode = 1;
 						_lineAnimationPosition = 1;
 						_lineMoving = true;
@@ -2086,7 +2089,8 @@ void Scene511::actions() {
 		} else {
 			_vm->_dialogs->show(51130);
 		}
-	} else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) || _action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) {
+	} else if (_action.isAction(VERB_TIE, NOUN_FISHING_LINE, NOUN_BOAT) ||
+			_action.isAction(VERB_ATTACH, NOUN_FISHING_LINE, NOUN_BOAT)) {
 		if (_globals[kBoatRaised])
 			_vm->_dialogs->show(51131);
 		else if (_globals[kLineStatus] == 1)
@@ -2104,7 +2108,6 @@ void Scene511::actions() {
 						_scene->_sequences.addTimer(1, 1);
 					else {
 						_game._player._visible = true;
-						_game._player._priorTimer = _scene->_frameStartTime - _game._player._ticksAmount;
 						_globals._sequenceIndexes[7] = _scene->_sequences.startCycle(_globals._spriteIndexes[7], false, -2);
 						_scene->_sequences.setDepth(_globals._sequenceIndexes[7], 4);
 						int idx = _scene->_dynamicHotspots.add(NOUN_FISHING_LINE, VERB_WALKTO, _globals._sequenceIndexes[7], Common::Rect(0, 0, 0, 0));
@@ -2114,6 +2117,10 @@ void Scene511::actions() {
 						_lineMoving = true;
 						_globals[kLineStatus] = 3;
 						_game._player._stepEnabled = true;
+
+						if (_scene->_animation[0])
+							_scene->_animation[0]->eraseSprites();
+						_game._player.update();
 					}
 				}
 			}
@@ -2152,9 +2159,9 @@ void Scene511::actions() {
 			_vm->_dialogs->show(51128);
 	} else if (_action.isAction(VERB_LOOK, NOUN_PORTHOLE))
 		_vm->_dialogs->show(51122);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == 4) && (_globals[kLineStatus] == 2))
+	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 2))
 		_vm->_dialogs->show(51126);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == 4) && (_globals[kLineStatus] == 3))
+	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_LINE) && (_action._mainObjectSource == CAT_HOTSPOT) && (_globals[kLineStatus] == 3))
 		_vm->_dialogs->show(51133);
 	else if (_action.isAction(VERB_LOOK, NOUN_STATUE))
 		_vm->_dialogs->show(51127);
@@ -2240,7 +2247,7 @@ void Scene512::enter() {
 	} else
 		_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
 
-	if (_scene->_priorSceneId != -2) {
+	if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(144, 152);
 		_game._player._facing = FACING_NORTHEAST;
 	}
@@ -2257,7 +2264,7 @@ void Scene512::actions() {
 			case 0:
 				_game._player._stepEnabled = false;
 				_game._player._visible = false;
-				_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
+				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 8, 1, 0, 0);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, 5, 1);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -2293,7 +2300,7 @@ void Scene512::actions() {
 
 			case 1:
 				_game._player._visible = false;
-				_globals._sequenceIndexes[8] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[8], false, 9, 1, 0, 0);
+				_globals._sequenceIndexes[8] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[8], false, 9, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[8], 1, 3);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[8]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[8], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -2326,7 +2333,7 @@ void Scene512::actions() {
 				break;
 
 			case 5:
-				_globals._sequenceIndexes[5] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[5], false, 14, 0, 0, 0);
+				_globals._sequenceIndexes[5] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[5], false, 14, 0, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[5], 3);
 				_scene->_hotspots.activate(NOUN_PADLOCK_KEY, true);
 				_scene->_sequences.addTimer(60, 6);
@@ -2347,7 +2354,7 @@ void Scene512::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
-			_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 10, 1, 0, 0);
+			_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 10, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -2358,12 +2365,12 @@ void Scene512::actions() {
 			_game._player._visible = true;
 			if (!_game._objects.isInRoom(OBJ_PADLOCK_KEY) || _game._difficulty == DIFFICULTY_EASY) {
 				_scene->_sequences.remove(_globals._sequenceIndexes[3]);
-				_globals._sequenceIndexes[3] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
+				_globals._sequenceIndexes[3] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[3], false, 12, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[3], 3);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[3], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
 			} else {
 				_scene->_sequences.remove(_globals._sequenceIndexes[5]);
-				_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 12, 1, 0, 0);
+				_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 12, 1, 0, 0);
 				_scene->_sequences.setDepth(_globals._sequenceIndexes[4], 3);
 				_scene->_hotspots.activate(NOUN_PADLOCK_KEY, false);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 2);
@@ -2391,7 +2398,7 @@ void Scene512::actions() {
 				else
 					endVal = 2;
 
-				_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 10, 1, 0, 0);
+				_globals._sequenceIndexes[2] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[2], false, 10, 1, 0, 0);
 				_scene->_sequences.setAnimRange(_globals._sequenceIndexes[2], 1, endVal);
 				_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[2]);
 				_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_SPRITE, endVal, 1);
@@ -2427,7 +2434,8 @@ void Scene512::actions() {
 		_vm->_dialogs->show(51225);
 	else if (_action.isAction(VERB_LOOK, NOUN_PADLOCK_KEY) && _game._objects.isInRoom(OBJ_PADLOCK_KEY))
 		_vm->_dialogs->show(51215);
-	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_ROD) && (_scene->_activeAnimation->getCurrentFrame() == 4))
+	else if (_action.isAction(VERB_LOOK, NOUN_FISHING_ROD) && (!_scene->_animation[0] ||
+			_scene->_animation[0]->getCurrentFrame() == 4))
 		_vm->_dialogs->show(51216);
 	else if (_action.isAction(VERB_LOOK, NOUN_SHIPS_WHEEL))
 		_vm->_dialogs->show(51218);
@@ -2460,7 +2468,9 @@ void Scene512::actions() {
 		_vm->_dialogs->show(51233);
 	else if (_action.isAction(VERB_LOOK, NOUN_LAMP))
 		_vm->_dialogs->show(51234);
-	else if (_action.isAction(VERB_LOOK, NOUN_COUNTER))
+	else if (_action.isAction(VERB_WALK_BEHIND, NOUN_COUNTER)) {
+		// WORKAROUND: Empty handling to prevent default "can't do that" dialogs showing
+	} else if (_action.isAction(VERB_LOOK, NOUN_COUNTER))
 		_vm->_dialogs->show(51235);
 	else if (_action.isAction(VERB_LOOK, NOUN_ICE_CHESTS))
 		_vm->_dialogs->show(51237);
@@ -2505,7 +2515,7 @@ void Scene513::enter() {
 		_game._player._facing = FACING_WEST;
 		_game._player._stepEnabled = false;
 		_scene->_sequences.addTimer(15, 80);
-	} else if (_scene->_priorSceneId != -2) {
+	} else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(63, 149);
 		_game._player._facing = FACING_NORTHEAST;
 		_game._player._visible = false;
@@ -2529,7 +2539,7 @@ void Scene513::step() {
 	case 80:
 		_game._player._stepEnabled = false;
 		_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-		_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
+		_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 		_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 		_vm->_sound->command(24);
 		_scene->_sequences.addSubEntry(_globals._sequenceIndexes[2], SEQUENCE_TRIGGER_EXPIRE, 0, 81);
@@ -2560,7 +2570,7 @@ void Scene513::step() {
 	switch (_game._trigger) {
 	case 70:
 		_game._player._visible = true;
-		_game._player._priorTimer = _scene->_activeAnimation->getNextFrameTimer() - _game._player._ticksAmount;
+		_game._player._priorTimer = _scene->_animation[0]->getNextFrameTimer() - _game._player._ticksAmount;
 		_scene->_sequences.addTimer(6, 71);
 		break;
 
@@ -2588,7 +2598,7 @@ void Scene513::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_scene->_sequences.remove(_globals._sequenceIndexes[1]);
-			_globals._sequenceIndexes[1] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
+			_globals._sequenceIndexes[1] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[1], false, 6, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[1], 1);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[1], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
 			break;
@@ -2626,7 +2636,7 @@ void Scene513::actions() {
 		case 0:
 			_game._player._stepEnabled = false;
 			_game._player._visible = false;
-			_globals._sequenceIndexes[4] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[4], false, 7, 1, 0, 0);
+			_globals._sequenceIndexes[4] = _scene->_sequences.startPingPongCycle(_globals._spriteIndexes[4], false, 7, 1, 0, 0);
 			_scene->_sequences.setAnimRange(_globals._sequenceIndexes[4], 1, 2);
 			_scene->_sequences.setMsgLayout(_globals._sequenceIndexes[4]);
 			_scene->_sequences.addSubEntry(_globals._sequenceIndexes[4], SEQUENCE_TRIGGER_EXPIRE, 0, 1);
@@ -2636,7 +2646,7 @@ void Scene513::actions() {
 			_scene->_sequences.updateTimeout(-1, _globals._sequenceIndexes[4]);
 			_game._player._visible = true;
 			_scene->_sequences.remove(_globals._sequenceIndexes[2]);
-			_globals._sequenceIndexes[2] = _scene->_sequences.startReverseCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
+			_globals._sequenceIndexes[2] = _scene->_sequences.addReverseSpriteCycle(_globals._spriteIndexes[2], false, 7, 1, 0, 0);
 			_scene->_sequences.setDepth(_globals._sequenceIndexes[2], 2);
 			_vm->_sound->command(24);
 			_scene->_kernelMessages.reset();
@@ -2739,7 +2749,7 @@ void Scene551::enter() {
 
 	if (_scene->_priorSceneId == 501)
 		_game._player._playerPos = Common::Point(18, 130);
-	else if (_scene->_priorSceneId != -2) {
+	else if (_scene->_priorSceneId != RETURNING_FROM_DIALOG) {
 		_game._player._playerPos = Common::Point(124, 119);
 		_game._player._facing = FACING_NORTH;
 	}

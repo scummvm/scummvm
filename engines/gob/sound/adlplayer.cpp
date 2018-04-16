@@ -28,7 +28,7 @@
 
 namespace Gob {
 
-ADLPlayer::ADLPlayer(Audio::Mixer &mixer) : AdLib(mixer),
+ADLPlayer::ADLPlayer() : AdLib(1000),
 	_songData(0), _songDataSize(0), _playPos(0) {
 
 }
@@ -135,14 +135,7 @@ uint32 ADLPlayer::pollMusic(bool first) {
 	if (delay & 0x80)
 		delay = ((delay & 3) << 8) | *_playPos++;
 
-	return getSampleDelay(delay);
-}
-
-uint32 ADLPlayer::getSampleDelay(uint16 delay) const {
-	if (delay == 0)
-		return 0;
-
-	return ((uint32)delay * getSamplesPerSecond()) / 1000;
+	return delay;
 }
 
 void ADLPlayer::rewind() {

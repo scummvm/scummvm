@@ -63,10 +63,10 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	openPort(_menuPort);
 	setPort(_menuPort);
 	_text16->SetFont(0);
-	_menuPort->rect = Common::Rect(0, 0, _screen->getWidth(), _screen->getHeight());
-	_menuBarRect = Common::Rect(0, 0, _screen->getWidth(), 9);
-	_menuRect = Common::Rect(0, 0, _screen->getWidth(), 10);
-	_menuLine = Common::Rect(0, 9, _screen->getWidth(), 10);
+	_menuPort->rect = Common::Rect(0, 0, _screen->getScriptWidth(), _screen->getScriptHeight());
+	_menuBarRect = Common::Rect(0, 0, _screen->getScriptWidth(), 9);
+	_menuRect = Common::Rect(0, 0, _screen->getScriptWidth(), 10);
+	_menuLine = Common::Rect(0, 9, _screen->getScriptWidth(), 10);
 
 	_wmgrPort = new Port(1);
 	_windowsById.resize(2);
@@ -122,13 +122,13 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	} else {
 		_wmgrPort->rect.bottom = _screen->getHeight();
 	}
-	_wmgrPort->rect.right = _screen->getWidth();
+	_wmgrPort->rect.right = _screen->getScriptWidth();
 	_wmgrPort->rect.moveTo(0, 0);
 	_wmgrPort->curTop = 0;
 	_wmgrPort->curLeft = 0;
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = addWindow(Common::Rect(0, offTop, _screen->getWidth(), _screen->getHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
+	_picWind = addWindow(Common::Rect(0, offTop, _screen->getScriptWidth(), _screen->getScriptHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 	// For SCI0 games till kq4 (.502 - not including) we set _picWind top to offTop instead
 	//  Because of the menu/status bar
 	if (_usesOldGfxFunctions)
@@ -321,13 +321,13 @@ Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restor
 	// their interpreter even in the newer VGA games.
 	r.left = r.left & 0xFFFE;
 
-	if (r.width() > _screen->getWidth()) {
+	if (r.width() > _screen->getScriptWidth()) {
 		// We get invalid dimensions at least at the end of sq3 (script bug!).
 		// Same happens very often in lsl5, sierra sci didnt fix it but it looked awful.
 		// Also happens frequently in the demo of GK1.
 		warning("Fixing too large window, left: %d, right: %d", dims.left, dims.right);
 		r.left = 0;
-		r.right = _screen->getWidth() - 1;
+		r.right = _screen->getScriptWidth() - 1;
 		if ((style != _styleUser) && !(style & SCI_WINDOWMGR_STYLE_NOFRAME))
 			r.right--;
 	}
@@ -674,13 +674,13 @@ void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 		_priorityBottom--;
 }
 
-void GfxPorts::priorityBandsInit(byte *data) {
+void GfxPorts::priorityBandsInit(const SciSpan<const byte> &data) {
 	int i = 0, inx;
 	byte priority = 0;
 
 	for (inx = 0; inx < 14; inx++) {
-		priority = *data++;
-		while (i < priority)
+		priority = data[inx];
+		while (i < priority && i < 200)
 			_priorityBands[i++] = inx;
 	}
 	while (i < 200)
@@ -688,13 +688,13 @@ void GfxPorts::priorityBandsInit(byte *data) {
 }
 
 // Gets used to read priority bands data from sci1.1 pictures
-void GfxPorts::priorityBandsInitSci11(byte *data) {
+void GfxPorts::priorityBandsInitSci11(SciSpan<const byte> data) {
 	byte priorityBands[14];
 	for (int bandNo = 0; bandNo < 14; bandNo++) {
-		priorityBands[bandNo] = READ_LE_UINT16(data);
+		priorityBands[bandNo] = data.getUint16LEAt(0);
 		data += 2;
 	}
-	priorityBandsInit(priorityBands);
+	priorityBandsInit(SciSpan<const byte>(priorityBands, 14));
 }
 
 void GfxPorts::kernelInitPriorityBands() {
@@ -717,8 +717,10 @@ void GfxPorts::kernelGraphAdjustPriority(int top, int bottom) {
 }
 
 byte GfxPorts::kernelCoordinateToPriority(int16 y) {
-	if (y < _priorityTop)
-		return _priorityBands[_priorityTop];
+	if (y < 0) // Sierra did not check this, we do for safety reasons
+		return _priorityBands[0];
+	// do NOT check for _priorityTop in here. Sierra never did that and it would cause
+	// at least priority issues in room 54 of lsl2 (airplane)
 	if (y > _priorityBottom)
 		return _priorityBands[_priorityBottom];
 	return _priorityBands[y];

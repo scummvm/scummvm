@@ -36,6 +36,8 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_MANIAC:
 	case GID_ZAK:
 		return 4;
+	case GID_INDY4:
+		return 5;
 	case GID_INDY3:
 		return 6;
 	case GID_LOOM:
@@ -43,7 +45,6 @@ int ScummHelp::numPages(byte gameId) {
 	case GID_MONKEY_VGA:
 	case GID_MONKEY:
 	case GID_MONKEY2:
-	case GID_INDY4:
 	case GID_TENTACLE:
 	case GID_SAMNMAX:
 	case GID_DIG:
@@ -76,8 +77,8 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND(".", _("Skip line of text"));
 		ADD_BIND(_("Esc"), _("Skip cutscene"));
 		ADD_BIND(_("Space"), _("Pause game"));
-		ADD_BIND(String(_("Ctrl")) + " 0-9", _("Load game state 1-10"));
-		ADD_BIND(String(_("Alt")) + " 0-9", _("Save game state 1-10"));
+		ADD_BIND(String(_("Ctrl")) + " 0-9", _("Load saved game 1-10"));
+		ADD_BIND(String(_("Alt")) + " 0-9", _("Save game 1-10"));
 #ifdef MACOSX
 		ADD_BIND("Cmd q", _("Quit"));
 #else
@@ -287,10 +288,19 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("F3", "Melissa");
 			ADD_BIND("F4", "Leslie");
 		}
+		if (gameId == GID_INDY4) {
+			ADD_BIND("i", _("Toggle Inventory/IQ Points display"));
+			ADD_BIND("f", _("Toggle Keyboard/Mouse Fighting (*)"));
+			ADD_LINE;
+			ADD_TEXT(_("* Keyboard Fighting is always on,"));
+			ADD_TEXT(_("  so despite the in-game message this"));
+			ADD_TEXT(_("  actually toggles Mouse Fighting Off/On"));
+		}
 		break;
 	case 5:
 		switch (gameId) {
 		case GID_INDY3:
+		case GID_INDY4:
 			title = _("Fighting controls (numpad):");
 			ADD_BIND("7", _("Step back"));
 			ADD_BIND("4", _("Step back"));
@@ -301,7 +311,9 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 			ADD_BIND("9", _("Punch high"));
 			ADD_BIND("6", _("Punch middle"));
 			ADD_BIND("3", _("Punch low"));
-			ADD_LINE;
+			if (gameId == GID_INDY4) {
+				ADD_BIND("0", _("Sucker punch"));
+			}
 			ADD_LINE;
 			ADD_TEXT(_("These are for Indy on left."));
 			ADD_TEXT(_("When Indy is on the right,"));

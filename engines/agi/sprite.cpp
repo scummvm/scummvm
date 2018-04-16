@@ -23,449 +23,149 @@
 #include "agi/agi.h"
 #include "agi/sprite.h"
 #include "agi/graphics.h"
+#include "agi/text.h"
 
 namespace Agi {
 
-/**
- * Sprite structure.
- * This structure holds information on visible and priority data of
- * a rectangular area of the AGI screen. Sprites are chained in two
- * circular lists, one for updating and other for non-updating sprites.
- */
-struct Sprite {
-	VtEntry *v;		/**< pointer to view table entry */
-	int16 xPos;			/**< x coordinate of the sprite */
-	int16 yPos;			/**< y coordinate of the sprite */
-	int16 xSize;			/**< width of the sprite */
-	int16 ySize;			/**< height of the sprite */
-	uint8 *buffer;			/**< buffer to store background data */
-};
+SpritesMgr::SpritesMgr(AgiEngine *agi, GfxMgr *gfx) {
+	_vm = agi;
+	_gfx = gfx;
+}
 
-/*
- * Sprite pool replaces dynamic allocation
- */
-#undef ALLOC_DEBUG
+SpritesMgr::~SpritesMgr() {
+	_spriteRegularList.clear();
+	_spriteStaticList.clear();
+}
 
+static bool sortSpriteHelper(const Sprite &entry1, const Sprite &entry2) {
+	if (entry1.sortOrder == entry2.sortOrder) {
+		// If sort-order is the same, we sort according to given order
+		// which makes this sort stable.
+		return entry1.givenOrderNr < entry2.givenOrderNr;
+	}
+	return entry1.sortOrder < entry2.sortOrder;
+}
 
-#define POOL_SIZE 68000		// Gold Rush mine room needs > 50000
-							// Speeder bike challenge needs > 67000
+void SpritesMgr::buildRegularSpriteList() {
+	ScreenObjEntry *screenObj = NULL;
+	uint16 givenOrderNr = 0;
 
-void *SpritesMgr::poolAlloc(int size) {
-	uint8 *x;
-
-	// Adjust size to sizeof(void *) boundary to prevent data misalignment
-	// errors.
-	const int alignPadding = sizeof(void *) - 1;
-	size = (size + alignPadding) & ~alignPadding;
-
-	x = _poolTop;
-	_poolTop += size;
-
-	if (_poolTop >= (uint8 *)_spritePool + POOL_SIZE) {
-		debugC(1, kDebugLevelMain | kDebugLevelResources, "not enough memory");
-		_poolTop = x;
-		return NULL;
+	freeList(_spriteRegularList);
+	for (screenObj = _vm->_game.screenObjTable; screenObj < &_vm->_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
+		if ((screenObj->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fUpdate | fDrawn)) {
+			buildSpriteListAdd(givenOrderNr, screenObj, _spriteRegularList);
+			givenOrderNr++;
+		}
 	}
 
-	return x;
+	// Now sort this list
+	Common::sort(_spriteRegularList.begin(), _spriteRegularList.end(), sortSpriteHelper);
+//	warning("buildRegular: %d", _spriteRegularList.size());
 }
 
-// Note: it's critical that pool_release() is called in the exact
-//         reverse order of pool_alloc()
-void SpritesMgr::poolRelease(void *s) {
-	_poolTop = (uint8 *)s;
+void SpritesMgr::buildStaticSpriteList() {
+	ScreenObjEntry *screenObj = NULL;
+	uint16 givenOrderNr = 0;
+
+	freeList(_spriteStaticList);
+	for (screenObj = _vm->_game.screenObjTable; screenObj < &_vm->_game.screenObjTable[SCREENOBJECTS_MAX]; screenObj++) {
+		if ((screenObj->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fDrawn)) { // DIFFERENCE IN HERE!
+			buildSpriteListAdd(givenOrderNr, screenObj, _spriteStaticList);
+			givenOrderNr++;
+		}
+	}
+
+	// Now sort this list
+	Common::sort(_spriteStaticList.begin(), _spriteStaticList.end(), sortSpriteHelper);
 }
 
-/*
- * Blitter functions
- */
+void SpritesMgr::buildAllSpriteLists() {
+	buildStaticSpriteList();
+	buildRegularSpriteList();
+}
 
-// Blit one pixel considering the priorities
-void SpritesMgr::blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden) {
-	int epr = 0, pr = 0;	// effective and real priorities
+void SpritesMgr::buildSpriteListAdd(uint16 givenOrderNr, ScreenObjEntry *screenObj, SpriteList &spriteList) {
+	Sprite spriteEntry;
 
-	// CM: priority 15 overrides control lines and is ignored when
-	//     tracking effective priority. This tweak is needed to fix
-	//     Sarien bug #451768, and should not affect Sierra games because
-	//     sprites shouldn't have priority 15 (like the AGI Mouse
-	//     demo "mouse pointer")
-	//
-	// Update: this solution breaks other games, and can't be used.
-
-	if (p >= end)
+	// Check, if screen object points to currently loaded view, if not don't add it
+	if (!(_vm->_game.dirView[screenObj->currentViewNr].flags & RES_LOADED))
 		return;
 
-	// Check if we're on a control line
-	if ((pr = *p & 0xf0) < 0x30) {
-		uint8 *p1;
-		// Yes, get effective priority going down
-		for (p1 = p; p1 < end && (epr = *p1 & 0xf0) < 0x30; p1 += width)
-			;
-		if (p1 >= end)
-			epr = 0x40;
+	spriteEntry.givenOrderNr = givenOrderNr;
+//	warning("sprite add objNr %d", screenObjPtr->objectNr);
+	if (screenObj->flags & fFixedPriority) {
+		spriteEntry.sortOrder = _gfx->priorityToY(screenObj->priority);
+//		warning(" - priorityToY (fixed) %d -> %d", screenObj->priority, spriteEntry.sortOrder);
 	} else {
-		epr = pr;
+		spriteEntry.sortOrder = screenObj->yPos;
+//		warning(" - Ypos %d -> %d", screenObjPtr->yPos, spriteEntry.sortOrder);
 	}
 
-	if (spr >= epr) {
-		// Keep control line information visible, but put our
-		// priority over water (0x30) surface
-		if (_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))
-			*(p + FROM_SBUF16_TO_SBUF256_OFFSET) = col; // Write to 256 color buffer
-		else
-			*p = (pr < 0x30 ? pr : spr) | col; // Write to 16 color (+control line/priority info) buffer
+	spriteEntry.screenObjPtr = screenObj;
+	spriteEntry.xPos = screenObj->xPos;
+	spriteEntry.yPos = (screenObj->yPos) - (screenObj->ySize) + 1;
+	spriteEntry.xSize = screenObj->xSize;
+	spriteEntry.ySize = screenObj->ySize;
 
-		*hidden = false;
-
-		// Except if our priority is 15, which should never happen
-		// (fixes Sarien bug #451768)
-		//
-		// Update: breaks other games, can't be used
-		//
-		// if (spr == 0xf0)
-		//      *p = spr | col;
-	}
-}
-
-
-int SpritesMgr::blitCel(int x, int y, int spr, ViewCel *c, bool agi256_2) {
-	uint8 *p0, *p, *q = NULL, *end;
-	int i, j, t, m, col;
-	int hidden = true;
-
-	// Fixes Sarien bug #477841 (crash in PQ1 map C4 when y == -2)
-	if (y < 0)
-		y = 0;
-	if (x < 0)
-		x = 0;
-	if (y >= _HEIGHT)
-		y = _HEIGHT - 1;
-	if (x >= _WIDTH)
-		x = _WIDTH - 1;
-
-	q = c->data;
-	t = c->transparency;
-	m = c->mirror;
-	spr <<= 4;
-	p0 = &_vm->_game.sbuf16c[x + y * _WIDTH + m * (c->width - 1)];
-
-	end = _vm->_game.sbuf16c + _WIDTH * _HEIGHT;
-
-	for (i = 0; i < c->height; i++) {
-		p = p0;
-		while (*q) {
-			col = agi256_2 ? *q : (*q & 0xf0) >> 4; // Uses whole byte for color info with AGI256-2
-			for (j = agi256_2 ? 1 : *q & 0x0f; j; j--, p += 1 - 2 * m) { // No RLE with AGI256-2
-				if (col != t) {
-					blitPixel(p, end, col, spr, _WIDTH, &hidden);
-				}
-			}
-			q++;
-		}
-		p0 += _WIDTH;
-		q++;
-	}
-
-	return hidden;
-}
-
-void SpritesMgr::objsSaveArea(Sprite *s) {
-	int y;
-	int16 xPos = s->xPos, yPos = s->yPos;
-	int16 xSize = s->xSize, ySize = s->ySize;
-	uint8 *p0, *q;
-
-	if (xPos + xSize > _WIDTH)
-		xSize = _WIDTH - xPos;
-
-	if (xPos < 0) {
-		xSize += xPos;
-		xPos = 0;
-	}
-
-	if (yPos + ySize > _HEIGHT)
-		ySize = _HEIGHT - yPos;
-
-	if (yPos < 0) {
-		ySize += yPos;
-		yPos = 0;
-	}
-
-	if (xSize <= 0 || ySize <= 0)
+	// Checking, if xPos/yPos/right/bottom are valid and do not go outside of playscreen (visual screen)
+	// Original AGI did not do this (but it then resulted in memory corruption)
+	if (spriteEntry.xPos < 0) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c xPos (%d) < 0", screenObj->objectNr, spriteEntry.xPos);
 		return;
-
-	p0 = &_vm->_game.sbuf[xPos + yPos * _WIDTH];
-	q = s->buffer;
-	for (y = 0; y < ySize; y++) {
-		memcpy(q, p0, xSize);
-		q += xSize;
-		p0 += _WIDTH;
 	}
-}
-
-void SpritesMgr::objsRestoreArea(Sprite *s) {
-	int y, offset;
-	int16 xPos = s->xPos, yPos = s->yPos;
-	int16 xSize = s->xSize, ySize = s->ySize;
-	uint8 *q;
-	uint32 pos0;
-
-	if (xPos + xSize > _WIDTH)
-		xSize = _WIDTH - xPos;
-
-	if (xPos < 0) {
-		xSize += xPos;
-		xPos = 0;
-	}
-
-	if (yPos + ySize > _HEIGHT)
-		ySize = _HEIGHT - yPos;
-
-	if (yPos < 0) {
-		ySize += yPos;
-		yPos = 0;
-	}
-
-	if (xSize <= 0 || ySize <= 0)
+	if (spriteEntry.yPos < 0) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c yPos (%d) < 0", screenObj->objectNr, spriteEntry.yPos);
 		return;
-
-	pos0 = xPos + yPos * _WIDTH;
-	q = s->buffer;
-	offset = _vm->_game.lineMinPrint * CHAR_LINES;
-	for (y = 0; y < ySize; y++) {
-		memcpy(&_vm->_game.sbuf[pos0], q, xSize);
-		_gfx->putPixelsA(xPos, yPos + y + offset, xSize, &_vm->_game.sbuf16c[pos0]);
-		q += xSize;
-		pos0 += _WIDTH;
+	}
+	int16 xRight = spriteEntry.xPos + spriteEntry.xSize;
+	if (xRight > SCRIPT_HEIGHT) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c rightPos (%d) > %d", screenObj->objectNr, xRight, SCRIPT_WIDTH);
+		return;
+	}
+	int16 yBottom = spriteEntry.yPos + spriteEntry.ySize;
+	if (yBottom > SCRIPT_HEIGHT) {
+		warning("buildSpriteListAdd(): ignoring screen obj %d, b/c bottomPos (%d) > %d", screenObj->objectNr, yBottom, SCRIPT_HEIGHT);
+		return;
 	}
 
-	// WORKAROUND (see ScummVM bug #1945716)
-	// When set.view command is called, current code cannot detect  this situation while updating
-	// Thus we force removal of the old sprite
-	if (s->v && s->v->viewReplaced) {
-		commitBlock(xPos, yPos, xPos + xSize, yPos + ySize);
-		s->v->viewReplaced = false;
-	}
+//	warning("list-add: %d, %d, original yPos: %d, ySize: %d", spriteEntry.xPos, spriteEntry.yPos, screenObj->yPos, screenObj->ySize);
+	spriteEntry.backgroundBuffer = (uint8 *)malloc(spriteEntry.xSize * spriteEntry.ySize * 2); // for visual + priority data
+	assert(spriteEntry.backgroundBuffer);
+	spriteList.push_back(spriteEntry);
 }
 
-
-/**
- * Condition to determine whether a sprite will be in the 'updating' list.
- */
-bool SpritesMgr::testUpdating(VtEntry *v, AgiEngine *agi) {
-	// Sanity check (see Sarien bug #779302)
-	if (~agi->_game.dirView[v->currentView].flags & RES_LOADED)
-		return false;
-
-	return (v->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fUpdate | fDrawn);
-}
-
-/**
- * Condition to determine whether a sprite will be in the 'non-updating' list.
- */
-bool SpritesMgr::testNotUpdating(VtEntry *v, AgiEngine *vm) {
-	// Sanity check (see Sarien bug #779302)
-	if (~vm->_game.dirView[v->currentView].flags & RES_LOADED)
-		return false;
-
-	return (v->flags & (fAnimated | fUpdate | fDrawn)) == (fAnimated | fDrawn);
-}
-
-/**
- * Convert sprite priority to y value.
- */
-int SpritesMgr::prioToY(int p) {
-	int i;
-
-	if (p == 0)
-		return -1;
-
-	for (i = 167; i >= 0; i--) {
-		if (_vm->_game.priTable[i] < p)
-			return i;
-	}
-
-	return -1;		// (p - 5) * 12 + 48;
-}
-
-/**
- * Create and initialize a new sprite structure.
- */
-Sprite *SpritesMgr::newSprite(VtEntry *v) {
-	Sprite *s;
-	s = (Sprite *)poolAlloc(sizeof(Sprite));
-	if (s == NULL)
-		return NULL;
-
-	s->v = v;		// link sprite to associated view table entry
-	s->xPos = v->xPos;
-	s->yPos = v->yPos - v->ySize + 1;
-	s->xSize = v->xSize;
-	s->ySize = v->ySize;
-	s->buffer = (uint8 *)poolAlloc(s->xSize * s->ySize);
-	v->s = s;		// link view table entry to this sprite
-
-	return s;
-}
-
-/**
- * Insert sprite in the specified sprite list.
- */
-void SpritesMgr::sprAddlist(SpriteList &l, VtEntry *v) {
-	Sprite *s = newSprite(v);
-	l.push_back(s);
-}
-
-/**
- * Sort sprites from lower y values to build a sprite list.
- */
-void SpritesMgr::buildList(SpriteList &l, bool (*test)(VtEntry *, AgiEngine *)) {
-	int i, j, k;
-	VtEntry *v;
-	VtEntry *entry[0x100];
-	int yVal[0x100];
-	int minY = 0xff, minIndex = 0;
-
-	// fill the arrays with all sprites that satisfy the 'test'
-	// condition and their y values
-	i = 0;
-	for (v = _vm->_game.viewTable; v < &_vm->_game.viewTable[MAX_VIEWTABLE]; v++) {
-		if ((*test)(v, _vm)) {
-			entry[i] = v;
-			yVal[i] = v->flags & fFixedPriority ? prioToY(v->priority) : v->yPos;
-			i++;
-		}
-	}
-
-	debugC(5, kDebugLevelSprites, "buildList() --> entries %d", i);
-
-	// now look for the smallest y value in the array and put that
-	// sprite in the list
-	for (j = 0; j < i; j++) {
-		minY = 0xff;
-
-		for (k = 0; k < i; k++) {
-			if (yVal[k] < minY) {
-				minIndex = k;
-				minY = yVal[k];
-			}
-		}
-
-		yVal[minIndex] = 0xff;
-		sprAddlist(l, entry[minIndex]);
-	}
-}
-
-/**
- * Build list of updating sprites.
- */
-void SpritesMgr::buildUpdBlitlist() {
-	buildList(_sprUpd, testUpdating);
-}
-
-/**
- * Build list of non-updating sprites.
- */
-void SpritesMgr::buildNonupdBlitlist() {
-	buildList(_sprNonupd, testNotUpdating);
-}
-
-/**
- * Clear the given sprite list.
- */
-void SpritesMgr::freeList(SpriteList &l) {
+void SpritesMgr::freeList(SpriteList &spriteList) {
 	SpriteList::iterator iter;
-	for (iter = l.reverse_begin(); iter != l.end(); ) {
-		Sprite* s = *iter;
+	for (iter = spriteList.reverse_begin(); iter != spriteList.end(); iter--) {
+		Sprite &sprite = *iter;
 
-		poolRelease(s->buffer);
-		poolRelease(s);
-		iter = l.reverse_erase(iter);
+		free(sprite.backgroundBuffer);
 	}
+	spriteList.clear();
 }
 
-/**
- * Copy sprites from the pic buffer to the screen buffer, and check if
- * sprites of the given list have moved.
- */
-void SpritesMgr::commitSprites(SpriteList &l, bool immediate) {
+void SpritesMgr::freeRegularSprites() {
+	freeList(_spriteRegularList);
+}
+
+void SpritesMgr::freeStaticSprites() {
+	freeList(_spriteStaticList);
+}
+
+void SpritesMgr::freeAllSprites() {
+	freeList(_spriteRegularList);
+	freeList(_spriteStaticList);
+}
+
+void SpritesMgr::eraseSprites(SpriteList &spriteList) {
 	SpriteList::iterator iter;
-	for (iter = l.begin(); iter != l.end(); ++iter) {
-		Sprite *s = *iter;
-		int x1, y1, x2, y2;
-
-		x1 = MIN((int)MIN(s->v->xPos, s->v->xPos2), MIN(s->v->xPos + s->v->celData->width, s->v->xPos2 + s->v->celData2->width));
-		x2 = MAX((int)MAX(s->v->xPos, s->v->xPos2), MAX(s->v->xPos + s->v->celData->width, s->v->xPos2 + s->v->celData2->width));
-		y1 = MIN((int)MIN(s->v->yPos, s->v->yPos2), MIN(s->v->yPos - s->v->celData->height, s->v->yPos2 - s->v->celData2->height));
-		y2 = MAX((int)MAX(s->v->yPos, s->v->yPos2), MAX(s->v->yPos - s->v->celData->height, s->v->yPos2 - s->v->celData2->height));
-
-		s->v->celData2 = s->v->celData;
-
-		commitBlock(x1, y1, x2, y2, immediate);
-
-		if (s->v->stepTimeCount != s->v->stepTime)
-			continue;
-
-		if (s->v->xPos == s->v->xPos2 && s->v->yPos == s->v->yPos2) {
-			s->v->flags |= fDidntMove;
-			continue;
-		}
-
-		s->v->xPos2 = s->v->xPos;
-		s->v->yPos2 = s->v->yPos;
-		s->v->flags &= ~fDidntMove;
-	}
-}
-
-/**
- * Erase all sprites in the given list.
- */
-void SpritesMgr::eraseSprites(SpriteList &l) {
-	SpriteList::iterator iter;
-	for (iter = l.reverse_begin(); iter != l.end(); --iter) {
-		Sprite *s = *iter;
-		objsRestoreArea(s);
+//	warning("eraseSprites - count %d", spriteList.size());
+	for (iter = spriteList.reverse_begin(); iter != spriteList.end(); iter--) {
+		Sprite &sprite = *iter;
+		_gfx->block_restore(sprite.xPos, sprite.yPos, sprite.xSize, sprite.ySize, sprite.backgroundBuffer);
 	}
 
-	freeList(l);
-}
-
-/**
- * Blit all sprites in the given list.
- */
-void SpritesMgr::blitSprites(SpriteList& l) {
-	int hidden;
-	SpriteList::iterator iter;
-
-	for (iter = l.begin(); iter != l.end(); ++iter) {
-		Sprite *s = *iter;
-
-		objsSaveArea(s);
-		debugC(8, kDebugLevelSprites, "blitSprites(): s->v->entry = %d (prio %d)", s->v->entry, s->v->priority);
-		hidden = blitCel(s->xPos, s->yPos, s->v->priority, s->v->celData, s->v->viewData->agi256_2);
-
-		if (s->v->entry == 0) {	// if ego, update f1
-			_vm->setflag(fEgoInvisible, hidden);
-		}
-	}
-}
-
-/*
- * Public functions
- */
-
-void SpritesMgr::commitUpdSprites() {
-	commitSprites(_sprUpd);
-}
-
-void SpritesMgr::commitNonupdSprites() {
-	commitSprites(_sprNonupd);
-}
-
-// check moves in both lists
-void SpritesMgr::commitBoth() {
-	commitUpdSprites();
-	commitNonupdSprites();
+	freeList(spriteList);
 }
 
 /**
@@ -477,35 +177,35 @@ void SpritesMgr::commitBoth() {
  * @see erase_nonupd_sprites()
  * @see erase_both()
  */
-void SpritesMgr::eraseUpdSprites() {
-	eraseSprites(_sprUpd);
+void SpritesMgr::eraseRegularSprites() {
+	eraseSprites(_spriteRegularList);
+}
+
+void SpritesMgr::eraseStaticSprites() {
+	eraseSprites(_spriteStaticList);
+}
+
+void SpritesMgr::eraseSprites() {
+	eraseSprites(_spriteRegularList);
+	eraseSprites(_spriteStaticList);
 }
 
 /**
- * Erase non-updating sprites.
- * This function follows the list of all non-updating sprites and restores
- * the visible and priority data of their background buffers back to
- * the AGI screen.
- *
- * @see erase_upd_sprites()
- * @see erase_both()
+ * Draw all sprites in the given list.
  */
-void SpritesMgr::eraseNonupdSprites() {
-	eraseSprites(_sprNonupd);
-}
+void SpritesMgr::drawSprites(SpriteList &spriteList) {
+	SpriteList::iterator iter;
+//	warning("drawSprites");
 
-/**
- * Erase all sprites.
- * This function follows the lists of all updating and non-updating
- * sprites and restores the visible and priority data of their background
- * buffers back to the AGI screen.
- *
- * @see erase_upd_sprites()
- * @see erase_nonupd_sprites()
- */
-void SpritesMgr::eraseBoth() {
-	eraseUpdSprites();
-	eraseNonupdSprites();
+	for (iter = spriteList.begin(); iter != spriteList.end(); ++iter) {
+		Sprite &sprite = *iter;
+		ScreenObjEntry *screenObj = sprite.screenObjPtr;
+
+		_gfx->block_save(sprite.xPos, sprite.yPos, sprite.xSize, sprite.ySize, sprite.backgroundBuffer);
+		//debugC(8, kDebugLevelSprites, "drawSprites(): s->v->entry = %d (prio %d)", s->viewPtr->entry, s->viewPtr->priority);
+//		warning("sprite %d (view %d), priority %d, sort %d, givenOrder %d", screenObj->objectNr, screenObj->currentView, screenObj->priority, sprite.sortOrder, sprite.givenOrderNr);
+		drawCel(screenObj);
+	}
 }
 
 /**
@@ -516,37 +216,222 @@ void SpritesMgr::eraseBoth() {
  * @see blit_nonupd_sprites()
  * @see blit_both()
  */
-void SpritesMgr::blitUpdSprites() {
-	debugC(7, kDebugLevelSprites, "blitUpdSprites()");
-	buildUpdBlitlist();
-	blitSprites(_sprUpd);
+void SpritesMgr::drawRegularSpriteList() {
+	debugC(7, kDebugLevelSprites, "drawRegularSpriteList()");
+	drawSprites(_spriteRegularList);
+}
+
+void SpritesMgr::drawStaticSpriteList() {
+	//debugC(7, kDebugLevelSprites, "drawRegularSpriteList()");
+	drawSprites(_spriteStaticList);
+}
+
+void SpritesMgr::drawAllSpriteLists() {
+	drawSprites(_spriteStaticList);
+	drawSprites(_spriteRegularList);
+}
+
+void SpritesMgr::drawCel(ScreenObjEntry *screenObj) {
+	int16 curX = screenObj->xPos;
+	int16 baseX = screenObj->xPos;
+	int16 curY = screenObj->yPos;
+	AgiViewCel *celPtr = screenObj->celData;
+	byte *celDataPtr = celPtr->rawBitmap;
+	uint8 remainingCelHeight = celPtr->height;
+	uint8 celWidth = celPtr->width;
+	byte celClearKey = celPtr->clearKey;
+	byte viewPriority = screenObj->priority;
+	byte screenPriority = 0;
+	byte curColor = 0;
+	byte isViewHidden = true;
+
+	// Adjust vertical position, given yPos is lower left, but we need upper left
+	curY = curY - celPtr->height + 1;
+
+	while (remainingCelHeight) {
+		for (int16 loopX = 0; loopX < celWidth; loopX++) {
+			curColor = *celDataPtr++;
+
+			if (curColor != celClearKey) {
+				screenPriority = _gfx->getPriority(curX, curY);
+				if (screenPriority <= 2) {
+					// control data found
+					if (_gfx->checkControlPixel(curX, curY, viewPriority)) {
+						_gfx->putPixel(curX, curY, GFX_SCREEN_MASK_VISUAL, curColor, 0);
+						isViewHidden = false;
+					}
+				} else if (screenPriority <= viewPriority) {
+					_gfx->putPixel(curX, curY, GFX_SCREEN_MASK_ALL, curColor, viewPriority);
+					isViewHidden = false;
+				}
+
+			}
+			curX++;
+		}
+
+		// go to next vertical position
+		remainingCelHeight--;
+		curX = baseX;
+		curY++;
+	}
+
+	if (screenObj->objectNr == 0) { // if ego, update if ego is visible at the moment
+		_vm->setFlag(VM_FLAG_EGO_INVISIBLE, isViewHidden);
+	}
+}
+
+
+void SpritesMgr::showSprite(ScreenObjEntry *screenObj) {
+	int16 x = 0;
+	int16 y = 0;
+	int16 width = 0;
+	int16 height = 0;
+
+	int16 view_height_prev = 0;
+	int16 view_width_prev = 0;
+
+	int16 y2 = 0;
+	int16 height1 = 0;
+	int16 height2 = 0;
+
+	int16 x2 = 0;
+	int16 width1 = 0;
+	int16 width2 = 0;
+
+	if (!_vm->_game.pictureShown)
+		return;
+
+	view_height_prev = screenObj->ySize_prev;
+	view_width_prev  = screenObj->xSize_prev;
+
+	screenObj->ySize_prev = screenObj->ySize;
+	screenObj->xSize_prev = screenObj->xSize;
+
+	if (screenObj->yPos < screenObj->yPos_prev) {
+		y = screenObj->yPos_prev;
+		y2 = screenObj->yPos;
+
+		height1 = view_height_prev;
+		height2 = screenObj->ySize;
+	} else {
+		y = screenObj->yPos;
+		y2 = screenObj->yPos_prev;
+
+		height1 = screenObj->ySize;
+		height2 = view_height_prev;
+	}
+
+	if ((y2 - height2) > (y - height1)) {
+		height = height1;
+	} else {
+		height = y - y2 + height2;
+	}
+
+	if (screenObj->xPos > screenObj->xPos_prev) {
+		x = screenObj->xPos_prev;
+		x2 = screenObj->xPos;
+		width1 = view_width_prev;
+		width2 = screenObj->xSize;
+	} else {
+		x = screenObj->xPos;
+		x2 = screenObj->xPos_prev;
+		width1 = screenObj->xSize;
+		width2 = view_width_prev;
+	}
+
+	if ((x2 + width2) < (x + width1)) {
+		width = width1;
+	} else {
+		width = width2 + x2 - x;
+	}
+
+	if ((x + width) > 161) {
+		width = 161 - x;
+	}
+
+	if (1 < (height - y)) {
+		height = y + 1;
+	}
+
+	// render this block
+	int16 upperY = y - height + 1;
+	_gfx->render_Block(x, upperY, width, height);
+}
+
+void SpritesMgr::showSprites(SpriteList &spriteList) {
+	SpriteList::iterator iter;
+	ScreenObjEntry *screenObjPtr = NULL;
+
+	for (iter = spriteList.begin(); iter != spriteList.end(); ++iter) {
+		Sprite &sprite = *iter;
+		screenObjPtr = sprite.screenObjPtr;
+
+		showSprite(screenObjPtr);
+
+		if (screenObjPtr->stepTimeCount == screenObjPtr->stepTime) {
+			if ((screenObjPtr->xPos == screenObjPtr->xPos_prev) && (screenObjPtr->yPos == screenObjPtr->yPos_prev)) {
+				screenObjPtr->flags |= fDidntMove;
+			} else {
+				screenObjPtr->xPos_prev = screenObjPtr->xPos;
+				screenObjPtr->yPos_prev = screenObjPtr->yPos;
+				screenObjPtr->flags &= ~fDidntMove;
+			}
+		}
+	}
+	g_system->updateScreen();
+	//g_system->delayMillis(20);
+}
+
+void SpritesMgr::showRegularSpriteList() {
+	debugC(7, kDebugLevelSprites, "showRegularSpriteList()");
+	showSprites(_spriteRegularList);
+}
+
+void SpritesMgr::showStaticSpriteList() {
+	debugC(7, kDebugLevelSprites, "showStaticSpriteList()");
+	showSprites(_spriteStaticList);
+}
+
+void SpritesMgr::showAllSpriteLists() {
+	showSprites(_spriteStaticList);
+	showSprites(_spriteRegularList);
 }
 
 /**
- * Blit non-updating sprites.
- * This function follows the list of all non-updating sprites and blits
- * them on the AGI screen.
- *
- * @see blit_upd_sprites()
- * @see blit_both()
+ * Show object and description
+ * This function shows an object from the player's inventory, displaying
+ * a message box with the object description.
+ * @param n  Number of the object to show
  */
-void SpritesMgr::blitNonupdSprites() {
-	debugC(7, kDebugLevelSprites, "blitNonupdSprites()");
-	buildNonupdBlitlist();
-	blitSprites(_sprNonupd);
-}
+void SpritesMgr::showObject(int16 viewNr) {
+	ScreenObjEntry screenObj;
+	uint8 *backgroundBuffer = NULL;
 
-/**
- * Blit all sprites.
- * This function follows the lists of all updating and non-updating
- * sprites and blits them on the AGI screen.
- *
- * @see blit_upd_sprites()
- * @see blit_nonupd_sprites()
- */
-void SpritesMgr::blitBoth() {
-	blitNonupdSprites();
-	blitUpdSprites();
+	_vm->agiLoadResource(RESOURCETYPE_VIEW, viewNr);
+	_vm->setView(&screenObj, viewNr);
+
+	screenObj.ySize_prev = screenObj.celData->height;
+	screenObj.xSize_prev = screenObj.celData->width;
+	screenObj.xPos_prev = ((SCRIPT_WIDTH - 1) - screenObj.xSize) / 2;
+	screenObj.xPos = screenObj.xPos_prev;
+	screenObj.yPos_prev = SCRIPT_HEIGHT - 1;
+	screenObj.yPos = screenObj.yPos_prev;
+	screenObj.priority = 15;
+	screenObj.flags = fFixedPriority; // Original AGI did "| fFixedPriority" on uninitialized memory
+	screenObj.objectNr = 255; // ???
+
+	backgroundBuffer = (uint8 *)malloc(screenObj.xSize * screenObj.ySize * 2); // for visual + priority data
+
+	_gfx->block_save(screenObj.xPos, (screenObj.yPos - screenObj.ySize + 1), screenObj.xSize, screenObj.ySize, backgroundBuffer);
+	drawCel(&screenObj);
+	showSprite(&screenObj);
+
+	_vm->_text->messageBox((char *)_vm->_game.views[viewNr].description);
+
+	_gfx->block_restore(screenObj.xPos, (screenObj.yPos - screenObj.ySize + 1), screenObj.xSize, screenObj.ySize, backgroundBuffer);
+	showSprite(&screenObj);
+
+	free(backgroundBuffer);
 }
 
 /**
@@ -562,188 +447,107 @@ void SpritesMgr::blitBoth() {
  * @param pri   priority to use
  * @param mar   if < 4, create a margin around the the base of the cel
  */
-void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, int mar) {
-	ViewCel *c = NULL;
-	int x1, y1, x2, y2, y3;
-	uint8 *p1, *p2;
+void SpritesMgr::addToPic(int16 viewNr, int16 loopNr, int16 celNr, int16 xPos, int16 yPos, int16 priority, int16 border) {
+	debugC(3, kDebugLevelSprites, "addToPic(view=%d, loop=%d, cel=%d, x=%d, y=%d, pri=%d, border=%d)", viewNr, loopNr, celNr, xPos, yPos, priority, border);
 
-	debugC(3, kDebugLevelSprites, "addToPic(view=%d, loop=%d, cel=%d, x=%d, y=%d, pri=%d, mar=%d)", view, loop, cel, x, y, pri, mar);
+	_vm->recordImageStackCall(ADD_VIEW, viewNr, loopNr, celNr, xPos, yPos, priority, border);
 
-	_vm->recordImageStackCall(ADD_VIEW, view, loop, cel, x, y, pri, mar);
+	ScreenObjEntry *screenObj = &_vm->_game.addToPicView;
+	screenObj->objectNr = -1; // addToPic-view
 
-	// Was hardcoded to 8, changed to pri_table[y] to fix Gold
-	// Rush (see Sarien bug #587558)
-	if (pri == 0)
-		pri = _vm->_game.priTable[y];
+	_vm->setView(screenObj, viewNr);
+	_vm->setLoop(screenObj, loopNr);
+	_vm->setCel(screenObj, celNr);
 
-	c = &_vm->_game.views[view].loop[loop].cel[cel];
-
-	x1 = x;
-	y1 = y - c->height + 1;
-	x2 = x + c->width - 1;
-	y2 = y;
-
-	if (x1 < 0) {
-		x2 -= x1;
-		x1 = 0;
+	screenObj->xSize_prev = screenObj->xSize;
+	screenObj->ySize_prev = screenObj->ySize;
+	screenObj->xPos_prev = xPos;
+	screenObj->xPos = xPos;
+	screenObj->yPos_prev = yPos;
+	screenObj->yPos = yPos;
+	screenObj->flags = fIgnoreObjects | fIgnoreHorizon | fFixedPriority;
+	screenObj->priority = 15;
+	_vm->fixPosition(screenObj);
+	if (priority == 0) {
+		screenObj->flags = fIgnoreHorizon;
 	}
-	if (y1 < 0) {
-		y2 -= y1;
-		y1 = 0;
+	screenObj->priority = priority;
+
+	eraseSprites();
+
+	// bugs related to this code: required by Gold Rush (see Sarien bug #587558)
+	if (screenObj->priority == 0) {
+		screenObj->priority = _gfx->priorityFromY(screenObj->yPos);
 	}
-	if (x2 >= _WIDTH)
-		x2 = _WIDTH - 1;
-	if (y2 >= _HEIGHT)
-		y2 = _HEIGHT - 1;
+	drawCel(screenObj);
 
-	eraseBoth();
-
-	debugC(4, kDebugLevelSprites, "blitCel(%d, %d, %d, c)", x, y, pri);
-	blitCel(x1, y1, pri, c, _vm->_game.views[view].agi256_2);
-
-	// If margin is 0, 1, 2, or 3, the base of the cel is
-	// surrounded with a rectangle of the corresponding priority.
-	// If margin >= 4, this extra margin is not shown.
-	//
-	// -1 indicates ignore and is set for V1
-	if (mar < 4 && mar != -1) {
-		// add rectangle around object, don't clobber control
-		// info in priority data. The box extends to the end of
-		// its priority band!
-		y3 = (y2 / 12) * 12;
-
-		// SQ1 needs +1 (see Sarien bug #810331)
-		if (_vm->getGameID() == GID_SQ1)
-			y3++;
-
-		// don't let box extend below y.
-		if (y3 > y2) y3 = y2;
-
-		p1 = &_vm->_game.sbuf16c[x1 + y3 * _WIDTH];
-		p2 = &_vm->_game.sbuf16c[x2 + y3 * _WIDTH];
-
-		for (y = y3; y <= y2; y++) {
-			if ((*p1 >> 4) >= 4)
-				*p1 = (mar << 4) | (*p1 & 0x0f);
-
-			if ((*p2 >> 4) >= 4)
-				*p2 = (mar << 4) | (*p2 & 0x0f);
-
-			p1 += _WIDTH;
-			p2 += _WIDTH;
-		}
-
-		debugC(4, kDebugLevelSprites, "pri box: %d %d %d %d (%d)", x1, y3, x2, y2, mar);
-		p1 = &_vm->_game.sbuf16c[x1 + y3 * _WIDTH];
-		p2 = &_vm->_game.sbuf16c[x1 + y2 * _WIDTH];
-		for (x = x1; x <= x2; x++) {
-			if ((*p1 >> 4) >= 4)
-				*p1 = (mar << 4) | (*p1 & 0x0f);
-
-			if ((*p2 >> 4) >= 4)
-				*p2 = (mar << 4) | (*p2 & 0x0f);
-
-			p1++;
-			p2++;
-		}
+	if (border <= 3) {
+		// Create priority-box
+		addToPicDrawPriorityBox(screenObj, border);
 	}
-
-	blitBoth();
-
-	commitBlock(x1, y1, x2, y2, true);
+	buildAllSpriteLists();
+	drawAllSpriteLists();
+	showSprite(screenObj);
 }
 
-/**
- * Show object and description
- * This function shows an object from the player's inventory, displaying
- * a message box with the object description.
- * @param n  Number of the object to show
- */
-void SpritesMgr::showObj(int n) {
-	ViewCel *c;
-	Sprite s;
-	int x1, y1, x2, y2;
+// bugs previously related to this:
+// Sarien bug #247)
+void SpritesMgr::addToPicDrawPriorityBox(ScreenObjEntry *screenObj, int16 border) {
+	int16 priorityFromY = _gfx->priorityFromY(screenObj->yPos);
+	int16 priorityHeight = 0;
+	int16 curY = 0;
+	int16 curX = 0;
+	int16 height = 0;
+	int16 width = 0;
+	int16 offsetX = 0;
 
-	_vm->agiLoadResource(rVIEW, n);
-	if (!(c = &_vm->_game.views[n].loop[0].cel[0]))
-		return;
+	// Figure out the height of the box
+	curY = screenObj->yPos;
+	do {
+		priorityHeight++;
+		if (curY <= 0)
+			break;
+		curY--;
+	} while (_gfx->priorityFromY(curY) == priorityFromY);
 
-	x1 = (_WIDTH - c->width) / 2;
-	y1 = 112;
-	x2 = x1 + c->width - 1;
-	y2 = y1 + c->height - 1;
+	// box height may not be larger than the actual view
+	if (screenObj->ySize < priorityHeight)
+		priorityHeight = screenObj->ySize;
 
-	s.xPos = x1;
-	s.yPos = y1;
-	s.xSize = c->width;
-	s.ySize = c->height;
-	s.buffer = (uint8 *)malloc(s.xSize * s.ySize);
-	s.v = 0;
+	// now actually draw lower horizontal line
+	curY = screenObj->yPos;
+	curX = screenObj->xPos;
 
-	objsSaveArea(&s);
-	blitCel(x1, y1, 15, c, _vm->_game.views[n].agi256_2);
-	commitBlock(x1, y1, x2, y2, true);
-	_vm->messageBox(_vm->_game.views[n].descr);
-	objsRestoreArea(&s);
-	commitBlock(x1, y1, x2, y2, true);
-
-	free(s.buffer);
-}
-
-void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2, bool immediate) {
-	int i, w, offset;
-	uint8 *q;
-
-	if (!_vm->_game.pictureShown)
-		return;
-
-	x1 = CLIP(x1, 0, _WIDTH - 1);
-	x2 = CLIP(x2, 0, _WIDTH - 1);
-	y1 = CLIP(y1, 0, _HEIGHT - 1);
-	y2 = CLIP(y2, 0, _HEIGHT - 1);
-
-	// Check if a window is active, and clip the block commited to exclude the
-	// window's contents. Fixes bug #3295652, and partially fixes bug #3080415.
-	AgiBlock &window = _vm->_game.window;
-	if (window.active) {
-		if (y1 < window.y2 && y2 > window.y2 && (x1 < window.x2 || x2 > window.x1)) {
-			// The top of the block covers the bottom of the window
-			y1 = window.y2;
-		}
-
-		if (y1 < window.y1 && y2 > window.y1 && (x1 < window.x2 || x2 > window.x1)) {
-			// The bottom of the block covers the top of the window
-			y2 = window.y1;
-		}
+	width = screenObj->xSize;
+	while (width) {
+		_gfx->putPixel(curX, curY, GFX_SCREEN_MASK_PRIORITY, 0, border);
+		curX++;
+		width--;
 	}
 
-	debugC(7, kDebugLevelSprites, "commitBlock(%d, %d, %d, %d)", x1, y1, x2, y2);
+	if (priorityHeight > 1) {
+		// Actual rectangle is needed
+		curY = screenObj->yPos;
+		curX = screenObj->xPos;
+		offsetX = screenObj->xSize - 1;
 
-	w = x2 - x1 + 1;
-	q = &_vm->_game.sbuf16c[x1 + _WIDTH * y1];
-	offset = _vm->_game.lineMinPrint * CHAR_LINES;
+		height = priorityHeight - 1;
+		while (height) {
+			curY--;
+			height--;
+			_gfx->putPixel(curX, curY, GFX_SCREEN_MASK_PRIORITY, 0, border); // left line
+			_gfx->putPixel(curX + offsetX, curY, GFX_SCREEN_MASK_PRIORITY, 0, border); // right line
+		}
 
-	for (i = y1; i <= y2; i++) {
-		_gfx->putPixelsA(x1, i + offset, w, q);
-		q += _WIDTH;
+		// and finally the upper horizontal line
+		width = screenObj->xSize - 2;
+		curX++;
+		while (width > 0) {
+			_gfx->putPixel(curX, curY, GFX_SCREEN_MASK_PRIORITY, 0, border);
+			curX++;
+			width--;
+		}
 	}
-
-	_gfx->flushBlockA(x1, y1 + offset, x2, y2 + offset);
-
-	if (immediate)
-		_gfx->doUpdate();
-}
-
-SpritesMgr::SpritesMgr(AgiEngine *agi, GfxMgr *gfx) {
-	_vm = agi;
-	_gfx = gfx;
-
-	_spritePool = (uint8 *)malloc(POOL_SIZE);
-	_poolTop = _spritePool;
-}
-
-SpritesMgr::~SpritesMgr() {
-	free(_spritePool);
 }
 
 } // End of namespace Agi

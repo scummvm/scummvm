@@ -21,6 +21,7 @@
  */
 
 #include "dreamweb/dreamweb.h"
+#include "common/file.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 #include "image/pcx.h"
@@ -150,7 +151,7 @@ void DreamWebEngine::doShake() {
 
 void DreamWebEngine::setMode() {
 	waitForVSync();
-	initGraphics(kScreenwidth, kScreenheight, false);
+	initGraphics(kScreenwidth, kScreenheight);
 }
 
 void DreamWebEngine::showPCX(const Common::String &suffix) {
@@ -424,6 +425,7 @@ void DreamWebEngine::transferFrame(uint8 from, uint8 to, uint8 offset) {
 
 	const uint8 *src = _freeFrames.getFrameData(3*from + offset);
 	uint8 *dst = _exFrames._data + _vars._exFramePos;
+	assert(_vars._exFramePos + byteCount <= kExframeslen);
 	memcpy(dst, src, byteCount);
 
 	exFrame.setPtr(_vars._exFramePos);

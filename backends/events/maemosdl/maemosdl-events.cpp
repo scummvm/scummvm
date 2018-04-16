@@ -96,7 +96,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				}
 			} else if (ev.key.keysym.sym == SDLK_F7) {
 				event.type = Common::EVENT_RBUTTONDOWN;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 				 debug(9, "remapping to right click down");
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F8) {
@@ -134,7 +134,7 @@ bool MaemoSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				}
 			} else if (ev.key.keysym.sym == SDLK_F7) {
 				event.type = Common::EVENT_RBUTTONUP;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 					debug(9, "remapping to right click up");
 				return true;
 			} else if (ev.key.keysym.sym == SDLK_F8) {

@@ -27,6 +27,7 @@
 #include "image/tga.h"
 
 #include "common/util.h"
+#include "common/algorithm.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/error.h"
@@ -152,7 +153,7 @@ bool TGADecoder::readHeader(Common::SeekableReadStream &tga, byte &imageType, by
 			// of alpha-bits, however, as the game files that use this decoder seems
 			// to ignore that fact, we force the amount to 8 for 32bpp files for now.
 			_format = Graphics::PixelFormat(4, 8, 8, 8, /* attributeBits */ 8, 16, 8, 0, 24);
-		} else if (pixelDepth == 16 && imageType == TYPE_TRUECOLOR) {
+		} else if (pixelDepth == 16) {
 			// 16bpp TGA is ARGB1555
 			_format = Graphics::PixelFormat(2, 5, 5, 5, attributeBits, 10, 5, 0, 15);
 		} else {
@@ -353,6 +354,13 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 #endif
 						count--;
 					}
+				} else if (pixelDepth == 16 && imageType == TYPE_RLE_TRUECOLOR) {
+					const uint16 rgb = tga.readUint16LE();
+					while (rleCount-- > 0) {
+						*((uint16 *)data) = rgb;
+						data += 2;
+						count--;
+					}
 				} else if (pixelDepth == 8 && imageType == TYPE_RLE_BW) {
 					byte color = tga.readByte();
 					while (rleCount-- > 0) {
@@ -397,6 +405,12 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 #endif
 						count--;
 					}
+				} else if (pixelDepth == 16 && imageType == TYPE_RLE_TRUECOLOR) {
+					while (rleCount-- > 0) {
+						*((uint16 *)data) = tga.readUint16LE();
+						data += 2;
+						count--;
+					}
 				} else if (pixelDepth == 8 && imageType == TYPE_RLE_BW) {
 					while (rleCount-- > 0) {
 						byte color = tga.readByte();
@@ -424,6 +438,22 @@ bool TGADecoder::readDataRLE(Common::SeekableReadStream &tga, byte imageType, by
 	} else {
 		return false;
 	}
+
+	// If it's a bottom origin image, we need to vertically flip the image
+	if (!_originTop) {
+		byte *tempLine = new byte[_surface.pitch];
+		byte *line1 = (byte *)_surface.getBasePtr(0, 0);
+		byte *line2 = (byte *)_surface.getBasePtr(0, _surface.h - 1);
+
+		for (int y = 0; y < (_surface.h / 2); ++y, line1 += _surface.pitch, line2 -= _surface.pitch) {
+			Common::copy(line1, line1 + _surface.pitch, tempLine);
+			Common::copy(line2, line2 + _surface.pitch, line1);
+			Common::copy(tempLine, tempLine + _surface.pitch, line2);
+		}
+
+		delete[] tempLine;
+	}
+
 	return true;
 }
 

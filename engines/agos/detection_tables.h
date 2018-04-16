@@ -1259,6 +1259,32 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
+		// Simon the Sorcerer 1 - English Amiga CD32 demo, from the cover disc of
+		// issue 5 (October 1994) of Amiga CD32 Gamer
+	{
+		{
+			"simon1",
+			"CD32 Demo",
+
+			{
+	{ "gameamiga",		GAME_BASEFILE,	"e243f9229f9728b3476e54d2cf5f18a1", 27998},
+	{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", 18979},
+	{ "stripped.txt",	GAME_STRFILE,	"94413c71c86c32ed9baaa1c74a151cb3", 243},
+	{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", 696},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_CD | ADGF_DEMO,
+			GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1CD32,
+		GF_TALKIE | GF_OLD_BUNDLE | GF_PLANAR
+	},
+
+
 	// Simon the Sorcerer 1 - English DOS Floppy Demo
 	{
 		{
@@ -1359,7 +1385,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"simon1",
-			"Floppy",
+			"Infocom Floppy",
 
 			{
 	{ "gamepc",		GAME_BASEFILE,	"9f93d27432ce44a787eef10adb640870", 37070},
@@ -1383,7 +1409,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"simon1",
-			"Floppy",
+			"Infocom Floppy",
 
 			{
 	{ "gamepc",		GAME_BASEFILE,	"62de24fc579b94fac7d3d23201b65b14", -1},
@@ -1573,11 +1599,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
-	// Simon the Sorcerer 1 - English DOS CD alternate?
+	// Simon the Sorcerer 1 - English DOS CD  (Infocom)
 	{
 		{
 			"simon1",
-			"CD",
+			"Infocom CD",
 
 			{
 	{ "gamepc",		GAME_BASEFILE,	"c0b948b6821d2140f8b977144f21027a", -1},
@@ -2215,6 +2241,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 2 - Russian DOS CD
+	{
+		{
+			"simon2",
+			"CD",
+
+			{
+	{ "gsptr30",		GAME_BASEFILE,	"e26d162e573587f4601b88701292212c", 58851},
+	{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+	{ "simon2.gme",		GAME_GMEFILE,	"9c535d403966750ae98bdaf698375a38", 19687892},
+	{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", 171},
+	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
+	{ NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()

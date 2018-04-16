@@ -62,9 +62,9 @@ void scene17_restoreState() {
 	g_vars->scene17_flyState = g_fp->getObjectState(sO_Fly_17);
 
 	if (g_vars->scene17_flyState <= 0 ) {
-		g_vars->scene17_flyCountdown = g_fp->_rnd->getRandomNumber(600) + 600;
+		g_vars->scene17_flyCountdown = g_fp->_rnd.getRandomNumber(600) + 600;
 
-		g_vars->scene17_flyState = g_fp->_rnd->getRandomNumber(4) + 1;
+		g_vars->scene17_flyState = g_fp->_rnd.getRandomNumber(4) + 1;
 	}
 
 	g_fp->setObjectState(sO_Fly_17, g_vars->scene17_flyState - 1);
@@ -157,9 +157,9 @@ void sceneHandler17_moonshineFill() {
 void sceneHandler17_updateFlies() {
 	g_fp->_floaters->genFlies(g_fp->_currentScene, 239, -50, 20, 4);
 
-	g_fp->_floaters->_array2[0]->countdown = g_fp->_rnd->getRandomNumber(5) + 6;
-	g_fp->_floaters->_array2[0]->val6 = 239;
-	g_fp->_floaters->_array2[0]->val7 = -50;
+	g_fp->_floaters->_array2[0].countdown = g_fp->_rnd.getRandomNumber(5) + 6;
+	g_fp->_floaters->_array2[0].val6 = 239;
+	g_fp->_floaters->_array2[0].val7 = -50;
 }
 
 
@@ -184,7 +184,7 @@ int sceneHandler17(ExCommand *cmd) {
 
 			g_vars->scene17_handPhase = true;
 		}
-        break;
+		break;
 
 	case MSG_SC17_FILLBOTTLE:
 		sceneHandler17_fillBottle();
@@ -211,11 +211,11 @@ int sceneHandler17(ExCommand *cmd) {
 			int pic = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
 			if (pic == PIC_SC17_RTRUBA2 || pic == PIC_SC17_RTRUBA) {
-				if (cmd->_keyCode == ANI_INV_COIN || cmd->_keyCode == ANI_INV_BOOT || cmd->_keyCode == ANI_INV_HAMMER) {
+				if (cmd->_param == ANI_INV_COIN || cmd->_param == ANI_INV_BOOT || cmd->_param == ANI_INV_HAMMER) {
 					if (g_vars->scene17_handPhase) {
 						if (g_fp->_aniMan->isIdle()) {
 							if (!(g_fp->_aniMan->_flags & 0x100)) {
-								handleObjectInteraction(g_fp->_aniMan, g_vars->scene17_hand, cmd->_keyCode);
+								handleObjectInteraction(g_fp->_aniMan, g_vars->scene17_hand, cmd->_param);
 								break;
 							}
 						}

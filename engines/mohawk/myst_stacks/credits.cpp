@@ -28,31 +28,29 @@
 #include "mohawk/myst_stacks/credits.h"
 
 #include "common/system.h"
-#include "gui/message.h"
 
 namespace Mohawk {
 namespace MystStacks {
 
 // NOTE: Credits Start Card is 10000
 
-Credits::Credits(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
+Credits::Credits(MohawkEngine_Myst *vm) :
+		MystScriptParser(vm),
+		_creditsRunning(false),
+		_curImage(0) {
 	setupOpcodes();
 }
 
 Credits::~Credits() {
 }
 
-#define OPCODE(op, x) _opcodes.push_back(new MystOpcode(op, (OpcodeProcMyst) &Credits::x, #x))
-
 void Credits::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OPCODE(100, o_quit);
+	REGISTER_OPCODE(100, Credits, o_quit);
 
 	// "Init" Opcodes
-	OPCODE(200, o_runCredits);
+	REGISTER_OPCODE(200, Credits, o_runCredits);
 }
-
-#undef OPCODE
 
 void Credits::disablePersistentScripts() {
 	_creditsRunning = false;
@@ -66,13 +64,14 @@ void Credits::runPersistentScripts() {
 		_curImage++;
 
 		// After the 6th image has shown, it's time to quit
-		if (_curImage == 7)
+		if (_curImage == 7) {
 			_vm->quitGame();
+			return;
+		}
 
 		// Draw next image
 		_vm->drawCardBackground();
 		_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-		_vm->_system->updateScreen();
 
 		_startTime = _vm->_system->getMillis();
 	}
@@ -89,7 +88,7 @@ uint16 Credits::getVar(uint16 var) {
 	}
 }
 
-void Credits::o_runCredits(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+void Credits::o_runCredits(uint16 var, const ArgumentsArray &args) {
 	// Activate the credits
 	_creditsRunning = true;
 	_curImage = 0;

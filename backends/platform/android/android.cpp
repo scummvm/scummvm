@@ -396,18 +396,13 @@ void OSystem_Android::initBackend() {
 	EventsBaseBackend::initBackend();
 }
 
-void OSystem_Android::addPluginDirectories(Common::FSList &dirs) const {
-	ENTER();
-
-	JNI::getPluginDirectories(dirs);
-}
-
 bool OSystem_Android::hasFeature(Feature f) {
 	return (f == kFeatureFullscreenMode ||
 			f == kFeatureAspectRatioCorrection ||
 			f == kFeatureCursorPalette ||
 			f == kFeatureVirtualKeyboard ||
-			f == kFeatureOverlaySupportsAlpha);
+			f == kFeatureOverlaySupportsAlpha ||
+			f == kFeatureOpenUrl);
 }
 
 void OSystem_Android::setFeatureState(Feature f, bool enable) {
@@ -592,6 +587,10 @@ Common::String OSystem_Android::getSystemLanguage() const {
 							getSystemProperty("persist.sys.country").c_str());
 }
 
+bool OSystem_Android::openUrl(const Common::String &url) {
+	return JNI::openUrl(url.c_str());
+}
+
 Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	char value[PROP_VALUE_MAX];
 
@@ -599,11 +598,5 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 
 	return Common::String(value, len);
 }
-
-#ifdef DYNAMIC_MODULES
-void AndroidPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
-	((OSystem_Android *)g_system)->addPluginDirectories(dirs);
-}
-#endif
 
 #endif

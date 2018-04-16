@@ -24,7 +24,6 @@
 #include "common/timer.h"
 
 #include "scumm/actor.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/sound.h"
 #include "scumm/imuse_digi/dimuse.h"
@@ -103,61 +102,55 @@ void IMuseDigital::resetState() {
 	_triggerUsed = false;
 }
 
-void IMuseDigital::saveOrLoad(Serializer *ser) {
-	Common::StackLock lock(_mutex, "IMuseDigital::saveOrLoad()");
+static void syncWithSerializer(Common::Serializer &s, Track &t) {
+	s.syncAsSByte(t.pan, VER(31));
+	s.syncAsSint32LE(t.vol, VER(31));
+	s.syncAsSint32LE(t.volFadeDest, VER(31));
+	s.syncAsSint32LE(t.volFadeStep, VER(31));
+	s.syncAsSint32LE(t.volFadeDelay, VER(31));
+	s.syncAsByte(t.volFadeUsed, VER(31));
+	s.syncAsSint32LE(t.soundId, VER(31));
+	s.syncArray(t.soundName, 15, Common::Serializer::SByte, VER(31));
+	s.syncAsByte(t.used, VER(31));
+	s.syncAsByte(t.toBeRemoved, VER(31));
+	s.syncAsByte(t.souStreamUsed, VER(31));
+	s.skip(1, VER(31), VER(76)); // mixerStreamRunning
+	s.syncAsSint32LE(t.soundPriority, VER(31));
+	s.syncAsSint32LE(t.regionOffset, VER(31));
+	s.skip(4, VER(31), VER(31)); // trackOffset
+	s.syncAsSint32LE(t.dataOffset, VER(31));
+	s.syncAsSint32LE(t.curRegion, VER(31));
+	s.syncAsSint32LE(t.curHookId, VER(31));
+	s.syncAsSint32LE(t.volGroupId, VER(31));
+	s.syncAsSint32LE(t.soundType, VER(31));
+	s.syncAsSint32LE(t.feedSize, VER(31));
+	s.syncAsSint32LE(t.dataMod12Bit, VER(31));
+	s.syncAsSint32LE(t.mixerFlags, VER(31));
+	s.skip(4, VER(31), VER(42)); // mixerVol
+	s.skip(4, VER(31), VER(42)); // mixerPan
+	s.syncAsByte(t.sndDataExtComp, VER(45));
+}
 
-	const SaveLoadEntry mainEntries[] = {
-		MK_OBSOLETE(IMuseDigital, _volVoice, sleInt32, VER(31), VER(42)),
-		MK_OBSOLETE(IMuseDigital, _volSfx, sleInt32, VER(31), VER(42)),
-		MK_OBSOLETE(IMuseDigital, _volMusic, sleInt32, VER(31), VER(42)),
-		MKLINE(IMuseDigital, _curMusicState, sleInt32, VER(31)),
-		MKLINE(IMuseDigital, _curMusicSeq, sleInt32, VER(31)),
-		MKLINE(IMuseDigital, _curMusicCue, sleInt32, VER(31)),
-		MKLINE(IMuseDigital, _nextSeqToPlay, sleInt32, VER(31)),
-		MKLINE(IMuseDigital, _radioChatterSFX, sleByte, VER(76)),
-		MKARRAY(IMuseDigital, _attributes[0], sleInt32, 188, VER(31)),
-		MKEND()
-	};
+void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
+	Common::StackLock lock(_mutex, "IMuseDigital::saveLoadEarly()");
 
-	const SaveLoadEntry trackEntries[] = {
-		MKLINE(Track, pan, sleInt8, VER(31)),
-		MKLINE(Track, vol, sleInt32, VER(31)),
-		MKLINE(Track, volFadeDest, sleInt32, VER(31)),
-		MKLINE(Track, volFadeStep, sleInt32, VER(31)),
-		MKLINE(Track, volFadeDelay, sleInt32, VER(31)),
-		MKLINE(Track, volFadeUsed, sleByte, VER(31)),
-		MKLINE(Track, soundId, sleInt32, VER(31)),
-		MKARRAY(Track, soundName[0], sleByte, 15, VER(31)),
-		MKLINE(Track, used, sleByte, VER(31)),
-		MKLINE(Track, toBeRemoved, sleByte, VER(31)),
-		MKLINE(Track, souStreamUsed, sleByte, VER(31)),
-		MK_OBSOLETE(Track, mixerStreamRunning, sleByte, VER(31), VER(76)),
-		MKLINE(Track, soundPriority, sleInt32, VER(31)),
-		MKLINE(Track, regionOffset, sleInt32, VER(31)),
-		MK_OBSOLETE(Track, trackOffset, sleInt32, VER(31), VER(31)),
-		MKLINE(Track, dataOffset, sleInt32, VER(31)),
-		MKLINE(Track, curRegion, sleInt32, VER(31)),
-		MKLINE(Track, curHookId, sleInt32, VER(31)),
-		MKLINE(Track, volGroupId, sleInt32, VER(31)),
-		MKLINE(Track, soundType, sleInt32, VER(31)),
-		MKLINE(Track, feedSize, sleInt32, VER(31)),
-		MKLINE(Track, dataMod12Bit, sleInt32, VER(31)),
-		MKLINE(Track, mixerFlags, sleInt32, VER(31)),
-		MK_OBSOLETE(Track, mixerVol, sleInt32, VER(31), VER(42)),
-		MK_OBSOLETE(Track, mixerPan, sleInt32, VER(31), VER(42)),
-		MKLINE(Track, sndDataExtComp, sleByte, VER(45)),
-		MKEND()
-	};
-
-	ser->saveLoadEntries(this, mainEntries);
+	s.skip(4, VER(31), VER(42)); // _volVoice
+	s.skip(4, VER(31), VER(42)); // _volSfx
+	s.skip(4, VER(31), VER(42)); // _volMusic
+	s.syncAsSint32LE(_curMusicState, VER(31));
+	s.syncAsSint32LE(_curMusicSeq, VER(31));
+	s.syncAsSint32LE(_curMusicCue, VER(31));
+	s.syncAsSint32LE(_nextSeqToPlay, VER(31));
+	s.syncAsByte(_radioChatterSFX, VER(76));
+	s.syncArray(_attributes, 188, Common::Serializer::Sint32LE, VER(31));
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
-		if (ser->isLoading()) {
+		if (s.isLoading()) {
 			memset(track, 0, sizeof(Track));
 		}
-		ser->saveLoadEntries(track, trackEntries);
-		if (ser->isLoading()) {
+		syncWithSerializer(s, *track);
+		if (s.isLoading()) {
 			_track[l]->trackId = l;
 			if (!track->used)
 				continue;
@@ -201,8 +194,7 @@ void IMuseDigital::saveOrLoad(Serializer *ser) {
 
 			track->stream = Audio::makeQueuingAudioStream(freq, (track->mixerFlags & kFlagStereo) != 0);
 
-			_mixer->playStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(),
-							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagStereo) != 0);
+			_mixer->playStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan());
 			_mixer->pauseHandle(track->mixChanHandle, true);
 		}
 	}

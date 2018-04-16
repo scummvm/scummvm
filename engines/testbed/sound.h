@@ -23,7 +23,6 @@
 #ifndef TESTBED_SOUND_H
 #define TESTBED_SOUND_H
 
-#include "gui/dialog.h"
 #include "audio/mixer.h"
 #include "testbed/config.h"
 #include "testbed/testsuite.h"

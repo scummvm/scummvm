@@ -24,7 +24,6 @@
 
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/usage_bits.h"
@@ -38,7 +37,11 @@ Sprite::Sprite(ScummEngine_v90he *vm)
 	_vm(vm),
 	_spriteGroups(0),
 	_spriteTable(0),
-	_activeSpritesTable(0) {
+	_activeSpritesTable(0),
+	_numSpritesToProcess(0),
+	_varNumSpriteGroups(0),
+	_varNumSprites(0),
+	_varMaxSprites(0) {
 }
 
 Sprite::~Sprite() {
@@ -386,7 +389,7 @@ int Sprite::getSpriteGeneralProperty(int spriteId, int type) {
 	case 0x7B:
 		return _spriteTable[spriteId].imgFlags;
 	case 0x7D:
-		return _spriteTable[spriteId].field_90;
+		return _spriteTable[spriteId].conditionBits;
 	case 0x7E:
 		return _spriteTable[spriteId].animProgress;
 	default:
@@ -739,18 +742,16 @@ void Sprite::setSpriteResetClass(int spriteId) {
 	_spriteTable[spriteId].classFlags = 0;
 }
 
-void Sprite::setSpriteField84(int spriteId, int value) {
+void Sprite::setSpriteZBuffer(int spriteId, int value) {
 	assertRange(1, spriteId, _varNumSprites, "sprite");
 
-	_spriteTable[spriteId].field_84 = value;
+	_spriteTable[spriteId].zbufferImage = value;
 }
 
 void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
-	debug(0, "setSpriteGeneralProperty: spriteId %d type 0x%x", spriteId, type);
+	debug(6, "setSpriteGeneralProperty: spriteId %d type 0x%x value 0x%x", spriteId, type, value);
 	assertRange(1, spriteId, _varNumSprites, "sprite");
 	int32 delay;
-
-	// XXX U32 related check
 
 	switch (type) {
 	case 0x7B:
@@ -758,7 +759,7 @@ void Sprite::setSpriteGeneralProperty(int spriteId, int type, int value) {
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 		break;
 	case 0x7D:
-		_spriteTable[spriteId].field_90 = value;
+		_spriteTable[spriteId].conditionBits = value;
 		_spriteTable[spriteId].flags |= kSFChanged | kSFNeedRedraw;
 		break;
 	case 0x7E:
@@ -797,9 +798,9 @@ void Sprite::resetSprite(int spriteId) {
 	_spriteTable[spriteId].sourceImage = 0;
 	_spriteTable[spriteId].maskImage = 0;
 	_spriteTable[spriteId].priority = 0;
-	_spriteTable[spriteId].field_84 = 0;
+	_spriteTable[spriteId].zbufferImage = 0;
 	_spriteTable[spriteId].imgFlags = 0;
-	_spriteTable[spriteId].field_90 = 0;
+	_spriteTable[spriteId].conditionBits = 0;
 
 	if (_vm->_game.heversion >= 100) {
 		_spriteTable[spriteId].flags &= ~kSFMarkDirty;
@@ -816,7 +817,7 @@ void Sprite::setSpriteImage(int spriteId, int imageNum) {
 	origResWizStates = _spriteTable[spriteId].imageStateCount;
 
 	_spriteTable[spriteId].image = imageNum;
-	_spriteTable[spriteId].field_74 = 0;
+	_spriteTable[spriteId].animIndex = 0;
 	_spriteTable[spriteId].imageState = 0;
 
 	if (_spriteTable[spriteId].image) {
@@ -1292,7 +1293,7 @@ void Sprite::processImages(bool arg) {
 
 		wiz.spriteId = spi->id;
 		wiz.spriteGroup = spi->group;
-		wiz.field_23EA = spi->field_90;
+		wiz.conditionBits = spi->conditionBits;
 		spi->curImageState = wiz.img.state = imageState;
 		spi->curImage = wiz.img.resNum = image;
 		wiz.processFlags = kWPFNewState | kWPFSetPos;
@@ -1339,9 +1340,9 @@ void Sprite::processImages(bool arg) {
 		}
 		if (spr_flags & kSFRemapPalette)
 			wiz.img.flags |= kWIFRemapPalette;
-		if (spi->field_84) {
+		if (spi->zbufferImage) {
 			wiz.processFlags |= 0x200000;
-			wiz.img.field_390 = spi->field_84;
+			wiz.img.zbuffer = spi->zbufferImage;
 			wiz.img.zorder = spi->priority;
 		}
 		if (spi->sourceImage) {
@@ -1387,80 +1388,79 @@ void Sprite::processImages(bool arg) {
 	}
 }
 
-void Sprite::saveOrLoadSpriteData(Serializer *s) {
-	static const SaveLoadEntry spriteEntries[] = {
-		MKLINE(SpriteInfo, id, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, zorder, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, flags, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, image, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, imageState, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, group, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, palette, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, priority, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, bbox.left, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, bbox.top, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, bbox.right, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, bbox.bottom, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, dx, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, dy, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, pos.x, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, pos.y, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, tx, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, ty, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, userValue, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, curImageState, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, curImage, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, imglistNum, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, shadow, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, imageStateCount, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, angle, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, scale, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, animProgress, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, curAngle, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, curScale, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, curImgFlags, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_74, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, animSpeed, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, sourceImage, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, maskImage, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_84, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, classFlags, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, imgFlags, sleInt32, VER(48)),
-		MKLINE(SpriteInfo, field_90, sleInt32, VER(48)),
-		MKEND()
-	};
+static void syncWithSerializer(Common::Serializer &s, SpriteInfo &si) {
+	s.syncAsSint32LE(si.id, VER(48));
+	s.syncAsSint32LE(si.zorder, VER(48));
+	s.syncAsSint32LE(si.flags, VER(48));
+	s.syncAsSint32LE(si.image, VER(48));
+	s.syncAsSint32LE(si.imageState, VER(48));
+	s.syncAsSint32LE(si.group, VER(48));
+	s.syncAsSint32LE(si.palette, VER(48));
+	s.syncAsSint32LE(si.priority, VER(48));
+	s.syncAsSint32LE(si.bbox.left, VER(48));
+	s.syncAsSint32LE(si.bbox.top, VER(48));
+	s.syncAsSint32LE(si.bbox.right, VER(48));
+	s.syncAsSint32LE(si.bbox.bottom, VER(48));
+	s.syncAsSint32LE(si.dx, VER(48));
+	s.syncAsSint32LE(si.dy, VER(48));
+	s.syncAsSint32LE(si.pos.x, VER(48));
+	s.syncAsSint32LE(si.pos.y, VER(48));
+	s.syncAsSint32LE(si.tx, VER(48));
+	s.syncAsSint32LE(si.ty, VER(48));
+	s.syncAsSint32LE(si.userValue, VER(48));
+	s.syncAsSint32LE(si.curImageState, VER(48));
+	s.syncAsSint32LE(si.curImage, VER(48));
+	s.syncAsSint32LE(si.imglistNum, VER(48));
+	s.syncAsSint32LE(si.shadow, VER(48));
+	s.syncAsSint32LE(si.imageStateCount, VER(48));
+	s.syncAsSint32LE(si.angle, VER(48));
+	s.syncAsSint32LE(si.scale, VER(48));
+	s.syncAsSint32LE(si.animProgress, VER(48));
+	s.syncAsSint32LE(si.curAngle, VER(48));
+	s.syncAsSint32LE(si.curScale, VER(48));
+	s.syncAsSint32LE(si.curImgFlags, VER(48));
+	s.syncAsSint32LE(si.animIndex, VER(48));
+	s.syncAsSint32LE(si.animSpeed, VER(48));
+	s.syncAsSint32LE(si.sourceImage, VER(48));
+	s.syncAsSint32LE(si.maskImage, VER(48));
+	s.syncAsSint32LE(si.zbufferImage, VER(48));
+	s.syncAsSint32LE(si.classFlags, VER(48));
+	s.syncAsSint32LE(si.imgFlags, VER(48));
+	s.syncAsSint32LE(si.conditionBits, VER(48));
+}
 
-	static const SaveLoadEntry spriteGroupEntries[] = {
-		MKLINE(SpriteGroup, bbox.left, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, bbox.top, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, bbox.right, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, bbox.bottom, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, priority, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, flags, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, tx, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, ty, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, image, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, scaling, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, scale_x_ratio_mul, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, scale_x_ratio_div, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, scale_y_ratio_mul, sleInt32, VER(48)),
-		MKLINE(SpriteGroup, scale_y_ratio_div, sleInt32, VER(48)),
-		MKEND()
-	};
+static void syncWithSerializer(Common::Serializer &s, SpriteGroup &sg) {
+	s.syncAsSint32LE(sg.bbox.left, VER(48));
+	s.syncAsSint32LE(sg.bbox.top, VER(48));
+	s.syncAsSint32LE(sg.bbox.right, VER(48));
+	s.syncAsSint32LE(sg.bbox.bottom, VER(48));
+	s.syncAsSint32LE(sg.priority, VER(48));
+	s.syncAsSint32LE(sg.flags, VER(48));
+	s.syncAsSint32LE(sg.tx, VER(48));
+	s.syncAsSint32LE(sg.ty, VER(48));
+	s.syncAsSint32LE(sg.image, VER(48));
+	s.syncAsSint32LE(sg.scaling, VER(48));
+	s.syncAsSint32LE(sg.scale_x_ratio_mul, VER(48));
+	s.syncAsSint32LE(sg.scale_x_ratio_div, VER(48));
+	s.syncAsSint32LE(sg.scale_y_ratio_mul, VER(48));
+	s.syncAsSint32LE(sg.scale_y_ratio_div, VER(48));
+}
 
-	if (s->getVersion() >= VER(64)) {
-		s->saveLoadArrayOf(_spriteTable, _varNumSprites + 1, sizeof(_spriteTable[0]), spriteEntries);
-		s->saveLoadArrayOf(_spriteGroups, _varNumSpriteGroups + 1, sizeof(_spriteGroups[0]), spriteGroupEntries);
+void Sprite::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() >= VER(64)) {
+		s.syncArray(_spriteTable, _varNumSprites + 1, syncWithSerializer);
+		s.syncArray(_spriteGroups, _varNumSpriteGroups + 1, syncWithSerializer);
 	} else {
-		s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites, sizeof(_activeSpritesTable[0]), spriteEntries);
-		s->saveLoadArrayOf(_spriteTable, _varNumSprites, sizeof(_spriteTable[0]), spriteEntries);
-		s->saveLoadArrayOf(_spriteGroups, _varNumSpriteGroups, sizeof(_spriteGroups[0]), spriteGroupEntries);
+		// TODO: This had been bogus, what is it really supposed to do?
+//		s->saveLoadArrayOf(_activeSpritesTable, _varNumSprites, sizeof(_activeSpritesTable[0]), spriteEntries);
+		s.syncArray(*_activeSpritesTable, _varNumSprites, syncWithSerializer);
+		s.syncArray(_spriteTable, _varNumSprites, syncWithSerializer);
+		s.syncArray(_spriteGroups, _varNumSpriteGroups, syncWithSerializer);
 	}
 
 	// Reset active sprite table
-	if (s->isLoading())
+	if (s.isLoading())
 		_numSpritesToProcess = 0;
-
 }
 
 } // End of namespace Scumm

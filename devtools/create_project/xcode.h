@@ -30,9 +30,9 @@
 
 namespace CreateProjectTool {
 
-class XCodeProvider : public ProjectProvider {
+class XcodeProvider : public ProjectProvider {
 public:
-	XCodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
+	XcodeProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version = 0);
 
 protected:
 
@@ -40,32 +40,32 @@ protected:
 
 	void createOtherBuildFiles(const BuildSetup &setup);
 
+	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList);
+
 	void createProjectFile(const std::string &name, const std::string &uuid, const BuildSetup &setup, const std::string &moduleDir,
 	                       const StringList &includeList, const StringList &excludeList);
 
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
-
 private:
 	enum {
-		SettingsAsList        = 0x01,
-		SettingsSingleItem    = 0x02,
-		SettingsNoQuote       = 0x04,
-		SettingsQuoteVariable = 0x08,
-		SettingsNoValue       = 0x10
+		kSettingsAsList        = 0x01,
+		kSettingsSingleItem    = 0x02,
+		kSettingsNoQuote       = 0x04,
+		kSettingsQuoteVariable = 0x08,
+		kSettingsNoValue       = 0x10
 	};
 
 	// File properties
 	struct FileProperty {
-		std::string fileEncoding;
-		std::string lastKnownFileType;
-		std::string fileName;
-		std::string filePath;
-		std::string sourceTree;
+		std::string _fileEncoding;
+		std::string _lastKnownFileType;
+		std::string _fileName;
+		std::string _filePath;
+		std::string _sourceTree;
 
-		FileProperty(std::string fileType = "", std::string name = "", std::string path = "", std::string source = "") :
-			fileEncoding(""), lastKnownFileType(fileType), fileName(name), filePath(path), sourceTree(source)
-		{
+		FileProperty(std::string fileType = "", std::string name = "", std::string path = "", std::string source = "")
+				: _fileEncoding(""), _lastKnownFileType(fileType), _fileName(name), _filePath(path), _sourceTree(source) {
 		}
 	};
 
@@ -74,33 +74,33 @@ private:
 	typedef std::vector<std::string> ValueList;
 
 	struct Entry {
-		std::string value;
-		std::string comment;
+		std::string _value;
+		std::string _comment;
 
-		Entry(std::string val, std::string cmt) : value(val), comment(cmt) {}
+		Entry(std::string val, std::string cmt) : _value(val), _comment(cmt) {}
 	};
 
 	typedef std::vector<Entry> EntryList;
 
 	struct Setting {
-		EntryList entries;
-		int flags;
-		int indent;
-		int order;
+		EntryList _entries;
+		int _flags;
+		int _indent;
+		int _order;
 
-		explicit Setting(std::string value = "", std::string comment = "", int flgs = 0, int idt = 0, int ord = -1) : flags(flgs), indent(idt), order(ord) {
-			entries.push_back(Entry(value, comment));
+		Setting(std::string value = "", std::string comment = "", int flgs = 0, int idt = 0, int ord = -1) : _flags(flgs), _indent(idt), _order(ord) {
+			_entries.push_back(Entry(value, comment));
 		}
 
-		explicit Setting(ValueList values, int flgs = 0, int idt = 0, int ord = -1) : flags(flgs), indent(idt), order(ord) {
+		Setting(ValueList values, int flgs = 0, int idt = 0, int ord = -1) : _flags(flgs), _indent(idt), _order(ord) {
 			for (unsigned int i = 0; i < values.size(); i++)
-				entries.push_back(Entry(values[i], ""));
+				_entries.push_back(Entry(values[i], ""));
 		}
 
-		explicit Setting(EntryList ents, int flgs = 0, int idt = 0, int ord = -1) : entries(ents), flags(flgs), indent(idt), order(ord) {}
+		Setting(EntryList ents, int flgs = 0, int idt = 0, int ord = -1) : _entries(ents), _flags(flgs), _indent(idt), _order(ord) {}
 
 		void addEntry(std::string value, std::string comment = "") {
-			entries.push_back(Entry(value, comment));
+			_entries.push_back(Entry(value, comment));
 		}
 	};
 
@@ -108,46 +108,36 @@ private:
 	typedef std::pair<std::string, Setting> SettingPair;
 	typedef std::vector<SettingPair> OrderedSettingList;
 
-	static bool OrderSortPredicate(const SettingPair& s1, const SettingPair& s2) {
-		return s1.second.order < s2.second.order;
+	static bool OrderSortPredicate(const SettingPair &s1, const SettingPair &s2) {
+		return s1.second._order < s2.second._order;
 	}
 
 	struct Property {
 	public:
-		SettingList settings;
-		int flags;
-		bool hasOrder;
+		SettingList _settings;
+		int _flags;
+		bool _hasOrder;
 
-		Property() : flags(0), hasOrder(false) {}
+		Property() : _flags(0), _hasOrder(false) {}
 
 		// Constructs a simple Property
-		explicit Property(std::string name, std::string value = "", std::string comment = "", int flgs = 0, int indent = 0, bool order = false) : flags(flgs), hasOrder(order) {
-			Setting setting(value, comment, flags, indent);
-
-			settings[name] = setting;
+		Property(std::string name, std::string value = "", std::string comment = "", int flgs = 0, int indent = 0, bool order = false) : _flags(flgs), _hasOrder(order) {
+			_settings[name] = Setting(value, comment, _flags, indent);
 		}
 
-		Property(std::string name, ValueList values, int flgs = 0, int indent = 0, bool order = false) : flags(flgs), hasOrder(order) {
-			Setting setting(values, flags, indent);
-
-			settings[name] = setting;
-		}
-
-		// Copy constructor
-		Property(const Property &rhs) {
-			settings = rhs.settings;
-			flags = rhs.flags;
+		Property(std::string name, ValueList values, int flgs = 0, int indent = 0, bool order = false) : _flags(flgs), _hasOrder(order) {
+			_settings[name] = Setting(values, _flags, indent);
 		}
 
 		OrderedSettingList getOrderedSettingList() {
 			OrderedSettingList list;
 
 			// Prepare vector to sort
-			for (SettingList::const_iterator setting = settings.begin(); setting != settings.end(); ++setting)
+			for (SettingList::const_iterator setting = _settings.begin(); setting != _settings.end(); ++setting)
 				list.push_back(SettingPair(setting->first, setting->second));
 
 			// Sort vector using setting order
-			if (hasOrder)
+			if (_hasOrder)
 				std::sort(list.begin(), list.end(), OrderSortPredicate);
 
 			return list;
@@ -161,48 +151,48 @@ private:
 	// be overkill since we only have to generate a single project
 	struct Object {
 	public:
-		std::string id;					// Unique identifier for this object
- 		std::string name;				// Name	(may not be unique - for ex. configuration entries)
-		std::string refType;			// Type of object this references (if any)
-		std::string comment;			// Main comment (empty for no comment)
+		std::string _id;                // Unique identifier for this object
+		std::string _name;              // Name (may not be unique - for ex. configuration entries)
+		std::string _refType;           // Type of object this references (if any)
+		std::string _comment;           // Main comment (empty for no comment)
 
-		PropertyList properties;		// List of object properties, including output configuration
+		PropertyList _properties;       // List of object properties, including output configuration
 
 		// Constructs an object and add a default type property
-		Object(XCodeProvider *objectParent, std::string objectId, std::string objectName, std::string objectType, std::string objectRefType = "", std::string objectComment = "")
-		    : id(objectId), name(objectName), refType(objectRefType), comment(objectComment), parent(objectParent) {
+		Object(XcodeProvider *objectParent, std::string objectId, std::string objectName, std::string objectType, std::string objectRefType = "", std::string objectComment = "")
+		    : _id(objectId), _name(objectName), _refType(objectRefType), _comment(objectComment), _parent(objectParent) {
 			assert(objectParent);
 			assert(!objectId.empty());
 			assert(!objectName.empty());
 			assert(!objectType.empty());
 
-			addProperty("isa", objectType, "", SettingsNoQuote|SettingsNoValue);
+			addProperty("isa", objectType, "", kSettingsNoQuote | kSettingsNoValue);
 		}
 
 		// Add a simple Property with just a name and a value
 		void addProperty(std::string propName, std::string propValue, std::string propComment = "", int propFlags = 0, int propIndent = 0) {
-			properties[propName] = Property(propValue, "", propComment, propFlags, propIndent);
+			_properties[propName] = Property(propValue, "", propComment, propFlags, propIndent);
 		}
 
 		std::string toString(int flags = 0) {
 			std::string output;
-			output = "\t\t" + parent->getHash(id) + (comment.empty() ? "" : " /* " + comment + " */") + " = {";
+			output = "\t\t" + _parent->getHash(_id) + (_comment.empty() ? "" : " /* " + _comment + " */") + " = {";
 
-			if (flags & SettingsAsList)
+			if (flags & kSettingsAsList)
 				output += "\n";
 
 			// Special case: always output the isa property first
-			output += parent->writeProperty("isa", properties["isa"], flags);
+			output += _parent->writeProperty("isa", _properties["isa"], flags);
 
 			// Write each property
-			for (PropertyList::iterator property = properties.begin(); property != properties.end(); ++property) {
-				if ((*property).first == "isa")
+			for (PropertyList::iterator property = _properties.begin(); property != _properties.end(); ++property) {
+				if (property->first == "isa")
 					continue;
 
-				output += parent->writeProperty((*property).first, (*property).second, flags);
+				output += _parent->writeProperty(property->first, property->second, flags);
 			}
 
-			if (flags & SettingsAsList)
+			if (flags & kSettingsAsList)
 				output += "\t\t";
 
 			output += "};\n";
@@ -210,54 +200,94 @@ private:
 			return output;
 		}
 
+		// Slight hack, to allow Group access to parent.
+	protected:
+		XcodeProvider *_parent;
 	private:
-		XCodeProvider *parent;
-
 		// Returns the type property (should always be the first in the properties map)
 		std::string getType() {
-			assert(!properties.empty());
-			assert(!properties["isa"].settings.empty());
+			assert(!_properties.empty());
+			assert(!_properties["isa"]._settings.empty());
 
-			SettingList::iterator it = properties["isa"].settings.begin();
+			SettingList::iterator it = _properties["isa"]._settings.begin();
 
-			return (*it).first;
+			return it->first;
 		}
 	};
 
 	struct ObjectList {
 	private:
-		std::map<std::string, bool> objectMap;
+		std::map<std::string, bool> _objectMap;
 
 	public:
-		std::vector<Object *> objects;
-		std::string comment;
-		int flags;
+		std::vector<Object *> _objects;
+		std::string _comment;
+		int _flags;
 
 		void add(Object *obj) {
-			std::map<std::string, bool>::iterator it = objectMap.find(obj->id);
-			if (it != objectMap.end() && it->second == true)
+			std::map<std::string, bool>::iterator it = _objectMap.find(obj->_id);
+			if (it != _objectMap.end() && it->second == true)
 				return;
 
-			objects.push_back(obj);
-			objectMap[obj->id] = true;
+			_objects.push_back(obj);
+			_objectMap[obj->_id] = true;
+		}
+
+		Object *find(std::string id) {
+			for (std::vector<Object *>::iterator it = _objects.begin(); it != _objects.end(); ++it) {
+				if ((*it)->_id == id) {
+					return *it;
+				}
+			}
+			return NULL;
 		}
 
 		std::string toString() {
 			std::string output;
 
-			if (!comment.empty())
-				output = "\n/* Begin " + comment + " section */\n";
+			if (!_comment.empty())
+				output = "\n/* Begin " + _comment + " section */\n";
 
-			for (std::vector<Object *>::iterator object = objects.begin(); object != objects.end(); ++object)
-				output += (*object)->toString(flags);
+			for (std::vector<Object *>::iterator object = _objects.begin(); object != _objects.end(); ++object)
+				output += (*object)->toString(_flags);
 
-			if (!comment.empty())
-				output += "/* End " + comment + " section */\n";
+			if (!_comment.empty())
+				output += "/* End " + _comment + " section */\n";
 
 			return output;
 		}
 	};
 
+	// A class to maintain a folder-reference group-hierarchy, which together with the functionality below
+	// allows for breaking up sub-paths into a chain of groups. This helps with merging engines into the
+	// overall group-layout.
+	class Group : public Object {
+		int _childOrder;
+		std::map<std::string, Group *> _childGroups;
+		std::string _treeName;
+		void addChildInternal(const std::string &id, const std::string &comment);
+	public:
+		Group(XcodeProvider *objectParent, const std::string &groupName, const std::string &uniqueName, const std::string &path);
+		void addChildFile(const std::string &name);
+		void addChildByHash(const std::string &hash, const std::string &name);
+		// Should be passed the hash for the entry
+		void addChildGroup(const Group *group);
+		void ensureChildExists(const std::string &name);
+		Group *getChildGroup(const std::string &name);
+		std::string getHashRef() const { return _parent->getHash(_id); }
+	};
+
+	// The path used by the root-source group
+	std::string _projectRoot;
+	// The base source group, currently also re-purposed for containing the various support-groups.
+	Group *_rootSourceGroup;
+	// Helper function to create the chain of groups for the various subfolders. Necessary as
+	// create_project likes to start in engines/
+	Group *touchGroupsForPath(const std::string &path);
+	// Functionality for adding file-refs and build-files, as Group-objects need to be able to do this.
+	void addFileReference(const std::string &id, const std::string &name, FileProperty properties);
+	void addProductFileReference(const std::string &id, const std::string &name);
+	void addBuildFile(const std::string &id, const std::string &name, const std::string &fileRefId, const std::string &comment);
 	// All objects
 	std::map<std::string, std::string> _hashDictionnary;
 	ValueList _defines;
@@ -278,22 +308,30 @@ private:
 	ObjectList _buildConfiguration;
 	ObjectList _configurationList;
 
-	void ouputMainProjectFile(const BuildSetup &setup);
+	void outputMainProjectFile(const BuildSetup &setup);
 
 	// Setup objects
 	void setupCopyFilesBuildPhase();
-	void setupFrameworksBuildPhase();
+	void setupFrameworksBuildPhase(const BuildSetup &setup);
 	void setupNativeTarget();
 	void setupProject();
 	void setupResourcesBuildPhase();
 	void setupSourcesBuildPhase();
-	void setupBuildConfiguration();
+	void setupBuildConfiguration(const BuildSetup &setup);
+	void setupImageAssetCatalog(const BuildSetup &setup);
+	void setupAdditionalSources(std::string targetName, Property &files, int &order);
 
 	// Misc
 	void setupDefines(const BuildSetup &setup); // Setup the list of defines to be used on build configurations
 
+	// Retrieve information
+	ValueList& getResourceFiles() const;
+
 	// Hash generation
 	std::string getHash(std::string key);
+#ifdef MACOSX
+	std::string md5(std::string key);
+#endif
 	std::string newHash() const;
 
 	// Output

@@ -206,6 +206,8 @@ TownsScreen::TownsScreen(OSystem *system, int width, int height, Graphics::Pixel
 	memset(_outBuffer, 0, _pitch * _height);
 
 	setupLayer(0, width, height, 256);
+
+	_numDirtyRects = 0;
 }
 
 TownsScreen::~TownsScreen() {

@@ -27,10 +27,11 @@
 #include "common/textconsole.h"
 
 #include "audio/fmopl.h"
-#include "audio/softsynth/emumidi.h"
+#include "audio/mididrv.h"
 
 #include "sci/resource.h"
 #include "sci/sound/drivers/mididriver.h"
+#include "sci/util.h"
 
 namespace Sci {
 
@@ -43,36 +44,37 @@ namespace Sci {
 // FIXME: We don't seem to be sending the polyphony init data, so disable this for now
 #define ADLIB_DISABLE_VOICE_MAPPING
 
-class MidiDriver_AdLib : public MidiDriver_Emulated {
+class MidiDriver_AdLib : public MidiDriver {
 public:
 	enum {
 		kVoices = 9,
 		kRhythmKeys = 62
 	};
 
-	MidiDriver_AdLib(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15), _rhythmKeyMap(0), _opl(0) { }
+	MidiDriver_AdLib(Audio::Mixer *mixer) :_playSwitch(true), _masterVolume(15), _rhythmKeyMap(), _opl(0), _isOpen(false) { }
 	virtual ~MidiDriver_AdLib() { }
 
 	// MidiDriver
+	int open() { return -1; } // Dummy implementation (use openAdLib)
 	int openAdLib(bool isSCI0);
 	void close();
 	void send(uint32 b);
 	MidiChannel *allocateChannel() { return NULL; }
 	MidiChannel *getPercussionChannel() { return NULL; }
+	bool isOpen() const { return _isOpen; }
+	uint32 getBaseTempo() { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
-	// AudioStream
-	bool isStereo() const { return _stereo; }
-	int getRate() const { return _mixer->getOutputRate(); }
+	// MidiDriver
+	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc);
 
-	// MidiDriver_Emulated
-	void generateSamples(int16 *buf, int len);
+	void onTimer();
 
 	void setVolume(byte volume);
 	void playSwitch(bool play);
-	bool loadResource(const byte *data, uint size);
+	bool loadResource(const SciSpan<const byte> &data);
 	virtual uint32 property(int prop, uint32 param);
 
-	bool useRhythmChannel() const { return _rhythmKeyMap != NULL; }
+	bool useRhythmChannel() const { return _rhythmKeyMap; }
 
 private:
 	enum ChannelID {
@@ -133,14 +135,18 @@ private:
 	bool _stereo;
 	bool _isSCI0;
 	OPL::OPL *_opl;
+	bool _isOpen;
 	bool _playSwitch;
 	int _masterVolume;
 	Channel _channels[MIDI_CHANNELS];
 	AdLibVoice _voices[kVoices];
-	byte *_rhythmKeyMap;
+	Common::SpanOwner<SciSpan<const byte> > _rhythmKeyMap;
 	Common::Array<AdLibPatch> _patches;
 
-	void loadInstrument(const byte *ins);
+	Common::TimerManager::TimerProc _adlibTimerProc;
+	void *_adlibTimerParam;
+
+	void loadInstrument(const SciSpan<const byte> &ins);
 	void voiceOn(int voice, int note, int velocity);
 	void voiceOff(int voice);
 	void setPatch(int voice, int patch);
@@ -215,14 +221,12 @@ static const int ym3812_note[13] = {
 };
 
 int MidiDriver_AdLib::openAdLib(bool isSCI0) {
-	int rate = _mixer->getOutputRate();
-
 	_stereo = STEREO;
 
 	debug(3, "ADLIB: Starting driver in %s mode", (isSCI0 ? "SCI0" : "SCI1"));
 	_isSCI0 = isSCI0;
 
-	_opl = OPL::Config::create(isStereo() ? OPL::Config::kDualOpl2 : OPL::Config::kOpl2);
+	_opl = OPL::Config::create(_stereo ? OPL::Config::kDualOpl2 : OPL::Config::kOpl2);
 
 	// Try falling back to mono, thus plain OPL2 emualtor, when no Dual OPL2 is available.
 	if (!_opl && _stereo) {
@@ -233,24 +237,26 @@ int MidiDriver_AdLib::openAdLib(bool isSCI0) {
 	if (!_opl)
 		return -1;
 
-	_opl->init(rate);
+	if (!_opl->init()) {
+		delete _opl;
+		_opl = nullptr;
+		return -1;
+	}
 
 	setRegister(0xBD, 0);
 	setRegister(0x08, 0);
 	setRegister(0x01, 0x20);
 
-	MidiDriver_Emulated::open();
+	_isOpen = true;
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	_opl->start(new Common::Functor0Mem<void, MidiDriver_AdLib>(this, &MidiDriver_AdLib::onTimer));
 
 	return 0;
 }
 
 void MidiDriver_AdLib::close() {
-	_mixer->stopHandle(_mixerSoundHandle);
-
 	delete _opl;
-	delete[] _rhythmKeyMap;
+	_rhythmKeyMap.clear();
 }
 
 void MidiDriver_AdLib::setVolume(byte volume) {
@@ -325,10 +331,14 @@ void MidiDriver_AdLib::send(uint32 b) {
 	}
 }
 
-void MidiDriver_AdLib::generateSamples(int16 *data, int len) {
-	if (isStereo())
-		len <<= 1;
-	_opl->readBuffer(data, len);
+void MidiDriver_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
+	_adlibTimerProc = timerProc;
+	_adlibTimerParam = timerParam;
+}
+
+void MidiDriver_AdLib::onTimer() {
+	if (_adlibTimerProc)
+		(*_adlibTimerProc)(_adlibTimerParam);
 
 	// Increase the age of the notes
 	for (int i = 0; i < kVoices; i++) {
@@ -337,12 +347,12 @@ void MidiDriver_AdLib::generateSamples(int16 *data, int len) {
 	}
 }
 
-void MidiDriver_AdLib::loadInstrument(const byte *ins) {
+void MidiDriver_AdLib::loadInstrument(const SciSpan<const byte> &ins) {
 	AdLibPatch patch;
 
 	// Set data for the operators
 	for (int i = 0; i < 2; i++) {
-		const byte *op = ins + i * 13;
+		const byte *op = ins.getUnsafeDataAt(i * 13, 13);
 		patch.op[i].kbScaleLevel = op[0] & 0x3;
 		patch.op[i].frequencyMult = op[1] & 0xf;
 		patch.op[i].attackRate = op[3] & 0xf;
@@ -580,7 +590,7 @@ void MidiDriver_AdLib::voiceOn(int voice, int note, int velocity) {
 
 	_voices[voice].age = 0;
 
-	if ((channel == 9) && _rhythmKeyMap) {
+	if (channel == 9 && _rhythmKeyMap) {
 		patch = CLIP(note, 27, 88) + 101;
 	} else {
 		patch = _channels[channel].patch;
@@ -607,7 +617,7 @@ void MidiDriver_AdLib::setNote(int voice, int note, bool key) {
 	float delta;
 	int bend = _channels[channel].pitchWheel;
 
-	if ((channel == 9) && _rhythmKeyMap) {
+	if (channel == 9 && _rhythmKeyMap) {
 		note = _rhythmKeyMap[CLIP(note, 27, 88) - 27];
 	}
 
@@ -684,7 +694,7 @@ void MidiDriver_AdLib::setVelocityReg(int regOffset, int velocity, int kbScaleLe
 	if (!_playSwitch)
 		velocity = 0;
 
-	if (isStereo()) {
+	if (_stereo) {
 		int velLeft = velocity;
 		int velRight = velocity;
 
@@ -734,7 +744,7 @@ void MidiDriver_AdLib::setRegister(int reg, int value, int channels) {
 		_opl->write(0x221, value);
 	}
 
-	if (isStereo()) {
+	if (_stereo) {
 		if (channels & kRightChannel) {
 			_opl->write(0x222, reg);
 			_opl->write(0x223, value);
@@ -747,30 +757,32 @@ void MidiDriver_AdLib::playSwitch(bool play) {
 	renewNotes(-1, play);
 }
 
-bool MidiDriver_AdLib::loadResource(const byte *data, uint size) {
-	if ((size != 1344) && (size != 2690) && (size != 5382)) {
-		error("ADLIB: Unsupported patch format (%i bytes)", size);
+bool MidiDriver_AdLib::loadResource(const SciSpan<const byte> &data) {
+	const uint32 size = data.size();
+	if (size != 1344 && size != 2690 && size != 5382) {
+		error("ADLIB: Unsupported patch format (%u bytes)", size);
 		return false;
 	}
 
 	for (int i = 0; i < 48; i++)
-		loadInstrument(data + (28 * i));
+		loadInstrument(data.subspan(28 * i));
 
 	if (size == 1344) {
 		byte dummy[28] = {0};
 
 		// Only 48 instruments, add dummies
 		for (int i = 0; i < 48; i++)
-			loadInstrument(dummy);
+			loadInstrument(SciSpan<const byte>(dummy, sizeof(dummy)));
 	} else if (size == 2690) {
 		for (int i = 48; i < 96; i++)
-			loadInstrument(data + 2 + (28 * i));
+			loadInstrument(data.subspan(2 + (28 * i)));
 	} else {
 		// SCI1.1 and later
-		for (int i = 48; i < 190; i++)
-			loadInstrument(data + (28 * i));
-		_rhythmKeyMap = new byte[kRhythmKeys];
-		memcpy(_rhythmKeyMap, data + 5320, kRhythmKeys);
+		for (int i = 48; i < 190; i++) {
+			loadInstrument(data.subspan(28 * i));
+		}
+
+		_rhythmKeyMap->allocateFromSpan(data.subspan(5320, kRhythmKeys));
 	}
 
 	return true;
@@ -793,11 +805,11 @@ int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 	assert(resMan != NULL);
 
 	// Load up the patch.003 file, parse out the instruments
-	Resource *res = resMan->findResource(ResourceId(kResourceTypePatch, 3), 0);
+	Resource *res = resMan->findResource(ResourceId(kResourceTypePatch, 3), false);
 	bool ok = false;
 
 	if (res) {
-		ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(res->data, res->size);
+		ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(*res);
 	} else {
 		// Early SCI0 games have the sound bank embedded in the AdLib driver
 
@@ -810,13 +822,13 @@ int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 			// Note: Funseeker's Guide also has another version of adl.drv, 8803 bytes.
 			// This isn't supported, but it's not really used anywhere, as that demo
 			// doesn't have sound anyway.
-			if ((size == 5684) || (size == 5720) || (size == 5727)) {
-				byte *buf = new byte[patchSize];
-
-				if (f.seek(0x45a) && (f.read(buf, patchSize) == patchSize))
-					ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(buf, patchSize);
-
-				delete[] buf;
+			if (size == 5684 || size == 5720 || size == 5727) {
+				ok = f.seek(0x45a);
+				if (ok) {
+					Common::SpanOwner<SciSpan<const byte> > patchData;
+					patchData->allocateFromStream(f, patchSize);
+					ok = static_cast<MidiDriver_AdLib *>(_driver)->loadResource(*patchData);
+				}
 			}
 		}
 	}

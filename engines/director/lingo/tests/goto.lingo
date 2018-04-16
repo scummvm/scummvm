@@ -1,0 +1,26 @@
+go to frame "Open23" of movie "OpenCabin23"
+go "CARDBACK"
+go movie "BAR 1"
+go to "Open23" of movie "OpenCabin23"
+go to "Chair"
+
+set varframe to "VARFrame"
+set varmovie to "VARMovie"
+
+go to frame 35
+go "label two"
+go to movie "Chicago"
+go to frame 23 of movie "Chicago"
+go to frame "main loop" of movie "Basic With"
+play frame varFrame of movie varMovie
+go to marker(1)
+
+play frame 37
+play frame "label one"
+play movie "Desert Scene"
+play frame 23 of movie "Chicago"
+play frame varframe of movie varmovie
+play frame "main loop" of movie "Basic With"
+
+playAccel "Lungs.mma"
+playAccel "Bolitas.mma", loop, clickStop, whatFits

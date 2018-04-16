@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -22,7 +22,6 @@
 
 #include "prince/prince.h"
 #include "prince/graphics.h"
-#include "prince/detection.h"
 #include "prince/flags.h"
 #include "prince/script.h"
 #include "prince/hero.h"
@@ -41,106 +40,11 @@ namespace Prince {
 
 #define kBadSVG 99
 #define kSavegameVersion 1
-#define kSavegameStrSize 14
-#define kSavegameStr "SCUMMVM_PRINCE"
 
 class InterpreterFlags;
 class Interpreter;
 
-struct SavegameHeader {
-	uint8 version;
-	Common::String saveName;
-	Graphics::Surface *thumbnail;
-	int saveYear, saveMonth, saveDay;
-	int saveHour, saveMinutes;
-};
-
-int PrinceMetaEngine::getMaximumSaveSlot() const {
-	return 99;
-}
-
-SaveStateList PrinceMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String pattern = target;
-	pattern += ".???";
-
-	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end()); // Sort (hopefully ensuring we are sorted numerically..)
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); filename++) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(filename->c_str() + filename->size() - 3);
-
-		if (slotNum >= 0 && slotNum <= 99) {
-
-			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
-			if (file) {
-				Prince::SavegameHeader header;
-
-				// Check to see if it's a ScummVM savegame or not
-				char buffer[kSavegameStrSize + 1];
-				file->read(buffer, kSavegameStrSize + 1);
-
-				if (!strncmp(buffer, kSavegameStr, kSavegameStrSize + 1)) {
-					// Valid savegame
-					if (Prince::PrinceEngine::readSavegameHeader(file, header)) {
-						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-						if (header.thumbnail) {
-							header.thumbnail->free();
-							delete header.thumbnail;
-						}
-					}
-				} else {
-					// Must be an original format savegame
-					saveList.push_back(SaveStateDescriptor(slotNum, "Unknown"));
-				}
-
-				delete file;
-			}
-		}
-	}
-
-	return saveList;
-}
-
-SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
-
-	if (f) {
-		Prince::SavegameHeader header;
-
-		// Check to see if it's a ScummVM savegame or not
-		char buffer[kSavegameStrSize + 1];
-		f->read(buffer, kSavegameStrSize + 1);
-
-		bool hasHeader = !strncmp(buffer, kSavegameStr, kSavegameStrSize + 1) &&
-			Prince::PrinceEngine::readSavegameHeader(f, header);
-		delete f;
-
-		if (!hasHeader) {
-			// Original savegame perhaps?
-			SaveStateDescriptor desc(slot, "Unknown");
-			return desc;
-		} else {
-			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
-			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-			desc.setSaveTime(header.saveHour, header.saveMinutes);
-
-			return desc;
-		}
-	}
-
-	return SaveStateDescriptor();
-}
-
-bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
-	header.thumbnail = nullptr;
-
+WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
 	// Get the savegame version
 	header.version = in->readByte();
 	if (header.version > kSavegameVersion)
@@ -153,9 +57,9 @@ bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &he
 		header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
 	header.saveYear = in->readSint16LE();
@@ -167,19 +71,34 @@ bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &he
 	return true;
 }
 
-void PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String fileName = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(fileName);
-}
-
-// TODO
 bool PrinceEngine::canSaveGameStateCurrently() {
-	return true;
+	if (_mouseFlag && _mouseFlag != 3) {
+		if (_mainHero->_visible) {
+			// 29 - Basement
+			if (_locationNr != 29) {
+				// No dialog box and not in inventory
+				if (!_dialogFlag && !_showInventoryFlag) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
-// TODO
 bool PrinceEngine::canLoadGameStateCurrently() {
-	return true;
+	if (_mouseFlag && _mouseFlag != 3) {
+		if (_mainHero->_visible) {
+			// 29 - Basement
+			if (_locationNr != 29) {
+				// No dialog box and not in inventory
+				if (!_dialogFlag && !_showInventoryFlag) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 Common::Error PrinceEngine::saveGameState(int slot, const Common::String &desc) {
@@ -495,18 +414,11 @@ bool PrinceEngine::loadGame(int slotNumber) {
 			delete readStream;
 			return false;
 		}
-
-		// Delete the thumbnail
-		saveHeader.thumbnail->free();
-		delete saveHeader.thumbnail;
 	}
 
 	// Get in the savegame
 	syncGame(readStream, nullptr);
 	delete readStream;
-
-	// TODO
-	//syncSpeechSettings();
 
 	return true;
 }

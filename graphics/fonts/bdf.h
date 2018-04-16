@@ -40,8 +40,12 @@ struct BdfBoundingBox {
 };
 
 struct BdfFontData {
+	const char *familyName;
+	const char *slant;
+
 	int maxAdvance;
 	int height;
+	int size;
 	BdfBoundingBox defaultBox;
 	int ascent;
 
@@ -65,9 +69,14 @@ public:
 	virtual int getCharWidth(uint32 chr) const;
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
+	const char *getFamilyName() const;
+	const char *getFontSlant() const;
+	int getFontSize() const;
+
 	static BdfFont *loadFont(Common::SeekableReadStream &stream);
 	static bool cacheFontData(const BdfFont &font, const Common::String &filename);
 	static BdfFont *loadFromCache(Common::SeekableReadStream &stream);
+	static BdfFont *scaleFont(BdfFont *src, int newSize);
 private:
 	int mapToIndex(uint32 ch) const;
 

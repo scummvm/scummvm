@@ -25,9 +25,25 @@
 
 namespace Agi {
 
+/**
+ * Sprite structure.
+ * This structure holds information on visible and priority data of
+ * a rectangular area of the AGI screen. Sprites are chained in two
+ * circular lists, one for updating and other for non-updating sprites.
+ */
+struct Sprite {
+	uint16 givenOrderNr;
+	uint16 sortOrder;
+	ScreenObjEntry *screenObjPtr; /**< pointer to view table entry */
+	int16 xPos;                   /**< x coordinate of the sprite */
+	int16 yPos;                   /**< y coordinate of the sprite */
+	int16 xSize;                  /**< width of the sprite */
+	int16 ySize;                  /**< height of the sprite */
+	byte *backgroundBuffer;       /**< buffer to store background data */
+};
 
-struct Sprite;
-typedef Common::List<Sprite *> SpriteList;
+typedef Common::List<Sprite> SpriteList;
+typedef Common::List<Sprite *> SpritePtrList;
 
 class AgiEngine;
 class GfxMgr;
@@ -38,35 +54,42 @@ private:
 	GfxMgr *_gfx;
 	AgiEngine *_vm;
 
-	uint8 *_spritePool;
-	uint8 *_poolTop;
-
 	//
 	// Sprite management functions
 	//
 
-	SpriteList _sprUpd;
-	SpriteList _sprNonupd;
+	SpriteList _spriteRegularList;
+	SpriteList _spriteStaticList;
 
-	void *poolAlloc(int size);
-	void poolRelease(void *s);
-	void blitPixel(uint8 *p, uint8 *end, uint8 col, int spr, int width, int *hidden);
-	int blitCel(int x, int y, int spr, ViewCel *c, bool agi256_2);
-	void objsSaveArea(Sprite *s);
-	void objsRestoreArea(Sprite *s);
+public:
+	void buildRegularSpriteList();
+	void buildStaticSpriteList();
+	void buildAllSpriteLists();
+	void buildSpriteListAdd(uint16 givenOrderNr, ScreenObjEntry *screenObj, SpriteList &spriteList);
+	void freeList(SpriteList &spriteList);
+	void freeRegularSprites();
+	void freeStaticSprites();
+	void freeAllSprites();
 
-	int prioToY(int p);
-	Sprite *newSprite(VtEntry *v);
-	void sprAddlist(SpriteList &l, VtEntry *v);
-	void buildList(SpriteList &l, bool (*test)(VtEntry *, AgiEngine *));
-	void buildUpdBlitlist();
-	void buildNonupdBlitlist();
-	void freeList(SpriteList &l);
-	void commitSprites(SpriteList &l, bool immediate = false);
-	void eraseSprites(SpriteList &l);
-	void blitSprites(SpriteList &l);
-	static bool testUpdating(VtEntry *v, AgiEngine *);
-	static bool testNotUpdating(VtEntry *v, AgiEngine *);
+	void eraseSprites(SpriteList &spriteList);
+	void eraseRegularSprites();
+	void eraseStaticSprites();
+	void eraseSprites();
+
+	void drawSprites(SpriteList &spriteList);
+	void drawRegularSpriteList();
+	void drawStaticSpriteList();
+	void drawAllSpriteLists();
+
+	void drawCel(ScreenObjEntry *screenObj);
+
+	void showSprite(ScreenObjEntry *screenObj);
+	void showSprites(SpriteList &spriteList);
+	void showRegularSpriteList();
+	void showStaticSpriteList();
+	void showAllSpriteLists();
+
+	void showObject(int16 viewNr);
 
 public:
 	SpritesMgr(AgiEngine *agi, GfxMgr *gfx);
@@ -74,18 +97,8 @@ public:
 
 	int initSprites();
 	void deinitSprites();
-	void eraseUpdSprites();
-	void eraseNonupdSprites();
-	void eraseBoth();
-	void blitUpdSprites();
-	void blitNonupdSprites();
-	void blitBoth();
-	void commitUpdSprites();
-	void commitNonupdSprites();
-	void commitBoth();
-	void addToPic(int, int, int, int, int, int, int);
-	void showObj(int);
-	void commitBlock(int x1, int y1, int x2, int y2, bool immediate = false);
+	void addToPic(int16 viewNr, int16 loopNr, int16 celNr, int16 xPos, int16 yPos, int16 priority, int16 border);
+	void addToPicDrawPriorityBox(ScreenObjEntry *screenObj, int16 border);
 };
 
 } // End of namespace Agi

@@ -96,6 +96,7 @@ private:
 	char *_lang;
 	char *_charset;
 	char *_langName;
+	char *_langNameAlt;
 
 	PoMessageEntry **_list;
 	int _size;

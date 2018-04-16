@@ -51,13 +51,30 @@ public:
 	VectorRendererSpec(PixelFormat format);
 
 	void drawLine(int x1, int y1, int x2, int y2);
+	void drawLineClip(int x1, int y1, int x2, int y2, Common::Rect clipping);
 	void drawCircle(int x, int y, int r);
+	void drawCircleClip(int x, int y, int r, Common::Rect clipping);
 	void drawSquare(int x, int y, int w, int h);
+	void drawSquareClip(int x, int y, int w, int h, Common::Rect clipping);
 	void drawRoundedSquare(int x, int y, int r, int w, int h);
+	void drawRoundedSquareClip(int x, int y, int r, int w, int h, Common::Rect clipping);
 	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient);
+	void drawTriangleClip(int x, int y, int base, int height, TriangleOrientation orient, Common::Rect clipping);
 	void drawTab(int x, int y, int r, int w, int h);
+	void drawTabClip(int x, int y, int r, int w, int h, Common::Rect clipping);
 	void drawBeveledSquare(int x, int y, int w, int h, int bevel) {
 		drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
+	}
+	void drawBeveledSquareClip(int x, int y, int w, int h, int bevel, Common::Rect clipping) {
+		bool useClippingVersions = !(clipping.isEmpty() || clipping.contains(Common::Rect(x, y, x + w, y + h)));
+		if (useClippingVersions) {
+			Common::Rect backup = _clippingArea;
+			_clippingArea = clipping;
+			drawBevelSquareAlgClip(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
+			_clippingArea = backup;
+		} else {
+			drawBevelSquareAlg(x, y, w, h, bevel, _bevelColor, _fgColor, Base::_fillMode != kFillDisabled);
+		}
 	}
 	void drawString(const Graphics::Font *font, const Common::String &text,
 					const Common::Rect &area, Graphics::TextAlign alignH,
@@ -72,13 +89,23 @@ public:
 	void copyWholeFrame(OSystem *sys) { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
 
 	void fillSurface();
+	void fillSurfaceClip(Common::Rect clipping);
 	void blitSurface(const Graphics::Surface *source, const Common::Rect &r);
 	void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r);
-	void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r);
+	void blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping);
+	void blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r);
+	void blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping);
+	void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
+			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
+			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
+			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
+			int alpha = 255);
 
 	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle);
 
 protected:
+
+	Common::Rect _clippingArea;
 
 	/**
 	 * Draws a single pixel on the surface with the given coordinates and
@@ -119,6 +146,7 @@ protected:
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
 	inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
+	inline void blendPixelPtrClip(PixelType *ptr, PixelType color, uint8 alpha, int x, int y);
 
 	/**
 	 * Blends a single pixel on the surface in the given pixel pointer, using supplied color
@@ -150,25 +178,46 @@ protected:
 	 * @see VectorRendererAA::drawCircleAlg
 	 */
 	virtual void drawLineAlg(int x1, int y1, int x2, int y2,
-	    int dx, int dy, PixelType color);
+	    uint dx, uint dy, PixelType color);
+
+	virtual void drawLineAlgClip(int x1, int y1, int x2, int y2,
+		uint dx, uint dy, PixelType color);
 
 	virtual void drawCircleAlg(int x, int y, int r,
 	    PixelType color, FillMode fill_m);
 
+	virtual void drawCircleAlgClip(int x, int y, int r,
+		PixelType color, FillMode fill_m);
+
 	virtual void drawRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m);
+
+	virtual void drawRoundedSquareAlgClip(int x1, int y1, int r, int w, int h,
+		PixelType color, FillMode fill_m);
 
 	virtual void drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
 
+	virtual void drawBorderRoundedSquareAlgClip(int x1, int y1, int r, int w, int h,
+		PixelType color, FillMode fill_m, uint8 alpha_t, uint8 alpha_r, uint8 alpha_b, uint8 alpha_l);
+
 	virtual void drawInteriorRoundedSquareAlg(int x1, int y1, int r, int w, int h,
 	    PixelType color, FillMode fill_m);
+
+	virtual void drawInteriorRoundedSquareAlgClip(int x1, int y1, int r, int w, int h,
+		PixelType color, FillMode fill_m);
 
 	virtual void drawSquareAlg(int x, int y, int w, int h,
 	    PixelType color, FillMode fill_m);
 
+	virtual void drawSquareAlgClip(int x, int y, int w, int h,
+		PixelType color, FillMode fill_m);
+
 	virtual void drawTriangleVertAlg(int x, int y, int w, int h,
 	    bool inverted, PixelType color, FillMode fill_m);
+
+	virtual void drawTriangleVertAlgClip(int x, int y, int w, int h,
+		bool inverted, PixelType color, FillMode fill_m);
 
 	virtual void drawTriangleFast(int x, int y, int size,
 	    bool inverted, PixelType color, FillMode fill_m);
@@ -176,15 +225,28 @@ protected:
 	virtual void drawBevelSquareAlg(int x, int y, int w, int h,
 	    int bevel, PixelType top_color, PixelType bottom_color, bool fill);
 
+	virtual void drawBevelSquareAlgClip(int x, int y, int w, int h,
+		int bevel, PixelType top_color, PixelType bottom_color, bool fill);
+
 	virtual void drawTabAlg(int x, int y, int w, int h, int r,
 	    PixelType color, VectorRenderer::FillMode fill_m,
 	    int baseLeft = 0, int baseRight = 0);
 
+	virtual void drawTabAlgClip(int x, int y, int w, int h, int r,
+		PixelType color, VectorRenderer::FillMode fill_m,
+		int baseLeft = 0, int baseRight = 0);
+
 	virtual void drawTabShadow(int x, int y, int w, int h, int r);
+
+	virtual void drawTabShadowClip(int x, int y, int w, int h, int r);
 
 	virtual void drawBevelTabAlg(int x, int y, int w, int h,
 	    int bevel, PixelType topColor, PixelType bottomColor,
 	    int baseLeft = 0, int baseRight = 0);
+
+	virtual void drawBevelTabAlgClip(int x, int y, int w, int h,
+		int bevel, PixelType topColor, PixelType bottomColor,
+		int baseLeft = 0, int baseRight = 0);
 
 	/**
 	 * SHADOW DRAWING ALGORITHMS
@@ -197,7 +259,9 @@ protected:
 	 * @param offset Intensity/size of the shadow.
 	 */
 	virtual void drawSquareShadow(int x, int y, int w, int h, int offset);
+	virtual void drawSquareShadowClip(int x, int y, int w, int h, int offset);
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int offset);
+	virtual void drawRoundedSquareShadowClip(int x, int y, int r, int w, int h, int offset);
 
 	/**
 	 * Calculates the color gradient on a given point.
@@ -212,6 +276,7 @@ protected:
 
 	void precalcGradient(int h);
 	void gradientFill(PixelType *first, int width, int x, int y);
+	void gradientFillClip(PixelType *first, int width, int x, int y, int realX, int realY);
 
 	/**
 	 * Fills several pixels in a row with a given color and the specified alpha blending.
@@ -227,7 +292,20 @@ protected:
 		while (first != last) blendPixelPtr(first++, color, alpha);
 	}
 
+	inline void blendFillClip(PixelType *first, PixelType *last, PixelType color, uint8 alpha, int realX, int realY) {
+		if (_clippingArea.top <= realY && realY < _clippingArea.bottom) {
+			while (first != last) {
+				if (_clippingArea.left <= realX && realX < _clippingArea.right)
+					blendPixelPtr(first++, color, alpha);
+				else
+					++first;
+				++realX;
+			}
+		}
+	}
+
 	void darkenFill(PixelType *first, PixelType *last);
+	void darkenFillClip(PixelType *first, PixelType *last, int x, int y);
 
 	const PixelFormat _format;
 	const PixelType _redMask, _greenMask, _blueMask, _alphaMask;
@@ -278,7 +356,7 @@ protected:
 	 *
 	 * @see VectorRenderer::drawLineAlg()
 	 */
-	virtual void drawLineAlg(int x1, int y1, int x2, int y2, int dx, int dy, PixelType color);
+	virtual void drawLineAlg(int x1, int y1, int x2, int y2, uint dx, uint dy, PixelType color);
 
 	/**
 	 * "Wu's Circle Antialiasing Algorithm" as published by Xiaolin Wu, July 1991

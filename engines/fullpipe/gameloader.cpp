@@ -21,7 +21,6 @@
  */
 
 #include "fullpipe/fullpipe.h"
-#include "graphics/thumbnail.h"
 
 #include "fullpipe/gameloader.h"
 #include "fullpipe/scene.h"
@@ -39,12 +38,32 @@ Inventory2 *getGameLoaderInventory() {
 	return &g_fp->_gameLoader->_inventory;
 }
 
-MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
-	for (uint i = 0; i < g_fp->_gameLoader->_sc2array.size(); i++)
-		if (g_fp->_gameLoader->_sc2array[i]._sceneId == sceneId)
-			return (MctlCompound *)g_fp->_gameLoader->_sc2array[i]._motionController;
+static MotionController *getMotionControllerBySceneId(int16 sceneId) {
+	for (uint i = 0; i < g_fp->_gameLoader->_sc2array.size(); i++) {
+		if (g_fp->_gameLoader->_sc2array[i]._sceneId == sceneId) {
+			return g_fp->_gameLoader->_sc2array[i]._motionController;
+		}
+	}
 
-	return 0;
+	return nullptr;
+}
+
+MovGraph *getSc2MovGraphBySceneId(int16 sceneId) {
+	MotionController *mc = getMotionControllerBySceneId(sceneId);
+	if (mc) {
+		assert(mc->_objtype == kObjTypeMovGraph);
+		return static_cast<MovGraph *>(mc);
+	}
+	return nullptr;
+}
+
+MctlCompound *getSc2MctlCompoundBySceneId(int16 sceneId) {
+	MotionController *mc = getMotionControllerBySceneId(sceneId);
+	if (mc) {
+		assert(mc->_objtype == kObjTypeMctlCompound);
+		return static_cast<MctlCompound *>(mc);
+	}
+	return nullptr;
 }
 
 InteractionController *getGameLoaderInteractionController() {
@@ -55,9 +74,6 @@ GameLoader::GameLoader() {
 	_interactionController = new InteractionController();
 	_inputController = new InputController();
 
-	_gameProject = 0;
-	_gameName = 0;
-
 	addMessageHandlerByIndex(global_messageHandler2, 0, 0);
 	insertMessageHandler(global_messageHandler3, 0, 128);
 	insertMessageHandler(global_messageHandler4, 0, 1);
@@ -66,7 +82,7 @@ GameLoader::GameLoader() {
 	_field_F8 = 0;
 	_sceneSwitcher = 0;
 	_preloadCallback = 0;
-	_readSavegameCallback = 0;
+	_savegameCallback = 0;
 	_gameVar = 0;
 	_preloadSceneId = 0;
 	_preloadEntranceId = 0;
@@ -79,60 +95,35 @@ GameLoader::GameLoader() {
 }
 
 GameLoader::~GameLoader() {
-	free(_gameName);
-	delete _gameProject;
 	delete _interactionController;
 	delete _inputController;
-
-	g_fp->_gameLoader = 0;
-
-	for (uint i = 0; i < _sc2array.size(); i++) {
-		if (_sc2array[i]._defPicAniInfos)
-			delete _sc2array[i]._defPicAniInfos;
-
-		if (_sc2array[i]._picAniInfos)
-			delete _sc2array[i]._picAniInfos;
-
-		if (_sc2array[i]._motionController)
-			delete _sc2array[i]._motionController;
-
-		if (_sc2array[i]._data1)
-			free(_sc2array[i]._data1);
-
-		if (_sc2array[i]._entranceData)
-			free(_sc2array[i]._entranceData);
-	}
-
 	delete _gameVar;
-	_gameVar = 0;
-
-	_sc2array.clear();
 }
 
 bool GameLoader::load(MfcArchive &file) {
-	debug(5, "GameLoader::load()");
+	debugC(1, kDebugLoading, "GameLoader::load()");
 
 	_gameName = file.readPascalString();
-	debug(6, "_gameName: %s", _gameName);
+	debugC(1, kDebugLoading, "_gameName: %s", _gameName.c_str());
 
-	_gameProject = new GameProject();
+	_gameProject.reset(new GameProject());
 
 	_gameProject->load(file);
 
-	g_fp->_gameProject = _gameProject;
+	g_fp->_gameProject = _gameProject.get();
 
 	if (g_fp->_gameProjectVersion < 12) {
 		error("Old gameProjectVersion: %d", g_fp->_gameProjectVersion);
 	}
 
 	_gameName = file.readPascalString();
-	debug(6, "_gameName: %s", _gameName);
+	debugC(1, kDebugLoading, "_gameName: %s", _gameName.c_str());
 
 	_inventory.load(file);
 
 	_interactionController->load(file);
 
-	debug(6, "sceneTag count: %d", _gameProject->_sceneTagList->size());
+	debugC(1, kDebugLoading, "sceneTag count: %d", _gameProject->_sceneTagList->size());
 
 	_sc2array.resize(_gameProject->_sceneTagList->size());
 
@@ -142,9 +133,9 @@ bool GameLoader::load(MfcArchive &file) {
 
 		snprintf(tmp, 11, "%04d.sc2", it->_sceneId);
 
-		debug(2, "sc: %s", tmp);
+		debugC(1, kDebugLoading, "sc: %s", tmp);
 
-		_sc2array[i].loadFile((const char *)tmp);
+		_sc2array[i].loadFile(tmp);
 	}
 
 	_preloadItems.load(file);
@@ -152,7 +143,9 @@ bool GameLoader::load(MfcArchive &file) {
 	_field_FA = file.readUint16LE();
 	_field_F8 = file.readUint16LE();
 
-	_gameVar = (GameVar *)file.readClass();
+	debugC(1, kDebugLoading, "_field_FA: %d\n_field_F8: %d", _field_FA, _field_F8);
+
+	_gameVar = file.readClass<GameVar>();
 
 	return true;
 }
@@ -171,11 +164,11 @@ bool GameLoader::loadScene(int sceneId) {
 	if (st->_scene) {
 		st->_scene->init();
 
-		applyPicAniInfos(st->_scene, _sc2array[idx]._defPicAniInfos, _sc2array[idx]._defPicAniInfosCount);
-		applyPicAniInfos(st->_scene, _sc2array[idx]._picAniInfos, _sc2array[idx]._picAniInfosCount);
+		applyPicAniInfos(st->_scene, _sc2array[idx]._defPicAniInfos);
+		applyPicAniInfos(st->_scene, _sc2array[idx]._picAniInfos);
 
 		_sc2array[idx]._scene = st->_scene;
-		_sc2array[idx]._isLoaded = 1;
+		_sc2array[idx]._isLoaded = true;
 
 		return true;
 	}
@@ -194,18 +187,18 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 	if (!_sc2array[sc2idx]._isLoaded)
 		return false;
 
-	if (_sc2array[sc2idx]._entranceDataCount < 1) {
+	if (_sc2array[sc2idx]._entranceData.size() < 1) {
 		g_fp->_currentScene = st->_scene;
 		return true;
 	}
 
-	if (_sc2array[sc2idx]._entranceDataCount <= 0)
+	if (!_sc2array[sc2idx]._entranceData.size())
 		return false;
 
-	int entranceIdx = 0;
+	uint entranceIdx = 0;
 	if (sceneId != 726) // WORKAROUND
-		for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]->_field_4 != entranceId; entranceIdx++) {
-			if (entranceIdx >= _sc2array[sc2idx]._entranceDataCount)
+		for (entranceIdx = 0; _sc2array[sc2idx]._entranceData[entranceIdx]._field_4 != entranceId; entranceIdx++) {
+			if (entranceIdx >= _sc2array[sc2idx]._entranceData.size())
 				return false;
 		}
 
@@ -223,7 +216,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 
 	g_fp->_currentScene = st->_scene;
 
-	MessageQueue *mq1 = g_fp->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]->_messageQueueId);
+	MessageQueue *mq1 = g_fp->_currentScene->getMessageQueueById(_sc2array[sc2idx]._entranceData[entranceIdx]._messageQueueId);
 	if (mq1) {
 		MessageQueue *mq = new MessageQueue(mq1, 0, 0);
 
@@ -233,7 +226,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 
 			ExCommand *ex = new ExCommand(stobj->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
-			ex->_field_14 = 256;
+			ex->_z = 256;
 			ex->_messageNum = 0;
 			ex->_excFlags |= 3;
 
@@ -259,7 +252,7 @@ bool GameLoader::gotoScene(int sceneId, int entranceId) {
 bool preloadCallback(PreloadItem &pre, int flag) {
 	if (flag) {
 		if (flag == 50)
-			g_fp->_aniMan->preloadMovements(g_fp->_movTable);
+			g_fp->_aniMan->preloadMovements(g_fp->_movTable.get());
 
 		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
 
@@ -292,7 +285,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 
 		if (g_fp->_soundEnabled) {
 			g_fp->_currSoundListCount = 1;
-			g_fp->_currSoundList1[0] = g_fp->accessScene(SC_COMMON)->_soundList;
+			g_fp->_currSoundList1[0] = g_fp->accessScene(SC_COMMON)->_soundList.get();
 		}
 
 		g_vars->scene18_inScene18p1 = false;
@@ -305,7 +298,7 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 				g_fp->_scene3 = 0;
 			}
 		} else {
-			scene19_setMovements(g_fp->accessScene(pre.preloadId1), pre.keyCode);
+			scene19_setMovements(g_fp->accessScene(pre.preloadId1), pre.param);
 
 			g_vars->scene18_inScene18p1 = true;
 
@@ -316,14 +309,14 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 			}
 		}
 
-		if (((pre.sceneId == SC_19 && pre.keyCode == TrubaRight) || (pre.sceneId == SC_18 && pre.keyCode == TrubaRight)) && !pre.preloadId2) {
+		if (((pre.sceneId == SC_19 && pre.param == TrubaRight) || (pre.sceneId == SC_18 && pre.param == TrubaRight)) && !pre.preloadId2) {
 			pre.sceneId = SC_18;
-			pre.keyCode = TrubaLeft;
+			pre.param = TrubaLeft;
 		}
 
 		if (!g_fp->_loaderScene) {
 			g_fp->_gameLoader->loadScene(SC_LDR);
-			g_fp->_loaderScene = g_fp->accessScene(SC_LDR);;
+			g_fp->_loaderScene = g_fp->accessScene(SC_LDR);
 		}
 
 		StaticANIObject *pbar = g_fp->_loaderScene->getStaticANIObject1ById(ANI_PBAR, -1);
@@ -354,8 +347,12 @@ bool preloadCallback(PreloadItem &pre, int flag) {
 	return true;
 }
 
+void GameLoader::addPreloadItem(const PreloadItem &item) {
+	_preloadItems.push_back(item);
+}
+
 bool GameLoader::preloadScene(int sceneId, int entranceId) {
-	debug(0, "preloadScene(%d, %d), ", sceneId, entranceId);
+	debugC(0, kDebugLoading, "preloadScene(%d, %d), ", sceneId, entranceId);
 
 	if (_preloadSceneId != sceneId || _preloadEntranceId != entranceId) {
 		_preloadSceneId = sceneId;
@@ -366,7 +363,7 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 	int idx = -1;
 
 	for (uint i = 0; i < _preloadItems.size(); i++)
-		if (_preloadItems[i]->preloadId1 == sceneId && _preloadItems[i]->preloadId2 == entranceId) {
+		if (_preloadItems[i].preloadId1 == sceneId && _preloadItems[i].preloadId2 == entranceId) {
 			idx = i;
 			break;
 		}
@@ -378,7 +375,7 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 	}
 
 	if (_preloadCallback) {
-		if (!_preloadCallback(*_preloadItems[idx], 0))
+		if (!_preloadCallback(_preloadItems[idx], 0))
 			return false;
 	}
 
@@ -390,19 +387,19 @@ bool GameLoader::preloadScene(int sceneId, int entranceId) {
 	unloadScene(sceneId);
 
 	if (_preloadCallback)
-		_preloadCallback(*_preloadItems[idx], 50);
+		_preloadCallback(_preloadItems[idx], 50);
 
-	loadScene(_preloadItems[idx]->sceneId);
+	loadScene(_preloadItems[idx].sceneId);
 
-	ExCommand *ex = new ExCommand(_preloadItems[idx]->sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
+	ExCommand *ex = new ExCommand(_preloadItems[idx].sceneId, 17, 62, 0, 0, 0, 1, 0, 0, 0);
 	ex->_excFlags = 2;
-	ex->_keyCode = _preloadItems[idx]->keyCode;
+	ex->_param = _preloadItems[idx].param;
 
 	_preloadSceneId = 0;
 	_preloadEntranceId = 0;
 
 	if (_preloadCallback)
-		_preloadCallback(*_preloadItems[idx], 100);
+		_preloadCallback(_preloadItems[idx], 100);
 
 	ex->postMessage();
 
@@ -419,15 +416,15 @@ bool GameLoader::unloadScene(int sceneId) {
 	if (_sc2array[sceneTag]._isLoaded)
 		saveScenePicAniInfos(sceneId);
 
-	_sc2array[sceneTag]._motionController->freeItems();
+	_sc2array[sceneTag]._motionController->detachAllObjects();
 
 	delete tag->_scene;
-	tag->_scene = 0;
+	tag->_scene = nullptr;
 
-	_sc2array[sceneTag]._isLoaded = 0;
-	_sc2array[sceneTag]._scene = 0;
+	_sc2array[sceneTag]._isLoaded = false;
+	_sc2array[sceneTag]._scene = nullptr;
 
-   return true;
+	return true;
 }
 
 int GameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {
@@ -449,46 +446,47 @@ int GameLoader::getSceneTagBySceneId(int sceneId, SceneTag **st) {
 	return -1;
 }
 
-void GameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAniInfoCount) {
-	if (picAniInfoCount <= 0)
+void GameLoader::applyPicAniInfos(Scene *sc, const PicAniInfoList &picAniInfo) {
+	if (!picAniInfo.size())
 		return;
 
-	debug(0, "GameLoader::applyPicAniInfos(sc, ptr, %d)", picAniInfoCount);
+	debugC(0, kDebugAnimation, "GameLoader::applyPicAniInfos(sc, ptr, %d)", picAniInfo.size());
 
 	PictureObject *pict;
 	StaticANIObject *ani;
 
-	for (int i = 0; i < picAniInfoCount; i++) {
-		debug(7, "PicAniInfo: id: %d type: %d", picAniInfo[i]->objectId, picAniInfo[i]->type);
-		if (picAniInfo[i]->type & 2) {
-			pict = sc->getPictureObjectById(picAniInfo[i]->objectId, picAniInfo[i]->field_8);
+	for (uint i = 0; i < picAniInfo.size(); i++) {
+		const PicAniInfo &info = picAniInfo[i];
+		debugC(7, kDebugAnimation, "PicAniInfo: id: %d type: %d", info.objectId, info.type);
+		if (info.type & 2) {
+			pict = sc->getPictureObjectById(info.objectId, info.field_8);
 			if (pict) {
-				pict->setPicAniInfo(picAniInfo[i]);
+				pict->setPicAniInfo(info);
 				continue;
 			}
-			pict = sc->getPictureObjectById(picAniInfo[i]->objectId, 0);
+			pict = sc->getPictureObjectById(info.objectId, 0);
 			if (pict) {
 				PictureObject *pictNew = new PictureObject(pict);
 
 				sc->_picObjList.push_back(pictNew);
-				pictNew->setPicAniInfo(picAniInfo[i]);
+				pictNew->setPicAniInfo(info);
 				continue;
 			}
 		} else {
-			if (!(picAniInfo[i]->type & 1))
+			if (!(info.type & 1))
 				continue;
 
-			Scene *scNew = g_fp->accessScene(picAniInfo[i]->sceneId);
+			Scene *scNew = g_fp->accessScene(info.sceneId);
 			if (!scNew)
 				continue;
 
-			ani = sc->getStaticANIObject1ById(picAniInfo[i]->objectId, picAniInfo[i]->field_8);
+			ani = sc->getStaticANIObject1ById(info.objectId, info.field_8);
 			if (ani) {
 				ani->setPicAniInfo(picAniInfo[i]);
 				continue;
 			}
 
-			ani = scNew->getStaticANIObject1ById(picAniInfo[i]->objectId, 0);
+			ani = scNew->getStaticANIObject1ById(info.objectId, 0);
 			if (ani) {
 				StaticANIObject *aniNew = new StaticANIObject(ani);
 
@@ -502,7 +500,58 @@ void GameLoader::applyPicAniInfos(Scene *sc, PicAniInfo **picAniInfo, int picAni
 }
 
 void GameLoader::saveScenePicAniInfos(int sceneId) {
-	warning("STUB: GameLoader::saveScenePicAniInfos(%d)", sceneId);
+	SceneTag *st;
+
+	int idx = getSceneTagBySceneId(sceneId, &st);
+
+	if (idx < 0)
+		return;
+
+	if (!_sc2array[idx]._isLoaded)
+		return;
+
+	if (!st->_scene)
+		return;
+
+	_sc2array[idx]._picAniInfos = savePicAniInfos(st->_scene, 0, 128);
+}
+
+PicAniInfoList GameLoader::savePicAniInfos(Scene *sc, int flag1, int flag2) {
+	if (!sc)
+		return PicAniInfoList();
+
+	if (!sc->_picObjList.size())
+		return PicAniInfoList();
+
+	int numInfos = sc->_staticANIObjectList1.size() + sc->_picObjList.size() - 1;
+	if (numInfos < 1)
+		return PicAniInfoList();
+
+	PicAniInfoList res;
+	res.reserve(numInfos);
+
+	for (uint i = 0; i < sc->_picObjList.size(); i++) {
+		PictureObject *obj = sc->_picObjList[i];
+
+		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_field_8 & flag2) == flag2)) {
+			res.push_back(PicAniInfo());
+			obj->getPicAniInfo(res.back());
+		}
+	}
+
+	for (uint i = 0; i < sc->_staticANIObjectList1.size(); i++) {
+		StaticANIObject *obj = sc->_staticANIObjectList1[i];
+
+		if (obj && ((obj->_flags & flag1) == flag1) && ((obj->_field_8 & flag2) == flag2)) {
+			res.push_back(PicAniInfo());
+			obj->getPicAniInfo(res.back());
+			res.back().type &= 0xFFFF;
+		}
+	}
+
+	debugC(4, kDebugBehavior | kDebugAnimation, "savePicAniInfos: Stored %d infos", res.size());
+
+	return res;
 }
 
 void GameLoader::updateSystems(int counterdiff) {
@@ -524,78 +573,51 @@ void GameLoader::updateSystems(int counterdiff) {
 	}
 }
 
-void GameLoader::readSavegame(const char *fname) {
-	warning("STUB: readSavegame(%s)", fname);
-}
+Sc2::Sc2() :
+	_sceneId(0),
+	_field_2(0),
+	_scene(nullptr),
+	_isLoaded(false),
+	_motionController(nullptr) {}
 
-void GameLoader::writeSavegame(Scene *sc, const char *fname) {
-	warning("STUB: writeSavegame(sc, %s)", fname);
-}
-
-Sc2::Sc2() {
-	_sceneId = 0;
-	_field_2 = 0;
-	_scene = 0;
-	_motionController = 0;
-	_data1 = 0;
-	_count1 = 0;
-	_defPicAniInfos = 0;
-	_defPicAniInfosCount = 0;
-	_picAniInfos = 0;
-	_picAniInfosCount = 0;
-	_isLoaded = 0;
-	_entranceData = 0;
-	_entranceDataCount = 0;
+Sc2::~Sc2() {
+	delete _motionController;
 }
 
 bool Sc2::load(MfcArchive &file) {
-	debug(5, "Sc2::load()");
+	debugC(5, kDebugLoading, "Sc2::load()");
 
 	_sceneId = file.readUint16LE();
 
-	_motionController = (MotionController *)file.readClass();
+	delete _motionController;
+	_motionController = file.readClass<MotionController>();
 
-	_count1 = file.readUint32LE();
-	debug(4, "count1: %d", _count1);
-	if (_count1 > 0) {
-		_data1 = (int32 *)malloc(_count1 * sizeof(int32));
-
-		for (int i = 0; i < _count1; i++) {
-			_data1[i] = file.readUint32LE();
+	const uint count1 = file.readUint32LE();
+	debugC(4, kDebugLoading, "count1: %d", count1);
+	if (count1) {
+		_data1.reserve(count1);
+		for (uint i = 0; i < count1; i++) {
+			_data1.push_back(file.readUint32LE());
 		}
-	} else {
-		_data1 = 0;
 	}
 
-	_defPicAniInfosCount = file.readUint32LE();
-	debug(4, "defPicAniInfos: %d", _defPicAniInfosCount);
-	if (_defPicAniInfosCount > 0) {
-		_defPicAniInfos = (PicAniInfo **)malloc(_defPicAniInfosCount * sizeof(PicAniInfo *));
-
-		for (int i = 0; i < _defPicAniInfosCount; i++) {
-			_defPicAniInfos[i] = new PicAniInfo();
-
-			_defPicAniInfos[i]->load(file);
+	const uint defPicAniInfosCount = file.readUint32LE();
+	debugC(4, kDebugLoading, "defPicAniInfos: %d", defPicAniInfosCount);
+	if (defPicAniInfosCount) {
+		_defPicAniInfos.resize(defPicAniInfosCount);
+		for (uint i = 0; i < defPicAniInfosCount; i++) {
+			_defPicAniInfos[i].load(file);
 		}
-	} else {
-		_defPicAniInfos = 0;
 	}
 
-	_picAniInfos = 0;
-	_picAniInfosCount = 0;
+	const uint entranceDataCount = file.readUint32LE();
+	debugC(4, kDebugLoading, "_entranceData: %d", entranceDataCount);
 
-	_entranceDataCount = file.readUint32LE();
-	debug(4, "_entranceData: %d", _entranceDataCount);
-
-	if (_entranceDataCount > 0) {
-		_entranceData = (EntranceInfo **)malloc(_entranceDataCount * sizeof(EntranceInfo *));
-
-		for (int i = 0; i < _entranceDataCount; i++) {
-			_entranceData[i] = new EntranceInfo();
-			_entranceData[i]->load(file);
+	if (entranceDataCount) {
+		_entranceData.resize(entranceDataCount);
+		for (uint i = 0; i < entranceDataCount; i++) {
+			_entranceData[i].load(file);
 		}
-	} else {
-		_entranceData = 0;
 	}
 
 	if (file.size() - file.pos() > 0)
@@ -605,20 +627,19 @@ bool Sc2::load(MfcArchive &file) {
 }
 
 bool PreloadItems::load(MfcArchive &file) {
-	debug(5, "PreloadItems::load()");
+	debugC(5, kDebugLoading, "PreloadItems::load()");
 
 	int count = file.readCount();
 
 	clear();
 
+	resize(count);
 	for (int i = 0; i < count; i++) {
-		PreloadItem *t = new PreloadItem();
-		t->preloadId1 = file.readUint32LE();
-		t->preloadId2 = file.readUint32LE();
-		t->sceneId = file.readUint32LE();
-		t->keyCode = file.readUint32LE();
-
-		push_back(t);
+		PreloadItem &t = (*this)[i];
+		t.preloadId1 = file.readUint32LE();
+		t.preloadId2 = file.readUint32LE();
+		t.sceneId = file.readUint32LE();
+		t.param = file.readSint32LE();
 	}
 
 	return true;
@@ -630,42 +651,12 @@ const char *getSavegameFile(int saveGameIdx) {
 	return buffer;
 }
 
-bool readSavegameHeader(Common::InSaveFile *in, FullpipeSavegameHeader &header) {
-	char saveIdentBuffer[6];
-	header.thumbnail = NULL;
-
-	// Validate the header Id
-	in->read(saveIdentBuffer, 6);
-	if (strcmp(saveIdentBuffer, "SVMCR"))
-		return false;
-
-	header.version = in->readByte();
-	if (header.version != FULLPIPE_SAVEGAME_VERSION)
-		return false;
-
-	// Read in the string
-	header.saveName.clear();
-	char ch;
-	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
-
-	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
-		return false;
-
-	return true;
-}
-
 void GameLoader::restoreDefPicAniInfos() {
 	for (uint i = 0; i < _sc2array.size(); i++) {
-		if (_sc2array[i]._picAniInfos) {
-			free(_sc2array[i]._picAniInfos);
-			_sc2array[i]._picAniInfos = 0;
-			_sc2array[i]._picAniInfosCount = 0;
-		}
+		_sc2array[i]._picAniInfos.clear();
 
 		if (_sc2array[i]._scene)
-			applyPicAniInfos(_sc2array[i]._scene, _sc2array[i]._defPicAniInfos, _sc2array[i]._defPicAniInfosCount);
+			applyPicAniInfos(_sc2array[i]._scene, _sc2array[i]._defPicAniInfos);
 	}
 }
 

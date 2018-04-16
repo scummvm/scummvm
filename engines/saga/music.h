@@ -25,13 +25,10 @@
 #ifndef SAGA_MUSIC_H
 #define SAGA_MUSIC_H
 
+#include "audio/mididrv.h"
 #include "audio/midiplayer.h"
 #include "audio/midiparser.h"
 #include "audio/mixer.h"
-#include "audio/decoders/mp3.h"
-#include "audio/decoders/vorbis.h"
-#include "audio/decoders/flac.h"
-#include "common/mutex.h"
 
 namespace Saga {
 
@@ -61,6 +58,7 @@ public:
 protected:
 	MusicType _driverType;
 	bool _isGM;
+	bool _milesAudioMode;
 };
 
 class Music {
@@ -78,6 +76,8 @@ public:
 
 	void setVolume(int volume, int time = 1);
 	int getVolume() { return _currentVolume; }
+
+	bool isAdlib() const { return _player->isAdlib(); }
 
 	Common::Array<int32> _songTable;
 

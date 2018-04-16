@@ -38,33 +38,44 @@
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
+#include "agi/text.h"
 #include "agi/sprite.h"
 #include "agi/keyboard.h"
 #include "agi/menu.h"
+#include "agi/systemui.h"
+#include "agi/words.h"
 
-#define SAVEGAME_VERSION 6
+#define SAVEGAME_CURRENT_VERSION 11
 
 //
-// Version 0 (Sarien): view table has 64 entries
-// Version 1 (Sarien): view table has 256 entries (needed in KQ3)
-// Version 2 (ScummVM): first ScummVM version
-// Version 3 (ScummVM): added AGIPAL save/load support
-// Version 4 (ScummVM): added thumbnails and save creation date/time
-// Version 5 (ScummVM): Added game md5
-// Version 6 (ScummVM): Added game played time
-//
+// Version 0 (Sarien):   view table has 64 entries
+// Version 1 (Sarien):   view table has 256 entries (needed in KQ3)
+// Version 2 (ScummVM):  first ScummVM version
+// Version 3 (ScummVM):  added AGIPAL save/load support
+// Version 4 (ScummVM):  added thumbnails and save creation date/time
+// Version 5 (ScummVM):  Added game md5
+// Version 6 (ScummVM):  Added game played time
+// Version 7 (ScummVM):  Added controller key mappings
+//                        required for some games for quick-loading from ScummVM main menu
+//                        for games, that do not set all key mappings right at the start
+//                       Added automatic save data (for command SetSimple)
+// Version 8 (ScummVM):  Added Hold-Key-Mode boolean
+//                        required for at least Mixed Up Mother Goose
+//                        gets set at the start of the game only
+// Version 9 (ScummVM):  Added seconds to saved game time stamp
+// Version 10 (ScummVM): Added priorityTableSet boolean
 
 namespace Agi {
 
-static const uint32 AGIflag = MKTAG('A','G','I',':');
+static const uint32 AGIflag = MKTAG('A', 'G', 'I', ':');
 
-int AgiEngine::saveGame(const Common::String &fileName, const Common::String &description) {
+int AgiEngine::saveGame(const Common::String &fileName, const Common::String &descriptionString) {
 	char gameIDstring[8] = "gameIDX";
 	int i;
 	Common::OutSaveFile *out;
 	int result = errOK;
 
-	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::saveGame(%s, %s)", fileName.c_str(), description.c_str());
+	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::saveGame(%s, %s)", fileName.c_str(), descriptionString.c_str());
 	if (!(out = _saveFileMan->openForSaving(fileName))) {
 		warning("Can't create file '%s', game not saved", fileName.c_str());
 		return errBadFileOpen;
@@ -73,10 +84,17 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	}
 
 	out->writeUint32BE(AGIflag);
-	out->write(description.c_str(), 31);
 
-	out->writeByte(SAVEGAME_VERSION);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save game version (%d)", SAVEGAME_VERSION);
+	// Write description of saved game, limited to SAVEDGAME_DESCRIPTION_LEN characters + terminating NUL
+	char description[SAVEDGAME_DESCRIPTION_LEN + 1];
+
+	memset(description, 0, sizeof(description));
+	strncpy(description, descriptionString.c_str(), SAVEDGAME_DESCRIPTION_LEN);
+	assert(SAVEDGAME_DESCRIPTION_LEN + 1 == 31); // safety
+	out->write(description, 31);
+
+	out->writeByte(SAVEGAME_CURRENT_VERSION);
+	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save game version (%d)", SAVEGAME_CURRENT_VERSION);
 
 	// Thumbnail
 	Graphics::saveThumbnail(*out);
@@ -93,13 +111,14 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save date (%d)", saveDate);
 	out->writeUint16BE(saveTime);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing save time (%d)", saveTime);
+	// Version 9+: save seconds of current time as well
+	out->writeByte(curTime.tm_sec & 0xFF);
 	out->writeUint32BE(playTime);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing play time (%d)", playTime);
 
-	out->writeByte(_game.state);
-	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game state (%d)", _game.state);
+	out->writeByte(2); // was _game.state, 2 = STATE_RUNNING
 
-	strcpy(gameIDstring, _game.id);
+	Common::strlcpy(gameIDstring, _game.id, 8);
 	out->write(gameIDstring, 8);
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
 
@@ -116,37 +135,56 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 			out->writeByte(tmp[i]);
 	}
 
+	// Version 7+: Save automatic saving state (set.simple opcode)
+	out->writeByte(_game.automaticSave);
+	out->write(_game.automaticSaveDescription, 31);
+
+	// touch VM_VAR_SECONDS, so that it gets updated
+	getVar(VM_VAR_SECONDS);
+
 	for (i = 0; i < MAX_FLAGS; i++)
 		out->writeByte(_game.flags[i]);
 	for (i = 0; i < MAX_VARS; i++)
 		out->writeByte(_game.vars[i]);
 
 	out->writeSint16BE((int8)_game.horizon);
-	out->writeSint16BE((int16)_game.lineStatus);
-	out->writeSint16BE((int16)_game.lineUserInput);
-	out->writeSint16BE((int16)_game.lineMinPrint);
+	out->writeSint16BE((int16)_text->statusRow_Get());
+	out->writeSint16BE((int16)_text->promptRow_Get());
+	out->writeSint16BE((int16)_text->getWindowRowMin());
 
-	out->writeSint16BE((int16)_game.inputMode);
-	out->writeSint16BE((int16)_game.lognum);
+	out->writeSint16BE(1); // was _game.inputMode, we set it to 1, which was INPUTMODE_NORMAL
+	out->writeSint16BE((int16)_game.curLogicNr);
 
 	out->writeSint16BE((int16)_game.playerControl);
 	out->writeSint16BE((int16)shouldQuit());
-	out->writeSint16BE((int16)_game.statusLine);
-	out->writeSint16BE((int16)_game.clockEnabled);
+	if (_text->statusEnabled()) {
+		out->writeSint16BE(0x7FFF);
+	} else {
+		out->writeSint16BE(0);
+	}
+	out->writeSint16BE(1); // was clock enabled
+	// (previous in-game-timer, in-game-timer is always enabled during the regular game, so need to save/load it)
 	out->writeSint16BE((int16)_game.exitAllLogics);
 	out->writeSint16BE((int16)_game.pictureShown);
-	out->writeSint16BE((int16)_game.hasPrompt);
+	out->writeSint16BE((int16)_text->promptIsEnabled()); // was "_game.hasPrompt", no longer needed
 	out->writeSint16BE((int16)_game.gameFlags);
 
-	out->writeSint16BE(_game.inputEnabled);
+	if (_text->promptIsEnabled()) {
+		out->writeSint16BE(0x7FFF);
+	} else {
+		out->writeSint16BE(0);
+	}
 
-	for (i = 0; i < _HEIGHT; i++)
-		out->writeByte(_game.priTable[i]);
+	for (i = 0; i < SCRIPT_HEIGHT; i++)
+		out->writeByte(_gfx->saveLoadGetPriority(i));
+
+	// Version 10+: Save, if priority table got modified (set.pri.base opcode)
+	out->writeSint16BE((int16)_gfx->saveLoadWasPriorityTableModified());
 
 	out->writeSint16BE((int16)_game.gfxMode);
-	out->writeByte(_game.cursorChar);
-	out->writeSint16BE((int16)_game.colorFg);
-	out->writeSint16BE((int16)_game.colorBg);
+	out->writeByte(_text->inputGetCursorChar());
+	out->writeSint16BE((int16)_text->charAttrib_GetForeground());
+	out->writeSint16BE((int16)_text->charAttrib_GetBackground());
 
 	// game.hires
 	// game.sbuf
@@ -157,21 +195,33 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	for (i = 0; i < (int16)_game.numObjects; i++)
 		out->writeSint16BE((int16)objectGetLocation(i));
 
+	// Version 7+: save controller key mappings
+	//  required for games, that do not set all key mappings right at the start
+	//  when quick restoring is used from ScummVM menu, only 1 cycle is executed
+	for (i = 0; i < MAX_CONTROLLER_KEYMAPPINGS; i++) {
+		out->writeUint16BE(_game.controllerKeyMapping[i].keycode);
+		out->writeByte(_game.controllerKeyMapping[i].controllerSlot);
+	}
+
+	// Version 8+: hold-key-mode
+	//  required for at least Mixed Up Mother Goose
+	out->writeByte(_keyHoldMode);
+
 	// game.ev_keyp
 	for (i = 0; i < MAX_STRINGS; i++)
 		out->write(_game.strings[i], MAX_STRINGLEN);
 
 	// record info about loaded resources
-	for (i = 0; i < MAX_DIRS; i++) {
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		out->writeByte(_game.dirLogic[i].flags);
 		out->writeSint16BE((int16)_game.logics[i].sIP);
 		out->writeSint16BE((int16)_game.logics[i].cIP);
 	}
-	for (i = 0; i < MAX_DIRS; i++)
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++)
 		out->writeByte(_game.dirPic[i].flags);
-	for (i = 0; i < MAX_DIRS; i++)
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++)
 		out->writeByte(_game.dirView[i].flags);
-	for (i = 0; i < MAX_DIRS; i++)
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++)
 		out->writeByte(_game.dirSound[i].flags);
 
 	// game.pictures
@@ -179,51 +229,79 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 	// game.views
 	// game.sounds
 
-	for (i = 0; i < MAX_VIEWTABLE; i++) {
-		VtEntry *v = &_game.viewTable[i];
+	for (i = 0; i < SCREENOBJECTS_MAX; i++) {
+		ScreenObjEntry *screenObj = &_game.screenObjTable[i];
 
-		out->writeByte(v->stepTime);
-		out->writeByte(v->stepTimeCount);
-		out->writeByte(v->entry);
-		out->writeSint16BE(v->xPos);
-		out->writeSint16BE(v->yPos);
-		out->writeByte(v->currentView);
+		out->writeByte(screenObj->stepTime);
+		out->writeByte(screenObj->stepTimeCount);
+		out->writeByte(screenObj->objectNr);
+		out->writeSint16BE(screenObj->xPos);
+		out->writeSint16BE(screenObj->yPos);
+		out->writeByte(screenObj->currentViewNr);
 
 		// v->view_data
 
-		out->writeByte(v->currentLoop);
-		out->writeByte(v->numLoops);
+		out->writeByte(screenObj->currentLoopNr);
+		out->writeByte(screenObj->loopCount);
 
 		// v->loop_data
 
-		out->writeByte(v->currentCel);
-		out->writeByte(v->numCels);
+		out->writeByte(screenObj->currentCelNr);
+		out->writeByte(screenObj->celCount);
 
 		// v->cel_data
 		// v->cel_data_2
 
-		out->writeSint16BE(v->xPos2);
-		out->writeSint16BE(v->yPos2);
+		out->writeSint16BE(screenObj->xPos_prev);
+		out->writeSint16BE(screenObj->yPos_prev);
 
 		// v->s
 
-		out->writeSint16BE(v->xSize);
-		out->writeSint16BE(v->ySize);
-		out->writeByte(v->stepSize);
-		out->writeByte(v->cycleTime);
-		out->writeByte(v->cycleTimeCount);
-		out->writeByte(v->direction);
+		out->writeSint16BE(screenObj->xSize);
+		out->writeSint16BE(screenObj->ySize);
+		out->writeByte(screenObj->stepSize);
+		out->writeByte(screenObj->cycleTime);
+		out->writeByte(screenObj->cycleTimeCount);
+		out->writeByte(screenObj->direction);
 
-		out->writeByte(v->motion);
-		out->writeByte(v->cycle);
-		out->writeByte(v->priority);
+		out->writeByte(screenObj->motionType);
+		out->writeByte(screenObj->cycle);
+		// Version 11+: loop_flag, was saved previously under vt.parm1
+		out->writeByte(screenObj->loop_flag);
+		out->writeByte(screenObj->priority);
 
-		out->writeUint16BE(v->flags);
+		out->writeUint16BE(screenObj->flags);
 
-		out->writeByte(v->parm1);
-		out->writeByte(v->parm2);
-		out->writeByte(v->parm3);
-		out->writeByte(v->parm4);
+		// this was done so that saved games compatibility isn't broken
+		switch (screenObj->motionType) {
+		case kMotionNormal:
+			out->writeByte(0);
+			out->writeByte(0);
+			out->writeByte(0);
+			out->writeByte(0);
+			break;
+		case kMotionWander:
+			out->writeByte(screenObj->wander_count);
+			out->writeByte(0);
+			out->writeByte(0);
+			out->writeByte(0);
+			break;
+		case kMotionFollowEgo:
+			out->writeByte(screenObj->follow_stepSize);
+			out->writeByte(screenObj->follow_flag);
+			out->writeByte(screenObj->follow_count);
+			out->writeByte(0);
+			break;
+		case kMotionEgo:
+		case kMotionMoveObj:
+			out->writeByte((byte)screenObj->move_x); // problematic! int16 -> byte
+			out->writeByte((byte)screenObj->move_y);
+			out->writeByte(screenObj->move_stepSize);
+			out->writeByte(screenObj->move_flag);
+			break;
+		default:
+			error("unknown motion-type");
+		}
 	}
 
 	// Save image stack
@@ -249,7 +327,7 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 		warning("Can't write file '%s'. (Disk full?)", fileName.c_str());
 		result = errIOError;
 	} else
-		debugC(1, kDebugLevelMain | kDebugLevelSavegame, "Saved game %s in file %s", description.c_str(), fileName.c_str());
+		debugC(1, kDebugLevelMain | kDebugLevelSavegame, "Saved game %s in file %s", descriptionString.c_str(), fileName.c_str());
 
 	delete out;
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName.c_str());
@@ -260,11 +338,15 @@ int AgiEngine::saveGame(const Common::String &fileName, const Common::String &de
 }
 
 int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
-	char description[31], saveVersion, loadId[8];
-	int i, vtEntries = MAX_VIEWTABLE;
+	char  description[SAVEDGAME_DESCRIPTION_LEN + 1];
+	byte  saveVersion = 0;
+	char  loadId[8];
+	int   i, vtEntries = SCREENOBJECTS_MAX;
 	uint8 t;
 	int16 parm[7];
 	Common::InSaveFile *in;
+	bool totalPlayTimeWasSet = false;
+	byte oldLoopFlag = 0;
 
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "AgiEngine::loadGame(%s)", fileName.c_str());
 
@@ -284,30 +366,45 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		return errOK;
 	}
 
-	in->read(description, 31);
+	assert(SAVEDGAME_DESCRIPTION_LEN + 1 == 31); // safety
+	in->read(description, 31); // skip description
 
+	// check, if there is a terminating NUL inside description
+	uint16 descriptionPos = 0;
+	while (description[descriptionPos]) {
+		descriptionPos++;
+		if (descriptionPos >= sizeof(description))
+			error("saved game description is corrupt");
+	}
 	debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Description is: %s", description);
 
 	saveVersion = in->readByte();
-	if (saveVersion < 2)	// is the save game pre-ScummVM?
-		warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, SAVEGAME_VERSION);
+	if (saveVersion < 2)    // is the save game pre-ScummVM?
+		warning("Old save game version (%d, current version is %d). Will try and read anyway, but don't be surprised if bad things happen", saveVersion, SAVEGAME_CURRENT_VERSION);
 
 	if (saveVersion < 3)
 		warning("This save game contains no AGIPAL data, if the game is using the AGIPAL hack, it won't work correctly");
+
+	if (saveVersion > SAVEGAME_CURRENT_VERSION)
+		error("Saved game was created with a newer version of ScummVM. Unable to load.");
 
 	if (saveVersion >= 4) {
 		// We don't need the thumbnail here, so just read it and discard it
 		Graphics::skipThumbnail(*in);
 
-		in->readUint32BE();	// save date
-		in->readUint16BE(); // save time
+		in->readUint32BE(); // save date
+		in->readUint16BE(); // save time (hour + minute)
+		if (saveVersion >= 9) {
+			in->readByte(); // save time seconds
+		}
 		if (saveVersion >= 6) {
 			uint32 playTime = in->readUint32BE();
-			g_engine->setTotalPlayTime(playTime * 1000);
+			inGameTimerReset(playTime * 1000);
+			totalPlayTimeWasSet = true;
 		}
 	}
 
-	_game.state = (State)in->readByte();
+	in->readByte(); // was _game.state, not needed anymore
 
 	in->read(loadId, 8);
 	if (strcmp(loadId, _game.id) != 0 && checkId) {
@@ -348,56 +445,93 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		}
 	}
 
+	if (saveVersion >= 7) {
+		// Restore automatic saving state (set.simple opcode)
+		_game.automaticSave = in->readByte();
+		in->read(_game.automaticSaveDescription, 31);
+	} else {
+		_game.automaticSave = false;
+		_game.automaticSaveDescription[0] = 0;
+	}
+
 	for (i = 0; i < MAX_FLAGS; i++)
 		_game.flags[i] = in->readByte();
 	for (i = 0; i < MAX_VARS; i++)
 		_game.vars[i] = in->readByte();
 
-	setvar(vFreePages, 180); // Set amount of free memory to realistic value (Overwriting the just loaded value)
+	if (!totalPlayTimeWasSet) {
+		// If we haven't gotten total play time by now, try to calculate it by using VM Variables
+		// This will happen for at least saves before version 6
+		// Direct access because otherwise we would trigger an update to these variables according to ScummVM total play time
+		byte playTimeSeconds = _game.vars[VM_VAR_SECONDS];
+		byte playTimeMinutes = _game.vars[VM_VAR_MINUTES];
+		byte playTimeHours   = _game.vars[VM_VAR_HOURS];
+		byte playTimeDays    = _game.vars[VM_VAR_DAYS];
+		uint32 playTime = (playTimeSeconds + (playTimeMinutes * 60) + (playTimeHours * 3600) + (playTimeDays * 86400)) * 1000;
+
+		inGameTimerReset(playTime);
+	}
+
+	setVar(VM_VAR_FREE_PAGES, 180); // Set amount of free memory to realistic value (Overwriting the just loaded value)
 
 	_game.horizon = in->readSint16BE();
-	_game.lineStatus = in->readSint16BE();
-	_game.lineUserInput = in->readSint16BE();
-	_game.lineMinPrint = in->readSint16BE();
+	_text->statusRow_Set(in->readSint16BE());
+	_text->promptRow_Set(in->readSint16BE());
+	_text->configureScreen(in->readSint16BE());
 
 	// These are never saved
-	_game.cursorPos = 0;
-	_game.inputBuffer[0] = 0;
-	_game.echoBuffer[0] = 0;
-	_game.keypress = 0;
+	_text->promptReset();
 
-	_game.inputMode = (InputMode)in->readSint16BE();
-	_game.lognum = in->readSint16BE();
+	in->readSint16BE(); // was _game.inputMode, not needed anymore
+
+	_game.curLogicNr = in->readSint16BE();
 
 	_game.playerControl = in->readSint16BE();
 	if (in->readSint16BE())
 		quitGame();
-	_game.statusLine = in->readSint16BE();
-	_game.clockEnabled = in->readSint16BE();
+	if (in->readSint16BE()) {
+		_text->statusEnable();
+	} else {
+		_text->statusDisable();
+	}
+	in->readSint16BE(); // was clock enabled, no longer needed
 	_game.exitAllLogics = in->readSint16BE();
-	_game.pictureShown = in->readSint16BE();
-	_game.hasPrompt = in->readSint16BE();
+	in->readSint16BE(); // was _game.pictureShown
+	in->readSint16BE(); // was _game.hasPrompt, no longer needed
 	_game.gameFlags = in->readSint16BE();
-	_game.inputEnabled = in->readSint16BE();
+	if (in->readSint16BE()) {
+		_text->promptEnable();
+	} else {
+		_text->promptDisable();
+	}
 
-	for (i = 0; i < _HEIGHT; i++)
-		_game.priTable[i] = in->readByte();
+	for (i = 0; i < SCRIPT_HEIGHT; i++)
+		_gfx->saveLoadSetPriority(i, in->readByte());
 
-	if (_game.hasWindow)
-		closeWindow();
+	if (saveVersion >= 10) {
+		// Version 10+: priority table was modified by scripts
+		int16 priorityTableWasModified = in->readSint16BE();
 
-	_game.msgBoxTicks = 0;
+		if (priorityTableWasModified) {
+			_gfx->saveLoadSetPriorityTableModifiedBool(true);
+		} else {
+			_gfx->saveLoadSetPriorityTableModifiedBool(false);
+		}
+	} else {
+		// Try to figure it out by ourselves
+		_gfx->saveLoadFigureOutPriorityTableModifiedBool();
+	}
+
+	_text->closeWindow();
+
 	_game.block.active = false;
-	// game.window - fixed by close_window()
-	// game.has_window - fixed by close_window()
 
 	_game.gfxMode = in->readSint16BE();
-	_game.cursorChar = in->readByte();
-	_game.colorFg = in->readSint16BE();
-	_game.colorBg = in->readSint16BE();
+	_text->inputSetCursorChar(in->readByte());
 
-	// game.hires - rebuilt from image stack
-	// game.sbuf - rebuilt from image stack
+	int16 textForeground = in->readSint16BE();
+	int16 textBackground = in->readSint16BE();
+	_text->charAttrib_Set(textForeground, textBackground);
 
 	// game.ego_words - fixed by clean_input
 	// game.num_ego_words - fixed by clean_input
@@ -407,41 +541,58 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		objectSetLocation(i, in->readSint16BE());
 
 	// Those are not serialized
-	for (i = 0; i < MAX_DIRS; i++) {
+	for (i = 0; i < MAX_CONTROLLERS; i++) {
 		_game.controllerOccured[i] = false;
+	}
+
+	if (saveVersion >= 7) {
+		// For old saves, we just keep the current controllers
+		for (i = 0; i < MAX_CONTROLLER_KEYMAPPINGS; i++) {
+			_game.controllerKeyMapping[i].keycode = in->readUint16BE();
+			_game.controllerKeyMapping[i].controllerSlot = in->readByte();
+		}
+	}
+
+	if (saveVersion >= 8) {
+		// Version 8+: hold-key-mode
+		if (in->readByte()) {
+			_keyHoldMode = true;
+		} else {
+			_keyHoldMode = false;
+		}
 	}
 
 	for (i = 0; i < MAX_STRINGS; i++)
 		in->read(_game.strings[i], MAX_STRINGLEN);
 
-	for (i = 0; i < MAX_DIRS; i++) {
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(rLOGIC, i);
+			agiLoadResource(RESOURCETYPE_LOGIC, i);
 		else
-			agiUnloadResource(rLOGIC, i);
+			agiUnloadResource(RESOURCETYPE_LOGIC, i);
 		_game.logics[i].sIP = in->readSint16BE();
 		_game.logics[i].cIP = in->readSint16BE();
 	}
 
-	for (i = 0; i < MAX_DIRS; i++) {
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(rPICTURE, i);
+			agiLoadResource(RESOURCETYPE_PICTURE, i);
 		else
-			agiUnloadResource(rPICTURE, i);
+			agiUnloadResource(RESOURCETYPE_PICTURE, i);
 	}
 
-	for (i = 0; i < MAX_DIRS; i++) {
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(rVIEW, i);
+			agiLoadResource(RESOURCETYPE_VIEW, i);
 		else
-			agiUnloadResource(rVIEW, i);
+			agiUnloadResource(RESOURCETYPE_VIEW, i);
 	}
 
-	for (i = 0; i < MAX_DIRS; i++) {
+	for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		if (in->readByte() & RES_LOADED)
-			agiLoadResource(rSOUND, i);
+			agiLoadResource(RESOURCETYPE_SOUND, i);
 		else
-			agiUnloadResource(rSOUND, i);
+			agiUnloadResource(RESOURCETYPE_SOUND, i);
 	}
 
 	// game.pictures - loaded above
@@ -450,78 +601,116 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	// game.sounds - loaded above
 
 	for (i = 0; i < vtEntries; i++) {
-		VtEntry *v = &_game.viewTable[i];
+		ScreenObjEntry *screenObj = &_game.screenObjTable[i];
 
-		v->stepTime = in->readByte();
-		v->stepTimeCount = in->readByte();
-		v->entry = in->readByte();
-		v->xPos = in->readSint16BE();
-		v->yPos = in->readSint16BE();
-		v->currentView = in->readByte();
+		screenObj->stepTime = in->readByte();
+		screenObj->stepTimeCount = in->readByte();
+		screenObj->objectNr = in->readByte();
+		screenObj->xPos = in->readSint16BE();
+		screenObj->yPos = in->readSint16BE();
+		screenObj->currentViewNr = in->readByte();
 
-		// v->view_data - fixed below
+		// screenObj->view_data - fixed below
 
-		v->currentLoop = in->readByte();
-		v->numLoops = in->readByte();
+		screenObj->currentLoopNr = in->readByte();
+		screenObj->loopCount = in->readByte();
 
-		// v->loop_data - fixed below
+		// screenObj->loop_data - fixed below
 
-		v->currentCel = in->readByte();
-		v->numCels = in->readByte();
+		screenObj->currentCelNr = in->readByte();
+		screenObj->celCount = in->readByte();
 
-		// v->cel_data - fixed below
-		// v->cel_data_2 - fixed below
+		// screenObj->cel_data - fixed below
+		// screenObj->cel_data_2 - fixed below
 
-		v->xPos2 = in->readSint16BE();
-		v->yPos2 = in->readSint16BE();
+		screenObj->xPos_prev = in->readSint16BE();
+		screenObj->yPos_prev = in->readSint16BE();
 
-		// v->s - fixed below
+		// screenObj->s - fixed below
 
-		v->xSize = in->readSint16BE();
-		v->ySize = in->readSint16BE();
-		v->stepSize = in->readByte();
-		v->cycleTime = in->readByte();
-		v->cycleTimeCount = in->readByte();
-		v->direction = in->readByte();
+		screenObj->xSize = in->readSint16BE();
+		screenObj->ySize = in->readSint16BE();
+		screenObj->stepSize = in->readByte();
+		screenObj->cycleTime = in->readByte();
+		screenObj->cycleTimeCount = in->readByte();
+		screenObj->direction = in->readByte();
 
-		v->motion = (MotionType)in->readByte();
-		v->cycle = (CycleType)in->readByte();
-		v->priority = in->readByte();
+		screenObj->motionType = (MotionType)in->readByte();
+		screenObj->cycle = (CycleType)in->readByte();
+		if (saveVersion >= 11) {
+			// Version 11+: loop_flag, was previously vt.parm1
+			screenObj->loop_flag = in->readByte();
+		}
+		screenObj->priority = in->readByte();
 
-		v->flags = in->readUint16BE();
+		screenObj->flags = in->readUint16BE();
 
-		v->parm1 = in->readByte();
-		v->parm2 = in->readByte();
-		v->parm3 = in->readByte();
-		v->parm4 = in->readByte();
+		// this was done so that saved games compatibility isn't broken
+		switch (screenObj->motionType) {
+		case kMotionNormal:
+			oldLoopFlag = in->readByte();
+			in->readByte();
+			in->readByte();
+			in->readByte();
+			break;
+		case kMotionWander:
+			screenObj->wander_count = in->readByte();
+			in->readByte();
+			in->readByte();
+			in->readByte();
+			oldLoopFlag = screenObj->wander_count;
+			break;
+		case kMotionFollowEgo:
+			screenObj->follow_stepSize = in->readByte();
+			screenObj->follow_flag = in->readByte();
+			screenObj->follow_count = in->readByte();
+			in->readByte();
+			oldLoopFlag = screenObj->follow_stepSize;
+			break;
+		case kMotionEgo:
+		case kMotionMoveObj:
+			screenObj->move_x = in->readByte(); // problematic! int16 -> byte
+			screenObj->move_y = in->readByte();
+			screenObj->move_stepSize = in->readByte();
+			screenObj->move_flag = in->readByte();
+			oldLoopFlag = screenObj->move_x;
+			break;
+		default:
+			error("unknown motion-type");
+		}
+		if (saveVersion < 11) {
+			if (saveVersion < 7) {
+				// Recreate loop_flag from motion-type (was previously vt.parm1)
+				// vt.parm1 was shared for multiple uses
+				screenObj->loop_flag = oldLoopFlag;
+			} else {
+				// for Version 7-10 we can't really do anything, it was not saved
+				screenObj->loop_flag = 0; // set it to 0
+			}
+		}
 	}
-	for (i = vtEntries; i < MAX_VIEWTABLE; i++) {
-		memset(&_game.viewTable[i], 0, sizeof(VtEntry));
-	}
 
-	// Fix some pointers in viewtable
+	// Fix some pointers in screenObjTable
 
-	for (i = 0; i < MAX_VIEWTABLE; i++) {
-		VtEntry *v = &_game.viewTable[i];
+	for (i = 0; i < SCREENOBJECTS_MAX; i++) {
+		ScreenObjEntry *screenObj = &_game.screenObjTable[i];
 
-		if (_game.dirView[v->currentView].offset == _EMPTY)
+		if (_game.dirView[screenObj->currentViewNr].offset == _EMPTY)
 			continue;
 
-		if (!(_game.dirView[v->currentView].flags & RES_LOADED))
-			agiLoadResource(rVIEW, v->currentView);
+		if (!(_game.dirView[screenObj->currentViewNr].flags & RES_LOADED))
+			agiLoadResource(RESOURCETYPE_VIEW, screenObj->currentViewNr);
 
-		setView(v, v->currentView);	// Fix v->view_data
-		setLoop(v, v->currentLoop);	// Fix v->loop_data
-		setCel(v, v->currentCel);	// Fix v->cel_data
-		v->celData2 = v->celData;
-		v->s = NULL;	// not sure if it is used...
+		setView(screenObj, screenObj->currentViewNr);   // Fix v->view_data
+		setLoop(screenObj, screenObj->currentLoopNr);   // Fix v->loop_data
+		setCel(screenObj, screenObj->currentCelNr); // Fix v->cel_data
 	}
 
-	_sprites->eraseBoth();
+	_sprites->eraseSprites();
 
-	// Clear input line
-	_gfx->clearScreen(0);
-	writeStatus();
+	_game.pictureShown = false;
+
+	_gfx->clearDisplay(0, false); // clear display screen, but not copy it to actual screen for now b/c transition
 
 	// Recreate background from saved image stack
 	clearImageStack();
@@ -529,7 +718,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		for (i = 0; i < 7; i++)
 			parm[i] = in->readSint16BE();
 		replayImageStackCall(t, parm[0], parm[1], parm[2],
-				parm[3], parm[4], parm[5], parm[6]);
+		                     parm[3], parm[4], parm[5], parm[6]);
 	}
 
 	// Load AGIPAL Data
@@ -539,259 +728,28 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	delete in;
 	debugC(3, kDebugLevelMain | kDebugLevelSavegame, "Closed %s", fileName.c_str());
 
-	setflag(fRestoreJustRan, true);
+	setFlag(VM_FLAG_RESTORE_JUST_RAN, true);
 
-	_game.hasPrompt = 0;	// force input line repaint if necessary
-	cleanInput();
+	_words->clearEgoWords();
 
-	_sprites->eraseBoth();
-	_sprites->blitBoth();
-	_sprites->commitBoth();
-	_picture->showPic();
-	_gfx->doUpdate();
+	// don't delay anything right after restoring a game
+	artificialDelay_Reset();
+
+	_sprites->eraseSprites();
+	_sprites->buildAllSpriteLists();
+	_sprites->drawAllSpriteLists();
+	_picture->showPicWithTransition();
+	_game.pictureShown = true;
+	_text->statusDraw();
+	_text->promptRedraw();
+
+	// copy everything over (we should probably only copy over the remaining parts of the screen w/o play screen
+	_gfx->copyDisplayToScreen();
+
+	// Sync volume settings from ScummVM system settings, so that VM volume variable is overwritten
+	setVolumeViaSystemSetting();
 
 	return errOK;
-}
-
-#define NUM_SLOTS 100
-#define NUM_VISIBLE_SLOTS 12
-
-Common::String AgiEngine::getSavegameFilename(int num) const {
-	Common::String saveLoadSlot = _targetName;
-	saveLoadSlot += Common::String::format(".%.3d", num);
-	return saveLoadSlot;
-}
-
-void AgiEngine::getSavegameDescription(int num, char *buf, bool showEmpty) {
-	Common::InSaveFile *in;
-	Common::String fileName = getSavegameFilename(num);
-
-	debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
-
-	if (!(in = _saveFileMan->openForLoading(fileName))) {
-		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "File %s does not exist", fileName.c_str());
-
-		if (showEmpty)
-			strcpy(buf, "        (empty slot)");
-		else
-			*buf = 0;
-	} else {
-		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for reading", fileName.c_str());
-
-		uint32 type = in->readUint32BE();
-
-		if (type == AGIflag) {
-			debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Has AGI flag, good start");
-			in->read(buf, 31);
-		} else {
-			warning("This doesn't appear to be an AGI savegame");
-			strcpy(buf, "(corrupt file)");
-		}
-
-		delete in;
-	}
-}
-
-int AgiEngine::selectSlot() {
-	int i, key, active = 0;
-	int rc = -1;
-	int hm = 1, vm = 3;	// box margins
-	int xmin, xmax, slotClicked;
-	char desc[NUM_VISIBLE_SLOTS][40];
-	int textCenter, buttonLength, buttonX[2], buttonY;
-	const char *buttonText[] = { "  OK  ", "Cancel", NULL };
-
-	_noSaveLoadAllowed = true;
-
-	for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
-		getSavegameDescription(_firstSlot + i, desc[i]);
-	}
-
-	textCenter = GFX_WIDTH / CHAR_LINES / 2;
-	buttonLength = 6;
-	buttonX[0] = (textCenter - 3 * buttonLength / 2) * CHAR_COLS;
-	buttonX[1] = (textCenter + buttonLength / 2) * CHAR_COLS;
-	buttonY = (vm + 17) * CHAR_LINES;
-
-	for (i = 0; i < 2; i++)
-		_gfx->drawCurrentStyleButton(buttonX[i], buttonY, buttonText[i], false, false, i == 0);
-
-	AllowSyntheticEvents on(this);
-	int oldFirstSlot = _firstSlot + 1;
-	int oldActive = active + 1;
-	bool exitSelectSlot = false;
-	while (!exitSelectSlot && !(shouldQuit() || _restartGame)) {
-		int sbPos = 0;
-
-		// Use the extreme scrollbar positions only if the extreme
-		// slots are in sight. (We have to calculate this even if we
-		// don't redraw the save slots, because it's also used for
-		// clicking in the scrollbar.
-
-		if (_firstSlot == 0)
-			sbPos = 1;
-		else if (_firstSlot == NUM_SLOTS - NUM_VISIBLE_SLOTS)
-			sbPos = NUM_VISIBLE_SLOTS - 2;
-		else {
-			sbPos = 2 + (_firstSlot * (NUM_VISIBLE_SLOTS - 4)) / (NUM_SLOTS - NUM_VISIBLE_SLOTS - 1);
-			if (sbPos >= NUM_VISIBLE_SLOTS - 3)
-				sbPos = NUM_VISIBLE_SLOTS - 3;
-		}
-
-		if (oldFirstSlot != _firstSlot || oldActive != active) {
-			char dstr[64];
-			for (i = 0; i < NUM_VISIBLE_SLOTS; i++) {
-				sprintf(dstr, "[%2d. %-28.28s]", i + _firstSlot, desc[i]);
-				printText(dstr, 0, hm + 1, vm + 4 + i,
-						(40 - 2 * hm) - 1, i == active ? MSG_BOX_COLOR : MSG_BOX_TEXT,
-						i == active ? MSG_BOX_TEXT : MSG_BOX_COLOR);
-			}
-
-			char upArrow[] = "^";
-			char downArrow[] = "v";
-			char scrollBar[] = " ";
-
-			for (i = 1; i < NUM_VISIBLE_SLOTS - 1; i++)
-				printText(scrollBar, 35, hm + 1, vm + 4 + i, 1, MSG_BOX_COLOR, 7, true);
-
-			printText(upArrow, 35, hm + 1, vm + 4, 1, 8, 7);
-			printText(downArrow, 35, hm + 1, vm + 4 + NUM_VISIBLE_SLOTS - 1, 1, 8, 7);
-			printText(scrollBar, 35, hm + 1, vm + 4 + sbPos, 1, MSG_BOX_COLOR, MSG_BOX_TEXT);
-
-			oldActive = active;
-			oldFirstSlot = _firstSlot;
-		}
-
-		pollTimer();
-		key = doPollKeyboard();
-
-		// It may happen that somebody will open GMM while
-		// this dialog is open, and load a game
-		// We are processing it here, effectively jumping
-		// out of the dead loop
-		if (getflag(fRestoreJustRan)) {
-			rc = -2;
-			exitSelectSlot = true;
-		}
-
-		if (!exitSelectSlot) {
-			switch (key) {
-			case KEY_ENTER:
-				rc = active;
-				Common::strlcpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
-				debugC(8, kDebugLevelMain | kDebugLevelInput, "Button pressed: %d", rc);
-				exitSelectSlot = true;
-				break;
-			case KEY_ESCAPE:
-				rc = -1;
-				exitSelectSlot = true;
-				break;
-			case BUTTON_LEFT:
-				if (_gfx->testButton(buttonX[0], buttonY, buttonText[0])) {
-					rc = active;
-					strncpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
-					debugC(8, kDebugLevelMain | kDebugLevelInput, "Button pressed: %d", rc);
-					exitSelectSlot = true;
-				} else if (_gfx->testButton(buttonX[1], buttonY, buttonText[1])) {
-					rc = -1;
-					exitSelectSlot = true;
-				} else {
-					slotClicked = ((int)_mouse.y - 1) / CHAR_COLS - (vm + 4);
-					xmin = (hm + 1) * CHAR_COLS;
-					xmax = xmin + CHAR_COLS * 34;
-					if ((int)_mouse.x >= xmin && (int)_mouse.x <= xmax) {
-						if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS)
-							active = slotClicked;
-					}
-					xmin = (hm + 36) * CHAR_COLS;
-					xmax = xmin + CHAR_COLS;
-					if ((int)_mouse.x >= xmin && (int)_mouse.x <= xmax) {
-						if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS) {
-							if (slotClicked == 0)
-								keyEnqueue(KEY_UP);
-							else if (slotClicked == NUM_VISIBLE_SLOTS - 1)
-								keyEnqueue(KEY_DOWN);
-							else if (slotClicked < sbPos)
-								keyEnqueue(KEY_UP_RIGHT);
-							else if (slotClicked > sbPos)
-								keyEnqueue(KEY_DOWN_RIGHT);
-						}
-					}
-				}
-				break;
-
-			case KEY_DOWN:
-				active++;
-				if (active >= NUM_VISIBLE_SLOTS) {
-					if (_firstSlot + NUM_VISIBLE_SLOTS < NUM_SLOTS) {
-						_firstSlot++;
-						for (i = 1; i < NUM_VISIBLE_SLOTS; i++)
-							memcpy(desc[i - 1], desc[i], sizeof(desc[0]));
-						getSavegameDescription(_firstSlot + NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
-					}
-					active = NUM_VISIBLE_SLOTS - 1;
-				}
-				break;
-			case KEY_UP:
-				active--;
-				if (active < 0) {
-					active = 0;
-					if (_firstSlot > 0) {
-						_firstSlot--;
-						for (i = NUM_VISIBLE_SLOTS - 1; i > 0; i--)
-							memcpy(desc[i], desc[i - 1], sizeof(desc[0]));
-						getSavegameDescription(_firstSlot, desc[0]);
-					}
-				}
-				break;
-
-			// Page Up/Down and mouse wheel scrolling all leave 'active'
-			// unchanged so that a visible slot will remain selected.
-
-			case WHEEL_DOWN:
-				if (_firstSlot < NUM_SLOTS - NUM_VISIBLE_SLOTS) {
-					_firstSlot++;
-					for (i = 1; i < NUM_VISIBLE_SLOTS; i++)
-						memcpy(desc[i - 1], desc[i], sizeof(desc[0]));
-					getSavegameDescription(_firstSlot + NUM_VISIBLE_SLOTS - 1, desc[NUM_VISIBLE_SLOTS - 1]);
-				}
-				break;
-			case WHEEL_UP:
-				if (_firstSlot > 0) {
-					_firstSlot--;
-					for (i = NUM_VISIBLE_SLOTS - 1; i > 0; i--)
-						memcpy(desc[i], desc[i - 1], sizeof(desc[0]));
-					getSavegameDescription(_firstSlot, desc[0]);
-				}
-				break;
-			case KEY_DOWN_RIGHT:
-				// This is probably triggered by Page Down.
-				_firstSlot += NUM_VISIBLE_SLOTS;
-				if (_firstSlot > NUM_SLOTS - NUM_VISIBLE_SLOTS) {
-					_firstSlot = NUM_SLOTS - NUM_VISIBLE_SLOTS;
-				}
-				for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
-					getSavegameDescription(_firstSlot + i, desc[i]);
-				break;
-			case KEY_UP_RIGHT:
-				// This is probably triggered by Page Up.
-				_firstSlot -= NUM_VISIBLE_SLOTS;
-				if (_firstSlot < 0) {
-					_firstSlot = 0;
-				}
-				for (i = 0; i < NUM_VISIBLE_SLOTS; i++)
-					getSavegameDescription(_firstSlot + i, desc[i]);
-				break;
-			}
-		}
-		_gfx->doUpdate();
-	}
-
-	closeWindow();
-
-	_noSaveLoadAllowed = false;
-
-	return rc;
 }
 
 int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
@@ -834,7 +792,8 @@ int AgiEngine::doSave(int slot, const Common::String &desc) {
 
 	// Make sure all graphics was blitted to screen. This fixes bug
 	// #2960567: "AGI: Ego partly erased in Load/Save thumbnails"
-	_gfx->doUpdate();
+	_gfx->updateScreen();
+//	_gfx->doUpdate();
 
 	return saveGame(fileName, desc);
 }
@@ -843,162 +802,218 @@ int AgiEngine::doLoad(int slot, bool showMessages) {
 	Common::String fileName = getSavegameFilename(slot);
 	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName.c_str());
 
-	_sprites->eraseBoth();
+	_sprites->eraseSprites();
 	_sound->stopSound();
-	closeWindow();
+	_text->closeWindow();
 
 	int result = loadGame(fileName);
 
 	if (result == errOK) {
-		if (showMessages)
-			messageBox("Game restored.");
-		_game.exitAllLogics = 1;
-		_menu->enableAll();
+		_game.exitAllLogics = true;
+		_menu->itemEnableAll();
 	} else {
 		if (showMessages)
-			messageBox("Error restoring game.");
+			_text->messageBox("Error restoring game.");
 	}
 
 	return result;
 }
 
-int AgiEngine::saveGameDialog() {
-	if (!ConfMan.getBool("originalsaveload"))
-		return scummVMSaveLoadDialog(true);
+SavedGameSlotIdArray AgiEngine::getSavegameSlotIds() {
+	Common::StringArray filenames;
+	int16 numberPos = _targetName.size() + 1;
+	int16 slotId = 0;
+	SavedGameSlotIdArray slotIdArray;
 
-	char *desc;
-	const char *buttons[] = { "Do as I say!", "I regret", NULL };
-	char dstr[200];
-	int rc, slot = 0;
-	int hm, vm, hp, vp;
-	int w;
+	// search for saved game filenames...
+	filenames = _saveFileMan->listSavefiles(_targetName + ".###");
 
-	hm = 1;
-	vm = 3;
-	hp = hm * CHAR_COLS;
-	vp = vm * CHAR_LINES;
-	w = (40 - 2 * hm) - 1;
+	Common::StringArray::iterator it;
+	Common::StringArray::iterator end = filenames.end();
 
-	do {
-		drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
-		printText("Select a slot in which you wish to\nsave the game:",
-				0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOR);
-		slot = selectSlot();
-		if (slot + _firstSlot == 0)
-			messageBox("That slot is for Autosave only.");
-		else if (slot < 0)
-			return errOK;
-	} while (slot + _firstSlot == 0);
-
-	drawWindow(hp, vp + 5 * CHAR_LINES, GFX_WIDTH - hp,
-			GFX_HEIGHT - vp - 9 * CHAR_LINES);
-	printText("Enter a description for this game:",
-			0, hm + 1, vm + 6, w, MSG_BOX_TEXT, MSG_BOX_COLOR);
-	_gfx->drawRectangle(3 * CHAR_COLS, 11 * CHAR_LINES - 1,
-			37 * CHAR_COLS, 12 * CHAR_LINES, MSG_BOX_TEXT);
-	_gfx->flushBlock(3 * CHAR_COLS, 11 * CHAR_LINES - 1,
-			37 * CHAR_COLS, 12 * CHAR_LINES);
-
-	// The description field of the save/restore dialog holds 32 characters
-	// but we use four of them for the slot number. The input field is a
-	// bit wider than that, so we don't have to worry about leaving space
-	// for the cursor.
-
-	getString(2, 11, 28, MAX_STRINGS);
-
-	// If we're saving over an old slot, show the old description. We can't
-	// access that buffer directly, so we have to feed the characters to
-	// the input handler one at a time.
-
-	char name[40];
-	int numChars;
-
-	getSavegameDescription(_firstSlot + slot, name, false);
-
-	for (numChars = 0; numChars < 28 && name[numChars]; numChars++)
-		handleGetstring(name[numChars]);
-
-	_gfx->printCharacter(numChars + 3, 11, _game.cursorChar, MSG_BOX_COLOR, MSG_BOX_TEXT);
-	do {
-		mainCycle();
-	} while (_game.inputMode == INPUT_GETSTRING);
-	closeWindow();
-
-	desc = _game.strings[MAX_STRINGS];
-	sprintf(dstr, "Are you sure you want to save the game "
-			"described as:\n\n%s\n\nin slot %d?\n\n\n", desc, _firstSlot + slot);
-
-	rc = selectionBox(dstr, buttons);
-
-	if (rc != 0) {
-		messageBox("Game NOT saved.");
-		return errOK;
+	// convert to lower-case, just to be sure
+	for (it = filenames.begin(); it != end; it++) {
+		it->toLowercase();
 	}
+	// sort
+	Common::sort(filenames.begin(), filenames.end());
 
-	int result = doSave(_firstSlot + slot, desc);
+	// now extract slot-Ids
+	for (it = filenames.begin(); it != end; it++) {
+		slotId = atoi(it->c_str() + numberPos);
 
-	if (result == errOK)
-		messageBox("Game saved.");
-	else
-		messageBox("Error saving game.");
-
-	return result;
+		slotIdArray.push_back(slotId);
+	}
+	return slotIdArray;
 }
 
-int AgiEngine::saveGameSimple() {
-	if (!ConfMan.getBool("originalsaveload"))
-		return scummVMSaveLoadDialog(true);
-
-	Common::String fileName = getSavegameFilename(0);
-
-	int result = saveGame(fileName, "Default savegame");
-	if (result != errOK)
-		messageBox("Error saving game.");
-	return result;
+Common::String AgiEngine::getSavegameFilename(int16 slotId) const {
+	Common::String saveLoadSlot = _targetName;
+	saveLoadSlot += Common::String::format(".%.3d", slotId);
+	return saveLoadSlot;
 }
 
-int AgiEngine::loadGameDialog() {
+bool AgiEngine::getSavegameInformation(int16 slotId, Common::String &saveDescription, uint32 &saveDate, uint32 &saveTime, bool &saveIsValid) {
+	Common::InSaveFile *in;
+	Common::String fileName = getSavegameFilename(slotId);
+	char saveGameDescription[31];
+	int16 curPos = 0;
+	byte  saveVersion = 0;
+
+	saveDescription.clear();
+	saveDate = 0;
+	saveTime = 0;
+	saveIsValid = false;
+
+	debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Current game id is %s", _targetName.c_str());
+
+	if (!(in = _saveFileMan->openForLoading(fileName))) {
+		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "File %s does not exist", fileName.c_str());
+		return false;
+
+	} else {
+		debugC(4, kDebugLevelMain | kDebugLevelSavegame, "Successfully opened %s for reading", fileName.c_str());
+
+		uint32 type = in->readUint32BE();
+
+		if (type != AGIflag) {
+			warning("This doesn't appear to be an AGI savegame");
+			saveDescription += "[ScummVM: not an AGI save]";
+			delete in;
+			return true;
+		}
+
+		debugC(6, kDebugLevelMain | kDebugLevelSavegame, "Has AGI flag, good start");
+		if (in->read(saveGameDescription, 31) != 31) {
+			warning("unexpected EOF");
+			delete in;
+			saveDescription += "[ScummVM: invalid save]";
+			return true;
+		}
+
+		for (curPos = 0; curPos < 31; curPos++) {
+			if (!saveGameDescription[curPos])
+				break;
+		}
+		if (curPos >= 31) {
+			warning("corrupted description");
+			delete in;
+			saveDescription += "[ScummVM: invalid save]";
+			return true;
+		}
+
+		saveVersion = in->readByte();
+		if (saveVersion > SAVEGAME_CURRENT_VERSION) {
+			warning("save from a future ScummVM, not supported");
+			delete in;
+			saveDescription += "[ScummVM: not supported]";
+			return true;
+		}
+
+		if (saveVersion >= 4) {
+			// We don't need the thumbnail here, so just read it and discard it
+			Graphics::skipThumbnail(*in);
+
+			saveDate = in->readUint32BE();
+			saveTime = in->readUint16BE() << 8;
+			if (saveVersion >= 9) {
+				saveTime |= in->readByte(); // add seconds (only available since saved game version 9+)
+			}
+
+			// save date is DDMMYYYY, we need a proper format
+			byte saveDateDay = saveDate >> 24;
+			byte saveDateMonth = (saveDate >> 16) & 0xFF;
+			uint16 saveDateYear = saveDate & 0xFFFF;
+
+			saveDate = (saveDateYear << 16) | (saveDateMonth << 8) | saveDateDay;
+
+		} else {
+			saveDate = 0;
+			saveTime = 0;
+		}
+
+		saveDescription += saveGameDescription;
+		saveIsValid = true;
+
+		delete in;
+		return true;
+	}
+}
+
+bool AgiEngine::loadGameAutomatic() {
+	int16 automaticRestoreGameSlotId = 0;
+
+	automaticRestoreGameSlotId = _systemUI->figureOutAutomaticRestoreGameSlot(_game.automaticSaveDescription);
+	if (automaticRestoreGameSlotId >= 0) {
+		if (doLoad(automaticRestoreGameSlotId, true) == errOK) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AgiEngine::loadGameDialog() {
+	int16 restoreGameSlotId = 0;
+
 	if (!ConfMan.getBool("originalsaveload"))
 		return scummVMSaveLoadDialog(false);
 
-	int slot = 0;
-	int hm, vm, hp, vp;	// box margins
-	int w;
-
-	hm = 1;
-	vm = 3;
-	hp = hm * CHAR_COLS;
-	vp = vm * CHAR_LINES;
-	w = (40 - 2 * hm) - 1;
-
-	_sprites->eraseBoth();
-	_sound->stopSound();
-
-	drawWindow(hp, vp, GFX_WIDTH - hp, GFX_HEIGHT - vp);
-	printText("Select a game which you wish to\nrestore:",
-			0, hm + 1, vm + 1, w, MSG_BOX_TEXT, MSG_BOX_COLOR);
-
-	slot = selectSlot();
-
-	if (slot < 0) {
-		if (slot == -1) // slot = -2 when GMM was launched
-			messageBox("Game NOT restored.");
-
-		return errOK;
+	restoreGameSlotId = _systemUI->askForRestoreGameSlot();
+	if (restoreGameSlotId >= 0) {
+		if (doLoad(restoreGameSlotId, true) == errOK) {
+			return true;
+		}
 	}
-
-	return doLoad(_firstSlot + slot, true);
+	return errOK;
 }
 
-int AgiEngine::loadGameSimple() {
+// Try to figure out either the slot, that is currently using the automatic saved game description
+// or get a new slot.
+// If we fail, return false, so that the regular saved game dialog is called
+// Original AGI was limited to 12 saves, we are effectively limited to 100 saves at the moment.
+//
+// btw. this also means that entering an existant name in Mixed Up Mother Goose will effectively overwrite
+// that saved game. This is also what original AGI did.
+bool AgiEngine::saveGameAutomatic() {
+	int16 automaticSaveGameSlotId = 0;
+
+	automaticSaveGameSlotId = _systemUI->figureOutAutomaticSaveGameSlot(_game.automaticSaveDescription);
+	if (automaticSaveGameSlotId >= 0) {
+		Common::String slotDescription(_game.automaticSaveDescription);
+
+		// WORKAROUND: Remove window in case one is currently shown, otherwise it would get saved in the thumbnail
+		// Happens for Mixed Up Mother Goose. The scripts close the window after saving.
+		// Original interpreter obviously did not do this, but original interpreter also did not save thumbnails.
+		_text->closeWindow();
+
+		if (doSave(automaticSaveGameSlotId, slotDescription) == errOK) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool AgiEngine::saveGameDialog() {
+	int16 saveGameSlotId = 0;
+	Common::String slotDescription;
+
 	if (!ConfMan.getBool("originalsaveload"))
-		return scummVMSaveLoadDialog(false);
-	else
-		return doLoad(0, true);
+		return scummVMSaveLoadDialog(true);
+
+	saveGameSlotId = _systemUI->askForSaveGameSlot();
+	if (saveGameSlotId >= 0) {
+		if (_systemUI->askForSaveGameDescription(saveGameSlotId, slotDescription)) {
+			if (doSave(saveGameSlotId, slotDescription) == errOK) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
+
 
 void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {
+                                     int16 p4, int16 p5, int16 p6, int16 p7) {
 	ImageStackElement pnew;
 
 	pnew.type = type;
@@ -1015,15 +1030,15 @@ void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
 }
 
 void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {
+                                     int16 p4, int16 p5, int16 p6, int16 p7) {
 	switch (type) {
 	case ADD_PIC:
 		debugC(8, kDebugLevelMain, "--- decoding picture %d ---", p1);
-		agiLoadResource(rPICTURE, p1);
+		agiLoadResource(RESOURCETYPE_PICTURE, p1);
 		_picture->decodePicture(p1, p2, p3 != 0);
 		break;
 	case ADD_VIEW:
-		agiLoadResource(rVIEW, p1);
+		agiLoadResource(RESOURCETYPE_VIEW, p1);
 		_sprites->addToPic(p1, p2, p3, p4, p5, p6, p7);
 		break;
 	}
@@ -1041,12 +1056,12 @@ void AgiEngine::checkQuickLoad() {
 	if (ConfMan.hasKey("save_slot")) {
 		Common::String saveNameBuffer = getSavegameFilename(ConfMan.getInt("save_slot"));
 
-		_sprites->eraseBoth();
+		_sprites->eraseSprites();
 		_sound->stopSound();
 
-		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
-			_game.exitAllLogics = 1;
-			_menu->enableAll();
+		if (loadGame(saveNameBuffer, false) == errOK) {  // Do not check game id
+			_game.exitAllLogics = true;
+			_menu->itemEnableAll();
 		}
 	}
 }
@@ -1054,21 +1069,21 @@ void AgiEngine::checkQuickLoad() {
 Common::Error AgiEngine::loadGameState(int slot) {
 	Common::String saveLoadSlot = getSavegameFilename(slot);
 
-	_sprites->eraseBoth();
+	_sprites->eraseSprites();
 	_sound->stopSound();
 
 	if (loadGame(saveLoadSlot) == errOK) {
-		_game.exitAllLogics = 1;
-		_menu->enableAll();
+		_game.exitAllLogics = true;
+		_menu->itemEnableAll();
 		return Common::kNoError;
 	} else {
 		return Common::kUnknownError;
 	}
 }
 
-Common::Error AgiEngine::saveGameState(int slot, const Common::String &desc) {
+Common::Error AgiEngine::saveGameState(int slot, const Common::String &description) {
 	Common::String saveLoadSlot = getSavegameFilename(slot);
-	if (saveGame(saveLoadSlot, desc) == errOK)
+	if (saveGame(saveLoadSlot, description) == errOK)
 		return Common::kNoError;
 	else
 		return Common::kUnknownError;

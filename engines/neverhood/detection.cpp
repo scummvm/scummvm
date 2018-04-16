@@ -41,7 +41,7 @@ struct NeverhoodGameDescription {
 };
 
 const char *NeverhoodEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 uint32 NeverhoodEngine::getFeatures() const {
@@ -114,6 +114,23 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Neverhood earlier English demo version
+		{
+			"neverhood",
+			"Demo",
+			AD_ENTRY1s("nevdemo.blb", "9cbc33bc8ebacacfc8071f3e26a9c85f", 22357020),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NONE)
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
 		// Neverhood Russian version. Dyadyushka Risech
 		{
 			"neverhood",
@@ -158,7 +175,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 
 static const ExtraGuiOption neverhoodExtraGuiOption1 = {
 	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
+	_s("Use the original save/load screens instead of the ScummVM ones"),
 	"originalsaveload",
 	false
 };
@@ -181,8 +198,8 @@ static const ExtraGuiOption neverhoodExtraGuiOption3 = {
 class NeverhoodMetaEngine : public AdvancedMetaEngine {
 public:
 	NeverhoodMetaEngine() : AdvancedMetaEngine(Neverhood::gameDescriptions, sizeof(Neverhood::NeverhoodGameDescription), neverhoodGames) {
-		_singleid = "neverhood";
-		_guioptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI);
+		_singleId = "neverhood";
+		_guiOptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {
@@ -211,7 +228,8 @@ bool NeverhoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Neverhood::NeverhoodEngine::hasFeature(EngineFeature f) const {
@@ -241,11 +259,10 @@ SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Neverhood::NeverhoodEngine::SaveHeader header;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
@@ -254,7 +271,7 @@ SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Neverhood::NeverhoodEngine::readSaveHeader(in, false, header) == Neverhood::NeverhoodEngine::kRSHENoError) {
+				if (Neverhood::NeverhoodEngine::readSaveHeader(in, header) == Neverhood::NeverhoodEngine::kRSHENoError) {
 					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
 				}
 				delete in;
@@ -262,6 +279,8 @@ SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -283,7 +302,7 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 		Neverhood::NeverhoodEngine::SaveHeader header;
 		Neverhood::NeverhoodEngine::kReadSaveHeaderError error;
 
-		error = Neverhood::NeverhoodEngine::readSaveHeader(in, true, header);
+		error = Neverhood::NeverhoodEngine::readSaveHeader(in, header, false);
 		delete in;
 
 		if (error == Neverhood::NeverhoodEngine::kRSHENoError) {

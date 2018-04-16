@@ -66,12 +66,12 @@ int DialogManager::show(const Common::String &msg) {
 		drawAlertBox(10, 5, colNumb);
 	} else {
 		drawAlertBox(8, 7, colNumb);
-		int i = 0;
+		int i = -1;
 		_vm->_screenSurface->_textPos.y = 70;
 		do {
 			curPos.x = 320;
 			Common::String displayStr = "";
-			while ((alertStr[i + 1] != '\174') && (alertStr[i + 1] != '\135')) {
+			while ((alertStr[i + 1] != '|') && (alertStr[i + 1] != ']')) {
 				++i;
 				displayStr += alertStr[i];
 				curPos.x -= 3;
@@ -405,7 +405,7 @@ void DialogManager::drawF3F8() {
 	int f8Width = _vm->_screenSurface->getStringWidth(f8);
 
 	// Write out the bounding box
-	_vm->_screenSurface->drawBox(0, 42, MAX(f3Width, f8Width) + 6, 18, 7);
+	_vm->_screenSurface->drawBox(0, 42, MAX(f3Width, f8Width) + 4, 16, 7);
 }
 
 /**

@@ -87,7 +87,7 @@ void scene34_initScene(Scene *sc) {
 	g_vars->scene34_dudeClimbed = false;
 	g_vars->scene34_dudeOnBoard = false;
 	g_vars->scene34_dudeOnCactus = false;
-	g_vars->scene34_fliesCountdown = g_fp->_rnd->getRandomNumber(500) + 500;
+	g_vars->scene34_fliesCountdown = g_fp->_rnd.getRandomNumber(500) + 500;
 
 	g_fp->_floaters->init(g_fp->getGameLoaderGameVar()->getSubVarByName("SC_34"));
 
@@ -115,7 +115,7 @@ int scene34_updateCursor() {
 }
 
 void sceneHandler34_leaveBoard() {
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
@@ -124,7 +124,7 @@ void sceneHandler34_leaveBoard() {
 }
 
 void sceneHandler34_onBoard() {
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
@@ -149,7 +149,7 @@ void sceneHandler34_hideStool() {
 }
 
 void sceneHandler34_climb() {
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
@@ -160,11 +160,11 @@ void sceneHandler34_climb() {
 void sceneHandler34_genFlies() {
 	g_fp->_floaters->genFlies(g_fp->_currentScene, 1072, -50, 100, 4);
 
-	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->countdown = 1;
-	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val6 = 1072;
-	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val7 = -50;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].countdown = 1;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val6 = 1072;
+	g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val7 = -50;
 
-	g_vars->scene34_fliesCountdown = g_fp->_rnd->getRandomNumber(500) + 500;
+	g_vars->scene34_fliesCountdown = g_fp->_rnd.getRandomNumber(500) + 500;
 }
 
 void sceneHandler34_fromCactus(ExCommand *cmd) {
@@ -180,7 +180,7 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
-	ex->_field_14 = 256;
+	ex->_z = 256;
 	mq->addExCommandToEnd(ex);
 
 	ex = cmd->createClone();
@@ -189,7 +189,7 @@ void sceneHandler34_fromCactus(ExCommand *cmd) {
 	mq->setFlags(mq->getFlags() | 1);
 	mq->chain(0);
 
-	g_fp->_aniMan->_flags |= 1;
+	g_fp->_aniMan->_flags |= 0x100;
 }
 
 void sceneHandler34_animateLeaveBoard(ExCommand *cmd) {
@@ -287,7 +287,7 @@ void sceneHandler34_showStool() {
 }
 
 void sceneHandler34_unclimb() {
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
 	g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
@@ -323,7 +323,7 @@ int sceneHandler34(ExCommand *cmd) {
 	case MSG_SC34_FROMCACTUS:
 		g_vars->scene34_dudeOnCactus = false;
 
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
@@ -337,7 +337,7 @@ int sceneHandler34(ExCommand *cmd) {
 		g_fp->_aniMan->changeStatics2(ST_MAN_RIGHT);
 		g_fp->_aniMan->_flags &= 0xFEFF;
 
-		getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_keyCode);
+		getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_param);
 
 		break;
 
@@ -381,7 +381,7 @@ int sceneHandler34(ExCommand *cmd) {
 	case MSG_SC34_ONCACTUS:
 		g_vars->scene34_dudeOnCactus = true;
 
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
@@ -419,8 +419,8 @@ int sceneHandler34(ExCommand *cmd) {
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
 			if (ani) {
-				if ((ani->_id == ANI_STOOL_34 && cmd->_keyCode == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_keyCode == ANI_INV_STOOL)) {
-					getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_keyCode);
+				if ((ani->_id == ANI_STOOL_34 && cmd->_param == ANI_INV_BOX) || (ani->_id == ANI_BOX_34 && cmd->_param == ANI_INV_STOOL)) {
+					getGameLoaderInteractionController()->handleInteraction(g_fp->_aniMan, g_vars->scene34_vent, cmd->_param);
 
 					cmd->_messageKind = 0;
 				}
@@ -434,11 +434,11 @@ int sceneHandler34(ExCommand *cmd) {
 				}
 			}
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);
 						break;
@@ -457,6 +457,8 @@ int sceneHandler34(ExCommand *cmd) {
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
 		}
 
 		--g_vars->scene34_fliesCountdown;

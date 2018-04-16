@@ -1,0 +1,215 @@
+# This file is obsolete
+
+F0115_DUNGEONVIEW_DrawObjectsCreaturesProjectilesExplosions_CPSEF
+	F0113_DUNGEONVIEW_DrawField // stub method
+		F0133_VIDEO_BlitBoxFilledWithMaskedBitmap // dummy
+		FIELD_ASPECT // done
+	F0114_DUNGEONVIEW_GetExplosionBitmap // done
+	F0133_VIDEO_BlitBoxFilledWithMaskedBitmap // dummy
+	F0141_DUNGEON_GetObjectInfoIndex // done
+	F0142_DUNGEON_GetProjectileAspect // done
+		F0158_DUNGEON_GetWeaponInfo // done
+		M66_PROJECTILE_ASPECT_ORDINAL // done
+	F0176_GROUP_GetCreatureOrdinalInCell // done
+		F0145_DUNGEON_GetGroupCells // done
+		F0147_DUNGEON_GetGroupDirections // done
+		GROUP // done
+		CreatureType // done
+	G0077_B_DoNotDrawFluxcagesDuringEndgame // done
+	G0105_s_Graphic558_Box_ExplosionPattern_D0C // one
+	G0188_as_Graphic558_FieldAspects // done
+	G0216_auc_Graphic558_ExplosionBaseScales // done
+	G0217_aauc_Graphic558_ObjectPileShiftSetIndices // done
+	G0218_aaaauc_Graphic558_ObjectCoordinateSets // done
+	G0223_aac_Graphic558_ShiftSets // done
+	G0224_aaaauc_Graphic558_CreatureCoordinateSets // done
+	G0225_aai_Graphic558_CenteredExplosionCoordinates // done
+	G0226_aaai_Graphic558_ExplosionCoordinates // done
+	G0227_aai_Graphic558_RebirthStep2ExplosionCoordinates // done
+	G0228_aai_Graphic558_RebirthStep1ExplosionCoordinates // done
+	G0292_aT_PileTopObject // done
+	G0370_ps_Events // done
+
+
+
+
+F0380_COMMAND_ProcessQueue_CPSC // in progress
+	C080_COMMAND_CLICK_IN_DUNGEON_VIEW // cool
+		F0377_COMMAND_ProcessType80_ClickInDungeonView // done so-so
+			F0372_COMMAND_ProcessType80_ClickInDungeonView_TouchFrontWall // done so-so
+				F0275_SENSOR_IsTriggeredByClickOnWall // done so-so
+					F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
+
+
+F0378_COMMAND_ProcessType81_ClickInPanel // done so-so
+	F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel // done
+		F0368_COMMAND_SetLeader // done
+		F0457_START_DrawEnabledMenus_CPSF // can't yet see it's purpose
+		F0281_CHAMPION_Rename // stub
+		F0394_MENUS_SetMagicCasterAndDrawSpellArea // done
+		F0393_MENUS_DrawSpellAreaControls // done
+		F0051_TEXT_MESSAGEAREA_PrintLineFeed // post skip
+		F0047_TEXT_MESSAGEAREA_PrintMessage // post skip
+		F0067_MOUSE_SetPointerToNormal // skip
+
+
+
+F0280_CHAMPION_AddCandidateChampionToParty // done, so-so
+	M27_PORTRAIT_X // done
+	M28_PORTRAIT_Y // done
+	F0285_CHAMPION_GetIndexInCell // done
+	F0279_CHAMPION_GetDecodedValue // done
+	F0368_COMMAND_SetLeader // done
+		F0292_CHAMPION_DrawState // done
+			G0407_s_Party // done
+			G0048_s_Graphic562_Box_Mouth // done
+			G0049_s_Graphic562_Box_Eye // done
+			G0054_ai_Graphic562_Box_ChampionIcons // done
+			G0353_ac_StringBuildBuffer // done
+			G0046_auc_Graphic562_ChampionColor // done
+			F0354_INVENTORY_DrawStatusBoxPortrait // done
+			F0287_CHAMPION_DrawBarGraphs // done
+			F0290_CHAMPION_DrawHealthStaminaManaValues // done
+			F0309_CHAMPION_GetMaximumLoad // done
+				F0306_CHAMPION_GetStaminaAdjustedValue // done
+			F0288_CHAMPION_GetStringFromInteger // done
+			F0345_INVENTORY_DrawPanel_FoodWaterPoisoned // done
+				F0344_INVENTORY_DrawPanel_FoodOrWaterBar // done
+						F0343_INVENTORY_DrawPanel_HorizontalBar // done
+				G0032_s_Graphic562_Box_Panel // done
+				G0035_s_Graphic562_Box_Food // done
+				G0036_s_Graphic562_Box_Water // done
+				G0037_s_Graphic562_Box_Poisoned // done
+			F0351_INVENTORY_DrawChampionSkillsAndStatistics // skip -----------------
+			F0347_INVENTORY_DrawPanel // done
+				F0342_INVENTORY_DrawPanel_Object // done
+					F0341_INVENTORY_DrawPanel_Scroll // done
+						F0340_INVENTORY_DrawPanel_ScrollTextLine // done
+					F0333_INVENTORY_OpenAndDrawChest // done
+					F0303_CHAMPION_GetSkillLevel // done
+					F0332_INVENTORY_DrawIconToViewport // done
+					F0336_INVENTORY_DrawPanel_BuildObjectAttributesString // done
+					F0335_INVENTORY_DrawPanel_ObjectDescriptionString // done
+						G0421_i_ObjectDescriptionTextX // done
+						G0422_i_ObjectDescriptionTextY // done
+					F0339_INVENTORY_DrawPanel_ArrowOrEye // done
+					G0430_apc_DirectionNames // done
+					G0034_s_Graphic562_Box_ObjectDescriptionCircle // done
+					G0032_s_Graphic562_Box_Panel // done
+					G0352_apc_ObjectNames // done
+					G0237_as_Graphic559_ObjectInfo // done
+					G0422_i_ObjectDescriptionTextY // done
+
+				F0346_INVENTORY_DrawPanel_ResurrectReincarnate // done
+			F0291_CHAMPION_DrawSlot // done
+				F0038_OBJECT_DrawIconInSlotBox // done
+		F0140_DUNGEON_GetObjectWeight // done
+			G0238_as_Graphic559_WeaponInfo // done
+				WEAPON_INFO // done
+			G0239_as_Graphic559_ArmourInfo // done
+				ARMOUR_INFO // done
+			G0241_auc_Graphic559_JunkInfo // done
+				JUNK_INFO // done
+		G0411_i_LeaderIndex // done
+		G0299_ui_CandidateChampionOrdinal // done
+	F0388_MENUS_ClearActingChampion // done
+		F0292_CHAMPION_DrawState // done
+		G0508_B_RefreshActionArea // done
+		G0506_ui_ActingChampionOrdinal // done
+	F0386_MENUS_DrawActionIcon // done
+		F0141_DUNGEON_GetObjectInfoIndex // done
+		F0033_OBJECT_GetIconIndex // done
+			F0032_OBJECT_GetType // done
+				G0237_as_Graphic559_ObjectInfo // done
+					OBJECT_INFO // done
+			G0029_auc_Graphic562_ChargeCountToTorchType // done
+		F0134_VIDEO_FillBitmap // done
+		D24_FillScreenBox // done
+		F0036_OBJECT_ExtractIconFromBitmap // done
+			G0026_ai_Graphic562_IconGraphicFirstIconIndex // done
+		F0129_VIDEO_BlitShrinkWithPaletteChanges // eeeh
+		F0136_VIDEO_ShadeScreenBox // skip
+		G0498_auc_Graphic560_PaletteChanges_ActionAreaObjectIcon // done
+		G0237_as_Graphic559_ObjectInfo // done
+		G0509_B_ActionAreaContainsIcons // done
+	F0301_CHAMPION_AddObjectInSlot // done
+		F0299_CHAMPION_ApplyObjectModifiersToStatistics // done
+		F0296_CHAMPION_DrawChangedObjectIcons // done
+			F0068_MOUSE_SetPointerToObject // skip
+			F0077_MOUSE_HidePointer_CPSE // skip
+			F0078_MOUSE_ShowPointer // skip
+			F0034_OBJECT_DrawLeaderHandObjectName // done
+			F0386_MENUS_DrawActionIcon // done
+			F0295_CHAMPION_HasObjectIconInSlotBoxChanged // done
+				F0039_OBJECT_GetIconIndexInSlotBox // done
+			M70_HAND_SLOT_INDEX // done
+			G0420_B_MousePointerHiddenToDrawChangedObjectIconOnScreen // done
+			G0412_puc_Bitmap_ObjectIconForMousePointer // done
+			G0413_i_LeaderHandObjectIconIndex // done
+			G0414_T_LeaderHandObject // done
+		F0337_INVENTORY_SetDungeonViewPalette // skip
+		G0407_s_Party // done
+		G0039_ai_Graphic562_LightPowerToLightAmount // skip
+
+	F0355_INVENTORY_Toggle_CPSE // done
+		F0292_CHAMPION_DrawState // done
+		F0334_INVENTORY_CloseChest // done
+			F0163_DUNGEON_LinkThingToList // done
+			G0426_T_OpenChest // done
+			G0425_aT_ChestSlots // done
+		F0395_MENUS_DrawMovementArrows // done
+		F0357_COMMAND_DiscardAllInput // skip
+		F0098_DUNGEONVIEW_DrawFloorAndCeiling // wat
+		F0136_VIDEO_ShadeScreenBox // skip
+		D25_F0135_VIDEO_FillBox // done
+		G0423_i_InventoryChampionOrdinal
+		G0326_B_RefreshMousePointerInMainLoop  // lol you wat m8
+		G0002_s_Graphic562_Box_MovementArrows // done
+		G0041_s_Graphic562_Box_ViewportFloppyZzzCross // done
+		G0296_puc_Bitmap_Viewport // done
+		G0598_B_MousePointerBitmapUpdated // done
+	F0456_START_DrawDisabledMenus // done
+	G0415_B_LeaderEmptyHanded // done
+	G0305_ui_PartyChampionCount // done
+	G0578_B_UseByteBoxCoordinates // done
+	G0047_s_Graphic562_Box_ChampionPortrait // done
+	G0308_i_PartyDirection // done
+	G0306_i_PartyMapX // done
+	G0307_i_PartyMapY // done
+	G0299_ui_CandidateChampionOrdinal // done
+	G0508_B_RefreshActionArea // done
+	G0233_ai_Graphic559_DirectionToStepEastCount // done
+	G0234_ai_Graphic559_DirectionToStepNorthCount // done
+	G0237_as_Graphic559_ObjectInfo // done
+	G0038_ai_Graphic562_SlotMasks // done
+
+
+F0462_START_StartGame_CPSF
+	F0003_MAIN_ProcessNewPartyMap_CPSE // partially done
+	F0278_CHAMPION_ResetDataToStartGame // paritally done
+	G0331_B_PressingEye // dm // done
+	G0332_B_StopPressingEye // dm // done
+	G0333_B_PressingMouth // dm // done
+	G0334_B_StopPressingMouth // dm // done
+	G0340_B_HighlightBoxInversionRequested // dm, useless // done
+	G0341_B_HighlightBoxEnabled // eventman // done
+	G0300_B_PartyIsSleeping // champion // done
+	G0506_ui_ActingChampionOrdinal // champion // done
+	G0509_B_ActionAreaContainsIcons // menus // done
+	G0599_ui_UseChampionIconOrdinalAsMousePointerBitmap // eventman // done
+
+
+F0463_START_InitializeGame_CPSADEF // partially done
+	F0267_MOVE_GetMoveResult_CPSCE // skip, really though
+	F0357_COMMAND_DiscardAllInput // done
+
+
+C013_GRAPHIC_MOVEMENT_ARROWS
+	F0395_MENUS_DrawMovementArrows
+		F0355_INVENTORY_Toggle_CPSE
+		F0462_START_StartGame_CPSF
+		F0457_START_DrawEnabledMenus_CPSF
+			F0314_CHAMPION_WakeUp
+			F0282_CHAMPION_ProcessCommands160To162_ClickInResurrectReincarnatePanel
+			F0380_COMMAND_ProcessQueue_CPSC
+			F0433_STARTEND_ProcessCommand140_SaveGame_CPSCDF

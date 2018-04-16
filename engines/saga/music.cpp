@@ -31,7 +31,11 @@
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
 #include "audio/midiparser_qt.h"
+#include "audio/miles.h"
+#include "audio/decoders/flac.h"
+#include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/vorbis.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
@@ -42,24 +46,51 @@ namespace Saga {
 #define MUSIC_SUNSPOT 26
 
 MusicDriver::MusicDriver() : _isGM(false) {
-
-	MidiPlayer::createDriver();
-
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	_driverType = MidiDriver::getMusicType(dev);
 
+	switch (_driverType) {
+	case MT_ADLIB:
+		if (Common::File::exists("INSTR.AD") && Common::File::exists("INSTR.OPL")) {
+			_milesAudioMode = true;
+			_driver = Audio::MidiDriver_Miles_AdLib_create("INSTR.AD", "INSTR.OPL");
+		} else if (Common::File::exists("SAMPLE.AD") && Common::File::exists("SAMPLE.OPL")) {
+			_milesAudioMode = true;
+			_driver = Audio::MidiDriver_Miles_AdLib_create("SAMPLE.AD", "SAMPLE.OPL");
+		} else {
+			_milesAudioMode = false;
+			MidiPlayer::createDriver();
+		}
+		break;
+	case MT_MT32:
+		_milesAudioMode = true;
+		_driver = Audio::MidiDriver_Miles_MT32_create("");
+		break;
+	default:
+		_milesAudioMode = false;
+		MidiPlayer::createDriver();
+		break;
+	}
+
 	int retValue = _driver->open();
 	if (retValue == 0) {
-		if (_nativeMT32)
-			_driver->sendMT32Reset();
-		else
-			_driver->sendGMReset();
+		if (_driverType != MT_ADLIB) {
+			if (_driverType == MT_MT32 || _nativeMT32)
+				_driver->sendMT32Reset();
+			else
+				_driver->sendGMReset();
+		}
 
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 }
 
 void MusicDriver::send(uint32 b) {
+	if (_milesAudioMode) {
+		_driver->send(b);
+		return;
+	}
+
 	if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
 		// Remap MT32 instruments to General Midi
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
@@ -98,7 +129,6 @@ void MusicDriver::play(SagaEngine *vm, ByteArray *buffer, bool loop) {
 
 	// Handle music looping
 	_parser->property(MidiParser::mpAutoLoop, loop);
-//	_isLooping = loop;
 
 	_isPlaying = true;
 }
@@ -119,7 +149,6 @@ void MusicDriver::playQuickTime(const Common::String &musicName, bool loop) {
 
 	// Handle music looping
 	_parser->property(MidiParser::mpAutoLoop, loop);
-//	_isLooping = loop;
 
 	_isPlaying = true;
 }
@@ -196,6 +225,9 @@ void Music::musicVolumeGaugeCallback(void *refCon) {
 }
 
 void Music::musicVolumeGauge() {
+	// CHECKME: This is potentially called from a different thread because it is
+	// called from a timer callback. However, it does not seem to take any
+	// precautions to avoid race conditions.
 	int volume;
 
 	_currentVolumePercent += 10;
@@ -249,7 +281,11 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	debug(2, "Music::play %d, %d", resourceId, flags);
 
-	if (isPlaying() && _trackNumber == resourceId) {
+	if (isPlaying() && _trackNumber == resourceId)
+		return;
+
+	if (_vm->getFeatures() & GF_ITE_DOS_DEMO) {
+		warning("TODO: Music::play %d, %d for ITE DOS demo", resourceId, flags);
 		return;
 	}
 

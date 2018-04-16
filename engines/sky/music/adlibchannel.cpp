@@ -23,13 +23,13 @@
 
 #include "common/endian.h"
 #include "common/textconsole.h"
-#include "common/util.h"
+#include "audio/fmopl.h"
 #include "sky/music/adlibchannel.h"
 #include "sky/sky.h"
 
 namespace Sky {
 
-AdLibChannel::AdLibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
+AdLibChannel::AdLibChannel(OPL::OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 	_opl = opl;
 	_musicData = pMusicData;
 	_channelData.loopPoint = startOfData;
@@ -44,6 +44,8 @@ AdLibChannel::AdLibChannel(FM_OPL *opl, uint8 *pMusicData, uint16 startOfData) {
 		_channelData.adlibReg1 = _channelData.adlibReg2 = _channelData.freqOffset = 0;
 	_channelData.frequency = 0;
 	_channelData.instrumentData = NULL;
+
+	_musicVolume = 128;
 
 	uint16 instrumentDataLoc;
 
@@ -86,7 +88,7 @@ bool AdLibChannel::isActive() {
 }
 
 void AdLibChannel::updateVolume(uint16 pVolume) {
-	// Do nothing. The mixer handles the music volume for us.
+	_musicVolume = pVolume;
 }
 
 /*	This class uses the same area for the register mirror as the original
@@ -95,7 +97,7 @@ void AdLibChannel::updateVolume(uint16 pVolume) {
 */
 void AdLibChannel::setRegister(uint8 regNum, uint8 value) {
 	if (_adlibRegMirror[regNum] != value) {
-		OPLWriteReg (_opl, regNum, value);
+		_opl->writeReg(regNum, value);
 		_adlibRegMirror[regNum] = value;
 	}
 }
@@ -208,6 +210,8 @@ void AdLibChannel::setupChannelVolume(uint8 volume) {
 	uint32 resVol = ((volume + 1) * (_channelData.instrumentData->totOutLev_Op2 + 1)) << 1;
 	resVol &= 0xFFFF;
 	resVol *= (_channelData.channelVolume + 1) << 1;
+	resVol >>= 8;
+	resVol *= _musicVolume << 1;
 	resVol >>= 16;
 	assert(resVol < 0x81);
 	resultOp = ((_channelData.instrumentData->scalingLevel << 6) & 0xC0) | _opOutputTable[resVol];
@@ -216,6 +220,8 @@ void AdLibChannel::setupChannelVolume(uint8 volume) {
 		resVol = ((volume + 1) * (_channelData.instrumentData->totOutLev_Op1 + 1)) << 1;
 		resVol &= 0xFFFF;
 		resVol *= (_channelData.channelVolume + 1) << 1;
+		resVol >>= 8;
+		resVol *= _musicVolume << 1;
 		resVol >>= 16;
 	} else
 		resVol = _channelData.instrumentData->totOutLev_Op1;

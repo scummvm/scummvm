@@ -189,10 +189,10 @@ Common::Error Saver::restore(int slot) {
 
 	// Read in the savegame header
 	tSageSavegameHeader header;
-	readSavegameHeader(saveFile, header);
-	if (header._thumbnail)
-		header._thumbnail->free();
-	delete header._thumbnail;
+	if (!readSavegameHeader(saveFile, header)) {
+		delete saveFile;
+		return Common::kReadingFailed;
+	}
 
 	serializer.setSaveVersion(header._version);
 
@@ -211,12 +211,14 @@ Common::Error Saver::restore(int slot) {
 	// Note: I don't store pointers to instantiated objects here, because it's not necessary - the mere act
 	// of instantiating a saved object registers it with the saver, and will then be resolved to whatever
 	// object originally had a pointer to it as part of the post-processing step
+	DynObjects dynObjects;
 	Common::String className;
 	serializer.syncString(className);
 	while (className != "END") {
 		SavedObject *savedObject;
 		if (!_factoryPtr || ((savedObject = _factoryPtr(className)) == NULL))
 			error("Unknown class name '%s' encountered trying to restore savegame", className.c_str());
+		dynObjects.push_back(savedObject);
 
 		// Populate the contents of the object
 		savedObject->synchronize(serializer);
@@ -226,7 +228,12 @@ Common::Error Saver::restore(int slot) {
 	}
 
 	// Post-process any unresolved pointers to get the correct pointer
-	resolveLoadPointers();
+	resolveLoadPointers(dynObjects);
+
+	// Post-process safety check: if any dynamically created objects didn't get any
+	// references, then delete them, since they'd never be freed otherwise
+	for (DynObjects::iterator i = dynObjects.begin(); i != dynObjects.end(); ++i)
+		delete *i;
 
 	delete saveFile;
 
@@ -240,9 +247,8 @@ Common::Error Saver::restore(int slot) {
 const char *SAVEGAME_STR = "SCUMMVM_TSAGE";
 #define SAVEGAME_STR_SIZE 13
 
-bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &header) {
+WARN_UNUSED_RESULT bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
-	header._thumbnail = NULL;
 
 	// Validate the header Id
 	in->read(saveIdentBuffer, SAVEGAME_STR_SIZE + 1);
@@ -259,9 +265,9 @@ bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &head
 	while ((ch = (char)in->readByte()) != '\0') header._saveName += ch;
 
 	// Get the thumbnail
-	header._thumbnail = Graphics::loadThumbnail(*in);
-	if (!header._thumbnail)
+	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
 	header._saveYear = in->readSint16LE();
@@ -289,10 +295,10 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-	Graphics::Surface s = g_globals->_screenSurface.lockSurface();
+	Graphics::Surface s = g_globals->_screen.lockSurface();
 	::createThumbnail(thumb, (const byte *)s.getPixels(), SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
-	g_globals->_screenSurface.unlockSurface();
+	g_globals->_screen.unlockSurface();
 	thumb->free();
 	delete thumb;
 
@@ -392,7 +398,7 @@ void Saver::listObjects() {
 /**
  * Returns the pointer associated with the specified object index
  */
-void Saver::resolveLoadPointers() {
+void Saver::resolveLoadPointers(DynObjects &dynObjects) {
 	if (_unresolvedPtrs.size() == 0)
 		// Nothing to resolve
 		return;
@@ -410,6 +416,9 @@ void Saver::resolveLoadPointers() {
 				SavedObject **objPP = r._savedObject;
 				*objPP = pObj;
 				iPtr = _unresolvedPtrs.erase(iPtr);
+
+				// If it's a dynamic object, remove it from the dynamic objects list
+				dynObjects.remove(pObj);
 			} else {
 				++iPtr;
 			}

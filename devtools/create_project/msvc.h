@@ -39,6 +39,8 @@ protected:
 
 	void createOtherBuildFiles(const BuildSetup &setup);
 
+	void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList);
+
 	/**
 	 * Create the global project properties.
 	 *
@@ -81,6 +83,11 @@ protected:
 	 * Get the Visual Studio version (used by the VS shell extension to launch the correct VS version)
 	 */
 	virtual int getVisualStudioVersion() = 0;
+
+	/**
+	 * Get the Solution version (used in the sln file header)
+	 */
+	virtual int getSolutionVersion();
 
 	/**
 	 * Get the command line for the revision tool (shared between all Visual Studio based providers)

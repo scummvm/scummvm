@@ -25,6 +25,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h	//On IRIX, sys/stat.h includes sys/time.h
+#define FORBIDDEN_SYMBOL_EXCEPTION_system
 
 #include "common/scummsys.h"
 
@@ -33,13 +34,25 @@
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/saves/posix/posix-saves.h"
 #include "backends/fs/posix/posix-fs-factory.h"
+#include "backends/fs/posix/posix-fs.h"
 #include "backends/taskbar/unity/unity-taskbar.h"
 
+#ifdef USE_LINUXCD
+#include "backends/audiocd/linux/linux-audiocd.h"
+#endif
+
+#include "common/textconsole.h"
+
+#include <stdlib.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
+#ifdef HAS_POSIX_SPAWN
+#include <spawn.h>
+#endif
+extern char **environ;
 
 OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
 	:
@@ -76,17 +89,64 @@ void OSystem_POSIX::initBackend() {
 bool OSystem_POSIX::hasFeature(Feature f) {
 	if (f == kFeatureDisplayLogFile)
 		return true;
+#ifdef HAS_POSIX_SPAWN
+	if (f == kFeatureOpenUrl)
+		return true;
+#endif
 	return OSystem_SDL::hasFeature(f);
 }
 
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	Common::String configFile;
 
-	// On POSIX type systems, by default we store the config file inside
-	// to the HOME directory of the user.
-	const char *home = getenv("HOME");
-	if (home != NULL && (strlen(home) + 1 + _baseConfigName.size()) < MAXPATHLEN) {
-		configFile = Common::String::format("%s/%s", home, _baseConfigName.c_str());
+	Common::String prefix;
+#ifdef MACOSX
+	prefix = getenv("HOME");
+#elif !defined(SAMSUNGTV)
+	const char *envVar;
+	// Our old configuration file path for POSIX systems was ~/.scummvmrc.
+	// If that file exists, we still use it.
+	envVar = getenv("HOME");
+	if (envVar && *envVar) {
+		configFile = envVar;
+		configFile += '/';
+		configFile += ".scummvmrc";
+
+		if (configFile.size() < MAXPATHLEN) {
+			struct stat sb;
+			if (stat(configFile.c_str(), &sb) == 0) {
+				return configFile;
+			}
+		}
+	}
+
+	// On POSIX systems we follow the XDG Base Directory Specification for
+	// where to store files. The version we based our code upon can be found
+	// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
+	envVar = getenv("XDG_CONFIG_HOME");
+	if (!envVar || !*envVar) {
+		envVar = getenv("HOME");
+		if (!envVar) {
+			return 0;
+		}
+
+		if (Posix::assureDirectoryExists(".config", envVar)) {
+			prefix = envVar;
+			prefix += "/.config";
+		}
+	} else {
+		prefix = envVar;
+	}
+
+	if (!prefix.empty() && Posix::assureDirectoryExists("scummvm", prefix.c_str())) {
+		prefix += "/scummvm";
+	}
+#endif
+
+	if (!prefix.empty() && (prefix.size() + 1 + _baseConfigName.size()) < MAXPATHLEN) {
+		configFile = prefix;
+		configFile += '/';
+		configFile += _baseConfigName;
 	} else {
 		configFile = _baseConfigName;
 	}
@@ -94,61 +154,64 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	return configFile;
 }
 
+void OSystem_POSIX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+#ifdef DATA_PATH
+	const char *snap = getenv("SNAP");
+	if (snap) {
+		Common::String dataPath = Common::String(snap) + DATA_PATH;
+		Common::FSNode dataNode(dataPath);
+		if (dataNode.exists() && dataNode.isDirectory()) {
+			// This is the same priority which is used for the data path (below),
+			// but we insert this one first, so it will be searched first.
+			s.add(dataPath, new Common::FSDirectory(dataNode, 4), priority);
+		}
+	}
+#endif
+
+	// For now, we always add the data path, just in case SNAP doesn't make sense.
+	OSystem_SDL::addSysArchivesToSearchSet(s, priority);
+}
+
 Common::WriteStream *OSystem_POSIX::createLogFile() {
 	// Start out by resetting _logFilePath, so that in case
 	// of a failure, we know that no log file is open.
 	_logFilePath.clear();
 
-	const char *home = getenv("HOME");
-	if (home == NULL)
-		return 0;
-
-	Common::String logFile(home);
+	const char *prefix = nullptr;
+	Common::String logFile;
 #ifdef MACOSX
-	logFile += "/Library";
-#else
-	logFile += "/.scummvm";
-#endif
-#ifdef SAMSUNGTV
-	logFile = "/mtd_ram";
-#endif
-
-	struct stat sb;
-
-	// Check whether the dir exists
-	if (stat(logFile.c_str(), &sb) == -1) {
-		// The dir does not exist, or stat failed for some other reason.
-		if (errno != ENOENT)
-			return 0;
-
-		// If the problem was that the path pointed to nothing, try
-		// to create the dir.
-		if (mkdir(logFile.c_str(), 0755) != 0)
-			return 0;
-	} else if (!S_ISDIR(sb.st_mode)) {
-		// Path is no directory. Oops
+	prefix = getenv("HOME");
+	if (prefix == nullptr) {
 		return 0;
 	}
 
-#ifdef MACOSX
-	logFile += "/Logs";
+	logFile = "Library/Logs";
+#elif SAMSUNGTV
+	prefix = nullptr;
+	logFile = "/mtd_ram";
 #else
-	logFile += "/logs";
+	// On POSIX systems we follow the XDG Base Directory Specification for
+	// where to store files. The version we based our code upon can be found
+	// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
+	prefix = getenv("XDG_CACHE_HOME");
+	if (prefix == nullptr || !*prefix) {
+		prefix = getenv("HOME");
+		if (prefix == nullptr) {
+			return 0;
+		}
+
+		logFile = ".cache/";
+	}
+
+	logFile += "scummvm/logs";
 #endif
 
-	// Check whether the dir exists
-	if (stat(logFile.c_str(), &sb) == -1) {
-		// The dir does not exist, or stat failed for some other reason.
-		if (errno != ENOENT)
-			return 0;
-
-		// If the problem was that the path pointed to nothing, try
-		// to create the dir.
-		if (mkdir(logFile.c_str(), 0755) != 0)
-			return 0;
-	} else if (!S_ISDIR(sb.st_mode)) {
-		// Path is no directory. Oops
+	if (!Posix::assureDirectoryExists(logFile, prefix)) {
 		return 0;
+	}
+
+	if (prefix) {
+		logFile = Common::String::format("%s/%s", prefix, logFile.c_str());
 	}
 
 	logFile += "/scummvm.log";
@@ -211,5 +274,75 @@ bool OSystem_POSIX::displayLogFile() {
 	return WIFEXITED(status) && WEXITSTATUS(status) == 0;
 }
 
+bool OSystem_POSIX::openUrl(const Common::String &url) {
+#ifdef HAS_POSIX_SPAWN
+	// inspired by Qt's "qdesktopservices_x11.cpp"
+
+	// try "standards"
+	if (launchBrowser("xdg-open", url))
+		return true;
+	if (launchBrowser(getenv("DEFAULT_BROWSER"), url))
+		return true;
+	if (launchBrowser(getenv("BROWSER"), url))
+		return true;
+
+	// try desktop environment specific tools
+	if (launchBrowser("gnome-open", url)) // gnome
+		return true;
+	if (launchBrowser("kfmclient", url)) // kde
+		return true;
+	if (launchBrowser("exo-open", url)) // xfce
+		return true;
+
+	// try browser names
+	if (launchBrowser("firefox", url))
+		return true;
+	if (launchBrowser("mozilla", url))
+		return true;
+	if (launchBrowser("netscape", url))
+		return true;
+	if (launchBrowser("opera", url))
+		return true;
+	if (launchBrowser("chromium-browser", url))
+		return true;
+	if (launchBrowser("google-chrome", url))
+		return true;
+
+	warning("openUrl() (POSIX) failed to open URL");
+	return false;
+#else
+	return false;
+#endif
+}
+
+bool OSystem_POSIX::launchBrowser(const Common::String &client, const Common::String &url) {
+#ifdef HAS_POSIX_SPAWN
+	pid_t pid;
+	const char *argv[] = {
+		client.c_str(),
+		url.c_str(),
+		NULL,
+		NULL
+	};
+	if (client == "kfmclient") {
+		argv[2] = argv[1];
+		argv[1] = "openURL";
+	}
+	if (posix_spawnp(&pid, client.c_str(), NULL, NULL, const_cast<char **>(argv), environ) != 0) {
+		return false;
+	}
+	return (waitpid(pid, NULL, WNOHANG) != -1);
+#else
+	return false;
+#endif
+}
+
+AudioCDManager *OSystem_POSIX::createAudioCDManager() {
+#ifdef USE_LINUXCD
+	return createLinuxAudioCDManager();
+#else
+	return OSystem_SDL::createAudioCDManager();
+#endif
+}
 
 #endif

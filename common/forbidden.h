@@ -183,7 +183,7 @@
 #endif
 
 // mingw-w64 uses [set|long]jmp in system headers
-#ifndef __MINGW64__
+#if !defined __MINGW64__ && ! defined __MINGW32__
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #undef setjmp
 #define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
@@ -193,7 +193,7 @@
 #undef longjmp
 #define longjmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
-#endif // __MINGW64__
+#endif // __MINGW64__ __MINGW32__
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_system
 #undef system

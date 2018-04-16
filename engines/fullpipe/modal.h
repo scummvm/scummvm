@@ -23,6 +23,8 @@
 #ifndef FULLPIPE_MODAL_H
 #define FULLPIPE_MODAL_H
 
+#include "video/avi_decoder.h"
+
 namespace Fullpipe {
 
 class PictureObject;
@@ -49,6 +51,7 @@ class BaseModalObject {
 	BaseModalObject() : _parentObj(0) { _objtype = kObjTypeDefault; }
 	virtual ~BaseModalObject() {}
 
+	void deleteObject();
 
 	virtual bool pollEvent() = 0;
 	virtual bool handleMessage(ExCommand *message) = 0;
@@ -78,6 +81,26 @@ class ModalIntro : public BaseModalObject {
 	void finish();
 };
 
+class ModalIntroDemo : public BaseModalObject {
+	int _field_8;
+	int _introFlags;
+	int _countDown;
+	int _stillRunning;
+	int _sfxVolume;
+
+ public:
+	ModalIntroDemo();
+	virtual ~ModalIntroDemo();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
+
+	void finish();
+};
+
 class ModalVideoPlayer : public BaseModalObject {
 public:
 
@@ -88,11 +111,16 @@ public:
 	virtual void saveload() {}
 
 	void play(const char *fname);
+
+private:
+	Video::AVIDecoder _decoder;
 };
 
 class ModalMap : public BaseModalObject {
 	Scene *_mapScene;
 	PictureObject *_pic;
+	PictureObject *_picI03;
+	PictureObject *_highlightedPic;
 	bool _isRunning;
 	Common::Rect _rect1;
 	int _x;
@@ -100,9 +128,9 @@ class ModalMap : public BaseModalObject {
 	int _flag;
 	int _mouseX;
 	int _mouseY;
-	int _field_38;
-	int _field_3C;
-	int _field_40;
+	int _dragX;
+	int _dragY;
+	int _hotSpotDelay;
 	Common::Rect _rect2;
 
  public:
@@ -112,11 +140,20 @@ class ModalMap : public BaseModalObject {
 	virtual bool pollEvent() { return true; }
 	virtual bool handleMessage(ExCommand *message);
 	virtual bool init(int counterdiff);
+	virtual bool init2(int counterdiff);
 	virtual void update();
 	virtual void saveload() {}
 
 	void initMap();
-	PictureObject *getScenePicture();
+
+private:
+	PictureObject *getScenePicture(int sceneId);
+	PictureObject *getSceneHPicture(PictureObject *obj);
+	bool checkScenePass(PreloadItem *item);
+	bool isSceneEnabled(int sceneId);
+
+	int findMapSceneId(int picId);
+	void clickButton(PictureObject *pic);
 };
 
 class ModalFinal : public BaseModalObject {
@@ -169,7 +206,7 @@ class ModalMainMenu : public BaseModalObject {
 public:
 	Scene *_scene;
 	int _hoverAreaId;
-	Common::Array<MenuArea *> _areas;
+	Common::Array<MenuArea> _areas;
 	int _menuSliderIdx;
 	int _musicSliderIdx;
 	MenuArea *_lastArea;
@@ -197,7 +234,7 @@ private:
 	void enableDebugMenu(char c);
 	int checkHover(Common::Point &point);
 	void updateVolume();
-	void updateSoundVolume(Sound *snd);
+	void updateSoundVolume(Sound &snd);
 	void updateSliderPos();
 	bool isOverArea(PictureObject *obj, Common::Point *point);
 };
@@ -283,10 +320,32 @@ public:
 	Scene *_menuScene;
 	int _mode;
 	ModalQuery *_queryDlg;
-	Common::Array <FileInfo *> _files;
+	Common::Array <FileInfo> _files;
 	Common::Array <PictureObject *> _arrayL;
 	Common::Array <PictureObject *> _arrayD;
 	int _queryRes;
+};
+
+class ModalDemo : public BaseModalObject {
+	PictureObject *_bg;
+	PictureObject *_button;
+	PictureObject *_text;
+	int _clickedQuit;
+	int _countdown;
+	Scene *_scene;
+
+ public:
+	ModalDemo();
+	virtual ~ModalDemo();
+
+	bool launch();
+
+	virtual bool pollEvent() { return true; }
+	virtual bool handleMessage(ExCommand *message);
+	virtual bool init(int counterdiff);
+	bool init2(int counterdiff);
+	virtual void update();
+	virtual void saveload() {}
 };
 
 

@@ -23,33 +23,14 @@
 #include "common/scummsys.h"
 
 #include "zvision/scripting/control.h"
+#include "zvision/scripting/script_manager.h"
 
 #include "zvision/zvision.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/utility/utility.h"
 
 #include "common/stream.h"
 
-
 namespace ZVision {
-
-void Control::enable() {
-	if (!_enabled) {
-		_enabled = true;
-		return;
-	}
-
-	debug("Control %u is already enabled", _key);
-}
-
-void Control::disable() {
-	if (_enabled) {
-		_enabled = false;
-		return;
-	}
-
-	debug("Control %u is already disabled", _key);
-}
 
 void Control::parseFlatControl(ZVision *engine) {
 	engine->getRenderManager()->getRenderTable()->setRenderState(RenderTable::FLAT);
@@ -61,7 +42,7 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(&line);
+	engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("angle*", true)) {
@@ -79,23 +60,26 @@ void Control::parsePanoramaControl(ZVision *engine, Common::SeekableReadStream &
 				renderTable->setPanoramaReverse(true);
 			}
 		} else if (line.matchString("zeropoint*", true)) {
-			// TODO: Implement
+			uint point;
+			sscanf(line.c_str(), "zeropoint(%u)", &point);
+			renderTable->setPanoramaZeroPoint(point);
 		}
 
 		line = stream.readLine();
-		trimCommentsAndWhiteSpace(&line);
+		engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 	}
 
 	renderTable->generateRenderTable();
 }
 
+// Only used in Zork Nemesis, handles tilt controls (ZGI doesn't have a tilt view)
 void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stream) {
 	RenderTable *renderTable = engine->getRenderManager()->getRenderTable();
 	renderTable->setRenderState(RenderTable::TILT);
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(&line);
+	engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 
 	while (!stream.eos() && !line.contains('}')) {
 		if (line.matchString("angle*", true)) {
@@ -115,10 +99,40 @@ void Control::parseTiltControl(ZVision *engine, Common::SeekableReadStream &stre
 		}
 
 		line = stream.readLine();
-		trimCommentsAndWhiteSpace(&line);
+		engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
 	}
 
 	renderTable->generateRenderTable();
+}
+
+void Control::getParams(const Common::String &inputStr, Common::String &parameter, Common::String &values) {
+	const char *chrs = inputStr.c_str();
+	uint lbr;
+
+	for (lbr = 0; lbr < inputStr.size(); lbr++)
+		if (chrs[lbr] == '(')
+			break;
+
+	if (lbr >= inputStr.size())
+		return;
+
+	uint rbr;
+
+	for (rbr = lbr + 1; rbr < inputStr.size(); rbr++)
+		if (chrs[rbr] == ')')
+			break;
+
+	if (rbr >= inputStr.size())
+		return;
+
+	parameter = Common::String(chrs, chrs + lbr);
+	values = Common::String(chrs + lbr + 1, chrs + rbr);
+}
+
+void Control::setVenus() {
+	if (_venusId >= 0)
+		if (_engine->getScriptManager()->getStateValue(_venusId) > 0)
+			_engine->getScriptManager()->setStateValue(StateKey_Venus, _venusId);
 }
 
 } // End of namespace ZVision

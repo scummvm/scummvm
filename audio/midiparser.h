@@ -370,6 +370,7 @@ public:
 
 public:
 	typedef void (*XMidiCallbackProc)(byte eventData, void *refCon);
+	typedef void (*XMidiNewTimbreListProc)(MidiDriver_BASE *driver, const byte *timbreListPtr, uint32 timbreListSize);
 
 	MidiParser();
 	virtual ~MidiParser() { allNotesOff(); }
@@ -395,7 +396,7 @@ public:
 	static void defaultXMidiCallback(byte eventData, void *refCon);
 
 	static MidiParser *createParser_SMF();
-	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0);
+	static MidiParser *createParser_XMIDI(XMidiCallbackProc proc = defaultXMidiCallback, void *refCon = 0, XMidiNewTimbreListProc newTimbreListProc = NULL, MidiDriver_BASE *newTimbreListDriver = NULL);
 	static MidiParser *createParser_QT();
 	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };

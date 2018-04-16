@@ -23,6 +23,7 @@
 #include "common/translation.h"
 
 #include "gui/dialog.h"
+#include "gui/options.h"
 #include "gui/widget.h"
 
 #include "tsage/tsage.h"
@@ -90,6 +91,11 @@ int MessageDialog::show2(const Common::String &message, const Common::String &bt
 }
 
 /*--------------------------------------------------------------------------*/
+
+class ConfigDialog : public GUI::OptionsDialog {
+public:
+	ConfigDialog();
+};
 
 ConfigDialog::ConfigDialog() : GUI::OptionsDialog("", "GlobalConfig") {
 	//

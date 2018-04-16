@@ -25,7 +25,7 @@
  * Copyright (c) 1994-1997 Janus B. Wisniewski and L.K. Avalon
  */
 
-#include "common/config-manager.h"
+#include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
@@ -36,8 +36,6 @@
 #include "cge2/snail.h"
 #include "cge2/hero.h"
 #include "cge2/text.h"
-#include "cge2/sound.h"
-#include "cge2/cge2_main.h"
 
 namespace CGE2 {
 
@@ -119,10 +117,6 @@ bool CGE2Engine::loadGame(int slotNumber) {
 			delete readStream;
 			return false;
 		}
-
-		// Delete the thumbnail
-		saveHeader.thumbnail->free();
-		delete saveHeader.thumbnail;
 	}
 
 	resetGame();
@@ -182,9 +176,7 @@ void CGE2Engine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &h
 	out->writeSint16LE(td.tm_min);
 }
 
-bool CGE2Engine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header) {
-	header.thumbnail = nullptr;
-
+WARN_UNUSED_RESULT bool CGE2Engine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
 	// Get the savegame version
 	header.version = in->readByte();
 	if (header.version > kSavegameVersion)
@@ -197,9 +189,9 @@ bool CGE2Engine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &head
 		header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = Graphics::loadThumbnail(*in);
-	if (!header.thumbnail)
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
 		return false;
+	}
 
 	// Read in save date/time
 	header.saveYear = in->readSint16LE();

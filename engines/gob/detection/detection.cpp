@@ -33,7 +33,7 @@ class GobMetaEngine : public AdvancedMetaEngine {
 public:
 	GobMetaEngine();
 
-	virtual GameDescriptor findGame(const char *gameid) const;
+	virtual GameDescriptor findGame(const char *gameId) const;
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 
@@ -55,12 +55,12 @@ private:
 GobMetaEngine::GobMetaEngine() :
 	AdvancedMetaEngine(Gob::gameDescriptions, sizeof(Gob::GOBGameDescription), gobGames) {
 
-	_singleid   = "gob";
-	_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
+	_singleId   = "gob";
+	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 }
 
-GameDescriptor GobMetaEngine::findGame(const char *gameid) const {
-	return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+GameDescriptor GobMetaEngine::findGame(const char *gameId) const {
+	return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 }
 
 const ADGameDescription *GobMetaEngine::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
@@ -77,7 +77,10 @@ const ADGameDescription *GobMetaEngine::fallbackDetect(const FileMap &allFiles, 
 			return 0;
 	}
 
-	reportUnknown(fslist.begin()->getParent(), filesProps);
+	ADGameIdList gameIds;
+	gameIds.push_back(game->desc.gameId);
+
+	reportUnknown(fslist.begin()->getParent(), filesProps, gameIds);
 	return (const ADGameDescription *)game;
 }
 

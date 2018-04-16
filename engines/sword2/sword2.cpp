@@ -107,7 +107,8 @@ bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
+		(f == kSupportsDeleteSave) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Sword2::Sword2Engine::hasFeature(EngineFeature f) const {
@@ -231,10 +232,9 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	char saveDesc[SAVE_DESCRIPTION_LEN];
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -252,6 +252,8 @@ SaveStateList Sword2MetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -440,7 +442,7 @@ Common::Error Sword2Engine::run() {
 	_resman = NULL;
 	_memory = NULL;
 
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 	_screen = new Screen(this, 640, 480);
 
 	// Create the debugger as early as possible (but not before the

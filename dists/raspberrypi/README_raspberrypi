@@ -1,0 +1,46 @@
+ScummVM Raspberry Pi README
+-------------------------------------------------------------------------------
+
+NOTES ON NEEDED DEPENDENCIES
+
+The Raspberry Pi version is linked against the following GNU/Linux libraries 
+that may or may not be already installed on a Raspberry Pi GNU/Linux system
+and hence needs them installed in your system before running ScummVM on it:
+	-SDL2, version 2.0.4 recommended and included. See notes on this below.
+	-libVorbis, for OGG music needed by some engines and the fantastic 
+	 enhanced music packs by James Woodcock.
+	-libJPEG, needed by some engines.
+	-libPNG, needed by some engines.
+
+So, if you are in Raspbian, for example, you can install these, except
+SDL 2.0.4 by doing:
+
+sudo apt-get install libvorbis0a libjpeg62-turbo libpng12-0
+
+You can look at the other library dependencies by running ldd on the
+scummvm executable. They are standard GNU Linux, C++ and Raspberry Pi
+Video Core IV libraries that should come installed with your system. 
+
+RUNNING SCUMMVM ON THE RASPBERRY PI SERIES OF MICROCOMPUTERS
+------------------------------------------------------------
+
+To launch Scummvm on the Raspberry Pi, run the scummvm.sh script.
+It will run the scummvm binary using the SDL2 library in the lib
+directory.
+You can do so like this:
+cd scummvm
+./scummvm.sh
+
+Notes on SDL2 version 2.0.4
+----------------------------------------------
+
+This version of ScummVM is built against SDL2, and stable version 2.0.4 is 
+recommended. Previous versions could have mouse input bugs on the Pi.
+Using SDL 1.x on the Pi is buggy, even if a hacky dispmanx (native 2D API)
+backend exists, it's not recommended at all.
+
+For this reason, a Pi-version-gnostic of libSDL2-2.0.so.0 (will work on a Pi1,
+Pi2 or Pi3) is included until the Raspbian people finally include SDL 2.0.4 
+with the system by default.
+That's why you should run scummvm using the scummvm.sh script instead of
+running the binary directly.

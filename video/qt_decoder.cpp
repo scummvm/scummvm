@@ -267,8 +267,10 @@ void QuickTimeDecoder::VideoSampleDesc::initCodec() {
 	_videoCodec = Image::createQuickTimeCodec(_codecTag, _parentTrack->width, _parentTrack->height, _bitsPerSample & 0x1f);
 }
 
-QuickTimeDecoder::AudioTrackHandler::AudioTrackHandler(QuickTimeDecoder *decoder, QuickTimeAudioTrack *audioTrack)
-		: _decoder(decoder), _audioTrack(audioTrack) {
+QuickTimeDecoder::AudioTrackHandler::AudioTrackHandler(QuickTimeDecoder *decoder, QuickTimeAudioTrack *audioTrack) :
+		SeekableAudioTrack(decoder->getSoundType()),
+		_decoder(decoder),
+		_audioTrack(audioTrack) {
 }
 
 void QuickTimeDecoder::AudioTrackHandler::updateBuffer() {
@@ -286,19 +288,29 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_curEdit = 0;
 	enterNewEditList(false);
 
-	_holdNextFrameStartTime = false;
 	_curFrame = -1;
 	_durationOverride = -1;
 	_scaledSurface = 0;
 	_curPalette = 0;
 	_dirtyPalette = false;
 	_reversed = false;
+	_forcedDitherPalette = 0;
+	_ditherTable = 0;
+	_ditherFrame = 0;
 }
 
 QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
 	if (_scaledSurface) {
 		_scaledSurface->free();
 		delete _scaledSurface;
+	}
+
+	delete[] _forcedDitherPalette;
+	delete[] _ditherTable;
+
+	if (_ditherFrame) {
+		_ditherFrame->free();
+		delete _ditherFrame;
 	}
 }
 
@@ -347,15 +359,12 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 		}
 	}
 
-	// All that's left is to figure out what our starting time is going to be
-	// Compare the starting point for the frame to where we need to be
-	_holdNextFrameStartTime = getRateAdjustedFrameTime() != (uint32)time.totalNumberOfFrames();
-
-	// If we went past the time, go back a frame. _curFrame before this point is at the frame
-	// that should be displayed. This adjustment ensures it is on the frame before the one that
-	// should be displayed.
-	if (_holdNextFrameStartTime)
+	// Check if we went past, then adjust the frame times
+	if (getRateAdjustedFrameTime() != (uint32)time.totalNumberOfFrames()) {
 		_curFrame--;
+		_durationOverride = getRateAdjustedFrameTime() - time.totalNumberOfFrames();
+		_nextFrameStartTime = time.totalNumberOfFrames();
+	}
 
 	if (_reversed) {
 		// Call setReverse again to update
@@ -386,6 +395,9 @@ uint16 QuickTimeDecoder::VideoTrackHandler::getHeight() const {
 }
 
 Graphics::PixelFormat QuickTimeDecoder::VideoTrackHandler::getPixelFormat() const {
+	if (_forcedDitherPalette)
+		return Graphics::PixelFormat::createFormatCLUT8();
+
 	return ((VideoSampleDesc *)_parent->sampleDescs[0])->_videoCodec->getPixelFormat();
 }
 
@@ -397,8 +409,22 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getNextFrameStartTime() const {
 	if (endOfTrack())
 		return 0;
 
-	// Convert to milliseconds so the tracks can be compared
-	return getRateAdjustedFrameTime() * 1000 / _parent->timeScale;
+	Audio::Timestamp frameTime(0, getRateAdjustedFrameTime(), _parent->timeScale);
+
+	// Check if the frame goes beyond the end of the edit. In that case, the next frame
+	// should really be when we cross the edit boundary.
+	if (_reversed) {
+		Audio::Timestamp editStartTime(0, _parent->editList[_curEdit].timeOffset, _decoder->_timeScale);
+		if (frameTime < editStartTime)
+			return editStartTime.msecs();
+	} else {
+		Audio::Timestamp nextEditStartTime(0, _parent->editList[_curEdit].timeOffset + _parent->editList[_curEdit].trackDuration, _decoder->_timeScale);
+		if (frameTime > nextEditStartTime)
+			return nextEditStartTime.msecs();
+	}
+
+	// Not past an edit boundary, so the frame time is what should be used
+	return frameTime.msecs();
 }
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() {
@@ -422,38 +448,42 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 			bufferNextFrame();
 	}
 
+	// Update the edit list, if applicable
+	// FIXME: Add support for playing backwards videos with more than one edit
+	// For now, stay on the first edit for reversed playback
+	if (endOfCurEdit() && !_reversed) {
+		_curEdit++;
+
+		if (atLastEdit())
+			return 0;
+
+		enterNewEditList(true);
+	}
+
 	const Graphics::Surface *frame = bufferNextFrame();
 
 	if (_reversed) {
-		if (_holdNextFrameStartTime) {
-			// Don't set the next frame start time here; we just did a seek
-			_holdNextFrameStartTime = false;
+		if (_durationOverride >= 0) {
+			// Use our own duration overridden from a media seek
+			_nextFrameStartTime -= _durationOverride;
+			_durationOverride = -1;
 		} else {
 			// Just need to subtract the time
 			_nextFrameStartTime -= getFrameDuration();
 		}
 	} else {
-		if (_holdNextFrameStartTime) {
-			// Don't set the next frame start time here; we just did a seek
-			_holdNextFrameStartTime = false;
-		} else if (_durationOverride >= 0) {
-			// Use our own duration from the edit list calculation
-			_nextFrameStartTime += _durationOverride;
+		if (_durationOverride >= 0) {
+			// Use our own duration overridden from a media seek
+ 			_nextFrameStartTime += _durationOverride;
 			_durationOverride = -1;
 		} else {
 			_nextFrameStartTime += getFrameDuration();
 		}
-
-		// Update the edit list, if applicable
-		// HACK: We're also accepting the time minus one because edit lists
-		// aren't as accurate as one would hope.
-		if (!atLastEdit() && getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration() - 1) {
-			_curEdit++;
-
-			if (!atLastEdit())
-				enterNewEditList(true);
-		}
 	}
+
+	// Handle forced dithering
+	if (frame && _forcedDitherPalette)
+		frame = forceDither(*frame);
 
 	if (frame && (_parent->scaleFactorX != 1 || _parent->scaleFactorY != 1)) {
 		if (!_scaledSurface) {
@@ -468,11 +498,16 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	return frame;
 }
 
+const byte *QuickTimeDecoder::VideoTrackHandler::getPalette() const {
+	_dirtyPalette = false;
+	return _forcedDitherPalette ? _forcedDitherPalette : _curPalette;
+}
+
 bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 	_reversed = reverse;
 
 	if (_reversed) {
-		if (_parent->editCount != 1) {
+		if (_parent->editList.size() != 1) {
 			// TODO: Myst's holo.mov needs this :(
 			warning("Can only set reverse without edits");
 			return false;
@@ -482,14 +517,14 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 			// If we're at the end of the video, go to the penultimate edit.
 			// The current frame is set to one beyond the last frame here;
 			// one "past" the currently displayed frame.
-			_curEdit = _parent->editCount - 1;
+			_curEdit = _parent->editList.size() - 1;
 			_curFrame = _parent->frameCount;
 			_nextFrameStartTime = _parent->editList[_curEdit].trackDuration + _parent->editList[_curEdit].timeOffset;
-		} else if (_holdNextFrameStartTime) {
-			// We just seeked, so "pivot" around the frame that should be displayed
-			_curFrame++;
-			_nextFrameStartTime -= getFrameDuration();
-			_curFrame++;
+		} else if (_durationOverride >= 0) {
+			// We just had a media seek, so "pivot" around the frame that should
+			// be displayed.
+			_curFrame += 2;
+			_nextFrameStartTime += _durationOverride;
 		} else {
 			// We need to put _curFrame to be the one after the one that should be displayed.
 			// Since we're on the frame that should be displaying right now, add one.
@@ -497,20 +532,19 @@ bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
 		}
 	} else {
 		// Update the edit list, if applicable
-		// HACK: We're also accepting the time minus one because edit lists
-		// aren't as accurate as one would hope.
-		if (!atLastEdit() && getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration() - 1) {
+		if (!atLastEdit() && endOfCurEdit()) {
 			_curEdit++;
 
 			if (atLastEdit())
 				return true;
 		}
 
-		if (_holdNextFrameStartTime) {
-			// We just seeked, so "pivot" around the frame that should be displayed
+		if (_durationOverride >= 0) {
+			// We just had a media seek, so "pivot" around the frame that should
+			// be displayed.
 			_curFrame--;
-			_nextFrameStartTime += getFrameDuration();
-		}
+			_nextFrameStartTime -= _durationOverride;
+ 		}
 
 		// We need to put _curFrame to be the one before the one that should be displayed.
 		// Since we're on the frame that should be displaying right now, subtract one.
@@ -559,10 +593,8 @@ Common::SeekableReadStream *QuickTimeDecoder::VideoTrackHandler::getNextFramePac
 		}
 	}
 
-	if (actualChunk < 0) {
-		warning("Could not find data for frame %d", _curFrame);
-		return 0;
-	}
+	if (actualChunk < 0)
+		error("Could not find data for frame %d", _curFrame);
 
 	// Next seek to that frame
 	Common::SeekableReadStream *stream = _decoder->_fd;
@@ -617,30 +649,32 @@ void QuickTimeDecoder::VideoTrackHandler::enterNewEditList(bool bufferFrames) {
 	if (atLastEdit())
 		return;
 
+	uint32 mediaTime = _parent->editList[_curEdit].mediaTime;
 	uint32 frameNum = 0;
-	bool done = false;
 	uint32 totalDuration = 0;
-	uint32 prevDuration = 0;
+	_durationOverride = -1;
 
 	// Track down where the mediaTime is in the media
 	// This is basically time -> frame mapping
 	// Note that this code uses first frame = 0
-	for (int32 i = 0; i < _parent->timeToSampleCount && !done; i++) {
-		for (int32 j = 0; j < _parent->timeToSample[i].count; j++) {
-			if (totalDuration == (uint32)_parent->editList[_curEdit].mediaTime) {
-				done = true;
-				prevDuration = totalDuration;
-				break;
-			} else if (totalDuration > (uint32)_parent->editList[_curEdit].mediaTime) {
-				done = true;
-				frameNum--;
-				break;
-			}
+	for (int32 i = 0; i < _parent->timeToSampleCount; i++) {
+		uint32 duration = _parent->timeToSample[i].count * _parent->timeToSample[i].duration;
 
-			prevDuration = totalDuration;
-			totalDuration += _parent->timeToSample[i].duration;
-			frameNum++;
+		if (totalDuration + duration >= mediaTime) {
+			uint32 frameInc = (mediaTime - totalDuration) / _parent->timeToSample[i].duration;
+			frameNum += frameInc;
+			totalDuration += frameInc * _parent->timeToSample[i].duration;
+
+			// If we didn't get to the exact media time, mark an override for
+			// the time.
+			if (totalDuration != mediaTime)
+				_durationOverride = totalDuration + _parent->timeToSample[i].duration - mediaTime;
+
+			break;
 		}
+
+		frameNum += _parent->timeToSample[i].count;
+		totalDuration += duration;
 	}
 
 	if (bufferFrames) {
@@ -656,12 +690,6 @@ void QuickTimeDecoder::VideoTrackHandler::enterNewEditList(bool bufferFrames) {
 	}
 
 	_nextFrameStartTime = getCurEditTimeOffset();
-
-	// Set an override for the duration since we came up in-between two frames
-	if (prevDuration != totalDuration)
-		_durationOverride = totalDuration - prevDuration;
-	else
-		_durationOverride = -1;
 }
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() {
@@ -709,7 +737,12 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 
 uint32 QuickTimeDecoder::VideoTrackHandler::getRateAdjustedFrameTime() const {
 	// Figure out what time the next frame is at taking the edit list rate into account
-	uint32 convertedTime = (Common::Rational(_nextFrameStartTime - getCurEditTimeOffset()) / _parent->editList[_curEdit].mediaRate).toInt();
+	Common::Rational offsetFromEdit = Common::Rational(_nextFrameStartTime - getCurEditTimeOffset()) / _parent->editList[_curEdit].mediaRate;
+	uint32 convertedTime = offsetFromEdit.toInt();
+
+	if ((offsetFromEdit.getNumerator() % offsetFromEdit.getDenominator()) > (offsetFromEdit.getDenominator() / 2))
+		convertedTime++;
+
 	return convertedTime + getCurEditTimeOffset();
 }
 
@@ -736,7 +769,110 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTrackDuration() const {
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::atLastEdit() const {
-	return _curEdit == _parent->editCount;
+	return _curEdit == _parent->editList.size();
+}
+
+bool QuickTimeDecoder::VideoTrackHandler::endOfCurEdit() const {
+	// We're at the end of the edit once the next frame's time would
+	// bring us past the end of the edit.
+	return getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration();
+}
+
+bool QuickTimeDecoder::VideoTrackHandler::canDither() const {
+	for (uint i = 0; i < _parent->sampleDescs.size(); i++) {
+		VideoSampleDesc *desc = (VideoSampleDesc *)_parent->sampleDescs[i];
+
+		if (!desc || !desc->_videoCodec)
+			return false;
+	}
+
+	return true;
+}
+
+void QuickTimeDecoder::VideoTrackHandler::setDither(const byte *palette) {
+	assert(canDither());
+
+	for (uint i = 0; i < _parent->sampleDescs.size(); i++) {
+		VideoSampleDesc *desc = (VideoSampleDesc *)_parent->sampleDescs[i];
+
+		if (desc->_videoCodec->canDither(Image::Codec::kDitherTypeQT)) {
+			// Codec dither
+			desc->_videoCodec->setDither(Image::Codec::kDitherTypeQT, palette);
+		} else {
+			// Forced dither
+			_forcedDitherPalette = new byte[256 * 3];
+			memcpy(_forcedDitherPalette, palette, 256 * 3);
+			_ditherTable = Image::Codec::createQuickTimeDitherTable(_forcedDitherPalette, 256);
+			_dirtyPalette = true;
+		}
+	}
+}
+
+namespace {
+
+// Return a pixel in RGB554
+uint16 makeDitherColor(byte r, byte g, byte b) {
+	return ((r & 0xF8) << 6) | ((g & 0xF8) << 1) | (b >> 4);
+}
+
+// Default template to convert a dither color
+template<typename PixelInt>
+inline uint16 readDitherColor(PixelInt srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+	byte r, g, b;
+	format.colorToRGB(srcColor, r, g, b);
+	return makeDitherColor(r, g, b);
+}
+
+// Specialized version for 8bpp
+template<>
+inline uint16 readDitherColor(byte srcColor, const Graphics::PixelFormat& format, const byte *palette) {
+	return makeDitherColor(palette[srcColor * 3], palette[srcColor * 3 + 1], palette[srcColor * 3 + 2]);
+}
+
+template<typename PixelInt>
+void ditherFrame(const Graphics::Surface &src, Graphics::Surface &dst, const byte *ditherTable, const byte *palette = 0) {
+	static const uint16 colorTableOffsets[] = { 0x0000, 0xC000, 0x4000, 0x8000 };
+
+	for (int y = 0; y < dst.h; y++) {
+		const PixelInt *srcPtr = (const PixelInt *)src.getBasePtr(0, y);
+		byte *dstPtr = (byte *)dst.getBasePtr(0, y);
+		uint16 colorTableOffset = colorTableOffsets[y & 3];
+
+		for (int x = 0; x < dst.w; x++) {
+			uint16 color = readDitherColor(*srcPtr++, src.format, palette);
+			*dstPtr++ = ditherTable[colorTableOffset + color];
+			colorTableOffset += 0x4000;
+		}
+	}
+}
+
+} // End of anonymous namespace
+
+const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::forceDither(const Graphics::Surface &frame) {
+	if (frame.format.bytesPerPixel == 1) {
+		// This should always be true, but this is for sanity
+		if (!_curPalette)
+			return &frame;
+
+		// If the palettes match, bail out
+		if (memcmp(_forcedDitherPalette, _curPalette, 256 * 3) == 0)
+			return &frame;
+	}
+
+	// Need to create a new one
+	if (!_ditherFrame) {
+		_ditherFrame = new Graphics::Surface();
+		_ditherFrame->create(frame.w, frame.h, Graphics::PixelFormat::createFormatCLUT8());
+	}
+
+	if (frame.format.bytesPerPixel == 1)
+		ditherFrame<byte>(frame, *_ditherFrame, _ditherTable, _curPalette);
+	else if (frame.format.bytesPerPixel == 2)
+		ditherFrame<uint16>(frame, *_ditherFrame, _ditherTable);
+	else if (frame.format.bytesPerPixel == 4)
+		ditherFrame<uint32>(frame, *_ditherFrame, _ditherTable);
+
+	return _ditherFrame;
 }
 
 } // End of namespace Video

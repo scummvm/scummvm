@@ -24,9 +24,9 @@
 #define SCUMM_IMUSE_INTERNAL
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse/instrument.h"
-#include "scumm/saveload.h"
 #include "audio/mididrv.h"
 
 class MidiParser;
@@ -153,7 +153,7 @@ struct CommandQueue {
 //
 //////////////////////////////////////////////////
 
-class Player : public MidiDriver_BASE {
+class Player : public MidiDriver_BASE, public Common::Serializable {
 	/*
 	 * External SysEx handler functions shall each be defined in
 	 * a separate file. This header file shall be included at the
@@ -267,7 +267,7 @@ public:
 	void onTimer();
 	void removePart(Part *part);
 	int scan(uint totrack, uint tobeat, uint totick);
-	void saveLoadWithSerializer(Serializer *ser);
+	void saveLoadWithSerializer(Common::Serializer &ser);
 	int setHook(byte cls, byte value, byte chan) { return _hook.set(cls, value, chan); }
 	void setDetune(int detune);
 	void setOffsetNote(int offset);
@@ -295,7 +295,7 @@ public:
 //
 //////////////////////////////////////////////////
 
-struct Part : public Serializable {
+struct Part : public Common::Serializable {
 	IMuseInternal *_se;
 	int _slot;
 	Part *_next, *_prev;
@@ -360,7 +360,7 @@ struct Part : public Serializable {
 
 	Part();
 
-	void saveLoadWithSerializer(Serializer *ser);
+	void saveLoadWithSerializer(Common::Serializer &ser);
 
 private:
 	void sendPitchBend();
@@ -518,7 +518,7 @@ protected:
 public:
 	// IMuse interface
 	void pause(bool paused);
-	int save_or_load(Serializer *ser, ScummEngine *scumm, bool fixAfterLoad = true);
+	void saveLoadIMuse(Common::Serializer &ser, ScummEngine *scumm, bool fixAfterLoad = true);
 	bool get_sound_active(int sound) const;
 	int32 doCommand(int numargs, int args[]);
 	uint32 property(int prop, uint32 value);

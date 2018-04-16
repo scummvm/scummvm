@@ -538,7 +538,7 @@ void Game::handleRightClickMenu() {
 			hotspot = res.getHotspot(room.hotspotId());
 			assert(hotspot);
 			strings.getString(hotspot->nameId, statusLine);
-			strcat(statusLine, stringList.getString(S_FOR));
+			Common::strlcat(statusLine, stringList.getString(S_FOR), MAX_DESC_SIZE);
 			statusLine += strlen(statusLine);
 
 			itemId = PopupMenu::ShowItems(GET, player->roomNumber());
@@ -549,7 +549,7 @@ void Game::handleRightClickMenu() {
 			hotspot = res.getHotspot(room.hotspotId());
 			assert(hotspot);
 			strings.getString(hotspot->nameId, statusLine);
-			strcat(statusLine, stringList.getString(S_TO));
+			Common::strlcat(statusLine, stringList.getString(S_TO), MAX_DESC_SIZE);
 			breakFlag = GetTellActions();
 			break;
 
@@ -559,7 +559,7 @@ void Game::handleRightClickMenu() {
 		case DRINK:
 			hasItems = (res.numInventoryItems() != 0);
 			if (!hasItems)
-				strcat(statusLine, stringList.getString(S_ACTION_NOTHING));
+				Common::strlcat(statusLine, stringList.getString(S_ACTION_NOTHING), MAX_DESC_SIZE);
 			statusLine += strlen(statusLine);
 
 			room.update();
@@ -579,9 +579,9 @@ void Game::handleRightClickMenu() {
 						assert(useHotspot);
 						strings.getString(useHotspot->nameId, statusLine);
 						if (action == GIVE)
-							strcat(statusLine, stringList.getString(S_TO));
+							Common::strlcat(statusLine, stringList.getString(S_TO), MAX_DESC_SIZE);
 						else
-							strcat(statusLine, stringList.getString(S_ON));
+							Common::strlcat(statusLine, stringList.getString(S_ON), MAX_DESC_SIZE);
 						statusLine += strlen(statusLine);
 					}
 					else if ((action == DRINK) || (action == EXAMINE))
@@ -762,11 +762,11 @@ bool Game::GetTellActions() {
 				// Second parameter
 				action = (Action) commands[_numTellCommands * 3];
 				if (action == ASK)
-					strcat(statusLine, stringList.getString(S_FOR));
+					Common::strlcat(statusLine, stringList.getString(S_FOR), MAX_DESC_SIZE);
 				else if (action == GIVE)
-					strcat(statusLine, stringList.getString(S_TO));
+					Common::strlcat(statusLine, stringList.getString(S_TO), MAX_DESC_SIZE);
 				else if (action == USE)
-					strcat(statusLine, stringList.getString(S_ON));
+					Common::strlcat(statusLine, stringList.getString(S_ON), MAX_DESC_SIZE);
 				else {
 					// All other commads don't need a second parameter
 					++paramIndex;
@@ -1000,6 +1000,7 @@ bool Game::getYN() {
 	if (l == Common::FR_FRA) y = Common::KEYCODE_o;
 	else if ((l == Common::DE_DEU) || (l == Common::NL_NLD)) y = Common::KEYCODE_j;
 	else if ((l == Common::ES_ESP) || (l == Common::IT_ITA)) y = Common::KEYCODE_s;
+	else if (l == Common::RU_RUS) y = Common::KEYCODE_l;
 
 	bool vKbdFlag = g_system->hasFeature(OSystem::kFeatureVirtualKeyboard);
 	if (!vKbdFlag)
@@ -1018,7 +1019,12 @@ bool Game::getYN() {
 		while (events.pollEvent()) {
 			if (events.event().type == Common::EVENT_KEYDOWN) {
 				Common::KeyCode key = events.event().kbd.keycode;
-				if ((key == y) || (key == Common::KEYCODE_n) ||
+				if (l == Common::RU_RUS) {
+					if ((key == y) || (key == Common::KEYCODE_y) || (key == Common::KEYCODE_ESCAPE)) {
+						breakFlag = true;
+						result = key == y;
+					}
+				} else if ((key == y) || (key == Common::KEYCODE_n) ||
 					(key == Common::KEYCODE_ESCAPE)) {
 					breakFlag = true;
 					result = key == y;

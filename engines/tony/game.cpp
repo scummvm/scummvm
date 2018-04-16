@@ -319,6 +319,11 @@ RMOptionScreen::RMOptionScreen() {
 	_fadeTime = 0;
 	_nEditPos = 0;
 	_nLastState = MENUGAME;
+
+	_bExit = false;
+	_bLoadMenuOnly = false;
+	_bNoLoadSave = false;
+	_bAlterGfx = false;
 }
 
 RMOptionScreen::~RMOptionScreen() {
@@ -1145,7 +1150,7 @@ void RMOptionScreen::doFrame(CORO_PARAM, RMInput *input) {
 							// Turn on edit mode
 							_bEditSaveName = true;
 							_nEditPos = _ctx->i;
-							strcpy(_editName, _curThumbName[_ctx->i].c_str());
+							Common::strlcpy(_editName, _curThumbName[_ctx->i].c_str(), sizeof(_editName));
 							_ctx->bRefresh = true;
 						}
 

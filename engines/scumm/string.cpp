@@ -23,6 +23,7 @@
 
 
 #include "common/config-manager.h"
+#include "audio/mixer.h"
 
 #include "scumm/actor.h"
 #include "scumm/charset.h"
@@ -283,6 +284,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 		switch (c) {
 		case 1:
 			c = 13; // new line
+			_msgCount = _screenWidth;
 			endLoop = true;
 			break;
 		case 2:
@@ -293,6 +295,7 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 		case 3:
 			_haveMsg = (_game.version >= 7) ? 1 : 0xFF;
 			_keepText = false;
+			_msgCount = 0;
 			endLoop = true;
 			break;
 		case 8:
@@ -573,6 +576,9 @@ void ScummEngine::CHARSET_1() {
 #endif
 				restoreCharsetBg();
 		}
+		_msgCount = 0;
+	} else if (_game.version <= 2) {
+		_talkDelay += _msgCount * _defaultTalkDelay;
 	}
 
 	if (_game.version > 3) {
@@ -600,6 +606,7 @@ void ScummEngine::CHARSET_1() {
 			// End of text reached, set _haveMsg accordingly
 			_haveMsg = (_game.version >= 7) ? 2 : 1;
 			_keepText = false;
+			_msgCount = 0;
 			break;
 		}
 
@@ -648,6 +655,7 @@ void ScummEngine::CHARSET_1() {
 			}
 			if (_game.version <= 3) {
 				_charset->printChar(c, false);
+				_msgCount += 1;
 			} else {
 				if (_game.features & GF_16BIT_COLOR) {
 					// HE games which use sprites for subtitles
@@ -655,7 +663,7 @@ void ScummEngine::CHARSET_1() {
 					// Special case for HE games
 				} else if (_game.id == GID_LOOM && !ConfMan.getBool("subtitles") && (_sound->pollCD())) {
 					// Special case for Loom (CD), since it only uses CD audio.for sound
-				} else if (!ConfMan.getBool("subtitles") && (!_haveActorSpeechMsg || _mixer->isSoundHandleActive(_sound->_talkChannelHandle))) {
+				} else if (!ConfMan.getBool("subtitles") && (!_haveActorSpeechMsg || _mixer->isSoundHandleActive(*_sound->_talkChannelHandle))) {
 					// Subtitles are turned off, and there is a voice version
 					// of this message -> don't print it.
 				} else {

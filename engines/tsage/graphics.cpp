@@ -229,123 +229,45 @@ void Rect::synchronize(Serializer &s) {
 
 /*--------------------------------------------------------------------------*/
 
-GfxSurface::GfxSurface() : _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
+GfxSurface::GfxSurface() : Graphics::Screen(0, 0), _bounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) {
+	free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_disableUpdates = false;
 	_lockSurfaceCtr = 0;
-	_customSurface = NULL;
 	_transColor = -1;
-	_trackDirtyRects = false;
 	_flags = 0;
 }
 
-GfxSurface::GfxSurface(const GfxSurface &s) {
+GfxSurface::GfxSurface(const GfxSurface &s): Graphics::Screen(0, 0) {
+	free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_lockSurfaceCtr = 0;
-	_customSurface = NULL;
-	_trackDirtyRects = false;
-	*this = s;
+
+	operator=(s);
 }
 
 GfxSurface::~GfxSurface() {
-	clear();
+	// Sanity check.. GfxSurface should always be just referencing _rawSurface,
+	// and not directly managing it's own surface
+	assert(disposeAfterUse() == DisposeAfterUse::NO);
 }
 
-void GfxSurface::clear() {
-	if (_customSurface) {
-		_customSurface->free();
-		delete _customSurface;
-		_customSurface = NULL;
-	}
+void GfxSurface::create(uint16 width, uint16 height) {
+	free();
+
+	_rawSurface.create(width, height);
+	setBounds(Rect(0, 0, width, height));
 }
 
-/**
- * Specifies that the surface will encapsulate the ScummVM screen surface
- */
-void GfxSurface::setScreenSurface() {
-	_trackDirtyRects = true;
-	create(SCREEN_WIDTH, SCREEN_HEIGHT);
-}
-
-/**
- * Updates the physical screen with the screen surface buffer
- */
-void GfxSurface::updateScreen() {
-	assert(_trackDirtyRects);
-
-	// Merge any overlapping dirty rects
-	mergeDirtyRects();
-
-	// Loop through the dirty rect list to copy the affected areas to the sc
-	for (Common::List<Rect>::iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i) {
-		Rect r = *i;
-
-		// Make sure that there is something to update. If not, skip this
-		// rectangle. An example case is the speedbike closeup at the beginning
-		// of Ringworld (third screen).
-		if (r.isEmpty())
-			continue;
-
-		const byte *srcP = (const byte *)_customSurface->getBasePtr(r.left, r.top);
-		g_system->copyRectToScreen(srcP, _customSurface->pitch, r.left, r.top,
-			r.width(), r.height());
-	}
-
-	// Update the physical screen
-	g_system->updateScreen();
-
-	// Now that the dirty rects have been copied, clear the dirty rect list
-	_dirtyRects.clear();
-}
-
-/**
- * Adds a rect to the dirty rect list
- */
-void GfxSurface::addDirtyRect(const Rect &r) {
-	if (_trackDirtyRects) {
-		// Get the bounds and adjust to allow for sub-screen areas
-		Rect r2 = r;
-		r2.translate(_bounds.left, _bounds.top);
-
-		// Add to the dirty rect list
-		r2.right = MIN(r2.right + 1, SCREEN_WIDTH);
-		r2.bottom = MIN(r2.bottom + 1, SCREEN_HEIGHT);
-
-		if (r2.isValidRect())
-			_dirtyRects.push_back(r2);
-	}
-}
-
-
-
-/**
- * Specifies that the surface should maintain it's own internal surface
- */
-void GfxSurface::create(int width, int height) {
-	assert((width >= 0) && (height >= 0));
-
-	if (_customSurface) {
-		_customSurface->free();
-		delete _customSurface;
-	}
-	_customSurface = new Graphics::Surface();
-	_customSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	Common::fill((byte *)_customSurface->getPixels(), (byte *)_customSurface->getBasePtr(0, height), 0);
-	_bounds = Rect(0, 0, width, height);
+void GfxSurface::setBounds(const Rect &bounds) {
+	_bounds = bounds;
+	Graphics::ManagedSurface::create(_rawSurface, bounds);
 }
 
 /**
  * Locks the surface for access, and returns a raw ScummVM surface to manipulate it
  */
-Graphics::Surface GfxSurface::lockSurface() {
+Graphics::ManagedSurface &GfxSurface::lockSurface() {
 	++_lockSurfaceCtr;
-
-	Graphics::Surface *src = _customSurface;
-	assert(src);
-
-	// Setup the returned surface either as one pointing to the same pixels as the source, or
-	// as a subset of the source one based on the currently set bounds
-	Graphics::Surface result;
-	result.init(_bounds.width(), _bounds.height(), src->pitch, src->getBasePtr(_bounds.left, _bounds.top), src->format);
-	return result;
+	return *this;
 }
 
 /**
@@ -367,69 +289,43 @@ void GfxSurface::synchronize(Serializer &s) {
 
 	if (s.isSaving()) {
 		// Save contents of the surface
-		if (_customSurface) {
-			s.syncAsSint16LE(_customSurface->w);
-			s.syncAsSint16LE(_customSurface->h);
-			s.syncBytes((byte *)_customSurface->getPixels(), _customSurface->w * _customSurface->h);
+		if (disposeAfterUse() == DisposeAfterUse::YES) {
+			s.syncAsSint16LE(this->w);
+			s.syncAsSint16LE(this->h);
+			s.syncBytes((byte *)getPixels(), this->w * this->h);
 		} else {
 			int zero = 0;
 			s.syncAsSint16LE(zero);
 			s.syncAsSint16LE(zero);
 		}
 	} else {
-		int w = 0, h = 0;
-		s.syncAsSint16LE(w);
-		s.syncAsSint16LE(h);
+		int xSize = 0, ySize = 0;
+		s.syncAsSint16LE(xSize);
+		s.syncAsSint16LE(ySize);
 
-		if ((w == 0) || (h == 0)) {
-			if (_customSurface)
-				delete _customSurface;
-			_customSurface = NULL;
+		if (xSize == 0 || ySize == 0) {
+			free();
 		} else {
-			create(w, h);
-			s.syncBytes((byte *)_customSurface->getPixels(), w * h);
+			create(xSize, ySize);
+			s.syncBytes((byte *)getPixels(), xSize * ySize);
 		}
 	}
-}
-
-/**
- * Fills a specified rectangle on the surface with the specified color
- *
- * @bounds Area to fill
- * @color Color to use
- */
-void GfxSurface::fillRect(const Rect &bounds, int color) {
-	Graphics::Surface surface = lockSurface();
-	surface.fillRect(bounds, color);
-	unlockSurface();
-	addDirtyRect(bounds);
 }
 
 GfxSurface &GfxSurface::operator=(const GfxSurface &s) {
 	assert(_lockSurfaceCtr == 0);
 	assert(s._lockSurfaceCtr == 0);
 
-	if (_customSurface) {
-		_customSurface->free();
-		delete _customSurface;
-	}
-
-	_customSurface = s._customSurface;
 	_disableUpdates = s._disableUpdates;
 	_bounds = s._bounds;
 	_centroid = s._centroid;
 	_transColor = s._transColor;
 	_flags = s._flags;
 
-	if (_customSurface) {
-		// Surface owns the internal data, so replicate it so new surface owns it's own
-		_customSurface = new Graphics::Surface();
-		_customSurface->create(s._customSurface->w, s._customSurface->h, Graphics::PixelFormat::createFormatCLUT8());
-		const byte *srcP = (const byte *)s._customSurface->getPixels();
-		byte *destP = (byte *)_customSurface->getPixels();
-
-		Common::copy(srcP, srcP + (_bounds.width() * _bounds.height()), destP);
-	}
+	// Copy the source's surface
+	create(s.w, s.h);
+	blitFrom(s);
+	setBounds(s.getBounds());
 
 	return *this;
 }
@@ -474,7 +370,7 @@ bool GfxSurface::displayText(const Common::String &msg, const Common::Point &pt)
 /**
  * Loads a quarter of a screen from a resource
  */
-void GfxSurface::loadScreenSection(Graphics::Surface &dest, int xHalf, int yHalf, int xSection, int ySection) {
+void GfxSurface::loadScreenSection(Graphics::ManagedSurface &dest, int xHalf, int yHalf, int xSection, int ySection) {
 	int screenNum = g_globals->_sceneManager._scene->_activeScreenNumber;
 	Rect updateRect(0, 0, 160, 100);
 	updateRect.translate(xHalf * 160, yHalf * 100);
@@ -682,50 +578,6 @@ void GfxSurface::draw(const Common::Point &pt, Rect *rect) {
 	}
 }
 
-/**
- * Merges any clipping rectangles that overlap to try and reduce
- * the total number of clip rectangles.
- */
-void GfxSurface::mergeDirtyRects() {
-	if (_dirtyRects.size() <= 1)
-		return;
-
-	Common::List<Rect>::iterator rOuter, rInner;
-
-	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
-		rInner = rOuter;
-		while (++rInner != _dirtyRects.end()) {
-
-			if ((*rOuter).intersects(*rInner)) {
-				// these two rectangles overlap or
-				// are next to each other - merge them
-
-				unionRectangle(*rOuter, *rOuter, *rInner);
-
-				// remove the inner rect from the list
-				_dirtyRects.erase(rInner);
-
-				// move back to beginning of list
-				rInner = rOuter;
-			}
-		}
-	}
-}
-
-/**
- * Creates the union of two rectangles.
- * Returns True if there is a union.
- * @param pDest			destination rectangle that is to receive the new union
- * @param pSrc1			a source rectangle
- * @param pSrc2			a source rectangle
- */
-bool GfxSurface::unionRectangle(Common::Rect &destRect, const Rect &src1, const Rect &src2) {
-	destRect = src1;
-	destRect.extend(src2);
-
-	return !destRect.isEmpty();
-}
-
 /*--------------------------------------------------------------------------*/
 
 GfxElement::GfxElement() {
@@ -762,16 +614,15 @@ void GfxElement::highlight() {
 	Rect tempRect(_bounds);
 	tempRect.collapse(g_globals->_gfxEdgeAdjust - 1, g_globals->_gfxEdgeAdjust - 1);
 
-	for (int yp = tempRect.top; yp < tempRect.bottom; ++yp) {
-		byte *lineP = (byte *)surface.getBasePtr(tempRect.left, yp);
-		for (int xp = tempRect.left; xp < tempRect.right; ++xp, ++lineP) {
+	Graphics::Surface dest = surface.getSubArea(tempRect);
+
+	for (int yp = 0; yp < dest.h; ++yp) {
+		byte *lineP = (byte *)dest.getBasePtr(0, yp);
+		for (int xp = 0; xp < tempRect.right; ++xp, ++lineP) {
 			if (*lineP == _colors.background) *lineP = _colors.foreground;
 			else if (*lineP == _colors.foreground) *lineP = _colors.background;
 		}
 	}
-
-	// Mark the affected area as dirty
-	gfxManager.getSurface().addDirtyRect(tempRect);
 
 	// Release the surface
 	gfxManager.unlockSurface();
@@ -816,10 +667,11 @@ void GfxElement::drawFrame() {
 
 		// Loop through the surface area to replace each pixel
 		// with its proper shaded replacement
-		Graphics::Surface surface = gfxManager.lockSurface();
-		for (int y = tempRect.top; y < tempRect.bottom; ++y) {
-			byte *lineP = (byte *)surface.getBasePtr(tempRect.left, y);
-			for (int x = 0; x < tempRect.width(); ++x) {
+		Graphics::Surface dest = gfxManager.getSurface().getSubArea(tempRect);
+
+		for (int y = 0; y < dest.h; ++y) {
+			byte *lineP = (byte *)dest.getBasePtr(0, y);
+			for (int x = 0; x < dest.w; ++x) {
 				*lineP = transList[*lineP];
 				lineP++;
 			}
@@ -827,27 +679,24 @@ void GfxElement::drawFrame() {
 
 		// Draw the edge frame
 		// Outer frame border
-		surface.hLine(tempRect.left + 2, tempRect.top, tempRect.right - 2, 0);
-		surface.hLine(tempRect.left + 2, tempRect.bottom, tempRect.right - 2, 0);
-		surface.vLine(tempRect.left, tempRect.top + 2, tempRect.bottom - 2, 0);
-		surface.vLine(tempRect.right, tempRect.top + 2, tempRect.bottom - 2, 0);
-		*((byte *)surface.getBasePtr(tempRect.left + 1, tempRect.top + 1)) = 0;
-		*((byte *)surface.getBasePtr(tempRect.right - 1, tempRect.top + 1)) = 0;
-		*((byte *)surface.getBasePtr(tempRect.left + 1, tempRect.bottom - 1)) = 0;
-		*((byte *)surface.getBasePtr(tempRect.right - 1, tempRect.bottom - 1)) = 0;
+		dest.hLine(2, 0, dest.w - 2, 0);
+		dest.hLine(2, dest.h - 1, dest.w - 2, 0);
+		dest.vLine(0, 2, dest.h - 2, 0);
+		dest.vLine(tempRect.right, 2, dest.h - 2, 0);
+		*((byte *)dest.getBasePtr(1, 1)) = 0;
+		*((byte *)dest.getBasePtr(dest.w - 1, 1)) = 0;
+		*((byte *)dest.getBasePtr(1, dest.h - 1)) = 0;
+		*((byte *)dest.getBasePtr(dest.w - 1, dest.h - 1)) = 0;
 
 		// Inner frame border
-		surface.hLine(tempRect.left + 2, tempRect.top + 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor);
-		surface.hLine(tempRect.left + 2, tempRect.bottom - 1, tempRect.right - 2, R2_GLOBALS._frameEdgeColor);
-		surface.vLine(tempRect.left + 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColor);
-		surface.vLine(tempRect.right - 1, tempRect.top + 2, tempRect.bottom - 2, R2_GLOBALS._frameEdgeColor);
-		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColor;
-		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.top + 2)) = R2_GLOBALS._frameEdgeColor;
-		*((byte *)surface.getBasePtr(tempRect.left + 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColor;
-		*((byte *)surface.getBasePtr(tempRect.right - 2, tempRect.bottom - 2)) = R2_GLOBALS._frameEdgeColor;
-
-		gfxManager.unlockSurface();
-		gfxManager.getSurface().addDirtyRect(tempRect);
+		dest.hLine(2, 1, dest.w - 2, R2_GLOBALS._frameEdgeColor);
+		dest.hLine(2, dest.h - 1, dest.w - 2, R2_GLOBALS._frameEdgeColor);
+		dest.vLine(1, 2, dest.h - 2, R2_GLOBALS._frameEdgeColor);
+		dest.vLine(dest.w - 1, 2, dest.h - 2, R2_GLOBALS._frameEdgeColor);
+		*((byte *)dest.getBasePtr(2, 2)) = R2_GLOBALS._frameEdgeColor;
+		*((byte *)dest.getBasePtr(dest.w - 2, 2)) = R2_GLOBALS._frameEdgeColor;
+		*((byte *)dest.getBasePtr(2, dest.h - 2)) = R2_GLOBALS._frameEdgeColor;
+		*((byte *)dest.getBasePtr(dest.w - 2, dest.h - 2)) = R2_GLOBALS._frameEdgeColor;
 
 	} else {
 		// Fill dialog content with specified background color
@@ -1236,7 +1085,7 @@ GfxButton *GfxDialog::execute(GfxButton *defaultButton) {
 		}
 
 		g_system->delayMillis(10);
-		GLOBALS._screenSurface.updateScreen();
+		GLOBALS._screen.update();
 	}
 
 	_gfxManager.deactivate();
@@ -1269,7 +1118,7 @@ void GfxDialog::setPalette() {
 
 /*--------------------------------------------------------------------------*/
 
-GfxManager::GfxManager() : _surface(g_globals->_screenSurface), _oldManager(NULL) {
+GfxManager::GfxManager() : _surface(g_globals->_screen), _oldManager(NULL) {
 	_font.setOwner(this);
 	_font._fillFlag = false;
 	_bounds = Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -1289,7 +1138,8 @@ void GfxManager::setDefaults() {
 
 	_font._edgeSize = Common::Point(1, 1);
 	_font._colors = g_globals->_fontColors;
-	_font.setFontNumber(g_globals->_gfxFontNumber);
+	if (g_globals->_gfxFontNumber >= 0)
+		_font.setFontNumber(g_globals->_gfxFontNumber);
 }
 
 void GfxManager::activate() {
@@ -1562,23 +1412,24 @@ int GfxFont::writeChar(const char ch) {
 	int yOffset = (_fontData[charOffset + 1] >> 3) & 0x1f;
 	const uint8 *dataP = &_fontData[charOffset + 2];
 
-	// Lock the surface for access
-	Graphics::Surface surfacePtr = _gfxManager->lockSurface();
-
 	Rect charRect;
 	charRect.set(0, 0, charWidth, _fontSize.y);
 	charRect.translate(_topLeft.x + _position.x, _topLeft.y + _position.y + yOffset);
 
+	// Get the sub-section of the screen to update
+	Graphics::Surface dest = _gfxManager->getSurface().getSubArea(charRect);
+
 	if (_fillFlag)
-		surfacePtr.fillRect(charRect, _colors.background);
+		dest.fillRect(charRect, _colors.background);
 
 	charRect.bottom = charRect.top + charHeight;
+	assert(charRect.height() <= dest.h);
 
 	// Display the character
 	int bitCtr = 0;
 	uint8 v = 0;
-	for (int yp = charRect.top; yp < charRect.bottom; ++yp) {
-		byte *destP = (byte *)surfacePtr.getBasePtr(charRect.left, yp);
+	for (int yp = 0; yp < charHeight; ++yp) {
+		byte *destP = (byte *)dest.getBasePtr(0, yp);
 
 		for (int xs = 0; xs < charRect.width(); ++xs, ++destP) {
 			// Get the next color index to use
@@ -1598,13 +1449,9 @@ int GfxFont::writeChar(const char ch) {
 		}
 	}
 
-	// Mark the affected area as dirty
-	_gfxManager->getSurface().addDirtyRect(charRect);
-
 	// Move the text writing position
 	_position.x += charWidth;
 
-	_gfxManager->unlockSurface();
 	return charWidth;
 }
 

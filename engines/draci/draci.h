@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DRACI_H
-#define DRACI_H
+#ifndef DRACI_DRACI_H
+#define DRACI_DRACI_H
 
 #include "engines/engine.h"
 #include "common/random.h"
@@ -126,4 +126,4 @@ static inline long scummvm_lround(double val) { return (long)floor(val + 0.5); }
 
 } // End of namespace Draci
 
-#endif // DRACI_H
+#endif // DRACI_DRACI_H

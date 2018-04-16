@@ -84,6 +84,20 @@ protected:
 
 public:
 	/**
+	 * Construct a FSNode object from an AbstractFSNode object.
+	 *
+	 * This is a helper to create Common::FSNode objects when the backend's
+	 * FileSystemFactory cannot create the given AbstractFSNode object itself.
+	 * All other code is supposed to use Common::FSNode's constructor itself.
+	 *
+	 * @param realNode Pointer to a heap allocated instance. FSNode will take
+	 *                 ownership of the pointer.
+	 */
+	static Common::FSNode makeFSNode(AbstractFSNode *realNode) {
+		return Common::FSNode(realNode);
+	}
+
+	/**
 	 * Destructor.
 	 */
 	virtual ~AbstractFSNode() {}
@@ -177,6 +191,15 @@ public:
 	 * @return pointer to the stream object, 0 in case of a failure
 	 */
 	virtual Common::WriteStream *createWriteStream() = 0;
+
+	/**
+	* Creates a file referred by this node.
+	*
+	* @param isDirectoryFlag true if created file must be a directory
+	*
+	* @return true if file is created successfully
+	*/
+	virtual bool create(bool isDirectoryFlag) = 0;
 };
 
 

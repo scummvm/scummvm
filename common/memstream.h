@@ -25,6 +25,7 @@
 
 #include "common/stream.h"
 #include "common/types.h"
+#include "common/util.h"
 
 namespace Common {
 
@@ -110,7 +111,7 @@ public:
 		return dataSize;
 	}
 
-	uint32 pos() const { return _pos; }
+	int32 pos() const { return _pos; }
 	uint32 size() const { return _bufSize; }
 
 	virtual bool err() const { return _err; }
@@ -156,7 +157,7 @@ public:
  * that grows as it's written to.
  */
 class MemoryWriteStreamDynamic : public WriteStream {
-private:
+protected:
 	uint32 _capacity;
 	uint32 _size;
 	byte *_ptr;
@@ -170,7 +171,7 @@ private:
 
 		byte *old_data = _data;
 
-		_capacity = new_len + 32;
+		_capacity = MAX(new_len + 32, _capacity * 2);
 		_data = (byte *)malloc(_capacity);
 		_ptr = _data + _pos;
 
@@ -183,7 +184,7 @@ private:
 		_size = new_len;
 	}
 public:
-	MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
+	explicit MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
 
 	~MemoryWriteStreamDynamic() {
 		if (_disposeMemory)
@@ -200,12 +201,101 @@ public:
 		return dataSize;
 	}
 
-	uint32 pos() const { return _pos; }
+	int32 pos() const { return _pos; }
 	uint32 size() const { return _size; }
 
 	byte *getData() { return _data; }
 
 	bool seek(int32 offset, int whence = SEEK_SET);
+};
+
+/**
+* MemoryStream based on RingBuffer. Grows if has insufficient buffer size.
+*/
+class MemoryReadWriteStream : public SeekableReadStream, public WriteStream {
+private:
+	uint32 _capacity;
+	uint32 _size;
+	byte *_data;
+	uint32 _writePos, _readPos, _pos, _length;
+	DisposeAfterUse::Flag _disposeMemory;
+	bool _eos;
+
+	void ensureCapacity(uint32 new_len) {
+		if (new_len <= _capacity)
+			return;
+
+		byte *old_data = _data;
+		uint32 oldCapacity = _capacity;
+
+		_capacity = MAX(new_len + 32, _capacity * 2);
+		_data = (byte *)malloc(_capacity);
+
+		if (old_data) {
+			// Copy old data
+			if (_readPos < _writePos) {
+				memcpy(_data, old_data + _readPos, _writePos - _readPos);
+				_writePos = _length;
+				_readPos = 0;
+			} else {
+				memcpy(_data, old_data + _readPos, oldCapacity - _readPos);
+				memcpy(_data + oldCapacity - _readPos, old_data, _writePos);
+				_writePos = _length;
+				_readPos = 0;
+			}
+			free(old_data);
+		}
+	}
+public:
+	explicit MemoryReadWriteStream(DisposeAfterUse::Flag disposeMemory) : _capacity(0), _size(0), _data(0), _writePos(0), _readPos(0), _pos(0), _length(0), _disposeMemory(disposeMemory), _eos(false) {}
+
+	~MemoryReadWriteStream() {
+		if (_disposeMemory)
+			free(_data);
+	}
+
+	uint32 write(const void *dataPtr, uint32 dataSize) {
+		ensureCapacity(_length + dataSize);
+		if (_writePos + dataSize < _capacity) {
+			memcpy(_data + _writePos, dataPtr, dataSize);
+		} else {
+			memcpy(_data + _writePos, dataPtr, _capacity - _writePos);
+			const byte *shiftedPtr = (const byte *)dataPtr + _capacity - _writePos;
+			memcpy(_data, shiftedPtr, dataSize - (_capacity - _writePos));
+		}
+		_writePos = (_writePos + dataSize) % _capacity;
+		_pos += dataSize;
+		_length += dataSize;
+		if (_pos > _size)
+			_size = _pos;
+		return dataSize;
+	}
+
+	virtual uint32 read(void *dataPtr, uint32 dataSize) {
+		if (_length < dataSize) {
+			dataSize = _length;
+			_eos = true;
+		}
+		if (dataSize == 0 || _capacity == 0) return 0;
+		if (_readPos + dataSize < _capacity) {
+			memcpy(dataPtr, _data + _readPos, dataSize);
+		} else {
+			memcpy(dataPtr, _data + _readPos, _capacity - _readPos);
+			byte *shiftedPtr = (byte *)dataPtr + _capacity - _readPos;
+			memcpy(shiftedPtr, _data, dataSize - (_capacity - _readPos));
+		}
+		_readPos = (_readPos + dataSize) % _capacity;
+		_length -= dataSize;
+		return dataSize;
+	}
+
+	int32 pos() const { return _pos - _length; } //'read' position in the stream
+	int32 size() const { return _size; } //that's also 'write' position in the stream, as it's append-only
+	bool seek(int32, int) { return false; }
+	bool eos() const { return _eos; }
+	void clearErr() { _eos = false; }
+
+	byte *getData() { return _data; }
 };
 
 } // End of namespace Common

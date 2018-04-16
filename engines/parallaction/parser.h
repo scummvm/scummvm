@@ -405,7 +405,7 @@ protected:
 	virtual void parseRValue(ScriptVar &var, const char *str);
 
 public:
-	ProgramParser_br(Parallaction_br *vm) : ProgramParser_ns((Parallaction_ns*)vm), _vm(vm) {
+	ProgramParser_br(Parallaction_br *vm) : ProgramParser_ns((Parallaction_ns*)vm), _vm(vm), _openIfStatement(0) {
 	}
 
 	virtual void init();

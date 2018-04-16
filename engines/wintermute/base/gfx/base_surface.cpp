@@ -75,11 +75,6 @@ bool BaseSurface::displayHalfTrans(int x, int y, Rect32 rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurface::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
-	return displayTransform(x, y, rect, newRect, transform);
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseSurface::create(int width, int height) {
 	return STATUS_FAILED;
 }

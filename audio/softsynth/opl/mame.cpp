@@ -29,8 +29,14 @@
 #include <stdarg.h>
 #include <math.h>
 
+#if defined(__DS__)
+#include "dsmain.h"
+#endif
+
 #include "mame.h"
 
+#include "audio/mixer.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -38,23 +44,23 @@
 #include "common/config-manager.h"
 #endif
 
-#if defined(__DS__)
-#include "dsmain.h"
-#endif
-
 namespace OPL {
 namespace MAME {
 
 OPL::~OPL() {
+	stop();
 	MAME::OPLDestroy(_opl);
 	_opl = 0;
 }
 
-bool OPL::init(int rate) {
-	if (_opl)
+bool OPL::init() {
+	if (_opl) {
+		stopCallbacks();
 		MAME::OPLDestroy(_opl);
+	}
 
-	_opl = MAME::makeAdLibOPL(rate);
+	_opl = MAME::makeAdLibOPL(g_system->getMixer()->getOutputRate());
+
 	return (_opl != 0);
 }
 
@@ -74,7 +80,7 @@ void OPL::writeReg(int r, int v) {
 	MAME::OPLWriteReg(_opl, r, v);
 }
 
-void OPL::readBuffer(int16 *buffer, int length) {
+void OPL::generateSamples(int16 *buffer, int length) {
 	MAME::YM3812UpdateOne(_opl, buffer, length);
 }
 
@@ -91,8 +97,8 @@ void OPL::readBuffer(int16 *buffer, int length) {
 
 /* final output shift , limit minimum and maximum */
 #define OPL_OUTSB   (TL_BITS+3-16)		/* OPL output final shift 16bit */
-#define OPL_MAXOUT (0x7fff<<OPL_OUTSB)
-#define OPL_MINOUT (-0x8000<<OPL_OUTSB)
+#define OPL_MAXOUT   (0x7fff<<OPL_OUTSB)
+#define OPL_MINOUT (-(0x8000<<OPL_OUTSB))
 
 /* -------------------- quality selection --------------------- */
 

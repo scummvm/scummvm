@@ -21,7 +21,6 @@
  */
 
 #include "tsage/blue_force/blueforce_scenes5.h"
-#include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
@@ -2123,7 +2122,7 @@ void Scene570::signal() {
 		_object3.setVisage(572);
 		_object3.setStrip(4);
 		_object3.setFrame(1);
-		// Deliberate fall-through
+		// fall through
 	case 5702:
 	case 5703:
 		_object3.fixPriority(1);

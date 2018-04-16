@@ -34,10 +34,20 @@ enum MoveCountType {
 	kIncrementMoveCount
 };
 
-enum Sci2StringFunctionType {
-	kSci2StringFunctionUninitialized,
-	kSci2StringFunctionOld,
-	kSci2StringFunctionNew
+enum PseudoMouseAbilityType {
+	kPseudoMouseAbilityUninitialized,
+	kPseudoMouseAbilityFalse,
+	kPseudoMouseAbilityTrue
+};
+
+enum MessageTypeSyncStrategy {
+	kMessageTypeSyncStrategyNone,
+	kMessageTypeSyncStrategyDefault
+#ifdef ENABLE_SCI32
+	,
+	kMessageTypeSyncStrategyLSL6Hires,
+	kMessageTypeSyncStrategyShivers
+#endif
 };
 
 class GameFeatures {
@@ -83,13 +93,125 @@ public:
 	 */
 	SciVersion detectSci21KernelType();
 
-	/**
-	 * Autodetects the string subfunctions used in SCI2 - SCI3
-	 * @return string subfunctions type, kSci2StringFunctionOld / kSci2StringFunctionNew
-	 */
-	Sci2StringFunctionType detectSci2StringFunctionType();
+	inline bool usesModifiedAudioAttenuation() const {
+		switch (g_sci->getGameId()) {
+		// Assuming MGDX uses modified attenuation since SQ6 does and it was
+		// released earlier, but not verified (Phar Lap Windows-only release)
+		case GID_MOTHERGOOSEHIRES:
+		case GID_PQ4:
+		case GID_SQ6:
+			return true;
+		case GID_KQ7:
+			// KQ7 1.51 (SCI2.1early) uses the non-standard attenuation, but
+			// 2.00b (SCI2.1mid) does not
+			return getSciVersion() == SCI_VERSION_2_1_EARLY;
+		default:
+			return false;
+		}
+	}
 
+	inline bool gameScriptsControlMasterVolume() const {
+		switch (g_sci->getGameId()) {
+		case GID_LSL7:
+		case GID_PHANTASMAGORIA2:
+		case GID_TORIN:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	inline bool hasSci3Audio() const {
+		return getSciVersion() == SCI_VERSION_3 || g_sci->getGameId() == GID_GK2;
+	}
+
+	inline bool hasTransparentPicturePlanes() const {
+		const SciGameId &gid = g_sci->getGameId();
+
+		// MGDX is assumed to not have transparent picture planes since it
+		// was released before SQ6, but this has not been verified since it
+		// cannot be disassembled at the moment (Phar Lap Windows-only release)
+		return getSciVersion() >= SCI_VERSION_2_1_MIDDLE &&
+			gid != GID_SQ6 &&
+			gid != GID_MOTHERGOOSEHIRES;
+	}
+
+	inline bool hasMidPaletteCode() const {
+		return getSciVersion() >= SCI_VERSION_2_1_MIDDLE || g_sci->getGameId() == GID_KQ7;
+	}
+
+	inline bool hasLatePaletteCode() const {
+		return getSciVersion() > SCI_VERSION_2_1_MIDDLE ||
+			g_sci->getGameId() == GID_GK2 ||
+			g_sci->getGameId() == GID_PQSWAT ||
+			// Guessing that Shivers has the late palette code because it has a
+			// brightness slider
+			g_sci->getGameId() == GID_SHIVERS ||
+			g_sci->getGameId() == GID_TORIN;
+	}
+
+	inline bool VMDOpenStopsAudio() const {
+		// Of the games that use VMDs:
+		// Yes: Phant1, Shivers, Torin
+		// No: SQ6
+		// TODO: Optional extra flag to kPlayVMD which defaults to Yes: PQ:SWAT
+		// TODO: SCI3, GK2 (GK2's VMD code is closer to SCI3 than SCI21)
+		return getSciVersion() == SCI_VERSION_2_1_MIDDLE &&
+			g_sci->getGameId() != GID_SQ6 &&
+			g_sci->getGameId() != GID_GK2;
+	}
+
+	inline bool usesAlternateSelectors() const {
+		return g_sci->getGameId() == GID_PHANTASMAGORIA2;
+	}
+
+	inline bool hasEmptyScaleDrawHack() const {
+		// Yes: KQ7 (all), PQ4CD, QFG4CD, SQ6, Phant1
+		// No: All SCI2, all SCI3, GK2, LSL6hires, PQ:SWAT, Torin
+		// Unknown: Hoyle5, MGDX, Shivers
+		const SciGameId &gid = g_sci->getGameId();
+		return getSciVersion() > SCI_VERSION_2 &&
+			getSciVersion() < SCI_VERSION_2_1_LATE &&
+			gid != GID_LSL6HIRES &&
+			gid != GID_GK2 &&
+			gid != GID_PQSWAT &&
+			gid != GID_TORIN;
+	}
 #endif
+
+	/**
+	 * If true, the current game supports simultaneous speech & subtitles.
+	 */
+	bool supportsSpeechWithSubtitles() const;
+
+	/**
+	 * If true, the game supports changing text speed.
+	 */
+	bool supportsTextSpeed() const {
+		switch (g_sci->getGameId()) {
+#ifdef ENABLE_SCI32
+		case GID_GK1:
+		case GID_SQ6:
+			return true;
+#endif
+		default:
+			break;
+		}
+
+		return false;
+	}
+
+	/**
+	 * If true, audio volume sync between the game and ScummVM is done by
+	 * monitoring and setting game global variables.
+	 */
+	bool audioVolumeSyncUsesGlobals() const;
+
+	/**
+	 * The strategy that should be used when synchronising the message type
+	 * (text/speech/text+speech) between the game and ScummVM.
+	 */
+	MessageTypeSyncStrategy getMessageTypeSyncStrategy() const;
 
 	/**
 	 * Applies to all versions before 0.000.502
@@ -118,10 +240,21 @@ public:
 	bool useAltWinGMSound();
 
 	/**
+	 * Checks if the game only supports General MIDI for music playback.
+	 */
+	bool generalMidiOnly();
+
+	/**
 	 * Forces DOS soundtracks in Windows CD versions when the user hasn't
 	 * selected a MIDI output device
 	 */
 	void forceDOSTracks() { _forceDOSTracks = true; }
+
+	/**
+	 * Autodetects, if Pseudo Mouse ability is enabled (different behavior in keyboard driver)
+	 * @return kPseudoMouseAbilityTrue or kPseudoMouseAbilityFalse
+	 */
+	PseudoMouseAbilityType detectPseudoMouseAbility();
 
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);
@@ -132,18 +265,18 @@ private:
 	bool autoDetectMoveCountType();
 #ifdef ENABLE_SCI32
 	bool autoDetectSci21KernelType();
-	bool autoDetectSci21StringFunctionType();
 #endif
 
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType, _messageFunctionType;
 #ifdef ENABLE_SCI32
 	SciVersion _sci21KernelType;
-	Sci2StringFunctionType _sci2StringFunctionType;
 #endif
 
 	MoveCountType _moveCountType;
 	bool _usesCdTrack;
 	bool _forceDOSTracks;
+
+	PseudoMouseAbilityType _pseudoMouseAbility;
 
 	SegManager *_segMan;
 	Kernel *_kernel;

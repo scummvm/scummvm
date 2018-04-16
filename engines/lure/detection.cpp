@@ -46,6 +46,7 @@ LureLanguage LureEngine::getLureLanguage() const {
 	case Common::FR_FRA: return LANG_FR_FRA;
 	case Common::DE_DEU: return LANG_DE_DEU;
 	case Common::ES_ESP: return LANG_ES_ESP;
+	case Common::RU_RUS: return LANG_RU_RUS;
 	case Common::EN_ANY: return LANG_EN_ANY;
 	case Common::UNK_LANG: return LANG_UNKNOWN;
 	default:
@@ -168,6 +169,35 @@ static const LureGameDescription gameDescriptions[] = {
 		GF_FLOPPY,
 	},
 
+	// Russian OG Edition v1.0
+	{
+		{
+			"lure",
+			"1.0",
+			AD_ENTRY1("disk1.vga", "04cdcaa9f0cadca492f7aff0c8adfe06"),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GF_FLOPPY,
+	},
+
+	// Russian OG Edition v1.1
+	{
+		{
+			"lure",
+			"1.1",
+			AD_ENTRY1("disk1.vga", "3f27adff8e8b279f12aaf3d808e84f02"),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GF_FLOPPY,
+	},
+
+
 	{ AD_TABLE_END_MARKER, 0 }
 };
 
@@ -177,12 +207,12 @@ class LureMetaEngine : public AdvancedMetaEngine {
 public:
 	LureMetaEngine() : AdvancedMetaEngine(Lure::gameDescriptions, sizeof(Lure::LureGameDescription), lureGames) {
 		_md5Bytes = 1024;
-		_singleid = "lure";
+		_singleId = "lure";
 
 		// Use kADFlagUseExtraAsHint to distinguish between EGA and VGA versions
 		// of italian Lure when their datafiles sit in the same directory.
 		_flags = kADFlagUseExtraAsHint;
-		_guioptions = GUIO1(GUIO_NOSPEECH);
+		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual const char *getName() const {
@@ -226,10 +256,9 @@ SaveStateList LureMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = "lure.???";
+	Common::String pattern = "lure.###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -246,6 +275,8 @@ SaveStateList LureMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

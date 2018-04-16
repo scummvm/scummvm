@@ -21,6 +21,7 @@
  */
 
 #include "graphics/cursorman.h"
+#include "tsage/dialogs.h"
 #include "tsage/tsage.h"
 #include "tsage/staticres.h"
 #include "tsage/ringworld2/ringworld2_outpost.h"
@@ -936,7 +937,7 @@ void Scene1337::Action1::signal() {
 
 		scene->_stockPile.remove();
 		}
-	// No break on purpose
+		// fall through
 	case 0:
 		R2_GLOBALS._sceneObjects->draw();
 		signal();
@@ -2546,11 +2547,11 @@ void Scene1337::handlePlayerTurn() {
 		if (_displayHelpFl)
 			actionDisplay(1330, 114, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 		_displayHelpFl = false;
-	// No break on purpose
+		// fall through
 	case 0:
-	// No break on purpose
+		// fall through
 	case 1:
-	// No break on purpose
+		// fall through
 	case 3:
 		_actionItem.setAction(&_action4);
 	default:
@@ -4689,7 +4690,7 @@ GfxButton *Scene1337::OptionsDialog::execute(GfxButton *defaultButton) {
 		}
 
 		g_system->delayMillis(10);
-		GLOBALS._screenSurface.updateScreen();
+		GLOBALS._screen.update();
 	}
 
 	_gfxManager.deactivate();

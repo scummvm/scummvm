@@ -56,6 +56,9 @@ InvObject::InvObject(int sceneNumber, int rlbNum, int cursorNum, CursorType curs
 	_bounds = s.getBounds();
 
 	DEALLOCATE(imgData);
+	_visage = 0;
+	_strip = 0;
+	_frame = 0;
 }
 
 InvObject::InvObject(int visage, int strip, int frame) {
@@ -90,7 +93,7 @@ InvObject::InvObject(int strip, int frame) {
 void InvObject::setCursor() {
 	if (g_vm->getGameID() != GType_Ringworld) {
 		// All other games
-		_cursorId = (CursorType)BF_GLOBALS._inventory->indexOf(this);
+		_cursorId = (CursorType)g_globals->_inventory->indexOf(this);
 		g_globals->_events.setCursor(_cursorId);
 	} else {
 		// Ringworld cursor handling
@@ -1462,9 +1465,9 @@ void ScenePalette::fade(const byte *adjustData, bool fullAdjust, int percent) {
 			adjustData += 3;
 	}
 
-	// Set the altered pale4tte
+	// Set the altered palette
 	g_system->getPaletteManager()->setPalette((const byte *)&tempPalette[0], 0, 256);
-	GLOBALS._screenSurface.updateScreen();
+	GLOBALS._screen.update();
 }
 
 PaletteRotation *ScenePalette::addRotation(int start, int end, int rotationMode, int duration, Action *action) {
@@ -1518,14 +1521,14 @@ void ScenePalette::changeBackground(const Rect &bounds, FadeMode fadeMode) {
 	}
 
 	Rect tempRect = bounds;
-	if (g_vm->getGameID() != GType_Ringworld)
+	if (g_vm->getGameID() != GType_Ringworld && g_vm->getGameID() != GType_Sherlock1)
 		tempRect.setHeight(T2_GLOBALS._interfaceY);
 
-	g_globals->_screenSurface.copyFrom(g_globals->_sceneManager._scene->_backSurface,
+	g_globals->_screen.copyFrom(g_globals->_sceneManager._scene->_backSurface,
 		tempRect, Rect(0, 0, tempRect.width(), tempRect.height()), NULL);
 	if (g_vm->getGameID() == GType_Ringworld2 && !GLOBALS._player._uiEnabled
 			&& T2_GLOBALS._interfaceY == UI_INTERFACE_Y) {
-		g_globals->_screenSurface.fillRect(Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT - 1), 0);
+		g_globals->_screen.fillRect(Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT - 1), 0);
 	}
 
 	for (SynchronizedList<PaletteModifier *>::iterator i = tempPalette._listeners.begin(); i != tempPalette._listeners.end(); ++i)
@@ -1793,7 +1796,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 		// Keep event on-screen until a mouse or keypress
 		while (!g_vm->shouldQuit() && !g_globals->_events.getEvent(event,
 				EVENT_BUTTON_DOWN | EVENT_KEYPRESS)) {
-			GLOBALS._screenSurface.updateScreen();
+			GLOBALS._screen.update();
 			g_system->delayMillis(10);
 
 			if ((g_vm->getGameID() == GType_Ringworld2) && (R2_GLOBALS._speechSubtitles & SPEECH_VOICE)) {
@@ -2355,8 +2358,11 @@ int SceneObject::checkRegion(const Common::Point &pt) {
 	return regionIndex;
 }
 
-void SceneObject::animate(AnimateMode animMode, ...) {
-	_animateMode = animMode;
+// The parameter to the function below should really be an AnimateMode value.
+// However passing an enum type as last argument of a variadic function may
+// result in undefined behaviour.
+void SceneObject::animate(int animMode, ...) {
+	_animateMode = (AnimateMode)animMode;
 	_updateStartFrame = g_globals->_events.getFrameNumber();
 	if (_numFrames)
 		_updateStartFrame += 60 / _numFrames;
@@ -2803,7 +2809,7 @@ void SceneObject::updateScreen() {
 	srcRect.right = ((srcRect.right + 3) / 4) * 4;
 	srcRect.clip(g_globals->_sceneManager._scene->_sceneBounds);
 
-	if (g_vm->getGameID() != GType_Ringworld) {
+	if (g_vm->getGameID() != GType_Ringworld && g_vm->getGameID() != GType_Sherlock1) {
 		if (T2_GLOBALS._uiElements._visible)
 			srcRect.bottom = MIN<int16>(srcRect.bottom, T2_GLOBALS._interfaceY);
 	}
@@ -2813,7 +2819,7 @@ void SceneObject::updateScreen() {
 		destRect.translate(-sceneBounds.left, -sceneBounds.top);
 		srcRect.translate(-g_globals->_sceneOffset.x, -g_globals->_sceneOffset.y);
 
-		g_globals->_screenSurface.copyFrom(g_globals->_sceneManager._scene->_backSurface, srcRect, destRect);
+		g_globals->_screen.copyFrom(g_globals->_sceneManager._scene->_backSurface, srcRect, destRect);
 	}
 }
 

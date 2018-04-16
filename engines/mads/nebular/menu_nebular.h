@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -35,7 +35,10 @@ class MADSEngine;
 
 namespace Nebular {
 
-enum MADSGameAction { START_GAME, RESUME_GAME, SHOW_INTRO, CREDITS, QUOTES, EXIT };
+enum MADSGameAction {
+	START_GAME, RESUME_GAME, SHOW_INTRO, CREDITS, QUOTES, EXIT,
+	SETS, EVOLVE
+};
 
 class MainMenu: public MenuView {
 private:
@@ -45,6 +48,7 @@ private:
 	int _frameIndex;
 	uint32 _delayTimeout;
 	bool _skipFlag;
+	bool _showEvolve, _showSets;
 
 	/**
 	 * Currently highlighted menu item
@@ -81,7 +85,16 @@ private:
 	 */
 	void addSpriteSlot();
 
+	/**
+	 * Returns true if the Quotes item should be shown.
+	 * i.e. if the player has completed the game
+	 */
 	bool shouldShowQuotes();
+
+	/**
+	 * Show the bonus item icons, if available
+	 */
+	void showBonusItems();
 protected:
 	/**
 	 * Display the menu

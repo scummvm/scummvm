@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,6 +34,7 @@
 #include "mads/inventory.h"
 #include "mads/player.h"
 #include "mads/screen.h"
+#include "mads/camera.h"
 
 namespace MADS {
 
@@ -43,6 +44,11 @@ enum KernelMode {
 	KERNEL_GAME_LOAD = 0, KERNEL_SECTION_PRELOAD = 1, KERNEL_SECTION_INIT = 2,
 	KERNEL_ROOM_PRELOAD = 3, KERNEL_ROOM_INIT = 4, KERNEL_ACTIVE_CODE = 5
 };
+
+enum SyncType {
+	SYNC_SEQ = 1, SYNC_PLAYER = 2, SYNC_ANIM = 3, SYNC_CLOCK = 4
+};
+
 
 #define MADS_SAVEGAME_VERSION 1
 
@@ -142,6 +148,8 @@ public:
 	int _winStatus;
 	int _widepipeCtr;
 	int _loadGameSlot;
+	int _panningSpeed;
+	Camera _camX, _camY;
 
 public:
 	virtual ~Game();
@@ -195,6 +203,9 @@ public:
 	 */
 	virtual void synchronize(Common::Serializer &s, bool phase1);
 
+	virtual void setNaughtyMode(bool naughtyMode) {}
+	virtual bool getNaughtyMode() const { return true; }
+
 	// DEPRECATED: ScummVM re-implementation keeps all the quotes loaded, so the methods below are stubs
 	void clearQuotes() {}
 	void loadQuoteRange(int startNum, int endNum) {}
@@ -204,7 +215,7 @@ public:
 	/**
 	* Handle a keyboard event
 	*/
-	void handleKeypress(const Common::Event &event);
+	void handleKeypress(const Common::KeyState &kbd);
 
 	/**
 	 * Starts a savegame loading.
@@ -226,12 +237,18 @@ public:
 	/**
 	 * Read in a savegame header
 	 */
-	static bool readSavegameHeader(Common::InSaveFile *in, MADSSavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, MADSSavegameHeader &header, bool skipThumbnail = true);
 
 	/**
 	 * Creates a temporary thumbnail for use in saving games
 	 */
 	void createThumbnail();
+
+	void syncTimers(SyncType slaveType, int slaveId, SyncType masterType, int masterId);
+
+	void camInitDefault();
+	void camSetSpeed();
+	void camUpdate();
 };
 
 } // End of namespace MADS

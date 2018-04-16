@@ -57,14 +57,6 @@ namespace Tinsel {
  */
 #define CURRENT_VER 2
 
-/**
- * An auxillary macro, used to specify savegame versions. We use this instead
- * of just writing the raw version, because this way they stand out more to
- * the reading eye, making it a bit easier to navigate through the code.
- */
-#define VER(x) x
-
-
 //----------------- GLOBAL GLOBAL DATA --------------------
 
 int	g_thingHeld = 0;
@@ -529,7 +521,7 @@ static bool DoRestore() {
 	delete f;
 
 	if (failed) {
-		GUI::MessageDialog dialog(_("Failed to load game state from file."));
+		GUI::MessageDialog dialog(_("Failed to load saved game from file."));
 		dialog.runModal();
 	}
 
@@ -542,7 +534,7 @@ static void SaveFailure(Common::OutSaveFile *f) {
 		_vm->getSaveFileMan()->removeSavefile(g_SaveSceneName);
 	}
 	g_SaveSceneName = NULL;	// Invalidate save name
-	GUI::MessageDialog dialog(_("Failed to save game state to file."));
+	GUI::MessageDialog dialog(_("Failed to save game to file."));
 	dialog.runModal();
 }
 
@@ -563,7 +555,7 @@ static void DoSave() {
 
 		while (1) {
 			Common::String fname = _vm->getSavegameFilename(ano);
-			strcpy(tmpName, fname.c_str());
+			Common::strlcpy(tmpName, fname.c_str(), FNAMELEN);
 
 			for (i = 0; i < g_numSfiles; i++)
 				if (!strcmp(g_savedFiles[i].name, tmpName))
@@ -594,8 +586,8 @@ static void DoSave() {
 	hdr.id = SAVEGAME_ID;
 	hdr.size = SAVEGAME_HEADER_SIZE;
 	hdr.ver = CURRENT_VER;
-	memcpy(hdr.desc, g_SaveSceneDesc, SG_DESC_LEN);
-	hdr.desc[SG_DESC_LEN - 1] = 0;
+	memset(hdr.desc, 0, SG_DESC_LEN);
+	Common::strlcpy(hdr.desc, g_SaveSceneDesc, SG_DESC_LEN);
 	g_system->getTimeAndDate(hdr.dateTime);
 	hdr.scnFlag = _vm->getFeatures() & GF_SCNFILES;
 	hdr.language = _vm->_config->_language;

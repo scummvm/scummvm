@@ -71,6 +71,13 @@ TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
 	res = new Resources();
 
 	console = 0;
+	scene = 0;
+	inventory = 0;
+	_sceneBusy = false;
+	_dstObject = 0;
+	_musicStream = 0;
+	_markDelay = 0;
+	_gameDelay = 0;
 }
 
 TeenAgentEngine::~TeenAgentEngine() {
@@ -533,7 +540,7 @@ Common::Error TeenAgentEngine::run() {
 
 	Common::EventManager *_event = _system->getEventManager();
 
-	initGraphics(kScreenWidth, kScreenHeight, false);
+	initGraphics(kScreenWidth, kScreenHeight);
 	console = new Console(this);
 
 	scene = new Scene(this);
@@ -544,6 +551,10 @@ Common::Error TeenAgentEngine::run() {
 	CursorMan.pushCursor(res->dseg.ptr(dsAddr_cursor), 8, 12, 0, 0, 1);
 
 	syncSoundSettings();
+
+	// Initialize CD audio
+	if (_gameDescription->flags & ADGF_CD)
+		g_system->getAudioCDManager()->open();
 
 	setMusic(1);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);

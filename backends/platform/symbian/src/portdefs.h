@@ -30,9 +30,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <e32def.h>
 
+#if (__GNUC__ && __cplusplus)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+#endif
+#include <e32def.h>
 #include <e32std.h>
+#if (__GNUC__ && __cplusplus)
+#pragma GCC diagnostic pop
+#endif
+
 #include <libc\math.h>
 
 /* define pi */
@@ -53,16 +61,34 @@ typedef unsigned short int uint16;
 typedef signed short int int16;
 typedef unsigned long int uint32;
 typedef signed long int int32;
+typedef signed long long int64;
+typedef unsigned long long uint64;
+
+#ifdef __cplusplus
+namespace std
+	{
+
+	using ::size_t;
+
+	} // namespace std
+#endif
 
 // Define SCUMMVM_DONT_DEFINE_TYPES to prevent scummsys.h from trying to
 // re-define those data types.
 #define SCUMMVM_DONT_DEFINE_TYPES
 
-#define SMALL_SCREEN_DEVICE
+// Hide the macro "remove" defined in unistd.h from anywere except where
+// we explicitly require it. This lets us use the name "remove" in engines.
+// Must be after including unistd.h .
+#ifndef SYMBIAN_USE_SYSTEM_REMOVE
+#undef remove
+#endif
+
+#define GUI_ONLY_FULLSCREEN
+#define GUI_ENABLE_KEYSDIALOG
 
 #define DISABLE_COMMAND_LINE
 #define USE_RGB_COLOR
-int remove(const char *path);
 
 #if defined(USE_TREMOR) && !defined(USE_VORBIS)
 #define USE_VORBIS // make sure this one is defined together with USE_TREMOR!
@@ -92,9 +118,9 @@ int remove(const char *path);
 	/* convert double float to double int (dfdi) */
 	long long inline
 	scumm_fixdfdi (double a1) { // __fixdfdi (double a1)
-	    register union double_long dl1;
-	    register int exp;
-	    register long long l;
+	    union double_long dl1;
+	    int exp;
+	    long long l;
 
 	    dl1.d = a1;
 

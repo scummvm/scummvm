@@ -198,7 +198,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 
 static const ExtraGuiOption toltecsExtraGuiOption = {
 	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
+	_s("Use the original save/load screens instead of the ScummVM ones"),
 	"originalsaveload",
 	false
 };
@@ -206,7 +206,7 @@ static const ExtraGuiOption toltecsExtraGuiOption = {
 class ToltecsMetaEngine : public AdvancedMetaEngine {
 public:
 	ToltecsMetaEngine() : AdvancedMetaEngine(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
-		_singleid = "toltecs";
+		_singleId = "toltecs";
 	}
 
 	virtual const char *getName() const {
@@ -234,7 +234,8 @@ bool ToltecsMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Toltecs::ToltecsEngine::hasFeature(EngineFeature f) const {
@@ -262,11 +263,10 @@ SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Toltecs::ToltecsEngine::SaveHeader header;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
-	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -276,7 +276,7 @@ SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Toltecs::ToltecsEngine::readSaveHeader(in, false, header) == Toltecs::ToltecsEngine::kRSHENoError) {
+				if (Toltecs::ToltecsEngine::readSaveHeader(in, header) == Toltecs::ToltecsEngine::kRSHENoError) {
 					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
 				}
 				delete in;
@@ -284,6 +284,8 @@ SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -299,7 +301,7 @@ void ToltecsMetaEngine::removeSaveState(const char *target, int slot) const {
 
 	Common::StringArray filenames;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 	filenames = saveFileMan->listSavefiles(pattern.c_str());
 	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
@@ -323,7 +325,7 @@ SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, in
 		Toltecs::ToltecsEngine::SaveHeader header;
 		Toltecs::ToltecsEngine::kReadSaveHeaderError error;
 
-		error = Toltecs::ToltecsEngine::readSaveHeader(in, true, header);
+		error = Toltecs::ToltecsEngine::readSaveHeader(in, header, false);
 		delete in;
 
 		if (error == Toltecs::ToltecsEngine::kRSHENoError) {

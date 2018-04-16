@@ -22,6 +22,7 @@
 
 #include "agi/agi.h"
 #include "agi/lzw.h"
+#include "agi/words.h"
 
 #include "common/config-manager.h"
 #include "common/fs.h"
@@ -42,7 +43,7 @@ int AgiLoader_v3::detectGame() {
 	}
 
 	for (Common::FSList::const_iterator file = fslist.begin();
-	    file != fslist.end() && !found; ++file) {
+	        file != fslist.end() && !found; ++file) {
 		Common::String f = file->getName();
 		f.toLowercase();
 
@@ -51,7 +52,7 @@ int AgiLoader_v3::detectGame() {
 			strncpy(_vm->_game.name, f.c_str(), MIN((uint)8, f.size() > 5 ? f.size() - 5 : f.size()));
 			debugC(3, kDebugLevelMain, "game.name = %s", _vm->_game.name);
 
-			ec = _vm->setupV3Game(_vm->getVersion());
+			ec = errOK;
 
 			found = true;
 		}
@@ -66,7 +67,7 @@ int AgiLoader_v3::detectGame() {
 }
 
 int AgiLoader_v3::loadDir(struct AgiDir *agid, Common::File *fp,
-						   uint32 offs, uint32 len) {
+                          uint32 offs, uint32 len) {
 	int ec = errOK;
 	uint8 *mem;
 	unsigned int i;
@@ -76,7 +77,7 @@ int AgiLoader_v3::loadDir(struct AgiDir *agid, Common::File *fp,
 		fp->read(mem, len);
 
 		// set all directory resources to gone
-		for (i = 0; i < MAX_DIRS; i++) {
+		for (i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 			agid[i].volume = 0xff;
 			agid[i].offset = _EMPTY;
 		}
@@ -171,19 +172,19 @@ int AgiLoader_v3::deinit() {
 	return ec;
 }
 
-int AgiLoader_v3::unloadResource(int t, int n) {
-	switch (t) {
-	case rLOGIC:
-		_vm->unloadLogic(n);
+int AgiLoader_v3::unloadResource(int16 resourceType, int16 resourceNr) {
+	switch (resourceType) {
+	case RESOURCETYPE_LOGIC:
+		_vm->unloadLogic(resourceNr);
 		break;
-	case rPICTURE:
-		_vm->_picture->unloadPicture(n);
+	case RESOURCETYPE_PICTURE:
+		_vm->_picture->unloadPicture(resourceNr);
 		break;
-	case rVIEW:
-		_vm->unloadView(n);
+	case RESOURCETYPE_VIEW:
+		_vm->unloadView(resourceNr);
 		break;
-	case rSOUND:
-		_vm->_sound->unloadSound(n);
+	case RESOURCETYPE_SOUND:
+		_vm->_sound->unloadSound(resourceNr);
 		break;
 	}
 
@@ -191,21 +192,20 @@ int AgiLoader_v3::unloadResource(int t, int n) {
 }
 
 /**
- * This function does noting but load a raw resource into memory.
+ * This function loads a raw resource into memory.
  * If further decoding is required, it must be done by another
  * routine.
  *
  * NULL is returned if unsucsessful.
  */
 uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
-	char x[MAXPATHLEN];
+	char x[8];
 	uint8 *data = NULL, *compBuffer;
 	Common::File fp;
 	Common::String path;
 
 	debugC(3, kDebugLevelResources, "(%p)", (void *)agid);
-	sprintf(x, "vol.%i", agid->volume);
-	path = Common::String(_vm->_game.name) + x;
+	path = Common::String::format("%svol.%i", _vm->_game.name, agid->volume);
 
 	if (agid->offset != _EMPTY && fp.open(path)) {
 		fp.seek(agid->offset, SEEK_SET);
@@ -216,17 +216,21 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 			debugC(3, kDebugLevelResources, "offset = %d", agid->offset);
 			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);
 			error("ACK! BAD RESOURCE");
-			_vm->quitGame();	// for compilers that don't support NORETURN
+			_vm->quitGame();    // for compilers that don't support NORETURN
 		}
 
-		agid->len = READ_LE_UINT16((uint8 *) x + 3);	// uncompressed size
-		agid->clen = READ_LE_UINT16((uint8 *) x + 5);	// compressed len
+		agid->len = READ_LE_UINT16((uint8 *) x + 3);    // uncompressed size
+		agid->clen = READ_LE_UINT16((uint8 *) x + 5);   // compressed len
 
 		compBuffer = (uint8 *)calloc(1, agid->clen + 32);
 		fp.read(compBuffer, agid->clen);
 
 		if (x[2] & 0x80) { // compressed pic
-			data = _vm->_picture->convertV3Pic(compBuffer, agid->clen);
+			// effectively uncompressed, but having only 4-bit parameters for F0 / F2 commands
+			// Manhunter 2 uses such pictures
+			data = compBuffer;
+			agid->flags |= RES_PICTURE_V3_NIBBLE_PARM;
+			//data = _vm->_picture->convertV3Pic(compBuffer, agid->clen);
 			// compBuffer has been freed inside convertV3Pic()
 		} else if (agid->len == agid->clen) {
 			// do not decompress
@@ -253,31 +257,31 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
  * Loads a resource into memory, a raw resource is loaded in
  * with above routine, then further decoded here.
  */
-int AgiLoader_v3::loadResource(int t, int n) {
+int AgiLoader_v3::loadResource(int16 resourceType, int16 resourceNr) {
 	int ec = errOK;
 	uint8 *data = NULL;
 
-	if (n >= MAX_DIRS)
+	if (resourceNr >= MAX_DIRECTORY_ENTRIES)
 		return errBadResource;
 
-	switch (t) {
-	case rLOGIC:
+	switch (resourceType) {
+	case RESOURCETYPE_LOGIC:
 		// load resource into memory, decrypt messages at the end
 		// and build the message list (if logic is in memory)
-		if (~_vm->_game.dirLogic[n].flags & RES_LOADED) {
+		if (~_vm->_game.dirLogic[resourceNr].flags & RES_LOADED) {
 			// if logic is already in memory, unload it
-			unloadResource(rLOGIC, n);
+			unloadResource(RESOURCETYPE_LOGIC, resourceNr);
 
 			// load raw resource into data
-			data = loadVolRes(&_vm->_game.dirLogic[n]);
-			_vm->_game.logics[n].data = data;
+			data = loadVolRes(&_vm->_game.dirLogic[resourceNr]);
+			_vm->_game.logics[resourceNr].data = data;
 
 			// uncompressed logic files need to be decrypted
 			if (data != NULL) {
 				// resloaded flag gets set by decode logic
 				// needed to build string table
-				ec = _vm->decodeLogic(n);
-				_vm->_game.logics[n].sIP = 2;
+				ec = _vm->decodeLogic(resourceNr);
+				_vm->_game.logics[resourceNr].sIP = 2;
 			} else {
 				ec = errBadResource;
 			}
@@ -285,56 +289,56 @@ int AgiLoader_v3::loadResource(int t, int n) {
 			// logics[n].sIP=2; // saved IP = 2
 			// logics[n].cIP=2; // current IP = 2
 
-			_vm->_game.logics[n].cIP = _vm->_game.logics[n].sIP;
+			_vm->_game.logics[resourceNr].cIP = _vm->_game.logics[resourceNr].sIP;
 		}
 
 		// if logic was cached, we get here
 		// reset code pointers incase it was cached
 
-		_vm->_game.logics[n].cIP = _vm->_game.logics[n].sIP;
+		_vm->_game.logics[resourceNr].cIP = _vm->_game.logics[resourceNr].sIP;
 		break;
-	case rPICTURE:
+	case RESOURCETYPE_PICTURE:
 		// if picture is currently NOT loaded *OR* cacheing is off,
 		// unload the resource (caching==off) and reload it
-		if (~_vm->_game.dirPic[n].flags & RES_LOADED) {
-			unloadResource(rPICTURE, n);
-			data = loadVolRes(&_vm->_game.dirPic[n]);
+		if (~_vm->_game.dirPic[resourceNr].flags & RES_LOADED) {
+			unloadResource(RESOURCETYPE_PICTURE, resourceNr);
+			data = loadVolRes(&_vm->_game.dirPic[resourceNr]);
 			if (data != NULL) {
-				_vm->_game.pictures[n].rdata = data;
-				_vm->_game.dirPic[n].flags |= RES_LOADED;
+				_vm->_game.pictures[resourceNr].rdata = data;
+				_vm->_game.dirPic[resourceNr].flags |= RES_LOADED;
 			} else {
 				ec = errBadResource;
 			}
 		}
 		break;
-	case rSOUND:
-		if (_vm->_game.dirSound[n].flags & RES_LOADED)
+	case RESOURCETYPE_SOUND:
+		if (_vm->_game.dirSound[resourceNr].flags & RES_LOADED)
 			break;
 
-		data = loadVolRes(&_vm->_game.dirSound[n]);
+		data = loadVolRes(&_vm->_game.dirSound[resourceNr]);
 		if (data != NULL) {
 			// Freeing of the raw resource from memory is delegated to the createFromRawResource-function
-			_vm->_game.sounds[n] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[n].len, n, _vm->_soundemu);
-			_vm->_game.dirSound[n].flags |= RES_LOADED;
+			_vm->_game.sounds[resourceNr] = AgiSound::createFromRawResource(data, _vm->_game.dirSound[resourceNr].len, resourceNr, _vm->_soundemu);
+			_vm->_game.dirSound[resourceNr].flags |= RES_LOADED;
 		} else {
 			ec = errBadResource;
 		}
 		break;
-	case rVIEW:
+	case RESOURCETYPE_VIEW:
 		// Load a VIEW resource into memory...
 		// Since VIEWS alter the view table ALL the time can we
 		// cache the view? or must we reload it all the time?
 		//
 		// load a raw view from a VOL file into data
-		if (_vm->_game.dirView[n].flags & RES_LOADED)
+		if (_vm->_game.dirView[resourceNr].flags & RES_LOADED)
 			break;
 
-		unloadResource(rVIEW, n);
-		data = loadVolRes(&_vm->_game.dirView[n]);
+		unloadResource(RESOURCETYPE_VIEW, resourceNr);
+		data = loadVolRes(&_vm->_game.dirView[resourceNr]);
 		if (data != NULL) {
-			_vm->_game.views[n].rdata = data;
-			_vm->_game.dirView[n].flags |= RES_LOADED;
-			ec = _vm->decodeView(n);
+			_vm->_game.dirView[resourceNr].flags |= RES_LOADED;
+			ec = _vm->decodeView(data, _vm->_game.dirView[resourceNr].len, resourceNr);
+			free(data);
 		} else {
 			ec = errBadResource;
 		}
@@ -352,7 +356,7 @@ int AgiLoader_v3::loadObjects(const char *fname) {
 }
 
 int AgiLoader_v3::loadWords(const char *fname) {
-	return _vm->loadWords(fname);
+	return _vm->_words->loadDictionary(fname);
 }
 
 } // End of namespace Agi

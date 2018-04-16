@@ -200,6 +200,11 @@ void CodeBlocksProvider::createProjectFile(const std::string &name, const std::s
 
 }
 
+void CodeBlocksProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
+	includeList.push_back(setup.srcDir + "/icons/" + setup.projectName + ".ico");
+	includeList.push_back(setup.srcDir + "/dists/" + setup.projectName + ".rc");
+}
+
 void CodeBlocksProvider::writeWarnings(const std::string &name, std::ofstream &output) const {
 
 	// Global warnings

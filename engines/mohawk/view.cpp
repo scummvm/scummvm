@@ -37,6 +37,23 @@ Module::~Module() {
 }
 
 Feature::Feature(View *view) : _view(view) {
+	_next = _prev = nullptr;
+	_drawProc = nullptr;
+	_moveProc = nullptr;
+	_doneProc = nullptr;
+	_frameProc = nullptr;
+	_timeProc = nullptr;
+	_region = 0;
+	_id = 0;
+	_scrbId = 0;
+	_storedScrbId = 0;
+	_flags = 0;
+	_nextTime = 0;
+	_delayTime = 0;
+	_dirty = false;
+	_needsReset = false;
+	_justReset = false;
+	_done = false;
 }
 
 Feature::~Feature() {
@@ -46,10 +63,10 @@ void Feature::setNodeDefaults(Feature *prev, Feature *next) {
 	_prev = prev;
 	_next = next;
 
-	_moveProc = NULL;
-	_drawProc = NULL;
-	_doneProc = NULL;
-	_frameProc = NULL;
+	_moveProc = nullptr;
+	_drawProc = nullptr;
+	_doneProc = nullptr;
+	_frameProc = nullptr;
 
 	_data.bounds = Common::Rect();
 	_data.clipRect = Common::Rect();
@@ -75,11 +92,10 @@ void Feature::setNodeDefaults(Feature *prev, Feature *next) {
 
 	_flags = 0;
 
-	_dirty = 1;
-	_needsReset = 1;
-	_justReset = 0; // old
-	_notifyDone = 0;
-	_done = 0; // new
+	_dirty = true;
+	_needsReset = true;
+	_justReset = false; // old
+	_done = false; // new
 
 	_nextTime = 0;
 	_delayTime = 0;
@@ -107,11 +123,11 @@ void Feature::resetFeatureScript(uint16 enabled, uint16 scrbId) {
 	resetFrame();
 	_nextTime = 0; // New feature code uses _view->_lastIdleTime, but should be equivalent.
 	_data.enabled = enabled;
-	_dirty = 1;
+	_dirty = true;
 
 	finishResetFeatureScript();
 
-	_needsReset = 0;
+	_needsReset = false;
 
 	if (_region) {
 		// TODO: mark _region as dirty
@@ -123,7 +139,6 @@ void Feature::resetFeatureScript(uint16 enabled, uint16 scrbId) {
 void Feature::resetFeature(bool notifyDone, Module::FeatureProc doneProc, uint16 scrbId) {
 	resetFeatureScript(1, scrbId);
 	_doneProc = doneProc;
-	_notifyDone = notifyDone;
 }
 
 void Feature::hide(bool clip) {
@@ -159,7 +174,7 @@ void Feature::moveAndUpdate(Common::Point newPos) {
 		return;
 
 	_nextTime = 0;
-	_dirty = 1;
+	_dirty = true;
 	// TODO: mark _data.bounds as dirty
 
 	if (_data.bitmapIds[0])
@@ -228,7 +243,7 @@ void OldFeature::resetScript() {
 }
 
 void OldFeature::finishResetFeatureScript() {
-	_justReset = 1;
+	_justReset = true;
 
 	if (_flags & kFeatureOldAdjustByPos) {
 		Common::SeekableReadStream *ourSCRB = _view->getSCRB(_data.scrbIndex, _scrbId);
@@ -240,6 +255,13 @@ void OldFeature::finishResetFeatureScript() {
 }
 
 NewFeature::NewFeature(View *view) : Feature(view) {
+	_unknown168 = 0;
+	_pickupProc = nullptr;
+	_dropProc = nullptr;
+	_dragMoveProc = nullptr;
+	_oldMoveProc = nullptr;
+	_dragFlags = 0;
+	_oldFlags = 0;
 }
 
 NewFeature::~NewFeature() {
@@ -307,11 +329,11 @@ void NewFeature::resetScript() {
 }
 
 void NewFeature::finishResetFeatureScript() {
-	_done = 0;
+	_done = false;
 }
 
 View::View(MohawkEngine *vm) : _vm(vm) {
-	_currentModule = NULL;
+	_currentModule = nullptr;
 
 	_backgroundId = 0xffff;
 
@@ -319,6 +341,12 @@ View::View(MohawkEngine *vm) : _vm(vm) {
 		_compoundSHAPGroups[i] = 0;
 	}
 	_numSCRBGroups = 0;
+
+	_lastIdleTime = 0;
+	_needsUpdate = false;
+	_gfx = nullptr;
+	_rootNode = nullptr;
+	_cursorNode = nullptr;
 }
 
 View::~View() {
@@ -347,7 +375,7 @@ void View::idleView() {
 		}
 		if (node->_drawProc)
 			(_currentModule->*(node->_drawProc))(node);
-		node->_dirty = 0;
+		node->_dirty = false;
 	}
 
 	if (_needsUpdate) {
@@ -365,7 +393,7 @@ void View::setModule(Module *module) {
 		delete _currentModule;
 	}
 
-	_currentModule = NULL;
+	_currentModule = nullptr;
 
 	if (module) {
 		_currentModule = module;
@@ -544,7 +572,7 @@ Feature *View::getFeaturePtr(uint16 id) {
 			return node;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 uint16 View::getNewFeatureId() {
@@ -563,8 +591,8 @@ void View::removeFeature(Feature *feature, bool free) {
 
 	feature->_prev->_next = feature->_next;
 	feature->_next->_prev = feature->_prev;
-	feature->_next = NULL;
-	feature->_prev = NULL;
+	feature->_next = nullptr;
+	feature->_prev = nullptr;
 
 	if (free)
 		delete feature;
@@ -591,21 +619,21 @@ Feature *View::pointOnFeature(bool topdown, uint32 flags, Common::Point pos) {
 		else
 			curr = curr->_next;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void View::sortView() {
 	Feature *base = _rootNode;
 	Feature *next = base->_next;
-	Feature *otherRoot = NULL;
-	Feature *otherBase = NULL;
-	Feature *objectRoot = NULL;
-	Feature *objectBase = NULL;
-	Feature *staticRoot = NULL;
-	Feature *staticBase = NULL;
+	Feature *otherRoot = nullptr;
+	Feature *otherBase = nullptr;
+	Feature *objectRoot = nullptr;
+	Feature *objectBase = nullptr;
+	Feature *staticRoot = nullptr;
+	Feature *staticBase = nullptr;
 
 	// Remove all features.
-	base->_next = NULL;
+	base->_next = nullptr;
 
 	// Iterate through all the previous features, placing them in the appropriate list.
 	while (next) {
@@ -617,33 +645,33 @@ void View::sortView() {
 			// so we insert this node directly after the current base.
 			base->_next = curr;
 			curr->_prev = base;
-			curr->_next = NULL;
+			curr->_next = nullptr;
 			base = base->_next;
 		} else if (curr->_flags & kFeatureSortStatic) {
 			// Insert this node into the list of static objects.
 			if (staticBase) {
 				staticBase->_next = curr;
 				curr->_prev = staticBase;
-				curr->_next = NULL;
+				curr->_next = nullptr;
 				staticBase = curr;
 			} else {
 				staticBase = curr;
 				staticRoot = curr;
-				curr->_prev = NULL;
-				curr->_next = NULL;
+				curr->_prev = nullptr;
+				curr->_next = nullptr;
 			}
 		} else if (curr->_flags & kFeatureObjectMask) { // This is == 1 or == 2 in old code.
 			// Insert this node into the list of objects.
 			if (objectRoot) {
 				objectBase->_next = curr;
 				curr->_prev = objectBase;
-				curr->_next = NULL;
+				curr->_next = nullptr;
 				objectBase = curr;
 			} else {
 				objectBase = curr;
 				objectRoot = curr;
-				curr->_prev = NULL;
-				curr->_next = NULL;
+				curr->_prev = nullptr;
+				curr->_next = nullptr;
 			}
 		} else {
 			if (!(curr->_flags & kFeatureOldSortForeground))
@@ -653,13 +681,13 @@ void View::sortView() {
 			if (otherRoot) {
 				otherBase->_next = curr;
 				curr->_prev = otherBase;
-				curr->_next = NULL;
+				curr->_next = nullptr;
 				otherBase = curr;
 			} else {
 				otherBase = curr;
 				otherRoot = curr;
-				curr->_prev = NULL;
-				curr->_next = NULL;
+				curr->_prev = nullptr;
+				curr->_next = nullptr;
 			}
 		}
 	}
@@ -672,7 +700,7 @@ void View::sortView() {
 		base->_next = prev;
 		prev->_prev = base;
 		base = base->_next;
-		base->_next = NULL;
+		base->_next = nullptr;
 	}
 
 	// Add the other features on top..
@@ -683,12 +711,12 @@ void View::sortView() {
 
 Feature *View::sortOneList(Feature *root) {
 	if (!root)
-		return NULL;
+		return nullptr;
 
 	// Save the next feature and then clear the list.
 	Feature *curr = root->_next;
-	root->_next = NULL;
-	root->_prev = NULL;
+	root->_next = nullptr;
+	root->_prev = nullptr;
 
 	// Iterate over all the features.
 	while (curr) {
@@ -707,7 +735,7 @@ Feature *View::sortOneList(Feature *root) {
 					// This is the end of the list: add ourselves there.
 					check->_next = prev;
 					prev->_prev = check;
-					prev->_next = NULL;
+					prev->_next = nullptr;
 					break;
 				}
 			} else {
@@ -751,7 +779,7 @@ Feature *View::mergeLists(Feature *root, Feature *mergeRoot) {
 				check = check->_next;
 			check->_next = prev;
 			prev->_prev = check;
-			prev->_next = NULL;
+			prev->_next = nullptr;
 			continue;
 		}
 
@@ -774,7 +802,7 @@ Feature *View::mergeLists(Feature *root, Feature *mergeRoot) {
 				// We're at the end of the list, so we have to go here.
 				check->_next = prev;
 				prev->_prev = check;
-				prev->_next = NULL;
+				prev->_next = nullptr;
 				base = prev;
 				break;
 			}

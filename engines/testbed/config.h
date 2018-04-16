@@ -30,7 +30,7 @@
 #include "common/tokenizer.h"
 
 #include "gui/widgets/list.h"
-#include "gui/options.h"
+#include "gui/dialog.h"
 #include "gui/ThemeEngine.h"
 
 #include "testbed/testsuite.h"

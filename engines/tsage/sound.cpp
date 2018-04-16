@@ -20,9 +20,10 @@
  *
  */
 
+#include "audio/fmopl.h"
 #include "audio/decoders/raw.h"
 #include "common/config-manager.h"
-#include "audio/decoders/raw.h"
+#include "common/timer.h"
 #include "audio/audiostream.h"
 #include "tsage/core.h"
 #include "tsage/globals.h"
@@ -70,7 +71,7 @@ SoundManager::~SoundManager() {
 		}
 		sfTerminate();
 
-//		g_system->getTimerManager()->removeTimerProc(_sfUpdateCallback);
+		g_system->getTimerManager()->removeTimerProc(&sfSoundServer);
 	}
 
 	// Free any allocated voice type structures
@@ -90,12 +91,7 @@ void SoundManager::postInit() {
 		g_saver->addLoadNotifier(&SoundManager::loadNotifier);
 		g_saver->addListener(this);
 
-
-//	I originally separated the sound manager update method into a separate thread, since
-//  it handles updates for both music and Fx. However, since Adlib updates also get done in a
-//	thread, and doesn't get too far ahead, I've left it to the AdlibSoundDriver class to
-//	call the update method, rather than having it be called separately
-//		g_system->getTimerManager()->installTimerProc(_sfUpdateCallback, 1000000 / SOUND_FREQUENCY, NULL, "tsageSoundUpdate");
+		g_system->getTimerManager()->installTimerProc(&sfSoundServer, 1000000 / CALLBACKS_PER_SECOND, NULL, "tsageSoundUpdate");
 		_sndmgrReady = true;
 	}
 }
@@ -145,10 +141,6 @@ void SoundManager::syncSounds() {
 			(voice_mute ? 0 : SPEECH_VOICE) |
 			(!subtitles ? 0 : SPEECH_TEXT);
 	}
-}
-
-void SoundManager::update() {
-	sfSoundServer();
 }
 
 Common::List<SoundDriverEntry> &SoundManager::buildDriverList(bool detectFlag) {
@@ -382,7 +374,10 @@ void SoundManager::rethinkVoiceTypes() {
 	sfRethinkVoiceTypes();
 }
 
-void SoundManager::sfSoundServer() {
+void SoundManager::sfSoundServer(void *) {
+	Common::StackLock slock1(SoundManager::sfManager()._serverDisabledMutex);
+	Common::StackLock slock2(SoundManager::sfManager()._serverSuspendedMutex);
+
 	if (sfManager()._needToRethink) {
 		sfRethinkVoiceTypes();
 		sfManager()._needToRethink = false;
@@ -542,10 +537,6 @@ void SoundManager::sfUpdateVoiceStructs2() {
 			}
 		}
 	}
-}
-
-void SoundManager::sfUpdateCallback(void *ref) {
-	((SoundManager *)ref)->update();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1562,7 +1553,9 @@ void Sound::play(int soundNum) {
 }
 
 void Sound::stop() {
-	g_globals->_soundManager.removeFromPlayList(this);
+	if (g_globals) {
+		g_globals->_soundManager.removeFromPlayList(this);
+	}
 	_unPrime();
 }
 
@@ -2743,17 +2736,9 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	_groupData._pData = &adlib_group_data[0];
 
 	_mixer = g_vm->_mixer;
-	_sampleRate = _mixer->getOutputRate();
 	_opl = OPL::Config::create();
 	assert(_opl);
-	_opl->init(_sampleRate);
-
-	_samplesTillCallback = 0;
-	_samplesTillCallbackRemainder = 0;
-	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
-	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
-
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_opl->init();
 
 	Common::fill(_channelVoiced, _channelVoiced + ADLIB_CHANNEL_COUNT, false);
 	memset(_channelVolume, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
@@ -2772,11 +2757,12 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 		_channelVoiced[i] = false;
 		_pitchBlend[i] = 0;
 	}
+
+	_opl->start(new Common::Functor0Mem<void, AdlibSoundDriver>(this, &AdlibSoundDriver::onTimer), CALLBACKS_PER_SECOND);
 }
 
 AdlibSoundDriver::~AdlibSoundDriver() {
 	DEALLOCATE(_patchData);
-	_mixer->stopHandle(_soundHandle);
 	delete _opl;
 }
 
@@ -2886,13 +2872,13 @@ void AdlibSoundDriver::setPitch(int channel, int pitchBlend) {
 }
 
 void AdlibSoundDriver::write(byte reg, byte value) {
+	Common::StackLock lock(_queueMutex);
 	_portContents[reg] = value;
 	_queue.push(RegisterValue(reg, value));
 }
 
 void AdlibSoundDriver::flush() {
-	Common::StackLock slock(SoundManager::sfManager()._serverDisabledMutex);
-
+	Common::StackLock lock(_queueMutex);
 	while (!_queue.empty()) {
 		RegisterValue v = _queue.pop();
 		_opl->writeReg(v._regNum, v._value);
@@ -3019,33 +3005,8 @@ void AdlibSoundDriver::setFrequency(int channel) {
 		((dataWord >> 8) & 3) | (var2 << 2));
 }
 
-int AdlibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
-	Common::StackLock slock1(SoundManager::sfManager()._serverDisabledMutex);
-	Common::StackLock slock2(SoundManager::sfManager()._serverSuspendedMutex);
-
-	int32 samplesLeft = numSamples;
-	memset(buffer, 0, sizeof(int16) * numSamples);
-	while (samplesLeft) {
-		if (!_samplesTillCallback) {
-			SoundManager::sfUpdateCallback(NULL);
-			flush();
-
-			_samplesTillCallback = _samplesPerCallback;
-			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-			if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
-				_samplesTillCallback++;
-				_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
-			}
-		}
-
-		int32 render = MIN<int>(samplesLeft, _samplesTillCallback);
-		samplesLeft -= render;
-		_samplesTillCallback -= render;
-
-		_opl->readBuffer(buffer, render);
-		buffer += render;
-	}
-	return numSamples;
+void AdlibSoundDriver::onTimer() {
+	flush();
 }
 
 /*--------------------------------------------------------------------------*/

@@ -62,7 +62,8 @@ public:
 	~SkyCompact();
 	Compact *fetchCpt(uint16 cptId);
 	Compact *fetchCptInfo(uint16 cptId, uint16 *elems = NULL, uint16 *type = NULL, char *name = NULL);
-	static uint16 *getSub(Compact *cpt, uint16 mode);
+	static uint16 getSub(Compact *cpt, uint16 mode);
+	static void setSub(Compact *cpt, uint16 mode, uint16 value);
 	static MegaSet *getMegaSet(Compact *cpt);
 	uint16 *getGrafixPtr(Compact *cpt);
 	uint16 *getTurnTable(Compact *cpt, uint16 dir);
@@ -78,6 +79,8 @@ public:
 	uint16 giveDataListLen(uint16 listNum);
 	const char *nameForType(uint16 type);
 private:
+	void checkAndFixOfficerBluntError();
+
 	uint16  _numDataLists;
 	uint16  *_dataListLen;
 	uint16  *_rawBuf;

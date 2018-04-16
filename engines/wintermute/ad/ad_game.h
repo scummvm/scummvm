@@ -130,6 +130,7 @@ public:
 	virtual bool scSetProperty(const char *name, ScValue *value) override;
 	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	bool validMouse();
+	Common::String debuggerToString() const override;
 private:
 	virtual bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) override;
 

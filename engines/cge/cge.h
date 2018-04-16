@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CGE_H
-#define CGE_H
+#ifndef CGE_CGE_H
+#define CGE_CGE_H
 
 #include "common/random.h"
 #include "common/savefile.h"
@@ -246,7 +246,7 @@ public:
 	void mainLoop();
 	void handleFrame();
 	void saveGame(int slotNumber, const Common::String &desc);
-	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 	void switchMusic();
 	void selectPocket(int n);
 	void expandSprite(Sprite *spr);

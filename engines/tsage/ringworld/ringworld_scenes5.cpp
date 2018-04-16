@@ -1160,7 +1160,7 @@ void Scene4000::signal() {
 	case 4010:
 		g_globals->setFlag(38);
 		_olo.remove();
-		// Deliberate fall-through
+		// fall through
 	case 4001:
 		g_globals->_player.enableControl();
 		break;
@@ -1173,7 +1173,7 @@ void Scene4000::signal() {
 		break;
 	case 4004:
 		RING_INVENTORY._ladder._sceneNumber = 4000;
-		// Deliberate fall-through
+		// fall through
 	case 4007:
 		g_globals->_player._uiEnabled = true;
 		g_globals->_events.setCursor(CURSOR_USE);
@@ -2813,7 +2813,7 @@ void Scene4150::Action1::signal() {
 	case 4: {
 		for (int idx = 100; idx >= 0; idx -= 5) {
 			g_globals->_scenePalette.fade(adjustData, false, idx);
-			GLOBALS._screenSurface.updateScreen();
+			GLOBALS._screen.update();
 			g_system->delayMillis(10);
 		}
 
@@ -2841,7 +2841,7 @@ void Scene4150::Action1::signal() {
 	case 7:
 		for (int idx = 100; idx >= 0; idx -= 5) {
 			g_globals->_scenePalette.fade(adjustData, false, idx);
-			GLOBALS._screenSurface.updateScreen();
+			GLOBALS._screen.update();
 			g_system->delayMillis(10);
 		}
 

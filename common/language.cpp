@@ -35,6 +35,7 @@ const LanguageDescription g_languages[] = {
 	{    "en",    "en", "English", EN_ANY }, // Generic English (when only one game version exist)
 	{    "gb", "en_GB", "English (GB)", EN_GRB },
 	{    "us", "en_US", "English (US)", EN_USA },
+	{    "et", "et_EE", "Estonian", ET_EST },
 	{    "fr", "fr_FR", "French", FR_FRA },
 	{    "de", "de_DE", "German", DE_DEU },
 	{    "gr", "el_GR", "Greek", GR_GRE },
@@ -45,7 +46,7 @@ const LanguageDescription g_languages[] = {
 	{    "jp", "ja_JP", "Japanese", JA_JPN },
 	{    "kr", "ko_KR", "Korean", KO_KOR },
 	{    "lv", "lv_LV", "Latvian", LV_LAT },
-	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR }, // TODO Someone should verify the unix locale
+	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR },
 	{    "pl", "pl_PL", "Polish", PL_POL },
 	{    "br", "pt_BR", "Portuguese", PT_BRA },
 	{    "ru", "ru_RU", "Russian", RU_RUS },

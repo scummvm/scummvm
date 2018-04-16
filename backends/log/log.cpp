@@ -93,10 +93,12 @@ void Log::print(const char *message, const bool printTime) {
 
 void Log::printTimeStamp() {
 	TimeDate date;
+	int curMonth;
 	_system->getTimeAndDate(date);
+	curMonth = date.tm_mon + 1; // month is base 0, we need base 1 (1 = january and so on)
 
 	_stream->writeString(Common::String::format("[%d-%02d-%02d %02d:%02d:%02d] ",
-	                     date.tm_year + 1900, date.tm_mon, date.tm_mday,
+	                     date.tm_year + 1900, curMonth, date.tm_mday,
 	                     date.tm_hour, date.tm_min, date.tm_sec));
 }
 

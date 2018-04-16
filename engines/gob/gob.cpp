@@ -25,7 +25,9 @@
 #include "backends/audiocd/audiocd.h"
 #include "base/plugins.h"
 #include "common/config-manager.h"
+#include "engines/util.h"
 #include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "gui/gui-manager.h"
 #include "gui/dialog.h"
@@ -114,6 +116,19 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst), _rnd("gob") {
+	DebugMan.addDebugChannel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
+	DebugMan.addDebugChannel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
+	DebugMan.addDebugChannel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
+	DebugMan.addDebugChannel(kDebugSound, "Sound", "Sound output debug level");
+	DebugMan.addDebugChannel(kDebugExpression, "Expression", "Expression parser debug level");
+	DebugMan.addDebugChannel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
+	DebugMan.addDebugChannel(kDebugFileIO, "FileIO", "File Input/Output debug level");
+	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
+	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
+	DebugMan.addDebugChannel(kDebugVideo, "Video", "IMD/VMD video debug level");
+	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Hotspots debug level");
+	DebugMan.addDebugChannel(kDebugDemo, "Demo", "Demo script debug level");
+
 	_sound     = 0; _mult     = 0; _game    = 0;
 	_global    = 0; _dataIO   = 0; _goblin  = 0;
 	_vidPlayer = 0; _init     = 0; _inter   = 0;
@@ -135,19 +150,6 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst), _rnd("gob") {
 	_copyProtection = ConfMan.getBool("copy_protection");
 
 	_console = new GobConsole(this);
-
-	DebugMan.addDebugChannel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
-	DebugMan.addDebugChannel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
-	DebugMan.addDebugChannel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
-	DebugMan.addDebugChannel(kDebugSound, "Sound", "Sound output debug level");
-	DebugMan.addDebugChannel(kDebugExpression, "Expression", "Expression parser debug level");
-	DebugMan.addDebugChannel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
-	DebugMan.addDebugChannel(kDebugFileIO, "FileIO", "File Input/Output debug level");
-	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
-	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
-	DebugMan.addDebugChannel(kDebugVideo, "Video", "IMD/VMD video debug level");
-	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Hotspots debug level");
-	DebugMan.addDebugChannel(kDebugDemo, "Demo", "Demo script debug level");
 }
 
 GobEngine::~GobEngine() {
@@ -259,7 +261,7 @@ void GobEngine::setTrueColor(bool trueColor) {
 
 	_features = (_features & ~kFeaturesTrueColor) | (trueColor ? kFeaturesTrueColor : 0);
 
-	_video->setSize(is640x480());
+	_video->setSize();
 
 	_pixelFormat = g_system->getScreenFormat();
 
@@ -296,9 +298,7 @@ Common::Error GobEngine::run() {
 	if (isCD())
 		checkCD();
 
-	int cd_num = ConfMan.getInt("cdrom");
-	if (cd_num >= 0)
-		_system->getAudioCDManager()->openCD(cd_num);
+	_system->getAudioCDManager()->open();
 
 	_global->_debugFlag = 1;
 	_video->_doRangeClamp = true;
@@ -389,6 +389,9 @@ void GobEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
 	_init->updateConfig();
+
+	if (_sound)
+		_sound->adlibSyncVolume();
 }
 
 void GobEngine::pauseGame() {
@@ -427,6 +430,23 @@ Common::Error GobEngine::initGameParts() {
 		_map      = new Map_v1(this);
 		_goblin   = new Goblin_v1(this);
 		_scenery  = new Scenery_v1(this);
+
+		// WORKAROUND: The EGA version of Gobliiins claims a few resources are
+		//             larger than they actually are. The original happily reads
+		//             past the resource structure boundary, but we don't.
+		//             To make sure we don't throw an error like we normally do
+		//             (which leads to these resources not loading), we enable
+		//             this workaround that automatically fixes the resources
+		//             sizes.
+		//
+		//             This glitch is visible in levels
+		//             - 03 (ICIGCAA)
+		//             - 09 (ICVGCGT)
+		//             - 16 (TCVQRPM)
+		//             - 20 (NNGWTTO)
+		//             See also ScummVM bug report #7162.
+		if (isEGA())
+			_resourceSizeWorkaround = true;
 		break;
 
 	case kGameTypeGeisha:
@@ -689,7 +709,14 @@ Common::Error GobEngine::initGraphics() {
 		_mode   = 0x14;
 	}
 
-	_video->setSize(is640x480());
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(_width, _height));
+	if (getGameType() == kGameTypeLostInTime) {
+		modes.push_back(Graphics::Mode(640, 400));
+	}
+	initGraphicsModes(modes);
+
+	_video->setSize();
 
 	_pixelFormat = g_system->getScreenFormat();
 

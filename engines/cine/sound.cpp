@@ -32,6 +32,8 @@
 #include "cine/cine.h"
 #include "cine/sound.h"
 
+#include "backends/audiocd/audiocd.h"
+
 #include "audio/audiostream.h"
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
@@ -101,7 +103,7 @@ struct AdLibSoundInstrument {
 	byte amDepth;
 };
 
-class AdLibSoundDriver : public PCSoundDriver, Audio::AudioStream {
+class AdLibSoundDriver : public PCSoundDriver {
 public:
 	AdLibSoundDriver(Audio::Mixer *mixer);
 	virtual ~AdLibSoundDriver();
@@ -112,14 +114,8 @@ public:
 	virtual void stopChannel(int channel);
 	virtual void stopAll();
 
-	// AudioStream interface
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-	virtual bool isStereo() const { return false; }
-	virtual bool endOfData() const { return false; }
-	virtual int getRate() const { return _sampleRate; }
-
 	void initCard();
-	void update(int16 *buf, int len);
+	void onTimer();
 	void setupInstrument(const byte *data, int channel);
 	void loadRegisterInstrument(const byte *data, AdLibRegisterSoundInstrument *reg);
 	virtual void loadInstrument(const byte *data, AdLibSoundInstrument *asi) = 0;
@@ -128,10 +124,8 @@ protected:
 	UpdateCallback _upCb;
 	void *_upRef;
 
-	FM_OPL *_opl;
-	int _sampleRate;
+	OPL::OPL *_opl;
 	Audio::Mixer *_mixer;
-	Audio::SoundHandle _soundHandle;
 
 	byte _vibrato;
 	int _channelsVolumeTable[4];
@@ -282,17 +276,19 @@ void PCSoundDriver::resetChannel(int channel) {
 
 AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
 	: _upCb(0), _upRef(0), _mixer(mixer) {
-	_sampleRate = _mixer->getOutputRate();
-	_opl = makeAdLibOPL(_sampleRate);
+
+	_opl = OPL::Config::create();
+	if (!_opl || !_opl->init())
+		error("Failed to create OPL");
+
 	memset(_channelsVolumeTable, 0, sizeof(_channelsVolumeTable));
 	memset(_instrumentsTable, 0, sizeof(_instrumentsTable));
 	initCard();
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_opl->start(new Common::Functor0Mem<void, AdLibSoundDriver>(this, &AdLibSoundDriver::onTimer), 50);
 }
 
 AdLibSoundDriver::~AdLibSoundDriver() {
-	_mixer->stopHandle(_soundHandle);
-	OPLDestroy(_opl);
+	delete _opl;
 }
 
 void AdLibSoundDriver::setUpdateCallback(UpdateCallback upCb, void *ref) {
@@ -322,71 +318,52 @@ void AdLibSoundDriver::stopChannel(int channel) {
 		channel = 6;
 	}
 	if (ins->mode == 0 || channel == 6) {
-		OPLWriteReg(_opl, 0xB0 | channel, 0);
+		_opl->writeReg(0xB0 | channel, 0);
 	}
 	if (ins->mode != 0) {
 		_vibrato &= ~(1 << (10 - ins->channel));
-		OPLWriteReg(_opl, 0xBD, _vibrato);
+		_opl->writeReg(0xBD, _vibrato);
 	}
 }
 
 void AdLibSoundDriver::stopAll() {
 	int i;
 	for (i = 0; i < 18; ++i) {
-		OPLWriteReg(_opl, 0x40 | _operatorsTable[i], 63);
+		_opl->writeReg(0x40 | _operatorsTable[i], 63);
 	}
 	for (i = 0; i < 9; ++i) {
-		OPLWriteReg(_opl, 0xB0 | i, 0);
+		_opl->writeReg(0xB0 | i, 0);
 	}
-	OPLWriteReg(_opl, 0xBD, 0);
-}
-
-int AdLibSoundDriver::readBuffer(int16 *buffer, const int numSamples) {
-	update(buffer, numSamples);
-	return numSamples;
+	_opl->writeReg(0xBD, 0);
 }
 
 void AdLibSoundDriver::initCard() {
 	_vibrato = 0x20;
-	OPLWriteReg(_opl, 0xBD, _vibrato);
-	OPLWriteReg(_opl, 0x08, 0x40);
+	_opl->writeReg(0xBD, _vibrato);
+	_opl->writeReg(0x08, 0x40);
 
 	static const int oplRegs[] = { 0x40, 0x60, 0x80, 0x20, 0xE0 };
 
 	for (int i = 0; i < 9; ++i) {
-		OPLWriteReg(_opl, 0xB0 | i, 0);
+		_opl->writeReg(0xB0 | i, 0);
 	}
 	for (int i = 0; i < 9; ++i) {
-		OPLWriteReg(_opl, 0xC0 | i, 0);
+		_opl->writeReg(0xC0 | i, 0);
 	}
 
 	for (int j = 0; j < 5; j++) {
 		for (int i = 0; i < 18; ++i) {
-			OPLWriteReg(_opl, oplRegs[j] | _operatorsTable[i], 0);
+			_opl->writeReg(oplRegs[j] | _operatorsTable[i], 0);
 		}
 	}
 
-	OPLWriteReg(_opl, 1, 0x20);
-	OPLWriteReg(_opl, 1, 0);
+	_opl->writeReg(1, 0x20);
+	_opl->writeReg(1, 0);
 }
 
-void AdLibSoundDriver::update(int16 *buf, int len) {
-	static int samplesLeft = 0;
-	while (len != 0) {
-		int count = samplesLeft;
-		if (count > len) {
-			count = len;
-		}
-		samplesLeft -= count;
-		len -= count;
-		YM3812UpdateOne(_opl, buf, count);
-		if (samplesLeft == 0) {
-			if (_upCb) {
-				(*_upCb)(_upRef);
-			}
-			samplesLeft = _sampleRate / 50;
-		}
-		buf += count;
+void AdLibSoundDriver::onTimer() {
+	if (_upCb) {
+		(*_upCb)(_upRef);
 	}
 }
 
@@ -408,32 +385,32 @@ void AdLibSoundDriver::setupInstrument(const byte *data, int channel) {
 
 	if (ins->mode == 0 || ins->channel == 6) {
 		reg = &ins->regMod;
-		OPLWriteReg(_opl, 0x20 | mod, reg->vibrato);
+		_opl->writeReg(0x20 | mod, reg->vibrato);
 		if (reg->freqMod) {
 			tmp = reg->outputLevel & 0x3F;
 		} else {
 			tmp = (63 - (reg->outputLevel & 0x3F)) * _channelsVolumeTable[channel];
 			tmp = 63 - (2 * tmp + 127) / (2 * 127);
 		}
-		OPLWriteReg(_opl, 0x40 | mod, tmp | (reg->keyScaling << 6));
-		OPLWriteReg(_opl, 0x60 | mod, reg->attackDecay);
-		OPLWriteReg(_opl, 0x80 | mod, reg->sustainRelease);
+		_opl->writeReg(0x40 | mod, tmp | (reg->keyScaling << 6));
+		_opl->writeReg(0x60 | mod, reg->attackDecay);
+		_opl->writeReg(0x80 | mod, reg->sustainRelease);
 		if (ins->mode != 0) {
-			OPLWriteReg(_opl, 0xC0 | ins->channel, reg->feedbackStrength);
+			_opl->writeReg(0xC0 | ins->channel, reg->feedbackStrength);
 		} else {
-			OPLWriteReg(_opl, 0xC0 | channel, reg->feedbackStrength);
+			_opl->writeReg(0xC0 | channel, reg->feedbackStrength);
 		}
-		OPLWriteReg(_opl, 0xE0 | mod, ins->waveSelectMod);
+		_opl->writeReg(0xE0 | mod, ins->waveSelectMod);
 	}
 
 	reg = &ins->regCar;
-	OPLWriteReg(_opl, 0x20 | car, reg->vibrato);
+	_opl->writeReg(0x20 | car, reg->vibrato);
 	tmp = (63 - (reg->outputLevel & 0x3F)) * _channelsVolumeTable[channel];
 	tmp = 63 - (2 * tmp + 127) / (2 * 127);
-	OPLWriteReg(_opl, 0x40 | car, tmp | (reg->keyScaling << 6));
-	OPLWriteReg(_opl, 0x60 | car, reg->attackDecay);
-	OPLWriteReg(_opl, 0x80 | car, reg->sustainRelease);
-	OPLWriteReg(_opl, 0xE0 | car, ins->waveSelectCar);
+	_opl->writeReg(0x40 | car, tmp | (reg->keyScaling << 6));
+	_opl->writeReg(0x60 | car, reg->attackDecay);
+	_opl->writeReg(0x80 | car, reg->sustainRelease);
+	_opl->writeReg(0xE0 | car, ins->waveSelectCar);
 }
 
 void AdLibSoundDriver::loadRegisterInstrument(const byte *data, AdLibRegisterSoundInstrument *reg) {
@@ -490,16 +467,16 @@ void AdLibSoundDriverINS::setChannelFrequency(int channel, int frequency) {
 		if (channel == 6)
 			oct = 0;
 		freq = _freqTable[note % 12];
-		OPLWriteReg(_opl, 0xA0 | channel, freq);
+		_opl->writeReg(0xA0 | channel, freq);
 		freq = (oct << 2) | ((freq & 0x300) >> 8);
 		if (ins->mode == 0) {
 			freq |= 0x20;
 		}
-		OPLWriteReg(_opl, 0xB0 | channel, freq);
+		_opl->writeReg(0xB0 | channel, freq);
 	}
 	if (ins->mode != 0) {
 		_vibrato |= 1 << (10 - ins->channel);
-		OPLWriteReg(_opl, 0xBD, _vibrato);
+		_opl->writeReg(0xBD, _vibrato);
 	}
 }
 
@@ -515,16 +492,16 @@ void AdLibSoundDriverINS::playSample(const byte *data, int size, int channel, in
 	if (ins->mode == 0 || channel == 6) {
 		uint16 note = 12;
 		int freq = _freqTable[note % 12];
-		OPLWriteReg(_opl, 0xA0 | channel, freq);
+		_opl->writeReg(0xA0 | channel, freq);
 		freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
 		if (ins->mode == 0) {
 			freq |= 0x20;
 		}
-		OPLWriteReg(_opl, 0xB0 | channel, freq);
+		_opl->writeReg(0xB0 | channel, freq);
 	}
 	if (ins->mode != 0) {
 		_vibrato |= 1 << (10 - ins->channel);
-		OPLWriteReg(_opl, 0xBD, _vibrato);
+		_opl->writeReg(0xBD, _vibrato);
 	}
 }
 
@@ -562,15 +539,15 @@ void AdLibSoundDriverADL::setChannelFrequency(int channel, int frequency) {
 	}
 
 	freq = _freqTable[note % 12];
-	OPLWriteReg(_opl, 0xA0 | channel, freq);
+	_opl->writeReg(0xA0 | channel, freq);
 	freq = (oct << 2) | ((freq & 0x300) >> 8);
 	if (ins->mode == 0) {
 		freq |= 0x20;
 	}
-	OPLWriteReg(_opl, 0xB0 | channel, freq);
+	_opl->writeReg(0xB0 | channel, freq);
 	if (ins->mode != 0) {
 		_vibrato |= 1 << (10 - channel);
-		OPLWriteReg(_opl, 0xBD, _vibrato);
+		_opl->writeReg(0xBD, _vibrato);
 	}
 }
 
@@ -580,11 +557,11 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 	setupInstrument(data, channel);
 	AdLibSoundInstrument *ins = &_instrumentsTable[channel];
 	if (ins->mode != 0 && ins->channel == 6) {
-		OPLWriteReg(_opl, 0xB0 | channel, 0);
+		_opl->writeReg(0xB0 | channel, 0);
 	}
 	if (ins->mode != 0) {
 		_vibrato &= ~(1 << (10 - ins->channel));
-		OPLWriteReg(_opl, 0xBD, _vibrato);
+		_opl->writeReg(0xBD, _vibrato);
 	}
 	if (ins->mode != 0) {
 		channel = ins->channel;
@@ -599,15 +576,15 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 		note = ins->amDepth;
 	}
 	int freq = _freqTable[note % 12];
-	OPLWriteReg(_opl, 0xA0 | channel, freq);
+	_opl->writeReg(0xA0 | channel, freq);
 	freq = ((note / 12) << 2) | ((freq & 0x300) >> 8);
 	if (ins->mode == 0) {
 		freq |= 0x20;
 	}
-	OPLWriteReg(_opl, 0xB0 | channel, freq);
+	_opl->writeReg(0xB0 | channel, freq);
 	if (ins->mode != 0) {
 		_vibrato |= 1 << (10 - channel);
-		OPLWriteReg(_opl, 0xBD, _vibrato);
+		_opl->writeReg(0xBD, _vibrato);
 	}
 }
 
@@ -932,6 +909,10 @@ void PCSoundFxPlayer::unload() {
 PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
 	: Sound(mixer, vm), _soundDriver(0) {
 
+	_currentMusic = 0;
+	_currentMusicStatus = 0;
+	_currentBgSlot = 0;
+
 	const MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
 	const MusicType musicType = MidiDriver::getMusicType(dev);
 	if (musicType == MT_MT32 || musicType == MT_GM) {
@@ -958,6 +939,10 @@ PCSound::PCSound(Audio::Mixer *mixer, CineEngine *vm)
 	}
 
 	_player = new PCSoundFxPlayer(_soundDriver);
+
+	// Ensure the CD is open
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD))
+		g_system->getAudioCDManager()->open();
 }
 
 PCSound::~PCSound() {
@@ -965,23 +950,98 @@ PCSound::~PCSound() {
 	delete _soundDriver;
 }
 
+static const char *const musicFileNames[11] = {
+	"DUGGER.DAT",
+	"SUITE21.DAT",
+	"FWARS.DAT",
+	"SUITE23.DAT",
+	"SUITE22.DAT",
+	"ESCAL",
+	"MOINES.DAT",
+	"MEDIAVAL.DAT",
+	"SFUTUR",
+	"ALIENS",
+	"TELESONG.DAT",
+};
+
+static uint8 musicCDTracks[11] = {
+	20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 22,
+};
+
 void PCSound::loadMusic(const char *name) {
 	debugC(5, kCineDebugSound, "PCSound::loadMusic('%s')", name);
-	_player->load(name);
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD)) {
+		_currentMusic = 0;
+		_currentMusicStatus = 0;
+		for (int i = 0; i < 11; i++) {
+			if (!strcmp((const char *)name, musicFileNames[i])) {
+				_currentMusic = musicCDTracks[i];
+				_currentMusicStatus = musicCDTracks[i];
+			}
+		}
+	} else {
+		_player->load(name);
+	}
 }
 
 void PCSound::playMusic() {
 	debugC(5, kCineDebugSound, "PCSound::playMusic()");
-	_player->play();
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD)) {
+		g_system->getAudioCDManager()->stop();
+		g_system->getAudioCDManager()->play(_currentMusic - 1, -1, 0, 0);
+	} else {
+		_player->play();
+	}
+}
+
+static uint8 bgCDTracks[49] = {
+	0, 21, 21, 23, 0, 29, 0, 0, 0, 0,
+	0, 27,  0,  0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 22, 22, 23, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+void PCSound::setBgMusic(int num) {
+	debugC(5, kCineDebugSound, "PCSound::setBgMusic(%d)", num);
+	_currentBgSlot = num;
+	if (!bgCDTracks[_currentBgSlot])
+		return;
+
+	if ((_currentBgSlot == 1) || (_currentMusicStatus == 0 && _currentMusic != bgCDTracks[_currentBgSlot])) {
+		_currentMusic = bgCDTracks[_currentBgSlot];
+		g_system->getAudioCDManager()->stop();
+		g_system->getAudioCDManager()->play(bgCDTracks[_currentBgSlot] - 1, -1, 0, 0);
+	}
 }
 
 void PCSound::stopMusic() {
 	debugC(5, kCineDebugSound, "PCSound::stopMusic()");
+
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD)) {
+		if (_currentBgSlot != 1)
+			g_system->getAudioCDManager()->stop();
+	}
 	_player->stop();
 }
 
 void PCSound::fadeOutMusic() {
 	debugC(5, kCineDebugSound, "PCSound::fadeOutMusic()");
+
+	if (_vm->getGameType() == GType_FW && (_vm->getFeatures() & GF_CD)) {
+		if (_currentMusicStatus) {
+			if (_currentBgSlot == 1) {
+				_currentMusicStatus = 0;
+			} else {
+				_currentMusic = 0;
+				_currentMusicStatus = 0;
+				g_system->getAudioCDManager()->stop();
+				if (bgCDTracks[_currentBgSlot]) {
+					g_system->getAudioCDManager()->play(_currentBgSlot - 1, -1, 0, 0);
+				}
+			}
+		}
+	}
 	_player->fadeOut();
 }
 
@@ -1079,6 +1139,9 @@ void PaulaSound::stopMusic() {
 	Common::StackLock lock(_musicMutex);
 
 	_mixer->stopHandle(_moduleHandle);
+}
+
+void PaulaSound::setBgMusic(int num) {
 }
 
 void PaulaSound::fadeOutMusic() {

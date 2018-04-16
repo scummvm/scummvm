@@ -27,7 +27,6 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
-#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/gph/gph-hw.h"
 #include "backends/platform/gph/gph.h"
 #include "backends/plugins/posix/posix-provider.h"
@@ -159,7 +158,7 @@ void OSystem_GPH::initBackend() {
 
 	// Create the graphics manager
 	if (_graphicsManager == 0) {
-		_graphicsManager = new GPHGraphicsManager(_eventSource);
+		_graphicsManager = new GPHGraphicsManager(_eventSource, _window);
 	}
 
 	/* Pass to POSIX method to do the heavy lifting */

@@ -47,6 +47,8 @@ public:
 	FFT(int bits, int inverse);
 	~FFT();
 
+	const uint16 *getRevTab() const;
+
 	/** Do the permutation needed BEFORE calling calc(). */
 	void permute(Complex *z);
 

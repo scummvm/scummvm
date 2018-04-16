@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -30,40 +30,9 @@
 
 namespace MADS {
 
-MADSEngine *MSurface::_vm = nullptr;
+MADSEngine *BaseSurface::_vm = nullptr;
 
-MSurface::MSurface() {
-	pixels = nullptr;
-	_freeFlag = false;
-}
-
-MSurface::MSurface(int width, int height) {
-	pixels = nullptr;
-	_freeFlag = false;
-	setSize(width, height);
-}
-
-MSurface::~MSurface() {
-	if (_freeFlag)
-		Graphics::Surface::free();
-}
-
-void MSurface::setSize(int width, int height) {
-	if (_freeFlag)
-		Graphics::Surface::free();
-	Graphics::Surface::create(width, height, Graphics::PixelFormat::createFormatCLUT8());
-	_freeFlag = true;
-}
-
-void MSurface::setPixels(byte *pData, int horizSize, int vertSize) {
-	_freeFlag = false;
-	pixels = pData;
-	w = pitch = horizSize;
-	h = vertSize;
-	format.bytesPerPixel = 1;
-}
-
-int MSurface::scaleValue(int value, int scale, int err) {
+int BaseSurface::scaleValue(int value, int scale, int err) {
 	int scaled = 0;
 	while (value--) {
 		err -= scale;
@@ -75,8 +44,7 @@ int MSurface::scaleValue(int value, int scale, int err) {
 	return scaled;
 }
 
-void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Common::Rect &clipRect) {
-
+void BaseSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Common::Rect &clipRect) {
 	enum {
 		kStatusSkip,
 		kStatusScale,
@@ -116,8 +84,8 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 		return;
 	int heightAmt = scaledHeight;
 
-	byte *src = info.sprite->getData();
-	byte *dst = getBasePtr(x - info.hotX - clipX, y - info.hotY - clipY);
+	const byte *src = (const byte *)info.sprite->getPixels();
+	byte *dst = (byte *)getBasePtr(x - info.hotX - clipX, y - info.hotY - clipY);
 
 	int status = kStatusSkip;
 	byte *scaledLineBuf = new byte[scaledWidth];
@@ -138,7 +106,7 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 				byte *lineDst = scaledLineBuf;
 				int curErrX = errX;
 				int width = scaledWidth;
-				byte *tempSrc = src;
+				const byte *tempSrc = src;
 				int startX = clipX;
 				while (width > 0) {
 					byte pixel = *tempSrc++;
@@ -201,63 +169,136 @@ void MSurface::drawSprite(const Common::Point &pt, SpriteInfo &info, const Commo
 	}
 
 	delete[] scaledLineBuf;
-
 }
 
-void MSurface::empty() {
-	Common::fill(getBasePtr(0, 0), getBasePtr(0, h), 0);
-}
-
-void MSurface::copyFrom(MSurface *src, const Common::Rect &srcBounds,
-		const Common::Point &destPos, int transparentColor) {
-	// Validation of the rectangle and position
-	int destX = destPos.x, destY = destPos.y;
-	if ((destX >= w) || (destY >= h))
+void BaseSurface::scrollX(int xAmount) {
+	if (xAmount == 0)
 		return;
 
-	Common::Rect copyRect = srcBounds;
-	if (destX < 0) {
-		copyRect.left += -destX;
-		destX = 0;
-	} else if (destX + copyRect.width() > w) {
-		copyRect.right -= destX + copyRect.width() - w;
-	}
-	if (destY < 0) {
-		copyRect.top += -destY;
-		destY = 0;
-	} else if (destY + copyRect.height() > h) {
-		copyRect.bottom -= destY + copyRect.height() - h;
-	}
+	byte buffer[80];
+	int direction = (xAmount > 0) ? -1 : 1;
+	int xSize = ABS(xAmount);
+	assert(xSize <= 80);
 
-	if (!copyRect.isValidRect())
-		return;
+	byte *srcP = (byte *)getBasePtr(0, 0);
 
-	// Copy the specified area
-
-	byte *data = src->getData();
-	byte *srcPtr = data + (src->getWidth() * copyRect.top + copyRect.left);
-	byte *destPtr = (byte *)pixels + (destY * getWidth()) + destX;
-
-	for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
-		if (transparentColor == -1) {
-			// No transparency, so copy line over
-			Common::copy(srcPtr, srcPtr + copyRect.width(), destPtr);
+	for (int y = 0; y < this->h; ++y, srcP += pitch) {
+		if (direction < 0) {
+			// Copy area to be overwritten
+			Common::copy(srcP, srcP + xSize, &buffer[0]);
+			// Shift the remainder of the line over the given area
+			Common::copy(srcP + xSize, srcP + this->w, srcP);
+			// Move buffered area to the end of the line
+			Common::copy(&buffer[0], &buffer[xSize], srcP + this->w - xSize);
 		} else {
-			// Copy each byte one at a time checking for the transparency color
-			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr)
-				if (srcPtr[xCtr] != transparentColor) destPtr[xCtr] = srcPtr[xCtr];
+			// Copy area to be overwritten
+			Common::copy_backward(srcP + this->w - xSize, srcP + this->w, &buffer[80]);
+			// Shift the remainder of the line over the given area
+			Common::copy_backward(srcP, srcP + this->w - xSize, srcP + this->w);
+			// Move buffered area to the start of the line
+			Common::copy_backward(&buffer[80 - xSize], &buffer[80], srcP + xSize);
 		}
-
-		srcPtr += src->getWidth();
-		destPtr += getWidth();
 	}
+
+	markAllDirty();
 }
 
-void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
+void BaseSurface::scrollY(int yAmount) {
+	if (yAmount == 0)
+		return;
+
+	int direction = (yAmount > 0) ? 1 : -1;
+	int ySize = ABS(yAmount);
+	assert(ySize < (this->h / 2));
+	assert(this->w == pitch);
+
+	int blockSize = ySize * this->w;
+	byte *tempData = new byte[blockSize];
+	byte *pixelsP = (byte *)getBasePtr(0, 0);
+
+	if (direction > 0) {
+		// Buffer the lines to be overwritten
+		byte *srcP = (byte *)getBasePtr(0, this->h - ySize);
+		Common::copy(srcP, srcP + (pitch * ySize), tempData);
+		// Vertically shift all the lines
+		Common::copy_backward(pixelsP, pixelsP + (pitch * (this->h - ySize)),
+			pixelsP + (pitch * this->h));
+		// Transfer the buffered lines top the top of the screen
+		Common::copy(tempData, tempData + blockSize, pixelsP);
+	} else {
+		// Buffer the lines to be overwritten
+		Common::copy(pixelsP, pixelsP + (pitch * ySize), tempData);
+		// Vertically shift all the lines
+		Common::copy(pixelsP + (pitch * ySize), pixelsP + (pitch * this->h), pixelsP);
+		// Transfer the buffered lines to the bottom of the screen
+		Common::copy(tempData, tempData + blockSize, pixelsP + (pitch * (this->h - ySize)));
+	}
+
+	markAllDirty();
+	delete[] tempData;
+}
+
+void BaseSurface::translate(Common::Array<RGB6> &palette) {
+	for (int y = 0; y < this->h; ++y) {
+		byte *pDest = (byte *)getBasePtr(0, y);
+
+		for (int x = 0; x < this->w; ++x, ++pDest) {
+			if (*pDest < 255)	// scene 752 has some palette indices of 255
+				*pDest = palette[*pDest]._palIndex;
+		}
+	}
+
+	markAllDirty();
+}
+
+void BaseSurface::translate(byte map[PALETTE_COUNT]) {
+	for (int y = 0; y < this->h; ++y) {
+		byte *pDest = (byte *)getBasePtr(0, y);
+
+		for (int x = 0; x < this->w; ++x, ++pDest) {
+				*pDest = map[*pDest];
+		}
+	}
+
+	markAllDirty();
+}
+
+BaseSurface *BaseSurface::flipHorizontal() const {
+	MSurface *dest = new MSurface(this->w, this->h);
+
+	for (int y = 0; y < this->h; ++y) {
+		const byte *srcP = getBasePtr(this->w - 1, y);
+		byte *destP = dest->getBasePtr(0, y);
+
+		for (int x = 0; x < this->w; ++x)
+			*destP++ = *srcP--;
+	}
+
+	return dest;
+}
+
+void BaseSurface::copyRectTranslate(BaseSurface &srcSurface, const byte *paletteMap,
+		const Common::Point &destPos, const Common::Rect &srcRect) {
+	// Loop through the lines
+	for (int yCtr = 0; yCtr < srcRect.height(); ++yCtr) {
+		const byte *srcP = (const byte *)srcSurface.getBasePtr(srcRect.left, srcRect.top + yCtr);
+		byte *destP = (byte *)getBasePtr(destPos.x, destPos.y + yCtr);
+
+		// Copy the line over
+		for (int xCtr = 0; xCtr < srcRect.width(); ++xCtr, ++srcP, ++destP) {
+			*destP = paletteMap[*srcP];
+		}
+	}
+
+	addDirtyRect(Common::Rect(destPos.x, destPos.y, destPos.x + srcRect.width(),
+		destPos.y + srcRect.height()));
+}
+
+void BaseSurface::copyFrom(BaseSurface &src, const Common::Point &destPos, int depth,
 	DepthSurface *depthSurface, int scale, bool flipped, int transparentColor) {
 	int destX = destPos.x, destY = destPos.y;
-	int frameWidth = src->getWidth();
-	int frameHeight = src->getHeight();
+	int frameWidth = src.w;
+	int frameHeight = src.h;
 	int direction = flipped ? -1 : 1;
 
 	int highestDim = MAX(frameWidth, frameHeight);
@@ -271,7 +312,8 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 			distCtr += scale;
 			if (distCtr < 100) {
 				lineDist[distIndex] = false;
-			} else {
+			}
+			else {
 				lineDist[distIndex] = true;
 				distCtr -= 100;
 
@@ -290,7 +332,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	// Special case for quicker drawing of non-scaled images
 	if (scale == 100 || scale == -1) {
 		// Copy the specified area
-		Common::Rect copyRect(0, 0, src->getWidth(), src->getHeight());
+		Common::Rect copyRect(0, 0, src.w, src.h);
 
 		if (destX < 0) {
 			copyRect.left += -destX;
@@ -308,9 +350,12 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		if (!copyRect.isValidRect())
 			return;
 
-		byte *data = src->getData();
-		byte *srcPtr = data + (src->getWidth() * copyRect.top + copyRect.left);
-		byte *destPtr = (byte *)pixels + (destY * pitch) + destX;
+		if (flipped)
+			copyRect.moveTo(0, copyRect.top);
+
+		byte *data = src.getPixels();
+		byte *srcPtr = data + (src.w * copyRect.top + copyRect.left);
+		byte *destPtr = (byte *)getPixels() + (destY * pitch) + destX;
 		if (flipped)
 			srcPtr += copyRect.width() - 1;
 
@@ -326,18 +371,18 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 					destPtr[xCtr] = *srcP;
 			}
 
-			srcPtr += src->getWidth();
-			destPtr += getWidth();
+			srcPtr += src.w;
+			destPtr += this->w;
 		}
 
 		return;
 	}
 
 	// Start of draw logic for scaled sprites
-	const byte *srcPixelsP = src->getData();
+	const byte *srcPixelsP = src.getPixels();
 
-	int destRight = this->getWidth() - 1;
-	int destBottom = this->getHeight() - 1;
+	int destRight = this->w - 1;
+	int destBottom = this->h - 1;
 
 	// Check x bounding area
 	int spriteLeft = 0;
@@ -384,7 +429,7 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 	spriteLeft = spriteLeft * direction;
 
 	// Loop through the lines of the sprite
-	for (int yp = 0, sprY = -1; yp < frameHeight; ++yp, srcPixelsP += src->pitch) {
+	for (int yp = 0, sprY = -1; yp < frameHeight; ++yp, srcPixelsP += src.pitch) {
 		if (!lineDist[yp])
 			// Not a display line, so skip it
 			continue;
@@ -397,17 +442,19 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		const byte *srcP = srcPixelsP;
 		byte *destP = destPixelsP;
 
-		for (int xp = 0, sprX = 0; xp < frameWidth; ++xp, ++srcP) {
-			if (xp < spriteLeft)
-				// Not yet reached start of display area
-				continue;
-			if (!lineDist[sprX++])
+		for (int xp = 0, sprX = -1; xp < frameWidth; ++xp, ++srcP) {
+			if (!lineDist[xp])
 				// Not a display pixel
 				continue;
 
+			++sprX;
+			if (sprX < spriteLeft || sprX >= spriteRight)
+				// Skip pixel if it's not in horizontal display portion
+				continue;
+
 			// Get depth of current output pixel in depth surface
-			Common::Point pt((destP - (byte *)this->pixels) % this->pitch,
-				(destP - (byte *)this->pixels) / this->pitch);
+			Common::Point pt((destP - (byte *)getPixels()) % this->pitch,
+				(destP - (byte *)getPixels()) / this->pitch);
 			int pixelDepth = (depthSurface == nullptr) ? 15 : depthSurface->getDepth(pt);
 
 			if ((*srcP != transparentColor) && (depth <= pixelDepth))
@@ -419,106 +466,8 @@ void MSurface::copyFrom(MSurface *src, const Common::Point &destPos, int depth,
 		// Move to the next destination line
 		destPixelsP += this->pitch;
 	}
-}
 
-void MSurface::scrollX(int xAmount) {
-	if (xAmount == 0)
-		return;
-
-	byte buffer[80];
-	int direction = (xAmount > 0) ? -1 : 1;
-	int xSize = ABS(xAmount);
-	assert(xSize <= 80);
-
-	byte *srcP = getBasePtr(0, 0);
-
-	for (int y = 0; y < this->h; ++y, srcP += pitch) {
-		if (direction < 0) {
-			// Copy area to be overwritten
-			Common::copy(srcP, srcP + xSize, &buffer[0]);
-			// Shift the remainder of the line over the given area
-			Common::copy(srcP + xSize, srcP + this->w, srcP);
-			// Move buffered area to the end of the line
-			Common::copy(&buffer[0], &buffer[xSize], srcP + this->w - xSize);
-		} else {
-			// Copy area to be overwritten
-			Common::copy_backward(srcP + this->w - xSize, srcP + this->w, &buffer[80]);
-			// Shift the remainder of the line over the given area
-			Common::copy_backward(srcP, srcP + this->w - xSize, srcP + this->w);
-			// Move buffered area to the start of the line
-			Common::copy_backward(&buffer[80 - xSize], &buffer[80], srcP + xSize);
-		}
-	}
-}
-
-void MSurface::scrollY(int yAmount) {
-	if (yAmount == 0)
-		return;
-
-	int direction = (yAmount > 0) ? 1 : -1;
-	int ySize = ABS(yAmount);
-	assert(ySize < (this->h / 2));
-	assert(this->w == pitch);
-
-	int blockSize = ySize * this->w;
-	byte *tempData = new byte[blockSize];
-	byte *pixelsP = getBasePtr(0, 0);
-
-	if (direction > 0) {
-		// Buffer the lines to be overwritten
-		byte *srcP = (byte *)getBasePtr(0, this->h - ySize);
-		Common::copy(srcP, srcP + (pitch * ySize), tempData);
-		// Vertically shift all the lines
-		Common::copy_backward(pixelsP, pixelsP + (pitch * (this->h - ySize)),
-			pixelsP + (pitch * this->h));
-		// Transfer the buffered lines top the top of the screen
-		Common::copy(tempData, tempData + blockSize, pixelsP);
-	} else {
-		// Buffer the lines to be overwritten
-		Common::copy(pixelsP, pixelsP + (pitch * ySize), tempData);
-		// Vertically shift all the lines
-		Common::copy(pixelsP + (pitch * ySize), pixelsP + (pitch * this->h), pixelsP);
-		// Transfer the buffered lines to the bottom of the screen
-		Common::copy(tempData, tempData + blockSize, pixelsP + (pitch * (this->h - ySize)));
-	}
-
-	delete[] tempData;
-}
-
-
-void MSurface::translate(Common::Array<RGB6> &palette) {
-	for (int y = 0; y < this->h; ++y) {
-		byte *pDest = getBasePtr(0, y);
-
-		for (int x = 0; x < this->w; ++x, ++pDest) {
-			if (*pDest < 255)	// scene 752 has some palette indices of 255
-				*pDest = palette[*pDest]._palIndex;
-		}
-	}
-}
-
-void MSurface::translate(byte map[PALETTE_COUNT]) {
-	for (int y = 0; y < this->h; ++y) {
-		byte *pDest = getBasePtr(0, y);
-
-		for (int x = 0; x < this->w; ++x, ++pDest) {
-				*pDest = map[*pDest];
-		}
-	}
-}
-
-MSurface *MSurface::flipHorizontal() const {
-	MSurface *dest = new MSurface(this->w, this->h);
-
-	for (int y = 0; y < this->h; ++y) {
-		const byte *srcP = getBasePtr(this->w - 1, y);
-		byte *destP = dest->getBasePtr(0, y);
-
-		for (int x = 0; x < this->w; ++x)
-			*destP++ = *srcP--;
-	}
-
-	return dest;
+	addDirtyRect(Common::Rect(destX, destY, destX + frameWidth, destY + frameHeight));
 }
 
 /*------------------------------------------------------------------------*/
@@ -526,26 +475,26 @@ MSurface *MSurface::flipHorizontal() const {
 int DepthSurface::getDepth(const Common::Point &pt) {
 	if (_depthStyle == 2) {
 		int bits = (3 - (pt.x % 4)) * 2;
-		byte v = *getBasePtr(pt.x >> 2, pt.y);
+		byte v = *(const byte *)getBasePtr(pt.x >> 2, pt.y);
 		return v >> bits;
 	} else {
 		if (pt.x < 0 || pt.y < 0 || pt.x >= this->w || pt.y >= this->h)
 			return 0;
 
-		return *getBasePtr(pt.x, pt.y) & 0xF;
+		return *(const byte *)getBasePtr(pt.x, pt.y) & 0xF;
 	}
 }
 
 int DepthSurface::getDepthHighBit(const Common::Point &pt) {
 	if (_depthStyle == 2) {
 		int bits = (3 - (pt.x % 4)) * 2;
-		byte v = *getBasePtr(pt.x >> 2, pt.y);
+		byte v = *(const byte *)getBasePtr(pt.x >> 2, pt.y);
 		return (v >> bits) & 2;
 	} else {
 		if (pt.x < 0 || pt.y < 0 || pt.x >= this->w || pt.y >= this->h)
 			return 0;
 
-		return *getBasePtr(pt.x, pt.y) & 0x80;
+		return *(const byte *)getBasePtr(pt.x, pt.y) & 0x80;
 	}
 }
 

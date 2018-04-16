@@ -86,7 +86,7 @@ protected:
 	byte *_trackEnd;
 
 public:
-	MidiParser_MSC() : byte_11C5A(false) {
+	MidiParser_MSC() : byte_11C5A(false), _beats(0), _lastEvent(0), _trackEnd(NULL) {
 	}
 };
 
@@ -467,6 +467,11 @@ SoundMan_br::SoundMan_br(Parallaction_br *vm) : _vm(vm) {
 
 	_musicEnabled = true;
 	_sfxEnabled = true;
+
+	_sfxLooping = false;
+	_sfxVolume = 0;
+	_sfxRate = 0;
+	_sfxChannel = 0;
 }
 
 SoundMan_br::~SoundMan_br() {

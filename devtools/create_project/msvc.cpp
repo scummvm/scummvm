@@ -52,7 +52,7 @@ void MSVCProvider::createWorkspace(const BuildSetup &setup) {
 	if (!solution)
 		error("Could not open \"" + setup.outputDir + '/' + setup.projectName + ".sln\" for writing");
 
-	solution << "Microsoft Visual Studio Solution File, Format Version " << _version + 1 << ".00\n";
+	solution << "Microsoft Visual Studio Solution File, Format Version " << getSolutionVersion() << ".00\n";
 	solution << "# Visual Studio " << getVisualStudioVersion() << "\n";
 
 	// Write main project
@@ -130,6 +130,11 @@ void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {
 	createBuildProp(setup, false, true, "LLVM");
 }
 
+void MSVCProvider::addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) {
+	includeList.push_back(setup.srcDir + "/icons/" + setup.projectName + ".ico");
+	includeList.push_back(setup.srcDir + "/dists/" + setup.projectName + ".rc");
+}
+
 void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_Global" + getPropertiesExtension()).c_str());
 	if (!properties)
@@ -157,13 +162,17 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	outputGlobalPropFile(setup, properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 }
 
+int MSVCProvider::getSolutionVersion() {
+	return _version + 1;
+}
+
 std::string MSVCProvider::getPreBuildEvent() const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
 	          "echo Executing Pre-Build script...\n"
-			  "echo.\n"
-			  "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;  &quot;$(TargetDir)&quot;\n"
+	          "echo.\n"
+	          "@call &quot;$(SolutionDir)../../devtools/create_project/scripts/prebuild.cmd&quot; &quot;$(SolutionDir)/../..&quot;  &quot;$(TargetDir)&quot;\n"
 	          "EXIT /B0";
 
 	return cmdLine;

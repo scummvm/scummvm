@@ -32,6 +32,7 @@
 #define VIDEO_BINK_DECODER_H
 
 #include "common/array.h"
+#include "common/bitstream.h"
 #include "common/rational.h"
 
 #include "video/video_decoder.h"
@@ -45,7 +46,6 @@ class QueuingAudioStream;
 
 namespace Common {
 class SeekableReadStream;
-class BitStream;
 class Huffman;
 
 class RDFT;
@@ -100,7 +100,7 @@ private:
 
 		uint32 sampleCount;
 
-		Common::BitStream *bits;
+		Common::BitStream32LELSB *bits;
 
 		bool first;
 
@@ -133,7 +133,7 @@ private:
 		uint32 offset;
 		uint32 size;
 
-		Common::BitStream *bits;
+		Common::BitStream32LELSB *bits;
 
 		VideoFrame();
 		~VideoFrame();
@@ -254,6 +254,11 @@ private:
 		/** Value of the last decoded high nibble in color data types. */
 		int _colLastVal;
 
+		uint32 _yBlockWidth;   ///< Width of the Y plane in blocks
+		uint32 _yBlockHeight;  ///< Height of the Y plane in blocks
+		uint32 _uvBlockWidth;  ///< Width of the U and V planes in blocks
+		uint32 _uvBlockHeight; ///< Height of the U and V planes in blocks
+
 		byte *_curPlanes[4]; ///< The 4 color planes, YUVA, current frame.
 		byte *_oldPlanes[4]; ///< The 4 color planes, YUVA, last frame.
 
@@ -320,7 +325,7 @@ private:
 
 	class BinkAudioTrack : public AudioTrack {
 	public:
-		BinkAudioTrack(AudioInfo &audio);
+		BinkAudioTrack(AudioInfo &audio, Audio::Mixer::SoundType soundType);
 		~BinkAudioTrack();
 
 		/** Decode an audio packet. */

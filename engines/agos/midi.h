@@ -33,6 +33,13 @@ class File;
 
 namespace AGOS {
 
+enum kMusicMode {
+	kMusicModeDisabled = 0,
+	kMusicModeAccolade = 1,
+	kMusicModeMilesAudio = 2,
+	kMusicModeSimon1 = 3
+};
+
 struct MusicInfo {
 	MidiParser *parser;
 	byte *data;
@@ -82,6 +89,7 @@ protected:
 	void resetVolumeTable();
 
 public:
+	bool _adLibMusic;
 	bool _enable_sfx;
 
 public:
@@ -107,12 +115,17 @@ public:
 	void setVolume(int musicVol, int sfxVol);
 
 public:
-	int open(int gameType);
+	int open(int gameType, bool isDemo);
 
 	// MidiDriver_BASE interface implementation
 	virtual void send(uint32 b);
 	virtual void metaEvent(byte type, byte *data, uint16 length);
 
+private:
+	kMusicMode _musicMode;
+
+private:
+	Common::SeekableReadStream *simon2SetupExtractFile(const Common::String &requestedFileName);
 };
 
 } // End of namespace AGOS

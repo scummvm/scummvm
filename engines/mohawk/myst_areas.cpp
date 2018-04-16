@@ -23,7 +23,7 @@
 #include "mohawk/myst_areas.h"
 #include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
-#include "mohawk/sound.h"
+#include "mohawk/myst_sound.h"
 #include "mohawk/video.h"
 
 #include "common/events.h"
@@ -32,17 +32,18 @@
 
 namespace Mohawk {
 
-MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) {
-	_vm = vm;
-	_parent = parent;
+MystArea::MystArea(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		_vm(vm),
+		_parent(parent),
+		_type(type) {
 
-	if (parent == NULL) {
+	if (parent == nullptr) {
 		_flags = rlstStream->readUint16LE();
 		_rect.left = rlstStream->readSint16LE();
 		_rect.top = rlstStream->readSint16LE();
 
 		if (_rect.top == -1) {
-			warning("Invalid _rect.top of -1 found - clamping to 0");
+			debugC(kDebugResource, "Invalid _rect.top of -1 found - clamping to 0");
 			_rect.top = 0;
 		}
 
@@ -66,10 +67,10 @@ MystResource::MystResource(MohawkEngine_Myst *vm, Common::SeekableReadStream *rl
 	debugC(kDebugResource, "\tdest: %d", _dest);
 }
 
-MystResource::~MystResource() {
+MystArea::~MystArea() {
 }
 
-void MystResource::handleMouseUp() {
+void MystArea::handleMouseUp() {
 	if (_dest == 0) {
 		warning("Movement type resource with null destination at position (%d, %d), (%d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
 		return;
@@ -77,14 +78,14 @@ void MystResource::handleMouseUp() {
 
 	uint16 opcode;
 
-	switch (type) {
-	case kMystForwardArea:
+	switch (_type) {
+	case kMystAreaForward:
 		opcode = 6;
 		break;
-	case kMystLeftArea:
+	case kMystAreaLeft:
 		opcode = 8;
 		break;
-	case kMystRightArea:
+	case kMystAreaRight:
 		opcode = 7;
 		break;
 	default:
@@ -96,29 +97,29 @@ void MystResource::handleMouseUp() {
 	_vm->_scriptParser->runOpcode(opcode, 0);
 }
 
-bool MystResource::canBecomeActive() {
+bool MystArea::canBecomeActive() {
 	return !unreachableZipDest() && (isEnabled() || (_flags & kMystUnknownFlag));
 }
 
-bool MystResource::unreachableZipDest() {
+bool MystArea::unreachableZipDest() {
 	return (_flags & kMystZipModeEnableFlag)
 			&& !_vm->_gameState->isReachableZipDest(_vm->getCurStack() , _dest);
 }
 
-bool MystResource::isEnabled() {
+bool MystArea::isEnabled() {
 	return _flags & kMystHotspotEnableFlag;
 }
 
-void MystResource::setEnabled(bool enabled) {
+void MystArea::setEnabled(bool enabled) {
 	if (enabled)
 		_flags |= kMystHotspotEnableFlag;
 	else
 		_flags &= ~kMystHotspotEnableFlag;
 }
 
-const Common::String MystResource::describe() {
+const Common::String MystArea::describe() {
 	Common::String desc = Common::String::format("type: %2d rect: (%3d %3d %3d %3d)",
-			type, _rect.left, _rect.top, _rect.width(), _rect.height());
+			_type, _rect.left, _rect.top, _rect.width(), _rect.height());
 
 	if (_dest != 0)
 		desc += Common::String::format(" dest: %4d", _dest);
@@ -126,7 +127,7 @@ const Common::String MystResource::describe() {
 	return desc;
 }
 
-void MystResource::drawBoundingRect() {
+void MystArea::drawBoundingRect() {
 	if (_rect.isValidRect()) {
 		if (!canBecomeActive())
 			_vm->_gfx->drawRect(_rect, kRectUnreachable);
@@ -137,18 +138,19 @@ void MystResource::drawBoundingRect() {
 	}
 }
 
-MystResourceType5::MystResourceType5(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
+MystAreaAction::MystAreaAction(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystArea(vm, type, rlstStream, parent) {
 	debugC(kDebugResource, "\tResource Type 5 Script:");
 
 	_script = vm->_scriptParser->readScript(rlstStream, kMystScriptNormal);
 }
 
-void MystResourceType5::handleMouseUp() {
+void MystAreaAction::handleMouseUp() {
 	_vm->_scriptParser->runScript(_script, this);
 }
 
-const Common::String MystResourceType5::describe() {
-	Common::String desc = MystResource::describe();
+const Common::String MystAreaAction::describe() {
+	Common::String desc = MystArea::describe();
 
 	if (_script->size() != 0) {
 		desc += " ops:";
@@ -161,7 +163,7 @@ const Common::String MystResourceType5::describe() {
 }
 
 // In Myst/Making of Myst, the paths are hardcoded ala Windows style without extension. Convert them.
-Common::String MystResourceType6::convertMystVideoName(Common::String name) {
+Common::String MystAreaVideo::convertMystVideoName(const Common::String &name) {
 	Common::String temp;
 
 	for (uint32 i = 1; i < name.size(); i++) {
@@ -174,7 +176,8 @@ Common::String MystResourceType6::convertMystVideoName(Common::String name) {
 	return temp + ".mov";
 }
 
-MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType5(vm, rlstStream, parent) {
+MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaAction(vm, type, rlstStream, parent) {
 	char c = 0;
 
 	do {
@@ -193,20 +196,20 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	// Position values require modulus 10000 to keep in sane range.
 	_left = rlstStream->readSint16LE() % 10000;
 	_top = rlstStream->readSint16LE() % 10000;
-	_playOnCardChange = rlstStream->readUint16LE();
+	_playOnCardChange = rlstStream->readUint16LE() != 0;
 	_direction = rlstStream->readSint16LE();
 	_playBlocking = rlstStream->readUint16LE();
 	_loop = rlstStream->readUint16LE();
-	_u3 = rlstStream->readUint16LE();
+	_playRate = rlstStream->readUint16LE();
 
-	// TODO: Out of bound values should clip the movie
-	if (_left < 0)
-		_left = 0;
-	if (_top < 0)
-		_top = 0;
-
-	if (_u3 != 0)
-		warning("Type 6 _u3 != 0");
+	// WORKAROUND: Myst v1.0 has playOnCardChange set to true
+	// for the Myst flyby video shown during the intro.
+	// This causes the flyby to play over the closed Myst book picture.
+	// Later releases of the game have that flag set to false.
+	// Here we apply a resource patch to match the newer releases.
+	if (_videoFile == "qtw/intro/intro2.mov") {
+		_playOnCardChange = false;
+	}
 
 	debugC(kDebugResource, "\tvideoFile: \"%s\"", _videoFile.c_str());
 	debugC(kDebugResource, "\tleft: %d", _left);
@@ -215,213 +218,199 @@ MystResourceType6::MystResourceType6(MohawkEngine_Myst *vm, Common::SeekableRead
 	debugC(kDebugResource, "\tdirection: %d", _direction);
 	debugC(kDebugResource, "\tplayBlocking: %d", _playBlocking);
 	debugC(kDebugResource, "\tplayOnCardChange: %d", _playOnCardChange);
-	debugC(kDebugResource, "\tu3: %d", _u3);
+	debugC(kDebugResource, "\tplayRate: %d", _playRate);
 }
 
-VideoHandle MystResourceType6::playMovie() {
+VideoEntryPtr MystAreaVideo::playMovie() {
 	// Check if the video is already running
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
 
 	// If the video is not running, play it
-	if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle)) {
-		handle = _vm->_video->playMovie(_videoFile, _left, _top, _loop);
-		if (_direction == -1) {
-			_vm->_video->seekToTime(handle, _vm->_video->getDuration(handle));
-			_vm->_video->setVideoRate(handle, -1);
+	if (!handle) {
+		handle = _vm->_video->playMovie(_videoFile, Audio::Mixer::kSFXSoundType);
+		if (!handle)
+			error("Failed to open '%s'", _videoFile.c_str());
+
+		handle->moveTo(_left, _top);
+		handle->setLooping(_loop != 0);
+
+		Common::Rational rate;
+		if (_playRate != 0) {
+			rate = Common::Rational(_playRate, 100);
+		} else {
+			rate = 1;
 		}
+
+		if (_direction == -1) {
+			rate = -rate;
+			handle->seek(handle->getDuration());
+		}
+
+		handle->setRate(rate);
 	} else {
 		// Resume the video
-		_vm->_video->pauseMovie(handle, false);
+		handle->pause(false);
+		handle->start();
 	}
 
 	if (_playBlocking) {
-		_vm->_video->waitUntilMovieEnds(handle);
-		handle = NULL_VID_HANDLE;
+		_vm->waitUntilMovieEnds(handle);
+		return VideoEntryPtr();
 	}
 
 	return handle;
 }
 
-void MystResourceType6::handleCardChange() {
+VideoEntryPtr MystAreaVideo::getVideo() {
+	// If the video is already in the manager, just return the handle
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
+	if (!handle) {
+		// If the video has not been loaded yet, do it but don't start playing it
+		handle = _vm->_video->playMovie(_videoFile, Audio::Mixer::kSFXSoundType);
+		if (!handle)
+			error("Failed to open '%s'", _videoFile.c_str());
+		handle->stop();
+	}
+
+	return handle;
+}
+
+void MystAreaVideo::handleCardChange() {
 	if (_playOnCardChange)
 		playMovie();
 }
 
-bool MystResourceType6::isPlaying() {
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
-	return handle != NULL_VID_HANDLE && !_vm->_video->endOfVideo(handle);
+bool MystAreaVideo::isPlaying() {
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
+	return handle && !handle->endOfVideo();
 }
 
-void MystResourceType6::pauseMovie(bool pause) {
-	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
-	if (handle != NULL_VID_HANDLE && !_vm->_video->endOfVideo(handle))
-		_vm->_video->pauseMovie(handle, pause);
+void MystAreaVideo::pauseMovie(bool pause) {
+	VideoEntryPtr handle = _vm->_video->findVideo(_videoFile);
+	if (handle && !handle->endOfVideo())
+		handle->pause(pause);
 }
 
-MystResourceType7::MystResourceType7(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
-	_var7 = rlstStream->readUint16LE();
-	_numSubResources = rlstStream->readUint16LE();
-	debugC(kDebugResource, "\tvar7: %d", _var7);
-	debugC(kDebugResource, "\tnumSubResources: %d", _numSubResources);
+MystAreaActionSwitch::MystAreaActionSwitch(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystArea(vm, type, rlstStream, parent) {
+	_actionSwitchVar = rlstStream->readUint16LE();
+	uint16 numSubResources = rlstStream->readUint16LE();
+	debugC(kDebugResource, "\tactionSwitchVar: %d", _actionSwitchVar);
+	debugC(kDebugResource, "\tnumSubResources: %d", numSubResources);
 
-	for (uint16 i = 0; i < _numSubResources; i++)
+	for (uint16 i = 0; i < numSubResources; i++)
 		_subResources.push_back(vm->loadResource(rlstStream, this));
 }
 
-MystResourceType7::~MystResourceType7() {
+MystAreaActionSwitch::~MystAreaActionSwitch() {
 	for (uint32 i = 0; i < _subResources.size(); i++)
 		delete _subResources[i];
 
 	_subResources.clear();
 }
 
-// TODO: All these functions to switch subresource are very similar.
-//       Find way to share code (function pointer pass?)
-void MystResourceType7::drawDataToScreen() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->drawDataToScreen();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
+void MystAreaActionSwitch::doSwitch(AreaHandler handler) {
+	if (_actionSwitchVar == 0xFFFF) {
+		if (_subResources.size() == 1)
+			(_subResources[0]->*handler)();
+		else if (_subResources.size() != 0)
+			warning("Action switch resource with _numSubResources of %d, but no control variable", _subResources.size());
 	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
+		uint16 varValue = _vm->_scriptParser->getVar(_actionSwitchVar);
 
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->drawDataToScreen();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->drawDataToScreen();
+		if (_subResources.size() == 1 && varValue != 0)
+			(_subResources[0]->*handler)();
+		else if (_subResources.size() != 0) {
+			if (varValue < _subResources.size())
+				(_subResources[varValue]->*handler)();
 			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
+				warning("Action switch resource Var %d: %d exceeds number of sub resources %d", _actionSwitchVar, varValue, _subResources.size());
 		}
 	}
 }
 
-void MystResourceType7::handleCardChange() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleCardChange();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
-
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleCardChange();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleCardChange();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
-		}
-	}
+void MystAreaActionSwitch::drawDataToScreen() {
+	doSwitch(&MystArea::drawDataToScreen);
 }
 
-void MystResourceType7::handleMouseUp() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleMouseUp();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
-
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseUp();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseUp();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
-		}
-	}
+void MystAreaActionSwitch::handleCardChange() {
+	doSwitch(&MystArea::handleCardChange);
 }
 
-void MystResourceType7::handleMouseDown() {
-	if (_var7 == 0xFFFF) {
-		if (_numSubResources == 1)
-			_subResources[0]->handleMouseDown();
-		else if (_numSubResources != 0)
-			warning("Type 7 Resource with _numSubResources of %d, but no control variable", _numSubResources);
-	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var7);
-
-		if (_numSubResources == 1 && varValue != 0)
-			_subResources[0]->handleMouseDown();
-		else if (_numSubResources != 0) {
-			if (varValue < _numSubResources)
-				_subResources[varValue]->handleMouseDown();
-			else
-				warning("Type 7 Resource Var %d: %d exceeds number of sub resources %d", _var7, varValue, _numSubResources);
-		}
-	}
+void MystAreaActionSwitch::handleMouseUp() {
+	doSwitch(&MystArea::handleMouseUp);
 }
 
-MystResourceType8::MystResourceType8(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType7(vm, rlstStream, parent) {
-	_var8 = rlstStream->readUint16LE();
-	_numSubImages = rlstStream->readUint16LE();
-	debugC(kDebugResource, "\tvar8: %d", _var8);
-	debugC(kDebugResource, "\tnumSubImages: %d", _numSubImages);
+void MystAreaActionSwitch::handleMouseDown() {
+	doSwitch(&MystArea::handleMouseDown);
+}
 
-	_subImages = new MystResourceType8::SubImage[_numSubImages];
+MystAreaImageSwitch::MystAreaImageSwitch(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaActionSwitch(vm, type, rlstStream, parent) {
+	_imageSwitchVar = rlstStream->readUint16LE();
+	uint16 numSubImages = rlstStream->readUint16LE();
+	debugC(kDebugResource, "\tvar8: %d", _imageSwitchVar);
+	debugC(kDebugResource, "\tnumSubImages: %d", numSubImages);
 
-	for (uint16 i = 0; i < _numSubImages; i++) {
+	for (uint16 i = 0; i < numSubImages; i++) {
 		debugC(kDebugResource, "\tSubimage %d:", i);
 
-		_subImages[i].wdib = rlstStream->readUint16LE();
-		_subImages[i].rect.left = rlstStream->readSint16LE();
+		SubImage subImage;
+		subImage.wdib = rlstStream->readUint16LE();
+		subImage.rect.left = rlstStream->readSint16LE();
 
-		if (_subImages[i].rect.left != -1) {
-			_subImages[i].rect.top = rlstStream->readSint16LE();
-			_subImages[i].rect.right = rlstStream->readSint16LE();
-			_subImages[i].rect.bottom = rlstStream->readSint16LE();
+		if (subImage.rect.left != -1) {
+			subImage.rect.top = rlstStream->readSint16LE();
+			subImage.rect.right = rlstStream->readSint16LE();
+			subImage.rect.bottom = rlstStream->readSint16LE();
 		} else {
 			// Use the hotspot rect as the source rect since the subimage is fullscreen
 			// Convert to bitmap coordinates (upside down)
-			_subImages[i].rect.left = _rect.left;
-			_subImages[i].rect.top = 333 - _rect.bottom;
-			_subImages[i].rect.right = _rect.right;
-			_subImages[i].rect.bottom = 333 - _rect.top;
+			subImage.rect.left = _rect.left;
+			subImage.rect.top = 333 - _rect.bottom;
+			subImage.rect.right = _rect.right;
+			subImage.rect.bottom = 333 - _rect.top;
 		}
 
-		debugC(kDebugResource, "\twdib: %d", _subImages[i].wdib);
-		debugC(kDebugResource, "\tleft: %d", _subImages[i].rect.left);
-		debugC(kDebugResource, "\ttop: %d", _subImages[i].rect.top);
-		debugC(kDebugResource, "\tright: %d", _subImages[i].rect.right);
-		debugC(kDebugResource, "\tbottom: %d", _subImages[i].rect.bottom);
+		debugC(kDebugResource, "\twdib: %d", subImage.wdib);
+		debugC(kDebugResource, "\tleft: %d", subImage.rect.left);
+		debugC(kDebugResource, "\ttop: %d", subImage.rect.top);
+		debugC(kDebugResource, "\tright: %d", subImage.rect.right);
+		debugC(kDebugResource, "\tbottom: %d", subImage.rect.bottom);
+
+		_subImages.push_back(subImage);
 	}
 }
 
-MystResourceType8::~MystResourceType8() {
-	delete[] _subImages;
+MystAreaImageSwitch::~MystAreaImageSwitch() {
 }
 
-void MystResourceType8::drawDataToScreen() {
-	// Need to call overidden Type 7 function to ensure
+void MystAreaImageSwitch::drawDataToScreen() {
+	// Need to call overridden function to ensure
 	// switch section is processed correctly.
-	MystResourceType7::drawDataToScreen();
+	MystAreaActionSwitch::drawDataToScreen();
 
 	bool drawSubImage = false;
 	int16 subImageId = 0;
 
-	if (_var8 == 0xFFFF) {
-		if (_numSubImages == 1) {
+	if (_imageSwitchVar == 0xFFFF) {
+		if (_subImages.size() == 1) {
 			subImageId = 0;
 			drawSubImage = true;
-		} else if (_numSubImages != 0)
-			warning("Type 8 Resource with _numSubImages of %d, but no control variable", _numSubImages);
+		} else if (_subImages.size() != 0)
+			warning("Image Switch resource with _numSubImages of %d, but no control variable", _subImages.size());
 	} else {
-		uint16 varValue = _vm->_scriptParser->getVar(_var8);
+		uint16 varValue = _vm->_scriptParser->getVar(_imageSwitchVar);
 
-		if (_numSubImages == 1 && varValue != 0) {
+		if (_subImages.size() == 1 && varValue != 0) {
 			subImageId = 0;
 			drawSubImage = true;
-		} else if (_numSubImages != 0) {
-			if (varValue < _numSubImages) {
+		} else if (_subImages.size() != 0) {
+			if (varValue < _subImages.size()) {
 				subImageId = varValue;
 				drawSubImage = true;
 			} else
-				warning("Type 8 Image Var %d: %d exceeds number of subImages %d", _var8, varValue, _numSubImages);
+				warning("Image Switch Var %d: %d exceeds number of subImages %d", _imageSwitchVar, varValue, _subImages.size());
 		}
 	}
 
@@ -436,20 +425,21 @@ void MystResourceType8::drawDataToScreen() {
 	}
 }
 
-void MystResourceType8::drawConditionalDataToScreen(uint16 state, bool update) {
+//TODO: Merge with the method above?
+void MystAreaImageSwitch::drawConditionalDataToScreen(uint16 state, bool update) {
 	bool drawSubImage = false;
 	int16 subImageId = 0;
 
 
-	if (_numSubImages == 1 && state != 0) {
+	if (_subImages.size() == 1 && state != 0) {
 		subImageId = 0;
 		drawSubImage = true;
-	} else if (_numSubImages != 0) {
-		if (state < _numSubImages) {
+	} else if (_subImages.size() != 0) {
+		if (state < _subImages.size()) {
 			subImageId = state;
 			drawSubImage = true;
 		} else
-			warning("Type 8 Image Var %d: %d exceeds number of subImages %d", _var8, state, _numSubImages);
+			warning("Image Switch Var %d: %d exceeds number of subImages %d", _imageSwitchVar, state, _subImages.size());
 	}
 
 
@@ -463,25 +453,32 @@ void MystResourceType8::drawConditionalDataToScreen(uint16 state, bool update) {
 		// Draw to screen
 		if (update) {
 			_vm->_gfx->copyImageSectionToScreen(imageToDraw, _subImages[subImageId].rect, _rect);
-			_vm->_system->updateScreen();
 		} else {
 			_vm->_gfx->copyImageSectionToBackBuffer(imageToDraw, _subImages[subImageId].rect, _rect);
 		}
 	}
 }
 
-uint16 MystResourceType8::getType8Var() {
-	return _var8;
+uint16 MystAreaImageSwitch::getImageSwitchVar() {
+	return _imageSwitchVar;
 }
 
-const Common::String MystResourceType8::describe() {
-	Common::String desc = Common::String::format("%s var: %2d",
-			MystResourceType7::describe().c_str(), _var8);
+MystAreaImageSwitch::SubImage MystAreaImageSwitch::getSubImage(uint index) const {
+	return _subImages[index];
+}
 
-	if (_numSubImages > 0) {
+void MystAreaImageSwitch::setSubImageRect(uint index, const Common::Rect &rect) {
+	_subImages[index].rect = rect;
+}
+
+const Common::String MystAreaImageSwitch::describe() {
+	Common::String desc = Common::String::format("%s var: %2d",
+	                                             MystAreaActionSwitch::describe().c_str(), _imageSwitchVar);
+
+	if (_subImages.size() > 0) {
 		desc +=  " subImgs:";
 
-		for (uint i = 0; i < _numSubImages; i++)
+		for (uint i = 0; i < _subImages.size(); i++)
 			desc += Common::String::format(" %d", (int16)_subImages[i].wdib);
 	}
 
@@ -490,7 +487,8 @@ const Common::String MystResourceType8::describe() {
 
 // No MystResourceType9!
 
-MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
+MystAreaSlider::MystAreaSlider(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaDrag(vm, type, rlstStream, parent) {
 	_dragSound = rlstStream->readUint16LE();
 
 	debugC(kDebugResource, "\tdrag sound : %d", _dragSound);
@@ -499,23 +497,23 @@ MystResourceType10::MystResourceType10(MohawkEngine_Myst *vm, Common::SeekableRe
 	_sliderHeight = _rect.bottom - _rect.top;
 }
 
-MystResourceType10::~MystResourceType10() {
+MystAreaSlider::~MystAreaSlider() {
 }
 
-void MystResourceType10::setStep(uint16 step) {
+void MystAreaSlider::setStep(uint16 step) {
 	_rect.top = _minV + _stepV * step - _sliderHeight / 2;
 	_rect.bottom = _rect.top + _sliderHeight;
 	_subImages[0].rect.top = 333 - _rect.bottom - 1;
 	_subImages[0].rect.bottom = 333 - _rect.top - 1;
 }
 
-void MystResourceType10::setPosition(uint16 pos) {
+void MystAreaSlider::setPosition(uint16 pos) {
 	Common::Point mouse;
 	mouse.y = pos;
 	updatePosition(mouse);
 }
 
-Common::Rect MystResourceType10::boundingBox() {
+Common::Rect MystAreaSlider::boundingBox() {
 	Common::Rect bb;
 
 	bb.top = _rect.top;
@@ -538,7 +536,7 @@ Common::Rect MystResourceType10::boundingBox() {
 	return bb;
 }
 
-void MystResourceType10::restoreBackground() {
+void MystAreaSlider::restoreBackground() {
 	// Restore background
 	Common::Rect src = boundingBox();
 	Common::Rect dest = boundingBox();
@@ -547,14 +545,11 @@ void MystResourceType10::restoreBackground() {
 	_vm->_gfx->copyImageSectionToScreen(_vm->getCardBackgroundId(), src, dest);
 }
 
-void MystResourceType10::handleMouseDown() {
-	// Tell the engine we are dragging a resource
-	_vm->_dragResource = this;
-
+void MystAreaSlider::handleMouseDown() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	updatePosition(mouse);
 
-	MystResourceType11::handleMouseDown();
+	MystAreaDrag::handleMouseDown();
 
 	// Restore background
 	restoreBackground();
@@ -563,7 +558,7 @@ void MystResourceType10::handleMouseDown() {
 	drawConditionalDataToScreen(2);
 }
 
-void MystResourceType10::handleMouseUp() {
+void MystAreaSlider::handleMouseUp() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	updatePosition(mouse);
 
@@ -587,19 +582,16 @@ void MystResourceType10::handleMouseUp() {
 			value = _pos.x;
 	}
 
-	_vm->_scriptParser->setVarValue(_var8, value);
+	_vm->_scriptParser->setVarValue(_imageSwitchVar, value);
 
-	MystResourceType11::handleMouseUp();
-
-	// No longer in drag mode
-	_vm->_dragResource = 0;
+	MystAreaDrag::handleMouseUp();
 }
 
-void MystResourceType10::handleMouseDrag() {
+void MystAreaSlider::handleMouseDrag() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	updatePosition(mouse);
 
-	MystResourceType11::handleMouseDrag();
+	MystAreaDrag::handleMouseDrag();
 
 	// Restore background
 	restoreBackground();
@@ -608,7 +600,7 @@ void MystResourceType10::handleMouseDrag() {
 	drawConditionalDataToScreen(2);
 }
 
-void MystResourceType10::updatePosition(const Common::Point &mouse) {
+void MystAreaSlider::updatePosition(const Common::Point &mouse) {
 	bool positionChanged = false;
 
 	Common::Point mouseClipped;
@@ -658,10 +650,11 @@ void MystResourceType10::updatePosition(const Common::Point &mouse) {
 	}
 
 	if (positionChanged && _dragSound)
-		_vm->_sound->replaceSoundMyst(_dragSound);
+		_vm->_sound->playEffect(_dragSound);
 }
 
-MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType8(vm, rlstStream, parent) {
+MystAreaDrag::MystAreaDrag(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaImageSwitch(vm, type, rlstStream, parent) {
 	_flagHV = rlstStream->readUint16LE();
 	_minH = rlstStream->readUint16LE();
 	_maxH = rlstStream->readUint16LE();
@@ -688,16 +681,15 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 	debugCN(kDebugResource, "Type 11 _mouseDragOpcode: %d\n", _mouseDragOpcode);
 	debugCN(kDebugResource, "Type 11 _mouseUpOpcode: %d\n", _mouseUpOpcode);
 
-	for (byte i = 0; i < 3; i++) {
+	for (byte i = 0; i < ARRAYSIZE(_lists); i++) {
 		debugC(kDebugResource, "\tList %d:", i);
 
-		_lists[i].listCount = rlstStream->readUint16LE();
-		debugC(kDebugResource, "\t%d values", _lists[i].listCount);
+		uint16 listCount = rlstStream->readUint16LE();
+		debugC(kDebugResource, "\t%d values", listCount);
 
-		_lists[i].list = new uint16[_lists[i].listCount];
-		for (uint16 j = 0; j < _lists[i].listCount; j++) {
-			_lists[i].list[j] = rlstStream->readUint16LE();
-			debugC(kDebugResource, "\tValue %d: %d", j, _lists[i].list[j]);
+		for (uint16 j = 0; j < listCount; j++) {
+			_lists[i].push_back(rlstStream->readUint16LE());
+			debugC(kDebugResource, "\tValue %d: %d", j, _lists[i][j]);
 		}
 	}
 
@@ -711,44 +703,42 @@ MystResourceType11::MystResourceType11(MohawkEngine_Myst *vm, Common::SeekableRe
 		_stepV = (_maxV - _minV) / (_stepsV - 1);
 }
 
-MystResourceType11::~MystResourceType11() {
-	for (byte i = 0; i < 3; i++)
-		delete[] _lists[i].list;
+MystAreaDrag::~MystAreaDrag() {
 }
 
-void MystResourceType11::handleMouseDown() {
+void MystAreaDrag::handleMouseDown() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	setPositionClipping(mouse, _pos);
 
 	_vm->_scriptParser->setInvokingResource(this);
-	_vm->_scriptParser->runOpcode(_mouseDownOpcode, _var8);
+	_vm->_scriptParser->runOpcode(_mouseDownOpcode, _imageSwitchVar);
 }
 
-void MystResourceType11::handleMouseUp() {
+void MystAreaDrag::handleMouseUp() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	setPositionClipping(mouse, _pos);
 
 	_vm->_scriptParser->setInvokingResource(this);
-	_vm->_scriptParser->runOpcode(_mouseUpOpcode, _var8);
+	_vm->_scriptParser->runOpcode(_mouseUpOpcode, _imageSwitchVar);
 }
 
-void MystResourceType11::handleMouseDrag() {
+void MystAreaDrag::handleMouseDrag() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 	setPositionClipping(mouse, _pos);
 
 	_vm->_scriptParser->setInvokingResource(this);
-	_vm->_scriptParser->runOpcode(_mouseDragOpcode, _var8);
+	_vm->_scriptParser->runOpcode(_mouseDragOpcode, _imageSwitchVar);
 }
 
-const Common::String MystResourceType11::describe() {
+const Common::String MystAreaDrag::describe() {
 	return Common::String::format("%s down: %s drag: %s up: %s",
-			MystResourceType8::describe().c_str(),
+			MystAreaImageSwitch::describe().c_str(),
 			_vm->_scriptParser->getOpcodeDesc(_mouseDownOpcode).c_str(),
 			_vm->_scriptParser->getOpcodeDesc(_mouseDragOpcode).c_str(),
 			_vm->_scriptParser->getOpcodeDesc(_mouseUpOpcode).c_str());
 }
 
-void MystResourceType11::setPositionClipping(const Common::Point &mouse, Common::Point &dest) {
+void MystAreaDrag::setPositionClipping(const Common::Point &mouse, Common::Point &dest) {
 	if (_flagHV & 2)
 		dest.y = CLIP<uint16>(mouse.y, _minV, _maxV);
 
@@ -756,19 +746,20 @@ void MystResourceType11::setPositionClipping(const Common::Point &mouse, Common:
 		dest.x = CLIP<uint16>(mouse.x, _minH, _maxH);
 }
 
-uint16 MystResourceType11::getList1(uint16 index) {
-	return (index < _lists[0].listCount) ? _lists[0].list[index] : 0;
+uint16 MystAreaDrag::getList1(uint16 index) {
+	return (index < _lists[0].size()) ? _lists[0][index] : 0;
 }
 
-uint16 MystResourceType11::getList2(uint16 index) {
-	return (index < _lists[1].listCount) ?  _lists[1].list[index] : 0;
+uint16 MystAreaDrag::getList2(uint16 index) {
+	return (index < _lists[1].size()) ?  _lists[1][index] : 0;
 }
 
-uint16 MystResourceType11::getList3(uint16 index) {
-	return (index < _lists[2].listCount) ?  _lists[2].list[index] : 0;
+uint16 MystAreaDrag::getList3(uint16 index) {
+	return (index < _lists[2].size()) ?  _lists[2][index] : 0;
 }
 
-MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResourceType11(vm, rlstStream, parent) {
+MystVideoInfo::MystVideoInfo(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystAreaDrag(vm, type, rlstStream, parent) {
 	_numFrames = rlstStream->readUint16LE();
 	_firstFrame = rlstStream->readUint16LE();
 	uint16 frameWidth = rlstStream->readUint16LE();
@@ -789,16 +780,15 @@ MystResourceType12::MystResourceType12(MohawkEngine_Myst *vm, Common::SeekableRe
 	debugC(kDebugResource, "\t_frameRect.bottom: %d", _frameRect.bottom);
 }
 
-MystResourceType12::~MystResourceType12() {
+MystVideoInfo::~MystVideoInfo() {
 }
 
-void MystResourceType12::drawFrame(uint16 frame) {
-	_currentFrame = _firstFrame + frame;
-	_vm->_gfx->copyImageToScreen(_currentFrame, _frameRect);
-	_vm->_system->updateScreen();
+void MystVideoInfo::drawFrame(uint16 frame) {
+	uint16 currentFrame = _firstFrame + frame;
+	_vm->_gfx->copyImageToScreen(currentFrame, _frameRect);
 }
 
-bool MystResourceType12::pullLeverV() {
+bool MystVideoInfo::pullLeverV() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	// Make the handle follow the mouse
@@ -814,7 +804,7 @@ bool MystResourceType12::pullLeverV() {
 	return step == maxStep;
 }
 
-void MystResourceType12::releaseLeverV() {
+void MystVideoInfo::releaseLeverV() {
 	const Common::Point &mouse = _vm->_system->getEventManager()->getMousePos();
 
 	// Get current lever frame
@@ -826,11 +816,12 @@ void MystResourceType12::releaseLeverV() {
 	// Release lever
 	for (int i = step; i >= 0; i--) {
 		drawFrame(i);
-		_vm->_system->delayMillis(10);
+		_vm->doFrame();
 	}
 }
 
-MystResourceType13::MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableReadStream *rlstStream, MystResource *parent) : MystResource(vm, rlstStream, parent) {
+MystAreaHover::MystAreaHover(MohawkEngine_Myst *vm, ResourceType type, Common::SeekableReadStream *rlstStream, MystArea *parent) :
+		MystArea(vm, type, rlstStream, parent) {
 	_enterOpcode = rlstStream->readUint16LE();
 	_leaveOpcode = rlstStream->readUint16LE();
 
@@ -838,27 +829,27 @@ MystResourceType13::MystResourceType13(MohawkEngine_Myst *vm, Common::SeekableRe
 	debugC(kDebugResource, "\t_leaveOpcode: %d", _leaveOpcode);
 }
 
-void MystResourceType13::handleMouseEnter() {
+void MystAreaHover::handleMouseEnter() {
 	// Pass along the enter opcode to the script parser
 	// The variable to use is stored in the dest field
 	_vm->_scriptParser->runOpcode(_enterOpcode, _dest);
 }
 
-void MystResourceType13::handleMouseLeave() {
+void MystAreaHover::handleMouseLeave() {
 	// Pass along the leave opcode (with no parameters) to the script parser
 	// The variable to use is stored in the dest field
 	_vm->_scriptParser->runOpcode(_leaveOpcode, _dest);
 }
 
-void MystResourceType13::handleMouseUp() {
+void MystAreaHover::handleMouseUp() {
 	// Type 13 Resources do nothing on Mouse Clicks.
 	// This is required to override the inherited default
-	// i.e. MystResource::handleMouseUp
+	// i.e. MystArea::handleMouseUp
 }
 
-const Common::String MystResourceType13::describe() {
+const Common::String MystAreaHover::describe() {
 	return Common::String::format("%s enter: %s leave: %s",
-			MystResource::describe().c_str(),
+			MystArea::describe().c_str(),
 			_vm->_scriptParser->getOpcodeDesc(_enterOpcode).c_str(),
 			_vm->_scriptParser->getOpcodeDesc(_leaveOpcode).c_str());
 }

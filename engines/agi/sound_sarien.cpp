@@ -21,8 +21,7 @@
  */
 
 #include "common/random.h"
-
-#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 #include "agi/agi.h"
 
@@ -40,7 +39,7 @@ static const int16 waveformRamp[WAVEFORM_SIZE] = {
 	0, -248, -240, -232, -224, -216, -208, -200,
 	-192, -184, -176, -168, -160, -152, -144, -136,
 	-128, -120, -112, -104, -96, -88, -80, -72,
-	-64, -56, -48, -40, -32, -24, -16, -8	// Ramp up
+	-64, -56, -48, -40, -32, -24, -16, -8   // Ramp up
 };
 
 static const int16 waveformSquare[WAVEFORM_SIZE] = {
@@ -51,7 +50,7 @@ static const int16 waveformSquare[WAVEFORM_SIZE] = {
 	-255, -230, -220, -220, -220, -220, -220, -220,
 	-220, -220, -220, -220, -220, -220, -220, -220,
 	-220, -220, -220, -220, -220, -220, -220, -220,
-	-220, -220, -220, -110, 0, 0, 0, 0	// Square
+	-220, -220, -220, -110, 0, 0, 0, 0  // Square
 };
 
 static const int16 waveformMac[WAVEFORM_SIZE] = {
@@ -72,9 +71,10 @@ SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm,
 	_env = false;
 	_playingSound = -1;
 	_playing = false;
-	_useChorus = true;	// FIXME: Currently always true?
+	_useChorus = true;  // FIXME: Currently always true?
 
 	switch (_vm->_soundemu) {
+	default:
 	case SOUND_EMU_NONE:
 		_waveform = waveformRamp;
 		_env = true;
@@ -94,11 +94,11 @@ SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm,
 		debug(0, "Initializing sound: envelopes disabled");
 	}
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, _soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 SoundGenSarien::~SoundGenSarien() {
-	_mixer->stopHandle(_soundHandle);
+	_mixer->stopHandle(*_soundHandle);
 
 	free(_sndBuffer);
 }
@@ -154,14 +154,14 @@ void SoundGenSarien::stopNote(int i) {
 	if (_useChorus) {
 		// Stop chorus ;)
 		if (_chn[i].type == AGI_SOUND_4CHN &&
-			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
+		        _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 			stopNote(i + 4);
 		}
 	}
 }
 
 void SoundGenSarien::playNote(int i, int freq, int vol) {
-	if (!_vm->getflag(fSoundOn))
+	if (!_vm->getFlag(VM_FLAG_SOUND_ON))
 		vol = 0;
 	else if (vol && _vm->_soundemu == SOUND_EMU_PC)
 		vol = 160;
@@ -175,7 +175,7 @@ void SoundGenSarien::playNote(int i, int freq, int vol) {
 	if (_useChorus) {
 		// Add chorus ;)
 		if (_chn[i].type == AGI_SOUND_4CHN &&
-			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
+		        _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 
 			int newfreq = freq * 1007 / 1000;
 
@@ -237,7 +237,7 @@ void SoundGenSarien::playSound() {
 }
 
 uint32 SoundGenSarien::mixSound() {
-	register int i, p;
+	int i, p;
 	const int16 *src;
 	int c, b, m;
 
@@ -265,7 +265,7 @@ uint32 SoundGenSarien::mixSound() {
 #endif
 				_sndBuffer[i] += (b * m) >> 4;
 
-				p += (uint32) 118600 *4 / _chn[c].freq;
+				p += (uint32) 118600 * 4 / _chn[c].freq;
 
 				// FIXME: Fingolfin asks: why is there a FIXME here? Please either clarify what
 				// needs fixing, or remove it!

@@ -27,6 +27,7 @@
 #include "common/noncopyable.h"
 #include "common/list.h" // For OSystem::getSupportedFormats()
 #include "graphics/pixelformat.h"
+#include "graphics/mode.h"
 
 namespace Audio {
 class Mixer;
@@ -256,6 +257,12 @@ public:
 		kFeatureAspectRatioCorrection,
 
 		/**
+		 * If supported this flag can be used to switch between unfiltered and
+		 * filtered graphics modes.
+		 */
+		kFeatureFilteringMode,
+
+		/**
 		 * Determine whether a virtual keyboard is too be shown or not.
 		 * This would mostly be implemented by backends for hand held devices,
 		 * like PocketPC, Palms, Symbian phones like the P800, Zaurus, etc.
@@ -314,7 +321,54 @@ public:
 		 *
 		 * This feature has no associated state.
 		 */
-		kFeatureDisplayLogFile
+		kFeatureDisplayLogFile,
+
+		/**
+		 * The presence of this feature indicates whether the hasTextInClipboard()
+		 * and getTextFromClipboard() calls are supported.
+		 *
+		 * This feature has no associated state.
+		 */
+		kFeatureClipboardSupport,
+
+		/**
+		 * The presence of this feature indicates whether the openUrl()
+		 * call is supported.
+		 *
+		 * This feature has no associated state.
+		 */
+		kFeatureOpenUrl	,
+
+		/**
+		* show on-screen control
+		*/
+		kFeatureOnScreenControl,
+
+		/**
+		* mouse emulation mode
+		*/
+		kFeatureTouchpadMode,
+
+		/**
+		* swap menu and back buttons
+		*/
+		kFeatureSwapMenuAndBackButtons,
+
+		/**
+		* keyboard mouse and joystick mouse speed
+		*/
+		kFeatureKbdMouseSpeed,
+
+		/**
+		* change analog joystick deadzone
+		*/
+		kFeatureJoystickDeadzone,
+
+		/**
+		* shaders
+		*/
+		kFeatureShader
+
 	};
 
 	/**
@@ -525,6 +579,34 @@ public:
 #endif
 
 	/**
+	 * Retrieve a list of all hardware shaders supported by this backend.
+	 * This can be only hardware shaders.
+	 * it is completely up to the backend maintainer to decide what is
+	 * appropriate here and what not.
+	 * The list is terminated by an all-zero entry.
+	 * @return a list of supported shaders
+	 */
+	virtual const GraphicsMode *getSupportedShaders() const {
+		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {0, 0, 0}};
+		return no_shader;
+	}
+
+	/**
+	 * Switch to the specified shader mode. If switching to the new mode
+	 * failed, this method returns false.
+	 *
+	 * @param mode	the ID of the new shader mode
+	 * @return true if the switch was successful, false otherwise
+	 */
+	virtual bool setShader(int id) { return false; }
+
+	/**
+	 * Determine which shader is currently active.
+	 * @return the ID of the active shader
+	 */
+	virtual int getShader() const { return 0; }
+
+	/**
 	 * Set the size and color format of the virtual screen. Typical sizes include:
 	 *  - 320x200 (e.g. for most SCUMM games, and Simon)
 	 *  - 320x240 (e.g. for FM-TOWN SCUMM games)
@@ -551,6 +633,18 @@ public:
 	 * @param format	the new virtual screen pixel format
 	 */
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
+
+	/**
+	 * Send a list of graphics modes to the backend so it can make a decision
+	 * about the best way to set up the display hardware.
+	 *
+	 * Engines that switch between different virtual screen sizes during a game
+	 * should call this function prior to any call to initSize. Engines that use
+	 * only a single screen size do not need to call this function.
+	 *
+	 * @param modes the list of graphics modes the engine will probably use.
+	 */
+	virtual void initSizeHint(const Graphics::ModeList &modes) {}
 
 	/**
 	 * Return an int value which is changed whenever any screen
@@ -600,7 +694,8 @@ public:
 		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switching fullscreen mode */
 		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switching the GFX graphics mode (setGraphicsMode) */
 		kTransactionSizeChangeFailed = (1 << 3),	/**< Failed switching the screen dimensions (initSize) */
-		kTransactionFormatNotSupported = (1 << 4)	/**< Failed setting the color format */
+		kTransactionFormatNotSupported = (1 << 4),	/**< Failed setting the color format */
+		kTransactionFilteringFailed = (1 << 5)		/**< Failed setting the filtering mode */
 	};
 
 	/**
@@ -1086,11 +1181,30 @@ public:
 	virtual void displayMessageOnOSD(const char *msg) = 0;
 
 	/**
+	 * Display an icon indicating background activity
+	 *
+	 * The icon is displayed in an 'on screen display'. It is visible above
+	 * the regular screen content or near it.
+	 *
+	 * The caller keeps ownership of the icon. It is acceptable to free
+	 * the surface just after the call.
+	 *
+	 * There is no preferred pixel format for the icon. The backend should
+	 * convert its copy of the icon to an appropriate format.
+	 *
+	 * The caller must call this method again with a null pointer
+	 * as a parameter to indicate the icon should no longer be displayed.
+	 *
+	 * @param icon the icon to display on screen
+	 */
+	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) = 0;
+
+	/**
 	 * Return the SaveFileManager, used to store and load savestates
 	 * and other modifiable persistent game data. For more information,
 	 * refer to the SaveFileManager documentation.
 	 */
-	Common::SaveFileManager *getSavefileManager();
+	virtual Common::SaveFileManager *getSavefileManager();
 
 #if defined(USE_TASKBAR)
 	/**
@@ -1198,6 +1312,42 @@ public:
 	 * might for example require leaving fullscreen mode.
 	 */
 	virtual bool displayLogFile() { return false; }
+
+	/**
+	 * Returns whether there is text available in the clipboard.
+	 *
+	 * The kFeatureClipboardSupport feature flag can be used to
+	 * test whether this call has been implemented by the active
+	 * backend.
+	 *
+	 * @return true if there is text in the clipboard, false otherwise
+	 */
+	virtual bool hasTextInClipboard() { return false; }
+
+	/**
+	 * Returns clipboard contents as a String.
+	 *
+	 * The kFeatureClipboardSupport feature flag can be used to
+	 * test whether this call has been implemented by the active
+	 * backend.
+	 *
+	 * @return clipboard contents ("" if hasTextInClipboard() == false)
+	 */
+	virtual Common::String getTextFromClipboard() { return ""; }
+
+	/**
+	 * Open the given Url in the default browser (if available on the target
+	 * system).
+	 *
+	 * @return true on success, false otherwise.
+	 *
+	 * @note It is up to the backend to ensure that the system is in a state
+	 * that allows the user to actually see the web page. This might for
+	 * example require leaving fullscreen mode.
+	 *
+	 * @parem url the URL to open
+	 */
+	virtual bool openUrl(const Common::String &url) {return false; }
 
 	/**
 	 * Returns the locale of the system.

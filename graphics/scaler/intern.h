@@ -46,8 +46,8 @@ static inline uint32 interpolate32_1_1(uint32 p1, uint32 p2) {
  */
 template<typename ColorMask>
 static inline uint32 interpolate32_3_1(uint32 p1, uint32 p2) {
-	register uint32 x = ((p1 & ColorMask::qhighBits) >> 2) * 3 + ((p2 & ColorMask::qhighBits) >> 2);
-	register uint32 y = ((p1 & ColorMask::qlowBits) * 3 + (p2 & ColorMask::qlowBits)) >> 2;
+	uint32 x = ((p1 & ColorMask::qhighBits) >> 2) * 3 + ((p2 & ColorMask::qhighBits) >> 2);
+	uint32 y = ((p1 & ColorMask::qlowBits) * 3 + (p2 & ColorMask::qlowBits)) >> 2;
 
 	y &= ColorMask::qlowBits;
 	return x + y;

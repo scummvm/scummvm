@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -34,27 +34,61 @@ namespace MADS {
 
 namespace Phantom {
 
+enum Verb {
+	VERB_LOOK = 0x3,
+	VERB_TAKE = 0x4,
+	VERB_PUSH = 0x5,
+	VERB_OPEN = 0x6,
+	VERB_PUT = 0x7,
+	VERB_TALK_TO = 0x8,
+	VERB_GIVE = 0x9,
+	VERB_PULL = 0xA,
+	VERB_CLOSE = 0xB,
+	VERB_THROW = 0xC,
+	VERB_WALK_TO = 0xD,
+	VERB_ATTACK = 0x14,
+	VERB_CLIMB_DOWN = 0x21,
+	VERB_CLIMB_INTO = 0x22,
+	VERB_CLIMB_THROUGH = 0x23,
+	VERB_EXIT = 0x34,
+	VERB_EXIT_TO = 0x37,
+	VERB_JUMP_INTO = 0x53,
+	VERB_LASSO = 0x59,
+	VERB_LOCK = 0x5D,
+	VERB_LOOK_AT = 0x60,
+	VERB_LOOK_THROUGH = 0x61,
+	VERB_READ = 0x7A,
+	VERB_REMOVE = 0x7C,
+	VERB_TURN_OFF = 0x95,
+	VERB_TURN_ON = 0x96,
+	VERB_UNLOCK = 0x97,
+	VERB_WALK_ACROSS = 0x99,
+	VERB_WALK_DOWN = 0x9A,
+	VERB_WALK_THROUGH = 0x9B,
+	VERB_WALK_UP = 0x9C,
+	VERB_WEAR = 0xA1,
+	VERB_CLIMB_UP = 0xA5,
+	VERB_WALK_ONTO = 0xA6,
+	VERB_WALK = 0xA7,
+	VERB_ENTER = 0xEC,
+	VERB_WALK_BEHIND = 0xF3,
+	VERB_CLIMB = 0x120,
+	VERB_ATTACH = 0x131,
+	VERB_GRAPPLE = 0x133,
+	VERB_SIT_ON = 0x138,
+	VERB_SIT_IN = 0x13A,
+	VERB_WALK_DOWN_STAIRS_TO = 0x153
+};
+
 enum Noun {
 	NOUN_GAME = 0x1,
 	NOUN_QSAVE = 0x2,
-	NOUN_LOOK = 0x3,
-	NOUN_TAKE = 0x4,
-	NOUN_PUSH = 0x5,
-	NOUN_OPEN = 0x6,
-	NOUN_PUT = 0x7,
-	NOUN_TALK_TO = 0x8,
-	NOUN_GIVE = 0x9,
-	NOUN_PULL = 0xA,
-	NOUN_CLOSE = 0xB,
-	NOUN_THROW = 0xC,
-	NOUN_WALK_TO = 0xD,
 	NOUN_ = 0xE,
 	NOUN_IN_ONE = 0xF,
 	NOUN_IN_TWO = 0x10,
 	NOUN_ACT_CURTAIN = 0x11,
 	NOUN_AISLE = 0x12,
 	NOUN_APRON = 0x13,
-	NOUN_ATTACK = 0x14,
 	NOUN_BACKSTAGE = 0x15,
 	NOUN_BEAR_PROP = 0x16,
 	NOUN_BLUE_FRAME = 0x17,
@@ -67,9 +101,6 @@ enum Noun {
 	NOUN_CEILING = 0x1E,
 	NOUN_CHAIR = 0x1F,
 	NOUN_CIRCULAR_STAIRCASE = 0x20,
-	NOUN_CLIMB_DOWN = 0x21,
-	NOUN_CLIMB_INTO = 0x22,
-	NOUN_CLIMB_THROUGH = 0x23,
 	NOUN_COLUMN_PROP = 0x24,
 	NOUN_CONDUCTORS_STAND = 0x25,
 	NOUN_CORRIDOR = 0x26,
@@ -86,10 +117,8 @@ enum Noun {
 	NOUN_DRESSING_TABLE = 0x31,
 	NOUN_ELEPHANT_PROP = 0x32,
 	NOUN_ENVELOPE = 0x33,
-	NOUN_EXIT = 0x34,
 	NOUN_EXIT_DOWN = 0x35,
 	NOUN_EXIT_SIGN = 0x36,
-	NOUN_EXIT_TO = 0x37,
 	NOUN_EXIT_TO_BACKSTAGE = 0x38,
 	NOUN_EXIT_TO_CELLAR = 0x39,
 	NOUN_EXIT_TO_CORRIDOR = 0x3A,
@@ -117,21 +146,16 @@ enum Noun {
 	NOUN_HOUSE = 0x50,
 	NOUN_IN_ONE2 = 0x51,
 	NOUN_IN_TWO2 = 0x52,
-	NOUN_JUMP_INTO = 0x53,
 	NOUN_JUNK = 0x54,
 	NOUN_KEY = 0x55,
 	NOUN_LAMP = 0x56,
 	NOUN_LANTERN = 0x57,
 	NOUN_LARGE_NOTE = 0x58,
-	NOUN_LASSO = 0x59,
 	NOUN_LEG = 0x5A,
 	NOUN_LETTER = 0x5B,
 	NOUN_LIGHT_FIXTURE = 0x5C,
-	NOUN_LOCK = 0x5D,
 	NOUN_LOCKING_RAIL = 0x5E,
 	NOUN_LOCKRAIL = 0x5F,
-	NOUN_LOOK_AT = 0x60,
-	NOUN_LOOK_THROUGH = 0x61,
 	NOUN_MANNEQUINS = 0x62,
 	NOUN_MIRROR = 0x63,
 	NOUN_MUMMY_PROP = 0x64,
@@ -156,9 +180,7 @@ enum Noun {
 	NOUN_PROSCENIUM_ARCH = 0x77,
 	NOUN_PURCHASE_LINES = 0x78,
 	NOUN_RAILING = 0x79,
-	NOUN_READ = 0x7A,
 	NOUN_RED_FRAME = 0x7B,
-	NOUN_REMOVE = 0x7C,
 	NOUN_ROPE = 0x7D,
 	NOUN_RUG = 0x7E,
 	NOUN_SANDBAG = 0x7F,
@@ -183,25 +205,14 @@ enum Noun {
 	NOUN_TICKET = 0x92,
 	NOUN_TRAP_CEILING = 0x93,
 	NOUN_TRAP_DOOR = 0x94,
-	NOUN_TURN_OFF = 0x95,
-	NOUN_TURN_ON = 0x96,
-	NOUN_UNLOCK = 0x97,
 	NOUN_URN = 0x98,
-	NOUN_WALK_ACROSS = 0x99,
-	NOUN_WALK_DOWN = 0x9A,
-	NOUN_WALK_THROUGH = 0x9B,
-	NOUN_WALK_UP = 0x9C,
 	NOUN_WALL = 0x9D,
 	NOUN_WARDROBE = 0x9E,
 	NOUN_WASTE_BASKET = 0x9F,
 	NOUN_WATER_PIPE = 0xA0,
-	NOUN_WEAR = 0xA1,
 	NOUN_WEDDING_RING = 0xA2,
 	NOUN_YELLOW_FRAME = 0xA3,
 	NOUN_PROP = 0xA4,
-	NOUN_CLIMB_UP = 0xA5,
-	NOUN_WALK_ONTO = 0xA6,
-	NOUN_WALK = 0xA7,
 	NOUN_LEFT_DOOR = 0xA8,
 	NOUN_RIGHT_DOOR = 0xA9,
 	NOUN_DOOR_TO_PIT = 0xAA,
@@ -270,14 +281,12 @@ enum Noun {
 	NOUN_DECORATIVE_VASE = 0xE9,
 	NOUN_MARBLE_COLUMN = 0xEA,
 	NOUN_BOX_FIVE = 0xEB,
-	NOUN_ENTER = 0xEC,
 	NOUN_BOX_SIX = 0xED,
 	NOUN_BOX_SEVEN = 0xEE,
 	NOUN_BOX_EIGHT = 0xEF,
 	NOUN_BOX_NINE = 0xF0,
 	NOUN_STEP = 0xF1,
 	NOUN_PANEL = 0xF2,
-	NOUN_WALK_BEHIND = 0xF3,
 	NOUN_MIDDLE_DOORWAY = 0xF4,
 	NOUN_LIGHT = 0xF5,
 	NOUN_CANDLE = 0xF6,
@@ -322,7 +331,6 @@ enum Noun {
 	NOUN_MIDDLE_LEVEL = 0x11D,
 	NOUN_LOWER_LEVEL = 0x11E,
 	NOUN_LADDER = 0x11F,
-	NOUN_CLIMB = 0x120,
 	NOUN_CHANDELIER_TRAP = 0x121,
 	NOUN_PIECE_OF_WOOD = 0x122,
 	NOUN_CUT_HEMP = 0x123,
@@ -339,16 +347,12 @@ enum Noun {
 	NOUN_MONSIEUR_RICHARD = 0x12E,
 	NOUN_JULIE2 = 0x12F,
 	NOUN_CABLE_HOOK = 0x130,
-	NOUN_ATTACH = 0x131,
 	NOUN_ROPE_WITH_HOOK = 0x132,
-	NOUN_GRAPPLE = 0x133,
 	NOUN_OAR = 0x134,
 	NOUN_ORGAN = 0x135,
 	NOUN_SIT_AT = 0x136,
 	NOUN_ORGAN_BENCH = 0x137,
-	NOUN_SIT_ON = 0x138,
 	NOUN_LARGE_CHAIR = 0x139,
-	NOUN_SIT_IN = 0x13A,
 	NOUN_SARCOPHAGUS = 0x13B,
 	NOUN_SKULL = 0x13C,
 	NOUN_SKULLS = 0x13D,
@@ -373,7 +377,6 @@ enum Noun {
 	NOUN_BOX_TEN = 0x150,
 	NOUN_FOYER = 0x151,
 	NOUN_WALK_DOWN_STAIRCASE = 0x152,
-	NOUN_WALK_DOWN_STAIRS_TO = 0x153,
 	NOUN_HAT_RACK = 0x154,
 	NOUN_VASE = 0x155,
 	NOUN_CLOTHES_DUMMY = 0x156,
@@ -471,9 +474,9 @@ public:
 class SceneInfoPhantom : public SceneInfo {
 	friend class SceneInfo;
 protected:
-	virtual void loadCodes(MSurface &depthSurface, int variant);
+	virtual void loadCodes(BaseSurface &depthSurface, int variant);
 
-	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream);
+	virtual void loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream);
 
 	/**
 	* Constructor
@@ -481,41 +484,7 @@ protected:
 	SceneInfoPhantom(MADSEngine *vm) : SceneInfo(vm) {}
 };
 
-// TODO: Temporary, remove once implemented properly
-class Scene1xx : public PhantomScene {
-protected:
-	/**
-	 * Plays an appropriate sound when entering a scene
-	 */
-	void sceneEntrySound() {}
-
-	/**
-	 *Sets the AA file to use for the scene
-	 */
-	void setAAName() {}
-
-	/**
-	 * Updates the prefix used for getting player sprites for the scene
-	 */
-	void setPlayerSpritesPrefix() {}
-public:
-	Scene1xx(MADSEngine *vm) : PhantomScene(vm) {}
-};
-
-// TODO: Temporary, remove once implemented properly
-class DummyScene : public PhantomScene {
-public:
-	DummyScene(MADSEngine *vm) : PhantomScene(vm) {
-		warning("Unimplemented scene");
-	}
-
-	virtual void setup() {}
-	virtual void enter() {}
-	virtual void actions() {}
-};
-
 } // End of namespace Phantom
-
 } // End of namespace MADS
 
 #endif /* MADS_PHANTOM_SCENES_H */

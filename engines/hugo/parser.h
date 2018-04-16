@@ -32,6 +32,7 @@
 
 namespace Common {
 struct Event;
+class ReadStream;
 }
 
 namespace Hugo {

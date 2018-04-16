@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011, 2012, 2013, 2014 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2017 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -18,26 +18,16 @@
 #ifndef MT32EMU_TABLES_H
 #define MT32EMU_TABLES_H
 
+#include "globals.h"
+#include "Types.h"
+
 namespace MT32Emu {
-
-// Sample rate to use in mixing. With the progress of development, we've found way too many thing dependent.
-// In order to achieve further advance in emulation accuracy, sample rate made fixed throughout the emulator.
-// The output from the synth is supposed to be resampled to convert the sample rate.
-const unsigned int SAMPLE_RATE = 32000;
-
-// MIDI interface data transfer rate in samples. Used to simulate the transfer delay.
-const double MIDI_DATA_TRANSFER_RATE = (double)SAMPLE_RATE / 31250.0 * 8.0;
-
-const float CM32L_REVERB_TO_LA32_ANALOG_OUTPUT_GAIN_FACTOR = 0.68f;
-
-const int MIDDLEC = 60;
-
-class Synth;
 
 class Tables {
 private:
 	Tables();
 	Tables(Tables &);
+	~Tables() {}
 
 public:
 	static const Tables &getInstance();
@@ -65,8 +55,8 @@ public:
 	Bit16u logsin9[512];
 
 	const Bit8u *resAmpDecayFactor;
-};
+}; // class Tables
 
-}
+} // namespace MT32Emu
 
-#endif
+#endif // #ifndef MT32EMU_TABLES_H

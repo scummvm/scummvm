@@ -571,6 +571,7 @@ void MortevielleEngine::fctSearch() {
 				_curSearchObjId = getFirstObject();
 				if (_curSearchObjId != 0) {
 					_searchCount = 0;
+					_is = 0;
 					_heroSearching = true;
 					_menu->setSearchMenu();
 					prepareNextObject();
@@ -1678,9 +1679,8 @@ void MortevielleEngine::endGame() {
 	handleDescriptionText(2, 35);
 	startMusicOrSpeech(0);
 	testKey(false);
-	// A wait message was displayed.
-	// testKey (aka tkey1) was called before and after.
-	// This double call is useless, thus removed
+	displayInterScreenMessage(2036);
+	testKey(false);
 	resetVariables();
 }
 

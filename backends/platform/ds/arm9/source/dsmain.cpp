@@ -68,8 +68,9 @@
 // - Try discworld?
 
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
+// Allow use of stuff in <nds.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
 
 #include <nds.h>
@@ -573,7 +574,7 @@ void initGame() {
 		s_currentGame = &gameList[0];		// Default game
 
 		for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
-			if (!stricmp(gameName, gameList[r].gameId)) {
+			if (!scumm_stricmp(gameName, gameList[r].gameId)) {
 				s_currentGame = &gameList[r];
 	//			consolePrintf("Game list num: %d\n", r);
 			}
@@ -2499,7 +2500,7 @@ void penUpdate() {
 
 //	if (getKeysHeld() & KEY_L) consolePrintf("%d, %d   penX=%d, penY=%d tz=%d\n", IPC->touchXpx, IPC->touchYpx, penX, penY, IPC->touchZ1);
 
-	bool penDownThisFrame = (IPC->touchZ1 > 0) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0);
+	bool penDownThisFrame = (!(IPC->buttons & 0x40)) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0);
 	static bool moved = false;
 
 	if (( (tapScreenClicks) || getKeyboardEnable() ) && (getIsDisplayMode8Bit())) {
@@ -2626,7 +2627,7 @@ void penUpdate() {
 				penDownSaved = true;
 			}
 
-			if ((IPC->touchZ1 > 0) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0)) {
+			if ((!(IPC->buttons & 0x40)) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0)) {
 				penX = IPC->touchXpx + touchXOffset;
 				penY = IPC->touchYpx + touchYOffset;
 				moved = true;
@@ -2648,7 +2649,7 @@ void penUpdate() {
 
 
 
-	if ((IPC->touchZ1 > 0) || ((penDownFrames == 2)) ) {
+	if ((!(IPC->buttons & 0x40)) || ((penDownFrames == 2)) ) {
 		penDownLastFrame = true;
 		penDownFrames++;
 	} else {

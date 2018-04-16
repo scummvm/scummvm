@@ -20,768 +20,1317 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/textconsole.h"
+#include "engines/util.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
+#include "agi/mouse_cursor.h"
+#include "agi/palette.h"
+#include "agi/picture.h"
+#include "agi/text.h"
 
 namespace Agi {
 
-#define DEV_X0(x) ((x) << 1)
-#define DEV_X1(x) (((x) << 1) + 1)
-#define DEV_Y(x) (x)
-
-#ifndef MAX_INT
-#  define MAX_INT (int)((unsigned)~0 >> 1)
-#endif
-
 #include "agi/font.h"
 
-/**
- * 16 color RGB palette.
- * This array contains the 6-bit RGB values of the EGA palette exported
- * to the console drivers.
- */
-static const uint8 egaPalette[16 * 3] = {
-	0x00, 0x00, 0x00,
-	0x00, 0x00, 0x2a,
-	0x00, 0x2a, 0x00,
-	0x00, 0x2a, 0x2a,
-	0x2a, 0x00, 0x00,
-	0x2a, 0x00, 0x2a,
-	0x2a, 0x15, 0x00,
-	0x2a, 0x2a, 0x2a,
-	0x15, 0x15, 0x15,
-	0x15, 0x15, 0x3f,
-	0x15, 0x3f, 0x15,
-	0x15, 0x3f, 0x3f,
-	0x3f, 0x15, 0x15,
-	0x3f, 0x15, 0x3f,
-	0x3f, 0x3f, 0x15,
-	0x3f, 0x3f, 0x3f
-};
-
-/**
- * Atari ST AGI palette.
- * Used by all of the tested Atari ST AGI games
- * from Donald Duck's Playground (1986) to Manhunter II (1989).
- * 16 RGB colors. 3 bits per color component.
- */
-static const uint8 atariStAgiPalette[16 * 3] = {
-	0x0, 0x0, 0x0,
-	0x0, 0x0, 0x7,
-	0x0, 0x4, 0x0,
-	0x0, 0x5, 0x4,
-	0x5, 0x0, 0x0,
-	0x5, 0x3, 0x6,
-	0x4, 0x3, 0x0,
-	0x5, 0x5, 0x5,
-	0x3, 0x3, 0x2,
-	0x0, 0x5, 0x7,
-	0x0, 0x6, 0x0,
-	0x0, 0x7, 0x6,
-	0x7, 0x2, 0x3,
-	0x7, 0x4, 0x7,
-	0x7, 0x7, 0x4,
-	0x7, 0x7, 0x7
-};
-
-/**
- * Second generation Apple IIGS AGI palette.
- * A 16-color, 12-bit RGB palette.
- *
- * Used by at least the following Apple IIGS AGI versions:
- * 1.003 (Leisure Suit Larry I  v1.0E, intro says 1987)
- * 1.005 (AGI Demo 2            1987-06-30?)
- * 1.006 (King's Quest I        v1.0S 1988-02-23)
- * 1.007 (Police Quest I        v2.0B 1988-04-21 8:00am)
- * 1.013 (King's Quest II       v2.0A 1988-06-16 (CE))
- * 1.013 (Mixed-Up Mother Goose v2.0A 1988-05-31 10:00am)
- * 1.014 (King's Quest III      v2.0A 1988-08-28 (CE))
- * 1.014 (Space Quest II        v2.0A, LOGIC.141 says 1988)
- * 2.004 (Manhunter I           v2.0E 1988-10-05 (CE))
- * 2.006 (King's Quest IV       v1.0K 1988-11-22 (CE))
- * 3.001 (Black Cauldron        v1.0O 1989-02-24 (CE))
- * 3.003 (Gold Rush!            v1.0M 1989-02-28 (CE))
- */
-static const uint8 appleIIgsAgiPaletteV2[16 * 3] = {
-	0x0, 0x0, 0x0,
-	0x0, 0x0, 0xF,
-	0x0, 0x8, 0x0,
-	0x0, 0xD, 0xB,
-	0xC, 0x0, 0x0,
-	0xB, 0x7, 0xD,
-	0x8, 0x5, 0x0,
-	0xB, 0xB, 0xB,
-	0x7, 0x7, 0x7,
-	0x0, 0xB, 0xF,
-	0x0, 0xE, 0x0,
-	0x0, 0xF, 0xD,
-	0xF, 0x9, 0x8,
-	0xD, 0x9, 0xF, // Only this differs from the 1st generation palette
-	0xE, 0xE, 0x0,
-	0xF, 0xF, 0xF
-};
-
-/**
- * First generation Amiga & Apple IIGS AGI palette.
- * A 16-color, 12-bit RGB palette.
- *
- * Used by at least the following Amiga AGI versions:
- * 2.082 (King's Quest I   v1.0U 1986)
- * 2.082 (Space Quest I    v1.2  1986)
- * 2.090 (King's Quest III v1.01 1986-11-08)
- * 2.107 (King's Quest II  v2.0J 1987-01-29)
- * x.yyy (Black Cauldron   v2.00 1987-06-14)
- * x.yyy (Larry I          v1.05 1987-06-26)
- *
- * Also used by at least the following Apple IIGS AGI versions:
- * 1.002 (Space Quest I, intro says v2.2 1987)
- */
-static const uint8 amigaAgiPaletteV1[16 * 3] = {
-	0x0, 0x0, 0x0,
-	0x0, 0x0, 0xF,
-	0x0, 0x8, 0x0,
-	0x0, 0xD, 0xB,
-	0xC, 0x0, 0x0,
-	0xB, 0x7, 0xD,
-	0x8, 0x5, 0x0,
-	0xB, 0xB, 0xB,
-	0x7, 0x7, 0x7,
-	0x0, 0xB, 0xF,
-	0x0, 0xE, 0x0,
-	0x0, 0xF, 0xD,
-	0xF, 0x9, 0x8,
-	0xF, 0x7, 0x0,
-	0xE, 0xE, 0x0,
-	0xF, 0xF, 0xF
-};
-
-/**
- * Second generation Amiga AGI palette.
- * A 16-color, 12-bit RGB palette.
- *
- * Used by at least the following Amiga AGI versions:
- * 2.202 (Space Quest II v2.0F. Intro says 1988. ScummVM 0.10.0 detects as 1986-12-09)
- */
-static const uint8 amigaAgiPaletteV2[16 * 3] = {
-	0x0, 0x0, 0x0,
-	0x0, 0x0, 0xF,
-	0x0, 0x8, 0x0,
-	0x0, 0xD, 0xB,
-	0xC, 0x0, 0x0,
-	0xB, 0x7, 0xD,
-	0x8, 0x5, 0x0,
-	0xB, 0xB, 0xB,
-	0x7, 0x7, 0x7,
-	0x0, 0xB, 0xF,
-	0x0, 0xE, 0x0,
-	0x0, 0xF, 0xD,
-	0xF, 0x9, 0x8,
-	0xD, 0x0, 0xF,
-	0xE, 0xE, 0x0,
-	0xF, 0xF, 0xF
-};
-
-/**
- * Third generation Amiga AGI palette.
- * A 16-color, 12-bit RGB palette.
- *
- * Used by at least the following Amiga AGI versions:
- * 2.310 (Police Quest I   v2.0B 1989-02-22)
- * 2.316 (Gold Rush!       v2.05 1989-03-09)
- * x.yyy (Manhunter I      v1.06 1989-03-18)
- * 2.333 (Manhunter II     v3.06 1989-08-17)
- * 2.333 (King's Quest III v2.15 1989-11-15)
- */
-static const uint8 amigaAgiPaletteV3[16 * 3] = {
-	0x0, 0x0, 0x0,
-	0x0, 0x0, 0xB,
-	0x0, 0xB, 0x0,
-	0x0, 0xB, 0xB,
-	0xB, 0x0, 0x0,
-	0xB, 0x0, 0xB,
-	0xC, 0x7, 0x0,
-	0xB, 0xB, 0xB,
-	0x7, 0x7, 0x7,
-	0x0, 0x0, 0xF,
-	0x0, 0xF, 0x0,
-	0x0, 0xF, 0xF,
-	0xF, 0x0, 0x0,
-	0xF, 0x0, 0xF,
-	0xF, 0xF, 0x0,
-	0xF, 0xF, 0xF
-};
-
-/**
- * 16 color amiga-ish palette.
- */
-static const uint8 newPalette[16 * 3] = {
-	0x00, 0x00, 0x00,
-	0x00, 0x00, 0x3f,
-	0x00, 0x2A, 0x00,
-	0x00, 0x2A, 0x2A,
-	0x33, 0x00, 0x00,
-	0x2f, 0x1c, 0x37,
-	0x23, 0x14, 0x00,
-	0x2f, 0x2f, 0x2f,
-	0x15, 0x15, 0x15,
-	0x00, 0x2f, 0x3f,
-	0x00, 0x33, 0x15,
-	0x15, 0x3F, 0x3F,
-	0x3f, 0x27, 0x23,
-	0x3f, 0x15, 0x3f,
-	0x3b, 0x3b, 0x00,
-	0x3F, 0x3F, 0x3F
-};
-
-/**
- * 256 color palette used with AGI256 and AGI256-2 games.
- * Uses full 8 bits per color component.
- */
-static const uint8 vgaPalette[256 * 3] = {
-	0x00, 0x00, 0x00,
-	0x00, 0x00, 0xA8,
-	0x00, 0xA8, 0x00,
-	0x00, 0xA8, 0xA8,
-	0xA8, 0x00, 0x00,
-	0xA8, 0x00, 0xA8,
-	0xA8, 0x54, 0x00,
-	0xA8, 0xA8, 0xA8,
-	0x54, 0x54, 0x54,
-	0x54, 0x54, 0xFC,
-	0x54, 0xFC, 0x54,
-	0x54, 0xFC, 0xFC,
-	0xFC, 0x54, 0x54,
-	0xFC, 0x54, 0xFC,
-	0xFC, 0xFC, 0x54,
-	0xFC, 0xFC, 0xFC,
-	0x00, 0x00, 0x00,
-	0x14, 0x14, 0x14,
-	0x20, 0x20, 0x20,
-	0x2C, 0x2C, 0x2C,
-	0x38, 0x38, 0x38,
-	0x44, 0x44, 0x44,
-	0x50, 0x50, 0x50,
-	0x60, 0x60, 0x60,
-	0x70, 0x70, 0x70,
-	0x80, 0x80, 0x80,
-	0x90, 0x90, 0x90,
-	0xA0, 0xA0, 0xA0,
-	0xB4, 0xB4, 0xB4,
-	0xC8, 0xC8, 0xC8,
-	0xE0, 0xE0, 0xE0,
-	0xFC, 0xFC, 0xFC,
-	0x00, 0x00, 0xFC,
-	0x40, 0x00, 0xFC,
-	0x7C, 0x00, 0xFC,
-	0xBC, 0x00, 0xFC,
-	0xFC, 0x00, 0xFC,
-	0xFC, 0x00, 0xBC,
-	0xFC, 0x00, 0x7C,
-	0xFC, 0x00, 0x40,
-	0xFC, 0x00, 0x00,
-	0xFC, 0x40, 0x00,
-	0xFC, 0x7C, 0x00,
-	0xFC, 0xBC, 0x00,
-	0xFC, 0xFC, 0x00,
-	0xBC, 0xFC, 0x00,
-	0x7C, 0xFC, 0x00,
-	0x40, 0xFC, 0x00,
-	0x00, 0xFC, 0x00,
-	0x00, 0xFC, 0x40,
-	0x00, 0xFC, 0x7C,
-	0x00, 0xFC, 0xBC,
-	0x00, 0xFC, 0xFC,
-	0x00, 0xBC, 0xFC,
-	0x00, 0x7C, 0xFC,
-	0x00, 0x40, 0xFC,
-	0x7C, 0x7C, 0xFC,
-	0x9C, 0x7C, 0xFC,
-	0xBC, 0x7C, 0xFC,
-	0xDC, 0x7C, 0xFC,
-	0xFC, 0x7C, 0xFC,
-	0xFC, 0x7C, 0xDC,
-	0xFC, 0x7C, 0xBC,
-	0xFC, 0x7C, 0x9C,
-	0xFC, 0x7C, 0x7C,
-	0xFC, 0x9C, 0x7C,
-	0xFC, 0xBC, 0x7C,
-	0xFC, 0xDC, 0x7C,
-	0xFC, 0xFC, 0x7C,
-	0xDC, 0xFC, 0x7C,
-	0xBC, 0xFC, 0x7C,
-	0x9C, 0xFC, 0x7C,
-	0x7C, 0xFC, 0x7C,
-	0x7C, 0xFC, 0x9C,
-	0x7C, 0xFC, 0xBC,
-	0x7C, 0xFC, 0xDC,
-	0x7C, 0xFC, 0xFC,
-	0x7C, 0xDC, 0xFC,
-	0x7C, 0xBC, 0xFC,
-	0x7C, 0x9C, 0xFC,
-	0xB4, 0xB4, 0xFC,
-	0xC4, 0xB4, 0xFC,
-	0xD8, 0xB4, 0xFC,
-	0xE8, 0xB4, 0xFC,
-	0xFC, 0xB4, 0xFC,
-	0xFC, 0xB4, 0xE8,
-	0xFC, 0xB4, 0xD8,
-	0xFC, 0xB4, 0xC4,
-	0xFC, 0xB4, 0xB4,
-	0xFC, 0xC4, 0xB4,
-	0xFC, 0xD8, 0xB4,
-	0xFC, 0xE8, 0xB4,
-	0xFC, 0xFC, 0xB4,
-	0xE8, 0xFC, 0xB4,
-	0xD8, 0xFC, 0xB4,
-	0xC4, 0xFC, 0xB4,
-	0xB4, 0xFC, 0xB4,
-	0xB4, 0xFC, 0xC4,
-	0xB4, 0xFC, 0xD8,
-	0xB4, 0xFC, 0xE8,
-	0xB4, 0xFC, 0xFC,
-	0xB4, 0xE8, 0xFC,
-	0xB4, 0xD8, 0xFC,
-	0xB4, 0xC4, 0xFC,
-	0x00, 0x00, 0x70,
-	0x1C, 0x00, 0x70,
-	0x38, 0x00, 0x70,
-	0x54, 0x00, 0x70,
-	0x70, 0x00, 0x70,
-	0x70, 0x00, 0x54,
-	0x70, 0x00, 0x38,
-	0x70, 0x00, 0x1C,
-	0x70, 0x00, 0x00,
-	0x70, 0x1C, 0x00,
-	0x70, 0x38, 0x00,
-	0x70, 0x54, 0x00,
-	0x70, 0x70, 0x00,
-	0x54, 0x70, 0x00,
-	0x38, 0x70, 0x00,
-	0x1C, 0x70, 0x00,
-	0x00, 0x70, 0x00,
-	0x00, 0x70, 0x1C,
-	0x00, 0x70, 0x38,
-	0x00, 0x70, 0x54,
-	0x00, 0x70, 0x70,
-	0x00, 0x54, 0x70,
-	0x00, 0x38, 0x70,
-	0x00, 0x1C, 0x70,
-	0x38, 0x38, 0x70,
-	0x44, 0x38, 0x70,
-	0x54, 0x38, 0x70,
-	0x60, 0x38, 0x70,
-	0x70, 0x38, 0x70,
-	0x70, 0x38, 0x60,
-	0x70, 0x38, 0x54,
-	0x70, 0x38, 0x44,
-	0x70, 0x38, 0x38,
-	0x70, 0x44, 0x38,
-	0x70, 0x54, 0x38,
-	0x70, 0x60, 0x38,
-	0x70, 0x70, 0x38,
-	0x60, 0x70, 0x38,
-	0x54, 0x70, 0x38,
-	0x44, 0x70, 0x38,
-	0x38, 0x70, 0x38,
-	0x38, 0x70, 0x44,
-	0x38, 0x70, 0x54,
-	0x38, 0x70, 0x60,
-	0x38, 0x70, 0x70,
-	0x38, 0x60, 0x70,
-	0x38, 0x54, 0x70,
-	0x38, 0x44, 0x70,
-	0x50, 0x50, 0x70,
-	0x58, 0x50, 0x70,
-	0x60, 0x50, 0x70,
-	0x68, 0x50, 0x70,
-	0x70, 0x50, 0x70,
-	0x70, 0x50, 0x68,
-	0x70, 0x50, 0x60,
-	0x70, 0x50, 0x58,
-	0x70, 0x50, 0x50,
-	0x70, 0x58, 0x50,
-	0x70, 0x60, 0x50,
-	0x70, 0x68, 0x50,
-	0x70, 0x70, 0x50,
-	0x68, 0x70, 0x50,
-	0x60, 0x70, 0x50,
-	0x58, 0x70, 0x50,
-	0x50, 0x70, 0x50,
-	0x50, 0x70, 0x58,
-	0x50, 0x70, 0x60,
-	0x50, 0x70, 0x68,
-	0x50, 0x70, 0x70,
-	0x50, 0x68, 0x70,
-	0x50, 0x60, 0x70,
-	0x50, 0x58, 0x70,
-	0x00, 0x00, 0x40,
-	0x10, 0x00, 0x40,
-	0x20, 0x00, 0x40,
-	0x30, 0x00, 0x40,
-	0x40, 0x00, 0x40,
-	0x40, 0x00, 0x30,
-	0x40, 0x00, 0x20,
-	0x40, 0x00, 0x10,
-	0x40, 0x00, 0x00,
-	0x40, 0x10, 0x00,
-	0x40, 0x20, 0x00,
-	0x40, 0x30, 0x00,
-	0x40, 0x40, 0x00,
-	0x30, 0x40, 0x00,
-	0x20, 0x40, 0x00,
-	0x10, 0x40, 0x00,
-	0x00, 0x40, 0x00,
-	0x00, 0x40, 0x10,
-	0x00, 0x40, 0x20,
-	0x00, 0x40, 0x30,
-	0x00, 0x40, 0x40,
-	0x00, 0x30, 0x40,
-	0x00, 0x20, 0x40,
-	0x00, 0x10, 0x40,
-	0x20, 0x20, 0x40,
-	0x28, 0x20, 0x40,
-	0x30, 0x20, 0x40,
-	0x38, 0x20, 0x40,
-	0x40, 0x20, 0x40,
-	0x40, 0x20, 0x38,
-	0x40, 0x20, 0x30,
-	0x40, 0x20, 0x28,
-	0x40, 0x20, 0x20,
-	0x40, 0x28, 0x20,
-	0x40, 0x30, 0x20,
-	0x40, 0x38, 0x20,
-	0x40, 0x40, 0x20,
-	0x38, 0x40, 0x20,
-	0x30, 0x40, 0x20,
-	0x28, 0x40, 0x20,
-	0x20, 0x40, 0x20,
-	0x20, 0x40, 0x28,
-	0x20, 0x40, 0x30,
-	0x20, 0x40, 0x38,
-	0x20, 0x40, 0x40,
-	0x20, 0x38, 0x40,
-	0x20, 0x30, 0x40,
-	0x20, 0x28, 0x40,
-	0x2C, 0x2C, 0x40,
-	0x30, 0x2C, 0x40,
-	0x34, 0x2C, 0x40,
-	0x3C, 0x2C, 0x40,
-	0x40, 0x2C, 0x40,
-	0x40, 0x2C, 0x3C,
-	0x40, 0x2C, 0x34,
-	0x40, 0x2C, 0x30,
-	0x40, 0x2C, 0x2C,
-	0x40, 0x30, 0x2C,
-	0x40, 0x34, 0x2C,
-	0x40, 0x3C, 0x2C,
-	0x40, 0x40, 0x2C,
-	0x3C, 0x40, 0x2C,
-	0x34, 0x40, 0x2C,
-	0x30, 0x40, 0x2C,
-	0x2C, 0x40, 0x2C,
-	0x2C, 0x40, 0x30,
-	0x2C, 0x40, 0x34,
-	0x2C, 0x40, 0x3C,
-	0x2C, 0x40, 0x40,
-	0x2C, 0x3C, 0x40,
-	0x2C, 0x34, 0x40,
-	0x2C, 0x30, 0x40,
-	0x40, 0x40, 0x40,
-	0x38, 0x38, 0x38,
-	0x30, 0x30, 0x30,
-	0x28, 0x28, 0x28,
-	0x24, 0x24, 0x24,
-	0x1C, 0x1C, 0x1C,
-	0x14, 0x14, 0x14,
-	0x0C, 0x0C, 0x0C
-};
-
-static const uint16 cgaMap[16] = {
-	0x0000,			//  0 - black
-	0x0d00,			//  1 - blue
-	0x0b00,			//  2 - green
-	0x0f00,			//  3 - cyan
-	0x000b,			//  4 - red
-	0x0b0d,			//  5 - magenta
-	0x000d,			//  6 - brown
-	0x0b0b,			//  7 - gray
-	0x0d0d,			//  8 - dark gray
-	0x0b0f,			//  9 - light blue
-	0x0b0d,			// 10 - light green
-	0x0f0d,			// 11 - light cyan
-	0x0f0d,			// 12 - light red
-	0x0f00,			// 13 - light magenta
-	0x0f0b,			// 14 - yellow
-	0x0f0f			// 15 - white
-};
-
-struct UpdateBlock {
-	int x1, y1;
-	int x2, y2;
-};
-
-static struct UpdateBlock update = {
-	MAX_INT, MAX_INT, 0, 0
-};
-
-GfxMgr::GfxMgr(AgiBase *vm) : _vm(vm) {
-	_shakeH = NULL;
-	_shakeV = NULL;
+GfxMgr::GfxMgr(AgiBase *vm, GfxFont *font) : _vm(vm), _font(font) {
 	_agipalFileNum = 0;
-	_currentCursorPalette = 0;	// cursor palette not set
+
+	memset(&_paletteGfxMode, 0, sizeof(_paletteGfxMode));
+	memset(&_paletteTextMode, 0, sizeof(_paletteTextMode));
+
+	memset(&_mouseCursor, 0, sizeof(_mouseCursor));
+	memset(&_mouseCursorBusy, 0, sizeof(_mouseCursorBusy));
+
+	initPriorityTable();
+
+	_renderStartVisualOffsetY = 0;
+	_renderStartDisplayOffsetY = 0;
+
+	_upscaledHires = DISPLAY_UPSCALED_DISABLED;
+	_displayScreenWidth = DISPLAY_DEFAULT_WIDTH;
+	_displayScreenHeight = DISPLAY_DEFAULT_HEIGHT;
+	_displayFontWidth = 8;
+	_displayFontHeight = 8;
+
+	_displayWidthMulAdjust = 0; // visualPos * (2+0) = displayPos
+	_displayHeightMulAdjust = 0; // visualPos * (1+0) = displayPos
+
+	_pixels = 0;
+	_displayPixels = 0;
+
+	_activeScreen = NULL;
+	_gameScreen = NULL;
+	_priorityScreen = NULL;
+	_displayScreen = NULL;
 }
 
+/**
+ * Initialize graphics device.
+ *
+ * @see deinit_video()
+ */
+int GfxMgr::initVideo() {
+	bool forceHires = false;
 
-//
-//  Layer 4:  640x480?  ==================  User display
-//                              ^
-//                              |  do_update(), put_block()
-//                              |
-//  Layer 3:  640x480?  ==================  Framebuffer
-//                              ^
-//                              |  flush_block(), put_pixels()
-//                              |
-//  Layer 2:  320x200   ==================  AGI engine screen (console), put_pixel()
-//                              |
-//  Layer 1:  160x336   ==================  AGI screen
-//
-//  Upper half (160x168) of Layer 1 is for the normal 16 color & control line/priority info.
-//  Lower half (160x168) of Layer 1 is for the 256 color information (Used with AGI256 & AGI256-2).
-//
+	// Set up palettes
+	initPalette(_paletteTextMode, PALETTE_EGA);
 
-#define SHAKE_MAG 3
-
-void GfxMgr::shakeStart() {
-	int i;
-
-	if ((_shakeH = (uint8 *)malloc(GFX_WIDTH * SHAKE_MAG)) == NULL)
-		return;
-
-	if ((_shakeV = (uint8 *)malloc(SHAKE_MAG * (GFX_HEIGHT - SHAKE_MAG))) == NULL) {
-		free(_shakeH);
-		return;
-	}
-
-	for (i = 0; i < GFX_HEIGHT - SHAKE_MAG; i++) {
-		memcpy(_shakeV + i * SHAKE_MAG, _agiScreen + i * GFX_WIDTH, SHAKE_MAG);
-	}
-
-	for (i = 0; i < SHAKE_MAG; i++) {
-		memcpy(_shakeH + i * GFX_WIDTH, _agiScreen + i * GFX_WIDTH, GFX_WIDTH);
-	}
-}
-
-void GfxMgr::shakeScreen(int n) {
-	int i;
-
-	if (n == 0) {
-		for (i = 0; i < (GFX_HEIGHT - SHAKE_MAG); i++) {
-			memmove(&_agiScreen[GFX_WIDTH * i],
-					&_agiScreen[GFX_WIDTH * (i + SHAKE_MAG) + SHAKE_MAG],
-					GFX_WIDTH - SHAKE_MAG);
+	switch (_vm->_renderMode) {
+	case Common::kRenderEGA:
+		initPalette(_paletteGfxMode, PALETTE_EGA);
+		break;
+	case Common::kRenderCGA:
+		initPalette(_paletteGfxMode, PALETTE_CGA, 4, 8);
+		break;
+	case Common::kRenderVGA:
+		initPalette(_paletteGfxMode, PALETTE_VGA, 256, 8);
+		break;
+	case Common::kRenderHercG:
+		initPalette(_paletteGfxMode, PALETTE_HERCULES_GREEN, 2, 8);
+		forceHires = true;
+		break;
+	case Common::kRenderHercA:
+		initPalette(_paletteGfxMode, PALETTE_HERCULES_AMBER, 2, 8);
+		forceHires = true;
+		break;
+	case Common::kRenderAmiga:
+		if (!ConfMan.getBool("altamigapalette")) {
+			// Set the correct Amiga palette depending on AGI interpreter version
+			if (_vm->getVersion() < 0x2936)
+				initPalette(_paletteGfxMode, PALETTE_AMIGA_V1, 16, 4);
+			else if (_vm->getVersion() == 0x2936)
+				initPalette(_paletteGfxMode, PALETTE_AMIGA_V2, 16, 4);
+			else if (_vm->getVersion() > 0x2936)
+				initPalette(_paletteGfxMode, PALETTE_AMIGA_V3, 16, 4);
+		} else {
+			// Set the old common alternative Amiga palette
+			initPalette(_paletteGfxMode, PALETTE_AMIGA_ALT);
 		}
+		break;
+	case Common::kRenderApple2GS:
+		switch (_vm->getGameID()) {
+		case GID_SQ1:
+			// Special one, only used for Space Quest 1 on Apple IIgs. Is the same as Amiga v1 palette
+			initPalette(_paletteGfxMode, PALETTE_APPLE_II_GS_SQ1, 16, 4);
+			break;
+		default:
+			// Regular "standard" Apple IIgs palette, used by everything else
+			initPalette(_paletteGfxMode, PALETTE_APPLE_II_GS, 16, 4);
+			break;
+		}
+		break;
+	case Common::kRenderAtariST:
+		initPalette(_paletteGfxMode, PALETTE_ATARI_ST, 16, 3);
+		break;
+	case Common::kRenderMacintosh:
+		switch (_vm->getGameID()) {
+		case GID_KQ3:
+		case GID_PQ1:
+			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT, 16);
+			break;
+		case GID_GOLDRUSH:
+			// We use the common KQ3/PQ1 palette at the moment.
+			// It seems the Gold Rush palette, that came with the game is quite ugly.
+			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT, 16);
+			break;
+		case GID_SQ2:
+			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT3, 16);
+			break;
+		default:
+			initPaletteCLUT(_paletteGfxMode, PALETTE_MACINTOSH_CLUT3, 16);
+			break;
+		}
+		break;
+	default:
+		error("initVideo: unsupported render mode");
+		break;
+	}
+
+	//bool forcedUpscale = true;
+
+	if (_font->isFontHires() || forceHires) {
+		// Upscaling enable
+		_upscaledHires = DISPLAY_UPSCALED_640x400;
+		_displayScreenWidth = 640;
+		_displayScreenHeight = 400;
+		_displayFontWidth = 16;
+		_displayFontHeight = 16;
+
+		_displayWidthMulAdjust = 2;
+		_displayHeightMulAdjust = 1;
+	}
+
+	// set up mouse cursors
+	switch (_vm->_renderMode) {
+	case Common::kRenderEGA:
+	case Common::kRenderCGA:
+	case Common::kRenderVGA:
+	case Common::kRenderHercG:
+	case Common::kRenderHercA:
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_SCI, 11, 16, 0, 0);
+		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
+		break;
+	case Common::kRenderAmiga:
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_AMIGA, 8, 11, 0, 0);
+		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_AMIGA_BUSY, 13, 16, 7, 8);
+		break;
+	case Common::kRenderApple2GS:
+		// had no special busy mouse cursor
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_APPLE_II_GS, 9, 11, 0, 0);
+		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
+		break;
+	case Common::kRenderAtariST:
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 0, 0);
+		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_SCI_BUSY, 15, 16, 7, 8);
+		break;
+	case Common::kRenderMacintosh:
+		// It looks like Atari ST + Macintosh used the same standard mouse cursor
+		// TODO: Verify by checking actual hardware
+		initMouseCursor(&_mouseCursor, MOUSECURSOR_ATARI_ST, 11, 16, 0, 0);
+		initMouseCursor(&_mouseCursorBusy, MOUSECURSOR_MACINTOSH_BUSY, 10, 14, 7, 8);
+		break;
+	default:
+		error("initVideo: unsupported render mode");
+		break;
+	}
+
+	_pixels = SCRIPT_WIDTH * SCRIPT_HEIGHT;
+	_gameScreen = (byte *)calloc(_pixels, 1);
+	_priorityScreen = (byte *)calloc(_pixels, 1);
+	_activeScreen = _gameScreen;
+	//_activeScreen = _priorityScreen;
+
+	_displayPixels = _displayScreenWidth * _displayScreenHeight;
+	_displayScreen = (byte *)calloc(_displayPixels, 1);
+
+	initGraphics(_displayScreenWidth, _displayScreenHeight);
+
+	setPalette(true); // set gfx-mode palette
+
+	// set up mouse cursor palette
+	CursorMan.replaceCursorPalette(MOUSECURSOR_PALETTE, 1, ARRAYSIZE(MOUSECURSOR_PALETTE) / 3);
+	setMouseCursor();
+
+	return errOK;
+}
+
+/**
+ * Deinitialize graphics device.
+ *
+ * @see init_video()
+ */
+int GfxMgr::deinitVideo() {
+	// Free mouse cursors in case they were allocated
+	if (_mouseCursor.bitmapDataAllocated)
+		free(_mouseCursor.bitmapDataAllocated);
+	if (_mouseCursorBusy.bitmapDataAllocated)
+		free(_mouseCursorBusy.bitmapDataAllocated);
+
+	free(_displayScreen);
+	free(_gameScreen);
+	free(_priorityScreen);
+
+	return errOK;
+}
+
+void GfxMgr::setRenderStartOffset(uint16 offsetY) {
+	if (offsetY >= (VISUAL_HEIGHT - SCRIPT_HEIGHT))
+		error("invalid render start offset");
+
+	_renderStartVisualOffsetY = offsetY;
+	_renderStartDisplayOffsetY = offsetY * (1 + _displayHeightMulAdjust);
+}
+uint16 GfxMgr::getRenderStartDisplayOffsetY() {
+	return _renderStartDisplayOffsetY;
+}
+
+// Translates a game screen coordinate to a display screen coordinate
+// Game screen to 320x200 -> x * 2, y + renderStart
+// Game screen to 640x400 -> x * 4, (y * 2) + renderStart
+void GfxMgr::translateGamePosToDisplayScreen(int16 &x, int16 &y) {
+	x = x * (2 + _displayWidthMulAdjust);
+	y = y * (1 + _displayHeightMulAdjust) + _renderStartDisplayOffsetY;
+}
+
+// Translates a visual coordinate to a display screen coordinate
+// Visual to 320x200 -> x * 2, y
+// Visual to 640x400 -> x * 4, y * 2
+void GfxMgr::translateVisualPosToDisplayScreen(int16 &x, int16 &y) {
+	x = x * (2 + _displayWidthMulAdjust);
+	y = y * (1 + _displayHeightMulAdjust);
+}
+
+// Translates a display screen coordinate to a game screen coordinate
+// Display screen to 320x200 -> x / 2, y - renderStart
+// Display screen to 640x400 -> x / 4, (y / 2) - renderStart
+void GfxMgr::translateDisplayPosToGameScreen(int16 &x, int16 &y) {
+	y -= _renderStartDisplayOffsetY; // remove status bar line
+	x = x / (2 + _displayWidthMulAdjust);
+	y = y / (1 + _displayHeightMulAdjust);
+	if (y < 0)
+		y = 0;
+	if (y >= SCRIPT_HEIGHT)
+		y = SCRIPT_HEIGHT + 1; // 1 beyond
+}
+
+// Translates dimension from visual screen to display screen
+void GfxMgr::translateVisualDimensionToDisplayScreen(int16 &width, int16 &height) {
+	width = width * (2 + _displayWidthMulAdjust);
+	height = height * (1 + _displayHeightMulAdjust);
+}
+
+// Translates dimension from display screen to visual screen
+void GfxMgr::translateDisplayDimensionToVisualScreen(int16 &width, int16 &height) {
+	width = width / (2 + _displayWidthMulAdjust);
+	height = height / (1 + _displayHeightMulAdjust);
+}
+
+// Translates a rect from game screen to display screen
+void GfxMgr::translateGameRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) {
+	translateGamePosToDisplayScreen(x, y);
+	translateVisualDimensionToDisplayScreen(width, height);
+}
+
+// Translates a rect from visual screen to display screen
+void GfxMgr::translateVisualRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) {
+	translateVisualPosToDisplayScreen(x, y);
+	translateVisualDimensionToDisplayScreen(width, height);
+}
+
+uint32 GfxMgr::getDisplayOffsetToGameScreenPos(int16 x, int16 y) {
+	translateGamePosToDisplayScreen(x, y);
+	return (y * _displayScreenWidth) + x;
+}
+
+uint32 GfxMgr::getDisplayOffsetToVisualScreenPos(int16 x, int16 y) {
+	translateVisualPosToDisplayScreen(x, y);
+	return (y * _displayScreenWidth) + x;
+}
+
+// Attention: uses display screen coordinates!
+void GfxMgr::copyDisplayRectToScreen(int16 x, int16 y, int16 width, int16 height) {
+	g_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
+}
+void GfxMgr::copyDisplayRectToScreen(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight) {
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		adjX *= 2; adjY *= 2;
+		adjWidth *= 2; adjHeight *= 2;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+	x += adjX; y += adjY;
+	width += adjWidth; height += adjHeight;
+	g_system->copyRectToScreen(_displayScreen + y * _displayScreenWidth + x, _displayScreenWidth, x, y, width, height);
+}
+void GfxMgr::copyDisplayRectToScreenUsingGamePos(int16 x, int16 y, int16 width, int16 height) {
+	translateGameRectToDisplayScreen(x, y, width, height);
+	g_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
+}
+void GfxMgr::copyDisplayRectToScreenUsingVisualPos(int16 x, int16 y, int16 width, int16 height) {
+	translateVisualRectToDisplayScreen(x, y, width, height);
+	g_system->copyRectToScreen(_displayScreen + (y * _displayScreenWidth) + x, _displayScreenWidth, x, y, width, height);
+}
+void GfxMgr::copyDisplayToScreen() {
+	g_system->copyRectToScreen(_displayScreen, _displayScreenWidth, 0, 0, _displayScreenWidth, _displayScreenHeight);
+}
+
+void GfxMgr::translateFontPosToDisplayScreen(int16 &x, int16 &y) {
+	x *= _displayFontWidth;
+	y *= _displayFontHeight;
+}
+void GfxMgr::translateDisplayPosToFontScreen(int16 &x, int16 &y) {
+	x /= _displayFontWidth;
+	y /= _displayFontHeight;
+}
+void GfxMgr::translateFontDimensionToDisplayScreen(int16 &width, int16 &height) {
+	width *= _displayFontWidth;
+	height *= _displayFontHeight;
+}
+void GfxMgr::translateFontRectToDisplayScreen(int16 &x, int16 &y, int16 &width, int16 &height) {
+	translateFontPosToDisplayScreen(x, y);
+	translateFontDimensionToDisplayScreen(width, height);
+}
+Common::Rect GfxMgr::getFontRectForDisplayScreen(int16 column, int16 row, int16 width, int16 height) {
+	Common::Rect displayRect(width * _displayFontWidth, height * _displayFontHeight);
+	displayRect.moveTo(column * _displayFontWidth, row * _displayFontHeight);
+	return displayRect;
+}
+
+void GfxMgr::debugShowMap(int mapNr) {
+	switch (mapNr) {
+	case 0:
+		_activeScreen = _gameScreen;
+		break;
+	case 1:
+		_activeScreen = _priorityScreen;
+		break;
+	default:
+		break;
+	}
+
+	render_Block(0, 0, SCRIPT_WIDTH, SCRIPT_HEIGHT);
+}
+
+void GfxMgr::clear(byte color, byte priority) {
+	memset(_gameScreen, color, _pixels);
+	memset(_priorityScreen, priority, _pixels);
+}
+
+void GfxMgr::clearDisplay(byte color, bool copyToScreen) {
+	memset(_displayScreen, color, _displayPixels);
+
+	if (copyToScreen) {
+		copyDisplayToScreen();
+	}
+}
+
+void GfxMgr::putPixel(int16 x, int16 y, byte drawMask, byte color, byte priority) {
+	int offset = y * SCRIPT_WIDTH + x;
+
+	if (drawMask & GFX_SCREEN_MASK_VISUAL) {
+		_gameScreen[offset] = color;
+	}
+	if (drawMask & GFX_SCREEN_MASK_PRIORITY) {
+		_priorityScreen[offset] = priority;
+	}
+}
+
+void GfxMgr::putPixelOnDisplay(int16 x, int16 y, byte color) {
+	uint32 offset = 0;
+
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		offset = y * _displayScreenWidth + x;
+
+		_displayScreen[offset] = color;
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		offset = (y * _displayScreenWidth) + x;
+
+		_displayScreen[offset + 0] = color;
+		_displayScreen[offset + 1] = color;
+		_displayScreen[offset + _displayScreenWidth + 0] = color;
+		_displayScreen[offset + _displayScreenWidth + 1] = color;
+		break;
+	default:
+		break;
+	}
+}
+
+void GfxMgr::putPixelOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, byte color) {
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		adjX *= 2; adjY *= 2;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+	x += adjX;
+	y += adjY;
+	putPixelOnDisplay(x, y, color);
+}
+
+void GfxMgr::putFontPixelOnDisplay(int16 baseX, int16 baseY, int16 addX, int16 addY, byte color, bool isHires) {
+	uint32 offset = 0;
+
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		offset = ((baseY + addY) * _displayScreenWidth) + (baseX + addX);
+		_displayScreen[offset] = color;
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		if (isHires) {
+			offset = ((baseY + addY) * _displayScreenWidth) + (baseX + addX);
+			_displayScreen[offset] = color;
+		} else {
+			offset = ((baseY + addY * 2) * _displayScreenWidth) + (baseX + addX * 2);
+			_displayScreen[offset + 0] = color;
+			_displayScreen[offset + 1] = color;
+			_displayScreen[offset + _displayScreenWidth + 0] = color;
+			_displayScreen[offset + _displayScreenWidth + 1] = color;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+byte GfxMgr::getColor(int16 x, int16 y) {
+	int offset = y * SCRIPT_WIDTH + x;
+
+	return _gameScreen[offset];
+}
+
+byte GfxMgr::getPriority(int16 x, int16 y) {
+	int offset = y * SCRIPT_WIDTH + x;
+
+	return _priorityScreen[offset];
+}
+
+// used, when a control pixel is found
+// will search downwards and compare priority in case any is found
+bool GfxMgr::checkControlPixel(int16 x, int16 y, byte viewPriority) {
+	int offset = y * SCRIPT_WIDTH + x;
+	byte curPriority;
+
+	while (1) {
+		y++;
+		offset += SCRIPT_WIDTH;
+		if (y >= SCRIPT_HEIGHT) {
+			// end of screen, nothing but control pixels found
+			return true; // draw view pixel
+		}
+		curPriority = _priorityScreen[offset];
+		if (curPriority > 2) // valid priority found?
+			break;
+	}
+	if (curPriority <= viewPriority)
+		return true; // view priority is higher, draw
+	return false; // view priority is lower, don't draw
+}
+
+static byte CGA_MixtureColorTable[] = {
+	0x00, 0x08, 0x04, 0x0C, 0x01, 0x09, 0x02, 0x05,
+	0x0A, 0x0D, 0x06, 0x0E, 0x0B, 0x03, 0x07, 0x0F
+};
+
+byte GfxMgr::getCGAMixtureColor(byte color) {
+	return CGA_MixtureColorTable[color & 0x0F];
+}
+
+// Attention: in our implementation, y-coordinate is upper left.
+// Sierra passed the lower left instead. We changed it to make upscaling easier.
+void GfxMgr::render_Block(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
+	if (!render_Clip(x, y, width, height))
+		return;
+
+	switch (_vm->_renderMode) {
+	case Common::kRenderHercG:
+	case Common::kRenderHercA:
+		render_BlockHercules(x, y, width, height, copyToScreen);
+		break;
+	case Common::kRenderCGA:
+		render_BlockCGA(x, y, width, height, copyToScreen);
+		break;
+	case Common::kRenderEGA:
+	default:
+		render_BlockEGA(x, y, width, height, copyToScreen);
+		break;
+	}
+
+	if (copyToScreen) {
+		copyDisplayRectToScreenUsingGamePos(x, y, width, height);
+	}
+}
+
+bool GfxMgr::render_Clip(int16 &x, int16 &y, int16 &width, int16 &height, int16 clipAgainstWidth, int16 clipAgainstHeight) {
+	if ((x >= clipAgainstWidth) || ((x + width - 1) < 0) ||
+	        (y < 0) || ((y + (height - 1)) >= clipAgainstHeight)) {
+		return false;
+	}
+
+	if (y < 0) {
+		height += y;
+		y = 0;
+	}
+
+	if ((y + height - 1) >= clipAgainstHeight) {
+		height = clipAgainstHeight - y;
+	}
+
+#if 0
+	if ((y - height + 1) < 0)
+		height = y + 1;
+
+	if (y >= clipAgainstHeight) {
+		height -= y - (clipAgainstHeight - 1);
+		y = clipAgainstHeight - 1;
+	}
+#endif
+
+	if (x < 0) {
+		width += x;
+		x = 0;
+	}
+
+	if ((x + width - 1) >= clipAgainstWidth) {
+		width = clipAgainstWidth - x;
+	}
+	return true;
+}
+
+void GfxMgr::render_BlockEGA(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
+	uint32 offsetVisual = SCRIPT_WIDTH * y + x;
+	uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, y);
+	int16 remainingWidth = width;
+	int16 remainingHeight = height;
+	byte curColor = 0;
+	int16 displayWidth = width * (2 + _displayWidthMulAdjust);
+
+	while (remainingHeight) {
+		remainingWidth = width;
+
+		switch (_upscaledHires) {
+		case DISPLAY_UPSCALED_DISABLED:
+			while (remainingWidth) {
+				curColor = _activeScreen[offsetVisual++];
+				_displayScreen[offsetDisplay++] = curColor;
+				_displayScreen[offsetDisplay++] = curColor;
+				remainingWidth--;
+			}
+			break;
+		case DISPLAY_UPSCALED_640x400:
+			while (remainingWidth) {
+				curColor = _activeScreen[offsetVisual++];
+				memset(&_displayScreen[offsetDisplay], curColor, 4);
+				memset(&_displayScreen[offsetDisplay + _displayScreenWidth], curColor, 4);
+				offsetDisplay += 4;
+				remainingWidth--;
+			}
+			break;
+		default:
+			assert(0);
+			break;
+		}
+
+		offsetVisual += SCRIPT_WIDTH - width;
+		offsetDisplay += _displayScreenWidth - displayWidth;
+
+		switch (_upscaledHires) {
+		case DISPLAY_UPSCALED_640x400:
+			offsetDisplay += _displayScreenWidth;
+			break;
+		default:
+			break;
+		}
+
+		remainingHeight--;
+	}
+}
+
+void GfxMgr::render_BlockCGA(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
+	uint32 offsetVisual = SCRIPT_WIDTH * y + x;
+	uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, y);
+	int16 remainingWidth = width;
+	int16 remainingHeight = height;
+	byte curColor = 0;
+	int16 displayWidth = width * (2 + _displayWidthMulAdjust);
+
+	while (remainingHeight) {
+		remainingWidth = width;
+
+		switch (_upscaledHires) {
+		case DISPLAY_UPSCALED_DISABLED:
+			while (remainingWidth) {
+				curColor = _activeScreen[offsetVisual++];
+				_displayScreen[offsetDisplay++] = curColor & 0x03; // we process CGA mixture
+				_displayScreen[offsetDisplay++] = curColor >> 2;
+				remainingWidth--;
+			}
+			break;
+		case DISPLAY_UPSCALED_640x400:
+			while (remainingWidth) {
+				curColor = _activeScreen[offsetVisual++];
+				_displayScreen[offsetDisplay + 0] = curColor & 0x03; // we process CGA mixture
+				_displayScreen[offsetDisplay + 1] = curColor >> 2;
+				_displayScreen[offsetDisplay + 2] = curColor & 0x03;
+				_displayScreen[offsetDisplay + 3] = curColor >> 2;
+				_displayScreen[offsetDisplay + _displayScreenWidth + 0] = curColor & 0x03;
+				_displayScreen[offsetDisplay + _displayScreenWidth + 1] = curColor >> 2;
+				_displayScreen[offsetDisplay + _displayScreenWidth + 2] = curColor & 0x03;
+				_displayScreen[offsetDisplay + _displayScreenWidth + 3] = curColor >> 2;
+				offsetDisplay += 4;
+				remainingWidth--;
+			}
+			break;
+		default:
+			assert(0);
+			break;
+		}
+
+		offsetVisual += SCRIPT_WIDTH - width;
+		offsetDisplay += _displayScreenWidth - displayWidth;
+
+		switch (_upscaledHires) {
+		case DISPLAY_UPSCALED_640x400:
+			offsetDisplay += _displayScreenWidth;
+			break;
+		default:
+			break;
+		}
+
+		remainingHeight--;
+	}
+}
+
+static const uint8 herculesColorMapping[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x88, 0x00, 0x00, 0x00, 0x22, 0x00, 0x00, 0x00,
+	0x80, 0x10, 0x02, 0x20, 0x01, 0x08, 0x40, 0x04,
+	0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00,
+	0x22, 0x88, 0x22, 0x88, 0x22, 0x88, 0x22, 0x88,
+	0x88, 0x00, 0x88, 0x00, 0x88, 0x00, 0x88, 0x00,
+	0x11, 0x22, 0x44, 0x88, 0x11, 0x22, 0x44, 0x88,
+	0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA,
+	0x22, 0x00, 0x88, 0x00, 0x22, 0x00, 0x88, 0x00,
+	0xD7, 0xFF, 0x7D, 0xFF, 0xD7, 0xFF, 0x7D, 0xFF,
+	0xDD, 0x55, 0x77, 0xAA, 0xDD, 0x55, 0x77, 0xAA,
+	0x7F, 0xEF, 0xFD, 0xDF, 0xFE, 0xF7, 0xBF, 0xFB,
+	0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF,
+	0x77, 0xBB, 0xDD, 0xEE, 0x77, 0xBB, 0xDD, 0xEE,
+	0x77, 0xFF, 0xFF, 0xFF, 0xDD, 0xFF, 0xFF, 0xFF,
+	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+
+// Sierra actually seems to have rendered the whole screen all the time
+void GfxMgr::render_BlockHercules(int16 x, int16 y, int16 width, int16 height, bool copyToScreen) {
+	uint32 offsetVisual = SCRIPT_WIDTH * y + x;
+	uint32 offsetDisplay = getDisplayOffsetToGameScreenPos(x, y);
+	int16 remainingWidth = width;
+	int16 remainingHeight = height;
+	byte curColor = 0;
+	int16 displayWidth = width * (2 + _displayWidthMulAdjust);
+
+	assert(_upscaledHires == DISPLAY_UPSCALED_640x400);
+
+	uint16 lookupOffset1 = (y * 2 & 0x07);
+	uint16 lookupOffset2 = 0;
+	bool   getUpperNibble = false;
+	byte   herculesColors1 = 0;
+	byte   herculesColors2 = 0;
+
+	while (remainingHeight) {
+		remainingWidth = width;
+
+		lookupOffset1 = (lookupOffset1 + 0) & 0x07;
+		lookupOffset2 = (lookupOffset1 + 1) & 0x07;
+
+		getUpperNibble = (x & 1) ? false : true;
+		while (remainingWidth) {
+			curColor = _activeScreen[offsetVisual++] & 0x0F;
+
+			if (getUpperNibble) {
+				herculesColors1 = herculesColorMapping[curColor * 8 + lookupOffset1] & 0x0F;
+				herculesColors2 = herculesColorMapping[curColor * 8 + lookupOffset2] & 0x0F;
+			} else {
+				herculesColors1 = herculesColorMapping[curColor * 8 + lookupOffset1] >> 4;
+				herculesColors2 = herculesColorMapping[curColor * 8 + lookupOffset2] >> 4;
+			}
+			getUpperNibble ^= true;
+
+			_displayScreen[offsetDisplay + 0] = (herculesColors1 & 0x08) ? 1 : 0;
+			_displayScreen[offsetDisplay + 1] = (herculesColors1 & 0x04) ? 1 : 0;
+			_displayScreen[offsetDisplay + 2] = (herculesColors1 & 0x02) ? 1 : 0;
+			_displayScreen[offsetDisplay + 3] = (herculesColors1 & 0x01) ? 1 : 0;
+
+			_displayScreen[offsetDisplay + _displayScreenWidth + 0] = (herculesColors2 & 0x08) ? 1 : 0;
+			_displayScreen[offsetDisplay + _displayScreenWidth + 1] = (herculesColors2 & 0x04) ? 1 : 0;
+			_displayScreen[offsetDisplay + _displayScreenWidth + 2] = (herculesColors2 & 0x02) ? 1 : 0;
+			_displayScreen[offsetDisplay + _displayScreenWidth + 3] = (herculesColors2 & 0x01) ? 1 : 0;
+
+			offsetDisplay += 4;
+			remainingWidth--;
+		}
+
+		lookupOffset1 += 2;
+
+		offsetVisual += SCRIPT_WIDTH - width;
+		offsetDisplay += _displayScreenWidth - displayWidth;
+		offsetDisplay += _displayScreenWidth;
+
+		remainingHeight--;
+	}
+}
+
+// Table used for at least Manhunter 2, it renders 2 lines -> 3 lines instead of 4
+// Manhunter 1 is shipped with a broken Hercules font
+// King's Quest 4 aborts right at the start, when Hercules rendering is active
+#if 0
+static const uint8 herculesCoordinateOffset[] = {
+	0x00, 0x01, 0x03, 0x04, 0x06, 0x07, 0x01, 0x02,
+	0x04, 0x05, 0x07, 0x00, 0x02, 0x03, 0x05, 0x06
+};
+
+static const uint8 herculesColorMapping[] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x40, 0x00, 0x02, 0x00, 0x40, 0x00, 0x08, 0x00,
+	0x80, 0x10, 0x02, 0x20, 0x01, 0x08, 0x40, 0x04,	0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00, 0xAA, 0x00,
+	0x22, 0x88, 0x22, 0x88, 0x22, 0x88, 0x22, 0x88,	0x88, 0x00, 0x88, 0x00, 0x88, 0x00, 0x88, 0x00,
+	0x11, 0x22, 0x44, 0x88, 0x11, 0x22, 0x44, 0x88,	0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA,
+	0x22, 0x00, 0x88, 0x00, 0x22, 0x00, 0x88, 0x00,	0xD7, 0xFF, 0x7D, 0xFF, 0xD7, 0xFF, 0x7D, 0xFF,
+	0xDD, 0x55, 0x77, 0xAA, 0xDD, 0x55, 0x77, 0xAA,	0x7F, 0xEF, 0xFD, 0xDF, 0xFE, 0xF7, 0xBF, 0xFB,
+	0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF, 0xAA, 0xFF,	0x77, 0xBB, 0xDD, 0xEE, 0x77, 0xBB, 0xDD, 0xEE,
+	0x7F, 0xEF, 0xFB, 0xBF, 0xEF, 0xFE, 0xBF, 0xFD,	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+};
+#endif
+
+void GfxMgr::transition_Amiga() {
+	uint16 screenPos = 1;
+	uint32 screenStepPos = 1;
+	int16  posY = 0, posX = 0;
+	int16  stepCount = 0;
+
+	// disable mouse while transition is taking place
+	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
+		CursorMan.showMouse(false);
+	}
+
+	do {
+		if (screenPos & 1) {
+			screenPos = screenPos >> 1;
+			screenPos = screenPos ^ 0x3500; // 13568d
+		} else {
+			screenPos = screenPos >> 1;
+		}
+
+		if ((screenPos < 13440) && (screenPos & 1)) {
+			screenStepPos = screenPos >> 1;
+			posY = screenStepPos / SCRIPT_WIDTH;
+			posX = screenStepPos - (posY * SCRIPT_WIDTH);
+
+			// Adjust to only update the game screen, not the status bar
+			translateGamePosToDisplayScreen(posX, posY);
+
+			switch (_upscaledHires) {
+			case DISPLAY_UPSCALED_DISABLED:
+				for (int16 multiPixel = 0; multiPixel < 4; multiPixel++) {
+					screenStepPos = (posY * _displayScreenWidth) + posX;
+					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 2, 1);
+					posY += 42;
+				}
+				break;
+			case DISPLAY_UPSCALED_640x400:
+				for (int16 multiPixel = 0; multiPixel < 4; multiPixel++) {
+					screenStepPos = (posY * _displayScreenWidth) + posX;
+					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 4, 2);
+					posY += 42 * 2;
+				}
+				break;
+			default:
+				assert(0);
+				break;
+			}
+
+			stepCount++;
+			if (stepCount == 220) {
+				// 30 times for the whole transition, so should take around 0.5 seconds
+				g_system->updateScreen();
+				g_system->delayMillis(16);
+				stepCount = 0;
+			}
+		}
+	} while (screenPos != 1);
+
+	// Enable mouse again
+	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
+		CursorMan.showMouse(true);
+	}
+
+	g_system->updateScreen();
+}
+
+// This transition code was not reverse engineered, but created based on the Amiga transition code
+// Atari ST definitely had a hi-res transition using the full resolution unlike the Amiga transition.
+void GfxMgr::transition_AtariSt() {
+	uint16 screenPos = 1;
+	uint32 screenStepPos = 1;
+	int16  posY = 0, posX = 0;
+	int16  stepCount = 0;
+
+	// disable mouse while transition is taking place
+	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
+		CursorMan.showMouse(false);
+	}
+
+	do {
+		if (screenPos & 1) {
+			screenPos = screenPos >> 1;
+			screenPos = screenPos ^ 0x3500; // 13568d
+		} else {
+			screenPos = screenPos >> 1;
+		}
+
+		if ((screenPos < 13440) && (screenPos & 1)) {
+			screenStepPos = screenPos >> 1;
+			posY = screenStepPos / DISPLAY_DEFAULT_WIDTH;
+			posX = screenStepPos - (posY * DISPLAY_DEFAULT_WIDTH);
+
+			switch (_upscaledHires) {
+			case DISPLAY_UPSCALED_DISABLED:
+				posY += _renderStartDisplayOffsetY; // adjust to only update the main area, not the status bar
+				for (int16 multiPixel = 0; multiPixel < 8; multiPixel++) {
+					screenStepPos = (posY * _displayScreenWidth) + posX;
+					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 1, 1);
+					posY += 21;
+				}
+				break;
+			case DISPLAY_UPSCALED_640x400:
+				posX *= 2; posY *= 2;
+				posY += _renderStartDisplayOffsetY; // adjust to only update the main area, not the status bar
+				for (int16 multiPixel = 0; multiPixel < 8; multiPixel++) {
+					screenStepPos = (posY * _displayScreenWidth) + posX;
+					g_system->copyRectToScreen(_displayScreen + screenStepPos, _displayScreenWidth, posX, posY, 2, 2);
+					posY += 21 * 2;
+				}
+				break;
+			default:
+				break;
+			}
+
+			stepCount++;
+			if (stepCount == 168) {
+				// 40 times for the whole transition, so should take around 0.7 seconds
+				// When using an Atari ST emulator, the transition seems to be even slower than this
+				// TODO: should get checked on real hardware
+				g_system->updateScreen();
+				g_system->delayMillis(16);
+				stepCount = 0;
+			}
+		}
+	} while (screenPos != 1);
+
+	// Enable mouse again
+	if ((_vm->_game.mouseEnabled) && (!_vm->_game.mouseHidden)) {
+		CursorMan.showMouse(true);
+	}
+
+	g_system->updateScreen();
+}
+
+// Attention: y coordinate is here supposed to be the upper one!
+void GfxMgr::block_save(int16 x, int16 y, int16 width, int16 height, byte *bufferPtr) {
+	int16 startOffset = y * SCRIPT_WIDTH + x;
+	int16 offset = startOffset;
+	int16 remainingHeight = height;
+	byte *curBufferPtr = bufferPtr;
+
+	//warning("block_save: %d, %d -> %d, %d", x, y, width, height);
+
+	while (remainingHeight) {
+		memcpy(curBufferPtr, _gameScreen + offset, width);
+		offset += SCRIPT_WIDTH;
+		curBufferPtr += width;
+		remainingHeight--;
+	}
+
+	remainingHeight = height;
+	offset = startOffset;
+	while (remainingHeight) {
+		memcpy(curBufferPtr, _priorityScreen + offset, width);
+		offset += SCRIPT_WIDTH;
+		curBufferPtr += width;
+		remainingHeight--;
+	}
+}
+
+// Attention: y coordinate is here supposed to be the upper one!
+void GfxMgr::block_restore(int16 x, int16 y, int16 width, int16 height, byte *bufferPtr) {
+	int16 startOffset = y * SCRIPT_WIDTH + x;
+	int16 offset = startOffset;
+	int16 remainingHeight = height;
+	byte *curBufferPtr = bufferPtr;
+
+	//warning("block_restore: %d, %d -> %d, %d", x, y, width, height);
+
+	while (remainingHeight) {
+		memcpy(_gameScreen + offset, curBufferPtr, width);
+		offset += SCRIPT_WIDTH;
+		curBufferPtr += width;
+		remainingHeight--;
+	}
+
+	remainingHeight = height;
+	offset = startOffset;
+	while (remainingHeight) {
+		memcpy(_priorityScreen + offset, curBufferPtr, width);
+		offset += SCRIPT_WIDTH;
+		curBufferPtr += width;
+		remainingHeight--;
+	}
+}
+
+// coordinates are for visual screen, but are supposed to point somewhere inside the playscreen
+// x, y is the upper left. Sierra passed them as lower left. We change that to make upscaling easier.
+// attention: Clipping is done here against 160x200 instead of 160x168
+//            Original interpreter didn't do any clipping, we do it for security.
+//            Clipping against the regular script width/height must not be done,
+//            because at least during the intro one message box goes beyond playscreen
+//            Going beyond 160x168 will result in messageboxes not getting fully removed
+//            In KQ4's case, the scripts clear the screen that's why it works.
+void GfxMgr::drawBox(int16 x, int16 y, int16 width, int16 height, byte backgroundColor, byte lineColor) {
+	if (!render_Clip(x, y, width, height, VISUAL_WIDTH, VISUAL_HEIGHT - _renderStartVisualOffsetY))
+		return;
+
+	// coordinate translation: visual-screen -> display-screen
+	translateVisualRectToDisplayScreen(x, y, width, height);
+
+	y = y + _renderStartDisplayOffsetY;	// drawDisplayRect paints anywhere on the whole screen, our coordinate is within playscreen
+
+	// draw box background
+	drawDisplayRect(x, y, width, height, backgroundColor);
+
+	// draw lines
+	switch (_vm->_renderMode) {
+	case Common::kRenderApple2GS:
+	case Common::kRenderAmiga:
+		// Slightly different window frame, and actually using 1-pixel width, which is "hi-res"
+		drawDisplayRect(x, +2, y, +2, width, -4, 0, 1, lineColor);
+		drawDisplayRect(x + width, -3, y, +2, 0, 1, height, -4, lineColor);
+		drawDisplayRect(x, +2, y + height, -3, width, -4, 0, 1, lineColor);
+		drawDisplayRect(x, +2, y, +2, 0, 1, height, -4, lineColor);
+		break;
+	case Common::kRenderMacintosh:
+		// 1 pixel between box and frame lines. Frame lines were black
+		drawDisplayRect(x, +1, y, +1, width, -2, 0, 1, 0);
+		drawDisplayRect(x + width, -2, y, +1, 0, 1, height, -2, 0);
+		drawDisplayRect(x, +1, y + height, -2, width, -2, 0, 1, 0);
+		drawDisplayRect(x, +1, y, +1, 0, 1, height, -2, 0);
+		break;
+	case Common::kRenderHercA:
+	case Common::kRenderHercG:
+		lineColor = 0; // change linecolor to black
+		// fall through
+	case Common::kRenderCGA:
+	case Common::kRenderEGA:
+	case Common::kRenderVGA:
+	case Common::kRenderAtariST:
+	default:
+		drawDisplayRect(x, +2, y, +1, width, -4, 0, 1, lineColor);
+		drawDisplayRect(x + width, -4, y, +2, 0, 2, height, -4, lineColor);
+		drawDisplayRect(x, +2, y + height, -2, width, -4, 0, 1, lineColor);
+		drawDisplayRect(x, +2, y, +2, 0, 2, height, -4, lineColor);
+		break;
+	}
+}
+
+// coordinates are directly for display screen
+void GfxMgr::drawDisplayRect(int16 x, int16 y, int16 width, int16 height, byte color, bool copyToScreen) {
+	switch (_vm->_renderMode) {
+	case Common::kRenderCGA:
+		drawDisplayRectCGA(x, y, width, height, color);
+		break;
+	case Common::kRenderHercG:
+	case Common::kRenderHercA:
+		if (color)
+			color = 1; // change any color except black to green/amber
+		// fall through
+	case Common::kRenderEGA:
+	default:
+		drawDisplayRectEGA(x, y, width, height, color);
+		break;
+	}
+	if (copyToScreen) {
+		copyDisplayRectToScreen(x, y, width, height);
+	}
+}
+
+void GfxMgr::drawDisplayRect(int16 x, int16 adjX, int16 y, int16 adjY, int16 width, int16 adjWidth, int16 height, int16 adjHeight, byte color, bool copyToScreen) {
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		x += adjX; y += adjY;
+		width += adjWidth; height += adjHeight;
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		x += adjX * 2; y += adjY * 2;
+		width += adjWidth * 2; height += adjHeight * 2;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+	drawDisplayRect(x, y, width, height, color, copyToScreen);
+}
+
+void GfxMgr::drawDisplayRectEGA(int16 x, int16 y, int16 width, int16 height, byte color) {
+	uint32 offsetDisplay = (y * _displayScreenWidth) + x;
+	int16 remainingHeight = height;
+
+	while (remainingHeight) {
+		memset(_displayScreen + offsetDisplay, color, width);
+
+		offsetDisplay += _displayScreenWidth;
+		remainingHeight--;
+	}
+}
+
+void GfxMgr::drawDisplayRectCGA(int16 x, int16 y, int16 width, int16 height, byte color) {
+	uint32 offsetDisplay = (y * _displayScreenWidth) + x;
+	int16 remainingHeight = height;
+	int16 remainingWidth = width;
+	byte CGAMixtureColor = getCGAMixtureColor(color);
+	byte *displayScreen = nullptr;
+
+	// we should never get an uneven width
+	assert((width & 1) == 0);
+
+	while (remainingHeight) {
+		remainingWidth = width;
+
+		// set up pointer
+		displayScreen = _displayScreen + offsetDisplay;
+
+		while (remainingWidth) {
+			*displayScreen++ = CGAMixtureColor & 0x03;
+			*displayScreen++ = CGAMixtureColor >> 2;
+			remainingWidth -= 2;
+		}
+
+		offsetDisplay += _displayScreenWidth;
+		remainingHeight--;
+	}
+}
+
+// row + column are text-coordinates
+void GfxMgr::drawCharacter(int16 row, int16 column, byte character, byte foreground, byte background, bool disabledLook) {
+	int16 x = column;
+	int16 y = row;
+	byte  transformXOR = 0;
+	byte  transformOR = 0;
+
+	translateFontPosToDisplayScreen(x, y);
+
+	// Now figure out, if special handling needs to be done
+	if (_vm->_game.gfxMode) {
+		if (background & 0x08) {
+			// invert enabled
+			background &= 0x07; // remove invert bit
+			transformXOR = 0xFF;
+		}
+		if (disabledLook) {
+			transformOR = 0x55;
+		}
+	}
+
+	drawCharacterOnDisplay(x, y, character, foreground, background, transformXOR, transformOR);
+}
+
+// only meant for internal use (SystemUI)
+void GfxMgr::drawStringOnDisplay(int16 x, int16 y, const char *text, byte foregroundColor, byte backgroundColor) {
+	while (*text) {
+		drawCharacterOnDisplay(x, y, *text, foregroundColor, backgroundColor);
+		text++;
+		x += _displayFontWidth;
+	}
+}
+
+void GfxMgr::drawStringOnDisplay(int16 x, int16 adjX, int16 y, int16 adjY, const char *text, byte foregroundColor, byte backgroundColor) {
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		x += adjX;
+		y += adjY;
+		break;
+	case DISPLAY_UPSCALED_640x400:
+		x += adjX * 2;
+		y += adjY * 2;
+		break;
+	default:
+		assert(0);
+		break;
+	}
+	drawStringOnDisplay(x, y, text, foregroundColor, backgroundColor);
+}
+
+void GfxMgr::drawCharacterOnDisplay(int16 x, int16 y, const byte character, byte foreground, byte background, byte transformXOR, byte transformOR) {
+	int16       curX, curY;
+	const byte *fontData;
+	bool        fontIsHires = _font->isFontHires();
+	int16       fontHeight = fontIsHires ? 16 : FONT_DISPLAY_HEIGHT;
+	int16       fontWidth = fontIsHires ? 16 : FONT_DISPLAY_WIDTH;
+	int16       fontBytesPerCharacter = fontIsHires ? 32 : FONT_BYTES_PER_CHARACTER;
+	byte        curByte = 0;
+	uint16      curBit;
+
+	// get font data of specified character
+	fontData = _font->getFontData() + character * fontBytesPerCharacter;
+
+	curBit = 0;
+	for (curY = 0; curY < fontHeight; curY++) {
+		for (curX = 0; curX < fontWidth; curX++) {
+			if (!curBit) {
+				curByte = *fontData;
+				// do transformations in case they are needed (invert/disabled look)
+				curByte ^= transformXOR;
+				curByte |= transformOR;
+				fontData++;
+				curBit  = 0x80;
+			}
+			if (curByte & curBit) {
+				putFontPixelOnDisplay(x, y, curX, curY, foreground, fontIsHires);
+			} else {
+				putFontPixelOnDisplay(x, y, curX, curY, background, fontIsHires);
+			}
+			curBit = curBit >> 1;
+		}
+		if (transformOR)
+			transformOR ^= 0xFF;
+	}
+
+	copyDisplayRectToScreen(x, y, _displayFontWidth, _displayFontHeight);
+}
+
+#define SHAKE_VERTICAL_PIXELS 4
+#define SHAKE_HORIZONTAL_PIXELS 4
+
+// Sierra used some EGA port trickery to do it, we have to do it by copying pixels around
+//
+// Shaking locations:
+// - Fanmade "Enclosure" right during the intro
+// - Space Quest 2 almost right at the start when getting captured (after walking into the space ship)
+void GfxMgr::shakeScreen(int16 repeatCount) {
+	int shakeNr, shakeCount;
+	uint8 *blackSpace;
+	int16 shakeHorizontalPixels = SHAKE_HORIZONTAL_PIXELS * (2 + _displayWidthMulAdjust);
+	int16 shakeVerticalPixels = SHAKE_VERTICAL_PIXELS * (1 + _displayHeightMulAdjust);
+
+	if ((blackSpace = (uint8 *)calloc(shakeHorizontalPixels * _displayScreenWidth, 1)) == NULL)
+		return;
+
+	shakeCount = repeatCount * 8; // effectively 4 shakes per repeat
+
+	// it's 4 pixels down and 8 pixels to the right
+	// and it's also filling the remaining space with black
+	for (shakeNr = 0; shakeNr < shakeCount; shakeNr++) {
+		if (shakeNr & 1) {
+			// move back
+			copyDisplayToScreen();
+		} else {
+			g_system->copyRectToScreen(_displayScreen, _displayScreenWidth, shakeHorizontalPixels, shakeVerticalPixels, _displayScreenWidth - shakeHorizontalPixels, _displayScreenHeight - shakeVerticalPixels);
+			// additionally fill the remaining space with black
+			g_system->copyRectToScreen(blackSpace, _displayScreenWidth, 0, 0, _displayScreenWidth, shakeVerticalPixels);
+			g_system->copyRectToScreen(blackSpace, shakeHorizontalPixels, 0, 0, shakeHorizontalPixels, _displayScreenHeight);
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(66); // Sierra waited for 4 V'Syncs, which is around 66 milliseconds
+	}
+
+	free(blackSpace);
+}
+
+void GfxMgr::updateScreen() {
+	g_system->updateScreen();
+}
+
+void GfxMgr::initPriorityTable() {
+	_priorityTableSet = false;
+
+	createDefaultPriorityTable(_priorityTable);
+}
+
+void GfxMgr::createDefaultPriorityTable(uint8 *priorityTable) {
+	int16 priority, step;
+	int16 yPos = 0;
+
+	for (priority = 1; priority < 15; priority++) {
+		for (step = 0; step < 12; step++) {
+			priorityTable[yPos++] = priority < 4 ? 4 : priority;
+		}
+	}
+}
+
+void GfxMgr::setPriorityTable(int16 priorityBase) {
+	int16 x, priorityY, priority;
+
+	_priorityTableSet = true;
+	x = (SCRIPT_HEIGHT - priorityBase) * SCRIPT_HEIGHT / 10;
+
+	for (priorityY = 0; priorityY < SCRIPT_HEIGHT; priorityY++) {
+		priority = (priorityY - priorityBase) < 0 ? 4 : (priorityY - priorityBase) * SCRIPT_HEIGHT / x + 5;
+		if (priority > 15)
+			priority = 15;
+		_priorityTable[priorityY] = priority;
+	}
+}
+
+// used for saving
+int16 GfxMgr::saveLoadGetPriority(int16 yPos) {
+	assert(yPos < SCRIPT_HEIGHT);
+	return _priorityTable[yPos];
+}
+bool GfxMgr::saveLoadWasPriorityTableModified() {
+	return _priorityTableSet;
+}
+
+// used for restoring
+void GfxMgr::saveLoadSetPriority(int16 yPos, int16 priority) {
+	assert(yPos < SCRIPT_HEIGHT);
+	_priorityTable[yPos] = priority;
+}
+void GfxMgr::saveLoadSetPriorityTableModifiedBool(bool wasModified) {
+	_priorityTableSet = wasModified;
+}
+void GfxMgr::saveLoadFigureOutPriorityTableModifiedBool() {
+	uint8 defaultPriorityTable[SCRIPT_HEIGHT]; /**< priority table */
+
+	createDefaultPriorityTable(defaultPriorityTable);
+
+	if (memcmp(defaultPriorityTable, _priorityTable, sizeof(_priorityTable)) == 0) {
+		// Match, it is the default table, so reset the flag
+		_priorityTableSet = false;
 	} else {
-		for (i = GFX_HEIGHT - SHAKE_MAG - 1; i >= 0; i--) {
-			memmove(&_agiScreen[GFX_WIDTH * (i + SHAKE_MAG) + SHAKE_MAG],
-					&_agiScreen[GFX_WIDTH * i], GFX_WIDTH - SHAKE_MAG);
-		}
+		_priorityTableSet = true;
 	}
-}
-
-void GfxMgr::shakeEnd() {
-	int i;
-
-	for (i = 0; i < GFX_HEIGHT - SHAKE_MAG; i++) {
-		memcpy(_agiScreen + i * GFX_WIDTH, _shakeV + i * SHAKE_MAG, SHAKE_MAG);
-	}
-
-	for (i = 0; i < SHAKE_MAG; i++) {
-		memcpy(_agiScreen + i * GFX_WIDTH, _shakeH + i * GFX_WIDTH, GFX_WIDTH);
-	}
-
-	flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
-
-	free(_shakeV);
-	free(_shakeH);
-}
-
-void GfxMgr::putTextCharacter(int l, int x, int y, unsigned char c, int fg, int bg, bool checkerboard, const uint8 *font) {
-	int x1, y1, xx, yy, cc;
-	const uint8 *p;
-
-	p = font + ((unsigned int)c * CHAR_LINES);
-	for (y1 = 0; y1 < CHAR_LINES; y1++) {
-		for (x1 = 0; x1 < CHAR_COLS; x1++) {
-			xx = x + x1;
-			yy = y + y1;
-			cc = (*p & (1 << (7 - x1))) ? fg : bg;
-			_agiScreen[xx + yy * GFX_WIDTH] = cc;
-		}
-
-		p++;
-	}
-
-	// Simple checkerboard effect to simulate "greyed out" text.
-	// This is what Sierra's interpreter does for things like menu items
-	// that aren't selectable (such as separators). -- dsymonds
-	if (checkerboard) {
-		for (yy = y; yy < y + CHAR_LINES; yy++)
-			for (xx = x + (~yy & 1); xx < x + CHAR_COLS; xx += 2)
-				_agiScreen[xx + yy * GFX_WIDTH] = 15;
-	}
-
-	// FIXME: we don't want this when we're writing on the
-	//        console!
-	flushBlock(x, y, x + CHAR_COLS - 1, y + CHAR_LINES - 1);
-}
-
-void GfxMgr::drawRectangle(int x1, int y1, int x2, int y2, int c) {
-	int y, w, h;
-	uint8 *p0;
-
-	if (x1 >= GFX_WIDTH)
-		x1 = GFX_WIDTH - 1;
-	if (y1 >= GFX_HEIGHT)
-		y1 = GFX_HEIGHT - 1;
-	if (x2 >= GFX_WIDTH)
-		x2 = GFX_WIDTH - 1;
-	if (y2 >= GFX_HEIGHT)
-		y2 = GFX_HEIGHT - 1;
-
-	w = x2 - x1 + 1;
-	h = y2 - y1 + 1;
-	p0 = &_agiScreen[x1 + y1 * GFX_WIDTH];
-	for (y = 0; y < h; y++) {
-		memset(p0, c, w);
-		p0 += GFX_WIDTH;
-	}
-}
-
-void GfxMgr::drawFrame(int x1, int y1, int x2, int y2, int c1, int c2) {
-	int y, w;
-	uint8 *p0;
-
-	// top line
-	w = x2 - x1 + 1;
-	p0 = &_agiScreen[x1 + y1 * GFX_WIDTH];
-	memset(p0, c1, w);
-
-	// bottom line
-	p0 = &_agiScreen[x1 + y2 * GFX_WIDTH];
-	memset(p0, c2, w);
-
-	// side lines
-	for (y = y1; y <= y2; y++) {
-		_agiScreen[x1 + y * GFX_WIDTH] = c1;
-		_agiScreen[x2 + y * GFX_WIDTH] = c2;
-	}
-}
-
-void GfxMgr::drawBox(int x1, int y1, int x2, int y2, int color1, int color2, int m) {
-	x1 += m;
-	y1 += m;
-	x2 -= m;
-	y2 -= m;
-
-	drawRectangle(x1, y1, x2, y2, color1);
-	drawFrame(x1 + 2, y1 + 2, x2 - 2, y2 - 2, color2, color2);
-	flushBlock(x1, y1, x2, y2);
-}
-
-void GfxMgr::printCharacter(int x, int y, char c, int fg, int bg) {
-	x *= CHAR_COLS;
-	y *= CHAR_LINES;
-
-	putTextCharacter(0, x, y, c, fg, bg);
-	// redundant! already inside put_text_character!
-	// flush_block (x, y, x + CHAR_COLS - 1, y + CHAR_LINES - 1);
 }
 
 /**
- * Draw a default style button.
- * Swaps background and foreground color if button is in focus or being pressed.
- * @param x  x coordinate of the button
- * @param y  y coordinate of the button
- * @param a  set if the button has focus
- * @param p  set if the button is pressed
- * @param fgcolor foreground color of the button when it is neither in focus nor being pressed
- * @param bgcolor background color of the button when it is neither in focus nor being pressed
+ * Convert sprite priority to y value.
  */
-void GfxMgr::drawDefaultStyleButton(int x, int y, const char *s, int a, int p, int fgcolor, int bgcolor) {
-	int textOffset     = _vm->_defaultButtonStyle.getTextOffset(a > 0, p > 0);
-	AgiTextColor color = _vm->_defaultButtonStyle.getColor     (a > 0, p > 0, fgcolor, bgcolor);
-	bool border        = _vm->_defaultButtonStyle.getBorder    (a > 0, p > 0);
+int16 GfxMgr::priorityToY(int16 priority) {
+	int16 currentY;
 
-	rawDrawButton(x, y, s, color.fg, color.bg, border, textOffset);
-}
-
-/**
- * Draw a button using the currently chosen style.
- * Amiga-style is used for the Amiga-rendering mode, PC-style is used otherwise.
- * @param x  x coordinate of the button
- * @param y  y coordinate of the button
- * @param hasFocus  set if the button has focus
- * @param pressed  set if the button is pressed
- * @param positive  set if button is positive, otherwise button is negative (Only matters with Amiga-style buttons)
- * TODO: Make Amiga-style buttons a bit wider as they were in Amiga AGI games.
- */
-void GfxMgr::drawCurrentStyleButton(int x, int y, const char *label, bool hasFocus, bool pressed, bool positive) {
-	int textOffset     = _vm->_buttonStyle.getTextOffset(hasFocus, pressed);
-	AgiTextColor color = _vm->_buttonStyle.getColor(hasFocus, pressed, positive);
-	bool border        = _vm->_buttonStyle.getBorder(hasFocus, pressed);
-
-	rawDrawButton(x, y, label, color.fg, color.bg, border, textOffset);
-}
-
-void GfxMgr::rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor, bool border, int textOffset) {
-	int len = strlen(s);
-	int x1, y1, x2, y2;
-
-	x1 = x - 3;
-	y1 = y - 3;
-	x2 = x + CHAR_COLS * len + 2;
-	y2 = y + CHAR_LINES + 2;
-
-	// Draw a filled rectangle that's larger than the button. Used for drawing
-	// a border around the button as the button itself is drawn after this.
-	drawRectangle(x1, y1, x2, y2, border ? BUTTON_BORDER : MSG_BOX_COLOR);
-
-	while (*s) {
-		putTextCharacter(0, x + textOffset, y + textOffset, *s++, fgcolor, bgcolor);
-		x += CHAR_COLS;
+	if (!_priorityTableSet) {
+		// priority table wasn't set by scripts? calculate directly
+		return (priority - 5) * 12 + 48;
 	}
 
-	x1 -= 2;
-	y1 -= 2;
-	x2 += 2;
-	y2 += 2;
+	// Dynamic priority bands were introduced in 2.425, but removed again until 2.936 (effectively last version of AGI2)
+	// They are available from 2.936 onwards.
+	// It seems there was a glitch, that caused priority bands to not get calculated properly.
+	// It was caused by this function starting with Y = 168 instead of 167, which meant it always
+	// returned with 168 as result.
+	// This glitch is required in King's Quest 4 2.0, otherwise in room 54 ego will get drawn over
+	//  the last dwarf, that enters the house.
+	//  Dwarf is screen object 13 (view 152), gets fixed priority of 8, which would normally
+	//  result in a Y of 101. Ego is priority (non-fixed) 8, which would mean that dwarf is
+	//  drawn first, followed by ego, which would then draw ego over the dwarf.
+	//  For more information see bug #1712585 (dwarf sprite priority)
+	//
+	// This glitch is definitely present in 2.425, 2.936 and 3.002.086.
+	//
+	// Priority bands were working properly in: 3.001.098 (Black Cauldron)
+	uint16 agiVersion = _vm->getVersion();
 
-	flushBlock(x1, y1, x2, y2);
+	if (agiVersion <= 0x3086) {
+		return 168; // Buggy behavior, see above
+	}
+
+	currentY = 167;
+	while (_priorityTable[currentY] >= priority) {
+		currentY--;
+		if (currentY < 0) // Original AGI didn't do this, we abort in that case and return -1
+			break;
+	}
+	return currentY;
 }
 
-int GfxMgr::testButton(int x, int y, const char *s) {
-	int len = strlen(s);
-	Common::Rect rect(x - 3, y - 3, x + CHAR_COLS * len + 3, y + CHAR_LINES + 3);
-	return rect.contains(_vm->_mouse.x, _vm->_mouse.y);
+int16 GfxMgr::priorityFromY(int16 yPos) {
+	assert(yPos < SCRIPT_HEIGHT);
+	return _priorityTable[yPos];
 }
 
-void GfxMgr::putBlock(int x1, int y1, int x2, int y2) {
-	gfxPutBlock(x1, y1, x2, y2);
-}
-
-void GfxMgr::putScreen() {
-	putBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
-}
-
-/*
- * Public functions
- */
 
 /**
  * Initialize the color palette
@@ -792,18 +1341,34 @@ void GfxMgr::putScreen() {
  * @param fromBits    Bits per source color component.
  * @param toBits      Bits per destination color component.
  */
-void GfxMgr::initPalette(const uint8 *p, uint colorCount, uint fromBits, uint toBits) {
+void GfxMgr::initPalette(uint8 *destPalette, const uint8 *paletteData, uint colorCount, uint fromBits, uint toBits) {
 	const uint srcMax  = (1 << fromBits) - 1;
 	const uint destMax = (1 << toBits) - 1;
-	for (uint col = 0; col < colorCount; col++) {
-		for (uint comp = 0; comp < 3; comp++) { // Convert RGB components
-			_palette[col * 3 + comp] = (p[col * 3 + comp] * destMax) / srcMax;
+	for (uint colorNr = 0; colorNr < colorCount; colorNr++) {
+		for (uint componentNr = 0; componentNr < 3; componentNr++) { // Convert RGB components
+			destPalette[colorNr * 3 + componentNr] = (paletteData[colorNr * 3 + componentNr] * destMax) / srcMax;
 		}
 	}
 }
 
-void GfxMgr::gfxSetPalette() {
-	g_system->getPaletteManager()->setPalette(_palette, 0, 256);
+// Converts CLUT data to a palette, that we can use
+void GfxMgr::initPaletteCLUT(uint8 *destPalette, const uint16 *paletteCLUTData, uint colorCount) {
+	for (uint colorNr = 0; colorNr < colorCount; colorNr++) {
+		for (uint componentNr = 0; componentNr < 3; componentNr++) { // RGB component
+			byte component = (paletteCLUTData[colorNr * 3 + componentNr] >> 8);
+			// Adjust gamma (1.8 to 2.2)
+			component = (byte)(255 * pow(component / 255.0f, 0.8181f));
+			destPalette[colorNr * 3 + componentNr] = component;
+		}
+	}
+}
+
+void GfxMgr::setPalette(bool gfxModePalette) {
+	if (gfxModePalette) {
+		g_system->getPaletteManager()->setPalette(_paletteGfxMode, 0, 256);
+	} else {
+		g_system->getPaletteManager()->setPalette(_paletteTextMode, 0, 256);
+	}
 }
 
 //Gets AGIPAL Data
@@ -855,8 +1420,8 @@ void GfxMgr::setAGIPal(int p0) {
 
 	_agipalFileNum = p0;
 
-	initPalette(_agipalPalette);
-	gfxSetPalette();
+	initPalette(_paletteGfxMode, _agipalPalette);
+	setPalette(true); // set gfx-mode palette
 
 	debug(1, "Using AGIPAL palette from '%s'", filename);
 }
@@ -865,135 +1430,64 @@ int GfxMgr::getAGIPalFileNum() {
 	return _agipalFileNum;
 }
 
-// put a block onto the screen
-void GfxMgr::gfxPutBlock(int x1, int y1, int x2, int y2) {
-	if (x1 >= GFX_WIDTH)
-		x1 = GFX_WIDTH - 1;
-	if (y1 >= GFX_HEIGHT)
-		y1 = GFX_HEIGHT - 1;
-	if (x2 >= GFX_WIDTH)
-		x2 = GFX_WIDTH - 1;
-	if (y2 >= GFX_HEIGHT)
-		y2 = GFX_HEIGHT - 1;
+void GfxMgr::initMouseCursor(MouseCursorData *mouseCursor, const byte *bitmapData, uint16 width, uint16 height, int hotspotX, int hotspotY) {
+	switch (_upscaledHires) {
+	case DISPLAY_UPSCALED_DISABLED:
+		mouseCursor->bitmapData = bitmapData;
+		break;
+	case DISPLAY_UPSCALED_640x400: {
+		mouseCursor->bitmapDataAllocated = (byte *)malloc(width * height * 4);
+		mouseCursor->bitmapData = mouseCursor->bitmapDataAllocated;
 
-	g_system->copyRectToScreen(_screen + y1 * 320 + x1, 320, x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+		// Upscale mouse cursor
+		byte *upscaledData = mouseCursor->bitmapDataAllocated;
+
+		for (uint16 y = 0; y < height; y++) {
+			for (uint16 x = 0; x < width; x++) {
+				byte curColor = *bitmapData++;
+				upscaledData[x * 2 + 0] = curColor;
+				upscaledData[x * 2 + 1] = curColor;
+				upscaledData[x * 2 + (width * 2) + 0] = curColor;
+				upscaledData[x * 2 + (width * 2) + 1] = curColor;
+			}
+			upscaledData += width * 2 * 2;
+		}
+
+		width *= 2;
+		height *= 2;
+		hotspotX *= 2;
+		hotspotY *= 2;
+		break;
+	}
+	default:
+		assert(0);
+		break;
+	}
+	mouseCursor->width = width;
+	mouseCursor->height = height;
+	mouseCursor->hotspotX = hotspotX;
+	mouseCursor->hotspotY = hotspotY;
 }
 
-/**
- * A black and white SCI-style arrow cursor (11x16).
- * 0 = Transparent.
- * 1 = Black (#000000 in 24-bit RGB).
- * 2 = White (#FFFFFF in 24-bit RGB).
- */
-static const byte sciMouseCursor[] = {
-	1,1,0,0,0,0,0,0,0,0,0,
-	1,2,1,0,0,0,0,0,0,0,0,
-	1,2,2,1,0,0,0,0,0,0,0,
-	1,2,2,2,1,0,0,0,0,0,0,
-	1,2,2,2,2,1,0,0,0,0,0,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,2,2,2,2,2,1,0,0,0,
-	1,2,2,2,2,2,2,2,1,0,0,
-	1,2,2,2,2,2,2,2,2,1,0,
-	1,2,2,2,2,2,2,2,2,2,1,
-	1,2,2,2,2,2,1,0,0,0,0,
-	1,2,1,0,1,2,2,1,0,0,0,
-	1,1,0,0,1,2,2,1,0,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,1,2,2,1,0,0,
-	0,0,0,0,0,0,1,2,2,1,0
-};
+void GfxMgr::setMouseCursor(bool busy) {
+	MouseCursorData *mouseCursor = nullptr;
 
-/**
- * A black and white Apple IIGS style arrow cursor (9x11).
- * 0 = Transparent.
- * 1 = Black (#000000 in 24-bit RGB).
- * 2 = White (#FFFFFF in 24-bit RGB).
- */
-static const byte appleIIgsMouseCursor[] = {
-	2,2,0,0,0,0,0,0,0,
-	2,1,2,0,0,0,0,0,0,
-	2,1,1,2,0,0,0,0,0,
-	2,1,1,1,2,0,0,0,0,
-	2,1,1,1,1,2,0,0,0,
-	2,1,1,1,1,1,2,0,0,
-	2,1,1,1,1,1,1,2,0,
-	2,1,1,1,1,1,1,1,2,
-	2,1,1,2,1,1,2,2,0,
-	2,2,2,0,2,1,1,2,0,
-	0,0,0,0,0,2,2,2,0
-};
+	if (!busy) {
+		mouseCursor = &_mouseCursor;
+	} else {
+		mouseCursor = &_mouseCursorBusy;
+	}
 
-/**
- * RGB-palette for the black and white SCI and Apple IIGS arrow cursors.
- */
-static const byte sciMouseCursorPalette[] = {
-	0x00, 0x00, 0x00, // Black
-	0xFF, 0xFF, 0xFF  // White
-};
+	if (mouseCursor) {
+		CursorMan.replaceCursor(mouseCursor->bitmapData, mouseCursor->width, mouseCursor->height, mouseCursor->hotspotX, mouseCursor->hotspotY, 0);
+	}
+}
 
-/**
- * An Amiga-style arrow cursor (8x11).
- * 0 = Transparent.
- * 1 = Black     (#000000 in 24-bit RGB).
- * 2 = Red       (#DE2021 in 24-bit RGB).
- * 3 = Light red (#FFCFAD in 24-bit RGB).
- */
-static const byte amigaMouseCursor[] = {
-	2,3,1,0,0,0,0,0,
-	2,2,3,1,0,0,0,0,
-	2,2,2,3,1,0,0,0,
-	2,2,2,2,3,1,0,0,
-	2,2,2,2,2,3,1,0,
-	2,2,2,2,2,2,3,1,
-	2,0,2,2,3,1,0,0,
-	0,0,0,2,3,1,0,0,
-	0,0,0,2,2,3,1,0,
-	0,0,0,0,2,3,1,0,
-	0,0,0,0,2,2,3,1
-};
-
-/**
- * RGB-palette for the Amiga-style arrow cursor
- * and the Amiga-style busy cursor.
- */
-static const byte amigaMouseCursorPalette[] = {
-	0x00, 0x00, 0x00, // Black
-	0xDE, 0x20, 0x21, // Red
-	0xFF, 0xCF, 0xAD  // Light red
-};
-
-/**
- * An Amiga-style busy cursor showing an hourglass (13x16).
- * 0 = Transparent.
- * 1 = Black     (#000000 in 24-bit RGB).
- * 2 = Red       (#DE2021 in 24-bit RGB).
- * 3 = Light red (#FFCFAD in 24-bit RGB).
- */
-static const byte busyAmigaMouseCursor[] = {
-	1,1,1,1,1,1,1,1,1,1,1,1,1,
-	1,2,2,2,2,2,2,2,2,2,2,2,1,
-	1,2,2,2,2,2,2,2,2,2,2,2,1,
-	0,1,3,3,3,3,3,3,3,3,3,1,0,
-	0,0,1,3,3,3,3,3,3,3,1,0,0,
-	0,0,0,1,3,3,3,3,3,1,0,0,0,
-	0,0,0,0,1,3,3,3,1,0,0,0,0,
-	0,0,0,0,0,1,3,1,0,0,0,0,0,
-	0,0,0,0,0,1,3,1,0,0,0,0,0,
-	0,0,0,0,1,2,3,2,1,0,0,0,0,
-	0,0,0,1,2,2,3,2,2,1,0,0,0,
-	0,0,1,2,2,2,3,2,2,2,1,0,0,
-	0,1,2,2,2,3,3,3,2,2,2,1,0,
-	1,3,3,3,3,3,3,3,3,3,3,3,1,
-	1,3,3,3,3,3,3,3,3,3,3,3,1,
-	1,1,1,1,1,1,1,1,1,1,1,1,1
-};
-
+#if 0
 void GfxMgr::setCursor(bool amigaStyleCursor, bool busy) {
 	if (busy) {
-		CursorMan.replaceCursorPalette(amigaMouseCursorPalette, 1, ARRAYSIZE(amigaMouseCursorPalette) / 3);
-		CursorMan.replaceCursor(busyAmigaMouseCursor, 13, 16, 7, 8, 0);
-
+		CursorMan.replaceCursorPalette(MOUSECURSOR_AMIGA_PALETTE, 1, ARRAYSIZE(MOUSECURSOR_AMIGA_PALETTE) / 3);
+		CursorMan.replaceCursor(MOUSECURSOR_AMIGA_BUSY, 13, 16, 7, 8, 0);
 		return;
 	}
 
@@ -1019,227 +1513,6 @@ void GfxMgr::setCursorPalette(bool amigaStyleCursor) {
 		}
 	}
 }
-
-/**
- * Initialize graphics device.
- *
- * @see deinit_video()
- */
-int GfxMgr::initVideo() {
-	if (_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2))
-		initPalette(vgaPalette, 256, 8);
-	else if (_vm->_renderMode == Common::kRenderEGA)
-		initPalette(egaPalette);
-	else
-		initPalette(newPalette);
-
-	if ((_agiScreen = (uint8 *)calloc(GFX_WIDTH, GFX_HEIGHT)) == NULL)
-		return errNotEnoughMemory;
-
-	gfxSetPalette();
-
-	setCursor(_vm->_renderMode == Common::kRenderAmiga);
-
-	return errOK;
-}
-
-/**
- * Deinitialize graphics device.
- *
- * @see init_video()
- */
-int GfxMgr::deinitVideo() {
-	free(_agiScreen);
-
-	return errOK;
-}
-
-int GfxMgr::initMachine() {
-	_screen = (unsigned char *)malloc(320 * 200);
-	_vm->_clockCount = 0;
-
-	return errOK;
-}
-
-int GfxMgr::deinitMachine() {
-	free(_screen);
-
-	return errOK;
-}
-
-/**
- * Write pixels on the output device.
- * This function writes a row of pixels on the output device. Only the
- * lower 4 bits of each pixel in the row will be used, making this
- * function suitable for use with rows from the AGI screen.
- * @param x x coordinate of the row start (AGI coord.)
- * @param y y coordinate of the row start (AGI coord.)
- * @param n number of pixels in the row
- * @param p pointer to the row start in the AGI screen (Always use sbuf16c as base, not sbuf256c)
- * FIXME: CGA rendering doesn't work correctly with AGI256 or AGI256-2.
- */
-void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
-	const uint rShift = _vm->_debug.priority ? 4 : 0; // Priority information is in the top 4 bits of a byte taken from sbuf16c.
-
-	// Choose the correct screen to read from. If AGI256 or AGI256-2 is used and we're not trying to show the priority information,
-	// then choose the 256 color screen, otherwise choose the 16 color screen (Which also has the priority information).
-	p += ((_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2)) && !_vm->_debug.priority) ? FROM_SBUF16_TO_SBUF256_OFFSET : 0;
-
-	if (_vm->_renderMode == Common::kRenderCGA) {
-		for (x *= 2; n--; p++, x += 2) {
-			register uint16 q = (cgaMap[(*p & 0xf0) >> 4] << 4) | cgaMap[*p & 0x0f];
-			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = (q >> rShift) & 0x0f0f;
-		}
-	} else {
-		const uint16 mask = ((_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2)) && !_vm->_debug.priority) ? 0xffff : 0x0f0f;
-		for (x *= 2; n--; p++, x += 2) {
-			register uint16 q = ((uint16)*p << 8) | *p;
-			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = (q >> rShift) & mask;
-		}
-	}
-}
-
-/**
- * Schedule blocks for blitting on the output device.
- * This function gets the coordinates of a block in the AGI screen and
- * schedule it to be updated in the output device.
- * @param x1 x coordinate of the upper left corner of the block (AGI coord.)
- * @param y1 y coordinate of the upper left corner of the block (AGI coord.)
- * @param x2 x coordinate of the lower right corner of the block (AGI coord.)
- * @param y2 y coordinate of the lower right corner of the block (AGI coord.)
- *
- * @see do_update()
- */
-void GfxMgr::scheduleUpdate(int x1, int y1, int x2, int y2) {
-	if (x1 < update.x1)
-		update.x1 = x1;
-	if (y1 < update.y1)
-		update.y1 = y1;
-	if (x2 > update.x2)
-		update.x2 = x2;
-	if (y2 > update.y2)
-		update.y2 = y2;
-}
-
-/**
- * Update scheduled blocks on the output device.
- * This function exposes the blocks scheduled for updating to the output
- * device. Blocks can be scheduled at any point of the AGI cycle.
- *
- * @see schedule_update()
- */
-void GfxMgr::doUpdate() {
-	if (update.x1 <= update.x2 && update.y1 <= update.y2) {
-		gfxPutBlock(update.x1, update.y1, update.x2, update.y2);
-	}
-
-	// reset update block variables
-	update.x1 = MAX_INT;
-	update.y1 = MAX_INT;
-	update.x2 = 0;
-	update.y2 = 0;
-
-	g_system->updateScreen();
-}
-
-/**
- * Updates a block of the framebuffer with contents of the AGI engine screen.
- * This function updates a block in the output device with the contents of
- * the AGI engine screen, handling console transparency.
- * @param x1 x coordinate of the upper left corner of the block
- * @param y1 y coordinate of the upper left corner of the block
- * @param x2 x coordinate of the lower right corner of the block
- * @param y2 y coordinate of the lower right corner of the block
- *
- * @see flush_block_a()
- */
-void GfxMgr::flushBlock(int x1, int y1, int x2, int y2) {
-	int y, w;
-	uint8 *p0;
-
-	scheduleUpdate(x1, y1, x2, y2);
-
-	p0 = &_agiScreen[x1 + y1 * GFX_WIDTH];
-	w = x2 - x1 + 1;
-
-	for (y = y1; y <= y2; y++) {
-		memcpy(_screen + 320 * y + x1, p0, w);
-		p0 += GFX_WIDTH;
-	}
-}
-
-/**
- * Updates a block of the framebuffer receiving AGI picture coordinates.
- * @param x1 x AGI picture coordinate of the upper left corner of the block
- * @param y1 y AGI picture coordinate of the upper left corner of the block
- * @param x2 x AGI picture coordinate of the lower right corner of the block
- * @param y2 y AGI picture coordinate of the lower right corner of the block
- *
- * @see flush_block()
- */
-void GfxMgr::flushBlockA(int x1, int y1, int x2, int y2) {
-	//y1 += 8;
-	//y2 += 8;
-	flushBlock(DEV_X0(x1), DEV_Y(y1), DEV_X1(x2), DEV_Y(y2));
-}
-
-/**
- * Updates the framebuffer with contents of the AGI engine screen (console-aware).
- * This function updates the output device with the contents of the AGI
- * screen, handling console transparency.
- */
-void GfxMgr::flushScreen() {
-	flushBlock(0, 0, GFX_WIDTH - 1, GFX_HEIGHT - 1);
-
-	doUpdate();
-}
-
-/**
- * Clear the output device screen (console-aware).
- * This function clears the output device screen and updates the
- * output device. Contents of the AGI screen are left untouched. This
- * function can be used to simulate a switch to a text mode screen in
- * a graphic-only device.
- * @param c  color to clear the screen
- */
-void GfxMgr::clearScreen(int c) {
-	memset(_agiScreen, c, GFX_WIDTH * GFX_HEIGHT);
-	flushScreen();
-}
-
-/**
- * Save a block of the AGI engine screen
- */
-void GfxMgr::saveBlock(int x1, int y1, int x2, int y2, uint8 *b) {
-	uint8 *p0;
-	int w, h;
-
-	p0 = &_agiScreen[x1 + GFX_WIDTH * y1];
-	w = x2 - x1 + 1;
-	h = y2 - y1 + 1;
-	while (h--) {
-		memcpy(b, p0, w);
-		b += w;
-		p0 += GFX_WIDTH;
-	}
-}
-
-/**
- * Restore a block of the AGI engine screen
- */
-void GfxMgr::restoreBlock(int x1, int y1, int x2, int y2, uint8 *b) {
-	uint8 *p0;
-	int w, h;
-
-	p0 = &_agiScreen[x1 + GFX_WIDTH * y1];
-	w = x2 - x1 + 1;
-	h = y2 - y1 + 1;
-	while (h--) {
-		memcpy(p0, b, w);
-		b += w;
-		p0 += GFX_WIDTH;
-	}
-	flushBlock(x1, y1, x2, y2);
-}
+#endif
 
 } // End of namespace Agi

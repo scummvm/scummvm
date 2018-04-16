@@ -64,7 +64,7 @@ void ResourceCache::add(uint32 tag, uint16 id, Common::SeekableReadStream *data)
 // Returns NULL if not found
 Common::SeekableReadStream *ResourceCache::search(uint32 tag, uint16 id) {
 	if (!enabled)
-		return NULL;
+		return nullptr;
 
 	debugC(kDebugCache, "Searching for tag 0x%04X id %d", tag, id);
 
@@ -79,7 +79,7 @@ Common::SeekableReadStream *ResourceCache::search(uint32 tag, uint16 id) {
 	}
 
 	debugC(kDebugCache, "tag 0x%04X id %d not found", tag, id);
-	return NULL;
+	return nullptr;
 }
 
 } // End of namespace Mohawk

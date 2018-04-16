@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "sci/graphics/helpers.h"
+#include "sci/util.h"
 
 namespace Sci {
 
@@ -34,12 +35,6 @@ class GfxScreen;
 // Special flag implemented by us for optimization in palette merge
 #define SCI_PALETTE_MATCH_PERFECT 0x8000
 #define SCI_PALETTE_MATCH_COLORMASK 0xFF
-
-enum ColorRemappingType {
-	kRemappingNone = 0,
-	kRemappingByRange = 1,
-	kRemappingByPercent = 2
-};
 
 /**
  * Palette class, handles palette operations like changing intensity, setting up the palette, merging different palettes
@@ -53,9 +48,9 @@ public:
 	bool isUsing16bitColorMatch();
 
 	void setDefault();
-	void createFromData(byte *data, int bytesLeft, Palette *paletteOut);
+	void createFromData(const SciSpan<const byte> &data, Palette *paletteOut) const;
 	bool setAmiga();
-	void modifyAmigaPalette(byte *data);
+	void modifyAmigaPalette(const SciSpan<const byte> &data);
 	void setEGA();
 	void set(Palette *sciPal, bool force, bool forceRealMerge = false);
 	bool insert(Palette *newPalette, Palette *destPalette);
@@ -63,15 +58,6 @@ public:
 	uint16 matchColor(byte r, byte g, byte b);
 	void getSys(Palette *pal);
 	uint16 getTotalColorCount() const { return _totalScreenColors; }
-
-	void resetRemapping();
-	void setRemappingPercent(byte color, byte percent);
-	void setRemappingPercentGray(byte color, byte percent);
-	void setRemappingRange(byte color, byte from, byte to, byte base);
-	bool isRemapped(byte color) const {
-		return _remapOn && (_remappingType[color] != kRemappingNone);
-	}
-	byte remapColor(byte remappedColor, byte screenColor);
 
 	void setOnScreen();
 	void copySysPaletteToScreen();
@@ -104,19 +90,13 @@ public:
 
 	Palette _sysPalette;
 
-	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void saveLoadWithSerializer(Common::Serializer &s);
 	void palVarySaveLoadPalette(Common::Serializer &s, Palette *palette);
 
 	byte findMacIconBarColor(byte r, byte g, byte b);
 	bool colorIsFromMacClut(byte index);
 
-#ifdef ENABLE_SCI32
-	bool loadClut(uint16 clutId);
-	byte matchClutColor(uint16 color);
-	void unloadClut();
-#endif
-
-private:
+protected:
 	void palVaryInit();
 	void palVaryInstallTimer();
 	void palVaryRemoveTimer();
@@ -144,18 +124,8 @@ private:
 	int _palVarySignal;
 	uint16 _totalScreenColors;
 
-	bool _remapOn;
-	ColorRemappingType _remappingType[256];
-	byte _remappingByPercent[256];
-	byte _remappingByRange[256];
-	uint16 _remappingPercentToSet;
-
 	void loadMacIconBarPalette();
 	byte *_macClut;
-
-#ifdef ENABLE_SCI32
-	byte *_clutTable;
-#endif
 };
 
 } // End of namespace Sci

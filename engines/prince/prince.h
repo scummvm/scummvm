@@ -8,20 +8,20 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#ifndef PRINCE_H
-#define PRINCE_H
+#ifndef PRINCE_PRINCE_H
+#define PRINCE_PRINCE_H
 
 #include "common/random.h"
 #include "common/system.h"
@@ -38,6 +38,7 @@
 
 #include "gui/debugger.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "engines/util.h"
 
@@ -51,7 +52,17 @@
 
 namespace Prince {
 
-struct PrinceGameDescription;
+enum PrinceGameType {
+	kPrinceDataUNK,
+	kPrinceDataDE,
+	kPrinceDataPL
+};
+
+struct PrinceGameDescription {
+	ADGameDescription desc;
+	PrinceGameType gameType;
+};
+
 struct SavegameHeader;
 
 class PrinceEngine;
@@ -69,6 +80,21 @@ class Hero;
 class Animation;
 class Room;
 class Pscr;
+
+enum {
+	GF_TRANSLATED = 1 << 0
+};
+
+struct SavegameHeader {
+	uint8 version;
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
+	int saveYear, saveMonth, saveDay;
+	int saveHour, saveMinutes;
+};
+
+#define kSavegameStrSize 14
+#define kSavegameStr "SCUMMVM_PRINCE"
 
 struct Text {
 	const char *_str;
@@ -256,12 +282,15 @@ public:
 	virtual ~PrinceEngine();
 
 	virtual bool hasFeature(EngineFeature f) const;
+	virtual void pauseEngineIntern(bool pause);
 	virtual bool canSaveGameStateCurrently();
 	virtual bool canLoadGameStateCurrently();
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
 	virtual Common::Error loadGameState(int slot);
 
-	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header);
+	void playVideo(Common::String videoFilename);
+
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 	Common::String generateSaveName(int slot);
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
 	void syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream);
@@ -371,7 +400,7 @@ public:
 	static const int16 kZoomBitmapHeight = kMaxPicHeight / kZoomStep;
 	static const int16 kNormalWidth = 640;
 	static const int16 kNormalHeight = 480;
-	static const int32 kTransTableSize = 256 * 256;
+	static const uint32 kTransTableSize = 256 * 256;
 
 	static const int kMaxNormAnims = 64;
 	static const int kMaxBackAnims = 64;
@@ -407,7 +436,7 @@ public:
 	int _currentPointerNumber;
 
 	static const int16 kMaxInv = 90; // max amount of inventory items in whole game
-	static const int16 kMaxItems = 30; // size of inventory
+	static const uint16 kMaxItems = 30; // size of inventory
 
 	uint32 _invTxtSize;
 	byte *_invTxt;
@@ -536,7 +565,7 @@ public:
 
 	// Pathfinding
 	static const int16 kPathGridStep = 2;
-	static const int32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;
+	static const uint32 kPathBitmapLen = (kMaxPicHeight / kPathGridStep * kMaxPicWidth / kPathGridStep) / 8;
 	static const int32 kTracePts = 8000;
 	static const int32 kPBW = kMaxPicWidth / 16; // PathBitmapWidth
 	static const int kMinDistance = 2500;
@@ -639,8 +668,7 @@ private:
 	static bool compareDrawNodes(DrawNode d1, DrawNode d2);
 	void runDrawNodes();
 	void makeShadowTable(int brightness);
-	void pause();
-	void pause2();
+	void pausePrinceEngine(int fps = kFPS);
 
 	uint32 getTextWidth(const char *s);
 	void debugEngine(const char *s, ...);

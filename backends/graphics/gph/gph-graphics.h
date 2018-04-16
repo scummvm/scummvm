@@ -33,28 +33,25 @@ enum {
 
 class GPHGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	GPHGraphicsManager(SdlEventSource *boss);
+	GPHGraphicsManager(SdlEventSource *boss, SdlWindow *window);
 
-	bool hasFeature(OSystem::Feature f);
-	void setFeatureState(OSystem::Feature f, bool enable);
-	bool getFeatureState(OSystem::Feature f);
-	int getDefaultGraphicsMode() const;
+	bool hasFeature(OSystem::Feature f) const override;
+	void setFeatureState(OSystem::Feature f, bool enable) override;
+	bool getFeatureState(OSystem::Feature f) const;
+	int getDefaultGraphicsMode() const override;
 
-	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	bool setGraphicsMode(const char *name);
-	bool setGraphicsMode(int mode);
-	void setGraphicsModeIntern();
-	void internUpdateScreen();
-	void showOverlay();
-	void hideOverlay();
-	bool loadGFXMode();
-	void drawMouse();
-	void undrawMouse();
-	virtual void warpMouse(int x, int y);
-
-	SurfaceSdlGraphicsManager::MousePos *getMouseCurState();
-	SurfaceSdlGraphicsManager::VideoState *getVideoMode();
+	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL) override;
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	bool setGraphicsMode(const char *name) override;
+	bool setGraphicsMode(int mode) override;
+	void setGraphicsModeIntern() override;
+	void internUpdateScreen() override;
+	void showOverlay() override;
+	void hideOverlay() override;
+	bool loadGFXMode() override;
+	void drawMouse() override;
+	void undrawMouse() override;
+	void warpMouse(int x, int y) override;
 
 	virtual void transformMouseCoordinates(Common::Point &point);
 };

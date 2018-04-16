@@ -130,7 +130,7 @@ void Walk::animateJoe() {
 			_vm->logic()->joeScale(pbs->scale);
 			pbs->scaleWalkSpeed(6);
 			_vm->update(true);
-			if (_vm->input()->cutawayQuit() || _vm->logic()->joeWalk() == JWM_EXECUTE) {
+			if (_vm->input()->cutawayQuit() || _vm->logic()->joeWalk() == JWM_EXECUTE || _vm->shouldQuit()) {
 				stopJoe();
 				break;
 			}
@@ -249,7 +249,7 @@ void Walk::animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum,
 			_vm->update();
 			pbs->scale = pwd->area->calcScale(pbs->y);
 			pbs->scaleWalkSpeed(mpd->moveSpeed);
-			if (_vm->input()->cutawayQuit()) {
+			if (_vm->input()->cutawayQuit() || _vm->shouldQuit()) {
 				stopPerson(bobNum);
 				break;
 			}

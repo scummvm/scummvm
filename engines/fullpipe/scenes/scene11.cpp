@@ -96,7 +96,7 @@ void scene11_setupMusic() {
 void scene11_initScene(Scene *sc) {
 	g_vars->scene11_swingie = sc->getStaticANIObject1ById(ANI_SWINGER, -1);
 	g_vars->scene11_boots = sc->getStaticANIObject1ById(ANI_BOOTS_11, -1);
-	g_vars->scene11_mgm.clear();
+	g_vars->scene11_aniHandler.detachAllObjects();
 	g_vars->scene11_dudeOnSwing = sc->getStaticANIObject1ById(ANI_MAN11, -1);
 	g_vars->scene11_dudeOnSwing->_callback2 = scene11_dudeSwingCallback;
 	g_vars->scene11_dudeOnSwing = sc->getStaticANIObject1ById(ANI_KACHELI, -1);
@@ -114,7 +114,7 @@ void scene11_initScene(Scene *sc) {
 	g_vars->scene11_swingOldAngle = 0.0;
 	g_vars->scene11_swingSpeed = 0.0;
 	g_vars->scene11_swingAngleDiff = 0.0;
-	g_vars->scene11_swingInertia = 1.28; //1.9849218750000000;
+	g_vars->scene11_swingInertia = 0.01; //1.9849218750000000;
 	g_vars->scene11_swingCounter = 0;
 	g_vars->scene11_swingCounterPrevTurn = 0;
 	g_vars->scene11_swingDirection = 0;
@@ -134,12 +134,10 @@ void scene11_initScene(Scene *sc) {
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 1);
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 1);
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 0);
-
-		((MctlCompound *)getCurrSceneSc2MotionController())->replaceNodeX(805, 905);
-
+		getCurrSceneSc2MotionController()->replaceNodeX(805, 905);
 		getSc2MctlCompoundBySceneId(sc->_sceneId)->replaceNodeX(303, 353);
 	} else if (swingie == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
-			   || swingie == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
+				|| swingie == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
 		g_vars->scene11_swingIsSwinging = false;
 		g_vars->scene11_swingieStands = true;
 
@@ -148,8 +146,7 @@ void scene11_initScene(Scene *sc) {
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing1, 0);
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing2, 1);
 		getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing3, 0);
-
-		((MctlCompound *)getCurrSceneSc2MotionController())->replaceNodeX(905, 805);
+		getCurrSceneSc2MotionController()->replaceNodeX(905, 805);
 	} else {
 		g_vars->scene11_swingIsSwinging = false;
 		g_vars->scene11_swingieStands = false;
@@ -191,7 +188,7 @@ void sceneHandler11_restartMan() {
 	chainObjQueue(0, QU_SC11_RESTARTMAN, 1);
 
 	getGameLoaderInteractionController()->enableFlag24();
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 
 	g_vars->scene11_scrollIsEnabled = false;
 }
@@ -232,15 +229,17 @@ int sceneHandler11_updateScreenCallback() {
 }
 
 void sceneHandler11_manToSwing() {
+	debugC(1, kDebugSceneLogic, "sceneHandler11_manToSwing()");
+
 	g_vars->scene11_arcadeIsOn = true;
 
-	getCurrSceneSc2MotionController()->clearEnabled();
+	getCurrSceneSc2MotionController()->deactivate();
 	getGameLoaderInteractionController()->disableFlag24();
 
 	g_fp->_aniMan2->hide();
 
 	g_vars->scene11_swingCounter = 0;
-	g_vars->scene11_swingInertia = 1.28; //1.9849218;
+	g_vars->scene11_swingInertia = 0.01; //1.9849218;
 
 	g_vars->scene11_dudeOnSwing->_flags &= 0xFFFB;
 	g_vars->scene11_dudeOnSwing = g_fp->_currentScene->getStaticANIObject1ById(ANI_MAN11, -1);
@@ -251,7 +250,7 @@ void sceneHandler11_manToSwing() {
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
 	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(45);
 
-	g_vars->scene11_mgm.addItem(g_fp->_aniMan->_id);
+	g_vars->scene11_aniHandler.attachObject(g_fp->_aniMan->_id);
 
 	g_fp->_currentScene->_x = 1400 - g_fp->_sceneRect.right;
 
@@ -271,7 +270,7 @@ void sceneHandler11_putABoot() {
 void sceneHandler11_putBoot() {
 	if (abs(353 - g_fp->_aniMan->_ox) > 1 || abs(498 - g_fp->_aniMan->_oy) > 1
 		|| g_fp->_aniMan->_movement || g_fp->_aniMan->_statics->_staticsId != ST_MAN_RIGHT) {
-		MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 353, 498, 1, ST_MAN_RIGHT);
+		MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 353, 498, 1, ST_MAN_RIGHT);
 
 		if (mq) {
 			ExCommand *ex = new ExCommand(0, 17, MSG_SC11_PUTBOOT, 0, 0, 0, 1, 0, 0, 0);
@@ -299,7 +298,7 @@ void sceneHandler11_jumpFromSwing() {
 	g_vars->scene11_hint->_flags &= 0xFFFB;
 	g_vars->scene11_scrollIsEnabled = false;
 
-	getCurrSceneSc2MotionController()->setEnabled();
+	getCurrSceneSc2MotionController()->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 
 	g_vars->scene11_swingOldAngle = 0.0;
@@ -315,9 +314,9 @@ void sceneHandler11_jumpFromSwing() {
 	g_vars->scene11_dudeOnSwing->_priority = 20;
 	g_vars->scene11_dudeOnSwing->_flags |= 4;
 
-    MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
-    ExCommand *ex = new ExCommand(g_fp->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
-	ex->_field_14 = 256;
+	MessageQueue *mq = new MessageQueue(g_fp->_globalMessageQueueList->compact());
+	ExCommand *ex = new ExCommand(g_fp->_aniMan->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
+	ex->_z = 256;
 	ex->_messageNum = 0;
 	ex->_excFlags |= 3;
 	mq->addExCommandToEnd(ex);
@@ -334,11 +333,14 @@ void sceneHandler11_jumpFromSwing() {
 }
 
 void sceneHandler11_swing0() {
+	debugC(1, kDebugSceneLogic, "sceneHandler11_swing0()");
+
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = 0;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_0, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_0, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
 
 	g_vars->scene11_swingDirection = 0;
 	g_vars->scene11_swingMaxAngle = 45;
@@ -346,11 +348,14 @@ void sceneHandler11_swing0() {
 }
 
 void sceneHandler11_swing1() {
+	debugC(1, kDebugSceneLogic, "sceneHandler11_swing1()");
+
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = 0;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_1, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_1, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
 
 	g_vars->scene11_swingDirection = 1;
 	g_vars->scene11_swingMaxAngle = 42;
@@ -358,11 +363,14 @@ void sceneHandler11_swing1() {
 }
 
 void sceneHandler11_swing2() {
+	debugC(1, kDebugSceneLogic, "sceneHandler11_swing2()");
+
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	g_vars->scene11_dudeOnSwing->_statics = g_vars->scene11_dudeOnSwing->getStaticsById(ST_MAN11_EMPTY);
 	g_vars->scene11_dudeOnSwing->_movement = 0;
 	g_vars->scene11_dudeOnSwing->show1(690, 215, MV_MAN11_SWING_2, 0);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_MAN11_SWING_2, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
 
 	g_vars->scene11_swingDirection = 2;
 	g_vars->scene11_swingMaxAngle = 48;
@@ -370,6 +378,7 @@ void sceneHandler11_swing2() {
 }
 
 void sceneHandler11_emptySwing() {
+	int phase = g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex;
 	if (g_vars->scene11_swingDirection)
 		sceneHandler11_swing0();
 
@@ -379,13 +388,13 @@ void sceneHandler11_emptySwing() {
 	g_vars->scene11_dudeOnSwing->show1(-1, -1, -1, 0);
 	g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_EMPTY);
 	g_vars->scene11_dudeOnSwing->startAnim(MV_KCH_MOVE2, 0, -1);
-	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex);
+	g_vars->scene11_dudeOnSwing->_movement->setDynamicPhaseIndex(phase);
 
 	g_vars->scene11_swingInertia = 0.03; //1.9881250;
 }
 
 void sceneHandler11_jumpHitAndWin() {
-	MGMInfo mgminfo;
+	MakeQueueStruct mkQueue;
 
 	sceneHandler11_emptySwing();
 
@@ -393,27 +402,27 @@ void sceneHandler11_jumpHitAndWin() {
 						  MV_MAN11_JUMPHIT, 0);
 	g_fp->_aniMan->_priority = 10;
 
-	mgminfo.field_1C = 10;
-	mgminfo.ani = g_fp->_aniMan;
-	mgminfo.staticsId2 = ST_MAN_1PIX;
-	mgminfo.x1 = 1400;
-	mgminfo.y1 = 0;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 66;
-	mgminfo.movementId = MV_MAN11_JUMPHIT;
+	mkQueue.field_1C = 10;
+	mkQueue.ani = g_fp->_aniMan;
+	mkQueue.staticsId2 = ST_MAN_1PIX;
+	mkQueue.x1 = 1400;
+	mkQueue.y1 = 0;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 66;
+	mkQueue.movementId = MV_MAN11_JUMPHIT;
 
-	MessageQueue *mq = g_vars->scene11_mgm.genMovement(&mgminfo);
+	MessageQueue *mq = g_vars->scene11_aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_024;
 		ExCommand *ex = new ExCommand(ANI_MAN, 2, 36, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = -1;
+		ex->_param = -1;
 		ex->_excFlags = 2;
 
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(SC_11, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaRight;
+		ex->_param = TrubaRight;
 		ex->_excFlags = 3;
 
 		mq->addExCommandToEnd(ex);
@@ -430,7 +439,7 @@ void sceneHandler11_jumpHitAndWin() {
 }
 
 void sceneHandler11_jumpOver(double angle) {
-	MGMInfo mgminfo;
+	MakeQueueStruct mkQueue;
 
 	sceneHandler11_emptySwing();
 
@@ -438,16 +447,16 @@ void sceneHandler11_jumpOver(double angle) {
 						  MV_MAN11_JUMPOVER, 0);
 	g_fp->_aniMan->_priority = 0;
 
-	mgminfo.staticsId2 = ST_MAN_1PIX;
-	mgminfo.ani = g_fp->_aniMan;
-	mgminfo.x1 = 1163;
-	mgminfo.y1 = 837 - (int)(angle * 153.0);
-	mgminfo.field_1C = 0;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_MAN11_JUMPOVER;
+	mkQueue.staticsId2 = ST_MAN_1PIX;
+	mkQueue.ani = g_fp->_aniMan;
+	mkQueue.x1 = 1163;
+	mkQueue.y1 = 837 - (int)(angle * 153.0);
+	mkQueue.field_1C = 0;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_MAN11_JUMPOVER;
 
-	MessageQueue *mq = g_vars->scene11_mgm.genMovement(&mgminfo);
+	MessageQueue *mq = g_vars->scene11_aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_022;
@@ -463,7 +472,7 @@ void sceneHandler11_jumpOver(double angle) {
 }
 
 void sceneHandler11_jumpHit(double angle) {
-	MGMInfo mgminfo;
+	MakeQueueStruct mkQueue;
 
 	sceneHandler11_emptySwing();
 
@@ -478,16 +487,16 @@ void sceneHandler11_jumpHit(double angle) {
 						  MV_MAN11_JUMPOVER, 0);
 	g_fp->_aniMan->_priority = 0;
 
-	mgminfo.staticsId2 = ST_MAN_1PIX;
-	mgminfo.ani = g_fp->_aniMan;
-	mgminfo.x1 = 1017 - (int)(angle * -214.0);
-	mgminfo.y1 = 700;
-	mgminfo.field_1C = 0;
-	mgminfo.field_10 = 1;
-	mgminfo.flags = 78;
-	mgminfo.movementId = MV_MAN11_JUMPHIT;
+	mkQueue.staticsId2 = ST_MAN_1PIX;
+	mkQueue.ani = g_fp->_aniMan;
+	mkQueue.x1 = 1017 - (int)(angle * -214.0);
+	mkQueue.y1 = 700;
+	mkQueue.field_1C = 0;
+	mkQueue.field_10 = 1;
+	mkQueue.flags = 78;
+	mkQueue.movementId = MV_MAN11_JUMPHIT;
 
-	MessageQueue *mq = g_vars->scene11_mgm.genMovement(&mgminfo);
+	MessageQueue *mq = g_vars->scene11_aniHandler.makeRunQueue(&mkQueue);
 
 	if (mq) {
 		g_vars->scene11_crySound = SND_11_022;
@@ -531,7 +540,7 @@ void sceneHandler11_setSwingDirection() {
 	else if (g_vars->scene11_swingDirection == 1)
 		g_vars->scene11_swingDirectionPrevTurn = 2;
 	else
-		g_vars->scene11_swingDirectionPrevTurn = (g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex <= 45) + 1;
+		g_vars->scene11_swingDirectionPrevTurn = (g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex <= 45 ? 1 : 0) + 1;
 }
 
 void sceneHandler11_swingieSit() {
@@ -551,7 +560,7 @@ void sceneHandler11_swingieSit() {
 }
 
 void sceneHandler11_swingieJumpDown() {
-    MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SWR_JUMPDOWN), 0, 0);
+	MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SWR_JUMPDOWN), 0, 0);
 
 	mq->setFlags(mq->getFlags() | 1);
 
@@ -590,7 +599,7 @@ int sceneHandler11(ExCommand *cmd) {
 
 	case MSG_SC11_SITSWINGER:
 		if (g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInBoots)
-			    || g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
+				|| g_fp->getObjectState(sO_Swingie) == g_fp->getObjectEnumState(sO_Swingie, sO_IsStandingInCorner)) {
 			g_fp->setObjectState(sO_Swingie, g_fp->getObjectEnumState(sO_Swingie, sO_IsSitting));
 		}
 		break;
@@ -629,145 +638,121 @@ int sceneHandler11(ExCommand *cmd) {
 	case 33:
 		{
 			int res = 0;
-			int x, y;
 
-			if (!g_fp->_aniMan2)
-				goto LABEL_27;
+			if (g_fp->_aniMan2) {
+				int x, y;
+				x = g_fp->_aniMan2->_ox;
+				y = g_fp->_aniMan2->_oy;
 
-			x = g_fp->_aniMan2->_ox;
-			y = g_fp->_aniMan2->_oy;
+				g_vars->scene11_dudeX = x;
+				g_vars->scene11_dudeY = y;
 
-			g_vars->scene11_dudeX = x;
-			g_vars->scene11_dudeY = y;
+				if (g_vars->scene11_scrollIsEnabled) {
+					if (x > g_fp->_sceneRect.right - 200)
+						g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 200;
+				} else if (g_vars->scene11_scrollIsMaximized) {
+					g_fp->_currentScene->_x = g_fp->_sceneWidth - x;
 
-			if (g_vars->scene11_scrollIsEnabled) {
-				if (x > g_fp->_sceneRect.right - 200)
-					g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
-				goto LABEL_26;
+					if (g_vars->scene11_dudeX < 910)
+						g_vars->scene11_scrollIsMaximized = false;
+				} else {
+					if (x < g_fp->_sceneRect.left + 200)
+						g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
+					else if (x > g_fp->_sceneRect.right - 200)
+						g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
+
+					if (y < g_fp->_sceneRect.top + 200)
+						g_fp->_currentScene->_y = y - g_fp->_sceneRect.top - 300;
+					if (y > g_fp->_sceneRect.bottom - 300)
+						g_fp->_currentScene->_y = y - g_fp->_sceneRect.bottom + 300;
+
+					if (x >= 940)
+						g_vars->scene11_scrollIsMaximized = true;
+
+					g_fp->sceneAutoScrolling();
+				}
+				res = 1;
 			}
 
-			if (g_vars->scene11_scrollIsMaximized) {
-				g_fp->_currentScene->_x = g_fp->_sceneWidth - x;
-
-				if (g_vars->scene11_dudeX < 910)
-					g_vars->scene11_scrollIsMaximized = false;
-
-			LABEL_26:
-				res = 1;
-			LABEL_27:
-				if (g_vars->scene11_swingieStands) {
-					if (g_fp->_sceneRect.left >= 534 && g_vars->scene11_swingieScreenEdge < 534)
+			if (g_vars->scene11_swingieStands) {
+				if (g_fp->_sceneRect.left >= 534 && g_vars->scene11_swingieScreenEdge < 534)
 						sceneHandler11_swingieSit();
 
-					g_vars->scene11_swingieScreenEdge = g_fp->_sceneRect.left;
-				}
+				g_vars->scene11_swingieScreenEdge = g_fp->_sceneRect.left;
+			}
 
-				if (!g_vars->scene11_arcadeIsOn)
-					goto LABEL_50;
-
-				if (g_vars->scene11_swingCounterPrevTurn <= 0 || g_vars->scene11_swingCounter - g_vars->scene11_swingCounterPrevTurn <= 72) {
-				} else {
+			if (g_vars->scene11_arcadeIsOn) {
+				if (g_vars->scene11_swingCounterPrevTurn > 0 && g_vars->scene11_swingCounter - g_vars->scene11_swingCounterPrevTurn > 72) {
 					sceneHandler11_swing0();
 					g_vars->scene11_swingDirectionPrevTurn = 0;
 					g_vars->scene11_swingCounterPrevTurn = 0;
 				}
-
-				if (!g_vars->scene11_arcadeIsOn)
-					goto LABEL_50;
-
-				if (g_vars->scene11_swingDirection == g_vars->scene11_swingDirectionPrevTurn || g_vars->scene11_swingCounterPrevTurn <= 0 || g_vars->scene11_swingCounter - g_vars->scene11_swingCounterPrevTurn <= 2) {
-				LABEL_49:
-					if (g_vars->scene11_arcadeIsOn) {
-						g_fp->_behaviorManager->updateBehaviors();
-						g_fp->startSceneTrack();
-						return res;
-					}
-				LABEL_50:
-					if (g_vars->scene11_swingIsSwinging
-						|| (0.0 == g_vars->scene11_swingSpeed
-							&& g_vars->scene11_dudeOnSwing->_movement != 0
-							&& g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex == 45
-							&& (g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_STATIC), !g_vars->scene11_arcadeIsOn)
-							&& g_vars->scene11_swingIsSwinging)) {
-						if (!g_vars->scene11_swingie->_movement) {
-							if ((g_vars->scene11_boots->_flags & 4) && g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_2) {
-								sceneHandler11_swingieJumpDown();
-
-								g_fp->_behaviorManager->updateBehaviors();
-								g_fp->startSceneTrack();
-								return res;
-							}
-							g_vars->scene11_swingie->startAnim(MV_SWR_SWING, 0, -1);
-						}
-					}
-					g_fp->_behaviorManager->updateBehaviors();
-					g_fp->startSceneTrack();
-					return res;
-				}
-
-				if (g_vars->scene11_swingDirectionPrevTurn == 1) {
-					if (!g_vars->scene11_swingDirection)
-						sceneHandler11_swing1();
-					else
-						sceneHandler11_swing0();
-				} else if (g_vars->scene11_swingDirectionPrevTurn == 2) {
-					if (!g_vars->scene11_swingDirection)
-						sceneHandler11_swing2();
-					else
-						sceneHandler11_swing0();
-				}
-
-				g_vars->scene11_swingCounterPrevTurn = g_vars->scene11_swingCounter;
-				goto LABEL_49;
 			}
-			if (x >= g_fp->_sceneRect.left + 200) {
-				if (x <= g_fp->_sceneRect.right - 200) {
-				LABEL_18:
-					if (y < g_fp->_sceneRect.top + 200) {
-						g_fp->_currentScene->_y = y - g_fp->_sceneRect.top - 300;
-						y = g_vars->scene11_dudeY;
-						x = g_vars->scene11_dudeX;
+
+			if (g_vars->scene11_arcadeIsOn) {
+				if (g_vars->scene11_swingDirection != g_vars->scene11_swingDirectionPrevTurn
+					&& g_vars->scene11_swingCounterPrevTurn > 0 && g_vars->scene11_swingCounter - g_vars->scene11_swingCounterPrevTurn > 2) {
+
+					if (g_vars->scene11_swingDirectionPrevTurn == 1) {
+						if (g_vars->scene11_swingDirection == 0)
+							sceneHandler11_swing1();
+						else
+							sceneHandler11_swing0();
+					} else if (g_vars->scene11_swingDirectionPrevTurn == 2) {
+						if (g_vars->scene11_swingDirection == 0)
+							sceneHandler11_swing2();
+						else
+							sceneHandler11_swing0();
 					}
-					if (y > g_fp->_sceneRect.bottom - 300) {
-						g_fp->_currentScene->_y = y - g_fp->_sceneRect.bottom + 300;
-						x = g_vars->scene11_dudeX;
-					}
-					if (x >= 940)
-						g_vars->scene11_scrollIsMaximized = true;
-					goto LABEL_26;
+
+					g_vars->scene11_swingCounterPrevTurn = g_vars->scene11_swingCounter;
 				}
-				g_fp->_currentScene->_x = x - g_fp->_sceneRect.right + 300;
-			} else {
-				g_fp->_currentScene->_x = x - g_fp->_sceneRect.left - 300;
 			}
-			y = g_vars->scene11_dudeY;
-			x = g_vars->scene11_dudeX;
-			goto LABEL_18;
+
+			if (!g_vars->scene11_arcadeIsOn && !g_vars->scene11_swingIsSwinging) {
+				if (g_vars->scene11_swingSpeed == 0.0
+					&& g_vars->scene11_dudeOnSwing->_movement && g_vars->scene11_dudeOnSwing->_movement->_currDynamicPhaseIndex == 45) {
+					g_vars->scene11_dudeOnSwing->changeStatics2(ST_KCH_STATIC);
+				}
+			}
+
+			if (!g_vars->scene11_arcadeIsOn && g_vars->scene11_swingIsSwinging) {
+				if (!g_vars->scene11_swingie->_movement) {
+					if ((g_vars->scene11_boots->_flags & 4) && g_vars->scene11_boots->_statics->_staticsId == ST_BTS11_2)
+						sceneHandler11_swingieJumpDown();
+					else
+						g_vars->scene11_swingie->startAnim(MV_SWR_SWING, 0, -1);
+				}
+			}
+
+			g_fp->_behaviorManager->updateBehaviors();
+			g_fp->startSceneTrack();
+			return res;
 		}
-
-		break;
 
 	case 29:
 		if (g_vars->scene11_swingIsSwinging) {
 			if (g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y) == g_vars->scene11_swingie
-				&& cmd->_keyCode == ANI_INV_BOOT)
+				&& cmd->_param == ANI_INV_BOOT)
 				sceneHandler11_putBoot();
 		} else {
-			if (g_vars->scene11_arcadeIsOn) {
-				sceneHandler11_setSwingDirection();
+			if (!g_vars->scene11_arcadeIsOn)
+				goto LABEL_69;
 
-				g_vars->scene11_swingCounterPrevTurn = g_vars->scene11_swingCounter;
-			}
+			sceneHandler11_setSwingDirection();
+
+			g_vars->scene11_swingCounterPrevTurn = g_vars->scene11_swingCounter;
 		}
 
 		if (!g_vars->scene11_arcadeIsOn) {
+		LABEL_69:
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);

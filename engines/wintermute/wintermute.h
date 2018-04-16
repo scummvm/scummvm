@@ -20,18 +20,21 @@
  *
  */
 
-#ifndef WINTERMUTE_H
-#define WINTERMUTE_H
+#ifndef WINTERMUTE_WINTERMUTE_H
+#define WINTERMUTE_WINTERMUTE_H
 
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 #include "gui/debugger.h"
+#include "engines/wintermute/game_description.h"
 
 namespace Wintermute {
 
 class Console;
 class BaseGame;
 class SystemClassRegistry;
+class DebuggerController;
+
 // our engine debug channels
 enum {
 	kWintermuteDebugLog = 1 << 0, // The debug-logs from the original engine
@@ -44,11 +47,11 @@ enum {
 
 class WintermuteEngine : public Engine {
 public:
-	WintermuteEngine(OSystem *syst, const ADGameDescription *desc);
+	WintermuteEngine(OSystem *syst, const WMEGameDescription *desc);
 	WintermuteEngine();
 	~WintermuteEngine();
 
-	virtual GUI::Debugger *getDebugger() { return _debugger; }
+	virtual Wintermute::Console *getConsole() { return _debugger; }
 	void trigDebugger() { _trigDebug = true; }
 
 	virtual Common::Error run();
@@ -65,11 +68,13 @@ private:
 	int init();
 	void deinit();
 	int messageLoop();
-	GUI::Debugger *_debugger;
+	Wintermute::Console *_debugger;
 	BaseGame *_game;
-	const ADGameDescription *_gameDescription;
+	Wintermute::DebuggerController *_dbgController;
+	const WMEGameDescription *_gameDescription;
 
 	friend class Console;
+	friend class DebuggerController;
 };
 
 } // End of namespace Wintermute

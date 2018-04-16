@@ -320,7 +320,7 @@ void SceneArea::wait() {
 	// Wait until a mouse or keypress
 	Event event;
 	while (!g_vm->shouldQuit() && !g_globals->_events.getEvent(event)) {
-		GLOBALS._screenSurface.updateScreen();
+		GLOBALS._screen.update();
 		g_system->delayMillis(10);
 	}
 

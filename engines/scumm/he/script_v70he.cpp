@@ -39,7 +39,7 @@ namespace Scumm {
 void ScummEngine_v70he::setupOpcodes() {
 	ScummEngine_v60he::setupOpcodes();
 
-	OPCODE(0x74, o70_startSound);
+	OPCODE(0x74, o70_soundOps);
 	OPCODE(0x84, o70_pickupObject);
 	OPCODE(0x8c, o70_getActorRoom);
 	OPCODE(0x9b, o70_resourceRoutines);
@@ -52,59 +52,60 @@ void ScummEngine_v70he::setupOpcodes() {
 	OPCODE(0xfa, o70_setSystemMessage);
 }
 
-void ScummEngine_v70he::o70_startSound() {
+void ScummEngine_v70he::o70_soundOps() {
 	int var, value;
 
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
-	case 9:
-		_heSndFlags |= 4;
+	case 9:		// SO_SOUND_SOFT?
+		_heSndFlags |= HE_SND_SOFT_SOUND;
 		break;
-	case 23:
+	case 23:	// SO_VARIABLE
 		value = pop();
 		var = pop();
 		_heSndSoundId = pop();
 		((SoundHE *)_sound)->setSoundVar(_heSndSoundId, var, value);
 		break;
-	case 25:
+	case 25:	// SO_SOUND_VOLUME
 		value = pop();
 		_heSndSoundId = pop();
-		_sound->addSoundToQueue(_heSndSoundId, 0, 0, 8);
-	case 56:
-		_heSndFlags |= 16;
+		_sound->addSoundToQueue(_heSndSoundId, 0, 0, HE_SND_VOL, 0, 0, value);
 		break;
-	case 164:
-		_heSndFlags |= 2;
+	case 56:	// SO_NOW
+		_heSndFlags |= HE_SND_QUICK_START;
+		break;
+	case 164:	// SO_SOUND_ADD
+		_heSndFlags |= HE_SND_APPEND;
 		break;
 	case 222:
 		// WORKAROUND: For errors in room script 240 (room 4) of maze
 		break;
-	case 224:
+	case 224:	// SO_SOUND_FREQUENCY
 		_heSndSoundFreq = pop();
 		break;
-	case 230:
+	case 230:	// SO_SOUND_CHANNEL
 		_heSndChannel = pop();
 		break;
-	case 231:
+	case 231:	// SO_AT
 		_heSndOffset = pop();
 		break;
-	case 232:
+	case 232:	// SO_SOUND_START
 		_heSndSoundId = pop();
 		_heSndOffset = 0;
 		_heSndSoundFreq = 11025;
 		_heSndChannel = VAR(VAR_SOUND_CHANNEL);
 		break;
-	case 245:
-		_heSndFlags |= 1;
+	case 245:	// SO_SOUND_LOOPING
+		_heSndFlags |= HE_SND_LOOP;
 		break;
-	case 255:
-		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags);
+	case 255:	// SO_END
+		_sound->addSoundToQueue(_heSndSoundId, _heSndOffset, _heSndChannel, _heSndFlags, _heSndSoundFreq);
 		_heSndFlags = 0;
 		break;
 
 	default:
-		error("o70_startSound invalid case %d", subOp);
+		error("o70_soundOps invalid case %d", subOp);
 	}
 }
 

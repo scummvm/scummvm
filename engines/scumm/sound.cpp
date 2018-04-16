@@ -35,9 +35,9 @@
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
-#include "scumm/util.h"
 
-#include "audio/decoders/adpcm.h"
+#include "audio/audiostream.h"
+#include "audio/timestamp.h"
 #include "audio/decoders/flac.h"
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
@@ -45,7 +45,6 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "audio/decoders/vorbis.h"
-#include "audio/decoders/wave.h"
 
 namespace Scumm {
 
@@ -98,15 +97,20 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 	_loomSteamCD.balance = 0;
 
 	_isLoomSteam = _vm->_game.id == GID_LOOM && Common::File::exists("CDDA.SOU");
+
+	_loomSteamCDAudioHandle = new Audio::SoundHandle();
+	_talkChannelHandle = new Audio::SoundHandle();
 }
 
 Sound::~Sound() {
 	stopCDTimer();
 	stopCD();
 	free(_offsetTable);
+	delete _loomSteamCDAudioHandle;
+	delete _talkChannelHandle;
 }
 
-void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags) {
+void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 	_lastSound = sound;
@@ -115,15 +119,18 @@ void Sound::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlags)
 	if (sound <= _vm->_numSounds)
 		_vm->ensureResourceLoaded(rtSound, sound);
 
-	addSoundToQueue2(sound, heOffset, heChannel, heFlags);
+	addSoundToQueue2(sound, heOffset, heChannel, heFlags, heFreq, hePan, heVol);
 }
 
-void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags) {
+void Sound::addSoundToQueue2(int sound, int heOffset, int heChannel, int heFlags, int heFreq, int hePan, int heVol) {
 	assert(_soundQue2Pos < ARRAYSIZE(_soundQue2));
 	_soundQue2[_soundQue2Pos].sound = sound;
 	_soundQue2[_soundQue2Pos].offset = heOffset;
 	_soundQue2[_soundQue2Pos].channel = heChannel;
 	_soundQue2[_soundQue2Pos].flags = heFlags;
+	_soundQue2[_soundQue2Pos].freq = heFreq;
+	_soundQue2[_soundQue2Pos].pan = hePan;
+	_soundQue2[_soundQue2Pos].vol = heVol;
 	_soundQue2Pos++;
 }
 
@@ -240,7 +247,7 @@ void Sound::playSound(int soundID) {
 		// mentioned in the bug report above; in case it is, I put a check here.
 		assert(soundID == 39);
 
-		// The samplerate is copied from the sound resouce 39 of the PC CD/VGA
+		// The samplerate is copied from the sound resource 39 of the PC CD/VGA
 		// version of Monkey Island.
 
 		// Read info from the header
@@ -352,7 +359,7 @@ void Sound::playSound(int soundID) {
 			_currentCDSound = soundID;
 		} else {
 			// All other sound types are ignored
-			warning("Scumm::Sound::playSound: encountered audio resoure with chunk type 'SOUN' and sound type %d", type);
+			warning("Scumm::Sound::playSound: encountered audio resource with chunk type 'SOUN' and sound type %d", type);
 		}
 	}
 	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && READ_BE_UINT16(ptr + 8) == 0x1C) {
@@ -426,7 +433,7 @@ void Sound::processSfxQueues() {
 		if (_talk_sound_mode & 1)
 			startTalkSound(_talk_sound_a1, _talk_sound_b1, 1);
 		if (_talk_sound_mode & 2)
-			startTalkSound(_talk_sound_a2, _talk_sound_b2, 2, &_talkChannelHandle);
+			startTalkSound(_talk_sound_a2, _talk_sound_b2, 2, _talkChannelHandle);
 		_talk_sound_mode = 0;
 	}
 
@@ -437,26 +444,26 @@ void Sound::processSfxQueues() {
 
 		if (_vm->_imuseDigital) {
 			finished = !isSoundRunning(kTalkSoundID);
+#if defined(ENABLE_SCUMM_7_8)
+			_curSoundPos = _vm->_imuseDigital->getSoundElapsedTimeInMs(kTalkSoundID) * 60 / 1000;
+#endif
 		} else if (_vm->_game.heversion >= 60) {
 			finished = !isSoundRunning(1);
 		} else {
-			finished = !_mixer->isSoundHandleActive(_talkChannelHandle);
+			finished = !_mixer->isSoundHandleActive(*_talkChannelHandle);
+			// calculate speech sound position simulating increment at 60FPS
+			_curSoundPos = (_mixer->getSoundElapsedTime(*_talkChannelHandle) * 60) / 1000;
 		}
-
 		if ((uint) act < 0x80 && ((_vm->_game.version == 8) || (_vm->_game.version <= 7 && !_vm->_string[0].no_talk_anim))) {
 			a = _vm->derefActor(act, "processSfxQueues");
 			if (a->isInCurrentRoom()) {
-				if (isMouthSyncOff(_curSoundPos) && !_mouthSyncMode) {
-					if (!_endOfMouthSync)
-						a->runActorTalkScript(a->_talkStopFrame);
+				if (finished || (isMouthSyncOff(_curSoundPos) && _mouthSyncMode)) {
+					a->runActorTalkScript(a->_talkStopFrame);
 					_mouthSyncMode = 0;
-				} else  if (isMouthSyncOff(_curSoundPos) == 0 && !_mouthSyncMode) {
+				} else if (isMouthSyncOff(_curSoundPos) == 0 && !_mouthSyncMode) {
 					a->runActorTalkScript(a->_talkStartFrame);
 					_mouthSyncMode = 1;
 				}
-
-				if (_vm->_game.version <= 6 && finished)
-					a->runActorTalkScript(a->_talkStopFrame);
 			}
 		}
 
@@ -676,7 +683,7 @@ void Sound::stopTalkSound() {
 		} else if (_vm->_game.heversion >= 60) {
 			stopSound(1);
 		} else {
-			_mixer->stopHandle(_talkChannelHandle);
+			_mixer->stopHandle(*_talkChannelHandle);
 		}
 		_sfxMode &= ~2;
 	}
@@ -802,6 +809,9 @@ void Sound::stopSound(int sound) {
 			_soundQue2[i].offset = 0;
 			_soundQue2[i].channel = 0;
 			_soundQue2[i].flags = 0;
+			_soundQue2[i].freq = 0;
+			_soundQue2[i].pan = 0;
+			_soundQue2[i].vol = 0;
 		}
 	}
 }
@@ -1061,7 +1071,7 @@ void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int dur
 		g_system->getAudioCDManager()->play(track, numLoops, startFrame, duration);
 	} else {
 		// Stop any currently playing track
-		_mixer->stopHandle(_loomSteamCDAudioHandle);
+		_mixer->stopHandle(*_loomSteamCDAudioHandle);
 
 		Common::File *cddaFile = new Common::File();
 		if (cddaFile->open("CDDA.SOU")) {
@@ -1069,7 +1079,7 @@ void Sound::playCDTrackInternal(int track, int numLoops, int startFrame, int dur
 			Audio::Timestamp end = Audio::Timestamp(0, startFrame + duration, 75);
 			Audio::SeekableAudioStream *stream = makeCDDAStream(cddaFile, DisposeAfterUse::YES);
 
-			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_loomSteamCDAudioHandle,
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, _loomSteamCDAudioHandle,
 			                    Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops));
 		} else {
 			delete cddaFile;
@@ -1081,19 +1091,19 @@ void Sound::stopCD() {
 	if (!_isLoomSteam)
 		g_system->getAudioCDManager()->stop();
 	else
-		_mixer->stopHandle(_loomSteamCDAudioHandle);
+		_mixer->stopHandle(*_loomSteamCDAudioHandle);
 }
 
 int Sound::pollCD() const {
 	if (!_isLoomSteam)
 		return g_system->getAudioCDManager()->isPlaying();
 	else
-		return _mixer->isSoundHandleActive(_loomSteamCDAudioHandle);
+		return _mixer->isSoundHandleActive(*_loomSteamCDAudioHandle);
 }
 
 void Sound::updateCD() {
 	if (!_isLoomSteam)
-		g_system->getAudioCDManager()->updateCD();
+		g_system->getAudioCDManager()->update();
 }
 
 AudioCDManager::Status Sound::getCDStatus() {
@@ -1101,19 +1111,14 @@ AudioCDManager::Status Sound::getCDStatus() {
 		return g_system->getAudioCDManager()->getStatus();
 	else {
 		AudioCDManager::Status info = _loomSteamCD;
-		info.playing = _mixer->isSoundHandleActive(_loomSteamCDAudioHandle);
+		info.playing = _mixer->isSoundHandleActive(*_loomSteamCDAudioHandle);
 		return info;
 	}
 }
 
-void Sound::saveLoadWithSerializer(Serializer *ser) {
-	static const SaveLoadEntry soundEntries[] = {
-		MKLINE(Sound, _currentCDSound, sleInt16, VER(35)),
-		MKLINE(Sound, _currentMusic, sleInt16, VER(35)),
-		MKEND()
-	};
-
-	ser->saveLoadEntries(this, soundEntries);
+void Sound::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsSint16LE(_currentCDSound, VER(35));
+	s.syncAsSint16LE(_currentMusic, VER(35));
 }
 
 

@@ -25,7 +25,7 @@
 #define SCUMM_ACTOR_H
 
 #include "common/scummsys.h"
-#include "scumm/saveload.h"
+#include "common/serializer.h"
 #include "scumm/scumm.h"
 
 
@@ -82,7 +82,7 @@ enum {
 	kNewInavlidBox = 0
 };
 
-class Actor : public Serializable {
+class Actor : public Common::Serializable {
 public:
 	static byte kInvalidBox;
 
@@ -300,8 +300,7 @@ public:
 
 	void classChanged(int cls, bool value);
 
-	// Used by the save/load system:
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 protected:
 	bool isInClass(int cls);
@@ -333,7 +332,6 @@ public:
 protected:
 	virtual bool isPlayer();
 	virtual void prepareDrawActorCostume(BaseCostumeRenderer *bcr);
-	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };
 
 enum ActorV0MiscFlags {
@@ -349,10 +347,36 @@ enum ActorV0MiscFlags {
 
 class Actor_v0 : public Actor_v2 {
 public:
+	Common::Point _CurrentWalkTo, _NewWalkTo;
+
+	Common::Array<byte> _walkboxHistory;
+
+	byte _walkboxQueue[0x10];
+	byte _walkboxQueueIndex;
+
 	byte _costCommandNew;
 	byte _costCommand;
 	byte _miscflags;
 	byte _speaking;
+
+	byte _walkCountModulo;
+	bool _newWalkBoxEntered;
+
+	byte _walkDirX;
+	byte _walkDirY;
+
+	byte _walkYCountGreaterThanXCount;
+	byte _walkXCount;
+	byte _walkXCountInc;
+	byte _walkYCount;
+	byte _walkYCountInc;
+
+	byte _walkMaxXYCountInc;
+
+	Common::Point _tmp_Pos;
+	Common::Point _tmp_NewPos;
+	byte _tmp_WalkBox;
+	bool _tmp_NewWalkBoxEntered;
 
 	int8 _animFrameRepeat;
 	int8 _limbFrameRepeatNew[8];
@@ -360,26 +384,43 @@ public:
 
 	bool _limb_flipped[8];
 
+private:
+
+	bool walkBoxQueueAdd(int box);
+	bool walkBoxQueueFind(int box);
+	void walkboxQueueReverse();
+
 public:
 	Actor_v0(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
 
-	virtual void initActor(int mode);
-	virtual void animateActor(int anim);
-	virtual void animateCostume();
+	void initActor(int mode);
+	void animateActor(int anim);
+	void animateCostume();
 
 	void limbFrameCheck(int limb);
 
+	void directionUpdate();
 	void speakCheck();
-	virtual void setDirection(int direction);
+	void setDirection(int direction);
 	void startAnimActor(int f);
 
-	// Used by the save/load system:
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	bool calcWalkDistances();
+	void walkActor();
+	void actorSetWalkTo();
+	byte actorWalkXCalculate();
+	byte actorWalkYCalculate();
+	byte updateWalkbox();
 
-protected:
-	bool intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End,
-		const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result);
-	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
+	void walkBoxQueueReset();
+	bool walkBoxQueuePrepare();
+
+	AdjustBoxResult adjustXYToBeInBox(int dstX, int dstY);
+	AdjustBoxResult adjustPosInBorderWalkbox(AdjustBoxResult box);
+
+	void setActorToTempPosition();
+	void setActorToOriginalPosition();
+
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
 
 

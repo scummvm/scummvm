@@ -52,14 +52,12 @@ GfxControls16::~GfxControls16() {
 const char controlListUpArrow[2]	= { 0x18, 0 };
 const char controlListDownArrow[2]	= { 0x19, 0 };
 
-void GfxControls16::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
+void GfxControls16::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const Common::String *entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
 	Common::Rect workerRect = rect;
 	GuiResourceId oldFontId = _text16->GetFontId();
 	int16 oldPenColor = _ports->_curPort->penClr;
 	uint16 fontSize = 0;
 	int16 i;
-	const char *listEntry;
-	int16 listEntryLen;
 	int16 lastYpos;
 
 	// draw basic window
@@ -92,11 +90,10 @@ void GfxControls16::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars
 	// Write actual text
 	for (i = upperPos; i < count; i++) {
 		_paint16->eraseRect(workerRect);
-		listEntry = entries[i];
+		const Common::String &listEntry = entries[i];
 		if (listEntry[0]) {
 			_ports->moveTo(workerRect.left, workerRect.top);
-			listEntryLen = strlen(listEntry);
-			_text16->Draw(listEntry, 0, MIN(maxChars, listEntryLen), oldFontId, oldPenColor);
+			_text16->Draw(listEntry.c_str(), 0, MIN<int16>(maxChars, listEntry.size()), oldFontId, oldPenColor);
 			if ((!isAlias) && (i == cursorPos)) {
 				_paint16->invertRect(workerRect);
 			}
@@ -151,7 +148,7 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 	Common::Rect rect;
 
 	if (textReference.isNull())
-		error("kEditControl called on object that doesnt have a text reference");
+		error("kEditControl called on object that doesn't have a text reference");
 	text = _segMan->getString(textReference);
 
 	uint16 oldCursorPos = cursorPos;
@@ -161,50 +158,50 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 		eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
 
 		switch (eventType) {
-		case SCI_EVENT_MOUSE_PRESS:
+		case kSciEventMousePress:
 			// TODO: Implement mouse support for cursor change
 			break;
-		case SCI_EVENT_KEYBOARD:
+		case kSciEventKeyDown:
 			eventKey = readSelectorValue(_segMan, eventObject, SELECTOR(message));
 			modifiers = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
 			switch (eventKey) {
-			case SCI_KEY_BACKSPACE:
+			case kSciKeyBackspace:
 				if (cursorPos > 0) {
 					cursorPos--; text.deleteChar(cursorPos);
 					textChanged = true;
 				}
 				break;
-			case SCI_KEY_DELETE:
+			case kSciKeyDelete:
 				if (cursorPos < textSize) {
 					text.deleteChar(cursorPos);
 					textChanged = true;
 				}
 				break;
-			case SCI_KEY_HOME: // HOME
+			case kSciKeyHome:
 				cursorPos = 0; textChanged = true;
 				break;
-			case SCI_KEY_END: // END
+			case kSciKeyEnd:
 				cursorPos = textSize; textChanged = true;
 				break;
-			case SCI_KEY_LEFT: // LEFT
+			case kSciKeyLeft:
 				if (cursorPos > 0) {
 					cursorPos--; textChanged = true;
 				}
 				break;
-			case SCI_KEY_RIGHT: // RIGHT
+			case kSciKeyRight:
 				if (cursorPos + 1 <= textSize) {
 					cursorPos++; textChanged = true;
 				}
 				break;
-			case 3:	// returned in SCI1 late and newer when Control - C is pressed
-				if (modifiers & SCI_KEYMOD_CTRL) {
+			case kSciKeyEtx:
+				if (modifiers & kSciKeyModCtrl) {
 					// Control-C erases the whole line
 					cursorPos = 0; text.clear();
 					textChanged = true;
 				}
 				break;
 			default:
-				if ((modifiers & SCI_KEYMOD_CTRL) && eventKey == 99) {
+				if ((modifiers & kSciKeyModCtrl) && eventKey == 99) {
 					// Control-C in earlier SCI games (SCI0 - SCI1 middle)
 					// Control-C erases the whole line
 					cursorPos = 0; text.clear();
@@ -280,7 +277,7 @@ int GfxControls16::getPicNotValid() {
 	return _screen->_picNotValid;
 }
 
-void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
+void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, int16 style, bool hilite) {
 	int16 sci0EarlyPen = 0, sci0EarlyBack = 0;
 	if (!hilite) {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
@@ -295,7 +292,7 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 		_paint16->frameRect(rect);
 		rect.grow(-2);
 		_ports->textGreyedOutput(!(style & SCI_CONTROLS_STYLE_ENABLED));
-		_text16->Box(text, false, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
+		_text16->Box(text, languageSplitter, false, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
 		_ports->textGreyedOutput(false);
 		rect.grow(1);
 		if (style & SCI_CONTROLS_STYLE_SELECTED)
@@ -318,12 +315,12 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 	}
 }
 
-void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
+void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
 	if (!hilite) {
 		rect.grow(1);
 		_paint16->eraseRect(rect);
 		rect.grow(-1);
-		_text16->Box(text, false, rect, alignment, fontId);
+		_text16->Box(text, languageSplitter, false, rect, alignment, fontId);
 		if (style & SCI_CONTROLS_STYLE_SELECTED) {
 			_paint16->frameRect(rect);
 		}
@@ -335,7 +332,7 @@ void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *tex
 	}
 }
 
-void GfxControls16::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
+void GfxControls16::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
 	Common::Rect textRect = rect;
 	uint16 oldFontId = _text16->GetFontId();
 
@@ -343,7 +340,7 @@ void GfxControls16::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char 
 	_texteditCursorVisible = false;
 	texteditCursorErase();
 	_paint16->eraseRect(rect);
-	_text16->Box(text, false, textRect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
+	_text16->Box(text, languageSplitter, false, textRect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
 	_paint16->frameRect(rect);
 	if (style & SCI_CONTROLS_STYLE_SELECTED) {
 		_text16->SetFont(fontId);
@@ -370,7 +367,7 @@ void GfxControls16::kernelDrawIcon(Common::Rect rect, reg_t obj, GuiResourceId v
 	}
 }
 
-void GfxControls16::kernelDrawList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
+void GfxControls16::kernelDrawList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const Common::String *entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
 	if (!hilite) {
 		drawListControl(rect, obj, maxChars, count, entries, fontId, upperPos, cursorPos, isAlias);
 		rect.grow(1);

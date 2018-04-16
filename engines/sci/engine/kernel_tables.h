@@ -34,6 +34,15 @@ namespace Sci {
 // . -> any type
 // i* -> optional multiple integers
 // .* -> any parameters afterwards (or none)
+//
+// data types:
+// i - regular integer
+// o - object
+// r - reference
+// n - node
+// 0 - NULL
+// . - any
+// ! - invalid reference/offset
 
 struct SciKernelMapSubEntry {
 	SciVersion fromVersion;
@@ -51,12 +60,21 @@ struct SciKernelMapSubEntry {
 #define SCI_SUBOPENTRY_TERMINATOR { SCI_VERSION_NONE, SCI_VERSION_NONE, 0, NULL, NULL, NULL, NULL }
 
 
-#define SIG_SCIALL         SCI_VERSION_NONE, SCI_VERSION_NONE
-#define SIG_SCI0           SCI_VERSION_NONE, SCI_VERSION_01
-#define SIG_SCI1           SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
-#define SIG_SCI11          SCI_VERSION_1_1, SCI_VERSION_1_1
-#define SIG_SINCE_SCI11    SCI_VERSION_1_1, SCI_VERSION_NONE
-#define SIG_SCI21          SCI_VERSION_2_1, SCI_VERSION_3
+#define SIG_SCIALL           SCI_VERSION_NONE, SCI_VERSION_NONE
+#define SIG_SCI0             SCI_VERSION_NONE, SCI_VERSION_01
+#define SIG_SCI1             SCI_VERSION_1_EGA_ONLY, SCI_VERSION_1_LATE
+#define SIG_SCI11            SCI_VERSION_1_1, SCI_VERSION_1_1
+#define SIG_SINCE_SCI11      SCI_VERSION_1_1, SCI_VERSION_NONE
+#define SIG_SCI2             SCI_VERSION_2, SCI_VERSION_2
+#define SIG_SCI21EARLY       SCI_VERSION_2_1_EARLY, SCI_VERSION_2_1_EARLY
+#define SIG_SCI21MID_LATE    SCI_VERSION_2_1_MIDDLE, SCI_VERSION_2_1_LATE
+#define SIG_THRU_SCI21EARLY  SCI_VERSION_2, SCI_VERSION_2_1_EARLY
+#define SIG_THRU_SCI21MID    SCI_VERSION_2, SCI_VERSION_2_1_MIDDLE
+#define SIG_SINCE_SCI21      SCI_VERSION_2_1_EARLY, SCI_VERSION_3
+#define SIG_SINCE_SCI21MID   SCI_VERSION_2_1_MIDDLE, SCI_VERSION_3
+#define SIG_SINCE_SCI21LATE  SCI_VERSION_2_1_LATE, SCI_VERSION_3
+#define SIG_SCI21LATE        SCI_VERSION_2_1_LATE, SCI_VERSION_2_1_LATE
+#define SIG_SCI3             SCI_VERSION_3, SCI_VERSION_3
 
 #define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
 #define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
@@ -65,7 +83,6 @@ struct SciKernelMapSubEntry {
 #define SIG_SOUNDSCI0      SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE
 #define SIG_SOUNDSCI1EARLY SCI_VERSION_1_EARLY, SCI_VERSION_1_EARLY
 #define SIG_SOUNDSCI1LATE  SCI_VERSION_1_LATE, SCI_VERSION_1_LATE
-#define SIG_SOUNDSCI21     SCI_VERSION_2_1, SCI_VERSION_3
 
 #define SIGFOR_ALL   0x3f
 #define SIGFOR_DOS   1 << 0
@@ -86,7 +103,7 @@ struct SciKernelMapSubEntry {
 static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI0,       0, MAP_CALL(DoSoundInit),               "o",                    NULL },
 	{ SIG_SOUNDSCI0,       1, MAP_CALL(DoSoundPlay),               "o",                    NULL },
-	{ SIG_SOUNDSCI0,       2, MAP_CALL(DoSoundRestore),            "(o)",                  NULL },
+	{ SIG_SOUNDSCI0,       2, MAP_EMPTY(DoSoundRestore),           "(o)",                  NULL },
 	{ SIG_SOUNDSCI0,       3, MAP_CALL(DoSoundDispose),            "o",                    NULL },
 	{ SIG_SOUNDSCI0,       4, MAP_CALL(DoSoundMute),               "(i)",                  NULL },
 	{ SIG_SOUNDSCI0,       5, MAP_CALL(DoSoundStop),               "o",                    NULL },
@@ -99,16 +116,12 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI0,      12, MAP_CALL(DoSoundStopAll),            "",                     NULL },
 	{ SIG_SOUNDSCI1EARLY,  0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-	{ SIG_SOUNDSCI1EARLY,  2, MAP_CALL(DoSoundRestore),            NULL,                   NULL },
+	{ SIG_SOUNDSCI1EARLY,  2, MAP_EMPTY(DoSoundRestore),           NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  4, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  5, MAP_CALL(DoSoundInit),               NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  6, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  7, MAP_CALL(DoSoundPlay),               "oi",                   NULL },
-	// ^^ TODO: In SCI1-SCI1.1 DoSound (play) is called by 2 methods of the Sound object: play and
-	//  playBed. The methods are the same, apart from the second integer parameter: it's 0 in
-	//  play and 1 in playBed, to distinguish the caller. It's passed on, we should find out what
-	//  it actually does internally
 	{ SIG_SOUNDSCI1EARLY,  8, MAP_CALL(DoSoundStop),               NULL,                   NULL },
 	{ SIG_SOUNDSCI1EARLY,  9, MAP_CALL(DoSoundPause),              "[o0]i",                NULL },
 	{ SIG_SOUNDSCI1EARLY, 10, MAP_CALL(DoSoundFade),               "oiiii",                kDoSoundFade_workarounds },
@@ -116,11 +129,11 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           "oiii",                 NULL },
 	{ SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundGlobalReverb),       "(i)",                  NULL },
 	{ SIG_SOUNDSCI1EARLY, 14, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
-	{ SIG_SOUNDSCI1EARLY, 15, MAP_CALL(DoSoundDummy),              "",                     NULL },
+	{ SIG_SOUNDSCI1EARLY, 15, MAP_EMPTY(DoSoundDummy),             "",                     NULL },
 	//  ^^ Longbow demo
 	{ SIG_SOUNDSCI1LATE,   0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,   1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-	{ SIG_SOUNDSCI1LATE,   2, MAP_CALL(DoSoundRestore),            "",                     NULL },
+	{ SIG_SOUNDSCI1LATE,   2, MAP_EMPTY(DoSoundRestore),           "",                     NULL },
 	{ SIG_SOUNDSCI1LATE,   3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,   4, MAP_CALL(DoSoundGetAudioCapability), "",                     NULL },
 	{ SIG_SOUNDSCI1LATE,   5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
@@ -131,7 +144,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI1LATE,  10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,  11, MAP_CALL(DoSoundFade),               "oiiii(i)",             kDoSoundFade_workarounds },
 	{ SIG_SOUNDSCI1LATE,  12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
-	{ SIG_SOUNDSCI1LATE,  13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+	{ SIG_SOUNDSCI1LATE,  13, MAP_EMPTY(DoSoundDummy),             NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,  14, MAP_CALL(DoSoundSetVolume),          "oi",                   NULL },
 	{ SIG_SOUNDSCI1LATE,  15, MAP_CALL(DoSoundSetPriority),        "oi",                   NULL },
 	{ SIG_SOUNDSCI1LATE,  16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
@@ -140,39 +153,99 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	{ SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundGlobalReverb),       NULL,                   NULL },
 	{ SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
 #ifdef ENABLE_SCI32
-	{ SIG_SOUNDSCI21,      0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      2, MAP_CALL(DoSoundRestore),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      4, MAP_CALL(DoSoundGetAudioCapability), NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      5, MAP_CALL(DoSoundSuspend),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      6, MAP_CALL(DoSoundInit),               NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      7, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,      8, MAP_CALL(DoSoundPlay),               "o(i)",                 NULL },
-	// ^^ TODO: if this is really the only change between SCI1LATE AND SCI21, we could rename the
-	//     SIG_SOUNDSCI1LATE #define to SIG_SINCE_SOUNDSCI1LATE and make it being SCI1LATE+. Although
-	//     I guess there are many more changes somewhere
-	// TODO: Quest for Glory 4 (SCI2.1) uses the old scheme, we need to detect it accordingly
-	//        signature for SCI21 should be "o"
-	{ SIG_SOUNDSCI21,      9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               NULL,                   kDoSoundFade_workarounds },
-	{ SIG_SOUNDSCI21,     12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     14, MAP_CALL(DoSoundSetVolume),          NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     15, MAP_CALL(DoSoundSetPriority),        NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     16, MAP_CALL(DoSoundSetLoop),            NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     17, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     19, MAP_CALL(DoSoundGlobalReverb),       NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
+	{ SIG_SCI32,           0, MAP_CALL(DoSoundMasterVolume),       "(i)",                  NULL },
+	{ SIG_SCI32,           1, MAP_CALL(DoSoundMute),               "(i)",                  NULL },
+	{ SIG_SCI32,           2, MAP_EMPTY(DoSoundRestore),           NULL,                   NULL },
+	{ SIG_SCI32,           3, MAP_CALL(DoSoundGetPolyphony),       "",                     NULL },
+	{ SIG_SCI32,           4, MAP_CALL(DoSoundGetAudioCapability), "",                     NULL },
+	{ SIG_SCI32,           5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
+	{ SIG_SCI32,           6, MAP_CALL(DoSoundInit),               "o",                    NULL },
+	{ SIG_SCI32,           7, MAP_CALL(DoSoundDispose),            "o",                    NULL },
+	{ SIG_SCI32,           8, MAP_CALL(DoSoundPlay),               "o",                    kDoSoundPlay_workarounds },
+	{ SIG_SCI32,           9, MAP_CALL(DoSoundStop),               "o",                    NULL },
+	{ SIG_SCI32,          10, MAP_CALL(DoSoundPause),              "[o0]i",                NULL },
+	{ SIG_SCI32,          11, MAP_CALL(DoSoundFade),               "oiiii",                kDoSoundFade_workarounds },
+	{ SIG_SCI32,          12, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
+	{ SIG_SCI32,          13, MAP_EMPTY(DoSoundDummy),             NULL,                   NULL },
+	{ SIG_SCI32,          14, MAP_CALL(DoSoundSetVolume),          "oi",                   NULL },
+	{ SIG_SCI32,          15, MAP_CALL(DoSoundSetPriority),        "oi",                   NULL },
+	{ SIG_SCI32,          16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
+	{ SIG_SCI32,          17, MAP_CALL(DoSoundUpdateCues),         "o",                    NULL },
+	{ SIG_SCI32,          18, MAP_CALL(DoSoundSendMidi),           "oiiii",                NULL },
+	{ SIG_SCI32,          19, MAP_CALL(DoSoundGlobalReverb),       "(i)",                  NULL },
+	{ SIG_SCI32,          20, MAP_CALL(DoSoundUpdate),             "o",                    NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+#ifdef ENABLE_SCI32
+// NOTE: In SSCI, some 'unused' kDoAudio subops are actually called indirectly
+// by kDoSound:
+//
+// kDoSoundGetAudioCapability -> kDoAudioGetCapability
+// kDoSoundPlay       -> kDoAudioPlay, kDoAudioStop
+// kDoSoundPause      -> kDoAudioPause, kDoAudioResume
+// kDoSoundFade       -> kDoAudioFade
+// kDoSoundSetVolume  -> kDoAudioVolume
+// kDoSoundSetLoop    -> kDoAudioSetLoop
+// kDoSoundUpdateCues -> kDoAudioPosition
+//
+// In ScummVM, logic inside these kernel functions has been moved to methods of
+// Audio32, and direct calls to Audio32 are made from kDoSound instead.
+//
+// Some kDoAudio methods are esoteric and appear to be used only by one or two
+// games:
+//
+// - kDoAudioMixing:    Phantasmagoria (other games call this function, but only
+//                      to disable the feature)
+// - kDoAudioHasSignal: SQ6 TalkRandCycle
+// - kDoAudioPan:       Rama RegionSFX::pan method
+// - kDoAudioCritical:  Phantasmagoria, chapter 3, nursery (room 14200), during
+//                      the "ghost lullaby" event. It is used to make the
+//                      lullaby sound exclusive, but it really doesn't make any
+//                      major difference. Returning 0 means "non-critical", i.e.
+//                      normal audio behavior.
+//
+// Finally, there is a split in SCI2.1mid audio code. QFG4CD & SQ6 do not have
+// opcodes 18 and 19, but they exist in GK2, KQ7 2.00b, Phantasmagoria 1,
+// PQ:SWAT, and Torin. It is unknown if they exist in MUMG Deluxe or Shivers 1;
+// they are not used in either of these games.
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kDoAudio_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(DoAudioInit),               "",                     NULL },
+	// SCI2 includes a Sync script that would call
+	// kDoAudioWaitForPlay, but SSCI has no opcode 1 until
+	// SCI2.1early
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(DoAudioWaitForPlay),        "(i)(i)(i)(i)(i)(i)(i)", NULL },
+	{ SIG_SCI32,           2, MAP_CALL(DoAudioPlay),               "(i)(i)(i)(i)(i)(i)(i)", NULL },
+	{ SIG_SCI32,           3, MAP_CALL(DoAudioStop),               "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           4, MAP_CALL(DoAudioPause),              "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           5, MAP_CALL(DoAudioResume),             "(i)(i)(i)(i)(i)",      kDoAudioResume_workarounds },
+	{ SIG_SCI32,           6, MAP_CALL(DoAudioPosition),           "(i)(i)(i)(i)(i)",      NULL },
+	{ SIG_SCI32,           7, MAP_CALL(DoAudioRate),               "(i)",                  NULL },
+	{ SIG_SCI32,           8, MAP_CALL(DoAudioVolume),             "(i)(i)(i)(i)(i)(i)",   NULL },
+	{ SIG_SCI32,           9, MAP_CALL(DoAudioGetCapability),      "",                     NULL },
+	{ SIG_SCI32,          10, MAP_CALL(DoAudioBitDepth),           "(i)",                  NULL },
+	{ SIG_SCI32,          11, MAP_DUMMY(DoAudioDistort),           "(i)",                  NULL },
+	{ SIG_SCI32,          12, MAP_CALL(DoAudioMixing),             "(i)",                  NULL },
+	{ SIG_SCI2,           13, MAP_EMPTY(DoAudioSetBufferSize),     "i",                    NULL },
+	{ SIG_SINCE_SCI21,    13, MAP_CALL(DoAudioChannels),           "(i)",                  NULL },
+	{ SIG_SINCE_SCI21,    14, MAP_CALL(DoAudioPreload),            "(i)",                  NULL },
+	{ SIG_SINCE_SCI21MID, 15, MAP_CALL(DoAudioFade),               "(iiii)(i)(i)",         NULL },
+	{ SIG_SINCE_SCI21MID, 16, MAP_DUMMY(DoAudioFade36),            "iiiii(iii)(i)",        NULL },
+	{ SIG_SINCE_SCI21MID, 17, MAP_CALL(DoAudioHasSignal),          "",                     NULL },
+	{ SIG_SINCE_SCI21MID, 18, MAP_EMPTY(DoAudioCritical),          "(i)",                  NULL },
+	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(DoAudioSetLoop),            "iii(o)",               NULL },
+	{ SIG_SCI3,           20, MAP_CALL(DoAudioPan),                "ii(i)(iii)",           NULL },
+	{ SIG_SCI3,           21, MAP_CALL(DoAudioPanOff),             "i(i)(iii)",            NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+#endif
+
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kGraph_subops[] = {
-	{ SIG_SCI32,           1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
+	// 1 - load bits
 	{ SIG_SCIALL,          2, MAP_CALL(GraphGetColorCount),        "",                     NULL },
 	// 3 - set palette via resource
 	{ SIG_SCIALL,          4, MAP_CALL(GraphDrawLine),             "iiiii(i)(i)",          kGraphDrawLine_workarounds },
@@ -194,37 +267,50 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kPalVary_subops[] = {
-	{ SIG_SCI21,           0, MAP_CALL(PalVaryInit),               "ii(i)(i)(i)",          NULL },
-	{ SIG_SCIALL,          0, MAP_CALL(PalVaryInit),               "ii(i)(i)",             NULL },
-	{ SIG_SCIALL,          1, MAP_CALL(PalVaryReverse),            "(i)(i)(i)",            NULL },
-	{ SIG_SCIALL,          2, MAP_CALL(PalVaryGetCurrentStep),     "",                     NULL },
-	{ SIG_SCIALL,          3, MAP_CALL(PalVaryDeinit),             "",                     NULL },
-	{ SIG_SCIALL,          4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
-	{ SIG_SCIALL,          5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
-	{ SIG_SCIALL,          6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
+	{ SIG_SCI16,           0, MAP_CALL(PalVaryInit),               "ii(i)(i)",             NULL },
+	{ SIG_SCI16,           1, MAP_CALL(PalVaryReverse),            "(i)(i)(i)",            NULL },
+	{ SIG_SCI16,           2, MAP_CALL(PalVaryGetCurrentStep),     "",                     NULL },
+	{ SIG_SCI16,           3, MAP_CALL(PalVaryDeinit),             "",                     NULL },
+	{ SIG_SCI16,           4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
+	{ SIG_SCI16,           5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
+	{ SIG_SCI16,           6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
 #ifdef ENABLE_SCI32
-	{ SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "i",                    NULL },
-	{ SIG_SCI32,           9, MAP_CALL(PalVaryUnknown2),           "i",                    NULL },
+	{ SIG_SCI32,           0, MAP_CALL(PalVarySetVary),            "i(i)(i)(i)(i)",        kPalVarySetVary_workarounds },
+	{ SIG_SCI32,           1, MAP_CALL(PalVarySetPercent),         "(i)(i)",               kPalVarySetPercent_workarounds },
+	{ SIG_SCI32,           2, MAP_CALL(PalVaryGetPercent),         "",                     NULL },
+	{ SIG_SCI32,           3, MAP_CALL(PalVaryOff),                "",                     NULL },
+	{ SIG_SCI32,           4, MAP_CALL(PalVaryMergeTarget),        "i",                    NULL },
+	{ SIG_SCI32,           5, MAP_CALL(PalVarySetTime),            "i",                    NULL },
+	{ SIG_SCI32,           6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
+	{ SIG_SCI32,           7, MAP_CALL(PalVarySetTarget),          "i",                    NULL },
+	{ SIG_SCI32,           8, MAP_CALL(PalVarySetStart),           "i",                    kPalVarySetStart_workarounds },
+	{ SIG_SCI32,           9, MAP_CALL(PalVaryMergeStart),         "i",                    kPalVaryMergeStart_workarounds },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kPalette_subops[] = {
-	{ SIG_SCIALL,          1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
-	{ SIG_SCIALL,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
-	{ SIG_SCIALL,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  kPaletteUnsetFlag_workarounds },
-	{ SIG_SCIALL,          4, MAP_CALL(PaletteSetIntensity),       "iii(i)",               NULL },
-	{ SIG_SCIALL,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
-	{ SIG_SCIALL,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
-	{ SIG_SCIALL,          7, MAP_CALL(PaletteSave),               "",                     NULL },
-	{ SIG_SCIALL,          8, MAP_CALL(PaletteRestore),            "[r0]",                 NULL },
+	{ SIG_SCI16,          1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
+	{ SIG_SCI16,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
+	{ SIG_SCI16,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  kPaletteUnsetFlag_workarounds },
+	{ SIG_SCI16,          4, MAP_CALL(PaletteSetIntensity),       "iii(i)",               NULL },
+	{ SIG_SCI16,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
+	{ SIG_SCI16,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
+	{ SIG_SCI16,          7, MAP_CALL(PaletteSave),               "",                     NULL },
+	{ SIG_SCI16,          8, MAP_CALL(PaletteRestore),            "[r0]",                 NULL },
+#ifdef ENABLE_SCI32
+	{ SIG_SCI32,          1, MAP_CALL(PaletteSetFromResource32),  "i(i)",                 NULL },
+	{ SIG_SCI32,          2, MAP_CALL(PaletteSetFade),            "iii",                  NULL },
+	{ SIG_SCI32,          3, MAP_CALL(PaletteFindColor32),        "iii",                  NULL },
+	{ SIG_SCI32,          4, MAP_CALL(PaletteSetGamma),           "i",                    NULL },
+#endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kFileIO_subops[] = {
-	{ SIG_SCI32,           0, MAP_CALL(FileIOOpen),                "r(i)",                 NULL },
-	{ SIG_SCIALL,          0, MAP_CALL(FileIOOpen),                "ri",                   NULL },
+	{ SIG_SCIALL,          0, MAP_CALL(FileIOOpen),                "ri",                   kFileIOOpen_workarounds },
 	{ SIG_SCIALL,          1, MAP_CALL(FileIOClose),               "i",                    NULL },
 	{ SIG_SCIALL,          2, MAP_CALL(FileIOReadRaw),             "iri",                  NULL },
 	{ SIG_SCIALL,          3, MAP_CALL(FileIOWriteRaw),            "iri",                  NULL },
@@ -237,59 +323,301 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
 	{ SIG_SCIALL,         10, MAP_CALL(FileIOExists),              "r",                    NULL },
 	{ SIG_SINCE_SCI11,    11, MAP_CALL(FileIORename),              "rr",                   NULL },
 #ifdef ENABLE_SCI32
-	{ SIG_SCI32,          13, MAP_CALL(FileIOReadByte),            "i",                    NULL },
-	{ SIG_SCI32,          14, MAP_CALL(FileIOWriteByte),           "ii",                   NULL },
-	{ SIG_SCI32,          15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
-	{ SIG_SCI32,          16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
-	{ SIG_SCI32,          17, MAP_CALL(FileIOCreateSaveSlot),      "ir",                   NULL },
-	{ SIG_SCI32,          18, MAP_EMPTY(FileIOChangeDirectory),    "r",                    NULL }, // for SQ6, when changing the savegame directory in the save/load dialog
-	{ SIG_SCI32,          19, MAP_CALL(FileIOIsValidDirectory),    "r",                    NULL }, // for Torin / Torin demo
+	{ SIG_SINCE_SCI21MID, 13, MAP_CALL(FileIOReadByte),            "i",                    NULL },
+	{ SIG_SINCE_SCI21MID, 14, MAP_CALL(FileIOWriteByte),           "ii",                   NULL },
+	{ SIG_SINCE_SCI21MID, 15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
+	{ SIG_SCI21MID_LATE,  16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
+	{ SIG_SCI3,           16, MAP_CALL(FileIOWriteWord),           "i[.!]",                NULL },
+	{ SIG_SINCE_SCI21MID, 17, "FileIOCheckFreeSpace", kCheckFreeSpace, "i(r)",             NULL },
+	{ SIG_SINCE_SCI21MID, 18, MAP_CALL(FileIOGetCWD),              "r",                    NULL },
+	{ SIG_SINCE_SCI21MID, 19, MAP_CALL(FileIOIsValidDirectory),    "[ro]",                 NULL },
 #endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
 #ifdef ENABLE_SCI32
 
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kPalCycle_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(PalCycleSetCycle),          "iii(i)",               NULL },
+	{ SIG_SCI32,           1, MAP_CALL(PalCycleDoCycle),           "i(i)",                 NULL },
+	{ SIG_SCI32,           2, MAP_CALL(PalCyclePause),             "(i)",                  NULL },
+	{ SIG_SCI32,           3, MAP_CALL(PalCycleOn),                "(i)",                  NULL },
+	{ SIG_SCI32,           4, MAP_CALL(PalCycleOff),               "(i)",                  NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kSave_subops[] = {
-	{ SIG_SCI32,           0, MAP_CALL(SaveGame),                  "[r0]i[r0](r0)",        NULL },
-	{ SIG_SCI32,           1, MAP_CALL(RestoreGame),               "[r0]i[r0]",            NULL },
-	{ SIG_SCI32,           2, MAP_CALL(GetSaveDir),                "(r*)",                 NULL },
-	{ SIG_SCI32,           3, MAP_CALL(CheckSaveGame),             ".*",                   NULL },
+	{ SIG_SCI32,           0, MAP_CALL(SaveGame32),                "[r0]i[r0][r0]",        NULL },
+	{ SIG_SCI32,           1, MAP_CALL(RestoreGame32),             "[r0]i[r0]",            NULL },
+	// System script 64994 in several SCI2.1mid games (KQ7 2.00b, Phant1,
+	// PQ:SWAT, SQ6, Torin) calls GetSaveDir with an extra unused argument, and
+	// it is easier to just handle it here than to bother with creating
+	// workarounds
+	{ SIG_SCI32,           2, MAP_CALL(GetSaveDir),                "(r)",                  NULL },
+	{ SIG_SCI32,           3, MAP_CALL(CheckSaveGame32),           "ri[r0]",               NULL },
 	// Subop 4 hasn't been encountered yet
-	{ SIG_SCI32,           5, MAP_CALL(GetSaveFiles),              "rrr",                  NULL },
+	{ SIG_SCI32,           5, MAP_CALL(GetSaveFiles32),            "rrr",                  NULL },
 	{ SIG_SCI32,           6, MAP_CALL(MakeSaveCatName),           "rr",                   NULL },
 	{ SIG_SCI32,           7, MAP_CALL(MakeSaveFileName),          "rri",                  NULL },
-	{ SIG_SCI32,           8, MAP_CALL(AutoSave),                  "[o0]",                 NULL },
+	{ SIG_SCI32,           8, MAP_EMPTY(GameIsRestarting),         "(.*)",                 NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kFont_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(PointSize),                 "i",                    NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(SetFontRes),                "ii",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kText_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(TextSize32),                "r[r0]i(i)(i)",         NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(TextWidth),                 "ri",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kBitmap_subops[] = {
+	{ SIG_SINCE_SCI21,     0, MAP_CALL(BitmapCreate),              "iiii(i)(i)(i)",        NULL },
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(BitmapDestroy),             "[r!]",                 NULL },
+	{ SIG_SINCE_SCI21,     2, MAP_DUMMY(BitmapDrawLine),           "riiiii(i)(i)",         NULL },
+	{ SIG_SINCE_SCI21,     3, MAP_CALL(BitmapDrawView),            "riii(i)(i)(0)(i)(i)",  NULL },
+	{ SIG_SINCE_SCI21,     4, MAP_CALL(BitmapDrawText),            "rriiiiiiiiiii",        NULL },
+	{ SIG_SINCE_SCI21,     5, MAP_CALL(BitmapDrawColor),           "riiiii",               NULL },
+	{ SIG_SINCE_SCI21,     6, MAP_DUMMY(BitmapDrawBitmap),         "rr(i)(i)(i)",          NULL },
+	{ SIG_SINCE_SCI21,     7, MAP_DUMMY(BitmapInvert),             "riiiiii",              NULL },
+	{ SIG_SINCE_SCI21MID,  8, MAP_CALL(BitmapSetOrigin),           "rii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  9, MAP_CALL(BitmapCreateFromView),      "iii(i)(i)(i)([r0])",   NULL },
+	{ SIG_SINCE_SCI21MID, 10, MAP_DUMMY(BitmapCopyPixels),         "rr",                   NULL },
+	{ SIG_SINCE_SCI21MID, 11, MAP_DUMMY(BitmapClone),              "r",                    NULL },
+	{ SIG_SINCE_SCI21MID, 12, MAP_CALL(BitmapGetInfo),             "r(i)(i)",              NULL },
+	{ SIG_SINCE_SCI21LATE,13, MAP_DUMMY(BitmapScale),              "r...ii",               NULL },
+	{ SIG_SCI3,           14, MAP_DUMMY(BitmapCreateFromUnknown),  "......",               NULL },
+	{ SIG_SCI3,           15, MAP_DUMMY(Bitmap),                   "(.*)",                 NULL },
+	{ SIG_SCI3,           16, MAP_DUMMY(Bitmap),                   "(.*)",                 NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kCD_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(CheckCD),                   "(i)",                  NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(GetSavedCD),                "",                     NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kList_subops[] = {
-	{ SIG_SCI21,           0, MAP_CALL(NewList),                   "",                     NULL },
-	{ SIG_SCI21,           1, MAP_CALL(DisposeList),               "l",                    NULL },
-	{ SIG_SCI21,           2, MAP_CALL(NewNode),                   ".(.)",                 NULL },
-	{ SIG_SCI21,           3, MAP_CALL(FirstNode),                 "[l0]",                 NULL },
-	{ SIG_SCI21,           4, MAP_CALL(LastNode),                  "l",                    NULL },
-	{ SIG_SCI21,           5, MAP_CALL(EmptyList),                 "l",                    NULL },
-	{ SIG_SCI21,           6, MAP_CALL(NextNode),                  "n",                    NULL },
-	{ SIG_SCI21,           7, MAP_CALL(PrevNode),                  "n",                    NULL },
-	{ SIG_SCI21,           8, MAP_CALL(NodeValue),                 "[n0]",                 NULL },
-	{ SIG_SCI21,           9, MAP_CALL(AddAfter),                  "lnn.",                 NULL },
-	{ SIG_SCI21,          10, MAP_CALL(AddToFront),                "ln.",                  NULL },
-	{ SIG_SCI21,          11, MAP_CALL(AddToEnd),                  "ln(.)",                NULL },
-	{ SIG_SCI21,          12, MAP_CALL(AddBefore),                 "ln.",                  NULL },
-	{ SIG_SCI21,          13, MAP_CALL(MoveToFront),               "ln",                   NULL },
-	{ SIG_SCI21,          14, MAP_CALL(MoveToEnd),                 "ln",                   NULL },
-	{ SIG_SCI21,          15, MAP_CALL(FindKey),                   "l.",                   NULL },
-	{ SIG_SCI21,          16, MAP_CALL(DeleteKey),                 "l.",                   NULL },
-	{ SIG_SCI21,          17, MAP_CALL(ListAt),                    "li",                   NULL },
-	{ SIG_SCI21,          18, MAP_CALL(ListIndexOf) ,              "l[io]",                NULL },
-	{ SIG_SCI21,          19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
-	{ SIG_SCI21,          20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
-	{ SIG_SCI21,          21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
-	{ SIG_SCI21,          22, MAP_CALL(Sort),                      "ooo",                  NULL },
+	{ SIG_SINCE_SCI21,     0, MAP_CALL(NewList),                   "",                     NULL },
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(DisposeList),               "l",                    NULL },
+	{ SIG_SINCE_SCI21,     2, MAP_CALL(NewNode),                   ".(.)",                 NULL },
+	{ SIG_SINCE_SCI21,     3, MAP_CALL(FirstNode),                 "[l0]",                 NULL },
+	{ SIG_SINCE_SCI21,     4, MAP_CALL(LastNode),                  "l",                    NULL },
+	{ SIG_SINCE_SCI21,     5, MAP_CALL(EmptyList),                 "l",                    NULL },
+	{ SIG_SINCE_SCI21,     6, MAP_CALL(NextNode),                  "n",                    NULL },
+	{ SIG_SINCE_SCI21,     7, MAP_CALL(PrevNode),                  "n",                    NULL },
+	{ SIG_SINCE_SCI21,     8, MAP_CALL(NodeValue),                 "[n0]",                 NULL },
+	{ SIG_SINCE_SCI21,     9, MAP_CALL(AddAfter),                  "lnn(.)",               NULL },
+	{ SIG_SINCE_SCI21,    10, MAP_CALL(AddToFront),                "ln(.)",                NULL },
+	{ SIG_SINCE_SCI21,    11, MAP_CALL(AddToEnd),                  "ln(.)",                NULL },
+	{ SIG_SINCE_SCI21,    12, MAP_CALL(AddBefore),                 "ln.",                  NULL },
+	{ SIG_SINCE_SCI21,    13, MAP_CALL(MoveToFront),               "ln",                   NULL },
+	{ SIG_SINCE_SCI21,    14, MAP_CALL(MoveToEnd),                 "ln",                   NULL },
+	{ SIG_SINCE_SCI21,    15, MAP_CALL(FindKey),                   "l.",                   NULL },
+	{ SIG_SINCE_SCI21,    16, MAP_CALL(DeleteKey),                 "l.",                   NULL },
+	{ SIG_SINCE_SCI21,    17, MAP_CALL(ListAt),                    "li",                   kListAt_workarounds },
+	{ SIG_SINCE_SCI21,    18, MAP_CALL(ListIndexOf) ,              "l[io]",                NULL },
+	{ SIG_SINCE_SCI21,    19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
+	{ SIG_SINCE_SCI21,    20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
+	{ SIG_SINCE_SCI21,    21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
+	{ SIG_SINCE_SCI21,    22, MAP_CALL(ListSort),                  "li(i)",                NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kShowMovieWin_subops[] = {
+	{ SIG_SCI2,            0, MAP_CALL(ShowMovieWinOpen),          "r",                    NULL },
+	{ SIG_SCI2,            1, MAP_CALL(ShowMovieWinInit),          "ii(ii)",               NULL },
+	{ SIG_SCI2,            2, MAP_CALL(ShowMovieWinPlay),          "i",                    NULL },
+	{ SIG_SCI2,            6, MAP_CALL(ShowMovieWinClose),         "",                     NULL },
+	{ SIG_SINCE_SCI21,     0, MAP_CALL(ShowMovieWinOpen),          "ir",                   NULL },
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(ShowMovieWinInit),          "iii(ii)",              NULL },
+	{ SIG_SINCE_SCI21,     2, MAP_CALL(ShowMovieWinPlay),          "i(ii)(i)(i)",          NULL },
+	{ SIG_SINCE_SCI21,     6, MAP_CALL(ShowMovieWinClose),         "i",                    NULL },
+	// Since movies are rendered within the graphics engine in ScummVM,
+	// it is not necessary to copy the palette from SCI to MCI, so this
+	// can be a no-op
+	{ SIG_SINCE_SCI21,     7, MAP_EMPTY(ShowMovieWinSetPalette),   "i",                    NULL },
+	{ SIG_SINCE_SCI21,     8, MAP_CALL(ShowMovieWinGetDuration),   "i",                    NULL },
+	{ SIG_SINCE_SCI21,    11, MAP_CALL(ShowMovieWinCue),           "ii",                   NULL },
+	{ SIG_SINCE_SCI21,    14, MAP_CALL(ShowMovieWinPlayUntilEvent), "i(i)",                NULL },
+	{ SIG_SINCE_SCI21,    15, MAP_CALL(ShowMovieWinInitDouble),    "iii",                  NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+// There are a lot of subops to PlayVMD, but only a few of them are ever
+// actually used by games
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kPlayVMD_subops[] = {
+	{ SIG_SINCE_SCI21,     0, MAP_CALL(PlayVMDOpen),               "r(i)(i)",              NULL },
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(PlayVMDInit),               "ii(i)(i)(ii)",         NULL },
+	{ SIG_SINCE_SCI21,     6, MAP_CALL(PlayVMDClose),              "",                     NULL },
+	{ SIG_SINCE_SCI21,     7, MAP_CALL(PlayVMDIgnorePalettes),     "",                     NULL },
+	{ SIG_SINCE_SCI21,    10, MAP_CALL(PlayVMDGetStatus),          "",                     NULL },
+	{ SIG_SINCE_SCI21,    14, MAP_CALL(PlayVMDPlayUntilEvent),     "i(i)(i)",              NULL },
+	{ SIG_SINCE_SCI21,    16, MAP_CALL(PlayVMDShowCursor),         "i",                    NULL },
+	{ SIG_SINCE_SCI21,    17, MAP_DUMMY(PlayVMDStartBlob),         "",                     NULL },
+	{ SIG_SINCE_SCI21,    18, MAP_DUMMY(PlayVMDStopBlobs),         "",                     NULL },
+	{ SIG_SINCE_SCI21,    21, MAP_CALL(PlayVMDSetBlackoutArea),    "iiii",                 NULL },
+	{ SIG_SINCE_SCI21,    23, MAP_CALL(PlayVMDRestrictPalette),    "ii",                   NULL },
+	{ SIG_SCI3,           27, MAP_CALL(PlayVMDSetPlane),           "i(i)",                 NULL },
+	{ SIG_SCI3,           28, MAP_EMPTY(PlayVMDSetPreload),        "i",                    NULL },
+	{ SIG_SCI3,           31, MAP_EMPTY(PlayVMDSetFrameRate),      "i",                    NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kRobot_subops[] = {
+	{ SIG_SINCE_SCI21,     0, MAP_CALL(RobotOpen),                 "ioiii(i)",             NULL },
+	{ SIG_SINCE_SCI21,     1, MAP_CALL(RobotShowFrame),            "i(ii)",                NULL },
+	{ SIG_SINCE_SCI21,     2, MAP_CALL(RobotGetFrameSize),         "r",                    NULL },
+	{ SIG_SINCE_SCI21,     4, MAP_CALL(RobotPlay),                 "",                     NULL },
+	{ SIG_SINCE_SCI21,     5, MAP_CALL(RobotGetIsFinished),        "",                     NULL },
+	{ SIG_SINCE_SCI21,     6, MAP_CALL(RobotGetIsPlaying),         "",                     NULL },
+	{ SIG_SINCE_SCI21,     7, MAP_CALL(RobotClose),                "",                     NULL },
+	{ SIG_SINCE_SCI21,     8, MAP_CALL(RobotGetCue),               "o",                    NULL },
+	{ SIG_SINCE_SCI21,    10, MAP_CALL(RobotPause),                "",                     NULL },
+	{ SIG_SINCE_SCI21,    11, MAP_CALL(RobotGetFrameNo),           "",                     NULL },
+	{ SIG_SINCE_SCI21,    12, MAP_CALL(RobotSetPriority),          "i",                    NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kPlayDuck_subops[] = {
+	{ SIG_SCI3,            1, MAP_CALL(PlayDuckPlay),              "iiiii",                NULL },
+	{ SIG_SCI3,            2, MAP_CALL(PlayDuckSetFrameOut),       "i",                    NULL },
+	{ SIG_SCI3,            5, MAP_CALL(PlayDuckClose),             "",                     NULL },
+	{ SIG_SCI3,            6, MAP_CALL(PlayDuckSetVolume),         "i",                    NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kRemapColors_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(RemapColorsOff),            "(i)",                  NULL },
+	{ SIG_SCI32,           1, MAP_CALL(RemapColorsByRange),        "iiii(i)",              NULL },
+	{ SIG_SCI32,           2, MAP_CALL(RemapColorsByPercent),      "ii(i)",                NULL },
+	{ SIG_SCI32,           3, MAP_CALL(RemapColorsToGray),         "ii(i)",                NULL },
+	{ SIG_SCI32,           4, MAP_CALL(RemapColorsToPercentGray),  "iii(i)",               NULL },
+	{ SIG_SCI32,           5, MAP_CALL(RemapColorsBlockRange),     "ii",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kArray_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(ArrayNew),                  "ii",                   NULL },
+	{ SIG_SCI32,           1, MAP_CALL(ArrayGetSize),              "r",                    NULL },
+	{ SIG_SCI32,           2, MAP_CALL(ArrayGetElement),           "ri",                   NULL },
+	{ SIG_SCI32,           3, MAP_CALL(ArraySetElements),          "ri(.*)",               kArraySetElements_workarounds },
+	{ SIG_SCI32,           4, MAP_CALL(ArrayFree),                 "[r0]",                 NULL },
+	{ SIG_SCI32,           5, MAP_CALL(ArrayFill),                 "riii",                 kArrayFill_workarounds },
+	{ SIG_SCI32,           6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
+	// there is no subop 7
+	{ SIG_SCI32,           8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
+	{ SIG_SCI32,           9, MAP_CALL(ArrayGetData),              "[or0]",                NULL },
+	{ SIG_SCI3,           10, MAP_CALL(ArrayByteCopy),             "ririi",                NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kString_subops[] = {
+	// every single copy of script 64918 in SCI2 through 2.1mid calls StringNew
+	// with a second type argument which is unused (new strings are always type
+	// 3)
+	{ SIG_THRU_SCI21MID,   0, MAP_CALL(StringNew),                 "i(i)",                 NULL },
+	{ SIG_THRU_SCI21MID,   1, MAP_CALL(ArrayGetSize),              "r",                    NULL },
+	{ SIG_THRU_SCI21MID,   2, MAP_CALL(StringGetChar),             "[r0]i",                NULL },
+	{ SIG_THRU_SCI21MID,   3, MAP_CALL(ArraySetElements),          "ri(i*)",               kArraySetElements_workarounds },
+	{ SIG_THRU_SCI21MID,   4, MAP_CALL(StringFree),                "[r0]",                 NULL },
+	{ SIG_THRU_SCI21MID,   5, MAP_CALL(ArrayFill),                 "rii",                  kArrayFill_workarounds },
+	{ SIG_THRU_SCI21MID,   6, MAP_CALL(ArrayCopy),                 "ririi",                NULL },
+	{ SIG_SCI32,           7, MAP_CALL(StringCompare),             "[r0][r0](i)",          NULL },
+
+	{ SIG_THRU_SCI21MID,   8, MAP_CALL(ArrayDuplicate),            "r",                    NULL },
+	{ SIG_THRU_SCI21MID,   9, MAP_CALL(ArrayGetData),              "[or0]",                NULL },
+	{ SIG_THRU_SCI21MID,  10, MAP_CALL(StringLength),              "[r0]",                 NULL },
+	{ SIG_THRU_SCI21MID,  11, MAP_CALL(StringFormat),              "[or0](.*)",            NULL },
+	{ SIG_THRU_SCI21MID,  12, MAP_CALL(StringFormatAt),            "r[or0](.*)",           NULL },
+	{ SIG_THRU_SCI21MID,  13, MAP_CALL(StringToInteger),           "[r0]",                 NULL },
+	{ SIG_THRU_SCI21MID,  14, MAP_CALL(StringTrim),                "[r0]i(i)",             NULL },
+	{ SIG_THRU_SCI21MID,  15, MAP_CALL(StringToUpperCase),         "[r0]",                 NULL },
+	{ SIG_THRU_SCI21MID,  16, MAP_CALL(StringToLowerCase),         "[r0]",                 NULL },
+	{ SIG_THRU_SCI21MID,  17, MAP_CALL(StringReplaceSubstring),    "[r0][r0][r0][r0]",     NULL },
+	{ SIG_THRU_SCI21MID,  18, MAP_CALL(StringReplaceSubstringEx),  "[r0][r0][r0][r0]",     NULL },
+
+	{ SIG_SINCE_SCI21LATE, 8, MAP_CALL(StringLength),              "[r0]",                 NULL },
+	{ SIG_SINCE_SCI21LATE, 9, MAP_CALL(StringFormat),              "[or0](.*)",            NULL },
+	{ SIG_SINCE_SCI21LATE,10, MAP_CALL(StringFormatAt),            "[r0][or0](.*)",        NULL },
+	{ SIG_SINCE_SCI21LATE,11, MAP_CALL(StringToInteger),           "[r0]",                 NULL },
+	{ SIG_SINCE_SCI21LATE,12, MAP_CALL(StringTrim),                "[r0]i(i)",             NULL },
+	{ SIG_SINCE_SCI21LATE,13, MAP_CALL(StringToUpperCase),         "[r0]",                 NULL },
+	{ SIG_SINCE_SCI21LATE,14, MAP_CALL(StringToLowerCase),         "[r0]",                 NULL },
+	{ SIG_SINCE_SCI21LATE,15, MAP_CALL(StringReplaceSubstring),    "[r0][r0][r0][r0]",     NULL },
+	{ SIG_SINCE_SCI21LATE,16, MAP_CALL(StringReplaceSubstringEx),  "[r0][r0][r0][r0]",     NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kCelInfo_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_CALL(CelInfoGetOriginX),         "iii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_CALL(CelInfoGetOriginY),         "iii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  2, MAP_EMPTY(CelInfo),                  "iii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  3, MAP_EMPTY(CelInfo),                  "iii",                  NULL },
+	{ SIG_SINCE_SCI21MID,  4, MAP_CALL(CelInfoGetPixel),           "iiiii",                NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kCelLink_subops[] = {
+	{ SIG_SINCE_SCI21MID,  0, MAP_DUMMY(CelLink0),                 "",                     NULL },
+	{ SIG_SINCE_SCI21MID,  1, MAP_DUMMY(CelLink1),                 "",                     NULL },
+	{ SIG_SINCE_SCI21MID,  2, MAP_CALL(CelLinkGetX),               "iiii",                 NULL },
+	{ SIG_SINCE_SCI21MID,  3, MAP_CALL(CelLinkGetY),               "iiii",                 NULL },
+	{ SIG_SINCE_SCI21MID,  4, MAP_DUMMY(CelLink4),                 "",                     NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kScrollWindow_subops[] = {
+	{ SIG_SCI32,           0, MAP_CALL(ScrollWindowCreate),        "oi",                   NULL },
+	{ SIG_SCI32,           1, MAP_CALL(ScrollWindowAdd),           "iriii(i)",             kScrollWindowAdd_workarounds },
+	{ SIG_SCI32,           2, MAP_DUMMY(ScrollWindowClear),        "i",                    NULL },
+	{ SIG_SCI32,           3, MAP_CALL(ScrollWindowPageUp),        "i",                    NULL },
+	{ SIG_SCI32,           4, MAP_CALL(ScrollWindowPageDown),      "i",                    NULL },
+	{ SIG_SCI32,           5, MAP_CALL(ScrollWindowUpArrow),       "i",                    NULL },
+	{ SIG_SCI32,           6, MAP_CALL(ScrollWindowDownArrow),     "i",                    NULL },
+	{ SIG_SCI32,           7, MAP_CALL(ScrollWindowHome),          "i",                    NULL },
+	{ SIG_SCI32,           8, MAP_CALL(ScrollWindowEnd),           "i",                    NULL },
+	{ SIG_SCI32,           9, MAP_DUMMY(ScrollWindowResize),       "i.",                   NULL },
+	{ SIG_SCI32,          10, MAP_CALL(ScrollWindowWhere),         "ii",                   NULL },
+	{ SIG_SCI32,          11, MAP_CALL(ScrollWindowGo),            "i..",                  NULL },
+	{ SIG_SCI32,          12, MAP_DUMMY(ScrollWindowInsert),       "i.....",               NULL },
+	{ SIG_SCI32,          13, MAP_DUMMY(ScrollWindowDelete),       "i.",                   NULL },
+	{ SIG_SCI32,          14, MAP_CALL(ScrollWindowModify),        "iiriii(i)",            NULL },
+	{ SIG_SCI32,          15, MAP_CALL(ScrollWindowHide),          "i",                    NULL },
+	{ SIG_SCI32,          16, MAP_CALL(ScrollWindowShow),          "i",                    NULL },
+	{ SIG_SCI32,          17, MAP_CALL(ScrollWindowDestroy),       "i",                    NULL },
+	// LSL6hires uses kScrollWindowText and kScrollWindowReconstruct to try to save
+	// and restore the content of the game's subtitle window, but this feature did not
+	// use the normal save/load functionality of the engine and was actually broken
+	// (all text formatting was missing on restore). Since there is no real reason to
+	// save the subtitle scrollback anyway, we just ignore calls to these two functions.
+	{ SIG_SCI32,          18, MAP_EMPTY(ScrollWindowText),         "i",                    NULL },
+	{ SIG_SCI32,          19, MAP_EMPTY(ScrollWindowReconstruct),  "i.",                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
 #endif
 
 struct SciKernelMapEntry {
@@ -316,18 +644,28 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Animate),           SIG_EVERYWHERE,           "(l0)(i)",               NULL,            NULL },
 	{ MAP_CALL(AssertPalette),     SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii(.*)",                NULL,            NULL },
-	{ MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
+	{ MAP_CALL(BaseSetter),        SIG_SCI16, SIGFOR_ALL,    "o",                     NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ "CantBeHere", kCantBeHere32, SIG_SCI32, SIGFOR_ALL,    "ol",                    NULL,            NULL },
+	{ "BaseSetter", kBaseSetter32, SIG_SCI32, SIGFOR_ALL,    "o",                     NULL,            NULL },
 #endif
-	{ MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
-	{ MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            kCelHigh_workarounds },
-	{ MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            kCelWide_workarounds },
-	{ MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
+	{ MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
+	{ MAP_CALL(CantBeHere),        SIG_SCI16, SIGFOR_ALL,    "o(l)",                  NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ MAP_CALL(CantBeHere),        SIG_SCI32, SIGFOR_ALL,    "ol",                    NULL,            NULL },
+#endif
+	{ MAP_CALL(CelHigh),           SIG_SCI16, SIGFOR_ALL,    "ii(i)",                 NULL,            kCelHigh_workarounds },
+	{ MAP_CALL(CelWide),           SIG_SCI16, SIGFOR_ALL,    "ii(i)",                 NULL,            kCelWide_workarounds },
+#ifdef ENABLE_SCI32
+	{ "CelHigh", kCelHigh32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            NULL },
+	{ "CelWide", kCelWide32,       SIG_SCI32, SIGFOR_ALL,    "iii",                   NULL,            kCelWide_workarounds },
+#endif
+	{ MAP_CALL(CheckFreeSpace),    SIG_THRU_SCI21EARLY, SIGFOR_ALL, "r(i)",           NULL,            NULL },
 	{ MAP_CALL(CheckFreeSpace),    SIG_SCI11, SIGFOR_ALL,    "r(i)",                  NULL,            NULL },
-	{ MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                    NULL,            NULL },
+	{ MAP_CALL(CheckFreeSpace),    SIG_SCI16, SIGFOR_ALL,    "r",                     NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "CheckSaveGame", kCheckSaveGame32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri[r0]",   NULL,            NULL },
+#endif
+	{ MAP_CALL(CheckSaveGame),     SIG_SCI16, SIGFOR_ALL,    ".*",                    NULL,            NULL },
 	{ MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
 	{ MAP_CALL(CosDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
@@ -341,7 +679,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                     NULL,            NULL },
 	{ MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "i(i*)",                 NULL,            kDisposeScript_workarounds },
 	{ MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
-	{ MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+	{ MAP_CALL(DoAudio),           SIG_SCI16, SIGFOR_ALL,    "i(.*)",                 NULL,            NULL }, // subop
+#ifdef ENABLE_SCI32
+	{ "DoAudio", kDoAudio32,       SIG_SCI32, SIGFOR_ALL,    "(.*)",                  kDoAudio_subops, NULL },
+#endif
 	{ MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
 	{ MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i(.*)",                 kDoSound_subops, NULL },
@@ -359,7 +700,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ "FGets", kFileIOReadString,  SIG_EVERYWHERE,           "rii",                   NULL,            NULL },
 	{ "FOpen", kFileIOOpen,        SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
 	{ "FPuts", kFileIOWriteString, SIG_EVERYWHERE,           "ir",                    NULL,            NULL },
-	{ MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                 kFileIO_subops,  NULL },
+	{ MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i([.!]*)",              kFileIO_subops,  NULL },
 	{ MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                    NULL,            kFindKey_workarounds },
 	{ MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                  NULL,            NULL },
 	{ MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
@@ -374,13 +715,23 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(GetMenu),           SIG_EVERYWHERE,           "i.",                    NULL,            NULL },
 	{ MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                  NULL,            NULL },
 	{ MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
-	{ MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "(r*)",                  NULL,            NULL },
-	{ MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                      NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ MAP_CALL(GetSaveDir),        SIG_THRU_SCI21EARLY, SIGFOR_ALL, "(r)",            NULL,            NULL },
+#endif
+	{ MAP_CALL(GetSaveDir),        SIG_SCI16, SIGFOR_ALL,    "",                      NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "GetSaveFiles", kGetSaveFiles32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "rrr",        NULL,            NULL },
+#endif
 	{ MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
 	{ MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
-	{ MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
-	{ MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(Graph),             SIG_EVERYWHERE,           NULL,                    kGraph_subops,   NULL },
+	{ MAP_CALL(GlobalToLocal),     SIG_SCI16, SIGFOR_ALL,    "o",                     NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "GlobalToLocal", kGlobalToLocal32, SIG_SCI32, SIGFOR_ALL, "oo",                 NULL,            NULL },
+#endif
+	{ MAP_CALL(Graph),             SIG_SCI16, SIGFOR_ALL,    NULL,                    kGraph_subops,   NULL },
+#ifdef ENABLE_SCI32
+	{ MAP_EMPTY(Graph),            SIG_SCI32, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
+#endif
 	{ MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
@@ -390,8 +741,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
 	{ MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                     NULL,            NULL },
 	{ MAP_CALL(Load),              SIG_EVERYWHERE,           "ii(i*)",                NULL,            NULL },
-	{ MAP_CALL(LocalToGlobal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
-	{ MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+	{ MAP_CALL(LocalToGlobal),     SIG_SCI16, SIGFOR_ALL,    "o",                     NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "LocalToGlobal", kLocalToGlobal32, SIG_SCI32, SIGFOR_ALL, "oo",                 NULL,            NULL },
+#endif
 	{ MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
 	{ MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(Memory),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            kMemory_workarounds }, // subop
@@ -416,37 +769,60 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(Palette),           SIG_EVERYWHERE,           "i(.*)",                 kPalette_subops, NULL },
 	{ MAP_CALL(Parse),             SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
 	{ MAP_CALL(PicNotValid),       SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
-	{ MAP_CALL(Platform),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Platform),          SIG_SCI16, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "Platform", kPlatform32,     SIG_SCI32, SIGFOR_MAC,    "(.*)",                  NULL,            NULL },
+	{ "Platform", kPlatform32,     SIG_SCI32, SIGFOR_ALL,    "(i)",                   NULL,            kPlatform32_workarounds },
+#endif
 	{ MAP_CALL(Portrait),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
 	{ MAP_CALL(PrevNode),          SIG_EVERYWHERE,           "n",                     NULL,            NULL },
 	{ MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(Random),            SIG_EVERYWHERE,           "i(i)(i)",               NULL,            NULL },
+	{ MAP_CALL(Random),            SIG_EVERYWHERE,           "(i)(i)",                NULL,            kRandom_workarounds },
 	{ MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            kReadNumber_workarounds },
 	{ MAP_CALL(RemapColors),       SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            NULL },
 #ifdef ENABLE_SCI32
-	{ "RemapColors", kRemapColors32, SIG_SCI32, SIGFOR_ALL,  "i(i)(i)(i)(i)(i)",      NULL,            NULL },
+	{ "RemapColors", kRemapColors32, SIG_SCI32, SIGFOR_ALL,  "i(i)(i)(i)(i)(i)",      kRemapColors_subops, NULL },
 #endif
-	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
+	{ MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            kResCheck_workarounds },
 	{ MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
 	{ MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "RestoreGame", kRestoreGame32, SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri[r0]",       NULL,            NULL },
+#endif
 	{ MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "[r0]i[r0]",             NULL,            NULL },
 	{ MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
-	{ MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "[r0]i[r0](r0)",         NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "SaveGame", kSaveGame32,     SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri[r0][r0]",     NULL,            NULL },
+	{ MAP_CALL(ScummVMSaveLoad),   SIG_SCI32, SIGFOR_ALL,    "([iro])([iro])",        NULL,            NULL },
+#endif
+	{ MAP_CALL(SaveGame),          SIG_SCI16, SIGFOR_ALL,    "[r0]i[r0](r0)",         NULL,            NULL },
 	{ MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },
-	{ MAP_CALL(SetCursor),         SIG_SCI21, SIGFOR_ALL,    "i(i)([io])(i*)",        NULL,            NULL },
-	// TODO: SCI2.1 may supply an object optionally (mother goose sci21 right on startup) - find out why
 	{ MAP_CALL(SetCursor),         SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(iiiiii)",    NULL,            NULL },
-	{ MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i(i)(i)(i)(i)",         NULL,            kSetCursor_workarounds },
+	{ MAP_CALL(SetCursor),         SIG_SCI16, SIGFOR_ALL,    "i(i)(i)(i)(i)",         NULL,            kSetCursor_workarounds },
+#ifdef ENABLE_SCI32
+	{ "SetCursor", kSetCursor32,   SIG_SCI32, SIGFOR_ALL,    "i(i)(i)(i)",            NULL,            kSetCursor_workarounds },
+#endif
 	{ MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
 	{ MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
 	{ MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
-	{ MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
+	{ MAP_CALL(SetNowSeen),        SIG_SCI16, SIGFOR_ALL,    "o(i)",                  NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "SetNowSeen", kSetNowSeen32, SIG_SCI32, SIGFOR_ALL,    "o",                     NULL,            NULL },
+#endif
 	{ MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iiiii)(i)",           NULL,            kSetPort_workarounds },
 	{ MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "(i)(i)",                NULL,            NULL },
-	{ MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(ShakeScreen),       SIG_SCI16, SIGFOR_ALL,    "(i)(i)",                NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "ShakeScreen", kShakeScreen32, SIG_SCI32, SIGFOR_ALL,  "i(i)",                  NULL,            NULL },
+#endif
+	{ MAP_CALL(ShowMovie),         SIG_SCI16, SIGFOR_ALL,    "(.*)",                  NULL,            NULL },
+#ifdef ENABLE_SCI32
+	{ "ShowMovie", kShowMovie32,   SIG_SCI32, SIGFOR_DOS,    "ri(i)(i)",              NULL,            NULL },
+	{ "ShowMovie", kShowMovie32,   SIG_SCI32, SIGFOR_MAC,    "ri(i)(i)",              NULL,            NULL },
+	{ "ShowMovie", kShowMovieWin,  SIG_SCI32, SIGFOR_WIN,    "(.*)",                  kShowMovieWin_subops, NULL },
+#endif
 	{ MAP_CALL(Show),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
@@ -458,10 +834,10 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
 	{ MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                  NULL,            kStrLen_workarounds },
 	{ MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",                NULL,            NULL },
-	{ MAP_CALL(TextColors),        SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
-	{ MAP_CALL(TextFonts),         SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
-	{ MAP_CALL(TextSize),          SIG_SCIALL, SIGFOR_MAC,   "r[r0]i(i)(r0)(i)",      NULL,            NULL },
-	{ MAP_CALL(TextSize),          SIG_EVERYWHERE,           "r[r0]i(i)(r0)",         NULL,            NULL },
+	{ MAP_CALL(TextColors),        SIG_SCI16, SIGFOR_ALL,    "(i*)",                  NULL,            NULL },
+	{ MAP_CALL(TextFonts),         SIG_SCI16, SIGFOR_ALL,    "(i*)",                  NULL,            NULL },
+	{ MAP_CALL(TextSize),          SIG_SCI16, SIGFOR_MAC,    "r[r0]i(i)(r0)(i)",      NULL,            NULL },
+	{ MAP_CALL(TextSize),          SIG_SCI16, SIGFOR_ALL,    "r[r0]i(i)(r0)",         NULL,            NULL },
 	{ MAP_CALL(TimesCos),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ "CosMult", kTimesCos,        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 	{ MAP_CALL(TimesCot),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
@@ -493,14 +869,18 @@ static SciKernelMapEntry s_kernelMap[] = {
 #ifdef ENABLE_SCI32
 	// SCI2 Kernel Functions
 	// TODO: whoever knows his way through those calls, fix the signatures.
+	{ "TextSize", kTextSize32,     SIG_THRU_SCI21EARLY, SIGFOR_ALL, "r[r0]i(i)",      NULL,            NULL },
+	{ MAP_DUMMY(TextColors),       SIG_THRU_SCI21EARLY, SIGFOR_ALL, "(.*)",           NULL,            NULL },
+	{ MAP_DUMMY(TextFonts),        SIG_THRU_SCI21EARLY, SIGFOR_ALL, "(.*)",           NULL,            NULL },
+
 	{ MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(Array),             SIG_EVERYWHERE,           "i(.*)",                 kArray_subops,   NULL },
 	{ MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
 	{ MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(DisposeTextBitmap), SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                      NULL,            NULL },
+	{ "DisposeTextBitmap", kBitmapDestroy, SIG_SCI2, SIGFOR_ALL, "[r!]",              NULL,            NULL },
+	{ MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "(i)",                   NULL,            kFrameOut_workarounds },
 	{ MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
 	{ MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
 	{ MAP_CALL(IsHiRes),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
@@ -509,6 +889,8 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(ListEachElementDo), SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
 	{ MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
 	{ MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                 NULL,            NULL },
+	// kMessageBox is used only by KQ7 1.51
+	{ MAP_CALL(MessageBox),        SIG_SCI32, SIGFOR_ALL,    "rri",                   NULL,            NULL },
 	{ "OnMe", kIsOnMe,             SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
 	// Purge is used by the memory manager in SSCI to ensure that X number of bytes (the so called "unmovable
 	// memory") are available when the current room changes. This is similar to the SCI0-SCI1.1 FlushResources
@@ -516,16 +898,18 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// our own memory manager and garbage collector, thus we simply call FlushResources, which in turn invokes
 	// our garbage collector (i.e. the SCI0-SCI1.1 semantics).
 	{ "Purge", kFlushResources,    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-	{ MAP_CALL(SetShowStyle),      SIG_EVERYWHERE,           "ioiiiii([ri])(i)",      NULL,            NULL },
-	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(SetShowStyle),      SIG_THRU_SCI21MID, SIGFOR_ALL, "ioiiiii([ri])(i)", NULL,            NULL },
+	{ MAP_CALL(SetShowStyle),      SIG_SCI21LATE,     SIGFOR_ALL, "ioiiiii([ri])([ri])(i)", NULL,      NULL },
+	{ MAP_CALL(SetShowStyle),      SIG_SCI3,          SIGFOR_ALL, "ioiiiiii(r)(i)",   NULL,            NULL },
+	{ MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  kString_subops,  NULL },
 	{ MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
 	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-	{ MAP_CALL(MakeSaveCatName),   SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
-	{ MAP_CALL(MakeSaveFileName),  SIG_EVERYWHERE,           "rri",                   NULL,            NULL },
-	{ MAP_CALL(SetScroll),         SIG_EVERYWHERE,           "oiiiii(i)",             NULL,            NULL },
-	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
+	{ MAP_CALL(MakeSaveCatName),   SIG_THRU_SCI21EARLY, SIGFOR_ALL, "rr",             NULL,            NULL },
+	{ MAP_CALL(MakeSaveFileName),  SIG_THRU_SCI21EARLY, SIGFOR_ALL, "rri",            NULL,            NULL },
+	{ MAP_CALL(SetScroll),         SIG_EVERYWHERE,           "oiiii(i)(i)",           NULL,            NULL },
+	{ MAP_CALL(PalCycle),          SIG_EVERYWHERE,           "(.*)",                  kPalCycle_subops, NULL },
 
 	// SCI2 Empty functions
 
@@ -561,39 +945,39 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(MarkMemory),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(GetHighItemPri),   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_DUMMY(ShowStylePercent), SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(InvertRect),       SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_DUMMY(InvertRect),       SIG_THRU_SCI21EARLY, SIGFOR_ALL, "(.*)",           NULL,            NULL },
 	{ MAP_DUMMY(InputText),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(TextWidth),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_DUMMY(PointSize),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	// SetScroll is called by script 64909, Styler::doit(), but it doesn't seem to
-	// be used at all (plus, it was then changed to a dummy function in SCI3).
-	// Since this is most likely unused, and we got no test case, error out when
-	// it is called in order to find an actual call to it.
-	{ MAP_DUMMY(SetScroll),        SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(TextWidth),         SIG_THRU_SCI21EARLY, SIGFOR_ALL, "ri",             NULL,            NULL },
+	{ MAP_CALL(PointSize),         SIG_THRU_SCI21EARLY, SIGFOR_ALL, "i",              NULL,            NULL },
 
 	// SCI2.1 Kernel Functions
-	{ MAP_CALL(CD),                SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ "CheckCDisc", kCheckCD,      SIG_SCI21EARLY, SIGFOR_ALL, "(i)",                 NULL,            NULL },
+	{ "GetSaveCDisc", kGetSavedCD, SIG_SCI21EARLY, SIGFOR_ALL, "",                    NULL,            NULL },
+	{ MAP_CALL(CD),                SIG_SINCE_SCI21MID, SIGFOR_ALL, "(.*)",            kCD_subops,      NULL },
 	{ MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iioi",                  NULL,            NULL },
-	{ MAP_CALL(List),              SIG_SCI21, SIGFOR_ALL,    "(.*)",                  kList_subops,    NULL },
+	{ MAP_CALL(List),              SIG_SINCE_SCI21, SIGFOR_ALL, "(.*)",               kList_subops,    NULL },
 	{ MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
-	{ MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  kPlayVMD_subops, NULL },
+	{ MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  kRobot_subops,   NULL },
 	{ MAP_CALL(Save),              SIG_EVERYWHERE,           "i(.*)",                 kSave_subops,    NULL },
-	{ MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
+	{ MAP_CALL(Text),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kText_subops,    NULL },
+	{ MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii(i)(i)",            NULL,            NULL },
 	{ MAP_CALL(GetWindowsOption),  SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 	{ MAP_CALL(WinHelp),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 	{ MAP_CALL(GetConfig),         SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
 	{ MAP_CALL(GetSierraProfileInt), SIG_EVERYWHERE,         "rri",                   NULL,            NULL },
-	{ MAP_CALL(CelInfo),           SIG_EVERYWHERE,           "iiiiii",                NULL,            NULL },
-	{ MAP_CALL(SetLanguage),       SIG_EVERYWHERE,           "r",                     NULL,            NULL },
-	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "io(.*)",                NULL,            NULL },
-	{ MAP_CALL(SetFontRes),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
-	{ MAP_CALL(Font),              SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
-	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
-	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiiiiiiii",            NULL,            NULL },
-	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "[r0]oiiiiiiiii",        NULL,            NULL },
-	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "[r0]o",                 NULL,            NULL },
+	{ MAP_CALL(CelInfo),           SIG_SINCE_SCI21MID, SIGFOR_ALL, "(.*)",            kCelInfo_subops, NULL },
+	{ MAP_CALL(SetLanguage),       SIG_SINCE_SCI21MID, SIGFOR_ALL, "r",               NULL,            NULL },
+	{ MAP_CALL(ScrollWindow),      SIG_EVERYWHERE,           "i(.*)",                 kScrollWindow_subops, NULL },
+	{ MAP_CALL(SetFontRes),        SIG_SCI21EARLY, SIGFOR_ALL, "ii",                  NULL,            NULL },
+	{ MAP_CALL(Font),              SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(.*)",           kFont_subops,    NULL },
+	{ MAP_CALL(Bitmap),            SIG_EVERYWHERE,           "(.*)",                  kBitmap_subops,  NULL },
+	{ MAP_CALL(AddLine),           SIG_EVERYWHERE,           "oiiii(iiiii)",          NULL,            NULL },
+	// The first argument is a ScreenItem instance ID that is created by the
+	// engine, not the VM; as a result, in ScummVM, this argument looks like
+	// an integer and not an object, although it is an object reference.
+	{ MAP_CALL(UpdateLine),        SIG_EVERYWHERE,           "ioiiii(iiiii)",         NULL,            NULL },
+	{ MAP_CALL(DeleteLine),        SIG_EVERYWHERE,           "io",                    NULL,            NULL },
 
 	// SCI2.1 Empty Functions
 
@@ -601,14 +985,14 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// stub in the original interpreters, but it gets called by the game scripts.
 	// Usually, it gets called with a string (which is the output format) and a
 	// variable number of parameters
-	{ MAP_EMPTY(PrintDebug),        SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+	{ MAP_CALL(PrintDebug),        SIG_SCI32, SIGFOR_ALL,    "r(.*)",                 NULL,            NULL },
 
 	// SetWindowsOption is used to set Windows specific options, like for example the title bar visibility of
 	// the game window in Phantasmagoria 2. We ignore these settings completely.
-	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,             "ii",                  NULL,            NULL },
+	{ MAP_EMPTY(SetWindowsOption), SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
 
 	// Debug function called whenever the current room changes
-	{ MAP_EMPTY(NewRoom),           SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
+	{ MAP_EMPTY(NewRoom),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
 
 	// Unused / debug SCI2.1 unused functions, always mapped to kDummy
 
@@ -619,7 +1003,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(FindClass),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(CelRect),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(BaseLineSpan),      SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-	{ MAP_DUMMY(CelLink),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_CALL(CelLink),            SIG_SINCE_SCI21MID, SIGFOR_ALL, "(.*)",           kCelLink_subops, NULL },
 	{ MAP_DUMMY(AddPolygon),        SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(DeletePolygon),     SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(UpdatePolygon),     SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
@@ -632,26 +1016,26 @@ static SciKernelMapEntry s_kernelMap[] = {
 
 	// Unused / debug functions in the in-between SCI2.1 interpreters
 	{ MAP_DUMMY(PreloadResource),   SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-	{ MAP_DUMMY(CheckCDisc),        SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-	{ MAP_DUMMY(GetSaveCDisc),      SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(TestPoly),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 
-	// SCI2.1 unmapped functions - TODO!
+	// Used by Phantasmagoria 1, script 64981 (used in the chase scene)
+	{ MAP_CALL(SetHotRectangles), SIG_SINCE_SCI21MID, SIGFOR_ALL, "i(r)",             NULL,            NULL },
 
-	// SetHotRectangles - used by Phantasmagoria 1, script 64981 (used in the chase scene)
-	//     <lskovlun> The idea, if I understand correctly, is that the engine generates events
-	//     of a special HotRect type continuously when the mouse is on that rectangle
+	// Used by SQ6 to scroll through the inventory via the up/down buttons
+	{ MAP_CALL(MovePlaneItems),     SIG_SINCE_SCI21, SIGFOR_ALL, "oii(i)",            NULL,            NULL },
 
-	// MovePlaneItems - used by SQ6 to scroll through the inventory via the up/down buttons
-	// SetPalStyleRange - 2 integer parameters, start and end. All styles from start-end
-	//   (inclusive) are set to 0
-	// MorphOn - used by SQ6, script 900, the datacorder reprogramming puzzle (from room 270)
+	{ MAP_CALL(SetPalStyleRange),   SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
+
+	{ MAP_CALL(MorphOn),            SIG_EVERYWHERE,           "",                     NULL,            NULL },
 
 	// SCI3 Kernel Functions
-	{ MAP_CALL(PlayDuck),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+	{ MAP_EMPTY(Minimize),          SIG_SCI3, SIGFOR_ALL,     "(.*)",                 NULL,            NULL },
+	{ MAP_CALL(PlayDuck),           SIG_SCI3, SIGFOR_ALL,     "(.*)",                 kPlayDuck_subops,NULL },
+	{ MAP_CALL(WebConnect),         SIG_SCI3, SIGFOR_ALL,     "(r)",                  NULL,            NULL },
+	{ MAP_CALL(WinExec),            SIG_SCI3, SIGFOR_ALL,     "r",                    NULL,            NULL },
 #endif
 
-	{ NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
+	{ NULL, NULL,                   SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
 };
 
 /** Default kernel name table. */
@@ -942,10 +1326,9 @@ static const char *const sci2_default_knames[] = {
 	/*0x86*/ "CheckIntegrity",	  // for debugging
 	/*0x87*/ "ObjectIntersect",
 	/*0x88*/ "MarkMemory",	      // for debugging
-	/*0x89*/ "TextWidth",		  // for debugging(?), only in SCI2, not used in any SCI2 game
-	/*0x8a*/ "PointSize",	      // for debugging(?), only in SCI2, not used in any SCI2 game
+	/*0x89*/ "TextWidth",
+	/*0x8a*/ "PointSize",
 
-	// GK2 Demo (and similar) only kernel functions
 	/*0x8b*/ "AddLine",
 	/*0x8c*/ "DeleteLine",
 	/*0x8d*/ "UpdateLine",
@@ -1049,7 +1432,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x4c*/ "ScrollWindow",	// Dummy in SCI3
 	/*0x4d*/ "Dummy",
 	/*0x4e*/ "Dummy",
-	/*0x4f*/ "Dummy",
+	/*0x4f*/ "Dummy",           // Replaced with kWait for Hoyle5 in ScummVM
 	/*0x50*/ "GetEvent",
 	/*0x51*/ "GlobalToLocal",
 	/*0x52*/ "LocalToGlobal",
@@ -1099,7 +1482,7 @@ static const char *const sci21_default_knames[] = {
 	/*0x7e*/ "Table",
 	/*0x7f*/ "WinHelp",		// Windows only
 	/*0x80*/ "Dummy",
-	/*0x81*/ "Dummy",		// called when changing rooms in most SCI2.1 games (e.g. KQ7, GK2, MUMG deluxe, Phant1)
+	/*0x81*/ "Empty",       // called when clicking the On-line Help button in Phant2 control panel
 	/*0x82*/ "Dummy",
 	/*0x83*/ "PrintDebug",	// debug function, used by Shivers (demo and full)
 	/*0x84*/ "Dummy",
@@ -1131,7 +1514,8 @@ static const char *const sci21_default_knames[] = {
 	/*0x9d*/ "Dummy",
 	/*0x9e*/ "WebConnect",
 	/*0x9f*/ "Dummy",
-	/*0xa0*/ "PlayDuck"
+	/*0xa0*/ "PlayDuck",
+	/*0xa1*/ "WinExec"
 };
 
 #endif
@@ -1208,7 +1592,6 @@ static const opcode_format g_base_opcode_formats[128][4] = {
 	// 7C - 7F / minussgi, minussli, minussti, minusspi
 	{Script_Global}, {Script_Local}, {Script_Temp}, {Script_Param}
 };
-#undef END
 
 } // End of namespace Sci
 

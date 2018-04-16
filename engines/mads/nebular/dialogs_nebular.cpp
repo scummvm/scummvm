@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -82,15 +82,20 @@ bool DialogsNebular::show(int messageId, int objectId) {
 						if (centerFlag) {
 							crFlag = true;
 						} else {
-							if (objectId == -1) {
+							if (dialog)
+								delete dialog;
+
+							if (objectId == -1)
 								dialog = new TextDialog(_vm, FONT_INTERFACE, _defaultPosition, _dialogWidth);
-							} else {
+							else
 								dialog = new PictureDialog(_vm, _defaultPosition, _dialogWidth, objectId);
-							}
+
 							dialog->wordWrap(dialogText);
 							dialog->incNumLines();
 						}
 					} else if (commandCheck("ASK", valStr, commandText)) {
+						if (!dialog)
+							error("DialogsNebular::show - Uninitialized dialog");
 						dialog->addInput();
 					} else if (commandCheck("VERB", valStr, commandText)) {
 						dialogText += getVocab(action._activeAction._verbId);
@@ -114,12 +119,18 @@ bool DialogsNebular::show(int messageId, int objectId) {
 					} else if (commandCheck("WIDTH", valStr, commandText)) {
 						_dialogWidth = atoi(valStr.c_str());
 					} else if (commandCheck("BAR", valStr, commandText)) {
+						if (!dialog)
+							error("DialogsNebular::show - Uninitialized dialog");
 						dialog->addBarLine();
 					} else if (commandCheck("UNDER", valStr, commandText)) {
 						underlineFlag = true;
 					} else if (commandCheck("DOWN", valStr, commandText)) {
+						if (!dialog)
+							error("DialogsNebular::show - Uninitialized dialog");
 						dialog->downPixelLine();
 					} else if (commandCheck("TAB", valStr, commandText)) {
+						if (!dialog)
+							error("DialogsNebular::show - Uninitialized dialog");
 						int xp = atoi(valStr.c_str());
 						dialog->setLineXp(xp);
 					}
@@ -138,11 +149,10 @@ bool DialogsNebular::show(int messageId, int objectId) {
 		}
 
 		if (!dialog) {
-			if (objectId == -1) {
+			if (objectId == -1)
 				dialog = new TextDialog(_vm, FONT_INTERFACE, _defaultPosition, _dialogWidth);
-			} else {
+			else
 				dialog = new PictureDialog(_vm, _defaultPosition, _dialogWidth, objectId);
-			}
 		}
 
 		if (centerFlag) {
@@ -160,6 +170,9 @@ bool DialogsNebular::show(int messageId, int objectId) {
 		centerFlag = false;
 		crFlag = false;
 	}
+
+	if (!dialog)
+		error("DialogsNebular::show - Uninitialized dialog");
 
 	if (!centerFlag)
 		dialog->incNumLines();
@@ -317,7 +330,7 @@ void DialogsNebular::showDialog() {
 			TextView *dlg = new RexTextView(_vm);
 			dlg->show();
 			delete dlg;
-			break;
+			return;
 		}
 		case DIALOG_ANIMVIEW: {
 			AnimationView *dlg = new RexAnimationView(_vm);
@@ -333,7 +346,7 @@ void DialogsNebular::showDialog() {
 
 void DialogsNebular::showScummVMSaveDialog() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
-	Scene *scene = &(game._scene);
+	Scene &scene = game._scene;
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
 	int slot = dialog->runModalWithCurrentTarget();
@@ -345,25 +358,36 @@ void DialogsNebular::showScummVMSaveDialog() {
 			desc = dialog->createDefaultSaveDescription(slot);
 		}
 
-		scene->_spriteSlots.reset();
-		scene->loadScene(scene->_currentSceneId, game._aaName, true);
-		scene->_userInterface.noInventoryAnim();
+		scene._spriteSlots.reset();
+		scene.loadScene(scene._currentSceneId, game._aaName, true);
+		scene._userInterface.noInventoryAnim();
 		game._scene.drawElements(kTransitionFadeIn, false);
 
 		game.saveGame(slot, desc);
 	}
+
+	// Flag for scene loading that we're returning from a dialog
+	scene._currentSceneId = RETURNING_FROM_DIALOG;
+
+	delete dialog;
 }
 
 void DialogsNebular::showScummVMRestoreDialog() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	Scene &scene = game._scene;
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
 		game._loadGameSlot = slot;
-		game._scene._currentSceneId = -1;
+		game._scene._currentSceneId = RETURNING_FROM_LOADING;
 		game._currentSectionNumber = -1;
+	} else {
+		// Flag for scene loading that we're returning from a dialog
+		scene._currentSceneId = RETURNING_FROM_DIALOG;
 	}
+
+	delete dialog;
 }
 
 /*------------------------------------------------------------------------*/
@@ -376,8 +400,7 @@ TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 		addLine("ANSWER INCORRECT!", true);
 		wordWrap("\n");
 		addLine("(But we'll give you another chance!)");
-	}
-	else {
+	} else {
 		addLine("REX NEBULAR version 8.43", true);
 		wordWrap("\n");
 		addLine("(Copy Protection, for your convenience)");
@@ -400,7 +423,7 @@ TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 		_hogEntry._pageNum, _hogEntry._lineNum, _hogEntry._wordNum);
 	wordWrap(line);
 
-	wordWrap("and type it on the line below (we',27h,'ve even given you");
+	wordWrap("and type it on the line below (we've even given you");
 	wordWrap("first letter as a hint).  As soon as you do that, we can get");
 	wordWrap("right into this really COOL adventure game!\n");
 	wordWrap("\n");
@@ -411,16 +434,55 @@ TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 
 void CopyProtectionDialog::show() {
 	draw();
-	_vm->_events->showCursor();
 
-	// TODO: Replace with text input
-	while (!_vm->shouldQuit() && !_vm->_events->isKeyPressed() &&
-		!_vm->_events->_mouseClicked) {
-		_vm->_events->delay(1);
+	Common::KeyState curKey;
+	const Common::Rect inputArea(110, 165, 210, 175);
+	MSurface *origInput = new MSurface(inputArea.width(), inputArea.height());
+	_vm->_screen->frameRect(inputArea, TEXTDIALOG_BLACK);
+	origInput->blitFrom(*_vm->_screen, inputArea, Common::Point(0, 0));
+		_font->setColors(TEXTDIALOG_FE, TEXTDIALOG_FE, TEXTDIALOG_FE, TEXTDIALOG_FE);
+	_vm->_screen->update();
+
+	bool firstTime = true;
+
+	while (!_vm->shouldQuit()) {
+		if (!firstTime) {
+			while (!_vm->shouldQuit() && !_vm->_events->isKeyPressed()) {
+				_vm->_events->delay(1);
+			}
+
+			if (_vm->shouldQuit())
+				break;
+
+			curKey = _vm->_events->getKey();
+
+			if (curKey.keycode == Common::KEYCODE_RETURN || curKey.keycode == Common::KEYCODE_KP_ENTER)
+				break;
+			else if (curKey.keycode == Common::KEYCODE_BACKSPACE)
+				_textInput.deleteLastChar();
+			else if (_textInput.size() < 14)
+				_textInput += curKey.ascii;
+
+			_vm->_events->_pendingKeys.clear();
+		} else {
+			firstTime = false;
+			_textInput = _hogEntry._word[0];
+		}
+
+		_vm->_screen->blitFrom(*origInput, Common::Point(inputArea.left, inputArea.top));
+		_font->writeString(_vm->_screen, _textInput,
+			Common::Point(inputArea.left + 2, inputArea.top + 1), 1);
+		_vm->_screen->update();
 	}
 
-	_vm->_events->_pendingKeys.clear();
+	origInput->free();
+	delete origInput;
 }
+
+bool CopyProtectionDialog::isCorrectAnswer() {
+	return _hogEntry._word == _textInput;
+}
+
 
 bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 	File f;
@@ -473,7 +535,7 @@ void PictureDialog::save() {
 
 	// Save the entire screen
 	_savedSurface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCREEN_HEIGHT);
-	_vm->_screen.copyTo(_savedSurface);
+	_savedSurface->blitFrom(*_vm->_screen);
 
 	// Save palette information
 	Common::copy(&palette._mainPalette[0], &palette._mainPalette[PALETTE_SIZE], &_palette[0]);
@@ -504,7 +566,7 @@ void PictureDialog::save() {
 
 	// Remap the greyed out screen to use the small greyscale range
 	// at the top end of the palette
-	_vm->_screen.translate(map);
+	_vm->_screen->translate(map);
 
 	// Load the inventory picture
 	Common::String setName = Common::String::format("*OB%.3d.SS", _objectId);
@@ -514,13 +576,12 @@ void PictureDialog::save() {
 	// Get the inventory frame, and adjust the dialog position to allow for it
 	MSprite *frame = asset->getFrame(0);
 	_position.y = frame->h + 12;
-	if ((_position.y + _height) > _vm->_screen.getHeight())
-		_position.y -= (_position.y + _height) - _vm->_screen.getHeight();
+	if ((_position.y + _height) > _vm->_screen->h)
+		_position.y -= (_position.y + _height) - _vm->_screen->h;
 
 	// Draw the inventory picture
-	frame->copyTo(&_vm->_screen, Common::Point(160 - frame->w / 2, 6),
+	_vm->_screen->transBlitFrom(*frame, Common::Point(160 - frame->w / 2, 6),
 		frame->getTransparencyIndex());
-	_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
 
 	// Adjust the dialog colors to use
 	TEXTDIALOG_CONTENT1 -= 10;
@@ -534,11 +595,10 @@ void PictureDialog::save() {
 
 void PictureDialog::restore() {
 	if (_savedSurface) {
-		_savedSurface->copyTo(&_vm->_screen);
+		_vm->_screen->blitFrom(*_savedSurface);
+		_savedSurface->free();
 		delete _savedSurface;
 		_savedSurface = nullptr;
-
-		_vm->_screen.copyRectToScreen(_vm->_screen.getBounds());
 
 		// Restore palette information
 		Palette &palette = *_vm->_palette;
@@ -602,9 +662,12 @@ GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
 }
 
 void GameDialog::display() {
+	Palette &palette = *_vm->_palette;
+	palette.initPalette();
+	palette.resetGamePalette(18, 10);
+
 	FullScreenDialog::display();
 
-	Palette &palette = *_vm->_palette;
 	palette.setEntry(10, 0, 63, 0);
 	palette.setEntry(11, 0, 45, 0);
 	palette.setEntry(12, 63, 63, 0);
@@ -623,7 +686,7 @@ void GameDialog::display() {
 }
 
 GameDialog::~GameDialog() {
-	_vm->_screen.resetClipBounds();
+	_vm->_game->_scene._currentSceneId = RETURNING_FROM_DIALOG;
 }
 
 void GameDialog::clearLines() {
@@ -643,14 +706,14 @@ void GameDialog::setClickableLines() {
 			int maxHeight = _lines[idx]._font->getHeight();
 
 			screenObjects.add(Common::Rect(pt.x, pt.y, pt.x + strWidth, pt.y + maxHeight - 1),
-				LAYER_GUI, CAT_COMMAND, idx);
+				SCREENMODE_VGA, CAT_COMMAND, idx);
 		}
 	}
 
 	if (_vm->_dialogs->_pendingDialog == DIALOG_SAVE ||
 			_vm->_dialogs->_pendingDialog == DIALOG_RESTORE) {
-		screenObjects.add(Common::Rect(293, 26, 312, 75), LAYER_GUI, CAT_INV_LIST, 50);
-		screenObjects.add(Common::Rect(293, 78, 312, 127), LAYER_GUI, CAT_INV_LIST, 51);
+		screenObjects.add(Common::Rect(293, 26, 312, 75), SCREENMODE_VGA, CAT_INV_LIST, 50);
+		screenObjects.add(Common::Rect(293, 78, 312, 127), SCREENMODE_VGA, CAT_INV_LIST, 51);
 	}
 }
 
@@ -794,7 +857,7 @@ void GameDialog::show() {
 
 	Scene &scene = _vm->_game->_scene;
 
-	while (_selectedLine < 1 && !_vm->shouldQuit()) {
+	while (_selectedLine == -1 && !_vm->shouldQuit()) {
 		handleEvents();
 		if (_redrawFlag) {
 			if (!_tempLine)
@@ -821,11 +884,21 @@ void GameDialog::handleEvents() {
 		_lines[i]._state = DLGSTATE_UNSELECTED;
 
 	// Process pending events
-	_vm->_events->pollEvents();
+	events.pollEvents();
+
+	if (events.isKeyPressed()) {
+		switch (events.getKey().keycode) {
+		case Common::KEYCODE_ESCAPE:
+			_selectedLine = 0;
+			break;
+		default:
+			break;
+		}
+	}
 
 	// Scan for objects in the dialog
 	Common::Point mousePos = events.currentPos() - Common::Point(0, DIALOG_TOP);
-	int objIndex = screenObjects.scan(mousePos, LAYER_GUI);
+	int objIndex = screenObjects.scan(mousePos, SCREENMODE_VGA);
 
 	if (_movedFlag) {
 		int yp = mousePos.y;
@@ -1000,12 +1073,13 @@ void GameMenuDialog::show() {
 		_vm->_dialogs->_pendingDialog = DIALOG_OPTIONS;
 		_vm->_dialogs->showDialog();
 		break;
+	case 5:
+		_vm->quitGame();
+		break;
 	case 4:
+	default:
 		// Resume game
 		break;
-	case 5:
-	default:
-		_vm->quitGame();
 	}
 }
 
@@ -1018,12 +1092,11 @@ OptionsDialog::OptionsDialog(MADSEngine *vm) : GameDialog(vm) {
 int OptionsDialog::getOptionQuote(int option) {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 
-	// TODO: Hook the rest of the options to the current config
 	switch (option) {
 	case 17:	// Music
-		return 24;	// 24: ON, 25: OFF
+		return _vm->_musicFlag ? 24 : 25;	// 24: ON, 25: OFF
 	case 18:	// Sound
-		return 26;	// 26: ON, 27: OFF
+		return _vm->_soundFlag ? 26 : 27;	// 26: ON, 27: OFF
 	case 19:	// Interface
 		return !_vm->_easyMouse ? 28 : 29;	// 28: Standard, 29: Easy
 	case 20:	// Inventory
@@ -1066,6 +1139,7 @@ void OptionsDialog::show() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 
 	// Previous options, restored when cancel is selected
+	bool prevMusicFlag = _vm->_musicFlag;
 	bool prevEasyMouse = _vm->_easyMouse;
 	bool prevInvObjectsAnimated = _vm->_invObjectsAnimated;
 	bool prevTextWindowStill = _vm->_textWindowStill;
@@ -1073,15 +1147,15 @@ void OptionsDialog::show() {
 	StoryMode prevStoryMode = game._storyMode;
 
 	do {
-		_selectedLine = 0;
+		_selectedLine = -1;
 		GameDialog::show();
 
 		switch (_selectedLine) {
 		case 1:	// Music
-			warning("STUB: Music toggle");
+			_vm->_musicFlag = _vm->_soundFlag = !_vm->_musicFlag;
 			break;
 		case 2:	// Sound
-			warning("STUB: Sound toggle");
+			_vm->_musicFlag = _vm->_soundFlag = !_vm->_musicFlag;
 			break;
 		case 3:	// Interface
 			_vm->_easyMouse = !_vm->_easyMouse;
@@ -1110,24 +1184,22 @@ void OptionsDialog::show() {
 		// Reload menu
 		_lineIndex = -1;
 		clearLines();
+		_vm->_game->_screenObjects.clear();
+		_vm->_game->_scene._spriteSlots.reset();
 		setLines();
-		setClickableLines();
-	} while (_selectedLine <= 7);
+	} while (!_vm->shouldQuit() && _selectedLine != 0 && _selectedLine <= 7);
 
-	switch (_selectedLine) {
-	case 8:	// Done
-		// New options will be applied
-		break;
-	case 9:	// Cancel
-		// Revert all options from the saved ones
+	if (_selectedLine == 8) {
+		// OK button, save settings
+		_vm->saveOptions();
+	} else if (_selectedLine == 9) {
+		// Cancel button, revert all options from the saved ones
+		_vm->_musicFlag = _vm->_soundFlag = prevMusicFlag;
 		_vm->_easyMouse = prevEasyMouse;
 		_vm->_invObjectsAnimated = prevInvObjectsAnimated;
 		_vm->_textWindowStill = prevTextWindowStill;
 		_vm->_screenFade = prevScreenFade;
 		game._storyMode = prevStoryMode;
-		break;
-	default:
-		break;
 	}
 }
 

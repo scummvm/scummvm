@@ -32,7 +32,7 @@ namespace Mohawk {
 CSTimeGraphics::CSTimeGraphics(MohawkEngine_CSTime *vm) : GraphicsManager(), _vm(vm) {
 	_bmpDecoder = new MohawkBitmap();
 
-	initGraphics(640, 480, true);
+	initGraphics(640, 480);
 }
 
 CSTimeGraphics::~CSTimeGraphics() {

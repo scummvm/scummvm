@@ -124,9 +124,8 @@ void QuickTimeParser::init() {
 
 			// If this track doesn't have an edit list (like in MPEG-4 files),
 			// fake an entry of one edit that takes up the entire sample
-			if (_tracks[i]->editCount == 0) {
-				_tracks[i]->editCount = 1;
-				_tracks[i]->editList = new EditListEntry[1];
+			if (_tracks[i]->editList.size() == 0) {
+				_tracks[i]->editList.resize(1);
 				_tracks[i]->editList[0].trackDuration = _tracks[i]->duration;
 				_tracks[i]->editList[0].timeOffset = 0;
 				_tracks[i]->editList[0].mediaTime = 0;
@@ -434,14 +433,14 @@ int QuickTimeParser::readELST(Atom atom) {
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
-	track->editCount = _fd->readUint32BE();
-	track->editList = new EditListEntry[track->editCount];
+	uint32 editCount = _fd->readUint32BE();
+	track->editList.resize(editCount);
 
-	debug(2, "Track %d edit list count: %d", _tracks.size() - 1, track->editCount);
+	debug(2, "Track %d edit list count: %d", _tracks.size() - 1, editCount);
 
 	uint32 offset = 0;
 
-	for (uint32 i = 0; i < track->editCount; i++) {
+	for (uint32 i = 0; i < editCount; i++) {
 		track->editList[i].trackDuration = _fd->readUint32BE();
 		track->editList[i].mediaTime = _fd->readSint32BE();
 		track->editList[i].mediaRate = Rational(_fd->readUint32BE(), 0x10000);
@@ -836,8 +835,6 @@ QuickTimeParser::Track::Track() {
 	width = 0;
 	height = 0;
 	codecType = CODEC_TYPE_MOV_OTHER;
-	editCount = 0;
-	editList = 0;
 	frameCount = 0;
 	duration = 0;
 	startTime = 0;
@@ -850,7 +847,6 @@ QuickTimeParser::Track::~Track() {
 	delete[] sampleToChunk;
 	delete[] sampleSizes;
 	delete[] keyframes;
-	delete[] editList;
 
 	for (uint32 i = 0; i < sampleDescs.size(); i++)
 		delete sampleDescs[i];

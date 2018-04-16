@@ -41,6 +41,7 @@ enum Language {
 	EN_ANY,     // Generic English (when only one game version exist)
 	EN_GRB,
 	EN_USA,
+	ET_EST,
 	FR_FRA,
 	DE_DEU,
 	GR_GRE,

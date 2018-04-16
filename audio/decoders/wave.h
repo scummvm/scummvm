@@ -23,15 +23,26 @@
 /**
  * @file
  * Sound decoder used in engines:
+ *  - access
  *  - agos
+ *  - cge
+ *  - cge2
+ *  - fullpipe
  *  - gob
+ *  - hopkins
  *  - mohawk
+ *  - prince
  *  - saga
  *  - sci
  *  - scumm
+ *  - sherlock
  *  - sword1
  *  - sword2
+ *	- titanic
+ *  - tony
  *  - tucker
+ *  - wintermute
+ *  - zvision
  */
 
 #ifndef AUDIO_WAVE_H
@@ -46,7 +57,7 @@ class SeekableReadStream;
 
 namespace Audio {
 
-class RewindableAudioStream;
+class SeekableAudioStream;
 
 /**
  * Try to load a WAVE from the given seekable stream. Returns true if
@@ -72,9 +83,9 @@ extern bool loadWAVFromStream(
  *
  * @param stream			the SeekableReadStream from which to read the WAVE data
  * @param disposeAfterUse	whether to delete the stream after use
- * @return	a new RewindableAudioStream, or NULL, if an error occurred
+ * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeWAVStream(
+SeekableAudioStream *makeWAVStream(
 	Common::SeekableReadStream *stream,
 	DisposeAfterUse::Flag disposeAfterUse);
 

@@ -20,15 +20,15 @@
  *
  */
 
-#include "common/config-manager.h"
+#include "audio/mixer.h"
+#include "audio/softsynth/pcspk.h"
+
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/random.h"
-#include "common/textconsole.h"
 
 #include "agi/preagi.h"
 #include "agi/graphics.h"
-#include "agi/keyboard.h"
 
 namespace Agi {
 
@@ -51,41 +51,39 @@ PreAgiEngine::PreAgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : 
 	memset(&_game, 0, sizeof(struct AgiGame));
 	memset(&_debug, 0, sizeof(struct AgiDebug));
 	memset(&_mouse, 0, sizeof(struct Mouse));
+
+	_speakerHandle = new Audio::SoundHandle();
 }
 
 void PreAgiEngine::initialize() {
 	initRenderMode();
 
-	_gfx = new GfxMgr(this);
+	_font = new GfxFont(this);
+	_gfx = new GfxMgr(this, _font);
 	_picture = new PictureMgr(this, _gfx);
 
-	_gfx->initMachine();
+	_font->init();
 
 	_game.gameFlags = 0;
 
-	_game.colorFg = 15;
-	_game.colorBg = 0;
+	//_game._vm->_text->charAttrib_Set(15, 0);
 
 	_defaultColor = 0xF;
 
 	_game.name[0] = '\0';
 
-	_game.sbufOrig = (uint8 *)calloc(_WIDTH, _HEIGHT * 2); // Allocate space for two AGI screens vertically
-	_game.sbuf16c  = _game.sbufOrig + SBUF16_OFFSET; // Make sbuf16c point to the 16 color (+control line & priority info) AGI screen
-	_game.sbuf     = _game.sbuf16c; // Make sbuf point to the 16 color (+control line & priority info) AGI screen by default
-
-	_game.lineMinPrint = 0; // hardcoded
+	//_game._vm->_text->configureScreen(0); // hardcoded
 
 	_gfx->initVideo();
 
 	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-							_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, _speakerHandle,
+	                   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	debugC(2, kDebugLevelMain, "Detect game");
 
 	// clear all resources and events
-	for (int i = 0; i < MAX_DIRS; i++) {
+	for (int i = 0; i < MAX_DIRECTORY_ENTRIES; i++) {
 		memset(&_game.pictures[i], 0, sizeof(struct AgiPicture));
 		memset(&_game.sounds[i], 0, sizeof(class AgiSound *)); // _game.sounds contains pointers now
 		memset(&_game.dirPic[i], 0, sizeof(struct AgiDir));
@@ -94,8 +92,13 @@ void PreAgiEngine::initialize() {
 }
 
 PreAgiEngine::~PreAgiEngine() {
-	_mixer->stopHandle(_speakerHandle);
+	_mixer->stopHandle(*_speakerHandle);
 	delete _speakerStream;
+	delete _speakerHandle;
+
+	delete _picture;
+	delete _gfx;
+	delete _font;
 }
 
 int PreAgiEngine::rnd(int hi) {
@@ -107,11 +110,11 @@ void PreAgiEngine::clearScreen(int attr, bool overrideDefault) {
 	if (overrideDefault)
 		_defaultColor = attr;
 
-	_gfx->clearScreen((attr & 0xF0) / 0x10);
+	_gfx->clearDisplay((attr & 0xF0) / 0x10);
 }
 
 void PreAgiEngine::clearGfxScreen(int attr) {
-	_gfx->drawRectangle(0, 0, GFX_WIDTH - 1, IDI_MAX_ROW_PIC * 8 -1, (attr & 0xF0) / 0x10);
+	_gfx->drawDisplayRect(0, 0, DISPLAY_DEFAULT_WIDTH - 1, IDI_MAX_ROW_PIC * 8 - 1, (attr & 0xF0) / 0x10);
 }
 
 // String functions
@@ -137,7 +140,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 			break;
 
 		default:
-			_gfx->putTextCharacter(1, col * 8 , row * 8, static_cast<char>(code), attr & 0x0f, (attr & 0xf0) / 0x10, false, getGameID() == GID_MICKEY ? mickey_fontdata : ibm_fontdata);
+			_gfx->drawCharacter(row, col, code, attr & 0x0f, attr >> 4, false);
 
 			if (++col == 320 / 8) {
 				col = 0;
@@ -148,7 +151,7 @@ void PreAgiEngine::drawStr(int row, int col, int attr, const char *buffer) {
 }
 
 void PreAgiEngine::drawStrMiddle(int row, int attr, const char *buffer) {
-	int col = (25 / 2) - (strlen(buffer) / 2);	// 25 = 320 / 8 (maximum column)
+	int col = (25 / 2) - (strlen(buffer) / 2);  // 25 = 320 / 8 (maximum column)
 	drawStr(row, col, attr, buffer);
 }
 
@@ -164,13 +167,13 @@ void PreAgiEngine::clearTextArea() {
 }
 
 void PreAgiEngine::clearRow(int row) {
-	drawStr(row, 0, IDA_DEFAULT, "                                        ");	// 40 spaces
+	drawStr(row, 0, IDA_DEFAULT, "                                        ");   // 40 spaces
 }
 
-void PreAgiEngine::printStr(const char* szMsg) {
+void PreAgiEngine::printStr(const char *szMsg) {
 	clearTextArea();
 	drawStr(21, 0, IDA_DEFAULT, szMsg);
-	_gfx->doUpdate();
+	g_system->updateScreen();
 }
 
 void PreAgiEngine::XOR80(char *buffer) {
@@ -201,6 +204,7 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 			case Common::EVENT_LBUTTONUP:
 				if (type == kSelYesNo || type == kSelAnyKey)
 					return 1;
+				break;
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_d && (event.kbd.flags & Common::KBD_CTRL) && console) {
 					console->attach();
@@ -214,12 +218,15 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 				case Common::KEYCODE_y:
 					if (type == kSelYesNo)
 						return 1;
+					break;
 				case Common::KEYCODE_n:
 					if (type == kSelYesNo)
 						return 0;
+					break;
 				case Common::KEYCODE_ESCAPE:
 					if (type == kSelNumber || type == kSelAnyKey)
 						return 0;
+					break;
 				case Common::KEYCODE_1:
 				case Common::KEYCODE_2:
 				case Common::KEYCODE_3:
@@ -231,12 +238,15 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 				case Common::KEYCODE_9:
 					if (type == kSelNumber)
 						return event.kbd.keycode - Common::KEYCODE_1 + 1;
+					break;
 				case Common::KEYCODE_SPACE:
 					if (type == kSelSpace)
 						return 1;
+					break;
 				case Common::KEYCODE_BACKSPACE:
 					if (type == kSelBackspace)
 						return 0;
+					break;
 				default:
 					if (event.kbd.flags & Common::KBD_CTRL)
 						break;
@@ -268,7 +278,7 @@ void PreAgiEngine::waitForTimer(int msec_delay) {
 	uint32 start_time = _system->getMillis();
 
 	while (_system->getMillis() < start_time + msec_delay) {
-		_gfx->doUpdate();
+		g_system->updateScreen();
 		_system->delayMillis(10);
 	}
 }

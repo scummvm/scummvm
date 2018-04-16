@@ -434,7 +434,7 @@ bool Menu::handleEvent(StartMenuAction action, Common::EventType type) {
 	case kMenuCase4:
 		if (clicked)
 			_index = 0;
-		// fall down to kMenuContinue
+		// fall through
 
 	//////////////////////////////////////////////////////////////////////////
 	case kMenuContinue: {

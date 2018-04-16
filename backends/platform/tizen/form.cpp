@@ -243,7 +243,6 @@ void TizenAppForm::pushEvent(Common::EventType type, const Point &currentPositio
 void TizenAppForm::pushKey(Common::KeyCode keycode) {
 	if (_eventQueueLock) {
 		Common::Event e;
-		e.synthetic = false;
 		e.kbd.keycode = keycode;
 		e.kbd.ascii = keycode;
 		e.kbd.flags = 0;
@@ -318,16 +317,16 @@ void TizenAppForm::invokeShortcut() {
 	case kControlMouse:
 		setButtonShortcut();
 		break;
-		
+
 	case kEscapeKey:
 		pushKey(Common::KEYCODE_ESCAPE);
 		break;
-		
+
 	case kGameMenu:
 		_buttonState = kLeftButton;
 		pushKey(Common::KEYCODE_F5);
 		break;
-		
+
 	case kShowKeypad:
 		showKeypad();
 		break;
@@ -338,7 +337,7 @@ void TizenAppForm::showKeypad() {
 	// display the soft keyboard
 	if (_state == kActiveState) {
 		_buttonState = kLeftButton;
-		
+
 		Common::Event e;
 		e.type = Common::EVENT_VIRTUAL_KEYBOARD;
 		if (_eventQueueLock) {

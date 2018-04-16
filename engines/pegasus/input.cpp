@@ -11,12 +11,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -25,6 +25,8 @@
 
 #include "common/events.h"
 #include "common/system.h"
+
+#include "gui/gui-manager.h"
 
 #include "pegasus/cursor.h"
 #include "pegasus/input.h"
@@ -148,6 +150,7 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 
 	// Set the console to be requested or not
 	input.setConsoleRequested(_consoleRequested);
+	_consoleRequested = false;
 
 	// WORKAROUND: The original had this in currentBits, but then
 	// pressing alt would count as an event (and mess up someone
@@ -173,9 +176,14 @@ void InputDeviceManager::waitInput(const InputBits filter) {
 }
 
 bool InputDeviceManager::notifyEvent(const Common::Event &event) {
+	if (GUI::GuiManager::instance().isActive()) {
+		// For some reason, the engine hooks in the event system using an EventObserver.
+		// So we need to explicitly ignore events that happen while ScummVM's GUI is open.
+		return false;
+	}
+
 	// We're mapping from ScummVM events to pegasus events, which
 	// are based on pippin events.
-	_consoleRequested = false;
 
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
@@ -215,10 +223,18 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 }
 
 void InputDeviceManager::pumpEvents() {
+	PegasusEngine *vm = ((PegasusEngine *)g_engine);
+
+	bool saveAllowed = vm->swapSaveAllowed(false);
+	bool openAllowed = vm->swapLoadAllowed(false);
+
 	// Just poll for events. notifyEvent() will pick up on them.
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event))
 		;
+
+	vm->swapSaveAllowed(saveAllowed);
+	vm->swapLoadAllowed(openAllowed);
 }
 
 int operator==(const Input &arg1, const Input &arg2) {

@@ -27,129 +27,127 @@
 #include "zvision/zvision.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/cursors/cursor_manager.h"
-#include "zvision/animation/rlf_animation.h"
-#include "zvision/video/zork_avi_decoder.h"
-#include "zvision/utility/utility.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
 
 #include "common/stream.h"
 #include "common/file.h"
 #include "common/tokenizer.h"
 #include "common/system.h"
-
 #include "graphics/surface.h"
-
+#include "video/video_decoder.h"
 
 namespace ZVision {
 
 LeverControl::LeverControl(ZVision *engine, uint32 key, Common::SeekableReadStream &stream)
-		: Control(engine, key),
-		  _frameInfo(0),
-		  _frameCount(0),
-		  _startFrame(0),
-		  _currentFrame(0),
-		  _lastRenderedFrame(0),
-		  _mouseIsCaptured(false),
-		  _isReturning(false),
-		  _accumulatedTime(0),
-		  _returnRoutesCurrentFrame(0) {
+	: Control(engine, key, CONTROL_LEVER),
+	  _frameInfo(0),
+	  _frameCount(0),
+	  _startFrame(0),
+	  _currentFrame(0),
+	  _lastRenderedFrame(0),
+	  _mouseIsCaptured(false),
+	  _isReturning(false),
+	  _accumulatedTime(0),
+	  _returnRoutesCurrentFrame(0),
+	  _animation(NULL),
+	  _cursor(CursorIndex_Active),
+	  _mirrored(false) {
 
 	// Loop until we find the closing brace
 	Common::String line = stream.readLine();
-	trimCommentsAndWhiteSpace(&line);
+	_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
+
+	Common::String param;
+	Common::String values;
+	getParams(line, param, values);
 
 	while (!stream.eos() && !line.contains('}')) {
-		if (line.matchString("*descfile*", true)) {
+		if (param.matchString("descfile", true)) {
 			char levFileName[25];
-			sscanf(line.c_str(), "%*[^(](%25[^)])", levFileName);
+			sscanf(values.c_str(), "%24s", levFileName);
 
 			parseLevFile(levFileName);
-		} else if (line.matchString("*cursor*", true)) {
+		} else if (param.matchString("cursor", true)) {
 			char cursorName[25];
-			sscanf(line.c_str(), "%*[^(](%25[^)])", cursorName);
+			sscanf(values.c_str(), "%24s", cursorName);
 
-			_cursorName = Common::String(cursorName);
+			_cursor = _engine->getCursorManager()->getCursorId(Common::String(cursorName));
 		}
 
 		line = stream.readLine();
-		trimCommentsAndWhiteSpace(&line);
+		_engine->getScriptManager()->trimCommentsAndWhiteSpace(&line);
+		getParams(line, param, values);
 	}
 
 	renderFrame(_currentFrame);
 }
 
 LeverControl::~LeverControl() {
-	if (_fileType == AVI) {
-		delete _animation.avi;
-	} else if (_fileType == RLF) {
-		delete _animation.rlf;
-	}
+	if (_animation)
+		delete _animation;
 
 	delete[] _frameInfo;
 }
 
 void LeverControl::parseLevFile(const Common::String &fileName) {
 	Common::File file;
-	if (!file.open(fileName)) {
+	if (!_engine->getSearchManager()->openFile(file, fileName)) {
 		warning("LEV file %s could could be opened", fileName.c_str());
 		return;
 	}
 
-	Common::String line = file.readLine();
+	Common::String line;
+	Common::String param;
+	Common::String values;
 
 	while (!file.eos()) {
-		if (line.matchString("*animation_id*", true)) {
-			// Not used
-		} else if (line.matchString("*filename*", true)) {
-			char fileNameBuffer[25];
-			sscanf(line.c_str(), "%*[^:]:%25[^~]~", fileNameBuffer);
+		line = file.readLine();
+		getLevParams(line, param, values);
 
-			Common::String animationFileName(fileNameBuffer);
-
-			if (animationFileName.hasSuffix(".avi")) {
-				_animation.avi = new ZorkAVIDecoder();
-				_animation.avi->loadFile(animationFileName);
-				_fileType = AVI;
-			} else if (animationFileName.hasSuffix(".rlf")) {
-				_animation.rlf = new RlfAnimation(animationFileName, false);
-				_fileType = RLF;
-			}
-		} else if (line.matchString("*skipcolor*", true)) {
+		if (param.matchString("animation_id", true)) {
 			// Not used
-		} else if (line.matchString("*anim_coords*", true)) {
+		} else if (param.matchString("filename", true)) {
+			_animation = _engine->loadAnimation(values);
+		} else if (param.matchString("skipcolor", true)) {
+			// Not used
+		} else if (param.matchString("anim_coords", true)) {
 			int left, top, right, bottom;
-			sscanf(line.c_str(), "%*[^:]:%d %d %d %d~", &left, &top, &right, &bottom);
+			sscanf(values.c_str(), "%d %d %d %d", &left, &top, &right, &bottom);
 
 			_animationCoords.left = left;
 			_animationCoords.top = top;
 			_animationCoords.right = right;
 			_animationCoords.bottom = bottom;
-		} else if (line.matchString("*mirrored*", true)) {
+		} else if (param.matchString("mirrored", true)) {
 			uint mirrored;
-			sscanf(line.c_str(), "%*[^:]:%u~", &mirrored);
+			sscanf(values.c_str(), "%u", &mirrored);
 
 			_mirrored = mirrored == 0 ? false : true;
-		} else if (line.matchString("*frames*", true)) {
-			sscanf(line.c_str(), "%*[^:]:%u~", &_frameCount);
+		} else if (param.matchString("frames", true)) {
+			sscanf(values.c_str(), "%u", &_frameCount);
 
 			_frameInfo = new FrameInfo[_frameCount];
-		} else if (line.matchString("*elsewhere*", true)) {
+		} else if (param.matchString("elsewhere", true)) {
 			// Not used
-		} else if (line.matchString("*out_of_control*", true)) {
+		} else if (param.matchString("out_of_control", true)) {
 			// Not used
-		} else if (line.matchString("*start_pos*", true)) {
-			sscanf(line.c_str(), "%*[^:]:%u~", &_startFrame);
+		} else if (param.matchString("start_pos", true)) {
+			sscanf(values.c_str(), "%u", &_startFrame);
 			_currentFrame = _startFrame;
-		} else if (line.matchString("*hotspot_deltas*", true)) {
+		} else if (param.matchString("hotspot_deltas", true)) {
 			uint x;
 			uint y;
-			sscanf(line.c_str(), "%*[^:]:%u %u~", &x, &y);
+			sscanf(values.c_str(), "%u %u", &x, &y);
 
 			_hotspotDelta.x = x;
 			_hotspotDelta.y = y;
+		} else if (param.matchString("venus_id", true)) {
+			_venusId = atoi(values.c_str());
 		} else {
 			uint frameNumber;
 			uint x, y;
+
+			line.toLowercase();
 
 			if (sscanf(line.c_str(), "%u:%u %u", &frameNumber, &x, &y) == 3) {
 				_frameInfo[frameNumber].hotspot.left = x;
@@ -158,13 +156,13 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 				_frameInfo[frameNumber].hotspot.bottom = y + _hotspotDelta.y;
 			}
 
-			Common::StringTokenizer tokenizer(line, " ^=()");
+			Common::StringTokenizer tokenizer(line, " ^=()~");
 			tokenizer.nextToken();
 			tokenizer.nextToken();
 
 			Common::String token = tokenizer.nextToken();
 			while (!tokenizer.empty()) {
-				if (token == "D") {
+				if (token == "d") {
 					token = tokenizer.nextToken();
 
 					uint angle;
@@ -172,7 +170,7 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 					sscanf(token.c_str(), "%u,%u", &toFrame, &angle);
 
 					_frameInfo[frameNumber].directions.push_back(Direction(angle, toFrame));
-				} else if (token.hasPrefix("P")) {
+				} else if (token.hasPrefix("p")) {
 					// Format: P(<from> to <to>)
 					tokenizer.nextToken();
 					tokenizer.nextToken();
@@ -186,25 +184,25 @@ void LeverControl::parseLevFile(const Common::String &fileName) {
 			}
 		}
 
-		line = file.readLine();
+		// Don't read lines in this place because last will not be parsed.
 	}
 }
 
-void LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_enabled) {
-		return;
-	}
+bool LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
+		return false;
 
 	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
+		setVenus();
 		_mouseIsCaptured = true;
 		_lastMousePos = backgroundImageSpacePos;
 	}
+	return false;
 }
 
-void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_enabled) {
-		return;
-	}
+bool LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
+		return false;
 
 	if (_mouseIsCaptured) {
 		_mouseIsCaptured = false;
@@ -214,20 +212,19 @@ void LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 		_returnRoutesCurrentProgress = _frameInfo[_currentFrame].returnRoute.begin();
 		_returnRoutesCurrentFrame = _currentFrame;
 	}
+	return false;
 }
 
 bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	if (!_enabled) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
-	}
 
 	bool cursorWasChanged = false;
 
 	if (_mouseIsCaptured) {
-		// Make sure the square distance between the last point and the current point is greater than 64
+		// Make sure the square distance between the last point and the current point is greater than 16
 		// This is a heuristic. This determines how responsive the lever is to mouse movement.
-		// TODO: Fiddle with the heuristic to get a good lever responsiveness 'feel'
-		if (_lastMousePos.sqrDist(backgroundImageSpacePos) >= 64) {
+		if (_lastMousePos.sqrDist(backgroundImageSpacePos) >= 16) {
 			int angle = calculateVectorAngle(_lastMousePos, backgroundImageSpacePos);
 			_lastMousePos = backgroundImageSpacePos;
 
@@ -235,12 +232,15 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 				if (angle >= (int)iter->angle - ANGLE_DELTA && angle <= (int)iter->angle + ANGLE_DELTA) {
 					_currentFrame = iter->toFrame;
 					renderFrame(_currentFrame);
+					_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 					break;
 				}
 			}
 		}
+		_engine->getCursorManager()->changeCursor(_cursor);
+		cursorWasChanged = true;
 	} else if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
-		_engine->getCursorManager()->changeCursor(_cursorName);
+		_engine->getCursorManager()->changeCursor(_cursor);
 		cursorWasChanged = true;
 	}
 
@@ -248,9 +248,8 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 }
 
 bool LeverControl::process(uint32 deltaTimeInMillis) {
-	if (!_enabled) {
+	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
-	}
 
 	if (_isReturning) {
 		_accumulatedTime += deltaTimeInMillis;
@@ -301,7 +300,7 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 
 		// Calculate the angle using arctan
 		// Then convert to degrees. (180 / 3.14159 = 57.2958)
-		int angle = int(atan((float)yDist / (float)xDist) * 57);
+		int angle = int(atan((float)yDist / (float)abs(xDist)) * 57);
 
 		// Calculate what quadrant pointTwo is in
 		uint quadrant = ((yDist > 0 ? 1 : 0) << 1) | (xDist < 0 ? 1 : 0);
@@ -350,16 +349,16 @@ int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Comm
 		// Convert the local angles to unit circle angles
 		switch (quadrant) {
 		case 0:
-			angle = 180 + angle;
+			angle = -angle;
 			break;
 		case 1:
-			// Do nothing
+			angle = angle + 180;
 			break;
 		case 2:
-			angle = 180 + angle;
+			angle = 360 - angle;
 			break;
 		case 3:
-			angle = 360 + angle;
+			angle = 180 + angle;
 			break;
 		}
 
@@ -377,26 +376,36 @@ void LeverControl::renderFrame(uint frameNumber) {
 		_lastRenderedFrame = frameNumber;
 	}
 
-	const uint16 *frameData = 0;
-	int x = _animationCoords.left;
-	int y = _animationCoords.top;
-	int width = 0;
-	int height = 0;
+	const Graphics::Surface *frameData;
 
-	if (_fileType == RLF) {
-		// getFrameData() will automatically optimize to getNextFrame() / getPreviousFrame() if it can
-		frameData = (const uint16 *)_animation.rlf->getFrameData(frameNumber)->getPixels();
-		width = _animation.rlf->width(); // Use the animation width instead of _animationCoords.width()
-		height = _animation.rlf->height(); // Use the animation height instead of _animationCoords.height()
-	} else if (_fileType == AVI) {
-		_animation.avi->seekToFrame(frameNumber);
-		const Graphics::Surface *surface = _animation.avi->decodeNextFrame();
-		frameData = (const uint16 *)surface->getPixels();
-		width = surface->w;
-		height = surface->h;
-	}
+	_animation->seekToFrame(frameNumber);
+	frameData = _animation->decodeNextFrame();
+	if (frameData)
+		_engine->getRenderManager()->blitSurfaceToBkgScaled(*frameData, _animationCoords);
+}
 
-	_engine->getRenderManager()->copyRectToWorkingWindow(frameData, x, y, width, width, height);
+void LeverControl::getLevParams(const Common::String &inputStr, Common::String &parameter, Common::String &values) {
+	const char *chrs = inputStr.c_str();
+	uint lbr;
+
+	for (lbr = 0; lbr < inputStr.size(); lbr++)
+		if (chrs[lbr] == ':')
+			break;
+
+	if (lbr >= inputStr.size())
+		return;
+
+	uint rbr;
+
+	for (rbr = lbr + 1; rbr < inputStr.size(); rbr++)
+		if (chrs[rbr] == '~')
+			break;
+
+	if (rbr >= inputStr.size())
+		return;
+
+	parameter = Common::String(chrs, chrs + lbr);
+	values = Common::String(chrs + lbr + 1, chrs + rbr);
 }
 
 } // End of namespace ZVision

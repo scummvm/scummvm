@@ -1712,7 +1712,7 @@ int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 	 * newCheck differs from check in that that 4 route options are
 	 * considered corresponding to actual walked routes.
 	 *
-	 * Note distance doesnt take account of shrinking ???
+	 * Note distance doesn't take account of shrinking ???
 	 *
 	 * Note Bars array must be properly calculated ie min max dx dy co
 	 *********************************************************************/

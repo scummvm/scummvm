@@ -55,7 +55,7 @@ void scene30_initScene(Scene *sc, int flag) {
 		g_vars->scene30_leg->changeStatics2(ST_LEG_UP);
 	else if (g_fp->getObjectState(sO_Leg) == g_fp->getObjectEnumState(sO_Leg, sO_WithoutJugs))
 		g_vars->scene30_leg->changeStatics2(ST_LEG_DOWN);
-    else if (g_fp->getObjectState(sO_Leg) == g_fp->getObjectEnumState(sO_Leg, sO_WithBig))
+	else if (g_fp->getObjectState(sO_Leg) == g_fp->getObjectEnumState(sO_Leg, sO_WithBig))
 		g_vars->scene30_leg->changeStatics2(ST_LEG_DOWN1);
 	else if (g_fp->getObjectState(sO_Leg) == g_fp->getObjectEnumState(sO_Leg, sO_WithSmall))
 		g_vars->scene30_leg->changeStatics2(ST_LEG_DOWN2);

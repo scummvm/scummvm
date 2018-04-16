@@ -30,6 +30,11 @@ convbdf
     where SIZE is replaced by the desired font height.
 
 
+create_cryo
+-----------
+    Creates cryo.dat file which contains a lot of hardcoded tables used
+    by the Cryo engine..
+
 create_drascula (sev)
 ---------------
     Stores a lot of hardcoded data of Drascula in a data file, based on
@@ -72,11 +77,17 @@ create_mort (Strangerke)
 
 create_project (LordHoto, Littleboy)
 --------------
-    Creates project files for Visual Studio 2008, 2010, 2012, 2013, Xcode and
-    Code::Blocks out of the configure / Makefile based build system.
+    Creates project files for Visual Studio 2008, 2010, 2012, 2013, 2015,
+    Xcode and Code::Blocks out of the configure / Makefile based build system.
     It also offers a way to enable or disable certain engines and the use
     of external libraries similar to configure. Run the tool without
     any arguments for further help.
+
+
+create_supernova (criezy)
+----------------
+    Creates supernova.dat files which contains static data contained in the
+    original executable as well as translations into additional languages.
 
 
 create_toon (Strangerke)

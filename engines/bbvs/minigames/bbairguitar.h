@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -47,7 +47,7 @@ public:
 
 	enum {
 		kMaxObjectsCount = 256,
-		kMaxTracks = 2049
+		kMaxTracks = 2048
 	};
 
 	struct PianoKeyInfo {
@@ -140,6 +140,15 @@ public:
 	void loadSounds();
 	void playNote(int noteNum);
 	void stopNote(int noteNum);
+
+	bool getLoadFilename(Common::String &filename);
+	bool getSaveFilename(Common::String &filename);
+	bool querySaveModifiedDialog();
+	bool querySaveModifiedTracks();
+	bool loadTracks();
+	bool saveTracks();
+	bool loadFromStream(Common::ReadStream *stream);
+	void saveToStream(Common::WriteStream *stream);
 
 };
 

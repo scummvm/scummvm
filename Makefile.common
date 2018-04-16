@@ -24,8 +24,8 @@ MODULES += \
 	backends \
 	engines \
 	video \
-	graphics \
 	image \
+	graphics \
 	audio \
 	common \
 	po
@@ -165,6 +165,11 @@ VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
 VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
+ifdef AMIGAOS
+# Amiga needs date in specific format for the version cookie
+AMIGA_DATE = $(shell gdate '+%d.%m.%Y')
+base/version.o: CXXFLAGS:=$(CXXFLAGS) -DAMIGA_DATE=\"$(AMIGA_DATE)\"
+endif
 
 ######################################################################
 # Get git's working copy information
@@ -244,8 +249,20 @@ DIST_FILES_THEMES+=translations.dat
 endif
 DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,$(DIST_FILES_THEMES))
 
+# Networking files
+DIST_FILES_NETWORKING=
+ifdef USE_SDL_NET
+DIST_FILES_NETWORKING:=$(addprefix $(srcdir)/dists/networking/,wwwroot.zip)
+endif
+
 # Engine data files
 DIST_FILES_ENGINEDATA=
+ifdef ENABLE_ACCESS
+DIST_FILES_ENGINEDATA+=access.dat
+endif
+ifdef ENABLE_CRYO
+DIST_FILES_ENGINEDATA+=cryo.dat
+endif
 ifdef ENABLE_DRASCULA
 DIST_FILES_ENGINEDATA+=drascula.dat
 endif
@@ -270,8 +287,14 @@ endif
 ifdef ENABLE_SKY
 DIST_FILES_ENGINEDATA+=sky.cpt
 endif
+ifdef ENABLE_SUPERNOVA
+DIST_FILES_ENGINEDATA+=supernova.dat
+endif
 ifdef ENABLE_TEENAGENT
 DIST_FILES_ENGINEDATA+=teenagent.dat
+endif
+ifdef ENABLE_TITANIC
+DIST_FILES_ENGINEDATA+=titanic.dat
 endif
 ifdef ENABLE_TONY
 DIST_FILES_ENGINEDATA+=tony.dat
@@ -281,6 +304,12 @@ DIST_FILES_ENGINEDATA+=toon.dat
 endif
 ifdef ENABLE_WINTERMUTE
 DIST_FILES_ENGINEDATA+=wintermute.zip
+endif
+ifdef ENABLE_MACVENTURE
+DIST_FILES_ENGINEDATA+=macventure.dat
+endif
+ifdef ENABLE_XEEN
+DIST_FILES_ENGINEDATA+=xeen.ccs
 endif
 DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 

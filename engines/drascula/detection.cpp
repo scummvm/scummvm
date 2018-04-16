@@ -87,7 +87,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -104,7 +104,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -121,7 +121,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -138,7 +138,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -151,7 +151,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -168,7 +168,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -181,7 +181,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -198,7 +198,24 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			GF_PACKED,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
+		},
+	},
+
+	{
+		// Drascula Russian version (ScummVM repacked files)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
+				{"packet.006", 1, "e464b99de7f226391337510d5c328258", 697173},
+				{NULL, 0, NULL, 0}
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			GF_PACKED,
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -213,7 +230,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -226,7 +243,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -239,7 +256,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -252,7 +269,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -265,7 +282,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -278,7 +295,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -291,7 +308,19 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GUIO_LINKSPEECHTOSFX)
+		},
+	},
+	{
+		// Drascula Russian version
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "4dfab170eae935a2e9889196df427a4a", 1426),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_LINKSPEECHTOSFX)
 		},
 	},
 
@@ -300,7 +329,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 
 static const ExtraGuiOption drasculaExtraGuiOption = {
 	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
+	_s("Use the original save/load screens instead of the ScummVM ones"),
 	"originalsaveload",
 	false
 };
@@ -310,8 +339,8 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
 	DrasculaMetaEngine() : AdvancedMetaEngine(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
-		_singleid = "drascula";
-		_guioptions = GUIO1(GUIO_NOMIDI);
+		_singleId = "drascula";
+		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {
@@ -339,7 +368,8 @@ bool DrasculaMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+		(f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 const ExtraGuiOptions DrasculaMetaEngine::getExtraGuiOptions(const Common::String &target) const {
@@ -352,10 +382,9 @@ SaveStateList DrasculaMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	int slotNum = 0;
@@ -378,12 +407,13 @@ SaveStateList DrasculaMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
 SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	char fileName[MAXPATHLEN];
-	sprintf(fileName, "%s.%03d", target, slot);
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -400,7 +430,11 @@ SaveStateDescriptor DrasculaMetaEngine::querySaveMetaInfos(const char *target, i
 			return SaveStateDescriptor();
 		}
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
+		Graphics::Surface *thumbnail;
+		if (!Graphics::loadThumbnail(*in, thumbnail)) {
+			delete in;
+			return SaveStateDescriptor();
+		}
 		desc.setThumbnail(thumbnail);
 
 		delete in;

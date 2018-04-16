@@ -1326,7 +1326,7 @@ void Scene160::Action1::signal() {
 		scene->_yChange = 1;
 		scene->_lineNum = 0;
 		++_actionIndex;
-		// Deliberate fall-through
+		// fall through
 
 	case 1:
 		setDelay(5);
@@ -1613,7 +1613,7 @@ void Scene180::signal() {
 	case 43:
 	case 47:
 		_helpEnabled = false;
-		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		R2_GLOBALS._screen.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		_palette.loadPalette(0);
 		_palette.loadPalette(9998);
 		R2_GLOBALS._scenePalette.addFader(_palette._palette, 256, 8, this);
@@ -1659,6 +1659,7 @@ void Scene180::signal() {
 	case 10:
 		loadScene(4002);
 		R2_GLOBALS._scenePalette.loadPalette(0);
+		R2_GLOBALS._interfaceY = SCREEN_HEIGHT;
 		setSceneDelay(6);
 		break;
 
@@ -1815,7 +1816,7 @@ void Scene180::signal() {
 		_shipDisplay.remove();
 
 		_backSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		R2_GLOBALS._screen.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 		R2_GLOBALS._sound2.fadeOut2(NULL);
 		R2_GLOBALS._sound1.fadeOut2(this);
 		break;
@@ -1880,7 +1881,7 @@ void Scene180::signal() {
 		R2_GLOBALS._paneRefreshFlag[0] = 3;
 
 		_backSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
-		R2_GLOBALS._screenSurface.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
+		R2_GLOBALS._screen.fillRect(Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT), 0);
 
 		setSceneDelay(1);
 		break;
@@ -3638,7 +3639,7 @@ void Scene300::signal() {
 			break;
 		case 181:
 			R2_GLOBALS._player.setStrip(6);
-			// Deliberate fall-through
+			// fall through
 		default:
 			R2_GLOBALS._player.enableControl(CURSOR_TALK);
 
@@ -3744,7 +3745,7 @@ void Scene300::signal() {
 
 	case 310:
 		R2_GLOBALS._player.setStrip(5);
-		// Deliberate fall-through
+		// fall through
 	case 309:
 		signal309();
 		R2_GLOBALS._events.setCursor(CURSOR_ARROW);
@@ -7870,7 +7871,7 @@ void Scene900::signal() {
 		break;
 	case 5:
 		_sceneMode = 0;
-	// No break on purpose
+		// fall through
 	default:
 		R2_GLOBALS._player.enableControl();
 		R2_GLOBALS._player._canWalk = false;

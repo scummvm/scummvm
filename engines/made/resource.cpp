@@ -43,6 +43,7 @@ Resource::~Resource() {
 
 PictureResource::PictureResource() : _picture(NULL), _picturePalette(NULL) {
 	_hasPalette = false;
+	_paletteColorCount = 0;
 }
 
 PictureResource::~PictureResource() {
@@ -182,6 +183,9 @@ void PictureResource::loadChunked(byte *source, int size) {
 /* AnimationResource */
 
 AnimationResource::AnimationResource() {
+	_flags = 0;
+	_width = 0;
+	_height = 0;
 }
 
 AnimationResource::~AnimationResource() {
@@ -241,6 +245,7 @@ void AnimationResource::load(byte *source, int size) {
 /* SoundResource */
 
 SoundResource::SoundResource() : _soundSize(0), _soundData(NULL) {
+	_soundEnergyArray = nullptr;
 }
 
 SoundResource::~SoundResource() {
@@ -377,6 +382,9 @@ void GenericResource::load(byte *source, int size) {
 ResourceReader::ResourceReader() {
 	_isV1 = false;
 	_cacheDataSize = 0;
+
+	_fd = _fdMusic = _fdPics = _fdSounds = nullptr;
+	_cacheCount = 0;
 }
 
 ResourceReader::~ResourceReader() {

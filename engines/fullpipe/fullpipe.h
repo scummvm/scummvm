@@ -23,16 +23,15 @@
 #ifndef FULLPIPE_FULLPIPE_H
 #define FULLPIPE_FULLPIPE_H
 
+#include "audio/mixer.h"
 #include "common/scummsys.h"
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/ptr.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
-
-#include "audio/mixer.h"
-
-#include "graphics/transparent_surface.h"
+#include "graphics/surface.h"
 
 #include "engines/engine.h"
 
@@ -41,10 +40,30 @@
 
 struct ADGameDescription;
 
+namespace Audio {
+class SoundHandle;
+}
+
 namespace Fullpipe {
 
 enum FullpipeGameFeatures {
 };
+
+enum {
+	kDebugPathfinding	= 1 << 0,
+	kDebugDrawing		= 1 << 1,
+	kDebugLoading		= 1 << 2,
+	kDebugAnimation		= 1 << 3,
+	kDebugMemory		= 1 << 4,
+	kDebugEvents		= 1 << 5,
+	kDebugBehavior		= 1 << 6,
+	kDebugInventory		= 1 << 7,
+	kDebugSceneLogic	= 1 << 8,
+	kDebugInteractions	= 1 << 9,
+	kDebugXML			= 1 << 10
+};
+
+#define MAXGAMEOBJH 10000
 
 class BehaviorManager;
 class BaseModalObject;
@@ -61,8 +80,7 @@ class GameObject;
 class GlobalMessageQueueList;
 struct MessageHandler;
 class MessageQueue;
-struct MovTable;
-class MGM;
+class AniHandler;
 class NGIArchive;
 class PictureObject;
 struct PreloadItem;
@@ -70,6 +88,11 @@ class Scene;
 class SoundList;
 class StaticANIObject;
 class Vars;
+typedef Common::Array<int16> MovTable;
+typedef Common::Array<int32> Palette;
+typedef Common::Array<Common::Point> PointList;
+
+typedef Common::HashMap<uint16, Common::String> GameObjHMap;
 
 int global_messageHandler1(ExCommand *cmd);
 int global_messageHandler2(ExCommand *cmd);
@@ -87,20 +110,22 @@ public:
 	FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	virtual ~FullpipeEngine();
 
-	Console *_console;
-	GUI::Debugger *getDebugger() { return _console; }
+	Console _console;
+	GUI::Debugger *getDebugger() { return &_console; }
 
 	void initialize();
 	void restartGame();
+	bool shouldQuit();
 
 	void setMusicAllowed(int val) { _musicAllowed = val; }
 
 	// Detection related functions
 	const ADGameDescription *_gameDescription;
-	const char *getGameId() const;
-	Common::Platform getPlatform() const;
+	uint32 getFeatures() const;
+	bool isDemo();
+	Common::Language getLanguage() const;
 
-	Common::RandomSource *_rnd;
+	Common::RandomSource _rnd;
 
 	Common::KeyCode _keyState;
 	uint16 _buttonState;
@@ -108,11 +133,14 @@ public:
 	void updateEvents();
 
 	Graphics::Surface _backgroundSurface;
-	Graphics::PixelFormat *_origFormat;
+	Graphics::PixelFormat _origFormat;
 
-	GameLoader *_gameLoader;
+	Common::ScopedPtr<GameLoader> _gameLoader;
 	GameProject *_gameProject;
 	bool loadGam(const char *fname, int scene = 0);
+
+	void loadGameObjH();
+	Common::String gameIdToStr(uint16 id);
 
 	GameVar *getGameLoaderGameVar();
 	InputController *getGameLoaderInputController();
@@ -137,7 +165,8 @@ public:
 	Scene *_scene3;
 	StaticANIObject *_aniMan;
 	StaticANIObject *_aniMan2;
-	byte *_globalPalette;
+	Palette _defaultPalette;
+	const Palette *_globalPalette;
 
 	InputController *_inputController;
 	bool _inputDisabled;
@@ -151,15 +180,15 @@ public:
 	int _currSoundListCount;
 	bool _soundEnabled;
 	bool _flgSoundList;
-	char _sceneTracks[10][260];
+	Common::String _sceneTracks[10];
 	int _numSceneTracks;
 	bool _sceneTrackHasSequence;
 	int _musicMinDelay;
 	int _musicMaxDelay;
 	int _musicLocal;
-	char _trackName[2600];
+	Common::String _trackName;
 	int _trackStartDelay;
-	char _sceneTracksCurrentTrack[260];
+	Common::String _sceneTracksCurrentTrack;
 	bool _sceneTrackIsPlaying;
 
 	void stopAllSounds();
@@ -167,8 +196,10 @@ public:
 	void playSound(int id, int flag);
 	void playTrack(GameVar *sceneVar, const char *name, bool delayed);
 	int getSceneTrack();
+	void updateTrackDelay();
 	void startSceneTrack();
-	void startSoundStream1(char *trackName);
+	void startSoundStream1(const Common::String &trackName);
+	void playOggSound(const Common::String &trackName, Audio::SoundHandle &stream);
 	void stopSoundStream2();
 	void stopAllSoundStreams();
 	void stopAllSoundInstances(int id);
@@ -178,7 +209,7 @@ public:
 	int _sfxVolume;
 	int _musicVolume;
 
-	GlobalMessageQueueList *_globalMessageQueueList;
+	Common::ScopedPtr<GlobalMessageQueueList> _globalMessageQueueList;
 	MessageHandler *_messageHandlers;
 
 	int _msgX;
@@ -193,14 +224,16 @@ public:
 	int _mouseVirtY;
 	Common::Point _mouseScreenPos;
 
-	BehaviorManager *_behaviorManager;
+	Common::ScopedPtr<BehaviorManager> _behaviorManager;
 
-	MovTable *_movTable;
+	Common::ScopedPtr<MovTable> _movTable;
 
-	Floaters *_floaters;
-	MGM *_mgm;
+	Common::ScopedPtr<Floaters> _floaters;
+	Common::ScopedPtr<AniHandler> _aniHandler;
 
-	Common::Array<Common::Point *> _arcadeKeys;
+	Common::Array<Common::Point> _arcadeKeys;
+
+	void deleteModalObject();
 
 	void initMap();
 	void updateMap(PreloadItem *pre);
@@ -218,6 +251,7 @@ public:
 
 	void enableSaves() { _isSaveAllowed = true; }
 	void disableSaves(ExCommand *ex);
+	bool isSaveAllowed();
 
 	void initObjectStates();
 	void setLevelStates();
@@ -255,11 +289,12 @@ public:
 	void setCursor(int id);
 	void updateCursorCommon();
 
-	int getObjectState(const char *objname);
-	void setObjectState(const char *name, int state);
-	int getObjectEnumState(const char *name, const char *state);
+	int getObjectState(const Common::String &objname);
+	void setObjectState(const Common::String &name, int state);
+	int getObjectEnumState(const Common::String &name, const char *state);
 
-	bool sceneSwitcher(EntranceInfo *entrance);
+	void sceneAutoScrolling();
+	bool sceneSwitcher(const EntranceInfo &entrance);
 	Scene *accessScene(int sceneId);
 	void setSceneMusicParameters(GameVar *var);
 	int convertScene(int scene);
@@ -312,14 +347,25 @@ public:
 	void lift_openLift();
 
 	GameVar *_musicGameVar;
-	Audio::SoundHandle _sceneTrackHandle;
+	Audio::SoundHandle _soundStream1;
+	Audio::SoundHandle _soundStream2;
+	Audio::SoundHandle _soundStream3;
+	Audio::SoundHandle _soundStream4;
+
+	bool _stream2playing;
+
+	GameObjHMap _gameObjH;
 
 public:
 
 	bool _isSaveAllowed;
 
-	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &description);
+
+	virtual bool canLoadGameStateCurrently() { return true; }
+	virtual bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	virtual bool hasFeature(EngineFeature f) const;
 
 };
 

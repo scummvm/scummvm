@@ -32,8 +32,8 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::unifySeparators(const AnsiString &path) {
-	AnsiString newPath = path;
+Common::String PathUtil::unifySeparators(const Common::String &path) {
+	Common::String newPath = path;
 
 	for (uint32 i = 0; i < newPath.size(); i++) {
 		if (newPath[i] == '\\') {
@@ -45,16 +45,16 @@ AnsiString PathUtil::unifySeparators(const AnsiString &path) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::normalizeFileName(const AnsiString &path) {
-	AnsiString newPath = unifySeparators(path);
+Common::String PathUtil::normalizeFileName(const Common::String &path) {
+	Common::String newPath = unifySeparators(path);
 	newPath.toLowercase();
 	return newPath;
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::combine(const AnsiString &path1, const AnsiString &path2) {
-	AnsiString newPath1 = unifySeparators(path1);
-	AnsiString newPath2 = unifySeparators(path2);
+Common::String PathUtil::combine(const Common::String &path1, const Common::String &path2) {
+	Common::String newPath1 = unifySeparators(path1);
+	Common::String newPath2 = unifySeparators(path2);
 
 	if (!newPath1.hasSuffix("/") && !newPath2.hasPrefix("/")) {
 		newPath1 += "/";
@@ -63,29 +63,37 @@ AnsiString PathUtil::combine(const AnsiString &path1, const AnsiString &path2) {
 	return newPath1 + newPath2;
 }
 
-//////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::getDirectoryName(const AnsiString &path) {
-	AnsiString newPath = unifySeparators(path);
-	Common::String filename = getFileName(path);
-	return Common::String(path.c_str(), path.size() - filename.size());
+bool PathUtil::hasTrailingSlash(const Common::String &path) {
+	return (path.size() > 0 && path[path.size() - 1 ] == '/');
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::getFileName(const AnsiString &path) {
-	AnsiString newPath = unifySeparators(path);
-	Common::String lastPart = Common::lastPathComponent(newPath, '/');
-	if (lastPart[lastPart.size() - 1 ] != '/') {
-		return lastPart;
-	} else {
+Common::String PathUtil::getDirectoryName(const Common::String &path) {
+	Common::String newPath = unifySeparators(path);
+	Common::String filename = getFileName(path);
+	if (hasTrailingSlash(newPath)) {
 		return path;
+	} else {
+		return Common::String(path.c_str(), path.size() - filename.size());
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
-	AnsiString fileName = getFileName(path);
+Common::String PathUtil::getFileName(const Common::String &path) {
+	Common::String newPath = unifySeparators(path);
+	Common::String lastPart = Common::lastPathComponent(newPath, '/');
+	if (hasTrailingSlash(newPath)) {
+		return Common::String("");
+	} else {
+		return lastPart;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+Common::String PathUtil::getFileNameWithoutExtension(const Common::String &path) {
+	Common::String fileName = getFileName(path);
 	// TODO: Prettify this.
-	AnsiString extension = Common::lastPathComponent(fileName, '.');
+	Common::String extension = Common::lastPathComponent(fileName, '.');
 	for (uint32 i = 0; i < extension.size() + 1; i++) {
 		fileName.deleteLastChar();
 	}
@@ -93,8 +101,8 @@ AnsiString PathUtil::getFileNameWithoutExtension(const AnsiString &path) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnsiString PathUtil::getExtension(const AnsiString &path) {
-	AnsiString fileName = getFileName(path);
+Common::String PathUtil::getExtension(const Common::String &path) {
+	Common::String fileName = getFileName(path);
 	return Common::lastPathComponent(path, '.');
 }
 

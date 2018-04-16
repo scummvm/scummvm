@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -41,7 +41,7 @@ void AAHeader::load(Common::SeekableReadStream *f) {
 	_spritesIndex = f->readUint16LE();
 	_scrollPosition.x = f->readSint16LE();
 	_scrollPosition.y = f->readSint16LE();
-	_scrollTicks = f->readUint32LE();
+	_scrollTicks = f->readUint32LE() & 0xffff;
 	f->skip(6);
 
 	char buffer[FILENAME_SIZE];
@@ -162,6 +162,7 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_flags = 0;
 	_font = nullptr;
 	_resetFlag = false;
+	_canChangeView = false;
 	_messageCtr = 0;
 	_skipLoad = false;
 	_freeFlag = false;
@@ -177,6 +178,7 @@ Animation::Animation(MADSEngine *vm, Scene *scene) : _vm(vm), _scene(scene) {
 	_oldFrameEntry = 0;
 	_rgbResult = -1;
 	_palIndex1 = _palIndex2 = -1;
+	_dynamicHotspotIndex = -1;
 }
 
 Animation::~Animation() {
@@ -375,6 +377,7 @@ void Animation::loadFrame(int frameNumber) {
 		pt.x = _unkList[_unkIndex].x;
 		pt.y = _unkList[_unkIndex].y;
 		_unkIndex = 1 - _unkIndex;
+		warning("LoadFrame - Using unknown array");
 	}
 
 	if (drawFrame(spriteSet, pt, frameNumber))
@@ -436,10 +439,8 @@ void Animation::update() {
 	if (_vm->_game->_scene._frameStartTime < _nextFrameTimer)
 		return;
 
-	for (uint idx = 0; idx < scene._spriteSlots.size(); ++idx) {
-		if (scene._spriteSlots[idx]._seqIndex >= 0x80)
-			scene._spriteSlots[idx]._flags = IMG_ERASE;
-	}
+	// Erase any active sprites
+	eraseSprites();
 
 	// Validate the current frame
 	if (_currentFrame >= (int)_miscEntries.size()) {
@@ -465,21 +466,25 @@ void Animation::update() {
 		scene._spriteSlots.fullRefresh();
 	}
 
-	// Handle any offset adjustment for sprites as of this frame
-	bool paChanged = false;
-	if (scene._posAdjust.x != misc._posAdjust.x) {
-		scene._posAdjust.x = misc._posAdjust.x;
-		paChanged = true;
-	}
-	if (scene._posAdjust.y != misc._posAdjust.y) {
-		scene._posAdjust.y = misc._posAdjust.y;
-		paChanged = true;
-	}
+	bool isV2 = (_vm->getGameID() != GType_RexNebular);
+	if (isV2 && _canChangeView) {
+		// Handle any offset adjustment for sprites as of this frame
+		bool paChanged = false;
+		if (getFramePosAdjust(_currentFrame).x != scene._posAdjust.x) {
+			scene._posAdjust.x = getFramePosAdjust(_currentFrame).x;
+			paChanged = true;
+		}
 
-	if (paChanged) {
-		int newIndex = scene._spriteSlots.add();
-		scene._spriteSlots[newIndex]._seqIndex = -1;
-		scene._spriteSlots[newIndex]._flags = IMG_REFRESH;
+		if (getFramePosAdjust(_currentFrame).y != scene._posAdjust.y) {
+			scene._posAdjust.y = getFramePosAdjust(_currentFrame).y;
+			paChanged = true;
+		}
+
+		if (paChanged) {
+			int newIndex = scene._spriteSlots.add();
+			scene._spriteSlots[newIndex]._seqIndex = -1;
+			scene._spriteSlots[newIndex]._flags = IMG_REFRESH;
+		}
 	}
 
 	// Main frame animation loop - frames get animated by being placed, as necessary, into the
@@ -598,12 +603,24 @@ void Animation::setCurrentFrame(int frameNumber) {
 	_currentFrame = frameNumber;
 	_oldFrameEntry = 0;
 	_freeFlag = false;
-
-	_nextScrollTimer = _nextFrameTimer = _vm->_game->_scene._frameStartTime;
 }
 
-void Animation::setNextFrameTimer(int frameNumber) {
-	_nextFrameTimer = frameNumber;
+void Animation::setNextFrameTimer(uint32 newTimer) {
+	_nextFrameTimer = newTimer;
 }
 
+void Animation::eraseSprites() {
+	Scene &scene = _vm->_game->_scene;
+
+	for (uint idx = 0; idx < scene._spriteSlots.size(); ++idx) {
+		if (scene._spriteSlots[idx]._seqIndex >= 0x80)
+			scene._spriteSlots[idx]._flags = IMG_ERASE;
+	}
+}
+
+Common::Point Animation::getFramePosAdjust(int idx) {
+	warning("TODO: Implement getFramePosAdjust");
+
+	return Common::Point(0, 0);
+}
 } // End of namespace MADS

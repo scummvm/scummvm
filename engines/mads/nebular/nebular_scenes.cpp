@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -311,7 +311,7 @@ Common::String NebularScene::formAnimName(char sepChar, int suffixNum) {
 
 /*------------------------------------------------------------------------*/
 
-void SceneInfoNebular::loadCodes(MSurface &depthSurface, int variant) {
+void SceneInfoNebular::loadCodes(BaseSurface &depthSurface, int variant) {
 	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ".DAT"));
 	MadsPack codesPack(&f);
 	Common::SeekableReadStream *stream = codesPack.getItemStream(variant + 1);
@@ -322,9 +322,9 @@ void SceneInfoNebular::loadCodes(MSurface &depthSurface, int variant) {
 	f.close();
 }
 
-void SceneInfoNebular::loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) {
-	byte *destP = depthSurface.getData();
-	byte *endP = depthSurface.getBasePtr(0, depthSurface.h);
+void SceneInfoNebular::loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream) {
+	byte *destP = (byte *)depthSurface.getPixels();
+	byte *endP = (byte *)depthSurface.getBasePtr(0, depthSurface.h);
 
 	byte runLength = stream->readByte();
 	while (destP < endP && runLength > 0) {
@@ -432,7 +432,7 @@ void SceneTeleporter::teleporterHandleKey() {
 	case 0: {
 		_game._player._stepEnabled = false;
 		Common::Point msgPos = teleporterComputeLocation();
-		_handSequenceId = _scene->_sequences.startReverseCycle(_handSpriteId, false, 4, 2, 0, 0);
+		_handSequenceId = _scene->_sequences.startPingPongCycle(_handSpriteId, false, 4, 2, 0, 0);
 		_scene->_sequences.setPosition(_handSequenceId, msgPos);
 		_scene->_sequences.setDepth(_handSequenceId, 2);
 		_scene->_sequences.addSubEntry(_handSequenceId, SEQUENCE_TRIGGER_LOOP, 0, 1);
@@ -451,7 +451,10 @@ void SceneTeleporter::teleporterHandleKey() {
 				_curCode *= 10;
 				_curCode += _buttonTyped;
 				_digitCount++;
-				_msgText = Common::String::format("%d", _curCode);
+
+				Common::String format = "%01d";
+				format.setChar('0' + _digitCount, 2);
+				_msgText = Common::String::format(format.c_str(), _curCode);
 				if (_digitCount < 4)
 					_msgText += "_";
 
@@ -482,7 +485,7 @@ void SceneTeleporter::teleporterHandleKey() {
 		if (_scene->_currentSceneId != 711) {
 			if (_curMessageId >= 0)
 				_scene->_kernelMessages.remove(_curMessageId);
-			_curMessageId = _scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, 9999999, _msgText);
+			_curMessageId = _scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText);
 		}
 		break;
 
@@ -535,7 +538,7 @@ void SceneTeleporter::teleporterEnter() {
 	_curMessageId        = -1;
 	_msgText = "_";
 
-	if (_scene->_priorSceneId == -2)
+	if (_scene->_priorSceneId == RETURNING_FROM_DIALOG)
 		_scene->_priorSceneId = _globals[kTeleporterDestination];
 
 	if (_scene->_priorSceneId < 101)
@@ -560,8 +563,8 @@ void SceneTeleporter::teleporterEnter() {
 	Common::String msgText2 = Common::String::format("#%.4d", codeVal);
 
 	if (_scene->_currentSceneId != 711) {
-		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, 9999999, msgText2);
-		_scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, 9999999, _msgText);
+		_scene->_kernelMessages.add(Common::Point(133, 34), 0, 32, 0, INDEFINITE_TIMEOUT, msgText2);
+		_scene->_kernelMessages.add(Common::Point(143, 61), 0xFDFC, 16, 0, INDEFINITE_TIMEOUT, _msgText);
 	}
 
 	_meteorologistCurPlace = 0;
@@ -574,9 +577,9 @@ void SceneTeleporter::teleporterEnter() {
 
 bool SceneTeleporter::teleporterActions() {
 	bool retVal = false;
-	static int _buttonList[12] = { NOUN_0_KEY, NOUN_1_KEY, NOUN_2_KEY, NOUN_3_KEY, NOUN_4_KEY, NOUN_5_KEY, NOUN_6_KEY, NOUN_7_KEY, NOUN_8_KEY, NOUN_9_KEY, NOUN_SMILE_KEY, NOUN_FROWN_KEY };
 
 	if (_action.isAction(VERB_PRESS) || _action.isAction(VERB_PUSH)) {
+		static int _buttonList[12] = { NOUN_0_KEY, NOUN_1_KEY, NOUN_2_KEY, NOUN_3_KEY, NOUN_4_KEY, NOUN_5_KEY, NOUN_6_KEY, NOUN_7_KEY, NOUN_8_KEY, NOUN_9_KEY, NOUN_SMILE_KEY, NOUN_FROWN_KEY };
 		for (int i = 0; i < 12; i++) {
 			if (_action._activeAction._objectNameId == _buttonList[i])
 				_buttonTyped = i;

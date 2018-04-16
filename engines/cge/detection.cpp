@@ -115,7 +115,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 class CGEMetaEngine : public AdvancedMetaEngine {
 public:
 	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames, optionsList) {
-		_singleid = "soltys";
+		_singleId = "soltys";
 	}
 
 	virtual const char *getName() const {
@@ -123,7 +123,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Soltys (c) 1994-1996 L.K. Avalon";
+		return "Soltys (C) 1994-1996 L.K. Avalon";
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
@@ -159,12 +159,13 @@ const ADGameDescription *CGEMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	if (!game)
 		return nullptr;
 
-	SearchMan.clear();
-	SearchMan.addDirectory(fslist.begin()->getParent().getPath(), fslist.begin()->getParent());
+	SearchMan.addDirectory("CGEMetaEngine::fallbackDetect", fslist.begin()->getParent());
 	ResourceManager *resman;
 	resman = new ResourceManager();
 	bool result = resman->exist("CGE.SAY");
 	delete resman;
+
+	SearchMan.remove("CGEMetaEngine::fallbackDetect");
 
 	if (!result)
 		return nullptr;
@@ -180,7 +181,8 @@ bool CGEMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
 	    (f == kSavesSupportThumbnail) ||
-	    (f == kSavesSupportCreationDate);
+	    (f == kSavesSupportCreationDate) ||
+		(f == kSimpleSavesNames);
 }
 
 void CGEMetaEngine::removeSaveState(const char *target, int slot) const {
@@ -196,10 +198,9 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
@@ -220,10 +221,6 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 					// Valid savegame
 					if (CGE::CGEEngine::readSavegameHeader(file, header)) {
 						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
-						if (header.thumbnail) {
-							header.thumbnail->free();
-							delete header.thumbnail;
-						}
 					}
 				} else {
 					// Must be an original format savegame
@@ -235,6 +232,8 @@ SaveStateList CGEMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -250,7 +249,7 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 		f->read(buffer, kSavegameStrSize + 1);
 
 		bool hasHeader = !strncmp(buffer, CGE::savegameStr, kSavegameStrSize + 1) &&
-			CGE::CGEEngine::readSavegameHeader(f, header);
+			CGE::CGEEngine::readSavegameHeader(f, header, false);
 		delete f;
 
 		if (!hasHeader) {

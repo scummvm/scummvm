@@ -420,7 +420,7 @@ void OSystem_WINCE3::initBackend() {
 	}
 
 	if (_graphicsManager == 0)
-		_graphicsManager = new WINCESdlGraphicsManager(_eventSource);
+		_graphicsManager = new WINCESdlGraphicsManager(_eventSource, _window);
 
 	((WINCESdlEventSource *)_eventSource)->init(dynamic_cast<WINCESdlGraphicsManager *>(_graphicsManager));
 
@@ -645,7 +645,7 @@ Common::String OSystem_WINCE3::getSystemLanguage() const {
 	const char *posixMappingTable[][3] = {
 		{"CAT", "ESP", "ca_ES"},
 		{"CSY", "CZE", "cs_CZ"},
-		{"DAN", "DNK", "da_DA"},
+		{"DAN", "DNK", "da_DK"},
 		{"DEU", "DEU", "de_DE"},
 		{"ESN", "ESP", "es_ES"},
 		{"ESP", "ESP", "es_ES"},
@@ -657,7 +657,7 @@ Common::String OSystem_WINCE3::getSystemLanguage() const {
 		{"PLK", "POL", "pl_PL"},
 		{"PTB", "BRA", "pt_BR"},
 		{"RUS", "RUS", "ru_RU"},
-		{"SVE", "SWE", "se_SE"},
+		{"SVE", "SWE", "sv_SE"},
 		{"UKR", "UKR", "uk_UA"},
 		{NULL, NULL, NULL}
 	};

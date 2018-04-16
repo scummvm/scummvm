@@ -44,6 +44,10 @@ Resources::Resources() : _rnd(LureEngine::getReference().rnd()) {
 	MemoryBlock *mb = Disk::getReference().getEntry(STRING_LIST_RESOURCE_ID);
 	_stringList.load(mb);
 	delete mb;
+
+	// WORKAROUND: In Spanish the look "Obsevar" should be "Observar"
+	if (!Common::String(_stringList.getString(LOOK)).compareTo("Obsevar"))
+		_stringList.setString(LOOK, "Observar");
 }
 
 Resources::~Resources() {
@@ -83,7 +87,7 @@ void Resources::freeData() {
 }
 
 struct AnimRecordTemp {
-	uint16 *offset;
+	uint16 offset;
 	MovementDataList *list;
 };
 
@@ -231,12 +235,12 @@ void Resources::reloadData() {
 
 		// Handle any direction frames
 		AnimRecordTemp dirEntries[4] = {
-			{&animRec->leftOffset, &newEntry->leftFrames},
-			{&animRec->rightOffset, &newEntry->rightFrames},
-			{&animRec->upOffset, &newEntry->upFrames},
-			{&animRec->downOffset, &newEntry->downFrames}};
+			{FROM_LE_16(animRec->leftOffset), &newEntry->leftFrames},
+			{FROM_LE_16(animRec->rightOffset), &newEntry->rightFrames},
+			{FROM_LE_16(animRec->upOffset), &newEntry->upFrames},
+			{FROM_LE_16(animRec->downOffset), &newEntry->downFrames}};
 		for (int dirCtr = 0; dirCtr < 4; ++dirCtr) {
-			offsetVal = READ_LE_UINT16(dirEntries[dirCtr].offset);
+			offsetVal = dirEntries[dirCtr].offset;
 			if (offsetVal != 0) {
 				MovementResource *moveRec = (MovementResource *)
 					(mb->data() + offsetVal);

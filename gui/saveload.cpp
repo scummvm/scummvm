@@ -25,7 +25,6 @@
 
 #include "gui/saveload.h"
 #include "gui/saveload-dialog.h"
-#include "gui/gui-manager.h"
 
 #include "engines/metaengine.h"
 
@@ -68,7 +67,7 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 	g_system->getTimeAndDate(curTime);
 	curTime.tm_year += 1900; // fixup year
 	curTime.tm_mon++; // fixup month
-	return Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+	return Common::String::format("%04d-%02d-%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
 #else
 	return Common::String::format("Save %d", slot + 1);
 #endif
@@ -77,16 +76,20 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 int SaveLoadChooser::runModalWithCurrentTarget() {
 	const Common::String gameId = ConfMan.get("gameid");
 
-	const EnginePlugin *plugin = 0;
+	const Plugin *plugin = 0;
 	EngineMan.findGame(gameId, &plugin);
 
 	return runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 }
 
-int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target) {
-	selectChooser(**plugin);
+int SaveLoadChooser::runModalWithPluginAndTarget(const Plugin *plugin, const String &target) {
+	selectChooser(plugin->get<MetaEngine>());
 	if (!_impl)
 		return -1;
+
+#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+	_impl->runSaveSync(ConfMan.hasKey("savepath", target));
+#endif
 
 	// Set up the game domain as newly active domain, so
 	// target specific savepath will be checked
@@ -95,10 +98,10 @@ int SaveLoadChooser::runModalWithPluginAndTarget(const EnginePlugin *plugin, con
 
 	int ret;
 	do {
-		ret = _impl->run(target, &(**plugin));
+		ret = _impl->run(target, &plugin->get<MetaEngine>());
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 		if (ret == kSwitchSaveLoadDialog) {
-			selectChooser(**plugin);
+			selectChooser(plugin->get<MetaEngine>());
 		}
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 	} while (ret < -1);

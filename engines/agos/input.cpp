@@ -26,6 +26,7 @@
 #include "agos/intern.h"
 #include "agos/agos.h"
 #include "agos/midi.h"
+#include "agos/sound.h"
 #include "agos/vga.h"
 
 namespace AGOS {
@@ -707,6 +708,7 @@ bool AGOSEngine::processSpecialKeys() {
 		if (_midiEnabled) {
 			_midi->pause(_musicPaused);
 		}
+		_mixer->pauseHandle(_modHandle, _musicPaused);
 		syncSoundSettings();
 		break;
 	case 's':

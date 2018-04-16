@@ -105,6 +105,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS Demo - English (from Bugreport #6946)
+	{
+		{
+			"queen",
+			"Demo Alt",
+			AD_ENTRY1s("queen.1", "2871fc6f8090f37fa1a0c556a1c97460", 3735447),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOSPEECH)
+		},
+	},
+
 	// DOS Interview Demo - English
 	{
 		{
@@ -131,20 +144,18 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-#if 0
 	// Amiga Floppy - English
 	{
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", NULL, 351775), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "9c209c2cbc1730e3138663c4fd29c2e8", 351775),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
-#endif
 
 	// DOS Floppy - English
 	{
@@ -185,6 +196,32 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS Floppy - Russian
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "0d1c10d5c3a1bd90bc0b3859a3258093", 22677657),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+	},
+
+	// DOS Floppy - Russian (From Bugreport #6946)
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22677657),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+	},
+
 	// DOS CD - French
 	{
 		{
@@ -198,35 +235,31 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-#if 0
 	// DOS Floppy - German
 	{
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", NULL, 22240013), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22240013),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
-#endif
 
-#if 0
 	// DOS CD - German
 	{
 		{
 			"queen",
 			"Talkie",
-			AD_ENTRY1s("queen.1", NULL, 217648975), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "551d595be8af890fc4cb8533c9c5f5f1", 217648975),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
-#endif
 
 #if 0
 	// DOS CD - Hebrew
@@ -243,20 +276,18 @@ static const QueenGameDescription gameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	// DOS Floppy - Italian
 	{
 		{
 			"queen",
 			"Floppy",
-			AD_ENTRY1s("queen.1", NULL, 22461366), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22461366),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
 	},
-#endif
 
 	// DOS CD - Italian
 	{
@@ -271,20 +302,18 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
-#if 0
 	// DOS CD - Spanish
 	{
 		{
 			"queen",
 			"Talkie",
-			AD_ENTRY1s("queen.1", NULL, 190730602), // TODO: Fill in correct MD5
+			AD_ENTRY1s("queen.1", "b6302bccf70463de3d5faf0f0628f742", 190730602),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GAMEOPTION_ALT_INTRO)
 		},
 	},
-#endif
 
 	// DOS CD - English (Compressed Freeware Release v1.0)
 	{
@@ -364,6 +393,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// DOS CD - Hungarian (Compressed Freeware Release v1.02)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "21fd690b372f8a6289f6f33bc986276c", 51329031),
+			Common::HU_HUN,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GAMEOPTION_ALT_INTRO)
+		},
+	},
+
 	// TODO: Freeware Release for Spanish DOS CD is missing.
 #if 0
 	// DOS CD - Spanish (Compressed Freeware Release v1.0)
@@ -388,7 +430,7 @@ static const QueenGameDescription gameDescriptions[] = {
 class QueenMetaEngine : public AdvancedMetaEngine {
 public:
 	QueenMetaEngine() : AdvancedMetaEngine(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames, optionsList) {
-		_singleid = "queen";
+		_singleId = "queen";
 	}
 
 	virtual const char *getName() const {
@@ -430,25 +472,25 @@ const ADGameDescription *QueenMetaEngine::fallbackDetect(const FileMap &allFiles
 			}
 			Queen::DetectedGameVersion version;
 			if (Queen::Resource::detectVersion(&version, &dataFile)) {
-				desc.gameid = "queen";
+				desc.gameId = "queen";
 				desc.language = version.language;
 				desc.platform = version.platform;
 				desc.flags = ADGF_NO_FLAGS;
-				desc.guioptions = GUIO0();
+				desc.guiOptions = GUIO0();
 				if (version.features & Queen::GF_DEMO) {
 					desc.extra = "Demo";
 					desc.flags = ADGF_DEMO;
-					desc.guioptions = GUIO_NOSPEECH;
+					desc.guiOptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_INTERVIEW) {
 					desc.extra = "Interview";
 					desc.flags = ADGF_DEMO;
-					desc.guioptions = GUIO_NOSPEECH;
+					desc.guiOptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_FLOPPY) {
 					desc.extra = "Floppy";
-					desc.guioptions = GUIO_NOSPEECH;
+					desc.guiOptions = GUIO_NOSPEECH;
 				} else if (version.features & Queen::GF_TALKIE) {
 					desc.extra = "Talkie";
-					desc.guioptions = GAMEOPTION_ALT_INTRO;
+					desc.guiOptions = GAMEOPTION_ALT_INTRO;
 				}
 				return (const ADGameDescription *)&desc;
 			}
@@ -461,10 +503,9 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	char saveDesc[32];
-	Common::String pattern("queen.s??");
+	Common::String pattern("queen.s##");
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -483,6 +524,8 @@ SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

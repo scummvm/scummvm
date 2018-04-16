@@ -24,23 +24,28 @@
 
 #include "sci/sci.h"
 #include "sci/engine/features.h"
-#include "sci/engine/state.h"
-#include "sci/engine/selector.h"
+#include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/savegame.h"
+#include "sci/engine/selector.h"
+#include "sci/engine/state.h"
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_simulated_key
 #include "sci/event.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/frameout.h"
+#endif
 
 namespace Sci {
 
 reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
-	int mask = argv[0].toUint16();
+	SciEventType mask = (SciEventType)argv[0].toUint16();
 	reg_t obj = argv[1];
 	SciEvent curEvent;
-	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
+	uint16 modifiers = 0;
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
 
@@ -53,35 +58,62 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
-	if (g_debug_simulated_key && (mask & SCI_EVENT_KEYBOARD)) {
+	// TODO: This does not really work as expected for keyup events, since the
+	// fake event is disposed halfway through the normal event lifecycle.
+	if (g_debug_simulated_key && (mask & kSciEventKeyDown)) {
 		// In case we use a simulated event we query the current mouse position
 		mousePos = g_sci->_gfxCursor->getPosition();
-#ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2_1)
-			g_sci->_gfxCoordAdjuster->fromDisplayToScript(mousePos.y, mousePos.x);
-#endif
+
 		// Limit the mouse cursor position, if necessary
 		g_sci->_gfxCursor->refreshPosition();
 
-		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD); // Keyboard event
+		writeSelectorValue(segMan, obj, SELECTOR(type), kSciEventKeyDown);
 		writeSelectorValue(segMan, obj, SELECTOR(message), g_debug_simulated_key);
-		writeSelectorValue(segMan, obj, SELECTOR(modifiers), SCI_KEYMOD_NUMLOCK); // Numlock on
+		writeSelectorValue(segMan, obj, SELECTOR(modifiers), kSciKeyModNumLock);
 		writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
 		writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
 		g_debug_simulated_key = 0;
-		return make_reg(0, 1);
+		return TRUE_REG;
 	}
 
 	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
+	if (g_sci->_guestAdditions->kGetEventHook()) {
+		return NULL_REG;
+	}
+
 	// For a real event we use its associated mouse position
-	mousePos = curEvent.mousePos;
 #ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2_1)
-		g_sci->_gfxCoordAdjuster->fromDisplayToScript(mousePos.y, mousePos.x);
+	if (getSciVersion() >= SCI_VERSION_2) {
+		mousePos = curEvent.mousePosSci;
+
+		// Some games, like LSL6hires (when interacting with the menu bar) and
+		// Phant2 (when on the "click mouse" screen after restoring a game),
+		// have unthrottled loops that call kGetEvent but do not call kFrameOut.
+		// In these cases we still need to call OSystem::updateScreen to update
+		// the mouse cursor (in SSCI this was not necessary because mouse
+		// updates were made directly to hardware from an interrupt handler),
+		// and we need to throttle these calls so the game does not use 100%
+		// CPU.
+		// This situation seems to be detectable by looking at how many times
+		// kGetEvent has been called between calls to kFrameOut. During normal
+		// game operation, there are usually just 0 or 1 kGetEvent calls between
+		// kFrameOut calls; any more than that indicates that we are probably in
+		// one of these ugly loops and should be updating the screen &
+		// throttling the VM.
+		if (++s->_eventCounter > 2) {
+			g_sci->_gfxFrameout->updateScreen();
+			s->speedThrottler(10); // 10ms is an arbitrary value
+			s->_throttleTrigger = true;
+		}
+	} else {
 #endif
-	// Limit the mouse cursor position, if necessary
-	g_sci->_gfxCursor->refreshPosition();
+		mousePos = curEvent.mousePos;
+		// Limit the mouse cursor position, if necessary
+		g_sci->_gfxCursor->refreshPosition();
+#ifdef ENABLE_SCI32
+	}
+#endif
 
 	if (g_sci->getVocabulary())
 		g_sci->getVocabulary()->parser_event = NULL_REG; // Invalidate parser event
@@ -93,7 +125,25 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// question. Check GfxCursor::setPosition(), for a more detailed
 		// explanation and a list of cursor position workarounds.
 		if (s->_cursorWorkaroundRect.contains(mousePos.x, mousePos.y)) {
-			s->_cursorWorkaroundActive = false;
+			// For OpenPandora and possibly other platforms, that support analog-stick control + touch screen
+			// control at the same time: in case the cursor is currently at the coordinate set by the scripts,
+			// we will count down instead of immediately disabling the workaround.
+			// On OpenPandora the cursor position is set, but it's overwritten shortly afterwards by the
+			// touch screen. In this case we would sometimes disable the workaround, simply because the touch
+			// screen hasn't yet overwritten the position and thus the workaround would not work anymore.
+			// On OpenPandora it would sometimes work and sometimes not without this.
+			if (s->_cursorWorkaroundPoint == mousePos) {
+				// Cursor is still at the same spot as set by the scripts
+				if (s->_cursorWorkaroundPosCount > 0) {
+					s->_cursorWorkaroundPosCount--;
+				} else {
+					// Was for quite a bit of time at that spot, so disable workaround now
+					s->_cursorWorkaroundActive = false;
+				}
+			} else {
+				// Cursor has moved, but is within the rect -> disable workaround immediately
+				s->_cursorWorkaroundActive = false;
+			}
 		} else {
 			mousePos.x = s->_cursorWorkaroundPoint.x;
 			mousePos.y = s->_cursorWorkaroundPoint.y;
@@ -103,58 +153,72 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
 	writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
 
-	//s->_gui->moveCursor(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
+	// Get current keyboard modifiers, only keep relevant bits
+	const int modifierMask = getSciVersion() <= SCI_VERSION_01 ? kSciKeyModAll : kSciKeyModNonSticky;
+	modifiers = curEvent.modifiers & modifierMask;
+	if (g_sci->getPlatform() == Common::kPlatformDOS && getSciVersion() <= SCI_VERSION_01) {
+		// We are supposed to emulate SCI running in DOS
+
+		// We set the higher byte of the modifiers to 02h
+		// Original SCI also did that indirectly, because it asked BIOS for shift status
+		// via AH=0x02 INT16, which then sets the shift flags in AL
+		// AH is supposed to be destroyed in that case and it's not defined that 0x02
+		// is still in it on return. The value of AX was then set into the modifiers selector.
+		// At least one fan-made game (Betrayed Alliance) requires 0x02 to be in the upper byte,
+		// otherwise the darts game (script 111) will not work properly.
+
+		// It seems Sierra fixed this behaviour (effectively bug) in the SCI1 keyboard driver.
+		// SCI32 also resets the upper byte.
+
+		// This was verified in SSCI itself by creating a SCI game and checking behavior.
+		modifiers |= 0x0200;
+	}
 
 	switch (curEvent.type) {
-	case SCI_EVENT_QUIT:
+	case kSciEventQuit:
 		s->abortScriptProcessing = kAbortQuitGame; // Terminate VM
 		g_sci->_debugState.seeking = kDebugSeekNothing;
 		g_sci->_debugState.runningStep = 0;
 		break;
 
-	case SCI_EVENT_KEYBOARD:
-		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD); // Keyboard event
-		s->r_acc = make_reg(0, 1);
-
+	case kSciEventKeyDown:
+	case kSciEventKeyUp:
+		writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
 		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.character);
 		// We only care about the translated character
-		writeSelectorValue(segMan, obj, SELECTOR(modifiers), curEvent.modifiers & modifier_mask);
+		writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
+		s->r_acc = TRUE_REG;
 		break;
 
-	case SCI_EVENT_MOUSE_RELEASE:
-	case SCI_EVENT_MOUSE_PRESS:
-
+	case kSciEventMouseRelease:
+	case kSciEventMousePress:
 		// track left buttton clicks, if requested
-		if (curEvent.type == SCI_EVENT_MOUSE_PRESS && curEvent.data == 1 && g_debug_track_mouse_clicks) {
+		if (curEvent.type == kSciEventMousePress && curEvent.modifiers == 0 && g_debug_track_mouse_clicks) {
 			g_sci->getSciDebugger()->debugPrintf("Mouse clicked at %d, %d\n",
 						mousePos.x, mousePos.y);
 		}
 
 		if (mask & curEvent.type) {
-			int extra_bits = 0;
-
-			switch (curEvent.data) {
-			case 2:
-				extra_bits = SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT;
-				break;
-			case 3:
-				extra_bits = SCI_KEYMOD_CTRL;
-			default:
-				break;
-			}
-
 			writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
 			writeSelectorValue(segMan, obj, SELECTOR(message), 0);
-			writeSelectorValue(segMan, obj, SELECTOR(modifiers), (curEvent.modifiers | extra_bits) & modifier_mask);
-			s->r_acc = make_reg(0, 1);
+			writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
+			s->r_acc = TRUE_REG;
 		}
 		break;
 
+#ifdef ENABLE_SCI32
+	case kSciEventHotRectangle:
+		writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
+		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.hotRectangleIndex);
+		s->r_acc = TRUE_REG;
+		break;
+#endif
+
 	default:
 		// Return a null event
-		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_NONE);
+		writeSelectorValue(segMan, obj, SELECTOR(type), kSciEventNone);
 		writeSelectorValue(segMan, obj, SELECTOR(message), 0);
-		writeSelectorValue(segMan, obj, SELECTOR(modifiers), curEvent.modifiers & modifier_mask);
+		writeSelectorValue(segMan, obj, SELECTOR(modifiers), modifiers);
 		s->r_acc = NULL_REG;
 	}
 
@@ -165,14 +229,15 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		Console *con = g_sci->getSciDebugger();
 		con->debugPrintf("SCI event occurred: ");
 		switch (curEvent.type) {
-		case SCI_EVENT_QUIT:
+		case kSciEventQuit:
 			con->debugPrintf("quit event\n");
 			break;
-		case SCI_EVENT_KEYBOARD:
+		case kSciEventKeyDown:
+		case kSciEventKeyUp:
 			con->debugPrintf("keyboard event\n");
 			break;
-		case SCI_EVENT_MOUSE_RELEASE:
-		case SCI_EVENT_MOUSE_PRESS:
+		case kSciEventMousePress:
+		case kSciEventMouseRelease:
 			con->debugPrintf("mouse click event\n");
 			break;
 		default:
@@ -199,7 +264,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	// check bugs #3058865 and #3127824
 	if (s->_gameIsBenchmarking) {
 		// Game is benchmarking, don't add a delay
-	} else {
+	} else if (getSciVersion() < SCI_VERSION_2) {
 		g_system->delayMillis(10);
 	}
 
@@ -207,30 +272,31 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 }
 
 struct KeyDirMapping {
-	uint16 key;
+	SciKeyCode key;
 	uint16 direction;
 };
 
 const KeyDirMapping keyToDirMap[] = {
-	{ SCI_KEY_HOME,   8 }, { SCI_KEY_UP,     1 }, { SCI_KEY_PGUP,   2 },
-	{ SCI_KEY_LEFT,   7 }, { SCI_KEY_CENTER, 0 }, { SCI_KEY_RIGHT,  3 },
-	{ SCI_KEY_END,    6 }, { SCI_KEY_DOWN,   5 }, { SCI_KEY_PGDOWN, 4 },
+	{ kSciKeyHome, 8 }, { kSciKeyUp,     1 }, { kSciKeyPageUp,   2 },
+	{ kSciKeyLeft, 7 }, { kSciKeyCenter, 0 }, { kSciKeyRight,    3 },
+	{ kSciKeyEnd,  6 }, { kSciKeyDown,   5 }, { kSciKeyPageDown, 4 },
 };
 
 reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	SegManager *segMan = s->_segMan;
 
-	if (readSelectorValue(segMan, obj, SELECTOR(type)) == SCI_EVENT_KEYBOARD) { // Keyboard
+	if (readSelectorValue(segMan, obj, SELECTOR(type)) == kSciEventKeyDown) {
 		uint16 message = readSelectorValue(segMan, obj, SELECTOR(message));
-		uint16 eventType = SCI_EVENT_DIRECTION;
-		// Check if the game is using cursor views. These games allowed control
-		// of the mouse cursor via the keyboard controls (the so called
-		// "PseudoMouse" functionality in script 933).
-		if (g_sci->_features->detectSetCursorType() == SCI_VERSION_1_1)
-			eventType |= SCI_EVENT_KEYBOARD;
+		SciEventType eventType = kSciEventDirection;
+		// It seems with SCI1 Sierra started to add the kSciEventDirection bit instead of setting it directly.
+		// It was done inside the keyboard driver and is required for the PseudoMouse functionality and class
+		// to work (script 933).
+		if (g_sci->_features->detectPseudoMouseAbility() == kPseudoMouseAbilityTrue) {
+			eventType |= kSciEventKeyDown;
+		}
 
-		for (int i = 0; i < 9; i++) {
+		for (int i = 0; i < ARRAYSIZE(keyToDirMap); i++) {
 			if (keyToDirMap[i].key == message) {
 				writeSelectorValue(segMan, obj, SELECTOR(type), eventType);
 				writeSelectorValue(segMan, obj, SELECTOR(message), keyToDirMap[i].direction);
@@ -246,14 +312,13 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
-	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
 	if (obj.getSegment()) {
 		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
 		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 
-		g_sci->_gfxCoordAdjuster->kernelGlobalToLocal(x, y, planeObject);
+		g_sci->_gfxCoordAdjuster->kernelGlobalToLocal(x, y);
 
 		writeSelectorValue(segMan, obj, SELECTOR(x), x);
 		writeSelectorValue(segMan, obj, SELECTOR(y), y);
@@ -265,14 +330,13 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
-	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
 	if (obj.getSegment()) {
 		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
 		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 
-		g_sci->_gfxCoordAdjuster->kernelLocalToGlobal(x, y, planeObject);
+		g_sci->_gfxCoordAdjuster->kernelLocalToGlobal(x, y);
 
 		writeSelectorValue(segMan, obj, SELECTOR(x), x);
 		writeSelectorValue(segMan, obj, SELECTOR(y), y);
@@ -286,5 +350,77 @@ reg_t kJoystick(EngineState *s, int argc, reg_t *argv) {
 	debug(5, "Unimplemented syscall 'Joystick()'");
 	return NULL_REG;
 }
+
+#ifdef ENABLE_SCI32
+reg_t kGlobalToLocal32(EngineState *s, int argc, reg_t *argv) {
+	const reg_t result = argv[0];
+	const reg_t planeObj = argv[1];
+
+	bool visible = true;
+	Plane *plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(planeObj);
+	if (plane == nullptr) {
+		plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObj);
+		visible = false;
+	}
+	if (plane == nullptr) {
+		error("kGlobalToLocal: Plane %04x:%04x not found", PRINT_REG(planeObj));
+	}
+
+	const int16 x = readSelectorValue(s->_segMan, result, SELECTOR(x)) - plane->_gameRect.left;
+	const int16 y = readSelectorValue(s->_segMan, result, SELECTOR(y)) - plane->_gameRect.top;
+
+	writeSelectorValue(s->_segMan, result, SELECTOR(x), x);
+	writeSelectorValue(s->_segMan, result, SELECTOR(y), y);
+
+	return make_reg(0, visible);
+}
+
+reg_t kLocalToGlobal32(EngineState *s, int argc, reg_t *argv) {
+	const reg_t result = argv[0];
+	const reg_t planeObj = argv[1];
+
+	bool visible = true;
+	Plane *plane = g_sci->_gfxFrameout->getVisiblePlanes().findByObject(planeObj);
+	if (plane == nullptr) {
+		plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObj);
+		visible = false;
+	}
+	if (plane == nullptr) {
+		error("kLocalToGlobal: Plane %04x:%04x not found", PRINT_REG(planeObj));
+	}
+
+	const int16 x = readSelectorValue(s->_segMan, result, SELECTOR(x)) + plane->_gameRect.left;
+	const int16 y = readSelectorValue(s->_segMan, result, SELECTOR(y)) + plane->_gameRect.top;
+
+	writeSelectorValue(s->_segMan, result, SELECTOR(x), x);
+	writeSelectorValue(s->_segMan, result, SELECTOR(y), y);
+
+	return make_reg(0, visible);
+}
+
+reg_t kSetHotRectangles(EngineState *s, int argc, reg_t *argv) {
+	if (argc == 1) {
+		g_sci->getEventManager()->setHotRectanglesActive((bool)argv[0].toUint16());
+		return s->r_acc;
+	}
+
+	const int16 numRects = argv[0].toSint16();
+	SciArray &hotRects = *s->_segMan->lookupArray(argv[1]);
+
+	Common::Array<Common::Rect> rects;
+	rects.resize(numRects);
+
+	for (int16 i = 0; i < numRects; ++i) {
+		rects[i].left   = hotRects.getAsInt16(i * 4);
+		rects[i].top    = hotRects.getAsInt16(i * 4 + 1);
+		rects[i].right  = hotRects.getAsInt16(i * 4 + 2) + 1;
+		rects[i].bottom = hotRects.getAsInt16(i * 4 + 3) + 1;
+	}
+
+	g_sci->getEventManager()->setHotRectanglesActive(true);
+	g_sci->getEventManager()->setHotRectangles(rects);
+	return s->r_acc;
+}
+#endif
 
 } // End of namespace Sci

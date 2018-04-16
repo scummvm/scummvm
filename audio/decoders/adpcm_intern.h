@@ -39,7 +39,7 @@
 
 namespace Audio {
 
-class ADPCMStream : public RewindableAudioStream {
+class ADPCMStream : public SeekableAudioStream {
 protected:
 	Common::DisposablePtr<Common::SeekableReadStream> _stream;
 	int32 _startpos;
@@ -67,6 +67,8 @@ public:
 	virtual int getRate() const { return _rate; }
 
 	virtual bool rewind();
+	virtual bool seek(const Timestamp &where) { return false; }
+	virtual Timestamp getLength() const { return -1; }
 
 	/**
 	 * This table is used by some ADPCM variants (IMA and OKI) to adjust the
@@ -207,6 +209,7 @@ public:
 			error("MS_ADPCMStream(): blockAlign isn't specified for MS ADPCM");
 		memset(&_status, 0, sizeof(_status));
 		_decodedSampleCount = 0;
+		_decodedSampleIndex = 0;
 	}
 
 	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
@@ -218,6 +221,7 @@ protected:
 
 private:
 	uint8 _decodedSampleCount;
+	uint8 _decodedSampleIndex;
 	int16 _decodedSamples[4];
 };
 
@@ -225,20 +229,12 @@ private:
 // Based on FFmpeg's decoder and http://wiki.multimedia.cx/index.php?title=Duck_DK3_IMA_ADPCM
 
 class DK3_ADPCMStream : public Ima_ADPCMStream {
-protected:
-
-	void reset() {
-		Ima_ADPCMStream::reset();
-		_topNibble = false;
-	}
-
 public:
 	DK3_ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign)
 		: Ima_ADPCMStream(stream, disposeAfterUse, size, rate, channels, blockAlign) {
 
 		// DK3 only works as a stereo stream
 		assert(channels == 2);
-		_topNibble = false;
 	}
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);

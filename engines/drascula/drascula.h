@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef DRASCULA_H
-#define DRASCULA_H
+#ifndef DRASCULA_DRASCULA_H
+#define DRASCULA_DRASCULA_H
 
 #include "common/scummsys.h"
 #include "common/archive.h"
@@ -54,7 +54,7 @@
  */
 namespace Drascula {
 
-#define DRASCULA_DAT_VER 4
+#define DRASCULA_DAT_VER 6
 #define DATAALIGNMENT 4
 
 enum DrasculaGameFeatures {
@@ -66,7 +66,8 @@ enum Languages {
 	kSpanish = 1,
 	kGerman = 2,
 	kFrench = 3,
-	kItalian = 4
+	kItalian = 4,
+	kRussian = 5
 };
 
 enum Verbs {
@@ -325,6 +326,13 @@ public:
 	virtual ~DrasculaEngine();
 	virtual bool hasFeature(EngineFeature f) const;
 
+	virtual void syncSoundSettings();
+
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+	virtual bool canSaveGameStateCurrently();
+
 	Common::RandomSource *_rnd;
 	const DrasculaGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -413,11 +421,13 @@ public:
 	char iconName[44][13];
 
 	int objectNum[40], visible[40], isDoor[40];
-	int roomObjX[40], roomObjY[40], trackObj[40];
+	int trackObj[40];
+	Common::Point _roomObject[40];
 	int inventoryObjects[43];
-	char _targetSurface[40][20];
-	int _destX[40], _destY[40], trackCharacter_alkeva[40], roomExits[40];
-	int _objectX1[40], _objectY1[40], _objectX2[40], _objectY2[40];
+	int _doorDestRoom[40];
+	Common::Point _doorDestPoint[40];
+	int trackCharacter_alkeva[40], _roomExitId[40];
+	Common::Rect _objectRect[40];
 	int takeObject, pickedObject;
 	bool _subtitlesDisabled;
 	bool _menuBar, _menuScreen, _hasName;
@@ -428,15 +438,16 @@ public:
 	int flags[NUM_FLAGS];
 
 	int frame_y;
-	int curX, curY, characterMoved, curDirection, trackProtagonist, _characterFrame;
-	int hare_se_ve;		// TODO: what is this for?
+	int curX, curY, curDirection, trackProtagonist, _characterFrame;
+	bool _characterMoved, _characterVisible;
 	int roomX, roomY, checkFlags;
 	int doBreak;
 	int stepX, stepY;
 	int curHeight, curWidth, feetHeight;
-	int floorX1, floorY1, floorX2, floorY2;
+	Common::Rect _walkRect;
 	int lowerLimit, upperLimit;
-	int trackFinal, walkToObject;
+	int trackFinal;
+	bool _walkToObject;
 	int objExit;
 	int _startTime;
 	int hasAnswer;
@@ -449,12 +460,11 @@ public:
 	int blinking;
 	int igorX, igorY, trackIgor;
 	int drasculaX, drasculaY, trackDrascula;
-	int bjX, bjY, trackBJ;
-	int framesWithoutAction;
 	int term_int;
 	int currentChapter;
 	bool _loadedDifferentChapter;
 	int _currentSaveSlot;
+	bool _canSaveLoad;
 	int _color;
 	int musicStopped;
 	int _mouseX, _mouseY, _leftMouseButton, _rightMouseButton;
@@ -478,7 +488,7 @@ public:
 
 	void enterRoom(int);
 	void clearRoom();
-	void gotoObject(int, int);
+	void walkToPoint(Common::Point pos);
 	void moveCursor();
 	void checkObjects();
 	void selectVerbFromBar();
@@ -488,17 +498,17 @@ public:
 	void addKeyToBuffer(Common::KeyState& key);
 	void flushKeyBuffer();
 	void selectVerb(int);
-	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);
+	int updateVolume(int prevVolume, int prevVolumeY);
 	void volumeControls();
 
 	bool saveLoadScreen();
 	bool scummVMSaveLoadDialog(bool isSave);
 	Common::String enterName(Common::String &selectedName);
 	void loadSaveNames();
-	void saveGame(int slot, Common::String &desc);
+	void saveGame(int slot, const Common::String &desc);
 	bool loadGame(int slot);
 	void checkForOldSaveGames();
-	void convertSaveGame(int slot, Common::String &desc);
+	void convertSaveGame(int slot, const Common::String &desc);
 
 	void print_abc(const char *, int, int);
 	void delay(int ms);
@@ -518,7 +528,6 @@ public:
 	bool animate(const char *animation, int FPS);
 	void pause(int);
 	void placeIgor();
-	void placeBJ();
 	void placeDrascula();
 
 	void talkInit(const char *filename);
@@ -784,4 +793,4 @@ protected:
 
 } // End of namespace Drascula
 
-#endif /* DRASCULA_H */
+#endif /* DRASCULA_DRASCULA_H */

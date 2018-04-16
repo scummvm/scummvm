@@ -31,6 +31,7 @@
 class OSystem;
 namespace Common {
 class SaveFileManager;
+class MemoryWriteStreamDynamic;
 }
 
 namespace Sword1 {
@@ -114,6 +115,7 @@ private:
 	uint8 _cursorTick;
 	bool _cursorVisible;
 	bool _panelShown;
+	Common::MemoryWriteStreamDynamic *_tempThumbnail;
 
 	uint8 getClicks(uint8 mode, uint8 *retVal);
 	uint8 handleButtonClick(uint8 id, uint8 mode, uint8 *retVal);

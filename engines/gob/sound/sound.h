@@ -23,12 +23,13 @@
 #ifndef GOB_SOUND_SOUND_H
 #define GOB_SOUND_SOUND_H
 
+#include "common/str.h"
 #include "gob/sound/sounddesc.h"
-#include "gob/sound/bgatmosphere.h"
 
 namespace Gob {
 
 class GobEngine;
+class BackgroundAtmosphere;
 class PCSpeaker;
 class SoundBlaster;
 class ADLPlayer;
@@ -39,6 +40,11 @@ class CDROM;
 
 class Sound {
 public:
+	enum BackgroundPlayMode {
+		kPlayModeLinear,
+		kPlayModeRandom
+	};
+
 	static const int kSoundsCount = 60;
 
 	Sound(GobEngine *vm);
@@ -96,6 +102,7 @@ public:
 	int32 adlibGetRepeating() const;
 
 	void adlibSetRepeating(int32 repCount);
+	void adlibSyncVolume();
 
 
 	// Infogrames
@@ -134,7 +141,7 @@ public:
 	void bgPlay(const char *base, const char *ext, SoundType type, int count);
 	void bgStop();
 
-	void bgSetPlayMode(BackgroundAtmosphere::PlayMode mode);
+	void bgSetPlayMode(BackgroundPlayMode mode);
 
 	void bgShade();
 	void bgUnshade();

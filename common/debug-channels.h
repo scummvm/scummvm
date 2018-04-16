@@ -117,7 +117,7 @@ public:
 	/**
 	 * Test whether the given debug channel is enabled.
 	 */
-	bool isDebugChannelEnabled(uint32 channel);
+	bool isDebugChannelEnabled(uint32 channel, bool enforce = false);
 
 private:
 	typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugChannelMap;

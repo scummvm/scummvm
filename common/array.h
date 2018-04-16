@@ -59,6 +59,24 @@ protected:
 public:
 	Array() : _capacity(0), _size(0), _storage(0) {}
 
+	/**
+	 * Constructs an array with `count` default-inserted instances of T. No
+	 * copies are made.
+	 */
+	explicit Array(size_type count) : _size(count) {
+		allocCapacity(count);
+		for (size_type i = 0; i < count; ++i)
+			new ((void *)&_storage[i]) T();
+	}
+
+	/**
+	 * Constructs an array with `count` copies of elements with value `value`.
+	 */
+	Array(size_type count, const T &value) : _size(count) {
+		allocCapacity(count);
+		uninitialized_fill_n(_storage, count, value);
+	}
+
 	Array(const Array<T> &array) : _capacity(array._size), _size(array._size), _storage(0) {
 		if (array._storage) {
 			allocCapacity(_size);
@@ -70,10 +88,10 @@ public:
 	 * Construct an array by copying data from a regular array.
 	 */
 	template<class T2>
-	Array(const T2 *data, size_type n) {
+	Array(const T2 *array, size_type n) {
 		_size = n;
 		allocCapacity(n);
-		uninitialized_copy(data, data + _size, _storage);
+		uninitialized_copy(array, array + _size, _storage);
 	}
 
 	~Array() {
@@ -104,6 +122,16 @@ public:
 		_size--;
 		// We also need to destroy the last object properly here.
 		_storage[_size].~T();
+	}
+
+	/** Returns a pointer to the underlying memory serving as element storage. */
+	const T *data() const {
+		return _storage;
+	}
+
+	/** Returns a pointer to the underlying memory serving as element storage. */
+	T *data() {
+		return _storage;
 	}
 
 	/** Returns a reference to the first element of the array. */
@@ -141,6 +169,12 @@ public:
 		insert_aux(_storage + idx, array.begin(), array.end());
 	}
 
+	/**
+	 * Inserts element before pos.
+	 */
+	void insert(iterator pos, const T &element) {
+		insert_aux(pos, &element, &element + 1);
+	}
 
 	T remove_at(size_type idx) {
 		assert(idx < _size);
@@ -185,6 +219,14 @@ public:
 		_storage = 0;
 		_size = 0;
 		_capacity = 0;
+	}
+
+	iterator erase(iterator pos) {
+		copy(pos + 1, _storage + _size, pos);
+		_size--;
+		// We also need to destroy the last object properly here.
+		_storage[_size].~T();
+		return pos;
 	}
 
 	bool empty() const {
@@ -345,6 +387,74 @@ protected:
 		return pos;
 	}
 
+};
+
+/**
+ * Double linked list with sorted nodes.
+ */
+template<class T>
+class SortedArray : public Array<T> {
+public:
+	typedef T *iterator;
+	typedef uint size_type;
+
+	SortedArray(int (*comparator)(const void *, const void *)) {
+		_comparator = comparator;
+	}
+
+	/**
+	 * Inserts element at the sorted position.
+	 */
+	void insert(const T &element) {
+		if (!this->_size) {
+			this->insert_aux(this->_storage, &element, &element + 1);
+			return;
+		}
+
+		T *where = bsearchMin(element);
+
+		if (where > this->_storage + this->_size)
+			Array<T>::push_back(element);
+		else
+			Array<T>::insert(where, element);
+	}
+
+private:
+	T &operator[](size_type idx);
+
+	void insert_at(size_type idx, const T &element);
+
+	void insert_at(size_type idx, const Array<T> &array);
+
+	void insert(iterator pos, const T &element);
+
+	void push_back(const T &element);
+
+	void push_back(const Array<T> &array);
+
+	// Based on code Copyright (C) 2008-2009 Ksplice, Inc.
+	// Author: Tim Abbott <tabbott@ksplice.com>
+	// Licensed under GPLv2+
+	T *bsearchMin(void *key) {
+		uint start_ = 0, end_ = this->_size;
+		int result;
+
+		while (start_ < end_) {
+			uint mid = start_ + (end_ - start_) / 2;
+
+			result = this->_comparator(key, this->_storage[mid]);
+			if (result < 0)
+				end_ = mid;
+			else if (result > 0)
+				start_ = mid + 1;
+			else
+				return &this->_storage[mid];
+		}
+
+		return &this->_storage[start_];
+	}
+
+	int (*_comparator)(const void *, const void *);
 };
 
 } // End of namespace Common

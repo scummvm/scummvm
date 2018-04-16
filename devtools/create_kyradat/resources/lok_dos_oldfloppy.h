@@ -1440,6 +1440,19 @@ static const byte k1SpecialPalette32DOSOldFloppy[39] = {
 
 static const ByteProvider k1SpecialPalette32DOSOldFloppyProvider = { ARRAYSIZE(k1SpecialPalette32DOSOldFloppy), k1SpecialPalette32DOSOldFloppy };
 
+static const byte k1SpecialPalette33DOSOldFloppy[60] = {
+	0x3F, 0x3D, 0x2F, 0x3F, 0x3D, 0x29, 0x3F, 0x3D,
+	0x23, 0x3F, 0x3D, 0x1D, 0x3F, 0x3B, 0x17, 0x3F,
+	0x3B, 0x11, 0x3F, 0x3B, 0x0B, 0x3F, 0x3B, 0x05,
+	0x3F, 0x3B, 0x00, 0x3D, 0x38, 0x00, 0x3B, 0x34,
+	0x00, 0x39, 0x33, 0x00, 0x39, 0x30, 0x00, 0x37,
+	0x2D, 0x00, 0x36, 0x2B, 0x00, 0x34, 0x28, 0x00,
+	0x33, 0x26, 0x00, 0x32, 0x24, 0x00, 0x30, 0x22,
+	0x00, 0x2F, 0x20, 0x00
+};
+
+static const ByteProvider k1SpecialPalette33DOSOldFloppyProvider = { ARRAYSIZE(k1SpecialPalette33DOSOldFloppy), k1SpecialPalette33DOSOldFloppy };
+
 static const Shape k1Healing1ShapesDOSOldFloppy[22] = {
 	{   8,   0,   0,   3,  48, -12, -48 },
 	{   8,   3,   0,   3,  48, -12, -48 },
@@ -1884,7 +1897,7 @@ static const byte k1OutroReunionSeqDOSOldFloppy[1351] = {
 
 static const ByteProvider k1OutroReunionSeqDOSOldFloppyProvider = { ARRAYSIZE(k1OutroReunionSeqDOSOldFloppy), k1OutroReunionSeqDOSOldFloppy };
 
-static const char *const k1AudioTracksDOSOldFloppy[8] = {
+static const char *const k1AudioTracksDOSOldFloppy[9] = {
 	"KYRA1A",
 	"KYRA1B",
 	"KYRA2A",
@@ -1892,16 +1905,11 @@ static const char *const k1AudioTracksDOSOldFloppy[8] = {
 	"KYRA4A",
 	"KYRA4B",
 	"KYRA5A",
-	"KYRA5B"
+	"KYRA5B",
+	"KYRAMISC"
 };
 
 static const StringListProvider k1AudioTracksDOSOldFloppyProvider = { ARRAYSIZE(k1AudioTracksDOSOldFloppy), k1AudioTracksDOSOldFloppy };
-
-static const char *const k1AudioTracks2DOSOldFloppy[1] = {
-	"kyramisc"
-};
-
-static const StringListProvider k1AudioTracks2DOSOldFloppyProvider = { ARRAYSIZE(k1AudioTracks2DOSOldFloppy), k1AudioTracks2DOSOldFloppy };
 
 static const char *const k1AudioTracksIntroDOSOldFloppy[1] = {
 	"intro"

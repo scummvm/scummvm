@@ -133,10 +133,10 @@ void ManholeEgaSoundDecompressor::update3() {
 		_sample2 += _sample1;
 }
 
-void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray) {
+void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCount, SoundEnergyArray *soundEnergyArray, SoundDecoderData *soundDecoderData) {
 
-	int16 prevSample = 0, workSample = 0;
-	byte soundBuffer[1025];
+	int16 prevSample, workSample;
+	byte* soundBuffer;
 	byte deltaSoundBuffer[1024];
 	int16 soundBuffer2[16];
 	byte deltaType, type;
@@ -155,9 +155,19 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 	};
 
 	soundEnergyItem.position = 0;
+	memset(deltaSoundBuffer, 0, 1024);
 
 	if (soundEnergyArray)
 		soundEnergyArray->clear();
+
+	if (soundDecoderData) {
+		soundBuffer = soundDecoderData->_soundBuffer;
+		prevSample = soundDecoderData->_prevSample;
+	} else {
+		soundBuffer = new byte[1025];
+		memset(soundBuffer, 0x80, 1025);
+		prevSample = 0;
+	}
 
 	while (chunkCount--) {
 		deltaType = (*source) >> 6;
@@ -228,11 +238,17 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 			break;
 
 		default:
+			delete[] soundBuffer;
 			return;
 
 		}
 
 		if (deltaType > 0) {
+			// NB: The original did not add this extra value at the end (as far
+			// as I can tell), and so technically read past the filled part of
+			// soundBuffer.
+			soundBuffer[workChunkSize] = soundBuffer[workChunkSize - 1];
+
 			if (deltaType == 1) {
 				for (i = 0; i < chunkSize - 1; i += 2) {
 					l = i / 2;
@@ -255,9 +271,13 @@ void decompressSound(byte *source, byte *dest, uint16 chunkSize, uint16 chunkCou
 		prevSample = workSample;
 		memcpy(dest, soundBuffer, chunkSize);
 		dest += chunkSize;
-
 	}
 
+	if (soundDecoderData) {
+		soundDecoderData->_prevSample = prevSample;
+	} else {
+		delete[] soundBuffer;
+	}
 }
 
 } // End of namespace Made

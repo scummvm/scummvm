@@ -58,7 +58,7 @@ struct CameraData {
 /** Virtual screen identifiers */
 enum VirtScreenNumber {
 	kMainVirtScreen = 0,	// The 'stage'
-	kTextVirtScreen = 1,	// In V1-V3 games: the area where text is printed
+	kTextVirtScreen = 1,	// In V0-V3 games: the area where text is printed
 	kVerbVirtScreen = 2,	// The verb area
 	kUnkVirtScreen = 3		// ?? Not sure what this one is good for...
 };

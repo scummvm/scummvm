@@ -37,6 +37,7 @@
 
 namespace Common {
 class SeekableReadStream;
+class WriteStream;
 }
 
 namespace Graphics {
@@ -55,13 +56,24 @@ public:
 	const Graphics::Surface *getSurface() const { return _outputSurface; }
 	const byte *getPalette() const { return _palette; }
 	uint16 getPaletteColorCount() const { return _paletteColorCount; }
+	void setSkipSignature(bool skip) { _skipSignature = skip; }
 private:
-	Common::SeekableReadStream *_stream;
 	byte *_palette;
 	uint16 _paletteColorCount;
 
+	// flag to skip the png signature check for headless png files
+	bool _skipSignature;
+
 	Graphics::Surface *_outputSurface;
 };
+
+/**
+ * Outputs a compressed PNG stream of the given input surface.
+ *
+ * @param bottomUp Flip the vertical axis so pixel data is drawn from the
+ * bottom up, instead of from the top down.
+ */
+bool writePNG(Common::WriteStream &out, const Graphics::Surface &input, const bool bottomUp = false);
 
 } // End of namespace Image
 

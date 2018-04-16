@@ -22,6 +22,8 @@
 
 namespace Cine {
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD   GUIO_GAMEOPTIONS1
+
 static const CINEGameDescription gameDescriptions[] = {
 	{
 		{
@@ -374,6 +376,20 @@ static const CINEGameDescription gameDescriptions[] = {
 		},
 		GType_OS,
 		0,
+	},
+
+	{
+		{
+			"os",
+			"Demo",
+			AD_ENTRY1("demo_os", "043859e4cfe3977ad95b6efd00b21c62"),
+			Common::EN_GRB,
+			Common::kPlatformDOS,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_OS,
+		GF_DEMO,
 	},
 
 	{

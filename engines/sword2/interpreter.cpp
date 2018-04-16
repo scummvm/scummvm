@@ -449,7 +449,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 
 			Read16ip(parameter);
 			stack.push(_vm->_memory->encodePtr(localVars + parameter));
-			debug(9, "CP_PUSH_LOCAL_ADDR: &localVars[%d] => %p", parameter / 4, localVars + parameter);
+			debug(9, "CP_PUSH_LOCAL_ADDR: &localVars[%d] => %p", parameter / 4, (void *)(localVars + parameter));
 			break;
 		case CP_PUSH_STRING:
 			// Push the address of a string on to the stack
@@ -467,7 +467,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			Read32ip(parameter);
 			ptr = objectData + 4 + ResHeader::size() + ObjectHub::size() + parameter;
 			stack.push(_vm->_memory->encodePtr(ptr));
-			debug(9, "CP_PUSH_DEREFERENCED_STRUCTURE: %d => %p", parameter, ptr);
+			debug(9, "CP_PUSH_DEREFERENCED_STRUCTURE: %d => %p", parameter, (void *)ptr);
 			break;
 		case CP_POP_LOCAL_VAR32:
 			// Pop a value into a local word variable

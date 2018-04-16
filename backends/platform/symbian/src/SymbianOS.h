@@ -39,7 +39,7 @@ public:
 	virtual void engineDone();
 	virtual bool setGraphicsMode(const char *name);
 	virtual Common::String getDefaultConfigFileName();
-	virtual void setupIcon();
+	virtual bool hasFeature(Feature f);
 
 	/**
 	 * Returns reference to File session

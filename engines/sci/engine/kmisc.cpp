@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 
 #include "sci/sci.h"
@@ -29,6 +30,9 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
 #include "sci/graphics/cursor.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/cursor32.h"
+#endif
 #include "sci/graphics/maciconbar.h"
 #include "sci/console.h"
 
@@ -218,7 +222,6 @@ enum {
 
 reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	TimeDate loc_time;
-	uint32 elapsedTime = g_engine->getTotalPlayTime();
 	int retval = 0; // Avoid spurious warning
 
 	g_system->getTimeAndDate(loc_time);
@@ -232,7 +235,7 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 
 	switch (mode) {
 	case KGETTIME_TICKS :
-		retval = elapsedTime * 60 / 1000;
+		retval = g_sci->getTickCount();
 		debugC(kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
 	case KGETTIME_TIME_12HOUR :
@@ -244,10 +247,18 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		debugC(kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
 	case KGETTIME_DATE :
-		// Year since 1980 (0 = 1980, 1 = 1981, etc.)
-		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year - 80) & 0x7f) << 9);
+	{
+		// SCI0 late: Year since 1920 (0 = 1920, 1 = 1921, etc)
+		// SCI01 and newer: Year since 1980 (0 = 1980, 1 = 1981, etc)
+		// Atari ST SCI0 late versions use the newer base year.
+		int baseYear = 80;
+		if (getSciVersion() == SCI_VERSION_0_LATE && g_sci->getPlatform() == Common::kPlatformDOS) {
+			baseYear = 20;
+		}
+		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year - baseYear) & 0x7f) << 9);
 		debugC(kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
+	}
 	default:
 		error("Attempt to use unknown GetTime mode %d", mode);
 		break;
@@ -269,7 +280,10 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL: {
 		int byteCount = argv[1].toUint16();
-		// WORKAROUND:
+		// Sierra themselves allocated at least 2 bytes more than requested.
+		// Probably as a safety margin. And they also made size even.
+		//
+		// This behavior is required by at least these:
 		//  - pq3 (multilingual) room 202
 		//     when plotting crimes, allocates the returned bytes from kStrLen
 		//     on "W" and "E" and wants to put a string in there, which doesn't
@@ -277,18 +291,22 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		//  - lsl5 (multilingual) room 280
 		//     allocates memory according to a previous kStrLen for the name of
 		//     the airport ladies (bug #3093818), which isn't enough
-
-		// We always allocate 1 byte more, because of this
-		byteCount++;
+		byteCount += 2 + (byteCount & 1);
 
 		if (!s->_segMan->allocDynmem(byteCount, "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
 		break;
 	}
-	case K_MEMORY_ALLOCATE_NONCRITICAL:
-		s->_segMan->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
+	case K_MEMORY_ALLOCATE_NONCRITICAL: {
+		int byteCount = argv[1].toUint16();
+
+		// See above
+		byteCount += 2 + (byteCount & 1);
+
+		s->_segMan->allocDynmem(byteCount, "kMemory() non-critical", &s->r_acc);
 		break;
+	}
 	case K_MEMORY_FREE :
 		if (!s->_segMan->freeDynmem(argv[1])) {
 			if (g_sci->getGameId() == GID_QFG1VGA) {
@@ -395,6 +413,18 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	} else if (setting == "startroom") {
 		// Debug setting in LSL7, specifies the room to start from.
 		s->_segMan->strcpy(data, "");
+	} else if (setting == "game") {
+		// Hoyle 5 startup, specifies the number of the game to start.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "laptop") {
+		// Hoyle 5 startup.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "jumpto") {
+		// Hoyle 5 startup.
+		s->_segMan->strcpy(data, "");
+	} else if (setting == "deflang") {
+		// MGDX 4-language startup.
+		s->_segMan->strcpy(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}
@@ -405,6 +435,10 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 // Likely modelled after the Windows 3.1 function GetPrivateProfileInt:
 // http://msdn.microsoft.com/en-us/library/windows/desktop/ms724345%28v=vs.85%29.aspx
 reg_t kGetSierraProfileInt(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getPlatform() != Common::kPlatformWindows) {
+		return s->r_acc;
+	}
+
 	Common::String category = s->_segMan->getString(argv[0]);	// always "config"
 	category.toLowercase();
 	Common::String setting = s->_segMan->getString(argv[1]);
@@ -430,6 +464,14 @@ reg_t kGetWindowsOption(EngineState *s, int argc, reg_t *argv) {
 		warning("GetWindowsOption: Unknown option %d", windowsOption);
 		return NULL_REG;
 	}
+}
+
+extern Common::String format(const Common::String &source, int argc, const reg_t *argv);
+
+reg_t kPrintDebug(EngineState *s, int argc, reg_t *argv) {
+	const Common::String debugString = s->_segMan->getString(argv[0]);
+	debugC(kDebugLevelGame, "%s", format(debugString, argc - 1, argv + 1).c_str());
+	return s->r_acc;
 }
 
 #endif
@@ -487,9 +529,12 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 		// In SCI1, its usage is still unknown
 		// In SCI1.1, it's NOP
 		// In SCI32, it's used for remapping cursor ID's
-		if (getSciVersion() >= SCI_VERSION_2_1) // Set Mac cursor remap
-			g_sci->_gfxCursor->setMacCursorRemapList(argc - 1, argv + 1);
-		else if (getSciVersion() != SCI_VERSION_1_1)
+#ifdef ENABLE_SCI32_MAC
+		if (getSciVersion() >= SCI_VERSION_2_1_EARLY) // Set Mac cursor remap
+			g_sci->_gfxCursor32->setMacCursorRemapList(argc - 1, argv + 1);
+		else
+#endif
+		if (getSciVersion() != SCI_VERSION_1_1)
 			warning("Unknown SCI1 kMacPlatform(0) call");
 		break;
 	case 4: // Handle icon bar code
@@ -512,61 +557,56 @@ reg_t kMacPlatform(EngineState *s, int argc, reg_t *argv) {
 }
 
 enum kSciPlatforms {
+	kSciPlatformMacintosh = 0,
 	kSciPlatformDOS = 1,
 	kSciPlatformWindows = 2
 };
 
-enum kPlatformOps {
-	kPlatformUnk0 = 0,
-	kPlatformCDSpeed = 1,
-	kPlatformUnk2 = 2,
-	kPlatformCDCheck = 3,
-	kPlatformGetPlatform = 4,
-	kPlatformUnk5 = 5,
-	kPlatformIsHiRes = 6,
-	kPlatformIsItWindows = 7
-};
-
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
+	enum Operation {
+		kPlatformUnknown        = 0,
+		kPlatformGetPlatform    = 4,
+		kPlatformUnknown5       = 5,
+		kPlatformIsHiRes        = 6,
+		kPlatformWin311OrHigher = 7
+	};
+
 	bool isWindows = g_sci->getPlatform() == Common::kPlatformWindows;
 
-	if (argc == 0 && getSciVersion() < SCI_VERSION_2) {
+	if (argc == 0) {
 		// This is called in KQ5CD with no parameters, where it seems to do some
 		// graphics driver check. This kernel function didn't have subfunctions
 		// then. If 0 is returned, the game functions normally, otherwise all
 		// the animations show up like a slideshow (e.g. in the intro). So we
-		// return 0. However, the behavior changed for kPlatform with no
-		// parameters in SCI32.
+		// return 0.
 		return NULL_REG;
+	}
+
+	if (g_sci->forceHiresGraphics()) {
+		// force Windows platform, so that hires-graphics are enabled
+		isWindows = true;
 	}
 
 	uint16 operation = (argc == 0) ? 0 : argv[0].toUint16();
 
 	switch (operation) {
-	case kPlatformCDSpeed:
-		// TODO: Returns CD Speed?
-		warning("STUB: kPlatform(CDSpeed)");
-		break;
-	case kPlatformUnk2:
-		// Always returns 2
-		return make_reg(0, 2);
-	case kPlatformCDCheck:
-		// TODO: Some sort of CD check?
-		warning("STUB: kPlatform(CDCheck)");
-		break;
-	case kPlatformUnk0:
-		// For Mac versions, kPlatform(0) with other args has more functionality
+	case kPlatformUnknown:
+		// For Mac versions, kPlatform(0) with other args has more functionality. Otherwise, fall through.
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh && argc > 1)
 			return kMacPlatform(s, argc - 1, argv + 1);
-		// Otherwise, fall through
+		// fall through
 	case kPlatformGetPlatform:
-		return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);
-	case kPlatformUnk5:
+		if (isWindows)
+			return make_reg(0, kSciPlatformWindows);
+		else if (g_sci->getPlatform() == Common::kPlatformMacintosh)
+			return make_reg(0, kSciPlatformMacintosh);
+		else
+			return make_reg(0, kSciPlatformDOS);
+	case kPlatformUnknown5:
 		// This case needs to return the opposite of case 6 to get hires graphics
 		return make_reg(0, !isWindows);
 	case kPlatformIsHiRes:
-		return make_reg(0, isWindows);
-	case kPlatformIsItWindows:
+	case kPlatformWin311OrHigher:
 		return make_reg(0, isWindows);
 	default:
 		error("Unsupported kPlatform operation %d", operation);
@@ -574,6 +614,71 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 
 	return NULL_REG;
 }
+
+#ifdef ENABLE_SCI32
+reg_t kPlatform32(EngineState *s, int argc, reg_t *argv) {
+	enum Operation {
+		kGetPlatform   = 0,
+		kGetCDSpeed    = 1,
+		kGetColorDepth = 2,
+		kGetCDDrive    = 3
+	};
+
+	Operation operation;
+	if (getSciVersion() < SCI_VERSION_2_1_MIDDLE) {
+		if (argc == 0 || argv[0].toSint16() == 0) {
+			operation = kGetPlatform;
+		} else {
+			return NULL_REG;
+		}
+	} else {
+		operation = argc > 0 ? (Operation)argv[0].toSint16() : kGetPlatform;
+	}
+
+	switch (operation) {
+	case kGetPlatform:
+		switch (g_sci->getPlatform()) {
+		case Common::kPlatformDOS:
+			return make_reg(0, kSciPlatformDOS);
+		case Common::kPlatformWindows:
+			return make_reg(0, kSciPlatformWindows);
+		case Common::kPlatformMacintosh:
+#ifdef ENABLE_SCI32_MAC
+			// For Mac versions, kPlatform(0) with other args has more functionality
+			if (argc > 1)
+				return kMacPlatform(s, argc - 1, argv + 1);
+			else
+#endif
+				return make_reg(0, kSciPlatformMacintosh);
+		default:
+			error("Unknown platform %d", g_sci->getPlatform());
+		}
+	case kGetColorDepth:
+		if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+			return make_reg(0, /* 16-bit color */ 3);
+		} else {
+			return make_reg(0, /* 256 color */ 2);
+		}
+	case kGetCDSpeed:
+		// The value `4` comes from Rama DOS resource.cfg installed in DOSBox,
+		// and seems to correspond to the highest expected CD speed value
+		return make_reg(0, 4);
+	case kGetCDDrive:
+	default:
+		return NULL_REG;
+	}
+}
+
+reg_t kWebConnect(EngineState *s, int argc, reg_t *argv) {
+	const Common::String baseUrl = "https://web.archive.org/web/1996/";
+	const Common::String gameUrl = argc > 0 ? s->_segMan->getString(argv[0]) : "http://www.sierra.com";
+	return make_reg(0, g_system->openUrl(baseUrl + gameUrl));
+}
+
+reg_t kWinExec(EngineState *s, int argc, reg_t *argv) {
+	return NULL_REG;
+}
+#endif
 
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
 	// Placeholder for empty kernel functions which are still called from the
@@ -586,18 +691,28 @@ reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
 reg_t kStub(EngineState *s, int argc, reg_t *argv) {
 	Kernel *kernel = g_sci->getKernel();
 	int kernelCallNr = -1;
+	int kernelSubCallNr = -1;
 
 	Common::List<ExecStack>::const_iterator callIterator = s->_executionStack.end();
 	if (callIterator != s->_executionStack.begin()) {
 		callIterator--;
 		ExecStack lastCall = *callIterator;
-		kernelCallNr = lastCall.debugSelector;
+		kernelCallNr = lastCall.debugKernelFunction;
+		kernelSubCallNr = lastCall.debugKernelSubFunction;
 	}
 
-	Common::String warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) +
-								Common::String::format("[%x]", kernelCallNr) +
-								" invoked. Params: " +
-								Common::String::format("%d", argc) + " (";
+	Common::String warningMsg;
+	if (kernelSubCallNr == -1) {
+		warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) +
+		             Common::String::format("[%x]", kernelCallNr);
+	} else {
+		warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr, kernelSubCallNr) +
+		             Common::String::format("[%x:%x]", kernelCallNr, kernelSubCallNr);
+
+	}
+
+	warningMsg += " invoked. Params: " +
+	              Common::String::format("%d", argc) + " (";
 
 	for (int i = 0; i < argc; i++) {
 		warningMsg +=  Common::String::format("%04x:%04x", PRINT_REG(argv[i]));

@@ -27,6 +27,7 @@
  *  - lastexpress
  *  - mohawk
  *  - saga
+ *  - sci (DK3 ADPCM for Phantasmagoria 2)
  *  - scumm
  *  - tinsel
  */
@@ -44,7 +45,8 @@ class SeekableReadStream;
 
 namespace Audio {
 
-class RewindableAudioStream;
+class PacketizedAudioStream;
+class SeekableAudioStream;
 
 // There are several types of ADPCM encoding, only some are supported here
 // For all the different encodings, refer to:
@@ -73,13 +75,33 @@ enum ADPCMType {
  * @param blockAlign        block alignment ???
  * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
-RewindableAudioStream *makeADPCMStream(
+SeekableAudioStream *makeADPCMStream(
     Common::SeekableReadStream *stream,
     DisposeAfterUse::Flag disposeAfterUse,
     uint32 size, ADPCMType type,
     int rate,
     int channels,
     uint32 blockAlign = 0);
+
+/**
+ * Creates a PacketizedAudioStream that will automatically queue
+ * packets as individual AudioStreams like returned by makeADPCMStream.
+ *
+ * Due to the ADPCM types not necessarily supporting stateless
+ * streaming, OKI and DVI are not supported by this function
+ * and will return NULL.
+ *
+ * @param type              the compression type used
+ * @param rate              the sampling rate
+ * @param channels          the number of channels
+ * @param blockAlign        block alignment ???
+ * @return The new PacketizedAudioStream or NULL, if the type isn't supported.
+ */
+PacketizedAudioStream *makePacketizedADPCMStream(
+	ADPCMType type,
+	int rate,
+	int channels,
+	uint32 blockAlign = 0);
 
 } // End of namespace Audio
 

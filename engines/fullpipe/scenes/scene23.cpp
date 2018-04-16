@@ -192,24 +192,24 @@ void sceneHandler23_spinWheel1() {
 	int mv = 0;
 
 	switch (g_vars->scene23_calend0->_statics->_staticsId) {
-    case ST_CND_0:
+	case ST_CND_0:
 		mv = MV_CND_0_1;
 		break;
 
-    case ST_CND_1:
+	case ST_CND_1:
 		mv = MV_CND_1_2;
 		break;
 
-    case ST_CND_2:
+	case ST_CND_2:
 		mv = MV_CND_2_3;
 		break;
 
-    case ST_CND_3:
+	case ST_CND_3:
 		g_vars->scene23_calend0->changeStatics2(ST_CND_9);
 		mv = MV_CND_9_0;
 		break;
 
-    default:
+	default:
 		break;
 	}
 
@@ -224,47 +224,47 @@ void sceneHandler23_spinWheel2and4(StaticANIObject *ani) {
 	int mv = 0;
 
 	switch (ani->_statics->_staticsId) {
-    case ST_CND_0:
+	case ST_CND_0:
 		mv = MV_CND_0_1;
 		break;
 
-    case ST_CND_1:
+	case ST_CND_1:
 		mv = MV_CND_1_2;
 		break;
 
-    case ST_CND_2:
+	case ST_CND_2:
 		mv = MV_CND_2_3;
 		break;
 
-    case ST_CND_3:
+	case ST_CND_3:
 		mv = MV_CND_3_4;
 		break;
 
-    case ST_CND_4:
+	case ST_CND_4:
 		mv = MV_CND_4_5;
 		break;
 
-    case ST_CND_5:
+	case ST_CND_5:
 		mv = MV_CND_5_6;
 		break;
 
-    case ST_CND_6:
+	case ST_CND_6:
 		mv = MV_CND_6_7;
 		break;
 
-    case ST_CND_7:
+	case ST_CND_7:
 		mv = MV_CND_7_8;
 		break;
 
-    case ST_CND_8:
+	case ST_CND_8:
 		mv = MV_CND_8_9;
 		break;
 
-    case ST_CND_9:
+	case ST_CND_9:
 		mv = MV_CND_9_0;
 		break;
 
-    default:
+	default:
 		break;
 	}
 
@@ -296,17 +296,17 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 					if (g_fp->_msgX == 276 && g_fp->_msgY == 438 )
 						return;
 
-					MessageQueue *mq = getCurrSceneSc2MotionController()->method34(g_fp->_aniMan, 276, 438, 1, ST_MAN_RIGHT);
+					MessageQueue *mq = getCurrSceneSc2MotionController()->startMove(g_fp->_aniMan, 276, 438, 1, ST_MAN_RIGHT);
 
 					if (mq) {
-						mq->addExCommandToEnd(cmd->createClone());;
+						mq->addExCommandToEnd(cmd->createClone());
 
 						postExCommand(g_fp->_aniMan->_id, 2, 276, 438, 0, -1);
 					}
 				} else {
 					MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC23_TOCALENDAR), 0, 0);
 
-					mq->addExCommandToEnd(cmd->createClone());;
+					mq->addExCommandToEnd(cmd->createClone());
 					mq->setFlags(mq->getFlags() | 1);
 					mq->chain(0);
 				}
@@ -351,20 +351,20 @@ void sceneHandler23_pushButton(ExCommand *cmd) {
 
 void sceneHandler23_sendClick(StaticANIObject *ani) {
 	int msg = 0;
-	switch (ani->_okeyCode) {
-    case 0:
+	switch (ani->_odelay) {
+	case 0:
 		msg = MSG_SC23_CLICKBTN1;
 		break;
-    case 1:
+	case 1:
 		msg = MSG_SC23_CLICKBTN2;
 		break;
-    case 2:
+	case 2:
 		msg = MSG_SC23_CLICKBTN3;
 		break;
-    case 3:
+	case 3:
 		msg = MSG_SC23_CLICKBTN4;
 		break;
-    default:
+	default:
 		break;
 	}
 
@@ -424,7 +424,7 @@ int sceneHandler23(ExCommand *cmd) {
 	case MSG_SC23_FROMSTOOL:
 		g_vars->scene23_isOnStool = false;
 
-		getCurrSceneSc2MotionController()->setEnabled();
+		getCurrSceneSc2MotionController()->activate();
 		getGameLoaderInteractionController()->enableFlag24();
 
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 1);
@@ -438,7 +438,7 @@ int sceneHandler23(ExCommand *cmd) {
 	case MSG_SC23_ONSTOOL:
 		g_vars->scene23_isOnStool = true;
 
-		getCurrSceneSc2MotionController()->clearEnabled();
+		getCurrSceneSc2MotionController()->deactivate();
 		getGameLoaderInteractionController()->disableFlag24();
 
 		g_fp->_behaviorManager->setFlagByStaticAniObject(g_fp->_aniMan, 0);
@@ -537,7 +537,7 @@ int sceneHandler23(ExCommand *cmd) {
 			}
 
 			if (ani && ani->_id == ANI_HANDLE23) {
-				handleObjectInteraction(g_fp->_aniMan, ani, cmd->_keyCode);
+				handleObjectInteraction(g_fp->_aniMan, ani, cmd->_param);
 				cmd->_messageKind = 0;
 			} else {
 				sceneHandler23_fromStool(cmd);

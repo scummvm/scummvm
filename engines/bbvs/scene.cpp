@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -118,8 +118,8 @@ void BbvsEngine::initScene(bool sounds) {
 			sceneObject->animIndex = soInit->animIndex;
 			sceneObject->frameIndex = sceneObject->anim->frameCount - 1;
 			sceneObject->frameTicks = 1;
-			sceneObject->x = soInit->x << 16;
-			sceneObject->y = soInit->y << 16;
+			sceneObject->x = soInit->x * 65536;
+			sceneObject->y = soInit->y * 65536;
 		}
 	}
 
@@ -142,7 +142,7 @@ void BbvsEngine::initScene(bool sounds) {
 		int minDistance = 0xFFFFFF;
 		for (int cameraNum = 0; cameraNum < 4; ++cameraNum) {
 			CameraInit *cameraInit = _gameModule->getCameraInit(cameraNum);
-			int curDistance = ABS(cameraInit->cameraPos.x - (int)(_buttheadObject->x >> 16) + 160);
+			int curDistance = ABS(cameraInit->cameraPos.x - (int)(_buttheadObject->x / 65536) + 160);
 			if (curDistance < minDistance) {
 				minDistance = curDistance;
 				_currCameraNum = cameraNum;

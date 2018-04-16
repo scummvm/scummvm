@@ -20,6 +20,10 @@
  *
  */
 
+// Allow use of stuff in <nds.h>
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
+#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
 #include "common/scummsys.h"
 
 #if defined(DYNAMIC_MODULES) && defined(__DS__)

@@ -29,7 +29,7 @@
  *
  */
 
-#include "common/array.h"
+#include "common/memstream.h"
 #include "common/debug-channels.h"
 
 #include "sword25/sword25.h"
@@ -43,7 +43,7 @@
 #include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lualib.h"
 #include "sword25/util/lua/lauxlib.h"
-#include "sword25/util/pluto/pluto.h"
+#include "sword25/util/lua_persistence.h"
 
 namespace Sword25 {
 
@@ -111,10 +111,6 @@ bool LuaScriptEngine::init() {
 
 	// Place the error handler function in the Lua registry, and remember the index
 	_pcallErrorhandlerRegistryIndex = luaL_ref(_state, LUA_REGISTRYINDEX);
-
-	// Initialize the Pluto-Persistence library
-	luaopen_pluto(_state);
-	lua_pop(_state, 1);
 
 	// Initialize debugging callback
 	if (DebugMan.isDebugChannelEnabled(kDebugScript)) {
@@ -218,7 +214,7 @@ bool LuaScriptEngine::executeBuffer(const byte *data, uint size, const Common::S
 
 	// Run buffer contents
 	if (lua_pcall(_state, 0, 0, -2) != 0) {
-		error("An error occured while executing \"%s\":\n%s.",
+		error("An error occurred while executing \"%s\":\n%s.",
 		               name.c_str(),
 		               lua_tostring(_state, -1));
 		lua_pop(_state, 2);
@@ -383,19 +379,8 @@ bool pushPermanentsTable(lua_State *L, PERMANENT_TABLE_TYPE tableType) {
 
 	return true;
 }
-}
 
-namespace {
-int chunkwriter(lua_State *L, const void *p, size_t sz, void *ud) {
-	Common::Array<byte> & chunkData = *reinterpret_cast<Common::Array<byte> * >(ud);
-	const byte *buffer = reinterpret_cast<const byte *>(p);
-
-	while (sz--)
-		chunkData.push_back(*buffer++);
-
-	return 1;
-}
-}
+} // End of anonymous namespace
 
 bool LuaScriptEngine::persist(OutputPersistenceBlock &writer) {
 	// Empty the Lua stack. pluto_persist() xepects that the stack is empty except for its parameters
@@ -409,12 +394,12 @@ bool LuaScriptEngine::persist(OutputPersistenceBlock &writer) {
 	pushPermanentsTable(_state, PTT_PERSIST);
 	lua_getglobal(_state, "_G");
 
-	// Lua persists and stores the data in a Common::Array
-	Common::Array<byte> chunkData;
-	pluto_persist(_state, chunkwriter, &chunkData);
+	// Lua persists and stores the data in a WriteStream
+	Common::MemoryWriteStreamDynamic writeStream(DisposeAfterUse::YES);
+	Lua::persistLua(_state, &writeStream);
 
 	// Persistenzdaten in den Writer schreiben.
-	writer.writeByteArray(chunkData);
+	writer.write(writeStream.getData(), writeStream.size());
 
 	// Die beiden Tabellen vom Stack nehmen.
 	lua_pop(_state, 2);
@@ -423,24 +408,6 @@ bool LuaScriptEngine::persist(OutputPersistenceBlock &writer) {
 }
 
 namespace {
-
-struct ChunkreaderData {
-	void   *BufferPtr;
-	size_t  Size;
-	bool    BufferReturned;
-};
-
-const char *chunkreader(lua_State *L, void *ud, size_t *sz) {
-	ChunkreaderData &cd = *reinterpret_cast<ChunkreaderData *>(ud);
-
-	if (!cd.BufferReturned) {
-		cd.BufferReturned = true;
-		*sz = cd.Size;
-		return reinterpret_cast<const char *>(cd.BufferPtr);
-	} else {
-		return 0;
-	}
-}
 
 void clearGlobalTable(lua_State *L, const char **exceptions) {
 	// Iterate over all elements of the global table
@@ -479,7 +446,8 @@ void clearGlobalTable(lua_State *L, const char **exceptions) {
 	// Perform garbage collection, so that all removed elements are deleted
 	lua_gc(L, LUA_GCCOLLECT, 0);
 }
-}
+
+} // End of anonymous namespace
 
 bool LuaScriptEngine::unpersist(InputPersistenceBlock &reader) {
 	// Empty the Lua stack. pluto_persist() xepects that the stack is empty except for its parameters
@@ -512,14 +480,9 @@ bool LuaScriptEngine::unpersist(InputPersistenceBlock &reader) {
 	// Persisted Lua data
 	Common::Array<byte> chunkData;
 	reader.readByteArray(chunkData);
+	Common::MemoryReadStream readStream(&chunkData[0], chunkData.size(), DisposeAfterUse::NO);
 
-	// Chunk-Reader initialisation. It is used with pluto_unpersist to restore read data
-	ChunkreaderData cd;
-	cd.BufferPtr = &chunkData[0];
-	cd.Size = chunkData.size();
-	cd.BufferReturned = false;
-
-	pluto_unpersist(_state, chunkreader, &cd);
+	Lua::unpersistLua(_state, &readStream);
 
 	// Permanents-Table is removed from stack
 	lua_remove(_state, -2);
@@ -527,7 +490,7 @@ bool LuaScriptEngine::unpersist(InputPersistenceBlock &reader) {
 	// The read elements in the global table about
 	lua_pushnil(_state);
 	while (lua_next(_state, -2) != 0) {
-		// The referenec to the global table (_G) must not be overwritten, or ticks from Lua total
+		// The reference to the global table (_G) must not be overwritten, or ticks from Lua total
 		bool isGlobalReference = lua_isstring(_state, -2) && strcmp(lua_tostring(_state, -2), "_G") == 0;
 		if (!isGlobalReference) {
 			lua_pushvalue(_state, -2);

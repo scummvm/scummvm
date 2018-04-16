@@ -44,9 +44,9 @@ bool Sprite::contains(const Common::Point &pos) const {
 }
 
 enum {
-	kAnimOpEvent = 1,
-	kAnimOpPlayWave = 2,
-	kAnimOpPlayAnim = 3,
+	kAnimOpEvent = 1, 
+	kAnimOpPlayWave = 2, 
+	kAnimOpPlayAnim = 3, 
 	kAnimOpDrawSprite = 4
 };
 
@@ -57,6 +57,7 @@ Animation::Animation(Common::SeekableReadStream *stream, uint16 id, Common::Poin
 
 	// probably total size?
 	uint32 unknown = _stream->readUint32LE();
+	_size = unknown;
 
 	debug(8, "anim: size %d, state %08x, unknown %08x", size, _state, unknown);
 
@@ -82,6 +83,55 @@ void Animation::seekToCurrPos() {
 	_stream->seek(_offset, SEEK_SET);
 }
 
+void ComposerEngine::loadAnimation(Animation *&anim, uint16 animId, int16 x, int16 y, int16 eventParam, int32 size) {
+	Common::SeekableReadStream *stream = NULL;
+	Pipe *newPipe = NULL;
+
+	// First, check the existing pipes.
+	for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
+		Pipe *pipe = *j;
+		if (!pipe->hasResource(ID_ANIM, animId))
+			continue;
+		stream = pipe->getResource(ID_ANIM, animId, false);
+
+		// When loading from savegame, make sure we have the correct stream
+		if ((!size) || (stream->size() >= size)) break;
+		stream = NULL;
+	}
+
+	// If we didn't find it, try the libraries.
+	if (!stream) {
+		if (!hasResource(ID_ANIM, animId)) {
+			warning("ignoring attempt to play invalid anim %d", animId);
+			return;
+		}
+		Common::List<Library>::iterator j;
+		for (j = _libraries.begin(); j != _libraries.end(); j++) {
+			stream = j->_archive->getResource(ID_ANIM, animId);
+
+			// When loading from savegame, make sure we have the correct stream
+			if ((!size) || (stream->size() >= size)) break;
+			stream = NULL;
+		}
+
+		uint32 type = j->_archive->getResourceFlags(ID_ANIM, animId);
+
+		// If the resource is a pipe itself, then load the pipe
+		// and then fish the requested animation out of it.
+		if (type != 1) {
+			_pipeStreams.push_back(stream);
+			newPipe = new Pipe(stream, animId);
+			_pipes.push_front(newPipe);
+			newPipe->nextFrame();
+			stream = newPipe->getResource(ID_ANIM, animId, false);
+		}
+	}
+
+	anim = new Animation(stream, animId, Common::Point(x, y), eventParam);
+	if (newPipe)
+		newPipe->_anim = anim;
+}
+
 void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventParam) {
 	// First, we check if this animation is already playing,
 	// and if it is, we sabotage that running one first.
@@ -93,49 +143,10 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 		stopAnimation(*i);
 	}
 
-	Common::SeekableReadStream *stream = NULL;
-	Pipe *newPipe = NULL;
-
-	// First, check the existing pipes.
-	for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
-		Pipe *pipe = *j;
-		if (!pipe->hasResource(ID_ANIM, animId))
-			continue;
-		stream = pipe->getResource(ID_ANIM, animId, false);
-		break;
-	}
-
-	// If we didn't find it, try the libraries.
-	if (!stream) {
-		if (!hasResource(ID_ANIM, animId)) {
-			warning("ignoring attempt to play invalid anim %d", animId);
-			return;
-		}
-		stream = getResource(ID_ANIM, animId);
-
-		uint32 type = 0;
-		for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
-			if (i->_archive->hasResource(ID_ANIM, animId)) {
-				type = i->_archive->getResourceFlags(ID_ANIM, animId);
-				break;
-			}
-
-		// If the resource is a pipe itself, then load the pipe
-		// and then fish the requested animation out of it.
-		if (type != 1) {
-			_pipeStreams.push_back(stream);
-			newPipe = new Pipe(stream);
-			_pipes.push_front(newPipe);
-			newPipe->nextFrame();
-			stream = newPipe->getResource(ID_ANIM, animId, false);
-		}
-	}
-
-	Animation *anim = new Animation(stream, animId, Common::Point(x, y), eventParam);
+	Animation *anim = NULL;
+	loadAnimation(anim, animId, x, y, eventParam);
 	_anims.push_back(anim);
 	runEvent(kEventAnimStarted, animId, eventParam, 0);
-	if (newPipe)
-		newPipe->_anim = anim;
 }
 
 void ComposerEngine::stopAnimation(Animation *anim, bool localOnly, bool pipesOnly) {
@@ -376,7 +387,7 @@ void ComposerEngine::playPipe(uint16 id) {
 	}
 
 	Common::SeekableReadStream *stream = getResource(ID_PIPE, id);
-	OldPipe *pipe = new OldPipe(stream);
+	OldPipe *pipe = new OldPipe(stream, id);
 	_pipes.push_front(pipe);
 	//pipe->nextFrame();
 

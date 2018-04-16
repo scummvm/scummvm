@@ -1019,6 +1019,8 @@ void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, in
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
+	dx++; dy++;	// Original function draws 1px bigger
+
 	Graphics::Surface destSurface = lockArea(Common::Rect(x, y * 2, x + dx, (y + dy) * 2));
 
 	destSurface.hLine(0, 0, dx, col);

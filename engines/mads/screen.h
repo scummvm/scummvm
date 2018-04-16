@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -33,8 +33,8 @@ namespace MADS {
 #define MADS_SCREEN_WIDTH 320
 #define MADS_SCREEN_HEIGHT 200
 
-enum Layer {
-	LAYER_GUI = 19
+enum ScreenMode {
+	SCREENMODE_VGA = 19
 };
 
 enum ScreenTransition {
@@ -47,13 +47,18 @@ enum ScreenTransition {
 	kTransitionCircleIn3, kTransitionCircleIn4,
 	kVertTransition1, kVertTransition2, kVertTransition3,
 	kVertTransition4, kVertTransition5, kVertTransition6,
-	kVertTransition7, kCenterVertTransition
+	kVertTransition7, kNullPaletteCopy
 };
 
 enum InputMode {
 	kInputBuildingSentences = 0,		// Normal sentence building
 	kInputConversation = 1,			// Conversation mode
 	kInputLimitedSentences = 2		// Use only scene hotspots
+};
+
+enum ThroughBlack {
+	THROUGH_BLACK1 = 1,
+	THROUGH_BLACK2 = 2
 };
 
 class SpriteSlot;
@@ -91,8 +96,8 @@ public:
 };
 
 class DirtyAreas : public Common::Array<DirtyArea> {
-private:
-	MADSEngine *_vm;
+//private:
+//	MADSEngine *_vm;
 public:
 	DirtyAreas(MADSEngine *vm);
 
@@ -112,7 +117,7 @@ public:
 	* @param destSurface	Dest surface
 	* @param posAdjust		Position adjustment
 	*/
-	void copy(MSurface *srcSurface, MSurface *destSurface, const Common::Point &posAdjust);
+	void copy(BaseSurface *srcSurface, BaseSurface *destSurface, const Common::Point &posAdjust);
 
 	/**
 	* Use the lsit of dirty areas to copy areas of the screen surface to
@@ -123,14 +128,13 @@ public:
 	void reset();
 };
 
-
 class ScreenObject {
 public:
 	bool _active;
 	Common::Rect _bounds;
 	ScrCategory _category;
 	int _descId;
-	int _layer;
+	int _mode;
 
 	ScreenObject();
 };
@@ -162,7 +166,7 @@ public:
 	/**
 	* Add a new item to the list
 	*/
-	void add(const Common::Rect &bounds, Layer layer, ScrCategory category, int descId);
+	ScreenObject *add(const Common::Rect &bounds, ScreenMode mode, ScrCategory category, int descId);
 
 	/**
 	 * Check objects on the screen
@@ -202,47 +206,58 @@ public:
 	void synchronize(Common::Serializer &s);
 };
 
-class ScreenSurface : public MSurface {
+class Screen : public BaseSurface {
 private:
 	uint16 _random;
-	byte *_surfacePixels;
-	Common::Rect _clipBounds;
+	MSurface _rawSurface;
+
+	void panTransition(MSurface &newScreen, byte *palData, int entrySide,
+		const Common::Point &srcPos, const Common::Point &destPos,
+		ThroughBlack throughBlack, bool setPalette, int numTicks);
+
+	void swapForeground(byte newPalette[PALETTE_SIZE], byte *paletteMap);
+
+	void swapPalette(const byte palData[PALETTE_SIZE], byte swapTable[PALETTE_COUNT], bool foreground);
 public:
 	int _shakeCountdown;
 public:
 	/**
 	 * Constructor
 	 */
-	ScreenSurface();
+	Screen();
 
 	/**
 	 * Destructor
 	 */
-	~ScreenSurface();
+	virtual ~Screen() {}
 
 	/**
-	 * Initialize the surface
+	 * Updates the physical screen with contents of the internal surface
 	 */
-	void init();
+	virtual void update();
 
 	/**
-	 * Copys an area of the screen surface to the ScmmVM physical screen buffer
-	 * @param bounds	Area of screen surface to copy
+	 * Transition to a new screen with a given effect
 	 */
-	void copyRectToScreen(const Common::Rect &bounds);
-
-	/**
-	 * Updates the screen with the contents of the surface
-	 */
-	void updateScreen();
-
 	void transition(ScreenTransition transitionType, bool surfaceFlag);
 
+	/**
+	 * Set the screen drawing area to a sub-section of the real screen
+	 */
 	void setClipBounds(const Common::Rect &r);
 
+	/**
+	 * Reset back to drawing on the entirety of the screen
+	 */
 	void resetClipBounds();
 
-	const Common::Rect &getClipBounds() { return _clipBounds; }
+	/**
+	 * Return the current drawing/clip area
+	 */
+	const Common::Rect getClipBounds() const {
+		const Common::Point pt = getOffsetFromOwner();
+		return Common::Rect(pt.x, pt.y, pt.x + this->w, pt.y + this->h);
+	}
 };
 
 } // End of namespace MADS

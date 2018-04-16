@@ -37,7 +37,6 @@ class PopUpDialog : public Dialog {
 protected:
 	PopUpWidget	*_popUpBoss;
 	int			_clickX, _clickY;
-	byte		*_buffer;
 	int			_selection;
 	uint32		_openTime;
 	bool		_twoColumns;
@@ -49,12 +48,12 @@ protected:
 public:
 	PopUpDialog(PopUpWidget *boss, int clickX, int clickY);
 
-	void drawDialog();
+	void drawDialog(DrawLayer layerToDraw) override;
 
-	void handleMouseUp(int x, int y, int button, int clickCount);
-	void handleMouseWheel(int x, int y, int direction);	// Scroll through entries with scroll wheel
-	void handleMouseMoved(int x, int y, int button);	// Redraw selections depending on mouse position
-	void handleKeyDown(Common::KeyState state);	// Scroll through entries with arrow keys etc.
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;	// Scroll through entries with scroll wheel
+	void handleMouseMoved(int x, int y, int button) override;	// Redraw selections depending on mouse position
+	void handleKeyDown(Common::KeyState state) override;	// Scroll through entries with arrow keys etc.
 
 protected:
 	void drawMenuEntry(int entry, bool hilite);
@@ -70,6 +69,10 @@ protected:
 PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	: Dialog(0, 0, 16, 16),
 	_popUpBoss(boss) {
+	_backgroundType = ThemeEngine::kDialogBackgroundNone;
+
+	_openTime = 0;
+	_entriesPerColumn = 1;
 
 	// Copy the selection index
 	_selection = _popUpBoss->_selectedItem;
@@ -142,11 +145,11 @@ PopUpDialog::PopUpDialog(PopUpWidget *boss, int clickX, int clickY)
 	// Remember original mouse position
 	_clickX = clickX - _x;
 	_clickY = clickY - _y;
-
-	_openTime = 0;
 }
 
-void PopUpDialog::drawDialog() {
+void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
+	Dialog::drawDialog(layerToDraw);
+
 	// Draw the menu border
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x+_w, _y+_h), 0);
 
@@ -232,6 +235,7 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_KP1:
 		if (state.flags & Common::KBD_NUM)
 			break;
+		// fall through
 	case Common::KEYCODE_END:
 		setSelection(_popUpBoss->_entries.size()-1);
 		break;
@@ -239,6 +243,7 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_KP2:
 		if (state.flags & Common::KBD_NUM)
 			break;
+		// fall through
 	case Common::KEYCODE_DOWN:
 		moveDown();
 		break;
@@ -246,6 +251,7 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_KP7:
 		if (state.flags & Common::KBD_NUM)
 			break;
+		// fall through
 	case Common::KEYCODE_HOME:
 		setSelection(0);
 		break;
@@ -253,6 +259,7 @@ void PopUpDialog::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_KP8:
 		if (state.flags & Common::KBD_NUM)
 			break;
+		// fall through
 	case Common::KEYCODE_UP:
 		moveUp();
 		break;
@@ -362,8 +369,11 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		// Draw a separator
 		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x+w, y+kLineHeight));
 	} else {
-		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w, y+2+kLineHeight), name,	hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
-								Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding);
+		g_gui.theme()->drawText(
+			Common::Rect(x+1, y+2, x+w, y+2+kLineHeight),
+			name, hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
+			Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding
+		);
 	}
 }
 
@@ -380,6 +390,17 @@ PopUpWidget::PopUpWidget(GuiObject *boss, const String &name, const char *toolti
 	_type = kPopUpWidget;
 
 	_selectedItem = -1;
+	_leftPadding = _rightPadding = 0;
+}
+
+PopUpWidget::PopUpWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
+	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss) {
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_IGNORE_DRAG);
+	_type = kPopUpWidget;
+
+	_selectedItem = -1;
+
+	_leftPadding = _rightPadding = 0;
 }
 
 void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -389,7 +410,7 @@ void PopUpWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		if (newSel != -1 && _selectedItem != newSel) {
 			_selectedItem = newSel;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
-			draw();
+			markAsDirty();
 		}
 	}
 }
@@ -409,7 +430,7 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 			(newSelection != _selectedItem)) {
 			_selectedItem = newSelection;
 			sendCommand(kPopUpItemSelectedCmd, _entries[_selectedItem].tag);
-			draw();
+			markAsDirty();
 		}
 	}
 }
@@ -457,7 +478,10 @@ void PopUpWidget::drawWidget() {
 	Common::String sel;
 	if (_selectedItem >= 0)
 		sel = _entries[_selectedItem].name;
-	g_gui.theme()->drawPopUpWidget(Common::Rect(_x, _y, _x + _w, _y + _h), sel, _leftPadding, _state, Graphics::kTextAlignLeft);
+	g_gui.theme()->drawPopUpWidgetClip(
+		Common::Rect(_x, _y, _x + _w, _y + _h), getBossClipRect(),
+		sel, _leftPadding, _state, Graphics::kTextAlignLeft
+	);
 }
 
 } // End of namespace GUI

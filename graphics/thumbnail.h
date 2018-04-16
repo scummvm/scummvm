@@ -52,7 +52,7 @@ bool skipThumbnail(Common::SeekableReadStream &in);
 /**
  * Loads a thumbnail from the given input stream.
  */
-Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in);
+bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail, bool skipThumbnail = false);
 
 /**
  * Saves a thumbnail to the given write stream.

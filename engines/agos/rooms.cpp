@@ -383,7 +383,7 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 			 for (uint16 z = minNum; z <= maxNum; z++) {
 				uint16 itemNum = z + 2;
 				item = derefItem(itemNum);
-				item->parent = 0;
+				_itemArrayPtr[itemNum] = 0;
 
 				uint16 num = (itemNum - _itemArrayInited);
 				_roomStates[num].state = item->state;
@@ -453,6 +453,7 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 					item->classFlags = _roomStates[num].classFlags;
 					SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
 					subRoom->roomExitStates = _roomStates[num].roomExitStates;
+
 				}
 				in.close();
 

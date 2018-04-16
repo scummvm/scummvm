@@ -31,6 +31,8 @@
 
 #include <bautils.h>
 
+#define JOY_DEADZONE 3200
+
 SymbianSdlEventSource::zoneDesc SymbianSdlEventSource::_zones[TOTAL_ZONES] = {
         { 0, 0, 320, 145 },
         { 0, 145, 150, 55 },
@@ -56,76 +58,76 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 			switch (loop) {
 			case GUI::ACTION_UP:
 				if (ev.type == SDL_KEYDOWN) {
-					_km.y_vel = -1;
+					_km.y_vel = -1 * MULTIPLIER;
 					_km.y_down_count = 1;
 				} else {
-					_km.y_vel = 0;
+					_km.y_vel = 0 * MULTIPLIER;
 					_km.y_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_DOWN:
 				if (ev.type == SDL_KEYDOWN) {
-					_km.y_vel = 1;
+					_km.y_vel = 1 * MULTIPLIER;
 					_km.y_down_count = 1;
 				} else {
-					_km.y_vel = 0;
+					_km.y_vel = 0 * MULTIPLIER;
 					_km.y_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_LEFT:
 				if (ev.type == SDL_KEYDOWN) {
-					_km.x_vel = -1;
+					_km.x_vel = -1 * MULTIPLIER;
 					_km.x_down_count = 1;
 				} else {
-					_km.x_vel = 0;
+					_km.x_vel = 0 * MULTIPLIER;
 					_km.x_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_RIGHT:
 				if (ev.type == SDL_KEYDOWN) {
-					_km.x_vel = 1;
+					_km.x_vel = 1 * MULTIPLIER;
 					_km.x_down_count = 1;
 				} else {
-					_km.x_vel = 0;
+					_km.x_vel = 0 * MULTIPLIER;
 					_km.x_down_count = 0;
 				}
 				event.type = Common::EVENT_MOUSEMOVE;
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_LEFTCLICK:
 				event.type = (ev.type == SDL_KEYDOWN ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP);
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_RIGHTCLICK:
 				event.type = (ev.type == SDL_KEYDOWN ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP);
-				processMouseEvent(event, _km.x, _km.y);
+				processMouseEvent(event, _km.x / MULTIPLIER, _km.y / MULTIPLIER);
 
 				return true;
 
 			case GUI::ACTION_ZONE:
 				if (ev.type == SDL_KEYDOWN) {
 					for (int i = 0; i < TOTAL_ZONES; i++)
-						if (_km.x >= _zones[i].x && _km.y >= _zones[i].y &&
-							_km.x <= _zones[i].x + _zones[i].width && _km.y <= _zones[i].y + _zones[i].height
+						if ( (_km.x / MULTIPLIER) >= _zones[i].x && (_km.y / MULTIPLIER) >= _zones[i].y &&
+							(_km.x / MULTIPLIER) <= _zones[i].x + _zones[i].width && (_km.y / MULTIPLIER <= _zones[i].y + _zones[i].height)
 							) {
-							_mouseXZone[i] = _km.x;
-							_mouseYZone[i] = _km.y;
+							_mouseXZone[i] = _km.x / MULTIPLIER;
+							_mouseYZone[i] = _km.y / MULTIPLIER;
 							break;
 						}
 						_currentZone++;
@@ -133,7 +135,13 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 							_currentZone = 0;
 						event.type = Common::EVENT_MOUSEMOVE;
 						processMouseEvent(event, _mouseXZone[_currentZone], _mouseYZone[_currentZone]);
-						SDL_WarpMouse(event.mouse.x, event.mouse.y);
+						// update KbdMouse
+						_km.x = _mouseXZone[_currentZone] * MULTIPLIER;
+						_km.y = _mouseYZone[_currentZone] * MULTIPLIER;
+
+						if (_graphicsManager) {
+							_graphicsManager->getWindow()->warpMouseInWindow(event.mouse.x, event.mouse.y);
+						}
 				}
 
 				return true;
@@ -189,6 +197,40 @@ bool SymbianSdlEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				}
 			}
 		}
+	}
+
+	return false;
+}
+
+bool SymbianSdlEventSource::handleAxisToMouseMotion(int16 xAxis, int16 yAxis) {
+	// Symbian wants dialog joystick i.e cursor for movement/selection
+
+	if (xAxis > JOY_DEADZONE) {
+		xAxis -= JOY_DEADZONE;
+	} else if (xAxis < -JOY_DEADZONE) {
+		xAxis += JOY_DEADZONE;
+	} else
+		xAxis = 0;
+	if (yAxis > JOY_DEADZONE) {
+		yAxis -= JOY_DEADZONE;
+	} else if (yAxis < -JOY_DEADZONE) {
+		yAxis += JOY_DEADZONE;
+	} else
+		yAxis = 0;
+
+	if (xAxis != 0) {
+		_km.x_vel = (xAxis > 0) ? 1 * MULTIPLIER:-1 * MULTIPLIER;
+		_km.x_down_count = 1;
+	} else {
+		_km.x_vel = 0;
+		_km.x_down_count = 0;
+	}
+	if (yAxis != 0) {
+		_km.y_vel = (yAxis > 0) ? 1 * MULTIPLIER: -1 * MULTIPLIER;
+		_km.y_down_count = 1;
+	} else {
+		_km.y_vel = 0;
+		_km.y_down_count = 0;
 	}
 
 	return false;

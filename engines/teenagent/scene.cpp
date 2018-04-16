@@ -71,6 +71,9 @@ Scene::Scene(TeenAgentEngine *vm) : _vm(vm), intro(false), _id(0), ons(0),
 
 	varia.close();
 	loadObjectData();
+
+	_onsCount = 0;
+	_messageColor = 0;
 }
 
 Scene::~Scene() {
@@ -314,7 +317,7 @@ void Scene::loadOns() {
 	uint16 addr = _vm->res->dseg.get_word(dsAddr_onsAnimationTablePtr + (_id - 1) * 2);
 	debugC(0, kDebugScene, "ons index: %04x", addr);
 
-	onsCount = 0;
+	_onsCount = 0;
 	byte b;
 	byte onId[16];
 	while ((b = _vm->res->dseg.get_byte(addr)) != 0xff) {
@@ -323,15 +326,15 @@ void Scene::loadOns() {
 		if (b == 0)
 			continue;
 
-		onId[onsCount++] = b;
+		onId[_onsCount++] = b;
 	}
 
 	delete[] ons;
 	ons = NULL;
 
-	if (onsCount > 0) {
-		ons = new Surface[onsCount];
-		for (uint32 i = 0; i < onsCount; ++i) {
+	if (_onsCount > 0) {
+		ons = new Surface[_onsCount];
+		for (uint32 i = 0; i < _onsCount; ++i) {
 			Common::ScopedPtr<Common::SeekableReadStream> s(_vm->res->ons.getStream(onId[i]));
 			if (s) {
 				ons[i].load(*s, Surface::kTypeOns);
@@ -498,7 +501,7 @@ bool Scene::processEvent(const Common::Event &event) {
 				events.clear();
 				sounds.clear();
 				currentEvent.clear();
-				messageColor = textColorMark;
+				_messageColor = textColorMark;
 				for (int i = 0; i < 4; ++i)
 					customAnimation[i].free();
 				_vm->playMusic(4);
@@ -535,10 +538,13 @@ bool Scene::processEvent(const Common::Event &event) {
 		default:
 			break;
 		}
+		break;
 
 	default:
 		return false;
 	}
+
+	return false;
 }
 
 struct ZOrderCmp {
@@ -651,7 +657,7 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 		bool gotAnyAnimation = false;
 
 		if (ons != NULL && debugFeatures.feature[DebugFeatures::kShowOns]) {
-			for (uint32 i = 0; i < onsCount; ++i) {
+			for (uint32 i = 0; i < _onsCount; ++i) {
 				Surface *s = ons + i;
 				if (s != NULL)
 					s->render(surface);
@@ -821,7 +827,7 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 			}
 
 			if (visible) {
-				_vm->res->font7.render(surface, messagePos.x, messagePos.y, message, messageColor);
+				_vm->res->font7.render(surface, messagePos.x, messagePos.y, message, _messageColor);
 				busy = true;
 			}
 		}
@@ -1005,7 +1011,7 @@ bool Scene::processEventQueue() {
 					warning("no animation in slot %u", messageSlot);
 			}
 			messagePos = messagePosition(message, p);
-			messageColor = currentEvent.color;
+			_messageColor = currentEvent.color;
 
 			if (messageFirstFrame)
 				currentEvent.clear(); // async message, clearing event
@@ -1153,7 +1159,7 @@ bool Scene::processEventQueue() {
 	}
 
 	if (events.empty()) {
-		messageColor = textColorMark;
+		_messageColor = textColorMark;
 		hideActor = false;
 	}
 
@@ -1232,7 +1238,7 @@ void Scene::displayMessage(const Common::String &str, byte color, const Common::
 	debugC(0, kDebugScene, "displayMessage: %s", str.c_str());
 	message = str;
 	messagePos = (pos.x | pos.y) ? pos : messagePosition(str, position);
-	messageColor = color;
+	_messageColor = color;
 	messageTimer = messageDuration(message);
 }
 
@@ -1251,7 +1257,7 @@ void Scene::clear() {
 void Scene::clearMessage() {
 	message.clear();
 	messageTimer = 0;
-	messageColor = textColorMark;
+	_messageColor = textColorMark;
 	messageFirstFrame = 0;
 	messageLastFrame = 0;
 	messageAnimation = NULL;

@@ -25,6 +25,34 @@ class AlgorithmTestSuite : public CxxTest::TestSuite {
 		return true;
 	}
 
+	/**
+	 * Auxiliary function to check the equality of two generic collections (A and B), from one_first to one_last.
+	 *
+	 * @note: It assumes that other has at least (one_last - one-first) lenght, starting from other_first.
+	 *
+	 * @param one_first: The first element of the first collection to be compared.
+	 * @param one_last: The last element of the first collection to be compared.
+	 * @param other_first: The first element of the collection to be compared.
+	 * @return true if, for each index i in [one_first, one_last), A[i] == B[i], false otherwise.
+	 */
+	template<typename It>
+	bool checkEqual(It one_first, It one_last, It other_first) {
+		if (one_first == one_last)
+			return true;
+
+		// Check whether two containers have the same items in the same order,
+		// starting from some iterators one_first and other_first
+		//
+		// It iterates through the containers, comparing the elements one by one.
+		// If it finds a discrepancy, it returns false. Otherwise, it returns true.
+
+		for (; one_first != one_last; ++one_first, ++other_first)
+			if (*one_first != *other_first)
+				return false;
+
+		return true;
+	}
+
 	struct Item {
 		int value;
 		Item(int v) : value(v) {}
@@ -47,9 +75,27 @@ public:
 
 	void test_pod_sort() {
 		{
+			int dummy;
+			Common::sort(&dummy, &dummy);
+			TS_ASSERT_EQUALS(checkSort(&dummy, &dummy, Common::Less<int>()), true);
+		}
+		{
+			int array[] = { 12 };
+			Common::sort(array, ARRAYEND(array));
+			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
+
+			// already sorted
+			Common::sort(array, ARRAYEND(array));
+			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
+		}
+		{
 			int array[] = { 63, 11, 31, 72, 1, 48, 32, 69, 38, 31 };
 			Common::sort(array, ARRAYEND(array));
 			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
+
+			int sortedArray[] = { 1, 11, 31, 31, 32, 38, 48, 63, 69, 72 };
+			for (size_t i = 0; i < 10; ++i)
+				TS_ASSERT_EQUALS(array[i], sortedArray[i]);
 
 			// already sorted
 			Common::sort(array, ARRAYEND(array));
@@ -78,5 +124,33 @@ public:
 		// already sorted
 		Common::sort(list.begin(), list.end());
 		TS_ASSERT_EQUALS(checkSort(list.begin(), list.end(), Common::Less<Item>()), true);
+	}
+
+	void test_string_replace() {
+
+		Common::String original = "Hello World";
+		Common::String expected = "Hells Wsrld";
+
+		Common::replace(original.begin(), original.end(), 'o', 's');
+
+		TS_ASSERT_EQUALS(original, expected);
+	}
+
+	void test_container_replace() {
+
+		Common::List<int> original;
+		Common::List<int> expected;
+		for (int i = 0; i < 6; ++i) {
+			original.push_back(i);
+			if (i == 3) {
+				expected.push_back(5);
+			} else {
+				expected.push_back(i);
+			}
+		}
+
+		Common::replace(original.begin(), original.end(), 3, 5);
+
+		TS_ASSERT_EQUALS(checkEqual(original.begin(), original.end(), expected.begin()), true);
 	}
 };

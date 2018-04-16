@@ -27,7 +27,7 @@
 #include "voyeur/data.h"
 #include "voyeur/events.h"
 #include "voyeur/files.h"
-#include "voyeur/graphics.h"
+#include "voyeur/screen.h"
 #include "voyeur/sound.h"
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -164,7 +164,7 @@ public:
 	Debugger *_debugger;
 	EventsManager *_eventsManager;
 	FilesManager *_filesManager;
-	GraphicsManager *_graphicsManager;
+	Screen *_screen;
 	SoundManager *_soundManager;
 	SVoy *_voy;
 
@@ -296,7 +296,7 @@ public:
 	void showEndingNews();
 };
 
-#define VOYEUR_SAVEGAME_VERSION 1
+#define VOYEUR_SAVEGAME_VERSION 2
 
 /**
  * Header for Voyeur savegame files
@@ -312,7 +312,7 @@ struct VoyeurSavegameHeader {
 	/**
 	 * Read in the header from the specified file
 	 */
-	bool read(Common::InSaveFile *f);
+	bool read(Common::InSaveFile *f, bool skipThumbnail = true);
 
 	/**
 	 * Write out header information to the specified file

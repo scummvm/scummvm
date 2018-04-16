@@ -37,12 +37,11 @@
 
 namespace Kyra {
 
-KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
+WARN_UNUSED_RESULT KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail) {
 	uint32 type = in->readUint32BE();
 	header.originalSave = false;
 	header.oldHeader = false;
 	header.flags = 0;
-	header.thumbnail = 0;
 
 	if (type == MKTAG('K', 'Y', 'R', 'A') || type == MKTAG('A', 'R', 'Y', 'K')) { // old Kyra1 header ID
 		header.gameID = GI_KYRA1;
@@ -125,10 +124,8 @@ KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekabl
 		header.flags = in->readUint32BE();
 
 	if (header.version >= 14) {
-		if (loadThumbnail) {
-			header.thumbnail = Graphics::loadThumbnail(*in);
-		} else {
-			Graphics::skipThumbnail(*in);
+		if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
+			return kRSHEIoError;
 		}
 	}
 
@@ -140,7 +137,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return 0;
 
-	ReadSaveHeaderError errorCode = KyraEngine_v1::readSaveHeader(in, false, header);
+	ReadSaveHeaderError errorCode = KyraEngine_v1::readSaveHeader(in, header);
 	if (errorCode != kRSHENoError) {
 		if (errorCode == kRSHEInvalidType)
 			warning("No ScummVM Kyra engine savefile header");
@@ -156,7 +153,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 	if (!header.originalSave) {
 		if (!header.oldHeader) {
 			if (header.gameID != _flags.gameID && checkID) {
-				warning("Trying to load game state from other game (save game: %u, running game: %u)", header.gameID, _flags.gameID);
+				warning("Trying to load saved game from other game (saved game: %u, running game: %u)", header.gameID, _flags.gameID);
 				delete in;
 				return 0;
 			}
@@ -184,7 +181,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 	return in;
 }
 
-Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const {
+Common::OutSaveFile *KyraEngine_v1::openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const {
 	if (shouldQuit())
 		return 0;
 
@@ -226,7 +223,7 @@ Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, con
 		delete genThumbnail;
 	}
 
-	return out;
+	return new Common::OutSaveFile(out);
 }
 
 const char *KyraEngine_v1::getSavegameFilename(int num) {

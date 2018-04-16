@@ -1,6 +1,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include "common/array.h"
+#include "common/noncopyable.h"
 #include "common/str.h"
 
 class ArrayTestSuite : public CxxTest::TestSuite
@@ -42,6 +43,48 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(*iter, -11);
 		iter++;
 		TS_ASSERT_EQUALS(iter, array.end());
+	}
+
+	void test_erase_iterator() {
+		Common::Array<int> array;
+		Common::Array<int>::iterator iter;
+
+		// Fill the array with some random data
+		array.push_back(17);
+		array.push_back(33);
+		array.push_back(-11);
+
+		iter = array.begin();
+		++iter;
+
+		iter = array.erase(iter);
+		TS_ASSERT_DIFFERS(iter, array.end());
+		TS_ASSERT_EQUALS(*iter, -11);
+		TS_ASSERT_EQUALS(array.size(), (unsigned int)2);
+		TS_ASSERT_EQUALS(array[0], 17);
+		TS_ASSERT_EQUALS(array[1], -11);
+	}
+
+	void test_insert_iterator() {
+		Common::Array<int> array;
+		Common::Array<int>::iterator iter;
+
+		// Fill the array with some random data
+		array.push_back(17);
+		array.push_back(33);
+		array.push_back(-11);
+
+		iter = array.begin();
+		++iter;
+
+		array.insert(iter, 99);
+
+		TS_ASSERT_EQUALS(*iter, 99);
+		TS_ASSERT_EQUALS(array.size(), (unsigned int)4);
+		TS_ASSERT_EQUALS(array[0], 17);
+		TS_ASSERT_EQUALS(array[1], 99);
+		TS_ASSERT_EQUALS(array[2], 33);
+		TS_ASSERT_EQUALS(array[3], -11);
 	}
 
 	void test_direct_access() {
@@ -256,6 +299,53 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array2.size(), (unsigned int)3);
 	}
 
+	class Copyable {
+		bool _copied;
+		int _value;
+		Copyable &operator=(Copyable &);
+	public:
+		Copyable() : _copied(false), _value(1) {}
+		explicit Copyable(const int v) : _copied(false), _value(v) {}
+		Copyable(const Copyable &other) : _copied(true), _value(other._value) {}
+		bool copied() const { return _copied; }
+		int value() const { return _value; }
+	};
+
+	void test_array_constructor_count() {
+		Common::Array<int> array(10);
+		TS_ASSERT_EQUALS(array.size(), 10U);
+		TS_ASSERT_EQUALS(array[0], 0);
+		TS_ASSERT_EQUALS(array[9], 0);
+
+		// This will fail at compile time if it is not possible to construct an
+		// array without copy-construction
+		Common::Array<Common::NonCopyable> nonCopyable(1);
+	}
+
+	void test_array_constructor_count_copy_value() {
+		Common::Array<int> trivial(5, 1);
+		TS_ASSERT_EQUALS(trivial.size(), 5U);
+		TS_ASSERT_EQUALS(trivial[0], 1);
+		TS_ASSERT_EQUALS(trivial[4], 1);
+
+		Copyable c(123);
+		typedef Common::Array<Copyable> NonTrivialArray;
+
+		NonTrivialArray nonTrivialCopy(3, c);
+		TS_ASSERT_EQUALS(nonTrivialCopy.size(), 3U);
+		for (NonTrivialArray::size_type i = 0; i < nonTrivialCopy.size(); ++i) {
+			TS_ASSERT_EQUALS(nonTrivialCopy[0].value(), 123);
+			TS_ASSERT(nonTrivialCopy[0].copied());
+		}
+
+		NonTrivialArray nonTrivialDefault(3);
+		TS_ASSERT_EQUALS(nonTrivialDefault.size(), 3U);
+		for (NonTrivialArray::size_type i = 0; i < nonTrivialDefault.size(); ++i) {
+			TS_ASSERT_EQUALS(nonTrivialDefault[0].value(), 1);
+			TS_ASSERT(!nonTrivialDefault[0].copied());
+		}
+	}
+
 	void test_array_constructor_str() {
 		const char *array1[] = { "a", "b", "c" };
 
@@ -266,6 +356,15 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array2[2], "c");
 
 		TS_ASSERT_EQUALS(array2.size(), (unsigned int)3);
+	}
+
+	void test_data() {
+		Common::Array<int> array;
+		TS_ASSERT(array.data() == nullptr);
+		array.resize(2);
+		TS_ASSERT(array.data() != nullptr);
+		TS_ASSERT_EQUALS(array.data(), &array.front());
+		TS_ASSERT_EQUALS(array.data() + array.size() - 1, &array.back());
 	}
 
 	void test_front_back_push_pop() {
@@ -309,6 +408,46 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array.size(), (unsigned int)2);
 		TS_ASSERT_EQUALS(array[0], -3);
 		TS_ASSERT_EQUALS(array[1], 163);
+	}
+
+};
+
+struct ListElement {
+	int value;
+
+	ListElement(int v) : value(v) {}
+};
+
+static int compareInts(const void *a, const void *b) {
+	return ((const ListElement *)a)->value - ((const ListElement *)b)->value;
+}
+
+class SortedArrayTestSuite : public CxxTest::TestSuite {
+public:
+	void test_insert() {
+		Common::SortedArray<ListElement *> container(compareInts);
+		Common::SortedArray<ListElement *>::iterator iter;
+
+		// Fill the container with some random data
+		container.insert(new ListElement(1));
+		container.insert(new ListElement(7));
+		container.insert(new ListElement(8));
+		container.insert(new ListElement(3));
+		container.insert(new ListElement(5));
+		container.insert(new ListElement(4));
+		container.insert(new ListElement(9));
+		container.insert(new ListElement(2));
+		container.insert(new ListElement(6));
+
+		// Verify contents are correct
+		iter = container.begin();
+
+		for (int i = 1; i < 10; i++) {
+			TS_ASSERT_EQUALS((*iter)->value, i);
+			++iter;
+		}
+
+		TS_ASSERT_EQUALS(iter, container.end());
 	}
 
 };

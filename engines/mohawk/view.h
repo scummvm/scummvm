@@ -138,11 +138,10 @@ public:
 	uint32 _flags;
 	uint32 _nextTime;
 	uint32 _delayTime;
-	uint16 _dirty; // byte in old
-	byte _needsReset;
-	byte _justReset; // old
-	byte _notifyDone; // old
-	byte _done; // new
+	bool _dirty; // byte in old
+	bool _needsReset;
+	bool _justReset; // old
+	bool _done; // new
 
 	FeatureData _data;
 
@@ -192,13 +191,6 @@ protected:
 	void finishResetFeatureScript();
 };
 
-#define NUM_SYNC_CHANNELS 17
-struct SyncChannel {
-	uint16 masterId;
-	byte state;
-	bool alternate;
-};
-
 class View {
 public:
 	View(MohawkEngine *vm);
@@ -234,7 +226,6 @@ public:
 	void sortView();
 
 	uint32 _lastIdleTime;
-	SyncChannel _syncChannels[NUM_SYNC_CHANNELS];
 
 	virtual uint32 getTime() = 0;
 

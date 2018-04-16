@@ -23,8 +23,8 @@
 #ifndef TOOLS_CREATE_PROJECT_H
 #define TOOLS_CREATE_PROJECT_H
 
-#ifndef __has_feature         // Optional of course.
-  #define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#ifndef __has_feature       // Optional of course.
+#define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
 #include <map>
@@ -86,6 +86,11 @@ struct EngineDesc {
 	 * Whether the engine should be included in the build or not.
 	 */
 	bool enable;
+	
+	/**
+	 * Features required for this engine.
+	 */
+	StringList requiredFeatures;
 
 	/**
 	 * A list of all available sub engine names. Sub engines are engines
@@ -229,15 +234,17 @@ struct BuildSetup {
 	StringList testDirs;  ///< List of all folders containing tests
 
 	bool devTools;         ///< Generate project files for the tools
-	bool tests;             ///< Generate project files for the tests
+	bool tests;            ///< Generate project files for the tests
 	bool runBuildEvents;   ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
 	bool createInstaller;  ///< Create NSIS installer after the build
+	bool useSDL2;          ///< Whether to use SDL2 or not.
 
 	BuildSetup() {
 		devTools        = false;
 		tests           = false;
 		runBuildEvents  = false;
 		createInstaller = false;
+		useSDL2         = true;
 	}
 };
 
@@ -314,6 +321,17 @@ std::string convertPathToWin(const std::string &path);
  * @param ext Reference to a string, where to store the extension.
  */
 void splitFilename(const std::string &fileName, std::string &name, std::string &ext);
+
+/**
+ * Returns the basename of a path.
+ * examples:
+ *   a/b/c/d.ext -> d.ext
+ *   d.ext       -> d.ext
+ *
+ * @param fileName Filename
+ * @return The basename
+ */
+std::string basename(const std::string &fileName);
 
 /**
  * Checks whether the given file will produce an object file or not.
@@ -417,6 +435,13 @@ protected:
 	 * @param setup Description of the desired build setup.
 	 */
 	virtual void createOtherBuildFiles(const BuildSetup &setup) = 0;
+
+	/**
+	 *  Add resources to the project
+	 *
+	 * @param setup Description of the desired build setup.
+	 */
+	virtual void addResourceFiles(const BuildSetup &setup, StringList &includeList, StringList &excludeList) = 0;
 
 	/**
 	 * Create a project file for the specified list of files.

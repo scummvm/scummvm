@@ -25,7 +25,6 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-#include "gui/about.h"
 #include "gui/message.h"
 
 #include "agos/agos.h"
@@ -157,7 +156,7 @@ void AGOSEngine::quickLoadOrSave() {
 		Subroutine *sub;
 		success = loadGame(genSaveName(_saveLoadSlot));
 		if (!success) {
-			buf = Common::String::format(_("Failed to load game state from file:\n\n%s"), filename.c_str());
+			buf = Common::String::format(_("Failed to load saved game from file:\n\n%s"), filename.c_str());
 		} else if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 			drawIconArray(2, me(), 0, 0);
 			setBitFlag(97, true);
@@ -192,7 +191,7 @@ void AGOSEngine::quickLoadOrSave() {
 	} else {
 		success = saveGame(_saveLoadSlot, _saveLoadName);
 		if (!success)
-			buf = Common::String::format(_("Failed to save game state to file:\n\n%s"), filename.c_str());
+			buf = Common::String::format(_("Failed to save game to file:\n\n%s"), filename.c_str());
 	}
 
 	if (!success) {
@@ -200,7 +199,7 @@ void AGOSEngine::quickLoadOrSave() {
 		dialog.runModal();
 
 	} else if (_saveLoadType == 1) {
-		buf = Common::String::format(_("Successfully saved game state in file:\n\n%s"), filename.c_str());
+		buf = Common::String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
 		GUI::TimedMessageDialog dialog(buf, 1500);
 		dialog.runModal();
 
@@ -495,7 +494,7 @@ void AGOSEngine_Elvira2::userGame(bool load) {
 
 			i = userGameGetKey(&b, 128);
 			if (b) {
-				if (i <= 223) {
+				if (i <= 23) {
 					if (!confirmOverWrite(window)) {
 						listSaveGames();
 						continue;
@@ -1261,7 +1260,6 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 
 		uint16 room = _currentRoom;
 		_currentRoom = f->readUint16BE();
-
 		if (_roomsListPtr) {
 			byte *p = _roomsListPtr;
 			if (room == _currentRoom) {
@@ -1293,8 +1291,7 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 
 					 for (uint16 z = minNum; z <= maxNum; z++) {
 						uint16 itemNum = z + 2;
-						Item *item = derefItem(itemNum);
-						item->parent = 0;
+						_itemArrayPtr[itemNum] = 0;
 					}
 				}
 			}
@@ -1317,6 +1314,9 @@ bool AGOSEngine_Elvira2::loadGame(const Common::String &filename, bool restartMo
 		} else {
 			uint parent = f->readUint16BE();
 			uint next = f->readUint16BE();
+
+			if (getGameType() == GType_WW && getPlatform() == Common::kPlatformDOS && derefItem(item->parent) == NULL)
+				item->parent = 0;
 
 			parent_item = derefItem(parent);
 			setItemParent(item, parent_item);

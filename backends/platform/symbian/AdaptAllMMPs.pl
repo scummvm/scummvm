@@ -48,12 +48,15 @@ chdir("../../../");
 	"mmp/scummvm_voyeur.mmp",
 	"mmp/scummvm_wintermute.mmp",
 	# New engines
+	"mmp/scummvm_access.mmp",
 	"mmp/scummvm_avalanche.mmp",
 	"mmp/scummvm_bbvs.mmp",
 	"mmp/scummvm_cge2.mmp",
 	"mmp/scummvm_fullpipe.mmp",
 	"mmp/scummvm_lastexpress.mmp",
 	"mmp/scummvm_mads.mmp",
+	"mmp/scummvm_prince.mmp",
+	"mmp/scummvm_sherlock.mmp",
 	"mmp/scummvm_sword25.mmp",
 	"mmp/scummvm_testbed.mmp",
 	"mmp/scummvm_zvision.mmp",
@@ -103,6 +106,7 @@ my @sections_scumm = ("", "ENABLE_SCUMM_7_8", "ENABLE_HE"); # special sections f
 # files excluded from build, case insensitive, will be matched in filename string only
 my @excludes_snd = (
 	"mt32.*",
+	"Analog.cpp",
 	"fluidsynth.cpp",
 	"i386.cpp",
 	"part.*",
@@ -191,6 +195,7 @@ ParseModule("_tucker",	"tucker",	\@section_empty);
 ParseModule("_voyeur"     ,"voyeur",	\@section_empty);
 ParseModule("_wintermute","wintermute",	\@section_empty);
 ##### new engines
+ParseModule("_access"     ,"access",	\@section_empty);
 ParseModule("_avalanche"     ,"avalanche",	\@section_empty);
 ParseModule("_bbvs"     	,"bbvs",	\@section_empty);
 ParseModule("_cge2"     	,"cge2",	\@section_empty);
@@ -198,6 +203,8 @@ ParseModule("_fullpipe"     ,"fullpipe",	\@section_empty);
 ParseModule("_lastexpress","lastexpress",	\@section_empty);
 ParseModule("_m4",		"m4",		\@section_empty);
 ParseModule("_mads"			,"mads",	\@section_empty);
+ParseModule("_prince"			,"prince",	\@section_empty);
+ParseModule("_sherlock"     ,"sherlock",	\@section_empty);
 ParseModule("_sword25"     ,"sword25",	\@section_empty);
 ParseModule("_testbed"     ,"testbed",	\@section_empty);
 ParseModule("_zvision"     ,"zvision",	\@section_empty);

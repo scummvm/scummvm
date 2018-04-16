@@ -159,6 +159,9 @@ static int RegisterSoundReel(SCNHANDLE hFilm, int column, int actorCol) {
 		}
 	}
 
+	if (i == MAX_SOUNDREELS)
+		error("Out of sound reels in RegisterSoundReel()");
+
 	g_soundReelNumbers[i]++;
 	return i;
 }

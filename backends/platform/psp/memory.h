@@ -33,7 +33,7 @@
 
 // These instructions don't generate automatically but are faster then copying byte by byte
 inline void lwl_copy(byte *dst, const byte *src) {
-	register uint32 data;
+	uint32 data;
 	asm volatile ("lwr %0,0(%1)\n\t"
 		 "lwl %0,3(%1)\n\t"
 		 : "=&r" (data) : "r" (src), "m" (*src));

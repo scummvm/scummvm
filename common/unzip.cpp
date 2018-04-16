@@ -334,8 +334,10 @@ int unzGetLocalExtrafield(unzFile file, voidp buf, unsigned len);
 #define SIZEZIPLOCALHEADER (0x1e)
 
 
+#if 0
 const char unz_copyright[] =
    " unzip 0.15 Copyright 1998 Gilles Vollant ";
+#endif
 
 /* unz_file_info_interntal contain internal info about a file in zipfile*/
 typedef struct {

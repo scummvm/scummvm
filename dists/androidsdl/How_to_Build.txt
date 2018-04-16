@@ -1,0 +1,49 @@
+1) At first, for building you need (64bit) linux.
+
+2) Install Android SDK and NDK (You can unpack them into ~/Android directory), and download required tools.
+
+	https://developer.android.com/studio/index.html (you can download GUI Android Studio with SDK (which installs
+from studio) or download command-line tools)
+    
+At current moment (01.01.2018) latest NDK version r16b not supported by pelya's liBSDL, so you need to use previous version r15c
+    https://developer.android.com/ndk/downloads/older_releases.html
+
+Download this:
+
+	Android SDK Tools
+	Android SDK Platform-tools
+	Android SDL Build tools
+	Android 7.1.1 (API 25) or higher
+	SDK Platform (API 25) or higher
+	Extras/Android Support Repository
+
+3) Install JDK. You can do it from apt-get tool or download from official site (in this case you must set envirnoment 
+value to JDK, see guides "How install JDK and set envirnoment values to JDK).
+
+Command:
+	sudo apt-get install openjdk-8-jdk
+
+4) Set envirnoment values to Android's tools. For set android environment I create and use simple script setenv-android.sh.
+In this sript you must set your paths and tools versions. If script don't work (see results from command "printenv") - set
+this values manually. Warning: values will be setted for one command-line session.
+
+Script:
+	#!/bin/sh
+
+	export ANDROID_HOME=~/Android/android-sdk
+	export ANDROID_NDK_HOME=~/Android/android-ndk-r15c
+    export PATH=$ANDROID_NDK_HOME:$ANDROID_HOME/tools:$PATH
+
+5) Install packages, which needs for build:
+
+Commands:
+	sudo apt-get install make
+	sudo apt-get install git-core
+
+6) Create and put keystore (You can use debug version) in ~/.android/debug.keystore
+
+8) Now you can build project
+	cd scummvm/dists/androidsdl
+	./build.sh
+
+Your apk will be stored in this folder

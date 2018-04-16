@@ -31,6 +31,7 @@
 
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/persistent.h"
+#include "engines/wintermute/video/video_subtitler.h"
 #include "video/video_decoder.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
@@ -59,7 +60,7 @@ public:
 	Common::String _filename;
 
 	BaseSurface *_texture;
-	//CVidSubtitler *_subtitler;
+	VideoSubtitler *_subtitler;
 
 	// control methods
 	bool initialize(const Common::String &filename, const Common::String &subtitleFile = Common::String());
@@ -137,9 +138,10 @@ private:
 
 	bool _playbackStarted;
 
+	bool _foundSubtitles;
+
 	// helpers
 	void SetDefaults();
-
 };
 
 } // End of namespace Wintermute

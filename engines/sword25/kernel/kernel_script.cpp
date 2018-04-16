@@ -257,6 +257,7 @@ static int processMessages(lua_State *L) {
 	// to the closeWanted() opcode; see also the TODO comment in there.
 
 	lua_pushbooleancpp(L, !Engine::shouldQuit());
+	g_system->delayMillis(10);
 
 	return 1;
 }

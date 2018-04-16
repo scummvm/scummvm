@@ -33,6 +33,7 @@
 #include "audio/decoders/quicktime.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/mixer.h"
 
 
 namespace Audio {
@@ -463,6 +464,26 @@ private:
 
 AudioStream *makeLimitingAudioStream(AudioStream *parentStream, const Timestamp &length, DisposeAfterUse::Flag disposeAfterUse) {
 	return new LimitingAudioStream(parentStream, length, disposeAfterUse);
+}
+
+/**
+ * An AudioStream that plays nothing and immediately returns that
+ * the endOfStream() has been reached
+ */
+class NullAudioStream : public AudioStream {
+public:
+        bool isStereo() const { return false; }
+        int getRate() const;
+        int readBuffer(int16 *data, const int numSamples) { return 0; }
+        bool endOfData() const { return true; }
+};
+
+int NullAudioStream::getRate() const {
+	return g_system->getMixer()->getOutputRate();
+}
+
+AudioStream *makeNullAudioStream() {
+	return new NullAudioStream();
 }
 
 } // End of namespace Audio

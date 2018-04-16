@@ -34,6 +34,7 @@ template<class T> class Array;
 namespace Graphics {
 
 struct Surface;
+class ManagedSurface;
 
 /** Text alignment modes */
 enum TextAlign {
@@ -141,10 +142,13 @@ public:
 	 * @param color The color of the character.
 	 */
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const = 0;
+	void drawChar(ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 	// TODO: Add doxygen comments to this
 	void drawString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	void drawString(Surface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft) const;
+	void drawString(ManagedSurface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
+	void drawString(ManagedSurface *dst, const Common::U32String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft) const;
 
 	/**
 	 * Compute and return the width the string str has when rendered using this font.
@@ -165,13 +169,14 @@ public:
 	 * It returns the maximal width of any of the new lines (i.e. a value which is less
 	 * or equal to maxWidth).
 	 *
-	 * @param str      the string to word wrap
-	 * @param maxWidth the maximum width a line may have
-	 * @param lines    the string list to which the text lines from str are appended
+	 * @param str       the string to word wrap
+	 * @param maxWidth  the maximum width a line may have
+	 * @param lines     the string list to which the text lines from str are appended
+	 * @param initWidth the starting width of the first line, for partially filled lines (optional)
 	 * @return the maximal width of any of the lines added to lines
 	 */
-	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const;
-	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines) const;
+	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0) const;
+	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0) const;
 
 private:
 	Common::String handleEllipsis(const Common::String &str, int w) const;

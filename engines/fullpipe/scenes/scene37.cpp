@@ -52,6 +52,11 @@ void scene37_initScene(Scene *sc) {
 	Ring *ring;
 	StaticANIObject *ani;
 
+	for (uint i = 0; i < g_vars->scene37_rings.size(); i++)
+		delete g_vars->scene37_rings[i];
+
+	g_vars->scene37_rings.clear();
+
 	g_vars->scene37_lastDudeX = -1;
 
 	ring = new Ring();
@@ -96,7 +101,7 @@ void scene37_initScene(Scene *sc) {
 
 	g_fp->_currentScene = sc;
 
-	g_vars->scene37_cursorIsLocked = false;
+	g_vars->scene37_pipeIsOpen = false;
 
 	g_vars->scene37_plusMinus1 = sc->getStaticANIObject1ById(ANI_PLUSMINUS, 1);
 
@@ -149,7 +154,7 @@ int scene37_updateCursor() {
 	g_fp->updateCursorCommon();
 
 	if (g_fp->_cursorId == PIC_CSR_ITN && g_fp->_objectIdAtCursor == PIC_SC37_MASK) {
-		if (g_vars->scene37_cursorIsLocked)
+		if (g_vars->scene37_pipeIsOpen)
 			g_fp->_cursorId = PIC_CSR_GOL;
 	}
 
@@ -175,20 +180,29 @@ void sceneHandler37_updateRing(int ringNum) {
 		}
 	}
 
-	g_vars->scene37_cursorIsLocked = true;
+	g_vars->scene37_pipeIsOpen = true;
 
-	for (uint j = 0; j < g_vars->scene37_rings.size(); j++) {
-		for (int i = 0; i < g_vars->scene37_rings[ringNum]->numSubRings; i++) {
-			ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[j]->subRings[i]);
+	for (uint i = 0; i < g_vars->scene37_rings.size(); i++) {
+		for (int j = 0; j < g_vars->scene37_rings[i]->numSubRings; j++) {
+			ani = g_fp->_currentScene->getStaticANIObject1ById(ANI_RING, g_vars->scene37_rings[i]->subRings[j]);
 
-			if ((ani->_movement && ani->_movement->_id != MV_RNG_CLOSE) || ani->_statics->_staticsId != ST_RNG_CLOSED2)
-				g_vars->scene37_cursorIsLocked = false;
+			debugC(2, kDebugSceneLogic, "ring[%d][%d]: mov: %d st: %d", i, j, (ani->_movement ? ani->_movement->_id : 0), ani->_statics->_staticsId);
+
+			if (ani->_movement) {
+				if (ani->_movement->_id == MV_RNG_CLOSE)
+					g_vars->scene37_pipeIsOpen = false;
+			} else {
+				if (ani->_statics->_staticsId == ST_RNG_CLOSED2)
+					g_vars->scene37_pipeIsOpen = false;
+			}
 		}
 	}
 
+	debugC(1, kDebugSceneLogic, "Pipe is: %s", g_vars->scene37_pipeIsOpen ? "open" : "closed");
+
 	int state;
 
-	if (g_vars->scene37_cursorIsLocked)
+	if (g_vars->scene37_pipeIsOpen)
 		state = g_fp->getObjectEnumState(sO_LeftPipe_37, sO_IsOpened);
 	else
 		state = g_fp->getObjectEnumState(sO_LeftPipe_37, sO_IsClosed);
@@ -234,11 +248,11 @@ int sceneHandler37(ExCommand *cmd) {
 		{
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1)
 						|| (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);
@@ -266,6 +280,8 @@ int sceneHandler37(ExCommand *cmd) {
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
 		}
 
 		sceneHandler37_setRingsState();

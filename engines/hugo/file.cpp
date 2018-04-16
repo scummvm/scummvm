@@ -32,6 +32,7 @@
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "graphics/surface.h"
 #include "graphics/thumbnail.h"
@@ -294,7 +295,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	Common::String savegameDescription;
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Save game:", "Save", true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		savegameId = dialog->runModalWithCurrentTarget();
 		savegameDescription = dialog->getResultString();
 		delete dialog;
@@ -396,7 +397,7 @@ bool FileManager::restoreGame(const int16 slot) {
 	int16 savegameId;
 
 	if (slot == -1) {
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser("Restore game:", "Restore", false);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		savegameId = dialog->runModalWithCurrentTarget();
 		delete dialog;
 	} else {

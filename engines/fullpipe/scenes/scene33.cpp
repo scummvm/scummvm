@@ -107,7 +107,7 @@ void sceneHandler33_switchVent(StaticANIObject *ani) {
 	if (mv)
 		ani->startAnim(mv, 0, -1);
 
-	g_vars->scene33_ventsState[ani->_okeyCode] = !g_vars->scene33_ventsState[ani->_okeyCode];
+	g_vars->scene33_ventsState[ani->_odelay] = !g_vars->scene33_ventsState[ani->_odelay];
 }
 
 void sceneHandler33_processVents() {
@@ -169,7 +169,7 @@ void sceneHandler33_zoneClickProcess(StaticANIObject *ani) {
 		StaticANIObject *vent1 = 0;
 		StaticANIObject *vent2 = 0;
 
-		switch (ani->_okeyCode) {
+		switch (ani->_odelay) {
 		case 0:
 			vent1 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 2);
 			vent2 = g_fp->_currentScene->getStaticANIObject1ById(ANI_VENT_33, 3);
@@ -211,7 +211,7 @@ void sceneHandler33_clickZones(ExCommand *cmd) {
 	double mindist = 1e10;
 
 	for (uint i = 0; i < g_fp->_currentScene->_staticANIObjectList1.size(); i++) {
-		StaticANIObject *ani = (StaticANIObject *)g_fp->_currentScene->_staticANIObjectList1[i];
+		StaticANIObject *ani = g_fp->_currentScene->_staticANIObjectList1[i];
 
 		if (ani->_id == ANI_VENT_33) {
 			int dx = ani->_ox - cmd->_sceneClickX;
@@ -270,7 +270,7 @@ int sceneHandler33(ExCommand *cmd) {
 		{
 			StaticANIObject *ani = g_fp->_currentScene->getStaticANIObjectAtPos(g_fp->_sceneRect.left + cmd->_x, g_fp->_sceneRect.top + cmd->_y);
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
@@ -279,7 +279,7 @@ int sceneHandler33(ExCommand *cmd) {
 					break;
 				}
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0))
 						g_fp->processArcade(cmd);
 				}
@@ -296,6 +296,8 @@ int sceneHandler33(ExCommand *cmd) {
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
 		}
 
 		if (g_vars->scene33_cube)

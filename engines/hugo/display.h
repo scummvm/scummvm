@@ -30,6 +30,11 @@
 #ifndef HUGO_DISPLAY_H
 #define HUGO_DISPLAY_H
 
+namespace Common {
+class ReadStream;
+class WriteStream;
+}
+
 namespace Hugo {
 enum OverlayState {kOvlUndef, kOvlForeground, kOvlBackground}; // Overlay state
 
@@ -56,7 +61,7 @@ public:
 
 	void     displayBackground();
 	void     displayFrame(const int sx, const int sy, Seq *seq, const bool foreFl);
-	void     displayList(Dupdate update, ...);
+	void     displayList(int update, ...);
 	void     displayRect(const int16 x, const int16 y, const int16 dx, const int16 dy);
 	void     drawBoundaries();
 	void     drawRectangle(const bool filledFl, const int16 x1, const int16 y1, const int16 x2, const int16 y2, const int color);

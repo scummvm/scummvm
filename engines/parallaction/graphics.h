@@ -57,7 +57,7 @@ protected:
 
 
 public:
-	Font() {}
+	Font() : _color(0) {}
 	virtual ~Font() {}
 
 	virtual void setColor(byte color) {

@@ -43,7 +43,8 @@ protected:
 	Parallaction *_vm;
 
 public:
-	SplashInputState_NS(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
+	SplashInputState_NS(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm),
+			_timeOut(0), _startTime(0) {
 	}
 
 	virtual MenuInputState* run() {
@@ -298,7 +299,7 @@ class LoadGameInputState_NS : public MenuInputState {
 	Parallaction *_vm;
 
 public:
-	LoadGameInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm) { }
+	LoadGameInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("loadgame", helper), _vm(vm), _result(false) { }
 
 	virtual MenuInputState* run() {
 		if (!_result) {
@@ -476,6 +477,11 @@ public:
 		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 		_labels[0] = 0;
 		_labels[1] = 0;
+
+		_fail = false;
+		_len = 0;
+		_startTime = 0;
+		_state = 0;
 
 		_codeSelectBlocks[0] = Common::Rect( 111, 129, 127, 153 );	// na
 		_codeSelectBlocks[1] = Common::Rect( 128, 120, 144, 144 );	// wa
@@ -689,6 +695,9 @@ public:
 	ShowCreditsInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("showcredits", helper), _vm(vm) {
 		_labels[0] = 0;
 		_labels[1] = 0;
+
+		_current = 0;
+		_startTime = 0;
 	}
 
 	~ShowCreditsInputState_NS() {
@@ -827,6 +836,8 @@ public:
 		_labels[1] = 0;
 		_labels[2] = 0;
 		_labels[3] = 0;
+
+		_allPartsComplete = false;
 	}
 
 	void destroyLabels() {

@@ -85,14 +85,14 @@ void VideoTheoraPlayer::SetDefaults() {
 	_volume = 100;
 	_theoraDecoder = nullptr;
 
-	// TODO: Add subtitles-support
-	//_subtitler = nullptr;
+	_subtitler = new VideoSubtitler(_gameRef);
+	_foundSubtitles = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 VideoTheoraPlayer::~VideoTheoraPlayer(void) {
 	cleanup();
-//	SAFE_DELETE(_subtitler);
+	delete _subtitler;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -130,6 +130,9 @@ bool VideoTheoraPlayer::initialize(const Common::String &filename, const Common:
 	warning("VideoTheoraPlayer::initialize - Theora support not compiled in, video will be skipped: %s", filename.c_str());
 	return STATUS_FAILED;
 #endif
+
+	_foundSubtitles = _subtitler->loadSubtitles(_filename, subtitleFile);
+
 	_theoraDecoder->loadStream(_file);
 
 	if (!_theoraDecoder->isVideoLoaded()) {
@@ -214,7 +217,10 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		_state = THEORA_STATE_PLAYING;
 		_looping = looping;
 		_playbackType = type;
-
+		if (_subtitler && _foundSubtitles && _gameRef->_subtitles) {
+			_subtitler->update(_theoraDecoder->getFrameCount());
+			_subtitler->display();
+		}
 		_startTime = startTime;
 		_volume = volume;
 		_posX = x;
@@ -256,7 +262,7 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 #if 0 // Stubbed for now as theora isn't seekable
 	if (StartTime) SeekToTime(StartTime);
 
-	Update();
+	update();
 #endif
 	return STATUS_FAILED;
 }
@@ -289,6 +295,10 @@ bool VideoTheoraPlayer::update() {
 	}
 
 	if (_theoraDecoder) {
+		if (_subtitler && _foundSubtitles && _gameRef->_subtitles) {
+			_subtitler->update(_theoraDecoder->getCurFrame());
+		}
+
 		if (_theoraDecoder->endOfVideo() && _looping) {
 			warning("Should loop movie %s, hacked for now", _filename.c_str());
 			_theoraDecoder->rewind();
@@ -412,11 +422,10 @@ bool VideoTheoraPlayer::display(uint32 alpha) {
 	} else {
 		res = STATUS_FAILED;
 	}
-	// TODO: Add subtitles-support
-/*	if (m_Subtitler && _gameRef->m_VideoSubtitles) {
-		m_Subtitler->display();
-	}*/
 
+	if (_subtitler && _foundSubtitles && _gameRef->_subtitles) {
+		_subtitler->display();
+	}
 	return res;
 }
 

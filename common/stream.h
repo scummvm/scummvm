@@ -103,6 +103,14 @@ public:
 		flush();
 	}
 
+	/**
+	* Obtains the current value of the stream position indicator of the
+	* stream.
+	*
+	* @return the current position indicator, or -1 if an error occurred.
+	 */
+	virtual int32 pos() const = 0;
+
 
 	// The remaining methods all have default implementations; subclasses
 	// need not (and should not) overload them.
@@ -125,6 +133,11 @@ public:
 		write(&value, 4);
 	}
 
+	void writeUint64LE(uint64 value) {
+		value = TO_LE_64(value);
+		write(&value, 8);
+	}
+
 	void writeUint16BE(uint16 value) {
 		value = TO_BE_16(value);
 		write(&value, 2);
@@ -135,6 +148,11 @@ public:
 		write(&value, 4);
 	}
 
+	void writeUint64BE(uint64 value) {
+		value = TO_BE_64(value);
+		write(&value, 8);
+	}
+
 	FORCEINLINE void writeSint16LE(int16 value) {
 		writeUint16LE((uint16)value);
 	}
@@ -143,12 +161,46 @@ public:
 		writeUint32LE((uint32)value);
 	}
 
+	FORCEINLINE void writeSint64LE(int64 value) {
+		writeUint64LE((uint64)value);
+	}
+
 	FORCEINLINE void writeSint16BE(int16 value) {
 		writeUint16BE((uint16)value);
 	}
 
 	FORCEINLINE void writeSint32BE(int32 value) {
 		writeUint32BE((uint32)value);
+	}
+
+	FORCEINLINE void writeSint64BE(int64 value) {
+		writeUint64BE((uint64)value);
+	}
+
+
+	/**
+	 * Write the given 32-bit floating point value stored
+	 * in little endian(LSB first) order into the stream.
+	 */
+	FORCEINLINE void writeFloatLE(float value) {
+		uint32 n;
+
+		memcpy(&n, &value, 4);
+
+		writeUint32LE(n);
+	}
+
+
+	/**
+	 * Write the given 32-bit floating point value stored
+	 * in big endian order into the stream.
+	 */
+	FORCEINLINE void writeFloatBE(float value) {
+		uint32 n;
+
+		memcpy(&n, &value, 4);
+
+		writeUint32BE(n);
 	}
 
 	/**
@@ -242,6 +294,19 @@ public:
 	}
 
 	/**
+	 * Read an unsigned 64-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	uint64 readUint64LE() {
+		uint64 val;
+		read(&val, 8);
+		return FROM_LE_64(val);
+	}
+
+	/**
 	 * Read an unsigned 16-bit word stored in big endian (MSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
@@ -268,6 +333,19 @@ public:
 	}
 
 	/**
+	 * Read an unsigned 64-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	uint64 readUint64BE() {
+		uint64 val;
+		read(&val, 8);
+		return FROM_BE_64(val);
+	}
+
+	/**
 	 * Read a signed 16-bit word stored in little endian (LSB first) order
 	 * from the stream and return it.
 	 * Performs no error checking. The return value is undefined
@@ -287,6 +365,17 @@ public:
 	 */
 	FORCEINLINE int32 readSint32LE() {
 		return (int32)readUint32LE();
+	}
+
+	/**
+	 * Read a signed 64-bit word stored in little endian (LSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE int64 readSint64LE() {
+		return (int64)readUint64LE();
 	}
 
 	/**
@@ -312,6 +401,49 @@ public:
 	}
 
 	/**
+	 * Read a signed 64-bit word stored in big endian (MSB first) order
+	 * from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE int64 readSint64BE() {
+		return (int64)readUint64BE();
+	}
+
+	/**
+	 * Read a 32-bit floating point value stored in little endian (LSB first)
+	 * order from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE float readFloatLE() {
+		uint32 n = readUint32LE();
+		float f;
+
+		memcpy(&f, &n, 4);
+
+		return f;
+	}
+
+	/**
+	 * Read a 32-bit floating point value stored in big endian
+	 * order from the stream and return it.
+	 * Performs no error checking. The return value is undefined
+	 * if a read error occurred (for which client code can check by
+	 * calling err() and eos() ).
+	 */
+	FORCEINLINE float readFloatBE() {
+		uint32 n = readUint32BE();
+		float f;
+
+		memcpy(&f, &n, 4);
+
+		return f;
+	}
+
+	/**
 	 * Read the specified amount of data into a malloc'ed buffer
 	 * which then is wrapped into a MemoryReadStream.
 	 * The returned stream might contain less data than requested,
@@ -320,6 +452,14 @@ public:
 	 * calling err() and eos().
 	 */
 	SeekableReadStream *readStream(uint32 dataSize);
+
+	/**
+	 * Read stream in Pascal format, that is, one byte is
+	 * string length, followed by string data
+	 *
+	 * @param transformCR	if set (default), then transform \r into \n
+	 */
+	Common::String readPascalString(bool transformCR = true);
 
 };
 
@@ -408,6 +548,15 @@ public:
 	 * err() or eos() to determine whether an exception occurred.
 	 */
 	virtual String readLine();
+
+	/**
+	 * Print a hexdump of the stream while maintaing position. The number
+	 * of bytes per line is customizable.
+	 * @param len	the length of that data
+	 * @param bytesPerLine	number of bytes to print per line (default: 16)
+	 * @param startOffset	shift the shown offsets by the starting offset (default: 0)
+	 */
+	void hexdump(int len, int bytesPerLine = 16, int startOffset = 0);
 };
 
 /**
@@ -435,12 +584,22 @@ public:
 		return (_bigEndian) ? TO_BE_32(val) : TO_LE_32(val);
 	}
 
+	uint64 readUint64() {
+		uint64 val;
+		read(&val, 8);
+		return (_bigEndian) ? TO_BE_64(val) : TO_LE_64(val);
+	}
+
 	FORCEINLINE int16 readSint16() {
 		return (int16)readUint16();
 	}
 
 	FORCEINLINE int32 readSint32() {
 		return (int32)readUint32();
+	}
+
+	FORCEINLINE int64 readSint64() {
+		return (int64)readUint64();
 	}
 };
 

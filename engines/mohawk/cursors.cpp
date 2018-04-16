@@ -34,8 +34,8 @@
 #include "graphics/wincursor.h"
 
 #ifdef ENABLE_MYST
-#include "mohawk/bitmap.h"
 #include "mohawk/myst.h"
+#include "mohawk/myst_graphics.h"
 #endif
 
 namespace Mohawk {
@@ -86,21 +86,17 @@ void DefaultCursorManager::setCursor(uint16 id) {
 #ifdef ENABLE_MYST
 
 MystCursorManager::MystCursorManager(MohawkEngine_Myst *vm) : _vm(vm) {
-	_bmpDecoder = new MystBitmap();
 }
 
 MystCursorManager::~MystCursorManager() {
-	delete _bmpDecoder;
 }
 
 void MystCursorManager::showCursor() {
 	CursorMan.showMouse(true);
-	_vm->_needsUpdate = true;
 }
 
 void MystCursorManager::hideCursor() {
 	CursorMan.showMouse(false);
-	_vm->_needsUpdate = true;
 }
 
 void MystCursorManager::setCursor(uint16 id) {
@@ -111,25 +107,36 @@ void MystCursorManager::setCursor(uint16 id) {
 		return;
 	}
 
-	// Both Myst and Myst ME use the "MystBitmap" format for cursor images.
-	MohawkSurface *mhkSurface = _bmpDecoder->decodeImage(_vm->getResource(ID_WDIB, id));
-	Graphics::Surface *surface = mhkSurface->getSurface();
 	Common::SeekableReadStream *clrcStream = _vm->getResource(ID_CLRC, id);
 	uint16 hotspotX = clrcStream->readUint16LE();
 	uint16 hotspotY = clrcStream->readUint16LE();
 	delete clrcStream;
 
+	// Both Myst and Myst ME use the "MystBitmap" format for cursor images.
+	MohawkSurface *mhkSurface = _vm->_gfx->findImage(id);
+	Graphics::Surface *surface = mhkSurface->getSurface();
+
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
 	if (surface->format.bytesPerPixel == 1) {
-		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, 0);
-		CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
+		// The transparent color is almost always 255, except for the main cursor (100)
+		// in the D'ni archive, where it is 0.
+		// Using the color of the first pixel as the transparent color for the main cursor always works.
+		byte transparentColor;
+		if (id == kDefaultMystCursor) {
+			transparentColor = ((byte *)surface->getPixels())[0];
+		} else {
+			transparentColor = 255;
+		}
+		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, transparentColor);
+
+		// We're using the screen palette for the original game, but we need
+		// to use this for any 8bpp cursor in ME.
+		if (_vm->getFeatures() & GF_ME)
+			CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 		CursorMan.replaceCursor(surface->getPixels(), surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), false, &pixelFormat);
 	}
-
-	_vm->_needsUpdate = true;
-	delete mhkSurface;
 }
 
 void MystCursorManager::setDefaultCursor() {
@@ -144,7 +151,7 @@ NECursorManager::NECursorManager(const Common::String &appName) {
 	if (!_exe->loadFromEXE(appName)) {
 		// Not all have cursors anyway, so this is not a problem
 		delete _exe;
-		_exe = 0;
+		_exe = nullptr;
 	}
 }
 
@@ -176,10 +183,10 @@ MacCursorManager::MacCursorManager(const Common::String &appName) {
 		if (!_resFork->open(appName)) {
 			// Not all have cursors anyway, so this is not a problem
 			delete _resFork;
-			_resFork = 0;
+			_resFork = nullptr;
 		}
 	} else {
-		_resFork = 0;
+		_resFork = nullptr;
 	}
 }
 
@@ -212,7 +219,7 @@ LivingBooksCursorManager_v2::LivingBooksCursorManager_v2() {
 
 	if (!_sysArchive->openFile("system.mhk")) {
 		delete _sysArchive;
-		_sysArchive = 0;
+		_sysArchive = nullptr;
 	}
 }
 
@@ -240,28 +247,33 @@ void LivingBooksCursorManager_v2::setCursor(const Common::String &name) {
 }
 
 PECursorManager::PECursorManager(const Common::String &appName) {
-	_exe = new Common::PEResources();
-
-	if (!_exe->loadFromEXE(appName)) {
+	Common::PEResources exe;
+	if (!exe.loadFromEXE(appName)) {
 		// Not all have cursors anyway, so this is not a problem
-		delete _exe;
-		_exe = 0;
+		return;
+	}
+
+	const Common::Array<Common::WinResourceID> cursorGroups = exe.getNameList(Common::kPEGroupCursor);
+
+	_cursors.resize(cursorGroups.size());
+	for (uint i = 0; i < cursorGroups.size(); i++) {
+		_cursors[i].id = cursorGroups[i].getID();
+		_cursors[i].cursorGroup = Graphics::WinCursorGroup::createCursorGroup(exe, cursorGroups[i]);
 	}
 }
 
 PECursorManager::~PECursorManager() {
-	delete _exe;
+	for (uint i = 0; i < _cursors.size(); i++) {
+		delete _cursors[i].cursorGroup;
+	}
 }
 
 void PECursorManager::setCursor(uint16 id) {
-	if (_exe) {
-		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, id);
-
-		if (cursorGroup) {
-			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
+	for (uint i = 0; i < _cursors.size(); i++) {
+		if (_cursors[i].id == id) {
+			Graphics::Cursor *cursor = _cursors[i].cursorGroup->cursors[0].cursor;
 			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
-			delete cursorGroup;
 			return;
 		}
 	}

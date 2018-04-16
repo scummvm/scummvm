@@ -88,7 +88,7 @@ void sceneHandler35_startFlow() {
 			g_fp->_behaviorManager->setBehaviorEnabled(g_vars->scene35_bellyInflater, ST_PDV_SMALL, QU_PDV_SML_TRY, 0);
 
 			g_vars->scene35_bellyInflater->changeStatics2(ST_PDV_SMALL);
-			g_vars->scene35_bellyInflater->_flags &= 0xFEFF;
+			g_vars->scene35_bellyInflater->_flags &= ~0x100;
 
 			MessageQueue *mq = new MessageQueue(g_fp->_currentScene->getMessageQueueById(QU_SC35_EATHOZE), 0, 0);
 
@@ -97,7 +97,7 @@ void sceneHandler35_startFlow() {
 			ExCommand *cmd = new ExCommand(g_vars->scene35_bellyInflater->_id, 34, 256, 0, 0, 0, 1, 0, 0, 0);
 
 			cmd->_excFlags |= 3;
-			cmd->_field_14 = 256;
+			cmd->_z = 256;
 			cmd->_messageNum = 0;
 
 			mq->addExCommandToEnd(cmd);
@@ -105,7 +105,7 @@ void sceneHandler35_startFlow() {
 			if (!mq->chain(g_vars->scene35_bellyInflater))
 				delete mq;
 
-			g_vars->scene35_bellyInflater->_flags |= 1;
+			g_vars->scene35_bellyInflater->_flags |= 0x100;
 
 			getCurrSceneSc2MotionController()->enableLinks(sO_CloseThing, 1);
 
@@ -123,10 +123,10 @@ void sceneHandler35_genFlies() {
 	StaticANIObject *fly = g_fp->_currentScene->getStaticANIObject1ById(ANI_FLY, -1);
 
 	int xoff = 0;
-	if ((!fly || !(fly->_flags & 4)) && !(g_fp->_rnd->getRandomNumber(32767) % 30)) {
+	if ((!fly || !(fly->_flags & 4)) && !(g_fp->_rnd.getRandomNumber(32767) % 30)) {
 		int x, y;
 
-		if (g_fp->_rnd->getRandomNumber(1)) {
+		if (g_fp->_rnd.getRandomNumber(1)) {
 			x = 600;
 			y = 0;
 		} else {
@@ -134,16 +134,16 @@ void sceneHandler35_genFlies() {
 			y = 600;
 		}
 
-		int numFlies = g_fp->_rnd->getRandomNumber(3) + 1;
+		int numFlies = g_fp->_rnd.getRandomNumber(3) + 1;
 
 		while (numFlies--) {
-			g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd->getRandomNumber(55) + 1057,  g_fp->_rnd->getRandomNumber(60) + x + xoff, 4, 1);
+			g_fp->_floaters->genFlies(g_fp->_currentScene, g_fp->_rnd.getRandomNumber(55) + 1057,  g_fp->_rnd.getRandomNumber(60) + x + xoff, 4, 1);
 
 			xoff += 40;
 
-			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val2 = 1084;
-			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val3 = y;
-			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1]->val11 = 8.0;
+			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val2 = 1084;
+			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val3 = y;
+			g_fp->_floaters->_array2[g_fp->_floaters->_array2.size() - 1].val11 = 8.0;
 		}
 
 		g_vars->scene35_fliesCounter = 0;
@@ -213,11 +213,11 @@ int sceneHandler35(ExCommand *cmd) {
 					break;
 				}
 
-			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_keyCode)) {
+			if (!ani || !canInteractAny(g_fp->_aniMan, ani, cmd->_param)) {
 				int picId = g_fp->_currentScene->getPictureObjectIdAtPos(cmd->_sceneClickX, cmd->_sceneClickY);
 				PictureObject *pic = g_fp->_currentScene->getPictureObjectById(picId, 0);
 
-				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_keyCode)) {
+				if (!pic || !canInteractAny(g_fp->_aniMan, pic, cmd->_param)) {
 					if ((g_fp->_sceneRect.right - cmd->_sceneClickX < 47 && g_fp->_sceneRect.right < g_fp->_sceneWidth - 1) || (cmd->_sceneClickX - g_fp->_sceneRect.left < 47 && g_fp->_sceneRect.left > 0)) {
 						g_fp->processArcade(cmd);
 						break;
@@ -236,6 +236,8 @@ int sceneHandler35(ExCommand *cmd) {
 
 			if (x > g_fp->_sceneRect.right - 200)
 				g_fp->_currentScene->_x = x + 300 - g_fp->_sceneRect.right;
+
+			g_fp->sceneAutoScrolling();
 		}
 
 		if (g_vars->scene35_flowCounter > 0) {

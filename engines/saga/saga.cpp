@@ -117,6 +117,9 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
+	// Location of Miles audio files (sample.ad and sample.opl) in IHNM
+	SearchMan.addSubDirectoryMatching(gameDataDir, "drivers");
+
 	// The Multi-OS version puts the voices file in the root directory of
 	// the CD. The rest of the data files are in game/itedata
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game/itedata");
@@ -500,6 +503,12 @@ const char *SagaEngine::getTextString(int textStringId) {
 		case Common::ES_ESP:
 			lang = 3;
 			break;
+		case Common::RU_RUS:
+			lang = 4;
+			break;
+		case Common::FR_FRA:
+			lang = 5;
+			break;
 		default:
 			lang = 0;
 			break;
@@ -572,9 +581,11 @@ ColorId SagaEngine::KnownColor2ColorId(KnownColor knownColor) {
 		}
 #ifdef ENABLE_IHNM
 	} else if (getGameId() == GID_IHNM) {
-		// The default colors in the Spanish version of IHNM are shifted by one
-		// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)"
-		int offset = (getLanguage() == Common::ES_ESP) ? 1 : 0;
+		// The default colors in the Spanish, version of IHNM are shifted by one
+		// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)". This
+		// also applies to the German and French versions (bug #7064 - "IHNM:
+		// text mistake in german version").
+		int offset = (getFeatures() & GF_IHNM_COLOR_FIX) ? 1 : 0;
 
 		switch (knownColor) {
 		case(kKnownColorTransparent):
@@ -634,6 +645,9 @@ void SagaEngine::syncSoundSettings() {
 }
 
 void SagaEngine::pauseEngineIntern(bool pause) {
+	if (!_render || !_music)
+		return;
+
 	bool engineIsPaused = (_render->getFlags() & RF_RENDERPAUSE);
 	if (engineIsPaused == pause)
 		return;

@@ -49,7 +49,7 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	Common::ArtificialEventSource _artificialEventSource;
 
 	Common::Queue<Common::Event> _eventQueue;
-	bool notifyEvent(const Common::Event &ev) {
+	bool notifyEvent(const Common::Event &ev) override {
 		_eventQueue.push(ev);
 		return true;
 	}
@@ -67,26 +67,26 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 		kKeyRepeatSustainDelay = 100
 	};
 
-	struct {
-		uint16 ascii;
-		byte flags;
-		int keycode;
-	} _currentKeyDown;
+	bool _shouldGenerateKeyRepeatEvents;
+	Common::KeyState _currentKeyDown;
 	uint32 _keyRepeatTime;
+
+	void handleKeyRepeat();
 public:
 	DefaultEventManager(Common::EventSource *boss);
 	~DefaultEventManager();
 
-	virtual void init();
-	virtual bool pollEvent(Common::Event &event);
-	virtual void pushEvent(const Common::Event &event);
+	virtual void init() override;
+	virtual bool pollEvent(Common::Event &event) override;
+	virtual void pushEvent(const Common::Event &event) override;
+	virtual void purgeMouseEvents() override;
 
-	virtual Common::Point getMousePos() const { return _mousePos; }
-	virtual int getButtonState() const { return _buttonState; }
-	virtual int getModifierState() const { return _modifierState; }
-	virtual int shouldQuit() const { return _shouldQuit; }
-	virtual int shouldRTL() const { return _shouldRTL; }
-	virtual void resetRTL() { _shouldRTL = false; }
+	virtual Common::Point getMousePos() const override { return _mousePos; }
+	virtual int getButtonState() const override { return _buttonState; }
+	virtual int getModifierState() const override { return _modifierState; }
+	virtual int shouldQuit() const override { return _shouldQuit; }
+	virtual int shouldRTL() const override { return _shouldRTL; }
+	virtual void resetRTL() override { _shouldRTL = false; }
 #ifdef FORCE_RTL
 	virtual void resetQuit() { _shouldQuit = false; }
 #endif
@@ -96,6 +96,17 @@ public:
 	 // this, please talk to tsoliman and/or LordHoto.
 	virtual Common::Keymapper *getKeymapper() { return _keymapper; }
 #endif
+
+	/**
+	 * Controls whether repeated key down events are generated while a key is pressed
+	 *
+	 * Backends that generate their own keyboard repeat events should disable this.
+	 *
+	 * @param generateKeyRepeatEvents
+	 */
+	void setGenerateKeyRepeatEvents(bool generateKeyRepeatEvents) {
+		_shouldGenerateKeyRepeatEvents = generateKeyRepeatEvents;
+	}
 };
 
 #endif

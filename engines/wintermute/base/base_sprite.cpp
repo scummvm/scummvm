@@ -41,6 +41,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/game_description.h"
 
 namespace Wintermute {
 
@@ -347,9 +348,17 @@ void BaseSprite::reset() {
 	} else {
 		_currentFrame = -1;
 	}
-
-	killAllSounds();
-
+	if (BaseEngine::instance().getTargetExecutable() >= WME_1_8_6) {
+		/*
+		* This was added in WME 1.8.6
+		*
+		* 5MA and possibly other games ship with pre-1.8.6 WME, and
+		* depends (e.g.: menu sounds, etc) on this not being triggered.
+		*
+		* See bug #6647
+		*/
+		killAllSounds();
+	}
 	_lastFrameTime = 0;
 	_finished = false;
 	_moveX = _moveY = 0;
@@ -817,4 +826,7 @@ bool BaseSprite::killAllSounds() {
 	return STATUS_OK;
 }
 
+Common::String BaseSprite::debuggerToString() const {
+	return Common::String::format("%p: Sprite \"%s\"", (const void *)this, getName());
+}
 } // End of namespace Wintermute

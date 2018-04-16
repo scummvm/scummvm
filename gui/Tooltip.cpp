@@ -32,13 +32,15 @@ namespace GUI {
 
 
 Tooltip::Tooltip() :
-	Dialog(-1, -1, -1, -1), _maxWidth(-1) {
+	Dialog(-1, -1, -1, -1), _maxWidth(-1), _parent(NULL), _xdelta(0), _ydelta(0) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }
 
 void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	assert(widget->hasTooltip());
+
+	_parent = parent;
 
 	_maxWidth = g_gui.xmlEval()->getVar("Globals.Tooltip.MaxWidth", 100);
 	_xdelta = g_gui.xmlEval()->getVar("Globals.Tooltip.XDelta", 0);
@@ -54,11 +56,11 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	_y = MIN<int16>(parent->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
 }
 
-void Tooltip::drawDialog() {
+void Tooltip::drawDialog(DrawLayer layerToDraw) {
 	int num = 0;
 	int h = g_gui.theme()->getFontHeight(ThemeEngine::kFontStyleTooltip) + 2;
 
-	Dialog::drawDialog();
+	Dialog::drawDialog(layerToDraw);
 
 	for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
 		g_gui.theme()->drawText(

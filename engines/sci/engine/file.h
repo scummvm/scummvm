@@ -23,26 +23,41 @@
 #ifndef SCI_ENGINE_FILE_H
 #define SCI_ENGINE_FILE_H
 
+#include "common/memstream.h"
 #include "common/str-array.h"
 #include "common/stream.h"
 
 namespace Sci {
 
-enum {
-	_K_FILE_MODE_OPEN_OR_CREATE = 0,
-	_K_FILE_MODE_OPEN_OR_FAIL = 1,
-	_K_FILE_MODE_CREATE = 2
+enum kFileOpenMode {
+	kFileOpenModeOpenOrCreate = 0,
+	kFileOpenModeOpenOrFail = 1,
+	kFileOpenModeCreate = 2
 };
 
-/* Maximum length of a savegame name (including terminator character). */
-#define SCI_MAX_SAVENAME_LENGTH 0x24
-
 enum {
-	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
+	kMaxSaveNameLength = 36, ///< Maximum length of a savegame name (including optional terminator character).
+	kMaxNumSaveGames = 20 ///< Maximum number of savegames
 };
 
-#define VIRTUALFILE_HANDLE 200
-#define PHANTASMAGORIA_SAVEGAME_INDEX "phantsg.dir"
+#ifdef ENABLE_SCI32
+enum {
+	kAutoSaveId = 0,  ///< The save game slot number for autosaves
+	kNewGameId = 999, ///< The save game slot number for a "new game" save
+
+	// SCI engine expects game IDs to start at 0, but slot 0 in ScummVM is
+	// reserved for autosave, so non-autosave games get their IDs shifted up
+	// when saving or restoring, and shifted down when enumerating save games
+	kSaveIdShift = 1
+};
+#endif
+
+enum {
+	kVirtualFileHandleStart = 32000,
+	kVirtualFileHandleSci32Save = 32100,
+	kVirtualFileHandleSciAudio = 32300,
+	kVirtualFileHandleEnd = 32300
+};
 
 struct SavegameDesc {
 	int16 id;
@@ -50,7 +65,17 @@ struct SavegameDesc {
 	int date;
 	int time;
 	int version;
-	char name[SCI_MAX_SAVENAME_LENGTH];
+	char name[kMaxSaveNameLength];
+	Common::String gameVersion;
+	uint32 script0Size;
+	uint32 gameObjectOffset;
+#ifdef ENABLE_SCI32
+	// Used by Shivers 1
+	uint16 lowScore;
+	uint16 highScore;
+	// Used by MGDX
+	uint8 avatarId;
+#endif
 };
 
 class FileHandle {
@@ -90,49 +115,65 @@ private:
 	void addAsVirtualFiles(Common::String title, Common::String fileMask);
 };
 
-
 #ifdef ENABLE_SCI32
+/**
+ * A MemoryWriteStreamDynamic with additional read functionality.
+ * The read and write functions share a single stream position.
+ */
+class MemoryDynamicRWStream : public Common::MemoryWriteStreamDynamic, public Common::SeekableReadStream {
+public:
+	MemoryDynamicRWStream(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : MemoryWriteStreamDynamic(disposeMemory), _eos(false) { }
+
+	uint32 read(void *dataPtr, uint32 dataSize);
+
+	bool eos() const { return _eos; }
+	int32 pos() const { return _pos; }
+	int32 size() const { return _size; }
+	void clearErr() { _eos = false; Common::MemoryWriteStreamDynamic::clearErr(); }
+	bool seek(int32 offs, int whence = SEEK_SET) { return Common::MemoryWriteStreamDynamic::seek(offs, whence); }
+
+protected:
+	bool _eos;
+};
 
 /**
- * An implementation of a virtual file that supports basic read and write
- * operations simultaneously.
- *
- * This class has been initially implemented for Phantasmagoria, which has its
- * own custom save/load code. The load code keeps checking for the existence
- * of the save index file and keeps closing and reopening it for each save
- * slot. This is notoriously slow and clumsy, and introduces noticeable delays,
- * especially for non-desktop systems. Also, its game scripts request to open
- * the index file for reading and writing with the same parameters
- * (SaveManager::setCurrentSave and SaveManager::getCurrentSave). Moreover,
- * the game scripts reopen the index file for writing in order to update it
- * and seek within it. We do not support seeking in writeable streams, and the
- * fact that our saved games are ZIP files makes this operation even more
- * expensive. Finally, the savegame index file is supposed to be expanded when
- * a new save slot is added.
- * For the aforementioned reasons, this class has been implemented, which offers
- * the basic functionality needed by the game scripts in Phantasmagoria.
+ * A MemoryDynamicRWStream intended to re-write a file.
+ * It reads the contents of `inFile` in the constructor, and writes back
+ * the changes to `fileName` in the destructor (and when calling commit() ).
  */
-class VirtualIndexFile {
+class SaveFileRewriteStream : public MemoryDynamicRWStream {
 public:
-	VirtualIndexFile(Common::String fileName);
-	VirtualIndexFile(uint32 initialSize);
-	~VirtualIndexFile();
+	SaveFileRewriteStream(const Common::String &fileName,
+	                      Common::SeekableReadStream *inFile,
+	                      kFileOpenMode mode, bool compress);
+	virtual ~SaveFileRewriteStream();
 
-	uint32 read(char *buffer, uint32 size);
-	uint32 readLine(char *buffer, uint32 size);
-	uint32 write(const char *buffer, uint32 size);
-	bool seek(int32 offset, int whence);
-	void close();
+	virtual uint32 write(const void *dataPtr, uint32 dataSize) { _changed = true; return MemoryDynamicRWStream::write(dataPtr, dataSize); }
 
-private:
-	char *_buffer;
-	uint32 _bufferSize;
-	char *_ptr;
+	void commit(); //< Save back to disk
 
+protected:
 	Common::String _fileName;
+	bool _compress;
 	bool _changed;
 };
 
+#endif
+
+uint findFreeFileHandle(EngineState *s);
+reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mode, bool unwrapFilename);
+FileHandle *getFileFromHandle(EngineState *s, uint handle);
+int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle);
+void listSavegames(Common::Array<SavegameDesc> &saves);
+int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId);
+bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc);
+
+#ifdef ENABLE_SCI32
+/**
+ * Constructs an in-memory stream from the ScummVM save game list that is
+ * compatible with game scripts' game catalogue readers.
+ */
+Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameNameSize, const Common::String &fileNamePattern, const bool ramaFormat);
 #endif
 
 } // End of namespace Sci

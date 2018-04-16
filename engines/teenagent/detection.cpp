@@ -88,7 +88,7 @@ enum {
 class TeenAgentMetaEngine : public AdvancedMetaEngine {
 public:
 	TeenAgentMetaEngine() : AdvancedMetaEngine(teenAgentGameDescriptions, sizeof(ADGameDescription), teenAgentGames) {
-		_singleid = "teenagent";
+		_singleId = "teenagent";
 	}
 
 	virtual const char *getName() const {
@@ -125,10 +125,9 @@ public:
 
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::String pattern = target;
-		pattern += ".??";
+		pattern += ".##";
 
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
-		Common::sort(filenames.begin(), filenames.end());
 
 		SaveStateList saveList;
 		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -145,6 +144,8 @@ public:
 				saveList.push_back(SaveStateDescriptor(slot, buf));
 			}
 		}
+		// Sort saves based on slot number.
+		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 		return saveList;
 	}
 
@@ -177,8 +178,11 @@ public:
 		SaveStateDescriptor ssd(slot, desc);
 
 		//checking for the thumbnail
-		if (Graphics::Surface *const thumb = Graphics::loadThumbnail(*in))
-			ssd.setThumbnail(thumb);
+		Graphics::Surface *thumbnail;
+		if (!Graphics::loadThumbnail(*in, thumbnail)) {
+			return SaveStateDescriptor();
+		}
+		ssd.setThumbnail(thumbnail);
 
 		return ssd;
 	}

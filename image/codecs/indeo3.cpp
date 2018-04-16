@@ -40,11 +40,27 @@
 
 namespace Image {
 
-Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height) : _ModPred(0), _corrector_type(0) {
+Indeo3Decoder::Indeo3Decoder(uint16 width, uint16 height, uint bitsPerPixel) : _ModPred(0), _corrector_type(0) {
 	_iv_frame[0].the_buf = 0;
 	_iv_frame[1].the_buf = 0;
 
-	_pixelFormat = g_system->getScreenFormat();
+	switch (bitsPerPixel) {
+	case 15:
+		_pixelFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0);
+		break;
+	case 16:
+		_pixelFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
+		break;
+	case 24:
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 0, 16, 8, 0, 0);
+		break;
+	case 32:
+		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		break;
+	default:
+		error("Invalid color depth");
+		break;
+	}
 
 	_surface = new Graphics::Surface;
 	_surface->create(width, height, _pixelFormat);
@@ -391,6 +407,11 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 	int rle_v1, rle_v2, rle_v3;
 	uint16 res;
 
+	if ((width & 3) != 0) {
+		// This isn't a valid width according to http://wiki.multimedia.cx/index.php?title=Indeo_3
+		warning("Indeo3 file with width not divisible by 4. This will cause unaligned writes");
+	}
+
 	bit_buf = 0;
 	ref_vectors = NULL;
 
@@ -479,7 +500,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 			if (cmd == 0 || ref_vectors != NULL) {
 				for (lp1 = 0; lp1 < blks_width; lp1++) {
 					for (i = 0, j = 0; i < blks_height; i++, j += width_tbl[1])
-						((uint32 *)cur_frm_pos)[j] = ((uint32 *)ref_frm_pos)[j];
+						((uint32 *)cur_frm_pos)[j] = READ_UINT32(((uint32 *)ref_frm_pos)+j);
 					cur_frm_pos += 4;
 					ref_frm_pos += 4;
 				}
@@ -526,9 +547,10 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 
 								switch (correction_type_sp[0][k]) {
 									case 0:
-										*cur_lp = FROM_LE_32(((FROM_LE_32(*ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+										*cur_lp = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
 										lp2++;
 										break;
+
 									case 1:
 										if (correction_type_sp[0][*buf1] != 1) {
 											// both correction types must be DYAD. If it's not the case
@@ -540,34 +562,37 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											//warning("Glitch");
 											return;
 										}
-										res = ((FROM_LE_16(((uint16 *)(ref_lp))[0]) >> 1) + correction_lp[lp2 & 0x01][*buf1]) << 1;
+										res = ((READ_LE_UINT16(((uint16 *)(ref_lp))) >> 1) + correction_lp[lp2 & 0x01][*buf1]) << 1;
 										((uint16 *)cur_lp)[0] = FROM_LE_16(res);
-										res = ((FROM_LE_16(((uint16 *)(ref_lp))[1]) >> 1) + correction_lp[lp2 & 0x01][k]) << 1;
+										res = ((READ_LE_UINT16(((uint16 *)(ref_lp))+1) >> 1) + correction_lp[lp2 & 0x01][k]) << 1;
 										((uint16 *)cur_lp)[1] = FROM_LE_16(res);
 										buf1++;
 										lp2++;
 										break;
+
 									case 2:
 										if (lp2 == 0) {
 											for (i = 0, j = 0; i < 2; i++, j += width_tbl[1])
-												cur_lp[j] = ref_lp[j];
+												cur_lp[j] = READ_UINT32(ref_lp+j);
 											lp2 += 2;
 										}
 										break;
+
 									case 3:
 										if (lp2 < 2) {
 											for (i = 0, j = 0; i < (3 - lp2); i++, j += width_tbl[1])
-												cur_lp[j] = ref_lp[j];
+												cur_lp[j] = READ_UINT32(ref_lp+j);
 											lp2 = 3;
 										}
 										break;
+
 									case 8:
 										if (lp2 == 0) {
 											RLE_V3_CHECK(buf1,rle_v1,rle_v2,rle_v3)
 
 											if (rle_v1 == 1 || ref_vectors != NULL) {
 												for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-													cur_lp[j] = ref_lp[j];
+													cur_lp[j] = READ_UINT32(ref_lp+j);
 											}
 
 											RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2)
@@ -576,11 +601,13 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											rle_v1 = 1;
 											rle_v2 = *buf1 - 1;
 										}
+										// fall through
 									case 5:
-											LP2_CHECK(buf1,rle_v3,lp2)
+										LP2_CHECK(buf1,rle_v3,lp2)
+										// fall through
 									case 4:
 										for (i = 0, j = 0; i < (4 - lp2); i++, j += width_tbl[1])
-											cur_lp[j] = ref_lp[j];
+											cur_lp[j] = READ_UINT32(ref_lp+j);
 										lp2 = 4;
 										break;
 
@@ -591,6 +618,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											buf1--;
 											rle_v3 = 1;
 										}
+										// fall through
 									case 6:
 										if (lp2 > 0) {
 											//This case can't happen either.
@@ -600,7 +628,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 										}
 										if (ref_vectors != NULL) {
 											for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-												cur_lp[j] = ref_lp[j];
+												cur_lp[j] = READ_UINT32(ref_lp+j);
 										}
 										lp2 = 4;
 										break;
@@ -615,6 +643,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 
 										LV1_CHECK(buf1,rle_v3,lv1,lp2)
 										break;
+
 									default:
 										return;
 								}
@@ -645,18 +674,18 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 
 								switch (correction_type_sp[lp2 & 0x01][k]) {
 									case 0:
-										cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(*ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+										cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
 										if (lp2 > 0 || flag1 == 0 || strip->ypos != 0)
 											cur_lp[0] = ((cur_lp[-width_tbl[1]] >> 1) + (cur_lp[width_tbl[1]] >> 1)) & 0xFEFEFEFE;
 										else
-											cur_lp[0] = FROM_LE_32(((FROM_LE_32(*ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+											cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
 										lp2++;
 										break;
 
 									case 1:
-										res = ((FROM_LE_16(((uint16 *)ref_lp)[0]) >> 1) + correction_lp[lp2 & 0x01][*buf1]) << 1;
+										res = ((READ_LE_UINT16(((uint16 *)ref_lp)) >> 1) + correction_lp[lp2 & 0x01][*buf1]) << 1;
 										((uint16 *)cur_lp)[width_tbl[2]] = FROM_LE_16(res);
-										res = ((FROM_LE_16(((uint16 *)ref_lp)[1]) >> 1) + correction_lp[lp2 & 0x01][k]) << 1;
+										res = ((READ_LE_UINT16(((uint16 *)ref_lp)+1) >> 1) + correction_lp[lp2 & 0x01][k]) << 1;
 										((uint16 *)cur_lp)[width_tbl[2]+1] = FROM_LE_16(res);
 
 										if (lp2 > 0 || flag1 == 0 || strip->ypos != 0)
@@ -670,7 +699,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 									case 2:
 										if (lp2 == 0) {
 											for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-												cur_lp[j] = *ref_lp;
+												cur_lp[j] = READ_UINT32(ref_lp);
 											lp2 += 2;
 										}
 										break;
@@ -678,7 +707,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 									case 3:
 										if (lp2 < 2) {
 											for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1])
-												cur_lp[j] = *ref_lp;
+												cur_lp[j] = READ_UINT32(ref_lp);
 											lp2 = 3;
 										}
 										break;
@@ -703,7 +732,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 
 											if (rle_v1 == 1) {
 												for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
-													cur_lp[j] = ref_lp[j];
+													cur_lp[j] = READ_UINT32(ref_lp+j);
 											}
 
 											RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2)
@@ -712,11 +741,13 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											rle_v2 = (*buf1) - 1;
 											rle_v1 = 1;
 										}
+										// fall through
 									case 5:
-											LP2_CHECK(buf1,rle_v3,lp2)
+										LP2_CHECK(buf1,rle_v3,lp2)
+										// fall through
 									case 4:
 										for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1])
-											cur_lp[j] = *ref_lp;
+											cur_lp[j] = READ_UINT32(ref_lp);
 										lp2 = 4;
 										break;
 
@@ -756,8 +787,8 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 									k = *buf1++;
 									cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
 									ref_lp = ((uint32 *)cur_frm_pos) + width_tbl[(lp2 * 2) - 1];
-									lv1 = ref_lp[0];
-									lv2 = ref_lp[1];
+									lv1 = READ_UINT32(ref_lp);
+									lv2 = READ_UINT32(ref_lp+1);
 									if (lp2 == 0 && flag1 != 0) {
 #if defined(SCUMM_BIG_ENDIAN)
 										lv1 = lv1 & 0xFF00FF00;
@@ -867,8 +898,10 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 												rle_v1 = 1;
 												rle_v2 = (*buf1) - 1;
 											}
+											// fall through
 										case 5:
-												LP2_CHECK(buf1,rle_v3,lp2)
+											LP2_CHECK(buf1,rle_v3,lp2)
+											// fall through
 										case 4:
 											if (lp2 == 0 && flag1 != 0) {
 												for (i = 0, j = width_tbl[1]; i < 7; i++, j += width_tbl[1]) {
@@ -936,28 +969,28 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 										case 0:
 											lv1 = correctionloworder_lp[lp2 & 0x01][k];
 											lv2 = correctionhighorder_lp[lp2 & 0x01][k];
-											cur_lp[0] = FROM_LE_32(((FROM_LE_32(ref_lp[0]) >> 1) + lv1) << 1);
-											cur_lp[1] = FROM_LE_32(((FROM_LE_32(ref_lp[1]) >> 1) + lv2) << 1);
-											cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(ref_lp[width_tbl[1]]) >> 1) + lv1) << 1);
-											cur_lp[width_tbl[1]+1] = FROM_LE_32(((FROM_LE_32(ref_lp[width_tbl[1]+1]) >> 1) + lv2) << 1);
+											cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + lv1) << 1);
+											cur_lp[1] = FROM_LE_32(((READ_LE_UINT32(ref_lp+1) >> 1) + lv2) << 1);
+											cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]) >> 1) + lv1) << 1);
+											cur_lp[width_tbl[1]+1] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]+1) >> 1) + lv2) << 1);
 											lp2++;
 											break;
 
 										case 1:
 											lv1 = correctionloworder_lp[lp2 & 0x01][*buf1++];
 											lv2 = correctionloworder_lp[lp2 & 0x01][k];
-											cur_lp[0] = FROM_LE_32(((FROM_LE_32(ref_lp[0]) >> 1) + lv1) << 1);
-											cur_lp[1] = FROM_LE_32(((FROM_LE_32(ref_lp[1]) >> 1) + lv2) << 1);
-											cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(ref_lp[width_tbl[1]]) >> 1) + lv1) << 1);
-											cur_lp[width_tbl[1]+1] = FROM_LE_32(((FROM_LE_32(ref_lp[width_tbl[1]+1]) >> 1) + lv2) << 1);
+											cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + lv1) << 1);
+											cur_lp[1] = FROM_LE_32(((READ_LE_UINT32(ref_lp+1) >> 1) + lv2) << 1);
+											cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]) >> 1) + lv1) << 1);
+											cur_lp[width_tbl[1]+1] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]+1) >> 1) + lv2) << 1);
 											lp2++;
 											break;
 
 										case 2:
 											if (lp2 == 0) {
 												for (i = 0, j = 0; i < 4; i++, j += width_tbl[1]) {
-													cur_lp[j] = ref_lp[j];
-													cur_lp[j+1] = ref_lp[j+1];
+													cur_lp[j] = READ_UINT32(ref_lp+j);
+													cur_lp[j+1] = READ_UINT32(ref_lp+j+1);
 												}
 												lp2 += 2;
 											}
@@ -966,8 +999,8 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 										case 3:
 											if (lp2 < 2) {
 												for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1]) {
-													cur_lp[j] = ref_lp[j];
-													cur_lp[j+1] = ref_lp[j+1];
+													cur_lp[j] = READ_UINT32(ref_lp+j);
+													cur_lp[j+1] = READ_UINT32(ref_lp+j+1);
 												}
 												lp2 = 3;
 											}
@@ -977,8 +1010,8 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											if (lp2 == 0) {
 												RLE_V3_CHECK(buf1,rle_v1,rle_v2,rle_v3)
 												for (i = 0, j = 0; i < 8; i++, j += width_tbl[1]) {
-													((uint32 *)cur_frm_pos)[j] = ((uint32 *)ref_frm_pos)[j];
-													((uint32 *)cur_frm_pos)[j+1] = ((uint32 *)ref_frm_pos)[j+1];
+													((uint32 *)cur_frm_pos)[j] = READ_UINT32(((uint32 *)ref_frm_pos)+j);
+													((uint32 *)cur_frm_pos)[j+1] = READ_UINT32(((uint32 *)ref_frm_pos)+j+1);
 												}
 												RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2)
 												break;
@@ -986,14 +1019,16 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 												rle_v1 = 1;
 												rle_v2 = (*buf1) - 1;
 											}
+											// fall through
 										case 5:
 										case 7:
-												LP2_CHECK(buf1,rle_v3,lp2)
+											LP2_CHECK(buf1,rle_v3,lp2)
+											// fall through
 										case 6:
 										case 4:
 											for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1]) {
-												cur_lp[j] = ref_lp[j];
-												cur_lp[j+1] = ref_lp[j+1];
+												cur_lp[j] = READ_UINT32(ref_lp+j);
+												cur_lp[j+1] = READ_UINT32(ref_lp+j+1);
 											}
 											lp2 = 4;
 											break;
@@ -1037,8 +1072,8 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 
 								switch (correction_type_sp[lp2 & 0x01][k]) {
 									case 0:
-										cur_lp[0] = FROM_LE_32(((FROM_LE_32(*ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
-										cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(ref_lp[width_tbl[1]]) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+										cur_lp[0] = FROM_LE_32(((READ_LE_UINT32(ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
+										cur_lp[width_tbl[1]] = FROM_LE_32(((READ_LE_UINT32(ref_lp+width_tbl[1]) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
 										lp2++;
 										break;
 
@@ -1051,13 +1086,13 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 
 										lv1 = (uint16)(correction_lp[lp2 & 0x01][*buf1++]);
 										lv2 = (uint16)(correction_lp[lp2 & 0x01][k]);
-										res = (uint16)(((FROM_LE_16(((uint16 *)ref_lp)[0]) >> 1) + lv1) << 1);
+										res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp)) >> 1) + lv1) << 1);
 										((uint16 *)cur_lp)[0] = FROM_LE_16(res);
-										res = (uint16)(((FROM_LE_16(((uint16 *)ref_lp)[1]) >> 1) + lv2) << 1);
+										res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp)+1) >> 1) + lv2) << 1);
 										((uint16 *)cur_lp)[1] = FROM_LE_16(res);
-										res = (uint16)(((FROM_LE_16(((uint16 *)ref_lp)[width_tbl[2]]) >> 1) + lv1) << 1);
+										res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp)+width_tbl[2]) >> 1) + lv1) << 1);
 										((uint16 *)cur_lp)[width_tbl[2]] = FROM_LE_16(res);
-										res = (uint16)(((FROM_LE_16(((uint16 *)ref_lp)[width_tbl[2]+1]) >> 1) + lv2) << 1);
+										res = (uint16)(((READ_LE_UINT16(((uint16 *)ref_lp)+width_tbl[2]+1) >> 1) + lv2) << 1);
 										((uint16 *)cur_lp)[width_tbl[2]+1] = FROM_LE_16(res);
 										lp2++;
 										break;
@@ -1065,7 +1100,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 									case 2:
 										if (lp2 == 0) {
 											for (i = 0, j = 0; i < 4; i++, j += width_tbl[1])
-												cur_lp[j] = ref_lp[j];
+												cur_lp[j] = READ_UINT32(ref_lp+j);
 											lp2 += 2;
 										}
 										break;
@@ -1073,7 +1108,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 									case 3:
 										if (lp2 < 2) {
 											for (i = 0, j = 0; i < 6 - (lp2 * 2); i++, j += width_tbl[1])
-												cur_lp[j] = ref_lp[j];
+												cur_lp[j] = READ_UINT32(ref_lp+j);
 											lp2 = 3;
 										}
 										break;
@@ -1083,7 +1118,7 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											RLE_V3_CHECK(buf1,rle_v1,rle_v2,rle_v3)
 
 											for (i = 0, j = 0; i < 8; i++, j += width_tbl[1])
-												cur_lp[j] = ref_lp[j];
+												cur_lp[j] = READ_UINT32(ref_lp+j);
 
 											RLE_V2_CHECK(buf1,rle_v2, rle_v3,lp2)
 											break;
@@ -1091,13 +1126,15 @@ void Indeo3Decoder::decodeChunk(byte *cur, byte *ref, int width, int height,
 											rle_v1 = 1;
 											rle_v2 = (*buf1) - 1;
 										}
+										// fall through
 									case 5:
 									case 7:
-											LP2_CHECK(buf1,rle_v3,lp2)
+										LP2_CHECK(buf1,rle_v3,lp2)
+										// fall through
 									case 4:
 									case 6:
 										for (i = 0, j = 0; i < 8 - (lp2 * 2); i++, j += width_tbl[1])
-											cur_lp[j] = ref_lp[j];
+											cur_lp[j] = READ_UINT32(ref_lp+j);
 										lp2 = 4;
 										break;
 

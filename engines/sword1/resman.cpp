@@ -309,7 +309,7 @@ Common::File *ResMan::resFile(uint32 id) {
 			_openCluEnd = cluster;
 		}
 		cluster->file = new Common::File();
-		char fileName[15];
+		char fileName[36];
 		// Supposes that big endian means mac cluster file and little endian means PC cluster file.
 		// This works, but we may want to separate the file name from the endianess or try .CLM extension if opening.clu file fail.
 		if (_isBigEndian)
@@ -327,13 +327,12 @@ Common::File *ResMan::resFile(uint32 id) {
 			Clu *closeClu = _openCluStart;
 			_openCluStart = _openCluStart->nextOpen;
 
-			if (closeClu) {
-				if (closeClu->file)
-					closeClu->file->close();
-				delete closeClu->file;
-				closeClu->file = NULL;
-				closeClu->nextOpen = NULL;
-			}
+			if (closeClu->file)
+				closeClu->file->close();
+			delete closeClu->file;
+			closeClu->file = NULL;
+			closeClu->nextOpen = NULL;
+
 			_openClus--;
 		}
 	}

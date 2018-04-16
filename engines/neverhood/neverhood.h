@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef NEVERHOOD_H
-#define NEVERHOOD_H
+#ifndef NEVERHOOD_NEVERHOOD_H
+#define NEVERHOOD_NEVERHOOD_H
 
 #include "common/scummsys.h"
 #include "common/events.h"
@@ -30,7 +30,6 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
-#include "audio/mixer.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
 #include "neverhood/console.h"
@@ -130,7 +129,7 @@ public:
 	bool loadgame(const char *filename);
 	const char *getSavegameFilename(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
-	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
+	WARN_UNUSED_RESULT static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 
 	GameState& gameState() { return _gameState; }
 	GameModule *gameModule() { return _gameModule; }
@@ -150,4 +149,4 @@ private:
 
 } // End of namespace Neverhood
 
-#endif /* NEVERHOOD_H */
+#endif /* NEVERHOOD_NEVERHOOD_H */

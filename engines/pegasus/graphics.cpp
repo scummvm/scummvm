@@ -11,12 +11,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -35,7 +35,7 @@
 namespace Pegasus {
 
 GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
-	initGraphics(640, 480, true, NULL);
+	initGraphics(640, 480, nullptr);
 
 	if (_vm->_system->getScreenFormat().bytesPerPixel == 1)
 		error("No true color mode available");
@@ -44,7 +44,6 @@ GraphicsManager::GraphicsManager(PegasusEngine *vm) : _vm(vm) {
 	_frontLayer = kMaxAvailableOrder;
 	_firstDisplayElement = _lastDisplayElement = 0;
 	_workArea.create(640, 480, _vm->_system->getScreenFormat());
-	_modifiedScreen = false;
 	_curSurface = &_workArea;
 	_erase = false;
 	_updatesEnabled = true;
@@ -152,8 +151,6 @@ void GraphicsManager::removeDisplayElement(DisplayElement *oldElement) {
 }
 
 void GraphicsManager::updateDisplay() {
-	bool screenDirty = false;
-
 	if (!_dirtyRect.isEmpty()) {
 		// Fill the dirty area with black if erase mode is enabled
 		if (_erase)
@@ -167,29 +164,18 @@ void GraphicsManager::updateDisplay() {
 			// but it should work fine for now.
 			if (bounds.intersects(_dirtyRect) && runner->validToDraw(_backLayer, _frontLayer)) {
 				runner->draw(bounds);
-				screenDirty = true;
 			}
 		}
 
 		// Copy only the dirty rect to the screen
-		if (screenDirty)
-			g_system->copyRectToScreen((byte *)_workArea.getBasePtr(_dirtyRect.left, _dirtyRect.top), _workArea.pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
+		g_system->copyRectToScreen((byte *)_workArea.getBasePtr(_dirtyRect.left, _dirtyRect.top), _workArea.pitch, _dirtyRect.left, _dirtyRect.top, _dirtyRect.width(), _dirtyRect.height());
 
 		// Clear the dirty rect
 		_dirtyRect = Common::Rect();
 	}
 
-	if (_updatesEnabled && (screenDirty || _modifiedScreen))
+	if (_updatesEnabled)
 		g_system->updateScreen();
-
-	_modifiedScreen = false;
-}
-
-void GraphicsManager::clearScreen() {
-	Graphics::Surface *screen = g_system->lockScreen();
-	screen->fillRect(Common::Rect(0, 0, 640, 480), g_system->getScreenFormat().RGBToColor(0, 0, 0));
-	g_system->unlockScreen();
-	_modifiedScreen = true;
 }
 
 DisplayElement *GraphicsManager::findDisplayElement(const DisplayElementID id) {
@@ -212,10 +198,6 @@ void GraphicsManager::doFadeOutSync(const TimeValue time, const TimeScale scale,
 void GraphicsManager::doFadeInSync(const TimeValue time, const TimeScale scale, bool isBlack) {
 	_screenFader->doFadeInSync(time, scale, isBlack);
 	_updatesEnabled = true;
-}
-
-void GraphicsManager::markCursorAsDirty() {
-	_modifiedScreen = true;
 }
 
 void GraphicsManager::newShakePoint(int32 index1, int32 index2, int32 maxRadius) {

@@ -123,7 +123,7 @@ public:
 	virtual void addRecent(const String &name, const String &description) {}
 
 	/**
-	 * Notifies the user an error occured through the taskbar icon
+	 * Notifies the user an error occurred through the taskbar icon
 	 *
 	 * This will for example show the taskbar icon as red (using progress of 100% and an error state)
 	 * on Windows, and set the launcher icon in the urgent state on Unity

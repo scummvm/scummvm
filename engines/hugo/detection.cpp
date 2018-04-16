@@ -41,7 +41,7 @@ uint32 HugoEngine::getFeatures() const {
 }
 
 const char *HugoEngine::getGameId() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->desc.gameId;
 }
 
 
@@ -177,10 +177,9 @@ SaveStateList HugoMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String pattern = target;
-	pattern += "-??.SAV";
+	pattern += "-##.SAV";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	char slot[3];
@@ -217,6 +216,8 @@ SaveStateList HugoMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -240,7 +241,12 @@ SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int s
 
 		SaveStateDescriptor desc(slot, saveName);
 
-		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
+		Graphics::Surface *thumbnail;
+		if (!Graphics::loadThumbnail(*file, thumbnail)) {
+			warning("Missing or broken savegame thumbnail");
+			delete file;
+			return SaveStateDescriptor();
+		}
 		desc.setThumbnail(thumbnail);
 
 		uint32 saveDate = file->readUint32BE();

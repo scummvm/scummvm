@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/memstream.h"
 
 #include "graphics/palette.h"
 #include "graphics/thumbnail.h"
@@ -239,6 +240,7 @@ Control::Control(Common::SaveFileManager *saveFileMan, ResMan *pResMan, ObjectMa
 	_lStrings = _languageStrings + SwordEngine::_systemVars.language * 20;
 	_selectedButton = 255;
 	_panelShown = false;
+	_tempThumbnail = 0;
 }
 
 void Control::askForCd() {
@@ -299,6 +301,11 @@ static int volToBalance(int volL, int volR) {
 }
 
 uint8 Control::runPanel() {
+	// Make a thumbnail of the screen before displaying the menu in case we want to save
+	// the game from the menu.
+	_tempThumbnail = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	Graphics::saveThumbnail(*_tempThumbnail);
+
 	_panelShown = true;
 	_mouseDown = false;
 	_restoreBuf = NULL;
@@ -392,18 +399,31 @@ uint8 Control::runPanel() {
 	if (SwordEngine::_systemVars.controlPanelMode == CP_NORMAL) {
 		uint8 volL, volR;
 		_music->giveVolume(&volL, &volR);
-		ConfMan.setInt("music_volume", (int)((volR + volL) / 2));
-		ConfMan.setInt("music_balance", volToBalance(volL, volR));
+		int vol = (int)((volR + volL) / 2);
+		int volBalance = volToBalance(volL, volR);
+		if (vol != ConfMan.getInt("music_volume"))
+			ConfMan.setInt("music_volume", vol);
+		if (volBalance != ConfMan.getInt("music_balance"))
+			ConfMan.setInt("music_balance", volBalance);
 
 		_sound->giveSpeechVol(&volL, &volR);
-		ConfMan.setInt("speech_volume", (int)((volR + volL) / 2));
-		ConfMan.setInt("speech_balance", volToBalance(volL, volR));
+		vol = (int)((volR + volL) / 2);
+		volBalance = volToBalance(volL, volR);
+		if (vol != ConfMan.getInt("speech_volume"))
+			ConfMan.setInt("speech_volume", vol);
+		if (volBalance != ConfMan.getInt("speech_balance"))
+			ConfMan.setInt("speech_balance", volBalance);
 
 		_sound->giveSfxVol(&volL, &volR);
-		ConfMan.setInt("sfx_volume", (int)((volR + volL) / 2));
-		ConfMan.setInt("sfx_balance", volToBalance(volL, volR));
+		vol = (int)((volR + volL) / 2);
+		volBalance = volToBalance(volL, volR);
+		if (vol != ConfMan.getInt("sfx_volume"))
+			ConfMan.setInt("sfx_volume", vol);
+		if (volBalance != ConfMan.getInt("sfx_balance"))
+			ConfMan.setInt("sfx_balance", volBalance);
 
-		ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText == 1);
+		if (SwordEngine::_systemVars.showText != ConfMan.getBool("subtitles"))
+			ConfMan.setBool("subtitles", SwordEngine::_systemVars.showText);
 		ConfMan.flushToDisk();
 	}
 
@@ -418,6 +438,8 @@ uint8 Control::runPanel() {
 	_music->startMusic(Logic::_scriptVars[CURRENT_MUSIC], 1);
 	_sound->newScreen(Logic::_scriptVars[SCREEN]);
 	_panelShown = false;
+	delete _tempThumbnail;
+	_tempThumbnail = 0;
 	return retVal;
 }
 
@@ -494,8 +516,8 @@ uint8 Control::handleButtonClick(uint8 id, uint8 mode, uint8 *retVal) {
 		           (id == BUTTON_DONE) || (id == BUTTON_VOLUME_PANEL))
 			return id;
 		else if (id == BUTTON_TEXT) {
-			SwordEngine::_systemVars.showText ^= 1;
-			_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
+			SwordEngine::_systemVars.showText = !SwordEngine::_systemVars.showText;
+			_buttons[5]->setSelected(SwordEngine::_systemVars.showText ? 1 : 0);
 		} else if (id == BUTTON_QUIT) {
 			if (getConfirm(_lStrings[STR_QUIT]))
 				Engine::quitGame();
@@ -557,7 +579,7 @@ void Control::setupMainPanel() {
 		createButtons(_deathButtons, 3);
 	else {
 		createButtons(_panelButtons, 7);
-		_buttons[5]->setSelected(SwordEngine::_systemVars.showText);
+		_buttons[5]->setSelected(SwordEngine::_systemVars.showText ? 1 : 0);
 	}
 
 	if (SwordEngine::_systemVars.controlPanelMode == CP_THEEND) // end of game
@@ -860,8 +882,8 @@ void Control::checkForOldSaveGames() {
 		return;
 
 	GUI::MessageDialog dialog0(
-	    _("ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"
-	      "The old save game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
+	    _("ScummVM found that you have old saved games for Broken Sword 1 that should be converted.\n"
+	      "The old saved game format is no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
 	      "Press OK to convert them now, otherwise you will be asked again the next time you start the game.\n"), _("OK"), _("Cancel"));
 
 	int choice = dialog0.runModal();
@@ -1105,8 +1127,13 @@ void Control::saveGameToFile(uint8 slot) {
 	outf->write(_saveNames[slot].c_str(), 40);
 	outf->writeByte(SAVEGAME_VERSION);
 
-	if (!isPanelShown()) // Generate a thumbnail only if we are outside of game menu
+	// Saving can occur either delayed from the GMM (in which case the panel is now shown and we can make
+	// a thumbnail now) or from the game menu (the panel, in which case we created the _tempThumbnail just
+	// before showing the panel).
+	if (!isPanelShown())
 		Graphics::saveThumbnail(*outf);
+	else if (_tempThumbnail)
+		outf->write(_tempThumbnail->getData(), _tempThumbnail->size());
 
 	// Date / time
 	TimeDate curTime;
@@ -1159,7 +1186,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	uint saveHeader = inf->readUint32LE();
 	if (saveHeader != SAVEGAME_HEADER) {
 		// Display an error message, and do nothing
-		displayMessage(0, "Save game '%s' is corrupt", fName);
+		displayMessage(0, "Saved game '%s' is corrupt", fName);
 		return false;
 	}
 
@@ -1167,7 +1194,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	uint8 saveVersion = inf->readByte();
 
 	if (saveVersion > SAVEGAME_VERSION) {
-		warning("Different save game version");
+		warning("Different saved game version");
 		return false;
 	}
 
@@ -1229,8 +1256,8 @@ bool Control::convertSaveGame(uint8 slot, char *desc) {
 	if (testSave) {
 		delete testSave;
 
-		Common::String msg = Common::String::format(_("Target new save game already exists!\n"
-		                     "Would you like to keep the old save game (%s) or the new one (%s)?\n"),
+		Common::String msg = Common::String::format(_("Target new saved game already exists!\n"
+		                     "Would you like to keep the old saved game (%s) or the new one (%s)?\n"),
 		                     oldFileName, newFileName);
 		GUI::MessageDialog dialog0(msg, _("Keep the old one"), _("Keep the new one"));
 

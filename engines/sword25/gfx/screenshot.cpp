@@ -40,7 +40,7 @@ namespace Sword25 {
 
 bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream) {
 	// Convert the RGBA data to RGB
-	const byte *pSrc = (const byte *)data->getPixels();
+	const uint32 *pSrc = (const uint32 *)data->getPixels();
 
 	// Write our own custom header
 	stream->writeUint32BE(MKTAG('S','C','R','N'));	// SCRN, short for "Screenshot"
@@ -52,11 +52,12 @@ bool Screenshot::saveToFile(Graphics::Surface *data, Common::WriteStream *stream
 		for (uint x = 0; x < data->w; x++) {
 			// This is only called by createThumbnail below, which
 			// provides a fake 'surface' with LE data in it.
-			uint32 srcPixel = READ_LE_UINT32(pSrc);
-			pSrc += sizeof(uint32);
-			stream->writeByte((srcPixel >> 16) & 0xff); // R
-			stream->writeByte((srcPixel >> 8) & 0xff);  // G
-			stream->writeByte(srcPixel & 0xff);         // B
+			byte a, r, g, b;
+
+			data->format.colorToARGB(*pSrc++, a, r, g, b);
+			stream->writeByte(r);
+			stream->writeByte(g);
+			stream->writeByte(b);
 		}
 	}
 
@@ -81,30 +82,27 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 	Graphics::Surface thumbnail;
 	thumbnail.create(200, 125, g_system->getScreenFormat());
 
-	// Über das Zielbild iterieren und einen Pixel zur Zeit berechnen.
+	// Uber das Zielbild iterieren und einen Pixel zur Zeit berechnen.
 	uint x, y;
 	x = y = 0;
 
-	for (byte *pDest = (byte *)thumbnail.getPixels(); pDest < ((byte *)thumbnail.getBasePtr(0, thumbnail.h)); ) {
+	for (uint32 *pDest = (uint32 *)thumbnail.getPixels(); pDest < thumbnail.getBasePtr(0, thumbnail.h); ) {
 		// Get an average over a 4x4 pixel block in the source image
 		int alpha, red, green, blue;
 		alpha = red = green = blue = 0;
 		for (int j = 0; j < 4; ++j) {
 			const uint32 *srcP = (const uint32 *)data->getBasePtr(x * 4, y * 4 + j + 50);
 			for (int i = 0; i < 4; ++i) {
-				uint32 pixel = READ_UINT32(srcP + i);
-				alpha += (pixel >> 24);
-				red += (pixel >> 16) & 0xff;
-				green += (pixel >> 8) & 0xff;
-				blue += pixel & 0xff;
+				byte a, r, g, b;
+				data->format.colorToARGB(*(srcP + i), a, r, g, b);
+				alpha += a;
+				red += r;
+				green += g;
+				blue += b;
 			}
 		}
 
-		// Write target pixel
-		*pDest++ = blue / 16;
-		*pDest++ = green / 16;
-		*pDest++ = red / 16;
-		*pDest++ = alpha / 16;
+		*pDest++ = thumbnail.format.ARGBToColor(alpha / 16, red / 16, green / 16, blue / 16);
 
 		// Move to next block
 		++x;
@@ -115,11 +113,12 @@ Common::SeekableReadStream *Screenshot::createThumbnail(Graphics::Surface *data)
 	}
 
 	// Create a PNG representation of the thumbnail data
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
-	saveToFile(&thumbnail, stream);
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::NO);
+	saveToFile(&thumbnail, &stream);
+	thumbnail.free();
 
 	// Output a MemoryReadStream that encompasses the written data
-	Common::SeekableReadStream *result = new Common::MemoryReadStream(stream->getData(), stream->size(),
+	Common::SeekableReadStream *result = new Common::MemoryReadStream(stream.getData(), stream.size(),
 		DisposeAfterUse::YES);
 	return result;
 }

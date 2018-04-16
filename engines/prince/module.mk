@@ -19,7 +19,8 @@ MODULE_OBJS = \
 	saveload.o \
 	script.o \
 	sound.o \
-	variatxt.o
+	variatxt.o \
+	videoplayer.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PRINCE), DYNAMIC_PLUGIN)

@@ -33,23 +33,23 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Mechanical : public MystScriptParser {
 public:
-	Mechanical(MohawkEngine_Myst *vm);
-	~Mechanical();
+	explicit Mechanical(MohawkEngine_Myst *vm);
+	~Mechanical() override;
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
-	uint16 getVar(uint16 var);
-	void toggleVar(uint16 var);
-	bool setVarValue(uint16 var, uint16 value);
+	uint16 getVar(uint16 var) override;
+	void toggleVar(uint16 var) override;
+	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() { return 9931; }
+	uint16 getMap() override { return 9931; }
 
 	void birdSing_run();
 	void elevatorRotation_run();
@@ -109,7 +109,7 @@ private:
 	uint16 _fortressRotationBrake; // 80
 	uint16 _fortressPosition; // 82
 	uint16 _fortressRotationSounds[4]; // 86 to 92
-	MystResourceType6 *_fortressRotationGears; // 172
+	MystAreaVideo *_fortressRotationGears; // 172
 
 	bool _fortressRotationShortMovieWorkaround;
 	uint32 _fortressRotationShortMovieCount;
@@ -121,8 +121,12 @@ private:
 	uint16 _fortressSimulationBrake; // 98
 	uint16 _fortressSimulationStartSound1; // 102
 	uint16 _fortressSimulationStartSound2; // 100
-	MystResourceType6 *_fortressSimulationHolo; // 160
-	MystResourceType6 *_fortressSimulationStartup; // 164
+	MystAreaVideo *_fortressSimulationHolo; // 160
+	MystAreaVideo *_fortressSimulationStartup; // 164
+
+	// HACK: Support negative rates with edit lists
+	double _fortressSimulationHoloRate;
+	// END HACK
 
 	uint16 _elevatorGoingDown; // 112
 
@@ -143,10 +147,10 @@ private:
 	bool _birdSinging; // 144
 	uint32 _birdCrankStartTime; // 136
 	uint32 _birdSingEndTime; // 140
-	MystResourceType6 *_bird; // 152
+	MystAreaVideo *_bird; // 152
 
 
-	MystResourceType6 *_snakeBox; // 156
+	MystAreaVideo *_snakeBox; // 156
 };
 
 } // End of namespace MystStacks

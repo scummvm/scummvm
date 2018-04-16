@@ -22,10 +22,8 @@
 
 // MIDI and digital music class
 
-#include "audio/audiostream.h"
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
-#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 
@@ -55,7 +53,7 @@ MusicPlayer::MusicPlayer(const char *pathMask) : _pathMask(pathMask), _isGM(fals
 
 void MusicPlayer::sendToChannel(byte channel, uint32 b) {
 	if (!_channelsTable[channel]) {
-		_channelsTable[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
+		_channelsTable[channel] = (channel == 15) ? _driver->getPercussionChannel() : _driver->allocateChannel();
 		// If a new channel is allocated during the playback, make sure
 		// its volume is correctly initialized.
 		if (_channelsTable[channel])

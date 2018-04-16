@@ -25,6 +25,8 @@
 
 #include "common/array.h"
 #include "common/mutex.h"
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
 
 class MidiParser;
 
@@ -134,10 +136,12 @@ private:
 	// Output music type
 	uint8 _musicType;
 
+	bool _milesAudioMode;
+
 	// Timbres
 	class Timbre {
 	public:
-		Timbre() : data(NULL) {}
+		Timbre() : data(NULL), patch(0), bank(0), size(0) {}
 		byte patch;
 		byte bank;
 		uint32 size;

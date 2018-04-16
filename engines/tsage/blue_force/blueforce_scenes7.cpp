@@ -135,7 +135,7 @@ bool Scene710::Object5::startAction(CursorType action, Event &event) {
 			}
 			return true;
 		}
-		// No break on purpose
+		// fall through
 	default:
 		return NamedObject::startAction(action, event);
 	}
@@ -242,7 +242,7 @@ void Scene710::signal() {
 		break;
 	case 7105:
 		_throwStick = true;
-		// No break on purpose
+		// fall through
 	case 7104:
 		_sceneMode = 7102;
 		setAction(&_sequenceManager1, this, 7102, &_dog, NULL);

@@ -27,6 +27,7 @@
 #include "graphics/surface.h"
 
 #include "agos/agos.h"
+#include "agos/intern.h"
 
 namespace AGOS {
 

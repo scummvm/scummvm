@@ -731,7 +731,7 @@ Gfx::Gfx(Parallaction* vm) :
 	_gameType = _vm->getGameType();
 	_doubleBuffering = _gameType != GType_Nippon;
 
-	initGraphics(_vm->_screenWidth, _vm->_screenHeight, _gameType == GType_BRA);
+	initGraphics(_vm->_screenWidth, _vm->_screenHeight);
 
 	setPalette(_palette);
 
@@ -742,6 +742,8 @@ Gfx::Gfx(Parallaction* vm) :
 	_halfbrite = false;
 	_nextProjectorPos = 0;
 	_hbCircleRadius = 0;
+
+	_overlayMode = false;
 
 	_unpackedBitmap = new byte[MAXIMUM_UNPACKED_BITMAP_SIZE];
 	assert(_unpackedBitmap);

@@ -27,6 +27,7 @@
 #include "common/singleton.h"
 #include "common/stack.h"
 #include "common/str.h"
+#include "common/list.h"
 
 #include "gui/ThemeEngine.h"
 
@@ -44,6 +45,7 @@ namespace GUI {
 
 class Dialog;
 class ThemeEval;
+class GuiObject;
 
 #define g_gui	(GUI::GuiManager::instance())
 
@@ -73,6 +75,7 @@ public:
 	void runLoop();
 
 	void processEvent(const Common::Event &event, Dialog *const activeDialog);
+	void scheduleTopDialogRedraw();
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
@@ -98,6 +101,15 @@ public:
 	 */
 	bool checkScreenChange();
 
+	/**
+	 * Tell the GuiManager to delete the given GuiObject later. If a parent
+	 * dialog is provided and is present in the DialogStack, the object will
+	 * only be deleted when that dialog is the top level dialog.
+	 */
+	void addToTrash(GuiObject*, Dialog* parent = 0);
+
+	bool _launched;
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -122,16 +134,24 @@ protected:
 	bool		_useStdCursor;
 
 	// position and time of last mouse click (used to detect double clicks)
-	struct {
+	struct MousePos {
+		MousePos() : x(-1), y(-1), count(0) { time = 0; }
 		int16 x, y;	// Position of mouse when the click occurred
 		uint32 time;	// Time
 		int count;	// How often was it already pressed?
-	} _lastClick, _lastMousePosition;
+	} _lastClick, _lastMousePosition, _globalMousePosition;
 
 	// mouse cursor state
 	int		_cursorAnimateCounter;
 	int		_cursorAnimateTimer;
 	byte	_cursor[2048];
+
+	// delayed deletion of GuiObject
+	struct GuiObjectTrashItem {
+		GuiObject* object;
+		Dialog* parent;
+	};
+	Common::List<GuiObjectTrashItem> _guiObjectTrash;
 
 	void initKeymap();
 	void pushKeymap();
@@ -153,6 +173,9 @@ protected:
 	Dialog *getTopDialog() const;
 
 	void screenChange();
+
+	void giveFocusToDialog(Dialog *dialog);
+	void setLastMousePos(int16 x, int16 y);
 };
 
 } // End of namespace GUI

@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)http://fileformats.archiveteam.org/wiki/Lingo_bytecode -->
+<html lang="en" dir="ltr" class="client-js gr__fileformats_archiveteam_org"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Lingo bytecode - Just Solve the File Format Problem</title>
+
+<meta name="generator" content="MediaWiki 1.19.2">
+<link rel="shortcut icon" href="http://fileformats.archiveteam.org/favicon.ico">
+<link rel="search" type="application/opensearchdescription+xml" href="http://fileformats.archiveteam.org/opensearch_desc.php" title="Just Solve the File Format Problem (en)">
+<link rel="EditURI" type="application/rsd+xml" href="http://fileformats.archiveteam.org/api.php?action=rsd">
+<link rel="copyright" href="http://creativecommons.org/publicdomain/zero/1.0/">
+<link rel="alternate" type="application/atom+xml" title="Just Solve the File Format Problem Atom feed" href="http://fileformats.archiveteam.org/index.php?title=Special:RecentChanges&amp;feed=atom">
+<link rel="stylesheet" href="./Lingo bytecode - Just Solve the File Format Problem_files/load.php">
+<style type="text/css" media="all">.js-messagebox{margin:1em 5%;padding:0.5em 2.5%;border:1px solid #ccc;background-color:#fcfcfc;font-size:0.8em}.js-messagebox .js-messagebox-group{margin:1px;padding:0.5em 2.5%;border-bottom:1px solid #ddd}.js-messagebox .js-messagebox-group:last-child{border-bottom:thin none transparent}
+
+/* cache key: justsolve:resourceloader:filter:minify-css:7:8b08bdc91c52a9ffba396dccfb5b473c */
+
+
+.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+
+/* cache key: justsolve:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
+</style><meta name="ResourceLoaderDynamicStyles" content="">
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}a.new,#quickbar a.new{color:#ba0000}
+
+/* cache key: justsolve:resourceloader:filter:minify-css:7:c88e2bcd56513749bec09a7e29cb3ffa */
+</style>
+
+<script src="./Lingo bytecode - Just Solve the File Format Problem_files/load(1).php"></script><script src="./Lingo bytecode - Just Solve the File Format Problem_files/load(2).php"></script>
+<script>if(window.mw){
+mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"Lingo_bytecode","wgTitle":"Lingo bytecode","wgCurRevisionId":25053,"wgArticleId":6263,"wgIsArticle":true,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["File Formats","Electronic File Formats","Development","FormatInfo without extensions","FormatInfo without mimetypes"],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgRelevantPageName":"Lingo_bytecode","wgRestrictionEdit":[],"wgRestrictionMove":[]});
+}</script><script>if(window.mw){
+mw.loader.implement("user.options",function($){mw.user.options.set({"ccmeonemails":0,"cols":80,"date":"default","diffonly":0,"disablemail":0,"disablesuggest":0,"editfont":"default","editondblclick":0,"editsection":1,"editsectiononrightclick":0,"enotifminoredits":0,"enotifrevealaddr":0,"enotifusertalkpages":1,"enotifwatchlistpages":0,"extendwatchlist":0,"externaldiff":0,"externaleditor":0,"fancysig":0,"forceeditsummary":0,"gender":"unknown","hideminor":0,"hidepatrolled":0,"highlightbroken":1,"imagesize":2,"justify":0,"math":1,"minordefault":0,"newpageshidepatrolled":0,"nocache":0,"noconvertlink":0,"norollbackdiff":0,"numberheadings":0,"previewonfirst":0,"previewontop":1,"quickbar":5,"rcdays":7,"rclimit":50,"rememberpassword":0,"rows":25,"searchlimit":20,"showhiddencats":0,"showjumplinks":1,"shownumberswatching":1,"showtoc":1,"showtoolbar":1,"skin":"vector","stubthreshold":0,"thumbsize":2,"underline":2,"uselivepreview":0,"usenewrc":0,"watchcreations":0,"watchdefault":0,"watchdeletion":0,
+"watchlistdays":3,"watchlisthideanons":0,"watchlisthidebots":0,"watchlisthideliu":0,"watchlisthideminor":0,"watchlisthideown":0,"watchlisthidepatrolled":0,"watchmoves":0,"wllimit":250,"variant":"en","language":"en","searchNs0":true,"searchNs1":false,"searchNs2":false,"searchNs3":false,"searchNs4":false,"searchNs5":false,"searchNs6":false,"searchNs7":false,"searchNs8":false,"searchNs9":false,"searchNs10":false,"searchNs11":false,"searchNs12":false,"searchNs13":false,"searchNs14":false,"searchNs15":false});;},{},{});mw.loader.implement("user.tokens",function($){mw.user.tokens.set({"editToken":"+\\","watchToken":false});;},{},{});
+
+/* cache key: justsolve:resourceloader:filter:minify-js:7:9983699ab6150ffa89a90653b2338ac8 */
+}</script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.page.startup","mediawiki.legacy.wikibits","mediawiki.legacy.ajax"]);
+}</script><script type="text/javascript" src="./Lingo bytecode - Just Solve the File Format Problem_files/load(3).php"></script>
+<!--[if lt IE 7]><style type="text/css">body{behavior:url("/skins/vector/csshover.min.htc")}</style><![endif]--><meta name="chromesniffer" id="chromesniffer_meta" content="{&quot;MediaWiki&quot;:-1,&quot;jQuery&quot;:&quot;1.7.1&quot;}"><script type="text/javascript" src="chrome-extension://homgcnaoacgigpkkljjjekpignblkeae/detector.js"></script></head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-Lingo_bytecode skin-vector action-view" data-gr-c-s-loaded="true">
+		<div id="mw-page-base" class="noprint"></div>
+		<div id="mw-head-base" class="noprint"></div>
+		<!-- content -->
+		<div id="content" class="mw-body">
+			<a id="top"></a>
+			<div id="mw-js-message" style="display:none;" class="js-messagebox"></div>
+						<!-- firstHeading -->
+			<h1 id="firstHeading" class="firstHeading">
+				<span dir="auto">Lingo bytecode</span>
+			</h1>
+			<!-- /firstHeading -->
+			<!-- bodyContent -->
+			<div id="bodyContent">
+								<!-- tagline -->
+				<div id="siteSub">From Just Solve the File Format Problem</div>
+				<!-- /tagline -->
+								<!-- subtitle -->
+				<div id="contentSub"></div>
+				<!-- /subtitle -->
+																<!-- jumpto -->
+				<div id="jump-to-nav" class="mw-jump">
+					Jump to: <a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#mw-head">navigation</a>,
+					<a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#p-search">search</a>
+				</div>
+				<!-- /jumpto -->
+								<!-- bodycontent -->
+				<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><table class="infobox formatinfo" border="0" style="float: right; border: 1px solid #666666; max-width: 25%; overflow: hidden; background-color: #F8E0F7; padding: 0.25em; margin: 0.25em 1em;">
+<tbody><tr>
+<th colspan="2"><a href="http://fileformats.archiveteam.org/wiki/File_Formats" title="File Formats">File Format</a></th>
+</tr>
+
+<tr>
+<th>Name</th>
+<td>Lingo bytecode</td>
+</tr>
+
+
+<tr>
+<th> Ontology
+</th>
+<td>
+<ul><li>
+<a href="http://fileformats.archiveteam.org/wiki/Electronic_File_Formats" title="Electronic File Formats">Electronic File Formats</a>
+<ul><li>
+<a href="http://fileformats.archiveteam.org/wiki/Development" title="Development">Development</a>
+<ul><li>
+<strong class="selflink">Lingo bytecode</strong>
+</li></ul>
+</li></ul>
+</li></ul>
+</td>
+</tr>
+
+
+
+</tbody></table>
+<p>This is a partial, work-in-progress examination of the bytecode created when Lingo code is compiled in Macromedia Director 4.0. It describes instructions for a stack-based virtual machine. This virtual machine is sometimes known as the IML, or Idealized Machine Layer.
+</p><p>Each instruction is one, two or three bytes.
+</p>
+<ul><li> If the first byte is in the range 0x00-0x3F, then the full instruction is one byte.
+</li><li> If the first byte is in the range 0x40-0x7F, then the full instruction is two bytes.
+</li><li> If the first byte is in the range 0x80-0xFF, then the full instruction is three bytes.
+</li></ul>
+<p>Constant blobs like string literals are stored after the bytecode, and referred to by records that are six bytes long regardless of the actual length of the data. This means the first constant will be referred to as 0x00, the second constant as 0x06, the third as 0x0C, and so on. Integer literals over 32767 and floating-point number literals are also stored as constants.
+</p><p>There is also a namelist for referring to external identifiers, stored separately from the bytecode. This is a simple array of strings.
+</p>
+<table id="toc" class="toc"><tbody><tr><td><div id="toctitle"><h2>Contents</h2><span class="toctoggle">&nbsp;[<a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#" class="internal" id="togglelink">hide</a>]&nbsp;</span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#One-Byte_Instructions"><span class="tocnumber">1</span> <span class="toctext">One-Byte Instructions</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Two-Byte_Instructions"><span class="tocnumber">2</span> <span class="toctext">Two-Byte Instructions</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Three_Byte_Instructions"><span class="tocnumber">3</span> <span class="toctext">Three Byte Instructions</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Syntactic_Sugar"><span class="tocnumber">4</span> <span class="toctext">Syntactic Sugar</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Lscr_bytecode-container_chunk_layout"><span class="tocnumber">5</span> <span class="toctext">Lscr bytecode-container chunk layout</span></a>
+<ul>
+<li class="toclevel-2 tocsection-6"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Header"><span class="tocnumber">5.1</span> <span class="toctext">Header</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Function_Record"><span class="tocnumber">5.2</span> <span class="toctext">Function Record</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Bytecode_Trailer"><span class="tocnumber">5.3</span> <span class="toctext">Bytecode Trailer</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Constants"><span class="tocnumber">5.4</span> <span class="toctext">Constants</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-10"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Projector_File_.28Windows.29"><span class="tocnumber">6</span> <span class="toctext">Projector File (Windows)</span></a>
+<ul>
+<li class="toclevel-2 tocsection-11"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Director_3.0"><span class="tocnumber">6.1</span> <span class="toctext">Director 3.0</span></a></li>
+<li class="toclevel-2 tocsection-12"><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#Director_4.0"><span class="tocnumber">6.2</span> <span class="toctext">Director 4.0</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></tbody></table>
+<h1> <span class="mw-headline" id="One-Byte_Instructions"> One-Byte Instructions </span></h1>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> <code>exit</code>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td> Leave the current function immediately and return to its caller. Automatically added as the final step of a function.
+</td></tr>
+<tr>
+<th> 02
+</th></tr>
+<tr>
+<th> 03
+</th>
+<td>
+<p><code>0</code>
+</p><p><code>FALSE</code>
+</p>
+</td>
+<td>
+</td>
+<td> +1
+</td>
+<td>
+<p>Push zero onto the stack.
+</p>
+</td></tr>
+<tr>
+<th> 04
+</th>
+<td> <code>(a&nbsp;*&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, multiply them together and push the result.
+</td></tr>
+<tr>
+<th> 05
+</th>
+<td> <code>(a&nbsp;+&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, add them together and push the result.
+</td></tr>
+<tr>
+<th> 06
+</th>
+<td> <code>(a&nbsp;-&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, subtract the second from the first and push the result.
+</td></tr>
+<tr>
+<th> 07
+</th>
+<td> <code>(a&nbsp;/&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, divide the first by the second and push the result.
+</td></tr>
+<tr>
+<th> 08
+</th>
+<td> <code>(a&nbsp;mod&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, perform a modulo operation and push the result.
+</td></tr>
+<tr>
+<th> 09
+</th>
+<td> <code>(-a)</code>
+</td>
+<td> -1
+</td>
+<td> +1
+</td>
+<td> Pop one value from the stack, negate it and push the result.
+</td></tr>
+<tr>
+<th> 0A
+</th>
+<td> <code>(a&nbsp;&amp;&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, concatenate them and push the resulting string.
+</td></tr>
+<tr>
+<th> 0B
+</th>
+<td> <code>(a&nbsp;&amp;&amp;&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, concatenate them with one space character added in between, and push the resulting string.
+</td></tr>
+<tr>
+<th> 0C
+</th>
+<td> <code>(a&nbsp;&lt;&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, push 1 if the first is less than the second and 0 if not.
+</td></tr>
+<tr>
+<th> 0D
+</th>
+<td> <code>(a&nbsp;&lt;=&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, push 1 if the first is less than or equal to the second and 0 if not.
+</td></tr>
+<tr>
+<th> 0E
+</th>
+<td> <code>(a&nbsp;&lt;&gt;&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, push 0 if the two values are the same and 1 if they are not.
+</td></tr>
+<tr>
+<th> 0F
+</th>
+<td> <code>(a&nbsp;=&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, push 1 if the two values are the same and 0 if they are not.
+</td></tr>
+<tr>
+<th> 10
+</th>
+<td> <code>(a&nbsp;&gt;&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, push 1 if the first is greater than the second and 0 if not.
+</td></tr>
+<tr>
+<th> 11
+</th>
+<td> <code>(a&nbsp;&gt;=&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, push 1 if the first is greater than or equal to the sceond and 0 if not.
+</td></tr>
+<tr>
+<th> 12
+</th>
+<td> <code>(a&nbsp;and&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, push 1 if both are logically true and 0 if not.
+</td></tr>
+<tr>
+<th> 13
+</th>
+<td> <code>(a&nbsp;or&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two values from the stack, push 1 if either are logically true and 0 if not.
+</td></tr>
+<tr>
+<th> 14
+</th>
+<td> <code>(not&nbsp;a)</code>
+</td>
+<td> -1
+</td>
+<td> +1
+</td>
+<td> Pop one value from the stack, push 0 if it is logically true and 1 if not.
+</td></tr>
+<tr>
+<th> 15
+</th>
+<td> <code>(a&nbsp;contains&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop two values from the stack, push 1 if the first is a string that contains the second and 0 if not.
+</p><p>The text comparison is case-insensitive and ignores diacritic marks, e.g. "a" and "Å" are treated the same.
+</p>
+</td></tr>
+<tr>
+<th> 16
+</th>
+<td> <code>(a&nbsp;starts&nbsp;b)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop two values from the stack, push 1 if the first is a string that begins with second string and 0 if not.
+</p><p>The text comparison is case-insensitive and ignores diacritic marks, e.g. "a" and "Å" are treated the same.
+</p>
+</td></tr>
+<tr>
+<th> 17
+</th>
+<td> <code>(char&nbsp;a of&nbsp;c)</code>
+<p><code>(char&nbsp;a&nbsp;to&nbsp;b of&nbsp;c)</code>
+</p><p><code>(item&nbsp;1&nbsp;to&nbsp;3 of&nbsp;someItems)</code>
+</p>
+</td>
+<td> -9
+</td>
+<td> +1
+</td>
+<td> String slice/split operation. It takes nine arguments from the stack:
+<table class="wikitable">
+
+<tbody><tr>
+<th> -9
+</th>
+<td> First char position
+</td></tr>
+<tr>
+<th> -8
+</th>
+<td> Last char position
+</td></tr>
+<tr>
+<th> -7
+</th>
+<td> First word position
+</td></tr>
+<tr>
+<th> -6
+</th>
+<td> Last word position
+</td></tr>
+<tr>
+<th> -5
+</th>
+<td> First item position <i>(items separated by</i> <code>the itemDelimiter</code><i>, which is a comma by default)</i>
+</td></tr>
+<tr>
+<th> -4
+</th>
+<td> Last item position
+</td></tr>
+<tr>
+<th> -3
+</th>
+<td> First line position
+</td></tr>
+<tr>
+<th> -2
+</th>
+<td> Last line position
+</td></tr>
+<tr>
+<th> -1
+</th>
+<td> The string to slice
+</td></tr></tbody></table>
+<p>The positions used here are one-based, so zero is invalid as a position and is instead used to indicate unused parameters. Only one "first X position" can be set, the rest must be zero. The corresponding "last X position" may either be set too, or it can be zero, in which case the first position will also be used as the last.
+</p>
+</td></tr>
+<tr>
+<th> 18
+</th>
+<td> <code>hilite&nbsp;word&nbsp;1 of&nbsp;field&nbsp;10</code>
+</td>
+<td> -9
+</td>
+<td>
+</td>
+<td> Highlight (select) some text. The nine arguments taken from the stack are:
+<table class="wikitable">
+
+<tbody><tr>
+<th> -9
+</th>
+<td> First char position
+</td></tr>
+<tr>
+<th> -8
+</th>
+<td> Last char position
+</td></tr>
+<tr>
+<th> -7
+</th>
+<td> First word position
+</td></tr>
+<tr>
+<th> -6
+</th>
+<td> Last word position
+</td></tr>
+<tr>
+<th> -5
+</th>
+<td> First item position
+</td></tr>
+<tr>
+<th> -4
+</th>
+<td> Last item position
+</td></tr>
+<tr>
+<th> -3
+</th>
+<td> First line position
+</td></tr>
+<tr>
+<th> -2
+</th>
+<td> Last line position
+</td></tr>
+<tr>
+<th> -1
+</th>
+<td> Field number (cast ID)
+</td></tr></tbody></table>
+<p>The positions used here are one-based, so zero is invalid as a position and is instead used to indicate unused parameters. Only one "first X position" can be set, the rest must be zero. The corresponding "last X position" may either be set too, or it can be zero, in which case the first position will also be used as the last.
+</p>
+</td></tr>
+<tr>
+<th> 19
+</th>
+<td> <code>(sprite 1 intersects 2)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two sprite IDs and push 1 if the bounding rectangles of the two sprites touch at all, or 0 if they do not.
+</td></tr>
+<tr>
+<th> 1A
+</th>
+<td> <code>(sprite 1 within 2)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td> Pop two sprite IDs and push 1 if the bounding rectangle of the first is entirely inside the bounding rectangle of the second, or 0 if not.
+</td></tr>
+<tr>
+<th> 1B
+</th>
+<td> <code>(field 1)</code>
+</td>
+<td> -1
+</td>
+<td> +1
+</td>
+<td> Pop a cast ID (name or number), push the value of that cast member's <code>text</code> property.
+</td></tr>
+<tr>
+<th> 1C
+</th>
+<td> <code>tell&nbsp;someObject to&nbsp;go&nbsp;to&nbsp;frame&nbsp;1</code>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> Pop an object from the stack and begin running subsequent bytecodes in the context of that object, until code 1D is encountered.
+</td></tr>
+<tr>
+<th> 1D
+</th>
+<td> <code>tell&nbsp;someObject to&nbsp;go&nbsp;to&nbsp;frame&nbsp;1</code>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td> Marker for the end of a sequence of bytecodes started by 1C. Similar to 01 except for nested bytecode chunks instead of the main one.
+</td></tr>
+<tr>
+<th> 1E
+</th>
+<td>
+</td>
+<td> -1
+</td>
+<td> +1
+</td>
+<td> Some kind of list transformation or check, seen used just before setting the actorList to []. More research is needed to know exactly what is happening there.
+</td></tr>
+<tr>
+<th> 1F
+</th>
+<td> <code>[#key: value]</code>
+</td>
+<td> -1
+</td>
+<td> +1
+</td>
+<td> Pops a list that must be in the form [#symbol1, val1, #symbol2, val2 ...] to transform into [#symbol1: val1, #symbol2: val2 ...]
+</td></tr></tbody></table>
+<h1> <span class="mw-headline" id="Two-Byte_Instructions"> Two-Byte Instructions </span></h1>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 41&nbsp;XX
+</th>
+<td> <code>1</code> .. <code>127</code>
+</td>
+<td>
+</td>
+<td> +1
+</td>
+<td> Push integer of value XX, which must be between 1 and 127, inclusive. To push zero, use 03. To push larger integers, use 81 XX YY.
+</td></tr>
+<tr>
+<th> 42&nbsp;XX
+</th>
+<td> <code>a,&nbsp;b,&nbsp;c</code>
+</td>
+<td> -﻿XX
+</td>
+<td> +1
+</td>
+<td> Pop the specified number of values off the top of the stack, create an unparenthesized argument list containing them (i.e. for a call statement like <code>myFunction 1, 2, 3</code>), and push that to the stack.
+</td></tr>
+<tr>
+<th> 43&nbsp;XX
+</th>
+<td> <code>[a,&nbsp;b,&nbsp;c]</code>
+</td>
+<td> -﻿XX
+</td>
+<td> +1
+</td>
+<td> Pop the specified number of values off the top of the stack, create a list for them (which can also be used for a parenthesized call expression like <code>set result = myFunction(1, 2, 3)</code>), and push that to the stack.
+</td></tr>
+<tr>
+<th> 44&nbsp;XX
+</th>
+<td>
+<p><code>"literal"</code>
+</p><p><code>0.5</code>
+</p><p><code>32768</code>
+</p>
+</td>
+<td>
+</td>
+<td> +1
+</td>
+<td> Push a constant from local constant records onto the stack. These records seem to be six bytes long (regardless of the actual size of the constant value), so pushing the first one is <code>44 00</code>, the second is <code>44 06</code>, the third is <code>44 0C</code>, etc.
+</td></tr>
+<tr>
+<th> 45&nbsp;XX
+</th>
+<td> <code>#symbol</code>
+</td>
+<td>
+</td>
+<td> +1
+</td>
+<td> Push a symbol with a name from namelist[XX]. Note that the name will be stored as "name", not "#name".
+</td></tr>
+<tr>
+<th> 46&nbsp;XX
+</th></tr>
+<tr>
+<th> 47&nbsp;XX
+</th></tr>
+<tr>
+<th> 48&nbsp;XX
+</th></tr>
+<tr>
+<th> 49&nbsp;XX
+</th>
+<td>
+<p><code>(someGlobal)</code>
+</p><p><i>where previously declared:</i>
+</p><p><code>global someGlobal</code>
+</p>
+</td>
+<td>
+</td>
+<td> +1
+</td>
+<td> Push the value of a global variable with a name from namelist[XX].
+</td></tr>
+<tr>
+<th> 4A XX
+</th></tr>
+<tr>
+<th> 4B XX
+</th>
+<td> <code>(someParam)</code>
+</td>
+<td>
+</td>
+<td> +1
+</td>
+<td> Push the value of a function call parameter. The parameter records seem to be 6 bytes long, so the first is pushed with 4B 00, the second with 4B 06, etc.
+</td></tr>
+<tr>
+<th> 4C&nbsp;XX
+</th>
+<td> <code>(someLocal)</code>
+</td>
+<td>
+</td>
+<td> +1
+</td>
+<td> Push the value of a local variable. The local variable records seem to be 6 bytes long, so the first is pushed with <code>4C 00</code>, the second with <code>4C 06</code>, etc.
+</td></tr>
+<tr>
+<th> 4D&nbsp;XX
+</th></tr>
+<tr>
+<th> 4E&nbsp;XX
+</th></tr>
+
+<tr>
+<th> 4F&nbsp;XX
+</th>
+<td> <code>set&nbsp;someGlobal&nbsp;=&nbsp;0</code>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> Pop one value and use it to set the global variable with name from namelist[XX].
+</td></tr>
+<tr>
+<th> 50&nbsp;XX
+</th></tr>
+<tr>
+<th> 51&nbsp;XX
+</th></tr>
+<tr>
+<th> 52&nbsp;XX
+</th>
+<td> <code>set&nbsp;someLocal&nbsp;=&nbsp;0</code>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> Pop one value and use it to set a local variable. See code 4C 00 for a note about local variable records.
+</td></tr>
+<tr>
+<th> 53&nbsp;XX
+</th></tr>
+<tr>
+<th> 54&nbsp;XX
+</th>
+<td> <code>end repeat</code>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td> Unconditional backwards jump by XX bytes, relative to the first byte of this instruction.
+</td></tr>
+<tr>
+<th> 55&nbsp;XX
+</th></tr>
+<tr>
+<th> 56&nbsp;XX
+</th>
+<td> <code>localFunction(1,2,3)</code>
+</td>
+<td> -1
+</td>
+<td> +1 or +0
+</td>
+<td> Call a function defined in this script with the name at namelist[XX]. The top value on the stack must be an argument list. If the argument list was created with code 43 XX, one return value will be pushed to the stack. If the argument list was created with code 42 XX, no return value will be pushed.
+</td></tr>
+<tr>
+<th> 57&nbsp;XX
+</th>
+<td> <code>someFunction&nbsp;1,2,3</code>
+<p><code>(someFunction(1,2,3))</code>
+</p>
+</td>
+<td> -1
+</td>
+<td> +1 OR +0
+</td>
+<td> Call the external function with name from namelist[XX]. The top value on the stack must be an argument list. If the argument list was created with code 43 XX, one return value will be pushed to the stack. If the argument list was created with code 42 XX, no return value will be pushed.
+</td></tr>
+<tr>
+<th> 58&nbsp;XX
+</th>
+<td> <code>someObject(mSomeMethod, 1,2,3)</code>
+</td>
+<td> -2
+</td>
+<td> +1 OR +0
+</td>
+<td> Pop [argument list, call target] to make a method call. If the call target is a literal number, this indicates a local variable is the target. It must be divided by six to get the actual local variable number. The first argument of the argument list will be a symbol with the name of the method. Note: It is still unclear what difference the value of XX makes. It has been seen as 0x01 and 0x05. More research is needed to know more. (Possibly local variables vs. call parameters?)
+</td></tr>
+<tr>
+<th> 59&nbsp;16
+</th>
+<td> <code>put&nbsp;"extra" into&nbsp;textVar</code>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> (Not sure how the target value is specified, needs more research)
+</td></tr>
+<tr>
+<th> 59&nbsp;25
+</th>
+<td> <code>put&nbsp;"extra" after&nbsp;textVar</code>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> (See above)
+</td></tr>
+<tr>
+<th> 59&nbsp;35
+</th>
+<td> <code>put&nbsp;"extra" before&nbsp;textVar</code>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> (See above)
+</td></tr>
+<tr>
+<th> 5A&nbsp;XX
+</th></tr>
+<tr>
+<th> 5B&nbsp;05
+</th>
+<td> <code>delete&nbsp;word&nbsp;3 of&nbsp;textVar</code>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> (See above)
+</td></tr>
+<tr>
+<th> 5C&nbsp;00
+</th>
+<td>
+<p><code>(the&nbsp;abbr&nbsp;time)</code>
+</p><p><code>(the&nbsp;short&nbsp;date)</code>
+</p><p><code>(the last word in someText)</code>
+</p>
+</td>
+<td> -1 OR -2
+</td>
+<td> +1
+</td>
+<td>
+<p>If the top value is one of the following setting IDs, pop it from the stack, and push the current value of the setting:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 00
+</th>
+<td> <code>the floatPrecision</code>
+</td></tr>
+<tr>
+<th> 01
+</th>
+<td> <code>the mouseDownScript</code>
+</td></tr>
+<tr>
+<th> 02
+</th>
+<td> <code>the mouseUpScript</code>
+</td></tr>
+<tr>
+<th> 03
+</th>
+<td> <code>the keyDownScript</code>
+</td></tr>
+<tr>
+<th> 04
+</th>
+<td> <code>the keyUpScript</code>
+</td></tr>
+<tr>
+<th> 05
+</th>
+<td> <code>the timeoutScript</code>
+</td></tr></tbody></table>
+<p>If the top value is a time-formatting ID, pop it from the stack, and push the current time formatted using it:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 06
+</th>
+<td> <code>the&nbsp;short&nbsp;time</code>
+</td>
+<td> 1:09 AM
+</td></tr>
+<tr>
+<th> 07
+</th>
+<td> <code>the&nbsp;abbreviated&nbsp;time</code>, <code>the&nbsp;abbrev&nbsp;time</code>, <code>the&nbsp;abbr&nbsp;time</code>
+</td>
+<td> 1:09 AM
+</td></tr>
+<tr>
+<th> 08
+</th>
+<td> <code>the&nbsp;long&nbsp;time</code>
+</td>
+<td> 1:09:38 AM
+</td></tr></tbody></table>
+<p>If the top value is a date-formatting ID, pop it from the stack, and push the current date formatted using it:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 09
+</th>
+<td> <code>the&nbsp;short&nbsp;date</code>
+</td>
+<td> 3/4/16
+</td></tr>
+<tr>
+<th> 0A
+</th>
+<td> <code>the&nbsp;abbreviated&nbsp;date</code>, <code>the&nbsp;abbrev&nbsp;date</code>, <code>the&nbsp;abbr&nbsp;date</code>
+</td>
+<td> Mon, Mar 14, 2016
+</td></tr>
+<tr>
+<th> 0B
+</th>
+<td> <code>the&nbsp;long&nbsp;date</code>
+</td>
+<td> Monday, March 14, 2016
+</td></tr></tbody></table>
+<p>If the top value is a slice type ID, pop both it and the previous value from the stack. The previous value will be a string, slice the last "bit" of it according to the slice type, and push the sliced value:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 0C
+</th>
+<td> <code>the last char</code>
+</td></tr>
+<tr>
+<th> 0D
+</th>
+<td> <code>the last word</code>
+</td></tr>
+<tr>
+<th> 0E
+</th>
+<td> <code>the last item</code>
+</td></tr>
+<tr>
+<th> 0F
+</th>
+<td> <code>the last line</code>
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C&nbsp;01
+</th>
+<td> <code>(the number of chars in someText)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop [text, stat ID] and push the stat value for the given text, using these stat IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> chars
+</td></tr>
+<tr>
+<th> 02
+</th>
+<td> words
+</td></tr>
+<tr>
+<th> 03
+</th>
+<td> items <i>(separated by</i> <code>the itemDelimiter</code><i>, which is a comma by default)</i>
+</td></tr>
+<tr>
+<th> 04
+</th>
+<td> lines
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C&nbsp;02
+</th>
+<td> <code>(the name of menu 1)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop [menu ID, property ID] and push the value of the specified menu property, using these property IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> <code>name</code>
+</td></tr>
+<tr>
+<th> 02
+</th>
+<td> <code>number of menuItems</code>
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C&nbsp;03
+</th>
+<td> <code>(the&nbsp;name of&nbsp;menuItem&nbsp;3 of&nbsp;menu&nbsp;1)</code>
+</td>
+<td> -3
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop [item ID, menu ID, property ID] and push the value of the specified menu item property, using these property IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> <code>name</code>
+</td></tr>
+<tr>
+<th> 02
+</th>
+<td> <code>checkMark</code>
+</td></tr>
+<tr>
+<th> 03
+</th>
+<td> <code>enabled</code>
+</td></tr>
+<tr>
+<th> 04
+</th>
+<td> <code>script</code>
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C&nbsp;04
+</th>
+<td> <code>(the&nbsp;volume of&nbsp;sound&nbsp;1)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop [sound ID, property ID] and push the value of the specified sound property, using these property IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> <code>volume</code> (0 to 255)
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C&nbsp;06
+</th>
+<td> <code>(the&nbsp;cursor of&nbsp;sprite&nbsp;3)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop [sprite ID, property ID] and push the value of the specified sprite property, using these property IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> <code>type</code>
+</td></tr>
+<tr>
+<th> 02
+</th>
+<td> <code>backColor</code>
+</td></tr>
+<tr>
+<th> 03
+</th>
+<td> <code>bottom</code>
+</td></tr>
+<tr>
+<th> 04
+</th>
+<td> <code>castNum</code>
+</td></tr>
+<tr>
+<th> 05
+</th>
+<td> <code>constraint</code>
+</td></tr>
+<tr>
+<th> 06
+</th>
+<td> <code>cursor</code>
+</td></tr>
+<tr>
+<th> 07
+</th>
+<td> <code>foreColor</code>
+</td></tr>
+<tr>
+<th> 08
+</th>
+<td> <code>height</code>
+</td></tr>
+<tr>
+<th> 0A
+</th>
+<td> <code>ink</code>
+</td></tr>
+<tr>
+<th> 0B
+</th>
+<td> <code>left</code>
+</td></tr>
+<tr>
+<th> 0C
+</th>
+<td> <code>lineSize</code>
+</td></tr>
+<tr>
+<th> 0D
+</th>
+<td> <code>locH</code>
+</td></tr>
+<tr>
+<th> 0E
+</th>
+<td> <code>locV</code>
+</td></tr>
+<tr>
+<th> 0F
+</th>
+<td> <code>movieRate</code>
+</td></tr>
+<tr>
+<th> 10
+</th>
+<td> <code>movieTime</code>
+</td></tr>
+<tr>
+<th> 12
+</th>
+<td> <code>puppet</code>
+</td></tr>
+<tr>
+<th> 13
+</th>
+<td> <code>right</code>
+</td></tr>
+<tr>
+<th> 14
+</th>
+<td> <code>startTime</code>
+</td></tr>
+<tr>
+<th> 15
+</th>
+<td> <code>stopTime</code>
+</td></tr>
+<tr>
+<th> 16
+</th>
+<td> <code>stretch</code>
+</td></tr>
+<tr>
+<th> 17
+</th>
+<td> <code>top</code>
+</td></tr>
+<tr>
+<th> 18
+</th>
+<td> <code>trails</code>
+</td></tr>
+<tr>
+<th> 19
+</th>
+<td> <code>visible</code>
+</td></tr>
+<tr>
+<th> 1A
+</th>
+<td> <code>volume</code> (-256 to 256, &lt;= 0 is silent)
+</td></tr>
+<tr>
+<th> 1B
+</th>
+<td> <code>width</code>
+</td></tr>
+<tr>
+<th> 1D
+</th>
+<td> <code>scriptNum</code>
+</td></tr>
+<tr>
+<th> 1E
+</th>
+<td> <code>moveableSprite</code>
+</td></tr>
+<tr>
+<th> 20
+</th>
+<td> <code>scoreColor</code>
+</td></tr></tbody></table>
+<p>The values for <code>type</code> are:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 0
+</th>
+<td> inactive
+</td></tr>
+<tr>
+<th> 1
+</th>
+<td> bitmap
+</td></tr>
+<tr>
+<th> 2
+</th>
+<td> rectangle
+</td></tr>
+<tr>
+<th> 3
+</th>
+<td> rounded rectangle
+</td></tr>
+<tr>
+<th> 4
+</th>
+<td> oval
+</td></tr>
+<tr>
+<th> 5
+</th>
+<td> line top-left to bottom-right
+</td></tr>
+<tr>
+<th> 6
+</th>
+<td> line bottom-left to top-right
+</td></tr>
+<tr>
+<th> 7
+</th>
+<td> text
+</td></tr>
+<tr>
+<th> 8
+</th>
+<td> button
+</td></tr>
+<tr>
+<th> 9
+</th>
+<td> checkbox
+</td></tr>
+<tr>
+<th> 10
+</th>
+<td> radio button
+</td></tr>
+<tr>
+<th> 16
+</th>
+<td> undetermined (try the castType of the associated cast member)
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C&nbsp;07
+</th>
+<td> <code>(the exitLock)</code>
+</td>
+<td> -1
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop a setting ID from the stack and push its value, using these setting IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> <code>the beepOn</code>
+</td></tr>
+<tr>
+<th> 02
+</th>
+<td> <code>the buttonStyle</code>
+</td></tr>
+<tr>
+<th> 03
+</th>
+<td> <code>the centerStage</code>
+</td></tr>
+<tr>
+<th> 04
+</th>
+<td> <code>the checkBoxAccess</code>
+</td></tr>
+<tr>
+<th> 05
+</th>
+<td> <code>the checkBoxType</code>
+</td></tr>
+<tr>
+<th> 06
+</th>
+<td> <code>the colorDepth</code>
+</td></tr>
+<tr>
+<th> 08
+</th>
+<td> <code>the exitLock</code>
+</td></tr>
+<tr>
+<th> 09
+</th>
+<td> <code>the fixStageSize</code>
+</td></tr>
+<tr>
+<th> 13
+</th>
+<td> <code>the timeoutLapsed</code>
+</td></tr>
+<tr>
+<th> 17
+</th>
+<td> <code>the selEnd</code>
+</td></tr>
+<tr>
+<th> 18
+</th>
+<td> <code>the selStart</code>
+</td></tr>
+<tr>
+<th> 19
+</th>
+<td> <code>the soundEnabled</code>
+</td></tr>
+<tr>
+<th> 1A
+</th>
+<td> <code>the soundLevel</code>
+</td></tr>
+<tr>
+<th> 1B
+</th>
+<td> <code>the stageColor</code>
+</td></tr>
+<tr>
+<th> 1D
+</th>
+<td> <code>the stillDown</code>
+</td></tr>
+<tr>
+<th> 1E
+</th>
+<td> <code>the timeoutKeyDown</code>
+</td></tr>
+<tr>
+<th> 1F
+</th>
+<td> <code>the timeoutLength</code>
+</td></tr>
+<tr>
+<th> 20
+</th>
+<td> <code>the timeoutMouse</code>
+</td></tr>
+<tr>
+<th> 21
+</th>
+<td> <code>the timeoutPlay</code>
+</td></tr>
+<tr>
+<th> 22
+</th>
+<td> <code>the timer</code>
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C&nbsp;08
+</th>
+<td> <code>(the&nbsp;number of&nbsp;castMembers)</code>
+</td>
+<td> -1
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop a stat ID from the stack and push the stat, using these stat IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> <code>the perFrameHook</code>
+</td></tr>
+<tr>
+<th> 02
+</th>
+<td> <code>number of castMembers</code>
+</td></tr>
+<tr>
+<th> 03
+</th>
+<td> <code>number of menus</code>
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C&nbsp;09
+</th>
+<td>
+<p><code>(the&nbsp;picture of&nbsp;cast&nbsp;"bob")</code>
+</p><p><code>(the&nbsp;name of&nbsp;cast&nbsp;3)</code>
+</p>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop [cast ID, property ID] from the stack and push the value of the cast property, using these property IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> <code>name</code>
+</td></tr>
+<tr>
+<th> 02
+</th>
+<td> <code>text</code>
+</td></tr>
+<tr>
+<th> 08
+</th>
+<td> <code>picture</code>
+</td></tr>
+<tr>
+<th> 0A
+</th>
+<td> <code>number</code>
+</td></tr>
+<tr>
+<th> 0B
+</th>
+<td> <code>size</code>
+</td></tr>
+<tr>
+<th> 11
+</th>
+<td> <code>foreColor</code>
+</td></tr>
+<tr>
+<th> 12
+</th>
+<td> <code>backColor</code>
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C 0C
+</th>
+<td> <code>(the textSize of field 1)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop [field ID, property ID] and push the value of the property for the given field according to these property IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 03
+</th>
+<td> <code>textStyle</code>
+</td></tr>
+<tr>
+<th> 04
+</th>
+<td> <code>textFont</code>
+</td></tr>
+<tr>
+<th> 05
+</th>
+<td> <code>textHeight</code>
+</td></tr>
+<tr>
+<th> 06
+</th>
+<td> <code>textAlign</code>
+</td></tr>
+<tr>
+<th> 07
+</th>
+<td> <code>textSize</code>
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5C 0D
+</th>
+<td> <code>(the sound of cast 5)</code>
+</td>
+<td> -2
+</td>
+<td> +1
+</td>
+<td>
+<p>Pop [cast ID, property ID] and push the value of property for the given cast according to these property IDs:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 10
+</th>
+<td> <code>sound</code>
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5D&nbsp;00
+</th>
+<td> <code>when keyDown then beep</code>
+</td>
+<td> -2
+</td>
+<td>
+</td>
+<td>
+<p>Pop [statement, eventID] and set the statement (Lingo source code in a text string) to run on the given event:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 01
+</th>
+<td> <code>mouseDown</code>
+</td></tr>
+<tr>
+<th> 02
+</th>
+<td> <code>mouseUp</code>
+</td></tr>
+<tr>
+<th> 03
+</th>
+<td> <code>keyDown</code>
+</td></tr>
+<tr>
+<th> 04
+</th>
+<td> <code>keyUp</code>
+</td></tr>
+<tr>
+<th> 05
+</th>
+<td> <code>timeOut</code>
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<th> 5D&nbsp;03
+</th>
+<td> <code>set&nbsp;the&nbsp;enabled of&nbsp;menuItem&nbsp;3 of&nbsp;menu&nbsp;5 to&nbsp;FALSE</code>
+</td>
+<td> -4
+</td>
+<td>
+</td>
+<td> Pop [menuItem ID, menu ID, new value, property ID] and set the menu item property. See the table for code 5C 03 for menu item property IDs.
+</td></tr>
+<tr>
+<th> 5D&nbsp;04
+</th>
+<td> <code>set&nbsp;the&nbsp;volume of&nbsp;sound&nbsp;3 to&nbsp;255</code>
+</td>
+<td> -3
+</td>
+<td>
+</td>
+<td> Pop [sound ID, new value, property ID] and set the menu item property. See the table for code 5C 04 for sound property IDs.
+</td></tr>
+<tr>
+<th> 5D&nbsp;06
+</th>
+<td> <code>set&nbsp;the&nbsp;constraint of&nbsp;sprite&nbsp;3 to&nbsp;0</code>
+</td>
+<td> -3
+</td>
+<td>
+</td>
+<td> Pop [sprite ID, new value, property ID] and set the sprite property. See the table for code 5C 06 for sprite property IDs.
+</td></tr>
+<tr>
+<th> 5D 07
+</th>
+<td> <code>set the exitLock to TRUE</code>
+</td>
+<td> -2
+</td>
+<td>
+</td>
+<td> Pop [new value, setting ID] and change the relevant setting. See the table for code 5C 07 for setting IDs.
+</td></tr>
+<tr>
+<th> 5D&nbsp;09
+</th>
+<td> <code>set&nbsp;the&nbsp;backColor of&nbsp;cast&nbsp;"bob" to&nbsp;0</code>
+</td>
+<td> -3
+</td>
+<td>
+</td>
+<td> Pop [cast ID, new value, property ID] and set the cast property. See the table for code 5C 09 for cast property IDs.
+</td></tr>
+<tr>
+<th> 5D 0C
+</th>
+<td> <code>set&nbsp;the&nbsp;textAlign of&nbsp;field&nbsp;3 to&nbsp;"right"</code>
+</td>
+<td> -3
+</td>
+<td>
+</td>
+<td> Pop [field ID, new value, property ID] and set the field property. See the table for code 5C 0C for cast property IDs.
+</td></tr>
+<tr>
+<th> 5D 0D
+</th>
+<td> <code>set the sound of cast 3 to TRUE</code>
+</td>
+<td> -3
+</td>
+<td>
+</td>
+<td> Pop [cast ID, new value, property ID] and set the cast property. See the table for code 5C 0D for cast property IDs.
+</td></tr>
+<tr>
+<th> 5E&nbsp;XX
+</th></tr>
+<tr>
+<th> 5F&nbsp;XX
+</th>
+<td> <code>(the someProperty)</code>
+</td>
+<td>
+</td>
+<td> +1
+</td>
+<td> Push the value of the contextual property with the name at namelist[XX].
+</td></tr>
+<tr>
+<th> 60&nbsp;XX
+</th>
+<td> <code>set&nbsp;the&nbsp;someProperty to&nbsp;0</code>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> Pop a value and use it to set the contextual property with the name at namelist[XX].
+</td></tr>
+<tr>
+<th> 61&nbsp;XX
+</th>
+<td> <code>(the&nbsp;someProperty of&nbsp;someVariable)</code>
+</td>
+<td> -1
+</td>
+<td> +1
+</td>
+<td> Pop a property-owning object from the stack, and push the value of this object's property with the name at namelist[XX].
+</td></tr>
+<tr>
+<th> 62&nbsp;XX
+</th>
+<td> <code>set the&nbsp;someProperty of&nbsp;someVariable to&nbsp;1</code>
+</td>
+<td> -2
+</td>
+<td>
+</td>
+<td> Pop [property-owning object, new value] from the stack and set the property of the object with the name at namelist[XX].
+</td></tr>
+<tr>
+<th> 63&nbsp;XX
+</th>
+<td> <code>tell&nbsp;someObject to&nbsp;go&nbsp;to&nbsp;frame&nbsp;1</code>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> Remote call: Similar to 57 XX except runs in the context of a <code>tell ... to</code> block.
+</td></tr>
+<tr>
+<th> 64&nbsp;XX
+</th>
+<td>
+</td>
+<td>
+</td>
+<td> +1
+</td>
+<td>
+<p>Push a copy of a value already on the stack, relative to the top where 00 is the top slot, 01 is one slot beneath the top, etc.
+</p><p>This is used by the compiler when generating bytecode for the <code>repeat with i in list</code> block, to keep state in the loop without allocating new local variables.
+</p>
+</td></tr>
+<tr>
+<th> 65&nbsp;XX
+</th>
+<td>
+</td>
+<td> -XX
+</td>
+<td>
+</td>
+<td>
+<p>Pop and discard XX values from the top of the stack.
+</p><p>This is used in the bytecode generated for a <code>repeat with i in list</code> block, to clean up at the end.
+</p>
+</td></tr>
+<tr>
+<th> 66 XX
+</th>
+<td> <code>(the pathName)</code>
+</td>
+<td> -1
+</td>
+<td> +1
+</td>
+<td> Pop an empty list and push the value of a read-only property named at namelist[XX].
+</td></tr></tbody></table>
+<h1> <span class="mw-headline" id="Three_Byte_Instructions"> Three Byte Instructions </span></h1>
+<table class="wikitable">
+
+<tbody><tr>
+<th> 81&nbsp;XX&nbsp;YY
+</th>
+<td> <code>128</code> .. <code>32767</code>
+</td>
+<td> &nbsp;
+</td>
+<td> +1
+</td>
+<td> Push the integer ((XX * 0x100) + YY). Larger integers and floats are pushed using constants.
+</td></tr>
+<tr>
+<th> 82&nbsp;XX&nbsp;YY
+</th>
+<td> <code>someFunc 1, 2, 3,</code> <i>(...)</i> <code>254, 255, 256, 257</code>
+</td>
+<td> -﻿((XX&nbsp;*&nbsp;0x100)&nbsp;+&nbsp;YY)
+</td>
+<td> +1
+</td>
+<td> Pop ((XX * 0x100) + YY) values from the stack and push a no-return-value argument list object containing these values. Similar to code 42 XX, only necessary when there are more than 255 arguments in the list.
+</td></tr>
+
+<tr>
+<th> 83&nbsp;XX&nbsp;YY
+</th>
+<td> <code>[1, 2, 3,</code> <i>(...)</i> <code>254, 255, 256, 257]</code>
+</td>
+<td> -﻿((XX&nbsp;*&nbsp;0x100)&nbsp;+&nbsp;YY)
+</td>
+<td> +1
+</td>
+<td> Pop ((XX * 0x100) + YY) values from the stack and push a list object containing these values. Similar to code 43 XX, only necessary when there are more than 255 items in the list.
+</td></tr>
+<tr>
+<th> 93&nbsp;XX&nbsp;YY
+</th>
+<td>
+<p><code>else</code>
+</p><p><code>exit repeat</code>
+</p><p><code>next repeat</code>
+</p>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td> Unconditional jump: Advance by ((XX * 0x100) + YY) bytes, relative to the first byte of this instruction (i.e. it may be 3 more than you are expecting)
+<p>(<code>next repeat</code> jumps forward to <code>end repeat</code> instead of jumping back itself)
+</p>
+</td></tr>
+<tr>
+<th> 95&nbsp;XX&nbsp;YY
+</th>
+<td>
+<p><code>if&nbsp;somethingIsTrue&nbsp;then</code>
+</p><p><code>repeat&nbsp;while&nbsp;somethingIsTrue</code>
+</p>
+</td>
+<td> -1
+</td>
+<td>
+</td>
+<td> Conditional jump: Pop a value, and if it is logically FALSE, advance by ((XX * 0x100) + YY) bytes, relative to the first byte of this instruction
+</td></tr></tbody></table>
+<h1> <span class="mw-headline" id="Syntactic_Sugar"> Syntactic Sugar </span></h1>
+<p>Some functions get special syntax when written out in source code, but under the hood, the compiler just transforms it into more regular syntax. Here is a mapping that shows the equivalent in plain, generalized Lingo that gets used for the bytecode.
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> Specialized Syntax
+</th>
+<th> Generalized Syntax
+</th></tr>
+<tr>
+<td><code>play frame 10 of movie "theMovie"</code>
+</td>
+<td><code>play 10, "theMovie"</code>
+</td></tr>
+<tr>
+<td><code>play frame 10</code>
+</td>
+<td><code>play 10</code>
+</td></tr>
+<tr>
+<td><code>play movie "theMovie"</code>
+</td>
+<td><code>play 1, "theMovie"</code>
+</td></tr>
+<tr>
+<td><code>play done</code>
+</td>
+<td><code>play</code>
+</td></tr>
+<tr>
+<td><pre>repeat with i = 15 to 20
+  ...
+
+end repeat</pre>
+</td>
+<td><pre>set i = 15
+repeat while i &lt;= 20
+  ...
+  set i = i + 1
+end repeat</pre>
+</td></tr>
+<tr>
+<td><pre>repeat with i = 15 down to 10
+  ...
+
+end repeat</pre>
+</td>
+<td><pre>set i = 15
+repeat while i &gt;= 10
+  ...
+  set i = i - 1
+end repeat</pre>
+</td></tr>
+<tr>
+<td><code>sound playFile 1, "Thunder"</code>
+</td>
+<td><code>sound #playFile, 1, "Thunder"</code>
+</td></tr>
+<tr>
+<td><code>sound fadeIn 5</code>
+</td>
+<td><code>sound #fadeIn, 5</code>
+</td></tr>
+<tr>
+<td><code>sound fadeIn 5, 10</code>
+</td>
+<td><code>sound #fadeIn, 5, 10</code>
+</td></tr>
+<tr>
+<td><code>sound fadeOut 5</code>
+</td>
+<td><code>sound #fadeOut, 5</code>
+</td></tr>
+<tr>
+<td><code>sound fadeOut 5, 10</code>
+</td>
+<td><code>sound #fadeOut, 5, 10</code>
+</td></tr>
+<tr>
+<td><code>sound stop 1</code>
+</td>
+<td><code>sound #stop, 1</code>
+</td></tr>
+<tr>
+<td><code>sound close 1</code>
+</td>
+<td><code>sound #close, 1</code>
+</td></tr>
+<tr>
+<td><code>go to frame 10</code>
+<p><code>go frame 10</code>
+</p><p><code>go to 10</code>
+</p>
+</td>
+<td><code>go 10</code>
+</td></tr>
+<tr>
+<td><code>go to movie "theMovie"</code>
+<p><code>go movie "theMovie"</code>
+</p>
+</td>
+<td><code>go 1, "theMovie"</code>
+</td></tr>
+<tr>
+<td><code>go to frame 10 of movie "theMovie"</code>
+<p><code>go frame 10 of movie "theMovie"</code>
+</p><p><code>go to 10 of movie "theMovie"</code>
+</p><p><code>go 10 of movie "theMovie"</code>
+</p>
+</td>
+<td><code>go 10, "theMovie"</code>
+</td></tr>
+<tr>
+<td><code>go loop</code>
+</td>
+<td><code>go #loop</code>
+</td></tr>
+<tr>
+<td><code>go next</code>
+</td>
+<td><code>go #next</code>
+</td></tr>
+<tr>
+<td><code>go previous</code>
+</td>
+<td><code>go #previous</code>
+</td></tr>
+<tr>
+<td><code>open "document" with "application"</code>
+</td>
+<td><code>open "document", "application"</code>
+</td></tr>
+<tr>
+<td><code>set obj = GetObject()<br>obj(mSomeMethod, 1, 2, 3)</code>
+</td>
+<td><code>set obj = GetObject()<br>obj(#mSomeMethod, 1, 2, 3)</code>
+</td></tr></tbody></table>
+<h1> <span class="mw-headline" id="Lscr_bytecode-container_chunk_layout"> <code>Lscr</code> bytecode-container chunk layout </span></h1>
+<h2> <span class="mw-headline" id="Header"> Header </span></h2>
+<table class="wikitable">
+
+<tbody><tr>
+<td colspan="3">...
+</td></tr>
+<tr>
+<th> $0040-$0041
+</th>
+<td> uint16
+</td>
+<td> Offset to the function records block
+</td></tr>
+<tr>
+<td colspan="3">...
+</td></tr>
+<tr>
+<th> $004E-$004F
+</th>
+<td> uint16
+</td>
+<td> Number of constants
+</td></tr>
+<tr>
+<td colspan="3">...
+</td></tr>
+<tr>
+<th> $0048-$0049
+</th>
+<td> uint16
+</td>
+<td> Number of function records
+</td></tr>
+<tr>
+<td colspan="3">...
+</td></tr>
+<tr>
+<th> $0052-$0053
+</th>
+<td> uint16
+</td>
+<td> Offset to the constant records block
+</td></tr>
+<tr>
+<td colspan="3">...
+</td></tr>
+<tr>
+<th> $005A-$005B
+</th>
+<td> uint16
+</td>
+<td> Base address for constant data
+</td></tr></tbody></table>
+<h2> <span class="mw-headline" id="Function_Record"> Function Record </span></h2>
+<p>Each function record is 42 bytes long.
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th> $0000-$0001
+</th>
+<td> uint16
+</td>
+<td> Namelist index for the function's name, or 0xFFFF if there is no name(?)
+</td></tr>
+<tr>
+<th> $0002-$0003
+</th>
+<td> uint16
+</td>
+<td> Unknown
+</td></tr>
+<tr>
+<th> $0004-$0007
+</th>
+<td> uint32
+</td>
+<td> Length of the function bytecode in bytes
+</td></tr>
+<tr>
+<th> $0008-$000B
+</th>
+<td> uint32
+</td>
+<td> Offset to the function bytecode
+</td></tr>
+<tr>
+<th> $000C-$000D
+</th>
+<td> uint16
+</td>
+<td> Number of arguments
+</td></tr>
+<tr>
+<th> $000E-$0011
+</th>
+<td> uint32
+</td>
+<td> Unknown
+</td></tr>
+<tr>
+<th> $0012-$0013
+</th>
+<td> uint16
+</td>
+<td> Number of local variables
+</td></tr>
+<tr>
+<th> $0014-$0017
+</th>
+<td> uint32
+</td>
+<td> Unknown
+</td></tr>
+<tr>
+<th> $0018-$0019
+</th>
+<td> uint16
+</td>
+<td> Count (C)
+</td></tr>
+<tr>
+<th> $001A-$001D
+</th>
+<td> uint32
+</td>
+<td> Unknown
+</td></tr>
+<tr>
+<th> $001E-$0021
+</th>
+<td> uint32
+</td>
+<td> Unknown
+</td></tr>
+<tr>
+<th> $0022-$0023
+</th>
+<td> uint16
+</td>
+<td> Unknown
+</td></tr>
+<tr>
+<th> $0024-$0025
+</th>
+<td> uint16
+</td>
+<td> Count (D)
+</td></tr>
+<tr>
+<th> $0026-$0029
+</th>
+<td> uint32
+</td>
+<td> Unknown
+</td></tr></tbody></table>
+<h2> <span class="mw-headline" id="Bytecode_Trailer"> Bytecode Trailer </span></h2>
+<p>After the bytecode section for a function (determined using the offset and length fields from the function record), and then after an additional padding byte if there are an odd number of bytes in the bytecode, are the following values:
+</p>
+<ul><li> For each argument: uint16 namelist index for the argument's name
+</li><li> For each local variable: uint16 namelist index for the variable's name
+</li><li> Count (C) * uint16
+</li><li> Count (D) * uint8
+</li><li> A padding byte if Count (D) is an odd number
+</li></ul>
+<h2> <span class="mw-headline" id="Constants"> Constants </span></h2>
+<p>Each constant record is six bytes long and has this format:
+</p>
+<ul><li> uint16: Value type ID
+</li><li> uint32: Data address, relative to the base address given in the header
+</li></ul>
+<p>Here is how the value type IDs correspond to the data found at the given address:
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th> 01
+</th>
+<td> Text string
+</td>
+<td> uint32 length (including null terminator) followed immediately by the character data
+</td></tr>
+<tr>
+<th> 04
+</th>
+<td> 32-bit unsigned integer
+</td>
+<td> "Data address" not an address, but the value itself
+</td></tr>
+<tr>
+<th> 09
+</th>
+<td> Floating point
+</td>
+<td> uint32 length followed by the floating point data. In practice, the length always seems to be 10, so the number is an 80-bit extended precision number.
+</td></tr></tbody></table>
+<h1> <span class="mw-headline" id="Projector_File_.28Windows.29"> Projector File (Windows) </span></h1>
+<h2> <span class="mw-headline" id="Director_3.0"> Director 3.0 </span></h2>
+<p>At the very end of the projector executable is a 32-bit little-endian file address.
+</p><p>At this location is found:
+</p>
+<ul><li> 7 bytes: Not sure/more research needed
+</li><li> uint32: Length of the RIFF block
+</li><li> uint8: Length of the original RIFF file's name
+</li><li> ASCII: Original RIFF file's name
+</li><li> uint8: Length of the original RIFF file's parent folder
+</li><li> ASCII: Original RIFF file's parent folder
+</li><li> RIFF block
+</li></ul>
+<h2> <span class="mw-headline" id="Director_4.0"> Director 4.0 </span></h2>
+<p>At the very end of the projector executable is a 32-bit little-endian file address.
+</p><p>At this location is found:
+</p>
+<ul><li> ASCII "PJ93"
+</li><li> The file address of the main RIFF data file
+</li><li> Six further addresses for other embedded data (more research required to know more about these)
+</li></ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 196/1000000
+Post-expand include size: 1279/2097152 bytes
+Template argument size: 338/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key justsolve:pcache:idhash:6263-0!*!0!!en!*!* and timestamp 20160712223455 -->
+</div>				<!-- /bodycontent -->
+								<!-- printfooter -->
+				<div class="printfooter">
+				Retrieved from "<a href="http://fileformats.archiveteam.org/index.php?title=Lingo_bytecode&amp;oldid=25053">http://fileformats.archiveteam.org/index.php?title=Lingo_bytecode&amp;oldid=25053</a>"				</div>
+				<!-- /printfooter -->
+												<!-- catlinks -->
+				<div id="catlinks" class="catlinks"><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="http://fileformats.archiveteam.org/wiki/Special:Categories" title="Special:Categories">Categories</a>: <ul><li><a href="http://fileformats.archiveteam.org/wiki/Category:File_Formats" title="Category:File Formats">File Formats</a></li><li><a href="http://fileformats.archiveteam.org/wiki/Category:Electronic_File_Formats" title="Category:Electronic File Formats">Electronic File Formats</a></li><li><a href="http://fileformats.archiveteam.org/wiki/Category:Development" title="Category:Development">Development</a></li></ul></div><div id="mw-hidden-catlinks" class="mw-hidden-catlinks mw-hidden-cats-hidden">Hidden categories: <ul><li><a href="http://fileformats.archiveteam.org/wiki/Category:FormatInfo_without_extensions" title="Category:FormatInfo without extensions">FormatInfo without extensions</a></li><li><a href="http://fileformats.archiveteam.org/wiki/Category:FormatInfo_without_mimetypes" title="Category:FormatInfo without mimetypes">FormatInfo without mimetypes</a></li></ul></div></div>				<!-- /catlinks -->
+												<div class="visualClear"></div>
+				<!-- debughtml -->
+								<!-- /debughtml -->
+			</div>
+			<!-- /bodyContent -->
+		</div>
+		<!-- /content -->
+		<!-- header -->
+		<div id="mw-head" class="noprint">
+			
+<!-- 0 -->
+<div id="p-personal" class="">
+	<h5>Personal tools</h5>
+	<ul>
+		<li id="pt-login"><a href="http://fileformats.archiveteam.org/index.php?title=Special:UserLogin&amp;returnto=Lingo+bytecode" title="You are encouraged to log in; however, it is not mandatory [ctrl-option-o]" accesskey="o">Log in / create account</a></li>
+	</ul>
+</div>
+
+<!-- /0 -->
+			<div id="left-navigation">
+				
+<!-- 0 -->
+<div id="p-namespaces" class="vectorTabs">
+	<h5>Namespaces</h5>
+	<ul>
+					<li id="ca-nstab-main" class="selected"><span><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode" title="View the content page [ctrl-option-c]" accesskey="c">Page</a></span></li>
+					<li id="ca-talk" class="new"><span><a href="http://fileformats.archiveteam.org/index.php?title=Talk:Lingo_bytecode&amp;action=edit&amp;redlink=1" title="Discussion about the content page [ctrl-option-t]" accesskey="t">Discussion</a></span></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id="p-variants" class="vectorMenu emptyPortlet">
+	<h4>
+		</h4>
+	<h5><span>Variants</span><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#"></a></h5>
+	<div class="menu">
+		<ul>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+			</div>
+			<div id="right-navigation">
+				
+<!-- 0 -->
+<div id="p-views" class="vectorTabs">
+	<h5>Views</h5>
+	<ul>
+					<li id="ca-view" class="selected"><span><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode">Read</a></span></li>
+					<li id="ca-viewsource"><span><a href="http://fileformats.archiveteam.org/index.php?title=Lingo_bytecode&amp;action=edit" title="This page is protected.
+You can view its source [ctrl-option-e]" accesskey="e">View source</a></span></li>
+					<li id="ca-history" class="collapsible"><span><a href="http://fileformats.archiveteam.org/index.php?title=Lingo_bytecode&amp;action=history" title="Past revisions of this page [ctrl-option-h]" accesskey="h">View history</a></span></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id="p-cactions" class="vectorMenu emptyPortlet">
+	<h5><span>Actions</span><a href="http://fileformats.archiveteam.org/wiki/Lingo_bytecode#"></a></h5>
+	<div class="menu">
+		<ul>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+
+<!-- 2 -->
+<div id="p-search">
+	<h5><label for="searchInput">Search</label></h5>
+	<form action="http://fileformats.archiveteam.org/index.php" id="searchform">
+				<div>
+			<input type="search" name="search" title="Search Just Solve the File Format Problem [ctrl-option-f]" accesskey="f" id="searchInput">			<input type="submit" name="go" value="Go" title="Go to a page with this exact name if exists" id="searchGoButton" class="searchButton">			<input type="submit" name="fulltext" value="Search" title="Search the pages for this text" id="mw-searchButton" class="searchButton">					<input type="hidden" name="title" value="Special:Search">
+		</div>
+	</form>
+</div>
+
+<!-- /2 -->
+			</div>
+		</div>
+		<!-- /header -->
+		<!-- panel -->
+			<div id="mw-panel" class="noprint">
+				<!-- logo -->
+					<div id="p-logo"><a style="background-image: url(/thumbsup.png);" href="http://fileformats.archiveteam.org/wiki/Main_Page" title="Visit the main page"></a></div>
+				<!-- /logo -->
+				
+<!-- navigation -->
+<div class="portal" id="p-navigation">
+	<h5>Navigation</h5>
+	<div class="body">
+		<ul>
+			<li id="n-mainpage-description"><a href="http://fileformats.archiveteam.org/wiki/Main_Page" title="Visit the main page [ctrl-option-z]" accesskey="z">Main page</a></li>
+			<li id="n-File-formats"><a href="http://fileformats.archiveteam.org/wiki/File_Formats">File formats</a></li>
+			<li id="n-Formats-by-extension"><a href="http://fileformats.archiveteam.org/wiki/Category:File_formats_by_extension">Formats by extension</a></li>
+			<li id="n-Still-more-extensions"><a href="http://fileformats.archiveteam.org/wiki/Category:File_Format_Extension">Still more extensions</a></li>
+			<li id="n-Software"><a href="http://fileformats.archiveteam.org/wiki/Software">Software</a></li>
+			<li id="n-Glossary"><a href="http://fileformats.archiveteam.org/wiki/Glossary">Glossary</a></li>
+			<li id="n-Library"><a href="http://fileformats.archiveteam.org/wiki/Library">Library</a></li>
+			<li id="n-Sources"><a href="http://fileformats.archiveteam.org/wiki/Sources">Sources</a></li>
+			<li id="n-Categories"><a href="http://fileformats.archiveteam.org/wiki/Category:Top_Level_Categories">Categories</a></li>
+			<li id="n-portal"><a href="http://fileformats.archiveteam.org/wiki/Just_Solve_the_File_Format_Problem:Community_portal" title="About the project, what you can do, where to find things">Community portal</a></li>
+			<li id="n-recentchanges"><a href="http://fileformats.archiveteam.org/wiki/Special:RecentChanges" title="A list of recent changes in the wiki [ctrl-option-r]" accesskey="r">Recent changes</a></li>
+			<li id="n-randompage"><a href="http://fileformats.archiveteam.org/wiki/Special:Random" title="Load a random page [ctrl-option-x]" accesskey="x">Random page</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- /navigation -->
+
+<!-- SEARCH -->
+
+<!-- /SEARCH -->
+
+<!-- TOOLBOX -->
+<div class="portal" id="p-tb">
+	<h5>Toolbox</h5>
+	<div class="body">
+		<ul>
+			<li id="t-whatlinkshere"><a href="http://fileformats.archiveteam.org/wiki/Special:WhatLinksHere/Lingo_bytecode" title="A list of all wiki pages that link here [ctrl-option-j]" accesskey="j">What links here</a></li>
+			<li id="t-recentchangeslinked"><a href="http://fileformats.archiveteam.org/wiki/Special:RecentChangesLinked/Lingo_bytecode" title="Recent changes in pages linked from this page [ctrl-option-k]" accesskey="k">Related changes</a></li>
+			<li id="t-specialpages"><a href="http://fileformats.archiveteam.org/wiki/Special:SpecialPages" title="A list of all special pages [ctrl-option-q]" accesskey="q">Special pages</a></li>
+			<li><a href="http://fileformats.archiveteam.org/index.php?title=Lingo_bytecode&amp;printable=yes" rel="alternate">Printable version</a></li>
+			<li id="t-permalink"><a href="http://fileformats.archiveteam.org/index.php?title=Lingo_bytecode&amp;oldid=25053" title="Permanent link to this revision of the page">Permanent link</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- /TOOLBOX -->
+
+<!-- LANGUAGES -->
+
+<!-- /LANGUAGES -->
+			</div>
+		<!-- /panel -->
+		<!-- footer -->
+		<div id="footer">
+							<ul id="footer-info">
+											<li id="footer-info-lastmod"> This page was last modified on 17 March 2016, at 18:25.</li>
+											<li id="footer-info-viewcount">This page has been accessed 586 times.</li>
+											<li id="footer-info-copyright">Content is available under <a class="external" href="http://creativecommons.org/publicdomain/zero/1.0/">Creative Commons 0</a>.</li>
+									</ul>
+							<ul id="footer-places">
+											<li id="footer-places-privacy"><a href="http://fileformats.archiveteam.org/wiki/Just_Solve_the_File_Format_Problem:Privacy_policy" title="Just Solve the File Format Problem:Privacy policy">Privacy policy</a></li>
+											<li id="footer-places-about"><a href="http://fileformats.archiveteam.org/wiki/Just_Solve_the_File_Format_Problem:About" title="Just Solve the File Format Problem:About">About Just Solve the File Format Problem</a></li>
+											<li id="footer-places-disclaimer"><a href="http://fileformats.archiveteam.org/wiki/Just_Solve_the_File_Format_Problem:General_disclaimer" title="Just Solve the File Format Problem:General disclaimer">Disclaimers</a></li>
+									</ul>
+										<ul id="footer-icons" class="noprint">
+					<li id="footer-copyrightico">
+						<a href="http://creativecommons.org/publicdomain/zero/1.0/"><img src="./Lingo bytecode - Just Solve the File Format Problem_files/cc-0.png" alt="Creative Commons 0" width="88" height="31"></a>
+					</li>
+					<li id="footer-poweredbyico">
+						<a href="http://www.mediawiki.org/"><img src="./Lingo bytecode - Just Solve the File Format Problem_files/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" width="88" height="31"></a>
+					</li>
+				</ul>
+						<div style="clear:both"></div>
+		</div>
+		<!-- /footer -->
+		<script src="./Lingo bytecode - Just Solve the File Format Problem_files/load(4).php"></script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.user","mediawiki.page.ready"], null, true);
+}</script><script src="./Lingo bytecode - Just Solve the File Format Problem_files/load(5).php" type="text/javascript"></script>
+<!-- Served in 0.102 secs. -->
+	
+
+<script type="text/javascript" src="chrome-extension://cmjeonfdjdekpggjkoknhhkcifnaichh/src/rules.js"></script><script type="text/javascript" src="chrome-extension://cmjeonfdjdekpggjkoknhhkcifnaichh/src/inject.js"></script></body><span class="gr__tooltip"><span class="gr__tooltip-content"></span><i class="gr__tooltip-logo"></i><span class="gr__triangle"></span></span></html>

@@ -1363,7 +1363,7 @@ void Scene5100::signal() {
 		g_globals->_player.setStrip(6);
 		g_globals->_player.fixPriority(-1);
 		g_globals->_player.animate(ANIM_MODE_1, NULL);
-	// No break on purpose
+		// fall through
 	case 5117:
 		g_globals->_player.enableControl();
 		break;
@@ -2149,7 +2149,7 @@ void Scene5300::signal() {
 		break;
 	case 5307:
 		_soundHandler.fadeOut(NULL);
-	// No break on purpose
+		// fall through
 	case 5302:
 	case 5308:
 	case 5316:

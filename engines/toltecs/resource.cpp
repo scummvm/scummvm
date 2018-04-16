@@ -31,6 +31,7 @@ namespace Toltecs {
 /* ArchiveReader */
 
 ArchiveReader::ArchiveReader() {
+	_offsets = 0;
 }
 
 ArchiveReader::~ArchiveReader() {

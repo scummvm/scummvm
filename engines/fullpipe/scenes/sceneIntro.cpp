@@ -96,7 +96,7 @@ int sceneHandlerIntro(ExCommand *ex) {
 		if (!g_vars->sceneIntro_aniin1man->_movement && g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP)
 			g_vars->sceneIntro_aniin1man->startAnim(MV_IN1MAN_SLEEP, 0, -1);
 	} else if (g_vars->sceneIntro_needGetup && !g_vars->sceneIntro_aniin1man->_movement &&
-			   g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP) {
+				g_vars->sceneIntro_aniin1man->_statics->_staticsId == ST_IN1MAN_SLEEP) {
 		g_vars->sceneIntro_needGetup = 0;
 
 		chainQueue(QU_INTR_GETUPMAN, 0);

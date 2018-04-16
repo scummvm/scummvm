@@ -68,7 +68,7 @@ int Scene::IHNMStartProc() {
 				// Play the title music
 				_vm->_music->play(1, MUSIC_NORMAL);
 				// Play title screen
-				playTitle(2, 17);
+				playTitle(2, _vm->_music->isAdlib() ? 20 : 27);
 			}
 		}
 	} else {
@@ -150,7 +150,7 @@ bool Scene::checkKey() {
 			break;
 		case Common::EVENT_KEYDOWN:
 			// Don't react to modifier keys alone. The original did
-			// non, and the user may want to change scaler without
+			// not, and the user may want to change scaler without
 			// terminating the intro.
 			if (event.kbd.ascii)
 				res = true;

@@ -8,24 +8,27 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
+#include "audio/fmopl.h"
 #include "common/memstream.h"
 #include "mads/sound.h"
 #include "mads/mads.h"
 #include "mads/nebular/sound_nebular.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace MADS {
 
@@ -36,9 +39,12 @@ SoundManager::SoundManager(MADSEngine *vm, Audio::Mixer *mixer) {
 	_pollSoundEnabled = false;
 	_soundPollFlag = false;
 	_newSoundsPaused = false;
+	_masterVolume = 255;
+
+	_preferRoland = false;
 
 	_opl = OPL::Config::create();
-	_opl->init(11025);
+	_opl->init();
 
 	// Validate sound files
 	switch (_vm->getGameID()) {
@@ -61,6 +67,9 @@ SoundManager::~SoundManager() {
 
 void SoundManager::init(int sectionNumber) {
 	assert(sectionNumber > 0 && sectionNumber < 10);
+
+	if (_driver != nullptr)
+		delete _driver;
 
 	switch (_vm->getGameID()) {
 	case GType_RexNebular:
@@ -94,15 +103,18 @@ void SoundManager::init(int sectionNumber) {
 			break;
 		default:
 			_driver = nullptr;
-			break;
+			return;
 		}
 		break;
 
 	default:
 		warning("SoundManager: Unknown game");
 		_driver = nullptr;
-		break;
+		return;
 	}
+
+	// Set volume for newly loaded driver
+	_driver->setVolume(_masterVolume);
 }
 
 void SoundManager::closeDriver() {
@@ -138,12 +150,22 @@ void SoundManager::startQueuedCommands() {
 	}
 }
 
+void SoundManager::setVolume(int volume) {
+	_masterVolume = volume;
+
+	if (_driver)
+		_driver->setVolume(volume);
+}
+
 void SoundManager::command(int commandId, int param) {
 	if (_newSoundsPaused) {
 		if (_queuedCommands.size() < 8)
 			_queuedCommands.push(commandId);
 	} else if (_driver) {
-		_driver->command(commandId, param);
+		// Note: I don't know any way to identify music commands versus sfx
+		// commands, so if sfx is mute, then so is music
+		if (_vm->_soundFlag)
+			_driver->command(commandId, param);
 	}
 }
 

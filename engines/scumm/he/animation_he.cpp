@@ -22,15 +22,20 @@
 
 #ifdef ENABLE_HE
 
+#include "common/scummsys.h"
+
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
 
-#include "audio/audiostream.h"
 #include "video/smk_decoder.h"
 
 #ifdef USE_BINK
 #include "video/bink_decoder.h"
 #endif
+
+namespace Audio {
+class Mixer;
+}
 
 namespace Scumm {
 

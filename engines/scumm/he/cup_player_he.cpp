@@ -408,6 +408,9 @@ void CUP_Player::handleSRLE(Common::SeekableReadStream &dataStream, uint32 dataS
 static void decodeLZSS(uint8 *dst, const uint8 *src1, const uint8 *src2, const uint8 *src3) {
 	uint8 wnd[4096];
 	int index = 1;
+
+	memset(wnd, 0, sizeof(wnd));
+
 	while (1) {
 		int code = *src1++;
 		for (int b = 0; b < 8; ++b) {

@@ -43,6 +43,7 @@
 
 namespace Common {
 struct Rect;
+class MemoryReadWriteStream;
 class SeekableReadStream;
 }
 namespace Audio {
@@ -503,6 +504,17 @@ private:
 	AudioFormat _audioFormat;
 	bool   _autoStartSound;
 
+	/**
+	 * Old stereo format packs a DPCM stream into audio packets without ensuring
+	 * that each packet contains an even amount of samples. In order for the
+	 * stream to play back correctly, all audio data needs to be pushed into a
+	 * single data buffer and read from there.
+	 *
+	 * This buffer is owned by _audioStream and will be disposed when
+	 * _audioStream is disposed.
+	 */
+	Common::MemoryReadWriteStream *_oldStereoBuffer;
+
 	// Video properties
 	bool   _hasVideo;
 	uint32 _videoCodec;
@@ -545,6 +557,7 @@ private:
 	void emptySoundSlice  (uint32 size);
 	void filledSoundSlice (uint32 size);
 	void filledSoundSlices(uint32 size, uint32 mask);
+	void createAudioStream();
 
 	uint8 evaluateMask(uint32 mask, bool *fillInfo, uint8 &max);
 
@@ -567,6 +580,8 @@ public:
 
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
+
+	void setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp);
 
 private:
 	class VMDVideoTrack : public FixedRateVideoTrack {
@@ -592,8 +607,6 @@ private:
 	class VMDAudioTrack : public AudioTrack {
 	public:
 		VMDAudioTrack(VMDDecoder *decoder);
-
-		Audio::Mixer::SoundType getSoundType() const;
 
 	protected:
 		virtual Audio::AudioStream *getAudioStream() const;

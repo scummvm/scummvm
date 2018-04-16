@@ -547,7 +547,7 @@ void AGOSEngine_Simon1::drawMaskedImage(VC10_state *state) {
 						if ((dst[count * 2] & 0xF0) == 0x20)
 							dst[count * 2] = src[count * 2];
 					if (mask[count + state->x_skip] & 0x0F)
-						if ((dst[count * 2 + 1] & 0x0F) == 0x20)
+						if ((dst[count * 2 + 1] & 0xF0) == 0x20)
 							dst[count * 2 + 1] = src[count * 2 + 1];
 				} else {
 					/* no transparency */
@@ -1302,6 +1302,13 @@ void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vgaSpriteId) {
 		}
 	} else {
 		setWindowImage(mode, vgaSpriteId);
+	}
+
+	// Amiga versions wait for verb area to be displayed.
+	if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformAmiga && vgaSpriteId == 1) {
+		_copyScnFlag = 5;
+		while (_copyScnFlag && !shouldQuit())
+			delay(1);
 	}
 }
 

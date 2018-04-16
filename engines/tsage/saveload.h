@@ -201,6 +201,7 @@ public:
 typedef SavedObject *(*SavedObjectFactory)(const Common::String &className);
 
 class Saver {
+	typedef Common::List<SavedObject *> DynObjects;
 private:
 	Common::List<SavedObject *> _objList;
 	FunctionList<bool> _saveNotifiers;
@@ -213,14 +214,14 @@ private:
 	bool _macroSaveFlag;
 	bool _macroRestoreFlag;
 
-	void resolveLoadPointers();
+	void resolveLoadPointers(DynObjects &dynObjects);
 public:
 	Saver();
 	~Saver();
 
 	Common::Error save(int slot, const Common::String &saveName);
 	Common::Error restore(int slot);
-	static bool readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &header);
+	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &header, bool skipThumbnail = true);
 	static void writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &header);
 
 	void addListener(SaveListener *obj);

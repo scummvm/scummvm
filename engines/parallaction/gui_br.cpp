@@ -43,7 +43,8 @@ protected:
 	int _fadeSteps;
 
 public:
-	SplashInputState_BR(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm)  {
+	SplashInputState_BR(Parallaction *vm, const Common::String &name, MenuInputHelper *helper) : MenuInputState(name, helper), _vm(vm),
+			_timeOut(0), _startTime(0), _fadeSteps(0) {
 	}
 
 	virtual MenuInputState* run() {
@@ -382,6 +383,9 @@ public:
 		_menuObj->getRect(0, _menuRect);
 		_cellW = _menuRect.width() / 3;
 		_cellH = _menuRect.height() / 2;
+
+		_menuObjId = _mscMenuObjId = _sfxMenuObjId = 0;
+		_sfxStatus = _mscStatus = 0;
 	}
 
 	~IngameMenuInputState_BR() {

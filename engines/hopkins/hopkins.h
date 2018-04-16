@@ -48,7 +48,6 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
-#include "gui/debugger.h"
 
 /**
  * This is the namespace of the Hopkins engine.
@@ -72,8 +71,6 @@ enum HopkinsDebugChannels {
  * ensure portability. Typical usage: MKTAG24('E','N','D').
  */
 #define MKTAG24(a0,a1,a2) ((uint32)((a2) | (a1) << 8 | ((a0) << 16)))
-
-#define READ_LE_INT16(x) (int16) READ_LE_UINT16(x)
 
 struct HopkinsGameDescription;
 

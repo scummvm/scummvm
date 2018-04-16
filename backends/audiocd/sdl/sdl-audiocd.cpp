@@ -24,8 +24,11 @@
 
 #if defined(SDL_BACKEND)
 
-#include "common/textconsole.h"
 #include "backends/audiocd/sdl/sdl-audiocd.h"
+
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+
+#include "common/textconsole.h"
 
 SdlAudioCDManager::SdlAudioCDManager()
 	:
@@ -40,10 +43,16 @@ SdlAudioCDManager::SdlAudioCDManager()
 }
 
 SdlAudioCDManager::~SdlAudioCDManager() {
-	if (_cdrom) {
-		SDL_CDStop(_cdrom);
-		SDL_CDClose(_cdrom);
-	}
+	close();
+}
+
+bool SdlAudioCDManager::open() {
+	close();
+
+	if (openRealCD())
+		return true;
+
+	return DefaultAudioCDManager::open();
 }
 
 bool SdlAudioCDManager::openCD(int drive) {
@@ -64,44 +73,69 @@ bool SdlAudioCDManager::openCD(int drive) {
 	return (_cdrom != NULL);
 }
 
-void SdlAudioCDManager::stopCD() {
+void SdlAudioCDManager::close() {
+	DefaultAudioCDManager::close();
+
+	if (_cdrom) {
+                SDL_CDStop(_cdrom);
+                SDL_CDClose(_cdrom);
+		_cdrom = 0;
+        }
+}
+
+void SdlAudioCDManager::stop() {
+	DefaultAudioCDManager::stop();
+
 	// Stop CD Audio in 1/10th of a second
 	_cdStopTime = SDL_GetTicks() + 100;
 	_cdNumLoops = 0;
 }
 
-void SdlAudioCDManager::playCD(int track, int num_loops, int start_frame, int duration) {
-	if (!num_loops && !start_frame)
-		return;
+bool SdlAudioCDManager::play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate) {
+	// Prefer emulation
+	if (DefaultAudioCDManager::play(track, numLoops, startFrame, duration, onlyEmulate))
+		return true;
 
-	if (!_cdrom)
-		return;
+	// If we're set to only emulate, or have no CD, return here
+	if (onlyEmulate || !_cdrom)
+		return false;
 
+	if (!numLoops && !startFrame)
+		return false;
+
+	// FIXME: Explain this.
 	if (duration > 0)
 		duration += 5;
 
 	_cdTrack = track;
-	_cdNumLoops = num_loops;
-	_cdStartFrame = start_frame;
+	_cdNumLoops = numLoops;
+	_cdStartFrame = startFrame;
 
 	SDL_CDStatus(_cdrom);
-	if (start_frame == 0 && duration == 0)
+	if (startFrame == 0 && duration == 0)
 		SDL_CDPlayTracks(_cdrom, track, 0, 1, 0);
 	else
-		SDL_CDPlayTracks(_cdrom, track, start_frame, 0, duration);
+		SDL_CDPlayTracks(_cdrom, track, startFrame, 0, duration);
 	_cdDuration = duration;
 	_cdStopTime = 0;
 	_cdEndTime = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
+
+	return true;
 }
 
-bool SdlAudioCDManager::pollCD() const {
+bool SdlAudioCDManager::isPlaying() const {
+	if (DefaultAudioCDManager::isPlaying())
+		return true;
+
 	if (!_cdrom)
 		return false;
 
 	return (_cdNumLoops != 0 && (SDL_GetTicks() < _cdEndTime || SDL_CDStatus(_cdrom) == CD_PLAYING));
 }
 
-void SdlAudioCDManager::updateCD() {
+void SdlAudioCDManager::update() {
+	DefaultAudioCDManager::update();
+
 	if (!_cdrom)
 		return;
 
@@ -132,5 +166,7 @@ void SdlAudioCDManager::updateCD() {
 		_cdEndTime = SDL_GetTicks() + _cdrom->track[_cdTrack].length * 1000 / CD_FPS;
 	}
 }
+
+#endif // !SDL_VERSION_ATLEAST(2, 0, 0)
 
 #endif

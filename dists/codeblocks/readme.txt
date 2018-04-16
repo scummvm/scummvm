@@ -1,5 +1,5 @@
 The Code::Blocks project files can now be created automatically from the GCC
-files using the create_project tool inside the /tools/create_project folder.
+files using the create_project tool inside the /devtools/create_project folder.
 
 To create the default project files, build create_project.exe, copy it inside
 this folder and run the create_codeblocks.bat file for a default build. You can

@@ -68,6 +68,7 @@ Vars::Vars() {
 	scene04_mamasha = 0;
 	scene04_boot = 0;
 	scene04_speaker = 0;
+	scene04_musicStage = 0;
 
 	scene04_ladder = 0;
 	scene04_coinPut = false;
@@ -199,7 +200,7 @@ Vars::Vars() {
 	scene11_swingOldAngle = 1.0;
 	scene11_swingSpeed = 1.0;
 	scene11_swingAngleDiff = 1.0;
-	scene11_swingInertia = 0.0;
+	scene11_swingInertia = 0.01;
 	scene11_swingCounter = 0;
 	scene11_swingCounterPrevTurn = 0;
 	scene11_swingDirection = 0;
@@ -445,7 +446,7 @@ Vars::Vars() {
 
 	scene37_rings.clear();
 	scene37_lastDudeX = -1;
-	scene37_cursorIsLocked = 0;
+	scene37_pipeIsOpen = 0;
 	scene37_plusMinus1 = 0;
 	scene37_plusMinus2 = 0;
 	scene37_plusMinus3 = 0;
@@ -472,6 +473,7 @@ Vars::Vars() {
 	sceneFinal_var01 = 0;
 	sceneFinal_var02 = 0;
 	sceneFinal_var03 = 0;
+	sceneFinal_trackHasStarted = false;
 
 	selector = 0;
 }
@@ -517,16 +519,27 @@ int FullpipeEngine::getSceneFromTag(int tag) {
 	return 1;
 }
 
-bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
+void FullpipeEngine::sceneAutoScrolling() {
+	if (_aniMan2 == _aniMan && _currentScene && !_currentScene->_messageQueueId) {
+		if (800 - _mouseScreenPos.x >= 47 || _sceneRect.right >= _sceneWidth - 1 || _aniMan->_ox <= _sceneRect.left + 230) {
+			if (_mouseScreenPos.x < 47 && _sceneRect.left > 0 && _aniMan->_ox < _sceneRect.right - 230)
+				_currentScene->_x = -10;
+		} else {
+			_currentScene->_x = 10;
+		}
+	}
+}
+
+bool FullpipeEngine::sceneSwitcher(const EntranceInfo &entrance) {
 	GameVar *sceneVar;
 	Common::Point sceneDim;
 
-	Scene *scene = accessScene(entrance->_sceneId);
+	Scene *scene = accessScene(entrance._sceneId);
 
 	if (!scene)
 		return 0;
 
-	((PictureObject *)scene->_picObjList.front())->getDimensions(&sceneDim);
+	sceneDim = scene->_picObjList.front()->getDimensions();
 	_sceneWidth = sceneDim.x;
 	_sceneHeight = sceneDim.y;
 
@@ -540,8 +553,8 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 	_aniMan->setOXY(0, 0);
 	_aniMan->clearFlags();
-	_aniMan->_callback1 = 0;
-	_aniMan->_callback2 = 0;
+	_aniMan->_callback1 = 0; // Really NULL
+	_aniMan->_callback2 = 0; // Really NULL
 	_aniMan->_shadowsOn = 1;
 
 	_scrollSpeed = 8;
@@ -550,7 +563,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	_updateFlag = true;
 	_flgCanOpenMap = true;
 
-	if (entrance->_sceneId == SC_DBGMENU) {
+	if (entrance._sceneId == SC_DBGMENU) {
 		_inventoryScene = 0;
 	} else {
 		_gameLoader->loadScene(SC_INV);
@@ -560,15 +573,15 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	if (_soundEnabled) {
 		if (scene->_soundList) {
 			_currSoundListCount = 2;
-			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList;
-			_currSoundList1[1] = scene->_soundList;
+			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList.get();
+			_currSoundList1[1] = scene->_soundList.get();
 
 			for (int i = 0; i < scene->_soundList->getCount(); i++) {
-				scene->_soundList->getSoundByIndex(i)->updateVolume();
+				scene->_soundList->getSoundByIndex(i).updateVolume();
 			}
 		} else {
 			_currSoundListCount = 1;
-			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList;
+			_currSoundList1[0] = accessScene(SC_COMMON)->_soundList.get();
 		}
 	}
 
@@ -581,10 +594,10 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	_aniMan->setOXY(0, 0);
 
 	_aniMan2 = _aniMan;
-	MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance->_sceneId);
-	cmp->initMovGraph2();
-	cmp->addObject(_aniMan);
-	cmp->setEnabled();
+	MctlCompound *cmp = getSc2MctlCompoundBySceneId(entrance._sceneId);
+	cmp->initMctlGraph();
+	cmp->attachObject(_aniMan);
+	cmp->activate();
 	getGameLoaderInteractionController()->enableFlag24();
 	setInputDisabled(0);
 
@@ -599,23 +612,34 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	removeMessageHandler(2, -1);
 	_updateScreenCallback = 0;
 
-	switch (entrance->_sceneId) {
+	switch (entrance._sceneId) {
 	case SC_INTRO1:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_INTRO1");
 		scene->preloadMovements(sceneVar);
-		sceneIntro_initScene(scene);
+
+		if (!(g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS))
+			sceneIntro_initScene(scene);
+		else
+			sceneIntroDemo_initScene(scene);
+
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_INTRO1");
 		setSceneMusicParameters(sceneVar);
-		addMessageHandler(sceneHandlerIntro, 2);
-		_updateCursorCallback = sceneIntro_updateCursor;
+
+		if (!(g_fp->isDemo() && g_fp->getLanguage() == Common::RU_RUS)) {
+			addMessageHandler(sceneHandlerIntro, 2);
+			_updateCursorCallback = sceneIntro_updateCursor;
+		} else {
+			addMessageHandler(sceneHandlerIntroDemo, 2);
+			_updateCursorCallback = sceneIntroDemo_updateCursor;
+		}
 		break;
 
 	case SC_1:
 		scene01_fixEntrance();
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_1");
 		scene->preloadMovements(sceneVar);
-		scene01_initScene(scene, entrance->_field_4);
+		scene01_initScene(scene, entrance._field_4);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_1");
 		setSceneMusicParameters(sceneVar);
@@ -830,7 +854,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 
 			scene18_initScene2(g_fp->_scene3);
 			scene18_preload();
-			scene19_setMovements(g_fp->_scene3, entrance->_field_4);
+			scene19_setMovements(g_fp->_scene3, entrance._field_4);
 
 			g_vars->scene18_inScene18p1 = true;
 		}
@@ -914,12 +938,12 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	case SC_25:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_25");
 		scene->preloadMovements(sceneVar);
-		scene25_initScene(scene, entrance->_field_4);
+		scene25_initScene(scene, entrance._field_4);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_25");
 		setSceneMusicParameters(sceneVar);
 		addMessageHandler(sceneHandler25, 2);
-		scene25_setupWater(scene, entrance->_field_4);
+		scene25_setupWater(scene, entrance._field_4);
 		_updateCursorCallback = scene25_updateCursor;
 		break;
 
@@ -971,7 +995,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 	case SC_30:
 		sceneVar = _gameLoader->_gameVar->getSubVarByName("SC_30");
 		scene->preloadMovements(sceneVar);
-		scene30_initScene(scene, entrance->_field_4);
+		scene30_initScene(scene, entrance._field_4);
 		_behaviorManager->initBehavior(scene, sceneVar);
 		scene->initObjectCursors("SC_30");
 		setSceneMusicParameters(sceneVar);
@@ -1091,7 +1115,7 @@ bool FullpipeEngine::sceneSwitcher(EntranceInfo *entrance) {
 		break;
 
 	default:
-		error("Unknown scene %d", entrance->_sceneId);
+		error("Unknown scene %d", entrance._sceneId);
 		break;
 	}
 
@@ -1124,17 +1148,17 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_1:
 		updateMapPiece(PIC_MAP_S01, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_P01, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_A13, 1);
 		break;
 
 	case SC_2:
 		updateMapPiece(PIC_MAP_S02, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_P01, 1);
 
 		break;
@@ -1146,7 +1170,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_4:
 		updateMapPiece(PIC_MAP_S04, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_P04, 1);
 
 		break;
@@ -1154,21 +1178,21 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_5:
 		updateMapPiece(PIC_MAP_S05, 1);
 
-		if (pre->keyCode == TrubaLeft) {
+		if (pre->param == TrubaLeft) {
 			updateMapPiece(PIC_MAP_P04, 1);
-	    }
+		}
 
-		if (pre->keyCode == TrubaUp) {
+		if (pre->param == TrubaUp) {
 			updateMapPiece(PIC_MAP_P05, 1);
 			updateMapPiece(PIC_MAP_A11, 1);
-	    }
+		}
 
 		break;
 
 	case SC_6:
 		updateMapPiece(PIC_MAP_S06, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_A12, 1);
 
 		break;
@@ -1176,7 +1200,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_7:
 		updateMapPiece(PIC_MAP_S07, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_P18, 1);
 
 		break;
@@ -1184,10 +1208,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_8:
 		updateMapPiece(PIC_MAP_S08, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_P11, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_P18, 1);
 
 		return;
@@ -1195,7 +1219,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_9:
 		updateMapPiece(PIC_MAP_S09, 1);
 
-		if (pre->keyCode == TrubaDown)
+		if (pre->param == TrubaDown)
 			updateMapPiece(PIC_MAP_P11, 1);
 
 		return;
@@ -1203,7 +1227,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_10:
 		updateMapPiece(PIC_MAP_S10, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_P02, 1);
 
 		break;
@@ -1211,7 +1235,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_11:
 		updateMapPiece(PIC_MAP_S11, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_P02, 1);
 
 		break;
@@ -1223,7 +1247,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_13:
 		updateMapPiece(PIC_MAP_S13, 1);
 
-		if (pre->keyCode == TrubaUp) {
+		if (pre->param == TrubaUp) {
 			updateMapPiece(PIC_MAP_P06, 1);
 			updateMapPiece(PIC_MAP_A10, 1);
 		}
@@ -1236,7 +1260,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_15:
 		updateMapPiece(PIC_MAP_S15, 1);
 
-		if (pre->keyCode == TrubaUp) {
+		if (pre->param == TrubaUp) {
 			updateMapPiece(PIC_MAP_P08, 1);
 			updateMapPiece(PIC_MAP_A14, 1);
 		}
@@ -1254,7 +1278,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_18:
 		updateMapPiece(PIC_MAP_S1819, 1);
 
-		if (pre->keyCode == PIC_SC18_RTRUBA)
+		if (pre->param == PIC_SC18_RTRUBA)
 			updateMapPiece(PIC_MAP_P14, 1);
 
 		break;
@@ -1262,7 +1286,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_19:
 		updateMapPiece(PIC_MAP_S1819, 1);
 
-		if (pre->keyCode == PIC_SC19_RTRUBA3) {
+		if (pre->param == PIC_SC19_RTRUBA3) {
 			updateMapPiece(PIC_MAP_P15, 1);
 			updateMapPiece(PIC_MAP_A09, 1);
 		}
@@ -1276,12 +1300,12 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_21:
 		updateMapPiece(PIC_MAP_S21, 1);
 
-		if (pre->keyCode == TrubaLeft) {
+		if (pre->param == TrubaLeft) {
 			updateMapPiece(PIC_MAP_P15, 1);
 			updateMapPiece(PIC_MAP_A09, 1);
 		}
 
-		if (pre->keyCode == TrubaDown)
+		if (pre->param == TrubaDown)
 			updateMapPiece(PIC_MAP_A08, 1);
 
 		break;
@@ -1304,10 +1328,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_24:
 		updateMapPiece(PIC_MAP_S24, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_A08, 1);
 
-		if (pre->keyCode == TrubaDown) {
+		if (pre->param == TrubaDown) {
 			updateMapPiece(PIC_MAP_P13, 1);
 			updateMapPiece(PIC_MAP_A07, 1);
 		}
@@ -1320,10 +1344,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_26:
 		updateMapPiece(PIC_MAP_S26, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_A06, 1);
 
-		if (pre->keyCode == TrubaUp) {
+		if (pre->param == TrubaUp) {
 			updateMapPiece(PIC_MAP_P13, 1);
 			updateMapPiece(PIC_MAP_A07, 1);
 		}
@@ -1337,7 +1361,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_28:
 		updateMapPiece(PIC_MAP_S28, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_A06, 1);
 
 		break;
@@ -1345,7 +1369,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_29:
 		updateMapPiece(PIC_MAP_S29, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_A05, 1);
 
 		break;
@@ -1353,10 +1377,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_30:
 		updateMapPiece(PIC_MAP_S30, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_P09, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_A04, 1);
 
 		break;
@@ -1367,7 +1391,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 		if (getObjectState(sO_Cactus) == getObjectEnumState(sO_Cactus, sO_HasGrown))
 			updateMapPiece(PIC_MAP_S31_1, 1);
 
-		if (pre->keyCode == TrubaRight)
+		if (pre->param == TrubaRight)
 			updateMapPiece(PIC_MAP_P09, 1);
 
 		break;
@@ -1387,7 +1411,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_34:
 		updateMapPiece(PIC_MAP_S34, 1);
 
-		if (pre->keyCode == TrubaUp)
+		if (pre->param == TrubaUp)
 			updateMapPiece(PIC_MAP_A03, 1);
 
 		break;
@@ -1395,10 +1419,10 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 	case SC_35:
 		updateMapPiece(PIC_MAP_S35, 1);
 
-		if (pre->keyCode == TrubaLeft)
+		if (pre->param == TrubaLeft)
 			updateMapPiece(PIC_MAP_A02, 1);
 
-		if (pre->keyCode == TrubaDown)
+		if (pre->param == TrubaDown)
 			updateMapPiece(PIC_MAP_A03, 1);
 
 		break;
@@ -1433,79 +1457,7 @@ void FullpipeEngine::updateMap(PreloadItem *pre) {
 			break;
 		}
 		break;
-    }
-}
-
-void BallChain::init(Ball **ball) {
-	*ball = pTail;
-	pTail = (Ball *)ball;
-	numBalls--;
-
-	if (!numBalls) {
-		for (Ball *i = pHead; i; i = i->p0 )
-			;
-		numBalls = 0;
-		pTail = 0;
-		field_8 = 0;
-		pHead = 0;
-		free(cPlex);
-		cPlex = 0;
 	}
 }
-
-Ball *BallChain::sub04(Ball *ballP, Ball *ballN) {
-	if (!pTail) {
-		if (!cPlexLen)
-			error("BallChain::sub04: cPlexLen is 0");
-
-		cPlex = (byte *)calloc(cPlexLen, sizeof(Ball));
-
-		Ball *runPtr = (Ball *)&cPlex[(cPlexLen - 1) * sizeof(Ball)];
-
-		for (int i = 0; i < cPlexLen; i++) {
-			runPtr->p0 = pTail;
-			pTail = runPtr;
-
-			runPtr--;
-		}
-	}
-
-	Ball *res = pTail;
-
-	pTail = res->p0;
-	res->p1 = ballP;
-	res->p0 = ballN;
-	numBalls++;
-	res->ani = 0;
-
-	return res;
-}
-
-void BallChain::removeBall(Ball *ball) {
-	if (ball == pHead)
-		pHead = ball->p0;
-	else
-		ball->p1->p0 = ball->p0;
-
-	if (ball == field_8)
-		field_8 = ball->p1;
-	else
-		ball->p0->p1 = ball->p1;
-
-	ball->p0 = pTail;
-	pTail = ball;
-
-	numBalls--;
-
-	if (!numBalls) {
-		numBalls = 0;
-		pTail = 0;
-		field_8 = 0;
-		pHead = 0;
-		free(cPlex);
-		cPlex = 0;
-	}
-}
-
 
 } // End of namespace Fullpipe

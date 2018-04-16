@@ -39,10 +39,22 @@ public:
 	~RPZADecoder();
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); }
+	Graphics::PixelFormat getPixelFormat() const { return _format; }
+
+	bool containsPalette() const { return _ditherPalette != 0; }
+	const byte *getPalette() { _dirtyPalette = false; return _ditherPalette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
+	bool canDither(DitherType type) const;
+	void setDither(DitherType type, const byte *palette);
 
 private:
+	Graphics::PixelFormat _format;
 	Graphics::Surface *_surface;
+	byte *_ditherPalette;
+	bool _dirtyPalette;
+	byte *_colorMap;
+	uint16 _width, _height;
+	uint16 _blockWidth, _blockHeight;
 };
 
 } // End of namespace Image

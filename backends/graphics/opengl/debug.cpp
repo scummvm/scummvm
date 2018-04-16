@@ -54,7 +54,7 @@ Common::String getGLErrStr(GLenum error) {
 void checkGLError(const char *expr, const char *file, int line) {
 	GLenum error;
 
-	while ((error = glGetError()) != GL_NO_ERROR) {
+	while ((error = g_context.glGetError()) != GL_NO_ERROR) {
 		// We cannot use error here because we do not know whether we have a
 		// working screen or not.
 		warning("GL ERROR: %s on %s (%s:%d)", getGLErrStr(error).c_str(), expr, file, line);

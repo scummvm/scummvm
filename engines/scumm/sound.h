@@ -24,23 +24,21 @@
 #define SCUMM_SOUND_H
 
 #include "common/scummsys.h"
-#include "audio/audiostream.h"
+#include "common/serializer.h"
+#include "common/str.h"
 #include "audio/mididrv.h"
-#include "audio/mixer.h"
 #include "backends/audiocd/audiocd.h"
-#include "scumm/saveload.h"
 
 namespace Audio {
 class Mixer;
+class SoundHandle;
 }
 
 namespace Scumm {
 
 class ScummEngine;
-class BaseScummFile;
 
 struct MP3OffsetTable;
-struct SaveLoadEntry;
 
 enum {
 	kTalkSoundID = 10000
@@ -48,7 +46,7 @@ enum {
 
 // TODO: Consider splitting Sound into even more subclasses.
 // E.g. for v1-v4, v5, v6+, ...
-class Sound : public Serializable {
+class Sound : public Common::Serializable {
 public:
 	enum SoundMode {
 		kVOCMode,
@@ -69,6 +67,9 @@ protected:
 		int32 offset;
 		int16 channel;
 		int16 flags;
+		int16 freq;
+		int16 pan;
+		int16 vol;
 	} _soundQue2[10];
 
 	Common::String _sfxFilename;
@@ -87,12 +88,12 @@ protected:
 	int16 _currentCDSound;
 	int16 _currentMusic;
 
-	Audio::SoundHandle _loomSteamCDAudioHandle;
+	Audio::SoundHandle *_loomSteamCDAudioHandle;
 	bool _isLoomSteam;
 	AudioCDManager::Status _loomSteamCD;
 
 public:
-	Audio::SoundHandle _talkChannelHandle;	// Handle of mixer channel actor is talking on
+	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
 
 	bool _soundsPaused;
 	byte _sfxMode;
@@ -103,8 +104,8 @@ public:
 public:
 	Sound(ScummEngine *parent, Audio::Mixer *mixer);
 	virtual ~Sound();
-	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
-	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0);
+	virtual void addSoundToQueue(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
+	virtual void addSoundToQueue2(int sound, int heOffset = 0, int heChannel = 0, int heFlags = 0, int heFreq = 0, int hePan = 0, int heVol = 0);
 	void processSound();
 
 	void playSound(int soundID);
@@ -131,8 +132,7 @@ public:
 	AudioCDManager::Status getCDStatus();
 	int getCurrentCDSound() const { return _currentCDSound; }
 
-	// Used by the save/load system:
-	void saveLoadWithSerializer(Serializer *ser);
+	void saveLoadWithSerializer(Common::Serializer &ser);
 
 protected:
 	void setupSfxFile();

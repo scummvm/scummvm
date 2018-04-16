@@ -28,7 +28,7 @@
 
 #include "common/scummsys.h"
 #include "graphics/surface.h"
-#include "util.h"
+#include "engines/util.h"
 #include "tony/window.h"
 #include "tony/game.h"
 #include "tony/tony.h"
@@ -54,7 +54,7 @@ RMWindow::~RMWindow() {
  */
 void RMWindow::init() {
 	Graphics::PixelFormat pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);
-	initGraphics(RM_SX, RM_SY, true, &pixelFormat);
+	initGraphics(RM_SX, RM_SY, &pixelFormat);
 
 	reset();
 }

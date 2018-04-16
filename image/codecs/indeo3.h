@@ -46,7 +46,7 @@ namespace Image {
  */
 class Indeo3Decoder : public Codec {
 public:
-	Indeo3Decoder(uint16 width, uint16 height);
+	Indeo3Decoder(uint16 width, uint16 height, uint bitsPerPixel = 24);
 	~Indeo3Decoder();
 
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);

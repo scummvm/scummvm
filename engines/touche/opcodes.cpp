@@ -610,8 +610,13 @@ void ToucheEngine::op_getInventoryItem() {
 		keyChar = _currentKeyCharNum;
 	}
 	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
-	assert(item < sizeof(_keyCharsTable[keyChar].inventoryItems));
-	*_script.stackDataPtr = _keyCharsTable[keyChar].inventoryItems[item];
+	if (item == 4) {
+		// item 4 is the 'money' field
+		*_script.stackDataPtr = _keyCharsTable[keyChar].money;
+	} else {
+		assert(item < ARRAYSIZE(_keyCharsTable[keyChar].inventoryItems));
+		*_script.stackDataPtr = _keyCharsTable[keyChar].inventoryItems[item];
+	}
 }
 
 void ToucheEngine::op_setInventoryItem() {
@@ -625,8 +630,13 @@ void ToucheEngine::op_setInventoryItem() {
 		keyChar = _currentKeyCharNum;
 	}
 	assert(keyChar >= 0 && keyChar < NUM_KEYCHARS);
-	assert(item < sizeof(_keyCharsTable[keyChar].inventoryItems));
-	_keyCharsTable[keyChar].inventoryItems[item] = *_script.stackDataPtr;
+	if (item == 4) {
+		// item 4 is the 'money' field
+		_keyCharsTable[keyChar].money = *_script.stackDataPtr;
+	} else {
+		assert(item < ARRAYSIZE(_keyCharsTable[keyChar].inventoryItems));
+		_keyCharsTable[keyChar].inventoryItems[item] = *_script.stackDataPtr;
+	}
 	if (item == 4 && !_hideInventoryTexts) {
 		drawAmountOfMoneyInInventory();
 	}

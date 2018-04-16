@@ -1,6 +1,10 @@
 MODULE := engines/agos
 
 MODULE_OBJS := \
+	drivers/accolade/adlib.o \
+	drivers/accolade/driverfile.o \
+	drivers/accolade/mt32.o \
+	drivers/simon1/adlib.o \
 	agos.o \
 	charset.o \
 	charset-fontdata.o \

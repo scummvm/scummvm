@@ -29,8 +29,18 @@
 #include "agi/sound_pcjr.h"
 
 #include "common/textconsole.h"
+#include "audio/mixer.h"
 
 namespace Agi {
+
+SoundGen::SoundGen(AgiBase *vm, Audio::Mixer *pMixer) : _vm(vm), _mixer(pMixer) {
+	_sampleRate = pMixer->getOutputRate();
+	_soundHandle = new Audio::SoundHandle();
+}
+
+SoundGen::~SoundGen() {
+	delete _soundHandle;
+}
 
 //
 // TODO: add support for variable sampling rate in the output device
@@ -140,7 +150,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	if (_vm->getVersion() < 0x2000) {
 		_vm->_game.vars[_endflag] = 0;
 	} else {
-		_vm->setflag(_endflag, false);
+		_vm->setFlag(_endflag, false);
 	}
 }
 
@@ -154,13 +164,13 @@ void SoundMgr::stopSound() {
 		_playingSound = -1;
 	}
 
-	// This is probably not needed most of the time, but there also should
-	// not be any harm doing it, so do it anyway.
+	// This is needed all the time, some games wait until music got played and when a sound/music got stopped early
+	// it would otherwise block the game (for example Death Angel jingle in back door poker room in Police Quest 1, room 71)
 	if (_endflag != -1) {
 		if (_vm->getVersion() < 0x2000) {
 			_vm->_game.vars[_endflag] = 1;
 		} else {
-			_vm->setflag(_endflag, true);
+			_vm->setFlag(_endflag, true);
 		}
 	}
 
@@ -169,7 +179,7 @@ void SoundMgr::stopSound() {
 
 void SoundMgr::soundIsFinished() {
 	if (_endflag != -1)
-		_vm->setflag(_endflag, true);
+		_vm->setFlag(_endflag, true);
 
 	if (_playingSound != -1)
 		_vm->_game.sounds[_playingSound]->stop();
@@ -183,6 +193,7 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 	_playingSound = -1;
 
 	switch (_vm->_soundemu) {
+	default:
 	case SOUND_EMU_NONE:
 	case SOUND_EMU_AMIGA:
 	case SOUND_EMU_MAC:

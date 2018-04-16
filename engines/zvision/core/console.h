@@ -37,7 +37,6 @@ public:
 private:
 	ZVision *_engine;
 
-	bool cmdLoadImage(int argc, const char **argv);
 	bool cmdLoadVideo(int argc, const char **argv);
 	bool cmdLoadSound(int argc, const char **argv);
 	bool cmdRawToWav(int argc, const char **argv);
@@ -45,10 +44,12 @@ private:
 	bool cmdGenerateRenderTable(int argc, const char **argv);
 	bool cmdSetPanoramaFoV(int argc, const char **argv);
 	bool cmdSetPanoramaScale(int argc, const char **argv);
-	bool cmdChangeLocation(int argc, const char **argv);
+	bool cmdLocation(int argc, const char **argv);
 	bool cmdDumpFile(int argc, const char **argv);
-	bool cmdParseAllScrFiles(int argc, const char **argv);
-	bool cmdRenderText(int argc, const char **argv);
+	bool cmdDumpFiles(int argc, const char **argv);
+	bool cmdDumpImage(int argc, const char **argv);
+	bool cmdStateValue(int argc, const char **argv);
+	bool cmdStateFlag(int argc, const char **argv);
 };
 
 } // End of namespace ZVision

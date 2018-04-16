@@ -20,8 +20,6 @@
  *
  */
 
-#include "common/endian.h"
-
 #include "sci/util.h"
 #include "sci/sci.h"
 
@@ -49,7 +47,7 @@ uint16 READ_SCI11ENDIAN_UINT16(const void *ptr) {
 }
 
 uint16 READ_SCI32ENDIAN_UINT16(const void *ptr) {
-	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1)
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_2_1_EARLY)
 		return READ_BE_UINT16(ptr);
 	else
 		return READ_LE_UINT16(ptr);
@@ -68,5 +66,14 @@ void WRITE_SCI11ENDIAN_UINT16(void *ptr, uint16 val) {
 	else
 		WRITE_LE_UINT16(ptr, val);
 }
+
+#ifdef ENABLE_SCI32
+void WRITE_SCI11ENDIAN_UINT32(void *ptr, uint32 val) {
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1)
+		WRITE_BE_UINT32(ptr, val);
+	else
+		WRITE_LE_UINT32(ptr, val);
+}
+#endif
 
 } // End of namespace Sci

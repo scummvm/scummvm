@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -21,6 +21,11 @@
  */
 
 #include "bbvs/minigames/bbairguitar.h"
+
+#include "common/savefile.h"
+
+#include "gui/message.h"
+#include "gui/filebrowser-dialog.h"
 
 namespace Bbvs {
 
@@ -805,7 +810,7 @@ void MinigameBbAirGuitar::update() {
 	}
 
 	if (_vm->_keyCode == Common::KEYCODE_ESCAPE) {
-		_gameDone = true;
+		_gameDone = querySaveModifiedTracks();
 		return;
 	}
 
@@ -925,7 +930,8 @@ void MinigameBbAirGuitar::afterButtonReleased() {
 			break;
 		case 4:
 			*_currFrameIndex = 1;
-			// TODO Run load dialog
+			loadTracks();
+			_objects[1].kind = 0;
 			break;
 		case 5:
 			_objects[3].kind = 0;
@@ -950,7 +956,8 @@ void MinigameBbAirGuitar::afterButtonReleased() {
 			break;
 		case 12:
 			*_currFrameIndex = 1;
-			// TODO Run save dialog
+			saveTracks();
+			_objects[2].kind = 0;
 			break;
 		case 13:
 			_objects[4].kind = 0;
@@ -1113,7 +1120,7 @@ void MinigameBbAirGuitar::noteOff(int noteNum) {
 		if (_actionTrackPos + _ticksDelta > 15000)
 			_ticksDelta = 15000 - _actionTrackPos;
 		_track[_trackCount].ticks = _ticksDelta;
-		if (_trackCount < 2048)
+		if (_trackCount + 1 < 2048)
 			++_trackCount;
 		_track[_trackCount].noteNum = -2;
 		_noteStartTime = _vm->_system->getMillis();
@@ -1193,6 +1200,115 @@ void MinigameBbAirGuitar::playNote(int noteNum) {
 void MinigameBbAirGuitar::stopNote(int noteNum) {
 	if (noteNum >= 0 && _currPatchNum >= 0)
 		stopSound(2 + _currPatchNum * kNoteSoundFilenamesCount + noteNum);
+}
+
+bool MinigameBbAirGuitar::getLoadFilename(Common::String &filename) {
+	GUI::FileBrowserDialog browser(0, "air", GUI::kFBModeLoad);
+
+	if (browser.runModal() > 0) {
+		filename = browser.getResult();
+		return true;
+	}
+
+	return false;
+}
+
+bool MinigameBbAirGuitar::getSaveFilename(Common::String &filename) {
+	GUI::FileBrowserDialog browser(0, "air", GUI::kFBModeSave);
+
+	if (browser.runModal() > 0) {
+		filename = browser.getResult();
+		return true;
+	}
+
+	return false;
+}
+
+bool MinigameBbAirGuitar::querySaveModifiedDialog() {
+	/* NOTE The original button captions don't fit so shortened variants are used
+		Original ok button caption: "Yeah, heh, heh, save it!"
+		Original discard button caption: "Who cares?  It sucked!"
+	*/
+	GUI::MessageDialog query("Hey Beavis - you didn't save that last Jam!",
+		"Save it!",
+		"It sucked!");
+	return query.runModal() == GUI::kMessageOK;
+}
+
+bool MinigameBbAirGuitar::querySaveModifiedTracks() {
+	if (_modified && querySaveModifiedDialog()) {
+		if (!saveTracks())
+			return false;
+	}
+	return true;
+}
+
+bool MinigameBbAirGuitar::loadTracks() {
+	if (_playerMode != 0)
+		return false;
+
+	if (!querySaveModifiedTracks())
+		return false;
+
+	Common::String filename;
+	if (!getLoadFilename(filename))
+		return false;
+
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::InSaveFile *stream = saveFileMan->openForLoading(filename);
+	if (!loadFromStream(stream)) {
+		Common::String msg = Common::String::format("%s is not a valid Air Guitar file", filename.c_str());
+		GUI::MessageDialog dialog(msg);
+		dialog.runModal();
+	}
+	delete stream;
+
+	return true;
+}
+
+bool MinigameBbAirGuitar::saveTracks() {
+	if (_playerMode != 0)
+		return false;
+
+	Common::String filename;
+	if (!getSaveFilename(filename))
+		return false;
+
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::OutSaveFile *stream = saveFileMan->openForSaving(filename);
+	saveToStream(stream);
+	delete stream;
+	_modified = false;
+
+	return true;
+}
+
+bool MinigameBbAirGuitar::loadFromStream(Common::ReadStream *stream) {
+	uint32 magic = stream->readUint32BE();
+	if (magic != MKTAG('A', 'I', 'R', 'G'))
+		return false;
+	for (uint i = 0; i < kMaxTracks; ++i) {
+		_track[i].noteNum = stream->readByte();
+		_track[i].ticks = stream->readUint16LE();
+	}
+	_trackCount = 0;
+	_actionTrackPos = 0;
+	while (_track[_trackCount].noteNum != -1) {
+		_actionTrackPos += _track[_trackCount].ticks;
+		++_trackCount;
+	}
+	_totalTrackLength = _actionTrackPos;
+	_trackIndex = 0;
+	_currTrackPos = 0;
+	return true;
+}
+
+void MinigameBbAirGuitar::saveToStream(Common::WriteStream *stream) {
+	stream->writeUint32BE(MKTAG('A', 'I', 'R', 'G'));
+	for (uint i = 0; i < kMaxTracks; ++i) {
+		stream->writeByte(_track[i].noteNum);
+		stream->writeUint16LE(_track[i].ticks);
+	}
 }
 
 } // End of namespace Bbvs

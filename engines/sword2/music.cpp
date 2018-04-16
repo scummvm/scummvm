@@ -35,10 +35,11 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/flac.h"
-#include "audio/decoders/wave.h"
 #include "audio/decoders/xa.h"
 #include "audio/rate.h"
 

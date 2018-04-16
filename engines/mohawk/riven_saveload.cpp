@@ -22,11 +22,41 @@
 
 #include "mohawk/resource.h"
 #include "mohawk/riven.h"
+#include "mohawk/riven_card.h"
 #include "mohawk/riven_saveload.h"
+#include "mohawk/riven_stack.h"
 
-#include "common/util.h"
+#include "common/system.h"
+#include "graphics/thumbnail.h"
 
 namespace Mohawk {
+
+RivenSaveMetadata::RivenSaveMetadata() {
+	saveDay = 0;
+	saveMonth = 0;
+	saveYear = 0;
+	saveHour = 0;
+	saveMinute = 0;
+	totalPlayTime = 0;
+}
+
+bool RivenSaveMetadata::sync(Common::Serializer &s) {
+	static const Common::Serializer::Version kCurrentVersion = 1;
+
+	if (!s.syncVersion(kCurrentVersion)) {
+		return false;
+	}
+
+	s.syncAsByte(saveDay);
+	s.syncAsByte(saveMonth);
+	s.syncAsUint16BE(saveYear);
+	s.syncAsByte(saveHour);
+	s.syncAsByte(saveMinute);
+	s.syncString(saveDescription);
+	s.syncAsUint32BE(totalPlayTime);
+
+	return true;
+}
 
 RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *saveFileMan) : _vm(vm), _saveFileMan(saveFileMan) {
 }
@@ -34,15 +64,107 @@ RivenSaveLoad::RivenSaveLoad(MohawkEngine_Riven *vm, Common::SaveFileManager *sa
 RivenSaveLoad::~RivenSaveLoad() {
 }
 
-Common::StringArray RivenSaveLoad::generateSaveGameList() {
-	return _saveFileMan->listSavefiles("*.rvn");
+Common::String RivenSaveLoad::buildSaveFilename(const int slot) {
+	return Common::String::format("riven-%03d.rvn", slot);
 }
 
-Common::Error RivenSaveLoad::loadGame(Common::String filename) {
+Common::String RivenSaveLoad::querySaveDescription(const int slot) {
+	Common::String filename = buildSaveFilename(slot);
+	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
+	if (!loadFile) {
+		return "";
+	}
+
+	MohawkArchive mhk;
+	if (!mhk.openStream(loadFile)) {
+		return "";
+	}
+
+	if (!mhk.hasResource(ID_META, 1)) {
+		return "";
+	}
+
+	Common::SeekableReadStream *metaStream = mhk.getResource(ID_META, 1);
+	if (!metaStream) {
+		return "";
+	}
+
+	Common::Serializer serializer = Common::Serializer(metaStream, nullptr);
+
+	RivenSaveMetadata metadata;
+	if (!metadata.sync(serializer)) {
+		delete metaStream;
+		return "";
+	}
+
+	delete metaStream;
+
+	return metadata.saveDescription;
+}
+
+SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
+	Common::String filename = buildSaveFilename(slot);
+	Common::InSaveFile *loadFile = g_system->getSavefileManager()->openForLoading(filename);
+	if (!loadFile) {
+		return SaveStateDescriptor();
+	}
+
+	MohawkArchive mhk;
+	if (!mhk.openStream(loadFile)) {
+		return SaveStateDescriptor();
+	}
+
+	if (!mhk.hasResource(ID_META, 1)) {
+		return SaveStateDescriptor();
+	}
+
+	Common::SeekableReadStream *metaStream = mhk.getResource(ID_META, 1);
+	if (!metaStream) {
+		return SaveStateDescriptor();
+	}
+
+	Common::Serializer serializer = Common::Serializer(metaStream, nullptr);
+
+	RivenSaveMetadata metadata;
+	if (!metadata.sync(serializer)) {
+		delete metaStream;
+		return SaveStateDescriptor();
+	}
+
+	SaveStateDescriptor descriptor;
+	descriptor.setDescription(metadata.saveDescription);
+	descriptor.setPlayTime(metadata.totalPlayTime);
+	descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
+	descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);
+
+	delete metaStream;
+
+	if (!mhk.hasResource(ID_THMB, 1)) {
+		return descriptor;
+	}
+
+	Common::SeekableReadStream *thmbStream = mhk.getResource(ID_THMB, 1);
+	if (!thmbStream) {
+		return descriptor;
+	}
+
+	Graphics::Surface *thumbnail;
+	if (!Graphics::loadThumbnail(*thmbStream, thumbnail)) {
+		return descriptor;
+	}
+	descriptor.setThumbnail(thumbnail);
+
+	delete thmbStream;
+
+	return descriptor;
+}
+
+Common::Error RivenSaveLoad::loadGame(const int slot) {
 	if (_vm->getFeatures() & GF_DEMO) // Don't load games in the demo
 		return Common::kNoError;
 
-	Common::InSaveFile *loadFile =  _saveFileMan->openForLoading(filename);
+	Common::String filename = buildSaveFilename(slot);
+	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filename);
 	if (!loadFile)
 		return Common::kReadingFailed;
 
@@ -62,9 +184,9 @@ Common::Error RivenSaveLoad::loadGame(Common::String filename) {
 	delete vers;
 	if ((saveGameVersion == kCDSaveGameVersion && (_vm->getFeatures() & GF_DVD))
 		|| (saveGameVersion == kDVDSaveGameVersion && !(_vm->getFeatures() & GF_DVD))) {
-		warning("Incompatible saved game versions. No support for this yet");
+		warning("Unable to load: Saved game created using an incompatible game version - CD vs DVD");
 		delete mhk;
-		return Common::Error(Common::kUnknownError, "Incompatible save version");
+		return Common::Error(Common::kUnknownError, "Saved game created using an incompatible game version - CD vs DVD");
 	}
 
 	// Now, we'll read in the variable values.
@@ -72,8 +194,11 @@ Common::Error RivenSaveLoad::loadGame(Common::String filename) {
 	Common::Array<uint32> rawVariables;
 
 	while (!vars->eos()) {
-		vars->readUint32BE();	// Unknown (Stack?)
-		vars->readUint32BE();	// Unknown (0 or 1)
+		// The original engine stores the variables values in an array. All the slots in
+		// the array may not be in use, which is why it needs a reference counter and
+		// a flag to tell if the value has been set.
+		vars->readUint32BE();	// Reference counter
+		vars->readUint32BE();	// Variable initialized flag
 		rawVariables.push_back(vars->readUint32BE());
 	}
 
@@ -122,6 +247,8 @@ Common::Error RivenSaveLoad::loadGame(Common::String filename) {
 			var = rawVariables[i];
 	}
 
+	_vm->_gfx->setTransitionMode((RivenTransitionMode) _vm->_vars["transitionmode"]);
+
 	_vm->changeToStack(_vm->_vars["CurrentStackID"]);
 	_vm->changeToCard(_vm->_vars["CurrentCardID"]);
 
@@ -144,13 +271,27 @@ Common::Error RivenSaveLoad::loadGame(Common::String filename) {
 	}
 
 	delete zips;
+
+	// Load the ScummVM specific save metadata
+	if (mhk->hasResource(ID_META, 1)) {
+		Common::SeekableReadStream *metadataStream = mhk->getResource(ID_META, 1);
+		Common::Serializer serializer = Common::Serializer(metadataStream, nullptr);
+
+		RivenSaveMetadata metadata;
+		metadata.sync(serializer);
+
+		// Set the saved total play time
+		_vm->setTotalPlayTime(metadata.totalPlayTime);
+
+		delete metadataStream;
+	}
 	delete mhk;
 
 	return Common::kNoError;
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 	if (_vm->getFeatures() & GF_DVD)
 		stream->writeUint32BE(kDVDSaveGameVersion);
 	else
@@ -159,19 +300,23 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVARSSection() {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
-		stream->writeUint32BE(0); // Unknown
-		stream->writeUint32BE(0); // Unknown
+		stream->writeUint32BE(1); // Reference counter
+		stream->writeUint32BE(1); // Variable initialized flag
 		stream->writeUint32BE(it->_value);
 	}
 
 	return stream;
 }
 
+static int stringCompareToIgnoreCase(const Common::String &s1, const Common::String &s2) {
+	return s1.compareToIgnoreCase(s2) < 0;
+}
+
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	stream->writeUint16BE(_vm->_vars.size());
 
@@ -181,8 +326,28 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
 		curPos += it->_key.size() + 1;
 	}
 
-	for (uint16 i = 0; i < _vm->_vars.size(); i++)
-		stream->writeUint16BE(i);
+	// The original engine does not store the variables in a HashMap, but in a "NameList"
+	// for the keys and an array for the values. The NameList data structure maintains an array
+	// of indices in the string table sorted by case insensitive key alphabetical order.
+	// It is used to perform fast key -> index lookups.
+	// ScummVM does not need the sorted array, but has to write it anyway for the saved games
+	// to be compatible with original engine.
+	Common::Array<Common::String> sortedKeys;
+	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
+		sortedKeys.push_back(it->_key);
+	}
+	Common::sort(sortedKeys.begin(), sortedKeys.end(), stringCompareToIgnoreCase);
+
+	for (uint i = 0; i < sortedKeys.size(); i++) {
+		uint16 varIndex = 0;
+		for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
+			if (it->_key == sortedKeys[i]) {
+				stream->writeUint16BE(varIndex);
+				break;
+			}
+			varIndex++;
+		}
+	}
 
 	for (RivenVariableMap::const_iterator it = _vm->_vars.begin(); it != _vm->_vars.end(); it++) {
 		stream->write(it->_key.c_str(), it->_key.size());
@@ -193,7 +358,7 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genNAMESection() {
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genZIPSSection() {
-	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
 
 	stream->writeUint16BE(_vm->_zipModeData.size());
 
@@ -206,7 +371,35 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genZIPSSection() {
 	return stream;
 }
 
-Common::Error RivenSaveLoad::saveGame(Common::String filename) {
+Common::MemoryWriteStreamDynamic *RivenSaveLoad::genTHMBSection() const {
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+
+	Graphics::saveThumbnail(*stream);
+
+	return stream;
+}
+
+Common::MemoryWriteStreamDynamic *RivenSaveLoad::genMETASection(const Common::String &desc) const {
+	Common::MemoryWriteStreamDynamic *stream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::YES);
+	Common::Serializer serializer = Common::Serializer(nullptr, stream);
+
+	TimeDate t;
+	_vm->_system->getTimeAndDate(t);
+
+	RivenSaveMetadata metadata;
+	metadata.saveDay = t.tm_mday;
+	metadata.saveMonth = t.tm_mon + 1;
+	metadata.saveYear = t.tm_year + 1900;
+	metadata.saveHour = t.tm_hour;
+	metadata.saveMinute = t.tm_min;
+	metadata.saveDescription = desc;
+	metadata.totalPlayTime = _vm->getTotalPlayTime();
+	metadata.sync(serializer);
+
+	return stream;
+}
+
+Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &description) {
 	// NOTE: This code is designed to only output a Mohawk archive
 	// for a Riven saved game. It's hardcoded to do this because
 	// (as of right now) this is the only place in the engine
@@ -214,17 +407,7 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 	// games need this, we should think about coming up with some
 	// more common way of outputting resources to an archive.
 
-	// TODO: Make these saves work with the original interpreter.
-	// Not sure why they don't work yet (they still can be loaded
-	// by ScummVM).
-
-	// Make sure we have the right extension
-	if (!filename.matchString("*.rvn", true))
-		filename += ".rvn";
-
-	// Convert class variables to variable numbers
-	_vm->_vars["currentstackid"] = _vm->getCurStack();
-	_vm->_vars["currentcardid"] = _vm->getCurCard();
+	Common::String filename = buildSaveFilename(slot);
 
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
 	if (!saveFile)
@@ -232,16 +415,20 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 
 	debug (0, "Saving game to \'%s\'", filename.c_str());
 
-	Common::MemoryWriteStreamDynamic *versSection = genVERSSection();
+	Common::MemoryWriteStreamDynamic *metaSection = genMETASection(description);
 	Common::MemoryWriteStreamDynamic *nameSection = genNAMESection();
+	Common::MemoryWriteStreamDynamic *thmbSection = genTHMBSection();
 	Common::MemoryWriteStreamDynamic *varsSection = genVARSSection();
+	Common::MemoryWriteStreamDynamic *versSection = genVERSSection();
 	Common::MemoryWriteStreamDynamic *zipsSection = genZIPSSection();
 
 	// Let's calculate the file size!
-	uint32 fileSize = 142;
-	fileSize += versSection->size();
+	uint32 fileSize = 194;
+	fileSize += metaSection->size();
 	fileSize += nameSection->size();
+	fileSize += thmbSection->size();
 	fileSize += varsSection->size();
+	fileSize += versSection->size();
 	fileSize += zipsSection->size();
 
 	// MHWK Header (8 bytes - total: 8)
@@ -254,109 +441,151 @@ Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 	saveFile->writeUint16BE(1); // Compaction -- original saves have this too
 	saveFile->writeUint32BE(fileSize); // Subtract off the MHWK header size
 	saveFile->writeUint32BE(28); // Absolute offset: right after both headers
-	saveFile->writeUint16BE(70); // File Table Offset
-	saveFile->writeUint16BE(44); // File Table Size (4 bytes count + 4 entries * 10 bytes per entry)
+	saveFile->writeUint16BE(102); // File Table Offset
+	saveFile->writeUint16BE(64); // File Table Size (4 bytes count + 6 entries * 10 bytes per entry)
 
 	// Type Table (4 bytes - total: 32)
-	saveFile->writeUint16BE(36); // String table offset After the Type Table Entries
-	saveFile->writeUint16BE(4); // 4 Type Table Entries
+	saveFile->writeUint16BE(52); // String table offset After the Type Table Entries
+	saveFile->writeUint16BE(6); // 6 Type Table Entries
 
-	// Hardcode Entries (32 bytes - total: 64)
-	saveFile->writeUint32BE(ID_VERS);
-	saveFile->writeUint16BE(46); // Resource table offset
-	saveFile->writeUint16BE(38); // String table offset
+	// Hardcode Entries (48 bytes - total: 80)
+	// The original engine relies on the entries being sorted by tag alphabetical order
+	// to optimize its lookup algorithm.
+	saveFile->writeUint32BE(ID_META);
+	saveFile->writeUint16BE(66); // Resource table offset
+	saveFile->writeUint16BE(54); // String table offset
 
 	saveFile->writeUint32BE(ID_NAME);
-	saveFile->writeUint16BE(52);
-	saveFile->writeUint16BE(40);
+	saveFile->writeUint16BE(72);
+	saveFile->writeUint16BE(56);
+
+	saveFile->writeUint32BE(ID_THMB);
+	saveFile->writeUint16BE(78);
+	saveFile->writeUint16BE(58);
 
 	saveFile->writeUint32BE(ID_VARS);
-	saveFile->writeUint16BE(58);
-	saveFile->writeUint16BE(42);
+	saveFile->writeUint16BE(84);
+	saveFile->writeUint16BE(60);
+
+	saveFile->writeUint32BE(ID_VERS);
+	saveFile->writeUint16BE(90);
+	saveFile->writeUint16BE(62);
 
 	saveFile->writeUint32BE(ID_ZIPS);
+	saveFile->writeUint16BE(96);
 	saveFile->writeUint16BE(64);
-	saveFile->writeUint16BE(44);
 
-	// Pseudo-String Table (2 bytes - total: 66)
+	// Pseudo-String Table (2 bytes - total: 82)
 	saveFile->writeUint16BE(0); // We don't need a name list
 
-	// Psuedo-Name Tables (8 bytes - total: 74)
+	// Pseudo-Name Tables (12 bytes - total: 94)
+	saveFile->writeUint16BE(0);
+	saveFile->writeUint16BE(0);
 	saveFile->writeUint16BE(0);
 	saveFile->writeUint16BE(0);
 	saveFile->writeUint16BE(0);
 	saveFile->writeUint16BE(0);
 
-	// VERS Section (Resource Table) (6 bytes - total: 80)
+	// META Section (Resource Table) (6 bytes - total: 100)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 
-	// NAME Section (Resource Table) (6 bytes - total: 86)
+	// NAME Section (Resource Table) (6 bytes - total: 106)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(2);
 
-	// VARS Section (Resource Table) (6 bytes - total: 92)
+	// THMB Section (Resource Table) (6 bytes - total: 112)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(3);
 
-	// ZIPS Section (Resource Table) (6 bytes - total: 98)
+	// VARS Section (Resource Table) (6 bytes - total: 118)
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(1);
 	saveFile->writeUint16BE(4);
 
-	// File Table (4 bytes - total: 102)
-	saveFile->writeUint32BE(4);
+	// VERS Section (Resource Table) (6 bytes - total: 124)
+	saveFile->writeUint16BE(1);
+	saveFile->writeUint16BE(1);
+	saveFile->writeUint16BE(5);
 
-	// VERS Section (File Table) (10 bytes - total: 112)
-	saveFile->writeUint32BE(142);
-	saveFile->writeUint16BE(versSection->size() & 0xFFFF);
-	saveFile->writeByte((versSection->size() & 0xFF0000) >> 16);
+	// ZIPS Section (Resource Table) (6 bytes - total: 130)
+	saveFile->writeUint16BE(1);
+	saveFile->writeUint16BE(1);
+	saveFile->writeUint16BE(6);
+
+	// File Table (4 bytes - total: 134)
+	saveFile->writeUint32BE(6);
+
+	// META Section (File Table) (10 bytes - total: 144)
+	saveFile->writeUint32BE(194);
+	saveFile->writeUint16BE(metaSection->size() & 0xFFFF);
+	saveFile->writeByte((metaSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
-	// NAME Section (File Table) (10 bytes - total: 122)
-	saveFile->writeUint32BE(142 + versSection->size());
+	// NAME Section (File Table) (10 bytes - total: 154)
+	saveFile->writeUint32BE(194 + metaSection->size());
 	saveFile->writeUint16BE(nameSection->size() & 0xFFFF);
 	saveFile->writeByte((nameSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
-	// VARS Section (File Table) (10 bytes - total: 132)
-	saveFile->writeUint32BE(142 + versSection->size() + nameSection->size());
+	// THMB Section (File Table) (10 bytes - total: 164)
+	saveFile->writeUint32BE(194 + metaSection->size() + nameSection->size());
+	saveFile->writeUint16BE(thmbSection->size() & 0xFFFF);
+	saveFile->writeByte((thmbSection->size() & 0xFF0000) >> 16);
+	saveFile->writeByte(0);
+	saveFile->writeUint16BE(0);
+
+	// VARS Section (File Table) (10 bytes - total: 174)
+	saveFile->writeUint32BE(194 + metaSection->size() + nameSection->size() + thmbSection->size());
 	saveFile->writeUint16BE(varsSection->size() & 0xFFFF);
 	saveFile->writeByte((varsSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
-	// ZIPS Section (File Table) (10 bytes - total: 142)
-	saveFile->writeUint32BE(142 + versSection->size() + nameSection->size() + varsSection->size());
+	// VERS Section (File Table) (10 bytes - total: 184)
+	saveFile->writeUint32BE(194 + metaSection->size() + nameSection->size() + thmbSection->size() + varsSection->size());
+	saveFile->writeUint16BE(versSection->size() & 0xFFFF);
+	saveFile->writeByte((versSection->size() & 0xFF0000) >> 16);
+	saveFile->writeByte(0);
+	saveFile->writeUint16BE(0);
+
+	// ZIPS Section (File Table) (10 bytes - total: 194)
+	saveFile->writeUint32BE(194 + metaSection->size() + nameSection->size() + thmbSection->size() + varsSection->size() + versSection->size());
 	saveFile->writeUint16BE(zipsSection->size() & 0xFFFF);
 	saveFile->writeByte((zipsSection->size() & 0xFF0000) >> 16);
 	saveFile->writeByte(0);
 	saveFile->writeUint16BE(0);
 
-	saveFile->write(versSection->getData(), versSection->size());
+	saveFile->write(metaSection->getData(), metaSection->size());
 	saveFile->write(nameSection->getData(), nameSection->size());
+	saveFile->write(thmbSection->getData(), thmbSection->size());
 	saveFile->write(varsSection->getData(), varsSection->size());
+	saveFile->write(versSection->getData(), versSection->size());
 	saveFile->write(zipsSection->getData(), zipsSection->size());
 
 	saveFile->finalize();
 
 	delete saveFile;
-	delete versSection;
+	delete metaSection;
 	delete nameSection;
+	delete thmbSection;
 	delete varsSection;
+	delete versSection;
 	delete zipsSection;
 
 	return Common::kNoError;
 }
 
-void RivenSaveLoad::deleteSave(Common::String saveName) {
-	debug (0, "Deleting save file \'%s\'", saveName.c_str());
-	_saveFileMan->removeSavefile(saveName);
+void RivenSaveLoad::deleteSave(const int slot) {
+	Common::String filename = buildSaveFilename(slot);
+
+	debug (0, "Deleting save file \'%s\'", filename.c_str());
+	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
 } // End of namespace Mohawk

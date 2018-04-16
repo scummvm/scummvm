@@ -554,7 +554,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 				}
 
 				delete fs;
-				::GUI::MessageDialog dialog(Common::String::format(_("The following original save game file has been found in your game path:\n\n%s %s\n\nDo you wish to use this save game file with ScummVM?\n\n"), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
+				::GUI::MessageDialog dialog(Common::String::format(_("The following original saved game file has been found in your game path:\n\n%s %s\n\nDo you wish to use this saved game file with ScummVM?\n\n"), temp.c_str(), dsc.c_str()), _("Yes"), _("No"));
 				if (dialog.runModal())
 					origFiles.push_back(temp);
 			}
@@ -579,7 +579,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 
 		// This will probably never happen, since we do have 990 save slots
 		if (assignedSlots != numFilesFound)
-			warning("%d original save files could not be converted due to missing save game slots", numFilesFound - assignedSlots);
+			warning("%d original save files could not be converted due to missing saved game slots", numFilesFound - assignedSlots);
 
 	} else {
 		newSlots.push_back(destSlot);
@@ -587,7 +587,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 
 	if (destSlot != -1) {
 		if (Common::find(_gui->_saveSlots.begin(), _gui->_saveSlots.end(), destSlot) != _gui->_saveSlots.end()) {
-			::GUI::MessageDialog dialog(Common::String::format(_("A save game file was found in the specified slot %d. Overwrite?\n\n"), destSlot), _("Yes"), _("No"));
+			::GUI::MessageDialog dialog(Common::String::format(_("A saved game file was found in the specified slot %d. Overwrite?\n\n"), destSlot), _("Yes"), _("No"));
 			if (!dialog.runModal())
 				return false;
 		}
@@ -620,7 +620,7 @@ bool EoBCoreEngine::importOriginalSaveFile(int destSlot, const char *sourceFile)
 	_inf->reset();
 
 	if (destSlot == -1 && importedCount) {
-		::GUI::MessageDialog dialog(Common::String::format(_("%d original save game files have been successfully imported into\nScummVM. If you want to manually import original save game files later you will\nneed to open the ScummVM debug console and use the command 'import_savefile'.\n\n"), importedCount));
+		::GUI::MessageDialog dialog(Common::String::format(_("%d original saved games have been successfully imported into\nScummVM. If you want to manually import original saved game later you will\nneed to open the ScummVM debug console and use the command 'import_savefile'.\n\n"), importedCount));
 		dialog.runModal();
 	}
 
@@ -995,7 +995,7 @@ bool EoBCoreEngine::saveAsOriginalSaveFile(int slot) {
 		return false;
 
 	Common::FSNode nf = nd.getChild(_flags.gameID == GI_EOB1 ? "EOBDATA.SAV" : Common::String::format("EOBDATA%d.SAV", slot));
-	Common::WriteStream *out = nf.createWriteStream();
+	Common::OutSaveFile *out = new Common::OutSaveFile(nf.createWriteStream());
 
 	if (_flags.gameID == GI_EOB2) {
 		static const char tempStr[20] = "SCUMMVM EXPORT     ";

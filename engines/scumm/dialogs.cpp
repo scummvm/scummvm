@@ -33,10 +33,8 @@
 #include "scummhelp.h"
 #endif
 
-#include "gui/about.h"
-
 #include "gui/gui-manager.h"
-#include "gui/widgets/list.h"
+#include "gui/widget.h"
 #include "gui/ThemeEval.h"
 
 #include "scumm/dialogs.h"
@@ -45,14 +43,12 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/verbs.h"
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 #ifndef DISABLE_HELP
 #include "scumm/help.h"
 #endif
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 #include "gui/KeysDialog.h"
 #endif
 
@@ -153,8 +149,8 @@ static const ResString string_map_table_v6[] = {
 	{91, "Unable to Find %s, (%c%d) Press Button."},
 	{92, "Error reading disk %c, (%c%d) Press Button."},
 	{93, "Game Paused.  Press SPACE to Continue."},
-	{94, "Are you sure you want to restart?  (Y/N)"},
-	{95, "Are you sure you want to quit?  (Y/N)"},
+	{94, "Are you sure you want to restart?  (Y/N)Y"},
+	{95, "Are you sure you want to quit?  (Y/N)Y"},
 	{96, "Save"},
 	{97, "Load"},
 	{98, "Play"},
@@ -308,6 +304,8 @@ void HelpDialog::reflowLayout() {
 	int16 x, y;
 	uint16 w, h;
 
+	assert(lineHeight);
+
 	g_gui.xmlEval()->getWidgetData("ScummHelp.HelpText", x, y, w, h);
 
 	// Make sure than we don't have more lines than what we can fit
@@ -360,7 +358,7 @@ void HelpDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 da
 			_prevButton->setFlags(WIDGET_ENABLED);
 		}
 		displayKeyBindings();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kPrevCmd:
 		_page--;
@@ -371,7 +369,7 @@ void HelpDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 da
 			_prevButton->clearFlags(WIDGET_ENABLED);
 		}
 		displayKeyBindings();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		break;
 	default:
 		ScummDialog::handleCommand(sender, cmd, data);
@@ -512,13 +510,14 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::String& label, int minVal, 
 		int val, uint16 incKey, uint16 decKey)
 	: GUI::Dialog(0, 0, 0, 0),
 	_label(label), _min(minVal), _max(maxVal),
-	_value(val), _incKey(incKey), _decKey(decKey) {
+	_value(val), _incKey(incKey), _decKey(decKey), _timer(0) {
 	assert(_min <= _value && _value <= _max);
 }
 
-void ValueDisplayDialog::drawDialog() {
+void ValueDisplayDialog::drawDialog(GUI::DrawLayer layerToDraw) {
+	Dialog::drawDialog(layerToDraw);
+
 	const int labelWidth = _w - 8 - _percentBarWidth;
-	g_gui.theme()->drawDialogBackground(Common::Rect(_x, _y, _x+_w, _y+_h), GUI::ThemeEngine::kDialogBackgroundDefault);
 	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4,
 				_y+g_gui.theme()->getFontHeight()+4), _label);
 	g_gui.theme()->drawSlider(Common::Rect(_x+4+labelWidth, _y+4, _x+_w-4, _y+_h-4),
@@ -555,7 +554,7 @@ void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
 
 		setResult(_value);
 		_timer = g_system->getMillis() + kDisplayDelay;
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	} else {
 		close();
 	}
@@ -568,7 +567,7 @@ void ValueDisplayDialog::open() {
 }
 
 SubtitleSettingsDialog::SubtitleSettingsDialog(ScummEngine *scumm, int value)
-	: InfoDialog(scumm, ""), _value(value) {
+	: InfoDialog(scumm, ""), _value(value), _timer(0) {
 
 }
 
@@ -583,7 +582,7 @@ void SubtitleSettingsDialog::handleKeyDown(Common::KeyState state) {
 		cycleValue();
 
 		reflowLayout();
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 	} else {
 		close();
 	}
@@ -636,7 +635,7 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 		buffer.deleteLastChar();
 		Common::String total = mainText + ' ' + buffer;
 		setInfoText(total);
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		reflowLayout();
 	} else if (state.keycode == Common::KEYCODE_RETURN) {
 		done = 1;
@@ -645,7 +644,7 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 	} else if ((state.ascii >= '0' && state.ascii <= '9') || (state.ascii >= 'A' && state.ascii <= 'Z') || (state.ascii >= 'a' && state.ascii <= 'z') || state.ascii == '.' || state.ascii == ' ') {
 		buffer += state.ascii;
 		Common::String total = mainText + ' ' + buffer;
-		draw();
+		g_gui.scheduleTopDialogRedraw();
 		reflowLayout();
 		setInfoText(total);
 	}

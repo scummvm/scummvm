@@ -27,6 +27,8 @@
 #include "common/util.h"
 #include "common/debug.h"
 
+#define PRINT_RECT(x) (x).left,(x).top,(x).right,(x).bottom
+
 namespace Common {
 
 /**
@@ -163,7 +165,8 @@ struct Rect {
 	 *
 	 * @param r the rectangle to check
 	 *
-	 * @return true if the given rectangle is inside the rectangle, false otherwise
+	 * @return true if the given rectangle has a non-empty intersection with
+	 *         this rectangle, false otherwise
 	 */
 	bool intersects(const Rect &r) const {
 		return (left < r.right) && (r.left < right) && (top < r.bottom) && (r.top < bottom);

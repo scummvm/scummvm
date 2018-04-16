@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -59,10 +59,10 @@ MSprite::MSprite() : MSurface() {
 }
 
 MSprite::MSprite(Common::SeekableReadStream *source, const Common::Array<RGB6> &palette,
-		const Common::Rect &bounds)
-	: MSurface(bounds.width(), bounds.height()),
-	  _offset(Common::Point(bounds.left, bounds.top)), _transparencyIndex(TRANSPARENT_COLOR_INDEX) {
+		const Common::Rect &bounds): MSurface(), _transparencyIndex(TRANSPARENT_COLOR_INDEX),
+	  _offset(Common::Point(bounds.left, bounds.top)) {
 	// Load the sprite data
+	create(bounds.width(), bounds.height());
 	loadSprite(source, palette);
 }
 
@@ -74,8 +74,8 @@ void MSprite::loadSprite(Common::SeekableReadStream *source,
 	byte *outp, *lineStart;
 	bool newLine = false;
 
-	outp = getData();
-	lineStart = getData();
+	outp = getPixels();
+	lineStart = getPixels();
 	int spriteSize = this->w * this->h;
 	byte transIndex = getTransparencyIndex();
 	Common::fill(outp, outp + spriteSize, transIndex);
@@ -84,7 +84,7 @@ void MSprite::loadSprite(Common::SeekableReadStream *source,
 		byte cmd1, cmd2, count, pixel;
 
 		if (newLine) {
-			outp = lineStart + getWidth();
+			outp = lineStart + this->w;
 			lineStart = outp;
 			newLine = false;
 		}
@@ -126,7 +126,7 @@ void MSprite::loadSprite(Common::SeekableReadStream *source,
 	// Do a final iteration over the sprite to convert it's pixels to
 	// the final positions in the main palette
 	spriteSize = this->w * this->h;
-	for (outp = getData(); spriteSize > 0; --spriteSize, ++outp) {
+	for (outp = getPixels(); spriteSize > 0; --spriteSize, ++outp) {
 		if (*outp != transIndex)
 			*outp = palette[*outp]._palIndex;
 	}
@@ -257,12 +257,12 @@ void SpriteSlots::drawBackground() {
 				}
 
 				if (spriteSlot._depth <= 1) {
-					frame->copyTo(&scene._backgroundSurface, pt, frame->getTransparencyIndex());
+					scene._backgroundSurface.transBlitFrom(*frame, pt, frame->getTransparencyIndex());
 				} else if (scene._depthStyle == 0) {
-					scene._backgroundSurface.copyFrom(frame, pt, spriteSlot._depth, &scene._depthSurface,
+					scene._backgroundSurface.copyFrom(*frame, pt, spriteSlot._depth, &scene._depthSurface,
 						-1, false, frame->getTransparencyIndex());
 				} else {
-					frame->copyTo(&scene._backgroundSurface, pt, frame->getTransparencyIndex());
+					scene._backgroundSurface.transBlitFrom(*frame, pt, frame->getTransparencyIndex());
 				}
 			}
 		}
@@ -319,7 +319,7 @@ void SpriteSlots::drawSprites(MSurface *s) {
 
 		if ((slot._scale < 100) && (slot._scale != -1)) {
 			// Scaled drawing
-			s->copyFrom(sprite, slot._position, slot._depth, &scene._depthSurface,
+			s->copyFrom(*sprite, slot._position, slot._depth, &scene._depthSurface,
 				slot._scale, flipped, sprite->getTransparencyIndex());
 		} else {
 			int xp, yp;
@@ -334,21 +334,23 @@ void SpriteSlots::drawSprites(MSurface *s) {
 
 			if (slot._depth > 1) {
 				// Draw the frame with depth processing
-				s->copyFrom(sprite, Common::Point(xp, yp), slot._depth, &scene._depthSurface,
+				s->copyFrom(*sprite, Common::Point(xp, yp), slot._depth, &scene._depthSurface,
 					-1, flipped, sprite->getTransparencyIndex());
 			} else {
-				MSurface *spr = sprite;
+				BaseSurface *spr = sprite;
 				if (flipped) {
 					// Create a flipped copy of the sprite temporarily
 					spr = sprite->flipHorizontal();
 				}
 
 				// No depth, so simply draw the image
-				spr->copyTo(s, Common::Point(xp, yp), sprite->getTransparencyIndex());
+				s->transBlitFrom(*spr, Common::Point(xp, yp), sprite->getTransparencyIndex());
 
 				// Free sprite if it was a flipped one
-				if (flipped)
+				if (flipped) {
+					spr->free();
 					delete spr;
+				}
 			}
 		}
 	}
@@ -368,22 +370,18 @@ SpriteSets::~SpriteSets() {
 }
 
 int SpriteSets::add(SpriteAsset *asset, int idx) {
-	if (idx)
-		idx = idx + 49;
-	else
-		idx = size();
+	if (idx) {
+		assert(idx == 1);
+		delete _uiSprites;
+		_uiSprites = asset;
 
-	if (idx >= (int)size())
-		resize(idx + 1);
-
-	if ((*this)[idx]) {
-		delete (*this)[idx];
+		return SPRITE_SLOTS_MAX_SIZE;
 	} else {
-		++_assetCount;
-	}
+		assert(size() < SPRITE_SLOTS_MAX_SIZE);
+		push_back(asset);
 
-	(*this)[idx] = asset;
-	return idx;
+		return (int)size() - 1;
+	}
 }
 
 int SpriteSets::addSprites(const Common::String &resName, int flags) {
@@ -393,25 +391,32 @@ int SpriteSets::addSprites(const Common::String &resName, int flags) {
 void SpriteSets::clear() {
 	for (uint i = 0; i < size(); ++i)
 		delete (*this)[i];
-
-	_assetCount = 0;
 	Common::Array<SpriteAsset *>::clear();
+
+	delete _uiSprites;
+	_uiSprites = nullptr;
 }
 
 void SpriteSets::remove(int idx) {
-	if (idx >= 0) {
+	if (idx == SPRITE_SLOTS_MAX_SIZE) {
+		delete _uiSprites;
+		_uiSprites = nullptr;
+	} else if (idx >= 0 && idx < (int)size()) {
+		delete (*this)[idx];
+
 		if (idx < ((int)size() - 1)) {
-			delete (*this)[idx];
 			(*this)[idx] = nullptr;
 		} else {
 			do {
 				remove_at(size() - 1);
 			} while (size() > 0 && (*this)[size() - 1] == nullptr);
 		}
-
-		if (_assetCount > 0)
-			--_assetCount;
 	}
+}
+
+SpriteAsset *&SpriteSets::operator[](int idx) {
+	return (idx == SPRITE_SLOTS_MAX_SIZE) ? _uiSprites :
+		Common::Array<SpriteAsset *>::operator[](idx);
 }
 
 } // End of namespace MADS

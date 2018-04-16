@@ -29,24 +29,48 @@
 #include "common/stream.h"
 
 #include "audio/audiostream.h"
-
+#include "audio/decoders/raw.h"
 
 namespace ZVision {
 
 Video::AVIDecoder::AVIAudioTrack *ZorkAVIDecoder::createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo) {
-	ZorkAVIDecoder::ZorkAVIAudioTrack *audioTrack = new ZorkAVIDecoder::ZorkAVIAudioTrack(sHeader, wvInfo, _soundType);
-	return (Video::AVIDecoder::AVIAudioTrack *)audioTrack;
+	if (wvInfo.tag != kWaveFormatZorkPCM)
+		return new AVIAudioTrack(sHeader, wvInfo, getSoundType());
+
+	assert(wvInfo.size == 8);
+	return new ZorkAVIAudioTrack(sHeader, wvInfo, getSoundType());
+}
+
+ZorkAVIDecoder::ZorkAVIAudioTrack::ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
+		Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType), _queueStream(0), _decoder(waveFormat.channels == 2) {
+}
+
+void ZorkAVIDecoder::ZorkAVIAudioTrack::createAudioStream() {
+	_queueStream = Audio::makeQueuingAudioStream(_wvInfo.samplesPerSec, _wvInfo.channels == 2);
+	_audioStream = _queueStream;
 }
 
 void ZorkAVIDecoder::ZorkAVIAudioTrack::queueSound(Common::SeekableReadStream *stream) {
-	if (_audStream) {
-		if (_wvInfo.tag == kWaveFormatZorkPCM) {
-			assert(_wvInfo.size == 8);
-			_audStream->queueAudioStream(makeRawZorkStream(stream, _wvInfo.samplesPerSec, _audStream->isStereo(), DisposeAfterUse::YES), DisposeAfterUse::YES);
-		}
-	} else {
-		delete stream;
+	RawChunkStream::RawChunk chunk = _decoder.readNextChunk(stream);
+	delete stream;
+
+	if (chunk.data) {
+		byte flags = Audio::FLAG_16BITS;
+		if (_wvInfo.channels == 2)
+			flags |= Audio::FLAG_STEREO;
+#ifdef SCUMM_LITTLE_ENDIAN
+		// RawChunkStream produces native endianness int16
+		flags |= Audio::FLAG_LITTLE_ENDIAN;
+#endif
+		_queueStream->queueBuffer((byte *)chunk.data, chunk.size, DisposeAfterUse::YES, flags);
 	}
+
+	_curChunk++;
+}
+
+void ZorkAVIDecoder::ZorkAVIAudioTrack::resetStream() {
+	AVIAudioTrack::resetStream();
+	_decoder.init();
 }
 
 } // End of namespace ZVision

@@ -24,6 +24,11 @@
 #define SCUMM_IMUSE_DIGI_TRACK_H
 
 #include "common/scummsys.h"
+#include "audio/mixer.h"
+
+namespace Audio {
+class QueuingAudioStream;
+}
 
 namespace Scumm {
 

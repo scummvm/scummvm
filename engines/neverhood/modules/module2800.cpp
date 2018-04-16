@@ -23,6 +23,7 @@
 #include "neverhood/diskplayerscene.h"
 #include "neverhood/gamemodule.h"
 #include "neverhood/scene.h"
+#include "neverhood/smackerplayer.h"
 #include "neverhood/modules/module1000_sprites.h"
 #include "neverhood/modules/module1200_sprites.h"
 #include "neverhood/modules/module1700_sprites.h"
@@ -752,7 +753,7 @@ uint32 Scene2803::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case NM_KLAYMEN_LOWER_LEVER:
 		toggleBackground();
-		// NOTE Intentional fall-through
+		// fall through
 	case NM_ANIMATION_START:
 		if (param.asInteger() == 0x84251F82)
 			setMessageList(0x004B7A50);
@@ -1475,21 +1476,6 @@ static const uint32 kScene2808FileHashes1[] = {
 static const uint32 kScene2808FileHashes2[] = {
 	0xB0396098,
 	0xB0196098
-};
-
-static const uint32 kClass428FileHashes[] = {
-	0x140022CA,
-	0x4C30A602,
-	0xB1633402,
-	0x12982135,
-	0x0540B728,
-	0x002A81E3,
-	0x08982841,
-	0x10982841,
-	0x20982841,
-	0x40982841,
-	0x80982841,
-	0x40800711
 };
 
 Scene2808::Scene2808(NeverhoodEngine *vm, Module *parentModule, int which)

@@ -11,12 +11,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -89,8 +89,6 @@ void Cursor::setCurrentFrameIndex(int32 index) {
 			} else {
 				CursorMan.replaceCursor(_info[index].surface->getPixels(), _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, _info[index].surface->format.RGBToColor(0xFF, 0xFF, 0xFF), false, &_info[index].surface->format);
 			}
-
-			((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 		}
 	}
 }
@@ -104,13 +102,11 @@ void Cursor::show() {
 		CursorMan.showMouse(true);
 
 	_cursorObscured = false;
-	((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 }
 
 void Cursor::hide() {
 	CursorMan.showMouse(false);
 	setCurrentFrameIndex(0);
-	((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 }
 
 void Cursor::hideUntilMoved() {
@@ -125,7 +121,6 @@ void Cursor::useIdleTime() {
 		_cursorLocation = g_system->getEventManager()->getMousePos();
 		if (_index != -1 && _cursorObscured)
 			show();
-		((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 	}
 }
 

@@ -141,7 +141,7 @@ Sprite::Sprite(CGE2Engine *vm)
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
-	_flags._frnt = 1;
+	_flags._frnt = true;
 }
 
 Sprite::Sprite(CGE2Engine *vm, BitmapPtr shpP, int cnt)
@@ -152,7 +152,7 @@ Sprite::Sprite(CGE2Engine *vm, BitmapPtr shpP, int cnt)
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
-	_flags._frnt = 1;
+	_flags._frnt = true;
 
 	setShapeList(shpP, cnt);
 }
@@ -629,11 +629,11 @@ void Sprite::gotoxyz(V2D pos) {
 	if (!_follow) {
 		FXP m = _vm->_eye->_z / (_pos3D._z - _vm->_eye->_z);
 		_pos3D._x = (_vm->_eye->_x + (_vm->_eye->_x - _pos2D.x) / m);
-		_pos3D._x.round();
+		_pos3D._x = _pos3D._x.round();
 
 		if (!_constY) {
 			_pos3D._y = _vm->_eye->_y + (_vm->_eye->_y - _pos2D.y) / m;
-			_pos3D._y.round();
+			_pos3D._y = _pos3D._y.round();
 		}
 	}
 
@@ -952,8 +952,9 @@ uint8 Vga::closest(Dac *pal, const uint8 colR, const uint8 colG, const uint8 col
 }
 
 uint8 Vga::closest(Dac *pal, Dac x) {
-	int exp = (sizeof(long) * 8 - 1);
-	long D = (1 << exp) - 1; // Maximum value of long.
+	long D = 0;
+	D = ~D;
+	D = (unsigned long)D >> 1; // Maximum value of long.
 	long R = x._r;
 	long G = x._g;
 	long B = x._b;

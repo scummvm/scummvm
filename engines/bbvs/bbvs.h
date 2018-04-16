@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -24,7 +24,6 @@
 #define BBVS_BBVS_H
 
 #include "audio/mixer.h"
-#include "audio/decoders/aiff.h"
 #include "common/array.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -61,6 +60,10 @@ class Screen;
 class SoundMan;
 
 #define BBVS_SAVEGAME_VERSION 0
+
+enum {
+	GF_GUILANGSWITCH =    (1 << 0) // If GUI language switch is required for menus
+};
 
 enum {
 	kVerbLook      = 0,
@@ -226,9 +229,15 @@ public:
 	void continueGameFromQuickSave();
 	void setNewSceneNum(int newSceneNum);
 	const Common::String getTargetName() { return _targetName; }
-private:
 	const ADGameDescription *_gameDescription;
+
+private:
 	Graphics::PixelFormat _pixelFormat;
+
+#ifdef USE_TRANSLATION
+	Common::String _oldGUILanguage;
+#endif
+
 public:
 	Common::RandomSource *_random;
 
@@ -408,7 +417,7 @@ public:
 	const char *getSavegameFilename(int num);
 	bool existsSavegame(int num);
 	static Common::String getSavegameFilename(const Common::String &target, int num);
-	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
+	WARN_UNUSED_RESULT static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
 
 	void allocSnapshot();
 	void freeSnapshot();

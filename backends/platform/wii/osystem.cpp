@@ -229,21 +229,21 @@ void OSystem_Wii::lockMutex(MutexRef mutex) {
 	s32 res = LWP_MutexLock(*(mutex_t *)mutex);
 
 	if (res)
-		printf("ERROR locking mutex %p (%d)\n", mutex, res);
+		printf("ERROR locking mutex %p (%ld)\n", mutex, res);
 }
 
 void OSystem_Wii::unlockMutex(MutexRef mutex) {
 	s32 res = LWP_MutexUnlock(*(mutex_t *)mutex);
 
 	if (res)
-		printf("ERROR unlocking mutex %p (%d)\n", mutex, res);
+		printf("ERROR unlocking mutex %p (%ld)\n", mutex, res);
 }
 
 void OSystem_Wii::deleteMutex(MutexRef mutex) {
 	s32 res = LWP_MutexDestroy(*(mutex_t *)mutex);
 
 	if (res)
-		printf("ERROR destroying mutex %p (%d)\n", mutex, res);
+		printf("ERROR destroying mutex %p (%ld)\n", mutex, res);
 
 	free(mutex);
 }

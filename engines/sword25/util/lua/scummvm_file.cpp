@@ -183,7 +183,7 @@ Common::String Sword25FileProxy::getLanguage() {
 	case Common::FR_FRA:
 		return "fr";
 	case Common::HU_HUN:
-		return "hr";
+		return "hu";
 	case Common::IT_ITA:
 		return "it";
 	case Common::PL_POL:
@@ -210,7 +210,7 @@ void Sword25FileProxy::setLanguage(const Common::String &lang) {
 		ConfMan.set("language", Common::getLanguageCode(Common::ES_ESP));
 	else if (lang == "fr")
 		ConfMan.set("language", Common::getLanguageCode(Common::FR_FRA));
-	else if (lang == "hr")
+	else if (lang == "hu")
 		ConfMan.set("language", Common::getLanguageCode(Common::HU_HUN));
 	else if (lang == "it")
 		ConfMan.set("language", Common::getLanguageCode(Common::IT_ITA));

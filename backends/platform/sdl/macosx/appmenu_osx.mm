@@ -26,14 +26,30 @@
 #include "backends/platform/sdl/macosx/appmenu_osx.h"
 #include "common/translation.h"
 
+#include "backends/platform/sdl/macosx/macosx-compat.h"
 #include <Cocoa/Cocoa.h>
 
-// Apple removed setAppleMenu from the header files in 10.4,
-// but as the method still exists we declare it ourselves here.
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
+#define NSEventModifierFlagCommand NSCommandKeyMask
+#define NSEventModifierFlagOption  NSAlternateKeyMask
+#endif
+
+// Apple added setAppleMenu in 10.5 and removed it in 10.6.
+// But as the method still exists we declare it ourselves here.
 // Yes, this works :)
 @interface NSApplication(MissingFunction)
 - (void)setAppleMenu:(NSMenu *)menu;
 @end
+// However maybe we should conditionally use it depending on the system on which we run ScummVM (and not
+// the one on which we compile) to only do it on OS X 10.5.
+// Here is the relevant bit from the release notes for 10.6:
+// In Leopard and earlier, apps that tried to construct a menu bar without a nib would get an undesirable
+// stubby application menu that could not be removed. To work around this problem on Leopard, you can call
+// the undocumented setAppleMenu: method and pass it the application menu, like so:
+//   [NSApp setAppleMenu:[[[NSApp mainMenu] itemAtIndex:0] submenu]];
+// In SnowLeopard, this workaround is unnecessary and should not be used. Under SnowLeopard, the first menu
+// is always identified as the application menu.
+
 
 NSString *constructNSStringFromCString(const char *rawCString, CFStringEncoding stringEncoding) {
 	return (NSString *)CFStringCreateWithCString(NULL, rawCString, stringEncoding);
@@ -46,13 +62,14 @@ void replaceApplicationMenuItems() {
 	NSMenu *windowMenu;
 	NSMenuItem *menuItem;
 
-	// For some reason [[NSApp mainMenu] removeAllItems] doesn't work and crashes, so we need
-	// to remove the SDL generated menus one by one
-	[[NSApp mainMenu] removeItemAtIndex:0];		// Remove application menu
-	[[NSApp mainMenu] removeItemAtIndex:0];		// Remove "Windows" menu
+	// We cannot use [[NSApp mainMenu] removeAllItems] as removeAllItems was added in OS X 10.6
+	// So remove the SDL generated menus one by one instead.
+	while ([[NSApp mainMenu] numberOfItems] > 0) {
+		[[NSApp mainMenu] removeItemAtIndex:0];
+	}
 
 	// Create new application menu
-	appleMenu = [[NSMenu alloc] initWithTitle:@""];
+	appleMenu = [[NSMenu alloc] initWithTitle:@"ScummVM"];
 
 	NSString *nsString = NULL;
 
@@ -81,7 +98,7 @@ void replaceApplicationMenuItems() {
 	// Add "Hide Others" menu item
 	nsString = constructNSStringFromCString(_("Hide Others"), stringEncoding);
 	menuItem = (NSMenuItem *)[appleMenu addItemWithTitle:nsString action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
-	[menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
+	[menuItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption|NSEventModifierFlagCommand)];
 
 	// Add "Show All" menu item
 	nsString = constructNSStringFromCString(_("Show All"), stringEncoding);

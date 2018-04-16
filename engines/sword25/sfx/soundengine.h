@@ -49,7 +49,6 @@
 #include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 
 namespace Sword25 {
@@ -74,6 +73,8 @@ struct SndHandle {
 	int32 loopStart;
 	int32 loopEnd;
 	uint32 layer;
+
+	SndHandle();
 };
 
 

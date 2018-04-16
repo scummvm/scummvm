@@ -23,9 +23,11 @@
 #ifndef MYST_SCRIPTS_PREVIEW_H
 #define MYST_SCRIPTS_PREVIEW_H
 
+#include "mohawk/sound.h"
+#include "mohawk/myst_stacks/myst.h"
+
 #include "common/scummsys.h"
 #include "common/util.h"
-#include "mohawk/myst_stacks/myst.h"
 
 namespace Mohawk {
 
@@ -33,15 +35,15 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Preview : public Myst {
 public:
-	Preview(MohawkEngine_Myst *vm);
-	~Preview();
+	explicit Preview(MohawkEngine_Myst *vm);
+	~Preview() override;
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
@@ -56,7 +58,7 @@ private:
 	DECLARE_OPCODE(o_library_init);
 
 	uint16 _libraryState; // 4
-	MystResourceType8 *_library; // 32
+	MystAreaImageSwitch *_library; // 32
 
 	bool _speechRunning;
 	uint _speechStep;
@@ -67,7 +69,7 @@ private:
 	void speech_run();
 	void speechUpdateCue();
 
-	void libraryBookcaseTransform_run();
+	void libraryBookcaseTransform_run() override;
 };
 
 } // End of namespace MystStacks

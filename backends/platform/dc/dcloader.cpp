@@ -26,6 +26,8 @@
 
 #include "dcloader.h"
 
+#include <cxxabi.h>
+
 #ifdef DL_DEBUG
 #define DBG(x) reportf x
 #else
@@ -345,6 +347,7 @@ bool DLObject::open(const char *path)
   ctors_end = symbol("__plugin_ctors_end");
   dtors_start = symbol("__plugin_dtors");
   dtors_end = symbol("__plugin_dtors_end");
+  dso_handle = symbol("__dso_handle");
 
   if (ctors_start == NULL || ctors_end == NULL || dtors_start == NULL ||
      dtors_end == NULL) {
@@ -364,6 +367,10 @@ bool DLObject::open(const char *path)
 
 bool DLObject::close()
 {
+  if (dso_handle != NULL) {
+    __cxxabiv1::__cxa_finalize(dso_handle);
+    dso_handle = NULL;
+  }
   if (dtors_start != NULL && dtors_end != NULL)
     for (void (**f)(void) = (void (**)(void))dtors_start; f != dtors_end; f++)
       (**f)();

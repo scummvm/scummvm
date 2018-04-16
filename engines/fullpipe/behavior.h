@@ -25,23 +25,22 @@
 
 namespace Fullpipe {
 
-struct BehaviorEntryInfo {
+struct BehaviorMove {
 	MessageQueue *_messageQueue;
 	int _delay;
 	uint32 _percent;
 	int _flags;
 
-	BehaviorEntryInfo(GameVar *subvar, Scene *sc, int *delay);
+	BehaviorMove(GameVar *subvar, Scene *sc, int *delay);
 };
 
-struct BehaviorEntry {
+struct BehaviorAnim {
 	int _staticsId;
-	int _itemsCount;
 	int _flags;
-	BehaviorEntryInfo **_items;
+	Common::Array<BehaviorMove> _behaviorMoves;
 
-	BehaviorEntry();
-	BehaviorEntry(GameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay);
+	BehaviorAnim();
+	BehaviorAnim(GameVar *var, Scene *sc, StaticANIObject *ani, int *minDelay);
 };
 
 struct BehaviorInfo {
@@ -51,8 +50,8 @@ struct BehaviorInfo {
 	int _counterMax;
 	int _flags;
 	int _subIndex;
-	int _itemsCount;
-	Common::Array<BehaviorEntry *> _bheItems;
+	int _animsCount;
+	Common::Array<BehaviorAnim> _behaviorAnims;
 
 	BehaviorInfo() { clear(); }
 
@@ -62,7 +61,7 @@ struct BehaviorInfo {
 };
 
 class BehaviorManager : public CObject {
-	Common::Array<BehaviorInfo *> _behaviors;
+	Common::Array<BehaviorInfo> _behaviors;
 	Scene *_scene;
 	bool _isActive;
 
@@ -75,14 +74,14 @@ class BehaviorManager : public CObject {
 	void initBehavior(Scene *scene, GameVar *var);
 
 	void updateBehaviors();
-	void updateBehavior(BehaviorInfo *behaviorInfo, BehaviorEntry *entry);
-	void updateStaticAniBehavior(StaticANIObject *ani, int delay, BehaviorEntry *beh);
+	void updateBehavior(BehaviorInfo &behaviorInfo, BehaviorAnim &entry);
+	void updateStaticAniBehavior(StaticANIObject &ani, int delay, const BehaviorAnim &beh);
 
 	bool setBehaviorEnabled(StaticANIObject *obj, int aniId, int quId, int flag);
 
 	void setFlagByStaticAniObject(StaticANIObject *ani, int flag);
 
-	BehaviorEntryInfo *getBehaviorEntryInfoByMessageQueueDataId(StaticANIObject *ani, int id1, int id2);
+	BehaviorMove *getBehaviorMoveByMessageQueueDataId(StaticANIObject *ani, int id1, int id2);
 };
 
 } // End of namespace Fullpipe

@@ -25,36 +25,36 @@
 
 namespace Agi {
 
-struct ViewCel {
+struct AgiViewCel {
 	uint8 height;
 	uint8 width;
-	uint8 transparency;
-	uint8 mirrorLoop;
-	uint8 mirror;
-	uint8 *data;
+	uint8 clearKey;
+	bool  mirrored;
+	byte *rawBitmap;
 };
 
-struct ViewLoop {
-	int numCels;
-	struct ViewCel *cel;
+struct AgiViewLoop {
+	int16 celCount;
+	AgiViewCel *cel;
 };
 
 /**
  * AGI view resource structure.
  */
 struct AgiView {
-	int numLoops;
-	struct ViewLoop *loop;
-	bool agi256_2;
-	char *descr;
-	uint8 *rdata;
+	byte  headerStepSize;
+	byte  headerCycleTime;
+	byte *description;
+	int16 loopCount;
+	AgiViewLoop *loop;
 };
 
 enum MotionType {
 	kMotionNormal = 0,
 	kMotionWander = 1,
 	kMotionFollowEgo = 2,
-	kMotionMoveObj = 3
+	kMotionMoveObj = 3,
+	kMotionEgo = 4 // used by us for mouse movement only?
 };
 
 enum CycleType {
@@ -62,63 +62,78 @@ enum CycleType {
 	kCycleEndOfLoop = 1,
 	kCycleRevLoop = 2,
 	kCycleReverse = 3
- };
+};
 
 enum ViewFlags {
-	fDrawn 			= (1 << 0),
-	fIgnoreBlocks 	= (1 << 1),
-	fFixedPriority	= (1 << 2),
-	fIgnoreHorizon	= (1 << 3),
-	fUpdate			= (1 << 4),
-	fCycling		= (1 << 5),
-	fAnimated		= (1 << 6),
-	fMotion			= (1 << 7),
-	fOnWater		= (1 << 8),
-	fIgnoreObjects	= (1 << 9),
-	fUpdatePos		= (1 << 10),
-	fOnLand			= (1 << 11),
-	fDontupdate		= (1 << 12),
-	fFixLoop		= (1 << 13),
-	fDidntMove		= (1 << 14),
-	fAdjEgoXY		= (1 << 15)
+	fDrawn          = (1 << 0),     // 0x0001
+	fIgnoreBlocks   = (1 << 1),     // 0x0002
+	fFixedPriority  = (1 << 2),     // 0x0004
+	fIgnoreHorizon  = (1 << 3),     // 0x0008
+	fUpdate         = (1 << 4),     // 0x0010
+	fCycling        = (1 << 5),     // 0x0020
+	fAnimated       = (1 << 6),     // 0x0040
+	fMotion         = (1 << 7),     // 0x0080
+	fOnWater        = (1 << 8),     // 0x0100
+	fIgnoreObjects  = (1 << 9),     // 0x0200
+	fUpdatePos      = (1 << 10),    // 0x0400
+	fOnLand         = (1 << 11),    // 0x0800
+	fDontupdate     = (1 << 12),    // 0x1000
+	fFixLoop        = (1 << 13),    // 0x2000
+	fDidntMove      = (1 << 14),    // 0x4000
+	fAdjEgoXY       = (1 << 15)     // 0x8000
 };
 
 /**
- * AGI view table entry
+ * AGI screen object table entry
  */
-struct VtEntry {
+struct ScreenObjEntry {
+	int16 objectNr; // 0-255 -> regular screenObjTable, -1 -> addToPic-view
 	uint8 stepTime;
 	uint8 stepTimeCount;
-	uint8 entry;
 	int16 xPos;
 	int16 yPos;
-	uint8 currentView;
+	uint8 currentViewNr;
 	bool viewReplaced;
-	struct AgiView *viewData;
-	uint8 currentLoop;
-	uint8 numLoops;
-	struct ViewLoop *loopData;
-	uint8 currentCel;
-	uint8 numCels;
-	struct ViewCel *celData;
-	struct ViewCel *celData2;
-	int16 xPos2;
-	int16 yPos2;
-	void *s;
+	struct AgiView *viewResource;
+	uint8 currentLoopNr;
+	uint8 loopCount;
+	struct AgiViewLoop *loopData;
+	uint8 currentCelNr;
+	uint8 celCount;
+	struct AgiViewCel *celData;
+	//int16 xPos2;
+	//int16 yPos2;
 	int16 xSize;
 	int16 ySize;
+
+	int16 xPos_prev;
+	int16 yPos_prev;
+	int16 xSize_prev;
+	int16 ySize_prev;
+
 	uint8 stepSize;
 	uint8 cycleTime;
 	uint8 cycleTimeCount;
 	uint8 direction;
-	MotionType motion;
+	MotionType motionType;
 	CycleType cycle;
 	uint8 priority;
 	uint16 flags;
-	uint8 parm1;
-	uint8 parm2;
-	uint8 parm3;
-	uint8 parm4;
+	// kMotionMoveObj
+	int16 move_x;
+	int16 move_y;
+	uint8 move_stepSize;
+	uint8 move_flag;
+	// kMotionFollowEgo
+	uint8 follow_stepSize;
+	uint8 follow_flag;
+	uint8 follow_count;
+	// kMotionWander
+	uint8 wander_count;
+	// end of motion related variables
+	uint8 loop_flag;
+
+	ScreenObjEntry() { memset(this, 0, sizeof(ScreenObjEntry)); }
 }; // struct vt_entry
 
 } // End of namespace Agi

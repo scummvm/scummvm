@@ -76,7 +76,7 @@ EventsManager::EventsManager(VoyeurEngine *vm) : _intPtr(_gameData),
 
 	_leftClick = _rightClick = false;
 	_mouseClicked = _newMouseClicked = false;
-	_newLeftClick = _newRightClick = false;;
+	_newLeftClick = _newRightClick = false;
 
 	_videoDead = 0;
 
@@ -111,18 +111,18 @@ void EventsManager::mainVoyeurIntFunc() {
 }
 
 void EventsManager::sWaitFlip() {
-	Common::Array<ViewPortResource *> &viewPorts = _vm->_graphicsManager->_viewPortListPtr->_entries;
+	Common::Array<ViewPortResource *> &viewPorts = _vm->_screen->_viewPortListPtr->_entries;
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
 		ViewPortResource &viewPort = *viewPorts[idx];
 
-		if (_vm->_graphicsManager->_saveBack && (viewPort._flags & DISPFLAG_40)) {
-			Common::Rect *clipPtr = _vm->_graphicsManager->_clipPtr;
-			_vm->_graphicsManager->_clipPtr = &viewPort._clipRect;
+		if (_vm->_screen->_saveBack && (viewPort._flags & DISPFLAG_40)) {
+			Common::Rect *clipPtr = _vm->_screen->_clipPtr;
+			_vm->_screen->_clipPtr = &viewPort._clipRect;
 
 			if (viewPort._restoreFn)
-				(_vm->_graphicsManager->*viewPort._restoreFn)(&viewPort);
+				(_vm->_screen->*viewPort._restoreFn)(&viewPort);
 
-			_vm->_graphicsManager->_clipPtr = clipPtr;
+			_vm->_screen->_clipPtr = clipPtr;
 			viewPort._rectListCount[viewPort._pageIndex] = 0;
 			viewPort._rectListPtr[viewPort._pageIndex]->clear();
 			viewPort._flags &= ~DISPFLAG_40;
@@ -158,9 +158,7 @@ void EventsManager::checkForNextFrameCounter() {
 			showMousePosition();
 
 		// Display the frame
-		g_system->copyRectToScreen((byte *)_vm->_graphicsManager->_screenSurface.getPixels(),
-			SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		g_system->updateScreen();
+		_vm->_screen->update();
 
 		// Signal the ScummVM debugger
 		_vm->_debugger->onFrame();
@@ -178,10 +176,8 @@ void EventsManager::showMousePosition() {
 		mousePos += Common::String::format(" - (%d,%d)", pt.x, pt.y);
 	}
 
-	_vm->_graphicsManager->_screenSurface.fillRect(
-		Common::Rect(0, 0, 110, font.getFontHeight()), 0);
-	font.drawString(&_vm->_graphicsManager->_screenSurface, mousePos,
-		0, 0, 110, 63);
+	_vm->_screen->fillRect(Common::Rect(0, 0, 110, font.getFontHeight()), 0);
+	font.drawString(_vm->_screen, mousePos, 0, 0, 110, 63);
 }
 
 void EventsManager::voyeurTimer() {
@@ -249,7 +245,7 @@ void EventsManager::pollEvents() {
 	checkForNextFrameCounter();
 
 	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
+	while (g_system->getEventManager()->pollEvent(event) && !_vm->shouldQuit()) {
 		// Handle keypress
 		switch (event.type) {
 		case Common::EVENT_QUIT:
@@ -299,11 +295,11 @@ void EventsManager::startFade(CMapResource *cMap) {
 
 	if (cMap->_steps > 0) {
 		_fadeStatus = cMap->_fadeStatus | 1;
-		byte *vgaP = &_vm->_graphicsManager->_VGAColors[_fadeFirstCol * 3];
+		byte *vgaP = &_vm->_screen->_VGAColors[_fadeFirstCol * 3];
 		int mapIndex = 0;
 
 		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx, vgaP += 3) {
-			ViewPortPalEntry &palEntry = _vm->_graphicsManager->_viewPortListPtr->_palette[idx];
+			ViewPortPalEntry &palEntry = _vm->_screen->_viewPortListPtr->_palette[idx];
 			palEntry._rEntry = vgaP[0] << 8;
 			int rDiff = (cMap->_entries[mapIndex * 3] << 8) - palEntry._rEntry;
 			palEntry._rChange = rDiff / cMap->_steps;
@@ -325,7 +321,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 			_intPtr._skipFading = true;
 		_fadeIntNode._flags &= ~1;
 	} else {
-		byte *vgaP = &_vm->_graphicsManager->_VGAColors[_fadeFirstCol * 3];
+		byte *vgaP = &_vm->_screen->_VGAColors[_fadeFirstCol * 3];
 		int mapIndex = 0;
 
 		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx, vgaP += 3) {
@@ -371,8 +367,8 @@ void EventsManager::vDoFadeInt() {
 	}
 
 	for (int i = _fadeFirstCol; i <= _fadeLastCol; ++i) {
-		ViewPortPalEntry &palEntry = _vm->_graphicsManager->_viewPortListPtr->_palette[i];
-		byte *vgaP = &_vm->_graphicsManager->_VGAColors[palEntry._palIndex * 3];
+		ViewPortPalEntry &palEntry = _vm->_screen->_viewPortListPtr->_palette[i];
+		byte *vgaP = &_vm->_screen->_VGAColors[palEntry._palIndex * 3];
 
 		palEntry._rEntry += palEntry._rChange;
 		palEntry._gEntry += palEntry._gChange;
@@ -395,7 +391,7 @@ void EventsManager::vDoCycleInt() {
 	for (int idx = 3; idx >= 0; --idx) {
 		if (_cyclePtr->_type[idx] && --_cycleTime[idx] <= 0) {
 			byte *pSrc = _cycleNext[idx];
-			byte *pPal = _vm->_graphicsManager->_VGAColors;
+			byte *pPal = _vm->_screen->_VGAColors;
 
 			if (_cyclePtr->_type[idx] != 1) {
 				// New palette data being specified - loop to set entries
@@ -403,7 +399,7 @@ void EventsManager::vDoCycleInt() {
 					int palIndex = READ_LE_UINT16(pSrc);
 					pPal[palIndex * 3] = pSrc[3];
 					pPal[palIndex * 3 + 1] = pSrc[4];
-					pPal[palIndex * 3 + 1] = pSrc[5];
+					pPal[palIndex * 3 + 2] = pSrc[5];
 					pSrc += 6;
 
 					if ((int16)READ_LE_UINT16(pSrc) >= 0) {
@@ -521,7 +517,7 @@ void EventsManager::setCursor(PictureResource *pic) {
 	cursor._bounds = pic->_bounds;
 	cursor._flags = DISPFLAG_CURSOR;
 
-	_vm->_graphicsManager->sDrawPic(pic, &cursor, Common::Point());
+	_vm->_screen->sDrawPic(pic, &cursor, Common::Point());
 }
 
 void EventsManager::setCursor(byte *cursorData, int width, int height, int keyColor) {
@@ -531,16 +527,16 @@ void EventsManager::setCursor(byte *cursorData, int width, int height, int keyCo
 void EventsManager::setCursorColor(int idx, int mode) {
 	switch (mode) {
 	case 0:
-		_vm->_graphicsManager->setColor(idx, 90, 90, 232);
+		_vm->_screen->setColor(idx, 90, 90, 232);
 		break;
 	case 1:
-		_vm->_graphicsManager->setColor(idx, 232, 90, 90);
+		_vm->_screen->setColor(idx, 232, 90, 90);
 		break;
 	case 2:
-		_vm->_graphicsManager->setColor(idx, 90, 232, 90);
+		_vm->_screen->setColor(idx, 90, 232, 90);
 		break;
 	case 3:
-		_vm->_graphicsManager->setColor(idx, 90, 232, 232);
+		_vm->_screen->setColor(idx, 90, 232, 232);
 		break;
 	default:
 		break;
@@ -564,12 +560,12 @@ void EventsManager::getMouseInfo() {
 
 			if (_cursorBlinked) {
 				_cursorBlinked = false;
-				_vm->_graphicsManager->setOneColor(128, 220, 20, 20);
-				_vm->_graphicsManager->setColor(128, 220, 20, 20);
+				_vm->_screen->setOneColor(128, 220, 20, 20);
+				_vm->_screen->setColor(128, 220, 20, 20);
 			} else {
 				_cursorBlinked = true;
-				_vm->_graphicsManager->setOneColor(128, 220, 220, 220);
-				_vm->_graphicsManager->setColor(128, 220, 220, 220);
+				_vm->_screen->setOneColor(128, 220, 220, 220);
+				_vm->_screen->setColor(128, 220, 220, 220);
 			}
 		}
 	}
@@ -585,11 +581,11 @@ void EventsManager::getMouseInfo() {
 
 void EventsManager::startCursorBlink() {
 	if (_vm->_voy->_eventFlags & EVTFLAG_RECORDING) {
-		_vm->_graphicsManager->setOneColor(128, 55, 5, 5);
-		_vm->_graphicsManager->setColor(128, 220, 20, 20);
+		_vm->_screen->setOneColor(128, 55, 5, 5);
+		_vm->_screen->setColor(128, 220, 20, 20);
 		_intPtr._hasPalette = true;
 
-		_vm->_graphicsManager->drawDot();
+		_vm->_screen->drawDot();
 		//copySection();
 	}
 }

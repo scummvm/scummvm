@@ -28,6 +28,7 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/script_patches.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
@@ -44,8 +45,8 @@
 
 namespace Sci {
 
-GfxAnimate::GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions)
-	: _s(state), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen), _palette(palette), _cursor(cursor), _transitions(transitions) {
+GfxAnimate::GfxAnimate(EngineState *state, ScriptPatcher *scriptPatcher, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions)
+	: _s(state), _scriptPatcher(scriptPatcher), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen), _palette(palette), _cursor(cursor), _transitions(transitions) {
 	init();
 }
 
@@ -55,16 +56,77 @@ GfxAnimate::~GfxAnimate() {
 void GfxAnimate::init() {
 	_lastCastData.clear();
 
-	_ignoreFastCast = false;
-	// fastCast object is not found in any SCI games prior SCI1
-	if (getSciVersion() <= SCI_VERSION_01)
-		_ignoreFastCast = true;
-	// Also if fastCast object exists at gamestartup, we can assume that the interpreter doesnt do kAnimate aborts
-	//  (found in Larry 1)
-	if (getSciVersion() > SCI_VERSION_0_EARLY) {
-		if (!_s->_segMan->findObjectByName("fastCast").isNull())
-			_ignoreFastCast = true;
+	_fastCastEnabled = false;
+	if (getSciVersion() == SCI_VERSION_1_1) {
+		// Seems to have been available for all SCI1.1 games
+		_fastCastEnabled = true;
+	} else if (getSciVersion() >= SCI_VERSION_1_EARLY) {
+		// fastCast only exists for some games between SCI1 early and SCI1 late
+		// Try to detect it by code signature
+		// It's extremely important, that we only enable it for games that actually need it
+		if (detectFastCast()) {
+			_fastCastEnabled = true;
+		}
 	}
+}
+
+// Signature for fastCast detection
+static const uint16 fastCastSignature[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                      // ldi 00
+	0xa1, 84,                        // sag global[84d]
+	SIG_END
+};
+
+// Fast cast in games:
+
+// SCI1 Early:
+// KQ5 - no fastcast, LSL1 (demo) - no fastcast, Mixed Up Fairy Tales - *has fastcast*, XMas Card 1990 - no fastcast,
+// SQ4Floppy - no fastcast, Mixed Up Mother Goose - no fastcast
+//
+// SCI1 Middle:
+// LSL5 demo - no fastfast, Conquest of the Longbow demo - no fastcast, LSL1 - no fastcast,
+// Astro Chicken II - no fastcast
+//
+// SCI1 Late:
+// Castle of Dr. Brain demo - has fastcast, Castle of Dr. Brain - has fastcast,
+// Conquests of the Longbow - has fastcast, Space Quest 1 EGA - has fastcast,
+// King's Quest 5 multilingual - *NO* fastcast, Police Quest 3 demo - *NO* fastcast,
+// LSL5 multilingual - has fastcast, Police Quest 3 - has fastcast,
+// EcoQuest 1 - has fastcast, Mixed Up Fairy Tales demo - has fastcast,
+// Space Quest 4 multilingual - *NO* fastcast
+//
+// SCI1.1
+// Quest for Glory 3 demo - has fastcast, Police Quest 1 - hast fastcast, Quest for Glory 1 - has fastcast
+// Laura Bow 2 Floppy - has fastcast, Mixed Up Mother Goose - has fastcast, Quest for Glory 3 - has fastcast
+// Island of Dr. Brain - has fastcast, King's Quest 6 - has fastcast, Space Quest 5 - has fastcast
+// Hoyle 4 - has fastcast, Laura Bow 2 CD - has fastcast, Freddy Pharkas CD - has fastcast
+bool GfxAnimate::detectFastCast() {
+	SegManager *segMan = _s->_segMan;
+	const reg_t gameVMObject = g_sci->getGameObject();
+	reg_t gameSuperVMObject = segMan->getObject(gameVMObject)->getSuperClassSelector();
+	uint32 magicDWord = 0; // platform-specific BE/LE for performance
+	int    magicDWordOffset = 0;
+
+	if (gameSuperVMObject.isNull()) {
+		gameSuperVMObject = gameVMObject; // Just in case. According to sci.cpp this may happen in KQ5CD, when loading saved games before r54510
+	}
+
+	Script *objectScript = segMan->getScript(gameSuperVMObject.getSegment());
+	byte *scriptData = const_cast<byte *>(objectScript->getBuf(0));
+	uint32 scriptSize = objectScript->getBufSize();
+
+	_scriptPatcher->calculateMagicDWordAndVerify("fast cast detection", fastCastSignature, true, magicDWord, magicDWordOffset);
+
+	// Signature is found for multilingual King's Quest 5 too, but it looks as if the fast cast global is never set
+	// within that game. Which means even though we detect it as having the capability, it's never actually used.
+	// The original multilingual KQ5 interpreter did have this feature disabled.
+	// Sierra probably used latest system scripts and that's why we detect it.
+	if (_scriptPatcher->findSignature(magicDWord, magicDWordOffset, fastCastSignature, "fast cast detection", SciSpan<const byte>(scriptData, scriptSize)) >= 0) {
+		// Signature found, game seems to use fast cast for kAnimate
+		return true;
+	}
+	return false;
 }
 
 void GfxAnimate::disposeLastCast() {
@@ -80,12 +142,14 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 	while (curNode) {
 		curObject = curNode->value;
 
-		if (!_ignoreFastCast) {
+		if (_fastCastEnabled) {
 			// Check if the game has a fastCast object set
 			//  if we don't abort kAnimate processing, at least in kq5 there will be animation cels drawn into speech boxes.
-			if (!_s->variables[VAR_GLOBAL][84].isNull()) {
-				if (!strcmp(_s->_segMan->getObjectName(_s->variables[VAR_GLOBAL][84]), "fastCast"))
-					return false;
+			if (!_s->variables[VAR_GLOBAL][kGlobalVarFastCast].isNull()) {
+				// This normally points to an object called "fastCast",
+				// but for example in Eco Quest 1 it may also point to an object called "EventHandler" (see bug #5170)
+				// Original SCI only checked, if this global was not 0.
+				return false;
 			}
 		}
 
@@ -274,7 +338,7 @@ void GfxAnimate::applyGlobalScaling(AnimateList::iterator entry, GfxView *view) 
 	int16 maxScale = readSelectorValue(_s->_segMan, entry->object, SELECTOR(maxScale));
 	int16 celHeight = view->getHeight(entry->loopNo, entry->celNo);
 	int16 maxCelHeight = (maxScale * celHeight) >> 7;
-	reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
+	reg_t globalVar2 = _s->variables[VAR_GLOBAL][kGlobalVarCurrentRoom]; // current room object
 	int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
 
 	int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;

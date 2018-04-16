@@ -20,391 +20,1596 @@
  *
  */
 
-#include "common/archive.h"
-#include "common/stream.h"
-#include "common/substream.h"
-#include "common/system.h"
-#include "common/textconsole.h"
-#include "common/util.h"
-
-#include "graphics/surface.h"
-#include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
-
-#include "sci/resource.h"
-#include "sci/util.h"
-#include "sci/sound/audio.h"
 #include "sci/video/robot_decoder.h"
+#include "common/archive.h"          // for SearchMan
+#include "common/debug.h"            // for debugC
+#include "common/endian.h"           // for MKTAG
+#include "common/memstream.h"        // for MemoryReadStream
+#include "common/platform.h"         // for Platform::kPlatformMacintosh
+#include "common/rational.h"         // for operator*, Rational
+#include "common/str.h"              // for String
+#include "common/stream.h"           // for SeekableReadStream
+#include "common/substream.h"        // for SeekableSubReadStreamEndian
+#include "common/textconsole.h"      // for error, warning
+#include "common/types.h"            // for Flag::NO, Flag::YES
+#include "sci/engine/seg_manager.h"  // for SegManager
+#include "sci/graphics/celobj32.h"   // for Ratio, ::kLowResX, ::kLowResY
+#include "sci/graphics/text32.h"     // for BitmapResource
+#include "sci/sound/audio32.h"       // for Audio32
+#include "sci/sci.h"                 // for kDebugLevels::kDebugLevelVideo
+#include "sci/util.h"                // for READ_SCI11ENDIAN_UINT16, READ_SC...
 
 namespace Sci {
 
-// TODO:
-// - Positioning
-// - Proper handling of frame scaling - scaled frames look squashed
-//   (probably because both dimensions should be scaled)
-// - Transparency support
-// - Timing - the arbitrary 100ms delay between each frame is not quite right
-// - Proper handling of sound chunks in some cases, so that the frame size
-//   table can be ignored (it's only used to determine the correct sound chunk
-//   size at the moment, cause it can be wrong in some cases)
-// - Fix audio "hiccups" - probably data that shouldn't be in the audio frames
+#pragma mark RobotAudioStream
 
+extern void deDPCM16Mono(int16 *out, const byte *in, const uint32 numBytes, int16 &sample);
 
-// Some non technical information on robot files, from an interview with
-// Greg Tomko-Pavia of Sierra On-Line
-// Taken from http://anthonylarme.tripod.com/phantas/phintgtp.html
-//
-// (...) What we needed was a way of playing video, but have it blend into
-// normal room art instead of occupying its own rectangular area. Room art
-// consists of a background pic overlaid with various animating cels
-// (traditional lingo: sprites). The cels each have a priority that determines
-// who is on top and who is behind in the drawing order. Cels are read from
-// *.v56 files (another proprietary format). A Robot is video frames with
-// transparent background including priority and x,y information. Thus, it is
-// like a cel, except it comes from an RBT - not a v56. Because it blends into
-// our graphics engine, it looks just like a part of the room. A RBT can move
-// around the screen and go behind other objects. (...)
+RobotAudioStream::RobotAudioStream(const int32 bufferSize) :
+	_loopBuffer((byte *)malloc(bufferSize)),
+	_loopBufferSize(bufferSize),
+	_decompressionBuffer(nullptr),
+	_decompressionBufferSize(0),
+	_decompressionBufferPosition(-1),
+	_waiting(true),
+	_finished(false),
+	_firstPacketPosition(-1) {}
 
-enum RobotPalTypes {
-	kRobotPalVariable = 0,
-	kRobotPalConstant = 1
-};
-
-RobotDecoder::RobotDecoder(bool isBigEndian) {
-	_fileStream = 0;
-	_pos = Common::Point(0, 0);
-	_isBigEndian = isBigEndian;
-	_frameTotalSize = 0;
+RobotAudioStream::~RobotAudioStream() {
+	free(_loopBuffer);
+	free(_decompressionBuffer);
 }
 
-RobotDecoder::~RobotDecoder() {
-	close();
+static void interpolateChannel(int16 *buffer, int32 numSamples, const int8 bufferIndex) {
+	if (numSamples <= 0) {
+		return;
+	}
+
+	int16 *inBuffer, *outBuffer;
+	int16 sample, previousSample;
+
+	if (bufferIndex) {
+		outBuffer = buffer + 1;
+		inBuffer = buffer + 2;
+		previousSample = sample = *buffer;
+		--numSamples;
+	} else {
+		outBuffer = buffer;
+		inBuffer = buffer + 1;
+		previousSample = sample = *inBuffer;
+	}
+
+	while (numSamples--) {
+		sample = (*inBuffer + previousSample) >> 1;
+		previousSample = *inBuffer;
+		*outBuffer = sample;
+		inBuffer += RobotAudioStream::kEOSExpansion;
+		outBuffer += RobotAudioStream::kEOSExpansion;
+	}
+
+	if (bufferIndex) {
+		*outBuffer = sample;
+	}
 }
 
-bool RobotDecoder::loadStream(Common::SeekableReadStream *stream) {
-	close();
+static void copyEveryOtherSample(int16 *out, const int16 *in, int numSamples) {
+	while (numSamples--) {
+		*out = *in++;
+		out += 2;
+	}
+}
 
-	_fileStream = new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), _isBigEndian, DisposeAfterUse::YES);
+bool RobotAudioStream::addPacket(const RobotAudioPacket &packet) {
+	Common::StackLock lock(_mutex);
 
-	readHeaderChunk();
+	if (_finished) {
+		warning("Packet %d sent to finished robot audio stream", packet.position);
+		return false;
+	}
 
-	// There are several versions of robot files, ranging from 3 to 6.
-	// v3: no known examples
-	// v4: PQ:SWAT demo
-	// v5: SCI2.1 and SCI3 games
-	// v6: SCI3 games
-	if (_header.version < 4 || _header.version > 6)
-		error("Unknown robot version: %d", _header.version);
+	// `packet.position` is the decompressed (doubled) position of the packet,
+	// so values of `position` will always be divisible either by 2 (even) or by
+	// 4 (odd).
+	const int8 bufferIndex = packet.position % 4 ? 1 : 0;
 
-	RobotVideoTrack *videoTrack = new RobotVideoTrack(_header.frameCount);
-	addTrack(videoTrack);
+	// Packet 0 is the first primer, packet 2 is the second primer, packet 4+
+	// are regular audio data
+	if (packet.position <= 2 && _firstPacketPosition == -1) {
+		_readHead = 0;
+		_readHeadAbs = 0;
+		_maxWriteAbs = _loopBufferSize;
+		_writeHeadAbs = 2;
+		_jointMin[0] = 0;
+		_jointMin[1] = 2;
+		_waiting = true;
+		_finished = false;
+		_firstPacketPosition = packet.position;
+		fillRobotBuffer(packet, bufferIndex);
+		return true;
+	}
 
-	if (_header.hasSound)
-		addTrack(new RobotAudioTrack());
+	const int32 packetEndByte = packet.position + (packet.dataSize * (sizeof(int16) + kEOSExpansion));
 
-	videoTrack->readPaletteChunk(_fileStream, _header.paletteDataSize);
-	readFrameSizesChunk();
-	videoTrack->calculateVideoDimensions(_fileStream, _frameTotalSize);
+	// Already read all the way past this packet (or already wrote valid samples
+	// to this channel all the way past this packet), so discard it
+	if (packetEndByte <= MAX(_readHeadAbs, _jointMin[bufferIndex])) {
+		debugC(kDebugLevelVideo, "Rejecting packet %d, read past %d / %d", packet.position, _readHeadAbs, _jointMin[bufferIndex]);
+		return true;
+	}
+
+	// The loop buffer is full, so tell the caller to send the packet again
+	// later
+	if (_maxWriteAbs <= _jointMin[bufferIndex]) {
+		debugC(kDebugLevelVideo, "Rejecting packet %d, full buffer", packet.position);
+		return false;
+	}
+
+	fillRobotBuffer(packet, bufferIndex);
+
+	// This packet is the second primer, so allow playback to begin
+	if (_firstPacketPosition != -1 && _firstPacketPosition != packet.position) {
+		debugC(kDebugLevelVideo, "Done waiting. Robot audio begins");
+		_waiting = false;
+		_firstPacketPosition = -1;
+	}
+
+	// Only part of the packet could be read into the loop buffer before it was
+	// full, so tell the caller to send the packet again later
+	if (packetEndByte > _maxWriteAbs) {
+		debugC(kDebugLevelVideo, "Partial read of packet %d (%d / %d)", packet.position, packetEndByte - _maxWriteAbs, packetEndByte - packet.position);
+		return false;
+	}
+
+	// The entire packet was successfully read into the loop buffer
 	return true;
 }
 
-bool RobotDecoder::load(GuiResourceId id) {
-	// TODO: RAMA's robot 1003 cannot be played (shown at the menu screen) -
-	// its drawn at odd coordinates. SV can't play it either (along with some
-	// others), so it must be some new functionality added in RAMA's robot
-	// videos. Skip it for now.
-	if (g_sci->getGameId() == GID_RAMA && id == 1003)
-		return false;
+void RobotAudioStream::fillRobotBuffer(const RobotAudioPacket &packet, const int8 bufferIndex) {
+	int32 sourceByte = 0;
 
-	// Robots for the options in the RAMA menu
-	if (g_sci->getGameId() == GID_RAMA && (id >= 1004 && id <= 1009))
-		return false;
+	const int32 decompressedSize = packet.dataSize * sizeof(int16);
+	if (_decompressionBufferPosition != packet.position) {
+		if (decompressedSize != _decompressionBufferSize) {
+			_decompressionBuffer = (byte *)realloc(_decompressionBuffer, decompressedSize);
+			_decompressionBufferSize = decompressedSize;
+		}
 
-	// TODO: The robot video in the Lighthouse demo gets stuck
-	if (g_sci->getGameId() == GID_LIGHTHOUSE && id == 16)
-		return false;
-
-	Common::String fileName = Common::String::format("%d.rbt", id);
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
-
-	if (!stream) {
-		warning("Unable to open robot file %s", fileName.c_str());
-		return false;
+		int16 carry = 0;
+		deDPCM16Mono((int16 *)_decompressionBuffer, packet.data, packet.dataSize, carry);
+		_decompressionBufferPosition = packet.position;
 	}
 
-	return loadStream(stream);
-}
+	int32 numBytes = decompressedSize;
+	int32 packetPosition = packet.position;
+	int32 endByte = packet.position + decompressedSize * kEOSExpansion;
+	int32 startByte = MAX(_readHeadAbs + bufferIndex * 2, _jointMin[bufferIndex]);
+	int32 maxWriteByte = _maxWriteAbs + bufferIndex * 2;
+	if (packetPosition < startByte) {
+		sourceByte = (startByte - packetPosition) / kEOSExpansion;
+		numBytes -= sourceByte;
+		packetPosition = startByte;
+	}
+	if (packetPosition > maxWriteByte) {
+		numBytes += (packetPosition - maxWriteByte) / kEOSExpansion;
+		packetPosition = maxWriteByte;
+	}
+	if (endByte > maxWriteByte) {
+		numBytes -= (endByte - maxWriteByte) / kEOSExpansion;
+		endByte = maxWriteByte;
+	}
 
-void RobotDecoder::close() {
-	VideoDecoder::close();
+	const int32 maxJointMin = MAX(_jointMin[0], _jointMin[1]);
+	if (endByte > maxJointMin) {
+		_writeHeadAbs += endByte - maxJointMin;
+	}
 
-	delete _fileStream;
-	_fileStream = 0;
-
-	delete[] _frameTotalSize;
-	_frameTotalSize = 0;
-}
-
-void RobotDecoder::readNextPacket() {
-	// Get our track
-	RobotVideoTrack *videoTrack = (RobotVideoTrack *)getTrack(0);
-	videoTrack->increaseCurFrame();
-	Graphics::Surface *surface = videoTrack->getSurface();
-
-	if (videoTrack->endOfTrack())
-		return;
-
-	// Read frame image header (24 bytes)
-	_fileStream->skip(3);
-	byte frameScale = _fileStream->readByte();
-	uint16 frameWidth = _fileStream->readUint16();
-	uint16 frameHeight = _fileStream->readUint16();
-	_fileStream->skip(4); // unknown, almost always 0
-	uint16 frameX = _fileStream->readUint16();
-	uint16 frameY = _fileStream->readUint16();
-
-	// TODO: In v4 robot files, frameX and frameY have a different meaning.
-	// Set them both to 0 for v4 for now, so that robots in PQ:SWAT show up
-	// correctly.
-	if (_header.version == 4)
-		frameX = frameY = 0;
-
-	uint16 compressedSize = _fileStream->readUint16();
-	uint16 frameFragments = _fileStream->readUint16();
-	_fileStream->skip(4); // unknown
-	uint32 decompressedSize = frameWidth * frameHeight * frameScale / 100;
-
-	// FIXME: A frame's height + position can go off limits... why? With the
-	// following, we cut the contents to fit the frame
-	uint16 scaledHeight = CLIP<uint16>(decompressedSize / frameWidth, 0, surface->h - frameY);
-
-	// FIXME: Same goes for the frame's width + position. In this case, we
-	// modify the position to fit the contents on screen.
-	if (frameWidth + frameX > surface->w)
-		frameX = surface->w - frameWidth;
-
-	assert(frameWidth + frameX <= surface->w && scaledHeight + frameY <= surface->h);
-
-	DecompressorLZS lzs;
-	byte *decompressedFrame = new byte[decompressedSize];
-	byte *outPtr = decompressedFrame;
-
-	if (_header.version == 4) {
-		// v4 has just the one fragment, it seems, and ignores the fragment count
-		Common::SeekableSubReadStream fragmentStream(_fileStream, _fileStream->pos(), _fileStream->pos() + compressedSize);
-		lzs.unpack(&fragmentStream, outPtr, compressedSize, decompressedSize);
-	} else {
-		for (uint16 i = 0; i < frameFragments; ++i) {
-			uint32 compressedFragmentSize = _fileStream->readUint32();
-			uint32 decompressedFragmentSize = _fileStream->readUint32();
-			uint16 compressionType = _fileStream->readUint16();
-
-			if (compressionType == 0) {
-				Common::SeekableSubReadStream fragmentStream(_fileStream, _fileStream->pos(), _fileStream->pos() + compressedFragmentSize);
-				lzs.unpack(&fragmentStream, outPtr, compressedFragmentSize, decompressedFragmentSize);
-			} else if (compressionType == 2) {	// untested
-				_fileStream->read(outPtr, compressedFragmentSize);
-			} else {
-				error("Unknown frame compression found: %d", compressionType);
+	if (packetPosition > _jointMin[bufferIndex]) {
+		int32 packetEndByte = packetPosition % _loopBufferSize;
+		int32 targetBytePosition;
+		int32 numBytesToEnd;
+		if ((packetPosition & ~3) > (_jointMin[1 - bufferIndex] & ~3)) {
+			targetBytePosition = _jointMin[1 - bufferIndex] % _loopBufferSize;
+			if (targetBytePosition >= packetEndByte) {
+				numBytesToEnd = _loopBufferSize - targetBytePosition;
+				memset(_loopBuffer + targetBytePosition, 0, numBytesToEnd);
+				targetBytePosition = (1 - bufferIndex) ? 2 : 0;
 			}
-
-			outPtr += decompressedFragmentSize;
+			numBytesToEnd = packetEndByte - targetBytePosition;
+			if (numBytesToEnd > 0) {
+				memset(_loopBuffer + targetBytePosition, 0, numBytesToEnd);
+			}
+		}
+		targetBytePosition = _jointMin[bufferIndex] % _loopBufferSize;
+		if (targetBytePosition >= packetEndByte) {
+			numBytesToEnd = _loopBufferSize - targetBytePosition;
+			interpolateChannel((int16 *)(_loopBuffer + targetBytePosition), numBytesToEnd / (sizeof(int16) + kEOSExpansion), 0);
+			targetBytePosition = bufferIndex ? 2 : 0;
+		}
+		numBytesToEnd = packetEndByte - targetBytePosition;
+		if (numBytesToEnd > 0) {
+			interpolateChannel((int16 *)(_loopBuffer + targetBytePosition), numBytesToEnd / (sizeof(int16) + kEOSExpansion), 0);
 		}
 	}
 
-	// Copy over the decompressed frame
-	byte *inFrame = decompressedFrame;
-	byte *outFrame = (byte *)surface->getPixels();
+	if (numBytes > 0) {
+		int32 targetBytePosition = packetPosition % _loopBufferSize;
+		int32 packetEndByte = endByte % _loopBufferSize;
+		int32 numBytesToEnd = 0;
+		if (targetBytePosition >= packetEndByte) {
+			numBytesToEnd = (_loopBufferSize - (targetBytePosition & ~3)) / kEOSExpansion;
+			copyEveryOtherSample((int16 *)(_loopBuffer + targetBytePosition), (int16 *)(_decompressionBuffer + sourceByte), numBytesToEnd / kEOSExpansion);
+			targetBytePosition = bufferIndex ? 2 : 0;
+		}
+		copyEveryOtherSample((int16 *)(_loopBuffer + targetBytePosition), (int16 *)(_decompressionBuffer + sourceByte + numBytesToEnd), (packetEndByte - targetBytePosition) / (sizeof(int16) + kEOSExpansion));
+	}
+	_jointMin[bufferIndex] = endByte;
+}
 
-	// Black out the surface
-	memset(outFrame, 0, surface->w * surface->h);
+void RobotAudioStream::interpolateMissingSamples(int32 numSamples) {
+	int32 numBytes = numSamples * (sizeof(int16) + kEOSExpansion);
+	int32 targetPosition = _readHead;
+	const int32 nextReadHeadPosition = _readHeadAbs + numBytes;
 
-	// Move to the correct y coordinate
-	outFrame += surface->w * frameY;
+	if (nextReadHeadPosition > _jointMin[1]) {
+		if (nextReadHeadPosition > _jointMin[0]) {
+			if (targetPosition + numBytes >= _loopBufferSize) {
+				const int32 numBytesToEdge = (_loopBufferSize - targetPosition);
+				memset(_loopBuffer + targetPosition, 0, numBytesToEdge);
+				numBytes -= numBytesToEdge;
+				targetPosition = 0;
+			}
+			memset(_loopBuffer + targetPosition, 0, numBytes);
+			_jointMin[0] = nextReadHeadPosition;
+			_jointMin[1] = nextReadHeadPosition + sizeof(int16);
+		} else {
+			if (targetPosition + numBytes >= _loopBufferSize) {
+				const int32 numSamplesToEdge = (_loopBufferSize - targetPosition) / (sizeof(int16) + kEOSExpansion);
+				interpolateChannel((int16 *)(_loopBuffer + targetPosition), numSamplesToEdge, 1);
+				numSamples -= numSamplesToEdge;
+				targetPosition = 0;
+			}
+			interpolateChannel((int16 *)(_loopBuffer + targetPosition), numSamples, 1);
+			_jointMin[1] = nextReadHeadPosition + sizeof(int16);
+		}
+	} else if (nextReadHeadPosition > _jointMin[0]) {
+		if (targetPosition + numBytes >= _loopBufferSize) {
+			const int32 numSamplesToEdge = (_loopBufferSize - targetPosition) / (sizeof(int16) + kEOSExpansion);
+			interpolateChannel((int16 *)(_loopBuffer + targetPosition), numSamplesToEdge, 0);
+			numSamples -= numSamplesToEdge;
+			targetPosition = 2;
+		}
+		interpolateChannel((int16 *)(_loopBuffer + targetPosition), numSamples, 0);
+		_jointMin[0] = nextReadHeadPosition;
+	}
+}
 
-	for (uint16 y = 0; y < scaledHeight; y++) {
-		memcpy(outFrame + frameX, inFrame, frameWidth);
-		inFrame += frameWidth;
-		outFrame += surface->w;
+void RobotAudioStream::finish() {
+	Common::StackLock lock(_mutex);
+	_finished = true;
+}
+
+RobotAudioStream::StreamState RobotAudioStream::getStatus() const {
+	Common::StackLock lock(_mutex);
+	StreamState status;
+	status.bytesPlaying = _readHeadAbs;
+	status.rate = getRate();
+	status.bits = 8 * sizeof(int16);
+	return status;
+}
+
+int RobotAudioStream::readBuffer(Audio::st_sample_t *outBuffer, int numSamples) {
+	Common::StackLock lock(_mutex);
+
+	if (_waiting) {
+		return 0;
 	}
 
-	delete[] decompressedFrame;
+	assert(!((_writeHeadAbs - _readHeadAbs) & 1));
+	const int maxNumSamples = (_writeHeadAbs - _readHeadAbs) / sizeof(Audio::st_sample_t);
+	numSamples = MIN(numSamples, maxNumSamples);
 
-	uint32 audioChunkSize = _frameTotalSize[videoTrack->getCurFrame()] - (24 + compressedSize);
+	if (!numSamples) {
+		return 0;
+	}
 
-// TODO: The audio chunk size below is usually correct, but there are some
-// exceptions (e.g. robot 4902 in Phantasmagoria, towards its end)
-#if 0
-	// Read frame audio header (14 bytes)
-	_fileStream->skip(2); // buffer position
-	_fileStream->skip(2); // unknown (usually 1)
-	_fileStream->skip(2); /*uint16 audioChunkSize = _fileStream->readUint16() + 8;*/
-	_fileStream->skip(2);
-#endif
+	interpolateMissingSamples(numSamples);
 
-	// Queue the next audio frame
-	// FIXME: For some reason, there are audio hiccups/gaps
-	if (_header.hasSound) {
-		RobotAudioTrack *audioTrack = (RobotAudioTrack *)getTrack(1);
-		_fileStream->skip(8); // header
-		audioChunkSize -= 8;
-		audioTrack->queueBuffer(g_sci->_audio->getDecodedRobotAudioFrame(_fileStream, audioChunkSize), audioChunkSize * 2);
+	Audio::st_sample_t *inBuffer = (Audio::st_sample_t *)(_loopBuffer + _readHead);
+
+	assert(!((_loopBufferSize - _readHead) & 1));
+	const int numSamplesToEnd = (_loopBufferSize - _readHead) / sizeof(Audio::st_sample_t);
+
+	int numSamplesToRead = MIN(numSamples, numSamplesToEnd);
+	Common::copy(inBuffer, inBuffer + numSamplesToRead, outBuffer);
+
+	if (numSamplesToRead < numSamples) {
+		inBuffer = (Audio::st_sample_t *)_loopBuffer;
+		outBuffer += numSamplesToRead;
+		numSamplesToRead = numSamples - numSamplesToRead;
+		Common::copy(inBuffer, inBuffer + numSamplesToRead, outBuffer);
+	}
+
+	const int32 numBytes = numSamples * sizeof(Audio::st_sample_t);
+
+	_readHead += numBytes;
+	if (_readHead > _loopBufferSize) {
+		_readHead -= _loopBufferSize;
+	}
+	_readHeadAbs += numBytes;
+	_maxWriteAbs += numBytes;
+	assert(!(_readHead & 1));
+	assert(!(_readHeadAbs & 1));
+
+	return numSamples;
+}
+
+#pragma mark -
+#pragma mark RobotDecoder
+
+RobotDecoder::RobotDecoder(SegManager *segMan) :
+	_delayTime(this),
+	_segMan(segMan),
+	_status(kRobotStatusUninitialized),
+	_audioBuffer(nullptr),
+	_rawPalette((uint8 *)malloc(kRawPaletteSize)) {}
+
+RobotDecoder::~RobotDecoder() {
+	close();
+	free(_rawPalette);
+	free(_audioBuffer);
+}
+
+#pragma mark -
+#pragma mark RobotDecoder - Initialization
+
+void RobotDecoder::initStream(const GuiResourceId robotId) {
+	const Common::String fileName = Common::String::format("%d.rbt", robotId);
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(fileName);
+	_fileOffset = 0;
+
+	if (stream == nullptr) {
+		error("Unable to open robot file %s", fileName.c_str());
+	}
+
+	_robotId = robotId;
+
+	const uint16 id = stream->readUint16LE();
+	if (id != 0x16) {
+		error("Invalid robot file %s", fileName.c_str());
+	}
+
+	// TODO: Mac version not tested, so this could be totally wrong
+	_stream = new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), g_sci->getPlatform() == Common::kPlatformMacintosh, DisposeAfterUse::YES);
+	_stream->seek(2, SEEK_SET);
+	if (_stream->readUint32BE() != MKTAG('S', 'O', 'L', 0)) {
+		error("Resource %s is not Robot type!", fileName.c_str());
+	}
+}
+
+void RobotDecoder::initPlayback() {
+	_startFrameNo = 0;
+	_startTime = -1;
+	_startingFrameNo = -1;
+	_cueForceShowFrame = -1;
+	_previousFrameNo = -1;
+	_currentFrameNo = 0;
+	_status = kRobotStatusPaused;
+}
+
+void RobotDecoder::initAudio() {
+	_audioRecordInterval = RobotAudioStream::kRobotSampleRate / _frameRate;
+
+	_expectedAudioBlockSize = _audioBlockSize - kAudioBlockHeaderSize;
+	_audioBuffer = (byte *)realloc(_audioBuffer, kRobotZeroCompressSize + _expectedAudioBlockSize);
+
+	if (_primerReservedSize != 0) {
+		const int32 primerHeaderPosition = _stream->pos();
+		_totalPrimerSize = _stream->readSint32();
+		const int16 compressionType = _stream->readSint16();
+		_evenPrimerSize = _stream->readSint32();
+		_oddPrimerSize = _stream->readSint32();
+		_primerPosition = _stream->pos();
+
+		if (compressionType) {
+			error("Unknown audio header compression type %d", compressionType);
+		}
+
+		if (_evenPrimerSize + _oddPrimerSize != _primerReservedSize) {
+			_stream->seek(primerHeaderPosition + _primerReservedSize, SEEK_SET);
+		}
+	} else if (_primerZeroCompressFlag) {
+		_evenPrimerSize = 19922;
+		_oddPrimerSize = 21024;
+	}
+
+	_firstAudioRecordPosition = _evenPrimerSize * 2;
+
+	const int usedEachFrame = (RobotAudioStream::kRobotSampleRate / 2) / _frameRate;
+	_maxSkippablePackets = MAX(0, _audioBlockSize / usedEachFrame - 1);
+}
+
+void RobotDecoder::initVideo(const int16 x, const int16 y, const int16 scale, const reg_t plane, const bool hasPalette, const uint16 paletteSize) {
+	_position = Common::Point(x, y);
+
+	_scaleInfo.x = scale;
+	_scaleInfo.y = scale;
+	_scaleInfo.signal = scale == 128 ? kScaleSignalNone : kScaleSignalManual;
+
+	_plane = g_sci->_gfxFrameout->getPlanes().findByObject(plane);
+	if (_plane == nullptr) {
+		error("Invalid plane %04x:%04x passed to RobotDecoder::open", PRINT_REG(plane));
+	}
+
+	_planeId = plane;
+	_minFrameRate = _frameRate - kMaxFrameRateDrift;
+	_maxFrameRate = _frameRate + kMaxFrameRateDrift;
+
+	if (_xResolution == 0 || _yResolution == 0) {
+		// In SSCI, default values were taken from RESOURCE.CFG hires property
+		// if it exists, but no games seem to take advantage of this
+		_xResolution = g_sci->_gfxFrameout->getScreenWidth();
+		_yResolution = g_sci->_gfxFrameout->getScreenHeight();
+	}
+
+	if (hasPalette) {
+		_stream->read(_rawPalette, paletteSize);
 	} else {
-		_fileStream->skip(audioChunkSize);
+		_stream->seek(paletteSize, SEEK_CUR);
 	}
+
+	_screenItemList.reserve(kScreenItemListSize);
+	_maxCelArea.reserve(kFixedCelListSize);
+
+	// Fixed cel buffers are for version 5 and newer
+	_fixedCels.reserve(MIN(_maxCelsPerFrame, (int16)kFixedCelListSize));
+	_celDecompressionBuffer.reserve(_maxCelArea[0] + SciBitmap::getBitmapHeaderSize() + kRawPaletteSize);
+	_celDecompressionArea = _maxCelArea[0];
 }
 
-void RobotDecoder::readHeaderChunk() {
-	// Header (60 bytes)
-	_fileStream->skip(6);
-	_header.version = _fileStream->readUint16();
-	_header.audioChunkSize = _fileStream->readUint16();
-	_header.audioSilenceSize = _fileStream->readUint16();
-	_fileStream->skip(2);
-	_header.frameCount = _fileStream->readUint16();
-	_header.paletteDataSize = _fileStream->readUint16();
-	_header.unkChunkDataSize = _fileStream->readUint16();
-	_fileStream->skip(5);
-	_header.hasSound = _fileStream->readByte();
-	_fileStream->skip(34);
+void RobotDecoder::initRecordAndCuePositions() {
+	PositionList recordSizes;
+	_videoSizes.reserve(_numFramesTotal);
+	_recordPositions.reserve(_numFramesTotal);
+	recordSizes.reserve(_numFramesTotal);
 
-	// Some videos (e.g. robot 1305 in Phantasmagoria and
-	// robot 184 in Lighthouse) have an unknown chunk before
-	// the palette chunk (probably used for sound preloading).
-	// Skip it here.
-	if (_header.unkChunkDataSize)
-		_fileStream->skip(_header.unkChunkDataSize);
-}
-
-void RobotDecoder::readFrameSizesChunk() {
-	// The robot video file contains 2 tables, with one entry for each frame:
-	// - A table containing the size of the image in each video frame
-	// - A table containing the total size of each video frame.
-	// In v5 robots, the tables contain 16-bit integers, whereas in v6 robots,
-	// they contain 32-bit integers.
-
-	_frameTotalSize = new uint32[_header.frameCount];
-
-	// TODO: The table reading code can probably be removed once the
-	// audio chunk size is figured out (check the TODO inside processNextFrame())
-#if 0
-	// We don't need any of the two tables to play the video, so we ignore
-	// both of them.
-	uint16 wordSize = _header.version == 6 ? 4 : 2;
-	_fileStream->skip(_header.frameCount * wordSize * 2);
-#else
-	switch (_header.version) {
-	case 4:
-	case 5:		// sizes are 16-bit integers
-		// Skip table with frame image sizes, as we don't need it
-		_fileStream->skip(_header.frameCount * 2);
-		for (int i = 0; i < _header.frameCount; ++i)
-			_frameTotalSize[i] = _fileStream->readUint16();
+	switch(_version) {
+	case 5: // 16-bit sizes and positions
+		for (int i = 0; i < _numFramesTotal; ++i) {
+			_videoSizes.push_back(_stream->readUint16());
+		}
+		for (int i = 0; i < _numFramesTotal; ++i) {
+			recordSizes.push_back(_stream->readUint16());
+		}
 		break;
-	case 6:		// sizes are 32-bit integers
-		// Skip table with frame image sizes, as we don't need it
-		_fileStream->skip(_header.frameCount * 4);
-		for (int i = 0; i < _header.frameCount; ++i)
-			_frameTotalSize[i] = _fileStream->readUint32();
+	case 6: // 32-bit sizes and positions
+		for (int i = 0; i < _numFramesTotal; ++i) {
+			_videoSizes.push_back(_stream->readSint32());
+		}
+		for (int i = 0; i < _numFramesTotal; ++i) {
+			recordSizes.push_back(_stream->readSint32());
+		}
 		break;
 	default:
-		error("Can't yet handle index table for robot version %d", _header.version);
-	}
-#endif
-
-	// 2 more unknown tables
-	_fileStream->skip(1024 + 512);
-
-	// Pad to nearest 2 kilobytes
-	uint32 curPos = _fileStream->pos();
-	if (curPos & 0x7ff)
-		_fileStream->seek((curPos & ~0x7ff) + 2048);
-}
-
-RobotDecoder::RobotVideoTrack::RobotVideoTrack(int frameCount) : _frameCount(frameCount) {
-	_surface = new Graphics::Surface();
-	_curFrame = -1;
-	_dirtyPalette = false;
-}
-
-RobotDecoder::RobotVideoTrack::~RobotVideoTrack() {
-	_surface->free();
-	delete _surface;
-}
-
-uint16 RobotDecoder::RobotVideoTrack::getWidth() const {
-	return _surface->w;
-}
-
-uint16 RobotDecoder::RobotVideoTrack::getHeight() const {
-	return _surface->h;
-}
-
-Graphics::PixelFormat RobotDecoder::RobotVideoTrack::getPixelFormat() const {
-	return _surface->format;
-}
-
-void RobotDecoder::RobotVideoTrack::readPaletteChunk(Common::SeekableSubReadStreamEndian *stream, uint16 chunkSize) {
-	byte *paletteData = new byte[chunkSize];
-	stream->read(paletteData, chunkSize);
-
-	// SCI1.1 palette
-	byte palFormat = paletteData[32];
-	uint16 palColorStart = paletteData[25];
-	uint16 palColorCount = READ_SCI11ENDIAN_UINT16(paletteData + 29);
-
-	int palOffset = 37;
-	memset(_palette, 0, 256 * 3);
-
-	for (uint16 colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
-		if (palFormat == kRobotPalVariable)
-			palOffset++;
-		_palette[colorNo * 3 + 0] = paletteData[palOffset++];
-		_palette[colorNo * 3 + 1] = paletteData[palOffset++];
-		_palette[colorNo * 3 + 2] = paletteData[palOffset++];
+		error("Unknown Robot version %d", _version);
 	}
 
-	_dirtyPalette = true;
-	delete[] paletteData;
-}
-
-void RobotDecoder::RobotVideoTrack::calculateVideoDimensions(Common::SeekableSubReadStreamEndian *stream, uint32 *frameSizes) {
-	// This is an O(n) operation, as each frame has a different size.
-	// We need to know the actual frame size to have a constant video size.
-	uint32 pos = stream->pos();
-
-	uint16 width = 0, height = 0;
-
-	for (int curFrame = 0; curFrame < _frameCount; curFrame++) {
-		stream->skip(4);
-		uint16 frameWidth = stream->readUint16();
-		uint16 frameHeight = stream->readUint16();
-		if (frameWidth > width)
-			width = frameWidth;
-		if (frameHeight > height)
-			height = frameHeight;
-		stream->skip(frameSizes[curFrame] - 8);
+	for (int i = 0; i < kCueListSize; ++i) {
+		_cueTimes[i] = _stream->readSint32();
 	}
 
-	stream->seek(pos);
+	for (int i = 0; i < kCueListSize; ++i) {
+		_cueValues[i] = _stream->readUint16();
+	}
 
-	_surface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	Common::copy(_cueTimes, _cueTimes + kCueListSize, _masterCueTimes);
+
+	int bytesRemaining = (_stream->pos() - _fileOffset) % kRobotFrameSize;
+	if (bytesRemaining != 0) {
+		_stream->seek(kRobotFrameSize - bytesRemaining, SEEK_CUR);
+	}
+
+	int position = _stream->pos();
+	_recordPositions.push_back(position);
+	for (int i = 0; i < _numFramesTotal - 1; ++i) {
+		position += recordSizes[i];
+		_recordPositions.push_back(position);
+	}
 }
 
-RobotDecoder::RobotAudioTrack::RobotAudioTrack() {
-	_audioStream = Audio::makeQueuingAudioStream(11025, false);
+#pragma mark -
+#pragma mark RobotDecoder - Playback
+
+void RobotDecoder::open(const GuiResourceId robotId, const reg_t plane, const int16 priority, const int16 x, const int16 y, const int16 scale) {
+	if (_status != kRobotStatusUninitialized) {
+		close();
+	}
+
+	initStream(robotId);
+
+	_version = _stream->readUint16();
+
+	// TODO: Version 4 for PQ:SWAT demo?
+	if (_version < 5 || _version > 6) {
+		error("Unsupported version %d of Robot resource", _version);
+	}
+
+	debugC(kDebugLevelVideo, "Opening version %d robot %d", _version, robotId);
+
+	initPlayback();
+
+	_syncFrame = true;
+	_audioBlockSize = _stream->readUint16();
+	_primerZeroCompressFlag = _stream->readSint16();
+	_stream->seek(2, SEEK_CUR); // unused
+	_numFramesTotal = _stream->readUint16();
+	const uint16 paletteSize = _stream->readUint16();
+	_primerReservedSize = _stream->readUint16();
+	_xResolution = _stream->readSint16();
+	_yResolution = _stream->readSint16();
+	const bool hasPalette = (bool)_stream->readByte();
+	_hasAudio = (bool)_stream->readByte();
+	_stream->seek(2, SEEK_CUR); // unused
+	_frameRate = _normalFrameRate = _stream->readSint16();
+	_isHiRes = (bool)_stream->readSint16();
+	_maxSkippablePackets = _stream->readSint16();
+	_maxCelsPerFrame = _stream->readSint16();
+
+	// used for memory preallocation of fixed cels
+	_maxCelArea.push_back(_stream->readSint32());
+	_maxCelArea.push_back(_stream->readSint32());
+	_maxCelArea.push_back(_stream->readSint32());
+	_maxCelArea.push_back(_stream->readSint32());
+	_stream->seek(8, SEEK_CUR); // reserved
+
+	if (_hasAudio) {
+		initAudio();
+	} else {
+		_stream->seek(_primerReservedSize, SEEK_CUR);
+	}
+
+	_priority = priority;
+	initVideo(x, y, scale, plane, hasPalette, paletteSize);
+	initRecordAndCuePositions();
 }
 
-RobotDecoder::RobotAudioTrack::~RobotAudioTrack() {
-	delete _audioStream;
+void RobotDecoder::close() {
+	if (_status == kRobotStatusUninitialized) {
+		return;
+	}
+
+	debugC(kDebugLevelVideo, "Closing robot");
+
+	for (CelHandleList::size_type i = 0; i < _celHandles.size(); ++i) {
+		if (_celHandles[i].status == CelHandleInfo::kFrameLifetime) {
+			_segMan->freeBitmap(_celHandles[i].bitmapId);
+		}
+	}
+	_celHandles.clear();
+
+	for (FixedCelsList::size_type i = 0; i < _fixedCels.size(); ++i) {
+		_segMan->freeBitmap(_fixedCels[i]);
+	}
+	_fixedCels.clear();
+
+	if (g_sci->_gfxFrameout->getPlanes().findByObject(_planeId) != nullptr) {
+		for (RobotScreenItemList::size_type i = 0; i < _screenItemList.size(); ++i) {
+			if (_screenItemList[i] != nullptr) {
+				g_sci->_gfxFrameout->deleteScreenItem(*_screenItemList[i]);
+			}
+		}
+	}
+	_screenItemList.clear();
+
+	if (_hasAudio) {
+		_audioList.reset();
+	}
+
+	_robotId = -1;
+	_planeId = NULL_REG;
+	_plane = nullptr;
+	_status = kRobotStatusUninitialized;
+	_videoSizes.clear();
+	_recordPositions.clear();
+	_celDecompressionBuffer.clear();
+	_doVersion5Scratch.clear();
+	delete _stream;
+	_stream = nullptr;
 }
 
-void RobotDecoder::RobotAudioTrack::queueBuffer(byte *buffer, int size) {
-	_audioStream->queueBuffer(buffer, size, DisposeAfterUse::YES, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN);
+void RobotDecoder::pause() {
+	if (_status != kRobotStatusPlaying) {
+		return;
+	}
+
+	if (_hasAudio) {
+		_audioList.stopAudioNow();
+	}
+
+	_status = kRobotStatusPaused;
+	_frameRate = _normalFrameRate;
 }
 
-Audio::AudioStream *RobotDecoder::RobotAudioTrack::getAudioStream() const {
-	return _audioStream;
+void RobotDecoder::resume() {
+	if (_status != kRobotStatusPaused) {
+		return;
+	}
+
+	_startingFrameNo = _currentFrameNo;
+	_status = kRobotStatusPlaying;
+	if (_hasAudio) {
+		primeAudio(_currentFrameNo * 60 / _frameRate);
+		_syncFrame = true;
+	}
+
+	setRobotTime(_currentFrameNo);
+	for (int i = 0; i < kCueListSize; ++i) {
+		if (_masterCueTimes[i] != -1 && _masterCueTimes[i] < _currentFrameNo) {
+			_cueTimes[i] = -1;
+		} else {
+			_cueTimes[i] = _masterCueTimes[i];
+		}
+	}
+}
+
+void RobotDecoder::showFrame(const uint16 frameNo, const uint16 newX, const uint16 newY, const uint16 newPriority) {
+	debugC(kDebugLevelVideo, "Show frame %d (%d %d %d)", frameNo, newX, newY, newPriority);
+
+	if (newX != kUnspecified) {
+		_position.x = newX;
+	}
+
+	if (newY != kUnspecified) {
+		_position.y = newY;
+	}
+
+	if (newPriority != kUnspecified) {
+		_priority = newPriority;
+	}
+
+	_currentFrameNo = frameNo;
+	pause();
+
+	if (frameNo != _previousFrameNo) {
+		seekToFrame(frameNo);
+		doVersion5(false);
+	} else {
+		for (RobotScreenItemList::size_type i = 0; i < _screenItemList.size(); ++i) {
+			if (_isHiRes) {
+				SciBitmap &bitmap = *_segMan->lookupBitmap(_celHandles[i].bitmapId);
+
+				const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+				const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+				const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+				const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
+
+				if (scriptWidth == kLowResX && scriptHeight == kLowResY) {
+					const Ratio lowResToScreenX(screenWidth, kLowResX);
+					const Ratio lowResToScreenY(screenHeight, kLowResY);
+					const Ratio screenToLowResX(kLowResX, screenWidth);
+					const Ratio screenToLowResY(kLowResY, screenHeight);
+
+					const int16 scaledX = _originalScreenItemX[i] + (_position.x * lowResToScreenX).toInt();
+					const int16 scaledY1 = _originalScreenItemY[i] + (_position.y * lowResToScreenY).toInt();
+					const int16 scaledY2 = scaledY1 + bitmap.getHeight() - 1;
+
+					const int16 lowResX = (scaledX * screenToLowResX).toInt();
+					const int16 lowResY = (scaledY2 * screenToLowResY).toInt();
+
+					bitmap.setOrigin(Common::Point(
+						(scaledX - (lowResX * lowResToScreenX).toInt()) * -1,
+						(lowResY * lowResToScreenY).toInt() - scaledY1
+					));
+
+					_screenItemX[i] = lowResX;
+					_screenItemY[i] = lowResY;
+				} else {
+					const int16 scaledX = _originalScreenItemX[i] + _position.x;
+					const int16 scaledY = _originalScreenItemY[i] + _position.y + bitmap.getHeight() - 1;
+					bitmap.setOrigin(Common::Point(0, bitmap.getHeight() - 1));
+					_screenItemX[i] = scaledX;
+					_screenItemY[i] = scaledY;
+				}
+			} else {
+				_screenItemX[i] = _originalScreenItemX[i] + _position.x;
+				_screenItemY[i] = _originalScreenItemY[i] + _position.y;
+			}
+
+			if (_screenItemList[i] == nullptr) {
+				CelInfo32 celInfo;
+				celInfo.type = kCelTypeMem;
+				celInfo.bitmap = _celHandles[i].bitmapId;
+				ScreenItem *screenItem = new ScreenItem(_planeId, celInfo);
+				_screenItemList[i] = screenItem;
+				screenItem->_position = Common::Point(_screenItemX[i], _screenItemY[i]);
+				if (_priority == -1) {
+					screenItem->_fixedPriority = false;
+				} else {
+					screenItem->_priority = _priority;
+					screenItem->_fixedPriority = true;
+				}
+				g_sci->_gfxFrameout->addScreenItem(*screenItem);
+			} else {
+				ScreenItem *screenItem = _screenItemList[i];
+				screenItem->_celInfo.bitmap = _celHandles[i].bitmapId;
+				screenItem->_position = Common::Point(_screenItemX[i], _screenItemY[i]);
+				if (_priority == -1) {
+					screenItem->_fixedPriority = false;
+				} else {
+					screenItem->_priority = _priority;
+					screenItem->_fixedPriority = true;
+				}
+				g_sci->_gfxFrameout->updateScreenItem(*screenItem);
+			}
+		}
+	}
+
+	_previousFrameNo = frameNo;
+}
+
+int16 RobotDecoder::getCue() const {
+	if (_status == kRobotStatusUninitialized ||
+		_status == kRobotStatusPaused ||
+		_syncFrame) {
+		return 0;
+	}
+
+	if (_status == kRobotStatusEnd) {
+		return -1;
+	}
+
+	const uint16 estimatedNextFrameNo = MIN(calculateNextFrameNo(_delayTime.predictedTicks()), _numFramesTotal);
+
+	for (int i = 0; i < kCueListSize; ++i) {
+		if (_cueTimes[i] != -1 && _cueTimes[i] <= estimatedNextFrameNo) {
+			if (_cueTimes[i] >= _previousFrameNo) {
+				_cueForceShowFrame = _cueTimes[i] + 1;
+			}
+
+			_cueTimes[i] = -1;
+			return _cueValues[i];
+		}
+	}
+
+	return 0;
+}
+
+int16 RobotDecoder::getFrameNo() const {
+	if (_status == kRobotStatusUninitialized) {
+		return 0;
+	}
+
+	return _currentFrameNo;
+}
+
+RobotDecoder::RobotStatus RobotDecoder::getStatus() const {
+	return _status;
+}
+
+bool RobotDecoder::seekToFrame(const int frameNo) {
+	return _stream->seek(_recordPositions[frameNo], SEEK_SET);
+}
+
+void RobotDecoder::setRobotTime(const int frameNo) {
+	_startTime = getTickCount();
+	_startFrameNo = frameNo;
+}
+
+#pragma mark -
+#pragma mark RobotDecoder - Timing
+
+RobotDecoder::DelayTime::DelayTime(RobotDecoder *decoder) :
+	_decoder(decoder) {
+	for (int i = 0; i < kDelayListSize; ++i) {
+		_timestamps[i] = i;
+		_delays[i] = 0;
+	}
+
+	_oldestTimestamp = 0;
+	_newestTimestamp = kDelayListSize - 1;
+	_startTime = 0;
+}
+
+void RobotDecoder::DelayTime::startTiming() {
+	_startTime = _decoder->getTickCount();
+}
+
+void RobotDecoder::DelayTime::endTiming() {
+	const int timeDelta = _decoder->getTickCount() - _startTime;
+	for (uint i = 0; i < kDelayListSize; ++i) {
+		if (_timestamps[i] == _oldestTimestamp) {
+			_timestamps[i] = ++_newestTimestamp;
+			_delays[i] = timeDelta;
+			break;
+		}
+	}
+	++_newestTimestamp;
+	_startTime = 0;
+	sortList();
+}
+
+bool RobotDecoder::DelayTime::timingInProgress() const {
+	return _startTime != 0;
+}
+
+int RobotDecoder::DelayTime::predictedTicks() const {
+	return _delays[kDelayListSize / 2];
+}
+
+void RobotDecoder::DelayTime::sortList() {
+	for (uint i = 0; i < kDelayListSize - 1; ++i) {
+		int smallestDelay = _delays[i];
+		uint smallestIndex = i;
+
+		for (uint j = i + 1; j < kDelayListSize - 1; ++j) {
+			if (_delays[j] < smallestDelay) {
+				smallestDelay = _delays[j];
+				smallestIndex = j;
+			}
+		}
+
+		if (smallestIndex != i) {
+			SWAP(_delays[i], _delays[smallestIndex]);
+			SWAP(_timestamps[i], _timestamps[smallestIndex]);
+		}
+	}
+}
+
+uint16 RobotDecoder::calculateNextFrameNo(const uint32 extraTicks) const {
+	return ticksToFrames(getTickCount() + extraTicks - _startTime) + _startFrameNo;
+}
+
+uint32 RobotDecoder::ticksToFrames(const uint32 ticks) const {
+	return (ticks * _frameRate) / 60;
+}
+
+uint32 RobotDecoder::getTickCount() const {
+	return g_sci->getTickCount();
+}
+
+#pragma mark -
+#pragma mark RobotDecoder - Audio
+
+RobotDecoder::AudioList::AudioList() :
+	_blocks(),
+	_blocksSize(0),
+	_oldestBlockIndex(0),
+	_newestBlockIndex(0),
+	_startOffset(0),
+	_status(kRobotAudioReady) {}
+
+void RobotDecoder::AudioList::startAudioNow() {
+	submitDriverMax();
+	g_sci->_audio32->resume(kRobotChannel);
+	_status = kRobotAudioPlaying;
+}
+
+void RobotDecoder::AudioList::stopAudio() {
+	g_sci->_audio32->finishRobotAudio();
+	freeAudioBlocks();
+	_status = kRobotAudioStopping;
+}
+
+void RobotDecoder::AudioList::stopAudioNow() {
+	if (_status == kRobotAudioPlaying || _status == kRobotAudioStopping || _status == kRobotAudioPaused) {
+		g_sci->_audio32->stopRobotAudio();
+		_status = kRobotAudioStopped;
+	}
+
+	freeAudioBlocks();
+}
+
+void RobotDecoder::AudioList::submitDriverMax() {
+	while (_blocksSize != 0) {
+		if (!_blocks[_oldestBlockIndex]->submit(_startOffset)) {
+			return;
+		}
+
+		delete _blocks[_oldestBlockIndex];
+		_blocks[_oldestBlockIndex] = nullptr;
+		++_oldestBlockIndex;
+		if (_oldestBlockIndex == kAudioListSize) {
+			_oldestBlockIndex = 0;
+		}
+
+		--_blocksSize;
+	}
+}
+
+void RobotDecoder::AudioList::addBlock(const int position, const int size, const byte *data) {
+	assert(data != nullptr);
+	assert(size >= 0);
+	assert(position >= -1);
+
+	if (_blocksSize == kAudioListSize) {
+		delete _blocks[_oldestBlockIndex];
+		_blocks[_oldestBlockIndex] = nullptr;
+		++_oldestBlockIndex;
+		if (_oldestBlockIndex == kAudioListSize) {
+			_oldestBlockIndex = 0;
+		}
+		--_blocksSize;
+	}
+
+	if (_blocksSize == 0) {
+		_oldestBlockIndex = _newestBlockIndex = 0;
+	} else {
+		++_newestBlockIndex;
+		if (_newestBlockIndex == kAudioListSize) {
+			_newestBlockIndex = 0;
+		}
+	}
+
+	_blocks[_newestBlockIndex] = new AudioBlock(position, size, data);
+	++_blocksSize;
+}
+
+void RobotDecoder::AudioList::reset() {
+	stopAudioNow();
+	_startOffset = 0;
+	_status = kRobotAudioReady;
+}
+
+void RobotDecoder::AudioList::prepareForPrimer() {
+	g_sci->_audio32->pause(kRobotChannel);
+	_status = kRobotAudioPaused;
+}
+
+void RobotDecoder::AudioList::setAudioOffset(const int offset) {
+	_startOffset = offset;
+}
+
+RobotDecoder::AudioList::AudioBlock::AudioBlock(const int position, const int size, const byte* const data) :
+	_position(position),
+	_size(size) {
+	_data = (byte *)malloc(size);
+	memcpy(_data, data, size);
+}
+
+RobotDecoder::AudioList::AudioBlock::~AudioBlock() {
+	free(_data);
+}
+
+bool RobotDecoder::AudioList::AudioBlock::submit(const int startOffset) {
+	assert(_data != nullptr);
+	RobotAudioStream::RobotAudioPacket packet(_data, _size, (_position - startOffset) * 2);
+	return g_sci->_audio32->playRobotAudio(packet);
+}
+
+void RobotDecoder::AudioList::freeAudioBlocks() {
+	while (_blocksSize != 0) {
+		delete _blocks[_oldestBlockIndex];
+		_blocks[_oldestBlockIndex] = nullptr;
+		++_oldestBlockIndex;
+		if (_oldestBlockIndex == kAudioListSize) {
+			_oldestBlockIndex = 0;
+		}
+
+		--_blocksSize;
+	}
+}
+
+bool RobotDecoder::primeAudio(const uint32 startTick) {
+	bool success = true;
+	_audioList.reset();
+
+	if (startTick == 0) {
+		_audioList.prepareForPrimer();
+		byte *evenPrimerBuff = new byte[_evenPrimerSize];
+		byte *oddPrimerBuff = new byte[_oddPrimerSize];
+
+		success = readPrimerData(evenPrimerBuff, oddPrimerBuff);
+		if (success) {
+			if (_evenPrimerSize != 0) {
+				_audioList.addBlock(0, _evenPrimerSize, evenPrimerBuff);
+			}
+			if (_oddPrimerSize != 0) {
+				_audioList.addBlock(1, _oddPrimerSize, oddPrimerBuff);
+			}
+		}
+
+		delete[] evenPrimerBuff;
+		delete[] oddPrimerBuff;
+	} else {
+		assert(_evenPrimerSize * 2 >= _audioRecordInterval || _oddPrimerSize * 2 >= _audioRecordInterval);
+
+		int audioStartFrame = 0;
+		int videoStartFrame = startTick * _frameRate / 60;
+		assert(videoStartFrame < _numFramesTotal);
+
+		int audioStartPosition = (startTick * RobotAudioStream::kRobotSampleRate) / 60;
+		if (audioStartPosition & 1) {
+			audioStartPosition--;
+		}
+		_audioList.setAudioOffset(audioStartPosition);
+		_audioList.prepareForPrimer();
+
+		if (audioStartPosition < _evenPrimerSize * 2 ||
+			audioStartPosition + 1 < _oddPrimerSize * 2) {
+
+			byte *evenPrimerBuffer = new byte[_evenPrimerSize];
+			byte *oddPrimerBuffer = new byte[_oddPrimerSize];
+			success = readPrimerData(evenPrimerBuffer, oddPrimerBuffer);
+			if (success) {
+				int halfAudioStartPosition = audioStartPosition / 2;
+				if (audioStartPosition < _evenPrimerSize * 2) {
+					_audioList.addBlock(audioStartPosition, _evenPrimerSize - halfAudioStartPosition, &evenPrimerBuffer[halfAudioStartPosition]);
+				}
+
+				if (audioStartPosition + 1 < _oddPrimerSize * 2) {
+					_audioList.addBlock(audioStartPosition + 1, _oddPrimerSize - halfAudioStartPosition, &oddPrimerBuffer[halfAudioStartPosition]);
+				}
+			}
+
+			delete[] evenPrimerBuffer;
+			delete[] oddPrimerBuffer;
+		}
+
+		if (audioStartPosition >= _firstAudioRecordPosition) {
+			int audioRecordSize = _expectedAudioBlockSize;
+			assert(audioRecordSize > 0);
+			assert(_audioRecordInterval > 0);
+			assert(_firstAudioRecordPosition >= 0);
+
+			audioStartFrame = (audioStartPosition - _firstAudioRecordPosition) / _audioRecordInterval;
+			assert(audioStartFrame < videoStartFrame);
+
+			if (audioStartFrame > 0) {
+				int lastAudioFrame = audioStartFrame - 1;
+				int oddRemainder = lastAudioFrame & 1;
+				int audioRecordStart = (lastAudioFrame * _audioRecordInterval) + oddRemainder + _firstAudioRecordPosition;
+				int audioRecordEnd = (audioRecordStart + ((audioRecordSize - 1) * 2)) + oddRemainder + _firstAudioRecordPosition;
+
+				if (audioStartPosition >= audioRecordStart && audioStartPosition <= audioRecordEnd) {
+					--audioStartFrame;
+				}
+			}
+
+			assert(!(audioStartPosition & 1));
+			if (audioStartFrame & 1) {
+				++audioStartPosition;
+			}
+
+			if (!readPartialAudioRecordAndSubmit(audioStartFrame, audioStartPosition)) {
+				return false;
+			}
+
+			++audioStartFrame;
+			assert(audioStartFrame < videoStartFrame);
+
+			int oddRemainder = audioStartFrame & 1;
+			int audioRecordStart = (audioStartFrame * _audioRecordInterval) + oddRemainder + _firstAudioRecordPosition;
+			int audioRecordEnd = (audioRecordStart + ((audioRecordSize - 1) * 2)) + oddRemainder + _firstAudioRecordPosition;
+
+			if (audioStartPosition >= audioRecordStart && audioStartPosition <= audioRecordEnd) {
+				if (!readPartialAudioRecordAndSubmit(audioStartFrame, audioStartPosition + 1)) {
+					return false;
+				}
+
+				++audioStartFrame;
+			}
+		}
+
+		int audioPosition, audioSize;
+		for (int i = audioStartFrame; i < videoStartFrame; i++) {
+			if (!readAudioDataFromRecord(i, _audioBuffer, audioPosition, audioSize)) {
+				break;
+			}
+
+			_audioList.addBlock(audioPosition, audioSize, _audioBuffer);
+		}
+	}
+
+	return success;
+}
+
+bool RobotDecoder::readPrimerData(byte *outEvenBuffer, byte *outOddBuffer) {
+	if (_primerReservedSize != 0) {
+		if (_totalPrimerSize != 0) {
+			_stream->seek(_primerPosition, SEEK_SET);
+			if (_evenPrimerSize > 0) {
+				_stream->read(outEvenBuffer, _evenPrimerSize);
+			}
+
+			if (_oddPrimerSize > 0) {
+				_stream->read(outOddBuffer, _oddPrimerSize);
+			}
+		}
+	} else if (_primerZeroCompressFlag) {
+		memset(outEvenBuffer, 0, _evenPrimerSize);
+		memset(outOddBuffer, 0, _oddPrimerSize);
+	} else {
+		error("ReadPrimerData - Flags corrupt");
+	}
+
+	return !_stream->err();
+}
+
+bool RobotDecoder::readAudioDataFromRecord(const int frameNo, byte *outBuffer, int &outAudioPosition, int &outAudioSize) {
+	_stream->seek(_recordPositions[frameNo] + _videoSizes[frameNo], SEEK_SET);
+	_audioList.submitDriverMax();
+
+	// Compressed absolute position of the audio block in the audio stream
+	const int position = _stream->readSint32();
+
+	// Size of the block of audio, excluding the audio block header
+	int size = _stream->readSint32();
+
+	assert(size <= _expectedAudioBlockSize);
+
+	if (position == 0) {
+		return false;
+	}
+
+	if (size != _expectedAudioBlockSize) {
+		memset(outBuffer, 0, kRobotZeroCompressSize);
+		_stream->read(outBuffer + kRobotZeroCompressSize, size);
+		size += kRobotZeroCompressSize;
+	} else {
+		_stream->read(outBuffer, size);
+	}
+
+	outAudioPosition = position;
+	outAudioSize = size;
+	return !_stream->err();
+}
+
+bool RobotDecoder::readPartialAudioRecordAndSubmit(const int startFrame, const int startPosition) {
+	int audioPosition, audioSize;
+	bool success = readAudioDataFromRecord(startFrame, _audioBuffer, audioPosition, audioSize);
+	if (success) {
+		const int relativeStartOffset = (startPosition - audioPosition) / 2;
+		_audioList.addBlock(startPosition, audioSize - relativeStartOffset, _audioBuffer + relativeStartOffset);
+	}
+
+	return success;
+}
+
+#pragma mark -
+#pragma mark RobotDecoder - Rendering
+
+uint16 RobotDecoder::getFrameSize(Common::Rect &outRect) const {
+	assert(_plane != nullptr);
+	outRect.clip(0, 0);
+	for (RobotScreenItemList::size_type i = 0; i < _screenItemList.size(); ++i) {
+		ScreenItem &screenItem = *_screenItemList[i];
+		outRect.extend(screenItem.getNowSeenRect(*_plane));
+	}
+
+	return _numFramesTotal;
+}
+
+void RobotDecoder::doRobot() {
+	if (_status != kRobotStatusPlaying) {
+		return;
+	}
+
+	if (!_syncFrame) {
+		if (_cueForceShowFrame != -1) {
+			_currentFrameNo = _cueForceShowFrame;
+			_cueForceShowFrame = -1;
+		} else {
+			const int nextFrameNo = calculateNextFrameNo(_delayTime.predictedTicks());
+			if (nextFrameNo < _currentFrameNo) {
+				return;
+			}
+			_currentFrameNo = nextFrameNo;
+		}
+	}
+
+	if (_currentFrameNo >= _numFramesTotal) {
+		const int finalFrameNo = _numFramesTotal - 1;
+		if (_previousFrameNo == finalFrameNo) {
+			_status = kRobotStatusEnd;
+			if (_hasAudio) {
+				_audioList.stopAudio();
+				_frameRate = _normalFrameRate;
+				_hasAudio = false;
+			}
+			return;
+		} else {
+			_currentFrameNo = finalFrameNo;
+		}
+	}
+
+	if (_currentFrameNo == _previousFrameNo) {
+		_audioList.submitDriverMax();
+		return;
+	}
+
+	if (_hasAudio) {
+		for (int candidateFrameNo = _previousFrameNo + _maxSkippablePackets + 1; candidateFrameNo < _currentFrameNo; candidateFrameNo += _maxSkippablePackets + 1) {
+
+			_audioList.submitDriverMax();
+
+			int audioPosition, audioSize;
+			if (readAudioDataFromRecord(candidateFrameNo, _audioBuffer, audioPosition, audioSize)) {
+				_audioList.addBlock(audioPosition, audioSize, _audioBuffer);
+			}
+		}
+		_audioList.submitDriverMax();
+	}
+
+	_delayTime.startTiming();
+	seekToFrame(_currentFrameNo);
+	doVersion5();
+	if (_hasAudio) {
+		_audioList.submitDriverMax();
+	}
+}
+
+void RobotDecoder::frameAlmostVisible() {
+	if (_status == kRobotStatusPlaying && !_syncFrame) {
+		if (_previousFrameNo != _currentFrameNo) {
+			while (calculateNextFrameNo() < _currentFrameNo) {
+				_audioList.submitDriverMax();
+			}
+		}
+	}
+}
+
+void RobotDecoder::frameNowVisible() {
+	if (_status != kRobotStatusPlaying) {
+		return;
+	}
+
+	if (_syncFrame) {
+		_syncFrame = false;
+		if (_hasAudio) {
+			_audioList.startAudioNow();
+			_checkAudioSyncTime = _startTime + kAudioSyncCheckInterval;
+		}
+
+		setRobotTime(_currentFrameNo);
+	}
+
+	if (_delayTime.timingInProgress()) {
+		_delayTime.endTiming();
+	}
+
+	if (_hasAudio) {
+		_audioList.submitDriverMax();
+	}
+
+	if (_previousFrameNo != _currentFrameNo) {
+		_previousFrameNo = _currentFrameNo;
+	}
+
+	if (!_syncFrame && _hasAudio && getTickCount() >= _checkAudioSyncTime) {
+		RobotAudioStream::StreamState status;
+		const bool success = g_sci->_audio32->queryRobotAudio(status);
+		if (!success) {
+			return;
+		}
+
+		const int bytesPerFrame = status.rate / _normalFrameRate * (status.bits == 16 ? 2 : 1);
+		// check again in 1/3rd second
+		_checkAudioSyncTime = getTickCount() + 60 / 3;
+
+		const int currentVideoFrameNo = calculateNextFrameNo() - _startingFrameNo;
+		const int currentAudioFrameNo = status.bytesPlaying / bytesPerFrame;
+		debugC(kDebugLevelVideo, "Video frame %d %s audio frame %d", currentVideoFrameNo, currentVideoFrameNo == currentAudioFrameNo ? "=" : currentVideoFrameNo < currentAudioFrameNo ? "<" : ">", currentAudioFrameNo);
+		if (currentVideoFrameNo < _numFramesTotal &&
+			currentAudioFrameNo < _numFramesTotal) {
+
+			bool shouldResetRobotTime = false;
+
+			if (currentAudioFrameNo < currentVideoFrameNo - 1 && _frameRate != _minFrameRate) {
+				debugC(kDebugLevelVideo, "[v] Reducing frame rate");
+				_frameRate = _minFrameRate;
+				shouldResetRobotTime = true;
+			} else if (currentAudioFrameNo > currentVideoFrameNo + 1 && _frameRate != _maxFrameRate) {
+				debugC(kDebugLevelVideo, "[^] Increasing frame rate");
+				_frameRate = _maxFrameRate;
+				shouldResetRobotTime = true;
+			} else if (_frameRate != _normalFrameRate) {
+				debugC(kDebugLevelVideo, "[=] Setting to normal frame rate");
+				_frameRate = _normalFrameRate;
+				shouldResetRobotTime = true;
+			}
+
+			if (shouldResetRobotTime) {
+				if (currentAudioFrameNo < _currentFrameNo) {
+					setRobotTime(_currentFrameNo);
+				} else {
+					setRobotTime(currentAudioFrameNo);
+				}
+			}
+		}
+	}
+}
+
+void RobotDecoder::expandCel(byte* target, const byte* source, const int16 celWidth, const int16 celHeight) const {
+	assert(source != nullptr && target != nullptr);
+
+	const int sourceHeight = (celHeight * _verticalScaleFactor) / 100;
+	assert(sourceHeight > 0);
+
+	const int16 numerator = celHeight;
+	const int16 denominator = sourceHeight;
+	int remainder = 0;
+	for (int16 y = sourceHeight - 1; y >= 0; --y) {
+		remainder += numerator;
+		int16 linesToDraw = remainder / denominator;
+		remainder %= denominator;
+
+		while (linesToDraw--) {
+			memcpy(target, source, celWidth);
+			target += celWidth;
+		}
+
+		source += celWidth;
+	}
+}
+
+int16 RobotDecoder::getPriority() const {
+	return _priority;
+}
+
+void RobotDecoder::setPriority(const int16 newPriority) {
+	_priority = newPriority;
+}
+
+void RobotDecoder::doVersion5(const bool shouldSubmitAudio) {
+	const RobotScreenItemList::size_type oldScreenItemCount = _screenItemList.size();
+	const int videoSize = _videoSizes[_currentFrameNo];
+	_doVersion5Scratch.resize(videoSize);
+
+	byte *videoFrameData = _doVersion5Scratch.begin();
+
+	if (!_stream->read(videoFrameData, videoSize)) {
+		error("RobotDecoder::doVersion5: Read error");
+	}
+
+	const RobotScreenItemList::size_type screenItemCount = READ_SCI11ENDIAN_UINT16(videoFrameData);
+
+	if (screenItemCount > kScreenItemListSize) {
+		return;
+	}
+
+	if (_hasAudio &&
+		(getSciVersion() < SCI_VERSION_3 || shouldSubmitAudio)) {
+		int audioPosition, audioSize;
+		if (readAudioDataFromRecord(_currentFrameNo, _audioBuffer, audioPosition, audioSize)) {
+			_audioList.addBlock(audioPosition, audioSize, _audioBuffer);
+		}
+	}
+
+	if (screenItemCount > oldScreenItemCount) {
+		_screenItemList.resize(screenItemCount);
+		_screenItemX.resize(screenItemCount);
+		_screenItemY.resize(screenItemCount);
+		_originalScreenItemX.resize(screenItemCount);
+		_originalScreenItemY.resize(screenItemCount);
+	}
+
+	createCels5(videoFrameData + 2, screenItemCount, true);
+	for (RobotScreenItemList::size_type i = 0; i < screenItemCount; ++i) {
+		Common::Point position(_screenItemX[i], _screenItemY[i]);
+
+		if (_scaleInfo.signal == kScaleSignalManual) {
+			position.x = (position.x * _scaleInfo.x) / 128;
+			position.y = (position.y * _scaleInfo.y) / 128;
+		}
+
+		if (_screenItemList[i] == nullptr) {
+			CelInfo32 celInfo;
+			celInfo.bitmap = _celHandles[i].bitmapId;
+			ScreenItem *screenItem = new ScreenItem(_planeId, celInfo, position, _scaleInfo);
+			_screenItemList[i] = screenItem;
+
+			if (_priority == -1) {
+				screenItem->_fixedPriority = false;
+			} else {
+				screenItem->_fixedPriority = true;
+				screenItem->_priority = _priority;
+			}
+			g_sci->_gfxFrameout->addScreenItem(*screenItem);
+		} else {
+			ScreenItem *screenItem = _screenItemList[i];
+			screenItem->_celInfo.bitmap = _celHandles[i].bitmapId;
+			screenItem->_position = position;
+
+			if (_priority == -1) {
+				screenItem->_fixedPriority = false;
+			} else {
+				screenItem->_fixedPriority = true;
+				screenItem->_priority = _priority;
+			}
+			g_sci->_gfxFrameout->updateScreenItem(*screenItem);
+		}
+	}
+
+	for (RobotScreenItemList::size_type i = screenItemCount; i < oldScreenItemCount; ++i) {
+		if (_screenItemList[i] != nullptr) {
+			g_sci->_gfxFrameout->deleteScreenItem(*_screenItemList[i]);
+			_screenItemList[i] = nullptr;
+		}
+	}
+
+	if (screenItemCount < oldScreenItemCount) {
+		_screenItemList.resize(screenItemCount);
+		_screenItemX.resize(screenItemCount);
+		_screenItemY.resize(screenItemCount);
+		_originalScreenItemX.resize(screenItemCount);
+		_originalScreenItemY.resize(screenItemCount);
+	}
+}
+
+void RobotDecoder::createCels5(const byte *rawVideoData, const int16 numCels, const bool usePalette) {
+	preallocateCelMemory(rawVideoData, numCels);
+	for (int16 i = 0; i < numCels; ++i) {
+		rawVideoData += createCel5(rawVideoData, i, usePalette);
+	}
+}
+
+uint32 RobotDecoder::createCel5(const byte *rawVideoData, const int16 screenItemIndex, const bool usePalette) {
+	_verticalScaleFactor = rawVideoData[1];
+	const int16 celWidth = (int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 2);
+	const int16 celHeight = (int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 4);
+	const Common::Point celPosition((int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 10),
+									(int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 12));
+	const uint16 dataSize = READ_SCI11ENDIAN_UINT16(rawVideoData + 14);
+	const int16 numDataChunks = (int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 16);
+
+	rawVideoData += kCelHeaderSize;
+
+	const int16 scriptWidth = g_sci->_gfxFrameout->getScriptWidth();
+	const int16 scriptHeight = g_sci->_gfxFrameout->getScriptHeight();
+	const int16 screenWidth = g_sci->_gfxFrameout->getScreenWidth();
+	const int16 screenHeight = g_sci->_gfxFrameout->getScreenHeight();
+
+	Common::Point origin;
+	if (scriptWidth == kLowResX && scriptHeight == kLowResY) {
+		const Ratio lowResToScreenX(screenWidth, kLowResX);
+		const Ratio lowResToScreenY(screenHeight, kLowResY);
+		const Ratio screenToLowResX(kLowResX, screenWidth);
+		const Ratio screenToLowResY(kLowResY, screenHeight);
+
+		const int16 scaledX = celPosition.x + (_position.x * lowResToScreenX).toInt();
+		const int16 scaledY1 = celPosition.y + (_position.y * lowResToScreenY).toInt();
+		const int16 scaledY2 = scaledY1 + celHeight - 1;
+
+		const int16 lowResX = (scaledX * screenToLowResX).toInt();
+		const int16 lowResY = (scaledY2 * screenToLowResY).toInt();
+
+		origin.x = (scaledX - (lowResX * lowResToScreenX).toInt()) * -1;
+		origin.y = (lowResY * lowResToScreenY).toInt() - scaledY1;
+		_screenItemX[screenItemIndex] = lowResX;
+		_screenItemY[screenItemIndex] = lowResY;
+
+		debugC(kDebugLevelVideo, "Low resolution position c: %d %d l: %d/%d %d/%d d: %d %d s: %d/%d %d/%d x: %d y: %d", celPosition.x, celPosition.y, lowResX, scriptWidth, lowResY, scriptHeight, origin.x, origin.y, scaledX, screenWidth, scaledY2, screenHeight, scaledX - origin.x, scaledY2 - origin.y);
+	} else {
+		const int16 highResX = celPosition.x + _position.x;
+		const int16 highResY = celPosition.y + _position.y + celHeight - 1;
+
+		origin.x = 0;
+		origin.y = celHeight - 1;
+		_screenItemX[screenItemIndex] = highResX;
+		_screenItemY[screenItemIndex] = highResY;
+
+		debugC(kDebugLevelVideo, "High resolution position c: %d %d s: %d %d d: %d %d", celPosition.x, celPosition.y, highResX, highResY, origin.x, origin.y);
+	}
+
+	_originalScreenItemX[screenItemIndex] = celPosition.x;
+	_originalScreenItemY[screenItemIndex] = celPosition.y;
+
+	assert(_celHandles[screenItemIndex].area >= celWidth * celHeight);
+
+	SciBitmap &bitmap = *_segMan->lookupBitmap(_celHandles[screenItemIndex].bitmapId);
+	assert(bitmap.getWidth() == celWidth && bitmap.getHeight() == celHeight);
+	assert(bitmap.getXResolution() == _xResolution && bitmap.getYResolution() == _yResolution);
+	assert(bitmap.getHunkPaletteOffset() == (uint32)bitmap.getWidth() * bitmap.getHeight() + SciBitmap::getBitmapHeaderSize());
+	bitmap.setOrigin(origin);
+
+	byte *targetBuffer;
+	if (_verticalScaleFactor == 100) {
+		// direct copy to bitmap
+		targetBuffer = bitmap.getPixels();
+	} else {
+		// go through squashed cel decompressor
+		_celDecompressionBuffer.resize(_celDecompressionArea >= celWidth * (celHeight * _verticalScaleFactor / 100));
+		targetBuffer = _celDecompressionBuffer.begin();
+	}
+
+	for (int i = 0; i < numDataChunks; ++i) {
+		uint compressedSize = READ_SCI11ENDIAN_UINT32(rawVideoData);
+		uint decompressedSize = READ_SCI11ENDIAN_UINT32(rawVideoData + 4);
+		uint16 compressionType = READ_SCI11ENDIAN_UINT16(rawVideoData + 8);
+		rawVideoData += 10;
+
+		switch (compressionType) {
+		case kCompressionLZS: {
+			Common::MemoryReadStream videoDataStream(rawVideoData, compressedSize, DisposeAfterUse::NO);
+			_decompressor.unpack(&videoDataStream, targetBuffer, compressedSize, decompressedSize);
+			break;
+		}
+		case kCompressionNone:
+			Common::copy(rawVideoData, rawVideoData + decompressedSize, targetBuffer);
+			break;
+		default:
+			error("Unknown compression type %d!", compressionType);
+		}
+
+		rawVideoData += compressedSize;
+		targetBuffer += decompressedSize;
+	}
+
+	if (_verticalScaleFactor != 100) {
+		expandCel(bitmap.getPixels(), _celDecompressionBuffer.begin(), celWidth, celHeight);
+	}
+
+	if (usePalette) {
+		Common::copy(_rawPalette, _rawPalette + kRawPaletteSize, bitmap.getHunkPalette());
+	}
+
+	return kCelHeaderSize + dataSize;
+}
+
+void RobotDecoder::preallocateCelMemory(const byte *rawVideoData, const int16 numCels) {
+	for (CelHandleList::size_type i = 0; i < _celHandles.size(); ++i) {
+		CelHandleInfo &celHandle = _celHandles[i];
+
+		if (celHandle.status == CelHandleInfo::kFrameLifetime) {
+			_segMan->freeBitmap(celHandle.bitmapId);
+			celHandle.bitmapId = NULL_REG;
+			celHandle.status = CelHandleInfo::kNoCel;
+			celHandle.area = 0;
+		}
+	}
+	_celHandles.resize(numCels);
+
+	const int numFixedCels = MIN(numCels, (int16)kFixedCelListSize);
+	for (int i = 0; i < numFixedCels; ++i) {
+		CelHandleInfo &celHandle = _celHandles[i];
+
+		// In SSCI, there was a check to see if the cel handle was not allocated
+		// here, for some reason, which would mean that nothing was ever
+		// allocated from fixed cels, because the _celHandles array just got
+		// deleted and recreated...
+		if (celHandle.bitmapId == NULL_REG) {
+			break;
+		}
+
+		celHandle.bitmapId = _fixedCels[i];
+		celHandle.status = CelHandleInfo::kRobotLifetime;
+		celHandle.area = _maxCelArea[i];
+	}
+
+	uint maxFrameArea = 0;
+	for (int i = 0; i < numCels; ++i) {
+		const int16 celWidth = (int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 2);
+		const int16 celHeight = (int16)READ_SCI11ENDIAN_UINT16(rawVideoData + 4);
+		const uint16 dataSize = READ_SCI11ENDIAN_UINT16(rawVideoData + 14);
+		const uint area = celWidth * celHeight;
+
+		if (area > maxFrameArea) {
+			maxFrameArea = area;
+		}
+
+		const bool remap = (getSciVersion() == SCI_VERSION_3);
+
+		CelHandleInfo &celHandle = _celHandles[i];
+		if (celHandle.status == CelHandleInfo::kRobotLifetime) {
+			if (_maxCelArea[i] < area) {
+				_segMan->freeBitmap(celHandle.bitmapId);
+				_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, remap, false);
+				celHandle.area = area;
+				celHandle.status = CelHandleInfo::kFrameLifetime;
+			}
+		} else if (celHandle.status == CelHandleInfo::kNoCel) {
+			_segMan->allocateBitmap(&celHandle.bitmapId, celWidth, celHeight, 255, 0, 0, _xResolution, _yResolution, kRawPaletteSize, remap, false);
+			celHandle.area = area;
+			celHandle.status = CelHandleInfo::kFrameLifetime;
+		} else {
+			error("Cel Handle has bad status");
+		}
+
+		rawVideoData += kCelHeaderSize + dataSize;
+	}
+
+	if (maxFrameArea > _celDecompressionBuffer.size()) {
+		_celDecompressionBuffer.resize(maxFrameArea);
+	}
 }
 
 } // End of namespace Sci

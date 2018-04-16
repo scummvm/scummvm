@@ -21,6 +21,10 @@
  */
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "backends/graphics/opengl/texture.h"
+#include "backends/events/sdl/sdl-events.h"
+#include "backends/platform/sdl/sdl.h"
+#include "graphics/scaler/aspect.h"
 
 #include "common/textconsole.h"
 #include "common/config-manager.h"
@@ -28,8 +32,13 @@
 #include "common/translation.h"
 #endif
 
-OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource)
-    : SdlGraphicsManager(eventSource), _lastVideoModeLoad(0), _hwScreen(nullptr), _lastRequestedWidth(0), _lastRequestedHeight(0),
+OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint desktopHeight, SdlEventSource *eventSource, SdlWindow *window)
+    : SdlGraphicsManager(eventSource, window), _lastRequestedHeight(0),
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+      _glContext(),
+#else
+      _lastVideoModeLoad(0),
+#endif
       _graphicsScale(2), _ignoreLoadVideoMode(false), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
       _desiredFullscreenWidth(0), _desiredFullscreenHeight(0) {
 	// Setup OpenGL attributes for SDL
@@ -39,17 +48,131 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+	// Set up proper SDL OpenGL context creation.
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	OpenGL::ContextType glContextType;
+
+	// Context version 1.4 is choosen arbitrarily based on what most shader
+	// extensions were written against.
+	enum {
+		DEFAULT_GL_MAJOR = 1,
+		DEFAULT_GL_MINOR = 4,
+
+		DEFAULT_GLES_MAJOR = 1,
+		DEFAULT_GLES_MINOR = 1,
+
+		DEFAULT_GLES2_MAJOR = 2,
+		DEFAULT_GLES2_MINOR = 0
+	};
+
+#if USE_FORCED_GL
+	glContextType = OpenGL::kContextGL;
+	_glContextProfileMask = 0;
+	_glContextMajor = DEFAULT_GL_MAJOR;
+	_glContextMinor = DEFAULT_GL_MINOR;
+#elif USE_FORCED_GLES
+	glContextType = OpenGL::kContextGLES;
+	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
+	_glContextMajor = DEFAULT_GLES_MAJOR;
+	_glContextMinor = DEFAULT_GLES_MINOR;
+#elif USE_FORCED_GLES2
+	glContextType = OpenGL::kContextGLES2;
+	_glContextProfileMask = SDL_GL_CONTEXT_PROFILE_ES;
+	_glContextMajor = DEFAULT_GLES2_MAJOR;
+	_glContextMinor = DEFAULT_GLES2_MINOR;
+#else
+	bool noDefaults = false;
+
+	// Obtain the default GL(ES) context SDL2 tries to setup.
+	//
+	// Please note this might not actually be SDL2's defaults when multiple
+	// instances of this object have been created. But that is no issue
+	// because then we already set up what we want to use.
+	//
+	// In case no defaults are given we prefer OpenGL over OpenGL ES.
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &_glContextProfileMask) != 0) {
+		_glContextProfileMask = 0;
+		noDefaults = true;
+	}
+
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &_glContextMajor) != 0) {
+		noDefaults = true;
+	}
+
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &_glContextMinor) != 0) {
+		noDefaults = true;
+	}
+
+	if (noDefaults) {
+		if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+			_glContextMajor = DEFAULT_GLES_MAJOR;
+			_glContextMinor = DEFAULT_GLES_MINOR;
+		} else {
+			_glContextProfileMask = 0;
+			_glContextMajor = DEFAULT_GL_MAJOR;
+			_glContextMinor = DEFAULT_GL_MINOR;
+		}
+	}
+
+	if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+		if (_glContextMajor >= 2) {
+			glContextType = OpenGL::kContextGLES2;
+		} else {
+			glContextType = OpenGL::kContextGLES;
+		}
+	} else if (_glContextProfileMask == SDL_GL_CONTEXT_PROFILE_CORE) {
+		glContextType = OpenGL::kContextGL;
+
+		// Core profile does not allow legacy functionality, which we use.
+		// Thus we request a standard OpenGL context.
+		_glContextProfileMask = 0;
+		_glContextMajor = DEFAULT_GL_MAJOR;
+		_glContextMinor = DEFAULT_GL_MINOR;
+	} else {
+		glContextType = OpenGL::kContextGL;
+	}
+#endif
+
+	setContextType(glContextType);
+#else
+	setContextType(OpenGL::kContextGL);
+#endif
+
 	// Retrieve a list of working fullscreen modes
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	const int numModes = SDL_GetNumDisplayModes(0);
+	for (int i = 0; i < numModes; ++i) {
+		SDL_DisplayMode mode;
+		if (SDL_GetDisplayMode(0, i, &mode)) {
+			continue;
+		}
+
+		_fullscreenVideoModes.push_back(VideoMode(mode.w, mode.h));
+	}
+#else
 	const SDL_Rect *const *availableModes = SDL_ListModes(NULL, SDL_OPENGL | SDL_FULLSCREEN);
-	if (availableModes != (void *)-1) {
+	// TODO: NULL means that there are no fullscreen modes supported. We
+	// should probably use this information and disable any fullscreen support
+	// in this case.
+	if (availableModes != NULL && availableModes != (void *)-1) {
 		for (;*availableModes; ++availableModes) {
 			const SDL_Rect *mode = *availableModes;
 
 			_fullscreenVideoModes.push_back(VideoMode(mode->w, mode->h));
 		}
+	}
+#endif
 
-		// Sort the modes in ascending order.
-		Common::sort(_fullscreenVideoModes.begin(), _fullscreenVideoModes.end());
+	// Sort the modes in ascending order.
+	Common::sort(_fullscreenVideoModes.begin(), _fullscreenVideoModes.end());
+
+	// Strip duplicates in video modes.
+	for (uint i = 0; i + 1 < _fullscreenVideoModes.size();) {
+		if (_fullscreenVideoModes[i] == _fullscreenVideoModes[i + 1]) {
+			_fullscreenVideoModes.remove_at(i);
+		} else {
+			++i;
+		}
 	}
 
 	// In case SDL is fine with every mode we will force the desktop mode.
@@ -70,6 +193,10 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(uint desktopWidth, uint deskt
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	notifyContextDestroy();
+	SDL_GL_DeleteContext(_glContext);
+#endif
 }
 
 void OpenGLSdlGraphicsManager::activateManager() {
@@ -88,7 +215,7 @@ void OpenGLSdlGraphicsManager::deactivateManager() {
 	SdlGraphicsManager::deactivateManager();
 }
 
-bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
 	case OSystem::kFeatureIconifyWindow:
@@ -108,7 +235,7 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 
 	case OSystem::kFeatureIconifyWindow:
 		if (enable) {
-			SDL_WM_IconifyWindow();
+			_window->iconifyWindow();
 		}
 		break;
 
@@ -117,36 +244,41 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 	}
 }
 
-bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+bool OpenGLSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureFullscreenMode:
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		if (_window) {
+			return (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_FULLSCREEN) != 0;
+		} else {
+			return _wantsFullScreen;
+		}
+#else
 		if (_hwScreen) {
 			return (_hwScreen->flags & SDL_FULLSCREEN) != 0;
 		} else {
 			return _wantsFullScreen;
 		}
+#endif
 
 	default:
 		return OpenGLGraphicsManager::getFeatureState(f);
 	}
 }
 
-bool OpenGLSdlGraphicsManager::setGraphicsMode(int mode) {
+void OpenGLSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	// HACK: This is stupid but the SurfaceSDL backend defaults to 2x. This
 	// assures that the launcher (which requests 320x200) has a reasonable
 	// size. It also makes small games have a reasonable size (i.e. at least
 	// 640x400). We follow the same logic here until we have a better way to
 	// give hints to our backend for that.
-	_graphicsScale = 2;
+	if (w > 320) {
+		_graphicsScale = 1;
+	} else {
+		_graphicsScale = 2;
+	}
 
-	return OpenGLGraphicsManager::setGraphicsMode(mode);
-}
-
-void OpenGLSdlGraphicsManager::resetGraphicsScale() {
-	OpenGLGraphicsManager::resetGraphicsScale();
-
-	// HACK: See OpenGLSdlGraphicsManager::setGraphicsMode.
-	_graphicsScale = 1;
+	return OpenGLGraphicsManager::initSize(w, h, format);
 }
 
 #ifdef USE_RGB_COLOR
@@ -172,20 +304,26 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 	// RGBA4444
 	formats.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
 
-#ifndef USE_GLES
-#ifdef SCUMM_LITTLE_ENDIAN
-	// RGBA8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
-#else
-	// ABGR8888
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+#if !USE_FORCED_GL
+	if (!isGLESContext()) {
 #endif
-	// ARGB8888, this should not be here, but Sword25 requires it. :-/
-	formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24));
+#ifdef SCUMM_LITTLE_ENDIAN
+		// RGBA8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+#else
+		// ABGR8888
+		formats.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+#endif
+#if !USE_FORCED_GL
+	}
+#endif
+#endif
 
 	// RGB555, this is used by SCUMM HE 16 bit games.
+	// This is not natively supported by OpenGL ES implementations, we convert
+	// the pixel format internally.
 	formats.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0));
-#endif
 
 	formats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
@@ -199,15 +337,26 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 	}
 
 	OpenGLGraphicsManager::updateScreen();
-
-	// Swap OpenGL buffers
-	SDL_GL_SwapBuffers();
 }
 
 void OpenGLSdlGraphicsManager::notifyVideoExpose() {
 }
 
-void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height) {
+void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	// We sometime get outdated resize events from SDL2. So check that the size we get
+	// is the actual current window size. If not ignore the resize.
+	// The issue for example occurs when switching from fullscreen to windowed mode or
+	// when switching between different fullscreen resolutions because SDL_DestroyWindow
+	// for a fullscreen window that doesn't have the SDL_WINDOW_FULLSCREEN_DESKTOP flag
+	// causes a SDL_WINDOWEVENT_RESIZED event with the old resolution to be sent, and this
+	// event is processed after recreating the window at the new resolution.
+	int currentWidth, currentHeight;
+	getWindowSizeFromSdl(&currentWidth, &currentHeight);
+	if (width != currentWidth || height != currentHeight)
+		return;
+	handleResize(width, height);
+#else
 	if (!_ignoreResizeEvents && _hwScreen && !(_hwScreen->flags & SDL_FULLSCREEN)) {
 		// We save that we handled a resize event here. We need to know this
 		// so we do not overwrite the users requested window size whenever we
@@ -218,18 +367,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height)
 			g_system->quit();
 		}
 	}
-}
-
-void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
-	adjustMousePosition(point.x, point.y);
-}
-
-void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
-	setMousePosition(mouse.x, mouse.y);
-}
-
-void OpenGLSdlGraphicsManager::setInternalMousePosition(int x, int y) {
-	SDL_WarpMouse(x, y);
+#endif
 }
 
 bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
@@ -254,6 +392,24 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 
 	// Set up the mode.
 	return setupMode(requestedWidth, requestedHeight);
+}
+
+void OpenGLSdlGraphicsManager::refreshScreen() {
+	// Swap OpenGL buffers
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	SDL_GL_SwapWindow(_window->getSDLWindow());
+#else
+	SDL_GL_SwapBuffers();
+#endif
+}
+
+void *OpenGLSdlGraphicsManager::getProcAddress(const char *name) const {
+	return SDL_GL_GetProcAddress(name);
+}
+
+void OpenGLSdlGraphicsManager::handleResizeImpl(const int width, const int height) {
+	OpenGLGraphicsManager::handleResizeImpl(width, height);
+	SdlGraphicsManager::handleResizeImpl(width, height);
 }
 
 bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
@@ -294,12 +450,68 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		// Remember our choice.
 		ConfMan.setInt("last_fullscreen_mode_width", _desiredFullscreenWidth, Common::ConfigManager::kApplicationDomain);
 		ConfMan.setInt("last_fullscreen_mode_height", _desiredFullscreenHeight, Common::ConfigManager::kApplicationDomain);
-
-		// Use our choice.
-		width  = _desiredFullscreenWidth;
-		height = _desiredFullscreenHeight;
 	}
 
+	// This is pretty confusing since RGBA8888 talks about the memory
+	// layout here. This is a different logical layout depending on
+	// whether we run on little endian or big endian. However, we can
+	// only safely assume that RGBA8888 in memory layout is supported.
+	// Thus, we chose this one.
+	const Graphics::PixelFormat rgba8888 =
+#ifdef SCUMM_LITTLE_ENDIAN
+	                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
+#else
+	                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+#endif
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+	if (_glContext) {
+		notifyContextDestroy();
+
+		SDL_GL_DeleteContext(_glContext);
+		_glContext = nullptr;
+	}
+
+	uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+	if (_wantsFullScreen) {
+		// On Linux/X11, when toggling to fullscreen, the window manager saves
+		// the window size to be able to restore it when going back to windowed mode.
+		// If the user configured ScummVM to start in fullscreen mode, we first
+		// create a window and then toggle it to fullscreen to give the window manager
+		// a chance to save the window size. That way if the user switches back
+		// to windowed mode, the window manager has a window size to apply instead
+		// of leaving the window at the fullscreen resolution size.
+		const char *driver = SDL_GetCurrentVideoDriver();
+		if (!_window->getSDLWindow() && driver && strcmp(driver, "x11") == 0) {
+			_window->createOrUpdateWindow(width, height, flags);
+		}
+
+		width  = _desiredFullscreenWidth;
+		height = _desiredFullscreenHeight;
+
+		flags |= SDL_WINDOW_FULLSCREEN;
+	}
+
+	// Request a OpenGL (ES) context we can use.
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, _glContextProfileMask);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, _glContextMajor);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, _glContextMinor);
+
+	if (!createOrUpdateWindow(width, height, flags)) {
+		return false;
+	}
+
+	_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
+	if (!_glContext) {
+		return false;
+	}
+
+	notifyContextCreate(rgba8888, rgba8888);
+	int actualWidth, actualHeight;
+	getWindowSizeFromSdl(&actualWidth, &actualHeight);
+	handleResize(actualWidth, actualHeight);
+	return true;
+#else
 	// WORKAROUND: Working around infamous SDL bugs when switching
 	// resolutions too fast. This might cause the event system to supply
 	// incorrect mouse position events otherwise.
@@ -314,6 +526,8 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 
 	uint32 flags = SDL_OPENGL;
 	if (_wantsFullScreen) {
+		width  = _desiredFullscreenWidth;
+		height = _desiredFullscreenHeight;
 		flags |= SDL_FULLSCREEN;
 	} else {
 		flags |= SDL_RESIZABLE;
@@ -341,19 +555,8 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 	_lastVideoModeLoad = SDL_GetTicks();
 
 	if (_hwScreen) {
-		// This is pretty confusing since RGBA8888 talks about the memory
-		// layout here. This is a different logical layout depending on
-		// whether we run on little endian or big endian. However, we can
-		// only safely assume that RGBA8888 in memory layout is supported.
-		// Thus, we chose this one.
-		const Graphics::PixelFormat rgba8888 =
-#ifdef SCUMM_LITTLE_ENDIAN
-		                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-#else
-		                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-#endif
 		notifyContextCreate(rgba8888, rgba8888);
-		setActualScreenSize(_hwScreen->w, _hwScreen->h);
+		handleResize(_hwScreen->w, _hwScreen->h);
 	}
 
 	// Ignore resize events (from SDL) for a few frames, if this isn't
@@ -363,6 +566,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		_ignoreResizeEvents = 10;
 
 	return _hwScreen != nullptr;
+#endif
 }
 
 bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
@@ -381,33 +585,54 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 
 #ifdef USE_OSD
 				if (getFeatureState(OSystem::kFeatureFullscreenMode)) {
-					displayMessageOnOSD("Fullscreen mode");
+					displayMessageOnOSD(_("Fullscreen mode"));
 				} else {
-					displayMessageOnOSD("Windowed mode");
+					displayMessageOnOSD(_("Windowed mode"));
 				}
 #endif
 				return true;
 			}
 
+			// Alt-s creates a screenshot
 			if (event.kbd.keycode == Common::KEYCODE_s) {
-				// Alt-s creates a screenshot
 				Common::String filename;
+
+				Common::String screenshotsPath;
+				OSystem_SDL *sdl_g_system = dynamic_cast<OSystem_SDL*>(g_system);
+				if (sdl_g_system)
+					screenshotsPath = sdl_g_system->getScreenshotsPath();
 
 				for (int n = 0;; n++) {
 					SDL_RWops *file;
 
+#ifdef USE_PNG
+					filename = Common::String::format("scummvm%05d.png", n);
+#else
 					filename = Common::String::format("scummvm%05d.bmp", n);
-					file = SDL_RWFromFile(filename.c_str(), "r");
+#endif
+
+					file = SDL_RWFromFile((screenshotsPath + filename).c_str(), "r");
+
 					if (!file)
 						break;
 					SDL_RWclose(file);
 				}
 
-				saveScreenshot(filename.c_str());
-				debug("Saved screenshot '%s'", filename.c_str());
+				if (saveScreenshot(screenshotsPath + filename)) {
+					if (screenshotsPath.empty())
+						debug("Saved screenshot '%s' in current directory", filename.c_str());
+					else
+						debug("Saved screenshot '%s' in directory '%s'", filename.c_str(), screenshotsPath.c_str());
+				} else {
+					if (screenshotsPath.empty())
+						warning("Could not save screenshot in current directory");
+					else
+						warning("Could not save screenshot in directory '%s'", screenshotsPath.c_str());
+				}
 
 				return true;
 			}
+
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL | Common::KBD_ALT)) {
 			if (   event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS
 			    || event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS) {
@@ -456,7 +681,9 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 					// Calculate the next scaling setting. We approximate the
 					// current scale setting in case the user resized the
 					// window. Then we apply the direction change.
-					_graphicsScale = MAX<int>(_hwScreen->w / _lastRequestedWidth, _hwScreen->h / _lastRequestedHeight);
+					int windowWidth = 0, windowHeight = 0;
+					getWindowSizeFromSdl(&windowWidth, &windowHeight);
+					_graphicsScale = MAX<int>(windowWidth / _lastRequestedWidth, windowHeight / _lastRequestedHeight);
 					_graphicsScale = MAX<int>(_graphicsScale + direction, 1);
 
 					// Since we overwrite a user resize here we reset its
@@ -472,7 +699,9 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				}
 
 #ifdef USE_OSD
-				const Common::String osdMsg = Common::String::format("Resolution: %dx%d", _hwScreen->w, _hwScreen->h);
+				int windowWidth = 0, windowHeight = 0;
+				getWindowSizeFromSdl(&windowWidth, &windowHeight);
+				const Common::String osdMsg = Common::String::format(_("Resolution: %dx%d"), windowWidth, windowHeight);
 				displayMessageOnOSD(osdMsg.c_str());
 #endif
 
@@ -492,45 +721,21 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
-				Common::String osdMsg = "Aspect ratio correction: ";
-				osdMsg += getFeatureState(OSystem::kFeatureAspectRatioCorrection) ? "enabled" : "disabled";
-				displayMessageOnOSD(osdMsg.c_str());
+				if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
+					displayMessageOnOSD(_("Enabled aspect ratio correction"));
+				else
+					displayMessageOnOSD(_("Disabled aspect ratio correction"));
 #endif
 
 				return true;
 			} else if (event.kbd.keycode == Common::KEYCODE_f) {
-				// Ctrl+Alt+f toggles the graphics modes.
-
-				// We are crazy we will allow the OpenGL base class to
-				// introduce new graphics modes like shaders for special
-				// filtering. If some other OpenGL subclass needs this,
-				// we can think of refactoring this.
-				int mode = getGraphicsMode();
-				const OSystem::GraphicsMode *supportedModes = getSupportedGraphicsModes();
-				const OSystem::GraphicsMode *modeDesc = nullptr;
-
-				// Search the current mode.
-				for (; supportedModes->name; ++supportedModes) {
-					if (supportedModes->id == mode) {
-						modeDesc = supportedModes;
-						break;
-					}
-				}
-				assert(modeDesc);
-
-				// Try to use the next mode in the list.
-				++modeDesc;
-				if (!modeDesc->name) {
-					modeDesc = getSupportedGraphicsModes();
-				}
-
-				// Never ever try to resize the window when we simply want to
-				// switch the graphics mode. This assures that the window size
-				// does not change.
+				// Never ever try to resize the window when we simply want to enable or disable filtering.
+				// This assures that the window size does not change.
 				_ignoreLoadVideoMode = true;
 
+				// Ctrl+Alt+f toggles filtering on/off
 				beginGFXTransaction();
-					setGraphicsMode(modeDesc->id);
+				setFeatureState(OSystem::kFeatureFilteringMode, !getFeatureState(OSystem::kFeatureFilteringMode));
 				endGFXTransaction();
 
 				// Make sure we do not ignore the next resize. This
@@ -538,8 +743,11 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
-				const Common::String osdMsg = Common::String::format("Graphics mode: %s", _(modeDesc->description));
-				displayMessageOnOSD(osdMsg.c_str());
+				if (getFeatureState(OSystem::kFeatureFilteringMode)) {
+					displayMessageOnOSD(_("Filtering enabled"));
+				} else {
+					displayMessageOnOSD(_("Filtering disabled"));
+				}
 #endif
 
 				return true;
@@ -552,7 +760,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	}
 }
 
-bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) {
+bool OpenGLSdlGraphicsManager::isHotkey(const Common::Event &event) const {
 	if (event.kbd.hasFlags(Common::KBD_ALT)) {
 		return    event.kbd.keycode == Common::KEYCODE_RETURN
 		       || event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER

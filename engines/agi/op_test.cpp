@@ -22,7 +22,10 @@
 
 
 #include "agi/agi.h"
+#include "agi/graphics.h"
 #include "agi/opcodes.h"
+#include "agi/words.h"
+
 #include "common/endian.h"
 
 namespace Agi {
@@ -30,170 +33,195 @@ namespace Agi {
 #define ip (state->_curLogic->cIP)
 #define code (state->_curLogic->data)
 
-#define getvar(a) state->_vm->getvar(a)
-#define getflag(a) state->_vm->getflag(a)
-
-#define testEqual(v1, v2)		(getvar(v1) == (v2))
-#define testLess(v1, v2)		(getvar(v1) < (v2))
-#define testGreater(v1, v2)	(getvar(v1) > (v2))
-#define testIsSet(flag)		(getflag(flag))
-#define testHas(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED)
-#define testHasV1(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED_V1)
-#define testObjInRoom(obj, v)	(state->_vm->objectGetLocation(obj) == getvar(v))
-
-void condEqual(AgiGame *state, uint8 *p) {
-	if (p[0] == 11)
-		state->_vm->_timerHack++;
-	state->testResult = testEqual(p[0], p[1]);
+void condEqual(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 varNr1 = p[0];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 value2 = p[1];
+	state->testResult = (varVal1 == value2);
 }
 
-void condEqualV(AgiGame *state, uint8 *p) {
-	if (p[0] == 11 || p[1] == 11)
-		state->_vm->_timerHack++;
-	state->testResult = testEqual(p[0], getvar(p[1]));
+void condEqualV(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 varNr1 = p[0];
+	uint16 varNr2 = p[1];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 varVal2 = vm->getVar(varNr2);
+	state->testResult = (varVal1 == varVal2);
 }
 
-void condLess(AgiGame *state, uint8 *p) {
-	if (p[0] == 11)
-		state->_vm->_timerHack++;
-	state->testResult = testLess(p[0], p[1]);
+void condLess(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 varNr1 = p[0];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 value2 = p[1];
+	state->testResult = (varVal1 < value2);
 }
 
-void condLessV(AgiGame *state, uint8 *p) {
-	if (p[0] == 11 || p[1] == 11)
-		state->_vm->_timerHack++;
-	state->testResult = testLess(p[0], getvar(p[1]));
+void condLessV(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 varNr1 = p[0];
+	uint16 varNr2 = p[1];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 varVal2 = vm->getVar(varNr2);
+	state->testResult = (varVal1 < varVal2);
 }
 
-void condGreater(AgiGame *state, uint8 *p) {
-	if (p[0] == 11)
-		state->_vm->_timerHack++;
-	state->testResult = testGreater(p[0], p[1]);
+void condGreater(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 varNr1 = p[0];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 value2 = p[1];
+	state->testResult = (varVal1 > value2);
 }
 
-void condGreaterV(AgiGame *state, uint8 *p) {
-	if (p[0] == 11 || p[1] == 11)
-		state->_vm->_timerHack++;
-	state->testResult = testGreater(p[0], getvar(p[1]));
+void condGreaterV(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 varNr1 = p[0];
+	uint16 varNr2 = p[1];
+	uint16 varVal1 = vm->getVar(varNr1);
+	uint16 varVal2 = vm->getVar(varNr2);
+	state->testResult = (varVal1 > varVal2);
 }
 
-void condIsSet(AgiGame *state, uint8 *p) {
-	state->testResult = testIsSet(p[0]);
+void condIsSet(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	state->testResult = vm->getFlag(p[0]);
 }
 
-void condIsSetV(AgiGame *state, uint8 *p) {
-	state->testResult = testIsSet(getvar(p[0]));
+void condIsSetV(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 varNr = p[0];
+	uint16 varVal = vm->getVar(varNr);
+	state->testResult = vm->getFlag(varVal);
 }
 
-void condIsSetV1(AgiGame *state, uint8 *p) {
-	state->testResult = getvar(p[0]) > 0;
+void condIsSetV1(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 varNr = p[0];
+	uint16 varVal = vm->getVar(varNr);
+	state->testResult = varVal > 0;
 }
 
-void condHas(AgiGame *state, uint8 *p) {
-	state->testResult = testHas(p[0]);
+void condHas(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 objectNr = p[0];
+	state->testResult = (vm->objectGetLocation(objectNr) == EGO_OWNED);
 }
 
-void condHasV1(AgiGame *state, uint8 *p) {
-	state->testResult = testHasV1(p[0]);
+void condHasV1(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 objectNr = p[0];
+	state->testResult = (vm->objectGetLocation(objectNr) == EGO_OWNED_V1);
 }
 
-void condObjInRoom(AgiGame *state, uint8 *p) {
-	state->testResult = testObjInRoom(p[0], p[1]);
+void condObjInRoom(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 objectNr = p[0];
+	uint16 varNr = p[1];
+	uint16 varVal = vm->getVar(varNr);
+	state->testResult = (vm->objectGetLocation(objectNr) == varVal);
 }
 
-void condPosn(AgiGame *state, uint8 *p) {
-	state->testResult = state->_vm->testPosn(p[0], p[1], p[2], p[3], p[4]);
+void condPosn(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	state->testResult = vm->testPosn(p[0], p[1], p[2], p[3], p[4]);
 }
 
-void condController(AgiGame *state, uint8 *p) {
-	state->testResult = state->_vm->testController(p[0]);
+void condController(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	state->testResult = vm->testController(p[0]);
 }
 
-void condHaveKey(AgiGame *state, uint8 *p) {
-	state->testResult = state->_vm->testKeypressed();
+void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	// Only check for key when there is not already one set by scripts
+	if (vm->getVar(VM_VAR_KEY)) {
+		state->testResult = 1;
+		return;
+	}
+	// we are not really an inner loop, but we stop processAGIEvents() from doing regular cycle work by setting it up
+	vm->cycleInnerLoopActive(CYCLE_INNERLOOP_HAVEKEY);
+	uint16 key = vm->processAGIEvents();
+	vm->cycleInnerLoopInactive();
+	if (key) {
+		debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", key);
+		vm->setVar(VM_VAR_KEY, key);
+		state->testResult = 1;
+		return;
+	}
+	state->testResult = 0;
 }
 
-void condSaid(AgiGame *state, uint8 *p) {
-	int ec = state->_vm->testSaid(p[0], p + 1);
+void condSaid(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	int ec = vm->testSaid(p[0], p + 1);
 	state->testResult = ec;
 }
 
-void condSaid1(AgiGame *state, uint8 *p) {
+void condSaid1(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	state->testResult = false;
 
-	if (!getflag(fEnteredCli))
+	if (!vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return;
 
 	int id0 = READ_LE_UINT16(p);
 
-	if ((id0 == 1 || id0 == state->egoWords[0].id))
+	if ((id0 == 1 || id0 == vm->_words->getEgoWordId(0)))
 		state->testResult = true;
 }
 
-void condSaid2(AgiGame *state, uint8 *p) {
+void condSaid2(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	state->testResult = false;
 
-	if (!getflag(fEnteredCli))
+	if (!vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return;
 
 	int id0 = READ_LE_UINT16(p);
 	int id1 = READ_LE_UINT16(p + 2);
 
-	if ((id0 == 1 || id0 == state->egoWords[0].id) &&
-		(id1 == 1 || id1 == state->egoWords[1].id))
+	if ((id0 == 1 || id0 == vm->_words->getEgoWordId(0)) &&
+	        (id1 == 1 || id1 == vm->_words->getEgoWordId(1)))
 		state->testResult = true;
 }
 
-void condSaid3(AgiGame *state, uint8 *p) {
+void condSaid3(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	state->testResult = false;
 
-	if (!getflag(fEnteredCli))
+	if (!vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return;
 
 	int id0 = READ_LE_UINT16(p);
 	int id1 = READ_LE_UINT16(p + 2);
 	int id2 = READ_LE_UINT16(p + 4);
 
-	if ((id0 == 1 || id0 == state->egoWords[0].id) &&
-		(id1 == 1 || id1 == state->egoWords[1].id) &&
-		(id2 == 1 || id2 == state->egoWords[2].id))
+	if ((id0 == 1 || id0 == vm->_words->getEgoWordId(0)) &&
+	        (id1 == 1 || id1 == vm->_words->getEgoWordId(1)) &&
+	        (id2 == 1 || id2 == vm->_words->getEgoWordId(2)))
 		state->testResult = true;
 }
 
-void condBit(AgiGame *state, uint8 *p) {
-	state->testResult = (getvar(p[1]) >> p[0]) & 1;
+void condBit(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	uint16 value1 = p[0];
+	uint16 varNr2 = p[1];
+	uint16 varVal2 = vm->getVar(varNr2);
+	state->testResult = (varVal2 >> value1) & 1;
 }
 
-void condCompareStrings(AgiGame *state, uint8 *p) {
+void condCompareStrings(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", state->strings[p[0]], state->strings[p[1]]);
-	state->testResult = state->_vm->testCompareStrings(p[0], p[1]);
+	state->testResult = vm->testCompareStrings(p[0], p[1]);
 }
 
-void condObjInBox(AgiGame *state, uint8 *p) {
-	state->testResult = state->_vm->testObjInBox(p[0], p[1], p[2], p[3], p[4]);
+void condObjInBox(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	state->testResult = vm->testObjInBox(p[0], p[1], p[2], p[3], p[4]);
 }
 
-void condCenterPosn(AgiGame *state, uint8 *p) {
-	state->testResult = state->_vm->testObjCenter(p[0], p[1], p[2], p[3], p[4]);
+void condCenterPosn(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	state->testResult = vm->testObjCenter(p[0], p[1], p[2], p[3], p[4]);
 }
 
-void condRightPosn(AgiGame *state, uint8 *p) {
-	state->testResult = state->_vm->testObjRight(p[0], p[1], p[2], p[3], p[4]);
+void condRightPosn(AgiGame *state, AgiEngine *vm, uint8 *p) {
+	state->testResult = vm->testObjRight(p[0], p[1], p[2], p[3], p[4]);
 }
 
-void condUnknown13(AgiGame *state, uint8 *p) {
+void condUnknown13(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	// My current theory is that this command checks whether the ego is currently moving
 	// and that that movement has been caused using the mouse and not using the keyboard.
 	// I base this theory on the game's behavior on an Amiga emulator, not on disassembly.
 	// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
 	// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
 	// TODO: Check this command's implementation using disassembly just to be sure.
-	int ec = state->viewTable[0].flags & fAdjEgoXY;
+	int ec = state->screenObjTable[SCREENOBJECTS_EGO_ENTRY].flags & fAdjEgoXY;
 	debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
 	state->testResult = ec;
 }
 
-void condUnknown(AgiGame *state, uint8 *p) {
+void condUnknown(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	warning("Skipping unknown test command %2X", *(code + ip - 1));
 	state->testResult = false;
 }
@@ -203,8 +231,8 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	char ms2[MAX_STRINGLEN];
 	int j, k, l;
 
-	strcpy(ms1, _game.strings[s1]);
-	strcpy(ms2, _game.strings[s2]);
+	Common::strlcpy(ms1, _game.strings[s1], MAX_STRINGLEN);
+	Common::strlcpy(ms2, _game.strings[s2], MAX_STRINGLEN);
 
 	l = strlen(ms1);
 	for (k = 0, j = 0; k < l; k++) {
@@ -221,7 +249,7 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 			break;
 
 		default:
-			ms1[j++] = toupper(ms1[k]);
+			ms1[j++] = tolower(ms1[k]);
 			break;
 		}
 	}
@@ -242,7 +270,7 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 			break;
 
 		default:
-			ms2[j++] = toupper(ms2[k]);
+			ms2[j++] = tolower(ms2[k]);
 			break;
 		}
 	}
@@ -251,35 +279,12 @@ uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	return !strcmp(ms1, ms2);
 }
 
-uint8 AgiEngine::testKeypressed() {
-	int x = _game.keypress;
-
-	_game.keypress = 0;
-	if (!x) {
-		InputMode mode = _game.inputMode;
-
-		_game.inputMode = INPUT_NONE;
-		// Only check for events here, without updating the game cycle,
-		// otherwise the animations in some games are drawn too quickly
-		// like, for example, Manannan's lightnings in the intro of KQ3
-		// and the bullets opened in the logo of PQ1, during its intro.
-		// Fixes bug #3600733
-		mainCycle(true);
-		_game.inputMode = mode;
-	}
-
-	if (x)
-		debugC(5, kDebugLevelScripts | kDebugLevelInput, "keypress = %02x", x);
-
-	return x;
-}
-
 uint8 AgiEngine::testController(uint8 cont) {
-	return (_game.controllerOccured[cont] ? 1 : 0);
+	return (_game.controllerOccured[cont] ? true : false);
 }
 
 uint8 AgiEngine::testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &_game.viewTable[n];
+	ScreenObjEntry *v = &_game.screenObjTable[n];
 	uint8 r;
 
 	r = v->xPos >= x1 && v->yPos >= y1 && v->xPos <= x2 && v->yPos <= y2;
@@ -290,35 +295,37 @@ uint8 AgiEngine::testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 }
 
 uint8 AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &_game.viewTable[n];
+	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos >= x1 &&
-	    v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
+	       v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
 }
 
 // if n is in center of box
 uint8 AgiEngine::testObjCenter(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &_game.viewTable[n];
+	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos + v->xSize / 2 >= x1 &&
-			v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
+	       v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 // if nect N is in right corner
 uint8 AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &_game.viewTable[n];
+	ScreenObjEntry *v = &_game.screenObjTable[n];
 
 	return v->xPos + v->xSize - 1 >= x1 &&
-			v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;
+	       v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 // When player has entered something, it is parsed elsewhere
 uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	AgiGame *state = &_game;
-	int c, n = _game.numEgoWords;
+	AgiEngine *vm = state->_vm;
+	Words *words = vm->_words;
+	int c, n = words->getEgoWordCount();
 	int z = 0;
 
-	if (getflag(fSaidAcceptedInput) || !getflag(fEnteredCli))
+	if (vm->getFlag(VM_FLAG_SAID_ACCEPTED_INPUT) || !vm->getFlag(VM_FLAG_ENTERED_CLI))
 		return false;
 
 	// FR:
@@ -343,13 +350,13 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 		cc += 2;
 
 		switch (z) {
-		case 9999:	// rest of line (empty string counts to...)
+		case 9999:  // rest of line (empty string counts to...)
 			nwords = 1;
 			break;
-		case 1:	// any word
+		case 1: // any word
 			break;
 		default:
-			if (_game.egoWords[c].id != z)
+			if (words->getEgoWordId(c) != z)
 				return false;
 			break;
 		}
@@ -364,12 +371,12 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 	if (nwords != 0 && READ_LE_UINT16(cc) != 9999)
 		return false;
 
-	setflag(fSaidAcceptedInput, true);
+	setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, true);
 
 	return true;
 }
 
-int AgiEngine::testIfCode(int lognum) {
+bool AgiEngine::testIfCode(int16 logicNr) {
 	AgiGame *state = &_game;
 	uint8 op;
 	uint8 p[16];
@@ -380,8 +387,8 @@ int AgiEngine::testIfCode(int lognum) {
 	int result = true;
 
 	while (!(shouldQuit() || _restartGame) && !endTest) {
-		if (_debug.enabled && (_debug.logic0 || lognum))
-			debugConsole(lognum, lTEST_MODE, NULL);
+		if (_debug.enabled && (_debug.logic0 || logicNr))
+			debugConsole(logicNr, lTEST_MODE, NULL);
 
 		op = *(code + ip++);
 		memmove(p, (code + ip), 16);
@@ -411,7 +418,14 @@ int AgiEngine::testIfCode(int lognum) {
 
 		default:
 			// Evaluate the command and skip the rest of the instruction
-			_agiCondCommands[op](state, p);
+			_opCodesCond[op].functionPtr(state, this, p);
+			if (state->exitAllLogics) {
+				// required even here, because of at least the timer heuristic
+				// which when triggered waits a bit and processes ScummVM events and user may therefore restore a saved game
+				// fixes bug #9707
+				// TODO: maybe delay restoring the game instead, when GMM is used?
+ 				return true;
+			}
 			skipInstruction(op);
 
 			// NOT mode is enabled only for one instruction
@@ -450,8 +464,8 @@ int AgiEngine::testIfCode(int lognum) {
 	else
 		ip += READ_LE_UINT16(code + ip) + 2;
 
-	if (_debug.enabled && (_debug.logic0 || lognum))
-		debugConsole(lognum, 0xFF, result ? "=true" : "=false");
+	if (_debug.enabled && (_debug.logic0 || logicNr))
+		debugConsole(logicNr, 0xFF, result ? "=true" : "=false");
 
 	return result;
 }
@@ -462,16 +476,26 @@ void AgiEngine::skipInstruction(byte op) {
 		return;
 	if (op == 0x0E && state->_vm->getVersion() >= 0x2000) // said
 		ip += *(code + ip) * 2 + 1;
-	else
-		ip += logicNamesTest[op].argumentsLength();
+	else {
+		ip += _opCodesCond[op].parameterSize;
+	}
 }
 
 void AgiEngine::skipInstructionsUntil(byte v) {
 	AgiGame *state = &_game;
+	int originalIP = state->_curLogic->cIP;
+
 	while (1) {
 		byte op = *(code + ip++);
 		if (op == v)
 			return;
+
+		if (op < 0xFC) {
+			if (!_opCodesCond[op].functionPtr) {
+				// security-check
+				error("illegal opcode %x during skipinstructions in script %d at %d (triggered at %d)", op, state->curLogicNr, ip, originalIP);
+			}
+		}
 		skipInstruction(op);
 	}
 }

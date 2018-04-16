@@ -41,7 +41,7 @@ class MohawkBitmap;
 class MohawkSurface {
 public:
 	MohawkSurface();
-	MohawkSurface(Graphics::Surface *surface, byte *palette = NULL, int offsetX = 0, int offsetY = 0);
+	explicit MohawkSurface(Graphics::Surface *surface, byte *palette = nullptr, int offsetX = 0, int offsetY = 0);
 	~MohawkSurface();
 
 	// getSurface() returns the surface in the current format
@@ -74,6 +74,10 @@ public:
 	// Free all surfaces in the cache
 	void clearCache();
 
+	// findImage will search the cache to find the image.
+	// If not found, it will call decodeImage to get a new one.
+	MohawkSurface *findImage(uint16 id);
+
 	void preloadImage(uint16 image);
 	virtual void setPalette(uint16 id);
 	void copyAnimImageToScreen(uint16 image, int left = 0, int top = 0);
@@ -84,10 +88,6 @@ public:
 
 protected:
 	void copyAnimImageSectionToScreen(MohawkSurface *image, Common::Rect src, Common::Rect dest);
-
-	// findImage will search the cache to find the image.
-	// If not found, it will call decodeImage to get a new one.
-	MohawkSurface *findImage(uint16 id);
 
 	// decodeImage will always return a new image.
 	virtual MohawkSurface *decodeImage(uint16 id) = 0;

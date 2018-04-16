@@ -202,6 +202,9 @@ void TimAnimator::playPart(int animIndex, int firstFrame, int lastFrame, int del
 		return;
 
 	Animation *anim = &_animations[animIndex];
+	// WORKAROUND for some bugged scripts that will try to play invalid animations
+	if (!anim->wsa)
+		return;
 
 	int step = (lastFrame >= firstFrame) ? 1 : -1;
 	for (int i = firstFrame; i != (lastFrame + step); i += step) {

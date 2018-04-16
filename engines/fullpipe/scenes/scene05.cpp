@@ -22,6 +22,7 @@
 
 #include "fullpipe/fullpipe.h"
 
+#include "fullpipe/gameloader.h"
 #include "fullpipe/objects.h"
 #include "fullpipe/objectnames.h"
 #include "fullpipe/constants.h"
@@ -36,6 +37,14 @@
 namespace Fullpipe {
 
 void scene05_initScene(Scene *sc) {
+	debugC(1, kDebugSceneLogic, "scene05_initScene()");
+
+#if 0
+	Inventory2 *inv = getGameLoaderInventory();
+	inv->addItem(ANI_INV_BOX, 1);
+	inv->rebuildItemRects();
+#endif
+
 	g_vars->scene05_handle = sc->getStaticANIObject1ById(ANI_HANDLE, -1);
 	g_vars->scene05_wacko = sc->getStaticANIObject1ById(ANI_OTMOROZ, -1);
 	g_vars->scene05_bigHatch = sc->getStaticANIObject1ById(ANI_BIGLUK, -1);
@@ -49,24 +58,32 @@ void scene05_initScene(Scene *sc) {
 
 	g_fp->_currentScene = sc;
 
+	debugC(2, kDebugSceneLogic, "scene05: Weird Wacko state: %d", g_fp->getObjectState(sO_WeirdWacko));
+
 	if (g_fp->getObjectState(sO_WeirdWacko) == g_fp->getObjectEnumState(sO_WeirdWacko, sO_InGlasses)) {
+		debugC(2, kDebugSceneLogic, "scene05: In glasses");
 		g_vars->scene05_wacko->changeStatics2(ST_OTM_GLS_LEFT);
 		g_vars->scene05_bigHatch->changeStatics2(ST_BLK_CLOSED);
 
 		g_vars->scene05_handle->changeStatics2(ST_HDL_UP);
 		g_vars->scene05_handle->_flags |= 4;
 	} else if (g_fp->getObjectState(sO_WeirdWacko) == g_fp->getObjectEnumState(sO_WeirdWacko, sO_WithDrawer)) {
+		debugC(2, kDebugSceneLogic, "scene05: With Drawer");
 		g_vars->scene05_wacko->changeStatics2(ST_OTM_BOX_LEFT);
 		g_vars->scene05_bigHatch->changeStatics2(ST_BLK_CLOSED);
 		g_vars->scene05_handle->changeStatics2(ST_HDL_UP);
 		g_vars->scene05_handle->_flags |= 4;
 	} else {
-		g_vars->scene05_wacko->changeStatics2(ST_OTM_VNT_LEFT);
-
 		if (g_fp->getObjectState(sO_WeirdWacko) != g_fp->getObjectEnumState(sO_WeirdWacko, sO_WithPlunger)) {
+			debugC(2, kDebugSceneLogic, "scene05: Without plunger");
+
 			g_vars->scene05_handle->changeStatics2(ST_HDL_BROKEN);
 			g_vars->scene05_bigHatch->changeStatics2(ST_BLK_CLOSED);
+		} else {
+			debugC(2, kDebugSceneLogic, "scene05: With plunger");
 		}
+
+		g_vars->scene05_wacko->changeStatics2(ST_OTM_VNT_LEFT);
 	}
 
 	g_fp->_currentScene = oldscene;
@@ -124,7 +141,7 @@ void sceneHandler05_makeWackoFeedback() {
 
 void sceneHandler05_resetTicks() {
 	if (g_fp->_aniMan->_movement && (g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEUP
-										   || g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
+											|| g_fp->_aniMan->_movement->_id == MV_MANHDL_HANDLEDOWN))
 		g_vars->scene05_wackoTicker = g_fp->_updateTicks;
 	else
 		g_vars->scene05_wackoTicker = 0;
@@ -134,17 +151,17 @@ void sceneHandler05_genFlies() {
 	if (g_vars->scene05_floatersTicker <= 1000)
 		return;
 
-	if (g_fp->_rnd->getRandomNumber(1)) {
-		int numFlies = g_fp->_rnd->getRandomNumber(3) + 1;
+	if (g_fp->_rnd.getRandomNumber(1)) {
+		int numFlies = g_fp->_rnd.getRandomNumber(3) + 1;
 
 		for (int i = 0; i < numFlies; i++) {
-			int x = g_fp->_rnd->getRandomNumber(55) + 538;
-			int y = g_fp->_rnd->getRandomNumber(60) + i * 30 + 520;
+			int x = g_fp->_rnd.getRandomNumber(55) + 538;
+			int y = g_fp->_rnd.getRandomNumber(60) + i * 30 + 520;
 
 			g_fp->_floaters->genFlies(g_fp->_currentScene, x, y, 5, 1);
-			g_fp->_floaters->_array2.back()->val2 = 585;
-			g_fp->_floaters->_array2.back()->val3 = -70;
-			g_fp->_floaters->_array2.back()->val11 = 8.0;
+			g_fp->_floaters->_array2.back().val2 = 585;
+			g_fp->_floaters->_array2.back().val3 = -70;
+			g_fp->_floaters->_array2.back().val11 = 8.0;
 		}
 	}
 
@@ -183,7 +200,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 
 	if (g_fp->_currentScene->getStaticANIObject1ById(ANI_BIGLUK, -1)->_statics->_staticsId == ST_BLK_CLOSED) {
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaLeft;
+		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		ex->postMessage();
 
@@ -216,7 +233,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 			mq->addExCommandToEnd(ex);
 
 			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-			ex->_keyCode = TrubaLeft;
+			ex->_param = TrubaLeft;
 			ex->_excFlags |= 2;
 			mq->addExCommandToEnd(ex);
 
@@ -232,7 +249,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaLeft;
+		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
 
@@ -258,11 +275,14 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 			mq->addExCommandToEnd(ex);
 
 			ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-			ex->_keyCode = TrubaLeft;
+			ex->_param = TrubaLeft;
 			ex->_excFlags |= 2;
 			mq->addExCommandToEnd(ex);
 
 			mq->_isFinished = 0;
+
+			if (!mq->chain(wacko))
+				delete mq;
 
 			return;
 		}
@@ -275,7 +295,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaLeft;
+		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		mq->addExCommandToEnd(ex);
 
@@ -285,7 +305,7 @@ void sceneHandler05_testHatch(ExCommand *inex) {
 		return;
 	} else {
 		ex = new ExCommand(SC_5, 17, 61, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = TrubaLeft;
+		ex->_param = TrubaLeft;
 		ex->_excFlags |= 2;
 		ex->postMessage();
 

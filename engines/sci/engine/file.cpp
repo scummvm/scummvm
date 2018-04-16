@@ -22,6 +22,7 @@
 
 #include "common/savefile.h"
 #include "common/stream.h"
+#include "common/memstream.h"
 
 #include "sci/sci.h"
 #include "sci/engine/file.h"
@@ -31,6 +32,73 @@
 #include "sci/engine/state.h"
 
 namespace Sci {
+
+#ifdef ENABLE_SCI32
+uint32 MemoryDynamicRWStream::read(void *dataPtr, uint32 dataSize) {
+	// Read at most as many bytes as are still available...
+	if (dataSize > _size - _pos) {
+		dataSize = _size - _pos;
+		_eos = true;
+	}
+	memcpy(dataPtr, _ptr, dataSize);
+
+	_ptr += dataSize;
+	_pos += dataSize;
+
+	return dataSize;
+}
+
+SaveFileRewriteStream::SaveFileRewriteStream(const Common::String &fileName,
+                                             Common::SeekableReadStream *inFile,
+                                             kFileOpenMode mode,
+                                             bool compress) :
+	MemoryDynamicRWStream(DisposeAfterUse::YES),
+	_fileName(fileName),
+	_compress(compress) {
+	const bool truncate = (mode == kFileOpenModeCreate);
+	const bool seekToEnd = (mode == kFileOpenModeOpenOrCreate);
+
+	if (!truncate && inFile) {
+		const uint s = inFile->size();
+		ensureCapacity(s);
+		inFile->read(_data, s);
+		if (seekToEnd) {
+			seek(0, SEEK_END);
+		}
+		_changed = false;
+	} else {
+		_changed = true;
+	}
+}
+
+SaveFileRewriteStream::~SaveFileRewriteStream() {
+	commit();
+}
+
+void SaveFileRewriteStream::commit() {
+	if (!_changed) {
+		return;
+	}
+
+	Common::ScopedPtr<Common::WriteStream> outFile(g_sci->getSaveFileManager()->openForSaving(_fileName, _compress));
+	outFile->write(_data, _size);
+	_changed = false;
+}
+#endif
+
+uint findFreeFileHandle(EngineState *s) {
+	// Find a free file handle
+	uint handle = 1; // Ignore _fileHandles[0]
+	while ((handle < s->_fileHandles.size()) && s->_fileHandles[handle].isOpen())
+		handle++;
+
+	if (handle == s->_fileHandles.size()) {
+		// Hit size limit => Allocate more space
+		s->_fileHandles.resize(s->_fileHandles.size() + 1);
+	}
+
+	return handle;
+}
 
 /*
  * Note on how file I/O is implemented: In ScummVM, one can not create/write
@@ -55,7 +123,7 @@ namespace Sci {
  * for reading only.
  */
 
-reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool unwrapFilename) {
+reg_t file_open(EngineState *s, const Common::String &filename, kFileOpenMode mode, bool unwrapFilename) {
 	Common::String englishName = g_sci->getSciLanguageString(filename, K_LANG_ENGLISH);
 	englishName.toLowercase();
 
@@ -66,16 +134,80 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 
 	bool isCompressed = true;
 	const SciGameId gameId = g_sci->getGameId();
-	if ((gameId == GID_QFG1 || gameId == GID_QFG1VGA || gameId == GID_QFG2 || gameId == GID_QFG3)
-		&& englishName.hasSuffix(".sav")) {
-		// QFG Characters are saved via the CharSave object.
-		// We leave them uncompressed so that they can be imported in later QFG
-		// games.
-		// Rooms/Scripts: QFG1: 601, QFG2: 840, QFG3/4: 52
+
+	// QFG Characters are saved via the CharSave object.
+	// We leave them uncompressed so that they can be imported in later QFG
+	// games, even when using the original interpreter.
+	// We check for room numbers in here, because the file suffix can be changed by the user.
+	// Rooms/Scripts: QFG1(EGA/VGA): 601, QFG2: 840, QFG3/4: 52
+	switch (gameId) {
+	case GID_QFG1:
+	case GID_QFG1VGA:
+		if (s->currentRoomNumber() == 601)
+			isCompressed = false;
+		break;
+	case GID_QFG2:
+		if (s->currentRoomNumber() == 840)
+			isCompressed = false;
+		break;
+	case GID_QFG3:
+	case GID_QFG4:
+		if (s->currentRoomNumber() == 52)
+			isCompressed = false;
+		break;
+#ifdef ENABLE_SCI32
+	// Hoyle5 has no save games, but creates very simple text-based game options
+	// files that do not need to be compressed
+	case GID_HOYLE5:
+	// Phantasmagoria game scripts create their own save files, so they are
+	// interoperable with the original interpreter just by renaming them as long
+	// as they are not compressed. They are also never larger than a couple
+	// hundred bytes, so compression does not do much here anyway
+	case GID_PHANTASMAGORIA:
 		isCompressed = false;
+		break;
+#endif
+	default:
+		break;
 	}
 
-	if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
+#ifdef ENABLE_SCI32
+	bool isRewritableFile;
+	switch (g_sci->getGameId()) {
+	case GID_PHANTASMAGORIA:
+		isRewritableFile = (filename == "phantsg.dir" || filename == "chase.dat" || filename == "tmp.dat");
+		break;
+	case GID_PQSWAT:
+		isRewritableFile = (filename == "swat.dat");
+		break;
+	default:
+		isRewritableFile = false;
+	}
+
+	if (isRewritableFile) {
+		debugC(kDebugLevelFile, "  -> file_open opening %s for rewriting", wrappedName.c_str());
+
+		inFile = saveFileMan->openForLoading(wrappedName);
+		// If no matching savestate exists: fall back to reading from a regular
+		// file
+		if (!inFile)
+			inFile = SearchMan.createReadStreamForMember(englishName);
+
+		if (mode == kFileOpenModeOpenOrFail && !inFile) {
+			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeOpenOrFail): failed to open file '%s'", englishName.c_str());
+			return SIGNAL_REG;
+		}
+
+		SaveFileRewriteStream *stream;
+		stream = new SaveFileRewriteStream(wrappedName, inFile, mode, isCompressed);
+
+		delete inFile;
+
+		inFile = stream;
+		outFile = stream;
+	} else
+#endif
+	if (mode == kFileOpenModeOpenOrFail) {
 		// Try to open file, abort if not possible
 		inFile = saveFileMan->openForLoading(wrappedName);
 		// If no matching savestate exists: fall back to reading from a regular
@@ -84,19 +216,19 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 			inFile = SearchMan.createReadStreamForMember(englishName);
 
 		if (!inFile)
-			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
-	} else if (mode == _K_FILE_MODE_CREATE) {
+			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeOpenOrFail): failed to open file '%s'", englishName.c_str());
+	} else if (mode == kFileOpenModeCreate) {
 		// Create the file, destroying any content it might have had
 		outFile = saveFileMan->openForSaving(wrappedName, isCompressed);
 		if (!outFile)
-			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
-	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
+			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeCreate): failed to create file '%s'", englishName.c_str());
+	} else if (mode == kFileOpenModeOpenOrCreate) {
 		// Try to open file, create it if it doesn't exist
 		outFile = saveFileMan->openForSaving(wrappedName, isCompressed);
 		if (!outFile)
-			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
+			debugC(kDebugLevelFile, "  -> file_open(kFileOpenModeCreate): failed to create file '%s'", englishName.c_str());
 
-		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first,
+		// QfG1 opens the character export file with kFileOpenModeCreate first,
 		// closes it immediately and opens it again with this here. Perhaps
 		// other games use this for read access as well. I guess changing this
 		// whole code into using virtual files and writing them after close
@@ -110,15 +242,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 		return SIGNAL_REG;
 	}
 
-	// Find a free file handle
-	uint handle = 1; // Ignore _fileHandles[0]
-	while ((handle < s->_fileHandles.size()) && s->_fileHandles[handle].isOpen())
-		handle++;
-
-	if (handle == s->_fileHandles.size()) {
-		// Hit size limit => Allocate more space
-		s->_fileHandles.resize(s->_fileHandles.size() + 1);
-	}
+	uint handle = findFreeFileHandle(s);
 
 	s->_fileHandles[handle]._in = inFile;
 	s->_fileHandles[handle]._out = outFile;
@@ -129,7 +253,7 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 }
 
 FileHandle *getFileFromHandle(EngineState *s, uint handle) {
-	if (handle == 0 || handle == VIRTUALFILE_HANDLE) {
+	if ((handle == 0) || ((handle >= kVirtualFileHandleStart) && (handle <= kVirtualFileHandleEnd))) {
 		error("Attempt to use invalid file handle (%d)", handle);
 		return 0;
 	}
@@ -155,7 +279,7 @@ int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	if (maxsize > 1) {
 		memset(dest, 0, maxsize);
 		f->_in->readLine(dest, maxsize);
-		readBytes = strlen(dest); // FIXME: sierra sci returned byte count and didn't react on NUL characters
+		readBytes = Common::strnlen(dest, maxsize); // FIXME: sierra sci returned byte count and didn't react on NUL characters
 		// The returned string must not have an ending LF
 		if (readBytes > 0) {
 			if (dest[readBytes - 1] == 0x0A)
@@ -175,41 +299,64 @@ static bool _savegame_sort_byDate(const SavegameDesc &l, const SavegameDesc &r) 
 	return (l.time > r.time);
 }
 
-// Create a sorted array containing all found savedgames
+bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc) {
+	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
+	Common::ScopedPtr<Common::SeekableReadStream> in(saveFileMan->openForLoading(filename));
+	if (!in) {
+		return false;
+	}
+
+	SavegameMetadata meta;
+	if (!get_savegame_metadata(in.get(), meta) || meta.name.empty()) {
+		return false;
+	}
+
+	const int id = strtol(filename.end() - 3, NULL, 10);
+	desc.id = id;
+	// We need to fix date in here, because we save DDMMYYYY instead of
+	// YYYYMMDD, so sorting wouldn't work
+	desc.date = ((meta.saveDate & 0xFFFF) << 16) | ((meta.saveDate & 0xFF0000) >> 8) | ((meta.saveDate & 0xFF000000) >> 24);
+	desc.time = meta.saveTime;
+	desc.version = meta.version;
+	desc.gameVersion = meta.gameVersion;
+	desc.script0Size = meta.script0Size;
+	desc.gameObjectOffset = meta.gameObjectOffset;
+#ifdef ENABLE_SCI32
+	if (g_sci->getGameId() == GID_SHIVERS) {
+		desc.lowScore = meta.lowScore;
+		desc.highScore = meta.highScore;
+	} else if (g_sci->getGameId() == GID_MOTHERGOOSEHIRES) {
+		desc.avatarId = meta.avatarId;
+	}
+#endif
+
+	if (meta.name.lastChar() == '\n')
+		meta.name.deleteLastChar();
+
+	// At least Phant2 requires use of strncpy, since it creates save game
+	// names of exactly kMaxSaveNameLength
+	strncpy(desc.name, meta.name.c_str(), kMaxSaveNameLength);
+
+	return true;
+}
+
+// Create an array containing all found savedgames, sorted by creation date
 void listSavegames(Common::Array<SavegameDesc> &saves) {
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
-
-	// Load all saves
 	Common::StringArray saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
 
 	for (Common::StringArray::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
-		Common::String filename = *iter;
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta) || meta.name.empty()) {
-				// invalid
-				delete in;
-				continue;
-			}
-			delete in;
+		const Common::String &filename = *iter;
 
-			SavegameDesc desc;
-			desc.id = strtol(filename.end() - 3, NULL, 10);
-			desc.date = meta.saveDate;
-			// We need to fix date in here, because we save DDMMYYYY instead of
-			// YYYYMMDD, so sorting wouldn't work
-			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
-			desc.time = meta.saveTime;
-			desc.version = meta.version;
+#ifdef ENABLE_SCI32
+		const int id = strtol(filename.end() - 3, NULL, 10);
+		if (id == kNewGameId || id == kAutoSaveId) {
+			continue;
+		}
+#endif
 
-			if (meta.name.lastChar() == '\n')
-				meta.name.deleteLastChar();
-
-			Common::strlcpy(desc.name, meta.name.c_str(), SCI_MAX_SAVENAME_LENGTH);
-
-			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
-
+		SavegameDesc desc;
+		if (fillSavegameDesc(filename, desc)) {
 			saves.push_back(desc);
 		}
 	}
@@ -227,6 +374,74 @@ int findSavegame(Common::Array<SavegameDesc> &saves, int16 savegameId) {
 	return -1;
 }
 
+#ifdef ENABLE_SCI32
+Common::MemoryReadStream *makeCatalogue(const uint maxNumSaves, const uint gameNameSize, const Common::String &fileNamePattern, const bool ramaFormat) {
+	enum {
+		kGameIdSize = sizeof(int16),
+		kNumSavesSize = sizeof(int16),
+		kFreeSlotSize = sizeof(int16),
+		kTerminatorSize = kGameIdSize,
+		kTerminator = 0xFFFF
+	};
+
+	Common::Array<SavegameDesc> games;
+	listSavegames(games);
+
+	const uint numSaves = MIN(games.size(), maxNumSaves);
+	const uint fileNameSize = fileNamePattern.empty() ? 0 : 12;
+	const uint entrySize = kGameIdSize + fileNameSize + gameNameSize;
+	uint dataSize = numSaves * entrySize + kTerminatorSize;
+	if (ramaFormat) {
+		dataSize += kNumSavesSize + kFreeSlotSize * maxNumSaves;
+	}
+
+	byte *out = (byte *)malloc(dataSize);
+	const byte *const data = out;
+
+	Common::Array<bool> usedSlots;
+	if (ramaFormat) {
+		WRITE_LE_UINT16(out, numSaves);
+		out += kNumSavesSize;
+		usedSlots.resize(maxNumSaves);
+	}
+
+	for (uint i = 0; i < numSaves; ++i) {
+		const SavegameDesc &save = games[i];
+		const uint16 id = save.id - kSaveIdShift;
+		if (!ramaFormat) {
+			WRITE_LE_UINT16(out, id);
+			out += kGameIdSize;
+		}
+		if (fileNameSize) {
+			const Common::String fileName = Common::String::format(fileNamePattern.c_str(), id);
+			strncpy(reinterpret_cast<char *>(out), fileName.c_str(), fileNameSize);
+			out += fileNameSize;
+		}
+		// Game names can be up to exactly gameNameSize
+		strncpy(reinterpret_cast<char *>(out), save.name, gameNameSize);
+		out += gameNameSize;
+		if (ramaFormat) {
+			WRITE_LE_UINT16(out, id);
+			out += kGameIdSize;
+
+			assert(id < maxNumSaves);
+			usedSlots[id] = true;
+		}
+	}
+
+	if (ramaFormat) {
+		// A table indicating which save game slots are occupied
+		for (uint i = 0; i < usedSlots.size(); ++i) {
+			WRITE_LE_UINT16(out, !usedSlots[i]);
+			out += kFreeSlotSize;
+		}
+	}
+
+	WRITE_LE_UINT16(out, kTerminator);
+
+	return new Common::MemoryReadStream(data, dataSize, DisposeAfterUse::YES);
+}
+#endif
 
 FileHandle::FileHandle() : _in(0), _out(0) {
 }
@@ -236,8 +451,12 @@ FileHandle::~FileHandle() {
 }
 
 void FileHandle::close() {
-	delete _in;
-	delete _out;
+	// NB: It is possible _in and _out are both non-null, but
+	// then they point to the same object.
+	if (_in)
+		delete _in;
+	else
+		delete _out;
 	_in = 0;
 	_out = 0;
 	_name.clear();
@@ -252,6 +471,9 @@ void DirSeeker::addAsVirtualFiles(Common::String title, Common::String fileMask)
 	Common::SaveFileManager *saveFileMan = g_sci->getSaveFileManager();
 	Common::StringArray foundFiles = saveFileMan->listSavefiles(fileMask);
 	if (!foundFiles.empty()) {
+		// Sort all filenames alphabetically
+		Common::sort(foundFiles.begin(), foundFiles.end());
+
 		_files.push_back(title);
 		_virtualFiles.push_back("");
 		Common::StringArray::iterator it;
@@ -345,120 +567,5 @@ reg_t DirSeeker::nextFile(SegManager *segMan) {
 	++_iter;
 	return _outbuffer;
 }
-
-
-#ifdef ENABLE_SCI32
-
-VirtualIndexFile::VirtualIndexFile(Common::String fileName) : _fileName(fileName), _changed(false) {
-	Common::SeekableReadStream *inFile = g_sci->getSaveFileManager()->openForLoading(fileName);
-
-	_bufferSize = inFile->size();
-	_buffer = new char[_bufferSize];
-	inFile->read(_buffer, _bufferSize);
-	_ptr = _buffer;
-	delete inFile;
-}
-
-VirtualIndexFile::VirtualIndexFile(uint32 initialSize) : _changed(false) {
-	_bufferSize = initialSize;
-	_buffer = new char[_bufferSize];
-	_ptr = _buffer;
-}
-
-VirtualIndexFile::~VirtualIndexFile() {
-	close();
-
-	_bufferSize = 0;
-	delete[] _buffer;
-	_buffer = 0;
-}
-
-uint32 VirtualIndexFile::read(char *buffer, uint32 size) {
-	uint32 curPos = _ptr - _buffer;
-	uint32 finalSize = MIN<uint32>(size, _bufferSize - curPos);
-	char *localPtr = buffer;
-
-	for (uint32 i = 0; i < finalSize; i++)
-		*localPtr++ = *_ptr++;
-
-	return finalSize;
-}
-
-uint32 VirtualIndexFile::write(const char *buffer, uint32 size) {
-	_changed = true;
-	uint32 curPos = _ptr - _buffer;
-
-	// Check if the buffer needs to be resized
-	if (curPos + size >= _bufferSize) {
-		_bufferSize = curPos + size + 1;
-		char *tmp = _buffer;
-		_buffer = new char[_bufferSize];
-		_ptr = _buffer + curPos;
-		memcpy(_buffer, tmp, _bufferSize);
-		delete[] tmp;
-	}
-
-	for (uint32 i = 0; i < size; i++)
-		*_ptr++ = *buffer++;
-
-	return size;
-}
-
-uint32 VirtualIndexFile::readLine(char *buffer, uint32 size) {
-	uint32 startPos = _ptr - _buffer;
-	uint32 bytesRead = 0;
-	char *localPtr = buffer;
-
-	// This is not a full-blown implementation of readLine, but it
-	// suffices for Phantasmagoria
-	while (startPos + bytesRead < size) {
-		bytesRead++;
-
-		if (*_ptr == 0 || *_ptr == 0x0A) {
-			_ptr++;
-			*localPtr = 0;
-			return bytesRead;
-		} else {
-			*localPtr++ = *_ptr++;
-		}
-	}
-
-	return bytesRead;
-}
-
-bool VirtualIndexFile::seek(int32 offset, int whence) {
-	uint32 startPos = _ptr - _buffer;
-	assert(offset >= 0);
-
-	switch (whence) {
-	case SEEK_CUR:
-		assert(startPos + offset < _bufferSize);
-		_ptr += offset;
-		break;
-	case SEEK_SET:
-		assert(offset < (int32)_bufferSize);
-		_ptr = _buffer + offset;
-		break;
-	case SEEK_END:
-		assert((int32)_bufferSize - offset >= 0);
-		_ptr = _buffer + (_bufferSize - offset);
-		break;
-	}
-
-	return true;
-}
-
-void VirtualIndexFile::close() {
-	if (_changed && !_fileName.empty()) {
-		Common::WriteStream *outFile = g_sci->getSaveFileManager()->openForSaving(_fileName);
-		outFile->write(_buffer, _bufferSize);
-		delete outFile;
-	}
-
-	// Maintain the buffer, and seek to the beginning of it
-	_ptr = _buffer;
-}
-
-#endif
 
 } // End of namespace Sci

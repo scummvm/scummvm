@@ -43,13 +43,13 @@
 #include "engines/engine.h"
 #include "engines/metaengine.h"
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 #include "gui/KeysDialog.h"
 #endif
 
 class ConfigDialog : public GUI::OptionsDialog {
 protected:
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	GUI::Dialog		*_keysDialog;
 #endif
 
@@ -85,11 +85,11 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), 0, kPlayCmd, 'P');
 
 	_loadButton = new GUI::ButtonWidget(this, "GlobalMenu.Load", _("~L~oad"), 0, kLoadCmd);
-	// TODO: setEnabled -> setVisible
+	_loadButton->setVisible(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
 	_loadButton->setEnabled(_engine->hasFeature(Engine::kSupportsLoadingDuringRuntime));
 
 	_saveButton = new GUI::ButtonWidget(this, "GlobalMenu.Save", _("~S~ave"), 0, kSaveCmd);
-	// TODO: setEnabled -> setVisible
+	_saveButton->setVisible(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Options", _("~O~ptions"), 0, kOptionsCmd);
@@ -231,7 +231,7 @@ void MainMenuDialog::save() {
 
 		Common::Error status = _engine->saveGameState(slot, result);
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Gamestate save failed (%s)! "
+			Common::String failMessage = Common::String::format(_("Failed to save game (%s)! "
 				  "Please consult the README for basic information, and for "
 				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
@@ -307,14 +307,14 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 	new GUI::ButtonWidget(this, "GlobalConfig.Ok", _("~O~K"), 0, GUI::kOKCmd);
 	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", _("~C~ancel"), 0, GUI::kCloseCmd);
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	new GUI::ButtonWidget(this, "GlobalConfig.Keys", _("~K~eys"), 0, kKeysCmd);
 	_keysDialog = NULL;
 #endif
 }
 
 ConfigDialog::~ConfigDialog() {
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	delete _keysDialog;
 #endif
 }
@@ -323,7 +323,7 @@ void ConfigDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 
 	switch (cmd) {
 	case kKeysCmd:
 
-#ifdef SMALL_SCREEN_DEVICE
+#ifdef GUI_ENABLE_KEYSDIALOG
 	//
 	// Create the sub dialog(s)
 	//

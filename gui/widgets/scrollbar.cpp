@@ -26,6 +26,7 @@
 #include "gui/widgets/scrollbar.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEngine.h"
+#include "gui/widgets/scrollcontainer.h"
 
 namespace GUI {
 
@@ -134,7 +135,7 @@ void ScrollBarWidget::handleMouseMoved(int x, int y, int button) {
 			_part = kSliderPart;
 
 		if (old_part != _part)
-			draw();
+			markAsDirty();
 	}
 }
 
@@ -164,7 +165,7 @@ void ScrollBarWidget::checkBounds(int old_pos) {
 
 	if (old_pos != _currentPos) {
 		recalc();
-		draw();
+		markAsDirty();
 		sendCommand(kSetPositionCmd, _currentPos);
 	}
 }
@@ -202,7 +203,11 @@ void ScrollBarWidget::drawWidget() {
 		state = ThemeEngine::kScrollbarStateSlider;
 	}
 
-	g_gui.theme()->drawScrollbar(Common::Rect(_x, _y, _x+_w, _y+_h), _sliderPos, _sliderHeight, state, _state);
+	Common::Rect clipRect = getBossClipRect();
+	//scrollbar is not a usual child of ScrollContainerWidget, so it gets this special treatment
+	if (dynamic_cast<ScrollContainerWidget *>(_boss))
+		clipRect.right += _w;
+	g_gui.theme()->drawScrollbarClip(Common::Rect(_x, _y, _x+_w, _y+_h), clipRect, _sliderPos, _sliderHeight, state, _state);
 }
 
 } // End of namespace GUI

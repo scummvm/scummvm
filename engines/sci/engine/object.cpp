@@ -23,63 +23,151 @@
 
 #include "sci/engine/kernel.h"
 #include "sci/engine/object.h"
+#include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
+#ifdef ENABLE_SCI32
+#include "sci/engine/features.h"
+#endif
 
 namespace Sci {
 
-// This helper function is used by Script::relocateLocal and Object::relocate
-// Duplicate in segment.cpp and script.cpp
-static bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, size_t scriptSize) {
-	int rel = location - block_location;
+extern bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, uint32 heapOffset);
 
-	if (rel < 0)
-		return false;
-
-	uint idx = rel >> 1;
-
-	if (idx >= block.size())
-		return false;
-
-	if (rel & 1) {
-		error("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
-		return false;
-	}
-	block[idx].setSegment(segment); // Perform relocation
-	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
-		block[idx].incOffset(scriptSize);
-
-	return true;
-}
-
-void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
-	byte *data = buf + obj_pos.getOffset();
+void Object::init(const Script &owner, reg_t obj_pos, bool initVariables) {
+	const SciSpan<const byte> buf = owner.getSpan(0);
+	const SciSpan<const byte> data = owner.getSpan(obj_pos.getOffset());
 	_baseObj = data;
 	_pos = obj_pos;
 
+	// Calling Object::init more than once will screw up _baseVars/_baseMethod
+	// by duplicating data. This could be turned into a soft error by warning
+	// instead and clearing arrays, but there does not currently seem to be any
+	// reason for an object to be initialized multiple times
+	if (_baseVars.size() || _baseMethod.size()) {
+		error("Attempt to reinitialize already-initialized object %04x:%04x in script %u", PRINT_REG(obj_pos), owner.getScriptNumber());
+	}
+
 	if (getSciVersion() <= SCI_VERSION_1_LATE) {
-		_variables.resize(READ_LE_UINT16(data + kOffsetSelectorCounter));
-		_baseVars = (const uint16 *)(_baseObj + _variables.size() * 2);
-		_methodCount = READ_LE_UINT16(data + READ_LE_UINT16(data + kOffsetFunctionArea) - 2);
-		for (int i = 0; i < _methodCount * 2 + 2; ++i) {
-			_baseMethod.push_back(READ_SCI11ENDIAN_UINT16(data + READ_LE_UINT16(data + kOffsetFunctionArea) + i * 2));
+		const SciSpan<const byte> header = buf.subspan(obj_pos.getOffset() - kOffsetHeaderSize);
+		_variables.resize(header.getUint16LEAt(kOffsetHeaderSelectorCounter));
+
+		// Non-class objects do not have a baseVars section
+		const uint16 infoSelector = data.getUint16SEAt((_offset + 2) * sizeof(uint16));
+		if (infoSelector & kInfoFlagClass) {
+			_baseVars.reserve(_variables.size());
+			uint baseVarsOffset = _variables.size() * sizeof(uint16);
+			for (uint i = 0; i < _variables.size(); ++i) {
+				_baseVars.push_back(data.getUint16SEAt(baseVarsOffset));
+				baseVarsOffset += sizeof(uint16);
+			}
 		}
-	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1) {
-		_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
-		_baseVars = (const uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
-		_methodCount = READ_SCI11ENDIAN_UINT16(buf + READ_SCI11ENDIAN_UINT16(data + 6));
-		for (int i = 0; i < _methodCount * 2 + 3; ++i) {
-			_baseMethod.push_back(READ_SCI11ENDIAN_UINT16(buf + READ_SCI11ENDIAN_UINT16(data + 6) + i * 2));
+
+		// method block structure:
+		// uint16 count;
+		// uint16 selectorNos[count];
+		// uint16 zero;
+		// uint16 codeOffsets[count];
+
+		const uint16 methodBlockOffset = header.getUint16LEAt(kOffsetHeaderFunctionArea) - 2;
+		_methodCount = data.getUint16LEAt(methodBlockOffset);
+		const uint32 methodBlockSize = _methodCount * 2 * sizeof(uint16) + /* zero-terminator after selector list */ sizeof(uint16);
+
+		SciSpan<const uint16> methodEntries = data.subspan<const uint16>(methodBlockOffset + /* count */ sizeof(uint16), methodBlockSize);
+
+		// If this happens, then there is either a corrupt script or this code
+		// misunderstands the structure of the SCI0/1 method block
+		if (methodEntries.getUint16SEAt(_methodCount) != 0) {
+			warning("Object %04x:%04x in script %u has a value (0x%04x) in its zero-terminator field", PRINT_REG(obj_pos), owner.getScriptNumber(), methodEntries.getUint16SEAt(_methodCount));
 		}
+
+		_baseMethod.reserve(_methodCount * 2);
+		for (uint i = 0; i < _methodCount; ++i) {
+			_baseMethod.push_back(methodEntries.getUint16SEAt(0));
+			_baseMethod.push_back(methodEntries.getUint16SEAt(_methodCount + /* zero-terminator */ 1));
+			++methodEntries;
+		}
+	} else if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1_LATE) {
+		_variables.resize(data.getUint16SEAt(2));
+
+		// Non-class objects do not have a baseVars section
+		const uint16 infoSelector = data.getUint16SEAt((_offset + 2) * sizeof(uint16));
+		if (infoSelector & kInfoFlagClass) {
+			_baseVars.reserve(_variables.size());
+			uint baseVarsOffset = data.getUint16SEAt(4);
+			for (uint i = 0; i < _variables.size(); ++i) {
+				_baseVars.push_back(buf.getUint16SEAt(baseVarsOffset));
+				baseVarsOffset += sizeof(uint16);
+			}
+		}
+
+		// method block structure:
+		// uint16 count;
+		// struct {
+		//   uint16 selectorNo;
+		//   uint16 codeOffset;
+		// } entries[count];
+
+		const uint16 methodBlockOffset = data.getUint16SEAt(6);
+		_methodCount = buf.getUint16SEAt(methodBlockOffset);
+
+		// Each entry in _baseMethod is actually two values; the first field is
+		// a selector number, and the second field is an offset to the method's
+		// code in the script
+		const uint32 methodBlockSize = _methodCount * 2 * sizeof(uint16);
+		_baseMethod.reserve(_methodCount * 2);
+
+		SciSpan<const uint16> methodEntries = buf.subspan<const uint16>(methodBlockOffset + /* count */ sizeof(uint16), methodBlockSize);
+		for (uint i = 0; i < _methodCount; ++i) {
+			_baseMethod.push_back(methodEntries.getUint16SEAt(0));
+			_baseMethod.push_back(methodEntries.getUint16SEAt(1));
+			methodEntries += 2;
+		}
+#ifdef ENABLE_SCI32
 	} else if (getSciVersion() == SCI_VERSION_3) {
-		initSelectorsSci3(buf);
+		initSelectorsSci3(buf, initVariables);
+#endif
+	}
+
+	// Some objects, like the unnamed LarryTalker instance in LSL6hires script
+	// 610, and the File class in Torin script 64993, have a `name` property
+	// that is assigned dynamically by game scripts, overriding the static name
+	// value that is normally created by the SC compiler. When this happens, the
+	// value can be set to anything: in LSL6hires it becomes a Str object; in
+	// Torin, it becomes a dynamically allocated string that is disposed before
+	// the corresponding File instance is disposed.
+	// To ensure `SegManager::getObjectName` works consistently and correctly,
+	// without hacks to bypass unexpected/invalid types of dynamic `name` data,
+	// the reg_t pointer to the original static name value for the object is
+	// stored here, ensuring that it is constant and guaranteed to be either a
+	// valid dereferenceable string or NULL_REG.
+	if (getSciVersion() != SCI_VERSION_3) {
+		const uint32 heapOffset = owner.getHeapOffset();
+		const uint32 nameOffset = (obj_pos.getOffset() - heapOffset) + (_offset + 3) * sizeof(uint16);
+		const uint32 relocOffset = owner.getRelocationOffset(nameOffset);
+		if (relocOffset != kNoRelocation) {
+			_name = make_reg(obj_pos.getSegment(), relocOffset + _baseObj.getUint16SEAt((_offset + 3) * sizeof(uint16)));
+		}
+#ifdef ENABLE_SCI32
+	} else if (_propertyOffsetsSci3.size()) {
+		const uint32 nameOffset = _propertyOffsetsSci3[0];
+		const uint32 relocOffset = owner.getRelocationOffset(nameOffset);
+		if (relocOffset != kNoRelocation) {
+			_name.setSegment(obj_pos.getSegment());
+			_name.setOffset(relocOffset + buf.getUint16SEAt(nameOffset));
+		}
+#endif
 	}
 
 	if (initVariables) {
-		if (getSciVersion() <= SCI_VERSION_2_1) {
-			for (uint i = 0; i < _variables.size(); i++)
-				_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
+#ifdef ENABLE_SCI32
+		if (getSciVersion() == SCI_VERSION_3) {
+			_infoSelectorSci3 = make_reg(0, data.getUint16SEAt(10));
 		} else {
-			_infoSelectorSci3 = make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 10));
+#else
+		{
+#endif
+			for (uint i = 0; i < _variables.size(); i++)
+				_variables[i] = make_reg(0, data.getUint16SEAt(i * sizeof(uint16)));
 		}
 	}
 }
@@ -89,31 +177,36 @@ const Object *Object::getClass(SegManager *segMan) const {
 }
 
 int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
-	const byte *buf = 0;
-	uint varnum = 0;
+	const Common::Array<uint16> *buf;
+	uint varCount;
 
-	if (getSciVersion() <= SCI_VERSION_2_1) {
+#ifdef ENABLE_SCI32
+	if (getSciVersion() == SCI_VERSION_3) {
+		buf = &_baseVars;
+		varCount = getVarCount();
+	} else {
+#else
+	{
+#endif
 		const Object *obj = getClass(segMan);
-		varnum = getSciVersion() <= SCI_VERSION_1_LATE ? getVarCount() : obj->getVariable(1).toUint16();
-		buf = (const byte *)obj->_baseVars;
-	} else if (getSciVersion() == SCI_VERSION_3) {
-		varnum = _variables.size();
-		buf = (const byte *)_baseVars;
+		buf = &obj->_baseVars;
+		varCount = obj->getVarCount();
 	}
 
-	for (uint i = 0; i < varnum; i++)
-		if (READ_SCI11ENDIAN_UINT16(buf + (i << 1)) == slc) // Found it?
+	for (uint i = 0; i < varCount; i++)
+		if ((*buf)[i] == slc) // Found it?
 			return i; // report success
 
 	return -1; // Failed
 }
 
-bool Object::relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize) {
-	return relocateBlock(_variables, getPos().getOffset(), segment, location, scriptSize);
+bool Object::relocateSci0Sci21(SegmentId segment, int location, uint32 heapOffset) {
+	return relocateBlock(_variables, getPos().getOffset(), segment, location, heapOffset);
 }
 
-bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize) {
-	assert(_propertyOffsetsSci3);
+#ifdef ENABLE_SCI32
+bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, uint32 scriptSize) {
+	assert(offset >= 0 && (uint)offset < scriptSize);
 
 	for (uint i = 0; i < _variables.size(); ++i) {
 		if (location == _propertyOffsetsSci3[i]) {
@@ -125,6 +218,7 @@ bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, size_t
 
 	return false;
 }
+#endif
 
 int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 	int selectors = getVarCount();
@@ -136,14 +230,14 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 	}
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
-		const byte *selectoroffset = ((const byte *)(_baseObj)) + kOffsetSelectorSegment + selectors * 2;
-		return READ_SCI11ENDIAN_UINT16(selectoroffset + propertyOffset);
+		const SciSpan<const byte> selectoroffset = _baseObj.subspan(kOffsetSelectorSegment + selectors * 2);
+		return selectoroffset.getUint16SEAt(propertyOffset);
 	} else {
 		const Object *obj = this;
 		if (!isClass())
 			obj = segMan->getObject(getSuperClassSelector());
 
-		return READ_SCI11ENDIAN_UINT16((const byte *)obj->_baseVars + propertyOffset);
+		return obj->_baseVars[propertyOffset >> 1];
 	}
 }
 
@@ -244,100 +338,134 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 	return false;
 }
 
-const int EXTRA_GROUPS = 3;
+#ifdef ENABLE_SCI32
+bool Object::mustSetViewVisible(int index, const bool fromPropertyOp) const {
+	if (getSciVersion() == SCI_VERSION_3) {
+		// In SCI3, visible flag lookups are based on selectors
 
-void Object::initSelectorsSci3(const byte *buf) {
-	const byte *groupInfo = _baseObj + 16;
-	const byte *selectorBase = groupInfo + EXTRA_GROUPS * 32 * 2;
-	int groups = g_sci->getKernel()->getSelectorNamesSize()/32;
-	int methods, properties;
+		if (!fromPropertyOp) {
+			// varindexes must be converted to selectors
+			index = getVarSelector(index);
+		}
 
-	if (g_sci->getKernel()->getSelectorNamesSize() % 32)
-		++groups;
+		if (index == -1) {
+			error("Selector %d is invalid for object %04x:%04x", index, PRINT_REG(_pos));
+		}
 
-	methods = properties = 0;
+		return _mustSetViewVisible[index >> 5];
+	} else {
+		// In SCI2, visible flag lookups are based on varindexes
+
+		if (fromPropertyOp) {
+			// property offsets must be converted to varindexes
+			assert((index % 2) == 0);
+			index >>= 1;
+		}
+
+		int minIndex, maxIndex;
+		if (g_sci->_features->usesAlternateSelectors()) {
+			minIndex = 24;
+			maxIndex = 43;
+		} else {
+			minIndex = 26;
+			maxIndex = 44;
+		}
+
+		return index >= minIndex && index <= maxIndex;
+	}
+}
+
+void Object::initSelectorsSci3(const SciSpan<const byte> &buf, const bool initVariables) {
+	enum {
+		kExtraGroups = 3,
+		kGroupSize   = 32
+	};
+
+	const SciSpan<const byte> groupInfo = _baseObj.subspan(16);
+	const SciSpan<const byte> selectorBase = groupInfo.subspan(kExtraGroups * kGroupSize * sizeof(uint16));
+
+	int numGroups = g_sci->getKernel()->getSelectorNamesSize() / kGroupSize;
+	if (g_sci->getKernel()->getSelectorNamesSize() % kGroupSize)
+		++numGroups;
+
+	_mustSetViewVisible.resize(numGroups);
+
+	int numMethods = 0;
+	int numProperties = 0;
 
 	// Selectors are divided into groups of 32, of which the first
 	// two selectors are always reserved (because their storage
 	// space is used by the typeMask).
 	// We don't know beforehand how many methods and properties
 	// there are, so we count them first.
-	for (int groupNr = 0; groupNr < groups; ++groupNr) {
+	for (int groupNr = 0; groupNr < numGroups; ++groupNr) {
 		byte groupLocation = groupInfo[groupNr];
-		const byte *seeker = selectorBase + groupLocation * 32 * 2;
+		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * kGroupSize * sizeof(uint16));
 
 		if (groupLocation != 0)	{
 			// This object actually has selectors belonging to this group
-			int typeMask = READ_SCI11ENDIAN_UINT32(seeker);
+			int typeMask = seeker.getUint32SEAt(0);
 
-			for (int bit = 2; bit < 32; ++bit) {
-				int value = READ_SCI11ENDIAN_UINT16(seeker + bit * 2);
+			_mustSetViewVisible[groupNr] = (typeMask & 1);
+
+			for (int bit = 2; bit < kGroupSize; ++bit) {
+				int value = seeker.getUint16SEAt(bit * sizeof(uint16));
 				if (typeMask & (1 << bit)) { // Property
-					++properties;
+					++numProperties;
 				} else if (value != 0xffff) { // Method
-					++methods;
+					++numMethods;
 				} else {
 					// Undefined selector
 				}
-
 			}
-		}
+		} else
+			_mustSetViewVisible[groupNr] = false;
 	}
 
-	_variables.resize(properties);
-	uint16 *propertyIds = (uint16 *)malloc(sizeof(uint16) * properties);
-//	uint16 *methodOffsets = (uint16 *)malloc(sizeof(uint16) * 2 * methods);
-	uint32 *propertyOffsets = (uint32 *)malloc(sizeof(uint32) * properties);
-	int propertyCounter = 0;
-	int methodCounter = 0;
+	_methodCount = numMethods;
+	_variables.resize(numProperties);
+	_baseVars.resize(numProperties);
+	_propertyOffsetsSci3.resize(numProperties);
 
 	// Go through the whole thing again to get the property values
 	// and method pointers
-	for (int groupNr = 0; groupNr < groups; ++groupNr) {
+	int propertyCounter = 0;
+	for (int groupNr = 0; groupNr < numGroups; ++groupNr) {
 		byte groupLocation = groupInfo[groupNr];
-		const byte *seeker = selectorBase + groupLocation * 32 * 2;
+		const SciSpan<const byte> seeker = selectorBase.subspan(groupLocation * kGroupSize * sizeof(uint16));
 
 		if (groupLocation != 0)	{
 			// This object actually has selectors belonging to this group
-			int typeMask = READ_SCI11ENDIAN_UINT32(seeker);
-			int groupBaseId = groupNr * 32;
+			int typeMask = seeker.getUint32SEAt(0);
+			int groupBaseId = groupNr * kGroupSize;
 
-			for (int bit = 2; bit < 32; ++bit) {
-				int value = READ_SCI11ENDIAN_UINT16(seeker + bit * 2);
+			for (int bit = 2; bit < kGroupSize; ++bit) {
+				int value = seeker.getUint16SEAt(bit * sizeof(uint16));
 				if (typeMask & (1 << bit)) { // Property
-
-					// FIXME: We really shouldn't be doing endianness
-					// conversion here; instead, propertyIds should be converted
-					// to a Common::Array, like _baseMethod already is
-					// This interim solution fixes playing SCI3 PC games
-					// on Big Endian platforms
-
-					WRITE_SCI11ENDIAN_UINT16(&propertyIds[propertyCounter],
-					                         groupBaseId + bit);
-					_variables[propertyCounter] = make_reg(0, value);
-					uint32 propertyOffset = (seeker + bit * 2) - buf;
-					propertyOffsets[propertyCounter] = propertyOffset;
+					_baseVars[propertyCounter] = groupBaseId + bit;
+					if (initVariables) {
+						_variables[propertyCounter] = make_reg(0, value);
+					}
+					uint32 propertyOffset = (seeker + bit * sizeof(uint16)) - buf;
+					_propertyOffsetsSci3[propertyCounter] = propertyOffset;
 					++propertyCounter;
 				} else if (value != 0xffff) { // Method
 					_baseMethod.push_back(groupBaseId + bit);
-					_baseMethod.push_back(value + READ_SCI11ENDIAN_UINT32(buf));
-//					methodOffsets[methodCounter] = (seeker + bit * 2) - buf;
-					++methodCounter;
+					const uint32 offset = value + buf.getUint32SEAt(0);
+					assert(offset <= kOffsetMask);
+					_baseMethod.push_back(offset);
 				} else {
 					// Undefined selector
 				}
-
 			}
 		}
 	}
 
-	_speciesSelectorSci3 = make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 4));
-	_superClassPosSci3 = make_reg(0, READ_SCI11ENDIAN_UINT16(_baseObj + 8));
-
-	_baseVars = propertyIds;
-	_methodCount = methods;
-	_propertyOffsetsSci3 = propertyOffsets;
-	//_methodOffsetsSci3 = methodOffsets;
+	if (initVariables) {
+		_speciesSelectorSci3 = make_reg(0, _baseObj.getUint16SEAt(4));
+		_superClassPosSci3 = make_reg(0, _baseObj.getUint16SEAt(8));
+	}
 }
+#endif
 
 } // End of namespace Sci

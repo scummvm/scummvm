@@ -43,7 +43,9 @@
 
 namespace Sword25 {
 
+#ifndef FLT_EPSILON
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
+#endif
 
 #ifdef USE_THEORADEC
 MoviePlayer::MoviePlayer(Kernel *pKernel) : Service(pKernel), _decoder() {
@@ -58,6 +60,8 @@ MoviePlayer::~MoviePlayer() {
 }
 
 bool MoviePlayer::loadMovie(const Common::String &filename, uint z) {
+	if (isMovieLoaded())
+		unloadMovie();
 	// Get the file and load it into the decoder
 	Common::SeekableReadStream *in = Kernel::getInstance()->getPackage()->getStream(filename);
 	_decoder.loadStream(in);
@@ -123,7 +127,7 @@ void MoviePlayer::update() {
 		if (_decoder.endOfVideo()) {
 			// Movie complete, so unload the movie
 			unloadMovie();
-		} else {
+		} else if (_decoder.needsUpdate()) {
 			const Graphics::Surface *s = _decoder.decodeNextFrame();
 			if (s) {
 				// Transfer the next frame

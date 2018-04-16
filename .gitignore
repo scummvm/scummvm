@@ -9,6 +9,7 @@ lib*.a
 /config.log
 /scummvm
 /scummvm-static
+/ScummVMDockTilePlugin*
 /config.h
 /config.mk
 /.gdb_history
@@ -19,8 +20,14 @@ lib*.a
 /MT32_CONTROL.ROM
 /MT32_PCM.ROM
 /ScummVM.app
+/scummvm.docktileplugin
+/\!ScummVM
+/*,e1f
 /scummvm-ps3.pkg
 /*.ipk
+/map.txt
+*.elf
+/*.nds
 /.project
 /.cproject
 /.settings
@@ -49,6 +56,7 @@ lib*.a
 /backends/platform/ds/arm7/build
 /backends/platform/ds/arm7/source/libcartreset/*.bak
 /backends/platform/ds/arm7/source/libcartreset/*.d
+/backends/platform/ds/arm9/data/*.h
 /backends/platform/ds/arm9/scummvm-?
 
 /backends/platform/maemo/scummvm
@@ -94,6 +102,10 @@ project.xcworkspace
 /dists/msvc*/*.dat
 /dists/msvc*/*.dll
 /dists/msvc*/test_runner.cpp
+
+/dists/engine-data/testbed-audiocd-files/testbed.config
+/dists/engine-data/testbed-audiocd-files/testbed.out
+
 
 /doc/*.aux
 /doc/*.dvi
@@ -152,6 +164,7 @@ Thumbs.db
 *.sbr
 *.sdf
 *.opensdf
+*.opendb
 obj/
 _ReSharper*/
 ipch/
@@ -163,6 +176,8 @@ ipch/
 *.vcxproj*
 *.bat
 *.tss
+*.VC.db
+.vs/
 
 #Ignore default Visual Studio build folders
 [Dd]ebug/
@@ -192,3 +207,19 @@ ScummVM.includes
 #Ignore MS Visual C++ temporary files/subdirectories (except create_project.bat)
 dists/msvc*/**
 !dists/msvc*/create_project.bat
+
+#Ignore bison debug output
+*.output
+
+#Ignore Xcode output/project files
+out/
+/*.xcodeproj
+
+#Ignore PSP2 files
+psp2pkg/
+*.velf
+*.vpk
+
+#Ignore gmon.out created by gprof
+gmon.out
+/scummvm_libs_2015

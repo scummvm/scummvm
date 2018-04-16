@@ -8,26 +8,26 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
+#include "audio/fmopl.h"
 #include "common/algorithm.h"
-#include "common/debug.h"
 #include "common/md5.h"
-#include "common/memstream.h"
-#include "mads/sound.h"
 #include "mads/nebular/sound_nebular.h"
+
+namespace Audio {
+class Mixer;
+}
 
 namespace MADS {
 
@@ -36,6 +36,7 @@ namespace Nebular {
 bool AdlibChannel::_channelsEnabled;
 
 AdlibChannel::AdlibChannel() {
+	_owner = nullptr;
 	_activeCount = 0;
 	_field1 = 0;
 	_field2 = 0;
@@ -43,6 +44,7 @@ AdlibChannel::AdlibChannel() {
 	_field4 = 0;
 	_sampleIndex = 0;
 	_volume = 0;
+	_volumeOffset = 0;
 	_field7 = 0;
 	_field8 = 0;
 	_field9 = 0;
@@ -55,11 +57,11 @@ AdlibChannel::AdlibChannel() {
 	_pSrc = nullptr;
 	_ptr3 = nullptr;
 	_ptr4 = nullptr;
+	_ptrEnd = nullptr;
 	_field17 = 0;
 	_field19 = 0;
 	_soundData = nullptr;
 	_field1D = 0;
-	_field1E = 0;
 	_field1F = 0;
 
 	_field20 = 0;
@@ -95,6 +97,7 @@ void AdlibChannel::setPtr2(byte *pData) {
 void AdlibChannel::load(byte *pData) {
 	_ptr1 = _pSrc = _ptr3 = pData;
 	_ptr4 = _soundData = pData;
+	_volumeOffset = 0;
 	_fieldA = 0xFF;
 	_activeCount = 1;
 	_fieldD = 64;
@@ -102,17 +105,20 @@ void AdlibChannel::load(byte *pData) {
 	_field1F = 0;
 	_field2 = _field3 = 0;
 	_volume = _field7 = 0;
-	_field1D = _field1E = 0;
+	_field1D = 0;
 	_fieldE = 0;
 	_field9 = 0;
 	_fieldB = 0;
 	_field17 = 0;
 	_field19 = 0;
+
+	CachedDataEntry &cacheEntry = _owner->getCachedData(pData);
+	_ptrEnd = cacheEntry._dataEnd;
 }
 
 void AdlibChannel::check(byte *nullPtr) {
 	if (_activeCount && _fieldE) {
-		if (!_field1E) {
+		if (!_volumeOffset) {
 			_pSrc = nullPtr;
 			_fieldE = 0;
 		} else {
@@ -150,7 +156,7 @@ AdlibSample::AdlibSample(Common::SeekableReadStream &s) {
 
 /*-----------------------------------------------------------------------*/
 
-ASound::ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename, int dataOffset) {
+ASound::ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::String &filename, int dataOffset) {
 	// Open up the appropriate sound file
 	if (!_soundFile.open(filename))
 		error("Could not open file - %s", filename.c_str());
@@ -161,6 +167,7 @@ ASound::ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename,
 	_samplePtr = nullptr;
 	_frameCounter = 0;
 	_isDisabled = false;
+	_masterVolume = 255;
 	_v1 = 0;
 	_v2 = 0;
 	_activeChannelNumber = 0;
@@ -181,17 +188,15 @@ ASound::ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename,
 	_randomSeed = 1234;
 	_amDep = _vibDep = _splitPoint = true;
 
-	_samplesTillCallback = 0;
-	_samplesTillCallbackRemainder = 0;
-	_samplesPerCallback = getRate() / CALLBACKS_PER_SECOND;
-	_samplesPerCallbackRemainder = getRate() % CALLBACKS_PER_SECOND;
-
 	for (int i = 0; i < 11; ++i) {
 		_channelData[i]._field0 = 0;
 		_channelData[i]._freqMask = 0;
 		_channelData[i]._freqBase = 0;
 		_channelData[i]._field6 = 0;
 	}
+
+	for (int i = 0; i < ADLIB_CHANNEL_COUNT; ++i)
+		_channels[i]._owner = this;
 
 	AdlibChannel::_channelsEnabled = false;
 
@@ -200,23 +205,21 @@ ASound::ASound(Audio::Mixer *mixer, FM_OPL *opl, const Common::String &filename,
 	_mixer = mixer;
 	_opl = opl;
 
-	_opl->init(getRate());
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1,
-		Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-
 	// Initialize the Adlib
 	adlibInit();
 
 	// Reset the adlib
 	command0();
+
+	_opl->start(new Common::Functor0Mem<void, ASound>(this, &ASound::onTimer), CALLBACKS_PER_SECOND);
 }
 
 ASound::~ASound() {
+	_opl->stop();
+
 	Common::List<CachedDataEntry>::iterator i;
 	for (i = _dataCache.begin(); i != _dataCache.end(); ++i)
 		delete[] (*i)._data;
-
-	_mixer->stopHandle(_soundHandle);
 }
 
 void ASound::validate() {
@@ -283,6 +286,17 @@ void ASound::noise() {
 	}
 }
 
+CachedDataEntry &ASound::getCachedData(byte *pData) {
+	Common::List<CachedDataEntry>::iterator i;
+	for (i = _dataCache.begin(); i != _dataCache.end(); ++i) {
+		CachedDataEntry &e = *i;
+		if (e._data == pData)
+			return e;
+	}
+
+	error("Could not find previously loaded data");
+}
+
 void ASound::write(int reg, int val) {
 	_queue.push(RegisterValue(reg, val));
 }
@@ -331,6 +345,7 @@ byte *ASound::loadData(int offset, int size) {
 	CachedDataEntry rec;
 	rec._offset = offset;
 	rec._data = new byte[size];
+	rec._dataEnd = rec._data + size - 1;
 	_soundFile.seek(_dataOffset + offset);
 	_soundFile.read(rec._data, size);
 	_dataCache.push_back(rec);
@@ -449,6 +464,10 @@ void ASound::pollActiveChannel() {
 					warning("pollActiveChannel(): No data found for sound channel");
 					break;
 				}
+				if (pSrc > chan->_ptrEnd) {
+					warning("Read beyond end of loaded sound data");
+				}
+
 				if (!(*pSrc & 0x80) || (*pSrc <= 0xF0)) {
 					if (updateFlag)
 						updateActiveChannel();
@@ -516,7 +535,7 @@ void ASound::pollActiveChannel() {
 						chan->_field1 = 0;
 						chan->_field2 = chan->_field3 = 0;
 						chan->_volume = chan->_field7 = 0;
-						chan->_field1D = chan->_field1E = 0;
+						chan->_field1D = chan->_volumeOffset = 0;
 						chan->_field8 = 0;
 						chan->_field9 = 0;
 						chan->_fieldB = 0;
@@ -570,7 +589,7 @@ void ASound::pollActiveChannel() {
 						break;
 
 					case 8:
-						chan->_field1D = *++pSrc;
+						chan->_field1D = (int8)*++pSrc;
 						chan->_pSrc += 2;
 						break;
 
@@ -591,7 +610,7 @@ void ASound::pollActiveChannel() {
 						if (chan->_fieldE) {
 							chan->_pSrc += 2;
 						} else {
-							chan->_field1E = *pSrc >> 1;
+							chan->_volumeOffset = *pSrc >> 1;
 							updateFlag = true;
 							chan->_pSrc += 2;
 						}
@@ -635,7 +654,7 @@ void ASound::pollActiveChannel() {
 			if (!--chan->_field9) {
 				chan->_field9 = chan->_fieldA;
 				if (chan->_field2) {
-					int8 newVal = (int8)chan->_field2 + (int8)chan->_field1E;
+					int8 newVal = (int8)chan->_field2 + (int8)chan->_volumeOffset;
 					if (newVal < 0) {
 						chan->_field9 = 0;
 						newVal = 0;
@@ -644,7 +663,7 @@ void ASound::pollActiveChannel() {
 						newVal = 63;
 					}
 
-					chan->_field1E = newVal;
+					chan->_volumeOffset = newVal;
 					updateFlag = true;
 				}
 			}
@@ -709,8 +728,8 @@ void ASound::updateChannelState() {
 		resultCheck();
 	} else {
 		int reg = 0xA0 + _activeChannelNumber;
-		int vTimes = (_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) / 12;
-		int vOffset = (_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) % 12;
+		int vTimes = (byte)(_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) / 12;
+		int vOffset = (byte)(_activeChannelPtr->_field4 + _activeChannelPtr->_field1F) % 12;
 		int val = _vList1[vOffset] + _activeChannelPtr->_field1D;
 		write2(8, reg, val & 0xFF);
 
@@ -727,32 +746,18 @@ static const int outputIndexes[] = {
 static const int outputChannels[] = {
 	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21, 0
 };
-static const int volumeList[] = {
-	0x3F, 0x3F, 0x36, 0x31, 0x2D, 0x2A, 0x28, 0x26, 0x24, 0x22, 0x21, 0x20, 0x1F, 0x1E, 0x1D, 0x1C,
-	0x1B, 0x1A, 0x19, 0x19, 0x18, 0x17, 0x17, 0x16, 0x16, 0x15, 0x15, 0x14, 0x14, 0x13, 0x12, 0x12,
-	0x11, 0x11, 0x10, 0x10, 0x0F, 0x0F, 0x0E, 0x0E, 0x0D, 0x0D, 0x0C, 0x0C, 0x0B, 0x0B, 0x0A, 0x0A,
-	0x0A, 0x09, 0x09, 0x09, 0x09, 0x09, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07, 0x07, 0x07, 0x07,
-	0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x04,
-	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-	0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-	0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-};
 
 void ASound::updateActiveChannel() {
 	int reg = 0x40 + outputChannels[outputIndexes[_activeChannelNumber * 2 + 1]];
 	int portVal = _ports[reg] & 0xFFC0;
-	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_field1E, 0, 63);
+	int newVolume = CLIP(_activeChannelPtr->_volume + _activeChannelPtr->_volumeOffset, 0, 63);
+	newVolume = newVolume * _masterVolume / 255;
 
 	// Note: Original had a whole block not seeming to be used, since the initialisation
 	// sets a variable to 5660h, and doesn't change it, so the branch is never taken
-	int val = CLIP(newVolume - volumeList[_activeChannelPtr->_fieldD], 0, 63);
-	val = (63 - val) | portVal;
+	portVal |= 63 - newVolume;
 
-	int val2 = CLIP(newVolume - volumeList[-(_activeChannelPtr->_fieldD - 127)], 0, 63);
-	val2 = (63 - val2) | portVal;
-	write2(0, reg, val);
-	write2(2, reg, val2);
+	write2(8, reg, portVal);
 }
 
 void ASound::loadSample(int sampleIndex) {
@@ -820,32 +825,16 @@ void ASound::updateFNumber() {
 	write2(8, hiReg, val2);
 }
 
-int ASound::readBuffer(int16 *buffer, const int numSamples) {
+void ASound::onTimer() {
 	Common::StackLock slock(_driverMutex);
+	poll();
+	flush();
+}
 
-	int32 samplesLeft = numSamples;
-	memset(buffer, 0, sizeof(int16) * numSamples);
-	while (samplesLeft) {
-		if (!_samplesTillCallback) {
-			poll();
-			flush();
-
-			_samplesTillCallback = _samplesPerCallback;
-			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-			if (_samplesTillCallbackRemainder >= CALLBACKS_PER_SECOND) {
-				_samplesTillCallback++;
-				_samplesTillCallbackRemainder -= CALLBACKS_PER_SECOND;
-			}
-		}
-
-		int32 render = MIN<int>(samplesLeft, _samplesTillCallback);
-		samplesLeft -= render;
-		_samplesTillCallback -= render;
-
-		_opl->readBuffer(buffer, render);
-		buffer += render;
-	}
-	return numSamples;
+void ASound::setVolume(int volume) {
+	_masterVolume = volume;
+	if (!volume)
+		command0();
 }
 
 int ASound::command0() {
@@ -966,7 +955,7 @@ const ASound1::CommandPtr ASound1::_commandList[42] = {
 	&ASound1::command40, &ASound1::command41
 };
 
-ASound1::ASound1(Audio::Mixer *mixer, FM_OPL *opl)
+ASound1::ASound1(Audio::Mixer *mixer, OPL::OPL *opl)
 	: ASound(mixer, opl, "asound.001", 0x1520) {
 	_cmd23Toggle = false;
 
@@ -1005,22 +994,22 @@ int ASound1::command10() {
 
 int ASound1::command11() {
 	command111213();
-	_channels[0]._field1E = 0;
-	_channels[1]._field1E = 0;
+	_channels[0]._volumeOffset = 0;
+	_channels[1]._volumeOffset = 0;
 	return 0;
 }
 
 int ASound1::command12() {
 	command111213();
-	_channels[0]._field1E = 40;
-	_channels[1]._field1E = 0;
+	_channels[0]._volumeOffset = 40;
+	_channels[1]._volumeOffset = 0;
 	return 0;
 }
 
 int ASound1::command13() {
 	command111213();
-	_channels[0]._field1E = 40;
-	_channels[1]._field1E = 50;
+	_channels[0]._volumeOffset = 40;
+	_channels[1]._volumeOffset = 50;
 	return 0;
 }
 
@@ -1267,7 +1256,7 @@ const ASound2::CommandPtr ASound2::_commandList[44] = {
 	&ASound2::command40, &ASound2::command41, &ASound2::command42, &ASound2::command43
 };
 
-ASound2::ASound2(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
+ASound2::ASound2(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
 	_command12Param = 0xFD;
 
 	// Load sound samples
@@ -1638,7 +1627,7 @@ const ASound3::CommandPtr ASound3::_commandList[61] = {
 	&ASound3::command60
 };
 
-ASound3::ASound3(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.003", 0x15B0) {
+ASound3::ASound3(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.003", 0x15B0) {
 	_command39Flag = false;
 
 	// Load sound samples
@@ -2037,12 +2026,12 @@ const ASound4::CommandPtr ASound4::_commandList[61] = {
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::command43,
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
 	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand, &ASound4::nullCommand,
-	&ASound4::nullCommand, &ASound4::command57, &ASound4::nullCommand, &ASound4::command59,
+	&ASound4::command52, &ASound4::command53, &ASound4::command54, &ASound4::command55,
+	&ASound4::command56, &ASound4::command57, &ASound4::command58, &ASound4::command59,
 	&ASound4::command60
 };
 
-ASound4::ASound4(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.004", 0x14F0) {
+ASound4::ASound4(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.004", 0x14F0) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x122);
 	for (int i = 0; i < 210; ++i)
@@ -2298,7 +2287,7 @@ const ASound5::CommandPtr ASound5::_commandList[42] = {
 	&ASound5::command40, &ASound5::command41
 };
 
-ASound5::ASound5(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
+ASound5::ASound5(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.002", 0x15E0) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x144);
 	for (int i = 0; i < 164; ++i)
@@ -2539,7 +2528,7 @@ const ASound6::CommandPtr ASound6::_commandList[30] = {
 	&ASound6::nullCommand, &ASound6::command29
 };
 
-ASound6::ASound6(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.006", 0x1390) {
+ASound6::ASound6(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.006", 0x1390) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x122);
 	for (int i = 0; i < 200; ++i)
@@ -2695,7 +2684,7 @@ const ASound7::CommandPtr ASound7::_commandList[38] = {
 	&ASound7::command36, &ASound7::command37
 };
 
-ASound7::ASound7(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.007", 0x1460) {
+ASound7::ASound7(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.007", 0x1460) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x122);
 	for (int i = 0; i < 214; ++i)
@@ -2901,7 +2890,7 @@ const ASound8::CommandPtr ASound8::_commandList[38] = {
 	&ASound8::command36, &ASound8::command37
 };
 
-ASound8::ASound8(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.008", 0x1490) {
+ASound8::ASound8(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.008", 0x1490) {
 	// Load sound samples
 	_soundFile.seek(_dataOffset + 0x122);
 	for (int i = 0; i < 174; ++i)
@@ -3157,7 +3146,7 @@ const ASound9::CommandPtr ASound9::_commandList[52] = {
 	&ASound9::command48, &ASound9::command49, &ASound9::command50, &ASound9::command51
 };
 
-ASound9::ASound9(Audio::Mixer *mixer, FM_OPL *opl) : ASound(mixer, opl, "asound.009", 0x16F0) {
+ASound9::ASound9(Audio::Mixer *mixer, OPL::OPL *opl) : ASound(mixer, opl, "asound.009", 0x16F0) {
 	_v1 = _v2 = 0;
 	_soundPtr = nullptr;
 

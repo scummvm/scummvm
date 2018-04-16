@@ -21,7 +21,6 @@
  */
 
 #include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 #include "groovie/script.h"
 #include "groovie/cell.h"
@@ -179,12 +178,20 @@ void Script::directGameLoad(int slot) {
 
 	// TODO: Return to the main script, likely reusing most of o_returnscript()
 
-	// HACK: We set variable 0x19 to the slot to load, and set the current
-	// instruction to the one that actually loads the saved game specified
-	// in that variable. This will change in other versions of the game and
-	// in other games.
-	setVariable(0x19, slot);
-	_currentInstruction = 0x287;
+	// HACK: We set the slot to load in the appropriate variable, and set the
+	// current instruction to the one that actually loads the saved game
+	// specified in that variable. This differs depending on the game and its
+	// version.
+	if (_version == kGroovieT7G) {
+		// 7th Guest
+		setVariable(0x19, slot);
+		_currentInstruction = 0x287;
+	} else {
+		// 11th Hour
+		setVariable(0xF, slot);
+		// FIXME: This bypasses a lot of the game's initialization procedure
+		_currentInstruction = 0xE78E;
+	}
 
 	// TODO: We'll probably need to start by running the beginning of the
 	// script to let it do the soundcard initialization and then do the
@@ -350,9 +357,10 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 
 	// Show hotspots when debugging
 	if (DebugMan.isDebugChannelEnabled(kDebugHotspots)) {
-		rect.translate(0, -80);
+		if (!_vm->_graphicsMan->isFullScreen())
+			rect.translate(0, -80);
 		_vm->_graphicsMan->_foreground.frameRect(rect, 250);
-		_vm->_system->copyRectToScreen(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_foreground.pitch, 0, 80, 640, 320);
+		_vm->_graphicsMan->updateScreen(&_vm->_graphicsMan->_foreground);
 		_vm->_system->updateScreen();
 	}
 
@@ -962,7 +970,7 @@ void Script::o_strcmpnejmp_var() {			// 0x21
 
 void Script::o_copybgtofg() {			// 0x22
 	debugC(1, kDebugScript, "COPY_BG_TO_FG");
-	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * 320);
+	memcpy(_vm->_graphicsMan->_foreground.getPixels(), _vm->_graphicsMan->_background.getPixels(), 640 * _vm->_graphicsMan->_foreground.h);
 }
 
 void Script::o_strcmpeqjmp() {			// 0x23
@@ -1198,6 +1206,7 @@ void Script::o_copyrecttobg() {	// 0x37
 	uint16 top = readScript16bits();
 	uint16 right = readScript16bits();
 	uint16 bottom = readScript16bits();
+	uint16 baseTop = (!_vm->_graphicsMan->isFullScreen()) ? 80 : 0;
 
 	// Sanity checks to prevent bad pointer access crashes
 	if (left > right) {
@@ -1216,9 +1225,9 @@ void Script::o_copyrecttobg() {	// 0x37
 		bottom = top;
 		top = j;
 	}
-	if (top < 80) {
-		warning("COPYRECT top < 80... clamping");
-		top = 80;
+	if (top < baseTop) {
+		warning("COPYRECT top < baseTop... clamping");
+		top = baseTop;
 	}
 	if (top >= 480) {
 		warning("COPYRECT top >= 480... clamping");
@@ -1243,13 +1252,13 @@ void Script::o_copyrecttobg() {	// 0x37
 
 	debugC(1, kDebugScript, "COPYRECT((%d,%d)->(%d,%d))", left, top, right, bottom);
 
-	fg = (byte *)_vm->_graphicsMan->_foreground.getBasePtr(left, top - 80);
-	bg = (byte *)_vm->_graphicsMan->_background.getBasePtr(left, top - 80);
+	fg = (byte *)_vm->_graphicsMan->_foreground.getBasePtr(left, top - baseTop);
+	bg = (byte *)_vm->_graphicsMan->_background.getBasePtr(left, top - baseTop);
 	for (i = 0; i < height; i++) {
 		memcpy(bg + offset, fg + offset, width);
 		offset += 640;
 	}
-	_vm->_system->copyRectToScreen(_vm->_graphicsMan->_background.getBasePtr(left, top - 80), 640, left, top, width, height);
+	_vm->_system->copyRectToScreen(_vm->_graphicsMan->_background.getBasePtr(left, top - baseTop), 640, left, top, width, height);
 	_vm->_graphicsMan->change();
 }
 
@@ -1595,8 +1604,7 @@ void Script::o_hotspot_outrect() {
 	bool contained = rect.contains(mousepos);
 
 	if (!contained) {
-		error("hotspot-outrect unimplemented");
-		// TODO: what to do with address?
+		_currentInstruction = address;
 	}
 }
 
@@ -1670,20 +1678,40 @@ void Script::o2_vdxtransition() {
 void Script::o2_copyscreentobg() {
 	uint16 val = readScript16bits();
 
+	// TODO: Parameter
+	if (val)
+		warning("o2_copyscreentobg: Param is %d", val);
+
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	_vm->_graphicsMan->_background.copyFrom(screen->getSubArea(Common::Rect(0, 80, 640, 320)));
+	_vm->_system->unlockScreen();
+
 	debugC(1, kDebugScript, "CopyScreenToBG3: 0x%04X", val);
-	error("Unimplemented Opcode 0x4F");
 }
 
 void Script::o2_copybgtoscreen() {
 	uint16 val = readScript16bits();
 
+	// TODO: Parameter
+	if (val)
+		warning("o2_copybgtoscreen: Param is %d", val);
+
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+	_vm->_graphicsMan->_background.copyRectToSurface(*screen, 0, 80, Common::Rect(0, 0, 640, 320 - 80));
+	_vm->_system->unlockScreen();
+
 	debugC(1, kDebugScript, "CopyBG3ToScreen: 0x%04X", val);
-	error("Unimplemented Opcode 0x50");
 }
 
 void Script::o2_setvideoskip() {
 	_videoSkipAddress = readScript16bits();
 	debugC(1, kDebugScript, "SetVideoSkip (0x%04X)", _videoSkipAddress);
+}
+
+void Script::o2_stub42() {
+	uint8 arg = readScript8bits();
+	// TODO: Switch with 5 cases (0 - 5). Anything above 5 is a NOP
+	debugC(1, kDebugScript, "STUB42 (0x%02X)", arg);
 }
 
 void Script::o2_stub52() {
@@ -1859,7 +1887,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_loadscript,
 	&Script::o_setvideoorigin, // 0x40
 	&Script::o_sub,
-	&Script::o_cellmove,
+	&Script::o2_stub42,
 	&Script::o_returnscript,
 	&Script::o_sethotspotright, // 0x44
 	&Script::o_sethotspotleft,

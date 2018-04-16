@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<channel>
+		<title>ScummVM Changelog</title>
+		<link>https://www.scummvm.org/appcasts/macosx/release.xml</link>
+		<description>Most recent changes with links to updates.</description>
+		<language>en</language>
+		<item>
+			<title>Version 2.0.0</title>
+			<sparkle:releaseNotesLink>
+				https://scummvm.org/frs/scummvm/2.0.0/ReleaseNotes.html
+			</sparkle:releaseNotesLink>
+			<pubDate>Sun, 17 Dec 2017 22:00:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/2.0.0/scummvm-2.0.0-macosx.dmg"
+						sparkle:version="2.0.0" length="19691828" type="application/octet-stream"
+						sparkle:dsaSignature="MC4CFQCWN49tZk/Rb8tXMbD0KKWzHxaaBgIVAJ2VbumjJ33xUXDzEM0C00OPI4a3" />
+			<enclosure sparkle:os="windows"
+						url="https://www.scummvm.org/frs/scummvm/2.0.0/scummvm-2.0.0-win32.exe"
+						sparkle:version="2.0.0" length="11985315" type="application/octet-stream"
+						sparkle:dsaSignature="MCwCFFP9D3bL02NxmISK2FWPnOo6iy0dAhRP6DJ94YN67pBxbpge4GdECZj4Yw==" />
+		</item>
+		<item>
+			<title>Version 1.9.0.2 (Win32-only)</title>
+			<description>
+				<![CDATA[
+				1.9.0.2 (2016-10-18)<br/>
+				&nbsp;&nbsp;- Fixed Sparkle problem on Win32<br/>
+				<br/>
+				1.9.0.1 (2016-10-18)<br/>
+				&nbsp;&nbsp;- Added missing Mohawk plugin on Win32
+				]]>
+			</description>
+			<pubDate>Mon, 18 Oct 2016 22:44:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0.2-macosx.dmg"
+						sparkle:version="1.9.0.2" length="16628758" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQDR26+9zisczFFbwOfhOG7sWY3qTgIUfbKeCYtrlxBarbmv6CjEhxgXseM=" />
+			<enclosure sparkle:os="windows"
+						url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0.2-win32.exe"
+						sparkle:version="1.9.0.2" length="10530439" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFELGrrsFcxJJlm4pqPmATz4qUnSpAhUAtBZpnjtyKhV/Vg7R6C0JLCc5Euc=" />
+		</item>
+		<item>
+			<title>Version 1.9.0.1 (Win32-only)</title>
+			<description>
+				<![CDATA[
+				1.9.0.1 (2016-10-18)<br/>
+				&nbsp;&nbsp;- Added missing Mohawk plugin on Win32
+				]]>
+			</description>
+			<pubDate>Mon, 18 Oct 2016 09:51:00 +0000</pubDate>
+			<enclosure sparkle:os="windows"
+						url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0.1-win32.exe"
+						sparkle:version="1.9.0.1" length="10529380" type="application/octet-stream"
+						sparkle:dsaSignature="MC4CFQDWLnEdFmN8uWDAGGSu2PD39Bd75QIVANOhPd/9EJ2LAXVCxKEiG7Kfcg8u" />
+		</item>
+		<item>
+			<title>Version 1.9.0</title>
+			<sparkle:releaseNotesLink>
+				https://scummvm.org/frs/scummvm/1.9.0/ReleaseNotes
+			</sparkle:releaseNotesLink>
+			<pubDate>Mon, 17 Oct 2016 22:36:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0-macosx.dmg"
+						sparkle:version="1.9.0" length="16642939" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFFcJJ0j1aJg99T44EQsh5JxWFxtYAhUAi6tVS4lYWLnybDudMCpx3IHjT+k=" />
+			<enclosure sparkle:os="windows"
+						url="https://www.scummvm.org/frs/scummvm/1.9.0/scummvm-1.9.0-win32.exe"
+						sparkle:version="1.9.0" length="10236598" type="application/octet-stream"
+						sparkle:dsaSignature="MC4CFQDqBOPsi/8uoZRIw7wyC9+B+OY8jgIVAMJQpwdWlpmPE7cocEBa+QNAy2TJ" />
+		</item>
+		<item>
+			<title>Version 1.8.1</title>
+			<sparkle:releaseNotesLink>
+				https://scummvm.org/frs/scummvm/1.8.1/ReleaseNotes
+			</sparkle:releaseNotesLink>
+			<pubDate>Wed, 25 May 2016 19:26:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/1.8.1/scummvm-1.8.1-macosx.dmg"
+						sparkle:version="1.8.1" length="15791070" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQDF0u/pGH51pMPzCbsv07eCNxuGDQIUdrKWVTznbF69fzuzIieR4Lc0U2Y=" />
+		</item>
+		<item>
+			<title>Version 1.8.0</title>
+			<sparkle:releaseNotesLink>
+				https://scummvm.org/frs/scummvm/1.8.0/ReleaseNotes
+			</sparkle:releaseNotesLink>
+			<pubDate>Sat, 5 Mar 2016 20:16:00 +0000</pubDate>
+			<enclosure url="https://www.scummvm.org/frs/scummvm/1.8.0/scummvm-1.8.0-macosx.dmg"
+						sparkle:version="1.8.0" length="14085288" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQDNy2yox7vklthHaZcMto8L4EuLwQIUY8cuevlTpLtuJ9nPOlrj4vo55lY=" />
+			<enclosure sparkle:os="windows"
+						url="https://www.scummvm.org/frs/scummvm/1.8.0/scummvm-1.8.0-win32.exe"
+						sparkle:version="1.8.0" length="9081062" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFQCaG7Oo+Nc2EWVmc7GjUBJLKRvt3QIUQcZTMe2FQhfvrrofX4HLTldDHyY=" />
+		</item>
+		<item>
+			<title>Version 1.7.0</title>
+			<sparkle:releaseNotesLink>
+				https://www.scummvm.org/frs/scummvm/1.7.0/ReleaseNotes
+			</sparkle:releaseNotesLink>
+			<sparkle:version>1.7.0</sparkle:version>
+			<pubDate>Tue, 29 Jul 2014 07:58:00 +0000</pubDate>
+			<link>https://www.scummvm.org/frs/scummvm/1.7.0/</link>
+		</item>
+	</channel>
+</rss>

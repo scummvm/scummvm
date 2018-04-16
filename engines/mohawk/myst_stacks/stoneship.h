@@ -33,23 +33,23 @@ struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Stoneship : public MystScriptParser {
 public:
-	Stoneship(MohawkEngine_Myst *vm);
-	~Stoneship();
+	explicit Stoneship(MohawkEngine_Myst *vm);
+	~Stoneship() override;
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
-	uint16 getVar(uint16 var);
-	void toggleVar(uint16 var);
-	bool setVarValue(uint16 var, uint16 value);
+	uint16 getVar(uint16 var) override;
+	void toggleVar(uint16 var) override;
+	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() { return 9933; }
+	uint16 getMap() override { return 9933; }
 
 	DECLARE_OPCODE(o_pumpTurnOff);
 	DECLARE_OPCODE(o_brotherDoorOpen);
@@ -98,7 +98,7 @@ private:
 
 	bool _batteryGaugeRunning;
 	uint16 _batteryLastCharge; // 92
-	MystResourceType8 *_batteryGauge; // 96
+	MystAreaImageSwitch *_batteryGauge; // 96
 	void batteryGaugeUpdate();
 	void batteryGauge_run();
 
@@ -113,8 +113,8 @@ private:
 	void drawerClose(uint16 drawer);
 
 	uint16 _hologramTurnedOn; // 80
-	MystResourceType6 *_hologramDisplay; // 84
-	MystResourceType6 *_hologramSelection; // 88
+	MystAreaVideo *_hologramDisplay; // 84
+	MystAreaVideo *_hologramSelection; // 88
 	uint16 _hologramDisplayPos;
 
 	bool _tunnelRunning;
@@ -135,7 +135,7 @@ private:
 	void telescope_run();
 	void telescopeLighthouseDraw();
 
-	MystResourceType6 *_cloudOrbMovie; // 136
+	MystAreaVideo *_cloudOrbMovie; // 136
 	uint16 _cloudOrbSound; // 140
 	uint16 _cloudOrbStopSound; // 142
 

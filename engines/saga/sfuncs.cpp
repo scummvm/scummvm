@@ -704,14 +704,6 @@ void Script::sfDropObject(SCRIPTFUNC_PARAMS) {
 
 	obj->_sceneNumber = _vm->_scene->currentSceneNumber();
 
-	// HACK for the compact disk in Ellen's chapter
-	// Change the scene number of the compact disk so that it's not shown. It will be shown
-	// once Ellen says that there's something different (i.e. after speaking with AM)
-	// See Actor::actorSpeech for the other part of this hack
-	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 3 &&
-		_vm->_scene->currentSceneNumber() == 59 && obj->_id == 16385)
-			obj->_sceneNumber = -1;
-
 	if (_vm->getGameId() == GID_IHNM) {
 		// Don't update _spriteListResourceId if spriteId is 0 and the object is not the
 		// psychic profile. If spriteId == 0, the object's sprite is incorrectly reset.

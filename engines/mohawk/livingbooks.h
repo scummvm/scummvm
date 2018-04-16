@@ -27,6 +27,7 @@
 #include "mohawk/console.h"
 #include "mohawk/livingbooks_graphics.h"
 #include "mohawk/sound.h"
+#include "mohawk/video.h"
 
 #include "common/ini-file.h"
 #include "common/rect.h"
@@ -706,7 +707,7 @@ protected:
 
 class MohawkEngine_LivingBooks : public MohawkEngine {
 protected:
-	Common::Error run();
+	Common::Error run() override;
 
 public:
 	MohawkEngine_LivingBooks(OSystem *syst, const MohawkGameDescription *gamedesc);
@@ -714,6 +715,8 @@ public:
 
 	Common::RandomSource *_rnd;
 
+	VideoManager *_video;
+	Sound *_sound;
 	LBGraphics *_gfx;
 	bool _needsRedraw, _needsUpdate;
 
@@ -722,7 +725,7 @@ public:
 	Common::SeekableSubReadStreamEndian *wrapStreamEndian(uint32 tag, uint16 id);
 	Common::String readString(Common::ReadStream *stream);
 	Common::Rect readRect(Common::ReadStreamEndian *stream);
-	GUI::Debugger *getDebugger() { return _console; }
+	GUI::Debugger *getDebugger() override { return _console; }
 
 	void addArchive(Archive *archive);
 	void removeArchive(Archive *archive);
@@ -816,6 +819,8 @@ private:
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key);
 	Common::String getStringFromConfig(const Common::String &section, const Common::String &key, Common::String &leftover);
 	int getIntFromConfig(const Common::String &section, const Common::String &key);
+
+	void pauseEngineIntern(bool) override;
 };
 
 } // End of namespace Mohawk

@@ -422,6 +422,51 @@ const char *ITEinterfaceTextStrings[][53] = {
 		NULL,
 		NULL,
 		"Cardango una partida guardada"
+	},
+	// Russian IHNM
+	{
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, NULL,
+		NULL, NULL, NULL, NULL, "\xC2\xFB\xE9\xF2\xE8 \xE8\xE7 \xE8\xE3\xF0\xFB?",
+		"Load Successful!",
+		"\xC2\xE2\xE5\xE4\xE8\xF2\xE5 \xE8\xEC\xFF \xE7\xE0\xEF\xE8\xF1\xE8",
+		"\xC4\xE0\xF2\xFC %s >> %s",
+		"\xC8\xF1\xEF\xEE\xEB\xFC\xE7\xEE\xE2\xE0\xF2\xFC %s >> %s",
+		"[\xCD\xEE\xE2\xE0\xFF \xE7\xE0\xEF\xE8\xF1\xFC]",
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		"       \xC7\xE0\xE3\xF0\xF3\xE7\xEA\xE0     "
+	},
+	// French fan translation : ACTIONS
+	{
+		"Aller vers", "Examiner", "Prendre", "Parler \205", "Ouvrir",
+		"Fermer", "Utiliser", "Donner", "Options", "Test",
+		"Demo", "Aide", "Quitter le Jeu", "Vite", "Lent",
+		"On", "Off", "Continuer \205 jouer", "Charger", "Sauver",
+		"Options du Jeu", "Vitesse texte", "Musique", "Son", "Annuler",
+		"Quitter", "OK", "Mid", "Click", "10%",
+		"20%", "30%", "40%", "50%", "60%",
+		"70%", "80%", "90%", "Max", "Quitter le jeu?",
+		"Chargement OK!", "Nommer la sauvegarde", "Donner %s \205 %s", "Utiliser %s avec %s",
+		"[Nouvelle sauvegarde]",
+		"Je ne peux pas prendre ça.",
+		"Je ne vois rien de sp\202cial.",
+		"Il n'y a pas la place pour l'ouvrir.",
+		"Il n'y a pas d'ouverture \205 fermer.",
+		"Je ne sais pas comment l'utiliser.",
+		"Sous-titre",
+		"Que r\202pond Rif?",
+		"Charger une sauvegarde"
 	}
 };
 
@@ -443,6 +488,7 @@ const RawPoint pieceOrigins[PUZZLE_PIECES] = {
 	{ 271, 103 }
 };
 
+// Objects
 const char *pieceNames[][PUZZLE_PIECES] = {
 	{
 		"screwdriver", "pliers", "c-clamp", "wood clamp", "level",
@@ -458,9 +504,15 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 		"cacciavite", "pinze", "morsa", "morsa da legno", "livella",
 		"spago", "pialla", "martello", "metro a nastro", "accetta",
 		"cesoie", "righello", "sega", "mazza", "pennello"
+	},
+	{
+		"tournevis", "pince", "\202tau \205 vis", "pince \205 bois", "niveau",
+		"ficelle", "rabot \205 bois", "marteau", "m\212tre ruban", "hachette",
+		"ciseaux", "r\212gle", "scie", "maillet", "pinceau"
 	}
 };
 
+// hints
 const char *hintStr[][4] = {
 	{
 		"Check which pieces could fit in each corner first.",
@@ -479,6 +531,12 @@ const char *hintStr[][4] = {
 		"Controlla quale angolo ha il minor numero di pezzi che combaciano, e parti da quello.",
 		"Controlla ogni nuovo angolo e lato per ogni pezzo che combacia.",
 		"Non vedo nulla fuori posto."
+	},
+	{
+		"Trouve d'abord les pi\212ces qui correspondent aux coins.",
+		"V\202rifie quel coin a le moins de pi\212ces qui correspondent et part de l\205.",
+		"Evalue chaque coin et bord pour voir les pi\212ces qui collent.",
+		"Je ne vois rien de mal plac\202."
 	}
 };
 
@@ -503,6 +561,13 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		"Umm...Umm...",
 		"Psst! Serve un aiutino?",
 		"Io, sai, l'avrei fatto diversamente."
+	},
+	{
+		"H\202, Renard! Tu veux un coup de pouce?",
+		"T'as besoin d'aide?",
+		"Umm...Umm...",
+		"Psst! Un indice?",
+		"Tu sais, j'aurais fait ça autrement."
 	}
 };
 
@@ -521,6 +586,11 @@ const char *sakkaStr[][NUM_SAKKA] = {
 		"Hey, non si dovrebbero aiutare i candidati!",
 		"Ragazzi! Questo dovrebbe essere un test!",
 		"Forza ragazzi, non si pu\225!"
+	},
+	{
+		"H\202, vous n'\210tes pas suppos\202s aider les concurrents!",
+		"Les gars! C'est suppos\202 être un test!",
+		"Allez les gars, c'est pas dans les r\212gles!"
 	}
 };
 
@@ -545,6 +615,13 @@ const char *whineStr[][NUM_WHINES] = {
 		"Sigh...",
 		"Credo che questa faccenda ti abbia dato alla testa, Sakka!",
 		"Beh, non ricordo regole specifiche contro i suggerimenti."
+	},
+	{
+		"Rohh, allez Sakka!",
+		"Un indice ne peut pas faire de mal.",
+		"Pfff...",
+		"Je crois que ton carnet te monte \205 la t\210te, Sakka!",
+		"Bon, je ne me souviens d'aucune r\212gle concernant les indices."
 	}
 };
 
@@ -566,6 +643,12 @@ const char *optionsStr[][4] = {
 		"\"Si, grazie. Ne avrei bisogno.\"",
 		"\"No, grazie, voglio provare a risolverlo da solo.\"",
 		"Penso che la tessera %s sia nel posto sbagliato."
+	},
+	{
+		"\"Je r\202soudrai cette \202nigme plus tard.\"",
+		"\"Oui, j'aimerais un indice s'il vous plait.\"",
+		"\"Non merci, je voudrais r\202soudre cela par moi m\210me.\"",
+		"Je crois que t'as mal plac\202 l'%s."
 	}
 };
 
@@ -633,6 +716,29 @@ const IntroDialogue introDialogueCave1[][4] = {
 		"Conoscevano il Segreto del Volo, il Segreto della "
 		"Felicit\205, ed altri segreti oltre ogni nostra "
 		"immaginazione."
+	} },
+	// -----------------------------------------------------
+	{ { // French fan translation
+		0,		// cave voice 0
+		"Nous voyons le ciel, nous voyons les terres, "
+		"nous voyons la mer et nous nous demandons: "
+		"Sommes-nous vraiment seuls?"
+	},
+	{
+		1,		// cave voice 1
+		"Bien avant notre av\212nement, les humains "
+		"r\202gnaient sur Terre."
+	},
+	{
+		2,		// cave voice 2
+		"Ils firent des choses merveilleuses, et "
+		"d\202plac\212rent des montagnes."
+	},
+	{
+		3,		// cave voice 3
+		"Ils savaient comment Voler, poss\202daient le "
+		"secret du Bonheur et d'autres secrets au "
+		"del\205 de notre imagination."
 	} }
 };
 
@@ -682,6 +788,21 @@ const IntroDialogue introDialogueCave2[][3] = {
 	{
 		6,		// cave voice 6
 		"Siamo i loro figli."
+	} },
+	{ { // Fench fan translation
+		4,		// cave voice 4
+		"Les humains connaissaient aussi le secret de "
+		"la Vie, et l'utilis\212rent pour nous offrir "
+		"Quatres Dons:"
+	},
+	{
+		5,		// cave voice 5
+		"La Pens\202e, les Sentiments, la Parole et, "
+		"l'Habilet\202 manuelle."
+	},
+	{
+		6,		// cave voice 6
+		"Nous sommes leurs enfants."
 	} }
 };
 
@@ -732,6 +853,21 @@ const IntroDialogue introDialogueCave3[][3] = {
 		"Ci amarono, ed una volta pronti, ci avrebbero "
 		"sicuramente svelato il Segreto della Felicit\205."
 
+	} },
+	{ { // French fan translation
+		7,		// cave voice 7
+		"Ils nous apprirent \205 utiliser nos mains, et \205 "
+		"parler."
+	},
+	{
+		8,		// cave voice 8
+		"Ils nous apprirent les joies de la pens\202e."
+	},
+	{
+		9,		// cave voice 9
+		"Ils nous aim\212rent, et le moment venu, ils "
+		"nous auraient s\223rement livr\202 le Secret du "
+		"Bonheur."
 	} }
 };
 
@@ -795,6 +931,26 @@ const IntroDialogue introDialogueCave4[][4] = {
 		13,		// cave voice 13
 		"E un giorno, condivideremo anche noi lo stesso "
 		"destino?"
+	} },
+	{ { // French fan translation
+		10,		// cave voice 10
+		"Aujourd'hui nous voyons le ciel, les terres, et "
+		"l'eau dont nous sommes les h\202ritiers, Et "
+		"nous nous demandons: pourquoi sont-ils partis?" // Partis \205 la ligne ?????
+	},
+	{
+		11,		// cave voice 11
+		"Vivent-ils encore, dans les \202toiles? dans les "
+		"profondeurs des oc\202ans? dans le vent?"
+	},
+	{
+		12,		// cave voice 12
+		"Nous nous demandons: leur destin f\223t-il bon "
+		"ou mauvais?"
+	},
+	{
+		13,		// cave voice 13
+		"Et aurons-nous un jour un sort identique?"
 	} }
 };
 
@@ -802,15 +958,18 @@ const IntroCredit creditsValley[] = {
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Producer"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Produzent"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Producteur"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Ausf\201hrender Produzent"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore Esecutivo"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Producteur Executif"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Robert McNally"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "2nd Executive Producer"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Publisher"},
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Herausgeber"},
 	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Editore"},
+	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Editeur"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"}
 };
 
@@ -818,16 +977,20 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Game Design"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Spielentwurf"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Progetto"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Conception"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "und Carolly Hauksdottir"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "e Carolly Hauksdottir"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "et Carolly Hauksdottir"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Geschichte und Dialoge"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein und Bill Rotsler"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Sceneggiatura e Dialoghi"},
-	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein e Bill Rotsler"}
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein e Bill Rotsler"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Sc\202nario et Dialogues"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein et Bill Rotsler"}
 };
 
 const IntroCredit creditsTreeHouse2[] = {
@@ -836,19 +999,23 @@ const IntroCredit creditsTreeHouse2[] = {
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Art"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Grafiken"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Grafica"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Graphismes"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Ed Lacabanne, Glenn Price, April Lee,"},
 	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
 	{Common::EN_ANY, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey and Talin"},
 	{Common::DE_DEU, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey und Talin"},
 	{Common::IT_ITA, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey e Talin"},
+	{Common::FR_FRA, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey et Talin"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Waller, Allison Hershey and Talin"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey und Talin"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey e Talin"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey et Talin"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Art Direction"},
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Grafische Leitung"},
 	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Direzione Grafica"},
+	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Directeur Artistique"},
 	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"}
 };
 
@@ -856,17 +1023,22 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Programming"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Programmiert von"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Programmazione"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Programmeurs"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Joe Burks and Robert Wiggins"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Joe Burks und Robert Wiggins"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Joe Burks e Robert Wiggins"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Joe Burks et Robert Wiggins"},
 	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Additional Programming"},
+	{Common::FR_FRA, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Programmeur Additionnel"},
 	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsText, "John Bolton"},
+	{Common::FR_FRA, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsText, "John Bolton"},
 	{Common::UNK_LANG, kITECreditsMac, kITECreditsHeader, "Macintosh Version"},
 	{Common::UNK_LANG, kITECreditsMac, kITECreditsText, "Michael McNally and Robert McNally"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Music and Sound"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Musik und Sound"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Musica e Sonoro"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Musique et Sons"},
 	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Matt Nathan"}
 };
 
@@ -874,7 +1046,10 @@ const IntroCredit creditsFairePath2[] = {
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Directed by"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Regie"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Regia"},
-	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin"}
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Dirig\202 par"},
+	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Traduction Francaise"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Ryfatwork, Momo le Yetty et Darknior"}
 };
 
 } // End of namespace Saga

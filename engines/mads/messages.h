@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -39,14 +39,14 @@ namespace MADS {
 enum KernelMessageFlags {
 	KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8,
 	KMSG_RIGHT_ALIGN = 0x10, KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40,
-	KMSG_ACTIVE = 0x80
+	KMSG_ACTIVE = 0x80, KMSG_ANIM = 0x100
 };
 
 class MADSEngine;
 
 class KernelMessage {
 public:
-	uint8 _flags;
+	uint16 _flags;
 	int _sequenceIndex;
 	int _color1;
 	int _color2;
@@ -99,11 +99,12 @@ public:
 	~KernelMessages();
 
 	void clear();
-	int add(const Common::Point &pt, uint fontColor, uint8 flags, uint8 abortTimers,
+	int add(const Common::Point &pt, uint fontColor, uint8 flags, int endTrigger,
 		uint32 timeout, const Common::String &msg);
-	int addQuote(int quoteId, int abortTimers, uint32 timeout);
+	int addQuote(int quoteId, int endTrigger, uint32 timeout);
 	void scrollMessage(int msgIndex, int numTicks, bool quoted);
 	void setSeqIndex(int msgIndex, int seqIndex);
+	void setAnim(int msgId, int seqId, int val3);
 	void remove(int msgIndex);
 	void reset();
 	void update();
@@ -169,7 +170,7 @@ public:
 	 * Draw any text in the list to the specified surface
 	 * @param surface	Surface
 	 */
-	void draw(MSurface *s);
+	void draw(BaseSurface *s);
 
 	/**
 	 * Determine dirty areas for active text areas

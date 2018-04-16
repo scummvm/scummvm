@@ -36,11 +36,11 @@ public:
 	OSystem_SDL_Maemo();
 	~OSystem_SDL_Maemo();
 
+	virtual void init();
 	virtual void initBackend();
 	virtual void quit();
 	virtual void fatalError();
 	virtual void setWindowCaption(const char *caption);
-	virtual void setupIcon();
 #ifdef ENABLE_KEYMAPPER
 	virtual Common::HardwareInputSet *getHardwareInputSet();
 	virtual Common::Keymap *getGlobalKeymap();

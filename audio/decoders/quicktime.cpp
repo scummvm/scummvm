@@ -241,6 +241,15 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::queueAudio(const Timestamp &len
 			// If we have any samples that we need to skip (ie. we seeked into
 			// the middle of a chunk), skip them here.
 			if (_skipSamples != Timestamp()) {
+				if (_skipSamples > chunkLength) {
+					// If the amount we need to skip is greater than the size
+					// of the chunk, just skip it altogether.
+					_curMediaPos = _curMediaPos + chunkLength;
+					_skipSamples = _skipSamples - chunkLength;
+					delete stream;
+					continue;
+				}
+
 				skipSamples(_skipSamples, stream);
 				_curMediaPos = _curMediaPos + _skipSamples;
 				chunkLength = chunkLength - _skipSamples;
@@ -290,7 +299,7 @@ int QuickTimeAudioDecoder::QuickTimeAudioTrack::readBuffer(int16 *buffer, const 
 }
 
 bool QuickTimeAudioDecoder::QuickTimeAudioTrack::allDataRead() const {
-	return _curEdit == _parentTrack->editCount;
+	return _curEdit == _parentTrack->editList.size();
 }
 
 bool QuickTimeAudioDecoder::QuickTimeAudioTrack::endOfData() const {
@@ -305,7 +314,7 @@ bool QuickTimeAudioDecoder::QuickTimeAudioTrack::seek(const Timestamp &where) {
 
 	if (where >= getLength()) {
 		// We're done
-		_curEdit = _parentTrack->editCount;
+		_curEdit = _parentTrack->editList.size();
 		return true;
 	}
 
@@ -315,8 +324,7 @@ bool QuickTimeAudioDecoder::QuickTimeAudioTrack::seek(const Timestamp &where) {
 	// Now queue up some audio and skip whatever we need to skip
 	Timestamp samplesToSkip = where.convertToFramerate(getRate()) - getCurrentTrackTime();
 	queueAudio();
-	if (_parentTrack->editList[_curEdit].mediaTime != -1)
-		skipSamples(samplesToSkip, _queue);
+	skipSamples(samplesToSkip, _queue);
 
 	return true;
 }
@@ -336,7 +344,7 @@ bool QuickTimeAudioDecoder::QuickTimeAudioTrack::isOldDemuxing() const {
 
 AudioStream *QuickTimeAudioDecoder::QuickTimeAudioTrack::readAudioChunk(uint chunk) {
 	AudioSampleDesc *entry = (AudioSampleDesc *)_parentTrack->sampleDescs[0];
-	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
+	Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic(DisposeAfterUse::NO);
 
 	_decoder->_fd->seek(_parentTrack->chunkOffsets[chunk]);
 
@@ -418,7 +426,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::findEdit(const Timestamp &posit
 	// as the position is >= to the edit's start time, it is considered to be in that
 	// edit. seek() already figured out if we reached the last edit, so we don't need
 	// to handle that case here.
-	for (_curEdit = 0; _curEdit < _parentTrack->editCount - 1; _curEdit++) {
+	for (_curEdit = 0; _curEdit < _parentTrack->editList.size() - 1; _curEdit++) {
 		Timestamp nextEditTime(0, _parentTrack->editList[_curEdit + 1].timeOffset, _decoder->_timeScale);
 		if (position < nextEditTime)
 			break;

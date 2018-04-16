@@ -286,7 +286,12 @@ int LogicHEfootball::computeTwoCircleIntercepts(int32 *args) {
 
 class LogicHEfootball2002 : public LogicHEfootball {
 public:
-	LogicHEfootball2002(ScummEngine_v90he *vm) : LogicHEfootball(vm) {}
+	LogicHEfootball2002(ScummEngine_v90he *vm) : LogicHEfootball(vm) {
+		_var0 = _var1 = _var2 = _var3 = _var4 = 0.0;
+                _angle = 0.0;
+                _maxX = -1;
+                _minX = 1000000;
+	}
 
 	int32 dispatch(int op, int numArgs, int32 *args);
 

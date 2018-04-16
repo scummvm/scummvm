@@ -31,6 +31,8 @@
 #include "cine/bg_list.h"
 #include "cine/sound.h"
 
+#include "backends/audiocd/audiocd.h"
+
 namespace Cine {
 
 struct MouseStatusStruct {
@@ -169,7 +171,7 @@ static void processEvent(Common::Event &event) {
 				g_cine->getDebugger()->attach();
 				g_cine->getDebugger()->onFrame();
 			}
-			// No Break to allow fallthrough to process 'd' without CTRL
+			// fall through
 		default:
 			lastKeyStroke = event.kbd.keycode;
 			break;
@@ -219,6 +221,8 @@ void manageEvents() {
 
 	mouseData.left = mouseLeft;
 	mouseData.right = mouseRight;
+
+	g_system->getAudioCDManager()->update();
 }
 
 void getMouseData(uint16 param, uint16 *pButton, uint16 *pX, uint16 *pY) {

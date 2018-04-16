@@ -2,9 +2,13 @@ package org.scummvm.scummvm;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.net.Uri;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -75,19 +79,27 @@ public class ScummVMActivity extends Activity {
 		}
 
 		@Override
+		protected void openUrl(String url) {
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+		}
+
+		@Override
+		protected boolean isConnectionLimited() {
+			WifiManager wifiMgr = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+			if (wifiMgr != null && wifiMgr.isWifiEnabled()) {
+				WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+				return (wifiInfo == null || wifiInfo.getNetworkId() == -1); //WiFi is on, but it's not connected to any network
+			}
+			return true;
+		}
+
+		@Override
 		protected void setWindowCaption(final String caption) {
 			runOnUiThread(new Runnable() {
 					public void run() {
 						setTitle(caption);
 					}
 				});
-		}
-
-		@Override
-		protected String[] getPluginDirectories() {
-			String[] dirs = new String[1];
-			dirs[0] = ScummVMApplication.getLastCacheDir().getPath();
-			return dirs;
 		}
 
 		@Override

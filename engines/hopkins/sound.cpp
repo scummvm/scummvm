@@ -26,6 +26,8 @@
 #include "hopkins/hopkins.h"
 
 #include "audio/decoders/adpcm_intern.h"
+#include "audio/decoders/wave.h"
+#include "audio/softsynth/pcspk.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -273,13 +275,28 @@ void SoundManager::playAnimSound(int animFrame) {
 			playSample(1);
 			break;
 		case 75:
-			playSample(2);
+			// This removes the sound of the gun played while the guard is being shot, as this part of the scene has been
+			// removed in the Polish version of the game
+			if (_vm->getLanguage() != Common::PL_POL)
+				playSample(2);
+			break;
+		case 95:
+			// This fixes an original bug in the Polish version of the game, which was literally butchered for some reason
+			if (_vm->getLanguage() == Common::PL_POL)
+				playSample(3);
 			break;
 		case 109:
-			playSample(3);
+			if (_vm->getLanguage() != Common::PL_POL)
+				playSample(3);
+			break;
+		case 108:
+			// This fixes an original bug in the Polish version of the game, which was literally butchered for some reason
+			if (_vm->getLanguage() == Common::PL_POL)
+				playSample(4);
 			break;
 		case 122:
-			playSample(4);
+			if (_vm->getLanguage() != Common::PL_POL)
+				playSample(4);
 			break;
 		}
 	} else if (_specialSoundNum == 1 && animFrame == 17)

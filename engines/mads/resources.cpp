@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -79,7 +79,7 @@ private:
 	 */
 	ResourceType getResourceType(const Common::String &resourceName) const;
 public:
-	HagArchive(MADSEngine *vm);
+	explicit HagArchive(MADSEngine *vm);
 	virtual ~HagArchive();
 
 	// Archive implementation
@@ -151,7 +151,7 @@ void HagArchive::loadIndex(MADSEngine *vm) {
 	Common::File hagFile;
 
 	for (int sectionIndex = -1; sectionIndex < 11; ++sectionIndex) {
-		if (sectionIndex == 0)
+ 		if (sectionIndex == 0 && !Common::File::exists("SECTION0.HAG"))
 			continue;
 
 		// Dragonsphere does not have some sections - skip them
@@ -239,7 +239,7 @@ Common::String HagArchive::getResourceFilename(const Common::String &resourceNam
 		int value = atoi(resourceName.c_str() + 2);
 		int hagFileNum = (resType == RESTYPE_ROOM) ? value / 100 : value;
 
-		if (hagFileNum > 0)
+		if (hagFileNum >= 0)
 			outputFilename = Common::String::format("SECTION%d.HAG", hagFileNum);
 	}
 

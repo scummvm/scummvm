@@ -332,6 +332,9 @@ void Interface::saveReminderCallback(void *refCon) {
 }
 
 void Interface::updateSaveReminder() {
+	// CHECKME: This is potentially called from a different thread because it is
+	// called from a timer callback. However, it does not seem to take any
+	// precautions to avoid race conditions.
 	if (_active && _panelMode == kPanelMain) {
 		_saveReminderState = _saveReminderState % _vm->getDisplayInfo().saveReminderNumSprites + 1;
 		drawStatusBar();
@@ -864,7 +867,7 @@ void Interface::calcOptionSaveSlider() {
 
 void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	const char *text;
-	int textWidth;
+	int textWidth, textHeight;
 	Rect rect;
 	Point textPoint;
 	KnownColor textShadowKnownColor = kKnownColorVerbTextShadow;
@@ -897,12 +900,26 @@ void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	}
 
 	panel->calcPanelButtonRect(panelButton, rect);
+	if (_vm->getGameId() == GID_ITE) {
+		textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
+		textHeight = _vm->_font->getHeight(kKnownFontMedium);
+	} else {
+		textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
+		textHeight = _vm->_font->getHeight(kKnownFontVerb);
+	}
 	if (panelButton->xOffset < 0) {
-		if (_vm->getGameId() == GID_ITE)
-			textWidth = _vm->_font->getStringWidth(kKnownFontMedium, text, 0, kFontNormal);
-		else
-			textWidth = _vm->_font->getStringWidth(kKnownFontVerb, text, 0, kFontNormal);
+		// Special case: Centered to dialog. This is used for things like the
+		// title of a dialog.
 		rect.left += 2 + (panel->imageWidth - 1 - textWidth) / 2;
+	} else {
+		// The standard case is used for the things that look a bit like buttons
+		// but are not clickable, e.g. texts like "Music", "Sound", etc.
+		if (_vm->getGameId() == GID_ITE) {
+			rect.left = rect.right - textWidth - 3;
+		} else {
+			rect.left = (rect.right + rect.left - textWidth) / 2;
+		}
+		rect.top = (rect.top + rect.bottom - textHeight) / 2;
 	}
 
 	textPoint.x = rect.left;
@@ -1152,8 +1169,9 @@ void Interface::processStatusTextInput(Common::KeyState keystate) {
 		}
 		_statusTextInputPos--;
 		_statusTextInputString[_statusTextInputPos] = 0;
+		break;
 	default:
-		if (_statusTextInputPos >= STATUS_TEXT_INPUT_MAX) {
+		if (_statusTextInputPos >= STATUS_TEXT_INPUT_MAX - 1) { // -1 because of the null termination
 			break;
 		}
 		if (Common::isAlnum(keystate.ascii) || (keystate.ascii == ' ')) {
@@ -1185,6 +1203,7 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 			break;
 		}
 		_textInputPos--;
+		// fall through
 	case Common::KEYCODE_DELETE:
 		if (_textInputPos <= _textInputStringLength) {
 			if (_textInputPos != 1) {
@@ -1859,8 +1878,10 @@ void Interface::drawStatusBar() {
 	int stringWidth;
 	int color;
 	// The default colors in the Spanish version of IHNM are shifted by one
-	// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)"
-	int offset = (_vm->getLanguage() == Common::ES_ESP) ? 1 : 0;
+	// Fixes bug #1848016 - "IHNM: Wrong Subtitles Color (Spanish)". This
+	// also applies to the German and French versions (bug #7064 - "IHNM:
+	// text mistake in german version").
+	int offset = (_vm->getFeatures() & GF_IHNM_COLOR_FIX) ? 1 : 0;
 
 	// Disable the status text in IHNM when the chapter is 8
 	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 8)
@@ -2280,6 +2301,9 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 		break;
 	}
 	if (_vm->getGameId() == GID_ITE) {
+		if (textId > kTextEnterProtectAnswer)
+			error("This should not happen. Please report to ScummVM Team how you achieved this error.");
+
 		text = _vm->getTextString(textId);
 		textFont = kKnownFontMedium;
 		textShadowKnownColor = kKnownColorVerbTextShadow;
@@ -2509,10 +2533,12 @@ void Interface::converseDisplayTextLines() {
 	char bullet[2] = {
 		(char)0xb7, 0
 	};
-	Rect rect(8, _vm->getDisplayInfo().converseTextLines * _vm->getDisplayInfo().converseTextHeight);
-	Point textPoint;
 
 	assert(_conversePanel.buttonsCount >= 6);
+	Rect rect(8, _vm->getDisplayInfo().converseTextLines * _vm->getDisplayInfo().converseTextHeight);
+	rect.moveTo(_conversePanel.x + _conversePanel.buttons[0].xOffset, _conversePanel.y + _conversePanel.buttons[0].yOffset);
+
+	Point textPoint;
 
 	if (_vm->getGameId() == GID_ITE) {
 		bulletForegnd = kITEColorGreen;
@@ -2523,13 +2549,11 @@ void Interface::converseDisplayTextLines() {
 		bullet[0] = '>';				// different bullet in IHNM
 	}
 
-	rect.moveTo(_conversePanel.x + _conversePanel.buttons[0].xOffset,
-		_conversePanel.y + _conversePanel.buttons[0].yOffset);
-
 	if (_vm->getGameId() == GID_ITE)
-		_vm->_gfx->drawRect(rect, kITEColorDarkGrey);	//fill bullet place
-	else
-		_vm->_gfx->drawRect(rect, _vm->KnownColor2ColorId(kKnownColorBlack));	//fill bullet place
+		_vm->_gfx->drawRect(rect, kITEColorDarkGrey);	// fill bullet place
+	else if (_vm->getGameId() == GID_IHNM)
+		// TODO: Add these to IHNM_DisplayInfo?
+		_vm->_gfx->drawRect(Common::Rect(118, 345, 603, 463), _vm->KnownColor2ColorId(kKnownColorBlack));	// fill converse rect
 
 	for (int i = 0; i < _vm->getDisplayInfo().converseTextLines; i++) {
 		relPos = _converseStartPos + i;

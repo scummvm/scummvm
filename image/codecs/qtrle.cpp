@@ -37,27 +37,45 @@ namespace Image {
 
 QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
 	_bitsPerPixel = bitsPerPixel;
+	_ditherPalette = 0;
+	_width = width;
+	_height = height;
+	_surface = 0;
+	_dirtyPalette = false;
+	_colorMap = 0;
 
 	// We need to ensure the width is a multiple of 4
+	_paddedWidth = width;
 	uint16 wMod = width % 4;
 	if (wMod != 0)
-		width += 4 - wMod;
+		_paddedWidth += 4 - wMod;
+}
 
-	_surface = new Graphics::Surface();
-	_surface->create(width, height, getPixelFormat());
+QTRLEDecoder::~QTRLEDecoder() {
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+
+	delete[] _colorMap;
+	delete[] _ditherPalette;
 }
 
 #define CHECK_STREAM_PTR(n) \
-  if ((stream.pos() + n) > stream.size()) { \
-    warning("QTRLE Problem: stream out of bounds (%d > %d)", stream.pos() + n, stream.size()); \
-    return; \
-  }
+	do { \
+		if ((stream.pos() + n) > stream.size()) { \
+			warning("QTRLE Problem: stream out of bounds (%d > %d)", stream.pos() + n, stream.size()); \
+			return; \
+		} \
+	} while (0)
 
 #define CHECK_PIXEL_PTR(n) \
-  if ((int32)pixelPtr + n > _surface->w * _surface->h) { \
-    warning("QTRLE Problem: pixel ptr = %d, pixel limit = %d", pixelPtr + n, _surface->w * _surface->h); \
-    return; \
-  } \
+	do { \
+		if ((int32)pixelPtr + n > (int)_paddedWidth * _surface->h) { \
+			warning("QTRLE Problem: pixel ptr = %d, pixel limit = %d", pixelPtr + n, _paddedWidth * _surface->h); \
+			return; \
+		} \
+	} while (0)
 
 void QTRLEDecoder::decode1(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
@@ -73,7 +91,7 @@ void QTRLEDecoder::decode1(Common::SeekableReadStream &stream, uint32 rowPtr, ui
 
 		if (skip & 0x80) {
 			linesToChange--;
-			rowPtr += _surface->w;
+			rowPtr += _paddedWidth;
 			pixelPtr = rowPtr + 2 * (skip & 0x7f);
 		} else
 			pixelPtr += 2 * skip;
@@ -159,7 +177,7 @@ void QTRLEDecoder::decode2_4(Common::SeekableReadStream &stream, uint32 rowPtr, 
 			}
 		}
 
-		rowPtr += _surface->w;
+		rowPtr += _paddedWidth;
 	}
 }
 
@@ -204,7 +222,7 @@ void QTRLEDecoder::decode8(Common::SeekableReadStream &stream, uint32 rowPtr, ui
 			}
 		}
 
-		rowPtr += _surface->w;
+		rowPtr += _paddedWidth;
 	}
 }
 
@@ -242,7 +260,7 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream &stream, uint32 rowPtr, u
 			}
 		}
 
-		rowPtr += _surface->w;
+		rowPtr += _paddedWidth;
 	}
 }
 
@@ -288,7 +306,72 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream &stream, uint32 rowPtr, u
 			}
 		}
 
-		rowPtr += _surface->w;
+		rowPtr += _paddedWidth;
+	}
+}
+
+namespace {
+
+inline uint16 readDitherColor24(Common::ReadStream &stream) {
+	uint16 color = (stream.readByte() & 0xF8) << 6;
+	color |= (stream.readByte() & 0xF8) << 1;
+	color |= stream.readByte() >> 4;
+	return color;
+}
+
+} // End of anonymous namespace
+
+void QTRLEDecoder::dither24(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
+	uint32 pixelPtr = 0;
+	byte *output = (byte *)_surface->getPixels();
+
+	static const uint16 colorTableOffsets[] = { 0x0000, 0xC000, 0x4000, 0x8000 };
+
+	// clone2727 thinks this should be startLine & 3, but the original definitely
+	// isn't doing this. Unless startLine & 3 is always 0? Kinda defeats the
+	// purpose of the compression then.
+	byte curColorTableOffset = 0;
+
+	while (linesToChange--) {
+		CHECK_STREAM_PTR(2);
+
+		byte rowOffset = stream.readByte() - 1;
+		pixelPtr = rowPtr + rowOffset;
+		uint16 colorTableOffset = colorTableOffsets[curColorTableOffset] + (rowOffset << 14);
+
+		for (int8 rleCode = stream.readSByte(); rleCode != -1; rleCode = stream.readSByte()) {
+			if (rleCode == 0) {
+				// there's another skip code in the stream
+				CHECK_STREAM_PTR(1);
+				pixelPtr += stream.readByte() - 1;
+			} else if (rleCode < 0) {
+				// decode the run length code
+				rleCode = -rleCode;
+
+				CHECK_STREAM_PTR(3);
+				CHECK_PIXEL_PTR(rleCode);
+
+				uint16 color = readDitherColor24(stream);
+
+				while (rleCode--) {
+					output[pixelPtr++] = _colorMap[colorTableOffset + color];
+					colorTableOffset += 0x4000;
+				}
+			} else {
+				CHECK_STREAM_PTR(rleCode * 3);
+				CHECK_PIXEL_PTR(rleCode);
+
+				// copy pixels directly to output
+				while (rleCode--) {
+					uint16 color = readDitherColor24(stream);
+					output[pixelPtr++] = _colorMap[colorTableOffset + color];
+					colorTableOffset += 0x4000;
+				}
+			}
+		}
+
+		rowPtr += _paddedWidth;
+		curColorTableOffset = (curColorTableOffset + 1) & 3;
 	}
 }
 
@@ -336,13 +419,16 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream &stream, uint32 rowPtr, u
 			}
 		}
 
-		rowPtr += _surface->w;
+		rowPtr += _paddedWidth;
 	}
 }
 
 const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &stream) {
+	if (!_surface)
+		createSurface();
+
 	uint16 startLine = 0;
-	uint16 height = _surface->h;
+	uint16 height = _height;
 
 	// check if this frame is even supposed to change
 	if (stream.size() < 8)
@@ -365,7 +451,7 @@ const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &s
 		stream.readUint16BE(); // Unknown
 	}
 
-	uint32 rowPtr = _surface->w * startLine;
+	uint32 rowPtr = _paddedWidth * startLine;
 
 	switch (_bitsPerPixel) {
 	case 1:
@@ -388,7 +474,10 @@ const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &s
 		decode16(stream, rowPtr, height);
 		break;
 	case 24:
-		decode24(stream, rowPtr, height);
+		if (_ditherPalette)
+			dither24(stream, rowPtr, height);
+		else
+			decode24(stream, rowPtr, height);
 		break;
 	case 32:
 		decode32(stream, rowPtr, height);
@@ -400,12 +489,10 @@ const Graphics::Surface *QTRLEDecoder::decodeFrame(Common::SeekableReadStream &s
 	return _surface;
 }
 
-QTRLEDecoder::~QTRLEDecoder() {
-	_surface->free();
-	delete _surface;
-}
-
 Graphics::PixelFormat QTRLEDecoder::getPixelFormat() const {
+	if (_ditherPalette)
+		return Graphics::PixelFormat::createFormatCLUT8();
+
 	switch (_bitsPerPixel) {
 	case 1:
 	case 33:
@@ -426,6 +513,33 @@ Graphics::PixelFormat QTRLEDecoder::getPixelFormat() const {
 	}
 
 	return Graphics::PixelFormat();
+}
+
+bool QTRLEDecoder::canDither(DitherType type) const {
+	// Only 24-bit dithering is implemented at the moment
+	return type == kDitherTypeQT && _bitsPerPixel == 24;
+}
+
+void QTRLEDecoder::setDither(DitherType type, const byte *palette) {
+	assert(canDither(type));
+
+	_ditherPalette = new byte[256 * 3];
+	memcpy(_ditherPalette, palette, 256 * 3);
+	_dirtyPalette = true;
+
+	delete[] _colorMap;
+	_colorMap = createQuickTimeDitherTable(palette, 256);
+}
+
+void QTRLEDecoder::createSurface() {
+	if (_surface) {
+		_surface->free();
+		delete _surface;
+	}
+
+	_surface = new Graphics::Surface();
+	_surface->create(_paddedWidth, _height, getPixelFormat());
+	_surface->w = _width;
 }
 
 } // End of namespace Image

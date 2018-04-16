@@ -150,8 +150,7 @@ protected:
 
 		Array<SampleDesc *> sampleDescs;
 
-		uint32 editCount;
-		EditListEntry *editList;
+		Common::Array<EditListEntry> editList;
 
 		uint32 frameCount;
 		uint32 duration;

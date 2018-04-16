@@ -844,8 +844,6 @@ void KyraEngine_LoK::updatePlayerItemsForScene() {
 		uint8 item = _currentCharacter->inventoryItems[i];
 		if (item >= 29 && item < 33) {
 			++item;
-			if (item > 33)
-				item = 33;
 			_currentCharacter->inventoryItems[i] = item;
 			redraw = true;
 		}

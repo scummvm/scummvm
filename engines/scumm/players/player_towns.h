@@ -43,7 +43,7 @@ public:
 
 	virtual int32 doCommand(int numargs, int args[]) = 0;
 
-	virtual void saveLoadWithSerializer(Serializer *ser);
+	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 	virtual void restoreAfterLoad();
 
 	// version 1 specific
@@ -69,6 +69,7 @@ protected:
 		uint8 looping;
 		uint32 priority;
 	} _pcmCurrentSound[9];
+	friend void syncWithSerializer(Common::Serializer &, PcmCurrentSound &);
 
 	uint8 _unkFlags;
 
@@ -101,10 +102,8 @@ public:
 	void setSoundVolume(int sound, int left, int right);
 	void setSoundNote(int sound, int note);
 
-	void saveLoadWithSerializer(Serializer *ser);
+	void saveLoadWithSerializer(Common::Serializer &ser);
 	void restoreAfterLoad();
-
-	TownsEuphonyDriver *driver() { return _driver; }
 
 private:
 	void restartLoopingSounds();
@@ -137,7 +136,7 @@ private:
 	uint8 _cdaCurrentSoundTemp;
 	uint8 _cdaNumLoopsTemp;
 
-	TownsEuphonyDriver *_driver;
+	EuphonyPlayer *_player;
 };
 
 class Player_Towns_v2 : public Player_Towns {
@@ -156,7 +155,7 @@ public:
 
 	int32 doCommand(int numargs, int args[]);
 
-	void saveLoadWithSerializer(Serializer *ser);
+	void saveLoadWithSerializer(Common::Serializer &ser);
 
 private:
 	void playVocTrack(const uint8 *data);

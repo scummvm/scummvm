@@ -34,6 +34,8 @@
 #include "common/random.h"
 #include "common/language.h"
 
+#include "engines/wintermute/game_description.h"
+
 namespace Wintermute {
 
 class BaseFileManager;
@@ -53,10 +55,12 @@ class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 	Common::RandomSource *_rnd;
 	SystemClassRegistry *_classReg;
 	Common::Language _language;
+	WMETargetExecutable _targetExecutable;
 public:
 	BaseEngine();
 	~BaseEngine();
-	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang);
+	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable = LATEST_VERSION);
+
 	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
 
 	Common::RandomSource *getRandomSource() { return _rnd; }
@@ -70,9 +74,12 @@ public:
 	static const Timer *getTimer();
 	static const Timer *getLiveTimer();
 	static void LOG(bool res, const char *fmt, ...);
-	const char *getGameTargetName() const { return _targetName.c_str(); }
+	Common::String getGameTargetName() const { return _targetName; }
 	Common::String getGameId() const { return _gameId; }
 	Common::Language getLanguage() const { return _language; }
+	WMETargetExecutable getTargetExecutable() const {
+		return _targetExecutable;
+	}
 };
 
 } // End of namespace Wintermute

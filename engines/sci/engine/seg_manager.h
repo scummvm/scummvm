@@ -29,6 +29,9 @@
 #include "sci/engine/vm.h"
 #include "sci/engine/vm_types.h"
 #include "sci/engine/segment.h"
+#ifdef ENABLE_SCI32
+#include "sci/graphics/celobj32.h" // kLowResX, kLowResY
+#endif
 
 namespace Sci {
 
@@ -301,11 +304,10 @@ public:
 	 * Return the string referenced by pointer.
 	 * pointer can point to either a raw or non-raw segment.
 	 * @param pointer The pointer to dereference
-	 * @parm entries The number of values expected (for checking)
 	 * @return The string referenced, or an empty string if not enough
 	 * entries were available.
 	 */
-	Common::String getString(reg_t pointer, int entries = 0);
+	Common::String getString(reg_t pointer);
 
 
 	/**
@@ -409,6 +411,11 @@ public:
 	const char *getObjectName(reg_t pos);
 
 	/**
+	 * Finds the addresses of all objects with the given name.
+	 */
+	Common::Array<reg_t> findObjectsByName(const Common::String &name);
+
+	/**
 	 * Find the address of an object by its name. In case multiple objects
 	 * with the same name occur, the optional index parameter can be used
 	 * to distinguish between them. If index is -1, then if there is a
@@ -430,13 +437,21 @@ public:
 	reg_t getParserPtr() const { return _parserPtr; }
 
 #ifdef ENABLE_SCI32
-	SciArray<reg_t> *allocateArray(reg_t *addr);
-	SciArray<reg_t> *lookupArray(reg_t addr);
+	bool isValidAddr(reg_t reg, SegmentType expected) const {
+		SegmentObj *mobj = getSegmentObj(reg.getSegment());
+		return (mobj &&
+				mobj->getType() == expected &&
+				mobj->isValidOffset(reg.getOffset()));
+	}
+
+	SciArray *allocateArray(SciArrayType type, uint16 size, reg_t *addr);
+	SciArray *lookupArray(reg_t addr);
 	void freeArray(reg_t addr);
-	SciString *allocateString(reg_t *addr);
-	SciString *lookupString(reg_t addr);
-	void freeString(reg_t addr);
-	SegmentId getStringSegmentId() { return _stringSegId; }
+	bool isArray(reg_t addr) const;
+
+	SciBitmap *allocateBitmap(reg_t *addr, const int16 width, const int16 height, const uint8 skipColor = kDefaultSkipColor, const int16 originX = 0, const int16 originY = 0, const int16 xResolution = kLowResX, const int16 yResolution = kLowResY, const uint32 paletteSize = 0, const bool remap = false, const bool gc = true);
+	SciBitmap *lookupBitmap(reg_t addr);
+	void freeBitmap(reg_t addr);
 #endif
 
 	const Common::Array<SegmentObj *> &getSegments() const { return _heap; }
@@ -461,7 +476,7 @@ private:
 
 #ifdef ENABLE_SCI32
 	SegmentId _arraysSegId;
-	SegmentId _stringSegId;
+	SegmentId _bitmapSegId;
 #endif
 
 public:
@@ -472,6 +487,18 @@ private:
 	void createClassTable();
 
 	SegmentId findFreeSegment() const;
+
+	/**
+	 * This implements our handling of scripts greater than 64K in size.
+	 * They occur sporadically in SCI3 games (and in The Realm (SCI2.1),
+	 * if we ever decide to support it). It works by "stealing" the upper
+	 * two bits of the segment value to use as extra offset bits, making
+	 * the maximum offset 0x3FFFF (262143). This is enough.
+	 *
+	 * The "actual" segment, then, is the segment value with the upper two
+	 * bits masked out.
+	 */
+	SegmentId getActualSegment(SegmentId seg) const;
 };
 
 } // End of namespace Sci

@@ -1,2 +1,9 @@
 engines/sci/detection.cpp
+engines/sci/engine/guest_additions.cpp
 engines/sci/engine/kfile.cpp
+engines/sci/engine/kgraphics.cpp
+engines/sci/engine/kgraphics32.cpp
+engines/sci/engine/savegame.cpp
+engines/sci/graphics/controls32.cpp
+engines/sci/resource.cpp
+engines/sci/sci.cpp

@@ -65,7 +65,7 @@ static String errorToString(ErrorCode errorCode) {
 	case kEnginePluginNotFound:
 		return _s("Could not find suitable engine plugin");
 	case kEnginePluginNotSupportSaves:
-		return _s("Engine plugin does not support save states");
+		return _s("Engine plugin does not support saved games");
 
 	case kUserCanceled:
 		return _s("User canceled");

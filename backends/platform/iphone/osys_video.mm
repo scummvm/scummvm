@@ -23,8 +23,8 @@
 // Disable symbol overrides so that we can use system headers.
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "osys_main.h"
-#include "iphone_video.h"
+#include "backends/platform/iphone/osys_main.h"
+#include "backends/platform/iphone/iphone_video.h"
 
 #include "graphics/conversion.h"
 
@@ -155,7 +155,7 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 		_mouseDirty = _mouseNeedTextureUpdate = true;
 }
 
-void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
+void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) const {
 	//printf("grabPalette(%p, %u, %u)\n", colors, start, num);
 	assert(start + num <= 256);
 	byte *b = colors;

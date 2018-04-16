@@ -21,14 +21,21 @@ Savegames are wrote in the /hdd0/game/SCUM12000/saves folder.
 
 Joypad button mapping
 =====================
-- Left stick => Mouse
-- Cross      => Left mouse button
-- Circle     => Right mouse button
-- Triangle   => Game menu (F5)
-- Square     => Escape
-- Start      => ScummVM's in global game menu
-- Select     => Toggle virtual keyboard
-- L1         => AGI predictive input dialog
+- Left stick      => Mouse
+- R1 + Left stick => Slow Mouse
+- Cross           => Left mouse button
+- Circle          => Right mouse button
+- DPad            => Cursor Keys (useful for character motion)
+- R1 + DPad       => Diagonal Cursor Keys
+- L1              => Game menu (F5)
+- R1              => Shift (used to enable Mass Add in menu)
+- Square          => Period '.' (used to skip dialog lines)
+- R1 + Square     => Space ' '
+- Triangle        => Escape (used to skip cutscenes)
+- R1 + Triangle   => Return
+- Start           => ScummVM's global in-game menu
+- Select          => Toggle virtual keyboard
+- R1 + Select     => AGI predictive input dialog
 
 Disclaimer
 ==========
@@ -36,12 +43,12 @@ Unauthorized distribution of an installable package with non freeware games incl
 
 Building from source
 ====================
-This port of ScummVM to the PS3 is based on SDL. It uses the open source SDK PSL1GHT.
+This port of ScummVM to the PS3 is based on SDL2. It uses the open source SDK PSL1GHT.
 
 The dependencies needed to build it are :
 
 - The toolchain from https://github.com/ps3dev/ps3toolchain
-- SDL from https://github.com/zeldin/SDL_PSL1GHT
+- SDL from https://bitbucket.org/bgK/sdl_psl1ght
 - ScummVM from https://github.com/scummvm/scummvm
 
 Once all the dependencies are correctly setup, an installable package can be obtained from source by issuing the following command :

@@ -73,6 +73,7 @@ public:
 
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
+	virtual bool create(bool isDirectoryFlag);
 
 private:
 	/**
@@ -80,5 +81,19 @@ private:
 	 */
 	virtual void setFlags();
 };
+
+namespace Posix {
+
+/**
+ * Assure that a directory path exists.
+ *
+ * @param dir The path which is required to exist.
+ * @param prefix An (optional) prefix which should not be created if non existent.
+ *               prefix is prepended to dir if supplied.
+ * @return true in case the directoy exists (or was created), false otherwise.
+ */
+bool assureDirectoryExists(const Common::String &dir, const char *prefix = nullptr);
+
+} // End of namespace Posix
 
 #endif

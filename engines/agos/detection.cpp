@@ -94,13 +94,13 @@ using namespace AGOS;
 class AgosMetaEngine : public AdvancedMetaEngine {
 public:
 	AgosMetaEngine() : AdvancedMetaEngine(AGOS::gameDescriptions, sizeof(AGOS::AGOSGameDescription), agosGames) {
-		_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
+		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
 
-	virtual GameDescriptor findGame(const char *gameid) const {
-		return Engines::findGameID(gameid, _gameids, obsoleteGameIDsTable);
+	virtual GameDescriptor findGame(const char *gameId) const {
+		return Engines::findGameID(gameId, _gameIds, obsoleteGameIDsTable);
 	}
 
 	virtual const char *getName() const {
@@ -125,7 +125,8 @@ public:
 
 bool AgosMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves);
+		(f == kSupportsListSaves) ||
+		(f == kSimpleSavesNames);
 }
 
 bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
@@ -183,10 +184,9 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 	Common::StringArray filenames;
 	Common::String saveDesc;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
@@ -203,6 +203,8 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 

@@ -25,17 +25,12 @@
 
 #include "common/random.h"
 #include "common/system.h"
-#include "common/savefile.h"
 
 #include "graphics/pixelformat.h"
 
 #include "engines/engine.h"
 
 #include "gob/console.h"
-
-namespace GUI {
-class StaticTextWidget;
-}
 
 /**
  * This is the namespace of the Gob engine.
@@ -75,7 +70,6 @@ class PalAnim;
 class Scenery;
 class Util;
 class SaveLoad;
-class GobConsole;
 class PreGob;
 
 #define WRITE_VAR_UINT32(var, val)  _vm->_inter->_variables->writeVar32(var, val)

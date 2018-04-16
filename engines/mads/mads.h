@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
+#include "mads/conversations.h"
 #include "mads/debugger.h"
 #include "mads/dialogs.h"
 #include "mads/events.h"
@@ -84,6 +85,8 @@ private:
 	 * Handles basic initialisation
 	 */
 	void initialize();
+
+	void loadOptions();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -94,9 +97,10 @@ public:
 	EventsManager *_events;
 	Font *_font;
 	Game *_game;
+	GameConversations * _gameConv;
 	Palette *_palette;
 	Resources *_resources;
-	ScreenSurface _screen;
+	Screen *_screen;
 	SoundManager *_sound;
 	AudioPlayer *_audio;
 	bool _easyMouse;
@@ -104,7 +108,9 @@ public:
 	bool _textWindowStill;
 	ScreenFade _screenFade;
 	bool _musicFlag;
+	bool _soundFlag;
 	bool _dithering;
+	bool _disableFastwalk;
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	virtual ~MADSEngine();
@@ -145,6 +151,13 @@ public:
 	 * Handles saving the game via the GMM
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	/**
+	 * Handles updating sound settings after they're changed in the GMM dialog
+	 */
+	virtual void syncSoundSettings();
+
+	void saveOptions();
 };
 
 } // End of namespace MADS

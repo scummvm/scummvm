@@ -83,15 +83,18 @@ enum VideoFlags {
 	kStretch         = 1 << 8
 };
 
-struct VideoState {
-	Common::String fileName;
-	uint16 x;
-	uint16 y;
-	uint16 flags;
+/**
+ * Trace information about a VM function call.
+ */
+struct SciCallOrigin {
+	int scriptNr; //< The source script of the function
+	Common::String objectName; //< The name of the object being called
+	Common::String methodName; //< The name of the method being called
+	int localCallOffset; //< The byte offset of a local script subroutine called by the origin method. -1 if not in a local subroutine.
+	int roomNr; //< The room that was loaded at the time of the call
 
-	void reset() {
-		fileName = "";
-		x = y = flags = 0;
+	Common::String toString() const {
+		return Common::String::format("method %s::%s (room %d, script %d, localCall %x)", objectName.c_str(), methodName.c_str(), roomNr, scriptNr, localCallOffset);
 	}
 };
 
@@ -111,9 +114,11 @@ public:
 	uint32 _screenUpdateTime;	/**< The last time the game updated the screen */
 
 	void speedThrottler(uint32 neededSleep);
-	void wait(int16 ticks);
+	int wait(int16 ticks);
 
-	uint32 _throttleCounter; /**< total times kAnimate was invoked */
+#ifdef ENABLE_SCI32
+	uint32 _eventCounter; /**< total times kGetEvent was invoked since the last call to kFrameOut */
+#endif
 	uint32 _throttleLastTime; /**< last time kAnimate was invoked */
 	bool _throttleTrigger;
 	bool _gameIsBenchmarking;
@@ -127,13 +132,13 @@ public:
 	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
 	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
 
-#ifdef ENABLE_SCI32
-	VirtualIndexFile *_virtualIndexFile;
-#endif
+	// see detection.cpp / SciEngine::loadGameState()
+	int _delayedRestoreGameId; // the saved game id, that it supposed to get restored (triggered by ScummVM menu)
 
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
 	bool _cursorWorkaroundActive; // Refer to GfxCursor::setPosition()
+	int16 _cursorWorkaroundPosCount; // When the cursor is reported to be at the previously set coordinate, we won't disable the workaround unless it happened for this many times
 	Common::Point _cursorWorkaroundPoint;
 	Common::Rect _cursorWorkaroundRect;
 
@@ -195,16 +200,20 @@ public:
 	uint16 _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
 
-	VideoState _videoState;
-	uint16 _vmdPalStart, _vmdPalEnd;
-	bool _syncedAudioOptions;
-
-	uint16 _palCycleToColor;
-
 	/**
 	 * Resets the engine state.
 	 */
 	void reset(bool isRestoring);
+
+	/**
+	 * Finds and returns the origin of the current call.
+	 */
+	SciCallOrigin getCurrentCallOrigin() const;
+
+	/**
+	 * Determines whether the given object method is in the current stack.
+	 */
+	bool callInStack(const reg_t object, const Selector selector) const;
 };
 
 } // End of namespace Sci

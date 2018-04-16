@@ -24,9 +24,9 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/scumm.h"
 #include "scumm/resource.h"
-#include "scumm/saveload.h"
 
 #include "audio/fmopl.h"
+#include "audio/mixer.h"
 
 #include "common/textconsole.h"
 #include "common/config-manager.h"
@@ -35,17 +35,12 @@ namespace Scumm {
 
 #define AD_CALLBACK_FREQUENCY 472
 
-Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
-	: _vm(scumm), _mixer(mixer), _rate(mixer->getOutputRate()) {
+Player_AD::Player_AD(ScummEngine *scumm)
+	: _vm(scumm) {
 	_opl2 = OPL::Config::create();
-	if (!_opl2->init(_rate)) {
+	if (!_opl2->init()) {
 		error("Could not initialize OPL2 emulator");
 	}
-
-	_samplesPerCallback = _rate / AD_CALLBACK_FREQUENCY;
-	_samplesPerCallbackRemainder = _rate % AD_CALLBACK_FREQUENCY;
-	_samplesTillCallback = 0;
-	_samplesTillCallbackRemainder = 0;
 
 	memset(_registerBackUpTable, 0, sizeof(_registerBackUpTable));
 	writeReg(0x01, 0x00);
@@ -53,10 +48,8 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 	writeReg(0x08, 0x00);
 	writeReg(0x01, 0x20);
 
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-
 	_engineMusicTimer = 0;
-	_soundPlaying = -1;
+	_musicResource = -1;
 
 	_curOffset = 0;
 
@@ -78,11 +71,11 @@ Player_AD::Player_AD(ScummEngine *scumm, Audio::Mixer *mixer)
 
 	_musicVolume = _sfxVolume = 255;
 	_isSeeking = false;
+
+	_opl2->start(new Common::Functor0Mem<void, Player_AD>(this, &Player_AD::onTimer), AD_CALLBACK_FREQUENCY);
 }
 
 Player_AD::~Player_AD() {
-	_mixer->stopHandle(_soundHandle);
-
 	stopAllSounds();
 	Common::StackLock lock(_mutex);
 	delete _opl2;
@@ -110,8 +103,8 @@ void Player_AD::startSound(int sound) {
 		stopMusic();
 
 		// Lock the new music resource
-		_soundPlaying = sound;
-		_vm->_res->lock(rtSound, _soundPlaying);
+		_musicResource = sound;
+		_vm->_res->lock(rtSound, _musicResource);
 
 		// Start the new music resource
 		_musicData = res;
@@ -156,7 +149,7 @@ void Player_AD::startSound(int sound) {
 void Player_AD::stopSound(int sound) {
 	Common::StackLock lock(_mutex);
 
-	if (sound == _soundPlaying) {
+	if (sound == _musicResource) {
 		stopMusic();
 	} else {
 		for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
@@ -184,30 +177,40 @@ int Player_AD::getMusicTimer() {
 }
 
 int Player_AD::getSoundStatus(int sound) const {
-	return (sound == _soundPlaying);
+	if (sound == _musicResource) {
+		return true;
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_sfx); ++i) {
+		if (_sfx[i].resource == sound) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
-void Player_AD::saveLoadWithSerializer(Serializer *ser) {
+void Player_AD::saveLoadWithSerializer(Common::Serializer &s) {
 	Common::StackLock lock(_mutex);
 
-	if (ser->getVersion() < VER(95)) {
+	if (s.getVersion() < VER(95)) {
 		IMuse *dummyImuse = IMuse::create(_vm->_system, NULL, NULL);
-		dummyImuse->save_or_load(ser, _vm, false);
+		dummyImuse->saveLoadIMuse(s, _vm, false);
 		delete dummyImuse;
 		return;
 	}
 
-	if (ser->getVersion() >= VER(96)) {
+	if (s.getVersion() >= VER(96)) {
 		int32 res[4] = {
-			_soundPlaying, _sfx[0].resource, _sfx[1].resource, _sfx[2].resource
+			_musicResource, _sfx[0].resource, _sfx[1].resource, _sfx[2].resource
 		};
 
 		// The first thing we save is a list of sound resources being played
 		// at the moment.
-		ser->saveLoadArrayOf(res, 4, sizeof(res[0]), sleInt32);
+		s.syncArray(res, 4, Common::Serializer::Sint32LE);
 
 		// If we are loading start the music again at this point.
-		if (ser->isLoading()) {
+		if (s.isLoading()) {
 			if (res[0] != -1) {
 				startSound(res[0]);
 			}
@@ -215,26 +218,21 @@ void Player_AD::saveLoadWithSerializer(Serializer *ser) {
 
 		uint32 musicOffset = _curOffset;
 
-		static const SaveLoadEntry musicData[] = {
-			MKLINE(Player_AD, _engineMusicTimer, sleInt32, VER(96)),
-			MKLINE(Player_AD, _musicTimer, sleUint32, VER(96)),
-			MKLINE(Player_AD, _internalMusicTimer, sleUint32, VER(96)),
-			MKLINE(Player_AD, _curOffset, sleUint32, VER(96)),
-			MKLINE(Player_AD, _nextEventTimer, sleUint32, VER(96)),
-			MKEND()
-		};
-
-		ser->saveLoadEntries(this, musicData);
+		s.syncAsSint32LE(_engineMusicTimer, VER(96));
+		s.syncAsUint32LE(_musicTimer, VER(96));
+		s.syncAsUint32LE(_internalMusicTimer, VER(96));
+		s.syncAsUint32LE(_curOffset, VER(96));
+		s.syncAsUint32LE(_nextEventTimer, VER(96));
 
 		// We seek back to the old music position.
-		if (ser->isLoading()) {
+		if (s.isLoading()) {
 			SWAP(musicOffset, _curOffset);
 			musicSeekTo(musicOffset);
 		}
 
 		// Finally start up the SFX. This makes sure that they are not
 		// accidently stopped while seeking to the old music position.
-		if (ser->isLoading()) {
+		if (s.isLoading()) {
 			for (int i = 1; i < ARRAYSIZE(res); ++i) {
 				if (res[i] != -1) {
 					startSound(res[i]);
@@ -244,36 +242,14 @@ void Player_AD::saveLoadWithSerializer(Serializer *ser) {
 	}
 }
 
-int Player_AD::readBuffer(int16 *buffer, const int numSamples) {
+void Player_AD::onTimer() {
 	Common::StackLock lock(_mutex);
 
-	int len = numSamples;
-
-	while (len > 0) {
-		if (!_samplesTillCallback) {
-			if (_curOffset) {
-				updateMusic();
-			}
-
-			updateSfx();
-
-			_samplesTillCallback = _samplesPerCallback;
-			_samplesTillCallbackRemainder += _samplesPerCallbackRemainder;
-			if (_samplesTillCallbackRemainder >= AD_CALLBACK_FREQUENCY) {
-				++_samplesTillCallback;
-				_samplesTillCallbackRemainder -= AD_CALLBACK_FREQUENCY;
-			}
-		}
-
-		const int samplesToRead = MIN(len, _samplesTillCallback);
-		_opl2->readBuffer(buffer, samplesToRead);
-
-		buffer += samplesToRead;
-		len -= samplesToRead;
-		_samplesTillCallback -= samplesToRead;
+	if (_curOffset) {
+		updateMusic();
 	}
 
-	return numSamples;
+	updateSfx();
 }
 
 void Player_AD::setupVolume() {
@@ -489,13 +465,13 @@ void Player_AD::startMusic() {
 }
 
 void Player_AD::stopMusic() {
-	if (_soundPlaying == -1) {
+	if (_musicResource == -1) {
 		return;
 	}
 
 	// Unlock the music resource if present
-	_vm->_res->unlock(rtSound, _soundPlaying);
-	_soundPlaying = -1;
+	_vm->_res->unlock(rtSound, _musicResource);
+	_musicResource = -1;
 
 	// Stop the music playback
 	_curOffset = 0;
@@ -538,7 +514,7 @@ void Player_AD::updateMusic() {
 			// important to note that we need to parse a command directly
 			// at the new position, i.e. there is no time value we need to
 			// parse.
-			if (_soundPlaying == -1) {
+			if (_musicResource == -1) {
 				return;
 			} else {
 				continue;

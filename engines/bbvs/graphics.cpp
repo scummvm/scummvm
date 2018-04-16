@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -66,7 +66,7 @@ void Screen::clear() {
 
 void Screen::drawDrawList(DrawList &drawList, SpriteModule *spriteModule) {
 	for (uint i = 0; i < drawList.size(); ++i) {
-		debug(1, "index: %d; x: %d; y: %d; priority: %d", drawList[i].index, drawList[i].x, drawList[i].y, drawList[i].priority);
+		debug(4, "index: %d; x: %d; y: %d; priority: %d", drawList[i].index, drawList[i].x, drawList[i].y, drawList[i].priority);
 		Sprite sprite = spriteModule->getSprite(drawList[i].index);
 		drawSprite(sprite, drawList[i].x, drawList[i].y);
 	}
@@ -105,7 +105,7 @@ void Screen::drawSprite(Sprite &sprite, int x, int y) {
 	if (destX + width >= _surface->w)
 		width = _surface->w - destX;
 
-	debug(0, "drawSprite() (%d, %d, %d, %d); skipX: %d; skipY: %d; %d", destX, destY, width, height, skipX, skipY, sprite.type);
+	debug(6, "drawSprite() (%d, %d, %d, %d); skipX: %d; skipY: %d; %d", destX, destY, width, height, skipX, skipY, sprite.type);
 
 	if (sprite.type == 1) {
 		for (int yc = 0; yc < height; ++yc) {

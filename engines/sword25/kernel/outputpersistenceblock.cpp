@@ -41,6 +41,13 @@ OutputPersistenceBlock::OutputPersistenceBlock() {
 	_data.reserve(INITIAL_BUFFER_SIZE);
 }
 
+void OutputPersistenceBlock::write(const void *data, uint32 size) {
+	writeMarker(BLOCK_MARKER);
+
+	write(size);
+	rawWrite(data, size);
+}
+
 void OutputPersistenceBlock::write(int32 value) {
 	writeMarker(SINT_MARKER);
 	value = TO_LE_32(value);

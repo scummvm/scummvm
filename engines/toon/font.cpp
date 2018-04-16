@@ -99,7 +99,7 @@ void FontRenderer::renderText(int16 x, int16 y, const Common::String &origText, 
 		} else {
 			curChar = textToFont(curChar);
 			_currentFont->drawFontFrame(_vm->getMainSurface(), curChar, curX, curY, _currentFontColor);
-			curX = curX + _currentFont->getFrameWidth(curChar) - 1;
+			curX = curX + MAX<int32>(_currentFont->getFrameWidth(curChar) - 2, 0);
 			height = MAX<int32>(height, _currentFont->getFrameHeight(curChar));
 		}
 		text++;
@@ -138,8 +138,8 @@ void FontRenderer::computeSize(const Common::String &origText, int16 *retX, int1
 			// really tell how far it will stick out. For now,
 			// assume we only need to take the lower bound into
 			// consideration.
-			Common::Rect charRect = _currentFont->getFrameRect(curChar);
-			lastLineHeight = MAX(lastLineHeight, charRect.bottom);
+			//Common::Rect charRect = _currentFont->getFrameRect(curChar);
+			lastLineHeight = MAX(lastLineHeight, _currentFont->getHeight());
 		}
 		text++;
 	}

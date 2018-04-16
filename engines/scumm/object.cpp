@@ -110,6 +110,16 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 	// This causes it to try to remove object 0 from the inventory.
 	if (_game.id == GID_PASS && obj == 0 && vm.slot[_currentScript].number == 94)
 		return;
+
+	// WORKAROUND for bug #6802: assert() was triggered in freddi2.
+ 	// Bug is in room 39. Problem is script 10, in the localvar2==78 case;
+	// this only sets the obj id if var198 is non-zero, but in the asserting
+	// case, it is obj 0. That means two setOwnerOf calls are made with obj 0.
+	// The correct setOwnerOf calls are made afterwards, so just ignoring this
+	// seems to work just fine.
+	if (_game.id == GID_HEGAME && obj == 0 && _currentRoom == 39 && vm.slot[_currentScript].number == 10)
+		return;
+
 	assert(obj > 0);
 
 	if (owner == 0) {
@@ -1126,6 +1136,7 @@ void ScummEngine_v80he::clearDrawQueues() {
  */
 void ScummEngine::markObjectRectAsDirty(int obj) {
 	int i, strip;
+	++_V0Delay._objectRedrawCount;
 
 	for (i = 1; i < _numLocalObjects; i++) {
 		if (_objs[i].obj_nr == (uint16)obj) {
@@ -1133,6 +1144,7 @@ void ScummEngine::markObjectRectAsDirty(int obj) {
 				const int minStrip = MAX(_screenStartStrip, _objs[i].x_pos / 8);
 				const int maxStrip = MIN(_screenEndStrip+1, _objs[i].x_pos / 8 + _objs[i].width / 8);
 				for (strip = minStrip; strip < maxStrip; strip++) {
+					++_V0Delay._objectStripRedrawCount;
 					setGfxUsageBit(strip, USAGE_BIT_DIRTY);
 				}
 			}
@@ -1526,7 +1538,8 @@ int ScummEngine::getObjX(int obj) {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
 		int x, y;
-		getObjectOrActorXY(obj, x, y);
+		if (getObjectOrActorXY(obj, x, y) == -1)
+			return -1;
 		return x;
 	}
 }
@@ -1541,7 +1554,8 @@ int ScummEngine::getObjY(int obj) {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
 		int x, y;
-		getObjectOrActorXY(obj, x, y);
+		if (getObjectOrActorXY(obj, x, y) == -1)
+			return -1;
 		return y;
 	}
 }

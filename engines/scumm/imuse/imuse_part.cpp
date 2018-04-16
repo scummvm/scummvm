@@ -26,7 +26,6 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "scumm/imuse/imuse_internal.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
@@ -66,48 +65,44 @@ Part::Part() {
 	_unassigned_instrument = false;
 }
 
-void Part::saveLoadWithSerializer(Serializer *ser) {
-	const SaveLoadEntry partEntries[] = {
-		MKLINE(Part, _pitchbend, sleInt16, VER(8)),
-		MKLINE(Part, _pitchbend_factor, sleUint8, VER(8)),
-		MKLINE(Part, _transpose, sleInt8, VER(8)),
-		MKLINE(Part, _vol, sleUint8, VER(8)),
-		MKLINE(Part, _detune, sleInt8, VER(8)),
-		MKLINE(Part, _pan, sleInt8, VER(8)),
-		MKLINE(Part, _on, sleUint8, VER(8)),
-		MKLINE(Part, _modwheel, sleUint8, VER(8)),
-		MKLINE(Part, _pedal, sleUint8, VER(8)),
-		MK_OBSOLETE(Part, _program, sleUint8, VER(8), VER(16)),
-		MKLINE(Part, _pri, sleUint8, VER(8)),
-		MKLINE(Part, _chan, sleUint8, VER(8)),
-		MKLINE(Part, _effect_level, sleUint8, VER(8)),
-		MKLINE(Part, _chorus, sleUint8, VER(8)),
-		MKLINE(Part, _percussion, sleUint8, VER(8)),
-		MKLINE(Part, _bank, sleUint8, VER(8)),
-		MKEND()
-	};
-
+void Part::saveLoadWithSerializer(Common::Serializer &ser) {
 	int num;
-	if (ser->isSaving()) {
+	if (ser.isSaving()) {
 		num = (_next ? (_next - _se->_parts + 1) : 0);
-		ser->saveUint16(num);
+		ser.syncAsUint16LE(num);
 
 		num = (_prev ? (_prev - _se->_parts + 1) : 0);
-		ser->saveUint16(num);
+		ser.syncAsUint16LE(num);
 
 		num = (_player ? (_player - _se->_players + 1) : 0);
-		ser->saveUint16(num);
+		ser.syncAsUint16LE(num);
 	} else {
-		num = ser->loadUint16();
+		ser.syncAsUint16LE(num);
 		_next = (num ? &_se->_parts[num - 1] : 0);
 
-		num = ser->loadUint16();
+		ser.syncAsUint16LE(num);
 		_prev = (num ? &_se->_parts[num - 1] : 0);
 
-		num = ser->loadUint16();
+		ser.syncAsUint16LE(num);
 		_player = (num ? &_se->_players[num - 1] : 0);
 	}
-	ser->saveLoadEntries(this, partEntries);
+
+	ser.syncAsSint16LE(_pitchbend, VER(8));
+	ser.syncAsByte(_pitchbend_factor, VER(8));
+	ser.syncAsSByte(_transpose, VER(8));
+	ser.syncAsByte(_vol, VER(8));
+	ser.syncAsSByte(_detune, VER(8));
+	ser.syncAsSByte(_pan, VER(8));
+	ser.syncAsByte(_on, VER(8));
+	ser.syncAsByte(_modwheel, VER(8));
+	ser.syncAsByte(_pedal, VER(8));
+	ser.skip(1, VER(8), VER(16)); // _program
+	ser.syncAsByte(_pri, VER(8));
+	ser.syncAsByte(_chan, VER(8));
+	ser.syncAsByte(_effect_level, VER(8));
+	ser.syncAsByte(_chorus, VER(8));
+	ser.syncAsByte(_percussion, VER(8));
+	ser.syncAsByte(_bank, VER(8));
 }
 
 void Part::set_detune(int8 detune) {

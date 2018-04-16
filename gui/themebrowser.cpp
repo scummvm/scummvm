@@ -84,6 +84,7 @@ void ThemeBrowser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data)
 			++sel;
 
 		_select = sel->id;
+		_selectName = sel->name;
 		setResult(1);
 		close();
 		break;
@@ -114,7 +115,7 @@ void ThemeBrowser::updateListing() {
 	_fileList->setSelected(currentThemeIndex);
 
 	// Finally, redraw
-	draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 } // End of namespace GUI

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -29,29 +29,49 @@
 #include "mads/dragonsphere/game_dragonsphere.h"
 //#include "mads/dragonsphere/globals_dragonsphere.h"
 
-
 namespace MADS {
 
 namespace Dragonsphere {
 
+enum Verb {
+	VERB_LOOK = 0x3,
+	VERB_TAKE = 0x4,
+	VERB_PUSH = 0x5,
+	VERB_OPEN = 0x6,
+	VERB_PUT = 0x7,
+	VERB_TALK_TO = 0x8,
+	VERB_GIVE = 0x9,
+	VERB_PULL = 0xA,
+	VERB_CLOSE = 0xB,
+	VERB_THROW = 0xC,
+	VERB_WALK_TO = 0xD,
+	VERB_WALK_ACROSS = 0x11,
+	VERB_WALK_BEHIND = 0x1C,
+	VERB_LOOK_AT = 0x1E,
+	VERB_WALK_THROUGH = 0x25,
+	VERB_WALK_INTO = 0x27,
+	VERB_INVOKE = 0x2F,
+	VERB_ATTACK = 0x39,
+	VERB_CARVE_UP = 0x3A,
+	VERB_THRUST = 0x57,
+	VERB_POUR = 0x62,
+	VERB_POUR_CONTENTS_OF = 0x63,
+	VERB_DRINK = 0x64,
+	VERB_SHIFT_SELF = 0x73,
+	VERB_SHIFT_INTO_BEAR = 0x74,
+	VERB_SHIFT_INTO_SEAL = 0x75,
+	VERB_SHIFT_INTO_SNAKE = 0x76,
+	VERB_WALK_DOWN = 0xA9,
+	VERB_WALK = 0x1CB,
+	VERB_WALK_AROUND = 0x221
+};
+
 enum Noun {
 	NOUN_GAME = 0x1,
 	NOUN_QSAVE = 0x2,
-	NOUN_LOOK = 0x3,
-	NOUN_TAKE = 0x4,
-	NOUN_PUSH = 0x5,
-	NOUN_OPEN = 0x6,
-	NOUN_PUT = 0x7,
-	NOUN_TALK_TO = 0x8,
-	NOUN_GIVE = 0x9,
-	NOUN_PULL = 0xA,
-	NOUN_CLOSE = 0xB,
-	NOUN_THROW = 0xC,
-	NOUN_WALK_TO = 0xD,
 	NOUN_NOTHING = 0xE,
 	NOUN_ = 0xF,
 	NOUN_FLOOR = 0x10,
-	NOUN_WALK_ACROSS = 0x11,
 	NOUN_RUG = 0x12,
 	NOUN_CARPET = 0x13,
 	NOUN_WALL = 0x14,
@@ -62,18 +82,14 @@ enum Noun {
 	NOUN_NIGHTSTAND = 0x19,
 	NOUN_TAPESTRY = 0x1A,
 	NOUN_DRESSING_SCREEN = 0x1B,
-	NOUN_WALK_BEHIND = 0x1C,
 	NOUN_ROYAL_CREST = 0x1D,
-	NOUN_LOOK_AT = 0x1E,
 	NOUN_WASHBASIN = 0x1F,
 	NOUN_WASH_AT = 0x20,
 	NOUN_BOOK = 0x21,
 	NOUN_FIREPLACE = 0x22,
 	NOUN_FIREPLACE_SCREEN = 0x23,
 	NOUN_DOOR_TO_QUEENS_ROOM = 0x24,
-	NOUN_WALK_THROUGH = 0x25,
 	NOUN_HALL_TO_SOUTH = 0x26,
-	NOUN_WALK_INTO = 0x27,
 	NOUN_WALL_PLAQUE = 0x28,
 	NOUN_DECORATION = 0x29,
 	NOUN_SWORDS = 0x2A,
@@ -81,7 +97,6 @@ enum Noun {
 	NOUN_BUST_ON_WALL = 0x2C,
 	NOUN_WALL_ARCH = 0x2D,
 	NOUN_SIGNET_RING = 0x2E,
-	NOUN_INVOKE = 0x2F,
 	NOUN_POLISH = 0x30,
 	NOUN_GANGBANG = 0x31,
 	NOUN_BIRD_FIGURINE = 0x32,
@@ -91,8 +106,6 @@ enum Noun {
 	NOUN_MAKE_NOISE = 0x36,
 	NOUN_SHIELDSTONE = 0x37,
 	NOUN_SWORD = 0x38,
-	NOUN_ATTACK = 0x39,
-	NOUN_CARVE_UP = 0x3A,
 	NOUN_GOBLET = 0x3B,
 	NOUN_FILL = 0x3C,
 	NOUN_DRINK_FROM = 0x3D,
@@ -121,7 +134,6 @@ enum Noun {
 	NOUN_MAGIC_BELT = 0x54,
 	NOUN_ADJUST = 0x55,
 	NOUN_AMULET = 0x56,
-	NOUN_THRUST = 0x57,
 	NOUN_MUD = 0x58,
 	NOUN_FEEL = 0x59,
 	NOUN_TASTE = 0x5A,
@@ -132,9 +144,6 @@ enum Noun {
 	NOUN_FLASK = 0x5F,
 	NOUN_FLASK_FULL_OF_ACID = 0x60,
 	NOUN_POUR_CONTENTS = 0x61,
-	NOUN_POUR = 0x62,
-	NOUN_POUR_CONTENTS_OF = 0x63,
-	NOUN_DRINK = 0x64,
 	NOUN_ROPE = 0x65,
 	NOUN_TIE = 0x66,
 	NOUN_POWER_VACUUM_STONE = 0x67,
@@ -149,10 +158,6 @@ enum Noun {
 	NOUN_BLACK_SPHERE = 0x70,
 	NOUN_SOPTUS_SOPORIFIC = 0x71,
 	NOUN_SHIFTER_RING = 0x72,
-	NOUN_SHIFT_SELF = 0x73,
-	NOUN_SHIFT_INTO_BEAR = 0x74,
-	NOUN_SHIFT_INTO_SEAL = 0x75,
-	NOUN_SHIFT_INTO_SNAKE = 0x76,
 	NOUN_REVERT = 0x77,
 	NOUN_MEDICINE_BUNDLE = 0x78,
 	NOUN_SHAKE = 0x79,
@@ -203,7 +208,6 @@ enum Noun {
 	NOUN_DOOR = 0xA6,
 	NOUN_WALL_SWITCH = 0xA7,
 	NOUN_STAIRS = 0xA8,
-	NOUN_WALK_DOWN = 0xA9,
 	NOUN_EDGE_OF_ABYSS = 0xAA,
 	NOUN_COURTYARD = 0xAB,
 	NOUN_ROCK = 0xAC,
@@ -493,7 +497,6 @@ enum Noun {
 	NOUN_PATH_TO_HIGHTOWER = 0x1C8,
 	NOUN_SPIRIT_PLANE = 0x1C9,
 	NOUN_SPIRIT_TREE = 0x1CA,
-	NOUN_WALK = 0x1CB,
 	NOUN_REMAINS = 0x1CC,
 	NOUN_DOORWAY_TO_ELEVATOR = 0x1CD,
 	NOUN_DRAGON_DOOR = 0x1CE,
@@ -579,7 +582,6 @@ enum Noun {
 	NOUN_SHIFTER_VILLAGE = 0x21E,
 	NOUN_SLATHAN_SKY = 0x21F,
 	NOUN_SHIFTER = 0x220,
-	NOUN_WALK_AROUND = 0x221,
 	NOUN_WRECKED_BRIDGE = 0x222,
 	NOUN_SHACK = 0x223,
 	NOUN_WRECKED_SHACK = 0x224,
@@ -645,35 +647,14 @@ public:
 class SceneInfoDragonsphere : public SceneInfo {
 	friend class SceneInfo;
 protected:
-	virtual void loadCodes(MSurface &depthSurface, int variant);
+	virtual void loadCodes(BaseSurface &depthSurface, int variant);
 
-	virtual void loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream);
+	virtual void loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream);
 
 	/**
 	* Constructor
 	*/
 	SceneInfoDragonsphere(MADSEngine *vm) : SceneInfo(vm) {}
-};
-
-// TODO: Temporary, remove once implemented properly
-class Scene1xx : public DragonsphereScene {
-protected:
-	/**
-	 * Plays an appropriate sound when entering a scene
-	 */
-	void sceneEntrySound() {}
-
-	/**
-	 *Sets the AA file to use for the scene
-	 */
-	void setAAName() {}
-
-	/**
-	 * Updates the prefix used for getting player sprites for the scene
-	 */
-	void setPlayerSpritesPrefix() {}
-public:
-	Scene1xx(MADSEngine *vm) : DragonsphereScene(vm) {}
 };
 
 // TODO: Temporary, remove once implemented properly

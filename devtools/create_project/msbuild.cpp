@@ -55,7 +55,20 @@ int MSBuildProvider::getVisualStudioVersion() {
 	if (_version == 12)
 		return 2013;
 
+	if (_version == 14)
+		return 14;
+
+	if (_version == 15)
+		return 15;
+
 	error("Unsupported version passed to getVisualStudioVersion");
+}
+
+int MSBuildProvider::getSolutionVersion() {
+	if (_version == 14 || _version == 15)
+		return 14;
+
+	return _version + 1;
 }
 
 namespace {
@@ -116,7 +129,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-    std::string version = "v" + toString(_version) + "0";
+	std::string version = _version == 15 ? "v141" : "v" + toString(_version) + "0";
 	std::string llvm = "LLVM-vs" + toString(getVisualStudioVersion());
 
 	outputConfigurationType(setup, project, name, "Release|Win32", version);
@@ -177,6 +190,13 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		project << "\t</ItemGroup>\n";
 	}
 
+	// Visual Studio 2015 automatically imports natvis files that are part of the project
+	if (name == PROJECT_NAME && _version == 14) {
+		project << "\t<ItemGroup>\n";
+		project << "\t\t<None Include=\"" << setup.srcDir << "/devtools/create_project/scripts/scummvm.natvis\" />\n";
+		project << "\t</ItemGroup>\n";
+	}
+
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionTargets\">\n"
 	           "\t</ImportGroup>\n";
@@ -185,7 +205,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		// We override the normal target to ignore the exit code (this allows us to have a clean output and not message about the command exit code)
 		project << "\t\t<Target Name=\"PostBuildEvent\">\n"
 		        << "\t\t\t<Message Text=\"Description: Run tests\" />\n"
-				<< "\t\t\t<Exec Command=\"$(TargetPath)\"  IgnoreExitCode=\"true\" />\n"
+		        << "\t\t\t<Exec Command=\"$(TargetPath)\"  IgnoreExitCode=\"true\" />\n"
 		        << "\t\t</Target>\n";
 	}
 
@@ -350,17 +370,17 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << (_version >= 12 ? _version : 4) << ".0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<PropertyGroup>\n"
 	              "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
-	              "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(ExecutablePath)</ExecutablePath>\n"
-	              "\t\t<LibraryPath>$(" << LIBS_DEFINE << ")\\lib\\" << (bits == 32 ? "x86" : "x64") << ";$(LibraryPath)</LibraryPath>\n"
-	              "\t\t<IncludePath>$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\SDL;$(IncludePath)</IncludePath>\n"
+	              "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(" << LIBS_DEFINE << ")\\bin\\" << (bits == 32 ? "x86" : "x64") << ";$(ExecutablePath)</ExecutablePath>\n"
+	              "\t\t<LibraryPath>$(" << LIBS_DEFINE << ")\\lib\\" << (bits == 32 ? "x86" : "x64") << ";$(" << LIBS_DEFINE << ")\\lib\\" << (bits == 32 ? "x86" : "x64") << "\\$(Configuration);$(LibraryPath)</LibraryPath>\n"
+	              "\t\t<IncludePath>$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\" << (setup.useSDL2 ? "SDL2" : "SDL") << ";$(IncludePath)</IncludePath>\n"
 	              "\t\t<OutDir>$(Configuration)" << bits << "\\</OutDir>\n"
-	              "\t\t<IntDir>$(Configuration)" << bits << "/$(ProjectName)\\</IntDir>\n"
+	              "\t\t<IntDir>$(Configuration)" << bits << "\\$(ProjectName)\\</IntDir>\n"
 	              "\t</PropertyGroup>\n"
 	              "\t<ItemDefinitionGroup>\n"
 	              "\t\t<ClCompile>\n"
 	              "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
 	              "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	              "\t\t\t<AdditionalIncludeDirectories>$(" << LIBS_DEFINE << ")\\include;.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	              "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	              "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests) ? "Sync" : "") << "</ExceptionHandling>\n";
 
@@ -417,10 +437,14 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t\t<StringPooling>true</StringPooling>\n"
 		              "\t\t\t<BufferSecurityCheck>false</BufferSecurityCheck>\n"
 		              "\t\t\t<DebugInformationFormat></DebugInformationFormat>\n"
-		              "\t\t\t<RuntimeLibrary>MultiThreaded</RuntimeLibrary>\n"
+		              "\t\t\t<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>\n"
 		              "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n"
 		              "\t\t</ClCompile>\n"
+		              "\t\t<Lib>\n"
+		              "\t\t\t<LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>\n"
+		              "\t\t</Lib>\n"
 		              "\t\t<Link>\n"
+		              "\t\t\t<LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>\n"
 		              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
 		              "\t\t\t<SetChecksum>true</SetChecksum>\n";
 	} else {
@@ -428,11 +452,17 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t\t<PreprocessorDefinitions>WIN32;" << (configuration == "LLVM" ? "_CRT_SECURE_NO_WARNINGS;" : "") << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 		              "\t\t\t<MinimalRebuild>true</MinimalRebuild>\n"
 		              "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n"
-		              "\t\t\t<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>\n"
+		              "\t\t\t<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>\n"
 		              "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
-		              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
-		              "\t\t\t<DebugInformationFormat>" << (isWin32 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n" // For x64 format Edit and continue is not supported, thus we default to Program Database
-		              "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
+		              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
+		if (_version >= 14) {
+			// Since MSVC 2015 Edit and Continue is support for x64 too.
+			properties << "\t\t\t<DebugInformationFormat>" << "EditAndContinue" << "</DebugInformationFormat>\n";
+		} else {
+			// Older MSVC versions did not support Edit and Continue for x64, thus we do not use it.
+			properties << "\t\t\t<DebugInformationFormat>" << (isWin32 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n";
+		}
+		properties << "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
 
 		if (configuration == "LLVM") {
 			// FIXME The LLVM cl wrapper does not seem to work properly with the $(TargetDir) path so we hard-code the build folder until the issue is resolved
@@ -443,8 +473,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		properties << "\t\t</ClCompile>\n"
 		              "\t\t<Link>\n"
 		              "\t\t\t<GenerateDebugInformation>true</GenerateDebugInformation>\n"
-		              "\t\t\t<ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>\n"
-		              "\t\t\t<IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n";
+		              "\t\t\t<ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>\n";
 	}
 
 	properties << "\t\t</Link>\n"
@@ -491,7 +520,9 @@ void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream 
 	if (!_compileFiles.empty()) {
 		projectFile << "\t<ItemGroup>\n";
 		for (std::list<FileEntry>::const_iterator entry = _compileFiles.begin(); entry != _compileFiles.end(); ++entry) {
-			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), (*entry).name + ".o") != duplicate.end());
+			std::string fileName = (*entry).name + ".o";
+			std::transform(fileName.begin(), fileName.end(), fileName.begin(), tolower);
+			const bool isDuplicate = (std::find(duplicate.begin(), duplicate.end(), fileName) != duplicate.end());
 
 			// Deal with duplicated file names
 			if (isDuplicate) {

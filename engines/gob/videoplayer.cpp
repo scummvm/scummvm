@@ -21,6 +21,8 @@
  */
 
 
+#include "video/coktel_decoder.h"
+
 #include "gob/videoplayer.h"
 #include "gob/global.h"
 #include "gob/dataio.h"

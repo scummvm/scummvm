@@ -23,6 +23,8 @@
 #include "common/config-manager.h"
 #include "common/translation.h"
 
+#include "audio/mixer.h"
+
 #include "gui/saveload.h"
 
 #include "neverhood/menumodule.h"
@@ -91,6 +93,10 @@ MenuModule::~MenuModule() {
 
 void MenuModule::setLoadgameInfo(uint index) {
 	_savegameSlot = (*_savegameList)[index].slotNum;
+}
+
+void MenuModule::setLoadgameSlot(int slot) {
+	_savegameSlot = slot;
 }
 
 void MenuModule::setSavegameInfo(const Common::String &description, uint index, bool newSavegame) {
@@ -202,7 +208,7 @@ uint32 MenuModule::handleMessage(int messageNum, const MessageParam &param, Enti
 		break;
 	}
 
-	return Module::handleMessage(messageNum, param, sender);;
+	return Module::handleMessage(messageNum, param, sender);
 }
 
 void MenuModule::createLoadGameMenu() {
@@ -285,7 +291,7 @@ void MenuModule::loadSavegameList() {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Neverhood::NeverhoodEngine::readSaveHeader(in, false, header) == Neverhood::NeverhoodEngine::kRSHENoError) {
+				if (Neverhood::NeverhoodEngine::readSaveHeader(in, header) == Neverhood::NeverhoodEngine::kRSHENoError) {
 					SavegameItem savegameItem;
 					savegameItem.slotNum = slotNum;
 					savegameItem.description = header.description;
@@ -605,7 +611,8 @@ void TextEditWidget::onClick() {
 				++newCursorPos;
 			_cursorPos = MIN((int)_entryString.size(), newCursorPos);
 		}
-		_cursorSurface->setVisible(true);
+		if (!_readOnly)
+			_cursorSurface->setVisible(true);
 		refresh();
 	}
 	Widget::onClick();
@@ -863,7 +870,7 @@ void SavegameListBox::pageDown() {
 }
 
 int GameStateMenu::scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc) {
-	const EnginePlugin *plugin = NULL;
+	const Plugin *plugin = nullptr;
 	EngineMan.findGame(ConfMan.get("gameid"), &plugin);
 	GUI::SaveLoadChooser *dialog;
 	Common::String desc;
@@ -912,7 +919,7 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 
 		if (slot >= 0) {
 			if (!isSave) {
-				((MenuModule*)_parentModule)->setLoadgameInfo(slot);
+				((MenuModule*)_parentModule)->setLoadgameSlot(slot);
 			} else {
 				((MenuModule*)_parentModule)->setSavegameInfo(saveDesc,
 					slot, slot >= saveCount);
@@ -1054,7 +1061,7 @@ static const NRect kSaveGameMenuTextEditRect = { 0, 0, 377, 17 };
 static const NRect kSaveGameMenuMouseRect = { 50, 47, 427, 64 };
 
 SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
-	:  GameStateMenu(vm, parentModule, savegameList, kSaveGameMenuButtonFileHashes, kSaveGameMenuButtonCollisionBounds,
+	: GameStateMenu(vm, parentModule, savegameList, kSaveGameMenuButtonFileHashes, kSaveGameMenuButtonCollisionBounds,
 		0x30084E25, 0x2328121A,
 		0x84E21308, &kSaveGameMenuMouseRect,
 		0x1115A223, 60, 142, kSaveGameMenuListBoxRect,
@@ -1064,9 +1071,11 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameLi
 }
 
 void SaveGameMenu::performAction() {
-	((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
-		_listBox->getCurrIndex(), _textEditWidget->isModified());
-	leaveScene(0);
+	if (!_textEditWidget->getString().empty()) {
+		((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
+			_listBox->getCurrIndex(), _textEditWidget->isModified());
+		leaveScene(0);
+	}
 }
 
 static const uint32 kLoadGameMenuButtonFileHashes[] = {
@@ -1085,12 +1094,21 @@ static const NRect kLoadGameMenuButtonCollisionBounds[] = {
 
 static const NRect kLoadGameMenuListBoxRect = { 0, 0, 320, 272 };
 static const NRect kLoadGameMenuTextEditRect = { 0, 0, 320, 17 };
+
+#if 0
+// Unlike the original game, the text widget in our load dialog is read-only so
+// don't change the mouse cursor to indicate that you can type the name of the
+// game to load.
+//
+// Since we allow multiple saved games to have the same name, it's probably
+// better this way.
 static const NRect kLoadGameMenuMouseRect = { 263, 48, 583, 65 };
+#endif
 
 LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
 	: GameStateMenu(vm, parentModule, savegameList, kLoadGameMenuButtonFileHashes, kLoadGameMenuButtonCollisionBounds,
 		0x98620234, 0x201C2474,
-		0x2023098E, &kLoadGameMenuMouseRect,
+		0x2023098E, NULL /* &kLoadGameMenuMouseRect */,
 		0x04040409, 263, 142, kLoadGameMenuListBoxRect,
 		0x10924C03, 0, 263, 48, kLoadGameMenuTextEditRect,
 		0x0BC600A3, 0x0F960021) {
@@ -1098,8 +1116,11 @@ LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameLi
 }
 
 void LoadGameMenu::performAction() {
-	((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
-	leaveScene(0);
+	// TODO: The original would display a message here if nothing was selected.
+	if (!_textEditWidget->getString().empty()) {
+		((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
+		leaveScene(0);
+	}
 }
 
 static const uint32 kDeleteGameMenuButtonFileHashes[] = {
@@ -1130,8 +1151,11 @@ DeleteGameMenu::DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, Savega
 }
 
 void DeleteGameMenu::performAction() {
-	((MenuModule*)_parentModule)->setDeletegameInfo(_listBox->getCurrIndex());
-	leaveScene(0);
+	// TODO: The original would display a message here if no game was selected.
+	if (!_textEditWidget->getString().empty()) {
+		((MenuModule*)_parentModule)->setDeletegameInfo(_listBox->getCurrIndex());
+		leaveScene(0);
+	}
 }
 
 QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule, const Common::String &description)

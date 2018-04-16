@@ -28,6 +28,7 @@
 #include "common/str.h"
 
 #include "graphics/surface.h"
+#include "graphics/transparent_surface.h"
 
 #include "gui/ThemeEngine.h"
 
@@ -38,7 +39,7 @@ class VectorRenderer;
 struct DrawStep;
 
 
-typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);
+typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &, const Common::Rect &);
 
 
 struct DrawStep {
@@ -79,8 +80,11 @@ struct DrawStep {
 
 	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
+	GUI::ThemeEngine::AutoScaleMode autoscale; /**< scale alphaimage if present */
+
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
 	Graphics::Surface *blitSrc;
+	Graphics::TransparentSurface *blitAlphaSrc;
 };
 
 VectorRenderer *createRenderer(int mode);
@@ -142,6 +146,7 @@ public:
 	 * @param y2 Vertical (Y) coordinate for the line end
 	 */
 	virtual void drawLine(int x1, int y1, int x2, int y2) = 0;
+	virtual void drawLineClip(int x1, int y1, int x2, int y2, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a circle centered at (x,y) with radius r.
@@ -151,6 +156,7 @@ public:
 	 * @param r Radius of the circle.
 	 */
 	virtual void drawCircle(int x, int y, int r) = 0;
+	virtual void drawCircleClip(int x, int y, int r, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a square starting at (x,y) with the given width and height.
@@ -161,6 +167,7 @@ public:
 	 * @param h Height of the square
 	 */
 	virtual void drawSquare(int x, int y, int w, int h) = 0;
+	virtual void drawSquareClip(int x, int y, int w, int h, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a rounded square starting at (x,y) with the given width and height.
@@ -173,6 +180,7 @@ public:
 	 * @param r Radius of the corners.
 	 */
 	virtual void drawRoundedSquare(int x, int y, int r, int w, int h) = 0;
+	virtual void drawRoundedSquareClip(int x, int y, int r, int w, int h, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a triangle starting at (x,y) with the given base and height.
@@ -186,6 +194,7 @@ public:
 	 * @param orient Orientation of the triangle.
 	 */
 	virtual void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient) = 0;
+	virtual void drawTriangleClip(int x, int y, int base, int height, TriangleOrientation orient, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a beveled square like the ones in the Classic GUI themes.
@@ -199,6 +208,7 @@ public:
 	 * @param bevel Amount of bevel. Must be positive.
 	 */
 	virtual void drawBeveledSquare(int x, int y, int w, int h, int bevel) = 0;
+	virtual void drawBeveledSquareClip(int x, int y, int w, int h, int bevel, Common::Rect clipping) = 0;
 
 	/**
 	 * Draws a tab-like shape, specially thought for the Tab widget.
@@ -212,6 +222,7 @@ public:
 	 * @param r Radius of the corners of the tab (0 for squared tabs).
 	 */
 	virtual void drawTab(int x, int y, int r, int w, int h) = 0;
+	virtual void drawTabClip(int x, int y, int r, int w, int h, Common::Rect clipping) = 0;
 
 
 	/**
@@ -220,6 +231,11 @@ public:
 	virtual void drawCross(int x, int y, int w, int h) {
 		drawLine(x, y, x + w, y + w);
 		drawLine(x + w, y, x, y + h);
+	}
+
+	virtual void drawCrossClip(int x, int y, int w, int h, Common::Rect clipping) {
+		drawLineClip(x, y, x + w, y + w, clipping);
+		drawLineClip(x + w, y, x, y + h, clipping);
 	}
 
 	/**
@@ -269,8 +285,15 @@ public:
 	 *
 	 * @param surface Pointer to a Surface object.
 	 */
-	virtual void setSurface(Surface *surface) {
+	virtual void setSurface(TransparentSurface *surface) {
 		_activeSurface = surface;
+	}
+
+	/**
+	 * Returns the currently active drawing surface
+	 */
+	virtual TransparentSurface *getActiveSurface() {
+		return _activeSurface;
 	}
 
 	/**
@@ -278,6 +301,7 @@ public:
 	 * Defaults to using the active Foreground color for filling.
 	 */
 	virtual void fillSurface() = 0;
+	virtual void fillSurfaceClip(Common::Rect clipping) = 0;
 
 	/**
 	 * Clears the active surface.
@@ -355,68 +379,74 @@ public:
 	/**
 	 * DrawStep callback functions for each drawing feature
 	 */
-	void drawCallback_CIRCLE(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_CIRCLE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h, radius;
 
 		radius = stepGetRadius(step, area);
 		stepGetPositions(step, area, x, y, w, h);
 
-		drawCircle(x + radius, y + radius, radius);
+		drawCircleClip(x + radius, y + radius, radius, clip);
 	}
 
-	void drawCallback_SQUARE(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_SQUARE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawSquare(x, y, w, h);
+		drawSquareClip(x, y, w, h, clip);
 	}
 
-	void drawCallback_LINE(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_LINE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawLine(x, y, x + w, y + w);
+		drawLineClip(x, y, x + w, y + w, clip);
 	}
 
-	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_ROUNDSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawRoundedSquare(x, y, stepGetRadius(step, area), w, h);
+		drawRoundedSquareClip(x, y, stepGetRadius(step, area), w, h, clip);
 	}
 
-	void drawCallback_FILLSURFACE(const Common::Rect &area, const DrawStep &step) {
-		fillSurface();
+	void drawCallback_FILLSURFACE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
+		fillSurfaceClip(clip);
 	}
 
-	void drawCallback_TRIANGLE(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_TRIANGLE(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawTriangle(x, y, w, h, (TriangleOrientation)step.extraData);
+		drawTriangleClip(x, y, w, h, (TriangleOrientation)step.extraData, clip);
 	}
 
-	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_BEVELSQ(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawBeveledSquare(x, y, w, h, _bevel);
+		drawBeveledSquareClip(x, y, w, h, _bevel, clip);
 	}
 
-	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_TAB(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawTab(x, y, stepGetRadius(step, area), w, h);
+		drawTabClip(x, y, stepGetRadius(step, area), w, h, clip);
 	}
 
-	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		blitAlphaBitmap(step.blitSrc, Common::Rect(x, y, x + w, y + h));
+		blitKeyBitmapClip(step.blitSrc, Common::Rect(x, y, x + w, y + h), clip);
 	}
 
-	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step) {
+	void drawCallback_ALPHABITMAP(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		drawCross(x, y, w, h);
+		blitAlphaBitmap(step.blitAlphaSrc, Common::Rect(x, y, x + w, y + h), step.autoscale, step.xAlign, step.yAlign); //TODO
 	}
 
-	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step) {}
+	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {
+		uint16 x, y, w, h;
+		stepGetPositions(step, area, x, y, w, h);
+		drawCrossClip(x, y, w, h, clip);
+	}
+
+	void drawCallback_VOID(const Common::Rect &area, const DrawStep &step, const Common::Rect &clip) {}
 
 	/**
 	 * Draws the specified draw step on the screen.
@@ -426,6 +456,7 @@ public:
 	 * @param step Pointer to a DrawStep struct.
 	 */
 	virtual void drawStep(const Common::Rect &area, const DrawStep &step, uint32 extra = 0);
+	virtual void drawStepClip(const Common::Rect &area, const Common::Rect &clip, const DrawStep &step, uint32 extra = 0);
 
 	/**
 	 * Copies the part of the current frame to the system overlay.
@@ -466,8 +497,16 @@ public:
 	 * blitted into the active surface, at the position specified by "r".
 	 */
 	virtual void blitSubSurface(const Graphics::Surface *source, const Common::Rect &r) = 0;
+	virtual void blitSubSurfaceClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
 
-	virtual void blitAlphaBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
+	virtual void blitKeyBitmap(const Graphics::Surface *source, const Common::Rect &r) = 0;
+	virtual void blitKeyBitmapClip(const Graphics::Surface *source, const Common::Rect &r, const Common::Rect &clipping) = 0;
+
+	virtual void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
+			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
+			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
+			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
+			int alpha = 255) = 0;
 
 	/**
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
@@ -491,7 +530,7 @@ public:
 	virtual void applyScreenShading(GUI::ThemeEngine::ShadingStyle) = 0;
 
 protected:
-	Surface *_activeSurface; /**< Pointer to the surface currently being drawn */
+	TransparentSurface *_activeSurface; /**< Pointer to the surface currently being drawn */
 
 	FillMode _fillMode; /**< Defines in which way (if any) are filled the drawn shapes */
 	ShadowFillMode _shadowFillMode;

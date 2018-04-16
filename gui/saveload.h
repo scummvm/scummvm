@@ -23,7 +23,7 @@
 #ifndef GUI_SAVELOAD_H
 #define GUI_SAVELOAD_H
 
-#include "gui/dialog.h"
+#include "common/str.h"
 #include "engines/metaengine.h"
 
 namespace GUI {
@@ -51,7 +51,7 @@ public:
 	 * @return The selcted save slot. -1 in case none is selected.
 	 */
 	int runModalWithCurrentTarget();
-	int runModalWithPluginAndTarget(const EnginePlugin *plugin, const String &target);
+	int runModalWithPluginAndTarget(const Plugin *plugin, const String &target);
 
 	const Common::String &getResultString() const;
 

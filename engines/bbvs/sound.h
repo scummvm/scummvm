@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -23,9 +23,12 @@
 #ifndef BBVS_SOUND_H
 #define BBVS_SOUND_H
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "common/array.h"
+
+namespace Audio {
+class RewindableAudioStream;
+}
 
 namespace Bbvs {
 
@@ -38,7 +41,7 @@ public:
 	void stop();
 	bool isPlaying();
 protected:
-	Audio::SeekableAudioStream *_stream;
+	Audio::RewindableAudioStream *_stream;
 	Audio::SoundHandle _handle;
 	// Keep the filename for debugging purposes
 	Common::String _filename;

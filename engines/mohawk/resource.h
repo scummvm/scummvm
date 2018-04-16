@@ -68,6 +68,8 @@ namespace Mohawk {
 #define ID_VARS MKTAG('V','A','R','S') // Variable Values
 #define ID_VERS MKTAG('V','E','R','S') // Version Info
 #define ID_ZIPS MKTAG('Z','I','P','S') // Zip Mode Status
+#define ID_META MKTAG('M','E','T','A') // ScummVM save metadata
+#define ID_THMB MKTAG('T','H','M','B') // ScummVM save thumbnail
 
 // Zoombini Resource FourCC's
 #define ID_SND  MKTAG( 0 ,'S','N','D') // Standard Mohawk Sound
@@ -168,25 +170,25 @@ protected:
 class MohawkArchive : public Archive {
 public:
 	MohawkArchive() : Archive() {}
-	~MohawkArchive() {}
+	~MohawkArchive() override {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 class LivingBooksArchive_v1 : public Archive {
 public:
 	LivingBooksArchive_v1() : Archive() {}
-	~LivingBooksArchive_v1() {}
+	~LivingBooksArchive_v1() override {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 class DOSArchive_v2 : public Archive {
 public:
 	DOSArchive_v2() : Archive() {}
-	~DOSArchive_v2() {}
+	~DOSArchive_v2() override {}
 
-	bool openStream(Common::SeekableReadStream *stream);
+	bool openStream(Common::SeekableReadStream *stream) override;
 };
 
 } // End of namespace Mohawk

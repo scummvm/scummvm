@@ -32,6 +32,7 @@
 
 #include "engines/engine.h"
 #include "engines/dialogs.h"
+#include "engines/util.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -40,14 +41,17 @@
 #include "common/str.h"
 #include "common/error.h"
 #include "common/list.h"
-#include "common/list_intern.h"
+#include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
+#include "common/singleton.h"
 
 #include "backends/keymapper/keymapper.h"
+#include "base/version.h"
 
+#include "gui/gui-manager.h"
 #include "gui/debugger.h"
 #include "gui/dialog.h"
 #include "gui/message.h"
@@ -55,7 +59,9 @@
 #include "audio/mixer.h"
 
 #include "graphics/cursorman.h"
+#include "graphics/fontman.h"
 #include "graphics/pixelformat.h"
+#include "image/bmp.h"
 
 #ifdef _WIN32_WCE
 extern bool isSmartphone();
@@ -101,6 +107,36 @@ static void defaultErrorHandler(const char *msg) {
 	}
 }
 
+// Chained games manager
+
+ChainedGamesManager::ChainedGamesManager() {
+	clear();
+}
+
+void ChainedGamesManager::clear() {
+	_chainedGames.clear();
+}
+
+void ChainedGamesManager::push(const Common::String target, const int slot) {
+	Game game;
+	game.target = target;
+	game.slot = slot;
+	_chainedGames.push(game);
+}
+
+bool ChainedGamesManager::pop(Common::String &target, int &slot) {
+	if (_chainedGames.empty()) {
+		return false;
+	}
+	Game game = _chainedGames.pop();
+	target = game.target;
+	slot = game.slot;
+	return true;
+}
+
+namespace Common {
+DECLARE_SINGLETON(ChainedGamesManager);
+}
 
 Engine::Engine(OSystem *syst)
 	: _system(syst),
@@ -159,61 +195,92 @@ void Engine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 4);
 }
 
-void initCommonGFX(bool defaultTo1XScaler) {
-	const Common::ConfigManager::Domain *transientDomain = ConfMan.getDomain(Common::ConfigManager::kTransientDomain);
+void initCommonGFX() {
 	const Common::ConfigManager::Domain *gameDomain = ConfMan.getActiveDomain();
 
-	assert(transientDomain);
-
-	const bool useDefaultGraphicsMode =
-		(!transientDomain->contains("gfx_mode") ||
-		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "normal") ||
-		!scumm_stricmp(transientDomain->getVal("gfx_mode").c_str(), "default")
-		)
-		 &&
-		(
-		!gameDomain ||
-		!gameDomain->contains("gfx_mode") ||
-		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "normal") ||
-		!scumm_stricmp(gameDomain->getVal("gfx_mode").c_str(), "default")
-		);
-
-	// See if the game should default to 1x scaler
-	if (useDefaultGraphicsMode && defaultTo1XScaler) {
-		g_system->resetGraphicsScale();
-	} else {
-		// Override global scaler with any game-specific define
-		if (ConfMan.hasKey("gfx_mode")) {
-			Common::String gfxMode = ConfMan.get("gfx_mode");
-			g_system->setGraphicsMode(gfxMode.c_str());
-
-			// HACK: For OpenGL modes, we will still honor the graphics scale override
-			if (defaultTo1XScaler && (gfxMode.equalsIgnoreCase("opengl_linear") || gfxMode.equalsIgnoreCase("opengl_nearest")))
-				g_system->resetGraphicsScale();
-		}
-	}
-
-	// Note: The following code deals with the fullscreen / ASR settings. This
-	// is a bit tricky, because there are three ways the user can affect these
-	// settings: Via the config file, via the command line, and via in-game
-	// hotkeys.
 	// Any global or command line settings already have been applied at the time
-	// we get here. Hence we only do something
+	// we get here, so we only do something if the game domain overrides those
+	// values
+	if (gameDomain) {
+		if (gameDomain->contains("aspect_ratio"))
+			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
 
-	// (De)activate aspect-ratio correction as determined by the config settings
-	if (gameDomain && gameDomain->contains("aspect_ratio"))
-		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio"));
+		if (gameDomain->contains("fullscreen"))
+			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 
-	// (De)activate fullscreen mode as determined by the config settings
-	if (gameDomain && gameDomain->contains("fullscreen"))
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
+		if (gameDomain->contains("filtering"))
+			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering"));
+	}
 }
 
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format) {
+// Please leave the splash screen in working order for your releases, even if they're commercial.
+// This is a proper and good way to show your appreciation for our hard work over these years.
+bool splash = false;
+
+#include "logo_data.h"
+
+void splashScreen() {
+	Common::MemoryReadStream stream(logo_data, ARRAYSIZE(logo_data));
+
+	Image::BitmapDecoder bitmap;
+
+	if (!bitmap.loadStream(stream)) {
+		warning("Error loading logo file");
+		return;
+	}
+
+	g_system->showOverlay();
+
+	// Fill with orange
+	Graphics::Surface screen;
+	screen.create(g_system->getOverlayWidth(), g_system->getOverlayHeight(), g_system->getOverlayFormat());
+	screen.fillRect(Common::Rect(screen.w, screen.h), screen.format.ARGBToColor(0xff, 0xd4, 0x75, 0x0b));
+
+	// Load logo
+	Graphics::Surface *logo = bitmap.getSurface()->convertTo(g_system->getOverlayFormat(), bitmap.getPalette());
+	int lx = MAX((g_system->getOverlayWidth() - logo->w) / 2, 0);
+	int ly = MAX((g_system->getOverlayHeight() - logo->h) / 2, 0);
+
+	// Print version information
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+	int w = font->getStringWidth(gScummVMVersionDate);
+	int x = g_system->getOverlayWidth() - w - 5; // lx + logo->w - w + 5;
+	int y = g_system->getOverlayHeight() - font->getFontHeight() - 5; //ly + logo->h + 5;
+	font->drawString(&screen, gScummVMVersionDate, x, y, w, screen.format.ARGBToColor(0xff, 0, 0, 0));
+
+	g_system->copyRectToOverlay(screen.getPixels(), screen.pitch, 0, 0, screen.w, screen.h);
+	screen.free();
+
+	// Draw logo
+	int lw = MIN<uint16>(logo->w, g_system->getOverlayWidth() - lx);
+	int lh = MIN<uint16>(logo->h, g_system->getOverlayHeight() - ly);
+
+	g_system->copyRectToOverlay(logo->getPixels(), logo->pitch, lx, ly, lw, lh);
+	logo->free();
+	delete logo;
+
+	// Delay 0.6 secs
+	uint time0 = g_system->getMillis();
+	Common::Event event;
+	while (time0 + 600 > g_system->getMillis()) {
+		g_system->updateScreen();
+		(void)g_system->getEventManager()->pollEvent(event);
+		g_system->delayMillis(10);
+	}
+	g_system->hideOverlay();
+
+	splash = true;
+}
+
+void initGraphicsModes(const Graphics::ModeList &modes) {
+	g_system->initSizeHint(modes);
+}
+
+void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
 
 	g_system->beginGFXTransaction();
 
-		initCommonGFX(defaultTo1xScaler);
+		initCommonGFX();
 #ifdef USE_RGB_COLOR
 		if (format)
 			g_system->initSize(width, height, format);
@@ -226,6 +293,9 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 #endif
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
+	if (!splash && !GUI::GuiManager::instance()._launched)
+		splashScreen();
 
 	if (gfxError == OSystem::kTransactionSuccess)
 		return;
@@ -267,10 +337,12 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 		GUI::MessageDialog dialog(_("Could not apply fullscreen setting."));
 		dialog.runModal();
 	}
+
+	if (gfxError & OSystem::kTransactionFilteringFailed) {
+		GUI::MessageDialog dialog(_("Could not apply filtering setting."));
+		dialog.runModal();
+	}
 }
-
-
-using Graphics::PixelFormat;
 
 /**
  * Determines the first matching format between two lists.
@@ -280,33 +352,33 @@ using Graphics::PixelFormat;
  * @return			The first item on the backend list that also occurs on the frontend list
  *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
  */
-inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
+inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::PixelFormat> &backend, const Common::List<Graphics::PixelFormat> &frontend) {
 #ifdef USE_RGB_COLOR
-	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
-		for (Common::List<PixelFormat>::iterator j = frontend.begin(); j != frontend.end(); ++j) {
+	for (Common::List<Graphics::PixelFormat>::const_iterator i = backend.begin(); i != backend.end(); ++i) {
+		for (Common::List<Graphics::PixelFormat>::const_iterator j = frontend.begin(); j != frontend.end(); ++j) {
 			if (*i == *j)
 				return *i;
 		}
 	}
 #endif
-	return PixelFormat::createFormatCLUT8();
+	return Graphics::PixelFormat::createFormatCLUT8();
 }
 
 
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList) {
+void initGraphics(int width, int height, const Common::List<Graphics::PixelFormat> &formatList) {
 	Graphics::PixelFormat format = findCompatibleFormat(g_system->getSupportedFormats(), formatList);
-	initGraphics(width, height, defaultTo1xScaler, &format);
+	initGraphics(width, height, &format);
 }
 
-void initGraphics(int width, int height, bool defaultTo1xScaler) {
+void initGraphics(int width, int height) {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	initGraphics(width, height, defaultTo1xScaler, &format);
+	initGraphics(width, height, &format);
 }
 
 void GUIErrorMessage(const Common::String &msg) {
 	g_system->setWindowCaption("Error");
 	g_system->beginGFXTransaction();
-		initCommonGFX(false);
+		initCommonGFX();
 		g_system->initSize(320, 200);
 	if (g_system->endGFXTransaction() == OSystem::kTransactionSuccess) {
 		GUI::MessageDialog dialog(msg);
@@ -433,7 +505,7 @@ void Engine::openMainMenuDialog() {
 	if (_saveSlotToLoad >= 0) {
 		Common::Error status = loadGameState(_saveSlotToLoad);
 		if (status.getCode() != Common::kNoError) {
-			Common::String failMessage = Common::String::format(_("Gamestate load failed (%s)! "
+			Common::String failMessage = Common::String::format(_("Failed to load saved game (%s)! "
 				  "Please consult the README for basic information, and for "
 				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
 			GUI::MessageDialog dialog(failMessage);
@@ -448,7 +520,7 @@ bool Engine::warnUserAboutUnsupportedGame() {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
 		GUI::MessageDialog alert(_("WARNING: The game you are about to start is"
 			" not yet fully supported by ScummVM. As such, it is likely to be"
-			" unstable, and any saves you make might not work in future"
+			" unstable, and any saved game you make might not work in future"
 			" versions of ScummVM."), _("Start anyway"), _("Cancel"));
 		return alert.runModal() == GUI::kMessageOK;
 	}

@@ -23,8 +23,6 @@
 #ifndef SCI_GRAPHICS_PAINT16_H
 #define SCI_GRAPHICS_PAINT16_H
 
-#include "sci/graphics/paint.h"
-
 namespace Sci {
 
 class GfxPorts;
@@ -36,9 +34,9 @@ class GfxView;
 /**
  * Paint16 class, handles painting/drawing for SCI16 (SCI0-SCI1.1) games
  */
-class GfxPaint16 : public GfxPaint {
+class GfxPaint16 {
 public:
-	GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio);
+	GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster16 *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio);
 	~GfxPaint16();
 
 	void init(GfxAnimate *animate, GfxText16 *text16);
@@ -80,7 +78,7 @@ public:
 	void kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode);
 	void kernelGraphRedrawBox(Common::Rect rect);
 
-	reg_t kernelDisplay(const char *text, int argc, reg_t *argv);
+	reg_t kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv);
 
 	reg_t kernelPortraitLoad(const Common::String &resourceName);
 	void kernelPortraitShow(const Common::String &resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
@@ -93,7 +91,7 @@ private:
 	GfxAnimate *_animate;
 	GfxCache *_cache;
 	GfxPorts *_ports;
-	GfxCoordAdjuster *_coordAdjuster;
+	GfxCoordAdjuster16 *_coordAdjuster;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	GfxText16 *_text16;

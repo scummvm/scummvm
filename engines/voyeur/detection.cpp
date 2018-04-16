@@ -75,7 +75,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Voyeur (c) Philips P.O.V. Entertainment Group";
+		return "Voyeur (C) Philips P.O.V. Entertainment Group";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -92,7 +92,8 @@ bool VoyeurMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail);
+		(f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Voyeur::VoyeurEngine::hasFeature(EngineFeature f) const {
@@ -114,10 +115,9 @@ SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.0??", target);
+	Common::String pattern = Common::String::format("%s.0##", target);
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());   // Sort to get the files in numerical order
 
 	SaveStateList saveList;
 	Voyeur::VoyeurSavegameHeader header;
@@ -132,13 +132,14 @@ SaveStateList VoyeurMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				if (header.read(in)) {
 					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
-					header._thumbnail->free();
 				}
 				delete in;
 			}
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -157,7 +158,7 @@ SaveStateDescriptor VoyeurMetaEngine::querySaveMetaInfos(const char *target, int
 
 	if (f) {
 		Voyeur::VoyeurSavegameHeader header;
-		header.read(f);
+		header.read(f, false);
 		delete f;
 
 		// Create the return descriptor

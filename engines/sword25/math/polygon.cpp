@@ -29,8 +29,6 @@
  *
  */
 
-#include <math.h>
-
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 
@@ -110,7 +108,7 @@ bool Polygon::computeIsCW() const {
 
 		// Cross product form
 		// If the cross product of the vertex lying fartherest bottom left is positive,
-		// the vertecies arrranged in a clockwise order. Otherwise counter-clockwise
+		// the vertecies arranged in a clockwise order. Otherwise counter-clockwise
 		if (crossProduct(vertices[v1Index], vertices[v2Index], vertices[v3Index]) >= 0)
 			return true;
 	}

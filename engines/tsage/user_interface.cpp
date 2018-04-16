@@ -205,7 +205,7 @@ void UIInventoryScroll::process(Event &event) {
 		toggle(true);
 
 		// Wait for the mouse to be released
-		BF_GLOBALS._events.waitForPress(EVENT_BUTTON_UP);
+		g_globals->_events.waitForPress(EVENT_BUTTON_UP);
 
 		// Restore unselected version
 		toggle(false);
@@ -253,7 +253,7 @@ void UICollection::show() {
 void UICollection::erase() {
 	if (_clearScreen) {
 		Rect tempRect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT);
-		GLOBALS._screenSurface.fillRect(tempRect, 0);
+		GLOBALS._screen.fillRect(tempRect, 0);
 		GLOBALS._sceneManager._scene->_backSurface.fillRect(tempRect, 0);
 		_clearScreen = false;
 	}
@@ -274,7 +274,7 @@ void UICollection::draw() {
 			_objList[idx]->draw();
 
 		// Draw the resulting UI onto the screen
-		GLOBALS._screenSurface.copyFrom(GLOBALS._sceneManager._scene->_backSurface,
+		GLOBALS._screen.copyFrom(GLOBALS._sceneManager._scene->_backSurface,
 			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
 			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
 
@@ -293,12 +293,12 @@ void UICollection::r2rDrawFrame() {
 	GfxSurface vertLineRight = visage.getFrame(3);
 	GfxSurface horizLine = visage.getFrame(2);
 
-	GLOBALS._screenSurface.copyFrom(horizLine, 0, 0);
-	GLOBALS._screenSurface.copyFrom(vertLineLeft, 0, 3);
-	GLOBALS._screenSurface.copyFrom(vertLineRight, SCREEN_WIDTH - 4, 3);
+	GLOBALS._screen.copyFrom(horizLine, 0, 0);
+	GLOBALS._screen.copyFrom(vertLineLeft, 0, 3);
+	GLOBALS._screen.copyFrom(vertLineRight, SCREEN_WIDTH - 4, 3);
 
 	// Restrict drawing area to exclude the borders at the edge of the screen
-	R2_GLOBALS._screenSurface._clipRect = Rect(4, 3, SCREEN_WIDTH - 4,
+	R2_GLOBALS._screen._clipRect = Rect(4, 3, SCREEN_WIDTH - 4,
 		SCREEN_HEIGHT - 3);
 }
 

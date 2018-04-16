@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -28,6 +28,7 @@
 #include "mads/scene.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
+#include "mads/dragonsphere/dragonsphere_scenes1.h"
 
 namespace MADS {
 
@@ -42,15 +43,15 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 	switch (scene._nextSceneId) {
 	// Scene group #1 (Castle, river and caves)
 	case 101:	// king's bedroom
-		return new DummyScene(vm);	// TODO
+		return new Scene101(vm);
 	case 102:	// queen's bedroom
-		return new DummyScene(vm);	// TODO
+		return new Scene102(vm);
 	case 103:	// outside king's bedroom
-		return new DummyScene(vm);	// TODO
+		return new Scene103(vm);
 	case 104:	// fireplace / bookshelf
-		return new DummyScene(vm);	// TODO
+		return new Scene104(vm);
 	case 105:	// dining room
-		return new DummyScene(vm);	// TODO
+		return new Scene105(vm);
 	case 106:	// throne room
 		return new DummyScene(vm);	// TODO
 	case 107:	// council chamber
@@ -200,9 +201,13 @@ Common::String DragonsphereScene::formAnimName(char sepChar, int suffixNum) {
 
 /*------------------------------------------------------------------------*/
 
-void SceneInfoDragonsphere::loadCodes(MSurface &depthSurface, int variant) {
+void SceneInfoDragonsphere::loadCodes(BaseSurface &depthSurface, int variant) {
 	Common::String ext = Common::String::format(".WW%d", variant);
-	File f(Resources::formatName(RESPREFIX_RM, _sceneId, ext));
+	Common::String fileName = Resources::formatName(RESPREFIX_RM, _sceneId, ext);
+	if (!Common::File::exists(fileName))
+		return;
+
+	File f(fileName);
 	MadsPack codesPack(&f);
 	Common::SeekableReadStream *stream = codesPack.getItemStream(0);
 
@@ -212,8 +217,8 @@ void SceneInfoDragonsphere::loadCodes(MSurface &depthSurface, int variant) {
 	f.close();
 }
 
-void SceneInfoDragonsphere::loadCodes(MSurface &depthSurface, Common::SeekableReadStream *stream) {
-	byte *destP = depthSurface.getData();
+void SceneInfoDragonsphere::loadCodes(BaseSurface &depthSurface, Common::SeekableReadStream *stream) {
+	byte *destP = (byte *)depthSurface.getPixels();
 	byte *walkMap = new byte[stream->size()];
 	stream->read(walkMap, stream->size());
 

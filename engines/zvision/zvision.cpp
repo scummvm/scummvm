@@ -23,46 +23,89 @@
 #include "common/scummsys.h"
 
 #include "zvision/zvision.h"
-
 #include "zvision/core/console.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/graphics/render_manager.h"
-#include "zvision/cursors/cursor_manager.h"
-#include "zvision/core/save_manager.h"
-#include "zvision/strings/string_manager.h"
-#include "zvision/archives/zfs_archive.h"
-#include "zvision/detection.h"
+#include "zvision/graphics/cursors/cursor_manager.h"
+#include "zvision/file/save_manager.h"
+#include "zvision/text/string_manager.h"
+#include "zvision/scripting/menu.h"
+#include "zvision/file/search_manager.h"
+#include "zvision/text/text.h"
+#include "zvision/text/truetype_font.h"
+#include "zvision/sound/midi.h"
 
 #include "common/config-manager.h"
+#include "common/str.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/textconsole.h"
+#include "common/timer.h"
 #include "common/error.h"
 #include "common/system.h"
 #include "common/file.h"
 
+#include "gui/message.h"
 #include "engines/util.h"
-
 #include "audio/mixer.h"
-
 
 namespace ZVision {
 
+#define ZVISION_SETTINGS_KEYS_COUNT 12
+
+struct zvisionIniSettings {
+	const char *name;
+	int16 slot;
+	int16 defaultValue;	// -1: use the bool value
+	bool defaultBoolValue;
+	bool allowEditing;
+} settingsKeys[ZVISION_SETTINGS_KEYS_COUNT] = {
+	// Hardcoded settings
+	{"countrycode", StateKey_CountryCode, 0, false, false},	// always 0 = US, subtitles are shown for codes 0 - 4, unused
+	{"lineskipvideo", StateKey_VideoLineSkip, 0, false, false},	// video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
+	{"installlevel", StateKey_InstallLevel, 0, false, false},	// 0 = full, checked by universe.scr
+	{"highquality", StateKey_HighQuality, -1, true, false},	// high panorama quality, unused
+	{"qsoundenabled", StateKey_Qsound, -1, true, false},	// 1 = enable QSound - TODO: not supported yet
+	{"debugcheats", StateKey_DebugCheats, -1, true, false},	// always start with the GOxxxx cheat enabled
+	// Editable settings
+	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},
+	{"panarotatespeed", StateKey_RotateSpeed, 540, false, true},	// checked by universe.scr
+	{"noanimwhileturning", StateKey_NoTurnAnim, -1, false, true},	// toggle playing animations during pana rotation
+	{"venusenabled", StateKey_VenusEnable, -1, true, true},
+	{"subtitles", StateKey_Subtitles, -1, true, true},
+	{"mpegmovies", StateKey_MPEGMovies, -1, true, true}		// Zork: Grand Inquisitor DVD hi-res MPEG movies (0 = normal, 1 = hires, 2 = disable option)
+};
+
 ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
-		: Engine(syst),
-		  _gameDescription(gameDesc),
-		  _workingWindow(gameDesc->gameId == GID_NEMESIS ? Common::Rect((WINDOW_WIDTH - ZNEM_WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - ZNEM_WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - ZNEM_WORKING_WINDOW_WIDTH) / 2) + ZNEM_WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - ZNEM_WORKING_WINDOW_HEIGHT) / 2) + ZNEM_WORKING_WINDOW_HEIGHT) :
-		                                                   Common::Rect((WINDOW_WIDTH - ZGI_WORKING_WINDOW_WIDTH) / 2, (WINDOW_HEIGHT - ZGI_WORKING_WINDOW_HEIGHT) / 2, ((WINDOW_WIDTH - ZGI_WORKING_WINDOW_WIDTH) / 2) + ZGI_WORKING_WINDOW_WIDTH, ((WINDOW_HEIGHT - ZGI_WORKING_WINDOW_HEIGHT) / 2) + ZGI_WORKING_WINDOW_HEIGHT)),
-		  _pixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /*RGB 565*/
-		  _desiredFrameTime(33), /* ~30 fps */
-		  _clock(_system),
-		  _scriptManager(nullptr),
-		  _renderManager(nullptr),
-		  _saveManager(nullptr),
-		  _stringManager(nullptr),
-		  _cursorManager(nullptr) {
+	: Engine(syst),
+	  _gameDescription(gameDesc),
+	  _resourcePixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /* RGB 555 */
+	  _screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /* RGB 565 */
+	  _desiredFrameTime(33), /* ~30 fps */
+	  _clock(_system),
+	  _scriptManager(nullptr),
+	  _renderManager(nullptr),
+	  _saveManager(nullptr),
+	  _stringManager(nullptr),
+	  _cursorManager(nullptr),
+	  _midiManager(nullptr),
+	  _rnd(nullptr),
+	  _console(nullptr),
+	  _menu(nullptr),
+	  _searchManager(nullptr),
+	  _textRenderer(nullptr),
+	  _doubleFPS(false),
+	  _audioId(0),
+	  _frameRenderDelay(2),
+	  _keyboardVelocity(0),
+	  _mouseVelocity(0),
+	  _videoIsPlaying(false),
+	  _renderedFrameCount(0),
+	  _fps(0) {
 
 	debug(1, "ZVision::ZVision");
+
+	memset(_cheatBuffer, 0, sizeof(_cheatBuffer));
 }
 
 ZVision::~ZVision() {
@@ -73,66 +116,192 @@ ZVision::~ZVision() {
 	delete _cursorManager;
 	delete _stringManager;
 	delete _saveManager;
-	delete _renderManager;
 	delete _scriptManager;
+	delete _renderManager;	// should be deleted after the script manager
 	delete _rnd;
+	delete _midiManager;
+
+	getTimerManager()->removeTimerProc(&fpsTimerCallback);
 
 	// Remove all of our debug levels
 	DebugMan.clearAllDebugChannels();
 }
 
-void ZVision::initialize() {
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	// TODO: There are 10 file clashes when we flatten the directories.
-	// From a quick look, the files are exactly the same, so it shouldn't matter.
-	// But I'm noting it here just in-case it does become a problem.
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data1", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data2", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "data3", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets1", 0, 2, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets2", 0, 2, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "znemmx", 0, 1, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zgi", 0, 4, true);
-	SearchMan.addSubDirectoryMatching(gameDataDir, "fonts", 0, 1, true);
+void ZVision::registerDefaultSettings() {
+	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++) {
+		if (settingsKeys[i].allowEditing) {
+			if (settingsKeys[i].defaultValue >= 0)
+				ConfMan.registerDefault(settingsKeys[i].name, settingsKeys[i].defaultValue);
+			else
+				ConfMan.registerDefault(settingsKeys[i].name, settingsKeys[i].defaultBoolValue);
+		}
+	}
+}
 
-	// Find zfs archive files
-	Common::ArchiveMemberList list;
-	SearchMan.listMatchingMembers(list, "*.zfs");
+void ZVision::loadSettings() {
+	int16 value = 0;
+	bool boolValue = false;
 
-	// Register the file entries within the zfs archives with the SearchMan
-	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
-		Common::String name = (*iter)->getName();
-		Common::SeekableReadStream *stream = (*iter)->createReadStream();
-		ZfsArchive *archive = new ZfsArchive(name, stream);
+	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++) {
+		if (settingsKeys[i].defaultValue >= 0) {
+			value = (settingsKeys[i].allowEditing) ? ConfMan.getInt(settingsKeys[i].name) : settingsKeys[i].defaultValue;
+		} else {
+			boolValue = (settingsKeys[i].allowEditing) ? ConfMan.getBool(settingsKeys[i].name) : settingsKeys[i].defaultBoolValue;
+			value = (boolValue) ? 1 : 0;
+		}
 
-		delete stream;
-
-		SearchMan.add(name, archive);
+		_scriptManager->setStateValue(settingsKeys[i].slot, value);
 	}
 
-	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, true, &_pixelFormat);
+	if (getGameId() == GID_NEMESIS)
+		_scriptManager->setStateValue(StateKey_ExecScopeStyle, 1);
+	else
+		_scriptManager->setStateValue(StateKey_ExecScopeStyle, 0);
+}
+
+void ZVision::saveSettings() {
+	for (int i = 0; i < ZVISION_SETTINGS_KEYS_COUNT; i++) {
+		if (settingsKeys[i].allowEditing) {
+			if (settingsKeys[i].defaultValue >= 0)
+				ConfMan.setInt(settingsKeys[i].name, _scriptManager->getStateValue(settingsKeys[i].slot));
+			else
+				ConfMan.setBool(settingsKeys[i].name, (_scriptManager->getStateValue(settingsKeys[i].slot) == 1));
+		}
+	}
+
+	ConfMan.flushToDisk();
+}
+
+void ZVision::initialize() {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	_searchManager = new SearchManager(ConfMan.get("path"), 6);
+
+	_searchManager->addDir("FONTS");
+	_searchManager->addDir("addon");
+
+	if (getGameId() == GID_GRANDINQUISITOR) {
+		if (!_searchManager->loadZix("INQUIS.ZIX"))
+			error("Unable to load file INQUIS.ZIX");
+	} else if (getGameId() == GID_NEMESIS) {
+		if (!_searchManager->loadZix("NEMESIS.ZIX")) {
+			// The game might not be installed, try MEDIUM.ZIX instead
+			if (!_searchManager->loadZix("ZNEMSCR/MEDIUM.ZIX"))
+				error("Unable to load the file ZNEMSCR/MEDIUM.ZIX");
+		}
+	}
+
+	initScreen();
 
 	// Register random source
 	_rnd = new Common::RandomSource("zvision");
 
 	// Create managers
 	_scriptManager = new ScriptManager(this);
-	_renderManager = new RenderManager(_system, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _pixelFormat);
+	_renderManager = new RenderManager(this, WINDOW_WIDTH, WINDOW_HEIGHT, _workingWindow, _resourcePixelFormat, _doubleFPS);
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
-	_cursorManager = new CursorManager(this, &_pixelFormat);
+	_cursorManager = new CursorManager(this, _resourcePixelFormat);
+	_textRenderer = new TextRenderer(this);
+	_midiManager = new MidiManager();
+
+	if (getGameId() == GID_GRANDINQUISITOR)
+		_menu = new MenuZGI(this);
+	else
+		_menu = new MenuNemesis(this);
 
 	// Initialize the managers
 	_cursorManager->initialize();
 	_scriptManager->initialize();
-	_stringManager->initialize(_gameDescription->gameId);
+	_stringManager->initialize(getGameId());
+
+	registerDefaultSettings();
+
+	loadSettings();
+
+#ifndef USE_MPEG2
+	// libmpeg2 not loaded, disable the MPEG2 movies option
+	_scriptManager->setStateValue(StateKey_MPEGMovies, 2);
+#endif
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
+	_doubleFPS = ConfMan.getBool("doublefps");
+
+	// Initialize FPS timer callback
+	getTimerManager()->installTimerProc(&fpsTimerCallback, 1000000, this, "zvisionFPS");
 }
+
+extern const FontStyle getSystemFont(int fontIndex);
 
 Common::Error ZVision::run() {
 	initialize();
+
+	// Check if a saved game is to be loaded from the launcher
+	if (ConfMan.hasKey("save_slot"))
+		_saveManager->loadGame(ConfMan.getInt("save_slot"));
+
+	bool foundAllFonts = true;
+
+	// Before starting, make absolutely sure that the user has copied the needed fonts
+	for (int i = 0; i < FONT_COUNT; i++) {
+		FontStyle curFont = getSystemFont(i);
+		Common::String freeFontBoldItalic = Common::String("Bold") + curFont.freeFontItalicName;
+
+		const char *fontSuffixes[4] = { "", "bd", "i", "bi" };
+		const char *freeFontSuffixes[4] = { "", "Bold", curFont.freeFontItalicName, freeFontBoldItalic.c_str() };
+		const char *liberationFontSuffixes[4] = { "-Regular", "-Bold", "-Italic", "-BoldItalic" };
+
+		for (int j = 0; j < 4; j++) {
+			Common::String fontName = curFont.fontBase;
+			if (fontName == "censcbk" && j > 0)
+				fontName = "schlbk";
+			fontName += fontSuffixes[j];
+			fontName += ".ttf";
+
+			if (fontName == "schlbkbd.ttf")
+				fontName = "schlbkb.ttf";
+			if (fontName == "garabi.ttf")
+				continue;
+			if (fontName == "garai.ttf")
+				fontName = "garait.ttf";
+
+			Common::String freeFontName = curFont.freeFontBase;
+			freeFontName += freeFontSuffixes[j];
+			freeFontName += ".ttf";
+
+			Common::String liberationFontName = curFont.liberationFontBase;
+			liberationFontName += liberationFontSuffixes[j];
+			liberationFontName += ".ttf";
+
+			if (!Common::File::exists(fontName) && !_searchManager->hasFile(fontName) &&
+				!Common::File::exists(liberationFontName) && !_searchManager->hasFile(liberationFontName) &&
+				!Common::File::exists(freeFontName) && !_searchManager->hasFile(freeFontName)) {
+				foundAllFonts = false;
+				break;
+			}
+		}
+
+		if (!foundAllFonts)
+			break;
+	}
+
+	if (!foundAllFonts) {
+		GUI::MessageDialog dialog(
+				"Before playing this game, you'll need to copy the required "
+				"fonts into ScummVM's extras directory, or into the game directory. "
+				"On Windows, you'll need the following font files from the Windows "
+				"font directory: Times New Roman, Century Schoolbook, Garamond, "
+				"Courier New and Arial. Alternatively, you can download the "
+				"Liberation Fonts or the GNU FreeFont package. You'll need all the "
+				"fonts from the font package you choose, i.e., LiberationMono, "
+				"LiberationSans and LiberationSerif, or FreeMono, FreeSans and "
+				"FreeSerif respectively."
+		);
+		dialog.runModal();
+		quitGame();
+		return Common::kUnknownError;
+	}
 
 	// Main loop
 	while (!shouldQuit()) {
@@ -140,23 +309,41 @@ Common::Error ZVision::run() {
 		uint32 currentTime = _clock.getLastMeasuredTime();
 		uint32 deltaTime = _clock.getDeltaTime();
 
-		processEvents();
+		_cursorManager->setItemID(_scriptManager->getStateValue(StateKey_InventoryItem));
 
-		// Call _renderManager->update() first so the background renders
-		// before anything that puzzles/controls will render
-		_renderManager->update(deltaTime);
+		processEvents();
+		_renderManager->updateRotation();
+
 		_scriptManager->update(deltaTime);
+		_menu->process(deltaTime);
 
 		// Render the backBuffer to the screen
-		_renderManager->renderBackbufferToScreen();
+		_renderManager->prepareBackground();
+		_renderManager->renderMenuToScreen();
+		_renderManager->processSubs(deltaTime);
+		_renderManager->renderSceneToScreen();
 
 		// Update the screen
-		_system->updateScreen();
+		if (canRender()) {
+			_system->updateScreen();
+			_renderedFrameCount++;
+		} else {
+			_frameRenderDelay--;
+		}
 
 		// Calculate the frame delay based off a desired frame time
 		int delay = _desiredFrameTime - int32(_system->getMillis() - currentTime);
 		// Ensure non-negative
 		delay = delay < 0 ? 0 : delay;
+
+		if (_doubleFPS) {
+			delay >>= 1;
+		}
+
+		if (canSaveGameStateCurrently() && shouldPerformAutoSave(_saveManager->getLastSaveTime())) {
+			_saveManager->autoSave();
+		}
+
 		_system->delayMillis(delay);
 	}
 
@@ -174,11 +361,53 @@ void ZVision::pauseEngineIntern(bool pause) {
 }
 
 Common::String ZVision::generateSaveFileName(uint slot) {
-	return Common::String::format("%s.%02u", _targetName.c_str(), slot);
+	return Common::String::format("%s.%03u", _targetName.c_str(), slot);
 }
 
-Common::String ZVision::generateAutoSaveFileName() {
-	return Common::String::format("%s.auto", _targetName.c_str());
+void ZVision::setRenderDelay(uint delay) {
+	_frameRenderDelay = delay;
+}
+
+bool ZVision::canRender() {
+	return _frameRenderDelay <= 0;
+}
+
+GUI::Debugger *ZVision::getDebugger() {
+	return _console;
+}
+
+void ZVision::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_scriptManager->setStateValue(StateKey_Subtitles, ConfMan.getBool("subtitles") ? 1 : 0);
+}
+
+void ZVision::fpsTimerCallback(void *refCon) {
+	((ZVision *)refCon)->fpsTimer();
+}
+
+void ZVision::fpsTimer() {
+	_fps = _renderedFrameCount;
+	_renderedFrameCount = 0;
+}
+
+void ZVision::initScreen() {
+	uint16 workingWindowWidth = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_WIDTH : ZGI_WORKING_WINDOW_WIDTH;
+	uint16 workingWindowHeight = (getGameId() == GID_NEMESIS) ? ZNM_WORKING_WINDOW_HEIGHT : ZGI_WORKING_WINDOW_HEIGHT;
+	_workingWindow = Common::Rect(
+						 (WINDOW_WIDTH  -  workingWindowWidth) / 2,
+						 (WINDOW_HEIGHT - workingWindowHeight) / 2,
+						((WINDOW_WIDTH  -  workingWindowWidth) / 2) + workingWindowWidth,
+						((WINDOW_HEIGHT - workingWindowHeight) / 2) + workingWindowHeight
+					 );
+
+	initGraphics(WINDOW_WIDTH, WINDOW_HEIGHT, &_screenPixelFormat);
+}
+
+void ZVision::initHiresScreen() {
+	_renderManager->upscaleRect(_workingWindow);
+
+	initGraphics(HIRES_WINDOW_WIDTH, HIRES_WINDOW_HEIGHT, &_screenPixelFormat);
 }
 
 } // End of namespace ZVision

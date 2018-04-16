@@ -24,8 +24,6 @@
 #include "audio/mods/paula.h"
 #include "audio/mods/module.h"
 
-#include "audio/audiostream.h"
-
 #include "common/textconsole.h"
 
 namespace Modules {
@@ -103,15 +101,13 @@ private:
 
 	void doPorta(int track) {
 		if (_track[track].portaToNote && _track[track].portaToNoteSpeed) {
-			if (_track[track].period < _track[track].portaToNote) {
-				_track[track].period += _track[track].portaToNoteSpeed;
-				if (_track[track].period > _track[track].portaToNote)
-					_track[track].period = _track[track].portaToNote;
-			} else if (_track[track].period > _track[track].portaToNote) {
-				_track[track].period -= _track[track].portaToNoteSpeed;
-				if (_track[track].period < _track[track].portaToNote)
-					_track[track].period = _track[track].portaToNote;
-			}
+			int distance = _track[track].period - _track[track].portaToNote;
+			int sign = distance > 0 ? 1 : -1;
+
+			if ((sign * distance) > _track[track].portaToNoteSpeed)
+				_track[track].period -= sign * _track[track].portaToNoteSpeed;
+			else
+				_track[track].period = _track[track].portaToNote;
 		}
 	}
 	void doVibrato(int track) {
@@ -219,11 +215,10 @@ void ProtrackerStream::updateRow() {
 		case 0x0:
 			if (exy) {
 				_track[track].arpeggio = true;
-				if (note.period) {
-					_track[track].arpeggioNotes[0] = note.note;
-					_track[track].arpeggioNotes[1] = note.note + ex;
-					_track[track].arpeggioNotes[2] = note.note + ey;
-				}
+				byte trackNote = _module.periodToNote(_track[track].period);
+				_track[track].arpeggioNotes[0] = trackNote;
+				_track[track].arpeggioNotes[1] = trackNote + ex;
+				_track[track].arpeggioNotes[2] = trackNote + ey;
 			}
 			break;
 		case 0x1:

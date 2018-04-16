@@ -274,7 +274,7 @@ void MassAddDialog::handleTickle() {
 		_list->scrollToEnd();
 	}
 
-	drawDialog();
+	drawDialog(kDrawLayerForeground);
 }
 
 

@@ -41,7 +41,7 @@
 
 namespace Sci {
 
-GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
+GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster16 *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
 	: _resMan(resMan), _segMan(segMan), _cache(cache), _ports(ports),
 	  _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette),
 	  _transitions(transitions), _audio(audio), _EGAdrawingVisualize(false) {
@@ -471,12 +471,9 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_WIDTH				106
 #define SCI_DISPLAY_SAVEUNDER			107
 #define SCI_DISPLAY_RESTOREUNDER		108
-#define SCI_DISPLAY_DUMMY1				114
-#define SCI_DISPLAY_DUMMY2				115
-#define SCI_DISPLAY_DUMMY3				117
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
-reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
+reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv) {
 	reg_t displayArg;
 	TextAlignment alignment = SCI_TEXT16_ALIGNMENT_LEFT;
 	int16 colorPen = -1, colorBack = -1, width = -1, bRedraw = 1;
@@ -543,36 +540,18 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			bRedraw = 0;
 			break;
 
-		// The following three dummy calls are not supported by the Sierra SCI
-		// interpreter, but are erroneously called in some game scripts.
-		case SCI_DISPLAY_DUMMY1:	// Longbow demo (all rooms) and QFG1 EGA demo (room 11)
-		case SCI_DISPLAY_DUMMY2:	// Longbow demo (all rooms)
-		case SCI_DISPLAY_DUMMY3:	// QFG1 EGA demo (room 11) and PQ2 (room 23)
-			if (!(g_sci->getGameId() == GID_LONGBOW && g_sci->isDemo()) &&
-				!(g_sci->getGameId() == GID_QFG1    && g_sci->isDemo()) &&
-				!(g_sci->getGameId() == GID_PQ2))
-				error("Unknown kDisplay argument %d", displayArg.getOffset());
-
-			if (displayArg.getOffset() == SCI_DISPLAY_DUMMY2) {
-				if (!argc)
-					error("No parameter left for kDisplay(115)");
-				argc--; argv++;
-			}
-			break;
 		default:
-			SciTrackOriginReply originReply;
+			SciCallOrigin originReply;
 			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kDisplay_workarounds, &originReply);
 			if (solution.type == WORKAROUND_NONE)
-				error("Unknown kDisplay argument (%04x:%04x) from method %s::%s (script %d, localCall %x)",
-						PRINT_REG(displayArg), originReply.objectName.c_str(), originReply.methodName.c_str(),
-						originReply.scriptNr, originReply.localCallOffset);
+				error("Unknown kDisplay argument (%04x:%04x) from %s", PRINT_REG(displayArg), originReply.toString().c_str());
 			assert(solution.type == WORKAROUND_IGNORE);
 			break;
 		}
 	}
 
 	// now drawing the text
-	_text16->Size(rect, text, -1, width);
+	_text16->Size(rect, text, languageSplitter, -1, width);
 	rect.moveTo(_ports->getPort()->curLeft, _ports->getPort()->curTop);
 	// Note: This code has been found in SCI1 middle and newer games. It was
 	// previously only for SCI1 late and newer, but the LSL1 interpreter contains
@@ -588,7 +567,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		result = bitsSave(rect, GFX_SCREEN_MASK_VISUAL);
 	if (colorBack != -1)
 		fillRect(rect, GFX_SCREEN_MASK_VISUAL, colorBack, 0, 0);
-	_text16->Box(text, false, rect, alignment, -1);
+	_text16->Box(text, languageSplitter, false, rect, alignment, -1);
 	if (_screen->_picNotValid == 0 && bRedraw)
 		bitsShow(rect);
 	// restoring port and cursor pos

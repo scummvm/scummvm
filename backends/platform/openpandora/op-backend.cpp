@@ -27,7 +27,6 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
-#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/openpandora/op-sdl.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/saves/default/default-saves.h"
@@ -147,7 +146,7 @@ void OSystem_OP::initBackend() {
 
 	// Create the graphics manager
 	if (_graphicsManager == 0) {
-		_graphicsManager = new OPGraphicsManager(_eventSource);
+		_graphicsManager = new OPGraphicsManager(_eventSource, _window);
 	}
 
 	/* Pass to POSIX method to do the heavy lifting */

@@ -101,7 +101,9 @@ enum {
 	JKEYCODE_MEDIA_NEXT = 87,
 	JKEYCODE_MEDIA_PREVIOUS = 88,
 	JKEYCODE_MEDIA_REWIND = 89,
-	JKEYCODE_MEDIA_FAST_FORWARD = 90
+	JKEYCODE_MEDIA_FAST_FORWARD = 90,
+	JKEYCODE_MEDIA_PLAY = 126,
+	JKEYCODE_MEDIA_PAUSE = 127
 };
 
 // five-way navigation control
@@ -380,6 +382,19 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			return;
 
+		case JKEYCODE_MEDIA_PAUSE:
+		case JKEYCODE_MEDIA_PLAY:
+		case JKEYCODE_MEDIA_PLAY_PAUSE:
+			if (arg1 == JACTION_DOWN) {
+				e.type = Common::EVENT_MAINMENU;
+
+				lockMutex(_event_queue_lock);
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
+			}
+
+			return;
+
 		case JKEYCODE_CAMERA:
 		case JKEYCODE_SEARCH:
 			if (arg1 == JACTION_DOWN)
@@ -428,7 +443,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 		if (arg5 > 0)
-			e.synthetic = true;
+			e.kbdRepeat = true;
 
 		// map special keys to 'our' ascii codes
 		switch (e.kbd.keycode) {
@@ -886,6 +901,10 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JKEYCODE_BUTTON_X:
 			e.kbd.keycode = Common::KEYCODE_ESCAPE;
 			e.kbd.ascii = Common::ASCII_ESCAPE;
+			break;
+
+		case JKEYCODE_BUTTON_Y:
+			e.type = Common::EVENT_MAINMENU;
 			break;
 
 		default:

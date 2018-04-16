@@ -31,13 +31,13 @@
 #include "neverhood/klaymen.h"
 #include "neverhood/module.h"
 #include "neverhood/palette.h"
-#include "neverhood/smackerplayer.h"
 #include "neverhood/sprite.h"
 #include "neverhood/staticdata.h"
 
 namespace Neverhood {
 
 class Console;
+class SmackerPlayer;
 
 class Scene : public Entity {
 public:

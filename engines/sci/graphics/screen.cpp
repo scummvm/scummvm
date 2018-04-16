@@ -38,103 +38,110 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	// Scale the screen, if needed
 	_upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
 
+	// we default to scripts running at 320x200
+	_scriptWidth = 320;
+	_scriptHeight = 200;
+	_width = 0;
+	_height = 0;
+	_displayWidth = 0;
+	_displayHeight = 0;
+
 	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able
 	// to provide that under DOS as well, but as gk1/floppy does support
 	// upscaled hires scriptswise, but doesn't actually have the hires content
 	// we need to limit it to platform windows.
-	if (g_sci->getPlatform() == Common::kPlatformWindows) {
+	if ((g_sci->getPlatform() == Common::kPlatformWindows) || (g_sci->forceHiresGraphics())) {
 		if (g_sci->getGameId() == GID_KQ6)
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
-#ifdef ENABLE_SCI32
-		if (g_sci->getGameId() == GID_GK1)
-			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
-#endif
 	}
-
-	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-		if (getSciVersion() <= SCI_VERSION_01)
-			_upscaledHires = GFX_SCREEN_UPSCALED_480x300;
-	}
-
-#ifdef ENABLE_SCI32
-	// GK1 Mac uses a 640x480 resolution too
-	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-		if (g_sci->getGameId() == GID_GK1)
-			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
-	}
-#endif
-
-	if (_resMan->detectHires()) {
-		_width = 640;
-		_pitch = 640;
-		_height = 480;
-	} else {
-		_width = 320;
-		_pitch = 320;
-		_height = getLowResScreenHeight();
-	}
-
-#ifdef ENABLE_SCI32
-	// Phantasmagoria 1 sets a window area of 630x450
-	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
-		_width = 630;
-		_height = 450;
-	}
-#endif
 
 	// Japanese versions of games use hi-res font on upscaled version of the game.
 	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
 		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
-	_pixels = _pitch * _height;
+	// Macintosh SCI0 games used 480x300, while the scripts were running at 320x200
+	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		if (getSciVersion() <= SCI_VERSION_01) {
+			_upscaledHires = GFX_SCREEN_UPSCALED_480x300;
+			_width = 480;
+			_height = 300; // regular visual, priority and control map are 480x300 (this is different than other upscaled SCI games)
+		}
+
+		// Some Mac SCI1/1.1 games only take up 190 rows and do not
+		// have the menu bar.
+		// TODO: Verify that LSL1 and LSL5 use height 190
+		switch (g_sci->getGameId()) {
+		case GID_FREDDYPHARKAS:
+		case GID_KQ5:
+		case GID_KQ6:
+		case GID_LSL1:
+		case GID_LSL5:
+		case GID_SQ1:
+			_scriptHeight = 190;
+			break;
+		default:
+			break;
+		}
+	}
+
+	// if not yet set, set those to script-width/height
+	if (!_width)
+		_width = _scriptWidth;
+	if (!_height)
+		_height = _scriptHeight;
+
+	_pixels = _width * _height;
 
 	switch (_upscaledHires) {
 	case GFX_SCREEN_UPSCALED_480x300:
 		// Space Quest 3, Hoyle 1+2 on MAC use this one
-		//  TODO: Sierra's upscaling worked differently. We need to figure out the exact algo
 		_displayWidth = 480;
 		_displayHeight = 300;
-		for (int i = 0; i <= _height; i++)
+		for (int i = 0; i <= _scriptHeight; i++)
 			_upscaledHeightMapping[i] = (i * 3) >> 1;
-		for (int i = 0; i <= _width; i++)
+		for (int i = 0; i <= _scriptWidth; i++)
 			_upscaledWidthMapping[i] = (i * 3) >> 1;
 		break;
 	case GFX_SCREEN_UPSCALED_640x400:
 		// Police Quest 2 and Quest For Glory on PC9801 (Japanese)
 		_displayWidth = 640;
 		_displayHeight = 400;
-		for (int i = 0; i <= _height; i++)
+		for (int i = 0; i <= _scriptHeight; i++)
 			_upscaledHeightMapping[i] = i * 2;
-		for (int i = 0; i <= _width; i++)
+		for (int i = 0; i <= _scriptWidth; i++)
 			_upscaledWidthMapping[i] = i * 2;
 		break;
 	case GFX_SCREEN_UPSCALED_640x440:
 		// used by King's Quest 6 on Windows
 		_displayWidth = 640;
 		_displayHeight = 440;
-		for (int i = 0; i <= _height; i++)
+		for (int i = 0; i <= _scriptHeight; i++)
 			_upscaledHeightMapping[i] = (i * 11) / 5;
-		for (int i = 0; i <= _width; i++)
+		for (int i = 0; i <= _scriptWidth; i++)
 			_upscaledWidthMapping[i] = i * 2;
 		break;
 	case GFX_SCREEN_UPSCALED_640x480:
 		// Gabriel Knight 1 (VESA, Mac)
 		_displayWidth = 640;
 		_displayHeight = 480;
-		for (int i = 0; i <= _height; i++)
+		for (int i = 0; i <= _scriptHeight; i++)
 			_upscaledHeightMapping[i] = (i * 12) / 5;
-		for (int i = 0; i <= _width; i++)
+		for (int i = 0; i <= _scriptWidth; i++)
 			_upscaledWidthMapping[i] = i * 2;
 		break;
 	default:
-		_displayWidth = _pitch;
-		_displayHeight = _height;
+		if (!_displayWidth)
+			_displayWidth = _width;
+		if (!_displayHeight)
+			_displayHeight = _height;
 		memset(&_upscaledHeightMapping, 0, sizeof(_upscaledHeightMapping) );
 		memset(&_upscaledWidthMapping, 0, sizeof(_upscaledWidthMapping) );
 		break;
 	}
 
 	_displayPixels = _displayWidth * _displayHeight;
+
+	// Allocate visual, priority, control and display screen
 	_visualScreen = (byte *)calloc(_pixels, 1);
 	_priorityScreen = (byte *)calloc(_pixels, 1);
 	_controlScreen = (byte *)calloc(_pixels, 1);
@@ -172,13 +179,13 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		// We add 2 to the height of the icon bar to add a buffer between the screen and the
 		// icon bar (as did the original interpreter).
 		if (g_sci->getGameId() == GID_KQ6)
-			initGraphics(_displayWidth, _displayHeight + 26 + 2, _displayWidth > 320);
+			initGraphics(_displayWidth, _displayHeight + 26 + 2);
 		else if (g_sci->getGameId() == GID_FREDDYPHARKAS)
-			initGraphics(_displayWidth, _displayHeight + 28 + 2, _displayWidth > 320);
+			initGraphics(_displayWidth, _displayHeight + 28 + 2);
 		else
 			error("Unknown SCI1.1 Mac game");
 	} else
-		initGraphics(_displayWidth, _displayHeight, _displayWidth > 320);
+		initGraphics(_displayWidth, _displayHeight);
 }
 
 GfxScreen::~GfxScreen() {
@@ -188,22 +195,43 @@ GfxScreen::~GfxScreen() {
 	free(_displayScreen);
 }
 
+// should not be used regularly; only meant for restore game
+void GfxScreen::clearForRestoreGame() {
+	// reset all screen data
+	memset(_visualScreen, 0, _pixels);
+	memset(_priorityScreen, 0, _pixels);
+	memset(_controlScreen, 0, _pixels);
+	memset(_displayScreen, 0, _displayPixels);
+	memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
+	_fontIsUpscaled = false;
+	copyToScreen();
+}
+
 void GfxScreen::copyToScreen() {
 	g_system->copyRectToScreen(_activeScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
 }
 
 void GfxScreen::copyFromScreen(byte *buffer) {
-	// TODO this ignores the pitch
 	Graphics::Surface *screen = g_system->lockScreen();
-	memcpy(buffer, screen->getPixels(), _displayPixels);
+
+	if (screen->pitch == _displayWidth) {
+		memcpy(buffer, screen->getPixels(), _displayPixels);
+	} else {
+		const byte *src = (const byte *)screen->getPixels();
+		uint height = _displayHeight;
+
+		while (height--) {
+			memcpy(buffer, src, _displayWidth);
+			buffer += _displayWidth;
+			src    += screen->pitch;
+		}
+	}
+
 	g_system->unlockScreen();
 }
 
 void GfxScreen::kernelSyncWithFramebuffer() {
-	// TODO this ignores the pitch
-	Graphics::Surface *screen = g_system->lockScreen();
-	memcpy(_displayScreen, screen->getPixels(), _displayPixels);
-	g_system->unlockScreen();
+	copyFromScreen(_displayScreen);
 }
 
 void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
@@ -248,71 +276,95 @@ byte GfxScreen::getDrawingMask(byte color, byte prio, byte control) {
 	return flag;
 }
 
-void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
-	int offset = y * _pitch + x;
+void GfxScreen::vectorAdjustLineCoordinates(int16 *left, int16 *top, int16 *right, int16 *bottom, byte drawMask, byte color, byte priority, byte control) {
+	switch (_upscaledHires) {
+	case GFX_SCREEN_UPSCALED_480x300: {
+		int16 displayLeft = (*left * 3) / 2;
+		int16 displayRight = (*right * 3) / 2;
+		int16 displayTop = (*top * 3) / 2;
+		int16 displayBottom = (*bottom * 3) / 2;
+
+		if (displayLeft < displayRight) {
+			// one more pixel to the left, one more pixel to the right
+			if (displayLeft > 0)
+				vectorPutLinePixel(displayLeft - 1, displayTop, drawMask, color, priority, control);
+			vectorPutLinePixel(displayRight + 1, displayBottom, drawMask, color, priority, control);
+		} else if (displayLeft > displayRight) {
+			if (displayRight > 0)
+				vectorPutLinePixel(displayRight - 1, displayBottom, drawMask, color, priority, control);
+			vectorPutLinePixel(displayLeft + 1, displayTop, drawMask, color, priority, control);
+		}
+		*left = displayLeft;
+		*top = displayTop;
+		*right = displayRight;
+		*bottom = displayBottom;
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+// This is called from vector drawing to put a pixel at a certain location
+void GfxScreen::vectorPutLinePixel(int16 x, int16 y, byte drawMask, byte color, byte priority, byte control) {
+	if (_upscaledHires == GFX_SCREEN_UPSCALED_480x300) {
+		vectorPutLinePixel480x300(x, y, drawMask, color, priority, control);
+		return;
+	}
+
+	// For anything else forward to the regular putPixel
+	putPixel(x, y, drawMask, color, priority, control);
+}
+
+// Special 480x300 Mac putPixel for vector line drawing, also draws an additional pixel below the actual one
+void GfxScreen::vectorPutLinePixel480x300(int16 x, int16 y, byte drawMask, byte color, byte priority, byte control) {
+	int offset = y * _width + x;
 
 	if (drawMask & GFX_SCREEN_MASK_VISUAL) {
+		// also set pixel below actual pixel
 		_visualScreen[offset] = color;
-		if (!_upscaledHires) {
-			_displayScreen[offset] = color;
-		} else {
-			putScaledPixelOnDisplay(x, y, color);
-		}
+		_visualScreen[offset + _width] = color;
+		_displayScreen[offset] = color;
+		_displayScreen[offset + _displayWidth] = color;
 	}
-	if (drawMask & GFX_SCREEN_MASK_PRIORITY)
+	if (drawMask & GFX_SCREEN_MASK_PRIORITY) {
 		_priorityScreen[offset] = priority;
-	if (drawMask & GFX_SCREEN_MASK_CONTROL)
+		_priorityScreen[offset + _width] = priority;
+	}
+	if (drawMask & GFX_SCREEN_MASK_CONTROL) {
 		_controlScreen[offset] = control;
-}
-
-/**
- * This is used to put font pixels onto the screen - we adjust differently, so that we won't
- *  do triple pixel lines in any case on upscaled hires. That way the font will not get distorted
- *  Sierra SCI didn't do this
- */
-void GfxScreen::putFontPixel(int startingY, int x, int y, byte color) {
-	int actualY = startingY + y;
-	if (_fontIsUpscaled) {
-		// Do not scale ourselves, but put it on the display directly
-		putPixelOnDisplay(x, actualY, color);
-	} else {
-		int offset = actualY * _pitch + x;
-
-		_visualScreen[offset] = color;
-		switch (_upscaledHires) {
-		case GFX_SCREEN_UPSCALED_DISABLED:
-			_displayScreen[offset] = color;
-			break;
-		default:
-			putScaledPixelOnDisplay(x, actualY, color);
-			break;
-		}
+		_controlScreen[offset + _width] = control;
 	}
 }
 
-/**
- * This will just change a pixel directly on displayscreen. It is supposed to be
- * only used on upscaled-Hires games where hires content needs to get drawn ONTO
- * the upscaled display screen (like japanese fonts, hires portraits, etc.).
- */
-void GfxScreen::putPixelOnDisplay(int x, int y, byte color) {
-	int offset = y * _displayWidth + x;
-	_displayScreen[offset] = color;
-}
+byte GfxScreen::vectorIsFillMatch(int16 x, int16 y, byte screenMask, byte checkForColor, byte checkForPriority, byte checkForControl, bool isEGA) {
+	int offset = y * _width + x;
+	byte match = 0;
 
-void GfxScreen::putScaledPixelOnDisplay(int x, int y, byte color) {
-	int displayOffset = _upscaledHeightMapping[y] * _displayWidth + _upscaledWidthMapping[x];
-	int heightOffsetBreak = (_upscaledHeightMapping[y + 1] - _upscaledHeightMapping[y]) * _displayWidth;
-	int heightOffset = 0;
-	int widthOffsetBreak = _upscaledWidthMapping[x + 1] - _upscaledWidthMapping[x];
-	do {
-		int widthOffset = 0;
-		do {
-			_displayScreen[displayOffset + heightOffset + widthOffset] = color;
-			widthOffset++;
-		} while (widthOffset != widthOffsetBreak);
-		heightOffset += _displayWidth;
-	} while (heightOffset != heightOffsetBreak);
+	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
+		if (!isEGA) {
+			if (*(_visualScreen + offset) == checkForColor)
+				match |= GFX_SCREEN_MASK_VISUAL;
+		} else {
+			// In EGA games a pixel in the framebuffer is only 4 bits. We store
+			// a full byte per pixel to allow undithering, but when comparing
+			// pixels for flood-fill purposes, we should only compare the
+			// visible color of a pixel.
+
+			byte EGAcolor = *(_visualScreen + offset);
+			if ((x ^ y) & 1)
+				EGAcolor = (EGAcolor ^ (EGAcolor >> 4)) & 0x0F;
+			else
+				EGAcolor = EGAcolor & 0x0F;
+			if (EGAcolor == checkForColor)
+				match |= GFX_SCREEN_MASK_VISUAL;
+		}
+	}
+	if ((screenMask & GFX_SCREEN_MASK_PRIORITY) && *(_priorityScreen + offset) == checkForPriority)
+		match |= GFX_SCREEN_MASK_PRIORITY;
+	if ((screenMask & GFX_SCREEN_MASK_CONTROL) && *(_controlScreen + offset) == checkForControl)
+		match |= GFX_SCREEN_MASK_CONTROL;
+	return match;
 }
 
 /**
@@ -333,12 +385,14 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 	//set_drawing_flag
 	byte drawMask = getDrawingMask(color, priority, control);
 
+	vectorAdjustLineCoordinates(&left, &top, &right, &bottom, drawMask, color, priority, control);
+
 	// horizontal line
 	if (top == bottom) {
 		if (right < left)
 			SWAP(right, left);
 		for (int i = left; i <= right; i++)
-			putPixel(i, top, drawMask, color, priority, control);
+			vectorPutLinePixel(i, top, drawMask, color, priority, control);
 		return;
 	}
 	// vertical line
@@ -346,20 +400,20 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 		if (top > bottom)
 			SWAP(top, bottom);
 		for (int i = top; i <= bottom; i++)
-			putPixel(left, i, drawMask, color, priority, control);
+			vectorPutLinePixel(left, i, drawMask, color, priority, control);
 		return;
 	}
 	// sloped line - draw with Bresenham algorithm
-	int dy = bottom - top;
-	int dx = right - left;
-	int stepy = dy < 0 ? -1 : 1;
-	int stepx = dx < 0 ? -1 : 1;
+	int16 dy = bottom - top;
+	int16 dx = right - left;
+	int16 stepy = dy < 0 ? -1 : 1;
+	int16 stepx = dx < 0 ? -1 : 1;
 	dy = ABS(dy) << 1;
 	dx = ABS(dx) << 1;
 
 	// setting the 1st and last pixel
-	putPixel(left, top, drawMask, color, priority, control);
-	putPixel(right, bottom, drawMask, color, priority, control);
+	vectorPutLinePixel(left, top, drawMask, color, priority, control);
+	vectorPutLinePixel(right, bottom, drawMask, color, priority, control);
 	// drawing the line
 	if (dx > dy) { // going horizontal
 		int fraction = dy - (dx >> 1);
@@ -370,7 +424,7 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 			}
 			left += stepx;
 			fraction += dy;
-			putPixel(left, top, drawMask, color, priority, control);
+			vectorPutLinePixel(left, top, drawMask, color, priority, control);
 		}
 	} else { // going vertical
 		int fraction = dx - (dy >> 1);
@@ -381,7 +435,7 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 			}
 			top += stepy;
 			fraction += dx;
-			putPixel(left, top, drawMask, color, priority, control);
+			vectorPutLinePixel(left, top, drawMask, color, priority, control);
 		}
 	}
 }
@@ -394,48 +448,6 @@ void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, u
 	commonFont->drawChar(displayPtr, chr, _displayWidth, 1, color, 0, -1, -1);
 }
 
-byte GfxScreen::getVisual(int x, int y) {
-	return _visualScreen[y * _pitch + x];
-}
-
-byte GfxScreen::getPriority(int x, int y) {
-	return _priorityScreen[y * _pitch + x];
-}
-
-byte GfxScreen::getControl(int x, int y) {
-	return _controlScreen[y * _pitch + x];
-}
-
-byte GfxScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t_pri, byte t_con, bool isEGA) {
-	int offset = y * _pitch + x;
-	byte match = 0;
-
-	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
-		if (!isEGA) {
-			if (*(_visualScreen + offset) == t_color)
-				match |= GFX_SCREEN_MASK_VISUAL;
-		} else {
-			// In EGA games a pixel in the framebuffer is only 4 bits. We store
-			// a full byte per pixel to allow undithering, but when comparing
-			// pixels for flood-fill purposes, we should only compare the
-			// visible color of a pixel.
-
-			byte c = *(_visualScreen + offset);
-			if ((x ^ y) & 1)
-				c = (c ^ (c >> 4)) & 0x0F;
-			else
-				c = c & 0x0F;
-			if (c == t_color)
-				match |= GFX_SCREEN_MASK_VISUAL;
-		}
-	}
-	if ((screenMask & GFX_SCREEN_MASK_PRIORITY) && *(_priorityScreen + offset) == t_pri)
-		match |= GFX_SCREEN_MASK_PRIORITY;
-	if ((screenMask & GFX_SCREEN_MASK_CONTROL) && *(_controlScreen + offset) == t_con)
-		match |= GFX_SCREEN_MASK_CONTROL;
-	return match;
-}
-
 int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
@@ -446,7 +458,7 @@ int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 		} else {
 			int rectHeight = _upscaledHeightMapping[rect.bottom] - _upscaledHeightMapping[rect.top];
 			int rectWidth = _upscaledWidthMapping[rect.right] - _upscaledWidthMapping[rect.left];
-			byteCount += rectHeight * rect.width() * rectWidth; // _displayScreen (upscaled hires)
+			byteCount += rectHeight * rectWidth; // _displayScreen (upscaled hires)
 		}
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
@@ -460,7 +472,6 @@ int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 			error("bitsGetDataSize() called w/o being in upscaled hires mode");
 		byteCount += pixels; // _displayScreen (coordinates actually are given to us for hires displayScreen)
 	}
-
 	return byteCount;
 }
 
@@ -469,14 +480,14 @@ void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	memcpy(memoryPtr, (void *)&mask, sizeof(mask)); memoryPtr += sizeof(mask);
 
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
-		bitsSaveScreen(rect, _visualScreen, _pitch, memoryPtr);
+		bitsSaveScreen(rect, _visualScreen, _width, memoryPtr);
 		bitsSaveDisplayScreen(rect, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
-		bitsSaveScreen(rect, _priorityScreen, _pitch, memoryPtr);
+		bitsSaveScreen(rect, _priorityScreen, _width, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_CONTROL) {
-		bitsSaveScreen(rect, _controlScreen, _pitch, memoryPtr);
+		bitsSaveScreen(rect, _controlScreen, _width, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_DISPLAY) {
 		if (!_upscaledHires)
@@ -530,14 +541,14 @@ void GfxScreen::bitsRestore(byte *memoryPtr) {
 	memcpy((void *)&mask, memoryPtr, sizeof(mask)); memoryPtr += sizeof(mask);
 
 	if (mask & GFX_SCREEN_MASK_VISUAL) {
-		bitsRestoreScreen(rect, memoryPtr, _visualScreen, _pitch);
+		bitsRestoreScreen(rect, memoryPtr, _visualScreen, _width);
 		bitsRestoreDisplayScreen(rect, memoryPtr);
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
-		bitsRestoreScreen(rect, memoryPtr, _priorityScreen, _pitch);
+		bitsRestoreScreen(rect, memoryPtr, _priorityScreen, _width);
 	}
 	if (mask & GFX_SCREEN_MASK_CONTROL) {
-		bitsRestoreScreen(rect, memoryPtr, _controlScreen, _pitch);
+		bitsRestoreScreen(rect, memoryPtr, _controlScreen, _width);
 	}
 	if (mask & GFX_SCREEN_MASK_DISPLAY) {
 		if (!_upscaledHires)
@@ -593,13 +604,13 @@ void GfxScreen::setVerticalShakePos(uint16 shakePos) {
 
 void GfxScreen::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 	while (shakeCount--) {
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+		if (directions & kShakeVertical)
 			setVerticalShakePos(10);
 		// TODO: horizontal shakes
 		g_system->updateScreen();
 		g_sci->getEngineState()->wait(3);
 
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+		if (directions & kShakeVertical)
 			setVerticalShakePos(0);
 
 		g_system->updateScreen();
@@ -616,13 +627,14 @@ void GfxScreen::dither(bool addToFlag) {
 	if (!_unditheringEnabled) {
 		// Do dithering on visual and display-screen
 		for (y = 0; y < _height; y++) {
-			for (x = 0; x < _pitch; x++) {
+			for (x = 0; x < _width; x++) {
 				color = *visualPtr;
 				if (color & 0xF0) {
 					color ^= color << 4;
 					color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
 					switch (_upscaledHires) {
 					case GFX_SCREEN_UPSCALED_DISABLED:
+					case GFX_SCREEN_UPSCALED_480x300:
 						*displayPtr = color;
 						break;
 					default:
@@ -639,7 +651,7 @@ void GfxScreen::dither(bool addToFlag) {
 			memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
 		// Do dithering on visual screen and put decoded but undithered byte onto display-screen
 		for (y = 0; y < _height; y++) {
-			for (x = 0; x < _pitch; x++) {
+			for (x = 0; x < _width; x++) {
 				color = *visualPtr;
 				if (color & 0xF0) {
 					color ^= color << 4;
@@ -654,6 +666,7 @@ void GfxScreen::dither(bool addToFlag) {
 					}
 					switch (_upscaledHires) {
 					case GFX_SCREEN_UPSCALED_DISABLED:
+					case GFX_SCREEN_UPSCALED_480x300:
 						*displayPtr = ditheredColor;
 						break;
 					default:
@@ -685,8 +698,8 @@ int16 *GfxScreen::unditherGetDitheredBgColors() {
 }
 
 void GfxScreen::debugShowMap(int mapNo) {
-	// We cannot really support changing maps when in upscaledHires mode
-	if (_upscaledHires)
+	// We cannot really support changing maps when display screen has a different resolution than visual screen
+	if ((_width != _displayWidth) || (_height != _displayHeight))
 		return;
 
 	switch (mapNo) {
@@ -706,81 +719,61 @@ void GfxScreen::debugShowMap(int mapNo) {
 	copyToScreen();
 }
 
-void GfxScreen::scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel) {
+void GfxScreen::scale2x(const SciSpan<const byte> &src, SciSpan<byte> &dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel) {
 	assert(bytesPerPixel == 1 || bytesPerPixel == 2);
 	const int newWidth = srcWidth * 2;
 	const int pitch = newWidth * bytesPerPixel;
-	const byte *srcPtr = src;
+	const byte *srcPtr = src.getUnsafeDataAt(0, srcWidth * srcHeight * bytesPerPixel);
+	byte *dstPtr = dst.getUnsafeDataAt(0, srcWidth * srcHeight * bytesPerPixel);
 
 	if (bytesPerPixel == 1) {
 		for (int y = 0; y < srcHeight; y++) {
 			for (int x = 0; x < srcWidth; x++) {
 				const byte color = *srcPtr++;
-				dst[0] = color;
-				dst[1] = color;
-				dst[newWidth] = color;
-				dst[newWidth + 1] = color;
-				dst += 2;
+				dstPtr[0] = color;
+				dstPtr[1] = color;
+				dstPtr[newWidth] = color;
+				dstPtr[newWidth + 1] = color;
+				dstPtr += 2;
 			}
-			dst += newWidth;
+			dstPtr += newWidth;
 		}
 	} else if (bytesPerPixel == 2) {
 		for (int y = 0; y < srcHeight; y++) {
 			for (int x = 0; x < srcWidth; x++) {
 				const byte color = *srcPtr++;
 				const byte color2 = *srcPtr++;
-				dst[0] = color;
-				dst[1] = color2;
-				dst[2] = color;
-				dst[3] = color2;
-				dst[pitch] = color;
-				dst[pitch + 1] = color2;
-				dst[pitch + 2] = color;
-				dst[pitch + 3] = color2;
-				dst += 4;
+				dstPtr[0] = color;
+				dstPtr[1] = color2;
+				dstPtr[2] = color;
+				dstPtr[3] = color2;
+				dstPtr[pitch] = color;
+				dstPtr[pitch + 1] = color2;
+				dstPtr[pitch + 2] = color;
+				dstPtr[pitch + 3] = color2;
+				dstPtr += 4;
 			}
-			dst += pitch;
+			dstPtr += pitch;
 		}
 	}
 }
 
 struct UpScaledAdjust {
 	GfxScreenUpscaledMode gameHiresMode;
-	Sci32ViewNativeResolution viewNativeRes;
 	int numerator;
 	int denominator;
 };
 
-static const UpScaledAdjust s_upscaledAdjustTable[] = {
-	{ GFX_SCREEN_UPSCALED_640x480, SCI_VIEW_NATIVERES_640x400, 5, 6 }
-};
-
-void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewNativeRes) {
+void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
 	x = _upscaledWidthMapping[x];
 	y = _upscaledHeightMapping[y];
-
-	for (int i = 0; i < ARRAYSIZE(s_upscaledAdjustTable); i++) {
-		if (s_upscaledAdjustTable[i].gameHiresMode == _upscaledHires &&
-				s_upscaledAdjustTable[i].viewNativeRes == viewNativeRes) {
-			y = (y * s_upscaledAdjustTable[i].numerator) / s_upscaledAdjustTable[i].denominator;
-			break;
-		}
-	}
 }
 
-void GfxScreen::adjustBackUpscaledCoordinates(int16 &y, int16 &x, Sci32ViewNativeResolution viewNativeRes) {
-	for (int i = 0; i < ARRAYSIZE(s_upscaledAdjustTable); i++) {
-		if (s_upscaledAdjustTable[i].gameHiresMode == _upscaledHires &&
-				s_upscaledAdjustTable[i].viewNativeRes == viewNativeRes) {
-			y = (y * s_upscaledAdjustTable[i].denominator) / s_upscaledAdjustTable[i].numerator;
-			break;
-		}
-	}
-
+void GfxScreen::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
 	switch (_upscaledHires) {
 	case GFX_SCREEN_UPSCALED_480x300:
-		x = (x << 1) / 3;
-		y = (y << 1) / 3;
+		x = (x * 4) / 6;
+		y = (y * 4) / 6;
 		break;
 	case GFX_SCREEN_UPSCALED_640x400:
 		x /= 2;
@@ -814,28 +807,6 @@ int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {
 	}
 
 	return oldPicNotValid;
-}
-
-uint16 GfxScreen::getLowResScreenHeight() {
-	// Some Mac SCI1/1.1 games only take up 190 rows and do not
-	// have the menu bar.
-	// TODO: Verify that LSL1 and LSL5 use height 190
-	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-		switch (g_sci->getGameId()) {
-		case GID_FREDDYPHARKAS:
-		case GID_KQ5:
-		case GID_KQ6:
-		case GID_LSL1:
-		case GID_LSL5:
-		case GID_SQ1:
-			return 190;
-		default:
-			break;
-		}
-	}
-
-	// Everything else is 200
-	return 200;
 }
 
 } // End of namespace Sci

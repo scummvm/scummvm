@@ -29,28 +29,28 @@
 
 namespace Mohawk {
 
-class MystResourceType8;
+class MystAreaImageSwitch;
 struct MystScriptEntry;
 
 namespace MystStacks {
 
-#define DECLARE_OPCODE(x) void x(uint16 op, uint16 var, uint16 argc, uint16 *argv)
+#define DECLARE_OPCODE(x) void x(uint16 var, const ArgumentsArray &args)
 
 class Selenitic : public MystScriptParser {
 public:
-	Selenitic(MohawkEngine_Myst *vm);
-	~Selenitic();
+	explicit Selenitic(MohawkEngine_Myst *vm);
+	~Selenitic() override;
 
-	void disablePersistentScripts();
-	void runPersistentScripts();
+	void disablePersistentScripts() override;
+	void runPersistentScripts() override;
 
 private:
 	void setupOpcodes();
-	uint16 getVar(uint16 var);
-	void toggleVar(uint16 var);
-	bool setVarValue(uint16 var, uint16 value);
+	uint16 getVar(uint16 var) override;
+	void toggleVar(uint16 var) override;
+	bool setVarValue(uint16 var, uint16 value) override;
 
-	virtual uint16 getMap() { return 9930; }
+	uint16 getMap() override { return 9930; }
 
 	DECLARE_OPCODE(o_mazeRunnerMove);
 	DECLARE_OPCODE(o_mazeRunnerSoundRepeat);
@@ -80,43 +80,45 @@ private:
 
 	bool _soundReceiverRunning;
 	bool _soundReceiverSigmaPressed; // 6
-	MystResourceType8 *_soundReceiverSources[5]; // 92 -> 108
-	MystResourceType8 *_soundReceiverCurrentSource; // 112
+	MystAreaImageSwitch *_soundReceiverSources[5]; // 92 -> 108
+	MystAreaImageSwitch *_soundReceiverCurrentSource; // 112
 	uint16 *_soundReceiverPosition; // 116
 	uint16 _soundReceiverDirection; // 120
 	uint16 _soundReceiverSpeed; // 122
 	uint32 _soundReceiverStartTime; //124
-	MystResourceType8 *_soundReceiverViewer; // 128
-	MystResourceType8 *_soundReceiverRightButton; // 132
-	MystResourceType8 *_soundReceiverLeftButton; // 136
-	MystResourceType8 *_soundReceiverAngle1; // 140
-	MystResourceType8 *_soundReceiverAngle2; // 144
-	MystResourceType8 *_soundReceiverAngle3; // 148
-	MystResourceType8 *_soundReceiverAngle4; // 152
-	MystResourceType8 *_soundReceiverSigmaButton; // 156
+	uint _soundReceiverNearBlinkCounter;
+	MystAreaImageSwitch *_soundReceiverViewer; // 128
+	MystAreaImageSwitch *_soundReceiverRightButton; // 132
+	MystAreaImageSwitch *_soundReceiverLeftButton; // 136
+	MystAreaImageSwitch *_soundReceiverAngle1; // 140
+	MystAreaImageSwitch *_soundReceiverAngle2; // 144
+	MystAreaImageSwitch *_soundReceiverAngle3; // 148
+	MystAreaImageSwitch *_soundReceiverAngle4; // 152
+	MystAreaImageSwitch *_soundReceiverSigmaButton; // 156
 
 	static const uint16 _mazeRunnerMap[300][4];
 	static const uint8 _mazeRunnerVideos[300][4];
 
 	uint16 _mazeRunnerPosition; // 56
 	uint16 _mazeRunnerDirection; // 58
-	MystResourceType8 *_mazeRunnerWindow; // 68
-	MystResourceType8 *_mazeRunnerCompass; // 72
-	MystResourceType8 *_mazeRunnerLight; // 76
-	MystResourceType8 *_mazeRunnerRightButton; // 80
-	MystResourceType8 *_mazeRunnerLeftButton; // 84
+	MystAreaImageSwitch *_mazeRunnerWindow; // 68
+	MystAreaImageSwitch *_mazeRunnerCompass; // 72
+	MystAreaImageSwitch *_mazeRunnerLight; // 76
+	MystAreaImageSwitch *_mazeRunnerRightButton; // 80
+	MystAreaImageSwitch *_mazeRunnerLeftButton; // 84
 	bool _mazeRunnerDoorOpened; // 160
 
 	uint16 _soundLockSoundId;
-	MystResourceType10 *_soundLockSlider1; // 164
-	MystResourceType10 *_soundLockSlider2; // 168
-	MystResourceType10 *_soundLockSlider3; // 172
-	MystResourceType10 *_soundLockSlider4; // 176
-	MystResourceType10 *_soundLockSlider5; // 180
-	MystResourceType8 *_soundLockButton; // 184
+	MystAreaSlider *_soundLockSlider1; // 164
+	MystAreaSlider *_soundLockSlider2; // 168
+	MystAreaSlider *_soundLockSlider3; // 172
+	MystAreaSlider *_soundLockSlider4; // 176
+	MystAreaSlider *_soundLockSlider5; // 180
+	MystAreaImageSwitch *_soundLockButton; // 184
 
 	void soundReceiverLeftRight(uint direction);
 	void soundReceiverUpdate();
+	void soundReceiverSetSubimageRect() const;
 	void soundReceiverDrawView();
 	void soundReceiverDrawAngle();
 	void soundReceiverIncreaseSpeed();
@@ -125,8 +127,8 @@ private:
 	void soundReceiverSolution(uint16 source, uint16 &solution, bool &enabled);
 
 	uint16 soundLockCurrentSound(uint16 position, bool pixels);
-	MystResourceType10 *soundLockSliderFromVar(uint16 var);
-	void soundLockCheckSolution(MystResourceType10 *slider, uint16 value, uint16 solution, bool &solved);
+	MystAreaSlider *soundLockSliderFromVar(uint16 var);
+	void soundLockCheckSolution(MystAreaSlider *slider, uint16 value, uint16 solution, bool &solved);
 
 	bool mazeRunnerForwardAllowed(uint16 position);
 	void mazeRunnerUpdateCompass();

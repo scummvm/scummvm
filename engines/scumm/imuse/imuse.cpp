@@ -32,7 +32,6 @@
 #include "scumm/imuse/imuse_internal.h"
 #include "scumm/imuse/instrument.h"
 #include "scumm/resource.h"
-#include "scumm/saveload.h"
 #include "scumm/scumm.h"
 
 namespace Scumm {
@@ -362,70 +361,50 @@ void IMuseInternal::pause(bool paused) {
 	_paused = paused;
 }
 
-int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm, bool fixAfterLoad) {
-	Common::StackLock lock(_mutex, "IMuseInternal::save_or_load()");
-	const SaveLoadEntry mainEntries[] = {
-		MKLINE(IMuseInternal, _queue_end, sleUint8, VER(8)),
-		MKLINE(IMuseInternal, _queue_pos, sleUint8, VER(8)),
-		MKLINE(IMuseInternal, _queue_sound, sleUint16, VER(8)),
-		MKLINE(IMuseInternal, _queue_adding, sleByte, VER(8)),
-		MKLINE(IMuseInternal, _queue_marker, sleByte, VER(8)),
-		MKLINE(IMuseInternal, _queue_cleared, sleByte, VER(8)),
-		MKLINE(IMuseInternal, _master_volume, sleByte, VER(8)),
-		MKLINE(IMuseInternal, _trigger_count, sleUint16, VER(8)),
-		MKLINE(IMuseInternal, _snm_trigger_index, sleUint16, VER(54)),
-		MKARRAY(IMuseInternal, _channel_volume[0], sleUint16, 8, VER(8)),
-		MKARRAY(IMuseInternal, _volchan_table[0], sleUint16, 8, VER(8)),
-		MKEND()
-	};
+static void syncWithSerializer(Common::Serializer &s, CommandQueue &cq) {
+	s.syncArray(cq.array, 8, Common::Serializer::Uint16LE, VER(23));
+}
 
-	const SaveLoadEntry cmdQueueEntries[] = {
-		MKARRAY(CommandQueue, array[0], sleUint16, 8, VER(23)),
-		MKEND()
-	};
+static void syncWithSerializer(Common::Serializer &s, ImTrigger &it) {
+	s.syncAsSint16LE(it.sound, VER(54));
+	s.syncAsByte(it.id, VER(54));
+	s.syncAsUint16LE(it.expire, VER(54));
+	s.syncArray(it.command, 8, Common::Serializer::Uint16LE, VER(54));
+}
 
-	// VolumeFader is obsolete.
-	const SaveLoadEntry volumeFaderEntries[] = {
-		MK_OBSOLETE(VolumeFader, player, sleUint16, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, active, sleUint8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, curvol, sleUint8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, speed_lo_max, sleUint16, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, num_steps, sleUint16, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, speed_hi, sleInt8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, direction, sleInt8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, speed_lo, sleInt8, VER(8), VER(16)),
-		MK_OBSOLETE(VolumeFader, speed_lo_counter, sleUint16, VER(8), VER(16)),
-		MKEND()
-	};
-
-	const SaveLoadEntry snmTriggerEntries[] = {
-		MKLINE(ImTrigger, sound, sleInt16, VER(54)),
-		MKLINE(ImTrigger, id, sleByte, VER(54)),
-		MKLINE(ImTrigger, expire, sleUint16, VER(54)),
-		MKARRAY(ImTrigger, command[0], sleUint16, 8, VER(54)),
-		MKEND()
-	};
+void IMuseInternal::saveLoadIMuse(Common::Serializer &s, ScummEngine *scumm, bool fixAfterLoad) {
+	Common::StackLock lock(_mutex, "IMuseInternal::saveLoadIMuse()");
 
 	int i;
 
-	ser->saveLoadEntries(this, mainEntries);
-	ser->saveLoadArrayOf(_cmd_queue, ARRAYSIZE(_cmd_queue), sizeof(_cmd_queue[0]), cmdQueueEntries);
-	ser->saveLoadArrayOf(_snm_triggers, ARRAYSIZE(_snm_triggers), sizeof(_snm_triggers[0]), snmTriggerEntries);
+	s.syncAsByte(_queue_end, VER(8));
+	s.syncAsByte(_queue_pos, VER(8));
+	s.syncAsUint16LE(_queue_sound, VER(8));
+	s.syncAsByte(_queue_adding, VER(8));
+	s.syncAsByte(_queue_marker, VER(8));
+	s.syncAsByte(_queue_cleared, VER(8));
+	s.syncAsByte(_master_volume, VER(8));
+	s.syncAsUint16LE(_trigger_count, VER(8));
+	s.syncAsUint16LE(_snm_trigger_index, VER(54));
+	s.syncArray(_channel_volume, 8, Common::Serializer::Uint16LE, VER(8));
+	s.syncArray(_volchan_table, 8, Common::Serializer::Uint16LE, VER(8));
+	s.syncArray(_cmd_queue, ARRAYSIZE(_cmd_queue), syncWithSerializer);
+	s.syncArray(_snm_triggers, ARRAYSIZE(_snm_triggers), syncWithSerializer);
 
 	// The players
 	for (i = 0; i < ARRAYSIZE(_players); ++i)
-		_players[i].saveLoadWithSerializer(ser);
+		_players[i].saveLoadWithSerializer(s);
 
 	// The parts
 	for (i = 0; i < ARRAYSIZE(_parts); ++i)
-		_parts[i].saveLoadWithSerializer(ser);
+		_parts[i].saveLoadWithSerializer(s);
 
 	{
 		// Load/save the instrument definitions, which were revamped with V11.
 		Part *part = &_parts[0];
-		if (ser->getVersion() >= VER(11)) {
+		if (s.getVersion() >= VER(11)) {
 			for (i = ARRAYSIZE(_parts); i; --i, ++part) {
-				part->_instrument.saveOrLoad(ser);
+				part->_instrument.saveLoadWithSerializer(s);
 			}
 		} else {
 			for (i = ARRAYSIZE(_parts); i; --i, ++part)
@@ -434,10 +413,7 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm, bool fixAft
 	}
 
 	// VolumeFader has been replaced with the more generic ParameterFader.
-	// FIXME: replace this loop by something like
-	// if (loading && version <= 16)  ser->skip(XXX bytes);
-	for (i = 0; i < 8; ++i)
-		ser->saveLoadEntries(0, volumeFaderEntries);
+	s.skip(13 * 8, VER(8), VER(16));
 
 	// Normally, we have to fix up the data structures after loading a
 	// saved game. But there are cases where we don't. For instance, The
@@ -448,7 +424,7 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm, bool fixAft
 	// dummy iMUSE object, but since the resource is no longer recognizable
 	// to iMUSE, the fixup fails hard. So yes, this is a bit of a hack.
 
-	if (ser->isLoading() && fixAfterLoad) {
+	if (s.isLoading() && fixAfterLoad) {
 		// Load all sounds that we need
 		fix_players_after_load(scumm);
 		fix_parts_after_load();
@@ -459,8 +435,6 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm, bool fixAft
 		if (_midi_adlib)
 			reallocateMidiChannels(_midi_adlib);
 	}
-
-	return 0;
 }
 
 bool IMuseInternal::get_sound_active(int sound) const {
@@ -674,6 +648,44 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 
 	if (_game_id == GID_SAMNMAX && sound == 82 && getSoundStatus_internal(81, false))
 		ImClearTrigger(81, 1);
+
+	// Workaround for monkey2 bug #1410 / Scabb Island
+	//
+	// Tunes involved:
+	// 100 - Captain Dread's map
+	// 101 - Woodtick
+	// 107 - Map of Scabb Island
+	//
+	// If you go from Woodtick to the map of Scabb Island tune 107 is added as
+	// trigger on 101 and 101 moves to an outro and stop (triggering start
+	// of 107). Then at Captain Dread tune 107 is stopped and 100 is started.
+	//
+	// If you go quickly enough, the trigger occurs not at the Scabb Island
+	// map but at Captain Dread causing tune 107 not to be stopped.
+	// So we prevent starting 107 if 100 is already running.
+	if (_game_id == GID_MONKEY2 && (sound == 107) && (getSoundStatus_internal(100, true) == 1))
+		return false;
+
+	// In some cases 107 is running and doesn't get killed at Dread's map
+	if (_game_id == GID_MONKEY2 && (sound == 100) && (getSoundStatus_internal(107, true) == 1))
+		IMuseInternal::stopSound_internal(107);
+
+	// Workaround for monkey2 bug #1410 / Booty Island
+	//
+	// Tunes involved
+	// 100 - Captain Dread's map
+	// 113 - Guard Kiosk / Mardi Grass 
+	// 115 - Map of Booty Island / Ville de la Booty
+	// 118 - Ville de la Booty
+	//
+	// When you enter the Guard Kiosk tune 113 is added as trigger on song
+	// 115. Then if you leave, 113 is stopped and 115 is started again.
+	// If you leave quickly enough, the trigger occurs on the map and tune
+	// 113 will not stop.
+	// We kill 113 on entry of one of the other locations (Captain Dread
+	// or Ville de la Booty) because tune 115 is not always started.
+	if (_game_id == GID_MONKEY2 && (sound == 100 || sound == 115 || sound == 118) && (getSoundStatus_internal(113, true) == 1))
+		IMuseInternal::stopSound_internal(113);
 
 	player->clear();
 	player->setOffsetNote(offset);

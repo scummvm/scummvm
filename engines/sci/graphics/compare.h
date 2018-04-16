@@ -34,12 +34,13 @@ class Screen;
  */
 class GfxCompare {
 public:
-	GfxCompare(SegManager *segMan, GfxCache *cache, GfxScreen *screen, GfxCoordAdjuster *coordAdjuster);
+	GfxCompare(SegManager *segMan, GfxCache *cache, GfxScreen *screen, GfxCoordAdjuster16 *coordAdjuster);
 	~GfxCompare();
 
 	uint16 kernelOnControl(byte screenMask, const Common::Rect &rect);
 	void kernelSetNowSeen(reg_t objectReference);
 	reg_t kernelCanBeHere(reg_t curObject, reg_t listReference);
+	reg_t kernelCantBeHere32(const reg_t curObject, const reg_t listReference) const;
 	bool kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
 	void kernelBaseSetter(reg_t object);
 	Common::Rect getNSRect(reg_t object);
@@ -49,7 +50,7 @@ private:
 	SegManager *_segMan;
 	GfxCache *_cache;
 	GfxScreen *_screen;
-	GfxCoordAdjuster *_coordAdjuster;
+	GfxCoordAdjuster16 *_coordAdjuster;
 
 	uint16 isOnControl(uint16 screenMask, const Common::Rect &rect);
 
@@ -58,7 +59,7 @@ private:
 	 * *different* from checkObject, has a brRect which is contained inside
 	 * checkRect.
 	 */
-	reg_t canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list);
+	reg_t canBeHereCheckRectList(const reg_t checkObject, const Common::Rect &checkRect, const List *list, const uint16 signalFlags) const;
 };
 
 } // End of namespace Sci

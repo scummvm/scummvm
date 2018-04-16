@@ -144,7 +144,15 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 	}
 
 	// add new script
+#if EXTENDED_DEBUGGER_ENABLED
+	DebuggableScEngine* debuggableEngine;
+	debuggableEngine = dynamic_cast<DebuggableScEngine*>(this);
+	// TODO: Not pretty
+	assert(debuggableEngine);
+	ScScript *script = new DebuggableScript(_gameRef, debuggableEngine);
+#else
 	ScScript *script = new ScScript(_gameRef, this);
+#endif
 	bool ret = script->create(filename, compBuffer, compSize, owner);
 	if (DID_FAIL(ret)) {
 		_gameRef->LOG(ret, "Error running script '%s'...", filename);

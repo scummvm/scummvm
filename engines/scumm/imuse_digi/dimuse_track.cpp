@@ -110,8 +110,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->souStreamUsed = (input != 0);
 
 	if (track->souStreamUsed) {
-		_mixer->playStream(track->getType(), &track->mixChanHandle, input, -1, track->getVol(), track->getPan(),
-							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagStereo) != 0);
+		_mixer->playStream(track->getType(), &track->mixChanHandle, input, -1, track->getVol(), track->getPan());
 	} else {
 		strcpy(track->soundName, soundName);
 		track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
@@ -167,8 +166,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		}
 
 		track->stream = Audio::makeQueuingAudioStream(freq, track->mixerFlags & kFlagStereo);
-		_mixer->playStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan(),
-							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagStereo) != 0);
+		_mixer->playStream(track->getType(), &track->mixChanHandle, track->stream, -1, track->getVol(), track->getPan());
 	}
 
 	track->used = true;
@@ -354,9 +352,9 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	// leaving bug number for now #1635361
 	ImuseDigiSndMgr::SoundDesc *soundDesc = _sound->cloneSound(track->soundDesc);
 	if (!soundDesc) {
-		// it fail load open old song after switch to diffrent CDs
+		// it fail load open old song after switch to different CDs
 		// so gave up
-		error("Game not supported while playing on 2 diffrent CDs");
+		error("Game not supported while playing on 2 different CDs");
 	}
 	track->soundDesc = soundDesc;
 
@@ -368,8 +366,7 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 
 	// Create an appendable output buffer
 	fadeTrack->stream = Audio::makeQueuingAudioStream(_sound->getFreq(fadeTrack->soundDesc), track->mixerFlags & kFlagStereo);
-	_mixer->playStream(track->getType(), &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan(),
-							DisposeAfterUse::YES, false, (track->mixerFlags & kFlagStereo) != 0);
+	_mixer->playStream(track->getType(), &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan());
 	fadeTrack->used = true;
 
 	debug(5, "cloneToFadeOutTrack() - end of func, soundId %d, fade soundId %d", track->soundId, fadeTrack->soundId);

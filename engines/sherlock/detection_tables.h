@@ -1,0 +1,238 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+namespace Sherlock {
+
+static const SherlockGameDescription gameDescriptions[] = {
+	{
+		// Case of the Serrated Scalpel - English 3.5" Floppy
+		// The HitSquad CD version has the same MD5
+		{
+			"scalpel",
+			0,
+			AD_ENTRY1s("talk.lib", "ad0c4d6865edf15da4e9204c08815875", 238928),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - German CD (from multilingual CD)
+		// Provided by m_kiewitz
+		{
+			"scalpel",
+			0, {
+				{"talk.lib", 0, "40a5f9f37c0e0d2ad48d8f44d8e393c9", 284278},
+				{"music.lib", 0, "68ae2f7684ecf903bd60a00bb6bae195", 366465},
+				AD_LISTEND},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - German
+		// Provided by mgerhardy
+		{
+			"scalpel",
+			0, {
+				{"talk.lib", 0, "44652e54172e13b1b075b1ef7d89de24", 284043},
+				{"music.lib", 0, "68ae2f7684ecf903bd60a00bb6bae195", 366465},
+				AD_LISTEND},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - German
+		// Provided by max565
+		{
+			"scalpel",
+			0, {
+				{"talk.lib", 0, "3d813fd8505b391a1f8b3a16b1aa7f2e", 284195},
+				{"music.lib", 0, "68ae2f7684ecf903bd60a00bb6bae195", 366465},
+				AD_LISTEND },
+				Common::DE_DEU,
+				Common::kPlatformDOS,
+				ADGF_NO_FLAGS,
+				GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - Spanish CD (from multilingual CD)
+		// Provided by m_kiewitz
+		{
+			"scalpel",
+			0, {
+				{"talk.lib", 0, "27697804b637a7f3b77234bf16f15dce", 171419},
+				{"music.lib", 0, "68ae2f7684ecf903bd60a00bb6bae195", 366465},
+				AD_LISTEND},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - Italian fan translation
+		{
+			"scalpel",
+			0, {
+				{"talk.lib", 0, "1a547f96476a3a50cf6f0d599a4f5bcc", 247406},
+				{"music.lib", 0, "68ae2f7684ecf903bd60a00bb6bae195", 366465},
+				AD_LISTEND},
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,
+				GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - English 3DO
+		{
+			"scalpel",
+			0,
+			AD_ENTRY1s("talk.lib", "20f74a29f2db6475e85b029ac9fc03bc", 240610),
+			Common::EN_ANY,
+			Common::kPlatform3DO,
+			ADGF_UNSTABLE,
+			GUIO4(GAMEOPTION_FADE_STYLE, GAMEOPTION_HELP_STYLE,GAMEOPTION_PORTRAITS_ON, GAMEOPTION_WINDOW_STYLE)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - Interactive English Demo
+		// Provided by Strangerke
+		{
+			"scalpel",
+			"Interactive Demo",
+			AD_ENTRY1s("talk.lib", "dbdc8a20c96900aa7e4d02f3fe8a274c", 121102),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Serrated Scalpel - Non-Interactive English Demo
+		// Provided by Strangerke
+		{
+			"scalpel",
+			"Non Interactive Demo",
+			AD_ENTRY1s("music.lib", "ec19a09b7fef6fd90b1ab812ce6e9739", 38563),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
+		// Case of the Rose Tattoo - French CD
+		// Provided by Strangerke
+		{
+			"rosetattoo",
+			"CD",
+			AD_ENTRY1s("talk.lib", "22e8e6406dd2fbbb238c9898928df42e", 770756),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
+		},
+		GType_RoseTattoo
+	},
+
+	{
+		// Case of the Rose Tattoo - English CD
+		// Provided by dreammaster
+		{
+			"rosetattoo",
+			"CD",
+			AD_ENTRY1s("talk.lib", "9639a756b0993ebd71cb5f4d8b78b2dc", 765134),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
+		},
+		GType_RoseTattoo,
+	},
+
+	{
+		// Case of the Rose Tattoo - German CD
+		// Provided by m_kiewitz
+		{
+			"rosetattoo",
+			"CD",
+			AD_ENTRY1s("talk.lib", "5027aa72f0d263ed3b1c764a6c397911", 873864),
+  			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
+		},
+		GType_RoseTattoo,
+	},
+
+	{
+		// Case of the Rose Tattoo - Spanish CD
+		// Provided by dianiu
+		{
+			"rosetattoo",
+			"CD",
+			AD_ENTRY1s("talk.lib", "4f3ccf50e1012445624569cd605d7449", 783713),
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO3(GAMEOPTION_ORIGINAL_SAVES, GAMEOPTION_HELP_STYLE, GAMEOPTION_TRANSPARENT_WINDOWS)
+		},
+		GType_RoseTattoo,
+	},
+
+	{ AD_TABLE_END_MARKER, (GameType)0 }
+};
+
+} // End of namespace Sherlock

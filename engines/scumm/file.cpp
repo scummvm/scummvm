@@ -33,7 +33,7 @@ namespace Scumm {
 #pragma mark --- ScummFile ---
 #pragma mark -
 
-ScummFile::ScummFile() : _subFileStart(0), _subFileLen(0) {
+ScummFile::ScummFile() : _subFileStart(0), _subFileLen(0), _myEos(false) {
 }
 
 void ScummFile::setSubfileRange(int32 start, int32 len) {
@@ -221,6 +221,15 @@ static const int maniacResourcesPerFile[55] = {
 	 3, 10,  1,  0,  0
 };
 
+static const int maniacDemoResourcesPerFile[55] = {
+	 0, 12,  0,  2,  1, 12,  1, 13,  6,  0,
+	 31, 0,  1,  0,  0,  0,  0,  1,  1,  1,
+	 0,  1,  0,  0,  2,  0,  0,  1,  0,  0,
+	 2,  7,  1, 11,  0,  0,  5,  1,  0,  0,
+	 1,  0,  1,  3,  4,  3,  1,  0,  0,  1,
+	 2,  2,  0,  0,  0
+};
+
 static const int zakResourcesPerFile[59] = {
 	 0, 29, 12, 14, 13,  4,  4, 10,  7,  4,
 	14, 19,  5,  4,  7,  6, 11,  9,  4,  4,
@@ -253,9 +262,17 @@ ScummDiskImage::ScummDiskImage(const char *disk1, const char *disk2, GameSetting
 		_numGlobalObjects = 256;
 		_numRooms = 55;
 		_numCostumes = 25;
-		_numScripts = 160;
-		_numSounds = 70;
-		_resourcesPerFile = maniacResourcesPerFile;
+
+		if (_game.features & GF_DEMO) {
+			_numScripts = 55;
+			_numSounds = 40;
+			_resourcesPerFile = maniacDemoResourcesPerFile;
+		} else {
+			_numScripts = 160;
+			_numSounds = 70;
+			_resourcesPerFile = maniacResourcesPerFile;
+		}
+
 	} else {
 		_numGlobalObjects = 775;
 		_numRooms = 59;
@@ -326,6 +343,9 @@ bool ScummDiskImage::open(const Common::String &filename) {
 	}
 
 	extractIndex(0); // Fill in resource arrays
+
+	if (_game.features & GF_DEMO)
+		return true;
 
 	openDisk(2);
 

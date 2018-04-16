@@ -305,12 +305,23 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		for (uint i = 0; i < clientVarNum; ++i)
 			clientBackup[i] = clientObject->getVariable(i);
 
-		if (mover_xAxis) {
-			if (ABS(mover_x - client_x) < ABS(mover_dx))
-				completed = true;
+		if ((getSciVersion() <= SCI_VERSION_1_EGA_ONLY)) {
+			if (mover_xAxis) {
+				if (ABS(mover_x - client_x) < ABS(mover_dx))
+					completed = true;
+			} else {
+				if (ABS(mover_y - client_y) < ABS(mover_dy))
+					completed = true;
+			}
 		} else {
-			if (ABS(mover_y - client_y) < ABS(mover_dy))
-				completed = true;
+			// SCI1EARLY+ code
+			if (mover_xAxis) {
+				if (ABS(mover_x - client_x) <= ABS(mover_dx))
+					completed = true;
+			} else {
+				if (ABS(mover_y - client_y) <= ABS(mover_dy))
+					completed = true;
+			}
 		}
 		if (completed) {
 			client_x = mover_x;
@@ -336,10 +347,10 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		bool collision = false;
 		reg_t cantBeHere = NULL_REG;
 
+		// adding this here for hoyle 3 to get happy. CantBeHere is a dummy in hoyle 3 and acc is != 0 so we would
+		//  get a collision otherwise. Resetting the result was always done in SSCI
+		s->r_acc = NULL_REG;
 		if (SELECTOR(cantBeHere) != -1) {
-			// adding this here for hoyle 3 to get happy. CantBeHere is a dummy in hoyle 3 and acc is != 0 so we would
-			//  get a collision otherwise
-			s->r_acc = NULL_REG;
 			invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
 			if (!s->r_acc.isNull())
 				collision = true;

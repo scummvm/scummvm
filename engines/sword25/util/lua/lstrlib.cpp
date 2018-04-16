@@ -799,10 +799,8 @@ static int str_format (lua_State *L) {
             luaL_addvalue(&b);
             continue;  /* skip the `addsize' at the end */
           }
-          else {
-            sprintf(buff, form, s);
-            break;
-          }
+          sprintf(buff, form, s);
+          break;
         }
         default: {  /* also treat cases `pnLlh' */
           return luaL_error(L, "invalid option " LUA_QL("%%%c") " to "

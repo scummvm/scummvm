@@ -21,6 +21,7 @@
  */
 
 #include "gui/browser.h"
+#include "gui/gui-manager.h"
 #include "gui/widgets/list.h"
 
 #include "common/config-manager.h"
@@ -49,7 +50,7 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_isDirBrowser = dirBrowser;
 	_fileList = NULL;
 	_currentPath = NULL;
-	_showHidden = ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain);
+	_showHidden = false;
 
 	// Headline - TODO: should be customizable during creation time
 	new StaticTextWidget(this, "Browser.Headline", title);
@@ -85,8 +86,10 @@ void BrowserDialog::open() {
 	if (!_node.isDirectory())
 		_node = Common::FSNode(".");
 
-	// Alway refresh file list
-	updateListing();
+	_showHidden = ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain);
+	_showHiddenWidget->setState(_showHidden);
+
+	// At this point the file list has already been refreshed by the kHiddenCmd handler
 }
 
 void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -189,7 +192,7 @@ void BrowserDialog::updateListing() {
 	_fileList->scrollTo(0);
 
 	// Finally, redraw
-	draw();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 } // End of namespace GUI

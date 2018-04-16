@@ -222,6 +222,24 @@
 	kFeatures640x480,
 	"intro2.stk", 0, 0
 },
+{ // Version 1.002. Bug #7052
+	{
+		"playtoons2",
+		"",
+		{
+			{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
+			{"spirou.stk", 0, "91080dc148de1bbd6a97321c1a1facf3", 9817086},
+			{0, 0, 0, 0}
+		},
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypePlaytoons,
+	kFeatures640x480,
+	"intro2.stk", 0, 0
+},
 {
 	{
 		"playtoons2",

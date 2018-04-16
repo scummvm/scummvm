@@ -22,7 +22,9 @@
 
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "engines/util.h"
 #include "common/config-manager.h"
+#include "common/file.h"
 
 namespace DreamWeb {
 
@@ -561,6 +563,11 @@ void DreamWebEngine::dreamweb() {
 		_foreignRelease = true;
 		break;
 	}
+
+	Graphics::ModeList modes;
+	modes.push_back(Graphics::Mode(320, 200));
+	modes.push_back(Graphics::Mode(640, 480));
+	initGraphicsModes(modes);
 
 	allocateBuffers();
 

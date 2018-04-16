@@ -168,7 +168,7 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 		if (newPath.lastChar() != '/')
 		  newPath += '/';
 		newPath += pent->d_name;
-	  
+
 		bool isDir = false;
 		tmpdir = opendir(newPath.c_str());
 		if(tmpdir)
@@ -176,17 +176,17 @@ bool WiiFilesystemNode::getChildren(AbstractFSList &list, ListMode mode, bool hi
 			isDir = true;
 			closedir(tmpdir);
 		}
-		
+
 		if ((mode == Common::FSNode::kListFilesOnly && isDir) ||
 			(mode == Common::FSNode::kListDirectoriesOnly && !isDir))
 			continue;
-		
+
 		struct stat st;
 		st.st_mode = 0;
 		st.st_mode |= ( isDir ? S_IFDIR : 0 );
 		st.st_mode |= S_IRUSR;
 		st.st_mode |= S_IWUSR;
-			
+
 		list.push_back(new WiiFilesystemNode(newPath, &st));
 	}
 
@@ -211,6 +211,11 @@ Common::SeekableReadStream *WiiFilesystemNode::createReadStream() {
 
 Common::WriteStream *WiiFilesystemNode::createWriteStream() {
 	return StdioStream::makeFromPath(getPath(), true);
+}
+
+bool WiiFilesystemNode::create(bool isDirectoryFlag) {
+	error("Not supported");
+	return false;
 }
 
 #endif //#if defined(__WII__)

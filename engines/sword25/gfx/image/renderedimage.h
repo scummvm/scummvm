@@ -44,6 +44,9 @@
 namespace Sword25 {
 
 class RenderedImage : public Image {
+private:
+	RenderedImage(const RenderedImage &) : Image(), _doCleanup(false) {}
+	RenderedImage &operator=(const RenderedImage &) { return *this; }
 public:
 	RenderedImage(const Common::String &filename, bool &result);
 

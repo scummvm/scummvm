@@ -41,6 +41,7 @@ class BaseStringTable : public BaseClass {
 public:
 	bool loadFile(const char *filename, bool deleteAll = true);
 	void expand(char **str) const;
+	void expand(Common::String &str) const;
 	const char *expandStatic(const char *string) const;
 	bool addString(const char *key, const char *val, bool reportDuplicities = true);
 	BaseStringTable(BaseGame *inGame);

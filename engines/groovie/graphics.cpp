@@ -31,7 +31,7 @@
 namespace Groovie {
 
 GraphicsMan::GraphicsMan(GroovieEngine *vm) :
-	_vm(vm), _changed(false), _fading(0) {
+	_vm(vm), _changed(false), _fading(0), _fadeStartTime(0) {
 	// Create the game surfaces
 	_foreground.create(640, 320, _vm->_pixelFormat);
 	_background.create(640, 320, _vm->_pixelFormat);
@@ -63,7 +63,7 @@ void GraphicsMan::update() {
 
 			// Clear the buffer when ending the fade out
 			if (_fading == 2)
-				_foreground.fillRect(Common::Rect(640, 320), 0);
+				_foreground.fillRect(Common::Rect(640, _foreground.h), 0);
 		}
 	}
 
@@ -72,6 +72,22 @@ void GraphicsMan::update() {
 		_vm->_system->updateScreen();
 		_changed = false;
 	}
+}
+
+void GraphicsMan::switchToFullScreen(bool fullScreen) {
+	_foreground.free();
+	_background.free();
+
+	if (fullScreen) {
+		_foreground.create(640, 480, _vm->_pixelFormat);
+		_background.create(640, 480, _vm->_pixelFormat);
+	} else {
+		_vm->_system->fillScreen(0);
+		_foreground.create(640, 320, _vm->_pixelFormat);
+		_background.create(640, 320, _vm->_pixelFormat);
+	}
+
+	_changed = true;
 }
 
 void GraphicsMan::change() {
@@ -84,7 +100,7 @@ void GraphicsMan::mergeFgAndBg() {
 
 	countf = (byte *)_foreground.getPixels();
 	countb = (byte *)_background.getPixels();
-	for (i = 640 * 320; i; i--) {
+	for (i = 640 * _foreground.h; i; i--) {
 		if (255 == *(countf)) {
 			*(countf) = *(countb);
 		}
@@ -94,7 +110,10 @@ void GraphicsMan::mergeFgAndBg() {
 }
 
 void GraphicsMan::updateScreen(Graphics::Surface *source) {
-	_vm->_system->copyRectToScreen(source->getPixels(), 640, 0, 80, 640, 320);
+	if (!isFullScreen())
+		_vm->_system->copyRectToScreen(source->getPixels(), source->pitch, 0, 80, 640, 320);
+	else
+		_vm->_system->copyRectToScreen(source->getPixels(), source->pitch, 0, 0, 640, 480);
 	change();
 }
 

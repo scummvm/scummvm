@@ -23,30 +23,48 @@
 #ifndef SCI_GRAPHICS_PAINT32_H
 #define SCI_GRAPHICS_PAINT32_H
 
-#include "sci/graphics/paint.h"
-
 namespace Sci {
+class Plane;
+class SciBitmap;
+class ScreenItem;
+class SegManager;
 
-class GfxPorts;
+enum LineStyle {
+	kLineStyleSolid,
+	kLineStyleDashed,
+	kLineStylePattern
+};
 
 /**
  * Paint32 class, handles painting/drawing for SCI32 (SCI2+) games
  */
-class GfxPaint32 : public GfxPaint {
+class GfxPaint32 {
 public:
-	GfxPaint32(ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette);
-	~GfxPaint32();
-
-	void fillRect(Common::Rect rect, byte color);
-
-	void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
-	void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
+	GfxPaint32(SegManager *segMan);
 
 private:
-	ResourceManager *_resMan;
-	GfxCoordAdjuster *_coordAdjuster;
-	GfxScreen *_screen;
-	GfxPalette *_palette;
+	SegManager *_segMan;
+
+#pragma mark -
+#pragma mark Line drawing
+public:
+	reg_t kernelAddLine(const reg_t planeObject, const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, const uint16 pattern, const uint8 thickness);
+	void kernelUpdateLine(ScreenItem *screenItem, Plane *plane, const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, const uint16 pattern, const uint8 thickness);
+	void kernelDeleteLine(const reg_t screenItemObject, const reg_t planeObject);
+
+private:
+	typedef struct {
+		SciBitmap *bitmap;
+		bool pattern[16];
+		uint8 patternIndex;
+		bool solid;
+		bool horizontal;
+		int lastAddress;
+	} LineProperties;
+
+	static void plotter(int x, int y, int color, void *data);
+
+	reg_t makeLineBitmap(const Common::Point &startPoint, const Common::Point &endPoint, const int16 priority, const uint8 color, const LineStyle style, const uint16 pattern, const uint8 thickness, Common::Rect &outRect);
 };
 
 } // End of namespace Sci

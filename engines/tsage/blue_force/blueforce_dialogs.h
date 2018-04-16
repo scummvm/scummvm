@@ -23,13 +23,10 @@
 #ifndef TSAGE_BLUEFORCE_DIALOGS_H
 #define TSAGE_BLUEFORCE_DIALOGS_H
 
-#include "gui/options.h"
+#include "tsage/core.h"
 #include "tsage/dialogs.h"
 #include "tsage/events.h"
 #include "tsage/graphics.h"
-#include "common/list.h"
-#include "common/rect.h"
-#include "common/system.h"
 
 namespace TsAGE {
 

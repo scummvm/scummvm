@@ -707,6 +707,17 @@ void ScummEngine_v6::o6_ifNot() {
 void ScummEngine_v6::o6_jump() {
 	int offset = fetchScriptWordSigned();
 
+	// WORKAROUND bug #6097: Pressing escape at the lake side entrance of
+	// the cave while Putt Putt is not on solid ground and still talking
+	// will cause the raft to disappear. This is a script bug in the
+	// original game and affects several versions.
+	if (_game.id == GID_PUTTZOO) {
+		if (_game.heversion == 73 && vm.slot[_currentScript].number == 206 && offset == 176 && !isScriptRunning(202))
+			_scummVars[244] = 35;
+		if (_game.features & GF_HE_985 && vm.slot[_currentScript].number == 2054 && offset == 178 && !isScriptRunning(2050))
+			_scummVars[202] = 35;
+	}
+
 	// WORKAROUND bug #2826144: Talking to the guard at the bigfoot party, after
 	// he's let you inside, will cause the game to hang, if you end the conversation.
 	// This is a script bug, due to a missing jump in one segment of the script.
@@ -1625,6 +1636,9 @@ void ScummEngine_v6::o6_roomOps() {
 		c = pop();
 		b = pop();
 		a = pop();
+		// Prevent assert() error with corner case, fixes bug #9871
+		if (_game.id == GID_FT && _roomResource == 0)
+			break;
 		darkenPalette(a, a, a, b, c);
 		break;
 
@@ -2597,7 +2611,11 @@ void ScummEngine_v6::o6_kernelSetFunctions() {
 		fadeIn(args[1]);
 		break;
 	case 8:
-		startManiac();
+		if (startManiac()) {
+			// This is so that the surprised exclamation happens
+			// after we return to the game again, not before.
+			o6_breakHere();
+		}
 		break;
 	case 9:
 		killAllScriptsExceptCurrent();

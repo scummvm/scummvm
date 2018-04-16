@@ -29,7 +29,7 @@
 
 #ifdef LAYOUT_DEBUG_DIALOG
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 #endif
 
@@ -45,7 +45,8 @@ public:
 		kLayoutMain,
 		kLayoutVertical,
 		kLayoutHorizontal,
-		kLayoutWidget
+		kLayoutWidget,
+		kLayoutTabWidget
 	};
 
 	ThemeLayout(ThemeLayout *p) :
@@ -221,6 +222,41 @@ protected:
 	}
 
 	Common::String _name;
+};
+
+class ThemeLayoutTabWidget : public ThemeLayoutWidget {
+	int _tabHeight;
+
+public:
+	ThemeLayoutTabWidget(ThemeLayout *p, const Common::String &name, int16 w, int16 h, Graphics::TextAlign align, int tabHeight):
+		ThemeLayoutWidget(p, name, w, h, align) {
+		_tabHeight = tabHeight;
+	}
+
+	void reflowLayout() {
+		for (uint i = 0; i < _children.size(); ++i) {
+			_children[i]->resetLayout();
+			_children[i]->reflowLayout();
+		}
+	}
+
+	virtual bool getWidgetData(const Common::String &name, int16 &x, int16 &y, uint16 &w, uint16 &h) {
+		if (ThemeLayoutWidget::getWidgetData(name, x, y, w, h)) {
+			h -= _tabHeight;
+			return true;
+		}
+
+		return false;
+	}
+
+protected:
+	LayoutType getLayoutType() { return kLayoutTabWidget; }
+
+	ThemeLayout *makeClone(ThemeLayout *newParent) {
+		ThemeLayoutTabWidget *n = new ThemeLayoutTabWidget(*this);
+		n->_parent = newParent;
+		return n;
+	}
 };
 
 class ThemeLayoutSpacing : public ThemeLayout {

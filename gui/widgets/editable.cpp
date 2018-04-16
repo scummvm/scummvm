@@ -79,7 +79,7 @@ bool EditableWidget::tryInsertChar(byte c, int pos) {
 
 void EditableWidget::handleTickle() {
 	uint32 time = g_system->getMillis();
-	if (_caretTime < time) {
+	if (_caretTime < time && isEnabled()) {
 		_caretTime = time + kCaretBlinkTime;
 		drawCaret(_caretVisible);
 	}
@@ -89,6 +89,9 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
 	bool forcecaret = false;
+
+	if (!isEnabled())
+		return false;
 
 	// First remove caret
 	if (_caretVisible)
@@ -182,6 +185,21 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 		forcecaret = true;
 		break;
 
+	case Common::KEYCODE_v:
+		if (g_system->hasFeature(OSystem::kFeatureClipboardSupport) && state.flags & Common::KBD_CTRL) {
+			if (g_system->hasTextInClipboard()) {
+				String text = g_system->getTextFromClipboard();
+				for (uint32 i = 0; i < text.size(); ++i) {
+					if (tryInsertChar(text[i], _caretPos))
+						++_caretPos;
+				}
+				dirty = true;
+			}
+		} else {
+			defaultKeyDownHandler(state, dirty, forcecaret, handled);
+		}
+		break;
+
 #ifdef MACOSX
 	// Let ctrl-a / ctrl-e move the caret to the start / end of the line.
 	//
@@ -217,7 +235,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	}
 
 	if (dirty)
-		draw();
+		markAsDirty();
 
 	if (forcecaret)
 		makeCaretVisible();
@@ -271,7 +289,7 @@ void EditableWidget::drawCaret(bool erase) {
 	x += getAbsX();
 	y += getAbsY();
 
-	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
+	g_gui.theme()->drawCaretClip(Common::Rect(x, y, x + 1, y + editRect.height()), getBossClipRect(), erase);
 
 	if (erase) {
 		GUI::EditableWidget::String character;
@@ -300,7 +318,7 @@ void EditableWidget::drawCaret(bool erase) {
 		// possible glitches due to different methods used.
 		width = MIN(editRect.width() - caretOffset, width);
 		if (width > 0) {
-			g_gui.theme()->drawText(Common::Rect(x, y, x + width, y + editRect.height()), character, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+			g_gui.theme()->drawTextClip(Common::Rect(x, y, x + width, y + editRect.height()), getBossClipRect(), character, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		}
 	}
 

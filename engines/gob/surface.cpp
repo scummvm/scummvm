@@ -470,7 +470,7 @@ void Surface::blitScaled(const Surface &from, Common::Rational scale, int32 tran
 	blitScaled(from, 0, 0, from._width - 1, from._height - 1, 0, 0, scale, transp);
 }
 
-void Surface::fillRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uint32 color) {
+void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 color) {
 	// Just in case those are swapped
 	if (left > right)
 		SWAP(left, right);
@@ -480,6 +480,11 @@ void Surface::fillRect(uint16 left, uint16 top, uint16 right, uint16 bottom, uin
 	if ((left >= _width) || (top >= _height))
 		// Nothing to do
 		return;
+
+	left   = CLIP<int32>(left  , 0, _width  - 1);
+	top    = CLIP<int32>(top   , 0, _height - 1);
+	right  = CLIP<int32>(right , 0, _width  - 1);
+	bottom = CLIP<int32>(bottom, 0, _height - 1);
 
 	// Area to actually fill
 	uint16 width  = CLIP<int32>(right  - left + 1, 0, _width  - left);

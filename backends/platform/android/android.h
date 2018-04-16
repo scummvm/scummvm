@@ -96,13 +96,6 @@ extern void checkGlError(const char *expr, const char *file, int line);
 #define GLTHREADCHECK do {  } while (false)
 #endif
 
-#ifdef DYNAMIC_MODULES
-class AndroidPluginProvider : public POSIXPluginProvider {
-protected:
-	virtual void addCustomDirectories(Common::FSList &dirs) const;
-};
-#endif
-
 class OSystem_Android : public EventsBaseBackend, public PaletteManager {
 private:
 	// passed from the dark side
@@ -177,7 +170,6 @@ public:
 	virtual ~OSystem_Android();
 
 	virtual void initBackend();
-	void addPluginDirectories(Common::FSList &dirs) const;
 	void enableZoning(bool enable) { _enable_zoning = enable; }
 
 	virtual bool hasFeature(Feature f);
@@ -242,7 +234,7 @@ private:
 protected:
 	// PaletteManager API
 	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual void grabPalette(byte *colors, uint start, uint num) const;
 
 public:
 	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y,
@@ -294,6 +286,7 @@ public:
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s,
 											int priority = 0);
+	virtual bool openUrl(const Common::String &url);
 	virtual Common::String getSystemLanguage() const;
 };
 

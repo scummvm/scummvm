@@ -96,6 +96,9 @@ public:
 	/**
 	 * Return a list of all save states associated with the given target.
 	 *
+	 * The returned list is guaranteed to be sorted by slot numbers. That
+	 * means smaller slot numbers are always stored before bigger slot numbers.
+	 *
 	 * The caller has to ensure that this (Meta)Engine is responsible
 	 * for the specified target (by using findGame on it respectively
 	 * on the associated gameid from the relevant ConfMan entry, if present).
@@ -233,7 +236,19 @@ public:
 		 * the game till the save.
 		 * This flag may only be set when 'kSavesSupportMetaInfo' is set.
 		 */
-		kSavesSupportPlayTime
+		kSavesSupportPlayTime,
+
+		/**
+		* Feature is available if engine's saves could be detected
+		* with "<target>.###" pattern and "###" corresponds to slot
+		* number.
+		*
+		* If that's not true or engine is using some unusual way
+		* of detecting saves and slot numbers, this should be
+		* unavailable. In that case Save/Load dialog for engine's
+		* games is locked during cloud saves sync.
+		*/
+		kSimpleSavesNames
 	};
 
 	/**
@@ -247,20 +262,15 @@ public:
 	//@}
 };
 
-
-// Engine plugins
-
-typedef PluginSubclass<MetaEngine> EnginePlugin;
-
 /**
  * Singleton class which manages all Engine plugins.
  */
 class EngineManager : public Common::Singleton<EngineManager> {
 public:
-	GameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
-	GameDescriptor findGame(const Common::String &gameName, const EnginePlugin **plugin = NULL) const;
+	GameDescriptor findGameInLoadedPlugins(const Common::String &gameName, const Plugin **plugin = NULL) const;
+	GameDescriptor findGame(const Common::String &gameName, const Plugin **plugin = NULL) const;
 	GameList detectGames(const Common::FSList &fslist) const;
-	const EnginePlugin::List &getPlugins() const;
+	const PluginList &getPlugins() const;
 };
 
 /** Convenience shortcut for accessing the engine manager. */

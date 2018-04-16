@@ -173,7 +173,8 @@ bool KyraMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSupportsLoadingDuringStartup) ||
 	    (f == kSupportsDeleteSave) ||
 	    (f == kSavesSupportMetaInfo) ||
-	    (f == kSavesSupportThumbnail);
+	    (f == kSavesSupportThumbnail) ||
+		(f == kSimpleSavesNames);
 }
 
 bool Kyra::KyraEngine_v1::hasFeature(EngineFeature f) const {
@@ -242,25 +243,20 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Kyra::KyraEngine_v1::SaveHeader header;
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	Common::StringArray filenames;
 	filenames = saveFileMan->listSavefiles(pattern);
-	Common::sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		// Skip automatic final saves made by EOB for the purpose of party transfer
-		if (!scumm_stricmp(file->c_str() + file->size() - 3, "fin"))
-			continue;
-
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
 		int slotNum = atoi(file->c_str() + file->size() - 3);
 
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
-				if (Kyra::KyraEngine_v1::readSaveHeader(in, false, header) == Kyra::KyraEngine_v1::kRSHENoError) {
+				if (Kyra::KyraEngine_v1::readSaveHeader(in, header) == Kyra::KyraEngine_v1::kRSHENoError) {
 					// WORKAROUND: Old savegames are using 'German' as description for kyra3 restart game save (slot 0),
 					// since that looks odd we replace it by "New Game".
 					if (slotNum == 0 && header.gameID == Kyra::GI_KYRA3)
@@ -273,6 +269,8 @@ SaveStateList KyraMetaEngine::listSaves(const char *target) const {
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
@@ -300,7 +298,7 @@ SaveStateDescriptor KyraMetaEngine::querySaveMetaInfos(const char *target, int s
 		Kyra::KyraEngine_v1::SaveHeader header;
 		Kyra::KyraEngine_v1::ReadSaveHeaderError error;
 
-		error = Kyra::KyraEngine_v1::readSaveHeader(in, true, header);
+		error = Kyra::KyraEngine_v1::readSaveHeader(in, header, false);
 		delete in;
 
 		if (error == Kyra::KyraEngine_v1::kRSHENoError) {

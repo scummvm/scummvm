@@ -27,6 +27,8 @@ MODULE_OBJS := \
 	ad/ad_talk_holder.o \
 	ad/ad_talk_node.o \
 	ad/ad_waypoint_group.o \
+	base/scriptables/debuggable/debuggable_script.o \
+	base/scriptables/debuggable/debuggable_script_engine.o \
 	base/scriptables/script.o \
 	base/scriptables/script_engine.o \
 	base/scriptables/script_stack.o \
@@ -88,6 +90,18 @@ MODULE_OBJS := \
 	base/saveload.o \
 	base/save_thumb_helper.o \
 	base/timer.o \
+	debugger/breakpoint.o \
+	debugger/debugger_controller.o \
+	debugger/error.o \
+	debugger/listing_providers/blank_listing.o \
+	debugger/listing_providers/blank_listing_provider.o \
+	debugger/listing_providers/basic_source_listing_provider.o \
+	debugger/listing_providers/cached_source_listing_provider.o \
+	debugger/listing_providers/source_listing.o \
+	debugger/listing.o \
+	debugger/script_monitor.o \
+	debugger/watch.o \
+	debugger/watch_instance.o \
 	detection.o \
 	math/math_util.o \
 	math/matrix4.o \
@@ -108,7 +122,9 @@ MODULE_OBJS := \
 	utils/path_util.o \
 	utils/string_util.o \
 	utils/utils.o \
+	video/subtitle_card.o \
 	video/video_player.o \
+	video/video_subtitler.o \
 	video/video_theora_player.o \
 	debugger.o \
 	wintermute.o \

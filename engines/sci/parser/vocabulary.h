@@ -30,6 +30,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/vm_types.h"
+#include "sci/util.h"
 
 namespace Common {
 
@@ -156,7 +157,7 @@ typedef Common::Array<synonym_t> SynonymList;
 struct AltInput {
 	const char *_input;
 	const char *_replacement;
-	unsigned int _inputLength;
+	uint32 _inputLength;
 	bool _prefix;
 };
 
@@ -233,6 +234,16 @@ public:
 	int parseGNF(const ResultWordListList &words, bool verbose = false);
 
 	/**
+	 * Find and store reference for future pronouns
+	 */
+	bool storePronounReference();
+
+	/**
+	 * Replace pronouns by stored reference
+	 */
+	void replacePronouns(ResultWordListList &words);
+
+	/**
 	 * Constructs the Greibach Normal Form of the grammar supplied in 'branches'.
 	 * @param verbose	Set to true for debugging. If true, the list is
 	 *					freed before the function ends
@@ -250,7 +261,7 @@ public:
 	 * For debugging only.
 	 * @param pos	pointer to the data to dump
 	 */
-	void debugDecipherSaidBlock(const byte *pos);
+	void debugDecipherSaidBlock(const SciSpan<const byte> &data);
 
 	/**
 	 * Prints the parser suffixes to the debug console.
@@ -359,6 +370,8 @@ private:
 	WordMap _parserWords;
 	SynonymList _synonyms; /**< The list of synonyms */
 	Common::Array<Common::List<AltInput> > _altInputs;
+
+	int _pronounReference;
 
 public:
 	// Accessed by said()

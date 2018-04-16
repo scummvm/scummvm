@@ -11,12 +11,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -100,6 +100,14 @@ Mars::Mars(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextH
 		_planetMovie(kNoDisplayElement), _junk(kNoDisplayElement), _energyChoiceSpot(kShuttleEnergySpotID),
 		_gravitonChoiceSpot(kShuttleGravitonSpotID), _tractorChoiceSpot(kShuttleTractorSpotID),
 		_shuttleViewSpot(kShuttleViewSpotID), _shuttleTransportSpot(kShuttleTransportSpotID) {
+
+	_reactorStage  = 0;
+	_nextGuess  = 0;
+	_attackingItem  = nullptr;
+	_marsEvent.mars  = nullptr;
+	_marsEvent.event  = kMarsLaunchTubeReached;
+	_weaponSelection  = kNoWeapon;
+
 	_noAirFuse.setFunctor(new Common::Functor0Mem<void, Mars>(this, &Mars::airStageExpired));
 	setIsItemTaken(kMarsCard);
 	setIsItemTaken(kAirMask);
@@ -1950,7 +1958,7 @@ void Mars::pickedUpItem(Item *item) {
 }
 
 void Mars::dropItemIntoRoom(Item *item, Hotspot *dropSpot) {
-	if (dropSpot->getObjectID() == kAttackRobotHotSpotID) {
+	if (dropSpot && dropSpot->getObjectID() == kAttackRobotHotSpotID) {
 		_attackingItem = (InventoryItem *)item;
 		startExtraSequence(kMars48RobotDefends, kExtraCompletedFlag, kFilterNoInput);
 		loadLoopSound2("");
@@ -2414,9 +2422,7 @@ void Mars::doCanyonChase() {
 				_vm->drawScaledFrame(frame, 0, 0);
 		}
 
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event))
-			;
+		InputDevice.pumpEvents();
 
 		g_system->delayMillis(10);
 	}
@@ -3047,9 +3053,7 @@ void Mars::transportToRobotShip() {
 				_vm->drawScaledFrame(frame, 0, 0);
 		}
 
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event))
-			;
+		InputDevice.pumpEvents();
 
 		g_system->delayMillis(10);
 	}

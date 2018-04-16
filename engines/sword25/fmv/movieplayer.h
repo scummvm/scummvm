@@ -67,7 +67,7 @@ public:
 	 * movie file, it will be unloaded and, if necessary, stopped playing.
 	 * @param Filename      The filename of the movie file to be loaded
 	 * @param Z             Z indicates the position of the film on the main graphics layer
-	 * @return              Returns false if an error occured while loading, otherwise true.
+	 * @return              Returns false if an error occurred while loading, otherwise true.
 	*/
 	bool loadMovie(const Common::String &filename, uint z);
 

@@ -35,7 +35,6 @@ List<Event> DefaultEventMapper::mapEvent(const Event &ev, EventSource *source) {
 	// of middle mouse button.
 	const uint32 vkeybdTime = 1000;
 
-	static bool vkeybd = false;
 	static uint32 vkeybdThen = 0;
 
 	if (ev.type == EVENT_MBUTTONDOWN) {

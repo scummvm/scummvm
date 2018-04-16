@@ -50,22 +50,27 @@ namespace Graphics {
  @brief The possible flipping parameters for the blit method.
  */
 enum FLIP_FLAGS {
-    /// The image will not be flipped.
-    FLIP_NONE = 0,
-    /// The image will be flipped at the horizontal axis.
-    FLIP_H = 1,
-    /// The image will be flipped at the vertical axis.
-    FLIP_V = 2,
-    /// The image will be flipped at the horizontal and vertical axis.
-    FLIP_HV = FLIP_H | FLIP_V,
-    /// The image will be flipped at the horizontal and vertical axis.
-    FLIP_VH = FLIP_H | FLIP_V
+	/// The image will not be flipped.
+	FLIP_NONE = 0,
+	/// The image will be flipped at the horizontal axis.
+	FLIP_H = 1,
+	/// The image will be flipped at the vertical axis.
+	FLIP_V = 2,
+	/// The image will be flipped at the horizontal and vertical axis.
+	FLIP_HV = FLIP_H | FLIP_V,
+	/// The image will be flipped at the horizontal and vertical axis.
+	FLIP_VH = FLIP_H | FLIP_V
 };
 
 enum AlphaType {
-    ALPHA_OPAQUE = 0,
-    ALPHA_BINARY = 1,
-    ALPHA_FULL = 2
+	ALPHA_OPAQUE = 0,
+	ALPHA_BINARY = 1,
+	ALPHA_FULL = 2
+};
+
+enum TFilteringMode {
+	FILTER_NEAREST = 0,
+	FILTER_BILINEAR = 1
 };
 
 /**
@@ -74,6 +79,18 @@ enum AlphaType {
 struct TransparentSurface : public Graphics::Surface {
 	TransparentSurface();
 	TransparentSurface(const Graphics::Surface &surf, bool copyData = false);
+
+	/**
+	 * Returns the pixel format all operations of TransparentSurface support.
+	 *
+	 * Unlike Surface TransparentSurface only works with a fixed pixel format.
+	 * This format can be queried using this static function.
+	 *
+	 * @return Supported pixel format.
+	 */
+	static PixelFormat getSupportedPixelFormat() {
+		return PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	}
 
 	void setColorKey(char r, char g, char b);
 	void disableColorKey();
@@ -111,6 +128,14 @@ struct TransparentSurface : public Graphics::Surface {
 	                  uint color = TS_ARGB(255, 255, 255, 255),
 	                  int width = -1, int height = -1,
 	                  TSpriteBlendMode blend = BLEND_NORMAL);
+	Common::Rect blitClip(Graphics::Surface &target, Common::Rect clippingArea,
+						int posX = 0, int posY = 0,
+						int flipping = FLIP_NONE,
+						Common::Rect *pPartRect = nullptr,
+						uint color = TS_ARGB(255, 255, 255, 255),
+						int width = -1, int height = -1,
+						TSpriteBlendMode blend = BLEND_NORMAL);
+
 	void applyColorKey(uint8 r, uint8 g, uint8 b, bool overwriteAlpha = false);
 
 	/**
@@ -121,6 +146,9 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @param newHeight the resulting height.
 	 * @see TransformStruct
 	 */
+	template <TFilteringMode filteringMode>
+	TransparentSurface *scaleT(uint16 newWidth, uint16 newHeight) const;
+
 	TransparentSurface *scale(uint16 newWidth, uint16 newHeight) const;
 
 	/**
@@ -130,12 +158,27 @@ struct TransparentSurface : public Graphics::Surface {
 	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
 	 *
 	 */
+	template <TFilteringMode filteringMode>
+	TransparentSurface *rotoscaleT(const TransformStruct &transform) const;
+
 	TransparentSurface *rotoscale(const TransformStruct &transform) const;
+
+	TransparentSurface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
+
+	float getRatio() {
+		if (!w)
+			return 0;
+
+		return h / (float)w;
+	}
+
 	AlphaType getAlphaMode() const;
 	void setAlphaMode(AlphaType);
 private:
 	AlphaType _alphaMode;
 
+	template <typename Size>
+	void scaleNN(int *scaleCacheX, TransparentSurface *target) const;
 };
 
 /**

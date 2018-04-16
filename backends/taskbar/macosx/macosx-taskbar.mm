@@ -26,25 +26,31 @@
 
 #if defined(MACOSX) && defined(USE_TASKBAR)
 
-// NSDockTile was introduced with Mac OS X 10.5.
-// Try provide backward compatibility by avoiding NSDockTile symbols.
-
-// TODO: Implement recent list, maybe as a custom menu on dock tile when app is not running
-// See Dock Tile plug-in at https://developer.apple.com/library/mac/documentation/Carbon/Conceptual/customizing_docktile/CreatingaDockTilePlug-in/CreatingaDockTilePlug-in.html
-
 #include "backends/taskbar/macosx/macosx-taskbar.h"
 #include "common/config-manager.h"
 #include "common/file.h"
-
+#include "backends/platform/sdl/macosx/macosx-compat.h"
 #include <AppKit/NSApplication.h>
 #include <AppKit/NSImage.h>
 #include <Foundation/NSString.h>
+#include <Foundation/NSDictionary.h>
+#include <Foundation/NSArray.h>
+#include <Foundation/NSUserDefaults.h>
 #include <AppKit/NSImageView.h>
 #include <AppKit/NSColor.h>
 #include <AppKit/NSBezierPath.h>
 #include <CoreFoundation/CFString.h>
 
-id _dockTile;
+// NSDockTile was introduced with Mac OS X 10.5.
+// Try provide backward compatibility by avoiding NSDockTile symbols.
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+typedef id NSDockTilePtr;
+#else
+#include <AppKit/NSDockTile.h>
+typedef NSDockTile * NSDockTilePtr;
+#endif
+
+NSDockTilePtr _dockTile;
 NSImageView *_applicationIconView;
 NSImageView *_overlayIconView;
 
@@ -112,15 +118,15 @@ void MacOSXTaskbarManager::setOverlayIcon(const Common::String &name, const Comm
 		[_dockTile performSelector:@selector(display)];
 		return;
 	}
-	
+
 	Common::String path = getIconPath(name);
 	if (path.empty())
 		return;
-	
+
 	initOverlayIconView();
 
 	CFStringRef imageFile = CFStringCreateWithCString(0, path.c_str(), kCFStringEncodingASCII);
-	NSImage* image = [[NSImage alloc] initWithContentsOfFile:(NSString *)imageFile];
+	NSImage *image = [[NSImage alloc] initWithContentsOfFile:(NSString *)imageFile];
 	[_overlayIconView setImage:image];
 	[image release];
 	CFRelease(imageFile);
@@ -136,7 +142,7 @@ void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
 		_progress = (double)completed / (double)total;
 	else if (_progress < 0)
 		_progress = 0.0;
-	
+
 	 NSImage *mainIcon = [[NSApp applicationIconImage] copy];
 	double barSize = [mainIcon size].width;
 	double progressSize = barSize * _progress;
@@ -150,7 +156,7 @@ void MacOSXTaskbarManager::setProgressValue(int completed, int total) {
 	initApplicationIconView();
 	[_applicationIconView setImage:mainIcon];
 	[mainIcon release];
-	
+
 	[_dockTile performSelector:@selector(display)];
 }
 
@@ -207,32 +213,91 @@ Common::String MacOSXTaskbarManager::getIconPath(const Common::String& target) {
 	// fallback to the extra path
 	//
 	// Icons can be either in a subfolder named "icons" or directly in the path
-	
+
 	Common::String iconsPath = ConfMan.get("iconspath");
 	Common::String extraPath = ConfMan.get("extrapath");
-	
+
 #define TRY_ICON_PATH(path) { \
 Common::FSNode node((path)); \
 if (node.exists()) \
 return (path); \
 }
-	
+
 	if (!iconsPath.empty()) {
 		TRY_ICON_PATH(iconsPath + "/" + target + ".png");
 		TRY_ICON_PATH(iconsPath + "/" + ConfMan.get("gameid") + ".png");
 		TRY_ICON_PATH(iconsPath + "/icons/" + target + ".png");
 		TRY_ICON_PATH(iconsPath + "/icons/" + ConfMan.get("gameid") + ".png");
 	}
-	
+
 	if (!extraPath.empty()) {
 		TRY_ICON_PATH(extraPath + "/" + target + ".png");
 		TRY_ICON_PATH(extraPath + "/" + ConfMan.get("gameid") + ".png");
 		TRY_ICON_PATH(extraPath + "/icons/" + target + ".png");
 		TRY_ICON_PATH(extraPath + "/icons/" + ConfMan.get("gameid") + ".png");
 	}
-	
+
 	return "";
 }
+
+void MacOSXTaskbarManager::addRecent(const Common::String &name, const Common::String &description) {
+	//warning("[MacOSXTaskbarManager::addRecent] Adding recent list entry: %s (%s)", name.c_str(), description.c_str());
+
+	if (_dockTile == nil)
+		return;
+
+	// Store the game, description and icon in user preferences.
+	// The NSDockTilePlugin will retrieve them there to list them in the dock tile menu.
+
+	CFStringRef gameName = CFStringCreateWithCString(0, name.c_str(), kCFStringEncodingASCII);
+	CFStringRef desc = CFStringCreateWithCString(0, description.c_str(), kCFStringEncodingASCII);
+
+	// First build the dictionary for this game.
+	NSMutableDictionary *dict = [[NSMutableDictionary  alloc] init];
+	[dict setObject:(NSString *)gameName forKey:@"game"];
+	[dict setObject:(NSString *)desc forKey:@"description"];
+
+	// Icon
+	Common::String iconPath = getIconPath(name);
+	if (!iconPath.empty()) {
+		CFStringRef icon = CFStringCreateWithCString(0, iconPath.c_str(), kCFStringEncodingASCII);
+		[dict setObject:(NSString *)icon forKey:@"icon"];
+		CFRelease(icon);
+	}
+
+	// Retrieve the current list of recent items and update it.
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	NSArray *oldArray = [defaults arrayForKey:@"recentGames"];
+	if (oldArray == nil) {
+		[defaults setObject:[NSArray arrayWithObject:dict] forKey:@"recentGames"];
+	} else {
+		NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:oldArray];
+		// Insert the new game at the start
+		[newArray insertObject:dict atIndex:0];
+		// If the game was already present in the array, remove it
+		for (unsigned int i = 1 ; i < [newArray count] ; ++i) {
+			NSDictionary *oldDict = [newArray objectAtIndex:i];
+			if (oldDict == nil)
+				continue;
+			NSString *oldGame = [oldDict valueForKey:@"game"];
+			if (oldGame != nil && [oldGame isEqualToString:(NSString*)gameName]) {
+				[newArray removeObjectAtIndex:i];
+				break;
+			}
+		}
+		// And make sure we limit the size of the array to 5 games
+		if ([newArray count] > 5)
+			[newArray removeLastObject];
+		[defaults setObject:newArray forKey:@"recentGames"];
+		[newArray release];
+	}
+
+	// Finally release the dictionary
+	[dict release];
+	CFRelease(gameName);
+	CFRelease(desc);
+}
+
 
 
 #endif

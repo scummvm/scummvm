@@ -42,6 +42,7 @@ namespace Saga {
 #define INTRO_CAPTION_Y 170
 #define INTRO_DE_CAPTION_Y 160
 #define INTRO_IT_CAPTION_Y 160
+#define INTRO_FR_CAPTION_Y 160
 #define INTRO_VOICE_PAD 50
 #define INTRO_VOICE_LETTERLEN 90
 
@@ -59,6 +60,11 @@ namespace Saga {
 #define RID_ITE_FAIREPATH_SCENE 1564
 #define RID_ITE_FAIRETENT_SCENE 1567
 
+// Intro scenes - DOS demo
+#define RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO 298
+#define RID_ITE_CAVE_SCENE_DOS_DEMO 302
+#define RID_ITE_VALLEY_SCENE_DOS_DEMO 310
+
 // ITE intro music
 #define MUSIC_INTRO 9
 #define MUSIC_TITLE_THEME 10
@@ -75,21 +81,23 @@ LoadSceneParams ITE_IntroList[] = {
 	{RID_ITE_FAIRETENT_SCENE, kLoadByResourceId, Scene::SC_ITEIntroFaireTentProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE}
 };
 
-int Scene::ITEStartProc() {
-	size_t scenesCount;
-	size_t i;
+LoadSceneParams ITE_DOS_Demo_IntroList[] = {
+	{RID_ITE_INTRO_ANIM_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroAnimProc, false, kTransitionNoFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_CAVE_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroCaveDemoProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+	{RID_ITE_VALLEY_SCENE_DOS_DEMO, kLoadByResourceId, Scene::SC_ITEIntroValleyProc, false, kTransitionFade, 0, NO_CHAPTER_CHANGE},
+};
 
+int Scene::ITEStartProc() {
 	LoadSceneParams firstScene;
 	LoadSceneParams tempScene;
+	bool dosDemo = (_vm->getFeatures() & GF_ITE_DOS_DEMO);
+	int scenesCount = (!dosDemo) ? ARRAYSIZE(ITE_IntroList) : ARRAYSIZE(ITE_DOS_Demo_IntroList);
 
-	scenesCount = ARRAYSIZE(ITE_IntroList);
-
-	for (i = 0; i < scenesCount; i++) {
-		tempScene = ITE_IntroList[i];
+	for (int i = 0; i < scenesCount; i++) {
+		tempScene = (!dosDemo) ? ITE_IntroList[i] : ITE_DOS_Demo_IntroList[i];
 		tempScene.sceneDescriptor = _vm->_resource->convertResourceId(tempScene.sceneDescriptor);
 		_vm->_scene->queueScene(tempScene);
 	}
-
 
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = _vm->getStartSceneNumber();
@@ -121,6 +129,8 @@ EventColumns *Scene::queueIntroDialogue(EventColumns *eventColumns, int n_dialog
 		textEntry.rect.top = INTRO_DE_CAPTION_Y;
 	} else if (_vm->getLanguage() == Common::IT_ITA) {
 		textEntry.rect.top = INTRO_IT_CAPTION_Y;
+	} else if (_vm->getLanguage() == Common::FR_FRA) {
+		textEntry.rect.top = INTRO_FR_CAPTION_Y;
 	} else {
 		textEntry.rect.top = INTRO_CAPTION_Y;
 	}
@@ -372,6 +382,8 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 		lang = 1;
 	else if (_vm->getLanguage() == Common::IT_ITA)
 		lang = 2;
+	else if (_vm->getLanguage() == Common::FR_FRA)
+		lang = 3;
 
 	int n_dialogues = 0;
 
@@ -435,6 +447,53 @@ int Scene::ITEIntroCaveCommonProc(int param, int caveScene) {
 	}
 
 	return 0;
+}
+
+int Scene::ITEIntroCaveDemoProc(int param) {
+	Event event;
+	EventColumns *eventColumns = NULL;
+
+	switch (param) {
+	case SCENE_BEGIN:
+		// Begin palette cycling animation for candles
+		event.type = kEvTOneshot;
+		event.code = kPalAnimEvent;
+		event.op = kEventCycleStart;
+		event.time = 0;
+		eventColumns = _vm->_events->chain(eventColumns, event);
+
+		// Queue narrator dialogue list
+		for (int i = 0; i < 11; i++) {
+			// Play voice
+			event.type = kEvTOneshot;
+			event.code = kVoiceEvent;
+			event.op = kEventPlay;
+			event.param = i;
+			event.time = _vm->_sndRes->getVoiceLength(i);
+			_vm->_events->chain(eventColumns, event);
+		}
+
+		// End scene after last dialogue over
+		event.type = kEvTOneshot;
+		event.code = kSceneEvent;
+		event.op = kEventEnd;
+		event.time = INTRO_VOICE_PAD;
+		_vm->_events->chain(eventColumns, event);
+
+		break;
+	case SCENE_END:
+		break;
+
+	default:
+		warning("Illegal scene procedure parameter");
+		break;
+	}
+
+	return 0;
+}
+
+int Scene::SC_ITEIntroCaveDemoProc(int param, void *refCon) {
+	return ((Scene *)refCon)->ITEIntroCaveDemoProc(param);
 }
 
 // Handles first introductory cave painting scene

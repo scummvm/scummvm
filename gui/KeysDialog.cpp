@@ -68,7 +68,7 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 
 	case kListSelectionChangedCmd:
 		if (_actionsList->getSelected() >= 0) {
-			char selection[100];
+			Common::String selection;
 
 			uint16 key = Actions::Instance()->getMapping(_actionsList->getSelected());
 #ifdef __SYMBIAN32__
@@ -77,19 +77,19 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 				key = key - Common::ASCII_F1 + SDLK_F1;
 #endif
 			if (key != 0)
-				sprintf(selection, _("Associated key : %s"), SDL_GetKeyName((SDLKey)key));
+				selection = Common::String::format(_("Associated key : %s"), SDL_GetKeyName((SDLKey)key));
 			else
-				sprintf(selection, _("Associated key : none"));
+				selection = Common::String::format(_("Associated key : none"));
 
 			_keyMapping->setLabel(selection);
-			_keyMapping->draw();
+			_keyMapping->markAsDirty();
 		}
 		break;
 	case kMapCmd:
 		if (_actionsList->getSelected() < 0) {
 			_actionTitle->setLabel(_("Please select an action"));
 		} else {
-			char selection[100];
+			Common::String selection;
 
 			_actionSelected = _actionsList->getSelected();
 			uint16 key = Actions::Instance()->getMapping(_actionSelected);
@@ -99,17 +99,17 @@ void KeysDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 				key = key - Common::ASCII_F1 + SDLK_F1;
 #endif
 			if (key != 0)
-				sprintf(selection, _("Associated key : %s"), SDL_GetKeyName((SDLKey)key));
+				selection = Common::String::format(_("Associated key : %s"), SDL_GetKeyName((SDLKey)key));
 			else
-				sprintf(selection, _("Associated key : none"));
+				selection = Common::String::format(_("Associated key : none"));
 
 			_actionTitle->setLabel(_("Press the key to associate"));
 			_keyMapping->setLabel(selection);
-			_keyMapping->draw();
+			_keyMapping->markAsDirty();
 			Actions::Instance()->beginMapping(true);
 			_actionsList->setEnabled(false);
 		}
-		_actionTitle->draw();
+		_actionTitle->markAsDirty();
 		break;
 	case kOKCmd:
 		Actions::Instance()->saveMapping();
@@ -133,19 +133,19 @@ void KeysDialog::handleKeyUp(Common::KeyState state) {
 #else
 	if (state.flags == 0xff  && Actions::Instance()->mappingActive()) {	// GAPI key was selected
 #endif
-		char selection[100];
+		Common::String selection;
 
 		Actions::Instance()->setMapping((ActionType)_actionSelected, state.ascii);
 
 		if (state.ascii != 0)
-			sprintf(selection, _("Associated key : %s"), SDL_GetKeyName((SDLKey) state.keycode));
+			selection = Common::String::format(_("Associated key : %s"), SDL_GetKeyName((SDLKey) state.keycode));
 		else
-			sprintf(selection, _("Associated key : none"));
+			selection = Common::String::format(_("Associated key : none"));
 
 		_actionTitle->setLabel(_("Choose an action to map"));
 		_keyMapping->setLabel(selection);
-		_keyMapping->draw();
-		_actionTitle->draw();
+		_keyMapping->markAsDirty();
+		_actionTitle->markAsDirty();
 		_actionSelected = -1;
 		_actionsList->setEnabled(true);
 		Actions::Instance()->beginMapping(false);

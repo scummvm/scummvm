@@ -41,16 +41,29 @@ public:
 	const Graphics::Surface *decodeFrame(Common::SeekableReadStream &stream);
 	Graphics::PixelFormat getPixelFormat() const;
 
+	bool containsPalette() const { return _ditherPalette != 0; }
+	const byte *getPalette() { _dirtyPalette = false; return _ditherPalette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
+	bool canDither(DitherType type) const;
+	void setDither(DitherType type, const byte *palette);
+
 private:
 	byte _bitsPerPixel;
-
 	Graphics::Surface *_surface;
+	uint16 _width, _height;
+	uint32 _paddedWidth;
+	byte *_ditherPalette;
+	bool _dirtyPalette;
+	byte *_colorMap;
+
+	void createSurface();
 
 	void decode1(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 	void decode2_4(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
 	void decode8(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 	void decode16(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 	void decode24(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
+	void dither24(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 	void decode32(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange);
 };
 

@@ -692,6 +692,22 @@ byte *ScummEngine::getBoxMatrixBaseAddr() {
 	return ptr;
 }
 
+byte *ScummEngine::getBoxConnectionBase(int box) {
+	byte *boxm = getBoxMatrixBaseAddr();
+
+	int boxIndex = 0;
+
+	for (; boxIndex != box; ++boxIndex) {
+
+		while (*boxm != 0xFF) {
+			++boxm;
+		}
+
+		++boxm;
+	}
+
+	return boxm;
+}
 /**
  * Compute if there is a way that connects box 'from' with box 'to'.
  * Returns the number of a box adjacent to 'from' that is the next on the
@@ -719,21 +735,18 @@ int ScummEngine::getNextBox(byte from, byte to) {
 	boxm = getBoxMatrixBaseAddr();
 
 	if (_game.version == 0) {
-		// calculate shortest paths
-		byte *itineraryMatrix = (byte *)malloc(numOfBoxes * numOfBoxes);
-		calcItineraryMatrix(itineraryMatrix, numOfBoxes);
 
-		dest = to;
-		do {
-			dest = itineraryMatrix[numOfBoxes * from + dest];
-		} while (dest != Actor::kInvalidBox && !areBoxesNeighbors(from, dest));
+		boxm = getBoxConnectionBase(from);
 
-		if (dest == Actor::kInvalidBox)
-			dest = -1;
+		for (; *boxm != 0xFF; ++boxm) {
+			if (*boxm == to)
+				break;
+		}
 
-		free(itineraryMatrix);
-		return dest;
-	} else if (_game.version <= 2) {
+		return *boxm;
+
+	}
+	else if (_game.version <= 2) {
 		// The v2 box matrix is a real matrix with numOfBoxes rows and columns.
 		// The first numOfBoxes bytes contain indices to the start of the corresponding
 		// row (although that seems unnecessary to me - the value is easily computable.
@@ -967,6 +980,7 @@ void ScummEngine::calcItineraryMatrix(byte *itineraryMatrix, int num) {
 	// 255 (= infinity) to all other boxes.
 	for (i = 0; i < num; i++) {
 		for (j = 0; j < num; j++) {
+
 			if (i == j) {
 				adjacentMatrix[i * boxSize + j] = 0;
 				itineraryMatrix[i * boxSize + j] = j;
@@ -1156,6 +1170,41 @@ bool ScummEngine::areBoxesNeighbors(int box1nr, int box2nr) {
 	}
 
 	return false;
+}
+
+byte ScummEngine_v0::walkboxFindTarget(Actor *a, int destbox, Common::Point walkdest) {
+	Actor_v0 *Actor = (Actor_v0 *)a;
+	byte nextBox = kOldInvalidBox;
+
+	// Do we have a walkbox queue to process
+	if (Actor->_walkboxQueueIndex > 1) {
+		nextBox = Actor->_walkboxQueue[--Actor->_walkboxQueueIndex];
+
+		if (Actor->_walkboxQueueIndex <= 1) {
+			Actor->walkBoxQueueReset();
+		}
+	}
+
+	// Target box reached?
+	if (nextBox != Actor::kInvalidBox && nextBox == destbox && areBoxesNeighbors(a->_walkbox, nextBox)) {
+
+		Actor->_NewWalkTo = walkdest;
+		return nextBox;
+	}
+
+	// Next box reached
+	if (nextBox != Actor::kInvalidBox && nextBox != a->_walkbox) {
+
+		getClosestPtOnBox(getBoxCoordinates(nextBox), a->getRealPos().x, a->getRealPos().y, Actor->_NewWalkTo.x, Actor->_NewWalkTo.y);
+
+	} else {
+
+		if (walkdest.x == -1)
+			Actor->_NewWalkTo = Actor->_CurrentWalkTo;
+		else
+			Actor->_NewWalkTo = walkdest;
+	}
+	return nextBox;
 }
 
 bool ScummEngine_v0::areBoxesNeighbors(int box1nr, int box2nr) {

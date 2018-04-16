@@ -23,36 +23,23 @@
 #ifndef MOHAWK_SOUND_H
 #define MOHAWK_SOUND_H
 
+#include "common/array.h"
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/stream.h"
 
-#include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/decoders/adpcm.h"
-
-#include "mohawk/mohawk.h"
-#include "mohawk/resource.h"
 
 class MidiDriver;
 class MidiParser;
 
+namespace Audio {
+class RewindableAudioStream;
+}
+
 namespace Mohawk {
 
 #define MAX_CHANNELS 2         // Can there be more than 2?
-
-struct SLSTRecord {
-	uint16 index;
-	uint16 sound_count;
-	uint16 *sound_ids;
-	uint16 fade_flags;
-	uint16 loop;
-	uint16 global_volume;
-	uint16 u0;
-	uint16 u1;
-	uint16 *volumes;
-	int16 *balances;
-	uint16 *u2;
-};
 
 enum SndHandleType {
 	kFreeHandle,
@@ -63,11 +50,6 @@ struct SndHandle {
 	Audio::SoundHandle handle;
 	SndHandleType type;
 	uint samplesPerSecond;
-	uint16 id;
-};
-
-struct SLSTSndHandle {
-	Audio::SoundHandle *handle;
 	uint16 id;
 };
 
@@ -114,41 +96,24 @@ struct DataChunk {
 	Common::SeekableReadStream *audioData;
 };
 
+Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = nullptr);
+
 class MohawkEngine;
 
 class Sound {
 public:
-	Sound(MohawkEngine *vm);
+	explicit Sound(MohawkEngine *vm);
 	~Sound();
 
 	// Generic sound functions
 	Audio::SoundHandle *playSound(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false, CueList *cueList = NULL);
-	void playSoundBlocking(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void playMidi(uint16 id);
 	void stopMidi();
 	void stopSound();
 	void stopSound(uint16 id);
-	void pauseSound();
-	void resumeSound();
 	bool isPlaying(uint16 id);
 	bool isPlaying();
 	uint getNumSamplesPlayed(uint16 id);
-
-	// Myst-specific sound functions
-	Audio::SoundHandle *replaceSoundMyst(uint16 id, byte volume = Audio::Mixer::kMaxChannelVolume, bool loop = false);
-	Audio::SoundHandle *replaceBackgroundMyst(uint16 id, uint16 volume = 0xFFFF);
-	void pauseBackgroundMyst();
-	void resumeBackgroundMyst();
-	void stopBackgroundMyst();
-	void changeBackgroundVolumeMyst(uint16 vol);
-
-	// Riven-specific sound functions
-	void playSLST(uint16 index, uint16 card);
-	void playSLST(SLSTRecord slstRecord);
-	void pauseSLST();
-	void resumeSLST();
-	void stopAllSLST(bool fade = false);
-	static byte convertRivenVolume(uint16 volume);
 
 private:
 	MohawkEngine *_vm;
@@ -156,22 +121,12 @@ private:
 	MidiParser *_midiParser;
 	byte *_midiData;
 
-	static Audio::AudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList = NULL);
-	static Audio::AudioStream *makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream);
+	static Audio::RewindableAudioStream *makeLivingBooksWaveStream_v1(Common::SeekableReadStream *stream);
 	void initMidi();
 
 	Common::Array<SndHandle> _handles;
 	SndHandle *getHandle();
-	Audio::AudioStream *makeAudioStream(uint16 id, CueList *cueList = NULL);
-	uint16 convertMystID(uint16 id);
-
-	// Myst-specific
-	SndHandle _mystBackgroundSound;
-
-	// Riven-specific
-	void playSLSTSound(uint16 index, bool fade, bool loop, uint16 volume, int16 balance);
-	void stopSLSTSound(uint16 id, bool fade);
-	Common::Array<SLSTSndHandle> _currentSLSTSounds;
+	Audio::RewindableAudioStream *makeAudioStream(uint16 id, CueList *cueList = nullptr);
 };
 
 } // End of namespace Mohawk

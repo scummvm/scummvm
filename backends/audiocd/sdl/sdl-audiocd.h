@@ -27,6 +27,8 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
+#if !SDL_VERSION_ATLEAST(2, 0, 0)
+
 /**
  * The SDL audio cd manager. Implements real audio cd playback.
  */
@@ -35,16 +37,21 @@ public:
 	SdlAudioCDManager();
 	virtual ~SdlAudioCDManager();
 
+	virtual bool open();
+	virtual void close();
+	virtual bool play(int track, int numLoops, int startFrame, int duration, bool onlyEmulate = false);
+	virtual void stop();
+	virtual bool isPlaying() const;
+	virtual void update();
+
 protected:
 	virtual bool openCD(int drive);
-	virtual void updateCD();
-	virtual bool pollCD() const;
-	virtual void playCD(int track, int num_loops, int start_frame, int duration);
-	virtual void stopCD();
 
 	SDL_CD *_cdrom;
 	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
 	uint32 _cdEndTime, _cdStopTime;
 };
+
+#endif // !SDL_VERSION_ATLEAST(2, 0, 0)
 
 #endif

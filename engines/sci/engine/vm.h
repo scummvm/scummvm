@@ -36,6 +36,7 @@ class SegManager;
 struct EngineState;
 class Object;
 class ResourceManager;
+class Script;
 
 /** Number of bytes to be allocated for the stack */
 #define VM_STACK_SIZE 0x1000
@@ -93,16 +94,19 @@ struct ExecStack {
 
 	SegmentId local_segment; // local variables etc
 
-	Selector debugSelector;   // The selector which was used to call or -1 if not applicable
-	int debugExportId;        // The exportId which was called or -1 if not applicable
-	int debugLocalCallOffset; // Local call offset or -1 if not applicable
-	int debugOrigin;          // The stack frame position the call was made from, or -1 if it was the initial call
+	Selector debugSelector;     // The selector which was used to call or -1 if not applicable
+	int debugExportId;          // The exportId which was called or -1 if not applicable
+	int debugLocalCallOffset;   // Local call offset or -1 if not applicable
+	int debugOrigin;            // The stack frame position the call was made from, or -1 if it was the initial call
+	int debugKernelFunction;    // The kernel function called, or -1 if not applicable
+	int debugKernelSubFunction; // The kernel subfunction called, or -1 if not applicable
 	ExecStackType type;
 
 	reg_t* getVarPointer(SegManager *segMan) const;
 
 	ExecStack(reg_t objp_, reg_t sendp_, StackPtr sp_, int argc_, StackPtr argp_,
 				SegmentId localsSegment_, reg32_t pc_, Selector debugSelector_,
+				int debugKernelFunction_, int debugKernelSubFunction_,
 				int debugExportId_, int debugLocalCallOffset_, int debugOrigin_,
 				ExecStackType type_) {
 		objp = objp_;
@@ -112,12 +116,13 @@ struct ExecStack {
 		fp = sp = sp_;
 		argc = argc_;
 		variables_argp = argp_;
-		*variables_argp = make_reg(0, argc);  // The first argument is argc
-		if (localsSegment_ != 0xFFFF)
+		if (localsSegment_ != kUninitializedSegment)
 			local_segment = localsSegment_;
 		else
 			local_segment = pc_.getSegment();
 		debugSelector = debugSelector_;
+		debugKernelFunction = debugKernelFunction_;
+		debugKernelSubFunction = debugKernelSubFunction_;
 		debugExportId = debugExportId_;
 		debugLocalCallOffset = debugLocalCallOffset_;
 		debugOrigin = debugOrigin_;
@@ -127,9 +132,51 @@ struct ExecStack {
 
 enum {
 	VAR_GLOBAL = 0,
-	VAR_LOCAL = 1,
-	VAR_TEMP = 2,
-	VAR_PARAM = 3
+	VAR_LOCAL  = 1,
+	VAR_TEMP   = 2,
+	VAR_PARAM  = 3
+};
+
+enum GlobalVar {
+	kGlobalVarEgo            = 0,
+	kGlobalVarGame           = 1,
+	kGlobalVarCurrentRoom    = 2,
+	kGlobalVarSpeed          = 3,  // SCI16
+	kGlobalVarQuit           = 4,
+	kGlobalVarSounds         = 8,
+	kGlobalVarPlanes         = 10, // SCI32
+	kGlobalVarCurrentRoomNo  = 11,
+	kGlobalVarPreviousRoomNo = 12,
+	kGlobalVarNewRoomNo      = 13,
+	kGlobalVarScore          = 15,
+	kGlobalVarGK2MusicVolume = 76, // 0 to 127
+	kGlobalVarPhant2SecondaryVolume = 76, // 0 to 127
+	kGlobalVarFastCast             = 84, // SCI16
+	kGlobalVarMessageType          = 90,
+	kGlobalVarTextSpeed            = 94, // SCI32; 0 is fastest, 8 is slowest
+	kGlobalVarGK1Music1            = 102, // 0 to 127
+	kGlobalVarGK1Music2            = 103, // 0 to 127
+	kGlobalVarRamaCatalogFile      = 130,
+	kGlobalVarLSL6HiresGameFlags   = 137,
+	kGlobalVarGK1NarratorMode      = 166, // 0 for text, 1 for speech
+	kGlobalVarRamaMusicVolume      = 176, // 0 to 16
+	kGlobalVarPhant1MusicVolume    = 187, // 0 to 15
+	kGlobalVarPhant1DACVolume      = 188, // 0 to 127
+	kGlobalVarLSL6HiresMusicVolume = 194, // 0 to 13
+	kGlobalVarGK1DAC1              = 207, // 0 to 127
+	kGlobalVarPhant2CensorshipFlag = 207,
+	kGlobalVarGK1DAC2              = 208, // 0 to 127
+	kGlobalVarLSL6HiresRestoreTextWindow = 210,
+	kGlobalVarGK1DAC3              = 211, // 0 to 127
+	kGlobalVarShiversFlags         = 211,
+	kGlobalVarTorinMusicVolume     = 227, // 0 to 100
+	kGlobalVarTorinSFXVolume       = 228, // 0 to 100
+	kGlobalVarTorinSpeechVolume    = 229, // 0 to 100
+	// Phant2 labels its volume slider as "music volume" but it is actually
+	// a master volume that affects both music *and* sound effects
+	kGlobalVarPhant2MasterVolume   = 236, // 0 to 127
+	kGlobalVarPhant2ControlPanel   = 250,
+	kGlobalVarShivers1Score        = 349
 };
 
 /** Number of kernel calls in between gcs; should be < 50000 */
@@ -176,8 +223,8 @@ enum SciOpcodes {
 	op_calle    = 0x23,	// 035
 	op_ret      = 0x24,	// 036
 	op_send     = 0x25,	// 037
-	// dummy      0x26,	// 038
-	// dummy      0x27,	// 039
+	op_info     = 0x26,	// 038
+	op_superP   = 0x27,	// 039
 	op_class    = 0x28,	// 040
 	// dummy      0x29,	// 041
 	op_self     = 0x2a,	// 042
@@ -365,6 +412,16 @@ SelectorType lookupSelector(SegManager *segMan, reg_t obj, Selector selectorid,
  *       into trouble if we encounter high value words. *If* those exist at all.
  */
 int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]);
+
+/**
+ * Finds the script-absolute offset of a relative object offset.
+ *
+ * @param[in] relOffset the relative object offset
+ * @param[in] scr the owner script object, used by SCI1.1+
+ * @param[in] pcOffset the offset of the program counter, used by SCI0early and
+ *                     SCI3
+ */
+uint32 findOffset(const int16 relOffset, const Script *scr, const uint32 pcOffset);
 
 } // End of namespace Sci
 

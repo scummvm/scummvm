@@ -28,6 +28,7 @@
 #include "avalanche/avalanche.h"
 #include "avalanche/graphics.h"
 
+#include "common/system.h"
 #include "engines/util.h"
 #include "graphics/palette.h"
 
@@ -67,7 +68,7 @@ GraphicManager::~GraphicManager() {
 }
 
 void GraphicManager::init() {
-	initGraphics(kScreenWidth, kScreenHeight * 2, true); // Doubling the height.
+	initGraphics(kScreenWidth, kScreenHeight * 2); // Doubling the height.
 
 	for (int i = 0; i < 64; ++i) {
 		_egaPalette[i][0] = (i >> 2 & 1) * 0xaa + (i >> 5 & 1) * 0x55;
@@ -798,7 +799,7 @@ void GraphicManager::menuRefreshScreen() {
 }
 
 void GraphicManager::menuInitialize() {
-	initGraphics(kScreenWidth, kMenuScreenHeight, true);
+	initGraphics(kScreenWidth, kMenuScreenHeight);
 	_menu.create(kScreenWidth, kMenuScreenHeight, Graphics::PixelFormat::createFormatCLUT8());
 }
 
@@ -807,7 +808,7 @@ void GraphicManager::menuFree() {
 }
 
 void GraphicManager::menuRestoreScreen() {
-	initGraphics(kScreenWidth, 2 * kScreenHeight, true);
+	initGraphics(kScreenWidth, 2 * kScreenHeight);
 }
 
 void GraphicManager::menuLoadPictures() {

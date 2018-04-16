@@ -31,7 +31,6 @@
 #include "backends/saves/default/default-saves.h"
 #include "backends/fs/ps3/ps3-fs-factory.h"
 #include "backends/events/ps3sdl/ps3sdl-events.h"
-#include "backends/mixer/sdl13/sdl13-mixer.h"
 
 #include <dirent.h>
 #include <sys/stat.h>
@@ -60,21 +59,12 @@ void OSystem_PS3::init() {
 
 void OSystem_PS3::initBackend() {
 	ConfMan.set("joystick_num", 0);
-	ConfMan.set("vkeybdpath", PREFIX "/data");
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new DefaultSaveFileManager(PREFIX "/saves");
-
-	// Create the mixer manager
-	if (_mixer == 0) {
-		_mixerManager = new Sdl13MixerManager();
-
-		// Setup and start mixer
-		_mixerManager->init();
-	}
 
 	// Event source
 	if (_eventSource == 0)

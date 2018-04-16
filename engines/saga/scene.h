@@ -400,12 +400,14 @@ class Scene {
 	static int SC_ITEIntroTreeHouseProc(int param, void *refCon);
 	static int SC_ITEIntroFairePathProc(int param, void *refCon);
 	static int SC_ITEIntroFaireTentProc(int param, void *refCon);
+	static int SC_ITEIntroCaveDemoProc(int param, void *refCon);
 
  private:
 	EventColumns *queueIntroDialogue(EventColumns *eventColumns, int n_dialogues, const IntroDialogue dialogue[]);
 	EventColumns *queueCredits(int delta_time, int duration, int n_credits, const IntroCredit credits[]);
 	int ITEIntroAnimProc(int param);
 	int ITEIntroCaveCommonProc(int param, int caveScene);
+	int ITEIntroCaveDemoProc(int param);
 	int ITEIntroValleyProc(int param);
 	int ITEIntroTreeHouseProc(int param);
 	int ITEIntroFairePathProc(int param);

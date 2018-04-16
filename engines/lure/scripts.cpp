@@ -926,8 +926,8 @@ uint16 Script::execute(uint16 startOffset) {
 		opcode >>= 1;
 
 		if (gDebugLevel >= ERROR_DETAILED)
-			strcat(debugInfo, (opcode > S_OPCODE_RANDOM) ? "INVALID" :
-				scriptOpcodes[opcode]);
+			Common::strlcat(debugInfo, (opcode > S_OPCODE_RANDOM) ? "INVALID" :
+				scriptOpcodes[opcode], MAX_DESC_SIZE);
 
 		if (hasParam) {
 			// Flag to read next two bytes as active parameter
@@ -1087,7 +1087,7 @@ uint16 Script::execute(uint16 startOffset) {
 				else if (scriptMethodNames[param] == NULL) strcat(debugInfo, " UNKNOWN METHOD");
 				else {
 					strcat(debugInfo, " ");
-					strcat(debugInfo, scriptMethodNames[param]);
+					Common::strlcat(debugInfo, scriptMethodNames[param], MAX_DESC_SIZE);
 				}
 
 				// Any params

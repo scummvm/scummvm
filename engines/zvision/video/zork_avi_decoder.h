@@ -18,31 +18,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ *
  */
 
 #ifndef ZORK_AVI_DECODER_H
 #define ZORK_AVI_DECODER_H
 
 #include "video/avi_decoder.h"
-
+#include "zvision/sound/zork_raw.h"
 
 namespace ZVision {
 
 class ZorkAVIDecoder : public Video::AVIDecoder {
 public:
-	ZorkAVIDecoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType) :
-	  Video::AVIDecoder(soundType) {}
+	ZorkAVIDecoder() {}
 
-	  virtual ~ZorkAVIDecoder() {}
+	virtual ~ZorkAVIDecoder() {}
 
 private:
 	class ZorkAVIAudioTrack : public Video::AVIDecoder::AVIAudioTrack {
 	public:
-		ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType) :
-			Video::AVIDecoder::AVIAudioTrack(streamHeader, waveFormat, soundType) {}
-		virtual ~ZorkAVIAudioTrack() {}
+		ZorkAVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType);
 
+		void createAudioStream();
 		void queueSound(Common::SeekableReadStream *stream);
+		void resetStream();
+
+	private:
+		Audio::QueuingAudioStream *_queueStream;
+		RawChunkStream _decoder;
 	};
 
 	Video::AVIDecoder::AVIAudioTrack *createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo);
@@ -50,7 +54,7 @@ private:
 private:
 	// Audio Codecs
 	enum {
-		kWaveFormatZorkPCM = 17	// special Zork PCM audio format (clashes with MS IMA ADPCM)
+		kWaveFormatZorkPCM = 17 // special Zork PCM audio format (clashes with MS IMA ADPCM)
 	};
 };
 

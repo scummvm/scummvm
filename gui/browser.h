@@ -52,7 +52,6 @@ protected:
 #ifdef MACOSX
 	const void *_titleRef;
 	const void *_chooseRef;
-	const void *_hiddenFilesRef;
 #else
 	ListWidget		*_fileList;
 	StaticTextWidget	*_currentPath;

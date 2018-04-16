@@ -38,6 +38,7 @@ MODULE_OBJS := \
 	palette.o \
 	players/player_ad.o \
 	players/player_apple2.o \
+	players/player_he.o \
 	players/player_mac.o \
 	players/player_mod.o \
 	players/player_nes.o \
@@ -136,9 +137,25 @@ MODULE_OBJS += \
 	he/logic/basketball.o \
 	he/logic/football.o \
 	he/logic/funshop.o \
-	he/logic/moonbase.o \
+	he/logic/moonbase_logic.o \
 	he/logic/puttrace.o \
-	he/logic/soccer.o
+	he/logic/soccer.o \
+	he/moonbase/ai_defenseunit.o \
+	he/moonbase/ai_main.o \
+	he/moonbase/ai_node.o \
+	he/moonbase/ai_targetacquisition.o \
+	he/moonbase/ai_traveller.o \
+	he/moonbase/ai_tree.o \
+	he/moonbase/ai_types.o \
+	he/moonbase/ai_weapon.o \
+	he/moonbase/distortion.o \
+	he/moonbase/moonbase.o \
+	he/moonbase/moonbase_fow.o
+
+ifdef USE_SDL_NET
+MODULE_OBJS += \
+	he/moonbase/net_main.o
+endif
 endif
 
 # This module can be built as a plugin

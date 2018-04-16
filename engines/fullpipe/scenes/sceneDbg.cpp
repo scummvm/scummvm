@@ -41,19 +41,18 @@ void sceneDbgMenu_initScene(Scene *sc) {
 }
 
 GameObject *sceneHandlerDbgMenu_getObjectAtXY(int x, int y) {
-	if (g_fp->_currentScene)
-		for (uint i = 0; i < g_fp->_currentScene->_picObjList.size(); i++) {
-			PictureObject *pic = (PictureObject *)g_fp->_currentScene->_picObjList[i];
+	if (!g_fp->_currentScene)
+		return 0;
 
-			if (x >= pic->_ox && y >= pic->_oy) {
-				Common::Point point;
+	for (uint i = 1; i < g_fp->_currentScene->_picObjList.size(); i++) {
+		PictureObject *pic = g_fp->_currentScene->_picObjList[i];
 
-				pic->getDimensions(&point);
-
-				if (x <= pic->_ox + point.x && y <= pic->_oy + point.y && pic != g_vars->selector)
-					return pic;
-			}
+		if (x >= pic->_ox && y >= pic->_oy) {
+			const Dims dims = pic->getDimensions();
+			if (x <= pic->_ox + dims.x && y <= pic->_oy + dims.y && pic != g_vars->selector)
+				return pic;
 		}
+	}
 
 	return 0;
 }

@@ -29,10 +29,13 @@
 #include "common/str.h"
 
 #include "graphics/surface.h"
-#include "video/coktel_decoder.h"
 
 #include "gob/util.h"
 #include "gob/draw.h"
+
+namespace Video {
+class CoktelDecoder;
+}
 
 namespace Gob {
 

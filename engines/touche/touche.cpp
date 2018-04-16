@@ -32,6 +32,7 @@
 #include "common/keyboard.h"
 #include "common/textconsole.h"
 
+#include "audio/audiostream.h"
 #include "audio/mixer.h"
 
 #include "engines/util.h"
@@ -198,7 +199,7 @@ ToucheEngine::~ToucheEngine() {
 }
 
 Common::Error ToucheEngine::run() {
-	initGraphics(kScreenWidth, kScreenHeight, true);
+	initGraphics(kScreenWidth, kScreenHeight);
 
 	Graphics::setupFont(_language);
 

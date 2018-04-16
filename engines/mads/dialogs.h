@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -31,6 +31,7 @@
 namespace MADS {
 
 #define DIALOG_TOP 22
+#define POPUP_CENTER 0x8000
 
 class Dialog {
 private:
@@ -109,6 +110,11 @@ private:
 	 * Clean up after finishing displaying the dialog
 	 */
 	void restorePalette();
+
+	/**
+	 * Used by the constructors to initialize the dialog fields
+	 */
+	void init(int maxTextChars);
 protected:
 	Font *_font;
 	int _innerWidth;
@@ -120,6 +126,10 @@ protected:
 	int _askLineNum;
 	Common::String _lines[TEXT_DIALOG_MAX_LINES];
 	int _lineXp[TEXT_DIALOG_MAX_LINES];
+	SpriteAsset *_edgeSeries;
+	MSurface *_icon;
+	int _piecesPerCenter;
+	int _fontSpacing;
 
 	/**
 	 * Calculate the bounds for the dialog
@@ -135,6 +145,17 @@ public:
 	 */
 	TextDialog(MADSEngine *vm, const Common::String &fontName, const Common::Point &pos,
 		int maxChars);
+
+	/**
+	 * Constructor
+	 * @param vm			Engine reference
+	 * @param fontName		Font to use for display
+	 * @param pos			Position for window top-left
+	 * @param icon			Speaker portrait to show in dialog
+	 * @param maxTextChars	Horizontal width of text portion of window in characters
+	 */
+	TextDialog(MADSEngine *vm, const Common::String &fontName, const Common::Point &pos,
+		MSurface *icon, int maxTextChars);
 
 	/**
 	 * Destructor
@@ -189,8 +210,13 @@ public:
 	void setLineXp(int xp);
 
 	/**
-	* Show the dialog, and wait until a key or mouse press.
-	*/
+	 * Estimates the maximum dialog length for text dialogs with icons
+	 */
+	int estimatePieces(int maxLen);
+
+	/**
+	 * Show the dialog, and wait until a key or mouse press.
+	 */
 	virtual void show();
 };
 
@@ -226,6 +252,11 @@ public:
 	virtual void showItem(int objectId, int messageId, int speech = 0) = 0;
 	virtual Common::String getVocab(int vocabId) = 0;
 	virtual bool show(int messageId, int objectId = -1) = 0;
+
+	/**
+	* Show a spinning picture of an object, used in V2+ games
+	*/
+	virtual void spinObject(int idx) { warning("TODO: spinObject"); }
 };
 
 class FullScreenDialog: public EventTarget {

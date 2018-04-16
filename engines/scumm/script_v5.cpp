@@ -1760,6 +1760,7 @@ void ScummEngine_v5::o5_roomOps() {
 					return;
 				case 18: // clear kMainVirtScreen layer 2 buffer
 					_textSurface.fillRect(Common::Rect(0, _virtscr[kMainVirtScreen].topline * _textSurfaceMultiplier, _textSurface.pitch, (_virtscr[kMainVirtScreen].topline + _virtscr[kMainVirtScreen].h) * _textSurfaceMultiplier), 0);
+					return;
 				case 19: // enable palette operations (palManipulate(), cyclePalette() etc.)
 					_townsPaletteFlags |= 1;
 					return;
@@ -2497,10 +2498,6 @@ void ScummEngine_v5::walkActorToActor(int actor, int toActor, int dist) {
 		y = abr.y;
 	}
 	a->startWalkActor(x, y, -1);
-
-	// WORKAROUND: See bug #2971126 for details on why this is here.
-	if (_game.version == 0)
-		o5_breakHere();
 }
 
 void ScummEngine_v5::o5_walkActorToActor() {

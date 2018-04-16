@@ -40,8 +40,8 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 		sceneId = g_fp->_currentScene->_sceneId;
 
 	InteractionController *intC = getGameLoaderInteractionController();
-	for (ObList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
-		Interaction *intr = (Interaction *)*i;
+	for (InteractionController::InteractionList::iterator i = intC->_interactions.begin(); i != intC->_interactions.end(); ++i) {
+		Interaction *intr = *i;
 
 		if (intr->_sceneId > 0 && intr->_sceneId != sceneId)
 			break;
@@ -56,23 +56,19 @@ bool canInteractAny(GameObject *obj1, GameObject *obj2, int invId) {
 }
 
 InteractionController::~InteractionController() {
-	_interactions.clear();
-
+	Common::for_each(_interactions.begin(), _interactions.end(), Common::DefaultDeleter<Interaction>());
 	removeMessageHandler(124, -1);
 }
 
 bool InteractionController::load(MfcArchive &file) {
-	debug(5, "InteractionController::load()");
+	debugC(5, kDebugLoading, "InteractionController::load()");
 
 	return _interactions.load(file);
 }
 
 int static_compSceneId = 0;
 
-bool InteractionController::compareInteractions(const void *p1, const void *p2) {
-	const Interaction *i1 = (const Interaction *)p1;
-	const Interaction *i2 = (const Interaction *)p2;
-
+bool InteractionController::compareInteractions(const Interaction *i1, const Interaction *i2) {
 	if (i2->_sceneId < i1->_sceneId) {
 		if (i1->_sceneId != static_compSceneId)
 			return false;
@@ -118,8 +114,8 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 	MessageQueue *mq;
 	ExCommand *ex;
 
-	for (ObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
-		Interaction *cinter = (Interaction *)*i;
+	for (InteractionList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
+		Interaction *cinter = *i;
 
 		if (!cinter->canInteract(subj, obj, invId))
 			continue;
@@ -128,22 +124,25 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 			if (cinter->_messageQueue)
 				cinter->_messageQueue->calcDuration(subj);
 
+			debugC(5, kDebugInteractions, "Interaction: %s", transCyrillic(cinter->_actionName));
+
 			PicAniInfo aniInfo;
 
-			obj->getPicAniInfo(&aniInfo);
+			obj->getPicAniInfo(aniInfo);
 
-			if (cinter->_staticsId1) {
-				StaticANIObject *ani = (StaticANIObject *)obj;
+			if (cinter->_staticsId1 && obj->_objtype == kObjTypeStaticANIObject) {
+				StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
 				ani->_messageQueueId = 0;
 				ani->changeStatics2(cinter->_staticsId1);
 			}
 			int xpos = cinter->_xOffs + obj->_ox;
 			int ypos = cinter->_yOffs + obj->_oy;
 
-			obj->setPicAniInfo(&aniInfo);
+			obj->setPicAniInfo(aniInfo);
 
 			if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1) {
-				mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->doWalkTo(subj, xpos, ypos, 1, cinter->_staticsId2);
+				debugC(0, kDebugPathfinding, "Calling makeQueue() at [%d, %d]", xpos, ypos);
+				mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->makeQueue(subj, xpos, ypos, 1, cinter->_staticsId2);
 				if (mq) {
 					dur = mq->calcDuration(subj);
 					delete mq;
@@ -169,47 +168,51 @@ bool InteractionController::handleInteraction(StaticANIObject *subj, GameObject 
 		return false;
 
 	if (!inter->_objectId2) {
-		StaticANIObject *ani = (StaticANIObject *)obj;
+		if (obj->_objtype == kObjTypeStaticANIObject) {
+			StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
 
-		if (!ani->isIdle())
-			return false;
-
-		if (ani->_flags & 0x100)
-			return false;
-
-		if (!inter->_staticsId1 || !(inter->_flags & 1))
-			goto LABEL_38;
-
-		if (ani->_movement || ani->_statics == 0 || ani->_statics->_staticsId != inter->_staticsId1) {
-			mq = ani->changeStatics1(inter->_staticsId1);
-			if (!mq)
-				return false;
-
-			ex = new ExCommand((subj ? subj->_id : 0), 55, 0, 0, 0, 0, 1, 0, 0, 0);
-			ex->_x = obj->_id;
-			ex->_y = obj->_okeyCode;
-			ex->_keyCode = subj ? subj->_okeyCode : 0;
-			ex->_excFlags = 3;
-			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
-			ex->_field_20 = invId;
-			mq->addExCommandToEnd(ex);
-
-			if (mq->_isFinished) {
-				mq->_isFinished = 0;
-				ani->queueMessageQueue(mq);
-			}
-		} else {
-			if (ani->getMessageQueue())
-				ani->queueMessageQueue(0);
-LABEL_38:
-			if (inter->_messageQueue) {
-				mq = new MessageQueue(inter->_messageQueue, 0, 1);
-				mq->changeParam28ForObjectId(ani->_id, -1, ani->_okeyCode);
-
-				if (!mq->chain(0))
+			if (inter->_flags & 1) {
+				if (!ani->isIdle())
 					return false;
+
+				if (ani->_flags & 0x100)
+					return false;
+			} else if (inter->_staticsId1 != 0) {
+				if (ani->_movement || ani->_statics == 0 || ani->_statics->_staticsId != inter->_staticsId1) {
+					mq = ani->changeStatics1(inter->_staticsId1);
+					if (!mq)
+						return false;
+
+					ex = new ExCommand((subj ? subj->_id : 0), 55, 0, 0, 0, 0, 1, 0, 0, 0);
+					ex->_x = obj->_id;
+					ex->_y = obj->_odelay;
+					ex->_param = subj ? subj->_odelay : 0;
+					ex->_excFlags = 3;
+					ex->_z = (obj->_objtype != kObjTypePictureObject);
+					ex->_field_20 = invId;
+					mq->addExCommandToEnd(ex);
+
+					if (mq->_isFinished) {
+						mq->_isFinished = 0;
+						ani->queueMessageQueue(mq);
+					}
+
+					return true;
+				} else {
+					if (ani->getMessageQueue())
+						ani->queueMessageQueue(0);
+				}
 			}
 		}
+
+		if (inter->_messageQueue) {
+			mq = new MessageQueue(inter->_messageQueue, 0, 1);
+			mq->changeParam28ForObjectId(obj->_id, -1, obj->_odelay);
+
+			if (!mq->chain(0))
+				return false;
+		}
+
 		return true;
 	}
 
@@ -235,7 +238,7 @@ LABEL_38:
 
 	if (inter->isOverlapping(subj, obj)) {
 		if (obj->_objtype == kObjTypeStaticANIObject) {
-			StaticANIObject *ani = (StaticANIObject *)obj;
+			StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
 
 			ani->queueMessageQueue(0);
 
@@ -252,35 +255,35 @@ LABEL_38:
 		subj->setOXY(inter->_xOffs + obj->_ox, inter->_yOffs + obj->_oy);
 
 		mq = new MessageQueue(inter->_messageQueue, 0, 1);
-		mq->changeParam28ForObjectId(obj->_id, -1, obj->_okeyCode);
+		mq->changeParam28ForObjectId(obj->_id, -1, obj->_odelay);
 		mq->_flags |= 1;
 
 		if (!(inter->_flags & 0x10000)) {
 			ex = new ExCommand(obj->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
-			ex->_keyCode = obj->_okeyCode;
-			ex->_field_14 = 0x100;
+			ex->_param = obj->_odelay;
+			ex->_z = 0x80;
 			ex->_messageNum = 0;
 			ex->_excFlags = 3;
 			mq->addExCommandToEnd(ex);
 		}
 
 		ex = new ExCommand(obj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = obj->_okeyCode;
-		ex->_field_14 = 0x100;
+		ex->_param = obj->_odelay;
+		ex->_z = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-		ex->_keyCode = subj->_okeyCode;
-		ex->_field_14 = 0x100;
+		ex->_param = subj->_odelay;
+		ex->_z = 0x100;
 		ex->_messageNum = 0;
 		ex->_excFlags = 3;
 		mq->addExCommandToEnd(ex);
 
 		ex = new ExCommand(subj->_id, 17, 0x40, 0, 0, 0, 1, 0, 0, 0);
 		ex->_excFlags |= 3;
-		ex->_keyCode = 0;
+		ex->_param = 0;
 		mq->addExCommandToEnd(ex);
 
 		if (!mq->chain(subj)) {
@@ -289,40 +292,40 @@ LABEL_38:
 			return false;
 		}
 
-		subj->_flags |= 1;
-		obj->_flags |= 1;
+		subj->_flags |= 0x100;
+		obj->_flags |= 0x100;
 	} else {
 		bool someFlag = false;
 		PicAniInfo aniInfo;
 
-		obj->getPicAniInfo(&aniInfo);
+		obj->getPicAniInfo(aniInfo);
 
 		if (obj->_objtype == kObjTypeStaticANIObject && inter->_staticsId1) {
-			StaticANIObject *ani = (StaticANIObject *)obj;
+			StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
 
 			ani->_messageQueueId = 0;
 			ani->changeStatics2(inter->_staticsId1);
 		}
 
-		int xpos = inter->_yOffs + obj->_ox;
+		int xpos = inter->_xOffs + obj->_ox;
 		int ypos = inter->_yOffs + obj->_oy;
 
-		obj->setPicAniInfo(&aniInfo);
+		obj->setPicAniInfo(aniInfo);
 
 		if (abs(xpos - subj->_ox) > 1 || abs(ypos - subj->_oy) > 1
 				|| (inter->_staticsId2 != 0 && (subj->_statics == 0 || subj->_statics->_staticsId != inter->_staticsId2))) {
-			mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->method34(subj, xpos, ypos, 1, inter->_staticsId2);
+			mq = getSc2MctlCompoundBySceneId(g_fp->_currentScene->_sceneId)->startMove(subj, xpos, ypos, 1, inter->_staticsId2);
 
 			if (!mq)
 				return false;
 
 			ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 			ex->_x = obj->_id;
-			ex->_y = obj->_okeyCode;
-			ex->_keyCode = subj->_okeyCode;
+			ex->_y = obj->_odelay;
+			ex->_param = subj->_odelay;
 			ex->_excFlags = 3;
 			ex->_field_20 = invId;
-			ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
+			ex->_z = (obj->_objtype != kObjTypePictureObject);
 			mq->addExCommandToEnd(ex);
 
 			someFlag = true;
@@ -331,16 +334,19 @@ LABEL_38:
 			ex->_x = xpos;
 			ex->_y = ypos;
 			ex->_excFlags |= 3;
-			ex->_keyCode = 6;
-			ex->_field_14 = obj->_id;
-			ex->_field_20 = obj->_okeyCode;
+			ex->_param = 6;
+			ex->_z = obj->_id;
+			ex->_field_20 = obj->_odelay;
 			ex->postMessage();
 		}
 
 		if (!inter->_staticsId1 || !(inter->_flags & 1))
 			return true;
 
-		StaticANIObject *ani = (StaticANIObject *)obj;
+		if (obj->_objtype != kObjTypeStaticANIObject)
+			return false;
+
+		StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
 
 		if (!ani->isIdle())
 			return false;
@@ -360,24 +366,24 @@ LABEL_38:
 						ani->_flags |= 0x80u;
 					} else {
 						ex = new ExCommand(ani->_id, 34, 0x80, 0, 0, 0, 1, 0, 0, 0);
-						ex->_field_14 = 0x80;
-						ex->_keyCode = ani->_okeyCode;
+						ex->_z = 0x80;
+						ex->_param = ani->_odelay;
 						ex->_excFlags = 3;
 						mq->addExCommandToEnd(ex);
 					}
 				}
 				ex = new ExCommand(ani->_id, 34, 0x100, 0, 0, 0, 1, 0, 0, 0);
-				ex->_keyCode = ani->_okeyCode;
-				ex->_field_14 = 0x100;
+				ex->_param = ani->_odelay;
+				ex->_z = 0x100;
 				ex->_excFlags = 3;
 				mq->addExCommandToEnd(ex);
 			} else {
 				ex = new ExCommand(subj->_id, 55, 0, 0, 0, 0, 1, 0, 0, 0);
 				ex->_x = ani->_id;
-				ex->_y = ani->_okeyCode;
-				ex->_keyCode = subj->_okeyCode;
+				ex->_y = ani->_odelay;
+				ex->_param = subj->_odelay;
 				ex->_excFlags = 2;
-				ex->_field_14 = (obj->_objtype != kObjTypePictureObject);
+				ex->_z = (obj->_objtype != kObjTypePictureObject);
 				ex->_field_20 = invId;
 				mq->addExCommandToEnd(ex);
 
@@ -388,7 +394,7 @@ LABEL_38:
 				ani->queueMessageQueue(mq);
 			}
 		} else {
-			obj->_flags |= 1;
+			obj->_flags |= 0x100;
 
 			if (inter->_flags & 0x10000)
 				return true;
@@ -401,8 +407,8 @@ LABEL_38:
 }
 
 Interaction *InteractionController::getInteractionByObjectIds(int obId, int obId2, int obId3) {
-	for (ObList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
-		Interaction *intr = (Interaction *)*i;
+	for (InteractionList::iterator i = _interactions.begin(); i != _interactions.end(); ++i) {
+		Interaction *intr = *i;
 
 		if (intr->_objectId1 == obId && intr->_objectId2 == obId2 && intr->_objectId3 == obId3)
 			return intr;
@@ -425,22 +431,19 @@ Interaction::Interaction() {
 	_staticsId2 = 0;
 	_field_28 = 0;
 	_sceneId = -1;
-	_actionName = 0;
 }
 
 Interaction::~Interaction() {
 	if (_messageQueue) {
 		while (_messageQueue->getExCommandByIndex(0))
 			_messageQueue->deleteExCommandByIndex(0, 1);
-    }
+	}
 
 	delete _messageQueue;
-
-	free(_actionName);
 }
 
 bool Interaction::load(MfcArchive &file) {
-	debug(5, "Interaction::load()");
+	debugC(5, kDebugLoading, "Interaction::load()");
 
 	_objectId1 = file.readUint16LE();
 	_objectId2 = file.readUint16LE();
@@ -449,13 +452,13 @@ bool Interaction::load(MfcArchive &file) {
 	_objectId3 = file.readUint16LE();
 	_objectState2 = file.readUint32LE();
 	_objectState1 = file.readUint32LE();
-	_xOffs = file.readUint32LE();
-	_yOffs = file.readUint32LE();
+	_xOffs = file.readSint32LE();
+	_yOffs = file.readSint32LE();
 	_sceneId = file.readUint32LE();
 	_flags = file.readUint32LE();
 	_actionName = file.readPascalString();
 
-	_messageQueue = (MessageQueue *)file.readClass();
+	_messageQueue = file.readClass<MessageQueue>();
 
 	return true;
 }
@@ -477,7 +480,7 @@ bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 		if (obj2->_objtype != kObjTypeStaticANIObject)
 			return false;
 
-		StaticANIObject *st = (StaticANIObject *)obj2;
+		StaticANIObject *st = static_cast<StaticANIObject *>(obj2);
 
 		if (!st->_statics)
 			return false;
@@ -518,25 +521,29 @@ bool Interaction::canInteract(GameObject *obj1, GameObject *obj2, int invId) {
 }
 
 bool Interaction::isOverlapping(StaticANIObject *subj, GameObject *obj) {
-	StaticANIObject *ani = (StaticANIObject *)obj;
-
 	if (abs(_xOffs + obj->_ox - subj->_ox) <= 1
 		&& abs(obj->_oy + _yOffs - subj->_oy) <= 1) {
 		if (!_staticsId2 || (subj->_statics != 0 && subj->_statics->_staticsId == _staticsId2)) {
-			if (!_staticsId1 || !(_flags & 1) || (ani->_statics != 0 && ani->_statics->_staticsId == _staticsId1))
+			if (!_staticsId1 || !(_flags & 1))
 				return true;
+
+			if (obj->_objtype == kObjTypeStaticANIObject) {
+				const StaticANIObject *ani = static_cast<StaticANIObject *>(obj);
+				if (ani->_statics != 0 && ani->_statics->_staticsId == _staticsId1)
+					return true;
+			}
 		}
 	}
 	return false;
 }
 
 bool EntranceInfo::load(MfcArchive &file) {
-	debug(5, "EntranceInfo::load()");
+	debugC(5, kDebugLoading, "EntranceInfo::load()");
 
 	_sceneId = file.readUint32LE();
 	_field_4 = file.readUint32LE();
 	_messageQueueId = file.readUint32LE();
-	file.read(_gap_C, 292); // FIXME, Ugh
+	file.skip(292); // FIXME: Ugh
 	_field_130 = file.readUint32LE();
 
 	return true;

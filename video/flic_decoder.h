@@ -42,6 +42,7 @@ namespace Video {
  * Decoder for FLIC videos.
  *
  * Video decoder used in engines:
+ *  - chewy
  *  - tucker
  */
 class FlicDecoder : public VideoDecoder {
@@ -49,21 +50,23 @@ public:
 	FlicDecoder();
 	virtual ~FlicDecoder();
 
-	bool loadStream(Common::SeekableReadStream *stream);
+	virtual bool loadStream(Common::SeekableReadStream *stream);
 
 	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
-private:
+protected:
 	class FlicVideoTrack : public VideoTrack {
 	public:
-		FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height);
+		FlicVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height, bool skipHeader = false);
 		~FlicVideoTrack();
 
+		virtual void readHeader();
+
 		bool endOfTrack() const;
-		bool isRewindable() const { return true; }
-		bool rewind();
+		virtual bool isRewindable() const { return true; }
+		virtual bool rewind();
 
 		uint16 getWidth() const;
 		uint16 getHeight() const;
@@ -71,7 +74,8 @@ private:
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
 		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
-		const Graphics::Surface *decodeNextFrame();
+		virtual const Graphics::Surface *decodeNextFrame();
+		virtual void handleFrame();
 		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
@@ -79,7 +83,7 @@ private:
 		void clearDirtyRects() { _dirtyRects.clear(); }
 		void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
-	private:
+	protected:
 		Common::SeekableReadStream *_fileStream;
 		Graphics::Surface *_surface;
 

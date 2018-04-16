@@ -38,7 +38,6 @@ struct BlendedPaletteStatus {
 	byte *_palette, *_newPalette;
 	int _colorCount;
 	int16 _value, _maxValue, _incr;
-	int cnt;
 };
 
 class ScreenEffects {

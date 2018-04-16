@@ -41,8 +41,8 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 		title = g.extra;
 		extra = "";
 	} else {
-		while (sg->gameid) {
-			if (!scumm_stricmp(g.gameid, sg->gameid))
+		while (sg->gameId) {
+			if (!scumm_stricmp(g.gameId, sg->gameId))
 				title = sg->description;
 			sg++;
 		}
@@ -56,7 +56,7 @@ static GameDescriptor toGameDescriptor(const ADGameDescription &g, const PlainGa
 	else if (g.flags & ADGF_TESTING)
 		gsl = kTestingGame;
 
-	GameDescriptor gd(g.gameid, title, g.language, g.platform, 0, gsl);
+	GameDescriptor gd(g.gameId, title, g.language, g.platform, 0, gsl);
 	gd.updateDesc(extra);
 	return gd;
 }
@@ -89,21 +89,38 @@ static Common::String generatePreferredTarget(const Common::String &id, const AD
 	return res;
 }
 
+static Common::String sanitizeName(const char *name) {
+	Common::String res;
+
+	while (*name) {
+		if (Common::isAlnum(*name))
+			res += tolower(*name);
+		name++;
+	}
+
+	return res;
+}
+
 void AdvancedMetaEngine::updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *realDesc) const {
-	if (_singleid != NULL) {
+	if (_singleId != NULL) {
 		desc["preferredtarget"] = desc["gameid"];
-		desc["gameid"] = _singleid;
+		desc["gameid"] = _singleId;
 	}
 
 	if (!desc.contains("preferredtarget"))
 		desc["preferredtarget"] = desc["gameid"];
+
+	if (realDesc->flags & ADGF_AUTOGENTARGET) {
+		if (*realDesc->extra)
+			desc["preferredtarget"] = sanitizeName(realDesc->extra);
+	}
 
 	desc["preferredtarget"] = generatePreferredTarget(desc["preferredtarget"], realDesc);
 
 	if (_flags & kADFlagUseExtraAsHint)
 		desc["extra"] = realDesc->extra;
 
-	desc.setGUIOptions(realDesc->guioptions + _guioptions);
+	desc.setGUIOptions(realDesc->guiOptions + _guiOptions);
 	desc.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(realDesc->language));
 
 	if (realDesc->flags & ADGF_ADDENGLISH)
@@ -149,7 +166,7 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// Use fallback detector if there were no matches by other means
 		const ADGameDescription *fallbackDesc = fallbackDetect(allFiles, fslist);
 		if (fallbackDesc != 0) {
-			GameDescriptor desc(toGameDescriptor(*fallbackDesc, _gameids));
+			GameDescriptor desc(toGameDescriptor(*fallbackDesc, _gameIds));
 			updateGameDescriptor(desc, fallbackDesc);
 			detectedGames.push_back(desc);
 		}
@@ -157,7 +174,7 @@ GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
 		// Otherwise use the found matches
 		cleanupPirated(matches);
 		for (uint i = 0; i < matches.size(); i++) {
-			GameDescriptor desc(toGameDescriptor(*matches[i], _gameids));
+			GameDescriptor desc(toGameDescriptor(*matches[i], _gameIds));
 			updateGameDescriptor(desc, matches[i]);
 			detectedGames.push_back(desc);
 		}
@@ -252,10 +269,10 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	if (cleanupPirated(matches))
 		return Common::kNoGameDataFoundError;
 
-	if (_singleid == NULL) {
+	if (_singleId == NULL) {
 		// Find the first match with correct gameid.
 		for (uint i = 0; i < matches.size(); i++) {
-			if (matches[i]->gameid == gameid) {
+			if (matches[i]->gameId == gameid) {
 				agdDesc = matches[i];
 				break;
 			}
@@ -270,7 +287,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		if (agdDesc != 0) {
 			// Seems we found a fallback match. But first perform a basic
 			// sanity check: the gameid must match.
-			if (_singleid == NULL && agdDesc->gameid != gameid)
+			if (_singleId == NULL && agdDesc->gameId != gameid)
 				agdDesc = 0;
 		}
 	}
@@ -284,9 +301,9 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	if (agdDesc->flags & ADGF_ADDENGLISH)
 		lang += " " + getGameGUIOptionsDescriptionLanguage(Common::EN_ANY);
 
-	Common::updateGameGUIOptions(agdDesc->guioptions + _guioptions, lang);
+	Common::updateGameGUIOptions(agdDesc->guiOptions + _guiOptions, lang);
 
-	GameDescriptor gameDescriptor = toGameDescriptor(*agdDesc, _gameids);
+	GameDescriptor gameDescriptor = toGameDescriptor(*agdDesc, _gameIds);
 
 	bool showTestingWarning = false;
 
@@ -308,17 +325,30 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		return Common::kNoError;
 }
 
-void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps) const {
-	// TODO: This message should be cleaned up / made more specific.
-	// For example, we should specify at least which engine triggered this.
-	//
-	// Might also be helpful to display the full path (for when this is used
-	// from the mass detector).
-	Common::String report = Common::String::format(_("The game in '%s' seems to be unknown."), path.getPath().c_str()) + "\n";
-	report += _("Please, report the following data to the ScummVM team along with name");
-	report += "\n";
-	report += _("of the game you tried to add and its version/language/etc.:");
-	report += "\n";
+void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFilePropertiesMap &filesProps, const ADGameIdList &matchedGameIds) const {
+	Common::String report = Common::String::format(
+			_("The game in '%s' seems to be an unknown %s engine game "
+			  "variant.\n\nPlease report the following data to the ScummVM "
+			  "team at %s along with the name of the game you tried to add and "
+			  "its version, language, etc.:"),
+			path.getPath().c_str(), getName(), "https://bugs.scummvm.org/");
+
+	if (matchedGameIds.size()) {
+		report += "\n\n";
+		report += _("Matched game IDs:");
+		report += " ";
+
+		for (ADGameIdList::const_iterator gameId = matchedGameIds.begin(); gameId != matchedGameIds.end(); ++gameId) {
+			if (gameId != matchedGameIds.begin()) {
+				report += ", ";
+			}
+			report += *gameId;
+		}
+	}
+
+	report += "\n\n";
+
+	report.wordWrap(80);
 
 	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file)
 		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
@@ -328,7 +358,7 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	g_system->logMessage(LogMessageType::kInfo, report.c_str());
 }
 
-void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth) const {
+void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName) const {
 	if (depth <= 0)
 		return;
 
@@ -336,6 +366,8 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 		return;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		Common::String tstr = (_matchFullPaths && !parentName.empty() ? parentName + "/" : "") + file->getName();
+
 		if (file->isDirectory()) {
 			Common::FSList files;
 
@@ -355,10 +387,8 @@ void AdvancedMetaEngine::composeFileHashMap(FileMap &allFiles, const Common::FSL
 			if (!file->getChildren(files, Common::FSNode::kListAll))
 				continue;
 
-			composeFileHashMap(allFiles, files, depth - 1);
+			composeFileHashMap(allFiles, files, depth - 1, tstr);
 		}
-
-		Common::String tstr = file->getName();
 
 		// Strip any trailing dot
 		if (tstr.lastChar() == '.')
@@ -380,7 +410,9 @@ bool AdvancedMetaEngine::getFileProperties(const Common::FSNode &parent, const F
 
 		fileProps.md5 = macResMan.computeResForkMD5AsString(_md5Bytes);
 		fileProps.size = macResMan.getResForkDataSize();
-		return true;
+
+		if (fileProps.size != 0)
+			return true;
 	}
 
 	if (!allFiles.contains(fname))
@@ -407,7 +439,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 	// Check which files are included in some ADGameDescription *and* are present.
 	// Compute MD5s and file sizes for these files.
-	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += _descItemSize) {
+	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != 0; descPtr += _descItemSize) {
 		g = (const ADGameDescription *)descPtr;
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
@@ -425,12 +457,13 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 	}
 
 	ADGameDescList matched;
+	ADGameIdList matchedGameIds;
 	int maxFilesMatched = 0;
 	bool gotAnyMatchesWithAllFiles = false;
 
 	// MD5 based matching
 	uint i;
-	for (i = 0, descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameid != 0; descPtr += _descItemSize, ++i) {
+	for (i = 0, descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != 0; descPtr += _descItemSize, ++i) {
 		g = (const ADGameDescription *)descPtr;
 		bool fileMissing = false;
 
@@ -447,6 +480,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 
 		bool allFilesPresent = true;
 		int curFilesMatched = 0;
+		bool hashOrSizeMismatch = false;
 
 		// Try to match all files for this game
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
@@ -458,16 +492,21 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 				break;
 			}
 
+			if (hashOrSizeMismatch)
+				continue;
+
 			if (fileDesc->md5 != NULL && fileDesc->md5 != filesProps[tstr].md5) {
 				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[tstr].md5.c_str());
 				fileMissing = true;
-				break;
+				hashOrSizeMismatch = true;
+				continue;
 			}
 
 			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[tstr].size) {
 				debug(3, "Size Mismatch. Skipping");
 				fileMissing = true;
-				break;
+				hashOrSizeMismatch = true;
+				continue;
 			}
 
 			debug(3, "Matched file: %s", tstr.c_str());
@@ -483,11 +522,14 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 		// Potentially this could rule out variants where some particular file
 		// is really missing, but the developers should better know about such
 		// cases.
-		if (allFilesPresent)
+		if (allFilesPresent) {
 			gotAnyMatchesWithAllFiles = true;
+			if (!matchedGameIds.size() || strcmp(matchedGameIds.back(), g->gameId) != 0)
+				matchedGameIds.push_back(g->gameId);
+		}
 
 		if (!fileMissing) {
-			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameid, g->extra,
+			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 
 			if (curFilesMatched > maxFilesMatched) {
@@ -503,7 +545,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 			}
 
 		} else {
-			debug(5, "Skipping game: %s (%s %s/%s) (%d)", g->gameid, g->extra,
+			debug(5, "Skipping game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 		}
 	}
@@ -511,7 +553,7 @@ ADGameDescList AdvancedMetaEngine::detectGame(const Common::FSNode &parent, cons
 	// We didn't find a match
 	if (matched.empty()) {
 		if (!filesProps.empty() && gotAnyMatchesWithAllFiles) {
-			reportUnknown(parent, filesProps);
+			reportUnknown(parent, filesProps, matchedGameIds);
 		}
 
 		// Filename based fallback
@@ -543,7 +585,7 @@ const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &
 		}
 
 		if (!fileMissing) {
-			debug(4, "Matched: %s", agdesc->gameid);
+			debug(4, "Matched: %s", agdesc->gameId);
 
 			if (numMatchedFiles > maxNumMatchedFiles) {
 				matchedDesc = agdesc;
@@ -568,27 +610,27 @@ const ADGameDescription *AdvancedMetaEngine::detectGameFilebased(const FileMap &
 }
 
 GameList AdvancedMetaEngine::getSupportedGames() const {
-	if (_singleid != NULL) {
+	if (_singleId != NULL) {
 		GameList gl;
 
-		const PlainGameDescriptor *g = _gameids;
-		while (g->gameid) {
-			if (0 == scumm_stricmp(_singleid, g->gameid)) {
-				gl.push_back(GameDescriptor(g->gameid, g->description));
+		const PlainGameDescriptor *g = _gameIds;
+		while (g->gameId) {
+			if (0 == scumm_stricmp(_singleId, g->gameId)) {
+				gl.push_back(GameDescriptor(g->gameId, g->description));
 
 				return gl;
 			}
 			g++;
 		}
-		error("Engine %s doesn't have its singleid specified in ids list", _singleid);
+		error("Engine %s doesn't have its singleid specified in ids list", _singleId);
 	}
 
-	return GameList(_gameids);
+	return GameList(_gameIds);
 }
 
-GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
+GameDescriptor AdvancedMetaEngine::findGame(const char *gameId) const {
 	// First search the list of supported gameids for a match.
-	const PlainGameDescriptor *g = findPlainGameDescriptor(gameid, _gameids);
+	const PlainGameDescriptor *g = findPlainGameDescriptor(gameId, _gameIds);
 	if (g)
 		return GameDescriptor(*g);
 
@@ -596,16 +638,17 @@ GameDescriptor AdvancedMetaEngine::findGame(const char *gameid) const {
 	return GameDescriptor();
 }
 
-AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameids, const ADExtraGuiOptionsMap *extraGuiOptions)
-	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameids(gameids),
+AdvancedMetaEngine::AdvancedMetaEngine(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions)
+	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameIds(gameIds),
 	  _extraGuiOptions(extraGuiOptions) {
 
 	_md5Bytes = 5000;
-	_singleid = NULL;
+	_singleId = NULL;
 	_flags = 0;
-	_guioptions = GUIO_NONE;
+	_guiOptions = GUIO_NONE;
 	_maxScanDepth = 1;
 	_directoryGlobs = NULL;
+	_matchFullPaths = false;
 }
 
 void AdvancedMetaEngine::initSubSystems(const ADGameDescription *gameDesc) const {

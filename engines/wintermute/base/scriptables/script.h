@@ -33,12 +33,15 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/scriptables/dcscript.h"   // Added by ClassView
 #include "engines/wintermute/coll_templ.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 class BaseScriptHolder;
 class BaseObject;
 class ScEngine;
 class ScStack;
+class ScValue;
+
 class ScScript : public BaseClass {
 public:
 	BaseArray<int> _breakpoints;
@@ -50,7 +53,7 @@ public:
 	bool copyParameters(ScStack *stack);
 
 	void afterLoad();
-private:
+protected:
 	ScValue *_operand;
 	ScValue *_reg1;
 public:
@@ -125,7 +128,7 @@ public:
 	ScValue *_globals;
 	ScEngine *_engine;
 	int32 _currentLine;
-	bool executeInstruction();
+	virtual bool executeInstruction();
 	char *getString();
 	uint32 getDWORD();
 	double getFloat();
@@ -162,11 +165,8 @@ private:
 	bool initScript();
 	bool initTables();
 
-
-// IWmeDebugScript interface implementation
-public:
-	virtual int dbgGetLine();
-	virtual const char *dbgGetFilename();
+	virtual void preInstHook(uint32 inst);
+	virtual void postInstHook(uint32 inst);
 };
 
 } // End of namespace Wintermute

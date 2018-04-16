@@ -138,25 +138,72 @@ static const PlainGameDescriptor agiGames[] = {
 	{0, 0}
 };
 
-static const ExtraGuiOption agiExtraGuiOption = {
-	_s("Use original save/load screens"),
-	_s("Use the original save/load screens, instead of the ScummVM ones"),
-	"originalsaveload",
-	false
-};
-
 #include "agi/detection_tables.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,
+		{
+			_s("Use an alternative palette"),
+			_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
+			"altamigapalette",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_DISABLE_MOUSE,
+		{
+			_s("Mouse support"),
+			_s("Enables mouse support. Allows to use mouse for movement and in game menus."),
+			"mousesupport",
+			true
+		}
+	},
+
+	{
+		GAMEOPTION_USE_HERCULES_FONT,
+		{
+			_s("Use Hercules hires font"),
+			_s("Uses Hercules hires font, when font file is available."),
+			"herculesfont",
+			false
+		}
+	},
+
+	{
+		GAMEOPTION_COMMAND_PROMPT_WINDOW,
+		{
+			_s("Pause when entering commands"),
+			_s("Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt."),
+			"commandpromptwindow",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 using namespace Agi;
 
 class AgiMetaEngine : public AdvancedMetaEngine {
-	mutable Common::String	_gameid;
-	mutable Common::String	_extra;
+	mutable Common::String _gameid;
+	mutable Common::String _extra;
 
 public:
-	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
-		_singleid = "agi";
-		_guioptions = GUIO1(GUIO_NOSPEECH);
+	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
+		_singleId = "agi";
+		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual const char *getName() const {
@@ -168,7 +215,6 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
-	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -179,20 +225,21 @@ public:
 
 bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate) ||
-		(f == kSavesSupportPlayTime);
+	    (f == kSupportsListSaves) ||
+	    (f == kSupportsLoadingDuringStartup) ||
+	    (f == kSupportsDeleteSave) ||
+	    (f == kSavesSupportMetaInfo) ||
+	    (f == kSavesSupportThumbnail) ||
+	    (f == kSavesSupportCreationDate) ||
+	    (f == kSavesSupportPlayTime) ||
+		(f == kSimpleSavesNames);
 }
 
 bool AgiBase::hasFeature(EngineFeature f) const {
 	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+	    (f == kSupportsRTL) ||
+	    (f == kSupportsLoadingDuringRuntime) ||
+	    (f == kSupportsSavingDuringRuntime);
 }
 
 
@@ -227,55 +274,66 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	return res;
 }
 
-const ExtraGuiOptions AgiMetaEngine::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(agiExtraGuiOption);
-	return options;
-}
-
 SaveStateList AgiMetaEngine::listSaves(const char *target) const {
-	const uint32 AGIflag = MKTAG('A','G','I',':');
+	const uint32 AGIflag = MKTAG('A', 'G', 'I', ':');
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	char saveDesc[31];
 	Common::String pattern = target;
-	pattern += ".???";
+	pattern += ".###";
 
 	filenames = saveFileMan->listSavefiles(pattern);
-	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
 
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		// Obtain the last 3 digits of the filename, since they correspond to the save slot
-		int slotNum = atoi(file->c_str() + file->size() - 3);
+		int slotNr = atoi(file->c_str() + file->size() - 3);
 
-		if (slotNum >= 0 && slotNum <= 999) {
+		if (slotNr >= 0 && slotNr <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				uint32 type = in->readUint32BE();
-				if (type == AGIflag)
-					in->read(saveDesc, 31);
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				char description[31];
+
+				if (type == AGIflag) {
+					uint16 descriptionPos = 0;
+
+					in->read(description, 31);
+
+					// Security-check, if saveDescription has a terminating NUL
+					while (description[descriptionPos]) {
+						descriptionPos++;
+						if (descriptionPos >= sizeof(description))
+							break;
+					}
+					if (descriptionPos >= sizeof(description)) {
+						strcpy(description, "[broken saved game]");
+					}
+				} else {
+					strcpy(description, "[not an AGI saved game]");
+				}
+
 				delete in;
+
+				saveList.push_back(SaveStateDescriptor(slotNr, description));
 			}
 		}
 	}
 
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
 	return saveList;
 }
 
 int AgiMetaEngine::getMaximumSaveSlot() const { return 999; }
 
 void AgiMetaEngine::removeSaveState(const char *target, int slot) const {
-	char fileName[MAXPATHLEN];
-	sprintf(fileName, "%s.%03d", target, slot);
+	Common::String fileName = Common::String::format("%s.%03d", target, slot);
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	const uint32 AGIflag = MKTAG('A','G','I',':');
-	char fileName[MAXPATHLEN];
-	sprintf(fileName, "%s.%03d", target, slot);
+SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
+	const uint32 AGIflag = MKTAG('A', 'G', 'I', ':');
+	Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
 
@@ -285,49 +343,80 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 			return SaveStateDescriptor();
 		}
 
-		char name[32];
-		in->read(name, 31);
+		char description[31];
+		uint16 descriptionPos = 0;
 
-		SaveStateDescriptor desc(slot, name);
+		in->read(description, 31);
+
+		while (description[descriptionPos]) {
+			descriptionPos++;
+			if (descriptionPos >= sizeof(description))
+				break;
+		}
+		if (descriptionPos >= sizeof(description)) {
+			// broken description, ignore it
+			delete in;
+
+			SaveStateDescriptor descriptor(slotNr, "[broken saved game]");
+			return descriptor;
+		}
+
+		SaveStateDescriptor descriptor(slotNr, description);
 
 		// Do not allow save slot 0 (used for auto-saving) to be deleted or
 		// overwritten.
-		desc.setDeletableFlag(slot != 0);
-		desc.setWriteProtectedFlag(slot == 0);
+		if (slotNr == 0) {
+			descriptor.setWriteProtectedFlag(true);
+			descriptor.setDeletableFlag(false);
+		} else {
+			descriptor.setWriteProtectedFlag(false);
+			descriptor.setDeletableFlag(true);
+		}
 
 		char saveVersion = in->readByte();
 		if (saveVersion >= 4) {
-			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
+			Graphics::Surface *thumbnail;
+			if (!Graphics::loadThumbnail(*in, thumbnail)) {
+				delete in;
+				return SaveStateDescriptor();
+			}
 
-			desc.setThumbnail(thumbnail);
+			descriptor.setThumbnail(thumbnail);
 
 			uint32 saveDate = in->readUint32BE();
 			uint16 saveTime = in->readUint16BE();
+			if (saveVersion >= 9) {
+				in->readByte(); // skip over seconds of saveTime (not needed here)
+			}
 			if (saveVersion >= 6) {
 				uint32 playTime = in->readUint32BE();
-				desc.setPlayTime(playTime * 1000);
+				descriptor.setPlayTime(playTime * 1000);
 			}
 
 			int day = (saveDate >> 24) & 0xFF;
 			int month = (saveDate >> 16) & 0xFF;
 			int year = saveDate & 0xFFFF;
 
-			desc.setSaveDate(year, month, day);
+			descriptor.setSaveDate(year, month, day);
 
 			int hour = (saveTime >> 8) & 0xFF;
 			int minutes = saveTime & 0xFF;
 
-			desc.setSaveTime(hour, minutes);
+			descriptor.setSaveTime(hour, minutes);
 		}
-
 
 		delete in;
 
-		return desc;
+		return descriptor;
+
 	} else {
 		SaveStateDescriptor emptySave;
 		// Do not allow save slot 0 (used for auto-saving) to be overwritten.
-		emptySave.setWriteProtectedFlag(slot == 0);
+		if (slotNr == 0) {
+			emptySave.setWriteProtectedFlag(true);
+		} else {
+			emptySave.setWriteProtectedFlag(false);
+		}
 		return emptySave;
 	}
 }
@@ -371,9 +460,9 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 	}
 
 	if (allFiles.contains("logdir") && allFiles.contains("object") &&
-		allFiles.contains("picdir") && allFiles.contains("snddir") &&
-		allFiles.contains("viewdir") && allFiles.contains("vol.0") &&
-		allFiles.contains("words.tok")) { // Check for v2
+	        allFiles.contains("picdir") && allFiles.contains("snddir") &&
+	        allFiles.contains("viewdir") && allFiles.contains("vol.0") &&
+	        allFiles.contains("words.tok")) { // Check for v2
 
 		// The default AGI interpreter version 0x2917 is okay for v2 games
 		// so we don't have to change it here.
@@ -405,7 +494,7 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 				strncpy(name, f->_key.c_str(), MIN((uint)8, f->_key.size() > 5 ? f->_key.size() - 5 : f->_key.size()));
 
 				if (allFiles.contains("object") && allFiles.contains("words.tok") &&
-					allFiles.contains(Common::String(name) + "dir")) {
+				        allFiles.contains(Common::String(name) + "dir")) {
 					matchedUsingFilenames = true;
 					description = "Unknown v3 Game";
 					g_fallbackDesc.version = 0x3149; // Set the default AGI version for an AGI v3 game
@@ -483,13 +572,13 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 		// Override the gameid & extra values in g_fallbackDesc.desc. This only works
 		// until the fallback detector is called again, and while the MetaEngine instance
 		// is alive (as else the string storage is modified/deleted).
-		g_fallbackDesc.desc.gameid = _gameid.c_str();
+		g_fallbackDesc.desc.gameId = _gameid.c_str();
 		g_fallbackDesc.desc.extra = _extra.c_str();
 
 		Common::String fallbackWarning;
 
 		fallbackWarning = "Your game version has been detected using fallback matching as a\n";
-		fallbackWarning += Common::String::format("variant of %s (%s).\n", g_fallbackDesc.desc.gameid, g_fallbackDesc.desc.extra);
+		fallbackWarning += Common::String::format("variant of %s (%s).\n", g_fallbackDesc.desc.gameId, g_fallbackDesc.desc.extra);
 		fallbackWarning += "If this is an original and unmodified version or new made Fanmade game,\n";
 		fallbackWarning += "please report any, information previously printed by ScummVM to the team.\n";
 
@@ -510,14 +599,39 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 namespace Agi {
 
 bool AgiBase::canLoadGameStateCurrently() {
-	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !_noSaveLoadAllowed);
+	if (!(getGameType() == GType_PreAGI)) {
+		if (getFlag(VM_FLAG_MENUS_ACCESSIBLE)) {
+			if (!_noSaveLoadAllowed) {
+				if (!cycleInnerLoopIsActive()) {
+					// We can't allow to restore a game, while inner loop is active
+					// For example Mixed Up Mother Goose has an endless loop for user name input
+					// Which means even if we abort the inner loop, the game would keep on calling
+					// GetString() until something is entered. And this would of course also happen
+					// right after restoring a saved game.
+					return true;
+				}
+			}
+		}
+	}
+	return false;
 }
 
 bool AgiBase::canSaveGameStateCurrently() {
 	if (getGameID() == GID_BC) // Technically in Black Cauldron we may save anytime
 		return true;
 
-	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !_noSaveLoadAllowed && _game.inputEnabled);
+	if (!(getGameType() == GType_PreAGI)) {
+		if (getFlag(VM_FLAG_MENUS_ACCESSIBLE)) {
+			if (!_noSaveLoadAllowed) {
+				if (!cycleInnerLoopIsActive()) {
+					if (promptIsEnabled()) {
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 int AgiEngine::agiDetectGame() {

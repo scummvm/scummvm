@@ -21,6 +21,7 @@
  */
 
 #include "common/debug.h"
+#include "audio/audiostream.h"
 
 #include "groovie/player.h"
 #include "groovie/groovie.h"
@@ -28,7 +29,8 @@
 namespace Groovie {
 
 VideoPlayer::VideoPlayer(GroovieEngine *vm) :
-	_vm(vm), _syst(vm->_system), _file(NULL), _audioStream(NULL), _fps(0), _overrideSpeed(false) {
+	_vm(vm), _syst(vm->_system), _file(NULL), _audioStream(NULL), _fps(0), _overrideSpeed(false), _flags(0),
+	_begunPlaying(false), _millisBetweenFrames(0), _lastFrameTime(0) {
 }
 
 bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {

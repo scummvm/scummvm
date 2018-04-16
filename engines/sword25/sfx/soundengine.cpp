@@ -36,6 +36,7 @@
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
 
+#include "audio/audiostream.h"
 #include "audio/decoders/vorbis.h"
 
 #include "common/system.h"
@@ -64,9 +65,6 @@ SoundEngine::SoundEngine(Kernel *pKernel) : ResourceService(pKernel) {
 	_mixer = g_system->getMixer();
 
 	_maxHandleId = 1;
-
-	for (int i = 0; i < SOUND_HANDLES; i++)
-		_handles[i].type = kFreeHandle;
 }
 
 bool SoundEngine::init(uint sampleRate, uint channels) {
@@ -393,5 +391,16 @@ bool SoundEngine::unpersist(InputPersistenceBlock &reader) {
 	return reader.isGood();
 }
 
+SndHandle::SndHandle() :
+		type(kFreeHandle),
+		id(0),
+		sndType(-1),
+		volume(0),
+		pan(0),
+		loop(false),
+		loopStart(0),
+		loopEnd(0),
+		layer(0) {
+}
 
 } // End of namespace Sword25

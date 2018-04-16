@@ -28,7 +28,6 @@
  * LFO and noise channel support have been removed (not used by Loom PCE).
  */
 
-#include <math.h>
 #include "scumm/players/player_pce.h"
 #include "common/endian.h"
 

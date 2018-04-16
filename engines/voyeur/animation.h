@@ -26,12 +26,15 @@
 #include "video/video_decoder.h"
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
-#include "audio/timestamp.h"
 #include "common/array.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/stream.h"
 #include "voyeur/files.h"
+
+namespace Audio {
+class Timestamp;
+}
 
 namespace Voyeur {
 
@@ -85,7 +88,6 @@ private:
 
 	class RL2AudioTrack : public AudioTrack {
 	private:
-		Audio::Mixer::SoundType _soundType;
 		const RL2FileHeader &_header;
 		Audio::QueuingAudioStream *_audStream;
 	protected:
@@ -95,7 +97,6 @@ private:
 			Audio::Mixer::SoundType soundType);
 		~RL2AudioTrack();
 
-		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 		int numQueuedStreams() const { return _audStream->numQueuedStreams(); }
 		virtual bool isSeekable() const { return true; }
 		virtual bool seek(const Audio::Timestamp &time) { return true; }
@@ -153,7 +154,6 @@ private:
 	RL2AudioTrack *_audioTrack;
 	RL2VideoTrack *_videoTrack;
 	Common::SeekableReadStream *_fileStream;
-	Audio::Mixer::SoundType _soundType;
 	RL2FileHeader _header;
 	int _paletteStart;
 	Common::Array<SoundFrame> _soundFrames;
@@ -168,7 +168,7 @@ private:
 	virtual bool seekIntern(const Audio::Timestamp &time);
 
 public:
-	RL2Decoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
+	RL2Decoder();
 	virtual ~RL2Decoder();
 
 	virtual void close();

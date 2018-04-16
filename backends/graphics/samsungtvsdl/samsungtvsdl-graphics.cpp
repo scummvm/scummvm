@@ -28,11 +28,11 @@
 #include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
 #include "backends/graphics/samsungtvsdl/samsungtvsdl-graphics.h"
 
-SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource)
-	: SurfaceSdlGraphicsManager(sdlEventSource) {
+SamsungTVSdlGraphicsManager::SamsungTVSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window)
+	: SurfaceSdlGraphicsManager(sdlEventSource, window) {
 }
 
-bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+bool SamsungTVSdlGraphicsManager::hasFeature(OSystem::Feature f) const {
 	return
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
 		(f == OSystem::kFeatureCursorPalette);
@@ -48,7 +48,7 @@ void SamsungTVSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enabl
 	}
 }
 
-bool SamsungTVSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+bool SamsungTVSdlGraphicsManager::getFeatureState(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
 		return SurfaceSdlGraphicsManager::getFeatureState(f);

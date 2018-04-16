@@ -70,7 +70,6 @@ NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) 
 	}
 
 	NgiHeader header;
-	NgiHeader *head;
 
 	for (uint i = 0; i < count; i++) {
 		memcpy(header.filename, &fat[i * 32], 12);
@@ -84,33 +83,26 @@ NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) 
 			warning("File has flags: %.8x\n", header.flags & 0x1e0);
 		}
 
-		head = new NgiHeader(header);
-
-		_headers[header.filename] = head;
+		_headers[header.filename].reset(new NgiHeader(header));
 	}
 
 	free(fat);
 
 	g_fp->_currArchive = this;
 
-	debug(0, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
+	debugC(0, kDebugLoading, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
 
 NGIArchive::~NGIArchive() {
-	debug(0, "NGIArchive Destructor Called");
-	NgiHeadersMap::iterator it = _headers.begin();
-	for ( ; it != _headers.end(); ++it) {
-		delete it->_value;
-	}
-
-	g_fp->_currArchive = 0;
+	debugC(0, kDebugLoading, "NGIArchive Destructor Called");
+	g_fp->_currArchive = nullptr;
 }
 
 bool NGIArchive::hasFile(const Common::String &name) const {
 	return _headers.contains(name);
 }
 
-	int NGIArchive::listMembers(Common::ArchiveMemberList &list) const {
+int NGIArchive::listMembers(Common::ArchiveMemberList &list) const {
 	int matches = 0;
 
 	NgiHeadersMap::const_iterator it = _headers.begin();
@@ -134,7 +126,7 @@ Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::
 		return 0;
 	}
 
-	NgiHeader *hdr = _headers[name];
+	NgiHeader *hdr = _headers[name].get();
 
 	Common::File archiveFile;
 	archiveFile.open(_ngiFilename);
@@ -149,7 +141,7 @@ Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::
 	return new Common::MemoryReadStream(data, hdr->size, DisposeAfterUse::YES);
 }
 
-Common::Archive *makeNGIArchive(const Common::String &name) {
+NGIArchive *makeNGIArchive(const Common::String &name) {
 	return new NGIArchive(name);
 }
 

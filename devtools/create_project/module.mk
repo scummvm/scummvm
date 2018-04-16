@@ -2,6 +2,7 @@
 MODULE := devtools/create_project
 
 MODULE_OBJS := \
+	cmake.o \
 	create_project.o \
 	codeblocks.o \
 	msvc.o \

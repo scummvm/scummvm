@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -400,9 +400,12 @@ bool Script::loadAllMasks(Common::Array<Mask> &maskList, int offset) {
 					return false;
 				}
 				delete msStream;
+
+				tempMask._width = tempMask.getWidth();
+				tempMask._height = tempMask.getHeight();
+			} else {
+				return false;
 			}
-			tempMask._width = tempMask.getWidth();
-			tempMask._height = tempMask.getHeight();
 		}
 
 		maskList.push_back(tempMask);
@@ -722,6 +725,17 @@ void Interpreter::O_PUTBACKANIM() {
 		_vm->_script->installSingleBackAnim(_vm->_backAnimList, slot, room->_backAnim);
 	}
 	delete room;
+
+	// WALKAROUND: fix for turning on 'walking bird' background animation too soon,
+	// after completing 'throw a rock' mini-game in Silmaniona location.
+	// Second bird shouldn't appear when normal animation is still in use
+	// in script lines 13814 and 13848
+	if (_currentInstruction == kSecondBirdAnimationScriptFix) {
+		if (_vm->_normAnimList[1]._state == 0) {
+			_vm->_backAnimList[0].backAnims[0]._state = 1;
+		}
+	}
+
 	debugInterpreter("O_PUTBACKANIM roomId %d, slot %d, animId %d", roomId, slot, animId);
 }
 
@@ -1629,7 +1643,7 @@ void Interpreter::O_BACKANIMRANGE() {
 }
 
 void Interpreter::O_CLEARPATH() {
-	for (int i = 0; i < _vm->kPathBitmapLen; i++) {
+	for (uint i = 0; i < _vm->kPathBitmapLen; i++) {
 		_vm->_roomPathBitmap[i] = 255;
 	}
 	debugInterpreter("O_CLEARPATH");

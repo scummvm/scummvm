@@ -1,0 +1,21 @@
+menu: Commands A-O
+alert;beep;clearGlobals;closeDA;closeResFile;closeXLib;continue;cursor;delay;delete;do;dontPassEvent;editableText;go to;go to movie;hilite;installMenu;mci;moveableSprite;nothing;open;openDA;openResFile;openXLib
+menu: Commands P-Z
+pause;play;play done;play movie;playAccel;preLoad;preLoadCast;printFrom;puppetPalette;puppetSound;puppetSprite;puppetTempo;puppetTransition;put ;put after;put before;put into;quit;restart;set;setCallBack;showGlobals;showLocals;showResFile;showXlib;shutDown;sound fadeIn;sound fadeOut;sound playFile;sound stop;spriteBox;startTimer;unLoad;unLoadCast;updateStage;when keyDown;when mouseDown;when mouseUp;when timeOut;zoomBox
+menu: Functions A-L
+abs;char;chars;charToNum;clickOn;colorQD;commandDown;constrainH;constrainV;controlDown;date;doubleClick;factory;floatp;frame;framesToHMS;freeBlock;freeBytes;HMStoFrames;integer;integerp;item;key;keyCode;label;labelList;lastClick;lastEvent;lastKey;lastRoll;length;line
+menu: Functions M-Z
+machineType;marker;memorySize;mouseCast;mouseChar;mouseItem;mouseLine;mouseDown;mouseWord;mouseH;mouseUp;mouseV;movie;multiSound;numToChar;objectp;offset;optionDown;pathName;pauseState;quickTimePresent;ramNeeded;random;result;rollover;selection;shiftDown;sqrt;stageBottom;stageLeft;stageRight;stageTop;stillDown;string;stringp;soundBusy;symbolp;ticks;time;value;word;xfactoryList
+menu: Keywords
+exit;factory;global;if;instance;macro;menu:;method;on;on idle;on startMovie;on stepMovie;on stopMovie;repeat while;repeat with;return
+menu: Operators
+() ;sprite s within ;sprite s intersects ; - ;not ;and ;or ;* ;/ ;mod ;+ ; - ;& ;&& ;< ;<= ;> ;>= ;<> ;contains ;starts ;= 
+menu: Constants
+BACKSPACE ;EMPTY ;ENTER ;FALSE ;QUOTE ;RETURN ;TAB ;TRUE 
+menu: Properties
+beepOn;buttonStyle;centerStage;checkBoxAccess;checkBoxType;colorDepth;exitLock;fixStageSize;floatPrecision;fullColorPermit;imageDirect;keyDownScript;maxInteger;mouseDownScript;mouseUpScript;perFrameHook;romanLingo;soundEnabled;soundLevel;stageColor;switchColorDepth;timeoutKeydown;timeoutLapsed;timeoutLength;timeoutMouse;timeoutPlay;timeoutScript;timer
+menu: Sprite Properties
+backColor;bottom;castNum;constraint;cursor;foreColor;height;immediate;ink;left;lineSize;locH;locV;movieRate;movieTime;pattern;puppet;right;startTime;stopTime;stretch;top;trails;type;visibility;volume;width
+menu: Other Properties
+cast hilite;cast name;cast number;cast picture;cast size;cast text;controller;directToStage;duration;field;field textAlign;field textFont;field textHeight;field textSize;field textStyle;loop;menu checkMark;menu enabled;menu name;menu script;selEnd;selStart;sound;sound volume
+

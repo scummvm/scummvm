@@ -21,22 +21,23 @@
  */
 
 #include "agi/agi.h"
+#include "agi/words.h"
 
 #include "common/textconsole.h"
 
 namespace Agi {
 
-//
-// Local implementation to avoid problems with strndup() used by
-// gcc 3.2 Cygwin (see #635984)
-//
-static char *myStrndup(const char *src, int n) {
-	char *tmp = strncpy((char *)malloc(n + 1), src, n);
-	tmp[n] = 0;
-	return tmp;
+Words::Words(AgiEngine *vm) {
+	_vm = vm;
+
+	clearEgoWords();
 }
 
-int AgiEngine::loadWords_v1(Common::File &f) {
+Words::~Words() {
+	clearEgoWords();
+}
+
+int Words::loadDictionary_v1(Common::File &f) {
 	char str[64];
 	int k;
 
@@ -55,18 +56,21 @@ int AgiEngine::loadWords_v1(Common::File &f) {
 
 		// And store it in our internal dictionary
 		if (k > 0) {
-			AgiWord *w = new AgiWord;
-			w->word = myStrndup(str, k + 1);
-			w->id = f.readUint16LE();
-			_game.words[str[0] - 'a'].push_back(w);
-			debug(3, "'%s' (%d)", w->word, w->id);
+			WordEntry *newWord = new WordEntry;
+			byte firstCharNr = str[0] - 'a';
+
+			newWord->word = Common::String(str, k + 1); // myStrndup(str, k + 1);
+			newWord->id = f.readUint16LE();
+
+			_dictionaryWords[firstCharNr].push_back(newWord);
+			debug(3, "'%s' (%d)", newWord->word.c_str(), newWord->id);
 		}
-	} while((uint8)str[0] != 0xFF);
+	} while ((uint8)str[0] != 0xFF);
 
 	return errOK;
 }
 
-int AgiEngine::loadWords(const char *fname) {
+int Words::loadDictionary(const char *fname) {
 	Common::File fp;
 
 	if (!fp.open(fname)) {
@@ -99,10 +103,10 @@ int AgiEngine::loadWords(const char *fname) {
 			// See bug #3615061
 			if (str[0] == 'a' + i) {
 				// And store it in our internal dictionary
-				AgiWord *w = new AgiWord;
-				w->word = myStrndup(str, k);
-				w->id = fp.readUint16BE();
-				_game.words[i].push_back(w);
+				WordEntry *newWord = new WordEntry;
+				newWord->word = Common::String(str, k);
+				newWord->id = fp.readUint16BE();
+				_dictionaryWords[i].push_back(newWord);
 			}
 
 			k = fp.readByte();
@@ -119,113 +123,254 @@ int AgiEngine::loadWords(const char *fname) {
 	return errOK;
 }
 
-void AgiEngine::unloadWords() {
-	for (int i = 0; i < 26; i++)
-		_game.words[i].clear();
+void Words::unloadDictionary() {
+	for (int16 firstCharNr = 0; firstCharNr < 26; firstCharNr++) {
+		Common::Array<WordEntry *> &dictionary = _dictionaryWords[firstCharNr];
+		int16 dictionarySize = dictionary.size();
+
+		for (int16 dictionaryWordNr = 0; dictionaryWordNr < dictionarySize; dictionaryWordNr++) {
+			delete dictionary[dictionaryWordNr];
+		}
+
+		_dictionaryWords[firstCharNr].clear();
+	}
 }
 
-/**
- * Find a word in the dictionary
- * Uses an algorithm hopefully like the one Sierra used. Returns the ID
- * of the word and the length in flen. Returns -1 if not found.
- */
-int AgiEngine::findWord(const char *word, int *flen) {
-	int c;
-	int result = -1;
+void Words::clearEgoWords() {
+	for (int16 wordNr = 0; wordNr < MAX_WORDS; wordNr++) {
+		_egoWords[wordNr].id = 0;
+		_egoWords[wordNr].word.clear();
+	}
+	_egoWordCount = 0;
+}
 
-	debugC(2, kDebugLevelScripts, "find_word(%s)", word);
 
-	if (word[0] >= 'a' && word[0] <= 'z')
-		c = word[0] - 'a';
-	else
-		return -1;
+static bool isCharSeparator(const char curChar) {
+	switch (curChar) {
+	case ' ':
+	case ',':
+	case '.':
+	case '?':
+	case '!':
+	case '(':
+	case ')':
+	case ';':
+	case ':':
+	case '[':
+	case ']':
+	case '{':
+	case '}':
+		return true;
+		break;
+	default:
+		break;
+	}
+	return false;
+}
 
-	*flen = 0;
-	Common::Array<AgiWord *> &a = _game.words[c];
+static bool isCharInvalid(const char curChar) {
+	switch (curChar) {
+	case 0x27: // '
+	case 0x60: // `
+	case '-':
+	case '\\':
+	case '"':
+		return true;
+		break;
+	default:
+		break;
+	}
+	return false;
+}
 
-	for (int i = 0; i < (int)a.size(); i++) {
-		int wlen = strlen(a[i]->word);
-		// Keep looking till we find the word itself, or the whole phrase.
-		// Try to find the best match (i.e. the longest matching phrase).
-		if (!strncmp(a[i]->word, word, wlen) && (word[wlen] == 0 || word[wlen] == 0x20) && wlen >= *flen) {
-			*flen = wlen;
-			result = a[i]->id;
+void Words::cleanUpInput(const char *rawUserInput, Common::String &cleanInput) {
+	byte curChar = 0;
+
+	cleanInput.clear();
+
+	curChar = *rawUserInput;
+	while (curChar) {
+		// skip separators / invalid characters
+		if (isCharSeparator(curChar) || isCharInvalid(curChar)) {
+			rawUserInput++;
+			curChar = *rawUserInput;
+		} else {
+			do {
+				if (!isCharInvalid(curChar)) {
+					// not invalid char, add it to the cleaned up input
+					cleanInput += curChar;
+				}
+
+				rawUserInput++;
+				curChar = *rawUserInput;
+
+				if (isCharSeparator(curChar)) {
+					cleanInput += ' ';
+					break;
+				}
+			} while (curChar);
 		}
 	}
-
-	return result;
+	if (cleanInput.hasSuffix(" ")) {
+		// ends with a space? remove it
+		cleanInput.deleteLastChar();
+	}
 }
 
-void AgiEngine::dictionaryWords(char *msg) {
-	char *p = NULL;
-	char *q = NULL;
-	int wid, wlen;
+int16 Words::findWordInDictionary(const Common::String &userInputLowcased, uint16 userInputLen, uint16 userInputPos, uint16 &foundWordLen) {
+	uint16 userInputLeft = userInputLen - userInputPos;
+	uint16 wordStartPos = userInputPos;
+	int16 wordId = DICTIONARY_RESULT_UNKNOWN;
+	byte  firstChar = userInputLowcased[userInputPos];
+	byte  curUserInputChar = 0;
 
-	debugC(2, kDebugLevelScripts, "msg = \"%s\"", msg);
+	foundWordLen = 0;
 
-	cleanInput();
-
-	for (p = msg; p && *p && getvar(vWordNotFound) == 0;) {
-		if (*p == 0x20)
-			p++;
-
-		if (*p == 0)
-			break;
-
-		wid = findWord(p, &wlen);
-		debugC(2, kDebugLevelScripts, "find_word(p) == %d", wid);
-
-		switch (wid) {
-		case -1:
-			debugC(2, kDebugLevelScripts, "unknown word");
-			_game.egoWords[_game.numEgoWords].word = strdup(p);
-
-			q = _game.egoWords[_game.numEgoWords].word;
-
-			_game.egoWords[_game.numEgoWords].id = 19999;
-			setvar(vWordNotFound, 1 + _game.numEgoWords);
-
-			_game.numEgoWords++;
-
-			p += strlen(p);
-			break;
-		case 0:
-			// ignore this word
-			debugC(2, kDebugLevelScripts, "ignore word");
-			p += wlen;
-			q = NULL;
-			break;
-		default:
-			// an OK word
-			debugC(3, kDebugLevelScripts, "ok word (%d)", wid);
-			_game.egoWords[_game.numEgoWords].id = wid;
-			_game.egoWords[_game.numEgoWords].word = myStrndup(p, wlen);
-			_game.numEgoWords++;
-			p += wlen;
-			break;
+	if ((firstChar >= 'a') && (firstChar <= 'z')) {
+		// word has to start with a letter
+		if (((userInputPos + 1) < userInputLen) && (userInputLowcased[userInputPos + 1] == ' ')) {
+			// current word is 1 char only?
+			if ((firstChar == 'a') || (firstChar == 'i')) {
+				// and it's "a" or "i"? -> then set current type to ignore
+				wordId = DICTIONARY_RESULT_IGNORE;
+			}
 		}
 
-		if (p != NULL && *p) {
-			debugC(2, kDebugLevelScripts, "p = %s", p);
-			*p = 0;
-			p++;
-		}
+		Common::Array<WordEntry *> &dictionary = _dictionaryWords[firstChar - 'a'];
+		int16 dictionarySize = dictionary.size();
 
-		if (q != NULL) {
-			for (; (*q != 0 && *q != 0x20); q++)
-				;
-			if (*q) {
-				*q = 0;
-				q++;
+		for (int16 dictionaryWordNr = 0; dictionaryWordNr < dictionarySize; dictionaryWordNr++) {
+			WordEntry *dictionaryEntry = dictionary[dictionaryWordNr];
+			uint16 dictionaryWordLen = dictionaryEntry->word.size();
+
+			if (dictionaryWordLen <= userInputLeft) {
+				// dictionary word is longer or same length as the remaining user input
+				uint16 curCompareLeft = dictionaryWordLen;
+				uint16 dictionaryWordPos = 0;
+				byte   curDictionaryChar = 0;
+
+				userInputPos = wordStartPos;
+				while (curCompareLeft) {
+					curUserInputChar = userInputLowcased[userInputPos];
+					curDictionaryChar = dictionaryEntry->word[dictionaryWordPos];
+
+					if (curUserInputChar != curDictionaryChar)
+						break;
+
+					userInputPos++;
+					dictionaryWordPos++;
+					curCompareLeft--;
+				}
+
+				if (!curCompareLeft) {
+					// check, if there is also nothing more of user input left or if a space the follow-up char?
+					if ((userInputPos >= userInputLen) || (userInputLowcased[userInputPos] == ' ')) {
+						// so fully matched, remember match
+						wordId = dictionaryEntry->id;
+						foundWordLen = dictionaryWordLen;
+
+						// perfect match? -> exit loop
+						if (userInputLeft == foundWordLen) {
+							// perfect match -> break
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
 
-	debugC(4, kDebugLevelScripts, "num_ego_words = %d", _game.numEgoWords);
-	if (_game.numEgoWords > 0) {
-		setflag(fEnteredCli, true);
-		setflag(fSaidAcceptedInput, false);
+	if (foundWordLen == 0) {
+		userInputPos = wordStartPos;
+		while (userInputPos < userInputLen) {
+			if (userInputLowcased[userInputPos] == ' ') {
+				break;
+			}
+			userInputPos++;
+		}
+		foundWordLen = userInputPos - wordStartPos;
 	}
+	return wordId;
+}
+
+void Words::parseUsingDictionary(const char *rawUserInput) {
+	Common::String userInput;
+	Common::String userInputLowcased;
+	const char *userInputPtr = nullptr;
+	uint16 userInputLen;
+	uint16 userInputPos = 0;
+	uint16 foundWordPos;
+	int16  foundWordId;
+	uint16 foundWordLen = 0;
+	uint16 wordCount = 0;
+
+	assert(rawUserInput);
+	debugC(2, kDebugLevelScripts, "parse: userinput = \"%s\"", rawUserInput);
+
+	// Reset result
+	clearEgoWords();
+
+	// clean up user input
+	cleanUpInput(rawUserInput, userInput);
+
+	// Sierra compared independent of upper case and lower case
+	userInputLowcased = userInput;
+	userInputLowcased.toLowercase();
+
+	userInputLen = userInput.size();
+	userInputPtr = userInput.c_str();
+
+	while (userInputPos < userInputLen) {
+		// Skip trailing space
+		if (userInput[userInputPos] == ' ')
+			userInputPos++;
+
+		foundWordPos = userInputPos;
+		foundWordId = findWordInDictionary(userInputLowcased, userInputLen, userInputPos, foundWordLen);
+
+		if (foundWordId != DICTIONARY_RESULT_IGNORE) {
+			// word not supposed to get ignored
+			// add it now
+			if (foundWordId != DICTIONARY_RESULT_UNKNOWN) {
+				// known word
+				_egoWords[wordCount].id = foundWordId;
+			}
+
+			_egoWords[wordCount].word = Common::String(userInputPtr + foundWordPos, foundWordLen);
+			debugC(2, kDebugLevelScripts, "found word %s (id %d)", _egoWords[wordCount].word.c_str(), _egoWords[wordCount].id);
+			wordCount++;
+
+			if (foundWordId == DICTIONARY_RESULT_UNKNOWN) {
+				// unknown word
+				_vm->setVar(VM_VAR_WORD_NOT_FOUND, wordCount);
+				break; // and exit now
+			}
+		}
+
+		userInputPos += foundWordLen;
+	}
+
+	_egoWordCount = wordCount;
+
+	debugC(4, kDebugLevelScripts, "ego word count = %d", _egoWordCount);
+	if (_egoWordCount > 0) {
+		_vm->setFlag(VM_FLAG_ENTERED_CLI, true);
+	} else {
+		_vm->setFlag(VM_FLAG_ENTERED_CLI, false);
+	}
+	_vm->setFlag(VM_FLAG_SAID_ACCEPTED_INPUT, false);
+}
+
+uint16 Words::getEgoWordCount() {
+	return _egoWordCount;
+}
+const char *Words::getEgoWord(int16 wordNr) {
+	assert(wordNr >= 0 && wordNr < MAX_WORDS);
+	return _egoWords[wordNr].word.c_str();
+}
+uint16 Words::getEgoWordId(int16 wordNr) {
+	assert(wordNr >= 0 && wordNr < MAX_WORDS);
+	return _egoWords[wordNr].id;
 }
 
 } // End of namespace Agi

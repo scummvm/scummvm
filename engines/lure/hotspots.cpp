@@ -1898,8 +1898,8 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 	endAction();
 
 	strings.getString(room.roomNumber(), buffer);
-	strcat(buffer, "\n\n");
-	strcat(buffer, stringList.getString(S_YOU_ARE_CARRYING));
+	Common::strlcat(buffer, "\n\n", MAX_DESC_SIZE);
+	Common::strlcat(buffer, stringList.getString(S_YOU_ARE_CARRYING), MAX_DESC_SIZE);
 
 	// Scan through the list and add in any items assigned to the player
 	HotspotDataList &list = res.hotspotData();
@@ -1909,25 +1909,25 @@ void Hotspot::doStatus(HotspotData *hotspot) {
 
 		if (rec.roomNumber == PLAYER_ID) {
 			if (numItems++ == 0)
-				strcat(buffer, ": ");
+				Common::strlcat(buffer, ": ", MAX_DESC_SIZE);
 			else
-				strcat(buffer, ", ");
+				Common::strlcat(buffer, ", ", MAX_DESC_SIZE);
 			strings.getString(rec.nameId, buffer + strlen(buffer));
 		}
 	}
 
 	// If there were no items, add in the word 'nothing'
 	if (numItems == 0)
-		strcat(buffer, stringList.getString(S_INV_NOTHING));
+		Common::strlcat(buffer, stringList.getString(S_INV_NOTHING), MAX_DESC_SIZE);
 
 	// If the player has money, add it in
 	uint16 numGroats = res.fieldList().numGroats();
 	if (numGroats > 0) {
-		strcat(buffer, "\n\n");
-		strcat(buffer, stringList.getString(S_YOU_HAVE));
-		sprintf(buffer + strlen(buffer), "%d", numGroats);
-		strcat(buffer, " ");
-		strcat(buffer, stringList.getString((numGroats == 1) ? S_GROAT : S_GROATS));
+		Common::strlcat(buffer, "\n\n", MAX_DESC_SIZE);
+		Common::strlcat(buffer, stringList.getString(S_YOU_HAVE), MAX_DESC_SIZE);
+		snprintf(buffer + strlen(buffer), MAX_DESC_SIZE - strlen(buffer), "%d", numGroats);
+		Common::strlcat(buffer, " ", MAX_DESC_SIZE);
+		Common::strlcat(buffer, stringList.getString((numGroats == 1) ? S_GROAT : S_GROATS), MAX_DESC_SIZE); // Make sure we're not overrunning
 	}
 
 	// Display the dialog
@@ -2713,7 +2713,7 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		pathFinder.reset(paths);
 		h.currentActions().top().setAction(PROCESSING_PATH);
 
-		// Deliberate fall through to processing walking path
+		// fall through
 
 	case PROCESSING_PATH:
 		// Handle processing pathfinding
@@ -2800,6 +2800,8 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 		// otherwise break out to exit method
 		if (h.currentActions().isEmpty() || h.currentActions().top().action() != WALKING)
 			break;
+
+		// fall through
 
 	case WALKING:
 		// The character is currently moving
@@ -3061,7 +3063,8 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		// Set current action to processing walking path
 		actions.pop();
 		h.currentActions().addFront(PROCESSING_PATH, h.roomNumber());
-		// Deliberate fall through to processing walking path
+
+		// fall through
 
 	case PROCESSING_PATH:
 		h.setCharacterMode(CHARMODE_NONE);
@@ -3111,7 +3114,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		if (mouse.getCursorNum() != CURSOR_CAMERA)
 			mouse.setCursorNum(CURSOR_ARROW);
 
-		// Deliberate fall through to walking
+		// fall through
 
 	case WALKING:
 		// The character is currently moving
@@ -3469,7 +3472,7 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 		if (room.isDialogShowing())
 			return;
 
-		// Fall through to TALK_START
+		// fall through
 
 	case TALK_START:
 		// Handle initial setup of talking options
@@ -3599,6 +3602,8 @@ void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 
 		if (res.getTalkingCharacter() != 0)
 			return;
+
+		// fall through
 
 	case TALK_RESPOND_3:
 		// Respond
@@ -4045,7 +4050,8 @@ void HotspotTickHandlers::rackSerfAnimHandler(Hotspot &h) {
 		h.setActionCtr(4);
 		h.setLayer(2);
 
-		// Deliberate fall-through
+		// fall through
+
 	case 4:
 		if (HotspotScript::execute(&h)) {
 			h.setLayer(255);

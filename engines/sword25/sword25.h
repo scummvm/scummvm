@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SWORD25_H
-#define SWORD25_H
+#ifndef SWORD25_SWORD25_H
+#define SWORD25_SWORD25_H
 
 #include "common/scummsys.h"
 #include "engines/engine.h"

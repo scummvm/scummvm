@@ -49,6 +49,8 @@ class SeekableReadStream;
 
 namespace LastExpress {
 
+class LastExpress_ADPCMStream;
+
 class SimpleSound {
 public:
 	SimpleSound();
@@ -59,7 +61,7 @@ public:
 
 protected:
 	void loadHeader(Common::SeekableReadStream *in);
-	Audio::AudioStream *makeDecoder(Common::SeekableReadStream *in, uint32 size, int32 filterId = -1) const;
+	LastExpress_ADPCMStream *makeDecoder(Common::SeekableReadStream *in, uint32 size, int32 filterId = -1) const;
 	void play(Audio::AudioStream *as);
 
 	uint32 _size;   ///< data size
@@ -82,7 +84,7 @@ public:
 	void setFilterId(int32 filterId);
 
 private:
-	Audio::AudioStream *_as;
+	LastExpress_ADPCMStream *_as;
 	bool _loaded;
 };
 

@@ -27,7 +27,7 @@
 #include "common/memstream.h"
 #include "common/system.h"
 
-#include "audio/fmopl.h"
+#include "audio/mididrv.h"
 
 #include "sci/resource.h"
 #include "sci/engine/features.h"
@@ -36,6 +36,93 @@
 #include "sci/sound/drivers/map-mt32-to-gm.h"
 
 namespace Sci {
+
+#ifdef ENABLE_SCI32
+static const byte defaultSci32GMPatch[] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
+	0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F,
+	0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F,
+	0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+	0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F,
+	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F,
+	0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
+	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5E, 0x5F,
+	0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F,
+	0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E, 0x7F,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
+	0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E,
+	0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E,
+	0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E,
+	0x3F, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E,
+	0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5E,
+	0x5F, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E,
+	0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E,
+	0x7F, 0x00, 0x20, 0x20, 0x21, 0x21, 0x22, 0x22, 0x23, 0x23, 0x24, 0x24, 0x25, 0x25, 0x26, 0x26,
+	0x27, 0x27, 0x28, 0x28, 0x29, 0x29, 0x2A, 0x2A, 0x2B, 0x2B, 0x2C, 0x2C, 0x2D, 0x2D, 0x2E, 0x2E,
+	0x2F, 0x2F, 0x30, 0x30, 0x31, 0x31, 0x32, 0x32, 0x33, 0x33, 0x34, 0x34, 0x35, 0x35, 0x36, 0x36,
+	0x37, 0x37, 0x38, 0x38, 0x39, 0x39, 0x3A, 0x3A, 0x3B, 0x3B, 0x3C, 0x3C, 0x3D, 0x3D, 0x3E, 0x3E,
+	0x3F, 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E,
+	0x4F, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5D, 0x5E,
+	0x5F, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 0x6C, 0x6D, 0x6E,
+	0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x7E,
+	0x7F, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
+	0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E,
+	0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E,
+	0x2F, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E,
+	0x3F, 0x40, 0x41, 0x42, 0x42, 0x43, 0x43, 0x44, 0x44, 0x45, 0x45, 0x46, 0x46, 0x47, 0x47, 0x48,
+	0x48, 0x49, 0x49, 0x4A, 0x4A, 0x4B, 0x4B, 0x4C, 0x4C, 0x4D, 0x4D, 0x4E, 0x4E, 0x4F, 0x4F, 0x50,
+	0x50, 0x51, 0x51, 0x52, 0x52, 0x53, 0x53, 0x54, 0x54, 0x55, 0x55, 0x56, 0x56, 0x57, 0x57, 0x58,
+	0x58, 0x59, 0x59, 0x5A, 0x5A, 0x5B, 0x5B, 0x5C, 0x5C, 0x5D, 0x5D, 0x5E, 0x5E, 0x5F, 0x5F, 0x60,
+	0x60, 0x00, 0x20, 0x20, 0x21, 0x21, 0x22, 0x22, 0x23, 0x23, 0x24, 0x24, 0x25, 0x25, 0x26, 0x26,
+	0x27, 0x27, 0x28, 0x28, 0x29, 0x29, 0x2A, 0x2A, 0x2B, 0x2B, 0x2C, 0x2C, 0x2D, 0x2D, 0x2E, 0x2E,
+	0x2F, 0x2F, 0x30, 0x30, 0x31, 0x31, 0x32, 0x32, 0x33, 0x33, 0x34, 0x34, 0x35, 0x35, 0x36, 0x36,
+	0x37, 0x37, 0x38, 0x38, 0x39, 0x39, 0x3A, 0x3A, 0x3B, 0x3B, 0x3C, 0x3C, 0x3D, 0x3D, 0x3E, 0x3E,
+	0x3F, 0x40, 0x41, 0x42, 0x42, 0x43, 0x43, 0x44, 0x44, 0x45, 0x45, 0x46, 0x46, 0x47, 0x47, 0x48,
+	0x48, 0x49, 0x49, 0x4A, 0x4A, 0x4B, 0x4B, 0x4C, 0x4C, 0x4D, 0x4D, 0x4E, 0x4E, 0x4F, 0x4F, 0x50,
+	0x50, 0x51, 0x51, 0x52, 0x52, 0x53, 0x53, 0x54, 0x54, 0x55, 0x55, 0x56, 0x56, 0x57, 0x57, 0x58,
+	0x58, 0x59, 0x59, 0x5A, 0x5A, 0x5B, 0x5B, 0x5C, 0x5C, 0x5D, 0x5D, 0x5E, 0x5E, 0x5F, 0x5F, 0x60,
+	0x60, 0x9B, 0x00, 0xF0, 0x41, 0x10, 0x42, 0x12, 0x40, 0x00, 0x7F, 0x00, 0x41, 0xF7, 0xB0, 0x65,
+	0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00, 0xB1, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00,
+	0xB2, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00, 0xB3, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C,
+	0x26, 0x00, 0xB4, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00, 0xB5, 0x65, 0x00, 0x64, 0x00,
+	0x06, 0x0C, 0x26, 0x00, 0xB6, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00, 0xB7, 0x65, 0x00,
+	0x64, 0x00, 0x06, 0x0C, 0x26, 0x00, 0xB8, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00, 0xB9,
+	0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00, 0xBA, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26,
+	0x00, 0xBB, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00, 0xBC, 0x65, 0x00, 0x64, 0x00, 0x06,
+	0x0C, 0x26, 0x00, 0xBD, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00, 0xBE, 0x65, 0x00, 0x64,
+	0x00, 0x06, 0x0C, 0x26, 0x00, 0xBF, 0x65, 0x00, 0x64, 0x00, 0x06, 0x0C, 0x26, 0x00
+};
+#endif
 
 Mt32ToGmMapList *Mt32dynamicMappings = NULL;
 
@@ -47,41 +134,48 @@ public:
 		kMaxSysExSize = 264
 	};
 
+	enum Mt32Type {
+		kMt32TypeNone,
+		kMt32TypeReal,
+		kMt32TypeEmulated
+	};
+
 	MidiPlayer_Midi(SciVersion version);
 	virtual ~MidiPlayer_Midi();
 
-	int open(ResourceManager *resMan);
-	void close();
-	void send(uint32 b);
-	void sysEx(const byte *msg, uint16 length);
-	bool hasRhythmChannel() const { return true; }
-	byte getPlayId() const;
-	int getPolyphony() const {
+	int open(ResourceManager *resMan) override;
+	void close() override;
+	void send(uint32 b) override;
+	void sysEx(const byte *msg, uint16 length) override;
+	bool hasRhythmChannel() const override { return true; }
+	byte getPlayId() const override;
+	int getPolyphony() const override {
 		if (g_sci && g_sci->_features->useAltWinGMSound())
 			return 16;
 		else
 			return kVoices;
 	}
-	int getFirstChannel() const;
-	int getLastChannel() const;
-	void setVolume(byte volume);
-	int getVolume();
-	void setReverb(int8 reverb);
-	void playSwitch(bool play);
+	int getFirstChannel() const override;
+	int getLastChannel() const override;
+	void setVolume(byte volume) override;
+	virtual void onNewSound() override;
+	int getVolume() override;
+	void setReverb(int8 reverb) override;
+	void playSwitch(bool play) override;
 
 private:
-	bool isMt32GmPatch(const byte *data, int size);
-	void readMt32GmPatch(const byte *data, int size);
-	void readMt32Patch(const byte *data, int size);
+	bool isMt32GmPatch(const SciSpan<const byte> &data);
+	void readMt32GmPatch(const SciSpan<const byte> &data);
+	void readMt32Patch(const SciSpan<const byte> &data);
 	void readMt32DrvData();
 
-	void mapMt32ToGm(byte *data, size_t size);
+	void mapMt32ToGm(const SciSpan<const byte> &data);
 	uint8 lookupGmInstrument(const char *iname);
 	uint8 lookupGmRhythmKey(const char *iname);
 	uint8 getGmInstrument(const Mt32ToGmMap &Mt32Ins);
 
-	void sendMt32SysEx(const uint32 addr, Common::SeekableReadStream *str, int len, bool noDelay);
-	void sendMt32SysEx(const uint32 addr, const byte *buf, int len, bool noDelay);
+	void sendMt32SysEx(const uint32 addr, Common::SeekableReadStream &data, const int len, bool noDelay);
+	void sendMt32SysEx(const uint32 addr, const SciSpan<const byte> &data, bool noDelay);
 	void setMt32Volume(byte volume);
 	void resetMt32();
 
@@ -104,13 +198,14 @@ private:
 			keyShift(0), volAdjust(0), pan(0x40), hold(0), volume(0x7f) { }
 	};
 
-	bool _isMt32;
+	Mt32Type _mt32Type;
 	bool _useMT32Track;
 	bool _hasReverb;
 	bool _playSwitch;
 	int _masterVolume;
 
 	byte _reverbConfig[kReverbConfigNr][3];
+	int8 _defaultReverb;
 	Channel _channels[16];
 	uint8 _percussionMap[128];
 	int8 _keyShift[128];
@@ -127,12 +222,17 @@ private:
 	byte _sysExBuf[kMaxSysExSize];
 };
 
-MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _useMT32Track(true) {
+MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _mt32Type(kMt32TypeNone), _hasReverb(false), _defaultReverb(-1), _useMT32Track(true) {
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
 	_driver = MidiDriver::createMidi(dev);
 
-	if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32"))
-		_isMt32 = true;
+	if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32")) {
+		if (MidiDriver::getDeviceString(dev, MidiDriver::kDriverId) == "mt32") {
+			_mt32Type = kMt32TypeEmulated;
+		} else {
+			_mt32Type = kMt32TypeReal;
+		}
+	}
 
 	_sysExBuf[0] = 0x41;
 	_sysExBuf[1] = 0x10;
@@ -352,13 +452,13 @@ void MidiPlayer_Midi::send(uint32 b) {
 // We return 1 for mt32, because if we remap channels to 0 for mt32, those won't get played at all
 // NOTE: SSCI uses channels 1 through 8 for General MIDI as well, in the drivers I checked
 int MidiPlayer_Midi::getFirstChannel() const {
-	if (_isMt32)
+	if (_mt32Type != kMt32TypeNone)
 		return 1;
 	return 0;
 }
 
 int MidiPlayer_Midi::getLastChannel() const {
-	if (_isMt32)
+	if (_mt32Type != kMt32TypeNone)
 		return 8;
 	return 15;
 }
@@ -379,11 +479,20 @@ int MidiPlayer_Midi::getVolume() {
 	return _masterVolume;
 }
 
+void MidiPlayer_Midi::onNewSound() {
+	if (_defaultReverb >= 0)
+		// SCI0 in combination with MT-32 requires a reset of the reverb to
+		// the default value that is present in either the MT-32 patch data
+		// or MT32.DRV itself.
+		setReverb(_defaultReverb);
+}
+
 void MidiPlayer_Midi::setReverb(int8 reverb) {
 	assert(reverb < kReverbConfigNr);
 
-	if (_hasReverb && (_reverb != reverb))
-		sendMt32SysEx(0x100001, _reverbConfig[reverb], 3, true);
+	if (_hasReverb && _reverb != reverb) {
+		sendMt32SysEx(0x100001, SciSpan<const byte>(_reverbConfig[reverb], 3), true);
+	}
 
 	_reverb = reverb;
 }
@@ -398,7 +507,9 @@ void MidiPlayer_Midi::playSwitch(bool play) {
 	}
 }
 
-bool MidiPlayer_Midi::isMt32GmPatch(const byte *data, int size) {
+bool MidiPlayer_Midi::isMt32GmPatch(const SciSpan<const byte> &data) {
+	uint32 size = data.size();
+
 	// WORKAROUND: Some Mac games (e.g. LSL5) may have an extra byte at the
 	// end, so compensate for that here - bug #6725.
 	if (size == 16890)
@@ -419,21 +530,21 @@ bool MidiPlayer_Midi::isMt32GmPatch(const byte *data, int size) {
 
 	// First, check for a GM patch. The presence of MIDI data after the
 	// initial 1153 + 2 bytes indicates a GM patch
-	if (READ_LE_UINT16(data + 1153) + 1155 == size)
+	if (data.getUint16LEAt(1153) + 1155U == size)
 		isMt32Gm = true;
 
 	// Now check for a regular MT-32 patch. Check readMt32Patch() below for
 	// more info.
 	// 491 = 20 + 20 + 20 + 2 + 1 + 11 + 3 * 11 + 256 + 128
 	byte timbresNr = data[491];
-	int pos = 492 + 246 * timbresNr;
+	uint pos = 492 + 246 * timbresNr;
 
 	// Patches 49-96
-	if ((size >= (pos + 386)) && (READ_BE_UINT16(data + pos) == 0xabcd))
+	if (size >= pos + 386 && data.getUint16BEAt(pos) == 0xabcd)
 		pos += 386;	// 256 + 128 + 2
 
 	// Rhythm key map + partial reserve
-	if ((size >= (pos + 267)) && (READ_BE_UINT16(data + pos) == 0xdcba))
+	if (size >= pos + 267 && data.getUint16BEAt(pos) == 0xdcba)
 		pos += 267;	// 256 + 9 + 2
 
 	if (size == pos)
@@ -445,7 +556,7 @@ bool MidiPlayer_Midi::isMt32GmPatch(const byte *data, int size) {
 	return isMt32Gm;
 }
 
-void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStream *str, int len, bool noDelay = false) {
+void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStream &stream, int len, bool noDelay = false) {
 	if (len + 8 > kMaxSysExSize) {
 		warning("SysEx message exceed maximum size; ignoring");
 		return;
@@ -457,8 +568,7 @@ void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStrea
 	_sysExBuf[5] = (addr >> 8) & 0xff;
 	_sysExBuf[6] = addr & 0xff;
 
-	for (int i = 0; i < len; i++)
-		_sysExBuf[7 + i] = str->readByte();
+	stream.read(_sysExBuf + 7, len);
 
 	for (int i = 4; i < 7 + len; i++)
 		chk -= _sysExBuf[i];
@@ -471,98 +581,94 @@ void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, Common::SeekableReadStrea
 		sysEx(_sysExBuf, len + 8);
 }
 
-void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, const byte *buf, int len, bool noDelay = false) {
-	Common::MemoryReadStream *str = new Common::MemoryReadStream(buf, len);
-	sendMt32SysEx(addr, str, len, noDelay);
-	delete str;
+void MidiPlayer_Midi::sendMt32SysEx(const uint32 addr, const SciSpan<const byte> &buf, bool noDelay = false) {
+	Common::MemoryReadStream stream(buf.toStream());
+	sendMt32SysEx(addr, stream, buf.size(), noDelay);
 }
 
-void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
-	// MT-32 patch contents:
-	// - 20 bytes unkown
-	// - 20 bytes before-SysEx message
-	// - 20 bytes goodbye SysEx message
-	// - 2 bytes volume
-	// - 1 byte reverb
-	// - 11 bytes reverb Sysex message
-	// - 3 * 11 reverb data
-	// - 256 + 128 bytes patches 1-48
-	// --> total: 491 bytes
-	// - 1 byte number of timbres (64 max)
-	// - 246 * timbres timbre data
-	// - 2 bytes flag (0xabcd)
-	// - 256 + 128 bytes patches 49-96
-	// - 2 bytes flag (0xdcba)
-	// - 256 bytes rhythm key map
-	// - 9 bytes partial reserve
 
-	Common::MemoryReadStream *str = new Common::MemoryReadStream(data, size);
+void MidiPlayer_Midi::readMt32Patch(const SciSpan<const byte> &data) {
+	// MT-32 patch contents:
+	// - 0-19        after-SysEx message
+	// - 20-39       before-SysEx message
+	// - 40-59       goodbye SysEx message
+	// - 60-61       volume
+	// - 62          reverb
+	// - 63-73       reverb Sysex message
+	// - 74-106      [3 * 11] reverb data
+	// - 107-490     [256 + 128] patches 1-48
+	// --> total: 491 bytes
+	// - 491         number of timbres (64 max)
+	// - 492..n      [246 * number of timbres] timbre data
+	// - n-n+1       flag (0xabcd)
+	// - n+2-n+385   [256 + 128] patches 49-96
+	// - n+386-n+387 flag (0xdcba)
+	// - n+388-n+643 rhythm key map
+	// - n+644-n+652 partial reserve
+
+	Common::MemoryReadStream stream(data.toStream());
 
 	// Send before-SysEx text
-	str->seek(20);
-	sendMt32SysEx(0x200000, str, 20);
+	stream.seek(20);
+	sendMt32SysEx(0x200000, stream, 20);
 
 	// Save goodbye message
-	str->read(_goodbyeMsg, 20);
+	assert(sizeof(_goodbyeMsg) == 20);
+	stream.read(_goodbyeMsg, 20);
 
-	byte volume = CLIP<uint16>(str->readUint16LE(), 0, 100);
+	const uint8 volume = MIN<uint16>(stream.readUint16LE(), 100);
 	setMt32Volume(volume);
 
 	// Reverb default only used in (roughly) SCI0/SCI01
-	byte reverb = str->readByte();
+	_defaultReverb = stream.readSByte();
 
 	_hasReverb = true;
 
 	// Skip reverb SysEx message
-	str->seek(11, SEEK_CUR);
+	stream.seek(11, SEEK_CUR);
 
 	// Read reverb data (stored vertically - patch #3117434)
 	for (int j = 0; j < 3; ++j) {
 		for (int i = 0; i < kReverbConfigNr; i++) {
-			_reverbConfig[i][j] = str->readByte();
+			_reverbConfig[i][j] = stream.readByte();
 		}
 	}
 
 	// Patches 1-48
-	sendMt32SysEx(0x50000, str, 256);
-	sendMt32SysEx(0x50200, str, 128);
+	sendMt32SysEx(0x50000, stream, 256);
+	sendMt32SysEx(0x50200, stream, 128);
 
 	// Timbres
-	byte timbresNr = str->readByte();
+	const uint8 timbresNr = stream.readByte();
 	for (int i = 0; i < timbresNr; i++)
-		sendMt32SysEx(0x80000 + (i << 9), str, 246);
+		sendMt32SysEx(0x80000 + (i << 9), stream, 246);
 
-	uint16 flag = str->readUint16BE();
+	uint16 flag = stream.readUint16BE();
 
-	if (!str->eos() && (flag == 0xabcd)) {
+	if (!stream.eos() && flag == 0xabcd) {
 		// Patches 49-96
-		sendMt32SysEx(0x50300, str, 256);
-		sendMt32SysEx(0x50500, str, 128);
-		flag = str->readUint16BE();
+		sendMt32SysEx(0x50300, stream, 256);
+		sendMt32SysEx(0x50500, stream, 128);
+		flag = stream.readUint16BE();
 	}
 
-	if (!str->eos() && (flag == 0xdcba)) {
+	if (!stream.eos() && flag == 0xdcba) {
 		// Rhythm key map
-		sendMt32SysEx(0x30110, str, 256);
+		sendMt32SysEx(0x30110, stream, 256);
 		// Partial reserve
-		sendMt32SysEx(0x100004, str, 9);
+		sendMt32SysEx(0x100004, stream, 9);
 	}
-
-	// Reverb for SCI0
-	if (_version <= SCI_VERSION_0_LATE)
-		setReverb(reverb);
 
 	// Send after-SysEx text
-	str->seek(0);
-	sendMt32SysEx(0x200000, str, 20);
+	stream.seek(0);
+	sendMt32SysEx(0x200000, stream, 20);
 
 	// Send the mystery SysEx
-	sendMt32SysEx(0x52000a, (const byte *)"\x16\x16\x16\x16\x16\x16", 6);
-
-	delete str;
+	Common::MemoryReadStream mystery((const byte *)"\x16\x16\x16\x16\x16\x16", 6);
+	sendMt32SysEx(0x52000a, mystery, 6);
 }
 
-void MidiPlayer_Midi::readMt32GmPatch(const byte *data, int size) {
+void MidiPlayer_Midi::readMt32GmPatch(const SciSpan<const byte> &data) {
 	// GM patch contents:
 	// - 128 bytes patch map
 	// - 128 bytes key shift
@@ -573,21 +679,21 @@ void MidiPlayer_Midi::readMt32GmPatch(const byte *data, int size) {
 	// - 512 bytes velocity map
 	// --> total: 1153 bytes
 
-	memcpy(_patchMap, data, 128);
-	memcpy(_keyShift, data + 128, 128);
-	memcpy(_volAdjust, data + 256, 128);
-	memcpy(_percussionMap, data + 384, 128);
+	data.subspan(0, sizeof(_patchMap)).unsafeCopyDataTo(_patchMap);
+	data.subspan(128, sizeof(_keyShift)).unsafeCopyDataTo(_keyShift);
+	data.subspan(256, sizeof(_volAdjust)).unsafeCopyDataTo(_volAdjust);
+	data.subspan(384, sizeof(_percussionMap)).unsafeCopyDataTo(_percussionMap);
 	_channels[MIDI_RHYTHM_CHANNEL].volAdjust = data[512];
-	memcpy(_velocityMapIdx, data + 513, 128);
-	memcpy(_velocityMap, data + 641, 512);
+	data.subspan(513, sizeof(_velocityMapIdx)).unsafeCopyDataTo(_velocityMapIdx);
+	data.subspan(641, sizeof(_velocityMap)).unsafeCopyDataTo(_velocityMap);
 
-	uint16 midiSize = READ_LE_UINT16(data + 1153);
+	uint16 midiSize = data.getUint16LEAt(1153);
 
 	if (midiSize > 0) {
-		if (size < midiSize + 1155)
+		if (data.size() < midiSize + 1155U)
 			error("Failed to read MIDI data");
 
-		const byte *midi = data + 1155;
+		const SciSpan<const byte> midi = data.subspan(1155, midiSize);
 		byte command = 0;
 		uint i = 0;
 
@@ -599,15 +705,16 @@ void MidiPlayer_Midi::readMt32GmPatch(const byte *data, int size) {
 
 			switch (command & 0xf0) {
 			case 0xf0: {
-				const byte *sysExEnd = (const byte *)memchr(midi + i, 0xf7, midiSize - i);
+				const byte *sysExStart = midi.getUnsafeDataAt(i, midiSize - i);
+				const byte *sysExEnd = (const byte *)memchr(sysExStart, 0xf7, midiSize - i);
 
 				if (!sysExEnd)
 					error("Failed to find end of sysEx");
 
-				int len = sysExEnd - (midi + i);
-				sysEx(midi + i, len);
+				int len = sysExEnd - sysExStart;
+				sysEx(sysExStart, len);
 
-				i += len + 1; // One more for the 0x7f
+				i += len + 1; // One more for the 0xf7
 				break;
 			}
 			case 0x80:
@@ -656,13 +763,13 @@ void MidiPlayer_Midi::readMt32DrvData() {
 			f.seek(-2, SEEK_CUR);
 
 		// Send before-SysEx text
-		sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);
+		sendMt32SysEx(0x200000, f, 20);
 
 		if (size != 2271) {
 			// Send after-SysEx text (SSCI sends this before every song).
 			// There aren't any SysEx calls in old drivers, so this can
 			// be sent right after the before-SysEx text.
-			sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);
+			sendMt32SysEx(0x200000, f, 20);
 		} else {
 			// Skip the after-SysEx text in the newer patch version, we'll send
 			// it after the SysEx messages are sent.
@@ -679,7 +786,7 @@ void MidiPlayer_Midi::readMt32DrvData() {
 
 		if (size == 2771) {
 			// MT32.DRV in LSL2 early contains more data, like a normal patch
-			byte reverb = f.readByte();
+			_defaultReverb = f.readByte();
 
 			_hasReverb = true;
 
@@ -696,14 +803,12 @@ void MidiPlayer_Midi::readMt32DrvData() {
 			f.skip(2235);	// skip driver code
 
 			// Patches 1-48
-			sendMt32SysEx(0x50000, static_cast<Common::SeekableReadStream *>(&f), 256);
-			sendMt32SysEx(0x50200, static_cast<Common::SeekableReadStream *>(&f), 128);
-
-			setReverb(reverb);
+			sendMt32SysEx(0x50000, f, 256);
+			sendMt32SysEx(0x50200, f, 128);
 
 			// Send the after-SysEx text
 			f.seek(0x3d);
-			sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);
+			sendMt32SysEx(0x200000, f, 20);
 		} else {
 			byte reverbSysEx[13];
 			// This old driver should have a full reverb SysEx
@@ -775,11 +880,11 @@ uint8 MidiPlayer_Midi::getGmInstrument(const Mt32ToGmMap &Mt32Ins) {
 		return Mt32Ins.gmInstr;
 }
 
-void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
+void MidiPlayer_Midi::mapMt32ToGm(const SciSpan<const byte> &data) {
 	// FIXME: Clean this up
 	int memtimbres, patches;
 	uint8 group, number, keyshift, /*finetune,*/ bender_range;
-	uint8 *patchpointer;
+	SciSpan<const byte> patchpointer;
 	uint32 pos;
 	int i;
 
@@ -791,10 +896,10 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 	for (i = 0; i < 128; i++)
 		_percussionMap[i] = Mt32PresetRhythmKeymap[i];
 
-	memtimbres = *(data + 0x1eb);
+	memtimbres = data[0x1eb];
 	pos = 0x1ec + memtimbres * 0xf6;
 
-	if (size > pos && ((0x100 * *(data + pos) + *(data + pos + 1)) == 0xabcd)) {
+	if (data.size() > pos && data.getUint16BEAt(pos) == 0xabcd) {
 		patches = 96;
 		pos += 2 + 8 * 48;
 	} else {
@@ -807,18 +912,18 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 	debugC(kDebugLevelSound, "\n[MT32-to-GM] Mapping patches..");
 
 	for (i = 0; i < patches; i++) {
-		char name[11];
+		Common::String name;
 
 		if (i < 48)
-			patchpointer = data + 0x6b + 8 * i;
+			patchpointer = data.subspan(0x6b + 8 * i);
 		else
-			patchpointer = data + 0x1ec + 8 * (i - 48) + memtimbres * 0xf6 + 2;
+			patchpointer = data.subspan(0x1ec + 8 * (i - 48) + memtimbres * 0xf6 + 2);
 
-		group = *patchpointer;
-		number = *(patchpointer + 1);
-		keyshift = *(patchpointer + 2);
-		//finetune = *(patchpointer + 3);
-		bender_range = *(patchpointer + 4);
+		group = patchpointer[0];
+		number = patchpointer[1];
+		keyshift = patchpointer[2];
+		//finetune = patchpointer[3];
+		bender_range = patchpointer[4];
 
 		debugCN(kDebugLevelSound, "  [%03d] ", i);
 
@@ -832,10 +937,9 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 			break;
 		case 2:
 			if (number < memtimbres) {
-				strncpy(name, (const char *)data + 0x1ec + number * 0xf6, 10);
-				name[10] = 0;
-				_patchMap[i] = lookupGmInstrument(name);
-				debugCN(kDebugLevelSound, "%s -> ", name);
+				name = data.getStringAt(0x1ec + number * 0xf6, 10);
+				_patchMap[i] = lookupGmInstrument(name.c_str());
+				debugCN(kDebugLevelSound, "%s -> ", name.c_str());
 			} else {
 				_patchMap[i] = 0xff;
 				debugCN(kDebugLevelSound, "[Invalid]  -> ");
@@ -865,21 +969,19 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 		_pitchBendRange[i] = CLIP<uint8>(bender_range, 0, 24);
 	}
 
-	if (size > pos && ((0x100 * *(data + pos) + *(data + pos + 1)) == 0xdcba)) {
+	if (data.size() > pos && data.getUint16BEAt(pos) == 0xdcba) {
 		debugC(kDebugLevelSound, "\n[MT32-to-GM] Mapping percussion..");
 
 		for (i = 0; i < 64; i++) {
-			number = *(data + pos + 4 * i + 2);
+			number = data[pos + 4 * i + 2];
 			byte ins = i + 24;
 
 			debugCN(kDebugLevelSound, "  [%03d] ", ins);
 
 			if (number < 64) {
-				char name[11];
-				strncpy(name, (const char *)data + 0x1ec + number * 0xf6, 10);
-				name[10] = 0;
-				debugCN(kDebugLevelSound, "%s -> ", name);
-				_percussionMap[ins] = lookupGmRhythmKey(name);
+				Common::String name = data.getStringAt(0x1ec + number * 0xf6, 10);
+				debugCN(kDebugLevelSound, "%s -> ", name.c_str());
+				_percussionMap[ins] = lookupGmRhythmKey(name.c_str());
 			} else {
 				if (number < 94) {
 					debugCN(kDebugLevelSound, "%s -> ", Mt32RhythmTimbreMaps[number - 64].name);
@@ -897,20 +999,24 @@ void MidiPlayer_Midi::mapMt32ToGm(byte *data, size_t size) {
 				debugC(kDebugLevelSound, "%s", GmPercussionNames[_percussionMap[ins]]);
 #endif
 
-			_percussionVelocityScale[ins] = *(data + pos + 4 * i + 3) * 127 / 100;
+			_percussionVelocityScale[ins] = data[pos + 4 * i + 3] * 127 / 100;
 		}
 	}
 }
 
 void MidiPlayer_Midi::setMt32Volume(byte volume) {
-	sendMt32SysEx(0x100016, &volume, 1);
+	Common::MemoryReadStream s(&volume, 1);
+	sendMt32SysEx(0x100016, s, 1);
 }
 
 void MidiPlayer_Midi::resetMt32() {
-	sendMt32SysEx(0x7f0000, (const byte *)"\x01\x00", 2, true);
+	Common::MemoryReadStream s((const byte *)"\x01\x00", 2);
+	sendMt32SysEx(0x7f0000, s, 2, true);
 
-	// This seems to require a longer delay than usual
-	g_system->delayMillis(150);
+	if (_mt32Type != kMt32TypeEmulated) {
+		// This seems to require a longer delay than usual
+		g_sci->sleep(150);
+	}
 }
 
 int MidiPlayer_Midi::open(ResourceManager *resMan) {
@@ -937,11 +1043,11 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		_percussionVelocityScale[i] = 127;
 	}
 
-	Resource *res = NULL;
+	Resource *res = nullptr;
 
 	if (g_sci && g_sci->_features->useAltWinGMSound()) {
-		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), 0);
-		if (!(res && isMt32GmPatch(res->data, res->size))) {
+		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), false);
+		if (!res || !isMt32GmPatch(*res)) {
 			// Don't do any mapping when a Windows alternative track is selected
 			// and no MIDI patch is available
 			_useMT32Track = false;
@@ -949,19 +1055,19 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		}
 	}
 
-	if (_isMt32) {
+	if (_mt32Type != kMt32TypeNone) {
 		// MT-32
 		resetMt32();
 
-		res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
+		res = resMan->findResource(ResourceId(kResourceTypePatch, 1), false);
 
 		if (res) {
-			if (isMt32GmPatch(res->data, res->size)) {
-				readMt32GmPatch(res->data, res->size);
+			if (isMt32GmPatch(*res)) {
+				readMt32GmPatch(*res);
 				// Note that _goodbyeMsg is not zero-terminated
 				memcpy(_goodbyeMsg, "      ScummVM       ", 20);
 			} else {
-				readMt32Patch(res->data, res->size);
+				readMt32Patch(*res);
 			}
 		} else {
 			// Early SCI0 games have the sound bank embedded in the MT-32 driver
@@ -969,22 +1075,22 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		}
 	} else {
 		// General MIDI
-		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), 0);
+		res = resMan->findResource(ResourceId(kResourceTypePatch, 4), false);
 
-		if (res && isMt32GmPatch(res->data, res->size)) {
+		if (res && isMt32GmPatch(*res)) {
 			// There is a GM patch
-			readMt32GmPatch(res->data, res->size);
+			readMt32GmPatch(*res);
 
 			if (g_sci && g_sci->_features->useAltWinGMSound()) {
 				// Always use the GM track if an alternative GM Windows soundtrack is selected
 				_useMT32Track = false;
 			} else {
 				// Detect the format of patch 1, so that we know what play mask to use
-				res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
+				res = resMan->findResource(ResourceId(kResourceTypePatch, 1), false);
 				if (!res)
 					_useMT32Track = false;
 				else
-					_useMT32Track = !isMt32GmPatch(res->data, res->size);
+					_useMT32Track = !isMt32GmPatch(*res);
 
 				// Check if the songs themselves have a GM track
 				if (!_useMT32Track) {
@@ -992,6 +1098,11 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 						_useMT32Track = true;
 				}
 			}
+#ifdef ENABLE_SCI32
+		} else if (getSciVersion() >= SCI_VERSION_2) {
+			readMt32GmPatch(SciSpan<const byte>(defaultSci32GMPatch, sizeof(defaultSci32GMPatch)));
+			_useMT32Track = false;
+#endif
 		} else {
 			// No GM patch found, map instruments using MT-32 patch
 
@@ -1013,17 +1124,17 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 				_velocityMap[3][i] = 0x20 + (i - 1) / 2;
 			}
 
-			res = resMan->findResource(ResourceId(kResourceTypePatch, 1), 0);
+			res = resMan->findResource(ResourceId(kResourceTypePatch, 1), false);
 
 			if (res) {
-				if (!isMt32GmPatch(res->data, res->size)) {
-					mapMt32ToGm(res->data, res->size);
+				if (!isMt32GmPatch(*res)) {
+					mapMt32ToGm(*res);
 				} else {
-					if (getSciVersion() <= SCI_VERSION_2_1) {
+					if (getSciVersion() < SCI_VERSION_3) {
 						error("MT-32 patch has wrong type");
 					} else {
 						// Happens in the SCI3 interactive demo of Lighthouse
-						warning("TODO: Ignoring new SCI3 type of MT-32 patch for now (size = %d)", res->size);
+						warning("TODO: Ignoring new SCI3 type of MT-32 patch for now (size = %u)", res->size());
 					}
 				}
 			} else {
@@ -1051,9 +1162,9 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 }
 
 void MidiPlayer_Midi::close() {
-	if (_isMt32) {
+	if (_mt32Type != kMt32TypeNone) {
 		// Send goodbye message
-		sendMt32SysEx(0x200000, _goodbyeMsg, 20);
+		sendMt32SysEx(0x200000, SciSpan<const byte>(_goodbyeMsg, 20), true);
 	}
 
 	_driver->close();
@@ -1062,15 +1173,17 @@ void MidiPlayer_Midi::close() {
 void MidiPlayer_Midi::sysEx(const byte *msg, uint16 length) {
 	_driver->sysEx(msg, length);
 
-	// Wait the time it takes to send the SysEx data
-	uint32 delay = (length + 2) * 1000 / 3125;
+	if (_mt32Type != kMt32TypeEmulated) {
+		// Wait the time it takes to send the SysEx data
+		uint32 delay = (length + 2) * 1000 / 3125;
 
-	// Plus an additional delay for the MT-32 rev00
-	if (_isMt32)
-		delay += 40;
+		// Plus an additional delay for the MT-32 rev00
+		if (_mt32Type == kMt32TypeReal)
+			delay += 40;
 
-	g_system->delayMillis(delay);
-	g_system->updateScreen();
+		g_system->updateScreen();
+		g_sci->sleep(delay);
+	}
 }
 
 byte MidiPlayer_Midi::getPlayId() const {
@@ -1079,7 +1192,7 @@ byte MidiPlayer_Midi::getPlayId() const {
 	case SCI_VERSION_0_LATE:
 		return 0x01;
 	default:
-		if (_isMt32)
+		if (_mt32Type != kMt32TypeNone)
 			return 0x0c;
 		else
 			return _useMT32Track ? 0x0c : 0x07;

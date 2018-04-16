@@ -80,7 +80,7 @@ private:
 
 	class VQAAudioTrack : public AudioTrack {
 	public:
-		VQAAudioTrack(const VQAHeader *header);
+		VQAAudioTrack(const VQAHeader *header, Audio::Mixer::SoundType soundType);
 		~VQAAudioTrack();
 
 		void handleSND0(Common::SeekableReadStream *stream);

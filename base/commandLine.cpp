@@ -35,6 +35,7 @@
 #include "common/config-manager.h"
 #include "common/fs.h"
 #include "common/rendermode.h"
+#include "common/stack.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -57,7 +58,7 @@ static const char USAGE_STRING[] =
 ;
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID) || defined(__DS__)
+#if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID) || defined(__DS__) || defined(__3DS__)
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
@@ -68,6 +69,18 @@ static const char HELP_STRING[] =
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-saves=TARGET      Display a list of saved games for the game (TARGET) specified\n"
+	"  -a, --add                Add all games from current or specified directory.\n"
+	"                           If --game=ID is passed only the game with id ID is added. See also --detect\n"
+	"                           Use --path=PATH before -a, --add to specify a directory.\n"
+	"  --detect                 Display a list of games with their ID from current or\n"
+	"                           specified directory without adding it to the config.\n"
+	"                           Use --path=PATH before --detect to specify a directory.\n"
+	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
+	"                           detect the game with id ID.\n"
+	"  --auto-detect            Display a list of games from current or specified directory\n"
+	"                           and start the first one. Use --path=PATH before --auto-detect\n"
+	"                           to specify a directory.\n"
+	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
@@ -80,6 +93,8 @@ static const char HELP_STRING[] =
 	"  -g, --gfx-mode=MODE      Select graphics scaler (1x,2x,3x,2xsai,super2xsai,\n"
 	"                           supereagle,advmame2x,advmame3x,hq2x,hq3x,tv2x,\n"
 	"                           dotmatrix)\n"
+	"  --filtering              Force filtered graphics mode\n"
+	"  --no-filtering           Force unfiltered graphics mode\n"
 	"  --gui-theme=THEME        Select GUI theme\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
@@ -97,11 +112,13 @@ static const char HELP_STRING[] =
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  --debugflags=FLAGS       Enable engine specific debug flags\n"
 	"                           (separated by commas)\n"
+	"  --debug-channels-only    Show only the specified debug channels\n"
 	"  -u, --dump-scripts       Enable script dumping if a directory called 'dumps'\n"
 	"                           exists in the current directory\n"
 	"\n"
-	"  --cdrom=NUM              CD drive to play CD audio from (default: 0 = first\n"
-	"                           drive)\n"
+	"  --cdrom=DRIVE            CD drive to play CD audio from; can either be a\n"
+	"                           drive, path, or numeric index (default: 0 = best\n"
+	"                           choice drive)\n"
 	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
 	"  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,\n"
 	"                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc, pc98,\n"
@@ -114,10 +131,18 @@ static const char HELP_STRING[] =
 	"  --native-mt32            True Roland MT-32 (disable GM emulation)\n"
 	"  --enable-gs              Enable Roland GS mode for MIDI playback\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
-	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame)\n"
+	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
+#ifndef DISABLE_NUKED_OPL
+                                                                     ", nuked"
+#endif
+#ifdef ENABLE_OPL2LPT
+                                                                     ", opl2lpt"
+#endif
+                                                                              ")\n"
 	"  --aspect-ratio           Enable aspect ratio correction\n"
-	"  --render-mode=MODE       Enable additional render modes (cga, ega, hercGreen,\n"
-	"                           hercAmber, amiga)\n"
+	"  --render-mode=MODE       Enable additional render modes (hercGreen, hercAmber,\n"
+	"                           cga, ega, vga, amiga, fmtowns, pc9821, pc9801, 2gs,\n"
+	"                           atari, macintosh)\n"
 #ifdef ENABLE_EVENTRECORDER
 	"  --record-mode=MODE       Specify record mode for event recorder (record, playback,\n"
 	"                           passthrough [default])\n"
@@ -130,11 +155,14 @@ static const char HELP_STRING[] =
 	"  --alt-intro              Use alternative intro for CD versions of Beneath a\n"
 	"                           Steel Sky and Flight of the Amazon Queen\n"
 #endif
-	"  --copy-protection        Enable copy protection in SCUMM games, when\n"
+	"  --copy-protection        Enable copy protection in games, when\n"
 	"                           ScummVM disables it by default.\n"
 	"  --talkspeed=NUM          Set talk speed for games (default: 60)\n"
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 	"  --demo-mode              Start demo mode of Maniac Mansion or The 7th Guest\n"
+#endif
+#if defined(ENABLE_DIRECTOR)
+	"  --start-movie=NAME       Start movie for Director\n"
 #endif
 #ifdef ENABLE_SCUMM
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
@@ -175,6 +203,7 @@ void registerDefaults() {
 
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
+	ConfMan.registerDefault("filtering", false);
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.registerDefault("gfx_mode", "normal");
 	ConfMan.registerDefault("render_mode", "default");
@@ -198,6 +227,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("music_driver", "auto");
 	ConfMan.registerDefault("mt32_device", "null");
 	ConfMan.registerDefault("gm_device", "null");
+	ConfMan.registerDefault("opl2lpt_parport", "null");
 
 	ConfMan.registerDefault("cdrom", 0);
 
@@ -247,6 +277,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("gui_saveload_last_pos", "0");
 
 	ConfMan.registerDefault("gui_browser_show_hidden", false);
+	ConfMan.registerDefault("game", "");
 
 #ifdef USE_FLUIDSYNTH
 	// The settings are deliberately stored the same way as in Qsynth. The
@@ -372,6 +403,18 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			// We defer checking whether this is a valid target to a later point.
 			return s;
 		} else {
+			// On MacOS X prior to 10.9 the OS is sometimes adding a -psn_X_XXXXXX argument (where X are digits)
+			// to pass the process serial number. We need to ignore it to avoid an error.
+			// When using XCode it also adds -NSDocumentRevisionsDebugMode YES argument if XCode option
+			// "Allow debugging when using document Versions Browser" is on (which is the default).
+#ifdef MACOSX
+			if (strncmp(s, "-psn_", 5) == 0)
+				continue;
+			if (strcmp(s, "-NSDocumentRevisionsDebugMode") == 0) {
+				++i; // Also skip the YES that follows
+				continue;
+			}
+#endif
 
 			bool isLongCmd = (s[0] == '-' && s[1] == '-');
 
@@ -385,6 +428,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_COMMAND
 
 			DO_COMMAND('z', "list-games")
+			END_COMMAND
+
+			DO_COMMAND('a', "add")
+			END_COMMAND
+
+			DO_LONG_COMMAND("detect")
+			END_COMMAND
+
+			DO_LONG_COMMAND("auto-detect")
 			END_COMMAND
 
 #ifdef DETECTOR_TESTING_HACK
@@ -418,6 +470,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("debugflags")
 			END_OPTION
 
+			DO_LONG_OPTION_BOOL("debug-channels-only")
+			END_OPTION
+
 			DO_OPTION('e', "music-driver")
 			END_OPTION
 
@@ -428,6 +483,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION_BOOL('f', "fullscreen")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("filtering")
 			END_OPTION
 
 #ifdef ENABLE_EVENTRECORDER
@@ -553,6 +611,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("gui-theme")
 			END_OPTION
 
+			DO_LONG_OPTION("game")
+			END_OPTION
+
+			DO_LONG_OPTION_BOOL("recursive")
+			END_OPTION
+
 			DO_LONG_OPTION("themepath")
 				Common::FSNode path(option);
 				if (!path.exists()) {
@@ -598,6 +662,11 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
+#if defined(ENABLE_DIRECTOR)
+			DO_LONG_OPTION("start-movie")
+			END_OPTION
+#endif
+
 unknownOption:
 			// If we get till here, the option is unhandled and hence unknown.
 			usage("Unrecognized option '%s'", argv[i]);
@@ -612,9 +681,9 @@ static void listGames() {
 	printf("Game ID              Full Title                                            \n"
 	       "-------------------- ------------------------------------------------------\n");
 
-	const EnginePlugin::List &plugins = EngineMan.getPlugins();
-	for (EnginePlugin::List::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		GameList list = (**iter)->getSupportedGames();
+	const PluginList &plugins = EngineMan.getPlugins();
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		GameList list = (*iter)->get<MetaEngine>().getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
 			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());
 		}
@@ -680,7 +749,7 @@ static Common::Error listSaves(const char *target) {
 	gameid.toLowercase();	// Normalize it to lower case
 
 	// Find the plugin that will handle the specified gameid
-	const EnginePlugin *plugin = 0;
+	const Plugin *plugin = nullptr;
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (!plugin) {
@@ -688,13 +757,15 @@ static Common::Error listSaves(const char *target) {
 						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	}
 
-	if (!(*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
+	const MetaEngine &metaEngine = plugin->get<MetaEngine>();
+
+	if (!metaEngine.hasFeature(MetaEngine::kSupportsListSaves)) {
 		// TODO: Include more info about the target (desc, engine name, ...) ???
 		return Common::Error(Common::kEnginePluginNotSupportSaves,
 						Common::String::format("target '%s', gameid '%s", target, gameid.c_str()));
 	} else {
 		// Query the plugin for a list of saved games
-		SaveStateList saveList = (*plugin)->listSaves(target);
+		SaveStateList saveList = metaEngine.listSaves(target);
 
 		if (saveList.size() > 0) {
 			// TODO: Include more info about the target (desc, engine name, ...) ???
@@ -732,19 +803,149 @@ static void listThemes() {
 
 /** Lists all output devices */
 static void listAudioDevices() {
-	MusicPlugin::List pluginList = MusicMan.getPlugins();
+	PluginList pluginList = MusicMan.getPlugins();
 
 	printf("ID                             Description\n");
 	printf("------------------------------ ------------------------------------------------\n");
 
-	for (MusicPlugin::List::const_iterator i = pluginList.begin(), iend = pluginList.end(); i != iend; ++i) {
-		MusicDevices deviceList = (**i)->getDevices();
+	for (PluginList::const_iterator i = pluginList.begin(), iend = pluginList.end(); i != iend; ++i) {
+		const MusicPluginObject &musicObject = (*i)->get<MusicPluginObject>();
+		MusicDevices deviceList = musicObject.getDevices();
 		for (MusicDevices::iterator j = deviceList.begin(), jend = deviceList.end(); j != jend; ++j) {
 			printf("%-30s %s\n", Common::String::format("\"%s\"", j->getCompleteId().c_str()).c_str(), j->getCompleteName().c_str());
 		}
 	}
 }
 
+/** Display all games in the given directory, or current directory if empty */
+static GameList getGameList(const Common::FSNode &dir) {
+	Common::FSList files;
+
+	//Collect all files from directory
+	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+		printf("Path %s does not exist or is not a directory.\n", dir.getPath().c_str());
+		return GameList();
+	}
+
+	// detect Games
+	GameList candidates(EngineMan.detectGames(files));
+	Common::String dataPath = dir.getPath();
+	// add game data path
+	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
+		(*v)["path"] = dataPath;
+	}
+	return candidates;
+}
+
+static bool addGameToConf(const GameDescriptor &gd) {
+	const Common::String &domain = gd.preferredtarget();
+
+	// If game has already been added, don't add
+	if (ConfMan.hasGameDomain(domain))
+		return false;
+
+	// Add the name domain
+	ConfMan.addGameDomain(domain);
+
+	// Copy all non-empty key/value pairs into the new domain
+	for (GameDescriptor::const_iterator iter = gd.begin(); iter != gd.end(); ++iter) {
+		if (!iter->_value.empty() && iter->_key != "preferredtarget")
+			ConfMan.set(iter->_key, iter->_value, domain);
+	}
+
+	// Display added game info
+	printf("Game Added: \n  GameID:   %s\n  Name:     %s\n  Language: %s\n  Platform: %s\n",
+			gd.gameid().c_str(),
+			gd.description().c_str(),
+			Common::getLanguageDescription(gd.language()),
+			Common::getPlatformDescription(gd.platform()));
+
+	return true;
+}
+
+static GameList recListGames(const Common::FSNode &dir, const Common::String &gameId, bool recursive) {
+	GameList list = getGameList(dir);
+
+	if (recursive) {
+		Common::FSList files;
+		dir.getChildren(files, Common::FSNode::kListDirectoriesOnly);
+		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
+			GameList rec = recListGames(*file, gameId, recursive);
+			for (GameList::const_iterator game = rec.begin(); game != rec.end(); ++game) {
+				if (gameId.empty() || game->gameid().c_str() == gameId)
+					list.push_back(*game);
+			}
+		}
+	}
+
+	return list;
+}
+
+/** Display all games in the given directory, return ID of first detected game */
+static Common::String detectGames(const Common::String &path, const Common::String &gameId, bool recursive) {
+	bool noPath = path.empty();
+	//Current directory
+	Common::FSNode dir(path);
+	GameList candidates = recListGames(dir, gameId, recursive);
+
+	if (candidates.empty()) {
+		printf("WARNING: ScummVM could not find any game in %s\n", dir.getPath().c_str());
+		if (noPath) {
+			printf("WARNING: Consider using --path=<path> *before* --add or --detect to specify a directory\n");
+		}
+		if (!recursive) {
+			printf("WARNING: Consider using --recursive *before* --add or --detect to search inside subdirectories\n");
+		}
+		return Common::String();
+	}
+	// TODO this is not especially pretty
+	printf("ID             Description                                                Full Path\n");
+	printf("-------------- ---------------------------------------------------------- ---------------------------------------------------------\n");
+	for (GameList::iterator v = candidates.begin(); v != candidates.end(); ++v) {
+		printf("%-14s %-58s %s\n", v->gameid().c_str(), v->description().c_str(), (*v)["path"].c_str());
+	}
+
+	return candidates[0].gameid();
+}
+
+static int recAddGames(const Common::FSNode &dir, const Common::String &game, bool recursive) {
+	int count = 0;
+	GameList list = getGameList(dir);
+	for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
+		if (v->gameid().c_str() != game && !game.empty()) {
+			printf("Found %s, only adding %s per --game option, ignoring...\n", v->gameid().c_str(), game.c_str());
+		} else if (!addGameToConf(*v)) {
+			// TODO Is it reall the case that !addGameToConf iff already added?
+			printf("Found %s, but has already been added, skipping\n", v->gameid().c_str());
+		} else {
+			printf("Found %s, adding...\n", v->gameid().c_str());
+			count++;
+		}
+	}
+
+	if (recursive) {
+		Common::FSList files;
+		if (dir.getChildren(files, Common::FSNode::kListDirectoriesOnly)) {
+			for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
+				count += recAddGames(*file, game, recursive);
+			}
+		}
+	}
+
+	return count;
+}
+
+static bool addGames(const Common::String &path, const Common::String &game, bool recursive) {
+	//Current directory
+	Common::FSNode dir(path);
+	int added = recAddGames(dir, game, recursive);
+	printf("Added %d games\n", added);
+	if (added == 0 && !recursive) {
+		printf("Consider using --recursive to search inside subdirectories\n");
+	}
+	ConfMan.flushToDisk();
+	return true;
+}
 
 #ifdef DETECTOR_TESTING_HACK
 static void runDetectorTest() {
@@ -970,6 +1171,31 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);
+		return true;
+	} else if (command == "auto-detect") {
+		bool resursive = settings["recursive"] == "true";
+		// If auto-detects fails (returns an empty ID) return true to close ScummVM.
+		// If we get a non-empty ID, we store it in command so that it gets processed together with the
+		// other command line options below.
+		if (resursive) {
+			printf("ERROR: Autodetection not supported with --recursive; are you sure you didn't want --detect?\n");
+			err = Common::kUnknownError;
+			return true;
+			// There is not a particularly good technical reason for this.
+			// From an UX point of view, however, it might get confusing.
+			// Consider removing this if consensus says otherwise.
+		} else {
+			command = detectGames(settings["path"], settings["game"], resursive);
+			if (command.empty()) {
+				err = Common::kNoGameDataFoundError;
+				return true;
+			}
+		}
+	} else if (command == "detect") {
+		detectGames(settings["path"], settings["game"], settings["recursive"] == "true");
+		return true;
+	} else if (command == "add") {
+		addGames(settings["path"], settings["game"], settings["recursive"] == "true");
 		return true;
 	}
 #ifdef DETECTOR_TESTING_HACK

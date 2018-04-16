@@ -27,15 +27,15 @@
 
 class SymbianSdlGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
-	SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource);
+	SymbianSdlGraphicsManager(SdlEventSource *sdlEventSource, SdlWindow *window);
 
 public:
-	virtual bool hasFeature(OSystem::Feature f);
-	virtual void setFeatureState(OSystem::Feature f, bool enable);
+	virtual bool hasFeature(OSystem::Feature f) const override;
+	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 
-	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
+	virtual int getDefaultGraphicsMode() const override;
+	virtual bool setGraphicsMode(int mode) override;
 };
 
 #endif

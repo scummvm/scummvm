@@ -68,19 +68,4 @@ void Huffman::setSymbols(const uint32 *symbols) {
 		_symbols[i]->symbol = symbols ? *symbols++ : i;
 }
 
-uint32 Huffman::getSymbol(BitStream &bits) const {
-	uint32 code = 0;
-
-	for (uint32 i = 0; i < _codes.size(); i++) {
-		bits.addBit(code, i);
-
-		for (CodeList::const_iterator cCode = _codes[i].begin(); cCode != _codes[i].end(); ++cCode)
-			if (code == cCode->code)
-				return cCode->symbol;
-	}
-
-	error("Unknown Huffman code");
-	return 0;
-}
-
 } // End of namespace Common

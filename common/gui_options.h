@@ -23,47 +23,59 @@
 #ifndef COMMON_GUI_OPTIONS_H
 #define COMMON_GUI_OPTIONS_H
 
-#define GUIO_NONE			"\000"
-#define GUIO_NOSUBTITLES	"\001"
-#define GUIO_NOMUSIC		"\002"
-#define GUIO_NOSPEECH		"\003"
-#define GUIO_NOSFX			"\004"
-#define GUIO_NOMIDI			"\005"
-#define GUIO_NOLAUNCHLOAD	"\006"
+#define GUIO_NONE            "\000"
+#define GUIO_NOSUBTITLES     "\001"
+#define GUIO_NOMUSIC         "\002"
+// GUIO_NOSPEECH is a combination of GUIO_NOSPEECHVOLUME and GUIO_NOSUBTITLES
+#define GUIO_NOSPEECH        "\003"
+#define GUIO_NOSFX           "\004"
+#define GUIO_NOMIDI          "\005"
+#define GUIO_NOLAUNCHLOAD    "\006"
 
-#define GUIO_MIDIPCSPK		"\007"
-#define GUIO_MIDICMS		"\010"
-#define GUIO_MIDIPCJR		"\011"
-#define GUIO_MIDIADLIB		"\012"
-#define GUIO_MIDIC64        "\013"
-#define GUIO_MIDIAMIGA      "\014"
-#define GUIO_MIDIAPPLEIIGS  "\015"
-#define GUIO_MIDITOWNS		"\016"
-#define GUIO_MIDIPC98		"\017"
-#define GUIO_MIDIMT32		"\020"
-#define GUIO_MIDIGM			"\021"
+#define GUIO_MIDIPCSPK       "\007"
+#define GUIO_MIDICMS         "\010"
+#define GUIO_MIDIPCJR        "\011"
+#define GUIO_MIDIADLIB       "\012"
+#define GUIO_MIDIC64         "\013"
+#define GUIO_MIDIAMIGA       "\014"
+#define GUIO_MIDIAPPLEIIGS   "\015"
+#define GUIO_MIDITOWNS       "\016"
+#define GUIO_MIDIPC98        "\017"
+#define GUIO_MIDIMT32        "\020"
+#define GUIO_MIDIGM          "\021"
 
-#define GUIO_NOASPECT		"\022"
+#define GUIO_NOASPECT        "\022"
 
-#define GUIO_RENDERHERCGREEN	"\030"
-#define GUIO_RENDERHERCAMBER	"\031"
-#define GUIO_RENDERCGA		"\032"
-#define GUIO_RENDEREGA		"\033"
-#define GUIO_RENDERVGA		"\034"
-#define GUIO_RENDERAMIGA	"\035"
-#define GUIO_RENDERFMTOWNS	"\036"
-#define GUIO_RENDERPC9821	"\037"
-#define GUIO_RENDERPC9801	"\040"
+#define GUIO_RENDERHERCGREEN "\030"
+#define GUIO_RENDERHERCAMBER "\031"
+#define GUIO_RENDERCGA       "\032"
+#define GUIO_RENDEREGA       "\033"
+#define GUIO_RENDERVGA       "\034"
+#define GUIO_RENDERAMIGA     "\035"
+#define GUIO_RENDERFMTOWNS   "\036"
+#define GUIO_RENDERPC9821    "\037"
+#define GUIO_RENDERPC9801    "\040"
+#define GUIO_RENDERAPPLE2GS  "\041"
+#define GUIO_RENDERATARIST   "\042"
+#define GUIO_RENDERMACINTOSH "\043"
+
+#define GUIO_LINKSPEECHTOSFX "\044"
+#define GUIO_LINKMUSICTOSFX  "\045"
+#define GUIO_NOSPEECHVOLUME  "\046"
 
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
-#define GUIO_GAMEOPTIONS1	"\041"
-#define GUIO_GAMEOPTIONS2	"\042"
-#define GUIO_GAMEOPTIONS3	"\043"
-#define GUIO_GAMEOPTIONS4	"\044"
-#define GUIO_GAMEOPTIONS5	"\045"
-#define GUIO_GAMEOPTIONS6	"\046"
-#define GUIO_GAMEOPTIONS7	"\047"
+#define GUIO_GAMEOPTIONS1    "\050"
+#define GUIO_GAMEOPTIONS2    "\051"
+#define GUIO_GAMEOPTIONS3    "\052"
+#define GUIO_GAMEOPTIONS4    "\053"
+#define GUIO_GAMEOPTIONS5    "\054"
+#define GUIO_GAMEOPTIONS6    "\055"
+#define GUIO_GAMEOPTIONS7    "\056"
+#define GUIO_GAMEOPTIONS8    "\057"
+#define GUIO_GAMEOPTIONS9    "\060"
+#define GUIO_GAMEOPTIONS10   "\061"
+#define GUIO_GAMEOPTIONS11   "\062"
 
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
@@ -74,6 +86,7 @@
 #define GUIO6(a,b,c,d,e,f) (a b c d e f)
 #define GUIO7(a,b,c,d,e,f,g) (a b c d e f g)
 #define GUIO8(a,b,c,d,e,f,g,h) (a b c d e f g h)
+#define GUIO9(a,b,c,d,e,f,g,h,i) (a b c d e f g h i)
 
 namespace Common {
 

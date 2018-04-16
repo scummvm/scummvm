@@ -40,7 +40,6 @@
 #define SWORD25_VERTEX_H
 
 // Includes
-#include <math.h>
 #include "common/rect.h"
 #include "sword25/kernel/common.h"
 

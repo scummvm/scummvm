@@ -1,0 +1,513 @@
+ -
+ --
+ ()
+ []
+ *
+ /
+ &
+ &&
+ #
+ +
+ <
+ <=
+ <>
+ =
+ >
+ >=
+ �
+abbr
+abort
+abs
+actorList
+add
+addAt
+addProp
+after
+alert
+ancestor
+and
+append
+atan
+backColor of cast
+backColor of sprite
+BACKSPACE
+beep
+beepOn
+before
+birth
+blend of sprite
+bottom of sprite
+buttonStyle
+cast backColor
+cast castType
+cast depth
+cast fileName
+cast foreColor
+cast height
+cast hilite
+cast loaded
+cast modified
+cast name
+cast number
+cast palette
+cast picture
+cast purgePriority
+cast rect
+cast regPoint
+cast scriptText
+cast size
+cast text
+cast width
+castmembers
+castNum of sprite
+castType of cast
+center
+centerStage
+char of
+chars
+charToNum
+checkBoxAccess
+checkBoxType
+checkMark of menuItem
+clearGlobals
+clickLoc
+clickOn
+close window
+closeDA
+closeResFile
+closeXlib
+colorDepth
+colorQD
+commandDown
+constrainH
+constraint of sprite
+constrainV
+contains
+continue
+controlDown
+controller of cast
+copyToClipBoard cast
+cos
+count
+crop
+cursor
+cursor of sprite
+date
+delay
+delete
+deleteAt
+deleteProp
+depth of cast
+digitalVideo
+digitalVideo cast center
+digitalVideo cast controller
+digitalVideo cast crop
+digitalVideo cast directToStage
+digitalVideo cast duration
+digitalVideo cast frameRate
+digitalVideo cast loop
+digitalVideo cast pausedAtStart
+digitalVideo cast preload
+digitalVideo cast sound
+digitalVideo cast video
+digitalVideo sprite movieRate
+digitalVideo sprite movieTime
+digitalVideo sprite startTime
+digitalVideo sprite stopTime
+digitalVideo sprite volume
+directToStage of cast
+do
+done
+dontPassEvent
+doubleClick
+down
+drawRect of window
+duplicate cast {n}
+editableText of sprite
+else
+EMPTY
+enabled of menuItem
+end
+ENTER
+erase cast
+exit
+exit repeat
+exitFrame
+exitLock
+exp
+factory
+fadeIn
+fadeOut
+FALSE
+field
+fileName of cast
+fileName of window
+findEmpty
+findPos
+findPosNear
+fixStageSize
+float
+floatP
+floatPrecision
+foreColor of cast
+foreColor of sprite
+forget
+frame
+frameLabel
+framePalette
+frameRate of cast
+frameScript
+framesToHMS
+frameTempo
+freeBlock
+freeBytes
+getaProp
+getAt
+getLast
+getNthFileNameInFolder
+getOne
+getPos
+getProp
+getPropAt
+global
+go
+go loop
+go next
+go previous
+halt
+height of cast
+height of sprite
+hilite
+hilite of cast
+HMStoFrames
+idle
+if
+ilk list
+ilk point
+ilk rect
+importFileInto
+in
+inflate rect
+ink of sprite
+inside point
+installMenu
+instance
+integer
+integerP
+intersect rect
+intersects
+into
+item of
+itemDelimiter
+items
+key
+keyCode
+keyDown
+keyDownScript
+keyUp
+keyUpScript
+label
+labelList
+last
+lastClick
+lastEvent
+lastFrame
+lastKey
+lastRoll
+left of sprite
+length
+line of
+lines
+lineSize of sprite
+list
+list ilk
+listP
+loaded of cast
+locH of sprite
+locV of sprite
+log
+long
+loop
+loop of cast
+machineType
+map point
+map rect
+marker
+mAtFrame
+max
+maxInteger
+mci
+mDescribe
+mDispose
+me
+memorySize
+menu
+menuItem
+menuItems
+menus
+mGet
+min
+mInstanceRespondsTo
+mMessageList
+mName
+mNew
+mod
+modal window
+modified of cast
+mouseCast
+mouseChar
+mouseDown
+mouseDownScript
+mouseH
+mouseItem
+mouseLine
+mouseUp
+mouseUpScript
+mouseV
+mouseWord
+move
+moveableSprite of sprite
+moveToBack
+moveToFront
+movie
+movieFileFreeSize
+movieFileSize
+movieName
+moviePath
+movieRate of sprite
+movieTime of sprite
+mPerform
+mPut
+mRespondsTo
+multiSound
+name of cast
+name of menu
+name of menuItem
+next
+next repeat
+not
+nothing
+number of cast
+number of castMembers
+number of chars
+number of items
+number of lines
+number of menuItems
+number of menus
+number of words
+numToChar
+objectP
+of
+offset
+offset rect
+on
+on enterFrame
+on enterFrame
+on exitFrame
+on idle
+on keyDown
+on keyUp
+on mouseDown
+on mouseUp
+on startMovie
+on stopMovie
+open
+open window
+openDA
+openResFile
+openXlib
+optionDown
+or
+palette of cast
+param
+paramCount
+pass
+pasteClipBoardInto
+pathName
+pause
+pausedAtStart of cast
+pauseState
+perFrameHook
+pi
+picture of cast
+pictureP
+play
+play done
+playFile
+point
+power
+preLoad
+preload of cast
+preLoadCast
+preLoadEventAbort
+preLoadRAM
+previous
+printFrom
+property
+puppet
+puppetPalette
+puppetSound
+puppetSprite
+puppetTempo
+puppetTransition
+purgePriority of cast
+put
+put after
+put before
+put into
+quickTimePresent
+quit
+QUOTE
+ramNeeded
+random
+randomSeed
+rect
+rect of cast
+rect of window
+rect point
+regPoint of cast
+repeat while
+repeat with
+restart
+result
+return
+RETURN
+right of sprite
+rollOver
+romanLingo
+saveMovie
+scoreColor
+script of menuItem
+scriptNum of sprite
+scriptText of cast
+searchCurrentFolder
+searchPath
+selection
+selEnd
+selStart
+set
+setaProp
+setAt
+setCallBack
+setProp
+shiftDown
+short
+showGlobals
+showLocals
+showResFile
+showXlib
+shutDown
+sin
+size of cast
+sort
+sound close
+sound fadeIn
+sound fadeOut
+sound of cast
+sound playFile
+sound stop
+soundBusy
+soundEnabled
+soundLevel
+sourceRect of window
+sprite
+sprite backColor
+sprite blend
+sprite bottom
+sprite castNum
+sprite constraint
+sprite cursor
+sprite editableText
+sprite foreColor
+sprite height
+sprite ink
+sprite intersects
+sprite left
+sprite lineSize
+sprite locH
+sprite locV
+sprite moveableSprite
+sprite right
+sprite scriptNum
+sprite stretch
+sprite top
+sprite trails
+sprite type
+sprite visible
+sprite width
+sprite within
+spriteBox
+sqrt
+stage
+stageBottom
+stageColor
+stageLeft
+stageRight
+stageTop
+startMovie
+starts
+startTime of sprite
+startTimer
+stillDown
+stop
+stopMovie
+stopTime of sprite
+stretch of sprite
+string
+stringP
+switchColorDepth
+symbolP
+TAB
+tan
+tell
+text of cast
+textAlign
+textFont
+textHeight
+textSize
+textStyle
+the
+then
+ticks
+time
+timeoutKeyDown
+timeoutLapsed
+timeoutLength
+timeoutMouse
+timeoutPlay
+timeoutScript
+timer
+title
+titleVisible
+to
+top of sprite
+trace
+traceLoad
+traceLogFile
+trails of sprite
+TRUE
+type of sprite
+union rect
+unLoad
+unLoadCast
+updateMovieEnabled
+updateStage
+value
+video
+visible of sprite
+visible of window
+voidP
+volume of sound
+volume of sprite
+while
+width of cast
+width of sprite
+window
+windowList
+windowType
+with
+within
+word of
+words
+xFactoryList
+zoomBox
