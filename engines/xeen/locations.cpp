@@ -2240,9 +2240,12 @@ int PyramidLocation::show() {
 LocationManager::LocationManager() : _location(nullptr) {
 }
 
-int LocationManager::doAction(LocationAction actionId) {
+int LocationManager::doAction(int actionId) {
+	LocationAction action = (g_vm->getGameID() == GType_Swords && actionId > 13 && actionId < 18) ?
+		BLACKSMITH : (LocationAction)actionId;
+
 	// Create the desired location
-	switch (actionId) {
+	switch (action) {
 	case BANK:
 		_location = new Locations::BankLocation();
 		break;
