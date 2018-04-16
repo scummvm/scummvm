@@ -272,7 +272,7 @@ void ScreenPalette::shiftPalette(int16 fromIndex, int16 toIndex) {
 		r = _mainPalette[3 * toIndex + 0];
 		g = _mainPalette[3 * toIndex + 1];
 		b = _mainPalette[3 * toIndex + 2];
-		for (int16 i = toIndex + 1; i < fromIndex; +i) {
+		for (int16 i = toIndex + 1; i < fromIndex; +i) { //TODO fix this. +i
 			byte *dst = &_mainPalette[3 * i];
 			byte *src = &_mainPalette[3 * (i + 1)];
 			dst[0] = src[0];
@@ -371,16 +371,15 @@ Screen::Screen(IllusionsEngine *vm, int16 width, int16 height, int bpp)
 	_decompressQueue = new SpriteDecompressQueue(this);
 	_drawQueue = new SpriteDrawQueue(this);
 	if (bpp == 8) {
-		initGraphics(width, height, false);
+		initGraphics(width, height);
 	} else {
 		Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
-		initGraphics(width, height, true, &pixelFormat16);
+		initGraphics(width, height, &pixelFormat16);
 	}
 
 	_backSurface = allocSurface(width, height);
 
 	_isScreenOffsetActive = false;
-
 }
 
 Screen::~Screen() {
