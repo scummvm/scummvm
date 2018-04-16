@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-15 19:57+0200\n"
-"PO-Revision-Date: 2018-04-15 06:45+0000\n"
-"Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
-"Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/de/>\n"
+"PO-Revision-Date: 2018-04-16 22:20+0000\n"
+"Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
+"Language-Team: German "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/de/>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -201,7 +201,7 @@ msgstr "Spiel"
 
 #: gui/editgamedialog.cpp:137
 msgid "ID:"
-msgstr "Kennung:"
+msgstr "ID:"
 
 #: gui/editgamedialog.cpp:137 gui/editgamedialog.cpp:139
 #: gui/editgamedialog.cpp:140
@@ -209,13 +209,13 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"Kurzer Spielname, um die Spielstände zuzuordnen und das Spiel von der "
+"Kurzer Spielname, um Spielstände zuzuordnen und das Spiel von der "
 "Kommandozeile aus starten zu können"
 
 #: gui/editgamedialog.cpp:139
 msgctxt "lowres"
 msgid "ID:"
-msgstr "Kennung:"
+msgstr "ID:"
 
 #: gui/editgamedialog.cpp:144 gui/editrecorddialog.cpp:59
 msgid "Name:"
@@ -427,7 +427,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:535
 msgid "This game ID is already taken. Please choose another one."
-msgstr "Diese Spielkennung ist schon vergeben. Bitte eine andere wählen."
+msgstr "Diese Spiel-ID ist bereits vergeben. Bitte eine andere wählen."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
@@ -731,7 +731,7 @@ msgstr ""
 
 #: gui/launcher.cpp:530
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr "ScummVM konnte keine Engine finden, um das Spiel zu starten!"
+msgstr "ScummVM konnte keine passende Engine für dieses Spiel finden!"
 
 #: gui/launcher.cpp:581
 msgid "ScummVM could not find any game in the specified directory!"
@@ -852,7 +852,7 @@ msgstr "Zeiger-Geschw.:"
 
 #: gui/options.cpp:943 gui/options.cpp:945 gui/options.cpp:946
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr "Zeiger-Geschwindigkeit der Tastatur-/Joystick-Maus"
+msgstr "Zeiger-Geschwindigkeit der Tastatur- bzw. Joystick-Maus"
 
 #: gui/options.cpp:945
 msgctxt "lowres"
@@ -900,7 +900,7 @@ msgstr "Render-Modus:"
 
 #: gui/options.cpp:1006 gui/options.cpp:1007
 msgid "Special dithering modes supported by some games"
-msgstr "Spezielle Farbmischungsmethoden werden von manchen Spielen unterstützt"
+msgstr "Spezielle Dithering-Methoden unterstützt von manchen Spielen"
 
 #: gui/options.cpp:1018 backends/graphics/openglsdl/openglsdl-graphics.cpp:588
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2590
@@ -934,7 +934,7 @@ msgstr "Musikgerät:"
 #: gui/options.cpp:1032 gui/options.cpp:1034
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr ""
-"Legt das bevorzugte Tonwiedergabe-Gerät oder den Soundkarten-Emulator fest"
+"Legt das bevorzugte Audio-Wiedergabegerät oder den Soundkarten-Emulator fest"
 
 #: gui/options.cpp:1032 gui/options.cpp:1034 gui/options.cpp:1035
 msgid "Specifies output sound device or sound card emulator"
@@ -1008,8 +1008,8 @@ msgstr "MT-32-Gerät:"
 #: gui/options.cpp:1130
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Legt das standardmäßige Tonwiedergabe-Gerät für die Ausgabe von Roland MT-32/"
-"LAPC1/CM32l/CM64 fest"
+"Legt das standardmäßige Audio-Wiedergabegerät für die Ausgabe von Roland "
+"MT-32/LAPC1/CM32l/CM64 fest"
 
 #: gui/options.cpp:1135
 msgid "True Roland MT-32 (disable GM emulation)"
@@ -1140,12 +1140,12 @@ msgstr "FluidSynth-Einstellungen"
 
 #: gui/options.cpp:1505
 msgid "Theme Path:"
-msgstr "Themen:"
+msgstr "Themes:"
 
 #: gui/options.cpp:1507
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr "Themen:"
+msgstr "Themes:"
 
 #: gui/options.cpp:1513 gui/options.cpp:1515 gui/options.cpp:1516
 msgid "Specifies path to additional data used by all games or ScummVM"
@@ -1169,7 +1169,7 @@ msgstr "Andere"
 
 #: gui/options.cpp:1537
 msgid "Theme:"
-msgstr "Design:"
+msgstr "Theme:"
 
 #: gui/options.cpp:1541
 msgid "GUI Renderer:"
@@ -1356,7 +1356,7 @@ msgstr ""
 
 #: gui/options.cpp:1944
 msgid "Select directory for GUI themes"
-msgstr "Verzeichnis für Oberflächen-Themen"
+msgstr "Verzeichnis für Oberflächen-Themes"
 
 #: gui/options.cpp:1954
 msgid "Select directory for extra files"
@@ -1364,7 +1364,7 @@ msgstr "Verzeichnis für zusätzliche Dateien auswählen"
 
 #: gui/options.cpp:1965
 msgid "Select directory for plugins"
-msgstr "Verzeichnis für Erweiterungen auswählen"
+msgstr "Verzeichnis für Plugins auswählen"
 
 #: gui/options.cpp:1977
 msgid "Select directory for Files Manager /root/"
@@ -1615,7 +1615,7 @@ msgstr ""
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
-msgstr "Design auswählen"
+msgstr "Theme auswählen"
 
 #: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
@@ -1710,7 +1710,7 @@ msgstr "Spieldateien nicht gefunden"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr "Spielkennung nicht unterstützt"
+msgstr "Spiel-ID nicht unterstützt"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
@@ -1730,7 +1730,7 @@ msgstr "Verzeichnis existiert nicht"
 
 #: common/error.cpp:54
 msgid "Path not a directory"
-msgstr "Ungültiges Verzeichnis"
+msgstr "Pfad ist kein Verzeichnis"
 
 #: common/error.cpp:56
 msgid "Path not a file"
@@ -1767,11 +1767,11 @@ msgstr "Unbekannter Fehler"
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Hercules Grün"
+msgstr "Hercules-Grün"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr "Hercules Bernstein"
+msgstr "Hercules-Bernstein"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
@@ -1784,24 +1784,24 @@ msgstr "PC-9801 (16 Farben)"
 #: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr "Hercules Grün"
+msgstr "Hercules-Grün"
 
 #: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr "Hercules Bernst."
+msgstr "Hercules-Bernst."
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr "täglich"
+msgstr "Täglich"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr "wöchentlich"
+msgstr "Wöchentlich"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr "monatlich"
+msgstr "Monatlich"
 
 #: common/updates.cpp:64
 msgid "<Bad value>"
@@ -1824,7 +1824,7 @@ msgstr ""
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
-msgstr "Übereinstimmende Spiele-Kennungen:"
+msgstr "Übereinstimmende Spiele-IDs:"
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
@@ -2010,15 +2010,15 @@ msgstr "AdLib-Emulator"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
-msgstr "MAME-OPL-Emulator"
+msgstr "MAME OPL-Emulator"
 
 #: audio/fmopl.cpp:73
 msgid "DOSBox OPL emulator"
-msgstr "DOSBox-OPL-Emulator"
+msgstr "DOSBox OPL-Emulator"
 
 #: audio/fmopl.cpp:76
 msgid "Nuked OPL emulator"
-msgstr "Nuked-OPL-Emulator"
+msgstr "Nuked OPL-Emulator"
 
 #: audio/fmopl.cpp:79
 msgid "ALSA Direct FM"
@@ -2079,11 +2079,11 @@ msgstr "Keine Musik"
 
 #: audio/softsynth/appleiigs.cpp:33
 msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
-msgstr "Apple-II-GS-Emulator (NICHT INTEGRIERT)"
+msgstr "Apple II GS-Emulator (NICHT INTEGRIERT)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr "Creative-Music-System-Emulator"
+msgstr "Creative Music System-Emulator"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
 msgid "FM-Towns Audio"
@@ -2099,7 +2099,7 @@ msgstr "Initialisiere MT-32-Emulator"
 
 #: audio/softsynth/mt32.cpp:437
 msgid "MT-32 Emulator"
-msgstr "MT-32-Emulation"
+msgstr "MT-32-Emulator"
 
 #: audio/softsynth/pcspk.cpp:139
 msgid "PC Speaker Emulator"
@@ -2107,7 +2107,7 @@ msgstr "PC-Lautsprecher-Emulator"
 
 #: audio/softsynth/pcspk.cpp:158
 msgid "IBM PCjr Emulator"
-msgstr "IBM-PCjr-Emulator"
+msgstr "IBM PCjr-Emulator"
 
 #: audio/softsynth/sid.cpp:1430
 msgid "C64 Audio Emulator"
@@ -2171,19 +2171,19 @@ msgstr "Beenden"
 #: backends/events/gph/gph-events.cpp:434
 #: backends/events/openpandora/op-events.cpp:174
 msgid "Touchscreen 'Tap Mode' - Left Click"
-msgstr "Berührungsbildschirm-Tipp-Modus - Linksklick"
+msgstr "Touchscreen-Tipp-Modus - Linksklick"
 
 #: backends/events/gph/gph-events.cpp:393
 #: backends/events/gph/gph-events.cpp:436
 #: backends/events/openpandora/op-events.cpp:176
 msgid "Touchscreen 'Tap Mode' - Right Click"
-msgstr "Berührungsbildschirm-Tipp-Modus - Rechtsklick"
+msgstr "Touchscreen-Tipp-Modus - Rechtsklick"
 
 #: backends/events/gph/gph-events.cpp:395
 #: backends/events/gph/gph-events.cpp:438
 #: backends/events/openpandora/op-events.cpp:178
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
-msgstr "Berührungsbildschirm-Tipp-Modus - schweben (kein Klick)"
+msgstr "Touchscreen-Tipp-Modus - schweben (kein Klick)"
 
 #: backends/events/gph/gph-events.cpp:415
 msgid "Maximum Volume"
@@ -2211,7 +2211,7 @@ msgstr "Klicken deaktiviert"
 
 #: backends/events/openpandora/op-events.cpp:180
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Berührungsbildschirm-Tipp-Modus - schweben (DPad-Klicks)"
+msgstr "Touchscreen-Tipp-Modus - schweben (DPad-Klicks)"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:192
 msgid "Do you want to quit ?"
@@ -3224,10 +3224,10 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
-"Sie scheinen ein General-MIDI-Gerät zu\n"
+"Sie scheinen ein General MIDI-Gerät zu\n"
 "verwenden, aber das Spiel unterstützt nur\n"
 "Roland MT32 MIDI. Es wird versucht, die\n"
-"Roland-MT32-Instrumente denen von\n"
+"Roland MT32-Instrumente denen von\n"
 "General MIDI zuzuordnen. Es ist dennoch\n"
 "möglich, dass ein paar Musikstücke nicht\n"
 "richtig abgespielt werden."
@@ -3294,7 +3294,7 @@ msgstr "Animierte Spieloberfläche"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr "Unanständiger Spiel-Modus"
+msgstr "Unanständiger Spielmodus"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
@@ -3579,7 +3579,7 @@ msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Verwendet eine Music-Feature-Karte von IBM oder ein Yamaha-FB-01-FM-"
+"Verwendet eine Music Feature-Karte von IBM oder ein Yamaha FB-01 FM-"
 "Synthetisierungsmodul für die MIDI-Ausgabe"
 
 #: engines/sci/detection.cpp:473
@@ -3877,7 +3877,7 @@ msgstr "Wähle einen Schwierigkeitsgrad."
 
 #: engines/scumm/dialogs.cpp:657
 msgid "Refer to your Loom(TM) manual for help."
-msgstr "Für Hilfe schauen Sie ins Loom-Handbuch."
+msgstr "Für Hilfe schauen Sie ins Loom(TM)-Handbuch."
 
 #: engines/scumm/dialogs.cpp:661
 msgid "Practice"
@@ -4483,14 +4483,14 @@ msgstr "Bei Szenenwechseln wird ein zufälliger Pixelübergang verwendet"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr "Bei Mausbewegung keine Klickpunkte anzeigen"
+msgstr "Bei Mausbewegung keine Hotspots anzeigen"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
-"Zeigt Klickpunktnamen nur nach Klick auf selbigen oder auf einen Aktionspunkt"
+"Zeigt Hotspot-Namen nur nach Klick auf selbigen oder auf einen Aktionspunkt"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show character portraits"
@@ -4667,7 +4667,7 @@ msgstr "Schnellladen des Spielstandes #%d nicht möglich"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr "Zähler für Bilder pro Sekunde anzeigen"
+msgstr "FPS-Zähler anzeigen"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
