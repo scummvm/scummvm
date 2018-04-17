@@ -79,6 +79,8 @@ BaseMenu *DuckmanMenuSystem::createMenuById(int menuId) {
 		return createQueryRestartMenu();
 	case kDuckmanQueryQuitMenu:
 		return createQueryQuitMenu();
+	case kDuckmanSaveCompleteMenu:
+		return createSaveCompleteMenu();
 	default:
 		error("DuckmanMenuSystem::createMenuById() Invalid menu id %d", menuId);
 	}
@@ -107,7 +109,7 @@ BaseMenu *DuckmanMenuSystem::createPauseMenu() {
 	menu->addText("-------------------");
 	menu->addMenuItem(new MenuItem("Resume", new MenuActionReturnChoice(this, 21)));
 	menu->addMenuItem(new MenuItem("Load Game", new MenuActionLoadGame(this, 1)));
-	// TODO menu->addMenuItem(new MenuItem("Save Game", new MenuActionSaveGame(this, 11)));
+	menu->addMenuItem(new MenuItem("Save Game", new MenuActionSaveGame(this, 11)));
 	// TODO menu->addMenuItem(new MenuItem("Restart Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryRestartMenu, 2)));
 	// TODO menu->addMenuItem(new MenuItem("Options", new MenuActionEnterMenu(this, kDuckmanOptionsMenu)));
 	menu->addMenuItem(new MenuItem("Quit Game", new MenuActionEnterQueryMenu(this, kDuckmanQueryQuitMenu, 23)));
@@ -127,14 +129,23 @@ BaseMenu *DuckmanMenuSystem::createQueryQuitMenu() {
 	return menu;
 }
 
+BaseMenu *DuckmanMenuSystem::createSaveCompleteMenu() {
+	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 1);
+	menu->addText("Game Saved");
+	menu->addText("-------------");
+	menu->addMenuItem(new MenuItem("Continue", new MenuActionLeaveMenu(this)));
+	return menu;
+}
+
 int DuckmanMenuSystem::convertRootMenuId(uint32 menuId) {
 	switch (menuId) {
 	case 0x180001:
 		return kDuckmanMainMenu;
 	case 0x180002:
 		return kDuckmanPauseMenu;
-	/* Debug menus, not implemented
 	case 0x180005:
+		return kDuckmanSaveCompleteMenu;
+	/* Debug menus, not implemented
 	case 0x180006:
 	case 0x180007:
 	*/

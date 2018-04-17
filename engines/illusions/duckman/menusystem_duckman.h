@@ -34,6 +34,7 @@ enum {
 	kDuckmanPauseMenu,
 	kDuckmanQueryQuitMenu,
 	kDuckmanQueryRestartMenu,
+	kDuckmanSaveCompleteMenu,
 	kDuckmanLastMenuIndex
 };
 
@@ -56,8 +57,9 @@ public://protected:
 	BaseMenu *createLoadGameMenu();
 	BaseMenu *createOptionsMenu();
 	BaseMenu *createPauseMenu();
-	BaseMenu *createQueryRestartMenu();		
+	BaseMenu *createQueryRestartMenu();
 	BaseMenu *createQueryQuitMenu();
+	BaseMenu *createSaveCompleteMenu();
 	int convertRootMenuId(uint32 menuId);
 	virtual bool initMenuCursor();
 	virtual int getGameState();

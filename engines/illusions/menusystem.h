@@ -239,6 +239,14 @@ protected:
 	uint _choiceIndex;
 };
 
+class MenuActionSaveGame : public BaseMenuAction {
+public:
+	MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIndex);
+	virtual void execute();
+protected:
+	uint _choiceIndex;
+};
+
 } // End of namespace Illusions
 
 #endif // ILLUSIONS_MENUSYSTEM_H
