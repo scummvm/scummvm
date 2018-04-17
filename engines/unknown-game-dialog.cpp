@@ -117,8 +117,7 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	case kCopyToClipboard:
 	{
 		g_system->setTextInClipboard(_reportData);
-		MessageDialog dialog(_("All necessary information about your game has been copied into the clipboard"), _("OK"));
-		dialog.runModal();
+		g_system->displayMessageOnOSD(_("All necessary information about your game has been copied into the clipboard"));
 		break;
 	}
 	case kClose:
@@ -132,7 +131,7 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 		"https://bugs.scummvm.org/newticket?"
 		"summary=[UNK] Unknown game for engine %s:"
 		"&description=%s"
-		"&component=Engine0A%s"
+		"&component=Engine%3A%s"
 		"&type=enhancement"
 		"&keywords=unknown-game,%s"),
 		_bugtrackerAffectedEngine.c_str(), _bugtrackerGameData.c_str(), _bugtrackerAffectedEngine.c_str(), _bugtrackerAffectedEngine.c_str());
