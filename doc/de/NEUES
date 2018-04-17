@@ -543,7 +543,7 @@ Programmcodes finden Sie auf Englisch unter:
      KQ6, LB2, LSL2, LSL5, Pharkas, PQ1VGA, SQ4 und SQ5 beseitigt.
    - MIDI-Parser verbessert, sodass Musikereignisse genauer verarbeitet werden.
 
-SCUMM:
+ SCUMM:
    - Spielstandsbenennungsschema von HE-Spielen geändert, sodass immer der
      Zielname des Spiels enthalten ist.
    - Fehler beseitigt, durch den man mehrere Trainer in Backyard Football hatte.
