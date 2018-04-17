@@ -99,7 +99,7 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 		//Formatting the reportData for bugtracker submission [replace line breaks]...
 		_bugtrackerGameData = _reportData;
 		while (_bugtrackerGameData.contains("\n")) {
-			replace(_bugtrackerGameData, "\n", "%0A");
+			Common::replace(_bugtrackerGameData, "\n", "%0A");
 		}
 	}
 
