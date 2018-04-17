@@ -621,4 +621,28 @@ void MenuActionLoadGame::execute() {
 
 }
 
+// MenuActionSaveGame
+
+	MenuActionSaveGame::MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIndex)
+			: BaseMenuAction(menuSystem), _choiceIndex(choiceIndex) {
+	}
+
+	void MenuActionSaveGame::execute() {
+		const Plugin *plugin = NULL;
+		EngineMan.findGame(ConfMan.get("gameid"), &plugin);
+		GUI::SaveLoadChooser *dialog;
+		Common::String desc;
+		int slot;
+
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		slot = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+
+		delete dialog;
+
+		if (slot >= 0) {
+			_menuSystem->setSavegameSlotNum(slot);
+			_menuSystem->selectMenuChoiceIndex(_choiceIndex);
+		}
+		_menuSystem->closeMenu();
+	}
 } // End of namespace Illusions
