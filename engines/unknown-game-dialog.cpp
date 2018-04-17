@@ -46,11 +46,13 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 
 	//Check if we have clipboard functionality and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
-		_reportTranslated += _("Use the button below to copy the required game information into your clipboard. \n");
+		_reportTranslated += "\n";
+		_reportTranslated += _("Use the button below to copy the required game information into your clipboard.");
 	}
 
 	//Check if we have support for opening URLs and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
+		_reportTranslated += "\n";
 		_reportTranslated += _("You can also directly report your game to the Bug Tracker!");
 	}
 
