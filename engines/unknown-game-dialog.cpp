@@ -72,10 +72,6 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 	_h =  3 * kLineHeight;
 	_h += lineCount * kLineHeight;
 
-	// Center the dialog
-	_x = (screenW - _w) / 2;
-	_y = (screenH - _h) / 2;
-
 	// Buttons
 	int closeButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_("Close")) + 10);
 	int copyToClipboardButtonWidth = MAX(buttonWidth, g_gui.getFont().getStringWidth(_("Copy to clipboard")) + 10);
@@ -112,6 +108,12 @@ UnknownGameDialog::UnknownGameDialog(const Common::String &reportData, const Com
 	}
 
 	y += kLineHeight;
+}
+
+void UnknownGameDialog::reflowLayout() {
+	_x = (g_system->getOverlayWidth() - _w) / 2;
+	_y = (g_system->getOverlayHeight() - _h) / 2;
+	GUI::Dialog::reflowLayout();
 }
 
 void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
