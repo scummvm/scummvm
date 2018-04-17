@@ -358,17 +358,18 @@ void AdvancedMetaEngine::reportUnknown(const Common::FSNode &path, const ADFileP
 	reportTranslated += "\n\n";
 
 	reportTranslated.wordWrap(65);
-
-	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file) {
-		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
-		reportTranslated += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
-	}
-	report += "\n";
-	reportTranslated += "\n";
-
-	// Write the original message about the unknown game to the log file
 	Common::String reportLog = report;
 	reportLog.wordWrap(80);
+
+	Common::String unknownFiles;
+	for (ADFilePropertiesMap::const_iterator file = filesProps.begin(); file != filesProps.end(); ++file)
+		unknownFiles += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
+
+	report += unknownFiles;
+	reportTranslated += unknownFiles;
+	reportLog += unknownFiles + "\n";
+
+	// Write the original message about the unknown game to the log file
 	g_system->logMessage(LogMessageType::kInfo, reportLog.c_str());
 
 	// Check if the GUI is running, show the UnknownGameDialog and print the translated unknown game information
