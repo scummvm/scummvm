@@ -116,6 +116,17 @@ void UnknownGameDialog::reflowLayout() {
 	GUI::Dialog::reflowLayout();
 }
 
+Common::String UnknownGameDialog::generateBugtrackerURL() {
+		return Common::String::format((
+		"https://bugs.scummvm.org/newticket?"
+		"summary=[UNK] Unknown game for engine %s:"
+		"&description=%s"
+		"&component=Engine%3A%s"
+		"&type=enhancement"
+		"&keywords=unknown-game,%s"),
+		_bugtrackerAffectedEngine.c_str(), _bugtrackerGameData.c_str(), _bugtrackerAffectedEngine.c_str(), _bugtrackerAffectedEngine.c_str());
+}
+
 void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch(cmd) {
 	case kCopyToClipboard:
@@ -135,15 +146,7 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	}
 	case kOpenBugtrackerURL:
 	{
-		Common::String bugtrackerURL = Common::String::format((
-		"https://bugs.scummvm.org/newticket?"
-		"summary=[UNK] Unknown game for engine %s:"
-		"&description=%s"
-		"&component=Engine%3A%s"
-		"&type=enhancement"
-		"&keywords=unknown-game,%s"),
-		_bugtrackerAffectedEngine.c_str(), _bugtrackerGameData.c_str(), _bugtrackerAffectedEngine.c_str(), _bugtrackerAffectedEngine.c_str());
-		g_system->openUrl(bugtrackerURL);
+		g_system->openUrl(generateBugtrackerURL());
 		break;
 	}
 }

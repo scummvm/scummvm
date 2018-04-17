@@ -32,6 +32,7 @@ class UnknownGameDialog : public Dialog {
 public:
 	UnknownGameDialog(const Common::String &reportData, const Common::String &reportTranslated, const Common::String &bugtrackerAffectedEngine);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+	virtual Common::String generateBugtrackerURL();
 	virtual void reflowLayout();
 
 private:
