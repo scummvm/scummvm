@@ -121,7 +121,11 @@ void UnknownGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	case kCopyToClipboard:
 	{
 		g_system->setTextInClipboard(_reportData);
-		g_system->displayMessageOnOSD(_("All necessary information about your game has been copied into the clipboard"));
+		if (g_system->setTextInClipboard(_reportData)) {
+			g_system->displayMessageOnOSD(_("All necessary information about your game has been copied into the clipboard"));
+		} else {
+			g_system->displayMessageOnOSD(_("Copying the game information to the clipboard has failed!"));
+		}
 		break;
 	}
 	case kClose:
