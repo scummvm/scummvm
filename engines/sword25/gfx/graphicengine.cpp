@@ -373,10 +373,10 @@ bool GraphicEngine::saveThumbnailScreenshot(const Common::String &filename) {
 
 void GraphicEngine::ARGBColorToLuaColor(lua_State *L, uint color) {
 	lua_Number components[4] = {
-		(lua_Number)((color >> 16) & 0xff),	// Red
-		(lua_Number)((color >> 8) & 0xff),	// Green
-		(lua_Number)(color & 0xff),			// Blue
-		(lua_Number)(color >> 24),			// Alpha
+		(lua_Number)((color >> 16) & 0xff), // Red
+		(lua_Number)((color >>  8) & 0xff), // Green
+		(lua_Number)( color        & 0xff), // Blue
+		(lua_Number)( color >> 24),         // Alpha
 	};
 
 	lua_newtable(L);
