@@ -643,6 +643,5 @@ void MenuActionLoadGame::execute() {
 			_menuSystem->setSavegameSlotNum(slot);
 			_menuSystem->selectMenuChoiceIndex(_choiceIndex);
 		}
-		_menuSystem->closeMenu();
 	}
 } // End of namespace Illusions
