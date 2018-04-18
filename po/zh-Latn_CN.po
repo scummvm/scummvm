@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-15 19:57+0200\n"
-"PO-Revision-Date: 2016-12-26 19:38+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/zh_LATN@cn/>\n"
+"PO-Revision-Date: 2018-04-18 10:18+0000\n"
+"Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
+"Language-Team: Chinese "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/zh_LATN@cn/>\n"
 "Language: zh-Latn_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1979,12 +1979,11 @@ msgstr "MAME OPL Moniqi"
 
 #: audio/fmopl.cpp:73
 msgid "DOSBox OPL emulator"
-msgstr "DosBox OPL Moniqi"
+msgstr "DOSBox OPL Moniqi"
 
 #: audio/fmopl.cpp:76
-#, fuzzy
 msgid "Nuked OPL emulator"
-msgstr "MAME OPL Moniqi"
+msgstr "Nuked OPL Moniqi"
 
 #: audio/fmopl.cpp:79
 msgid "ALSA Direct FM"
@@ -1992,7 +1991,7 @@ msgstr "ALSA Direct FM"
 
 #: audio/fmopl.cpp:82
 msgid "OPL2LPT"
-msgstr ""
+msgstr "OPL2LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
