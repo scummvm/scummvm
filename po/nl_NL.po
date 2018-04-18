@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-15 19:57+0200\n"
-"PO-Revision-Date: 2018-04-18 07:46+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2018-04-18 09:57+0000\n"
+"Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
 "Language-Team: Dutch "
 "<https://translations.scummvm.org/projects/scummvm/scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -1985,7 +1985,7 @@ msgstr "Evengoed starten"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
-msgstr "AdLib Emulator"
+msgstr "AdLib emulator"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
