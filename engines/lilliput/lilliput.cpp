@@ -2727,8 +2727,9 @@ Common::Error LilliputEngine::run() {
 
 	// Setup mixer
 	syncSoundSettings();
-	//TODO: Init sound/music player
+	_soundHandler->init();
 
+	// Init palette
 	initPalette();
 
 	// Load files. In the original, the size was hardcoded

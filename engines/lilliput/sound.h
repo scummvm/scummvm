@@ -43,7 +43,12 @@ public:
 private:
 	LilliputEngine *_vm;
 
-	byte *_musicBuff;
+	int _fileNumb;
+	byte **_unpackedFiles;
+	uint16 *_unpackedSizes;
+
+	uint32 decode(const byte *src, byte *dst, uint32 len);
+	byte readByte(const byte *data, uint32 offset);
 
 	void loadMusic(Common::String filename);
 };
