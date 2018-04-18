@@ -7,13 +7,13 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-15 19:57+0200\n"
-"PO-Revision-Date: 2017-04-28 11:12+0000\n"
-"Last-Translator: Arius <alidop@pathfinder.gr>\n"
-"Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/el/>\n"
+"PO-Revision-Date: 2018-04-18 10:19+0000\n"
+"Last-Translator: Adrian FrΓΌhwirth <bonki@scummvm.org>\n"
+"Language-Team: Greek "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/el/>\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-7\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 2.9\n"
@@ -22,37 +22,37 @@ msgstr ""
 #: gui/about.cpp:94
 #, c-format
 msgid "(built on %s)"
-msgstr "(δημιουργήθηκε την %s)"
+msgstr "(Ξ΄Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ®ΞΈΞ·ΞΊΞµ Ο„Ξ·Ξ½ %s)"
 
 #: gui/about.cpp:101
 msgid "Features compiled in:"
-msgstr "Χαρακτηριστικά που περιλαμβάνονται:"
+msgstr "Ξ§Ξ±ΟΞ±ΞΊΟ„Ξ·ΟΞΉΟƒΟ„ΞΉΞΊΞ¬ Ο€ΞΏΟ… Ο€ΞµΟΞΉΞ»Ξ±ΞΌΞ²Ξ¬Ξ½ΞΏΞ½Ο„Ξ±ΞΉ:"
 
 #: gui/about.cpp:110
 msgid "Available engines:"
-msgstr "Διαθέσιμες μηχανές:"
+msgstr "Ξ”ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞµΟ‚ ΞΌΞ·Ο‡Ξ±Ξ½Ξ­Ο‚:"
 
 #: gui/browser.cpp:69 gui/browser_osx.mm:84
 msgid "Show hidden files"
-msgstr "Εμφάνιση κρυφών αρχείων"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΞΊΟΟ…Ο†ΟΞ½ Ξ±ΟΟ‡ΞµΞ―Ο‰Ξ½"
 
 #: gui/browser.cpp:69
 msgid "Show files marked with the hidden attribute"
-msgstr "Εμφάνειση αρχείων που έχουν επισημανθεί ως κρυφά"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞµΞΉΟƒΞ· Ξ±ΟΟ‡ΞµΞ―Ο‰Ξ½ Ο€ΞΏΟ… Ξ­Ο‡ΞΏΟ…Ξ½ ΞµΟ€ΞΉΟƒΞ·ΞΌΞ±Ξ½ΞΈΞµΞ― Ο‰Ο‚ ΞΊΟΟ…Ο†Ξ¬"
 
 #: gui/browser.cpp:73 gui/remotebrowser.cpp:57
 msgid "Go up"
-msgstr "Μετάβαση πάνω"
+msgstr "ΞΞµΟ„Ξ¬Ξ²Ξ±ΟƒΞ· Ο€Ξ¬Ξ½Ο‰"
 
 #: gui/browser.cpp:73 gui/browser.cpp:75 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr "Μετάβαση στο προηγούμενο επίπεδο καταλόγου"
+msgstr "ΞΞµΟ„Ξ¬Ξ²Ξ±ΟƒΞ· ΟƒΟ„ΞΏ Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ ΞµΟ€Ξ―Ο€ΞµΞ΄ΞΏ ΞΊΞ±Ο„Ξ±Ξ»ΟΞ³ΞΏΟ…"
 
 #: gui/browser.cpp:75 gui/remotebrowser.cpp:59
 msgctxt "lowres"
 msgid "Go up"
-msgstr "Μετάβαση πάνω"
+msgstr "ΞΞµΟ„Ξ¬Ξ²Ξ±ΟƒΞ· Ο€Ξ¬Ξ½Ο‰"
 
 #: gui/browser.cpp:76 gui/chooser.cpp:46 gui/editgamedialog.cpp:293
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
@@ -68,50 +68,50 @@ msgstr "Μετάβαση πάνω"
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
 msgid "Cancel"
-msgstr "Ακύρωση"
+msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ·"
 
 #: gui/browser.cpp:77 gui/browser_osx.mm:151 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:66 gui/remotebrowser.cpp:61
 #: gui/themebrowser.cpp:56
 msgid "Choose"
-msgstr "Επιλογή"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ®"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "Επιλέξτε φάκελο για να μεταφορτώσετε τα δεδομένα παιχνιδιών"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο†Ξ¬ΞΊΞµΞ»ΞΏ Ξ³ΞΉΞ± Ξ½Ξ± ΞΌΞµΟ„Ξ±Ο†ΞΏΟΟ„ΟΟƒΞµΟ„Ξµ Ο„Ξ± Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:471 gui/launcher.cpp:197
 msgid "Select directory with game data"
-msgstr "Επιλέξτε φάκελο με δεδομένα παιχνιδιού"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο†Ξ¬ΞΊΞµΞ»ΞΏ ΞΌΞµ Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "From: "
-msgstr "Από: "
+msgstr "Ξ‘Ο€Ο: "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:265
 msgid "To: "
-msgstr "Έως: "
+msgstr "ΞΟ‰Ο‚: "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
-msgstr "Ακύρωση λήψης"
+msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ· Ξ»Ξ®ΟΞ·Ο‚"
 
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "Ακύρωση λήψης"
+msgstr "Ξ‘ΞΊΟΟΟ‰ΟƒΞ· Ξ»Ξ®ΟΞ·Ο‚"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr "Απόκρυψη"
+msgstr "Ξ‘Ο€ΟΞΊΟΟ…ΟΞ·"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
-"Φαίνεται πως η σύνδεσή σας είναι περιορισμένη. Θέλετε πραγματικά να "
-"μεταφορτώσετε αρχεία με αυτή;"
+"Ξ¦Ξ±Ξ―Ξ½ΞµΟ„Ξ±ΞΉ Ο€Ο‰Ο‚ Ξ· ΟƒΟΞ½Ξ΄ΞµΟƒΞ® ΟƒΞ±Ο‚ ΞµΞ―Ξ½Ξ±ΞΉ Ο€ΞµΟΞΉΞΏΟΞΉΟƒΞΌΞ­Ξ½Ξ·. ΞΞ­Ξ»ΞµΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ¬ Ξ½Ξ± "
+"ΞΌΞµΟ„Ξ±Ο†ΞΏΟΟ„ΟΟƒΞµΟ„Ξµ Ξ±ΟΟ‡ΞµΞ―Ξ± ΞΌΞµ Ξ±Ο…Ο„Ξ®;"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -124,7 +124,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:820
 msgid "Yes"
-msgstr "Ναι"
+msgstr "ΞΞ±ΞΉ"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -137,19 +137,19 @@ msgstr "Ναι"
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:820
 msgid "No"
-msgstr "Όχι"
+msgstr "ΞΟ‡ΞΉ"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:569
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "Το ScummVM δε μπόρεσε να ανοίξει το καθορισμένο φάκελο!"
+msgstr "Ξ¤ΞΏ ScummVM Ξ΄Ξµ ΞΌΟ€ΟΟΞµΟƒΞµ Ξ½Ξ± Ξ±Ξ½ΞΏΞ―ΞΎΞµΞΉ Ο„ΞΏ ΞΊΞ±ΞΈΞΏΟΞΉΟƒΞΌΞ­Ξ½ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏ!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"Δεν ήταν δυνατή η δημιουργία φακέλου για μεταφόρτωση - ο προκαθορισμένος "
-"φάκελος έχει ένα αρχείο με το ίδιο όνομα."
+"Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ΄Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ± Ο†Ξ±ΞΊΞ­Ξ»ΞΏΟ… Ξ³ΞΉΞ± ΞΌΞµΟ„Ξ±Ο†ΟΟΟ„Ο‰ΟƒΞ· - ΞΏ Ο€ΟΞΏΞΊΞ±ΞΈΞΏΟΞΉΟƒΞΌΞ­Ξ½ΞΏΟ‚ "
+"Ο†Ξ¬ΞΊΞµΞ»ΞΏΟ‚ Ξ­Ο‡ΞµΞΉ Ξ­Ξ½Ξ± Ξ±ΟΟ‡ΞµΞ―ΞΏ ΞΌΞµ Ο„ΞΏ Ξ―Ξ΄ΞΉΞΏ ΟΞ½ΞΏΞΌΞ±."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:294
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:526
@@ -178,22 +178,22 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"Το \"%s\" υπάρχει ήδη στον προκαθορισμένο φάκελο.\n"
-"Θέλετε πραγματικά να μεταφορτώσετε αρχεία σε αυτό το φάκελο;"
+"Ξ¤ΞΏ \"%s\" Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ Ξ®Ξ΄Ξ· ΟƒΟ„ΞΏΞ½ Ο€ΟΞΏΞΊΞ±ΞΈΞΏΟΞΉΟƒΞΌΞ­Ξ½ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏ.\n"
+"ΞΞ­Ξ»ΞµΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ¬ Ξ½Ξ± ΞΌΞµΟ„Ξ±Ο†ΞΏΟΟ„ΟΟƒΞµΟ„Ξµ Ξ±ΟΟ‡ΞµΞ―Ξ± ΟƒΞµ Ξ±Ο…Ο„Ο Ο„ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏ;"
 
 #: gui/downloaddialog.cpp:252
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr "Μεταφορτώθηκαν %s %s / %s %s"
+msgstr "ΞΞµΟ„Ξ±Ο†ΞΏΟΟ„ΟΞΈΞ·ΞΊΞ±Ξ½ %s %s / %s %s"
 
 #: gui/downloaddialog.cpp:259
 #, c-format
 msgid "Download speed: %s %s"
-msgstr "Ταχύτητα μεταφόρτωσης: %s %s"
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± ΞΌΞµΟ„Ξ±Ο†ΟΟΟ„Ο‰ΟƒΞ·Ο‚: %s %s"
 
 #: gui/editgamedialog.cpp:133
 msgid "Game"
-msgstr "Παιχνίδι"
+msgstr "Ξ Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ"
 
 #: gui/editgamedialog.cpp:137
 msgid "ID:"
@@ -205,9 +205,9 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"Σύντομο αναγνωριστικό παιχνιδιού που χρησιμοποιείται για την παραπομπή "
-"αποθηκευμένων παιχνιδιών και για την εκτέλεση του παιχνιδιού από τη γραμμή "
-"εντολών"
+"Ξ£ΟΞ½Ο„ΞΏΞΌΞΏ Ξ±Ξ½Ξ±Ξ³Ξ½Ο‰ΟΞΉΟƒΟ„ΞΉΞΊΟ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ο€ΞΏΟ… Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞµΞ―Ο„Ξ±ΞΉ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ Ο€Ξ±ΟΞ±Ο€ΞΏΞΌΟ€Ξ® "
+"Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ο‰Ξ½ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½ ΞΊΞ±ΞΉ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞµΞΊΟ„Ξ­Ξ»ΞµΟƒΞ· Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ±Ο€Ο Ο„Ξ· Ξ³ΟΞ±ΞΌΞΌΞ® "
+"ΞµΞ½Ο„ΞΏΞ»ΟΞ½"
 
 #: gui/editgamedialog.cpp:139
 msgctxt "lowres"
@@ -216,100 +216,100 @@ msgstr "ID:"
 
 #: gui/editgamedialog.cpp:144 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr "Όνομα:"
+msgstr "ΞΞ½ΞΏΞΌΞ±:"
 
 #: gui/editgamedialog.cpp:144 gui/editgamedialog.cpp:146
 #: gui/editgamedialog.cpp:147
 msgid "Full title of the game"
-msgstr "Πλήρης τίτλος του παιχνιδιού"
+msgstr "Ξ Ξ»Ξ®ΟΞ·Ο‚ Ο„Ξ―Ο„Ξ»ΞΏΟ‚ Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: gui/editgamedialog.cpp:146
 msgctxt "lowres"
 msgid "Name:"
-msgstr "Όνομα:"
+msgstr "ΞΞ½ΞΏΞΌΞ±:"
 
 #: gui/editgamedialog.cpp:150
 msgid "Language:"
-msgstr "Γλώσσα:"
+msgstr "Ξ“Ξ»ΟΟƒΟƒΞ±:"
 
 #: gui/editgamedialog.cpp:150 gui/editgamedialog.cpp:151
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"Γλώσσα του παιχνιδιού. Αυτό δε θα μετατρέψει την Ισπανική έκδοση του "
-"παιχνιδιού σας σε Αγγλική"
+"Ξ“Ξ»ΟΟƒΟƒΞ± Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ. Ξ‘Ο…Ο„Ο Ξ΄Ξµ ΞΈΞ± ΞΌΞµΟ„Ξ±Ο„ΟΞ­ΟΞµΞΉ Ο„Ξ·Ξ½ Ξ™ΟƒΟ€Ξ±Ξ½ΞΉΞΊΞ® Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ο„ΞΏΟ… "
+"Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΟƒΞ±Ο‚ ΟƒΞµ Ξ‘Ξ³Ξ³Ξ»ΞΉΞΊΞ®"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:166 gui/options.cpp:995
 #: gui/options.cpp:1008 gui/options.cpp:1573 audio/null.cpp:41
 msgid "<default>"
-msgstr "<προκαθορισμένη>"
+msgstr "<Ο€ΟΞΏΞΊΞ±ΞΈΞΏΟΞΉΟƒΞΌΞ­Ξ½Ξ·>"
 
 #: gui/editgamedialog.cpp:162
 msgid "Platform:"
-msgstr "Πλατφόρμα:"
+msgstr "Ξ Ξ»Ξ±Ο„Ο†ΟΟΞΌΞ±:"
 
 #: gui/editgamedialog.cpp:162 gui/editgamedialog.cpp:164
 #: gui/editgamedialog.cpp:165
 msgid "Platform the game was originally designed for"
-msgstr "Πλατφόρμα για την οποία σχεδιάστηκε αρχικά το παιχνίδι"
+msgstr "Ξ Ξ»Ξ±Ο„Ο†ΟΟΞΌΞ± Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞΏΟ€ΞΏΞ―Ξ± ΟƒΟ‡ΞµΞ΄ΞΉΞ¬ΟƒΟ„Ξ·ΞΊΞµ Ξ±ΟΟ‡ΞΉΞΊΞ¬ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ"
 
 #: gui/editgamedialog.cpp:164
 msgctxt "lowres"
 msgid "Platform:"
-msgstr "Πλατφόρμα:"
+msgstr "Ξ Ξ»Ξ±Ο„Ο†ΟΟΞΌΞ±:"
 
 #: gui/editgamedialog.cpp:177
 msgid "Engine"
-msgstr "Μηχανή"
+msgstr "ΞΞ·Ο‡Ξ±Ξ½Ξ®"
 
 #: gui/editgamedialog.cpp:185 gui/options.cpp:1343 gui/options.cpp:1428
 msgid "Graphics"
-msgstr "Γραφικά"
+msgstr "Ξ“ΟΞ±Ο†ΞΉΞΊΞ¬"
 
 #: gui/editgamedialog.cpp:185 gui/options.cpp:1343 gui/options.cpp:1428
 msgid "GFX"
-msgstr "Γραφ."
+msgstr "Ξ“ΟΞ±Ο†."
 
 #: gui/editgamedialog.cpp:188
 msgid "Override global graphic settings"
-msgstr "Παράκαμψη καθολικών ρυθμίσεων γραφικών"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΞΊΞ±ΞΈΞΏΞ»ΞΉΞΊΟΞ½ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΟ‰Ξ½ Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½"
 
 #: gui/editgamedialog.cpp:190
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "Παράκαμψη ρυθμ, γραφικών"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΟΟ…ΞΈΞΌ, Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½"
 
 #: gui/editgamedialog.cpp:197 gui/options.cpp:1455
 msgid "Audio"
-msgstr "Ήχος"
+msgstr "Ξ‰Ο‡ΞΏΟ‚"
 
 #: gui/editgamedialog.cpp:200
 msgid "Override global audio settings"
-msgstr "Παράκαμψη καθολικών ρυθμίσεων ήχου"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΞΊΞ±ΞΈΞΏΞ»ΞΉΞΊΟΞ½ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΟ‰Ξ½ Ξ®Ο‡ΞΏΟ…"
 
 #: gui/editgamedialog.cpp:202
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "Παράκαμψη ρυθμ. ήχου"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΟΟ…ΞΈΞΌ. Ξ®Ο‡ΞΏΟ…"
 
 #: gui/editgamedialog.cpp:211 gui/options.cpp:1460
 msgid "Volume"
-msgstr "Ένταση"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ·"
 
 #: gui/editgamedialog.cpp:213 gui/options.cpp:1462
 msgctxt "lowres"
 msgid "Volume"
-msgstr "Ένταση"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ·"
 
 #: gui/editgamedialog.cpp:216
 msgid "Override global volume settings"
-msgstr "Παράκαμψη καθολικών ρυθμίσεων έντασης"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΞΊΞ±ΞΈΞΏΞ»ΞΉΞΊΟΞ½ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΟ‰Ξ½ Ξ­Ξ½Ο„Ξ±ΟƒΞ·Ο‚"
 
 #: gui/editgamedialog.cpp:218
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "Παράκαμψη ρυθμ. έντασης"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΟΟ…ΞΈΞΌ. Ξ­Ξ½Ο„Ξ±ΟƒΞ·Ο‚"
 
 #: gui/editgamedialog.cpp:227 gui/options.cpp:1470
 msgid "MIDI"
@@ -317,12 +317,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:230
 msgid "Override global MIDI settings"
-msgstr "Παράκαμψη καθολικών ρυθμίσεων MIDI"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΞΊΞ±ΞΈΞΏΞ»ΞΉΞΊΟΞ½ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΟ‰Ξ½ MIDI"
 
 #: gui/editgamedialog.cpp:232
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Παράκαμψη ρυθμ. MIDI"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΟΟ…ΞΈΞΌ. MIDI"
 
 #: gui/editgamedialog.cpp:242 gui/options.cpp:1480
 msgid "MT-32"
@@ -330,60 +330,60 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:245
 msgid "Override global MT-32 settings"
-msgstr "Παράκαμψη καθολικών ρυθμίσεων MT-32"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΞΊΞ±ΞΈΞΏΞ»ΞΉΞΊΟΞ½ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΟ‰Ξ½ MT-32"
 
 #: gui/editgamedialog.cpp:247
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "Παράκαμψη ρυθμ. MT-32"
+msgstr "Ξ Ξ±ΟΞ¬ΞΊΞ±ΞΌΟΞ· ΟΟ…ΞΈΞΌ. MT-32"
 
 #: gui/editgamedialog.cpp:256 gui/options.cpp:1487
 msgid "Paths"
-msgstr "Φάκελοι"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΞΉ"
 
 #: gui/editgamedialog.cpp:258 gui/options.cpp:1489
 msgctxt "lowres"
 msgid "Paths"
-msgstr "Φάκελοι"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΞΉ"
 
 #: gui/editgamedialog.cpp:265
 msgid "Game Path:"
-msgstr "Φάκελος Παιχνιδιού:"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΟ‚ Ξ Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ:"
 
 #: gui/editgamedialog.cpp:267
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr "Φάκελος Παιχνιδιού:"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΟ‚ Ξ Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ:"
 
 #: gui/editgamedialog.cpp:272 gui/options.cpp:1513
 msgid "Extra Path:"
-msgstr "Φάκελος Έξτρα:"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΟ‚ ΞΞΎΟ„ΟΞ±:"
 
 #: gui/editgamedialog.cpp:272 gui/editgamedialog.cpp:274
 #: gui/editgamedialog.cpp:275
 msgid "Specifies path to additional data used by the game"
 msgstr ""
-"Καθορίζει διαδρομή για πρόσθετα δεδομένα που χρησιμοποιούνται από το παιχνίδι"
+"ΞΞ±ΞΈΞΏΟΞ―Ξ¶ΞµΞΉ Ξ΄ΞΉΞ±Ξ΄ΟΞΏΞΌΞ® Ξ³ΞΉΞ± Ο€ΟΟΟƒΞΈΞµΟ„Ξ± Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ξ± Ο€ΞΏΟ… Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞΏΟΞ½Ο„Ξ±ΞΉ Ξ±Ο€Ο Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ"
 
 #: gui/editgamedialog.cpp:274 gui/options.cpp:1515
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr "Φάκελος Έξτρα:"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΟ‚ ΞΞΎΟ„ΟΞ±:"
 
 #: gui/editgamedialog.cpp:281 gui/options.cpp:1497
 msgid "Save Path:"
-msgstr "Φάκελος Αποθήκευσης:"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΟ‚ Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚:"
 
 #: gui/editgamedialog.cpp:281 gui/editgamedialog.cpp:283
 #: gui/editgamedialog.cpp:284 gui/options.cpp:1497 gui/options.cpp:1499
 #: gui/options.cpp:1500
 msgid "Specifies where your saved games are put"
-msgstr "Καθορίζει την τοποθεσία των αποθηκευμένων παιχνιδιών σας"
+msgstr "ΞΞ±ΞΈΞΏΟΞ―Ξ¶ΞµΞΉ Ο„Ξ·Ξ½ Ο„ΞΏΟ€ΞΏΞΈΞµΟƒΞ―Ξ± Ο„Ο‰Ξ½ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ο‰Ξ½ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½ ΟƒΞ±Ο‚"
 
 #: gui/editgamedialog.cpp:283 gui/options.cpp:1499
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr "Φάκελος Αποθ.:"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΟ‚ Ξ‘Ο€ΞΏΞΈ.:"
 
 #: gui/editgamedialog.cpp:302 gui/editgamedialog.cpp:399
 #: gui/editgamedialog.cpp:458 gui/editgamedialog.cpp:519 gui/options.cpp:1508
@@ -394,48 +394,48 @@ msgstr "Φάκελος Αποθ.:"
 #: gui/options.cpp:2001 gui/options.cpp:2011
 msgctxt "path"
 msgid "None"
-msgstr "Κανένα"
+msgstr "ΞΞ±Ξ½Ξ­Ξ½Ξ±"
 
 #: gui/editgamedialog.cpp:307 gui/editgamedialog.cpp:405
 #: gui/editgamedialog.cpp:523 gui/options.cpp:1699 gui/options.cpp:1769
 #: gui/options.cpp:1997 backends/platform/wii/options.cpp:56
 msgid "Default"
-msgstr "Προκαθορισμένο"
+msgstr "Ξ ΟΞΏΞΊΞ±ΞΈΞΏΟΞΉΟƒΞΌΞ­Ξ½ΞΏ"
 
 #: gui/editgamedialog.cpp:451 gui/options.cpp:2005
 msgid "Select SoundFont"
-msgstr "Επιλέξτε SoundFont"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ SoundFont"
 
 #: gui/editgamedialog.cpp:490
 msgid "Select additional game directory"
-msgstr "Επιλέξτε πρόσθετο φάκελο παιχνιδιού"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο€ΟΟΟƒΞΈΞµΟ„ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: gui/editgamedialog.cpp:503 gui/options.cpp:1928
 msgid "Select directory for saved games"
-msgstr "Επιλέξτε φάκελο για αποθηκευμένα παιχνίδια"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο†Ξ¬ΞΊΞµΞ»ΞΏ Ξ³ΞΉΞ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ±"
 
 #: gui/editgamedialog.cpp:509
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
-"Η λειτουργία συγχρονισμού αποθηκευμένων παιχνιδιών δε λειτουργεί με μη-"
-"προεπιλεγμένους φακέλους. Αν επιθυμείτε να συγχρονίζονται τα αποθηκευμένα "
-"παιχνίδια σας, χρησιμοποιήστε τον προεπιλεγμένο φάκελο."
+"Ξ— Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± ΟƒΟ…Ξ³Ο‡ΟΞΏΞ½ΞΉΟƒΞΌΞΏΟ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ο‰Ξ½ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½ Ξ΄Ξµ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³ΞµΞ― ΞΌΞµ ΞΌΞ·-"
+"Ο€ΟΞΏΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ…Ο‚ Ο†Ξ±ΞΊΞ­Ξ»ΞΏΟ…Ο‚. Ξ‘Ξ½ ΞµΟ€ΞΉΞΈΟ…ΞΌΞµΞ―Ο„Ξµ Ξ½Ξ± ΟƒΟ…Ξ³Ο‡ΟΞΏΞ½Ξ―Ξ¶ΞΏΞ½Ο„Ξ±ΞΉ Ο„Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± "
+"Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± ΟƒΞ±Ο‚, Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ®ΟƒΟ„Ξµ Ο„ΞΏΞ½ Ο€ΟΞΏΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏ."
 
 #: gui/editgamedialog.cpp:535
 msgid "This game ID is already taken. Please choose another one."
 msgstr ""
-"Αυτό το αναγνωριστικό παιχνιδιού χρησιμοποιείται ήδη. Παρακαλώ επιλέξτε ένα "
-"άλλο."
+"Ξ‘Ο…Ο„Ο Ο„ΞΏ Ξ±Ξ½Ξ±Ξ³Ξ½Ο‰ΟΞΉΟƒΟ„ΞΉΞΊΟ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞµΞ―Ο„Ξ±ΞΉ Ξ®Ξ΄Ξ·. Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ξ­Ξ½Ξ± "
+"Ξ¬Ξ»Ξ»ΞΏ."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr "Συγγραφέας:"
+msgstr "Ξ£Ο…Ξ³Ξ³ΟΞ±Ο†Ξ­Ξ±Ο‚:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr "Σημειώσεις:"
+msgstr "Ξ£Ξ·ΞΌΞµΞΉΟΟƒΞµΞΉΟ‚:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
@@ -443,43 +443,43 @@ msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
-msgstr "Επιλογή αρχείου για φόρτωση"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… Ξ³ΞΉΞ± Ο†ΟΟΟ„Ο‰ΟƒΞ·"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr "Εισάγετε όνομα αρχείου για αποθήκευση"
+msgstr "Ξ•ΞΉΟƒΞ¬Ξ³ΞµΟ„Ξµ ΟΞ½ΞΏΞΌΞ± Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… Ξ³ΞΉΞ± Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
-msgstr "Θέλετε πραγματικά να αντικαταστήσετε το αρχείο;"
+msgstr "ΞΞ­Ξ»ΞµΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ¬ Ξ½Ξ± Ξ±Ξ½Ο„ΞΉΞΊΞ±Ο„Ξ±ΟƒΟ„Ξ®ΟƒΞµΟ„Ξµ Ο„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ;"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
-msgstr "Αντήχηση"
+msgstr "Ξ‘Ξ½Ο„Ξ®Ο‡Ξ·ΟƒΞ·"
 
 #: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
 msgid "Active"
-msgstr "Ενεργό"
+msgstr "Ξ•Ξ½ΞµΟΞ³Ο"
 
 #: gui/fluidsynth-dialog.cpp:73
 msgid "Room:"
-msgstr "Δωμάτιο:"
+msgstr "Ξ”Ο‰ΞΌΞ¬Ο„ΞΉΞΏ:"
 
 #: gui/fluidsynth-dialog.cpp:80
 msgid "Damp:"
-msgstr "Υγρασία:"
+msgstr "Ξ¥Ξ³ΟΞ±ΟƒΞ―Ξ±:"
 
 #: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
-msgstr "Πλάτος:"
+msgstr "Ξ Ξ»Ξ¬Ο„ΞΏΟ‚:"
 
 #: gui/fluidsynth-dialog.cpp:94 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
-msgstr "Επίπεδο:"
+msgstr "Ξ•Ο€Ξ―Ο€ΞµΞ΄ΞΏ:"
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
-msgstr "Χορωδία"
+msgstr "Ξ§ΞΏΟΟ‰Ξ΄Ξ―Ξ±"
 
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
@@ -487,211 +487,211 @@ msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
-msgstr "Ταχύτητα:"
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ±:"
 
 #: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
-msgstr "Βάθος:"
+msgstr "Ξ’Ξ¬ΞΈΞΏΟ‚:"
 
 #: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
-msgstr "Τύπος:"
+msgstr "Ξ¤ΟΟ€ΞΏΟ‚:"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
-msgstr "Ημίτονο"
+msgstr "Ξ—ΞΌΞ―Ο„ΞΏΞ½ΞΏ"
 
 #: gui/fluidsynth-dialog.cpp:137
 msgid "Triangle"
-msgstr "Τρίγωνο"
+msgstr "Ξ¤ΟΞ―Ξ³Ο‰Ξ½ΞΏ"
 
 #: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1533
 msgid "Misc"
-msgstr "Διάφορα"
+msgstr "Ξ”ΞΉΞ¬Ο†ΞΏΟΞ±"
 
 #: gui/fluidsynth-dialog.cpp:141
 msgid "Interpolation:"
-msgstr "Παρεμβολή:"
+msgstr "Ξ Ξ±ΟΞµΞΌΞ²ΞΏΞ»Ξ®:"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
-msgstr "Καμία (γρηγορότερο)"
+msgstr "ΞΞ±ΞΌΞ―Ξ± (Ξ³ΟΞ·Ξ³ΞΏΟΟΟ„ΞµΟΞΏ)"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
-msgstr "Γραμμική"
+msgstr "Ξ“ΟΞ±ΞΌΞΌΞΉΞΊΞ®"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
-msgstr "Τέταρτης-τάξης"
+msgstr "Ξ¤Ξ­Ο„Ξ±ΟΟ„Ξ·Ο‚-Ο„Ξ¬ΞΎΞ·Ο‚"
 
 #: gui/fluidsynth-dialog.cpp:147
 msgid "Seventh-order"
-msgstr "Έβδομης-τάξης"
+msgstr "ΞΞ²Ξ΄ΞΏΞΌΞ·Ο‚-Ο„Ξ¬ΞΎΞ·Ο‚"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset"
-msgstr "Επαναφορά"
+msgstr "Ξ•Ο€Ξ±Ξ½Ξ±Ο†ΞΏΟΞ¬"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
 msgstr ""
-"Επαναφορά όλων των ρυθμίσεων του FluidSynth στις προκαθορισμένες τους τιμές."
+"Ξ•Ο€Ξ±Ξ½Ξ±Ο†ΞΏΟΞ¬ ΟΞ»Ο‰Ξ½ Ο„Ο‰Ξ½ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΟ‰Ξ½ Ο„ΞΏΟ… FluidSynth ΟƒΟ„ΞΉΟ‚ Ο€ΟΞΏΞΊΞ±ΞΈΞΏΟΞΉΟƒΞΌΞ­Ξ½ΞµΟ‚ Ο„ΞΏΟ…Ο‚ Ο„ΞΉΞΌΞ­Ο‚."
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
-"Θέλετε πραγματικά να επαναφέρετε όλες τις ρυθμίσεις του FluidSynth στις "
-"προκαθορισμένες τους τιμές;"
+"ΞΞ­Ξ»ΞµΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ¬ Ξ½Ξ± ΞµΟ€Ξ±Ξ½Ξ±Ο†Ξ­ΟΞµΟ„Ξµ ΟΞ»ΞµΟ‚ Ο„ΞΉΟ‚ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ο„ΞΏΟ… FluidSynth ΟƒΟ„ΞΉΟ‚ "
+"Ο€ΟΞΏΞΊΞ±ΞΈΞΏΟΞΉΟƒΞΌΞ­Ξ½ΞµΟ‚ Ο„ΞΏΟ…Ο‚ Ο„ΞΉΞΌΞ­Ο‚;"
 
 #: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
 msgid "Close"
-msgstr "Κλείσιμο"
+msgstr "ΞΞ»ΞµΞ―ΟƒΞΉΞΌΞΏ"
 
 #: gui/gui-manager.cpp:122
 msgid "Mouse click"
-msgstr "Click ποντικιού"
+msgstr "Click Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: gui/gui-manager.cpp:126 base/main.cpp:341
 msgid "Display keyboard"
-msgstr "Προβολή πληκτρολογίου"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ο€Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΞΏΞ³Ξ―ΞΏΟ…"
 
 #: gui/gui-manager.cpp:130 base/main.cpp:345
 msgid "Remap keys"
-msgstr "Αντιστοίχιση πλήκτρων"
+msgstr "Ξ‘Ξ½Ο„ΞΉΟƒΟ„ΞΏΞ―Ο‡ΞΉΟƒΞ· Ο€Ξ»Ξ®ΞΊΟ„ΟΟ‰Ξ½"
 
 #: gui/gui-manager.cpp:133 base/main.cpp:348 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
-msgstr "Λειτουργία πλήρους οθόνης"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο€Ξ»Ξ®ΟΞΏΟ…Ο‚ ΞΏΞΈΟΞ½Ξ·Ο‚"
 
 #: gui/KeysDialog.cpp:41
 msgid "Map"
-msgstr "Αντιστοίχιση"
+msgstr "Ξ‘Ξ½Ο„ΞΉΟƒΟ„ΞΏΞ―Ο‡ΞΉΟƒΞ·"
 
 #: gui/KeysDialog.cpp:49
 msgid "Select an action and click 'Map'"
-msgstr "Επιλέξτε μια ενέργεια και πατήστε 'Αντιστοίχιση'"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞΌΞΉΞ± ΞµΞ½Ξ­ΟΞ³ΞµΞΉΞ± ΞΊΞ±ΞΉ Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ 'Ξ‘Ξ½Ο„ΞΉΟƒΟ„ΞΏΞ―Ο‡ΞΉΟƒΞ·'"
 
 #: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
 #, c-format
 msgid "Associated key : %s"
-msgstr "Συσχετισμένο κλειδί : %s"
+msgstr "Ξ£Ο…ΟƒΟ‡ΞµΟ„ΞΉΟƒΞΌΞ­Ξ½ΞΏ ΞΊΞ»ΞµΞΉΞ΄Ξ― : %s"
 
 #: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
 msgid "Associated key : none"
-msgstr "Συσχετισμένο κλειδί: κανένα"
+msgstr "Ξ£Ο…ΟƒΟ‡ΞµΟ„ΞΉΟƒΞΌΞ­Ξ½ΞΏ ΞΊΞ»ΞµΞΉΞ΄Ξ―: ΞΊΞ±Ξ½Ξ­Ξ½Ξ±"
 
 #: gui/KeysDialog.cpp:90
 msgid "Please select an action"
-msgstr "Παρακαλώ επιλέξτε μια ενέργεια"
+msgstr "Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞΌΞΉΞ± ΞµΞ½Ξ­ΟΞ³ΞµΞΉΞ±"
 
 #: gui/KeysDialog.cpp:106
 msgid "Press the key to associate"
-msgstr "Πατήστε το πλήκτρο για συσχέτιση"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ Ο„ΞΏ Ο€Ξ»Ξ®ΞΊΟ„ΟΞΏ Ξ³ΞΉΞ± ΟƒΟ…ΟƒΟ‡Ξ­Ο„ΞΉΟƒΞ·"
 
 #: gui/KeysDialog.cpp:145 gui/KeysDialog.h:36
 msgid "Choose an action to map"
-msgstr "Επιλέξτε μια ενέργεια για αντιστοίχιση"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞΌΞΉΞ± ΞµΞ½Ξ­ΟΞ³ΞµΞΉΞ± Ξ³ΞΉΞ± Ξ±Ξ½Ο„ΞΉΟƒΟ„ΞΏΞ―Ο‡ΞΉΟƒΞ·"
 
 #: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:100
 msgid "~Q~uit"
-msgstr "Έ~ξ~οδος"
+msgstr "Ξ~ΞΎ~ΞΏΞ΄ΞΏΟ‚"
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:112
 msgid "Quit ScummVM"
-msgstr "Έξοδος από το ScummVM"
+msgstr "ΞΞΎΞΏΞ΄ΞΏΟ‚ Ξ±Ο€Ο Ο„ΞΏ ScummVM"
 
 #: gui/launcher.cpp:142
 msgid "A~b~out..."
-msgstr "~Π~ερί..."
+msgstr "~Ξ ~ΞµΟΞ―..."
 
 #: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:86
 msgid "About ScummVM"
-msgstr "Περί του ScummVM"
+msgstr "Ξ ΞµΟΞ― Ο„ΞΏΟ… ScummVM"
 
 #: gui/launcher.cpp:143
 msgid "~O~ptions..."
-msgstr "~Ε~πιλογές..."
+msgstr "~Ξ•~Ο€ΞΉΞ»ΞΏΞ³Ξ­Ο‚..."
 
 #: gui/launcher.cpp:143
 msgid "Change global ScummVM options"
-msgstr "Αλλαγή καθολικών επιλογών του ScummVM"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® ΞΊΞ±ΞΈΞΏΞ»ΞΉΞΊΟΞ½ ΞµΟ€ΞΉΞ»ΞΏΞ³ΟΞ½ Ο„ΞΏΟ… ScummVM"
 
 #: gui/launcher.cpp:145
 msgid "~S~tart"
-msgstr "Ε~κ~κίνηση"
+msgstr "Ξ•~ΞΊ~ΞΊΞ―Ξ½Ξ·ΟƒΞ·"
 
 #: gui/launcher.cpp:145
 msgid "Start selected game"
-msgstr "Εκκίνηση επιλεγμένου παιχνιδιού"
+msgstr "Ξ•ΞΊΞΊΞ―Ξ½Ξ·ΟƒΞ· ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: gui/launcher.cpp:148
 msgid "~L~oad..."
-msgstr "~Φ~όρτωση..."
+msgstr "~Ξ¦~ΟΟΟ„Ο‰ΟƒΞ·..."
 
 #: gui/launcher.cpp:148
 msgid "Load saved game for selected game"
-msgstr "Φόρτωση αποθηκευμένου παιχνιδιού για το επιλεγμένο παιχνίδι"
+msgstr "Ξ¦ΟΟΟ„Ο‰ΟƒΞ· Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ³ΞΉΞ± Ο„ΞΏ ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ"
 
 #: gui/launcher.cpp:153
 msgid "~A~dd Game..."
-msgstr "~Π~ροσθήκη Παιχνιδιού..."
+msgstr "~Ξ ~ΟΞΏΟƒΞΈΞ®ΞΊΞ· Ξ Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ..."
 
 #: gui/launcher.cpp:153 gui/launcher.cpp:160
 msgid "Hold Shift for Mass Add"
-msgstr "Κρατήστε πατημένο το Shift για Μαζική Προσθήκη"
+msgstr "ΞΟΞ±Ο„Ξ®ΟƒΟ„Ξµ Ο€Ξ±Ο„Ξ·ΞΌΞ­Ξ½ΞΏ Ο„ΞΏ Shift Ξ³ΞΉΞ± ΞΞ±Ξ¶ΞΉΞΊΞ® Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ·"
 
 #: gui/launcher.cpp:155
 msgid "~E~dit Game..."
-msgstr "~Δ~ιόρθωση Παιχνιδιού..."
+msgstr "~Ξ”~ΞΉΟΟΞΈΟ‰ΟƒΞ· Ξ Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ..."
 
 #: gui/launcher.cpp:155 gui/launcher.cpp:162
 msgid "Change game options"
-msgstr "Αλλαγή επιλογών παιχνιδιού"
+msgstr "Ξ‘Ξ»Ξ»Ξ±Ξ³Ξ® ΞµΟ€ΞΉΞ»ΞΏΞ³ΟΞ½ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: gui/launcher.cpp:157
 msgid "~R~emove Game"
-msgstr "~Α~φαίρεση Παιχνιδιού"
+msgstr "~Ξ‘~Ο†Ξ±Ξ―ΟΞµΟƒΞ· Ξ Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: gui/launcher.cpp:157 gui/launcher.cpp:164
 msgid "Remove game from the list. The game data files stay intact"
 msgstr ""
-"Αφαίρεση παιχνιδιού από τη λίστα. Τα αρχεία δεδομένων του παιχνιδιού μένουν "
-"ανέπαφα"
+"Ξ‘Ο†Ξ±Ξ―ΟΞµΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ±Ο€Ο Ο„Ξ· Ξ»Ξ―ΟƒΟ„Ξ±. Ξ¤Ξ± Ξ±ΟΟ‡ΞµΞ―Ξ± Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½ Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΞΌΞ­Ξ½ΞΏΟ…Ξ½ "
+"Ξ±Ξ½Ξ­Ο€Ξ±Ο†Ξ±"
 
 #: gui/launcher.cpp:160
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr "~Π~ροσθ. Παιχν..."
+msgstr "~Ξ ~ΟΞΏΟƒΞΈ. Ξ Ξ±ΞΉΟ‡Ξ½..."
 
 #: gui/launcher.cpp:162
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "~Δ~ιόρθ. Παιχν..."
+msgstr "~Ξ”~ΞΉΟΟΞΈ. Ξ Ξ±ΞΉΟ‡Ξ½..."
 
 #: gui/launcher.cpp:164
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "~Α~φαίρ. Παιχν"
+msgstr "~Ξ‘~Ο†Ξ±Ξ―Ο. Ξ Ξ±ΞΉΟ‡Ξ½"
 
 #: gui/launcher.cpp:172
 msgid "Search in game list"
-msgstr "Αναζήτηση στη λίστα παιχνιδιών"
+msgstr "Ξ‘Ξ½Ξ±Ξ¶Ξ®Ο„Ξ·ΟƒΞ· ΟƒΟ„Ξ· Ξ»Ξ―ΟƒΟ„Ξ± Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½"
 
 #: gui/launcher.cpp:176 gui/launcher.cpp:775
 msgid "Search:"
-msgstr "Αναζήτηση:"
+msgstr "Ξ‘Ξ½Ξ±Ξ¶Ξ®Ο„Ξ·ΟƒΞ·:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:533
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
-msgstr "Φόρτωση παιχνιδιού:"
+msgstr "Ξ¦ΟΟΟ„Ο‰ΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -701,183 +701,183 @@ msgstr "Φόρτωση παιχνιδιού:"
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
-msgstr "Φόρτωση"
+msgstr "Ξ¦ΟΟΟ„Ο‰ΟƒΞ·"
 
 #: gui/launcher.cpp:309
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
-"Θέλετε πραγματικά να τρέξετε τον μαζικό ανιχνευτή παιχνιδιών; Αυτό θα "
-"μπορούσε ενδεχομένως να προσθέσει ένα τεράστιο αριθμό παιχνιδιών."
+"ΞΞ­Ξ»ΞµΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ¬ Ξ½Ξ± Ο„ΟΞ­ΞΎΞµΟ„Ξµ Ο„ΞΏΞ½ ΞΌΞ±Ξ¶ΞΉΞΊΟ Ξ±Ξ½ΞΉΟ‡Ξ½ΞµΟ…Ο„Ξ® Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½; Ξ‘Ο…Ο„Ο ΞΈΞ± "
+"ΞΌΟ€ΞΏΟΞΏΟΟƒΞµ ΞµΞ½Ξ΄ΞµΟ‡ΞΏΞΌΞ­Ξ½Ο‰Ο‚ Ξ½Ξ± Ο€ΟΞΏΟƒΞΈΞ­ΟƒΞµΞΉ Ξ­Ξ½Ξ± Ο„ΞµΟΞ¬ΟƒΟ„ΞΉΞΏ Ξ±ΟΞΉΞΈΞΌΟ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½."
 
 #: gui/launcher.cpp:368
 msgid "This directory cannot be used yet, it is being downloaded into!"
 msgstr ""
-"Αυτός ο φάκελος δε μπορεί να χρησιμοποιηθεί ακόμη, γίνεται μεταφόρτωση σε "
-"αυτόν!"
+"Ξ‘Ο…Ο„ΟΟ‚ ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏΟ‚ Ξ΄Ξµ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ·ΞΈΞµΞ― Ξ±ΞΊΟΞΌΞ·, Ξ³Ξ―Ξ½ΞµΟ„Ξ±ΞΉ ΞΌΞµΟ„Ξ±Ο†ΟΟΟ„Ο‰ΟƒΞ· ΟƒΞµ "
+"Ξ±Ο…Ο„ΟΞ½!"
 
 #: gui/launcher.cpp:418
 msgid "Do you really want to remove this game configuration?"
-msgstr "Θέλετε πραγματικά να σβήσετε τις ρυθμίσεις αυτού του παιχνιδιού;"
+msgstr "ΞΞ­Ξ»ΞµΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ¬ Ξ½Ξ± ΟƒΞ²Ξ®ΟƒΞµΟ„Ξµ Ο„ΞΉΟ‚ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ Ξ±Ο…Ο„ΞΏΟ Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ;"
 
 #: gui/launcher.cpp:476
 msgid "Do you want to load saved game?"
-msgstr "Θέλετε να φορτώσετε το αποθηκευμένο παιχνίδι;"
+msgstr "ΞΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ο†ΞΏΟΟ„ΟΟƒΞµΟ„Ξµ Ο„ΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ;"
 
 #: gui/launcher.cpp:526
 msgid "This game does not support loading games from the launcher."
-msgstr "Αυτό το παιχνίδι δεν υποστηρίζει φόρτωση παιχνιδιών από τον προωθητή."
+msgstr "Ξ‘Ο…Ο„Ο Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΞΉ Ο†ΟΟΟ„Ο‰ΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½ Ξ±Ο€Ο Ο„ΞΏΞ½ Ο€ΟΞΏΟ‰ΞΈΞ·Ο„Ξ®."
 
 #: gui/launcher.cpp:530
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
-"Το ScummVM δε μπόρεσε να βρεί κάποια μηχανή ικανή να εκτελέσει το επιλεγμένο "
-"παιχνίδι!"
+"Ξ¤ΞΏ ScummVM Ξ΄Ξµ ΞΌΟ€ΟΟΞµΟƒΞµ Ξ½Ξ± Ξ²ΟΞµΞ― ΞΊΞ¬Ο€ΞΏΞΉΞ± ΞΌΞ·Ο‡Ξ±Ξ½Ξ® ΞΉΞΊΞ±Ξ½Ξ® Ξ½Ξ± ΞµΞΊΟ„ΞµΞ»Ξ­ΟƒΞµΞΉ Ο„ΞΏ ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏ "
+"Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ!"
 
 #: gui/launcher.cpp:581
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr ""
-"Το ScummVM δε μπόρεσε να βρεί κάποιο παιχνίδι στον προκαθορισμένο φάκελο!"
+"Ξ¤ΞΏ ScummVM Ξ΄Ξµ ΞΌΟ€ΟΟΞµΟƒΞµ Ξ½Ξ± Ξ²ΟΞµΞ― ΞΊΞ¬Ο€ΞΏΞΉΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ ΟƒΟ„ΞΏΞ½ Ο€ΟΞΏΞΊΞ±ΞΈΞΏΟΞΉΟƒΞΌΞ­Ξ½ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏ!"
 
 #: gui/launcher.cpp:594
 msgid "Pick the game:"
-msgstr "Διαλέξτε το παιχνίδι:"
+msgstr "Ξ”ΞΉΞ±Ξ»Ξ­ΞΎΟ„Ξµ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ:"
 
 #: gui/launcher.cpp:712
 msgid "Mass Add..."
-msgstr "Μαζική Προσθήκη..."
+msgstr "ΞΞ±Ξ¶ΞΉΞΊΞ® Ξ ΟΞΏΟƒΞΈΞ®ΞΊΞ·..."
 
 #: gui/launcher.cpp:714
 msgid "Record..."
-msgstr "Εγγραφή..."
+msgstr "Ξ•Ξ³Ξ³ΟΞ±Ο†Ξ®..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
-msgstr "... πρόοδος ..."
+msgstr "... Ο€ΟΟΞΏΞ΄ΞΏΟ‚ ..."
 
 #: gui/massadd.cpp:259
 msgid "Scan complete!"
-msgstr "Η σάρωση ολοκληρώθηκε!"
+msgstr "Ξ— ΟƒΞ¬ΟΟ‰ΟƒΞ· ΞΏΞ»ΞΏΞΊΞ»Ξ·ΟΟΞΈΞ·ΞΊΞµ!"
 
 #: gui/massadd.cpp:262
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr ""
-"Ανακαλύφθηκαν %d νέα παιχνίδια, αγνοήθηκαν %d παιχνίδια που έχουν ήδη "
-"προστεθεί."
+"Ξ‘Ξ½Ξ±ΞΊΞ±Ξ»ΟΟ†ΞΈΞ·ΞΊΞ±Ξ½ %d Ξ½Ξ­Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ±, Ξ±Ξ³Ξ½ΞΏΞ®ΞΈΞ·ΞΊΞ±Ξ½ %d Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± Ο€ΞΏΟ… Ξ­Ο‡ΞΏΟ…Ξ½ Ξ®Ξ΄Ξ· "
+"Ο€ΟΞΏΟƒΟ„ΞµΞΈΞµΞ―."
 
 #: gui/massadd.cpp:266
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "Σαρώθηκαν %d φάκελοι ..."
+msgstr "Ξ£Ξ±ΟΟΞΈΞ·ΞΊΞ±Ξ½ %d Ο†Ξ¬ΞΊΞµΞ»ΞΏΞΉ ..."
 
 #: gui/massadd.cpp:269
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr ""
-"Ανακαλύφθηκαν %d νέα παιχνίδια, αγνοήθηκαν %d παιχνίδια που έχουν ήδη "
-"προστεθεί ..."
+"Ξ‘Ξ½Ξ±ΞΊΞ±Ξ»ΟΟ†ΞΈΞ·ΞΊΞ±Ξ½ %d Ξ½Ξ­Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ±, Ξ±Ξ³Ξ½ΞΏΞ®ΞΈΞ·ΞΊΞ±Ξ½ %d Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± Ο€ΞΏΟ… Ξ­Ο‡ΞΏΟ…Ξ½ Ξ®Ξ΄Ξ· "
+"Ο€ΟΞΏΟƒΟ„ΞµΞΈΞµΞ― ..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr "Στοπ"
+msgstr "Ξ£Ο„ΞΏΟ€"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr "Διόρθωση περιγραφής εγγραφής"
+msgstr "Ξ”ΞΉΟΟΞΈΟ‰ΟƒΞ· Ο€ΞµΟΞΉΞ³ΟΞ±Ο†Ξ®Ο‚ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
 
 #: gui/onscreendialog.cpp:108
 msgid "Switch to Game"
-msgstr "Μετάβαση στο Παιχνίδι"
+msgstr "ΞΞµΟ„Ξ¬Ξ²Ξ±ΟƒΞ· ΟƒΟ„ΞΏ Ξ Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ"
 
 #: gui/onscreendialog.cpp:110
 msgid "Fast replay"
-msgstr "Γρήγορη επανάληψη"
+msgstr "Ξ“ΟΞ®Ξ³ΞΏΟΞ· ΞµΟ€Ξ±Ξ½Ξ¬Ξ»Ξ·ΟΞ·"
 
 #: gui/options.cpp:121 common/updates.cpp:56
 msgid "Never"
-msgstr "Ποτέ"
+msgstr "Ξ ΞΏΟ„Ξ­"
 
 #: gui/options.cpp:121
 msgid "every 5 mins"
-msgstr "κάθε 5 λεπτά"
+msgstr "ΞΊΞ¬ΞΈΞµ 5 Ξ»ΞµΟ€Ο„Ξ¬"
 
 #: gui/options.cpp:121
 msgid "every 10 mins"
-msgstr "κάθε 10 λεπτά"
+msgstr "ΞΊΞ¬ΞΈΞµ 10 Ξ»ΞµΟ€Ο„Ξ¬"
 
 #: gui/options.cpp:121
 msgid "every 15 mins"
-msgstr "κάθε 15 λεπτά"
+msgstr "ΞΊΞ¬ΞΈΞµ 15 Ξ»ΞµΟ€Ο„Ξ¬"
 
 #: gui/options.cpp:121
 msgid "every 30 mins"
-msgstr "κάθε 30 λεπτά"
+msgstr "ΞΊΞ¬ΞΈΞµ 30 Ξ»ΞµΟ€Ο„Ξ¬"
 
 #: gui/options.cpp:339 gui/options.cpp:636 gui/options.cpp:774
 #: gui/options.cpp:851 gui/options.cpp:1112
 msgctxt "soundfont"
 msgid "None"
-msgstr "Κανένα"
+msgstr "ΞΞ±Ξ½Ξ­Ξ½Ξ±"
 
 #: gui/options.cpp:510
 msgid "Failed to apply some of the graphic options changes:"
-msgstr "Δεν ήταν δυνατή η εφαρμογή ορισμένων αλλαγών στις επιλογές γραφικών:"
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΟ†Ξ±ΟΞΌΞΏΞ³Ξ® ΞΏΟΞΉΟƒΞΌΞ­Ξ½Ο‰Ξ½ Ξ±Ξ»Ξ»Ξ±Ξ³ΟΞ½ ΟƒΟ„ΞΉΟ‚ ΞµΟ€ΞΉΞ»ΞΏΞ³Ξ­Ο‚ Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½:"
 
 #: gui/options.cpp:522
 msgid "the video mode could not be changed."
-msgstr "δεν ήταν δυνατή η αλλαγή της λειτουργίας βίντεο."
+msgstr "Ξ΄ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ο„Ξ·Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ Ξ²Ξ―Ξ½Ο„ΞµΞΏ."
 
 #: gui/options.cpp:528
 msgid "the aspect ratio setting could not be changed"
-msgstr "δεν ήταν δυνατή η αλλαγή της διόρθωσης αναλογίας διαστάσεων"
+msgstr "Ξ΄ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ο„Ξ·Ο‚ Ξ΄ΞΉΟΟΞΈΟ‰ΟƒΞ·Ο‚ Ξ±Ξ½Ξ±Ξ»ΞΏΞ³Ξ―Ξ±Ο‚ Ξ΄ΞΉΞ±ΟƒΟ„Ξ¬ΟƒΞµΟ‰Ξ½"
 
 #: gui/options.cpp:534
 msgid "the fullscreen setting could not be changed"
-msgstr "δεν ήταν δυνατή η αλλαγή της ρύθμισης πλήρους οθόνης"
+msgstr "Ξ΄ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ο„Ξ·Ο‚ ΟΟΞΈΞΌΞΉΟƒΞ·Ο‚ Ο€Ξ»Ξ®ΟΞΏΟ…Ο‚ ΞΏΞΈΟΞ½Ξ·Ο‚"
 
 #: gui/options.cpp:540
 msgid "the filtering setting could not be changed"
-msgstr "δεν ήταν δυνατή η αλλαγή της ρύθμισης φιλτραρίσματος"
+msgstr "Ξ΄ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ο„Ξ·Ο‚ ΟΟΞΈΞΌΞΉΟƒΞ·Ο‚ Ο†ΞΉΞ»Ο„ΟΞ±ΟΞ―ΟƒΞΌΞ±Ο„ΞΏΟ‚"
 
 #: gui/options.cpp:930
 msgid "Show On-screen control"
-msgstr "Εμφάνιση των στοιχείων χειρισμού στην οθόνη"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο„Ο‰Ξ½ ΟƒΟ„ΞΏΞΉΟ‡ΞµΞ―Ο‰Ξ½ Ο‡ΞµΞΉΟΞΉΟƒΞΌΞΏΟ ΟƒΟ„Ξ·Ξ½ ΞΏΞΈΟΞ½Ξ·"
 
 #: gui/options.cpp:934
 msgid "Touchpad mouse mode"
-msgstr "Touchpad σε λειτουργία ποντικιού"
+msgstr "Touchpad ΟƒΞµ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: gui/options.cpp:938
 msgid "Swap Menu and Back buttons"
-msgstr "Εναλλαγή των κουμπιών Μενού και Πίσω"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ο„Ο‰Ξ½ ΞΊΞΏΟ…ΞΌΟ€ΞΉΟΞ½ ΞΞµΞ½ΞΏΟ ΞΊΞ±ΞΉ Ξ Ξ―ΟƒΟ‰"
 
 #: gui/options.cpp:943
 msgid "Pointer Speed:"
-msgstr "Ταχύτητα δείκτη:"
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± Ξ΄ΞµΞ―ΞΊΟ„Ξ·:"
 
 #: gui/options.cpp:943 gui/options.cpp:945 gui/options.cpp:946
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr "Ταχύτητα χειρισμού του δείκτη ποντικιού με πληκτρολόγιο/χειριστήριο"
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± Ο‡ΞµΞΉΟΞΉΟƒΞΌΞΏΟ Ο„ΞΏΟ… Ξ΄ΞµΞ―ΞΊΟ„Ξ· Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ ΞΌΞµ Ο€Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΟΞ³ΞΉΞΏ/Ο‡ΞµΞΉΟΞΉΟƒΟ„Ξ®ΟΞΉΞΏ"
 
 #: gui/options.cpp:945
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "Ταχύτητα δείκτη:"
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± Ξ΄ΞµΞ―ΞΊΟ„Ξ·:"
 
 #: gui/options.cpp:956
 msgid "Joy Deadzone:"
-msgstr "Περιοχή αδράνειας χειριστήριου:"
+msgstr "Ξ ΞµΟΞΉΞΏΟ‡Ξ® Ξ±Ξ΄ΟΞ¬Ξ½ΞµΞΉΞ±Ο‚ Ο‡ΞµΞΉΟΞΉΟƒΟ„Ξ®ΟΞΉΞΏΟ…:"
 
 #: gui/options.cpp:956 gui/options.cpp:958 gui/options.cpp:959
 msgid "Analog joystick Deadzone"
-msgstr "Περιοχή αδράνειας αναλογικού χειριστήριου"
+msgstr "Ξ ΞµΟΞΉΞΏΟ‡Ξ® Ξ±Ξ΄ΟΞ¬Ξ½ΞµΞΉΞ±Ο‚ Ξ±Ξ½Ξ±Ξ»ΞΏΞ³ΞΉΞΊΞΏΟ Ο‡ΞµΞΉΟΞΉΟƒΟ„Ξ®ΟΞΉΞΏΟ…"
 
 #: gui/options.cpp:958
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr "Περιοχή αδράνειας χειριστήριου:"
+msgstr "Ξ ΞµΟΞΉΞΏΟ‡Ξ® Ξ±Ξ΄ΟΞ¬Ξ½ΞµΞΉΞ±Ο‚ Ο‡ΞµΞΉΟΞΉΟƒΟ„Ξ®ΟΞΉΞΏΟ…:"
 
 #: gui/options.cpp:972
 msgid "HW Shader:"
@@ -898,88 +898,88 @@ msgstr ""
 
 #: gui/options.cpp:992
 msgid "Graphics mode:"
-msgstr "Λειτουργία γραφικών:"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½:"
 
 #: gui/options.cpp:1006
 msgid "Render mode:"
-msgstr "Λειτουργία απόδοσης:"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ξ±Ο€ΟΞ΄ΞΏΟƒΞ·Ο‚:"
 
 #: gui/options.cpp:1006 gui/options.cpp:1007
 msgid "Special dithering modes supported by some games"
 msgstr ""
-"Ειδικές λειτουργίες χρωματικής αντιπαράθεσης οι οποίες υποστηρίζονται από "
-"ορισμένα παιχνίδια"
+"Ξ•ΞΉΞ΄ΞΉΞΊΞ­Ο‚ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―ΞµΟ‚ Ο‡ΟΟ‰ΞΌΞ±Ο„ΞΉΞΊΞ®Ο‚ Ξ±Ξ½Ο„ΞΉΟ€Ξ±ΟΞ¬ΞΈΞµΟƒΞ·Ο‚ ΞΏΞΉ ΞΏΟ€ΞΏΞ―ΞµΟ‚ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞΏΞ½Ο„Ξ±ΞΉ Ξ±Ο€Ο "
+"ΞΏΟΞΉΟƒΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ±"
 
 #: gui/options.cpp:1018 backends/graphics/openglsdl/openglsdl-graphics.cpp:588
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2590
 msgid "Fullscreen mode"
-msgstr "Λειτουργία πλήρους οθόνης"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο€Ξ»Ξ®ΟΞΏΟ…Ο‚ ΞΏΞΈΟΞ½Ξ·Ο‚"
 
 #: gui/options.cpp:1021
 msgid "Filter graphics"
-msgstr "Φίλτρο γραφικών"
+msgstr "Ξ¦Ξ―Ξ»Ο„ΟΞΏ Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½"
 
 #: gui/options.cpp:1021
 msgid "Use linear filtering when scaling graphics"
-msgstr "Χρήση γραμμικού φιλτραρίσματος για την κλιμάκωση γραφικών"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ³ΟΞ±ΞΌΞΌΞΉΞΊΞΏΟ Ο†ΞΉΞ»Ο„ΟΞ±ΟΞ―ΟƒΞΌΞ±Ο„ΞΏΟ‚ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞΊΞ»ΞΉΞΌΞ¬ΞΊΟ‰ΟƒΞ· Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½"
 
 #: gui/options.cpp:1024
 msgid "Aspect ratio correction"
-msgstr "Διόρθωση αναλογίας διαστάσεων"
+msgstr "Ξ”ΞΉΟΟΞΈΟ‰ΟƒΞ· Ξ±Ξ½Ξ±Ξ»ΞΏΞ³Ξ―Ξ±Ο‚ Ξ΄ΞΉΞ±ΟƒΟ„Ξ¬ΟƒΞµΟ‰Ξ½"
 
 #: gui/options.cpp:1024
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "Διόρθωση αναλογίας διαστάσεων για παιχνίδια 320x200"
+msgstr "Ξ”ΞΉΟΟΞΈΟ‰ΟƒΞ· Ξ±Ξ½Ξ±Ξ»ΞΏΞ³Ξ―Ξ±Ο‚ Ξ΄ΞΉΞ±ΟƒΟ„Ξ¬ΟƒΞµΟ‰Ξ½ Ξ³ΞΉΞ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± 320x200"
 
 #: gui/options.cpp:1032
 msgid "Preferred Device:"
-msgstr "Προτιμώμενη συσκευή:"
+msgstr "Ξ ΟΞΏΟ„ΞΉΞΌΟΞΌΞµΞ½Ξ· ΟƒΟ…ΟƒΞΊΞµΟ…Ξ®:"
 
 #: gui/options.cpp:1032
 msgid "Music Device:"
-msgstr "Συσκευή Μουσικής:"
+msgstr "Ξ£Ο…ΟƒΞΊΞµΟ…Ξ® ΞΞΏΟ…ΟƒΞΉΞΊΞ®Ο‚:"
 
 #: gui/options.cpp:1032 gui/options.cpp:1034
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "Καθορίζει την προτιμώμενη συσκευή εξόδου ήχου ή εξομοιωτή κάρτας ήχου"
+msgstr "ΞΞ±ΞΈΞΏΟΞ―Ξ¶ΞµΞΉ Ο„Ξ·Ξ½ Ο€ΟΞΏΟ„ΞΉΞΌΟΞΌΞµΞ½Ξ· ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® ΞµΞΎΟΞ΄ΞΏΟ… Ξ®Ο‡ΞΏΟ… Ξ® ΞµΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ® ΞΊΞ¬ΟΟ„Ξ±Ο‚ Ξ®Ο‡ΞΏΟ…"
 
 #: gui/options.cpp:1032 gui/options.cpp:1034 gui/options.cpp:1035
 msgid "Specifies output sound device or sound card emulator"
-msgstr "Καθορίζει τη συσκευή εξόδου ήχου ή εξομοιωτή κάρτας ήχου"
+msgstr "ΞΞ±ΞΈΞΏΟΞ―Ξ¶ΞµΞΉ Ο„Ξ· ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® ΞµΞΎΟΞ΄ΞΏΟ… Ξ®Ο‡ΞΏΟ… Ξ® ΞµΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ® ΞΊΞ¬ΟΟ„Ξ±Ο‚ Ξ®Ο‡ΞΏΟ…"
 
 #: gui/options.cpp:1034
 msgctxt "lowres"
 msgid "Preferred Dev.:"
-msgstr "Προτιμ. Συσκ.:"
+msgstr "Ξ ΟΞΏΟ„ΞΉΞΌ. Ξ£Ο…ΟƒΞΊ.:"
 
 #: gui/options.cpp:1034
 msgctxt "lowres"
 msgid "Music Device:"
-msgstr "Συσκ. Μουσ.:"
+msgstr "Ξ£Ο…ΟƒΞΊ. ΞΞΏΟ…Οƒ.:"
 
 #: gui/options.cpp:1061
 msgid "AdLib emulator:"
-msgstr "Εξομοιωτής Adlib:"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ Adlib:"
 
 #: gui/options.cpp:1061 gui/options.cpp:1062
 msgid "AdLib is used for music in many games"
-msgstr "Η Adlib χρησιμοποιείται για μουσική σε πολλά παιχνίδια"
+msgstr "Ξ— Adlib Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞµΞ―Ο„Ξ±ΞΉ Ξ³ΞΉΞ± ΞΌΞΏΟ…ΟƒΞΉΞΊΞ® ΟƒΞµ Ο€ΞΏΞ»Ξ»Ξ¬ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ±"
 
 #: gui/options.cpp:1075
 msgid "GM Device:"
-msgstr "Συσκευή GM:"
+msgstr "Ξ£Ο…ΟƒΞΊΞµΟ…Ξ® GM:"
 
 #: gui/options.cpp:1075
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Καθορίζει προεπιλεγμένη συσκευή ήχου για την έξοδο General MIDI"
+msgstr "ΞΞ±ΞΈΞΏΟΞ―Ξ¶ΞµΞΉ Ο€ΟΞΏΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½Ξ· ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® Ξ®Ο‡ΞΏΟ… Ξ³ΞΉΞ± Ο„Ξ·Ξ½ Ξ­ΞΎΞΏΞ΄ΞΏ General MIDI"
 
 #: gui/options.cpp:1086
 msgid "Don't use General MIDI music"
-msgstr "Μη χρήση μουσικής General MIDI"
+msgstr "ΞΞ· Ο‡ΟΞ®ΟƒΞ· ΞΌΞΏΟ…ΟƒΞΉΞΊΞ®Ο‚ General MIDI"
 
 #: gui/options.cpp:1097 gui/options.cpp:1159
 msgid "Use first available device"
-msgstr "Χρήση πρώτης διαθέσιμης συσκευής"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ο€ΟΟΟ„Ξ·Ο‚ Ξ΄ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞ·Ο‚ ΟƒΟ…ΟƒΞΊΞµΟ…Ξ®Ο‚"
 
 #: gui/options.cpp:1109
 msgid "SoundFont:"
@@ -988,7 +988,7 @@ msgstr "SoundFont:"
 #: gui/options.cpp:1109 gui/options.cpp:1111 gui/options.cpp:1112
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
-"Το SoundFont υποστηρίζεται από μερικές κάρτες ήχου, το FluidSynth και το "
+"Ξ¤ΞΏ SoundFont Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΟ„Ξ±ΞΉ Ξ±Ο€Ο ΞΌΞµΟΞΉΞΊΞ­Ο‚ ΞΊΞ¬ΟΟ„ΞµΟ‚ Ξ®Ο‡ΞΏΟ…, Ο„ΞΏ FluidSynth ΞΊΞ±ΞΉ Ο„ΞΏ "
 "Timidity"
 
 #: gui/options.cpp:1111
@@ -998,139 +998,139 @@ msgstr "SoundFont:"
 
 #: gui/options.cpp:1117
 msgid "Mixed AdLib/MIDI mode"
-msgstr "Μικτή λειτουργία Adlib/MIDI"
+msgstr "ΞΞΉΞΊΟ„Ξ® Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Adlib/MIDI"
 
 #: gui/options.cpp:1117
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "Χρήση MIDI και Adlib για δημιουργία ήχου"
+msgstr "Ξ§ΟΞ®ΟƒΞ· MIDI ΞΊΞ±ΞΉ Adlib Ξ³ΞΉΞ± Ξ΄Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ± Ξ®Ο‡ΞΏΟ…"
 
 #: gui/options.cpp:1120
 msgid "MIDI gain:"
-msgstr "Αύξηση MIDI:"
+msgstr "Ξ‘ΟΞΎΞ·ΟƒΞ· MIDI:"
 
 #: gui/options.cpp:1130
 msgid "MT-32 Device:"
-msgstr "Συσκευή MT-32:"
+msgstr "Ξ£Ο…ΟƒΞΊΞµΟ…Ξ® MT-32:"
 
 #: gui/options.cpp:1130
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Καθορίζει προεπιλεγμένη συσκευή ήχου για έξοδο Roland MT-32/LAPC1/CM32l/CM64"
+"ΞΞ±ΞΈΞΏΟΞ―Ξ¶ΞµΞΉ Ο€ΟΞΏΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½Ξ· ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® Ξ®Ο‡ΞΏΟ… Ξ³ΞΉΞ± Ξ­ΞΎΞΏΞ΄ΞΏ Roland MT-32/LAPC1/CM32l/CM64"
 
 #: gui/options.cpp:1135
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "Πραγματική Roland MT-32 (απενεργοποίηση εξομοιωτή GM)"
+msgstr "Ξ ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ® Roland MT-32 (Ξ±Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞµΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ® GM)"
 
 #: gui/options.cpp:1135 gui/options.cpp:1137
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
-"Επιλέξτε αν θέλετε να χρησιμοποιήσετε συσκευή ήχου συμβατή με Roland, η "
-"οποία είναι συνδεδεμένη στον υπολογιστή σας"
+"Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ξ±Ξ½ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΟ„Ξµ ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® Ξ®Ο‡ΞΏΟ… ΟƒΟ…ΞΌΞ²Ξ±Ο„Ξ® ΞΌΞµ Roland, Ξ· "
+"ΞΏΟ€ΞΏΞ―Ξ± ΞµΞ―Ξ½Ξ±ΞΉ ΟƒΟ…Ξ½Ξ΄ΞµΞ΄ΞµΞΌΞ­Ξ½Ξ· ΟƒΟ„ΞΏΞ½ Ο…Ο€ΞΏΞ»ΞΏΞ³ΞΉΟƒΟ„Ξ® ΟƒΞ±Ο‚"
 
 #: gui/options.cpp:1137
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr "Πραγματική Roland MT-32 (χωρίς εξομοίωση GM)"
+msgstr "Ξ ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ® Roland MT-32 (Ο‡Ο‰ΟΞ―Ο‚ ΞµΞΎΞΏΞΌΞΏΞ―Ο‰ΟƒΞ· GM)"
 
 #: gui/options.cpp:1140
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Συσκευή Roland GS (ενεργοποίηση αντιστοιχίσεων MT-32)"
+msgstr "Ξ£Ο…ΟƒΞΊΞµΟ…Ξ® Roland GS (ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ±Ξ½Ο„ΞΉΟƒΟ„ΞΏΞΉΟ‡Ξ―ΟƒΞµΟ‰Ξ½ MT-32)"
 
 #: gui/options.cpp:1140
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Επιλέξτε αν θέλετε να ενεργοποιήσετε διορθωμένες αντιστοιχίσεις για να "
-"εξομοιώσετε μια MT-32 σε συσκευή Roland GS"
+"Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ξ±Ξ½ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΟ„Ξµ Ξ΄ΞΉΞΏΟΞΈΟ‰ΞΌΞ­Ξ½ΞµΟ‚ Ξ±Ξ½Ο„ΞΉΟƒΟ„ΞΏΞΉΟ‡Ξ―ΟƒΞµΞΉΟ‚ Ξ³ΞΉΞ± Ξ½Ξ± "
+"ΞµΞΎΞΏΞΌΞΏΞΉΟΟƒΞµΟ„Ξµ ΞΌΞΉΞ± MT-32 ΟƒΞµ ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® Roland GS"
 
 #: gui/options.cpp:1149
 msgid "Don't use Roland MT-32 music"
-msgstr "Μη χρήση μουσικής Roland MT-32"
+msgstr "ΞΞ· Ο‡ΟΞ®ΟƒΞ· ΞΌΞΏΟ…ΟƒΞΉΞΊΞ®Ο‚ Roland MT-32"
 
 #: gui/options.cpp:1176
 msgid "Text and Speech:"
-msgstr "Κείμενο και Ομιλία:"
+msgstr "ΞΞµΞ―ΞΌΞµΞ½ΞΏ ΞΊΞ±ΞΉ ΞΞΌΞΉΞ»Ξ―Ξ±:"
 
 #: gui/options.cpp:1180 gui/options.cpp:1190
 msgid "Speech"
-msgstr "Ομιλία"
+msgstr "ΞΞΌΞΉΞ»Ξ―Ξ±"
 
 #: gui/options.cpp:1181 gui/options.cpp:1191
 msgid "Subtitles"
-msgstr "Υπότιτλοι"
+msgstr "Ξ¥Ο€ΟΟ„ΞΉΟ„Ξ»ΞΏΞΉ"
 
 #: gui/options.cpp:1182
 msgid "Both"
-msgstr "Και τα δυο"
+msgstr "ΞΞ±ΞΉ Ο„Ξ± Ξ΄Ο…ΞΏ"
 
 #: gui/options.cpp:1184
 msgid "Subtitle speed:"
-msgstr "Ταχύτητα υποτίτλων:"
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± Ο…Ο€ΞΏΟ„Ξ―Ο„Ξ»Ο‰Ξ½:"
 
 #: gui/options.cpp:1186
 msgctxt "lowres"
 msgid "Text and Speech:"
-msgstr "Κείμενο και Ομιλία:"
+msgstr "ΞΞµΞ―ΞΌΞµΞ½ΞΏ ΞΊΞ±ΞΉ ΞΞΌΞΉΞ»Ξ―Ξ±:"
 
 #: gui/options.cpp:1190
 msgid "Spch"
-msgstr "Ομιλία"
+msgstr "ΞΞΌΞΉΞ»Ξ―Ξ±"
 
 #: gui/options.cpp:1191
 msgid "Subs"
-msgstr "Υπότ."
+msgstr "Ξ¥Ο€ΟΟ„."
 
 #: gui/options.cpp:1192
 msgctxt "lowres"
 msgid "Both"
-msgstr "Και τα δυο"
+msgstr "ΞΞ±ΞΉ Ο„Ξ± Ξ΄Ο…ΞΏ"
 
 #: gui/options.cpp:1192
 msgid "Show subtitles and play speech"
-msgstr "Προβολή υποτίτλων και αναπαραγωγή φωνής"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ο…Ο€ΞΏΟ„Ξ―Ο„Ξ»Ο‰Ξ½ ΞΊΞ±ΞΉ Ξ±Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ® Ο†Ο‰Ξ½Ξ®Ο‚"
 
 #: gui/options.cpp:1194
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Ταχύτητα υπότ.:"
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± Ο…Ο€ΟΟ„.:"
 
 #: gui/options.cpp:1210
 msgid "Music volume:"
-msgstr "Ένταση μουσικής:"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· ΞΌΞΏΟ…ΟƒΞΉΞΊΞ®Ο‚:"
 
 #: gui/options.cpp:1212
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr "Ένταση μουσικής:"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· ΞΌΞΏΟ…ΟƒΞΉΞΊΞ®Ο‚:"
 
 #: gui/options.cpp:1219
 msgid "Mute All"
-msgstr "Σίγαση Όλων"
+msgstr "Ξ£Ξ―Ξ³Ξ±ΟƒΞ· ΞΞ»Ο‰Ξ½"
 
 #: gui/options.cpp:1222
 msgid "SFX volume:"
-msgstr "Ένταση εφέ:"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· ΞµΟ†Ξ­:"
 
 #: gui/options.cpp:1222 gui/options.cpp:1224 gui/options.cpp:1225
 msgid "Special sound effects volume"
-msgstr "Ένταση ειδικών ακουστικών εφέ"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· ΞµΞΉΞ΄ΞΉΞΊΟΞ½ Ξ±ΞΊΞΏΟ…ΟƒΟ„ΞΉΞΊΟΞ½ ΞµΟ†Ξ­"
 
 #: gui/options.cpp:1224
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr "Ένταση εφέ:"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· ΞµΟ†Ξ­:"
 
 #: gui/options.cpp:1232
 msgid "Speech volume:"
-msgstr "Ένταση ομιλίας:"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· ΞΏΞΌΞΉΞ»Ξ―Ξ±Ο‚:"
 
 #: gui/options.cpp:1234
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Ένταση ομιλίας:"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· ΞΏΞΌΞΉΞ»Ξ―Ξ±Ο‚:"
 
 #: gui/options.cpp:1436
 msgid "Shader"
@@ -1138,214 +1138,214 @@ msgstr ""
 
 #: gui/options.cpp:1448
 msgid "Control"
-msgstr "Χειρισμός"
+msgstr "Ξ§ΞµΞΉΟΞΉΟƒΞΌΟΟ‚"
 
 #: gui/options.cpp:1474
 msgid "FluidSynth Settings"
-msgstr "Ρυθμίσεις FluidSynth"
+msgstr "Ξ΅Ο…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ FluidSynth"
 
 #: gui/options.cpp:1505
 msgid "Theme Path:"
-msgstr "Φάκελος Θέματος:"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΟ‚ ΞΞ­ΞΌΞ±Ο„ΞΏΟ‚:"
 
 #: gui/options.cpp:1507
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr "Φάκελος Θέματος:"
+msgstr "Ξ¦Ξ¬ΞΊΞµΞ»ΞΏΟ‚ ΞΞ­ΞΌΞ±Ο„ΞΏΟ‚:"
 
 #: gui/options.cpp:1513 gui/options.cpp:1515 gui/options.cpp:1516
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
-"Καθορίζει τη διαδρομή για πρόσθετα δεδομένα που χρησιμοποιούνται από όλα τα "
-"παιχνίδια ή το ScummVM"
+"ΞΞ±ΞΈΞΏΟΞ―Ξ¶ΞµΞΉ Ο„Ξ· Ξ΄ΞΉΞ±Ξ΄ΟΞΏΞΌΞ® Ξ³ΞΉΞ± Ο€ΟΟΟƒΞΈΞµΟ„Ξ± Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ξ± Ο€ΞΏΟ… Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞΏΟΞ½Ο„Ξ±ΞΉ Ξ±Ο€Ο ΟΞ»Ξ± Ο„Ξ± "
+"Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± Ξ® Ο„ΞΏ ScummVM"
 
 #: gui/options.cpp:1522
 msgid "Plugins Path:"
-msgstr "Διαδρομή Πρόσθετων:"
+msgstr "Ξ”ΞΉΞ±Ξ΄ΟΞΏΞΌΞ® Ξ ΟΟΟƒΞΈΞµΟ„Ο‰Ξ½:"
 
 #: gui/options.cpp:1524
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr "Διαδρ. Πρόσθ.:"
+msgstr "Ξ”ΞΉΞ±Ξ΄Ο. Ξ ΟΟΟƒΞΈ.:"
 
 #: gui/options.cpp:1535
 msgctxt "lowres"
 msgid "Misc"
-msgstr "Λοιπά"
+msgstr "Ξ›ΞΏΞΉΟ€Ξ¬"
 
 #: gui/options.cpp:1537
 msgid "Theme:"
-msgstr "Θέμα:"
+msgstr "ΞΞ­ΞΌΞ±:"
 
 #: gui/options.cpp:1541
 msgid "GUI Renderer:"
-msgstr "Απεικόνιση GUI:"
+msgstr "Ξ‘Ο€ΞµΞΉΞΊΟΞ½ΞΉΟƒΞ· GUI:"
 
 #: gui/options.cpp:1553
 msgid "Autosave:"
-msgstr "Αυτόματη αποθήκευση:"
+msgstr "Ξ‘Ο…Ο„ΟΞΌΞ±Ο„Ξ· Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·:"
 
 #: gui/options.cpp:1555
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Αυτόμ. αποθ.:"
+msgstr "Ξ‘Ο…Ο„ΟΞΌ. Ξ±Ο€ΞΏΞΈ.:"
 
 #: gui/options.cpp:1563
 msgid "Keys"
-msgstr "Πλήκτρα"
+msgstr "Ξ Ξ»Ξ®ΞΊΟ„ΟΞ±"
 
 #: gui/options.cpp:1570
 msgid "GUI Language:"
-msgstr "Γλώσσα GUI:"
+msgstr "Ξ“Ξ»ΟΟƒΟƒΞ± GUI:"
 
 #: gui/options.cpp:1570
 msgid "Language of ScummVM GUI"
-msgstr "Γλώσσα του ScummVM GUI"
+msgstr "Ξ“Ξ»ΟΟƒΟƒΞ± Ο„ΞΏΟ… ScummVM GUI"
 
 #: gui/options.cpp:1598 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr "Έλεγχος αναβαθμίσεων:"
+msgstr "ΞΞ»ΞµΞ³Ο‡ΞΏΟ‚ Ξ±Ξ½Ξ±Ξ²Ξ±ΞΈΞΌΞ―ΟƒΞµΟ‰Ξ½:"
 
 #: gui/options.cpp:1598
 msgid "How often to check ScummVM updates"
-msgstr "Συχνότητα ελέγχου ενημερώσεων του ScummVM"
+msgstr "Ξ£Ο…Ο‡Ξ½ΟΟ„Ξ·Ο„Ξ± ΞµΞ»Ξ­Ξ³Ο‡ΞΏΟ… ΞµΞ½Ξ·ΞΌΞµΟΟΟƒΞµΟ‰Ξ½ Ο„ΞΏΟ… ScummVM"
 
 #: gui/options.cpp:1610
 msgid "Check now"
-msgstr "Ελέγξτε τώρα"
+msgstr "Ξ•Ξ»Ξ­Ξ³ΞΎΟ„Ξµ Ο„ΟΟΞ±"
 
 #: gui/options.cpp:1618
 msgid "Cloud"
-msgstr "Σύννεφο"
+msgstr "Ξ£ΟΞ½Ξ½ΞµΟ†ΞΏ"
 
 #: gui/options.cpp:1620
 msgctxt "lowres"
 msgid "Cloud"
-msgstr "Σύννεφο"
+msgstr "Ξ£ΟΞ½Ξ½ΞµΟ†ΞΏ"
 
 #: gui/options.cpp:1625
 msgid "Storage:"
-msgstr "Αποθήκευση:"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·:"
 
 #: gui/options.cpp:1625
 msgid "Active cloud storage"
-msgstr "Ενεργή αποθήκευση σύννεφου"
+msgstr "Ξ•Ξ½ΞµΟΞ³Ξ® Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΟƒΟΞ½Ξ½ΞµΟ†ΞΏΟ…"
 
 #: gui/options.cpp:1632 gui/options.cpp:2208
 msgid "<none>"
-msgstr "<καμία>"
+msgstr "<ΞΊΞ±ΞΌΞ―Ξ±>"
 
 #: gui/options.cpp:1636 backends/platform/wii/options.cpp:114
 msgid "Username:"
-msgstr "Όνομα χρήστη:"
+msgstr "ΞΞ½ΞΏΞΌΞ± Ο‡ΟΞ®ΟƒΟ„Ξ·:"
 
 #: gui/options.cpp:1636
 msgid "Username used by this storage"
-msgstr "Το όνομα χρήστη που χρησιμοποιείται από αυτή την αποθήκη"
+msgstr "Ξ¤ΞΏ ΟΞ½ΞΏΞΌΞ± Ο‡ΟΞ®ΟƒΟ„Ξ· Ο€ΞΏΟ… Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞµΞ―Ο„Ξ±ΞΉ Ξ±Ο€Ο Ξ±Ο…Ο„Ξ® Ο„Ξ·Ξ½ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞ·"
 
 #: gui/options.cpp:1639
 msgid "Used space:"
-msgstr "Χρησιμοποιημένος χώρος:"
+msgstr "Ξ§ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½ΞΏΟ‚ Ο‡ΟΟΞΏΟ‚:"
 
 #: gui/options.cpp:1639
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
-"Χώρος που χρησιμοποιείται από τα αποθηκευμένα παιχνίδια του ScummVM σε αυτή "
-"την αποθήκη"
+"Ξ§ΟΟΞΏΟ‚ Ο€ΞΏΟ… Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞµΞ―Ο„Ξ±ΞΉ Ξ±Ο€Ο Ο„Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± Ο„ΞΏΟ… ScummVM ΟƒΞµ Ξ±Ο…Ο„Ξ® "
+"Ο„Ξ·Ξ½ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞ·"
 
 #: gui/options.cpp:1642
 msgid "Last sync time:"
-msgstr "Τελευταία ώρα συγχρονισμού:"
+msgstr "Ξ¤ΞµΞ»ΞµΟ…Ο„Ξ±Ξ―Ξ± ΟΟΞ± ΟƒΟ…Ξ³Ο‡ΟΞΏΞ½ΞΉΟƒΞΌΞΏΟ:"
 
 #: gui/options.cpp:1642
 msgid "When the last saved games sync for this storage occured"
 msgstr ""
-"Πότε πραγματοποιήθηκε ο τελευταίος συγχρονισμός αποθηκευμένων παιχνιδιών"
+"Ξ ΟΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΏΟ€ΞΏΞΉΞ®ΞΈΞ·ΞΊΞµ ΞΏ Ο„ΞµΞ»ΞµΟ…Ο„Ξ±Ξ―ΞΏΟ‚ ΟƒΟ…Ξ³Ο‡ΟΞΏΞ½ΞΉΟƒΞΌΟΟ‚ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ο‰Ξ½ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½"
 
 #: gui/options.cpp:1645 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr "Σύνδεση"
+msgstr "Ξ£ΟΞ½Ξ΄ΞµΟƒΞ·"
 
 #: gui/options.cpp:1645
 msgid "Open wizard dialog to connect your cloud storage account"
 msgstr ""
-"Ανοίξτε το διάλογο οδηγού για να συνδέσετε το λογαριασμό τού σύννεφου "
-"αποθήκευσής σας"
+"Ξ‘Ξ½ΞΏΞ―ΞΎΟ„Ξµ Ο„ΞΏ Ξ΄ΞΉΞ¬Ξ»ΞΏΞ³ΞΏ ΞΏΞ΄Ξ·Ξ³ΞΏΟ Ξ³ΞΉΞ± Ξ½Ξ± ΟƒΟ…Ξ½Ξ΄Ξ­ΟƒΞµΟ„Ξµ Ο„ΞΏ Ξ»ΞΏΞ³Ξ±ΟΞΉΞ±ΟƒΞΌΟ Ο„ΞΏΟ ΟƒΟΞ½Ξ½ΞµΟ†ΞΏΟ… "
+"Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ®Ο‚ ΟƒΞ±Ο‚"
 
 #: gui/options.cpp:1646
 msgid "Refresh"
-msgstr "Ανανέωση"
+msgstr "Ξ‘Ξ½Ξ±Ξ½Ξ­Ο‰ΟƒΞ·"
 
 #: gui/options.cpp:1646
 msgid "Refresh current cloud storage information (username and usage)"
 msgstr ""
-"Ανανέωση πληροφοριών τρέχοντος χώρου αποθήκευσης στο σύννεφο (όνομα χρήστη "
-"και χρήση)"
+"Ξ‘Ξ½Ξ±Ξ½Ξ­Ο‰ΟƒΞ· Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞΉΟΞ½ Ο„ΟΞ­Ο‡ΞΏΞ½Ο„ΞΏΟ‚ Ο‡ΟΟΞΏΟ… Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚ ΟƒΟ„ΞΏ ΟƒΟΞ½Ξ½ΞµΟ†ΞΏ (ΟΞ½ΞΏΞΌΞ± Ο‡ΟΞ®ΟƒΟ„Ξ· "
+"ΞΊΞ±ΞΉ Ο‡ΟΞ®ΟƒΞ·)"
 
 #: gui/options.cpp:1647
 msgid "Download"
-msgstr "Μεταφόρτωση"
+msgstr "ΞΞµΟ„Ξ±Ο†ΟΟΟ„Ο‰ΟƒΞ·"
 
 #: gui/options.cpp:1647
 msgid "Open downloads manager dialog"
-msgstr "¶νοιγμα διαλόγου διαχείρισης μεταφορτώσεων"
+msgstr "Ξ†Ξ½ΞΏΞΉΞ³ΞΌΞ± Ξ΄ΞΉΞ±Ξ»ΟΞ³ΞΏΟ… Ξ΄ΞΉΞ±Ο‡ΞµΞ―ΟΞΉΟƒΞ·Ο‚ ΞΌΞµΟ„Ξ±Ο†ΞΏΟΟ„ΟΟƒΞµΟ‰Ξ½"
 
 #: gui/options.cpp:1649
 msgid "Run server"
-msgstr "Εκτέλεση διακομιστή"
+msgstr "Ξ•ΞΊΟ„Ξ­Ξ»ΞµΟƒΞ· Ξ΄ΞΉΞ±ΞΊΞΏΞΌΞΉΟƒΟ„Ξ®"
 
 #: gui/options.cpp:1649
 msgid "Run local webserver"
-msgstr "Εκτέλεση τοπικού διακομιστή web"
+msgstr "Ξ•ΞΊΟ„Ξ­Ξ»ΞµΟƒΞ· Ο„ΞΏΟ€ΞΉΞΊΞΏΟ Ξ΄ΞΉΞ±ΞΊΞΏΞΌΞΉΟƒΟ„Ξ® web"
 
 #: gui/options.cpp:1650 gui/options.cpp:2318
 msgid "Not running"
-msgstr "Δεν εκτελείται"
+msgstr "Ξ”ΞµΞ½ ΞµΞΊΟ„ΞµΞ»ΞµΞ―Ο„Ξ±ΞΉ"
 
 #: gui/options.cpp:1654
 msgid "/root/ Path:"
-msgstr "/root/ Διαδρομή:"
+msgstr "/root/ Ξ”ΞΉΞ±Ξ΄ΟΞΏΞΌΞ®:"
 
 #: gui/options.cpp:1654 gui/options.cpp:1656 gui/options.cpp:1657
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Καθορίζει το φάκελο στον οποίο έχει πρόσβαση ο File Manager"
+msgstr "ΞΞ±ΞΈΞΏΟΞ―Ξ¶ΞµΞΉ Ο„ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏ ΟƒΟ„ΞΏΞ½ ΞΏΟ€ΞΏΞ―ΞΏ Ξ­Ο‡ΞµΞΉ Ο€ΟΟΟƒΞ²Ξ±ΟƒΞ· ΞΏ File Manager"
 
 #: gui/options.cpp:1656
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "/root/ Διαδρομή:"
+msgstr "/root/ Ξ”ΞΉΞ±Ξ΄ΟΞΏΞΌΞ®:"
 
 #: gui/options.cpp:1666
 msgid "Server's port:"
-msgstr "Θύρα εξυπηρετητή:"
+msgstr "ΞΟΟΞ± ΞµΞΎΟ…Ο€Ξ·ΟΞµΟ„Ξ·Ο„Ξ®:"
 
 #: gui/options.cpp:1666
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
-"Ποιά θύρα χρησιμοποιείται από το διακομιστή\n"
-"Δεν είναι διαθέσιμη η πιστοποίηση με το διακομιστή σε μη-προεπιλεγμένη θύρα"
+"Ξ ΞΏΞΉΞ¬ ΞΈΟΟΞ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞµΞ―Ο„Ξ±ΞΉ Ξ±Ο€Ο Ο„ΞΏ Ξ΄ΞΉΞ±ΞΊΞΏΞΌΞΉΟƒΟ„Ξ®\n"
+"Ξ”ΞµΞ½ ΞµΞ―Ξ½Ξ±ΞΉ Ξ΄ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞ· Ξ· Ο€ΞΉΟƒΟ„ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞΌΞµ Ο„ΞΏ Ξ΄ΞΉΞ±ΞΊΞΏΞΌΞΉΟƒΟ„Ξ® ΟƒΞµ ΞΌΞ·-Ο€ΟΞΏΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½Ξ· ΞΈΟΟΞ±"
 
 #: gui/options.cpp:1679
 msgid "Apply"
-msgstr "Εφαρμογή"
+msgstr "Ξ•Ο†Ξ±ΟΞΌΞΏΞ³Ξ®"
 
 #: gui/options.cpp:1822
 msgid "Failed to change cloud storage!"
-msgstr "Αδυναμία αλλαγής αποθήκευσης σύννεφου!"
+msgstr "Ξ‘Ξ΄Ο…Ξ½Ξ±ΞΌΞ―Ξ± Ξ±Ξ»Ξ»Ξ±Ξ³Ξ®Ο‚ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚ ΟƒΟΞ½Ξ½ΞµΟ†ΞΏΟ…!"
 
 #: gui/options.cpp:1825
 msgid "Another cloud storage is already active."
-msgstr "Μια άλλη αποθήκευση σύννεφου είναι ήδη ενεργή."
+msgstr "ΞΞΉΞ± Ξ¬Ξ»Ξ»Ξ· Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΟƒΟΞ½Ξ½ΞµΟ†ΞΏΟ… ΞµΞ―Ξ½Ξ±ΞΉ Ξ®Ξ΄Ξ· ΞµΞ½ΞµΟΞ³Ξ®."
 
 #: gui/options.cpp:1893
 msgid "Theme does not support selected language!"
-msgstr "Το θέμα δεν υποστηρίζει την επιλεγμένη γλώσσα!"
+msgstr "Ξ¤ΞΏ ΞΈΞ­ΞΌΞ± Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΞΉ Ο„Ξ·Ξ½ ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½Ξ· Ξ³Ξ»ΟΟƒΟƒΞ±!"
 
 #: gui/options.cpp:1896
 msgid "Theme cannot be loaded!"
-msgstr "Το θέμα δεν φορτώθηκε!"
+msgstr "Ξ¤ΞΏ ΞΈΞ­ΞΌΞ± Ξ΄ΞµΞ½ Ο†ΞΏΟΟ„ΟΞΈΞ·ΞΊΞµ!"
 
 #: gui/options.cpp:1899
 msgid ""
@@ -1353,29 +1353,29 @@ msgid ""
 "Misc settings will be restored."
 msgstr ""
 "\n"
-"Οι λοιπές ρυθμίσεις θα επαναφερθούν στις αρχικές τους τιμές."
+"ΞΞΉ Ξ»ΞΏΞΉΟ€Ξ­Ο‚ ΟΟ…ΞΈΞΌΞ―ΟƒΞµΞΉΟ‚ ΞΈΞ± ΞµΟ€Ξ±Ξ½Ξ±Ο†ΞµΟΞΈΞΏΟΞ½ ΟƒΟ„ΞΉΟ‚ Ξ±ΟΟ‡ΞΉΞΊΞ­Ο‚ Ο„ΞΏΟ…Ο‚ Ο„ΞΉΞΌΞ­Ο‚."
 
 #: gui/options.cpp:1935
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
-"Δεν ήταν δυνατή η εγγραφή στον επιλεγμένο φάκελο. Παρακαλώ επιλέξτε κάποιον "
-"άλλο."
+"Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΞ³Ξ³ΟΞ±Ο†Ξ® ΟƒΟ„ΞΏΞ½ ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏ. Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο ΞµΟ€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞΊΞ¬Ο€ΞΏΞΉΞΏΞ½ "
+"Ξ¬Ξ»Ξ»ΞΏ."
 
 #: gui/options.cpp:1944
 msgid "Select directory for GUI themes"
-msgstr "Επιλέξτε φάκελο για θέματα GUI"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο†Ξ¬ΞΊΞµΞ»ΞΏ Ξ³ΞΉΞ± ΞΈΞ­ΞΌΞ±Ο„Ξ± GUI"
 
 #: gui/options.cpp:1954
 msgid "Select directory for extra files"
-msgstr "Επιλέξτε φάκελο για έξτρα αρχεία"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο†Ξ¬ΞΊΞµΞ»ΞΏ Ξ³ΞΉΞ± Ξ­ΞΎΟ„ΟΞ± Ξ±ΟΟ‡ΞµΞ―Ξ±"
 
 #: gui/options.cpp:1965
 msgid "Select directory for plugins"
-msgstr "Επιλέξτε φάκελο για πρόσθετα"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο†Ξ¬ΞΊΞµΞ»ΞΏ Ξ³ΞΉΞ± Ο€ΟΟΟƒΞΈΞµΟ„Ξ±"
 
 #: gui/options.cpp:1977
 msgid "Select directory for Files Manager /root/"
-msgstr "Επιλέξτε φάκελο για το /root/ του Διαχειριστή Αρχείων"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ο†Ξ¬ΞΊΞµΞ»ΞΏ Ξ³ΞΉΞ± Ο„ΞΏ /root/ Ο„ΞΏΟ… Ξ”ΞΉΞ±Ο‡ΞµΞΉΟΞΉΟƒΟ„Ξ® Ξ‘ΟΟ‡ΞµΞ―Ο‰Ξ½"
 
 #: gui/options.cpp:2215
 #, c-format
@@ -1384,40 +1384,40 @@ msgstr "%llu bytes"
 
 #: gui/options.cpp:2223
 msgid "<right now>"
-msgstr "<άμεσα>"
+msgstr "<Ξ¬ΞΌΞµΟƒΞ±>"
 
 #: gui/options.cpp:2225
 msgid "<never>"
-msgstr "<ποτέ>"
+msgstr "<Ο€ΞΏΟ„Ξ­>"
 
 #: gui/options.cpp:2309
 msgid "Stop server"
-msgstr "Διακοπή εξυπηρετητή"
+msgstr "Ξ”ΞΉΞ±ΞΊΞΏΟ€Ξ® ΞµΞΎΟ…Ο€Ξ·ΟΞµΟ„Ξ·Ο„Ξ®"
 
 #: gui/options.cpp:2310
 msgid "Stop local webserver"
-msgstr "Διακοπή τοπικού εξυπηρετητή web"
+msgstr "Ξ”ΞΉΞ±ΞΊΞΏΟ€Ξ® Ο„ΞΏΟ€ΞΉΞΊΞΏΟ ΞµΞΎΟ…Ο€Ξ·ΟΞµΟ„Ξ·Ο„Ξ® web"
 
 #: gui/options.cpp:2401
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
-"Το αίτημα απέτυχε.\n"
-"Ελέγξτε τη σύνδεσή σας στο Internet."
+"Ξ¤ΞΏ Ξ±Ξ―Ο„Ξ·ΞΌΞ± Ξ±Ο€Ξ­Ο„Ο…Ο‡Ξµ.\n"
+"Ξ•Ξ»Ξ­Ξ³ΞΎΟ„Ξµ Ο„Ξ· ΟƒΟΞ½Ξ΄ΞµΟƒΞ® ΟƒΞ±Ο‚ ΟƒΟ„ΞΏ Internet."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
 msgid "#  next"
-msgstr "# επόμενο"
+msgstr "# ΞµΟ€ΟΞΌΞµΞ½ΞΏ"
 
 #: gui/predictivedialog.cpp:87
 msgid "add"
-msgstr "προσθήκη"
+msgstr "Ο€ΟΞΏΟƒΞΈΞ®ΞΊΞ·"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:167
 msgid "Delete char"
-msgstr "Διαγραφή χαρακτήρα"
+msgstr "Ξ”ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ο‡Ξ±ΟΞ±ΞΊΟ„Ξ®ΟΞ±"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:171
 msgid "<"
@@ -1431,7 +1431,7 @@ msgstr "*  Pre"
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:578
 msgid "*  Num"
-msgstr "* Αριθ"
+msgstr "* Ξ‘ΟΞΉΞΈ"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:581
@@ -1440,211 +1440,211 @@ msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:63
 msgid "Recorder or Playback Gameplay"
-msgstr "Εγγραφή ή Αναπαραγωγή Gameplay"
+msgstr "Ξ•Ξ³Ξ³ΟΞ±Ο†Ξ® Ξ® Ξ‘Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ® Gameplay"
 
 #: gui/recorderdialog.cpp:68 gui/recorderdialog.cpp:155
 #: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:445
 msgid "Delete"
-msgstr "Σβήσιμο"
+msgstr "Ξ£Ξ²Ξ®ΟƒΞΉΞΌΞΏ"
 
 #: gui/recorderdialog.cpp:70
 msgid "Record"
-msgstr "Εγγραφή"
+msgstr "Ξ•Ξ³Ξ³ΟΞ±Ο†Ξ®"
 
 #: gui/recorderdialog.cpp:71
 msgid "Playback"
-msgstr "Αναπαραγωγή"
+msgstr "Ξ‘Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ®"
 
 #: gui/recorderdialog.cpp:73
 msgid "Edit"
-msgstr "Διόρθωση"
+msgstr "Ξ”ΞΉΟΟΞΈΟ‰ΟƒΞ·"
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
 msgid "Author: "
-msgstr "Συγγραφέας: "
+msgstr "Ξ£Ο…Ξ³Ξ³ΟΞ±Ο†Ξ­Ξ±Ο‚: "
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Notes: "
-msgstr "Σημειώσεις: "
+msgstr "Ξ£Ξ·ΞΌΞµΞΉΟΟƒΞµΞΉΟ‚: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
-msgstr "Θέλετε πραγματικά να σβήσετε αυτή την εγγραφή;"
+msgstr "ΞΞ­Ξ»ΞµΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ¬ Ξ½Ξ± ΟƒΞ²Ξ®ΟƒΞµΟ„Ξµ Ξ±Ο…Ο„Ξ® Ο„Ξ·Ξ½ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®;"
 
 #: gui/recorderdialog.cpp:172
 msgid "Unknown Author"
-msgstr "¶γνωστος Συγγραφέας"
+msgstr "Ξ†Ξ³Ξ½Ο‰ΟƒΟ„ΞΏΟ‚ Ξ£Ο…Ξ³Ξ³ΟΞ±Ο†Ξ­Ξ±Ο‚"
 
 #: gui/remotebrowser.cpp:129
 msgid "ScummVM could not access the directory!"
-msgstr "Το ScummVM δε μπόρεσε να προσπελάσει τον φάκελο!"
+msgstr "Ξ¤ΞΏ ScummVM Ξ΄Ξµ ΞΌΟ€ΟΟΞµΟƒΞµ Ξ½Ξ± Ο€ΟΞΏΟƒΟ€ΞµΞ»Ξ¬ΟƒΞµΞΉ Ο„ΞΏΞ½ Ο†Ξ¬ΞΊΞµΞ»ΞΏ!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
-msgstr "Προβολή λίστας"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ»Ξ―ΟƒΟ„Ξ±Ο‚"
 
 #: gui/saveload-dialog.cpp:335
 msgid "Grid view"
-msgstr "Προβολή πλέγματος"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ο€Ξ»Ξ­Ξ³ΞΌΞ±Ο„ΞΏΟ‚"
 
 #: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:532
 msgid "No date saved"
-msgstr "Χωρίς αποθηκ. ημ/νία"
+msgstr "Ξ§Ο‰ΟΞ―Ο‚ Ξ±Ο€ΞΏΞΈΞ·ΞΊ. Ξ·ΞΌ/Ξ½Ξ―Ξ±"
 
 #: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:533
 msgid "No time saved"
-msgstr "Χωρίς αποθηκ. ώρα"
+msgstr "Ξ§Ο‰ΟΞ―Ο‚ Ξ±Ο€ΞΏΞΈΞ·ΞΊ. ΟΟΞ±"
 
 #: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:534
 msgid "No playtime saved"
-msgstr "Χωρίς αποθηκ. ώρα παιχνιδιού"
+msgstr "Ξ§Ο‰ΟΞ―Ο‚ Ξ±Ο€ΞΏΞΈΞ·ΞΊ. ΟΟΞ± Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: gui/saveload-dialog.cpp:444
 msgid "Do you really want to delete this saved game?"
-msgstr "Θέλετε πραγματικά να σβήσετε αυτό το αποθηκευμένο παιχνίδι;"
+msgstr "ΞΞ­Ξ»ΞµΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ¬ Ξ½Ξ± ΟƒΞ²Ξ®ΟƒΞµΟ„Ξµ Ξ±Ο…Ο„Ο Ο„ΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ;"
 
 #: gui/saveload-dialog.cpp:558 gui/saveload-dialog.cpp:1070
 msgid "Date: "
-msgstr "Ημερομηνία: "
+msgstr "Ξ—ΞΌΞµΟΞΏΞΌΞ·Ξ½Ξ―Ξ±: "
 
 #: gui/saveload-dialog.cpp:562 gui/saveload-dialog.cpp:1076
 msgid "Time: "
-msgstr "Ώρα: "
+msgstr "ΞΟΞ±: "
 
 #: gui/saveload-dialog.cpp:568 gui/saveload-dialog.cpp:1084
 msgid "Playtime: "
-msgstr "Ώρα παιχνιδιού: "
+msgstr "ΞΟΞ± Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ: "
 
 #: gui/saveload-dialog.cpp:581 gui/saveload-dialog.cpp:669
 msgid "Untitled saved game"
-msgstr "Αποθηκευμένο παιχνίδι χωρίς όνομα"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ο‡Ο‰ΟΞ―Ο‚ ΟΞ½ΞΏΞΌΞ±"
 
 #: gui/saveload-dialog.cpp:728
 msgid "Next"
-msgstr "Επόμενο"
+msgstr "Ξ•Ο€ΟΞΌΞµΞ½ΞΏ"
 
 #: gui/saveload-dialog.cpp:731
 msgid "Prev"
-msgstr "Προηγούμενο"
+msgstr "Ξ ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ"
 
 #: gui/saveload-dialog.cpp:934
 msgid "New Save"
-msgstr "Νέα Αποθήκευση"
+msgstr "ΞΞ­Ξ± Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·"
 
 #: gui/saveload-dialog.cpp:934
 msgid "Create a new saved game"
-msgstr "Δημιουργία νέου αποθηκευμένου παιχνιδιού"
+msgstr "Ξ”Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ± Ξ½Ξ­ΞΏΟ… Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: gui/saveload-dialog.cpp:1063
 msgid "Name: "
-msgstr "Όνομα: "
+msgstr "ΞΞ½ΞΏΞΌΞ±: "
 
 #: gui/saveload-dialog.cpp:1141
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr "Εισάγετε περιγραφή για τη θυρίδα %d:"
+msgstr "Ξ•ΞΉΟƒΞ¬Ξ³ΞµΟ„Ξµ Ο€ΞµΟΞΉΞ³ΟΞ±Ο†Ξ® Ξ³ΞΉΞ± Ο„Ξ· ΞΈΟ…ΟΞ―Ξ΄Ξ± %d:"
 
 #: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr "%s Οδηγός Σύνδεσης Αποθήκευσης"
+msgstr "%s ΞΞ΄Ξ·Ξ³ΟΟ‚ Ξ£ΟΞ½Ξ΄ΞµΟƒΞ·Ο‚ Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚"
 
 #: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr "Πλοηγηθείτε στην ακόλουθη διεύθυνση URL:"
+msgstr "Ξ Ξ»ΞΏΞ·Ξ³Ξ·ΞΈΞµΞ―Ο„Ξµ ΟƒΟ„Ξ·Ξ½ Ξ±ΞΊΟΞ»ΞΏΟ…ΞΈΞ· Ξ΄ΞΉΞµΟΞΈΟ…Ξ½ΟƒΞ· URL:"
 
 #: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
-msgstr "Αποκτήστε τον κωδικό από την αποθήκευση, εισάγετέ τον"
+msgstr "Ξ‘Ο€ΞΏΞΊΟ„Ξ®ΟƒΟ„Ξµ Ο„ΞΏΞ½ ΞΊΟ‰Ξ΄ΞΉΞΊΟ Ξ±Ο€Ο Ο„Ξ·Ξ½ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·, ΞµΞΉΟƒΞ¬Ξ³ΞµΟ„Ξ­ Ο„ΞΏΞ½"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr "στο παρακάτω πεδίο και πατήστε \"Σύνδεση\":"
+msgstr "ΟƒΟ„ΞΏ Ο€Ξ±ΟΞ±ΞΊΞ¬Ο„Ο‰ Ο€ΞµΞ΄Ξ―ΞΏ ΞΊΞ±ΞΉ Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ \"Ξ£ΟΞ½Ξ΄ΞµΟƒΞ·\":"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
-msgstr "¶νοιγμα διεύθυνσης URL"
+msgstr "Ξ†Ξ½ΞΏΞΉΞ³ΞΌΞ± Ξ΄ΞΉΞµΟΞΈΟ…Ξ½ΟƒΞ·Ο‚ URL"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
-msgstr "Επικόλληση"
+msgstr "Ξ•Ο€ΞΉΞΊΟΞ»Ξ»Ξ·ΟƒΞ·"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr "Επικόλληση περιεχόμενου πρόχειρου σε πεδία"
+msgstr "Ξ•Ο€ΞΉΞΊΟΞ»Ξ»Ξ·ΟƒΞ· Ο€ΞµΟΞΉΞµΟ‡ΟΞΌΞµΞ½ΞΏΟ… Ο€ΟΟΟ‡ΞµΞΉΟΞΏΟ… ΟƒΞµ Ο€ΞµΞ΄Ξ―Ξ±"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
-msgstr "Θα οδηγηθείτε στη σελίδα ScummVM όπου"
+msgstr "ΞΞ± ΞΏΞ΄Ξ·Ξ³Ξ·ΞΈΞµΞ―Ο„Ξµ ΟƒΟ„Ξ· ΟƒΞµΞ»Ξ―Ξ΄Ξ± ScummVM ΟΟ€ΞΏΟ…"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr "θα πρέπει να επιτρέψετε την πρόσβαση στον αποθηκευτικό χώρο σας."
+msgstr "ΞΈΞ± Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± ΞµΟ€ΞΉΟ„ΟΞ­ΟΞµΟ„Ξµ Ο„Ξ·Ξ½ Ο€ΟΟΟƒΞ²Ξ±ΟƒΞ· ΟƒΟ„ΞΏΞ½ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…Ο„ΞΉΞΊΟ Ο‡ΟΟΞΏ ΟƒΞ±Ο‚."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr "Κάποια άλλη Αποθήκευση είναι ενεργή. Επιθυμείτε να τη διακόψετε;"
+msgstr "ΞΞ¬Ο€ΞΏΞΉΞ± Ξ¬Ξ»Ξ»Ξ· Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΞµΞ―Ξ½Ξ±ΞΉ ΞµΞ½ΞµΟΞ³Ξ®. Ξ•Ο€ΞΉΞΈΟ…ΞΌΞµΞ―Ο„Ξµ Ξ½Ξ± Ο„Ξ· Ξ΄ΞΉΞ±ΞΊΟΟΞµΟ„Ξµ;"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr "Αναμονή μέχρι να ολοκληρωθεί η τρέχουσα Αποθήκευση και δοκιμάστε ξανά."
+msgstr "Ξ‘Ξ½Ξ±ΞΌΞΏΞ½Ξ® ΞΌΞ­Ο‡ΟΞΉ Ξ½Ξ± ΞΏΞ»ΞΏΞΊΞ»Ξ·ΟΟ‰ΞΈΞµΞ― Ξ· Ο„ΟΞ­Ο‡ΞΏΟ…ΟƒΞ± Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΞΊΞ±ΞΉ Ξ΄ΞΏΞΊΞΉΞΌΞ¬ΟƒΟ„Ξµ ΞΎΞ±Ξ½Ξ¬."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr "Το πεδίο %s περιέχει ένα λάθος."
+msgstr "Ξ¤ΞΏ Ο€ΞµΞ΄Ξ―ΞΏ %s Ο€ΞµΟΞΉΞ­Ο‡ΞµΞΉ Ξ­Ξ½Ξ± Ξ»Ξ¬ΞΈΞΏΟ‚."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr "Τα πεδία %s περιέχουν λάθη."
+msgstr "Ξ¤Ξ± Ο€ΞµΞ΄Ξ―Ξ± %s Ο€ΞµΟΞΉΞ­Ο‡ΞΏΟ…Ξ½ Ξ»Ξ¬ΞΈΞ·."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr "Όλα OK!"
+msgstr "ΞΞ»Ξ± OK!"
 
 #: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
-msgstr "Εσφαλμένος κωδικός"
+msgstr "Ξ•ΟƒΟ†Ξ±Ξ»ΞΌΞ­Ξ½ΞΏΟ‚ ΞΊΟ‰Ξ΄ΞΉΞΊΟΟ‚"
 
 #: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
-"Αποτυχία ανοίγματος του URL!\n"
-"Παρακαλούμε, μεταφερθείτε σε αυτή τη σελίδα χειροκίνητα."
+"Ξ‘Ο€ΞΏΟ„Ο…Ο‡Ξ―Ξ± Ξ±Ξ½ΞΏΞ―Ξ³ΞΌΞ±Ο„ΞΏΟ‚ Ο„ΞΏΟ… URL!\n"
+"Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»ΞΏΟΞΌΞµ, ΞΌΞµΟ„Ξ±Ο†ΞµΟΞΈΞµΞ―Ο„Ξµ ΟƒΞµ Ξ±Ο…Ο„Ξ® Ο„Ξ· ΟƒΞµΞ»Ξ―Ξ΄Ξ± Ο‡ΞµΞΉΟΞΏΞΊΞ―Ξ½Ξ·Ο„Ξ±."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
-msgstr "Επιλέξτε θέμα"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞΈΞ­ΞΌΞ±"
 
 #: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
-msgstr "Απενεργοποιημένα γραφικά"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ± Ξ³ΟΞ±Ο†ΞΉΞΊΞ¬"
 
 #: gui/ThemeEngine.cpp:258
 msgctxt "lowres"
 msgid "Disabled GFX"
-msgstr "Απενεργ. γραφικά"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³. Ξ³ΟΞ±Ο†ΞΉΞΊΞ¬"
 
 #: gui/ThemeEngine.cpp:259
 msgid "Standard Renderer"
-msgstr "Κανονική Απεικόνιση"
+msgstr "ΞΞ±Ξ½ΞΏΞ½ΞΉΞΊΞ® Ξ‘Ο€ΞµΞΉΞΊΟΞ½ΞΉΟƒΞ·"
 
 #: gui/ThemeEngine.cpp:259 engines/scumm/dialogs.cpp:660
 msgid "Standard"
-msgstr "Κανονικό"
+msgstr "ΞΞ±Ξ½ΞΏΞ½ΞΉΞΊΟ"
 
 #: gui/ThemeEngine.cpp:261
 msgid "Antialiased Renderer"
-msgstr "Εξομαλυμένη Απόδοση"
+msgstr "Ξ•ΞΎΞΏΞΌΞ±Ξ»Ο…ΞΌΞ­Ξ½Ξ· Ξ‘Ο€ΟΞ΄ΞΏΟƒΞ·"
 
 #: gui/ThemeEngine.cpp:261
 msgid "Antialiased"
-msgstr "Εξομαλυμένη"
+msgstr "Ξ•ΞΎΞΏΞΌΞ±Ξ»Ο…ΞΌΞ­Ξ½Ξ·"
 
 #: gui/updates-dialog.cpp:49
 #, fuzzy
@@ -1653,10 +1653,10 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
-"Το ScummVM τώρα υποστηρίζει αυτόματο έλεγχο για ενημερώσεις\n"
-"το οποίο απαιτεί πρόσβαση στο Internet.\n"
+"Ξ¤ΞΏ ScummVM Ο„ΟΟΞ± Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΞΉ Ξ±Ο…Ο„ΟΞΌΞ±Ο„ΞΏ Ξ­Ξ»ΞµΞ³Ο‡ΞΏ Ξ³ΞΉΞ± ΞµΞ½Ξ·ΞΌΞµΟΟΟƒΞµΞΉΟ‚\n"
+"Ο„ΞΏ ΞΏΟ€ΞΏΞ―ΞΏ Ξ±Ο€Ξ±ΞΉΟ„ΞµΞ― Ο€ΟΟΟƒΞ²Ξ±ΟƒΞ· ΟƒΟ„ΞΏ Internet.\n"
 "\n"
-"Θέλετε να ενεργοποιήσετε αυτή τη δυνατότητα;"
+"ΞΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΟ„Ξµ Ξ±Ο…Ο„Ξ® Ο„Ξ· Ξ΄Ο…Ξ½Ξ±Ο„ΟΟ„Ξ·Ο„Ξ±;"
 
 #: gui/updates-dialog.cpp:52
 msgid ""
@@ -1666,152 +1666,152 @@ msgstr ""
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
-msgstr "Προχώρα"
+msgstr "Ξ ΟΞΏΟ‡ΟΟΞ±"
 
 #: gui/widget.cpp:379 gui/widget.cpp:381 gui/widget.cpp:387 gui/widget.cpp:389
 msgid "Clear value"
-msgstr "Σβήσιμο τιμής"
+msgstr "Ξ£Ξ²Ξ®ΟƒΞΉΞΌΞΏ Ο„ΞΉΞΌΞ®Ο‚"
 
 #: base/main.cpp:254
 #, c-format
 msgid "Engine does not support debug level '%s'"
-msgstr "Η μηχανή δεν υποστηρίζει επίπεδο εντοπισμού σφαλμάτων '%s'"
+msgstr "Ξ— ΞΌΞ·Ο‡Ξ±Ξ½Ξ® Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΞΉ ΞµΟ€Ξ―Ο€ΞµΞ΄ΞΏ ΞµΞ½Ο„ΞΏΟ€ΞΉΟƒΞΌΞΏΟ ΟƒΟ†Ξ±Ξ»ΞΌΞ¬Ο„Ο‰Ξ½ '%s'"
 
 #: base/main.cpp:328
 msgid "Menu"
-msgstr "Μενού"
+msgstr "ΞΞµΞ½ΞΏΟ"
 
 #: base/main.cpp:331 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
-msgstr "Παράλειψη"
+msgstr "Ξ Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ·"
 
 #: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
-msgstr "Παύση"
+msgstr "Ξ Ξ±ΟΟƒΞ·"
 
 #: base/main.cpp:337
 msgid "Skip line"
-msgstr "Παράλειψη γραμμής"
+msgstr "Ξ Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ· Ξ³ΟΞ±ΞΌΞΌΞ®Ο‚"
 
 #: base/main.cpp:548
 msgid "Error running game:"
-msgstr "Σφάλμα κατά την εκτέλεση του παιχνιδιού:"
+msgstr "Ξ£Ο†Ξ¬Ξ»ΞΌΞ± ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ ΞµΞΊΟ„Ξ­Ξ»ΞµΟƒΞ· Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ:"
 
 #: base/main.cpp:595
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
-"Δεν ήταν δυνατή η εύρεση μηχανής η οποία να μπορεί να εκτελέσει το "
-"συγκεκριμένο παιχνίδι"
+"Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΟΟΞµΟƒΞ· ΞΌΞ·Ο‡Ξ±Ξ½Ξ®Ο‚ Ξ· ΞΏΟ€ΞΏΞ―Ξ± Ξ½Ξ± ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± ΞµΞΊΟ„ΞµΞ»Ξ­ΟƒΞµΞΉ Ο„ΞΏ "
+"ΟƒΟ…Ξ³ΞΊΞµΞΊΟΞΉΞΌΞ­Ξ½ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ"
 
 #: common/error.cpp:38
 msgid "No error"
-msgstr "Κανένα σφάλμα"
+msgstr "ΞΞ±Ξ½Ξ­Ξ½Ξ± ΟƒΟ†Ξ¬Ξ»ΞΌΞ±"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr "Δε βρέθηκαν δεδομένα παιχνιδιού"
+msgstr "Ξ”Ξµ Ξ²ΟΞ­ΞΈΞ·ΞΊΞ±Ξ½ Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr "Το αναγνωριστικό παιχνιδιού δεν υποστηρίζεται"
+msgstr "Ξ¤ΞΏ Ξ±Ξ½Ξ±Ξ³Ξ½Ο‰ΟΞΉΟƒΟ„ΞΉΞΊΟ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΟ„Ξ±ΞΉ"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
-msgstr "Μη υποστηριζόμενη λειτουργία χρώματος"
+msgstr "ΞΞ· Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞΉΞ¶ΟΞΌΞµΞ½Ξ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο‡ΟΟΞΌΞ±Ο„ΞΏΟ‚"
 
 #: common/error.cpp:47
 msgid "Read permission denied"
-msgstr "¶ρνηση άδειας ανάγνωσης"
+msgstr "Ξ†ΟΞ½Ξ·ΟƒΞ· Ξ¬Ξ΄ΞµΞΉΞ±Ο‚ Ξ±Ξ½Ξ¬Ξ³Ξ½Ο‰ΟƒΞ·Ο‚"
 
 #: common/error.cpp:49
 msgid "Write permission denied"
-msgstr "¶ρνηση άδειας εγγραφής"
+msgstr "Ξ†ΟΞ½Ξ·ΟƒΞ· Ξ¬Ξ΄ΞµΞΉΞ±Ο‚ ΞµΞ³Ξ³ΟΞ±Ο†Ξ®Ο‚"
 
 #: common/error.cpp:52
 msgid "Path does not exist"
-msgstr "Η διαδρομή δεν υπάρχει"
+msgstr "Ξ— Ξ΄ΞΉΞ±Ξ΄ΟΞΏΞΌΞ® Ξ΄ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ"
 
 #: common/error.cpp:54
 msgid "Path not a directory"
-msgstr "Η διαδρομή δεν είναι φάκελος"
+msgstr "Ξ— Ξ΄ΞΉΞ±Ξ΄ΟΞΏΞΌΞ® Ξ΄ΞµΞ½ ΞµΞ―Ξ½Ξ±ΞΉ Ο†Ξ¬ΞΊΞµΞ»ΞΏΟ‚"
 
 #: common/error.cpp:56
 msgid "Path not a file"
-msgstr "Η διαδρομή δεν είναι αρχείο"
+msgstr "Ξ— Ξ΄ΞΉΞ±Ξ΄ΟΞΏΞΌΞ® Ξ΄ΞµΞ½ ΞµΞ―Ξ½Ξ±ΞΉ Ξ±ΟΟ‡ΞµΞ―ΞΏ"
 
 #: common/error.cpp:59
 msgid "Cannot create file"
-msgstr "Δεν είναι δυνατή η δημιουργία του αρχείου"
+msgstr "Ξ”ΞµΞ½ ΞµΞ―Ξ½Ξ±ΞΉ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ΄Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ± Ο„ΞΏΟ… Ξ±ΟΟ‡ΞµΞ―ΞΏΟ…"
 
 #: common/error.cpp:61
 msgid "Reading data failed"
-msgstr "Η ανάγνωση δεδομένων απέτυχε"
+msgstr "Ξ— Ξ±Ξ½Ξ¬Ξ³Ξ½Ο‰ΟƒΞ· Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½ Ξ±Ο€Ξ­Ο„Ο…Ο‡Ξµ"
 
 #: common/error.cpp:63
 msgid "Writing data failed"
-msgstr "Η εγγραφή δεδομένων απέτυχε"
+msgstr "Ξ— ΞµΞ³Ξ³ΟΞ±Ο†Ξ® Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½ Ξ±Ο€Ξ­Ο„Ο…Ο‡Ξµ"
 
 #: common/error.cpp:66
 msgid "Could not find suitable engine plugin"
-msgstr "Δεν ήταν δυνατή η εύρεση κατάλληλου πρόσθετου μηχανής"
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΟΟΞµΟƒΞ· ΞΊΞ±Ο„Ξ¬Ξ»Ξ»Ξ·Ξ»ΞΏΟ… Ο€ΟΟΟƒΞΈΞµΟ„ΞΏΟ… ΞΌΞ·Ο‡Ξ±Ξ½Ξ®Ο‚"
 
 #: common/error.cpp:68
 msgid "Engine plugin does not support saved games"
-msgstr "Το πρόσθετο μηχανής δεν υποστηρίζει αποθηκευμένα παιχνίδια"
+msgstr "Ξ¤ΞΏ Ο€ΟΟΟƒΞΈΞµΟ„ΞΏ ΞΌΞ·Ο‡Ξ±Ξ½Ξ®Ο‚ Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΞΉ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ±"
 
 #: common/error.cpp:71
 msgid "User canceled"
-msgstr "Ο χρήστης ακύρωσε"
+msgstr "Ξ Ο‡ΟΞ®ΟƒΟ„Ξ·Ο‚ Ξ±ΞΊΟΟΟ‰ΟƒΞµ"
 
 #: common/error.cpp:75
 msgid "Unknown error"
-msgstr "¶γνωστο σφάλμα"
+msgstr "Ξ†Ξ³Ξ½Ο‰ΟƒΟ„ΞΏ ΟƒΟ†Ξ¬Ξ»ΞΌΞ±"
 
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Πράσινη Hercules"
+msgstr "Ξ ΟΞ¬ΟƒΞΉΞ½Ξ· Hercules"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr "Πορτοκαλί Hercules"
+msgstr "Ξ ΞΏΟΟ„ΞΏΞΊΞ±Ξ»Ξ― Hercules"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr "PC-9821 (256 Χρώματα)"
+msgstr "PC-9821 (256 Ξ§ΟΟΞΌΞ±Ο„Ξ±)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr "PC-9801 (16 Χρώματα)"
+msgstr "PC-9801 (16 Ξ§ΟΟΞΌΞ±Ο„Ξ±)"
 
 #: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr "Πράσινη Hercules"
+msgstr "Ξ ΟΞ¬ΟƒΞΉΞ½Ξ· Hercules"
 
 #: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr "Πορτοκαλί Hercules"
+msgstr "Ξ ΞΏΟΟ„ΞΏΞΊΞ±Ξ»Ξ― Hercules"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr "Καθημερινά"
+msgstr "ΞΞ±ΞΈΞ·ΞΌΞµΟΞΉΞ½Ξ¬"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr "Εβδομαδιαία"
+msgstr "Ξ•Ξ²Ξ΄ΞΏΞΌΞ±Ξ΄ΞΉΞ±Ξ―Ξ±"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr "Μηνιαία"
+msgstr "ΞΞ·Ξ½ΞΉΞ±Ξ―Ξ±"
 
 #: common/updates.cpp:64
 msgid "<Bad value>"
-msgstr "<Εσφαλμένη τιμή>"
+msgstr "<Ξ•ΟƒΟ†Ξ±Ξ»ΞΌΞ­Ξ½Ξ· Ο„ΞΉΞΌΞ®>"
 
 #: engines/advancedDetector.cpp:330
 #, fuzzy, c-format
@@ -1821,11 +1821,11 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Το παιχνίδι στο '%s' φαίνεται να είναι άγνωστο.\n"
-"Παρακαλούμε, αναφέρετε τα ακόλουθα στοιχεία στην ομάδα ScummVM μαζί με το "
-"όνομα\n"
-"του παιχνιδιού που προσπαθήσατε να προσθέσετε και την έκδοση, τη γλώσσα του, "
-"κλπ.:"
+"Ξ¤ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ ΟƒΟ„ΞΏ '%s' Ο†Ξ±Ξ―Ξ½ΞµΟ„Ξ±ΞΉ Ξ½Ξ± ΞµΞ―Ξ½Ξ±ΞΉ Ξ¬Ξ³Ξ½Ο‰ΟƒΟ„ΞΏ.\n"
+"Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»ΞΏΟΞΌΞµ, Ξ±Ξ½Ξ±Ο†Ξ­ΟΞµΟ„Ξµ Ο„Ξ± Ξ±ΞΊΟΞ»ΞΏΟ…ΞΈΞ± ΟƒΟ„ΞΏΞΉΟ‡ΞµΞ―Ξ± ΟƒΟ„Ξ·Ξ½ ΞΏΞΌΞ¬Ξ΄Ξ± ScummVM ΞΌΞ±Ξ¶Ξ― ΞΌΞµ Ο„ΞΏ "
+"ΟΞ½ΞΏΞΌΞ±\n"
+"Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ο€ΞΏΟ… Ο€ΟΞΏΟƒΟ€Ξ±ΞΈΞ®ΟƒΞ±Ο„Ξµ Ξ½Ξ± Ο€ΟΞΏΟƒΞΈΞ­ΟƒΞµΟ„Ξµ ΞΊΞ±ΞΉ Ο„Ξ·Ξ½ Ξ­ΞΊΞ΄ΞΏΟƒΞ·, Ο„Ξ· Ξ³Ξ»ΟΟƒΟƒΞ± Ο„ΞΏΟ…, "
+"ΞΊΞ»Ο€.:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
@@ -1833,36 +1833,36 @@ msgstr ""
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
-msgstr "~Σ~υνέχεια"
+msgstr "~Ξ£~Ο…Ξ½Ξ­Ο‡ΞµΞΉΞ±"
 
 #: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:98
 msgid "~L~oad"
-msgstr "~Φ~όρτωση"
+msgstr "~Ξ¦~ΟΟΟ„Ο‰ΟƒΞ·"
 
 #: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:99
 msgid "~S~ave"
-msgstr "~Α~ποθήκευση"
+msgstr "~Ξ‘~Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·"
 
 #: engines/dialogs.cpp:95
 msgid "~O~ptions"
-msgstr "~Ε~πιλογές"
+msgstr "~Ξ•~Ο€ΞΉΞ»ΞΏΞ³Ξ­Ο‚"
 
 #: engines/dialogs.cpp:100
 msgid "~H~elp"
-msgstr "~Β~οήθεια"
+msgstr "~Ξ’~ΞΏΞ®ΞΈΞµΞΉΞ±"
 
 #: engines/dialogs.cpp:102
 msgid "~A~bout"
-msgstr "~Π~ερί"
+msgstr "~Ξ ~ΞµΟΞ―"
 
 #: engines/dialogs.cpp:105 engines/dialogs.cpp:181
 msgid "~R~eturn to Launcher"
-msgstr "Επισ~τ~ροφή στον Οδηγητή"
+msgstr "Ξ•Ο€ΞΉΟƒ~Ο„~ΟΞΏΟ†Ξ® ΟƒΟ„ΞΏΞ½ ΞΞ΄Ξ·Ξ³Ξ·Ο„Ξ®"
 
 #: engines/dialogs.cpp:107 engines/dialogs.cpp:183
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "Επισ~τ~ρ. στον Οδηγητή"
+msgstr "Ξ•Ο€ΞΉΟƒ~Ο„~Ο. ΟƒΟ„ΞΏΞ½ ΞΞ΄Ξ·Ξ³Ξ·Ο„Ξ®"
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:761
 #: engines/avalanche/parser.cpp:1900 engines/cge/events.cpp:72
@@ -1878,7 +1878,7 @@ msgstr "Επισ~τ~ρ. στον Οδηγητή"
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
-msgstr "Αποθήκευση παιχνιδιού:"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ:"
 
 #: engines/dialogs.cpp:116 backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
@@ -1900,7 +1900,7 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save"
-msgstr "Αποθήκευση"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·"
 
 #: engines/dialogs.cpp:145
 msgid ""
@@ -1908,10 +1908,10 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
-"Λυπούμαστε, αυτή η μηχανή δεν παρέχει προς το παρόν βοήθεια εντός "
-"παιχνιδιού. Παρακαλούμε συμβουλευτείτε το αρχείο README για βασικές "
-"πληροφορίες, καθώς και για οδηγίες σχετικά με το πώς να λάβετε περαιτέρω "
-"βοήθεια."
+"Ξ›Ο…Ο€ΞΏΟΞΌΞ±ΟƒΟ„Ξµ, Ξ±Ο…Ο„Ξ® Ξ· ΞΌΞ·Ο‡Ξ±Ξ½Ξ® Ξ΄ΞµΞ½ Ο€Ξ±ΟΞ­Ο‡ΞµΞΉ Ο€ΟΞΏΟ‚ Ο„ΞΏ Ο€Ξ±ΟΟΞ½ Ξ²ΞΏΞ®ΞΈΞµΞΉΞ± ΞµΞ½Ο„ΟΟ‚ "
+"Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ. Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»ΞΏΟΞΌΞµ ΟƒΟ…ΞΌΞ²ΞΏΟ…Ξ»ΞµΟ…Ο„ΞµΞ―Ο„Ξµ Ο„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ README Ξ³ΞΉΞ± Ξ²Ξ±ΟƒΞΉΞΊΞ­Ο‚ "
+"Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚, ΞΊΞ±ΞΈΟΟ‚ ΞΊΞ±ΞΉ Ξ³ΞΉΞ± ΞΏΞ΄Ξ·Ξ³Ξ―ΞµΟ‚ ΟƒΟ‡ΞµΟ„ΞΉΞΊΞ¬ ΞΌΞµ Ο„ΞΏ Ο€ΟΟ‚ Ξ½Ξ± Ξ»Ξ¬Ξ²ΞµΟ„Ξµ Ο€ΞµΟΞ±ΞΉΟ„Ξ­ΟΟ‰ "
+"Ξ²ΞΏΞ®ΞΈΞµΞΉΞ±."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:395
 #, c-format
@@ -1919,43 +1919,43 @@ msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Αποτυχία αποθήκευσης του παιχνιδιού (%s)! Παρακαλούμε συμβουλευτείτε το "
-"αρχείο README για βασικές πληροφορίες, καθώς και για οδηγίες σχετικά με το "
-"πώς να λάβετε περαιτέρω βοήθεια."
+"Ξ‘Ο€ΞΏΟ„Ο…Ο‡Ξ―Ξ± Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚ Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ (%s)! Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»ΞΏΟΞΌΞµ ΟƒΟ…ΞΌΞ²ΞΏΟ…Ξ»ΞµΟ…Ο„ΞµΞ―Ο„Ξµ Ο„ΞΏ "
+"Ξ±ΟΟ‡ΞµΞ―ΞΏ README Ξ³ΞΉΞ± Ξ²Ξ±ΟƒΞΉΞΊΞ­Ο‚ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚, ΞΊΞ±ΞΈΟΟ‚ ΞΊΞ±ΞΉ Ξ³ΞΉΞ± ΞΏΞ΄Ξ·Ξ³Ξ―ΞµΟ‚ ΟƒΟ‡ΞµΟ„ΞΉΞΊΞ¬ ΞΌΞµ Ο„ΞΏ "
+"Ο€ΟΟ‚ Ξ½Ξ± Ξ»Ξ¬Ξ²ΞµΟ„Ξµ Ο€ΞµΟΞ±ΞΉΟ„Ξ­ΟΟ‰ Ξ²ΞΏΞ®ΞΈΞµΞΉΞ±."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:102
 #: engines/tsage/dialogs.cpp:112
 msgid "~O~K"
-msgstr "~Ο~Κ"
+msgstr "~Ξ~Ξ"
 
 #: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:103
 #: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
-msgstr "~Α~κύρωση"
+msgstr "~Ξ‘~ΞΊΟΟΟ‰ΟƒΞ·"
 
 #: engines/dialogs.cpp:311
 msgid "~K~eys"
-msgstr "Π~λ~ήκτρα"
+msgstr "Ξ ~Ξ»~Ξ®ΞΊΟ„ΟΞ±"
 
 #: engines/engine.cpp:315
 msgid "Could not initialize color format."
-msgstr "Δεν ήταν δυνατή η προετοιμασία μορφής χρώματος."
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ο€ΟΞΏΞµΟ„ΞΏΞΉΞΌΞ±ΟƒΞ―Ξ± ΞΌΞΏΟΟ†Ξ®Ο‚ Ο‡ΟΟΞΌΞ±Ο„ΞΏΟ‚."
 
 #: engines/engine.cpp:323
 msgid "Could not switch to video mode: '"
-msgstr "Δεν ήταν δυνατή η αλλαγή σε λειτουργία οθόνης: '"
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΟƒΞµ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± ΞΏΞΈΟΞ½Ξ·Ο‚: '"
 
 #: engines/engine.cpp:332
 msgid "Could not apply aspect ratio setting."
-msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης διόρθωσης αναλογίας διαστάσεων."
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΟ†Ξ±ΟΞΌΞΏΞ³Ξ® ΟΟΞΈΞΌΞΉΟƒΞ·Ο‚ Ξ΄ΞΉΟΟΞΈΟ‰ΟƒΞ·Ο‚ Ξ±Ξ½Ξ±Ξ»ΞΏΞ³Ξ―Ξ±Ο‚ Ξ΄ΞΉΞ±ΟƒΟ„Ξ¬ΟƒΞµΟ‰Ξ½."
 
 #: engines/engine.cpp:337
 msgid "Could not apply fullscreen setting."
-msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης πλήρους οθόνης."
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΟ†Ξ±ΟΞΌΞΏΞ³Ξ® ΟΟΞΈΞΌΞΉΟƒΞ·Ο‚ Ο€Ξ»Ξ®ΟΞΏΟ…Ο‚ ΞΏΞΈΟΞ½Ξ·Ο‚."
 
 #: engines/engine.cpp:342
 msgid "Could not apply filtering setting."
-msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης φιλτραρίσματος."
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΟ†Ξ±ΟΞΌΞΏΞ³Ξ® ΟΟΞΈΞΌΞΉΟƒΞ·Ο‚ Ο†ΞΉΞ»Ο„ΟΞ±ΟΞ―ΟƒΞΌΞ±Ο„ΞΏΟ‚."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1965,11 +1965,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
-"Φαίνετε ότι παίζετε το παιχνίδι απευθείας\n"
-"από το CD. Αυτό είναι γνωστό ότι προκαλεί προβλήματα,\n"
-"και ως εκ τούτου συνιστάται να αντιγράψετε αντ'αυτού\n"
-"τα αρχεία δεδομένων στο σκληρό σας δίσκο.\n"
-"Δείτε το αρχείο README για λεπτομέρειες."
+"Ξ¦Ξ±Ξ―Ξ½ΞµΟ„Ξµ ΟΟ„ΞΉ Ο€Ξ±Ξ―Ξ¶ΞµΟ„Ξµ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ξ±Ο€ΞµΟ…ΞΈΞµΞ―Ξ±Ο‚\n"
+"Ξ±Ο€Ο Ο„ΞΏ CD. Ξ‘Ο…Ο„Ο ΞµΞ―Ξ½Ξ±ΞΉ Ξ³Ξ½Ο‰ΟƒΟ„Ο ΟΟ„ΞΉ Ο€ΟΞΏΞΊΞ±Ξ»ΞµΞ― Ο€ΟΞΏΞ²Ξ»Ξ®ΞΌΞ±Ο„Ξ±,\n"
+"ΞΊΞ±ΞΉ Ο‰Ο‚ ΞµΞΊ Ο„ΞΏΟΟ„ΞΏΟ… ΟƒΟ…Ξ½ΞΉΟƒΟ„Ξ¬Ο„Ξ±ΞΉ Ξ½Ξ± Ξ±Ξ½Ο„ΞΉΞ³ΟΞ¬ΟΞµΟ„Ξµ Ξ±Ξ½Ο„'Ξ±Ο…Ο„ΞΏΟ\n"
+"Ο„Ξ± Ξ±ΟΟ‡ΞµΞ―Ξ± Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½ ΟƒΟ„ΞΏ ΟƒΞΊΞ»Ξ·ΟΟ ΟƒΞ±Ο‚ Ξ΄Ξ―ΟƒΞΊΞΏ.\n"
+"Ξ”ΞµΞ―Ο„Ξµ Ο„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ README Ξ³ΞΉΞ± Ξ»ΞµΟ€Ο„ΞΏΞΌΞ­ΟΞµΞΉΞµΟ‚."
 
 #: engines/engine.cpp:450
 msgid ""
@@ -1979,11 +1979,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
-"Αυτό το παιχνίδι έχει κομμάτια ήχου στο δίσκο του. Αυτά τα\n"
-"κομμάτια πρέπει να αντιγραφούν από το δίσκο με τη χρήση\n"
-"ενός κατάλληλου εργαλείου εξαγωγής ήχου CD ώστε\n"
-"να ακούσετε τη μουσική του παιχνιδιού.\n"
-"Δείτε το αρχείο README για λεπτομέρειες."
+"Ξ‘Ο…Ο„Ο Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ξ­Ο‡ΞµΞΉ ΞΊΞΏΞΌΞΌΞ¬Ο„ΞΉΞ± Ξ®Ο‡ΞΏΟ… ΟƒΟ„ΞΏ Ξ΄Ξ―ΟƒΞΊΞΏ Ο„ΞΏΟ…. Ξ‘Ο…Ο„Ξ¬ Ο„Ξ±\n"
+"ΞΊΞΏΞΌΞΌΞ¬Ο„ΞΉΞ± Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± Ξ±Ξ½Ο„ΞΉΞ³ΟΞ±Ο†ΞΏΟΞ½ Ξ±Ο€Ο Ο„ΞΏ Ξ΄Ξ―ΟƒΞΊΞΏ ΞΌΞµ Ο„Ξ· Ο‡ΟΞ®ΟƒΞ·\n"
+"ΞµΞ½ΟΟ‚ ΞΊΞ±Ο„Ξ¬Ξ»Ξ»Ξ·Ξ»ΞΏΟ… ΞµΟΞ³Ξ±Ξ»ΞµΞ―ΞΏΟ… ΞµΞΎΞ±Ξ³Ο‰Ξ³Ξ®Ο‚ Ξ®Ο‡ΞΏΟ… CD ΟΟƒΟ„Ξµ\n"
+"Ξ½Ξ± Ξ±ΞΊΞΏΟΟƒΞµΟ„Ξµ Ο„Ξ· ΞΌΞΏΟ…ΟƒΞΉΞΊΞ® Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ.\n"
+"Ξ”ΞµΞ―Ο„Ξµ Ο„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ README Ξ³ΞΉΞ± Ξ»ΞµΟ€Ο„ΞΏΞΌΞ­ΟΞµΞΉΞµΟ‚."
 
 #: engines/engine.cpp:508
 #, c-format
@@ -1991,9 +1991,9 @@ msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"Αποτυχία φόρτωσης αποθηκευμένου παιχνιδιού (%s)! Παρακαλούμε συμβουλευτείτε "
-"το αρχείο README για βασικές πληροφορίες, καθώς και για οδηγίες σχετικά με "
-"το πώς να λάβετε περαιτέρω βοήθεια."
+"Ξ‘Ο€ΞΏΟ„Ο…Ο‡Ξ―Ξ± Ο†ΟΟΟ„Ο‰ΟƒΞ·Ο‚ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ (%s)! Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»ΞΏΟΞΌΞµ ΟƒΟ…ΞΌΞ²ΞΏΟ…Ξ»ΞµΟ…Ο„ΞµΞ―Ο„Ξµ "
+"Ο„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ README Ξ³ΞΉΞ± Ξ²Ξ±ΟƒΞΉΞΊΞ­Ο‚ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚, ΞΊΞ±ΞΈΟΟ‚ ΞΊΞ±ΞΉ Ξ³ΞΉΞ± ΞΏΞ΄Ξ·Ξ³Ξ―ΞµΟ‚ ΟƒΟ‡ΞµΟ„ΞΉΞΊΞ¬ ΞΌΞµ "
+"Ο„ΞΏ Ο€ΟΟ‚ Ξ½Ξ± Ξ»Ξ¬Ξ²ΞµΟ„Ξµ Ο€ΞµΟΞ±ΞΉΟ„Ξ­ΟΟ‰ Ξ²ΞΏΞ®ΞΈΞµΞΉΞ±."
 
 #: engines/engine.cpp:521
 msgid ""
@@ -2001,31 +2001,30 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
-"ΠΡΟΣΟΧΗ: Το παιχνίδι που θα ξεκινήσει, δεν υποστηρίζεται ακόμα πλήρως από το "
-"ScummVM. Ως εκ τούτου, είναι πιθανό να είναι ασταθές, και κάθε αποθηκευμένο "
-"παιχνίδι που κάνετε μπορεί να μη λειτουργεί σε μελλοντικές εκδόσεις του "
+"Ξ Ξ΅ΞΞ£ΞΞ§Ξ—: Ξ¤ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ο€ΞΏΟ… ΞΈΞ± ΞΎΞµΞΊΞΉΞ½Ξ®ΟƒΞµΞΉ, Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΟ„Ξ±ΞΉ Ξ±ΞΊΟΞΌΞ± Ο€Ξ»Ξ®ΟΟ‰Ο‚ Ξ±Ο€Ο Ο„ΞΏ "
+"ScummVM. Ξ©Ο‚ ΞµΞΊ Ο„ΞΏΟΟ„ΞΏΟ…, ΞµΞ―Ξ½Ξ±ΞΉ Ο€ΞΉΞΈΞ±Ξ½Ο Ξ½Ξ± ΞµΞ―Ξ½Ξ±ΞΉ Ξ±ΟƒΟ„Ξ±ΞΈΞ­Ο‚, ΞΊΞ±ΞΉ ΞΊΞ¬ΞΈΞµ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ "
+"Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ο€ΞΏΟ… ΞΊΞ¬Ξ½ΞµΟ„Ξµ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± ΞΌΞ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³ΞµΞ― ΟƒΞµ ΞΌΞµΞ»Ξ»ΞΏΞ½Ο„ΞΉΞΊΞ­Ο‚ ΞµΞΊΞ΄ΟΟƒΞµΞΉΟ‚ Ο„ΞΏΟ… "
 "ScummVM."
 
 #: engines/engine.cpp:524
 msgid "Start anyway"
-msgstr "Εκκίνηση ούτως ή άλλως"
+msgstr "Ξ•ΞΊΞΊΞ―Ξ½Ξ·ΟƒΞ· ΞΏΟΟ„Ο‰Ο‚ Ξ® Ξ¬Ξ»Ξ»Ο‰Ο‚"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
-msgstr "Εξομοιωτής Adlib"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ Adlib"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
-msgstr "Εξομοιωτής MAME OPL"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ MAME OPL"
 
 #: audio/fmopl.cpp:73
 msgid "DOSBox OPL emulator"
-msgstr "Εξομοιωτής DOSBox OPL"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ DOSBox OPL"
 
 #: audio/fmopl.cpp:76
-#, fuzzy
 msgid "Nuked OPL emulator"
-msgstr "Εξομοιωτής MAME OPL"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ Nuked OPL"
 
 #: audio/fmopl.cpp:79
 msgid "ALSA Direct FM"
@@ -2033,7 +2032,7 @@ msgstr "ALSA Direct FM"
 
 #: audio/fmopl.cpp:82
 msgid "OPL2LPT"
-msgstr ""
+msgstr "OPL2LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
@@ -2041,13 +2040,13 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Η επιλεγμένη συσκευή ήχου '%s' δε βρέθηκε (π.χ. μπορεί να είναι σβηστή ή "
-"αποσυνδεδεμένη)."
+"Ξ— ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½Ξ· ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® Ξ®Ο‡ΞΏΟ… '%s' Ξ΄Ξµ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ (Ο€.Ο‡. ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± ΞµΞ―Ξ½Ξ±ΞΉ ΟƒΞ²Ξ·ΟƒΟ„Ξ® Ξ® "
+"Ξ±Ο€ΞΏΟƒΟ…Ξ½Ξ΄ΞµΞ΄ΞµΞΌΞ­Ξ½Ξ·)."
 
 #: audio/mididrv.cpp:209 audio/mididrv.cpp:221 audio/mididrv.cpp:257
 #: audio/mididrv.cpp:272
 msgid "Attempting to fall back to the next available device..."
-msgstr "Προσπάθεια μετάπτωσης στην επόμενη διαθέσιμη συσκευή ..."
+msgstr "Ξ ΟΞΏΟƒΟ€Ξ¬ΞΈΞµΞΉΞ± ΞΌΞµΟ„Ξ¬Ο€Ο„Ο‰ΟƒΞ·Ο‚ ΟƒΟ„Ξ·Ξ½ ΞµΟ€ΟΞΌΞµΞ½Ξ· Ξ΄ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞ· ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® ..."
 
 #: audio/mididrv.cpp:221
 #, c-format
@@ -2055,8 +2054,8 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Η επιλεγμένη συσκευή ήχου '%s' δεν ήταν δυνατό να χρησιμοποιηθεί. Δείτε το "
-"αρχείο καταγραφής για περισσότερες πληροφορίες."
+"Ξ— ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½Ξ· ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® Ξ®Ο‡ΞΏΟ… '%s' Ξ΄ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ο Ξ½Ξ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ·ΞΈΞµΞ―. Ξ”ΞµΞ―Ο„Ξµ Ο„ΞΏ "
+"Ξ±ΟΟ‡ΞµΞ―ΞΏ ΞΊΞ±Ο„Ξ±Ξ³ΟΞ±Ο†Ξ®Ο‚ Ξ³ΞΉΞ± Ο€ΞµΟΞΉΟƒΟƒΟΟ„ΞµΟΞµΟ‚ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚."
 
 #: audio/mididrv.cpp:257
 #, c-format
@@ -2064,8 +2063,8 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Η επιθυμητή συσκευή ήχου '%s' δε βρέθηκε (π.χ. μπορεί να είναι σβηστή ή "
-"αποσυνδεδεμένη)."
+"Ξ— ΞµΟ€ΞΉΞΈΟ…ΞΌΞ·Ο„Ξ® ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® Ξ®Ο‡ΞΏΟ… '%s' Ξ΄Ξµ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ (Ο€.Ο‡. ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± ΞµΞ―Ξ½Ξ±ΞΉ ΟƒΞ²Ξ·ΟƒΟ„Ξ® Ξ® "
+"Ξ±Ο€ΞΏΟƒΟ…Ξ½Ξ΄ΞµΞ΄ΞµΞΌΞ­Ξ½Ξ·)."
 
 #: audio/mididrv.cpp:272
 #, c-format
@@ -2073,68 +2072,68 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Η επιθυμητή συσκευή ήχου '%s' δεν ήταν δυνατό να χρησιμοποιηθεί. Δείτε το "
-"αρχείο καταγραφής για περισσότερες πληροφορίες."
+"Ξ— ΞµΟ€ΞΉΞΈΟ…ΞΌΞ·Ο„Ξ® ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® Ξ®Ο‡ΞΏΟ… '%s' Ξ΄ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ο Ξ½Ξ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ·ΞΈΞµΞ―. Ξ”ΞµΞ―Ο„Ξµ Ο„ΞΏ "
+"Ξ±ΟΟ‡ΞµΞ―ΞΏ ΞΊΞ±Ο„Ξ±Ξ³ΟΞ±Ο†Ξ®Ο‚ Ξ³ΞΉΞ± Ο€ΞµΟΞΉΟƒΟƒΟΟ„ΞµΟΞµΟ‚ Ο€Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞ―ΞµΟ‚."
 
 #: audio/mods/paula.cpp:196
 msgid "Amiga Audio Emulator"
-msgstr "Εξομοιωτής Ήχου Amiga"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ Ξ‰Ο‡ΞΏΟ… Amiga"
 
 #: audio/null.h:44
 msgid "No music"
-msgstr "Χωρίς μουσική"
+msgstr "Ξ§Ο‰ΟΞ―Ο‚ ΞΌΞΏΟ…ΟƒΞΉΞΊΞ®"
 
 #: audio/softsynth/appleiigs.cpp:33
 msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
-msgstr "Εξομοιωτής Apple II GS (ΔΕΝ ΕΧΕΙ ΥΛΟΠΟΙΗΘΕΙ)"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ Apple II GS (Ξ”Ξ•Ξ Ξ•Ξ§Ξ•Ξ™ Ξ¥Ξ›ΞΞ ΞΞ™Ξ—ΞΞ•Ξ™)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr "Εξομοιωτής Creative Music System"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
 msgid "FM-Towns Audio"
-msgstr "Ήχος FM-Towns"
+msgstr "Ξ‰Ο‡ΞΏΟ‚ FM-Towns"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
 msgid "PC-98 Audio"
-msgstr "Ήχος PC-98"
+msgstr "Ξ‰Ο‡ΞΏΟ‚ PC-98"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
-msgstr "Προετοιμασία Εξομοιωτή MT-32"
+msgstr "Ξ ΟΞΏΞµΟ„ΞΏΞΉΞΌΞ±ΟƒΞ―Ξ± Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ® MT-32"
 
 #: audio/softsynth/mt32.cpp:437
 msgid "MT-32 Emulator"
-msgstr "Εξομοιωτής MT-32"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
 msgid "PC Speaker Emulator"
-msgstr "Εξομοιωτής Ηχείου PC"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ Ξ—Ο‡ΞµΞ―ΞΏΟ… PC"
 
 #: audio/softsynth/pcspk.cpp:158
 msgid "IBM PCjr Emulator"
-msgstr "Εξομοιωτής IBM PCjr"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1430
 msgid "C64 Audio Emulator"
-msgstr "Εξομοιωτής Ήχου C64"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞΉΟ‰Ο„Ξ®Ο‚ Ξ‰Ο‡ΞΏΟ… C64"
 
 #: backends/cloud/storage.cpp:211
 msgid "Saved games sync complete."
-msgstr "Ο συγχρονισμός αποθηκευμένων παιχνιδιών ολοκληρώθηκε."
+msgstr "Ξ ΟƒΟ…Ξ³Ο‡ΟΞΏΞ½ΞΉΟƒΞΌΟΟ‚ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ο‰Ξ½ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½ ΞΏΞ»ΞΏΞΊΞ»Ξ·ΟΟΞΈΞ·ΞΊΞµ."
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
-msgstr "Ο συγχρονισμός αποθηκευμένων παιχνιδιών ακυρώθηκε."
+msgstr "Ξ ΟƒΟ…Ξ³Ο‡ΟΞΏΞ½ΞΉΟƒΞΌΟΟ‚ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ο‰Ξ½ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½ Ξ±ΞΊΟ…ΟΟΞΈΞ·ΞΊΞµ."
 
 #: backends/cloud/storage.cpp:224
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
-"Ο συγχρονισμός αποθηκευμένων παιχνιδιών απέτυχε.\n"
-"Ελέγξτε τη σύνδεσή σας στο Internet."
+"Ξ ΟƒΟ…Ξ³Ο‡ΟΞΏΞ½ΞΉΟƒΞΌΟΟ‚ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ο‰Ξ½ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½ Ξ±Ο€Ξ­Ο„Ο…Ο‡Ξµ.\n"
+"Ξ•Ξ»Ξ­Ξ³ΞΎΟ„Ξµ Ο„Ξ· ΟƒΟΞ½Ξ΄ΞµΟƒΞ® ΟƒΞ±Ο‚ ΟƒΟ„ΞΏ Internet."
 
 #: backends/cloud/storage.cpp:328
 #, c-format
@@ -2142,28 +2141,28 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
-"Η μεταφόρτωση ολοκληρώθηκε.\n"
-"Δεν ήταν δυνατή η μεταφόρτωση %u αρχείων."
+"Ξ— ΞΌΞµΟ„Ξ±Ο†ΟΟΟ„Ο‰ΟƒΞ· ΞΏΞ»ΞΏΞΊΞ»Ξ·ΟΟΞΈΞ·ΞΊΞµ.\n"
+"Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞΌΞµΟ„Ξ±Ο†ΟΟΟ„Ο‰ΟƒΞ· %u Ξ±ΟΟ‡ΞµΞ―Ο‰Ξ½."
 
 #: backends/cloud/storage.cpp:330
 msgid "Download complete."
-msgstr "Η μεταφόρτωση ολοκληρώθηκε."
+msgstr "Ξ— ΞΌΞµΟ„Ξ±Ο†ΟΟΟ„Ο‰ΟƒΞ· ΞΏΞ»ΞΏΞΊΞ»Ξ·ΟΟΞΈΞ·ΞΊΞµ."
 
 #: backends/cloud/storage.cpp:340
 msgid "Download failed."
-msgstr "Η μεταφόρτωση απέτυχε."
+msgstr "Ξ— ΞΌΞµΟ„Ξ±Ο†ΟΟΟ„Ο‰ΟƒΞ· Ξ±Ο€Ξ­Ο„Ο…Ο‡Ξµ."
 
 #: backends/events/default/default-events.cpp:190
 msgid "Do you really want to return to the Launcher?"
-msgstr "Θέλετε πραγματικά να επιστρέψετε στον Προωθητή;"
+msgstr "ΞΞ­Ξ»ΞµΟ„Ξµ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞ¬ Ξ½Ξ± ΞµΟ€ΞΉΟƒΟ„ΟΞ­ΟΞµΟ„Ξµ ΟƒΟ„ΞΏΞ½ Ξ ΟΞΏΟ‰ΞΈΞ·Ο„Ξ®;"
 
 #: backends/events/default/default-events.cpp:190
 msgid "Launcher"
-msgstr "Προωθητής"
+msgstr "Ξ ΟΞΏΟ‰ΞΈΞ·Ο„Ξ®Ο‚"
 
 #: backends/events/default/default-events.cpp:212
 msgid "Do you really want to quit?"
-msgstr "Είστε σίγουροι ότι θέλετε να βγείτε από το πρόγραμμα;"
+msgstr "Ξ•Ξ―ΟƒΟ„Ξµ ΟƒΞ―Ξ³ΞΏΟ…ΟΞΏΞΉ ΟΟ„ΞΉ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ²Ξ³ΞµΞ―Ο„Ξµ Ξ±Ο€Ο Ο„ΞΏ Ο€ΟΟΞ³ΟΞ±ΞΌΞΌΞ±;"
 
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:52
@@ -2172,87 +2171,87 @@ msgstr "Είστε σίγουροι ότι θέλετε να βγείτε από το πρόγραμμα;"
 #: engines/scumm/dialogs.cpp:188 engines/scumm/help.cpp:83
 #: engines/scumm/help.cpp:85
 msgid "Quit"
-msgstr "Έξοδος"
+msgstr "ΞΞΎΞΏΞ΄ΞΏΟ‚"
 
 #: backends/events/gph/gph-events.cpp:391
 #: backends/events/gph/gph-events.cpp:434
 #: backends/events/openpandora/op-events.cpp:174
 msgid "Touchscreen 'Tap Mode' - Left Click"
-msgstr "'Λειτουργία Tap' οθόνης αφής - Αριστερό Click"
+msgstr "'Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Tap' ΞΏΞΈΟΞ½Ξ·Ο‚ Ξ±Ο†Ξ®Ο‚ - Ξ‘ΟΞΉΟƒΟ„ΞµΟΟ Click"
 
 #: backends/events/gph/gph-events.cpp:393
 #: backends/events/gph/gph-events.cpp:436
 #: backends/events/openpandora/op-events.cpp:176
 msgid "Touchscreen 'Tap Mode' - Right Click"
-msgstr "'Λειτουργία Tap' οθόνης αφής - Δεξί Click"
+msgstr "'Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Tap' ΞΏΞΈΟΞ½Ξ·Ο‚ Ξ±Ο†Ξ®Ο‚ - Ξ”ΞµΞΎΞ― Click"
 
 #: backends/events/gph/gph-events.cpp:395
 #: backends/events/gph/gph-events.cpp:438
 #: backends/events/openpandora/op-events.cpp:178
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
-msgstr "'Λειτουργία Tap' οθόνης αφής - Αιώρηση (Όχι Click)"
+msgstr "'Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Tap' ΞΏΞΈΟΞ½Ξ·Ο‚ Ξ±Ο†Ξ®Ο‚ - Ξ‘ΞΉΟΟΞ·ΟƒΞ· (ΞΟ‡ΞΉ Click)"
 
 #: backends/events/gph/gph-events.cpp:415
 msgid "Maximum Volume"
-msgstr "Μέγιστη Ένταση"
+msgstr "ΞΞ­Ξ³ΞΉΟƒΟ„Ξ· ΞΞ½Ο„Ξ±ΟƒΞ·"
 
 #: backends/events/gph/gph-events.cpp:417
 msgid "Increasing Volume"
-msgstr "Αύξηση Έντασης"
+msgstr "Ξ‘ΟΞΎΞ·ΟƒΞ· ΞΞ½Ο„Ξ±ΟƒΞ·Ο‚"
 
 #: backends/events/gph/gph-events.cpp:423
 msgid "Minimal Volume"
-msgstr "Ελάχιστη Ένταση"
+msgstr "Ξ•Ξ»Ξ¬Ο‡ΞΉΟƒΟ„Ξ· ΞΞ½Ο„Ξ±ΟƒΞ·"
 
 #: backends/events/gph/gph-events.cpp:425
 msgid "Decreasing Volume"
-msgstr "Μείωση Έντασης"
+msgstr "ΞΞµΞ―Ο‰ΟƒΞ· ΞΞ½Ο„Ξ±ΟƒΞ·Ο‚"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Enabled"
-msgstr "Ενεργοποιημένο Clicking"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½ΞΏ Clicking"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Disabled"
-msgstr "Απενεργοποιημένο Clicking"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½ΞΏ Clicking"
 
 #: backends/events/openpandora/op-events.cpp:180
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "'Λειτουργία Tap' οθόνης αφής - Αιώρηση (DPad Clicks)"
+msgstr "'Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Tap' ΞΏΞΈΟΞ½Ξ·Ο‚ Ξ±Ο†Ξ®Ο‚ - Ξ‘ΞΉΟΟΞ·ΟƒΞ· (DPad Clicks)"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:192
 msgid "Do you want to quit ?"
-msgstr "Θέλετε να βγείτε από το πρόγραμμα;"
+msgstr "ΞΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ²Ξ³ΞµΞ―Ο„Ξµ Ξ±Ο€Ο Ο„ΞΏ Ο€ΟΟΞ³ΟΞ±ΞΌΞΌΞ±;"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:332
 msgid "Trackpad mode is now"
-msgstr "Η λειτουργία trackpad είναι τώρα"
+msgstr "Ξ— Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± trackpad ΞµΞ―Ξ½Ξ±ΞΉ Ο„ΟΟΞ±"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:335
 #: backends/events/webossdl/webossdl-events.cpp:362
 msgid "ON"
-msgstr "Ενεργοποιημένη"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ·"
 
 #: backends/events/webossdl/webossdl-events.cpp:335
 #: backends/events/webossdl/webossdl-events.cpp:362
 msgid "OFF"
-msgstr "Απενεργοποιημένη"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ·"
 
 #: backends/events/webossdl/webossdl-events.cpp:339
 msgid "Swipe two fingers to the right to toggle."
-msgstr "Περάστε δύο δάχτυλα προς τα δεξιά για εναλλαγή."
+msgstr "Ξ ΞµΟΞ¬ΟƒΟ„Ξµ Ξ΄ΟΞΏ Ξ΄Ξ¬Ο‡Ο„Ο…Ξ»Ξ± Ο€ΟΞΏΟ‚ Ο„Ξ± Ξ΄ΞµΞΎΞΉΞ¬ Ξ³ΞΉΞ± ΞµΞ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ®."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:359
 msgid "Auto-drag mode is now"
-msgstr "Η λειτουργία auto-drag είναι τώρα"
+msgstr "Ξ— Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± auto-drag ΞµΞ―Ξ½Ξ±ΞΉ Ο„ΟΟΞ±"
 
 #: backends/events/webossdl/webossdl-events.cpp:366
 msgid "Swipe three fingers to the right to toggle."
-msgstr "Περάστε τρία δάχτυλα προς τα δεξιά για εναλλαγή."
+msgstr "Ξ ΞµΟΞ¬ΟƒΟ„Ξµ Ο„ΟΞ―Ξ± Ξ΄Ξ¬Ο‡Ο„Ο…Ξ»Ξ± Ο€ΟΞΏΟ‚ Ο„Ξ± Ξ΄ΞµΞΎΞΉΞ¬ Ξ³ΞΉΞ± ΞµΞ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ®."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:149
 msgid "OpenGL"
@@ -2261,71 +2260,71 @@ msgstr "OpenGL"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:590
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2592
 msgid "Windowed mode"
-msgstr "Λειτουργία παραθύρου"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο€Ξ±ΟΞ±ΞΈΟΟΞΏΟ…"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:704
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr "Ανάλυση: %dx%d"
+msgstr "Ξ‘Ξ½Ξ¬Ξ»Ο…ΟƒΞ·: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:725
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2453
 msgid "Enabled aspect ratio correction"
-msgstr "Ενεργοποιημένη διόρθωση αναλογίας διαστάσεων"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ· Ξ΄ΞΉΟΟΞΈΟ‰ΟƒΞ· Ξ±Ξ½Ξ±Ξ»ΞΏΞ³Ξ―Ξ±Ο‚ Ξ΄ΞΉΞ±ΟƒΟ„Ξ¬ΟƒΞµΟ‰Ξ½"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:727
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2459
 msgid "Disabled aspect ratio correction"
-msgstr "Απενεργοποιημένη διόρθωση αναλογίας διαστάσεων"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ· Ξ΄ΞΉΟΟΞΈΟ‰ΟƒΞ· Ξ±Ξ½Ξ±Ξ»ΞΏΞ³Ξ―Ξ±Ο‚ Ξ΄ΞΉΞ±ΟƒΟ„Ξ¬ΟƒΞµΟ‰Ξ½"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:747
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
 msgid "Filtering enabled"
-msgstr "Ενεργοποίηση φιλτραρίσματος"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ο†ΞΉΞ»Ο„ΟΞ±ΟΞ―ΟƒΞΌΞ±Ο„ΞΏΟ‚"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:749
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
 msgid "Filtering disabled"
-msgstr "Απενεργοποίηση φιλτραρίσματος"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ο†ΞΉΞ»Ο„ΟΞ±ΟΞ―ΟƒΞΌΞ±Ο„ΞΏΟ‚"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:95
 msgid "Normal (no scaling)"
-msgstr "Κανονικό (χωρίς κλιμάκωση)"
+msgstr "ΞΞ±Ξ½ΞΏΞ½ΞΉΞΊΟ (Ο‡Ο‰ΟΞ―Ο‚ ΞΊΞ»ΞΉΞΌΞ¬ΞΊΟ‰ΟƒΞ·)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgctxt "lowres"
 msgid "Normal (no scaling)"
-msgstr "Κανονικό (χωρίς κλιμάκωση)"
+msgstr "ΞΞ±Ξ½ΞΏΞ½ΞΉΞΊΟ (Ο‡Ο‰ΟΞ―Ο‚ ΞΊΞ»ΞΉΞΌΞ¬ΞΊΟ‰ΟƒΞ·)"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2539
 msgid "Active graphics filter:"
-msgstr "Ενεργό φίλτρο γραφικών:"
+msgstr "Ξ•Ξ½ΞµΟΞ³Ο Ο†Ξ―Ξ»Ο„ΟΞΏ Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½:"
 
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
-msgstr "Αντιστοιχίσεις πλήκτρων:"
+msgstr "Ξ‘Ξ½Ο„ΞΉΟƒΟ„ΞΏΞΉΟ‡Ξ―ΟƒΞµΞΉΟ‚ Ο€Ξ»Ξ®ΞΊΟ„ΟΟ‰Ξ½:"
 
 #: backends/keymapper/remap-dialog.cpp:67
 msgid " (Effective)"
-msgstr " (Ισχύον)"
+msgstr " (Ξ™ΟƒΟ‡ΟΞΏΞ½)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Active)"
-msgstr " (Ενεργό)"
+msgstr " (Ξ•Ξ½ΞµΟΞ³Ο)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Blocked)"
-msgstr " (Αποκλεισμένο)"
+msgstr " (Ξ‘Ο€ΞΏΞΊΞ»ΞµΞΉΟƒΞΌΞ­Ξ½ΞΏ)"
 
 #: backends/keymapper/remap-dialog.cpp:120
 msgid " (Global)"
-msgstr " (Ολικό)"
+msgstr " (ΞΞ»ΞΉΞΊΟ)"
 
 #: backends/keymapper/remap-dialog.cpp:128
 msgid " (Game)"
-msgstr " (Παιχνίδι)"
+msgstr " (Ξ Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ)"
 
 #: backends/midi/windows.cpp:165
 msgid "Windows MIDI"
@@ -2334,107 +2333,107 @@ msgstr "Windows MIDI"
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
 msgid "~C~lose"
-msgstr "~Κ~λείσιμο"
+msgstr "~Ξ~Ξ»ΞµΞ―ΟƒΞΉΞΌΞΏ"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
-msgstr "Κεντρικό Μενού ScummVM"
+msgstr "ΞΞµΞ½Ο„ΟΞΉΞΊΟ ΞΞµΞ½ΞΏΟ ScummVM"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:63
 msgid "~L~eft handed mode"
-msgstr "~Λ~ειτουργία για αριστερόχειρες"
+msgstr "~Ξ›~ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ξ³ΞΉΞ± Ξ±ΟΞΉΟƒΟ„ΞµΟΟΟ‡ΞµΞΉΟΞµΟ‚"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
-msgstr "~Χ~ειρισμοί μάχης Ίντυ"
+msgstr "~Ξ§~ΞµΞΉΟΞΉΟƒΞΌΞΏΞ― ΞΌΞ¬Ο‡Ξ·Ο‚ ΞΞ½Ο„Ο…"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
-msgstr "Προβολή δρομέα ποντικιού"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ΄ΟΞΏΞΌΞ­Ξ± Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:66
 msgid "Snap to edges"
-msgstr "Συγκράτηση στις άκρες"
+msgstr "Ξ£Ο…Ξ³ΞΊΟΞ¬Ο„Ξ·ΟƒΞ· ΟƒΟ„ΞΉΟ‚ Ξ¬ΞΊΟΞµΟ‚"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Touch X Offset"
-msgstr "Μετατόπιση Αφής Χ"
+msgstr "ΞΞµΟ„Ξ±Ο„ΟΟ€ΞΉΟƒΞ· Ξ‘Ο†Ξ®Ο‚ Ξ§"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:75
 msgid "Touch Y Offset"
-msgstr "Μετατόπιση Αφής Ψ"
+msgstr "ΞΞµΟ„Ξ±Ο„ΟΟ€ΞΉΟƒΞ· Ξ‘Ο†Ξ®Ο‚ Ξ¨"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:87
 msgid "Use laptop trackpad-style cursor control"
-msgstr "Χρήση ελέγχου δρομέα τύπου laptop trackpad"
+msgstr "Ξ§ΟΞ®ΟƒΞ· ΞµΞ»Ξ­Ξ³Ο‡ΞΏΟ… Ξ΄ΟΞΏΞΌΞ­Ξ± Ο„ΟΟ€ΞΏΟ… laptop trackpad"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:88
 msgid "Tap for left click, double tap right click"
-msgstr "Πατήστε για αριστερό click, πατήστε διπλά για δεξί click"
+msgstr "Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ Ξ³ΞΉΞ± Ξ±ΟΞΉΟƒΟ„ΞµΟΟ click, Ο€Ξ±Ο„Ξ®ΟƒΟ„Ξµ Ξ΄ΞΉΟ€Ξ»Ξ¬ Ξ³ΞΉΞ± Ξ΄ΞµΞΎΞ― click"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:90
 msgid "Sensitivity"
-msgstr "Ευαισθησία"
+msgstr "Ξ•Ο…Ξ±ΞΉΟƒΞΈΞ·ΟƒΞ―Ξ±"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:99
 msgid "Initial top screen scale:"
-msgstr "Αρχική πάνω κλίμακα οθόνης:"
+msgstr "Ξ‘ΟΟ‡ΞΉΞΊΞ® Ο€Ξ¬Ξ½Ο‰ ΞΊΞ»Ξ―ΞΌΞ±ΞΊΞ± ΞΏΞΈΟΞ½Ξ·Ο‚:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
-msgstr "Κύρια κλιμάκωση της οθόνης:"
+msgstr "ΞΟΟΞΉΞ± ΞΊΞ»ΞΉΞΌΞ¬ΞΊΟ‰ΟƒΞ· Ο„Ξ·Ο‚ ΞΏΞΈΟΞ½Ξ·Ο‚:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
-msgstr "Κλίμακα υλικού (γρήγορη, αλλά χαμηλής ποιότητας)"
+msgstr "ΞΞ»Ξ―ΞΌΞ±ΞΊΞ± Ο…Ξ»ΞΉΞΊΞΏΟ (Ξ³ΟΞ®Ξ³ΞΏΟΞ·, Ξ±Ξ»Ξ»Ξ¬ Ο‡Ξ±ΞΌΞ·Ξ»Ξ®Ο‚ Ο€ΞΏΞΉΟΟ„Ξ·Ο„Ξ±Ο‚)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:108
 msgid "Software scale (good quality, but slower)"
-msgstr "Κλίμακα λογισμικού (καλή ποιότητα, αλλά πιο αργή)"
+msgstr "ΞΞ»Ξ―ΞΌΞ±ΞΊΞ± Ξ»ΞΏΞ³ΞΉΟƒΞΌΞΉΞΊΞΏΟ (ΞΊΞ±Ξ»Ξ® Ο€ΞΏΞΉΟΟ„Ξ·Ο„Ξ±, Ξ±Ξ»Ξ»Ξ¬ Ο€ΞΉΞΏ Ξ±ΟΞ³Ξ®)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:109
 msgid "Unscaled (you must scroll left and right)"
-msgstr "Χωρίς κλίμακα (πρέπει να κυλίσετε την οθόνη αριστερά και δεξιά)"
+msgstr "Ξ§Ο‰ΟΞ―Ο‚ ΞΊΞ»Ξ―ΞΌΞ±ΞΊΞ± (Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± ΞΊΟ…Ξ»Ξ―ΟƒΞµΟ„Ξµ Ο„Ξ·Ξ½ ΞΏΞΈΟΞ½Ξ· Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬ ΞΊΞ±ΞΉ Ξ΄ΞµΞΎΞΉΞ¬)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:111
 msgid "Brightness:"
-msgstr "Φωτεινότητα:"
+msgstr "Ξ¦Ο‰Ο„ΞµΞΉΞ½ΟΟ„Ξ·Ο„Ξ±:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
-msgstr "Ήχος υψηλής ποιότητας (πιο αργό) (επανεκκίνηση)"
+msgstr "Ξ‰Ο‡ΞΏΟ‚ Ο…ΟΞ·Ξ»Ξ®Ο‚ Ο€ΞΏΞΉΟΟ„Ξ·Ο„Ξ±Ο‚ (Ο€ΞΉΞΏ Ξ±ΟΞ³Ο) (ΞµΟ€Ξ±Ξ½ΞµΞΊΞΊΞ―Ξ½Ξ·ΟƒΞ·)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:122
 msgid "Disable power off"
-msgstr "Απενεργοποίηση σβησίματος"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΟƒΞ²Ξ·ΟƒΞ―ΞΌΞ±Ο„ΞΏΟ‚"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:309
 #: backends/platform/ios7/ios7_osys_events.cpp:519
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
-msgstr "Ενεργοποίηση λειτουργίας ποντικιού click-and-drag."
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ click-and-drag."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:311
 #: backends/platform/ios7/ios7_osys_events.cpp:521
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
-msgstr "Απενεργοποίηση λειτουργίας ποντικιού click-and-drag."
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ click-and-drag."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:322
 #: backends/platform/ios7/ios7_osys_events.cpp:540
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
-msgstr "Λειτουργία Touchpad ενεργοποιημένη."
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Touchpad ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ·."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:324
 #: backends/platform/ios7/ios7_osys_events.cpp:542
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
-msgstr "Λειτουργία Touchpad απενεργοποιημένη."
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Touchpad Ξ±Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ·."
 
 #: backends/platform/maemo/maemo.cpp:206
 msgid "Click Mode"
-msgstr "Λειτουργία Click"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Click"
 
 #: backends/platform/maemo/maemo.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -2442,174 +2441,174 @@ msgstr "Λειτουργία Click"
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
 msgid "Left Click"
-msgstr "Αριστερό Click"
+msgstr "Ξ‘ΟΞΉΟƒΟ„ΞµΟΟ Click"
 
 #: backends/platform/maemo/maemo.cpp:215
 msgid "Middle Click"
-msgstr "Μεσαίο Click"
+msgstr "ΞΞµΟƒΞ±Ξ―ΞΏ Click"
 
 #: backends/platform/maemo/maemo.cpp:218
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
 msgid "Right Click"
-msgstr "Δεξί Click"
+msgstr "Ξ”ΞµΞΎΞ― Click"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:94
 msgid "Hide ScummVM"
-msgstr "Απόκρυψη ScummVM"
+msgstr "Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:99
 msgid "Hide Others"
-msgstr "Απόκρυψη ¶λλων"
+msgstr "Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· Ξ†Ξ»Ξ»Ο‰Ξ½"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:104
 msgid "Show All"
-msgstr "Προβολή όλων"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® ΟΞ»Ο‰Ξ½"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:126
 #: backends/platform/sdl/macosx/appmenu_osx.mm:137
 msgid "Window"
-msgstr "Παράθυρο"
+msgstr "Ξ Ξ±ΟΞ¬ΞΈΟ…ΟΞΏ"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:131
 msgid "Minimize"
-msgstr "Ελαχιστοποίηση"
+msgstr "Ξ•Ξ»Ξ±Ο‡ΞΉΟƒΟ„ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ·"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
 msgid "Up"
-msgstr "Πάνω"
+msgstr "Ξ Ξ¬Ξ½Ο‰"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:39
 #: backends/platform/wince/CEActionsSmartphone.cpp:40
 msgid "Down"
-msgstr "Κάτω"
+msgstr "ΞΞ¬Ο„Ο‰"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: backends/platform/wince/CEActionsSmartphone.cpp:41
 msgid "Left"
-msgstr "Αριστερά"
+msgstr "Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: backends/platform/wince/CEActionsSmartphone.cpp:42
 msgid "Right"
-msgstr "Δεξιά"
+msgstr "Ξ”ΞµΞΎΞΉΞ¬"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: backends/platform/wince/CEActionsSmartphone.cpp:47
 msgid "Zone"
-msgstr "Ζώνη"
+msgstr "Ξ–ΟΞ½Ξ·"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:54
 #: backends/platform/wince/CEActionsSmartphone.cpp:48
 msgid "Multi Function"
-msgstr "Πολλαπλή Λειτουργία"
+msgstr "Ξ ΞΏΞ»Ξ»Ξ±Ο€Ξ»Ξ® Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Swap character"
-msgstr "Ανταλλαγή χαρακτήρα"
+msgstr "Ξ‘Ξ½Ο„Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ο‡Ξ±ΟΞ±ΞΊΟ„Ξ®ΟΞ±"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:49
 msgid "Skip text"
-msgstr "Παράλειψη κειμένου"
+msgstr "Ξ Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ· ΞΊΞµΞΉΞΌΞ­Ξ½ΞΏΟ…"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Fast mode"
-msgstr "Γρήγορη λειτουργία"
+msgstr "Ξ“ΟΞ®Ξ³ΞΏΟΞ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
 msgid "Debugger"
-msgstr "Εντοπιστής σφαλμάτων"
+msgstr "Ξ•Ξ½Ο„ΞΏΟ€ΞΉΟƒΟ„Ξ®Ο‚ ΟƒΟ†Ξ±Ξ»ΞΌΞ¬Ο„Ο‰Ξ½"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:54
 msgid "Global menu"
-msgstr "Καθολικό μενού"
+msgstr "ΞΞ±ΞΈΞΏΞ»ΞΉΞΊΟ ΞΌΞµΞ½ΞΏΟ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:55
 msgid "Virtual keyboard"
-msgstr "Εικονικό πληκτρολόγιο"
+msgstr "Ξ•ΞΉΞΊΞΏΞ½ΞΉΞΊΟ Ο€Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΟΞ³ΞΉΞΏ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:56
 msgid "Key mapper"
-msgstr "Αντιστοιχίσεις πλήκτρων"
+msgstr "Ξ‘Ξ½Ο„ΞΉΟƒΟ„ΞΏΞΉΟ‡Ξ―ΟƒΞµΞΉΟ‚ Ο€Ξ»Ξ®ΞΊΟ„ΟΟ‰Ξ½"
 
 #: backends/platform/tizen/form.cpp:262
 msgid "Right Click Once"
-msgstr "Δεξί Click Μια Φορά"
+msgstr "Ξ”ΞµΞΎΞ― Click ΞΞΉΞ± Ξ¦ΞΏΟΞ¬"
 
 #: backends/platform/tizen/form.cpp:270
 msgid "Move Only"
-msgstr "Μόνο Μετακίνηση"
+msgstr "ΞΟΞ½ΞΏ ΞΞµΟ„Ξ±ΞΊΞ―Ξ½Ξ·ΟƒΞ·"
 
 #: backends/platform/tizen/form.cpp:293
 msgid "Escape Key"
-msgstr "Πλήκτρο Escape"
+msgstr "Ξ Ξ»Ξ®ΞΊΟ„ΟΞΏ Escape"
 
 #: backends/platform/tizen/form.cpp:298
 msgid "Game Menu"
-msgstr "Μενού Παιχνιδιού"
+msgstr "ΞΞµΞ½ΞΏΟ Ξ Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: backends/platform/tizen/form.cpp:303
 msgid "Show Keypad"
-msgstr "Προβολή Αριθμητικού Πληκτρολογίου"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ‘ΟΞΉΞΈΞΌΞ·Ο„ΞΉΞΊΞΏΟ Ξ Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΞΏΞ³Ξ―ΞΏΟ…"
 
 #: backends/platform/tizen/form.cpp:308
 msgid "Control Mouse"
-msgstr "Έλεγχος Ποντικιού"
+msgstr "ΞΞ»ΞµΞ³Ο‡ΞΏΟ‚ Ξ ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr "[ Δεδομένα ]"
+msgstr "[ Ξ”ΞµΞ΄ΞΏΞΌΞ­Ξ½Ξ± ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr "[ Πόροι ]"
+msgstr "[ Ξ ΟΟΞΏΞΉ ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr "[ Κάρτα SD ]"
+msgstr "[ ΞΞ¬ΟΟ„Ξ± SD ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr "[ Μέσα ]"
+msgstr "[ ΞΞ­ΟƒΞ± ]"
 
 #: backends/platform/tizen/fs.cpp:275
 msgid "[ Shared ]"
-msgstr "[ Κοινόχρηστα ]"
+msgstr "[ ΞΞΏΞΉΞ½ΟΟ‡ΟΞ·ΟƒΟ„Ξ± ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
-msgstr "Βίντεο"
+msgstr "Ξ’Ξ―Ξ½Ο„ΞµΞΏ"
 
 #: backends/platform/wii/options.cpp:54
 msgid "Current video mode:"
-msgstr "Τρέχουσα λειτουργία βίντεο:"
+msgstr "Ξ¤ΟΞ­Ο‡ΞΏΟ…ΟƒΞ± Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ξ²Ξ―Ξ½Ο„ΞµΞΏ:"
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr "Διπλό-κτύπημα"
+msgstr "Ξ”ΞΉΟ€Ξ»Ο-ΞΊΟ„ΟΟ€Ξ·ΞΌΞ±"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr "Οριζόντια Υποσάρωση:"
+msgstr "ΞΟΞΉΞ¶ΟΞ½Ο„ΞΉΞ± Ξ¥Ο€ΞΏΟƒΞ¬ΟΟ‰ΟƒΞ·:"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr "Κάθετη Υποσάρωση:"
+msgstr "ΞΞ¬ΞΈΞµΟ„Ξ· Ξ¥Ο€ΞΏΟƒΞ¬ΟΟ‰ΟƒΞ·:"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
-msgstr "Είσοδος"
+msgstr "Ξ•Ξ―ΟƒΞΏΞ΄ΞΏΟ‚"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr "Ευαισθησία GC Pad:"
+msgstr "Ξ•Ο…Ξ±ΞΉΟƒΞΈΞ·ΟƒΞ―Ξ± GC Pad:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr "Επιτάχυνση GC Pad:"
+msgstr "Ξ•Ο€ΞΉΟ„Ξ¬Ο‡Ο…Ξ½ΟƒΞ· GC Pad:"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
@@ -2617,19 +2616,19 @@ msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Status:"
-msgstr "Κατάσταση:"
+msgstr "ΞΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·:"
 
 #: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
 msgid "Unknown"
-msgstr "¶γνωστο"
+msgstr "Ξ†Ξ³Ξ½Ο‰ΟƒΟ„ΞΏ"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Mount DVD"
-msgstr "Προσάρτηση DVD"
+msgstr "Ξ ΟΞΏΟƒΞ¬ΟΟ„Ξ·ΟƒΞ· DVD"
 
 #: backends/platform/wii/options.cpp:94
 msgid "Unmount DVD"
-msgstr "Αποπροσάρτηση DVD"
+msgstr "Ξ‘Ο€ΞΏΟ€ΟΞΏΟƒΞ¬ΟΟ„Ξ·ΟƒΞ· DVD"
 
 #: backends/platform/wii/options.cpp:98
 msgid "SMB"
@@ -2637,194 +2636,194 @@ msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:106
 msgid "Server:"
-msgstr "Εξυπηρετητής:"
+msgstr "Ξ•ΞΎΟ…Ο€Ξ·ΟΞµΟ„Ξ·Ο„Ξ®Ο‚:"
 
 #: backends/platform/wii/options.cpp:110
 msgid "Share:"
-msgstr "Κοινόχρηστο:"
+msgstr "ΞΞΏΞΉΞ½ΟΟ‡ΟΞ·ΟƒΟ„ΞΏ:"
 
 #: backends/platform/wii/options.cpp:118
 msgid "Password:"
-msgstr "Κωδικός:"
+msgstr "ΞΟ‰Ξ΄ΞΉΞΊΟΟ‚:"
 
 #: backends/platform/wii/options.cpp:121
 msgid "Init network"
-msgstr "Προετοιμασία δικτύου"
+msgstr "Ξ ΟΞΏΞµΟ„ΞΏΞΉΞΌΞ±ΟƒΞ―Ξ± Ξ΄ΞΉΞΊΟ„ΟΞΏΟ…"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Mount SMB"
-msgstr "Προσάρτηση SMB"
+msgstr "Ξ ΟΞΏΟƒΞ¬ΟΟ„Ξ·ΟƒΞ· SMB"
 
 #: backends/platform/wii/options.cpp:124
 msgid "Unmount SMB"
-msgstr "Αποπροσάρτηση SMB"
+msgstr "Ξ‘Ο€ΞΏΟ€ΟΞΏΟƒΞ¬ΟΟ„Ξ·ΟƒΞ· SMB"
 
 #: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
-msgstr "Το DVD προσαρτήθηκε με επιτυχία"
+msgstr "Ξ¤ΞΏ DVD Ο€ΟΞΏΟƒΞ±ΟΟ„Ξ®ΞΈΞ·ΞΊΞµ ΞΌΞµ ΞµΟ€ΞΉΟ„Ο…Ο‡Ξ―Ξ±"
 
 #: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
-msgstr "Σφάλμα κατά την προσάρτηση του DVD"
+msgstr "Ξ£Ο†Ξ¬Ξ»ΞΌΞ± ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ο€ΟΞΏΟƒΞ¬ΟΟ„Ξ·ΟƒΞ· Ο„ΞΏΟ… DVD"
 
 #: backends/platform/wii/options.cpp:148
 msgid "DVD not mounted"
-msgstr "Το DVD δεν προσαρτήθηκε"
+msgstr "Ξ¤ΞΏ DVD Ξ΄ΞµΞ½ Ο€ΟΞΏΟƒΞ±ΟΟ„Ξ®ΞΈΞ·ΞΊΞµ"
 
 #: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
-msgstr "Δίκτυο ενεργό, ο κοινόχρηστος φάκελος προσαρτήθηκε"
+msgstr "Ξ”Ξ―ΞΊΟ„Ο…ΞΏ ΞµΞ½ΞµΟΞ³Ο, ΞΏ ΞΊΞΏΞΉΞ½ΟΟ‡ΟΞ·ΟƒΟ„ΞΏΟ‚ Ο†Ξ¬ΞΊΞµΞ»ΞΏΟ‚ Ο€ΟΞΏΟƒΞ±ΟΟ„Ξ®ΞΈΞ·ΞΊΞµ"
 
 #: backends/platform/wii/options.cpp:163
 msgid "Network up"
-msgstr "Δίκτυο ενεργό"
+msgstr "Ξ”Ξ―ΞΊΟ„Ο…ΞΏ ΞµΞ½ΞµΟΞ³Ο"
 
 #: backends/platform/wii/options.cpp:166
 msgid ", error while mounting the share"
-msgstr ", σφάλμα κατά την προσάρτηση του κοινόχρηστου φακέλου"
+msgstr ", ΟƒΟ†Ξ¬Ξ»ΞΌΞ± ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ο€ΟΞΏΟƒΞ¬ΟΟ„Ξ·ΟƒΞ· Ο„ΞΏΟ… ΞΊΞΏΞΉΞ½ΟΟ‡ΟΞ·ΟƒΟ„ΞΏΟ… Ο†Ξ±ΞΊΞ­Ξ»ΞΏΟ…"
 
 #: backends/platform/wii/options.cpp:168
 msgid ", share not mounted"
-msgstr ", ο κοινόχρηστος φάκελος δεν προσαρτήθηκε"
+msgstr ", ΞΏ ΞΊΞΏΞΉΞ½ΟΟ‡ΟΞ·ΟƒΟ„ΞΏΟ‚ Ο†Ξ¬ΞΊΞµΞ»ΞΏΟ‚ Ξ΄ΞµΞ½ Ο€ΟΞΏΟƒΞ±ΟΟ„Ξ®ΞΈΞ·ΞΊΞµ"
 
 #: backends/platform/wii/options.cpp:174
 msgid "Network down"
-msgstr "Δίκτυο ανενεργό"
+msgstr "Ξ”Ξ―ΞΊΟ„Ο…ΞΏ Ξ±Ξ½ΞµΞ½ΞµΟΞ³Ο"
 
 #: backends/platform/wii/options.cpp:178
 msgid "Initializing network"
-msgstr "Αρχικοποίηση δικτύου"
+msgstr "Ξ‘ΟΟ‡ΞΉΞΊΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ΄ΞΉΞΊΟ„ΟΞΏΟ…"
 
 #: backends/platform/wii/options.cpp:182
 msgid "Timeout while initializing network"
-msgstr "Εξάντληση χρονικού ορίου κατά την αρχικοποίηση δικτύου"
+msgstr "Ξ•ΞΎΞ¬Ξ½Ο„Ξ»Ξ·ΟƒΞ· Ο‡ΟΞΏΞ½ΞΉΞΊΞΏΟ ΞΏΟΞ―ΞΏΟ… ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ξ±ΟΟ‡ΞΉΞΊΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ΄ΞΉΞΊΟ„ΟΞΏΟ…"
 
 #: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr "Το δίκτυο δεν αρχικοποιήθηκε (%d)"
+msgstr "Ξ¤ΞΏ Ξ΄Ξ―ΞΊΟ„Ο…ΞΏ Ξ΄ΞµΞ½ Ξ±ΟΟ‡ΞΉΞΊΞΏΟ€ΞΏΞΉΞ®ΞΈΞ·ΞΊΞµ (%d)"
 
 #: backends/platform/wince/CEActionsPocket.cpp:46
 msgid "Hide Toolbar"
-msgstr "Απόκρυψη Γραμμής Εργαλείων"
+msgstr "Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· Ξ“ΟΞ±ΞΌΞΌΞ®Ο‚ Ξ•ΟΞ³Ξ±Ξ»ΞµΞ―Ο‰Ξ½"
 
 #: backends/platform/wince/CEActionsPocket.cpp:47
 msgid "Show Keyboard"
-msgstr "Προβολή Πληκτρολογίου"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΞΏΞ³Ξ―ΞΏΟ…"
 
 #: backends/platform/wince/CEActionsPocket.cpp:48
 msgid "Sound on/off"
-msgstr "Ήχος ανοικτός/κλειστός"
+msgstr "Ξ‰Ο‡ΞΏΟ‚ Ξ±Ξ½ΞΏΞΉΞΊΟ„ΟΟ‚/ΞΊΞ»ΞµΞΉΟƒΟ„ΟΟ‚"
 
 #: backends/platform/wince/CEActionsPocket.cpp:49
 msgid "Right click"
-msgstr "Δεξί click"
+msgstr "Ξ”ΞµΞΎΞ― click"
 
 #: backends/platform/wince/CEActionsPocket.cpp:50
 msgid "Show/Hide Cursor"
-msgstr "Εμφάνιση/Απόκρυψη Δρομέα"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ·/Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· Ξ”ΟΞΏΞΌΞ­Ξ±"
 
 #: backends/platform/wince/CEActionsPocket.cpp:51
 msgid "Free look"
-msgstr "Ελεύθερη περιήγηση"
+msgstr "Ξ•Ξ»ΞµΟΞΈΞµΟΞ· Ο€ΞµΟΞΉΞ®Ξ³Ξ·ΟƒΞ·"
 
 #: backends/platform/wince/CEActionsPocket.cpp:52
 msgid "Zoom up"
-msgstr "Μεγέθυνση πάνω"
+msgstr "ΞΞµΞ³Ξ­ΞΈΟ…Ξ½ΟƒΞ· Ο€Ξ¬Ξ½Ο‰"
 
 #: backends/platform/wince/CEActionsPocket.cpp:53
 msgid "Zoom down"
-msgstr "Μεγέθυνση κάτω"
+msgstr "ΞΞµΞ³Ξ­ΞΈΟ…Ξ½ΟƒΞ· ΞΊΞ¬Ο„Ο‰"
 
 #: backends/platform/wince/CEActionsPocket.cpp:55
 #: backends/platform/wince/CEActionsSmartphone.cpp:49
 msgid "Bind Keys"
-msgstr "Δέσμευση Πλήκτρων"
+msgstr "Ξ”Ξ­ΟƒΞΌΞµΟ…ΟƒΞ· Ξ Ξ»Ξ®ΞΊΟ„ΟΟ‰Ξ½"
 
 #: backends/platform/wince/CEActionsPocket.cpp:56
 msgid "Cursor Up"
-msgstr "Δρομέας Πάνω"
+msgstr "Ξ”ΟΞΏΞΌΞ­Ξ±Ο‚ Ξ Ξ¬Ξ½Ο‰"
 
 #: backends/platform/wince/CEActionsPocket.cpp:57
 msgid "Cursor Down"
-msgstr "Δρομέας Κάτω"
+msgstr "Ξ”ΟΞΏΞΌΞ­Ξ±Ο‚ ΞΞ¬Ο„Ο‰"
 
 #: backends/platform/wince/CEActionsPocket.cpp:58
 msgid "Cursor Left"
-msgstr "Δρομέας Αριστερά"
+msgstr "Ξ”ΟΞΏΞΌΞ­Ξ±Ο‚ Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬"
 
 #: backends/platform/wince/CEActionsPocket.cpp:59
 msgid "Cursor Right"
-msgstr "Δρομέας Δεξιά"
+msgstr "Ξ”ΟΞΏΞΌΞ­Ξ±Ο‚ Ξ”ΞµΞΎΞΉΞ¬"
 
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Do you want to load or save the game?"
-msgstr "Θέλετε να φορτώσετε ή να αποθηκεύσετε το παιχνίδι;"
+msgstr "ΞΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ο†ΞΏΟΟ„ΟΟƒΞµΟ„Ξµ Ξ® Ξ½Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟΟƒΞµΟ„Ξµ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ;"
 
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "   Είστε σίγουροι ότι θέλετε να βγείτε από το πρόγραμμα ;   "
+msgstr "   Ξ•Ξ―ΟƒΟ„Ξµ ΟƒΞ―Ξ³ΞΏΟ…ΟΞΏΞΉ ΟΟ„ΞΉ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ²Ξ³ΞµΞ―Ο„Ξµ Ξ±Ο€Ο Ο„ΞΏ Ο€ΟΟΞ³ΟΞ±ΞΌΞΌΞ± ;   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
-msgstr "Πληκτρολόγιο"
+msgstr "Ξ Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΟΞ³ΞΉΞΏ"
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:51
 msgid "Rotate"
-msgstr "Περιστροφή"
+msgstr "Ξ ΞµΟΞΉΟƒΟ„ΟΞΏΟ†Ξ®"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Χρήση οδηγού SDL "
+msgstr "Ξ§ΟΞ®ΟƒΞ· ΞΏΞ΄Ξ·Ξ³ΞΏΟ SDL "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "Απεικόνιση "
+msgstr "Ξ‘Ο€ΞµΞΉΞΊΟΞ½ΞΉΟƒΞ· "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
-msgstr "Θέλετε να πραγματοποιηθεί αυτοματοποιημένη σάρωση ;"
+msgstr "ΞΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΏΟ€ΞΏΞΉΞ·ΞΈΞµΞ― Ξ±Ο…Ο„ΞΏΞΌΞ±Ο„ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ· ΟƒΞ¬ΟΟ‰ΟƒΞ· ;"
 
 #: backends/platform/wince/wince-sdl.cpp:516
 msgid "Map right click action"
-msgstr "Αντιστοίχιση ενέργειας δεξί click"
+msgstr "Ξ‘Ξ½Ο„ΞΉΟƒΟ„ΞΏΞ―Ο‡ΞΉΟƒΞ· ΞµΞ½Ξ­ΟΞ³ΞµΞΉΞ±Ο‚ Ξ΄ΞµΞΎΞ― click"
 
 #: backends/platform/wince/wince-sdl.cpp:520
 msgid "You must map a key to the 'Right Click' action to play this game"
 msgstr ""
-"Θα πρέπει να αντιστοιχίσετε ένα πλήκτρο στην ενέργεια \"Δεξί click\" για να "
-"παίξετε αυτό το παιχνίδι"
+"ΞΞ± Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± Ξ±Ξ½Ο„ΞΉΟƒΟ„ΞΏΞΉΟ‡Ξ―ΟƒΞµΟ„Ξµ Ξ­Ξ½Ξ± Ο€Ξ»Ξ®ΞΊΟ„ΟΞΏ ΟƒΟ„Ξ·Ξ½ ΞµΞ½Ξ­ΟΞ³ΞµΞΉΞ± \"Ξ”ΞµΞΎΞ― click\" Ξ³ΞΉΞ± Ξ½Ξ± "
+"Ο€Ξ±Ξ―ΞΎΞµΟ„Ξµ Ξ±Ο…Ο„Ο Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ"
 
 #: backends/platform/wince/wince-sdl.cpp:529
 msgid "Map hide toolbar action"
-msgstr "Αντιστοίχιση ενέργειας απόκρυψης γραμμής εργαλείων"
+msgstr "Ξ‘Ξ½Ο„ΞΉΟƒΟ„ΞΏΞ―Ο‡ΞΉΟƒΞ· ΞµΞ½Ξ­ΟΞ³ΞµΞΉΞ±Ο‚ Ξ±Ο€ΟΞΊΟΟ…ΟΞ·Ο‚ Ξ³ΟΞ±ΞΌΞΌΞ®Ο‚ ΞµΟΞ³Ξ±Ξ»ΞµΞ―Ο‰Ξ½"
 
 #: backends/platform/wince/wince-sdl.cpp:533
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
-"Θα πρέπει να αντιστοιχίσετε ένα πλήκτρο στην ενέργεια \"Απόκρυψη γραμμής "
-"εργαλείων\" για να παίξετε αυτό το παιχνίδι"
+"ΞΞ± Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± Ξ±Ξ½Ο„ΞΉΟƒΟ„ΞΏΞΉΟ‡Ξ―ΟƒΞµΟ„Ξµ Ξ­Ξ½Ξ± Ο€Ξ»Ξ®ΞΊΟ„ΟΞΏ ΟƒΟ„Ξ·Ξ½ ΞµΞ½Ξ­ΟΞ³ΞµΞΉΞ± \"Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· Ξ³ΟΞ±ΞΌΞΌΞ®Ο‚ "
+"ΞµΟΞ³Ξ±Ξ»ΞµΞ―Ο‰Ξ½\" Ξ³ΞΉΞ± Ξ½Ξ± Ο€Ξ±Ξ―ΞΎΞµΟ„Ξµ Ξ±Ο…Ο„Ο Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ"
 
 #: backends/platform/wince/wince-sdl.cpp:542
 msgid "Map Zoom Up action (optional)"
-msgstr "Ενέργεια μεγέθυνσης χάρτη (προαιρετικό)"
+msgstr "Ξ•Ξ½Ξ­ΟΞ³ΞµΞΉΞ± ΞΌΞµΞ³Ξ­ΞΈΟ…Ξ½ΟƒΞ·Ο‚ Ο‡Ξ¬ΟΟ„Ξ· (Ο€ΟΞΏΞ±ΞΉΟΞµΟ„ΞΉΞΊΟ)"
 
 #: backends/platform/wince/wince-sdl.cpp:545
 msgid "Map Zoom Down action (optional)"
-msgstr "Ενέργεια σμίκρυνσης χάρτη (προαιρετικό)"
+msgstr "Ξ•Ξ½Ξ­ΟΞ³ΞµΞΉΞ± ΟƒΞΌΞ―ΞΊΟΟ…Ξ½ΟƒΞ·Ο‚ Ο‡Ξ¬ΟΟ„Ξ· (Ο€ΟΞΏΞ±ΞΉΟΞµΟ„ΞΉΞΊΟ)"
 
 #: backends/platform/wince/wince-sdl.cpp:553
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
-"Μην ξεχάσετε να αντιστοιχίσετε ένα πλήκτρο για την ενέργεια \"Απόκρυψη "
-"Γραμμής Εργαλείων\" για να δείτε όλα τα αντικείμενα"
+"ΞΞ·Ξ½ ΞΎΞµΟ‡Ξ¬ΟƒΞµΟ„Ξµ Ξ½Ξ± Ξ±Ξ½Ο„ΞΉΟƒΟ„ΞΏΞΉΟ‡Ξ―ΟƒΞµΟ„Ξµ Ξ­Ξ½Ξ± Ο€Ξ»Ξ®ΞΊΟ„ΟΞΏ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞµΞ½Ξ­ΟΞ³ΞµΞΉΞ± \"Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· "
+"Ξ“ΟΞ±ΞΌΞΌΞ®Ο‚ Ξ•ΟΞ³Ξ±Ξ»ΞµΞ―Ο‰Ξ½\" Ξ³ΞΉΞ± Ξ½Ξ± Ξ΄ΞµΞ―Ο„Ξµ ΟΞ»Ξ± Ο„Ξ± Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½Ξ±"
 
 #: backends/updates/macosx/macosx-updates.mm:79
 msgid "Check for Updates..."
-msgstr "Έλεγχος Ενημερώσεων..."
+msgstr "ΞΞ»ΞµΞ³Ο‡ΞΏΟ‚ Ξ•Ξ½Ξ·ΞΌΞµΟΟΟƒΞµΟ‰Ξ½..."
 
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:966
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
@@ -2833,7 +2832,7 @@ msgstr "Έλεγχος Ενημερώσεων..."
 #: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΟΟΞµΟƒΞ· Ο„ΞΏΟ… Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ '%s'."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:980
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
@@ -2841,7 +2840,7 @@ msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr "Το αρχειο παιχνιδιού '%s' είναι κατεστραμμένο."
+msgstr "Ξ¤ΞΏ Ξ±ΟΟ‡ΞµΞΉΞΏ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ '%s' ΞµΞ―Ξ½Ξ±ΞΉ ΞΊΞ±Ο„ΞµΟƒΟ„ΟΞ±ΞΌΞΌΞ­Ξ½ΞΏ."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:991
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
@@ -2852,24 +2851,24 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
-"Βρέθηκε λανθασμένη έκδοση του '%s' αρχείου παιχνιδιού. Αναμενόμενη %d.%d "
-"αλλά βρέθηκε η %d.%d."
+"Ξ’ΟΞ­ΞΈΞ·ΞΊΞµ Ξ»Ξ±Ξ½ΞΈΞ±ΟƒΞΌΞ­Ξ½Ξ· Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ο„ΞΏΟ… '%s' Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ. Ξ‘Ξ½Ξ±ΞΌΞµΞ½ΟΞΌΞµΞ½Ξ· %d.%d "
+"Ξ±Ξ»Ξ»Ξ¬ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ Ξ· %d.%d."
 
 #: engines/adl/detection.cpp:49 engines/adl/detection.cpp:59
 msgid "Color mode"
-msgstr "Λειτουργία χρώματος"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο‡ΟΟΞΌΞ±Ο„ΞΏΟ‚"
 
 #: engines/adl/detection.cpp:50 engines/adl/detection.cpp:60
 msgid "Use color graphics"
-msgstr "Χρήση έγχρωμων γραφικών"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ­Ξ³Ο‡ΟΟ‰ΞΌΟ‰Ξ½ Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½"
 
 #: engines/adl/detection.cpp:69
 msgid "Scanlines"
-msgstr "Γραμμές σάρωσης"
+msgstr "Ξ“ΟΞ±ΞΌΞΌΞ­Ο‚ ΟƒΞ¬ΟΟ‰ΟƒΞ·Ο‚"
 
 #: engines/adl/detection.cpp:70
 msgid "Show scanlines"
-msgstr "Προβολή γραμμών σάρωσης"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ³ΟΞ±ΞΌΞΌΟΞ½ ΟƒΞ¬ΟΟ‰ΟƒΞ·Ο‚"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -2877,7 +2876,7 @@ msgstr "Προβολή γραμμών σάρωσης"
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
-msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτωσης"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ±ΟΟ‡ΞΉΞΊΟΞ½ ΞΏΞΈΞΏΞ½ΟΞ½ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚/Ο†ΟΟΟ„Ο‰ΟƒΞ·Ο‚"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
@@ -2886,52 +2885,52 @@ msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτωσης"
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
-"Χρήση των αρχικών οθονών αποθήκευσης/φόρτωσης αντί για αυτές του ScummVM"
+"Ξ§ΟΞ®ΟƒΞ· Ο„Ο‰Ξ½ Ξ±ΟΟ‡ΞΉΞΊΟΞ½ ΞΏΞΈΞΏΞ½ΟΞ½ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚/Ο†ΟΟΟ„Ο‰ΟƒΞ·Ο‚ Ξ±Ξ½Ο„Ξ― Ξ³ΞΉΞ± Ξ±Ο…Ο„Ξ­Ο‚ Ο„ΞΏΟ… ScummVM"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
-msgstr "Χρήση εναλλακτικής παλέτας"
+msgstr "Ξ§ΟΞ®ΟƒΞ· ΞµΞ½Ξ±Ξ»Ξ»Ξ±ΞΊΟ„ΞΉΞΊΞ®Ο‚ Ο€Ξ±Ξ»Ξ­Ο„Ξ±Ο‚"
 
 #: engines/agi/detection.cpp:158
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
-"Χρήση εναλλακτικής παλέτας, κοινής για όλα τα παιχνίδια Amiga. Αυτή ήταν η "
-"παλιά συμπεριφορά"
+"Ξ§ΟΞ®ΟƒΞ· ΞµΞ½Ξ±Ξ»Ξ»Ξ±ΞΊΟ„ΞΉΞΊΞ®Ο‚ Ο€Ξ±Ξ»Ξ­Ο„Ξ±Ο‚, ΞΊΞΏΞΉΞ½Ξ®Ο‚ Ξ³ΞΉΞ± ΟΞ»Ξ± Ο„Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± Amiga. Ξ‘Ο…Ο„Ξ® Ξ®Ο„Ξ±Ξ½ Ξ· "
+"Ο€Ξ±Ξ»ΞΉΞ¬ ΟƒΟ…ΞΌΟ€ΞµΟΞΉΟ†ΞΏΟΞ¬"
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
-msgstr "Υποστήριξη ποντικιού"
+msgstr "Ξ¥Ο€ΞΏΟƒΟ„Ξ®ΟΞΉΞΎΞ· Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: engines/agi/detection.cpp:168
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
-"Ενεργοποίηση της υποστήριξης του ποντικιού. Επιτρέπει τη χρήση του ποντικιού "
-"για κίνηση και τα μενού του παιχνιδιού."
+"Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ο„Ξ·Ο‚ Ο…Ο€ΞΏΟƒΟ„Ξ®ΟΞΉΞΎΞ·Ο‚ Ο„ΞΏΟ… Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ. Ξ•Ο€ΞΉΟ„ΟΞ­Ο€ΞµΞΉ Ο„Ξ· Ο‡ΟΞ®ΟƒΞ· Ο„ΞΏΟ… Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ "
+"Ξ³ΞΉΞ± ΞΊΞ―Ξ½Ξ·ΟƒΞ· ΞΊΞ±ΞΉ Ο„Ξ± ΞΌΞµΞ½ΞΏΟ Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ."
 
 #: engines/agi/detection.cpp:177
 msgid "Use Hercules hires font"
-msgstr "Χρήση γραμματοσειράς Hercules υψηλής ευκρίνειας"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ³ΟΞ±ΞΌΞΌΞ±Ο„ΞΏΟƒΞµΞΉΟΞ¬Ο‚ Hercules Ο…ΟΞ·Ξ»Ξ®Ο‚ ΞµΟ…ΞΊΟΞ―Ξ½ΞµΞΉΞ±Ο‚"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
-"Χρήση γραμματοσειράς Hercules υψηλής ευκρίνειας, όταν η γραμματοσειρά είναι "
-"διαθέσιμη."
+"Ξ§ΟΞ®ΟƒΞ· Ξ³ΟΞ±ΞΌΞΌΞ±Ο„ΞΏΟƒΞµΞΉΟΞ¬Ο‚ Hercules Ο…ΟΞ·Ξ»Ξ®Ο‚ ΞµΟ…ΞΊΟΞ―Ξ½ΞµΞΉΞ±Ο‚, ΟΟ„Ξ±Ξ½ Ξ· Ξ³ΟΞ±ΞΌΞΌΞ±Ο„ΞΏΟƒΞµΞΉΟΞ¬ ΞµΞ―Ξ½Ξ±ΞΉ "
+"Ξ΄ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞ·."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr "Παύση κατά την εισαγωγή εντολών"
+msgstr "Ξ Ξ±ΟΟƒΞ· ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ ΞµΞΉΟƒΞ±Ξ³Ο‰Ξ³Ξ® ΞµΞ½Ο„ΞΏΞ»ΟΞ½"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
-"Εμφανίζει ένα παράθυρο γραμμής εντολών και παύει το παιχνίδι (όπως και το "
-"SCI) αντί της γραμμής εντολών πραγματικού χρόνου."
+"Ξ•ΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞµΞΉ Ξ­Ξ½Ξ± Ο€Ξ±ΟΞ¬ΞΈΟ…ΟΞΏ Ξ³ΟΞ±ΞΌΞΌΞ®Ο‚ ΞµΞ½Ο„ΞΏΞ»ΟΞ½ ΞΊΞ±ΞΉ Ο€Ξ±ΟΞµΞΉ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ (ΟΟ€Ο‰Ο‚ ΞΊΞ±ΞΉ Ο„ΞΏ "
+"SCI) Ξ±Ξ½Ο„Ξ― Ο„Ξ·Ο‚ Ξ³ΟΞ±ΞΌΞΌΞ®Ο‚ ΞµΞ½Ο„ΞΏΞ»ΟΞ½ Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΉΞΊΞΏΟ Ο‡ΟΟΞ½ΞΏΟ…."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -2945,7 +2944,7 @@ msgstr ""
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
-msgstr "Επαναφορά παιχνιδιού:"
+msgstr "Ξ•Ο€Ξ±Ξ½Ξ±Ο†ΞΏΟΞ¬ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ:"
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -2959,7 +2958,7 @@ msgstr "Επαναφορά παιχνιδιού:"
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
-msgstr "Επαναφορά"
+msgstr "Ξ•Ο€Ξ±Ξ½Ξ±Ο†ΞΏΟΞ¬"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2441
 #, c-format
@@ -2968,7 +2967,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Αποτυχία φόρτωσης παιχνιδιού από το αρχείο:\n"
+"Ξ‘Ο€ΞΏΟ„Ο…Ο‡Ξ―Ξ± Ο†ΟΟΟ„Ο‰ΟƒΞ·Ο‚ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ±Ο€Ο Ο„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ:\n"
 "\n"
 "%s"
 
@@ -2979,7 +2978,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Αποτυχία αποθήκευσης παιχνιδιού στο αρχείο:\n"
+"Ξ‘Ο€ΞΏΟ„Ο…Ο‡Ξ―Ξ± Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΟƒΟ„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ:\n"
 "\n"
 "%s"
 
@@ -2990,22 +2989,22 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Επιτυχής αποθήκευση παιχνιδιού στο αρχείο:\n"
+"Ξ•Ο€ΞΉΟ„Ο…Ο‡Ξ®Ο‚ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΟƒΟ„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ:\n"
 "\n"
 "%s"
 
 #: engines/agos/animation.cpp:558
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "Δεν βρέθηκε το αρχείο ενδιάμεσης σκηνής (cutscene) '%s' !"
+msgstr "Ξ”ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ Ο„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ ΞµΞ½Ξ΄ΞΉΞ¬ΞΌΞµΟƒΞ·Ο‚ ΟƒΞΊΞ·Ξ½Ξ®Ο‚ (cutscene) '%s' !"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
 msgid "Color Blind Mode"
-msgstr "Λειτουργία για ¶τομα με Αχρωματοψία"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ξ³ΞΉΞ± Ξ†Ο„ΞΏΞΌΞ± ΞΌΞµ Ξ‘Ο‡ΟΟ‰ΞΌΞ±Ο„ΞΏΟΞ―Ξ±"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
-msgstr "Ενεργοποίηση λειτουργίας για ¶τομα με Αχρωματοψία εξ'ορισμού"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ Ξ³ΞΉΞ± Ξ†Ο„ΞΏΞΌΞ± ΞΌΞµ Ξ‘Ο‡ΟΟ‰ΞΌΞ±Ο„ΞΏΟΞ―Ξ± ΞµΞΎ'ΞΏΟΞΉΟƒΞΌΞΏΟ"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -3017,211 +3016,211 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"Το ScummVM διαπίστωσε ότι έχετε παλιά αποθηκευμένα παιχνίδια για το Drascula "
-"που θα πρέπει να μετατραπούν.\n"
-"Η παλιά αποθηκευμένη μορφή παιχνιδιών δεν υποστηρίζεται πλέον, οπότε δε θα "
-"είστε σε θέση να φορτώσετε τα παιχνίδια σας, αν δεν τα μετατρέψετε.\n"
+"Ξ¤ΞΏ ScummVM Ξ΄ΞΉΞ±Ο€Ξ―ΟƒΟ„Ο‰ΟƒΞµ ΟΟ„ΞΉ Ξ­Ο‡ΞµΟ„Ξµ Ο€Ξ±Ξ»ΞΉΞ¬ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± Ξ³ΞΉΞ± Ο„ΞΏ Drascula "
+"Ο€ΞΏΟ… ΞΈΞ± Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± ΞΌΞµΟ„Ξ±Ο„ΟΞ±Ο€ΞΏΟΞ½.\n"
+"Ξ— Ο€Ξ±Ξ»ΞΉΞ¬ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ· ΞΌΞΏΟΟ†Ξ® Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½ Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΟ„Ξ±ΞΉ Ο€Ξ»Ξ­ΞΏΞ½, ΞΏΟ€ΟΟ„Ξµ Ξ΄Ξµ ΞΈΞ± "
+"ΞµΞ―ΟƒΟ„Ξµ ΟƒΞµ ΞΈΞ­ΟƒΞ· Ξ½Ξ± Ο†ΞΏΟΟ„ΟΟƒΞµΟ„Ξµ Ο„Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± ΟƒΞ±Ο‚, Ξ±Ξ½ Ξ΄ΞµΞ½ Ο„Ξ± ΞΌΞµΟ„Ξ±Ο„ΟΞ­ΟΞµΟ„Ξµ.\n"
 "\n"
-"Πατήστε OK για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί ξανά την "
-"επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
+"Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± Ο„Ξ± ΞΌΞµΟ„Ξ±Ο„ΟΞ­ΟΞµΟ„Ξµ Ο„ΟΟΞ±, Ξ±Ξ»Ξ»ΞΉΟΟ‚ ΞΈΞ± ΟƒΞ±Ο‚ Ξ¶Ξ·Ο„Ξ·ΞΈΞµΞ― ΞΎΞ±Ξ½Ξ¬ Ο„Ξ·Ξ½ "
+"ΞµΟ€ΟΞΌΞµΞ½Ξ· Ο†ΞΏΟΞ¬ Ο€ΞΏΟ… ΞΈΞ± ΞΎΞµΞΊΞΉΞ½Ξ®ΟƒΞµΟ„Ξµ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ.\n"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
-msgstr "Χρήση λαμπερής παλέτας"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ»Ξ±ΞΌΟ€ΞµΟΞ®Ο‚ Ο€Ξ±Ξ»Ξ­Ο„Ξ±Ο‚"
 
 #: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
-msgstr "Προβολή γραφικών με χρήση της λαμπερής παλέτας του παιχνιδιού"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½ ΞΌΞµ Ο‡ΟΞ®ΟƒΞ· Ο„Ξ·Ο‚ Ξ»Ξ±ΞΌΟ€ΞµΟΞ®Ο‚ Ο€Ξ±Ξ»Ξ­Ο„Ξ±Ο‚ Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:524
 msgid "Failed to load saved game from file."
-msgstr "Η ανάγνωση αποθηκευμένου παιχνιδιού από αρχείο απέτυχε."
+msgstr "Ξ— Ξ±Ξ½Ξ¬Ξ³Ξ½Ο‰ΟƒΞ· Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ±Ο€Ο Ξ±ΟΟ‡ΞµΞ―ΞΏ Ξ±Ο€Ξ­Ο„Ο…Ο‡Ξµ."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:537
 msgid "Failed to save game to file."
-msgstr "Η εγγραφή αποθηκευμένου παιχνιδιού σε αρχείο απέτυχε."
+msgstr "Ξ— ΞµΞ³Ξ³ΟΞ±Ο†Ξ® Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΟƒΞµ Ξ±ΟΟ‡ΞµΞ―ΞΏ Ξ±Ο€Ξ­Ο„Ο…Ο‡Ξµ."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
-msgstr "Η διαγραφή του αρχείου απέτυχε."
+msgstr "Ξ— Ξ΄ΞΉΞ±Ξ³ΟΞ±Ο†Ξ® Ο„ΞΏΟ… Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… Ξ±Ο€Ξ­Ο„Ο…Ο‡Ξµ."
 
 #: engines/groovie/detection.cpp:312
 msgid "Fast movie speed"
-msgstr "Γρήγορη ταχύτητα ταινιών"
+msgstr "Ξ“ΟΞ®Ξ³ΞΏΟΞ· Ο„Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± Ο„Ξ±ΞΉΞ½ΞΉΟΞ½"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr "Αναπαραγωγή ταινιών με αυξημένη ταχύτητα"
+msgstr "Ξ‘Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ® Ο„Ξ±ΞΉΞ½ΞΉΟΞ½ ΞΌΞµ Ξ±Ο…ΞΎΞ·ΞΌΞ­Ξ½Ξ· Ο„Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ±"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "Αδυναμία αποθήκευσης παιχνιδιού"
+msgstr "Ξ‘Ξ΄Ο…Ξ½Ξ±ΞΌΞ―Ξ± Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr "Λειτουργία Αίματος"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ξ‘Ξ―ΞΌΞ±Ο„ΞΏΟ‚"
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr "Ενεργοποίηση Λειτουργίας Αίματος όταν υπάρχει διαθεσιμότητα"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ Ξ‘Ξ―ΞΌΞ±Ο„ΞΏΟ‚ ΟΟ„Ξ±Ξ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ Ξ΄ΞΉΞ±ΞΈΞµΟƒΞΉΞΌΟΟ„Ξ·Ο„Ξ±"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr "Κοινό στούντιο"
+msgstr "ΞΞΏΞΉΞ½Ο ΟƒΟ„ΞΏΟΞ½Ο„ΞΉΞΏ"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr "Ενεργοποίηση κοινού στούντιο"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞΊΞΏΞΉΞ½ΞΏΟ ΟƒΟ„ΞΏΟΞ½Ο„ΞΉΞΏ"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr "Υποστήριξη παράλειψης"
+msgstr "Ξ¥Ο€ΞΏΟƒΟ„Ξ®ΟΞΉΞΎΞ· Ο€Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ·Ο‚"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr "Να επιτρέπεται η παράλειψη κειμένου και ταινιών"
+msgstr "ΞΞ± ΞµΟ€ΞΉΟ„ΟΞ­Ο€ΞµΟ„Ξ±ΞΉ Ξ· Ο€Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ· ΞΊΞµΞΉΞΌΞ­Ξ½ΞΏΟ… ΞΊΞ±ΞΉ Ο„Ξ±ΞΉΞ½ΞΉΟΞ½"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr "Λειτουργία ηλίου"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ξ·Ξ»Ξ―ΞΏΟ…"
 
 #: engines/kyra/detection.cpp:85
 msgid "Enable helium mode"
-msgstr "Ενεργοποίηση λειτουργίας ηλίου"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ Ξ·Ξ»Ξ―ΞΏΟ…"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr "Ομαλή κύλιση"
+msgstr "ΞΞΌΞ±Ξ»Ξ® ΞΊΟΞ»ΞΉΟƒΞ·"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr "Ενεργοποίηση ομαλής κύλισης κατά το περπάτημα"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞΏΞΌΞ±Ξ»Ξ®Ο‚ ΞΊΟΞ»ΞΉΟƒΞ·Ο‚ ΞΊΞ±Ο„Ξ¬ Ο„ΞΏ Ο€ΞµΟΟ€Ξ¬Ο„Ξ·ΞΌΞ±"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:112
 msgid "Floating cursors"
-msgstr "Δρομείς κατεύθυνσης"
+msgstr "Ξ”ΟΞΏΞΌΞµΞ―Ο‚ ΞΊΞ±Ο„ΞµΟΞΈΟ…Ξ½ΟƒΞ·Ο‚"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr "Ενεργοποίηση δρομέων κατεύθυνσης"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ΄ΟΞΏΞΌΞ­Ο‰Ξ½ ΞΊΞ±Ο„ΞµΟΞΈΟ…Ξ½ΟƒΞ·Ο‚"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
 msgid "HP bar graphs"
-msgstr "Ραβδογράμματα HP"
+msgstr "Ξ΅Ξ±Ξ²Ξ΄ΞΏΞ³ΟΞ¬ΞΌΞΌΞ±Ο„Ξ± HP"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr "Ενεργοποίηση ραβδογραμμάτων για hit points"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΟΞ±Ξ²Ξ΄ΞΏΞ³ΟΞ±ΞΌΞΌΞ¬Ο„Ο‰Ξ½ Ξ³ΞΉΞ± hit points"
 
 #: engines/kyra/eobcommon.cpp:331 engines/kyra/lol.cpp:481
 msgid "Move Forward"
-msgstr "Προχώρησε Μπροστά"
+msgstr "Ξ ΟΞΏΟ‡ΟΟΞ·ΟƒΞµ ΞΟ€ΟΞΏΟƒΟ„Ξ¬"
 
 #: engines/kyra/eobcommon.cpp:332 engines/kyra/lol.cpp:482
 msgid "Move Back"
-msgstr "Προχώρησε Πίσω"
+msgstr "Ξ ΟΞΏΟ‡ΟΟΞ·ΟƒΞµ Ξ Ξ―ΟƒΟ‰"
 
 #: engines/kyra/eobcommon.cpp:333
 msgid "Move Left"
-msgstr "Προχώρησε Αριστερά"
+msgstr "Ξ ΟΞΏΟ‡ΟΟΞ·ΟƒΞµ Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬"
 
 #: engines/kyra/eobcommon.cpp:334
 msgid "Move Right"
-msgstr "Προχώρησε Δεξιά"
+msgstr "Ξ ΟΞΏΟ‡ΟΟΞ·ΟƒΞµ Ξ”ΞµΞΎΞΉΞ¬"
 
 #: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2514
 msgid "Turn Left"
-msgstr "Στρίψε Αριστερά"
+msgstr "Ξ£Ο„ΟΞ―ΟΞµ Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬"
 
 #: engines/kyra/eobcommon.cpp:336 engines/kyra/lol.cpp:486
 #: engines/pegasus/pegasus.cpp:2515
 msgid "Turn Right"
-msgstr "Στρίψε Δεξιά"
+msgstr "Ξ£Ο„ΟΞ―ΟΞµ Ξ”ΞµΞΎΞΉΞ¬"
 
 #: engines/kyra/eobcommon.cpp:337
 msgid "Open/Close Inventory"
-msgstr "¶νοιγμα/Κλείσιμο Αντικειμένων"
+msgstr "Ξ†Ξ½ΞΏΞΉΞ³ΞΌΞ±/ΞΞ»ΞµΞ―ΟƒΞΉΞΌΞΏ Ξ‘Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
-msgstr "Εναλλαγή οθόνης Αντικειμένων/Χαρακτήρων"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΞΏΞΈΟΞ½Ξ·Ο‚ Ξ‘Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½/Ξ§Ξ±ΟΞ±ΞΊΟ„Ξ®ΟΟ‰Ξ½"
 
 #: engines/kyra/eobcommon.cpp:339
 msgid "Camp"
-msgstr "Κατασκήνωσε"
+msgstr "ΞΞ±Ο„Ξ±ΟƒΞΊΞ®Ξ½Ο‰ΟƒΞµ"
 
 #: engines/kyra/eobcommon.cpp:340
 msgid "Cast Spell"
-msgstr "Κάνε Ξόρκι"
+msgstr "ΞΞ¬Ξ½Ξµ ΞΟΟΞΊΞΉ"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
-msgstr "Ξόρκι Επιπέδου 1"
+msgstr "ΞΟΟΞΊΞΉ Ξ•Ο€ΞΉΟ€Ξ­Ξ΄ΞΏΟ… 1"
 
 #: engines/kyra/eobcommon.cpp:344
 msgid "Spell Level 2"
-msgstr "Ξόρκι Επιπέδου 2"
+msgstr "ΞΟΟΞΊΞΉ Ξ•Ο€ΞΉΟ€Ξ­Ξ΄ΞΏΟ… 2"
 
 #: engines/kyra/eobcommon.cpp:345
 msgid "Spell Level 3"
-msgstr "Ξόρκι Επιπέδου 3"
+msgstr "ΞΟΟΞΊΞΉ Ξ•Ο€ΞΉΟ€Ξ­Ξ΄ΞΏΟ… 3"
 
 #: engines/kyra/eobcommon.cpp:346
 msgid "Spell Level 4"
-msgstr "Ξόρκι Επιπέδου 4"
+msgstr "ΞΟΟΞΊΞΉ Ξ•Ο€ΞΉΟ€Ξ­Ξ΄ΞΏΟ… 4"
 
 #: engines/kyra/eobcommon.cpp:347
 msgid "Spell Level 5"
-msgstr "Ξόρκι Επιπέδου 5"
+msgstr "ΞΟΟΞΊΞΉ Ξ•Ο€ΞΉΟ€Ξ­Ξ΄ΞΏΟ… 5"
 
 #: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 6"
-msgstr "Ξόρκι Επιπέδου 6"
+msgstr "ΞΟΟΞΊΞΉ Ξ•Ο€ΞΉΟ€Ξ­Ξ΄ΞΏΟ… 6"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
-msgstr "Επίθεση 1"
+msgstr "Ξ•Ο€Ξ―ΞΈΞµΟƒΞ· 1"
 
 #: engines/kyra/lol.cpp:479
 msgid "Attack 2"
-msgstr "Επίθεση 2"
+msgstr "Ξ•Ο€Ξ―ΞΈΞµΟƒΞ· 2"
 
 #: engines/kyra/lol.cpp:480
 msgid "Attack 3"
-msgstr "Επίθεση 3"
+msgstr "Ξ•Ο€Ξ―ΞΈΞµΟƒΞ· 3"
 
 #: engines/kyra/lol.cpp:483
 msgid "Slide Left"
-msgstr "Ολίσθηση Αριστερά"
+msgstr "ΞΞ»Ξ―ΟƒΞΈΞ·ΟƒΞ· Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬"
 
 #: engines/kyra/lol.cpp:484
 msgid "Slide Right"
-msgstr "Ολίσθηση Δεξιά"
+msgstr "ΞΞ»Ξ―ΟƒΞΈΞ·ΟƒΞ· Ξ”ΞµΞΎΞΉΞ¬"
 
 #: engines/kyra/lol.cpp:487
 msgid "Rest"
-msgstr "Ανάπαυση"
+msgstr "Ξ‘Ξ½Ξ¬Ο€Ξ±Ο…ΟƒΞ·"
 
 #: engines/kyra/lol.cpp:488
 msgid "Options"
-msgstr "Επιλογές"
+msgstr "Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ­Ο‚"
 
 #: engines/kyra/lol.cpp:489
 msgid "Choose Spell"
-msgstr "Επιλέξτε Ξόρκι"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ ΞΟΟΞΊΞΉ"
 
 #: engines/kyra/sound_midi.cpp:477
 msgid ""
@@ -3231,11 +3230,11 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
-"Φαίνεται πως χρησιμοποιείτε μια συσκευή General MIDI,\n"
-"αλλά το παιχνίδι σας υποστηρίζει μόνο Roland MT32 MIDI.\n"
-"Προσπαθούμε να χαρτογραφήσουμε τα όργανα της\n"
-"Roland MT32 σε αυτά του General MIDI. Είναι πιθανό ότι\n"
-"ορισμένα κομμάτια θα ακούγονται εσφαλμένα."
+"Ξ¦Ξ±Ξ―Ξ½ΞµΟ„Ξ±ΞΉ Ο€Ο‰Ο‚ Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞµΞ―Ο„Ξµ ΞΌΞΉΞ± ΟƒΟ…ΟƒΞΊΞµΟ…Ξ® General MIDI,\n"
+"Ξ±Ξ»Ξ»Ξ¬ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ ΟƒΞ±Ο‚ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΞΉ ΞΌΟΞ½ΞΏ Roland MT32 MIDI.\n"
+"Ξ ΟΞΏΟƒΟ€Ξ±ΞΈΞΏΟΞΌΞµ Ξ½Ξ± Ο‡Ξ±ΟΟ„ΞΏΞ³ΟΞ±Ο†Ξ®ΟƒΞΏΟ…ΞΌΞµ Ο„Ξ± ΟΟΞ³Ξ±Ξ½Ξ± Ο„Ξ·Ο‚\n"
+"Roland MT32 ΟƒΞµ Ξ±Ο…Ο„Ξ¬ Ο„ΞΏΟ… General MIDI. Ξ•Ξ―Ξ½Ξ±ΞΉ Ο€ΞΉΞΈΞ±Ξ½Ο ΟΟ„ΞΉ\n"
+"ΞΏΟΞΉΟƒΞΌΞ­Ξ½Ξ± ΞΊΞΏΞΌΞΌΞ¬Ο„ΞΉΞ± ΞΈΞ± Ξ±ΞΊΞΏΟΞ³ΞΏΞ½Ο„Ξ±ΞΉ ΞµΟƒΟ†Ξ±Ξ»ΞΌΞ­Ξ½Ξ±."
 
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
@@ -3247,12 +3246,12 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
-"Το ακόλουθο αποθηκευμένο αρχείο του αρχικού παιχνιδιού έχει βρεθεί στο "
-"φάκελο του παιχνιδιού σας:\n"
+"Ξ¤ΞΏ Ξ±ΞΊΟΞ»ΞΏΟ…ΞΈΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ Ο„ΞΏΟ… Ξ±ΟΟ‡ΞΉΞΊΞΏΟ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ­Ο‡ΞµΞΉ Ξ²ΟΞµΞΈΞµΞ― ΟƒΟ„ΞΏ "
+"Ο†Ξ¬ΞΊΞµΞ»ΞΏ Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΟƒΞ±Ο‚:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Θέλετε να χρησιμοποιήσετε αυτό το αποθηκευμένο αρχείο παιχνιδιού με το "
+"ΞΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΟ„Ξµ Ξ±Ο…Ο„Ο Ο„ΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΞΌΞµ Ο„ΞΏ "
 "ScummVM;\n"
 
 #: engines/kyra/saveload_eob.cpp:590
@@ -3261,8 +3260,8 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
-"Ένα αποθηκευμένο αρχείο παιχνιδιού βρέθηκε στην επιλεγμένη θυρίδα %d. "
-"Αντικατάσταση;\n"
+"ΞΞ½Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ ΟƒΟ„Ξ·Ξ½ ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½Ξ· ΞΈΟ…ΟΞ―Ξ΄Ξ± %d. "
+"Ξ‘Ξ½Ο„ΞΉΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·;\n"
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
@@ -3274,84 +3273,84 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"%d πρωτότυπα αποθηκευμένα αρχεία παιχνιδιού εισήχθησαν επιτυχώς στο\n"
-"ScummVM. Αν αργότερα θελήσετε να εισάγετε πρωτότυπα αποθηκευμένα αρχεία \n"
-"παιχνιδιού χειροκίνητα, θα χρειαστεί να ανοιξετε το τερματικό "
-"αποσφαλμάτωσης \n"
-"(debug console) του ScummVM και να χρησιμοποιήσετε την εντολή "
+"%d Ο€ΟΟ‰Ο„ΟΟ„Ο…Ο€Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± Ξ±ΟΟ‡ΞµΞ―Ξ± Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΞµΞΉΟƒΞ®Ο‡ΞΈΞ·ΟƒΞ±Ξ½ ΞµΟ€ΞΉΟ„Ο…Ο‡ΟΟ‚ ΟƒΟ„ΞΏ\n"
+"ScummVM. Ξ‘Ξ½ Ξ±ΟΞ³ΟΟ„ΞµΟΞ± ΞΈΞµΞ»Ξ®ΟƒΞµΟ„Ξµ Ξ½Ξ± ΞµΞΉΟƒΞ¬Ξ³ΞµΟ„Ξµ Ο€ΟΟ‰Ο„ΟΟ„Ο…Ο€Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± Ξ±ΟΟ‡ΞµΞ―Ξ± \n"
+"Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ο‡ΞµΞΉΟΞΏΞΊΞ―Ξ½Ξ·Ο„Ξ±, ΞΈΞ± Ο‡ΟΞµΞΉΞ±ΟƒΟ„ΞµΞ― Ξ½Ξ± Ξ±Ξ½ΞΏΞΉΞΎΞµΟ„Ξµ Ο„ΞΏ Ο„ΞµΟΞΌΞ±Ο„ΞΉΞΊΟ "
+"Ξ±Ο€ΞΏΟƒΟ†Ξ±Ξ»ΞΌΞ¬Ο„Ο‰ΟƒΞ·Ο‚ \n"
+"(debug console) Ο„ΞΏΟ… ScummVM ΞΊΞ±ΞΉ Ξ½Ξ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΟ„Ξµ Ο„Ξ·Ξ½ ΞµΞ½Ο„ΞΏΞ»Ξ® "
 "'import_savefile'.\n"
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr "Εύκολη διεπαφή ποντικιού"
+msgstr "Ξ•ΟΞΊΞΏΞ»Ξ· Ξ΄ΞΉΞµΟ€Ξ±Ο†Ξ® Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: engines/mads/detection.cpp:92
 msgid "Shows object names when hovering the mouse over them"
 msgstr ""
-"Εμφανίζει τα ονόματα των αντικειμένων όταν αιωρείται το ποντίκι πάνω τους"
+"Ξ•ΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞµΞΉ Ο„Ξ± ΞΏΞ½ΟΞΌΞ±Ο„Ξ± Ο„Ο‰Ξ½ Ξ±Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½ ΟΟ„Ξ±Ξ½ Ξ±ΞΉΟ‰ΟΞµΞ―Ο„Ξ±ΞΉ Ο„ΞΏ Ο€ΞΏΞ½Ο„Ξ―ΞΊΞΉ Ο€Ξ¬Ξ½Ο‰ Ο„ΞΏΟ…Ο‚"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
-msgstr "Κινούμενα αντικείμενα"
+msgstr "ΞΞΉΞ½ΞΏΟΞΌΞµΞ½Ξ± Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½Ξ±"
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
-msgstr "Κινούμενη διεπαφή παιχνιδιού"
+msgstr "ΞΞΉΞ½ΞΏΟΞΌΞµΞ½Ξ· Ξ΄ΞΉΞµΟ€Ξ±Ο†Ξ® Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr "Λειτουργία παιχνιδιού για άτακτους"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ³ΞΉΞ± Ξ¬Ο„Ξ±ΞΊΟ„ΞΏΟ…Ο‚"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
-msgstr "Αναπαραγωγή της ταινίας εναέριας επισκόπησης του Myst"
+msgstr "Ξ‘Ξ½Ξ±Ο€Ξ±ΟΞ±Ξ³Ο‰Ξ³Ξ® Ο„Ξ·Ο‚ Ο„Ξ±ΞΉΞ½Ξ―Ξ±Ο‚ ΞµΞ½Ξ±Ξ­ΟΞΉΞ±Ο‚ ΞµΟ€ΞΉΟƒΞΊΟΟ€Ξ·ΟƒΞ·Ο‚ Ο„ΞΏΟ… Myst"
 
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr ""
-"Η ταινία εναέριας επισκόπησης του Myst δεν αναπαράχθηκε από την πρωτότυπη "
-"μηχανή."
+"Ξ— Ο„Ξ±ΞΉΞ½Ξ―Ξ± ΞµΞ½Ξ±Ξ­ΟΞΉΞ±Ο‚ ΞµΟ€ΞΉΟƒΞΊΟΟ€Ξ·ΟƒΞ·Ο‚ Ο„ΞΏΟ… Myst Ξ΄ΞµΞ½ Ξ±Ξ½Ξ±Ο€Ξ±ΟΞ¬Ο‡ΞΈΞ·ΞΊΞµ Ξ±Ο€Ο Ο„Ξ·Ξ½ Ο€ΟΟ‰Ο„ΟΟ„Ο…Ο€Ξ· "
+"ΞΌΞ·Ο‡Ξ±Ξ½Ξ®."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:183 engines/mohawk/dialogs.cpp:269
 msgid "~Z~ip Mode Activated"
-msgstr "Λειτουργία ~Z~ip Ενεργοποιημένη"
+msgstr "Ξ›ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± ~Z~ip Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ·"
 
 #: engines/mohawk/dialogs.cpp:184
 msgid "~T~ransitions Enabled"
-msgstr "~Μ~εταβάσεις Ενεργοποιημένες"
+msgstr "~Ξ~ΞµΟ„Ξ±Ξ²Ξ¬ΟƒΞµΞΉΟ‚ Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½ΞµΟ‚"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:186
 msgid "~D~rop Page"
-msgstr "~Ρ~ίξιμο Σελίδας"
+msgstr "~Ξ΅~Ξ―ΞΎΞΉΞΌΞΏ Ξ£ΞµΞ»Ξ―Ξ΄Ξ±Ο‚"
 
 #: engines/mohawk/dialogs.cpp:190
 msgid "Show ~M~ap"
-msgstr "Εμφάνιση ~Χ~άρτη"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ~Ξ§~Ξ¬ΟΟ„Ξ·"
 
 #: engines/mohawk/dialogs.cpp:196
 msgid "Main Men~u~"
-msgstr "Κεντρικό Μενο~ύ~"
+msgstr "ΞΞµΞ½Ο„ΟΞΉΞΊΟ ΞΞµΞ½ΞΏ~Ο~"
 
 #: engines/mohawk/dialogs.cpp:270
 msgid "~W~ater Effect Enabled"
-msgstr "Εφέ ~Ν~ερού Ενεργοποιημένο"
+msgstr "Ξ•Ο†Ξ­ ~Ξ~ΞµΟΞΏΟ Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½ΞΏ"
 
 #: engines/mohawk/dialogs.cpp:272
 #, fuzzy
 msgid "Transitions:"
-msgstr "~Μ~εταβάσεις Ενεργοποιημένες"
+msgstr "~Ξ~ΞµΟ„Ξ±Ξ²Ξ¬ΟƒΞµΞΉΟ‚ Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½ΞµΟ‚"
 
 #: engines/mohawk/dialogs.cpp:274
 #, fuzzy
 msgid "Disabled"
-msgstr "Απενεργοποιημένα γραφικά"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ± Ξ³ΟΞ±Ο†ΞΉΞΊΞ¬"
 
 #: engines/mohawk/dialogs.cpp:275
 #, fuzzy
 msgid "Fastest"
-msgstr "Επικόλληση"
+msgstr "Ξ•Ο€ΞΉΞΊΟΞ»Ξ»Ξ·ΟƒΞ·"
 
 #: engines/mohawk/dialogs.cpp:276
 msgid "Normal"
@@ -3364,31 +3363,31 @@ msgstr ""
 #: engines/mohawk/mohawk.cpp:58
 msgid "The game is paused. Press any key to continue."
 msgstr ""
-"Το παιχνίδι βρίσκεται σε παύση. Πατήστε οποιοδήποτε κουμπί για να συνεχίσετε."
+"Ξ¤ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ξ²ΟΞ―ΟƒΞΊΞµΟ„Ξ±ΞΉ ΟƒΞµ Ο€Ξ±ΟΟƒΞ·. Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ ΞΏΟ€ΞΏΞΉΞΏΞ΄Ξ®Ο€ΞΏΟ„Ξµ ΞΊΞΏΟ…ΞΌΟ€Ξ― Ξ³ΞΉΞ± Ξ½Ξ± ΟƒΟ…Ξ½ΞµΟ‡Ξ―ΟƒΞµΟ„Ξµ."
 
 #: engines/mohawk/riven.cpp:149
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
-"Λείπει το εκτελέσιμο του Riven. Το εκτελέσιμο για Windows είναι 'riven.exe' "
-"ή 'rivendemo.exe'. "
+"Ξ›ΞµΞ―Ο€ΞµΞΉ Ο„ΞΏ ΞµΞΊΟ„ΞµΞ»Ξ­ΟƒΞΉΞΌΞΏ Ο„ΞΏΟ… Riven. Ξ¤ΞΏ ΞµΞΊΟ„ΞµΞ»Ξ­ΟƒΞΉΞΌΞΏ Ξ³ΞΉΞ± Windows ΞµΞ―Ξ½Ξ±ΞΉ 'riven.exe' "
+"Ξ® 'rivendemo.exe'. "
 
 #: engines/mohawk/riven.cpp:150
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
-"Η χρήση του αρχείου εγκατάστασης 'arcriven.z' λειτουργεί επίσης. Επιπλέον, "
-"μπορείτε να χρησιμοποιήσετε το εκτελέσιμο του Mac 'Riven'."
+"Ξ— Ο‡ΟΞ®ΟƒΞ· Ο„ΞΏΟ… Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… ΞµΞ³ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·Ο‚ 'arcriven.z' Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³ΞµΞ― ΞµΟ€Ξ―ΟƒΞ·Ο‚. Ξ•Ο€ΞΉΟ€Ξ»Ξ­ΞΏΞ½, "
+"ΞΌΟ€ΞΏΟΞµΞ―Ο„Ξµ Ξ½Ξ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΟ„Ξµ Ο„ΞΏ ΞµΞΊΟ„ΞµΞ»Ξ­ΟƒΞΉΞΌΞΏ Ο„ΞΏΟ… Mac 'Riven'."
 
 #: engines/mohawk/riven.cpp:161
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
-"Σας λείπει το 'extras.mhk'. Η χρήση του αρχείου εγκατάστασης 'arcriven.z' "
-"λειτουργεί επίσης."
+"Ξ£Ξ±Ο‚ Ξ»ΞµΞ―Ο€ΞµΞΉ Ο„ΞΏ 'extras.mhk'. Ξ— Ο‡ΟΞ®ΟƒΞ· Ο„ΞΏΟ… Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… ΞµΞ³ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·Ο‚ 'arcriven.z' "
+"Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³ΞµΞ― ΞµΟ€Ξ―ΟƒΞ·Ο‚."
 
 #: engines/mohawk/riven.cpp:432
 msgid "You are missing the following required Riven data files:\n"
@@ -3399,8 +3398,8 @@ msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
 msgstr ""
-"Η εξερεύνηση πέρα από αυτό το σημείο είναι διαθέσιμη μόνο μέσω της\n"
-"πλήρους έκδοσης του παιχνιδιού."
+"Ξ— ΞµΞΎΞµΟΞµΟΞ½Ξ·ΟƒΞ· Ο€Ξ­ΟΞ± Ξ±Ο€Ο Ξ±Ο…Ο„Ο Ο„ΞΏ ΟƒΞ·ΞΌΞµΞ―ΞΏ ΞµΞ―Ξ½Ξ±ΞΉ Ξ΄ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞ· ΞΌΟΞ½ΞΏ ΞΌΞ­ΟƒΟ‰ Ο„Ξ·Ο‚\n"
+"Ο€Ξ»Ξ®ΟΞΏΟ…Ο‚ Ξ­ΞΊΞ΄ΞΏΟƒΞ·Ο‚ Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:309
 msgid ""
@@ -3410,29 +3409,29 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
-"Σε αυτό το σημείο, η δοκιμαστική έκδοση του Riven\n"
-"θα σας ρωτούσε αν θέλετε να ανοίξετε ένα φυλλομετρητή\n"
-"για να μεταβείτε στο ηλεκτρονικό κατάστημα της Red Orb\n"
-"για να αγοράσετε το παιχνίδι. Το ScummVM δε μπορεί να\n"
-"το κάνει αυτό και η ιστοσελίδα δεν υπάρχει πλέον."
+"Ξ£Ξµ Ξ±Ο…Ο„Ο Ο„ΞΏ ΟƒΞ·ΞΌΞµΞ―ΞΏ, Ξ· Ξ΄ΞΏΞΊΞΉΞΌΞ±ΟƒΟ„ΞΉΞΊΞ® Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ο„ΞΏΟ… Riven\n"
+"ΞΈΞ± ΟƒΞ±Ο‚ ΟΟ‰Ο„ΞΏΟΟƒΞµ Ξ±Ξ½ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ±Ξ½ΞΏΞ―ΞΎΞµΟ„Ξµ Ξ­Ξ½Ξ± Ο†Ο…Ξ»Ξ»ΞΏΞΌΞµΟ„ΟΞ·Ο„Ξ®\n"
+"Ξ³ΞΉΞ± Ξ½Ξ± ΞΌΞµΟ„Ξ±Ξ²ΞµΞ―Ο„Ξµ ΟƒΟ„ΞΏ Ξ·Ξ»ΞµΞΊΟ„ΟΞΏΞ½ΞΉΞΊΟ ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ·ΞΌΞ± Ο„Ξ·Ο‚ Red Orb\n"
+"Ξ³ΞΉΞ± Ξ½Ξ± Ξ±Ξ³ΞΏΟΞ¬ΟƒΞµΟ„Ξµ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ. Ξ¤ΞΏ ScummVM Ξ΄Ξµ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ±\n"
+"Ο„ΞΏ ΞΊΞ¬Ξ½ΞµΞΉ Ξ±Ο…Ο„Ο ΞΊΞ±ΞΉ Ξ· ΞΉΟƒΟ„ΞΏΟƒΞµΞ»Ξ―Ξ΄Ξ± Ξ΄ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ Ο€Ξ»Ξ­ΞΏΞ½."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr "Παράλειψη εικονογραφημένων σκηνών της Αίθουσας των Αρχείων"
+msgstr "Ξ Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ· ΞµΞΉΞΊΞΏΞ½ΞΏΞ³ΟΞ±Ο†Ξ·ΞΌΞ­Ξ½Ο‰Ξ½ ΟƒΞΊΞ·Ξ½ΟΞ½ Ο„Ξ·Ο‚ Ξ‘Ξ―ΞΈΞΏΟ…ΟƒΞ±Ο‚ Ο„Ο‰Ξ½ Ξ‘ΟΟ‡ΞµΞ―Ο‰Ξ½"
 
 #: engines/neverhood/detection.cpp:185
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
 msgstr ""
-"Επιτρέπει στον παίκτη να παραλείψει την εμφάνιση των εικονογραφημένων σκηνών "
-"της Αίθουσας των Αρχείων"
+"Ξ•Ο€ΞΉΟ„ΟΞ­Ο€ΞµΞΉ ΟƒΟ„ΞΏΞ½ Ο€Ξ±Ξ―ΞΊΟ„Ξ· Ξ½Ξ± Ο€Ξ±ΟΞ±Ξ»ΞµΞ―ΟΞµΞΉ Ο„Ξ·Ξ½ ΞµΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο„Ο‰Ξ½ ΞµΞΉΞΊΞΏΞ½ΞΏΞ³ΟΞ±Ο†Ξ·ΞΌΞ­Ξ½Ο‰Ξ½ ΟƒΞΊΞ·Ξ½ΟΞ½ "
+"Ο„Ξ·Ο‚ Ξ‘Ξ―ΞΈΞΏΟ…ΟƒΞ±Ο‚ Ο„Ο‰Ξ½ Ξ‘ΟΟ‡ΞµΞ―Ο‰Ξ½"
 
 #: engines/neverhood/detection.cpp:191
 msgid "Scale the making of videos to full screen"
-msgstr "Κλιμάκωση των ταινιών δημιουργίας σε πλήρη οθόνη"
+msgstr "ΞΞ»ΞΉΞΌΞ¬ΞΊΟ‰ΟƒΞ· Ο„Ο‰Ξ½ Ο„Ξ±ΞΉΞ½ΞΉΟΞ½ Ξ΄Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚ ΟƒΞµ Ο€Ξ»Ξ®ΟΞ· ΞΏΞΈΟΞ½Ξ·"
 
 #: engines/neverhood/detection.cpp:192
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "Κλιμάκωση των ταινιών δημιουργίας, ώστε να καταλαμβάνουν όλη την οθόνη"
+msgstr "ΞΞ»ΞΉΞΌΞ¬ΞΊΟ‰ΟƒΞ· Ο„Ο‰Ξ½ Ο„Ξ±ΞΉΞ½ΞΉΟΞ½ Ξ΄Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ±Ο‚, ΟΟƒΟ„Ξµ Ξ½Ξ± ΞΊΞ±Ο„Ξ±Ξ»Ξ±ΞΌΞ²Ξ¬Ξ½ΞΏΟ…Ξ½ ΟΞ»Ξ· Ο„Ξ·Ξ½ ΞΏΞΈΟΞ½Ξ·"
 
 #: engines/parallaction/saveload.cpp:130
 #, c-format
@@ -3440,24 +3439,24 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"Δεν ήταν δυνατή η αποθήκευση παιχνιδιού στη θυρίδα %i\n"
+"Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΟƒΟ„Ξ· ΞΈΟ…ΟΞ―Ξ΄Ξ± %i\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
 msgid "Load file"
-msgstr "Φόρτωση αρχείου"
+msgstr "Ξ¦ΟΟΟ„Ο‰ΟƒΞ· Ξ±ΟΟ‡ΞµΞ―ΞΏΟ…"
 
 #: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
-msgstr "Φόρτωση παιχνιδιού..."
+msgstr "Ξ¦ΟΟΟ„Ο‰ΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ..."
 
 #: engines/parallaction/saveload.cpp:209
 msgid "Save file"
-msgstr "Αποθήκευση αρχείου"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ξ±ΟΟ‡ΞµΞ―ΞΏΟ…"
 
 #: engines/parallaction/saveload.cpp:216
 msgid "Saving game..."
-msgstr "Αποθήκευση παιχνιδιού..."
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ..."
 
 #: engines/parallaction/saveload.cpp:269
 msgid ""
@@ -3468,17 +3467,17 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"Το ScummVM διαπίστωσε ότι έχετε παλιά αποθηκευμένα παιχνίδια του Nippon "
-"Safes τα οποία θα πρέπει να μετονομαστούν.\n"
-"Τα παλιά ονόματα δεν υποστηρίζονται πλέον, οπότε δε θα είστε σε θέση να "
-"φορτώσετε τα παιχνίδια σας, αν δεν τα μετατρέψετε.\n"
+"Ξ¤ΞΏ ScummVM Ξ΄ΞΉΞ±Ο€Ξ―ΟƒΟ„Ο‰ΟƒΞµ ΟΟ„ΞΉ Ξ­Ο‡ΞµΟ„Ξµ Ο€Ξ±Ξ»ΞΉΞ¬ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± Ο„ΞΏΟ… Nippon "
+"Safes Ο„Ξ± ΞΏΟ€ΞΏΞ―Ξ± ΞΈΞ± Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± ΞΌΞµΟ„ΞΏΞ½ΞΏΞΌΞ±ΟƒΟ„ΞΏΟΞ½.\n"
+"Ξ¤Ξ± Ο€Ξ±Ξ»ΞΉΞ¬ ΞΏΞ½ΟΞΌΞ±Ο„Ξ± Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞΏΞ½Ο„Ξ±ΞΉ Ο€Ξ»Ξ­ΞΏΞ½, ΞΏΟ€ΟΟ„Ξµ Ξ΄Ξµ ΞΈΞ± ΞµΞ―ΟƒΟ„Ξµ ΟƒΞµ ΞΈΞ­ΟƒΞ· Ξ½Ξ± "
+"Ο†ΞΏΟΟ„ΟΟƒΞµΟ„Ξµ Ο„Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± ΟƒΞ±Ο‚, Ξ±Ξ½ Ξ΄ΞµΞ½ Ο„Ξ± ΞΌΞµΟ„Ξ±Ο„ΟΞ­ΟΞµΟ„Ξµ.\n"
 "\n"
-"Πατήστε OK για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί την επόμενη "
-"φορά.\n"
+"Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± Ο„Ξ± ΞΌΞµΟ„Ξ±Ο„ΟΞ­ΟΞµΟ„Ξµ Ο„ΟΟΞ±, Ξ±Ξ»Ξ»ΞΉΟΟ‚ ΞΈΞ± ΟƒΞ±Ο‚ Ξ¶Ξ·Ο„Ξ·ΞΈΞµΞ― Ο„Ξ·Ξ½ ΞµΟ€ΟΞΌΞµΞ½Ξ· "
+"Ο†ΞΏΟΞ¬.\n"
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
-msgstr "Το ScummVM μετάτρεψε επιτυχώς όλα τα αποθηκευμένα παιχνίδια σας."
+msgstr "Ξ¤ΞΏ ScummVM ΞΌΞµΟ„Ξ¬Ο„ΟΞµΟΞµ ΞµΟ€ΞΉΟ„Ο…Ο‡ΟΟ‚ ΟΞ»Ξ± Ο„Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± ΟƒΞ±Ο‚."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -3487,83 +3486,83 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
-"Το ScummVM τύπωσε κάποιες προειδοποιήσεις στο παράθυρο της κονσόλας σας και "
-"δεν μπορεί να εγγυηθεί ότι όλα τα αρχεία σας έχουν μετατραπεί.\n"
+"Ξ¤ΞΏ ScummVM Ο„ΟΟ€Ο‰ΟƒΞµ ΞΊΞ¬Ο€ΞΏΞΉΞµΟ‚ Ο€ΟΞΏΞµΞΉΞ΄ΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΞΉΟ‚ ΟƒΟ„ΞΏ Ο€Ξ±ΟΞ¬ΞΈΟ…ΟΞΏ Ο„Ξ·Ο‚ ΞΊΞΏΞ½ΟƒΟΞ»Ξ±Ο‚ ΟƒΞ±Ο‚ ΞΊΞ±ΞΉ "
+"Ξ΄ΞµΞ½ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± ΞµΞ³Ξ³Ο…Ξ·ΞΈΞµΞ― ΟΟ„ΞΉ ΟΞ»Ξ± Ο„Ξ± Ξ±ΟΟ‡ΞµΞ―Ξ± ΟƒΞ±Ο‚ Ξ­Ο‡ΞΏΟ…Ξ½ ΞΌΞµΟ„Ξ±Ο„ΟΞ±Ο€ΞµΞ―.\n"
 "\n"
-"Παρακαλούμε αναφέρετε στην ομάδα."
+"Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»ΞΏΟΞΌΞµ Ξ±Ξ½Ξ±Ο†Ξ­ΟΞµΟ„Ξµ ΟƒΟ„Ξ·Ξ½ ΞΏΞΌΞ¬Ξ΄Ξ±."
 
 #: engines/pegasus/pegasus.cpp:716
 msgid "Invalid file name for saving"
-msgstr "Εσφαλμένο όνομα αρχείου για αποθήκευση"
+msgstr "Ξ•ΟƒΟ†Ξ±Ξ»ΞΌΞ­Ξ½ΞΏ ΟΞ½ΞΏΞΌΞ± Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… Ξ³ΞΉΞ± Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·"
 
 #: engines/pegasus/pegasus.cpp:2512
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr "Πάνω/Μεγέθυνση/Μετακίνηση Εμπρός/¶νοιγμα Θυρών"
+msgstr "Ξ Ξ¬Ξ½Ο‰/ΞΞµΞ³Ξ­ΞΈΟ…Ξ½ΟƒΞ·/ΞΞµΟ„Ξ±ΞΊΞ―Ξ½Ξ·ΟƒΞ· Ξ•ΞΌΟ€ΟΟΟ‚/Ξ†Ξ½ΞΏΞΉΞ³ΞΌΞ± ΞΟ…ΟΟΞ½"
 
 #: engines/pegasus/pegasus.cpp:2513
 msgid "Down/Zoom Out"
-msgstr "Κάτω/Σμίκρυνση"
+msgstr "ΞΞ¬Ο„Ο‰/Ξ£ΞΌΞ―ΞΊΟΟ…Ξ½ΟƒΞ·"
 
 #: engines/pegasus/pegasus.cpp:2516
 msgid "Display/Hide Inventory Tray"
-msgstr "Εμφάνιση/Απόκρυψη Δίσκου Αντικειμένων"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ·/Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· Ξ”Ξ―ΟƒΞΊΞΏΟ… Ξ‘Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½"
 
 #: engines/pegasus/pegasus.cpp:2517
 msgid "Display/Hide Biochip Tray"
-msgstr "Εμφάνιση/Απόκρυψη Δίσκου Biochip"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ·/Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· Ξ”Ξ―ΟƒΞΊΞΏΟ… Biochip"
 
 #: engines/pegasus/pegasus.cpp:2518
 msgid "Action/Select"
-msgstr "Ενέργεια/Επιλογή"
+msgstr "Ξ•Ξ½Ξ­ΟΞ³ΞµΞΉΞ±/Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ®"
 
 #: engines/pegasus/pegasus.cpp:2519
 msgid "Toggle Center Data Display"
-msgstr "Εναλλαγή Κεντρικής Παρουσίασης Δεδομένων"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΞΞµΞ½Ο„ΟΞΉΞΊΞ®Ο‚ Ξ Ξ±ΟΞΏΟ…ΟƒΞ―Ξ±ΟƒΞ·Ο‚ Ξ”ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½"
 
 #: engines/pegasus/pegasus.cpp:2520
 msgid "Display/Hide Info Screen"
-msgstr "Προβολή/Απόκρυψη Οθόνης Πληροφοριών"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ®/Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· ΞΞΈΟΞ½Ξ·Ο‚ Ξ Ξ»Ξ·ΟΞΏΟ†ΞΏΟΞΉΟΞ½"
 
 #: engines/pegasus/pegasus.cpp:2521
 msgid "Display/Hide Pause Menu"
-msgstr "Προβολή/Απόκρυψη Μενού Παύσης"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ®/Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· ΞΞµΞ½ΞΏΟ Ξ Ξ±ΟΟƒΞ·Ο‚"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
-msgstr "Εναλλακτική εισαγωγή"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±ΞΊΟ„ΞΉΞΊΞ® ΞµΞΉΟƒΞ±Ξ³Ο‰Ξ³Ξ®"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Χρήση εναλλακτικής εισαγωγής παιχνιδιού (έκδοση CD μόνο)"
+msgstr "Ξ§ΟΞ®ΟƒΞ· ΞµΞ½Ξ±Ξ»Ξ»Ξ±ΞΊΟ„ΞΉΞΊΞ®Ο‚ ΞµΞΉΟƒΞ±Ξ³Ο‰Ξ³Ξ®Ο‚ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ (Ξ­ΞΊΞ΄ΞΏΟƒΞ· CD ΞΌΟΞ½ΞΏ)"
 
 #: engines/sci/detection.cpp:400
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr ""
-"Παράλειψη του βήματος χρωματικής αντιπαράθεσης της EGA (φόντα πλήρους "
-"χρώματος)"
+"Ξ Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ· Ο„ΞΏΟ… Ξ²Ξ®ΞΌΞ±Ο„ΞΏΟ‚ Ο‡ΟΟ‰ΞΌΞ±Ο„ΞΉΞΊΞ®Ο‚ Ξ±Ξ½Ο„ΞΉΟ€Ξ±ΟΞ¬ΞΈΞµΟƒΞ·Ο‚ Ο„Ξ·Ο‚ EGA (Ο†ΟΞ½Ο„Ξ± Ο€Ξ»Ξ®ΟΞΏΟ…Ο‚ "
+"Ο‡ΟΟΞΌΞ±Ο„ΞΏΟ‚)"
 
 #: engines/sci/detection.cpp:401
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
-"Παράλειψη του βήματος χρωματικής αντιπαράθεσης σε παιχνίδια EGA, τα γραφικά "
-"εμφανίζονται με πλήρη χρώματα"
+"Ξ Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ· Ο„ΞΏΟ… Ξ²Ξ®ΞΌΞ±Ο„ΞΏΟ‚ Ο‡ΟΟ‰ΞΌΞ±Ο„ΞΉΞΊΞ®Ο‚ Ξ±Ξ½Ο„ΞΉΟ€Ξ±ΟΞ¬ΞΈΞµΟƒΞ·Ο‚ ΟƒΞµ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± EGA, Ο„Ξ± Ξ³ΟΞ±Ο†ΞΉΞΊΞ¬ "
+"ΞµΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞΏΞ½Ο„Ξ±ΞΉ ΞΌΞµ Ο€Ξ»Ξ®ΟΞ· Ο‡ΟΟΞΌΞ±Ο„Ξ±"
 
 #: engines/sci/detection.cpp:410
 msgid "Enable high resolution graphics"
-msgstr "Ενεργοποίηση γραφικών υψηλής ανάλυσης"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½ Ο…ΟΞ·Ξ»Ξ®Ο‚ Ξ±Ξ½Ξ¬Ξ»Ο…ΟƒΞ·Ο‚"
 
 #: engines/sci/detection.cpp:411
 msgid "Enable high resolution graphics/content"
-msgstr "Ενεργοποίηση γραφικών/περιεχομένου υψηλής ανάλυσης"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½/Ο€ΞµΟΞΉΞµΟ‡ΞΏΞΌΞ­Ξ½ΞΏΟ… Ο…ΟΞ·Ξ»Ξ®Ο‚ Ξ±Ξ½Ξ¬Ξ»Ο…ΟƒΞ·Ο‚"
 
 #: engines/sci/detection.cpp:420
 msgid "Enable black-lined video"
-msgstr "Ενεργοποίηση βίντεο με μαύρες γραμμές"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ²Ξ―Ξ½Ο„ΞµΞΏ ΞΌΞµ ΞΌΞ±ΟΟΞµΟ‚ Ξ³ΟΞ±ΞΌΞΌΞ­Ο‚"
 
 #: engines/sci/detection.cpp:421
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
-"Σχεδιασμός μαύρων γραμμών πάνω στα βίντεο για την αύξηση της οξύτητας τους"
+"Ξ£Ο‡ΞµΞ΄ΞΉΞ±ΟƒΞΌΟΟ‚ ΞΌΞ±ΟΟΟ‰Ξ½ Ξ³ΟΞ±ΞΌΞΌΟΞ½ Ο€Ξ¬Ξ½Ο‰ ΟƒΟ„Ξ± Ξ²Ξ―Ξ½Ο„ΞµΞΏ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ Ξ±ΟΞΎΞ·ΟƒΞ· Ο„Ξ·Ο‚ ΞΏΞΎΟΟ„Ξ·Ο„Ξ±Ο‚ Ο„ΞΏΟ…Ο‚"
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
@@ -3572,60 +3571,60 @@ msgstr ""
 #: engines/sci/detection.cpp:432
 #, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Χρήση γραμμικού φιλτραρίσματος για την κλιμάκωση γραφικών"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ³ΟΞ±ΞΌΞΌΞΉΞΊΞΏΟ Ο†ΞΉΞ»Ο„ΟΞ±ΟΞ―ΟƒΞΌΞ±Ο„ΞΏΟ‚ Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞΊΞ»ΞΉΞΌΞ¬ΞΊΟ‰ΟƒΞ· Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
-msgstr "Προτίμηση ψηφιακών ακουστικών εφε"
+msgstr "Ξ ΟΞΏΟ„Ξ―ΞΌΞ·ΟƒΞ· ΟΞ·Ο†ΞΉΞ±ΞΊΟΞ½ Ξ±ΞΊΞΏΟ…ΟƒΟ„ΞΉΞΊΟΞ½ ΞµΟ†Ξµ"
 
 #: engines/sci/detection.cpp:443
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Προτίμηση ψηφιακών ηχητικών εφέ αντί για εφέ δυναμικής σύνθεσης"
+msgstr "Ξ ΟΞΏΟ„Ξ―ΞΌΞ·ΟƒΞ· ΟΞ·Ο†ΞΉΞ±ΞΊΟΞ½ Ξ·Ο‡Ξ·Ο„ΞΉΞΊΟΞ½ ΞµΟ†Ξ­ Ξ±Ξ½Ο„Ξ― Ξ³ΞΉΞ± ΞµΟ†Ξ­ Ξ΄Ο…Ξ½Ξ±ΞΌΞΉΞΊΞ®Ο‚ ΟƒΟΞ½ΞΈΞµΟƒΞ·Ο‚"
 
 #: engines/sci/detection.cpp:462
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
-msgstr "Χρήση IMF/Yamaha FB-01 για έξοδο MIDI"
+msgstr "Ξ§ΟΞ®ΟƒΞ· IMF/Yamaha FB-01 Ξ³ΞΉΞ± Ξ­ΞΎΞΏΞ΄ΞΏ MIDI"
 
 #: engines/sci/detection.cpp:463
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Χρήση μιας κάρτας IBM Music Feature ή μια μονάδα σύνθεσης FM Yamaha FB-01 "
-"για έξοδο MIDI"
+"Ξ§ΟΞ®ΟƒΞ· ΞΌΞΉΞ±Ο‚ ΞΊΞ¬ΟΟ„Ξ±Ο‚ IBM Music Feature Ξ® ΞΌΞΉΞ± ΞΌΞΏΞ½Ξ¬Ξ΄Ξ± ΟƒΟΞ½ΞΈΞµΟƒΞ·Ο‚ FM Yamaha FB-01 "
+"Ξ³ΞΉΞ± Ξ­ΞΎΞΏΞ΄ΞΏ MIDI"
 
 #: engines/sci/detection.cpp:473
 msgid "Use CD audio"
-msgstr "Χρήση ήχου CD"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ®Ο‡ΞΏΟ… CD"
 
 #: engines/sci/detection.cpp:474
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Χρήση ήχου CD αντί για ήχο παιχνιδιού, όπου είναι διαθέσιμο"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ®Ο‡ΞΏΟ… CD Ξ±Ξ½Ο„Ξ― Ξ³ΞΉΞ± Ξ®Ο‡ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ, ΟΟ€ΞΏΟ… ΞµΞ―Ξ½Ξ±ΞΉ Ξ΄ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞΏ"
 
 #: engines/sci/detection.cpp:484
 msgid "Use Windows cursors"
-msgstr "Χρήση δρομέων Windows"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ΄ΟΞΏΞΌΞ­Ο‰Ξ½ Windows"
 
 #: engines/sci/detection.cpp:485
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
-"Χρήση δρομέων Windows (μικρότεροι και ασπρόμαυροι) αντί για τους δρομείς DOS"
+"Ξ§ΟΞ®ΟƒΞ· Ξ΄ΟΞΏΞΌΞ­Ο‰Ξ½ Windows (ΞΌΞΉΞΊΟΟΟ„ΞµΟΞΏΞΉ ΞΊΞ±ΞΉ Ξ±ΟƒΟ€ΟΟΞΌΞ±Ο…ΟΞΏΞΉ) Ξ±Ξ½Ο„Ξ― Ξ³ΞΉΞ± Ο„ΞΏΟ…Ο‚ Ξ΄ΟΞΏΞΌΞµΞ―Ο‚ DOS"
 
 #: engines/sci/detection.cpp:495
 msgid "Use silver cursors"
-msgstr "Χρήση ασημένιων δρομέων"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ±ΟƒΞ·ΞΌΞ­Ξ½ΞΉΟ‰Ξ½ Ξ΄ΟΞΏΞΌΞ­Ο‰Ξ½"
 
 #: engines/sci/detection.cpp:496
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
-"Χρήση των εναλλακτικών ασημένιων δρομέων αντί των προκαθορισμένων χρυσών"
+"Ξ§ΟΞ®ΟƒΞ· Ο„Ο‰Ξ½ ΞµΞ½Ξ±Ξ»Ξ»Ξ±ΞΊΟ„ΞΉΞΊΟΞ½ Ξ±ΟƒΞ·ΞΌΞ­Ξ½ΞΉΟ‰Ξ½ Ξ΄ΟΞΏΞΌΞ­Ο‰Ξ½ Ξ±Ξ½Ο„Ξ― Ο„Ο‰Ξ½ Ο€ΟΞΏΞΊΞ±ΞΈΞΏΟΞΉΟƒΞΌΞ­Ξ½Ο‰Ξ½ Ο‡ΟΟ…ΟƒΟΞ½"
 
 #: engines/sci/detection.cpp:506
 #, fuzzy
 msgid "Enable content censoring"
-msgstr "Ενεργοποίηση δρομέων κατεύθυνσης"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ΄ΟΞΏΞΌΞ­Ο‰Ξ½ ΞΊΞ±Ο„ΞµΟΞΈΟ…Ξ½ΟƒΞ·Ο‚"
 
 #: engines/sci/detection.cpp:507
 msgid "Enable the game's built-in optional content censoring"
@@ -3633,7 +3632,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
-msgstr "(Αυτόματη αποθήκευση)"
+msgstr "(Ξ‘Ο…Ο„ΟΞΌΞ±Ο„Ξ· Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·)"
 
 #: engines/sci/engine/kgraphics.cpp:984
 msgid ""
@@ -3718,13 +3717,13 @@ msgid ""
 "tried\n"
 "to add and its version, language, etc.:\n"
 msgstr ""
-"Η έκδοση του παιχνιδιού σας φαίνεται να είναι άγνωστη. Αν αυτή είναι *ΔΕΝ* "
-"είναι έκδοση τροποποιημένη\n"
-"από θαυμαστές (ειδικότερα, δεν είναι μια μετάφραση φτιαγμένη από θαυμαστές), "
-"παρακαλώ, αναφέρετε τα\n"
-"ακόλουθα δεδομένα στην ομάδα του ScummVM μαζί με το όνομα του παιχνιδιού που "
-"προσπαθήσατε\n"
-"να προσθέσετε και την έκδοσή του, τη γλώσσα του, κλπ.:\n"
+"Ξ— Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΟƒΞ±Ο‚ Ο†Ξ±Ξ―Ξ½ΞµΟ„Ξ±ΞΉ Ξ½Ξ± ΞµΞ―Ξ½Ξ±ΞΉ Ξ¬Ξ³Ξ½Ο‰ΟƒΟ„Ξ·. Ξ‘Ξ½ Ξ±Ο…Ο„Ξ® ΞµΞ―Ξ½Ξ±ΞΉ *Ξ”Ξ•Ξ* "
+"ΞµΞ―Ξ½Ξ±ΞΉ Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ο„ΟΞΏΟ€ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ·\n"
+"Ξ±Ο€Ο ΞΈΞ±Ο…ΞΌΞ±ΟƒΟ„Ξ­Ο‚ (ΞµΞΉΞ΄ΞΉΞΊΟΟ„ΞµΟΞ±, Ξ΄ΞµΞ½ ΞµΞ―Ξ½Ξ±ΞΉ ΞΌΞΉΞ± ΞΌΞµΟ„Ξ¬Ο†ΟΞ±ΟƒΞ· Ο†Ο„ΞΉΞ±Ξ³ΞΌΞ­Ξ½Ξ· Ξ±Ο€Ο ΞΈΞ±Ο…ΞΌΞ±ΟƒΟ„Ξ­Ο‚), "
+"Ο€Ξ±ΟΞ±ΞΊΞ±Ξ»Ο, Ξ±Ξ½Ξ±Ο†Ξ­ΟΞµΟ„Ξµ Ο„Ξ±\n"
+"Ξ±ΞΊΟΞ»ΞΏΟ…ΞΈΞ± Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ξ± ΟƒΟ„Ξ·Ξ½ ΞΏΞΌΞ¬Ξ΄Ξ± Ο„ΞΏΟ… ScummVM ΞΌΞ±Ξ¶Ξ― ΞΌΞµ Ο„ΞΏ ΟΞ½ΞΏΞΌΞ± Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ο€ΞΏΟ… "
+"Ο€ΟΞΏΟƒΟ€Ξ±ΞΈΞ®ΟƒΞ±Ο„Ξµ\n"
+"Ξ½Ξ± Ο€ΟΞΏΟƒΞΈΞ­ΟƒΞµΟ„Ξµ ΞΊΞ±ΞΉ Ο„Ξ·Ξ½ Ξ­ΞΊΞ΄ΞΏΟƒΞ® Ο„ΞΏΟ…, Ο„Ξ· Ξ³Ξ»ΟΟƒΟƒΞ± Ο„ΞΏΟ…, ΞΊΞ»Ο€.:\n"
 
 #: engines/scumm/detection.cpp:1144
 msgid ""
@@ -3732,145 +3731,145 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
-"Η Lite έκδοση του Putt-Putt Saves the Zoo για iOS δεν υποστηρίζεται για "
-"αποφυγή πειρατείας.\n"
-"Η πλήρης έκδοση είναι διαθέσιμη για αγορά από το Κατάστημα iTunes."
+"Ξ— Lite Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ο„ΞΏΟ… Putt-Putt Saves the Zoo Ξ³ΞΉΞ± iOS Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΟ„Ξ±ΞΉ Ξ³ΞΉΞ± "
+"Ξ±Ο€ΞΏΟ†Ο…Ξ³Ξ® Ο€ΞµΞΉΟΞ±Ο„ΞµΞ―Ξ±Ο‚.\n"
+"Ξ— Ο€Ξ»Ξ®ΟΞ·Ο‚ Ξ­ΞΊΞ΄ΞΏΟƒΞ· ΞµΞ―Ξ½Ξ±ΞΉ Ξ΄ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞ· Ξ³ΞΉΞ± Ξ±Ξ³ΞΏΟΞ¬ Ξ±Ο€Ο Ο„ΞΏ ΞΞ±Ο„Ξ¬ΟƒΟ„Ξ·ΞΌΞ± iTunes."
 
 #: engines/scumm/detection.cpp:1347
 msgid "Show Object Line"
-msgstr "Προβολή Γραμμής Αντικειμένων"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ξ“ΟΞ±ΞΌΞΌΞ®Ο‚ Ξ‘Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½"
 
 #: engines/scumm/detection.cpp:1348
 msgid "Show the names of objects at the bottom of the screen"
-msgstr "Παρουσίαση των ονομάτων των αντικειμένων στο κάτω μέρος της οθόνης"
+msgstr "Ξ Ξ±ΟΞΏΟ…ΟƒΞ―Ξ±ΟƒΞ· Ο„Ο‰Ξ½ ΞΏΞ½ΞΏΞΌΞ¬Ο„Ο‰Ξ½ Ο„Ο‰Ξ½ Ξ±Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½ ΟƒΟ„ΞΏ ΞΊΞ¬Ο„Ο‰ ΞΌΞ­ΟΞΏΟ‚ Ο„Ξ·Ο‚ ΞΏΞΈΟΞ½Ξ·Ο‚"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr "Εισάγετε τη Δισκέτα %c και Πατήστε Κουμπί για Συνέχεια."
+msgstr "Ξ•ΞΉΟƒΞ¬Ξ³ΞµΟ„Ξµ Ο„Ξ· Ξ”ΞΉΟƒΞΊΞ­Ο„Ξ± %c ΞΊΞ±ΞΉ Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ ΞΞΏΟ…ΞΌΟ€Ξ― Ξ³ΞΉΞ± Ξ£Ο…Ξ½Ξ­Ο‡ΞµΞΉΞ±."
 
 #: engines/scumm/dialogs.cpp:173
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr "Δεν ήταν δυνατή η Εύρεση του %s, (%c%d) Πατήστε ένα Κουμπί."
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ•ΟΟΞµΟƒΞ· Ο„ΞΏΟ… %s, (%c%d) Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ Ξ­Ξ½Ξ± ΞΞΏΟ…ΞΌΟ€Ξ―."
 
 #: engines/scumm/dialogs.cpp:174
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr "Σφάλμα ανάγνωσης δίσκου %c, (%c%d) Πατήστε ένα Κουμπί."
+msgstr "Ξ£Ο†Ξ¬Ξ»ΞΌΞ± Ξ±Ξ½Ξ¬Ξ³Ξ½Ο‰ΟƒΞ·Ο‚ Ξ΄Ξ―ΟƒΞΊΞΏΟ… %c, (%c%d) Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ Ξ­Ξ½Ξ± ΞΞΏΟ…ΞΌΟ€Ξ―."
 
 #: engines/scumm/dialogs.cpp:175
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr "Το παιχνίδι είναι σε Παύση. Πατήστε το SPACE για να Συνεχίσετε."
+msgstr "Ξ¤ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ ΞµΞ―Ξ½Ξ±ΞΉ ΟƒΞµ Ξ Ξ±ΟΟƒΞ·. Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ Ο„ΞΏ SPACE Ξ³ΞΉΞ± Ξ½Ξ± Ξ£Ο…Ξ½ΞµΟ‡Ξ―ΟƒΞµΟ„Ξµ."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:179
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "Είστε σίγουροι ότι θέλετε να γίνει επανεκκίνηση; (Ν/Ο)Ν"
+msgstr "Ξ•Ξ―ΟƒΟ„Ξµ ΟƒΞ―Ξ³ΞΏΟ…ΟΞΏΞΉ ΟΟ„ΞΉ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ³Ξ―Ξ½ΞµΞΉ ΞµΟ€Ξ±Ξ½ΞµΞΊΞΊΞ―Ξ½Ξ·ΟƒΞ·; (Ξ/Ξ)Ξ"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:181
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Είστε σίγουροι ότι θέλετε να βγείτε από το πρόγραμμα; (N/O)N"
+msgstr "Ξ•Ξ―ΟƒΟ„Ξµ ΟƒΞ―Ξ³ΞΏΟ…ΟΞΏΞΉ ΟΟ„ΞΉ ΞΈΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ²Ξ³ΞµΞ―Ο„Ξµ Ξ±Ο€Ο Ο„ΞΏ Ο€ΟΟΞ³ΟΞ±ΞΌΞΌΞ±; (N/O)N"
 
 #: engines/scumm/dialogs.cpp:186
 msgid "Play"
-msgstr "Παίξε"
+msgstr "Ξ Ξ±Ξ―ΞΎΞµ"
 
 #: engines/scumm/dialogs.cpp:190
 msgid "Insert save/load game disk"
-msgstr "Εισάγετε δισκέτα αποθήκευσης/φόρτωσης παιχνιδιού"
+msgstr "Ξ•ΞΉΟƒΞ¬Ξ³ΞµΟ„Ξµ Ξ΄ΞΉΟƒΞΊΞ­Ο„Ξ± Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚/Ο†ΟΟΟ„Ο‰ΟƒΞ·Ο‚ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: engines/scumm/dialogs.cpp:191
 msgid "You must enter a name"
-msgstr "Πρέπει να εισάγετε ένα όνομα"
+msgstr "Ξ ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± ΞµΞΉΟƒΞ¬Ξ³ΞµΟ„Ξµ Ξ­Ξ½Ξ± ΟΞ½ΞΏΞΌΞ±"
 
 #: engines/scumm/dialogs.cpp:192
 msgid "The game was NOT saved (disk full?)"
-msgstr "Το παιχνίδι ΔΕΝ αποθηκεύτηκε (γεμάτος δίσκος;)"
+msgstr "Ξ¤ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ξ”Ξ•Ξ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟΟ„Ξ·ΞΊΞµ (Ξ³ΞµΞΌΞ¬Ο„ΞΏΟ‚ Ξ΄Ξ―ΟƒΞΊΞΏΟ‚;)"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "The game was NOT loaded"
-msgstr "Το παιχνίδι ΔΕΝ φορτώθηκε"
+msgstr "Ξ¤ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ξ”Ξ•Ξ Ο†ΞΏΟΟ„ΟΞΈΞ·ΞΊΞµ"
 
 #: engines/scumm/dialogs.cpp:194
 #, c-format
 msgid "Saving '%s'"
-msgstr "Αποθήκευση '%s'"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· '%s'"
 
 #: engines/scumm/dialogs.cpp:195
 #, c-format
 msgid "Loading '%s'"
-msgstr "Φόρτωση '%s'"
+msgstr "Ξ¦ΟΟΟ„Ο‰ΟƒΞ· '%s'"
 
 #: engines/scumm/dialogs.cpp:196
 msgid "Name your SAVE game"
-msgstr "Ονομάστε το παιχνίδι ΑΠΟΘΗΚΕΥΣΗΣ"
+msgstr "ΞΞ½ΞΏΞΌΞ¬ΟƒΟ„Ξµ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ξ‘Ξ ΞΞΞ—ΞΞ•Ξ¥Ξ£Ξ—Ξ£"
 
 #: engines/scumm/dialogs.cpp:197
 msgid "Select a game to LOAD"
-msgstr "Επιλέξτε ένα παιχνίδι για ΦΟΡΤΩΣΗ"
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ξ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ξ³ΞΉΞ± Ξ¦ΞΞ΅Ξ¤Ξ©Ξ£Ξ—"
 
 #: engines/scumm/dialogs.cpp:198
 msgid "Game title)"
-msgstr "τίτλου Παιχνιδιού)"
+msgstr "Ο„Ξ―Ο„Ξ»ΞΏΟ… Ξ Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ)"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:284
 msgid "~P~revious"
-msgstr "~Π~ροηγούμενο"
+msgstr "~Ξ ~ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏ"
 
 #. I18N: Next page button
 #: engines/scumm/dialogs.cpp:286
 msgid "~N~ext"
-msgstr "~Ε~πόμενο"
+msgstr "~Ξ•~Ο€ΟΞΌΞµΞ½ΞΏ"
 
 #: engines/scumm/dialogs.cpp:599
 msgid "Speech Only"
-msgstr "Μόνο Ομιλία"
+msgstr "ΞΟΞ½ΞΏ ΞΞΌΞΉΞ»Ξ―Ξ±"
 
 #: engines/scumm/dialogs.cpp:600
 msgid "Speech and Subtitles"
-msgstr "Ομιλία και Υπότιτλοι"
+msgstr "ΞΞΌΞΉΞ»Ξ―Ξ± ΞΊΞ±ΞΉ Ξ¥Ο€ΟΟ„ΞΉΟ„Ξ»ΞΏΞΉ"
 
 #: engines/scumm/dialogs.cpp:601
 msgid "Subtitles Only"
-msgstr "Μόνο Υπότιτλοι"
+msgstr "ΞΟΞ½ΞΏ Ξ¥Ο€ΟΟ„ΞΉΟ„Ξ»ΞΏΞΉ"
 
 #: engines/scumm/dialogs.cpp:609
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "Ομιλία & Υπότ"
+msgstr "ΞΞΌΞΉΞ»Ξ―Ξ± & Ξ¥Ο€ΟΟ„"
 
 #: engines/scumm/dialogs.cpp:655
 msgid "Select a Proficiency Level."
-msgstr "Επιλέξτε Επίπεδο Ικανότητας."
+msgstr "Ξ•Ο€ΞΉΞ»Ξ­ΞΎΟ„Ξµ Ξ•Ο€Ξ―Ο€ΞµΞ΄ΞΏ Ξ™ΞΊΞ±Ξ½ΟΟ„Ξ·Ο„Ξ±Ο‚."
 
 #: engines/scumm/dialogs.cpp:657
 msgid "Refer to your Loom(TM) manual for help."
-msgstr "Ανατρέξτε στο εγχειρίδιο Loom(TM) σας για βοήθεια."
+msgstr "Ξ‘Ξ½Ξ±Ο„ΟΞ­ΞΎΟ„Ξµ ΟƒΟ„ΞΏ ΞµΞ³Ο‡ΞµΞΉΟΞ―Ξ΄ΞΉΞΏ Loom(TM) ΟƒΞ±Ο‚ Ξ³ΞΉΞ± Ξ²ΞΏΞ®ΞΈΞµΞΉΞ±."
 
 #: engines/scumm/dialogs.cpp:661
 msgid "Practice"
-msgstr "Εξάσκηση"
+msgstr "Ξ•ΞΎΞ¬ΟƒΞΊΞ·ΟƒΞ·"
 
 #: engines/scumm/dialogs.cpp:662
 msgid "Expert"
-msgstr "Ειδικός"
+msgstr "Ξ•ΞΉΞ΄ΞΉΞΊΟΟ‚"
 
 #: engines/scumm/help.cpp:74
 msgid "Common keyboard commands:"
-msgstr "Σύνηθεις εντολές πληκτρολογίου:"
+msgstr "Ξ£ΟΞ½Ξ·ΞΈΞµΞΉΟ‚ ΞµΞ½Ο„ΞΏΞ»Ξ­Ο‚ Ο€Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΞΏΞ³Ξ―ΞΏΟ…:"
 
 #: engines/scumm/help.cpp:75
 msgid "Save / Load dialog"
-msgstr "Διάλογος Αποθήκευσης / Φόρτωσης"
+msgstr "Ξ”ΞΉΞ¬Ξ»ΞΏΞ³ΞΏΟ‚ Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚ / Ξ¦ΟΟΟ„Ο‰ΟƒΞ·Ο‚"
 
 #: engines/scumm/help.cpp:77
 msgid "Skip line of text"
-msgstr "Παράλειψη γραμμής κειμένου"
+msgstr "Ξ Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ· Ξ³ΟΞ±ΞΌΞΌΞ®Ο‚ ΞΊΞµΞΉΞΌΞ­Ξ½ΞΏΟ…"
 
 #: engines/scumm/help.cpp:78
 msgid "Esc"
@@ -3878,7 +3877,7 @@ msgstr "Esc"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip cutscene"
-msgstr "Παράλειψη ταινίας"
+msgstr "Ξ Ξ±ΟΞ¬Ξ»ΞµΞΉΟΞ· Ο„Ξ±ΞΉΞ½Ξ―Ξ±Ο‚"
 
 #: engines/scumm/help.cpp:79
 msgid "Space"
@@ -3886,7 +3885,7 @@ msgstr "Space"
 
 #: engines/scumm/help.cpp:79
 msgid "Pause game"
-msgstr "Παύση παιχνιδιού"
+msgstr "Ξ Ξ±ΟΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ"
 
 #: engines/scumm/help.cpp:80 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:96 engines/scumm/help.cpp:97
@@ -3898,7 +3897,7 @@ msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
 msgid "Load saved game 1-10"
-msgstr "Φόρτωση αποθηκευμένου παιχνιδιού 1-10"
+msgstr "Ξ¦ΟΟΟ„Ο‰ΟƒΞ· Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ 1-10"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:101
@@ -3908,7 +3907,7 @@ msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
 msgid "Save game 1-10"
-msgstr "Αποθήκευση παιχνιδιού 1-10"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ 1-10"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
 msgid "Enter"
@@ -3916,15 +3915,15 @@ msgstr "Enter"
 
 #: engines/scumm/help.cpp:88
 msgid "Music volume up / down"
-msgstr "Ένταση μουσικής πάνω / κάτω"
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· ΞΌΞΏΟ…ΟƒΞΉΞΊΞ®Ο‚ Ο€Ξ¬Ξ½Ο‰ / ΞΊΞ¬Ο„Ο‰"
 
 #: engines/scumm/help.cpp:89
 msgid "Text speed slower / faster"
-msgstr "Ταχύτητα κειμένου πιο αργή / πιο γρήγορη"
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± ΞΊΞµΞΉΞΌΞ­Ξ½ΞΏΟ… Ο€ΞΉΞΏ Ξ±ΟΞ³Ξ® / Ο€ΞΉΞΏ Ξ³ΟΞ®Ξ³ΞΏΟΞ·"
 
 #: engines/scumm/help.cpp:90
 msgid "Simulate left mouse button"
-msgstr "Εξομοίωση αριστερού κουμπιού ποντικιού"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞ―Ο‰ΟƒΞ· Ξ±ΟΞΉΟƒΟ„ΞµΟΞΏΟ ΞΊΞΏΟ…ΞΌΟ€ΞΉΞΏΟ Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: engines/scumm/help.cpp:91
 msgid "Tab"
@@ -3932,482 +3931,482 @@ msgstr "Tab"
 
 #: engines/scumm/help.cpp:91
 msgid "Simulate right mouse button"
-msgstr "Εξομοίωση δεξιού κουμπιού ποντικιού"
+msgstr "Ξ•ΞΎΞΏΞΌΞΏΞ―Ο‰ΟƒΞ· Ξ΄ΞµΞΎΞΉΞΏΟ ΞΊΞΏΟ…ΞΌΟ€ΞΉΞΏΟ Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: engines/scumm/help.cpp:94
 msgid "Special keyboard commands:"
-msgstr "Ειδικές εντολές πληκτρολογίου:"
+msgstr "Ξ•ΞΉΞ΄ΞΉΞΊΞ­Ο‚ ΞµΞ½Ο„ΞΏΞ»Ξ­Ο‚ Ο€Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΞΏΞ³Ξ―ΞΏΟ…:"
 
 #: engines/scumm/help.cpp:95
 msgid "Show / Hide console"
-msgstr "Εμφάνιση / Απόκρυψη κονσόλας"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· / Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· ΞΊΞΏΞ½ΟƒΟΞ»Ξ±Ο‚"
 
 #: engines/scumm/help.cpp:96
 msgid "Start the debugger"
-msgstr "Εκκίνηση του εντοπισμού σφαλμάτων"
+msgstr "Ξ•ΞΊΞΊΞ―Ξ½Ξ·ΟƒΞ· Ο„ΞΏΟ… ΞµΞ½Ο„ΞΏΟ€ΞΉΟƒΞΌΞΏΟ ΟƒΟ†Ξ±Ξ»ΞΌΞ¬Ο„Ο‰Ξ½"
 
 #: engines/scumm/help.cpp:97
 msgid "Show memory consumption"
-msgstr "Εμφάνιση κατανάλωσης μνήμης"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΞΊΞ±Ο„Ξ±Ξ½Ξ¬Ξ»Ο‰ΟƒΞ·Ο‚ ΞΌΞ½Ξ®ΞΌΞ·Ο‚"
 
 #: engines/scumm/help.cpp:98
 msgid "Run in fast mode (*)"
-msgstr "Εκτέλεση σε γρήγορη λειτουργία (*)"
+msgstr "Ξ•ΞΊΟ„Ξ­Ξ»ΞµΟƒΞ· ΟƒΞµ Ξ³ΟΞ®Ξ³ΞΏΟΞ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± (*)"
 
 #: engines/scumm/help.cpp:99
 msgid "Run in really fast mode (*)"
-msgstr "Εκτέλεση σε πολύ γρήγορη λειτουργία (*)"
+msgstr "Ξ•ΞΊΟ„Ξ­Ξ»ΞµΟƒΞ· ΟƒΞµ Ο€ΞΏΞ»Ο Ξ³ΟΞ®Ξ³ΞΏΟΞ· Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± (*)"
 
 #: engines/scumm/help.cpp:100
 msgid "Toggle mouse capture"
-msgstr "Εναλλαγή κράτησης ποντικιού"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΞΊΟΞ¬Ο„Ξ·ΟƒΞ·Ο‚ Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
-msgstr "Εναλλαγή μεταξύ φίλτρων γραφικών"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΞΌΞµΟ„Ξ±ΞΎΟ Ο†Ξ―Ξ»Ο„ΟΟ‰Ξ½ Ξ³ΟΞ±Ο†ΞΉΞΊΟΞ½"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
-msgstr "Αύξηση / Μείωση συντελεστή κλίμακας"
+msgstr "Ξ‘ΟΞΎΞ·ΟƒΞ· / ΞΞµΞ―Ο‰ΟƒΞ· ΟƒΟ…Ξ½Ο„ΞµΞ»ΞµΟƒΟ„Ξ® ΞΊΞ»Ξ―ΞΌΞ±ΞΊΞ±Ο‚"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
-msgstr "Εναλλαγή διόρθωσης αναλογίας διαστάσεων"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ξ΄ΞΉΟΟΞΈΟ‰ΟƒΞ·Ο‚ Ξ±Ξ½Ξ±Ξ»ΞΏΞ³Ξ―Ξ±Ο‚ Ξ΄ΞΉΞ±ΟƒΟ„Ξ¬ΟƒΞµΟ‰Ξ½"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
-msgstr "* Να σημειωθεί ότι η χρήση του ctrl-f"
+msgstr "* ΞΞ± ΟƒΞ·ΞΌΞµΞΉΟ‰ΞΈΞµΞ― ΟΟ„ΞΉ Ξ· Ο‡ΟΞ®ΟƒΞ· Ο„ΞΏΟ… ctrl-f"
 
 #: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
-msgstr "  και του ctrl-g δε συνίσταται, μια"
+msgstr "  ΞΊΞ±ΞΉ Ο„ΞΏΟ… ctrl-g Ξ΄Ξµ ΟƒΟ…Ξ½Ξ―ΟƒΟ„Ξ±Ο„Ξ±ΞΉ, ΞΌΞΉΞ±"
 
 #: engines/scumm/help.cpp:110
 msgid "  since they may cause crashes"
-msgstr "  και μπορεί να προκαλέσουν κολλήματα"
+msgstr "  ΞΊΞ±ΞΉ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± Ο€ΟΞΏΞΊΞ±Ξ»Ξ­ΟƒΞΏΟ…Ξ½ ΞΊΞΏΞ»Ξ»Ξ®ΞΌΞ±Ο„Ξ±"
 
 #: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
-msgstr "  ή εσφαλμένη συμπεριφορά παιχνιδιών."
+msgstr "  Ξ® ΞµΟƒΟ†Ξ±Ξ»ΞΌΞ­Ξ½Ξ· ΟƒΟ…ΞΌΟ€ΞµΟΞΉΟ†ΞΏΟΞ¬ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΟΞ½."
 
 #: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
-msgstr "Δημιουργία 'ηχητικού υφαντού' (spinning draft) με το πληκτρολόγιο:"
+msgstr "Ξ”Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ―Ξ± 'Ξ·Ο‡Ξ·Ο„ΞΉΞΊΞΏΟ Ο…Ο†Ξ±Ξ½Ο„ΞΏΟ' (spinning draft) ΞΌΞµ Ο„ΞΏ Ο€Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΟΞ³ΞΉΞΏ:"
 
 #: engines/scumm/help.cpp:117
 msgid "Main game controls:"
-msgstr "Κύριοι χειρισμοί παιχνιδιού:"
+msgstr "ΞΟΟΞΉΞΏΞΉ Ο‡ΞµΞΉΟΞΉΟƒΞΌΞΏΞ― Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ:"
 
 #: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
 #: engines/scumm/help.cpp:162
 msgid "Push"
-msgstr "Σπρώξε"
+msgstr "Ξ£Ο€ΟΟΞΎΞµ"
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
 #: engines/scumm/help.cpp:163
 msgid "Pull"
-msgstr "Τράβηξε"
+msgstr "Ξ¤ΟΞ¬Ξ²Ξ·ΞΎΞµ"
 
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/scumm/help.cpp:198
 #: engines/scumm/help.cpp:208
 msgid "Give"
-msgstr "Δώσε"
+msgstr "Ξ”ΟΟƒΞµ"
 
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
 #: engines/scumm/help.cpp:209
 msgid "Open"
-msgstr "¶νοιξε"
+msgstr "Ξ†Ξ½ΞΏΞΉΞΎΞµ"
 
 #: engines/scumm/help.cpp:127
 msgid "Go to"
-msgstr "Μετάβαση σε"
+msgstr "ΞΞµΟ„Ξ¬Ξ²Ξ±ΟƒΞ· ΟƒΞµ"
 
 #: engines/scumm/help.cpp:128
 msgid "Get"
-msgstr "Πάρε"
+msgstr "Ξ Ξ¬ΟΞµ"
 
 #: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
 #: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
 #: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:251
 msgid "Use"
-msgstr "Χρήση"
+msgstr "Ξ§ΟΞ®ΟƒΞ·"
 
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
-msgstr "Διάβασε"
+msgstr "Ξ”ΞΉΞ¬Ξ²Ξ±ΟƒΞµ"
 
 #: engines/scumm/help.cpp:131 engines/scumm/help.cpp:148
 msgid "New kid"
-msgstr "Νέο παιδί"
+msgstr "ΞΞ­ΞΏ Ο€Ξ±ΞΉΞ΄Ξ―"
 
 #: engines/scumm/help.cpp:132 engines/scumm/help.cpp:154
 #: engines/scumm/help.cpp:172
 msgid "Turn on"
-msgstr "¶ναψε"
+msgstr "Ξ†Ξ½Ξ±ΟΞµ"
 
 #: engines/scumm/help.cpp:133 engines/scumm/help.cpp:155
 #: engines/scumm/help.cpp:173
 msgid "Turn off"
-msgstr "Σβήσε"
+msgstr "Ξ£Ξ²Ξ®ΟƒΞµ"
 
 #: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
 #: engines/scumm/help.cpp:195
 msgid "Walk to"
-msgstr "Περπάτησε σε"
+msgstr "Ξ ΞµΟΟ€Ξ¬Ο„Ξ·ΟƒΞµ ΟƒΞµ"
 
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
 #: engines/scumm/help.cpp:228
 msgid "Pick up"
-msgstr "Μάζεψε"
+msgstr "ΞΞ¬Ξ¶ΞµΟΞµ"
 
 #: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 msgid "What is"
-msgstr "Τι είναι"
+msgstr "Ξ¤ΞΉ ΞµΞ―Ξ½Ξ±ΞΉ"
 
 #: engines/scumm/help.cpp:147
 msgid "Unlock"
-msgstr "Ξεκλείδωσε"
+msgstr "ΞΞµΞΊΞ»ΞµΞ―Ξ΄Ο‰ΟƒΞµ"
 
 #: engines/scumm/help.cpp:150
 msgid "Put on"
-msgstr "Φόρεσε"
+msgstr "Ξ¦ΟΟΞµΟƒΞµ"
 
 #: engines/scumm/help.cpp:151
 msgid "Take off"
-msgstr "Βγάλε"
+msgstr "Ξ’Ξ³Ξ¬Ξ»Ξµ"
 
 #: engines/scumm/help.cpp:157
 msgid "Fix"
-msgstr "Διόρθωσε"
+msgstr "Ξ”ΞΉΟΟΞΈΟ‰ΟƒΞµ"
 
 #: engines/scumm/help.cpp:159
 msgid "Switch"
-msgstr "¶λλαξε"
+msgstr "Ξ†Ξ»Ξ»Ξ±ΞΎΞµ"
 
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:229
 msgid "Look"
-msgstr "Κοίταξε"
+msgstr "ΞΞΏΞ―Ο„Ξ±ΞΎΞµ"
 
 #: engines/scumm/help.cpp:174 engines/scumm/help.cpp:224
 msgid "Talk"
-msgstr "Μίλα"
+msgstr "ΞΞ―Ξ»Ξ±"
 
 #: engines/scumm/help.cpp:175
 msgid "Travel"
-msgstr "Ταξίδεψε"
+msgstr "Ξ¤Ξ±ΞΎΞ―Ξ΄ΞµΟΞµ"
 
 #: engines/scumm/help.cpp:176
 msgid "To Henry / To Indy"
-msgstr "Στο Χένρυ / Στον Ίντυ"
+msgstr "Ξ£Ο„ΞΏ Ξ§Ξ­Ξ½ΟΟ… / Ξ£Ο„ΞΏΞ½ ΞΞ½Ο„Ο…"
 
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:180
 msgid "play C minor on distaff"
-msgstr "παίξε C ελάσσονα στη ρόκα"
+msgstr "Ο€Ξ±Ξ―ΞΎΞµ C ΞµΞ»Ξ¬ΟƒΟƒΞΏΞ½Ξ± ΟƒΟ„Ξ· ΟΟΞΊΞ±"
 
 #: engines/scumm/help.cpp:181
 msgid "play D on distaff"
-msgstr "παίξε D στη ρόκα"
+msgstr "Ο€Ξ±Ξ―ΞΎΞµ D ΟƒΟ„Ξ· ΟΟΞΊΞ±"
 
 #: engines/scumm/help.cpp:182
 msgid "play E on distaff"
-msgstr "παίξε E στη ρόκα"
+msgstr "Ο€Ξ±Ξ―ΞΎΞµ E ΟƒΟ„Ξ· ΟΟΞΊΞ±"
 
 #: engines/scumm/help.cpp:183
 msgid "play F on distaff"
-msgstr "παίξε F στη ρόκα"
+msgstr "Ο€Ξ±Ξ―ΞΎΞµ F ΟƒΟ„Ξ· ΟΟΞΊΞ±"
 
 #: engines/scumm/help.cpp:184
 msgid "play G on distaff"
-msgstr "παίξε G στη ρόκα"
+msgstr "Ο€Ξ±Ξ―ΞΎΞµ G ΟƒΟ„Ξ· ΟΟΞΊΞ±"
 
 #: engines/scumm/help.cpp:185
 msgid "play A on distaff"
-msgstr "παίξε A στη ρόκα"
+msgstr "Ο€Ξ±Ξ―ΞΎΞµ A ΟƒΟ„Ξ· ΟΟΞΊΞ±"
 
 #: engines/scumm/help.cpp:186
 msgid "play B on distaff"
-msgstr "παίξε B στη ρόκα"
+msgstr "Ο€Ξ±Ξ―ΞΎΞµ B ΟƒΟ„Ξ· ΟΟΞΊΞ±"
 
 #: engines/scumm/help.cpp:187
 msgid "play C major on distaff"
-msgstr "παίξε C μείζονα στη ρόκα"
+msgstr "Ο€Ξ±Ξ―ΞΎΞµ C ΞΌΞµΞ―Ξ¶ΞΏΞ½Ξ± ΟƒΟ„Ξ· ΟΟΞΊΞ±"
 
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:215
 msgid "puSh"
-msgstr "Σπρώξε (S)"
+msgstr "Ξ£Ο€ΟΟΞΎΞµ (S)"
 
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:216
 msgid "pull (Yank)"
-msgstr "Τράβηξε (Y)"
+msgstr "Ξ¤ΟΞ¬Ξ²Ξ·ΞΎΞµ (Y)"
 
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:213
 #: engines/scumm/help.cpp:249
 msgid "Talk to"
-msgstr "Μίλα με (T)"
+msgstr "ΞΞ―Ξ»Ξ± ΞΌΞµ (T)"
 
 #: engines/scumm/help.cpp:200 engines/scumm/help.cpp:212
 msgid "Look at"
-msgstr "Κοίταξε το"
+msgstr "ΞΞΏΞ―Ο„Ξ±ΞΎΞµ Ο„ΞΏ"
 
 #: engines/scumm/help.cpp:201
 msgid "turn oN"
-msgstr "άναψε (N)"
+msgstr "Ξ¬Ξ½Ξ±ΟΞµ (N)"
 
 #: engines/scumm/help.cpp:202
 msgid "turn oFf"
-msgstr "σβήσε (F)"
+msgstr "ΟƒΞ²Ξ®ΟƒΞµ (F)"
 
 #: engines/scumm/help.cpp:218
 msgid "KeyUp"
-msgstr "Πλήκτρο πάνω"
+msgstr "Ξ Ξ»Ξ®ΞΊΟ„ΟΞΏ Ο€Ξ¬Ξ½Ο‰"
 
 #: engines/scumm/help.cpp:218
 msgid "Highlight prev dialogue"
-msgstr "Επισήμανση προηγούμενου διαλόγου"
+msgstr "Ξ•Ο€ΞΉΟƒΞ®ΞΌΞ±Ξ½ΟƒΞ· Ο€ΟΞΏΞ·Ξ³ΞΏΟΞΌΞµΞ½ΞΏΟ… Ξ΄ΞΉΞ±Ξ»ΟΞ³ΞΏΟ…"
 
 #: engines/scumm/help.cpp:219
 msgid "KeyDown"
-msgstr "Πλήκτρο κάτω"
+msgstr "Ξ Ξ»Ξ®ΞΊΟ„ΟΞΏ ΞΊΞ¬Ο„Ο‰"
 
 #: engines/scumm/help.cpp:219
 msgid "Highlight next dialogue"
-msgstr "Επισήμανση επόμενου διαλόγου"
+msgstr "Ξ•Ο€ΞΉΟƒΞ®ΞΌΞ±Ξ½ΟƒΞ· ΞµΟ€ΟΞΌΞµΞ½ΞΏΟ… Ξ΄ΞΉΞ±Ξ»ΟΞ³ΞΏΟ…"
 
 #: engines/scumm/help.cpp:223
 msgid "Walk"
-msgstr "Περπάτησε"
+msgstr "Ξ ΞµΟΟ€Ξ¬Ο„Ξ·ΟƒΞµ"
 
 #: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
 #: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
 msgid "Inventory"
-msgstr "Αντικείμενα"
+msgstr "Ξ‘Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½Ξ±"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
-msgstr "Αντικείμενο"
+msgstr "Ξ‘Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½ΞΏ"
 
 #: engines/scumm/help.cpp:230
 msgid "Black and White / Color"
-msgstr "Ασπρόμαυρο / Έγχρωμο"
+msgstr "Ξ‘ΟƒΟ€ΟΟΞΌΞ±Ο…ΟΞΏ / ΞΞ³Ο‡ΟΟ‰ΞΌΞΏ"
 
 #: engines/scumm/help.cpp:233
 msgid "Eyes"
-msgstr "Μάτια"
+msgstr "ΞΞ¬Ο„ΞΉΞ±"
 
 #: engines/scumm/help.cpp:234
 msgid "Tongue"
-msgstr "Γλώσσα"
+msgstr "Ξ“Ξ»ΟΟƒΟƒΞ±"
 
 #: engines/scumm/help.cpp:236
 msgid "Punch"
-msgstr "Γροθιά"
+msgstr "Ξ“ΟΞΏΞΈΞΉΞ¬"
 
 #: engines/scumm/help.cpp:237
 msgid "Kick"
-msgstr "Κλωτσιά"
+msgstr "ΞΞ»Ο‰Ο„ΟƒΞΉΞ¬"
 
 #: engines/scumm/help.cpp:240 engines/scumm/help.cpp:248
 msgid "Examine"
-msgstr "Εξέτασε"
+msgstr "Ξ•ΞΎΞ­Ο„Ξ±ΟƒΞµ"
 
 #: engines/scumm/help.cpp:241
 msgid "Regular cursor"
-msgstr "Κανονικός δρομέας"
+msgstr "ΞΞ±Ξ½ΞΏΞ½ΞΉΞΊΟΟ‚ Ξ΄ΟΞΏΞΌΞ­Ξ±Ο‚"
 
 #. I18N: Comm is a communication device
 #: engines/scumm/help.cpp:244
 msgid "Comm"
-msgstr "Διαβίβαση"
+msgstr "Ξ”ΞΉΞ±Ξ²Ξ―Ξ²Ξ±ΟƒΞ·"
 
 #: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
-msgstr "Αποθήκευση / Φόρτωση / Επιλογές"
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· / Ξ¦ΟΟΟ„Ο‰ΟƒΞ· / Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ­Ο‚"
 
 #: engines/scumm/help.cpp:256
 msgid "Other game controls:"
-msgstr "¶λλοι χειρισμοί του παιχνιδιού:"
+msgstr "Ξ†Ξ»Ξ»ΞΏΞΉ Ο‡ΞµΞΉΟΞΉΟƒΞΌΞΏΞ― Ο„ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ:"
 
 #: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
-msgstr "Αντικείμενα:"
+msgstr "Ξ‘Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½Ξ±:"
 
 #: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
 msgid "Scroll list up"
-msgstr "Κύλιση λίστας πάνω"
+msgstr "ΞΟΞ»ΞΉΟƒΞ· Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ Ο€Ξ¬Ξ½Ο‰"
 
 #: engines/scumm/help.cpp:260 engines/scumm/help.cpp:276
 msgid "Scroll list down"
-msgstr "Κύλιση λίστας κάτω"
+msgstr "ΞΟΞ»ΞΉΟƒΞ· Ξ»Ξ―ΟƒΟ„Ξ±Ο‚ ΞΊΞ¬Ο„Ο‰"
 
 #: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
 msgid "Upper left item"
-msgstr "Πάνω αριστερά αντικείμενο"
+msgstr "Ξ Ξ¬Ξ½Ο‰ Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬ Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½ΞΏ"
 
 #: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
 msgid "Lower left item"
-msgstr "Κάτω αριστερά αντικείμενο"
+msgstr "ΞΞ¬Ο„Ο‰ Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬ Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½ΞΏ"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
 msgid "Upper right item"
-msgstr "Πάνω δεξιά αντικείμενο"
+msgstr "Ξ Ξ¬Ξ½Ο‰ Ξ΄ΞµΞΎΞΉΞ¬ Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½ΞΏ"
 
 #: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
 msgid "Lower right item"
-msgstr "Κάτω δεξιά αντικείμενο"
+msgstr "ΞΞ¬Ο„Ο‰ Ξ΄ΞµΞΎΞΉΞ¬ Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½ΞΏ"
 
 #: engines/scumm/help.cpp:270
 msgid "Middle left item"
-msgstr "Μεσαίο αριστερά αντικείμενο"
+msgstr "ΞΞµΟƒΞ±Ξ―ΞΏ Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬ Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½ΞΏ"
 
 #: engines/scumm/help.cpp:273
 msgid "Middle right item"
-msgstr "Μεσαίο δεξιά αντικείμενο"
+msgstr "ΞΞµΟƒΞ±Ξ―ΞΏ Ξ΄ΞµΞΎΞΉΞ¬ Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½ΞΏ"
 
 #: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
 msgid "Switching characters:"
-msgstr "Εναλλαγή χαρακτήρων:"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ο‡Ξ±ΟΞ±ΞΊΟ„Ξ®ΟΟ‰Ξ½:"
 
 #: engines/scumm/help.cpp:282
 msgid "Second kid"
-msgstr "Δεύτερο παιδί"
+msgstr "Ξ”ΞµΟΟ„ΞµΟΞΏ Ο€Ξ±ΞΉΞ΄Ξ―"
 
 #: engines/scumm/help.cpp:283
 msgid "Third kid"
-msgstr "Τρίτο παιδί"
+msgstr "Ξ¤ΟΞ―Ο„ΞΏ Ο€Ξ±ΞΉΞ΄Ξ―"
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Εναλλαγή Αντικειμένων/προβολή Πόντων IQ"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ξ‘Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½/Ο€ΟΞΏΞ²ΞΏΞ»Ξ® Ξ ΟΞ½Ο„Ο‰Ξ½ IQ"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr "Εναλλαγή Πάλης Πληκτρολογίου/Ποντικιού (*)"
+msgstr "Ξ•Ξ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® Ξ Ξ¬Ξ»Ξ·Ο‚ Ξ Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΞΏΞ³Ξ―ΞΏΟ…/Ξ ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr "* Η χρήση πληκτρολογίου για τις μάχες είναι πάντα ενεργοποιημένη,"
+msgstr "* Ξ— Ο‡ΟΞ®ΟƒΞ· Ο€Ξ»Ξ·ΞΊΟ„ΟΞΏΞ»ΞΏΞ³Ξ―ΞΏΟ… Ξ³ΞΉΞ± Ο„ΞΉΟ‚ ΞΌΞ¬Ο‡ΞµΟ‚ ΞµΞ―Ξ½Ξ±ΞΉ Ο€Ξ¬Ξ½Ο„Ξ± ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ·,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr "  έτσι παρά την ειδοποίηση μέσα στο παιχνίδι, αυτή η ρύθμιση"
+msgstr "  Ξ­Ο„ΟƒΞΉ Ο€Ξ±ΟΞ¬ Ο„Ξ·Ξ½ ΞµΞΉΞ΄ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞΌΞ­ΟƒΞ± ΟƒΟ„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ, Ξ±Ο…Ο„Ξ® Ξ· ΟΟΞΈΞΌΞΉΟƒΞ·"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr "  ουσιαστικά (απ)ενεργοποιεί τις μάχες με την χρήση Ποντικιού"
+msgstr "  ΞΏΟ…ΟƒΞΉΞ±ΟƒΟ„ΞΉΞΊΞ¬ (Ξ±Ο€)ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞµΞ― Ο„ΞΉΟ‚ ΞΌΞ¬Ο‡ΞµΟ‚ ΞΌΞµ Ο„Ξ·Ξ½ Ο‡ΟΞ®ΟƒΞ· Ξ ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "Χειρισμοί μάχης (αριθ. πληκτρ.):"
+msgstr "Ξ§ΞµΞΉΟΞΉΟƒΞΌΞΏΞ― ΞΌΞ¬Ο‡Ξ·Ο‚ (Ξ±ΟΞΉΞΈ. Ο€Ξ»Ξ·ΞΊΟ„Ο.):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
 msgid "Step back"
-msgstr "Κάνε πίσω"
+msgstr "ΞΞ¬Ξ½Ξµ Ο€Ξ―ΟƒΟ‰"
 
 #: engines/scumm/help.cpp:308
 msgid "Block high"
-msgstr "Υψηλό μπλοκάρισμα"
+msgstr "Ξ¥ΟΞ·Ξ»Ο ΞΌΟ€Ξ»ΞΏΞΊΞ¬ΟΞΉΟƒΞΌΞ±"
 
 #: engines/scumm/help.cpp:309
 msgid "Block middle"
-msgstr "Μεσαίο μπλοκάρισμα"
+msgstr "ΞΞµΟƒΞ±Ξ―ΞΏ ΞΌΟ€Ξ»ΞΏΞΊΞ¬ΟΞΉΟƒΞΌΞ±"
 
 #: engines/scumm/help.cpp:310
 msgid "Block low"
-msgstr "Χαμηλό μπλοκάρισμα"
+msgstr "Ξ§Ξ±ΞΌΞ·Ξ»Ο ΞΌΟ€Ξ»ΞΏΞΊΞ¬ΟΞΉΟƒΞΌΞ±"
 
 #: engines/scumm/help.cpp:311
 msgid "Punch high"
-msgstr "Ψηλή μπουνιά"
+msgstr "Ξ¨Ξ·Ξ»Ξ® ΞΌΟ€ΞΏΟ…Ξ½ΞΉΞ¬"
 
 #: engines/scumm/help.cpp:312
 msgid "Punch middle"
-msgstr "Μεσαία μπουνιά"
+msgstr "ΞΞµΟƒΞ±Ξ―Ξ± ΞΌΟ€ΞΏΟ…Ξ½ΞΉΞ¬"
 
 #: engines/scumm/help.cpp:313
 msgid "Punch low"
-msgstr "Χαμηλή μπουνιά"
+msgstr "Ξ§Ξ±ΞΌΞ·Ξ»Ξ® ΞΌΟ€ΞΏΟ…Ξ½ΞΉΞ¬"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr "Αιφνιδιαστικό χτύπημα"
+msgstr "Ξ‘ΞΉΟ†Ξ½ΞΉΞ΄ΞΉΞ±ΟƒΟ„ΞΉΞΊΟ Ο‡Ο„ΟΟ€Ξ·ΞΌΞ±"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
-msgstr "Αυτά ισχύουν όταν ο Ίντυ είναι στα αριστερά."
+msgstr "Ξ‘Ο…Ο„Ξ¬ ΞΉΟƒΟ‡ΟΞΏΟ…Ξ½ ΟΟ„Ξ±Ξ½ ΞΏ ΞΞ½Ο„Ο… ΞµΞ―Ξ½Ξ±ΞΉ ΟƒΟ„Ξ± Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬."
 
 #: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
-msgstr "Όταν ο Ίντυ είναι στα δεξιά,"
+msgstr "ΞΟ„Ξ±Ξ½ ΞΏ ΞΞ½Ο„Ο… ΞµΞ―Ξ½Ξ±ΞΉ ΟƒΟ„Ξ± Ξ΄ΞµΞΎΞΉΞ¬,"
 
 #: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
-msgstr "τα 7, 4 και 1 εναλλάσσονται με τα"
+msgstr "Ο„Ξ± 7, 4 ΞΊΞ±ΞΉ 1 ΞµΞ½Ξ±Ξ»Ξ»Ξ¬ΟƒΟƒΞΏΞ½Ο„Ξ±ΞΉ ΞΌΞµ Ο„Ξ±"
 
 #: engines/scumm/help.cpp:321
 msgid "9, 6, and 3, respectively."
-msgstr "9, 6 και 3, αντίστοιχα."
+msgstr "9, 6 ΞΊΞ±ΞΉ 3, Ξ±Ξ½Ο„Ξ―ΟƒΟ„ΞΏΞΉΟ‡Ξ±."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "Χειρισμός δίπτερου (αριθ. πληκτρ.):"
+msgstr "Ξ§ΞµΞΉΟΞΉΟƒΞΌΟΟ‚ Ξ΄Ξ―Ο€Ο„ΞµΟΞΏΟ… (Ξ±ΟΞΉΞΈ. Ο€Ξ»Ξ·ΞΊΟ„Ο.):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
-msgstr "Πέταξε πάνω αριστερά"
+msgstr "Ξ Ξ­Ο„Ξ±ΞΎΞµ Ο€Ξ¬Ξ½Ο‰ Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬"
 
 #: engines/scumm/help.cpp:330
 msgid "Fly to left"
-msgstr "Πέταξε αριστερά"
+msgstr "Ξ Ξ­Ο„Ξ±ΞΎΞµ Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬"
 
 #: engines/scumm/help.cpp:331
 msgid "Fly to lower left"
-msgstr "Πέταξε κάτω αριστερά"
+msgstr "Ξ Ξ­Ο„Ξ±ΞΎΞµ ΞΊΞ¬Ο„Ο‰ Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬"
 
 #: engines/scumm/help.cpp:332
 msgid "Fly upwards"
-msgstr "Πέταξε πάνω"
+msgstr "Ξ Ξ­Ο„Ξ±ΞΎΞµ Ο€Ξ¬Ξ½Ο‰"
 
 #: engines/scumm/help.cpp:333
 msgid "Fly straight"
-msgstr "Πέταξε ευθεία"
+msgstr "Ξ Ξ­Ο„Ξ±ΞΎΞµ ΞµΟ…ΞΈΞµΞ―Ξ±"
 
 #: engines/scumm/help.cpp:334
 msgid "Fly down"
-msgstr "Πέταξε κάτω"
+msgstr "Ξ Ξ­Ο„Ξ±ΞΎΞµ ΞΊΞ¬Ο„Ο‰"
 
 #: engines/scumm/help.cpp:335
 msgid "Fly to upper right"
-msgstr "Πέταξε πάνω δεξιά"
+msgstr "Ξ Ξ­Ο„Ξ±ΞΎΞµ Ο€Ξ¬Ξ½Ο‰ Ξ΄ΞµΞΎΞΉΞ¬"
 
 #: engines/scumm/help.cpp:336
 msgid "Fly to right"
-msgstr "Πέταξε δεξιά"
+msgstr "Ξ Ξ­Ο„Ξ±ΞΎΞµ Ξ΄ΞµΞΎΞΉΞ¬"
 
 #: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
-msgstr "Πέταξε κάτω δεξιά"
+msgstr "Ξ Ξ­Ο„Ξ±ΞΎΞµ ΞΊΞ¬Ο„Ο‰ Ξ΄ΞµΞΎΞΉΞ¬"
 
 #: engines/scumm/input.cpp:578
 msgid "Snap scroll on"
-msgstr "Συγκράτηση κύλισης ενεργή"
+msgstr "Ξ£Ο…Ξ³ΞΊΟΞ¬Ο„Ξ·ΟƒΞ· ΞΊΟΞ»ΞΉΟƒΞ·Ο‚ ΞµΞ½ΞµΟΞ³Ξ®"
 
 #: engines/scumm/input.cpp:580
 msgid "Snap scroll off"
-msgstr "Συγκράτηση κύλισης ανενεργή"
+msgstr "Ξ£Ο…Ξ³ΞΊΟΞ¬Ο„Ξ·ΟƒΞ· ΞΊΟΞ»ΞΉΟƒΞ·Ο‚ Ξ±Ξ½ΞµΞ½ΞµΟΞ³Ξ®"
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Ένταση μουσικής: "
+msgstr "ΞΞ½Ο„Ξ±ΟƒΞ· ΞΌΞΏΟ…ΟƒΞΉΞΊΞ®Ο‚: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "Ταχύτητα υποτίτλων: "
+msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ± Ο…Ο€ΞΏΟ„Ξ―Ο„Ξ»Ο‰Ξ½: "
 
 #: engines/scumm/scumm.cpp:1881
 #, c-format
@@ -4415,8 +4414,8 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
-"Η υποστήριξη native MIDI απαιτεί την Αναβάθμιση Roland από τη LucasArts,\n"
-"αλλά το %s λείπει. Γίνεται χρήση AdLib αντ 'αυτού."
+"Ξ— Ο…Ο€ΞΏΟƒΟ„Ξ®ΟΞΉΞΎΞ· native MIDI Ξ±Ο€Ξ±ΞΉΟ„ΞµΞ― Ο„Ξ·Ξ½ Ξ‘Ξ½Ξ±Ξ²Ξ¬ΞΈΞΌΞΉΟƒΞ· Roland Ξ±Ο€Ο Ο„Ξ· LucasArts,\n"
+"Ξ±Ξ»Ξ»Ξ¬ Ο„ΞΏ %s Ξ»ΞµΞ―Ο€ΞµΞΉ. Ξ“Ξ―Ξ½ΞµΟ„Ξ±ΞΉ Ο‡ΟΞ®ΟƒΞ· AdLib Ξ±Ξ½Ο„ 'Ξ±Ο…Ο„ΞΏΟ."
 
 #: engines/scumm/scumm.cpp:2738
 msgid ""
@@ -4424,118 +4423,118 @@ msgid ""
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Κανονικά, τώρα θα ξεκινούσε το Maniac Mansion. Αλλά για να λειτουργήσει "
-"αυτό, τα αρχεία παιχνιδιού του Maniac Mansion θα πρέπει να είναι μέσα στο "
-"φάκελο 'Maniac' μέσα στο φάκελο παιχνιδιού του Tentacle, και το παιχνίδι "
-"πρέπει να προστεθεί στο ScummVM."
+"ΞΞ±Ξ½ΞΏΞ½ΞΉΞΊΞ¬, Ο„ΟΟΞ± ΞΈΞ± ΞΎΞµΞΊΞΉΞ½ΞΏΟΟƒΞµ Ο„ΞΏ Maniac Mansion. Ξ‘Ξ»Ξ»Ξ¬ Ξ³ΞΉΞ± Ξ½Ξ± Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ®ΟƒΞµΞΉ "
+"Ξ±Ο…Ο„Ο, Ο„Ξ± Ξ±ΟΟ‡ΞµΞ―Ξ± Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ο„ΞΏΟ… Maniac Mansion ΞΈΞ± Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± ΞµΞ―Ξ½Ξ±ΞΉ ΞΌΞ­ΟƒΞ± ΟƒΟ„ΞΏ "
+"Ο†Ξ¬ΞΊΞµΞ»ΞΏ 'Maniac' ΞΌΞ­ΟƒΞ± ΟƒΟ„ΞΏ Ο†Ξ¬ΞΊΞµΞ»ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ο„ΞΏΟ… Tentacle, ΞΊΞ±ΞΉ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ "
+"Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± Ο€ΟΞΏΟƒΟ„ΞµΞΈΞµΞ― ΟƒΟ„ΞΏ ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"Δεν βρέθηκε το εκτελέσιμο του 'Loom' για Macintosh ώστε να \n"
-"διαβαστούν τα όργανα. Η μουσική θα είναι απενεργοποιημένη."
+"Ξ”ΞµΞ½ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ Ο„ΞΏ ΞµΞΊΟ„ΞµΞ»Ξ­ΟƒΞΉΞΌΞΏ Ο„ΞΏΟ… 'Loom' Ξ³ΞΉΞ± Macintosh ΟΟƒΟ„Ξµ Ξ½Ξ± \n"
+"Ξ΄ΞΉΞ±Ξ²Ξ±ΟƒΟ„ΞΏΟΞ½ Ο„Ξ± ΟΟΞ³Ξ±Ξ½Ξ±. Ξ— ΞΌΞΏΟ…ΟƒΞΉΞΊΞ® ΞΈΞ± ΞµΞ―Ξ½Ξ±ΞΉ Ξ±Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΌΞ­Ξ½Ξ·."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"Δεν ήταν δυνατή η εύρεση του εκτελέσιμου Macintosh 'Monkey Island' από\n"
-"το οποίο να διαβαστούν τα όργανα μουσικής. Η μουσική θα απενεργοποιηθεί."
+"Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΟΟΞµΟƒΞ· Ο„ΞΏΟ… ΞµΞΊΟ„ΞµΞ»Ξ­ΟƒΞΉΞΌΞΏΟ… Macintosh 'Monkey Island' Ξ±Ο€Ο\n"
+"Ο„ΞΏ ΞΏΟ€ΞΏΞ―ΞΏ Ξ½Ξ± Ξ΄ΞΉΞ±Ξ²Ξ±ΟƒΟ„ΞΏΟΞ½ Ο„Ξ± ΟΟΞ³Ξ±Ξ½Ξ± ΞΌΞΏΟ…ΟƒΞΉΞΊΞ®Ο‚. Ξ— ΞΌΞΏΟ…ΟƒΞΉΞΊΞ® ΞΈΞ± Ξ±Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ·ΞΈΞµΞ―."
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr "Πιξελιασμένες μεταβάσεις σκηνής"
+msgstr "Ξ ΞΉΞΎΞµΞ»ΞΉΞ±ΟƒΞΌΞ­Ξ½ΞµΟ‚ ΞΌΞµΟ„Ξ±Ξ²Ξ¬ΟƒΞµΞΉΟ‚ ΟƒΞΊΞ·Ξ½Ξ®Ο‚"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr "Στην εναλλαγή σκηνών, πραγματοποιείται μια τυχαία μετάβαση pixel"
+msgstr "Ξ£Ο„Ξ·Ξ½ ΞµΞ½Ξ±Ξ»Ξ»Ξ±Ξ³Ξ® ΟƒΞΊΞ·Ξ½ΟΞ½, Ο€ΟΞ±Ξ³ΞΌΞ±Ο„ΞΏΟ€ΞΏΞΉΞµΞ―Ο„Ξ±ΞΉ ΞΌΞΉΞ± Ο„Ο…Ο‡Ξ±Ξ―Ξ± ΞΌΞµΟ„Ξ¬Ξ²Ξ±ΟƒΞ· pixel"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr "Απόκρυψη ενεργών περιοχών όταν μετακινείται ο δρομέας"
+msgstr "Ξ‘Ο€ΟΞΊΟΟ…ΟΞ· ΞµΞ½ΞµΟΞ³ΟΞ½ Ο€ΞµΟΞΉΞΏΟ‡ΟΞ½ ΟΟ„Ξ±Ξ½ ΞΌΞµΟ„Ξ±ΞΊΞΉΞ½ΞµΞ―Ο„Ξ±ΞΉ ΞΏ Ξ΄ΟΞΏΞΌΞ­Ξ±Ο‚"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
-"Εμφάνιση των ονομάτων ενεργών σημείων μόνο αφού πατηθεί ενεργό σημείο ή "
-"κουμπί δράσης"
+"Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο„Ο‰Ξ½ ΞΏΞ½ΞΏΞΌΞ¬Ο„Ο‰Ξ½ ΞµΞ½ΞµΟΞ³ΟΞ½ ΟƒΞ·ΞΌΞµΞ―Ο‰Ξ½ ΞΌΟΞ½ΞΏ Ξ±Ο†ΞΏΟ Ο€Ξ±Ο„Ξ·ΞΈΞµΞ― ΞµΞ½ΞµΟΞ³Ο ΟƒΞ·ΞΌΞµΞ―ΞΏ Ξ® "
+"ΞΊΞΏΟ…ΞΌΟ€Ξ― Ξ΄ΟΞ¬ΟƒΞ·Ο‚"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show character portraits"
-msgstr "Προβολή πορτρέτων χαρακτήρων"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ο€ΞΏΟΟ„ΟΞ­Ο„Ο‰Ξ½ Ο‡Ξ±ΟΞ±ΞΊΟ„Ξ®ΟΟ‰Ξ½"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr "Εμφάνιση πορτρέτων χαρακτήρων κατά τη διάρκεια συνομιλίας"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο€ΞΏΟΟ„ΟΞ­Ο„Ο‰Ξ½ Ο‡Ξ±ΟΞ±ΞΊΟ„Ξ®ΟΟ‰Ξ½ ΞΊΞ±Ο„Ξ¬ Ο„Ξ· Ξ΄ΞΉΞ¬ΟΞΊΞµΞΉΞ± ΟƒΟ…Ξ½ΞΏΞΌΞΉΞ»Ξ―Ξ±Ο‚"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr "Κύλιση διαλόγων όταν εμφανίζονται"
+msgstr "ΞΟΞ»ΞΉΟƒΞ· Ξ΄ΞΉΞ±Ξ»ΟΞ³Ο‰Ξ½ ΟΟ„Ξ±Ξ½ ΞµΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞΏΞ½Ο„Ξ±ΞΉ"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr "Κύλιση διαλόγων διεπαφής όταν εμφανίζονται, αντί να εμφανίζονται άμεσα"
+msgstr "ΞΟΞ»ΞΉΟƒΞ· Ξ΄ΞΉΞ±Ξ»ΟΞ³Ο‰Ξ½ Ξ΄ΞΉΞµΟ€Ξ±Ο†Ξ®Ο‚ ΟΟ„Ξ±Ξ½ ΞµΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞΏΞ½Ο„Ξ±ΞΉ, Ξ±Ξ½Ο„Ξ― Ξ½Ξ± ΞµΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞΏΞ½Ο„Ξ±ΞΉ Ξ¬ΞΌΞµΟƒΞ±"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr "Διαφανή παράθυρα"
+msgstr "Ξ”ΞΉΞ±Ο†Ξ±Ξ½Ξ® Ο€Ξ±ΟΞ¬ΞΈΟ…ΟΞ±"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr "Εμφάνιση παραθύρων με ένα μερικώς διαφανές φόντο"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο€Ξ±ΟΞ±ΞΈΟΟΟ‰Ξ½ ΞΌΞµ Ξ­Ξ½Ξ± ΞΌΞµΟΞΉΞΊΟΟ‚ Ξ΄ΞΉΞ±Ο†Ξ±Ξ½Ξ­Ο‚ Ο†ΟΞ½Ο„ΞΏ"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr "Το αρχείο δεδομένων παιχνιδιού \"sky.cpt\" έχει εσφαλμένο μέγεθος."
+msgstr "Ξ¤ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½ Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ \"sky.cpt\" Ξ­Ο‡ΞµΞΉ ΞµΟƒΟ†Ξ±Ξ»ΞΌΞ­Ξ½ΞΏ ΞΌΞ­Ξ³ΞµΞΈΞΏΟ‚."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr "Εισαγωγή έκδοσης δισκέτας"
+msgstr "Ξ•ΞΉΟƒΞ±Ξ³Ο‰Ξ³Ξ® Ξ­ΞΊΞ΄ΞΏΟƒΞ·Ο‚ Ξ΄ΞΉΟƒΞΊΞ­Ο„Ξ±Ο‚"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr "Χρήση της εισαγωγής από την έκδοση δισκέτας (έκδοση CD μόνο)"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ο„Ξ·Ο‚ ΞµΞΉΟƒΞ±Ξ³Ο‰Ξ³Ξ®Ο‚ Ξ±Ο€Ο Ο„Ξ·Ξ½ Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ξ΄ΞΉΟƒΞΊΞ­Ο„Ξ±Ο‚ (Ξ­ΞΊΞ΄ΞΏΟƒΞ· CD ΞΌΟΞ½ΞΏ)"
 
 #: engines/supernova/supernova.cpp:193
 #, fuzzy, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
-"Βρέθηκε λανθασμένη έκδοση του '%s' αρχείου παιχνιδιού. Αναμενόμενη %d.%d "
-"αλλά βρέθηκε η %d.%d."
+"Ξ’ΟΞ­ΞΈΞ·ΞΊΞµ Ξ»Ξ±Ξ½ΞΈΞ±ΟƒΞΌΞ­Ξ½Ξ· Ξ­ΞΊΞ΄ΞΏΟƒΞ· Ο„ΞΏΟ… '%s' Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ. Ξ‘Ξ½Ξ±ΞΌΞµΞ½ΟΞΌΞµΞ½Ξ· %d.%d "
+"Ξ±Ξ»Ξ»Ξ¬ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ Ξ· %d.%d."
 
 #: engines/supernova/supernova.cpp:220
 #, fuzzy, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
-msgstr "Δεν ήταν δυνατή η εύρεση του αρχείου παιχνιδιού '%s'."
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· ΞµΟΟΞµΟƒΞ· Ο„ΞΏΟ… Ξ±ΟΟ‡ΞµΞ―ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ '%s'."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
 msgstr ""
-"Το αρχείο (τύπου ροής PSX) ταινίας '%s' δεν γίνεται να αναπαραχθεί σε "
-"λειτουργία παλέτας"
+"Ξ¤ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ (Ο„ΟΟ€ΞΏΟ… ΟΞΏΞ®Ο‚ PSX) Ο„Ξ±ΞΉΞ½Ξ―Ξ±Ο‚ '%s' Ξ΄ΞµΞ½ Ξ³Ξ―Ξ½ΞµΟ„Ξ±ΞΉ Ξ½Ξ± Ξ±Ξ½Ξ±Ο€Ξ±ΟΞ±Ο‡ΞΈΞµΞ― ΟƒΞµ "
+"Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο€Ξ±Ξ»Ξ­Ο„Ξ±Ο‚"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
 msgstr ""
-"Βρέθηκαν ταινίες DXA αλλά το ScummVM έχει φτιαχτεί χωρίς υποστήριξη zlib"
+"Ξ’ΟΞ­ΞΈΞ·ΞΊΞ±Ξ½ Ο„Ξ±ΞΉΞ½Ξ―ΞµΟ‚ DXA Ξ±Ξ»Ξ»Ξ¬ Ο„ΞΏ ScummVM Ξ­Ο‡ΞµΞΉ Ο†Ο„ΞΉΞ±Ο‡Ο„ΞµΞ― Ο‡Ο‰ΟΞ―Ο‚ Ο…Ο€ΞΏΟƒΟ„Ξ®ΟΞΉΞΎΞ· zlib"
 
 #: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"Βρέθηκαν βίντεο MPEG-2 αλλά το ScummVM κατασκευάστηκε χωρίς υποστήριξη MPEG-2"
+"Ξ’ΟΞ­ΞΈΞ·ΞΊΞ±Ξ½ Ξ²Ξ―Ξ½Ο„ΞµΞΏ MPEG-2 Ξ±Ξ»Ξ»Ξ¬ Ο„ΞΏ ScummVM ΞΊΞ±Ο„Ξ±ΟƒΞΊΞµΟ…Ξ¬ΟƒΟ„Ξ·ΞΊΞµ Ο‡Ο‰ΟΞ―Ο‚ Ο…Ο€ΞΏΟƒΟ„Ξ®ΟΞΉΞΎΞ· MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr "Η ταινία '%s' δε βρέθηκε"
+msgstr "Ξ— Ο„Ξ±ΞΉΞ½Ξ―Ξ± '%s' Ξ΄Ξµ Ξ²ΟΞ­ΞΈΞ·ΞΊΞµ"
 
 #: engines/sword1/control.cpp:885
 msgid ""
@@ -4547,13 +4546,13 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"Το ScummVM διαπίστωσε ότι έχετε παλιά αποθηκευμένα παιχνίδια για το Broken "
-"Sword 1 που θα πρέπει να μετατραπούν.\n"
-"Η παλιά αποθηκευμένη μορφή παιχνιδιού δεν υποστηρίζεται πλέον, οπότε δε θα "
-"είστε σε θέση να φορτώσετε τα παιχνίδια σας, αν δεν τα μετατρέψετε.\n"
+"Ξ¤ΞΏ ScummVM Ξ΄ΞΉΞ±Ο€Ξ―ΟƒΟ„Ο‰ΟƒΞµ ΟΟ„ΞΉ Ξ­Ο‡ΞµΟ„Ξµ Ο€Ξ±Ξ»ΞΉΞ¬ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± Ξ³ΞΉΞ± Ο„ΞΏ Broken "
+"Sword 1 Ο€ΞΏΟ… ΞΈΞ± Ο€ΟΞ­Ο€ΞµΞΉ Ξ½Ξ± ΞΌΞµΟ„Ξ±Ο„ΟΞ±Ο€ΞΏΟΞ½.\n"
+"Ξ— Ο€Ξ±Ξ»ΞΉΞ¬ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ· ΞΌΞΏΟΟ†Ξ® Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΟ„Ξ±ΞΉ Ο€Ξ»Ξ­ΞΏΞ½, ΞΏΟ€ΟΟ„Ξµ Ξ΄Ξµ ΞΈΞ± "
+"ΞµΞ―ΟƒΟ„Ξµ ΟƒΞµ ΞΈΞ­ΟƒΞ· Ξ½Ξ± Ο†ΞΏΟΟ„ΟΟƒΞµΟ„Ξµ Ο„Ξ± Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉΞ± ΟƒΞ±Ο‚, Ξ±Ξ½ Ξ΄ΞµΞ½ Ο„Ξ± ΞΌΞµΟ„Ξ±Ο„ΟΞ­ΟΞµΟ„Ξµ.\n"
 "\n"
-"Πατήστε OK για να τα μετατρέψετε τώρα, αλλιώς θα σας ζητηθεί ξανά την "
-"επόμενη φορά που θα ξεκινήσετε το παιχνίδι.\n"
+"Ξ Ξ±Ο„Ξ®ΟƒΟ„Ξµ OK Ξ³ΞΉΞ± Ξ½Ξ± Ο„Ξ± ΞΌΞµΟ„Ξ±Ο„ΟΞ­ΟΞµΟ„Ξµ Ο„ΟΟΞ±, Ξ±Ξ»Ξ»ΞΉΟΟ‚ ΞΈΞ± ΟƒΞ±Ο‚ Ξ¶Ξ·Ο„Ξ·ΞΈΞµΞ― ΞΎΞ±Ξ½Ξ¬ Ο„Ξ·Ξ½ "
+"ΞµΟ€ΟΞΌΞµΞ½Ξ· Ο†ΞΏΟΞ¬ Ο€ΞΏΟ… ΞΈΞ± ΞΎΞµΞΊΞΉΞ½Ξ®ΟƒΞµΟ„Ξµ Ο„ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ.\n"
 
 #: engines/sword1/control.cpp:1259
 #, c-format
@@ -4561,98 +4560,98 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
-"Το νέο αποθηκευμένο παιχνίδι υπάρχει ήδη στον προορισμό!\n"
-"Θέλετε να διατηρήσετε το παλιό αποθηκευμένο παιχνίδι (%s) ή το νέο (%s);\n"
+"Ξ¤ΞΏ Ξ½Ξ­ΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ Ξ®Ξ΄Ξ· ΟƒΟ„ΞΏΞ½ Ο€ΟΞΏΞΏΟΞΉΟƒΞΌΟ!\n"
+"ΞΞ­Ξ»ΞµΟ„Ξµ Ξ½Ξ± Ξ΄ΞΉΞ±Ο„Ξ·ΟΞ®ΟƒΞµΟ„Ξµ Ο„ΞΏ Ο€Ξ±Ξ»ΞΉΟ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ (%s) Ξ® Ο„ΞΏ Ξ½Ξ­ΞΏ (%s);\n"
 
 #: engines/sword1/control.cpp:1262
 msgid "Keep the old one"
-msgstr "Κράτησε το παλιό"
+msgstr "ΞΟΞ¬Ο„Ξ·ΟƒΞµ Ο„ΞΏ Ο€Ξ±Ξ»ΞΉΟ"
 
 #: engines/sword1/control.cpp:1262
 msgid "Keep the new one"
-msgstr "Κράτησε το καινούργιο"
+msgstr "ΞΟΞ¬Ο„Ξ·ΟƒΞµ Ο„ΞΏ ΞΊΞ±ΞΉΞ½ΞΏΟΟΞ³ΞΉΞΏ"
 
 #: engines/sword1/logic.cpp:1633
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr "Αυτό είναι το τέλος της επίδειξης του Broken Sword 1"
+msgstr "Ξ‘Ο…Ο„Ο ΞµΞ―Ξ½Ξ±ΞΉ Ο„ΞΏ Ο„Ξ­Ξ»ΞΏΟ‚ Ο„Ξ·Ο‚ ΞµΟ€Ξ―Ξ΄ΞµΞΉΞΎΞ·Ο‚ Ο„ΞΏΟ… Broken Sword 1"
 
 #: engines/sword2/animation.cpp:425
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"Βρέθηκαν βίντεο PSX αλλά το ScummVM δημιουργήθηκε χωρίς υποστήριξη χρώματος "
+"Ξ’ΟΞ­ΞΈΞ·ΞΊΞ±Ξ½ Ξ²Ξ―Ξ½Ο„ΞµΞΏ PSX Ξ±Ξ»Ξ»Ξ¬ Ο„ΞΏ ScummVM Ξ΄Ξ·ΞΌΞΉΞΏΟ…ΟΞ³Ξ®ΞΈΞ·ΞΊΞµ Ο‡Ο‰ΟΞ―Ο‚ Ο…Ο€ΞΏΟƒΟ„Ξ®ΟΞΉΞΎΞ· Ο‡ΟΟΞΌΞ±Ο„ΞΏΟ‚ "
 "RGB"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr "Προβολή ετικετών αντικειμένων"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® ΞµΟ„ΞΉΞΊΞµΟ„ΟΞ½ Ξ±Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr "Εμφάνιση ετικετών για αντικείμενα κατά την αιώρηση του ποντικιού"
+msgstr "Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΞµΟ„ΞΉΞΊΞµΟ„ΟΞ½ Ξ³ΞΉΞ± Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½Ξ± ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ξ±ΞΉΟΟΞ·ΟƒΞ· Ο„ΞΏΟ… Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr "Χρήση Αγγλικής ομιλίας"
+msgstr "Ξ§ΟΞ®ΟƒΞ· Ξ‘Ξ³Ξ³Ξ»ΞΉΞΊΞ®Ο‚ ΞΏΞΌΞΉΞ»Ξ―Ξ±Ο‚"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
-"Χρήση Αγγλικής ομιλίας αντί για Γερμανική για κάθε γλώσσα εκτός της "
-"Γερμανικής"
+"Ξ§ΟΞ®ΟƒΞ· Ξ‘Ξ³Ξ³Ξ»ΞΉΞΊΞ®Ο‚ ΞΏΞΌΞΉΞ»Ξ―Ξ±Ο‚ Ξ±Ξ½Ο„Ξ― Ξ³ΞΉΞ± Ξ“ΞµΟΞΌΞ±Ξ½ΞΉΞΊΞ® Ξ³ΞΉΞ± ΞΊΞ¬ΞΈΞµ Ξ³Ξ»ΟΟƒΟƒΞ± ΞµΞΊΟ„ΟΟ‚ Ο„Ξ·Ο‚ "
+"Ξ“ΞµΟΞΌΞ±Ξ½ΞΉΞΊΞ®Ο‚"
 
 #: engines/teenagent/resources.cpp:118
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
-"Το αρχείο teenagent.dat είναι συμπιεσμένο και η zlib δεν έχει συμπεριληφθεί "
-"σε αυτό το εκτελέσιμο. Παρακαλώ αποσυμπιέστε το"
+"Ξ¤ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ teenagent.dat ΞµΞ―Ξ½Ξ±ΞΉ ΟƒΟ…ΞΌΟ€ΞΉΞµΟƒΞΌΞ­Ξ½ΞΏ ΞΊΞ±ΞΉ Ξ· zlib Ξ΄ΞµΞ½ Ξ­Ο‡ΞµΞΉ ΟƒΟ…ΞΌΟ€ΞµΟΞΉΞ»Ξ·Ο†ΞΈΞµΞ― "
+"ΟƒΞµ Ξ±Ο…Ο„Ο Ο„ΞΏ ΞµΞΊΟ„ΞµΞ»Ξ­ΟƒΞΉΞΌΞΏ. Ξ Ξ±ΟΞ±ΞΊΞ±Ξ»Ο Ξ±Ο€ΞΏΟƒΟ…ΞΌΟ€ΞΉΞ­ΟƒΟ„Ξµ Ο„ΞΏ"
 
 #: engines/tony/tony.cpp:258
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
 msgstr ""
-"H παραλλαγή γραμματοσειράς δεν υπάρχει στο αρχείο δεδομένων '%s' της μηχανής."
+"H Ο€Ξ±ΟΞ±Ξ»Ξ»Ξ±Ξ³Ξ® Ξ³ΟΞ±ΞΌΞΌΞ±Ο„ΞΏΟƒΞµΞΉΟΞ¬Ο‚ Ξ΄ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ ΟƒΟ„ΞΏ Ξ±ΟΟ‡ΞµΞ―ΞΏ Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½ '%s' Ο„Ξ·Ο‚ ΞΌΞ·Ο‡Ξ±Ξ½Ξ®Ο‚."
 
 #: engines/toon/toon.cpp:222
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Αποθήκευση παιχνιδιού στη θυρίδα #%d "
+msgstr "Ξ‘Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ ΟƒΟ„Ξ· ΞΈΟ…ΟΞ―Ξ΄Ξ± #%d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "Δεν ήταν δυνατή η γρήγορη αποθήκευση στη θυρίδα #%d"
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ³ΟΞ®Ξ³ΞΏΟΞ· Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· ΟƒΟ„Ξ· ΞΈΟ…ΟΞ―Ξ΄Ξ± #%d"
 
 #: engines/toon/toon.cpp:239
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr "Το αποθηκευμένη παιχνίδι #%d φορτώθηκε γρήγορα"
+msgstr "Ξ¤ΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½Ξ· Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ #%d Ο†ΞΏΟΟ„ΟΞΈΞ·ΞΊΞµ Ξ³ΟΞ®Ξ³ΞΏΟΞ±"
 
 #: engines/toon/toon.cpp:243
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "Δεν ήταν δυνατή η γρήγορη φόρτωση του αποθηκευμένου παιχνιδιού #%d"
+msgstr "Ξ”ΞµΞ½ Ξ®Ο„Ξ±Ξ½ Ξ΄Ο…Ξ½Ξ±Ο„Ξ® Ξ· Ξ³ΟΞ®Ξ³ΞΏΟΞ· Ο†ΟΟΟ„Ο‰ΟƒΞ· Ο„ΞΏΟ… Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏΟ… Ο€Ξ±ΞΉΟ‡Ξ½ΞΉΞ΄ΞΉΞΏΟ #%d"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr "Προβολή μετρητή FPS"
+msgstr "Ξ ΟΞΏΞ²ΞΏΞ»Ξ® ΞΌΞµΟ„ΟΞ·Ο„Ξ® FPS"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
 msgstr ""
-"Εμφάνιση του τρέχοντος αριθμού καρέ ανά δευτερόλεπτο στην επάνω αριστερή "
-"γωνία"
+"Ξ•ΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· Ο„ΞΏΟ… Ο„ΟΞ­Ο‡ΞΏΞ½Ο„ΞΏΟ‚ Ξ±ΟΞΉΞΈΞΌΞΏΟ ΞΊΞ±ΟΞ­ Ξ±Ξ½Ξ¬ Ξ΄ΞµΟ…Ο„ΞµΟΟΞ»ΞµΟ€Ο„ΞΏ ΟƒΟ„Ξ·Ξ½ ΞµΟ€Ξ¬Ξ½Ο‰ Ξ±ΟΞΉΟƒΟ„ΞµΟΞ® "
+"Ξ³Ο‰Ξ½Ξ―Ξ±"
 
 #: engines/wintermute/detection.cpp:68
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr "Διγραμμικό φιλτράρισμα στοιχείων (ΑΡΓΟ)"
+msgstr "Ξ”ΞΉΞ³ΟΞ±ΞΌΞΌΞΉΞΊΟ Ο†ΞΉΞ»Ο„ΟΞ¬ΟΞΉΟƒΞΌΞ± ΟƒΟ„ΞΏΞΉΟ‡ΞµΞ―Ο‰Ξ½ (Ξ‘Ξ΅Ξ“Ξ)"
 
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
-msgstr "Εφαρμογή διγραμμικού φιλτραρίσματος σε μεμονωμένα στοιχεία"
+msgstr "Ξ•Ο†Ξ±ΟΞΌΞΏΞ³Ξ® Ξ΄ΞΉΞ³ΟΞ±ΞΌΞΌΞΉΞΊΞΏΟ Ο†ΞΉΞ»Ο„ΟΞ±ΟΞ―ΟƒΞΌΞ±Ο„ΞΏΟ‚ ΟƒΞµ ΞΌΞµΞΌΞΏΞ½Ο‰ΞΌΞ­Ξ½Ξ± ΟƒΟ„ΞΏΞΉΟ‡ΞµΞ―Ξ±"
 
 #: engines/xeen/detection.cpp:85
 msgid "Show item costs in standard inventory mode"
@@ -4674,36 +4673,36 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr "Διπλάσια FPS"
+msgstr "Ξ”ΞΉΟ€Ξ»Ξ¬ΟƒΞΉΞ± FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr "Αύξηση του ρυθμού καρέ από 30 σε 60 FPS"
+msgstr "Ξ‘ΟΞΎΞ·ΟƒΞ· Ο„ΞΏΟ… ΟΟ…ΞΈΞΌΞΏΟ ΞΊΞ±ΟΞ­ Ξ±Ο€Ο 30 ΟƒΞµ 60 FPS"
 
 #: engines/zvision/detection_tables.h:71
 msgid "Enable Venus"
-msgstr "Ενεργοποίηση Αφροδίτης"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ξ‘Ο†ΟΞΏΞ΄Ξ―Ο„Ξ·Ο‚"
 
 #: engines/zvision/detection_tables.h:72
 msgid "Enable the Venus help system"
-msgstr "Ενεργοποίηση του συστήματος βοήθειας της Αφροδίτης"
+msgstr "Ξ•Ξ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· Ο„ΞΏΟ… ΟƒΟ…ΟƒΟ„Ξ®ΞΌΞ±Ο„ΞΏΟ‚ Ξ²ΞΏΞ®ΞΈΞµΞΉΞ±Ο‚ Ο„Ξ·Ο‚ Ξ‘Ο†ΟΞΏΞ΄Ξ―Ο„Ξ·Ο‚"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning"
-msgstr "Απενεργοποίηση κίνησης κατά την περιστροφή"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞΊΞ―Ξ½Ξ·ΟƒΞ·Ο‚ ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ο€ΞµΟΞΉΟƒΟ„ΟΞΏΟ†Ξ®"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr "Απενεργοποίηση κίνησης κατά την περιστροφή σε λειτουργία πανοράματος"
+msgstr "Ξ‘Ο€ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞ―Ξ·ΟƒΞ· ΞΊΞ―Ξ½Ξ·ΟƒΞ·Ο‚ ΞΊΞ±Ο„Ξ¬ Ο„Ξ·Ξ½ Ο€ΞµΟΞΉΟƒΟ„ΟΞΏΟ†Ξ® ΟƒΞµ Ξ»ΞµΞΉΟ„ΞΏΟ…ΟΞ³Ξ―Ξ± Ο€Ξ±Ξ½ΞΏΟΞ¬ΞΌΞ±Ο„ΞΏΟ‚"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
-msgstr "Χρήση MPEG βίντεο υψηλής ανάλυσης"
+msgstr "Ξ§ΟΞ®ΟƒΞ· MPEG Ξ²Ξ―Ξ½Ο„ΞµΞΏ Ο…ΟΞ·Ξ»Ξ®Ο‚ Ξ±Ξ½Ξ¬Ξ»Ο…ΟƒΞ·Ο‚"
 
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Χρήση βίντεο MPEG από την έκδοση DVD αντί για το χαμηλότερης ανάλυσης AVI"
+"Ξ§ΟΞ®ΟƒΞ· Ξ²Ξ―Ξ½Ο„ΞµΞΏ MPEG Ξ±Ο€Ο Ο„Ξ·Ξ½ Ξ­ΞΊΞ΄ΞΏΟƒΞ· DVD Ξ±Ξ½Ο„Ξ― Ξ³ΞΉΞ± Ο„ΞΏ Ο‡Ξ±ΞΌΞ·Ξ»ΟΟ„ΞµΟΞ·Ο‚ Ξ±Ξ½Ξ¬Ξ»Ο…ΟƒΞ·Ο‚ AVI"
 
 #: engines/zvision/file/save_manager.cpp:220
 #, c-format
@@ -4711,22 +4710,22 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
-"Αυτό το αποθηκευμένο παιχνίδι χρησιμοποιεί έκδοση%u, αλλά η μηχανή αυτή "
-"υποστηρίζει μόνο μέχρι την έκδοση%d. Θα χρειαστείτε μια ενημερωμένη έκδοση "
-"της μηχανής για να χρησιμοποιήσετε αυτό το αποθηκευμένο παιχνίδι."
+"Ξ‘Ο…Ο„Ο Ο„ΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞµΞ― Ξ­ΞΊΞ΄ΞΏΟƒΞ·%u, Ξ±Ξ»Ξ»Ξ¬ Ξ· ΞΌΞ·Ο‡Ξ±Ξ½Ξ® Ξ±Ο…Ο„Ξ® "
+"Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΞΉ ΞΌΟΞ½ΞΏ ΞΌΞ­Ο‡ΟΞΉ Ο„Ξ·Ξ½ Ξ­ΞΊΞ΄ΞΏΟƒΞ·%d. ΞΞ± Ο‡ΟΞµΞΉΞ±ΟƒΟ„ΞµΞ―Ο„Ξµ ΞΌΞΉΞ± ΞµΞ½Ξ·ΞΌΞµΟΟ‰ΞΌΞ­Ξ½Ξ· Ξ­ΞΊΞ΄ΞΏΟƒΞ· "
+"Ο„Ξ·Ο‚ ΞΌΞ·Ο‡Ξ±Ξ½Ξ®Ο‚ Ξ³ΞΉΞ± Ξ½Ξ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΟ„Ξµ Ξ±Ο…Ο„Ο Ο„ΞΏ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ Ο€Ξ±ΞΉΟ‡Ξ½Ξ―Ξ΄ΞΉ."
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""
-#~ "Χρησιμοποιήστε τις αρχικές οθόνες αποθήκευσης/φόρτωσης αντί αυτών του "
+#~ "Ξ§ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ®ΟƒΟ„Ξµ Ο„ΞΉΟ‚ Ξ±ΟΟ‡ΞΉΞΊΞ­Ο‚ ΞΏΞΈΟΞ½ΞµΟ‚ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ·Ο‚/Ο†ΟΟΟ„Ο‰ΟƒΞ·Ο‚ Ξ±Ξ½Ο„Ξ― Ξ±Ο…Ο„ΟΞ½ Ο„ΞΏΟ… "
 #~ "ScummVM"
 
 #~ msgid "(You can always enable it in the options dialog on the Misc tab)"
 #~ msgstr ""
-#~ "(Μπορείτε πάντα να την ενεργοποιήσετε στο παράθυρο διαλόγου Επιλογές στην "
-#~ "καρτέλα Διάφορα)"
+#~ "(ΞΟ€ΞΏΟΞµΞ―Ο„Ξµ Ο€Ξ¬Ξ½Ο„Ξ± Ξ½Ξ± Ο„Ξ·Ξ½ ΞµΞ½ΞµΟΞ³ΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΟ„Ξµ ΟƒΟ„ΞΏ Ο€Ξ±ΟΞ¬ΞΈΟ…ΟΞΏ Ξ΄ΞΉΞ±Ξ»ΟΞ³ΞΏΟ… Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ­Ο‚ ΟƒΟ„Ξ·Ξ½ "
+#~ "ΞΊΞ±ΟΟ„Ξ­Ξ»Ξ± Ξ”ΞΉΞ¬Ο†ΞΏΟΞ±)"
 
 #~ msgid "Check for updates automatically"
-#~ msgstr "Αυτόματος έλεγχος ενημερώσεων"
+#~ msgstr "Ξ‘Ο…Ο„ΟΞΌΞ±Ο„ΞΏΟ‚ Ξ­Ξ»ΞµΞ³Ο‡ΞΏΟ‚ ΞµΞ½Ξ·ΞΌΞµΟΟΟƒΞµΟ‰Ξ½"
 
 #~ msgid "8 kHz"
 #~ msgstr "8 kHz"
@@ -4744,28 +4743,28 @@ msgstr ""
 #~ msgstr "48 kHz"
 
 #~ msgid "Output rate:"
-#~ msgstr "Ρυθμός εξόδου:"
+#~ msgstr "Ξ΅Ο…ΞΈΞΌΟΟ‚ ΞµΞΎΟΞ΄ΞΏΟ…:"
 
 #~ msgid ""
 #~ "Higher value specifies better sound quality but may be not supported by "
 #~ "your soundcard"
 #~ msgstr ""
-#~ "Υψηλότερη τιμή καθορίζει καλύτερη ποιότητα ήχου, αλλά μπορεί να μην "
-#~ "υποστηρίζεται από την κάρτα ήχου σας"
+#~ "Ξ¥ΟΞ·Ξ»ΟΟ„ΞµΟΞ· Ο„ΞΉΞΌΞ® ΞΊΞ±ΞΈΞΏΟΞ―Ξ¶ΞµΞΉ ΞΊΞ±Ξ»ΟΟ„ΞµΟΞ· Ο€ΞΏΞΉΟΟ„Ξ·Ο„Ξ± Ξ®Ο‡ΞΏΟ…, Ξ±Ξ»Ξ»Ξ¬ ΞΌΟ€ΞΏΟΞµΞ― Ξ½Ξ± ΞΌΞ·Ξ½ "
+#~ "Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΟ„Ξ±ΞΉ Ξ±Ο€Ο Ο„Ξ·Ξ½ ΞΊΞ¬ΟΟ„Ξ± Ξ®Ο‡ΞΏΟ… ΟƒΞ±Ο‚"
 
 #~ msgid ""
 #~ "The theme you selected does not support your current language. If you "
 #~ "want to use this theme you need to switch to another language first."
 #~ msgstr ""
-#~ "Το θέμα που επιλέξατε δεν υποστηρίζει την τρέχουσα γλώσσα σας. Αν "
-#~ "επιθυμείτε να χρησιμοποιήσετε αυτό το θέμα θα πρέπει πρώτα να αλλάξετε σε "
-#~ "κάποια άλλη γλώσσα."
+#~ "Ξ¤ΞΏ ΞΈΞ­ΞΌΞ± Ο€ΞΏΟ… ΞµΟ€ΞΉΞ»Ξ­ΞΎΞ±Ο„Ξµ Ξ΄ΞµΞ½ Ο…Ο€ΞΏΟƒΟ„Ξ·ΟΞ―Ξ¶ΞµΞΉ Ο„Ξ·Ξ½ Ο„ΟΞ­Ο‡ΞΏΟ…ΟƒΞ± Ξ³Ξ»ΟΟƒΟƒΞ± ΟƒΞ±Ο‚. Ξ‘Ξ½ "
+#~ "ΞµΟ€ΞΉΞΈΟ…ΞΌΞµΞ―Ο„Ξµ Ξ½Ξ± Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞ®ΟƒΞµΟ„Ξµ Ξ±Ο…Ο„Ο Ο„ΞΏ ΞΈΞ­ΞΌΞ± ΞΈΞ± Ο€ΟΞ­Ο€ΞµΞΉ Ο€ΟΟΟ„Ξ± Ξ½Ξ± Ξ±Ξ»Ξ»Ξ¬ΞΎΞµΟ„Ξµ ΟƒΞµ "
+#~ "ΞΊΞ¬Ο€ΞΏΞΉΞ± Ξ¬Ξ»Ξ»Ξ· Ξ³Ξ»ΟΟƒΟƒΞ±."
 
 #, fuzzy
 #~ msgid "Speed multiplier for mouse emulation"
-#~ msgstr "Εξομοίωση αριστερού κουμπιού ποντικιού"
+#~ msgstr "Ξ•ΞΎΞΏΞΌΞΏΞ―Ο‰ΟƒΞ· Ξ±ΟΞΉΟƒΟ„ΞµΟΞΏΟ ΞΊΞΏΟ…ΞΌΟ€ΞΉΞΏΟ Ο€ΞΏΞ½Ο„ΞΉΞΊΞΉΞΏΟ"
 
 #, fuzzy
 #~ msgctxt "lowres"
 #~ msgid "Mouse Speed:"
-#~ msgstr "Ταχύτητα:"
+#~ msgstr "Ξ¤Ξ±Ο‡ΟΟ„Ξ·Ο„Ξ±:"
