@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2018-04-15 19:57+0200\n"
+"POT-Creation-Date: 2018-04-18 20:19+0200\n"
 "PO-Revision-Date: 2018-04-18 10:13+0000\n"
 "Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
-"Language-Team: Norwegian Nynorsk "
-"<https://translations.scummvm.org/projects/scummvm/scummvm/nn/>\n"
+"Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
+"scummvm/scummvm/nn/>\n"
 "Language: nn_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -167,7 +167,7 @@ msgstr ""
 #: engines/sword1/control.cpp:887 engines/sword1/logic.cpp:1633
 #: engines/sword2/animation.cpp:425 engines/sword2/animation.cpp:445
 #: engines/sword2/animation.cpp:461 engines/sword2/animation.cpp:471
-#: engines/zvision/file/save_manager.cpp:224
+#: engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
 
@@ -4593,7 +4593,7 @@ msgstr ""
 "Nytt MPEG video frå DVD-versjonen, framfor AVI-versjonen med lågare "
 "oppløysning"
 
-#: engines/zvision/file/save_manager.cpp:220
+#: engines/zvision/file/save_manager.cpp:221
 #, c-format
 msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
