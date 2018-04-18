@@ -133,7 +133,7 @@ BaseMenu *DuckmanMenuSystem::createSaveCompleteMenu() {
 	BaseMenu *menu = new BaseMenu(this, 0x00120003, 12, 17, 11, 27, 1);
 	menu->addText("Game Saved");
 	menu->addText("-------------");
-	menu->addMenuItem(new MenuItem("Continue", new MenuActionLeaveMenu(this)));
+	menu->addMenuItem(new MenuItem("Continue", new MenuActionReturnChoice(this, 1)));
 	return menu;
 }
 
@@ -145,9 +145,9 @@ int DuckmanMenuSystem::convertRootMenuId(uint32 menuId) {
 		return kDuckmanPauseMenu;
 	case 0x180005:
 		return kDuckmanSaveCompleteMenu;
-	/* Debug menus, not implemented
-	case 0x180006:
-	case 0x180007:
+	/*
+	case 0x180006: // save game failed menu
+	case 0x180007: // load game failed menu
 	*/
 	/* TODO CHECKME Another pause menu?
 	case 0x180008:
