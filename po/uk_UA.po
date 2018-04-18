@@ -10,12 +10,12 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-18 20:19+0200\n"
 "PO-Revision-Date: 2018-04-18 10:18+0000\n"
-"Last-Translator: Adrian FrГјhwirth <bonki@scummvm.org>\n"
+"Last-Translator: Adrian Fruehwirth <bonki@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
 "Language: uk_UA\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=iso-8859-5\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
@@ -25,37 +25,37 @@ msgstr ""
 #: gui/about.cpp:94
 #, c-format
 msgid "(built on %s)"
-msgstr "(Р·С–Р±СЂР°РЅРёР№ %s)"
+msgstr "(ЧцСаРЭШЩ %s)"
 
 #: gui/about.cpp:101
 msgid "Features compiled in:"
-msgstr "Р’РєР»СЋС‡РµРЅС– РІ Р±С–Р»Рґ РѕРїС†С–С—:"
+msgstr "ІЪЫозХЭц Т СцЫФ ЮЯжцч:"
 
 #: gui/about.cpp:110
 msgid "Available engines:"
-msgstr "Р”РѕСЃС‚СѓРїРЅС– РґРІРёР¶РєРё:"
+msgstr "ґЮбвгЯЭц ФТШЦЪШ:"
 
 #: gui/browser.cpp:69 gui/browser_osx.mm:84
 msgid "Show hidden files"
-msgstr "РџРѕРєР°Р·Р°С‚Рё cС…РѕРІР°РЅС– С„Р°Р№Р»С–"
+msgstr "їЮЪРЧРвШ cеЮТРЭц дРЩЫц"
 
 #: gui/browser.cpp:69
 msgid "Show files marked with the hidden attribute"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё С„Р°Р№Р»Рё СЏРєС– РїРѕРјС–С‡РµРЅРѕ СЏРє СЃС…РѕРІР°РЅС–"
+msgstr "їЮЪРЧгТРвШ дРЩЫШ пЪц ЯЮЬцзХЭЮ пЪ беЮТРЭц"
 
 #: gui/browser.cpp:73 gui/remotebrowser.cpp:57
 msgid "Go up"
-msgstr "Р’РіРѕСЂСѓ"
+msgstr "ІУЮаг"
 
 #: gui/browser.cpp:73 gui/browser.cpp:75 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr "РџРµСЂРµР№С‚Рё РЅР° РїР°РїРєСѓ СЂС–РІРЅРµРј РІРёС‰Рµ"
+msgstr "їХаХЩвШ ЭР ЯРЯЪг ацТЭХЬ ТШйХ"
 
 #: gui/browser.cpp:75 gui/remotebrowser.cpp:59
 msgctxt "lowres"
 msgid "Go up"
-msgstr "Р’РіРѕСЂСѓ"
+msgstr "ІУЮаг"
 
 #: gui/browser.cpp:76 gui/chooser.cpp:46 gui/editgamedialog.cpp:293
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
@@ -71,50 +71,50 @@ msgstr "Р’РіРѕСЂСѓ"
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:187
 #: engines/sword1/control.cpp:887
 msgid "Cancel"
-msgstr "Р’С–РґРјС–РЅР°"
+msgstr "ІцФЬцЭР"
 
 #: gui/browser.cpp:77 gui/browser_osx.mm:151 gui/chooser.cpp:47
 #: gui/filebrowser-dialog.cpp:66 gui/remotebrowser.cpp:61
 #: gui/themebrowser.cpp:56
 msgid "Choose"
-msgstr "Р’РёР±СЂР°С‚Рё"
+msgstr "ІШСаРвШ"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РїР°РїРєСѓ РєСѓРґРё Р·Р°РІР°РЅС‚Р°Р¶СѓРІР°С‚Рё С„Р°Р№Р»Рё РіСЂРё"
+msgstr "ІШСХацвм ЯРЯЪг ЪгФШ ЧРТРЭвРЦгТРвШ дРЩЫШ УаШ"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:471 gui/launcher.cpp:197
 msgid "Select directory with game data"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РїР°РїРєСѓ Р· С„Р°Р№Р»Р°РјРё РіСЂРё"
+msgstr "ІШСХацвм ЯРЯЪг Ч дРЩЫРЬШ УаШ"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:264
 msgid "From: "
-msgstr "Р’С–Рґ: "
+msgstr "ІцФ: "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:265
 msgid "To: "
-msgstr "Р”Рѕ: "
+msgstr "ґЮ: "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
-msgstr "РџСЂРёРїРёРЅРёС‚Рё Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ"
+msgstr "їаШЯШЭШвШ ЧРТРЭвРЦХЭЭп"
 
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr "РџСЂРёРїРёРЅРёС‚Рё"
+msgstr "їаШЯШЭШвШ"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr "РЎС…РѕРІР°С‚Рё"
+msgstr "БеЮТРвШ"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
-"Р’РёРіР»СЏРґР°С”, С‰Рѕ РІР°С€Рµ РїРѕС‚РѕС‡РЅРµ Р·'С”РґРЅР°РЅРЅСЏ Р»С–РјС–С‚РѕРІР°РЅРѕ. Р’Рё РЅР°СЃРїСЂР°РІРґС– С…РѕС‡РµС‚Рµ Р·Р°СЂР°Р· "
-"Р·Р°РІР°РЅС‚Р°Р¶СѓРІР°С‚Рё С„Р°Р№Р»Рё РЅР° С†СЊРѕРјСѓ Р·'С”РґРЅР°РЅРЅС–?"
+"ІШУЫпФРф, йЮ ТРиХ ЯЮвЮзЭХ Ч'фФЭРЭЭп ЫцЬцвЮТРЭЮ. ІШ ЭРбЯаРТФц еЮзХвХ ЧРаРЧ "
+"ЧРТРЭвРЦгТРвШ дРЩЫШ ЭР жмЮЬг Ч'фФЭРЭЭц?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -127,7 +127,7 @@ msgstr ""
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:820
 msgid "Yes"
-msgstr "РўР°Рє"
+msgstr "ВРЪ"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -140,19 +140,19 @@ msgstr "РўР°Рє"
 #: engines/kyra/saveload_eob.cpp:557 engines/kyra/saveload_eob.cpp:590
 #: engines/sci/graphics/controls32.cpp:820
 msgid "No"
-msgstr "РќС–"
+msgstr "Ѕц"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:569
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVM РЅРµ РјРѕР¶Рµ РІС–РґРєСЂРёС‚Рё РІРєР°Р·Р°РЅСѓ РїР°РїРєСѓ!"
+msgstr "ScummVM ЭХ ЬЮЦХ ТцФЪаШвШ ТЪРЧРЭг ЯРЯЪг!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
-"РќРµРјРѕР¶Р»РёРІРѕ СЃС‚РІРѕСЂРёС‚Рё РїР°РїРєСѓ РґР»СЏ СЃРєР°С‡СѓРІР°РЅРЅСЏ: РІРєР°Р·Р°РЅР° РїР°РїРєР° РјР°С” С„Р°Р№Р» Р· С‚Р°РєРѕСЋ Р¶ "
-"РЅР°Р·РІРѕСЋ."
+"ЅХЬЮЦЫШТЮ бвТЮаШвШ ЯРЯЪг ФЫп бЪРзгТРЭЭп: ТЪРЧРЭР ЯРЯЪР ЬРф дРЩЫ Ч вРЪЮо Ц "
+"ЭРЧТЮо."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:294
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:42 gui/launcher.cpp:526
@@ -181,22 +181,22 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"\"%s\" РІР¶Рµ С–СЃРЅСѓС” Сѓ РІРєР°Р·Р°РЅС–Р№ РїР°РїС†С–.\n"
-"Р§Рё РІРё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё С„Р°Р№Р»Рё РІ С†СЋ РїР°РїРєСѓ?"
+"\"%s\" ТЦХ цбЭгф г ТЪРЧРЭцЩ ЯРЯжц.\n"
+"ЗШ ТШ ФцЩбЭЮ еЮзХвХ ЧРТРЭвРЦШвШ дРЩЫШ Т жо ЯРЯЪг?"
 
 #: gui/downloaddialog.cpp:252
 #, c-format
 msgid "Downloaded %s %s / %s %s"
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶РµРЅРѕ %s %s Р· %s %s"
+msgstr "·РТРЭвРЦХЭЮ %s %s Ч %s %s"
 
 #: gui/downloaddialog.cpp:259
 #, c-format
 msgid "Download speed: %s %s"
-msgstr "РЁРІРёРґРєС–СЃС‚СЊ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ: %s %s"
+msgstr "ИТШФЪцбвм ЧРТРЭвРЦХЭЭп: %s %s"
 
 #: gui/editgamedialog.cpp:133
 msgid "Game"
-msgstr "Р“СЂР°"
+msgstr "іаР"
 
 #: gui/editgamedialog.cpp:137
 msgid "ID:"
@@ -208,8 +208,8 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
-"РљРѕСЂРѕС‚РєРёР№ С–РґРµРЅС‚РёС„С–РєР°С‚РѕСЂ, СЏРєРёР№ РІРёРєРѕСЂРёСЃС‚РѕРІСѓС”С‚СЊСЃСЏ РґР»СЏ РЅР°Р·РІ Р·Р±РµСЂРµР¶РµРЅРёС… С–РіРѕСЂ С– РґР»СЏ "
-"Р·Р°РїСѓСЃРєСѓ Р· РєРѕРјР°РЅРґРЅРѕС— СЃС‚СЂС–С‡РєРё"
+"єЮаЮвЪШЩ цФХЭвШдцЪРвЮа, пЪШЩ ТШЪЮаШбвЮТгфвмбп ФЫп ЭРЧТ ЧСХаХЦХЭШе цУЮа ц ФЫп "
+"ЧРЯгбЪг Ч ЪЮЬРЭФЭЮч бвацзЪШ"
 
 #: gui/editgamedialog.cpp:139
 msgctxt "lowres"
@@ -218,100 +218,100 @@ msgstr "ID:"
 
 #: gui/editgamedialog.cpp:144 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr "РќР°Р·РІР°:"
+msgstr "ЅРЧТР:"
 
 #: gui/editgamedialog.cpp:144 gui/editgamedialog.cpp:146
 #: gui/editgamedialog.cpp:147
 msgid "Full title of the game"
-msgstr "РџРѕРІРЅР° РЅР°Р·РІР° РіСЂРё"
+msgstr "їЮТЭР ЭРЧТР УаШ"
 
 #: gui/editgamedialog.cpp:146
 msgctxt "lowres"
 msgid "Name:"
-msgstr "РќР°Р·РІР°:"
+msgstr "ЅРЧТР:"
 
 #: gui/editgamedialog.cpp:150
 msgid "Language:"
-msgstr "РњРѕРІР°:"
+msgstr "јЮТР:"
 
 #: gui/editgamedialog.cpp:150 gui/editgamedialog.cpp:151
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
 msgstr ""
-"РњРѕРІР° РіСЂРё. Р—РјС–РЅР° С†СЊРѕРіРѕ РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РЅРµ РїРµСЂРµС‚РІРѕСЂРёС‚СЊ РіСЂСѓ Р°РЅРіР»С–Р№СЃСЊРєРѕСЋ РЅР° "
-"СѓРєСЂР°С—РЅСЃСЊРєСѓ"
+"јЮТР УаШ. ·ЬцЭР жмЮУЮ ЭРЫРивгТРЭЭп ЭХ ЯХаХвТЮаШвм Уаг РЭУЫцЩбмЪЮо ЭР "
+"гЪаРчЭбмЪг"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:166 gui/options.cpp:995
 #: gui/options.cpp:1008 gui/options.cpp:1573 audio/null.cpp:41
 msgid "<default>"
-msgstr "<Р·Р° СѓРјРѕРІС‡Р°РЅРЅСЏРј>"
+msgstr "<ЧР гЬЮТзРЭЭпЬ>"
 
 #: gui/editgamedialog.cpp:162
 msgid "Platform:"
-msgstr "РџР»Р°С‚С„РѕСЂРјР°:"
+msgstr "їЫРвдЮаЬР:"
 
 #: gui/editgamedialog.cpp:162 gui/editgamedialog.cpp:164
 #: gui/editgamedialog.cpp:165
 msgid "Platform the game was originally designed for"
-msgstr "РџР»Р°С‚С„РѕСЂРјР°, РґР»СЏ СЏРєРѕС— РіСЂСѓ Р±СѓР»Рѕ СЂРѕР·СЂРѕР±Р»РµРЅРѕ РїРѕС‡Р°С‚РєРѕРІРѕ"
+msgstr "їЫРвдЮаЬР, ФЫп пЪЮч Уаг СгЫЮ аЮЧаЮСЫХЭЮ ЯЮзРвЪЮТЮ"
 
 #: gui/editgamedialog.cpp:164
 msgctxt "lowres"
 msgid "Platform:"
-msgstr "РџР»Р°С‚С„РѕСЂРјР°:"
+msgstr "їЫРвдЮаЬР:"
 
 #: gui/editgamedialog.cpp:177
 msgid "Engine"
-msgstr "Р”РІРёР¶РѕРє"
+msgstr "ґТШЦЮЪ"
 
 #: gui/editgamedialog.cpp:185 gui/options.cpp:1343 gui/options.cpp:1428
 msgid "Graphics"
-msgstr "Р“СЂР°С„С–РєР°"
+msgstr "іаРдцЪР"
 
 #: gui/editgamedialog.cpp:185 gui/options.cpp:1343 gui/options.cpp:1428
 msgid "GFX"
-msgstr "Р“СЂС„"
+msgstr "іад"
 
 #: gui/editgamedialog.cpp:188
 msgid "Override global graphic settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РіСЂР°С„С–РєРё"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп УаРдцЪШ"
 
 #: gui/editgamedialog.cpp:190
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РіСЂР°С„С–РєРё"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп УаРдцЪШ"
 
 #: gui/editgamedialog.cpp:197 gui/options.cpp:1455
 msgid "Audio"
-msgstr "РђСѓРґС–Рѕ"
+msgstr "°гФцЮ"
 
 #: gui/editgamedialog.cpp:200
 msgid "Override global audio settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ Р°СѓРґС–Рѕ"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп РгФцЮ"
 
 #: gui/editgamedialog.cpp:202
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ Р°СѓРґС–Рѕ"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп РгФцЮ"
 
 #: gui/editgamedialog.cpp:211 gui/options.cpp:1460
 msgid "Volume"
-msgstr "Р“СѓС‡РЅС–СЃС‚СЊ"
+msgstr "ігзЭцбвм"
 
 #: gui/editgamedialog.cpp:213 gui/options.cpp:1462
 msgctxt "lowres"
 msgid "Volume"
-msgstr "Р“СѓС‡РЅ"
+msgstr "ігзЭ"
 
 #: gui/editgamedialog.cpp:216
 msgid "Override global volume settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РіСѓС‡РЅРѕСЃС‚С–"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп УгзЭЮбвц"
 
 #: gui/editgamedialog.cpp:218
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РіСѓС‡РЅРѕСЃС‚С–"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп УгзЭЮбвц"
 
 #: gui/editgamedialog.cpp:227 gui/options.cpp:1470
 msgid "MIDI"
@@ -319,12 +319,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:230
 msgid "Override global MIDI settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ MIDI"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп MIDI"
 
 #: gui/editgamedialog.cpp:232
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ MIDI"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп MIDI"
 
 #: gui/editgamedialog.cpp:242 gui/options.cpp:1480
 msgid "MT-32"
@@ -332,59 +332,59 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:245
 msgid "Override global MT-32 settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ MT-32"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп MT-32"
 
 #: gui/editgamedialog.cpp:247
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "РџРµСЂРµРєСЂРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ MT-32"
+msgstr "їХаХЪаШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп MT-32"
 
 #: gui/editgamedialog.cpp:256 gui/options.cpp:1487
 msgid "Paths"
-msgstr "РЁР»СЏС…Рё"
+msgstr "ИЫпеШ"
 
 #: gui/editgamedialog.cpp:258 gui/options.cpp:1489
 msgctxt "lowres"
 msgid "Paths"
-msgstr "РЁР»СЏС…Рё"
+msgstr "ИЫпеШ"
 
 #: gui/editgamedialog.cpp:265
 msgid "Game Path:"
-msgstr "РЁР»СЏС… РґРѕ РіСЂРё:"
+msgstr "ИЫпе ФЮ УаШ:"
 
 #: gui/editgamedialog.cpp:267
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr "РЁР»СЏС… РґРѕ РіСЂРё:"
+msgstr "ИЫпе ФЮ УаШ:"
 
 #: gui/editgamedialog.cpp:272 gui/options.cpp:1513
 msgid "Extra Path:"
-msgstr "Р”РѕРґР°С‚Рє. С€Р»СЏС…:"
+msgstr "ґЮФРвЪ. иЫпе:"
 
 #: gui/editgamedialog.cpp:272 gui/editgamedialog.cpp:274
 #: gui/editgamedialog.cpp:275
 msgid "Specifies path to additional data used by the game"
-msgstr "Р’РєР°Р·СѓС” С€Р»СЏС… РґРѕ РґРѕРґР°С‚РєРѕРІРёС… С„Р°Р№Р»С–РІ РґР°РЅРёС… РґР»СЏ РіСЂРё"
+msgstr "ІЪРЧгф иЫпе ФЮ ФЮФРвЪЮТШе дРЩЫцТ ФРЭШе ФЫп УаШ"
 
 #: gui/editgamedialog.cpp:274 gui/options.cpp:1515
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr "Р”РѕРґ. С€Р»СЏС…:"
+msgstr "ґЮФ. иЫпе:"
 
 #: gui/editgamedialog.cpp:281 gui/options.cpp:1497
 msgid "Save Path:"
-msgstr "РЁР»СЏС… Р·Р±РµСЂ.:"
+msgstr "ИЫпе ЧСХа.:"
 
 #: gui/editgamedialog.cpp:281 gui/editgamedialog.cpp:283
 #: gui/editgamedialog.cpp:284 gui/options.cpp:1497 gui/options.cpp:1499
 #: gui/options.cpp:1500
 msgid "Specifies where your saved games are put"
-msgstr "Р’РєР°Р·СѓС” С€Р»СЏС… РґРѕ Р·Р±РµСЂРµР¶РµРЅРёС… С–РіРѕСЂ"
+msgstr "ІЪРЧгф иЫпе ФЮ ЧСХаХЦХЭШе цУЮа"
 
 #: gui/editgamedialog.cpp:283 gui/options.cpp:1499
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr "РЁР»СЏС… Р·Р±РµСЂ.:"
+msgstr "ИЫпе ЧСХа.:"
 
 #: gui/editgamedialog.cpp:302 gui/editgamedialog.cpp:399
 #: gui/editgamedialog.cpp:458 gui/editgamedialog.cpp:519 gui/options.cpp:1508
@@ -395,90 +395,90 @@ msgstr "РЁР»СЏС… Р·Р±РµСЂ.:"
 #: gui/options.cpp:2001 gui/options.cpp:2011
 msgctxt "path"
 msgid "None"
-msgstr "РќРµ Р·Р°РІРґР°РЅРѕ"
+msgstr "ЅХ ЧРТФРЭЮ"
 
 #: gui/editgamedialog.cpp:307 gui/editgamedialog.cpp:405
 #: gui/editgamedialog.cpp:523 gui/options.cpp:1699 gui/options.cpp:1769
 #: gui/options.cpp:1997 backends/platform/wii/options.cpp:56
 msgid "Default"
-msgstr "Р—Р° СѓРјРѕРІС‡Р°РЅРЅСЏРј"
+msgstr "·Р гЬЮТзРЭЭпЬ"
 
 #: gui/editgamedialog.cpp:451 gui/options.cpp:2005
 msgid "Select SoundFont"
-msgstr "Р’РёР±РµСЂС–С‚СЊ SoundFont"
+msgstr "ІШСХацвм SoundFont"
 
 #: gui/editgamedialog.cpp:490
 msgid "Select additional game directory"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РґРѕРґР°С‚РєРѕРІСѓ РїР°РїРєСѓ РіСЂРё"
+msgstr "ІШСХацвм ФЮФРвЪЮТг ЯРЯЪг УаШ"
 
 #: gui/editgamedialog.cpp:503 gui/options.cpp:1928
 msgid "Select directory for saved games"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РїР°РїРєСѓ РґР»СЏ Р·Р±РµСЂРµР¶РµРЅРёС… С–РіРѕСЂ"
+msgstr "ІШСХацвм ЯРЯЪг ФЫп ЧСХаХЦХЭШе цУЮа"
 
 #: gui/editgamedialog.cpp:509
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
-"РЎРёРЅС…СЂРѕРЅС–Р·Р°С†С–СЏ Р·Р±РµСЂРµР¶РµРЅРёС… С–РіРѕСЂ РїСЂР°С†СЋС” С‚С–Р»СЊРєРё Р· РїР°РїРєРѕСЋ Р·Р° Р·Р°РјРѕРІС‡РµРЅРЅСЏРј. РЇРєС‰Рѕ РІРё "
-"С…РѕС‡РµС‚Рµ, С‰РѕР± РІР°С€С– Р·Р±РµСЂРµР¶РµРЅС– С–РіСЂРё СЃРёРЅС…СЂРѕРЅС–Р·СѓРІР°Р»РёСЃСЏ, РІРёРєРѕСЂРёСЃС‚РѕРІСѓР№С‚Рµ РїР°РїРєСѓ Р·Р° "
-"Р·Р°РјРѕРІС‡РµРЅРЅСЏРј."
+"БШЭеаЮЭцЧРжцп ЧСХаХЦХЭШе цУЮа ЯаРжоф вцЫмЪШ Ч ЯРЯЪЮо ЧР ЧРЬЮТзХЭЭпЬ. ПЪйЮ ТШ "
+"еЮзХвХ, йЮС ТРиц ЧСХаХЦХЭц цУаШ бШЭеаЮЭцЧгТРЫШбп, ТШЪЮаШбвЮТгЩвХ ЯРЯЪг ЧР "
+"ЧРЬЮТзХЭЭпЬ."
 
 #: gui/editgamedialog.cpp:535
 msgid "This game ID is already taken. Please choose another one."
-msgstr "Р¦РµР№ ID РіСЂРё РІР¶Рµ РІРёРєРѕСЂРёСЃС‚РѕРІСѓС”С‚СЊСЃСЏ. Р‘СѓРґСЊ Р»Р°СЃРєР°, РІРёР±РµСЂС–С‚СЊ С–РЅС€РёР№."
+msgstr "ЖХЩ ID УаШ ТЦХ ТШЪЮаШбвЮТгфвмбп. ±гФм ЫРбЪР, ТШСХацвм цЭиШЩ."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr "РђРІС‚РѕСЂ:"
+msgstr "°ТвЮа:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr "РџСЂРёРјС–С‚РєРё:"
+msgstr "їаШЬцвЪШ:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr "Р“Р°СЂР°Р·Рґ"
+msgstr "іРаРЧФ"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
-msgstr "РћР±РµСЂС–С‚СЊ С„Р°Р№Р» РґР»СЏ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ"
+msgstr "ѕСХацвм дРЩЫ ФЫп ЧРТРЭвРЦХЭЭп"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr "РќР°РґР°Р№С‚Рµ С–Рј'СЏ С„Р°Р№Р»Сѓ РґР»СЏ Р·Р°РїРёСЃСѓ"
+msgstr "ЅРФРЩвХ цЬ'п дРЩЫг ФЫп ЧРЯШбг"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
-msgstr "Р§Рё РІРё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ Р·Р°РјС–РЅРёС‚Рё С†РµР№ С„Р°Р№Р»?"
+msgstr "ЗШ ТШ ФцЩбЭЮ еЮзХвХ ЧРЬцЭШвШ жХЩ дРЩЫ?"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
-msgstr "Р РµРІРµСЂР±РµСЂР°С†С–СЏ"
+msgstr "АХТХаСХаРжцп"
 
 #: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
 msgid "Active"
-msgstr "РђРєС‚РёРІРЅРµ"
+msgstr "°ЪвШТЭХ"
 
 #: gui/fluidsynth-dialog.cpp:73
 msgid "Room:"
-msgstr "РљС–РјРЅР°С‚Р°:"
+msgstr "єцЬЭРвР:"
 
 #: gui/fluidsynth-dialog.cpp:80
 msgid "Damp:"
-msgstr "Р’РѕР»РѕРіС–СЃС‚СЊ:"
+msgstr "ІЮЫЮУцбвм:"
 
 #: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
-msgstr "РЁРёСЂРёРЅР°:"
+msgstr "ИШаШЭР:"
 
 #: gui/fluidsynth-dialog.cpp:94 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
-msgstr "Р С–РІРµРЅСЊ:"
+msgstr "АцТХЭм:"
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
-msgstr "РџСЂРёСЃРїС–РІ"
+msgstr "їаШбЯцТ"
 
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
@@ -486,208 +486,208 @@ msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
-msgstr "РЁРІРёРґРєС–СЃС‚СЊ:"
+msgstr "ИТШФЪцбвм:"
 
 #: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
-msgstr "Р“Р»РёР±РёРЅР°:"
+msgstr "іЫШСШЭР:"
 
 #: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
-msgstr "РўРёРї:"
+msgstr "ВШЯ:"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
-msgstr "РЎРёРЅСѓСЃРѕС—РґР°"
+msgstr "БШЭгбЮчФР"
 
 #: gui/fluidsynth-dialog.cpp:137
 msgid "Triangle"
-msgstr "РўСЂРёРєСѓС‚РЅРёРє"
+msgstr "ВаШЪгвЭШЪ"
 
 #: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1533
 msgid "Misc"
-msgstr "Р С–Р·РЅРµ"
+msgstr "АцЧЭХ"
 
 #: gui/fluidsynth-dialog.cpp:141
 msgid "Interpolation:"
-msgstr "Р†РЅС‚РµСЂРїРѕР»СЏС†С–СЏ:"
+msgstr "¦ЭвХаЯЮЫпжцп:"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
-msgstr "РќРµРјР° (РЅР°Р№С€РІРёРґС€Рµ)"
+msgstr "ЅХЬР (ЭРЩиТШФиХ)"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
-msgstr "Р›С–РЅС–Р№РЅР°"
+msgstr "»цЭцЩЭР"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
-msgstr "Р§РµС‚РІРµСЂС‚РѕРіРѕ РїРѕСЂСЏРґРєСѓ"
+msgstr "ЗХвТХавЮУЮ ЯЮапФЪг"
 
 #: gui/fluidsynth-dialog.cpp:147
 msgid "Seventh-order"
-msgstr "РЎСЊРѕРјРѕРіРѕ РїРѕСЂСЏРґРєСѓ"
+msgstr "БмЮЬЮУЮ ЯЮапФЪг"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset"
-msgstr "РЎРєРёРЅСѓС‚Рё"
+msgstr "БЪШЭгвШ"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr "РЎРєРёРЅСѓС‚Рё РІСЃС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ FluidSynth РґРѕ С—С… Р·РЅР°С‡РµРЅСЊ Р·Р° Р·Р°РјРѕРІС‡РµРЅРЅСЏРј."
+msgstr "БЪШЭгвШ Тбц ЭРЫРивгТРЭЭп FluidSynth ФЮ че ЧЭРзХЭм ЧР ЧРЬЮТзХЭЭпЬ."
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
-"Р’Рё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ СЃРєРёРЅСѓС‚Рё РІСЃС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ FluidSynth РґРѕ С—С… Р·РЅР°С‡РµРЅСЊ Р·Р° "
-"Р·Р°РјРѕРІС‡РµРЅРЅСЏРј?"
+"ІШ ФцЩбЭЮ еЮзХвХ бЪШЭгвШ Тбц ЭРЫРивгТРЭЭп FluidSynth ФЮ че ЧЭРзХЭм ЧР "
+"ЧРЬЮТзХЭЭпЬ?"
 
 #: gui/gui-manager.cpp:119 backends/keymapper/remap-dialog.cpp:53
 #: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
 #: engines/scumm/help.cpp:166 engines/scumm/help.cpp:192
 #: engines/scumm/help.cpp:210
 msgid "Close"
-msgstr "Р—Р°РєСЂРёС‚Рё"
+msgstr "·РЪаШвШ"
 
 #: gui/gui-manager.cpp:122
 msgid "Mouse click"
-msgstr "РљР»С–Рє РјРёС€РєРѕСЋ"
+msgstr "єЫцЪ ЬШиЪЮо"
 
 #: gui/gui-manager.cpp:126 base/main.cpp:341
 msgid "Display keyboard"
-msgstr "РџРѕРєР°Р·Р°С‚Рё РєР»Р°РІС–Р°С‚СѓСЂСѓ"
+msgstr "їЮЪРЧРвШ ЪЫРТцРвгаг"
 
 #: gui/gui-manager.cpp:130 base/main.cpp:345
 msgid "Remap keys"
-msgstr "РџРµСЂРµРїСЂРёР·РЅР°С‡РёС‚Рё РєР»Р°РІС–С€С–"
+msgstr "їХаХЯаШЧЭРзШвШ ЪЫРТциц"
 
 #: gui/gui-manager.cpp:133 base/main.cpp:348 engines/scumm/help.cpp:87
 msgid "Toggle fullscreen"
-msgstr "РџРµСЂРµРјРєРЅСѓС‚Рё РїРѕРІРЅРѕРµРєСЂР°РЅРЅРёР№ СЂРµР¶РёРј"
+msgstr "їХаХЬЪЭгвШ ЯЮТЭЮХЪаРЭЭШЩ аХЦШЬ"
 
 #: gui/KeysDialog.cpp:41
 msgid "Map"
-msgstr "РџСЂРёР·РЅР°С‡РёС‚Рё"
+msgstr "їаШЧЭРзШвШ"
 
 #: gui/KeysDialog.cpp:49
 msgid "Select an action and click 'Map'"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РґС–СЋ С– РєР»С–РєРЅС–С‚СЊ 'РџСЂРёР·РЅР°С‡РёС‚Рё'"
+msgstr "ІШСХацвм Фцо ц ЪЫцЪЭцвм 'їаШЧЭРзШвШ'"
 
 #: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
 #, c-format
 msgid "Associated key : %s"
-msgstr "РџСЂРёР·РЅР°С‡РµРЅР° РєР»Р°РІС–С€Р° : %s"
+msgstr "їаШЧЭРзХЭР ЪЫРТциР : %s"
 
 #: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
 msgid "Associated key : none"
-msgstr "РџСЂРёР·РЅР°С‡РµРЅР° РєР»Р°РІС–С€Р° : РЅРµРјР°С”"
+msgstr "їаШЧЭРзХЭР ЪЫРТциР : ЭХЬРф"
 
 #: gui/KeysDialog.cpp:90
 msgid "Please select an action"
-msgstr "Р‘СѓРґСЊ Р»Р°СЃРєР°, РІРёР±РµСЂС–С‚СЊ РґС–СЋ"
+msgstr "±гФм ЫРбЪР, ТШСХацвм Фцо"
 
 #: gui/KeysDialog.cpp:106
 msgid "Press the key to associate"
-msgstr "РќР°С‚РёСЃРЅС–С‚СЊ РєР»Р°РІС–С€Сѓ РґР»СЏ РїСЂРёР·РЅР°С‡РµРЅРЅСЏ"
+msgstr "ЅРвШбЭцвм ЪЫРТциг ФЫп ЯаШЧЭРзХЭЭп"
 
 #: gui/KeysDialog.cpp:145 gui/KeysDialog.h:36
 msgid "Choose an action to map"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РґС–СЋ РґР»СЏ РїСЂРёР·РЅР°С‡РµРЅРЅСЏ"
+msgstr "ІШСХацвм Фцо ФЫп ЯаШЧЭРзХЭЭп"
 
 #: gui/launcher.cpp:141 engines/dialogs.cpp:111 engines/mohawk/dialogs.cpp:100
 msgid "~Q~uit"
-msgstr "~Р’~РёС…С–Рґ"
+msgstr "~І~ШецФ"
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:112
 msgid "Quit ScummVM"
-msgstr "Р’РёС…С–Рґ Р·С– ScummVM"
+msgstr "ІШецФ Чц ScummVM"
 
 #: gui/launcher.cpp:142
 msgid "A~b~out..."
-msgstr "РџСЂРѕ Рї~СЂ~РѕРіСЂР°РјСѓ..."
+msgstr "їаЮ Я~а~ЮУаРЬг..."
 
 #: gui/launcher.cpp:142 backends/platform/sdl/macosx/appmenu_osx.mm:86
 msgid "About ScummVM"
-msgstr "РџСЂРѕ ScummVM"
+msgstr "їаЮ ScummVM"
 
 #: gui/launcher.cpp:143
 msgid "~O~ptions..."
-msgstr "~Рќ~Р°Р»Р°С€С‚СѓРІР°РЅРЅСЏ..."
+msgstr "~Ѕ~РЫРивгТРЭЭп..."
 
 #: gui/launcher.cpp:143
 msgid "Change global ScummVM options"
-msgstr "Р—РјС–РЅРёС‚Рё РіР»РѕР±Р°Р»СЊРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ ScummVM"
+msgstr "·ЬцЭШвШ УЫЮСРЫмЭц ЭРЫРивгТРЭЭп ScummVM"
 
 #: gui/launcher.cpp:145
 msgid "~S~tart"
-msgstr "Р—~Р°~РїСѓСЃРє"
+msgstr "·~Р~ЯгбЪ"
 
 #: gui/launcher.cpp:145
 msgid "Start selected game"
-msgstr "Р—Р°РїСѓСЃС‚РёС‚Рё РІРёР±СЂР°РЅСѓ РіСЂСѓ"
+msgstr "·РЯгбвШвШ ТШСаРЭг Уаг"
 
 #: gui/launcher.cpp:148
 msgid "~L~oad..."
-msgstr "~Р—~Р°РІР°РЅС‚Р°Р¶РёС‚Рё..."
+msgstr "~·~РТРЭвРЦШвШ..."
 
 #: gui/launcher.cpp:148
 msgid "Load saved game for selected game"
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё Р·Р±РµСЂРµР¶РµРЅРёР№ СЃС‚Р°РЅ РґР»СЏ РІРёР±СЂР°РЅРѕС— РіСЂРё"
+msgstr "·РТРЭвРЦШвШ ЧСХаХЦХЭШЩ бвРЭ ФЫп ТШСаРЭЮч УаШ"
 
 #: gui/launcher.cpp:153
 msgid "~A~dd Game..."
-msgstr "~Р”~РѕРґР°С‚Рё РіСЂСѓ..."
+msgstr "~ґ~ЮФРвШ Уаг..."
 
 #: gui/launcher.cpp:153 gui/launcher.cpp:160
 msgid "Hold Shift for Mass Add"
-msgstr "РЈС‚СЂРёРјСѓР№С‚Рµ РєР»Р°РІС–С€Сѓ Shift РґР»СЏ С‚РѕРіРѕ, С‰РѕР± РґРѕРґР°С‚Рё РґРµРєС–Р»СЊРєР° С–РіРѕСЂ"
+msgstr "ГваШЬгЩвХ ЪЫРТциг Shift ФЫп вЮУЮ, йЮС ФЮФРвШ ФХЪцЫмЪР цУЮа"
 
 #: gui/launcher.cpp:155
 msgid "~E~dit Game..."
-msgstr "Р РµРґР°~Рі~СѓРІР°С‚Рё РіСЂСѓ..."
+msgstr "АХФР~У~гТРвШ Уаг..."
 
 #: gui/launcher.cpp:155 gui/launcher.cpp:162
 msgid "Change game options"
-msgstr "Р—РјС–РЅРёС‚Рё РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РіСЂРё"
+msgstr "·ЬцЭШвШ ЭРЫРивгТРЭЭп УаШ"
 
 #: gui/launcher.cpp:157
 msgid "~R~emove Game"
-msgstr "~Р’~РёРґР°Р»РёС‚Рё РіСЂСѓ"
+msgstr "~І~ШФРЫШвШ Уаг"
 
 #: gui/launcher.cpp:157 gui/launcher.cpp:164
 msgid "Remove game from the list. The game data files stay intact"
-msgstr "Р’РёРґР°Р»РёС‚Рё РіСЂСѓ Р·С– СЃРїРёСЃРєСѓ. РќРµ РІРёРґР°Р»СЏС” РіСЂСѓ Р· Р¶РѕСЂСЃС‚РєРѕРіРѕ РґРёСЃРєСѓ"
+msgstr "ІШФРЫШвШ Уаг Чц бЯШбЪг. ЅХ ТШФРЫпф Уаг Ч ЦЮабвЪЮУЮ ФШбЪг"
 
 #: gui/launcher.cpp:160
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr "~Р”~РѕРґР°С‚Рё РіСЂСѓ..."
+msgstr "~ґ~ЮФРвШ Уаг..."
 
 #: gui/launcher.cpp:162
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "Р РµРґР°~Рі~. РіСЂСѓ..."
+msgstr "АХФР~У~. Уаг..."
 
 #: gui/launcher.cpp:164
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr "~Р’~РёРґР°Р»РёС‚Рё РіСЂСѓ"
+msgstr "~І~ШФРЫШвШ Уаг"
 
 #: gui/launcher.cpp:172
 msgid "Search in game list"
-msgstr "РџРѕС€СѓРє Сѓ СЃРїРёСЃРєСѓ С–РіРѕСЂ"
+msgstr "їЮигЪ г бЯШбЪг цУЮа"
 
 #: gui/launcher.cpp:176 gui/launcher.cpp:775
 msgid "Search:"
-msgstr "РџРѕС€СѓРє:"
+msgstr "їЮигЪ:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115 engines/cruise/menu.cpp:214
 #: engines/mohawk/dialogs.cpp:105 engines/mohawk/riven.cpp:533
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:748
 msgid "Load game:"
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё РіСЂСѓ:"
+msgstr "·РТРЭвРЦШвШ Уаг:"
 
 #: gui/launcher.cpp:200 engines/dialogs.cpp:115
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -697,274 +697,274 @@ msgstr "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё РіСЂСѓ:"
 #: engines/pegasus/pegasus.cpp:355 engines/scumm/dialogs.cpp:185
 #: engines/tsage/scenes.cpp:601 engines/wage/saveload.cpp:748
 msgid "Load"
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё"
+msgstr "·РТРЭвРЦШвШ"
 
 #: gui/launcher.cpp:309
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
-"Р§Рё РІРё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ Р·Р°РїСѓСЃС‚РёС‚Рё РїРѕС€СѓРє СѓСЃС–С… С–РіРѕСЂ? Р¦Рµ РїРѕС‚РµРЅС†С–Р№РЅРѕ РјРѕР¶Рµ РґРѕРґР°С‚Рё "
-"РІРµР»РёРєСѓ РєС–Р»СЊРєС–СЃС‚СЊ С–РіРѕСЂ."
+"ЗШ ТШ ФцЩбЭЮ еЮзХвХ ЧРЯгбвШвШ ЯЮигЪ гбце цУЮа? ЖХ ЯЮвХЭжцЩЭЮ ЬЮЦХ ФЮФРвШ "
+"ТХЫШЪг ЪцЫмЪцбвм цУЮа."
 
 #: gui/launcher.cpp:368
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr "Р¦СЋ РїР°РїРєСѓ С‰Рµ РЅРµ РјРѕР¶РЅР° РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё, РІ РЅРµС— С–РґРµ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ!"
+msgstr "Жо ЯРЯЪг йХ ЭХ ЬЮЦЭР ТШЪЮаШбвЮТгТРвШ, Т ЭХч цФХ ЧРТРЭвРЦХЭЭп!"
 
 #: gui/launcher.cpp:418
 msgid "Do you really want to remove this game configuration?"
-msgstr "Р’Рё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ РІРёРґР°Р»РёС‚Рё РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РґР»СЏ С†С–С”С— РіСЂРё?"
+msgstr "ІШ ФцЩбЭЮ еЮзХвХ ТШФРЫШвШ ЭРЫРивгТРЭЭп ФЫп жцфч УаШ?"
 
 #: gui/launcher.cpp:476
 msgid "Do you want to load saved game?"
-msgstr "Р’Рё С…РѕС‡РµС‚Рµ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё Р·Р±РµСЂРµР¶РµРЅРёР№ СЃС‚Р°РЅ РіСЂРё?"
+msgstr "ІШ еЮзХвХ ЧРТРЭвРЦШвШ ЧСХаХЦХЭШЩ бвРЭ УаШ?"
 
 #: gui/launcher.cpp:526
 msgid "This game does not support loading games from the launcher."
-msgstr "Р¦СЏ РіСЂР° РЅРµ РїС–РґС‚СЂРёРјСѓС” Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ Р·Р±РµСЂРµР¶РµРЅРёС… С–РіРѕСЂ С‡РµСЂРµР· РіРѕР»РѕРІРЅРµ РјРµРЅСЋ."
+msgstr "Жп УаР ЭХ ЯцФваШЬгф ЧРТРЭвРЦХЭЭп ЧСХаХЦХЭШе цУЮа зХаХЧ УЮЫЮТЭХ ЬХЭо."
 
 #: gui/launcher.cpp:530
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr "ScummVM РЅРµ РјРѕР¶Рµ Р·РЅР°Р№С‚Рё РґРІРёР¶РѕРє РґР»СЏ Р·Р°РїСѓСЃРєСѓ РІРёР±СЂР°РЅРѕС— РіСЂРё!"
+msgstr "ScummVM ЭХ ЬЮЦХ ЧЭРЩвШ ФТШЦЮЪ ФЫп ЧРЯгбЪг ТШСаРЭЮч УаШ!"
 
 #: gui/launcher.cpp:581
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr "ScummVM РЅРµ РјРѕР¶Рµ Р·РЅР°Р№С‚Рё РіСЂСѓ Сѓ РІРєР°Р·Р°РЅС–Р№ РїР°РїС†С–!"
+msgstr "ScummVM ЭХ ЬЮЦХ ЧЭРЩвШ Уаг г ТЪРЧРЭцЩ ЯРЯжц!"
 
 #: gui/launcher.cpp:594
 msgid "Pick the game:"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РіСЂСѓ:"
+msgstr "ІШСХацвм Уаг:"
 
 #: gui/launcher.cpp:712
 msgid "Mass Add..."
-msgstr "Р”РѕРґ. Р±Р°РіР°С‚Рѕ..."
+msgstr "ґЮФ. СРУРвЮ..."
 
 #: gui/launcher.cpp:714
 msgid "Record..."
-msgstr "Р—Р°РїРёСЃ..."
+msgstr "·РЯШб..."
 
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
-msgstr "... РїРѕС€СѓРє ..."
+msgstr "... ЯЮигЪ ..."
 
 #: gui/massadd.cpp:259
 msgid "Scan complete!"
-msgstr "РџРѕС€СѓРє Р·Р°РєС–РЅС‡РµРЅРѕ!"
+msgstr "їЮигЪ ЧРЪцЭзХЭЮ!"
 
 #: gui/massadd.cpp:262
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr "Р—РЅР°Р№РґРµРЅРѕ %d РЅРѕРІРёС… С–РіРѕСЂ, РїСЂРѕРїСѓС‰РµРЅРѕ %d РїРѕРїРµСЂРµРґРЅСЊРѕ РґРѕРґР°РЅРёС… С–РіРѕСЂ."
+msgstr "·ЭРЩФХЭЮ %d ЭЮТШе цУЮа, ЯаЮЯгйХЭЮ %d ЯЮЯХаХФЭмЮ ФЮФРЭШе цУЮа."
 
 #: gui/massadd.cpp:266
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "РџСЂРѕРіР»СЏРЅСѓС‚Рѕ %d РїР°РїРѕРє ..."
+msgstr "їаЮУЫпЭгвЮ %d ЯРЯЮЪ ..."
 
 #: gui/massadd.cpp:269
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr "Р—РЅР°Р№РґРµРЅРѕ %d РЅРѕРІРёС… С–РіРѕСЂ, РїСЂРѕРїСѓС‰РµРЅРѕ %d РїРѕРїРµСЂРµРґРЅСЊРѕ РґРѕРґР°РЅРёС… С–РіРѕСЂ ..."
+msgstr "·ЭРЩФХЭЮ %d ЭЮТШе цУЮа, ЯаЮЯгйХЭЮ %d ЯЮЯХаХФЭмЮ ФЮФРЭШе цУЮа ..."
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr "РЎС‚РѕРї"
+msgstr "БвЮЯ"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr "Р РµРґР°РіСѓРІР°С‚Рё РѕРїРёСЃ Р·Р°РїРёСЃСѓ"
+msgstr "АХФРУгТРвШ ЮЯШб ЧРЯШбг"
 
 #: gui/onscreendialog.cpp:108
 msgid "Switch to Game"
-msgstr "РџРµСЂРµРєР»СЋС‡РёС‚РёСЃСЏ РЅР° РіСЂСѓ"
+msgstr "їХаХЪЫозШвШбп ЭР Уаг"
 
 #: gui/onscreendialog.cpp:110
 msgid "Fast replay"
-msgstr "РЁРІРёРґРєРµ РІС–РґС‚РІРѕСЂРµРЅРЅСЏ"
+msgstr "ИТШФЪХ ТцФвТЮаХЭЭп"
 
 #: gui/options.cpp:121 common/updates.cpp:56
 msgid "Never"
-msgstr "РќС–РєРѕР»Рё"
+msgstr "ЅцЪЮЫШ"
 
 #: gui/options.cpp:121
 msgid "every 5 mins"
-msgstr "РєРѕР¶РЅС– 5 С…РІ"
+msgstr "ЪЮЦЭц 5 еТ"
 
 #: gui/options.cpp:121
 msgid "every 10 mins"
-msgstr "РєРѕР¶РЅС– 10 С…РІ"
+msgstr "ЪЮЦЭц 10 еТ"
 
 #: gui/options.cpp:121
 msgid "every 15 mins"
-msgstr "РєРѕР¶РЅС– 15 С…РІ"
+msgstr "ЪЮЦЭц 15 еТ"
 
 #: gui/options.cpp:121
 msgid "every 30 mins"
-msgstr "РєРѕР¶РЅС– 30 С…РІ"
+msgstr "ЪЮЦЭц 30 еТ"
 
 #: gui/options.cpp:339 gui/options.cpp:636 gui/options.cpp:774
 #: gui/options.cpp:851 gui/options.cpp:1112
 msgctxt "soundfont"
 msgid "None"
-msgstr "РќРµ Р·Р°РґР°РЅРёР№"
+msgstr "ЅХ ЧРФРЭШЩ"
 
 #: gui/options.cpp:510
 msgid "Failed to apply some of the graphic options changes:"
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°СЃС‚РѕСЃСѓРІР°С‚Рё РґРµСЏРєС– Р·С– Р·РјС–РЅ РіСЂР°С„С–С‡РЅРёС… РЅР°Р»Р°С€С‚СѓРІР°РЅСЊ:"
+msgstr "ЅХ ТФРЫЮбп ЧРбвЮбгТРвШ ФХпЪц Чц ЧЬцЭ УаРдцзЭШе ЭРЫРивгТРЭм:"
 
 #: gui/options.cpp:522
 msgid "the video mode could not be changed."
-msgstr "РЅРµ РІРґР°Р»РѕСЃСЏ Р·РјС–РЅРёС‚Рё РіСЂР°С„С–С‡РЅРёР№ СЂРµР¶РёРј."
+msgstr "ЭХ ТФРЫЮбп ЧЬцЭШвШ УаРдцзЭШЩ аХЦШЬ."
 
 #: gui/options.cpp:528
 msgid "the aspect ratio setting could not be changed"
-msgstr "РЅРµ РІРґР°Р»РѕСЃСЏ Р·РјС–РЅРёС‚Рё СЂРµР¶РёРј РєРѕСЂРµРєС†С–С— СЃРїС–РІРІС–РґРЅРѕС€РµРЅРЅСЏ СЃС‚РѕСЂС–РЅ"
+msgstr "ЭХ ТФРЫЮбп ЧЬцЭШвШ аХЦШЬ ЪЮаХЪжцч бЯцТТцФЭЮиХЭЭп бвЮацЭ"
 
 #: gui/options.cpp:534
 msgid "the fullscreen setting could not be changed"
-msgstr "РЅРµ РІРґР°Р»РѕСЃСЏ Р·РјС–РЅРёС‚Рё СЂРµР¶РёРј РїРѕРІРЅРѕРіРѕ РµРєСЂР°РЅСѓ"
+msgstr "ЭХ ТФРЫЮбп ЧЬцЭШвШ аХЦШЬ ЯЮТЭЮУЮ ХЪаРЭг"
 
 #: gui/options.cpp:540
 msgid "the filtering setting could not be changed"
-msgstr "РЅРµ РІРґР°Р»РѕСЃСЏ Р·РјС–РЅРёС‚Рё СЂРµР¶РёРј С„С–Р»СЊС‚СЂСѓРІР°РЅРЅСЏ"
+msgstr "ЭХ ТФРЫЮбп ЧЬцЭШвШ аХЦШЬ дцЫмвагТРЭЭп"
 
 #: gui/options.cpp:930
 msgid "Show On-screen control"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё РµРєСЂР°РЅРЅРµ РєРµСЂСѓРІР°РЅРЅСЏ"
+msgstr "їЮЪРЧгТРвШ ХЪаРЭЭХ ЪХагТРЭЭп"
 
 #: gui/options.cpp:934
 msgid "Touchpad mouse mode"
-msgstr "Р РµР¶РёРј С‚Р°С‡РїР°РґСѓ"
+msgstr "АХЦШЬ вРзЯРФг"
 
 #: gui/options.cpp:938
 msgid "Swap Menu and Back buttons"
-msgstr "РџРѕРјС–РЅСЏС‚Рё РјС–СЃС†СЏРјРё РєРЅРѕРїРєРё РњРµРЅСЋ С– РќР°Р·Р°Рґ"
+msgstr "їЮЬцЭпвШ ЬцбжпЬШ ЪЭЮЯЪШ јХЭо ц ЅРЧРФ"
 
 #: gui/options.cpp:943
 msgid "Pointer Speed:"
-msgstr "РЁРІРёРґРєС–СЃС‚СЊ РІРєР°Р·С–РІРЅРёРєР°:"
+msgstr "ИТШФЪцбвм ТЪРЧцТЭШЪР:"
 
 #: gui/options.cpp:943 gui/options.cpp:945 gui/options.cpp:946
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr "РЈРїСЂР°РІР»С–РЅРЅСЏ С€РІРёРґРєС–СЃС‚СЋ РІРєР°Р·С–РІРЅРёРєР° РјРёС€С–/РґР¶РѕР№СЃС‚РёРєР°"
+msgstr "ГЯаРТЫцЭЭп иТШФЪцбво ТЪРЧцТЭШЪР ЬШиц/ФЦЮЩбвШЪР"
 
 #: gui/options.cpp:945
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr "РЁРІРёРґРєС–СЃС‚СЊ РІРєР°Р·С–РІРЅРёРєР°:"
+msgstr "ИТШФЪцбвм ТЪРЧцТЭШЪР:"
 
 #: gui/options.cpp:956
 msgid "Joy Deadzone:"
-msgstr "РњРµСЂС‚РІР° Р·РѕРЅР° РґР¶РѕР№СЃС‚РёРєР°:"
+msgstr "јХавТР ЧЮЭР ФЦЮЩбвШЪР:"
 
 #: gui/options.cpp:956 gui/options.cpp:958 gui/options.cpp:959
 msgid "Analog joystick Deadzone"
-msgstr "РњРµСЂС‚РІР° Р·РѕРЅР° Р°РЅР°Р»РѕРіРѕРІРѕРіРѕ РґР¶РѕР№СЃС‚РёРєР°"
+msgstr "јХавТР ЧЮЭР РЭРЫЮУЮТЮУЮ ФЦЮЩбвШЪР"
 
 #: gui/options.cpp:958
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr "РњРµСЂС‚РІР° Р·РѕРЅР° РґР¶РѕР№СЃС‚РёРєР°:"
+msgstr "јХавТР ЧЮЭР ФЦЮЩбвШЪР:"
 
 #: gui/options.cpp:972
 msgid "HW Shader:"
-msgstr "РђРїР°СЂР°С‚РЅРёР№ С€РµР№РґРµСЂ:"
+msgstr "°ЯРаРвЭШЩ иХЩФХа:"
 
 #: gui/options.cpp:972 gui/options.cpp:974
 msgid "Different hardware shaders give different visual effects"
-msgstr "Р С–Р·РЅС– Р°РїР°СЂР°С‚РЅС– С€РµР№РґРµСЂРё РґР°СЋС‚СЊ СЂС–Р·РЅС– РІС–Р·СѓР°Р»СЊРЅС– РµС„РµРєС‚Рё"
+msgstr "АцЧЭц РЯРаРвЭц иХЩФХаШ ФРовм ацЧЭц ТцЧгРЫмЭц ХдХЪвШ"
 
 #: gui/options.cpp:974
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr "РђРїР°СЂР°С‚РЅРёР№ С€РµР№РґРµСЂ:"
+msgstr "°ЯРаРвЭШЩ иХЩФХа:"
 
 #: gui/options.cpp:975
 msgid "Different shaders give different visual effects"
-msgstr "Р С–Р·РЅС– С€РµР№РґРµСЂРё РґР°СЋС‚СЊ СЂС–Р·РЅС– РІС–Р·СѓР°Р»СЊРЅС– РµС„РµРєС‚Рё"
+msgstr "АцЧЭц иХЩФХаШ ФРовм ацЧЭц ТцЧгРЫмЭц ХдХЪвШ"
 
 #: gui/options.cpp:992
 msgid "Graphics mode:"
-msgstr "Р“СЂР°С„С–С‡РЅ. СЂРµР¶РёРј:"
+msgstr "іаРдцзЭ. аХЦШЬ:"
 
 #: gui/options.cpp:1006
 msgid "Render mode:"
-msgstr "Р РµР¶РёРј СЂР°СЃС‚СЂСѓРІ.:"
+msgstr "АХЦШЬ аРбвагТ.:"
 
 #: gui/options.cpp:1006 gui/options.cpp:1007
 msgid "Special dithering modes supported by some games"
-msgstr "РЎРїРµС†С–Р°Р»СЊРЅС– СЂРµР¶РёРјРё СЂР°СЃС‚СЂСѓРІР°РЅРЅСЏ, СЏРєС– РїС–РґС‚СЂРёРјСѓСЋС‚СЊ РґРµСЏРєС– С–РіСЂРё"
+msgstr "БЯХжцРЫмЭц аХЦШЬШ аРбвагТРЭЭп, пЪц ЯцФваШЬговм ФХпЪц цУаШ"
 
 #: gui/options.cpp:1018 backends/graphics/openglsdl/openglsdl-graphics.cpp:588
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2590
 msgid "Fullscreen mode"
-msgstr "РџРѕРІРЅРѕРµРєСЂР°РЅРЅРёР№ СЂРµР¶РёРј"
+msgstr "їЮТЭЮХЪаРЭЭШЩ аХЦШЬ"
 
 #: gui/options.cpp:1021
 msgid "Filter graphics"
-msgstr "Р¤С–Р»СЊС‚СЂСѓРІР°РЅРЅСЏ РіСЂР°С„С–РєРё"
+msgstr "ДцЫмвагТРЭЭп УаРдцЪШ"
 
 #: gui/options.cpp:1021
 msgid "Use linear filtering when scaling graphics"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р»С–РЅС–Р№РЅСѓ С„С–Р»СЊС‚СЂР°С†С–СЋ РґР»СЏ Р·Р±С–Р»СЊС€РµРЅРЅСЏ РіСЂР°С„С–РєРё"
+msgstr "ІШЪЮаШбвЮТгТРвШ ЫцЭцЩЭг дцЫмваРжцо ФЫп ЧСцЫмиХЭЭп УаРдцЪШ"
 
 #: gui/options.cpp:1024
 msgid "Aspect ratio correction"
-msgstr "РљРѕСЂРµРєС†С–СЏ СЃРїС–РІРІС–РґРЅРѕС€РµРЅРЅСЏ СЃС‚РѕСЂС–РЅ"
+msgstr "єЮаХЪжцп бЯцТТцФЭЮиХЭЭп бвЮацЭ"
 
 #: gui/options.cpp:1024
 msgid "Correct aspect ratio for 320x200 games"
-msgstr "РљРѕСЂРёРіСѓРІР°С‚Рё СЃРїС–РІРІС–РґРЅРѕС€РµРЅРЅСЏ СЃС‚РѕСЂС–РЅ РґР»СЏ С–РіРѕСЂ Р· РіСЂР°С„С–РєРѕСЋ 320x200"
+msgstr "єЮаШУгТРвШ бЯцТТцФЭЮиХЭЭп бвЮацЭ ФЫп цУЮа Ч УаРдцЪЮо 320x200"
 
 #: gui/options.cpp:1032
 msgid "Preferred Device:"
-msgstr "РЈРїРѕРґРѕР±Р°РЅРёР№ РїСЂРёСЃС‚СЂС–Р№:"
+msgstr "ГЯЮФЮСРЭШЩ ЯаШбвацЩ:"
 
 #: gui/options.cpp:1032
 msgid "Music Device:"
-msgstr "РњСѓР·РёС‡. РїСЂРёСЃС‚СЂС–Р№:"
+msgstr "јгЧШз. ЯаШбвацЩ:"
 
 #: gui/options.cpp:1032 gui/options.cpp:1034
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "Р’РєР°Р·СѓС” СѓРїРѕРґРѕР±Р°РЅРёР№ Р·РІСѓРєРѕРІРёР№ РїСЂРёСЃС‚СЂС–Р№ Р°Р±Рѕ РµРјСѓР»СЏС‚РѕСЂ Р·РІСѓРєРѕРІРѕС— РєР°СЂС‚Рё"
+msgstr "ІЪРЧгф гЯЮФЮСРЭШЩ ЧТгЪЮТШЩ ЯаШбвацЩ РСЮ ХЬгЫпвЮа ЧТгЪЮТЮч ЪРавШ"
 
 #: gui/options.cpp:1032 gui/options.cpp:1034 gui/options.cpp:1035
 msgid "Specifies output sound device or sound card emulator"
-msgstr "Р’РєР°Р·СѓС” РІРёС…С–РґРЅРёР№ Р·РІСѓРєРѕРІРёР№ РїСЂРёСЃС‚СЂС–Р№ Р°Р±Рѕ РµРјСѓР»СЏС‚РѕСЂ Р·РІСѓРєРѕРІРѕС— РєР°СЂС‚Рё"
+msgstr "ІЪРЧгф ТШецФЭШЩ ЧТгЪЮТШЩ ЯаШбвацЩ РСЮ ХЬгЫпвЮа ЧТгЪЮТЮч ЪРавШ"
 
 #: gui/options.cpp:1034
 msgctxt "lowres"
 msgid "Preferred Dev.:"
-msgstr "РЈРїРѕРґРѕР±. РїСЂРёСЃС‚СЂС–Р№:"
+msgstr "ГЯЮФЮС. ЯаШбвацЩ:"
 
 #: gui/options.cpp:1034
 msgctxt "lowres"
 msgid "Music Device:"
-msgstr "РњСѓР·РёС‡РЅРёР№ РїСЂРёСЃС‚СЂС–Р№:"
+msgstr "јгЧШзЭШЩ ЯаШбвацЩ:"
 
 #: gui/options.cpp:1061
 msgid "AdLib emulator:"
-msgstr "Р•РјСѓР»СЏС‚РѕСЂ AdLib:"
+msgstr "µЬгЫпвЮа AdLib:"
 
 #: gui/options.cpp:1061 gui/options.cpp:1062
 msgid "AdLib is used for music in many games"
-msgstr "Р—РІСѓРєРѕРІР° РєР°СЂС‚Р° AdLib РІРёРєРѕСЂРёСЃС‚РѕРІСѓС”С‚СЊСЃСЏ Р±Р°РіР°С‚СЊРјР° С–РіСЂР°РјРё РґР»СЏ РјСѓР·РёРєРё"
+msgstr "·ТгЪЮТР ЪРавР AdLib ТШЪЮаШбвЮТгфвмбп СРУРвмЬР цУаРЬШ ФЫп ЬгЧШЪШ"
 
 #: gui/options.cpp:1075
 msgid "GM Device:"
-msgstr "РџСЂРёСЃС‚СЂС–Р№ GM:"
+msgstr "їаШбвацЩ GM:"
 
 #: gui/options.cpp:1075
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Р’РєР°Р·СѓС” РІРёС…С–РґРЅРёР№ Р·РІСѓРєРѕРІРёР№ РїСЂРёСЃС‚СЂС–Р№ РґР»СЏ General MIDI"
+msgstr "ІЪРЧгф ТШецФЭШЩ ЧТгЪЮТШЩ ЯаШбвацЩ ФЫп General MIDI"
 
 #: gui/options.cpp:1086
 msgid "Don't use General MIDI music"
-msgstr "РќРµ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РјСѓР·РёРєСѓ General MIDI"
+msgstr "ЅХ ТШЪЮаШбвЮТгТРвШ ЬгЧШЪг General MIDI"
 
 #: gui/options.cpp:1097 gui/options.cpp:1159
 msgid "Use first available device"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РїРµСЂС€РёР№ РЅР°СЏРІРЅРёР№ РїСЂРёСЃС‚СЂС–Р№"
+msgstr "ІШЪЮаШбвЮТгТРвШ ЯХаиШЩ ЭРпТЭШЩ ЯаШбвацЩ"
 
 #: gui/options.cpp:1109
 msgid "SoundFont:"
@@ -973,7 +973,7 @@ msgstr "SoundFont:"
 #: gui/options.cpp:1109 gui/options.cpp:1111 gui/options.cpp:1112
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
-"SoundFont РїС–РґС‚СЂРёРјСѓС”С‚СЊСЃСЏ РґРµСЏРєРёРјРё Р·РІСѓРєРѕРІРёРјРё РєР°СЂС‚Р°РјРё, FluidSynth С‚Р° Timidity"
+"SoundFont ЯцФваШЬгфвмбп ФХпЪШЬШ ЧТгЪЮТШЬШ ЪРавРЬШ, FluidSynth вР Timidity"
 
 #: gui/options.cpp:1111
 msgctxt "lowres"
@@ -982,351 +982,351 @@ msgstr "SoundFont:"
 
 #: gui/options.cpp:1117
 msgid "Mixed AdLib/MIDI mode"
-msgstr "Р—РјС–С€Р°РЅРёР№ СЂРµР¶РёРј AdLib/MIDI"
+msgstr "·ЬциРЭШЩ аХЦШЬ AdLib/MIDI"
 
 #: gui/options.cpp:1117
 msgid "Use both MIDI and AdLib sound generation"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё С– MIDI С– AdLib РґР»СЏ РіРµРЅРµСЂР°С†С–С— Р·РІСѓРєСѓ"
+msgstr "ІШЪЮаШбвЮТгТРвШ ц MIDI ц AdLib ФЫп УХЭХаРжцч ЧТгЪг"
 
 #: gui/options.cpp:1120
 msgid "MIDI gain:"
-msgstr "РџРѕСЃРёР»РµРЅРЅСЏ MIDI:"
+msgstr "їЮбШЫХЭЭп MIDI:"
 
 #: gui/options.cpp:1130
 msgid "MT-32 Device:"
-msgstr "РџСЂРёСЃС‚СЂС–Р№ MT-32:"
+msgstr "їаШбвацЩ MT-32:"
 
 #: gui/options.cpp:1130
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
-"Р’РєР°Р·СѓС” Р·РІСѓРєРѕРІРёР№ РїСЂРёСЃС‚СЂС–Р№ Р·Р° Р·Р°РјРѕРІС‡РµРЅРЅСЏРј РґР»СЏ РІРёРІРѕРґСѓ РЅР° Roland MT-32/LAPC1/"
+"ІЪРЧгф ЧТгЪЮТШЩ ЯаШбвацЩ ЧР ЧРЬЮТзХЭЭпЬ ФЫп ТШТЮФг ЭР Roland MT-32/LAPC1/"
 "CM32l/CM64"
 
 #: gui/options.cpp:1135
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr "РЎРїСЂР°РІР¶РЅС–Р№ Roland MT-32 (РІРёРјРєРЅСѓС‚Рё РµРјСѓР»СЏС†РёСЋ GM)"
+msgstr "БЯаРТЦЭцЩ Roland MT-32 (ТШЬЪЭгвШ ХЬгЫпжШо GM)"
 
 #: gui/options.cpp:1135 gui/options.cpp:1137
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
-"Р’С–РґРјС–С‚СЊС‚Рµ, СЏРєС‰Рѕ Сѓ РІР°СЃ РїС–РґРєР»СЋС‡РµРЅРѕ Roland-СЃСѓРјС–СЃРЅРёР№ Р·РІСѓРєРѕРІРёР№ РїСЂРёСЃС‚СЂС–Р№ С– РІРё "
-"С…РѕС‡РµС‚Рµ Р№РѕРіРѕ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё"
+"ІцФЬцвмвХ, пЪйЮ г ТРб ЯцФЪЫозХЭЮ Roland-бгЬцбЭШЩ ЧТгЪЮТШЩ ЯаШбвацЩ ц ТШ "
+"еЮзХвХ ЩЮУЮ ТШЪЮаШбвЮТгТРвШ"
 
 #: gui/options.cpp:1137
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr "РЎРїСЂР°РІР¶РЅС–Р№ Roland MT-32 (РІРёРјРєРЅСѓС‚Рё РµРјСѓР»СЏС†РёСЋ GM)"
+msgstr "БЯаРТЦЭцЩ Roland MT-32 (ТШЬЪЭгвШ ХЬгЫпжШо GM)"
 
 #: gui/options.cpp:1140
 msgid "Roland GS Device (enable MT-32 mappings)"
-msgstr "Р РµР¶РёРј Roland GS (РІРІС–РјРєРЅСѓС‚Рё РјР°РїР»РµРЅРЅСЏ MT-32)"
+msgstr "АХЦШЬ Roland GS (ТТцЬЪЭгвШ ЬРЯЫХЭЭп MT-32)"
 
 #: gui/options.cpp:1140
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
 msgstr ""
-"Р’С–РґРјС–С‚СЊС‚Рµ, СЏРєС‰Рѕ С…РѕС‡РµС‚Рµ РІРєР»СЋС‡РёС‚Рё Р»Р°С‚РєРё РґР»СЏ С–РЅСЃС‚СЂСѓРјРµРЅС‚С–РІ РґР»СЏ РµРјСѓР»СЏС†С–С— MT-32 РЅР° "
+"ІцФЬцвмвХ, пЪйЮ еЮзХвХ ТЪЫозШвШ ЫРвЪШ ФЫп цЭбвагЬХЭвцТ ФЫп ХЬгЫпжцч MT-32 ЭР "
 "Roland"
 
 #: gui/options.cpp:1149
 msgid "Don't use Roland MT-32 music"
-msgstr "РќРµ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РјСѓР·РёРєСѓ РґР»СЏ Roland MT-32"
+msgstr "ЅХ ТШЪЮаШбвЮТгТРвШ ЬгЧШЪг ФЫп Roland MT-32"
 
 #: gui/options.cpp:1176
 msgid "Text and Speech:"
-msgstr "РўРµРєСЃС‚ С– РѕР·РІСѓС‡РєР°:"
+msgstr "ВХЪбв ц ЮЧТгзЪР:"
 
 #: gui/options.cpp:1180 gui/options.cpp:1190
 msgid "Speech"
-msgstr "РћР·РІСѓС‡РєР°"
+msgstr "ѕЧТгзЪР"
 
 #: gui/options.cpp:1181 gui/options.cpp:1191
 msgid "Subtitles"
-msgstr "РЎСѓР±С‚РёС‚СЂРё"
+msgstr "БгСвШваШ"
 
 #: gui/options.cpp:1182
 msgid "Both"
-msgstr "Р’СЃРµ"
+msgstr "ІбХ"
 
 #: gui/options.cpp:1184
 msgid "Subtitle speed:"
-msgstr "РЁРІРёРґ. СЃСѓР±С‚РёС‚СЂС–РІ:"
+msgstr "ИТШФ. бгСвШвацТ:"
 
 #: gui/options.cpp:1186
 msgctxt "lowres"
 msgid "Text and Speech:"
-msgstr "РўРµРєСЃС‚ С– РѕР·РІСѓС‡РєР°:"
+msgstr "ВХЪбв ц ЮЧТгзЪР:"
 
 #: gui/options.cpp:1190
 msgid "Spch"
-msgstr "РћР·РІ"
+msgstr "ѕЧТ"
 
 #: gui/options.cpp:1191
 msgid "Subs"
-msgstr "РЎСѓР±"
+msgstr "БгС"
 
 #: gui/options.cpp:1192
 msgctxt "lowres"
 msgid "Both"
-msgstr "Р’СЃРµ"
+msgstr "ІбХ"
 
 #: gui/options.cpp:1192
 msgid "Show subtitles and play speech"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё СЃСѓР±С‚РёС‚СЂРё С– РІС–РґС‚РІРѕСЂСЋРІР°С‚Рё РјРѕРІСѓ"
+msgstr "їЮЪРЧгТРвШ бгСвШваШ ц ТцФвТЮаоТРвШ ЬЮТг"
 
 #: gui/options.cpp:1194
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "РЁРІРёРґ. СЃСѓР±С‚РёС‚СЂС–РІ:"
+msgstr "ИТШФ. бгСвШвацТ:"
 
 #: gui/options.cpp:1210
 msgid "Music volume:"
-msgstr "Р“СѓС‡РЅС–СЃС‚СЊ РјСѓР·РёРєРё:"
+msgstr "ігзЭцбвм ЬгЧШЪШ:"
 
 #: gui/options.cpp:1212
 msgctxt "lowres"
 msgid "Music volume:"
-msgstr "Р“СѓС‡РЅС–СЃС‚СЊ РјСѓР·РёРєРё:"
+msgstr "ігзЭцбвм ЬгЧШЪШ:"
 
 #: gui/options.cpp:1219
 msgid "Mute All"
-msgstr "Р’РёРјРєРЅСѓС‚Рё РІСЃРµ"
+msgstr "ІШЬЪЭгвШ ТбХ"
 
 #: gui/options.cpp:1222
 msgid "SFX volume:"
-msgstr "Р“СѓС‡РЅС–СЃС‚СЊ РµС„РµРєС‚С–РІ:"
+msgstr "ігзЭцбвм ХдХЪвцТ:"
 
 #: gui/options.cpp:1222 gui/options.cpp:1224 gui/options.cpp:1225
 msgid "Special sound effects volume"
-msgstr "Р“СѓС‡РЅС–СЃС‚СЊ СЃРїРµС†С–Р°Р»СЊРЅРёС… Р·РІСѓРєРѕРІРёС… РµС„РµРєС‚С–РІ"
+msgstr "ігзЭцбвм бЯХжцРЫмЭШе ЧТгЪЮТШе ХдХЪвцТ"
 
 #: gui/options.cpp:1224
 msgctxt "lowres"
 msgid "SFX volume:"
-msgstr "Р“СѓС‡РЅ. РµС„РµРєС‚С–РІ:"
+msgstr "ігзЭ. ХдХЪвцТ:"
 
 #: gui/options.cpp:1232
 msgid "Speech volume:"
-msgstr "Р“СѓС‡РЅС–СЃС‚СЊ РѕР·РІСѓС‡РєРё:"
+msgstr "ігзЭцбвм ЮЧТгзЪШ:"
 
 #: gui/options.cpp:1234
 msgctxt "lowres"
 msgid "Speech volume:"
-msgstr "Р“СѓС‡РЅ. РѕР·РІСѓС‡РєРё:"
+msgstr "ігзЭ. ЮЧТгзЪШ:"
 
 #: gui/options.cpp:1436
 msgid "Shader"
-msgstr "РЁРµР№РґРµСЂ"
+msgstr "ИХЩФХа"
 
 #: gui/options.cpp:1448
 msgid "Control"
-msgstr "РљРµСЂСѓРІР°РЅРЅСЏ"
+msgstr "єХагТРЭЭп"
 
 #: gui/options.cpp:1474
 msgid "FluidSynth Settings"
-msgstr "РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ FluidSynth"
+msgstr "ЅРЫРивгТРЭЭп FluidSynth"
 
 #: gui/options.cpp:1505
 msgid "Theme Path:"
-msgstr "РЁР»СЏС… РґРѕ С‚РµРј:"
+msgstr "ИЫпе ФЮ вХЬ:"
 
 #: gui/options.cpp:1507
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr "РЁР»СЏС… РґРѕ С‚РµРј:"
+msgstr "ИЫпе ФЮ вХЬ:"
 
 #: gui/options.cpp:1513 gui/options.cpp:1515 gui/options.cpp:1516
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
-"Р’РєР°Р·СѓС” С€Р»СЏС… РґРѕ РґРѕРґР°С‚РєРѕРІРёС… С„Р°Р№Р»С–РІ РґР°РЅРёС…, СЏРєС– РІРёРєРѕСЂРёСЃС‚РѕРІСѓСЋС‚СЊСЃСЏ СѓСЃС–РјР° С–РіСЂР°РјРё "
-"Р°Р±Рѕ ScummVM"
+"ІЪРЧгф иЫпе ФЮ ФЮФРвЪЮТШе дРЩЫцТ ФРЭШе, пЪц ТШЪЮаШбвЮТговмбп гбцЬР цУаРЬШ "
+"РСЮ ScummVM"
 
 #: gui/options.cpp:1522
 msgid "Plugins Path:"
-msgstr "РЁР»СЏС… РґРѕ РІС‚СѓР»РєС–РІ:"
+msgstr "ИЫпе ФЮ ТвгЫЪцТ:"
 
 #: gui/options.cpp:1524
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr "РЁР»СЏС… РґРѕ РІС‚СѓР»РєС–РІ:"
+msgstr "ИЫпе ФЮ ТвгЫЪцТ:"
 
 #: gui/options.cpp:1535
 msgctxt "lowres"
 msgid "Misc"
-msgstr "Р С–Р·РЅРµ"
+msgstr "АцЧЭХ"
 
 #: gui/options.cpp:1537
 msgid "Theme:"
-msgstr "РўРµРјР°:"
+msgstr "ВХЬР:"
 
 #: gui/options.cpp:1541
 msgid "GUI Renderer:"
-msgstr "Р Р°СЃС‚РµСЂ. GUI:"
+msgstr "АРбвХа. GUI:"
 
 #: gui/options.cpp:1553
 msgid "Autosave:"
-msgstr "РђРІС‚РѕР·Р±РµСЂРµР¶РµРЅРЅСЏ:"
+msgstr "°ТвЮЧСХаХЦХЭЭп:"
 
 #: gui/options.cpp:1555
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "РђРІС‚РѕР·Р±РµСЂРµР¶.:"
+msgstr "°ТвЮЧСХаХЦ.:"
 
 #: gui/options.cpp:1563
 msgid "Keys"
-msgstr "РљР»Р°РІС–С€С–"
+msgstr "єЫРТциц"
 
 #: gui/options.cpp:1570
 msgid "GUI Language:"
-msgstr "РњРѕРІР° С–РЅС‚РµСЂС„.:"
+msgstr "јЮТР цЭвХад.:"
 
 #: gui/options.cpp:1570
 msgid "Language of ScummVM GUI"
-msgstr "РњРѕРІР° РіСЂР°С„С–С‡РЅРѕРіРѕ С–РЅС‚РµСЂС„РµР№СЃСѓ ScummVM"
+msgstr "јЮТР УаРдцзЭЮУЮ цЭвХадХЩбг ScummVM"
 
 #: gui/options.cpp:1598 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr "РџРµСЂРµРІС–СЂСЏС‚Рё РѕРЅРѕРІР»РµРЅРЅСЏ:"
+msgstr "їХаХТцапвШ ЮЭЮТЫХЭЭп:"
 
 #: gui/options.cpp:1598
 msgid "How often to check ScummVM updates"
-msgstr "РЇРє С‡Р°СЃС‚Рѕ РїРµСЂРµРІС–СЂСЏС‚Рё РѕРЅРѕРІР»РµРЅРЅСЏ ScummVM"
+msgstr "ПЪ зРбвЮ ЯХаХТцапвШ ЮЭЮТЫХЭЭп ScummVM"
 
 #: gui/options.cpp:1610
 msgid "Check now"
-msgstr "РџРµСЂРµРІС–СЂРёС‚Рё Р·Р°СЂР°Р·"
+msgstr "їХаХТцаШвШ ЧРаРЧ"
 
 #: gui/options.cpp:1618
 msgid "Cloud"
-msgstr "РҐРјР°СЂР°"
+msgstr "ЕЬРаР"
 
 #: gui/options.cpp:1620
 msgctxt "lowres"
 msgid "Cloud"
-msgstr "РҐРјР°СЂР°"
+msgstr "ЕЬРаР"
 
 #: gui/options.cpp:1625
 msgid "Storage:"
-msgstr "РЎРµСЂРµРґРѕРІРёС‰Рµ:"
+msgstr "БХаХФЮТШйХ:"
 
 #: gui/options.cpp:1625
 msgid "Active cloud storage"
-msgstr "РђРєС‚РёРІРЅРµ С…РјР°СЂРЅРµ СЃРµСЂРµРґРѕРІРёС‰Рµ"
+msgstr "°ЪвШТЭХ еЬРаЭХ бХаХФЮТШйХ"
 
 #: gui/options.cpp:1632 gui/options.cpp:2208
 msgid "<none>"
-msgstr "<РЅРµРјР°С”>"
+msgstr "<ЭХЬРф>"
 
 #: gui/options.cpp:1636 backends/platform/wii/options.cpp:114
 msgid "Username:"
-msgstr "РљРѕСЂРёСЃС‚СѓРІР°С‡:"
+msgstr "єЮаШбвгТРз:"
 
 #: gui/options.cpp:1636
 msgid "Username used by this storage"
-msgstr "РљРѕСЂРёСЃС‚СѓРІР°С‡ РґР»СЏ С†СЊРѕРіРѕ СЃРµСЂРµРґРѕРІРёС‰Р°"
+msgstr "єЮаШбвгТРз ФЫп жмЮУЮ бХаХФЮТШйР"
 
 #: gui/options.cpp:1639
 msgid "Used space:"
-msgstr "Р’РёРєРѕСЂРёСЃС‚Р°РЅРёР№ РѕР±'С”Рј:"
+msgstr "ІШЪЮаШбвРЭШЩ ЮС'фЬ:"
 
 #: gui/options.cpp:1639
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
-"РћР±'С”Рј, РІРёРєРѕСЂРёСЃС‚Р°РЅРёР№ РґР»СЏ Р·Р±РµСЂРµР¶РµРЅРёС… СЃС‚Р°РЅС–РІ С–РіРѕСЂ ScummVM РЅР° С†СЊРѕРјСѓ СЃРµСЂРµРґРѕРІРёС‰С–"
+"ѕС'фЬ, ТШЪЮаШбвРЭШЩ ФЫп ЧСХаХЦХЭШе бвРЭцТ цУЮа ScummVM ЭР жмЮЬг бХаХФЮТШйц"
 
 #: gui/options.cpp:1642
 msgid "Last sync time:"
-msgstr "РћСЃС‚Р°РЅРЅСЏ СЃРёРЅС…СЂРѕРЅРёР·Р°С†С–СЏ:"
+msgstr "ѕбвРЭЭп бШЭеаЮЭШЧРжцп:"
 
 #: gui/options.cpp:1642
 msgid "When the last saved games sync for this storage occured"
-msgstr "Р§Р°СЃ, РєРѕР»Рё Р±СѓР»Рѕ Р·СЂРѕР±Р»РµРЅРѕ РѕСЃС‚Р°РЅРЅСЋ СЃРёРЅС…СЂРѕРЅРёР·Р°С†С–СЋ Р· С†РёРј СЃРµСЂРµРґРѕРІРёС‰РµРј"
+msgstr "ЗРб, ЪЮЫШ СгЫЮ ЧаЮСЫХЭЮ ЮбвРЭЭо бШЭеаЮЭШЧРжцо Ч жШЬ бХаХФЮТШйХЬ"
 
 #: gui/options.cpp:1645 gui/storagewizarddialog.cpp:71
 msgid "Connect"
-msgstr "Р—Р°Р»СѓС‡РёС‚РёСЃСЊ"
+msgstr "·РЫгзШвШбм"
 
 #: gui/options.cpp:1645
 msgid "Open wizard dialog to connect your cloud storage account"
 msgstr ""
-"Р РѕР·РїРѕС‡Р°С‚Рё РєСЂРѕРєРё РґР»СЏ Р·Р°Р»СѓС‡РµРЅРЅСЏ РґРѕ РІР°С€РѕРіРѕ РѕР±Р»С–РєРѕРІРѕРіРѕ Р·Р°СЃРѕР±Сѓ РЅР° С…РјР°СЂРЅРѕРјСѓ "
-"СЃРµСЂРµРґРѕРІРёС‰С–"
+"АЮЧЯЮзРвШ ЪаЮЪШ ФЫп ЧРЫгзХЭЭп ФЮ ТРиЮУЮ ЮСЫцЪЮТЮУЮ ЧРбЮСг ЭР еЬРаЭЮЬг "
+"бХаХФЮТШйц"
 
 #: gui/options.cpp:1646
 msgid "Refresh"
-msgstr "РџРѕРЅРѕРІРёС‚Рё"
+msgstr "їЮЭЮТШвШ"
 
 #: gui/options.cpp:1646
 msgid "Refresh current cloud storage information (username and usage)"
-msgstr "РџРѕРЅРѕРІРёС‚Рё РїРѕС‚РѕС‡РЅС– РґР°РЅС– С…РјР°СЂРЅРѕРіРѕ СЃРµСЂРµРґРѕРІРёС‰Р° (С–Рј'СЏ РєРѕСЂРёСЃС‚СѓРІР°С‡Р° С‚Р° РѕР±'С”Рј)"
+msgstr "їЮЭЮТШвШ ЯЮвЮзЭц ФРЭц еЬРаЭЮУЮ бХаХФЮТШйР (цЬ'п ЪЮаШбвгТРзР вР ЮС'фЬ)"
 
 #: gui/options.cpp:1647
 msgid "Download"
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё"
+msgstr "·РТРЭвРЦШвШ"
 
 #: gui/options.cpp:1647
 msgid "Open downloads manager dialog"
-msgstr "Р’С–РґРєСЂРёС‚Рё РєРµСЂСѓРІР°РЅРЅСЏ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏРјРё"
+msgstr "ІцФЪаШвШ ЪХагТРЭЭп ЧРТРЭвРЦХЭЭпЬШ"
 
 #: gui/options.cpp:1649
 msgid "Run server"
-msgstr "Р—Р°РїСѓСЃС‚РёС‚Рё СЃРµСЂРІРµСЂ"
+msgstr "·РЯгбвШвШ бХаТХа"
 
 #: gui/options.cpp:1649
 msgid "Run local webserver"
-msgstr "Р—Р°РїСѓСЃРєР°С” Р»РѕРєР°Р»СЊРЅРёР№ РІРµР±-СЃРµСЂРІРµСЂ"
+msgstr "·РЯгбЪРф ЫЮЪРЫмЭШЩ ТХС-бХаТХа"
 
 #: gui/options.cpp:1650 gui/options.cpp:2318
 msgid "Not running"
-msgstr "Р’РёРјРєРЅРµРЅРѕ"
+msgstr "ІШЬЪЭХЭЮ"
 
 #: gui/options.cpp:1654
 msgid "/root/ Path:"
-msgstr "РЁР»СЏС… /root/:"
+msgstr "ИЫпе /root/:"
 
 #: gui/options.cpp:1654 gui/options.cpp:1656 gui/options.cpp:1657
 msgid "Specifies which directory the Files Manager can access"
-msgstr "Р’РєР°Р·СѓС” С€Р»СЏС…, РґРѕ СЏРєРѕРіРѕ РјРѕР¶РЅР° РјР°С‚Рё РґРѕСЃС‚СѓРї С‡РµСЂРµР· РљРµСЂСѓРІР°РЅРЅСЏ С„Р°Р№Р»Р°РјРё"
+msgstr "ІЪРЧгф иЫпе, ФЮ пЪЮУЮ ЬЮЦЭР ЬРвШ ФЮбвгЯ зХаХЧ єХагТРЭЭп дРЩЫРЬШ"
 
 #: gui/options.cpp:1656
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "РљРѕСЂС–РЅРЅРёР№ С€Р»СЏС…:"
+msgstr "єЮацЭЭШЩ иЫпе:"
 
 #: gui/options.cpp:1666
 msgid "Server's port:"
-msgstr "РџРѕСЂС‚ СЃРµСЂРІРµСЂР°:"
+msgstr "їЮав бХаТХаР:"
 
 #: gui/options.cpp:1666
 msgid ""
 "Which port is used by the server\n"
 "Auth with server is not available with non-default port"
 msgstr ""
-"РџРѕСЂС‚, СЏРєРёР№ Р±СѓРґРµ РІРёРєРѕСЂРёСЃС‚Р°РЅРѕ СЃРµСЂРІРµСЂРѕРј\n"
-"РђСѓС‚РµРЅС‚РёС„С–РєР°С†РёСЏ Р· СЃРµСЂРІРµСЂРѕРј РЅРµРјРѕР¶Р»РёРІР° РґР»СЏ РїРѕСЂС‚С–РІ, С–РЅС€РёС… РІС–Рґ Р·Р°РјРѕРІС‡СѓРІР°РЅРѕРіРѕ"
+"їЮав, пЪШЩ СгФХ ТШЪЮаШбвРЭЮ бХаТХаЮЬ\n"
+"°гвХЭвШдцЪРжШп Ч бХаТХаЮЬ ЭХЬЮЦЫШТР ФЫп ЯЮавцТ, цЭиШе ТцФ ЧРЬЮТзгТРЭЮУЮ"
 
 #: gui/options.cpp:1679
 msgid "Apply"
-msgstr "Р—Р°СЃС‚РѕСЃСѓРІР°С‚Рё"
+msgstr "·РбвЮбгТРвШ"
 
 #: gui/options.cpp:1822
 msgid "Failed to change cloud storage!"
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·РјС–РЅРёС‚Рё С…РјР°СЂРЅРµ СЃРµСЂРµРґРѕРІРёС‰Рµ!"
+msgstr "ЅХ ТФРЫЮбп ЧЬцЭШвШ еЬРаЭХ бХаХФЮТШйХ!"
 
 #: gui/options.cpp:1825
 msgid "Another cloud storage is already active."
-msgstr "Р†РЅС€Рµ С…РјР°СЂРЅРµ СЃРµСЂРµРґРѕРІРёС‰Рµ РІР¶Рµ Р°РєС‚РёРІРЅРµ."
+msgstr "¦ЭиХ еЬРаЭХ бХаХФЮТШйХ ТЦХ РЪвШТЭХ."
 
 #: gui/options.cpp:1893
 msgid "Theme does not support selected language!"
-msgstr "РўРµРјР° РЅРµ РїС–РґС‚СЂРёРјСѓС” РѕР±СЂР°РЅРѕС— РјРѕРІРё!"
+msgstr "ВХЬР ЭХ ЯцФваШЬгф ЮСаРЭЮч ЬЮТШ!"
 
 #: gui/options.cpp:1896
 msgid "Theme cannot be loaded!"
-msgstr "РўРµРјСѓ РЅРµ Р±СѓР»Рѕ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРѕ!"
+msgstr "ВХЬг ЭХ СгЫЮ ЧРТРЭвРЦХЭЮ!"
 
 #: gui/options.cpp:1899
 msgid ""
@@ -1334,69 +1334,69 @@ msgid ""
 "Misc settings will be restored."
 msgstr ""
 "\n"
-"Р С–Р·РЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ Р±СѓРґРµ РїРѕРЅРѕРІР»РµРЅРѕ."
+"АцЧЭц ЭРЫРивгТРЭЭп СгФХ ЯЮЭЮТЫХЭЮ."
 
 #: gui/options.cpp:1935
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr "РќРµ РјРѕР¶Сѓ РїРёСЃР°С‚Рё Сѓ РІРёР±СЂР°РЅСѓ РїР°РїРєСѓ. Р‘СѓРґСЊ Р»Р°СЃРєР°, РІРєР°Р¶С–С‚СЊ С–РЅС€Сѓ."
+msgstr "ЅХ ЬЮЦг ЯШбРвШ г ТШСаРЭг ЯРЯЪг. ±гФм ЫРбЪР, ТЪРЦцвм цЭиг."
 
 #: gui/options.cpp:1944
 msgid "Select directory for GUI themes"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РїР°РїРєСѓ РґР»СЏ С‚РµРј GUI"
+msgstr "ІШСХацвм ЯРЯЪг ФЫп вХЬ GUI"
 
 #: gui/options.cpp:1954
 msgid "Select directory for extra files"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РїР°РїРєСѓ Р· РґРѕРґР°С‚РєРѕРІРёРјРё С„Р°Р№Р»Р°РјРё"
+msgstr "ІШСХацвм ЯРЯЪг Ч ФЮФРвЪЮТШЬШ дРЩЫРЬШ"
 
 #: gui/options.cpp:1965
 msgid "Select directory for plugins"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РїР°РїРєСѓ Р·С– РІС‚СѓР»РєР°РјРё"
+msgstr "ІШСХацвм ЯРЯЪг Чц ТвгЫЪРЬШ"
 
 #: gui/options.cpp:1977
 msgid "Select directory for Files Manager /root/"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РїР°РїРєСѓ /root/ РґР»СЏ РљРµСЂСѓРІР°РЅРЅСЏ С„Р°Р№Р»Р°РјРё"
+msgstr "ІШСХацвм ЯРЯЪг /root/ ФЫп єХагТРЭЭп дРЩЫРЬШ"
 
 #: gui/options.cpp:2215
 #, c-format
 msgid "%llu bytes"
-msgstr "%llu Р±Р°Р№С‚"
+msgstr "%llu СРЩв"
 
 #: gui/options.cpp:2223
 msgid "<right now>"
-msgstr "<Р·Р°СЂР°Р·>"
+msgstr "<ЧРаРЧ>"
 
 #: gui/options.cpp:2225
 msgid "<never>"
-msgstr "<РЅС–РєРѕР»Рё>"
+msgstr "<ЭцЪЮЫШ>"
 
 #: gui/options.cpp:2309
 msgid "Stop server"
-msgstr "Р’РёРјРєРЅСѓС‚Рё СЃРµСЂРІРµСЂ"
+msgstr "ІШЬЪЭгвШ бХаТХа"
 
 #: gui/options.cpp:2310
 msgid "Stop local webserver"
-msgstr "Р’РёРјРєРЅСѓС‚Рё Р»РѕРєР°Р»СЊРЅРёР№ РІРµР±-СЃРµСЂРІРµСЂ"
+msgstr "ІШЬЪЭгвШ ЫЮЪРЫмЭШЩ ТХС-бХаТХа"
 
 #: gui/options.cpp:2401
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
-"РџРѕРјРёР»РєР° Р·Р°РїРёС‚Сѓ.\n"
-"РџРµСЂРµРІС–СЂС‚Рµ РІР°С€Рµ С–РЅС‚РµСЂРЅРµС‚-Р·'С”РґРЅР°РЅРЅСЏ."
+"їЮЬШЫЪР ЧРЯШвг.\n"
+"їХаХТцавХ ТРиХ цЭвХаЭХв-Ч'фФЭРЭЭп."
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:86
 msgid "#  next"
-msgstr "#  РЅР°СЃС‚"
+msgstr "#  ЭРбв"
 
 #: gui/predictivedialog.cpp:87
 msgid "add"
-msgstr "РґРѕРґ"
+msgstr "ФЮФ"
 
 #: gui/predictivedialog.cpp:92 gui/predictivedialog.cpp:167
 msgid "Delete char"
-msgstr "Р’РёРґР°Р»РёС‚Рё СЃРёРјРІРѕР»"
+msgstr "ІШФРЫШвШ бШЬТЮЫ"
 
 #: gui/predictivedialog.cpp:97 gui/predictivedialog.cpp:171
 msgid "<"
@@ -1405,12 +1405,12 @@ msgstr "<"
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:99 gui/predictivedialog.cpp:575
 msgid "*  Pre"
-msgstr "*  РџСЂРµ"
+msgstr "*  їаХ"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:578
 msgid "*  Num"
-msgstr "*  Р¦С„СЂ"
+msgstr "*  Жда"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:581
@@ -1419,211 +1419,211 @@ msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:63
 msgid "Recorder or Playback Gameplay"
-msgstr "Р—Р°РїРёСЃСѓРІР°С‚Рё Р°Р±Рѕ РІС–РґС‚РІРѕСЂСЋРІР°С‚Рё РїСЂРѕС†РµСЃ РіСЂРё"
+msgstr "·РЯШбгТРвШ РСЮ ТцФвТЮаоТРвШ ЯаЮжХб УаШ"
 
 #: gui/recorderdialog.cpp:68 gui/recorderdialog.cpp:155
 #: gui/saveload-dialog.cpp:387 gui/saveload-dialog.cpp:445
 msgid "Delete"
-msgstr "Р’РёРґР°Р»РёС‚Рё"
+msgstr "ІШФРЫШвШ"
 
 #: gui/recorderdialog.cpp:70
 msgid "Record"
-msgstr "Р—Р°РїРёСЃР°С‚Рё"
+msgstr "·РЯШбРвШ"
 
 #: gui/recorderdialog.cpp:71
 msgid "Playback"
-msgstr "Р’С–РґС‚РІРѕСЂРёС‚Рё"
+msgstr "ІцФвТЮаШвШ"
 
 #: gui/recorderdialog.cpp:73
 msgid "Edit"
-msgstr "Р РµРґР°РіСѓРІР°С‚Рё"
+msgstr "АХФРУгТРвШ"
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
 msgid "Author: "
-msgstr "РђРІС‚РѕСЂ: "
+msgstr "°ТвЮа: "
 
 #: gui/recorderdialog.cpp:86 gui/recorderdialog.cpp:242
 #: gui/recorderdialog.cpp:252
 msgid "Notes: "
-msgstr "РџСЂРёРјС–С‚РєРё: "
+msgstr "їаШЬцвЪШ: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
-msgstr "Р’Рё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ РІРёРґР°Р»РёС‚Рё С†РµР№ Р·Р°РїРёСЃ?"
+msgstr "ІШ ФцЩбЭЮ еЮзХвХ ТШФРЫШвШ жХЩ ЧРЯШб?"
 
 #: gui/recorderdialog.cpp:172
 msgid "Unknown Author"
-msgstr "РќРµРІС–РґРѕРјРёР№ Р°РІС‚РѕСЂ"
+msgstr "ЅХТцФЮЬШЩ РТвЮа"
 
 #: gui/remotebrowser.cpp:129
 msgid "ScummVM could not access the directory!"
-msgstr "ScummVM РЅРµ РјР°С” РґРѕСЃС‚СѓРїСѓ РґРѕ РІРєР°Р·Р°РЅРѕС— РїР°РїРєРё!"
+msgstr "ScummVM ЭХ ЬРф ФЮбвгЯг ФЮ ТЪРЧРЭЮч ЯРЯЪШ!"
 
 #: gui/saveload-dialog.cpp:334
 msgid "List view"
-msgstr "Р’РёРіР»СЏРґ СЃРїРёСЃРєСѓ"
+msgstr "ІШУЫпФ бЯШбЪг"
 
 #: gui/saveload-dialog.cpp:335
 msgid "Grid view"
-msgstr "Р’РёРіР»СЏРґ СЃС–С‚РєРё"
+msgstr "ІШУЫпФ бцвЪШ"
 
 #: gui/saveload-dialog.cpp:378 gui/saveload-dialog.cpp:532
 msgid "No date saved"
-msgstr "Р”Р°С‚Сѓ РЅРµ Р·Р°РїРёСЃР°РЅРѕ"
+msgstr "ґРвг ЭХ ЧРЯШбРЭЮ"
 
 #: gui/saveload-dialog.cpp:379 gui/saveload-dialog.cpp:533
 msgid "No time saved"
-msgstr "Р§Р°СЃ РЅРµ Р·Р°РїРёСЃР°РЅРѕ"
+msgstr "ЗРб ЭХ ЧРЯШбРЭЮ"
 
 #: gui/saveload-dialog.cpp:380 gui/saveload-dialog.cpp:534
 msgid "No playtime saved"
-msgstr "Р§Р°СЃ РіСЂРё РЅРµ Р·Р°РїРёСЃР°РЅРѕ"
+msgstr "ЗРб УаШ ЭХ ЧРЯШбРЭЮ"
 
 #: gui/saveload-dialog.cpp:444
 msgid "Do you really want to delete this saved game?"
-msgstr "Р’Рё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ РІРёРґР°Р»РёС‚Рё С†СЋ Р·Р±РµСЂРµР¶РµРЅСѓ РіСЂСѓ?"
+msgstr "ІШ ФцЩбЭЮ еЮзХвХ ТШФРЫШвШ жо ЧСХаХЦХЭг Уаг?"
 
 #: gui/saveload-dialog.cpp:558 gui/saveload-dialog.cpp:1070
 msgid "Date: "
-msgstr "Р”Р°С‚Р°: "
+msgstr "ґРвР: "
 
 #: gui/saveload-dialog.cpp:562 gui/saveload-dialog.cpp:1076
 msgid "Time: "
-msgstr "Р§Р°СЃ: "
+msgstr "ЗРб: "
 
 #: gui/saveload-dialog.cpp:568 gui/saveload-dialog.cpp:1084
 msgid "Playtime: "
-msgstr "Р§Р°СЃ РіСЂРё: "
+msgstr "ЗРб УаШ: "
 
 #: gui/saveload-dialog.cpp:581 gui/saveload-dialog.cpp:669
 msgid "Untitled saved game"
-msgstr "Р—Р±РµСЂРµР¶РµРЅР° РіСЂР° Р±РµР· С–РјРµРЅС–"
+msgstr "·СХаХЦХЭР УаР СХЧ цЬХЭц"
 
 #: gui/saveload-dialog.cpp:728
 msgid "Next"
-msgstr "РќР°СЃС‚СѓРїРЅРёР№"
+msgstr "ЅРбвгЯЭШЩ"
 
 #: gui/saveload-dialog.cpp:731
 msgid "Prev"
-msgstr "РџРѕРїРµСЂРµРґРЅС–Р№"
+msgstr "їЮЯХаХФЭцЩ"
 
 #: gui/saveload-dialog.cpp:934
 msgid "New Save"
-msgstr "РќРѕРІРёР№ СЃС‚Р°РЅ"
+msgstr "ЅЮТШЩ бвРЭ"
 
 #: gui/saveload-dialog.cpp:934
 msgid "Create a new saved game"
-msgstr "РЎС‚РІРѕСЂРёС‚Рё РЅРѕРІРёР№ Р·Р°РїРёСЃ РіСЂРё"
+msgstr "БвТЮаШвШ ЭЮТШЩ ЧРЯШб УаШ"
 
 #: gui/saveload-dialog.cpp:1063
 msgid "Name: "
-msgstr "РќР°Р·РІР°: "
+msgstr "ЅРЧТР: "
 
 #: gui/saveload-dialog.cpp:1141
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr "Р’РІРµРґС–С‚СЊ РѕРїРёСЃ РґР»СЏ СЃР»РѕС‚Сѓ %d:"
+msgstr "ІТХФцвм ЮЯШб ФЫп бЫЮвг %d:"
 
 #: gui/storagewizarddialog.cpp:55
 #, c-format
 msgid "%s Storage Connection Wizard"
-msgstr "Р”С–Р°Р»РѕРі РїС–РґРєР»СЋС‡РµРЅРЅСЏ РґРѕ С…РјР°СЂРё %s"
+msgstr "ґцРЫЮУ ЯцФЪЫозХЭЭп ФЮ еЬРаШ %s"
 
 #: gui/storagewizarddialog.cpp:58
 msgid "Navigate to the following URL:"
-msgstr "РџРµСЂРµР№РґС–С‚СЊ Р·Р° РЅР°СЃС‚СѓРїРЅРёРј URL:"
+msgstr "їХаХЩФцвм ЧР ЭРбвгЯЭШЬ URL:"
 
 #: gui/storagewizarddialog.cpp:61
 msgid "Obtain the code from the storage, enter it"
-msgstr "РџС–СЃР»СЏ РѕС‚СЂРёРјР°РЅРЅСЏ РєРѕРґСѓ РІС–Рґ С…РјР°СЂРЅРѕРіРѕ СЃРµСЂРµРґРѕРІРёС‰Р°, РІРІРµРґС–С‚СЊ"
+msgstr "їцбЫп ЮваШЬРЭЭп ЪЮФг ТцФ еЬРаЭЮУЮ бХаХФЮТШйР, ТТХФцвм"
 
 #: gui/storagewizarddialog.cpp:62
 msgid "in the following field and press 'Connect':"
-msgstr "Р№РѕРіРѕ РґРѕ РєРѕРјС–СЂРѕРє РЅРёР¶С‡Рµ С– РЅР°С‚РёСЃРЅС–С‚СЊ 'РџС–Рґ'С”РґРЅР°С‚РёСЃСЊ':"
+msgstr "ЩЮУЮ ФЮ ЪЮЬцаЮЪ ЭШЦзХ ц ЭРвШбЭцвм 'їцФ'фФЭРвШбм':"
 
 #: gui/storagewizarddialog.cpp:69
 msgid "Open URL"
-msgstr "Р’С–РґРєСЂРёС‚Рё URL"
+msgstr "ІцФЪаШвШ URL"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Paste"
-msgstr "Р’СЃС‚Р°РІРёС‚Рё"
+msgstr "ІбвРТШвШ"
 
 #: gui/storagewizarddialog.cpp:70
 msgid "Pastes clipboard contents into fields"
-msgstr "Р’СЃС‚Р°РІР»СЏС” РІРјС–СЃС‚ Р±СѓС„РµСЂР° РѕР±РјС–РЅСѓ РґРѕ РєРѕРјС–СЂРєРё"
+msgstr "ІбвРТЫпф ТЬцбв СгдХаР ЮСЬцЭг ФЮ ЪЮЬцаЪШ"
 
 #: gui/storagewizarddialog.cpp:78
 msgid "You will be directed to ScummVM's page where"
-msgstr "Р’Р°СЃ Р±СѓРґРµ РїРµСЂРµРЅР°РїСЂР°РІР»РµРЅРѕ РґРѕ СЃС‚РѕСЂС–РЅРєРё ScummVM, РґРµ"
+msgstr "ІРб СгФХ ЯХаХЭРЯаРТЫХЭЮ ФЮ бвЮацЭЪШ ScummVM, ФХ"
 
 #: gui/storagewizarddialog.cpp:79
 msgid "you should allow it to access your storage."
-msgstr "РІР°Рј Р±СѓРґРµ РїРѕС‚СЂС–Р±РЅРѕ РґРѕР·РІРѕР»РёС‚Рё РґРѕСЃС‚СѓРї РґРѕ РІР°С€РѕС— С…РјР°СЂРё."
+msgstr "ТРЬ СгФХ ЯЮвацСЭЮ ФЮЧТЮЫШвШ ФЮбвгЯ ФЮ ТРиЮч еЬРаШ."
 
 #: gui/storagewizarddialog.cpp:112
 msgid "Another Storage is active. Do you want to interrupt it?"
-msgstr "Р†РЅС€Рµ С…РјР°СЂРЅРµ СЃРµСЂРµРґРѕРІРёС‰Рµ РІР¶Рµ С” Р°РєС‚РёРІРЅРёРј. Р§Рё РІРё С…РѕС‡РµС‚Рµ РїСЂРёРїРёРЅРёС‚Рё РїСЂРѕС†РµСЃ?"
+msgstr "¦ЭиХ еЬРаЭХ бХаХФЮТШйХ ТЦХ ф РЪвШТЭШЬ. ЗШ ТШ еЮзХвХ ЯаШЯШЭШвШ ЯаЮжХб?"
 
 #: gui/storagewizarddialog.cpp:121
 msgid "Wait until current Storage finishes up and try again."
-msgstr "Р—Р°Р¶РґС–С‚СЊ, РїРѕРєРё РїРѕС‚РѕС‡РЅРµ СЃРµСЂРµРґРѕРІРёС‰Рµ Р·Р°РєС–РЅС‡РёС‚СЊ СЂРѕР±РѕС‚Сѓ, С– СЃРїСЂРѕР±СѓР№С‚Рµ Р·РЅРѕРІ."
+msgstr "·РЦФцвм, ЯЮЪШ ЯЮвЮзЭХ бХаХФЮТШйХ ЧРЪцЭзШвм аЮСЮвг, ц бЯаЮСгЩвХ ЧЭЮТ."
 
 #: gui/storagewizarddialog.cpp:182
 #, c-format
 msgid "Field %s has a mistake in it."
-msgstr "РљРѕРјС–СЂРєР° %s РјР°С” РїРѕС…РёР±РєСѓ."
+msgstr "єЮЬцаЪР %s ЬРф ЯЮеШСЪг."
 
 #: gui/storagewizarddialog.cpp:184
 #, c-format
 msgid "Fields %s have mistakes in them."
-msgstr "РљРѕРјС–СЂРєРё %s РјР°СЋС‚СЊ РїРѕС…РёР±РєРё."
+msgstr "єЮЬцаЪШ %s ЬРовм ЯЮеШСЪШ."
 
 #: gui/storagewizarddialog.cpp:199
 msgid "All OK!"
-msgstr "Р’СЃРµ РіР°СЂР°Р·Рґ!"
+msgstr "ІбХ УРаРЧФ!"
 
 #: gui/storagewizarddialog.cpp:201
 msgid "Invalid code"
-msgstr "РќРµРІС–СЂРЅРёР№ РєРѕРґ"
+msgstr "ЅХТцаЭШЩ ЪЮФ"
 
 #: gui/storagewizarddialog.cpp:209
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
 msgstr ""
-"РќРµ РІРґР°Р»РѕСЃСЏ РІС–РґРєСЂРёС‚Рё URL!\n"
-"Р‘СѓРґСЊ-Р»Р°СЃРєР°, РїРµСЂРµР№РґС–С‚СЊ РІСЂСѓС‡РЅСѓ РЅР° РІРєР°Р·Р°РЅСѓ СЃС‚РѕСЂС–РЅРєСѓ."
+"ЅХ ТФРЫЮбп ТцФЪаШвШ URL!\n"
+"±гФм-ЫРбЪР, ЯХаХЩФцвм ТагзЭг ЭР ТЪРЧРЭг бвЮацЭЪг."
 
 #: gui/themebrowser.cpp:45
 msgid "Select a Theme"
-msgstr "Р’РёР±РµСЂС–С‚СЊ С‚РµРјСѓ"
+msgstr "ІШСХацвм вХЬг"
 
 #: gui/ThemeEngine.cpp:258
 msgid "Disabled GFX"
-msgstr "Р‘РµР· РіСЂР°С„С–РєРё"
+msgstr "±ХЧ УаРдцЪШ"
 
 #: gui/ThemeEngine.cpp:258
 msgctxt "lowres"
 msgid "Disabled GFX"
-msgstr "Р‘РµР· РіСЂР°С„С–РєРё"
+msgstr "±ХЧ УаРдцЪШ"
 
 #: gui/ThemeEngine.cpp:259
 msgid "Standard Renderer"
-msgstr "РЎС‚Р°РЅРґР°СЂС‚РЅРёР№ СЂР°СЃС‚РµСЂРёР·Р°С‚РѕСЂ"
+msgstr "БвРЭФРавЭШЩ аРбвХаШЧРвЮа"
 
 #: gui/ThemeEngine.cpp:259 engines/scumm/dialogs.cpp:660
 msgid "Standard"
-msgstr "РЎС‚Р°РЅРґР°СЂС‚РЅРёР№"
+msgstr "БвРЭФРавЭШЩ"
 
 #: gui/ThemeEngine.cpp:261
 msgid "Antialiased Renderer"
-msgstr "Р Р°СЃС‚РµСЂРёР·Р°С‚РѕСЂ Р·С– Р·РіР»Р°РґР¶СѓРІР°РЅРЅСЏРј"
+msgstr "АРбвХаШЧРвЮа Чц ЧУЫРФЦгТРЭЭпЬ"
 
 #: gui/ThemeEngine.cpp:261
 msgid "Antialiased"
-msgstr "Р—С– Р·РіР»Р°РґР¶СѓРІР°РЅРЅСЏРј"
+msgstr "·ц ЧУЫРФЦгТРЭЭпЬ"
 
 #: gui/updates-dialog.cpp:49
 #, fuzzy
@@ -1632,10 +1632,10 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
-"ScummVM СЃС‚Р°РІ РїС–РґС‚СЂРёРјСѓРІР°С‚Рё Р°РІС‚РѕРјР°С‚РёС‡РЅСѓ РїРµСЂРµРІС–СЂРєСѓ\n"
-"РѕРЅРѕРІР»РµРЅСЊ, С‰Рѕ РїРѕС‚СЂРµР±СѓС” РґРѕСЃСѓРїСѓ РґРѕ Р†РЅС‚РµСЂРЅРµС‚Сѓ.\n"
+"ScummVM бвРТ ЯцФваШЬгТРвШ РТвЮЬРвШзЭг ЯХаХТцаЪг\n"
+"ЮЭЮТЫХЭм, йЮ ЯЮваХСгф ФЮбгЯг ФЮ ¦ЭвХаЭХвг.\n"
 "\n"
-"Р§Рё С…РѕС‚С–Р»Рё Р± РІРё РІРєР»СЋС‡РёС‚Рё С‚Р°РєСѓ РїРµСЂРµРІС–СЂРєСѓ?"
+"ЗШ еЮвцЫШ С ТШ ТЪЫозШвШ вРЪг ЯХаХТцаЪг?"
 
 #: gui/updates-dialog.cpp:52
 msgid ""
@@ -1645,150 +1645,150 @@ msgstr ""
 
 #: gui/updates-dialog.cpp:116
 msgid "Proceed"
-msgstr "РџСЂРѕРґРѕРІР¶РёС‚Рё"
+msgstr "їаЮФЮТЦШвШ"
 
 #: gui/widget.cpp:379 gui/widget.cpp:381 gui/widget.cpp:387 gui/widget.cpp:389
 msgid "Clear value"
-msgstr "РћС‡РёСЃС‚РёС‚Рё Р·РЅР°С‡РµРЅРЅСЏ"
+msgstr "ѕзШбвШвШ ЧЭРзХЭЭп"
 
 #: base/main.cpp:254
 #, c-format
 msgid "Engine does not support debug level '%s'"
-msgstr "Р”РІРёР¶РѕРє РЅРµ РїС–РґС‚СЂРёРјСѓС” СЂС–РІРµРЅСЊ РІС–РґР»Р°РґРєРё '%s'"
+msgstr "ґТШЦЮЪ ЭХ ЯцФваШЬгф ацТХЭм ТцФЫРФЪШ '%s'"
 
 #: base/main.cpp:328
 msgid "Menu"
-msgstr "РњРµРЅСЋ"
+msgstr "јХЭо"
 
 #: base/main.cpp:331 backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:45
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
 msgid "Skip"
-msgstr "РџСЂРѕРїСѓСЃС‚РёС‚Рё"
+msgstr "їаЮЯгбвШвШ"
 
 #: base/main.cpp:334 backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:42
 msgid "Pause"
-msgstr "РџР°СѓР·Р°"
+msgstr "їРгЧР"
 
 #: base/main.cpp:337
 msgid "Skip line"
-msgstr "РџСЂРѕРїСѓСЃС‚РёС‚Рё СЂСЏРґРѕРє"
+msgstr "їаЮЯгбвШвШ апФЮЪ"
 
 #: base/main.cpp:548
 msgid "Error running game:"
-msgstr "РџРѕРјРёР»РєР° Р·Р°РїСѓСЃРєСѓ РіСЂРё:"
+msgstr "їЮЬШЫЪР ЧРЯгбЪг УаШ:"
 
 #: base/main.cpp:595
 msgid "Could not find any engine capable of running the selected game"
-msgstr "РќРµ РјРѕР¶Сѓ Р·РЅР°Р№С‚Рё РґРІРёР¶РѕРє РґР»СЏ Р·Р°РїСѓСЃРєСѓ РІРёР±СЂР°РЅРѕС— РіСЂРё"
+msgstr "ЅХ ЬЮЦг ЧЭРЩвШ ФТШЦЮЪ ФЫп ЧРЯгбЪг ТШСаРЭЮч УаШ"
 
 #: common/error.cpp:38
 msgid "No error"
-msgstr "РќРµРјР°С” РїРѕРјРёР»РєРё"
+msgstr "ЅХЬРф ЯЮЬШЫЪШ"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr "РќРµРјР°С” С„Р°Р№Р»С–РІ РіСЂРё"
+msgstr "ЅХЬРф дРЩЫцТ УаШ"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr "Game id РЅРµ РїС–РґС‚СЂРёРјСѓС”С‚СЊСЃСЏ"
+msgstr "Game id ЭХ ЯцФваШЬгфвмбп"
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
-msgstr "Р РµР¶РёРј РєРѕР»СЊРѕСЂСѓ РЅРµ РїС–РґС‚СЂРёРјСѓС”С‚СЊСЃСЏ"
+msgstr "АХЦШЬ ЪЮЫмЮаг ЭХ ЯцФваШЬгфвмбп"
 
 #: common/error.cpp:47
 msgid "Read permission denied"
-msgstr "РќРµРґРѕСЃС‚Р°С‚РЅСЊРѕ РїСЂР°РІ РґР»СЏ С‡РёС‚Р°РЅРЅСЏ"
+msgstr "ЅХФЮбвРвЭмЮ ЯаРТ ФЫп зШвРЭЭп"
 
 #: common/error.cpp:49
 msgid "Write permission denied"
-msgstr "РќРµРґРѕСЃС‚Р°С‚РЅСЊРѕ РїСЂР°РІ РґР»СЏ Р·Р°РїРёСЃСѓ"
+msgstr "ЅХФЮбвРвЭмЮ ЯаРТ ФЫп ЧРЯШбг"
 
 #: common/error.cpp:52
 msgid "Path does not exist"
-msgstr "РЁР»СЏС… РЅРµ Р·РЅР°Р№РґРµРЅРѕ"
+msgstr "ИЫпе ЭХ ЧЭРЩФХЭЮ"
 
 #: common/error.cpp:54
 msgid "Path not a directory"
-msgstr "РЁР»СЏС… РЅРµ С” РїР°РїРєРѕСЋ"
+msgstr "ИЫпе ЭХ ф ЯРЯЪЮо"
 
 #: common/error.cpp:56
 msgid "Path not a file"
-msgstr "РЁР»СЏС… РЅРµ С” С„Р°Р№Р»РѕРј"
+msgstr "ИЫпе ЭХ ф дРЩЫЮЬ"
 
 #: common/error.cpp:59
 msgid "Cannot create file"
-msgstr "РќРµ РјРѕР¶Сѓ СЃС‚РІРѕСЂРёС‚Рё С„Р°Р№Р»"
+msgstr "ЅХ ЬЮЦг бвТЮаШвШ дРЩЫ"
 
 #: common/error.cpp:61
 msgid "Reading data failed"
-msgstr "РџРѕРјРёР»РєР° С‡РёС‚Р°РЅРЅСЏ"
+msgstr "їЮЬШЫЪР зШвРЭЭп"
 
 #: common/error.cpp:63
 msgid "Writing data failed"
-msgstr "РџРѕРјРёР»РєР° Р·Р°РїРёСЃСѓ РґР°РЅРёС…"
+msgstr "їЮЬШЫЪР ЧРЯШбг ФРЭШе"
 
 #: common/error.cpp:66
 msgid "Could not find suitable engine plugin"
-msgstr "РќРµ РјРѕР¶Сѓ Р·РЅР°Р№С‚Рё РЅРµРѕР±С…С–РґРЅРѕРіРѕ РІС‚СѓР»РєР° РґР»СЏ РґРІРёР¶РєР°"
+msgstr "ЅХ ЬЮЦг ЧЭРЩвШ ЭХЮСецФЭЮУЮ ТвгЫЪР ФЫп ФТШЦЪР"
 
 #: common/error.cpp:68
 msgid "Engine plugin does not support saved games"
-msgstr "Р’С‚СѓР»РѕРє РґРІРёР¶РєР° РЅРµ РїС–РґС‚СЂРёРјСѓС” Р·Р±РµСЂРµР¶РµРЅРЅСЏ С–РіРѕСЂ"
+msgstr "ІвгЫЮЪ ФТШЦЪР ЭХ ЯцФваШЬгф ЧСХаХЦХЭЭп цУЮа"
 
 #: common/error.cpp:71
 msgid "User canceled"
-msgstr "Р’С–РґРјС–РЅРµРЅРѕ РєРѕСЂРёСЃС‚СѓРІР°С‡РµРј"
+msgstr "ІцФЬцЭХЭЮ ЪЮаШбвгТРзХЬ"
 
 #: common/error.cpp:75
 msgid "Unknown error"
-msgstr "РќРµРІС–РґРѕРјР° РїРѕРјРёР»РєР°"
+msgstr "ЅХТцФЮЬР ЯЮЬШЫЪР"
 
 #. I18N: Hercules is graphics card name
 #: common/rendermode.cpp:35
 msgid "Hercules Green"
-msgstr "Hercules Р·РµР»РµРЅРёР№"
+msgstr "Hercules ЧХЫХЭШЩ"
 
 #: common/rendermode.cpp:36
 msgid "Hercules Amber"
-msgstr "Hercules Р±СѓСЂС€С‚РёРЅРЅРёР№"
+msgstr "Hercules СгаивШЭЭШЩ"
 
 #: common/rendermode.cpp:42
 msgid "PC-9821 (256 Colors)"
-msgstr "PC-9821 (256 РєРѕР»СЊРѕСЂС–РІ)"
+msgstr "PC-9821 (256 ЪЮЫмЮацТ)"
 
 #: common/rendermode.cpp:43
 msgid "PC-9801 (16 Colors)"
-msgstr "PC-9801 (16 РєРѕР»СЊРѕСЂС–РІ)"
+msgstr "PC-9801 (16 ЪЮЫмЮацТ)"
 
 #: common/rendermode.cpp:73
 msgctxt "lowres"
 msgid "Hercules Green"
-msgstr "Hercules Р·РµР»РµРЅРёР№"
+msgstr "Hercules ЧХЫХЭШЩ"
 
 #: common/rendermode.cpp:74
 msgctxt "lowres"
 msgid "Hercules Amber"
-msgstr "Hercules Р±СѓСЂС€С‚РёРЅРЅРёР№"
+msgstr "Hercules СгаивШЭЭШЩ"
 
 #: common/updates.cpp:58
 msgid "Daily"
-msgstr "Р©РѕРґРµРЅРЅРѕ"
+msgstr "ЙЮФХЭЭЮ"
 
 #: common/updates.cpp:60
 msgid "Weekly"
-msgstr "Р©РѕС‚РёР¶РЅСЏ"
+msgstr "ЙЮвШЦЭп"
 
 #: common/updates.cpp:62
 msgid "Monthly"
-msgstr "Р©РѕРјС–СЃСЏС†СЏ"
+msgstr "ЙЮЬцбпжп"
 
 #: common/updates.cpp:64
 msgid "<Bad value>"
-msgstr "<РќРµРІС–СЂРЅРµ Р·РЅР°С‡РµРЅРЅСЏ>"
+msgstr "<ЅХТцаЭХ ЧЭРзХЭЭп>"
 
 #: engines/advancedDetector.cpp:330
 #, fuzzy, c-format
@@ -1798,9 +1798,9 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
-"Р“СЂР° Сѓ '%s' РЅРµРІС–РґРѕРјР°.\n"
-"Р‘СѓРґСЊ Р»Р°СЃРєР°, РїРµСЂРµРґР°Р№С‚Рµ РЅРёР¶С‡РµРЅР°РІРµРґРµРЅСѓ С–РЅС„РѕСЂРјР°С†С–СЋ РєРѕРјР°РЅРґС– ScummVM СЂР°Р·РѕРј Р·\n"
-"РЅР°Р·РІРѕСЋ РіСЂРё, СЏРєСѓ РІРё РЅР°РјР°РіР°С”С‚РµСЃСЊ РґРѕРґР°С‚Рё, Р° С‚Р°РєРѕР¶ С—С— РІРµСЂСЃС–СЋ/РјРѕРІСѓ/С‚Р° С–РЅС€Рµ:"
+"іаР г '%s' ЭХТцФЮЬР.\n"
+"±гФм ЫРбЪР, ЯХаХФРЩвХ ЭШЦзХЭРТХФХЭг цЭдЮаЬРжцо ЪЮЬРЭФц ScummVM аРЧЮЬ Ч\n"
+"ЭРЧТЮо УаШ, пЪг ТШ ЭРЬРУРфвХбм ФЮФРвШ, Р вРЪЮЦ чч ТХабцо/ЬЮТг/вР цЭиХ:"
 
 #: engines/advancedDetector.cpp:338
 msgid "Matched game IDs:"
@@ -1808,36 +1808,36 @@ msgstr ""
 
 #: engines/dialogs.cpp:85
 msgid "~R~esume"
-msgstr "РџСЂРѕРґРѕРІ~Р¶~РёС‚Рё"
+msgstr "їаЮФЮТ~Ц~ШвШ"
 
 #: engines/dialogs.cpp:87 engines/mohawk/dialogs.cpp:98
 msgid "~L~oad"
-msgstr "~Р—~Р°РІР°РЅС‚Р°Р¶РёС‚Рё"
+msgstr "~·~РТРЭвРЦШвШ"
 
 #: engines/dialogs.cpp:91 engines/mohawk/dialogs.cpp:99
 msgid "~S~ave"
-msgstr "~Р—~Р°РїРёСЃР°С‚Рё"
+msgstr "~·~РЯШбРвШ"
 
 #: engines/dialogs.cpp:95
 msgid "~O~ptions"
-msgstr "~Рќ~Р°Р»Р°С€С‚СѓРІР°РЅРЅСЏ"
+msgstr "~Ѕ~РЫРивгТРЭЭп"
 
 #: engines/dialogs.cpp:100
 msgid "~H~elp"
-msgstr "~Р”~РѕРїРѕРјРѕРіР°"
+msgstr "~ґ~ЮЯЮЬЮУР"
 
 #: engines/dialogs.cpp:102
 msgid "~A~bout"
-msgstr "РџСЂРѕ РїСЂРѕ~Рі~СЂР°РјСѓ"
+msgstr "їаЮ ЯаЮ~У~аРЬг"
 
 #: engines/dialogs.cpp:105 engines/dialogs.cpp:181
 msgid "~R~eturn to Launcher"
-msgstr "~Рџ~РѕРІРµСЂ. РІ РіРѕР»РѕРІРЅРµ РјРµРЅСЋ"
+msgstr "~ї~ЮТХа. Т УЮЫЮТЭХ ЬХЭо"
 
 #: engines/dialogs.cpp:107 engines/dialogs.cpp:183
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "~Рџ~РѕРІРµСЂ.РІ РіРѕР»РѕРІРЅРµ РјРµРЅСЋ"
+msgstr "~ї~ЮТХа.Т УЮЫЮТЭХ ЬХЭо"
 
 #: engines/dialogs.cpp:116 engines/agi/saveload.cpp:761
 #: engines/avalanche/parser.cpp:1900 engines/cge/events.cpp:72
@@ -1853,7 +1853,7 @@ msgstr "~Рџ~РѕРІРµСЂ.РІ РіРѕР»РѕРІРЅРµ РјРµРЅСЋ"
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
-msgstr "Р—Р±РµСЂРµРіС‚Рё РіСЂСѓ:"
+msgstr "·СХаХУвШ Уаг:"
 
 #: engines/dialogs.cpp:116 backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
@@ -1875,7 +1875,7 @@ msgstr "Р—Р±РµСЂРµРіС‚Рё РіСЂСѓ:"
 #: engines/toon/toon.cpp:3340 engines/tsage/scenes.cpp:599
 #: engines/wage/saveload.cpp:758 engines/zvision/file/save_manager.cpp:49
 msgid "Save"
-msgstr "Р—Р°РїРёСЃР°С‚Рё"
+msgstr "·РЯШбРвШ"
 
 #: engines/dialogs.cpp:145
 msgid ""
@@ -1883,9 +1883,9 @@ msgid ""
 "the README for basic information, and for instructions on how to obtain "
 "further assistance."
 msgstr ""
-"Р’РёР±Р°С‡С‚Рµ, С†РµР№ РґРІРёР¶РѕРє РЅРµ РїС–РґС‚СЂРёРјСѓС” РґРѕРІС–РґРєСѓ РїРѕ С–РіСЂР°Рј. Р‘СѓРґСЊ-Р»Р°СЃРєР°, РґРёРІС–С‚СЊСЃСЏ С„Р°Р№Р» "
-"README РґР»СЏ РѕСЃРЅРѕРІРЅРѕС— С–РЅС„РѕСЂРјР°С†С–С—, Р° С‚Р°РєРѕР¶ С–РЅСЃС‚СЂСѓРєС†С–Р№, СЏРє РѕС‚СЂРёРјР°С‚Рё РїРѕРґР°Р»СЊС€Сѓ "
-"РґРѕРїРѕРјРѕРіСѓ."
+"ІШСРзвХ, жХЩ ФТШЦЮЪ ЭХ ЯцФваШЬгф ФЮТцФЪг ЯЮ цУаРЬ. ±гФм-ЫРбЪР, ФШТцвмбп дРЩЫ "
+"README ФЫп ЮбЭЮТЭЮч цЭдЮаЬРжцч, Р вРЪЮЦ цЭбвагЪжцЩ, пЪ ЮваШЬРвШ ЯЮФРЫмиг "
+"ФЮЯЮЬЮУг."
 
 #: engines/dialogs.cpp:234 engines/pegasus/pegasus.cpp:395
 #, c-format
@@ -1893,8 +1893,8 @@ msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"РќРµ РІРґР°Р»РѕСЃСЏ Р·Р±РµСЂРµРіС‚Рё РіСЂСѓ (%s)!. Р‘СѓРґСЊ-Р»Р°СЃРєР°, РґРёРІС–С‚СЊСЃСЏ С„Р°Р№Р» README РґР»СЏ РѕСЃРЅРѕРІРЅРѕС— "
-"С–РЅС„РѕСЂРјР°С†С–С—, Р° С‚Р°РєРѕР¶ С–РЅСЃС‚СЂСѓРєС†С–Р№, СЏРє РѕС‚СЂРёРјР°С‚Рё РїРѕРґР°Р»СЊС€Сѓ РґРѕРїРѕРјРѕРіСѓ."
+"ЅХ ТФРЫЮбп ЧСХаХУвШ Уаг (%s)!. ±гФм-ЫРбЪР, ФШТцвмбп дРЩЫ README ФЫп ЮбЭЮТЭЮч "
+"цЭдЮаЬРжцч, Р вРЪЮЦ цЭбвагЪжцЩ, пЪ ЮваШЬРвШ ЯЮФРЫмиг ФЮЯЮЬЮУг."
 
 #: engines/dialogs.cpp:307 engines/mohawk/dialogs.cpp:102
 #: engines/tsage/dialogs.cpp:112
@@ -1904,31 +1904,31 @@ msgstr "~O~K"
 #: engines/dialogs.cpp:308 engines/mohawk/dialogs.cpp:103
 #: engines/tsage/dialogs.cpp:113
 msgid "~C~ancel"
-msgstr "Р’С–~Рґ~РјС–РЅР°"
+msgstr "Іц~Ф~ЬцЭР"
 
 #: engines/dialogs.cpp:311
 msgid "~K~eys"
-msgstr "~Рљ~Р»Р°РІС–С€С–"
+msgstr "~є~ЫРТциц"
 
 #: engines/engine.cpp:315
 msgid "Could not initialize color format."
-msgstr "РќРµ РјРѕР¶Сѓ РЅР°Р»Р°С€С‚СѓРІР°С‚Рё С„РѕСЂРјР°С‚ РєРѕР»СЊРѕСЂСѓ."
+msgstr "ЅХ ЬЮЦг ЭРЫРивгТРвШ дЮаЬРв ЪЮЫмЮаг."
 
 #: engines/engine.cpp:323
 msgid "Could not switch to video mode: '"
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ РїРµСЂРµРєР»СЋС‡РёС‚Рё РІС–РґРµРѕСЂРµР¶РёРј: '"
+msgstr "ЅХ ТФРЫЮбп ЯХаХЪЫозШвШ ТцФХЮаХЦШЬ: '"
 
 #: engines/engine.cpp:332
 msgid "Could not apply aspect ratio setting."
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°СЃС‚РѕСЃСѓРІР°С‚Рё РєРѕСЂРµРєС†С–СЋ СЃРїС–РІРІС–РґРЅРѕС€РµРЅРЅСЏ СЃС‚РѕСЂС–РЅ."
+msgstr "ЅХ ТФРЫЮбп ЧРбвЮбгТРвШ ЪЮаХЪжцо бЯцТТцФЭЮиХЭЭп бвЮацЭ."
 
 #: engines/engine.cpp:337
 msgid "Could not apply fullscreen setting."
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°СЃС‚РѕСЃСѓРІР°С‚Рё РїРѕРІРЅРѕРµРєСЂР°РЅРЅРёР№ СЂРµР¶РёРј."
+msgstr "ЅХ ТФРЫЮбп ЧРбвЮбгТРвШ ЯЮТЭЮХЪаРЭЭШЩ аХЦШЬ."
 
 #: engines/engine.cpp:342
 msgid "Could not apply filtering setting."
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°СЃС‚РѕСЃСѓРІР°С‚Рё СЂРµР¶РёРј С„С–Р»СЊС‚СЂСѓРІР°РЅРЅСЏ."
+msgstr "ЅХ ТФРЫЮбп ЧРбвЮбгТРвШ аХЦШЬ дцЫмвагТРЭЭп."
 
 #: engines/engine.cpp:439
 msgid ""
@@ -1938,11 +1938,11 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the README file for details."
 msgstr ""
-"Р’Рё РЅР°РјР°РіР°С”С‚РµСЃСЊ РіСЂР°С‚Рё РіСЂСѓ Р±РµР·РїРѕСЃРµСЂРµРґРЅСЊРѕ Р· CD\n"
-"Р’С–РґРѕРјРѕ, С‰Рѕ С†Рµ РїСЂРёР·РІРѕРґРёС‚СЊ РґРѕ РїСЂРѕР±Р»РµРј, С– С‚РѕРјСѓ\n"
-"СЂРµРєРѕРјРµРЅРґРѕРІР°РЅРѕ, С‰РѕР±Рё Р’Рё СЃРєРѕРїС–СЋРІР°Р»Рё С„Р°Р№Р»Рё РґР°РЅРёС…\n"
-"РіСЂРё РЅР° Р¶РѕСЂСЃС‚РєРёР№ РґРёСЃРє.\n"
-"Р”РёРІС–С‚СЊСЃСЏ С„Р°Р№Р» README РґР»СЏ РїРѕРґР°Р»СЊС€РёС… С–РЅСЃС‚СЂСѓРєС†С–Р№."
+"ІШ ЭРЬРУРфвХбм УаРвШ Уаг СХЧЯЮбХаХФЭмЮ Ч CD\n"
+"ІцФЮЬЮ, йЮ жХ ЯаШЧТЮФШвм ФЮ ЯаЮСЫХЬ, ц вЮЬг\n"
+"аХЪЮЬХЭФЮТРЭЮ, йЮСШ ІШ бЪЮЯцоТРЫШ дРЩЫШ ФРЭШе\n"
+"УаШ ЭР ЦЮабвЪШЩ ФШбЪ.\n"
+"ґШТцвмбп дРЩЫ README ФЫп ЯЮФРЫмиШе цЭбвагЪжцЩ."
 
 #: engines/engine.cpp:450
 msgid ""
@@ -1952,11 +1952,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the README file for details."
 msgstr ""
-"Р¦СЏ РіСЂР° РјР°С” Р°СѓРґС–РѕРґРѕСЂС–Р¶РєРё РЅР° РґРёСЃРєСѓ. Р‡С… РїРѕС‚СЂС–Р±РЅРѕ\n"
-"РїРµСЂРµРїРёСЃР°С‚Рё Р· РґРёСЃРєСѓ Р· РґРѕРїРѕРјРѕРіРѕСЋ РІС–РґРїРѕРІС–РґРЅРѕС—\n"
-"РїСЂРѕРіСЂР°РјРё РґР»СЏ РєРѕРїС–СЋРІР°РЅРЅСЏ Р°СѓРґС–Рѕ Р· CD РґРёСЃРєС–РІ, РґР»СЏ\n"
-"С‚РѕРіРѕ, С‰РѕР± РјРѕР¶РЅР° Р±СѓР»Рѕ СЃР»СѓС…Р°С‚Рё РјСѓР·РёРєСѓ Сѓ РіСЂС–.\n"
-"Р”РёРІС–С‚СЊСЃСЏ С„Р°Р№Р» README РґР»СЏ РїРѕРґР°Р»СЊС€РёС… С–РЅСЃС‚СЂСѓРєС†С–Р№."
+"Жп УаР ЬРф РгФцЮФЮацЦЪШ ЭР ФШбЪг. §е ЯЮвацСЭЮ\n"
+"ЯХаХЯШбРвШ Ч ФШбЪг Ч ФЮЯЮЬЮУЮо ТцФЯЮТцФЭЮч\n"
+"ЯаЮУаРЬШ ФЫп ЪЮЯцоТРЭЭп РгФцЮ Ч CD ФШбЪцТ, ФЫп\n"
+"вЮУЮ, йЮС ЬЮЦЭР СгЫЮ бЫгеРвШ ЬгЧШЪг г Уац.\n"
+"ґШТцвмбп дРЩЫ README ФЫп ЯЮФРЫмиШе цЭбвагЪжцЩ."
 
 #: engines/engine.cpp:508
 #, c-format
@@ -1964,8 +1964,8 @@ msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
 "information, and for instructions on how to obtain further assistance."
 msgstr ""
-"РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РіСЂСѓ (%s)! . Р‘СѓРґСЊ-Р»Р°СЃРєР°, РґРёРІС–С‚СЊСЃСЏ С„Р°Р№Р» README РґР»СЏ "
-"РѕСЃРЅРѕРІРЅРѕС— С–РЅС„РѕСЂРјР°С†С–С—, Р° С‚Р°РєРѕР¶ С–РЅСЃС‚СЂСѓРєС†С–Р№, СЏРє РѕС‚СЂРёРјР°С‚Рё РїРѕРґР°Р»СЊС€Сѓ РґРѕРїРѕРјРѕРіСѓ."
+"ЅХ ТФРЫЮбп ЧРТРЭвРЦШвШ Уаг (%s)! . ±гФм-ЫРбЪР, ФШТцвмбп дРЩЫ README ФЫп "
+"ЮбЭЮТЭЮч цЭдЮаЬРжцч, Р вРЪЮЦ цЭбвагЪжцЩ, пЪ ЮваШЬРвШ ЯЮФРЫмиг ФЮЯЮЬЮУг."
 
 #: engines/engine.cpp:521
 msgid ""
@@ -1973,33 +1973,33 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
 "might not work in future versions of ScummVM."
 msgstr ""
-"РџРћРџР•Р Р•Р”Р–Р•РќРќРЇ: Р“СЂР°, СЏРєСѓ РІРё С…РѕС‡РµС‚Рµ Р·Р°РїСѓСЃС‚РёС‚Рё, С‰Рµ РЅРµ РїС–РґС‚СЂРёРјСѓС”С‚СЊСЃСЏ РїРѕРІРЅС–СЃС‚СЋ "
-"ScummVM. РЎРєРѕСЂС€Рµ Р·Р° РІСЃРµ РІРѕРЅР° РЅРµ Р±СѓРґРµ РїСЂР°С†СЋРІР°С‚Рё СЃС‚Р°Р±С–Р»СЊРЅРѕ, С– Р·Р±РµСЂРµР¶РµРЅС– С–РіСЂРё, "
-"СЏРєС– РІРё Р·СЂРѕР±РёС‚Рµ, РјРѕР¶СѓС‚СЊ РЅРµ РїСЂР°С†СЋРІР°С‚Рё Сѓ РїРѕРґР°Р»СЊС€РёС… РІРµСЂСЃС–СЏС… ScummVM."
+"їѕїµАµґ¶µЅЅП: іаР, пЪг ТШ еЮзХвХ ЧРЯгбвШвШ, йХ ЭХ ЯцФваШЬгфвмбп ЯЮТЭцбво "
+"ScummVM. БЪЮаиХ ЧР ТбХ ТЮЭР ЭХ СгФХ ЯаРжоТРвШ бвРСцЫмЭЮ, ц ЧСХаХЦХЭц цУаШ, "
+"пЪц ТШ ЧаЮСШвХ, ЬЮЦгвм ЭХ ЯаРжоТРвШ г ЯЮФРЫмиШе ТХабцпе ScummVM."
 
 #: engines/engine.cpp:524
 msgid "Start anyway"
-msgstr "Р’СЃРµ РѕРґРЅРѕ Р·Р°РїСѓСЃС‚РёС‚Рё"
+msgstr "ІбХ ЮФЭЮ ЧРЯгбвШвШ"
 
 #: audio/adlib.cpp:2290
 msgid "AdLib Emulator"
-msgstr "Р•РјСѓР»СЏС‚РѕСЂ AdLib"
+msgstr "µЬгЫпвЮа AdLib"
 
 #: audio/fmopl.cpp:71
 msgid "MAME OPL emulator"
-msgstr "Р•РјСѓР»СЏС‚РѕСЂ MAME OPL"
+msgstr "µЬгЫпвЮа MAME OPL"
 
 #: audio/fmopl.cpp:73
 msgid "DOSBox OPL emulator"
-msgstr "Р•РјСѓР»СЏС‚РѕСЂ DOSBox OPL"
+msgstr "µЬгЫпвЮа DOSBox OPL"
 
 #: audio/fmopl.cpp:76
 msgid "Nuked OPL emulator"
-msgstr "Р•РјСѓР»СЏС‚РѕСЂ Nuked OPL"
+msgstr "µЬгЫпвЮа Nuked OPL"
 
 #: audio/fmopl.cpp:79
 msgid "ALSA Direct FM"
-msgstr "Р‘РµР·РїРѕСЃРµСЂРµРґРЅС–Р№ ALSA FM"
+msgstr "±ХЧЯЮбХаХФЭцЩ ALSA FM"
 
 #: audio/fmopl.cpp:82
 msgid "OPL2LPT"
@@ -2011,13 +2011,13 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Р’РёР±СЂР°РЅРёР№ Р·РІСѓРєРѕРІРёР№ РїСЂРёСЃС‚СЂС–Р№ '%s' РЅРµ Р±СѓР»Рѕ Р·РЅР°Р№РґРµРЅРѕ (С‚РѕР±С‚Рѕ, Р№РѕРіРѕ РјРѕР¶Рµ Р±СѓС‚Рё "
-"РІРёРјРєРЅРµРЅРѕ Р°Р±Рѕ РЅРµ РїС–РґРєР»СЋС‡РµРЅРѕ)."
+"ІШСаРЭШЩ ЧТгЪЮТШЩ ЯаШбвацЩ '%s' ЭХ СгЫЮ ЧЭРЩФХЭЮ (вЮСвЮ, ЩЮУЮ ЬЮЦХ СгвШ "
+"ТШЬЪЭХЭЮ РСЮ ЭХ ЯцФЪЫозХЭЮ)."
 
 #: audio/mididrv.cpp:209 audio/mididrv.cpp:221 audio/mididrv.cpp:257
 #: audio/mididrv.cpp:272
 msgid "Attempting to fall back to the next available device..."
-msgstr "РќР°РјР°РіР°СЋСЃСЏ РІРёРєРѕСЂРёСЃС‚Р°С‚Рё РЅР°СЃС‚СѓРїРЅРёР№ РґРѕСЃС‚СѓРїРЅРёР№ РїСЂРёСЃС‚СЂС–Р№..."
+msgstr "ЅРЬРУРобп ТШЪЮаШбвРвШ ЭРбвгЯЭШЩ ФЮбвгЯЭШЩ ЯаШбвацЩ..."
 
 #: audio/mididrv.cpp:221
 #, c-format
@@ -2025,8 +2025,8 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"Р’РёР±СЂР°РЅРёР№ Р·РІСѓРєРѕРІРёР№ РїСЂРёСЃС‚СЂС–Р№ '%s' РЅРµ РјРѕР¶Рµ Р±СѓС‚Рё РІРёРєРѕСЂРёСЃС‚Р°РЅРѕ. Р”РёРІС–С‚СЊСЃСЏ С„Р°Р№Р» "
-"РїСЂРѕС‚РѕРєРѕР»Сѓ РґР»СЏ РґРѕРґР°С‚РєРѕРІРѕС— С–РЅС„РѕСЂРјР°С†С–С—."
+"ІШСаРЭШЩ ЧТгЪЮТШЩ ЯаШбвацЩ '%s' ЭХ ЬЮЦХ СгвШ ТШЪЮаШбвРЭЮ. ґШТцвмбп дРЩЫ "
+"ЯаЮвЮЪЮЫг ФЫп ФЮФРвЪЮТЮч цЭдЮаЬРжцч."
 
 #: audio/mididrv.cpp:257
 #, c-format
@@ -2034,8 +2034,8 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"РЈРїРѕРґРѕР±Р°РЅРёР№ Р·РІСѓРєРѕРІРёР№ РїСЂРёСЃС‚СЂС–Р№ '%s' РЅРµ Р±СѓР»Рѕ Р·РЅР°Р№РґРµРЅРѕ (С‚РѕР±С‚Рѕ, Р№РѕРіРѕ РјРѕР¶Рµ Р±СѓС‚Рё "
-"РІРёРјРєРЅРµРЅРѕ Р°Р±Рѕ РЅРµ РїС–РґРєР»СЋС‡РµРЅРѕ)."
+"ГЯЮФЮСРЭШЩ ЧТгЪЮТШЩ ЯаШбвацЩ '%s' ЭХ СгЫЮ ЧЭРЩФХЭЮ (вЮСвЮ, ЩЮУЮ ЬЮЦХ СгвШ "
+"ТШЬЪЭХЭЮ РСЮ ЭХ ЯцФЪЫозХЭЮ)."
 
 #: audio/mididrv.cpp:272
 #, c-format
@@ -2043,68 +2043,68 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"РЈРїРѕРґРѕР±Р°РЅРёР№ Р·РІСѓРєРѕРІРёР№ РїСЂРёСЃС‚СЂС–Р№ '%s' РЅРµ РјРѕР¶Рµ Р±СѓС‚Рё РІРёРєРѕСЂРёСЃС‚Р°РЅРѕ. Р”РёРІС–С‚СЊСЃСЏ С„Р°Р№Р» "
-"РїСЂРѕС‚РѕРєРѕР»Сѓ РґР»СЏ РґРѕРґР°С‚РєРѕРІРѕС— С–РЅС„РѕСЂРјР°С†С–С—."
+"ГЯЮФЮСРЭШЩ ЧТгЪЮТШЩ ЯаШбвацЩ '%s' ЭХ ЬЮЦХ СгвШ ТШЪЮаШбвРЭЮ. ґШТцвмбп дРЩЫ "
+"ЯаЮвЮЪЮЫг ФЫп ФЮФРвЪЮТЮч цЭдЮаЬРжцч."
 
 #: audio/mods/paula.cpp:196
 msgid "Amiga Audio Emulator"
-msgstr "РђРјС–РіР° РђСѓРґС–Рѕ Р•РјСѓР»СЏС‚РѕСЂ"
+msgstr "°ЬцУР °гФцЮ µЬгЫпвЮа"
 
 #: audio/null.h:44
 msgid "No music"
-msgstr "Р‘РµР· РјСѓР·РёРєРё"
+msgstr "±ХЧ ЬгЧШЪШ"
 
 #: audio/softsynth/appleiigs.cpp:33
 msgid "Apple II GS Emulator (NOT IMPLEMENTED)"
-msgstr "Apple II GS Р•РјСѓР»СЏС‚РѕСЂ (РќР• Р Р•РђР›Р†Р—РћР’РђРќРћ)"
+msgstr "Apple II GS µЬгЫпвЮа (Ѕµ Аµ°»¦·ѕІ°Ѕѕ)"
 
 #: audio/softsynth/cms.cpp:350
 msgid "Creative Music System Emulator"
-msgstr "Р•РјСѓР»СЏС‚РѕСЂ Creative Music System"
+msgstr "µЬгЫпвЮа Creative Music System"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:33
 msgid "FM-Towns Audio"
-msgstr "РђСѓРґС–Рѕ FM-Towns"
+msgstr "°гФцЮ FM-Towns"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:58
 msgid "PC-98 Audio"
-msgstr "РђСѓРґС–Рѕ PC-98"
+msgstr "°гФцЮ PC-98"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
-msgstr "РќР°Р»Р°С€С‚РѕРІСѓСЋ РµРјСѓР»СЏС‚РѕСЂ MT-32"
+msgstr "ЅРЫРивЮТго ХЬгЫпвЮа MT-32"
 
 #: audio/softsynth/mt32.cpp:437
 msgid "MT-32 Emulator"
-msgstr "Р•РјСѓР»СЏС‚РѕСЂ MT-32"
+msgstr "µЬгЫпвЮа MT-32"
 
 #: audio/softsynth/pcspk.cpp:139
 msgid "PC Speaker Emulator"
-msgstr "Р•РјСѓР»СЏС‚РѕСЂ PC СЃРїС–РєРµСЂР°"
+msgstr "µЬгЫпвЮа PC бЯцЪХаР"
 
 #: audio/softsynth/pcspk.cpp:158
 msgid "IBM PCjr Emulator"
-msgstr "Р•РјСѓР»СЏС‚РѕСЂ IBM PCjr"
+msgstr "µЬгЫпвЮа IBM PCjr"
 
 #: audio/softsynth/sid.cpp:1430
 msgid "C64 Audio Emulator"
-msgstr "C64 РђСѓРґС–Рѕ Р•РјСѓР»СЏС‚РѕСЂ"
+msgstr "C64 °гФцЮ µЬгЫпвЮа"
 
 #: backends/cloud/storage.cpp:211
 msgid "Saved games sync complete."
-msgstr "РЎРёРЅС…СЂРѕРЅРёР·Р°С†С–СЋ Р·Р±РµСЂРµР¶РµРЅРёС… С–РіРѕСЂ Р·Р°РєС–РЅС‡РµРЅРѕ."
+msgstr "БШЭеаЮЭШЧРжцо ЧСХаХЦХЭШе цУЮа ЧРЪцЭзХЭЮ."
 
 #: backends/cloud/storage.cpp:222
 msgid "Saved games sync was cancelled."
-msgstr "РЎРёРЅС…СЂРѕРЅРёР·Р°С†С–СЋ Р·Р±РµСЂРµР¶РµРЅРёС… С–РіРѕСЂ РїСЂРёРїРёРЅРµРЅРѕ."
+msgstr "БШЭеаЮЭШЧРжцо ЧСХаХЦХЭШе цУЮа ЯаШЯШЭХЭЮ."
 
 #: backends/cloud/storage.cpp:224
 msgid ""
 "Saved games sync failed.\n"
 "Check your Internet connection."
 msgstr ""
-"РџРѕРјРёР»РєР° СЃРёРЅС…СЂРѕРЅРёР·Р°С†С–С— Р·Р±РµСЂРµР¶РµРЅРёС… С–РіРѕСЂ.\n"
-"РџРµСЂРµРІС–СЂС‚Рµ РІР°С€Рµ Р·'С”РґРЅР°РЅРЅСЏ Р· С–РЅС‚РµСЂРЅРµС‚."
+"їЮЬШЫЪР бШЭеаЮЭШЧРжцч ЧСХаХЦХЭШе цУЮа.\n"
+"їХаХТцавХ ТРиХ Ч'фФЭРЭЭп Ч цЭвХаЭХв."
 
 #: backends/cloud/storage.cpp:328
 #, c-format
@@ -2112,28 +2112,28 @@ msgid ""
 "Download complete.\n"
 "Failed to download %u files."
 msgstr ""
-"Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ Р·Р°РєС–РЅС‡РµРЅРѕ.\n"
-"РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё %u С„Р°Р№Р»С–РІ."
+"·РТРЭвРЦХЭЭп ЧРЪцЭзХЭЮ.\n"
+"ЅХ ТФРЫЮбп ЧРТРЭвРЦШвШ %u дРЩЫцТ."
 
 #: backends/cloud/storage.cpp:330
 msgid "Download complete."
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ Р·Р°РєС–РЅС‡РµРЅРѕ."
+msgstr "·РТРЭвРЦХЭЭп ЧРЪцЭзХЭЮ."
 
 #: backends/cloud/storage.cpp:340
 msgid "Download failed."
-msgstr "РџРѕРјРёР»РєР° Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ."
+msgstr "їЮЬШЫЪР ЧРТРЭвРЦХЭЭп."
 
 #: backends/events/default/default-events.cpp:190
 msgid "Do you really want to return to the Launcher?"
-msgstr "Р’Рё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ РїРѕРІРµСЂРЅСѓС‚РёСЃСЏ РґРѕ РіРѕР»РѕРІРЅРѕРіРѕ РјРµРЅСЋ?"
+msgstr "ІШ ФцЩбЭЮ еЮзХвХ ЯЮТХаЭгвШбп ФЮ УЮЫЮТЭЮУЮ ЬХЭо?"
 
 #: backends/events/default/default-events.cpp:190
 msgid "Launcher"
-msgstr "Р“РѕР»РѕРІРЅРµ РјРµРЅСЋ"
+msgstr "іЮЫЮТЭХ ЬХЭо"
 
 #: backends/events/default/default-events.cpp:212
 msgid "Do you really want to quit?"
-msgstr "Р’Рё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ РІРёР№С‚Рё?"
+msgstr "ІШ ФцЩбЭЮ еЮзХвХ ТШЩвШ?"
 
 #: backends/events/default/default-events.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:52
@@ -2142,87 +2142,87 @@ msgstr "Р’Рё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ РІРёР№С‚Рё?"
 #: engines/scumm/dialogs.cpp:188 engines/scumm/help.cpp:83
 #: engines/scumm/help.cpp:85
 msgid "Quit"
-msgstr "Р’РёС…С–Рґ"
+msgstr "ІШецФ"
 
 #: backends/events/gph/gph-events.cpp:391
 #: backends/events/gph/gph-events.cpp:434
 #: backends/events/openpandora/op-events.cpp:174
 msgid "Touchscreen 'Tap Mode' - Left Click"
-msgstr "Р РµР¶РёРј РґРѕС‚РёРєСѓ Сѓ С‚Р°С‡СЃРєСЂС–РЅС– - Р›С–РІРёР№ РєР»С–Рє"
+msgstr "АХЦШЬ ФЮвШЪг г вРзбЪацЭц - »цТШЩ ЪЫцЪ"
 
 #: backends/events/gph/gph-events.cpp:393
 #: backends/events/gph/gph-events.cpp:436
 #: backends/events/openpandora/op-events.cpp:176
 msgid "Touchscreen 'Tap Mode' - Right Click"
-msgstr "Р РµР¶РёРј РґРѕС‚РёРєСѓ Сѓ С‚Р°С‡СЃРєСЂС–РЅС– - РџСЂР°РІРёР№ РєР»С–Рє"
+msgstr "АХЦШЬ ФЮвШЪг г вРзбЪацЭц - їаРТШЩ ЪЫцЪ"
 
 #: backends/events/gph/gph-events.cpp:395
 #: backends/events/gph/gph-events.cpp:438
 #: backends/events/openpandora/op-events.cpp:178
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
-msgstr "Р РµР¶РёРј РґРѕС‚РёРєСѓ Сѓ С‚Р°С‡СЃРєСЂС–РЅС– - РџСЂРѕР»С–С‚ (Р±РµР· РєР»С–РєСѓ)"
+msgstr "АХЦШЬ ФЮвШЪг г вРзбЪацЭц - їаЮЫцв (СХЧ ЪЫцЪг)"
 
 #: backends/events/gph/gph-events.cpp:415
 msgid "Maximum Volume"
-msgstr "РњР°РєСЃРёРјР°Р»СЊРЅР° Р“СѓС‡РЅС–СЃС‚СЊ"
+msgstr "јРЪбШЬРЫмЭР ігзЭцбвм"
 
 #: backends/events/gph/gph-events.cpp:417
 msgid "Increasing Volume"
-msgstr "РџС–РґРІРёС‰РµРЅРЅСЏ РіСѓС‡РЅРѕСЃС‚С–"
+msgstr "їцФТШйХЭЭп УгзЭЮбвц"
 
 #: backends/events/gph/gph-events.cpp:423
 msgid "Minimal Volume"
-msgstr "РњС–РЅС–РјР°Р»СЊРЅР° Р“СѓС‡РЅС–СЃС‚СЊ"
+msgstr "јцЭцЬРЫмЭР ігзЭцбвм"
 
 #: backends/events/gph/gph-events.cpp:425
 msgid "Decreasing Volume"
-msgstr "РџРѕРЅРёР¶РµРЅРЅСЏ РіСѓС‡РЅРѕСЃС‚С–"
+msgstr "їЮЭШЦХЭЭп УгзЭЮбвц"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Enabled"
-msgstr "РљР»С–РєРё СѓРІС–РјРєРЅРµРЅРѕ"
+msgstr "єЫцЪШ гТцЬЪЭХЭЮ"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:180
 msgid "Clicking Disabled"
-msgstr "РљР»С–РєРё РІРёРјРєРЅРµРЅРѕ"
+msgstr "єЫцЪШ ТШЬЪЭХЭЮ"
 
 #: backends/events/openpandora/op-events.cpp:180
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Р РµР¶РёРј РґРѕС‚РёРєСѓ Сѓ С‚Р°С‡СЃРєСЂС–РЅС– - РџСЂРѕР»С–С‚ (РєР»С–Рє DPad)"
+msgstr "АХЦШЬ ФЮвШЪг г вРзбЪацЭц - їаЮЫцв (ЪЫцЪ DPad)"
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:192
 msgid "Do you want to quit ?"
-msgstr "Р’Рё РґС–Р№СЃРЅРѕ С…РѕС‡РµС‚Рµ РІРёР№С‚Рё?"
+msgstr "ІШ ФцЩбЭЮ еЮзХвХ ТШЩвШ?"
 
 #. I18N: Trackpad mode toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:332
 msgid "Trackpad mode is now"
-msgstr "Р РµР¶РёРј С‚СЂРµРєРїР°РґСѓ"
+msgstr "АХЦШЬ ваХЪЯРФг"
 
 #. I18N: Trackpad mode on or off.
 #. I18N: Auto-drag on or off.
 #: backends/events/webossdl/webossdl-events.cpp:335
 #: backends/events/webossdl/webossdl-events.cpp:362
 msgid "ON"
-msgstr "Р’РљР›"
+msgstr "Іє»"
 
 #: backends/events/webossdl/webossdl-events.cpp:335
 #: backends/events/webossdl/webossdl-events.cpp:362
 msgid "OFF"
-msgstr "Р’РРњРљ"
+msgstr "Іёјє"
 
 #: backends/events/webossdl/webossdl-events.cpp:339
 msgid "Swipe two fingers to the right to toggle."
-msgstr "РџСЂРѕРІРµРґС–С‚СЊ РґРІРѕРјР° РїР°Р»СЊС†СЏРјРё РЅР°РїСЂР°РІРѕ РґР»СЏ РїРµСЂРµРєР»СЋС‡РµРЅРЅСЏ."
+msgstr "їаЮТХФцвм ФТЮЬР ЯРЫмжпЬШ ЭРЯаРТЮ ФЫп ЯХаХЪЫозХЭЭп."
 
 #. I18N: Auto-drag toggle status.
 #: backends/events/webossdl/webossdl-events.cpp:359
 msgid "Auto-drag mode is now"
-msgstr "Р РµР¶РёРј СЃР°РјРѕС‚СЏРіРЅРµРЅРЅСЏ РІРєР»СЋС‡РµРЅРѕ"
+msgstr "АХЦШЬ бРЬЮвпУЭХЭЭп ТЪЫозХЭЮ"
 
 #: backends/events/webossdl/webossdl-events.cpp:366
 msgid "Swipe three fingers to the right to toggle."
-msgstr "РџСЂРѕРІРµРґС–С‚СЊ С‚СЂСЊРѕРјР° РїР°Р»СЊС†СЏРјС– РЅР°РїСЂР°РІРѕ РґР»СЏ РїРµСЂРµРєР»СЋС‡РµРЅРЅСЏ."
+msgstr "їаЮТХФцвм вамЮЬР ЯРЫмжпЬц ЭРЯаРТЮ ФЫп ЯХаХЪЫозХЭЭп."
 
 #: backends/graphics/opengl/opengl-graphics.cpp:149
 msgid "OpenGL"
@@ -2231,71 +2231,71 @@ msgstr "OpenGL"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:590
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2592
 msgid "Windowed mode"
-msgstr "Р’С–РєРѕРЅРЅРёР№ СЂРµР¶РёРј"
+msgstr "ІцЪЮЭЭШЩ аХЦШЬ"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:704
 #, c-format
 msgid "Resolution: %dx%d"
-msgstr "Р РѕР·РіР°Р»СѓР¶РµРЅРЅСЏ %dx%d"
+msgstr "АЮЧУРЫгЦХЭЭп %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:725
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2453
 msgid "Enabled aspect ratio correction"
-msgstr "РљРѕСЂРµРєС†С–СЋ СЃРїС–РІРІС–РґРЅРѕС€РµРЅРЅСЏ СЃС‚РѕСЂС–РЅ СѓРІС–РјРєРЅРµРЅРѕ"
+msgstr "єЮаХЪжцо бЯцТТцФЭЮиХЭЭп бвЮацЭ гТцЬЪЭХЭЮ"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:727
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2459
 msgid "Disabled aspect ratio correction"
-msgstr "РљРѕСЂРµРєС†С–СЋ СЃРїС–РІРІС–РґРЅРѕС€РµРЅРЅСЏ СЃС‚РѕСЂС–РЅ РІРёРјРєРЅРµРЅРѕ"
+msgstr "єЮаХЪжцо бЯцТТцФЭЮиХЭЭп бвЮацЭ ТШЬЪЭХЭЮ"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:747
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2477
 msgid "Filtering enabled"
-msgstr "Р¤С–Р»СЊС‚СЂСѓРІР°РЅРЅСЏ СѓРІС–РјРєРЅРµРЅРѕ"
+msgstr "ДцЫмвагТРЭЭп гТцЬЪЭХЭЮ"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:749
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2479
 msgid "Filtering disabled"
-msgstr "Р¤С–Р»СЊС‚СЂСѓРІР°РЅРЅСЏ РІРёРјРєРЅРµРЅРѕ"
+msgstr "ДцЫмвагТРЭЭп ТШЬЪЭХЭЮ"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:55
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:88
 #: backends/graphics/wincesdl/wincesdl-graphics.cpp:95
 msgid "Normal (no scaling)"
-msgstr "Р‘РµР· Р·Р±С–Р»СЊС€РµРЅРЅСЏ"
+msgstr "±ХЧ ЧСцЫмиХЭЭп"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgctxt "lowres"
 msgid "Normal (no scaling)"
-msgstr "Р‘РµР· Р·Р±С–Р»СЊС€РµРЅРЅСЏ"
+msgstr "±ХЧ ЧСцЫмиХЭЭп"
 
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2539
 msgid "Active graphics filter:"
-msgstr "РџРѕС‚РѕС‡РЅРёР№ РіСЂР°С„С–С‡РЅРёР№ С„С–Р»СЊС‚СЂ:"
+msgstr "їЮвЮзЭШЩ УаРдцзЭШЩ дцЫмва:"
 
 #: backends/keymapper/remap-dialog.cpp:48
 msgid "Keymap:"
-msgstr "РњР°РїР° РєР»Р°РІС–С€:"
+msgstr "јРЯР ЪЫРТци:"
 
 #: backends/keymapper/remap-dialog.cpp:67
 msgid " (Effective)"
-msgstr " (Р•С„РµРєС‚РёРІРЅР°)"
+msgstr " (µдХЪвШТЭР)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Active)"
-msgstr " (РђРєС‚РёРІРЅР°)"
+msgstr " (°ЪвШТЭР)"
 
 #: backends/keymapper/remap-dialog.cpp:107
 msgid " (Blocked)"
-msgstr " (Р—Р°Р±Р»РѕРєРѕРІР°РЅРѕ)"
+msgstr " (·РСЫЮЪЮТРЭЮ)"
 
 #: backends/keymapper/remap-dialog.cpp:120
 msgid " (Global)"
-msgstr " (Р“Р»РѕР±Р°Р»СЊРЅР°)"
+msgstr " (іЫЮСРЫмЭР)"
 
 #: backends/keymapper/remap-dialog.cpp:128
 msgid " (Game)"
-msgstr " (Р†РіСЂРё)"
+msgstr " (¦УаШ)"
 
 #: backends/midi/windows.cpp:165
 msgid "Windows MIDI"
@@ -2304,107 +2304,107 @@ msgstr "Windows MIDI"
 #: backends/platform/ds/arm9/source/dsoptions.cpp:56
 #: engines/scumm/dialogs.cpp:287
 msgid "~C~lose"
-msgstr "~Р—~Р°РєСЂРёС‚Рё"
+msgstr "~·~РЪаШвШ"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
-msgstr "Р“РѕР»РѕРІРЅРµ РјРµРЅСЋ ScummVM"
+msgstr "іЮЫЮТЭХ ЬХЭо ScummVM"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:63
 msgid "~L~eft handed mode"
-msgstr "Р›С–РІРѕСЂСѓРєРёР№ СЂРµР¶РёРј"
+msgstr "»цТЮагЪШЩ аХЦШЬ"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
-msgstr "РљРµСЂСѓРІР°РЅРЅСЏ Р±РѕСЏРјРё РІ Indy"
+msgstr "єХагТРЭЭп СЮпЬШ Т Indy"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё РєСѓСЂСЃРѕСЂ РјРёС€С–"
+msgstr "їЮЪРЧгТРвШ ЪгабЮа ЬШиц"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:66
 msgid "Snap to edges"
-msgstr "РџСЂРёРєСЂС–РїРёС‚Рё РґРѕ РєСЂР°С—РІ"
+msgstr "їаШЪацЯШвШ ФЮ ЪаРчТ"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Touch X Offset"
-msgstr "Р—РјС–С‰РµРЅРЅСЏ РґРѕС‚РёРєС–РІ РїРѕ РѕСЃС– X"
+msgstr "·ЬцйХЭЭп ФЮвШЪцТ ЯЮ Юбц X"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:75
 msgid "Touch Y Offset"
-msgstr "Р—РјС–С‰РµРЅРЅСЏ РґРѕС‚РёРєС–РІ РїРѕ РѕСЃС– Y"
+msgstr "·ЬцйХЭЭп ФЮвШЪцТ ЯЮ Юбц Y"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:87
 msgid "Use laptop trackpad-style cursor control"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РєРµСЂСѓРІР°РЅРЅСЏ РєСѓСЂСЃРѕСЂРѕРј СЏРє РЅР° С‚СЂРµРєРїР°РґС– Р»Р°РїС‚РѕРїС–РІ"
+msgstr "ІШЪЮаШбвЮТгТРвШ ЪХагТРЭЭп ЪгабЮаЮЬ пЪ ЭР ваХЪЯРФц ЫРЯвЮЯцТ"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:88
 msgid "Tap for left click, double tap right click"
-msgstr "РўР°Рї РґР»СЏ Р»С–РІРѕРіРѕ РєР»Р°С†Р°РЅРЅСЏ, РїРѕРґРІС–Р№РЅРёР№ С‚Р°Рї РґР»СЏ РїСЂР°РІРѕРіРѕ РєР»Р°С†Р°РЅРЅСЏ"
+msgstr "ВРЯ ФЫп ЫцТЮУЮ ЪЫРжРЭЭп, ЯЮФТцЩЭШЩ вРЯ ФЫп ЯаРТЮУЮ ЪЫРжРЭЭп"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:90
 msgid "Sensitivity"
-msgstr "Р§СѓС‚Р»РёРІС–СЃС‚СЊ"
+msgstr "ЗгвЫШТцбвм"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:99
 msgid "Initial top screen scale:"
-msgstr "РџРѕС‡Р°С‚РєРѕРІРёР№ РјР°СЃС€С‚Р°Р± РІРµСЂС…РЅСЊРѕРіРѕ РµРєСЂР°РЅСѓ:"
+msgstr "їЮзРвЪЮТШЩ ЬРбивРС ТХаеЭмЮУЮ ХЪаРЭг:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
-msgstr "РњР°СЃС€С‚Р°Р± РіРѕР»РѕРІРЅРѕРіРѕ РµРєСЂР°РЅСѓ:"
+msgstr "јРбивРС УЮЫЮТЭЮУЮ ХЪаРЭг:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
-msgstr "РҐР°СЂРґРІР°СЂРЅРµ РјР°СЃС€С‚Р°Р±СѓРІР°РЅРЅСЏ (С€РІРёРґРєРѕ, Р°Р»Рµ РЅРёР·СЊРєРѕС— СЏРєРѕСЃС‚С–)"
+msgstr "ЕРаФТРаЭХ ЬРбивРСгТРЭЭп (иТШФЪЮ, РЫХ ЭШЧмЪЮч пЪЮбвц)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:108
 msgid "Software scale (good quality, but slower)"
-msgstr "РџСЂРѕРіСЂР°РјРЅРµ РјР°СЃС€С‚Р°Р±СѓРІР°РЅРЅСЏ (С…РѕСЂРѕС€Р° СЏРєС–СЃС‚СЊ, Р°Р»Рµ РїРѕРІС–Р»СЊРЅС–С€Рµ)"
+msgstr "їаЮУаРЬЭХ ЬРбивРСгТРЭЭп (еЮаЮиР пЪцбвм, РЫХ ЯЮТцЫмЭциХ)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:109
 msgid "Unscaled (you must scroll left and right)"
-msgstr "Р‘РµР· РјР°СЃС€С‚Р°Р±СѓРІР°РЅРЅСЏ (С‚СЂРµР±Р° Р±СѓРґРµ РїСЂРѕРєСЂСѓС‡СѓРІР°С‚Рё РЅР°Р»С–РІРѕ С– РЅР°РїСЂР°РІРѕ)"
+msgstr "±ХЧ ЬРбивРСгТРЭЭп (ваХСР СгФХ ЯаЮЪагзгТРвШ ЭРЫцТЮ ц ЭРЯаРТЮ)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:111
 msgid "Brightness:"
-msgstr "РЇСЃРєСЂР°РІС–СЃС‚СЊ:"
+msgstr "ПбЪаРТцбвм:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
-msgstr "Р’РёСЃРѕРєР° СЏРєС–СЃС‚СЊ Р·РІСѓРєСѓ (РїРѕРІС–Р»СЊРЅС–С€Рµ) (СЂРµР±СѓС‚)"
+msgstr "ІШбЮЪР пЪцбвм ЧТгЪг (ЯЮТцЫмЭциХ) (аХСгв)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:122
 msgid "Disable power off"
-msgstr "Р—Р°Р±РѕСЂРѕРЅРёС‚Рё РІРёРјРєРЅРµРЅРЅСЏ"
+msgstr "·РСЮаЮЭШвШ ТШЬЪЭХЭЭп"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:309
 #: backends/platform/ios7/ios7_osys_events.cpp:519
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
-msgstr "Р РµР¶РёРј РјРёС€С– РєР»С–РєРЅСѓС‚Рё-С‚Р°-С‚СЏРіРЅСѓС‚Рё СѓРІС–РјРєРЅРµРЅРѕ."
+msgstr "АХЦШЬ ЬШиц ЪЫцЪЭгвШ-вР-впУЭгвШ гТцЬЪЭХЭЮ."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:311
 #: backends/platform/ios7/ios7_osys_events.cpp:521
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
-msgstr "Р РµР¶РёРј РјРёС€С– РєР»С–РєРЅСѓС‚Рё-С‚Р°-С‚СЏРіРЅСѓС‚Рё РІРёРјРєРЅРµРЅРѕ."
+msgstr "АХЦШЬ ЬШиц ЪЫцЪЭгвШ-вР-впУЭгвШ ТШЬЪЭХЭЮ."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:322
 #: backends/platform/ios7/ios7_osys_events.cpp:540
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
-msgstr "Р РµР¶РёРј С‚Р°С‡РїР°РґСѓ СѓРІС–РјРєРЅРµРЅРѕ."
+msgstr "АХЦШЬ вРзЯРФг гТцЬЪЭХЭЮ."
 
 #: backends/platform/ios7/ios7_osys_events.cpp:324
 #: backends/platform/ios7/ios7_osys_events.cpp:542
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
-msgstr "Р РµР¶РёРј С‚Р°С‡РїР°РґСѓ РІРёРјРєРЅРµРЅРѕ."
+msgstr "АХЦШЬ вРзЯРФг ТШЬЪЭХЭЮ."
 
 #: backends/platform/maemo/maemo.cpp:206
 msgid "Click Mode"
-msgstr "Р РµР¶РёРј РєР»С–РєС–РІ"
+msgstr "АХЦШЬ ЪЫцЪцТ"
 
 #: backends/platform/maemo/maemo.cpp:212
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -2412,174 +2412,174 @@ msgstr "Р РµР¶РёРј РєР»С–РєС–РІ"
 #: backends/platform/wince/CEActionsPocket.cpp:60
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
 msgid "Left Click"
-msgstr "Р›С–РІРёР№ РєР»С–Рє"
+msgstr "»цТШЩ ЪЫцЪ"
 
 #: backends/platform/maemo/maemo.cpp:215
 msgid "Middle Click"
-msgstr "РЎРµСЂРµРґРЅС–Р№ РєР»С–Рє"
+msgstr "БХаХФЭцЩ ЪЫцЪ"
 
 #: backends/platform/maemo/maemo.cpp:218
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/tizen/form.cpp:266
 #: backends/platform/wince/CEActionsSmartphone.cpp:44
 msgid "Right Click"
-msgstr "РџСЂР°РІРёР№ РєР»С–Рє"
+msgstr "їаРТШЩ ЪЫцЪ"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:94
 msgid "Hide ScummVM"
-msgstr "РЎС…РѕРІР°С‚Рё ScummVM"
+msgstr "БеЮТРвШ ScummVM"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:99
 msgid "Hide Others"
-msgstr "РЎС…РѕРІР°С‚Рё Р†РЅС€С–"
+msgstr "БеЮТРвШ ¦Эиц"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:104
 msgid "Show All"
-msgstr "РџРѕРєР°Р·Р°С‚Рё Р’СЃРµ"
+msgstr "їЮЪРЧРвШ ІбХ"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:126
 #: backends/platform/sdl/macosx/appmenu_osx.mm:137
 msgid "Window"
-msgstr "Р’С–РєРЅРѕ"
+msgstr "ІцЪЭЮ"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:131
 msgid "Minimize"
-msgstr "РњС–РЅС–РјС–Р·СѓРІР°С‚Рё"
+msgstr "јцЭцЬцЧгТРвШ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
 msgid "Up"
-msgstr "Р”РѕРіРѕСЂРё"
+msgstr "ґЮУЮаШ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:39
 #: backends/platform/wince/CEActionsSmartphone.cpp:40
 msgid "Down"
-msgstr "Р”РѕРЅРёР·Сѓ"
+msgstr "ґЮЭШЧг"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: backends/platform/wince/CEActionsSmartphone.cpp:41
 msgid "Left"
-msgstr "РќР°Р»С–РІРѕ"
+msgstr "ЅРЫцТЮ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: backends/platform/wince/CEActionsSmartphone.cpp:42
 msgid "Right"
-msgstr "РќР°РїСЂР°РІРѕ"
+msgstr "ЅРЯаРТЮ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: backends/platform/wince/CEActionsSmartphone.cpp:47
 msgid "Zone"
-msgstr "Р—РѕРЅР°"
+msgstr "·ЮЭР"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:47
 #: backends/platform/wince/CEActionsPocket.cpp:54
 #: backends/platform/wince/CEActionsSmartphone.cpp:48
 msgid "Multi Function"
-msgstr "РњСѓР»СЊС‚РёС„СѓРЅРєС†С–СЏ"
+msgstr "јгЫмвШдгЭЪжцп"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:48
 msgid "Swap character"
-msgstr "Р—РјС–РЅРёС‚Рё РіРµСЂРѕСЏ"
+msgstr "·ЬцЭШвШ УХаЮп"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:49
 msgid "Skip text"
-msgstr "РџСЂРѕРїСѓСЃС‚РёС‚Рё С‚РµРєСЃС‚"
+msgstr "їаЮЯгбвШвШ вХЪбв"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Fast mode"
-msgstr "РЁРІРёРґРєРёР№ СЂРµР¶РёРј"
+msgstr "ИТШФЪШЩ аХЦШЬ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:53
 msgid "Debugger"
-msgstr "Р’С–РґР»Р°РґС‡РёРє"
+msgstr "ІцФЫРФзШЪ"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:54
 msgid "Global menu"
-msgstr "Р“Р»РѕР±Р°Р»СЊРЅРµ РјРµРЅСЋ"
+msgstr "іЫЮСРЫмЭХ ЬХЭо"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:55
 msgid "Virtual keyboard"
-msgstr "Р’С–СЂС‚СѓР°Р»СЊРЅР° РєР»Р°РІС–Р°С‚СѓСЂР°"
+msgstr "ІцавгРЫмЭР ЪЫРТцРвгаР"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:56
 msgid "Key mapper"
-msgstr "РџСЂРёР·РЅР°С‡РµРЅРЅСЏ РєР»Р°РІС–С€"
+msgstr "їаШЧЭРзХЭЭп ЪЫРТци"
 
 #: backends/platform/tizen/form.cpp:262
 msgid "Right Click Once"
-msgstr "РћРґРёРЅ РїСЂР°РІРёР№ РєР»С–Рє"
+msgstr "ѕФШЭ ЯаРТШЩ ЪЫцЪ"
 
 #: backends/platform/tizen/form.cpp:270
 msgid "Move Only"
-msgstr "РўС–Р»СЊРєРё РїРµСЂРµРјС–СЃС‚РёС‚Рё"
+msgstr "ВцЫмЪШ ЯХаХЬцбвШвШ"
 
 #: backends/platform/tizen/form.cpp:293
 msgid "Escape Key"
-msgstr "РљР»Р°РІС–С€Р° ESC"
+msgstr "єЫРТциР ESC"
 
 #: backends/platform/tizen/form.cpp:298
 msgid "Game Menu"
-msgstr "РњРµРЅСЋ РіСЂРё"
+msgstr "јХЭо УаШ"
 
 #: backends/platform/tizen/form.cpp:303
 msgid "Show Keypad"
-msgstr "РџРѕРєР°Р·Р°С‚Рё РєР»Р°РІС–Р°С‚СѓСЂСѓ"
+msgstr "їЮЪРЧРвШ ЪЫРТцРвгаг"
 
 #: backends/platform/tizen/form.cpp:308
 msgid "Control Mouse"
-msgstr "РљРµСЂСѓРІР°РЅРЅСЏ РјРёС€РµСЋ"
+msgstr "єХагТРЭЭп ЬШиХо"
 
 #: backends/platform/tizen/fs.cpp:259
 msgid "[ Data ]"
-msgstr "[ Р”Р°РЅС– ]"
+msgstr "[ ґРЭц ]"
 
 #: backends/platform/tizen/fs.cpp:263
 msgid "[ Resources ]"
-msgstr "[ Р РµСЃСѓСЂСЃРё ]"
+msgstr "[ АХбгабШ ]"
 
 #: backends/platform/tizen/fs.cpp:267
 msgid "[ SDCard ]"
-msgstr "[ РљР°СЂС‚РєР° SD ]"
+msgstr "[ єРавЪР SD ]"
 
 #: backends/platform/tizen/fs.cpp:271
 msgid "[ Media ]"
-msgstr "[ РњРµРґС–Р° ]"
+msgstr "[ јХФцР ]"
 
 #: backends/platform/tizen/fs.cpp:275
 msgid "[ Shared ]"
-msgstr "[ РњРµСЂРµР¶РµРІР° РїР°РїРєР° ]"
+msgstr "[ јХаХЦХТР ЯРЯЪР ]"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
-msgstr "Р’С–РґРµРѕ"
+msgstr "ІцФХЮ"
 
 #: backends/platform/wii/options.cpp:54
 msgid "Current video mode:"
-msgstr "РџРѕС‚РѕС‡РЅРёР№ РІС–РґРµРѕСЂРµР¶РёРј:"
+msgstr "їЮвЮзЭШЩ ТцФХЮаХЦШЬ:"
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr "РџРѕРґРІС–Р№РЅРёР№"
+msgstr "їЮФТцЩЭШЩ"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr "Р“РѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅРёР№ underscan:"
+msgstr "іЮаШЧЮЭвРЫмЭШЩ underscan:"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr "Р’РµСЂС‚РёРєР°Р»СЊРЅРёР№ underscan:"
+msgstr "ІХавШЪРЫмЭШЩ underscan:"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
-msgstr "Р’РІС–Рґ"
+msgstr "ІТцФ"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr "Р§СѓС‚Р»РёРІС–СЃС‚СЊ GC РїР°РґСѓ:"
+msgstr "ЗгвЫШТцбвм GC ЯРФг:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr "РџСЂРёСЃРєРѕСЂРµРЅРЅСЏ GC РїР°РґСѓ:"
+msgstr "їаШбЪЮаХЭЭп GC ЯРФг:"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
@@ -2587,19 +2587,19 @@ msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Status:"
-msgstr "РЎС‚Р°РЅ:"
+msgstr "БвРЭ:"
 
 #: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
 msgid "Unknown"
-msgstr "РќРµРІС–РґРѕРјРёР№"
+msgstr "ЅХТцФЮЬШЩ"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Mount DVD"
-msgstr "РџС–РґРєР»СЋС‡РёС‚Рё DVD"
+msgstr "їцФЪЫозШвШ DVD"
 
 #: backends/platform/wii/options.cpp:94
 msgid "Unmount DVD"
-msgstr "Р’С–РґРєР»СЋС‡РёС‚Рё DVD"
+msgstr "ІцФЪЫозШвШ DVD"
 
 #: backends/platform/wii/options.cpp:98
 msgid "SMB"
@@ -2607,192 +2607,192 @@ msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:106
 msgid "Server:"
-msgstr "РЎРµСЂРІРµСЂ:"
+msgstr "БХаТХа:"
 
 #: backends/platform/wii/options.cpp:110
 msgid "Share:"
-msgstr "РњРµСЂРµР¶РµРІР° РїР°РїРєР°:"
+msgstr "јХаХЦХТР ЯРЯЪР:"
 
 #: backends/platform/wii/options.cpp:118
 msgid "Password:"
-msgstr "РџР°СЂРѕР»СЊ:"
+msgstr "їРаЮЫм:"
 
 #: backends/platform/wii/options.cpp:121
 msgid "Init network"
-msgstr "РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РјРµСЂРµР¶С–"
+msgstr "ЅРЫРивгТРЭЭп ЬХаХЦц"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Mount SMB"
-msgstr "РџС–РґРєР»СЋС‡РёС‚Рё SMB"
+msgstr "їцФЪЫозШвШ SMB"
 
 #: backends/platform/wii/options.cpp:124
 msgid "Unmount SMB"
-msgstr "Р’С–РґРєР»СЋС‡С‚Рё SMB"
+msgstr "ІцФЪЫозвШ SMB"
 
 #: backends/platform/wii/options.cpp:143
 msgid "DVD Mounted successfully"
-msgstr "DVD РїС–РґРєР»СЋС‡РµРЅРѕ СѓСЃРїС–С€РЅРѕ"
+msgstr "DVD ЯцФЪЫозХЭЮ гбЯциЭЮ"
 
 #: backends/platform/wii/options.cpp:146
 msgid "Error while mounting the DVD"
-msgstr "РџРѕРјРёР»РєР° РїС–Рґ С‡Р°СЃ РїС–РґРєР»СЋС‡РµРЅРЅСЏ DVD"
+msgstr "їЮЬШЫЪР ЯцФ зРб ЯцФЪЫозХЭЭп DVD"
 
 #: backends/platform/wii/options.cpp:148
 msgid "DVD not mounted"
-msgstr "DVD РЅРµ РїС–РґРєР»СЋС‡РµРЅРѕ"
+msgstr "DVD ЭХ ЯцФЪЫозХЭЮ"
 
 #: backends/platform/wii/options.cpp:161
 msgid "Network up, share mounted"
-msgstr "РњРµСЂРµР¶Р° РїСЂР°С†СЋС”, РїР°РїРєСѓ РїС–РґРєР»СЋС‡РµРЅРѕ"
+msgstr "јХаХЦР ЯаРжоф, ЯРЯЪг ЯцФЪЫозХЭЮ"
 
 #: backends/platform/wii/options.cpp:163
 msgid "Network up"
-msgstr "РњРµСЂРµР¶Р° РїСЂР°С†СЋС”"
+msgstr "јХаХЦР ЯаРжоф"
 
 #: backends/platform/wii/options.cpp:166
 msgid ", error while mounting the share"
-msgstr ", РїРѕРјРёР»РєР° РїС–Рґ С‡Р°СЃ РїС–РґРєР»СЋС‡РµРЅРЅСЏ РїР°РїРєРё"
+msgstr ", ЯЮЬШЫЪР ЯцФ зРб ЯцФЪЫозХЭЭп ЯРЯЪШ"
 
 #: backends/platform/wii/options.cpp:168
 msgid ", share not mounted"
-msgstr ", РїР°РїРєСѓ РЅРµ РїС–РґРєР»СЋС‡РµРЅРѕ"
+msgstr ", ЯРЯЪг ЭХ ЯцФЪЫозХЭЮ"
 
 #: backends/platform/wii/options.cpp:174
 msgid "Network down"
-msgstr "РњРµСЂРµР¶Сѓ РІРёРјРєРЅРµРЅРѕ"
+msgstr "јХаХЦг ТШЬЪЭХЭЮ"
 
 #: backends/platform/wii/options.cpp:178
 msgid "Initializing network"
-msgstr "РќР°Р»Р°С€С‚РѕРІСѓСЋ РјРµСЂРµР¶Сѓ"
+msgstr "ЅРЫРивЮТго ЬХаХЦг"
 
 #: backends/platform/wii/options.cpp:182
 msgid "Timeout while initializing network"
-msgstr "Р§Р°СЃ РїС–РґРєР»СЋС‡РµРЅРЅСЏ РґРѕ РјРµСЂРµР¶С– РІРёР№С€РѕРІ"
+msgstr "ЗРб ЯцФЪЫозХЭЭп ФЮ ЬХаХЦц ТШЩиЮТ"
 
 #: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr "РњРµСЂРµР¶Сѓ РЅРµ РЅР°Р»Р°С€С‚РѕРІР°РЅРѕ (%d)"
+msgstr "јХаХЦг ЭХ ЭРЫРивЮТРЭЮ (%d)"
 
 #: backends/platform/wince/CEActionsPocket.cpp:46
 msgid "Hide Toolbar"
-msgstr "РЎС…РѕРІР°С‚Рё РїР°РЅРµР»СЊ С–РЅСЃС‚СЂСѓРјРµРЅС‚С–РІ"
+msgstr "БеЮТРвШ ЯРЭХЫм цЭбвагЬХЭвцТ"
 
 #: backends/platform/wince/CEActionsPocket.cpp:47
 msgid "Show Keyboard"
-msgstr "РџРѕРєР°Р·Р°С‚Рё РєР»Р°РІС–Р°С‚СѓСЂСѓ"
+msgstr "їЮЪРЧРвШ ЪЫРТцРвгаг"
 
 #: backends/platform/wince/CEActionsPocket.cpp:48
 msgid "Sound on/off"
-msgstr "Р—РІСѓРє СѓРІС–Рј/РІРёРјРє"
+msgstr "·ТгЪ гТцЬ/ТШЬЪ"
 
 #: backends/platform/wince/CEActionsPocket.cpp:49
 msgid "Right click"
-msgstr "РџСЂР°РІРёР№ РєР»С–Рє"
+msgstr "їаРТШЩ ЪЫцЪ"
 
 #: backends/platform/wince/CEActionsPocket.cpp:50
 msgid "Show/Hide Cursor"
-msgstr "РџРѕРєР°Р·Р°С‚Рё/СЃС…РѕРІР°С‚Рё РєСѓСЂСЃРѕСЂ"
+msgstr "їЮЪРЧРвШ/беЮТРвШ ЪгабЮа"
 
 #: backends/platform/wince/CEActionsPocket.cpp:51
 msgid "Free look"
-msgstr "Р’С–Р»СЊРЅРёР№ РѕРіР»СЏРґ"
+msgstr "ІцЫмЭШЩ ЮУЫпФ"
 
 #: backends/platform/wince/CEActionsPocket.cpp:52
 msgid "Zoom up"
-msgstr "Р—Р±С–Р». РјР°СЃС€С‚Р°Р±"
+msgstr "·СцЫ. ЬРбивРС"
 
 #: backends/platform/wince/CEActionsPocket.cpp:53
 msgid "Zoom down"
-msgstr "Р—РјРЅС€. РјР°СЃС€С‚Р°Р±"
+msgstr "·ЬЭи. ЬРбивРС"
 
 #: backends/platform/wince/CEActionsPocket.cpp:55
 #: backends/platform/wince/CEActionsSmartphone.cpp:49
 msgid "Bind Keys"
-msgstr "РџСЂРёР·РЅР°С‡РёС‚Рё РєР»Р°РІС–С€С–"
+msgstr "їаШЧЭРзШвШ ЪЫРТциц"
 
 #: backends/platform/wince/CEActionsPocket.cpp:56
 msgid "Cursor Up"
-msgstr "РљСѓСЂСЃРѕСЂ РґРѕРіРѕСЂРё"
+msgstr "єгабЮа ФЮУЮаШ"
 
 #: backends/platform/wince/CEActionsPocket.cpp:57
 msgid "Cursor Down"
-msgstr "РљСѓСЂСЃРѕСЂ РґРѕРЅРёР·Сѓ"
+msgstr "єгабЮа ФЮЭШЧг"
 
 #: backends/platform/wince/CEActionsPocket.cpp:58
 msgid "Cursor Left"
-msgstr "РљСѓСЂСЃРѕСЂ РЅР°Р»С–РІРѕ"
+msgstr "єгабЮа ЭРЫцТЮ"
 
 #: backends/platform/wince/CEActionsPocket.cpp:59
 msgid "Cursor Right"
-msgstr "РљСѓСЂСЃРѕСЂ РЅР°РїСЂР°РІРѕ"
+msgstr "єгабЮа ЭРЯаРТЮ"
 
 #: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Do you want to load or save the game?"
-msgstr "Р’Рё С…РѕС‡РµС‚Рµ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё Р°Р±Рѕ Р·Р±РµСЂРµРіС‚Рё РіСЂСѓ?"
+msgstr "ІШ еЮзХвХ ЧРТРЭвРЦШвШ РСЮ ЧСХаХУвШ Уаг?"
 
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
 msgid "   Are you sure you want to quit ?   "
-msgstr "   Р’Рё СѓРїРµРІРЅРµРЅС–, С‰Рѕ С…РѕС‡РµС‚Рµ РІРёР№С‚Рё?   "
+msgstr "   ІШ гЯХТЭХЭц, йЮ еЮзХвХ ТШЩвШ?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Keyboard"
-msgstr "РљР»Р°РІС–Р°С‚СѓСЂР°"
+msgstr "єЫРТцРвгаР"
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:51
 msgid "Rotate"
-msgstr "РџРѕРІРµСЂРЅСѓС‚Рё"
+msgstr "їЮТХаЭгвШ"
 
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "Using SDL driver "
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓСЋ РґСЂР°Р№РІРµСЂ SDL "
+msgstr "ІШЪЮаШбвЮТго ФаРЩТХа SDL "
 
 #: backends/platform/wince/CELauncherDialog.cpp:60
 msgid "Display "
-msgstr "РџРѕРєР°Р·Р°С‚Рё "
+msgstr "їЮЪРЧРвШ "
 
 #: backends/platform/wince/CELauncherDialog.cpp:83
 msgid "Do you want to perform an automatic scan ?"
-msgstr "Р’Рё С…РѕС‡РµС‚Рµ Р·РґС–Р№СЃРЅРёС‚Рё Р°РІС‚РѕРјР°С‚РёС‡РЅРёР№ РїРѕС€СѓРє?"
+msgstr "ІШ еЮзХвХ ЧФцЩбЭШвШ РТвЮЬРвШзЭШЩ ЯЮигЪ?"
 
 #: backends/platform/wince/wince-sdl.cpp:516
 msgid "Map right click action"
-msgstr "РџРµСЂРµРїСЂРёР·РЅР°С‡РµРЅРЅСЏ РїСЂР°РІРѕРіРѕ РєР»С–РєСѓ"
+msgstr "їХаХЯаШЧЭРзХЭЭп ЯаРТЮУЮ ЪЫцЪг"
 
 #: backends/platform/wince/wince-sdl.cpp:520
 msgid "You must map a key to the 'Right Click' action to play this game"
-msgstr "Р’Рё РїРѕРІРёРЅРЅС– РїСЂРёР·РЅР°С‡РёС‚Рё РєРЅРѕРїРєСѓ РґРѕ РґС–С— 'РџСЂР°РІРёР№ РєР»С–Рє', С‰РѕР± РіСЂР°С‚Рё Сѓ С†СЋ РіСЂСѓ"
+msgstr "ІШ ЯЮТШЭЭц ЯаШЧЭРзШвШ ЪЭЮЯЪг ФЮ Фцч 'їаРТШЩ ЪЫцЪ', йЮС УаРвШ г жо Уаг"
 
 #: backends/platform/wince/wince-sdl.cpp:529
 msgid "Map hide toolbar action"
-msgstr "РџРµСЂРµРїСЂРёР·РЅР°С‡РёС‚Рё РґС–СЋ 'РЎС…РѕРІР°С‚Рё РџР°РЅРµР»СЊ С–РЅСЃС‚СЂ.'"
+msgstr "їХаХЯаШЧЭРзШвШ Фцо 'БеЮТРвШ їРЭХЫм цЭбва.'"
 
 #: backends/platform/wince/wince-sdl.cpp:533
 msgid "You must map a key to the 'Hide toolbar' action to play this game"
 msgstr ""
-"Р’Рё РїРѕРІРёРЅРЅС– РїРµСЂРµРїСЂРёР·РЅР°С‡РёС‚Рё РєРЅРѕРїРєСѓ РґР»СЏ РґС–С— 'РЎС…РѕРІР°С‚Рё РџР°РЅРµР»СЊ С–РЅСЃС‚СЂ.', С‰РѕР± РіСЂР°С‚Рё "
-"Сѓ С†СЋ РіСЂСѓ"
+"ІШ ЯЮТШЭЭц ЯХаХЯаШЧЭРзШвШ ЪЭЮЯЪг ФЫп Фцч 'БеЮТРвШ їРЭХЫм цЭбва.', йЮС УаРвШ "
+"г жо Уаг"
 
 #: backends/platform/wince/wince-sdl.cpp:542
 msgid "Map Zoom Up action (optional)"
-msgstr "РџРµСЂРµРїСЂРёР·РЅР°С‡РёС‚Рё РґС–СЋ Р—Р±С–Р»СЊС€РµРЅРЅСЏ (РЅРµРѕР±РѕРІ'СЏР·РєРѕРІРѕ)"
+msgstr "їХаХЯаШЧЭРзШвШ Фцо ·СцЫмиХЭЭп (ЭХЮСЮТ'пЧЪЮТЮ)"
 
 #: backends/platform/wince/wince-sdl.cpp:545
 msgid "Map Zoom Down action (optional)"
-msgstr "РџРµСЂРµРїСЂРёР·РЅР°С‡РёС‚Рё РґС–СЋ Р—РјРµРЅС€РµРЅРЅСЏ (РЅРµРѕР±РѕРІ'СЏР·РєРѕРІРѕ)"
+msgstr "їХаХЯаШЧЭРзШвШ Фцо ·ЬХЭиХЭЭп (ЭХЮСЮТ'пЧЪЮТЮ)"
 
 #: backends/platform/wince/wince-sdl.cpp:553
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
-"РќРµ Р·Р°Р±СѓРґСЊС‚Рµ РїРµСЂРµРїСЂРёР·РЅР°С‡РёС‚Рё РєРЅРѕРїРєСѓ РґР»СЏ РґС–С—  'РЎС…РѕРІР°С‚Рё РџР°РЅРµР»СЊ С–РЅСЃС‚СЂ.' С‰РѕР± "
-"РїРѕР±Р°С‡РёС‚Рё РІРµСЃСЊ С–РЅРІРµРЅС‚Р°СЂ"
+"ЅХ ЧРСгФмвХ ЯХаХЯаШЧЭРзШвШ ЪЭЮЯЪг ФЫп Фцч  'БеЮТРвШ їРЭХЫм цЭбва.' йЮС "
+"ЯЮСРзШвШ ТХбм цЭТХЭвРа"
 
 #: backends/updates/macosx/macosx-updates.mm:79
 msgid "Check for Updates..."
-msgstr "РџРµСЂРµРІС–СЂРёС‚Рё РѕРЅРѕРІР»РµРЅРЅСЏ..."
+msgstr "їХаХТцаШвШ ЮЭЮТЫХЭЭп..."
 
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:966
 #: engines/hugo/hugo.cpp:437 engines/lure/lure.cpp:64
@@ -2801,7 +2801,7 @@ msgstr "РџРµСЂРµРІС–СЂРёС‚Рё РѕРЅРѕРІР»РµРЅРЅСЏ..."
 #: engines/tony/tony.cpp:198 engines/toon/toon.cpp:4918
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·РЅР°Р№С‚Рё С„Р°Р№Р» РґР°РЅРёС… РґРІРёР¶РєР° %s."
+msgstr "ЅХ ТФРЫЮбп ЧЭРЩвШ дРЩЫ ФРЭШе ФТШЦЪР %s."
 
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:980
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
@@ -2809,7 +2809,7 @@ msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·РЅР°Р№С‚Рё С„Р°Р№Р» РґР°РЅРёС… РґРІРёР¶РєР° %s."
 #: engines/tony/tony.cpp:210 engines/toon/toon.cpp:4930
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr "Р¤Р°Р№Р» РґРІРёР¶РєР° %s РїРѕС€РєРѕРґР¶РµРЅРѕ."
+msgstr "ДРЩЫ ФТШЦЪР %s ЯЮиЪЮФЦХЭЮ."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:991
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
@@ -2820,23 +2820,23 @@ msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
 "%d.%d."
 msgstr ""
-"Р—РЅР°Р№РґРµРЅРѕ РЅРµРІС–СЂРЅСѓ РІРµСЂСЃС–СЋ РґР°РЅРёС… РґРІРёР¶РєР° %s. РћС‡С–РєСѓРІР°РЅР° %d.%d, Р°Р»Рµ Р·РЅР°Р№РґРµРЅРѕ %d.%d."
+"·ЭРЩФХЭЮ ЭХТцаЭг ТХабцо ФРЭШе ФТШЦЪР %s. ѕзцЪгТРЭР %d.%d, РЫХ ЧЭРЩФХЭЮ %d.%d."
 
 #: engines/adl/detection.cpp:49 engines/adl/detection.cpp:59
 msgid "Color mode"
-msgstr "РљРѕР»СЊРѕСЂРѕРІРёР№ СЂРµР¶РёРј"
+msgstr "єЮЫмЮаЮТШЩ аХЦШЬ"
 
 #: engines/adl/detection.cpp:50 engines/adl/detection.cpp:60
 msgid "Use color graphics"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РєРѕР»СЊРѕСЂРѕРІСѓ РіСЂР°С„С–РєСѓ"
+msgstr "ІШЪЮаШбвЮТгТРвШ ЪЮЫмЮаЮТг УаРдцЪг"
 
 #: engines/adl/detection.cpp:69
 msgid "Scanlines"
-msgstr "РЎРєР°РЅ-Р»С–РЅС–С—"
+msgstr "БЪРЭ-ЫцЭцч"
 
 #: engines/adl/detection.cpp:70
 msgid "Show scanlines"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё СЃРєР°РЅ-Р»С–РЅС–С—"
+msgstr "їЮЪРЧгТРвШ бЪРЭ-ЫцЭцч"
 
 #: engines/agi/detection.cpp:147 engines/cine/detection.cpp:70
 #: engines/drascula/detection.cpp:331 engines/dreamweb/detection.cpp:48
@@ -2844,7 +2844,7 @@ msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё СЃРєР°РЅ-Р»С–РЅС–С—"
 #: engines/sherlock/detection.cpp:71 engines/toltecs/detection.cpp:200
 #: engines/zvision/detection_tables.h:51
 msgid "Use original save/load screens"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РѕСЂРёРі. РµРєСЂР°РЅРё Р·Р±РµСЂРµР¶РµРЅРЅСЏ/Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ"
+msgstr "ІШЪЮаШбвЮТгТРвШ ЮаШУ. ХЪаРЭШ ЧСХаХЦХЭЭп/ЧРТРЭвРЦХЭЭп"
 
 #: engines/agi/detection.cpp:148 engines/cine/detection.cpp:71
 #: engines/drascula/detection.cpp:332 engines/dreamweb/detection.cpp:49
@@ -2853,52 +2853,52 @@ msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РѕСЂРёРі. РµРєСЂР°РЅРё Р·Р±РµСЂРµР¶РµРЅРЅ
 #: engines/zvision/detection_tables.h:52
 msgid "Use the original save/load screens instead of the ScummVM ones"
 msgstr ""
-"Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РѕСЂРёРіС–РЅР°Р»СЊРЅС– РµРєСЂР°РЅРё Р·Р±РµСЂРµР¶РµРЅРЅСЏ/Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ Р·Р°РјС–СЃС‚СЊ ScummVM"
+"ІШЪЮаШбвЮТгТРвШ ЮаШУцЭРЫмЭц ХЪаРЭШ ЧСХаХЦХЭЭп/ЧРТРЭвРЦХЭЭп ЧРЬцбвм ScummVM"
 
 #: engines/agi/detection.cpp:157
 msgid "Use an alternative palette"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅСѓ РїР°Р»С–С‚СЂСѓ"
+msgstr "ІШЪЮаШбвЮТгТРвШ РЫмвХаЭРвШТЭг ЯРЫцваг"
 
 #: engines/agi/detection.cpp:158
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
 msgstr ""
-"Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅСѓ РїР°Р»С–С‚СЂСѓ, Р·РІРёС‡Р°Р№РЅСѓ РґР»СЏ С–РіРѕСЂ Р· Amiga. Р¦Рµ Р±СѓР»Р° "
-"СЃС‚Р°СЂР° РїРѕРІРµРґС–РЅРєР°"
+"ІШЪЮаШбвЮТгТРвШ РЫмвХаЭРвШТЭг ЯРЫцваг, ЧТШзРЩЭг ФЫп цУЮа Ч Amiga. ЖХ СгЫР "
+"бвРаР ЯЮТХФцЭЪР"
 
 #: engines/agi/detection.cpp:167
 msgid "Mouse support"
-msgstr "РџС–РґС‚СЂРёРјРєР° РјРёС€С–"
+msgstr "їцФваШЬЪР ЬШиц"
 
 #: engines/agi/detection.cpp:168
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
-"Р’РєР»СЋС‡Р°С” РїС–РґС‚СЂРёРјРєСѓ РјРёС€С–. Р”РѕР·РІРѕР»СЏС” РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РјРёС€Сѓ РґР»СЏ РїРµСЂРµСЃСѓРІР°РЅРЅСЏ С‚Р° "
-"СѓРїСЂР°РІР»С–РЅРЅСЏ РјРµРЅСЋ."
+"ІЪЫозРф ЯцФваШЬЪг ЬШиц. ґЮЧТЮЫпф ТШЪЮаШбвЮТгТРвШ ЬШиг ФЫп ЯХаХбгТРЭЭп вР "
+"гЯаРТЫцЭЭп ЬХЭо."
 
 #: engines/agi/detection.cpp:177
 msgid "Use Hercules hires font"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё С€СЂРёС„С‚ Hercules"
+msgstr "ІШЪЮаШбвЮТгТРвШ иаШдв Hercules"
 
 #: engines/agi/detection.cpp:178
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
-"Р’РёРєРѕСЂРёСЃС‚РѕРІСѓС” С€СЂРёС„С‚ РІРёСЃРѕРєРѕРіРѕ СЂРѕР·РіР°Р»СѓР¶РµРЅРЅСЏ Hercules, СЏРєС‰Рѕ С„Р°Р№Р» Р· С€СЂРёС„С‚РѕРј С” "
-"РґРѕСЃС‚СѓРїРЅРёР№."
+"ІШЪЮаШбвЮТгф иаШдв ТШбЮЪЮУЮ аЮЧУРЫгЦХЭЭп Hercules, пЪйЮ дРЩЫ Ч иаШдвЮЬ ф "
+"ФЮбвгЯЭШЩ."
 
 #: engines/agi/detection.cpp:187
 msgid "Pause when entering commands"
-msgstr "РЎС‚Р°РІРёС‚Рё РЅР° РїР°СѓР·Сѓ РїС–Рґ С‡Р°СЃ РІРІРѕРґСѓ РєРѕРјР°РЅРґ"
+msgstr "БвРТШвШ ЭР ЯРгЧг ЯцФ зРб ТТЮФг ЪЮЬРЭФ"
 
 #: engines/agi/detection.cpp:188
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
 msgstr ""
-"РџРѕРєР°Р·СѓС” РІС–РєРЅРѕ РґР»СЏ РІРІРѕРґСѓ РєРѕРјР°РЅРґРё С‚Р° СЃС‚Р°РІРёС‚СЊ РіСЂСѓ РЅР° РїР°СѓР·Сѓ (РїРѕРґС–Р±РЅРѕ РґРѕ SCI), "
-"Р·Р°РјС–СЃС‚СЊ Р±РµР·РїРѕСЃРµСЂРµРґРЅСЊРѕРіРѕ РІРІРѕРґСѓ."
+"їЮЪРЧгф ТцЪЭЮ ФЫп ТТЮФг ЪЮЬРЭФШ вР бвРТШвм Уаг ЭР ЯРгЧг (ЯЮФцСЭЮ ФЮ SCI), "
+"ЧРЬцбвм СХЧЯЮбХаХФЭмЮУЮ ТТЮФг."
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -2912,7 +2912,7 @@ msgstr ""
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore game:"
-msgstr "Р’С–РґРЅРѕРІРёС‚Рё РіСЂСѓ:"
+msgstr "ІцФЭЮТШвШ Уаг:"
 
 #: engines/agi/saveload.cpp:774 engines/avalanche/parser.cpp:1888
 #: engines/cge/events.cpp:83 engines/cge2/events.cpp:76
@@ -2926,7 +2926,7 @@ msgstr "Р’С–РґРЅРѕРІРёС‚Рё РіСЂСѓ:"
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/toltecs/menu.cpp:266
 #: engines/toon/toon.cpp:3432 engines/zvision/file/save_manager.cpp:62
 msgid "Restore"
-msgstr "Р’С–РґРЅРѕРІРёС‚Рё"
+msgstr "ІцФЭЮТШвШ"
 
 #: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2441
 #, c-format
@@ -2935,7 +2935,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РіСЂСѓ Р· С„Р°Р№Р»Сѓ:\n"
+"ЅХ ТФРЫЮбп ЧРТРЭвРЦШвШ Уаг Ч дРЩЫг:\n"
 "\n"
 "%s"
 
@@ -2946,7 +2946,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"РќРµ РІРґР°Р»РѕСЃСЏ Р·Р±РµСЂРµРіС‚Рё РіСЂСѓ Сѓ С„Р°Р№Р»:\n"
+"ЅХ ТФРЫЮбп ЧСХаХУвШ Уаг г дРЩЫ:\n"
 "\n"
 "%s"
 
@@ -2957,22 +2957,22 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"РЈСЃРїС–С€РЅРѕ Р·Р±РµСЂР¶РµРЅРѕ РіСЂСѓ Сѓ С„Р°Р№Р»:\n"
+"ГбЯциЭЮ ЧСХаЦХЭЮ Уаг г дРЩЫ:\n"
 "\n"
 "%s"
 
 #: engines/agos/animation.cpp:558
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr "Р¤Р°Р№Р» СЂРѕР»РёРєСѓ '%s' РЅРµ Р·РЅР°Р№РґРµРЅРѕ!"
+msgstr "ДРЩЫ аЮЫШЪг '%s' ЭХ ЧЭРЩФХЭЮ!"
 
 #: engines/cge/detection.cpp:105 engines/cge2/detection.cpp:101
 msgid "Color Blind Mode"
-msgstr "Р РµР¶РёРј Р±РµР· РєРѕР»СЊРѕСЂСѓ"
+msgstr "АХЦШЬ СХЧ ЪЮЫмЮаг"
 
 #: engines/cge/detection.cpp:106 engines/cge2/detection.cpp:102
 msgid "Enable Color Blind Mode by default"
-msgstr "Р’РєР»СЋС‡Р°С” СЂРµР¶РёРј РґР»СЏ Р»СЋРґРµР№ Р· РїРѕРіС–СЂС€РµРЅРЅРёРј СЃРїСЂРёСЏС‚С‚СЏРј РєРѕР»СЊРѕСЂСѓ"
+msgstr "ІЪЫозРф аХЦШЬ ФЫп ЫоФХЩ Ч ЯЮУцаиХЭЭШЬ бЯаШпввпЬ ЪЮЫмЮаг"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -2984,210 +2984,210 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM Р·РЅР°Р№С€РѕРІ, С‰Рѕ РІРё РјР°С”С‚Рµ СЃС‚Р°СЂС– Р·Р±РµСЂРµР¶РµРЅС– С–РіСЂРё РґР»СЏ Drascula.\n"
-"Р—Р±РµСЂРµР¶РµРЅС– Сѓ СЃС‚Р°СЂРѕРјСѓ С„РѕСЂРјР°С‚С– С–РіСЂРё РЅРµ РїС–РґС‚СЂРёРјСѓСЋС‚СЊСЃСЏ, С– РІРё РЅРµ Р·РјРѕР¶РµС‚Рµ С—С… "
-"Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё, СЏРєС‰Рѕ РЅРµ РїРµСЂРµРІРµРґРµС‚Рµ Сѓ РЅРѕРІРёР№ С„РѕСЂРјР°С‚.\n"
+"ScummVM ЧЭРЩиЮТ, йЮ ТШ ЬРфвХ бвРац ЧСХаХЦХЭц цУаШ ФЫп Drascula.\n"
+"·СХаХЦХЭц г бвРаЮЬг дЮаЬРвц цУаШ ЭХ ЯцФваШЬговмбп, ц ТШ ЭХ ЧЬЮЦХвХ че "
+"ЧРТРЭвРЦШвШ, пЪйЮ ЭХ ЯХаХТХФХвХ г ЭЮТШЩ дЮаЬРв.\n"
 "\n"
-"РќР°С‚РёСЃРЅС–С‚СЊ РћРљ, С‰РѕР± РїРµСЂРµРІРµСЃС‚Рё С—С… Р·Р°СЂР°Р·, С–РЅР°РєС€Рµ С†Рµ РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ Р·'СЏРІРёС‚СЊСЃСЏ РїСЂРё "
-"РЅР°СЃС‚СѓРїРЅРѕРјСѓ Р·Р°РїСѓСЃРєСѓ РіСЂРё.\n"
+"ЅРвШбЭцвм ѕє, йЮС ЯХаХТХбвШ че ЧРаРЧ, цЭРЪиХ жХ ЯЮТцФЮЬЫХЭЭп Ч'пТШвмбп ЯаШ "
+"ЭРбвгЯЭЮЬг ЧРЯгбЪг УаШ.\n"
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Use bright palette mode"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё СЂРµР¶РёРј СЏСЃРєСЂР°РІРѕС— РїР°Р»С–С‚СЂРё"
+msgstr "ІШЪЮаШбвЮТгТРвШ аХЦШЬ пбЪаРТЮч ЯРЫцваШ"
 
 #: engines/dreamweb/detection.cpp:59
 msgid "Display graphics using the game's bright palette"
-msgstr "Р’С–РґРѕР±СЂР°Р¶РµРЅРЅСЏ РіСЂР°С„С–РєРё Р· РІРёРєРѕСЂРёСЃС‚Р°РЅРЅСЏРј СЏСЃРєСЂР°РІРѕС— РїР°Р»С–С‚СЂРё С–РіСЂ"
+msgstr "ІцФЮСаРЦХЭЭп УаРдцЪШ Ч ТШЪЮаШбвРЭЭпЬ пбЪаРТЮч ЯРЫцваШ цУа"
 
 #: engines/gob/inter_playtoons.cpp:255 engines/gob/inter_v2.cpp:1467
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:524
 msgid "Failed to load saved game from file."
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё Р·Р±РµСЂРµР¶РµРЅСѓ РіСЂСѓ Р· С„Р°Р№Р»Сѓ."
+msgstr "ЅХ ТФРЫЮбп ЧРТРЭвРЦШвШ ЧСХаХЦХЭг Уаг Ч дРЩЫг."
 
 #: engines/gob/inter_v2.cpp:1537 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:537
 msgid "Failed to save game to file."
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р±РµСЂРµРіС‚Рё РіСЂСѓ Сѓ С„Р°Р№Р»."
+msgstr "ЅХ ТФРЫЮбп ЧСХаХУвШ Уаг г дРЩЫ."
 
 #: engines/gob/inter_v5.cpp:107
 msgid "Failed to delete file."
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ РІРёРґР°Р»РёС‚Рё С„Р°Р№Р»."
+msgstr "ЅХ ТФРЫЮбп ТШФРЫШвШ дРЩЫ."
 
 #: engines/groovie/detection.cpp:312
 msgid "Fast movie speed"
-msgstr "Р РµР¶РёРј С€РІРёРґРєРѕРіРѕ РІС–РґРµРѕ"
+msgstr "АХЦШЬ иТШФЪЮУЮ ТцФХЮ"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr "РџСЂРѕРіСЂР°РІР°С‚Рё РІС–РґРµРѕ Р· РїС–РґРІРёС‰РµРЅРЅРѕСЋ С€РІРёРґРєС–СЃС‚СЋ"
+msgstr "їаЮУаРТРвШ ТцФХЮ Ч ЯцФТШйХЭЭЮо иТШФЪцбво"
 
 #: engines/groovie/script.cpp:407
 msgid "Failed to save game"
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РїРёСЃР°С‚Рё РіСЂСѓ"
+msgstr "ЅХ ТФРЫЮбп ЧРЯШбРвШ Уаг"
 
 #: engines/hopkins/detection.cpp:76 engines/hopkins/detection.cpp:86
 msgid "Gore Mode"
-msgstr "Р РµР¶РёРј Р· РєСЂРѕРІ'СЋ"
+msgstr "АХЦШЬ Ч ЪаЮТ'о"
 
 #: engines/hopkins/detection.cpp:77 engines/hopkins/detection.cpp:87
 msgid "Enable Gore Mode when available"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё СЂРµР¶РёРј Р· РєСЂРѕРІ'СЋ, СЏРєС‰Рѕ С” РґРѕСЃС‚СѓРїРЅРёР№"
+msgstr "ГТцЬЪЭгвШ аХЦШЬ Ч ЪаЮТ'о, пЪйЮ ф ФЮбвгЯЭШЩ"
 
 #. I18N: Studio audience adds an applause and cheering sounds whenever
 #. Malcolm makes a joke.
 #: engines/kyra/detection.cpp:62
 msgid "Studio audience"
-msgstr "РђСѓРґС–С‚РѕСЂС–СЏ РІ СЃС‚СѓРґС–С—"
+msgstr "°гФцвЮацп Т бвгФцч"
 
 #: engines/kyra/detection.cpp:63
 msgid "Enable studio audience"
-msgstr "Р”РѕРґР°С‚Рё Р°СѓРґС–С‚РѕСЂС–СЋ Сѓ СЃС‚СѓРґС–СЋ"
+msgstr "ґЮФРвШ РгФцвЮацо г бвгФцо"
 
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr "Р”РѕР·РІРѕР»РёС‚Рё РїСЂРѕРїСѓСЃРєРё"
+msgstr "ґЮЧТЮЫШвШ ЯаЮЯгбЪШ"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
-msgstr "Р”РѕР·РІРѕР»РёС‚Рё РїСЂРѕРїСѓСЃРєР°С‚Рё С‚РµРєСЃС‚ С– СЂРѕР»РёРєРё"
+msgstr "ґЮЧТЮЫШвШ ЯаЮЯгбЪРвШ вХЪбв ц аЮЫШЪШ"
 
 #. I18N: Helium mode makes people sound like they've inhaled Helium.
 #: engines/kyra/detection.cpp:84
 msgid "Helium mode"
-msgstr "Р РµР¶РёРј РіРµР»С–СЋ"
+msgstr "АХЦШЬ УХЫцо"
 
 #: engines/kyra/detection.cpp:85
 msgid "Enable helium mode"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё СЂРµР¶РёРј РіРµР»С–С”РІРёС… РіРѕР»РѕСЃС–РІ"
+msgstr "ГТцЬЪЭгвШ аХЦШЬ УХЫцфТШе УЮЫЮбцТ"
 
 #. I18N: When enabled, this option makes scrolling smoother when
 #. changing from one screen to another.
 #: engines/kyra/detection.cpp:99
 msgid "Smooth scrolling"
-msgstr "РџР»Р°РІРЅР° РїСЂРѕРєСЂСѓС‚РєР°"
+msgstr "їЫРТЭР ЯаЮЪагвЪР"
 
 #: engines/kyra/detection.cpp:100
 msgid "Enable smooth scrolling when walking"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё РїР»Р°РІРЅСѓ РїСЂРѕРєСЂСѓС‚РєСѓ РїС–Рґ С‡Р°СЃ С…РѕРґС–РЅРЅСЏ"
+msgstr "ГТцЬЪЭгвШ ЯЫРТЭг ЯаЮЪагвЪг ЯцФ зРб еЮФцЭЭп"
 
 #. I18N: When enabled, this option changes the cursor when it floats to the
 #. edge of the screen to a directional arrow. The player can then click to
 #. walk towards that direction.
 #: engines/kyra/detection.cpp:112
 msgid "Floating cursors"
-msgstr "РџР»Р°РІР°СЋС‡С– РєСѓСЂСЃРѕСЂРё"
+msgstr "їЫРТРозц ЪгабЮаШ"
 
 #: engines/kyra/detection.cpp:113
 msgid "Enable floating cursors"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё РїР»Р°РІР°СЋС‡С– РєСѓСЂСЃРѕСЂРё"
+msgstr "ГТцЬЪЭгвШ ЯЫРТРозц ЪгабЮаШ"
 
 #. I18N: HP stands for Hit Points
 #: engines/kyra/detection.cpp:127
 msgid "HP bar graphs"
-msgstr "РЎС‚РѕРІРїС‡РёРєРё Р·РґРѕСЂРѕРІ'СЏ"
+msgstr "БвЮТЯзШЪШ ЧФЮаЮТ'п"
 
 #: engines/kyra/detection.cpp:128
 msgid "Enable hit point bar graphs"
-msgstr "РЈРёС–РјРєРЅСѓС‚Рё РіСЂР°С„С–С‡РЅС– СЃС‚РѕРІРїС‡РёРєРё Р·РґРѕСЂРѕРІ'СЏ"
+msgstr "ГШцЬЪЭгвШ УаРдцзЭц бвЮТЯзШЪШ ЧФЮаЮТ'п"
 
 #: engines/kyra/eobcommon.cpp:331 engines/kyra/lol.cpp:481
 msgid "Move Forward"
-msgstr "Р СѓС…Р°С‚РёСЃСЊ СѓРїРµСЂРµРґ"
+msgstr "АгеРвШбм гЯХаХФ"
 
 #: engines/kyra/eobcommon.cpp:332 engines/kyra/lol.cpp:482
 msgid "Move Back"
-msgstr "Р СѓС…Р°С‚РёСЃСЊ РЅР°Р·Р°Рґ"
+msgstr "АгеРвШбм ЭРЧРФ"
 
 #: engines/kyra/eobcommon.cpp:333
 msgid "Move Left"
-msgstr "Р СѓС…Р°С‚РёСЃСЊ РЅР°Р»С–РІРѕ"
+msgstr "АгеРвШбм ЭРЫцТЮ"
 
 #: engines/kyra/eobcommon.cpp:334
 msgid "Move Right"
-msgstr "Р СѓС…Р°С‚РёСЃСЊ РЅР°РїСЂР°РІРѕ"
+msgstr "АгеРвШбм ЭРЯаРТЮ"
 
 #: engines/kyra/eobcommon.cpp:335 engines/kyra/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2514
 msgid "Turn Left"
-msgstr "РџРѕРІРµСЂРЅСѓС‚РёСЃСЏ РЅР°Р»С–РІРѕ"
+msgstr "їЮТХаЭгвШбп ЭРЫцТЮ"
 
 #: engines/kyra/eobcommon.cpp:336 engines/kyra/lol.cpp:486
 #: engines/pegasus/pegasus.cpp:2515
 msgid "Turn Right"
-msgstr "РџРѕРІРµСЂРЅСѓС‚РёСЃСЏ РЅР°РїСЂР°РІРѕ"
+msgstr "їЮТХаЭгвШбп ЭРЯаРТЮ"
 
 #: engines/kyra/eobcommon.cpp:337
 msgid "Open/Close Inventory"
-msgstr "Р’С–РґРєСЂРёС‚Рё/Р·Р°РєСЂРёС‚Рё С–РЅРІРµРЅС‚Р°СЂ"
+msgstr "ІцФЪаШвШ/ЧРЪаШвШ цЭТХЭвРа"
 
 #: engines/kyra/eobcommon.cpp:338
 msgid "Switch Inventory/Character screen"
-msgstr "РџРµСЂРµРєР»СЋС‡РёС‚Рё РµРєСЂР°РЅ Р†РЅРІРµРЅС‚Р°СЂ/Р“РµСЂРѕР№"
+msgstr "їХаХЪЫозШвШ ХЪаРЭ ¦ЭТХЭвРа/іХаЮЩ"
 
 #: engines/kyra/eobcommon.cpp:339
 msgid "Camp"
-msgstr "РўР°Р±С–СЂ"
+msgstr "ВРСца"
 
 #: engines/kyra/eobcommon.cpp:340
 msgid "Cast Spell"
-msgstr "Р’РёРєРѕСЂРёСЃС‚Р°С‚Рё Р·Р°РєР»СЏС‚С‚СЏ"
+msgstr "ІШЪЮаШбвРвШ ЧРЪЫпввп"
 
 #: engines/kyra/eobcommon.cpp:343
 msgid "Spell Level 1"
-msgstr "Р—Р°РєР»СЏС‚С‚СЏ 1-РіРѕ СЂС–РІРЅСЏ"
+msgstr "·РЪЫпввп 1-УЮ ацТЭп"
 
 #: engines/kyra/eobcommon.cpp:344
 msgid "Spell Level 2"
-msgstr "Р—Р°РєР»СЏС‚С‚СЏ 2-РіРѕ СЂС–РІРЅСЏ"
+msgstr "·РЪЫпввп 2-УЮ ацТЭп"
 
 #: engines/kyra/eobcommon.cpp:345
 msgid "Spell Level 3"
-msgstr "Р—Р°РєР»СЏС‚С‚СЏ 3-РіРѕ СЂС–РІРЅСЏ"
+msgstr "·РЪЫпввп 3-УЮ ацТЭп"
 
 #: engines/kyra/eobcommon.cpp:346
 msgid "Spell Level 4"
-msgstr "Р—Р°РєР»СЏС‚С‚СЏ 4-РіРѕ СЂС–РІРЅСЏ"
+msgstr "·РЪЫпввп 4-УЮ ацТЭп"
 
 #: engines/kyra/eobcommon.cpp:347
 msgid "Spell Level 5"
-msgstr "Р—Р°РєР»СЏС‚С‚СЏ 5-РіРѕ СЂС–РІРЅСЏ"
+msgstr "·РЪЫпввп 5-УЮ ацТЭп"
 
 #: engines/kyra/eobcommon.cpp:356
 msgid "Spell Level 6"
-msgstr "Р—Р°РєР»СЏС‚С‚СЏ 6-РіРѕ СЂС–РІРЅСЏ"
+msgstr "·РЪЫпввп 6-УЮ ацТЭп"
 
 #: engines/kyra/lol.cpp:478
 msgid "Attack 1"
-msgstr "РђС‚Р°РєР° 1"
+msgstr "°вРЪР 1"
 
 #: engines/kyra/lol.cpp:479
 msgid "Attack 2"
-msgstr "РђС‚Р°РєР° 2"
+msgstr "°вРЪР 2"
 
 #: engines/kyra/lol.cpp:480
 msgid "Attack 3"
-msgstr "РђС‚Р°РєР° 3"
+msgstr "°вРЪР 3"
 
 #: engines/kyra/lol.cpp:483
 msgid "Slide Left"
-msgstr "РљРѕРІР·Р°С‚Рё РЅР°Р»С–РІРѕ"
+msgstr "єЮТЧРвШ ЭРЫцТЮ"
 
 #: engines/kyra/lol.cpp:484
 msgid "Slide Right"
-msgstr "РљРѕРІР·Р°С‚Рё РЅР°РїСЂР°РІРѕ"
+msgstr "єЮТЧРвШ ЭРЯаРТЮ"
 
 #: engines/kyra/lol.cpp:487
 msgid "Rest"
-msgstr "Р’С–РґРїРѕС‡РёС‚Рё"
+msgstr "ІцФЯЮзШвШ"
 
 #: engines/kyra/lol.cpp:488
 msgid "Options"
-msgstr "РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ"
+msgstr "ЅРЫРивгТРЭЭп"
 
 #: engines/kyra/lol.cpp:489
 msgid "Choose Spell"
-msgstr "Р’РёР±СЂР°С‚Рё Р·Р°РєР»СЏС‚С‚СЏ"
+msgstr "ІШСаРвШ ЧРЪЫпввп"
 
 #: engines/kyra/sound_midi.cpp:477
 msgid ""
@@ -3197,11 +3197,11 @@ msgid ""
 "General MIDI ones. It is still possible that\n"
 "some tracks sound incorrect."
 msgstr ""
-"Р—РґР°С”С‚СЊСЃСЏ, С‰Рѕ РІРё РІРёРєРѕСЂРёСЃС‚РѕРІСѓС”С‚Рµ РїСЂРёСЃС‚СЂС–Р№ General\n"
-"MIDI, Р°Р»Рµ РІР°С€Р° РіСЂР° РїС–РґС‚СЂРёРјСѓС” С‚С–Р»СЊРєРё Roland MT32\n"
-"MIDI. РњРё СЃРїСЂРѕР±СѓС”РјРѕ Р·Р°РјР°РїРёС‚Рё С–РЅСЃС‚СЂСѓРјРµРЅС‚Рё Roland\n"
-"MT32 РЅР° General MIDI. РђР»Рµ РІ СЂРµР·СѓР»СЊС‚Р°С‚С– РјРѕР¶Рµ\n"
-"СЃС‚Р°С‚РёСЃСЏ, С‰Рѕ РґРµСЏРєС– С‚СЂРµРєРё Р±СѓРґСѓС‚СЊ РіСЂР°С‚Рё РЅРµРїСЂР°РІРёР»СЊРЅРѕ."
+"·ФРфвмбп, йЮ ТШ ТШЪЮаШбвЮТгфвХ ЯаШбвацЩ General\n"
+"MIDI, РЫХ ТРиР УаР ЯцФваШЬгф вцЫмЪШ Roland MT32\n"
+"MIDI. јШ бЯаЮСгфЬЮ ЧРЬРЯШвШ цЭбвагЬХЭвШ Roland\n"
+"MT32 ЭР General MIDI. °ЫХ Т аХЧгЫмвРвц ЬЮЦХ\n"
+"бвРвШбп, йЮ ФХпЪц ваХЪШ СгФгвм УаРвШ ЭХЯаРТШЫмЭЮ."
 
 #: engines/kyra/saveload_eob.cpp:557
 #, c-format
@@ -3213,12 +3213,12 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
-"РќР°СЃС‚СѓРїРЅРёР№ РѕСЂРёРіС–РЅР°Р»СЊРЅРёР№ С„Р°Р№Р» Р·Р±РµСЂРµР¶РµРЅРѕС— РіСЂРё Р±СѓР»Рѕ Р·РЅР°Р№РґРµРЅРѕ Сѓ РІР°С€С–Р№ РїР°РїС†С– Р· "
-"РіСЂРѕСЋ:\n"
+"ЅРбвгЯЭШЩ ЮаШУцЭРЫмЭШЩ дРЩЫ ЧСХаХЦХЭЮч УаШ СгЫЮ ЧЭРЩФХЭЮ г ТРицЩ ЯРЯжц Ч "
+"УаЮо:\n"
 "\n"
 "%s %s\n"
 "\n"
-"Р§Рё РІРё Р±Р°Р¶Р°С”С‚Рµ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё С†СЋ Р·Р±РµСЂРµР¶РµРЅСѓ РіСЂСѓ Р·С– ScummVM?\n"
+"ЗШ ТШ СРЦРфвХ ТШЪЮаШбвЮТгТРвШ жо ЧСХаХЦХЭг Уаг Чц ScummVM?\n"
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:590
@@ -3227,7 +3227,7 @@ msgid ""
 "A saved game file was found in the specified slot %d. Overwrite?\n"
 "\n"
 msgstr ""
-"Р¤Р°Р№Р» Р·Р±РµСЂРµР¶РµРЅРѕС— РіСЂРё Р±СѓР»Рѕ Р·РЅР°Р№РґРµРЅРѕ Сѓ РІРєР°Р·Р°РЅС–Р№ РїРѕР·РёС†С–С— %d. РџРµСЂРµС‚РµСЂС‚Рё?\n"
+"ДРЩЫ ЧСХаХЦХЭЮч УаШ СгЫЮ ЧЭРЩФХЭЮ г ТЪРЧРЭцЩ ЯЮЧШжцч %d. їХаХвХавШ?\n"
 "\n"
 
 #: engines/kyra/saveload_eob.cpp:623
@@ -3239,80 +3239,80 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"%d РѕСЂРёРіС–РЅР°Р»СЊРЅРёС… С„Р°Р№Р»С–РІ Р·С– Р·Р±РµСЂРµР¶РµРЅРёРјРё С–РіСЂР°РјРё Р±СѓР»Рѕ СѓСЃРїС–С€РЅРѕ С–РјРїРѕСЂС‚РѕРІР°РЅРѕ Сѓ\n"
-"ScummVM. РЇРєС‰Рѕ РІРё Р·Р°С…РѕС‡РµС‚Рµ РїС–Р·РЅС–С€Рµ С–РјРїРѕСЂС‚СѓРІР°С‚Рё РѕСЂРёРіС–РЅР°Р»СЊРЅС– С„Р°Р№Р»Рё Р·С– "
-"Р·Р±РµСЂРµР¶РµРЅРёРјРё С–РіСЂР°РјРё, РІР°Рј РїРѕС‚СЂС–Р±РЅРѕ\n"
-"РІС–РґРєСЂРёС‚Рё РєРѕРЅСЃРѕР»СЊ РІС–РґР»Р°РґС‡РёРєР° С– РІРІРµСЃС‚Рё РєРѕРјР°РЅРґСѓ 'import_savefile'.\n"
+"%d ЮаШУцЭРЫмЭШе дРЩЫцТ Чц ЧСХаХЦХЭШЬШ цУаРЬШ СгЫЮ гбЯциЭЮ цЬЯЮавЮТРЭЮ г\n"
+"ScummVM. ПЪйЮ ТШ ЧРеЮзХвХ ЯцЧЭциХ цЬЯЮавгТРвШ ЮаШУцЭРЫмЭц дРЩЫШ Чц "
+"ЧСХаХЦХЭШЬШ цУаРЬШ, ТРЬ ЯЮвацСЭЮ\n"
+"ТцФЪаШвШ ЪЮЭбЮЫм ТцФЫРФзШЪР ц ТТХбвШ ЪЮЬРЭФг 'import_savefile'.\n"
 "\n"
 
 #: engines/mads/detection.cpp:91
 msgid "Easy mouse interface"
-msgstr "РџСЂРѕСЃС‚РёР№ С–РЅС‚РµСЂС„РµР№СЃ РґР»СЏ РјРёС€С–"
+msgstr "їаЮбвШЩ цЭвХадХЩб ФЫп ЬШиц"
 
 #: engines/mads/detection.cpp:92
 msgid "Shows object names when hovering the mouse over them"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё РјС–С‚РєРё РґР»СЏ РѕР±'С”РєС‚С–РІ РїСЂРё РЅР°РІРµРґРµРЅРЅС– РјРёС€С–"
+msgstr "їЮЪРЧгТРвШ ЬцвЪШ ФЫп ЮС'фЪвцТ ЯаШ ЭРТХФХЭЭц ЬШиц"
 
 #: engines/mads/detection.cpp:101 engines/mads/detection.cpp:102
 msgid "Animated inventory items"
-msgstr "РђРЅС–РјРѕРІР°РЅРёР№ С–РЅРІРµРЅС‚Р°СЂ"
+msgstr "°ЭцЬЮТРЭШЩ цЭТХЭвРа"
 
 #: engines/mads/detection.cpp:111 engines/mads/detection.cpp:112
 msgid "Animated game interface"
-msgstr "РђРЅС–РјРѕРІР°РЅРёР№ С–РЅС‚РµСЂС„РµР№СЃ РіСЂРё"
+msgstr "°ЭцЬЮТРЭШЩ цЭвХадХЩб УаШ"
 
 #: engines/mads/detection.cpp:121 engines/mads/detection.cpp:122
 msgid "Naughty game mode"
-msgstr "Р’С–РґРІРµСЂС‚РёР№ СЂРµР¶РёРј РіСЂРё"
+msgstr "ІцФТХавШЩ аХЦШЬ УаШ"
 
 #: engines/mohawk/detection.cpp:169
 msgid "Play the Myst fly by movie"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё СЂРѕР»С–Рє РїРѕР»СЊРѕС‚Сѓ РЅР°Рґ Myst"
+msgstr "їЮЪРЧгТРвШ аЮЫцЪ ЯЮЫмЮвг ЭРФ Myst"
 
 #: engines/mohawk/detection.cpp:170
 msgid "The Myst fly by movie was not played by the original engine."
-msgstr "Р РѕР»С–Рє РїРѕР»СЊРѕС‚Сѓ РЅР°Рґ Myst РЅРµ РїРѕРєР°Р·СѓРІР°РІСЃСЏ РѕСЂРёРіС–РЅР°Р»СЊРЅРёРј РґРІРёР¶РєРѕРј."
+msgstr "АЮЫцЪ ЯЮЫмЮвг ЭРФ Myst ЭХ ЯЮЪРЧгТРТбп ЮаШУцЭРЫмЭШЬ ФТШЦЪЮЬ."
 
 #. I18N: Option for fast scene switching
 #: engines/mohawk/dialogs.cpp:183 engines/mohawk/dialogs.cpp:269
 msgid "~Z~ip Mode Activated"
-msgstr "Р РµР¶РёРј С€РІРёРґРєРѕРіРѕ РїРµСЂРµС…РѕРґСѓ Р°РєС‚РёРІРѕРІР°РЅРѕ"
+msgstr "АХЦШЬ иТШФЪЮУЮ ЯХаХеЮФг РЪвШТЮТРЭЮ"
 
 #: engines/mohawk/dialogs.cpp:184
 msgid "~T~ransitions Enabled"
-msgstr "РџРµСЂРµС…РѕРґРё Р°РєС‚РёРІРѕРІР°РЅРѕ"
+msgstr "їХаХеЮФШ РЪвШТЮТРЭЮ"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:186
 msgid "~D~rop Page"
-msgstr "Р’РёРєРёРЅСѓС‚Рё СЃС‚РѕСЂС–РЅРєСѓ"
+msgstr "ІШЪШЭгвШ бвЮацЭЪг"
 
 #: engines/mohawk/dialogs.cpp:190
 msgid "Show ~M~ap"
-msgstr "РџРѕРєР°Р·Р°С‚Рё РјР°РїСѓ"
+msgstr "їЮЪРЧРвШ ЬРЯг"
 
 #: engines/mohawk/dialogs.cpp:196
 msgid "Main Men~u~"
-msgstr "Р“РѕР»РѕРІРЅРµ РјРµРЅСЋ"
+msgstr "іЮЫЮТЭХ ЬХЭо"
 
 #: engines/mohawk/dialogs.cpp:270
 msgid "~W~ater Effect Enabled"
-msgstr "Р•С„РµРєС‚Рё РІРѕРґРё СѓРІС–РјРєРЅРµРЅРѕ"
+msgstr "µдХЪвШ ТЮФШ гТцЬЪЭХЭЮ"
 
 #: engines/mohawk/dialogs.cpp:272
 #, fuzzy
 msgid "Transitions:"
-msgstr "РџРµСЂРµС…РѕРґРё Р°РєС‚РёРІРѕРІР°РЅРѕ"
+msgstr "їХаХеЮФШ РЪвШТЮТРЭЮ"
 
 #: engines/mohawk/dialogs.cpp:274
 #, fuzzy
 msgid "Disabled"
-msgstr "Р‘РµР· РіСЂР°С„С–РєРё"
+msgstr "±ХЧ УаРдцЪШ"
 
 #: engines/mohawk/dialogs.cpp:275
 #, fuzzy
 msgid "Fastest"
-msgstr "Р’СЃС‚Р°РІРёС‚Рё"
+msgstr "ІбвРТШвШ"
 
 #: engines/mohawk/dialogs.cpp:276
 msgid "Normal"
@@ -3324,31 +3324,31 @@ msgstr ""
 
 #: engines/mohawk/mohawk.cpp:58
 msgid "The game is paused. Press any key to continue."
-msgstr "Р†РіСЂСѓ РїСЂРёР·СѓРїРёРЅРµРЅРѕ. РќР°С‚РёСЃРЅС–С‚СЊ Р±СѓРґСЊ-СЏРєСѓ РєР»Р°РІС–С€Сѓ РґР»СЏ РїСЂРѕРґРѕРІР¶РµРЅРЅСЏ."
+msgstr "¦Уаг ЯаШЧгЯШЭХЭЮ. ЅРвШбЭцвм СгФм-пЪг ЪЫРТциг ФЫп ЯаЮФЮТЦХЭЭп."
 
 #: engines/mohawk/riven.cpp:149
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
-"РЈ РІР°Рј РЅРµРјР°С” С„Р°Р№Р»Сѓ РґР»СЏ РІРёРєРѕРЅР°РЅРЅСЏ Riven. Р¤Р°Р№Р» РІРёРєРѕРЅР°РЅРЅСЏ РґР»СЏ Windows РјР°С” РЅР°Р·РІСѓ "
-"'riven.exe' Р°Р±Рѕ 'rivendmo.exe'. "
+"Г ТРЬ ЭХЬРф дРЩЫг ФЫп ТШЪЮЭРЭЭп Riven. ДРЩЫ ТШЪЮЭРЭЭп ФЫп Windows ЬРф ЭРЧТг "
+"'riven.exe' РСЮ 'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:150
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
 msgstr ""
-"Р’РёРєРѕСЂРёСЃС‚Р°РЅРЅСЏ С„Р°Р№Р»Сѓ 'arcriven.z' С‚Р°РєРѕР¶ С” РїСЂРёРїСѓСЃС‚РёРјРёРј. РўР°РєРѕР¶ РІРё РјРѕР¶РµС‚Рµ "
-"РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё С„Р°Р№Р» 'Riven' РґР»СЏ Mac."
+"ІШЪЮаШбвРЭЭп дРЩЫг 'arcriven.z' вРЪЮЦ ф ЯаШЯгбвШЬШЬ. ВРЪЮЦ ТШ ЬЮЦХвХ "
+"ТШЪЮаШбвЮТгТРвШ дРЩЫ 'Riven' ФЫп Mac."
 
 #: engines/mohawk/riven.cpp:161
 msgid ""
 "You're missing 'extras.mhk'. Using the 'arcriven.z' installer file also "
 "works."
 msgstr ""
-"РЈ РІР°СЃ РЅРµРјР°С” С„Р°Р№Р»Сѓ 'extras.mhk'. Р’РёРєРѕСЂРёСЃС‚Р°РЅРЅСЏ С„Р°Р№Р»Сѓ 'arcriven.z' С‚Р°РєРѕР¶ "
-"РґРѕСЃС‚Р°С‚РЅСЊРѕ."
+"Г ТРб ЭХЬРф дРЩЫг 'extras.mhk'. ІШЪЮаШбвРЭЭп дРЩЫг 'arcriven.z' вРЪЮЦ "
+"ФЮбвРвЭмЮ."
 
 #: engines/mohawk/riven.cpp:432
 msgid "You are missing the following required Riven data files:\n"
@@ -3358,7 +3358,7 @@ msgstr ""
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
-msgstr "Р”РѕСЃР»С–РґСѓРІР°РЅРЅСЏ РїРѕР·Р° С†С–С”СЋ РјРµР¶РѕСЋ РґРѕСЃС‚СѓРїРЅРµ С‚С–Р»СЊРєРё Сѓ РїРѕРІРЅС–С— РІРµСЂСЃС–С— РіСЂРё."
+msgstr "ґЮбЫцФгТРЭЭп ЯЮЧР жцфо ЬХЦЮо ФЮбвгЯЭХ вцЫмЪШ г ЯЮТЭцч ТХабцч УаШ."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:309
 msgid ""
@@ -3368,27 +3368,27 @@ msgid ""
 "the game. ScummVM cannot do that and\n"
 "the site no longer exists."
 msgstr ""
-"РќР° С†РµР№ РјРѕРјРµРЅС‚ РґРµРјРѕ Riven Р±Рё Р·Р°РїРёС‚Р°Р»Р°, С‡Рё\n"
-"РІРё Р± С…РѕС‚С–Р»Рё РІС–РґРєСЂРёС‚Рё РІРµР±-РѕРіР»СЏРґР°С‡ С– РїРµСЂРµРЅРµСЃС‚Рё\n"
-"РІР°СЃ Сѓ РјР°РіР°Р·РёРЅ Red Orb, Р°Р±Рё РјР°С‚Рё РјРѕР¶Р»РёРІС–СЃС‚СЊ\n"
-"РєСѓРїРёС‚Рё РіСЂСѓ. ScummVM Р·Р°СЂР°Р· С†Рµ РЅРµ РІРјС–С” СЂРѕР±РёС‚Рё,\n"
-"РѕРєСЂС–Рј С‚РѕРіРѕ, С†РµР№ РјР°РіР°Р·РёРЅ Р±С–Р»СЊС€Рµ РЅРµ РїСЂР°С†СЋС”."
+"ЅР жХЩ ЬЮЬХЭв ФХЬЮ Riven СШ ЧРЯШвРЫР, зШ\n"
+"ТШ С еЮвцЫШ ТцФЪаШвШ ТХС-ЮУЫпФРз ц ЯХаХЭХбвШ\n"
+"ТРб г ЬРУРЧШЭ Red Orb, РСШ ЬРвШ ЬЮЦЫШТцбвм\n"
+"ЪгЯШвШ Уаг. ScummVM ЧРаРЧ жХ ЭХ ТЬцф аЮСШвШ,\n"
+"ЮЪацЬ вЮУЮ, жХЩ ЬРУРЧШЭ СцЫмиХ ЭХ ЯаРжоф."
 
 #: engines/neverhood/detection.cpp:184
 msgid "Skip the Hall of Records storyboard scenes"
-msgstr "РџРµСЂРµСЃРєР°РєСѓРІР°С‚Рё Р—Р°Р»Сѓ Р РµРєРѕСЂРґС–РІ"
+msgstr "їХаХбЪРЪгТРвШ ·РЫг АХЪЮаФцТ"
 
 #: engines/neverhood/detection.cpp:185
 msgid "Allows the player to skip past the Hall of Records storyboard scenes"
-msgstr "Р”РѕР·РІРѕР»СЏС” РіСЂР°РІС†РµРІС– РїРµСЂРµСЃРєР°РєСѓРІР°С‚Рё С‡РµСЂРµР· СЃС†РµРЅРё Сѓ Р—Р°Р»С– Р РµРєРѕСЂРґС–РІ"
+msgstr "ґЮЧТЮЫпф УаРТжХТц ЯХаХбЪРЪгТРвШ зХаХЧ бжХЭШ г ·РЫц АХЪЮаФцТ"
 
 #: engines/neverhood/detection.cpp:191
 msgid "Scale the making of videos to full screen"
-msgstr "Р РѕР·С‚СЏРіСѓРІР°С‚Рё РІС–РґРµРѕ РїСЂРѕ СЃС‚РІРѕСЂРµРЅРЅСЏ С–РіСЂРё РЅР° РІРµСЃСЊ РµРєСЂР°РЅ"
+msgstr "АЮЧвпУгТРвШ ТцФХЮ ЯаЮ бвТЮаХЭЭп цУаШ ЭР ТХбм ХЪаРЭ"
 
 #: engines/neverhood/detection.cpp:192
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "Р РѕР·С‚СЏРіСѓРІР°С‚Рё РІС–РґРµРѕ РїСЂРѕ СЃС‚РІРѕСЂРµРЅРЅСЏ С–РіСЂРё С‚Р°Рє, С‰РѕР± РІРѕРЅРѕ Р·Р°Р№РјР°Р»Рѕ РІРµСЃСЊ РµРєСЂР°РЅ"
+msgstr "АЮЧвпУгТРвШ ТцФХЮ ЯаЮ бвТЮаХЭЭп цУаШ вРЪ, йЮС ТЮЭЮ ЧРЩЬРЫЮ ТХбм ХЪаРЭ"
 
 #: engines/parallaction/saveload.cpp:130
 #, c-format
@@ -3396,24 +3396,24 @@ msgid ""
 "Can't save game in slot %i\n"
 "\n"
 msgstr ""
-"РќРµ РјРѕР¶Сѓ Р·Р±РµСЂРµРіС‚Рё РіСЂСѓ Сѓ СЃР»РѕС‚ %i\n"
+"ЅХ ЬЮЦг ЧСХаХУвШ Уаг г бЫЮв %i\n"
 "\n"
 
 #: engines/parallaction/saveload.cpp:194
 msgid "Load file"
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё С„Р°Р№Р»"
+msgstr "·РТРЭвРЦШвШ дРЩЫ"
 
 #: engines/parallaction/saveload.cpp:201
 msgid "Loading game..."
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶СѓСЋ РіСЂСѓ..."
+msgstr "·РТРЭвРЦго Уаг..."
 
 #: engines/parallaction/saveload.cpp:209
 msgid "Save file"
-msgstr "Р—Р±РµСЂРµРіС‚Рё С„Р°Р№Р»"
+msgstr "·СХаХУвШ дРЩЫ"
 
 #: engines/parallaction/saveload.cpp:216
 msgid "Saving game..."
-msgstr "Р—Р±РµСЂРµР¶СѓСЋ РіСЂСѓ..."
+msgstr "·СХаХЦго Уаг..."
 
 #: engines/parallaction/saveload.cpp:269
 msgid ""
@@ -3424,16 +3424,16 @@ msgid ""
 "\n"
 "Press OK to convert them now, otherwise you will be asked next time.\n"
 msgstr ""
-"ScummVM Р·РЅР°Р№С€РѕРІ, С‰Рѕ РІРё РјР°С”С‚Рµ СЃС‚Р°СЂС– Р·Р±РµСЂРµР¶РµРЅС– С–РіСЂРё РґР»СЏ Nippon Safes.\n"
-"Р—Р±РµСЂРµР¶РµРЅС– Сѓ СЃС‚Р°СЂРѕРјСѓ С„РѕСЂРјР°С‚С– С–РіСЂРё РЅРµ РїС–РґС‚СЂРёРјСѓСЋС‚СЊСЃСЏ, С– РІРё РЅРµ Р·РјРѕР¶РµС‚Рµ С—С… "
-"Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё, СЏРєС‰Рѕ РЅРµ РїРµСЂРµРІРµРґРµС‚Рµ Сѓ РЅРѕРІРёР№ С„РѕСЂРјР°С‚.\n"
+"ScummVM ЧЭРЩиЮТ, йЮ ТШ ЬРфвХ бвРац ЧСХаХЦХЭц цУаШ ФЫп Nippon Safes.\n"
+"·СХаХЦХЭц г бвРаЮЬг дЮаЬРвц цУаШ ЭХ ЯцФваШЬговмбп, ц ТШ ЭХ ЧЬЮЦХвХ че "
+"ЧРТРЭвРЦШвШ, пЪйЮ ЭХ ЯХаХТХФХвХ г ЭЮТШЩ дЮаЬРв.\n"
 "\n"
-"РќР°С‚РёСЃРЅС–С‚СЊ РћРљ, С‰РѕР± РїРµСЂРµРІРµСЃС‚Рё С—С… Р·Р°СЂР°Р·, С–РЅР°РєС€Рµ С†Рµ РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ Р·'СЏРІРёС‚СЊСЃСЏ РїСЂРё "
-"РЅР°СЃС‚СѓРїРЅРѕРјСѓ Р·Р°РїСѓСЃРєСѓ РіСЂРё.\n"
+"ЅРвШбЭцвм ѕє, йЮС ЯХаХТХбвШ че ЧРаРЧ, цЭРЪиХ жХ ЯЮТцФЮЬЫХЭЭп Ч'пТШвмбп ЯаШ "
+"ЭРбвгЯЭЮЬг ЧРЯгбЪг УаШ.\n"
 
 #: engines/parallaction/saveload.cpp:316
 msgid "ScummVM successfully converted all your saved games."
-msgstr "ScummVM СѓСЃРїС–С€РЅРѕ РїРµСЂРµРІС–РІ СѓСЃС– РІР°С€С– Р·Р±РµСЂРµР¶РµРЅС– С–РіСЂРё."
+msgstr "ScummVM гбЯциЭЮ ЯХаХТцТ гбц ТРиц ЧСХаХЦХЭц цУаШ."
 
 #: engines/parallaction/saveload.cpp:318
 msgid ""
@@ -3442,79 +3442,79 @@ msgid ""
 "\n"
 "Please report to the team."
 msgstr ""
-"ScummVM РЅР°РґСЂСѓРєСѓРІР°РІ РґРµСЏРєС– РїРѕРїРµСЂРµРґР¶РµРЅРЅСЏ Сѓ РІС–РєРЅС– РєРѕРЅСЃРѕР»С–, С– РЅРµРјР°С” РіР°СЂР°РЅС‚С–С—, С‰Рѕ "
-"СѓСЃС– РІР°С€С– С„Р°Р№Р»Рё Р±СѓР»Рѕ РїРµСЂРµРІРµРґРµРЅРѕ.\n"
+"ScummVM ЭРФагЪгТРТ ФХпЪц ЯЮЯХаХФЦХЭЭп г ТцЪЭц ЪЮЭбЮЫц, ц ЭХЬРф УРаРЭвцч, йЮ "
+"гбц ТРиц дРЩЫШ СгЫЮ ЯХаХТХФХЭЮ.\n"
 "\n"
-"Р‘СѓРґСЊ Р»Р°СЃРєР°, РїРѕРІС–РґРѕРјС‚Рµ РїСЂРѕ С†Рµ РєРѕРјР°РЅРґС–."
+"±гФм ЫРбЪР, ЯЮТцФЮЬвХ ЯаЮ жХ ЪЮЬРЭФц."
 
 #: engines/pegasus/pegasus.cpp:716
 msgid "Invalid file name for saving"
-msgstr "РќРµРїСЂР°РІРёР»СЊРЅРµ С–Рј'СЏ С„Р°Р№Р»Сѓ РґР»СЏ Р·Р°РїРёСЃСѓ"
+msgstr "ЅХЯаРТШЫмЭХ цЬ'п дРЩЫг ФЫп ЧРЯШбг"
 
 #: engines/pegasus/pegasus.cpp:2512
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr "Р”РѕРіРѕСЂРё/Р—РјРµРЅС€РёС‚Рё РјР°СЃС€С‚Р°Р±/Р’РїРµСЂРµРґ/Р’С–РґС‡РёРЅРёС‚Рё РґРІРµСЂС–"
+msgstr "ґЮУЮаШ/·ЬХЭиШвШ ЬРбивРС/ІЯХаХФ/ІцФзШЭШвШ ФТХац"
 
 #: engines/pegasus/pegasus.cpp:2513
 msgid "Down/Zoom Out"
-msgstr "Р”РѕРЅРёР·Сѓ/Р—Р±С–Р». РјР°СЃС€С‚Р°Р±"
+msgstr "ґЮЭШЧг/·СцЫ. ЬРбивРС"
 
 #: engines/pegasus/pegasus.cpp:2516
 msgid "Display/Hide Inventory Tray"
-msgstr "РџРѕРєР°Р·Р°С‚Рё/РЎС…РѕРІР°С‚Рё С–РЅРІРµРЅС‚Р°СЂ"
+msgstr "їЮЪРЧРвШ/БеЮТРвШ цЭТХЭвРа"
 
 #: engines/pegasus/pegasus.cpp:2517
 msgid "Display/Hide Biochip Tray"
-msgstr "РџРѕРєР°Р·Р°С‚Рё/РЎС…РѕРІР°С‚Рё Р±С–РѕС‡С–Рї"
+msgstr "їЮЪРЧРвШ/БеЮТРвШ СцЮзцЯ"
 
 #: engines/pegasus/pegasus.cpp:2518
 msgid "Action/Select"
-msgstr "Р”С–СЏ/Р’РёР±С–СЂ"
+msgstr "ґцп/ІШСца"
 
 #: engines/pegasus/pegasus.cpp:2519
 msgid "Toggle Center Data Display"
-msgstr "РџРµСЂРµРјРєРЅСѓС‚Рё РїРѕРєР°Р·СѓРІР°РЅРЅСЏ РґР°РЅРёС… РІ С†РµРЅС‚СЂС– РµРєСЂР°РЅСѓ"
+msgstr "їХаХЬЪЭгвШ ЯЮЪРЧгТРЭЭп ФРЭШе Т жХЭвац ХЪаРЭг"
 
 #: engines/pegasus/pegasus.cpp:2520
 msgid "Display/Hide Info Screen"
-msgstr "РџРѕРєР°Р·Р°С‚Рё/РЎС…РѕРІР°С‚Рё С–РЅС„РѕРµРєСЂР°РЅ"
+msgstr "їЮЪРЧРвШ/БеЮТРвШ цЭдЮХЪаРЭ"
 
 #: engines/pegasus/pegasus.cpp:2521
 msgid "Display/Hide Pause Menu"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё/РЎС…РѕРІР°С‚Рё РјРµРЅСЋ РїР°СѓР·Рё"
+msgstr "їЮЪРЧгТРвШ/БеЮТРвШ ЬХЭо ЯРгЧШ"
 
 #: engines/queen/detection.cpp:56
 msgid "Alternative intro"
-msgstr "РђР»СЊС‚РµСЂРЅР°С‚РёРІРЅРёР№ РІСЃС‚СѓРї"
+msgstr "°ЫмвХаЭРвШТЭШЩ ТбвгЯ"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРёР№ РІСЃС‚СѓРї РіСЂРё (С‚С–Р»СЊРєРё РІ CD РІРµСЂСЃС–С—)"
+msgstr "ІШЪЮаШбвЮТгТРвШ РЫмвХаЭРвШТЭШЩ ТбвгЯ УаШ (вцЫмЪШ Т CD ТХабцч)"
 
 #: engines/sci/detection.cpp:400
 msgid "Skip EGA dithering pass (full color backgrounds)"
-msgstr "РќРµ СЂРѕР±РёС‚Рё СЂР°СЃС‚СЂСѓРІР°РЅРЅСЏ EGA (С„РѕРЅРё Сѓ РїРѕРІРЅРѕРјСѓ РєРѕР»СЊРѕСЂС–)"
+msgstr "ЅХ аЮСШвШ аРбвагТРЭЭп EGA (дЮЭШ г ЯЮТЭЮЬг ЪЮЫмЮац)"
 
 #: engines/sci/detection.cpp:401
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
-"РќРµ СЂРѕР±РёС‚Рё СЂР°СЃС‚СЂСѓРІР°РЅРЅСЏ Сѓ С–РіСЂР°С… EGA, РіСЂР°С„С–РєСѓ Р±СѓРґРµ РїРѕРєР°Р·Р°РЅРѕ Сѓ РїРѕРІРЅРѕРјСѓ РєРѕР»СЊРѕСЂС–"
+"ЅХ аЮСШвШ аРбвагТРЭЭп г цУаРе EGA, УаРдцЪг СгФХ ЯЮЪРЧРЭЮ г ЯЮТЭЮЬг ЪЮЫмЮац"
 
 #: engines/sci/detection.cpp:410
 msgid "Enable high resolution graphics"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё РіСЂР°С„С–РєСѓ РІРёСЃРѕРєРѕРіРѕ СЂРѕР·РіР°Р»СѓР¶РµРЅРЅСЏ"
+msgstr "ГТцЬЪЭгвШ УаРдцЪг ТШбЮЪЮУЮ аЮЧУРЫгЦХЭЭп"
 
 #: engines/sci/detection.cpp:411
 msgid "Enable high resolution graphics/content"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё РіСЂР°С„С–РєСѓ С‚Р° РєРѕРЅС‚РµРЅС‚ Сѓ РІРёСЃРѕРєРѕРјСѓ СЂРѕР·РіР°Р»СѓР¶РµРЅРЅС–"
+msgstr "ГТцЬЪЭгвШ УаРдцЪг вР ЪЮЭвХЭв г ТШбЮЪЮЬг аЮЧУРЫгЦХЭЭц"
 
 #: engines/sci/detection.cpp:420
 msgid "Enable black-lined video"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё РІС–РґРµРѕ Р· С‡РѕСЂРЅРёРјРё Р»С–РЅС–СЏРјРё"
+msgstr "ГТцЬЪЭгвШ ТцФХЮ Ч зЮаЭШЬШ ЫцЭцпЬШ"
 
 #: engines/sci/detection.cpp:421
 msgid "Draw black lines over videos to increase their apparent sharpness"
-msgstr "РњР°Р»СЋРІР°С‚Рё С‡РѕСЂРЅС– Р»С–РЅС–С— РїРѕРІРµСЂС…Сѓ РІС–РґРµРѕ С‰РѕР± РїРѕСЃРёР»РёС‚Рё С—С…РЅСЋ РЅР°СЏРІРЅСѓ С‡С–С‚РєС–СЃС‚СЊ"
+msgstr "јРЫоТРвШ зЮаЭц ЫцЭцч ЯЮТХаег ТцФХЮ йЮС ЯЮбШЫШвШ чеЭо ЭРпТЭг зцвЪцбвм"
 
 #: engines/sci/detection.cpp:431
 msgid "Use high-quality video scaling"
@@ -3523,60 +3523,60 @@ msgstr ""
 #: engines/sci/detection.cpp:432
 #, fuzzy
 msgid "Use linear interpolation when upscaling videos, where possible"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р»С–РЅС–Р№РЅСѓ С„С–Р»СЊС‚СЂР°С†С–СЋ РґР»СЏ Р·Р±С–Р»СЊС€РµРЅРЅСЏ РіСЂР°С„С–РєРё"
+msgstr "ІШЪЮаШбвЮТгТРвШ ЫцЭцЩЭг дцЫмваРжцо ФЫп ЧСцЫмиХЭЭп УаРдцЪШ"
 
 #: engines/sci/detection.cpp:442
 msgid "Prefer digital sound effects"
-msgstr "РќР°РґР°РІР°С‚Рё РїРµСЂРµРІР°РіСѓ С†РёС„СЂРѕРІРёРј Р·РІСѓРєРѕРІРёРј РµС„РµРєС‚Р°Рј"
+msgstr "ЅРФРТРвШ ЯХаХТРУг жШдаЮТШЬ ЧТгЪЮТШЬ ХдХЪвРЬ"
 
 #: engines/sci/detection.cpp:443
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "Р’С–РґРґР°РІР°С‚Рё РїРµСЂРµРІР°РіСѓ С†РёС„СЂРѕРІРёРј Р·РІСѓРєРѕРІРёРј РµС„РµРєС‚Р°Рј, Р° РЅРµ СЃРёРЅС‚РµР·РѕРІР°РЅРёРј"
+msgstr "ІцФФРТРвШ ЯХаХТРУг жШдаЮТШЬ ЧТгЪЮТШЬ ХдХЪвРЬ, Р ЭХ бШЭвХЧЮТРЭШЬ"
 
 #: engines/sci/detection.cpp:462
 msgid "Use IMF/Yamaha FB-01 for MIDI output"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё IMF/Yahama FB-01 РґР»СЏ MIDI РІРёС…РѕРґСѓ"
+msgstr "ІШЪЮаШбвЮТгТРвШ IMF/Yahama FB-01 ФЫп MIDI ТШеЮФг"
 
 #: engines/sci/detection.cpp:463
 msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РґР»СЏ РІРёРІРѕРґСѓ MIDI СЂРµР¶РёРј РєР°СЂС‚Рё IBM Feature Р°Р±Рѕ FM СЃС–РЅС‚РµР· Yamaha "
+"ІШЪЮаШбвЮТгТРвШ ФЫп ТШТЮФг MIDI аХЦШЬ ЪРавШ IBM Feature РСЮ FM бцЭвХЧ Yamaha "
 "FB-01"
 
 #: engines/sci/detection.cpp:473
 msgid "Use CD audio"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё CD Р°СѓРґС–Рѕ"
+msgstr "ІШЪЮаШбвЮТгТРвШ CD РгФцЮ"
 
 #: engines/sci/detection.cpp:474
 msgid "Use CD audio instead of in-game audio, if available"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё CD Р°СѓРґС–Рѕ Р·Р°РјС–СЃС‚СЊ С–РіСЂРѕРІРѕРіРѕ Р°СѓРґС–Рѕ, СЏРєС‰Рѕ С‚Р°РєС– С”"
+msgstr "ІШЪЮаШбвЮТгТРвШ CD РгФцЮ ЧРЬцбвм цУаЮТЮУЮ РгФцЮ, пЪйЮ вРЪц ф"
 
 #: engines/sci/detection.cpp:484
 msgid "Use Windows cursors"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Windows РєСѓСЂСЃРѕСЂРё"
+msgstr "ІШЪЮаШбвЮТгТРвШ Windows ЪгабЮаШ"
 
 #: engines/sci/detection.cpp:485
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Windows РєСѓСЂСЃРѕСЂРё (РјРµРЅС€РёС… С– РјРѕРЅРѕС…СЂРѕРјРЅРёС…), Р·Р°РјС–СЃС‚СЊ DOS"
+msgstr "ІШЪЮаШбвЮТгТРвШ Windows ЪгабЮаШ (ЬХЭиШе ц ЬЮЭЮеаЮЬЭШе), ЧРЬцбвм DOS"
 
 #: engines/sci/detection.cpp:495
 msgid "Use silver cursors"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё СЃСЂС–Р±РЅС– РєСѓСЂСЃРѕСЂРё"
+msgstr "ІШЪЮаШбвЮТгТРвШ бацСЭц ЪгабЮаШ"
 
 #: engines/sci/detection.cpp:496
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
-"Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё Р°Р»СЊС‚РµСЂРЅР°С‚РёРІРЅРёР№ РЅР°Р±С–СЂ СЃСЂС–Р±РЅРёС… РєСѓСЂСЃРѕСЂС–РІ, Р·Р°РјС–СЃС‚СЊ Р·РІРёС‡Р°Р№РЅРёС… "
-"Р·РѕР»РѕС‚РёС…"
+"ІШЪЮаШбвЮТгТРвШ РЫмвХаЭРвШТЭШЩ ЭРСца бацСЭШе ЪгабЮацТ, ЧРЬцбвм ЧТШзРЩЭШе "
+"ЧЮЫЮвШе"
 
 #: engines/sci/detection.cpp:506
 #, fuzzy
 msgid "Enable content censoring"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё РїР»Р°РІР°СЋС‡С– РєСѓСЂСЃРѕСЂРё"
+msgstr "ГТцЬЪЭгвШ ЯЫРТРозц ЪгабЮаШ"
 
 #: engines/sci/detection.cpp:507
 msgid "Enable the game's built-in optional content censoring"
@@ -3584,7 +3584,7 @@ msgstr ""
 
 #: engines/sci/detection.cpp:837 engines/sci/engine/kfile.cpp:481
 msgid "(Autosave)"
-msgstr "(РђРІС‚РѕР·Р±РµСЂРµР¶РµРЅРЅСЏ)"
+msgstr "(°ТвЮЧСХаХЦХЭЭп)"
 
 #: engines/sci/engine/kgraphics.cpp:984
 msgid ""
@@ -3594,35 +3594,35 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
-"Р“РµСЂРѕС”РІ Р±СѓРґРµ Р·Р±РµСЂРµР¶РµРЅРѕ Р°РІС‚РѕРјР°С‚РёС‡РЅРѕ РІСЃРµСЂРµРґРёРЅС– ScummVM. Р¤Р°Р№Р»Рё Р· РіРµСЂРѕСЏРјРё РІС–Рґ "
-"РѕСЂРёРіС–РЅР°Р»СЊРЅРёС… С–РіРѕСЂ РјР°СЋС‚СЊ Р±СѓС‚Рё СЃРєРѕРїС–Р№РѕРІР°РЅС– Сѓ РїР°РїРєСѓ ScummVM Р·С– Р·Р±РµСЂРµР¶РµРЅРёРјРё "
-"С–РіСЂР°РјРё, С– РґРѕ РЅРёС… РјР°С” Р±СѓС‚Рё РґРѕРґР°РЅРѕ РїСЂРµС„С–РєСЃ РІ Р·Р°Р»РµР¶РЅРѕСЃС‚С– РІС–Рґ РіСЂРё, РґРµ С—С… Р±СѓР»Рѕ "
-"Р·Р±РµСЂРµР¶РµРЅРѕ: 'qfg1-' РґР»СЏ Quest for Glory1, 'qfg2-' РґР»СЏ Quest for Glory 2. "
-"РќР°РїСЂРёРєР»Р°Рґ: 'qfg2-thief.sav'."
+"іХаЮфТ СгФХ ЧСХаХЦХЭЮ РТвЮЬРвШзЭЮ ТбХаХФШЭц ScummVM. ДРЩЫШ Ч УХаЮпЬШ ТцФ "
+"ЮаШУцЭРЫмЭШе цУЮа ЬРовм СгвШ бЪЮЯцЩЮТРЭц г ЯРЯЪг ScummVM Чц ЧСХаХЦХЭШЬШ "
+"цУаРЬШ, ц ФЮ ЭШе ЬРф СгвШ ФЮФРЭЮ ЯаХдцЪб Т ЧРЫХЦЭЮбвц ТцФ УаШ, ФХ че СгЫЮ "
+"ЧСХаХЦХЭЮ: 'qfg1-' ФЫп Quest for Glory1, 'qfg2-' ФЫп Quest for Glory 2. "
+"ЅРЯаШЪЫРФ: 'qfg2-thief.sav'."
 
 #: engines/sci/engine/kgraphics32.cpp:348
 #, c-format
 msgid "Please use an external viewer to open the game's help file: %s"
 msgstr ""
-"Р‘СѓРґСЊ-Р»Р°СЃРєР°, РІРёРєРѕСЂРёСЃС‚РѕРІСѓР№С‚Рµ С–РЅС€Сѓ РїСЂРѕРіСЂР°РјСѓ РґР»СЏ РїРµСЂРµРіР»СЏРґР°РЅРЅСЏ С„Р°Р№Р»Сѓ РґРѕРїРѕРјРѕРіРё "
-"С–РіСЂРё: %s"
+"±гФм-ЫРбЪР, ТШЪЮаШбвЮТгЩвХ цЭиг ЯаЮУаРЬг ФЫп ЯХаХУЫпФРЭЭп дРЩЫг ФЮЯЮЬЮУШ "
+"цУаШ: %s"
 
 #: engines/sci/engine/savegame.cpp:1284
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr "Р¤РѕСЂРјР°С‚ С†СЊРѕРіРѕ С„Р°Р№Р»Сѓ Р·Р±РµСЂРµР¶РµРЅРѕС— РіСЂРё Р·Р°СЃС‚Р°СЂС–Р»РёР№, РЅРµ РјРѕР¶Сѓ Р№РѕРіРѕ РїСЂРѕС‡РёС‚Р°С‚Рё"
+msgstr "ДЮаЬРв жмЮУЮ дРЩЫг ЧСХаХЦХЭЮч УаШ ЧРбвРацЫШЩ, ЭХ ЬЮЦг ЩЮУЮ ЯаЮзШвРвШ"
 
 #: engines/sci/engine/savegame.cpp:1286
 #, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr "Р’РµСЂСЃС–СЏ С„Р°Р№Р»Сѓ Р·Р±РµСЂРµР¶РµРЅРЅСЏ %d, Р°Р»Рµ РјР°РєСЃРёРјР°Р»СЊРЅРѕ РїС–РґСЂС‚РёРјСѓС”С‚СЊСЃСЏ %0d"
+msgstr "ІХабцп дРЩЫг ЧСХаХЦХЭЭп %d, РЫХ ЬРЪбШЬРЫмЭЮ ЯцФавШЬгфвмбп %0d"
 
 #: engines/sci/engine/savegame.cpp:1297
 msgid ""
 "This saved game was created with a different version of the game, unable to "
 "load it"
 msgstr ""
-"Р¦РµР№ С„Р°Р№Р» Р·С– Р·Р±РµСЂРµР¶РµРЅРѕСЋ РіСЂРѕСЋ Р±СѓР»Рѕ СЃС‚РІРѕСЂРµРЅРѕ Сѓ С–РЅС€С–Р№ РІРµСЂСЃС–С— РіСЂРё, РЅРµ РјРѕР¶Сѓ Р№РѕРіРѕ "
-"РїСЂРѕС‡РёС‚Р°С‚Рё"
+"ЖХЩ дРЩЫ Чц ЧСХаХЦХЭЮо УаЮо СгЫЮ бвТЮаХЭЮ г цЭицЩ ТХабцч УаШ, ЭХ ЬЮЦг ЩЮУЮ "
+"ЯаЮзШвРвШ"
 
 #: engines/sci/resource.cpp:822
 msgid ""
@@ -3630,9 +3630,9 @@ msgid ""
 "not work properly. Please check the console for more information, and verify "
 "that your game files are valid."
 msgstr ""
-"Р—РЅР°Р№РґРµРЅРѕ РІС–РґСЃСѓС‚РЅС– Р°Р±Рѕ РїРѕС€РєРѕРґР¶РµРЅС– СЂРµСЃСѓСЂСЃРё РіСЂРё. Р”РµСЏРєС– РµР»РµРјРµРЅС‚Рё РіСЂРё РјРѕР¶СѓС‚СЊ "
-"РїСЂР°С†СЋРІР°С‚Рё РЅРµРІС–СЂРЅРѕ. Р‘СѓРґСЊ-Р»Р°СЃРєР°, РїРµСЂРµРІС–СЂС‚Рµ РІС–РєРЅРѕ Р· РєРѕРЅСЃРѕР»Р»СЋ РґР»СЏ РїРѕРґР°Р»СЊС€РѕС— "
-"С–РЅС„РѕСЂРјР°С†С–С—, Р° С‚Р°РєРѕР¶ РїРµСЂРµСЃРІС–РґС‡С–С‚СЊСЃСЏ С‰Рѕ С„Р°Р№Р»Рё РіСЂРё Р±СѓР»Рѕ РїСЂР°РІРёР»СЊРЅРѕ СЃРєРѕРїС–Р№РѕРІР°РЅРѕ."
+"·ЭРЩФХЭЮ ТцФбгвЭц РСЮ ЯЮиЪЮФЦХЭц аХбгабШ УаШ. ґХпЪц ХЫХЬХЭвШ УаШ ЬЮЦгвм "
+"ЯаРжоТРвШ ЭХТцаЭЮ. ±гФм-ЫРбЪР, ЯХаХТцавХ ТцЪЭЮ Ч ЪЮЭбЮЫЫо ФЫп ЯЮФРЫмиЮч "
+"цЭдЮаЬРжцч, Р вРЪЮЦ ЯХаХбТцФзцвмбп йЮ дРЩЫШ УаШ СгЫЮ ЯаРТШЫмЭЮ бЪЮЯцЩЮТРЭЮ."
 
 #: engines/sci/sci.cpp:400
 msgid ""
@@ -3681,10 +3681,10 @@ msgid ""
 "tried\n"
 "to add and its version, language, etc.:\n"
 msgstr ""
-"Р—РґР°С”С‚СЊСЃСЏ, С‰Рѕ РІР°С€Р° РІРµСЂСЃС–СЏ РіСЂРё РЅРµРІС–РґРѕРјР°. РЇРєС‰Рѕ РІРѕРЅР° РќР• Р„ Р·РјС–РЅРµРЅРѕСЋ\n"
-"С„Р°РЅР°РјРё (Сѓ С‚РѕРјСѓ С‡РёСЃР»С– РЅРµ С” С„Р°РЅР°С‚СЃСЊРєРёРј РїРµСЂРµРєР»Р°РґРѕРј), Р±СѓРґСЊ-Р»Р°СЃРєР°, РїРѕРІС–РґРѕРјС‚Рµ\n"
-"РЅС–Р¶С‡РµРЅР°РІРµРґРµРЅС– РґР°РЅС– РєРѕРјР°РЅРґС– ScummVM СЂР°Р·РѕРј Р· РЅР°Р·РІРѕСЋ РіСЂРё, СЏРєСѓ РІРё РЅР°РјР°РіР°С”С‚РµСЃСЊ\n"
-"РґРѕРґР°С‚Рё, Р° С‚Р°РєРѕР¶ С—С— РІРµСЂСЃС–СЋ, РјРѕРІСѓ С‚Р° С–РЅС€Рµ:\n"
+"·ФРфвмбп, йЮ ТРиР ТХабцп УаШ ЭХТцФЮЬР. ПЪйЮ ТЮЭР Ѕµ ¤ ЧЬцЭХЭЮо\n"
+"дРЭРЬШ (г вЮЬг зШбЫц ЭХ ф дРЭРвбмЪШЬ ЯХаХЪЫРФЮЬ), СгФм-ЫРбЪР, ЯЮТцФЮЬвХ\n"
+"ЭцЦзХЭРТХФХЭц ФРЭц ЪЮЬРЭФц ScummVM аРЧЮЬ Ч ЭРЧТЮо УаШ, пЪг ТШ ЭРЬРУРфвХбм\n"
+"ФЮФРвШ, Р вРЪЮЦ чч ТХабцо, ЬЮТг вР цЭиХ:\n"
 
 #: engines/scumm/detection.cpp:1144
 msgid ""
@@ -3692,144 +3692,144 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
-"Р—Р°РґР»СЏ Р·Р°РїРѕР±С–РіР°РЅРЅСЏ РїС–СЂР°С‚СЃС‚РІР°, Lite-РІРµСЂСЃС–СЏ РіСЂРё Putt-Putt Save the Zoo РґР»СЏ iOS\n"
-"РЅРµ РїС–РґС‚СЂРёРјСѓС”С‚СЊСЃСЏ. РџРѕРІРЅСѓ РІРµСЂСЃС–СЋ РјРѕР¶РЅР° РїСЂРёРґР±Р°С‚Рё Сѓ iTunes Store."
+"·РФЫп ЧРЯЮСцУРЭЭп ЯцаРвбвТР, Lite-ТХабцп УаШ Putt-Putt Save the Zoo ФЫп iOS\n"
+"ЭХ ЯцФваШЬгфвмбп. їЮТЭг ТХабцо ЬЮЦЭР ЯаШФСРвШ г iTunes Store."
 
 #: engines/scumm/detection.cpp:1347
 msgid "Show Object Line"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё Р»С–РЅС–С— РѕР±'С”РєС‚С–РІ"
+msgstr "їЮЪРЧгТРвШ ЫцЭцч ЮС'фЪвцТ"
 
 #: engines/scumm/detection.cpp:1348
 msgid "Show the names of objects at the bottom of the screen"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё РЅР°Р·РІРё РѕР±'С”РєС‚С–РІ РІРЅРёР·Сѓ РµРєСЂР°РЅСѓ"
+msgstr "їЮЪРЧгТРвШ ЭРЧТШ ЮС'фЪвцТ ТЭШЧг ХЪаРЭг"
 
 #: engines/scumm/dialogs.cpp:172
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr "Р’СЃС‚Р°РІС‚Рµ РґРёСЃРє %c С‚Р° РЅР°С‚РёСЃРЅС–С‚СЊ РєР»Р°РІС–С€Сѓ РґР»СЏ РїСЂРѕРґРѕРІР¶РµРЅРЅСЏ."
+msgstr "ІбвРТвХ ФШбЪ %c вР ЭРвШбЭцвм ЪЫРТциг ФЫп ЯаЮФЮТЦХЭЭп."
 
 #: engines/scumm/dialogs.cpp:173
 #, c-format
 msgid "Unable to Find %s, (%c%d) Press Button."
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·РЅР°Р№С‚Рё %s, (%c%d) РќР°С‚РёСЃРЅС–С‚СЊ РєР»Р°РІС–С€Сѓ."
+msgstr "ЅХ ТФРЫЮбп ЧЭРЩвШ %s, (%c%d) ЅРвШбЭцвм ЪЫРТциг."
 
 #: engines/scumm/dialogs.cpp:174
 #, c-format
 msgid "Error reading disk %c, (%c%d) Press Button."
-msgstr "РџРѕРјРёР»РєР° С‡РёС‚Р°РЅРЅСЏ РґРёСЃРєСѓ %c, (%c%d) РќР°С‚РёСЃРЅС–С‚СЊ РєР»Р°РІС–С€Сѓ."
+msgstr "їЮЬШЫЪР зШвРЭЭп ФШбЪг %c, (%c%d) ЅРвШбЭцвм ЪЫРТциг."
 
 #: engines/scumm/dialogs.cpp:175
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr "Р†РіСЂСѓ РїСЂРёР·СѓРїРёРЅРµРЅРѕ.  РќР°С‚РёСЃРЅС–С‚СЊ РїСЂРѕР±С–Р» РґР»СЏ РїСЂРѕРґРѕРІР¶РµРЅРЅСЏ."
+msgstr "¦Уаг ЯаШЧгЯШЭХЭЮ.  ЅРвШбЭцвм ЯаЮСцЫ ФЫп ЯаЮФЮТЦХЭЭп."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
 #. Will react to J as 'Yes'
 #: engines/scumm/dialogs.cpp:179
 msgid "Are you sure you want to restart?  (Y/N)Y"
-msgstr "Р’Рё РІРїРµРІРЅРµРЅС–, С‰Рѕ С…РѕС‡РµС‚Рµ СЂРѕР·РїРѕС‡Р°С‚Рё СЃРїРѕС‡Р°С‚РєСѓ?  (Y/N)Y"
+msgstr "ІШ ТЯХТЭХЭц, йЮ еЮзХвХ аЮЧЯЮзРвШ бЯЮзРвЪг?  (Y/N)Y"
 
 #. I18N: you may specify 'Yes' symbol at the end of the line. See previous comment
 #: engines/scumm/dialogs.cpp:181
 msgid "Are you sure you want to quit?  (Y/N)Y"
-msgstr "Р’Рё РІРїРµРІРЅРµРЅС–, С‰Рѕ С…РѕС‡РµС‚Рµ РІРёР№С‚Рё?  (Y/N)Y"
+msgstr "ІШ ТЯХТЭХЭц, йЮ еЮзХвХ ТШЩвШ?  (Y/N)Y"
 
 #: engines/scumm/dialogs.cpp:186
 msgid "Play"
-msgstr "Р“СЂР°С‚Рё"
+msgstr "іаРвШ"
 
 #: engines/scumm/dialogs.cpp:190
 msgid "Insert save/load game disk"
-msgstr "Р’СЃС‚Р°РІС‚Рµ РґРёСЃРє Р·С– Р·Р±РµСЂРµР¶РµРЅРёРјРё С–РіСЂР°РјРё"
+msgstr "ІбвРТвХ ФШбЪ Чц ЧСХаХЦХЭШЬШ цУаРЬШ"
 
 #: engines/scumm/dialogs.cpp:191
 msgid "You must enter a name"
-msgstr "Р’Рё РјСѓСЃРёС‚Рµ РІРІРµСЃС‚Рё С–Рј'СЏ"
+msgstr "ІШ ЬгбШвХ ТТХбвШ цЬ'п"
 
 #: engines/scumm/dialogs.cpp:192
 msgid "The game was NOT saved (disk full?)"
-msgstr "Р“СЂСѓ РќР• Р‘РЈР›Рћ Р·Р°РїРёСЃР°РЅРѕ (РїРѕРІРЅРёР№ РґРёСЃРє?)"
+msgstr "іаг Ѕµ ±Г»ѕ ЧРЯШбРЭЮ (ЯЮТЭШЩ ФШбЪ?)"
 
 #: engines/scumm/dialogs.cpp:193
 msgid "The game was NOT loaded"
-msgstr "Р“СЂСѓ РќР• Р‘РЈР›Рћ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРѕ"
+msgstr "іаг Ѕµ ±Г»ѕ ЧРТРЭвРЦХЭЮ"
 
 #: engines/scumm/dialogs.cpp:194
 #, c-format
 msgid "Saving '%s'"
-msgstr "Р—Р°РїРёСЃСѓСЋ '%s'"
+msgstr "·РЯШбго '%s'"
 
 #: engines/scumm/dialogs.cpp:195
 #, c-format
 msgid "Loading '%s'"
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶СѓСЋ '%s'"
+msgstr "·РТРЭвРЦго '%s'"
 
 #: engines/scumm/dialogs.cpp:196
 msgid "Name your SAVE game"
-msgstr "РќР°Р·РѕРІС–С‚СЊ С†СЋ Р·Р±РµСЂРµР¶РµРЅСѓ РіСЂСѓ"
+msgstr "ЅРЧЮТцвм жо ЧСХаХЦХЭг Уаг"
 
 #: engines/scumm/dialogs.cpp:197
 msgid "Select a game to LOAD"
-msgstr "Р’РёР±РµСЂС–С‚СЊ РіСЂСѓ РґР»СЏ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ"
+msgstr "ІШСХацвм Уаг ФЫп ЧРТРЭвРЦХЭЭп"
 
 #: engines/scumm/dialogs.cpp:198
 msgid "Game title)"
-msgstr "РќР°Р·РІР° РіСЂРё)"
+msgstr "ЅРЧТР УаШ)"
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:284
 msgid "~P~revious"
-msgstr "~Рџ~РѕРїРµСЂ"
+msgstr "~ї~ЮЯХа"
 
 #. I18N: Next page button
 #: engines/scumm/dialogs.cpp:286
 msgid "~N~ext"
-msgstr "~Рќ~Р°СЃС‚"
+msgstr "~Ѕ~Рбв"
 
 #: engines/scumm/dialogs.cpp:599
 msgid "Speech Only"
-msgstr "РўС–Р»СЊРєРё РѕР·РІСѓС‡РєР°"
+msgstr "ВцЫмЪШ ЮЧТгзЪР"
 
 #: engines/scumm/dialogs.cpp:600
 msgid "Speech and Subtitles"
-msgstr "РћР·РІСѓС‡РєР° С‚Р° СЃСѓР±С‚РёС‚СЂРё"
+msgstr "ѕЧТгзЪР вР бгСвШваШ"
 
 #: engines/scumm/dialogs.cpp:601
 msgid "Subtitles Only"
-msgstr "РўС–Р»СЊРєРё СЃСѓР±С‚РёС‚СЂРё"
+msgstr "ВцЫмЪШ бгСвШваШ"
 
 #: engines/scumm/dialogs.cpp:609
 msgctxt "lowres"
 msgid "Speech & Subs"
-msgstr "РћР·РІСѓС‡РєР° С‚Р° С‚РµРєСЃС‚"
+msgstr "ѕЧТгзЪР вР вХЪбв"
 
 #: engines/scumm/dialogs.cpp:655
 msgid "Select a Proficiency Level."
-msgstr "РћР±РµСЂС–С‚СЊ СЂРµР¶РёРј СЃРєР»Р°РґРЅРѕСЃС‚С–."
+msgstr "ѕСХацвм аХЦШЬ бЪЫРФЭЮбвц."
 
 #: engines/scumm/dialogs.cpp:657
 msgid "Refer to your Loom(TM) manual for help."
-msgstr "Р—Р° РґРѕРїРѕРјРѕРіРѕСЋ Р·РІРµСЂС‚Р°Р№С‚РµСЃСЏ РґРѕ С–РЅСЃС‚СЂСѓРєС†С–С— Loom(TM)."
+msgstr "·Р ФЮЯЮЬЮУЮо ЧТХавРЩвХбп ФЮ цЭбвагЪжцч Loom(TM)."
 
 #: engines/scumm/dialogs.cpp:661
 msgid "Practice"
-msgstr "РџСЂР°РєС‚РёРєР°РЅС‚"
+msgstr "їаРЪвШЪРЭв"
 
 #: engines/scumm/dialogs.cpp:662
 msgid "Expert"
-msgstr "Р•РєСЃРїРµСЂС‚"
+msgstr "µЪбЯХав"
 
 #: engines/scumm/help.cpp:74
 msgid "Common keyboard commands:"
-msgstr "РћСЃРЅРѕРІРЅС– РєРѕРјР°РЅРґРё РєР»Р°РІС–Р°С‚СѓСЂРё:"
+msgstr "ѕбЭЮТЭц ЪЮЬРЭФШ ЪЫРТцРвгаШ:"
 
 #: engines/scumm/help.cpp:75
 msgid "Save / Load dialog"
-msgstr "Р”С–Р°Р»РѕРі Р·Р±РµСЂРµР¶РµРЅРЅСЏ / Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ"
+msgstr "ґцРЫЮУ ЧСХаХЦХЭЭп / ЧРТРЭвРЦХЭЭп"
 
 #: engines/scumm/help.cpp:77
 msgid "Skip line of text"
-msgstr "РџСЂРѕРїСѓСЃС‚РёС‚Рё СЂСЏРґРѕРє С‚РµРєСЃС‚Сѓ"
+msgstr "їаЮЯгбвШвШ апФЮЪ вХЪбвг"
 
 #: engines/scumm/help.cpp:78
 msgid "Esc"
@@ -3837,7 +3837,7 @@ msgstr "Esc"
 
 #: engines/scumm/help.cpp:78
 msgid "Skip cutscene"
-msgstr "РџСЂРѕРїСѓСЃС‚РёС‚Рё СЂРѕР»С–Рє"
+msgstr "їаЮЯгбвШвШ аЮЫцЪ"
 
 #: engines/scumm/help.cpp:79
 msgid "Space"
@@ -3845,7 +3845,7 @@ msgstr "Space"
 
 #: engines/scumm/help.cpp:79
 msgid "Pause game"
-msgstr "РџР°СѓР·Р° РіСЂРё"
+msgstr "їРгЧР УаШ"
 
 #: engines/scumm/help.cpp:80 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:96 engines/scumm/help.cpp:97
@@ -3857,7 +3857,7 @@ msgstr "Ctrl"
 
 #: engines/scumm/help.cpp:80
 msgid "Load saved game 1-10"
-msgstr "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё С–РіСЂРё 1-10"
+msgstr "·РТРЭвРЦШвШ цУаШ 1-10"
 
 #: engines/scumm/help.cpp:81 engines/scumm/help.cpp:85
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:101
@@ -3867,7 +3867,7 @@ msgstr "Alt"
 
 #: engines/scumm/help.cpp:81
 msgid "Save game 1-10"
-msgstr "Р—Р±РµСЂРµРіС‚Рё С–РіСЂРё 1-10"
+msgstr "·СХаХУвШ цУаШ 1-10"
 
 #: engines/scumm/help.cpp:87 engines/scumm/help.cpp:90
 msgid "Enter"
@@ -3875,15 +3875,15 @@ msgstr "Enter"
 
 #: engines/scumm/help.cpp:88
 msgid "Music volume up / down"
-msgstr "Р“СѓС‡РЅС–СЃС‚СЊ РјСѓР·РёРєРё РІРёС‰Рµ / РЅРёР¶С‡Рµ"
+msgstr "ігзЭцбвм ЬгЧШЪШ ТШйХ / ЭШЦзХ"
 
 #: engines/scumm/help.cpp:89
 msgid "Text speed slower / faster"
-msgstr "РЁРІРёРґРєС–СЃС‚СЊ С‚РµРєСЃС‚Сѓ РїРѕРІС–Р»СЊРЅС–С€Рµ / С€РІРёРґС€Рµ"
+msgstr "ИТШФЪцбвм вХЪбвг ЯЮТцЫмЭциХ / иТШФиХ"
 
 #: engines/scumm/help.cpp:90
 msgid "Simulate left mouse button"
-msgstr "РЎРёРјСѓР»СЋРІР°С‚Рё Р»С–РІРёР№ РєР»С–Рє РјРёС€С–"
+msgstr "БШЬгЫоТРвШ ЫцТШЩ ЪЫцЪ ЬШиц"
 
 #: engines/scumm/help.cpp:91
 msgid "Tab"
@@ -3891,482 +3891,482 @@ msgstr "Tab"
 
 #: engines/scumm/help.cpp:91
 msgid "Simulate right mouse button"
-msgstr "РЎРёРјСѓР»СЋРІР°С‚Рё РїСЂР°РІРёР№ РєР»С–Рє РјРёС€С–"
+msgstr "БШЬгЫоТРвШ ЯаРТШЩ ЪЫцЪ ЬШиц"
 
 #: engines/scumm/help.cpp:94
 msgid "Special keyboard commands:"
-msgstr "РЎРїРµС†С–Р°Р»СЊРЅС– РєРѕРјР°РЅРґРё РєР»Р°РІС–Р°С‚СѓСЂРё:"
+msgstr "БЯХжцРЫмЭц ЪЮЬРЭФШ ЪЫРТцРвгаШ:"
 
 #: engines/scumm/help.cpp:95
 msgid "Show / Hide console"
-msgstr "РџРѕРєР°Р·Р°С‚Рё / cС…РѕРІР°С‚Рё РєРѕРЅСЃРѕР»СЊ"
+msgstr "їЮЪРЧРвШ / cеЮТРвШ ЪЮЭбЮЫм"
 
 #: engines/scumm/help.cpp:96
 msgid "Start the debugger"
-msgstr "Р—Р°РїСѓСЃРє РІС–РґР»Р°РґС‡РёРєР°"
+msgstr "·РЯгбЪ ТцФЫРФзШЪР"
 
 #: engines/scumm/help.cpp:97
 msgid "Show memory consumption"
-msgstr "РџРѕРєР°Р·Р°С‚Рё СЃРїРѕР¶РёРІР°РЅРЅСЏ РїР°Рј'СЏС‚С–"
+msgstr "їЮЪРЧРвШ бЯЮЦШТРЭЭп ЯРЬ'пвц"
 
 #: engines/scumm/help.cpp:98
 msgid "Run in fast mode (*)"
-msgstr "Р’РёРєРѕРЅР°С‚Рё РІ С€РІРёРґРєРѕРјСѓ СЂРµР¶РёРјС– (*)"
+msgstr "ІШЪЮЭРвШ Т иТШФЪЮЬг аХЦШЬц (*)"
 
 #: engines/scumm/help.cpp:99
 msgid "Run in really fast mode (*)"
-msgstr "Р’РёРєРѕРЅР°С‚Рё РІ РґСѓР¶Рµ С€РІРёРґРєРѕРјСѓ СЂРµР¶РёРјС– (*)"
+msgstr "ІШЪЮЭРвШ Т ФгЦХ иТШФЪЮЬг аХЦШЬц (*)"
 
 #: engines/scumm/help.cpp:100
 msgid "Toggle mouse capture"
-msgstr "РџРµСЂРµРєРѕСЋС‡РµРЅРЅСЏ Р·Р°С…РѕРїР»РµРЅРЅСЏ РјРёС€С–"
+msgstr "їХаХЪЮозХЭЭп ЧРеЮЯЫХЭЭп ЬШиц"
 
 #: engines/scumm/help.cpp:101
 msgid "Switch between graphics filters"
-msgstr "РџРµСЂРµРєР»СЋС‡РµРЅРЅСЏ РјС–Р¶ РіСЂР°С„С–С‡РЅРёРјРё С„С–Р»СЊС‚СЂР°РјРё"
+msgstr "їХаХЪЫозХЭЭп ЬцЦ УаРдцзЭШЬШ дцЫмваРЬШ"
 
 #: engines/scumm/help.cpp:102
 msgid "Increase / Decrease scale factor"
-msgstr "Р—Р±С–Р»СЊС€РµРЅРЅСЏ / Р—РјРµРЅС€РµРЅРЅСЏ РјР°СЃС€С‚Р°Р±Сѓ"
+msgstr "·СцЫмиХЭЭп / ·ЬХЭиХЭЭп ЬРбивРСг"
 
 #: engines/scumm/help.cpp:103
 msgid "Toggle aspect-ratio correction"
-msgstr "РљРѕСЂРµРєС†С–СЏ СЃРїС–РІРІС–РґРЅРѕС€РµРЅРЅСЏ СЃС‚РѕСЂС–РЅ"
+msgstr "єЮаХЪжцп бЯцТТцФЭЮиХЭЭп бвЮацЭ"
 
 #: engines/scumm/help.cpp:108
 msgid "* Note that using ctrl-f and"
-msgstr "* Р—Р°СѓРІР°Р¶РёРјРѕ, С‰Рѕ РІРёРєРѕСЂРёСЃС‚Р°РЅРЅСЏ ctrl-f С‚Р°"
+msgstr "* ·РгТРЦШЬЮ, йЮ ТШЪЮаШбвРЭЭп ctrl-f вР"
 
 #: engines/scumm/help.cpp:109
 msgid "  ctrl-g are not recommended"
-msgstr "  ctrl-g РЅРµ СЂРµРєРѕРјРµРЅРґСѓС”С‚СЊСЃСЏ"
+msgstr "  ctrl-g ЭХ аХЪЮЬХЭФгфвмбп"
 
 #: engines/scumm/help.cpp:110
 msgid "  since they may cause crashes"
-msgstr "  РѕСЃРєС–Р»СЊРєРё РІРѕРЅРё РјРѕР¶СѓС‚СЊ РІРёРєР»РёРєР°С‚Рё Р·Р±РѕС—"
+msgstr "  ЮбЪцЫмЪШ ТЮЭШ ЬЮЦгвм ТШЪЫШЪРвШ ЧСЮч"
 
 #: engines/scumm/help.cpp:111
 msgid "  or incorrect game behavior."
-msgstr "  Р°Р±Рѕ РЅРµРїСЂР°РІРёР»СЊРЅСѓ РїРѕРІРµРґС–РЅРєСѓ РіСЂРё."
+msgstr "  РСЮ ЭХЯаРТШЫмЭг ЯЮТХФцЭЪг УаШ."
 
 #: engines/scumm/help.cpp:115
 msgid "Spinning drafts on the keyboard:"
-msgstr "Р—РјС–РЅРЅС– С‡РѕСЂРЅРѕРІРёРєРё РЅР° РєР»Р°РІС–Р°С‚СѓСЂС–:"
+msgstr "·ЬцЭЭц зЮаЭЮТШЪШ ЭР ЪЫРТцРвгац:"
 
 #: engines/scumm/help.cpp:117
 msgid "Main game controls:"
-msgstr "РћСЃРЅРѕРІРЅС– РѕРїС†С–С— РєРµСЂСѓРІР°РЅРЅСЏ:"
+msgstr "ѕбЭЮТЭц ЮЯжцч ЪХагТРЭЭп:"
 
 #: engines/scumm/help.cpp:122 engines/scumm/help.cpp:137
 #: engines/scumm/help.cpp:162
 msgid "Push"
-msgstr "РЁС‚РѕРІС…Р°С‚Рё"
+msgstr "ИвЮТеРвШ"
 
 #: engines/scumm/help.cpp:123 engines/scumm/help.cpp:138
 #: engines/scumm/help.cpp:163
 msgid "Pull"
-msgstr "РўСЏРіРЅСѓС‚Рё"
+msgstr "ВпУЭгвШ"
 
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/scumm/help.cpp:198
 #: engines/scumm/help.cpp:208
 msgid "Give"
-msgstr "Р”Р°С‚Рё"
+msgstr "ґРвШ"
 
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
 #: engines/scumm/help.cpp:209
 msgid "Open"
-msgstr "Р’С–РґРєСЂРёС‚Рё"
+msgstr "ІцФЪаШвШ"
 
 #: engines/scumm/help.cpp:127
 msgid "Go to"
-msgstr "Р™С‚Рё РґРѕ"
+msgstr "№вШ ФЮ"
 
 #: engines/scumm/help.cpp:128
 msgid "Get"
-msgstr "РћС‚СЂРёРјР°С‚Рё"
+msgstr "ѕваШЬРвШ"
 
 #: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
 #: engines/scumm/help.cpp:171 engines/scumm/help.cpp:199
 #: engines/scumm/help.cpp:214 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:251
 msgid "Use"
-msgstr "Р’РёРєРѕСЂРёСЃС‚Р°С‚Рё"
+msgstr "ІШЪЮаШбвРвШ"
 
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
-msgstr "Р§РёС‚Р°С‚Рё"
+msgstr "ЗШвРвШ"
 
 #: engines/scumm/help.cpp:131 engines/scumm/help.cpp:148
 msgid "New kid"
-msgstr "РќРѕРІР° РґРёС‚РёРЅР°"
+msgstr "ЅЮТР ФШвШЭР"
 
 #: engines/scumm/help.cpp:132 engines/scumm/help.cpp:154
 #: engines/scumm/help.cpp:172
 msgid "Turn on"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё"
+msgstr "ГТцЬЪЭгвШ"
 
 #: engines/scumm/help.cpp:133 engines/scumm/help.cpp:155
 #: engines/scumm/help.cpp:173
 msgid "Turn off"
-msgstr "Р’РёРјРєРЅСѓС‚Рё"
+msgstr "ІШЬЪЭгвШ"
 
 #: engines/scumm/help.cpp:143 engines/scumm/help.cpp:168
 #: engines/scumm/help.cpp:195
 msgid "Walk to"
-msgstr "Р†С‚Рё РґРѕ"
+msgstr "¦вШ ФЮ"
 
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
 #: engines/scumm/help.cpp:196 engines/scumm/help.cpp:211
 #: engines/scumm/help.cpp:228
 msgid "Pick up"
-msgstr "РџС–РґС–Р±СЂР°С‚Рё"
+msgstr "їцФцСаРвШ"
 
 #: engines/scumm/help.cpp:145 engines/scumm/help.cpp:170
 msgid "What is"
-msgstr "Р©Рѕ С”"
+msgstr "ЙЮ ф"
 
 #: engines/scumm/help.cpp:147
 msgid "Unlock"
-msgstr "Р’С–РґРєСЂРёС‚Рё"
+msgstr "ІцФЪаШвШ"
 
 #: engines/scumm/help.cpp:150
 msgid "Put on"
-msgstr "РџРѕСЃС‚Р°РІРёС‚Рё РЅР°"
+msgstr "їЮбвРТШвШ ЭР"
 
 #: engines/scumm/help.cpp:151
 msgid "Take off"
-msgstr "Р—РЅСЏС‚Рё"
+msgstr "·ЭпвШ"
 
 #: engines/scumm/help.cpp:157
 msgid "Fix"
-msgstr "РќР°Р»Р°РіРѕРґРёС‚Рё"
+msgstr "ЅРЫРУЮФШвШ"
 
 #: engines/scumm/help.cpp:159
 msgid "Switch"
-msgstr "РџРµСЂРµРјРєРЅСѓС‚Рё"
+msgstr "їХаХЬЪЭгвШ"
 
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:229
 msgid "Look"
-msgstr "Р“Р»СЏРЅСѓС‚Рё"
+msgstr "іЫпЭгвШ"
 
 #: engines/scumm/help.cpp:174 engines/scumm/help.cpp:224
 msgid "Talk"
-msgstr "Р“РѕРІРѕСЂРёС‚Рё"
+msgstr "іЮТЮаШвШ"
 
 #: engines/scumm/help.cpp:175
 msgid "Travel"
-msgstr "РџРѕРґРѕСЂРѕР¶"
+msgstr "їЮФЮаЮЦ"
 
 #: engines/scumm/help.cpp:176
 msgid "To Henry / To Indy"
-msgstr "РЈ Р“РµРЅСЂС– / РЈ Р†РЅРґС–"
+msgstr "Г іХЭац / Г ¦ЭФц"
 
 #. I18N: These are different musical notes
 #: engines/scumm/help.cpp:180
 msgid "play C minor on distaff"
-msgstr "РіСЂР°С‚Рё РґРѕ РјС–РЅРѕСЂ РЅР° РїСЂСЏРґС†С–"
+msgstr "УаРвШ ФЮ ЬцЭЮа ЭР ЯапФжц"
 
 #: engines/scumm/help.cpp:181
 msgid "play D on distaff"
-msgstr "РіСЂР°С‚Рё СЂРµ РЅР° РїСЂСЏРґС†С–"
+msgstr "УаРвШ аХ ЭР ЯапФжц"
 
 #: engines/scumm/help.cpp:182
 msgid "play E on distaff"
-msgstr "РіСЂР°С‚Рё РјС– РЅР° РїСЂСЏРґС†С–"
+msgstr "УаРвШ Ьц ЭР ЯапФжц"
 
 #: engines/scumm/help.cpp:183
 msgid "play F on distaff"
-msgstr "РіСЂР°С‚Рё С„Р° РЅР° РїСЂСЏРґС†С–"
+msgstr "УаРвШ дР ЭР ЯапФжц"
 
 #: engines/scumm/help.cpp:184
 msgid "play G on distaff"
-msgstr "РіСЂР°С‚Рё СЃРѕР»СЊ РЅР° РїСЂСЏРґС†С–"
+msgstr "УаРвШ бЮЫм ЭР ЯапФжц"
 
 #: engines/scumm/help.cpp:185
 msgid "play A on distaff"
-msgstr "РіСЂР°С‚Рё Р»СЏ РЅР° РїСЂСЏРґС†С–"
+msgstr "УаРвШ Ып ЭР ЯапФжц"
 
 #: engines/scumm/help.cpp:186
 msgid "play B on distaff"
-msgstr "РіСЂР°С‚Рё СЃС– РЅР° РїСЂСЏРґС†С–"
+msgstr "УаРвШ бц ЭР ЯапФжц"
 
 #: engines/scumm/help.cpp:187
 msgid "play C major on distaff"
-msgstr "РіСЂР°С‚Рё РґРѕ РјР°Р¶РѕСЂ РЅР° РїСЂСЏРґС†С–"
+msgstr "УаРвШ ФЮ ЬРЦЮа ЭР ЯапФжц"
 
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:215
 msgid "puSh"
-msgstr "РџРѕС€С‚РѕРІС…"
+msgstr "їЮивЮТе"
 
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:216
 msgid "pull (Yank)"
-msgstr "С‚СЏРіРЅСѓС‚Рё (РЎРјРёРєРЅСѓС‚Рё)"
+msgstr "впУЭгвШ (БЬШЪЭгвШ)"
 
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:213
 #: engines/scumm/help.cpp:249
 msgid "Talk to"
-msgstr "Р“РѕРІРѕСЂРёС‚Рё РґРѕ"
+msgstr "іЮТЮаШвШ ФЮ"
 
 #: engines/scumm/help.cpp:200 engines/scumm/help.cpp:212
 msgid "Look at"
-msgstr "Р“Р»СЏРЅСѓС‚Рё РЅР°"
+msgstr "іЫпЭгвШ ЭР"
 
 #: engines/scumm/help.cpp:201
 msgid "turn oN"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё"
+msgstr "ГТцЬЪЭгвШ"
 
 #: engines/scumm/help.cpp:202
 msgid "turn oFf"
-msgstr "Р’РёРјРєРЅСѓС‚Рё"
+msgstr "ІШЬЪЭгвШ"
 
 #: engines/scumm/help.cpp:218
 msgid "KeyUp"
-msgstr "Р”РѕРіРѕСЂРё"
+msgstr "ґЮУЮаШ"
 
 #: engines/scumm/help.cpp:218
 msgid "Highlight prev dialogue"
-msgstr "Р’РёРґС–Р»РёС‚Рё РїРѕРїРµСЂРµРґРЅС–Р№ РґС–Р°Р»РѕРі"
+msgstr "ІШФцЫШвШ ЯЮЯХаХФЭцЩ ФцРЫЮУ"
 
 #: engines/scumm/help.cpp:219
 msgid "KeyDown"
-msgstr "Р”РѕРЅРёР·Сѓ"
+msgstr "ґЮЭШЧг"
 
 #: engines/scumm/help.cpp:219
 msgid "Highlight next dialogue"
-msgstr "Р’РёРґС–Р»РёС‚Рё РЅР°СЃС‚СѓРїРЅРёР№ РґС–Р°Р»РѕРі"
+msgstr "ІШФцЫШвШ ЭРбвгЯЭШЩ ФцРЫЮУ"
 
 #: engines/scumm/help.cpp:223
 msgid "Walk"
-msgstr "Р†С‚Рё"
+msgstr "¦вШ"
 
 #: engines/scumm/help.cpp:226 engines/scumm/help.cpp:235
 #: engines/scumm/help.cpp:242 engines/scumm/help.cpp:250
 msgid "Inventory"
-msgstr "Р†РЅРІРµРЅС‚Р°СЂ"
+msgstr "¦ЭТХЭвРа"
 
 #: engines/scumm/help.cpp:227
 msgid "Object"
-msgstr "РћР±'С”РєС‚"
+msgstr "ѕС'фЪв"
 
 #: engines/scumm/help.cpp:230
 msgid "Black and White / Color"
-msgstr "Р§РѕСЂРЅРѕ-Р±С–Р»РёР№ / РљРѕР»СЊРѕСЂРѕРІРёР№"
+msgstr "ЗЮаЭЮ-СцЫШЩ / єЮЫмЮаЮТШЩ"
 
 #: engines/scumm/help.cpp:233
 msgid "Eyes"
-msgstr "РћС‡С–"
+msgstr "ѕзц"
 
 #: engines/scumm/help.cpp:234
 msgid "Tongue"
-msgstr "РЇР·РёРє"
+msgstr "ПЧШЪ"
 
 #: engines/scumm/help.cpp:236
 msgid "Punch"
-msgstr "Р’РґР°СЂРёС‚Рё РєСѓР»Р°РєРѕРј"
+msgstr "ІФРаШвШ ЪгЫРЪЮЬ"
 
 #: engines/scumm/help.cpp:237
 msgid "Kick"
-msgstr "Р’РґР°СЂРёС‚Рё РЅРѕРіРѕСЋ"
+msgstr "ІФРаШвШ ЭЮУЮо"
 
 #: engines/scumm/help.cpp:240 engines/scumm/help.cpp:248
 msgid "Examine"
-msgstr "Р РѕР·РіР»СЏРЅСѓС‚Рё"
+msgstr "АЮЧУЫпЭгвШ"
 
 #: engines/scumm/help.cpp:241
 msgid "Regular cursor"
-msgstr "Р—РІРёС‡Р°Р№РЅРёР№ РєСѓСЂСЃРѕСЂ"
+msgstr "·ТШзРЩЭШЩ ЪгабЮа"
 
 #. I18N: Comm is a communication device
 #: engines/scumm/help.cpp:244
 msgid "Comm"
-msgstr "РљРѕРјРј"
+msgstr "єЮЬЬ"
 
 #: engines/scumm/help.cpp:247
 msgid "Save / Load / Options"
-msgstr "Р—Р±РµСЂРµР¶РµРЅРЅСЏ / Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ / РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ"
+msgstr "·СХаХЦХЭЭп / ·РТРЭвРЦХЭЭп / ЅРЫРивгТРЭЭп"
 
 #: engines/scumm/help.cpp:256
 msgid "Other game controls:"
-msgstr "Р†РЅС€Рµ РєРµСЂСѓРІР°РЅРЅСЏ РіСЂРѕСЋ:"
+msgstr "¦ЭиХ ЪХагТРЭЭп УаЮо:"
 
 #: engines/scumm/help.cpp:258 engines/scumm/help.cpp:268
 msgid "Inventory:"
-msgstr "Р†РЅРІРµРЅС‚Р°СЂ:"
+msgstr "¦ЭТХЭвРа:"
 
 #: engines/scumm/help.cpp:259 engines/scumm/help.cpp:275
 msgid "Scroll list up"
-msgstr "РџСЂРѕРєСЂСѓС‡РµРЅРЅСЏ СЃРїРёСЃРєСѓ РґРѕРіРѕСЂРё"
+msgstr "їаЮЪагзХЭЭп бЯШбЪг ФЮУЮаШ"
 
 #: engines/scumm/help.cpp:260 engines/scumm/help.cpp:276
 msgid "Scroll list down"
-msgstr "РџСЂРѕРєСЂСѓС‡РµРЅРЅСЏ СЃРїРёСЃРєСѓ РґРѕРЅРёР·Сѓ"
+msgstr "їаЮЪагзХЭЭп бЯШбЪг ФЮЭШЧг"
 
 #: engines/scumm/help.cpp:261 engines/scumm/help.cpp:269
 msgid "Upper left item"
-msgstr "Р’РµСЂС…РЅСЏ Р»С–РІР° СЂС–С‡"
+msgstr "ІХаеЭп ЫцТР ацз"
 
 #: engines/scumm/help.cpp:262 engines/scumm/help.cpp:271
 msgid "Lower left item"
-msgstr "РќРёР¶РЅСЏ Р»С–РІР° СЂС–С‡"
+msgstr "ЅШЦЭп ЫцТР ацз"
 
 #: engines/scumm/help.cpp:263 engines/scumm/help.cpp:272
 msgid "Upper right item"
-msgstr "Р’РµСЂС…РЅСЏ РїСЂР°РІР° СЂС–С‡"
+msgstr "ІХаеЭп ЯаРТР ацз"
 
 #: engines/scumm/help.cpp:264 engines/scumm/help.cpp:274
 msgid "Lower right item"
-msgstr "РќРёР¶РЅСЏ РїСЂР°РІР° СЂС–С‡"
+msgstr "ЅШЦЭп ЯаРТР ацз"
 
 #: engines/scumm/help.cpp:270
 msgid "Middle left item"
-msgstr "РЎРµСЂРµРґРЅСЏ Р»С–РІР° СЂС–С‡"
+msgstr "БХаХФЭп ЫцТР ацз"
 
 #: engines/scumm/help.cpp:273
 msgid "Middle right item"
-msgstr "РЎРµСЂРµРґРЅСЏ РїСЂР°РІР° СЂС–С‡"
+msgstr "БХаХФЭп ЯаРТР ацз"
 
 #: engines/scumm/help.cpp:280 engines/scumm/help.cpp:285
 msgid "Switching characters:"
-msgstr "РџРµСЂРµРєР»СЋС‡РµРЅРЅСЏ РіРµСЂРѕС—РІ:"
+msgstr "їХаХЪЫозХЭЭп УХаЮчТ:"
 
 #: engines/scumm/help.cpp:282
 msgid "Second kid"
-msgstr "Р”СЂСѓРіР° РґРёС‚РёРЅР°"
+msgstr "ґагУР ФШвШЭР"
 
 #: engines/scumm/help.cpp:283
 msgid "Third kid"
-msgstr "РўСЂРµС‚СЏ РґРёС‚РёРЅР°"
+msgstr "ВаХвп ФШвШЭР"
 
 #: engines/scumm/help.cpp:292
 msgid "Toggle Inventory/IQ Points display"
-msgstr "РџРµСЂРµРјРєРЅСѓС‚Рё РїРѕРєР°Р·СѓРІР°РЅРЅСЏ С–РЅРІРµРЅС‚Р°СЂСЋ Р°Р±Рѕ Р·РЅР°С‡РµРЅРЅСЏ IQ"
+msgstr "їХаХЬЪЭгвШ ЯЮЪРЧгТРЭЭп цЭТХЭвРао РСЮ ЧЭРзХЭЭп IQ"
 
 #: engines/scumm/help.cpp:293
 msgid "Toggle Keyboard/Mouse Fighting (*)"
-msgstr "РџРµСЂРµРјРєРЅСѓС‚Рё РєРµСЂСѓРІР°РЅРЅСЏ Р±С–Р№РєРѕСЋ РљР»Р°РІС–Р°С‚СѓСЂР°/РњРёС€Р° (*)"
+msgstr "їХаХЬЪЭгвШ ЪХагТРЭЭп СцЩЪЮо єЫРТцРвгаР/јШиР (*)"
 
 #: engines/scumm/help.cpp:295
 msgid "* Keyboard Fighting is always on,"
-msgstr "* РЈРїСЂР°РІР»С–РЅРЅСЏ РєР»Р°РІС–Р°С‚СѓСЂРѕСЋ Р·Р°РІР¶РґРё РІР»СЋС‡РµРЅРµ, С‚РѕРјСѓ,"
+msgstr "* ГЯаРТЫцЭЭп ЪЫРТцРвгаЮо ЧРТЦФШ ТЫозХЭХ, вЮЬг,"
 
 #: engines/scumm/help.cpp:296
 msgid "  so despite the in-game message this"
-msgstr "  РЅРµР·РІР°Р¶Р°СЋС‡Рё РЅР° РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ РіСЂРё, С†Рµ РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ"
+msgstr "  ЭХЧТРЦРозШ ЭР ЯЮТцФЮЬЫХЭЭп УаШ, жХ ЭРЫРивгТРЭЭп"
 
 #: engines/scumm/help.cpp:297
 msgid "  actually toggles Mouse Fighting Off/On"
-msgstr "  РЅР°СЃРїСЂР°РІРґС– РІРєР»СЋС‡Р°С” С‚Р° РІРёРєР»СЋС‡Р°С” СѓРїСЂР°РІР»С–РЅРЅСЏ РјРёС€РµСЋ"
+msgstr "  ЭРбЯаРТФц ТЪЫозРф вР ТШЪЫозРф гЯаРТЫцЭЭп ЬШиХо"
 
 #: engines/scumm/help.cpp:304
 msgid "Fighting controls (numpad):"
-msgstr "РљРµСЂСѓРІР°РЅРЅСЏ Р±С–Р№РєРѕСЋ (numpad):"
+msgstr "єХагТРЭЭп СцЩЪЮо (numpad):"
 
 #: engines/scumm/help.cpp:305 engines/scumm/help.cpp:306
 #: engines/scumm/help.cpp:307
 msgid "Step back"
-msgstr "РљСЂРѕРє РЅР°Р·Р°Рґ"
+msgstr "єаЮЪ ЭРЧРФ"
 
 #: engines/scumm/help.cpp:308
 msgid "Block high"
-msgstr "Р‘Р»РѕРєСѓРІР°С‚Рё Р·РІРµСЂС…Сѓ"
+msgstr "±ЫЮЪгТРвШ ЧТХаег"
 
 #: engines/scumm/help.cpp:309
 msgid "Block middle"
-msgstr "Р‘Р»РѕРєСѓРІР°С‚Рё РїРѕСЃРµСЂРµРґРёРЅС–"
+msgstr "±ЫЮЪгТРвШ ЯЮбХаХФШЭц"
 
 #: engines/scumm/help.cpp:310
 msgid "Block low"
-msgstr "Р‘Р»РѕРєСѓРІР°С‚Рё Р·РЅРёР·Сѓ"
+msgstr "±ЫЮЪгТРвШ ЧЭШЧг"
 
 #: engines/scumm/help.cpp:311
 msgid "Punch high"
-msgstr "Р‘РёС‚Рё Р·РІРµСЂС…Сѓ"
+msgstr "±ШвШ ЧТХаег"
 
 #: engines/scumm/help.cpp:312
 msgid "Punch middle"
-msgstr "Р‘РёС‚Рё РїРѕСЃРµСЂРµРґРёРЅС–"
+msgstr "±ШвШ ЯЮбХаХФШЭц"
 
 #: engines/scumm/help.cpp:313
 msgid "Punch low"
-msgstr "Р‘РёС‚Рё Р·РЅРёР·Сѓ"
+msgstr "±ШвШ ЧЭШЧг"
 
 #: engines/scumm/help.cpp:315
 msgid "Sucker punch"
-msgstr "Р‘РёС‚Рё Р·Р·Р°РґСѓ"
+msgstr "±ШвШ ЧЧРФг"
 
 #: engines/scumm/help.cpp:318
 msgid "These are for Indy on left."
-msgstr "РЈ РІРёРїР°РґРєСѓ РґР»СЏ Р†РЅРґС– Р·Р»С–РІР°."
+msgstr "Г ТШЯРФЪг ФЫп ¦ЭФц ЧЫцТР."
 
 #: engines/scumm/help.cpp:319
 msgid "When Indy is on the right,"
-msgstr "РљРѕР»Рё Р†РЅРґС– С” СЃРїСЂР°РІР°,"
+msgstr "єЮЫШ ¦ЭФц ф бЯаРТР,"
 
 #: engines/scumm/help.cpp:320
 msgid "7, 4, and 1 are switched with"
-msgstr "7, 4, С– 1 РїРµСЂРµРјРёРєР°СЋС‚СЊСЃСЏ РЅР°"
+msgstr "7, 4, ц 1 ЯХаХЬШЪРовмбп ЭР"
 
 #: engines/scumm/help.cpp:321
 msgid "9, 6, and 3, respectively."
-msgstr "9, 6 С– 3 РІС–РґРїРѕРІС–РґРЅРѕ."
+msgstr "9, 6 ц 3 ТцФЯЮТцФЭЮ."
 
 #: engines/scumm/help.cpp:328
 msgid "Biplane controls (numpad):"
-msgstr "РљРµСЂСѓРІР°РЅРЅСЏ Р±С–РїР»Р°РЅРѕРј (numpad):"
+msgstr "єХагТРЭЭп СцЯЫРЭЮЬ (numpad):"
 
 #: engines/scumm/help.cpp:329
 msgid "Fly to upper left"
-msgstr "Р›РµС‚С–С‚Рё РґРѕРіРѕСЂРё РЅР°Р»С–РІРѕ"
+msgstr "»ХвцвШ ФЮУЮаШ ЭРЫцТЮ"
 
 #: engines/scumm/help.cpp:330
 msgid "Fly to left"
-msgstr "Р›РµС‚С–С‚Рё РЅР°Р»С–РІРѕ"
+msgstr "»ХвцвШ ЭРЫцТЮ"
 
 #: engines/scumm/help.cpp:331
 msgid "Fly to lower left"
-msgstr "Р›РµС‚С–С‚Рё РЅРёР¶С‡Рµ РЅР°Р»С–РІРѕ"
+msgstr "»ХвцвШ ЭШЦзХ ЭРЫцТЮ"
 
 #: engines/scumm/help.cpp:332
 msgid "Fly upwards"
-msgstr "Р›РµС‚С–С‚Рё РґРѕРіРѕСЂРё"
+msgstr "»ХвцвШ ФЮУЮаШ"
 
 #: engines/scumm/help.cpp:333
 msgid "Fly straight"
-msgstr "Р›РµС‚С–С‚Рё РїСЂСЏРјРѕ"
+msgstr "»ХвцвШ ЯапЬЮ"
 
 #: engines/scumm/help.cpp:334
 msgid "Fly down"
-msgstr "Р›РµС‚С–С‚Рё РґРѕРЅРёР·Сѓ"
+msgstr "»ХвцвШ ФЮЭШЧг"
 
 #: engines/scumm/help.cpp:335
 msgid "Fly to upper right"
-msgstr "Р›РµС‚С–С‚Рё РґРѕРіРѕСЂРё РЅР°РїСЂР°РІРѕ"
+msgstr "»ХвцвШ ФЮУЮаШ ЭРЯаРТЮ"
 
 #: engines/scumm/help.cpp:336
 msgid "Fly to right"
-msgstr "Р›РµС‚С–С‚Рё РЅР°РїСЂР°РІРѕ"
+msgstr "»ХвцвШ ЭРЯаРТЮ"
 
 #: engines/scumm/help.cpp:337
 msgid "Fly to lower right"
-msgstr "Р›РµС‚С–С‚Рё РґРѕРЅРёР·Сѓ РЅР°РїСЂР°РІРѕ"
+msgstr "»ХвцвШ ФЮЭШЧг ЭРЯаРТЮ"
 
 #: engines/scumm/input.cpp:578
 msgid "Snap scroll on"
-msgstr "РџСЂРѕРєСЂСѓС‚РєР° СЃС‚СЂРёР±РєР°РјРё"
+msgstr "їаЮЪагвЪР бваШСЪРЬШ"
 
 #: engines/scumm/input.cpp:580
 msgid "Snap scroll off"
-msgstr "Р’РјРёРєР°С” РїСЂРѕРєСЂСѓС‚РєСѓ СЃС‚СЂРёР±РєР°РјРё"
+msgstr "ІЬШЪРф ЯаЮЪагвЪг бваШСЪРЬШ"
 
 #: engines/scumm/input.cpp:593
 msgid "Music volume: "
-msgstr "Р“СѓС‡РЅС–СЃС‚СЊ РјСѓР·РёРєРё: "
+msgstr "ігзЭцбвм ЬгЧШЪШ: "
 
 #: engines/scumm/input.cpp:610
 msgid "Subtitle speed: "
-msgstr "РЁРІРёРґ. СЃСѓР±С‚РёС‚СЂС–РІ: "
+msgstr "ИТШФ. бгСвШвацТ: "
 
 #: engines/scumm/scumm.cpp:1881
 #, c-format
@@ -4374,8 +4374,8 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
-"Р РµР¶РёРј \"СЂС–РґРЅРѕРіРѕ\" MIDI РїРѕС‚СЂРµР±СѓС” РїРѕРЅРѕРІР»РµРЅРЅСЏ Roland Upgrade РІС–Рґ\n"
-"LucasArts, РїСЂРѕС‚Рµ %s РІС–РґСЃСѓС‚РЅС–Р№. РџРµСЂРµРјРёРєР°СЋСЃСЊ РЅР° AdLib."
+"АХЦШЬ \"ацФЭЮУЮ\" MIDI ЯЮваХСгф ЯЮЭЮТЫХЭЭп Roland Upgrade ТцФ\n"
+"LucasArts, ЯаЮвХ %s ТцФбгвЭцЩ. їХаХЬШЪРобм ЭР AdLib."
 
 #: engines/scumm/scumm.cpp:2738
 msgid ""
@@ -4383,113 +4383,113 @@ msgid ""
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
 "Tentacle game directory, and the game has to be added to ScummVM."
 msgstr ""
-"Р—Р°Р·РІРёС‡Р°Р№, Р·Р°СЂР°Р· Р±Рё Р·Р°РїСѓСЃС‚РёРІСЃСЏ Maniac Mansion. РђР»Рµ, С‰РѕР± С†Рµ РјРѕРіР»Рѕ РїСЂР°С†СЋРІР°С‚Рё, "
-"РІР°Рј РїРѕС‚СЂС–Р±РЅРѕ РїРµСЂРµРїРёСЃР°С‚Рё С„Р°Р№Р»Рё РіСЂРё Maniac Manssion Сѓ РїР°РїРєСѓ Maniac РІСЃРµСЂРµРґРёРЅС– "
-"РїР°РїРєРё Р· РіСЂРѕСЋ Tentacle, Р° С‚Р°РєРѕР¶ РґРѕРґР°С‚Рё СЃР°РјСѓ РіСЂСѓ Сѓ ScummVM."
+"·РЧТШзРЩ, ЧРаРЧ СШ ЧРЯгбвШТбп Maniac Mansion. °ЫХ, йЮС жХ ЬЮУЫЮ ЯаРжоТРвШ, "
+"ТРЬ ЯЮвацСЭЮ ЯХаХЯШбРвШ дРЩЫШ УаШ Maniac Manssion г ЯРЯЪг Maniac ТбХаХФШЭц "
+"ЯРЯЪШ Ч УаЮо Tentacle, Р вРЪЮЦ ФЮФРвШ бРЬг Уаг г ScummVM."
 
 #: engines/scumm/players/player_v3m.cpp:129
 msgid ""
 "Could not find the 'Loom' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"РќРµ РІРґР°Р»РѕСЃСЏ Р·РЅР°Р№С‚Рё С„Р°Р№Р» РїСЂРѕРіСЂР°РјРё 'Loom' Macintosh Р°Р±Рё РїСЂРѕС‡РёС‚Р°С‚Рё\n"
-"Р· РЅСЊРѕРіРѕ С–РЅСЃС‚СЂСѓРјРµРЅС‚Рё. РњСѓР·РёРєСѓ Р±СѓР»Рѕ РІРёРјРєРЅРµРЅРѕ."
+"ЅХ ТФРЫЮбп ЧЭРЩвШ дРЩЫ ЯаЮУаРЬШ 'Loom' Macintosh РСШ ЯаЮзШвРвШ\n"
+"Ч ЭмЮУЮ цЭбвагЬХЭвШ. јгЧШЪг СгЫЮ ТШЬЪЭХЭЮ."
 
 #: engines/scumm/players/player_v5m.cpp:107
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"РќРµ РІРґР°Р»РѕСЃСЏ Р·РЅР°Р№С‚Рё С„Р°Р№Р» РїСЂРѕРіСЂР°РјРё 'Monkey Island' Macintosh Р°Р±Рё РїСЂРѕС‡РёС‚Р°С‚Рё\n"
-"Р· РЅСЊРѕРіРѕ С–РЅСЃС‚СЂСѓРјРµРЅС‚Рё. РњСѓР·РёРєСѓ Р±СѓР»Рѕ РІРёРјРєРЅРµРЅРѕ."
+"ЅХ ТФРЫЮбп ЧЭРЩвШ дРЩЫ ЯаЮУаРЬШ 'Monkey Island' Macintosh РСШ ЯаЮзШвРвШ\n"
+"Ч ЭмЮУЮ цЭбвагЬХЭвШ. јгЧШЪг СгЫЮ ТШЬЪЭХЭЮ."
 
 #: engines/sherlock/detection.cpp:81
 msgid "Pixellated scene transitions"
-msgstr "РџС–РєСЃРµР»СЊРѕРІР°РЅС– РїРµСЂРµС…РѕРґРё РјС–Р¶ СЃС†РµРЅР°РјРё"
+msgstr "їцЪбХЫмЮТРЭц ЯХаХеЮФШ ЬцЦ бжХЭРЬШ"
 
 #: engines/sherlock/detection.cpp:82
 msgid "When changing scenes, a randomized pixel transition is done"
-msgstr "РџСЂРё Р·РјС–РЅС– СЃС†РµРЅ Р±СѓРґРµ РІС–РґР±СѓРІР°С‚РёСЃСЏ РїРµСЂРµС…С–Рґ Сѓ РІРёРіР»СЏРґС– РІРёРїР°РґРєРѕРІРёС… РїС–РєСЃРµР»С–РІ"
+msgstr "їаШ ЧЬцЭц бжХЭ СгФХ ТцФСгТРвШбп ЯХаХецФ г ТШУЫпФц ТШЯРФЪЮТШе ЯцЪбХЫцТ"
 
 #: engines/sherlock/detection.cpp:91
 msgid "Don't show hotspots when moving mouse"
-msgstr "РќРµ РїРѕРєР°Р·СѓРІР°С‚Рё С†С–РєР°РІС– С‚РѕС‡РєРё РїСЂРё РЅР°РІРµРґРµРЅРЅС– РјРёС€РµСЋ"
+msgstr "ЅХ ЯЮЪРЧгТРвШ жцЪРТц вЮзЪШ ЯаШ ЭРТХФХЭЭц ЬШиХо"
 
 #: engines/sherlock/detection.cpp:92
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
-"РџРѕРєР°Р·СѓРІР°С‚Рё РЅР°Р·РІРё С†С–РєР°РІРёС… С‚РѕС‡РѕРє С‚С–Р»СЊРєРё РїС–СЃР»СЏ Р±РµР·РїРѕСЃРµСЂРµРґРЅСЊРѕРіРѕ РєР»С–РєСѓ РїРѕ РЅРёРј Р°Р±Рѕ "
-"РґС–С— Р· РЅРёРјРё"
+"їЮЪРЧгТРвШ ЭРЧТШ жцЪРТШе вЮзЮЪ вцЫмЪШ ЯцбЫп СХЧЯЮбХаХФЭмЮУЮ ЪЫцЪг ЯЮ ЭШЬ РСЮ "
+"Фцч Ч ЭШЬШ"
 
 #: engines/sherlock/detection.cpp:101
 msgid "Show character portraits"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё РїРѕСЂС‚СЂРµС‚Рё РіРµСЂРѕС—РІ"
+msgstr "їЮЪРЧгТРвШ ЯЮаваХвШ УХаЮчТ"
 
 #: engines/sherlock/detection.cpp:102
 msgid "Show portraits for the characters when conversing"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё РїРѕСЂС‚СЂРµС‚Рё РіРµСЂРѕС—РІ РїС–Рґ С‡Р°СЃ СЃРїС–Р»РєСѓРІР°РЅРЅСЏ"
+msgstr "їЮЪРЧгТРвШ ЯЮаваХвШ УХаЮчТ ЯцФ зРб бЯцЫЪгТРЭЭп"
 
 #: engines/sherlock/detection.cpp:111
 msgid "Slide dialogs into view"
-msgstr "Р—Р°РІРѕРґРёС‚Рё РґС–Р°Р»РѕРіРё РґРѕ РѕР±Р·РѕСЂСѓ"
+msgstr "·РТЮФШвШ ФцРЫЮУШ ФЮ ЮСЧЮаг"
 
 #: engines/sherlock/detection.cpp:112
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
-msgstr "Р—Р°РІРѕРґРёС‚Рё РґС–Р°Р»РѕРіРё РґРѕ РѕР±Р·РѕСЂСѓ Р·Р°РјС–СЃС‚СЊ РјРёС‚С‚С”РІРѕРіРѕ РїРѕРєР°Р·Сѓ"
+msgstr "·РТЮФШвШ ФцРЫЮУШ ФЮ ЮСЧЮаг ЧРЬцбвм ЬШввфТЮУЮ ЯЮЪРЧг"
 
 #: engines/sherlock/detection.cpp:121
 msgid "Transparent windows"
-msgstr "РџСЂРѕР·РѕСЂС– РІС–РєРЅР°"
+msgstr "їаЮЧЮац ТцЪЭР"
 
 #: engines/sherlock/detection.cpp:122
 msgid "Show windows with a partially transparent background"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё РІС–РєРЅР° Р· С‡Р°СЃС‚РєРѕРІРѕ РїСЂРѕР·РѕСЂРёРј С‚Р»РѕРј"
+msgstr "їЮЪРЧгТРвШ ТцЪЭР Ч зРбвЪЮТЮ ЯаЮЧЮаШЬ вЫЮЬ"
 
 #: engines/sky/compact.cpp:141
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
-msgstr "Р¤Р°Р№Р» РґР°РЅРёС… РґРІРёР¶РєР° sky.cpt РјР°С” РЅРµРїСЂР°РІРёР»СЊРЅРёР№ СЂРѕР·РјС–СЂ."
+msgstr "ДРЩЫ ФРЭШе ФТШЦЪР sky.cpt ЬРф ЭХЯаРТШЫмЭШЩ аЮЧЬца."
 
 #: engines/sky/detection.cpp:44
 msgid "Floppy intro"
-msgstr "Р’СЃС‚СѓРї Р· С„Р»РѕРїРїС–-РІРµСЂСЃС–С—"
+msgstr "ІбвгЯ Ч дЫЮЯЯц-ТХабцч"
 
 #: engines/sky/detection.cpp:45
 msgid "Use the floppy version's intro (CD version only)"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РІРІРµРґРµРЅРЅСЏ Р· С„Р»РѕРїРїС–-РІРµСЂСЃС–С— (С‚С–Р»СЊРєРё РґР»СЏ CD РІРµСЂСЃС–С— РіСЂРё)"
+msgstr "ІШЪЮаШбвЮТгТРвШ ТТХФХЭЭп Ч дЫЮЯЯц-ТХабцч (вцЫмЪШ ФЫп CD ТХабцч УаШ)"
 
 #: engines/supernova/supernova.cpp:193
 #, fuzzy, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
 msgstr ""
-"Р—РЅР°Р№РґРµРЅРѕ РЅРµРІС–СЂРЅСѓ РІРµСЂСЃС–СЋ РґР°РЅРёС… РґРІРёР¶РєР° %s. РћС‡С–РєСѓРІР°РЅР° %d.%d, Р°Р»Рµ Р·РЅР°Р№РґРµРЅРѕ %d.%d."
+"·ЭРЩФХЭЮ ЭХТцаЭг ТХабцо ФРЭШе ФТШЦЪР %s. ѕзцЪгТРЭР %d.%d, РЫХ ЧЭРЩФХЭЮ %d.%d."
 
 #: engines/supernova/supernova.cpp:220
 #, fuzzy, c-format
 msgid "Unable to locate the text for %s language in '%s' engine data file."
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·РЅР°Р№С‚Рё С„Р°Р№Р» РґР°РЅРёС… РґРІРёР¶РєР° %s."
+msgstr "ЅХ ТФРЫЮбп ЧЭРЩвШ дРЩЫ ФРЭШе ФТШЦЪР %s."
 
 #: engines/sword1/animation.cpp:524
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr "Р РѕР»РёРє PSX РїРѕС‚РѕРєСѓ '%s' РЅРµ РјРѕР¶Рµ Р±СѓС‚Рё РІС–РґС‚РІРѕСЂРµРЅРёРј Сѓ СЂРµР¶РёРјС– РїР°Р»С–С‚СЂРё"
+msgstr "АЮЫШЪ PSX ЯЮвЮЪг '%s' ЭХ ЬЮЦХ СгвШ ТцФвТЮаХЭШЬ г аХЦШЬц ЯРЫцваШ"
 
 #: engines/sword1/animation.cpp:545 engines/sword2/animation.cpp:445
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
-msgstr "Р—РЅР°Р№РґРµРЅРѕ СЂРѕР»РёРєРё DXA, Р°Р»Рµ ScummVM Р±СѓР»Рѕ РїРѕР±СѓРґРѕРІР°РЅРѕ Р±РµР· РїС–РґС‚СЂРёРјРєРё zlib"
+msgstr "·ЭРЩФХЭЮ аЮЫШЪШ DXA, РЫХ ScummVM СгЫЮ ЯЮСгФЮТРЭЮ СХЧ ЯцФваШЬЪШ zlib"
 
 #: engines/sword1/animation.cpp:561 engines/sword2/animation.cpp:461
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
 msgstr ""
-"Р—РЅР°Р№РґРµРЅРѕ СЂРѕР»РёРєРё MPEG-2, Р°Р»Рµ ScummVM Р±СѓР»Рѕ РїРѕР±СѓРґРѕРІР°РЅРѕ Р±РµР· РїС–РґС‚СЂРёРјРєРё MPEG-2"
+"·ЭРЩФХЭЮ аЮЫШЪШ MPEG-2, РЫХ ScummVM СгЫЮ ЯЮСгФЮТРЭЮ СХЧ ЯцФваШЬЪШ MPEG-2"
 
 #: engines/sword1/animation.cpp:568 engines/sword2/animation.cpp:470
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr "Р РѕР»РёРє '%s' РЅРµ Р·РЅР°Р№РґРµРЅРѕ"
+msgstr "АЮЫШЪ '%s' ЭХ ЧЭРЩФХЭЮ"
 
 #: engines/sword1/control.cpp:885
 msgid ""
@@ -4501,12 +4501,12 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM Р·РЅР°Р№С€РѕРІ, С‰Рѕ РІРё РјР°С”С‚Рµ СЃС‚Р°СЂС– Р·Р±РµСЂРµР¶РµРЅС– С–РіСЂРё РґР»СЏ Broken Sword 1.\n"
-"Р—Р±РµСЂРµР¶РµРЅС– Сѓ СЃС‚Р°СЂРѕРјСѓ С„РѕСЂРјР°С‚С– С–РіСЂРё РЅРµ РїС–РґС‚СЂРёРјСѓСЋС‚СЊСЃСЏ, С– РІРё РЅРµ Р·РјРѕР¶РµС‚Рµ С—С… "
-"Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё, СЏРєС‰Рѕ РЅРµ РїРµСЂРµРІРµРґРµС‚Рµ Сѓ РЅРѕРІРёР№ С„РѕСЂРјР°С‚.\n"
+"ScummVM ЧЭРЩиЮТ, йЮ ТШ ЬРфвХ бвРац ЧСХаХЦХЭц цУаШ ФЫп Broken Sword 1.\n"
+"·СХаХЦХЭц г бвРаЮЬг дЮаЬРвц цУаШ ЭХ ЯцФваШЬговмбп, ц ТШ ЭХ ЧЬЮЦХвХ че "
+"ЧРТРЭвРЦШвШ, пЪйЮ ЭХ ЯХаХТХФХвХ г ЭЮТШЩ дЮаЬРв.\n"
 "\n"
-"РќР°С‚РёСЃРЅС–С‚СЊ РћРљ, С‰РѕР± РїРµСЂРµРІРµСЃС‚Рё С—С… Р·Р°СЂР°Р·, С–РЅР°РєС€Рµ С†Рµ РїРѕРІС–РґРѕРјР»РµРЅРЅСЏ Р·'СЏРІРёС‚СЊСЃСЏ РїСЂРё "
-"РЅР°СЃС‚СѓРїРЅРѕРјСѓ Р·Р°РїСѓСЃРєСѓ РіСЂРё.\n"
+"ЅРвШбЭцвм ѕє, йЮС ЯХаХТХбвШ че ЧРаРЧ, цЭРЪиХ жХ ЯЮТцФЮЬЫХЭЭп Ч'пТШвмбп ЯаШ "
+"ЭРбвгЯЭЮЬг ЧРЯгбЪг УаШ.\n"
 
 #: engines/sword1/control.cpp:1259
 #, c-format
@@ -4514,94 +4514,94 @@ msgid ""
 "Target new saved game already exists!\n"
 "Would you like to keep the old saved game (%s) or the new one (%s)?\n"
 msgstr ""
-"Р—Р±РµСЂРµР¶РµРЅР° РіСЂР° Р· С‚Р°РєРѕСЋ РЅР°Р·РІРѕСЋ РІР¶Рµ С–СЃРЅСѓС”!\n"
-"Р§Рё РІРё С…РѕС‡РµС‚Рµ Р»РёС€РёС‚Рё СЃС‚Р°СЂСѓ Р·Р±РµСЂРµР¶РµРЅСѓ РіСЂСѓ (%s) Р°Р±Рѕ РЅРѕРІСѓ (%s)?\n"
+"·СХаХЦХЭР УаР Ч вРЪЮо ЭРЧТЮо ТЦХ цбЭгф!\n"
+"ЗШ ТШ еЮзХвХ ЫШиШвШ бвРаг ЧСХаХЦХЭг Уаг (%s) РСЮ ЭЮТг (%s)?\n"
 
 #: engines/sword1/control.cpp:1262
 msgid "Keep the old one"
-msgstr "Р›РёС€РёС‚Рё СЃС‚Р°СЂСѓ"
+msgstr "»ШиШвШ бвРаг"
 
 #: engines/sword1/control.cpp:1262
 msgid "Keep the new one"
-msgstr "Р’Р·СЏС‚Рё РЅРѕРІСѓ"
+msgstr "ІЧпвШ ЭЮТг"
 
 #: engines/sword1/logic.cpp:1633
 msgid "This is the end of the Broken Sword 1 Demo"
-msgstr "РќР° С†СЊРѕРјСѓ Р·Р°РєС–РЅС‡СѓС”С‚СЊСЃСЏ РґРµРјРѕ Broken Sword 1"
+msgstr "ЅР жмЮЬг ЧРЪцЭзгфвмбп ФХЬЮ Broken Sword 1"
 
 #: engines/sword2/animation.cpp:425
 msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
-"Р—РЅР°Р№РґРµРЅРѕ PSX СЂРѕР»РёРєРё, Р°Р»Рµ ScummVM Р±СѓР»Рѕ Р·С–Р±СЂР°РЅРѕ Р±РµР· РїС–РґС‚СЂРёРјРєРё РєРѕР»СЊРѕСЂС–РІ RGB"
+"·ЭРЩФХЭЮ PSX аЮЫШЪШ, РЫХ ScummVM СгЫЮ ЧцСаРЭЮ СХЧ ЯцФваШЬЪШ ЪЮЫмЮацТ RGB"
 
 #: engines/sword2/sword2.cpp:79
 msgid "Show object labels"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё РЅР°Р·РІРё РѕР±'С”РєС‚С–РІ"
+msgstr "їЮЪРЧгТРвШ ЭРЧТШ ЮС'фЪвцТ"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr "РџРѕРєР°Р·СѓРІР°С‚Рё РЅР°Р·РІРё РґР»СЏ РѕР±'С”РєС‚С–РІ РїСЂРё РЅР°РІРµРґРµРЅРЅС– РјРёС€С–"
+msgstr "їЮЪРЧгТРвШ ЭРЧТШ ФЫп ЮС'фЪвцТ ЯаШ ЭРТХФХЭЭц ЬШиц"
 
 #: engines/sword25/detection.cpp:46
 msgid "Use English speech"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РѕР·РІСѓС‡РµРЅРЅСЏ Р°РЅРіР»С–Р№СЃСЊРєРѕСЋ"
+msgstr "ІШЪЮаШбвЮТгТРвШ ЮЧТгзХЭЭп РЭУЫцЩбмЪЮо"
 
 #: engines/sword25/detection.cpp:47
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
-"Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РѕР·РІСѓС‡РµРЅРЅСЏ Р°РЅРіР»С–Р№СЃРєРѕСЋ Р·Р°РјС–СЃС‚СЊ РЅС–РјРµС†СЊРєРѕС— РґР»СЏ РІСЃС–С… РјРѕРІ РѕРєСЂС–Рј "
-"РЅС–РјРµС†СЊРєРѕС—"
+"ІШЪЮаШбвЮТгТРвШ ЮЧТгзХЭЭп РЭУЫцЩбЪЮо ЧРЬцбвм ЭцЬХжмЪЮч ФЫп Тбце ЬЮТ ЮЪацЬ "
+"ЭцЬХжмЪЮч"
 
 #: engines/teenagent/resources.cpp:118
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
-"Р¤Р°Р№Р» teenagent.dat Р·Р°РїР°РєРѕРІР°РЅРѕ, Р°Р»Рµ zlib РЅРµ Р±СѓР»Рѕ РІРєР»СЋС‡РµРЅРѕ РІ С†СЋ РїСЂРѕРіСЂР°РјРјСѓ. "
-"Р‘СѓРґСЊ-Р»Р°СЃРєР° СЂРѕР·РїР°РєСѓР№С‚Рµ Р№РѕРіРѕ"
+"ДРЩЫ teenagent.dat ЧРЯРЪЮТРЭЮ, РЫХ zlib ЭХ СгЫЮ ТЪЫозХЭЮ Т жо ЯаЮУаРЬЬг. "
+"±гФм-ЫРбЪР аЮЧЯРЪгЩвХ ЩЮУЮ"
 
 #: engines/tony/tony.cpp:258
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr "Р’Р°СЂС–Р°РЅС‚ С€СЂРёС„С‚Сѓ РІС–РґСЃС‚СѓС‚РЅС–Р№ Сѓ С„Р°Р№Р»С– РґРІРёР¶РєР° %s."
+msgstr "ІРацРЭв иаШдвг ТцФбвгвЭцЩ г дРЩЫц ФТШЦЪР %s."
 
 #: engines/toon/toon.cpp:222
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr "Р“СЂСѓ Р·Р°РїРёСЃР°РЅРѕ Сѓ СЃР»РѕС‚ %d "
+msgstr "іаг ЧРЯШбРЭЮ г бЫЮв %d "
 
 #: engines/toon/toon.cpp:226
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ С€РІРёРґРєРѕ Р·Р±РµСЂРµРіС‚Рё РіСЂСѓ Сѓ СЃР»РѕС‚ в„–%d"
+msgstr "ЅХ ТФРЫЮбп иТШФЪЮ ЧСХаХУвШ Уаг г бЫЮв р%d"
 
 #: engines/toon/toon.cpp:239
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr "Р—Р±РµСЂРµР¶РµРЅСѓ РіСЂСѓ в„–%d Р·Р°РІР°РЅС‚Р°Р¶РµРЅРѕ"
+msgstr "·СХаХЦХЭг Уаг р%d ЧРТРЭвРЦХЭЮ"
 
 #: engines/toon/toon.cpp:243
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё Р·Р±РµСЂРµР¶РµРЅСѓ РіСЂСѓ в„–%d"
+msgstr "ЅХ ТФРЫЮбп ЧРТРЭвРЦШвШ ЧСХаХЦХЭг Уаг р%d"
 
 #: engines/wintermute/detection.cpp:58
 msgid "Show FPS-counter"
-msgstr "РџРѕРєР°Р·Р°С‚Рё Р»С–С‡РёР»СЊРЅРёРє РєР°РґСЂС–РІ"
+msgstr "їЮЪРЧРвШ ЫцзШЫмЭШЪ ЪРФацТ"
 
 #: engines/wintermute/detection.cpp:59
 msgid "Show the current number of frames per second in the upper left corner"
-msgstr "РџРѕРєР°Р·СѓС” Сѓ РІРµСЂРЅСЊРѕРјСѓ Р»С–РІРѕРјСѓ РєСѓС‚С– РїРѕС‚РѕС‡РЅСѓ РєС–Р»СЊРєС–СЃС‚СЊ РєР°РґСЂС–РІ РЅР° СЃРµРєСѓРЅРґСѓ"
+msgstr "їЮЪРЧгф г ТХаЭмЮЬг ЫцТЮЬг Ъгвц ЯЮвЮзЭг ЪцЫмЪцбвм ЪРФацТ ЭР бХЪгЭФг"
 
 #: engines/wintermute/detection.cpp:68
 msgid "Sprite bilinear filtering (SLOW)"
-msgstr "Р‘С–Р»С–РЅС–Р№РЅР° С„С–Р»СЊС‚СЂР°С†С–СЏ СЃРїСЂР°Р№С‚С–РІ (РїРѕРІС–Р»СЊРЅРѕ)"
+msgstr "±цЫцЭцЩЭР дцЫмваРжцп бЯаРЩвцТ (ЯЮТцЫмЭЮ)"
 
 #: engines/wintermute/detection.cpp:69
 msgid "Apply bilinear filtering to individual sprites"
-msgstr "Р—Р°СЃС‚РѕСЃСѓРІР°С‚Рё Р±С–Р»С–РЅС–Р№РЅСѓ С„С–Р»СЊС‚СЂР°С†С–СЋ РґРѕ РѕРєСЂРµРјРёС… СЃРїСЂР°Р№С‚С–РІ"
+msgstr "·РбвЮбгТРвШ СцЫцЭцЩЭг дцЫмваРжцо ФЮ ЮЪаХЬШе бЯаРЩвцТ"
 
 #: engines/xeen/detection.cpp:85
 msgid "Show item costs in standard inventory mode"
@@ -4623,37 +4623,37 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:61
 msgid "Double FPS"
-msgstr "РџРѕРґРІС–Р№РЅР° FPS"
+msgstr "їЮФТцЩЭР FPS"
 
 #: engines/zvision/detection_tables.h:62
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr "РџС–РґРІРёС‰РёС‚Рё РєС–Р»СЊРєС–СЃС‚СЊ РєР°РґСЂС–РІ РЅР° СЃРµРєСѓРЅРґСѓ Р· 30 РґРѕ 60"
+msgstr "їцФТШйШвШ ЪцЫмЪцбвм ЪРФацТ ЭР бХЪгЭФг Ч 30 ФЮ 60"
 
 #: engines/zvision/detection_tables.h:71
 msgid "Enable Venus"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё Venus"
+msgstr "ГТцЬЪЭгвШ Venus"
 
 #: engines/zvision/detection_tables.h:72
 msgid "Enable the Venus help system"
-msgstr "РЈРІС–РјРєРЅСѓС‚Рё РґРѕРїРѕРјС–Р¶РЅСѓ СЃРёСЃС‚РµРјСѓ Venus"
+msgstr "ГТцЬЪЭгвШ ФЮЯЮЬцЦЭг бШбвХЬг Venus"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning"
-msgstr "Р’РёРјРєРЅСѓС‚Рё Р°РЅС–РјР°С†С–СЋ РїС–Рґ С‡Р°СЃ РїРѕРІРѕСЂРѕС‚С–РІ"
+msgstr "ІШЬЪЭгвШ РЭцЬРжцо ЯцФ зРб ЯЮТЮаЮвцТ"
 
 #: engines/zvision/detection_tables.h:82
 msgid "Disable animation while turning in panorama mode"
-msgstr "Р’РёРјРёРєР°С” Р°РЅС–РјР°С†С–СЋ РїС–Рґ С‡Р°СЃ РїРѕРІРѕСЂРѕС‚С–РІ Сѓ СЂРµР¶РёРјС– РїР°РЅРѕСЂР°РјРё"
+msgstr "ІШЬШЪРф РЭцЬРжцо ЯцФ зРб ЯЮТЮаЮвцТ г аХЦШЬц ЯРЭЮаРЬШ"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use high resolution MPEG video"
-msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РІС–РґРµРѕ MPEG Р· РїС–РґРІРёС‰РµРЅРѕСЋ СЂРѕР·РґС–Р»СЊРЅС–СЃС‚СЋ"
+msgstr "ІШЪЮаШбвЮТгТРвШ ТцФХЮ MPEG Ч ЯцФТШйХЭЮо аЮЧФцЫмЭцбво"
 
 #: engines/zvision/detection_tables.h:92
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr ""
-"Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РІС–РґРµРѕ MPEG Р· DVD-РІРµСЂСЃС–С— Р·Р°РјС–СЃС‚СЊ С„Р°Р№Р»С–РІ AVI Р· РЅС–Р¶С‡РѕСЋ "
-"СЂРѕР·РґС–Р»СЊРЅРѕСЋ Р·РґР°С‚РЅС–СЃС‚СЋ"
+"ІШЪЮаШбвЮТгТРвШ ТцФХЮ MPEG Ч DVD-ТХабцч ЧРЬцбвм дРЩЫцТ AVI Ч ЭцЦзЮо "
+"аЮЧФцЫмЭЮо ЧФРвЭцбво"
 
 #: engines/zvision/file/save_manager.cpp:221
 #, c-format
@@ -4661,121 +4661,121 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
-"Р¦РµР№ С„Р°Р№Р» Р·С– Р·Р±РµСЂРµР¶РµРЅРѕСЋ РіСЂРѕСЋ РІРёРєРѕСЂРёСЃС‚РѕРІСѓС” РІРµСЂСЃС–СЋ %u, Р°Р»Рµ РґРІРёР¶РѕРє РїС–РґС‚СЂРёРјСѓС” "
-"РІРµСЂСЃС–СЋ РґРѕ %d. Р’Р°Рј РїРѕС‚СЂС–Р±РЅР° РїРѕРЅРѕРІР»РµРЅР° РІРµСЂСЃС–СЏ ScummVM РґР»СЏ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ С†СЊРѕРіРѕ "
-"С„Р°Р№Р»Сѓ."
+"ЖХЩ дРЩЫ Чц ЧСХаХЦХЭЮо УаЮо ТШЪЮаШбвЮТгф ТХабцо %u, РЫХ ФТШЦЮЪ ЯцФваШЬгф "
+"ТХабцо ФЮ %d. ІРЬ ЯЮвацСЭР ЯЮЭЮТЫХЭР ТХабцп ScummVM ФЫп ЧРТРЭвРЦХЭЭп жмЮУЮ "
+"дРЩЫг."
 
 #~ msgid "Use the original save/load screens instead of the ScummVM interface"
 #~ msgstr ""
-#~ "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РѕСЂРёРіС–РЅР°Р»СЊРЅС– РµРєСЂР°РЅРё Р·Р±РµСЂРµР¶РµРЅРЅСЏ/Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ Р·Р°РјС–СЃС‚СЊ "
-#~ "РµРєСЂР°РЅС–РІ Р·С– ScummVM"
+#~ "ІШЪЮаШбвЮТгТРвШ ЮаШУцЭРЫмЭц ХЪаРЭШ ЧСХаХЦХЭЭп/ЧРТРЭвРЦХЭЭп ЧРЬцбвм "
+#~ "ХЪаРЭцТ Чц ScummVM"
 
 #~ msgid "(You can always enable it in the options dialog on the Misc tab)"
-#~ msgstr "(Р’Рё Р·Р°РІР¶РґРё РјРѕР¶РµС‚Рµ РІРєР»СЋС‡РёС‚Рё С—С— Сѓ РќР°Р»Р°С€С‚СѓРІР°РЅРЅСЏС… РЅР° Р·Р°РєР»Р°РґС†С– Р†РЅС€Рµ)"
+#~ msgstr "(ІШ ЧРТЦФШ ЬЮЦХвХ ТЪЫозШвШ чч г ЅРЫРивгТРЭЭпе ЭР ЧРЪЫРФжц ¦ЭиХ)"
 
 #~ msgid "Check for updates automatically"
-#~ msgstr "РђРІС‚РѕРјР°С‚РёС‡РЅРѕ РїРµСЂРµРІС–СЂСЏС‚Рё РѕРЅРѕРІР»РµРЅРЅСЏ"
+#~ msgstr "°ТвЮЬРвШзЭЮ ЯХаХТцапвШ ЮЭЮТЫХЭЭп"
 
 #~ msgid "8 kHz"
-#~ msgstr "8 РєР“С†"
+#~ msgstr "8 Ъіж"
 
 #~ msgid "11 kHz"
-#~ msgstr "11 РєР“С†"
+#~ msgstr "11 Ъіж"
 
 #~ msgid "22 kHz"
-#~ msgstr "22 РєР“С†"
+#~ msgstr "22 Ъіж"
 
 #~ msgid "44 kHz"
-#~ msgstr "44 РєР“С†"
+#~ msgstr "44 Ъіж"
 
 #~ msgid "48 kHz"
-#~ msgstr "48 РєР“С†"
+#~ msgstr "48 Ъіж"
 
 #~ msgid "Output rate:"
-#~ msgstr "Р’РёС…С–РґРЅР° С‡Р°СЃС‚РѕС‚Р°:"
+#~ msgstr "ІШецФЭР зРбвЮвР:"
 
 #~ msgid ""
 #~ "Higher value specifies better sound quality but may be not supported by "
 #~ "your soundcard"
 #~ msgstr ""
-#~ "Р’РµР»РёРєС– Р·РЅР°С‡РµРЅРЅСЏ РЅР°РґР°СЋС‚СЊ РєСЂР°С‰Сѓ СЏРєС–СЃС‚СЊ Р·РІСѓРєСѓ, РїСЂРѕС‚Рµ РІРѕРЅРё РјРѕР¶СѓС‚СЊ РЅРµ "
-#~ "РїС–РґС‚СЂРёРјСѓРІР°С‚РёСЃСЏ РІР°С€РѕСЋ Р·РІСѓРєРѕРІРѕСЋ РєР°СЂС‚РѕСЋ"
+#~ "ІХЫШЪц ЧЭРзХЭЭп ЭРФРовм ЪаРйг пЪцбвм ЧТгЪг, ЯаЮвХ ТЮЭШ ЬЮЦгвм ЭХ "
+#~ "ЯцФваШЬгТРвШбп ТРиЮо ЧТгЪЮТЮо ЪРавЮо"
 
 #~ msgid ""
 #~ "The theme you selected does not support your current language. If you "
 #~ "want to use this theme you need to switch to another language first."
 #~ msgstr ""
-#~ "Р’РёР±СЂР°РЅР° С‚РµРјР° РЅРµ РїС–РґС‚СЂРёРјСѓС” РїРѕС‚РѕС‡РЅСѓ РјРѕРІСѓ. РЇРєС‰Рѕ РІРё С…РѕС‡РµС‚Рµ РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё С†СЋ "
-#~ "С‚РµРјСѓ, РїРѕС‚СЂС–Р±РЅРѕ РІ РїРµСЂС€Сѓ С‡РµСЂРіСѓ Р·РјС–РЅРёС‚Рё РјРѕРІСѓ."
+#~ "ІШСаРЭР вХЬР ЭХ ЯцФваШЬгф ЯЮвЮзЭг ЬЮТг. ПЪйЮ ТШ еЮзХвХ ТШЪЮаШбвЮТгТРвШ жо "
+#~ "вХЬг, ЯЮвацСЭЮ Т ЯХаиг зХаУг ЧЬцЭШвШ ЬЮТг."
 
 #, fuzzy
 #~ msgid "Speed multiplier for mouse emulation"
-#~ msgstr "РЎРёРјСѓР»СЋРІР°С‚Рё Р»С–РІРёР№ РєР»С–Рє РјРёС€С–"
+#~ msgstr "БШЬгЫоТРвШ ЫцТШЩ ЪЫцЪ ЬШиц"
 
 #, fuzzy
 #~ msgctxt "lowres"
 #~ msgid "Mouse Speed:"
-#~ msgstr "РЁРІРёРґРєС–СЃС‚СЊ:"
+#~ msgstr "ИТШФЪцбвм:"
 
 #~ msgid ""
 #~ "Unable to find \"sky.cpt\" file!\n"
 #~ "Please download it from www.scummvm.org"
 #~ msgstr ""
-#~ "РќРµ РІРґР°Р»РѕСЃСЏ Р·РЅР°Р№С‚Рё С„Р°Р№Р» sky.cpt!\n"
-#~ "Р‘СѓРґСЊ Р»Р°СЃРєР°, Р·Р°РІР°РЅС‚Р°Р¶С‚Рµ Р№РѕРіРѕ Р· www.scummvm.org"
+#~ "ЅХ ТФРЫЮбп ЧЭРЩвШ дРЩЫ sky.cpt!\n"
+#~ "±гФм ЫРбЪР, ЧРТРЭвРЦвХ ЩЮУЮ Ч www.scummvm.org"
 
 #~ msgid ""
 #~ "The \"sky.cpt\" file has an incorrect size.\n"
 #~ "Please (re)download it from www.scummvm.org"
 #~ msgstr ""
-#~ "Р¤Р°Р№Р» sky.cpt РјР°С” РЅРµРІС–СЂРЅРёР№ СЂРѕР·РјС–СЂ.\n"
-#~ "Р‘СѓРґСЊ Р»Р°СЃРєР°, (РїРµСЂРµ)Р·Р°РІР°РЅС‚Р°Р¶С‚Рµ Р№РѕРіРѕ Р· www.scummvm.org"
+#~ "ДРЩЫ sky.cpt ЬРф ЭХТцаЭШЩ аЮЧЬца.\n"
+#~ "±гФм ЫРбЪР, (ЯХаХ)ЧРТРЭвРЦвХ ЩЮУЮ Ч www.scummvm.org"
 
 #~ msgid ""
 #~ "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
 #~ msgstr ""
-#~ "РЈ РІР°СЃ РІС–РґСЃС‚СѓРЅС–Р№ С„Р°Р№Р» 'teenagent.dat'. Р—Р°РІР°РЅС‚Р°Р¶С‚Рµ Р№РѕРіРѕ Р· РІРµР±-СЃР°Р№С‚Сѓ ScummVM"
+#~ "Г ТРб ТцФбвгЭцЩ дРЩЫ 'teenagent.dat'. ·РТРЭвРЦвХ ЩЮУЮ Ч ТХС-бРЩвг ScummVM"
 
 #~ msgid "You're missing the 'toon.dat' file. Get it from the ScummVM website"
-#~ msgstr "РЈ РІР°СЃ РІС–РґСЃС‚СѓРЅС–Р№ С„Р°Р№Р» 'toon.dat'. Р’С–Р·СЊРјС–С‚СЊ Р№РѕРіРѕ РЅР° РІРµР±-СЃР°Р№С‚С– ScummVM"
+#~ msgstr "Г ТРб ТцФбвгЭцЩ дРЩЫ 'toon.dat'. ІцЧмЬцвм ЩЮУЮ ЭР ТХС-бРЩвц ScummVM"
 
 #~ msgid "File 'toon.dat' is corrupt. Get it from the ScummVM website"
-#~ msgstr "Р¤Р°Р№Р» 'toon.dat' РїРѕС€РєРѕРґР¶РµРЅРѕ. Р—Р°РІР°РЅС‚Р°Р¶С‚Рµ Р№РѕРіРѕ Р· РІРµР±-СЃР°Р№С‚Сѓ ScummVM"
+#~ msgstr "ДРЩЫ 'toon.dat' ЯЮиЪЮФЦХЭЮ. ·РТРЭвРЦвХ ЩЮУЮ Ч ТХС-бРЩвг ScummVM"
 
 #~ msgid ""
 #~ "File 'toon.dat' is wrong version. Expected %d.%d but got %d.%d. Get it "
 #~ "from the ScummVM website"
 #~ msgstr ""
-#~ "Р¤Р°Р№Р» 'toon.dat' РјР°С” РЅРµРІС–СЂРЅСѓ РІРµСЂСЃС–СЋ. РћС‡С–РєСѓРІР°РЅР° %d.%d, Р° РѕС‚СЂС–РјР°РЅР° %d.%d. "
-#~ "Р—Р°РІР°РЅС‚Р°Р¶С‚Рµ Р№РѕРіРѕ СЃ РІРµР±-СЃР°Р№С‚Сѓ ScummVM"
+#~ "ДРЩЫ 'toon.dat' ЬРф ЭХТцаЭг ТХабцо. ѕзцЪгТРЭР %d.%d, Р ЮвацЬРЭР %d.%d. "
+#~ "·РТРЭвРЦвХ ЩЮУЮ б ТХС-бРЩвг ScummVM"
 
 #~ msgid "Invalid save file name"
-#~ msgstr "РќРµРїСЂР°РІРёР»СЊРЅР° РЅР°Р·РІР° С„Р°Р№Р»Сѓ Р·Р±РµСЂРµР¶РµРЅРЅСЏ СЃС‚Р°РЅСѓ"
+#~ msgstr "ЅХЯаРТШЫмЭР ЭРЧТР дРЩЫг ЧСХаХЦХЭЭп бвРЭг"
 
 #~ msgid "Use original savegame dialog"
-#~ msgstr "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚Рё РѕСЂРёРіС–РЅР°Р»СЊРЅРёР№ РµРєСЂР°РЅ Р·Р±РµСЂРµР¶РµРЅРЅСЏ"
+#~ msgstr "ІШЪЮаШбвЮТгТРвШ ЮаШУцЭРЫмЭШЩ ХЪаРЭ ЧСХаХЦХЭЭп"
 
 #~ msgid ""
 #~ "Files button in-game shows original savegame dialog rather than the "
 #~ "ScummVM menu"
 #~ msgstr ""
-#~ "РљРЅРѕРїРєР° \"Р¤Р°Р№Р»Рё\" Сѓ РіСЂС– РїРѕРєР°Р·СѓРІР°С‚РёРјРµ РѕСЂРёРіС–РЅР°Р»СЊРЅРёР№ РµРєСЂР°РЅ Р·Р±РµСЂРµР¶РµРЅРЅСЏ Р·Р°РјС–СЃС‚СЊ "
-#~ "РјРµРЅСЋ ScummVM"
+#~ "єЭЮЯЪР \"ДРЩЫШ\" г Уац ЯЮЪРЧгТРвШЬХ ЮаШУцЭРЫмЭШЩ ХЪаРЭ ЧСХаХЦХЭЭп ЧРЬцбвм "
+#~ "ЬХЭо ScummVM"
 
 #~ msgid "The game in '%s' seems to be unknown."
-#~ msgstr "Р“СЂР° Сѓ '%s' РЅРµРІС–РґРѕРјР°."
+#~ msgstr "іаР г '%s' ЭХТцФЮЬР."
 
 #~ msgid ""
 #~ "Please, report the following data to the ScummVM team along with name"
 #~ msgstr ""
-#~ "Р‘СѓРґСЊ Р»Р°СЃРєР°, РїРµСЂРµРґР°Р№С‚Рµ РЅРёР¶С‡РµРЅР°РІРµРґРµРЅСѓ С–РЅС„РѕСЂРјР°С†С–СЋ РєРѕРјР°РЅРґС– ScummVM СЂР°Р·РѕРј Р·"
+#~ "±гФм ЫРбЪР, ЯХаХФРЩвХ ЭШЦзХЭРТХФХЭг цЭдЮаЬРжцо ЪЮЬРЭФц ScummVM аРЧЮЬ Ч"
 
 #~ msgid "of the game you tried to add and its version/language/etc.:"
 #~ msgstr ""
-#~ "РЅР°Р·РІРѕСЋ РіСЂРё, СЏРєСѓ РІРё РЅР°РјР°РіР°С”С‚РµСЃСЊ РґРѕРґР°С‚Рё, Р° С‚Р°РєРѕР¶ С—С— РІРµСЂСЃС–СЋ/РјРѕРІСѓ/С‚Р° С–РЅС€Рµ:"
+#~ "ЭРЧТЮо УаШ, пЪг ТШ ЭРЬРУРфвХбм ФЮФРвШ, Р вРЪЮЦ чч ТХабцо/ЬЮТг/вР цЭиХ:"
 
 #~ msgid "You have to restart ScummVM before your changes will take effect."
-#~ msgstr "Р’Рё РїРѕРІРёРЅРЅС– РїРµСЂРµР·Р°РїСѓСЃС‚РёС‚Рё ScummVM С‰РѕР± Р·Р°СЃС‚РѕСЃСѓРІР°С‚Рё Р·РјС–РЅРё."
+#~ msgstr "ІШ ЯЮТШЭЭц ЯХаХЧРЯгбвШвШ ScummVM йЮС ЧРбвЮбгТРвШ ЧЬцЭШ."
 
 #~ msgid "OpenGL (No filtering)"
-#~ msgstr "OpenGL (Р±РµР· С„С–Р»СЊС‚СЂС–РІ)"
+#~ msgstr "OpenGL (СХЧ дцЫмвацТ)"
