@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-15 19:57+0200\n"
-"PO-Revision-Date: 2017-01-30 14:50+0000\n"
-"Last-Translator: Vitor Santos <vitorhgsantos90@gmail.com>\n"
-"Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
-"projects/scummvm/scummvm/pt_PT/>\n"
+"PO-Revision-Date: 2018-04-18 10:02+0000\n"
+"Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
+"Language-Team: Portuguese (Portugal) "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/pt_PT/>\n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1959,9 +1959,8 @@ msgid "DOSBox OPL emulator"
 msgstr ""
 
 #: audio/fmopl.cpp:76
-#, fuzzy
 msgid "Nuked OPL emulator"
-msgstr "Emulador AdLib:"
+msgstr ""
 
 #: audio/fmopl.cpp:79
 msgid "ALSA Direct FM"
