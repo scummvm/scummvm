@@ -8,10 +8,10 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2018-04-15 19:57+0200\n"
-"PO-Revision-Date: 2016-12-04 13:27+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
-"Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
-"scummvm/eu/>\n"
+"PO-Revision-Date: 2018-04-18 10:12+0000\n"
+"Last-Translator: Adrian Frühwirth <bonki@scummvm.org>\n"
+"Language-Team: Basque "
+"<https://translations.scummvm.org/projects/scummvm/scummvm/eu/>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -1989,9 +1989,8 @@ msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL emuladorea"
 
 #: audio/fmopl.cpp:76
-#, fuzzy
 msgid "Nuked OPL emulator"
-msgstr "MAME OPL emuladorea"
+msgstr "Nuked OPL emuladorea"
 
 #: audio/fmopl.cpp:79
 msgid "ALSA Direct FM"
@@ -1999,7 +1998,7 @@ msgstr "ALSA FM zuzena"
 
 #: audio/fmopl.cpp:82
 msgid "OPL2LPT"
-msgstr ""
+msgstr "OPL2LPT"
 
 #: audio/mididrv.cpp:209
 #, c-format
