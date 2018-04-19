@@ -25,6 +25,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved Audio quality in Humongous Entertainment games by using the Miles AdLib driver.
    - Fixed possible stack overflows in The Dig and Full Throttle.
 
+ Tinsel:
+   - Fix loading Discworld 1 savegames from the launcher where Rincewind had a held item
+
  Tucker:
    - Fixed multiple graphic issues in Bud Tucker in Double Trouble.
    - Fixed multiple issues with font and subtitle rendering.
