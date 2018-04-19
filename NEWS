@@ -27,6 +27,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Tinsel:
    - Fix loading Discworld 1 savegames from the launcher where Rincewind had a held item
+   - Script patch for hang in Discworld 1 GRA using items on Temple big hammer
 
  Tucker:
    - Fixed multiple graphic issues in Bud Tucker in Double Trouble.
