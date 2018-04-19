@@ -220,6 +220,37 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 	_bufferIsoChars = NULL;
 	_bufferIsoMap = NULL;
 	_bufferCubegfx = NULL;
+
+	_sequencesArr = nullptr;
+	_packedStringIndex = nullptr;
+	_packedStringNumb = 0;
+	_packedStrings = nullptr;
+	_initScript = nullptr;
+	_initScriptSize = 0;
+	_menuScript = nullptr;
+	_menuScriptSize = 0;
+	_arrayGameScriptIndex = nullptr;
+	_gameScriptIndexSize = 0;
+	_arrayGameScripts = nullptr;
+	_listNumb = 0;
+	_listIndex = nullptr;
+	_listArr = nullptr;
+	_rectNumb = 0;
+	for (int i = 0; i < 40; ++i) {
+		_rectXMinMax[i].min = 0;
+		_rectXMinMax[i].max = 0;
+		_rectYMinMax[i].min = 0;
+		_rectYMinMax[i].max = 0;
+	}
+	_interfaceHotspotNumb = 0;
+	for (int i = 0; i < 20; ++i)
+		_keyboardMapping[i] = Common::KEYCODE_DOLLAR;
+
+	_shouldQuit = false;
+	_eventMan = nullptr;
+	_lastTime = 0;
+	_gameType = kGameTypeNone;
+	_platform = Common::kPlatformUnknown;
 }
 
 LilliputEngine::~LilliputEngine() {

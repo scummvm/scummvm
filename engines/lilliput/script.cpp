@@ -77,6 +77,11 @@ LilliputScript::LilliputScript(LilliputEngine *vm) : _vm(vm), _currScript(NULL) 
 
 	for (int i = 0; i < 1600; i++)
 		_interactions[i] = 0;
+
+	_heroismLevel = 0;
+	_talkingCharacter = -1;
+	_byte16F05_ScriptHandler = 0;
+	_word18821 = 0;
 }
 
 LilliputScript::~LilliputScript() {
