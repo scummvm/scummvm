@@ -966,18 +966,6 @@ void ThemeEngine::drawBitmap(const Graphics::Surface *bitmap, const Common::Rect
 	addDirtyRect(r);
 }
 
-void ThemeEngine::drawABitmap(Graphics::TransparentSurface *bitmap, const Common::Rect &r, AutoScaleMode autoscale, int alpha) {
-	if (_layerToDraw == kDrawLayerBackground)
-		return;
-
-	Common::Rect area = r;
-	area.clip(_screen.w, _screen.h);
-
-	_vectorRenderer->blitAlphaBitmap(bitmap, area, autoscale, Graphics::DrawStep::kVectorAlignManual, Graphics::DrawStep::kVectorAlignManual, alpha);
-
-	addDirtyRect(area);
-}
-
 void ThemeEngine::drawBitmapClip(const Graphics::Surface *bitmap, const Common::Rect &r, const Common::Rect &clip, bool alpha) {
 	if (_layerToDraw == kDrawLayerBackground)
 		return;
@@ -1369,13 +1357,6 @@ void ThemeEngine::drawSurface(const Common::Rect &r, const Graphics::Surface &su
 		return;
 
 	drawBitmap(&surface, r, themeTrans);
-}
-
-void ThemeEngine::drawASurface(const Common::Rect &r, Graphics::TransparentSurface &surface, AutoScaleMode autoscale, int alpha) {
-	if (!ready())
-		return;
-
-	drawABitmap(&surface, r, autoscale, alpha);
 }
 
 void ThemeEngine::drawSurfaceClip(const Common::Rect &r, const Common::Rect &clip, const Graphics::Surface &surface, WidgetStateInfo state, int alpha, bool themeTrans) {

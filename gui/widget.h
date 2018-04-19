@@ -240,7 +240,6 @@ public:
 	~PicButtonWidget();
 
 	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled);
-	void setAGfx(const Graphics::TransparentSurface *gfx, int statenum = kPicButtonStateEnabled, ThemeEngine::AutoScaleMode mode = ThemeEngine::kAutoScaleNone);
 	void setGfx(int w, int h, int r, int g, int b, int statenum = kPicButtonStateEnabled);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
@@ -251,12 +250,9 @@ protected:
 	void drawWidget();
 
 	Graphics::Surface _gfx[kPicButtonStateMax + 1];
-	Graphics::TransparentSurface _agfx[kPicButtonStateMax + 1];
 	int _alpha;
 	bool _transparency;
 	bool _showButton;
-	bool _isAlpha;
-	ThemeEngine::AutoScaleMode _mode;
 };
 
 /* CheckboxWidget */
@@ -375,7 +371,6 @@ public:
 
 	void setGfx(const Graphics::Surface *gfx);
 	void setGfx(int w, int h, int r, int g, int b);
-	void setAGfx(const Graphics::TransparentSurface *gfx, ThemeEngine::AutoScaleMode mode = ThemeEngine::kAutoScaleNone);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
 	void useThemeTransparency(bool enable) { _transparency = enable; }
@@ -384,10 +379,8 @@ protected:
 	void drawWidget();
 
 	Graphics::Surface _gfx;
-	Graphics::TransparentSurface _agfx;
 	int _alpha;
 	bool _transparency;
-	ThemeEngine::AutoScaleMode _mode;
 };
 
 /* ContainerWidget */

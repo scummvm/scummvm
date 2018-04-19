@@ -395,7 +395,6 @@ public:
 	void drawSurfaceClip(const Common::Rect &r, const Common::Rect &clippingRect, const Graphics::Surface &surface,
 		WidgetStateInfo state = kStateEnabled, int alpha = 255, bool themeTrans = false);
 
-	void drawASurface(const Common::Rect &r, Graphics::TransparentSurface &surface, AutoScaleMode autoscale, int alpha);
 
 	void drawSlider(const Common::Rect &r, int width,
 	                WidgetStateInfo state = kStateEnabled);
@@ -671,7 +670,6 @@ protected:
 	void drawBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
 	void drawBitmapClip(const Graphics::Surface *bitmap, const Common::Rect &clippingRect, const Common::Rect &r,
 	                    bool alpha);
-	void drawABitmap(Graphics::TransparentSurface *bitmap, const Common::Rect &r, AutoScaleMode autoscale, int alpha);
 
 	/**
 	 * DEBUG: Draws a white square and writes some text next to it.
