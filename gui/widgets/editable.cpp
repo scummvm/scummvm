@@ -289,7 +289,7 @@ void EditableWidget::drawCaret(bool erase) {
 	x += getAbsX();
 	y += getAbsY();
 
-	g_gui.theme()->drawCaretClip(Common::Rect(x, y, x + 1, y + editRect.height()), getBossClipRect(), erase);
+	g_gui.theme()->drawCaret(Common::Rect(x, y, x + 1, y + editRect.height()), erase);
 
 	if (erase) {
 		GUI::EditableWidget::String character;
@@ -318,7 +318,9 @@ void EditableWidget::drawCaret(bool erase) {
 		// possible glitches due to different methods used.
 		width = MIN(editRect.width() - caretOffset, width);
 		if (width > 0) {
-			g_gui.theme()->drawTextClip(Common::Rect(x, y, x + width, y + editRect.height()), getBossClipRect(), character, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+			g_gui.theme()->drawText(Common::Rect(x, y, x + width, y + editRect.height()), character,
+			                        _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font,
+			                        ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		}
 	}
 
